@@ -1,0 +1,120 @@
+%%-*-Latex-*-
+\mychapter{Introduction}
+\label{chap:intro}
+
+\section{Rationale}
+
+The \PS systems code is being developed to provide an integrated and
+self-consistent treatment of the physics, engineering, economic, safety and
+environmental characteristics of fusion power plants. This will enable issues
+of the feasibility and safety advantages of different power plant designs to
+be systematically explored.
+
+During the course of studies of a proposed fusion power plant, there may be
+times when questions of the following type arise:
+\begin{quote}
+Are the machine's physics and engineering parameters consistent with one
+another?
+
+Which machine of a given size and shape produces the cheapest electricity?
+
+What is the effect of a more optimistic limit on the plasma beta on the amount
+of auxiliary power required?
+\end{quote}
+
+Questions such as these are extremely difficult to answer, since the large
+number of parameters involved are highly dependent on one another.
+Fortunately, computer programs have been written to address these issues, and
+\PS is one of them.
+
+Suppose that an outline power plant design calls for a machine with a given
+size and shape, which will produce a certain net electric power.  There may be
+a vast number of different conceptual machines that satisfy the problem as
+stated so far, and \PS can be used in non-optimisation mode to find one of
+these whose physics and engineering parameters are self-consistent. However,
+the machine found by \PS in this manner may not be possible to build in
+practice --- the coils may be overstressed, for instance, or the plasma
+pressure may exceed the maximum possible value. \PS contains a large number of
+constraints to prevent the code from finding a machine with such problems, and
+running the code in optimisation mode forces these constraints to be met. The
+number of possible conceptual machines is thus considerably reduced, and
+optimisation of the parameters with respect to (say) the cost of electricity
+will reduce this number to a minimum (possibly one).
+
+Formally then, \PS is a systems code that calculates in a self-consistent
+manner the parameters of a fusion power plant with a specified performance,
+ensuring that its operating limits are not violated, and with the option to
+optimise a given function of these parameters.
+
+It would not be fair to call \PS a fusion power plant design code, as this
+implies that a great deal of complexity would need to be present in each and
+every model describing one of the component systems. Such complexity is,
+however, incompatible with the code's iterative approach to solving the
+optimisation problem, since this requires repeated evaluation of the same
+(large number of) expressions. This is not to say that the models employed by
+the code are oversimplified --- in general they represent good numerical
+estimates of present theoretical understanding, or are fits to experimental
+data. \PS provides a useful overall description of how a conceptual and
+feasible power plant may look.
+
+\section{History}
+
+\PS is derived from several earlier systems codes, but is largely based on the
+TETRA (Tokamak Engineering Test Reactor Analysis) code~\cite{tetra} and its
+descendant STORAC (Spherical TOrus Reactor Analysis Code)~\cite{storac}, which
+includes routines relevant to the tight aspect ratio class of tokamaks. These
+codes, and much of the original version of \PS itself, were written by
+personnel at Oak Ridge National Laboratory in Tennessee, USA, with
+contributions from a number of other laboratories in the USA\@. In addition,
+many of the mathematical routines have been taken from a number of different
+well-established source libraries.
+
+Since the code is descended from such a wide range of sources, its structure
+was initially not ideal from the programmer's viewpoint.  Non-standard
+practices and inconsistent layout within the code could have led to
+difficulties in modifying, interpreting and indeed running the code. A great
+deal of effort has therefore been expended at Culham since the code's arrival
+from ORNL to improve this situation, with the code being given a complete but
+careful upgrade, routine by routine. A {\em single}\/ master copy of \PS now
+exists, the details of which are described here. The culmination of the work
+to improve the usability of the code is this User Guide, which hopefully will
+be of assistance to all users of \PSC whether they are planning to modify or
+run the code, or are simply trying to understand what the code aims to
+achieve.
+
+As with all active research codes, \PS will continue to be developed for some
+time. As explained earlier in this introduction, the code will be used as the
+basis of power plant environmental and safety studies by the inclusion of
+further models and constraints. This User Guide is updated regularly to ensure
+that the documentation is consistent with the latest version of the code.
+
+\section{Layout of the User Guide}
+
+The User Guide is divided into a small number of logically separate units,
+each one of which provides specific information on a given topic. It depends
+on the user's motive for referring to the manual as to which chapter will be
+the most useful, although hopefully the style and structure adopted will allow
+one to browse through without difficulty.
+
+Chapter~\ref{chap:overview} provides an overview of the program and the
+machine that is modelled by it. Chapter~\ref{chap:models} goes into slightly
+more detail, and discusses the various physics and engineering models that are
+used within the code to describe the power plant systems.
+Chapter~\ref{chap:run} describes how to run the program from scratch, and
+provides a number of hints and suggestions to bear in mind when the code does
+not find a feasible machine. Chapter~\ref{chap:modify} shows how to modify the
+code in specific ways, for example how extra constraints and variables should
+be added to the code. Appendices~\ref{app:infile1} and~\ref{app:infile2}
+contain example input files for \PS in non-optimisation and optimisation
+modes, respectively. Finally, Appendix~\ref{app:doc} contains references for
+useful Work File Notes~\cite{PWF} that provide information about the code
+status, its location, and other details relating to the implementation of \PS
+to date.
+
+This manual has been written in such a way as to (a) lead a new user of \PS
+into a clear understanding of the code's concepts, structure and models, and
+(b) help a more experienced user to set up and run the code efficiently and
+quickly. Potential users of \PS need only a basic knowledge of potential
+fusion power plants, and access to the code itself. No specialised knowledge
+in computers or computing is required.
+

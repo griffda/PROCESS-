@@ -1,0 +1,184 @@
+%%-*-Latex-*-
+\mychapter{Inclusion of Additional Variables and Equations}
+\label{chap:modify}
+
+It is often useful to add extra features to the code in order to model
+new situations. This chapter provides instructions on how to add
+various numerics related items to \PSD
+
+\section{Input Parameters}
+
+Input parameters (see Section~\ref{sec:inpars}) are added to the code
+in the following way:
+\begin{enumerate}
+\item
+Choose the most relevant \INCLUDE file, and, keeping everything in
+alphabetical order, add the parameter to
+\begin{enumerate}
+\item
+the correct type declaration block, and
+\item
+the corresponding \COMMON block.
+\end{enumerate}
+\item
+Ensure that all the routines that use the new variable reference the
+relevant \INCLUDE file.
+\item
+Add the parameter to the relevant section in routine {\tt INITIAL} in
+source file {\tt initial.f}, giving it a ``sensible'' default value.
+Keep to alphabetical order.
+\item
+Add the parameter to the relevant routine in source file {\tt
+input.f}, including the comments at the start of the routine. The
+comments in routine {\tt READNL} provide full instructions on how to
+do this. Note that real (i.e.\ double precision) and integer variables
+are treated differently, as are scalar quantities and arrays. Keep to
+alphabetical order.
+\item
+Add the details of the parameter to the relevant section of the
+variable descriptor file {\tt var.des}, keeping to alphabetical order.
+\end{enumerate}
+
+\section{Iteration Variables}
+
+New iteration variables (see Section~\ref{sec:itvars}) are added in the
+same way as input parameters, with the following additions:
+\begin{enumerate}
+\item
+Increment the parameter {\tt ipnvars} in \INCLUDE file {\tt param.h}
+to accommodate the new iteration variable.
+\item
+Add the variable to routines {\tt LOADXC} and {\tt CONVXC} in source
+file {\tt xc.f}, mimicking the way that the existing iteration
+variables are coded. Remember to ensure that these routines reference
+the relevant \INCLUDE file.
+\item
+Assign sensible values for the variable's bounds to the relevant
+elements in arrays {\tt boundl} and {\tt boundu} in routine {\tt
+INITIAL} in source file {\tt initial.f}.
+\item
+Assign the relevant element of character array {\tt lablxc} to the
+name of the variable, in routine {\tt INITIAL} in source file {\tt
+initial.f}.
+\item
+Document the changes to {\tt ipnvars} and {\tt ixc} in the variable
+descriptor file {\tt var.des}.
+\end{enumerate}
+If an existing input parameter is now required to be an iteration
+variable, then simply carry out the tasks mentioned here.
+
+It should be noted that iteration variables must not be reset elsewhere in the
+code. That is, they may only be assigned new values when originally
+initialised (in {\tt INITIAL}, or in the input file if required), and in
+routine {\tt CONVXC} where the iteration process itself is performed.
+Otherwise, the numerical procedure cannot adjust the value as it requires, and
+the program will fail.
+
+\section{Other Global Variables}
+
+This type of variable embraces all those present in the \INCLUDE files
+which do not need to be given initial values or to be input, as they
+are calculated within the code. These should be added to the code in
+the following way:
+\begin{enumerate}
+\item
+Choose the most relevant \INCLUDE file, and, keeping everything in
+alphabetical order, add the parameter to
+\begin{enumerate}
+\item
+the correct type declaration block, and
+\item
+the corresponding \COMMON block.
+\end{enumerate}
+\item
+Ensure that all the routines that use the new variable reference the
+relevant \INCLUDE file.
+\item
+Add the parameter to the relevant section in routine {\tt INITIAL} in
+source file {\tt initial.f}, giving it a default value of zero. This
+is done to ensure that the variable is defined immediately, preventing
+possible problems later. Keep to alphabetical order, as always.
+\item
+Add the details of the parameter to the relevant section of the
+variable descriptor file {\tt var.des}.
+\end{enumerate}
+
+\section{Constraint Equations}
+
+Constraint equations (see Section~\ref{sec:constraints}) are added to
+\PS in the following way:
+\begin{enumerate}
+\item
+Increment the parameter {\tt ipeqns} in \INCLUDE file {\tt param.h} to
+accommodate the new constraint.
+\item
+Add the constraint equation to routine {\tt CON1} in source file {\tt
+eqns.f}, ensuring that all the variables used in the formula are
+contained in the \INCLUDE files present at the start of this routine.
+Use a similar formulation to that used for the existing constraint
+equations, remembering that the code will try to force {\tt cc(i)} to
+be zero.
+\item
+Assign a description of the new constraint to the relevant element of
+array {\tt lablcc} in routine {\tt INITIAL} in source file {\tt
+initial.f}, using 34 characters or less.
+\item
+Document the changes to {\tt ipeqns} and {\tt icc} in the variable
+descriptor file {\tt var.des}.
+\end{enumerate}
+Remember that if a limit equation is being added, a new f-value
+iteration variable may also need to be added to the code.
+
+\section{Figures of Merit}
+
+New figures of merit (see Section~\ref{sec:foms}) are added to \PS in
+the following way:
+
+\begin{enumerate}
+\item
+Increment the parameter {\tt ipnfoms} in \INCLUDE file {\tt param.h}
+to accommodate the new figure of merit.
+\item
+Add the new figure of merit equation to routine {\tt FUNFOM} in source
+file {\tt optimiz.f}, following the method used in the existing
+examples. The value of {\tt fc} should be of order unity, so select a
+reasonable scaling factor if necessary.
+\item
+Ensure that all the variables used in the formula are contained in the
+\INCLUDE files present at the start of this routine.
+\item
+Add a short description of the new figure of merit to the {\tt minmax}
+entry in routine {\tt RDNL01} in source file {\tt input.f}.
+\item
+Assign a description of the new figure of merit to the relevant
+element of array {\tt lablmm} in routine {\tt INITIAL} in source file
+{\tt initial.f}, using 22 characters or less.
+\item
+Document the changes to {\tt ipnfoms} and {\tt minmax} in the variable
+descriptor file {\tt var.des}.
+\end{enumerate}
+
+\section{Scanning Variables}
+
+Scanning variables (see Section~\ref{sec:scans}) are added to \PS in
+the following way:
+
+\begin{enumerate}
+\item
+Increment the parameter {\tt ipnscnv} in \INCLUDE file {\tt param.h}
+to accommodate the new scanning variable.
+\item
+Add a new assignment to the relevant part of routine {\tt SCAN} in
+source file {\tt aamain.f}, following the examples already present,
+including the inclusion of a short description of the new scanning
+variable in variable {\tt xlabel}.
+\item
+Ensure that the scanning variable used in the assignment is contained
+in one of the \INCLUDE files present at the start of this routine.
+\item
+Add a short description of the new scanning variable to the {\tt nsweep}
+entry in routine {\tt RDNL15} in source file {\tt input.f}.
+\item
+Document the changes to {\tt ipnscnv} and {\tt nsweep} in the variable
+descriptor file {\tt var.des}.
+\end{enumerate}

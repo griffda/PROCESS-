@@ -1,0 +1,27 @@
+% Table summarising blanket materials
+
+\begin{table}
+\begin{center}
+
+\begin{tabular}{||l||c||c||c||} \hline
+material & {\tt lblnkt$\not=$1}: & \multicolumn{2}{c||}{{\tt lblnkt=1}: full
+thermodynamic model} \\ \cline{3-4}
+ & simple model & {\tt smstr=1}: solid blanket & {\tt smstr=2}: liquid blanket
+\\ \hline
+stainless steel & {\tt fblss}   & {\tt fblss}   & {\tt fblss}   \\
+vanadium        & {\tt fblvd}   & {\tt fblvd}   & {\tt fblvd}   \\
+Li$_2$O         & {\tt fblli2o} & {\tt fblli2o} &     ---       \\
+beryllium       & {\tt fblbe}   & {\tt fblbe}   &     ---       \\
+LiPb            &     ---       &     ---       & {\tt fbllipb} \\
+lithium         &     ---       &     ---       & {\tt fblli}   \\
+coolant         & {\tt vfblkt}  & {\tt vfblkt}  & {\tt vfblkt}  \\ \hline
+\end{tabular}
+\end{center}
+\caption[TABLE_BKT]{{\it
+Summary of the materials comprising the blanket in the various scenarios
+available. The fractions given are all available to be modified, and should
+of course add up to 1 for any given model. The type of coolant used is given
+by the value of switch {\tt costr} (Section~\ref{sec:costr}).
+}}
+\label{tab:blanket}
+\end{table}

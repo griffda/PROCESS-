@@ -1,0 +1,64 @@
+\documentclass[11pt,a4paper]{report}
+\usepackage{epsfig,colordvi}
+
+\pretolerance=10000
+
+\parskip=5mm
+\parindent=0mm
+
+\topmargin=0mm
+\headheight=10mm
+\headsep=10mm
+\textheight=210mm
+%\footheight=10mm
+
+\oddsidemargin=0mm
+\evensidemargin=0mm
+\textwidth=160mm
+
+\setcounter{secnumdepth}{3}
+\newcommand{\PS}{\mbox{\it PROCESS\/ }}
+\newcommand{\PSD}{\mbox{\it PROCESS}\@.\/ }
+\newcommand{\PSC}{\mbox{\it PROCESS},\/ }
+\newcommand{\FORT}{\mbox{\tt FORTRAN }}
+\newcommand{\FTSS}{\mbox{\tt FORTRAN 77 }}
+\newcommand{\INCLUDE}{\mbox{\tt INCLUDE }}
+\newcommand{\COMMON}{\mbox{\tt COMMON }}
+
+\newcommand{\setheader}[1]
+ {\markright{\rlap{\lower0.8ex\hbox to\textwidth{\hrulefill}}{\bf#1}}}
+\newcommand{\mychapter}[1]{\small\normalsize
+ \setcounter{footnote}{0}
+ \chapter{#1}
+ \pagestyle{myheadings}
+ \setheader{Chapter \thechapter\hspace{0.8em}#1}}
+\newcommand{\myappendix}[1]{\small\normalsize
+ \setcounter{footnote}{0}
+ \chapter{#1}
+ \pagestyle{myheadings}
+ \setheader{Appendix \thechapter\hspace{0.8em}#1}}
+
+%\input{/fusrs5a/home/peter/text/STYLES/epsfig.tex}
+%\input{/fusrs5a/home/peter/text/STYLES/colordvi.tex}
+%\input{/fusrs5a/home/peter/text/STYLES/rotate.tex}
+
+\begin{document}
+
+\include{titlepage} % Front page
+
+\tableofcontents
+
+\include{chap1} % Introduction
+\include{chap2} % Program Overview - The Fundamentals
+\include{chap3} % Physics and Engineering Models
+\include{chap4} % Execution of the Code
+\include{chap5} % Inclusion of Additional Variables and Equations
+\include{chap6} % Acknowledgements & Bibliography
+\appendix
+\include{appendixa} % Appendix A : typical non-optimisation input file
+\include{appendixb} % Appendix B : typical optimisation input file
+\include{appendixc} % Appendix C : Source Code Documentation
+
+\end{document}
+
+% See the READ.ME file for instructions.

@@ -1,0 +1,115 @@
+% Tables summarising iteration variables
+
+\begin{table}[tbph]
+\footnotesize
+\begin{center}
+
+\begin{tabular}{||c|l|l|c|c|c||} \hline
+{\tt ixc} &           &                                                         & {\tt icc} & lower        & upper       \\
+no. & variable name   & description                                             & eqn       & bound        & bound       \\ \hline
+1   & \tt aspect      & plasma aspect ratio                                     &           & \tt 1.100D0  & \tt 10.00D0 \\
+2   & \tt bt          & toroidal field on axis                                  &           & \tt 0.010D0  & \tt 100.0D0 \\
+3   & \tt rmajor      & plasma major radius                                     &           & \tt 0.100D0  & \tt 10.00D0 \\
+4   & \tt te          & electron temperature                                    &           & \tt 5.000D0  & \tt 500.0D0 \\
+5   & \tt beta        & plasma beta                                             &           & \tt 0.001D0  & \tt 1.000D0 \\
+6   & \tt dene        & electron density                                        &           & \tt 1.00D19  & \tt 1.00D21 \\
+7   & \tt rnbeam      & hot beam density / electron density                     &           & \tt 1.00D-6  & \tt 1.00D20 \\
+8   & \tt fbeta       & f-value for $\epsilon.\beta_p$ limit eqn                & 6         & \tt 0.001D0  & \tt 1.000D0 \\
+9   & \tt fdene       & f-value for density limit eqn                           & 5         & \tt 0.001D0  & \tt 1.000D0 \\
+10  & \tt hfact       & confinement time $H$-factor                             &           & \tt 0.100D0  & \tt 3.000D0 \\
+11  & \tt pheat       & heating power not used for current drive                &           & \tt 1.000D6  & \tt 1.000D9 \\
+12  & \tt oacdcp      & overall current density in TF coil inner leg            &           & \tt 1.000D5  & \tt 1.500D8 \\
+13  & \tt tfcth       & TF coil inner leg thickness                             &           & \tt 0.100D0  & \tt 5.000D0 \\
+14  & \tt fwalld      & f-value for wall load limit eqn                         & 8         & \tt 0.001D0  & \tt 1.000D0 \\
+15  & \tt fvs         & f-value for volt second limit eqn                       & 12        & \tt 0.000D0  & \tt 1.000D0 \\
+16  & \tt ohcth       & OH coil thickness                                       &           & \tt 0.001D0  & \tt 1.000D2 \\
+17  & \tt tdwell      & dwell time                                              &           & \tt 0.100D0  & \tt 1.000D8 \\
+18  & \tt q           & edge safety factor                                      &           & \tt 2.000D0  & \tt 100.0D0 \\
+19  & \tt enbeam      & neutral beam energy                                     &           & \tt 1.000D0  & \tt 1.000D6 \\
+20  & \tt tcpav       & average (resistive) TF coil temperature                 &           & \tt 40.00D0  & \tt 1.000D3 \\
+21  & \tt ftburn      & f-value for burn time limit eqn                         & 13        & \tt 0.001D0  & \tt 1.000D0 \\
+22  & \tt tbrnmn      & minimum burn time                                       &           & \tt 0.001D0  & \tt 1.000D6 \\
+23  & \tt fcoolcp     & coolant fraction of resistive TF coil                   &           & \tt 0.100D0  & \tt 0.500D0 \\
+24  & \tt cdtfleg     & TF coil leg overall current density                     &           & \tt 1.000D4  & \tt 1.000D8 \\
+25  & \tt fpnetel     & f-value for net electric power limit eqn                & 16        & \tt 1.000D0  & \tt 1.000D0 \\
+26  & \tt ffuspow     & f-value for fusion power limit eqn                      & 9         & \tt 0.001D0  & \tt 1.000D0 \\
+27  & \tt fhldiv      & f-value for divertor heat load limit eqn                & 18        & \tt 0.001D0  & \tt 1.000D0 \\
+28  & \tt fjtfc       & f-value for TF coil current density limit eqn           & 23        & \tt 0.100D0  & \tt 1.000D0 \\
+29  & \tt bore        & machine bore                                            &           & \tt 0.100D0  & \tt 10.00D0 \\
+30  & \tt fmva        & f-value for MVA limit eqn                               & 19        & \tt 0.010D0  & \tt 1.000D0 \\
+31  & \tt gapomin     & minimum gap between outer shield and TF coil            &           & \tt 0.001D0  & \tt 1.000D1 \\
+32  & \tt frminor     & f-value for minor radius limit eqn                      & 21        & \tt 0.001D0  & \tt 1.000D0 \\
+33  & \tt fportsz     & f-value for port size limit eqn                         & 20        & \tt 0.010D0  & \tt 1.000D0 \\
+34  & \tt fdivcol     & f-value for divertor collisionality limit eqn           & 22        & \tt 0.001D0  & \tt 1.000D0 \\
+35  & \tt fpeakb      & f-value for peak toroidal field limit eqn               & 25        & \tt 0.001D0  & \tt 1.000D0 \\
+36  & \tt fbetatry    & f-value for Troyon beta limit eqn                       & 24        & \tt 0.001D0  & \tt 1.000D0 \\
+37  & \tt coheof      & OH coil current density at end of flat-top              &           & \tt 1.000D5  & \tt 1.000D8 \\
+38  & \tt fjohc       & f-value for OH coil current at EOF limit eqn            & 26        & \tt 0.010D0  & \tt 1.000D0 \\
+39  & \tt fjohc0      & f-value for OH coil current at BOP limit eqn            & 27        & \tt 0.001D0  & \tt 1.000D0 \\
+40  & \tt fgamcd      & f-value for current drive gamma limit eqn               & 37        & \tt 0.001D0  & \tt 1.000D0 \\ \hline
+\end{tabular}
+\end{center}
+\caption[TABLE_VARS1]{{\it
+Iteration variables 1 to 40 used in \PSD The f-values correspond to the
+given constraint equations (see Table~\ref{tab:eqns}). The other iteration
+variables are shown in Table~\ref{tab:itvars2}. }}
+\label{tab:itvars1}
+\end{table}
+\normalsize
+
+\begin{table}[tbph]
+\footnotesize
+\begin{center}
+
+\begin{tabular}{||c|l|l|c|c|c||} \hline
+{\tt ixc} &           &                                                         & {\tt icc} & lower        & upper       \\
+no. & variable name   & description                                             & eqn       & bound        & bound       \\ \hline
+41  & \tt fcohbop     & OH coil current density ratio BOP/EOF                   &           & \tt 0.001D0  & \tt 1.000D0 \\
+42  & \tt gapoh       & gap between OH coil and bucking cylinder                &           & \tt 0.000D0  & \tt 10.00D0 \\
+43  & \tt cfe0        & iron impurity fraction                                  &           & \tt 1.00D-6  & \tt 3.00D-3 \\
+44  & \tt fvsbrnni    & fraction of volt seconds from non-inductive means       &           & \tt 0.001D0  & \tt 1.000D0 \\
+45  & \tt fqval       & f-value for energy multiplication limit eqn             & 28        & \tt 0.010D0  & \tt 0.330D0 \\
+46  & \tt fpinj       & f-value for injection power limit eqn                   & 30        & \tt 0.001D0  & \tt 1.000D0 \\
+47  & \tt feffcd      & current drive efficiency multiplier                     &           & \tt 0.001D0  & \tt 1.000D0 \\
+48  & \tt fstrcase    & f-value for TF coil case stress limit eqn               & 31        & \tt 0.001D0  & \tt 1.000D0 \\
+49  & \tt fstrcond    & f-value for TF coil conduit stress limit eqn            & 32        & \tt 0.001D0  & \tt 1.000D0 \\
+50  & \tt fiooic      & f-value for TF coil operational current limit eqn       & 33        & \tt 0.001D0  & \tt 0.500D0 \\
+51  & \tt fvdump      & f-value for TF coil dump voltage limit eqn              & 34        & \tt 0.001D0  & \tt 1.000D0 \\
+52  & \tt vdalw       & allowable TF coil dump voltage                          &           & \tt 0.001D0  & \tt 1.000D6 \\
+53  & \tt fjprot      & f-value for TF coil current protection limit eqn        & 35        & \tt 0.001D0  & \tt 1.000D0 \\
+54  & \tt ftmargtf    & f-value for TF coil temperature margin limit eqn        & 36        & \tt 0.001D0  & \tt 1.000D0 \\
+55  & \tt tmargmin    & minimum allowable TF coil temperature margin            &           & \tt 0.001D0  & \tt 100.0D0 \\
+56  & \tt tdmptf      & dump time for TF coil                                   &           & \tt 10.00D0  & \tt 1.000D6 \\
+57  & \tt thkcas      & TF coil external case thickness                         &           & \tt 0.050D0  & \tt 1.000D0 \\
+58  & \tt thwcndut    & TF coil conduit case thickness                          &           & \tt 0.001D0  & \tt 1.000D0 \\
+59  & \tt fcutfsu     & copper fraction of cable conductor                      &           & \tt 0.001D0  & \tt 1.000D0 \\
+60  & \tt cpttf       & current per turn in the TF coils                        &           & \tt 0.001D0  & \tt 4.000D4 \\
+61  & \tt gapds       & gap between dewar and shield                            &           & \tt 0.000D0  & \tt 10.00D0 \\
+62  & \tt fdtmp       & f-value for 1st wall coolant temperature rise limit eqn & 38        & \tt 0.001D0  & \tt 1.000D0 \\
+63  & \tt ftpeak      & f-value for 1st wall peak temperature limit eqn         & 39        & \tt 0.001D0  & \tt 1.000D0 \\
+64  & \tt fauxmn      & f-value for minimum auxiliary power limit eqn           & 40        & \tt 0.001D0  & \tt 1.000D0 \\
+65  & \tt tohs        & OH coil swing time                                      &           & \tt 0.100D0  & \tt 1.000D3 \\
+66  & \tt ftohs       & f-value for OH coil swing time limit eqn                & 41        & \tt 0.001D0  & \tt 1.000D0 \\
+67  & \tt ftcycl      & f-value for minimum cycle time limit eqn                & 42        & \tt 0.001D0  & \tt 1.000D0 \\
+68  & \tt fptemp      & f-value for maximum centrepost temperature limit eqn    & 44        & \tt 0.001D0  & \tt 1.000D0 \\
+69  & \tt rcool	      & average radius of centrepost coolant channel            &           & \tt 0.001D0  & \tt 0.010D0 \\
+70  & \tt vcool	      & maximum centrepost coolant flow speed at midplane       &           & \tt 1.000D0  & \tt 1.000D2 \\
+71  & \tt fq          & f-value for minimum edge safety factor limit eqn        & 45        & \tt 0.001D0  & \tt 1.000D0 \\
+72  & \tt fipir       & f-value for maximum $I_p/I_{rod}$ limit eqn             & 46        & \tt 0.001D0  & \tt 1.000D0 \\
+73  & \tt scrapli     & inboard scrape-off layer thickness                      &           & \tt 0.000D0  & \tt 1.000D1 \\
+74  & \tt scraplo     & outboard scrape-off layer thickness                     &           & \tt 0.000D0  & \tt 1.000D1 \\
+75  & \tt tfootfi     & ratio of TF coil outer/inner leg thickness              &           & \tt 0.200D0  & \tt 5.000D0 \\
+76  & \tt frfptf      & f-value for TF coil toroidal thickness limit eqn        & 47        & \tt 0.001D0  & \tt 1.000D0 \\
+77  & \tt tftort      & TF coil toroidal thickness                              &           & \tt 0.050D0  & \tt 2.000D0 \\
+78  & \tt rfpth       & RFP pinch parameter, $\Theta$                           &           & \tt 0.010D0  & \tt 1.800D0 \\
+79  & \tt fbetap      & f-value for poloidal beta limit eqn                     & 48        & \tt 0.001D0  & \tt 1.000D0 \\
+80  & \tt frfpf       & f-value for RFP reversal parameter limit eqn            & 49        & \tt 0.001D0  & \tt 1.000D0 \\ \hline
+\end{tabular}
+\end{center}
+\caption[TABLE_VARS2]{{\it
+Iteration variables 41 to 80 used in \PSD The f-values correspond to the
+given constraint equations (see Table~\ref{tab:eqns}). The other iteration
+variables are shown in Table~\ref{tab:itvars1}. }}
+\label{tab:itvars2}
+\end{table}
+\normalsize

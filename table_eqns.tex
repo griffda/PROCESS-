@@ -1,0 +1,71 @@
+% Table summarising constraint equations
+
+\begin{table}[tbph]
+\footnotesize
+\begin{center}
+
+\begin{tabular}{||c|l|c|l||} \hline
+{\tt icc} &                                               &      & corresponding \\
+no. & description                                         & type & {\tt ixc} variables \\ \hline
+1   & plasma beta consistency                             & C    & {\bf 5} \\
+2   & global power balance                                & C    & {\bf 10},1,2,3,4,6,11 \\
+3   & ion power balance                                   & C    & {\bf 10},1,2,3,4,6,11 \\
+4   & electron power balance                              & C    & {\bf 10},1,2,3,4,6,11 \\
+5   & density limit                                       & L    & {\bf 9},1,2,3,4,5,6 \\
+6   & epsilon-beta poloidal limit                         & L    & {\bf 8},1,2,3,4,6 \\
+7   & beam ion density (NBI)                              & C    & {\bf 7} \\
+8   & wall load limit                                     & L    & {\bf 14},1,2,3,4,6 \\
+9   & fusion power limit                                  & L    & {\bf 26},1,2,3,4,6 \\
+10  & field at coil / field on axis                       & C    & {\bf 12},1,2,3,13 \\
+11  & radial build = major radius                         & C    & {\bf 3},1,13,16,29,42,61 \\
+12  & volt second limit                                   & L    & {\bf 15},1,2,3 \\
+13  & burn time limit (PULSE)                             & L    & {\bf 21},1,16,17,22,29,42,44,61 \\
+14  & beam energy (NBI)                                   & C    & {\bf 19},1,2,3,6 \\
+15  & burn time (PULSE) 			          & C    & {\bf 21},1,16,17,22,29,42,44,61 \\
+16  & net electric power limit                            & L    & {\bf 25},1,2,3 \\
+17  & stellarator radial build (STELL)                    & C    & {\bf 61} \\
+18  & divertor heat load limit                            & L    & {\bf 27} \\
+19  & MVA limit                                           & L    & {\bf 30} \\
+20  & port size limit                                     & L    & {\bf 33},31,3,13 \\
+21  & minor radius limit                                  & L    & {\bf 32} \\
+22  & divertor collisionality limit                       & L    & {\bf 34},43 \\
+23  & TF coil current density limit                       & L    & {\bf 28},12,24,20,23 \\
+24  & Troyon beta limit (also beta limit in stellarators) & L    & {\bf 36},1,2,3,4,6,18 \\
+25  & toroidal field limit                                & L    & {\bf 35},3,13,29 \\
+26  & OH coil current density at End of Flat-top limit    & L    & {\bf 38},37,41,12 \\
+27  & OH coil current density at Beginning of Pulse limit & L    & {\bf 39},37,41,12 \\
+28  & energy multiplication $Q$ limit                     & L    & {\bf 45},47,40 \\
+29  & inboard radial build = specified value              & C    & {\bf 3},1,13,16,29,42,61 \\
+30  & injection power limit                               & L    & {\bf 46},47,11 \\
+31  & TF coil case stress limit (SCTF)                    & L    & {\bf 48},56,57,58,59,60,24 \\
+32  & TF coil conduit stress limit (SCTF)                 & L    & {\bf 49},56,57,58,59,60,24 \\
+33  & TF coil $I_{\mbox{\scriptsize operational}}/
+I_{\mbox{\scriptsize critical}}$ limit (SCTF)             & L    & {\bf 50},56,57,58,59,60,24 \\
+34  & TF coil dump voltage limit (SCTF)                   & L    & {\bf 51},52,56,57,58,59,60,24 \\
+35  & TF coil $J_{\mbox{\scriptsize winding pack}}/
+J_{\mbox{\scriptsize protection}}$ limit (SCTF)           & L    & {\bf 53},56,57,58,59,60,24 \\
+36  & TF coil temperature margin limit (SCTF)             & L    & {\bf 54},55,56,57,58,59,60,24 \\
+37  & current drive gamma limit                           & L    & {\bf 40},47 \\
+38  & first wall coolant temperature rise limit (PULSE)   & L    & {\bf 62} \\
+39  & first wall peak temperature limit (PULSE)           & L    & {\bf 63} \\
+40  & minimum injection power for ignition limit (PULSE)  & L    & {\bf 64} \\
+41  & OH coil swing time limit (PULSE)                    & L    & {\bf 66},65 \\
+42  & cycle time limit (PULSE)                            & L    & {\bf 67},65,17 \\
+43  & average centrepost temperature (TART)               & C    & {\bf 69},70,13 \\
+44  & peak centrepost temperature limit (TART)            & L    & {\bf 68},69,70 \\
+45  & edge safety factor limit    (TART)                  & L    & {\bf 71},1,2,3 \\
+46  & Ip/Irod limit               (TART)                  & L    & {\bf 72},2,60 \\
+47  & TF coil toroidal thickness  (RFP)                   & L    & {\bf 76},77,13,3 \\
+48  & poloidal beta limit                                 & L    & {\bf 79},2,3,18 \\
+49  & reversal parameter $< 0$ (RFP)                      & L    & {\bf 80},78,3,1 \\ \hline
+\end{tabular}
+\end{center}
+\caption[TABLE_EQNS]{{\it
+Summary of the constraint equations used in \PSD Consistency equations are
+marked C, limit equations are marked L\@. Some (non-exhaustive) iteration
+variable numbers (see Tables~\ref{tab:itvars1} and~\ref{tab:itvars2}) that
+directly affect the associated constraint equations are given, the one listed
+first being the most relevant.  }}
+\label{tab:eqns}
+\end{table}
+\normalsize

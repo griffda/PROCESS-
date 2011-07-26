@@ -1,0 +1,24 @@
+% Table summarising numerics modules in PROCESS
+
+\begin{table}
+\begin{center}
+
+\begin{tabular}{||l||l||} \hline
+source file   & description \\ \hline
+\tt aamain.f  & \rm main program \\
+\tt caller.f  & \rm calls physics and engineering routines \\
+\tt eqns.f    & \rm constraint equations \\
+\tt eqsolv.f  & \rm calls HYBRID non-optimising package \\
+\tt math.f    & \rm miscellaneous maths routines \\
+\tt math2.f   & \rm miscellaneous Linpack maths routines \\
+\tt minpac.f  & \rm various Minpack routines, including VMCON and HYBRID \\
+\tt optimiz.f & \rm calls VMCON optimising package \\
+\tt svd.f     & \rm singular value decomposition routine \\
+\tt xc.f      & \rm adjusts iteration variables \\ \hline
+\end{tabular}
+\end{center}
+\caption[TABLE_NUM]{{\it
+Summary of the numerics modules in \PSD
+}}
+\label{tab:numerics}
+\end{table}

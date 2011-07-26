@@ -1,0 +1,89 @@
+% Flow diagram for VMCON run
+
+\setlength{\unitlength}{1mm}
+
+\begin{figure}
+\begin{center}
+
+\begin{picture}(140.0,200.0)
+
+\put(50.0,197.0){\makebox(0,0){initialise variables}}
+\put(50.0,185.0){\makebox(0,0){input from file}}
+\put(50.0,173.0){\makebox(0,0){define free parameters}}
+\put(50.0,161.0){\makebox(0,0){define rules}}
+\put(50.0,155.0){\makebox(0,0){to be obeyed}}
+\put(50.0,143.0){\makebox(0,0){define performance}}
+\put(50.0,137.0){\makebox(0,0){requirements}}
+\put(50.0,125.0){\makebox(0,0){define figure-of-merit}}
+\put(50.0,107.0){\makebox(0,0){evaluate physics, engineering}}
+\put(50.0,101.0){\makebox(0,0){and cost functions}}
+\put(50.0,89.0){\makebox(0,0){apply consistency equations}}
+\put(50.0,83.0){\makebox(0,0){and limit equations}}
+\put(50.0,11.0){\makebox(0,0){write output}}
+\put(110.0,92.0){\makebox(0,0){iterate}}
+\put(110.0,86.0){\makebox(0,0){free parameters}}
+
+\thicklines
+
+\put(30.0,194.0){\framebox(40.0,6.0){}}
+\put(34.0,182.0){\framebox(32.0,6.0){}}
+\put(28.0,170.0){\framebox(44.0,6.0){}}
+\put(34.0,152.0){\framebox(32.0,12.0){}}
+\put(30.0,134.0){\framebox(40.0,12.0){}}
+\put(28.0,122.0){\framebox(44.0,6.0){}}
+\put(22.0,98.0){\framebox(56.0,12.0){}}
+\put(22.0,80.0){\framebox(56.0,12.0){}}
+\put(34.0,8.0){\framebox(32.0,6.0){}}
+\put(94.0,83.0){\framebox(32.0,12.0){}}
+
+\put(50.0,62.0){\makebox(0,0){self-consistent?}}
+\put(50.0,50.0){\line(-2,1){24.0}}
+\put(26.0,62.0){\line(2,1){24.0}}
+\put(50.0,74.0){\line(2,-1){24.0}}
+\put(74.0,62.0){\line(-2,-1){24.0}}
+
+\put(44.0,46.0){yes}
+\put(78.0,64.0){no}
+
+\put(50.0,32.0){\makebox(0,0){F-o-M minimised?}}
+\put(50.0,20.0){\line(-2,1){24.0}}
+\put(26.0,32.0){\line(2,1){24.0}}
+\put(50.0,44.0){\line(2,-1){24.0}}
+\put(74.0,32.0){\line(-2,-1){24.0}}
+
+\put(44.0,16.0){yes}
+\put(78.0,34.0){no}
+
+\put(50.0,194.0){\vector(0,-1){6.0}}
+\put(50.0,182.0){\vector(0,-1){6.0}}
+\put(50.0,170.0){\vector(0,-1){6.0}}
+\put(50.0,152.0){\vector(0,-1){6.0}}
+\put(50.0,134.0){\vector(0,-1){6.0}}
+\put(50.0,122.0){\vector(0,-1){12.0}}
+\put(50.0,98.0){\vector(0,-1){6.0}}
+\put(50.0,80.0){\vector(0,-1){6.0}}
+\put(50.0,50.0){\vector(0,-1){6.0}}
+\put(50.0,20.0){\vector(0,-1){6.0}}
+\put(74.0,62.0){\vector(1,0){18.0}}
+\put(74.0,32.0){\vector(1,0){18.0}}
+\put(110.0,62.0){\vector(0,1){10.5}}
+\put(110.0,32.0){\vector(0,1){15.0}}
+\put(110.0,95.0){\vector(0,1){10.5}}
+\put(110.0,116.0){\vector(-1,0){30.0}}
+
+\put(92.0,62.0){\line(1,0){18.0}}
+\put(92.0,32.0){\line(1,0){18.0}}
+\put(110.0,47.0){\line(0,1){15.0}}
+\put(110.0,72.5){\line(0,1){10.5}}
+\put(110.0,105.5){\line(0,1){10.5}}
+\put(80.0,116.0){\line(-1,0){30.0}}
+
+\thinlines
+\end{picture}
+
+\end{center}
+\caption[FLOW_VMC]{{\it
+Flow diagram of \PS in optimisation mode.
+}}
+\label{fig:flow_vmcon}
+\end{figure}

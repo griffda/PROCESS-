@@ -1,0 +1,57 @@
+!SCCS-*-Fortran-*-CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
+!                                                                     C
+!  Source Code Control System                                         C
+!                                                                     S
+!  Information header for the PROCESS systems code modules            C
+!                                                                     C
+!  P.J.Knight 22 May 1992                                             S
+!                                                                     C
+!                                                                     C
+!SCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
+!
+!  Module         : $Id: osections.h,v 3.3 1994/05/23 11:32:15 peter Exp $
+!
+!  Module name    : $RCSfile: osections.h,v $
+!  Version no.    : $Revision: 3.3 $
+!
+!  Creation date  : $Date: 1994/05/23 11:32:15 $
+!  Creation time  : 
+!
+!  The SCCS file corresponding to this source file is
+!  %P%
+!
+!SCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
+
+!  Switches for turning on/off output sections
+!
+!  sect01 : Power Reactor Costs
+!  sect02 : Detailed Costings
+!  sect03 : Plasma
+!  sect04 : Current Drive System
+!  sect05 : Divertor
+!  sect06 : Machine Build
+!  sect07 : TF Coils
+!  sect08 : PF Coils
+!  sect09 : Volt Second Consumption
+!  sect10 : Support Structure
+!  sect11 : PF Coil Inductances
+!  sect12 : Shield / Blanket
+!  sect13 : Power Conversion
+!  sect14 : Power / Heat Transport
+!  sect15 : Vacuum System
+!  sect16 : Plant Buildings System
+!  sect17 : AC Power
+!  sect18 : Neutral Beams
+!  sect19 : Electron Cyclotron Heating
+!  sect20 : Lower Hybrid Heating
+!  sect21 : Times
+
+  integer :: &
+       sect01,sect02,sect03,sect04,sect05,sect06,sect07,sect08, &
+       sect09,sect10,sect11,sect12,sect13,sect14,sect15,sect16, &
+       sect17,sect18,sect19,sect20,sect21
+
+  common/osect1/ &
+       sect01,sect02,sect03,sect04,sect05,sect06,sect07,sect08, &
+       sect09,sect10,sect11,sect12,sect13,sect14,sect15,sect16, &
+       sect17,sect18,sect19,sect20,sect21

@@ -1,0 +1,165 @@
+\myappendix{Non-optimisation Input File}
+\label{app:infile1}
+
+The following is a typical input file used to run \PS in
+non-optimisation mode. Comments have been added to the right of each
+line.
+
+\footnotesize
+\begin{verbatim}
+$inpt1                                | Start of input block INPT1 (numerics)
+NEQNS = 14,                           | Number of active constraint equations
+NVAR = 14,                            | Number of active iteration variables
+ICC =   1,  2, 10, 11, 7, 16, 24, 5, 31, 32, 33, 34, 35, 36, | Constraint eqns
+ixc =   5, 10, 12, 3,  7,  6, 36, 9, 48, 49, 50, 51, 53, 54, | Iteration variables
+IOPTIMZ = -1,                         | Turn off optimisation
+$end                                  | End of input block INPT1
+                                      | 
+$INEQDAT                              | Start of input block INEQDAT (f-values etc)
+FBETATRY = 1.0                        | N.B. active iteration variable 36
+$end                                  | End of input block INEQDAT
+                                      | 
+$PHYDAT                               | Start of input block PHYDAT (physics)
+ASPECT = 3.5,                         | Machine aspect ratio
+BETA = 0.042,                         | N.B. active iteration variable 5
+BT = 6.,                              | Toroidal field on axis
+DENE = 1.5e20,                        | N.B. active iteration variable 6
+FVSBRNNI = 1.0,                       | Non-inductive volt seconds fraction
+DNBETA = 3.5,                         | Troyon g coefficient
+HFACT = 2.,                           | N.B. active iteration variable 10
+ICURR = 4,                            | Use ITER current scaling
+ISC = 6,                              | Use ITER 89-P confinement time scaling law
+IINVQD = 1,                           | Use inverse quadrature
+IITER = 1,                            | Use ITER fusion power calculations
+ISHAPE = 0,                           | Use input values for KAPPA and TRIANG
+KAPPA = 2.218,                        | Plasma elongation
+Q = 3.0,                              | Edge safety factor
+RMAJOR = 7.0,                         | N.B. active iteration variable 3
+RNBEAM = 0.0002,                      | N.B. active iteration variable 7
+TE = 15.,                             | Electron temperature
+TRIANG = 0.6                          | Plasma triangularity
+$END                                  | End of input block PHYDAT
+                                      | 
+$CDDAT                                | Start of input block CDDAT (current drive)
+IRFCD = 1,                            | Use current drive
+IEFRF = 5                             | Use ITER neutral beam current drive
+FEFFCD = 3.,                          | Artificially enhance efficiency
+$END                                  | End of input block CDDAT
+                                      | 
+$TIME                                 | Start of input block TIME (times)
+TBURN = 227.9                         | Burn time
+$END                                  | End of input block TIME
+                                      | 
+$DIVT                                 | Start of input block DIVT (divertor)
+ANGINC=0.262,                         | Angle of incidence of field lines on plate
+PRN1=0.285                            | Density ratio
+$END                                  | End of input block DIVT
+                                      | 
+$BLD                                  | Start of input block BLD (machine build)
+BORE = 0.12,                          | Machine bore
+OHCTH = 0.1,                          | OH coil thickness
+GAPOH = 0.08,                         | Inboard gap
+TFCTH = 0.9,                          | Inboard TF coil leg thickness
+DDWI = 0.07,                          | Internal dewar thickness
+SHLDITH = 0.69,                       | Inboard shield thickness
+BLNKITH = 0.115,                      | Inboard blanket thickness
+FWITH = 0.035,                        | Inboard first wall thickness
+SCRAPLI = 0.14,                       | Inboard scrape-off layer thickness
+SCRAPLO = 0.15,                       | Outboard scrape-off layer thickness
+FWOTH = 0.035,                        | Outboard first wall thickness
+BLNKOTH = 0.235,                      | Outboard blanket thickness
+SHLDOTH = 1.05,                       | Outboard shield thickness
+GAPOMIN = 0.21,                       | Outboard gap
+VGAPTF = 0,                           | Vertical gap
+$END                                  | End of input block BLD
+                                      | 
+$TFC                                  | Start of input block TFC (TF coils)
+OACDCP = 1.4e7,                       | N.B. active iteration variable 12
+ITFSUP = 1,                           | Use superconducting TF coils
+RIPMAX = 5.,                          | Maximum TF ripple
+$END                                  | End of input block TFC
+                                      | 
+$PFC                                  | Start of input block PFC (PF coils)
+NGRP = 3,                             | Three groups of PF coils
+IPFLOC = 1,2,3,                       | Locations for each group
+NCLS = 2,2,2,1,                       | Number of coils in each group
+COHEOF = 1.85e7,                      | OH coil current at End Of Flat-top
+FCOHBOP = 0.9,                        | OH coil current at Begin. Of Pulse / COHEOF
+ROUTR = 1.5,                          | Radial position for group 3
+ZREF(3) = 2.5,                        | Z position for group 3
+OHHGHF = .71                          | Height ratio OH coil / TF coil
+$END                                  | End of input block PFC
+                                      | 
+$FWBLSH                               | Start of input block FWBLSH (1st wall etc.)
+LBLNKT=0                              | Use old blanket model
+DENSTL=7800.                          | Steel density
+$END                                  | End of input block FWBLSH
+                                      | 
+$COSTINP                              | Start of input block COSTINP (costs)
+IREACTOR = 1,                         | Calculate cost of electricity
+IFUELTYP = 0                          | Treat blanket, first wall etc as capital cost
+$END                                  | End of input block COSTINP
+                                      | 
+$UCSTINP                              | Start of input block UCSTINP (unit costs)
+UCHRS = 87.9,                         | }
+UCCPCL1 = 250,                        | } Unit costs
+UCCPCLB = 150                         | }
+$END                                  | End of input block UCSTINP
+                                      | 
+$SWEP                                 | Start of input block SWEP (scans)
+ISWEEP=0                              | No scans (non-optimisation mode)
+$END                                  | End of input block SWEP
+                                      | 
+$BCOM                                 | Start of input block BCOM (buildings)
+FNDT = 2.                             | Foundation thickness
+$END                                  | End of input block BCOM
+                                      | 
+$BLDINP                               | Start of input block BLDINP (buildings)
+EFLOOR=1.d5                           | Effective total floor space
+$END                                  | End of input block BLDINP
+                                      | 
+$HTPWR                                | Start of input block HTPWR (heat transport)
+ETATH=0.35                            | Thermal to electric conversion efficiency
+$END                                  | End of input block HTPWR
+                                      | 
+$HTTINP                               | Start of input block HTTINP (heat transport)
+FMGDMW = 0.                           | Power to MGF units
+$END                                  | End of input block HTTINP
+                                      | 
+$HTRINP                               | Start of input block HTRINP (heat transport)
+BASEEL=5.e6                           | Base plant electric load
+$END                                  | End of input block HTRINP
+                                      | 
+$EST                                  | Start of input block EST (energy storage)
+ISCENR=2                              | Energy store option
+$END                                  | End of input block EST
+                                      | 
+$VACCY                                | Start of input block VACCY (vacuum system)
+NTYPE = 1                             | Use cryopump
+$END                                  | End of input block VACCY
+                                      | 
+$OSECTS                               | Start of input block OSECTS (output sections)
+SECT01 = 1,                           | }
+SECT02 = 1,                           | }
+SECT03 = 1,                           | }
+SECT04 = 1,                           | }
+SECT05 = 1,                           | }
+SECT06 = 1,                           | }
+SECT07 = 1,                           | }
+SECT08 = 1,                           | }
+SECT09 = 1,                           | }
+SECT10 = 1,                           | } Turn on all output sections
+SECT11 = 1,                           | }
+SECT12 = 1,                           | }
+SECT13 = 1,                           | }
+SECT14 = 1,                           | }
+SECT15 = 1,                           | }
+SECT16 = 1,                           | }
+SECT17 = 1,                           | }
+SECT18 = 1,                           | }
+SECT19 = 1,                           | }
+SECT20 = 1                            | }
+SECT21 = 1                            | }
+$END                                  | End of input block OSECTS
+\end{verbatim}
+\normalsize

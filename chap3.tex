@@ -1,0 +1,870 @@
+%%-*-Latex-*-
+\mychapter{Physics and Engineering Models}
+\label{chap:models}
+
+There are a great number of individual models within \PSC characterising many
+different aspects of a fusion power plant. Several of these will always be
+used by the code and so require no input by the user to activate them.
+However, in many cases there is a choice of model available, and each of these
+has its own user-controlled switches or flags. This chapter summarises these
+models, and indicates their location and interaction within the code, together
+with the relevant switch settings and required parameter values. The
+nomenclature used, and instructions on how to set switches, etc., are
+explained fully in Chapter~\ref{chap:run}.
+
+\section{Physics Models}
+
+\setlength{\parskip}{0mm}
+\subsection{Fusion Reactions}
+
+By default, the code assumes that the deuterium-tritium (D-T) fusion reaction
+is utilised by the power plant being modelled:
+\begin{equation}
+\mathrm{D + T} \Longrightarrow \mathrm{^{4}He + n + 17.6 \,MeV}
+\label{eq:d-t}
+\end{equation}
+20\% of the energy produced is given to the alpha particles ($^4$He), which
+remain within the plasma and thermalise (slow down) due to collisions, thus
+heating the plasma. The remaining 80\% is carried away by the neutrons, which
+deposit their energy within the blanket and shield. The tritium fraction of
+the D-T fuel is controlled using variable \texttt{ftr} in input block
+\texttt{PHYDAT}.
+
+\setlength{\parskip}{5mm}
+\PS can also model D-$^3$He power plants, which utilise the following primary
+fusion reaction:
+\begin{equation}
+\mathrm{D + \mbox{$^3$He}} \Longrightarrow \mathrm{^{4}He + p + 18.3 \,MeV}
+\label{eq:dhe3}
+\end{equation}
+Note that no neutrons are produced by this reaction, only charged particles,
+allowing the whole of the fusion power to be used to heat the plasma. Useful
+energy is extracted from the plasma since the radiation power produced is very
+high, and this can be converted to electricity in a number of ways.
+
+Since the temperature required to ignite the D-$^3$He reaction is considerably
+higher than that for D-T, it is necessary to take into account the following
+D-D reactions, which have significant reaction rates at such temperatures:
+\begin{eqnarray}
+\mathrm{D + D} & \Longrightarrow & \mathrm{^{3}He + n + 3.27 \,MeV} \\
+\mathrm{D + D} & \Longrightarrow & \mathrm{T + p + 4.03 \,MeV}
+\end{eqnarray}
+Also, as tritium is produced by the latter reaction, D-T fusion is also
+possible. As a result, there is still a small amount of neutron power
+extracted from the plasma.
+
+The use of the D-$^3$He coding within \PS is controlled using the switch
+\texttt{idhe3} in input block \texttt{PHYDAT}. If \texttt{idhe3 = 1} then the
+D-$^3$He fusion reaction is assumed, otherwise the D-T reaction is
+assumed. The ratio of the ``fuel'' ions (D, $^3$He and T) may be modified if
+\texttt{idhe3 = 1} using the three variables \texttt{fdeut}, \texttt{fhe3} and
+\texttt{ftrit}, respectively (all in input block \texttt{PHYDAT}).
+
+\subsection{Plasma Profiles}
+\setlength{\parskip}{0mm}
+All the plasma profiles are assumed to be parabolic, that is, of the form
+\begin{eqnarray}
+\mbox{Density : } n(r) & = & n_0 \left( 1- \left(\frac{r}{a}\right)^2 \right)
+^{\alpha_n} \\
+\mbox{Temperature : } T(r) & = & T_0 \left( 1- \left(\frac{r}{a}\right)^2
+\right) ^{\alpha_T} \\
+\mbox{Current : } J(r) & = & J_0 \left( 1- \left(\frac{r}{a}\right)^2  \right)
+^{\alpha_J}
+\end{eqnarray}
+where $r$ varies from 0 to $a$, the plasma minor radius. This gives
+volume-averaged values $\langle n \rangle = n_0 / (1+\alpha_n)$, etc.  These
+volume averages are used throughout the code, along with the profile indices
+$\alpha$, thus making the code ``$\frac{1}{2}$-D''.  The relevant profile
+index variables {\tt alphan}, {\tt alphat} and {\tt alphaj} in the code are
+set in input block {\tt PHYDAT}.
+
+\subsection{Beta Limits}
+
+\subsubsection{Troyon limit \protect\cite{IPDG,172}}
+
+The Troyon beta limit is given by
+\begin{equation}
+\langle \beta \rangle < \frac{gI(\mbox{MA})}{a(\mbox{m})B_0(\mbox{T})}
+\label{eq:troyon}
+\end{equation}
+where $B_0$ is the axial vacuum toroidal field, and $\beta$ is defined with
+respect to the total equilibrium ${\bf B}$-field~\cite{172}. The Troyon
+coefficient $g$ is set using input parameter {\tt dnbeta}. To apply the beta
+limit, constraint equation no.\ 24 should be turned on with iteration variable
+no.\ 36 ({\tt fbetatry}). The limit can be applied to either the total plasma
+beta, in which case switch {\tt iculbl} in input block {\tt PHYDAT} should be
+set to zero, to only the thermal component of the plasma beta, in which
+case {\tt iculbl} should be set to one, or to the thermal plus neutral beam
+components, in which case {\tt iculbl} should be set to two.
+
+\subsubsection{Limit on $\epsilon.\beta_p$ value}
+
+To apply a limit to the value of $\epsilon.\beta_p$, where $\epsilon = a/R$ is
+the inverse aspect ratio, constraint equation no.\ 6 should be turned on with
+iteration variable no.\ 8 ({\tt fbeta}). The limiting value of
+$\epsilon.\beta_p$ should be set using input parameter {\tt epbetmax} in input
+block {\tt PHYDAT}.
+
+\subsection{Density Limits}
+
+Six density limit models~\cite{172} are available in \PSD These are calculated
+in routine {\tt CULDLM}, which is called by {\tt PHYSICS}.  To enforce any of
+these limits, set {\tt iculdl = 1} in input block {\tt PHYDAT}, and turn on
+constraint equation no.~5 with iteration variable no.~9 ({\tt fdene}).  In
+addition, switch {\tt idensl} in input block {\tt PHYDAT} must be set to the
+relevant value, as follows:-
+\begin{description}
+\item [{\tt idensl = 1} :] ASDEX model
+\item [{\tt idensl = 2} :] Borrass model for ITER, I
+\item [{\tt idensl = 3} :] Borrass model for ITER, II
+\item [{\tt idensl = 4} :] JET edge radiation model
+\item [{\tt idensl = 5} :] JET simplified model
+\item [{\tt idensl = 6} :] Hugill-Murakami $M.q$ model
+\end{description}
+
+\subsection{Plasma Current Scaling Laws}
+
+A number of plasma current scaling laws exploiting the inverse relationship
+between plasma current and edge safety factor $q_{\psi}$~\cite{172} are
+available in \PSD These are calculated in routine {\tt CULCUR}, which is
+called by {\tt PHYSICS}.  Flag {\tt iculcr} must be set to {\tt 1} in input
+block {\tt PHYDAT}. In addition, flag {\tt icurr} in input block {\tt PHYDAT}
+must be set to the relevant value, as follows:-
+\begin{description}
+\item [{\tt icurr = 1} :] Peng analytic fit
+\item [{\tt icurr = 2} :] Peng double null divertor scaling (TART)
+\item [{\tt icurr = 3} :] Simple ITER scaling
+\item [{\tt icurr = 4} :] Revised ITER scaling
+\item [{\tt icurr = 5} :] Todd empirical scaling, I
+\item [{\tt icurr = 6} :] Todd empirical scaling, II
+\item [{\tt icurr = 7} :] Connor-Hastie model
+\end{description}
+
+\subsection{Confinement Time Scaling Laws}
+
+More than twenty tokamak-relevant energy confinement time scaling
+laws~\cite{IPDG,172,H90P,iter93h} are present within \PSD These are calculated
+in routine {\tt PCOND}. The value of {\tt isc} in input block {\tt PHYDAT}
+determines which of the scalings is used in the plasma energy balance
+calculation.  Table~\ref{tab:scaling_laws} summarises the available scaling
+laws.
+
+\input{table_scaling_laws} % Table summarising confinement time scaling laws
+
+\subsection{Bootstrap Current Scalings}
+
+The fraction of the plasma current provided by the so-called bootstrap effect
+can be either input into the code directly, or calculated using one of three
+methods, as summarised here.
+
+\subsubsection{Direct input}
+To input directly the bootstrap current fraction, set {\tt bscfmax} in input
+block {\tt PHYDAT} to $(-1)$ times the required value.
+
+\subsubsection{ITER scaling \protect\cite{IPDG}}
+
+To use the ITER scaling method for the bootstrap current fraction, set {\tt
+ibss = 1} in input block {\tt PHYDAT}, and {\tt bscfmax} in input block {\tt
+PHYDAT} to the maximum required bootstrap current fraction ($\leq 1$). This
+method is valid at high aspect ratio only.
+
+\subsubsection{General scaling \protect\cite{Nevins}}
+
+To use a more general scaling method, set {\tt ibss = 2} in input block {\tt
+PHYDAT}, and {\tt bscfmax} in input block {\tt PHYDAT} to the maximum required
+bootstrap current fraction ($\leq 1$).
+
+\subsubsection{Numerically fitted scaling \protect\cite{172}}
+
+To use a numerically fitted scaling method, valid for all aspect ratios, set
+{\tt ibss = 3} in input block {\tt PHYDAT}, and {\tt bscfmax} in input block
+{\tt PHYDAT} to the maximum required bootstrap current fraction ($\leq 1$).
+
+\subsection{Current Drive}
+
+In addition to inductive current drive, eight non-inductive current drive
+efficiency models~\cite{172} are present in \PSD The fraction of the
+volt-seconds to be produced by non-inductive means, {\tt fvsbrnni}, should be
+set in input block {\tt PHYDAT}, and flag {\tt irfcd} in input block {\tt
+CDDAT} should be set to {\tt 0} for purely inductive scenarios, or {\tt 1}
+otherwise. The current drive efficiency model to be used in this latter case
+is defined by the value of switch {\tt iefrf} in input block {\tt CDDAT}:-
+
+\begin{description}
+\item [{\tt iefrf = 1} :] Fenstermacher Lower Hybrid model
+\item [{\tt iefrf = 2} :] Ion cyclotron model~\cite{IPDG}
+\item [{\tt iefrf = 3} :] Fenstermacher electron cyclotron resonance model
+\item [{\tt iefrf = 4} :] Ehst Lower Hybrid model
+\item [{\tt iefrf = 5} :] ITER neutral beam model~\cite{IPDG,172}
+\item [{\tt iefrf = 6} :] Culham Lower Hybrid model~\cite{172}
+\item [{\tt iefrf = 7} :] Culham electron cyclotron model~\cite{172}
+\item [{\tt iefrf = 8} :] Culham neutral beam model~\cite{172}
+\item [{\tt iefrf = 9} :] Oscillating Field current drive (RFPs only --- see
+Section~\ref{sec:rfpcd})
+\end{description}
+
+It is sometimes useful to adjust artificially the current drive efficiency
+values produced by these routines. This can be achieved by setting the scaling
+coefficient {\tt feffcd} in input block {\tt CDDAT}. The wall plug to plasma
+efficiencies can also be adjusted, by changing the relevant variable ({\tt
+etaech}, {\tt etalh}, {\tt etanbi} or {\tt etaof}) in input block {\tt CDDAT}.
+
+\subsection{Safety and Environment Models}
+
+The models comprising the safety and environmental calculations~\cite{FISPACT}
+within the code are all called from routine {\tt FISPAC}. They are only
+performed once, at the end of each run, as they take a relatively long time to
+evaluate, and the results are only used for diagnostic purposes --- no
+constraints are imposed at present to minimise doses, for instance. No
+switches need to be set to perform these calculations.
+
+\subsection{Other Physics Switches}
+
+\subsubsection{Plasma cross-sectional shape}
+
+Switch \texttt{ishape} in input block \texttt{PHYDAT} controls whether the
+input values for the plasma elongation (\texttt{kappa}) and triangularity
+(\texttt{triang}) should be used (\texttt{ishape = 0}), or whether they should
+be scaled with the plasma aspect ratio (\texttt{ishape = 1}). The latter case
+should only be used with a TART machine.
+
+\subsubsection{Fusion power calculations}
+
+Switch {\tt iiter} in input block {\tt PHYDAT} controls which model for the
+fusion power calculations should be used. If {\tt iiter = 1}, the ITER
+model~\cite{IPDG} is used.
+
+\subsubsection{Neo-classical correction effects}
+
+Switch {\tt ires} in input block {\tt PHYDAT} controls whether neo-classical
+correction effects~\cite{Uckan} are included in the calculation of the plasma
+resistance and ohmic heating power in routine {\tt POHM}, which is called by
+routine {\tt PHYSICS}. If {\tt ires = 1}, these effects are included. Note
+that the scaling used is only valid for aspect ratios between 2.5 and 4, and
+it is possible for the plasma resistance to be wrongly calculated as negative
+if {\tt ires = 1} and the aspect ratio is too high.
+
+\subsubsection{Aspect ratio scaling of Troyon $g$ coefficient}
+
+Switch {\tt gtscale} in input block {\tt PHYDAT} determines whether the Troyon
+$g$ coefficient {\tt dnbeta} (Equation~\ref{eq:troyon}) should scale with
+aspect ratio ({\tt gtscale }$\not=~${\tt 0}), or be fixed at the input value
+({\tt gtscale = 0}).
+
+\subsubsection{Inverse quadrature in $\tau_E$ scaling laws}
+
+Switch {\tt iinvqd} in input block {\tt PHYDAT} determines whether the energy
+confinement time scaling laws due to Kaye-Goldston ({\tt isc = 5}) and
+Goldston ({\tt isc = 9}) should include an inverse quadrature scaling with the
+Neo-Alcator result ({\tt isc = 1}). A value {\tt iinvqd = 1} includes this
+scaling.
+
+\subsubsection{Scrape-off width}
+
+Switch {\tt iscrp} in input block {\tt PHYDAT} determines whether the
+scrape-off widths should be calculated as 10\% of the plasma minor radius
+({\tt iscrp = 0}), or set equal to the input values {\tt scrapli} and {\tt
+scraplo} ({\tt iscrp = 1}).
+
+\subsubsection{Wall load calculation}
+
+Switch {\tt iwalld} in input block {\tt PHYDAT} determines whether the neutron
+wall load should be calculated using the plasma surface area ({\tt iwalld =
+1}) or the first wall area ({\tt iwalld = 2}) as the denominator.
+
+\subsection{Stellarator Physics}
+
+To activate the stellarator coding, it is necessary to create a file {\tt
+device.dat}, containing the single character {\tt 1} in the first row, in the
+working directory. If the file is absent, or the character is set to the digit
+{\tt 0} or {\tt 2}, the stellarator model is not used. Switch {\tt istell} in
+{\tt INCLUDE} file {\tt stell.h} is set to {\tt 1} if the stellarator model is
+to be used, otherwise {\tt istell = 0}, and the tokamak or RFP model is used
+instead.  It is suggested that the plasma geometry, constraint equations and
+iteration variables detailed in~\cite{PWF}, Note~0252 are used.
+\setlength{\parskip}{5mm}
+
+The following models are used automatically if the stellarator model is
+activated:
+\setlength{\parskip}{0mm}
+
+\subsubsection{Beta limit}
+The beta limit is assumed to be 5\%, based on 3-D MHD calculations
+\cite{Nuhrenberg}. To apply the beta limit, constraint equation no.\ 24 should
+be turned on with iteration variable no.\ 36 ({\tt fbetatry}).
+
+\subsubsection{Density limit}
+The density limit relevant to stellarators has been proposed to be~\cite{LHD}
+\begin{equation}
+n_{\mbox{\scriptsize max}} = 0.25\left( P B_0 / R_0 a_p^2\right)^\frac{1}{2}
+\end{equation}
+where $n$ is the line-averaged electron density in units of
+$10^{20}$~m$^{-3}$, $P$ is the absorbed heating power (MW), $B_0$ is the
+on-axis field (T), $R_0$ is the major radius (m), and $a_p$ is the plasma
+minor radius (m). To enforce the density limit, turn on constraint equation
+no.\ 5 with iteration variable no.\ 9 ({\tt fdene}).
+
+\subsubsection{$\tau_E$ scaling laws}
+Three confinement time scaling laws relevant to stellarators are present
+within \PSD The value of {\tt isc} in input block {\tt PHYDAT} determines
+which of these is used in the plasma energy balance calculation.
+\begin{eqnarray}
+\tau_E\; (\mbox{Large Helical Device~\cite{LHD}: {\tt isc=21}})
+& = & 0.17 R_0^{0.75} a_p^2 n^{0.69} B_0^{0.84} P^{-0.58} \\
+\tau_E\; (\mbox{Gyro-reduced Bohm~\cite{GRB}: {\tt isc=22}})
+ & = & 0.25 B_0^{0.8} n^{0.6} P^{-0.6} a_p^{2.4} R_0^{0.6} \\
+\tau_E\; (\mbox{Lackner-Gottardi~\cite{LG}: {\tt isc=23}})
+& = & 0.17 R_0 a_p^2 n^{0.6} B_0^{0.8} P^{-0.6} \iota^{0.4}
+\end{eqnarray}
+Here, $\iota$ is the rotational transform, which is equal to the reciprocal
+of the tokamak safety factor $q$.
+
+\subsubsection{Heating power options}
+The method by which auxiliary heating power is supplied to the stellarator is
+determined by the switch {\tt isthtr} in input block {\tt STELLA}:
+\begin{description}
+\item [{\tt isthtr = 1} :] electron cyclotron resonance heating
+\item [{\tt isthtr = 2} :] lower hybrid heating
+\item [{\tt isthtr = 3} :] neutral beam injection
+\end{description}
+The value of variable {\tt pheat} in input block {\tt CDRIV} determines the
+actual amount of auxiliary heating power (in Watts) to be applied to the
+plasma. This variable may be used as an iteration variable (no.\ 11).
+
+\subsection{Reversed Field Pinch Physics}
+
+To activate the RFP coding, it is necessary to create a file {\tt device.dat},
+containing the single character {\tt 2} in the first row, in the working
+directory. If the file is absent, or the character is set to the digit {\tt 0}
+or {\tt 1}, the RFP model is not used. Switch {\tt irfp} in {\tt INCLUDE} file
+{\tt rfp.h} is set to {\tt 1} if the RFP model is to be used, otherwise {\tt
+irfp = 0}, and the tokamak or stellarator model is used instead.
+\setlength{\parskip}{0mm}
+
+\subsubsection{Beta limit}
+The poloidal beta is limited to a maximum value given by input parameter
+\texttt{betpmx} (default = 0.19) using constraint equation~48 and iteration
+variable~79 (\texttt{fbetap}).
+
+\subsubsection{Density limit}
+No density limit is explicitly coded for RFPs, other than by simply
+constraining the upper bound of the electron density variable \texttt{dene}
+(iteration variable 6).
+
+\subsubsection{$\tau_E$ scaling law}
+One confinement time scaling law relevant to RFPs is present
+within \PSD The value of {\tt isc} in input block {\tt PHYDAT} determines
+the scaling to be used in the plasma energy balance calculation.
+\[
+\tau_E\; (\mbox{TITAN RFP~\cite{titan1}: {\tt isc=25}})
+ = 0.05 a^2 I_p(\mathrm{MA})
+\]
+
+\subsubsection{$F$-$\Theta$ plot}
+The pinch parameter $\Theta$ is set using iteration variable~78:
+\texttt{rfpth} in input block \texttt{PHYDAT}. The corresponding value of the
+reversal parameter $F$ (\texttt{rfpf}) is calculated using routine
+\texttt{FTHETA}. $F$ is constrained to be negative using constraint
+equation~49 with f-value \texttt{frfpf} (iteration variable~80).
+
+\subsubsection{Current drive}
+\label{sec:rfpcd}
+The RFP oscillating field current drive option is turned on by setting
+\texttt{iefrf = 9} in input block \texttt{PHYDAT}. The wall plug to injector
+efficiency is set using input parameter \texttt{etaof} in input block
+\texttt{CDDAT}, which has a default value of 0.5, and the unit cost is set
+using input parameter \texttt{ucof} in input block \texttt{UCSTINP}. The
+default value for \texttt{ucof} is 3.3~\$/W of injected power.
+
+\section{Engineering Models}
+
+\subsection{TF Coil Options}
+
+The TF coils can be either resistive (copper) or superconducting. Switch {\tt
+itfsup} in input block {\tt TFC} should be set to {\tt 1} for superconducting
+coils, or {\tt 0} for purely copper coils. The following options are available
+within the superconducting TF coil model ({\tt itfsup = 1}):
+
+\subsubsection{Superconducting materials}
+
+Switch {\tt isumattf} in input block {\tt TFC} specifies which superconducting
+material is to be used:
+\begin{description}
+\item [{\tt isumattf = 1} :] binary Nb$_3$Sn superconductor
+\item [{\tt isumattf = 2} :] ternary Nb$_3$Sn superconductor
+\item [{\tt isumattf = 3} :] NbTi superconductor
+\item [{\tt isumattf = 4} :] generic Nb$_3$Sn superconductor
+\item [{\tt isumattf = 5} :] generic NbTi superconductor
+\end{description}
+
+\subsubsection{Stress model}
+
+Switch {\tt itfmod} in input block {\tt TFC} controls whether a simple stress
+model ({\tt itfmod~=~0}) or more complex stress model ({\tt itfmod = 1})
+should be used. To enforce the stress limits calculated using either of these
+models, constraint equation no.\ 31 (case stress) and/or constraint equation
+no.\ 32 (conduit stress) should be turned on with iteration variables no.\ 48
+({\tt fstrcase}) and/or no.\ 49 ({\tt fstrcond}), respectively. The stress
+limit can be adjusted using input parameters {\tt csutf} and {\tt csytf} in
+input block {\tt TFC}.
+
+\subsubsection{Current density limits}
+
+% ADD jcrit_model switch
+
+Two limits can be applied to the current density $J$ in the (superconducting)
+TF coils. To ensure that $J$ does not exceed the critical value, constraint
+equation no.\ 33 should be turned on with iteration variable no.\ 50 ({\tt
+fiooic}). To ensure that $J$ does not exceed the current density protection
+limit, constraint equation no.\ 35 should be turned on with iteration variable
+no.\ 53 ({\tt fjprot}).
+\setlength{\parskip}{5mm}
+
+(A similar constraint on the TF coil current density exists if resistive coils
+are being used ({\tt itfsup = 0}). In this case, constraint equation no.\ 23
+should be turned on with iteration variable no.\ 28 ({\tt fjtfc}).)
+\setlength{\parskip}{0mm}
+
+\subsubsection{Reversed Field Pinch TF coils}
+
+The TF coils for the RFP option are derived from the TITAN-II coil set. The
+radial thickness is set using \texttt{tfcth} as usual, but the toroidal
+thickness may also be set, using iteration variable~77 (\texttt{tftort}) in
+input block \texttt{TFC}. This is constrained to be no larger than is
+geometrically possible using constraint equation~47 with iteration variable~76
+(\texttt{frfptf}).
+
+\subsection{PF Coil Options}
+
+\subsubsection{PF coil position}
+
+The PF coil locations are controlled using a set of switches stored in array
+{\tt ipfloc} (see Figure~\ref{fig:build1}), and are calculated in routine {\tt
+PFCOIL}. Input block {\tt PFC} contains all the variables associated with the
+PF coils. The coils are (usually) organised into groups containing two PF
+coils placed symmetrically above and below the midplane, and each group {\tt
+j} has an element {\tt ipfloc(j)} assigned to it. Input parameter {\tt ngrp}
+should be set to the number of groups, and {\tt ncls(j)} should be assigned
+the number of coils in each group --- which should be {\tt 2} in each case.
+\setlength{\parskip}{5mm}
+
+In the following, all variables are defined in the variable descriptor file
+{\tt var.des}. The values for {\tt rpf1}, {\tt rpf2}, {\tt zref(j)} and {\tt
+routr} should be adjusted by the user to locate the PF coils accurately.
+
+The three possible values of {\tt ipfloc(j)} correspond to the following PF
+coil positions:
+
+\setlength{\parskip}{0mm}
+\begin{description}
+\item [{\tt ipfloc(j) = 1} :]  PF coils are placed above the OH coil (one
+group only);
+\footnotesize
+\begin{eqnarray*}
+R & = & \mbox{\tt rohc + rpf1} \\
+Z & = & \pm
+\mbox{\tt ( hmax*ohhghf + 0.1 + 0.5*( hmax*(1.0D0-ohhghf)+tfcth+0.1) )}
+\end{eqnarray*}
+\normalsize
+\item [{\tt ipfloc(j) = 2} :]  PF coils are placed above the TF coils (one
+group only);
+\footnotesize
+\begin{eqnarray*}
+R & = & \mbox{\tt rmajor + rpf2*triang*rminor} \hspace{62mm} \\
+Z & = & \pm (\mbox{\tt hmax + tfcth + 0.86})
+\end{eqnarray*}
+\normalsize
+\item [{\tt ipfloc(j) = 3} :]  PF coils are placed radially outside the TF
+coils (any number of groups);
+\footnotesize
+\begin{eqnarray*}
+R & = & \mbox{\tt rtot + tfthko/2.0D0 + routr} \hspace{63mm}\\
+Z & = & \pm(\mbox{\tt rminor*zref(j)})
+\end{eqnarray*}
+\normalsize
+\end{description}
+
+\subsubsection{PF coil resistance}
+
+The PF coils can be either resistive or superconducting. This is determined
+from the value of {\tt ipfres} in input block {\tt PFC}. If {\tt ipfres = 0},
+the PF and OH coils are assumed to be superconducting. If {\tt ipfres = 1},
+they are assumed to be resistive, with resistivity given by the value of
+variable {\tt pfclres} in input block {\tt PFC}.
+
+\subsubsection{Superconducting materials}
+
+Switch {\tt isumatpf} in input block {\tt PFC} specifies which superconducting
+material is to be used for the PF and OH coils if {\tt ipfres = 0}:
+\begin{description}
+\item [{\tt isumatpf = 1} :] binary Nb$_3$Sn superconductor
+\item [{\tt isumatpf = 2} :] ternary Nb$_3$Sn superconductor
+\item [{\tt isumatpf = 3} :] NbTi superconductor
+\end{description}
+
+\subsection{OH Coil Options}
+
+Switch {\tt iohcl} in input block {\tt BLD} controls whether an OH coil is
+present. A value of {\tt 1} denotes that this coil is present, and should be
+assigned a non-zero thickness {\tt ohcth} in input block {\tt BLD}. A value of
+{\tt iohcl = 0} denotes that no OH coil is present, in which case the
+thickness {\tt ohcth} should be set to zero. No PF coils should be located
+at positions defined by {\tt ipfloc(j)~=~1} if no OH coil is present.
+
+\subsubsection{OH coil swing time}
+\label{sec:tohs}
+
+In the steady-state power plant scenario ({\tt lpulse} $\not=$~{\tt 1}), the
+length of time taken for the OH coil current to reverse (see
+Figure~\ref{fig:current_vs_time}) is determined from the value of switch {\tt
+tohsin} in input block {\tt TIME}. If {\tt tohsin = 0.0D0}, then the swing
+time {\tt tohs} is given by $\mbox{\tt tohs} = I_p / 0.5$, where $I_p$ is the
+plasma current in MA\@. Furthermore, the PF coil ramp time {\tt tramp} and
+shutdown time {\tt tqnch} are set equal to {\tt tohs}.  If {\tt tohsin}
+$\not=$~{\tt 0.0D0}, the swing time {\tt tohs = tohsin}, and the ramp and
+shutdown times are as defined in input block {\tt TIME}.
+\setlength{\parskip}{5mm}
+
+If, however, a pulsed power plant is being modelled ({\tt lpulse = 1}), the OH
+coil swing time {\tt tohs} is either set in routine {\tt INITIAL} or via input
+block {\tt TIME}, or it can be iterated by using iteration variable 65. The
+ramp and shutdown times in the pulsed case are always set equal to {\tt
+tohs}. To ensure that the plasma current ramp rate during start-up is
+prevented from being too high, as governed by the requirement to maintain
+plasma stability in $l_i$-$q_\psi$ space, constraint equation no.\ 41 should
+be turned on with iteration variable no.\ 66 ({\tt ftohs}).
+\setlength{\parskip}{0mm}
+
+\subsubsection{Current density limits}
+
+The current density in the OH coil can be limited at the beginning-of-pulse
+(BOP) and at the end-of-flat-top (EOF --- see
+Figure~\ref{fig:current_vs_time}). The limiting value is dependent on the
+maximum allowable stress in the coil as given by the value of {\tt sigpfalw}
+in input block {\tt PFC}. To limit the current density at the BOP, constraint
+equation no.\ 27 should be turned on with iteration variable no.\ 39 ({\tt
+fjohc0}). To limit the current density at the EOF, constraint equation no.\ 26
+should be turned on with iteration variable no.\ 38 ({\tt fjohc}).
+
+\subsection{Blanket Model}
+
+Switch {\tt lblnkt} in input block {\tt FWBLSH} determines whether the blanket
+is to be simulated using a full thermodynamic model~\cite{Panos} ({\tt lblnkt
+= 1}) or simply assumed to be made up of relevant materials (see
+Section~\ref{sec:fwbs}) in user-defined proportions. The former model also
+performs a self-consistent calculation of the thermal-to-electric conversion
+efficiency, whereas the latter simply uses the input value {\tt etath}.
+\setlength{\parskip}{5mm}
+
+The following switches (all accessible via input block {\tt FWBLSH}) control
+the details of the full thermodynamic model of the blanket.
+\setlength{\parskip}{0mm}
+
+\subsubsection{Cooling channel geometry}
+
+The value of switch {\tt astr} determines whether the cooling channels have a
+circular cross-section ({\tt astr = 1}) or an annular cross-section ({\tt astr
+= 2}). The latter case is the default.
+
+\subsubsection{Boundary condition}
+
+The value of switch {\tt bstr} determines whether the coolant output
+temperature is to be fixed ({\tt bstr = 1}) or whether the maximum blanket
+temperature is to be fixed ({\tt bstr~=~2}). The former case is the default.
+The desired coolant output temperature for {\tt bstr = 1} is set using input
+parameter {\tt xtfo} in input block {\tt FWBLSH}, and the required maximum
+blanket temperature is set using input parameter {\tt xtb} in input block {\tt
+FWBLSH}.
+
+\subsubsection{Coolant type}
+\label{sec:costr}
+
+The value of switch {\tt costr} determines the type of coolant used in the
+first wall, blanket and shield. If {\tt costr = 1}, the coolant is assumed to
+be gaseous helium. If {\tt costr = 2}, the coolant is assumed to be
+pressurised water/steam, which is the default. This switch is used whether or
+not the full blanket model is used, i.e.\ is independent of the setting of
+switch {\tt lblnkt}.
+
+\subsubsection{Cooling channel orientation}
+
+The value of switch {\tt estr} determines whether the cooling channels lie in
+the radial direction ({\tt estr = 1}) or in the poloidal direction ({\tt estr
+= 2}). The former case is the default.
+
+\subsubsection{Blanket material}
+
+Switch {\tt smstr} determines whether a solid blanket of Li$_2$O-Be ({\tt
+smstr = 1}), or a liquid blanket of LiPb-Li ({\tt smstr = 2}) is used. The
+former is the default, and is the type assumed if {\tt lblnkt} $\not=$~{\tt
+1}.
+
+\subsection{Other Engineering Models}
+
+\subsubsection{First wall, blanket and shield materials}
+\label{sec:fwbs}
+
+The various material fractions making up these components are all available to
+be changed in input block {\tt FWBLSH}. The first wall coolant fraction is
+given by the value of {\tt fwclfr}, which is calculated if a pulsed power
+plant is being modelled ({\tt lpulse = 1}), and assumed to be the input value
+otherwise. The shield coolant fraction is stored in input parameter {\tt
+vfshld}. The structural material for both the first wall and shield is
+stainless steel. The blanket is a more complicated structure, and can contain
+either solid or liquid material as the neutron multiplier or tritium
+synthesiser. Table~\ref{tab:blanket} summarises the possible options for the
+blanket materials.
+
+\input{table_blanket} % Table showing blanket materials
+
+\subsubsection{Divertor model}
+\label{sec:divmod}
+
+Switch {\tt idivrt} in input block {\tt PHYDAT}, controls the overall plasma
+configuration. At present, it is only possible to use {\tt idivrt = 2}, which
+corresponds to an up-down symmetric, double null configuration, as the PF coil
+current scaling algorithms only allow for this model.
+\setlength{\parskip}{5mm}
+
+The Harrison-Kukushkin-Hotston divertor model~\cite{IPDG} developed for ITER
+is used (except for the case of tight aspect ratio tokamaks --- see
+later). This is appropriate for conventional aspect ratio machines, but care
+should be taken in inputting the divertor magnetics for this model, and
+projections far from the ITER CDA machine parameters are likely to be
+unreliable.
+
+The divertor calculations are carried out in routines {\tt DIVCALL} and {\tt
+DIVERT}.
+\setlength{\parskip}{0mm}
+
+\subsubsection{Heat transport and power conversion}
+
+Many of the power conversion efficiencies shown in Figure~\ref{fig:pwrconv}
+can be adjusted by the user. The primary coolant is controlled by switch {\tt
+costr} in input block {\tt FWBLSH}.  If {\tt costr = 1}, gaseous helium is
+used; if {\tt costr = 2}, pressurised water coolant is assumed.
+
+\subsubsection{Vacuum pump}
+
+Switch {\tt ntype} in input block {\tt VACCY} controls whether a turbopump
+({\tt ntype = 0}) or a cryopump ({\tt ntype = 1}) is used in the vacuum
+system.
+
+\subsection{Pulsed Plant Operation}
+
+Switch {\tt lpulse} in input block {\tt PULSE} determines whether the power
+plant is assumed to be based on steady-state ({\tt lpulse = 0}) or
+pulsed ({\tt lpulse = 1}) operation.
+\setlength{\parskip}{5mm}
+
+The following sections describe the switches that control the use of the
+pulsed power plant option, all of which are accessible via input block {\tt
+PULSE}.
+\setlength{\parskip}{0mm}
+
+\subsubsection{First wall axial stress calculations}
+
+Switch {\tt itcycl} activates the desired model for the first wall axial
+stress calculations. If {\tt itcycl = 1} (the default), the wall is fully
+constrained axially, and no bending can occur. If {\tt itcycl = 2}, there is
+no constraint on the axial motion, but no bending can occur. Finally, if {\tt
+itcycl = 3}, again there is no axial constraint, and bending is allowed to
+occur.
+
+\subsubsection{Thermal storage options}
+
+During every cycle there is a period when no fusion power is produced. The net
+electric output from the plant must, however, be maintained, and this is
+achieved using thermal storage. There are three types of thermal storage
+available within \PSC and the value of switch {\tt istore} determines which is
+to be used. If {\tt istore = 1} (the default), option~1 of
+Ref.~\cite{ELECTROWATT} is assumed, which utilises the thermal storage
+inherent in the machine's steam cycle equipment. This should be used if the
+machine down time is less than 100~seconds. If {\tt istore = 2}, option~2 of
+Ref.~\cite{ELECTROWATT} is assumed, which uses the same method as before, but
+augments it with an additional boiler. This may be used for machine down times
+of up to 300~seconds. Finally, if {\tt istore = 3}, a large stainless steel
+block acts as the thermal storage medium.
+
+\subsubsection{First wall coolant temperature rise limit}
+
+The rise in temperature of the first wall coolant can be limited to be no more
+than the value of {\tt dtmpmx} by turning on constraint equation no.\ 38 with
+iteration variable no.\ 62 ({\tt fdtmp}).
+
+\subsubsection{First wall peak temperature limit}
+
+The maximum first wall temperature can be limited to be no more than the value
+of variable {\tt tpkmax} by turning on constraint equation no.\ 39 with
+iteration variable no.\ 63 ({\tt ftpeak}).
+
+\subsubsection{Minimum auxiliary power}
+
+The auxiliary power reaching the plasma can be forced to be more than the
+minimum allowable value {\tt auxmin} by turning on constraint equation no.\ 40
+with iteration variable no.\ 64 ({\tt fauxmn}). The value of {\tt auxmin} is
+determined by the code if the start-up model is activated, otherwise it may be
+initialised via input block {\tt PULSE}.
+
+\subsubsection{OH coil swing time}
+
+The OH coil swing time can be constrained as described in
+Section~\ref{sec:tohs}.
+
+\subsubsection{Cycle time limit}
+
+Due to fatigue induced by the cyclic stresses on the first wall, there is a
+maximum number of pulse cycles that can be withstood by this component.
+Therefore, for a given first wall lifetime (calculated by the code) there is a
+minimum allowable time per cycle. The cycle time can be constrained to be at
+least the minimum value by turning on constraint equation no.\ 42 with
+iteration variable no.\ 67 ({\tt ftcycl}).
+
+\section{Tight Aspect Ratio Tokamak Switches}
+
+As stated earlier, there are many different models that are relevant only to
+tight aspect ratio tokamaks. Switch \texttt{itart} in input block
+\texttt{PHYDAT} provides overall control of the TART switches within the code,
+and subroutine \texttt{CHECK} ensures that no conflicting values are
+inadvertently set by the user in the input file. Table~\ref{tab:tart}
+summarises the switch values relevant to each aspect ratio regime.
+\begin{table}
+\begin{center}
+\begin{tabular}{||l|c|c||} \hline
+ & conventional aspect ratio & tight aspect ratio \\
+switch & \texttt{itart = 0} & \texttt{itart = 1} \\ \hline
+ibss & 1, 2, 3 & 2, 3 \\
+icurr & 1, 3, 4, 5, 6, 7 & 2 \\
+ishape & 0 & 0, 1 \\
+itfsup & 0, 1 & 0 \\ \hline
+\end{tabular}
+\end{center}
+\caption{\textit{Summary of the switch values in PROCESS that relate to
+conventional aspect ratio and tight aspect ratio machines.}}
+\label{tab:tart}
+\end{table}
+In addition, \texttt{itart} controls the following features relevant to tight
+aspect ratio:
+\begin{enumerate}
+\item The relative radial positions of the TF coil inboard legs and the OH coil
+are different for a tight aspect ratio machine. If \texttt{itart = 1}, the
+radial build is altered so that, starting from the centreline ($R = 0$), the
+component order is: bucking cylinder, TF coil, gap, OH coil, cryostat, and
+then continuing as in Figure~\ref{fig:build1}.
+\item If \texttt{itart = 1}, a gaseous divertor concept~\cite{storac} is
+assumed and a simple divertor heat load calculation is employed, rather than
+the ITER-CDA like divertor assumed for conventional aspect ratio tokamaks.
+\item Tight aspect ratio tokamaks have resistive TF coils that combine into a
+single centrepost at the centre of the machine. If \texttt{itart = 1}, routine
+\texttt{CNTRPST} is called to calculate various parameters relevant to the
+centrepost, and these may be limited using constraint equations~43 to~46 if
+required:
+\begin{itemize}
+\item Equation~43 is a consistency equation for the average centrepost
+temperature.
+\item Equation~44 can be used to limit the peak centrepost temperature to a
+maximum value (\texttt{ptempalw}) using iteration variable no.\ 68
+(\texttt{fptemp}).
+\item Equation~45 can be used to force a lower limit to the edge safety
+factor, using iteration variable no.\ 71 (\texttt{fq}).
+\item Equation~46 can be used to apply an upper limit to the ratio of plasma
+current to TF coil (``rod'') current, using iteration variable no.\ 72
+(\texttt{fipir}).
+\end{itemize}
+\item A simple PF coil current scaling algorithm is used if \texttt{itart = 1}.
+\end{enumerate}
+
+\section{Cost Models}
+
+The cost accounting used by \PS combines methods~\cite{cost1} used in the
+TETRA code~\cite{tetra} and the Generomak~\cite{generomak} scheme.  The costs
+are split into the standard accounting categories~\cite{cost2} generally used
+in the reporting of power plant costs. The best references for the algorithms
+used are~\cite{storac}, and source file {\tt costs.f} in the code itself.
+\setlength{\parskip}{5mm}
+
+The majority of the costed items have a unit cost associated with them. These
+values scale with (for example) power output, volume, component mass etc., and
+many are available to be changed in input block {\tt COSTINP}. All costs and
+their algorithms correspond to 1990 dollars.
+
+\setlength{\parskip}{0mm}
+\subsection{Cost Options}
+
+\subsubsection{$N^{th}$ of a kind costs}
+
+The unit costs of the components of the fusion power core are relevant to
+``first-of-a-kind'' items. That is to say, the items are assumed to be
+relatively expensive to build as they are effectively prototypes and
+specialised tools and machines have perhaps been made specially to create
+them. However, if a ``production line'' has been set up, and R \& D progress
+has allowed more experience to be gained in constructing the power core
+components, the costs will be reduced as a result. Variable \texttt{fkind} in
+input block \texttt{COSTINP} may be used to multiply the raw unit costs of the
+fusion power core items (sensibly by a factor of less than one) to simulate
+this cost reduction for an $N^{th}$-of-a-kind device. In other systems studies
+of fusion power plants~\cite{galambos}, values for this multiplier have ranged
+from 0.5 to 0.8.
+
+\subsubsection{Level of safety assurance}
+
+Many of the unit costs have four possible choices, relating to the level of
+safety assurance~\cite{lsa} flag {\tt lsa} in input block {\tt COSTINP}. A
+value {\tt lsa = 1} corresponds to a plant with a full safety credit (i.e.\ is
+truly passively safe). Levels {\tt 2} and {\tt 3} lie between the two
+extremes, and level {\tt 4} corresponds to a present day fission reactor, with
+no safety credit.
+
+\subsubsection{Replaceable components}
+
+The first wall, blanket, divertor, centrepost (if present) and current drive
+system have relatively short lifetimes because of their hostile environment,
+after which they must be replaced. Because of this frequent renewal they can
+be regarded as though they are ``fuel'' items, and can be costed
+accordingly. Switch {\tt ifueltyp} in input block {\tt COSTINP} is used to
+control whether this option is used in the code. If {\tt ifueltyp = 1}, the
+costs of the first wall, blanket, divertor and a fraction {\tt fcdfuel} of the
+cost of the current drive system are treated as fuel costs. If {\tt ifueltyp =
+0}, these are treated as capital costs. Variable {\tt fcdfuel} is contained in
+input block {\tt COSTINP}.
+
+\subsubsection{Cost of electricity calculations}
+
+Switch {\tt ireactor} in input block {\tt COSTINP} determines the type of cost
+of electricity calculation that is performed. If {\tt ireactor = 0}, no cost
+of electricity calculation is performed. If {\tt ireactor = 1}, then this
+calculation {\em is}\/ performed, with the value quoted in units of
+m\$/kWh.
+
+\subsubsection{Net electric power calculation}
+
+Related to the cost of electricity is the net electric power calculation
+performed in routine {\tt POWER}. It is possible that the net electric power
+can become negative due to a high recirculating power. Switch {\tt ipnet} in
+input block {\tt COSTINP} determines whether the net electric power is scaled
+to always remain positive ({\tt ipnet = 0}), or whether it is allowed to
+become negative ({\tt ipnet = 1}), in which case no cost of electricity
+calculation is performed.
+
+\section{Other Switches and Models}
+
+\subsection{Output Control}
+
+Since the user may only be interested in a small proportion of the code's
+output, a set of switches exist in input block {\tt OSECTS} that control
+whether a given section of the output file is produced.
+Table~\ref{tab:osections} indicates how these switches affect the output.
+
+\input{table_osections} % Table showing output section controllers
+
+\subsection{Code Parameters Affecting Other Models}
+
+This chapter has summarised the methods by which several of the models in the
+code can be activated. There are many others present, however, and it is
+suggested that the user refers to the variable descriptor file, {\tt
+var.des}. As stated earlier, this contains details of all the parameters
+within the code that can be changed by the user, in order to customise the
+machine modelled by \PSD
+
+\setlength{\parskip}{5mm}
+
