@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: xc.f,v 3.16 1997/03/21 16:07:58 peter Exp pknight $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: xc.f,v $
 C  Version no.    : $Revision: 3.16 $

@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: radialb.f,v 3.6 1996/06/10 13:20:27 peter Exp pknight $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: radialb.f,v $
 C  Version no.    : $Revision: 3.6 $

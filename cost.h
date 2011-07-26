@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: cost.h,v 3.15 1999/07/06 13:11:10 peter Exp pknight $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: cost.h,v $
 C  Version no.    : $Revision: 3.15 $

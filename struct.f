@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: struct.f,v 3.2 1996/02/01 15:04:17 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: struct.f,v $
 C  Version no.    : $Revision: 3.2 $

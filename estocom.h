@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: estocom.h,v 3.2 1994/03/31 09:40:43 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: estocom.h,v $
 C  Version no.    : $Revision: 3.2 $

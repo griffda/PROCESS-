@@ -1,0 +1,53 @@
+!  $Id::                                                                $
+
+!--Version number 1.000
+!
+!--Description
+!  INCLUDE file containing values calculated by FISPACT routines
+!
+!--Author
+!  Peter Knight D3/G12 Culham Laboratory, ext.3330
+!
+!--Date
+!  19 February 1997
+!
+!--Reference
+!  None
+!  
+!--History
+!  06/02/97 PJK 1.000 Initial version
+!
+!--Contents
+!  BLIIZP : Inboard blanket integrated zone power
+!  BLIMZP : Inboard blanket mean zone power density
+!  BLOIZP : Outboard blanket integrated zone power
+!  BLOMZP : Outboard blanket mean zone power density
+!  FWIIZP : Inboard first wall integrated zone power
+!  FWIMZP : Inboard first wall mean zone power density
+!  FWOIZP : Outboard first wall integrated zone power
+!  FWOMZP : Outboard first wall mean zone power density
+!  BLIACT : Inboard blanket total activity (Bq)
+!  BLIGDR : Inboard blanket total gamma dose rate (Sv/hr)
+!  BLIHKW : Inboard blanket total heat output (kW)
+!  BLOACT : Outboard blanket total activity (Bq)
+!  BLOGDR : Outboard blanket total gamma dose rate (Sv/hr)
+!  BLOHKW : Outboard blanket total heat output (kW)
+!  FWIACT : Inboard first wall total activity (Bq)
+!  FWIGDR : Inboard first wall total gamma dose rate (Sv/hr)
+!  FWIHKW : Inboard first wall total heat output (kW)
+!  FWOACT : Outboard first wall total activity (Bq)
+!  FWOGDR : Outboard first wall total gamma dose rate (Sv/hr)
+!  FWOHKW : Outboard first wall total heat output (kW)
+!  FWTEMP : Outboard first wall temperature after a LOCA (K)
+
+  real(kind(1.0D0)) :: &
+       bliizp,blimzp,bloizp,blomzp,fwiizp,fwimzp,fwoizp,fwomzp,fwtemp
+  common /fisp1/ &
+       bliizp,blimzp,bloizp,blomzp,fwiizp,fwimzp,fwoizp,fwomzp,fwtemp
+
+  real(kind(1.0D0)), dimension(3) :: &
+       bliact,bligdr,blihkw,bloact,blogdr,blohkw,fwiact,fwigdr, &
+       fwihkw,fwoact,fwogdr,fwohkw
+  common /fisp2/ &
+       bliact,bligdr,blihkw,bloact,blogdr,blohkw,fwiact,fwigdr, &
+       fwihkw,fwoact,fwogdr,fwohkw

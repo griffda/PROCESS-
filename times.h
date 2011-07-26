@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: times.h,v 3.3 1994/03/31 09:39:25 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: times.h,v $
 C  Version no.    : $Revision: 3.3 $

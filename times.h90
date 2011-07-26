@@ -1,0 +1,9 @@
+!  $Id::                                                                $
+
+  real(kind(1.0D0)) :: &
+       tburn,tburn0,tdown,tdwell,theat,tohs,tohsin,tpulse,tqnch,tramp
+  common /times0/ &
+       tburn,tburn0,tdown,tdwell,theat,tohs,tohsin,tpulse,tqnch,tramp
+
+  real(kind(1.0D0)), dimension(6) :: tim
+  common /times1/ tim

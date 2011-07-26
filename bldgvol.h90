@@ -1,0 +1,8 @@
+!  $Id::                                                                $
+
+  real(kind(1.0D0)) :: &
+       admvol,convol,cryvol,efloor,elevol,esbldgm3,pfbldgm3, &
+       rbvol,rmbvol,shovol,tfcbv,triv,volnucb,volrci,wrbi,wsvol 
+  common /bldgv1/ &
+       admvol,convol,cryvol,efloor,elevol,esbldgm3,pfbldgm3, &
+       rbvol,rmbvol,shovol,tfcbv,triv,volnucb,volrci,wrbi,wsvol 

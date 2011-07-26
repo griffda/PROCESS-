@@ -1,0 +1,7 @@
+!  $Id::                                                                $
+
+  real(kind(1.0D0)), dimension(ipnscns) :: sweep
+  common /sweep1/ sweep
+
+  integer :: isweep,nsweep
+  common /sweep2/ isweep,nsweep

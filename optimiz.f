@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: optimiz.f,v 3.4 1996/02/01 15:07:03 peter Exp pknight $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: optimiz.f,v $
 C  Version no.    : $Revision: 3.4 $

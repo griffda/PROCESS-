@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: input.f,v 3.57 2006/05/25 09:27:02 pknight Exp pknight $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: input.f,v $
 C  Version no.    : $Revision: 3.57 $
@@ -4041,7 +4041,7 @@ C+**PJK 26/07/11
          call rangei(nout,'JCRIT_MODEL',jcrit_model,0,1)
          if (jcrit_model.ne.ioldvl) then
             clabel = 'Critical J model for binary Nb3Sn,'
-            write(nout,*) clabel,varnam(1:8),' = ',jcrit_model
+            write(nout,*) clabel,varnam(1:11),' = ',jcrit_model
             if (jcrit_model.eq.0) then
                write(nout,*) '     (original model)'
             else
@@ -10953,7 +10953,7 @@ C *** Must end with ')'
 C----------------------------------------------------------------------
       SUBROUTINE GETVAR(line,length,iptr,varnam,varlen,isub1,isub2)
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-C--Version number 1.000
+C--Version number 1.001
 C
 C--Description
 C  Routine to extract a variable name from LINE.
@@ -10962,16 +10962,17 @@ C  pointing to the first character of the value to be assigned.
 C  Returns VARLEN of 0 if error.
 C
 C--Author
-C  Peter Knight D3/G12 Culham Laboratory, ext.3330
+C  Peter Knight D3/162a Culham, ext.6368
 C
 C--Date
-C  28 June 1994
+C  26 July 2011
 C
 C--Reference
 C  None
 C  
 C--History
 C  28/06/94 PJK 1.000 Improved layout
+C  26/07/11 PJK 1.001 Added _ as a valid character in a variable name
 C
 C--Arguments
 C  line   : (INPUT)  String containing present line of input file
@@ -11014,11 +11015,12 @@ C *** First character must be alphabetic
       iptr = iptr + 1
       if (iptr.gt.length) goto 1000
 
-C *** Now parse the rest of the letters (must be alphanumeric)
+C *** Now parse the rest of the letters (must be alphanumeric or _ )
 
  10   continue
       if  (((line(iptr:iptr).ge.'A').and.(line(iptr:iptr).le.'Z')).or.
-     +     ((line(iptr:iptr).ge.'0').and.(line(iptr:iptr).le.'9'))) then
+     +     ((line(iptr:iptr).ge.'0').and.(line(iptr:iptr).le.'9')).or.
+     +     (line(iptr:iptr).eq.'_')) then
          iptr = iptr + 1
          if (iptr.le.length) goto 10
       end if

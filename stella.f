@@ -1,6 +1,6 @@
 C----------------------------------------------------------------------
 C--SCCS information
-C  Module         : $Id: stella.f,v 1.19 2006/05/25 09:27:02 pknight Exp $
+C  Module         : $Id$
 C  Module name    : $RCSfile: stella.f,v $
 C  Version no.    : $Revision: 1.19 $
 C  Creation date  : $Date: 2006/05/25 09:27:02 $

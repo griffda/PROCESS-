@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: blanket.h,v 3.3 1998/04/27 14:01:59 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: blanket.h,v $
 C  Version no.    : $Revision: 3.3 $

@@ -1,6 +1,6 @@
 C----------------------------------------------------------------------
 C--SCCS information
-C  Module         : $Id: tfcoil.f,v 3.10 1997/11/19 09:32:32 peter Exp $
+C  Module         : $Id$
 C  Module name    : $RCSfile: tfcoil.f,v $
 C  Version no.    : $Revision: 3.10 $
 C  Creation date  : $Date: 1997/11/19 09:32:32 $

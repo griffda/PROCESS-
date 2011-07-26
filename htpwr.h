@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: htpwr.h,v 3.5 1997/01/24 14:55:25 peter Exp pknight $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: htpwr.h,v $
 C  Version no.    : $Revision: 3.5 $

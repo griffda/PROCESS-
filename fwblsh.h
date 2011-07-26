@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: fwblsh.h,v 3.7 1997/02/19 15:09:50 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: fwblsh.h,v $
 C  Version no.    : $Revision: 3.7 $

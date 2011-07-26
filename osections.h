@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: osections.h,v 3.3 1994/05/23 11:32:15 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: osections.h,v $
 C  Version no.    : $Revision: 3.3 $

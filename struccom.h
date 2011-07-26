@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: struccom.h,v 3.2 1994/03/31 09:40:57 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: struccom.h,v $
 C  Version no.    : $Revision: 3.2 $

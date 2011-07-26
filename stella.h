@@ -3,7 +3,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C--Version number 1.000
 C
 C--SCCS information
-C  Module         : $Id: stella.h,v 1.1 1994/08/01 10:15:52 peter Exp $
+C  Module         : $Id$
 C  Module name    : $RCSfile: stella.h,v $
 C  Version no.    : $Revision: 1.1 $
 C  Creation date  : $Date: 1994/08/01 10:15:52 $

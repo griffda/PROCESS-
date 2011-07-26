@@ -1,0 +1,22 @@
+!  $Id::                                                                $
+
+  real(kind(1.0D0)) :: &
+       aplasmin,bcylth,blnkith,blnkoth,bore,ddwex,ddwi,gapds, &
+       gapoh,gapomin,gapsto,fwarea,fwith,fwoth,hmax,hr1,ohcth, &
+       prtsz,prtszreq,rbld,rinboard,rsldi,rsldo,rtfcin,rtot, &
+       scrapli,scraplo,shldith,shldoth,shldtth,tfcth,tfootfi, &
+       tfthko,vgap,vgaptf,vgap2
+  common /build0/ &
+       aplasmin,bcylth,blnkith,blnkoth,bore,ddwex,ddwi,gapds, &
+       gapoh,gapomin,gapsto,fwarea,fwith,fwoth,hmax,hr1,ohcth, &
+       prtsz,prtszreq,rbld,rinboard,rsldi,rsldo,rtfcin,rtot, &
+       scrapli,scraplo,shldith,shldoth,shldtth,tfcth,tfootfi, &
+       tfthko,vgap,vgaptf,vgap2
+
+  integer :: iohcl
+  common /build1/ iohcl
+
+  real(kind(1.0D0)) :: &
+       fmsbc,fmsbl,fmsdwe,fmsdwi,fmsfw,fmsoh,fmssh,fmstf
+  common /marten/ &
+       fmsbc,fmsbl,fmsdwe,fmsdwi,fmsfw,fmsoh,fmssh,fmstf

@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: eqns.f,v 3.17 1998/04/01 11:54:43 peter Exp pknight $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: eqns.f,v $
 C  Version no.    : $Revision: 3.17 $

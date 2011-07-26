@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: param.h,v 3.21 1998/10/08 10:04:49 peter Exp pknight $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: param.h,v $
 C  Version no.    : $Revision: 3.21 $

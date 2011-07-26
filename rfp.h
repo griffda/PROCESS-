@@ -3,7 +3,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C--Version number 1.000
 C
 C--SCCS information
-C  Module         : $Id: rfp.h,v 1.1 1996/03/07 16:10:39 peter Exp $
+C  Module         : $Id$
 C  Module name    : $RCSfile: rfp.h,v $
 C  Version no.    : $Revision: 1.1 $
 C  Creation date  : $Date: 1996/03/07 16:10:39 $

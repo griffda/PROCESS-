@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: supercond.f,v 3.3 1999/07/06 13:09:40 peter Exp pknight $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: supercond.f,v $
 C  Version no.    : $Revision: 3.3 $

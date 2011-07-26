@@ -136,41 +136,38 @@ object = \
  xc.o
 
 headers = \
- blanket.h   \
- bldgcom.h   \
- bldgvol.h   \
- build.h     \
- cdriv.h     cdriv.h90 \
- cost.h      \
- cost2.h     \
- divrt.h     \
- estocom.h   \
- fispact.h   \
- fwblsh.h    \
- htpwr.h     \
- heattr.h    \
- heatrinp.h  \
- ife.h       \
- ineq.h      \
- labels.h    \
- numer.h     \
- osections.h osections.h90 \
- param.h     \
- pfcoil.h    \
- phydat.h    \
- pfelect.h   \
- pulse.h     \
- pwrcom.h    \
- rfp.h       \
- start.h     \
- stella.h    \
- struccom.h  \
- sweep.h     \
- tfcoil.h    \
- times.h     \
- torsdat.h   \
- vaccom.h    \
- vltcom.h
+ blanket.h    blanket.h90   \
+ bldgcom.h    bldgcom.h90   \
+ bldgvol.h    bldgvol.h90   \
+ build.h      build.h90     \
+ cdriv.h      cdriv.h90     \
+ cost.h       cost.h90      \
+ cost2.h      cost2.h90     \
+ divrt.h      divrt.h90     \
+ estocom.h    estocom.h90   \
+ fispact.h    fispact.h90   \
+ fwblsh.h     fwblsh.h90    \
+ htpwr.h      htpwr.h90     \
+ ife.h        ife.h90       \
+ ineq.h       ineq.h90      \
+ labels.h     labels.h90    \
+ numer.h      numer.h90     \
+ osections.h  osections.h90 \
+ param.h      param.h90     \
+ pfcoil.h     pfcoil.h90    \
+ phydat.h     phydat.h90    \
+ pulse.h      pulse.h90     \
+ pwrcom.h     pwrcom.h90    \
+ rfp.h        rfp.h90       \
+ start.h      start.h90     \
+ stella.h     stella.h90    \
+ struccom.h   struccom.h90  \
+ sweep.h      sweep.h90     \
+ tfcoil.h     tfcoil.h90    \
+ times.h      times.h90     \
+ torsdat.h    torsdat.h90   \
+ vaccom.h     vaccom.h90    \
+ vltcom.h     vltcom.h90    
 
 ###### Architecture specifics #######
 #

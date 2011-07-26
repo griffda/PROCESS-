@@ -1,26 +1,4 @@
-!SCCS-*-Fortran-*-CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
-!                                                                     C
-!  Source Code Control System                                         C
-!                                                                     S
-!  Information header for the PROCESS systems code modules            C
-!                                                                     C
-!  P.J.Knight 22 May 1992                                             S
-!                                                                     C
-!                                                                     C
-!SCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
-!
-!  Module         : $Id: osections.h,v 3.3 1994/05/23 11:32:15 peter Exp $
-!
-!  Module name    : $RCSfile: osections.h,v $
-!  Version no.    : $Revision: 3.3 $
-!
-!  Creation date  : $Date: 1994/05/23 11:32:15 $
-!  Creation time  : 
-!
-!  The SCCS file corresponding to this source file is
-!  %P%
-!
-!SCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
+!  $Id::                                                                $
 
 !  Switches for turning on/off output sections
 !
@@ -50,7 +28,6 @@
        sect01,sect02,sect03,sect04,sect05,sect06,sect07,sect08, &
        sect09,sect10,sect11,sect12,sect13,sect14,sect15,sect16, &
        sect17,sect18,sect19,sect20,sect21
-
   common/osect1/ &
        sect01,sect02,sect03,sect04,sect05,sect06,sect07,sect08, &
        sect09,sect10,sect11,sect12,sect13,sect14,sect15,sect16, &

@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: numer.h,v 3.3 1997/11/19 09:41:22 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: numer.h,v $
 C  Version no.    : $Revision: 3.3 $

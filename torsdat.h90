@@ -1,0 +1,7 @@
+!  $Id::                                                                $
+
+  real(kind(1.0D0)) :: dlscal,vacdshm,vcdimax,vpumpn
+  common /tors0/ dlscal,vacdshm,vcdimax,vpumpn
+
+  integer :: nvduct,nvtype
+  common /tors1/ nvduct,nvtype

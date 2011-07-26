@@ -1,0 +1,69 @@
+!  $Id::                                                                $
+
+  !  Main switches
+
+  integer :: ife,ifetyp,ifedrv
+  common /ifei/ ife,ifetyp,ifedrv
+
+  !  Limits, f-values
+
+  real(kind(1.0D0)) :: frrmax,rrmax
+  common /ifelim/ frrmax,rrmax
+
+  !  Physics
+
+  real(kind(1.0D0)) :: &
+       drveff,edrive,fburn,pdrive,tgain,gain,etadrv,reprat
+  common /ifep1/ &
+       drveff,edrive,fburn,pdrive,tgain,gain,etadrv,reprat
+
+  real(kind(1.0D0)), dimension(10) :: etave,gainve
+  common /ifep2/ etave,gainve
+
+  !  Costs
+
+  real(kind(1.0D0)) :: &
+       uctarg,uccarb,ucconc,ucflib,cdriv0,cdriv1,cdriv2,dcdrv0, &
+       dcdrv1,dcdrv2,mcdriv
+  common /ifec1/ &
+       uctarg,uccarb,ucconc,ucflib,cdriv0,cdriv1,cdriv2,dcdrv0, &
+       dcdrv1,dcdrv2,mcdriv
+
+  !  Device build and material fractions and masses
+
+  integer, parameter ::  maxmat = 7
+
+  real(kind(1.0D0)) :: &
+       bldr,bldzl,bldzu,chrad,chdzl,chdzu,chvol,fwdr,fwdzl,fwdzu, &
+       shdr,shdzl,shdzu,v1dr,v1dzl,v1dzu,v2dr,v2dzl,v2dzu,v3dr,v3dzl, &
+       v3dzu,sombdr,somtdr,flirad,mflibe,fbreed
+  common /ifeb1/ &
+       bldr,bldzl,bldzu,chrad,chdzl,chdzu,chvol,fwdr,fwdzl,fwdzu, &
+       shdr,shdzl,shdzu,v1dr,v1dzl,v1dzu,v2dr,v2dzl,v2dzu,v3dr,v3dzl, &
+       v3dzu,sombdr,somtdr,flirad,mflibe,fbreed
+
+  real(kind(1.0D0)), dimension(3,0:maxmat) :: &
+       blmatf,blmatm,blmatv,fwmatf,fwmatm,fwmatv,shmatf,shmatm, &
+       shmatv,v1matf,v1matm,v1matv,v2matf,v2matm,v2matv,v3matf, &
+       v3matm,v3matv
+
+  real(kind(1.0D0)), dimension(0:maxmat) :: chmatf,chmatm,chmatv
+
+  real(kind(1.0D0)), dimension(3) :: blvol,fwvol,shvol,v1vol,v2vol,v3vol
+
+  common /ifeb2/ &
+     blmatf,blmatm,blmatv,blvol,chmatf,chmatm,chmatv,fwmatf,fwmatm, &
+     fwmatv,fwvol,shmatf,shmatm,shmatv,shvol,v1matf,v1matm,v1matv, &
+     v1vol,v2matf,v2matm,v2matv,v2vol,v3matf,v3matm,v3matv,v3vol
+
+  real(kind(1.0D0)) :: &
+       r1,r2,r3,r4,r5,r6,r7,zl1,zl2,zl3,zl4,zl5,zl6,zl7, &
+       zu1,zu2,zu3,zu4,zu5,zu6,zu7
+  common /ifeb3/ &
+       r1,r2,r3,r4,r5,r6,r7,zl1,zl2,zl3,zl4,zl5,zl6,zl7, &
+       zu1,zu2,zu3,zu4,zu5,zu6,zu7
+
+  !  Heat transport
+
+  real(kind(1.0D0)) :: pifecr,tdspmw,tfacmw,ptargf
+  common /ifep1/ pifecr,tdspmw,tfacmw,ptargf

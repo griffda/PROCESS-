@@ -1,0 +1,6 @@
+!  $Id::                                                                $
+
+  real(kind(1.0D0)) :: &
+       acptmax,ensxpfm,pfckts,spfbusl,spsmva,srcktpm,vpfskv
+  common /pwrcom/ &
+       acptmax,ensxpfm,pfckts,spfbusl,spsmva,srcktpm,vpfskv

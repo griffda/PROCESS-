@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: minpac.f,v 3.3 2006/05/25 09:27:02 pknight Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: minpac.f,v $
 C  Version no.    : $Revision: 3.3 $

@@ -1,6 +1,6 @@
 C----------------------------------------------------------------------
 C--SCCS information
-C  Module         : $Id: costs.f,v 3.29 1999/05/19 09:32:20 peter Exp pknight $
+C  Module         : $Id$
 C  Module name    : $RCSfile: costs.f,v $
 C  Version no.    : $Revision: 3.29 $
 C  Creation date  : $Date: 1999/05/19 09:32:20 $

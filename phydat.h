@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: phydat.h,v 3.16 2006/05/25 09:29:15 pknight Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: phydat.h,v $
 C  Version no.    : $Revision: 3.16 $

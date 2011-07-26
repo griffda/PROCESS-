@@ -3,7 +3,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C--Version number 1.100
 C
 C--SCCS information
-C  Module         : $Id: pulse.h,v 1.4 1994/04/11 11:13:27 peter Exp $
+C  Module         : $Id$
 C  Module name    : $RCSfile: pulse.h,v $
 C  Version no.    : $Revision: 1.4 $
 C  Creation date  : $Date: 1994/04/11 11:13:27 $

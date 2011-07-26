@@ -1,6 +1,6 @@
 C----------------------------------------------------------------------
 C--SCCS information
-C  Module         : $Id: initial.f,v 3.48 2006/05/25 09:27:02 pknight Exp pknight $
+C  Module         : $Id$
 C  Module name    : $RCSfile: initial.f,v $
 C  Version no.    : $Revision: 3.48 $
 C  Creation date  : $Date: 2006/05/25 09:27:02 $

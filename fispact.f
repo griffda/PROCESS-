@@ -1,6 +1,6 @@
 C----------------------------------------------------------------------
 C--SCCS information
-C  Module         : $Id: fispact.f,v 1.9 1997/11/19 09:29:42 peter Exp $
+C  Module         : $Id$
 C  Module name    : $RCSfile: fispact.f,v $
 C  Version no.    : $Revision: 1.9 $
 C  Creation date  : $Date: 1997/11/19 09:29:42 $

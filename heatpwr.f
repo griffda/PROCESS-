@@ -1,6 +1,6 @@
 C----------------------------------------------------------------------
 C--SCCS information
-C  Module         : $Id: heatpwr.f,v 3.12 2004/06/16 08:51:50 pknight Exp pknight $
+C  Module         : $Id$
 C  Module name    : $RCSfile: heatpwr.f,v $
 C  Version no.    : $Revision: 3.12 $
 C  Creation date  : $Date: 2004/06/16 08:51:50 $

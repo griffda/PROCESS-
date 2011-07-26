@@ -1,0 +1,40 @@
+!  $Id::                                                                $
+
+!--Version number 1.000
+!
+!--Description
+!  INCLUDE file for plasma start-up routine
+!
+!--Author
+!  Peter Knight D3/012 Culham Laboratory, ext.3330
+!
+!--Date
+!  08 November 1993
+!
+!--Reference
+!  Work File Notes in F/MPE/MOD/CAG/PROCESS/PULSE
+!  
+!--History
+!  08/11/93 PJK 1.000 Initial version
+!
+!--Contents
+!  nign   : electron density at start-up (m**-3)
+!  tign   : electron temperature at start-up (keV)
+!  ptaue  : exponent in taue formula
+!  qtaue  : exponent in taue formula
+!  rtaue  : exponent in taue formula
+!  gtaue  : factor in taue formula
+!  ftaue  : factor in taue formula
+!  aa     : constant
+!  bb     : constant
+!  cc     : constant
+!  dd     : constant
+!  s      : constant
+
+  real(kind(1.0D0)) :: &
+       nign,tign,ptaue,qtaue,rtaue,gtaue,ftaue,aa,bb,cc,dd
+  common /strt1/ &
+       nign,tign,ptaue,qtaue,rtaue,gtaue,ftaue,aa,bb,cc,dd
+
+  integer :: s
+  common /strt2/ s

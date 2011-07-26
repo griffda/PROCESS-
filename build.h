@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: build.h,v 3.4 1997/02/05 11:43:40 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: build.h,v $
 C  Version no.    : $Revision: 3.4 $

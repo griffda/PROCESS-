@@ -1,6 +1,6 @@
 C----------------------------------------------------------------------
 C--SCCS information
-C  Module         : $Id: tfcpwr.f,v 3.2 1997/01/24 14:59:57 peter Exp $
+C  Module         : $Id$
 C  Module name    : $RCSfile: tfcpwr.f,v $
 C  Version no.    : $Revision: 3.2 $
 C  Creation date  : $Date: 1997/01/24 14:59:57 $

@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: tfcoil.h,v 3.10 1999/07/06 13:10:42 peter Exp pknight $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: tfcoil.h,v $
 C  Version no.    : $Revision: 3.10 $

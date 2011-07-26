@@ -1,6 +1,6 @@
 C----------------------------------------------------------------------
 C--SCCS information
-C  Module         : $Id: ife.f,v 1.3 1999/05/19 09:29:26 peter Exp $
+C  Module         : $Id$
 C  Module name    : $RCSfile: ife.f,v $
 C  Version no.    : $Revision: 1.3 $
 C  Creation date  : $Date: 1999/05/19 09:29:26 $

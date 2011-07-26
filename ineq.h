@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: ineq.h,v 3.8 1996/03/07 16:11:25 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: ineq.h,v $
 C  Version no.    : $Revision: 3.8 $

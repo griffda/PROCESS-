@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: cdriv.h,v 3.3 1996/03/07 16:10:59 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: cdriv.h,v $
 C  Version no.    : $Revision: 3.3 $

@@ -3,7 +3,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C--Version number 1.000
 C
 C--SCCS information
-C  Module         : $Id: fispact.h,v 1.1 1997/02/19 13:54:41 peter Exp $
+C  Module         : $Id$
 C  Module name    : $RCSfile: fispact.h,v $
 C  Version no.    : $Revision: 1.1 $
 C  Creation date  : $Date: 1997/02/19 13:54:41 $

@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: pfscl.f,v 3.1 1993/06/11 14:28:13 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: pfscl.f,v $
 C  Version no.    : $Revision: 3.1 $

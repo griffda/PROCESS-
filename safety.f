@@ -1,6 +1,6 @@
 C----------------------------------------------------------------------
 C--SCCS information
-C  Module         : $Id: safety.f,v 1.3 1999/07/06 13:07:29 peter Exp $
+C  Module         : $Id$
 C  Module name    : $RCSfile: safety.f,v $
 C  Version no.    : $Revision: 1.3 $
 C  Creation date  : $Date: 1999/07/06 13:07:29 $

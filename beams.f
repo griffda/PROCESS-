@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: beams.f,v 3.1 1993/06/11 14:27:38 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: beams.f,v $
 C  Version no.    : $Revision: 3.1 $

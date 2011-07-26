@@ -1,0 +1,9 @@
+!  $Id::                                                                $
+
+  character(len=34), dimension(ipeqns) :: lablcc
+  character(len=22), dimension(ipnfoms) :: lablmm
+  character(len=8), dimension(ipnvars) :: lablxc
+  character(len=24), dimension(ipnlaws) :: tauscl
+
+  common /label1/ lablcc,lablmm,lablxc
+  common /label2/ tauscl

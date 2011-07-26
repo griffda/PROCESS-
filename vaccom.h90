@@ -1,0 +1,7 @@
+!  $Id::                                                                $
+
+  real(kind(1.0D0)) :: pbase,prdiv,rat,tn
+  common /vac0/ pbase,prdiv,rat,tn
+
+  integer :: ntype
+  common /vac1/ ntype

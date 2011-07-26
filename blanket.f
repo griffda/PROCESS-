@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: blanket.f,v 3.7 2006/05/25 09:27:02 pknight Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: blanket.f,v $
 C  Version no.    : $Revision: 3.7 $

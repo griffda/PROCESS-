@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: pwrconv.f,v 3.6 2006/05/25 09:27:02 pknight Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: pwrconv.f,v $
 C  Version no.    : $Revision: 3.6 $

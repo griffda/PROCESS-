@@ -1,0 +1,47 @@
+!  $Id::                                                                $
+
+!--Version number 1.000
+!
+!--Description
+!  INCLUDE file for reversed-field pinch module in PROCESS.
+!
+!--Author
+!  Peter Knight D3/G12 Culham Laboratory, ext.3330
+!
+!--Date
+!  27 February 1996
+!
+!--Reference
+!  None
+!  
+!--History
+!  27/02/96 PJK 1.000 Initial version
+!
+!--Contents
+!  irfp   : Switch for rfp option (0=off)
+!  nrfppf : number of RFP PF coils
+!  rrpf   : radius of each RFP PF coil (m)
+!  zzpf   : vertical position of each RFP PF coil (m)
+!  drpf   : radial cross-section of each RFP PF coil (m)
+!  dzpf   : vertical cross-section of each RFP PF coil (m)
+!  nturns : number of turns of each RFP PF coil
+!  cptrfp : current per turn in each RFP PF coil (A/m2)
+!  resrfp : resistance of each RFP PF coil
+!  tftort : TF coil toroidal thickness (m)
+!  pfrmax : radius of largest PF coil (m)
+!  pfmmax : mass of heaviest PF coil (tonnes)
+!  rfpf   : reversal parameter F
+!  rfpth  : pinch parameter theta
+
+  integer, parameter :: nrfppf = 16
+
+  real(kind(1.0D0)), dimension(nrfppf) :: &
+       rrpf,zzpf,drpf,dzpf,nturns,cptrfp,resrfp
+  common /rfpdar/ &
+       rrpf,zzpf,drpf,dzpf,nturns,cptrfp,resrfp
+
+  real(kind(1.0D0)) :: tftort,pfrmax,pfmmax,rfpf,rfpth
+  common /rfpdbl/ tftort,pfrmax,pfmmax,rfpf,rfpth
+
+  integer :: irfp
+  common /rfpint/ irfp

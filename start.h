@@ -3,7 +3,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C--Version number 1.000
 C
 C--SCCS information
-C  Module         : $Id: start.h,v 1.3 1994/03/31 09:40:56 peter Exp $
+C  Module         : $Id$
 C  Module name    : $RCSfile: start.h,v $
 C  Version no.    : $Revision: 1.3 $
 C  Creation date  : $Date: 1994/03/31 09:40:56 $

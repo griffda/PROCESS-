@@ -1,40 +1,17 @@
-!SCCS-*-Fortran-*-CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
-!                                                                     C
-!  Source Code Control System                                         C
-!                                                                     S
-!  Information header for the PROCESS systems code modules            C
-!                                                                     C
-!  P.J.Knight 22 May 1992                                             S
-!                                                                     C
-!                                                                     C
-!SCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
-!
-!  Module         : $Id: cdriv.h,v 3.3 1996/03/07 16:10:59 peter Exp $
-!
-!  Module name    : $RCSfile: cdriv.h,v $
-!  Version no.    : $Revision: 3.3 $
-!
-!  Creation date  : $Date: 1996/03/07 16:10:59 $
-!  Creation time  : 
-!
-!  The SCCS file corresponding to this source file is
-!  %P%
-!
-!SCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
+!  $Id::                                                                $
 
   real(kind(1.0D0)) :: &
-       beamwd, bigq, bootipf, bscfmax, cboot, cnbeam, echpwr, &
-       echpwr0, echwpow, enbeam, etaech, etalh, etanbi, etaof, &
-       feffcd, frbeam, ftritbm, gamcd, pheat, pinjalw, pinje, &
-       pinji, plhybd, pnbeam, pofcd, pwplh, pwpnb, taubeam, &
+       beamwd,bigq,bootipf,bscfmax,cboot,cnbeam,echpwr,&
+       echpwr0,echwpow,enbeam,etaech,etalh,etanbi,etaof,&
+       feffcd,frbeam,ftritbm,gamcd,pheat,pinjalw,pinje,&
+       pinji,plhybd,pnbeam,pofcd,pwplh,pwpnb,taubeam,&
        tbeamin
-
   common /cdriv0/ &
-       beamwd, bigq, bootipf, bscfmax, cboot, cnbeam, echpwr, &
-       echpwr0, echwpow, enbeam, etaech, etalh, etanbi, etaof, &
-       feffcd, frbeam, ftritbm, gamcd, pheat, pinjalw, pinje, &
-       pinji, plhybd, pnbeam, pofcd, pwplh, pwpnb, taubeam, &
+       beamwd,bigq,bootipf,bscfmax,cboot,cnbeam,echpwr,&
+       echpwr0,echwpow,enbeam,etaech,etalh,etanbi,etaof,&
+       feffcd,frbeam,ftritbm,gamcd,pheat,pinjalw,pinje,&
+       pinji,plhybd,pnbeam,pofcd,pwplh,pwpnb,taubeam,&
        tbeamin
 
-  integer :: iefrf, irfcd
-  common /cdriv1/ iefrf, irfcd
+  integer :: iefrf,irfcd
+  common /cdriv1/ iefrf,irfcd

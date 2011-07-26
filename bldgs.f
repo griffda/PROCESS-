@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: bldgs.f,v 3.6 1996/03/07 16:04:28 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: bldgs.f,v $
 C  Version no.    : $Revision: 3.6 $

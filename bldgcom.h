@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: bldgcom.h,v 3.2 1994/03/31 09:40:37 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: bldgcom.h,v $
 C  Version no.    : $Revision: 3.2 $

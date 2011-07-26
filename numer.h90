@@ -1,0 +1,28 @@
+!  $Id::                                                                $
+
+  real(kind(1.0D0)) :: epsfcn,epsvmc,factor,ftol,sqsumsq
+  common /cmcom0/ epsfcn,epsvmc,factor,ftol,sqsumsq
+
+  real(kind(1.0D0)), dimension(ipnvars) :: &
+       bondl,bondu,boundl,boundu,rcm,resdl,scafc,scale,xcm,xcs
+  real(kind(1.0D0)), dimension(ipvlam) :: vlam
+
+  common /numer1/ &
+       bondl,bondu,boundl,boundu,rcm,resdl,scafc,scale,xcm,xcs,vlam
+
+  integer :: &
+       ioptimz,maxcal,minmax,ncalls,neqns,nfev1,nfev2,nin,nineqns, &
+       nout,nvar,nvrbl
+  common /numer2/ &
+       ioptimz,maxcal,minmax,ncalls,neqns,nfev1,nfev2,nin,nineqns, &
+       nout,nvar,nvrbl
+
+  integer, dimension(ipeqns) :: icc
+  integer, dimension(ipnvars) :: ixc
+  common /numer3/ icc,ixc
+
+  character(len=48) :: icase
+  common /numer4/ icase
+
+  integer :: iotty,ivms
+  common /numer5/ iotty,ivms

@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: pfcoil.h,v 3.4 1994/03/31 09:40:52 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: pfcoil.h,v $
 C  Version no.    : $Revision: 3.4 $

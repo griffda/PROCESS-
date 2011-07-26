@@ -1,6 +1,6 @@
 C-----*-Fortran-*------------------------------------------------------
 C--SCCS information
-C  Module         : $Id: ife.h,v 1.1 1997/03/21 16:14:31 peter Exp $
+C  Module         : $Id$
 C  Module name    : $RCSfile: ife.h,v $
 C  Version no.    : $Revision: 1.1 $
 C  Creation date  : $Date: 1997/03/21 16:14:31 $

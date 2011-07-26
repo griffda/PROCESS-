@@ -3,7 +3,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C--Version number 1.020
 C
 C--SCCS information
-C  Module         : $Id: cost2.h,v 1.4 1997/03/21 16:13:25 peter Exp pknight $
+C  Module         : $Id$
 C  Module name    : $RCSfile: cost2.h,v $
 C  Version no.    : $Revision: 1.4 $
 C  Creation date  : $Date: 1997/03/21 16:13:25 $

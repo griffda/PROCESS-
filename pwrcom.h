@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: pwrcom.h,v 3.2 1994/03/31 09:40:55 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: pwrcom.h,v $
 C  Version no.    : $Revision: 3.2 $

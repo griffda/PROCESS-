@@ -1,6 +1,6 @@
 C----------------------------------------------------------------------
 C--SCCS information
-C  Module         : $Id: pulse.f,v 1.13 2006/05/25 09:27:02 pknight Exp $
+C  Module         : $Id$
 C  Module name    : $RCSfile: pulse.f,v $
 C  Version no.    : $Revision: 1.13 $
 C  Creation date  : $Date: 2006/05/25 09:27:02 $

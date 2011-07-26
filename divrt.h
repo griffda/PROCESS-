@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: divrt.h,v 3.3 2002/04/25 14:43:10 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: divrt.h,v $
 C  Version no.    : $Revision: 3.3 $

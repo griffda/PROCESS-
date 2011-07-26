@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: fwbs.f,v 3.9 1997/02/19 14:54:34 peter Exp pknight $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: fwbs.f,v $
 C  Version no.    : $Revision: 3.9 $

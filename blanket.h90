@@ -1,0 +1,11 @@
+!  $Id::                                                                $
+
+  real(kind(1.0D0)) :: &
+       xtfi,xtfo,xtb,xpf,xdo,xdi,ph,pr,pin,pc,etahp,etainp, &
+       etalp,etafp,etacp,fkblkt,sgeff
+  common /blkre/ &
+       xtfi,xtfo,xtb,xpf,xdo,xdi,ph,pr,pin,pc,etahp,etainp, &
+       etalp,etafp,etacp,fkblkt,sgeff
+
+  integer :: nipfwh,nlpfwh,lblnkt,estr,astr,bstr,costr,smstr
+  common /blki/ nipfwh,nlpfwh,lblnkt,estr,astr,bstr,costr,smstr

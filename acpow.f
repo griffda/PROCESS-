@@ -1,6 +1,6 @@
 C----------------------------------------------------------------------
 C--SCCS information
-C  Module         : $Id: acpow.f,v 3.3 1997/01/24 15:05:28 peter Exp $
+C  Module         : $Id$
 C  Module name    : $RCSfile: acpow.f,v $
 C  Version no.    : $Revision: 3.3 $
 C  Creation date  : $Date: 1997/01/24 15:05:28 $

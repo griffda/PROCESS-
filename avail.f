@@ -4,7 +4,7 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C--Version number 1.000
 C
 C--SCCS information
-C  Module         : $Id: avail.f,v 1.1 1999/05/19 09:24:42 peter Exp pknight $
+C  Module         : $Id$
 C  Module name    : $RCSfile: avail.f,v $
 C  Version no.    : $Revision: 1.1 $
 C  Creation date  : $Date: 1999/05/19 09:24:42 $

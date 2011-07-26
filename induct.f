@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: induct.f,v 3.3 1996/02/01 15:06:55 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: induct.f,v $
 C  Version no.    : $Revision: 3.3 $

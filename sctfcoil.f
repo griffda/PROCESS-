@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: sctfcoil.f,v 3.8 2006/05/25 09:27:02 pknight Exp pknight $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: sctfcoil.f,v $
 C  Version no.    : $Revision: 3.8 $

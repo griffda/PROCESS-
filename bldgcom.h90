@@ -1,0 +1,8 @@
+!  $Id::                                                                $
+
+  real(kind(1.0D0)) :: &
+       admv,clh1,clh2,conv,fndt,hccl,hcwt,pibv,rbrt,rbwt,row, &
+       rxcl,shmf,shov,stcl,trcl,wgt,wgt2
+  common /bldg1/ &
+       admv,clh1,clh2,conv,fndt,hccl,hcwt,pibv,rbrt,rbwt,row, &
+       rxcl,shmf,shov,stcl,trcl,wgt,wgt2

@@ -9,7 +9,7 @@ C                                                                     C
 C                                                                     C
 CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 C
-C  Module         : $Id: geomty.f,v 3.7 2001/07/16 14:59:07 peter Exp $
+C  Module         : $Id$
 C
 C  Module name    : $RCSfile: geomty.f,v $
 C  Version no.    : $Revision: 3.7 $

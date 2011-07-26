@@ -1,0 +1,9 @@
+!  $Id::                                                                $
+
+  real(kind(1.0D0)) :: &
+       vsbn,vsefbn,vsefsu,vseft,vsoh,vsohbn,vsohsu,vssu,vstot
+  common /vltcm0/ &
+       vsbn,vsefbn,vsefsu,vseft,vsoh,vsohbn,vsohsu,vssu,vstot
+
+  real(kind(1.0D0)), dimension(ngc2,ngc2) :: sxlg
+  common /vltcm1/ sxlg
