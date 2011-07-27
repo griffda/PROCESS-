@@ -42,7 +42,7 @@
 source = \
  aachange.f   \
  aamain.f     \
- acpow.f      \
+ acpow.f90    \
  avail.f      \
  beams.f      \
  bldgs.f      \
@@ -227,7 +227,7 @@ default: process.exe
 aachange.o: 
 aamain.o: cdriv.h cost.h divrt.h htpwr.h ineq.h labels.h numer.h param.h pfcoil.h \
   phydat.h pwrcom.h sweep.h tfcoil.h
-acpow.o: bldgvol.h estocom.h htpwr.h osections.h pwrcom.h
+acpow.o: bldgvol.h90 estocom.h90 htpwr.h90 osections.h90 pwrcom.h90
 avail.o: cost.h divrt.h fwblsh.h ife.h param.h phydat.h pulse.h rfp.h
 beams.o: cdriv.h osections.h
 blanket.o: blanket.h build.h fwblsh.h htpwr.h param.h phydat.h
