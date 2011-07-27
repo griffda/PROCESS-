@@ -62,7 +62,7 @@ source = \
  induct.f     \
  initial.f    \
  input.f      \
- lwhymod.f    \
+ lwhymod.f90  \
  math.f       \
  math2.f      \
  minpac.f     \
@@ -238,7 +238,7 @@ costs.o: blanket.h bldgvol.h build.h cdriv.h cost.h cost2.h divrt.h fwblsh.h \
   struccom.h tfcoil.h times.h torsdat.h
 cudriv.o: cdriv.h osections.h param.h phydat.h
 divtmod.o: build.h divrt.h osections.h param.h phydat.h
-ech.o: cdriv.h osections.h
+ech.o: cdriv.h90 osections.h90
 eqns.o: build.h cdriv.h divrt.h htpwr.h ife.h ineq.h numer.h param.h pfcoil.h \
   phydat.h pulse.h pwrcom.h rfp.h stella.h tfcoil.h times.h vltcom.h
 eqsolv.o: numer.h param.h
@@ -258,7 +258,7 @@ initial.o: blanket.h bldgcom.h bldgvol.h build.h cdriv.h cost.h divrt.h estocom.
 input.o: blanket.h bldgcom.h bldgvol.h build.h cdriv.h cost.h divrt.h estocom.h \
   fwblsh.h htpwr.h ife.h ineq.h labels.h numer.h osections.h param.h pfcoil.h \
   phydat.h pulse.h rfp.h stella.h sweep.h tfcoil.h times.h vaccom.h
-lwhymod.o: cdriv.h osections.h
+lwhymod.o: cdriv.h90 osections.h90
 math2.o: 
 math.o: 
 minpac.o: 
@@ -273,7 +273,8 @@ pulse.o: build.h cdriv.h cost.h fwblsh.h ineq.h numer.h param.h pfcoil.h phydat.
   pulse.h pwrcom.h start.h times.h vltcom.h
 pwrconv.o: build.h cost.h htpwr.h osections.h param.h pfcoil.h phydat.h pwrcom.h \
   tfcoil.h times.h vltcom.h
-radialb.o: build.h cdriv.h divrt.h osections.h param.h phydat.h rfp.h tfcoil.h
+radialb.o: build.h90 cdriv.h90 divrt.h90 osections.h90 param.h90 phydat.h90 rfp.h90 \
+  tfcoil.h90
 rfp.o: build.h cdriv.h divrt.h fwblsh.h htpwr.h numer.h osections.h param.h pfcoil.h \
   phydat.h pulse.h pwrcom.h rfp.h tfcoil.h times.h vltcom.h
 safety.o: blanket.h build.h fispact.h fwblsh.h param.h pfcoil.h phydat.h tfcoil.h

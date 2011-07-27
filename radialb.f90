@@ -88,7 +88,7 @@ subroutine radialb(iprint,nout)
   fwarea = 0.875D0 * &
        ( 4.0D0*pi**2*sf*rmajor*(rminor+0.5D0*(scrapli+scraplo)) )
 
-  if ((iprint.eq.0).or.(sect06.eq.0)) return
+  if ((iprint == 0).or.(sect06 == 0)) return
 
   !  Print out device build
 
