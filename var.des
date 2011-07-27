@@ -657,7 +657,7 @@ ksic       dble /0.80/   # power fraction for in outer DN so plasma
 lamp       dble          # power flow width (m)
 omegan     dble /1.00/   # pressure ratio (nT)_p / (nT)_s
 omlarg     dble          # power spillage to private flux factor
-plsepo     dble /1.50/   # poloidal length, x-pnt to outer strk. pnt (m)
+plsepo     dble /1.50/   # poloidal length, x-point to outer strike point (m)
 ppdivr     dble          # peak heat load at plate (with radiation) (MW/m**2)
 prn1       dble /0.285/  # n-scrape-off / n-average plasma
 ptpdiv     dble          # peak temperature at the plate (eV)

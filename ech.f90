@@ -8,8 +8,8 @@ subroutine ech(nout,iprint)
   !+ad_auth  J Galambos, ORNL
   !+ad_auth  P C Shipe, ORNL
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : 
-  !+ad_args  iprint : input integer : 
+  !+ad_args  nout : input integer : output file unit
+  !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine was added to TETRA on 8/9/88 by J Galambos
   !+ad_desc  to replace Wagner's model and provide a simplified dummy
   !+ad_desc  model of the wall plug power necessary for ech.  It was

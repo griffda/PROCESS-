@@ -74,7 +74,7 @@ source = \
  physics.f    \
  pulse.f      \
  pwrconv.f    \
- radialb.f    \
+ radialb.f90  \
  rfp.f        \
  safety.f     \
  stella.f     \
