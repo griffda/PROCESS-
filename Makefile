@@ -2,6 +2,8 @@
 #
 #  Makefile for the PROCESS systems code
 #
+#  $Id::                                                                $
+#
 #  P J Knight
 #
 #  Culham Centre for Fusion Energy
@@ -44,7 +46,7 @@ source = \
  aamain.f     \
  acpow.f90    \
  avail.f90    \
- beams.f      \
+ beams.f90    \
  bldgs.f      \
  blanket.f    \
  caller.f     \
@@ -229,7 +231,7 @@ aamain.o: cdriv.h cost.h divrt.h htpwr.h ineq.h labels.h numer.h param.h pfcoil.
   phydat.h pwrcom.h sweep.h tfcoil.h
 acpow.o: bldgvol.h90 estocom.h90 htpwr.h90 osections.h90 pwrcom.h90
 avail.o: cost.h90 divrt.h90 fwblsh.h90 ife.h90 param.h90 phydat.h90 pulse.h90 rfp.h90
-beams.o: cdriv.h osections.h
+beams.o: cdriv.h90 osections.h90
 blanket.o: blanket.h build.h fwblsh.h htpwr.h param.h phydat.h
 bldgs.o: bldgcom.h osections.h
 caller.o: ife.h numer.h param.h phydat.h rfp.h stella.h
