@@ -49,7 +49,7 @@ source = \
  beams.f90    \
  bldgs.f      \
  blanket.f    \
- caller.f     \
+ caller.f90   \
  costs.f      \
  cudriv.f     \
  divtmod.f    \
@@ -234,7 +234,7 @@ avail.o: cost.h90 divrt.h90 fwblsh.h90 ife.h90 param.h90 phydat.h90 pulse.h90 rf
 beams.o: cdriv.h90 osections.h90
 blanket.o: blanket.h build.h fwblsh.h htpwr.h param.h phydat.h
 bldgs.o: bldgcom.h osections.h
-caller.o: ife.h numer.h param.h phydat.h rfp.h stella.h
+caller.o: ife.h90 numer.h90 param.h90 phydat.h90 rfp.h90 stella.h90
 costs.o: blanket.h bldgvol.h build.h cdriv.h cost.h cost2.h divrt.h fwblsh.h \
   htpwr.h ife.h osections.h param.h pfcoil.h phydat.h pulse.h pwrcom.h rfp.h \
   struccom.h tfcoil.h times.h torsdat.h
