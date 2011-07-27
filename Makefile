@@ -55,7 +55,7 @@ source = \
  divtmod.f    \
  ech.f90      \
  eqns.f       \
- eqsolv.f     \
+ eqsolv.f90   \
  fispact.f    \
  fwbs.f       \
  geomty.f     \
@@ -243,7 +243,7 @@ divtmod.o: build.h divrt.h osections.h param.h phydat.h
 ech.o: cdriv.h90 osections.h90
 eqns.o: build.h cdriv.h divrt.h htpwr.h ife.h ineq.h numer.h param.h pfcoil.h \
   phydat.h pulse.h pwrcom.h rfp.h stella.h tfcoil.h times.h vltcom.h
-eqsolv.o: numer.h param.h
+eqsolv.o: numer.h90 param.h90
 fispact.o: blanket.h build.h fispact.h fwblsh.h numer.h param.h phydat.h pulse.h
 fwbs.o: blanket.h build.h cost.h divrt.h fwblsh.h htpwr.h osections.h param.h \
   phydat.h tfcoil.h
