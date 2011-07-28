@@ -65,7 +65,7 @@ source = \
  initial.f    \
  input.f      \
  lwhymod.f90  \
- math.f       \
+ math.f90     \
  math2.f      \
  minpac.f     \
  optimiz.f    \
