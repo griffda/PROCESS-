@@ -80,7 +80,7 @@ source = \
  rfp.f        \
  safety.f     \
  stella.f     \
- struct.f     \
+ struct.f90   \
  svd.f        \
  supercond.f  \
  tfcoil.f     \
@@ -285,8 +285,8 @@ stella.o: blanket.h bldgcom.h bldgvol.h build.h cdriv.h cost.h divrt.h estocom.h
   fwblsh.h htpwr.h ineq.h labels.h numer.h osections.h param.h pfcoil.h phydat.h \
   pulse.h pwrcom.h stella.h struccom.h sweep.h tfcoil.h times.h torsdat.h vaccom.h \
   vltcom.h
-struct.o: build.h divrt.h fwblsh.h osections.h param.h pfcoil.h phydat.h struccom.h \
-  tfcoil.h
+struct.o: build.h90 divrt.h90 fwblsh.h90 osections.h90 param.h90 pfcoil.h90 \
+  phydat.h90 struccom.h90 tfcoil.h90
 supercond.o: osections.h tfcoil.h
 svd.o: 
 tfcoil.o: build.h fwblsh.h osections.h param.h phydat.h tfcoil.h
