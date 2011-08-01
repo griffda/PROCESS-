@@ -75,7 +75,7 @@ source = \
  pfscl.f      \
  physics.f    \
  pulse.f      \
- pwrconv.f    \
+ pwrconv.f90  \
  radialb.f90  \
  rfp.f        \
  safety.f     \
@@ -274,8 +274,8 @@ physics.o: build.h cdriv.h divrt.h labels.h numer.h osections.h param.h phydat.h
   pulse.h start.h times.h
 pulse.o: build.h cdriv.h cost.h fwblsh.h ineq.h numer.h param.h pfcoil.h phydat.h \
   pulse.h pwrcom.h start.h times.h vltcom.h
-pwrconv.o: build.h cost.h htpwr.h osections.h param.h pfcoil.h phydat.h pwrcom.h \
-  tfcoil.h times.h vltcom.h
+pwrconv.o: build.h90 cost.h90 htpwr.h90 osections.h90 param.h90 pfcoil.h90 phydat.h90 \
+  pwrcom.h90 tfcoil.h90 times.h90 vltcom.h90
 radialb.o: build.h90 cdriv.h90 divrt.h90 osections.h90 param.h90 phydat.h90 rfp.h90 \
   tfcoil.h90
 rfp.o: build.h cdriv.h divrt.h fwblsh.h htpwr.h numer.h osections.h param.h pfcoil.h \
