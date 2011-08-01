@@ -61,7 +61,7 @@ source = \
  geomty.f     \
  heatpwr.f    \
  ife.f        \
- induct.f     \
+ induct.f90   \
  initial.f    \
  input.f      \
  lwhymod.f90  \
@@ -252,7 +252,8 @@ heatpwr.o: blanket.h cdriv.h cost.h fwblsh.h htpwr.h osections.h param.h pfcoil.
   phydat.h pwrcom.h struccom.h tfcoil.h times.h
 ife.o: bldgcom.h bldgvol.h build.h cost.h fwblsh.h htpwr.h ife.h numer.h osections.h \
   param.h phydat.h pulse.h struccom.h torsdat.h vaccom.h
-induct.o: build.h osections.h param.h pfcoil.h phydat.h tfcoil.h times.h vltcom.h
+induct.o: build.h90 osections.h90 param.h90 pfcoil.h90 phydat.h90 tfcoil.h90 times.h90 \
+  vltcom.h90
 initial.o: blanket.h bldgcom.h bldgvol.h build.h cdriv.h cost.h divrt.h estocom.h \
   fwblsh.h htpwr.h ife.h ineq.h labels.h numer.h osections.h param.h pfcoil.h phydat.h \
   pulse.h pwrcom.h rfp.h stella.h struccom.h sweep.h tfcoil.h times.h torsdat.h \
