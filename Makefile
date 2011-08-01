@@ -47,7 +47,7 @@ source = \
  acpow.f90    \
  avail.f90    \
  beams.f90    \
- bldgs.f      \
+ bldgs.f90    \
  blanket.f    \
  caller.f90   \
  costs.f      \
@@ -233,7 +233,7 @@ acpow.o: bldgvol.h90 estocom.h90 htpwr.h90 osections.h90 pwrcom.h90
 avail.o: cost.h90 divrt.h90 fwblsh.h90 ife.h90 param.h90 phydat.h90 pulse.h90 rfp.h90
 beams.o: cdriv.h90 osections.h90
 blanket.o: blanket.h build.h fwblsh.h htpwr.h param.h phydat.h
-bldgs.o: bldgcom.h osections.h
+bldgs.o: bldgcom.h90 osections.h90
 caller.o: ife.h90 numer.h90 param.h90 phydat.h90 rfp.h90 stella.h90
 costs.o: blanket.h bldgvol.h build.h cdriv.h cost.h cost2.h divrt.h fwblsh.h \
   htpwr.h ife.h osections.h param.h pfcoil.h phydat.h pulse.h pwrcom.h rfp.h \
