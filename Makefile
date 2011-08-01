@@ -84,7 +84,7 @@ source = \
  svd.f        \
  supercond.f  \
  tfcoil.f     \
- tfcpwr.f     \
+ tfcpwr.f90   \
  sctfcoil.f   \
  vacuum.f     \
  xc.f
@@ -291,7 +291,7 @@ struct.o: build.h90 divrt.h90 fwblsh.h90 osections.h90 param.h90 pfcoil.h90 \
 supercond.o: osections.h tfcoil.h
 svd.o: 
 tfcoil.o: build.h fwblsh.h osections.h param.h phydat.h tfcoil.h
-tfcpwr.o: bldgvol.h htpwr.h osections.h param.h phydat.h tfcoil.h
+tfcpwr.o: bldgvol.h90 htpwr.h90 osections.h90 param.h90 phydat.h90 tfcoil.h90
 vacuum.o: build.h osections.h param.h phydat.h tfcoil.h times.h torsdat.h vaccom.h
 xc.o: build.h cdriv.h divrt.h fwblsh.h htpwr.h ife.h ineq.h labels.h numer.h param.h \
   pfcoil.h phydat.h pulse.h rfp.h tfcoil.h times.h
