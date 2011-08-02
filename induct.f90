@@ -15,6 +15,7 @@ subroutine vsec
   !+ad_call  build.h90
   !+ad_call  pfcoil.h90
   !+ad_call  vltcom.h90
+  !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -118,6 +119,7 @@ subroutine outvolt(nout)
   !+ad_call  oheadr
   !+ad_call  oshead
   !+ad_call  osubhd
+  !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -220,6 +222,7 @@ subroutine induct(iprint,nout)
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
   !+ad_call  oheadr
+  !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_stat  Okay
   !+ad_docs  None
   !

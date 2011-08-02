@@ -20,6 +20,7 @@ subroutine tfpwcall(nout,iprint)
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  tfcpwr
+  !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -91,6 +92,7 @@ subroutine tfcpwr(nout,iprint,ntfc,ettfmj,itfka, &
   !+ad_call  osections.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
+  !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_stat  Okay
   !+ad_docs  None
   !

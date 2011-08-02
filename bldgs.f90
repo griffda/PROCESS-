@@ -25,6 +25,7 @@ subroutine bldgcall(nout,iprint)
   !+ad_call  tfcoil.h90
   !+ad_call  times.h90
   !+ad_call  bldgs
+  !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -144,6 +145,7 @@ subroutine bldgs(idhe3,pfr,pfm,tfro,tfri,tfh,tfm,tfno,shro,shri, &
   !+ad_call  osections.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
+  !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_stat  Okay
   !+ad_docs  None
   !

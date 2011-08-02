@@ -23,6 +23,7 @@ subroutine tfpwr(nout,iprint)
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_call  tfpwcall
+  !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -154,6 +155,7 @@ subroutine pfpwr(nout,iprint)
   !+ad_call  vltcom.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
+  !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_stat  Okay
   !+ad_docs  None
   !
