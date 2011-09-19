@@ -72,7 +72,7 @@ source = \
  outplas.f    \
  output.f     \
  pfcoil.f     \
- pfscl.f      \
+ pfscl.f90    \
  physics.f    \
  pulse.f      \
  pwrconv.f90  \
