@@ -81,7 +81,7 @@ source = \
  safety.f     \
  stella.f     \
  struct.f90   \
- svd.f        \
+ svd.f90      \
  supercond.f  \
  tfcoil.f     \
  tfcpwr.f90   \
