@@ -1,4 +1,4 @@
-!  $Id:: bldgs.f90 16 2011-08-02 08:07:34Z pknight                      $
+!  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine efc(ngrpmx,nclsmx,nptsmx,nfixmx,lrow1,lcol1,npts, &
