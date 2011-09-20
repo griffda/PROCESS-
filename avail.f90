@@ -25,6 +25,7 @@ subroutine avail(nout,iprint)
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  27/07/11 PJK Initial F90 version
+  !+ad_hist  20/09/11 PJK Removed dble calls
   !+ad_stat  Okay
   !+ad_docs  F/PL/PJK/PROCESS/CODE/043
   !
@@ -100,8 +101,8 @@ subroutine avail(nout,iprint)
 
      !  Planned unavailability
 
-     uplanned = (dble(n)*td + tcomrepl) / &
-          ( dble(n+1)*ld + (dble(n)*td + tcomrepl) )
+     uplanned = (n*td + tcomrepl) / &
+          ( (n+1)*ld + (n*td + tcomrepl) )
 
      !  Unplanned unavailability
      !  Rather than simply summing the individual terms, the

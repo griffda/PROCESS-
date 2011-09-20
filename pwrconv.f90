@@ -156,6 +156,7 @@ subroutine pfpwr(nout,iprint)
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  01/08/11 PJK Initial F90 version
+  !+ad_hist  20/09/11 PJK Removed dble calls
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -229,8 +230,7 @@ subroutine pfpwr(nout,iprint)
         !  ric : maximum current in coil (A)
 
         pfcr(ig) = pfclres * 2.0D0 * pi * rpf(ic) * abs(rjconpf(ic) / &
-             ( (1.0D0-vf(ic))*1.0D6*ric(ic)) ) * turns(ic)**2 * &
-             dble(ncls(ig))
+             ( (1.0D0-vf(ic))*1.0D6*ric(ic)) ) * turns(ic)**2 * ncls(ig)
 
         cktr(ig) = pfcr(ig) + pfbusr(ig)  !  total resistance of circuit (ohms)
         cptburn = cptdin(ic) * curpfb(ic)/ric(ic)
@@ -315,7 +315,7 @@ subroutine pfpwr(nout,iprint)
      peakmva =  max( (powpfr + powpfi), powpfr2)
 
      vpfskv = 20.0D0
-     pfckts = dble(ncirt-2) + 6.0D0
+     pfckts = (ncirt-2) + 6.0D0
      spfbusl = pfbusl*pfckts
      acptmax = 0.0D0
      spsmva = 0.0D0

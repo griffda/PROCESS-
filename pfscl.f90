@@ -174,6 +174,7 @@ subroutine mtrx(nptsmx,ngrpmx,nclsmx,lrow1,lcol1,npts,rpts,zpts, &
   !+ad_prob  None
   !+ad_call  bfield
   !+ad_hist  19/09/11 PJK Initial F90 version
+  !+ad_hist  20/09/11 PJK Removed dble call
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -228,7 +229,7 @@ subroutine mtrx(nptsmx,ngrpmx,nclsmx,lrow1,lcol1,npts,rpts,zpts, &
         gmat(nrws + j,i) = 0.0D0
      end do
      nc = ncls(j)
-     gmat(nrws + j,j) = DBLE(nc) * alfa
+     gmat(nrws + j,j) = nc * alfa
   end do
 
   nrws = 2*npts + ngrp

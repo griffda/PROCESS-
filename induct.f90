@@ -223,6 +223,7 @@ subroutine induct(iprint,nout)
   !+ad_call  ocmmnt
   !+ad_call  oheadr
   !+ad_hist  01/08/11 PJK Initial F90 version
+  !+ad_hist  20/09/11 PJK Removed dble calls
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -268,7 +269,7 @@ subroutine induct(iprint,nout)
   !  Break OH coil into noh segments
 
   if (iohcl /= 0) then
-     delzoh = zh(nohc) / dble(noh/2)
+     delzoh = zh(nohc) / (noh/2)
 
      do i = 1,noh
         if (itart == 1) then
@@ -276,7 +277,7 @@ subroutine induct(iprint,nout)
         else
            roh(i) = bore + 0.5D0*ohcth
         end if
-        zoh(i) = zh(nohc) - delzoh*(0.5D0 + dble(i-1) )
+        zoh(i) = zh(nohc) - delzoh*(0.5D0 + (i-1) )
      end do
   end if
 
@@ -303,7 +304,7 @@ subroutine induct(iprint,nout)
         end do
      end do
 
-     sxlg(ncirt,nohc) = xohpl / dble(nplas*noh) * turns(nohc)
+     sxlg(ncirt,nohc) = xohpl / (nplas*noh) * turns(nohc)
      sxlg(nohc,ncirt) = sxlg(ncirt,nohc)
   end if
 
@@ -326,7 +327,7 @@ subroutine induct(iprint,nout)
      end do
      do j = 1,ncls(i)
         ncoilj = ncoils + 1 - j
-        sxlg(ncoilj,ncirt) = xpfpl / dble(nplas) * turns(ncoilj)
+        sxlg(ncoilj,ncirt) = xpfpl / nplas * turns(ncoilj)
         sxlg(ncirt,ncoilj) = sxlg(ncoilj,ncirt)
      end do
   end do
@@ -358,8 +359,7 @@ subroutine induct(iprint,nout)
         end do
         do j = 1,ncls(i)
            ncoilj = ncoils + 1 - j
-           sxlg(ncoilj,nohc) = xohpf * turns(ncoilj) * turns(nohc) &
-                / dble(noh)
+           sxlg(ncoilj,nohc) = xohpf * turns(ncoilj) * turns(nohc)/noh
            sxlg(nohc,ncoilj) = sxlg(ncoilj,nohc)
         end do
      end do
