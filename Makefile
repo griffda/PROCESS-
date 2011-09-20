@@ -69,7 +69,7 @@ source = \
  math2.f      \
  minpac.f     \
  optimiz.f    \
- outplas.f    \
+ outplas.f90  \
  output.f     \
  pfcoil.f     \
  pfscl.f90    \
@@ -266,7 +266,8 @@ math2.o:
 math.o: 
 minpac.o: 
 optimiz.o: cdriv.h cost.h divrt.h htpwr.h numer.h param.h phydat.h pwrcom.h tfcoil.h
-outplas.o: cdriv.h ineq.h labels.h osections.h param.h phydat.h rfp.h times.h
+outplas.o: cdriv.h90 ineq.h90 labels.h90 osections.h90 param.h90 phydat.h90 \
+  rfp.h90 times.h90
 output.o: ife.h osections.h param.h phydat.h rfp.h stella.h times.h
 pfcoil.o: build.h osections.h param.h pfcoil.h phydat.h tfcoil.h times.h
 pfscl.o: 
