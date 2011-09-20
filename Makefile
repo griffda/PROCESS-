@@ -54,7 +54,7 @@ source = \
  cudriv.f     \
  divtmod.f    \
  ech.f90      \
- eqns.f       \
+ eqns.f90     \
  eqsolv.f90   \
  fispact.f    \
  fwbs.f       \
@@ -241,8 +241,9 @@ costs.o: blanket.h bldgvol.h build.h cdriv.h cost.h cost2.h divrt.h fwblsh.h \
 cudriv.o: cdriv.h osections.h param.h phydat.h
 divtmod.o: build.h divrt.h osections.h param.h phydat.h
 ech.o: cdriv.h90 osections.h90
-eqns.o: build.h cdriv.h divrt.h htpwr.h ife.h ineq.h numer.h param.h pfcoil.h \
-  phydat.h pulse.h pwrcom.h rfp.h stella.h tfcoil.h times.h vltcom.h
+eqns.o: build.h90 cdriv.h90 divrt.h90 htpwr.h90 ife.h90 ineq.h90 numer.h90 param.h90 \
+  pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 rfp.h90 stella.h90 tfcoil.h90 times.h90 \
+  vltcom.h90
 eqsolv.o: numer.h90 param.h90
 fispact.o: blanket.h build.h fispact.h fwblsh.h numer.h param.h phydat.h pulse.h
 fwbs.o: blanket.h build.h cost.h divrt.h fwblsh.h htpwr.h osections.h param.h \
