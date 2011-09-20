@@ -734,7 +734,7 @@ end subroutine obuild
 
 subroutine outtim(nout)
 
-  !+ad_name  outtime
+  !+ad_name  outtim
   !+ad_summ  Routine to print out the times of the various stages
   !+ad_summ  during a single plant cycle
   !+ad_type  Subroutine
