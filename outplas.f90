@@ -8,7 +8,7 @@ subroutine outplas(nout)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : Output file channel
+  !+ad_args  nout : input integer : Fortran output unit identifier
   !+ad_desc  This routine writes the plasma physics information
   !+ad_desc  to a file, in a tidy format.
   !+ad_prob  None
@@ -33,7 +33,7 @@ subroutine outplas(nout)
   !+ad_hist  17/07/98 PJK Added power threshold scalings
   !+ad_hist  19/01/99 PJK Added powerht and minor word changes
   !+ad_hist  16/07/01 PJK Added kappaa
-  !+ad_hist  18/08/11 PJK Initial F90 version
+  !+ad_hist  20/09/11 PJK Initial F90 version
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
