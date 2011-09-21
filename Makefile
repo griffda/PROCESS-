@@ -82,7 +82,7 @@ source = \
  stella.f     \
  struct.f90   \
  svd.f90      \
- supercond.f  \
+ supercond.f90 \
  tfcoil.f     \
  tfcpwr.f90   \
  sctfcoil.f   \
@@ -290,7 +290,7 @@ stella.o: blanket.h bldgcom.h bldgvol.h build.h cdriv.h cost.h divrt.h estocom.h
   vltcom.h
 struct.o: build.h90 divrt.h90 fwblsh.h90 osections.h90 param.h90 pfcoil.h90 \
   phydat.h90 struccom.h90 tfcoil.h90
-supercond.o: osections.h tfcoil.h
+supercond.o: osections.h90 tfcoil.h90
 svd.o: 
 tfcoil.o: build.h fwblsh.h osections.h param.h phydat.h tfcoil.h
 tfcpwr.o: bldgvol.h90 htpwr.h90 osections.h90 param.h90 phydat.h90 tfcoil.h90
