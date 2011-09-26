@@ -207,7 +207,7 @@ subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,isumat,jcrit_model, &
         jc = itersc(the,bmax,strain)
 
      else
-        tc0 = tc0m * fstrain**0.33333D0
+        tc0 = tc0m * fstrain**(1.0D0/3.0D0)
         tc1 = tc0m * (1.0D0 - bmax/bc20m)
         bc20 = bc20m * fstrain
         tbar = the/tc0
@@ -330,6 +330,10 @@ function itersc(the,bmax,strain)
   !+ad_call  None
   !+ad_hist  21/07/11 RK  First draft of routine
   !+ad_hist  21/09/11 PJK Initial F90 version
+  !+ad_hist  26/09/11 PJK Changed two exponents to double precision (which
+  !+ad_hisc               may lead to surprisingly large changes in the result
+  !+ad_hisc               if the Jcrit limit is being reached).
+  !+ad_hisc               Added range-checking for tzero, bred
   !+ad_stat  Okay
   !+ad_docs  ITER Nb3Sn critical surface parameterization (2MMF7J) (2008),
   !+ad_docc    https://user.iter.org/?uid=2MMF7J&action=get_document
@@ -372,9 +376,7 @@ function itersc(the,bmax,strain)
   !  cros
 
   bcro = (bctw*strfun)
-!+PJK Increasing the precision leads to different answers!
-!+PJK  tcro = tco*(strfun**0.333333D0)
-  tcro = tco*(strfun**0.333333)
+  tcro = tco * strfun**(1.0D0/3.0D0)
 
   !  tred and bred
 
@@ -385,12 +387,15 @@ function itersc(the,bmax,strain)
   tcrit = tcro * (1.0D0 - bzero)**(1.0D0/1.52D0)
   tred = the/tcrit
 
+  !  Enforce upper limits on tzero and bred
+
+  tzero = min(tzero, 0.9999D0)
+  bred = min(bred, 0.9999D0)
+
   !  Critical current density (A/m2)
 
   jc1 = (csc/bmax)*strfun
-!+PJK Increasing the precision leads to different answers!
-!+PJK  jc2 = (1.0D0-tzero**1.52D0)*(1.0D0-tzero**2)
-  jc2 = (1.0D0-tzero**1.52)*(1.0D0-tzero**2)
+  jc2 = (1.0D0-tzero**1.52D0)*(1.0D0-tzero**2)
   jc3 = bred**cp * (1.0D0-bred)**cq
 
   itersc = jc1 * jc2 * jc3

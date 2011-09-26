@@ -767,8 +767,8 @@ C  Check different times for maximum current
       if (ABS(curpfs(i)-ric(i)).LT.1.0D-12) it = 2
       if (ABS(curpff(i)-ric(i)).LT.1.0D-12) it = 4
       if (ABS(curpfb(i)-ric(i)).LT.1.0D-12) it = 5
-
-      if ((it.ne.2).AND.(it.ne.3).AND.(it.ne.5)) then
+C+PJK 26/09/11 corrected it.ne.3 to it.ne.4 in following line...
+      if ((it.ne.2).AND.(it.ne.4).AND.(it.ne.5)) then
          WRITE(*,*) 'Error in routine PEAKB :'
          WRITE(*,*) 'Illegal value of it, = ',it
          WRITE(*,*) 'Possible rounding error - change program logic...'
