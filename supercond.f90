@@ -128,6 +128,7 @@ subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,isumat,jcrit_model, &
   !+ad_hist  26/07/11 PJK Corrected denominator in JC calculation;
   !+ad_hisc               Added option to use new Jcrit model for binary Nb3Sn
   !+ad_hist  21/09/11 PJK Initial F90 version; converted to subroutine from function
+  !+ad_hist  26/09/11 PJK Converted itersc to a subroutine
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -150,10 +151,6 @@ subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,isumat,jcrit_model, &
   real(kind(1.0D0)) :: astrain, bbar, bc2, bc20, bc20m, cstrain, c0, &
        fac1, fac2, fcond, fstrain, icrit, iooic, jc, jwdgop, tbar, tc0, &
        tc0m, tc1
-
-  !  External functions
-
-  real(kind(1.0D0)), external :: itersc
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -204,7 +201,7 @@ subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,isumat,jcrit_model, &
 
         !  Use ITER Nb3Sn critical surface implementation model
 
-        jc = itersc(the,bmax,strain)
+        call itersc(the,bmax,strain,jc,tc1)
 
      else
         tc0 = tc0m * fstrain**(1.0D0/3.0D0)
@@ -312,7 +309,7 @@ end subroutine supercon
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-function itersc(the,bmax,strain)
+subroutine itersc(the,bmax,strain,jcrit,tcrit)
 
   !+ad_name  itersc
   !+ad_summ  Implementation of ITER Nb3Sn critical surface implementation
@@ -323,10 +320,12 @@ function itersc(the,bmax,strain)
   !+ad_args  the : input real : Coolant/SC temperature (K)
   !+ad_args  bmax : input real : Magnetic field at conductor (T)
   !+ad_args  strain : input real : Strain in superconductor
-  !+ad_desc  This routine calculates the critical current density (A/m2) in the
-  !+ad_desc  superconducting TF coils using the ITER Nb3Sn critical surface model.
-  !+ad_prob  On two lines, increasing the precision of the exponent leads to
-  !+ad_prob  somewhat different final answers. With RK/DW to discuss...
+  !+ad_args  jcrit : output real : Critical current density (A/m2)
+  !+ad_args  tcrit : output real : Critical temperature (K)
+  !+ad_desc  This routine calculates the critical current density and
+  !+ad_desc  temperature in the superconducting TF coils using the
+  !+ad_desc  ITER Nb3Sn critical surface model.
+  !+ad_prob  None
   !+ad_call  None
   !+ad_hist  21/07/11 RK  First draft of routine
   !+ad_hist  21/09/11 PJK Initial F90 version
@@ -334,6 +333,8 @@ function itersc(the,bmax,strain)
   !+ad_hisc               may lead to surprisingly large changes in the result
   !+ad_hisc               if the Jcrit limit is being reached).
   !+ad_hisc               Added range-checking for tzero, bred
+  !+ad_hist  26/09/11 PJK Converted to a subroutine, and added jcrit, tcrit
+  !+ad_hisc               arguments
   !+ad_stat  Okay
   !+ad_docs  ITER Nb3Sn critical surface parameterization (2MMF7J) (2008),
   !+ad_docc    https://user.iter.org/?uid=2MMF7J&action=get_document
@@ -344,11 +345,10 @@ function itersc(the,bmax,strain)
 
   implicit none
 
-  real(kind(1.0D0)) :: itersc
-
   !  Arguments
 
   real(kind(1.0D0)), intent(in) :: the, bmax, strain
+  real(kind(1.0D0)), intent(out) :: jcrit, tcrit
 
   !  Local variables
 
@@ -361,7 +361,7 @@ function itersc(the,bmax,strain)
   real(kind(1.0D0)), parameter :: catwo = 4.0D0
   real(kind(1.0D0)), parameter :: etaoa = 0.00256D0
   real(kind(1.0D0)), parameter :: etamax = -0.003253075D0
-  real(kind(1.0D0)) :: tcrit, tred, bcrit, bred, etash, tzero, bcro, &
+  real(kind(1.0D0)) :: tred, bcrit, bred, etash, tzero, bcro, &
        tcro, bzero, strfun, jc1, jc2, jc3
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -398,9 +398,9 @@ function itersc(the,bmax,strain)
   jc2 = (1.0D0-tzero**1.52D0)*(1.0D0-tzero**2)
   jc3 = bred**cp * (1.0D0-bred)**cq
 
-  itersc = jc1 * jc2 * jc3
+  jcrit = jc1 * jc2 * jc3
 
-end function itersc
+end subroutine itersc
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
