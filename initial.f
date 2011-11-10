@@ -51,6 +51,7 @@ C  22/05/06 PJK 3.120 Added IFALPHAP
 C  22/05/07 PJK 3.130 Added hydrogen plant variables
 C  21/03/11 PJK 3.140 Changed default value of FEFFCD to 1.0
 C  26/07/11 PJK 3.150 Added JCRIT_MODEL
+C  09/11/11 PJK       Removed ICULCR
 C
 C--Arguments
 C  None
@@ -625,7 +626,6 @@ C *** Physics data :
       hfact    = 2.0D0
       ibss     = 1
       iculbl   = 0
-      iculcr   = 0
       iculdl   = 0
       icurr    = 4
       idensl   = 3

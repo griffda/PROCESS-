@@ -329,9 +329,6 @@ iculbl     intg /0/      # switch for Troyon beta limit scaling
 $                          = 0 apply limit to total beta
 $                          = 1 apply limit to thermal beta
 $                          = 2 apply limit to thermal + neutral beam beta
-iculcr     intg /0/      # switch for current scaling
-$                          = 0 use old method
-$                          = 1 use new method (additional values of icurr)
 iculdl     intg /0/      # switch for density limit
 $                          = 0 use old method
 $                          = 1 use new method (seven formulae to choose from)

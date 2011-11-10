@@ -797,7 +797,7 @@ c   namelist/phydat/
 c  +     abeam, alphaj, alphan, alphat, aspect, beamfus0, beta, betbm0,
 c  +     bt, carea, cfe0, csawth, cvol, dene, dign, dnbeta, epbetmax,
 c  +     falpha, fbfe, fdeut, ffwal, fhe3, fradmin, ftr, ftrit,
-c  +     fvsbrnni, gamma, gtscale, hfact, ibss, iculbl, iculcr, iculdl,
+c  +     fvsbrnni, gamma, gtscale, hfact, ibss, iculbl, iculdl,
 c  +     icurr, idensl, idhe3, idivrt, ifalphap, ifispact, igeom,
 c  +     ignite, iinvqd, iiter, impc, impfe, impo, ires, isc, iscrp,
 c  +     ishape, itart, iwalld, kappa, q, q0, ralpne, recyle, rfpth,
@@ -1199,23 +1199,23 @@ C+**PJK 09/11/92 Removed redundant variable IBETIN
                continue
             end if
          end if
-      else if (varnam(1:varlen).eq.'ICULCR') then
-         if (isub1.ne.9999) goto 910
-         ioldvl = iculcr
-         call getiv(nin,line,length,iptr,lineno,iculcr,icode)
-         if (icode.ne.0) goto 900
-         call rangei(nout,'ICULCR',iculcr,0,1)
-         if (iculcr.ne.ioldvl) then
-            clabel = 'Switch for plasma current scaling,'
-            write(nout,*) clabel,varnam(1:8),' = ',iculcr
-            if (iculcr.eq.0) then
-               write(nout,*)
-     +              '     (Four to choose from)'
-            else
-               write(nout,*)
-     +              '     (Seven to choose from)'
-            end if
-         end if
+c      else if (varnam(1:varlen).eq.'ICULCR') then
+c         if (isub1.ne.9999) goto 910
+c         ioldvl = iculcr
+c         call getiv(nin,line,length,iptr,lineno,iculcr,icode)
+c         if (icode.ne.0) goto 900
+c         call rangei(nout,'ICULCR',iculcr,0,1)
+c         if (iculcr.ne.ioldvl) then
+c            clabel = 'Switch for plasma current scaling,'
+c            write(nout,*) clabel,varnam(1:8),' = ',iculcr
+c            if (iculcr.eq.0) then
+c               write(nout,*)
+c     +              '     (Four to choose from)'
+c            else
+c               write(nout,*)
+c     +              '     (Seven to choose from)'
+c            end if
+c         end if
       else if (varnam(1:varlen).eq.'ICULDL') then
          if (isub1.ne.9999) goto 910
          ioldvl = iculdl
@@ -1239,14 +1239,14 @@ C+**PJK 09/11/92 Removed redundant variable IBETIN
          call getiv(nin,line,length,iptr,lineno,icurr,icode)
          if (icode.ne.0) goto 900
          call rangei(nout,'ICURR',icurr,1,7)
-         if ((iculcr.eq.0).and.(icurr.gt.4)) then
-            write(nout,*) 'Error in input file:'
-            write(nout,*) 'Illegal value of ICURR, = ',icurr
-            write(nout,*) 'Change value of ICULCR to 1'
-            write(nout,*) 'BEFORE setting ICURR.'
-            write(nout,*) 'PROCESS stopping.'
-            STOP
-         end if
+c         if ((iculcr.eq.0).and.(icurr.gt.4)) then
+c            write(nout,*) 'Error in input file:'
+c            write(nout,*) 'Illegal value of ICURR, = ',icurr
+c            write(nout,*) 'Change value of ICULCR to 1'
+c            write(nout,*) 'BEFORE setting ICURR.'
+c            write(nout,*) 'PROCESS stopping.'
+c            STOP
+c         end if
          if (icurr.ne.ioldvl) then
             clabel = 'Switch for plasma current scaling,'
             write(nout,*) clabel,varnam(1:8),' = ',icurr

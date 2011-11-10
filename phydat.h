@@ -67,10 +67,10 @@ CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
       common /phydt2/ dlimit,hfac,pthrmw
 
       integer
-     +     gtscale, ibss, iculbl, iculcr, iculdl, icurr, idensl,
+     +     gtscale, ibss, iculbl, iculdl, icurr, idensl,
      +     idhe3, idivrt, ifispact, igeom, iinvqd, iiter, ires, isc,
      +     iscrp, ishape, itart, ignite, iwalld, ifalphap
       common /phydt3/
-     +     gtscale, ibss, iculbl, iculcr, iculdl, icurr, idensl,
+     +     gtscale, ibss, iculbl, iculdl, icurr, idensl,
      +     idhe3, idivrt, ifispact, igeom, iinvqd, iiter, ires, isc,
      +     iscrp, ishape, itart, ignite, iwalld, ifalphap

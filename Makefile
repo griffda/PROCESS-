@@ -73,7 +73,7 @@ source = \
  output.f90   \
  pfcoil.f     \
  pfscl.f90    \
- physics.f    \
+ physics.f90  \
  pulse.f      \
  pwrconv.f90  \
  radialb.f90  \
@@ -272,8 +272,8 @@ outplas.o: cdriv.h90 ineq.h90 labels.h90 osections.h90 param.h90 phydat.h90 \
 output.o: ife.h90 osections.h90 param.h90 phydat.h90 rfp.h90 stella.h90 times.h90
 pfcoil.o: build.h osections.h param.h pfcoil.h phydat.h tfcoil.h times.h
 pfscl.o: 
-physics.o: build.h cdriv.h divrt.h labels.h numer.h osections.h param.h phydat.h \
-  pulse.h start.h times.h
+physics.o: build.h90 cdriv.h90 divrt.h90 labels.h90 numer.h90 osections.h90 \
+  param.h90 phydat.h90 pulse.h90 start.h90 times.h90
 pulse.o: build.h cdriv.h cost.h fwblsh.h ineq.h numer.h param.h pfcoil.h phydat.h \
   pulse.h pwrcom.h start.h times.h vltcom.h
 pwrconv.o: build.h90 cost.h90 htpwr.h90 osections.h90 param.h90 pfcoil.h90 phydat.h90 \
