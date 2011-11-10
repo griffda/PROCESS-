@@ -1256,7 +1256,7 @@ subroutine palph(alphan,alphat,deni,ealpha,fdeut,fhe3,ftr,ftrit, &
   !+ad_summ  (Initial part of) fusion power and fast alpha pressure calculations
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
+  !+ad_cont  fint
   !+ad_args  alphan  : input real :  density profile index
   !+ad_args  alphat  : input real :  temperature profile index
   !+ad_args  deni    : input real :  fuel ion density (/m3)
@@ -1298,24 +1298,12 @@ subroutine palph(alphan,alphat,deni,ealpha,fdeut,fhe3,ftr,ftrit, &
        fhe3, ftr, ftrit, pcoef, pi, ti
   real(kind(1.0D0)), intent(out) :: palp, pcharge, pneut, sigvdt
 
-  !  Variables passed via COMMON
-
-  !  alphand: (OUTPUT) density profile index
-  !  alphatd: (OUTPUT) temperature profile index
-  !  tidum  : (OUTPUT) ion temperature (keV)
-
-  real(kind(1.0D0)) :: alphatd, alphand, tidum
-  common/fintcom/tidum,alphatd,alphand
-
   !  Local variables
 
   integer :: iopt, nofun
   real(kind(1.0D0)) :: alow, bhigh, ealphaj, epsq8, errest, flag, ft, &
        rint, svdt, tn, pa, pc, pn, sigmav
-
-  !  External functions
-
-  real(kind(1.0D0)), external :: fint
+  real(kind(1.0D0)) :: alphatd, alphand, tidum
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1368,68 +1356,58 @@ subroutine palph(alphan,alphat,deni,ealpha,fdeut,fhe3,ftr,ftrit, &
 
   end if
 
+contains
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function fint(xy)
+
+    !+ad_name  fint
+    !+ad_summ  Integrand for alpha power integration
+    !+ad_type  Function returning real
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  xy : input real :  Abscissa of the integration, = normalised
+    !+ad_argc                     plasma minor radius (0.0 <= xy < 1.0)
+    !+ad_desc  This function evaluates the integrand for the alpha power
+    !+ad_desc  integration, performed using routine <A HREF="quanc8.html">QUANC8</A>
+    !+ad_desc  in routine <A HREF="palph.html">PALPH</A>.
+    !+ad_prob  None
+    !+ad_call  svfdt
+    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
+    !+ad_hist  09/11/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: fint
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: xy
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: dxy, sigv, tiofr
+
+    !  External functions
+
+    real(kind(1.0D0)), external :: svfdt
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    tiofr = tidum*(1.0D0+alphatd)*(1.0D0-(xy**2))**alphatd
+    sigv = svfdt(tiofr)
+    dxy = (1.0D0-(xy**2))**alphand
+
+    fint = xy*(dxy**2)*sigv
+
+  end function fint
+
 end subroutine palph
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-function fint(xy)
-
-  !+ad_name  fint
-  !+ad_summ  Integrand for alpha power integration
-  !+ad_type  Function returning real
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  xy : input real :  Abscissa of the integration, = normalised
-  !+ad_argc                     plasma minor radius (0.0 <= xy < 1.0)
-  !+ad_desc  This function evaluates the integrand for the alpha power
-  !+ad_desc  integration, performed using routine <A HREF="quanc8.html">QUANC8</A>
-  !+ad_desc  in routine <A HREF="palph.html">PALPH</A>.
-  !+ad_prob  None
-  !+ad_call  svfdt
-  !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-  !+ad_hist  09/11/11 PJK Initial F90 version
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  real(kind(1.0D0)) :: fint
-
-  !  Arguments
-
-  real(kind(1.0D0)), intent(in) :: xy
-
-  !  Variables passed via COMMON
-
-  !  alphand: (INPUT) density profile index
-  !  alphatd: (INPUT) temperature profile index
-  !  tidum  : (INPUT) ion temperature (keV)
-
-  real(kind(1.0D0)) :: alphatd, alphand, tidum
-  common/fintcom/tidum,alphatd,alphand
-
-  !  Local variables
-
-  real(kind(1.0D0)) :: dxy, sigv, tiofr
-
-  !  External functions
-
-  real(kind(1.0D0)), external :: svfdt
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!+PJK Would be good to have this function 'contained' within palph
-!+PJK but the results are changed subtly
-
-  tiofr = tidum*(1.0D0+alphatd)*(1.0D0-(xy**2))**alphatd
-  sigv = svfdt(tiofr)
-  dxy = (1.0D0-(xy**2))**alphand
-
-  fint = xy*(dxy**2)*sigv
-
-end function fint
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1893,7 +1871,7 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
   !+ad_desc  This subroutine calculates the energy confinement time
   !+ad_desc  using one of a large number of scaling laws, and the
   !+ad_desc  transport power loss terms.
-  !+ad_prob  Converting from IF to CASE changes the resulting machine somewhat!
+  !+ad_prob  None
   !+ad_call  param.h90
   !+ad_call  start.h90
   !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
@@ -1990,410 +1968,23 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
 
   !  Electron energy confinement times
 
-!+PJK For some reason using CASE statements instead of the existing
-!+PJK IF statements here result in a somewhat different machine...
-!+PJK Needs further investigation!
+  select case (isc)
 
-  ! select case (isc)
-
-  ! case (1)  !  Neo-Alcator scaling (ohmic)
-  !    tauee = taueena
-  !    gtaue = 0.0D0
-  !    ptaue = 1.0D0
-  !    qtaue = 0.0D0
-  !    rtaue = 0.0D0
-
-  ! case (2)  !  Mirnov scaling (H-mode)
-  !    tauee = hfact * 0.2D0 * rminor * sqrt(kappa95) * pcur
-  !    gtaue = 0.0D0
-  !    ptaue = 0.0D0
-  !    qtaue = 0.0D0
-  !    rtaue = 0.0D0
-
-  ! case (3)  !  Merezhkin-Muhkovatov scaling (L-mode)
-  !    tauee = hfact * 3.5D-3 * rmajor**2.75D0 * rminor**0.25D0 * &
-  !         kappa95**0.125D0 * qstar * dnla20 * sqrt(afuel) / &
-  !         sqrt(ten/10.0D0)
-  !    gtaue = 0.0D0
-  !    ptaue = 1.0D0
-  !    qtaue = -0.5D0
-  !    rtaue = 0.0D0
-
-  ! case (4)  !  Shimomura scaling (H-mode)
-  !    tauee = hfact * 0.045D0 * rmajor * rminor * bt * sqrt(kappa95) &
-  !         * sqrt(afuel)
-  !    gtaue = 0.0D0
-  !    ptaue = 0.0D0
-  !    qtaue = 0.0D0
-  !    rtaue = 0.0D0
-
-  ! case (5)  !  Kaye-Goldston scaling (L-mode)
-  !    tauee = hfact * 0.055D0 * kappa95**0.28D0 * pcur**1.24D0 * &
-  !         n20**0.26D0 * rmajor**1.65D0 * sqrt(afuel/1.5D0) / &
-  !         ( bt**0.09D0 * rminor**0.49D0 * powerht**0.58D0 )
-  !    gtaue = 0.0D0
-  !    ptaue = 0.26D0
-  !    qtaue = 0.0D0
-  !    rtaue = -0.58D0
-  !    if (iinvqd /= 0) tauee = 1.0D0 / &
-  !         sqrt(1.0D0/taueena**2 + 1.0D0/tauee**2)
-
-  ! case (6)  !  ITER Power scaling - ITER 89-P (L-mode)
-  !    tauee = hfact * 0.048D0 * pcur**0.85D0 * rmajor**1.2D0 * &
-  !         rminor**0.3D0 * sqrt(kappa) * dnla20**0.1D0 * bt**0.2D0 * &
-  !         sqrt(afuel) / sqrt(powerht)
-  !    gtaue = 0.0D0
-  !    ptaue = 0.1D0
-  !    qtaue = 0.0D0
-  !    rtaue = -0.5D0
-
-  ! case (7)  !  ITER Offset linear scaling - ITER 89-O (L-mode)
-
-  !    term1 = 0.04D0 * pcur**0.5D0 * rmajor**0.3D0 * &
-  !         rminor**0.8D0 * kappa**0.6D0 * afuel**0.5D0
-  !    term2 = 0.064D0 * pcur**0.8D0 * rmajor**1.6D0 * &
-  !         rminor**0.6D0 * kappa**0.5D0 * dnla20**0.6D0 * &
-  !         bt**0.35D0 * afuel**0.2D0 / powerht
-  !    tauee = hfact * (term1 + term2)
-  !    gtaue = hfact*term1
-  !    ptaue = 0.6D0
-  !    qtaue = 0.0D0
-  !    rtaue = -1.0D0
-
-  ! case (8)  !  Rebut-Lallia offset linear scaling (L-mode)
-  !    rll = (rminor**2 * rmajor * kappa95)**0.333D0
-  !    tauee = hfact * 1.65D0 * sqrt(afuel/2.0D0) * &
-  !         ( 1.2D-2 * pcur * rll**1.5D0 / sqrt(zeff) + &
-  !         0.146D0 * dnla20**0.75D0 * sqrt(pcur) * sqrt(bt) * &
-  !         rll**2.75D0 * zeff**0.25D0 /powerht )
-  !    gtaue = hfact * 1.65D0 * sqrt(afuel/2.0D0) * &
-  !         (1.2D-2 * pcur * rll**1.5D0 / sqrt(zeff))
-  !    ptaue = 0.75D0
-  !    qtaue = 0.0D0
-  !    rtaue = -1.0D0
-
-  ! case (9)  !  Goldston scaling (L-mode)
-  !    tauee = hfact * 0.037D0 * pcur * rmajor**1.75D0 * &
-  !         rminor**(-0.37D0) * sqrt(kappa95) * sqrt(afuel/1.5D0) / &
-  !         sqrt(powerht)
-  !    gtaue = 0.0D0
-  !    ptaue = 0.0D0
-  !    qtaue = 0.0D0
-  !    rtaue = -0.5D0
-  !    if (iinvqd /= 0) tauee = 1.0D0 / &
-  !         sqrt(1.0D0/taueena**2 + 1.0D0/tauee**2)
-
-  ! case (10)  !  T10 scaling
-  !    denfac = dnla20 * rmajor * qstar / (1.3D0*bt)
-  !    denfac = min(1.0D0,denfac)
-  !    tauee = hfact * 0.095D0 * rmajor * rminor * bt * &
-  !         sqrt(kappa95) * denfac / powerht**0.4D0 * &
-  !         ( zeff**2 * pcur**4 / &
-  !         (rmajor * rminor * qstar**3 * kappa95**1.5D0) )**0.08D0
-  !    gtaue = 0.0D0
-  !    ptaue = 1.0D0
-  !    qtaue = 0.0D0
-  !    rtaue = -0.4D0
-
-  ! case (11)  !  JAERI scaling
-  !    gjaeri = zeff**0.4D0 * ((15.0D0-zeff)/20.0D0)**0.6D0 * &
-  !         (3.0D0 * qstar * (qstar+5.0D0) / ((qstar+2.0D0) * &
-  !         (qstar+7.0D0)))**0.6D0
-  !    tauee = hfact * (0.085D0 * kappa95 * rminor**2 * sqrt(afuel) + &
-  !         0.069D0 * n20**0.6D0 * pcur * bt**0.2D0 * rminor**0.4D0 * &
-  !         rmajor**1.6D0 * sqrt(afuel) * gjaeri * kappa95**0.2D0 / &
-  !         powerht)
-  !    gtaue = hfact * 0.085D0 * kappa95 * rminor**2 * sqrt(afuel)
-  !    ptaue = 0.6D0
-  !    qtaue = 0.0D0
-  !    rtaue = -1.0D0
-
-  ! case (12)  !  Kaye-Big scaling
-  !    tauee = hfact * 0.105D0 * sqrt(rmajor) * rminor**0.8D0 * &
-  !         bt**0.3D0 * kappa95**0.25D0 * pcur**0.85D0 * &
-  !         n20**0.1D0 * afuel**0.5D0 / powerht**0.5D0
-  !    gtaue = 0.0D0
-  !    ptaue = 0.1D0
-  !    qtaue = 0.0D0
-  !    rtaue = -0.5D0
-
-  ! case (13)  !  ITER H-mode scaling - ITER H90-P
-  !    tauee = hfact * 0.064D0 * pcur**0.87D0 * rmajor**1.82D0 * &
-  !         rminor**(-0.12D0) * kappa**0.35D0 * dnla20**0.09D0 * &
-  !         bt**0.15D0 * sqrt(afuel) / sqrt(powerht)
-  !    gtaue = 0.0D0
-  !    ptaue = 0.09D0
-  !    qtaue = 0.0D0
-  !    rtaue = -0.5D0
-
-  ! case (14)  !  Minimum of ITER 89-P (isc=6) and ITER 89-O (isc=7)
-  !    tauit1 = hfact * 0.048D0 * pcur**0.85D0 * rmajor**1.2D0 * &
-  !         rminor**0.3D0 * sqrt(kappa) * dnla20**0.1D0 * bt**0.2D0 * &
-  !         sqrt(afuel) / sqrt(powerht)
-  !    term1 = 0.04D0 * pcur**0.5D0 * rmajor**0.3D0 * &
-  !         rminor**0.8D0 * kappa**0.6D0 * afuel**0.5D0
-  !    term2 = 0.064D0 * pcur**0.8D0 * rmajor**1.6D0 * &
-  !         rminor**0.6D0 * kappa**0.5D0 * dnla20**0.6D0 * &
-  !         bt**0.35D0 * afuel**0.2D0 / powerht
-  !    tauit2 = hfact * (term1 + term2)
-  !    tauee = min(tauit1,tauit2)
-
-  !    if (tauit1 < tauit2) then
-  !       gtaue = 0.0D0
-  !       ptaue = 0.1D0
-  !       qtaue = 0.0D0
-  !       rtaue = -0.5D0
-  !    else
-  !       gtaue = hfact*term1
-  !       ptaue = 0.6D0
-  !       qtaue = 0.0D0
-  !       rtaue = -1.0D0
-  !    end if
-
-  ! case (15)  !  Riedel scaling (L-mode)
-  !    tauee = hfact * 0.044D0 * pcur**0.93D0 * rmajor**1.37D0 * &
-  !         rminor**(-0.049D0) * kappa95**0.588D0 * dnla20**0.078D0 * &
-  !         bt**0.152D0 / powerht**0.537D0
-  !    gtaue = 0.0D0
-  !    ptaue = 0.078D0
-  !    qtaue = 0.0D0
-  !    rtaue = -0.537D0
-
-  ! case (16)  !  Christiansen et al scaling (L-mode)
-  !    tauee = hfact * 0.24D0 * pcur**0.79D0 * rmajor**0.56D0 * &
-  !         rminor**1.46D0 * kappa95**0.73D0 * dnla20**0.41D0 * &
-  !         bt**0.29D0 / (powerht**0.79D0 * afuel**0.02D0)
-  !    gtaue = 0.0D0
-  !    ptaue = 0.41D0
-  !    qtaue = 0.0D0
-  !    rtaue = -0.79D0
-
-  ! case (17)  !  Lackner-Gottardi scaling (L-mode)
-  !    qhat = (1.0D0+kappa95**2) * rminor**2 * bt /(0.4D0 * pcur * rmajor)
-  !    tauee = hfact * 0.12D0 * pcur**0.8D0 * rmajor**1.8D0 * &
-  !         rminor**0.4D0 * kappa95 * (1.0D0+kappa95)**(-0.8D0) * &
-  !         dnla20**0.6D0 * qhat**0.4D0 / powerht**0.6D0
-  !    gtaue = 0.0D0
-  !    ptaue = 0.6D0
-  !    qtaue = 0.0D0
-  !    rtaue = -0.6D0
-
-  ! case (18)  !  Neo-Kaye scaling (L-mode)
-  !    tauee = hfact * 0.063D0 * pcur**1.12D0 * rmajor**1.3D0 * &
-  !         rminor**(-0.04D0) * kappa95**0.28D0 * dnla20**0.14D0 * &
-  !         bt**0.04D0 * sqrt(afuel) / powerht**0.59D0
-  !    gtaue = 0.0D0
-  !    ptaue = 0.14D0
-  !    qtaue = 0.0D0
-  !    rtaue = -0.59D0
-
-  ! case (19)  !  Riedel scaling (H-mode)
-  !    tauee = hfact * 0.1D0 * sqrt(afuel) * pcur**0.884D0 * &
-  !         rmajor**1.24D0 * rminor**(-0.23D0) * kappa95**0.317D0 * &
-  !         bt**0.207D0 * dnla20**0.105D0 / powerht**0.486D0
-  !    gtaue = 0.0D0
-  !    ptaue = 0.105D0
-  !    qtaue = 0.0D0
-  !    rtaue = -0.486D0
-
-  ! case (20)  !  Amended version of ITER H90-P law
-  !    !  Nuclear Fusion 32 (1992) 318
-  !    tauee = hfact * 0.082D0 * pcur**1.02D0 * &
-  !         bt**0.15D0 * sqrt(afuel) * rmajor**1.60D0 / &
-  !         (powerht**0.47D0 * kappa**0.19D0)
-  !    gtaue = 0.0D0
-  !    ptaue = 0.0D0
-  !    qtaue = 0.0D0
-  !    rtaue = -0.47D0
-
-  ! case (21)  !  Large Helical Device scaling (stellarators)
-  !    !  S.Sudo, Y.Takeiri, H.Zushi et al., Nuclear Fusion 30 (1990) 11
-  !    tauee = hfact * 0.17D0 * rmajor**0.75D0 * rminor**2 * &
-  !         dnla20**0.69D0 * bt**0.84D0 * powerht**(-0.58D0)
-  !    gtaue = 0.0D0
-  !    ptaue = 0.69D0
-  !    qtaue = 0.0D0
-  !    rtaue = 0.58D0
-
-  ! case (22)  !  Gyro-reduced Bohm scaling
-  !    !  R.J.Goldston, H.Biglari, G.W.Hammett et al., Bull.Am.Phys.Society,
-  !    !  volume 34, 1964 (1989)
-  !    tauee = hfact * 0.25D0 * bt**0.8D0 * dnla20**0.6D0 * &
-  !         powerht**(-0.6D0) * rminor**2.4D0 * rmajor**0.6D0
-  !    gtaue = 0.0D0
-  !    ptaue = 0.6D0
-  !    qtaue = 0.0D0
-  !    rtaue = -0.6D0
-
-  ! case (23)  !  Lackner-Gottardi stellarator scaling
-  !    !  (assumed q = 1/rotational transform)
-  !    !  K.Lackner and N.A.O.Gottardi, Nuclear Fusion, 30, p.767 (1990)
-  !    tauee = hfact * 0.17D0 * rmajor * rminor**2 * dnla20**0.6D0 * &
-  !         bt**0.8D0 * powerht**(-0.6D0) * q**(-0.4D0)
-  !    gtaue = 0.0D0
-  !    ptaue = 0.6D0
-  !    qtaue = 0.0D0
-  !    rtaue = -0.6D0
-
-  ! case (24)  !  ITER-93H scaling (ELM-free; multiply by 0.85 for ELMy version)
-  !    !  S.Kaye and the ITER Joint Central Team and Home Teams, in Plasma
-  !    !  Physics and Controlled Nuclear Fusion Research (Proc. 15th
-  !    !  Int. Conf., Seville, 1994) IAEA-CN-60/E-P-3
-  !    tauee = hfact * 0.053D0 * pcur**1.06D0 * bt**0.32D0 * &
-  !         powerht**(-0.67D0) * afuel**0.41D0 * rmajor**1.79D0 * &
-  !         dnla20**0.17D0 * aspect**0.11D0 * kappa**0.66D0
-  !    gtaue = 0.0D0
-  !    ptaue = 0.17D0
-  !    qtaue = 0.0D0
-  !    rtaue = -0.67D0
-
-  ! case (25)  !  TITAN RFP scaling
-  !    !  TITAN RFP Fusion Reactor Study, Scoping Phase Report
-  !    !  UCLA-PPG-1100, page 5-9, Jan 1987
-  !    tauee = hfact * 0.05D0 * pcur * rminor**2
-  !    gtaue = 0.0D0
-  !    ptaue = 0.0D0
-  !    qtaue = 0.0D0
-  !    rtaue = 0.0D0
-
-  !    !  Next two are ITER-97 H-mode scalings
-  !    !  J. G. Cordey et al., EPS Berchtesgaden, 1997
-
-  ! case (26)  !  ELM-free: ITERH-97P
-  !    tauee = hfact * 0.031D0 * pcur**0.95D0 * bt**0.25D0 * &
-  !         powerht**(-0.67D0) * dnla19**0.35D0 * &
-  !         rmajor**1.92D0 * aspect**(-0.08D0) * kappa**0.63D0 * &
-  !         afuel**0.42D0
-  !    gtaue = 0.0D0
-  !    ptaue = 0.35D0  !  N.B. problems with ptaue if pulsed option is used with isc=26
-  !    qtaue = 0.0D0
-  !    rtaue = -0.67D0
-
-  ! case (27)  !  ELMy: ITERH-97P(y)
-  !    tauee = hfact * 0.029D0 * pcur**0.90D0 * bt**0.20D0 * & 
-  !         powerht**(-0.66D0) * dnla19**0.40D0 * &
-  !         rmajor**2.03D0 * aspect**(-0.19D0) * kappa**0.92D0 * &
-  !         afuel**0.2D0
-  !    gtaue = 0.0D0
-  !    ptaue = 0.4D0  ! N.B. problems with ptaue if pulsed option is used with isc=27
-  !    qtaue = 0.0D0
-  !    rtaue = -0.66D0
-
-  ! case (28)  !  ITER-96P L-mode scaling
-  !    !  S.M.Kaye and the ITER Confinement Database Working Group,
-  !    !  Nuclear Fusion 37 (1997) 1303
-  !    !  N.B. tau_th formula used
-  !    tauee = hfact * 0.023D0 * pcur**0.96D0 * bt**0.03D0 * &
-  !            kappa95**0.64D0 * rmajor**1.83D0 * aspect**0.06D0 * &
-  !            dnla19**0.40D0 * afuel**0.20D0 * powerht**(-0.73D0)
-  !    gtaue = 0.0D0
-  !    ptaue = 0.4D0  !  N.B. problems with ptaue if pulsed option is used with isc=28
-  !    qtaue = 0.0D0
-  !    rtaue = -0.73D0
-
-  ! case (29)  !  Valovic modified ELMy-H mode scaling
-  !    tauee = hfact * 0.067D0 * pcur**0.9D0 * bt**0.17D0 * &
-  !         dnla19**0.45D0 * afuel**0.05D0 * rmajor**1.316D0 * &
-  !         rminor**0.79D0 * kappa**0.56D0 * powerht**(-0.68D0)
-  !    gtaue = 0.0D0
-  !    ptaue = 0.45D0  !  N.B. problems with ptaue if pulsed option is used with isc=29
-  !    qtaue = 0.0D0
-  !    rtaue = -0.68D0
-
-  ! case (30)  !  Kaye PPPL Workshop April 1998 L-mode scaling
-  !    tauee = hfact * 0.021D0 * pcur**0.81D0 * bt**0.14D0 * &
-  !         kappa**0.7D0 * rmajor**2.01D0 * aspect**(-0.18D0) * &
-  !         dnla19**0.47D0 * afuel**0.25D0 * powerht**(-0.73D0)
-  !    gtaue = 0.0D0
-  !    ptaue = 0.47D0  ! N.B. problems with ptaue if pulsed option is used with isc=30
-  !    qtaue = 0.0D0
-  !    rtaue = -0.73D0
-
-  ! case (31)  !  ITERH-PB98P(y), ELMy H-mode scaling
-  !    tauee = hfact * 0.0615D0 * pcur**0.9D0 * bt**0.1D0 * &
-  !         dnla19**0.4D0 * powerht**(-0.66D0) * rmajor**2 * &
-  !         kappaa**0.75D0 * aspect**(-0.66D0) * afuel**0.2D0
-  !    gtaue = 0.0D0
-  !    ptaue = 0.4D0  !  N.B. problems with ptaue if pulsed option is used with isc=31
-  !    qtaue = 0.0D0
-  !    rtaue = -0.66D0
-
-  ! case (32)  !  IPB98(y), ELMy H-mode scaling
-  !    tauee = hfact * 0.0365D0 * pcur**0.97D0 * bt**0.08D0 * &
-  !         dnla19**0.41D0 * powerht**(-0.63D0) * rmajor**1.93D0 * &
-  !         kappa**0.67D0 * aspect**(-0.23D0) * afuel**0.2D0
-  !    gtaue = 0.0D0
-  !    ptaue = 0.41D0  !  N.B. problems with ptaue if pulsed option is used with isc=32
-  !    qtaue = 0.0D0
-  !    rtaue = -0.63D0
-
-  ! case (33)  !  IPB98(y,1), ELMy H-mode scaling
-  !    tauee = hfact * 0.0503D0 * pcur**0.91D0 * bt**0.15D0 * &
-  !         dnla19**0.44D0 * powerht**(-0.65D0) * rmajor**2.05D0 * &
-  !         kappaa**0.72D0 * aspect**(-0.57D0) * afuel**0.13D0
-  !    gtaue = 0.0D0
-  !    ptaue = 0.44D0  !  N.B. problems with ptaue if pulsed option is used with isc=33
-  !    qtaue = 0.0D0
-  !    rtaue = -0.65D0
-
-  ! case (34)  !  IPB98(y,2), ELMy H-mode scaling
-  !    tauee = hfact * 0.0562D0 * pcur**0.93D0 * bt**0.15D0 * &
-  !         dnla19**0.41D0 * powerht**(-0.69D0) * rmajor**1.97D0 * &
-  !         kappaa**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
-  !    gtaue = 0.0D0
-  !    ptaue = 0.41D0  !  N.B. problems with ptaue if pulsed option is used with isc=34
-  !    qtaue = 0.0D0
-  !    rtaue = -0.69D0
-
-  ! case (35)  !  IPB98(y,3), ELMy H-mode scaling
-  !    tauee = hfact * 0.0564D0 * pcur**0.88D0 * bt**0.07D0 * &
-  !         dnla19**0.40D0 * powerht**(-0.69D0) * rmajor**2.15D0 * &
-  !         kappaa**0.78D0 * aspect**(-0.64D0) * afuel**0.20D0
-  !    gtaue = 0.0D0
-  !    ptaue = 0.4D0  !  N.B. problems with ptaue if pulsed option is used with isc=35
-  !    qtaue = 0.0D0
-  !    rtaue = -0.69D0
-
-  ! case (36)  !  IPB98(y,4), ELMy H-mode scaling
-  !    tauee = hfact * 0.0587D0 * pcur**0.85D0 * bt**0.29D0 * &
-  !         dnla19**0.39D0 * powerht**(-0.70D0) * rmajor**2.08D0 * &
-  !         kappaa**0.76D0 * aspect**(-0.69D0) * afuel**0.17D0
-  !    gtaue = 0.0D0
-  !    ptaue = 0.39D0  !  N.B. problems with ptaue if pulsed option is used with isc=36
-  !    qtaue = 0.0D0
-  !    rtaue = -0.70D0
-
-  ! case default
-  !    write(*,*) 'Error in routine PCOND:'
-  !    write(*,*) 'Illegal value for ISC, = ',isc
-  !    write(*,*) 'PROCESS stopping.'
-  !    stop
-  ! end select
-!-PJK
-
-  ! *** Neo-Alcator scaling (ohmic)
-
-  if (isc.eq.1) then
+  case (1)  !  Neo-Alcator scaling (ohmic)
      tauee = taueena
      gtaue = 0.0D0
      ptaue = 1.0D0
      qtaue = 0.0D0
      rtaue = 0.0D0
-  end if
 
-  ! *** Mirnov scaling (H-mode)
-
-  if (isc.eq.2) then
+  case (2)  !  Mirnov scaling (H-mode)
      tauee = hfact * 0.2D0 * rminor * sqrt(kappa95) * pcur
      gtaue = 0.0D0
      ptaue = 0.0D0
      qtaue = 0.0D0
      rtaue = 0.0D0
-  end if
 
-  ! *** Merezhkin-Muhkovatov scaling (L-mode)
-  !+**PJK 29/06/92 Corrected te to ten in Merez-Muhkov scaling law
-  if (isc.eq.3) then
+  case (3)  !  Merezhkin-Muhkovatov scaling (L-mode)
      tauee = hfact * 3.5D-3 * rmajor**2.75D0 * rminor**0.25D0 * &
           kappa95**0.125D0 * qstar * dnla20 * sqrt(afuel) / &
           sqrt(ten/10.0D0)
@@ -2401,22 +1992,16 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
      ptaue = 1.0D0
      qtaue = -0.5D0
      rtaue = 0.0D0
-  end if
 
-  ! *** Shimomura scaling (H-mode)
-
-  if (isc.eq.4) then
-     tauee = hfact * 0.045D0 * rmajor * rminor * bt * &
-          sqrt(kappa95) * sqrt(afuel)
+  case (4)  !  Shimomura scaling (H-mode)
+     tauee = hfact * 0.045D0 * rmajor * rminor * bt * sqrt(kappa95) &
+          * sqrt(afuel)
      gtaue = 0.0D0
      ptaue = 0.0D0
      qtaue = 0.0D0
      rtaue = 0.0D0
-  end if
 
-  ! *** Kaye-Goldston scaling (L-mode)
-
-  if (isc.eq.5) then
+  case (5)  !  Kaye-Goldston scaling (L-mode)
      tauee = hfact * 0.055D0 * kappa95**0.28D0 * pcur**1.24D0 * &
           n20**0.26D0 * rmajor**1.65D0 * sqrt(afuel/1.5D0) / &
           ( bt**0.09D0 * rminor**0.49D0 * powerht**0.58D0 )
@@ -2424,70 +2009,44 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
      ptaue = 0.26D0
      qtaue = 0.0D0
      rtaue = -0.58D0
-     if (iinvqd.ne.0) tauee = 1.0D0/ sqrt( 1.0D0/taueena**2 + &
-          1.0D0/tauee**2)
-  end if
+     if (iinvqd /= 0) tauee = 1.0D0 / &
+          sqrt(1.0D0/taueena**2 + 1.0D0/tauee**2)
 
-  ! *** ITER Power scaling - ITER 89-P (L-mode)
-
-  if ((isc.eq.6).or.(isc.eq.14)) then
+  case (6)  !  ITER Power scaling - ITER 89-P (L-mode)
      tauee = hfact * 0.048D0 * pcur**0.85D0 * rmajor**1.2D0 * &
           rminor**0.3D0 * sqrt(kappa) * dnla20**0.1D0 * bt**0.2D0 * &
           sqrt(afuel) / sqrt(powerht)
-     tauit1 = tauee
      gtaue = 0.0D0
      ptaue = 0.1D0
      qtaue = 0.0D0
      rtaue = -0.5D0
-  end if
 
-  ! *** ITER Offset linear scaling - ITER 89-O (L-mode)
-  !+**PJK 30/06/92 Corrected exponent on kappa in term2 from 0.2 to 0.5
+  case (7)  !  ITER Offset linear scaling - ITER 89-O (L-mode)
 
-  if ((isc.eq.7).or.(isc.eq.14)) then
      term1 = 0.04D0 * pcur**0.5D0 * rmajor**0.3D0 * &
           rminor**0.8D0 * kappa**0.6D0 * afuel**0.5D0
      term2 = 0.064D0 * pcur**0.8D0 * rmajor**1.6D0 * &
           rminor**0.6D0 * kappa**0.5D0 * dnla20**0.6D0 * &
           bt**0.35D0 * afuel**0.2D0 / powerht
      tauee = hfact * (term1 + term2)
-     tauit2 = tauee
      gtaue = hfact*term1
      ptaue = 0.6D0
      qtaue = 0.0D0
      rtaue = -1.0D0
-     if (isc.eq.14) then
-        tauee = min(tauit1,tauit2)
-        if (tauit1.lt.tauit2) then
-           gtaue = 0.0D0
-           ptaue = 0.1D0
-           qtaue = 0.0D0
-           rtaue = -0.5D0
-        end if
-     end if
-  end if
 
-  ! *** Rebut-Lallia offset linear scaling (L-mode)
-
-  !+**PJK 10/06/92 I do not understand the additional factor of 1/2.
-  !+**PJK 30/06/92 Therefore I have removed it (suggestion of Tim Hender).
-
-  if (isc.eq.8) then
+  case (8)  !  Rebut-Lallia offset linear scaling (L-mode)
      rll = (rminor**2 * rmajor * kappa95)**0.333D0
-     tauee = hfact * 1.65D0 * sqrt(afuel/2.0D0) * ( &
-          1.2D-2 * pcur * rll**1.5D0 / sqrt(zeff) + &
+     tauee = hfact * 1.65D0 * sqrt(afuel/2.0D0) * &
+          ( 1.2D-2 * pcur * rll**1.5D0 / sqrt(zeff) + &
           0.146D0 * dnla20**0.75D0 * sqrt(pcur) * sqrt(bt) * &
           rll**2.75D0 * zeff**0.25D0 /powerht )
-     gtaue = hfact * 1.65D0 * sqrt(afuel/2.0D0) * ( &
-          1.2D-2 * pcur * rll**1.5D0 / sqrt(zeff) )
+     gtaue = hfact * 1.65D0 * sqrt(afuel/2.0D0) * &
+          (1.2D-2 * pcur * rll**1.5D0 / sqrt(zeff))
      ptaue = 0.75D0
      qtaue = 0.0D0
      rtaue = -1.0D0
-  end if
 
-  ! *** Goldston scaling (L-mode)
-
-  if (isc.eq.9) then
+  case (9)  !  Goldston scaling (L-mode)
      tauee = hfact * 0.037D0 * pcur * rmajor**1.75D0 * &
           rminor**(-0.37D0) * sqrt(kappa95) * sqrt(afuel/1.5D0) / &
           sqrt(powerht)
@@ -2495,13 +2054,10 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
      ptaue = 0.0D0
      qtaue = 0.0D0
      rtaue = -0.5D0
-     if (iinvqd.ne.0) tauee = 1.0D0/ &
-          sqrt( 1.0D0/taueena**2 + 1.0D0/tauee**2)
-  end if
+     if (iinvqd /= 0) tauee = 1.0D0 / &
+          sqrt(1.0D0/taueena**2 + 1.0D0/tauee**2)
 
-  ! *** T10 scaling
-
-  if (isc.eq.10) then
+  case (10)  !  T10 scaling
      denfac = dnla20 * rmajor * qstar / (1.3D0*bt)
      denfac = min(1.0D0,denfac)
      tauee = hfact * 0.095D0 * rmajor * rminor * bt * &
@@ -2512,11 +2068,8 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
      ptaue = 1.0D0
      qtaue = 0.0D0
      rtaue = -0.4D0
-  end if
 
-  ! *** JAERI scaling
-
-  if (isc.eq.11) then
+  case (11)  !  JAERI scaling
      gjaeri = zeff**0.4D0 * ((15.0D0-zeff)/20.0D0)**0.6D0 * &
           (3.0D0 * qstar * (qstar+5.0D0) / ((qstar+2.0D0) * &
           (qstar+7.0D0)))**0.6D0
@@ -2528,11 +2081,8 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
      ptaue = 0.6D0
      qtaue = 0.0D0
      rtaue = -1.0D0
-  end if
 
-  ! *** Kaye-Big scaling
-
-  if (isc.eq.12) then
+  case (12)  !  Kaye-Big scaling
      tauee = hfact * 0.105D0 * sqrt(rmajor) * rminor**0.8D0 * &
           bt**0.3D0 * kappa95**0.25D0 * pcur**0.85D0 * &
           n20**0.1D0 * afuel**0.5D0 / powerht**0.5D0
@@ -2540,11 +2090,8 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
      ptaue = 0.1D0
      qtaue = 0.0D0
      rtaue = -0.5D0
-  end if
 
-  ! *** ITER H-mode scaling - ITER H90-P
-
-  if (isc.eq.13) then
+  case (13)  !  ITER H-mode scaling - ITER H90-P
      tauee = hfact * 0.064D0 * pcur**0.87D0 * rmajor**1.82D0 * &
           rminor**(-0.12D0) * kappa**0.35D0 * dnla20**0.09D0 * &
           bt**0.15D0 * sqrt(afuel) / sqrt(powerht)
@@ -2552,11 +2099,32 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
      ptaue = 0.09D0
      qtaue = 0.0D0
      rtaue = -0.5D0
-  end if
 
-  ! *** Riedel scaling (L-mode)
+  case (14)  !  Minimum of ITER 89-P (isc=6) and ITER 89-O (isc=7)
+     tauit1 = hfact * 0.048D0 * pcur**0.85D0 * rmajor**1.2D0 * &
+          rminor**0.3D0 * sqrt(kappa) * dnla20**0.1D0 * bt**0.2D0 * &
+          sqrt(afuel) / sqrt(powerht)
+     term1 = 0.04D0 * pcur**0.5D0 * rmajor**0.3D0 * &
+          rminor**0.8D0 * kappa**0.6D0 * afuel**0.5D0
+     term2 = 0.064D0 * pcur**0.8D0 * rmajor**1.6D0 * &
+          rminor**0.6D0 * kappa**0.5D0 * dnla20**0.6D0 * &
+          bt**0.35D0 * afuel**0.2D0 / powerht
+     tauit2 = hfact * (term1 + term2)
+     tauee = min(tauit1,tauit2)
 
-  if (isc.eq.15) then
+     if (tauit1 < tauit2) then
+        gtaue = 0.0D0
+        ptaue = 0.1D0
+        qtaue = 0.0D0
+        rtaue = -0.5D0
+     else
+        gtaue = hfact*term1
+        ptaue = 0.6D0
+        qtaue = 0.0D0
+        rtaue = -1.0D0
+     end if
+
+  case (15)  !  Riedel scaling (L-mode)
      tauee = hfact * 0.044D0 * pcur**0.93D0 * rmajor**1.37D0 * &
           rminor**(-0.049D0) * kappa95**0.588D0 * dnla20**0.078D0 * &
           bt**0.152D0 / powerht**0.537D0
@@ -2564,11 +2132,8 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
      ptaue = 0.078D0
      qtaue = 0.0D0
      rtaue = -0.537D0
-  end if
 
-  ! *** Christiansen et al scaling (L-mode)
-
-  if (isc.eq.16) then
+  case (16)  !  Christiansen et al scaling (L-mode)
      tauee = hfact * 0.24D0 * pcur**0.79D0 * rmajor**0.56D0 * &
           rminor**1.46D0 * kappa95**0.73D0 * dnla20**0.41D0 * &
           bt**0.29D0 / (powerht**0.79D0 * afuel**0.02D0)
@@ -2576,13 +2141,9 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
      ptaue = 0.41D0
      qtaue = 0.0D0
      rtaue = -0.79D0
-  end if
 
-  ! *** Lackner-Gottardi scaling (L-mode)
-
-  if (isc.eq.17) then
-     qhat = (1.0D0+kappa95**2) * rminor**2 * bt / &
-          (0.4D0 * pcur * rmajor)
+  case (17)  !  Lackner-Gottardi scaling (L-mode)
+     qhat = (1.0D0+kappa95**2) * rminor**2 * bt /(0.4D0 * pcur * rmajor)
      tauee = hfact * 0.12D0 * pcur**0.8D0 * rmajor**1.8D0 * &
           rminor**0.4D0 * kappa95 * (1.0D0+kappa95)**(-0.8D0) * &
           dnla20**0.6D0 * qhat**0.4D0 / powerht**0.6D0
@@ -2590,12 +2151,8 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
      ptaue = 0.6D0
      qtaue = 0.0D0
      rtaue = -0.6D0
-  end if
 
-  ! *** Neo-Kaye scaling (L-mode)
-  !+**PJK 29/06/92 Added missing afuel term to Neo-Kaye scaling law
-
-  if (isc.eq.18) then
+  case (18)  !  Neo-Kaye scaling (L-mode)
      tauee = hfact * 0.063D0 * pcur**1.12D0 * rmajor**1.3D0 * &
           rminor**(-0.04D0) * kappa95**0.28D0 * dnla20**0.14D0 * &
           bt**0.04D0 * sqrt(afuel) / powerht**0.59D0
@@ -2603,11 +2160,8 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
      ptaue = 0.14D0
      qtaue = 0.0D0
      rtaue = -0.59D0
-  end if
 
-  ! *** Riedel scaling (H-mode)
-
-  if (isc.eq.19) then
+  case (19)  !  Riedel scaling (H-mode)
      tauee = hfact * 0.1D0 * sqrt(afuel) * pcur**0.884D0 * &
           rmajor**1.24D0 * rminor**(-0.23D0) * kappa95**0.317D0 * &
           bt**0.207D0 * dnla20**0.105D0 / powerht**0.486D0
@@ -2615,13 +2169,9 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
      ptaue = 0.105D0
      qtaue = 0.0D0
      rtaue = -0.486D0
-  end if
 
-  !+**PJK 17/12/92 Added amended version of ITER H90-P law.
-  !+**PJK 17/12/92 Seems to bear no relation to the original...(isc=13)
-  !+**PJK 17/12/92 From Nuclear Fusion 32 (1992) 318.
-
-  if (isc.eq.20) then
+  case (20)  !  Amended version of ITER H90-P law
+     !  Nuclear Fusion 32 (1992) 318
      tauee = hfact * 0.082D0 * pcur**1.02D0 * &
           bt**0.15D0 * sqrt(afuel) * rmajor**1.60D0 / &
           (powerht**0.47D0 * kappa**0.19D0)
@@ -2629,231 +2179,170 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
      ptaue = 0.0D0
      qtaue = 0.0D0
      rtaue = -0.47D0
-  end if
 
-  !+**PJK 30/06/94 Added three new scaling laws, relevant to stellarators
-
-  ! *** Large Helical Device scaling
-  ! *** S.Sudo, Y.Takeiri, H.Zushi et al., Nuclear Fusion, 30, p.11 (1990)
-
-  if (isc.eq.21) then
+  case (21)  !  Large Helical Device scaling (stellarators)
+     !  S.Sudo, Y.Takeiri, H.Zushi et al., Nuclear Fusion 30 (1990) 11
      tauee = hfact * 0.17D0 * rmajor**0.75D0 * rminor**2 * &
           dnla20**0.69D0 * bt**0.84D0 * powerht**(-0.58D0)
      gtaue = 0.0D0
      ptaue = 0.69D0
      qtaue = 0.0D0
      rtaue = 0.58D0
-  end if
 
-  ! *** Gyro-reduced Bohm scaling
-  ! *** R.J.Goldston, H.Biglari, G.W.h90ammett et al., Bull.Am.Phys.Society,
-  ! *** volume 34, 1964 (1989)
-
-  if (isc.eq.22) then
+  case (22)  !  Gyro-reduced Bohm scaling
+     !  R.J.Goldston, H.Biglari, G.W.Hammett et al., Bull.Am.Phys.Society,
+     !  volume 34, 1964 (1989)
      tauee = hfact * 0.25D0 * bt**0.8D0 * dnla20**0.6D0 * &
           powerht**(-0.6D0) * rminor**2.4D0 * rmajor**0.6D0
      gtaue = 0.0D0
      ptaue = 0.6D0
      qtaue = 0.0D0
      rtaue = -0.6D0
-  end if
 
-  ! *** Lackner-Gottardi stellarator scaling
-  ! *** (assumed q = 1/rotational transform)
-  ! *** K.Lackner and N.A.O.Gottardi, Nuclear Fusion, 30, p.767 (1990)
-
-  if (isc.eq.23) then
+  case (23)  !  Lackner-Gottardi stellarator scaling
+     !  (assumed q = 1/rotational transform)
+     !  K.Lackner and N.A.O.Gottardi, Nuclear Fusion, 30, p.767 (1990)
      tauee = hfact * 0.17D0 * rmajor * rminor**2 * dnla20**0.6D0 * &
           bt**0.8D0 * powerht**(-0.6D0) * q**(-0.4D0)
      gtaue = 0.0D0
      ptaue = 0.6D0
      qtaue = 0.0D0
      rtaue = -0.6D0
-  end if
 
-  ! *** ITER-93H scaling (ELM-free; multiply by 0.85 for ELMy version)
-  ! *** S.Kaye and the ITER Joint Central Team and Home Teams, in Plasma
-  ! *** Physics and Controlled Nuclear Fusion Research (Proc. 15th
-  ! *** Int. Conf., Seville, 1994) IAEA-CN-60/E-P-3
-
-  if (isc.eq.24) then
+  case (24)  !  ITER-93H scaling (ELM-free; multiply by 0.85 for ELMy version)
+     !  S.Kaye and the ITER Joint Central Team and Home Teams, in Plasma
+     !  Physics and Controlled Nuclear Fusion Research (Proc. 15th
+     !  Int. Conf., Seville, 1994) IAEA-CN-60/E-P-3
      tauee = hfact * 0.053D0 * pcur**1.06D0 * bt**0.32D0 * &
           powerht**(-0.67D0) * afuel**0.41D0 * rmajor**1.79D0 * &
           dnla20**0.17D0 * aspect**0.11D0 * kappa**0.66D0
-
      gtaue = 0.0D0
      ptaue = 0.17D0
      qtaue = 0.0D0
      rtaue = -0.67D0
-  end if
 
-  ! *** TITAN RFP scaling
-  ! *** TITAN RFP Fusion Reactor Study, Scoping Phase Report
-  ! *** UCLA-PPG-1100, page 5-9, Jan 1987
-
-  if (isc.eq.25) then
+  case (25)  !  TITAN RFP scaling
+     !  TITAN RFP Fusion Reactor Study, Scoping Phase Report
+     !  UCLA-PPG-1100, page 5-9, Jan 1987
      tauee = hfact * 0.05D0 * pcur * rminor**2
-
      gtaue = 0.0D0
      ptaue = 0.0D0
      qtaue = 0.0D0
      rtaue = 0.0D0
-  end if
 
-  ! *** ITER-97 H-mode scalings
-  ! *** J.G.Cordey et al., EPS Berchtesgaden, 1997
+     !  Next two are ITER-97 H-mode scalings
+     !  J. G. Cordey et al., EPS Berchtesgaden, 1997
 
-  ! *** ELM-free: ITERH-97P
-
-  if (isc.eq.26) then
+  case (26)  !  ELM-free: ITERH-97P
      tauee = hfact * 0.031D0 * pcur**0.95D0 * bt**0.25D0 * &
           powerht**(-0.67D0) * dnla19**0.35D0 * &
           rmajor**1.92D0 * aspect**(-0.08D0) * kappa**0.63D0 * &
           afuel**0.42D0
-
      gtaue = 0.0D0
-     ! ***    N.B. problems with ptaue if pulsed option is used with isc=26
-     ptaue = 0.35D0
+     ptaue = 0.35D0  !  N.B. problems with ptaue if pulsed option is used with isc=26
      qtaue = 0.0D0
      rtaue = -0.67D0
-  end if
 
-  ! *** ELMy: ITERH-97P(y)
-
-  if (isc.eq.27) then
-     tauee = hfact * 0.029D0 * pcur**0.90D0 * bt**0.20D0 * &
+  case (27)  !  ELMy: ITERH-97P(y)
+     tauee = hfact * 0.029D0 * pcur**0.90D0 * bt**0.20D0 * & 
           powerht**(-0.66D0) * dnla19**0.40D0 * &
           rmajor**2.03D0 * aspect**(-0.19D0) * kappa**0.92D0 * &
           afuel**0.2D0
-
      gtaue = 0.0D0
-     ! ***    N.B. problems with ptaue if pulsed option is used with isc=27
-     ptaue = 0.4D0
+     ptaue = 0.4D0  ! N.B. problems with ptaue if pulsed option is used with isc=27
      qtaue = 0.0D0
      rtaue = -0.66D0
-  end if
 
-  ! *** ITER-96P L-mode scaling
-  ! *** S.M.Kaye and the ITER Confinement Database Working Group,
-  ! *** Nuclear Fusion vol.37 (1997) 1303
-
-  ! *** N.B. tau_th formula used
-
-  if (isc.eq.28) then
+  case (28)  !  ITER-96P L-mode scaling
+     !  S.M.Kaye and the ITER Confinement Database Working Group,
+     !  Nuclear Fusion 37 (1997) 1303
+     !  N.B. tau_th formula used
      tauee = hfact * 0.023D0 * pcur**0.96D0 * bt**0.03D0 * &
           kappa95**0.64D0 * rmajor**1.83D0 * aspect**0.06D0 * &
           dnla19**0.40D0 * afuel**0.20D0 * powerht**(-0.73D0)
-
      gtaue = 0.0D0
-     ! ***    N.B. problems with ptaue if pulsed option is used with isc=28
-     ptaue = 0.4D0
+     ptaue = 0.4D0  !  N.B. problems with ptaue if pulsed option is used with isc=28
      qtaue = 0.0D0
      rtaue = -0.73D0
-  end if
 
-  ! *** Valovic modified ELMy-H mode scaling
-
-  if (isc.eq.29) then
+  case (29)  !  Valovic modified ELMy-H mode scaling
      tauee = hfact * 0.067D0 * pcur**0.9D0 * bt**0.17D0 * &
           dnla19**0.45D0 * afuel**0.05D0 * rmajor**1.316D0 * &
           rminor**0.79D0 * kappa**0.56D0 * powerht**(-0.68D0)
      gtaue = 0.0D0
-     ! ***    N.B. problems with ptaue if pulsed option is used with isc=29
-     ptaue = 0.45D0
+     ptaue = 0.45D0  !  N.B. problems with ptaue if pulsed option is used with isc=29
      qtaue = 0.0D0
      rtaue = -0.68D0
-  end if
 
-  ! *** Kaye PPPL Workshop April 1998 L-mode scaling
-
-  if (isc.eq.30) then
+  case (30)  !  Kaye PPPL Workshop April 1998 L-mode scaling
      tauee = hfact * 0.021D0 * pcur**0.81D0 * bt**0.14D0 * &
           kappa**0.7D0 * rmajor**2.01D0 * aspect**(-0.18D0) * &
           dnla19**0.47D0 * afuel**0.25D0 * powerht**(-0.73D0)
      gtaue = 0.0D0
-     ! ***    N.B. problems with ptaue if pulsed option is used with isc=30
-     ptaue = 0.47D0
+     ptaue = 0.47D0  ! N.B. problems with ptaue if pulsed option is used with isc=30
      qtaue = 0.0D0
      rtaue = -0.73D0
-  end if
 
-  ! *** ITERH-PB98P(y), ELMy H-mode scaling
-
-  if (isc.eq.31) then
+  case (31)  !  ITERH-PB98P(y), ELMy H-mode scaling
      tauee = hfact * 0.0615D0 * pcur**0.9D0 * bt**0.1D0 * &
           dnla19**0.4D0 * powerht**(-0.66D0) * rmajor**2 * &
           kappaa**0.75D0 * aspect**(-0.66D0) * afuel**0.2D0
      gtaue = 0.0D0
-     ! ***    N.B. problems with ptaue if pulsed option is used with isc=31
-     ptaue = 0.4D0
+     ptaue = 0.4D0  !  N.B. problems with ptaue if pulsed option is used with isc=31
      qtaue = 0.0D0
      rtaue = -0.66D0
-  end if
 
-  ! *** IPB98(y), ELMy H-mode scaling
-
-  if (isc.eq.32) then
+  case (32)  !  IPB98(y), ELMy H-mode scaling
      tauee = hfact * 0.0365D0 * pcur**0.97D0 * bt**0.08D0 * &
           dnla19**0.41D0 * powerht**(-0.63D0) * rmajor**1.93D0 * &
           kappa**0.67D0 * aspect**(-0.23D0) * afuel**0.2D0
      gtaue = 0.0D0
-     ! ***    N.B. problems with ptaue if pulsed option is used with isc=32
-     ptaue = 0.41D0
+     ptaue = 0.41D0  !  N.B. problems with ptaue if pulsed option is used with isc=32
      qtaue = 0.0D0
      rtaue = -0.63D0
-  end if
 
-  ! *** IPB98(y,1), ELMy H-mode scaling
-
-  if (isc.eq.33) then
+  case (33)  !  IPB98(y,1), ELMy H-mode scaling
      tauee = hfact * 0.0503D0 * pcur**0.91D0 * bt**0.15D0 * &
           dnla19**0.44D0 * powerht**(-0.65D0) * rmajor**2.05D0 * &
           kappaa**0.72D0 * aspect**(-0.57D0) * afuel**0.13D0
      gtaue = 0.0D0
-     ! ***    N.B. problems with ptaue if pulsed option is used with isc=33
-     ptaue = 0.44D0
+     ptaue = 0.44D0  !  N.B. problems with ptaue if pulsed option is used with isc=33
      qtaue = 0.0D0
      rtaue = -0.65D0
-  end if
 
-  ! *** IPB98(y,2), ELMy H-mode scaling
-
-  if (isc.eq.34) then
+  case (34)  !  IPB98(y,2), ELMy H-mode scaling
      tauee = hfact * 0.0562D0 * pcur**0.93D0 * bt**0.15D0 * &
           dnla19**0.41D0 * powerht**(-0.69D0) * rmajor**1.97D0 * &
           kappaa**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
      gtaue = 0.0D0
-     ! ***    N.B. problems with ptaue if pulsed option is used with isc=34
-     ptaue = 0.41D0
+     ptaue = 0.41D0  !  N.B. problems with ptaue if pulsed option is used with isc=34
      qtaue = 0.0D0
      rtaue = -0.69D0
-  end if
 
-  ! *** IPB98(y,3), ELMy H-mode scaling
-
-  if (isc.eq.35) then
+  case (35)  !  IPB98(y,3), ELMy H-mode scaling
      tauee = hfact * 0.0564D0 * pcur**0.88D0 * bt**0.07D0 * &
           dnla19**0.40D0 * powerht**(-0.69D0) * rmajor**2.15D0 * &
           kappaa**0.78D0 * aspect**(-0.64D0) * afuel**0.20D0
      gtaue = 0.0D0
-     ! ***    N.B. problems with ptaue if pulsed option is used with isc=35
-     ptaue = 0.4D0
+     ptaue = 0.4D0  !  N.B. problems with ptaue if pulsed option is used with isc=35
      qtaue = 0.0D0
      rtaue = -0.69D0
-  end if
 
-  ! *** IPB98(y,4), ELMy H-mode scaling
-
-  if (isc.eq.36) then
+  case (36)  !  IPB98(y,4), ELMy H-mode scaling
      tauee = hfact * 0.0587D0 * pcur**0.85D0 * bt**0.29D0 * &
           dnla19**0.39D0 * powerht**(-0.70D0) * rmajor**2.08D0 * &
           kappaa**0.76D0 * aspect**(-0.69D0) * afuel**0.17D0
      gtaue = 0.0D0
-     ! ***    N.B. problems with ptaue if pulsed option is used with isc=36
-     ptaue = 0.39D0
+     ptaue = 0.39D0  !  N.B. problems with ptaue if pulsed option is used with isc=36
      qtaue = 0.0D0
      rtaue = -0.70D0
-  end if
+
+  case default
+     write(*,*) 'Error in routine PCOND:'
+     write(*,*) 'Illegal value for ISC, = ',isc
+     write(*,*) 'PROCESS stopping.'
+     stop
+  end select
 
   !  Ion energy confinement time
   !  N.B. Overwrites earlier calculation above
@@ -3166,8 +2655,7 @@ function svfdt(t)
   !+ad_args  t : input real :  Maxwellian density-weighted ion temperature (keV)
   !+ad_desc  This routine calculates the D-T reaction rate in m3/s.
   !+ad_desc  The range of the fit is 0.2 < t(keV) < 100
-  !+ad_prob  Promoting two values to full double precision changes
-  !+ad_prob  the resulting machine somewhat.
+  !+ad_prob  None
   !+ad_call  None
   !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
   !+ad_hist  25/07/11 PJK Changed name to SVFDT_ORIG; superseded by
@@ -3193,8 +2681,7 @@ function svfdt(t)
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !+PJK 09/11/11 Converting to 34.3827D0 results in a different machine...
-  bg = 34.3827
+  bg = 34.3827D0
   mrc2 = 1.124656D6
 
   acoef(1) =  1.17302D-9
@@ -3209,8 +2696,7 @@ function svfdt(t)
        (1.0D0 + t*(acoef(3) + t*(acoef(5) + t*acoef(7))))
   theta = t/(1.0D0 - theta1)
 
-  !+PJK 09/11/11 Converting to 0.3333333333D0 results in a different machine...
-  zeta = ((bg**2)/(4.0D0*theta))**0.3333333333
+  zeta = ((bg**2)/(4.0D0*theta))**0.3333333333D0
 
   svfdt = 1.0D-6 * acoef(1)*theta*sqrt(zeta/(mrc2*t**3)) * &
        exp(-3.0D0 * zeta)
@@ -3304,8 +2790,7 @@ subroutine radpwr(alphan,alphat,aspect,bt,dene,deni,fbfe,kappa95, &
   !+ad_args  psync  : output real : synchrotron radiation power/volume (MW/m3)
   !+ad_desc  This routine finds the radiation power in MW/m3.
   !+ad_desc  The Bremsstrahlung and synchrotron powers are included.
-  !+ad_prob  Promoting one exponent value to full double precision changes
-  !+ad_prob  the resulting machine somewhat.
+  !+ad_prob  None
   !+ad_call  None
   !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
   !+ad_hist  21/07/11 RK  Implemented Albajar for P_sync
@@ -3389,9 +2874,7 @@ subroutine radpwr(alphan,alphat,aspect,bt,dene,deni,fbfe,kappa95, &
   kfun = (alphan + 3.87D0*alphat + 1.46D0)**(-0.79D0)
   kfun = kfun * (1.98D0+alphat)**1.36D0 * tbet**2.14D0
   kfun = kfun*(tbet**1.53D0 + 1.87D0*alphat - 0.16D0)**(-1.33D0)
-  !+PJK 09/11/11 Converting 2nd occurrence of 0.41 to 0.41D0
-  !+PJK 09/11/11 results in a different machine...
-  dum = (1.0D0+0.12D0*(teo/(pao**0.41D0))*(1.0D0-ssync)**0.41)
+  dum = (1.0D0+0.12D0*(teo/(pao**0.41D0))*(1.0D0-ssync)**0.41D0)
 
   !  Very high T modification, from Fidone
 
@@ -4326,7 +3809,7 @@ function fnewbs(alphan,alphat,betat,bt,dene,plascur,q95,q0,rmajor, &
   !+ad_summ  Bootstrap current fraction from Nevins et al scaling
   !+ad_type  Function returning real
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
+  !+ad_cont  bsinteg
   !+ad_args  alphan : input real :  density profile index
   !+ad_args  alphat : input real :  temperature profile index
   !+ad_args  betat  : input real :  total plasma beta (with respect to the toroidal
@@ -4361,25 +3844,8 @@ function fnewbs(alphan,alphat,betat,bt,dene,plascur,q95,q0,rmajor, &
   real(kind(1.0D0)), intent(in) :: alphan,alphat,betat,bt,dene,plascur, &
        q0,q95,rmajor,rminor,ten,zeff
 
-  !  Variables passed via COMMON
-  !  alphanz: (OUTPUT) density profile index
-  !  alphatz: (OUTPUT) temperature profile index
-  !  betaz  : (OUTPUT) total plasma beta (with respect to the toroidal
-  !                    field)
-  !  btz    : (OUTPUT) toroidal field on axis (T)
-  !  denez  : (OUTPUT) electron density (/m3)
-  !  plascurz:(OUTPUT) plasma current (MA)
-  !  qaxis  : (OUTPUT) central safety factor
-  !  qpsi   : (OUTPUT) safety factor at 95% surface
-  !  rmajorz: (OUTPUT) plasma major radius (m)
-  !  rminorz: (OUTPUT) plasma minor radius (m)
-  !  tez    : (OUTPUT) density weighted average plasma temperature (keV)
-  !  zeffz  : (OUTPUT) plasma effective charge
-
   real(kind(1.0D0)) :: alphanz,alphatz,betaz,btz,denez,plascurz,qaxis, &
        qpsi,rmajorz,rminorz,tez,zeffz
-  COMMON/bss/ alphanz,alphatz,betaz,btz,denez,plascurz,qpsi,qaxis, &
-       rmajorz,tez,rminorz,zeffz
 
   !  Local variables
 
@@ -4387,13 +3853,9 @@ function fnewbs(alphan,alphat,betat,bt,dene,plascur,q95,q0,rmajor, &
   real(kind(1.0D0)), parameter :: rmu0 = 1.25664D-6
   real(kind(1.0D0)) :: aibs,ainteg,betae0,dum1,fibs,flag
 
-  !  External functions
-
-  real(kind(1.0D0)), external :: bsinteg
-
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !  Initialise global variables
+  !  Initialise shared variables
 
   alphanz = alphan
   alphatz = alphat
@@ -4425,95 +3887,77 @@ function fnewbs(alphan,alphat,betat,bt,dene,plascur,q95,q0,rmajor, &
 
   fnewbs = fibs
 
+contains
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function bsinteg(y)
+
+    !+ad_name  bsinteg
+    !+ad_summ  Integrand function for Nevins et al bootstrap current scaling
+    !+ad_type  Function returning real
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  y : input real : abscissa of integration, = normalised minor radius
+    !+ad_desc  This function calculates the integrand function for the
+    !+ad_desc  Nevins et al bootstrap current scaling, 4/11/90.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
+    !+ad_hist  10/11/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: bsinteg
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: y
+
+    !  Local variables
+
+    real(kind(1.0D0)), parameter :: rmu0 = 1.25664D-6
+    real(kind(1.0D0)) :: alphai,al1,al2,a1,a2,betae,c1,c2,c3, &
+         d,del,pratio,q,x,z
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Constants for fit to q-profile
+
+    c1 = 1.0D0
+    c2 = 1.0D0
+    c3 = 1.0D0
+
+    !  Compute average electron beta
+
+    betae = denez*tez*1.6022D-16/(btz**2/(2.0D0*rmu0))
+
+    del = rminorz*sqrt(y)/rmajorz
+    x = (1.46D0*sqrt(del) + 2.4D0*del)/(1.0D0 - del)**1.5D0
+    z = zeffz
+    d = 1.414D0*z + z*z + x*(0.754D0 + 2.657D0*z + 2.0D0*z*z) &
+         + x*x*(0.348D0 + 1.243D0*z + z*z)
+    al2 = -x*(0.884D0 + 2.074D0*z)/d
+    a2 = alphatz*(1.0D0-y)**(alphanz+alphatz-1.0D0)
+    alphai = -1.172D0/(1.0D0+ 0.462D0*x)
+    a1 = (alphanz+alphatz)*(1.0D0-y)**(alphanz+alphatz-1.0D0)
+    al1 = x*(0.754D0+2.21D0*z+z*z+x*(0.348D0+1.243D0*z+z*z))/d
+
+    !  q-profile
+
+    q = qaxis + (qpsi-qaxis)*(c1*y + c2*y*y + c3*y**3)/(c1+c2+c3)
+
+    pratio = (betaz - betae) / betae
+
+    bsinteg = (q/qpsi)*(al1*(a1 + pratio*(a1+alphai*a2) ) + al2*a2 )
+
+  end function bsinteg
+
 end function fnewbs
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-function bsinteg(y)
-
-  !+ad_name  bsinteg
-  !+ad_summ  Integrand function for Nevins et al bootstrap current scaling
-  !+ad_type  Function returning real
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  y : input real : abscissa of integration, = normalised minor radius
-  !+ad_desc  This function calculates the integrand function for the
-  !+ad_desc  Nevins et al bootstrap current scaling, 4/11/90.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
-  !+ad_hist  10/11/11 PJK Initial F90 version
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  real(kind(1.0D0)) :: bsinteg
-
-  !  Arguments
-
-  real(kind(1.0D0)), intent(in) :: y
-
-  !  Variables passed via COMMON
-  !  alphanz: (INPUT)  density profile index
-  !  alphatz: (INPUT)  temperature profile index
-  !  betaz  : (INPUT)  total plasma beta (with respect to the toroidal
-  !                    field)
-  !  btz    : (INPUT)  toroidal field on axis (T)
-  !  denez  : (INPUT)  electron density (/m3)
-  !  plascurz:(INPUT)  plasma current (MA)
-  !  qaxis  : (INPUT)  central safety factor
-  !  qpsi   : (INPUT)  safety factor at 95% surface
-  !  rmajorz: (INPUT)  plasma major radius (m)
-  !  rminorz: (INPUT)  plasma minor radius (m)
-  !  tez    : (INPUT)  density weighted average plasma temperature (keV)
-  !  zeffz  : (INPUT)  plasma effective charge
-
-  real(kind(1.0D0)) :: alphanz,alphatz,betaz,btz,denez,plascurz,qaxis, &
-       qpsi,rmajorz,rminorz,tez,zeffz
-  COMMON/bss/ alphanz,alphatz,betaz,btz,denez,plascurz,qpsi,qaxis, &
-       rmajorz,tez,rminorz,zeffz
-
-  !  Local variables
-
-  real(kind(1.0D0)), parameter :: rmu0 = 1.25664D-6
-  real(kind(1.0D0)) :: alphai,al1,al2,a1,a2,betae,c1,c2,c3, &
-       d,del,pratio,q,x,z
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !  Constants for fit to q-profile
-
-  c1 = 1.0D0
-  c2 = 1.0D0
-  c3 = 1.0D0
-
-  !  Compute average electron beta
-
-  betae = denez*tez*1.6022D-16/(btz**2/(2.0D0*rmu0))
-
-  del = rminorz*sqrt(y)/rmajorz
-  x = (1.46D0*sqrt(del) + 2.4D0*del)/(1.0D0 - del)**1.5D0
-  z = zeffz
-  d = 1.414D0*z + z*z + x*(0.754D0 + 2.657D0*z + 2.0D0*z*z) &
-       + x*x*(0.348D0 + 1.243D0*z + z*z)
-  al2 = -x*(0.884D0 + 2.074D0*z)/d
-  a2 = alphatz*(1.0D0-y)**(alphanz+alphatz-1.0D0)
-  alphai = -1.172D0/(1.0D0+ 0.462D0*x)
-  a1 = (alphanz+alphatz)*(1.0D0-y)**(alphanz+alphatz-1.0D0)
-  al1 = x*(0.754D0+2.21D0*z+z*z+x*(0.348D0+1.243D0*z+z*z))/d
-
-  !  q-profile
-
-  q = qaxis + (qpsi-qaxis)*(c1*y + c2*y*y + c3*y**3)/(c1+c2+c3)
-
-  pratio = (betaz - betae) / betae
-
-  bsinteg = (q/qpsi)*(al1*(a1 + pratio*(a1+alphai*a2) ) + al2*a2 )
-
-end function bsinteg
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
