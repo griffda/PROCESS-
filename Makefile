@@ -57,7 +57,7 @@ source = \
  eqns.f90     \
  eqsolv.f90   \
  fispact.f    \
- fwbs.f       \
+ fwbs.f90     \
  geomty.f     \
  heatpwr.f90  \
  ife.f        \
@@ -246,8 +246,8 @@ eqns.o: build.h90 cdriv.h90 divrt.h90 htpwr.h90 ife.h90 ineq.h90 numer.h90 param
   vltcom.h90
 eqsolv.o: numer.h90 param.h90
 fispact.o: blanket.h build.h fispact.h fwblsh.h numer.h param.h phydat.h pulse.h
-fwbs.o: blanket.h build.h cost.h divrt.h fwblsh.h htpwr.h osections.h param.h \
-  phydat.h tfcoil.h
+fwbs.o: blanket.h90 build.h90 cost.h90 divrt.h90 fwblsh.h90 htpwr.h90 osections.h90 \
+  param.h90 phydat.h90 tfcoil.h90
 geomty.o: build.h param.h phydat.h rfp.h
 heatpwr.o: blanket.h90 cdriv.h90 cost.h90 fwblsh.h90 htpwr.h90 osections.h90 \
   param.h90 pfcoil.h90 phydat.h90 pwrcom.h90 struccom.h90 tfcoil.h90 times.h90
