@@ -216,7 +216,7 @@ C  Minimise/maximise hydrogen production rate
 
 C  Crude method of catching NaN errors
 
-      if (abs(fc).gt.9.99D99) then
+      if ((abs(fc).gt.9.99D99).or.(fc.ne.fc)) then
          WRITE(*,*) 'Error in routine FUNFOM:'
          WRITE(*,*) 'NaN error in figure of merit calculation ',iab
          WRITE(*,*) 'PROCESS stopping.'

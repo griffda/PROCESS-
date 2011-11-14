@@ -30,6 +30,7 @@ c  optimisation variables array XCM.
 c
 c+**PJK 22/10/92 Removed original arguments (xc,nn)
 c+**PJK 22/10/92 xc --> xcm, nn --> nvar, both in COMMON.
+C+**PJK 14/11/11 Changed NaN error check
 
       IMPLICIT NONE
 
@@ -232,7 +233,8 @@ C  Check that no iteration variable is zero
 
 C  Crude method of catching NaN errors
 
-         if (abs(xcm(i)).gt.9.99D99) then
+         if ( (abs(xcm(i)).gt.9.99D99).or.
+     +        (xcm(i).ne.xcm(i)) ) then
             write(*,*) 'Error in routine LOADXC :'
             write(*,*) 'NaN error for iteration variable ',ixc(i)
             write(*,*) 'PROCESS stopping.'
@@ -240,18 +242,18 @@ C  Crude method of catching NaN errors
          end if
 
 C  Check that all iteration variables lie within bounds
-
-         if (ioptimz.ge.0) then
-            if ( ((boundl(ixc(i))-xcm(i)).ge.1.0D-12).or.
-     +           ((xcm(i)-boundu(ixc(i))).ge.1.0D-12) ) then
-               write(*,*) ' '
-               write(*,*) 'Warning in routine LOADXC :'
-               write(*,*)
-     +              'Iteration variable ',ixc(i),' (',lablxc(ixc(i)),
-     +              ') is outside its bounds.'
-               write(*,*) lablxc(ixc(i)), ' = ',xcm(i)
-            end if
-         end if
+C+**PJK 14/11/11 This check has been moved into CONVXC
+C         if (ioptimz.ge.0) then
+C            if ( ((boundl(ixc(i))-xcm(i)).ge.1.0D-12).or.
+C     +           ((xcm(i)-boundu(ixc(i))).ge.1.0D-12) ) then
+C               write(*,*) ' '
+C               write(*,*) 'Warning in routine LOADXC :'
+C               write(*,*)
+C     +              'Iteration variable ',ixc(i),' (',lablxc(ixc(i)),
+C     +              ') is outside its bounds.'
+C               write(*,*) lablxc(ixc(i)), ' = ',xcm(i)
+C            end if
+C-**PJK         end if
 
  10   continue
 
@@ -292,6 +294,27 @@ c     their real values
       integer i,nn
 
       do 10 i = 1,nn
+
+C+**PJK 14/11/11 Enforcing bounds here, instead of in LOADXC
+         if (ioptimz.ge.0) then
+            if ( ((boundl(ixc(i))-xc(i)/scale(i)).gt.1.0D-12).or.
+     +           ((xc(i)/scale(i)-boundu(ixc(i))).gt.1.0D-12) ) then
+               write(*,*) ' '
+               write(*,*) 'Warning in routine CONVXP :'
+               write(*,*)
+     +              'Iteration variable ',ixc(i),' (',lablxc(ixc(i)),
+     +              ') is outside its bounds.'
+               write(*,*) lablxc(ixc(i)), ' = ',xc(i)/scale(i)
+               write(*,*) 'Enforcing bound...'
+               if ((boundl(ixc(i))-xc(i)/scale(i)).gt.1.0D-12) then
+                  xc(i) = boundl(ixc(i))*scale(i)
+               else
+                  xc(i) = boundu(ixc(i))*scale(i)
+               end if
+               write(*,*) lablxc(ixc(i)), ' = ',xc(i)/scale(i)
+            end if
+         end if
+
          if (ixc(i).eq.1)  aspect   = xc(i)/scale(i)
          if (ixc(i).eq.2)  bt       = xc(i)/scale(i)
          if (ixc(i).eq.3)  rmajor   = xc(i)/scale(i)
@@ -406,7 +429,7 @@ C  Check that no iteration variable is zero
 
 C  Crude method of catching NaN errors
 
-         if (abs(xc(i)).gt.9.99D99) then
+         if ((abs(xc(i)).gt.9.99D99).or.(xc(i).ne.xc(i))) then
             write(*,*) 'Error in routine CONVXC :'
             write(*,*) 'NaN error for iteration variable ',ixc(i)
             write(*,*) 'PROCESS stopping.'

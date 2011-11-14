@@ -42,6 +42,7 @@ subroutine con1(m,cc)
   !+ad_hist  25/07/11 PJK Applied Greenwald density limit to line-averaged
   !+ad_hisc               rather than volume-averaged density
   !+ad_hist  20/09/11 PJK Initial F90 version
+  !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -424,7 +425,7 @@ subroutine con1(m,cc)
 
      !  Crude method of catching NaN errors
 
-     if (abs(cc(i)) > 9.99D99) then
+     if ((abs(cc(i)) > 9.99D99).or.(cc(i) /= cc(i))) then
         write(*,*) 'Error in routine CON1:'
         write(*,*) 'NaN error for constraint equation ',icc(i)
         write(*,*) 'PROCESS stopping.'
