@@ -833,7 +833,7 @@ c  tfstress - 1 for successful call, 0 for failure
       DOUBLE PRECISION b07,b05,b03
       DOUBLE PRECISION a(10,10), b(10), c(10)
 
-      INTEGER i, ii, ia, ipvt(10)
+      INTEGER i, ii, ia
 
       tfstress = 0
 
@@ -963,7 +963,7 @@ c  Find solution vector c, of:  A times c = b
 
 c  Use LINPACK routine here:
       ia = 10
-      call linesolv(a,ia,b,ipvt,c)
+      call linesolv(a,ia,b,c)
 
 c  Find stresses in winding pack region
 

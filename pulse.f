@@ -2939,7 +2939,7 @@ c  Set up matrix and rhs of equations governing equality problem
 
 c  Invert matrix giving operators h and cstar
 
-      call hinv1(h,ih,nk,wa,iwa,info)
+      call hinv1(h,ih,nk,iwa,info)
       if (info .ne. 1) goto 1000
       goto 118
 
@@ -3302,7 +3302,7 @@ c  Apply simplex formula to exchange constraints
       do 202 i = 1,m
          lt(nn+i) = 1
  202  continue
-      call hinv1(h,ih,n,wa,iwa,info)
+      call hinv1(h,ih,n,iwa,info)
       if (info .ne. 1) goto 1000
 
 c  Start with empty basis from feasible point
@@ -3423,7 +3423,7 @@ c  Set up normals v of the k designated constraints in basis
             h(i,j) = h(i,nj)
  16      continue
  161  continue
-      call hinv1(h,ih,n,wa,iwa,info)
+      call hinv1(h,ih,n,iwa,info)
       if (info .ne. 1) goto 1000
       goto 40
 
@@ -3441,7 +3441,7 @@ c  Form m = (vtranspose.v)(-1)
       goto  201
 
  200  continue
-      call hinv1(h,ih,k,wa,iwa,info)
+      call hinv1(h,ih,k,iwa,info)
       if (info .ne. 1) goto 1000
 
  201  continue
@@ -3713,13 +3713,13 @@ c  using simplex formula for new h
       return
       end
 c______________________________________________________________________
-      SUBROUTINE HINV1(h,ih,n,work,ipvt,info)
+      SUBROUTINE HINV1(h,ih,n,ipvt,info)
 
 c  This subroutine inverts the matrix H by use of linpack software.
 c
 c  The subroutine statement is
 c
-c  subroutine hinv(h,ih,n,work,ipvt,info)
+c  subroutine hinv(h,ih,n,ipvt,info)
 c
 c  where
 c
@@ -3731,8 +3731,6 @@ c  IH is an input integer variable set to the fortran
 c  declaration of the leading dimension in the H array.
 c
 c  N is the order of H.  N must be less than or equal to IH.
-c
-c  WORK is a real work array of length at least N.
 c
 c  IPVT is an integer work array of length at least N.
 c
@@ -3750,7 +3748,8 @@ c  Roger L. Crane, Kenneth E. Hillstrom, Michael Minkoff
 
       INTEGER ih,n,info
       INTEGER ipvt(n)
-      DOUBLE PRECISION h(ih,ih),work(n)
+      DOUBLE PRECISION h(ih,ih)
+      DOUBLE PRECISION det(2)
 
 c  Do lu decomposition of h
 
@@ -3764,7 +3763,7 @@ c  Form inverse of h
 
  20   continue
       info = 1
-      call sgedi(h,ih,n,ipvt,work,work,1)
+      call sgedi(h,ih,n,ipvt,det,1)
 
  1000 continue
 
