@@ -2217,7 +2217,8 @@ c  to the negative gradient of objf
          vlam(i) = zero
  55   continue
 
-      call qpsub1(
+C+**PJK 15/11/11      call qpsub1(
+      call qpsub(
      +     n,m,meq,conf,cnorm,lcnorm,b,lb,gm,bdl,bdu,info,x,delta,
      +     ldel,cm,h,lh,mact,wa,lwa,iwa,liwa,ilower,iupper,
      +     bndl,bndu)
@@ -2519,1253 +2520,1253 @@ c  Error return because uphill search direction was calculated
 
       return
       end
-c______________________________________________________________________
-      SUBROUTINE QPSUB1(
-     +     n,m,meq,conf,cnorm,lcnorm,b,lb,gm,bdl,bdu,info,
-     +     x,delta,ldel,cm,h,lh,mact,wa,lwa,iwa,liwa,
-     +     ilower,iupper,bndl,bndu)
-
-c  This subroutine finds the value of the solution vector which
-c  minimizes a quadratic function of several variables subject to
-c  equality and inequality constraints. This is accomplished
-c  by invoking subroutine harwqp, a modified version of subroutine
-c  ve02ad, the Harwell Library subroutine for general quadratic
-c  programming.
-c
-c  The subroutine statement is
-c
-c  subroutine qpsub1(n,m,meq,conf,cnorm,lcnorm,b,lb,gm,bdl,bdu,
-c                   info,delta,ldel,cm,h,lh,mact,wa,lwa,iwa,liwa)
-c
-c  where
-c
-c  N is a positive integer input variable set to the number of
-c  variables.
-c
-c  M is a positive integer input variable set to the number of
-c  constraints.
-c
-c  MEQ is a non-negative integer input variable set to the number
-c  of equality constraints. MEQ must be less than or equal to N.
-c
-c  CONF is a real input array of length M which contains the
-c  constraint functions.
-c
-c  CNORM is a real LCNORM by M array whose columns contain the
-c  constraint normals in the first N positions.  The (N+1)st
-c  row of CNORM is used for work space.
-c
-c  LCNORM is a positive integer input variable set to the row
-c  dimension of CNORM which is at least N+1.
-c
-c  B is a real LB by LB array whose first N rows and columns
-c  contain the hessian approximation on input.  The (N+1)st
-c  row and column are used for work space.
-c
-c  LB is a positive integer input variable set to the row
-c  dimension of B which is at least N+1.
-c
-c  GM is a real array of length N+1 which, on input, contains
-c  the negative components of the function gradient in the
-c  first N elements. The (N+1)st element is used for work space.
-c
-c  BDL, BDU are real work arrays of length N+1.
-c
-c  INFO is an integer variable. It must be set to zero before
-c  the initial call to qpsub1 and should not otherwise be
-c  changed.  On output, INFO is set as follows
-c
-c   INFO = 1  a normal return.
-c
-c   INFO = 5  a feasible point was not found.
-c
-c   INFO = 6  solution is restricted by an artificial bound or
-c             failed due to a singular matrix.
-c
-c  DELTA is a real array of length LDEL.  It need not be set
-c  before the first call to QPSUB1, but before each subsequent
-c  call, the first N locations should contain an estimate of
-c  the solution vector. (Zero is used as the estimate for the
-c  first call.)  On output, the value of the solution vector
-c  which minimizes the quadratic function is contained in the
-c  first N locations.  The remainder of the array is used for
-c  work space.
-c
-c  LDEL is a positive integer input variable set to the length
-c  of DELTA which is at least MAX(7*(N+1),4*(N+1)+M).
-c
-c  CM is a real work array of length M.
-c
-c  H is a real LH by LH work array.
-c
-c  LH is a positive integer input variable set to the dimension
-c  of the square array H which is at least 2*(N+1).
-c
-c  MACT is an integer output variable set to the number of
-c  constraints in the basis.
-c
-c  WA is a real work array of length LWA.
-c
-c  LWA is a positive integer input variable set equal to the
-c  dimension of WA which is at least 2*(N+1).
-c
-c  IWA is an integer work array of length LIWA.
-c
-c  LIWA is a positive integer input variable set to the length
-c  of IWA which is at least 6*(N+1) + M.
-c
-c  ILOWER is an integer array of length N.
-c  If X(I) has a lower bound, ILOWER(I) is set to 1
-c  on input.  If no bound is provided, ILOWER(I) should
-c  be 0 (the default value).
-c
-c  BNDL is a real array of length N.
-c  If X(I) has a lower bound, it should be given in BNDL(I).
-c
-c  IUPPER is an integer array of length N.
-c  If X(I) has a upper bound, IUPPER(I) is set to 1
-c  on input.  If no bound is provided, IUPPER(I) should
-c  be 0 (the default value).
-c
-c  BNDU is a real array of length N.
-c  If X(I) has a upper bound, it should be given in BNDU(I).
-c
-c  Roger L. Crane, Kenneth E. Hillstrom, Michael Minkoff
-c  Modified for simple bounds, M. Minkoff (10/26/82)
-c
-c  Modified to pass ILOWER,IUPPER, BNDL,BNDU in through argument list
-c  instead of through COMMON, J. Galambos, (5/21/91)
-
-      IMPLICIT NONE
-
-      INTEGER n,m,meq,lcnorm,lb,info,ldel,lh,mact,lwa,liwa
-      INTEGER iwa(liwa),ilower(n),iupper(n)
-      INTEGER i,iflag,j,k,mode,mtotal,np1,npp
-      INTEGER inx
-
-      DOUBLE PRECISION conf(m),cnorm(lcnorm,m),b(lb,lb),gm(*),bdl(*),
-     +     bdu(*),delta(ldel),cm(m),h(lh,lh),wa(lwa)
-      DOUBLE PRECISION x(n),bndu(n),bndl(n)
-      DOUBLE PRECISION cd6,cdm6,cp9,one,zero
-
-      cd6 = 1.0D6
-      cdm6 = 1.0D-6
-      cp9 = 0.9D0
-      one = 1.0D0
-      zero = 0.0D0
-
-      np1 = n + 1
-      npp = 2*np1
-      if (info .gt. 0) goto 50
-      mtotal = m + npp
-
-c  Set initial values of some variables
-
-      info = 1
-      mact = meq + 1
-      mode = 1
-
-c  Set the initial elements of bdl, bdu, and delta where
-c  bdl are artificial lower bounds,
-c  bdu are artificial upper bounds and
-c  delta is an initial solution estimate
-
-      do 10 i = 1, n
-         bdl(i) = -cd6
-         bdu(i) = cd6
- 10   continue
-
-c  Bound the artificial variables in qp
-
-      bdl(np1) = zero
-      delta(np1) = one
-      if (meq .le. 0) goto 30
-
-c  Set indices of equality constraints
-c  The bounds are the first npp constraints
-
-      do 20 k = 1, meq
-         iwa(k) = k + npp
- 20   continue
-
- 30   continue
-
-c  Set index of upper bound of delta(np1) active
-
-      iwa(mact) = npp
-
-c  Extend gm and b because of the extra variable that is introduced
-c  to allow for feasibility. Set linear term of cost function to
-c  a large value
-
-      gm(np1) = cd6
-      do 40 i = 1, np1
-         b(i,np1) = zero
-         b(np1,i) = zero
- 40   continue
-
-c  Set the elements of cm and cnorm(np1,*)
-
- 50   continue
-      do 60 i = 1, n
-         if (ilower(i) .eq. 1) bdl(i) = bndl(i) - x(i)
-         if (iupper(i) .eq. 1) bdu(i) = bndu(i) - x(i)
-         delta(i) = max(zero,bdl(i))
-         delta(i) = min(delta(i),bdu(i))
- 60   continue
-      do 90 k = 1, m
-         if (k .le. meq) goto 70
-         if (conf(k) .lt. zero) goto 70
-
-c  If an inequality constraint is satisfied set the constant term
-c  in the constraint vector to the violation and put zero in the
-c  constraint matrix for the (n+1)st variable
-
-         cm(k) = -conf(k)
-         cnorm(np1,k) = zero
-         goto 90
- 70      continue
-
-c  If the constraint is an equality or a violated inequality set
-c  the constant term to zero and put the function value in the
-c  constraint matrix for the (n+1)st variable
-
-         cm(k) = zero
-         cnorm(np1,k) = conf(k)
- 90   continue
-
-c  Set the upper bound of the (n+1)st variable
-c  Set iflag. iflag will be used in checking active constraints
-c  Call subroutine harwqp to solve quadratic programming problem
-
-      bdu(np1) = one
-      iflag = -1
- 100  continue
-
-      call harwqp1(np1,mtotal,b,lb,gm,cnorm,lcnorm,cm,bdl,bdu,delta,
-     +     mact,meq,h,lh,iwa,wa,iwa(4*(n+1)+m+1),mode,info)
-
-      if (info .ne. 1) goto 130
-
-c  Check whether the required feasibility conditions hold
-c  If delta(np1) is sufficiently small there is no feasible
-c  solution
-
-      if (delta(np1) .le. cdm6) goto 120
-
-c  Check whether active constraints are bounds
-
-      do 110 j = 1, mact
-         if (iwa(j) .gt. npp) goto 110
-         if (iwa(j) .eq. npp) goto 101
-         if (iwa(j) .gt. np1) goto 105
-         if (iwa(j) .eq. np1) goto 130
-         if (ilower(iwa(j)) .eq. 0) goto 130
-         goto 110
- 105     continue
-         inx = iwa(j) - np1
-         if (iupper(inx) .eq. 0) goto 130
-         goto 110
- 101     continue
-
-c  The active constraint is blu(np1)
-
-         iflag = 1
- 110  continue
-
-c  Normal exit
-
-      if (iflag .ge. 1) goto 140
-
-c  A second call to harwqp found blu(np1) to still be inactive
-c  thus an error exit is made
-
-      if (iflag .ge. 0) goto 120
-
-c  Reduce bdu(np1) and retry harwqp
-
-      bdu(np1) = cp9*delta(np1)
-      iflag = 0
-      goto 100
-
-c  Error return because of infeasibility
-
- 120  continue
-      info = 5
-      goto 140
-
-c  Error return because of restriction by an artificial bound
-c  or detection of a singular matrix
-
- 130  continue
-      info = 6
-
- 140  continue
-
-      return
-      end
-c______________________________________________________________________
-      SUBROUTINE HARWQP1(
-     +     n,m,a,ia,b,c,ic,d,bdl,bdu,x,k,ke,h,ih,lt,wa,iwa,mode,info)
-
-c  This program is a modified version of the Harwell library
-c  subroutine VE02AD dated 11/06/70.  The modifications were made
-c  to substitute the subroutines HINV and DOTPMC for Harwell
-c  subroutines MB01B and MC03AS.  The calling sequence above
-c  includes three entries, WA, IWA, and INFO not present in
-c  the original program.  WA and IWA are real and
-c  integer work arrays, respectively, and must be dimensioned
-c  at least 2*N.  INFO is an output variable set to one for a
-c  normal return and set to two when a singular matrix is detected
-c  in HINV.  All other entries in the calling sequence are as
-c  described in the Harwell documentation.
-c
-c  Modified 5/22/91 to use implicit none (J. Galambos)
-c
-c+**PJK 02/11/92 Throughout this routine, argument 1 of DOTPMC has
-c+**PJK 02/11/92 different dimensions than are declared in the source
-c+**PJK 02/11/92 code of the routine itself. The program runs without
-c+**PJK 02/11/92 error but beware of future modifications.
-
-      IMPLICIT NONE
-
-      INTEGER n,m,ia,ic,k,ke,ih,mode,info
-      INTEGER iwa(*),lt(*)
-      INTEGER i, ial, ib, ii, j, li, ni, nk, nn, n3,n4,n5,n6
-      INTEGER i0,i1,i2,i3
-
-      DOUBLE PRECISION a(ia,*),b(*),c(ic,*),d(*),bdl(*),bdu(*),x(*),
-     +     h(ih,*),wa(*)
-      DOUBLE PRECISION alpha, cac, cc, chc, ghc, y, z, zz
-      DOUBLE PRECISION r0
-
-      LOGICAL retest,passiv,postiv
-
-      i0 = 0
-      i1 = 1
-      i2 = 2
-      i3 = 3
-      r0 = 0.0D0
-
-      info = 1
-      retest = .false.
-      nn = n+n
-      n3 = nn+n
-      n4 = nn+nn
-      n5 = n4+n
-      n6 = n5+n
-
-      if (mode.ge.3) goto 99
-
-c  Call feasible vertex routine
-
- 8    continue
-      call harwfp1(n,m,c,ic,d,bdl,bdu,x,k,ke,h,ih,lt,wa,iwa,info)
-      if (info .ne. 1) goto 1000
-      if (k.eq.0) goto 1000
-      if ((mode.eq.2).and.(.not.retest)) goto 100
-
-c  Initial operators h=0 and cstar=c(-1) from ve02b
-      do 65 i = 1,n
-         do 60 j = 1,n
-            h(n+i,j) = h(i,j)
-            h(i,j) = 0.0D0
- 60      continue
- 65   continue
-      goto 120
-
- 99   continue
-      do 1 i = 1,m
-         lt(nn+i) = 1
- 1    continue
-
-c  Constraints indexed as  -1=equality, 0=active, 1=inactive
-      if (k.eq.0) goto 100
-      do 2 i=1,k
-         j=0
-         if (i.le.ke)j=-1
-         lt(nn+lt(i))=j
- 2    continue
-
- 100  continue
-      if ((mode.eq.5).and.(.not.retest)) goto 109
-
-c  Set up matrix and rhs of equations governing equality problem
-      do 1011 i = 1,n
-         x(n+i) = b(i)
-         do 101 j = 1,n
-            h(i,j) = a(i,j)
- 101     continue
- 1011 continue
-
-      if (((mode.eq.2).or.(mode.eq.3)).and.(.not.retest)) goto 200
-      if (k.eq.0) goto 107
-      do 1021 i = 1,k
-         li = lt(i)
-         if (li.gt.nn) goto 105
-         do 103 j = 1,n
-            h(j,n+i) = 0.0D0
-            h(n+i,j) = 0.0D0
- 103     continue
-         if (li.gt.n) goto 104
-         h(n+i,li) = 1.0D0
-         h(li,n+i) = 1.0D0
-         x(nn+i) = bdl(li)
-         goto 108
-
- 104     continue
-         li = li-n
-         h(n+i,li) = -1.0D0
-         h(li,n+i) = -1.0D0
-         x(nn+i) = -bdu(li)
-         goto 108
-
- 105     continue
-         li = li-nn
-         do 106 j = 1,n
-            h(n+i,j) = c(j,li)
-            h(j,n+i) = c(j,li)
- 106     continue
-         x(nn+i) = d(li)
-
- 108     continue
-         do 102 j = 1,k
-            h(n+i,n+j) = 0.0D0
- 102     continue
- 1021 continue
-
- 107  continue
-      nk = n+k
-
-c  Invert matrix giving operators h and cstar
-
-      call hinv1(h,ih,nk,iwa,info)
-      if (info .ne. 1) goto 1000
-      goto 118
-
-c  Set up rhs only
-
- 109  continue
-      do 113 i = 1,n
-         x(n+i) = b(i)
- 113  continue
-
-      do 115 i = 1,k
-         li = lt(i)
-         if (li.gt.nn) goto 117
-         if (li.gt.n) goto 116
-         x(nn+i) = bdl(li)
-         goto 115
-
- 116     continue
-         x(nn+i) = -bdu(li-n)
-         goto 115
-
- 117     continue
-         x(nn+i)=d(li-nn)
- 115  continue
-
-c  Solve for solution point x
-
-      nk = n+k
-
- 118  continue
-      do 119 i=1,n
-         call dotpmc(h(1,i),i1,x(n+1),i1,r0,x(i),nk,i0)
- 119  continue
-
-c  Check feasibility, if not exit to 8
-
-      do 110 i = 1,m
-         if (lt(nn+i).le.0) goto 110
-         if (i.gt.n) goto 111
-         z = x(i)-bdl(i)
-         goto 114
-
- 111     continue
-         if (i.gt.nn) goto 112
-         z = bdu(i-n)-x(i-n)
-         goto 114
-
- 112     continue
-         j = i-nn
-         call dotpmc(c(1,j),i1,x(1),i1,d(j),z,n,i2)
-
- 114     continue
-         if (z.lt.0.0D0) goto 8
- 110  continue
-
- 120  continue
-
-c  Calculate gradient g and Lagrange multipliers -cstar.g,
-c  Find largest multiplier,  exit if not positive
-
-      do 121 i = 1,n
-         call dotpmc(a(i,1),ia,x(1),i1,b(i),x(n6+i),n,i2)
- 121  continue
-      if (k.eq.0) goto 1000
-
-C+**PJK 17/11/97 D999 reduced to D99
-      z = -1.0D99
-      do 122 i = 1,k
-         if (lt(nn+lt(i)).eq.-1) goto 122
-         call dotpmc(h(n+i,1),ih,x(n6+1),i1,r0,zz,n,i3)
-         if (zz.le.z) goto 122
-         z = zz
-         ii = i
- 122  continue
-
-      if (z.gt.0.0D0) goto 130
-      if ((retest).or.(mode.ge.4)) goto 137
-      retest = .true.
-      goto 100
-
- 137  continue
-      if (z.ne.0.0D0) goto 1000
-      goto 1000
-
-c  Set direction of search as corresponding row of cstar
-
- 130  continue
-      do 131 i = 1,n
-         x(nn+i) = h(n+ii,i)
- 131  continue
-
- 136  continue
-      do 132 i = 1,n
-         call dotpmc(a(i,1),ia,x(nn+1),i1,r0,x(n+i),n,i0)
- 132  continue
-      call dotpmc(x(nn+1),i1,x(n+1),i1,r0,cac,n,i0)
-      if (cac.gt.0.0D0) goto 134
-      postiv = .false.
-      y = 1.0D0
-      goto 135
-
- 134  continue
-      postiv = .true.
-      y = z/cac
-
- 135  continue
-      do 133 i = 1,n
-         x(n5+i) = x(nn+i)*y
- 133  continue
-      passiv = .true.
-
- 139  continue
-C+**PJK 17/11/97 D999 reduced to D99
-      alpha = 1.0D99
-      nk = n+k
-
-c  Linear search along direction of search,  passiv indicates
-c  a constraint has been removed to get search direction,
-c  postiv indicates positive curvature along the direction
-
-      do 140 i = 1,m
-         if (lt(nn+i).le.0) goto 140
-         if (i.gt.n) goto 141
-         if (x(n5+i).ge.0.0D0) goto 140
-         cc = (bdl(i)-x(i))/x(n5+i)
-         goto 143
-
- 141     continue
-         if (i.gt.nn) goto 142
-         if (x(n4+i).le.0.0D0) goto 140
-         cc = (bdu(i-n)-x(i-n))/x(n4+i)
-         goto 143
-
- 142     continue
-         j = i-nn
-         call dotpmc(c(1,j),i1,x(n5+1),i1,r0,zz,n,i0)
-         if (zz.ge.0.0D0) goto 140
-         call dotpmc(c(1,j),i1,x(1),i1,d(j),cc,n,i1)
-         cc = cc/zz
-
- 143     continue
-         if (cc.ge.alpha) goto 140
-         alpha = cc
-         ial = i
- 140  continue
-      if (passiv) lt(nn+lt(ii)) = 1
-
-c  If minimum found, goto  170
-
-      if ((postiv).and.(alpha.ge.1.0D0)) goto 170
-
-c  Calculate h.c and cstar.c
-
-      do 144 i=1,n
-         x(i) = x(i)+alpha*x(n5+i)
- 144  continue
-      alpha = alpha*y
-      j = 1
-      if (k.eq.n) j = n+1
-      if (ial.gt.n) goto 146
-      do 145 i = j,nk
-         x(n3+i) = h(i,ial)
- 145  continue
-      chc = x(n3+ial)
-      goto 151
-
- 146  continue
-      ib = ial-n
-      if (ib.gt.n) goto 148
-      do 147 i = j,nk
-         x(n3+i) = -h(i,ib)
- 147  continue
-      chc = -x(n3+ib)
-      goto 151
-
- 148  continue
-      ib = ib-n
-      do 149 i = 1,n
-         x(n5+i) = c(i,ib)
- 149  continue
-      do 150 i = j,nk
-         call dotpmc(h(i,1),ih,x(n5+1),i1,r0,x(n3+i),n,i0)
- 150  continue
-      if (k.ne.n) call dotpmc(x(n5+1),i1,x(n3+1),i1,r0,chc,n,i0)
-
- 151  continue
-      lt(nn+ial) = 0
-      if (k.eq.n) goto 180
-      if (passiv) goto 160
-
-c  Apply formula for adding a constraint
-
- 156  continue
-      if (k.eq.0) goto 157
-      do 1521 i = 1,k
-         alpha = x(n4+i)/chc
-         ni = n+i
-         do 152 j = 1,n
-            h(ni,j) = h(ni,j)-alpha*x(n3+j)
- 152     continue
- 1521 continue
-
- 157  continue
-      k = k+1
-      lt(k) = ial
-      do 158 j = 1,n
-         h(n+k,j) = x(n3+j)/chc
- 158  continue
-      if (k.lt.n) goto 154
-      do 1531 i = 1,n
-         do 153 j = 1,n
-            h(i,j) = 0.0D0
- 153     continue
- 1531 continue
-      goto 159
-
- 154  continue
-      do 1551 i = 1,n
-         alpha = x(n3+i)/chc
-         do 155 j = 1,i
-            h(i,j) = h(i,j)-alpha*x(n3+j)
-            h(j,i) = h(i,j)
- 155     continue
- 1551 continue
-
- 159  continue
-      if (.not.passiv) goto 167
-
-c  Removal of a constraint has been deferred,  set up as if
-c  the constraint is being removed from augmented basis
-
-      do 164 i=1,n
-         call dotpmc(a(i,1),ia,x(1),i1,b(i),x(n6+i),n,i2)
-         x(nn+i) = h(n+ii,i)
- 164  continue
-      call dotpmc(x(n6+1),i1,x(nn+1),i1,r0,z,n,i3)
-      if (z.eq.0.0D0) goto 178
-      goto 136
-
- 160  continue
-      cc = x(n4+ii)
-      y = chc*cac+cc**2
-      call dotpmc(x(n6+1),i1,x(n3+1),i1,r0,ghc,n,i0)
-      if ((alpha*y).lt.(chc*(z-alpha*cac)+ghc*cc)) goto 156
-
-c  Apply formula for exchanging new constraint
-c  with passive constraint
-
-      do 161 i = 1,k
-         ni = n+i
-         call dotpmc(h(ni,1),ih,x(n+1),i1,r0,x(n5+i),n,i0)
- 161  continue
-      do 162 i = 1,n
-         x(n+i) = (chc*x(nn+i)-cc*x(n3+i))/y
-         x(n6+i) = (cac*x(n3+i)+cc*x(nn+i))/y
- 162  continue
-      do 1631 i = 1,n
-         do 163 j = 1,i
-            h(i,j) = h(i,j)+x(n+i)*x(nn+j)-x(n6+i)*x(n3+j)
-            h(j,i) = h(i,j)
- 163     continue
- 1631 continue
-      x(n4+ii) = x(n4+ii)-1.0D0
-      do 1661 i = 1,k
-         ni = n+i
-         do 166 j = 1,n
-            h(ni,j) = h(ni,j)-x(n4+i)*x(n6+j)-x(n5+i)*x(n+j)
- 166     continue
- 1661 continue
-      lt(ii) = ial
-
- 167  continue
-      if (k.eq.n) goto 120
-
-c  Calculate g,  new search direction is -h.g
-
-      do 168 i = 1,n
-         call dotpmc(a(i,1),ia,x(1),i1,b(i),x(n+i),n,i2)
- 168  continue
-      z = 0.0D0
-      do 169 i = 1,n
-         call dotpmc(h(i,1),ih,x(n+1),i1,r0,x(n5+i),n,i3)
-         if (x(n5+i).ne.0.0D0) z = 1.0D0
- 169  continue
-      passiv = .false.
-      if (z.eq.0.0D0) goto 120
-      postiv = .true.
-      goto 139
-
- 170  continue
-      do 171 i = 1,n
-         x(i) = x(i)+x(n5+i)
- 171  continue
-
-c  x is now the minimum point in the basis
-c  Update the operators if a constraint had been removed
-
-      if (.not.passiv) goto 120
-
- 178  continue
-      do 1721 i = 1,n
-         alpha = x(nn+i)/cac
-         do 172 j = 1,i
-            h(i,j) = h(i,j)+alpha*x(nn+j)
-            h(j,i) = h(i,j)
- 172     continue
- 1721 continue
-      if (k.gt.1) goto 177
-      k = 0
-      goto 120
-
- 177  continue
-      if (ii.eq.k) goto 175
-      do 174 i=1,n
-         h(n+ii,i) = h(n+k,i)
- 174  continue
-      lt(ii) = lt(k)
-
- 175  continue
-      k = k-1
-      do 173 i = 1,k
-         ni = n+i
-         call dotpmc(h(ni,1),ih,x(n+1),i1,r0,x(n3+i),n,i0)
- 173  continue
-      do 1761 i = 1,k
-         alpha = x(n3+i)/cac
-         ni = n+i
-         do 176 j = 1,n
-            h(ni,j) = h(ni,j)-alpha*x(nn+j)
- 176     continue
- 1761 continue
-      goto 120
-
- 180  continue
-      z = 1.0D0/x(n4+ii)
-
-c  Apply simplex formula to exchange constraints
-
-      do 181 i = 1,n
-         ni = n+i
-         if (i.ne.ii) goto 182
-         do 183 j = 1,n
-            h(ni,j) = h(ni,j)*z
- 183     continue
-         goto 181
-
- 182     continue
-         zz = z*x(n4+i)
-         do 184 j = 1,n
-            h(ni,j) = h(ni,j)-zz*x(nn+j)
- 184     continue
- 181  continue
-      lt(ii) = ial
-      goto 120
-
- 200  continue
-      k = 0
-
-      ke = 0
-      do 202 i = 1,m
-         lt(nn+i) = 1
- 202  continue
-      call hinv1(h,ih,n,iwa,info)
-      if (info .ne. 1) goto 1000
-
-c  Start with empty basis from feasible point
-c  Search direction is -a(-1).b
-
-      goto 167
-
- 1000 continue
-
-      return
-      end
-c______________________________________________________________________
-      SUBROUTINE HARWFP1(
-     +     n,m,c,ic,d,bdl,bdu,x,k,ke,h,ih,lt,wa,iwa,info)
-
-c  This program is a modified version of the Harwell Library
-c  subroutine LA02AD.  The modifications were made to substitute
-c  the subroutines HINV and DOTPMC for Harwell subroutines
-c  MB01B and MC03AS.  The calling sequence above includes
-c  three entries, WA, IWA, and INFO not present in the
-c  original program.  WA and IWA are real and
-c  integer work arrays, respectively, and must be dimensioned
-c  at least 2*N.  INFO is an output variable set to one for a
-c  normal return and set to two when a singular matrix is detected
-c  in HINV.  All other entries in the calling sequence are as
-c  described in the Harwell documentation.
-c
-c  Modified  5/22/91 to use implicit none (J. Galambos)
-c
-c+**PJK 02/11/92 Throughout this routine, argument 1 of DOTPMC has
-c+**PJK 02/11/92 different dimensions than are declared in the source
-c+**PJK 02/11/92 code of the routine itself. The program runs without
-c+**PJK 02/11/92 error but beware of future modifications.
-
-      IMPLICIT NONE
-
-      INTEGER n,m,ic,k,ke,ih,info
-      INTEGER i, ial, ib, ii, j, jj, kv, li, ni, nj, nn, n3
-      INTEGER iwa(*), lt(*)
-      INTEGER i0,i1,i2,i3
-
-      DOUBLE PRECISION c(ic,*),d(*),bdl(*),bdu(*),x(*),h(ih,*)
-      DOUBLE PRECISION wa(*)
-      DOUBLE PRECISION alpha, beta, y, z, zz
-      DOUBLE PRECISION r0
-
-      i0 = 0
-      i1 = 1
-      i2 = 2
-      i3 = 3
-      r0 = 0.0D0
-
-      info = 1
-      nn = n+n
-      n3 = nn+n
-      do 1 i = 1,m
-         lt(nn+i) = 1
- 1    continue
-
-c  Constraints indexed as
-c  -1=equality,  0=active,  1=inactive,  2=violated
-
-      if (k.ne.0) goto 10
-
-c  No designated constraints, vertex chosen from upper and
-c  lower bounds, inverse matrix trivial
-
-      do 4 i = 1,n
-         do 5 j = 1,n
-            h(i,j) = 0.0D0
- 5       continue
-         if ((x(i)-bdl(i)).gt.(bdu(i)-x(i))) goto 6
-         lt(i) = i
-         h(i,i) = 1.0D0
-         goto 998
-
- 6       continue
-         lt(i) = n+i
-         h(i,i) = -1.0D0
- 998     continue
-         lt(nn+lt(i)) = 0
- 4    continue
-      k = n
-      goto 40
-
-c  Set up normals v of the k designated constraints in basis
-
- 10   continue
-      do 11 i = 1,k
-         j = 0
-         if (i.le.ke) j = -1
-         lt(nn+lt(i)) = j
-         li = lt(i)
-         ni = n+i
-         if (li.gt.nn) goto 14
-         do 12 j = 1,n
-            h(j,ni) = 0.0D0
- 12      continue
-         if (li.gt.n) goto 13
-         h(li,ni) = 1.0D0
-         goto 11
-
- 13      continue
-         h(li-n,ni) = -1.0D0
-         goto 11
-
- 14      continue
-         li = li-nn
-         do 15 j = 1,n
-            h(j,ni) = c(j,li)
- 15      continue
- 11   continue
-
-      if (k.ne.n) goto 19
-      do 161 j = 1,n
-         nj = n+j
-         do 16 i = 1,n
-            h(i,j) = h(i,nj)
- 16      continue
- 161  continue
-      call hinv1(h,ih,n,iwa,info)
-      if (info .ne. 1) goto 1000
-      goto 40
-
- 19   continue
-
-c  Form m = (vtranspose.v)(-1)
-      do 2011 i = 1,k
-         do 20 j = i,k
-            call dotpmc(h(1,n+i),i1,h(1,n+j),i1,r0,h(i,j),n,i0)
-            h(j,i) = h(i,j)
- 20      continue
- 2011 continue
-      if (k.ne.1) goto 200
-      h(1,1) = 1.0D0/h(1,1)
-      goto  201
-
- 200  continue
-      call hinv1(h,ih,k,iwa,info)
-      if (info .ne. 1) goto 1000
-
- 201  continue
-
-c  Calculate generalized inverse of v,  vplus = m.vtranspose
-
-      do 211 i = 1,k
-         do 22 j = 1,k
-            x(n+j) = h(i,j)
- 22      continue
-         do 21 j = 1,n
-            call dotpmc(x(n+1),i1,h(j,n+1),ih,r0,h(i,j),k,i0)
- 21      continue
- 211  continue
-
-c  Set up diagonal elements of the projection matrix  p = v.vplus
-
-      do 23 i = 1,n
-         call dotpmc(h(1,i),i1,h(i,n+1),ih,r0,x(n+i),k,i0)
- 23   continue
-      do 24 i = 1,n
-         lt(n+i) = 0
- 24   continue
-      kv = k
-
-c  Add bound e(i) corresponding to the smallest diag(p)
-
- 29   continue
-      z = 1.0D0
-      do 25 i = 1,n
-         if (lt(n+i).eq.1) goto 25
-         if (x(n+i).ge.z) goto 25
-         z = x(n+i)
-         ii = i
- 25   continue
-      y = 1.0D0
-      if ( (x(ii)-bdl(ii)) .gt. (bdu(ii)-x(ii)) ) y = -1.0D0
-
-c  Calculate vectors vplus.e(i) and  u = e(i)-v.vplus.e(i)
-
-      if (y.ne.1.0D0) goto 27
-      do 26 i = 1,k
-         x(nn+i) = h(i,ii)
- 26   continue
-      goto 30
-
- 27   continue
-      do 28 i = 1,k
-         x(nn+i) = -h(i,ii)
- 28   continue
-
- 30   continue
-      do 31 i = 1,n
-         if (lt(n+i).eq.1) goto 31
-         call dotpmc(h(i,n+1),ih,x(nn+1),i1,r0,x(n3+i),kv,i3)
- 31   continue
-      do 32 i = 1,n
-         h(i,ii) = 0.0D0
- 32   continue
-      lt(n+ii) = 1
-      z = 1.0D0+x(n3+ii)*y
-
-c  Update vplus and diag(p)
-
-      do 33 i = 1,n
-         if (lt(n+i).eq.1) goto 33
-         alpha = x(n3+i)/z
-         h(k+1,i) = alpha
-         do 34 j = 1,k
-            h(j,i) = h(j,i)-x(nn+j)*alpha
- 34      continue
- 33   continue
-
-      do 35 i = 1,n
-         if (lt(n+i).eq.1) goto 35
-         x(n+i) = x(n+i)+x(n3+i)**2/z
- 35   continue
-      k = k+1
-      h(k,ii) = y
-      if (y.ne.1.0D0) ii = ii+n
-      lt(nn+ii) = 0
-      lt(k) = ii
-      if (k.ne.n) goto 29
-
-c  Set up rhs of constraints in basis
-
- 40   continue
-      do 41 i = 1,n
-         li = lt(i)
-         if (li.gt.n) goto 42
-         x(n+i) = bdl(li)
-         goto 41
-
- 42      continue
-         if (li.gt.nn) goto 43
-         x(n+i) = -bdu(li-n)
-         goto 41
-
- 43      continue
-         x(n+i) = d(li-nn)
-
- 41   continue
-
-c  Calculate position of vertex
-
-      do 44 i = 1,n
-         call dotpmc(h(1,i),i1,x(n+1),i1,r0,x(i),n,i0)
- 44   continue
-
-c  Calculate the constraint residuals, the number of violated
-c  constraints, and the sum of their normals
-
- 50   continue
-      kv = 0
-      do 51 i = 1,n
-         x(n+i) = 0.0D0
- 51   continue
-      do 52 i = 1,m
-         if (lt(nn+i).le.0) goto 52
-         if (i.gt.n) goto 53
-         z = x(i)-bdl(i)
-         goto 55
-
- 53      continue
-         if (i.gt.nn) goto 54
-         z = bdu(i-n)-x(i-n)
-         goto 55
-
- 54      continue
-         j = i-nn
-         call dotpmc(c(1,j),i1,x(1),i1,d(j),z,n,i2)
-
- 55      continue
-         x(nn+i) = z
-         if (z.ge.0.0D0) goto 52
-         kv = kv+1
-         lt(nn+i) = 2
-         if (i.gt.n) goto 56
-         x(n+i) = x(n+i)+1.0D0
-         goto 52
-
- 56      continue
-         if (i.gt.nn) goto 57
-         x(i) = x(i)-1.0D0
-         goto 52
-
- 57      continue
-         do 58 ii = 1,n
-            x(n+ii) = x(n+ii)+c(ii,j)
- 58      continue
- 52   continue
-      if (kv.ne.0) goto 63
-      goto 1000
-
-c  Possible directions of search obtainable by removing a
-c  constraint are rows of h,  calculate the optimum direction
-
- 63   continue
-      z = 0.0D0
-      do 64 i = 1,n
-         if (lt(nn+lt(i)).eq.-1) goto 64
-         call dotpmc(h(i,1),ih,x(n+1),i1,r0,y,n,i0)
-         if (y.le.z) goto 64
-         z = y
-         ii = i
- 64   continue
-      if (z.gt.0.0D0) goto 70
-      k = 0
-      goto 1000
-
-c  Search for the nearest of the furthest violated constraint
-c  and the nearest nonviolated nonbasic constraint
-
- 70   continue
-C+**PJK 17/11/97 D999 reduced to D99
-      alpha = 1.0D99
-      beta = 0.0D0
-      do 71 i = 1,n
-         x(n+i) = h(ii,i)
- 71   continue
-      do 72 i = 1,m
-         if (lt(nn+i).le.0) goto 72
-         if (i.gt.n) goto 73
-         z = -x(n+i)
-         goto 75
-
- 73      continue
-         if (i.gt.nn) goto 74
-         z = x(i)
-         goto 75
-
- 74      continue
-         jj = i-nn
-         call dotpmc(x(n+1),i1,c(1,jj),i1,r0,z,n,i3)
-
- 75      continue
-         if (lt(nn+i).eq.2) goto 76
-         if (z.le.0.0D0) goto 72
-         z = x(nn+i)/z
-         if (z.ge.alpha) goto 72
-         alpha = z
-         ial = i
-         goto 72
-
- 76      continue
-         lt(nn+i) = 1
-         if (z.ge.0.0D0) goto 72
-         z = x(nn+i)/z
-         if (z.le.beta) goto 72
-         beta = z
-         ib = i
- 72   continue
-
-      if (alpha.gt.beta) goto 80
-      ib = ial
-      beta = alpha
-
-c  Exchange with the constraint being removed from the basis,
-c  using simplex formula for new h
-
- 80   continue
-      lt(nn+lt(ii)) = 1
-      lt(nn+ib) = 0
-      lt(ii) = ib
-      if (ib.gt.n) goto 82
-      do 81 i = 1,n
-         x(nn+i) = h(i,ib)
- 81   continue
-      goto 90
-
- 82   continue
-      ib = ib-n
-      if (ib.gt.n) goto 84
-      do 83 i = 1,n
-         x(nn+i) = -h(i,ib)
- 83   continue
-      goto 90
-
- 84   continue
-      ib = ib-n
-      do 85 i = 1,n
-         x(n3+i) = c(i,ib)
- 85   continue
-      do 86 i = 1,n
-         call dotpmc(h(i,1),ih,x(n3+1),i1,r0,x(nn+i),n,i0)
- 86   continue
-
- 90   continue
-      z = 1.0D0/x(nn+ii)
-      do 91 i = 1,n
-         x(i) = x(i)+beta*x(n+i)
-         if (i.ne.ii) goto 92
-         do 93 j = 1,n
-            h(i,j) = h(i,j)*z
- 93      continue
-         goto 91
-
- 92      continue
-         zz = z*x(nn+i)
-         do 94 j = 1,n
-            h(i,j) = h(i,j)-zz*x(n+j)
- 94      continue
- 91   continue
-
-      goto 50
-
- 1000 continue
-
-      return
-      end
-c______________________________________________________________________
-      SUBROUTINE HINV1(h,ih,n,ipvt,info)
-
-c  This subroutine inverts the matrix H by use of linpack software.
-c
-c  The subroutine statement is
-c
-c  subroutine hinv(h,ih,n,ipvt,info)
-c
-c  where
-c
-c  H is a real IH by IH array which contains the N by N
-c  matrix to be inverted.  On output the N by N inverse
-c  is stored in H.
-c
-c  IH is an input integer variable set to the fortran
-c  declaration of the leading dimension in the H array.
-c
-c  N is the order of H.  N must be less than or equal to IH.
-c
-c  IPVT is an integer work array of length at least N.
-c
-c  INFO is an integer output variable set as follows
-c
-c   INFO = 1  normal return
-c
-c   INFO = 2  H matrix is singular
-c
-c  Algorithm version of June 1979
-c
-c  Roger L. Crane, Kenneth E. Hillstrom, Michael Minkoff
-
-      IMPLICIT NONE
-
-      INTEGER ih,n,info
-      INTEGER ipvt(n)
-      DOUBLE PRECISION h(ih,ih)
-      DOUBLE PRECISION det(2)
-
-c  Do lu decomposition of h
-
-      call sgefa(h,ih,n,ipvt,info)
-
-      if (info .eq. 0) goto 20
-      info = 2
-      goto 1000
-
-c  Form inverse of h
-
- 20   continue
-      info = 1
-      call sgedi(h,ih,n,ipvt,det,1)
-
- 1000 continue
-
-      return
-      end
+c$$$c______________________________________________________________________
+c$$$      SUBROUTINE QPSUB1(
+c$$$     +     n,m,meq,conf,cnorm,lcnorm,b,lb,gm,bdl,bdu,info,
+c$$$     +     x,delta,ldel,cm,h,lh,mact,wa,lwa,iwa,liwa,
+c$$$     +     ilower,iupper,bndl,bndu)
+c$$$
+c$$$c  This subroutine finds the value of the solution vector which
+c$$$c  minimizes a quadratic function of several variables subject to
+c$$$c  equality and inequality constraints. This is accomplished
+c$$$c  by invoking subroutine harwqp, a modified version of subroutine
+c$$$c  ve02ad, the Harwell Library subroutine for general quadratic
+c$$$c  programming.
+c$$$c
+c$$$c  The subroutine statement is
+c$$$c
+c$$$c  subroutine qpsub1(n,m,meq,conf,cnorm,lcnorm,b,lb,gm,bdl,bdu,
+c$$$c                   info,delta,ldel,cm,h,lh,mact,wa,lwa,iwa,liwa)
+c$$$c
+c$$$c  where
+c$$$c
+c$$$c  N is a positive integer input variable set to the number of
+c$$$c  variables.
+c$$$c
+c$$$c  M is a positive integer input variable set to the number of
+c$$$c  constraints.
+c$$$c
+c$$$c  MEQ is a non-negative integer input variable set to the number
+c$$$c  of equality constraints. MEQ must be less than or equal to N.
+c$$$c
+c$$$c  CONF is a real input array of length M which contains the
+c$$$c  constraint functions.
+c$$$c
+c$$$c  CNORM is a real LCNORM by M array whose columns contain the
+c$$$c  constraint normals in the first N positions.  The (N+1)st
+c$$$c  row of CNORM is used for work space.
+c$$$c
+c$$$c  LCNORM is a positive integer input variable set to the row
+c$$$c  dimension of CNORM which is at least N+1.
+c$$$c
+c$$$c  B is a real LB by LB array whose first N rows and columns
+c$$$c  contain the hessian approximation on input.  The (N+1)st
+c$$$c  row and column are used for work space.
+c$$$c
+c$$$c  LB is a positive integer input variable set to the row
+c$$$c  dimension of B which is at least N+1.
+c$$$c
+c$$$c  GM is a real array of length N+1 which, on input, contains
+c$$$c  the negative components of the function gradient in the
+c$$$c  first N elements. The (N+1)st element is used for work space.
+c$$$c
+c$$$c  BDL, BDU are real work arrays of length N+1.
+c$$$c
+c$$$c  INFO is an integer variable. It must be set to zero before
+c$$$c  the initial call to qpsub1 and should not otherwise be
+c$$$c  changed.  On output, INFO is set as follows
+c$$$c
+c$$$c   INFO = 1  a normal return.
+c$$$c
+c$$$c   INFO = 5  a feasible point was not found.
+c$$$c
+c$$$c   INFO = 6  solution is restricted by an artificial bound or
+c$$$c             failed due to a singular matrix.
+c$$$c
+c$$$c  DELTA is a real array of length LDEL.  It need not be set
+c$$$c  before the first call to QPSUB1, but before each subsequent
+c$$$c  call, the first N locations should contain an estimate of
+c$$$c  the solution vector. (Zero is used as the estimate for the
+c$$$c  first call.)  On output, the value of the solution vector
+c$$$c  which minimizes the quadratic function is contained in the
+c$$$c  first N locations.  The remainder of the array is used for
+c$$$c  work space.
+c$$$c
+c$$$c  LDEL is a positive integer input variable set to the length
+c$$$c  of DELTA which is at least MAX(7*(N+1),4*(N+1)+M).
+c$$$c
+c$$$c  CM is a real work array of length M.
+c$$$c
+c$$$c  H is a real LH by LH work array.
+c$$$c
+c$$$c  LH is a positive integer input variable set to the dimension
+c$$$c  of the square array H which is at least 2*(N+1).
+c$$$c
+c$$$c  MACT is an integer output variable set to the number of
+c$$$c  constraints in the basis.
+c$$$c
+c$$$c  WA is a real work array of length LWA.
+c$$$c
+c$$$c  LWA is a positive integer input variable set equal to the
+c$$$c  dimension of WA which is at least 2*(N+1).
+c$$$c
+c$$$c  IWA is an integer work array of length LIWA.
+c$$$c
+c$$$c  LIWA is a positive integer input variable set to the length
+c$$$c  of IWA which is at least 6*(N+1) + M.
+c$$$c
+c$$$c  ILOWER is an integer array of length N.
+c$$$c  If X(I) has a lower bound, ILOWER(I) is set to 1
+c$$$c  on input.  If no bound is provided, ILOWER(I) should
+c$$$c  be 0 (the default value).
+c$$$c
+c$$$c  BNDL is a real array of length N.
+c$$$c  If X(I) has a lower bound, it should be given in BNDL(I).
+c$$$c
+c$$$c  IUPPER is an integer array of length N.
+c$$$c  If X(I) has a upper bound, IUPPER(I) is set to 1
+c$$$c  on input.  If no bound is provided, IUPPER(I) should
+c$$$c  be 0 (the default value).
+c$$$c
+c$$$c  BNDU is a real array of length N.
+c$$$c  If X(I) has a upper bound, it should be given in BNDU(I).
+c$$$c
+c$$$c  Roger L. Crane, Kenneth E. Hillstrom, Michael Minkoff
+c$$$c  Modified for simple bounds, M. Minkoff (10/26/82)
+c$$$c
+c$$$c  Modified to pass ILOWER,IUPPER, BNDL,BNDU in through argument list
+c$$$c  instead of through COMMON, J. Galambos, (5/21/91)
+c$$$
+c$$$      IMPLICIT NONE
+c$$$
+c$$$      INTEGER n,m,meq,lcnorm,lb,info,ldel,lh,mact,lwa,liwa
+c$$$      INTEGER iwa(liwa),ilower(n),iupper(n)
+c$$$      INTEGER i,iflag,j,k,mode,mtotal,np1,npp
+c$$$      INTEGER inx
+c$$$
+c$$$      DOUBLE PRECISION conf(m),cnorm(lcnorm,m),b(lb,lb),gm(*),bdl(*),
+c$$$     +     bdu(*),delta(ldel),cm(m),h(lh,lh),wa(lwa)
+c$$$      DOUBLE PRECISION x(n),bndu(n),bndl(n)
+c$$$      DOUBLE PRECISION cd6,cdm6,cp9,one,zero
+c$$$
+c$$$      cd6 = 1.0D6
+c$$$      cdm6 = 1.0D-6
+c$$$      cp9 = 0.9D0
+c$$$      one = 1.0D0
+c$$$      zero = 0.0D0
+c$$$
+c$$$      np1 = n + 1
+c$$$      npp = 2*np1
+c$$$      if (info .gt. 0) goto 50
+c$$$      mtotal = m + npp
+c$$$
+c$$$c  Set initial values of some variables
+c$$$
+c$$$      info = 1
+c$$$      mact = meq + 1
+c$$$      mode = 1
+c$$$
+c$$$c  Set the initial elements of bdl, bdu, and delta where
+c$$$c  bdl are artificial lower bounds,
+c$$$c  bdu are artificial upper bounds and
+c$$$c  delta is an initial solution estimate
+c$$$
+c$$$      do 10 i = 1, n
+c$$$         bdl(i) = -cd6
+c$$$         bdu(i) = cd6
+c$$$ 10   continue
+c$$$
+c$$$c  Bound the artificial variables in qp
+c$$$
+c$$$      bdl(np1) = zero
+c$$$      delta(np1) = one
+c$$$      if (meq .le. 0) goto 30
+c$$$
+c$$$c  Set indices of equality constraints
+c$$$c  The bounds are the first npp constraints
+c$$$
+c$$$      do 20 k = 1, meq
+c$$$         iwa(k) = k + npp
+c$$$ 20   continue
+c$$$
+c$$$ 30   continue
+c$$$
+c$$$c  Set index of upper bound of delta(np1) active
+c$$$
+c$$$      iwa(mact) = npp
+c$$$
+c$$$c  Extend gm and b because of the extra variable that is introduced
+c$$$c  to allow for feasibility. Set linear term of cost function to
+c$$$c  a large value
+c$$$
+c$$$      gm(np1) = cd6
+c$$$      do 40 i = 1, np1
+c$$$         b(i,np1) = zero
+c$$$         b(np1,i) = zero
+c$$$ 40   continue
+c$$$
+c$$$c  Set the elements of cm and cnorm(np1,*)
+c$$$
+c$$$ 50   continue
+c$$$      do 60 i = 1, n
+c$$$         if (ilower(i) .eq. 1) bdl(i) = bndl(i) - x(i)
+c$$$         if (iupper(i) .eq. 1) bdu(i) = bndu(i) - x(i)
+c$$$         delta(i) = max(zero,bdl(i))
+c$$$         delta(i) = min(delta(i),bdu(i))
+c$$$ 60   continue
+c$$$      do 90 k = 1, m
+c$$$         if (k .le. meq) goto 70
+c$$$         if (conf(k) .lt. zero) goto 70
+c$$$
+c$$$c  If an inequality constraint is satisfied set the constant term
+c$$$c  in the constraint vector to the violation and put zero in the
+c$$$c  constraint matrix for the (n+1)st variable
+c$$$
+c$$$         cm(k) = -conf(k)
+c$$$         cnorm(np1,k) = zero
+c$$$         goto 90
+c$$$ 70      continue
+c$$$
+c$$$c  If the constraint is an equality or a violated inequality set
+c$$$c  the constant term to zero and put the function value in the
+c$$$c  constraint matrix for the (n+1)st variable
+c$$$
+c$$$         cm(k) = zero
+c$$$         cnorm(np1,k) = conf(k)
+c$$$ 90   continue
+c$$$
+c$$$c  Set the upper bound of the (n+1)st variable
+c$$$c  Set iflag. iflag will be used in checking active constraints
+c$$$c  Call subroutine harwqp to solve quadratic programming problem
+c$$$
+c$$$      bdu(np1) = one
+c$$$      iflag = -1
+c$$$ 100  continue
+c$$$
+c$$$      call harwqp1(np1,mtotal,b,lb,gm,cnorm,lcnorm,cm,bdl,bdu,delta,
+c$$$     +     mact,meq,h,lh,iwa,wa,iwa(4*(n+1)+m+1),mode,info)
+c$$$
+c$$$      if (info .ne. 1) goto 130
+c$$$
+c$$$c  Check whether the required feasibility conditions hold
+c$$$c  If delta(np1) is sufficiently small there is no feasible
+c$$$c  solution
+c$$$
+c$$$      if (delta(np1) .le. cdm6) goto 120
+c$$$
+c$$$c  Check whether active constraints are bounds
+c$$$
+c$$$      do 110 j = 1, mact
+c$$$         if (iwa(j) .gt. npp) goto 110
+c$$$         if (iwa(j) .eq. npp) goto 101
+c$$$         if (iwa(j) .gt. np1) goto 105
+c$$$         if (iwa(j) .eq. np1) goto 130
+c$$$         if (ilower(iwa(j)) .eq. 0) goto 130
+c$$$         goto 110
+c$$$ 105     continue
+c$$$         inx = iwa(j) - np1
+c$$$         if (iupper(inx) .eq. 0) goto 130
+c$$$         goto 110
+c$$$ 101     continue
+c$$$
+c$$$c  The active constraint is blu(np1)
+c$$$
+c$$$         iflag = 1
+c$$$ 110  continue
+c$$$
+c$$$c  Normal exit
+c$$$
+c$$$      if (iflag .ge. 1) goto 140
+c$$$
+c$$$c  A second call to harwqp found blu(np1) to still be inactive
+c$$$c  thus an error exit is made
+c$$$
+c$$$      if (iflag .ge. 0) goto 120
+c$$$
+c$$$c  Reduce bdu(np1) and retry harwqp
+c$$$
+c$$$      bdu(np1) = cp9*delta(np1)
+c$$$      iflag = 0
+c$$$      goto 100
+c$$$
+c$$$c  Error return because of infeasibility
+c$$$
+c$$$ 120  continue
+c$$$      info = 5
+c$$$      goto 140
+c$$$
+c$$$c  Error return because of restriction by an artificial bound
+c$$$c  or detection of a singular matrix
+c$$$
+c$$$ 130  continue
+c$$$      info = 6
+c$$$
+c$$$ 140  continue
+c$$$
+c$$$      return
+c$$$      end
+c$$$c______________________________________________________________________
+c$$$      SUBROUTINE HARWQP1(
+c$$$     +     n,m,a,ia,b,c,ic,d,bdl,bdu,x,k,ke,h,ih,lt,wa,iwa,mode,info)
+c$$$
+c$$$c  This program is a modified version of the Harwell library
+c$$$c  subroutine VE02AD dated 11/06/70.  The modifications were made
+c$$$c  to substitute the subroutines HINV and DOTPMC for Harwell
+c$$$c  subroutines MB01B and MC03AS.  The calling sequence above
+c$$$c  includes three entries, WA, IWA, and INFO not present in
+c$$$c  the original program.  WA and IWA are real and
+c$$$c  integer work arrays, respectively, and must be dimensioned
+c$$$c  at least 2*N.  INFO is an output variable set to one for a
+c$$$c  normal return and set to two when a singular matrix is detected
+c$$$c  in HINV.  All other entries in the calling sequence are as
+c$$$c  described in the Harwell documentation.
+c$$$c
+c$$$c  Modified 5/22/91 to use implicit none (J. Galambos)
+c$$$c
+c$$$c+**PJK 02/11/92 Throughout this routine, argument 1 of DOTPMC has
+c$$$c+**PJK 02/11/92 different dimensions than are declared in the source
+c$$$c+**PJK 02/11/92 code of the routine itself. The program runs without
+c$$$c+**PJK 02/11/92 error but beware of future modifications.
+c$$$
+c$$$      IMPLICIT NONE
+c$$$
+c$$$      INTEGER n,m,ia,ic,k,ke,ih,mode,info
+c$$$      INTEGER iwa(*),lt(*)
+c$$$      INTEGER i, ial, ib, ii, j, li, ni, nk, nn, n3,n4,n5,n6
+c$$$      INTEGER i0,i1,i2,i3
+c$$$
+c$$$      DOUBLE PRECISION a(ia,*),b(*),c(ic,*),d(*),bdl(*),bdu(*),x(*),
+c$$$     +     h(ih,*),wa(*)
+c$$$      DOUBLE PRECISION alpha, cac, cc, chc, ghc, y, z, zz
+c$$$      DOUBLE PRECISION r0
+c$$$
+c$$$      LOGICAL retest,passiv,postiv
+c$$$
+c$$$      i0 = 0
+c$$$      i1 = 1
+c$$$      i2 = 2
+c$$$      i3 = 3
+c$$$      r0 = 0.0D0
+c$$$
+c$$$      info = 1
+c$$$      retest = .false.
+c$$$      nn = n+n
+c$$$      n3 = nn+n
+c$$$      n4 = nn+nn
+c$$$      n5 = n4+n
+c$$$      n6 = n5+n
+c$$$
+c$$$      if (mode.ge.3) goto 99
+c$$$
+c$$$c  Call feasible vertex routine
+c$$$
+c$$$ 8    continue
+c$$$      call harwfp1(n,m,c,ic,d,bdl,bdu,x,k,ke,h,ih,lt,wa,iwa,info)
+c$$$      if (info .ne. 1) goto 1000
+c$$$      if (k.eq.0) goto 1000
+c$$$      if ((mode.eq.2).and.(.not.retest)) goto 100
+c$$$
+c$$$c  Initial operators h=0 and cstar=c(-1) from ve02b
+c$$$      do 65 i = 1,n
+c$$$         do 60 j = 1,n
+c$$$            h(n+i,j) = h(i,j)
+c$$$            h(i,j) = 0.0D0
+c$$$ 60      continue
+c$$$ 65   continue
+c$$$      goto 120
+c$$$
+c$$$ 99   continue
+c$$$      do 1 i = 1,m
+c$$$         lt(nn+i) = 1
+c$$$ 1    continue
+c$$$
+c$$$c  Constraints indexed as  -1=equality, 0=active, 1=inactive
+c$$$      if (k.eq.0) goto 100
+c$$$      do 2 i=1,k
+c$$$         j=0
+c$$$         if (i.le.ke)j=-1
+c$$$         lt(nn+lt(i))=j
+c$$$ 2    continue
+c$$$
+c$$$ 100  continue
+c$$$      if ((mode.eq.5).and.(.not.retest)) goto 109
+c$$$
+c$$$c  Set up matrix and rhs of equations governing equality problem
+c$$$      do 1011 i = 1,n
+c$$$         x(n+i) = b(i)
+c$$$         do 101 j = 1,n
+c$$$            h(i,j) = a(i,j)
+c$$$ 101     continue
+c$$$ 1011 continue
+c$$$
+c$$$      if (((mode.eq.2).or.(mode.eq.3)).and.(.not.retest)) goto 200
+c$$$      if (k.eq.0) goto 107
+c$$$      do 1021 i = 1,k
+c$$$         li = lt(i)
+c$$$         if (li.gt.nn) goto 105
+c$$$         do 103 j = 1,n
+c$$$            h(j,n+i) = 0.0D0
+c$$$            h(n+i,j) = 0.0D0
+c$$$ 103     continue
+c$$$         if (li.gt.n) goto 104
+c$$$         h(n+i,li) = 1.0D0
+c$$$         h(li,n+i) = 1.0D0
+c$$$         x(nn+i) = bdl(li)
+c$$$         goto 108
+c$$$
+c$$$ 104     continue
+c$$$         li = li-n
+c$$$         h(n+i,li) = -1.0D0
+c$$$         h(li,n+i) = -1.0D0
+c$$$         x(nn+i) = -bdu(li)
+c$$$         goto 108
+c$$$
+c$$$ 105     continue
+c$$$         li = li-nn
+c$$$         do 106 j = 1,n
+c$$$            h(n+i,j) = c(j,li)
+c$$$            h(j,n+i) = c(j,li)
+c$$$ 106     continue
+c$$$         x(nn+i) = d(li)
+c$$$
+c$$$ 108     continue
+c$$$         do 102 j = 1,k
+c$$$            h(n+i,n+j) = 0.0D0
+c$$$ 102     continue
+c$$$ 1021 continue
+c$$$
+c$$$ 107  continue
+c$$$      nk = n+k
+c$$$
+c$$$c  Invert matrix giving operators h and cstar
+c$$$
+c$$$      call hinv1(h,ih,nk,iwa,info)
+c$$$      if (info .ne. 1) goto 1000
+c$$$      goto 118
+c$$$
+c$$$c  Set up rhs only
+c$$$
+c$$$ 109  continue
+c$$$      do 113 i = 1,n
+c$$$         x(n+i) = b(i)
+c$$$ 113  continue
+c$$$
+c$$$      do 115 i = 1,k
+c$$$         li = lt(i)
+c$$$         if (li.gt.nn) goto 117
+c$$$         if (li.gt.n) goto 116
+c$$$         x(nn+i) = bdl(li)
+c$$$         goto 115
+c$$$
+c$$$ 116     continue
+c$$$         x(nn+i) = -bdu(li-n)
+c$$$         goto 115
+c$$$
+c$$$ 117     continue
+c$$$         x(nn+i)=d(li-nn)
+c$$$ 115  continue
+c$$$
+c$$$c  Solve for solution point x
+c$$$
+c$$$      nk = n+k
+c$$$
+c$$$ 118  continue
+c$$$      do 119 i=1,n
+c$$$         call dotpmc(h(1,i),i1,x(n+1),i1,r0,x(i),nk,i0)
+c$$$ 119  continue
+c$$$
+c$$$c  Check feasibility, if not exit to 8
+c$$$
+c$$$      do 110 i = 1,m
+c$$$         if (lt(nn+i).le.0) goto 110
+c$$$         if (i.gt.n) goto 111
+c$$$         z = x(i)-bdl(i)
+c$$$         goto 114
+c$$$
+c$$$ 111     continue
+c$$$         if (i.gt.nn) goto 112
+c$$$         z = bdu(i-n)-x(i-n)
+c$$$         goto 114
+c$$$
+c$$$ 112     continue
+c$$$         j = i-nn
+c$$$         call dotpmc(c(1,j),i1,x(1),i1,d(j),z,n,i2)
+c$$$
+c$$$ 114     continue
+c$$$         if (z.lt.0.0D0) goto 8
+c$$$ 110  continue
+c$$$
+c$$$ 120  continue
+c$$$
+c$$$c  Calculate gradient g and Lagrange multipliers -cstar.g,
+c$$$c  Find largest multiplier,  exit if not positive
+c$$$
+c$$$      do 121 i = 1,n
+c$$$         call dotpmc(a(i,1),ia,x(1),i1,b(i),x(n6+i),n,i2)
+c$$$ 121  continue
+c$$$      if (k.eq.0) goto 1000
+c$$$
+c$$$C+**PJK 17/11/97 D999 reduced to D99
+c$$$      z = -1.0D99
+c$$$      do 122 i = 1,k
+c$$$         if (lt(nn+lt(i)).eq.-1) goto 122
+c$$$         call dotpmc(h(n+i,1),ih,x(n6+1),i1,r0,zz,n,i3)
+c$$$         if (zz.le.z) goto 122
+c$$$         z = zz
+c$$$         ii = i
+c$$$ 122  continue
+c$$$
+c$$$      if (z.gt.0.0D0) goto 130
+c$$$      if ((retest).or.(mode.ge.4)) goto 137
+c$$$      retest = .true.
+c$$$      goto 100
+c$$$
+c$$$ 137  continue
+c$$$      if (z.ne.0.0D0) goto 1000
+c$$$      goto 1000
+c$$$
+c$$$c  Set direction of search as corresponding row of cstar
+c$$$
+c$$$ 130  continue
+c$$$      do 131 i = 1,n
+c$$$         x(nn+i) = h(n+ii,i)
+c$$$ 131  continue
+c$$$
+c$$$ 136  continue
+c$$$      do 132 i = 1,n
+c$$$         call dotpmc(a(i,1),ia,x(nn+1),i1,r0,x(n+i),n,i0)
+c$$$ 132  continue
+c$$$      call dotpmc(x(nn+1),i1,x(n+1),i1,r0,cac,n,i0)
+c$$$      if (cac.gt.0.0D0) goto 134
+c$$$      postiv = .false.
+c$$$      y = 1.0D0
+c$$$      goto 135
+c$$$
+c$$$ 134  continue
+c$$$      postiv = .true.
+c$$$      y = z/cac
+c$$$
+c$$$ 135  continue
+c$$$      do 133 i = 1,n
+c$$$         x(n5+i) = x(nn+i)*y
+c$$$ 133  continue
+c$$$      passiv = .true.
+c$$$
+c$$$ 139  continue
+c$$$C+**PJK 17/11/97 D999 reduced to D99
+c$$$      alpha = 1.0D99
+c$$$      nk = n+k
+c$$$
+c$$$c  Linear search along direction of search,  passiv indicates
+c$$$c  a constraint has been removed to get search direction,
+c$$$c  postiv indicates positive curvature along the direction
+c$$$
+c$$$      do 140 i = 1,m
+c$$$         if (lt(nn+i).le.0) goto 140
+c$$$         if (i.gt.n) goto 141
+c$$$         if (x(n5+i).ge.0.0D0) goto 140
+c$$$         cc = (bdl(i)-x(i))/x(n5+i)
+c$$$         goto 143
+c$$$
+c$$$ 141     continue
+c$$$         if (i.gt.nn) goto 142
+c$$$         if (x(n4+i).le.0.0D0) goto 140
+c$$$         cc = (bdu(i-n)-x(i-n))/x(n4+i)
+c$$$         goto 143
+c$$$
+c$$$ 142     continue
+c$$$         j = i-nn
+c$$$         call dotpmc(c(1,j),i1,x(n5+1),i1,r0,zz,n,i0)
+c$$$         if (zz.ge.0.0D0) goto 140
+c$$$         call dotpmc(c(1,j),i1,x(1),i1,d(j),cc,n,i1)
+c$$$         cc = cc/zz
+c$$$
+c$$$ 143     continue
+c$$$         if (cc.ge.alpha) goto 140
+c$$$         alpha = cc
+c$$$         ial = i
+c$$$ 140  continue
+c$$$      if (passiv) lt(nn+lt(ii)) = 1
+c$$$
+c$$$c  If minimum found, goto  170
+c$$$
+c$$$      if ((postiv).and.(alpha.ge.1.0D0)) goto 170
+c$$$
+c$$$c  Calculate h.c and cstar.c
+c$$$
+c$$$      do 144 i=1,n
+c$$$         x(i) = x(i)+alpha*x(n5+i)
+c$$$ 144  continue
+c$$$      alpha = alpha*y
+c$$$      j = 1
+c$$$      if (k.eq.n) j = n+1
+c$$$      if (ial.gt.n) goto 146
+c$$$      do 145 i = j,nk
+c$$$         x(n3+i) = h(i,ial)
+c$$$ 145  continue
+c$$$      chc = x(n3+ial)
+c$$$      goto 151
+c$$$
+c$$$ 146  continue
+c$$$      ib = ial-n
+c$$$      if (ib.gt.n) goto 148
+c$$$      do 147 i = j,nk
+c$$$         x(n3+i) = -h(i,ib)
+c$$$ 147  continue
+c$$$      chc = -x(n3+ib)
+c$$$      goto 151
+c$$$
+c$$$ 148  continue
+c$$$      ib = ib-n
+c$$$      do 149 i = 1,n
+c$$$         x(n5+i) = c(i,ib)
+c$$$ 149  continue
+c$$$      do 150 i = j,nk
+c$$$         call dotpmc(h(i,1),ih,x(n5+1),i1,r0,x(n3+i),n,i0)
+c$$$ 150  continue
+c$$$      if (k.ne.n) call dotpmc(x(n5+1),i1,x(n3+1),i1,r0,chc,n,i0)
+c$$$
+c$$$ 151  continue
+c$$$      lt(nn+ial) = 0
+c$$$      if (k.eq.n) goto 180
+c$$$      if (passiv) goto 160
+c$$$
+c$$$c  Apply formula for adding a constraint
+c$$$
+c$$$ 156  continue
+c$$$      if (k.eq.0) goto 157
+c$$$      do 1521 i = 1,k
+c$$$         alpha = x(n4+i)/chc
+c$$$         ni = n+i
+c$$$         do 152 j = 1,n
+c$$$            h(ni,j) = h(ni,j)-alpha*x(n3+j)
+c$$$ 152     continue
+c$$$ 1521 continue
+c$$$
+c$$$ 157  continue
+c$$$      k = k+1
+c$$$      lt(k) = ial
+c$$$      do 158 j = 1,n
+c$$$         h(n+k,j) = x(n3+j)/chc
+c$$$ 158  continue
+c$$$      if (k.lt.n) goto 154
+c$$$      do 1531 i = 1,n
+c$$$         do 153 j = 1,n
+c$$$            h(i,j) = 0.0D0
+c$$$ 153     continue
+c$$$ 1531 continue
+c$$$      goto 159
+c$$$
+c$$$ 154  continue
+c$$$      do 1551 i = 1,n
+c$$$         alpha = x(n3+i)/chc
+c$$$         do 155 j = 1,i
+c$$$            h(i,j) = h(i,j)-alpha*x(n3+j)
+c$$$            h(j,i) = h(i,j)
+c$$$ 155     continue
+c$$$ 1551 continue
+c$$$
+c$$$ 159  continue
+c$$$      if (.not.passiv) goto 167
+c$$$
+c$$$c  Removal of a constraint has been deferred,  set up as if
+c$$$c  the constraint is being removed from augmented basis
+c$$$
+c$$$      do 164 i=1,n
+c$$$         call dotpmc(a(i,1),ia,x(1),i1,b(i),x(n6+i),n,i2)
+c$$$         x(nn+i) = h(n+ii,i)
+c$$$ 164  continue
+c$$$      call dotpmc(x(n6+1),i1,x(nn+1),i1,r0,z,n,i3)
+c$$$      if (z.eq.0.0D0) goto 178
+c$$$      goto 136
+c$$$
+c$$$ 160  continue
+c$$$      cc = x(n4+ii)
+c$$$      y = chc*cac+cc**2
+c$$$      call dotpmc(x(n6+1),i1,x(n3+1),i1,r0,ghc,n,i0)
+c$$$      if ((alpha*y).lt.(chc*(z-alpha*cac)+ghc*cc)) goto 156
+c$$$
+c$$$c  Apply formula for exchanging new constraint
+c$$$c  with passive constraint
+c$$$
+c$$$      do 161 i = 1,k
+c$$$         ni = n+i
+c$$$         call dotpmc(h(ni,1),ih,x(n+1),i1,r0,x(n5+i),n,i0)
+c$$$ 161  continue
+c$$$      do 162 i = 1,n
+c$$$         x(n+i) = (chc*x(nn+i)-cc*x(n3+i))/y
+c$$$         x(n6+i) = (cac*x(n3+i)+cc*x(nn+i))/y
+c$$$ 162  continue
+c$$$      do 1631 i = 1,n
+c$$$         do 163 j = 1,i
+c$$$            h(i,j) = h(i,j)+x(n+i)*x(nn+j)-x(n6+i)*x(n3+j)
+c$$$            h(j,i) = h(i,j)
+c$$$ 163     continue
+c$$$ 1631 continue
+c$$$      x(n4+ii) = x(n4+ii)-1.0D0
+c$$$      do 1661 i = 1,k
+c$$$         ni = n+i
+c$$$         do 166 j = 1,n
+c$$$            h(ni,j) = h(ni,j)-x(n4+i)*x(n6+j)-x(n5+i)*x(n+j)
+c$$$ 166     continue
+c$$$ 1661 continue
+c$$$      lt(ii) = ial
+c$$$
+c$$$ 167  continue
+c$$$      if (k.eq.n) goto 120
+c$$$
+c$$$c  Calculate g,  new search direction is -h.g
+c$$$
+c$$$      do 168 i = 1,n
+c$$$         call dotpmc(a(i,1),ia,x(1),i1,b(i),x(n+i),n,i2)
+c$$$ 168  continue
+c$$$      z = 0.0D0
+c$$$      do 169 i = 1,n
+c$$$         call dotpmc(h(i,1),ih,x(n+1),i1,r0,x(n5+i),n,i3)
+c$$$         if (x(n5+i).ne.0.0D0) z = 1.0D0
+c$$$ 169  continue
+c$$$      passiv = .false.
+c$$$      if (z.eq.0.0D0) goto 120
+c$$$      postiv = .true.
+c$$$      goto 139
+c$$$
+c$$$ 170  continue
+c$$$      do 171 i = 1,n
+c$$$         x(i) = x(i)+x(n5+i)
+c$$$ 171  continue
+c$$$
+c$$$c  x is now the minimum point in the basis
+c$$$c  Update the operators if a constraint had been removed
+c$$$
+c$$$      if (.not.passiv) goto 120
+c$$$
+c$$$ 178  continue
+c$$$      do 1721 i = 1,n
+c$$$         alpha = x(nn+i)/cac
+c$$$         do 172 j = 1,i
+c$$$            h(i,j) = h(i,j)+alpha*x(nn+j)
+c$$$            h(j,i) = h(i,j)
+c$$$ 172     continue
+c$$$ 1721 continue
+c$$$      if (k.gt.1) goto 177
+c$$$      k = 0
+c$$$      goto 120
+c$$$
+c$$$ 177  continue
+c$$$      if (ii.eq.k) goto 175
+c$$$      do 174 i=1,n
+c$$$         h(n+ii,i) = h(n+k,i)
+c$$$ 174  continue
+c$$$      lt(ii) = lt(k)
+c$$$
+c$$$ 175  continue
+c$$$      k = k-1
+c$$$      do 173 i = 1,k
+c$$$         ni = n+i
+c$$$         call dotpmc(h(ni,1),ih,x(n+1),i1,r0,x(n3+i),n,i0)
+c$$$ 173  continue
+c$$$      do 1761 i = 1,k
+c$$$         alpha = x(n3+i)/cac
+c$$$         ni = n+i
+c$$$         do 176 j = 1,n
+c$$$            h(ni,j) = h(ni,j)-alpha*x(nn+j)
+c$$$ 176     continue
+c$$$ 1761 continue
+c$$$      goto 120
+c$$$
+c$$$ 180  continue
+c$$$      z = 1.0D0/x(n4+ii)
+c$$$
+c$$$c  Apply simplex formula to exchange constraints
+c$$$
+c$$$      do 181 i = 1,n
+c$$$         ni = n+i
+c$$$         if (i.ne.ii) goto 182
+c$$$         do 183 j = 1,n
+c$$$            h(ni,j) = h(ni,j)*z
+c$$$ 183     continue
+c$$$         goto 181
+c$$$
+c$$$ 182     continue
+c$$$         zz = z*x(n4+i)
+c$$$         do 184 j = 1,n
+c$$$            h(ni,j) = h(ni,j)-zz*x(nn+j)
+c$$$ 184     continue
+c$$$ 181  continue
+c$$$      lt(ii) = ial
+c$$$      goto 120
+c$$$
+c$$$ 200  continue
+c$$$      k = 0
+c$$$
+c$$$      ke = 0
+c$$$      do 202 i = 1,m
+c$$$         lt(nn+i) = 1
+c$$$ 202  continue
+c$$$      call hinv1(h,ih,n,iwa,info)
+c$$$      if (info .ne. 1) goto 1000
+c$$$
+c$$$c  Start with empty basis from feasible point
+c$$$c  Search direction is -a(-1).b
+c$$$
+c$$$      goto 167
+c$$$
+c$$$ 1000 continue
+c$$$
+c$$$      return
+c$$$      end
+c$$$c______________________________________________________________________
+c$$$      SUBROUTINE HARWFP1(
+c$$$     +     n,m,c,ic,d,bdl,bdu,x,k,ke,h,ih,lt,wa,iwa,info)
+c$$$
+c$$$c  This program is a modified version of the Harwell Library
+c$$$c  subroutine LA02AD.  The modifications were made to substitute
+c$$$c  the subroutines HINV and DOTPMC for Harwell subroutines
+c$$$c  MB01B and MC03AS.  The calling sequence above includes
+c$$$c  three entries, WA, IWA, and INFO not present in the
+c$$$c  original program.  WA and IWA are real and
+c$$$c  integer work arrays, respectively, and must be dimensioned
+c$$$c  at least 2*N.  INFO is an output variable set to one for a
+c$$$c  normal return and set to two when a singular matrix is detected
+c$$$c  in HINV.  All other entries in the calling sequence are as
+c$$$c  described in the Harwell documentation.
+c$$$c
+c$$$c  Modified  5/22/91 to use implicit none (J. Galambos)
+c$$$c
+c$$$c+**PJK 02/11/92 Throughout this routine, argument 1 of DOTPMC has
+c$$$c+**PJK 02/11/92 different dimensions than are declared in the source
+c$$$c+**PJK 02/11/92 code of the routine itself. The program runs without
+c$$$c+**PJK 02/11/92 error but beware of future modifications.
+c$$$
+c$$$      IMPLICIT NONE
+c$$$
+c$$$      INTEGER n,m,ic,k,ke,ih,info
+c$$$      INTEGER i, ial, ib, ii, j, jj, kv, li, ni, nj, nn, n3
+c$$$      INTEGER iwa(*), lt(*)
+c$$$      INTEGER i0,i1,i2,i3
+c$$$
+c$$$      DOUBLE PRECISION c(ic,*),d(*),bdl(*),bdu(*),x(*),h(ih,*)
+c$$$      DOUBLE PRECISION wa(*)
+c$$$      DOUBLE PRECISION alpha, beta, y, z, zz
+c$$$      DOUBLE PRECISION r0
+c$$$
+c$$$      i0 = 0
+c$$$      i1 = 1
+c$$$      i2 = 2
+c$$$      i3 = 3
+c$$$      r0 = 0.0D0
+c$$$
+c$$$      info = 1
+c$$$      nn = n+n
+c$$$      n3 = nn+n
+c$$$      do 1 i = 1,m
+c$$$         lt(nn+i) = 1
+c$$$ 1    continue
+c$$$
+c$$$c  Constraints indexed as
+c$$$c  -1=equality,  0=active,  1=inactive,  2=violated
+c$$$
+c$$$      if (k.ne.0) goto 10
+c$$$
+c$$$c  No designated constraints, vertex chosen from upper and
+c$$$c  lower bounds, inverse matrix trivial
+c$$$
+c$$$      do 4 i = 1,n
+c$$$         do 5 j = 1,n
+c$$$            h(i,j) = 0.0D0
+c$$$ 5       continue
+c$$$         if ((x(i)-bdl(i)).gt.(bdu(i)-x(i))) goto 6
+c$$$         lt(i) = i
+c$$$         h(i,i) = 1.0D0
+c$$$         goto 998
+c$$$
+c$$$ 6       continue
+c$$$         lt(i) = n+i
+c$$$         h(i,i) = -1.0D0
+c$$$ 998     continue
+c$$$         lt(nn+lt(i)) = 0
+c$$$ 4    continue
+c$$$      k = n
+c$$$      goto 40
+c$$$
+c$$$c  Set up normals v of the k designated constraints in basis
+c$$$
+c$$$ 10   continue
+c$$$      do 11 i = 1,k
+c$$$         j = 0
+c$$$         if (i.le.ke) j = -1
+c$$$         lt(nn+lt(i)) = j
+c$$$         li = lt(i)
+c$$$         ni = n+i
+c$$$         if (li.gt.nn) goto 14
+c$$$         do 12 j = 1,n
+c$$$            h(j,ni) = 0.0D0
+c$$$ 12      continue
+c$$$         if (li.gt.n) goto 13
+c$$$         h(li,ni) = 1.0D0
+c$$$         goto 11
+c$$$
+c$$$ 13      continue
+c$$$         h(li-n,ni) = -1.0D0
+c$$$         goto 11
+c$$$
+c$$$ 14      continue
+c$$$         li = li-nn
+c$$$         do 15 j = 1,n
+c$$$            h(j,ni) = c(j,li)
+c$$$ 15      continue
+c$$$ 11   continue
+c$$$
+c$$$      if (k.ne.n) goto 19
+c$$$      do 161 j = 1,n
+c$$$         nj = n+j
+c$$$         do 16 i = 1,n
+c$$$            h(i,j) = h(i,nj)
+c$$$ 16      continue
+c$$$ 161  continue
+c$$$      call hinv1(h,ih,n,iwa,info)
+c$$$      if (info .ne. 1) goto 1000
+c$$$      goto 40
+c$$$
+c$$$ 19   continue
+c$$$
+c$$$c  Form m = (vtranspose.v)(-1)
+c$$$      do 2011 i = 1,k
+c$$$         do 20 j = i,k
+c$$$            call dotpmc(h(1,n+i),i1,h(1,n+j),i1,r0,h(i,j),n,i0)
+c$$$            h(j,i) = h(i,j)
+c$$$ 20      continue
+c$$$ 2011 continue
+c$$$      if (k.ne.1) goto 200
+c$$$      h(1,1) = 1.0D0/h(1,1)
+c$$$      goto  201
+c$$$
+c$$$ 200  continue
+c$$$      call hinv1(h,ih,k,iwa,info)
+c$$$      if (info .ne. 1) goto 1000
+c$$$
+c$$$ 201  continue
+c$$$
+c$$$c  Calculate generalized inverse of v,  vplus = m.vtranspose
+c$$$
+c$$$      do 211 i = 1,k
+c$$$         do 22 j = 1,k
+c$$$            x(n+j) = h(i,j)
+c$$$ 22      continue
+c$$$         do 21 j = 1,n
+c$$$            call dotpmc(x(n+1),i1,h(j,n+1),ih,r0,h(i,j),k,i0)
+c$$$ 21      continue
+c$$$ 211  continue
+c$$$
+c$$$c  Set up diagonal elements of the projection matrix  p = v.vplus
+c$$$
+c$$$      do 23 i = 1,n
+c$$$         call dotpmc(h(1,i),i1,h(i,n+1),ih,r0,x(n+i),k,i0)
+c$$$ 23   continue
+c$$$      do 24 i = 1,n
+c$$$         lt(n+i) = 0
+c$$$ 24   continue
+c$$$      kv = k
+c$$$
+c$$$c  Add bound e(i) corresponding to the smallest diag(p)
+c$$$
+c$$$ 29   continue
+c$$$      z = 1.0D0
+c$$$      do 25 i = 1,n
+c$$$         if (lt(n+i).eq.1) goto 25
+c$$$         if (x(n+i).ge.z) goto 25
+c$$$         z = x(n+i)
+c$$$         ii = i
+c$$$ 25   continue
+c$$$      y = 1.0D0
+c$$$      if ( (x(ii)-bdl(ii)) .gt. (bdu(ii)-x(ii)) ) y = -1.0D0
+c$$$
+c$$$c  Calculate vectors vplus.e(i) and  u = e(i)-v.vplus.e(i)
+c$$$
+c$$$      if (y.ne.1.0D0) goto 27
+c$$$      do 26 i = 1,k
+c$$$         x(nn+i) = h(i,ii)
+c$$$ 26   continue
+c$$$      goto 30
+c$$$
+c$$$ 27   continue
+c$$$      do 28 i = 1,k
+c$$$         x(nn+i) = -h(i,ii)
+c$$$ 28   continue
+c$$$
+c$$$ 30   continue
+c$$$      do 31 i = 1,n
+c$$$         if (lt(n+i).eq.1) goto 31
+c$$$         call dotpmc(h(i,n+1),ih,x(nn+1),i1,r0,x(n3+i),kv,i3)
+c$$$ 31   continue
+c$$$      do 32 i = 1,n
+c$$$         h(i,ii) = 0.0D0
+c$$$ 32   continue
+c$$$      lt(n+ii) = 1
+c$$$      z = 1.0D0+x(n3+ii)*y
+c$$$
+c$$$c  Update vplus and diag(p)
+c$$$
+c$$$      do 33 i = 1,n
+c$$$         if (lt(n+i).eq.1) goto 33
+c$$$         alpha = x(n3+i)/z
+c$$$         h(k+1,i) = alpha
+c$$$         do 34 j = 1,k
+c$$$            h(j,i) = h(j,i)-x(nn+j)*alpha
+c$$$ 34      continue
+c$$$ 33   continue
+c$$$
+c$$$      do 35 i = 1,n
+c$$$         if (lt(n+i).eq.1) goto 35
+c$$$         x(n+i) = x(n+i)+x(n3+i)**2/z
+c$$$ 35   continue
+c$$$      k = k+1
+c$$$      h(k,ii) = y
+c$$$      if (y.ne.1.0D0) ii = ii+n
+c$$$      lt(nn+ii) = 0
+c$$$      lt(k) = ii
+c$$$      if (k.ne.n) goto 29
+c$$$
+c$$$c  Set up rhs of constraints in basis
+c$$$
+c$$$ 40   continue
+c$$$      do 41 i = 1,n
+c$$$         li = lt(i)
+c$$$         if (li.gt.n) goto 42
+c$$$         x(n+i) = bdl(li)
+c$$$         goto 41
+c$$$
+c$$$ 42      continue
+c$$$         if (li.gt.nn) goto 43
+c$$$         x(n+i) = -bdu(li-n)
+c$$$         goto 41
+c$$$
+c$$$ 43      continue
+c$$$         x(n+i) = d(li-nn)
+c$$$
+c$$$ 41   continue
+c$$$
+c$$$c  Calculate position of vertex
+c$$$
+c$$$      do 44 i = 1,n
+c$$$         call dotpmc(h(1,i),i1,x(n+1),i1,r0,x(i),n,i0)
+c$$$ 44   continue
+c$$$
+c$$$c  Calculate the constraint residuals, the number of violated
+c$$$c  constraints, and the sum of their normals
+c$$$
+c$$$ 50   continue
+c$$$      kv = 0
+c$$$      do 51 i = 1,n
+c$$$         x(n+i) = 0.0D0
+c$$$ 51   continue
+c$$$      do 52 i = 1,m
+c$$$         if (lt(nn+i).le.0) goto 52
+c$$$         if (i.gt.n) goto 53
+c$$$         z = x(i)-bdl(i)
+c$$$         goto 55
+c$$$
+c$$$ 53      continue
+c$$$         if (i.gt.nn) goto 54
+c$$$         z = bdu(i-n)-x(i-n)
+c$$$         goto 55
+c$$$
+c$$$ 54      continue
+c$$$         j = i-nn
+c$$$         call dotpmc(c(1,j),i1,x(1),i1,d(j),z,n,i2)
+c$$$
+c$$$ 55      continue
+c$$$         x(nn+i) = z
+c$$$         if (z.ge.0.0D0) goto 52
+c$$$         kv = kv+1
+c$$$         lt(nn+i) = 2
+c$$$         if (i.gt.n) goto 56
+c$$$         x(n+i) = x(n+i)+1.0D0
+c$$$         goto 52
+c$$$
+c$$$ 56      continue
+c$$$         if (i.gt.nn) goto 57
+c$$$         x(i) = x(i)-1.0D0
+c$$$         goto 52
+c$$$
+c$$$ 57      continue
+c$$$         do 58 ii = 1,n
+c$$$            x(n+ii) = x(n+ii)+c(ii,j)
+c$$$ 58      continue
+c$$$ 52   continue
+c$$$      if (kv.ne.0) goto 63
+c$$$      goto 1000
+c$$$
+c$$$c  Possible directions of search obtainable by removing a
+c$$$c  constraint are rows of h,  calculate the optimum direction
+c$$$
+c$$$ 63   continue
+c$$$      z = 0.0D0
+c$$$      do 64 i = 1,n
+c$$$         if (lt(nn+lt(i)).eq.-1) goto 64
+c$$$         call dotpmc(h(i,1),ih,x(n+1),i1,r0,y,n,i0)
+c$$$         if (y.le.z) goto 64
+c$$$         z = y
+c$$$         ii = i
+c$$$ 64   continue
+c$$$      if (z.gt.0.0D0) goto 70
+c$$$      k = 0
+c$$$      goto 1000
+c$$$
+c$$$c  Search for the nearest of the furthest violated constraint
+c$$$c  and the nearest nonviolated nonbasic constraint
+c$$$
+c$$$ 70   continue
+c$$$C+**PJK 17/11/97 D999 reduced to D99
+c$$$      alpha = 1.0D99
+c$$$      beta = 0.0D0
+c$$$      do 71 i = 1,n
+c$$$         x(n+i) = h(ii,i)
+c$$$ 71   continue
+c$$$      do 72 i = 1,m
+c$$$         if (lt(nn+i).le.0) goto 72
+c$$$         if (i.gt.n) goto 73
+c$$$         z = -x(n+i)
+c$$$         goto 75
+c$$$
+c$$$ 73      continue
+c$$$         if (i.gt.nn) goto 74
+c$$$         z = x(i)
+c$$$         goto 75
+c$$$
+c$$$ 74      continue
+c$$$         jj = i-nn
+c$$$         call dotpmc(x(n+1),i1,c(1,jj),i1,r0,z,n,i3)
+c$$$
+c$$$ 75      continue
+c$$$         if (lt(nn+i).eq.2) goto 76
+c$$$         if (z.le.0.0D0) goto 72
+c$$$         z = x(nn+i)/z
+c$$$         if (z.ge.alpha) goto 72
+c$$$         alpha = z
+c$$$         ial = i
+c$$$         goto 72
+c$$$
+c$$$ 76      continue
+c$$$         lt(nn+i) = 1
+c$$$         if (z.ge.0.0D0) goto 72
+c$$$         z = x(nn+i)/z
+c$$$         if (z.le.beta) goto 72
+c$$$         beta = z
+c$$$         ib = i
+c$$$ 72   continue
+c$$$
+c$$$      if (alpha.gt.beta) goto 80
+c$$$      ib = ial
+c$$$      beta = alpha
+c$$$
+c$$$c  Exchange with the constraint being removed from the basis,
+c$$$c  using simplex formula for new h
+c$$$
+c$$$ 80   continue
+c$$$      lt(nn+lt(ii)) = 1
+c$$$      lt(nn+ib) = 0
+c$$$      lt(ii) = ib
+c$$$      if (ib.gt.n) goto 82
+c$$$      do 81 i = 1,n
+c$$$         x(nn+i) = h(i,ib)
+c$$$ 81   continue
+c$$$      goto 90
+c$$$
+c$$$ 82   continue
+c$$$      ib = ib-n
+c$$$      if (ib.gt.n) goto 84
+c$$$      do 83 i = 1,n
+c$$$         x(nn+i) = -h(i,ib)
+c$$$ 83   continue
+c$$$      goto 90
+c$$$
+c$$$ 84   continue
+c$$$      ib = ib-n
+c$$$      do 85 i = 1,n
+c$$$         x(n3+i) = c(i,ib)
+c$$$ 85   continue
+c$$$      do 86 i = 1,n
+c$$$         call dotpmc(h(i,1),ih,x(n3+1),i1,r0,x(nn+i),n,i0)
+c$$$ 86   continue
+c$$$
+c$$$ 90   continue
+c$$$      z = 1.0D0/x(nn+ii)
+c$$$      do 91 i = 1,n
+c$$$         x(i) = x(i)+beta*x(n+i)
+c$$$         if (i.ne.ii) goto 92
+c$$$         do 93 j = 1,n
+c$$$            h(i,j) = h(i,j)*z
+c$$$ 93      continue
+c$$$         goto 91
+c$$$
+c$$$ 92      continue
+c$$$         zz = z*x(nn+i)
+c$$$         do 94 j = 1,n
+c$$$            h(i,j) = h(i,j)-zz*x(n+j)
+c$$$ 94      continue
+c$$$ 91   continue
+c$$$
+c$$$      goto 50
+c$$$
+c$$$ 1000 continue
+c$$$
+c$$$      return
+c$$$      end
+c$$$c______________________________________________________________________
+c$$$      SUBROUTINE HINV1(h,ih,n,ipvt,info)
+c$$$
+c$$$c  This subroutine inverts the matrix H by use of linpack software.
+c$$$c
+c$$$c  The subroutine statement is
+c$$$c
+c$$$c  subroutine hinv(h,ih,n,ipvt,info)
+c$$$c
+c$$$c  where
+c$$$c
+c$$$c  H is a real IH by IH array which contains the N by N
+c$$$c  matrix to be inverted.  On output the N by N inverse
+c$$$c  is stored in H.
+c$$$c
+c$$$c  IH is an input integer variable set to the fortran
+c$$$c  declaration of the leading dimension in the H array.
+c$$$c
+c$$$c  N is the order of H.  N must be less than or equal to IH.
+c$$$c
+c$$$c  IPVT is an integer work array of length at least N.
+c$$$c
+c$$$c  INFO is an integer output variable set as follows
+c$$$c
+c$$$c   INFO = 1  normal return
+c$$$c
+c$$$c   INFO = 2  H matrix is singular
+c$$$c
+c$$$c  Algorithm version of June 1979
+c$$$c
+c$$$c  Roger L. Crane, Kenneth E. Hillstrom, Michael Minkoff
+c$$$
+c$$$      IMPLICIT NONE
+c$$$
+c$$$      INTEGER ih,n,info
+c$$$      INTEGER ipvt(n)
+c$$$      DOUBLE PRECISION h(ih,ih)
+c$$$      DOUBLE PRECISION det(2)
+c$$$
+c$$$c  Do lu decomposition of h
+c$$$
+c$$$      call sgefa(h,ih,n,ipvt,info)
+c$$$
+c$$$      if (info .eq. 0) goto 20
+c$$$      info = 2
+c$$$      goto 1000
+c$$$
+c$$$c  Form inverse of h
+c$$$
+c$$$ 20   continue
+c$$$      info = 1
+c$$$      call sgedi(h,ih,n,ipvt,det,1)
+c$$$
+c$$$ 1000 continue
+c$$$
+c$$$      return
+c$$$      end
