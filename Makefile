@@ -227,77 +227,83 @@ default: process.exe
 # object dependencies (usually via modules or header files)
 
 aachange.o: 
-aamain.o: cdriv.h cost.h divrt.h htpwr.h ineq.h labels.h numer.h param.h pfcoil.h \
-  phydat.h pwrcom.h sweep.h tfcoil.h
+aamain.o: cdriv.h90 cost.h90 divrt.h90 htpwr.h90 ineq.h90 labels.h90 numer.h90 \
+  param.h90 pfcoil.h90 phydat.h90 pwrcom.h90 sweep.h90 tfcoil.h90
 acpow.o: bldgvol.h90 estocom.h90 htpwr.h90 osections.h90 pwrcom.h90
 avail.o: cost.h90 divrt.h90 fwblsh.h90 ife.h90 param.h90 phydat.h90 pulse.h90 rfp.h90
 beams.o: cdriv.h90 osections.h90
-blanket.o: blanket.h build.h fwblsh.h htpwr.h param.h phydat.h
+blanket.o: blanket.h90 build.h90 fwblsh.h90 htpwr.h90 param.h90 phydat.h90
 bldgs.o: bldgcom.h90 osections.h90
 caller.o: ife.h90 numer.h90 param.h90 phydat.h90 rfp.h90 stella.h90
-costs.o: blanket.h bldgvol.h build.h cdriv.h cost.h cost2.h divrt.h fwblsh.h \
-  htpwr.h ife.h osections.h param.h pfcoil.h phydat.h pulse.h pwrcom.h rfp.h \
-  struccom.h tfcoil.h times.h torsdat.h
-cudriv.o: cdriv.h osections.h param.h phydat.h
-divtmod.o: build.h divrt.h osections.h param.h phydat.h
+costs.o: blanket.h90 bldgvol.h90 build.h90 cdriv.h90 cost.h90 cost2.h90 divrt.h90 \
+  fwblsh.h90 htpwr.h90 ife.h90 osections.h90 param.h90 pfcoil.h90 phydat.h90 \
+  pulse.h90 pwrcom.h90 rfp.h90 struccom.h90 tfcoil.h90 times.h90 torsdat.h90
+cudriv.o: cdriv.h90 osections.h90 param.h90 phydat.h90
+divtmod.o: build.h90 divrt.h90 osections.h90 param.h90 phydat.h90
 ech.o: cdriv.h90 osections.h90
 eqns.o: build.h90 cdriv.h90 divrt.h90 htpwr.h90 ife.h90 ineq.h90 numer.h90 param.h90 \
   pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 rfp.h90 stella.h90 tfcoil.h90 times.h90 \
   vltcom.h90
 eqsolv.o: numer.h90 param.h90
-fispact.o: blanket.h build.h fispact.h fwblsh.h numer.h param.h phydat.h pulse.h
+fispact.o: blanket.h90 build.h90 fispact.h90 fwblsh.h90 numer.h90 param.h90 \
+  phydat.h90 pulse.h90
 fwbs.o: blanket.h90 build.h90 cost.h90 divrt.h90 fwblsh.h90 htpwr.h90 osections.h90 \
   param.h90 phydat.h90 tfcoil.h90
 geomty.o: build.h90 param.h90 phydat.h90 rfp.h90
 heatpwr.o: blanket.h90 cdriv.h90 cost.h90 fwblsh.h90 htpwr.h90 osections.h90 \
   param.h90 pfcoil.h90 phydat.h90 pwrcom.h90 struccom.h90 tfcoil.h90 times.h90
-ife.o: bldgcom.h bldgvol.h build.h cost.h fwblsh.h htpwr.h ife.h numer.h osections.h \
-  param.h phydat.h pulse.h struccom.h torsdat.h vaccom.h
+ife.o: bldgcom.h90 bldgvol.h90 build.h90 cost.h90 fwblsh.h90 htpwr.h90 ife.h90 \
+  numer.h90 osections.h90 param.h90 phydat.h90 pulse.h90 struccom.h90 torsdat.h90 \
+  vaccom.h90
 induct.o: build.h90 osections.h90 param.h90 pfcoil.h90 phydat.h90 tfcoil.h90 times.h90 \
   vltcom.h90
-initial.o: blanket.h bldgcom.h bldgvol.h build.h cdriv.h cost.h divrt.h estocom.h \
-  fwblsh.h htpwr.h ife.h ineq.h labels.h numer.h osections.h param.h pfcoil.h phydat.h \
-  pulse.h pwrcom.h rfp.h stella.h struccom.h sweep.h tfcoil.h times.h torsdat.h \
-  vaccom.h vltcom.h
-input.o: blanket.h bldgcom.h bldgvol.h build.h cdriv.h cost.h divrt.h estocom.h \
-  fwblsh.h htpwr.h ife.h ineq.h labels.h numer.h osections.h param.h pfcoil.h \
-  phydat.h pulse.h rfp.h stella.h sweep.h tfcoil.h times.h vaccom.h
+initial.o: blanket.h90 bldgcom.h90 bldgvol.h90 build.h90 cdriv.h90 cost.h90 divrt.h90 \
+  estocom.h90 fwblsh.h90 htpwr.h90 ife.h90 ineq.h90 labels.h90 numer.h90 osections.h90 \
+  param.h90 pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 rfp.h90 stella.h90 struccom.h90 \
+  sweep.h90 tfcoil.h90 times.h90 torsdat.h90 vaccom.h90 vltcom.h90
+input.o: blanket.h90 bldgcom.h90 bldgvol.h90 build.h90 cdriv.h90 cost.h90 divrt.h90 \
+  estocom.h90 fwblsh.h90 htpwr.h90 ife.h90 ineq.h90 labels.h90 numer.h90 osections.h90 \
+  param.h90 pfcoil.h90 phydat.h90 pulse.h90 rfp.h90 stella.h90 sweep.h90 tfcoil.h90 \
+  times.h90 vaccom.h90
 lwhymod.o: cdriv.h90 osections.h90
 math2.o: 
 math.o: 
 minpac.o: 
-optimiz.o: cdriv.h cost.h divrt.h htpwr.h numer.h param.h phydat.h pwrcom.h tfcoil.h
+optimiz.o: cdriv.h90 cost.h90 divrt.h90 htpwr.h90 numer.h90 param.h90 phydat.h90 \
+  pwrcom.h90 tfcoil.h90
 outplas.o: cdriv.h90 ineq.h90 labels.h90 osections.h90 param.h90 phydat.h90 \
   rfp.h90 times.h90
 output.o: ife.h90 osections.h90 param.h90 phydat.h90 rfp.h90 stella.h90 times.h90
-pfcoil.o: build.h osections.h param.h pfcoil.h phydat.h tfcoil.h times.h
+pfcoil.o: build.h90 osections.h90 param.h90 pfcoil.h90 phydat.h90 tfcoil.h90 times.h90
 pfscl.o: 
 physics.o: build.h90 cdriv.h90 divrt.h90 labels.h90 numer.h90 osections.h90 \
   param.h90 phydat.h90 pulse.h90 start.h90 times.h90
-pulse.o: build.h cdriv.h cost.h fwblsh.h ineq.h numer.h param.h pfcoil.h phydat.h \
-  pulse.h pwrcom.h start.h times.h vltcom.h
+pulse.o: build.h90 cdriv.h90 cost.h90 fwblsh.h90 ineq.h90 numer.h90 param.h90 \
+  pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 start.h90 times.h90 vltcom.h90
 pwrconv.o: build.h90 cost.h90 htpwr.h90 osections.h90 param.h90 pfcoil.h90 phydat.h90 \
   pwrcom.h90 tfcoil.h90 times.h90 vltcom.h90
 radialb.o: build.h90 cdriv.h90 divrt.h90 osections.h90 param.h90 phydat.h90 rfp.h90 \
   tfcoil.h90
-rfp.o: build.h cdriv.h divrt.h fwblsh.h htpwr.h numer.h osections.h param.h pfcoil.h \
-  phydat.h pulse.h pwrcom.h rfp.h tfcoil.h times.h vltcom.h
-safety.o: blanket.h build.h fispact.h fwblsh.h param.h pfcoil.h phydat.h tfcoil.h
-sctfcoil.o: build.h fwblsh.h osections.h param.h phydat.h tfcoil.h
-stella.o: blanket.h bldgcom.h bldgvol.h build.h cdriv.h cost.h divrt.h estocom.h \
-  fwblsh.h htpwr.h ineq.h labels.h numer.h osections.h param.h pfcoil.h phydat.h \
-  pulse.h pwrcom.h stella.h struccom.h sweep.h tfcoil.h times.h torsdat.h vaccom.h \
-  vltcom.h
+rfp.o: build.h90 cdriv.h90 divrt.h90 fwblsh.h90 htpwr.h90 numer.h90 osections.h90 \
+  param.h90 pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 rfp.h90 tfcoil.h90 times.h90 \
+  vltcom.h90
+safety.o: blanket.h90 build.h90 fispact.h90 fwblsh.h90 param.h90 pfcoil.h90 phydat.h90 \
+  tfcoil.h90
+sctfcoil.o: build.h90 fwblsh.h90 osections.h90 param.h90 phydat.h90 tfcoil.h90
+stella.o: blanket.h90 bldgcom.h90 bldgvol.h90 build.h90 cdriv.h90 cost.h90 divrt.h90 \
+  estocom.h90 fwblsh.h90 htpwr.h90 ineq.h90 labels.h90 numer.h90 osections.h90 \
+  param.h90 pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 stella.h90 struccom.h90 \
+  sweep.h90 tfcoil.h90 times.h90 torsdat.h90 vaccom.h90 vltcom.h90
 struct.o: build.h90 divrt.h90 fwblsh.h90 osections.h90 param.h90 pfcoil.h90 \
   phydat.h90 struccom.h90 tfcoil.h90
 supercond.o: osections.h90 tfcoil.h90
 svd.o: 
-tfcoil.o: build.h fwblsh.h osections.h param.h phydat.h tfcoil.h
+tfcoil.o: build.h90 fwblsh.h90 osections.h90 param.h90 phydat.h90 tfcoil.h90
 tfcpwr.o: bldgvol.h90 htpwr.h90 osections.h90 param.h90 phydat.h90 tfcoil.h90
 vacuum.o: build.h90 osections.h90 param.h90 phydat.h90 tfcoil.h90 times.h90 \
   torsdat.h90 vaccom.h90
-xc.o: build.h cdriv.h divrt.h fwblsh.h htpwr.h ife.h ineq.h labels.h numer.h param.h \
-  pfcoil.h phydat.h pulse.h rfp.h tfcoil.h times.h
+xc.o: build.h90 cdriv.h90 divrt.h90 fwblsh.h90 htpwr.h90 ife.h90 ineq.h90 labels.h90 \
+  numer.h90 param.h90 pfcoil.h90 phydat.h90 pulse.h90 rfp.h90 tfcoil.h90 times.h90
 
 process.exe: $(object)
 	$(FORTRAN) $(LFLAGS) -o $@ $(object) $(LIBS)
