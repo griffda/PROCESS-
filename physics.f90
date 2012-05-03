@@ -931,7 +931,7 @@ subroutine betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3,ftr, &
 
   !  Proton ash portion
 
-  if (idhe3 == 1) dnprot = dnalp
+  if (idhe3 == 1) dnprot = dnalp  !  otherwise zero
 
   !  Beam hot ion component
   !  If ignited, prevent beam fusion effects
@@ -979,6 +979,8 @@ subroutine betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3,ftr, &
   dnitot = deni + dnz + dnalp + dnprot + dnbeam
 
   !  Effective charge
+  !  True calculation should be sum(ni.Zi^2) / sum(ni.Zi),
+  !  but ne = sum(ni.Zi) through quasineutrality
 
   if (idhe3 == 0) then
      zeff = (deni + dnbeam)/dene + 4.0D0*ralpne + 36.0D0*fc + &
