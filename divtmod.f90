@@ -234,7 +234,10 @@ subroutine divert(adas,aion,anginc,delne,c1div,c2div,c3div,c4div, &
   !+ad_type  Subroutine
   !+ad_auth  J Galambos, ORNL
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
+  !+ad_cont  erprcy
+  !+ad_cont  ftdiv
+  !+ad_cont  ftpts
+  !+ad_cont  gammash
   !+ad_args  adas     : input real : divertor flux area / main plasma area
   !+ad_argc                          (long separatrix)
   !+ad_args  aion     : input real : ion mass (assumes fuel only) (AMU)
@@ -314,10 +317,6 @@ subroutine divert(adas,aion,anginc,delne,c1div,c2div,c3div,c4div, &
   real(kind(1.0D0)) :: angle,coefl,cp,ct,deltx,delty,deltdiv, &
        deltpts,denom,eier,facdenom,fprime,f1,f1dx,f1dy,f2,f2dx,f2dy, &
        gamdiv,tdivges,tdivp,tpts,tptsges,tptsp
-
-  !  External functions
-
-  real(kind(1.0D0)), external :: erprcy, ftdiv, ftpts, gammash
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -407,247 +406,325 @@ subroutine divert(adas,aion,anginc,delne,c1div,c2div,c3div,c4div, &
        (c27 * xpara * (1.0D0 - tpts**3.5D0) )**0.22222D0 )
   lamp = pdiv*rsrd / (2.0D0 * pi * rmaj * ppdiv)
 
+contains
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function erprcy(tdiv,ndiv)
+
+    !+ad_name  erprcy
+    !+ad_summ  Function providing the (energy radiated + ionized) per neutral
+    !+ad_summ  recycle event from the Harrison / Kukushkin ITER model
+    !+ad_type  Function returning real
+    !+ad_auth  J Galambos, ORNL
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  tdiv     : input real : electron temperature at the plate (eV)
+    !+ad_args  ndiv     : input real : electron density at the plate (10**20 m-3)
+    !+ad_desc  This function calculates the total energy (in eV) radiated and
+    !+ad_desc  ionized, per neutral recycle event, from the Harrison / Kukushkin
+    !+ad_desc  ITER model.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  08/05/12 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  Report ITER-IL-PH-13-9-e12
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: erprcy
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: ndiv,tdiv
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: ans
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ans = 17.5D0 + (5.0D0 + 37.5D0/tdiv) * log10(10.0D0/ndiv)
+    erprcy = max(ans, 0.001D0)
+
+  end function erprcy
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function ftdiv(aion,coefl,delne,fififi,omegan,omlarg,qdiv,tconl,xpara, &
+       xperp,xx,yy)
+
+    !+ad_name  ftdiv
+    !+ad_summ  Function for divertor temperature solution
+    !+ad_type  Function returning real
+    !+ad_auth  J Galambos, ORNL
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  aion     : input real : ion mass (assumes fuel only) (AMU)
+    !+ad_args  coefl    : input real : little 'l' in Harrison model
+    !+ad_args  delne    : input real : scrapeoff density by main plasma (10**20 m-3)
+    !+ad_args  fififi   : input real : coeff. used in sheath energy transfer factor calc.
+    !+ad_args  omegan   : input real : pressure ratio of (plate / main plasma)
+    !+ad_args  omlarg   : input real : factor accounting for power flow
+    !+ad_args  qdiv     : input real : heat flux across separatrix to divertor (MW/m2)
+    !+ad_args  tconl    : input real : connection length along field line by main
+    !+ad_argc                          plasma (m)
+    !+ad_args  xpara    : input real : parallel diffusivity in the plasma scrapeoff (m2/s)
+    !+ad_args  xperp    : input real : perpend. diffusivity in the plasma scrapeoff (m2/s)
+    !+ad_args  xx       : input real : T_plate / T_separatrix guess
+    !+ad_args  yy       : input real : T_plate guess (eV)
+    !+ad_desc  This function calculates an estimate for the divertor temperature (eV).
+    !+ad_prob  None
+    !+ad_call  erprcy
+    !+ad_call  gammash
+    !+ad_hist  08/05/12 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  Report ITER-IL-PH-13-9-e12
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: ftdiv
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: aion,coefl,delne,fififi,omegan,omlarg,qdiv, &
+         tconl,xpara,xperp,xx,yy
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: c27,dendiv,eier,ff,gamdiv,xxs,yys
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    c27 = 0.28571428D0
+
+    xxs = max(xx, 0.001D0)
+    xxs = min(xxs, 0.99999D0)
+    yys = max(yy, 0.1D0)
+
+    dendiv = delne * omegan/xxs
+    gamdiv = gammash(fififi,yys)
+    eier = erprcy(yys,dendiv)
+    ff = 20.16D0 * aion * ((qdiv)**10 * (c27*xpara)**4 / &
+         (xperp**5 * delne**14)*tconl*(1.0D0 - xxs**3.5D0)**4 &
+         /coefl**4)**0.22222D0/(omegan*gamdiv*omlarg* &
+         (1.0D0+eier/(gamdiv*yys)))**2
+
+    ftdiv = yys - ff
+
+  end function ftdiv
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function ftpts(aion,coefl,delne,fififi,omegan,omlarg,qdiv,tconl, &
+       xpara,xperp,xx,yy)
+
+    !+ad_name  ftpts
+    !+ad_summ  Function for divertor model temperature ratio solution
+    !+ad_type  Function returning real
+    !+ad_auth  J Galambos, ORNL
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  aion     : input real : ion mass (assumes fuel only) (AMU)
+    !+ad_args  coefl    : input real : little 'l' in Harrison model
+    !+ad_args  delne    : input real : scrapeoff density by main plasma (10**20 m-3)
+    !+ad_args  fififi   : input real : coeff. used in sheath energy transfer factor calc.
+    !+ad_args  omegan   : input real : pressure ratio of (plate / main plasma)
+    !+ad_args  omlarg   : input real : factor accounting for power flow
+    !+ad_args  qdiv     : input real : heat flux across separatrix to divertor (MW/m2)
+    !+ad_args  tconl    : input real : connection length along field line by main
+    !+ad_argc                          plasma (m)
+    !+ad_args  xpara    : input real : parallel diffusivity in the plasma scrapeoff (m2/s)
+    !+ad_args  xperp    : input real : perpend. diffusivity in the plasma scrapeoff (m2/s)
+    !+ad_args  xx       : input real : T_plate / T_separatrix guess
+    !+ad_args  yy       : input real : T_plate guess (eV)
+    !+ad_desc  This function updates the divertor model temperature ratio solution.
+    !+ad_prob  None
+    !+ad_call  erprcy
+    !+ad_call  gammash
+    !+ad_hist  17/11/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  Report ITER-IL-PH-13-9-e12
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: ftpts
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: aion,coefl,delne,fififi,omegan, &
+         omlarg,qdiv,tconl,xpara,xperp,xx,yy
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: dendiv,eier,ff,gamdiv,xxs,yys
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    xxs = max(xx, 0.001D0)
+    xxs = min(xxs, 0.99999D0)
+    yys = max(yy, 0.1D0)
+
+    dendiv = delne * omegan/xxs
+    gamdiv = gammash(fififi,yys)
+    eier = erprcy(yys,dendiv)
+
+    ff = xxs**3.5D0 + 9.66D0 * (xxs/aion)**0.9D0 * &
+         (xperp/(qdiv)**2)**0.8D0 * coefl/(2.0D0 * xpara/7.0D0)* &
+         tconl**0.2D0 * ( omlarg*omegan*gamdiv* &
+         (1.0D0+eier/(gamdiv*yys)))**1.8D0 * delne**2.6D0
+
+    ftpts = 1.0D0 - ff
+
+  end function ftpts
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function gammash(gcoef,tdiv)
+
+    !+ad_name  gammash
+    !+ad_summ  Function to provide the plasma sheath energy transfer coefficient
+    !+ad_type  Function returning real
+    !+ad_auth  J Galambos, ORNL
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  gcoef    : input real : coefficient
+    !+ad_args  tdiv     : input real : electron temperature at the plate (eV)
+    !+ad_desc  This function provides the plasma sheath energy transfer coefficient
+    !+ad_desc  from the Harrison / Kukushkin ITER model.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  08/05/12 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  Report ITER-IL-PH-13-9-e12
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: gammash
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: gcoef,tdiv
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    gammash = ( 8.3D0 - 6.0D0*(0.07D0 - 0.18D0 * log10(3.0D0*tdiv*gcoef) ) )
+
+  end function gammash
+
 end subroutine divert
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-function ftpts(aion,coefl,delne,fififi,omegan,omlarg,qdiv,tconl, &
-     xpara,xperp,xx,yy)
+subroutine divtart(rmajor,rminor,triang,scrapli,vgap,pi,pdivt,hldiv, &
+     iprint,nout)
 
-  !+ad_name  ftpts
-  !+ad_summ  Function for divertor model temperature ratio solution
-  !+ad_type  Function returning real
-  !+ad_auth  J Galambos, ORNL
+  !+ad_name  divtart
+  !+ad_summ  Tight aspect ratio tokamak divertor model
+  !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  aion     : input real : ion mass (assumes fuel only) (AMU)
-  !+ad_args  coefl    : input real : little 'l' in Harrison model
-  !+ad_args  delne    : input real : scrapeoff density by main plasma (10**20 m-3)
-  !+ad_args  fififi   : input real : coeff. used in sheath energy transfer factor calc.
-  !+ad_args  omegan   : input real : pressure ratio of (plate / main plasma)
-  !+ad_args  omlarg   : input real : factor accounting for power flow
-  !+ad_args  qdiv     : input real : heat flux across separatrix to divertor (MW/m2)
-  !+ad_args  tconl    : input real : connection length along field line by main plasma (m)
-  !+ad_args  xpara    : input real : parallel diffusivity in the plasma scrapeoff (m2/s)
-  !+ad_args  xperp    : input real : perpend. diffusivity in the plasma scrapeoff (m2/s)
-  !+ad_args  xx       : input real : T_plate / T_separatrix guess
-  !+ad_args  yy       : input real : T_plate guess (eV)
-  !+ad_desc  This function updates the divertor model temperature ratio solution.
+  !+ad_args  rmajor : input real : plasma major radius (m)
+  !+ad_args  rminor : input real : plasma minor radius (m)
+  !+ad_args  triang : input real : plasma triangularity
+  !+ad_args  scrapli : input real : inboard scrape-off width (m)
+  !+ad_args  vgap : input real : top scrape-off width (m)
+  !+ad_args  pi : input real : 3.14...
+  !+ad_args  pdivt : input real : power to the divertor (MW)
+  !+ad_args  hldiv : output real : heat load on the divertor (MW/m2)
+  !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+  !+ad_args  nout : input integer : output file unit
+  !+ad_desc  This subroutine calculates the divertor heat load for a tight aspect
+  !+ad_desc  ratio machine, by assuming that the power is evenly spread around the
+  !+ad_desc  divertor chamber by the action of a gaseous target. Each divertor is
+  !+ad_desc  assumed to be approximately triangular in the R,Z plane.
   !+ad_prob  None
-  !+ad_call  erprcy
-  !+ad_call  gammash
-  !+ad_hist  17/11/11 PJK Initial F90 version
+  !+ad_call  osections.h90
+  !+ad_call  oblnkl
+  !+ad_call  ocmmnt
+  !+ad_call  osubhd
+  !+ad_call  ovarre
+  !+ad_hist  29/01/96 PJK Added TART gaseous divertor model
+  !+ad_hist  14/05/96 PJK Improved calculation of TART divertor area
+  !+ad_hist  08/05/12 PJK Initial F90 version; Moved TART model into new routine
   !+ad_stat  Okay
-  !+ad_docs  Report ITER-IL-PH-13-9-e12
+  !+ad_docs  AEA FUS 64: Figure 2
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   implicit none
 
-  real(kind(1.0D0)) :: ftpts
-
-  !  Arguments
-
-  real(kind(1.0D0)), intent(in) :: aion,coefl,delne,fififi,omegan, &
-       omlarg,qdiv,tconl,xpara,xperp,xx,yy
-
-  !  Local variables
-
-  real(kind(1.0D0)) :: dendiv,eier,ff,gamdiv,xxs,yys
-
-  !  External functions
-
-  real(kind(1.0D0)), external :: erprcy,gammash
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  xxs = max(xx,0.001D0)
-  xxs = min(xxs, 0.99999D0)
-  yys = max(yy, 0.1D0)
-
-  dendiv = delne * omegan/xxs
-  gamdiv = gammash(fififi,yys)
-  eier = erprcy(yys,dendiv)
-
-  ff = xxs**3.5D0 + 9.66D0 * (xxs/aion)**0.9D0 * &
-       (xperp/(qdiv)**2)**0.8D0 * coefl/(2.0D0 * xpara/7.0D0)* &
-       tconl**0.2D0 * ( omlarg*omegan*gamdiv* &
-       (1.0D0+eier/(gamdiv*yys)))**1.8D0 * delne**2.6D0
-
-  ftpts = 1.0D0 - ff
-
-end function ftpts
-!______________________________________________________________________
-real(kind(1.0D0)) FUNCTION FTDIV( &
-     aion,coefl,delne,fififi,omegan,omlarg,qdiv,tconl,xpara, &
-     xperp,xx,yy)
-
-  !  Function for divertor temperature solution
-  !
-  !  Input: (see routine divert description)
-  !  xx = T_plate / T_separatrix guess
-  !  yy = T_plate guess (eV)
-  !
-  !  Output:
-  !  ftdiv = Divertor temperature calculated - guess
-
-  IMPLICIT NONE
-
-  real(kind(1.0D0)) aion,coefl,delne,fififi,omegan,omlarg,qdiv, &
-       tconl,xpara,xperp,xx,yy
-
-  !  Local variables
-
-  real(kind(1.0D0)) c27,dendiv,eier,ff,gamdiv,xxs,yys
-
-  real(kind(1.0D0)) erprcy,gammash
-  EXTERNAL         erprcy,gammash
-
-  c27 = 0.28571428D0
-
-  xxs = max(xx, 0.001D0)
-  xxs = min(xxs, 0.99999D0)
-  yys = max(yy, 0.1D0)
-
-  dendiv = delne * omegan/xxs
-  gamdiv = gammash(fififi,yys)
-  eier = erprcy(yys,dendiv)
-  ff = 20.16D0 * aion * ((qdiv)**10 * (c27*xpara)**4 / &
-       (xperp**5 * delne**14)*tconl*(1.0D0 - xxs**3.5D0)**4 &
-       /coefl**4)**0.22222D0/(omegan*gamdiv*omlarg* &
-       (1.0D0+eier/(gamdiv*yys)))**2
-
-  ftdiv = yys - ff
-
-  return
-end FUNCTION FTDIV
-!______________________________________________________________________
-real(kind(1.0D0)) FUNCTION GAMMASH(gcoef,tdiv)
-
-  !  Function to provide the plasma sheath energy transfer coefficient
-  !  from the Harrison / Kukushkin ITER model.
-  !  Programmed by J. Galambos.
-  !
-  !  INPUT :
-  !  tdiv = electron temperature at the plate (eV)
-  !  gcoef = coefficient
-  !
-  !  Output :
-  !  gammash = energy transfer coefficient across the plate sheath
-
-  IMPLICIT NONE
-
-  real(kind(1.0D0)) gcoef,tdiv
-
-  gammash = ( 8.3D0 - 6.0D0*(0.07D0 - 0.18D0 *  &
-       log10(3.0D0*tdiv*gcoef) ) )
-
-  return
-end FUNCTION GAMMASH
-!______________________________________________________________________
-real(kind(1.0D0)) FUNCTION ERPRCY(tdiv,ndiv)
-
-  !  Function to provide the (energy radiated + ionized) / neutral
-  !  recycle event from the Harrison / Kukushkin ITER model.
-  !  Programmed by J. Galambos.
-  !
-  !  INPUT :
-  !  tdiv = electron temperature at the plate (eV)
-  !  ndiv = electron density at the plate (10**20 m-3)
-  !
-  !  OUTPUT :
-  !  erprcy = (energy radiated + ionized) / neutral recycle event (eV)
-
-  IMPLICIT NONE
-
-  real(kind(1.0D0)) ans,ndiv,tdiv
-
-  ans = 17.5D0 + (5.0D0 + 37.5D0/tdiv) * log10(10.0D0/ndiv)
-  erprcy = max(ans, 0.001D0)
-
-  return
-end FUNCTION ERPRCY
-!______________________________________________________________________
-SUBROUTINE DIVTART(rmajor,rminor,triang,scrapli,vgap,pi,pdivt,hldiv, &
-     iprint,nout)
-
-
-  IMPLICIT NONE
-
   include 'osections.h90'
 
   !  Arguments
 
   integer, intent(in) :: iprint, nout
-  real(kind(1.0D0)), intent(in) :: rmajor,rminor,triang,scrapli,vgap, &
-       pi,pdivt
+  real(kind(1.0D0)), intent(in) :: rmajor,rminor,triang,scrapli,vgap,pi,pdivt
   real(kind(1.0D0)), intent(out) :: hldiv
 
   !  Local variables
 
   real(kind(1.0D0)) :: r1,r2,a1,a2,a3,theta,areadv
 
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! *** Tight aspect ratio tokamak divertor model
-  ! *** =========================================
-
-  ! *** Assume the power is evenly spread around the
-  ! *** divertor chamber by the action of a gaseous target
-
-  !+**PJK 14/05/96 Improved calculation of divertor area
-  !+**PJK 14/05/96 Each divertor is approximately triangular in R,Z plane
-  !+**PJK 14/05/96 Estimated from AEA FUS 64, Figure 2
-  !+**PJK 14/05/96 Old formula : areadv = 2.0D0 * fwarea
-
-  ! *** Thickness of centrepost+first wall at divertor height
+  !  Thickness of centrepost + first wall at divertor height
 
   r1 = rmajor - rminor*triang - 3.0D0*scrapli
 
-  ! *** Outer radius of divertor region
+  !  Outer radius of divertor region
 
   r2 = rmajor + rminor
 
-  ! *** Angle of diagonal divertor plate from horizontal
+  !  Angle of diagonal divertor plate from horizontal
 
-  if ((vgap.le.0.0D0).or.((r2-r1).le.0.0D0)) then
+  if (vgap <= 0.0D0) then
      write(nout,*) 'Error in routine DIVCALL:'
      write(nout,*) 'vgap = ',vgap
-     write(nout,*) 'r1 = ',r1
-     write(nout,*) 'r2 = ',r2
      write(nout,*) 'PROCESS stopping.'
      STOP
   end if
 
   theta = atan(vgap/(r2-r1))
 
-  ! *** Vertical plate area
+  !  Vertical plate area
 
   a1 = 2.0D0 * pi * r1 * vgap
 
-  ! *** Horizontal plate area
+  !  Horizontal plate area
 
   a2 = pi * (r2*r2 - r1*r1)
 
-  ! *** Diagonal plate area
+  !  Diagonal plate area
 
   a3 = a2 / cos(theta)
 
-  ! *** Total divertor area (N.B. there are two of them)
+  !  Total divertor area (N.B. there are two of them)
 
   areadv = 2.0D0 * (a1+a2+a3)
 
   hldiv = pdivt/areadv
 
-  if ((iprint.eq.0).or.(sect05.eq.0)) return
+  if ((iprint == 0).or.(sect05 == 0)) return
 
   call osubhd(nout,'Divertor Heat Load')
-  call ocmmnt(nout, &
-       'Assume an expanded divertor with a gaseous target')
+  call ocmmnt(nout,'Assume an expanded divertor with a gaseous target')
   call oblnkl(nout)
   call ovarre(nout,'Power to the divertor (MW)','(pdivt)',pdivt)
   call ovarre(nout,'Divertor surface area (m2)','(areadv)',areadv)
   call ovarre(nout,'Divertor heat load (MW/m2)','(hldiv)',hldiv)
 
-
-end SUBROUTINE DIVTART
+end subroutine divtart
