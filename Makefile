@@ -83,7 +83,7 @@ source = \
  struct.f90   \
  svd.f90      \
  supercond.f90 \
- tfcoil.f     \
+ tfcoil.f90   \
  tfcpwr.f90   \
  sctfcoil.f   \
  vacuum.f90   \
