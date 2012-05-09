@@ -1,5 +1,11 @@
 !  $Id::                                                                $
 
+  !  ngrpmx is the maximum number of PF coil groups
+  !  nclsmx is the maximum number of coils in one group
+  !  nptsmx is the maximum number of points across the plasma midplane
+  !         at which the magnetic field is fixed
+  !  nfixmx is the maximum number of fixed current coils
+
   integer, parameter :: ngrpmx = 8
   integer, parameter :: nclsmx = 2
   integer, parameter :: nptsmx = 32

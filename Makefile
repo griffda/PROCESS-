@@ -71,7 +71,7 @@ source = \
  optimiz.f    \
  outplas.f90  \
  output.f90   \
- pfcoil.f     \
+ pfcoil.f90   \
  pfscl.f90    \
  physics.f90  \
  pulse.f      \
@@ -322,7 +322,7 @@ clean:
 
 # Make a tar distribution of the source and other critical files
 # from the current directory
-#  (excludes IN.DAT for now)
+#  (excludes IN.DAT, device.dat for now)
 
 otherfiles = Makefile var.des *.tex *.ps
 
