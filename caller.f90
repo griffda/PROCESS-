@@ -71,12 +71,12 @@ subroutine caller(xc,nvars)
 
   implicit none
 
-  INCLUDE 'param.h90'
-  INCLUDE 'numer.h90'
-  INCLUDE 'phydat.h90'
-  INCLUDE 'stella.h90'
-  INCLUDE 'rfp.h90'
-  INCLUDE 'ife.h90'
+  include 'param.h90'
+  include 'numer.h90'
+  include 'phydat.h90'
+  include 'stella.h90'
+  include 'rfp.h90'
+  include 'ife.h90'
 
   !  Arguments
 

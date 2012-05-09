@@ -40,10 +40,10 @@ subroutine geomty
 
   implicit none
 
-  INCLUDE 'param.h90'
-  INCLUDE 'phydat.h90'
-  INCLUDE 'build.h90'
-  INCLUDE 'rfp.h90'
+  include 'param.h90'
+  include 'phydat.h90'
+  include 'build.h90'
+  include 'rfp.h90'
 
   !  Arguments
 

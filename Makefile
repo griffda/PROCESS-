@@ -77,7 +77,7 @@ source = \
  pulse.f      \
  pwrconv.f90  \
  radialb.f90  \
- rfp.f        \
+ rfp.f90      \
  safety.f     \
  stella.f     \
  struct.f90   \
