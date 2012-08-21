@@ -148,6 +148,7 @@ C *** Numerics quantities and labels :
       boundl(39) = 0.001D0
       boundl(40) = 0.001D0
       boundl(41) = 0.001D0
+!+PJK 20/08/2012 should boundl(42)=0.000 ???
       boundl(42) = 0.000D0
       boundl(43) = 1.00D-6
       boundl(44) = 0.001D0

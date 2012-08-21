@@ -123,7 +123,7 @@ subroutine tfcoil(nout,iprint)
 
   if ((iprint == 0).or.(sect07 == 0)) return
 
-  !  Output section
+  !  Output section (resistive TF coils only)
 
   if (itfsup == 0) then
 
