@@ -42,7 +42,7 @@
 ################# Start of Custom Section #####################
 
 source = \
- aachange.f   \
+ aachange.f90 \
  aamain.f     \
  acpow.f90    \
  avail.f90    \
