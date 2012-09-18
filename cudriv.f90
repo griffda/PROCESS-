@@ -1,0 +1,1579 @@
+!  $Id::                                                                $
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine cudriv(nout,iprint)
+
+  !+ad_name  cudriv
+  !+ad_summ  Routine to calculate the current drive power requirements
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  nout : input integer : output file unit
+  !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+  !+ad_desc  This routine calculates the power requirements of the current
+  !+ad_desc  drive system, using a choice of models for the current drive
+  !+ad_desc  efficiency.
+  !+ad_prob  None
+  !+ad_call  cdriv.h90
+  !+ad_call  osections.h90
+  !+ad_call  param.h90
+  !+ad_call  phydat.h90
+  !+ad_call  culecd
+  !+ad_call  cullhy
+  !+ad_call  culnbi
+  !+ad_call  iternb
+  !+ad_call  oblnkl
+  !+ad_call  ocmmnt
+  !+ad_call  oheadr
+  !+ad_call  osubhd
+  !+ad_call  ovarin
+  !+ad_call  ovarre
+  !+ad_call  ovarrf
+  !+ad_hist  22/08/12 PJK Initial F90 version
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  include 'param.h90'
+  include 'phydat.h90'
+  include 'cdriv.h90'
+  include 'osections.h90'
+
+  !  Arguments
+
+  integer, intent(in) :: iprint,nout
+
+  !  Local variables
+
+  real(kind(1.0D0)) :: dene20,effnbss,effofss,effrfss,fpion,fshine, &
+       gamnb,gamof,gamrf
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  echpwr = 0.0D0
+  pnbeam = 0.0D0
+  plhybd = 0.0D0
+  pofcd  = 0.0D0
+  cnbeam = 0.0D0
+
+  if (irfcd /= 0) then
+
+     dene20 = dene * 1.0D-20
+
+     !  Calculate current drive efficiencies in units of Amps/Watt.
+
+     select case (iefrf)
+
+     case (1)  !  Fenstermacher Lower Hybrid model
+
+        effrfss = (0.36D0 * (1.0D0 + (te/25.0D0)**1.16D0)) / &
+             (rmajor*dene20) * feffcd
+
+     case (2)  !  Ion-Cyclotron current drive
+
+        effrfss = 0.63D0 * 0.1D0*ten / (2.0D0 + zeff) / &
+             (rmajor*dene20) * feffcd
+
+     case (3)  !  Fenstermacher Electron Cyclotron Resonance model
+
+        effrfss = 0.21D0 * ten/ (rmajor * dene20 * dlamee) * feffcd
+
+     case (4)  !  Ehst Lower Hybrid / Fast Wave current drive
+
+        effrfss = te**0.77D0 * (0.034D0 + 0.196D0 * beta) / &
+             (rmajor*dene20) * ( 32.0D0/(5.0D0+zeff) + 2.0D0 + &
+             (12.0D0*(6.0D0+zeff))/(5.0D0+zeff)/(3.0D0+zeff) + &
+             3.76D0/zeff) / 12.507D0 * feffcd
+
+     case (5)  !  ITER Neutral Beam current drive
+
+        call iternb(abeam,alphan,alphat,aspect,dene,deni,dlamie, &
+             enbeam,eps,feffcd,frbeam,ftr,ralpne,rmajor,rncne, &
+             rnfene,rnone,te,ten,zeff,zeffai,effnbss,fpion, &
+             fshine,taubeam)
+
+     case (6)  !  Culham Lower Hybrid current drive model
+
+        call cullhy(alphan,alphat,bt,dene,feffcd,rmajor,rminor, &
+             te,zeff,effrfss)
+
+     case (7)  !  Culham ECCD model
+
+        call culecd(alphan,alphat,dene,feffcd,rmajor,rminor, &
+             te,zeff,effrfss)
+
+     case (8)  !  Culham Neutral Beam model
+
+        call culnbi(abeam,alphan,alphat,aspect,dene,deni,dlamie, &
+             dnla,enbeam,eps,feffcd,frbeam,ftr,ralpne,rmajor, &
+             rminor,rncne,rnfene,rnone,te,ten,zeff,zeffai, &
+             effnbss,fpion,fshine,taubeam)
+
+     case (9)  !  (trivial) RFP OFCD model
+
+        effofss = 0.8D0  !  TITAN figure: efficiency = 0.8 A/W
+
+     case default
+        write(*,*) 'Error in routine CUDRIV:'
+        write(*,*) 'Illegal value of IEFRF, = ',iefrf
+        write(*,*) 'PROCESS stopping.'
+        stop
+
+     end select
+
+     !  Compute current drive powers (Watts)
+
+     select case (iefrf)
+
+     case (1,2,4,6)  !  LHCD or ICCD
+
+        plhybd = faccd * plascur / effrfss + pheat
+        pinji = 0.0D0
+        pinje = plhybd
+
+     case (3,7)  !  ECCD
+
+        echpwr = faccd * plascur / effrfss + pheat
+        pinji = 0.0D0
+        pinje = echpwr
+
+     case (5,8)  !  NBCD
+
+        pnbeam = faccd * plascur / effnbss + pheat
+        pinji = pnbeam * fpion
+        pinje = pnbeam * (1.0D0-fpion)
+
+        !  Calculate neutral beam current
+
+        if (abs(pnbeam) > 1.0D-8) then
+           cnbeam = 1.0D-3 * pnbeam / enbeam
+        else
+           cnbeam = 0.0D0
+        end if
+
+     case (9)  !  OFCD
+
+        pofcd = faccd * plascur / effofss + pheat
+        pinji = 0.0D0
+        pinje = pofcd
+
+     case default
+        write(*,*) 'Error in routine CUDRIV:'
+        write(*,*) 'Illegal value of IEFRF, = ',iefrf
+        write(*,*) 'PROCESS stopping.'
+        stop
+
+     end select
+
+     !  Ratio of fusion to injection power
+
+     if (abs(pinje+pinji) < 1.0D-6) then
+        bigq = 1.0D18
+     else
+        bigq = 1.0D6 * powfmw / (pinje+pinji)
+     end if
+
+     !  Normalised current drive efficiency
+
+     if (abs(plhybd) > 1.0D-8) then
+        gamrf = effrfss * (1.0D-20*dene * rmajor)
+        gamcd = gamrf
+     end if
+
+     if (abs(pnbeam) > 1.0D-8) then
+        gamnb = effnbss * (1.0D-20*dene * rmajor)
+        gamcd = gamnb
+     end if
+
+     if (abs(pofcd) > 1.0D-8) then
+        gamof = effofss * (1.0D-20*dene * rmajor)
+        gamcd = gamof
+     end if
+
+  end if
+
+  !  Output section
+
+  if ((iprint /= 1).or.(sect04 == 0)) return
+
+  call oheadr(nout,'Current Drive System')
+
+  if (irfcd == 0) then
+     call ocmmnt(nout,'No current drive used')
+     call oblnkl(nout)
+     return
+  end if
+
+  select case (iefrf)
+
+  case (1,4,6)
+     call ocmmnt(nout,'Lower Hybrid Current Drive')
+     call oblnkl(nout)
+
+  case (2)
+     call ocmmnt(nout,'Ion Cyclotron Current Drive')
+     call oblnkl(nout)
+
+  case (3,7)
+     call ocmmnt(nout,'Electron Cyclotron Current Drive')
+     call oblnkl(nout)
+
+  case (5,8)
+     call ocmmnt(nout,'Neutral Beam Current Drive')
+     call oblnkl(nout)
+
+  case (9)
+     call ocmmnt(nout,'Oscillating Field Current Drive')
+     call oblnkl(nout)
+
+  case default
+     write(*,*) 'Error in routine CUDRIV:'
+     write(*,*) 'Illegal value of IEFRF, = ',iefrf
+     write(*,*) 'PROCESS stopping.'
+     stop
+
+  end select
+
+  if (abs(facoh) > 1.0D-8) then
+     call ocmmnt(nout,'Current is driven by both inductive')
+     call ocmmnt(nout,'and non-inductive means.')
+  end if
+
+  call ovarin(nout,'Current drive efficiency model','(iefrf)',iefrf)
+  call ovarre(nout,'Steady state power requirement (W)', &
+       '(pinje+pinji)',pinje+pinji)
+  call ovarre(nout,'CD power used for plasma heating only (W)', &
+       '(pheat)',pheat)
+  call ovarre(nout,'Energy multiplication factor Q','(bigq)',bigq)
+
+  call osubhd(nout,'Fractions of current drive :')
+  call ovarrf(nout,'Bootstrap fraction','(bootipf)',bootipf)
+  call ovarrf(nout,'Auxiliary current drive fraction','(faccd)',faccd)
+  call ovarrf(nout,'Inductive fraction','(facoh)',facoh)
+
+  if (abs(bootipf-bscfmax) < 1.0D-8) then
+     call ocmmnt(nout,'Warning : bootstrap current fraction is at')
+     call ocmmnt(nout,'          its prescribed maximum.')
+  end if
+
+  call oblnkl(nout)
+
+  if (abs(plhybd) > 1.0D-8) then
+     call ovarre(nout,'RF efficiency (A/W)','(effrfss)',effrfss)
+     call ovarre(nout,'RF gamma (A/W-m2)','(gamrf)',gamrf)
+     call ovarre(nout,'Lower hybrid power (W)','(plhybd)',plhybd)
+  end if
+
+  if (abs(pnbeam) > 1.0D-8) then
+     call ovarre(nout,'Beam efficiency (A/W)','(effnbss)',effnbss)
+     call ovarre(nout,'Beam gamma (A/W-m2)','(gamnb)',gamnb)
+     call ovarre(nout,'Neutral beam power (W)','(pnbeam)',pnbeam)
+     call ovarre(nout,'Neutral beam energy (keV)','(enbeam)',enbeam)
+     call ovarre(nout,'Neutral beam current (A)','(cnbeam)',cnbeam)
+     call ovarre(nout,'Fraction of beam energy to ions','(fpion)',fpion)
+     call ovarre(nout,'Neutral beam shine-through','(fshine)',fshine)
+     call ovarre(nout,'R injection tangent / R-major','(frbeam)',frbeam)
+     call ovarre(nout,'Beam decay lengths to centre','(taubeam)',taubeam)
+  end if
+
+  if (abs(echpwr) > 1.0D-8) then
+     call ovarre(nout,'Electron cyclotron power (W)','(echpwr)',echpwr)
+  end if
+
+  if (abs(pofcd) > 1.0D-8) then
+     call ovarre(nout,'OFCD efficiency (A/W)','(effofss)',effofss)
+     call ovarre(nout,'OFCD gamma (A/W-m2)','(gamof)',gamof)
+     call ovarre(nout,'OFCD power (W)','(pofcd)',pofcd)
+  end if
+
+end subroutine cudriv
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine iternb(abeam,alphan,alphat,aspect,dene,deni,dlamie,enbeam, &
+     eps,feffcd,frbeam,ftr,ralpne,rmajor,rncne,rnfene,rnone,te,ten, &
+     zeff,zeffai,effnbss,fpion,fshine,taubeam)
+
+  !+ad_name  iternb
+  !+ad_summ  Routine to calculate ITER Neutral Beam current drive parameters
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  etanb
+  !+ad_args  abeam   : input real : beam ion mass (amu)
+  !+ad_args  alphan  : input real : density profile factor
+  !+ad_args  alphat  : input real : temperature profile factor
+  !+ad_args  aspect  : input real : aspect ratio
+  !+ad_args  dene    : input real : volume averaged electron density (m**-3)
+  !+ad_args  deni    : input real : fuel ion density (m**-3)
+  !+ad_args  dlamie  : input real : ion-electron coulomb logarithm
+  !+ad_args  enbeam  : input real : neutral beam energy (keV)
+  !+ad_args  eps     : input real : inverse aspect ratio
+  !+ad_args  feffcd  : input real : current drive efficiency fudge factor
+  !+ad_args  frbeam  : input real : R_tangent / R_major for neutral beam injection
+  !+ad_args  ftr     : input real : tritium fraction of D-T ions in beam
+  !+ad_args  ralpne  : input real : thermal alpha density / electron density
+  !+ad_args  rmajor  : input real : plasma major radius (m)
+  !+ad_args  rncne   : input real : beam carbon density / electron density
+  !+ad_args  rnfene  : input real : beam iron density / electron density
+  !+ad_args  rnone   : input real : beam oxygen density / electron density
+  !+ad_args  te      : input real : volume averaged electron temperature (keV)
+  !+ad_args  ten     : input real : density weighted average electron temp. (keV)
+  !+ad_args  zeff    : input real : plasma effective charge
+  !+ad_args  zeffai  : input real : density weighted plasma effective charge
+  !+ad_args  effnbss : output real : neutral beam current drive efficiency (A/W)
+  !+ad_args  fpion   : output real : fraction of NB power given to ions
+  !+ad_args  fshine  : output real : shine-through fraction of beam
+  !+ad_args  taubeam : output real : no of NB expon. decay lengths to plasma centre
+  !+ad_desc  This routine calculates the current drive parameters for a
+  !+ad_desc  neutral beam system, based on the 1990 ITER model.
+  !+ad_prob  None
+  !+ad_call  cfnbi
+  !+ad_call  etanb
+  !+ad_call  sigbeam
+  !+ad_hist  15/06/92 PJK Initial upgraded version
+  !+ad_hist  22/08/12 PJK Initial F90 version
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  !  Arguments
+
+  real(kind(1.0D0)), intent(in) :: abeam,alphan,alphat,aspect, &
+       dene,deni,dlamie,enbeam,eps,feffcd,frbeam,ftr,ralpne, &
+       rmajor,rncne,rnfene,rnone,te,ten,zeff,zeffai
+
+  real(kind(1.0D0)), intent(out) :: effnbss,fpion,fshine,taubeam
+
+  !  Local variables
+
+  real(kind(1.0D0)) :: d1,d2,dend,dent,dpath,sigstop
+
+  !  External routines
+
+  real(kind(1.0D0)), external :: sigbeam
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !  Check argument sanity
+
+  if ((1.0D0+eps) < frbeam) then
+     write(*,*) 'Error in routine ITERNB:'
+     write(*,*) 'Imminent negative square root argument... ', eps, frbeam
+     write(*,*) 'PROCESS stopping.'
+     stop
+  end if
+
+  !  Calculate beam path length to centre
+
+  d1 = rmajor * sqrt( (1.0D0 + eps)**2 - frbeam**2)
+  if (frbeam < 1.0D0) then
+     d2 =  rmajor*sqrt(1.0D0-frbeam**2)
+     dpath = d1 - d2
+  else
+     dpath = d1
+  end if
+
+  !  Calculate beam stopping cross-section
+
+  sigstop = sigbeam(enbeam/abeam,te,dene,ralpne,rncne,rnone,rnfene)
+
+  !  Calculate number of decay lengths to centre
+
+  taubeam = dpath * dene * sigstop
+
+  !  Shine-through fraction of beam
+
+  fshine = exp (-2.0D0 * d1*dene*sigstop)
+
+  !  Deuterium and tritium beam densities
+
+  dend = deni * (1.0D0-ftr)
+  dent = deni * ftr
+
+  !  Power split to ions / electrons
+
+  call cfnbi(abeam,enbeam,ten,dene,dend,dent,zeffai,dlamie,fpion)
+
+  !  Current drive efficiency
+
+  effnbss = frbeam * feffcd * &
+       etanb(abeam,alphan,alphat,aspect,dene,enbeam,rmajor,ten,zeff)
+
+contains
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function etanb(abeam,alphan,alphat,aspect,dene,ebeam,rmajor,ten,zeff)
+
+    !+ad_name  etanb
+    !+ad_summ  Routine to find neutral beam current drive efficiency
+    !+ad_summ  using the ITER 1990 formulation
+    !+ad_type  Function returning real
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  abeam   : input real : beam ion mass (amu)
+    !+ad_args  alphan  : input real : density profile factor
+    !+ad_args  alphat  : input real : temperature profile factor
+    !+ad_args  aspect  : input real : aspect ratio
+    !+ad_args  dene    : input real : volume averaged electron density (m**-3)
+    !+ad_args  enbeam  : input real : neutral beam energy (keV)
+    !+ad_args  rmajor  : input real : plasma major radius (m)
+    !+ad_args  ten     : input real : density weighted average electron temp. (keV)
+    !+ad_args  zeff    : input real : plasma effective charge
+    !+ad_desc  This routine calculates the current drive efficiency of
+    !+ad_desc  a neutral beam system, based on the 1990 ITER model.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  15/06/92 PJK Initial upgraded version
+    !+ad_hist  22/08/12 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: etanb
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: abeam,alphan,alphat,aspect,dene, &
+         ebeam,rmajor,ten,zeff
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: abd,bbd,dene20,dum,epseff,ffac,gfac,rjfunc, &
+         xj,xjs,yj,zbeam
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    zbeam = 1.0D0
+    bbd = 1.0D0
+
+    !  N.B. changing the following to 1.0D-20 * dene
+    !  causes the code output to change subtly...
+
+    dene20 = dene/1.0D20
+
+    !  Ratio of E_beam/E_crit
+
+    xjs = ebeam / (bbd*10.0D0*abeam*ten)
+    xj = sqrt(xjs)
+
+    yj = 0.8D0 * zeff/abeam
+
+    rjfunc = xjs / (4.0D0 + 3.0D0*yj + xjs * &
+         (xj + 1.39D0 + 0.61D0*yj**0.7D0))
+
+    epseff = 0.5D0/aspect
+    gfac = (1.55D0 + 0.85D0/zeff)*sqrt(epseff) - &
+         (0.2D0 + 1.55D0/zeff)*epseff
+    ffac = 1.0D0/zbeam - (1.0D0 - gfac)/zeff
+
+    abd = 0.107D0 * (1.0D0 - 0.35D0*alphan + 0.14D0*alphan**2) * &
+         (1.0D0 - 0.21D0*alphat) * (1.0D0 - 0.2D-3*ebeam  + &
+         0.09D-6 * ebeam**2)
+    dum = abd *(5.0D0/rmajor) * (0.1D0*ten/dene20) * rjfunc/0.2D0 * ffac
+
+    etanb = dum
+
+  end function etanb
+
+end subroutine iternb
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine cfnbi(afast,efast,te,ne,nd,nt,zeffai,xlmbda,fpion)
+
+  !+ad_name  cfnbi
+  !+ad_summ  Routine to calculate the fraction of the fast particle energy
+  !+ad_summ  coupled to the ions
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  xlmbdabi
+  !+ad_args  afast   : input real : mass of fast particle (units of proton mass)
+  !+ad_args  efast   : input real : energy of fast particle (keV)
+  !+ad_args  te      : input real : density weighted average electron temp. (keV)
+  !+ad_args  ne      : input real : volume averaged electron density (m**-3)
+  !+ad_args  nd      : input real : deuterium beam density (m**-3)
+  !+ad_args  nt      : input real : tritium beam density (m**-3)
+  !+ad_args  zeffai  : input real : density weighted plasma effective charge
+  !+ad_args  xlmbda  : input real : ion-electron coulomb logarithm
+  !+ad_args  fpion   : output real : fraction of fast particle energy coupled to ions
+  !+ad_desc  This routine calculates the fast particle energy coupled to
+  !+ad_desc  the ions in the neutral beam system.
+  !+ad_prob  None
+  !+ad_call  xlmbdabi
+  !+ad_hist  15/06/92 PJK Initial upgraded version
+  !+ad_hist  22/08/12 PJK Initial F90 version
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  !  Arguments
+
+  real(kind(1.0D0)), intent(in) :: afast,efast,te,ne,nd,nt,zeffai,xlmbda
+  real(kind(1.0D0)), intent(out) :: fpion
+
+  !  Local variables
+
+  real(kind(1.0D0)) :: ans,ecritfi,ecritfix,sum,sumln,thx,t1,t2,ve,x, &
+       xlbd,xlbt,xlmbdai,xlnrat
+
+  real(kind(1.0D0)), parameter :: atmd = 2.0D0
+  real(kind(1.0D0)), parameter :: atmdt = 2.5D0
+  real(kind(1.0D0)), parameter :: atmt = 3.0D0
+  real(kind(1.0D0)), parameter :: c = 3.0D8
+  real(kind(1.0D0)), parameter :: echarge = 1.6022D-19
+  real(kind(1.0D0)), parameter :: me = 9.1D-31
+  real(kind(1.0D0)), parameter :: mproton = 1.67D-27
+  real(kind(1.0D0)), parameter :: pi = 3.1415926D0
+  real(kind(1.0D0)), parameter :: zd = 1.0D0
+  real(kind(1.0D0)), parameter :: zt = 1.0D0
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  xlbd = xlmbdabi(afast,atmd,efast,te,ne)
+  xlbt = xlmbdabi(afast,atmt,efast,te,ne)
+
+  sum = nd*zd*zd * xlbd/atmd + nt*zt*zt * xlbt/atmt
+  ecritfix = 16.0D0 * te * afast * (sum/(ne*xlmbda))**(2.0D0/3.0D0)
+
+  xlmbdai = xlmbdabi(afast,atmdt,efast,te,ne)
+  sumln = zeffai * xlmbdai/xlmbda
+  xlnrat = (3.0D0*sqrt(pi)/4.0D0 * me/mproton * sumln)**(2.0D0/3.0D0)
+  ve = c * sqrt(2.0D0*te/511.0D0)
+
+  ecritfi = afast * mproton * ve*ve * xlnrat/(2.0D0 * echarge * 1.0D3)
+
+  x = sqrt(efast/ecritfi)
+  t1 = log( (x*x - x + 1.0D0) / ((x + 1.0D0)**2) )
+  thx = (2.0D0*x - 1.0D0)/sqrt(3.0D0)
+  t2 = 2.0D0*sqrt(3.0D0) *(atan(thx) + pi/6.0D0)
+
+  ans = (t1 + t2) / (3.0D0 * x*x)
+  fpion = ans
+
+contains
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function xlmbdabi(mb,mth,eb,t,nelec)
+
+    !+ad_name  xlmbdabi
+    !+ad_summ  Calculates the Coulomb logarithm for ion-ion collisions
+    !+ad_type  Function returning real
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  mb     : input real : mass of fast particle (units of proton mass)
+    !+ad_args  mth    : input real : mass of background ions (units of proton mass)
+    !+ad_args  eb     : input real : energy of fast particle (keV)
+    !+ad_args  t      : input real : density weighted average electron temp. (keV)
+    !+ad_args  nelec  : input real : volume averaged electron density (m**-3)
+    !+ad_desc  This function calculates the Coulomb logarithm for ion-ion
+    !+ad_desc  collisions where the relative velocity may be large compared
+    !+ad_desc  with the background ('mt') thermal velocity.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  15/06/92 PJK Initial upgraded version
+    !+ad_hist  22/08/12 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  Mikkelson and Singer, Nuc Tech/Fus, 4, 237 (1983)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: xlmbdabi
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: mb,mth,eb,t,nelec
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: ans,x1,x2
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    x1 = (t/10.0D0) * (eb/1000.0D0) * mb/(nelec/1.0D20)
+    x2 = mth/(mth + mb)
+
+    ans = 23.7D0 + log(x2 * sqrt(x1))
+    xlmbdabi = ans
+
+  end function xlmbdabi
+
+end subroutine cfnbi
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+function sigbeam(eb,te,ne,rnhe,rnc,rno,rnfe)
+
+  !+ad_name  sigbeam
+  !+ad_summ  Calculates the stopping cross-section for a hydrogen
+  !+ad_summ  beam in a fusion plasma
+  !+ad_type  Function returning real
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  eb     : input real : beam energy (kev/amu)
+  !+ad_args  te     : input real : electron temperature (keV)
+  !+ad_args  ne     : input real : electron density (10^20m-3)
+  !+ad_args  rnhe   : input real : alpha density / ne
+  !+ad_args  rnc    : input real : carbon density /ne
+  !+ad_args  rno    : input real : oxygen density /ne
+  !+ad_args  rnfe   : input real : iron density /ne
+  !+ad_desc  This function calculates the stopping cross-section (m^-2)
+  !+ad_desc  for a hydrogen beam in a fusion plasma.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  15/06/92 PJK Initial upgraded version
+  !+ad_hist  22/08/12 PJK Initial F90 version
+  !+ad_stat  Okay
+  !+ad_docs  Janev, Boley and Post, Nuclear Fusion 29 (1989) 2138
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  real(kind(1.0D0)) :: sigbeam
+
+  !  Arguments
+
+  real(kind(1.0D0)), intent(in) :: eb,te,ne,rnhe,rnc,rno,rnfe
+
+  !  Local variables
+
+  real(kind(1.0D0)) :: ans,nen,sz,s1
+  real(kind(1.0D0)), dimension(2,3,2) :: a
+  real(kind(1.0D0)), dimension(3,2,2,4) :: b
+  real(kind(1.0D0)), dimension(4) :: nn,z
+
+  integer :: i,is,j,k
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  data a/ 4.40D0, 2.30D-1, 7.46D-2,-2.55D-3, 3.16D-3, 1.32D-3, &
+       -2.49D-2,-1.15D-2, 2.27D-3,-6.20D-4,-2.78D-5, 3.38D-5/
+
+  data b/ &
+       -2.36D0, 8.49D-1,-5.88D-2,-2.50D-1, 6.77D-2,-4.48D-3, &
+       1.85D-1,-4.78D-2, 4.34D-3,-3.81D-2, 1.05D-2,-6.76D-4, &
+       -1.49D0, 5.18D-1,-3.36D-2,-1.19D-1, 2.92D-2,-1.79D-3, &
+       -1.54D-2, 7.18D-3, 3.41D-4,-1.50D-2, 3.66D-3,-2.04D-4, &
+       -1.41D0, 4.77D-1,-3.05D-2,-1.08D-1, 2.59D-2,-1.57D-3, &
+       -4.08D-4, 1.57D-3, 7.35D-4,-1.38D-2, 3.33D-3,-1.86D-4, &
+       -1.03D0, 3.22D-1,-1.87D-2,-5.58D-2, 1.24D-2,-7.43D-4, &
+       1.06D-1,-3.75D-2, 3.53D-3,-3.72D-3, 8.61D-4,-5.12D-5/
+
+  z(1) = 2.0D0 ; z(2) = 6.0D0 ; z(3) = 8.0D0 ; z(4) = 26.0D0
+  nn(1) = rnhe ; nn(2) = rnc ; nn(3) = rno ; nn(4) = rnfe
+
+  nen = ne/1.0D19
+
+  s1 = 0.0D0
+  do k = 1,2
+     do j = 1,3
+        do i = 1,2
+           s1 = s1 + a(i,j,k) * (log(eb))**(i-1) * &
+                (log(nen))**(j-1) * (log(te))**(k-1)
+        end do
+     end do
+  end do
+
+  !  Impurity term
+
+  sz = 0.0D0
+  do is = 1,4
+     do k = 1,2
+        do j = 1,2
+           do i = 1,3
+              sz = sz + b(i,j,k,is)* (log(eb))**(i-1) * &
+                   (log(nen))**(j-1) * (log(te))**(k-1) * &
+                   nn(is) * z(is) * (z(is)-1.0D0)
+           end do
+        end do
+     end do
+  end do
+
+  ans = 1.0D-20 * ( exp(s1)/eb * (1.0D0 + sz) )
+
+  sigbeam = max(ans,1.0D-23)
+
+end function sigbeam
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine cullhy(alphan,alphat,bt,dene,feffcd,rmajor,rminor,te,zeff, &
+     effrfss)
+
+  !+ad_name  cullhy
+  !+ad_summ  Routine to calculate Lower Hybrid current drive efficiency
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  lhrad
+  !+ad_cont  lheval
+  !+ad_args  alphan  : input real : density profile factor
+  !+ad_args  alphat  : input real : temperature profile factor
+  !+ad_args  bt      : input real : toroidal field on axis (T)
+  !+ad_args  dene    : input real : volume averaged electron density (m**-3)
+  !+ad_args  feffcd  : input real : current drive efficiency fudge factor
+  !+ad_args  rmajor  : input real : plasma major radius (m)
+  !+ad_args  rminor  : input real : plasma minor radius (m)
+  !+ad_args  te      : input real : volume averaged electron temperature (keV)
+  !+ad_args  zeff    : input real : plasma effective charge
+  !+ad_args  effrfss : output real : lower hybrid current drive efficiency (A/W)
+  !+ad_desc  This routine calculates the current drive parameters for a
+  !+ad_desc  lower hybrid system, based on the AEA FUS 172 model.
+  !+ad_prob  None
+  !+ad_call  lhrad
+  !+ad_hist  15/06/92 PJK Initial upgraded version
+  !+ad_hist  22/08/12 PJK Initial F90 version
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  !  Arguments
+
+  real(kind(1.0D0)), intent(in) :: alphan,alphat,bt,dene,feffcd,rmajor, &
+       rminor,te,zeff
+  real(kind(1.0D0)), intent(out) :: effrfss
+
+  !  Local variables
+
+  real(kind(1.0D0)) :: blocal,dene19,dlocal,epslh,frac,gamlh,nplacc,rpenet, &
+       rratio,term01,term02,term03,term04,tlocal,x
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  dene19 = dene / 1.0D19
+
+  !  Calculate the penetration radius of the LH waves
+
+  call lhrad(alphan,alphat,bt,dene19,rmajor,rminor,te,rratio)
+  rpenet = rratio*rminor
+
+  !  Local density, temperature, toroidal field at this minor radius
+
+  dlocal = dene19*(1.0D0+alphan)*(1.0D0-rratio**2)**alphan
+  tlocal = te*(1.0D0+alphat)*(1.0D0-rratio**2)**alphat
+  blocal = bt*rmajor/(rmajor-rpenet)  !  Calculated on inboard side
+
+  !  Parallel refractive index needed for plasma access
+
+  frac = sqrt(dlocal)/blocal
+  nplacc = frac + sqrt(1.0D0 + frac*frac)
+
+  !  Local inverse aspect ratio
+
+  epslh = rpenet/rmajor
+
+  !  LH normalised efficiency (A/W m**-2)
+
+  x = 24.0D0 / (nplacc*sqrt(tlocal))
+
+  term01 = 6.1D0 / (nplacc*nplacc * (zeff+5.0D0))
+  term02 = 1.0D0 + (tlocal/25.0D0)**1.16D0
+  term03 = epslh**0.77D0 * sqrt(12.25D0 + x*x)
+  term04 = 3.5D0*epslh**0.77D0 + x
+
+  if (term03 > term04) then
+     write(*,*) 'Error in CULLHY :'
+     write(*,*) 'Normalised LH efficiency < 0'
+     write(*,*) 'Use a different value of IEFRF.'
+     write(*,*) 'PROCESS stopping.'
+     stop
+  end if
+
+  gamlh = term01 * term02 * (1.0D0 - term03/term04)
+
+  !  Current drive efficiency (A/W)
+
+  effrfss = gamlh / ((0.1D0*dlocal)*rmajor) * feffcd
+
+contains
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine lhrad(alphan,alphat,bt,dene19,rmajor,rminor,te,rratio)
+
+    !+ad_name  lhrad
+    !+ad_summ  Routine to calculate Lower Hybrid wave absorption radius
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  None
+    !+ad_args  alphan  : input real : density profile factor
+    !+ad_args  alphat  : input real : temperature profile factor
+    !+ad_args  bt      : input real : toroidal field on axis (T)
+    !+ad_args  dene19  : input real : volume averaged electron density (10**19 m**-3)
+    !+ad_args  rmajor  : input real : plasma major radius (m)
+    !+ad_args  rminor  : input real : plasma minor radius (m)
+    !+ad_args  te      : input real : volume averaged electron temperature (keV)
+    !+ad_args  rratio  : output real : minor radius of penetration / plasma minor radius
+    !+ad_desc  This routine determines numerically the minor radius at which the
+    !+ad_desc  damping of Lower Hybrid waves occurs, using a Newton-Raphson method.
+    !+ad_prob  None
+    !+ad_call  lheval
+    !+ad_hist  15/06/92 PJK Initial upgraded version
+    !+ad_hist  18/09/12 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: alphan,alphat,bt,dene19,rmajor,rminor,te
+    real(kind(1.0D0)), intent(out) :: rratio
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: den0,dgdr,drfind,g0,g1,g2,rat0,rat1,r1,r2,t0
+    integer :: lapno
+    integer, parameter :: maxlap = 100
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Central density and temperature
+
+    den0 = dene19 * (1.0D0+alphan)
+    t0 = te * (1.0D0+alphat)
+
+    !  Correction to refractive index (kept within valid bounds)
+
+    drfind = min(0.7D0, max(0.1D0,12.5D0/t0))
+
+    !  Use Newton-Raphson method to establish the correct minor radius
+    !  ratio. g is calculated as a function of r / r_minor, where g is
+    !  the difference between the results of the two formulae for the
+    !  energy E given in AEA FUS 172, p.58. The required minor radius
+    !  ratio has been found when g is sufficiently close to zero.
+
+    !  Initial guess for the minor radius ratio
+
+    rat0 = 0.8D0
+
+    lapno = 0
+    do ; lapno = lapno+1
+
+       !  Minor radius ratios either side of the latest guess
+
+       r1 = rat0 - 1.0D-3*rat0
+       r2 = rat0 + 1.0D-3*rat0
+
+       !  Evaluate g at rat0, r1, r2
+
+       call lheval(alphan,alphat,bt,den0,drfind,rmajor,rminor,rat0,t0,g0)
+       call lheval(alphan,alphat,bt,den0,drfind,rmajor,rminor,r1,  t0,g1)
+       call lheval(alphan,alphat,bt,den0,drfind,rmajor,rminor,r2,  t0,g2)
+
+       !  Calculate gradient of g with respect to minor radius ratio
+
+       dgdr = (g2-g1)/(r2-r1)
+
+       !  New approximation
+
+       rat1 = rat0 - g0/dgdr
+
+       !  Force this approximation to lie within bounds
+
+       rat1 = max(0.0001D0,rat1)
+       rat1 = min(0.9999D0,rat1)
+
+       !  Check the number of laps for convergence
+
+       if (lapno >= maxlap) then
+          write(*,*) 'Problem in routine LHRAD:'
+          write(*,*) 'LH penetration radius not found ' &
+               ,'after ',lapno,' iterations.'
+          write(*,*) 'A value of 0.8 * rminor will be used.'
+          rat0 = 0.8D0
+          exit
+       end if
+
+       !  Is g sufficiently close to zero?
+
+       if (abs(g0) > 0.01D0) then
+          !  No, so go around loop again
+          rat0 = rat1
+       else
+          exit
+       end if
+
+    end do
+
+    rratio = rat0
+
+  end subroutine lhrad
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine lheval(alphan,alphat,bt,den0,drfind,rmajor,rminor,rratio,t0, &
+       ediff)
+
+    !+ad_name  lheval
+    !+ad_summ  Routine to evaluate the difference between electron energy
+    !+ad_summ  expressions required to find the Lower Hybrid absorption radius
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  None
+    !+ad_args  alphan  : input real : density profile factor
+    !+ad_args  alphat  : input real : temperature profile factor
+    !+ad_args  bt      : input real : toroidal field on axis (T)
+    !+ad_args  den0    : input real : central electron density (10**19 m**-3)
+    !+ad_args  drfind  : input real : correction to parallel refractive index
+    !+ad_args  rmajor  : input real : plasma major radius (m)
+    !+ad_args  rminor  : input real : plasma minor radius (m)
+    !+ad_args  rratio  : input real : guess for radius of penetration / plasma minor radius
+    !+ad_args  t0      : input real : central electron temperature (keV)
+    !+ad_args  ediff   : output real : difference between the E values (keV)
+    !+ad_desc  This routine evaluates the difference between the values calculated
+    !+ad_desc  from the two equations for the electron energy E, given in
+    !+ad_desc  AEA FUS 172, p.58. This difference is used to locate the Lower Hybrid
+    !+ad_desc  wave absorption radius via a Newton-Raphson method, in calling
+    !+ad_desc  routine <A HREF="lhrad.html">lhrad</A>.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  15/06/92 PJK Initial upgraded version
+    !+ad_hist  18/09/12 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: alphan,alphat,bt,den0,drfind,rmajor,rminor, &
+         rratio,t0
+    real(kind(1.0D0)), intent(out) :: ediff
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: blocal,dlocal,e1,e2,frac,nplacc,refind,tlocal
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Local electron density
+
+    dlocal = den0 * (1.0D0-rratio**2)**alphan
+
+    !  Local electron temperature
+
+    tlocal = t0 * (1.0D0-rratio**2)**alphat
+
+    !  Local toroidal field (evaluated at the inboard region of the flux surface)
+
+    blocal = bt * rmajor/(rmajor - rratio*rminor)
+
+    !  Parallel refractive index needed for plasma access
+
+    frac = sqrt(dlocal)/blocal
+    nplacc = frac + sqrt(1.0D0 + frac*frac)
+
+    !  Total parallel refractive index
+
+    refind = nplacc + drfind
+
+    !  First equation for electron energy E
+
+    e1 = 511.0D0 * (sqrt(1.0D0 + 1.0D0/(refind*refind)) - 1.0D0)
+
+    !  Second equation for E
+
+    e2 = 7.0D0 * tlocal
+
+    !  Difference
+
+    ediff = e1-e2
+
+  end subroutine lheval
+
+end subroutine cullhy
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine culecd(alphan,alphat,dene,feffcd,rmajor,rminor,te,zeff,effrfss)
+
+  !+ad_name  culecd
+  !+ad_summ  Routine to calculate Electron Cyclotron current drive efficiency
+  !+ad_type  Subroutine
+  !+ad_auth  M R O'Brien, CCFE, Culham Science Centre
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  eccdef
+  !+ad_cont  legend
+  !+ad_args  alphan  : input real : density profile factor
+  !+ad_args  alphat  : input real : temperature profile factor
+  !+ad_args  dene    : input real : volume averaged electron density (m**-3)
+  !+ad_args  feffcd  : input real : current drive efficiency fudge factor
+  !+ad_args  rmajor  : input real : plasma major radius (m)
+  !+ad_args  rminor  : input real : plasma minor radius (m)
+  !+ad_args  te      : input real : volume averaged electron temperature (keV)
+  !+ad_args  zeff    : input real : plasma effective charge
+  !+ad_args  effrfss : output real : electron cyclotron current drive efficiency (A/W)
+  !+ad_desc  This routine calculates the current drive parameters for a
+  !+ad_desc  electron cyclotron system, based on the AEA FUS 172 model.
+  !+ad_prob  None
+  !+ad_call  eccdef
+  !+ad_hist  16/06/92 PJK Initial upgraded version
+  !+ad_hist  18/09/12 PJK Initial F90 version
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  !  Arguments
+
+  real(kind(1.0D0)), intent(in) :: alphan,alphat,dene,feffcd,rmajor,rminor,te,zeff
+  real(kind(1.0D0)), intent(out) :: effrfss
+
+  !  Local variables
+
+  real(kind(1.0D0)) :: cosang,coulog,dlocal,ecgam,ecgam1,ecgam2,ecgam3,ecgam4, &
+       epsloc,tlocal,zlocal
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !  Local plasma parameters : take r = a/3
+
+  !  Temperature
+
+  tlocal = te * (1.0D0+alphat) * (1.0D0-0.333D0**2)**alphat
+
+  !  Density (10**20 m**-3)
+
+  dlocal = dene*1.0D-20 * (1.0D0+alphan) * (1.0D0-0.333D0**2)**alphan
+
+  !  Inverse aspect ratio
+
+  epsloc = 0.333D0 * rminor/rmajor
+
+  !  Effective charge (use average value)
+
+  zlocal = zeff
+
+  !  Coulomb logarithm for ion-electron collisions
+  !  (From J. A. Wesson, 'Tokamaks', Clarendon Press, Oxford, p.293)
+
+  coulog = 15.2D0 - 0.5D0*log(dlocal) + log(tlocal)
+
+  !  Calculate normalised current drive efficiency at four different
+  !  poloidal angles, and average.
+  !  cosang = cosine of the poloidal angle at which ECCD takes place
+  !         = +1 outside, -1 inside.
+
+  cosang =  1.0D0 ; call eccdef(tlocal,epsloc,zlocal,cosang,coulog,ecgam1)
+  cosang =  0.5D0 ; call eccdef(tlocal,epsloc,zlocal,cosang,coulog,ecgam2)
+  cosang = -0.5D0 ; call eccdef(tlocal,epsloc,zlocal,cosang,coulog,ecgam3)
+  cosang = -1.0D0 ; call eccdef(tlocal,epsloc,zlocal,cosang,coulog,ecgam4)
+
+  !  Normalised current drive efficiency (A/W m**-2)
+
+  ecgam = 0.25D0 * (ecgam1+ecgam2+ecgam3+ecgam4)
+
+  !  Current drive efficiency (A/W)
+
+  effrfss = ecgam/(dlocal*rmajor) * feffcd
+
+contains
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine eccdef(tlocal,epsloc,zlocal,cosang,coulog,ecgam)
+
+    !+ad_name  eccdef
+    !+ad_summ  Routine to calculate Electron Cyclotron current drive efficiency
+    !+ad_type  Subroutine
+    !+ad_auth  M R O'Brien, CCFE, Culham Science Centre
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  None
+    !+ad_args  tlocal : input real : local electron temperature (keV)
+    !+ad_args  epsloc : input real : local inverse aspect ratio
+    !+ad_args  zlocal : input real : local plasma effective charge
+    !+ad_args  cosang : input real : cosine of the poloidal angle at which ECCD takes
+    !+ad_argc                        place (+1 outside, -1 inside)
+    !+ad_args  coulog : input real : local coulomb logarithm for ion-electron collisions
+    !+ad_args  ecgam  : output real : normalised current drive efficiency (A/W m**-2)
+    !+ad_desc  This routine calculates the current drive parameters for a
+    !+ad_desc  electron cyclotron system, based on the AEA FUS 172 model.
+    !+ad_desc  It works out the ECCD efficiency using the formula due to Cohen
+    !+ad_desc  quoted in the ITER Physics Design Guidelines : 1989
+    !+ad_desc  (but including division by the Coulomb Logarithm omitted from
+    !+ad_desc  IPDG). We have assumed gamma**2-1 << 1, where gamma is the
+    !+ad_desc  relativistic factor. The notation follows that in IPDG.
+    !+ad_desc  <P>The answer ECGAM is the normalised efficiency nIR/P with n the
+    !+ad_desc  local density in 10**20 /m**3, I the driven current in MAmps,
+    !+ad_desc  R the major radius in metres, and P the absorbed power in MWatts.
+    !+ad_prob  None
+    !+ad_call  legend
+    !+ad_hist  16/08/91 MOB Initial version
+    !+ad_hist  16/06/92 PJK Initial upgraded version
+    !+ad_hist  18/09/12 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: tlocal,epsloc,zlocal,cosang,coulog
+    real(kind(1.0D0)), intent(out) :: ecgam
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: f,facm,fp,h,hp,lam,lams,mcsq,palpha,palphap,palphaps, &
+         palphas,y
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    mcsq = 9.1095D-31 * 2.9979D8**2 /(1.0D3*1.6022D-19) !  keV
+    f = 16.0D0 * (tlocal/mcsq)**2
+
+    !  fp is the derivative of f with respect to gamma, the relativistic
+    !  factor, taken equal to 1 + 2T/(m c**2)
+
+    fp = 16.0D0 * tlocal/mcsq
+
+    !  lam is IPDG's lambda. LEGEND calculates the Legendre function of
+    !  order alpha and argument lam, palpha, and its derivative, palphap.
+    !  Here alpha satisfies alpha(alpha+1) = -8/(1+zlocal). alpha is of the
+    !  form  (-1/2 + ix), with x a real number and i = sqrt(-1).
+
+    lam = 1.0D0
+    call legend(zlocal,lam,palpha,palphap)
+
+    lams = sqrt(2.0D0*epsloc/(1.0D0+epsloc))
+    call legend(zlocal,lams,palphas,palphaps)
+
+    !  hp is the derivative of IPDG's h function with respect to lam
+
+    h = -4.0D0 * lam/(zlocal+5.0D0) * (1.0D0-lams*palpha/(lam*palphas))
+    hp = -4.0D0 / (zlocal+5.0D0) * (1.0D0-lams*palphap/palphas)
+
+    !  facm is IPDG's momentum conserving factor
+
+    facm = 1.5D0
+    y = mcsq/(2.0D0*tlocal) * (1.0D0 + epsloc*cosang)
+
+    !  We take the negative of the IPDG expression to get a positive
+    !  number
+
+    ecgam = -7.8D0 * facm * sqrt((1.0D0+epsloc)/(1.0D0-epsloc)) / coulog &
+         * (h*fp - 0.5D0*y*f*hp)
+
+    if (ecgam < 0.0D0) then
+       write(*,*) 'Error in routine ECCDEF:'
+       write(*,*) 'Negative normalised current drive efficiency.'
+       write(*,*) 'PROCESS stopping.'
+       stop
+    end if
+
+  end subroutine eccdef
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine legend(zlocal,arg,palpha,palphap)
+
+    !+ad_name  legend
+    !+ad_summ  Routine to calculate Legendre function and its derivative
+    !+ad_type  Subroutine
+    !+ad_auth  M R O'Brien, CCFE, Culham Science Centre
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  None
+    !+ad_args  zlocal  : input real : local plasma effective charge
+    !+ad_args  arg     : input real : argument of Legendre function
+    !+ad_args  palpha  : output real : value of Legendre function
+    !+ad_args  palphap : output real : derivative of Legendre function
+    !+ad_desc  This routine calculates the Legendre function <CODE>palpha</CODE>
+    !+ad_desc  of argument <CODE>arg</CODE> and order
+    !+ad_desc  <CODE>alpha = -0.5 + i sqrt(xisq)</CODE>,
+    !+ad_desc  and its derivative <CODE>palphap</CODE>.
+    !+ad_desc  <P>This Legendre function is a conical function and we use the series
+    !+ad_desc  in <CODE>xisq</CODE> given in Abramowitz and Stegun. The
+    !+ad_desc  derivative is calculated from the derivative of this series.
+    !+ad_desc  <P>The derivatives were checked by calculating <CODE>palpha</CODE> for
+    !+ad_desc  neighbouring arguments. The calculation of <CODE>palpha</CODE> for zero
+    !+ad_desc  argument was checked by comparison with the expression
+    !+ad_desc  <CODE>palpha(0) = 1/sqrt(pi) * cos(pi*alpha/2) * gam1 / gam2</CODE>
+    !+ad_desc  (Abramowitz and Stegun, eqn 8.6.1). Here <CODE>gam1</CODE> and
+    !+ad_desc  <CODE>gam2</CODE> are the Gamma functions of arguments
+    !+ad_desc  <CODE>0.5*(1+alpha)</CODE> and <CODE>0.5*(2+alpha)</CODE> respectively.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  16/08/91 MOB Initial version
+    !+ad_hist  16/06/92 PJK Initial upgraded version
+    !+ad_hist  18/09/12 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  Abramowitz and Stegun, equation 8.12.1
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: zlocal,arg
+    real(kind(1.0D0)), intent(out) ::  palpha,palphap
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: arg2,pold,poldp,pterm,sinsq,term1,term2,xisq
+    integer :: n
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Check for invalid argument
+
+    if (abs(arg) > (1.0D0+1.0D-10)) then
+       write(*,*) 'Error in routine LEGEND:'
+       write(*,*) 'Invalid argument ARG, = ',arg
+       write(*,*) 'PROCESS stopping.'
+       stop
+    end if
+
+    arg2 = min(arg, (1.0D0-1.0D-10))
+    sinsq = 0.5D0*(1.0D0-arg2)
+    xisq = 0.25D0*(32.0D0*zlocal/(zlocal+1.0D0) - 1.0D0)
+    palpha = 1.0D0
+    pold = 1.0D0
+    pterm = 1.0D0
+    palphap = 0.0D0
+    poldp = 0.0D0
+
+    do n = 1,10001
+
+       !  Check for convergence every 20 iterations
+
+       if ((n > 1).and.(mod(n,20) == 1)) then
+          term1 = 1.0D-10 * max(abs(pold),abs(palpha))
+          term2 = 1.0D-10 * max(abs(poldp),abs(palphap))
+
+          if ( (abs(pold-palpha) < term1) .and. &
+               (abs(poldp-palphap) < term2) ) return
+
+          pold = palpha
+          poldp = palphap
+       end if
+
+       pterm = pterm * (4.0D0*xisq+(2.0D0*n - 1.0D0)**2) / &
+            (2.0D0*n)**2 * sinsq
+       palpha = palpha + pterm
+       palphap = palphap - n*pterm/(1.0D0-arg2)
+
+    end do
+
+    !  Code will only get this far if convergence has failed
+
+    write(*,*) 'Error in routine LEGEND:'
+    write(*,*) 'Solution has not converged.'
+    write(*,*) 'PROCESS stopping.'
+    stop
+
+  end subroutine legend
+
+end subroutine culecd
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine culnbi(abeam,alphan,alphat,aspect,dene,deni,dlamie,dnla, &
+     enbeam,eps,feffcd,frbeam,ftr,ralpne,rmajor,rminor,rncne,rnfene, &
+     rnone,te,ten,zeff,zeffai,effnbss,fpion,fshine,taubeam)
+
+  !+ad_name  culnbi
+  !+ad_summ  Routine to calculate Neutral Beam current drive parameters
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  etanb2
+  !+ad_args  abeam   : input real : beam ion mass (amu)
+  !+ad_args  alphan  : input real : density profile factor
+  !+ad_args  alphat  : input real : temperature profile factor
+  !+ad_args  aspect  : input real : aspect ratio
+  !+ad_args  dene    : input real : volume averaged electron density (m**-3)
+  !+ad_args  deni    : input real : fuel ion density (m**-3)
+  !+ad_args  dlamie  : input real : ion-electron coulomb logarithm
+  !+ad_args  dnla    : input real : line averaged electron density (m**-3)
+  !+ad_args  enbeam  : input real : neutral beam energy (keV)
+  !+ad_args  eps     : input real : inverse aspect ratio
+  !+ad_args  feffcd  : input real : current drive efficiency fudge factor
+  !+ad_args  frbeam  : input real : R_tangent / R_major for neutral beam injection
+  !+ad_args  ftr     : input real : tritium fraction of D-T ions
+  !+ad_args  ralpne  : input real : thermal alpha density / electron density
+  !+ad_args  rmajor  : input real : plasma major radius (m)
+  !+ad_args  rminor  : input real : plasma minor radius (m)
+  !+ad_args  rncne   : input real : beam carbon density / electron density
+  !+ad_args  rnfene  : input real : beam iron density / electron density
+  !+ad_args  rnone   : input real : beam oxygen density / electron density
+  !+ad_args  te      : input real : volume averaged electron temperature (keV)
+  !+ad_args  ten     : input real : density weighted average electron temp. (keV)
+  !+ad_args  zeff    : input real : plasma effective charge
+  !+ad_args  zeffai  : input real : density weighted plasma effective charge
+  !+ad_args  effnbss : output real : neutral beam current drive efficiency (A/W)
+  !+ad_args  fpion   : output real : fraction of NB power given to ions
+  !+ad_args  fshine  : output real : shine-through fraction of beam
+  !+ad_args  taubeam : output real : no of NB expon. decay lengths to plasma centre
+  !+ad_desc  This routine calculates Neutral Beam current drive parameters
+  !+ad_desc  using the corrections outlined in AEA FUS 172 to the ITER method.
+  !+ad_desc  <P>The result cannot be guaranteed for devices with aspect ratios far
+  !+ad_desc  from that of ITER (approx. 2.8).
+  !+ad_prob  None
+  !+ad_call  cfnbi
+  !+ad_call  etanb2
+  !+ad_call  sigbeam
+  !+ad_hist  17/06/92 PJK Initial upgraded version
+  !+ad_hist  18/09/12 PJK Initial F90 version
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  !  Arguments
+
+  real(kind(1.0D0)), intent(in) :: abeam,alphan,alphat,aspect,dene,deni, &
+       dlamie,dnla,enbeam,eps,feffcd,frbeam,ftr,ralpne,rmajor,rminor,rncne, &
+       rnfene,rnone,te,ten,zeff,zeffai
+
+  real(kind(1.0D0)), intent(out) :: effnbss,fpion,fshine,taubeam
+
+  !  Local variables
+
+  real(kind(1.0D0)) :: dend,dent,dpath,d1,d2,sigstop
+
+  !  External functions
+
+  real(kind(1.0D0)), external :: sigbeam
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !  Check argument sanity
+
+  if ((1.0D0+eps) < frbeam) then
+     write(*,*) 'Error in routine CULNBI:'
+     write(*,*) 'Imminent negative square root argument... ', eps, frbeam
+     write(*,*) 'PROCESS stopping.'
+     stop
+  end if
+
+  !  Calculate beam path length to centre
+
+  d1 = rmajor * sqrt( (1.0D0 + eps)**2 - frbeam**2)
+  if (frbeam < 1.0D0) then
+     d2 =  rmajor*sqrt(1.0D0-frbeam**2)
+     dpath = d1 - d2
+  else
+     dpath = d1
+  end if
+
+  !  Calculate beam stopping cross-section
+
+  sigstop = sigbeam(enbeam/abeam,te,dene,ralpne,rncne,rnone,rnfene)
+
+  !  Calculate number of decay lengths to centre
+
+  taubeam = dpath * dnla * sigstop
+
+  !  Shine-through fraction of beam
+
+  fshine = exp(-2.0D0 * d1*dnla*sigstop)
+
+  !  Deuterium and tritium beam densities
+
+  dend = deni * (1.0D0-ftr)
+  dent = deni * ftr
+
+  !  Power split to ions / electrons
+
+  call cfnbi(abeam,enbeam,ten,dene,dend,dent,zeffai,dlamie,fpion)
+
+  !  Current drive efficiency
+
+  effnbss = etanb2(abeam,alphan,alphat,aspect,dene,dnla,enbeam,feffcd, &
+       frbeam,fshine,rmajor,rminor,ten,zeff)
+
+contains
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function etanb2(abeam,alphan,alphat,aspect,dene,dnla,enbeam,feffcd,frbeam, &
+       fshine,rmajor,rminor,ten,zeff)
+
+    !+ad_name  etanb2
+    !+ad_summ  Routine to find neutral beam current drive efficiency
+    !+ad_summ  using the ITER 1990 formulation, plus correction terms
+    !+ad_summ  outlined in Culham Report AEA FUS 172
+    !+ad_type  Function returning real
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  abeam   : input real : beam ion mass (amu)
+    !+ad_args  alphan  : input real : density profile factor
+    !+ad_args  alphat  : input real : temperature profile factor
+    !+ad_args  aspect  : input real : aspect ratio
+    !+ad_args  dene    : input real : volume averaged electron density (m**-3)
+    !+ad_args  dnla    : input real : line averaged electron density (m**-3)
+    !+ad_args  enbeam  : input real : neutral beam energy (keV)
+    !+ad_args  feffcd  : input real : current drive efficiency fudge factor
+    !+ad_args  frbeam  : input real : R_tangent / R_major for neutral beam injection
+    !+ad_args  fshine  : input real : shine-through fraction of beam
+    !+ad_args  rmajor  : input real : plasma major radius (m)
+    !+ad_args  rminor  : input real : plasma minor radius (m)
+    !+ad_args  ten     : input real : density weighted average electron temperature (keV)
+    !+ad_args  zeff    : input real : plasma effective charge
+    !+ad_desc  This routine calculates the current drive efficiency in A/W of
+    !+ad_desc  a neutral beam system, based on the 1990 ITER model,
+    !+ad_desc  plus correction terms outlined in Culham Report AEA FUS 172.
+    !+ad_desc  <P>The formulae are from AEA FUS 172, unless denoted by IPDG
+    !+ad_desc  (ITER Physics Design Guidelines: 1989).
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  17/06/92 PJK Initial upgraded version
+    !+ad_hist  18/09/12 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: etanb2
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: abeam,alphan,alphat,aspect,dene,dnla, &
+         enbeam,feffcd,frbeam,fshine,rmajor,rminor,ten,zeff
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: abd,bbd,d,dene20,dnla20,dnorm,ebmev,ecrit,enorm, &
+         epseff,epsitr,eps1,ffac,gamnb,gfac,j0,nnorm,r,xj,xjs,yj,zbeam
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Charge of beam ions
+
+    zbeam = 1.0D0
+
+    !  Fitting factor (IPDG)
+
+    bbd = 1.0D0
+
+    !  Volume averaged electron density (10**20 m**-3)
+
+    dene20 = dene/1.0D20
+
+    !  Line averaged electron density (10**20 m**-3)
+
+    dnla20 = dnla/1.0D20
+
+    !  Critical energy (MeV) (power to electrons = power to ions) (IPDG)
+    !  N.B. ten is in keV
+
+    ecrit = 0.01D0 * abeam * ten
+
+    !  Beam energy in MeV
+
+    ebmev = enbeam/1.0D3
+
+    !  x and y coefficients of function J0(x,y) (IPDG)
+
+    xjs = ebmev/(bbd*ecrit)
+    xj = sqrt(xjs)
+
+    yj = 0.8D0 * zeff/abeam
+
+    !  Fitting function J0(x,y)
+
+    j0 = xjs / (4.0D0 + 3.0D0*yj + xjs *(xj + 1.39D0 + &
+         0.61D0 * yj**0.7D0))
+
+    !  Effective inverse aspect ratio, with a limit on its maximum value
+
+    epseff = min(0.2D0, (0.5D0/aspect))
+
+    !  Reduction in the reverse electron current
+    !  due to neoclassical effects
+
+    gfac = (1.55D0 + 0.85D0/zeff)*sqrt(epseff) - &
+         (0.2D0 + 1.55D0/zeff)*epseff
+
+    !  Reduction in the net beam driven current
+    !  due to the reverse electron current
+
+    ffac = 1.0D0 - (zbeam/zeff) * (1.0D0 - gfac)
+
+    !  Normalisation to allow results to be valid for
+    !  non-ITER plasma size and density:
+
+    !  Line averaged electron density (10**20 m**-3) normalised to ITER
+
+    nnorm = 1.0D0
+
+    !  Distance along beam to plasma centre
+
+    r = max(rmajor,rmajor*frbeam)
+    eps1 = rminor/r
+
+    if ((1.0D0+eps1) < frbeam) then
+       write(*,*) 'Error in routine ETANB2:'
+       write(*,*) 'Imminent negative square root argument... ', eps1, frbeam
+       write(*,*) 'PROCESS stopping.'
+       stop
+    end if
+
+    d = rmajor * sqrt( (1.0D0+eps1)**2 - frbeam**2)
+
+    !  Distance along beam to plasma centre for ITER
+    !  assuming a tangency radius equal to the major radius
+
+    epsitr = 2.15D0/6.0D0
+    dnorm = 6.0D0 * sqrt(2.0D0*epsitr + epsitr**2)
+
+    !  Normalisation to beam energy (assumes a simplified formula for
+    !  the beam stopping cross-section)
+
+    enorm = ebmev * ( (nnorm*dnorm)/(dnla20*d) )**(1.0D0/0.78D0)
+
+    !  A_bd fitting coefficient, after normalisation with enorm
+
+    abd = 0.107D0 * (1.0D0 - 0.35D0*alphan + 0.14D0*alphan**2) * &
+         (1.0D0 - 0.21D0*alphat) * (1.0D0 - 0.2D0*enorm + 0.09D0*enorm**2)
+
+    !  Normalised current drive efficiency (A/W m**-2) (IPDG)
+
+    gamnb = 5.0D0 * abd * 0.1D0*ten * (1.0D0-fshine) * frbeam * &
+         j0/0.2D0 * ffac
+
+    !  Current drive efficiency (A/W)
+
+    etanb2 = gamnb / (dene20*rmajor) * feffcd
+
+  end function etanb2
+
+end subroutine culnbi
+

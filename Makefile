@@ -51,7 +51,7 @@ source = \
  blanket.f    \
  caller.f90   \
  costs.f      \
- cudriv.f     \
+ cudriv.f90   \
  divtmod.f    \
  ech.f90      \
  eqns.f90     \

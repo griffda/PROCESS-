@@ -408,7 +408,8 @@ C+**PJK 22/05/07
          if (ixc(i).eq.87) helecmw  = xc(i)/scale(i)
          if (ixc(i).eq.88) hthermmw = xc(i)/scale(i)
 
-         if ((ixc(i).lt.1).and.(ixc(i).gt.ipnvars)) then
+C+**PJK 22/08/12 .and. changed to .or.
+         if ((ixc(i).lt.1).or.(ixc(i).gt.ipnvars)) then
             write(*,*) 'Error in routine CONVXC :'
             write(*,*) 'Illegal variable number, = ',ixc(i)
             write(*,*) 'PROCESS stopping.'
