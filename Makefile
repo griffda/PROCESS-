@@ -62,7 +62,7 @@ source = \
  heatpwr.f90  \
  ife.f        \
  induct.f90   \
- initial.f    \
+ initial.f90  \
  input.f      \
  lwhymod.f90  \
  math.f90     \
