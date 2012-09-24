@@ -199,15 +199,15 @@ end subroutine outvolt
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine induct(iprint,nout)
+subroutine induct(nout,iprint)
 
   !+ad_name  induct
   !+ad_summ  Calculates PF coil set mutual inductance matrix
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_args  nout : input integer : output file unit
+  !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the mutual inductances between all the
   !+ad_desc  PF coils.
   !+ad_prob  None
@@ -224,6 +224,7 @@ subroutine induct(iprint,nout)
   !+ad_call  oheadr
   !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_hist  20/09/11 PJK Removed dble calls
+  !+ad_hist  24/09/12 PJK Swapped argument order
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -241,7 +242,7 @@ subroutine induct(iprint,nout)
 
   !  Arguments
 
-  integer, intent(in) :: iprint, nout
+  integer, intent(in) :: iprint,nout
 
   !  Local variables
 

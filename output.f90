@@ -57,6 +57,7 @@ subroutine output(nout)
   !+ad_hist  18/11/97 PJK Removed NOUT argument from FISPAC call
   !+ad_hist  19/05/99 PJK Added routine AVAIL
   !+ad_hist  20/09/11 PJK Initial F90 version
+  !+ad_hist  24/09/12 PJK Swapped argument order of RADIALB, DIVCALL, INDUCT
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -99,8 +100,8 @@ subroutine output(nout)
   call cudriv(nout,1)
   call pulse(nout,1)
   call outtim(nout)
-  call divcall(1,nout)
-  call radialb(1,nout)
+  call divcall(nout,1)
+  call radialb(nout,1)
 
   if (irfp == 0) then
      call tfcoil(nout,1)
@@ -122,7 +123,7 @@ subroutine output(nout)
 
   call strucall(nout,1)
 
-  if (irfp == 0) call induct(1,nout)
+  if (irfp == 0) call induct(nout,1)
 
   call fwbs(nout,1)
 

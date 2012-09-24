@@ -1,7 +1,7 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine divcall(iprint,nout)
+subroutine divcall(nout,iprint)
 
   !+ad_name  divcall
   !+ad_summ  Routine to call the divertor model
@@ -9,8 +9,8 @@ subroutine divcall(iprint,nout)
   !+ad_auth  J Galambos, ORNL
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_args  nout : input integer : output file unit
+  !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine calls the divertor routine. This routine scales
   !+ad_desc  dimensions, powers and field levels which are used as input to
   !+ad_desc  the Harrison divertor model.
@@ -39,6 +39,7 @@ subroutine divcall(iprint,nout)
   !+ad_hist  25/04/02 PJK Added ZEFFDIV; Changed DIVDUM to integer
   !+ad_hist  17/11/11 PJK Initial F90 version;
   !+ad_hisc               Moved TART model into new routine
+  !+ad_hist  24/09/12 PJK Swapped argument order
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !

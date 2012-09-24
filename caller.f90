@@ -55,15 +55,16 @@ subroutine caller(xc,nvars)
   !+ad_call  vaccall
   !+ad_call  vbuild
   !+ad_call  vsec
-  !+ad_hist  28/06/94 PJK 1.000 Improved code layout
-  !+ad_hist  29/01/96 PJK 1.100 Added routine CNTRPST
-  !+ad_hist  23/01/97 PJK 1.200 Split routine POWER into POWER1 and POWER2
-  !+ad_hist  06/02/97 PJK 1.300 Added routine LOCA
-  !+ad_hist  21/03/97 PJK 1.400 Added routine IFECLL
-  !+ad_hist  18/11/97 PJK 1.410 Removed NOUT argument from FISPAC call
-  !+ad_hist  19/05/99 PJK 1.500 Added routine AVAIL
-  !+ad_hist  24/05/06 PJK 1.510 Moved call to STRUCALL after DIVCALL
+  !+ad_hist  28/06/94 PJK Improved code layout
+  !+ad_hist  29/01/96 PJK Added routine CNTRPST
+  !+ad_hist  23/01/97 PJK Split routine POWER into POWER1 and POWER2
+  !+ad_hist  06/02/97 PJK Added routine LOCA
+  !+ad_hist  21/03/97 PJK Added routine IFECLL
+  !+ad_hist  18/11/97 PJK Removed NOUT argument from FISPAC call
+  !+ad_hist  19/05/99 PJK Added routine AVAIL
+  !+ad_hist  24/05/06 PJK Moved call to STRUCALL after DIVCALL
   !+ad_hist  27/07/11 PJK Initial F90 version
+  !+ad_hist  24/09/12 PJK Swapped argument order of RADIALB, DIVCALL, INDUCT
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -114,7 +115,7 @@ subroutine caller(xc,nvars)
   !  Tokamak and RFP calls
 
   call geomty
-  call radialb(0,nout)
+  call radialb(nout,0)
   call vbuild
 
   if (irfp == 0) then
@@ -140,7 +141,7 @@ subroutine caller(xc,nvars)
 
   if (irfp == 0) then
      call pfcoil
-     call induct(0,nout)
+     call induct(nout,0)
      call vsec
   else
      call rfppfc(nout,0)
@@ -148,7 +149,7 @@ subroutine caller(xc,nvars)
 
   call pulse(nout,0)
   call fwbs(nout,0)
-  call divcall(0,nout)
+  call divcall(nout,0)
   call strucall(nout,0)
 
   if (itart == 1) call cntrpst(nout,0)

@@ -79,7 +79,7 @@ source = \
  radialb.f90  \
  rfp.f90      \
  safety.f90   \
- stella.f     \
+ stella.f90   \
  struct.f90   \
  svd.f90      \
  supercond.f90 \

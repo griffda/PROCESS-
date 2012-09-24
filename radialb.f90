@@ -1,15 +1,15 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine radialb(iprint,nout)
+subroutine radialb(nout,iprint)
 
   !+ad_name  radialb
   !+ad_summ  Radial build
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_args  nout : input integer : output file unit
+  !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine determines the radial build of the machine.
   !+ad_prob  None
   !+ad_call  build.h90
@@ -24,6 +24,7 @@ subroutine radialb(iprint,nout)
   !+ad_call  ovarre
   !+ad_call  rippl
   !+ad_hist  26/07/11 PJK Initial F90 version
+  !+ad_hist  24/09/12 PJK Swapped argument order
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -39,8 +40,7 @@ subroutine radialb(iprint,nout)
 
   !  Arguments
 
-  integer, intent(in) :: iprint
-  integer, intent(in) :: nout
+  integer, intent(in) :: iprint,nout
 
   !  Local variables
 
