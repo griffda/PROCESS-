@@ -60,7 +60,7 @@ source = \
  fwbs.f90     \
  geomty.f90   \
  heatpwr.f90  \
- ife.f        \
+ ife.f90      \
  induct.f90   \
  initial.f90  \
  input.f      \
