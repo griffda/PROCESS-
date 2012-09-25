@@ -50,7 +50,7 @@ source = \
  bldgs.f90    \
  blanket.f    \
  caller.f90   \
- costs.f      \
+ costs.f90    \
  cudriv.f90   \
  divtmod.f    \
  ech.f90      \
