@@ -48,7 +48,7 @@ source = \
  avail.f90    \
  beams.f90    \
  bldgs.f90    \
- blanket.f    \
+ blanket.f90  \
  caller.f90   \
  costs.f90    \
  cudriv.f90   \
