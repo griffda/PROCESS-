@@ -74,7 +74,7 @@ source = \
  pfcoil.f90   \
  pfscl.f90    \
  physics.f90  \
- pulse.f      \
+ pulse.f90    \
  pwrconv.f90  \
  radialb.f90  \
  rfp.f90      \
