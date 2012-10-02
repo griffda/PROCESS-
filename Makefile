@@ -56,7 +56,7 @@ source = \
  ech.f90      \
  eqns.f90     \
  eqsolv.f90   \
- fispact.f    \
+ fispact.f90  \
  fwbs.f90     \
  geomty.f90   \
  heatpwr.f90  \
