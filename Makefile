@@ -63,7 +63,7 @@ source = \
  ife.f90      \
  induct.f90   \
  initial.f90  \
- input.f      \
+ input.f90    \
  lwhymod.f90  \
  math.f90     \
  math2.f90    \
@@ -284,7 +284,7 @@ pwrconv.o: build.h90 cost.h90 htpwr.h90 osections.h90 param.h90 pfcoil.h90 phyda
   pwrcom.h90 tfcoil.h90 times.h90 vltcom.h90
 radialb.o: build.h90 cdriv.h90 divrt.h90 osections.h90 param.h90 phydat.h90 rfp.h90 \
   tfcoil.h90
-rfp.o: build.h90 cdriv.h90 divrt.h90 fwblsh.h90 htpwr.h90 numer.h90 osections.h90 \
+rfp.o: input.o build.h90 cdriv.h90 divrt.h90 fwblsh.h90 htpwr.h90 numer.h90 osections.h90 \
   param.h90 pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 rfp.h90 tfcoil.h90 times.h90 \
   vltcom.h90
 safety.o: blanket.h90 build.h90 fispact.h90 fwblsh.h90 param.h90 pfcoil.h90 phydat.h90 \

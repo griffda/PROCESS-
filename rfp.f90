@@ -902,15 +902,19 @@ subroutine ftheta(theta,f)
   !+ad_prob  None
   !+ad_call  numer.h90
   !+ad_call  param.h90
-  !+ad_call  ranger
+  !+ad_call  process_input
+  !+ad_call  check_range_real
   !+ad_call  06/03/96 PJK Initial version
   !+ad_hist  09/05/12 PJK Initial F90 version
+  !+ad_hist  04/10/12 PJK Use new routine check_range_real instead of ranger
   !+ad_stat  Okay
   !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
   !+ad_docc           Scoping Phase Report, January 1987, Fig.4.2-2
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_input, only : check_range_real
 
   implicit none
 
@@ -928,7 +932,7 @@ subroutine ftheta(theta,f)
 
   !  Check for sensible theta range
 
-  call ranger(nout,'RFP theta',theta,0.0D0,1.8D0)
+  call check_range_real('RPF theta',theta,0.0D0,1.8D0)
 
   !  Polynomial fit to experimental data
 
