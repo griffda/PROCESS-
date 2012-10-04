@@ -227,7 +227,7 @@ default: process.exe
 # object dependencies (usually via modules or header files)
 
 aachange.o: 
-aamain.o: cdriv.h90 cost.h90 divrt.h90 htpwr.h90 ineq.h90 labels.h90 numer.h90 \
+aamain.o: input.o cdriv.h90 cost.h90 divrt.h90 htpwr.h90 ineq.h90 labels.h90 numer.h90 \
   param.h90 pfcoil.h90 phydat.h90 pwrcom.h90 sweep.h90 tfcoil.h90
 acpow.o: bldgvol.h90 estocom.h90 htpwr.h90 osections.h90 pwrcom.h90
 avail.o: cost.h90 divrt.h90 fwblsh.h90 ife.h90 param.h90 phydat.h90 pulse.h90 rfp.h90
