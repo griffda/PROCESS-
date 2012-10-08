@@ -14,7 +14,7 @@ module process_input
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  check_range_int
   !+ad_cont  check_range_real
-  !+ad_cont  edit1
+  !+ad_cont  run_summary
   !+ad_cont  get_subscript
   !+ad_cont  get_substring
   !+ad_cont  get_substring_trim
@@ -142,7 +142,7 @@ module process_input
   include 'vaccom.h90'
 
   private
-  public :: input, edit1, check_range_int, check_range_real
+  public :: input, run_summary, check_range_int, check_range_real
 
 #ifdef unit_test
   public :: parse_input_file
@@ -196,9 +196,9 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine edit1
+  subroutine run_summary
 
-    !+ad_name  edit1
+    !+ad_name  run_summary
     !+ad_summ  Routine to print out the active iteration variables and
     !+ad_summ  constraint equations for the run
     !+ad_type  Subroutine
@@ -213,6 +213,7 @@ contains
     !+ad_call  ocmmnt
     !+ad_hist  28/06/94 PJK Improved layout
     !+ad_hist  03/10/12 PJK Initial F90 version
+    !+ad_hist  08/10/12 PJK Changed routine name from edit1 to run_summary
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -263,7 +264,7 @@ contains
  40  format(t1,i3,t10,i3,t18,a34)
 #endif
 
-  end subroutine edit1
+  end subroutine run_summary
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

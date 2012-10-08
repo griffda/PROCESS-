@@ -27,6 +27,7 @@ subroutine tfcoil(nout,iprint)
   !+ad_call  sctfcoil
   !+ad_hist  22/10/96 PJK Initial upgraded version
   !+ad_hist  08/05/12 PJK Initial F90 version
+  !+ad_hist  08/10/12 PJK Swapped concoptf argument order
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -103,7 +104,7 @@ subroutine tfcoil(nout,iprint)
 
      !  Other calculations for normal-conducting TF coils
 
-     call concoptf(0,nout)
+     call concoptf(nout,0)
 
      !  Inductance
 
@@ -142,7 +143,7 @@ subroutine tfcoil(nout,iprint)
      call ovarre(nout,'Transverse stress (Pa)','(sigtan)',sigtan)
      call ovarre(nout,'Vertical stress (Pa)','(sigver)',sigver)
 
-     call concoptf(iprint,nout)
+     call concoptf(nout,iprint)
 
   end if
 
@@ -150,15 +151,15 @@ end subroutine tfcoil
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine concoptf(iprint,nout)
+subroutine concoptf(nout,iprint)
 
   !+ad_name  concoptf
   !+ad_summ  Calculates additional parameters for resistive TF coils
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_args  nout : input integer : output file unit
+  !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine calculates various additional parameters for a
   !+ad_desc  resistive TF coil set, including for TART machines.
   !+ad_prob  None
@@ -173,6 +174,7 @@ subroutine concoptf(iprint,nout)
   !+ad_hist  22/10/96 PJK Initial upgraded version
   !+ad_hist  18/11/97 PJK Modified RTOP,ZTOP values
   !+ad_hist  08/05/12 PJK Initial F90 version
+  !+ad_hist  08/10/12 PJK Swapped argument order
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !

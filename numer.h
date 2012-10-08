@@ -40,7 +40,7 @@ CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
      +     xcs(ipnvars)
       common /numer1/
      +     bondl, bondu, boundl, boundu, rcm, resdl, scafc, scale,
-     +     vlam, xcm, xcs
+     +     xcm, xcs, vlam
 
 C+**PJK 26/01/93 Removed redundant variables IIDATE,IIMACH,IITIME,IOUT
 

@@ -87,7 +87,6 @@ c  Input parameters
  10   continue
 
       nvrbl = nvar
-
       call VMCON(fcnvmc1,fcnvmc2,mode,n,m,meq,xv,f,fgrd,conf,cnorm,
      +     lcnorm,b,lb,xtol,maxcal,ifail,nfev2,vlam,glag,vmu,cm,glaga,
      +     gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa,

@@ -43,7 +43,7 @@
 
 source = \
  aachange.f90 \
- aamain.f     \
+ aamain.f90   \
  acpow.f90    \
  avail.f90    \
  beams.f90    \

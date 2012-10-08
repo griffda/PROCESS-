@@ -103,7 +103,7 @@ ncalls     intg          # number of function calls during solution
 neqns      intg /14/     # number of equations root solver must satisfy
 nin        intg /10/ FIX # unit specifier for input from file
 nineqns    intg /0/  FIX # number of inequalities VMCON must satisfy
-nout       intg /12/     # unit specifier for main output
+nout       intg /12/ FIX # unit specifier for main output
 nvar       intg /25/     # number of independent variables
 sqsumsq    dble          # square root of the sum of the square
 $                          of the constraint residuals

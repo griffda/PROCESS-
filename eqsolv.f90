@@ -17,7 +17,7 @@ subroutine eqsolv(fcnhyb,n,x,fvec,tol,epsfcn,factor,nprint,info, &
   !+ad_argc    an initial estimate of the solution vector. On output X
   !+ad_argc    contains the final estimate of the solution vector.
   !+ad_args  fvec(n) : output real array : Functions evaluated at output X
-  !+ad_args  tol : input integer : Termination occurs when the algorithm
+  !+ad_args  tol : input real : Termination occurs when the algorithm
   !+ad_argc    estimates that the relative error between X and the solution
   !+ad_argc    is at most TOL.
   !+ad_args  epsfcn : input real : Used in determining a suitable
