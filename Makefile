@@ -68,7 +68,7 @@ source = \
  math.f90     \
  math2.f90    \
  minpac.f     \
- optimiz.f    \
+ optimiz.f90  \
  outplas.f90  \
  output.f90   \
  pfcoil.f90   \
@@ -85,7 +85,7 @@ source = \
  supercond.f90 \
  tfcoil.f90   \
  tfcpwr.f90   \
- sctfcoil.f   \
+ sctfcoil.f90 \
  vacuum.f90   \
  xc.f
 
