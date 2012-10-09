@@ -67,7 +67,7 @@ source = \
  lwhymod.f90  \
  math.f90     \
  math2.f90    \
- minpac.f     \
+ minpac.f90   \
  optimiz.f90  \
  outplas.f90  \
  output.f90   \
