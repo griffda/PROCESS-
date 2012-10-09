@@ -1,21 +1,21 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine cudriv(nout,iprint)
+subroutine cudriv(outfile,iprint)
 
   !+ad_name  cudriv
   !+ad_summ  Routine to calculate the current drive power requirements
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the power requirements of the current
   !+ad_desc  drive system, using a choice of models for the current drive
   !+ad_desc  efficiency.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  cdriv.h90
-  !+ad_call  osections.h90
   !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  culecd
@@ -30,21 +30,23 @@ subroutine cudriv(nout,iprint)
   !+ad_call  ovarre
   !+ad_call  ovarrf
   !+ad_hist  22/08/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
   include 'param.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: iprint,nout
+  integer, intent(in) :: iprint,outfile
 
   !  Local variables
 
@@ -199,35 +201,35 @@ subroutine cudriv(nout,iprint)
 
   if ((iprint /= 1).or.(sect04 == 0)) return
 
-  call oheadr(nout,'Current Drive System')
+  call oheadr(outfile,'Current Drive System')
 
   if (irfcd == 0) then
-     call ocmmnt(nout,'No current drive used')
-     call oblnkl(nout)
+     call ocmmnt(outfile,'No current drive used')
+     call oblnkl(outfile)
      return
   end if
 
   select case (iefrf)
 
   case (1,4,6)
-     call ocmmnt(nout,'Lower Hybrid Current Drive')
-     call oblnkl(nout)
+     call ocmmnt(outfile,'Lower Hybrid Current Drive')
+     call oblnkl(outfile)
 
   case (2)
-     call ocmmnt(nout,'Ion Cyclotron Current Drive')
-     call oblnkl(nout)
+     call ocmmnt(outfile,'Ion Cyclotron Current Drive')
+     call oblnkl(outfile)
 
   case (3,7)
-     call ocmmnt(nout,'Electron Cyclotron Current Drive')
-     call oblnkl(nout)
+     call ocmmnt(outfile,'Electron Cyclotron Current Drive')
+     call oblnkl(outfile)
 
   case (5,8)
-     call ocmmnt(nout,'Neutral Beam Current Drive')
-     call oblnkl(nout)
+     call ocmmnt(outfile,'Neutral Beam Current Drive')
+     call oblnkl(outfile)
 
   case (9)
-     call ocmmnt(nout,'Oscillating Field Current Drive')
-     call oblnkl(nout)
+     call ocmmnt(outfile,'Oscillating Field Current Drive')
+     call oblnkl(outfile)
 
   case default
      write(*,*) 'Error in routine CUDRIV:'
@@ -238,55 +240,55 @@ subroutine cudriv(nout,iprint)
   end select
 
   if (abs(facoh) > 1.0D-8) then
-     call ocmmnt(nout,'Current is driven by both inductive')
-     call ocmmnt(nout,'and non-inductive means.')
+     call ocmmnt(outfile,'Current is driven by both inductive')
+     call ocmmnt(outfile,'and non-inductive means.')
   end if
 
-  call ovarin(nout,'Current drive efficiency model','(iefrf)',iefrf)
-  call ovarre(nout,'Steady state power requirement (W)', &
+  call ovarin(outfile,'Current drive efficiency model','(iefrf)',iefrf)
+  call ovarre(outfile,'Steady state power requirement (W)', &
        '(pinje+pinji)',pinje+pinji)
-  call ovarre(nout,'CD power used for plasma heating only (W)', &
+  call ovarre(outfile,'CD power used for plasma heating only (W)', &
        '(pheat)',pheat)
-  call ovarre(nout,'Energy multiplication factor Q','(bigq)',bigq)
+  call ovarre(outfile,'Energy multiplication factor Q','(bigq)',bigq)
 
-  call osubhd(nout,'Fractions of current drive :')
-  call ovarrf(nout,'Bootstrap fraction','(bootipf)',bootipf)
-  call ovarrf(nout,'Auxiliary current drive fraction','(faccd)',faccd)
-  call ovarrf(nout,'Inductive fraction','(facoh)',facoh)
+  call osubhd(outfile,'Fractions of current drive :')
+  call ovarrf(outfile,'Bootstrap fraction','(bootipf)',bootipf)
+  call ovarrf(outfile,'Auxiliary current drive fraction','(faccd)',faccd)
+  call ovarrf(outfile,'Inductive fraction','(facoh)',facoh)
 
   if (abs(bootipf-bscfmax) < 1.0D-8) then
-     call ocmmnt(nout,'Warning : bootstrap current fraction is at')
-     call ocmmnt(nout,'          its prescribed maximum.')
+     call ocmmnt(outfile,'Warning : bootstrap current fraction is at')
+     call ocmmnt(outfile,'          its prescribed maximum.')
   end if
 
-  call oblnkl(nout)
+  call oblnkl(outfile)
 
   if (abs(plhybd) > 1.0D-8) then
-     call ovarre(nout,'RF efficiency (A/W)','(effrfss)',effrfss)
-     call ovarre(nout,'RF gamma (A/W-m2)','(gamrf)',gamrf)
-     call ovarre(nout,'Lower hybrid power (W)','(plhybd)',plhybd)
+     call ovarre(outfile,'RF efficiency (A/W)','(effrfss)',effrfss)
+     call ovarre(outfile,'RF gamma (A/W-m2)','(gamrf)',gamrf)
+     call ovarre(outfile,'Lower hybrid power (W)','(plhybd)',plhybd)
   end if
 
   if (abs(pnbeam) > 1.0D-8) then
-     call ovarre(nout,'Beam efficiency (A/W)','(effnbss)',effnbss)
-     call ovarre(nout,'Beam gamma (A/W-m2)','(gamnb)',gamnb)
-     call ovarre(nout,'Neutral beam power (W)','(pnbeam)',pnbeam)
-     call ovarre(nout,'Neutral beam energy (keV)','(enbeam)',enbeam)
-     call ovarre(nout,'Neutral beam current (A)','(cnbeam)',cnbeam)
-     call ovarre(nout,'Fraction of beam energy to ions','(fpion)',fpion)
-     call ovarre(nout,'Neutral beam shine-through','(fshine)',fshine)
-     call ovarre(nout,'R injection tangent / R-major','(frbeam)',frbeam)
-     call ovarre(nout,'Beam decay lengths to centre','(taubeam)',taubeam)
+     call ovarre(outfile,'Beam efficiency (A/W)','(effnbss)',effnbss)
+     call ovarre(outfile,'Beam gamma (A/W-m2)','(gamnb)',gamnb)
+     call ovarre(outfile,'Neutral beam power (W)','(pnbeam)',pnbeam)
+     call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)
+     call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam)
+     call ovarre(outfile,'Fraction of beam energy to ions','(fpion)',fpion)
+     call ovarre(outfile,'Neutral beam shine-through','(fshine)',fshine)
+     call ovarre(outfile,'R injection tangent / R-major','(frbeam)',frbeam)
+     call ovarre(outfile,'Beam decay lengths to centre','(taubeam)',taubeam)
   end if
 
   if (abs(echpwr) > 1.0D-8) then
-     call ovarre(nout,'Electron cyclotron power (W)','(echpwr)',echpwr)
+     call ovarre(outfile,'Electron cyclotron power (W)','(echpwr)',echpwr)
   end if
 
   if (abs(pofcd) > 1.0D-8) then
-     call ovarre(nout,'OFCD efficiency (A/W)','(effofss)',effofss)
-     call ovarre(nout,'OFCD gamma (A/W-m2)','(gamof)',gamof)
-     call ovarre(nout,'OFCD power (W)','(pofcd)',pofcd)
+     call ovarre(outfile,'OFCD efficiency (A/W)','(effofss)',effofss)
+     call ovarre(outfile,'OFCD gamma (A/W-m2)','(gamof)',gamof)
+     call ovarre(outfile,'OFCD power (W)','(pofcd)',pofcd)
   end if
 
 end subroutine cudriv

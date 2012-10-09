@@ -12,8 +12,7 @@ subroutine stcall
   !+ad_args  None
   !+ad_desc  This routine is the caller for the stellarator models.
   !+ad_prob  None
-  !+ad_call  param.h90
-  !+ad_call  numer.h90
+  !+ad_call  process_output
   !+ad_call  acpow
   !+ad_call  avail
   !+ad_call  bldgcall
@@ -36,15 +35,15 @@ subroutine stcall
   !+ad_hist  19/11/97 PJK Corrected call to STCOIL (missing arguments)
   !+ad_hist  19/05/99 PJK Added call to routine AVAIL
   !+ad_hist  20/09/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  implicit none
+  use process_output
 
-  include 'param.h90'
-  include 'numer.h90'
+  implicit none
 
   !  Arguments
 
@@ -211,25 +210,25 @@ end subroutine stgeom
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine stbild(nout,iprint)
+subroutine stbild(outfile,iprint)
 
   !+ad_name  stbild
   !+ad_summ  Routine to determine the build of a stellarator machine
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine determines the build of the stellarator machine.
   !+ad_desc  The values calculated are based on the mean minor radius, etc.,
   !+ad_desc  as the actual radial and vertical build thicknesses vary with
   !+ad_desc  toroidal angle.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  divrt.h90
   !+ad_call  build.h90
-  !+ad_call  osections.h90
   !+ad_call  obuild
   !+ad_call  oheadr
   !+ad_call  osubhd
@@ -237,10 +236,13 @@ subroutine stbild(nout,iprint)
   !+ad_hist  29/06/94 PJK Initial version
   !+ad_hist  10/06/96 PJK Added first wall area calculation
   !+ad_hist  20/09/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -248,11 +250,10 @@ subroutine stbild(nout,iprint)
   include 'phydat.h90'
   include 'divrt.h90'
   include 'build.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: iprint,nout
+  integer, intent(in) :: iprint,outfile
 
   !  Local variables
 
@@ -307,71 +308,71 @@ subroutine stbild(nout,iprint)
 
   !  Print out device build
 
-  call oheadr(nout,'Radial Build')
+  call oheadr(outfile,'Radial Build')
 
-  write(nout,10)
+  write(outfile,10)
 10 format(t43,'Thickness (m)',t60,'Radius (m)')
 
   radius = 0.0D0
-  call obuild(nout,'Device centreline',0.0D0,radius)
+  call obuild(outfile,'Device centreline',0.0D0,radius)
 
   drbild = bore + ohcth + gapoh + bcylth
   radius = radius + drbild
-  call obuild(nout,'Machine bore',drbild,radius)
+  call obuild(outfile,'Machine bore',drbild,radius)
 
   radius = radius + tfcth
-  call obuild(nout,'TF coil inner leg',tfcth,radius)
+  call obuild(outfile,'TF coil inner leg',tfcth,radius)
 
   radius = radius + ddwi
-  call obuild(nout,'Cryostat',ddwi,radius)
+  call obuild(outfile,'Cryostat',ddwi,radius)
 
   radius = radius + gapds
-  call obuild(nout,'Gap',gapds,radius)
+  call obuild(outfile,'Gap',gapds,radius)
 
   radius = radius + shldith
-  call obuild(nout,'Inboard shield',shldith,radius)
+  call obuild(outfile,'Inboard shield',shldith,radius)
 
   radius = radius + blnkith
-  call obuild(nout,'Inboard blanket',blnkith,radius)
+  call obuild(outfile,'Inboard blanket',blnkith,radius)
 
   radius = radius + fwith
-  call obuild(nout,'Inboard first wall',fwith,radius)
+  call obuild(outfile,'Inboard first wall',fwith,radius)
 
   radius = radius + scrapli
-  call obuild(nout,'Inboard scrape-off',scrapli,radius)
+  call obuild(outfile,'Inboard scrape-off',scrapli,radius)
 
   radius = radius + rminor
-  call obuild(nout,'Plasma geometric centre',rminor,radius)
+  call obuild(outfile,'Plasma geometric centre',rminor,radius)
 
   radius = radius + rminor
-  call obuild(nout,'Plasma outer edge',rminor,radius)
+  call obuild(outfile,'Plasma outer edge',rminor,radius)
 
   radius = radius + scraplo
-  call obuild(nout,'Outboard scrape-off',scraplo,radius)
+  call obuild(outfile,'Outboard scrape-off',scraplo,radius)
 
   radius = radius + fwoth
-  call obuild(nout,'Outboard first wall',fwoth,radius)
+  call obuild(outfile,'Outboard first wall',fwoth,radius)
 
   radius = radius + blnkoth
-  call obuild(nout,'Outboard blanket',blnkoth,radius)
+  call obuild(outfile,'Outboard blanket',blnkoth,radius)
 
   radius = radius + shldoth
-  call obuild(nout,'Outboard shield',shldoth,radius)
+  call obuild(outfile,'Outboard shield',shldoth,radius)
 
   radius = radius + gapsto
-  call obuild(nout,'Gap',gapsto,radius)
+  call obuild(outfile,'Gap',gapsto,radius)
 
   radius = radius + ddwi
-  call obuild(nout,'Cryostat',ddwi,radius)
+  call obuild(outfile,'Cryostat',ddwi,radius)
 
   radius = radius + tfthko
-  call obuild(nout,'TF coil outer leg',tfthko,radius)
+  call obuild(outfile,'TF coil outer leg',tfthko,radius)
 
   !  Port size information
 
-  call osubhd(nout,'Port Size Information :')
-  call ovarre(nout,'Port width (m)','(prtsz)',prtsz)
-  call ovarre(nout,'Port requirement for beams (m)','(prtszreq)', &
+  call osubhd(outfile,'Port Size Information :')
+  call ovarre(outfile,'Port width (m)','(prtsz)',prtsz)
+  call ovarre(outfile,'Port requirement for beams (m)','(prtszreq)', &
        prtszreq)
 
 end subroutine stbild
@@ -389,6 +390,7 @@ subroutine stphys
   !+ad_desc  This routine calculates the physics quantities relevant to
   !+ad_desc  a stellarator device.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
@@ -419,11 +421,14 @@ subroutine stphys
   !+ad_hist  16/07/01 PJK Modified PCOND call
   !+ad_hist  22/05/06 PJK Modified PALPH2 call
   !+ad_hist  20/09/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -556,7 +561,7 @@ end subroutine stphys
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine stheat(nout,iprint)
+subroutine stheat(outfile,iprint)
 
   !+ad_name  stheat
   !+ad_summ  Routine to calculate calculate the auxiliary heating power
@@ -564,15 +569,15 @@ subroutine stheat(nout,iprint)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the auxiliary heating power for
   !+ad_desc  a stellarator device.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
-  !+ad_call  osections.h90
   !+ad_call  stella.h90
   !+ad_call  culnbi
   !+ad_call  oblnkl
@@ -582,23 +587,25 @@ subroutine stheat(nout,iprint)
   !+ad_hist  29/06/94 PJK Initial version
   !+ad_hist  01/04/98 PJK Modified call to CULNBI
   !+ad_hist  20/09/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use process_output
+
   implicit none
 
   include 'param.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
-  include 'osections.h90'
   include 'stella.h90'
 
   !  Arguments
 
-  integer, intent(in) :: iprint,nout
+  integer, intent(in) :: iprint,outfile
 
   !  Local variables
 
@@ -670,37 +677,37 @@ subroutine stheat(nout,iprint)
 
   !  Output section
 
-  call oheadr(nout,'Auxiliary Heating System')
+  call oheadr(outfile,'Auxiliary Heating System')
 
   select case (isthtr)
   case (1)
-     call ocmmnt(nout,'Electron Cyclotron Resonance Heating')
+     call ocmmnt(outfile,'Electron Cyclotron Resonance Heating')
   case (2)
-     call ocmmnt(nout,'Lower Hybrid Heating')
+     call ocmmnt(outfile,'Lower Hybrid Heating')
   case (3)
-     call ocmmnt(nout,'Neutral Beam Injection Heating')
+     call ocmmnt(outfile,'Neutral Beam Injection Heating')
   case default
      write(*,*) 'Error in routine STHEAT:'
      write(*,*) 'Illegal value of ISTHTR, = ',isthtr
      write(*,*) 'PROCESS stopping.'
      stop
   end select
-  call oblnkl(nout)
+  call oblnkl(outfile)
 
-  call ovarre(nout,'Auxiliary power supplied to plasma (W)', &
+  call ovarre(outfile,'Auxiliary power supplied to plasma (W)', &
        '(pheat)',pheat)
-  call ovarre(nout,'Energy multiplication factor Q','(bigq)',bigq)
+  call ovarre(outfile,'Energy multiplication factor Q','(bigq)',bigq)
 
   if (abs(pnbeam) > 1.0D-8) then
-     call ovarre(nout,'Neutral beam energy (keV)','(enbeam)',enbeam)
-     call ovarre(nout,'Neutral beam current (A)','(cnbeam)',cnbeam)
-     call ovarre(nout,'Fraction of beam energy to ions','(fpion)', &
+     call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)
+     call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam)
+     call ovarre(outfile,'Fraction of beam energy to ions','(fpion)', &
           fpion)
-     call ovarre(nout,'Neutral beam shine-through','(fshine)', &
+     call ovarre(outfile,'Neutral beam shine-through','(fshine)', &
           fshine)
-     call ovarre(nout,'R injection tangent / R-major','(frbeam)', &
+     call ovarre(outfile,'R injection tangent / R-major','(frbeam)', &
           frbeam)
-     call ovarre(nout,'Beam decay lengths to centre','(taubeam)', &
+     call ovarre(outfile,'Beam decay lengths to centre','(taubeam)', &
           taubeam)
   end if
 
@@ -708,14 +715,14 @@ end subroutine stheat
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine stcoil(nout,iprint)
+subroutine stcoil(outfile,iprint)
 
   !+ad_name  stcoil
   !+ad_summ  Routine that performs the calculations for stellarator TF coils
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the properties of the TF coils for
   !+ad_desc  a stellarator device.
@@ -747,7 +754,7 @@ subroutine stcoil(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -759,7 +766,7 @@ subroutine stcoil(nout,iprint)
   !  Produce output to file if required
 
   if (iprint == 1) then
-     call outtf(nout)
+     call outtf(outfile)
      return
   end if
 
@@ -1642,7 +1649,7 @@ end subroutine stblim
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine stigma(nout)
+subroutine stigma(outfile)
 
   !+ad_name  stigma
   !+ad_summ  Routine to calculate ignition margin at the final point
@@ -1650,15 +1657,15 @@ subroutine stigma(nout)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  None
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_desc  This routine calculates the ignition margin at the final
   !+ad_desc  point with different stellarator confinement time scaling laws
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
   !+ad_call  labels.h90
-  !+ad_call  osections.h90
   !+ad_call  fhfac
   !+ad_call  oblnkl
   !+ad_call  osubhd
@@ -1669,10 +1676,13 @@ subroutine stigma(nout)
   !+ad_hist  19/01/99 PJK Modified call to PCOND
   !+ad_hist  16/07/01 PJK Modified call to PCOND
   !+ad_hist  24/09/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -1680,11 +1690,10 @@ subroutine stigma(nout)
   include 'phydat.h90'
   include 'cdriv.h90'
   include 'labels.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout
+  integer, intent(in) :: outfile
 
   !  Local variables
 
@@ -1702,20 +1711,20 @@ subroutine stigma(nout)
 
   if (sect03 == 0) return
 
-  call osubhd(nout,'Confinement times, and required H-factors :')
+  call osubhd(outfile,'Confinement times, and required H-factors :')
 
-  write(nout,10)
+  write(outfile,10)
 10 format( &
         t5,'scaling law', &
         t30,'confinement time (s)', &
         t55,'H-factor for')
 
-  write(nout,20)
+  write(outfile,20)
 20 format( &
         t34,'for H = 2', &
         t54,'power balance')
 
-  call oblnkl(nout)
+  call oblnkl(outfile)
 
   !  Label stellarator scaling laws (update if more are added)
 
@@ -1736,7 +1745,7 @@ subroutine stigma(nout)
           xarea,zeff,ptrez,ptriz,taueez,taueiz,taueffz,powerhtz)
 
      hfac(iisc) = fhfac(i)
-     write(nout,30) tauscl(istlaw(iisc)),taueez,hfac(iisc)
+     write(outfile,30) tauscl(istlaw(iisc)),taueez,hfac(iisc)
   end do
 30 format(t2,a24,t34,f7.3,t58,f7.3)
 
@@ -1744,14 +1753,14 @@ end subroutine stigma
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine stout(nout)
+subroutine stout(outfile)
 
   !+ad_name  stout
   !+ad_summ  Routine to print out the final stellarator machine parameters
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  None
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_desc  This routine prints out the stellarator's parameters at the
   !+ad_desc  end of a run.
   !+ad_prob  None
@@ -1794,49 +1803,49 @@ subroutine stout(nout)
 
   !  Arguments
 
-  integer, intent(in) :: nout
+  integer, intent(in) :: outfile
 
   !  Local variables
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  call costs(nout,1)
-  call avail(nout,1)
-  call outplas(nout)
-  call stigma(nout)
-  call stheat(nout,1)
-  call divcall(nout,1)
-  call stbild(nout,1)
-  call stcoil(nout,1)
-  call tfspcall(nout,1)
-  call ststrc(nout,1)
-  call fwbs(nout,1)
+  call costs(outfile,1)
+  call avail(outfile,1)
+  call outplas(outfile)
+  call stigma(outfile)
+  call stheat(outfile,1)
+  call divcall(outfile,1)
+  call stbild(outfile,1)
+  call stcoil(outfile,1)
+  call tfspcall(outfile,1)
+  call ststrc(outfile,1)
+  call fwbs(outfile,1)
 
   if (ifispact == 1) then
      call fispac(0)
      call fispac(1)
-     call loca(nout,0)
-     call loca(nout,1)
+     call loca(outfile,0)
+     call loca(outfile,1)
   end if
 
-  call tfpwr(nout,1)
-  call vaccall(nout,1)
-  call bldgcall(nout,1)
-  call acpow(nout,1)
-  call power2(nout,1)
+  call tfpwr(outfile,1)
+  call vaccall(outfile,1)
+  call bldgcall(outfile,1)
+  call acpow(outfile,1)
+  call power2(outfile,1)
 
 end subroutine stout
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine ststrc(nout,iprint)
+subroutine ststrc(outfile,iprint)
 
   !+ad_name  ststrc
   !+ad_summ  Routine to call the structure module for a stellarator
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  None
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calls the structure module for a stellarator.
   !+ad_desc  This is the stellarator version of routine
@@ -1872,7 +1881,7 @@ subroutine ststrc(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: iprint,nout
+  integer, intent(in) :: iprint,outfile
 
   !  Local variables
 
@@ -1900,7 +1909,7 @@ subroutine ststrc(nout,iprint)
 
   call struct(cnorm,rmajor,rminor,ak,bt,itfsup,ipfres,tfboreh, &
        hmax,whtshld,divmas,twhtpf,whttf,fwmass,whtblkt,coolmass, &
-       wtbc,dewmkg,nout,iprint,fncmass,aintmass,clgsmass, &
+       wtbc,dewmkg,outfile,iprint,fncmass,aintmass,clgsmass, &
        coldmass,gsmass)
 
 end subroutine ststrc

@@ -1,7 +1,7 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine acpow(nout,iprint)
+subroutine acpow(outfile,iprint)
 
   !+ad_name  acpow
   !+ad_summ  AC power requirements
@@ -9,16 +9,16 @@ subroutine acpow(nout,iprint)
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_auth  P C Shipe, ORNL
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  The routine was drastically shortened on 23/01/90 (ORNL) from the
   !+ad_desc  original TETRA routine to provide only the total power needs for
   !+ad_desc  the plant. Included in STORAC in January 1992 by P.C. Shipe.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  bldgvol.h90
   !+ad_call  estocom.h90
   !+ad_call  htpwr.h90
-  !+ad_call  osections.h90
   !+ad_call  pwrcom.h90
   !+ad_call  oblnkl
   !+ad_call  oheadr
@@ -29,10 +29,13 @@ subroutine acpow(nout,iprint)
   !+ad_hist  22/01/97 PJK Subsumed heattr.h, heatrinp.h and pfelect.h into
   !+ad_hisc               htpwr.h
   !+ad_hist  27/07/11 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -40,11 +43,10 @@ subroutine acpow(nout,iprint)
   include 'pwrcom.h90'
   include 'estocom.h90'
   include 'htpwr.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: iprint,nout
+  integer, intent(in) :: iprint,outfile
 
   !  Local variables
 
@@ -94,31 +96,31 @@ subroutine acpow(nout,iprint)
 
   tlvpmw = fcsht + trithtmw + htpmw + vachtmw + 0.5D0*(crymw+ppfmw)
 
-  if ((iprint.eq.0).or.(sect17.eq.0)) return
+  if ((iprint == 0).or.(sect17 == 0)) return
 
   !  Output section
 
-  call oheadr(nout,'AC Power')
+  call oheadr(outfile,'AC Power')
 
-  call ovarre(nout,'Facility base load (MW)','(basemw)',basemw)
-  call ovarre(nout,'Divertor coil power supplies (MW)','(bdvmw)',bdvmw)
-  call ovarre(nout,'Cryogenic comp motors (MW)','(crymw)',crymw)
-  call ovarre(nout,'Total floor space (m2)','(efloor)',efloor)
-  call ovarre(nout,'MGF units (MW)','(fmgdmw)',fmgdmw)
-  call ovarre(nout,'Heat transport system pump motors (MW)', &
+  call ovarre(outfile,'Facility base load (MW)','(basemw)',basemw)
+  call ovarre(outfile,'Divertor coil power supplies (MW)','(bdvmw)',bdvmw)
+  call ovarre(outfile,'Cryogenic comp motors (MW)','(crymw)',crymw)
+  call ovarre(outfile,'Total floor space (m2)','(efloor)',efloor)
+  call ovarre(outfile,'MGF units (MW)','(fmgdmw)',fmgdmw)
+  call ovarre(outfile,'Heat transport system pump motors (MW)', &
        '(htpmw)',htpmw)
-  call ovarre(nout,'PF coil power supplies (MW)','(ppfmw)',ppfmw)
-  call ovarre(nout,'Power/floor area (kW/m2)','(pkwpm2)',pkwpm2)
-  call ovarre(nout,'TF coil power supplies (MW)','(ptfmw)',ptfmw)
-  call ovarre(nout,'Plasma heating supplies (MW)','(pheatmw)', &
+  call ovarre(outfile,'PF coil power supplies (MW)','(ppfmw)',ppfmw)
+  call ovarre(outfile,'Power/floor area (kW/m2)','(pkwpm2)',pkwpm2)
+  call ovarre(outfile,'TF coil power supplies (MW)','(ptfmw)',ptfmw)
+  call ovarre(outfile,'Plasma heating supplies (MW)','(pheatmw)', &
        pheatmw)
-  call ovarre(nout,'Tritium processing (MW)','(trithtmw)',trithtmw)
-  call ovarre(nout,'Vacuum pump motors (MW)','(vachtmw)',vachtmw)
+  call ovarre(outfile,'Tritium processing (MW)','(trithtmw)',trithtmw)
+  call ovarre(outfile,'Vacuum pump motors (MW)','(vachtmw)',vachtmw)
 
-  call oblnkl(nout)
+  call oblnkl(outfile)
 
-  call ovarre(nout,'Total pulsed power (MW)','(pacpmw)',pacpmw)
-  call ovarre(nout,'Total facility power (MW)','(fcsht)',fcsht)
-  call ovarre(nout,'Total low voltage power (MW)','(tlvpmw)',tlvpmw)
+  call ovarre(outfile,'Total pulsed power (MW)','(pacpmw)',pacpmw)
+  call ovarre(outfile,'Total facility power (MW)','(fcsht)',fcsht)
+  call ovarre(outfile,'Total low voltage power (MW)','(tlvpmw)',tlvpmw)
 
 end subroutine acpow

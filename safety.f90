@@ -137,7 +137,7 @@ end block data
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine loca(nout,iprint)
+subroutine loca(outfile,iprint)
 
   !+ad_name  loca
   !+ad_summ  Interface to Loss Of Coolant Accident model
@@ -150,12 +150,13 @@ subroutine loca(nout,iprint)
   !+ad_cont  fofx
   !+ad_cont  newton
   !+ad_cont  root
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine links the Loss Of Coolant Accident model to the rest of
   !+ad_desc  PROCESS. The model calculates the steady state temperatures that
   !+ad_desc  would develop following a loss of coolant accident.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  build.h90
@@ -171,12 +172,15 @@ subroutine loca(nout,iprint)
   !+ad_hist  26/02/97 PJK Corrected cases where there is no OH coil
   !+ad_hist  06/07/99 PJK Allowed for use of more ISUMATTF options
   !+ad_hist  19/09/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  This routine is untested in F90...
   !+ad_docs  F/MI/PJK/LOGBOOK12, pp.70,71,72,73
   !+ad_docs  Strategic Studies Note 96/30, January 1997
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -191,7 +195,7 @@ subroutine loca(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: iprint,nout
+  integer, intent(in) :: iprint,outfile
 
   !  Local variables
 
@@ -515,8 +519,8 @@ subroutine loca(nout,iprint)
 
      !  Output section
 
-     call oheadr(nout,'Loss of Coolant Accident')
-     call ovarre(nout,'First wall temperature after 3 months (K)', &
+     call oheadr(outfile,'Loss of Coolant Accident')
+     call ovarre(outfile,'First wall temperature after 3 months (K)', &
           '(fwtemp)',fwtemp)
 
   end if

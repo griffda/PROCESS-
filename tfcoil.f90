@@ -1,21 +1,21 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine tfcoil(nout,iprint)
+subroutine tfcoil(outfile,iprint)
 
   !+ad_name  tfcoil
   !+ad_summ  TF coil module
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine calculates various parameters for the TF coil set.
   !+ad_desc  If the TF coils are superconducting the calculations are performed
   !+ad_desc  in routine <A HREF="sctfcoil.html">sctfcoil</A> instead.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  osections.h90
   !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
@@ -28,10 +28,13 @@ subroutine tfcoil(nout,iprint)
   !+ad_hist  22/10/96 PJK Initial upgraded version
   !+ad_hist  08/05/12 PJK Initial F90 version
   !+ad_hist  08/10/12 PJK Swapped concoptf argument order
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -39,11 +42,10 @@ subroutine tfcoil(nout,iprint)
   include 'phydat.h90'
   include 'build.h90'
   include 'tfcoil.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -104,7 +106,7 @@ subroutine tfcoil(nout,iprint)
 
      !  Other calculations for normal-conducting TF coils
 
-     call concoptf(nout,0)
+     call concoptf(outfile,0)
 
      !  Inductance
 
@@ -115,7 +117,7 @@ subroutine tfcoil(nout,iprint)
      estotf = 0.5D-9 * tfcind1 * ritfc**2 / tfno
 
   else  !  Superconducting TF coils
-     call sctfcoil(nout,iprint)
+     call sctfcoil(outfile,iprint)
   end if
 
   !  Port size calculation
@@ -128,22 +130,22 @@ subroutine tfcoil(nout,iprint)
 
   if (itfsup == 0) then
 
-     call oheadr(nout,'TF Coils')
-     call ovarre(nout,'TF coil current (A)','(ritfc)',ritfc)
-     call ovarre(nout,'Peak field at the TF coils (T)','(bmaxtf)',bmaxtf)
-     call ovarre(nout,'Ripple at plasma edge (%)','(ripple)',ripple)
-     call ovarre(nout,'Allowable ripple (%)','(ripmax)',ripmax)
-     call ovarre(nout,'Number of TF coil legs','(tfno)',tfno)
+     call oheadr(outfile,'TF Coils')
+     call ovarre(outfile,'TF coil current (A)','(ritfc)',ritfc)
+     call ovarre(outfile,'Peak field at the TF coils (T)','(bmaxtf)',bmaxtf)
+     call ovarre(outfile,'Ripple at plasma edge (%)','(ripple)',ripple)
+     call ovarre(outfile,'Allowable ripple (%)','(ripmax)',ripmax)
+     call ovarre(outfile,'Number of TF coil legs','(tfno)',tfno)
 
-     call osubhd(nout,'Energy and Forces :')
-     call ovarre(nout,'Stored energy per coil (GJ)','(estotf)',estotf)
-     call ovarre(nout,'Vertical force on inner leg (N)','(vforce)',vforce)
-     call ovarre(nout,'Centering force on inner leg (N/m)','(cforce)',cforce)
-     call ovarre(nout,'Radial stress (Pa)','(sigrad)',sigrad)
-     call ovarre(nout,'Transverse stress (Pa)','(sigtan)',sigtan)
-     call ovarre(nout,'Vertical stress (Pa)','(sigver)',sigver)
+     call osubhd(outfile,'Energy and Forces :')
+     call ovarre(outfile,'Stored energy per coil (GJ)','(estotf)',estotf)
+     call ovarre(outfile,'Vertical force on inner leg (N)','(vforce)',vforce)
+     call ovarre(outfile,'Centering force on inner leg (N/m)','(cforce)',cforce)
+     call ovarre(outfile,'Radial stress (Pa)','(sigrad)',sigrad)
+     call ovarre(outfile,'Transverse stress (Pa)','(sigtan)',sigtan)
+     call ovarre(outfile,'Vertical stress (Pa)','(sigver)',sigver)
 
-     call concoptf(nout,iprint)
+     call concoptf(outfile,iprint)
 
   end if
 
@@ -151,20 +153,20 @@ end subroutine tfcoil
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine concoptf(nout,iprint)
+subroutine concoptf(outfile,iprint)
 
   !+ad_name  concoptf
   !+ad_summ  Calculates additional parameters for resistive TF coils
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine calculates various additional parameters for a
   !+ad_desc  resistive TF coil set, including for TART machines.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  osections.h90
   !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
@@ -175,10 +177,13 @@ subroutine concoptf(nout,iprint)
   !+ad_hist  18/11/97 PJK Modified RTOP,ZTOP values
   !+ad_hist  08/05/12 PJK Initial F90 version
   !+ad_hist  08/10/12 PJK Swapped argument order
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -186,11 +191,10 @@ subroutine concoptf(nout,iprint)
   include 'phydat.h90'
   include 'tfcoil.h90'
   include 'build.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: iprint,nout
+  integer, intent(in) :: iprint,outfile
 
   !  Local variables
 
@@ -263,7 +267,7 @@ subroutine concoptf(nout,iprint)
 
         !  Volume and resistive power losses of TART centrepost
 
-        call cpost(nout,pi,rtop,ztop,rmid,hmax,ritfc,rhocp,fcoolcp,volcp,prescp)
+        call cpost(pi,rtop,ztop,rmid,hmax,ritfc,rhocp,fcoolcp,volcp,prescp)
 
      end if
 
@@ -287,40 +291,40 @@ subroutine concoptf(nout,iprint)
 
   !  Output section
 
-  call osubhd(nout,'Conventional Copper TF Coil Information :')
-  call ovarre(nout,'Inner leg current density (A/m2)','(oacdcp)',oacdcp)
-  call ovarre(nout,'Outer leg current density (A/m2)','(cdtfleg)',cdtfleg)
-  call ovarre(nout,'Number of turns per outer leg','(turnstf)',turnstf)
-  call ovarre(nout,'Outer leg current per turn (A)','(cpttf)',cpttf)
-  call ovarre(nout,'Inner leg volume (m3)','(volcp)',volcp)
-  call ovarre(nout,'Outer leg volume per coil (m3)','(voltfleg)',voltfleg)
-  call ovarre(nout,'Mass of inner legs (kg)','(whtcp)',whtcp)
-  call ovarre(nout,'Mass of outer legs (kg)','(whttflgs)',whttflgs)
-  call ovarre(nout,'Total TF coil mass (kg)','(whttf)',whttf)
-  call ovarre(nout,'Inner leg resistive power (W)','(prescp)',prescp)
-  call ovarre(nout,'Outer leg resistance per coil (ohm)','(rhotfleg)',rhotfleg)
-  call ovarre(nout,'Average inner leg temperature (C)','(tcpav)',tcpav)
+  call osubhd(outfile,'Conventional Copper TF Coil Information :')
+  call ovarre(outfile,'Inner leg current density (A/m2)','(oacdcp)',oacdcp)
+  call ovarre(outfile,'Outer leg current density (A/m2)','(cdtfleg)',cdtfleg)
+  call ovarre(outfile,'Number of turns per outer leg','(turnstf)',turnstf)
+  call ovarre(outfile,'Outer leg current per turn (A)','(cpttf)',cpttf)
+  call ovarre(outfile,'Inner leg volume (m3)','(volcp)',volcp)
+  call ovarre(outfile,'Outer leg volume per coil (m3)','(voltfleg)',voltfleg)
+  call ovarre(outfile,'Mass of inner legs (kg)','(whtcp)',whtcp)
+  call ovarre(outfile,'Mass of outer legs (kg)','(whttflgs)',whttflgs)
+  call ovarre(outfile,'Total TF coil mass (kg)','(whttf)',whttf)
+  call ovarre(outfile,'Inner leg resistive power (W)','(prescp)',prescp)
+  call ovarre(outfile,'Outer leg resistance per coil (ohm)','(rhotfleg)',rhotfleg)
+  call ovarre(outfile,'Average inner leg temperature (C)','(tcpav)',tcpav)
 
 end subroutine concoptf
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine cntrpst(nout,iprint)
+subroutine cntrpst(outfile,iprint)
 
   !+ad_name  cntrpst
   !+ad_summ  Evaluates the properties of a TART centrepost
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine evaluates the parameters of the centrepost for a
   !+ad_desc  tight aspect ratio tokamak. The centrepost is assumed to be tapered,
   !+ad_desc  i.e. narrowest on the midplane (z=0).
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  fwblsh.h90
-  !+ad_call  osections.h90
   !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
@@ -329,10 +333,13 @@ subroutine cntrpst(nout,iprint)
   !+ad_call  ovarre
   !+ad_hist  22/10/96 PJK Initial upgraded version
   !+ad_hist  08/05/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -341,11 +348,10 @@ subroutine cntrpst(nout,iprint)
   include 'tfcoil.h90'
   include 'fwblsh.h90'
   include 'build.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -446,45 +452,44 @@ subroutine cntrpst(nout,iprint)
 
   !  Output section
 
-  call oheadr(nout,'Centrepost Coolant Parameters')
-  call ovarre(nout,'Centrepost coolant fraction','(fcoolcp)',fcoolcp)
-  call ovarre(nout,'Average coolant channel diameter (m)','(dcool)',dcool)
-  call ovarre(nout,'Coolant channel length (m)','(lcool)',lcool)
-  call ovarre(nout,'Maximum coolant flow speed (m/s)','(vcool)',vcool)
-  call ovarre(nout,'Number of coolant tubes','(ncool)',ncool)
-  call ovarre(nout,'Reynolds number','(reyn)',reyn)
-  call ovarre(nout,'Prandtl number','(prndtl)',prndtl)
-  call ovarre(nout,'Nusselt number','(nuselt)',nuselt)
+  call oheadr(outfile,'Centrepost Coolant Parameters')
+  call ovarre(outfile,'Centrepost coolant fraction','(fcoolcp)',fcoolcp)
+  call ovarre(outfile,'Average coolant channel diameter (m)','(dcool)',dcool)
+  call ovarre(outfile,'Coolant channel length (m)','(lcool)',lcool)
+  call ovarre(outfile,'Maximum coolant flow speed (m/s)','(vcool)',vcool)
+  call ovarre(outfile,'Number of coolant tubes','(ncool)',ncool)
+  call ovarre(outfile,'Reynolds number','(reyn)',reyn)
+  call ovarre(outfile,'Prandtl number','(prndtl)',prndtl)
+  call ovarre(outfile,'Nusselt number','(nuselt)',nuselt)
 
-  call osubhd(nout,'Resistive Heating :')
-  call ovarre(nout,'Average conductor resistivity (ohm.m)','(rhocp)',rhocp)
-  call ovarre(nout,'Resistive heating (W)','(prescp)',prescp)
+  call osubhd(outfile,'Resistive Heating :')
+  call ovarre(outfile,'Average conductor resistivity (ohm.m)','(rhocp)',rhocp)
+  call ovarre(outfile,'Resistive heating (W)','(prescp)',prescp)
 
-  call osubhd(nout,'Temperatures :')
-  call ovarre(nout,'Input coolant temperature (C)','(tcoolin)',tcoolin)
-  call ovarre(nout,'Input-output coolant temperature rise (C)','(dtiocool)',dtiocool)
-  call ovarre(nout,'Film temperature rise (C)','(dtfilmav)',dtfilmav)
-  call ovarre(nout,'Average temp gradient in conductor (K/m)','(dtcncpav)',dtcncpav)
-  call ovarre(nout,'Average centrepost temperature (C)','(tcpav2)',tcpav2)
-  call ovarre(nout,'Peak centrepost temperature (C)','(tcpmax)',tcpmax)
+  call osubhd(outfile,'Temperatures :')
+  call ovarre(outfile,'Input coolant temperature (C)','(tcoolin)',tcoolin)
+  call ovarre(outfile,'Input-output coolant temperature rise (C)','(dtiocool)',dtiocool)
+  call ovarre(outfile,'Film temperature rise (C)','(dtfilmav)',dtfilmav)
+  call ovarre(outfile,'Average temp gradient in conductor (K/m)','(dtcncpav)',dtcncpav)
+  call ovarre(outfile,'Average centrepost temperature (C)','(tcpav2)',tcpav2)
+  call ovarre(outfile,'Peak centrepost temperature (C)','(tcpmax)',tcpmax)
 
-  call osubhd(nout,'Pump Power :')
-  call ovarre(nout,'Coolant pressure drop (Pa)','(dpres)',dpres)
-  call ovarre(nout,'Coolant inlet pressure (Pa)','(presin)',presin)
-  call ovarre(nout,'Pump power (W)','(ppump)',ppump)
+  call osubhd(outfile,'Pump Power :')
+  call ovarre(outfile,'Coolant pressure drop (Pa)','(dpres)',dpres)
+  call ovarre(outfile,'Coolant inlet pressure (Pa)','(presin)',presin)
+  call ovarre(outfile,'Pump power (W)','(ppump)',ppump)
 
 end subroutine cntrpst
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine cpost(nout,pi,rtop,ztop,rmid,hmax,curr,rho,fcool,volume,respow)
+subroutine cpost(pi,rtop,ztop,rmid,hmax,curr,rho,fcool,volume,respow)
 
   !+ad_name  cpost
   !+ad_summ  Calculates the volume and resistive power losses of a TART centrepost
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout   : input integer : output file unit
   !+ad_args  pi     : input real : 3.1415...
   !+ad_args  rtop   : input real : Radius of the ends of the centrepost (m)
   !+ad_args  ztop   : input real : Distance from the midplane to the top of the
@@ -516,7 +521,6 @@ subroutine cpost(nout,pi,rtop,ztop,rmid,hmax,curr,rho,fcool,volume,respow)
 
   !  Arguments
 
-  integer, intent(in) :: nout
   real(kind(1.0D0)), intent(in) :: pi,rtop,ztop,rmid,hmax,curr,rho,fcool
   real(kind(1.0D0)), intent(out) :: volume,respow
 
@@ -531,51 +535,51 @@ subroutine cpost(nout,pi,rtop,ztop,rmid,hmax,curr,rho,fcool,volume,respow)
   !  Error traps
 
   if (rtop <= 0.0D0) then
-     write(nout,*) 'Error in routine CPOST:'
-     write(nout,*) 'RTOP = ',rtop
-     write(nout,*) 'PROCESS stopping.'
+     write(*,*) 'Error in routine CPOST:'
+     write(*,*) 'RTOP = ',rtop
+     write(*,*) 'PROCESS stopping.'
      stop
   end if
 
   if (ztop <= 0.0D0) then
-     write(nout,*) 'Error in routine CPOST:'
-     write(nout,*) 'ZTOP = ',ztop
-     write(nout,*) 'PROCESS stopping.'
+     write(*,*) 'Error in routine CPOST:'
+     write(*,*) 'ZTOP = ',ztop
+     write(*,*) 'PROCESS stopping.'
      stop
   end if
 
   if (rmid <= 0.0D0) then
-     write(nout,*) 'Error in routine CPOST:'
-     write(nout,*) 'RMID = ',rmid
-     write(nout,*) 'PROCESS stopping.'
+     write(*,*) 'Error in routine CPOST:'
+     write(*,*) 'RMID = ',rmid
+     write(*,*) 'PROCESS stopping.'
      stop
   end if
 
   if (hmax <= 0.0D0) then
-     write(nout,*) 'Error in routine CPOST:'
-     write(nout,*) 'HMAX = ',hmax
-     write(nout,*) 'PROCESS stopping.'
+     write(*,*) 'Error in routine CPOST:'
+     write(*,*) 'HMAX = ',hmax
+     write(*,*) 'PROCESS stopping.'
      stop
   end if
 
   if ((fcool < 0.0D0).or.(fcool > 1.0D0)) then
-     write(nout,*) 'Error in routine CPOST:'
-     write(nout,*) 'FCOOL = ',fcool
-     write(nout,*) 'PROCESS stopping.'
+     write(*,*) 'Error in routine CPOST:'
+     write(*,*) 'FCOOL = ',fcool
+     write(*,*) 'PROCESS stopping.'
      stop
   end if
 
   if (rtop < rmid) then
-     write(nout,*) 'Error in routine CPOST:'
-     write(nout,*) 'RTOP < RMID...', rtop, rmid
-     write(nout,*) 'PROCESS stopping.'
+     write(*,*) 'Error in routine CPOST:'
+     write(*,*) 'RTOP < RMID...', rtop, rmid
+     write(*,*) 'PROCESS stopping.'
      stop
   end if
 
   if (hmax < ztop) then
-     write(nout,*) 'Error in routine CPOST:'
-     write(nout,*) 'HMAX < ZTOP...', hmax, ztop
-     write(nout,*) 'PROCESS stopping.'
+     write(*,*) 'Error in routine CPOST:'
+     write(*,*) 'HMAX < ZTOP...', hmax, ztop
+     write(*,*) 'PROCESS stopping.'
      stop
   end if
 
@@ -584,9 +588,9 @@ subroutine cpost(nout,pi,rtop,ztop,rmid,hmax,curr,rho,fcool,volume,respow)
   if (fcool == 1.0D0) then
      volume = 0.0D0
      respow = 0.0D0
-     write(nout,*) 'Warning from routine CPOST:'
-     write(nout,*) 'Silly answers from CPOST because FCOOL=1.0...'
-     write(nout,*) 'PROCESS continuing'
+     write(*,*) 'Warning from routine CPOST:'
+     write(*,*) 'Silly answers from CPOST because FCOOL=1.0...'
+     write(*,*) 'PROCESS continuing'
      return
   end if
 
@@ -621,9 +625,9 @@ subroutine cpost(nout,pi,rtop,ztop,rmid,hmax,curr,rho,fcool,volume,respow)
      r = rc - sqrt( (rc-rmid)**2 - z*z )
 
      if (r <= 0.0D0) then
-        write(nout,*) 'Error in routine CPOST:'
-        write(nout,*) 'R(Z) = ',r
-        write(nout,*) 'PROCESS stopping.'
+        write(*,*) 'Error in routine CPOST:'
+        write(*,*) 'R(Z) = ',r
+        write(*,*) 'PROCESS stopping.'
         stop
      end if
 

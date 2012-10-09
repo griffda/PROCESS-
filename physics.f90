@@ -12,6 +12,7 @@ subroutine physics
   !+ad_desc  This routine calculates all the primary plasma physics
   !+ad_desc  characteristics for a tokamak device.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
@@ -58,10 +59,13 @@ subroutine physics
   !+ad_hist  22/05/06 PJK Added IFALPHAP to argument list of PALPH2
   !+ad_hist  10/11/11 PJK Initial F90 version; retired routine CURREN
   !+ad_hisc               and switch ICULCR
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -3051,22 +3055,22 @@ end subroutine pthresh
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine igmarcal(nout)
+subroutine igmarcal(outfile)
 
   !+ad_name  igmarcal
   !+ad_summ  Routine to calculate ignition margin
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout   : input integer : Fortran output unit identifier
+  !+ad_args  outfile   : input integer : Fortran output unit identifier
   !+ad_desc  This routine calculates the ignition margin at the final point
   !+ad_desc  with different scalings.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
   !+ad_call  labels.h90
-  !+ad_call  osections.h90
   !+ad_call  fhfac
   !+ad_call  oblnkl
   !+ad_call  osubhd
@@ -3077,10 +3081,13 @@ subroutine igmarcal(nout)
   !+ad_hist  19/01/99 PJK Modified PCOND arguments
   !+ad_hist  17/07/01 PJK Modified PCOND arguments
   !+ad_hist  10/11/11 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -3088,11 +3095,10 @@ subroutine igmarcal(nout)
   include 'phydat.h90'
   include 'cdriv.h90'
   include 'labels.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout
+  integer, intent(in) :: outfile
 
   !  Local variables
 
@@ -3113,16 +3119,16 @@ subroutine igmarcal(nout)
 
   !  Start output
 
-  call osubhd(nout,'Confinement times, and required H-factors :')
+  call osubhd(outfile,'Confinement times, and required H-factors :')
 
-  write(nout,10)
+  write(outfile,10)
 10 format(t5,'scaling law', t30,'confinement time (s)', &
         t55,'H-factor for')
 
-  write(nout,20)
+  write(outfile,20)
 20 format(t34,'for H = 2',t54,'power balance')
 
-  call oblnkl(nout)
+  call oblnkl(outfile)
 
   !  Calculate power balances for all scaling laws assuming H = 2
 
@@ -3133,7 +3139,7 @@ subroutine igmarcal(nout)
           xarea,zeff,ptrez,ptriz,taueez,taueiz,taueffz,powerhtz)
      hfac(iisc) = fhfac(iisc)
 
-     write(nout,30) tauscl(iisc),taueez,hfac(iisc)
+     write(outfile,30) tauscl(iisc),taueez,hfac(iisc)
   end do
 30 format(t2,a24,t34,f7.3,t58,f7.3)
 

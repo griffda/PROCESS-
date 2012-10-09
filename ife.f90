@@ -198,8 +198,7 @@ subroutine ifecll
   !+ad_desc  This routine calls the physics and engineering modules
   !+ad_desc  relevant to inertial fusion energy power plants.
   !+ad_prob  None
-  !+ad_call  param.h90
-  !+ad_call  numer.h90
+  !+ad_call  process_output
   !+ad_call  avail
   !+ad_call  costs
   !+ad_call  ifeacp
@@ -215,16 +214,16 @@ subroutine ifecll
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  19/05/99 PJK Added call to routine AVAIL
   !+ad_hist  24/09/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.66
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  implicit none
+  use process_output
 
-  include 'param.h90'
-  include 'numer.h90'
+  implicit none
 
   !  Arguments
 
@@ -284,7 +283,7 @@ end subroutine ifecll
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine ifeout(nout)
+subroutine ifeout(outfile)
 
   !+ad_name  ifeout
   !+ad_summ  Routine to output the physics and engineering information
@@ -292,7 +291,7 @@ subroutine ifeout(nout)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_desc  This routine outputs the physics and engineering information
   !+ad_desc  relevant to inertial fusion energy power plants.
   !+ad_prob  None
@@ -321,7 +320,7 @@ subroutine ifeout(nout)
 
   !  Arguments
 
-  integer, intent(in) :: nout
+  integer, intent(in) :: outfile
 
   !  Local variables
 
@@ -329,31 +328,31 @@ subroutine ifeout(nout)
 
   !  Costs
 
-  call costs(nout,1)
+  call costs(outfile,1)
 
   !  Plant availability
 
-  call avail(nout,1)
+  call avail(outfile,1)
 
   !  IFE physics
 
-  call ifephy(nout,1)
+  call ifephy(outfile,1)
 
   !  Device build
 
-  call ifebld(nout,1)
+  call ifebld(outfile,1)
 
   !  First wall, blanket and shield
 
-  call ifefbs(nout,1)
+  call ifefbs(outfile,1)
 
   !  Device structure
 
-  call ifestr(nout,1)
+  call ifestr(outfile,1)
 
   !  Target data
 
-  call ifetgt(nout,1)
+  call ifetgt(outfile,1)
 
   !  Primary thermal power
 
@@ -361,25 +360,25 @@ subroutine ifeout(nout)
 
   !  Vacuum system
 
-  call ifevac(nout,1)
+  call ifevac(outfile,1)
 
   !  Buildings
 
-  call ifebdg(nout,1)
+  call ifebdg(outfile,1)
 
   !  AC power requirements
 
-  call ifeacp(nout,1)
+  call ifeacp(outfile,1)
 
   !  Secondary thermal power
 
-  call ifepw2(nout,1)
+  call ifepw2(outfile,1)
 
 end subroutine ifeout
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine ifephy(nout,iprint)
+subroutine ifephy(outfile,iprint)
 
   !+ad_name  ifephy
   !+ad_summ  Routine to calculate the physics parameters of an Inertial Fusion
@@ -387,13 +386,13 @@ subroutine ifephy(nout,iprint)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the physics parameters of an Inertial Fusion
   !+ad_desc  Energy power plant.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
-  !+ad_call  osections.h90
   !+ad_call  phydat.h90
   !+ad_call  ife.h90
   !+ad_call  build.h90
@@ -406,23 +405,25 @@ subroutine ifephy(nout,iprint)
   !+ad_call  ovarre
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  24/09/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, pp.68,85
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use process_output
+
   implicit none
 
   include 'param.h90'
-  include 'osections.h90'
   include 'phydat.h90'
   include 'ife.h90'
   include 'build.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -478,9 +479,9 @@ subroutine ifephy(nout,iprint)
              nbeams,qion,reprat,sigma,sigma0,tauf,theta,vi,gain,etadrv)
 
      case default
-        write(nout,*) 'Error in routine IFEPHY:'
-        write(nout,*) 'Illegal value for IFEDRV, = ',ifedrv
-        write(nout,*) 'PROCESS stopping.'
+        write(outfile,*) 'Error in routine IFEPHY:'
+        write(outfile,*) 'Illegal value for IFEDRV, = ',ifedrv
+        write(outfile,*) 'PROCESS stopping.'
         stop
 
      end select
@@ -509,27 +510,27 @@ subroutine ifephy(nout,iprint)
 
   !  Output section
 
-  call oheadr(nout,'Physics / Driver Issues')
+  call oheadr(outfile,'Physics / Driver Issues')
 
   select case (ifedrv)
 
   case (-1, 0)
-     call ocmmnt(nout,'Driver type : generic')
+     call ocmmnt(outfile,'Driver type : generic')
   case (1)
-     call ocmmnt(nout,'Driver type : laser')
+     call ocmmnt(outfile,'Driver type : laser')
   case (2)
-     call ocmmnt(nout,'Driver type : heavy ion beam')
+     call ocmmnt(outfile,'Driver type : heavy ion beam')
   end select
-  call oblnkl(nout)
+  call oblnkl(outfile)
 
-  call ovarre(nout,'Driver energy (J)','(edrive)',edrive)
-  call ovarre(nout,'Driver efficiency','(etadrv)',etadrv)
-  call ovarre(nout,'Driver power reaching target (W)','(pdrive)', &
+  call ovarre(outfile,'Driver energy (J)','(edrive)',edrive)
+  call ovarre(outfile,'Driver efficiency','(etadrv)',etadrv)
+  call ovarre(outfile,'Driver power reaching target (W)','(pdrive)', &
        pdrive)
-  call ovarre(nout,'Driver repetition rate (Hz)','(reprat)',reprat)
-  call ovarre(nout,'Target gain','(gain)',gain)
-  call ovarre(nout,'Fusion power (MW)','(powfmw)',powfmw)
-  call ovarre(nout,'Neutron wall load (MW/m2)','(wallmw)',wallmw)
+  call ovarre(outfile,'Driver repetition rate (Hz)','(reprat)',reprat)
+  call ovarre(outfile,'Target gain','(gain)',gain)
+  call ovarre(outfile,'Fusion power (MW)','(powfmw)',powfmw)
+  call ovarre(outfile,'Neutron wall load (MW/m2)','(wallmw)',wallmw)
 
 end subroutine ifephy
 
@@ -1219,7 +1220,7 @@ end subroutine driver
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine ifebld(nout,iprint)
+subroutine ifebld(outfile,iprint)
 
   !+ad_name  ifebld
   !+ad_summ  Routine to create the build of an inertial fusion energy device
@@ -1230,12 +1231,12 @@ subroutine ifebld(nout,iprint)
   !+ad_cont  hylbld
   !+ad_cont  osibld
   !+ad_cont  sombld
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine constructs the build of an inertial fusion energy device
   !+ad_desc  and calculates the material volumes for the device core.
   !+ad_prob  None
-  !+ad_call  osections.h90
+  !+ad_call  process_output
   !+ad_call  ife.h90
   !+ad_call  genbld
   !+ad_call  hylbld
@@ -1245,20 +1246,22 @@ subroutine ifebld(nout,iprint)
   !+ad_call  sombld
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  24/09/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.52
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use process_output
+
   implicit none
 
-  include 'osections.h90'
   include 'ife.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -1283,46 +1286,46 @@ subroutine ifebld(nout,iprint)
 
   !  Output section
 
-  call oheadr(nout,'Radial Build')
-  write(nout,20)
+  call oheadr(outfile,'Radial Build')
+  write(outfile,20)
 20 format(T43,'Thickness (m)',T60,'Radius (m)')
 
-  call obuild(nout,'Device centreline',0.0D0,0.0D0)
-  call obuild(nout,'Chamber',chrad,r1)
-  call obuild(nout,'First Wall',fwdr,r2)
-  call obuild(nout,'Void 1',v1dr,r3)
-  call obuild(nout,'Blanket',bldr,r4)
-  call obuild(nout,'Void 2',v2dr,r5)
-  call obuild(nout,'Shield',shdr,r6)
-  call obuild(nout,'Void 3',v3dr,r7)
+  call obuild(outfile,'Device centreline',0.0D0,0.0D0)
+  call obuild(outfile,'Chamber',chrad,r1)
+  call obuild(outfile,'First Wall',fwdr,r2)
+  call obuild(outfile,'Void 1',v1dr,r3)
+  call obuild(outfile,'Blanket',bldr,r4)
+  call obuild(outfile,'Void 2',v2dr,r5)
+  call obuild(outfile,'Shield',shdr,r6)
+  call obuild(outfile,'Void 3',v3dr,r7)
 
-  call oheadr(nout,'Vertical Build')
-  write(nout,30)
+  call oheadr(outfile,'Vertical Build')
+  write(outfile,30)
 30 format(T43,'Thickness (m)',T60,'Height (m)')
 
-  call obuild(nout,'Base of device',0.0D0,-zl7)
-  call obuild(nout,'Void 3',v3dzl,-zl6)
-  call obuild(nout,'Shield',shdzl,-zl5)
-  call obuild(nout,'Void 2',v2dzl,-zl4)
-  call obuild(nout,'Blanket',bldzl,-zl3)
-  call obuild(nout,'Void 1',v1dzl,-zl2)
-  call obuild(nout,'First Wall',fwdzl,-zl1)
-  call obuild(nout,'Chamber',chdzl,0.0D0)
-  call obuild(nout,'Chamber',chdzu,zu1)
-  call obuild(nout,'First Wall',fwdzu,zu2)
-  call obuild(nout,'Void 1',v1dzu,zu3)
-  call obuild(nout,'Blanket',bldzu,zu4)
-  call obuild(nout,'Void 2',v2dzu,zu5)
-  call obuild(nout,'Shield',shdzu,zu6)
-  call obuild(nout,'Void 3',v3dzu,zu7)
+  call obuild(outfile,'Base of device',0.0D0,-zl7)
+  call obuild(outfile,'Void 3',v3dzl,-zl6)
+  call obuild(outfile,'Shield',shdzl,-zl5)
+  call obuild(outfile,'Void 2',v2dzl,-zl4)
+  call obuild(outfile,'Blanket',bldzl,-zl3)
+  call obuild(outfile,'Void 1',v1dzl,-zl2)
+  call obuild(outfile,'First Wall',fwdzl,-zl1)
+  call obuild(outfile,'Chamber',chdzl,0.0D0)
+  call obuild(outfile,'Chamber',chdzu,zu1)
+  call obuild(outfile,'First Wall',fwdzu,zu2)
+  call obuild(outfile,'Void 1',v1dzu,zu3)
+  call obuild(outfile,'Blanket',bldzu,zu4)
+  call obuild(outfile,'Void 2',v2dzu,zu5)
+  call obuild(outfile,'Shield',shdzu,zu6)
+  call obuild(outfile,'Void 3',v3dzu,zu7)
 
   !  Print matrix of material volumes
 
-  call oheadr(nout,'Material volumes')
+  call oheadr(outfile,'Material volumes')
 
-  write(nout,*) '         Chamber  1st wall  Void 1  Blanket  ' &
+  write(outfile,*) '         Chamber  1st wall  Void 1  Blanket  ' &
        //' Void 2   Shield   Void 3'
-  write(nout,'(A9,7(1pe9.2))') 'void     ', &
+  write(outfile,'(A9,7(1pe9.2))') 'void     ', &
        chmatv(0), &
        (fwmatv(1,0)+fwmatv(2,0)+fwmatv(3,0)), &
        (v1matv(1,0)+v1matv(2,0)+v1matv(3,0)), &
@@ -1330,7 +1333,7 @@ subroutine ifebld(nout,iprint)
        (v2matv(1,0)+v2matv(2,0)+v2matv(3,0)), &
        (shmatv(1,0)+shmatv(2,0)+shmatv(3,0)), &
        (v3matv(1,0)+v3matv(2,0)+v3matv(3,0))
-  write(nout,'(A9,7(1pe9.2))') 'steel    ', &
+  write(outfile,'(A9,7(1pe9.2))') 'steel    ', &
        chmatv(1), &
        (fwmatv(1,1)+fwmatv(2,1)+fwmatv(3,1)), &
        (v1matv(1,1)+v1matv(2,1)+v1matv(3,1)), &
@@ -1339,7 +1342,7 @@ subroutine ifebld(nout,iprint)
        (shmatv(1,1)+shmatv(2,1)+shmatv(3,1)), &
        (v3matv(1,1)+v3matv(2,1)+v3matv(3,1))
 
-  write(nout,'(A9,7(1pe9.2))') 'carbon   ', &
+  write(outfile,'(A9,7(1pe9.2))') 'carbon   ', &
        chmatv(2), &
        (fwmatv(1,2)+fwmatv(2,2)+fwmatv(3,2)), &
        (v1matv(1,2)+v1matv(2,2)+v1matv(3,2)), &
@@ -1348,7 +1351,7 @@ subroutine ifebld(nout,iprint)
        (shmatv(1,2)+shmatv(2,2)+shmatv(3,2)), &
        (v3matv(1,2)+v3matv(2,2)+v3matv(3,2))
 
-  write(nout,'(A9,7(1pe9.2))') 'FLiBe    ', &
+  write(outfile,'(A9,7(1pe9.2))') 'FLiBe    ', &
        chmatv(3), &
        (fwmatv(1,3)+fwmatv(2,3)+fwmatv(3,3)), &
        (v1matv(1,3)+v1matv(2,3)+v1matv(3,3)), &
@@ -1357,7 +1360,7 @@ subroutine ifebld(nout,iprint)
        (shmatv(1,3)+shmatv(2,3)+shmatv(3,3)), &
        (v3matv(1,3)+v3matv(2,3)+v3matv(3,3))
 
-  write(nout,'(A9,7(1pe9.2))') 'Li2O     ', &
+  write(outfile,'(A9,7(1pe9.2))') 'Li2O     ', &
        chmatv(4), &
        (fwmatv(1,4)+fwmatv(2,4)+fwmatv(3,4)), &
        (v1matv(1,4)+v1matv(2,4)+v1matv(3,4)), &
@@ -1366,7 +1369,7 @@ subroutine ifebld(nout,iprint)
        (shmatv(1,4)+shmatv(2,4)+shmatv(3,4)), &
        (v3matv(1,4)+v3matv(2,4)+v3matv(3,4))
 
-  write(nout,'(A9,7(1pe9.2))') 'concrete ', &
+  write(outfile,'(A9,7(1pe9.2))') 'concrete ', &
        chmatv(5), &
        (fwmatv(1,5)+fwmatv(2,5)+fwmatv(3,5)), &
        (v1matv(1,5)+v1matv(2,5)+v1matv(3,5)), &
@@ -1375,7 +1378,7 @@ subroutine ifebld(nout,iprint)
        (shmatv(1,5)+shmatv(2,5)+shmatv(3,5)), &
        (v3matv(1,5)+v3matv(2,5)+v3matv(3,5))
 
-  write(nout,'(A9,7(1pe9.2))') 'helium   ', &
+  write(outfile,'(A9,7(1pe9.2))') 'helium   ', &
        chmatv(6), &
        (fwmatv(1,6)+fwmatv(2,6)+fwmatv(3,6)), &
        (v1matv(1,6)+v1matv(2,6)+v1matv(3,6)), &
@@ -1384,7 +1387,7 @@ subroutine ifebld(nout,iprint)
        (shmatv(1,6)+shmatv(2,6)+shmatv(3,6)), &
        (v3matv(1,6)+v3matv(2,6)+v3matv(3,6))
 
-  write(nout,'(A9,7(1pe9.2))') 'xenon    ', &
+  write(outfile,'(A9,7(1pe9.2))') 'xenon    ', &
        chmatv(7), &
        (fwmatv(1,7)+fwmatv(2,7)+fwmatv(3,7)), &
        (v1matv(1,7)+v1matv(2,7)+v1matv(3,7)), &
@@ -1896,7 +1899,7 @@ end subroutine ifebld
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine ifestr(nout,iprint)
+subroutine ifestr(outfile,iprint)
 
   !+ad_name  ifestr
   !+ad_summ  Routine to calculate the support structural masses for the core of
@@ -1904,7 +1907,7 @@ subroutine ifestr(nout,iprint)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  None
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the support structural masses for the core of
   !+ad_desc  an Inertial Fusion Energy power plant.
@@ -1926,7 +1929,7 @@ subroutine ifestr(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -1944,7 +1947,7 @@ end subroutine ifestr
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine ifetgt(nout,iprint)
+subroutine ifetgt(outfile,iprint)
 
   !+ad_name  ifetgt
   !+ad_summ  Routine to calculate the power requirements of the target
@@ -1952,7 +1955,7 @@ subroutine ifetgt(nout,iprint)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  None
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the power requirements of the target
   !+ad_desc  delivery system and the target factory, for an Inertial
@@ -1973,7 +1976,7 @@ subroutine ifetgt(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -1992,7 +1995,7 @@ end subroutine ifetgt
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine ifefbs(nout,iprint)
+subroutine ifefbs(outfile,iprint)
 
   !+ad_name  ifefbs
   !+ad_summ  Routine to calculate the first wall, blanket and shield volumes,
@@ -2000,11 +2003,12 @@ subroutine ifefbs(nout,iprint)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  None
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the first wall, blanket and shield volumes,
   !+ad_desc  masses and other parameters, for an Inertial Fusion Energy device.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  ife.h90
   !+ad_call  fwblsh.h90
@@ -2012,17 +2016,19 @@ subroutine ifefbs(nout,iprint)
   !+ad_call  cost.h90
   !+ad_call  pulse.h90
   !+ad_call  phydat.h90
-  !+ad_call  osections.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  24/09/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.86
   !+ad_docs  Moir et al., Fusion Technology, vol.25 (1994) p.5
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -2033,11 +2039,10 @@ subroutine ifefbs(nout,iprint)
   include 'cost.h90'
   include 'pulse.h90'
   include 'phydat.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -2119,9 +2124,9 @@ subroutine ifefbs(nout,iprint)
      !  core region, i.e. is in the rest of the heat transport system
 
      if ((fbreed < 0.0D0).or.(fbreed > 0.999D0)) then
-        write(nout,*) 'Error in routine IFEFBS:'
-        write(nout,*) 'FBREED = ',fbreed
-        write(nout,*) 'PROCESS stopping.'
+        write(outfile,*) 'Error in routine IFEFBS:'
+        write(outfile,*) 'FBREED = ',fbreed
+        write(outfile,*) 'PROCESS stopping.'
         stop
      end if
 
@@ -2152,13 +2157,13 @@ subroutine ifefbs(nout,iprint)
 
   !  Output section
 
-  call oheadr(nout,'First Wall, Blanket, Shield')
+  call oheadr(outfile,'First Wall, Blanket, Shield')
 
-  call ovarre(nout,'First wall area (m2)','(fwarea)',fwarea)
-  call ovarre(nout,'First wall mass (kg)','(fwmass)',fwmass)
-  call ovarre(nout,'Blanket mass (kg)','(whtblkt)',whtblkt)
-  call ovarre(nout,'Total mass of FLiBe (kg)','(mflibe)',mflibe)
-  call ovarre(nout,'Shield mass (kg)','(whtshld)',whtshld)
+  call ovarre(outfile,'First wall area (m2)','(fwarea)',fwarea)
+  call ovarre(outfile,'First wall mass (kg)','(fwmass)',fwmass)
+  call ovarre(outfile,'Blanket mass (kg)','(whtblkt)',whtblkt)
+  call ovarre(outfile,'Total mass of FLiBe (kg)','(mflibe)',mflibe)
+  call ovarre(outfile,'Shield mass (kg)','(whtshld)',whtshld)
 
 end subroutine ifefbs
 
@@ -2261,42 +2266,44 @@ end subroutine ifepw1
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine ifeacp(nout,iprint)
+subroutine ifeacp(outfile,iprint)
 
   !+ad_name  ifeacp
   !+ad_summ  Routine to calculate AC power requirements for an IFE power plant
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  None
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the AC power requirements for an IFE power plant.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  bldgvol.h90
   !+ad_call  htpwr.h90
-  !+ad_call  osections.h90
   !+ad_call  ife.h90
   !+ad_call  oblnkl
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  25/09/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.68
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use process_output
+
   implicit none
 
   include 'bldgvol.h90'
   include 'htpwr.h90'
-  include 'osections.h90'
   include 'ife.h90'
 
   ! Arguments
 
-  integer, intent(in) :: iprint,nout
+  integer, intent(in) :: iprint,outfile
 
   !  Local variables
 
@@ -2335,34 +2342,34 @@ subroutine ifeacp(nout,iprint)
 
   !  Output section
 
-  call oheadr(nout,'AC Power')
+  call oheadr(outfile,'AC Power')
 
-  call ovarre(nout,'Facility base load (MW)','(basemw)',basemw)
-  call ovarre(nout,'Total floor space (m2)','(efloor)',efloor)
-  call ovarre(nout,'Power/floor area (MW/m2)','(pmwpm2)',pmwpm2)
-  call ovarre(nout,'MGF units (MW)','(fmgdmw)',fmgdmw)
-  call ovarre(nout,'Driver power supplies (MW)','(pinjwp)', &
+  call ovarre(outfile,'Facility base load (MW)','(basemw)',basemw)
+  call ovarre(outfile,'Total floor space (m2)','(efloor)',efloor)
+  call ovarre(outfile,'Power/floor area (MW/m2)','(pmwpm2)',pmwpm2)
+  call ovarre(outfile,'MGF units (MW)','(fmgdmw)',fmgdmw)
+  call ovarre(outfile,'Driver power supplies (MW)','(pinjwp)', &
        pinjwp)
-  call ovarre(nout,'Target delivery system (MW)','(tdspmw)', &
+  call ovarre(outfile,'Target delivery system (MW)','(tdspmw)', &
        tdspmw)
-  call ovarre(nout,'Target factory (MW)','(tfacmw)', &
+  call ovarre(outfile,'Target factory (MW)','(tfacmw)', &
        tfacmw)
-  call ovarre(nout,'Tritium processing plant (MW)','(trithtmw)', &
+  call ovarre(outfile,'Tritium processing plant (MW)','(trithtmw)', &
        trithtmw)
-  call ovarre(nout,'Vacuum pump motors (MW)','(vachtmw)',vachtmw)
-  call ovarre(nout,'Cryogenic comp motors (MW)','(crypmw)',crypmw)
-  call ovarre(nout,'Heat transport system pump motors (MW)', &
+  call ovarre(outfile,'Vacuum pump motors (MW)','(vachtmw)',vachtmw)
+  call ovarre(outfile,'Cryogenic comp motors (MW)','(crypmw)',crypmw)
+  call ovarre(outfile,'Heat transport system pump motors (MW)', &
        '(htpmw*reprat/6)',htpmw*reprat/6.0D0)
-  call oblnkl(nout)
-  call ovarre(nout,'Total pulsed power (MW)','(pacpmw)',pacpmw)
-  call ovarre(nout,'Total facility power (MW)','(fcsht)',fcsht)
-  call ovarre(nout,'Total low voltage power (MW)','(tlvpmw)',tlvpmw)
+  call oblnkl(outfile)
+  call ovarre(outfile,'Total pulsed power (MW)','(pacpmw)',pacpmw)
+  call ovarre(outfile,'Total facility power (MW)','(fcsht)',fcsht)
+  call ovarre(outfile,'Total low voltage power (MW)','(tlvpmw)',tlvpmw)
 
 end subroutine ifeacp
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine ifepw2(nout,iprint)
+subroutine ifepw2(outfile,iprint)
 
   !+ad_name  ifepw2
   !+ad_summ  Routine to calculate the rest of the IFE heat transport
@@ -2371,18 +2378,18 @@ subroutine ifepw2(nout,iprint)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  None
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the rest of the IFE heat transport
   !+ad_desc  and plant power balance constituents, not already calculated in
   !+ad_desc  routines <A HREF="ifepw1.html">IFEPW1</A> or
   !+ad_desc  <A HREF="ifeacp.html">IFEACP</A>.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  cost.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
-  !+ad_call  osections.h90
   !+ad_call  phydat.h90
   !+ad_call  ife.h90
   !+ad_call  oblnkl
@@ -2392,11 +2399,14 @@ subroutine ifepw2(nout,iprint)
   !+ad_call  ovarrf
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  25/09/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.67
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -2404,13 +2414,12 @@ subroutine ifepw2(nout,iprint)
   include 'cost.h90'
   include 'fwblsh.h90'
   include 'htpwr.h90'
-  include 'osections.h90'
   include 'phydat.h90'
   include 'ife.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -2471,54 +2480,54 @@ subroutine ifepw2(nout,iprint)
 
   !  Output section
 
-  call oheadr(nout,'Power / Heat Transport')
-  call ovarre(nout,'Fusion power (MW)','(powfmw)',powfmw)
-  call ovarre(nout,'Fusion power escaping via holes (MW)', &
+  call oheadr(outfile,'Power / Heat Transport')
+  call ovarre(outfile,'Fusion power (MW)','(powfmw)',powfmw)
+  call ovarre(outfile,'Fusion power escaping via holes (MW)', &
        '(pnucloss)',pnucloss)
-  call ovarre(nout,'Power multiplication factor','(emult)',emult)
-  call ovarre(nout,'Driver wall plug power (MW)','(pinjwp)' &
+  call ovarre(outfile,'Power multiplication factor','(emult)',emult)
+  call ovarre(outfile,'Driver wall plug power (MW)','(pinjwp)' &
        ,pinjwp)
-  call ovarre(nout,'First wall nuclear heating (MW)','(pfwdiv)', &
+  call ovarre(outfile,'First wall nuclear heating (MW)','(pfwdiv)', &
        pfwdiv)
-  call ovarre(nout,'Blanket nuclear heating (MW)','(pnucblkt)', &
+  call ovarre(outfile,'Blanket nuclear heating (MW)','(pnucblkt)', &
        pnucblkt)
-  call ovarre(nout,'Primary heat (MW)','(pthermmw)',pthermmw)
-  call ovarre(nout,'Secondary heat (MW)','(psecht)',psecht)
-  call oblnkl(nout)
-  call ovarre(nout,'Heat removal from driver power (MW)', &
+  call ovarre(outfile,'Primary heat (MW)','(pthermmw)',pthermmw)
+  call ovarre(outfile,'Secondary heat (MW)','(psecht)',psecht)
+  call oblnkl(outfile)
+  call ovarre(outfile,'Heat removal from driver power (MW)', &
        '(pinjht)',pinjht)
-  call ovarre(nout,'Heat removal from cryogenic plant (MW)', &
+  call ovarre(outfile,'Heat removal from cryogenic plant (MW)', &
        '(crypmw)',crypmw)
-  call ovarre(nout,'Heat removal from vacuum pumps (MW)', &
+  call ovarre(outfile,'Heat removal from vacuum pumps (MW)', &
        '(vachtmw)',vachtmw)
-  call ovarre(nout,'Heat removal from target factory (MW)', &
+  call ovarre(outfile,'Heat removal from target factory (MW)', &
        '(tfacmw)',tfacmw)
-  call ovarre(nout,'Heat removal from delivery system (MW)', &
+  call ovarre(outfile,'Heat removal from delivery system (MW)', &
        '(tdspmw)',tdspmw)
-  call ovarre(nout,'Heat removal from tritium plant (MW)', &
+  call ovarre(outfile,'Heat removal from tritium plant (MW)', &
        '(trithtmw)',trithtmw)
-  call ovarre(nout,'Heat removal from facilities (MW)','(facht)' &
+  call ovarre(outfile,'Heat removal from facilities (MW)','(facht)' &
        ,facht)
-  call ovarrf(nout,'Number of primary heat exchangers','(rnphx)' &
+  call ovarrf(outfile,'Number of primary heat exchangers','(rnphx)' &
        ,rnphx)
-  call ovarrf(nout,'Number of intermediate heat exchangers', &
+  call ovarrf(outfile,'Number of intermediate heat exchangers', &
        '(rnihx)',rnihx)
-  call ovarre(nout,'Total plant heat rejection (MW)','(ctht)',ctht)
+  call ovarre(outfile,'Total plant heat rejection (MW)','(ctht)',ctht)
 
   if (ireactor /= 1) return
 
-  call osubhd(nout,'Reactor powers :')
-  call ovarre(nout,'Gross electric power (MW)','(pgrossmw)' &
+  call osubhd(outfile,'Reactor powers :')
+  call ovarre(outfile,'Gross electric power (MW)','(pgrossmw)' &
        ,pgrossmw)
-  call ovarre(nout,'Net electric power (MW)','(pnetelmw)',pnetelmw)
-  call ovarre(nout,'Balance of plant aux. power fraction', &
+  call ovarre(outfile,'Net electric power (MW)','(pnetelmw)',pnetelmw)
+  call ovarre(outfile,'Balance of plant aux. power fraction', &
        '(fgrosbop)',fgrosbop)
 
 end subroutine ifepw2
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine ifevac(nout,iprint)
+subroutine ifevac(outfile,iprint)
 
   !+ad_name  ifevac
   !+ad_summ  Routine to calculate parameters of the vacuum system for an
@@ -2526,7 +2535,7 @@ subroutine ifevac(nout,iprint)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  None
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the parameters of the vacuum system for an
   !+ad_desc  Inertial Fusion Energy power plant.
@@ -2550,7 +2559,7 @@ subroutine ifevac(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -2566,7 +2575,7 @@ end subroutine ifevac
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine ifebdg(nout,iprint)
+subroutine ifebdg(outfile,iprint)
 
   !+ad_name  ifebdg
   !+ad_summ  Routine to calculate the volumes of the buildings required for
@@ -2574,28 +2583,31 @@ subroutine ifebdg(nout,iprint)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  None
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the volumes of the buildings required for
   !+ad_desc  an Inertial Fusion Energy power plant. The method is based
   !+ad_desc  closely on that for tokamaks etc. in routine
   !+ad_desc  <A HREF="bldgs.html">BLDGS</A>.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  bldgcom.h90
   !+ad_call  bldgvol.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  ife.h90
-  !+ad_call  osections.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  25/09/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.87
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -2604,11 +2616,10 @@ subroutine ifebdg(nout,iprint)
   include 'fwblsh.h90'
   include 'htpwr.h90'
   include 'ife.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -2741,24 +2752,24 @@ subroutine ifebdg(nout,iprint)
 
   !  Output section
 
-  call oheadr(nout,'Plant Buildings System')
-  call ovarre(nout,'Internal volume of reactor building (m3)', &
+  call oheadr(outfile,'Plant Buildings System')
+  call ovarre(outfile,'Internal volume of reactor building (m3)', &
        '(vrci)',vrci)
-  call ovarre(nout,'Dist from device centre to bldg wall (m)', &
+  call ovarre(outfile,'Dist from device centre to bldg wall (m)', &
        '(wrbi)',wrbi)
-  call ovarre(nout,'Effective floor area (m2)','(efloor)',efloor)
-  call ovarre(nout,'Reactor building volume (m3)','(rbv)',rbv)
-  call ovarre(nout,'Reactor maintenance building volume (m3)', &
+  call ovarre(outfile,'Effective floor area (m2)','(efloor)',efloor)
+  call ovarre(outfile,'Reactor building volume (m3)','(rbv)',rbv)
+  call ovarre(outfile,'Reactor maintenance building volume (m3)', &
        '(rmbv)',rmbv)
-  call ovarre(nout,'Warmshop volume (m3)','(wsv)',wsv)
-  call ovarre(nout,'Tritium building volume (m3)','(triv)',triv)
-  call ovarre(nout,'Electrical building volume (m3)','(elev)',elev)
-  call ovarre(nout,'Control building volume (m3)','(conv)',conv)
-  call ovarre(nout,'Cryogenics building volume (m3)','(cryv)',cryv)
-  call ovarre(nout,'Administration building volume (m3)','(admv)', &
+  call ovarre(outfile,'Warmshop volume (m3)','(wsv)',wsv)
+  call ovarre(outfile,'Tritium building volume (m3)','(triv)',triv)
+  call ovarre(outfile,'Electrical building volume (m3)','(elev)',elev)
+  call ovarre(outfile,'Control building volume (m3)','(conv)',conv)
+  call ovarre(outfile,'Cryogenics building volume (m3)','(cryv)',cryv)
+  call ovarre(outfile,'Administration building volume (m3)','(admv)', &
        admv)
-  call ovarre(nout,'Shops volume (m3)','(shov)',shov)
-  call ovarre(nout,'Total volume of nuclear buildings (m3)', &
+  call ovarre(outfile,'Shops volume (m3)','(shov)',shov)
+  call ovarre(outfile,'Total volume of nuclear buildings (m3)', &
        '(volnucb)',volnucb)
 
 end subroutine ifebdg

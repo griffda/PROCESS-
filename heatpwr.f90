@@ -49,7 +49,7 @@ subroutine power1
 
   !  Local variables
 
-  !--End of preamble--CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Primary nuclear heating
 
@@ -99,7 +99,7 @@ end subroutine power1
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine power2(nout,iprint)
+subroutine power2(outfile,iprint)
 
   !+ad_name  power2
   !+ad_summ  Calculates the remainder of the heat transport
@@ -107,17 +107,17 @@ subroutine power2(nout,iprint)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the rest of the heat transport
   !+ad_desc  and plant power balance constituents, not already calculated in
   !+ad_desc  <A HREF="acpow.html">ACPOW</A> or <A HREF="power1.html">POWER1</A>.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  blanket.h90
   !+ad_call  cost.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
-  !+ad_call  osections.h90
   !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
@@ -132,10 +132,13 @@ subroutine power2(nout,iprint)
   !+ad_hist  15/06/04 PJK Added use of IPRIMHTP, added HTPMW to PRECIR
   !+ad_hist  22/05/07 PJK Added hydrogen plant power requirements
   !+ad_hist  01/08/11 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -144,13 +147,12 @@ subroutine power2(nout,iprint)
   include 'cost.h90'
   include 'fwblsh.h90'
   include 'htpwr.h90'
-  include 'osections.h90'
   include 'phydat.h90'
   include 'tfcoil.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -214,7 +216,7 @@ subroutine power2(nout,iprint)
      !  Gross electric power
 
      if (lblnkt == 1) then
-        call blanket(2,nout,iprint)
+        call blanket(2,outfile,iprint)
      else
         pgrossmw = (pthermmw-hthermmw) * etath
      end if
@@ -244,65 +246,65 @@ subroutine power2(nout,iprint)
 
   !  Output section
 
-  call oheadr(nout,'Power / Heat Transport')
-  call ovarre(nout,'Fusion power (MW)','(powfmw)',powfmw)
-  call ovarre(nout,'Charged fusion power (MW)','(pfuscmw)',pfuscmw)
-  call ovarre(nout,'Neutron power escaping via holes (MW)', &
+  call oheadr(outfile,'Power / Heat Transport')
+  call ovarre(outfile,'Fusion power (MW)','(powfmw)',powfmw)
+  call ovarre(outfile,'Charged fusion power (MW)','(pfuscmw)',pfuscmw)
+  call ovarre(outfile,'Neutron power escaping via holes (MW)', &
        '(pnucloss)',pnucloss)
-  call ovarre(nout,'Neutron power multiplication','(emult)',emult)
-  call ovarre(nout,'Injector wall plug power (MW)','(pinjwp)' &
+  call ovarre(outfile,'Neutron power multiplication','(emult)',emult)
+  call ovarre(outfile,'Injector wall plug power (MW)','(pinjwp)' &
        ,pinjwp)
-  call ovarre(nout,'TF coil resistive power (MW)','(tfcmw)',tfcmw)
-  call ovarre(nout,'Centrepost coolant pump power (MW)','(ppumpmw)' &
+  call ovarre(outfile,'TF coil resistive power (MW)','(tfcmw)',tfcmw)
+  call ovarre(outfile,'Centrepost coolant pump power (MW)','(ppumpmw)' &
        ,ppumpmw)
-  call ovarre(nout,'Primary heat (MW)','(pthermmw)',pthermmw)
-  call ovarre(nout,'Secondary heat (MW)','(psecht)',psecht)
-  call oblnkl(nout)
-  call ovarre(nout,'Heat removal from F.W./divertor (MW)', &
+  call ovarre(outfile,'Primary heat (MW)','(pthermmw)',pthermmw)
+  call ovarre(outfile,'Secondary heat (MW)','(psecht)',psecht)
+  call oblnkl(outfile)
+  call ovarre(outfile,'Heat removal from F.W./divertor (MW)', &
        '(pfwdiv)',pfwdiv)
-  call ovarre(nout,'Heat removal from blankets (MW)', &
+  call ovarre(outfile,'Heat removal from blankets (MW)', &
        '(pnucblkt)',pnucblkt)
-  call ovarre(nout,'Heat removal from shield (MW)','(pnucshld)', &
+  call ovarre(outfile,'Heat removal from shield (MW)','(pnucshld)', &
        pnucshld)
-  call ovarre(nout,'Heat removal from injection power (MW)', &
+  call ovarre(outfile,'Heat removal from injection power (MW)', &
        '(pinjht)',pinjht)
-  call ovarre(nout,'Heat removal from cryogenic plant (MW)', &
+  call ovarre(outfile,'Heat removal from cryogenic plant (MW)', &
        '(crypmw)',crypmw)
-  call ovarre(nout,'Heat removal from vacuum pumps (MW)', &
+  call ovarre(outfile,'Heat removal from vacuum pumps (MW)', &
        '(vachtmw)',vachtmw)
-  call ovarre(nout,'Heat removal from tritium plant (MW)', &
+  call ovarre(outfile,'Heat removal from tritium plant (MW)', &
        '(trithtmw)',trithtmw)
 
   if (ihplant /= 0) then
-     call ovarre(nout,'Electrical pwr used for H production (MW)', &
+     call ovarre(outfile,'Electrical pwr used for H production (MW)', &
           '(helecmw)',helecmw)
-     call ovarre(nout,'Thermal power used for H production (MW)', &
+     call ovarre(outfile,'Thermal power used for H production (MW)', &
           '(hthermmw)',hthermmw)
-     call ovarre(nout,'Hydrogen production rate (MW)', &
+     call ovarre(outfile,'Hydrogen production rate (MW)', &
           '(hpower)',hpower)
-     call ovarre(nout,'Hydrogen production rate (Nm3/sec)', &
+     call ovarre(outfile,'Hydrogen production rate (Nm3/sec)', &
           '(hpower/13)',hpower/13.0D0)
   end if
 
-  call ovarre(nout,'Total cryogenic load (MW)','(helpow/1.D6)', &
+  call ovarre(outfile,'Total cryogenic load (MW)','(helpow/1.D6)', &
        helpow/1.0D6)
-  call ovarre(nout,'Heat removal from facilities (MW)','(facht)', &
+  call ovarre(outfile,'Heat removal from facilities (MW)','(facht)', &
        facht)
-  call ovarrf(nout,'Number of primary heat exchangers','(rnphx)', &
+  call ovarrf(outfile,'Number of primary heat exchangers','(rnphx)', &
        rnphx)
-  call ovarrf(nout,'Number of intermediate heat exchangers', &
+  call ovarrf(outfile,'Number of intermediate heat exchangers', &
        '(rnihx)',rnihx)
-  call ovarre(nout,'Total plant heat rejection (MW)','(ctht)',ctht)
+  call ovarre(outfile,'Total plant heat rejection (MW)','(ctht)',ctht)
 
   if (ireactor /= 1) return
 
-  call osubhd(nout,'Reactor powers :')
-  call ovarre(nout,'Gross electric power (MW)','(pgrossmw)', &
+  call osubhd(outfile,'Reactor powers :')
+  call ovarre(outfile,'Gross electric power (MW)','(pgrossmw)', &
        pgrossmw)
-  call ovarre(nout,'Net electric power (MW)','(pnetelmw)',pnetelmw)
-  call ovarre(nout,'Balance of plant aux. power fraction', &
+  call ovarre(outfile,'Net electric power (MW)','(pnetelmw)',pnetelmw)
+  call ovarre(outfile,'Balance of plant aux. power fraction', &
        '(fgrosbop)',fgrosbop)
-  call ovarre(nout,'First wall low grade heat fraction','(ffwlg)', &
+  call ovarre(outfile,'First wall low grade heat fraction','(ffwlg)', &
        ffwlg)
 
 end subroutine power2

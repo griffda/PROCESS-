@@ -1,33 +1,36 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine tfpwr(nout,iprint)
+subroutine tfpwr(outfile,iprint)
 
   !+ad_name  tfpwr
   !+ad_summ  TF coil power supply requirements for resistive coils
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the power conversion requirements for
   !+ad_desc  resistive TF coils, or calls <CODE>tfpwcall</CODE> if the TF
   !+ad_desc  coils are superconducting.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  times.h90
   !+ad_call  cost.h90
   !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
-  !+ad_call  osections.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_call  tfpwcall
   !+ad_hist  01/08/11 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -36,11 +39,10 @@ subroutine tfpwr(nout,iprint)
   include 'tfcoil.h90'
   include 'times.h90'
   include 'cost.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -98,7 +100,7 @@ subroutine tfpwr(nout,iprint)
 
   else  !  Superconducting TF coil option
 
-     call tfpwcall(nout,iprint)
+     call tfpwcall(outfile,iprint)
      return
 
   end if
@@ -107,35 +109,35 @@ subroutine tfpwr(nout,iprint)
 
   if ((iprint == 0).or.(sect13 == 0)) return
 
-  call oheadr(nout,'TF Coil Power Conversion')
-  call ovarre(nout,'Bus resistance (ohm)','(rhobus)',rhobus)
-  call ovarre(nout,'Bus current density (A/m2)','(jbus)',jbus)
-  call ovarre(nout,'Bus length - all coils (m)','(tfbusl)',tfbusl)
-  call ovarre(nout,'Bus mass (kg)','(tfbusmas)',tfbusmas)
-  call ovarre(nout,'Maximum impedance (ohm)','(ztot)',ztot)
-  call ovarre(nout,'Peak voltage per coil (kV)','(vtfkv)',vtfkv)
-  call ovarre(nout,'Peak power (MW)','(tfcmw)',tfcmw)
-  call ovarre(nout,'TF coil inner leg resistive power (MW)', &
+  call oheadr(outfile,'TF Coil Power Conversion')
+  call ovarre(outfile,'Bus resistance (ohm)','(rhobus)',rhobus)
+  call ovarre(outfile,'Bus current density (A/m2)','(jbus)',jbus)
+  call ovarre(outfile,'Bus length - all coils (m)','(tfbusl)',tfbusl)
+  call ovarre(outfile,'Bus mass (kg)','(tfbusmas)',tfbusmas)
+  call ovarre(outfile,'Maximum impedance (ohm)','(ztot)',ztot)
+  call ovarre(outfile,'Peak voltage per coil (kV)','(vtfkv)',vtfkv)
+  call ovarre(outfile,'Peak power (MW)','(tfcmw)',tfcmw)
+  call ovarre(outfile,'TF coil inner leg resistive power (MW)', &
        '(tfcpmw)',tfcpmw)
-  call ovarre(nout,'TF coil outer leg resistive power (MW)', &
+  call ovarre(outfile,'TF coil outer leg resistive power (MW)', &
        '(tflegmw)',tflegmw)
-  call ovarre(nout,'TF coil buswork resistive power','(tfbusmw)', &
+  call ovarre(outfile,'TF coil buswork resistive power','(tfbusmw)', &
        tfbusmw)
-  call ovarre(nout,'TF coil reactive power (MW)','(tfreacmw)', &
+  call ovarre(outfile,'TF coil reactive power (MW)','(tfreacmw)', &
        tfreacmw)
 
 end subroutine tfpwr
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine pfpwr(nout,iprint)
+subroutine pfpwr(outfile,iprint)
 
   !+ad_name  pfpwr
   !+ad_summ  PF coil power supply requirements for resistive coils
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the MVA, power and energy requirements
   !+ad_desc  for the PF coil systems.  Units are MW and MVA for power terms.
@@ -144,9 +146,9 @@ subroutine pfpwr(nout,iprint)
   !+ad_desc  The reactive (inductive) components use waves to calculate the
   !+ad_desc  <I>dI/dt</I> at the time periods.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  htpwr.h90
-  !+ad_call  osections.h90
   !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
@@ -157,10 +159,13 @@ subroutine pfpwr(nout,iprint)
   !+ad_call  ovarre
   !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_hist  20/09/11 PJK Removed dble calls
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -172,11 +177,10 @@ subroutine pfpwr(nout,iprint)
   include 'build.h90'
   include 'times.h90'
   include 'htpwr.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout, iprint
+  integer, intent(in) :: outfile, iprint
 
   !  Local variables
 
@@ -342,20 +346,20 @@ subroutine pfpwr(nout,iprint)
 
      if (sect13 == 0) return
 
-     call oheadr(nout,'PF Coil Power Conversion')
-     call ovarre(nout,'Number of PF coil circuits','(pfckts)',pfckts)
-     call ovarre(nout,'Total power supply MVA for PF circuits', &
+     call oheadr(outfile,'PF Coil Power Conversion')
+     call ovarre(outfile,'Number of PF coil circuits','(pfckts)',pfckts)
+     call ovarre(outfile,'Total power supply MVA for PF circuits', &
           '(spsmva)',spsmva)
-     call ovarre(nout,'Av. max curr/turn of PF coil circuits (kA)', &
+     call ovarre(outfile,'Av. max curr/turn of PF coil circuits (kA)', &
           '(acptmax)',acptmax)
-     call ovarre(nout,'Total PF coil circuit bus length (m)', &
+     call ovarre(outfile,'Total PF coil circuit bus length (m)', &
           '(spfbusl)',spfbusl)
-     call ovarre(nout,'Total PF coil bus resistive power (kW)', &
+     call ovarre(outfile,'Total PF coil bus resistive power (kW)', &
           '(pfbuspwr)',pfbuspwr)
-     call ovarre(nout,'Total PF coil resistive power (kW)', &
+     call ovarre(outfile,'Total PF coil resistive power (kW)', &
           '(srcktpm)',srcktpm)
-     call ovarre(nout,'Maximum PF coil voltage (kV)','(vpfskv)',vpfskv)
-     call ovarre(nout,'Max stored energy in PF coil circuits (MJ)', &
+     call ovarre(outfile,'Maximum PF coil voltage (kV)','(vpfskv)',vpfskv)
+     call ovarre(outfile,'Max stored energy in PF coil circuits (MJ)', &
           '(ensxpfm)',ensxpfm)
 
   end if

@@ -1097,18 +1097,18 @@ end subroutine waveform
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine outpf(nout)
+subroutine outpf(outfile)
 
   !+ad_name  outpf
   !+ad_summ  Routine to write output from PF coil module to file
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_desc  This routine writes the PF coil information to the output file.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  osections.h90
   !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
@@ -1119,10 +1119,13 @@ subroutine outpf(nout)
   !+ad_call  osubhd
   !+ad_call  ovarre
   !+ad_hist  09/05/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -1131,11 +1134,10 @@ subroutine outpf(nout)
   include 'pfcoil.h90'
   include 'tfcoil.h90'
   include 'build.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout
+  integer, intent(in) :: outfile
 
   !  Local variables
 
@@ -1148,37 +1150,37 @@ subroutine outpf(nout)
 
   if (sect08 == 0) return
 
-  call oheadr(nout,'PF Coils')
+  call oheadr(outfile,'PF Coils')
 
   !  Print out OH coil stress
 
   if (iohcl == 0) then
-     call ocmmnt(nout,'No OH coil included')
-     call oblnkl(nout)
+     call ocmmnt(outfile,'No OH coil included')
+     call oblnkl(outfile)
   else
-     call ocmmnt(nout,'OH Coil Stress Calculations :')
-     call oblnkl(nout)
-     call ovarre(nout,'Maximum field at End Of Flattop (T)', &
+     call ocmmnt(outfile,'OH Coil Stress Calculations :')
+     call oblnkl(outfile)
+     call ovarre(outfile,'Maximum field at End Of Flattop (T)', &
           '(bmaxoh)',bmaxoh)
-     call ovarre(nout,'Maximum field at Beginning Of Pulse (T)', &
+     call ovarre(outfile,'Maximum field at Beginning Of Pulse (T)', &
           '(bmaxoh0)',bmaxoh0)
-     call ovarre(nout,'Allowable current density at EOF (A/m2)', &
+     call ovarre(outfile,'Allowable current density at EOF (A/m2)', &
           '(rjohc)',rjohc)
-     call ovarre(nout,'Actual current density at EOF (A/m2)', &
+     call ovarre(outfile,'Actual current density at EOF (A/m2)', &
           '(coheof)',coheof)
-     call ovarre(nout,'Allowable current density at BOP (A/m2)', &
+     call ovarre(outfile,'Allowable current density at BOP (A/m2)', &
           '(rjohc0)',rjohc0)
-     call ovarre(nout,'Actual current density at BOP (A/m2)', &
+     call ovarre(outfile,'Actual current density at BOP (A/m2)', &
           '(cohbop)',cohbop)
-     call ovarre(nout,'Allowable stress at BOP (MPa)', &
+     call ovarre(outfile,'Allowable stress at BOP (MPa)', &
           '(sigpfalw)',sigpfalw)
   end if
 
   if (ipfres /= 0) then
-     call osubhd(nout,'Resistive Power :')
-     call ovarre(nout,'PF coil resistive power (W)','(powpfres)', &
+     call osubhd(outfile,'Resistive Power :')
+     call ovarre(outfile,'PF coil resistive power (W)','(powpfres)', &
           powpfres)
-     call ovarre(nout,'OH coil resistive power (W)','(powohres)', &
+     call ovarre(outfile,'OH coil resistive power (W)','(powohres)', &
           powohres)
   end if
 
@@ -1187,35 +1189,35 @@ subroutine outpf(nout)
   nef = nohc
   if (iohcl /= 0) nef = nef - 1
 
-  call osubhd(nout, 'Geometry of PF coils, OH coil and plasma :')
+  call osubhd(outfile, 'Geometry of PF coils, OH coil and plasma :')
 
-  write(nout,10)
+  write(outfile,10)
 10 format(' coil',t17,'R(m)',t29,'Z(m)',t41,'dR(m)',t53,'dZ(m)', &
        t65,'turns')
-  call oblnkl(nout)
+  call oblnkl(outfile)
 
   !  PF coils
 
-  write(nout,20) (k,rpf(k),zpf(k),(rb(k)-ra(k)),abs(zh(k)-zl(k)), &
+  write(outfile,20) (k,rpf(k),zpf(k),(rb(k)-ra(k)),abs(zh(k)-zl(k)), &
        turns(k),k=1,nef)
 20 format('  PF',i1,t10,5f12.2)
 
   !  OH coil, if present
 
   if (iohcl.ne.0) then
-     write(nout,30) rpf(nohc),zpf(nohc),(rb(nohc)-ra(nohc)), &
+     write(outfile,30) rpf(nohc),zpf(nohc),(rb(nohc)-ra(nohc)), &
           abs(zh(nohc)-zl(nohc)),turns(nohc)
 30   format('  OH',t10,5f12.2)
   end if
 
   !  Plasma
 
-  write(nout,40) rmajor,0.0D0,2.0D0*rminor,2.0D0*rminor*kappa,1.0D0
+  write(outfile,40) rmajor,0.0D0,2.0D0*rminor,2.0D0*rminor*kappa,1.0D0
 40 format(' Plasma',t10,5f12.2)
 
-  call osubhd(nout,'PF Coil Information :')
+  call osubhd(outfile,'PF Coil Information :')
 
-  write(nout,50)
+  write(outfile,50)
 50 format(' coil', &
        t8, 'current', &
        t17,'allowed J', &
@@ -1225,7 +1227,7 @@ subroutine outpf(nout)
        t56,'steel weight', &
        t71,'field')
 
-  write(nout,60)
+  write(outfile,60)
 60 format( &
        t10,'(MA)', &
        t18,'(A/m2)', &
@@ -1235,12 +1237,12 @@ subroutine outpf(nout)
        t60,'(kg)', &
        t72,'(T)')
 
-  call oblnkl(nout)
+  call oblnkl(outfile)
 
   !  PF coils
 
   do k = 1,nef
-     write(nout,90) k,ric(k),rjpfalw(k),rjconpf(k), &
+     write(outfile,90) k,ric(k),rjpfalw(k),rjconpf(k), &
           (rjconpf(k)/rjpfalw(k)),wtc(k),wts(k),bpf(k)
   end do
 
@@ -1254,7 +1256,7 @@ subroutine outpf(nout)
 
   if (iohcl /= 0) then
 
-     write(nout,100) ric(nohc),rjpfalw(nohc),cohbop, &
+     write(outfile,100) ric(nohc),rjpfalw(nohc),cohbop, &
           (cohbop/rjpfalw(nohc)),wtc(nohc),wts(nohc), &
           bpf(nohc)
 
@@ -1263,14 +1265,14 @@ subroutine outpf(nout)
 
   !  Miscellaneous totals
 
-  write(nout,110)
+  write(outfile,110)
 110 format(t8,'------',t43,'---------',t55,'---------')
 
-  write(nout,120) ricpf,whtpf,whtpfs
+  write(outfile,120) ricpf,whtpf,whtpfs
 120 format(t6,f8.2,t41,1pe11.3,1pe12.3)
 
-  call osubhd(nout,'PF coil current scaling information :')
-  call ovarre(nout,'Sum of squares of residuals ','(ssq0)',ssq0)
-  call ovarre(nout,'Smoothing parameter ','(alfapf)',alfapf)
+  call osubhd(outfile,'PF coil current scaling information :')
+  call ovarre(outfile,'Sum of squares of residuals ','(ssq0)',ssq0)
+  call ovarre(outfile,'Smoothing parameter ','(alfapf)',alfapf)
 
 end subroutine outpf

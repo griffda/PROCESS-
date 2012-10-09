@@ -30,6 +30,8 @@ program process
   !+ad_desc  aid the inclusion of more advanced physics and engineering models under
   !+ad_desc  development as part of a number of EFDA-sponsored collaborations.
   !+ad_prob  None
+  !+ad_call  process_input
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  eqslv
@@ -39,6 +41,7 @@ program process
   !+ad_call  scan
   !+ad_hist  03/10/96 PJK Upgrade of main program unit
   !+ad_hist  08/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  Box file F/RS/CIRE5523/PWF (up to 15/01/96)
@@ -46,6 +49,9 @@ program process
   !+ad_docs  Box file T&amp;M/PKNIGHT/PROCESS (from 24/01/12)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_input
+  use process_output
 
   implicit none
 
@@ -80,7 +86,7 @@ program process
   call oheadr(iotty,'End of PROCESS Output')
 
   close(unit=nin)
-  close(unit=11)  !  11=nplot
+  close(unit=nplot)
   close(unit=nout)
 
 end program process
@@ -101,6 +107,8 @@ subroutine init
   !+ad_prob  None
   !+ad_call  param.h90
   !+ad_call  numer.h90
+  !+ad_call  process_input
+  !+ad_call  process_output
   !+ad_call  check
   !+ad_call  codever
   !+ad_call  initial
@@ -111,12 +119,14 @@ subroutine init
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  17/11/97 PJK Changed file names to *.DAT
   !+ad_hist  08/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use process_input
+  use process_output
 
   implicit none
 
@@ -136,7 +146,7 @@ subroutine init
   !  Open the three input/output external files
 
   open(unit=nin,file='IN.DAT',status='old')
-  open(unit=11,file='PLOT.DAT',status='unknown')  !  nplot=11
+  open(unit=nplot,file='PLOT.DAT',status='unknown')
   open(unit=nout,file='OUT.DAT',status='unknown')
 
   !  Print code banner + run details
@@ -167,17 +177,18 @@ end subroutine init
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine codever(nout)
+subroutine codever(outfile)
 
   !+ad_name  codever
   !+ad_summ  Prints out the code version and other run-specific information
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout   : input integer : output file unit
+  !+ad_args  outfile   : input integer : output file unit
   !+ad_desc  This routine prints out the code version and various other
   !+ad_desc  run-specific details.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  inform
   !+ad_call  oblnkl
   !+ad_call  ocentr
@@ -185,16 +196,19 @@ subroutine codever(nout)
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  17/11/97 PJK Changed file names to *.DAT
   !+ad_hist  08/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use process_output
+
   implicit none
 
   !  Arguments
 
-  integer, intent(in) :: nout
+  integer, intent(in) :: outfile
 
   !  Local variables
 
@@ -205,13 +219,13 @@ subroutine codever(nout)
 
   !  Write out banner
 
-  call oblnkl(nout)
-  call ostars(nout,width)
-  call ocentr(nout,'PROCESS',width)
-  call ocentr(nout,'Power Reactor Optimisation Code',width)
-  call ocentr(nout,'for Environmental and Safety Studies',width)
-  call ostars(nout,width)
-  call oblnkl(nout)
+  call oblnkl(outfile)
+  call ostars(outfile,width)
+  call ocentr(outfile,'PROCESS',width)
+  call ocentr(outfile,'Power Reactor Optimisation Code',width)
+  call ocentr(outfile,'for Environmental and Safety Studies',width)
+  call ostars(outfile,width)
+  call oblnkl(outfile)
 
   !  Obtain details of this run
 
@@ -219,16 +233,16 @@ subroutine codever(nout)
 
   !  Write out details
 
-  write(nout,*) progid(1)
-  write(nout,*) progid(2)
-  write(nout,*) progid(3)
-  write(nout,*) progid(4)
-  write(nout,*) progid(5)
-  write(nout,*) progid(6)
+  write(outfile,*) progid(1)
+  write(outfile,*) progid(2)
+  write(outfile,*) progid(3)
+  write(outfile,*) progid(4)
+  write(outfile,*) progid(5)
+  write(outfile,*) progid(6)
 
-  call oblnkl(nout)
-  call ostars(nout,width)
-  call oblnkl(nout)
+  call oblnkl(outfile)
+  call ostars(outfile,width)
+  call oblnkl(outfile)
 
 end subroutine codever
 
@@ -244,6 +258,7 @@ subroutine eqslv(ifail)
   !+ad_args  ifail   : output integer : error flag
   !+ad_desc  This routine calls the non-optimising equation solver.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  labels.h90
@@ -259,10 +274,13 @@ subroutine eqslv(ifail)
   !+ad_call  ovarre
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  08/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -335,7 +353,7 @@ subroutine eqslv(ifail)
 
   if (ifail /= 1) then
      call oblnkl(nout)
-     call herror(nout,iotty,ifail)
+     call herror(ifail)
      call oblnkl(iotty)
   end if
 
@@ -367,7 +385,7 @@ end subroutine eqslv
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine herror(nout,iotty,ifail)
+subroutine herror(ifail)
 
   !+ad_name  herror
   !+ad_summ  Routine to print out relevant messages in the case of an
@@ -375,8 +393,6 @@ subroutine herror(nout,iotty,ifail)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout   : input integer : output file unit
-  !+ad_args  iotty  : input integer : terminal output file unit
   !+ad_args  ifail  : input integer : error flag
   !+ad_desc  This routine prints out relevant messages in the case of
   !+ad_desc  an unfeasible result from a HYBRD (non-optimisation) run.
@@ -385,19 +401,23 @@ subroutine herror(nout,iotty,ifail)
   !+ad_desc  <P>If <CODE>IFAIL=1</CODE> then a feasible solution has been
   !+ad_desc  found and therefore no error message is required.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  ocmmnt
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  08/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use process_output
+
   implicit none
 
   !  Arguments
 
-  integer, intent(in) :: nout,iotty,ifail
+  integer, intent(in) :: ifail
 
   !  Local variables
 
@@ -463,7 +483,7 @@ end subroutine herror
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine verror(nout,iotty,ifail)
+subroutine verror(ifail)
 
   !+ad_name  verror
   !+ad_summ  Routine to print out relevant messages in the case of an
@@ -471,8 +491,6 @@ subroutine verror(nout,iotty,ifail)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout   : input integer : output file unit
-  !+ad_args  iotty  : input integer : terminal output file unit
   !+ad_args  ifail  : input integer : error flag
   !+ad_desc  This routine prints out relevant messages in the case of
   !+ad_desc  an unfeasible result from a VMCON (optimisation) run.
@@ -481,19 +499,23 @@ subroutine verror(nout,iotty,ifail)
   !+ad_desc  <P>If <CODE>IFAIL=1</CODE> then a feasible solution has been
   !+ad_desc  found and therefore no error message is required.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  ocmmnt
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  08/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use process_output
+
   implicit none
 
   !  Arguments
 
-  integer, intent(in) :: nout,iotty,ifail
+  integer, intent(in) :: ifail
 
   !  Local variables
 
@@ -604,6 +626,7 @@ subroutine scan
   !+ad_desc  a number of times, by performing a sweep over a range of
   !+ad_desc  values of a particular variable.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  sweep.h90
   !+ad_call  phydat.h90
@@ -627,10 +650,13 @@ subroutine scan
   !+ad_hisc               new availability model
   !+ad_hist  25/05/06 PJK Added implied-DO loops for sweep outputs
   !+ad_hist  08/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -658,7 +684,7 @@ subroutine scan
        hfip,hld,ifa,ip,lq,ocd,pbf,pcp,pfp,pg,pht,pinj,piwp,pmp,pn,powf, &
        qlm,rcl,rec1,rmaj,sq,str,t10,tfp,tmx,vcl,wall,wpf,wtf
 
-  integer :: ifail,i,nplot
+  integer :: ifail,i
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -841,8 +867,6 @@ subroutine scan
      end if
   end do
 
-  nplot = 11
-
   write(nplot,900) isweep
   write(nplot,901) tlabel
 
@@ -973,6 +997,7 @@ subroutine doopt(ifail)
   !+ad_args  ifail   : output integer : error flag
   !+ad_desc  This routine calls the optimising equation solver.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  labels.h90
@@ -988,10 +1013,13 @@ subroutine doopt(ifail)
   !+ad_call  verror
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  08/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -1049,7 +1077,7 @@ subroutine doopt(ifail)
   !  If necessary, write the relevant error message
 
   if (ifail /= 1) then
-     call verror(nout,iotty,ifail)
+     call verror(ifail)
      call oblnkl(nout)
      call oblnkl(iotty)
   end if
@@ -1170,14 +1198,18 @@ subroutine final(ifail)
   !+ad_prob  None
   !+ad_call  param.h90
   !+ad_call  numer.h90
+  !+ad_call  process_output
   !+ad_call  oheadr
   !+ad_call  output
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  08/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 

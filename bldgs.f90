@@ -1,14 +1,14 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine bldgcall(nout,iprint)
+subroutine bldgcall(outfile,iprint)
 
   !+ad_name  bldgcall
   !+ad_summ  Calls the buildings module
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calls the buildings calculations.
   !+ad_prob  None
@@ -48,7 +48,7 @@ subroutine bldgcall(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: iprint, nout
+  integer, intent(in) :: iprint, outfile
 
   !  Local variables
 
@@ -79,7 +79,7 @@ subroutine bldgcall(nout,iprint)
 
   call bldgs(idhe3,pfrmax,pfmmax,tfro,tfri,tfh,tfmtn,tfno,rsldo, &
        rsldi,(hmax*2.0D0),whtshld,crrad,tfcbv,pfbldgm3, &
-       esbldgm3,helpow,iprint,nout, &
+       esbldgm3,helpow,iprint,outfile, &
        cryvol,triv,volrci,efloor,rbvol,rmbvol,wsvol,elevol,wrbi, &
        admvol,shovol,convol,volnucb)
 
@@ -88,7 +88,7 @@ end subroutine bldgcall
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine bldgs(idhe3,pfr,pfm,tfro,tfri,tfh,tfm,tfno,shro,shri, &
-     shh,shm,crr,tfcbv,pfbldgm3,esbldgm3,helpow,iprint,nout, &
+     shh,shm,crr,tfcbv,pfbldgm3,esbldgm3,helpow,iprint,outfile, &
      cryv,triv,vrci,efloor,rbv,rmbv,wsv,elev,wrbi,admvol,shovol, &
      convol,volnucb)
 
@@ -116,9 +116,9 @@ subroutine bldgs(idhe3,pfr,pfm,tfro,tfri,tfh,tfm,tfno,shro,shri, &
   !+ad_args  esbldgm3 : input real : volume of energy storage building, m3
   !+ad_args  helpow : input real : total cryogenic load, W
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  cryv : output real : volume of cryogenic building, m3
-  !+ad_args  triv : output real : volume of tritium building, m3
+  !+ad_args  triv : input real : volume of tritium building, m3
   !+ad_args  vrci : output real : inner volume of reactor building, m3
   !+ad_args  efloor : output real : effective floor area of buildings, m2
   !+ad_args  rbv : output real : outer volume of reactor building, m3
@@ -141,29 +141,31 @@ subroutine bldgs(idhe3,pfr,pfm,tfro,tfri,tfh,tfm,tfno,shro,shri, &
   !+ad_desc  This routine was included in PROCESS in January 1992 by 
   !+ad_desc  P. C. Shipe.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  bldgcom.h90
-  !+ad_call  osections.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  01/08/11 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use process_output
+
   implicit none
 
   include 'bldgcom.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: idhe3, iprint, nout
+  integer, intent(in) :: idhe3, iprint, outfile
   real(kind(1.0D0)), intent(inout) :: pfr
   real(kind(1.0D0)), intent(in) :: pfm,tfro,tfri,tfh,tfm,tfno,shro, &
-       shri,shh,shm,crr,tfcbv,pfbldgm3,esbldgm3,helpow
+       shri,shh,shm,crr,tfcbv,pfbldgm3,esbldgm3,helpow,triv
 
-  real(kind(1.0D0)), intent(out) :: cryv,triv,vrci,efloor,rbv,rmbv,wsv, &
+  real(kind(1.0D0)), intent(out) :: cryv,vrci,efloor,rbv,rmbv,wsv, &
        elev,wrbi,admvol,shovol,convol,volnucb
 
   !  Local variables
@@ -318,23 +320,23 @@ subroutine bldgs(idhe3,pfr,pfm,tfro,tfri,tfh,tfm,tfno,shro,shri, &
 
   if ((iprint == 0).or.(sect16 == 0)) return
 
-  call oheadr(nout,'Plant Buildings System')
-  call ovarre(nout,'Internal volume of reactor building (m3)', &
+  call oheadr(outfile,'Plant Buildings System')
+  call ovarre(outfile,'Internal volume of reactor building (m3)', &
        '(vrci)',vrci)
-  call ovarre(nout,'Dist from centre of torus to bldg wall (m)', &
+  call ovarre(outfile,'Dist from centre of torus to bldg wall (m)', &
        '(wrbi)',wrbi)
-  call ovarre(nout,'Effective floor area (m2)','(efloor)',efloor)
-  call ovarre(nout,'Reactor building volume (m3)','(rbv)',rbv)
-  call ovarre(nout,'Reactor maintenance building volume (m3)', &
+  call ovarre(outfile,'Effective floor area (m2)','(efloor)',efloor)
+  call ovarre(outfile,'Reactor building volume (m3)','(rbv)',rbv)
+  call ovarre(outfile,'Reactor maintenance building volume (m3)', &
        '(rmbv)',rmbv)
-  call ovarre(nout,'Warmshop volume (m3)','(wsv)',wsv)
-  call ovarre(nout,'Tritium building volume (m3)','(triv)',triv)
-  call ovarre(nout,'Electrical building volume (m3)','(elev)',elev)
-  call ovarre(nout,'Control building volume (m3)','(conv)',conv)
-  call ovarre(nout,'Cryogenics building volume (m3)','(cryv)',cryv)
-  call ovarre(nout,'Administration building volume (m3)','(admv)',admv)
-  call ovarre(nout,'Shops volume (m3)','(shov)',shov)
-  call ovarre(nout,'Total volume of nuclear buildings (m3)', &
+  call ovarre(outfile,'Warmshop volume (m3)','(wsv)',wsv)
+  call ovarre(outfile,'Tritium building volume (m3)','(triv)',triv)
+  call ovarre(outfile,'Electrical building volume (m3)','(elev)',elev)
+  call ovarre(outfile,'Control building volume (m3)','(conv)',conv)
+  call ovarre(outfile,'Cryogenics building volume (m3)','(cryv)',cryv)
+  call ovarre(outfile,'Administration building volume (m3)','(admv)',admv)
+  call ovarre(outfile,'Shops volume (m3)','(shov)',shov)
+  call ovarre(outfile,'Total volume of nuclear buildings (m3)', &
        '(volnucb)',volnucb)
 
 end subroutine bldgs

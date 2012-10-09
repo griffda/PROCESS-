@@ -1,19 +1,19 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine radialb(nout,iprint)
+subroutine radialb(outfile,iprint)
 
   !+ad_name  radialb
   !+ad_summ  Radial build
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine determines the radial build of the machine.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  osections.h90
   !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
@@ -25,10 +25,13 @@ subroutine radialb(nout,iprint)
   !+ad_call  rippl
   !+ad_hist  26/07/11 PJK Initial F90 version
   !+ad_hist  24/09/12 PJK Swapped argument order
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -36,11 +39,10 @@ subroutine radialb(nout,iprint)
   include 'phydat.h90'
   include 'build.h90'
   include 'tfcoil.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: iprint,nout
+  integer, intent(in) :: iprint,outfile
 
   !  Local variables
 
@@ -92,131 +94,131 @@ subroutine radialb(nout,iprint)
 
   !  Print out device build
 
-  call oheadr(nout,'Radial Build')
+  call oheadr(outfile,'Radial Build')
 
-  write(nout,10)
+  write(outfile,10)
 10 format(t43,'Thickness (m)',t60,'Radius (m)')
 
   radius = 0.0D0
-  call obuild(nout,'Device centreline',0.0D0,radius)
+  call obuild(outfile,'Device centreline',0.0D0,radius)
 
   radius = radius + bore
-  call obuild(nout,'Machine bore',bore,radius)
+  call obuild(outfile,'Machine bore',bore,radius)
 
   if (itart.eq.1) then
 
      radius = radius + bcylth
-     call obuild(nout,'Bucking cylinder',bcylth,radius)
+     call obuild(outfile,'Bucking cylinder',bcylth,radius)
 
      radius = radius + tfcth
-     call obuild(nout,'TF coil inner leg',tfcth,radius)
+     call obuild(outfile,'TF coil inner leg',tfcth,radius)
 
      radius = radius + gapoh
-     call obuild(nout,'Gap',gapoh,radius)
+     call obuild(outfile,'Gap',gapoh,radius)
 
      radius = radius + ohcth
-     call obuild(nout,'OH coil',ohcth,radius)
+     call obuild(outfile,'OH coil',ohcth,radius)
 
   else
 
      radius = radius + ohcth
-     call obuild(nout,'OH coil',ohcth,radius)
+     call obuild(outfile,'OH coil',ohcth,radius)
 
      radius = radius + gapoh
-     call obuild(nout,'Gap',gapoh,radius)
+     call obuild(outfile,'Gap',gapoh,radius)
 
      radius = radius + bcylth
-     call obuild(nout,'Bucking cylinder',bcylth,radius)
+     call obuild(outfile,'Bucking cylinder',bcylth,radius)
 
      radius = radius + tfcth
-     call obuild(nout,'TF coil inner leg',tfcth,radius)
+     call obuild(outfile,'TF coil inner leg',tfcth,radius)
 
   end if
 
   radius = radius + ddwi
-  call obuild(nout,'Vacuum vessel',ddwi,radius)
+  call obuild(outfile,'Vacuum vessel',ddwi,radius)
 
   radius = radius + gapds
-  call obuild(nout,'Gap',gapds,radius)
+  call obuild(outfile,'Gap',gapds,radius)
 
   radius = radius + shldith
-  call obuild(nout,'Inboard shield',shldith,radius)
+  call obuild(outfile,'Inboard shield',shldith,radius)
 
   radius = radius + blnkith
-  call obuild(nout,'Inboard blanket',blnkith,radius)
+  call obuild(outfile,'Inboard blanket',blnkith,radius)
 
   radius = radius + fwith
-  call obuild(nout,'Inboard first wall',fwith,radius)
+  call obuild(outfile,'Inboard first wall',fwith,radius)
 
   radius = radius + scrapli
-  call obuild(nout,'Inboard scrape-off',scrapli,radius)
+  call obuild(outfile,'Inboard scrape-off',scrapli,radius)
 
   radius = radius + rminor
-  call obuild(nout,'Plasma geometric centre',rminor,radius)
+  call obuild(outfile,'Plasma geometric centre',rminor,radius)
 
   radius = radius + rminor
-  call obuild(nout,'Plasma outer edge',rminor,radius)
+  call obuild(outfile,'Plasma outer edge',rminor,radius)
 
   radius = radius + scraplo
-  call obuild(nout,'Outboard scrape-off',scraplo,radius)
+  call obuild(outfile,'Outboard scrape-off',scraplo,radius)
 
   radius = radius + fwoth
-  call obuild(nout,'Outboard first wall',fwoth,radius)
+  call obuild(outfile,'Outboard first wall',fwoth,radius)
 
   radius = radius + blnkoth
-  call obuild(nout,'Outboard blanket',blnkoth,radius)
+  call obuild(outfile,'Outboard blanket',blnkoth,radius)
 
   radius = radius + shldoth
-  call obuild(nout,'Outboard shield',shldoth,radius)
+  call obuild(outfile,'Outboard shield',shldoth,radius)
 
   radius = radius + gapsto
-  call obuild(nout,'Gap',gapsto,radius)
+  call obuild(outfile,'Gap',gapsto,radius)
 
   radius = radius + ddwi
-  call obuild(nout,'Vacuum vessel',ddwi,radius)
+  call obuild(outfile,'Vacuum vessel',ddwi,radius)
 
   radius = radius + tfthko
-  call obuild(nout,'TF coil outer leg',tfthko,radius)
+  call obuild(outfile,'TF coil outer leg',tfthko,radius)
 
   !  Vertical build
 
-  call oheadr(nout,'Vertical Build')
+  call oheadr(outfile,'Vertical Build')
 
-  call ocmmnt(nout,'Double null case')
+  call ocmmnt(outfile,'Double null case')
 
-  write(nout,20)
+  write(outfile,20)
 20 format(t43,'Thickness (m)',t60,'Height (m)')
 
   vbuild = 0.D0
-  call obuild(nout,'Midplane',0.0D0,vbuild)
+  call obuild(outfile,'Midplane',0.0D0,vbuild)
 
   vbuild = vbuild + rminor * kappa
-  call obuild(nout,'Plasma top',rminor*kappa,vbuild)
+  call obuild(outfile,'Plasma top',rminor*kappa,vbuild)
 
   vbuild = vbuild + vgap
-  call obuild(nout,'Top scrape-off',vgap,vbuild)
+  call obuild(outfile,'Top scrape-off',vgap,vbuild)
 
   vbuild = vbuild + divfix
-  call obuild(nout,'Divertor structure',divfix,vbuild)
+  call obuild(outfile,'Divertor structure',divfix,vbuild)
 
   vbuild = vbuild + shldtth
-  call obuild(nout,'Top shield',shldtth,vbuild)
+  call obuild(outfile,'Top shield',shldtth,vbuild)
 
   vbuild = vbuild + vgap2
-  call obuild(nout,'Gap',vgap2,vbuild)
+  call obuild(outfile,'Gap',vgap2,vbuild)
 
   !+**PJK 25/07/11 Added dewar thickness to vertical build
   vbuild = vbuild + ddwi
-  call obuild(nout,'Vacuum vessel',ddwi,vbuild)
+  call obuild(outfile,'Vacuum vessel',ddwi,vbuild)
 
   vbuild = vbuild + tfcth
-  call obuild(nout,'TF coil',tfcth,vbuild)
+  call obuild(outfile,'TF coil',tfcth,vbuild)
 
   !  Port size information
 
-  call osubhd(nout,'Port Size Information :')
-  call ovarre(nout,'Port width (m)','(prtsz)',prtsz)
-  call ovarre(nout,'Port requirement for beams (m)','(prtszreq)', &
+  call osubhd(outfile,'Port Size Information :')
+  call ovarre(outfile,'Port width (m)','(prtsz)',prtsz)
+  call ovarre(outfile,'Port requirement for beams (m)','(prtszreq)', &
        prtszreq)
 
 end subroutine radialb

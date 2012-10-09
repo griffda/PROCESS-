@@ -1,7 +1,7 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine avail(nout,iprint)
+subroutine avail(outfile,iprint)
 
   !+ad_name  avail
   !+ad_summ  Routine to calculate component lifetimes and the overall plant
@@ -9,11 +9,12 @@ subroutine avail(nout,iprint)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the component lifetimes and the overall
   !+ad_desc  plant availability.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  cost.h90
   !+ad_call  divrt.h90
   !+ad_call  fwblsh.h90
@@ -26,10 +27,13 @@ subroutine avail(nout,iprint)
   !+ad_call  ovarre
   !+ad_hist  27/07/11 PJK Initial F90 version
   !+ad_hist  20/09/11 PJK Removed dble calls
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  F/PL/PJK/PROCESS/CODE/043
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -44,7 +48,7 @@ subroutine avail(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -158,41 +162,41 @@ subroutine avail(nout,iprint)
 
   !  Output section
 
-  call oheadr(nout,'Plant Availability')
-  call ovarre(nout,'Allowable blanket neut. fluence (MW-yr/m2)', &
+  call oheadr(outfile,'Plant Availability')
+  call ovarre(outfile,'Allowable blanket neut. fluence (MW-yr/m2)', &
        '(abktflnc)',abktflnc)
-  call ovarre(nout,'Allowable divertor heat fluence (MW-yr/m2)', &
+  call ovarre(outfile,'Allowable divertor heat fluence (MW-yr/m2)', &
        '(adivflnc)',adivflnc)
-  call ovarre(nout,'First wall / blanket lifetime (years)', &
+  call ovarre(outfile,'First wall / blanket lifetime (years)', &
        '(bktlife)',bktlife)
-  call ovarre(nout,'Divertor lifetime (years)', &
+  call ovarre(outfile,'Divertor lifetime (years)', &
        '(divlife)',divlife)
 
   if (itart == 1) then
-     call ovarre(nout,'Centrepost lifetime (years)','(cplife)',cplife)
+     call ovarre(outfile,'Centrepost lifetime (years)','(cplife)',cplife)
   end if
 
-  call ovarre(nout,'Current drive system lifetime (years)', &
+  call ovarre(outfile,'Current drive system lifetime (years)', &
        '(cdrlife)',cdrlife)
-  call ovarre(nout,'Total plant lifetime (years)','(tlife)',tlife)
+  call ovarre(outfile,'Total plant lifetime (years)','(tlife)',tlife)
 
   if (iavail == 1) then
      if (divlife < bktlife) then
-        call ovarre(nout,'Time needed to replace divertor (years)', &
+        call ovarre(outfile,'Time needed to replace divertor (years)', &
              '(tdivrepl)',tdivrepl)
      else
-        call ovarre(nout,'Time needed to replace blanket (years)', &
+        call ovarre(outfile,'Time needed to replace blanket (years)', &
              '(tbktrepl)',tbktrepl)
      end if
-     call ovarre(nout,'Time needed to replace blkt + div (years)', &
+     call ovarre(outfile,'Time needed to replace blkt + div (years)', &
           '(tcomrepl)',tcomrepl)
-     call ovarre(nout,'Planned unavailability fraction', &
+     call ovarre(outfile,'Planned unavailability fraction', &
           '(uplanned)',uplanned)
-     call ovarre(nout,'Unplanned unavailability fraction', &
+     call ovarre(outfile,'Unplanned unavailability fraction', &
           '(uutot)',uutot)
   end if
 
-  call ovarre(nout,'Total plant availability fraction', &
+  call ovarre(outfile,'Total plant availability fraction', &
        '(cfactr)',cfactr)
 
 END subroutine avail

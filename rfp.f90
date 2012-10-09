@@ -1,7 +1,7 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine rfptfc(nout,iprint)
+subroutine rfptfc(outfile,iprint)
 
   !+ad_name  rfptfc
   !+ad_summ  Routine to calculate TF coil information for the reversed field
@@ -9,14 +9,14 @@ subroutine rfptfc(nout,iprint)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine calculates various parameters for the TF coil set
   !+ad_desc  of a reversed field pinch machine. The coils are assumed to be
   !+ad_desc  circular.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  osections.h90
   !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  rfp.h90
@@ -27,10 +27,13 @@ subroutine rfptfc(nout,iprint)
   !+ad_call  portsz
   !+ad_hist  27/02/96 PJK Initial version
   !+ad_hist  09/05/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -39,11 +42,10 @@ subroutine rfptfc(nout,iprint)
   include 'build.h90'
   include 'tfcoil.h90'
   include 'rfp.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: iprint,nout
+  integer, intent(in) :: iprint,outfile
 
   !  Local variables
 
@@ -166,31 +168,31 @@ subroutine rfptfc(nout,iprint)
 
   !  Output section
 
-  call oheadr(nout,'TF Coils')
-  call ovarre(nout,'TF coil current (A)','(ritfc)',ritfc)
-  call ovarre(nout,'TF coil current density (A/m2)','(oacdcp)',oacdcp)
-  call ovarre(nout,'Peak field at the TF coils (T)','(bmaxtf)',bmaxtf)
-  call ovarre(nout,'Ripple at plasma edge (%)','(ripple)',ripple)
-  call ovarre(nout,'Allowable ripple (%)','(ripmax)',ripmax)
-  call ovarre(nout,'Number of TF coil legs','(tfno)',tfno)
+  call oheadr(outfile,'TF Coils')
+  call ovarre(outfile,'TF coil current (A)','(ritfc)',ritfc)
+  call ovarre(outfile,'TF coil current density (A/m2)','(oacdcp)',oacdcp)
+  call ovarre(outfile,'Peak field at the TF coils (T)','(bmaxtf)',bmaxtf)
+  call ovarre(outfile,'Ripple at plasma edge (%)','(ripple)',ripple)
+  call ovarre(outfile,'Allowable ripple (%)','(ripmax)',ripmax)
+  call ovarre(outfile,'Number of TF coil legs','(tfno)',tfno)
 
-  call osubhd(nout,'Energy and Forces :')
-  call ovarre(nout,'Stored energy per coil (GJ)','(estotf)',estotf)
-  call ovarre(nout,'Vertical force on inner leg (N)','(vforce)',vforce)
-  call ovarre(nout,'Centering force on inner leg (N/m)','(cforce)',cforce)
-  call ovarre(nout,'Radial stress (Pa)','(sigrad)',sigrad)
-  call ovarre(nout,'Transverse stress (Pa)','(sigtan)',sigtan)
-  call ovarre(nout,'Vertical stress (Pa)','(sigver)',sigver)
-  call ovarre(nout,'Weight of inner legs (kg)','(whtcp)',whtcp)
-  call ovarre(nout,'Total TF coil weight (kg)','(whttf)',whttf)
-  call ovarre(nout,'Inner leg resistive power (W)','(prescp)',prescp)
-  call ovarre(nout,'Average conductor temperature (C)','(tcpav)',tcpav)
+  call osubhd(outfile,'Energy and Forces :')
+  call ovarre(outfile,'Stored energy per coil (GJ)','(estotf)',estotf)
+  call ovarre(outfile,'Vertical force on inner leg (N)','(vforce)',vforce)
+  call ovarre(outfile,'Centering force on inner leg (N/m)','(cforce)',cforce)
+  call ovarre(outfile,'Radial stress (Pa)','(sigrad)',sigrad)
+  call ovarre(outfile,'Transverse stress (Pa)','(sigtan)',sigtan)
+  call ovarre(outfile,'Vertical stress (Pa)','(sigver)',sigver)
+  call ovarre(outfile,'Weight of inner legs (kg)','(whtcp)',whtcp)
+  call ovarre(outfile,'Total TF coil weight (kg)','(whttf)',whttf)
+  call ovarre(outfile,'Inner leg resistive power (W)','(prescp)',prescp)
+  call ovarre(outfile,'Average conductor temperature (C)','(tcpav)',tcpav)
 
 end subroutine rfptfc
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine rfppfc(nout,iprint)
+subroutine rfppfc(outfile,iprint)
 
   !+ad_name  rfppfc
   !+ad_summ  Routine to calculate PF coil information for the reversed field
@@ -198,15 +200,15 @@ subroutine rfppfc(nout,iprint)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine calculates various parameters for the PF coil set
   !+ad_desc  of a reversed field pinch machine. The coils are scaled from the
   !+ad_desc  TITAN-I OH/EF coil set.
   !+ad_prob  bpf, bpf2, forcepf are never set...
+  !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  fwblsh.h90
-  !+ad_call  osections.h90
   !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
@@ -220,10 +222,13 @@ subroutine rfppfc(nout,iprint)
   !+ad_call  ovarre
   !+ad_hist  29/02/96 PJK Initial version
   !+ad_hist  09/05/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -235,11 +240,10 @@ subroutine rfppfc(nout,iprint)
   include 'fwblsh.h90'
   include 'build.h90'
   include 'vltcom.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -429,19 +433,19 @@ subroutine rfppfc(nout,iprint)
 
   !  Output section
 
-  call oheadr(nout,'PF Coils')
-  call ovarre(nout,'Total mass of PF coils (kg)','(whtpf)',whtpf)
-  call ovarre(nout,'Mass of EF coil steel shield (kg)','(whtpfs)',whtpfs)
-  call ovarre(nout,'PF coil resistive power (W)','(powpfres)',powpfres)
-  call oblnkl(nout)
+  call oheadr(outfile,'PF Coils')
+  call ovarre(outfile,'Total mass of PF coils (kg)','(whtpf)',whtpf)
+  call ovarre(outfile,'Mass of EF coil steel shield (kg)','(whtpfs)',whtpfs)
+  call ovarre(outfile,'PF coil resistive power (W)','(powpfres)',powpfres)
+  call oblnkl(outfile)
 
-  write(nout,140)
+  write(outfile,140)
 140 format(' coil',t12,'R(m)',t20,'Z(m)',t28,'dR(m)',t36,'dZ(m)', &
        t43,'turns',t51,'I(MA)',t58,'J(MA/m2)')
 
-  call oblnkl(nout)
+  call oblnkl(outfile)
 
-  write(nout,150) (i,rrpf(i),zzpf(i),drpf(i),dzpf(i),nturns(i), &
+  write(outfile,150) (i,rrpf(i),zzpf(i),drpf(i),dzpf(i),nturns(i), &
        curpf(i)/1.0D6,curdpf(i)/1.0D6, i=1,nrfppf)
 150 format(i2,t8,7f8.2)
 
@@ -449,7 +453,7 @@ end subroutine rfppfc
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine rfppfp(nout,iprint)
+subroutine rfppfp(outfile,iprint)
 
   !+ad_name  rfppfp
   !+ad_summ  Routine to calculate the MVA, power and energy requirements
@@ -457,14 +461,14 @@ subroutine rfppfp(nout,iprint)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine calculates the MVA, power and energy requirements
   !+ad_desc  for the RFP PF coil systems.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  htpwr.h90
-  !+ad_call  osections.h90
   !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
@@ -478,10 +482,13 @@ subroutine rfppfp(nout,iprint)
   !+ad_hist  22/01/97 PJK Subsumed pfelect.h into htpwr.h
   !+ad_hist  08/05/12 PJK Added necessary SAVE to pfbuspwr declaration
   !+ad_hist  09/05/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -493,12 +500,11 @@ subroutine rfppfp(nout,iprint)
   include 'build.h90'
   include 'times.h90'
   include 'htpwr.h90'
-  include 'osections.h90'
   include 'rfp.h90'
 
   !  Arguments
 
-  integer, intent(in) :: iprint,nout
+  integer, intent(in) :: iprint,outfile
 
   !  Local variables
 
@@ -625,20 +631,20 @@ subroutine rfppfp(nout,iprint)
 
   if ((iprint == 0).or.(sect13 == 0)) return
 
-  call oheadr(nout,'PF Coil Power Conversion')
-  call ovarre(nout,'Number of PF coil circuits','(pfckts)',pfckts)
-  call ovarre(nout,'Total power supply MVA for PF circuits', &
+  call oheadr(outfile,'PF Coil Power Conversion')
+  call ovarre(outfile,'Number of PF coil circuits','(pfckts)',pfckts)
+  call ovarre(outfile,'Total power supply MVA for PF circuits', &
        '(spsmva)',spsmva)
-  call ovarre(nout,'Av. max curr/turn of PF coil circuits (kA)', &
+  call ovarre(outfile,'Av. max curr/turn of PF coil circuits (kA)', &
        '(acptmax)',acptmax)
-  call ovarre(nout,'Total PF coil circuit bus length (m)','(spfbusl)', &
+  call ovarre(outfile,'Total PF coil circuit bus length (m)','(spfbusl)', &
        spfbusl)
-  call ovarre(nout,'Total PF coil bus resistive power (kW)', &
+  call ovarre(outfile,'Total PF coil bus resistive power (kW)', &
        '(pfbuspwr)',pfbuspwr)
-  call ovarre(nout,'Total PF coil resistive power (kW)','(srcktpm)', &
+  call ovarre(outfile,'Total PF coil resistive power (kW)','(srcktpm)', &
        srcktpm)
-  call ovarre(nout,'Maximum PF coil voltage (kV)','(vpfskv)',vpfskv)
-  call ovarre(nout,'Max stored energy in PF coil circuits (MJ)', &
+  call ovarre(outfile,'Maximum PF coil voltage (kV)','(vpfskv)',vpfskv)
+  call ovarre(outfile,'Max stored energy in PF coil circuits (MJ)', &
        '(ensxpfm)',ensxpfm)
 
 end subroutine rfppfp
@@ -657,6 +663,7 @@ subroutine rfpphy
   !+ad_desc  This subroutine calculates the plasma physics of the
   !+ad_desc  reversed field pinch system.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
@@ -686,12 +693,15 @@ subroutine rfpphy
   !+ad_call  16/07/01 PJK Modified call to PCOND
   !+ad_call  22/05/06 PJK Modified call to PALPH2
   !+ad_hist  09/05/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
   !+ad_docc                Scoping Phase Report, January 1987
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 

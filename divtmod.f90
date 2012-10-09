@@ -1,7 +1,7 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine divcall(nout,iprint)
+subroutine divcall(outfile,iprint)
 
   !+ad_name  divcall
   !+ad_summ  Routine to call the divertor model
@@ -9,7 +9,7 @@ subroutine divcall(nout,iprint)
   !+ad_auth  J Galambos, ORNL
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine calls the divertor routine. This routine scales
   !+ad_desc  dimensions, powers and field levels which are used as input to
@@ -17,9 +17,9 @@ subroutine divcall(nout,iprint)
   !+ad_prob  Many of the parameters are scaled from the ~1990 ITER point
   !+ad_prob  (R=6.00, Bt = 4.85 T, Bp = 1.07 T, l_null-strike = 1.50 m).
   !+ad_prob  Variation far from these parameters is uncertain.
+  !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  divrt.h90
-  !+ad_call  osections.h90
   !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  divert
@@ -40,10 +40,13 @@ subroutine divcall(nout,iprint)
   !+ad_hist  17/11/11 PJK Initial F90 version;
   !+ad_hisc               Moved TART model into new routine
   !+ad_hist  24/09/12 PJK Swapped argument order
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -51,11 +54,10 @@ subroutine divcall(nout,iprint)
   include 'phydat.h90'
   include 'build.h90'
   include 'divrt.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: iprint,nout
+  integer, intent(in) :: iprint,outfile
 
   !  Local variables
 
@@ -67,7 +69,7 @@ subroutine divcall(nout,iprint)
 
   if (itart == 1) then
      call divtart(rmajor,rminor,triang,scrapli,vgap,pi,pdivt,hldiv, &
-          iprint,nout)
+          iprint,outfile)
      return
   end if
 
@@ -154,71 +156,71 @@ subroutine divcall(nout,iprint)
 
   if ((iprint == 0).or.(sect05 == 0)) return
 
-  call oheadr(nout,'Divertor')
-  call ocmmnt(nout,'Harrison (ITER) Model')
-  call oblnkl(nout)
+  call oheadr(outfile,'Divertor')
+  call ocmmnt(outfile,'Harrison (ITER) Model')
+  call oblnkl(outfile)
 
   !  Fixed quantities to divertor model
 
-  call ovarre(nout,'Ion mass (amu)','(aionso)',aionso)
-  call ovarre(nout,'Fitting coefficient','(c1div)',c1div)
-  call ovarre(nout,'Fitting coefficient','(c2div)',c2div)
-  call ovarre(nout,'Fitting coefficient','(c3div)',c3div)
-  call ovarre(nout,'Fitting coefficient','(c4div)',c4div)
-  call ovarre(nout,'Fitting coefficient','(c5div)',c5div)
-  call ovarre(nout,'Fitting coefficient','(c6div)',c6div)
-  call ovarin(nout,'Divertor Zeff model','(divdum)',divdum)
-  call ovarre(nout,'Zeff in scrape-off region','(zeffso)',zeffso)
-  call ovarre(nout,'Coeff of energy distrib. along conn length', &
+  call ovarre(outfile,'Ion mass (amu)','(aionso)',aionso)
+  call ovarre(outfile,'Fitting coefficient','(c1div)',c1div)
+  call ovarre(outfile,'Fitting coefficient','(c2div)',c2div)
+  call ovarre(outfile,'Fitting coefficient','(c3div)',c3div)
+  call ovarre(outfile,'Fitting coefficient','(c4div)',c4div)
+  call ovarre(outfile,'Fitting coefficient','(c5div)',c5div)
+  call ovarre(outfile,'Fitting coefficient','(c6div)',c6div)
+  call ovarin(outfile,'Divertor Zeff model','(divdum)',divdum)
+  call ovarre(outfile,'Zeff in scrape-off region','(zeffso)',zeffso)
+  call ovarre(outfile,'Coeff of energy distrib. along conn length', &
        '(delld)',delld)
-  call ovarre(nout,'Separatrix plasma density (10**20 m-3)', &
+  call ovarre(outfile,'Separatrix plasma density (10**20 m-3)', &
        '(delne)',delne)
-  call ovarre(nout,'Radial gradient ratio','(fdfs)',fdfs)
-  call ovarre(nout,'Sheath potential factor','(fgamp)',fgamp)
-  call ovarre(nout,'Parameter for sheath coefficient','(fififi)', &
+  call ovarre(outfile,'Radial gradient ratio','(fdfs)',fdfs)
+  call ovarre(outfile,'Sheath potential factor','(fgamp)',fgamp)
+  call ovarre(outfile,'Parameter for sheath coefficient','(fififi)', &
        fififi)
-  call ovarre(nout,'Fraction of radiated power to plate','(frrp)', &
+  call ovarre(outfile,'Fraction of radiated power to plate','(frrp)', &
        frrp)
-  call ovarre(nout,'Pressure ratio - (nT)_p/(nT)_s','(omegan)', &
+  call ovarre(outfile,'Pressure ratio - (nT)_p/(nT)_s','(omegan)', &
        omegan)
-  call ovarre(nout,'ne-edge / ne-average','(prn1)',prn1)
-  call ovarre(nout,'Parallel heat transport coefficient','(xpara)', &
+  call ovarre(outfile,'ne-edge / ne-average','(prn1)',prn1)
+  call ovarre(outfile,'Parallel heat transport coefficient','(xpara)', &
        xpara)
-  call ovarre(nout,'Radial transport coefficient','(xperp)',xperp)
+  call ovarre(outfile,'Radial transport coefficient','(xperp)',xperp)
 
   !  Input quantities scaled in divertor caller (dependent on geometry,
   !  plasma parameters) - can be different for inner and outer plates
 
-  call osubhd(nout,'Scaled Input Quantities :')
+  call osubhd(outfile,'Scaled Input Quantities :')
 
-  call ovarre(nout,'Fraction of areas','(adas)',adas)
-  call ovarre(nout,'Angle of incidence (rad)','(anginc)',anginc)
-  call ovarre(nout,'Area of divertor / area of separatrix','(frgd)' &
+  call ovarre(outfile,'Fraction of areas','(adas)',adas)
+  call ovarre(outfile,'Angle of incidence (rad)','(anginc)',anginc)
+  call ovarre(outfile,'Area of divertor / area of separatrix','(frgd)' &
        ,frgd)
-  call ovarre(nout,'Power fraction to outer divertor','(ksic)',ksic)
-  call ovarre(nout,'Power to divertor (MW)','(pdiv)',pdiv)
-  call ovarre(nout,'Null to strike length (m)','(plsep)',plsep)
-  call ovarre(nout,'B_p / B_t strike point','(rbpbtc)',rbpbt)
-  call ovarre(nout,'Connection length ratio','(rconl)',rconl)
-  call ovarre(nout,'Radius ratio R_s/R_d','(rsrd)',rsrd)
-  call ovarre(nout,'Strike radius (m)','(rstrko)',rstrko)
-  call ovarre(nout,'Connection length (m)','(tconl)',tconl)
+  call ovarre(outfile,'Power fraction to outer divertor','(ksic)',ksic)
+  call ovarre(outfile,'Power to divertor (MW)','(pdiv)',pdiv)
+  call ovarre(outfile,'Null to strike length (m)','(plsep)',plsep)
+  call ovarre(outfile,'B_p / B_t strike point','(rbpbtc)',rbpbt)
+  call ovarre(outfile,'Connection length ratio','(rconl)',rconl)
+  call ovarre(outfile,'Radius ratio R_s/R_d','(rsrd)',rsrd)
+  call ovarre(outfile,'Strike radius (m)','(rstrko)',rstrko)
+  call ovarre(outfile,'Connection length (m)','(tconl)',tconl)
 
   !  Quantities calculated by the Harrison model
 
-  call osubhd(nout,'Divertor Model Output :')
-  call ovarre(nout,'Iteration relative error','(delta)',delta)
-  call ovarre(nout,'Private flux power factor','(omlarg)',omlarg)
-  call ovarre(nout,'Separatrix temperature (eV)','(tsep)',tsep)
-  call ovarre(nout,'Divertor temperature (eV)','(tdiv)',tdiv)
-  call ovarre(nout,'Divertor plasma density (10**20 m-3)', &
+  call osubhd(outfile,'Divertor Model Output :')
+  call ovarre(outfile,'Iteration relative error','(delta)',delta)
+  call ovarre(outfile,'Private flux power factor','(omlarg)',omlarg)
+  call ovarre(outfile,'Separatrix temperature (eV)','(tsep)',tsep)
+  call ovarre(outfile,'Divertor temperature (eV)','(tdiv)',tdiv)
+  call ovarre(outfile,'Divertor plasma density (10**20 m-3)', &
        '(dendiv)',dendiv)
-  call ovarre(nout,'Peak heat load (MW/m2)','(hldiv)',hldiv)
-  call ovarre(nout,'Divertor peak temperature (eV)','(ptpdiv)', &
+  call ovarre(outfile,'Peak heat load (MW/m2)','(hldiv)',hldiv)
+  call ovarre(outfile,'Divertor peak temperature (eV)','(ptpdiv)', &
        ptpdiv)
-  call ovarre(nout,'D/T plate flux (10**20 m-3)','(gamdt)',gamdt)
-  call ovarre(nout,'Scrape-off thickness (m)','(delw)',delw)
-  call ovarre(nout,'Collision length / connection length', &
+  call ovarre(outfile,'D/T plate flux (10**20 m-3)','(gamdt)',gamdt)
+  call ovarre(outfile,'Scrape-off thickness (m)','(delw)',delw)
+  call ovarre(outfile,'Collision length / connection length', &
        '(rlclolcn)',rlclolcn)
 
 end subroutine divcall
@@ -630,7 +632,7 @@ end subroutine divert
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine divtart(rmajor,rminor,triang,scrapli,vgap,pi,pdivt,hldiv, &
-     iprint,nout)
+     iprint,outfile)
 
   !+ad_name  divtart
   !+ad_summ  Tight aspect ratio tokamak divertor model
@@ -646,13 +648,13 @@ subroutine divtart(rmajor,rminor,triang,scrapli,vgap,pi,pdivt,hldiv, &
   !+ad_args  pdivt : input real : power to the divertor (MW)
   !+ad_args  hldiv : output real : heat load on the divertor (MW/m2)
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_desc  This subroutine calculates the divertor heat load for a tight aspect
   !+ad_desc  ratio machine, by assuming that the power is evenly spread around the
   !+ad_desc  divertor chamber by the action of a gaseous target. Each divertor is
   !+ad_desc  assumed to be approximately triangular in the R,Z plane.
   !+ad_prob  None
-  !+ad_call  osections.h90
+  !+ad_call  process_output
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
   !+ad_call  osubhd
@@ -660,19 +662,20 @@ subroutine divtart(rmajor,rminor,triang,scrapli,vgap,pi,pdivt,hldiv, &
   !+ad_hist  29/01/96 PJK Added TART gaseous divertor model
   !+ad_hist  14/05/96 PJK Improved calculation of TART divertor area
   !+ad_hist  08/05/12 PJK Initial F90 version; Moved TART model into new routine
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 64: Figure 2
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  implicit none
+  use process_output
 
-  include 'osections.h90'
+  implicit none
 
   !  Arguments
 
-  integer, intent(in) :: iprint, nout
+  integer, intent(in) :: iprint, outfile
   real(kind(1.0D0)), intent(in) :: rmajor,rminor,triang,scrapli,vgap,pi,pdivt
   real(kind(1.0D0)), intent(out) :: hldiv
 
@@ -693,9 +696,9 @@ subroutine divtart(rmajor,rminor,triang,scrapli,vgap,pi,pdivt,hldiv, &
   !  Angle of diagonal divertor plate from horizontal
 
   if (vgap <= 0.0D0) then
-     write(nout,*) 'Error in routine DIVCALL:'
-     write(nout,*) 'vgap = ',vgap
-     write(nout,*) 'PROCESS stopping.'
+     write(outfile,*) 'Error in routine DIVCALL:'
+     write(outfile,*) 'vgap = ',vgap
+     write(outfile,*) 'PROCESS stopping.'
      STOP
   end if
 
@@ -721,11 +724,11 @@ subroutine divtart(rmajor,rminor,triang,scrapli,vgap,pi,pdivt,hldiv, &
 
   if ((iprint == 0).or.(sect05 == 0)) return
 
-  call osubhd(nout,'Divertor Heat Load')
-  call ocmmnt(nout,'Assume an expanded divertor with a gaseous target')
-  call oblnkl(nout)
-  call ovarre(nout,'Power to the divertor (MW)','(pdivt)',pdivt)
-  call ovarre(nout,'Divertor surface area (m2)','(areadv)',areadv)
-  call ovarre(nout,'Divertor heat load (MW/m2)','(hldiv)',hldiv)
+  call osubhd(outfile,'Divertor Heat Load')
+  call ocmmnt(outfile,'Assume an expanded divertor with a gaseous target')
+  call oblnkl(outfile)
+  call ovarre(outfile,'Power to the divertor (MW)','(pdivt)',pdivt)
+  call ovarre(outfile,'Divertor surface area (m2)','(areadv)',areadv)
+  call ovarre(outfile,'Divertor heat load (MW/m2)','(hldiv)',hldiv)
 
 end subroutine divtart

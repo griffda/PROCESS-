@@ -13,6 +13,7 @@ subroutine initial
   !+ad_desc  N.B. Many of these variables are re-initialised elsewhere in the
   !+ad_desc  code, but are set to zero in this routine anyway.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  labels.h90
@@ -36,7 +37,6 @@ subroutine initial
   !+ad_call  struccom.h90
   !+ad_call  torsdat.h90
   !+ad_call  vaccom.h90
-  !+ad_call  osections.h90
   !+ad_call  blanket.h90
   !+ad_call  pulse.h90
   !+ad_call  stella.h90
@@ -70,10 +70,13 @@ subroutine initial
   !+ad_hist  26/07/11 PJK Added JCRIT_MODEL
   !+ad_hist  09/11/11 PJK Removed ICULCR
   !+ad_hist  19/09/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -100,7 +103,6 @@ subroutine initial
   include 'struccom.h90'
   include 'torsdat.h90'
   include 'vaccom.h90'
-  include 'osections.h90'
   include 'blanket.h90'
   include 'pulse.h90'
   include 'stella.h90'
@@ -513,7 +515,6 @@ subroutine initial
   icc(14)  = 16
 
   ioptimz  = 1
-  iotty    = 6
   ivms     = 0
 
   ixc(:) = 0
@@ -549,9 +550,7 @@ subroutine initial
   neqns    = 14
   nfev1    = 0
   nfev2    = 0
-  nin      = 10
   nineqns  = 0
-  nout     = 12
   nvar     = 25
   nvrbl    = 0
   sqsumsq  = 0.0D0
@@ -1523,29 +1522,29 @@ subroutine initial
   vcdimax  = 0.0D0
   vpumpn   = 0.0D0
 
-  !  Output file parameters
-
-  sect01   = 1
-  sect02   = 1
-  sect03   = 1
-  sect04   = 1
-  sect05   = 1
-  sect06   = 1
-  sect07   = 1
-  sect08   = 1
-  sect09   = 1
-  sect10   = 1
-  sect11   = 1
-  sect12   = 1
-  sect13   = 1
-  sect14   = 1
-  sect15   = 1
-  sect16   = 1
-  sect17   = 1
-  sect18   = 1
-  sect19   = 1
-  sect20   = 1
-  sect21   = 1
+!  !  Output file parameters
+!
+!  sect01   = 1
+!  sect02   = 1
+!  sect03   = 1
+!  sect04   = 1
+!  sect05   = 1
+!  sect06   = 1
+!  sect07   = 1
+!  sect08   = 1
+!  sect09   = 1
+!  sect10   = 1
+!  sect11   = 1
+!  sect12   = 1
+!  sect13   = 1
+!  sect14   = 1
+!  sect15   = 1
+!  sect16   = 1
+!  sect17   = 1
+!  sect18   = 1
+!  sect19   = 1
+!  sect20   = 1
+!  sect21   = 1
 
   !  Reversed field pinch parameters
 
@@ -1668,6 +1667,7 @@ subroutine check
   !+ad_desc  This routine performs a sanity check of the input variables
   !+ad_desc  and ensures other dependent variables are given suitable values.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  bldgvol.h90
   !+ad_call  build.h90
@@ -1685,10 +1685,13 @@ subroutine check
   !+ad_hist  14/03/97 PJK Added coding relevant to IFE device
   !+ad_hist  01/04/98 PJK Added rnbeam reset for no NBI
   !+ad_hist  19/01/99 PJK Added warning about IITER flag with non-ITER profiles
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 

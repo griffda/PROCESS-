@@ -1,7 +1,7 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine nbeam(nout,iprint)
+subroutine nbeam(outfile,iprint)
 
   !+ad_name  nbeam
   !+ad_summ  Neutral Beam power requirements
@@ -9,7 +9,7 @@ subroutine nbeam(nout,iprint)
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_auth  P C Shipe, ORNL
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine was amputated on 28/03/89 to provide only a
   !+ad_desc  simplified dummy model of the wall plug power necessary
@@ -17,23 +17,25 @@ subroutine nbeam(nout,iprint)
   !+ad_desc  January 1992 by P. C. Shipe.
   !+ad_desc  <P>The output from the routine is <CODE>pwpnb</CODE>.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  cdriv.h90
-  !+ad_call  osections.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use process_output
+
   implicit none
 
   include 'cdriv.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -49,13 +51,13 @@ subroutine nbeam(nout,iprint)
 
   if ((iprint == 0).or.(sect18 == 0)) return
 
-  call oheadr(nout,'Neutral Beams')
+  call oheadr(outfile,'Neutral Beams')
 
-  call ovarre(nout,'Neutral beam current (A)','(cnbeam)',cnbeam)
-  call ovarre(nout,'Neutral beam energy (keV)','(enbeam)',enbeam)
-  call ovarre(nout,'Neutral beam wall plug efficiency','(etanbi)', &
+  call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam)
+  call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)
+  call ovarre(outfile,'Neutral beam wall plug efficiency','(etanbi)', &
        etanbi)
-  call ovarre(nout,'Neutral beam wall plug power (W)','(pwpnb)', &
+  call ovarre(outfile,'Neutral beam wall plug power (W)','(pwpnb)', &
        pwpnb)
 
 end subroutine nbeam

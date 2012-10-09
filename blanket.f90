@@ -1,7 +1,7 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine blanket(icalc,nout,iprint)
+subroutine blanket(icalc,outfile,iprint)
 
   !+ad_name  blanket
   !+ad_summ  Caller for the detailed blanket thermodynamic model
@@ -10,7 +10,7 @@ subroutine blanket(icalc,nout,iprint)
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
   !+ad_args  icalc : input integer : 1 = calculate volume, 2 = calculate electric power
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  Synopsis of model: 
   !+ad_desc  <P><B>(a) Blanket structure</B>
@@ -121,7 +121,7 @@ subroutine blanket(icalc,nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: iprint,nout,icalc
+  integer, intent(in) :: iprint,outfile,icalc
 
   !  Local variables
 
@@ -153,7 +153,7 @@ subroutine blanket(icalc,nout,iprint)
   !  accepts this assumption then the shield and first wall/divertor
   !  can easily be incorporated into the Rankine cycle. 
 
-  call blnkt(rm,ap,qfus,yc,xlr,xlp,volbl,wnet1,icalc,nout,iprint)
+  call blnkt(rm,ap,qfus,yc,xlr,xlp,volbl,wnet1,icalc,outfile,iprint)
 
   !  Volume and mass of blanket
 
@@ -177,7 +177,7 @@ end subroutine blanket
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,nout,iprint)
+subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,outfile,iprint)
 
   !+ad_name  blnkt
   !+ad_summ  Detailed thermodynamic model for the blanket
@@ -204,12 +204,13 @@ subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,nout,iprint)
   !+ad_args  vol      : output real : total blanket volume (m**3)
   !+ad_args  wnet1    : output real : net electric power (MW)
   !+ad_args  icalc    : input integer : 1 = calculate volume, 2 = calculate electric power
-  !+ad_args  nout     : input integer : output file unit
+  !+ad_args  outfile     : input integer : output file unit
   !+ad_args  iprint   : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine provides a detailed thermodynamic model for the blanket.
   !+ad_desc  For a synopsis of the model, see the description in routine
   !+ad_desc  <A HREF="blanket.html">blanket</A>.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  blanket.h90
   !+ad_call  flow
   !+ad_call  oblnkl
@@ -229,6 +230,7 @@ subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,nout,iprint)
   !+ad_call  twophase
   !+ad_hist  --/--/-- PK  Initial version
   !+ad_hist  27/09/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  Blanket and Energy Conversion Model for Fusion Reactors,
   !+ad_docc  Dr. P.J. Karditsas, AEA Technology, Theoretical and Strategic Studies
@@ -236,6 +238,8 @@ subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,nout,iprint)
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -246,7 +250,7 @@ subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,nout,iprint)
   real(kind(1.0D0)), intent(in) :: rm,ap,xlr,xlp
   real(kind(1.0D0)), intent(inout) :: yc
   real(kind(1.0D0)), intent(in), dimension(3) :: xqfus
-  integer, intent(in) :: icalc,nout,iprint
+  integer, intent(in) :: icalc,outfile,iprint
   real(kind(1.0D0)), intent(out) :: vol,wnet1
 
   !  Local variables
@@ -459,61 +463,61 @@ subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,nout,iprint)
 
   if (iprint == 1) then
 
-     call oblnkl(nout)
-     call ocentr(nout,'Blanket Input Data',72)
-     call oblnkl(nout)
+     call oblnkl(outfile)
+     call ocentr(outfile,'Blanket Input Data',72)
+     call oblnkl(outfile)
 
-     call ovarrf(nout,'fusion power (MW)','(xqfusion)',xqfus(1))
-     call ovarrf(nout,'blanket coolant inlet temp (C)','(xtfi)', &
+     call ovarrf(outfile,'fusion power (MW)','(xqfusion)',xqfus(1))
+     call ovarrf(outfile,'blanket coolant inlet temp (C)','(xtfi)', &
           xtfi)
-     call ovarrf(nout,'blanket coolant inlet pressure (MPa)', &
+     call ovarrf(outfile,'blanket coolant inlet pressure (MPa)', &
           '(xpf)',xpf)
-     call ovarrf(nout,'Radial blanket length (cm)','(xlr)',xlr)
-     call ovarrf(nout,'Poloidal (1/4) blanket length (cm)','(xlp)' &
+     call ovarrf(outfile,'Radial blanket length (cm)','(xlr)',xlr)
+     call ovarrf(outfile,'Poloidal (1/4) blanket length (cm)','(xlp)' &
           ,xlp)
-     call ovarrf(nout,'Reactor major radius (m)','(Rm)',Rm)
-     call ovarrf(nout,'Reactor minor radius (m)','(ap)',ap)
-     call ovarrf(nout,'Coolant fraction','(yc)',yc)
+     call ovarrf(outfile,'Reactor major radius (m)','(Rm)',Rm)
+     call ovarrf(outfile,'Reactor minor radius (m)','(ap)',ap)
+     call ovarrf(outfile,'Coolant fraction','(yc)',yc)
 
      if (astr == 1) then
-        call ovarrf(nout,'outside diameter (cm)','(xdo)',xdo)
+        call ovarrf(outfile,'outside diameter (cm)','(xdo)',xdo)
      else
-        call ovarrf(nout,'outside diameter (cm)','(xdo)',xdo)
-        call ovarrf(nout,'inside diameter (cm)','(xdi)',xdi)
+        call ovarrf(outfile,'outside diameter (cm)','(xdo)',xdo)
+        call ovarrf(outfile,'inside diameter (cm)','(xdi)',xdi)
      end if
 
      if (bstr == 1) then
-        call osubhd(nout,'Output coolant temperature is fixed')
-        call ovarrf(nout,'blanket coolant outlet temp (C)','(xtfo)' &
+        call osubhd(outfile,'Output coolant temperature is fixed')
+        call ovarrf(outfile,'blanket coolant outlet temp (C)','(xtfo)' &
              ,xtfo)
      else
-        call osubhd(nout,'Maximum blanket temperature is fixed')
-        call ovarrf(nout,'blanket max allowable temp (C)','(xtb)', &
+        call osubhd(outfile,'Maximum blanket temperature is fixed')
+        call ovarrf(outfile,'blanket max allowable temp (C)','(xtb)', &
              xtb)
      end if
 
      if (estr == 1) then
-        call osubhd(nout,'Cooling channels radially orientated')
+        call osubhd(outfile,'Cooling channels radially orientated')
      else
-        call osubhd(nout,'Cooling channels poloidally orientated')
+        call osubhd(outfile,'Cooling channels poloidally orientated')
      end if
 
      if (astr == 1) then
-        call osubhd(nout,'Circular cooling channels')
+        call osubhd(outfile,'Circular cooling channels')
      else
-        call osubhd(nout,'Annular cooling channels')
+        call osubhd(outfile,'Annular cooling channels')
      end if
 
      if (costr == 1) then
-        call ocmmnt(nout,'Gaseous helium chosen to be coolant')
+        call ocmmnt(outfile,'Gaseous helium chosen to be coolant')
      else
-        call ocmmnt(nout,'Pressurized water chosen to be coolant')
+        call ocmmnt(outfile,'Pressurized water chosen to be coolant')
      end if
 
      if (smstr == 1) then
-        call ocmmnt(nout,'Solid blanket chosen (Li2O/Be)')
+        call ocmmnt(outfile,'Solid blanket chosen (Li2O/Be)')
      else
-        call ocmmnt(nout,'Liquid blanket chosen (LiPb/Li)')
+        call ocmmnt(outfile,'Liquid blanket chosen (LiPb/Li)')
      end if
 
   end if
@@ -633,60 +637,60 @@ subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,nout,iprint)
 
   if (iprint == 1) then
 
-     call oblnkl(nout)
-     call ocentr(nout,'Blanket Output Data',72)
-     call oblnkl(nout)
-     call ovarrf(nout,'Max Blanket temp (C)','(tb)',tb-273.15D0)
-     call ovarrf(nout,'Coolant outlet temp (C)','(tfo)',tfo-273.15D0)
-     call ovarrf(nout,'Surface temp (C)','(ts)',ts-273.15D0)
-     call ovarrf(nout,'Pump power (MW)','(qpump)',qpump/1.0D6)
-     call ovarrf(nout,'Qfusion  (MW)','(xqfusion)',xqfus(1))
-     call ovarrf(nout,'Coolant fraction (%)','(yc)',yc*100.0D0)
-     call ovarrf(nout,'Coolant mass flow rate (kg/s)','(mf)',mf)
-     call ovarrf(nout,'Heat transfer coeff (W/m**2/K)','(htc)',htc)
-     call ovarrf(nout,'Reynolds number','(reyd)',reyd)
-     call ovarrf(nout,'Dh (cm)','(dh1)',dh1*100.0D0)
-     call ovarrf(nout,'Inlet press (MPa)','(xpf)',xpf)
-     call ovarrf(nout,'Pressure drop (kPa)','(dpf)',dpf/1.0D3)
-     call ovarrf(nout,'Exit press (MPa)','(pf-dpf)',(pf-dpf)/1.0D6)
-     call ovarin(nout,'Total no. of cooling channels','(ncc)',ncc)
-     call ovarin(nout,'Radial cooling channels','(4*nr)',4*nr)
-     call ovarin(nout,'Poloidal cooling channels','(np)',np)
-     call ovarin(nout,'Toroidal cooling channels','(nt)',nt)
-     call ovarrf(nout,'Block side length (cm)','(w)',w*100.0D0)
-     call ovarrf(nout,'Total cross sect. area (m**2)','(atotal)' &
+     call oblnkl(outfile)
+     call ocentr(outfile,'Blanket Output Data',72)
+     call oblnkl(outfile)
+     call ovarrf(outfile,'Max Blanket temp (C)','(tb)',tb-273.15D0)
+     call ovarrf(outfile,'Coolant outlet temp (C)','(tfo)',tfo-273.15D0)
+     call ovarrf(outfile,'Surface temp (C)','(ts)',ts-273.15D0)
+     call ovarrf(outfile,'Pump power (MW)','(qpump)',qpump/1.0D6)
+     call ovarrf(outfile,'Qfusion  (MW)','(xqfusion)',xqfus(1))
+     call ovarrf(outfile,'Coolant fraction (%)','(yc)',yc*100.0D0)
+     call ovarrf(outfile,'Coolant mass flow rate (kg/s)','(mf)',mf)
+     call ovarrf(outfile,'Heat transfer coeff (W/m**2/K)','(htc)',htc)
+     call ovarrf(outfile,'Reynolds number','(reyd)',reyd)
+     call ovarrf(outfile,'Dh (cm)','(dh1)',dh1*100.0D0)
+     call ovarrf(outfile,'Inlet press (MPa)','(xpf)',xpf)
+     call ovarrf(outfile,'Pressure drop (kPa)','(dpf)',dpf/1.0D3)
+     call ovarrf(outfile,'Exit press (MPa)','(pf-dpf)',(pf-dpf)/1.0D6)
+     call ovarin(outfile,'Total no. of cooling channels','(ncc)',ncc)
+     call ovarin(outfile,'Radial cooling channels','(4*nr)',4*nr)
+     call ovarin(outfile,'Poloidal cooling channels','(np)',np)
+     call ovarin(outfile,'Toroidal cooling channels','(nt)',nt)
+     call ovarrf(outfile,'Block side length (cm)','(w)',w*100.0D0)
+     call ovarrf(outfile,'Total cross sect. area (m**2)','(atotal)' &
           ,atotal)
-     call ovarrf(nout,'Blanket volume (m**3)','(vol)',vol)
-     call ovarrf(nout,'Total surface area (m**2)','(asurface)' &
+     call ovarrf(outfile,'Blanket volume (m**3)','(vol)',vol)
+     call ovarrf(outfile,'Total surface area (m**2)','(asurface)' &
           ,asurface)
-     call ovarrf(nout,'Average heat (MW/m**3)','(xqav)',xqav)
+     call ovarrf(outfile,'Average heat (MW/m**3)','(xqav)',xqav)
 
-     call oblnkl(nout)
-     call ocentr(nout,'Steam Input Data',72)
-     call oblnkl(nout)
+     call oblnkl(outfile)
+     call ocentr(outfile,'Steam Input Data',72)
+     call oblnkl(outfile)
 
-     call ovarrf(nout,'High inlet pressure (MPa)','(ph)',ph)
-     call ovarrf(nout,'Reheat intermediate pressure (MPa)','(pr)', &
+     call ovarrf(outfile,'High inlet pressure (MPa)','(ph)',ph)
+     call ovarrf(outfile,'Reheat intermediate pressure (MPa)','(pr)', &
           pr)
-     call ovarrf(nout,'Low inlet pressure (MPa)','(pin)',pin)
-     call ovarrf(nout,'Condenser pressure (MPa)','(pc)',pc)
-     call ovarrf(nout,'HP turbine isentropic efficiency','(etahp)', &
+     call ovarrf(outfile,'Low inlet pressure (MPa)','(pin)',pin)
+     call ovarrf(outfile,'Condenser pressure (MPa)','(pc)',pc)
+     call ovarrf(outfile,'HP turbine isentropic efficiency','(etahp)', &
           etahp)
-     call ovarrf(nout,'IP turbine isentropic efficiency','(etainp)', &
+     call ovarrf(outfile,'IP turbine isentropic efficiency','(etainp)', &
           etainp)
-     call ovarrf(nout,'LP turbine isentropic efficiency','(etalp)', &
+     call ovarrf(outfile,'LP turbine isentropic efficiency','(etalp)', &
           etalp)
-     call ovarrf(nout,'Feed pump isentropic efficiency','(etafp)', &
+     call ovarrf(outfile,'Feed pump isentropic efficiency','(etafp)', &
           etafp)
-     call ovarrf(nout,'Condensate pump isentropic efficiency', &
+     call ovarrf(outfile,'Condensate pump isentropic efficiency', &
           '(etacp)',etacp)
-     call ovarin(nout,'Number of IP feedwater heaters','(nipfwh)', &
+     call ovarin(outfile,'Number of IP feedwater heaters','(nipfwh)', &
           nipfwh)
-     call ovarin(nout,'Number of LP feedwater heaters','(nlpfwh)', &
+     call ovarin(outfile,'Number of LP feedwater heaters','(nlpfwh)', &
           nlpfwh)
-     call ovarrf(nout,'Steam generator effectiveness','(sgeff)', &
+     call ovarrf(outfile,'Steam generator effectiveness','(sgeff)', &
           sgeff)
-     call oblnkl(nout)
+     call oblnkl(outfile)
 
   end if
 
@@ -1239,60 +1243,60 @@ subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,nout,iprint)
 
   if (iprint == 1) then
 
-     call oblnkl(nout)
-     call ocentr(nout,'Thermal Cycle Data',72)
-     call oblnkl(nout)
+     call oblnkl(outfile)
+     call ocentr(outfile,'Thermal Cycle Data',72)
+     call oblnkl(outfile)
 
      do i = 0,nipfwh+nlpfwh+2
-        call ovarrf(nout,'Pressure (MPa)','(p)',p(i))
-        call ovarin(nout,'Extraction point','(i)',i)
-        call ovarrf(nout,'Enthalpy (kJ/kg)','(h)',h(i))
-        call ovarrf(nout,'Entropy (kJ/kg/K)','(s)',s(i))
-        call ovarrf(nout,'Temperature (C)','(t)',t(i)-273.15D0)
-        call ovarrf(nout,'Bled mass flow rate (kg/s)','(mb)',mb(i))
-        call ovarin(nout,'Feedwater heater train point','(i)',i)
-        call ovarrf(nout,'Saturated enthalpy (kJ/kg)','(hsat)', &
+        call ovarrf(outfile,'Pressure (MPa)','(p)',p(i))
+        call ovarin(outfile,'Extraction point','(i)',i)
+        call ovarrf(outfile,'Enthalpy (kJ/kg)','(h)',h(i))
+        call ovarrf(outfile,'Entropy (kJ/kg/K)','(s)',s(i))
+        call ovarrf(outfile,'Temperature (C)','(t)',t(i)-273.15D0)
+        call ovarrf(outfile,'Bled mass flow rate (kg/s)','(mb)',mb(i))
+        call ovarin(outfile,'Feedwater heater train point','(i)',i)
+        call ovarrf(outfile,'Saturated enthalpy (kJ/kg)','(hsat)', &
              hsat(i))
-        call ovarrf(nout,'Saturated temperature (C)','(tsat)', &
+        call ovarrf(outfile,'Saturated temperature (C)','(tsat)', &
              tsat(i))
-        call ovarrf(nout,'Saturated specific volume (m**3/kg)', &
+        call ovarrf(outfile,'Saturated specific volume (m**3/kg)', &
              '(vsat)',vsat(i))
-        call ovarrf(nout,'Mass flow rate (kg/s)','(m)',m(i))
-        call oblnkl(nout)
+        call ovarrf(outfile,'Mass flow rate (kg/s)','(m)',m(i))
+        call oblnkl(outfile)
      end do
 
-     call ocentr(nout,'Steam Output Data',72)
-     call oblnkl(nout)
+     call ocentr(outfile,'Steam Output Data',72)
+     call oblnkl(outfile)
 
-     call ovarrf(nout,'SG inlet enthalpy (kJ/kg)','(hsi)',hsi)
-     call ovarrf(nout,'SG exit enthalpy (kJ/kg)','(hso)',hso)
-     call ovarrf(nout,'SG inlet temp (C)','(tsi)',tsi-273.15D0)
-     call ovarrf(nout,'SG exit temp (C)','(tso)',tso-273.15D0)
-     call ovarrf(nout,'HP turbine inlet  h (kJ/kg)','(hhi)',hhi)
-     call ovarrf(nout,'HP turbine outlet  h (kJ/kg)','(hhe)',hhe)
-     call ovarrf(nout,'Reheat inlet (IP inlet) h (kJ/kg)','(hri)', &
+     call ovarrf(outfile,'SG inlet enthalpy (kJ/kg)','(hsi)',hsi)
+     call ovarrf(outfile,'SG exit enthalpy (kJ/kg)','(hso)',hso)
+     call ovarrf(outfile,'SG inlet temp (C)','(tsi)',tsi-273.15D0)
+     call ovarrf(outfile,'SG exit temp (C)','(tso)',tso-273.15D0)
+     call ovarrf(outfile,'HP turbine inlet  h (kJ/kg)','(hhi)',hhi)
+     call ovarrf(outfile,'HP turbine outlet  h (kJ/kg)','(hhe)',hhe)
+     call ovarrf(outfile,'Reheat inlet (IP inlet) h (kJ/kg)','(hri)', &
           hri)
-     call ovarrf(nout,'IP outlet (LP turb inlet) h (kJ/kg)','(hre)', &
+     call ovarrf(outfile,'IP outlet (LP turb inlet) h (kJ/kg)','(hre)', &
           hre)
-     call ovarrf(nout,'LP turb outlet h (kJ/kg)','(hle)',hle)
-     call ovarrf(nout,'Condenser enthalpy (kJ/kg)','(hc)',hc)
-     call ovarrf(nout,'Coolant mass flow rate (kg/s)','(mf)',mf)
-     call ovarrf(nout,'Steam mass flow rate (kg/s)','(ms)',ms)
-     call ovarrf(nout,'LP turbine exit dryness','(xexit)',xexit)
-     call ovarrf(nout,'HP turb. output (MW)','(whpt)',whpt)
-     call ovarrf(nout,'IP turb. output (MW)','(winpt)',winpt)
-     call ovarrf(nout,'LP turb. output (MW)','(wlpt)',wlpt)
-     call ovarrf(nout,'IP-FP power (MW)','(winpfp)',winpfp)
-     call ovarrf(nout,'LP-FP power (MW)','(wlpfp)',wlpfp)
-     call ovarrf(nout,'CP power (MW)','(wcp)',wcp)
-     call ovarrf(nout,'Qin (MW)','(qin)',qin)
-     call ovarrf(nout,'Qs (MW)','(qsg)',qsg)
-     call ovarrf(nout,'Qr (MW)','(qr)',qr)
-     call ovarrf(nout,'Qcond (MW)','(qc)',qc)
-     call ovarrf(nout,'Wnet plant (MW)','(wnet1)',wnet1)
-     call ovarrf(nout,'Wnet cycle (MW)','(wnet)',wnet)
-     call ovarrf(nout,'Plant Efficiency','(etaplant)',etaplant)
-     call ovarrf(nout,'Cycle Efficiency','(etacycle)',etacycle)
+     call ovarrf(outfile,'LP turb outlet h (kJ/kg)','(hle)',hle)
+     call ovarrf(outfile,'Condenser enthalpy (kJ/kg)','(hc)',hc)
+     call ovarrf(outfile,'Coolant mass flow rate (kg/s)','(mf)',mf)
+     call ovarrf(outfile,'Steam mass flow rate (kg/s)','(ms)',ms)
+     call ovarrf(outfile,'LP turbine exit dryness','(xexit)',xexit)
+     call ovarrf(outfile,'HP turb. output (MW)','(whpt)',whpt)
+     call ovarrf(outfile,'IP turb. output (MW)','(winpt)',winpt)
+     call ovarrf(outfile,'LP turb. output (MW)','(wlpt)',wlpt)
+     call ovarrf(outfile,'IP-FP power (MW)','(winpfp)',winpfp)
+     call ovarrf(outfile,'LP-FP power (MW)','(wlpfp)',wlpfp)
+     call ovarrf(outfile,'CP power (MW)','(wcp)',wcp)
+     call ovarrf(outfile,'Qin (MW)','(qin)',qin)
+     call ovarrf(outfile,'Qs (MW)','(qsg)',qsg)
+     call ovarrf(outfile,'Qr (MW)','(qr)',qr)
+     call ovarrf(outfile,'Qcond (MW)','(qc)',qc)
+     call ovarrf(outfile,'Wnet plant (MW)','(wnet1)',wnet1)
+     call ovarrf(outfile,'Wnet cycle (MW)','(wnet)',wnet)
+     call ovarrf(outfile,'Plant Efficiency','(etaplant)',etaplant)
+     call ovarrf(outfile,'Cycle Efficiency','(etacycle)',etacycle)
 
   end if
 

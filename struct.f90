@@ -1,14 +1,14 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine strucall(nout,iprint)
+subroutine strucall(outfile,iprint)
 
   !+ad_name  strucall
   !+ad_summ  Structure module caller
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine calls the structure module.
   !+ad_prob  None
@@ -40,7 +40,7 @@ subroutine strucall(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -52,7 +52,7 @@ subroutine strucall(nout,iprint)
 
   call struct(plascur,rmajor,rminor,kappa,bt,itfsup,ipfres,tfboreh, &
        hmax,whtshld,divmas,twhtpf,whttf,fwmass,whtblkt,coolmass, &
-       wtbc,dewmkg,nout,iprint,fncmass,aintmass,clgsmass,coldmass, &
+       wtbc,dewmkg,outfile,iprint,fncmass,aintmass,clgsmass,coldmass, &
        gsmass)
 
 end subroutine strucall
@@ -61,7 +61,7 @@ end subroutine strucall
 
 subroutine struct(ai,r0,a,akappa,b0,itfsup,ipfres,boreh,tfhmax, &
      shldmass,dvrtmass,pfmass,tfmass,fwmass,blmass,coolmass, &
-     wtbc,dewmass,nout,iprint,fncmass,aintmass,clgsmass,coldmass, &
+     wtbc,dewmass,outfile,iprint,fncmass,aintmass,clgsmass,coldmass, &
      gsm)
 
   !+ad_name  struct
@@ -90,7 +90,7 @@ subroutine struct(ai,r0,a,akappa,b0,itfsup,ipfres,boreh,tfhmax, &
   !+ad_args  coolmass : input real : total water coolant mass (kg)
   !+ad_args  wtbc : input real : bucking cylinder mass (kg)
   !+ad_args  dewmass : input real : dewar mass (kg)
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_args  fncmass : output real : mass of outer pf coil support fence (kg)
   !+ad_args  aintmass : output real : mass of intercoil support (kg)
@@ -99,25 +99,26 @@ subroutine struct(ai,r0,a,akappa,b0,itfsup,ipfres,boreh,tfhmax, &
   !+ad_args  gsm : output real : gravity support for magnets, and shield/blanket (kg)
   !+ad_desc  Reprogrammed by J. Galambos to match the ITER (i.e. B. Spears) rules.
   !+ad_prob  None
-  !+ad_call  osections.h90
+  !+ad_call  process_output
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  28/07/11 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  implicit none
+  use process_output
 
-  include 'osections.h90'
+  implicit none
 
   !  Arguments
 
   real(kind(1.0D0)), intent(in) :: ai,r0,a,akappa,b0,boreh,tfhmax, &
        shldmass,dvrtmass,pfmass,tfmass,fwmass,blmass,coolmass, &
        wtbc,dewmass
-  integer, intent(in) :: nout,iprint,itfsup,ipfres
+  integer, intent(in) :: outfile,iprint,itfsup,ipfres
   real(kind(1.0D0)), intent(out) :: fncmass,aintmass,clgsmass,coldmass,gsm
 
   !  Local variables
@@ -173,17 +174,17 @@ subroutine struct(ai,r0,a,akappa,b0,itfsup,ipfres,boreh,tfhmax, &
 
   if ((iprint == 0).or.(sect10 == 0)) return
 
-  call oheadr(nout,'Support Structure')
-  call ovarre(nout,'Outer PF coil fence mass (kg)', &
+  call oheadr(outfile,'Support Structure')
+  call ovarre(outfile,'Outer PF coil fence mass (kg)', &
        '(fncmass)',fncmass)
-  call ovarre(nout,'Intercoil support structure mass (kg)', &
+  call ovarre(outfile,'Intercoil support structure mass (kg)', &
        '(aintmass)',aintmass)
-  call ovarre(nout,'Mass of cooled components (kg)', &
+  call ovarre(outfile,'Mass of cooled components (kg)', &
        '(coldmass)',coldmass)
-  call ovarre(nout,'Gravity support structure mass (kg)', &
+  call ovarre(outfile,'Gravity support structure mass (kg)', &
        '(clgsmass)',clgsmass)
-  call ovarre(nout,'Torus leg support mass (kg)','(gsm1)',gsm1)
-  call ovarre(nout,'Ring beam mass (kg)','(gsm2)',gsm2)
-  call ovarre(nout,'Ring legs mass (kg)','(gsm3)',gsm3)
+  call ovarre(outfile,'Torus leg support mass (kg)','(gsm1)',gsm1)
+  call ovarre(outfile,'Ring beam mass (kg)','(gsm2)',gsm2)
+  call ovarre(outfile,'Ring legs mass (kg)','(gsm3)',gsm3)
 
 end subroutine struct

@@ -79,6 +79,7 @@ module process_input
   !+ad_desc  of what is being attempted.
   !+ad_desc  </UL>
   !+ad_prob  Some routines still contain GOTOs...
+  !+ad_call  process_output
   !+ad_call  blanket.h90
   !+ad_call  bldgcom.h90
   !+ad_call  bldgvol.h90
@@ -93,7 +94,6 @@ module process_input
   !+ad_call  ineq.h90
   !+ad_call  labels.h90
   !+ad_call  numer.h90
-  !+ad_call  osections.h90
   !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
@@ -107,11 +107,14 @@ module process_input
   !+ad_hist  20/01/95 PJK Initial version (PROCESS)
   !+ad_hist  05/01/04 PJK Initial F90 version (CENTORI)
   !+ad_hist  02/10/12 PJK Initial F90 version (PROCESS)
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -130,7 +133,6 @@ module process_input
   include 'ife.h90'
   include 'ineq.h90'
   include 'labels.h90'
-  include 'osections.h90'
   include 'pfcoil.h90'
   include 'phydat.h90'
   include 'pulse.h90'
@@ -143,6 +145,7 @@ module process_input
 
   private
   public :: input, run_summary, check_range_int, check_range_real
+  integer, public, parameter :: nin = 10
 
 #ifdef unit_test
   public :: parse_input_file

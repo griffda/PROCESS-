@@ -1,14 +1,14 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine vaccall(nout,iprint)
+subroutine vaccall(outfile,iprint)
 
   !+ad_name  vaccall
   !+ad_summ  Routine to call the vacuum module
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
+  !+ad_args  outfile : input integer : Fortran output unit identifier
   !+ad_args  iprint : input integer : Switch to write output (1=yes)
   !+ad_desc  This routine calls the main vacuum package.
   !+ad_prob  NBI gas load (qtorus) is currently hardwired to zero.
@@ -36,7 +36,7 @@ subroutine vaccall(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: nout, iprint
+  integer, intent(in) :: outfile, iprint
 
   !  Local variables
 
@@ -54,7 +54,7 @@ subroutine vaccall(nout,iprint)
 
   call vacuum(powfmw,rmajor,rminor,kappa,shldoth,shldith,tfcth, &
        rsldi-gapds-ddwi,tfno,tdwell,dene,idivrt,qtorus,gasld, &
-       vpumpn,nvduct,nvtype,dlscal,vacdshm,vcdimax,iprint,nout)
+       vpumpn,nvduct,nvtype,dlscal,vacdshm,vcdimax,iprint,outfile)
 
 end subroutine vaccall
 
@@ -62,7 +62,7 @@ end subroutine vaccall
 
 subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
      tdwell,nplasma,ndiv,qtorus,gasld,pumpn,nduct,nvtype,dlscal, &
-     mvdsh,dimax,iprint,nout)
+     mvdsh,dimax,iprint,outfile)
 
   !+ad_name  vaccall
   !+ad_summ  Routine to calculate the parameters of the vacuum system
@@ -96,11 +96,11 @@ subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
   !+ad_args  mvdsh : output real : Mass of a single vacuum duct shield (kg)
   !+ad_args  dimax : output real : Diameter of passage from divertor to pumping ducts (m)
   !+ad_args  iprint : input integer : Switch to write output (1=yes)
-  !+ad_args  nout : input integer : Fortran output unit identifier
+  !+ad_args  outfile : input integer : Fortran output unit identifier
   !+ad_desc  This routine calculates the parameters of the vacuum system.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  vaccom.h90
-  !+ad_call  osections.h90
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
   !+ad_call  oheadr
@@ -108,19 +108,21 @@ subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
   !+ad_call  ovarin
   !+ad_call  ovarre
   !+ad_hist  20/09/11 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use process_output
+
   implicit none
 
   include 'vaccom.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: ndiv, iprint, nout
+  integer, intent(in) :: ndiv, iprint, outfile
   real(kind(1.0D0)), intent(in) :: pfusmw, r0, aw, kappa, thshldo, thshldi
   real(kind(1.0D0)), intent(in) :: thtf, ritf, tfno, tdwell, nplasma, qtorus
   real(kind(1.0D0)), intent(in) :: gasld
@@ -350,46 +352,46 @@ subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
 
   !  Output section
 
-  call oheadr(nout,'Vacuum System')
+  call oheadr(outfile,'Vacuum System')
 
-  call ocmmnt(nout,'Pumpdown to Base Pressure :')
-  call oblnkl(nout)
-  call ovarre(nout,'First wall outgassing rate (Pa m/s)','(rat)',rat)
-  call ovarre(nout,'Total outgassing load (Pa m3/s)','(ogas)',ogas)
-  call ovarre(nout,'Base pressure required (Pa)','(pbase)',pbase)
-  call ovarre(nout,'Required N2 pump speed (m3/s)','(s(1))',s(1))
-  call ovarre(nout,'N2 pump speed provided (m3/s)','(snet(1))',snet(1))
+  call ocmmnt(outfile,'Pumpdown to Base Pressure :')
+  call oblnkl(outfile)
+  call ovarre(outfile,'First wall outgassing rate (Pa m/s)','(rat)',rat)
+  call ovarre(outfile,'Total outgassing load (Pa m3/s)','(ogas)',ogas)
+  call ovarre(outfile,'Base pressure required (Pa)','(pbase)',pbase)
+  call ovarre(outfile,'Required N2 pump speed (m3/s)','(s(1))',s(1))
+  call ovarre(outfile,'N2 pump speed provided (m3/s)','(snet(1))',snet(1))
 
-  call osubhd(nout,'Pumpdown between Burns :')
-  call ovarre(nout,'Plasma chamber volume (m3)','(volume)',volume)
-  call ovarre(nout,'Chamber pressure after burn (Pa)','(pend)',pend)
-  call ovarre(nout,'Chamber pressure before burn (Pa)','(pstart)', &
+  call osubhd(outfile,'Pumpdown between Burns :')
+  call ovarre(outfile,'Plasma chamber volume (m3)','(volume)',volume)
+  call ovarre(outfile,'Chamber pressure after burn (Pa)','(pend)',pend)
+  call ovarre(outfile,'Chamber pressure before burn (Pa)','(pstart)', &
        pstart)
-  call ovarre(nout,'Dwell time between burns (s)','(tdwell)',tdwell)
-  call ovarre(nout,'Required D-T pump speed (m3/s)','(s(2))',s(2))
-  call ovarre(nout,'D-T pump speed provided (m3/s)','(snet(2))',snet(2))
+  call ovarre(outfile,'Dwell time between burns (s)','(tdwell)',tdwell)
+  call ovarre(outfile,'Required D-T pump speed (m3/s)','(s(2))',s(2))
+  call ovarre(outfile,'D-T pump speed provided (m3/s)','(snet(2))',snet(2))
 
-  call osubhd(nout,'Helium Ash Removal :')
-  call ovarre(nout,'Divertor chamber gas pressure (Pa)','(prdiv)', &
+  call osubhd(outfile,'Helium Ash Removal :')
+  call ovarre(outfile,'Divertor chamber gas pressure (Pa)','(prdiv)', &
        prdiv)
-  call ovarre(nout,'Helium gas fraction in divertor chamber','(fhe)', &
+  call ovarre(outfile,'Helium gas fraction in divertor chamber','(fhe)', &
        fhe)
-  call ovarre(nout,'Required helium pump speed (m3/s)','(s(3))',s(3))
-  call ovarre(nout,'Helium pump speed provided (m3/s)','(snet(3))', &
+  call ovarre(outfile,'Required helium pump speed (m3/s)','(s(3))',s(3))
+  call ovarre(outfile,'Helium pump speed provided (m3/s)','(snet(3))', &
        snet(3))
 
-  call osubhd(nout,'D-T Removal at Fuelling Rate :')
-  call ovarre(nout,'D-T fuelling rate (kg/s)','(frate)',frate)
-  call ovarre(nout,'Required D-T pump speed (m3/s)','(s(4))',s(4))
-  call ovarre(nout,'D-T pump speed provided (m3/s)','(snet(4))',snet(4))
+  call osubhd(outfile,'D-T Removal at Fuelling Rate :')
+  call ovarre(outfile,'D-T fuelling rate (kg/s)','(frate)',frate)
+  call ovarre(outfile,'Required D-T pump speed (m3/s)','(s(4))',s(4))
+  call ovarre(outfile,'D-T pump speed provided (m3/s)','(snet(4))',snet(4))
 
   if (nflag == 1) then
-     call oblnkl(nout)
-     call ocmmnt(nout,'Vacuum pumping ducts are space limited.')
-     write(nout,10) d1max
+     call oblnkl(outfile)
+     call ocmmnt(outfile,'Vacuum pumping ducts are space limited.')
+     write(outfile,10) d1max
 10   format(' Maximum duct diameter is only ',f8.2,'m')
-     call ocmmnt(nout,'Conductance is inadequate.')
-     call oblnkl(nout)
+     call ocmmnt(outfile,'Conductance is inadequate.')
+     call oblnkl(outfile)
   end if
 
   if (ntype == 1) then
@@ -398,32 +400,32 @@ subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
      ipump = 'turbo'
   end if
 
-  call oblnkl(nout)
-  call ocmmnt(nout,'The vacuum pumping system size is governed by the')
+  call oblnkl(outfile)
+  call ocmmnt(outfile,'The vacuum pumping system size is governed by the')
 
   select case (imax)
   case (1)
-     call ocmmnt(nout,'requirements for pumpdown to base pressure.')
+     call ocmmnt(outfile,'requirements for pumpdown to base pressure.')
   case (2)
-     call ocmmnt(nout,'requirements for pumpdown between burns.')
+     call ocmmnt(outfile,'requirements for pumpdown between burns.')
   case (3)
-     call ocmmnt(nout,'requirements for helium ash removal.')
+     call ocmmnt(outfile,'requirements for helium ash removal.')
   case default
-     call ocmmnt(nout,'requirements for D-T removal at fuelling rate.')
+     call ocmmnt(outfile,'requirements for D-T removal at fuelling rate.')
   end select
 
-  call oblnkl(nout)
+  call oblnkl(outfile)
 
-  call ovarin(nout,'Number of large pump ducts','(nduct)',nduct)
-  call ovarre(nout,'Passage diameter, divertor to ducts (m)', &
+  call ovarin(outfile,'Number of large pump ducts','(nduct)',nduct)
+  call ovarre(outfile,'Passage diameter, divertor to ducts (m)', &
        '(d(imax))',d(imax))
-  call ovarre(nout,'Passage length (m)','(l1)',l1)
-  call ovarre(nout,'Diameter of ducts (m)','(dout)',dout)
-  call ovarre(nout,'Duct length, divertor to elbow (m)','(l2)',l2)
-  call ovarre(nout,'Duct length, elbow to pumps (m)','(l3)',l3)
-  call ovarre(nout,'Number of pumps','(pumpn)',pumpn)
-  call oblnkl(nout)
-  write(nout,20) ipump
+  call ovarre(outfile,'Passage length (m)','(l1)',l1)
+  call ovarre(outfile,'Diameter of ducts (m)','(dout)',dout)
+  call ovarre(outfile,'Duct length, divertor to elbow (m)','(l2)',l2)
+  call ovarre(outfile,'Duct length, elbow to pumps (m)','(l3)',l3)
+  call ovarre(outfile,'Number of pumps','(pumpn)',pumpn)
+  call oblnkl(outfile)
+  write(outfile,20) ipump
 20 format(' The vacuum system uses ',a5,'pumps')
 
 end subroutine vacuum

@@ -1,14 +1,661 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine output(nout)
+module process_output
+
+  !+ad_name  process_output
+  !+ad_summ  Module containing routines to produce a uniform output style
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  oblnkl
+  !+ad_cont  obuild
+  !+ad_cont  ocentr
+  !+ad_cont  ocmmnt
+  !+ad_cont  ocosts
+  !+ad_cont  oheadr
+  !+ad_cont  oshead
+  !+ad_cont  ostars
+  !+ad_cont  osubhd
+  !+ad_cont  ovarin
+  !+ad_cont  ovarre
+  !+ad_cont  ovarrf
+  !+ad_args  N/A
+  !+ad_desc  This module contains a number of routines that allow the
+  !+ad_desc  program to write output to a file unit in a uniform style.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  09/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  integer, parameter :: nout = 12  !  Output file unit identifier
+  integer, parameter :: nplot = 11  !  Plot data file unit identifier
+  integer, parameter :: iotty = 6  !  Standard output unit identifier
+
+  !  Switches for turning on/off output sections
+  !  1 = on, 0 = off
+
+  integer :: sect01 = 1  !  Power Reactor Costs
+  integer :: sect02 = 1  !  Detailed Costings
+  integer :: sect03 = 1  !  Plasma
+  integer :: sect04 = 1  !  Current Drive System
+  integer :: sect05 = 1  !  Divertor
+  integer :: sect06 = 1  !  Machine Build
+  integer :: sect07 = 1  !  TF Coils
+  integer :: sect08 = 1  !  PF Coils
+  integer :: sect09 = 1  !  Volt Second Consumption
+  integer :: sect10 = 1  !  Support Structure
+  integer :: sect11 = 1  !  PF Coil Inductances
+  integer :: sect12 = 1  !  Shield / Blanket
+  integer :: sect13 = 1  !  Power Conversion
+  integer :: sect14 = 1  !  Power / Heat Transport
+  integer :: sect15 = 1  !  Vacuum System
+  integer :: sect16 = 1  !  Plant Buildings System
+  integer :: sect17 = 1  !  AC Power
+  integer :: sect18 = 1  !  Neutral Beams
+  integer :: sect19 = 1  !  Electron Cyclotron Heating
+  integer :: sect20 = 1  !  Lower Hybrid Heating
+  integer :: sect21 = 1  !  Times
+
+contains
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine ocentr(file,string,width)
+
+    !+ad_name  ocentr
+    !+ad_summ  Routine to print a centred header within a line of asterisks
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  file : input integer : Fortran output unit identifier
+    !+ad_args  string : input character string : Character string to be used
+    !+ad_args  width : input integer : Total width of header
+    !+ad_desc  This routine writes out a centred header within a line of asterisks.
+    !+ad_desc  It cannot cope with a zero-length string; routine
+    !+ad_desc  <A HREF="ostars.html"><CODE>ostars</CODE></A> should be used instead.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: file, width
+    character(len=*), intent(in) :: string
+
+    !  Local variables
+
+    integer :: lh, nstars, nstars2
+    integer, parameter :: maxwd = 100
+    character(len=maxwd) :: stars
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    stars = repeat('*',maxwd)
+
+    lh = len(string)
+
+    if (width > maxwd) then
+       write(*,*) 'Error in routine OCENTR :'
+       write(*,*) 'Maximum width = ',maxwd
+       write(*,*) 'Requested width = ',width
+       write(*,*) 'PROCESS stopping.'
+       stop
+    end if
+
+    if (lh == 0) then
+       write(*,*) 'Error in routine OCENTR :'
+       write(*,*) 'A zero-length string is not permitted.'
+       write(*,*) 'PROCESS stopping.'
+       stop
+    end if
+
+    if (lh >= width) then
+       write(*,*) 'Error in routine OCENTR :'
+       write(*,*) string
+       write(*,*) 'This is too long to fit into ',width,' columns.'
+       write(*,*) 'PROCESS stopping.'
+       stop
+    end if
+
+    !  Number of stars to be printed on the left
+
+    nstars = int( (width-lh)/2 ) - 1
+
+    !  Number of stars to be printed on the right
+
+    nstars2 = width - (nstars+lh+2)
+
+    !  Write the whole line
+
+    write(file,*) stars(1:nstars),' ',string,' ',stars(1:nstars2)
+
+  end subroutine ocentr
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine ostars(file,width)
+
+    !+ad_name  ostars
+    !+ad_summ  Routine to print a line of asterisks
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  file : input integer : Fortran output unit identifier
+    !+ad_args  width : input integer : Total width of header
+    !+ad_desc  This routine writes out a line of asterisks.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: file, width
+
+    !  Local variables
+
+    integer, parameter :: maxwd = 100
+    character(len=maxwd) :: stars
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    stars = repeat('*',maxwd)
+
+    write(file,'(t2,a)') stars(1:min(width,maxwd))
+
+  end subroutine ostars
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine oheadr(file,string)
+
+    !+ad_name  oheadr
+    !+ad_summ  Routine to print a centred header within a line of asterisks,
+    !+ad_summ  and between two blank lines
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  file : input integer : Fortran output unit identifier
+    !+ad_args  string : input character string : Character string to be used
+    !+ad_desc  This routine writes out a centred header within a line of
+    !+ad_desc  asterisks, and between two blank lines.
+    !+ad_prob  None
+    !+ad_call  oblnkl
+    !+ad_call  ocentr
+    !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: file
+    character(len=*), intent(in) :: string
+
+    !  Local variables
+
+    integer, parameter :: width = 72
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    call oblnkl(file)
+    call ocentr(file,string,width)
+    call oblnkl(file)
+
+  end subroutine oheadr
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine oshead(file,string)
+
+    !+ad_name  oshead
+    !+ad_summ  Routine to print a short, centred header within a line of asterisks,
+    !+ad_summ  and between two blank lines
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  file : input integer : Fortran output unit identifier
+    !+ad_args  string : input character string : Character string to be used
+    !+ad_desc  This routine writes out a short, centred header within a line of
+    !+ad_desc  asterisks, and between two blank lines.
+    !+ad_prob  None
+    !+ad_call  oblnkl
+    !+ad_call  ocentr
+    !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: file
+    character(len=*), intent(in) :: string
+
+    !  Local variables
+
+    integer, parameter :: width = 50
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    call oblnkl(file)
+    call ocentr(file,string,width)
+    call oblnkl(file)
+
+  end subroutine oshead
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine oblnkl(file)
+
+    !+ad_name  oblnkl
+    !+ad_summ  Routine to print a blank line
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  file : input integer : Fortran output unit identifier
+    !+ad_desc  This routine writes out a simple blank line.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: file
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    write(file,10)
+10  format(' ')
+
+  end subroutine oblnkl
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine osubhd(file,string)
+
+    !+ad_name  osubhd
+    !+ad_summ  Routine to print a subheading between two blank lines
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  file : input integer : Fortran output unit identifier
+    !+ad_args  string : input character string : Character string to be used
+    !+ad_desc  This routine writes out a subheading between two blank lines.
+    !+ad_prob  None
+    !+ad_call  oblnkl
+    !+ad_call  ocmmnt
+    !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: file
+    character(len=*), intent(in) :: string
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    call oblnkl(file)
+    call ocmmnt(file,string)
+    call oblnkl(file)
+
+  end subroutine osubhd
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine ocmmnt(file,string)
+
+    !+ad_name  ocmmnt
+    !+ad_summ  Routine to print a comment
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  file : input integer : Fortran output unit identifier
+    !+ad_args  string : input character string : Character string to be used
+    !+ad_desc  This routine writes out a comment line.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: file
+    character(len=*), intent(in) :: string
+
+    !  Local variables
+
+    integer, parameter :: width = 72
+    integer :: lh
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    lh = len(string)
+
+    if (lh == 0) then
+       write(*,*) 'Error in routine OCMMNT :'
+       write(*,*) 'A zero-length string is not permitted.'
+       write(*,*) 'PROCESS stopping.'
+       stop
+    end if
+
+    if (lh >= width) then
+       write(*,*) 'Error in routine OCMMNT :'
+       write(*,*) string
+       write(*,*) 'This is too long to fit into ',width,' columns.'
+       write(*,*) 'PROCESS stopping.'
+       stop
+    end if
+
+    write(file,'(t2,a)') string
+
+  end subroutine ocmmnt
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine ovarrf(file,descr,varnam,value)
+
+    !+ad_name  ovarrf
+    !+ad_summ  Routine to print out the details of a floating-point
+    !+ad_summ  variable using 'F' format
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  file : input integer : Fortran output unit identifier
+    !+ad_args  descr : input character string : Description of the variable
+    !+ad_args  varnam : input character string : Name of the variable
+    !+ad_args  value : input real : Value of the variable
+    !+ad_desc  This routine writes out the description, name and value of a
+    !+ad_desc  double precision variable in F format (e.g.
+    !+ad_desc  <CODE>-12345.000</CODE>).
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: file
+    character(len=*), intent(in) :: descr, varnam
+    real(kind(1.0D0)), intent(in) :: value
+
+    !  Local variables
+
+    character(len=42) :: dum42
+    character(len=13) :: dum13
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Replace descr and varnam with dummy strings of the correct length.
+    !  This counters problems that would occur if the two original strings
+    !  were the wrong length.
+
+    dum42 = descr
+    dum13 = varnam
+
+    write(file,10) dum42, dum13, value
+10  format(1x,a,t45,a,t60,f10.3)
+
+  end subroutine ovarrf
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine ovarre(file,descr,varnam,value)
+
+    !+ad_name  ovarre
+    !+ad_summ  Routine to print out the details of a floating-point
+    !+ad_summ  variable using 'E' format
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  file : input integer : Fortran output unit identifier
+    !+ad_args  descr : input character string : Description of the variable
+    !+ad_args  varnam : input character string : Name of the variable
+    !+ad_args  value : input real : Value of the variable
+    !+ad_desc  This routine writes out the description, name and value of a
+    !+ad_desc  double precision variable in E format (e.g.
+    !+ad_desc  <CODE>-1.234E+04</CODE>).
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: file
+    character(len=*), intent(in) :: descr, varnam
+    real(kind(1.0D0)), intent(in) :: value
+
+    !  Local variables
+
+    character(len=42) :: dum42
+    character(len=13) :: dum13
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Replace descr and varnam with dummy strings of the correct length.
+    !  This counters problems that would occur if the two original strings
+    !  were the wrong length.
+
+    dum42 = descr
+    dum13 = varnam
+
+    write(file,10) dum42, dum13, value
+10  format(1x,a,t45,a,t60,1pe10.3)
+
+  end subroutine ovarre
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine ovarin(file,descr,varnam,value)
+
+    !+ad_name  ovarin
+    !+ad_summ  Routine to print out the details of an integer variable
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  file : input integer : Fortran output unit identifier
+    !+ad_args  descr : input character string : Description of the variable
+    !+ad_args  varnam : input character string : Name of the variable
+    !+ad_args  value : input integer : Value of the variable
+    !+ad_desc  This routine writes out the description, name and value of an
+    !+ad_desc  integer variable.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: file
+    character(len=*), intent(in) :: descr, varnam
+    integer, intent(in) :: value
+
+    !  Local variables
+
+    character(len=42) :: dum42
+    character(len=13) :: dum13
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Replace descr and varnam with dummy strings of the correct length.
+    !  This counters problems that would occur if the two original strings
+    !  were the wrong length.
+
+    dum42 = descr
+    dum13 = varnam
+
+    write(file,10) dum42, dum13, value
+10  format(1x,a,t45,a,t60,i10)
+
+  end subroutine ovarin
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine ocosts(file,ccode,descr,value)
+
+    !+ad_name  ocosts
+    !+ad_summ  Routine to print out the code, description and value
+    !+ad_summ  of a cost item
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  file : input integer : Fortran output unit identifier
+    !+ad_args  ccode : input character string : Code number/name of the cost item
+    !+ad_args  descr : input character string : Description of the cost item
+    !+ad_args  value : input real : Value of the cost item
+    !+ad_desc  This routine writes out the cost code, description and value
+    !+ad_desc  of a cost item.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: file
+    character(len=*), intent(in) :: ccode, descr
+    real(kind(1.0D0)), intent(in) :: value
+
+    !  Local variables
+
+    character(len=8)  :: dum08
+    character(len=42) :: dum42
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Replace ccode and descr with dummy strings of the correct length.
+    !  This counters problems that would occur if the two original strings
+    !  were the wrong length.
+
+    dum08 = ccode
+    dum42 = descr
+
+    write(file,10) dum08, dum42, value
+10  format(1x,a,t10,a,t60,f10.2)
+
+  end subroutine ocosts
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine obuild(file,descr,thick,total)
+
+    !+ad_name  obuild
+    !+ad_summ  Routine to print out a description, the thickness and
+    !+ad_summ  summed build of a component of the radial or vertical build
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  file : input integer : Fortran output unit identifier
+    !+ad_args  descr : input character string : Description of the component
+    !+ad_args  thick : input real : Thickness of the component (m)
+    !+ad_args  total : input real : Total build, including this component (m)
+    !+ad_desc  This routine writes out a description, the thickness and
+    !+ad_desc  summed build of a component of the radial or vertical build.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: file
+    character(len=*), intent(in) :: descr
+    real(kind(1.0D0)), intent(in) :: thick, total
+
+    !  Local variables
+
+    character(len=30) :: dum30
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Replace descr with dummy string of the correct length.
+    !  This counters problems that would occur if the original string
+    !  was the wrong length.
+
+    dum30 = descr
+
+    write(file,10) dum30, thick, total
+10  format(1x,a,t42,f10.3,t58,f10.3)
+
+  end subroutine obuild
+
+end module process_output
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine output(outfile)
 
   !+ad_name  output
   !+ad_summ  Subroutine to write the results to the main output file
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
+  !+ad_args  outfile : input integer : Fortran output unit identifier
   !+ad_desc  This routine writes the program results to a file,
   !+ad_desc  in a tidy format.
   !+ad_prob  None
@@ -73,7 +720,7 @@ subroutine output(nout)
 
   !  Arguments
 
-  integer, intent(in) :: nout
+  integer, intent(in) :: outfile
 
   !  Local variables
 
@@ -82,658 +729,79 @@ subroutine output(nout)
   !  Call stellarator output routine instead if relevant
 
   if (istell /= 0) then
-     call stout(nout)
+     call stout(outfile)
      return
   end if
 
   !  Call inertial fusion energy output routine instead if relevant
 
   if (ife /= 0) then
-     call ifeout(nout)
+     call ifeout(outfile)
      return
   end if
 
-  call costs(nout,1)
-  call avail(nout,1)
-  call outplas(nout)
-  call igmarcal(nout)
-  call cudriv(nout,1)
-  call pulse(nout,1)
-  call outtim(nout)
-  call divcall(nout,1)
-  call radialb(nout,1)
+  call costs(outfile,1)
+  call avail(outfile,1)
+  call outplas(outfile)
+  call igmarcal(outfile)
+  call cudriv(outfile,1)
+  call pulse(outfile,1)
+  call outtim(outfile)
+  call divcall(outfile,1)
+  call radialb(outfile,1)
 
   if (irfp == 0) then
-     call tfcoil(nout,1)
+     call tfcoil(outfile,1)
   else
-     call rfptfc(nout,1)
+     call rfptfc(outfile,1)
   end if
 
-  call tfspcall(nout,1)
+  call tfspcall(outfile,1)
 
-  if (itart == 1) call cntrpst(nout,1)
+  if (itart == 1) call cntrpst(outfile,1)
 
   if (irfp == 0) then
-     call outpf(nout)
+     call outpf(outfile)
   else
-     call rfppfc(nout,1)
+     call rfppfc(outfile,1)
   end if
 
-  if (irfp == 0) call outvolt(nout)
+  if (irfp == 0) call outvolt(outfile)
 
-  call strucall(nout,1)
+  call strucall(outfile,1)
 
-  if (irfp == 0) call induct(nout,1)
+  if (irfp == 0) call induct(outfile,1)
 
-  call fwbs(nout,1)
+  call fwbs(outfile,1)
 
   if (ifispact == 1) then
      call fispac(0)
      call fispac(1)
-     call loca(nout,0)
-     call loca(nout,1)
+     call loca(outfile,0)
+     call loca(outfile,1)
   end if
 
-  call tfpwr(nout,1)
+  call tfpwr(outfile,1)
 
   if (irfp == 0) then
-     call pfpwr(nout,1)
+     call pfpwr(outfile,1)
   else
-     call rfppfp(nout,1)
+     call rfppfp(outfile,1)
   end if
 
-  call vaccall(nout,1)
-  call bldgcall(nout,1)
-  call acpow(nout,1)
-  call power2(nout,1)
-  call nbeam(nout,1)
-  call ech(nout,1)
-  call lwhymod(nout,1)
+  call vaccall(outfile,1)
+  call bldgcall(outfile,1)
+  call acpow(outfile,1)
+  call power2(outfile,1)
+  call nbeam(outfile,1)
+  call ech(outfile,1)
+  call lwhymod(outfile,1)
 
 end subroutine output
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine ocentr(nout,string,width)
-
-  !+ad_name  ocentr
-  !+ad_summ  Routine to print a centred header within a line of asterisks
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
-  !+ad_args  string : input character string : Character string to be used
-  !+ad_args  width : input integer : Total width of header
-  !+ad_desc  This routine writes out a centred header within a line of asterisks.
-  !+ad_desc  It cannot cope with a zero-length string; routine
-  !+ad_desc  <A HREF="ostars.html"><CODE>ostars</CODE></A> should be used instead.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  20/09/11 PJK Initial F90 version
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  !  Arguments
-
-  integer, intent(in) :: nout, width
-  character(len=*), intent(in) :: string
-
-  !  Local variables
-
-  integer :: lh, nstars, nstars2
-  integer, parameter :: maxwd = 100
-  character(len=maxwd) :: stars
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  stars = repeat('*',maxwd)
-
-  lh = len(string)
-
-  if (width > maxwd) then
-     write(*,*) 'Error in routine OCENTR :'
-     write(*,*) 'Maximum width = ',maxwd
-     write(*,*) 'Requested width = ',width
-     write(*,*) 'PROCESS stopping.'
-     stop
-  end if
-
-  if (lh == 0) then
-     write(*,*) 'Error in routine OCENTR :'
-     write(*,*) 'A zero-length string is not permitted.'
-     write(*,*) 'PROCESS stopping.'
-     stop
-  end if
-
-  if (lh >= width) then
-     write(*,*) 'Error in routine OCENTR :'
-     write(*,*) string
-     write(*,*) 'This is too long to fit into ',width,' columns.'
-     write(*,*) 'PROCESS stopping.'
-     stop
-  end if
-
-  !  Number of stars to be printed on the left
-
-  nstars = int( (width-lh)/2 ) - 1
-
-  !  Number of stars to be printed on the right
-
-  nstars2 = width - (nstars+lh+2)
-
-  !  Write the whole line
-
-  write(nout,*) stars(1:nstars),' ',string,' ',stars(1:nstars2)
-
-end subroutine ocentr
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine ostars(nout,width)
-
-  !+ad_name  ostars
-  !+ad_summ  Routine to print a line of asterisks
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
-  !+ad_args  width : input integer : Total width of header
-  !+ad_desc  This routine writes out a line of asterisks.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  20/09/11 PJK Initial F90 version
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  !  Arguments
-
-  integer, intent(in) :: nout, width
-
-  !  Local variables
-
-  integer, parameter :: maxwd = 100
-  character(len=maxwd) :: stars
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  stars = repeat('*',maxwd)
-
-  write(nout,'(t2,a)') stars(1:min(width,maxwd))
-
-end subroutine ostars
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine oheadr(nout,string)
-
-  !+ad_name  oheadr
-  !+ad_summ  Routine to print a centred header within a line of asterisks,
-  !+ad_summ  and between two blank lines
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
-  !+ad_args  string : input character string : Character string to be used
-  !+ad_desc  This routine writes out a centred header within a line of
-  !+ad_desc  asterisks, and between two blank lines.
-  !+ad_prob  None
-  !+ad_call  oblnkl
-  !+ad_call  ocentr
-  !+ad_hist  20/09/11 PJK Initial F90 version
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  !  Arguments
-
-  integer, intent(in) :: nout
-  character(len=*), intent(in) :: string
-
-  !  Local variables
-
-  integer, parameter :: width = 72
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  call oblnkl(nout)
-  call ocentr(nout,string,width)
-  call oblnkl(nout)
-
-end subroutine oheadr
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine oshead(nout,string)
-
-  !+ad_name  oshead
-  !+ad_summ  Routine to print a short, centred header within a line of asterisks,
-  !+ad_summ  and between two blank lines
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
-  !+ad_args  string : input character string : Character string to be used
-  !+ad_desc  This routine writes out a short, centred header within a line of
-  !+ad_desc  asterisks, and between two blank lines.
-  !+ad_prob  None
-  !+ad_call  oblnkl
-  !+ad_call  ocentr
-  !+ad_hist  20/09/11 PJK Initial F90 version
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  !  Arguments
-
-  integer, intent(in) :: nout
-  character(len=*), intent(in) :: string
-
-  !  Local variables
-
-  integer, parameter :: width = 50
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  call oblnkl(nout)
-  call ocentr(nout,string,width)
-  call oblnkl(nout)
-
-end subroutine oshead
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine oblnkl(nout)
-
-  !+ad_name  oblnkl
-  !+ad_summ  Routine to print a blank line
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
-  !+ad_desc  This routine writes out a simple blank line.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  20/09/11 PJK Initial F90 version
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  !  Arguments
-
-  integer, intent(in) :: nout
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  write(nout,10)
-10 format(' ')
-
-end subroutine oblnkl
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine osubhd(nout,string)
-
-  !+ad_name  osubhd
-  !+ad_summ  Routine to print a subheading between two blank lines
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
-  !+ad_args  string : input character string : Character string to be used
-  !+ad_desc  This routine writes out a subheading between two blank lines.
-  !+ad_prob  None
-  !+ad_call  oblnkl
-  !+ad_call  ocmmnt
-  !+ad_hist  20/09/11 PJK Initial F90 version
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  !  Arguments
-
-  integer, intent(in) :: nout
-  character(len=*), intent(in) :: string
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  call oblnkl(nout)
-  call ocmmnt(nout,string)
-  call oblnkl(nout)
-
-end subroutine osubhd
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine ocmmnt(nout,string)
-
-  !+ad_name  ocmmnt
-  !+ad_summ  Routine to print a comment
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
-  !+ad_args  string : input character string : Character string to be used
-  !+ad_desc  This routine writes out a comment line.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  20/09/11 PJK Initial F90 version
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  !  Arguments
-
-  integer, intent(in) :: nout
-  character(len=*), intent(in) :: string
-
-  !  Local variables
-
-  integer, parameter :: width = 72
-  integer :: lh
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  lh = len(string)
-
-  if (lh == 0) then
-     write(*,*) 'Error in routine OCMMNT :'
-     write(*,*) 'A zero-length string is not permitted.'
-     write(*,*) 'PROCESS stopping.'
-     stop
-  end if
-
-  if (lh >= width) then
-     write(*,*) 'Error in routine OCMMNT :'
-     write(*,*) string
-     write(*,*) 'This is too long to fit into ',width,' columns.'
-     write(*,*) 'PROCESS stopping.'
-     stop
-  end if
-
-  write(nout,'(t2,a)') string
-
-end subroutine ocmmnt
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine ovarrf(nout,descr,varnam,value)
-
-  !+ad_name  ovarrf
-  !+ad_summ  Routine to print out the details of a floating-point
-  !+ad_summ  variable using 'F' format
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
-  !+ad_args  descr : input character string : Description of the variable
-  !+ad_args  varnam : input character string : Name of the variable
-  !+ad_args  value : input real : Value of the variable
-  !+ad_desc  This routine writes out the description, name and value of a
-  !+ad_desc  double precision variable in F format (e.g.
-  !+ad_desc  <CODE>-12345.000</CODE>).
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  20/09/11 PJK Initial F90 version
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  !  Arguments
-
-  integer, intent(in) :: nout
-  character(len=*), intent(in) :: descr, varnam
-  real(kind(1.0D0)), intent(in) :: value
-
-  !  Local variables
-
-  character(len=42) :: dum42
-  character(len=13) :: dum13
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !  Replace descr and varnam with dummy strings of the correct length.
-  !  This counters problems that would occur if the two original strings
-  !  were the wrong length.
-
-  dum42 = descr
-  dum13 = varnam
-
-  write(nout,10) dum42, dum13, value
-10 format(1x,a,t45,a,t60,f10.3)
-
-end subroutine ovarrf
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine ovarre(nout,descr,varnam,value)
-
-  !+ad_name  ovarre
-  !+ad_summ  Routine to print out the details of a floating-point
-  !+ad_summ  variable using 'E' format
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
-  !+ad_args  descr : input character string : Description of the variable
-  !+ad_args  varnam : input character string : Name of the variable
-  !+ad_args  value : input real : Value of the variable
-  !+ad_desc  This routine writes out the description, name and value of a
-  !+ad_desc  double precision variable in E format (e.g.
-  !+ad_desc  <CODE>-1.234E+04</CODE>).
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  20/09/11 PJK Initial F90 version
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  !  Arguments
-
-  integer, intent(in) :: nout
-  character(len=*), intent(in) :: descr, varnam
-  real(kind(1.0D0)), intent(in) :: value
-
-  !  Local variables
-
-  character(len=42) :: dum42
-  character(len=13) :: dum13
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !  Replace descr and varnam with dummy strings of the correct length.
-  !  This counters problems that would occur if the two original strings
-  !  were the wrong length.
-
-  dum42 = descr
-  dum13 = varnam
-
-  write(nout,10) dum42, dum13, value
-10 format(1x,a,t45,a,t60,1pe10.3)
-
-end subroutine ovarre
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine ovarin(nout,descr,varnam,value)
-
-  !+ad_name  ovarin
-  !+ad_summ  Routine to print out the details of an integer variable
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
-  !+ad_args  descr : input character string : Description of the variable
-  !+ad_args  varnam : input character string : Name of the variable
-  !+ad_args  value : input integer : Value of the variable
-  !+ad_desc  This routine writes out the description, name and value of an
-  !+ad_desc  integer variable.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  20/09/11 PJK Initial F90 version
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  !  Arguments
-
-  integer, intent(in) :: nout
-  character(len=*), intent(in) :: descr, varnam
-  integer, intent(in) :: value
-
-  !  Local variables
-
-  character(len=42) :: dum42
-  character(len=13) :: dum13
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !  Replace descr and varnam with dummy strings of the correct length.
-  !  This counters problems that would occur if the two original strings
-  !  were the wrong length.
-
-  dum42 = descr
-  dum13 = varnam
-
-  write(nout,10) dum42, dum13, value
-10 format(1x,a,t45,a,t60,i10)
-
-end subroutine ovarin
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine ocosts(nout,ccode,descr,value)
-
-  !+ad_name  ocosts
-  !+ad_summ  Routine to print out the code, description and value
-  !+ad_summ  of a cost item
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
-  !+ad_args  ccode : input character string : Code number/name of the cost item
-  !+ad_args  descr : input character string : Description of the cost item
-  !+ad_args  value : input real : Value of the cost item
-  !+ad_desc  This routine writes out the cost code, description and value
-  !+ad_desc  of a cost item.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  20/09/11 PJK Initial F90 version
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  !  Arguments
-
-  integer, intent(in) :: nout
-  character(len=*), intent(in) :: ccode, descr
-  real(kind(1.0D0)), intent(in) :: value
-
-  !  Local variables
-
-  character(len=8)  :: dum08
-  character(len=42) :: dum42
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !  Replace ccode and descr with dummy strings of the correct length.
-  !  This counters problems that would occur if the two original strings
-  !  were the wrong length.
-
-  dum08 = ccode
-  dum42 = descr
-
-  write(nout,10) dum08, dum42, value
-10 format(1x,a,t10,a,t60,f10.2)
-
-end subroutine ocosts
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine obuild(nout,descr,thick,total)
-
-  !+ad_name  obuild
-  !+ad_summ  Routine to print out a description, the thickness and
-  !+ad_summ  summed build of a component of the radial or vertical build
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
-  !+ad_args  descr : input character string : Description of the component
-  !+ad_args  thick : input real : Thickness of the component (m)
-  !+ad_args  total : input real : Total build, including this component (m)
-  !+ad_desc  This routine writes out a description, the thickness and
-  !+ad_desc  summed build of a component of the radial or vertical build.
-  !+ad_prob  None
-  !+ad_call  None
-  !+ad_hist  20/09/11 PJK Initial F90 version
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  !  Arguments
-
-  integer, intent(in) :: nout
-  character(len=*), intent(in) :: descr
-  real(kind(1.0D0)), intent(in) :: thick, total
-
-  !  Local variables
-
-  character(len=30) :: dum30
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !  Replace descr with dummy string of the correct length.
-  !  This counters problems that would occur if the original string
-  !  was the wrong length.
-
-  dum30 = descr
-
-  write(nout,10) dum30, thick, total
-10 format(1x,a,t42,f10.3,t58,f10.3)
-
-end subroutine obuild
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine outtim(nout)
+subroutine outtim(outfile)
 
   !+ad_name  outtim
   !+ad_summ  Routine to print out the times of the various stages
@@ -741,12 +809,12 @@ subroutine outtim(nout)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
+  !+ad_args  outfile : input integer : Fortran output unit identifier
   !+ad_desc  This routine writes out the times of the various stages
   !+ad_desc  during a single plant cycle.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  times.h90
-  !+ad_call  osections.h90
   !+ad_call  oblnkl
   !+ad_call  oheadr
   !+ad_call  ovarrf
@@ -756,14 +824,15 @@ subroutine outtim(nout)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use process_output
+
   implicit none
 
   include 'times.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout
+  integer, intent(in) :: outfile
 
   !  Local variables
 
@@ -775,18 +844,18 @@ subroutine outtim(nout)
 
   tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
 
-  call oheadr(nout,'Times')
+  call oheadr(outfile,'Times')
 
-  call ovarrf(nout,'Initial charge time for PF coils (s)','(tramp)', &
+  call ovarrf(outfile,'Initial charge time for PF coils (s)','(tramp)', &
        tramp)
-  call ovarrf(nout,'OH coil swing time (s)','(tohs)',tohs)
-  call ovarrf(nout,'Heating time (s)','(theat)',theat)
-  call ovarre(nout,'Burn time (s)','(tburn)',tburn)
-  call ovarrf(nout,'Shutdown time for PF coils (s)','(tqnch)',tqnch)
-  call ovarrf(nout,'Time between pulses (s)','(tdwell)',tdwell)
-  call oblnkl(nout)
-  call ovarre(nout,'Pulse time (s)','(tpulse)',tpulse)
-  call ovarrf(nout,'Down time (s)','(tdown)',tdown)
-  call ovarre(nout,'Total plant cycle time (s)','(tcycle)',tcycle)
+  call ovarrf(outfile,'OH coil swing time (s)','(tohs)',tohs)
+  call ovarrf(outfile,'Heating time (s)','(theat)',theat)
+  call ovarre(outfile,'Burn time (s)','(tburn)',tburn)
+  call ovarrf(outfile,'Shutdown time for PF coils (s)','(tqnch)',tqnch)
+  call ovarrf(outfile,'Time between pulses (s)','(tdwell)',tdwell)
+  call oblnkl(outfile)
+  call ovarre(outfile,'Pulse time (s)','(tpulse)',tpulse)
+  call ovarrf(outfile,'Down time (s)','(tdown)',tdown)
+  call ovarre(outfile,'Total plant cycle time (s)','(tcycle)',tcycle)
 
 end subroutine outtim

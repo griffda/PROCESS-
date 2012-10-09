@@ -1,7 +1,7 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine tfpwcall(nout,iprint)
+subroutine tfpwcall(outfile,iprint)
 
   !+ad_name  tfpwcall
   !+ad_summ  Calls the TF coil power conversion routine for superconducting coils
@@ -9,7 +9,7 @@ subroutine tfpwcall(nout,iprint)
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_auth  P C Shipe, ORNL
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calls routine <CODE>tfcpwr</CODE> to calculate the power
   !+ad_desc  conversion requirements for superconducting TF coils.
@@ -36,7 +36,7 @@ subroutine tfpwcall(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -52,14 +52,14 @@ subroutine tfpwcall(nout,iprint)
 
   itfka = 1.0D-3 * cpttf
 
-  call tfcpwr(nout,iprint,tfno,ettfmj,itfka,rhotfleg, &
+  call tfcpwr(outfile,iprint,tfno,ettfmj,itfka,rhotfleg, &
        vtfskv,rmajor,tfckw,tfbusl,drarea,tfcbv,tfacpd)
 
 end subroutine tfpwcall
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine tfcpwr(nout,iprint,ntfc,ettfmj,itfka, &
+subroutine tfcpwr(outfile,iprint,ntfc,ettfmj,itfka, &
      rptfc,vtfskv,rmajor,tfckw,tfbusl,drarea,tfcbv,tfacpd)
 
   !+ad_name  tfcpwr
@@ -68,7 +68,7 @@ subroutine tfcpwr(nout,iprint,ntfc,ettfmj,itfka, &
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_auth  P C Shipe, ORNL
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_args  ntfc : input real : number of tf coils
   !+ad_args  ettfmj : input real : total stored energy of one TF coils, MJ
@@ -89,22 +89,23 @@ subroutine tfcpwr(nout,iprint,ntfc,ettfmj,itfka, &
   !+ad_desc  FEDC/ORNL, April 1987, modified by J. Galambos in 1991 to
   !+ad_desc  run in TETRA, and included in PROCESS in 1992 by P. C. Shipe.
   !+ad_prob  None
-  !+ad_call  osections.h90
+  !+ad_call  process_output
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  01/08/11 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  implicit none
+  use process_output
 
-  include 'osections.h90'
+  implicit none
 
   !  Arguments
 
-  integer, intent(in) :: nout, iprint
+  integer, intent(in) :: outfile, iprint
   real(kind(1.0D0)), intent(in) :: ntfc,ettfmj,itfka,rptfc,vtfskv,rmajor
   real(kind(1.0D0)), intent(out) :: tfckw,tfbusl,drarea,tfcbv,tfacpd
 
@@ -183,57 +184,57 @@ subroutine tfcpwr(nout,iprint,ntfc,ettfmj,itfka, &
 
   if ((iprint == 0).or.(sect13 == 0)) return
 
-  call oheadr(nout,'Superconducting TF Coil Power Conversion')
+  call oheadr(outfile,'Superconducting TF Coil Power Conversion')
 
-  call ovarre(nout,'TF coil stored energy (MJ)','(ettfmj)',ettfmj)
-  call ovarre(nout,'TF coil current (kA)','(itfka)',itfka)
-  call ovarre(nout,'Number of TF coils','(ntfc)',ntfc)
-  call ovarre(nout,'Maximum voltage across TF coil (kV)','(vtfskv)', &
+  call ovarre(outfile,'TF coil stored energy (MJ)','(ettfmj)',ettfmj)
+  call ovarre(outfile,'TF coil current (kA)','(itfka)',itfka)
+  call ovarre(outfile,'Number of TF coils','(ntfc)',ntfc)
+  call ovarre(outfile,'Maximum voltage across TF coil (kV)','(vtfskv)', &
        vtfskv)
-  call ovarre(nout,'TF coil charge time (hours)','(tchghr)',tchghr)
-  call ovarre(nout,'Total inductance of TF coils (H)','(ltfth)', &
+  call ovarre(outfile,'TF coil charge time (hours)','(tchghr)',tchghr)
+  call ovarre(outfile,'Total inductance of TF coils (H)','(ltfth)', &
        ltfth)
-  call ovarre(nout,'Total resistance of TF coils (ohm)','(rcoils)', &
+  call ovarre(outfile,'Total resistance of TF coils (ohm)','(rcoils)', &
        rcoils)
-  call ovarre(nout,'Inductance per TF coil (H)','(lptfcs)',lptfcs)
-  call ovarre(nout,'TF coil charging voltage (V)','(tfcv)',tfcv)
-  call ovarre(nout,'Number of DC circuit breakers','(ntfbkr)', &
+  call ovarre(outfile,'Inductance per TF coil (H)','(lptfcs)',lptfcs)
+  call ovarre(outfile,'TF coil charging voltage (V)','(tfcv)',tfcv)
+  call ovarre(outfile,'Number of DC circuit breakers','(ntfbkr)', &
        ntfbkr)
-  call ovarre(nout,'Number of dump resistors','(ndumpr)',ndumpr)
-  call ovarre(nout,'Resistance per dump resistor (ohm)','(r1dump)', &
+  call ovarre(outfile,'Number of dump resistors','(ndumpr)',ndumpr)
+  call ovarre(outfile,'Resistance per dump resistor (ohm)','(r1dump)', &
        r1dump)
-  call ovarre(nout,'Dump resistor peak power (MW)','(r1ppmw)', &
+  call ovarre(outfile,'Dump resistor peak power (MW)','(r1ppmw)', &
        r1ppmw)
-  call ovarre(nout,'Energy supplied per dump resistor (MJ)', &
+  call ovarre(outfile,'Energy supplied per dump resistor (MJ)', &
        '(r1emj)',r1emj)
-  call ovarre(nout,'TF coil L/R time constant (s)','(ttfsec)', &
+  call ovarre(outfile,'TF coil L/R time constant (s)','(ttfsec)', &
        ttfsec)
-  call ovarre(nout,'Power supply voltage (V)','(tfpsv)',tfpsv)
-  call ovarre(nout,'Power supply current (kA)','(tfpska)',tfpska)
-  call ovarre(nout,'DC power supply rating (kW)','(tfckw)',tfckw)
-  call ovarre(nout,'AC power for charging (kW)','(tfackw)',tfackw)
-  call ovarre(nout,'TF coil resistive power (MW)','(rpower)',rpower)
-  call ovarre(nout,'TF coil inductive power (MW)','(xpower)',xpower)
-  call ovarre(nout,'Aluminium bus current density (kA/cm2)', &
+  call ovarre(outfile,'Power supply voltage (V)','(tfpsv)',tfpsv)
+  call ovarre(outfile,'Power supply current (kA)','(tfpska)',tfpska)
+  call ovarre(outfile,'DC power supply rating (kW)','(tfckw)',tfckw)
+  call ovarre(outfile,'AC power for charging (kW)','(tfackw)',tfackw)
+  call ovarre(outfile,'TF coil resistive power (MW)','(rpower)',rpower)
+  call ovarre(outfile,'TF coil inductive power (MW)','(xpower)',xpower)
+  call ovarre(outfile,'Aluminium bus current density (kA/cm2)', &
        '(djmka)',djmka)
-  call ovarre(nout,'Aluminium bus cross-sectional area (cm2)', &
+  call ovarre(outfile,'Aluminium bus cross-sectional area (cm2)', &
        '(albusa)',albusa)
-  call ovarre(nout,'Total length of TF coil bussing (m)', &
+  call ovarre(outfile,'Total length of TF coil bussing (m)', &
        '(tfbusl)',tfbusl)
-  call ovarre(nout,'Aluminium bus weight (tonnes)','(albuswt)', &
+  call ovarre(outfile,'Aluminium bus weight (tonnes)','(albuswt)', &
        albuswt)
-  call ovarre(nout,'Total TF coil bus resistance (ohm)','(rtfbus)', &
+  call ovarre(outfile,'Total TF coil bus resistance (ohm)','(rtfbus)', &
        rtfbus)
-  call ovarre(nout,'TF coil bus voltage drop (V)','(vtfbus)',vtfbus)
-  call ovarre(nout,'Dump resistor floor area (m2)','(drarea)', &
+  call ovarre(outfile,'TF coil bus voltage drop (V)','(vtfbus)',vtfbus)
+  call ovarre(outfile,'Dump resistor floor area (m2)','(drarea)', &
        drarea)
-  call ovarre(nout,'TF coil power conversion floor space (m2)', &
+  call ovarre(outfile,'TF coil power conversion floor space (m2)', &
        '(tfcfsp)',tfcfsp)
-  call ovarre(nout,'TF coil power conv. building volume (m3)', &
+  call ovarre(outfile,'TF coil power conv. building volume (m3)', &
        '(tfcbv)',tfcbv)
-  call ovarre(nout,'TF coil AC inductive power demand (MW)', &
+  call ovarre(outfile,'TF coil AC inductive power demand (MW)', &
        '(xpwrmw)',xpwrmw)
-  call ovarre(nout,'Total steady state AC power demand (MW)', &
+  call ovarre(outfile,'Total steady state AC power demand (MW)', &
        '(tfacpd)',tfacpd)
 
 end subroutine tfcpwr

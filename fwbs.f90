@@ -1,7 +1,7 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine fwbs(nout,iprint)
+subroutine fwbs(outfile,iprint)
 
   !+ad_name  fwbs
   !+ad_summ  First wall, blanket and shield module
@@ -9,7 +9,7 @@ subroutine fwbs(nout,iprint)
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_auth  C A Gardner, UKAEA Fusion
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
+  !+ad_args  outfile : input integer : Fortran output unit identifier
   !+ad_args  iprint : input integer : Switch to write output to file (1=yes)
   !+ad_desc  This subroutine calculates the nuclear heating in the blanket /
   !+ad_desc  shield, and estimates the volume and masses of the first wall,
@@ -22,13 +22,13 @@ subroutine fwbs(nout,iprint)
   !+ad_desc  Note: Costing and mass calculations elsewhere assume
   !+ad_desc  stainless steel only.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  blanket.h90
   !+ad_call  build.h90
   !+ad_call  cost.h90
   !+ad_call  divrt.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
-  !+ad_call  osections.h90
   !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
@@ -37,10 +37,13 @@ subroutine fwbs(nout,iprint)
   !+ad_call  osubhd
   !+ad_call  ovarre
   !+ad_hist  14/11/11 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -52,12 +55,11 @@ subroutine fwbs(nout,iprint)
   include 'cost.h90'
   include 'htpwr.h90'
   include 'divrt.h90'
-  include 'osections.h90'
   include 'blanket.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout, iprint
+  integer, intent(in) :: outfile, iprint
 
   !  Local variables
 
@@ -298,7 +300,7 @@ subroutine fwbs(nout,iprint)
   !  New blanket model (supersedes above calculations)
 
   if (lblnkt == 1) then
-     call blanket(1,nout,iprint)
+     call blanket(1,outfile,iprint)
 
      !  Improved approximation for inboard/outboard
      !  blanket volumes: assume cylinders of equal heights
@@ -355,59 +357,59 @@ subroutine fwbs(nout,iprint)
 
   !  Output section
 
-  call oheadr(nout,'Shield / Blanket')
-  call ovarre(nout,'Average neutron wall load (MW)','(wallmw)', wallmw)
-  call ovarre(nout,'DT full power TF coil operation (yrs)', &
+  call oheadr(outfile,'Shield / Blanket')
+  call ovarre(outfile,'Average neutron wall load (MW)','(wallmw)', wallmw)
+  call ovarre(outfile,'DT full power TF coil operation (yrs)', &
        '(fpydt)',fpydt)
-  call ovarre(nout,'Inner shield thickness (m)','(shldith)',shldith)
-  call ovarre(nout,'Outer shield thickness (m)','(shldoth)',shldoth)
-  call ovarre(nout,'Inner blanket thickness (m)','(blnkith)', blnkith)
-  call ovarre(nout,'Outer blanket thickness (m)','(blnkoth)', blnkoth)
-  call ovarre(nout,'Inner side TF coil case thickness (m)', &
+  call ovarre(outfile,'Inner shield thickness (m)','(shldith)',shldith)
+  call ovarre(outfile,'Outer shield thickness (m)','(shldoth)',shldoth)
+  call ovarre(outfile,'Inner blanket thickness (m)','(blnkith)', blnkith)
+  call ovarre(outfile,'Outer blanket thickness (m)','(blnkoth)', blnkoth)
+  call ovarre(outfile,'Inner side TF coil case thickness (m)', &
        '(hecan)',hecan)
 
   if (itart == 1) then
-     call osubhd(nout,'(Copper centrepost used)')
-     call ovarre(nout,'Centrepost heating (MW)','(pnuccp)',pnuccp)
+     call osubhd(outfile,'(Copper centrepost used)')
+     call ovarre(outfile,'Centrepost heating (MW)','(pnuccp)',pnuccp)
   else
-     call osubhd(nout,'TF coil nuclear parameters :')
-     call ovarre(nout,'Peak magnet heating (MW/m3)','(coilhtmx)', &
+     call osubhd(outfile,'TF coil nuclear parameters :')
+     call ovarre(outfile,'Peak magnet heating (MW/m3)','(coilhtmx)', &
           coilhtmx)
-     call ovarre(nout,'Inner TF coil winding pack heating (MW)', &
+     call ovarre(outfile,'Inner TF coil winding pack heating (MW)', &
           '(ptfiwp)',ptfiwp)
-     call ovarre(nout,'Outer TF coil winding pack heating (MW)', &
+     call ovarre(outfile,'Outer TF coil winding pack heating (MW)', &
           '(ptfowp)',ptfowp)
-     call ovarre(nout,'Peak He can heating (MW/m3)','(htheci)', &
+     call ovarre(outfile,'Peak He can heating (MW/m3)','(htheci)', &
           htheci)
-     call ovarre(nout,'Inner He can heating (MW)','(pheci)',pheci)
-     call ovarre(nout,'Outer He can heating (MW)','(pheco)',pheco)
-     call ovarre(nout,'Insulator dose (rad)','(raddose)',raddose)
-     call ovarre(nout,'Maximum neutron fluence (n/m2)','(flumax)', &
+     call ovarre(outfile,'Inner He can heating (MW)','(pheci)',pheci)
+     call ovarre(outfile,'Outer He can heating (MW)','(pheco)',pheco)
+     call ovarre(outfile,'Insulator dose (rad)','(raddose)',raddose)
+     call ovarre(outfile,'Maximum neutron fluence (n/m2)','(flumax)', &
           flumax)
-     call ovarre(nout,'Copper stabiliser displacements/atom', &
+     call ovarre(outfile,'Copper stabiliser displacements/atom', &
           '(dpacop)',dpacop)
   end if
 
-  call osubhd(nout,'Nuclear heating :')
-  call ovarre(nout,'Blanket heating (MW)','(pnucblkt)',pnucblkt)
-  call ovarre(nout,'Shield heating (MW)','(pnucshld)',pnucshld)
+  call osubhd(outfile,'Nuclear heating :')
+  call ovarre(outfile,'Blanket heating (MW)','(pnucblkt)',pnucblkt)
+  call ovarre(outfile,'Shield heating (MW)','(pnucshld)',pnucshld)
 
-  call osubhd(nout,'Blanket / shield volumes and weights :')
+  call osubhd(outfile,'Blanket / shield volumes and weights :')
 
   if (lblnkt == 1) then
      if (smstr == 1) then
-        write(nout,600) volblkti, volblkto, volblkt,  &
+        write(outfile,600) volblkti, volblkto, volblkt,  &
              whtblkt, vfblkt, fblbe, whtblbe, fblli2o, wtblli2o,  &
              fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
              volshld, whtshld, vfshld, wpenshld
      else
-        write(nout,601) volblkti, volblkto, volblkt,  &
+        write(outfile,601) volblkti, volblkto, volblkt,  &
              whtblkt, vfblkt, fbllipb, wtbllipb, fblli, whtblli,  &
              fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
              volshld, whtshld, vfshld, wpenshld
      end if
   else
-     write(nout,600) volblkti, volblkto, volblkt, whtblkt, vfblkt, &
+     write(outfile,600) volblkti, volblkto, volblkt, whtblkt, vfblkt, &
           fblbe, whtblbe, fblli2o, wtblli2o, fblss, whtblss, fblvd, &
           whtblvd, volshldi, volshldo, volshld, whtshld, vfshld, &
           wpenshld
@@ -447,14 +449,14 @@ subroutine fwbs(nout,iprint)
        '       Void fraction' ,t45,1pe10.3,/ &
        '    Penetration shield'        ,t62,1pe10.3)
 
-  call osubhd(nout,'Other volumes, masses and areas :')
-  call ovarre(nout,'First wall area (m2)','(fwarea)',fwarea)
-  call ovarre(nout,'First wall mass (kg)','(fwmass)',fwmass)
-  call ovarre(nout,'External dewar volume (m3)','(vdewex)',vdewex)
-  call ovarre(nout,'External dewar mass (kg)','(dewmkg)',dewmkg)
-  call ovarre(nout,'Internal dewar volume (m3)','(vdewin)',vdewin)
-  call ovarre(nout,'Cryostat mass (kg)','(cryomass)',cryomass)
-  call ovarre(nout,'Divertor area (m2)','(divsur)',divsur)
-  call ovarre(nout,'Divertor mass (kg)','(divmas)',divmas)
+  call osubhd(outfile,'Other volumes, masses and areas :')
+  call ovarre(outfile,'First wall area (m2)','(fwarea)',fwarea)
+  call ovarre(outfile,'First wall mass (kg)','(fwmass)',fwmass)
+  call ovarre(outfile,'External dewar volume (m3)','(vdewex)',vdewex)
+  call ovarre(outfile,'External dewar mass (kg)','(dewmkg)',dewmkg)
+  call ovarre(outfile,'Internal dewar volume (m3)','(vdewin)',vdewin)
+  call ovarre(outfile,'Cryostat mass (kg)','(cryomass)',cryomass)
+  call ovarre(outfile,'Divertor area (m2)','(divsur)',divsur)
+  call ovarre(outfile,'Divertor mass (kg)','(divmas)',divmas)
 
 end subroutine fwbs

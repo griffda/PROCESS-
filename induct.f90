@@ -97,18 +97,18 @@ end subroutine vsec
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine outvolt(nout)
+subroutine outvolt(outfile)
 
   !+ad_name  outvolt
   !+ad_summ  Writes volt-second information to output file
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_desc  This routine writes the PF coil volt-second data to the
   !+ad_desc  output file.
   !+ad_prob  None
-  !+ad_call  osections.h90
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
@@ -120,10 +120,13 @@ subroutine outvolt(nout)
   !+ad_call  oshead
   !+ad_call  osubhd
   !+ad_hist  01/08/11 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -132,11 +135,10 @@ subroutine outvolt(nout)
   include 'pfcoil.h90'
   include 'vltcom.h90'
   include 'times.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout
+  integer, intent(in) :: outfile
 
   !  Local variables
 
@@ -154,9 +156,9 @@ subroutine outvolt(nout)
 
   if (sect09 == 0) return
 
-  call oheadr(nout,'Volt Second Consumption')
+  call oheadr(outfile,'Volt Second Consumption')
 
-  write(nout,10) vsefsu,vsefbn,vseft,vsohsu,vsohbn,vsoh,vssu,vsbn,vstot
+  write(outfile,10) vsefsu,vsefbn,vseft,vsohsu,vsohbn,vsoh,vssu,vsbn,vstot
 10 format(t15,'volt-sec',t30,'volt-sec',t45,'volt-sec'/ &
         t15,  'start-up',t32,'burn',t46,'total'// &
         t2,'PF coils :',t13,3(f10.2,5x)/ &
@@ -164,55 +166,55 @@ subroutine outvolt(nout)
         t15,8('-'),t30,8('-'),t45,8('-')/ &
         t2,'Total :   ',t13,3(f10.2,5x) )
 
-  call osubhd(nout, &
+  call osubhd(outfile, &
        'Summary of volt-second consumption by circuit (Wb) :')
 
-  write(nout,20)
+  write(outfile,20)
 20 format(' circuit', t16,'BOP',t31,'BOF',t46,'EOF')
 
-  call oblnkl(nout)
+  call oblnkl(outfile)
 
-  write(nout,30) (k,vsdum(k,1),vsdum(k,2),vsdum(k,3),k=1,nef)
+  write(outfile,30) (k,vsdum(k,1),vsdum(k,2),vsdum(k,3),k=1,nef)
 30 format(t4,i3,t10,f10.3,5x,f10.3,5x,f10.3)
 
-  write(nout,40) vsdum(nohc,1),vsdum(nohc,2),vsdum(nohc,3)
+  write(outfile,40) vsdum(nohc,1),vsdum(nohc,2),vsdum(nohc,3)
 40 format(' OH coil',t10,f10.3,5x,f10.3,5x,f10.3)
 
-  call oshead(nout,'Waveforms')
-  call ocmmnt(nout,'Currents (Amps/coil) as a function of time :')
-  call oblnkl(nout)
+  call oshead(outfile,'Waveforms')
+  call ocmmnt(outfile,'Currents (Amps/coil) as a function of time :')
+  call oblnkl(outfile)
 
-  write(nout,50)(tim(k),k=1,6)
+  write(outfile,50)(tim(k),k=1,6)
 50 format(t40,'time (sec)'//t10,6f11.2)
 
-  call ocmmnt(nout,'circuit')
+  call ocmmnt(outfile,'circuit')
 
   do k = 1,ncirt-1
-     write(nout,60) k,((cpt(k,jj)*turns(k)),jj=1,6)
+     write(outfile,60) k,((cpt(k,jj)*turns(k)),jj=1,6)
   end do
 60 format(t3,i2,t12,6(1pe11.3))
 
-  write(nout,80) (cpt(ncirt,jj),jj=1,6)
+  write(outfile,80) (cpt(ncirt,jj),jj=1,6)
 80 format(' Plasma (A)',t12,6(1pe11.3))
 
 end subroutine outvolt
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine induct(nout,iprint)
+subroutine induct(outfile,iprint)
 
   !+ad_name  induct
   !+ad_summ  Calculates PF coil set mutual inductance matrix
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the mutual inductances between all the
   !+ad_desc  PF coils.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  osections.h90
   !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
@@ -225,10 +227,13 @@ subroutine induct(nout,iprint)
   !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_hist  20/09/11 PJK Removed dble calls
   !+ad_hist  24/09/12 PJK Swapped argument order
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -238,11 +243,10 @@ subroutine induct(nout,iprint)
   INCLUDE 'vltcom.h90'
   INCLUDE 'tfcoil.h90'
   INCLUDE 'build.h90'
-  INCLUDE 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: iprint,nout
+  integer, intent(in) :: iprint,outfile
 
   !  Local variables
 
@@ -406,19 +410,19 @@ subroutine induct(nout,iprint)
 
   if ((iprint == 0).or.(sect11 == 0)) return
 
-  call oheadr(nout,'PF Coil Inductances')
-  call ocmmnt(nout,'Inductance matrix (Henries-turns**2) :')
-  call oblnkl(nout)
+  call oheadr(outfile,'PF Coil Inductances')
+  call ocmmnt(outfile,'Inductance matrix (Henries-turns**2) :')
+  call oblnkl(outfile)
 
   do ig = 1,nef
-     write(nout,210) ig,(sxlg(ij,ig),ij=1,ncirt)
+     write(outfile,210) ig,(sxlg(ij,ig),ij=1,ncirt)
   end do
 210 format(t3,i2,t9,20(1pe8.1))
 
-  if (iohcl /= 0) write(nout,230) (sxlg(ij,ncirt-1),ij=1,ncirt)
+  if (iohcl /= 0) write(outfile,230) (sxlg(ij,ncirt-1),ij=1,ncirt)
 230 format(' OH coil',t9,20(1pe8.1))
 
-  write(nout,240) (sxlg(ij,ncirt),ij=1,ncirt)
+  write(outfile,240) (sxlg(ij,ncirt),ij=1,ncirt)
 240 format(' Plasma',t9,20(1pe8.1))
 
 end subroutine induct

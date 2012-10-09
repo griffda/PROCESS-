@@ -1,7 +1,7 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine pulse(nout,iprint)
+subroutine pulse(outfile,iprint)
 
   !+ad_name  pulse
   !+ad_summ  Caller for the pulsed reactor model
@@ -9,7 +9,7 @@ subroutine pulse(nout,iprint)
   !+ad_auth  C A Gardner, AEA Fusion, Culham Laboratory
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  None
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This calls the routines relevant to a pulsed reactor scenario.
   !+ad_prob  None
@@ -42,7 +42,7 @@ subroutine pulse(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -50,21 +50,21 @@ subroutine pulse(nout,iprint)
 
   !  Thermal cycling package
 
-  call thrmal(nout,iprint)
+  call thrmal(outfile,iprint)
 
   !  Evaluate minimum OH coil swing time
 
-  call tohswg(nout,iprint)
+  call tohswg(outfile,iprint)
 
   !  Burn time calculation
 
-  call burn(nout,iprint)
+  call burn(outfile,iprint)
 
 end subroutine pulse
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine thrmal(nout,iprint)
+subroutine thrmal(outfile,iprint)
 
   !+ad_name  thrmal
   !+ad_summ  Calculates the thermal and mechanical stresses induced
@@ -79,7 +79,7 @@ subroutine thrmal(nout,iprint)
   !+ad_cont  smt
   !+ad_cont  tk
   !+ad_cont  yield
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the thermal and mechanical stresses
   !+ad_desc  induced in the first wall for the case of a pulsed reactor.
@@ -96,6 +96,7 @@ subroutine thrmal(nout,iprint)
   !+ad_desc  coolant pressure, and an upper limit governed by the peak
   !+ad_desc  temperature and the neutron fluence.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  pulse.h90
   !+ad_call  build.h90
@@ -122,11 +123,14 @@ subroutine thrmal(nout,iprint)
   !+ad_hist  13/02/97 PJK Modified first wall lifetime calculation
   !+ad_hist  25/05/06 PJK Added SAVE statement
   !+ad_hist  01/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -140,7 +144,7 @@ subroutine thrmal(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -624,45 +628,45 @@ subroutine thrmal(nout,iprint)
 
      !  Written output
 
-     call oheadr(nout,'Pulsed Reactor')
+     call oheadr(outfile,'Pulsed Reactor')
 
-     call ocmmnt(nout,'Thermal cycling considerations for first wall:')
-     call oblnkl(nout)
+     call ocmmnt(outfile,'Thermal cycling considerations for first wall:')
+     call oblnkl(outfile)
 
-     call ovarrf(nout,'Inner radius of first wall tubes (m)', &
+     call ovarrf(outfile,'Inner radius of first wall tubes (m)', &
           '(afw)',afw)
-     call ovarrf(nout,'Outer radius of first wall tubes (m)', &
+     call ovarrf(outfile,'Outer radius of first wall tubes (m)', &
           '(bfw)',bfw)
-     call ovarre(nout,'Bulk coolant temperature (C)','(bctmp)',bctmp)
-     call ovarre(nout,'Coolant internal pressure (Pa)','(coolp)',coolp)
-     call ovarre(nout,'Neutron fluence (MW-yr/m2)','(flnce)',flnce)
-     call ovarre(nout,'Neutron flux deposited in 1st wall (W/m3)', &
+     call ovarre(outfile,'Bulk coolant temperature (C)','(bctmp)',bctmp)
+     call ovarre(outfile,'Coolant internal pressure (Pa)','(coolp)',coolp)
+     call ovarre(outfile,'Neutron fluence (MW-yr/m2)','(flnce)',flnce)
+     call ovarre(outfile,'Neutron flux deposited in 1st wall (W/m3)', &
           '(qppp)',qppp)
-     call ovarre(nout,'Heat flux incident on first wall (W/m2)', &
+     call ovarre(outfile,'Heat flux incident on first wall (W/m2)', &
           '(qpp)',qpp)
-     call ovarre(nout,'Heat transfer coefficient (W/m2/K)', &
+     call ovarre(outfile,'Heat transfer coefficient (W/m2/K)', &
           '(hcoeff)',hcoeff)
 
      if (vel == 5.0D0) then
-        call ocmmnt(nout, &
+        call ocmmnt(outfile, &
              'Calculation based upon fixed coolant velocity')
      else
-        call ocmmnt(nout, &
+        call ocmmnt(outfile, &
              'Calculation based upon fixed temperature rise')
      end if
-     call ovarre(nout,'Coolant velocity (m/s)','(vel)',vel)
-     call ovarre(nout,'Coolant temperature rise (K)','(tmprse)',tmprse)
-     call ovarre(nout,'Peak temperature in first wall (C)', &
+     call ovarre(outfile,'Coolant velocity (m/s)','(vel)',vel)
+     call ovarre(outfile,'Coolant temperature rise (K)','(tmprse)',tmprse)
+     call ovarre(outfile,'Peak temperature in first wall (C)', &
           '(tpeak)',tpeak)
-     call ovarre(nout,'Average first wall temperature (C)','(tav)',tav)
-     call ovarre(nout,'Material property temperature (C)', &
+     call ovarre(outfile,'Average first wall temperature (C)','(tav)',tav)
+     call ovarre(outfile,'Material property temperature (C)', &
           '(tmprop)',tmprop)
-     call ovarre(nout,'Youngs modulus','(eyung)',eyung(tmprop))
-     call ovarre(nout,'Thermal expansion coefficient (/K)', &
+     call ovarre(outfile,'Youngs modulus','(eyung)',eyung(tmprop))
+     call ovarre(outfile,'Thermal expansion coefficient (/K)', &
           '(alpha)',alpha(tmprop))
-     call ovarre(nout,'Thermal conductivity (W/m/K)','(tk)',tk(tmprop))
-     call ovarre(nout,'First wall lifetime (years)','(fwlife)',fwlife)
-     call ovarre(nout,'Minimum cycle time (s)','(tcycmn)',tcycmn)
+     call ovarre(outfile,'Thermal conductivity (W/m/K)','(tk)',tk(tmprop))
+     call ovarre(outfile,'First wall lifetime (years)','(fwlife)',fwlife)
+     call ovarre(outfile,'Minimum cycle time (s)','(tcycmn)',tcycmn)
 
   end if
 
@@ -1098,7 +1102,7 @@ end subroutine thrmal
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine tohswg(nout,iprint)
+subroutine tohswg(outfile,iprint)
 
   !+ad_name  tohswg
   !+ad_summ  Routine to calculate the minimum OH coil swing time
@@ -1106,11 +1110,12 @@ subroutine tohswg(nout,iprint)
   !+ad_auth  C A Gardner, AEA Fusion, Culham Laboratory
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  None
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the minimum OH coil swing time
   !+ad_desc  for a pulsed reactor.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  pwrcom.h90
@@ -1123,12 +1128,15 @@ subroutine tohswg(nout,iprint)
   !+ad_hist  25/11/93 PJK Incorporation into PROCESS
   !+ad_hist  22/05/06 PJK Corrected error in tohsmn calculation
   !+ad_hist  01/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0013
   !+ad_docs  Work File Note F/PL/PJK/PROCESS/CODE/050
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -1142,7 +1150,7 @@ subroutine tohswg(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -1201,8 +1209,8 @@ subroutine tohswg(nout,iprint)
 
   else
 
-     call osubhd(nout,'OH coil swing time considerations:')
-     call ovarre(nout,'Minimum OH coil swing time (s)', &
+     call osubhd(outfile,'OH coil swing time considerations:')
+     call ovarre(outfile,'Minimum OH coil swing time (s)', &
           '(tohsmn)',tohsmn)
 
   end if
@@ -1211,7 +1219,7 @@ end subroutine tohswg
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine burn(nout,iprint)
+subroutine burn(outfile,iprint)
 
   !+ad_name  burn
   !+ad_summ  Routine to calculate the burn time for a pulsed reactor
@@ -1219,10 +1227,11 @@ subroutine burn(nout,iprint)
   !+ad_auth  C A Gardner, AEA Fusion, Culham Laboratory
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  None
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the burn time for a pulsed reactor.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  pulse.h90
@@ -1235,11 +1244,14 @@ subroutine burn(nout,iprint)
   !+ad_hist  25/11/93 PJK Incorporation into PROCESS
   !+ad_hist  25/05/06 PJK Corrected error in tohsmn calculation
   !+ad_hist  01/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0012
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 
@@ -1253,7 +1265,7 @@ subroutine burn(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: nout,iprint
+  integer, intent(in) :: outfile,iprint
 
   !  Local variables
 
@@ -1286,15 +1298,15 @@ subroutine burn(nout,iprint)
 
   else
 
-     call osubhd(nout,'Volt-second considerations:')
+     call osubhd(outfile,'Volt-second considerations:')
 
-     call ovarre(nout,'Total V-s capability of OH/PF coils (Wb)', &
+     call ovarre(outfile,'Total V-s capability of OH/PF coils (Wb)', &
           '(abs(vstot))',abs(vstot))
-     call ovarre(nout,'Required volt-seconds during start-up (Wb)', &
+     call ovarre(outfile,'Required volt-seconds during start-up (Wb)', &
           '(vssoft)',vssoft)
-     call ovarre(nout,'Available volt-seconds during burn (Wb)', &
+     call ovarre(outfile,'Available volt-seconds during burn (Wb)', &
           '(vsmax)',vsmax)
-     call ovarre(nout,'Burn time (s)','(tburn)',tburn)
+     call ovarre(outfile,'Burn time (s)','(tburn)',tburn)
 
   end if
 
@@ -1356,6 +1368,7 @@ subroutine startup(iprint)
   !+ad_desc  </PRE>
   !+ad_desc  to find the minimum auxiliary power required in start-up.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  start.h90
@@ -1369,11 +1382,14 @@ subroutine startup(iprint)
   !+ad_call  vmcon1
   !+ad_hist  25/11/93 PJK Incorporation into PROCESS
   !+ad_hist  02/10/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Not currently used
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
 
   implicit none
 

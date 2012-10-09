@@ -1,14 +1,14 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine tfspcall(nout,iprint)
+subroutine tfspcall(outfile,iprint)
 
   !+ad_name  tfspcall
   !+ad_summ  Routine to call the superconductor module for the TF coils
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : Fortran output unit identifier
+  !+ad_args  outfile : input integer : Fortran output unit identifier
   !+ad_args  iprint : input integer : Switch to write output to file (1=yes)
   !+ad_desc  This routine calls the TF coil superconductor module.
   !+ad_prob  None
@@ -28,7 +28,7 @@ subroutine tfspcall(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: nout, iprint
+  integer, intent(in) :: outfile, iprint
 
   !  Local variables
 
@@ -52,7 +52,7 @@ subroutine tfspcall(nout,iprint)
   ifail = 0
   call supercon(acstf,aturn,bmaxtfrp,vftf,fcutfsu,cpttf,isumattf, &
        jcrit_model,strncon,tdmptf,tfes,tftmp,tmaxpro,bcritsc,jcritsc, &
-       tcritsc,iprint,nout,jwdgpro,jwdgcrt,vdump,tmargtf,ifail)
+       tcritsc,iprint,outfile,jwdgpro,jwdgcrt,vdump,tmargtf,ifail)
 
   if (ifail /= 0) then
      write(*,*) 'Error in routine TFSPCALL:'
@@ -70,7 +70,7 @@ end subroutine tfspcall
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,isumat,jcrit_model, &
-     strain,tdump,tfes,the,tmax,bcritsc,jcritsc,tcritsc,iprint,nout, &
+     strain,tdump,tfes,the,tmax,bcritsc,jcritsc,tcritsc,iprint,outfile, &
      jwdgpro,jwdgcrt,vd,tmarg,ifail)
 
   !+ad_name  supercon
@@ -104,7 +104,7 @@ subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,isumat,jcrit_model, &
   !+ad_args  jcritsc : input real : Critical J (A/m2) (isumat=4,5 only)
   !+ad_args  tcritsc : input real : Critical temperature (K) (isumat=4,5 only)
   !+ad_args  iprint : input integer : Switch for printing (1 = yes, 0 = no)
-  !+ad_args  nout : input integer : Fortran output unit identifier
+  !+ad_args  outfile : input integer : Fortran output unit identifier
   !+ad_args  jwdgpro : output real : Winding pack current density from temperature 
   !+ad_argc                          rise protection (A/m2)
   !+ad_args  jwdgcrt : output real : Critical winding pack current density (A/m2)
@@ -117,7 +117,7 @@ subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,isumat,jcrit_model, &
   !+ad_desc  the critical current density (winding pack) and also the protection
   !+ad_desc  information (for a quench).
   !+ad_prob  None
-  !+ad_call  osections.h90
+  !+ad_call  process_output
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
   !+ad_call  oheadr
@@ -129,18 +129,19 @@ subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,isumat,jcrit_model, &
   !+ad_hisc               Added option to use new Jcrit model for binary Nb3Sn
   !+ad_hist  21/09/11 PJK Initial F90 version; converted to subroutine from function
   !+ad_hist  26/09/11 PJK Converted itersc to a subroutine
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  implicit none
+  use process_output
 
-  include 'osections.h90'
+  implicit none
 
   !  Arguments
 
-  integer, intent(in) :: isumat, jcrit_model, iprint, nout
+  integer, intent(in) :: isumat, jcrit_model, iprint, outfile
   real(kind(1.0D0)), intent(in) :: acs, aturn, bmax, fhe, fcu, iop, strain, &
        tdump, tfes, the, tmax, bcritsc, jcritsc, tcritsc
   integer, intent(inout) :: ifail
@@ -258,52 +259,52 @@ subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,isumat,jcrit_model, &
 
   if ((iprint == 0).or.(sect07 == 0)) return
 
-  call oheadr(nout,'Superconducting TF Coils')
+  call oheadr(outfile,'Superconducting TF Coils')
 
   select case (isumat)
 
   case (1)
-     call ocmmnt(nout,'Superconductor used: Nb3Sn (binary)')
+     call ocmmnt(outfile,'Superconductor used: Nb3Sn (binary)')
      if (jcrit_model == 0) then
-        call ocmmnt(nout,'  (original Jcrit model)')
+        call ocmmnt(outfile,'  (original Jcrit model)')
      else
-        call ocmmnt(nout,'  (ITER Jcrit model)')
+        call ocmmnt(outfile,'  (ITER Jcrit model)')
      end if
   case (2)
-     call ocmmnt(nout,'Superconductor used: Nb3Sn (ternary)')
+     call ocmmnt(outfile,'Superconductor used: Nb3Sn (ternary)')
   case (3)
-     call ocmmnt(nout,'Superconductor used: NbTi')
+     call ocmmnt(outfile,'Superconductor used: NbTi')
   case (4)
-     call ocmmnt(nout, &
+     call ocmmnt(outfile, &
           'Generic superconductor used: Nb3Sn current density model')
   case default
-     call ocmmnt(nout, &
+     call ocmmnt(outfile, &
           'Generic superconductor used: NbTi current density model')
 
   end select
 
-  call oblnkl(nout)
-  call ovarre(nout,'Peak field at conductor (T)','(bmax)',bmax)
-  call ovarre(nout,'Helium temperature at peak field (K)','(the)',the)
-  call ovarre(nout,'Helium fraction inside cable space','(fhe)',fhe)
-  call ovarre(nout,'Copper fraction of conductor','(fcu)',fcu)
+  call oblnkl(outfile)
+  call ovarre(outfile,'Peak field at conductor (T)','(bmax)',bmax)
+  call ovarre(outfile,'Helium temperature at peak field (K)','(the)',the)
+  call ovarre(outfile,'Helium fraction inside cable space','(fhe)',fhe)
+  call ovarre(outfile,'Copper fraction of conductor','(fcu)',fcu)
 
-  call osubhd(nout,'Critical Current Information :')
-  call ovarre(nout,'Operating winding pack J (A/m2)','(jwdgop)',jwdgop)
-  call ovarre(nout,'Critical winding pack curr. density (A/m2)', &
+  call osubhd(outfile,'Critical Current Information :')
+  call ovarre(outfile,'Operating winding pack J (A/m2)','(jwdgop)',jwdgop)
+  call ovarre(outfile,'Critical winding pack curr. density (A/m2)', &
        '(jwdgcrt)',jwdgcrt)
-  call ovarre(nout,'Critical current (A)','(icrit)',icrit)
-  call ovarre(nout,'Operating current / critical current','(iooic)', &
+  call ovarre(outfile,'Critical current (A)','(icrit)',icrit)
+  call ovarre(outfile,'Operating current / critical current','(iooic)', &
        iooic)
-  call ovarre(nout,'Temperature margin (K)','(tmarg)',tmarg)
+  call ovarre(outfile,'Temperature margin (K)','(tmarg)',tmarg)
 
-  call osubhd(nout,'Protection Information :')
-  call ovarre(nout,'Maximum temperature in quench (K)','(tmax)', &
+  call osubhd(outfile,'Protection Information :')
+  call ovarre(outfile,'Maximum temperature in quench (K)','(tmax)', &
        tmax)
-  call ovarre(nout,'Winding pack protection J (A/m2)','(jwdgpro)', &
+  call ovarre(outfile,'Winding pack protection J (A/m2)','(jwdgpro)', &
        jwdgpro)
-  call ovarre(nout,'Dump time (s)','(tdump)',tdump)
-  call ovarre(nout,'Dump voltage (V)','(vd)',vd)
+  call ovarre(outfile,'Dump time (s)','(tdump)',tdump)
+  call ovarre(outfile,'Dump voltage (V)','(vd)',vd)
 
 end subroutine supercon
 

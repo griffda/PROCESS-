@@ -1,7 +1,7 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine sctfcoil(nout,iprint)
+subroutine sctfcoil(outfile,iprint)
 
   !+ad_name  sctfcoil
   !+ad_summ  Superconducting TF coil module
@@ -9,7 +9,7 @@ subroutine sctfcoil(nout,iprint)
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_auth  J Galambos, FEDC/ORNL
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine calculates various parameters for a superconducting
   !+ad_desc  TF coil set. The primary outputs are coil size, shape, stress,
@@ -43,7 +43,7 @@ subroutine sctfcoil(nout,iprint)
 
   !  Arguments
 
-  integer, intent(in) :: iprint,nout
+  integer, intent(in) :: iprint,outfile
 
   !  Local variables
 
@@ -342,7 +342,7 @@ subroutine sctfcoil(nout,iprint)
 
   call stresscl
 
-  if (iprint == 1) call outtf(nout)
+  if (iprint == 1) call outtf(outfile)
 
   return
 
@@ -1078,19 +1078,19 @@ end subroutine tfcind
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine outtf(nout)
+subroutine outtf(outfile)
 
   !+ad_name  outtf
   !+ad_summ  Writes superconducting TF coil output to file
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  nout : input integer : output file unit
+  !+ad_args  outfile : input integer : output file unit
   !+ad_desc  This routine writes the superconducting TF coil results
   !+ad_desc  to the output file.
   !+ad_prob  None
+  !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  osections.h90
   !+ad_call  tfcoil.h90
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
@@ -1098,20 +1098,22 @@ subroutine outtf(nout)
   !+ad_call  osubhd
   !+ad_call  ovarre
   !+ad_hist  14/05/12 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use process_output
+
   implicit none
 
   include 'build.h90'
   include 'tfcoil.h90'
-  include 'osections.h90'
 
   !  Arguments
 
-  integer, intent(in) :: nout
+  integer, intent(in) :: outfile
 
   !  Local variables
 
@@ -1122,104 +1124,104 @@ subroutine outtf(nout)
 
   if (sect07 == 0) return
 
-  call oheadr(nout,'TF Coils')
-  call ocmmnt(nout,'Superconducting TF coils')
+  call oheadr(outfile,'TF Coils')
+  call ocmmnt(outfile,'Superconducting TF coils')
 
   if (magnt == 2) then
-     call osubhd(nout,'Wedged TF Coils, with two-step winding')
+     call osubhd(outfile,'Wedged TF Coils, with two-step winding')
   else
-     call osubhd(nout,'Bucked TF Coils, with two-step winding')
+     call osubhd(outfile,'Bucked TF Coils, with two-step winding')
   end if
 
-  call ocmmnt(nout,'Current Density :')
-  call oblnkl(nout)
-  call ovarre(nout,'Winding pack current density (A/m2)','(jwptf)',jwptf)
-  call ovarre(nout,'Overall current density (A/m2)','(oacdcp)',oacdcp)
+  call ocmmnt(outfile,'Current Density :')
+  call oblnkl(outfile)
+  call ovarre(outfile,'Winding pack current density (A/m2)','(jwptf)',jwptf)
+  call ovarre(outfile,'Overall current density (A/m2)','(oacdcp)',oacdcp)
 
   if (itfmod /= 1) then
-     call ovarre(nout,'Allowable overall current density (A/m2)', &
+     call ovarre(outfile,'Allowable overall current density (A/m2)', &
           '(jwdgcrt)',jwdgcrt)
   end if
 
-  call osubhd(nout,'General Coil Parameters :')
-  call ovarre(nout,'Area per coil (m2)','(tfarea/tfno)',tfareain/tfno)
-  call ovarre(nout,'Total inner leg radial thickness (m)','(tfcth)',tfcth)
-  call ovarre(nout,'Inside half-width (m)','(tficrn)',tficrn)
-  call ovarre(nout,'Outside half width (m)','(tfocrn)',tfocrn)
-  call ovarre(nout,'Total current (MA)','(ritfc/1.D6)',1.0D-6*ritfc)
-  call ovarre(nout,'Vertical separating force per coil (N)','(vforce)',vforce)
-  call ovarre(nout,'Centering force per coil (N/m)','(cforce)',cforce)
-  call ovarre(nout,'Peak field (Amperes Law,T)','(bmaxtf)',bmaxtf)
-  call ovarre(nout,'Peak field (with ripple,T)','(bmaxtfrp)',bmaxtfrp)
-  call ovarre(nout,'Stored energy per coil (GJ)','(estotf)',estotf)
-  call ovarre(nout,'Mean coil circumference (m)','(tfleng)',tfleng)
-  call ovarre(nout,'Number of TF coils','(tfno)',tfno)
-  call ovarre(nout,'Outer coil case thickness (m)','(thkcas)',thkcas)
-  call ovarre(nout,'Outer coil case area (m2)','(acasetf)',acasetf)
+  call osubhd(outfile,'General Coil Parameters :')
+  call ovarre(outfile,'Area per coil (m2)','(tfarea/tfno)',tfareain/tfno)
+  call ovarre(outfile,'Total inner leg radial thickness (m)','(tfcth)',tfcth)
+  call ovarre(outfile,'Inside half-width (m)','(tficrn)',tficrn)
+  call ovarre(outfile,'Outside half width (m)','(tfocrn)',tfocrn)
+  call ovarre(outfile,'Total current (MA)','(ritfc/1.D6)',1.0D-6*ritfc)
+  call ovarre(outfile,'Vertical separating force per coil (N)','(vforce)',vforce)
+  call ovarre(outfile,'Centering force per coil (N/m)','(cforce)',cforce)
+  call ovarre(outfile,'Peak field (Amperes Law,T)','(bmaxtf)',bmaxtf)
+  call ovarre(outfile,'Peak field (with ripple,T)','(bmaxtfrp)',bmaxtfrp)
+  call ovarre(outfile,'Stored energy per coil (GJ)','(estotf)',estotf)
+  call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng)
+  call ovarre(outfile,'Number of TF coils','(tfno)',tfno)
+  call ovarre(outfile,'Outer coil case thickness (m)','(thkcas)',thkcas)
+  call ovarre(outfile,'Outer coil case area (m2)','(acasetf)',acasetf)
 
-  call osubhd(nout,'Coil Geometry :')
-  call ovarre(nout,'Inner leg centre radius (m)','(rtfcin)',rtfcin)
-  call ovarre(nout,'Outer leg centre radius (m)','(rtot)',rtot)
-  call ovarre(nout,'Maximum inner edge height (m)','(hmax)',hmax)
-  call ovarre(nout,'Clear bore (m)','(tfboreh)',tfboreh)
-  call ovarre(nout,'Clear vertical bore (m)','(borev)',borev)
+  call osubhd(outfile,'Coil Geometry :')
+  call ovarre(outfile,'Inner leg centre radius (m)','(rtfcin)',rtfcin)
+  call ovarre(outfile,'Outer leg centre radius (m)','(rtot)',rtot)
+  call ovarre(outfile,'Maximum inner edge height (m)','(hmax)',hmax)
+  call ovarre(outfile,'Clear bore (m)','(tfboreh)',tfboreh)
+  call ovarre(outfile,'Clear vertical bore (m)','(borev)',borev)
 
-  call oblnkl(nout)
-  call ocmmnt(nout,'TF coil inner surface shape is approximated')
-  call ocmmnt(nout,'by arcs between the following points :')
-  call oblnkl(nout)
+  call oblnkl(outfile)
+  call ocmmnt(outfile,'TF coil inner surface shape is approximated')
+  call ocmmnt(outfile,'by arcs between the following points :')
+  call oblnkl(outfile)
 
-  write(nout,10)
+  write(outfile,10)
 10 format(t2,'point',t16,'x(m)',t31,'y(m)')
 
   do i = 1,5
-     write(nout,20) i,xarc(i),yarc(i)
+     write(outfile,20) i,xarc(i),yarc(i)
   end do
 20 format(i4,t10,f10.3,t25,f10.3)
 
-  call osubhd(nout,'The centres of the arc are :')
-  write(nout,40)
+  call osubhd(outfile,'The centres of the arc are :')
+  write(outfile,40)
 40 format(t3,'arc',t16,'x(m)',t30,'y(m)')
 
   do i = 1,4
-     write(nout,20) i,xctfc(i),yctfc(i)
+     write(outfile,20) i,xctfc(i),yctfc(i)
   end do
 
-  call osubhd(nout,'Conductor Information :')
-  call ovarre(nout,'Total mass of TF coils (kg)','(whttf)',whttf)
-  call ovarre(nout,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc)
-  call ovarre(nout,'Copper mass per coil (kg)','(whtconcu)',whtconcu)
-  call ovarre(nout,'Steel conduit mass per coil (kg)','(whtconsh)',whtconsh)
-  call ovarre(nout,'Total conductor cable mass per coil (kg)','(whtcon)',whtcon)
-  call ovarre(nout,'External case mass per coil (kg)','(whtcas)',whtcas)
-  call ovarre(nout,'Cable conductor + void area (m2)','(acstf)',acstf)
-  call ovarre(nout,'Conduit case thickness (m)','(thwcndut)',thwcndut)
-  call ovarre(nout,'Cable insulation thickness (m)','(thicndut)',thicndut)
-  call ovarre(nout,'Cable radial/toroidal aspect ratio','(aspcstf)',aspcstf)
+  call osubhd(outfile,'Conductor Information :')
+  call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf)
+  call ovarre(outfile,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc)
+  call ovarre(outfile,'Copper mass per coil (kg)','(whtconcu)',whtconcu)
+  call ovarre(outfile,'Steel conduit mass per coil (kg)','(whtconsh)',whtconsh)
+  call ovarre(outfile,'Total conductor cable mass per coil (kg)','(whtcon)',whtcon)
+  call ovarre(outfile,'External case mass per coil (kg)','(whtcas)',whtcas)
+  call ovarre(outfile,'Cable conductor + void area (m2)','(acstf)',acstf)
+  call ovarre(outfile,'Conduit case thickness (m)','(thwcndut)',thwcndut)
+  call ovarre(outfile,'Cable insulation thickness (m)','(thicndut)',thicndut)
+  call ovarre(outfile,'Cable radial/toroidal aspect ratio','(aspcstf)',aspcstf)
 
   ap = acond + aswp + aiwp + avwp
 
-  call osubhd(nout,'Winding Pack Information :')
-  call ovarre(nout,'Conductor fraction of winding pack','(acond/ap)',acond/ap)
-  call ovarre(nout,'Copper fraction of conductor','(fcutfsu)',fcutfsu)
-  call ovarre(nout,'Structure fraction of winding pack','(aswp/ap)',aswp/ap)
-  call ovarre(nout,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap)
-  call ovarre(nout,'Helium fraction of winding pack','(avwp/ap)',avwp/ap)
-  call ovarre(nout,'Winding thickness (m)','(thkwp)',thkwp)
-  call ovarre(nout,'Winding width 1 (m)','(wwp1)',wwp1)
-  call ovarre(nout,'Winding width 2 (m)','(wwp2)',wwp2)
-  call ovarre(nout,'Number of turns per TF coil','(turnstf)',turnstf)
-  call ovarre(nout,'Current per turn (A)','(cpttf)',cpttf)
+  call osubhd(outfile,'Winding Pack Information :')
+  call ovarre(outfile,'Conductor fraction of winding pack','(acond/ap)',acond/ap)
+  call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcutfsu)
+  call ovarre(outfile,'Structure fraction of winding pack','(aswp/ap)',aswp/ap)
+  call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap)
+  call ovarre(outfile,'Helium fraction of winding pack','(avwp/ap)',avwp/ap)
+  call ovarre(outfile,'Winding thickness (m)','(thkwp)',thkwp)
+  call ovarre(outfile,'Winding width 1 (m)','(wwp1)',wwp1)
+  call ovarre(outfile,'Winding width 2 (m)','(wwp2)',wwp2)
+  call ovarre(outfile,'Number of turns per TF coil','(turnstf)',turnstf)
+  call ovarre(outfile,'Current per turn (A)','(cpttf)',cpttf)
 
-  call osubhd(nout,'TF Coil Stresses :')
-  call ovarre(nout,'Vertical stress (Pa)','(sigvert)',sigvert)
-  call ovarre(nout,'Conduit radial stress (Pa)','(sigrcon)',sigrcon)
-  call ovarre(nout,'Conduit tangential stress (Pa)','(sigtcon)',sigtcon)
-  call ovarre(nout,'Conduit Von Mises combination stress (Pa)','(strtf1)',strtf1)
-  call ovarre(nout,'Case radial stress (Pa)','(sigrtf(5))',sigrtf(5))
-  call ovarre(nout,'Case tangential stress (Pa)','(sigttf(5))',sigttf(5))
-  call ovarre(nout,'Case Von Mises combination stress (Pa)','(strtf2)',strtf2)
-  call ovarre(nout,'Allowable stress (Pa)','(alstrtf)',alstrtf)
-  call ovarre(nout,'Deflection at midplane (m)','(deflect)',deflect)
+  call osubhd(outfile,'TF Coil Stresses :')
+  call ovarre(outfile,'Vertical stress (Pa)','(sigvert)',sigvert)
+  call ovarre(outfile,'Conduit radial stress (Pa)','(sigrcon)',sigrcon)
+  call ovarre(outfile,'Conduit tangential stress (Pa)','(sigtcon)',sigtcon)
+  call ovarre(outfile,'Conduit Von Mises combination stress (Pa)','(strtf1)',strtf1)
+  call ovarre(outfile,'Case radial stress (Pa)','(sigrtf(5))',sigrtf(5))
+  call ovarre(outfile,'Case tangential stress (Pa)','(sigttf(5))',sigttf(5))
+  call ovarre(outfile,'Case Von Mises combination stress (Pa)','(strtf2)',strtf2)
+  call ovarre(outfile,'Allowable stress (Pa)','(alstrtf)',alstrtf)
+  call ovarre(outfile,'Deflection at midplane (m)','(deflect)',deflect)
 
 end subroutine outtf
