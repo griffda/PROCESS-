@@ -52,7 +52,7 @@ source = \
  caller.f90   \
  costs.f90    \
  cudriv.f90   \
- divtmod.f    \
+ divtmod.f90  \
  ech.f90      \
  eqns.f90     \
  eqsolv.f90   \
@@ -87,7 +87,7 @@ source = \
  tfcpwr.f90   \
  sctfcoil.f90 \
  vacuum.f90   \
- xc.f
+ xc.f90
 
 object = \
  aachange.o   \
