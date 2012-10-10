@@ -85,8 +85,8 @@ subroutine stinit
   !+ad_desc  Many of these may override the values set in routine
   !+ad_desc  <A HREF="initial.html">initial</A>.
   !+ad_prob  None
+  !+ad_call  numerics
   !+ad_call  build.h90
-  !+ad_call  numer.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  stella.h90
@@ -101,15 +101,17 @@ subroutine stinit
   !+ad_hist  22/01/97 PJK Subsumed heattr.h, heatrinp.h and pfelect.h into
   !+ad_hisc               htpwr.h
   !+ad_hist  20/09/12 PJK Initial F90 version
+  !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use numerics  !  icase only
+
   implicit none
 
   include 'build.h90'
-  include 'numer.h90'
   include 'pfcoil.h90'
   include 'phydat.h90'
   include 'stella.h90'

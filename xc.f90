@@ -13,6 +13,7 @@ subroutine loadxc
   !+ad_desc  This subroutine loads the physics and engineering variables
   !+ad_desc  into the optimisation variables array <CODE>XCM</CODE>.
   !+ad_prob  None
+  !+ad_call  numerics
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
@@ -20,7 +21,6 @@ subroutine loadxc
   !+ad_call  htpwr.h90
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
-  !+ad_call  numer.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  pulse.h90
@@ -30,14 +30,16 @@ subroutine loadxc
   !+ad_hist  22/10/92 PJK Removed original arguments (xc,nn)
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  09/10/12 PJK Initial F90 version
+  !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use numerics
+
   implicit none
 
-  include 'numer.h90'
   include 'phydat.h90'
   include 'ineq.h90'
   include 'cdriv.h90'
@@ -256,6 +258,7 @@ subroutine convxc(xc,nn)
   !+ad_desc  This subroutine converts the scaled iteration variables back to
   !+ad_desc  their real values.
   !+ad_prob  None
+  !+ad_call  numerics
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
@@ -263,7 +266,6 @@ subroutine convxc(xc,nn)
   !+ad_call  htpwr.h90
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
-  !+ad_call  numer.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  rfp.h90
@@ -271,14 +273,16 @@ subroutine convxc(xc,nn)
   !+ad_call  times.h90
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  16/11/11 PJK Initial F90 version
+  !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use numerics
+
   implicit none
 
-  include 'numer.h90'
   include 'phydat.h90'
   include 'ineq.h90'
   include 'cdriv.h90'
@@ -472,17 +476,18 @@ subroutine boundxc
   !+ad_desc  This subroutine converts the scaled iteration variable bounds
   !+ad_desc  back to their real values.
   !+ad_prob  None
-  !+ad_call  numer.h90
+  !+ad_call  numerics
   !+ad_hist  22/10/92 PJK Removed arguments (xc,nn)
   !+ad_hist  16/11/11 PJK Initial F90 version
+  !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  implicit none
+  use numerics
 
-  include 'numer.h90'
+  implicit none
 
   !  Local variables
 

@@ -13,9 +13,9 @@ subroutine caller(xc,nvars)
   !+ad_desc  This routine is the principal caller of all the physics and
   !+ad_desc  engineering modules.
   !+ad_prob  None
+  !+ad_call  numerics
   !+ad_call  process_output
   !+ad_call  ife.h90
-  !+ad_call  numer.h90
   !+ad_call  phydat.h90
   !+ad_call  rfp.h90
   !+ad_call  stella.h90
@@ -66,16 +66,17 @@ subroutine caller(xc,nvars)
   !+ad_hist  27/07/11 PJK Initial F90 version
   !+ad_hist  24/09/12 PJK Swapped argument order of RADIALB, DIVCALL, INDUCT
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use process_output
+  use numerics
 
   implicit none
 
-  include 'numer.h90'
   include 'phydat.h90'
   include 'stella.h90'
   include 'rfp.h90'

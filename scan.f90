@@ -12,13 +12,16 @@ module scan_module
   !+ad_desc  This module contains routines to perform a parameter scan
   !+ad_desc  over a range of values of a particular scanning variable.
   !+ad_prob  None
+  !+ad_call  numerics
   !+ad_call  process_output
   !+ad_hist  09/10/12 PJK Initial version of module
+  !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use numerics
   use process_output
 
   implicit none
@@ -86,7 +89,6 @@ contains
   !+ad_call  cost.h90
   !+ad_call  htpwr.h90
   !+ad_call  divrt.h90
-  !+ad_call  numer.h90
   !+ad_call  doopt
   !+ad_call  final
   !+ad_call  oblnkl
@@ -115,7 +117,6 @@ contains
   include 'cost.h90'
   include 'htpwr.h90'
   include 'divrt.h90'
-  include 'numer.h90'
 
   !  Arguments
 

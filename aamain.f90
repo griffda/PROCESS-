@@ -30,10 +30,10 @@ program process
   !+ad_desc  aid the inclusion of more advanced physics and engineering models under
   !+ad_desc  development as part of a number of EFDA-sponsored collaborations.
   !+ad_prob  None
+  !+ad_call  numerics
   !+ad_call  process_input
   !+ad_call  process_output
   !+ad_call  scan_module
-  !+ad_call  numer.h90
   !+ad_call  eqslv
   !+ad_call  final
   !+ad_call  init
@@ -43,6 +43,7 @@ program process
   !+ad_hist  08/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  09/10/12 PJK Modified to use scan_module
+  !+ad_hist  10/10/12 PJK Modified to use numerics module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  Box file F/RS/CIRE5523/PWF (up to 15/01/96)
@@ -54,10 +55,9 @@ program process
   use process_input
   use process_output
   use scan_module
+  use numerics
 
   implicit none
-
-  include 'numer.h90'
 
   !  Arguments
 
@@ -106,7 +106,7 @@ subroutine init
   !+ad_desc  the default values for the global variables, reads in data from
   !+ad_desc  the input file, and checks the run parameters for consistency.
   !+ad_prob  None
-  !+ad_call  numer.h90
+  !+ad_call  numerics
   !+ad_call  process_input
   !+ad_call  process_output
   !+ad_call  check
@@ -120,6 +120,7 @@ subroutine init
   !+ad_hist  17/11/97 PJK Changed file names to *.DAT
   !+ad_hist  08/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  09/10/12 PJK Modified to use new numerics module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -127,10 +128,9 @@ subroutine init
 
   use process_input
   use process_output
+  use numerics
 
   implicit none
-
-  include 'numer.h90'
 
   !  Arguments
 
@@ -257,8 +257,9 @@ subroutine eqslv(ifail)
   !+ad_args  ifail   : output integer : error flag
   !+ad_desc  This routine calls the non-optimising equation solver.
   !+ad_prob  None
+  !+ad_call  function_evaluator
+  !+ad_call  numerics
   !+ad_call  process_output
-  !+ad_call  numer.h90
   !+ad_call  eqsolv
   !+ad_call  fcnhyb
   !+ad_call  herror
@@ -272,16 +273,18 @@ subroutine eqslv(ifail)
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  08/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  10/10/12 PJK Modified to use new numerics, function_evaluator
+  !+ad_hisc               modules
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use process_output
+  use numerics
+  use function_evaluator
 
   implicit none
-
-  include 'numer.h90'
 
   !  Arguments
 
@@ -295,7 +298,7 @@ subroutine eqslv(ifail)
 
   !  External routines
 
-  external :: fcnhyb
+!  external :: fcnhyb
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -618,8 +621,9 @@ subroutine doopt(ifail)
   !+ad_args  ifail   : output integer : error flag
   !+ad_desc  This routine calls the optimising equation solver.
   !+ad_prob  None
+  !+ad_call  function_evaluator
+  !+ad_call  numerics
   !+ad_call  process_output
-  !+ad_call  numer.h90
   !+ad_call  boundxc
   !+ad_call  loadxc
   !+ad_call  oblnkl
@@ -633,16 +637,18 @@ subroutine doopt(ifail)
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  08/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  10/10/12 PJK Modified to use new numerics and function_evaluator
+  !+ad_hisc               modules
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use process_output
+  use numerics
+  use function_evaluator
 
   implicit none
-
-  include 'numer.h90'
 
   !  Arguments
 
@@ -663,7 +669,7 @@ subroutine doopt(ifail)
 
   call loadxc
   call boundxc
-  call optimiz(ifail,f)
+  call optimiz(fcnvmc1,fcnvmc2,ifail,f)
 
   !  Check on accuracy of solution by summing the
   !  squares of the residuals
@@ -813,23 +819,23 @@ subroutine final(ifail)
   !+ad_args  ifail   : input integer : error flag
   !+ad_desc  This routine prints out the final point in the scan.
   !+ad_prob  None
-  !+ad_call  numer.h90
+  !+ad_call  numerics
   !+ad_call  process_output
   !+ad_call  oheadr
   !+ad_call  output
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  08/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use process_output
+  use numerics
 
   implicit none
-
-  include 'numer.h90'
 
   !  Arguments
 

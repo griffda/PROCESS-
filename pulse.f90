@@ -1604,11 +1604,11 @@ subroutine start2(n,m,x,fgrd,cnorm,lcnorm,info)
   !+ad_desc  auxiliary power and the constraint equations relevant
   !+ad_desc  to the minimisation of the auxiliary power.
   !+ad_prob  None
-  !+ad_call  numer.h90
   !+ad_call  constr
   !+ad_call  cudrv1
   !+ad_hist  25/11/93 PJK Incorporation into PROCESS
   !+ad_hist  02/10/12 PJK Initial F90 version
+  !+ad_hist  10/10/12 PJK Hardwired local value of epsfcn
   !+ad_stat  Okay
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1616,8 +1616,6 @@ subroutine start2(n,m,x,fgrd,cnorm,lcnorm,info)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   implicit none
-
-!  include 'numer.h90'
 
   !  Arguments
 

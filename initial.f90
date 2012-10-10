@@ -13,8 +13,8 @@ subroutine initial
   !+ad_desc  N.B. Many of these variables are re-initialised elsewhere in the
   !+ad_desc  code, but are set to zero in this routine anyway.
   !+ad_prob  None
+  !+ad_call  numerics
   !+ad_call  process_output
-  !+ad_call  numer.h90
   !+ad_call  ineq.h90
   !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
@@ -69,16 +69,17 @@ subroutine initial
   !+ad_hist  19/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  10/10/12 PJK Removed IVMS
+  !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use numerics
   use process_output
 
   implicit none
 
-  include 'numer.h90'
   include 'ineq.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
@@ -111,9 +112,6 @@ subroutine initial
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Numerics quantities and labels
-
-  bondl(:) = 0.0D0
-  bondu(:) = 0.0D0
 
   boundl(1)  = 1.100D0
   boundl(2)  = 0.010D0
@@ -294,8 +292,6 @@ subroutine initial
   boundu(87) = 4.000D3
   boundu(88) = 4.000D3
 
-  icase = 'PROCESS standard D-T tokamak model'
-
   lablxc(1)  = 'aspect  '
   lablxc(2)  = 'bt      '
   lablxc(3)  = 'rmajor  '
@@ -450,50 +446,6 @@ subroutine initial
   lablmm(12) = 'H plant capital cost. '
   lablmm(13) = 'H production rate.    '
 
-  tauscl(1)  = 'Neo-Alcator      (ohmic)'
-  tauscl(2)  = 'Mirnov               (H)'
-  tauscl(3)  = 'Merezkhin-Muhkovatov (L)'
-  tauscl(4)  = 'Shimomura            (H)'
-  tauscl(5)  = 'Kaye-Goldston        (L)'
-  tauscl(6)  = 'ITER 89-P            (L)'
-  tauscl(7)  = 'ITER 89-O            (L)'
-  tauscl(8)  = 'Rebut-Lallia         (L)'
-  tauscl(9)  = 'Goldston             (L)'
-  tauscl(10) = 'T10                     '
-  tauscl(11) = 'JAERI-88                '
-  tauscl(12) = 'Kaye-Big Complex        '
-  tauscl(13) = 'ITER H90-P           (H)'
-  tauscl(14) = 'ITER Mix                '
-  tauscl(15) = 'Riedel               (L)'
-  tauscl(16) = 'Christiansen         (L)'
-  tauscl(17) = 'Lackner-Gottardi     (L)'
-  tauscl(18) = 'Neo-Kaye             (L)'
-  tauscl(19) = 'Riedel               (H)'
-  tauscl(20) = 'ITER H90-P amended   (H)'
-  tauscl(21) = 'LHD              (stell)'
-  tauscl(22) = 'Gyro-reduced Bohm(stell)'
-  tauscl(23) = 'Lackner-Gottardi (stell)'
-  tauscl(24) = 'ITER-93H             (H)'
-  tauscl(25) = 'TITAN RFP               '
-  tauscl(26) = 'ITER H-97P ELM-free  (H)'
-  tauscl(27) = 'ITER H-97P ELMy      (H)'
-  tauscl(28) = 'ITER-96P             (L)'
-  tauscl(29) = 'Valovic modified ELMy(H)'
-  tauscl(30) = 'Kaye PPPL April 98   (L)'
-  tauscl(31) = 'ITERH-PB98P(y)       (H)'
-  tauscl(32) = 'IPB98(y)             (H)'
-  tauscl(33) = 'IPB98(y,1)           (H)'
-  tauscl(34) = 'IPB98(y,2)           (H)'
-  tauscl(35) = 'IPB98(y,3)           (H)'
-  tauscl(36) = 'IPB98(y,4)           (H)'
-
-  epsfcn   = 1.0D-3
-  epsvmc   = 1.0D-3
-  factor   = 0.1D0
-  ftol     = 1.0D-4
-
-  icc(:) = 0
-
   icc(1)   = 2
   icc(2)   = 10
   icc(3)   = 11
@@ -508,10 +460,6 @@ subroutine initial
   icc(12)  = 7
   icc(13)  = 14
   icc(14)  = 16
-
-  ioptimz  = 1
-
-  ixc(:) = 0
 
   ixc(1)   = 10
   ixc(2)   = 12
@@ -538,24 +486,6 @@ subroutine initial
   ixc(23)  = 59
   ixc(24)  = 60
   ixc(25)  = 4
-  maxcal   = 200
-  minmax   = 6
-  ncalls   = 0
-  neqns    = 14
-  nfev1    = 0
-  nfev2    = 0
-  nineqns  = 0
-  nvar     = 25
-  nvrbl    = 0
-  sqsumsq  = 0.0D0
-
-  rcm(:) = 0.0D0
-  resdl(:) = 0.0D0
-  scafc(:) = 0.0D0
-  scale(:) = 0.0D0
-  xcm(:) = 0.0D0
-  xcs(:) = 0.0D0
-  vlam(:) = 0.0D0
 
   !  Physics data
 
@@ -714,6 +644,43 @@ subroutine initial
   wallmw   = 0.0D0
   zeff     = 0.0D0
   zeffai   = 0.0D0
+
+  tauscl(1)  = 'Neo-Alcator      (ohmic)'
+  tauscl(2)  = 'Mirnov               (H)'
+  tauscl(3)  = 'Merezkhin-Muhkovatov (L)'
+  tauscl(4)  = 'Shimomura            (H)'
+  tauscl(5)  = 'Kaye-Goldston        (L)'
+  tauscl(6)  = 'ITER 89-P            (L)'
+  tauscl(7)  = 'ITER 89-O            (L)'
+  tauscl(8)  = 'Rebut-Lallia         (L)'
+  tauscl(9)  = 'Goldston             (L)'
+  tauscl(10) = 'T10                     '
+  tauscl(11) = 'JAERI-88                '
+  tauscl(12) = 'Kaye-Big Complex        '
+  tauscl(13) = 'ITER H90-P           (H)'
+  tauscl(14) = 'ITER Mix                '
+  tauscl(15) = 'Riedel               (L)'
+  tauscl(16) = 'Christiansen         (L)'
+  tauscl(17) = 'Lackner-Gottardi     (L)'
+  tauscl(18) = 'Neo-Kaye             (L)'
+  tauscl(19) = 'Riedel               (H)'
+  tauscl(20) = 'ITER H90-P amended   (H)'
+  tauscl(21) = 'LHD              (stell)'
+  tauscl(22) = 'Gyro-reduced Bohm(stell)'
+  tauscl(23) = 'Lackner-Gottardi (stell)'
+  tauscl(24) = 'ITER-93H             (H)'
+  tauscl(25) = 'TITAN RFP               '
+  tauscl(26) = 'ITER H-97P ELM-free  (H)'
+  tauscl(27) = 'ITER H-97P ELMy      (H)'
+  tauscl(28) = 'ITER-96P             (L)'
+  tauscl(29) = 'Valovic modified ELMy(H)'
+  tauscl(30) = 'Kaye PPPL April 98   (L)'
+  tauscl(31) = 'ITERH-PB98P(y)       (H)'
+  tauscl(32) = 'IPB98(y)             (H)'
+  tauscl(33) = 'IPB98(y,1)           (H)'
+  tauscl(34) = 'IPB98(y,2)           (H)'
+  tauscl(35) = 'IPB98(y,3)           (H)'
+  tauscl(36) = 'IPB98(y,4)           (H)'
 
   !  Quantities used in inequality constraints
 
@@ -1655,12 +1622,12 @@ subroutine check
   !+ad_desc  This routine performs a sanity check of the input variables
   !+ad_desc  and ensures other dependent variables are given suitable values.
   !+ad_prob  None
+  !+ad_call  numerics
   !+ad_call  process_output
   !+ad_call  bldgvol.h90
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
   !+ad_call  htpwr.h90
-  !+ad_call  numer.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  pulse.h90
@@ -1673,11 +1640,13 @@ subroutine check
   !+ad_hist  01/04/98 PJK Added rnbeam reset for no NBI
   !+ad_hist  19/01/99 PJK Added warning about IITER flag with non-ITER profiles
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use numerics  !  icase only
   use process_output
 
   implicit none
@@ -1686,7 +1655,6 @@ subroutine check
   include 'build.h90'
   include 'cdriv.h90'
   include 'htpwr.h90'
-  include 'numer.h90'
   include 'pfcoil.h90'
   include 'phydat.h90'
   include 'pulse.h90'

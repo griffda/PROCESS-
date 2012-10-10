@@ -15,7 +15,7 @@ subroutine con1(m,cc)
   !+ad_desc  All relevant consistency equations should be active in order
   !+ad_desc  to make a self-consistent machine.
   !+ad_prob  None
-  !+ad_call  numer.h90
+  !+ad_call  numerics
   !+ad_call  phydat.h90
   !+ad_call  ineq.h90
   !+ad_call  cdriv.h90
@@ -42,14 +42,16 @@ subroutine con1(m,cc)
   !+ad_hisc               rather than volume-averaged density
   !+ad_hist  20/09/11 PJK Initial F90 version
   !+ad_hist  14/11/11 PJK Changed NaN error check
+  !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use numerics
+
   implicit none
 
-  include 'numer.h90'
   include 'phydat.h90'
   include 'ineq.h90'
   include 'cdriv.h90'

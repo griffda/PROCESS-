@@ -79,6 +79,7 @@ module process_input
   !+ad_desc  of what is being attempted.
   !+ad_desc  </UL>
   !+ad_prob  Some routines still contain GOTOs...
+  !+ad_call  numerics
   !+ad_call  process_output
   !+ad_call  scan_module
   !+ad_call  blanket.h90
@@ -93,7 +94,6 @@ module process_input
   !+ad_call  htpwr.h90
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
-  !+ad_call  numer.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  pulse.h90
@@ -107,18 +107,19 @@ module process_input
   !+ad_hist  02/10/12 PJK Initial F90 version (PROCESS)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  09/10/12 PJK Modified to use scan_module
+  !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use numerics
   use process_output
   use scan_module
 
   implicit none
 
-  include 'numer.h90'
   include 'blanket.h90'
   include 'bldgcom.h90'
   include 'bldgvol.h90'
