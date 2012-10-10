@@ -68,7 +68,7 @@ subroutine physics
 
   implicit none
 
-  include 'numer.h90'
+!  include 'numer.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
   include 'times.h90'

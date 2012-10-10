@@ -300,6 +300,7 @@ contains
     !+ad_call  report_error
     !+ad_hist  05/01/04 PJK Initial F90 version (CENTORI)
     !+ad_hist  03/10/12 PJK CENTORI version converted for PROCESS
+    !+ad_hist  10/10/12 PJK Removed IVMS
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -404,9 +405,6 @@ contains
        case ('IOPTIMZ')
           call parse_int_variable('IOPTIMZ', ioptimz, -1, 1, &
                'Switch for HYBRID/VMCON')
-       case ('IVMS')
-          call parse_int_variable('IVMS', ivms, 0, 1, &
-               'Switch for Operating System')
        case ('IXC')
           call parse_int_array('IXC', ixc, isub1, ipnvars, &
                'Iteration variable', icode)

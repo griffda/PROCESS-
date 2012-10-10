@@ -68,6 +68,7 @@ subroutine initial
   !+ad_hist  09/11/11 PJK Removed ICULCR
   !+ad_hist  19/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  10/10/12 PJK Removed IVMS
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -509,7 +510,6 @@ subroutine initial
   icc(14)  = 16
 
   ioptimz  = 1
-  ivms     = 0
 
   ixc(:) = 0
 

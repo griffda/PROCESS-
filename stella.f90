@@ -390,7 +390,6 @@ subroutine stphys
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
-  !+ad_call  numer.h90
   !+ad_call  phydat.h90
   !+ad_call  times.h90
   !+ad_call  beamfus
@@ -427,7 +426,6 @@ subroutine stphys
 
   implicit none
 
-  include 'numer.h90'
   include 'phydat.h90'
   include 'build.h90'
   include 'cdriv.h90'

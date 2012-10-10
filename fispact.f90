@@ -36,6 +36,7 @@
 !                     WELEMP calculation (fraction --> percentage).
 !                     Added coding for results for several decay periods
 !  18/11/97 PJK 1.220 Added COMMON block OPSYS. Removed NOUT argument
+!  10/10/12 PJK Hardwired IVMS to zero
 !
 !--Arguments
 !  IPRINT : (INPUT)  Flag to turn on/off (1/0) output to file
@@ -47,7 +48,6 @@
 !CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
 !  INCLUDE files
-      INCLUDE 'numer.h90'
       INCLUDE 'blanket.h90'
       INCLUDE 'build.h90'
       INCLUDE 'fwblsh.h90'
@@ -81,6 +81,9 @@
       COMMON /OPSYS/IVMS1
 
 !  Local variables
+
+      integer, parameter :: ivms = 0
+
       REAL nneut
       DOUBLE PRECISION breedr,dencol,fbbie(100),x,dklen
       DOUBLE PRECISION ecss(83),ecbe(83),ecvd(83),ecli2o(83), &

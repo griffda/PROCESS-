@@ -1359,7 +1359,6 @@ subroutine startup(iprint)
   !+ad_desc  to find the minimum auxiliary power required in start-up.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  numer.h90
   !+ad_call  start.h90
   !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
@@ -1382,7 +1381,6 @@ subroutine startup(iprint)
 
   implicit none
 
-  include 'numer.h90'
   include 'start.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
@@ -1619,7 +1617,7 @@ subroutine start2(n,m,x,fgrd,cnorm,lcnorm,info)
 
   implicit none
 
-  include 'numer.h90'
+!  include 'numer.h90'
 
   !  Arguments
 
@@ -1633,6 +1631,7 @@ subroutine start2(n,m,x,fgrd,cnorm,lcnorm,info)
 
   real(kind(1.0D0)), dimension(2) :: xfor,xbac,cfor,cbac
   real(kind(1.0D0)) :: ffor,fbac
+  real(kind(1.0D0)) :: epsfcn = 1.0D-3
   integer :: i,j
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1681,7 +1680,6 @@ subroutine cudrv1(n,x,paux)
   !+ad_desc  This routine acts as the interface between the start-up routines
   !+ad_desc  and <A HREF="cudriv.html">CUDRIV</A>.
   !+ad_prob  None
-  !+ad_call  numer.h90
   !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
   !+ad_call  physics
@@ -1696,7 +1694,6 @@ subroutine cudrv1(n,x,paux)
 
   implicit none
 
-  include 'numer.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
 

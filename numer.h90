@@ -36,6 +36,3 @@
 
   character(len=48) :: icase
   common /numer4/ icase
-
-  integer :: ivms
-  common /numer5/ ivms

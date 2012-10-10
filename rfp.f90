@@ -661,7 +661,6 @@ subroutine rfpphy
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
-  !+ad_call  numer.h90
   !+ad_call  phydat.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
@@ -698,7 +697,6 @@ subroutine rfpphy
 
   implicit none
 
-  include 'numer.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
   include 'times.h90'
@@ -902,7 +900,6 @@ subroutine ftheta(theta,f)
   !+ad_desc  This subroutine calculates the RFP reversal parameter F,
   !+ad_desc  given the pinch parameter THETA, using a polynomial fit.
   !+ad_prob  None
-  !+ad_call  numer.h90
   !+ad_call  process_input
   !+ad_call  check_range_real
   !+ad_call  06/03/96 PJK Initial version
@@ -918,8 +915,6 @@ subroutine ftheta(theta,f)
   use process_input, only : check_range_real
 
   implicit none
-
-  include 'numer.h90'
 
   !  Arguments
 
