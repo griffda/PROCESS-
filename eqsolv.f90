@@ -73,6 +73,7 @@ subroutine eqsolv(fcnhyb,n,x,fvec,tol,epsfcn,factor,nprint,info, &
   !+ad_desc  the user wants to terminate execution of EQSOLV.
   !+ad_desc  In this case set IFLAG to a negative integer.
   !+ad_prob  None
+  !+ad_call  maths_library
   !+ad_call  fcnhyb
   !+ad_call  hybrd
   !+ad_hist  27/07/11 PJK Initial F90 version
@@ -80,6 +81,8 @@ subroutine eqsolv(fcnhyb,n,x,fvec,tol,epsfcn,factor,nprint,info, &
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use maths_library
 
   implicit none
 

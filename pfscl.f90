@@ -268,12 +268,15 @@ subroutine solv(ngrpmx,lrow1,lcol1,ngrp,ccls,nrws,gmat,bvec,umat, &
   !+ad_desc  This routine solves the matrix equation for calculating the
   !+ad_desc  currents in a group of ring coils.
   !+ad_prob  None
+  !+ad_call  maths_library
   !+ad_call  svd
   !+ad_hist  18/08/11 PJK Initial F90 version
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use maths_library
 
   implicit none
 

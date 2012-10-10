@@ -1455,6 +1455,7 @@ contains
     !+ad_call  None
     !+ad_hist  17/06/92 PJK Initial upgraded version
     !+ad_hist  18/09/12 PJK Initial F90 version
+    !+ad_hist  10/10/12 PJK Changed enorm to ebnorm
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1472,8 +1473,9 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: abd,bbd,d,dene20,dnla20,dnorm,ebmev,ecrit,enorm, &
-         epseff,epsitr,eps1,ffac,gamnb,gfac,j0,nnorm,r,xj,xjs,yj,zbeam
+    real(kind(1.0D0)) :: abd,bbd,d,dene20,dnla20,dnorm,ebmev,ebnorm, &
+         ecrit,epseff,epsitr,eps1,ffac,gamnb,gfac,j0,nnorm,r,xj, &
+         xjs,yj,zbeam
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1559,12 +1561,12 @@ contains
     !  Normalisation to beam energy (assumes a simplified formula for
     !  the beam stopping cross-section)
 
-    enorm = ebmev * ( (nnorm*dnorm)/(dnla20*d) )**(1.0D0/0.78D0)
+    ebnorm = ebmev * ( (nnorm*dnorm)/(dnla20*d) )**(1.0D0/0.78D0)
 
-    !  A_bd fitting coefficient, after normalisation with enorm
+    !  A_bd fitting coefficient, after normalisation with ebnorm
 
     abd = 0.107D0 * (1.0D0 - 0.35D0*alphan + 0.14D0*alphan**2) * &
-         (1.0D0 - 0.21D0*alphat) * (1.0D0 - 0.2D0*enorm + 0.09D0*enorm**2)
+         (1.0D0 - 0.21D0*alphat) * (1.0D0 - 0.2D0*ebnorm + 0.09D0*ebnorm**2)
 
     !  Normalised current drive efficiency (A/W m**-2) (IPDG)
 

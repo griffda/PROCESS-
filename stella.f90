@@ -1550,6 +1550,7 @@ subroutine stdlim(alphan,bt,powht,rmajor,rminor,dlimit)
   !+ad_args  dlimit : output real : Maximum volume-averaged plasma density (/m3)
   !+ad_desc  This routine calculates the density limit for a stellarator.
   !+ad_prob  None
+  !+ad_call  maths_library
   !+ad_call  gamfun
   !+ad_hist  30/06/94 PJK Initial version
   !+ad_hist  24/09/12 PJK Initial F90 version
@@ -1561,6 +1562,8 @@ subroutine stdlim(alphan,bt,powht,rmajor,rminor,dlimit)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use maths_library
+
   implicit none
 
   !  Arguments
@@ -1571,10 +1574,6 @@ subroutine stdlim(alphan,bt,powht,rmajor,rminor,dlimit)
   !  Local variables
 
   real(kind(1.0D0)) :: arg,denom,dnlamx
-
-  !  External functions
-
-  real(kind(1.0D0)), external :: gamfun
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

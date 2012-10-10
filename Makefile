@@ -62,9 +62,7 @@ source = \
  induct.f90   \
  initial.f90  \
  input.f90    \
- math.f90     \
- math2.f90    \
- minpac.f90   \
+ maths_library.f90 \
  optimiz.f90  \
  outplas.f90  \
  output.f90   \
@@ -79,7 +77,6 @@ source = \
  scan.f90     \
  stella.f90   \
  struct.f90   \
- svd.f90      \
  supercond.f90 \
  tfcoil.f90   \
  tfcpwr.f90   \
@@ -108,9 +105,7 @@ object = \
  induct.o     \
  initial.o    \
  input.o      \
- math.o       \
- math2.o      \
- minpac.o     \
+ maths_library.o \
  optimiz.o    \
  outplas.o    \
  output.o     \
@@ -125,7 +120,6 @@ object = \
  scan.o       \
  stella.o     \
  struct.o     \
- svd.o        \
  supercond.o  \
  tfcoil.o     \
  tfcpwr.o     \
@@ -159,7 +153,6 @@ headers = \
  start.h90     \
  stella.h90    \
  struccom.h90  \
- sweep.h90     \
  tfcoil.h90    \
  times.h90     \
  torsdat.h90   \
@@ -238,7 +231,7 @@ divtmod.o: output.o build.h90 divrt.h90 param.h90 phydat.h90
 eqns.o: build.h90 cdriv.h90 divrt.h90 htpwr.h90 ife.h90 ineq.h90 numer.h90 param.h90 \
   pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 rfp.h90 stella.h90 tfcoil.h90 times.h90 \
   vltcom.h90
-eqsolv.o: numer.h90 param.h90
+eqsolv.o: maths_library.o numer.h90 param.h90
 fispact.o: blanket.h90 build.h90 fispact.h90 fwblsh.h90 numer.h90 param.h90 \
   phydat.h90 pulse.h90
 fwbs.o: output.o blanket.h90 build.h90 cost.h90 divrt.h90 fwblsh.h90 htpwr.h90 \
@@ -246,8 +239,8 @@ fwbs.o: output.o blanket.h90 build.h90 cost.h90 divrt.h90 fwblsh.h90 htpwr.h90 \
 geomty.o: build.h90 param.h90 phydat.h90 rfp.h90
 heatpwr.o: output.o blanket.h90 cdriv.h90 cost.h90 fwblsh.h90 htpwr.h90 \
   param.h90 pfcoil.h90 phydat.h90 pwrcom.h90 struccom.h90 tfcoil.h90 times.h90
-ife.o: output.o bldgcom.h90 bldgvol.h90 build.h90 cost.h90 fwblsh.h90 htpwr.h90 ife.h90 \
-  numer.h90 param.h90 phydat.h90 pulse.h90 struccom.h90 torsdat.h90 \
+ife.o: output.o bldgcom.h90 bldgvol.h90 build.h90 cost.h90 fwblsh.h90 htpwr.h90 \
+  ife.h90 numer.h90 param.h90 phydat.h90 pulse.h90 struccom.h90 torsdat.h90 \
   vaccom.h90
 induct.o: output.o build.h90 param.h90 pfcoil.h90 phydat.h90 tfcoil.h90 times.h90 \
   vltcom.h90
@@ -259,20 +252,19 @@ input.o: output.o scan.o blanket.h90 bldgcom.h90 bldgvol.h90 build.h90 cdriv.h90
   cost.h90 divrt.h90 estocom.h90 fwblsh.h90 htpwr.h90 ife.h90 ineq.h90 labels.h90 \
   numer.h90 param.h90 pfcoil.h90 phydat.h90 pulse.h90 rfp.h90 stella.h90 tfcoil.h90 \
   times.h90 vaccom.h90
-math2.o: 
-math.o: 
-minpac.o: 
-optimiz.o: cdriv.h90 cost.h90 divrt.h90 htpwr.h90 numer.h90 param.h90 phydat.h90 \
-  pwrcom.h90 tfcoil.h90
+maths_library.o: 
+optimiz.o: maths_library.o cdriv.h90 cost.h90 divrt.h90 htpwr.h90 numer.h90 param.h90 \
+  phydat.h90 pwrcom.h90 tfcoil.h90
 outplas.o: output.o cdriv.h90 ineq.h90 labels.h90 param.h90 phydat.h90 \
   rfp.h90 times.h90
 output.o:
 pfcoil.o: output.o build.h90 param.h90 pfcoil.h90 phydat.h90 tfcoil.h90 times.h90
-pfscl.o: 
-physics.o: output.o build.h90 cdriv.h90 divrt.h90 labels.h90 numer.h90 \
+pfscl.o: maths_library.o
+physics.o: maths_library.o output.o build.h90 cdriv.h90 divrt.h90 labels.h90 numer.h90 \
   param.h90 phydat.h90 pulse.h90 start.h90 times.h90
-pulse.o: output.o build.h90 cdriv.h90 cost.h90 fwblsh.h90 ineq.h90 numer.h90 param.h90 \
-  pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 start.h90 times.h90 vltcom.h90
+pulse.o: maths_library.o output.o build.h90 cdriv.h90 cost.h90 fwblsh.h90 ineq.h90 \
+  numer.h90 param.h90 pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 start.h90 times.h90 \
+  vltcom.h90
 pwrconv.o: output.o build.h90 cost.h90 htpwr.h90 param.h90 pfcoil.h90 phydat.h90 \
   pwrcom.h90 tfcoil.h90 times.h90 vltcom.h90
 radialb.o: output.o build.h90 cdriv.h90 divrt.h90 param.h90 phydat.h90 rfp.h90 \
@@ -284,15 +276,14 @@ safety.o: output.o blanket.h90 build.h90 fispact.h90 fwblsh.h90 param.h90 pfcoil
   phydat.h90 tfcoil.h90
 scan.o: output.o param.h90 phydat.h90 cdriv.h90 pwrcom.h90 tfcoil.h90 pfcoil.h90 \
   ineq.h90 cost.h90 htpwr.h90 divrt.h90 numer.h90 
-sctfcoil.o: output.o build.h90 fwblsh.h90 param.h90 phydat.h90 tfcoil.h90
-stella.o:  output.o scan.o blanket.h90 bldgcom.h90 bldgvol.h90 build.h90 cdriv.h90 \
-  cost.h90 divrt.h90 estocom.h90 fwblsh.h90 htpwr.h90 ineq.h90 labels.h90 numer.h90 \
-  param.h90 pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 stella.h90 struccom.h90 \
-  tfcoil.h90 times.h90 torsdat.h90 vaccom.h90 vltcom.h90
+sctfcoil.o: maths_library.o output.o build.h90 fwblsh.h90 param.h90 phydat.h90 tfcoil.h90
+stella.o: maths_library.o output.o scan.o blanket.h90 bldgcom.h90 bldgvol.h90 build.h90 \
+  cdriv.h90 cost.h90 divrt.h90 estocom.h90 fwblsh.h90 htpwr.h90 ineq.h90 labels.h90 \
+  numer.h90 param.h90 pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 stella.h90 \
+  struccom.h90 tfcoil.h90 times.h90 torsdat.h90 vaccom.h90 vltcom.h90
 struct.o: output.o build.h90 divrt.h90 fwblsh.h90 param.h90 pfcoil.h90 \
   phydat.h90 struccom.h90 tfcoil.h90
 supercond.o: output.o tfcoil.h90
-svd.o: 
 tfcoil.o: output.o build.h90 fwblsh.h90 param.h90 phydat.h90 tfcoil.h90
 tfcpwr.o: output.o bldgvol.h90 htpwr.h90 param.h90 phydat.h90 tfcoil.h90
 vacuum.o: output.o build.h90 param.h90 phydat.h90 tfcoil.h90 times.h90 \

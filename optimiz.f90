@@ -16,6 +16,7 @@ subroutine optimiz(ifail,f)
   !+ad_desc  or minimised (i.e. the figure of merit) is returned in argument
   !+ad_desc  <CODE>f</CODE>.
   !+ad_prob  None
+  !+ad_call  maths_library
   !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  fcnvmc1
@@ -27,6 +28,8 @@ subroutine optimiz(ifail,f)
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use maths_library
 
   implicit none
 

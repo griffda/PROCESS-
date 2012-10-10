@@ -517,6 +517,7 @@ subroutine tfstress(nu,rad,ey,j,sigr,sigt,deflect,iflag)
   !+ad_prob  Simple (correct) reordering of assignment statements or changing
   !+ad_prob  <CODE>else if (i == 3) then</CODE> to simply <CODE>else</CODE>
   !+ad_prob  causes the output values to change.
+  !+ad_call  maths_library
   !+ad_call  linesolv
   !+ad_hist  09/05/91 JG  Initial version
   !+ad_hist  10/05/12 PJK Initial F90 version;
@@ -525,6 +526,8 @@ subroutine tfstress(nu,rad,ey,j,sigr,sigt,deflect,iflag)
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use maths_library
 
   implicit none
 

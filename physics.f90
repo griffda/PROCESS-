@@ -882,6 +882,7 @@ subroutine betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3,ftr, &
   !+ad_desc  This subroutine determines the various plasma component
   !+ad_desc  fractional makeups.
   !+ad_prob  None
+  !+ad_call  maths_library
   !+ad_call  gamfun
   !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
   !+ad_hist  06/12/95 PJK Added D-He3 calculations
@@ -895,6 +896,8 @@ subroutine betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3,ftr, &
   !+ad_docs  F/MI/PJK/LOGBOOK11, p.38 for D-He3 deni calculation
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use maths_library
 
   implicit none
 
@@ -910,10 +913,6 @@ subroutine betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3,ftr, &
   !  Local variables
 
   real(kind(1.0D0)) :: fc, ffe, fo, znfuel
-
-  !  External functions
-
-  real(kind(1.0D0)), external :: gamfun
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1283,6 +1282,7 @@ subroutine palph(alphan,alphat,deni,ealpha,fdeut,fhe3,ftr,ftrit, &
   !+ad_desc  This subroutine numerically integrates over plasma cross-section to
   !+ad_desc  find the fusion power and fast alpha pressure.
   !+ad_prob  None
+  !+ad_call  maths_library
   !+ad_call  ffus
   !+ad_call  fint
   !+ad_call  fpower
@@ -1294,6 +1294,8 @@ subroutine palph(alphan,alphat,deni,ealpha,fdeut,fhe3,ftr,ftrit, &
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use maths_library
 
   implicit none
 
@@ -3158,6 +3160,7 @@ function fhfac(is)
   !+ad_desc  This function calculates the H-factor required for power balance,
   !+ad_desc  using the given energy confinement scaling law.
   !+ad_prob  None
+  !+ad_call  maths_library
   !+ad_call  fhz
   !+ad_call  zeroin
   !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
@@ -3166,6 +3169,8 @@ function fhfac(is)
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use maths_library
 
   implicit none
 
@@ -3189,7 +3194,7 @@ function fhfac(is)
 
   !  External functions
 
-  real(kind(1.0D0)), external :: fhz, zeroin
+  real(kind(1.0D0)), external :: fhz
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3611,6 +3616,7 @@ contains
     !+ad_argc                         the beam ion (m/s)
     !+ad_desc  This routine calculates the hot beam fusion reaction rate in m3/s.
     !+ad_prob  None
+    !+ad_call  maths_library
     !+ad_call  fsv
     !+ad_call  quanc8
     !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
@@ -3619,6 +3625,8 @@ contains
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use maths_library
 
     implicit none
 
@@ -3834,6 +3842,7 @@ function fnewbs(alphan,alphat,betat,bt,dene,plascur,q95,q0,rmajor, &
   !+ad_desc  This function calculates the bootstrap current fraction,
   !+ad_desc  using the Nevins et al method, 4/11/90.
   !+ad_prob  None
+  !+ad_call  maths_library
   !+ad_call  bsinteg
   !+ad_call  quanc8
   !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
@@ -3842,6 +3851,8 @@ function fnewbs(alphan,alphat,betat,bt,dene,plascur,q95,q0,rmajor, &
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use maths_library
 
   implicit none
 

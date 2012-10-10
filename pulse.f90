@@ -2056,6 +2056,8 @@ SUBROUTINE VMCON1( &
   !  Modified for separate START1 and START2 functions to avoid passing
   !  info via a common block. J. Galambos (5/21/91)
 
+  use maths_library
+
   IMPLICIT NONE
 
   INTEGER mode,n,m,meq,lcnorm,lb,maxfev,info,nfev,ldel,lh,lwa,liwa
