@@ -18,7 +18,6 @@ subroutine sctfcoil(outfile,iprint)
   !+ad_prob  None
   !+ad_call  build.h90
   !+ad_call  fwblsh.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  coilshap
@@ -35,7 +34,6 @@ subroutine sctfcoil(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'build.h90'
   include 'phydat.h90'
   include 'tfcoil.h90'
@@ -378,7 +376,6 @@ subroutine stresscl
   !+ad_desc  TF coil set.
   !+ad_prob  None
   !+ad_call  build.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  eyngeff
@@ -393,7 +390,6 @@ subroutine stresscl
 
   implicit none
 
-  include 'param.h90'
   include 'build.h90'
   include 'phydat.h90'
   include 'tfcoil.h90'
@@ -885,7 +881,6 @@ subroutine coilshap
   !+ad_desc  The geometry is a fit to the 1989 ITER design.
   !+ad_prob  None
   !+ad_call  build.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_hist  30/03/89 JG  Initial version
@@ -897,7 +892,6 @@ subroutine coilshap
 
   implicit none
 
-  include 'param.h90'
   include 'build.h90'
   include 'phydat.h90'
   include 'tfcoil.h90'
@@ -997,7 +991,6 @@ subroutine tfcind(narc,xarc,yarc,xctfc,yctfc,dthet,tfthk,tfind)
   !+ad_prob  to expect narc = 4.
   !+ad_prob  <P>This routine is very sensitive to trivial code changes...
   !+ad_call  build.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_hist  03/09/85 SSK Initial version

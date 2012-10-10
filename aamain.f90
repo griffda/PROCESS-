@@ -33,7 +33,6 @@ program process
   !+ad_call  process_input
   !+ad_call  process_output
   !+ad_call  scan_module
-  !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  eqslv
   !+ad_call  final
@@ -58,7 +57,6 @@ program process
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
 
   !  Arguments
@@ -108,7 +106,6 @@ subroutine init
   !+ad_desc  the default values for the global variables, reads in data from
   !+ad_desc  the input file, and checks the run parameters for consistency.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  process_input
   !+ad_call  process_output
@@ -133,7 +130,6 @@ subroutine init
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
 
   !  Arguments
@@ -262,9 +258,7 @@ subroutine eqslv(ifail)
   !+ad_desc  This routine calls the non-optimising equation solver.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  numer.h90
-  !+ad_call  labels.h90
   !+ad_call  eqsolv
   !+ad_call  fcnhyb
   !+ad_call  herror
@@ -287,9 +281,7 @@ subroutine eqslv(ifail)
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
-  include 'labels.h90'
 
   !  Arguments
 
@@ -627,9 +619,7 @@ subroutine doopt(ifail)
   !+ad_desc  This routine calls the optimising equation solver.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  numer.h90
-  !+ad_call  labels.h90
   !+ad_call  boundxc
   !+ad_call  loadxc
   !+ad_call  oblnkl
@@ -652,9 +642,7 @@ subroutine doopt(ifail)
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
-  include 'labels.h90'
 
   !  Arguments
 
@@ -825,7 +813,6 @@ subroutine final(ifail)
   !+ad_args  ifail   : input integer : error flag
   !+ad_desc  This routine prints out the final point in the scan.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  process_output
   !+ad_call  oheadr
@@ -842,7 +829,6 @@ subroutine final(ifail)
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
 
   !  Arguments
@@ -882,7 +868,6 @@ subroutine output(outfile)
   !+ad_desc  This routine writes the program results to a file,
   !+ad_desc  in a tidy format.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  stella.h90
   !+ad_call  rfp.h90
@@ -936,7 +921,6 @@ subroutine output(outfile)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'stella.h90'
   include 'rfp.h90'

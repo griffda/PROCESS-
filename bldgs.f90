@@ -16,7 +16,6 @@ subroutine bldgcall(outfile,iprint)
   !+ad_call  build.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  pwrcom.h90
@@ -33,7 +32,6 @@ subroutine bldgcall(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'pfcoil.h90'
   include 'tfcoil.h90'

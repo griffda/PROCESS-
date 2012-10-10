@@ -19,7 +19,6 @@ subroutine avail(outfile,iprint)
   !+ad_call  divrt.h90
   !+ad_call  fwblsh.h90
   !+ad_call  ife.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
@@ -37,7 +36,6 @@ subroutine avail(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'ife.h90'
   include 'cost.h90'
   include 'fwblsh.h90'

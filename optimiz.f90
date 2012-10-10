@@ -17,7 +17,6 @@ subroutine optimiz(ifail,f)
   !+ad_desc  <CODE>f</CODE>.
   !+ad_prob  None
   !+ad_call  maths_library
-  !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  fcnvmc1
   !+ad_call  fcnvmc2
@@ -33,7 +32,6 @@ subroutine optimiz(ifail,f)
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
 
   !  Arguments
@@ -122,7 +120,6 @@ subroutine funfom(fc)
   !+ad_desc  <P>Each equation for <CODE>fc<CODE> gives a value of the
   !+ad_desc  order of unity for the sake of the numerics.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
@@ -140,7 +137,6 @@ subroutine funfom(fc)
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
@@ -322,7 +318,6 @@ subroutine fcnvmc2(n,m,xv,fgrd,cnorm,lcnorm,ifail)
   !+ad_desc  constraints in <CODE>conf</CODE>. The constraint gradients
   !+ad_desc  or normals are returned as the columns of <CODE>cnorm</CODE>.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  caller
   !+ad_call  con1
@@ -336,7 +331,6 @@ subroutine fcnvmc2(n,m,xv,fgrd,cnorm,lcnorm,ifail)
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
 
   !  Arguments

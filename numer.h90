@@ -1,5 +1,18 @@
 !  $Id::                                                                $
 
+  integer, parameter :: ipnvars = 88  !  total number of variables available for iteration
+  integer, parameter :: ipeqns  = 50  !  number of constraint equations available
+  integer, parameter :: ipnfoms = 13  !  number of available figures of merit
+  integer, parameter :: ipvlam  = ipeqns+2*ipnvars+1
+  integer, parameter :: iptnt   = (ipeqns*(3*ipeqns+13))/2
+  integer, parameter :: ipvp1   = ipnvars+1
+
+  character(len=34), dimension(ipeqns) :: lablcc
+  character(len=22), dimension(ipnfoms) :: lablmm
+  character(len=8), dimension(ipnvars) :: lablxc
+
+  common /label1/ lablcc,lablmm,lablxc
+
   real(kind(1.0D0)) :: epsfcn,epsvmc,factor,ftol,sqsumsq
   common /cmcom0/ epsfcn,epsvmc,factor,ftol,sqsumsq
 

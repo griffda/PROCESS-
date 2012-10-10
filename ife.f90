@@ -392,7 +392,6 @@ subroutine ifephy(outfile,iprint)
   !+ad_desc  Energy power plant.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  ife.h90
   !+ad_call  build.h90
@@ -416,7 +415,6 @@ subroutine ifephy(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'ife.h90'
   include 'build.h90'
@@ -2009,7 +2007,6 @@ subroutine ifefbs(outfile,iprint)
   !+ad_desc  masses and other parameters, for an Inertial Fusion Energy device.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  ife.h90
   !+ad_call  fwblsh.h90
   !+ad_call  build.h90
@@ -2032,7 +2029,6 @@ subroutine ifefbs(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'ife.h90'
   include 'fwblsh.h90'
   include 'build.h90'
@@ -2181,7 +2177,6 @@ subroutine ifepw1
   !+ad_desc  This routine calculates the first part of the heat transport
   !+ad_desc  and plant power balance constituents, for an IFE power plant.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  ife.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
@@ -2197,7 +2192,6 @@ subroutine ifepw1
 
   implicit none
 
-  include 'param.h90'
   include 'fwblsh.h90'
   include 'htpwr.h90'
   include 'phydat.h90'
@@ -2386,7 +2380,6 @@ subroutine ifepw2(outfile,iprint)
   !+ad_desc  <A HREF="ifeacp.html">IFEACP</A>.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  cost.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
@@ -2410,7 +2403,6 @@ subroutine ifepw2(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'cost.h90'
   include 'fwblsh.h90'
   include 'htpwr.h90'

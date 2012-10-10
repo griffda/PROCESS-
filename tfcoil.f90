@@ -16,7 +16,6 @@ subroutine tfcoil(outfile,iprint)
   !+ad_prob  None
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  concoptf
@@ -38,7 +37,6 @@ subroutine tfcoil(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'build.h90'
   include 'tfcoil.h90'
@@ -167,7 +165,6 @@ subroutine concoptf(outfile,iprint)
   !+ad_prob  None
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  cpost
@@ -187,7 +184,6 @@ subroutine concoptf(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'tfcoil.h90'
   include 'build.h90'
@@ -325,7 +321,6 @@ subroutine cntrpst(outfile,iprint)
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  fwblsh.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  oheadr
@@ -343,7 +338,6 @@ subroutine cntrpst(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'tfcoil.h90'
   include 'fwblsh.h90'

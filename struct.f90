@@ -15,7 +15,6 @@ subroutine strucall(outfile,iprint)
   !+ad_call  build.h90
   !+ad_call  divrt.h90
   !+ad_call  fwblsh.h90
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  struccom.h90
@@ -29,7 +28,6 @@ subroutine strucall(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'build.h90'
   include 'divrt.h90'
   include 'fwblsh.h90'

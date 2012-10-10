@@ -1,5 +1,10 @@
 !  $Id::                                                                $
 
+  integer, parameter :: ipnlaws = 36  !  number of energy confinement time scaling laws
+
+  character(len=24), dimension(ipnlaws) :: tauscl
+  common /label2/ tauscl
+
   real(kind(1.0D0)) :: &
        abeam,afuel,aion,alphaj,alphan,alphat,alpmw,aspect,beamfus0, &
        beta,betaft,betalim,betanb,betap,betbm0,bp,bt,btot,burnup,capa, &

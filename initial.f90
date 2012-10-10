@@ -14,9 +14,7 @@ subroutine initial
   !+ad_desc  code, but are set to zero in this routine anyway.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  numer.h90
-  !+ad_call  labels.h90
   !+ad_call  ineq.h90
   !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
@@ -79,9 +77,7 @@ subroutine initial
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
-  include 'labels.h90'
   include 'ineq.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
@@ -1660,7 +1656,6 @@ subroutine check
   !+ad_desc  and ensures other dependent variables are given suitable values.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  bldgvol.h90
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
@@ -1687,7 +1682,6 @@ subroutine check
 
   implicit none
 
-  include 'param.h90'
   include 'bldgvol.h90'
   include 'build.h90'
   include 'cdriv.h90'

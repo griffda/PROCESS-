@@ -93,9 +93,7 @@ module process_input
   !+ad_call  htpwr.h90
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
-  !+ad_call  labels.h90
   !+ad_call  numer.h90
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  pulse.h90
@@ -120,7 +118,6 @@ module process_input
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
   include 'blanket.h90'
   include 'bldgcom.h90'
@@ -134,7 +131,6 @@ module process_input
   include 'htpwr.h90'
   include 'ife.h90'
   include 'ineq.h90'
-  include 'labels.h90'
   include 'pfcoil.h90'
   include 'phydat.h90'
   include 'pulse.h90'

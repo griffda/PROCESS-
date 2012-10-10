@@ -109,7 +109,6 @@ subroutine outvolt(outfile)
   !+ad_desc  output file.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  times.h90
@@ -130,7 +129,6 @@ subroutine outvolt(outfile)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'pfcoil.h90'
   include 'vltcom.h90'
@@ -215,7 +213,6 @@ subroutine induct(outfile,iprint)
   !+ad_prob  None
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
@@ -237,7 +234,6 @@ subroutine induct(outfile,iprint)
 
   implicit none
 
-  INCLUDE 'param.h90'
   INCLUDE 'phydat.h90'
   INCLUDE 'pfcoil.h90'
   INCLUDE 'vltcom.h90'

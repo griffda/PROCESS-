@@ -85,7 +85,6 @@ subroutine stinit
   !+ad_desc  Many of these may override the values set in routine
   !+ad_desc  <A HREF="initial.html">initial</A>.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  build.h90
   !+ad_call  numer.h90
   !+ad_call  pfcoil.h90
@@ -109,7 +108,6 @@ subroutine stinit
 
   implicit none
 
-  include 'param.h90'
   include 'build.h90'
   include 'numer.h90'
   include 'pfcoil.h90'
@@ -225,7 +223,6 @@ subroutine stbild(outfile,iprint)
   !+ad_desc  toroidal angle.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  divrt.h90
   !+ad_call  build.h90
@@ -246,7 +243,6 @@ subroutine stbild(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'divrt.h90'
   include 'build.h90'
@@ -395,7 +391,6 @@ subroutine stphys
   !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
   !+ad_call  numer.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  times.h90
   !+ad_call  beamfus
@@ -432,7 +427,6 @@ subroutine stphys
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
   include 'phydat.h90'
   include 'build.h90'
@@ -575,7 +569,6 @@ subroutine stheat(outfile,iprint)
   !+ad_desc  a stellarator device.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
   !+ad_call  stella.h90
@@ -598,7 +591,6 @@ subroutine stheat(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
   include 'stella.h90'
@@ -727,7 +719,6 @@ subroutine stcoil(outfile,iprint)
   !+ad_desc  This routine calculates the properties of the TF coils for
   !+ad_desc  a stellarator device.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  build.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
@@ -746,7 +737,6 @@ subroutine stcoil(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'build.h90'
   include 'phydat.h90'
   include 'tfcoil.h90'
@@ -1033,7 +1023,6 @@ subroutine stcshp
   !+ad_desc  <P>The code is almost identical to that in routine
   !+ad_desc  <A HREF="coilshap.html">COILSHAP</A>.
   !+ad_prob  This is clearly a highly dodgy approximation...
-  !+ad_call  param.h90
   !+ad_call  build.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
@@ -1046,7 +1035,6 @@ subroutine stcshp
 
   implicit none
 
-  include 'param.h90'
   include 'build.h90'
   include 'phydat.h90'
   include 'tfcoil.h90'
@@ -1146,7 +1134,6 @@ subroutine stclen(totlen)
   !+ad_desc  <P>The data are scaled with the machine's average major radius and
   !+ad_desc  the mean coil minor radius.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  build.h90
   !+ad_call  phydat.h90
   !+ad_call  rzp
@@ -1162,7 +1149,6 @@ subroutine stclen(totlen)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'build.h90'
 
@@ -1661,10 +1647,8 @@ subroutine stigma(outfile)
   !+ad_desc  point with different stellarator confinement time scaling laws
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
-  !+ad_call  labels.h90
   !+ad_call  fhfac
   !+ad_call  oblnkl
   !+ad_call  osubhd
@@ -1685,10 +1669,8 @@ subroutine stigma(outfile)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
-  include 'labels.h90'
 
   !  Arguments
 
@@ -1763,7 +1745,6 @@ subroutine stout(outfile)
   !+ad_desc  This routine prints out the stellarator's parameters at the
   !+ad_desc  end of a run.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  acpow
   !+ad_call  avail
@@ -1797,7 +1778,6 @@ subroutine stout(outfile)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
 
   !  Arguments
@@ -1850,7 +1830,6 @@ subroutine ststrc(outfile,iprint)
   !+ad_desc  This is the stellarator version of routine
   !+ad_desc  <A HREF="strucall.html">STRUCALL</A>.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  build.h90
   !+ad_call  divrt.h90
   !+ad_call  fwblsh.h90
@@ -1869,7 +1848,6 @@ subroutine ststrc(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'build.h90'
   include 'divrt.h90'
   include 'fwblsh.h90'

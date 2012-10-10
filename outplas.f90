@@ -13,11 +13,9 @@ subroutine outplas(outfile)
   !+ad_desc  to a file, in a tidy format.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  ineq.h90
   !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
-  !+ad_call  labels.h90
   !+ad_call  times.h90
   !+ad_call  rfp.h90
   !+ad_call  oblnkl
@@ -44,11 +42,9 @@ subroutine outplas(outfile)
 
   implicit none
 
-  include 'param.h90'
   include 'ineq.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
-  include 'labels.h90'
   include 'times.h90'
   include 'rfp.h90'
 

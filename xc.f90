@@ -20,9 +20,7 @@ subroutine loadxc
   !+ad_call  htpwr.h90
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
-  !+ad_call  labels.h90
   !+ad_call  numer.h90
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  pulse.h90
@@ -39,9 +37,7 @@ subroutine loadxc
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
-  include 'labels.h90'
   include 'phydat.h90'
   include 'ineq.h90'
   include 'cdriv.h90'
@@ -267,9 +263,7 @@ subroutine convxc(xc,nn)
   !+ad_call  htpwr.h90
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
-  !+ad_call  labels.h90
   !+ad_call  numer.h90
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  rfp.h90
@@ -284,9 +278,7 @@ subroutine convxc(xc,nn)
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
-  include 'labels.h90'
   include 'phydat.h90'
   include 'ineq.h90'
   include 'cdriv.h90'
@@ -481,7 +473,6 @@ subroutine boundxc
   !+ad_desc  back to their real values.
   !+ad_prob  None
   !+ad_call  numer.h90
-  !+ad_call  param.h90
   !+ad_hist  22/10/92 PJK Removed arguments (xc,nn)
   !+ad_hist  16/11/11 PJK Initial F90 version
   !+ad_stat  Okay
@@ -491,7 +482,6 @@ subroutine boundxc
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
 
   !  Local variables

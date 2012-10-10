@@ -17,7 +17,6 @@ subroutine power1
   !+ad_call  cdriv.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  pwrcom.h90
@@ -33,7 +32,6 @@ subroutine power1
 
   implicit none
 
-  include 'param.h90'
   include 'blanket.h90'
   include 'cdriv.h90'
   include 'fwblsh.h90'
@@ -118,7 +116,6 @@ subroutine power2(outfile,iprint)
   !+ad_call  cost.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  blanket
@@ -142,7 +139,6 @@ subroutine power2(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'blanket.h90'
   include 'cost.h90'
   include 'fwblsh.h90'

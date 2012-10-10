@@ -15,7 +15,6 @@ subroutine con1(m,cc)
   !+ad_desc  All relevant consistency equations should be active in order
   !+ad_desc  to make a self-consistent machine.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  phydat.h90
   !+ad_call  ineq.h90
@@ -50,7 +49,6 @@ subroutine con1(m,cc)
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
   include 'phydat.h90'
   include 'ineq.h90'

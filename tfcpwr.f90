@@ -16,7 +16,6 @@ subroutine tfpwcall(outfile,iprint)
   !+ad_prob  None
   !+ad_call  bldgvol.h90
   !+ad_call  htpwr.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  tfcpwr
@@ -28,7 +27,6 @@ subroutine tfpwcall(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'tfcoil.h90'
   include 'phydat.h90'
   include 'bldgvol.h90'

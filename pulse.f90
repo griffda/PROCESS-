@@ -13,7 +13,6 @@ subroutine pulse(outfile,iprint)
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This calls the routines relevant to a pulsed reactor scenario.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  pulse.h90
   !+ad_call  build.h90
   !+ad_call  phydat.h90
@@ -33,7 +32,6 @@ subroutine pulse(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'pulse.h90'
   include 'build.h90'
   include 'phydat.h90'
@@ -97,7 +95,6 @@ subroutine thrmal(outfile,iprint)
   !+ad_desc  temperature and the neutron fluence.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  pulse.h90
   !+ad_call  build.h90
   !+ad_call  phydat.h90
@@ -134,7 +131,6 @@ subroutine thrmal(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'pulse.h90'
   include 'build.h90'
   include 'phydat.h90'
@@ -692,7 +688,6 @@ contains
     !+ad_desc  distribution. These terms are calculated with the material
     !+ad_desc  properties measured at the property temperature.
     !+ad_prob  None
-    !+ad_call  param.h90
     !+ad_call  pulse.h90
     !+ad_call  phydat.h90
     !+ad_call  tk
@@ -706,7 +701,6 @@ contains
 
     implicit none
 
-    include 'param.h90'
     include 'pulse.h90'
     include 'phydat.h90'
 
@@ -1116,7 +1110,6 @@ subroutine tohswg(outfile,iprint)
   !+ad_desc  for a pulsed reactor.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  pwrcom.h90
   !+ad_call  vltcom.h90
@@ -1140,7 +1133,6 @@ subroutine tohswg(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'pfcoil.h90'
   include 'pwrcom.h90'
   include 'vltcom.h90'
@@ -1232,7 +1224,6 @@ subroutine burn(outfile,iprint)
   !+ad_desc  This routine calculates the burn time for a pulsed reactor.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  pulse.h90
   !+ad_call  vltcom.h90
@@ -1255,7 +1246,6 @@ subroutine burn(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'pfcoil.h90'
   include 'pulse.h90'
   include 'vltcom.h90'
@@ -1369,7 +1359,6 @@ subroutine startup(iprint)
   !+ad_desc  to find the minimum auxiliary power required in start-up.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  start.h90
   !+ad_call  phydat.h90
@@ -1393,7 +1382,6 @@ subroutine startup(iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
   include 'start.h90'
   include 'phydat.h90'
@@ -1618,7 +1606,6 @@ subroutine start2(n,m,x,fgrd,cnorm,lcnorm,info)
   !+ad_desc  auxiliary power and the constraint equations relevant
   !+ad_desc  to the minimisation of the auxiliary power.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  constr
   !+ad_call  cudrv1
@@ -1632,7 +1619,6 @@ subroutine start2(n,m,x,fgrd,cnorm,lcnorm,info)
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
 
   !  Arguments
@@ -1695,7 +1681,6 @@ subroutine cudrv1(n,x,paux)
   !+ad_desc  This routine acts as the interface between the start-up routines
   !+ad_desc  and <A HREF="cudriv.html">CUDRIV</A>.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  numer.h90
   !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
@@ -1711,7 +1696,6 @@ subroutine cudrv1(n,x,paux)
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
   include 'phydat.h90'
   include 'cdriv.h90'

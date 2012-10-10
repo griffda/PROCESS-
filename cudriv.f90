@@ -16,7 +16,6 @@ subroutine cudriv(outfile,iprint)
   !+ad_prob  None
   !+ad_call  process_output
   !+ad_call  cdriv.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  culecd
   !+ad_call  cullhy
@@ -40,7 +39,6 @@ subroutine cudriv(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
 

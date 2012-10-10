@@ -92,7 +92,6 @@ subroutine blanket(icalc,outfile,iprint)
   !+ad_desc  <P>A more detailed description of the physical models
   !+ad_desc  used in the analysis can be found in the main reference.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
@@ -112,7 +111,6 @@ subroutine blanket(icalc,outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'fwblsh.h90'
   include 'htpwr.h90'

@@ -17,7 +17,6 @@ subroutine rfptfc(outfile,iprint)
   !+ad_prob  None
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  rfp.h90
   !+ad_call  tfcoil.h90
@@ -37,7 +36,6 @@ subroutine rfptfc(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'build.h90'
   include 'tfcoil.h90'
@@ -209,7 +207,6 @@ subroutine rfppfc(outfile,iprint)
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  fwblsh.h90
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  rfp.h90
@@ -232,7 +229,6 @@ subroutine rfppfc(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'rfp.h90'
   include 'pfcoil.h90'
@@ -469,7 +465,6 @@ subroutine rfppfp(outfile,iprint)
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  htpwr.h90
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  pwrcom.h90
@@ -492,7 +487,6 @@ subroutine rfppfp(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'pfcoil.h90'
   include 'vltcom.h90'
@@ -668,7 +662,6 @@ subroutine rfpphy
   !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
   !+ad_call  numer.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
@@ -705,7 +698,6 @@ subroutine rfpphy
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
@@ -911,7 +903,6 @@ subroutine ftheta(theta,f)
   !+ad_desc  given the pinch parameter THETA, using a polynomial fit.
   !+ad_prob  None
   !+ad_call  numer.h90
-  !+ad_call  param.h90
   !+ad_call  process_input
   !+ad_call  check_range_real
   !+ad_call  06/03/96 PJK Initial version
@@ -928,7 +919,6 @@ subroutine ftheta(theta,f)
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
 
   !  Arguments

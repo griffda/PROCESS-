@@ -17,7 +17,6 @@ subroutine tfpwr(outfile,iprint)
   !+ad_call  process_output
   !+ad_call  times.h90
   !+ad_call  cost.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  oheadr
@@ -34,7 +33,6 @@ subroutine tfpwr(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'tfcoil.h90'
   include 'times.h90'
@@ -149,7 +147,6 @@ subroutine pfpwr(outfile,iprint)
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  htpwr.h90
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  pwrcom.h90
@@ -169,7 +166,6 @@ subroutine pfpwr(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'pfcoil.h90'
   include 'vltcom.h90'

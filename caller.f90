@@ -16,7 +16,6 @@ subroutine caller(xc,nvars)
   !+ad_call  process_output
   !+ad_call  ife.h90
   !+ad_call  numer.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  rfp.h90
   !+ad_call  stella.h90
@@ -76,7 +75,6 @@ subroutine caller(xc,nvars)
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
   include 'phydat.h90'
   include 'stella.h90'

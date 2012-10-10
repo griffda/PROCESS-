@@ -20,7 +20,6 @@ subroutine divcall(outfile,iprint)
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  divrt.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  divert
   !+ad_call  divtart
@@ -50,7 +49,6 @@ subroutine divcall(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'build.h90'
   include 'divrt.h90'

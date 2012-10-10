@@ -17,7 +17,6 @@ subroutine physics
   !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
   !+ad_call  numer.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  pulse.h90
   !+ad_call  times.h90
@@ -69,7 +68,6 @@ subroutine physics
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
@@ -1880,7 +1878,6 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
   !+ad_desc  using one of a large number of scaling laws, and the
   !+ad_desc  transport power loss terms.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  start.h90
   !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
   !+ad_hist  30/06/94 PJK Added stellarator scaling laws 20-23
@@ -1901,7 +1898,6 @@ subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
 
   implicit none
 
-  include 'param.h90'
   include 'start.h90'
 
   !  Arguments
@@ -3069,10 +3065,8 @@ subroutine igmarcal(outfile)
   !+ad_desc  with different scalings.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
-  !+ad_call  labels.h90
   !+ad_call  fhfac
   !+ad_call  oblnkl
   !+ad_call  osubhd
@@ -3093,10 +3087,8 @@ subroutine igmarcal(outfile)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
-  include 'labels.h90'
 
   !  Arguments
 
@@ -3222,7 +3214,6 @@ function fhz(hhh)
   !+ad_desc  using routine <A HREF="zeroin.html">ZEROIN</A> to adjust the
   !+ad_desc  value of <CODE>hhh</CODE>, the confinement time H-factor.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
   !+ad_call  pcond
@@ -3242,7 +3233,6 @@ function fhz(hhh)
 
   real(kind(1.0D0)) :: fhz
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
 

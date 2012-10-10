@@ -77,7 +77,6 @@ contains
   !+ad_desc  a number of times, by performing a sweep over a range of
   !+ad_desc  values of a particular variable.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
   !+ad_call  pwrcom.h90
@@ -107,7 +106,6 @@ contains
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'cdriv.h90'
   include 'pwrcom.h90'

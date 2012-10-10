@@ -14,7 +14,6 @@ subroutine pfcoil
   !+ad_desc  stresses etc.
   !+ad_prob  None
   !+ad_call  build.h90
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
@@ -33,7 +32,6 @@ subroutine pfcoil
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'pfcoil.h90'
   include 'tfcoil.h90'
@@ -552,7 +550,6 @@ subroutine ohcalc
   !+ad_desc  OH solenoid coil.
   !+ad_prob  None
   !+ad_call  build.h90
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
@@ -568,7 +565,6 @@ subroutine ohcalc
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'pfcoil.h90'
   include 'tfcoil.h90'
@@ -793,7 +789,6 @@ subroutine peakb(i,ii,it,bri,bro,bzi,bzo)
   !+ad_desc  and the plasma.
   !+ad_prob  None
   !+ad_call  build.h90
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
@@ -806,7 +801,6 @@ subroutine peakb(i,ii,it,bri,bro,bzi,bzo)
 
   implicit none
 
-  include 'param.h90'
   include 'pfcoil.h90'
   include 'tfcoil.h90'
   include 'phydat.h90'
@@ -1035,7 +1029,6 @@ subroutine waveform
   !+ad_desc  <CODE>waves(i,j)</CODE> is the current in coil i, at time j,
   !+ad_desc  normalized to the peak current in that coil at any time.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_hist  09/05/12 PJK Initial F90 version
@@ -1046,7 +1039,6 @@ subroutine waveform
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'pfcoil.h90'
 
@@ -1109,7 +1101,6 @@ subroutine outpf(outfile)
   !+ad_prob  None
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  param.h90
   !+ad_call  pfcoil.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
@@ -1129,7 +1120,6 @@ subroutine outpf(outfile)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'pfcoil.h90'
   include 'tfcoil.h90'

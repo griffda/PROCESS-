@@ -19,7 +19,6 @@ subroutine costs(outfile,iprint)
   !+ad_desc  <P>The code is arranged in the order of the standard accounts.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  tfcoil.h90
   !+ad_call  blanket.h90
   !+ad_call  cost.h90
@@ -57,7 +56,6 @@ subroutine costs(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'tfcoil.h90'
   include 'blanket.h90'
   include 'cost.h90'
@@ -384,7 +382,6 @@ subroutine coelc(outfile,iprint)
   !+ad_desc  All values are based on 1990 dollars.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  divrt.h90
   !+ad_call  cdriv.h90
@@ -410,7 +407,6 @@ subroutine coelc(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'divrt.h90'
   include 'cdriv.h90'
@@ -767,7 +763,6 @@ subroutine acc21
   !+ad_desc  Allowances are used for site improvements and for miscellaneous
   !+ad_desc  buildings and land costs.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  bldgvol.h90
   !+ad_call  cost.h90
   !+ad_call  cost2.h90
@@ -781,7 +776,6 @@ subroutine acc21
 
   implicit none
 
-  include 'param.h90'
   include 'bldgvol.h90'
   include 'cost.h90'
   include 'cost2.h90'
@@ -1513,7 +1507,6 @@ subroutine acc2221
   !+ad_desc  If ifueltyp = 1, the TART centrepost cost is treated as a fuel
   !+ad_desc  cost, rather than as a capital cost.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  struccom.h90
@@ -1528,7 +1521,6 @@ subroutine acc2221
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'tfcoil.h90'
   include 'struccom.h90'
@@ -2795,7 +2787,6 @@ subroutine acc227
   !+ad_desc  This routine evaluates the Account 227 (fuel handling) costs.
   !+ad_desc  Costs are scaled from TETRA reactor code runs.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  bldgvol.h90
   !+ad_call  cost.h90
@@ -2810,7 +2801,6 @@ subroutine acc227
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'bldgvol.h90'
   include 'cost.h90'
@@ -3146,7 +3136,6 @@ subroutine acc26
   !+ad_desc  Costs are scaled with the total plant heat rejection based on
   !+ad_desc  commercial systems.
   !+ad_prob  None
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  htpwr.h90
   !+ad_call  tfcoil.h90
@@ -3162,7 +3151,6 @@ subroutine acc26
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'htpwr.h90'
   include 'tfcoil.h90'

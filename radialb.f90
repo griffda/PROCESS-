@@ -14,7 +14,6 @@ subroutine radialb(outfile,iprint)
   !+ad_prob  None
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  obuild
@@ -35,7 +34,6 @@ subroutine radialb(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'build.h90'
   include 'tfcoil.h90'
@@ -237,7 +235,6 @@ subroutine vbuild
   !+ad_desc  inside the TF coil.
   !+ad_prob  None
   !+ad_call  build.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  rfp.h90
   !+ad_call  divgeom
@@ -249,7 +246,6 @@ subroutine vbuild
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'build.h90'
   include 'rfp.h90'
@@ -307,7 +303,6 @@ subroutine divgeom(divht)
   !+ad_prob  No evidence of any inner plasma surface being used...
   !+ad_call  build.h90
   !+ad_call  divrt.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_hist  29/01/96 PJK Added TART option with expanded divertor chamber
   !+ad_hist  26/07/11 PJK Initial F90 version
@@ -318,7 +313,6 @@ subroutine divgeom(divht)
 
   implicit none
 
-  INCLUDE 'param.h90'
   INCLUDE 'phydat.h90'
   INCLUDE 'build.h90'
   INCLUDE 'divrt.h90'
@@ -462,7 +456,6 @@ subroutine portsz
   !+ad_prob  None
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_hist  27/07/11 PJK Initial F90 version
@@ -473,7 +466,6 @@ subroutine portsz
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'build.h90'
   include 'tfcoil.h90'

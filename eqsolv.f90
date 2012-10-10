@@ -159,7 +159,6 @@ subroutine fcnhyb(n,xc,rc,iflag)
   !+ad_desc  <A HREF="eqsolv.html">EQSOLV</A> (q.v.).
   !+ad_prob  None
   !+ad_call  numer.h90
-  !+ad_call  param.h90
   !+ad_call  caller
   !+ad_call  con1
   !+ad_hist  27/07/11 PJK Initial F90 version
@@ -170,7 +169,6 @@ subroutine fcnhyb(n,xc,rc,iflag)
 
   implicit none
 
-  include 'param.h90'
   include 'numer.h90'
 
   !  Arguments

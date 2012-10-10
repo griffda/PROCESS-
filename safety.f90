@@ -157,7 +157,6 @@ subroutine loca(outfile,iprint)
   !+ad_desc  would develop following a loss of coolant accident.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  param.h90
   !+ad_call  phydat.h90
   !+ad_call  build.h90
   !+ad_call  pfcoil.h90
@@ -184,7 +183,6 @@ subroutine loca(outfile,iprint)
 
   implicit none
 
-  include 'param.h90'
   include 'phydat.h90'
   include 'build.h90'
   include 'pfcoil.h90'
