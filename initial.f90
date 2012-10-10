@@ -30,7 +30,6 @@ subroutine initial
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  cost.h90
-  !+ad_call  sweep.h90
   !+ad_call  bldgvol.h90
   !+ad_call  estocom.h90
   !+ad_call  bldgcom.h90
@@ -96,7 +95,6 @@ subroutine initial
   include 'fwblsh.h90'
   include 'htpwr.h90'
   include 'cost.h90'
-  include 'sweep.h90'
   include 'bldgvol.h90'
   include 'estocom.h90'
   include 'bldgcom.h90'
@@ -1446,12 +1444,6 @@ subroutine initial
   ucwst(2) = 3.94D0
   ucwst(3) = 5.91D0
   ucwst(4) = 7.88D0
-
-  !  Sweep information
-
-  isweep   = 0
-  nsweep   = 1
-  sweep(:) = 0.0D0
 
   !  Building volumes
 

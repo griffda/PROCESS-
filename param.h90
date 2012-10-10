@@ -4,8 +4,6 @@
   integer, parameter :: ipeqns  = 50  !  number of constraint equations available
   integer, parameter :: ipnlaws = 36  !  number of energy confinement time scaling laws
   integer, parameter :: ipnfoms = 13  !  number of available figures of merit
-  integer, parameter :: ipnscns = 50  !  maximum number of scan points
-  integer, parameter :: ipnscnv = 26  !  number of available scan variables
   integer, parameter :: ipvlam  = ipeqns+2*ipnvars+1
   integer, parameter :: iptnt   = (ipeqns*(3*ipeqns+13))/2
   integer, parameter :: ipvp1   = ipnvars+1
