@@ -1579,3 +1579,180 @@ contains
 
 end subroutine culnbi
 
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine nbeam(outfile,iprint)
+
+  !+ad_name  nbeam
+  !+ad_summ  Neutral Beam power requirements
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_auth  P C Shipe, ORNL
+  !+ad_cont  N/A
+  !+ad_args  outfile : input integer : output file unit
+  !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+  !+ad_desc  This routine was amputated on 28/03/89 to provide only a
+  !+ad_desc  simplified dummy model of the wall plug power necessary
+  !+ad_desc  for the neutral beams.  It was included in PROCESS in
+  !+ad_desc  January 1992 by P. C. Shipe.
+  !+ad_desc  <P>The output from the routine is <CODE>pwpnb</CODE>.
+  !+ad_prob  None
+  !+ad_call  process_output
+  !+ad_call  cdriv.h90
+  !+ad_call  oheadr
+  !+ad_call  ovarre
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_stat  Okay
+  !+ad_docs  None
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
+
+  implicit none
+
+  include 'cdriv.h90'
+
+  !  Arguments
+
+  integer, intent(in) :: outfile,iprint
+
+  !  Local variables
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !  cnbeam,  neutral beam current, A
+  !  enbeam,  neutral beam energy, keV
+  !  etanbi,  neutral beam wall plug to injector efficiency
+
+  !  pwpnb,   neutral beam wall plug power, W
+
+  pwpnb = enbeam * cnbeam * 1.0D3/etanbi
+
+  if ((iprint == 0).or.(sect18 == 0)) return
+
+  call oheadr(outfile,'Neutral Beams')
+
+  call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam)
+  call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)
+  call ovarre(outfile,'Neutral beam wall plug efficiency','(etanbi)', &
+       etanbi)
+  call ovarre(outfile,'Neutral beam wall plug power (W)','(pwpnb)', &
+       pwpnb)
+
+end subroutine nbeam
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine ech(outfile,iprint)
+
+  !+ad_name  ech
+  !+ad_summ  Electron Cyclotron Heating
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_auth  J Galambos, ORNL
+  !+ad_auth  P C Shipe, ORNL
+  !+ad_cont  N/A
+  !+ad_args  outfile : input integer : output file unit
+  !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+  !+ad_desc  This routine was added to TETRA on 8/9/88 by J Galambos
+  !+ad_desc  to replace Wagner's model and provide a simplified dummy
+  !+ad_desc  model of the wall plug power necessary for ech.  It was
+  !+ad_desc  included in PROCESS in January 1992 by P. C. Shipe.
+  !+ad_prob  None
+  !+ad_call  process_output
+  !+ad_call  cdriv.h90
+  !+ad_call  oheadr
+  !+ad_call  ovarre
+  !+ad_hist  14/09/01 PJK Initial version
+  !+ad_hist  23/03/11 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_stat  Okay
+  !+ad_docs  None
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
+
+  implicit none
+
+  include 'cdriv.h90'
+
+  !  Arguments
+
+  integer, intent(in) :: outfile
+  integer, intent(in) :: iprint
+
+  !  Local variables
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !  ECH heating power (Watts)
+
+  echwpow = echpwr / etaech
+
+  if ((iprint == 0).or.(sect19 == 0)) return
+
+  call oheadr(outfile,'Electron Cyclotron Heating')
+  call ovarre(outfile,'ECH power (W)','(echpwr)',echpwr)
+  call ovarre(outfile,'ECH wall plug efficiency','(etaech)',etaech)
+  call ovarre(outfile,'ECH wall plug power (W)','(echwpow)',echwpow)
+
+end subroutine ech
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine lwhymod(outfile,iprint)
+
+  !+ad_name  lwhymod
+  !+ad_summ  Lower Hybrid module
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_auth  P C Shipe, ORNL
+  !+ad_cont  N/A
+  !+ad_args  outfile : input integer : output file unit
+  !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+  !+ad_desc  This routine is a simplified dummy model of the wall
+  !+ad_desc  plug power necessary for Lower Hybrid heating. It was included in
+  !+ad_desc  PROCESS in January 1992 by P. C . Shipe.
+  !+ad_prob  None
+  !+ad_call  process_output
+  !+ad_call  cdriv.h90
+  !+ad_call  oheadr
+  !+ad_call  ovarre
+  !+ad_hist  27/07/11 PJK Initial F90 version
+  !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_stat  Okay
+  !+ad_docs  None
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use process_output
+
+  implicit none
+
+  include 'cdriv.h90'
+
+  !  Arguments
+
+  integer, intent(in) :: outfile,iprint
+
+  !  Local variables
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !  etalh,   Lower Hybrid wall plug to plasma efficiency
+  !  plhybd,  Lower Hybrid injection power, W 
+
+  !  Lower Hybrid wall plug power, W
+
+  pwplh = plhybd / etalh
+
+  if ((iprint == 0).or.(sect20 == 0)) return
+
+  call oheadr(outfile,'Lower Hybrid Heating')
+  call ovarre(outfile,'Lower hybrid wall plug efficiency','(etalh)',etalh)
+  call ovarre(outfile,'Lower hybrid injection power (W)','(plhybd)',plhybd)
+  call ovarre(outfile,'Lower hybrid wall plug power (W)','(pwplh)',pwplh)
+
+end subroutine lwhymod

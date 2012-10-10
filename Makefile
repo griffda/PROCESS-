@@ -46,14 +46,12 @@ source = \
  aamain.f90   \
  acpow.f90    \
  avail.f90    \
- beams.f90    \
  bldgs.f90    \
  blanket.f90  \
  caller.f90   \
  costs.f90    \
  cudriv.f90   \
  divtmod.f90  \
- ech.f90      \
  eqns.f90     \
  eqsolv.f90   \
  fispact.f90  \
@@ -64,7 +62,6 @@ source = \
  induct.f90   \
  initial.f90  \
  input.f90    \
- lwhymod.f90  \
  math.f90     \
  math2.f90    \
  minpac.f90   \
@@ -95,14 +92,12 @@ object = \
  aamain.o     \
  acpow.o      \
  avail.o      \
- beams.o      \
  bldgs.o      \
  blanket.o    \
  caller.o     \
  costs.o      \
  cudriv.o     \
  divtmod.o    \
- ech.o        \
  eqns.o       \
  eqsolv.o     \
  fispact.o    \
@@ -113,7 +108,6 @@ object = \
  induct.o     \
  initial.o    \
  input.o      \
- lwhymod.o    \
  math.o       \
  math2.o      \
  minpac.o     \
@@ -233,7 +227,6 @@ aamain.o: input.o output.o scan.o cdriv.h90 cost.h90 divrt.h90 htpwr.h90 ineq.h9
 acpow.o: output.o bldgvol.h90 estocom.h90 htpwr.h90 pwrcom.h90
 avail.o: output.o cost.h90 divrt.h90 fwblsh.h90 ife.h90 param.h90 phydat.h90 \
   pulse.h90 rfp.h90
-beams.o: output.o cdriv.h90
 blanket.o: output.o blanket.h90 build.h90 fwblsh.h90 htpwr.h90 param.h90 phydat.h90
 bldgs.o: output.o bldgcom.h90
 caller.o: output.o ife.h90 numer.h90 param.h90 phydat.h90 rfp.h90 stella.h90
@@ -242,7 +235,6 @@ costs.o: output.o blanket.h90 bldgvol.h90 build.h90 cdriv.h90 cost.h90 cost2.h90
   pulse.h90 pwrcom.h90 rfp.h90 struccom.h90 tfcoil.h90 times.h90 torsdat.h90
 cudriv.o: output.o cdriv.h90 param.h90 phydat.h90
 divtmod.o: output.o build.h90 divrt.h90 param.h90 phydat.h90
-ech.o: output.o cdriv.h90
 eqns.o: build.h90 cdriv.h90 divrt.h90 htpwr.h90 ife.h90 ineq.h90 numer.h90 param.h90 \
   pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 rfp.h90 stella.h90 tfcoil.h90 times.h90 \
   vltcom.h90
@@ -267,7 +259,6 @@ input.o: output.o scan.o blanket.h90 bldgcom.h90 bldgvol.h90 build.h90 cdriv.h90
   cost.h90 divrt.h90 estocom.h90 fwblsh.h90 htpwr.h90 ife.h90 ineq.h90 labels.h90 \
   numer.h90 param.h90 pfcoil.h90 phydat.h90 pulse.h90 rfp.h90 stella.h90 tfcoil.h90 \
   times.h90 vaccom.h90
-lwhymod.o: output.o cdriv.h90
 math2.o: 
 math.o: 
 minpac.o: 
