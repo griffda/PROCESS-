@@ -67,7 +67,6 @@ source = \
  outplas.f90  \
  output.f90   \
  pfcoil.f90   \
- pfscl.f90    \
  physics.f90  \
  pulse.f90    \
  pwrconv.f90  \
@@ -110,7 +109,6 @@ object = \
  outplas.o    \
  output.o     \
  pfcoil.o     \
- pfscl.o      \
  physics.o    \
  pulse.o      \
  pwrconv.o    \
@@ -251,8 +249,7 @@ maths_library.o:
 numerics.o: maths_library.o
 outplas.o: output.o cdriv.h90 ineq.h90 phydat.h90 rfp.h90 times.h90
 output.o:
-pfcoil.o: output.o build.h90 pfcoil.h90 phydat.h90 tfcoil.h90 times.h90
-pfscl.o: maths_library.o
+pfcoil.o: maths_library.o output.o build.h90 pfcoil.h90 phydat.h90 tfcoil.h90 times.h90
 physics.o: maths_library.o output.o build.h90 cdriv.h90 divrt.h90 \
    phydat.h90 pulse.h90 start.h90 times.h90
 pulse.o: maths_library.o output.o build.h90 cdriv.h90 cost.h90 fwblsh.h90 ineq.h90 \
