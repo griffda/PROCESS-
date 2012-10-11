@@ -59,7 +59,6 @@ source = \
  geomty.f90   \
  heatpwr.f90  \
  ife.f90      \
- induct.f90   \
  initial.f90  \
  input.f90    \
  maths_library.f90 \
@@ -101,7 +100,6 @@ object = \
  geomty.o     \
  heatpwr.o    \
  ife.o        \
- induct.o     \
  initial.o    \
  input.o      \
  maths_library.o \
@@ -216,7 +214,8 @@ acpow.o: output.o bldgvol.h90 estocom.h90 htpwr.h90 pwrcom.h90
 avail.o: output.o cost.h90 divrt.h90 fwblsh.h90 ife.h90 phydat.h90 \
   pulse.h90 rfp.h90
 blanket.o: output.o blanket.h90 build.h90 fwblsh.h90 htpwr.h90 phydat.h90
-bldgs.o: output.o bldgcom.h90
+bldgs.o: output.o bldgcom.h90 bldgvol.h90 build.h90 fwblsh.h90 htpwr.h90 \
+  pfcoil.h90 phydat.h90 pwrcom.h90 rfp.h90 struccom.h90 tfcoil.h90 times.h90
 caller.o: numerics.o output.o ife.h90 phydat.h90 rfp.h90 stella.h90
 costs.o: output.o blanket.h90 bldgvol.h90 build.h90 cdriv.h90 cost.h90 cost2.h90 \
   divrt.h90 fwblsh.h90 htpwr.h90 ife.h90 pfcoil.h90 phydat.h90 \
@@ -236,8 +235,6 @@ heatpwr.o: output.o blanket.h90 cdriv.h90 cost.h90 fwblsh.h90 htpwr.h90 \
    pfcoil.h90 phydat.h90 pwrcom.h90 struccom.h90 tfcoil.h90 times.h90
 ife.o: output.o bldgcom.h90 bldgvol.h90 build.h90 cost.h90 fwblsh.h90 htpwr.h90 \
   ife.h90 phydat.h90 pulse.h90 struccom.h90 torsdat.h90 vaccom.h90
-induct.o: output.o build.h90 pfcoil.h90 phydat.h90 tfcoil.h90 times.h90 \
-  vltcom.h90
 initial.o: numerics.o output.o scan.o blanket.h90 bldgcom.h90 bldgvol.h90 \
   build.h90 cdriv.h90 cost.h90 divrt.h90 estocom.h90 fwblsh.h90 htpwr.h90 \
   ife.h90 ineq.h90 pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 rfp.h90 stella.h90 \
@@ -249,7 +246,7 @@ maths_library.o:
 numerics.o: maths_library.o
 outplas.o: output.o cdriv.h90 ineq.h90 phydat.h90 rfp.h90 times.h90
 output.o:
-pfcoil.o: maths_library.o output.o build.h90 pfcoil.h90 phydat.h90 tfcoil.h90 times.h90
+pfcoil.o: maths_library.o output.o build.h90 pfcoil.h90 phydat.h90 times.h90 vltcom.h90
 physics.o: maths_library.o output.o build.h90 cdriv.h90 divrt.h90 \
    phydat.h90 pulse.h90 start.h90 times.h90
 pulse.o: maths_library.o output.o build.h90 cdriv.h90 cost.h90 fwblsh.h90 ineq.h90 \
