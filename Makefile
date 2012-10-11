@@ -77,7 +77,6 @@ source = \
  struct.f90   \
  supercond.f90 \
  tfcoil.f90   \
- tfcpwr.f90   \
  sctfcoil.f90 \
  vacuum.f90   \
  xc.f90
@@ -118,7 +117,6 @@ object = \
  struct.o     \
  supercond.o  \
  tfcoil.o     \
- tfcpwr.o     \
  sctfcoil.o   \
  vacuum.o     \
  xc.o
@@ -251,7 +249,7 @@ physics.o: maths_library.o output.o build.h90 cdriv.h90 divrt.h90 \
    phydat.h90 pulse.h90 start.h90 times.h90
 pulse.o: maths_library.o output.o build.h90 cdriv.h90 cost.h90 fwblsh.h90 ineq.h90 \
   pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 start.h90 times.h90 vltcom.h90
-pwrconv.o: output.o build.h90 cost.h90 htpwr.h90 pfcoil.h90 phydat.h90 \
+pwrconv.o: output.o bldgvol.h90 build.h90 cost.h90 htpwr.h90 pfcoil.h90 phydat.h90 \
   pwrcom.h90 tfcoil.h90 times.h90 vltcom.h90
 radialb.o: output.o build.h90 cdriv.h90 divrt.h90 phydat.h90 rfp.h90 \
   tfcoil.h90
@@ -271,7 +269,6 @@ struct.o: output.o build.h90 divrt.h90 fwblsh.h90 pfcoil.h90 \
   phydat.h90 struccom.h90 tfcoil.h90
 supercond.o: output.o tfcoil.h90
 tfcoil.o: output.o build.h90 fwblsh.h90 phydat.h90 tfcoil.h90
-tfcpwr.o: output.o bldgvol.h90 htpwr.h90 phydat.h90 tfcoil.h90
 vacuum.o: output.o build.h90 phydat.h90 tfcoil.h90 times.h90 \
   torsdat.h90 vaccom.h90
 xc.o: numerics.o build.h90 cdriv.h90 divrt.h90 fwblsh.h90 htpwr.h90 ife.h90 ineq.h90 \
