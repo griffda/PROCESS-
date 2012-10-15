@@ -14,6 +14,7 @@ subroutine loadxc
   !+ad_desc  into the optimisation variables array <CODE>XCM</CODE>.
   !+ad_prob  None
   !+ad_call  numerics
+  !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
@@ -22,7 +23,6 @@ subroutine loadxc
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
   !+ad_call  tfcoil.h90
@@ -31,16 +31,17 @@ subroutine loadxc
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  09/10/12 PJK Initial F90 version
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use numerics
+  use physics_variables
 
   implicit none
 
-  include 'phydat.h90'
   include 'ineq.h90'
   include 'cdriv.h90'
   include 'tfcoil.h90'
@@ -259,6 +260,7 @@ subroutine convxc(xc,nn)
   !+ad_desc  their real values.
   !+ad_prob  None
   !+ad_call  numerics
+  !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
@@ -267,23 +269,23 @@ subroutine convxc(xc,nn)
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  rfp.h90
   !+ad_call  tfcoil.h90
   !+ad_call  times.h90
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  16/11/11 PJK Initial F90 version
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use numerics
+  use physics_variables
 
   implicit none
 
-  include 'phydat.h90'
   include 'ineq.h90'
   include 'cdriv.h90'
   include 'tfcoil.h90'

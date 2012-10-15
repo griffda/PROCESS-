@@ -13,22 +13,25 @@ subroutine power1
   !+ad_desc  This routine calculates the first part of the heat transport
   !+ad_desc  and plant power balance constituents.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  blanket.h90
   !+ad_call  cdriv.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  pwrcom.h90
   !+ad_call  struccom.h90
   !+ad_call  tfcoil.h90
   !+ad_call  times.h90
   !+ad_call  cryo
   !+ad_hist  01/08/11 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use physics_variables
 
   implicit none
 
@@ -37,7 +40,6 @@ subroutine power1
   include 'fwblsh.h90'
   include 'htpwr.h90'
   include 'pfcoil.h90'
-  include 'phydat.h90'
   include 'pwrcom.h90'
   include 'struccom.h90'
   include 'tfcoil.h90'
@@ -111,12 +113,12 @@ subroutine power2(outfile,iprint)
   !+ad_desc  and plant power balance constituents, not already calculated in
   !+ad_desc  <A HREF="acpow.html">ACPOW</A> or <A HREF="power1.html">POWER1</A>.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  blanket.h90
   !+ad_call  cost.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
-  !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  blanket
   !+ad_call  oblnkl
@@ -130,11 +132,13 @@ subroutine power2(outfile,iprint)
   !+ad_hist  22/05/07 PJK Added hydrogen plant power requirements
   !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
@@ -143,7 +147,6 @@ subroutine power2(outfile,iprint)
   include 'cost.h90'
   include 'fwblsh.h90'
   include 'htpwr.h90'
-  include 'phydat.h90'
   include 'tfcoil.h90'
 
   !  Arguments

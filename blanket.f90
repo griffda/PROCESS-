@@ -92,7 +92,7 @@ subroutine blanket(icalc,outfile,iprint)
   !+ad_desc  <P>A more detailed description of the physical models
   !+ad_desc  used in the analysis can be found in the main reference.
   !+ad_prob  None
-  !+ad_call  phydat.h90
+  !+ad_call  physics_variables
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  build.h90
@@ -101,6 +101,7 @@ subroutine blanket(icalc,outfile,iprint)
   !+ad_call  perim
   !+ad_hist  --/--/-- PK  Initial version
   !+ad_hist  25/09/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  Blanket and Energy Conversion Model for Fusion Reactors,
   !+ad_docc  Dr. P.J. Karditsas, AEA Technology, Theoretical and Strategic Studies
@@ -109,9 +110,10 @@ subroutine blanket(icalc,outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
-  include 'phydat.h90'
   include 'fwblsh.h90'
   include 'htpwr.h90'
   include 'build.h90'

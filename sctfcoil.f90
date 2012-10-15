@@ -16,9 +16,9 @@ subroutine sctfcoil(outfile,iprint)
   !+ad_desc  and fields.
   !+ad_desc  <P>It is a variant from the original FEDC/Tokamak systems code.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  fwblsh.h90
-  !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  coilshap
   !+ad_call  tfcind
@@ -27,15 +27,17 @@ subroutine sctfcoil(outfile,iprint)
   !+ad_hist  04/11/92 PJK Initial version
   !+ad_hist  25/07/11 PJK Simplified outboard leg cross-section
   !+ad_hist  10/05/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
   include 'build.h90'
-  include 'phydat.h90'
   include 'tfcoil.h90'
   include 'fwblsh.h90'
 
@@ -357,7 +359,7 @@ subroutine sctfcoil(outfile,iprint)
   write(*,*) '        thicndut = ',thicndut
   write(*,*) '           cpttf = ',cpttf
 
-  STOP
+  stop
 
 end subroutine sctfcoil
 
@@ -375,23 +377,25 @@ subroutine stresscl
   !+ad_desc  This subroutine sets up the stress calculations for the
   !+ad_desc  TF coil set.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  eyngeff
   !+ad_call  sctfjalw
   !+ad_call  sigvm
   !+ad_call  tfstress
   !+ad_hist  10/05/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
   include 'build.h90'
-  include 'phydat.h90'
   include 'tfcoil.h90'
 
   !  Arguments
@@ -880,20 +884,22 @@ subroutine coilshap
   !+ad_desc  approximated by four arcs along the edge facing the plasma.
   !+ad_desc  The geometry is a fit to the 1989 ITER design.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_hist  30/03/89 JG  Initial version
   !+ad_hist  14/05/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
   include 'build.h90'
-  include 'phydat.h90'
   include 'tfcoil.h90'
 
   !  Arguments
@@ -991,7 +997,6 @@ subroutine tfcind(narc,xarc,yarc,xctfc,yctfc,dthet,tfthk,tfind)
   !+ad_prob  to expect narc = 4.
   !+ad_prob  <P>This routine is very sensitive to trivial code changes...
   !+ad_call  build.h90
-  !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_hist  03/09/85 SSK Initial version
   !+ad_hist  27/01/88 JG  Modified to use arcs whose centres do not

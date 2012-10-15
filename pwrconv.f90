@@ -14,25 +14,26 @@ subroutine tfpwr(outfile,iprint)
   !+ad_desc  resistive TF coils, or calls <CODE>tfpwcall</CODE> if the TF
   !+ad_desc  coils are superconducting.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  times.h90
-  !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_call  tfpwcall
   !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'tfcoil.h90'
   include 'times.h90'
 
@@ -139,21 +140,23 @@ subroutine tfpwcall(outfile,iprint)
   !+ad_desc  This routine calls routine <CODE>tfcpwr</CODE> to calculate the power
   !+ad_desc  conversion requirements for superconducting TF coils.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  bldgvol.h90
   !+ad_call  htpwr.h90
-  !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  tfcpwr
   !+ad_hist  01/08/11 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+ 
   implicit none
 
   include 'tfcoil.h90'
-  include 'phydat.h90'
   include 'bldgvol.h90'
   include 'htpwr.h90'
 
@@ -380,11 +383,11 @@ subroutine pfpwr(outfile,iprint)
   !+ad_desc  The reactive (inductive) components use waves to calculate the
   !+ad_desc  <I>dI/dt</I> at the time periods.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  htpwr.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  pwrcom.h90
   !+ad_call  times.h90
   !+ad_call  vltcom.h90
@@ -393,16 +396,17 @@ subroutine pfpwr(outfile,iprint)
   !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_hist  20/09/11 PJK Removed dble calls
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'pfcoil.h90'
   include 'vltcom.h90'
   include 'pwrcom.h90'

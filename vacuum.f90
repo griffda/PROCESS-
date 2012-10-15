@@ -12,22 +12,24 @@ subroutine vaccall(outfile,iprint)
   !+ad_args  iprint : input integer : Switch to write output (1=yes)
   !+ad_desc  This routine calls the main vacuum package.
   !+ad_prob  NBI gas load (qtorus) is currently hardwired to zero.
+  !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  times.h90
   !+ad_call  torsdat.h90
   !+ad_call  vacuum
   !+ad_hist  20/09/11 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
   include 'build.h90'
-  include 'phydat.h90'
   include 'tfcoil.h90'
   include 'times.h90'
   include 'torsdat.h90'

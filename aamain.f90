@@ -878,7 +878,7 @@ subroutine output(outfile)
   !+ad_desc  in a tidy format.
   !+ad_prob  None
   !+ad_call  costs_module
-  !+ad_call  phydat.h90
+  !+ad_call  physics_variables
   !+ad_call  stella.h90
   !+ad_call  rfp.h90
   !+ad_call  ife.h90
@@ -925,16 +925,17 @@ subroutine output(outfile)
   !+ad_hist  24/09/12 PJK Swapped argument order of RADIALB, DIVCALL, INDUCT
   !+ad_hist  10/10/12 PJK Moved routine from output.f90 to aamain.f90
   !+ad_hist  15/10/12 PJK Added costs_module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use costs_module
+  use physics_variables
 
   implicit none
 
-  include 'phydat.h90'
   include 'stella.h90'
   include 'rfp.h90'
   include 'ife.h90'

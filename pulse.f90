@@ -13,9 +13,9 @@ subroutine pulse(outfile,iprint)
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This calls the routines relevant to a pulsed reactor scenario.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  pulse.h90
   !+ad_call  build.h90
-  !+ad_call  phydat.h90
   !+ad_call  fwblsh.h90
   !+ad_call  times.h90
   !+ad_call  thrmal
@@ -24,17 +24,19 @@ subroutine pulse(outfile,iprint)
   !+ad_call  25/11/93 CAG/PJK Implementation within PROCESS
   !+ad_call  10/06/96 PJK Commented out call to STARTUP
   !+ad_hist  01/10/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
   include 'pulse.h90'
   include 'build.h90'
-  include 'phydat.h90'
   include 'fwblsh.h90'
   include 'times.h90'
 
@@ -94,10 +96,10 @@ subroutine thrmal(outfile,iprint)
   !+ad_desc  coolant pressure, and an upper limit governed by the peak
   !+ad_desc  temperature and the neutron fluence.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  pulse.h90
   !+ad_call  build.h90
-  !+ad_call  phydat.h90
   !+ad_call  fwblsh.h90
   !+ad_call  ineq.h90
   !+ad_call  alpha
@@ -120,19 +122,20 @@ subroutine thrmal(outfile,iprint)
   !+ad_hist  25/05/06 PJK Added SAVE statement
   !+ad_hist  01/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
   include 'pulse.h90'
   include 'build.h90'
-  include 'phydat.h90'
   include 'fwblsh.h90'
   include 'ineq.h90'
 
@@ -687,7 +690,6 @@ contains
     !+ad_desc  properties measured at the property temperature.
     !+ad_prob  None
     !+ad_call  pulse.h90
-    !+ad_call  phydat.h90
     !+ad_call  tk
     !+ad_hist  25/11/93 PJK Incorporation into PROCESS
     !+ad_hist  01/10/12 PJK Initial F90 version
@@ -700,7 +702,6 @@ contains
     implicit none
 
     include 'pulse.h90'
-    include 'phydat.h90'
 
     !  Arguments
 
@@ -1107,11 +1108,11 @@ subroutine tohswg(outfile,iprint)
   !+ad_desc  This routine calculates the minimum OH coil swing time
   !+ad_desc  for a pulsed reactor.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  pfcoil.h90
   !+ad_call  pwrcom.h90
   !+ad_call  vltcom.h90
-  !+ad_call  phydat.h90
   !+ad_call  ineq.h90
   !+ad_call  pulse.h90
   !+ad_call  osubhd
@@ -1120,6 +1121,7 @@ subroutine tohswg(outfile,iprint)
   !+ad_hist  22/05/06 PJK Corrected error in tohsmn calculation
   !+ad_hist  01/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0013
   !+ad_docs  Work File Note F/PL/PJK/PROCESS/CODE/050
@@ -1127,6 +1129,7 @@ subroutine tohswg(outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
@@ -1134,7 +1137,6 @@ subroutine tohswg(outfile,iprint)
   include 'pfcoil.h90'
   include 'pwrcom.h90'
   include 'vltcom.h90'
-  include 'phydat.h90'
   include 'ineq.h90'
   include 'pulse.h90'
 
@@ -1221,11 +1223,11 @@ subroutine burn(outfile,iprint)
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the burn time for a pulsed reactor.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  pfcoil.h90
   !+ad_call  pulse.h90
   !+ad_call  vltcom.h90
-  !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
   !+ad_call  times.h90
   !+ad_call  osubhd
@@ -1234,12 +1236,14 @@ subroutine burn(outfile,iprint)
   !+ad_hist  25/05/06 PJK Corrected error in tohsmn calculation
   !+ad_hist  01/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0012
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
@@ -1247,7 +1251,6 @@ subroutine burn(outfile,iprint)
   include 'pfcoil.h90'
   include 'pulse.h90'
   include 'vltcom.h90'
-  include 'phydat.h90'
   include 'cdriv.h90'
   include 'times.h90'
 
@@ -1356,9 +1359,9 @@ subroutine startup(iprint)
   !+ad_desc  </PRE>
   !+ad_desc  to find the minimum auxiliary power required in start-up.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  start.h90
-  !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
   !+ad_call  ineq.h90
   !+ad_call  oheadr
@@ -1369,18 +1372,19 @@ subroutine startup(iprint)
   !+ad_hist  25/11/93 PJK Incorporation into PROCESS
   !+ad_hist  02/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Not currently used
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
   include 'start.h90'
-  include 'phydat.h90'
   include 'cdriv.h90'
   include 'ineq.h90'
 
@@ -1676,21 +1680,23 @@ subroutine cudrv1(n,x,paux)
   !+ad_desc  This routine acts as the interface between the start-up routines
   !+ad_desc  and <A HREF="cudriv.html">CUDRIV</A>.
   !+ad_prob  None
-  !+ad_call  phydat.h90
+  !+ad_call  physics_variables
   !+ad_call  cdriv.h90
   !+ad_call  physics
   !+ad_call  cudrv1
   !+ad_hist  25/11/93 PJK Incorporation into PROCESS
   !+ad_hist  02/10/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
-  include 'phydat.h90'
   include 'cdriv.h90'
 
   !  Arguments

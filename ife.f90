@@ -398,8 +398,8 @@ subroutine ifephy(outfile,iprint)
   !+ad_desc  This routine calculates the physics parameters of an Inertial Fusion
   !+ad_desc  Energy power plant.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  phydat.h90
   !+ad_call  ife.h90
   !+ad_call  build.h90
   !+ad_call  driver
@@ -412,17 +412,18 @@ subroutine ifephy(outfile,iprint)
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  24/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, pp.68,85
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'ife.h90'
   include 'build.h90'
 
@@ -2013,18 +2014,19 @@ subroutine ifefbs(outfile,iprint)
   !+ad_desc  This routine calculates the first wall, blanket and shield volumes,
   !+ad_desc  masses and other parameters, for an Inertial Fusion Energy device.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  ife.h90
   !+ad_call  fwblsh.h90
   !+ad_call  build.h90
   !+ad_call  cost.h90
   !+ad_call  pulse.h90
-  !+ad_call  phydat.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  24/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.86
   !+ad_docs  Moir et al., Fusion Technology, vol.25 (1994) p.5
@@ -2032,6 +2034,7 @@ subroutine ifefbs(outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
@@ -2041,7 +2044,6 @@ subroutine ifefbs(outfile,iprint)
   include 'build.h90'
   include 'cost.h90'
   include 'pulse.h90'
-  include 'phydat.h90'
 
   !  Arguments
 
@@ -2184,12 +2186,13 @@ subroutine ifepw1
   !+ad_desc  This routine calculates the first part of the heat transport
   !+ad_desc  and plant power balance constituents, for an IFE power plant.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  ife.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
-  !+ad_call  phydat.h90
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  24/09/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, pp.67,89
   !+ad_docs  Bourque et al., Fusion Technology vol.21 (1992) 1465
@@ -2197,11 +2200,12 @@ subroutine ifepw1
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
   include 'fwblsh.h90'
   include 'htpwr.h90'
-  include 'phydat.h90'
   include 'ife.h90'
 
   !  Arguments
@@ -2386,11 +2390,11 @@ subroutine ifepw2(outfile,iprint)
   !+ad_desc  routines <A HREF="ifepw1.html">IFEPW1</A> or
   !+ad_desc  <A HREF="ifeacp.html">IFEACP</A>.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  cost.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
-  !+ad_call  phydat.h90
   !+ad_call  ife.h90
   !+ad_call  oblnkl
   !+ad_call  oheadr
@@ -2400,12 +2404,14 @@ subroutine ifepw2(outfile,iprint)
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  25/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.67
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
@@ -2413,7 +2419,6 @@ subroutine ifepw2(outfile,iprint)
   include 'cost.h90'
   include 'fwblsh.h90'
   include 'htpwr.h90'
-  include 'phydat.h90'
   include 'ife.h90'
 
   !  Arguments

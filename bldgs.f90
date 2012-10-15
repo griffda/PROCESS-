@@ -12,12 +12,12 @@ subroutine bldgcall(outfile,iprint)
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calls the buildings calculations.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  bldgvol.h90
   !+ad_call  build.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  pwrcom.h90
   !+ad_call  rfp.h90
   !+ad_call  struccom.h90
@@ -25,14 +25,16 @@ subroutine bldgcall(outfile,iprint)
   !+ad_call  times.h90
   !+ad_call  bldgs
   !+ad_hist  01/08/11 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
-  include 'phydat.h90'
   include 'pfcoil.h90'
   include 'tfcoil.h90'
   include 'build.h90'

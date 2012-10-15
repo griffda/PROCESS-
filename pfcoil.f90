@@ -13,9 +13,9 @@ subroutine pfcoil
   !+ad_desc  OH coils, to determine their size, location, current waveforms,
   !+ad_desc  stresses etc.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  times.h90
   !+ad_call  efc
   !+ad_call  ohcalc
@@ -25,14 +25,16 @@ subroutine pfcoil
   !+ad_hist  01/02/96 PJK Initial version
   !+ad_hist  09/05/12 PJK Initial F90 version
   !+ad_hist  11/10/12 PJK Removed work1 argument from efc
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
-  include 'phydat.h90'
   include 'pfcoil.h90'
   include 'build.h90'
   include 'times.h90'
@@ -548,22 +550,24 @@ subroutine ohcalc
   !+ad_desc  This subroutine performs the calculations for the
   !+ad_desc  OH solenoid coil.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  bfmax
   !+ad_call  peakb
   !+ad_call  pfjalw
   !+ad_hist  01/02/96 PJK Initial version
   !+ad_hist  09/05/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
-  include 'phydat.h90'
   include 'pfcoil.h90'
   include 'build.h90'
 
@@ -1335,20 +1339,22 @@ subroutine peakb(i,ii,it,bri,bro,bzi,bzo)
   !+ad_desc  The calculation includes the effects from all the coils
   !+ad_desc  and the plasma.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  bfield
   !+ad_hist  09/05/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
   include 'pfcoil.h90'
-  include 'phydat.h90'
   include 'build.h90'
 
   !  Arguments
@@ -1574,17 +1580,19 @@ subroutine waveform
   !+ad_desc  <CODE>waves(i,j)</CODE> is the current in coil i, at time j,
   !+ad_desc  normalized to the peak current in that coil at any time.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_hist  09/05/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
-  include 'phydat.h90'
   include 'pfcoil.h90'
 
   !  Arguments
@@ -1800,10 +1808,10 @@ subroutine induct(outfile,iprint)
   !+ad_desc  This routine calculates the mutual inductances between all the
   !+ad_desc  PF coils.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  vltcom.h90
   !+ad_call  bfield
   !+ad_call  oblnkl
@@ -1813,16 +1821,17 @@ subroutine induct(outfile,iprint)
   !+ad_hist  20/09/11 PJK Removed dble calls
   !+ad_hist  24/09/12 PJK Swapped argument order
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  INCLUDE 'phydat.h90'
   INCLUDE 'pfcoil.h90'
   INCLUDE 'vltcom.h90'
   INCLUDE 'build.h90'
@@ -2022,10 +2031,10 @@ subroutine outpf(outfile)
   !+ad_args  outfile : input integer : output file unit
   !+ad_desc  This routine writes the PF coil information to the output file.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
   !+ad_call  oheadr
@@ -2033,16 +2042,17 @@ subroutine outpf(outfile)
   !+ad_call  ovarre
   !+ad_hist  09/05/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'pfcoil.h90'
   include 'build.h90'
 

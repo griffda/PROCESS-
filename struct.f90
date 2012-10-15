@@ -12,19 +12,22 @@ subroutine strucall(outfile,iprint)
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine calls the structure module.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  divrt.h90
   !+ad_call  fwblsh.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  struccom.h90
   !+ad_call  tfcoil.h90
   !+ad_call  struct
   !+ad_hist  28/07/11 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use physics_variables
 
   implicit none
 
@@ -32,7 +35,6 @@ subroutine strucall(outfile,iprint)
   include 'divrt.h90'
   include 'fwblsh.h90'
   include 'pfcoil.h90'
-  include 'phydat.h90'
   include 'struccom.h90'
   include 'tfcoil.h90'
 

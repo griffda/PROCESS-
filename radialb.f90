@@ -12,9 +12,9 @@ subroutine radialb(outfile,iprint)
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine determines the radial build of the machine.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  obuild
   !+ad_call  ocmmnt
@@ -25,16 +25,17 @@ subroutine radialb(outfile,iprint)
   !+ad_hist  26/07/11 PJK Initial F90 version
   !+ad_hist  24/09/12 PJK Swapped argument order
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'build.h90'
   include 'tfcoil.h90'
 
@@ -234,19 +235,21 @@ subroutine vbuild
   !+ad_desc  This subroutine determines the vertical build of the machine
   !+ad_desc  inside the TF coil.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  phydat.h90
   !+ad_call  rfp.h90
   !+ad_call  divgeom
   !+ad_hist  26/07/11 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
-  include 'phydat.h90'
   include 'build.h90'
   include 'rfp.h90'
 
@@ -301,19 +304,21 @@ subroutine divgeom(divht)
   !+ad_desc  are approximated by arcs, and followed past the X-point to
   !+ad_desc  determine the maximum height.
   !+ad_prob  No evidence of any inner plasma surface being used...
+  !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  divrt.h90
-  !+ad_call  phydat.h90
   !+ad_hist  29/01/96 PJK Added TART option with expanded divertor chamber
   !+ad_hist  26/07/11 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  TART option: Peng SOFT paper
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
-  INCLUDE 'phydat.h90'
   INCLUDE 'build.h90'
   INCLUDE 'divrt.h90'
 
@@ -454,19 +459,21 @@ subroutine portsz
   !+ad_desc  <UL> <P><LI>prtsz : available port size (m)
   !+ad_desc       <P><LI>prtszreq : required port size (m) </UL>
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
-  !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_hist  27/07/11 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
-  include 'phydat.h90'
   include 'build.h90'
   include 'tfcoil.h90'
   include 'cdriv.h90'

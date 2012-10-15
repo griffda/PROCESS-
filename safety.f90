@@ -156,8 +156,8 @@ subroutine loca(outfile,iprint)
   !+ad_desc  PROCESS. The model calculates the steady state temperatures that
   !+ad_desc  would develop following a loss of coolant accident.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  phydat.h90
   !+ad_call  build.h90
   !+ad_call  pfcoil.h90
   !+ad_call  tfcoil.h90
@@ -172,6 +172,7 @@ subroutine loca(outfile,iprint)
   !+ad_hist  06/07/99 PJK Allowed for use of more ISUMATTF options
   !+ad_hist  19/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  This routine is untested in F90...
   !+ad_docs  F/MI/PJK/LOGBOOK12, pp.70,71,72,73
   !+ad_docs  Strategic Studies Note 96/30, January 1997
@@ -179,11 +180,11 @@ subroutine loca(outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'build.h90'
   include 'pfcoil.h90'
   include 'tfcoil.h90'

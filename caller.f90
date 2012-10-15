@@ -15,9 +15,9 @@ subroutine caller(xc,nvars)
   !+ad_prob  None
   !+ad_call  costs_module
   !+ad_call  numerics
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  ife.h90
-  !+ad_call  phydat.h90
   !+ad_call  rfp.h90
   !+ad_call  stella.h90
   !+ad_call  acpow
@@ -69,18 +69,19 @@ subroutine caller(xc,nvars)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_hist  15/10/12 PJK Added costs_module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use costs_module
+  use physics_variables
   use process_output
   use numerics
 
   implicit none
 
-  include 'phydat.h90'
   include 'stella.h90'
   include 'rfp.h90'
   include 'ife.h90'

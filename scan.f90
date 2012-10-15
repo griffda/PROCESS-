@@ -14,10 +14,12 @@ module scan_module
   !+ad_prob  None
   !+ad_call  global_variables
   !+ad_call  numerics
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_hist  09/10/12 PJK Initial version of module
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_hist  15/10/12 PJK Added global_variables module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -25,6 +27,7 @@ module scan_module
 
   use global_variables
   use numerics
+  use physics_variables
   use process_output
 
   implicit none
@@ -83,7 +86,6 @@ contains
   !+ad_desc  a number of times, by performing a sweep over a range of
   !+ad_desc  values of a particular variable.
   !+ad_prob  None
-  !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
   !+ad_call  pwrcom.h90
   !+ad_call  tfcoil.h90
@@ -111,7 +113,6 @@ contains
 
   implicit none
 
-  include 'phydat.h90'
   include 'cdriv.h90'
   include 'pwrcom.h90'
   include 'tfcoil.h90'

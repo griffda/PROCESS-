@@ -16,7 +16,7 @@ subroutine con1(m,cc)
   !+ad_desc  to make a self-consistent machine.
   !+ad_prob  None
   !+ad_call  numerics
-  !+ad_call  phydat.h90
+  !+ad_call  physics_variables
   !+ad_call  ineq.h90
   !+ad_call  cdriv.h90
   !+ad_call  tfcoil.h90
@@ -43,16 +43,17 @@ subroutine con1(m,cc)
   !+ad_hist  20/09/11 PJK Initial F90 version
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use numerics
+  use physics_variables
 
   implicit none
 
-  include 'phydat.h90'
   include 'ineq.h90'
   include 'cdriv.h90'
   include 'tfcoil.h90'

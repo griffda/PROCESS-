@@ -17,10 +17,10 @@ subroutine divcall(outfile,iprint)
   !+ad_prob  Many of the parameters are scaled from the ~1990 ITER point
   !+ad_prob  (R=6.00, Bt = 4.85 T, Bp = 1.07 T, l_null-strike = 1.50 m).
   !+ad_prob  Variation far from these parameters is uncertain.
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  divrt.h90
-  !+ad_call  phydat.h90
   !+ad_call  divert
   !+ad_call  divtart
   !+ad_call  oblnkl
@@ -40,16 +40,17 @@ subroutine divcall(outfile,iprint)
   !+ad_hisc               Moved TART model into new routine
   !+ad_hist  24/09/12 PJK Swapped argument order
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'build.h90'
   include 'divrt.h90'
 

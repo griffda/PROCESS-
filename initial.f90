@@ -16,7 +16,6 @@ subroutine initial
   !+ad_call  numerics
   !+ad_call  process_output
   !+ad_call  ineq.h90
-  !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
   !+ad_call  times.h90
   !+ad_call  divrt.h90
@@ -70,6 +69,7 @@ subroutine initial
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  10/10/12 PJK Removed IVMS
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
+  !+ad_hist  15/10/12 PJK Removed physics variables from list
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -81,7 +81,6 @@ subroutine initial
   implicit none
 
   include 'ineq.h90'
-  include 'phydat.h90'
   include 'cdriv.h90'
   include 'times.h90'
   include 'divrt.h90'
@@ -486,201 +485,6 @@ subroutine initial
   ixc(23)  = 59
   ixc(24)  = 60
   ixc(25)  = 4
-
-  !  Physics data
-
-  abeam    = 2.0D0
-  afuel    = 0.0D0
-  aion     = 0.0D0
-  alphaj   = 1.0D0
-  alphan   = 0.5D0
-  alphat   = 1.0D0
-  alpmw    = 0.0D0
-  aspect   = 3.5D0
-  beamfus0 = 1.0D0
-  beta     = 0.042D0
-  betaft   = 0.0D0
-  betalim  = 0.0D0
-  betanb   = 0.0D0
-  betap    = 0.0D0
-  betbm0   = 1.5D0
-  bp       = 0.0D0
-  bt       = 6.0D0
-  btot     = 0.0D0
-  burnup   = 0.0D0
-  capa     = 0.0D0
-  carea    = 1.0D0
-  cfe0     = 0.0D0
-  csawth   = 1.0D0
-  cvol     = 1.0D0
-  deltdn   = 0.0D0
-  deltup   = 0.0D0
-  dene     = 1.5D20
-  deni     = 0.0D0
-  dign     = 1.0D0
-  dlamee   = 0.0D0
-  dlamie   = 0.0D0
-  dlimit(:) = 0.0D0
-  dnalp    = 0.0D0
-  dnbeam   = 0.0D0
-  dnbeam2  = 0.0D0
-  dnbeta   = 3.5D0
-  dnelimt  = 0.0D0
-  dnitot   = 0.0D0
-  dnla     = 0.0D0
-  dnprot   = 0.0D0
-  dntau    = 0.0D0
-  dnz      = 0.0D0
-  ealpha   = 3520.0D0
-  epbetmax = 0.6D0
-  eps      = 1.0D0/aspect
-  faccd    = 0.0D0
-  facoh    = 0.0D0
-  falpe    = 0.0D0
-  falpha   = 1.0D0
-  falpi    = 0.0D0
-  faux     = 0.0D0
-  fbfe     = 0.35D0
-  fdeut    = 0.5D0
-  ffwal    = 0.92D0
-  fhe3     = 0.0D0
-  figmer   = 0.0D0
-  fradmin  = 0.0D0
-  ftr      = 0.5D0
-  ftrit    = 0.5D0
-  fvsbrnni = 1.0D0
-  gamma    = 0.4D0
-  gtscale  = 0
-  hfac(:) = 0.0D0
-  hfact    = 2.0D0
-  ibss     = 1
-  iculbl   = 0
-  iculdl   = 0
-  icurr    = 4
-  idensl   = 3
-  idhe3    = 0
-  idivrt   = 2
-  ifalphap = 0
-  ifispact = 1
-  igeom    = 0
-  iinvqd   = 1
-  iiter    = 1
-  impc     = 1.0D0
-  impfe    = 1.0D0
-  impo     = 1.0D0
-  ires     = 1
-  isc      = 6
-  iscrp    = 1
-  ishape   = 0
-  itart    = 0
-  ignite   = 0
-  iwalld   = 1
-  kappa    = 2.218D0
-  kappa95  = 0.0D0
-  palp     = 0.0D0
-  palpe    = 0.0D0
-  palpi    = 0.0D0
-  palpnb   = 0.0D0
-  pbrem    = 0.0D0
-  pcharge  = 0.0D0
-  pcoef    = 0.0D0
-  pdivt    = 0.0D0
-  pfuscmw  = 0.0D0
-  phiint   = 0.0D0
-  pi       = 3.141592653589793D0
-  pie      = 0.0D0
-  plascur  = 0.0D0
-  plrad    = 0.0D0
-  pneut    = 0.0D0
-  pohmpv   = 0.0D0
-  powerht  = 0.0D0
-  powfmw   = 0.0D0
-  prad     = 0.0D0
-  psync    = 0.0D0
-  pthrmw(:) = 0.0D0
-  ptre     = 0.0D0
-  ptri     = 0.0D0
-  q        = 3.0D0
-  q0       = 1.0D0
-  q95      = 0.0D0
-  qfuel    = 0.0D0
-  qlim     = 0.0D0
-  qstar    = 0.0D0
-  ralpne   = 0.10D0
-  recyle   = 0.7D0
-  rli      = 0.65D0
-  rlp      = 0.0D0
-  rmajor   = 7.0D0
-  rminor   = rmajor / aspect
-  rmu0     = 1.256637D-6
-  rnbeam   = 0.005D0
-  rncne    = 0.0D0
-  rndfuel  = 0.0D0
-  rnfene   = 0.0D0
-  rnone    = 0.0D0
-  rpfac    = 0.0D0
-  rplas    = 0.0D0
-  rtpte    = 5.0D0
-  sarea    = 0.0D0
-  sareao   = 0.0D0
-  sf       = 0.0D0
-  ssync    = 0.8D0
-  tauee    = 0.0D0
-  taueff   = 0.0D0
-  tauei    = 0.0D0
-  te       = 15.0D0
-  ten      = 0.0D0
-  ti       = 8.33D0
-  tin      = 0.0D0
-  tratio   = 1.0D0
-  triang   = 0.6D0
-  triang95 = 0.0D0
-  vol      = 0.0D0
-  vsbrn    = 0.0D0
-  vshift   = 0.0D0
-  vsind    = 0.0D0
-  vsres    = 0.0D0
-  vsstt    = 0.0D0
-  wallmw   = 0.0D0
-  zeff     = 0.0D0
-  zeffai   = 0.0D0
-
-  tauscl(1)  = 'Neo-Alcator      (ohmic)'
-  tauscl(2)  = 'Mirnov               (H)'
-  tauscl(3)  = 'Merezkhin-Muhkovatov (L)'
-  tauscl(4)  = 'Shimomura            (H)'
-  tauscl(5)  = 'Kaye-Goldston        (L)'
-  tauscl(6)  = 'ITER 89-P            (L)'
-  tauscl(7)  = 'ITER 89-O            (L)'
-  tauscl(8)  = 'Rebut-Lallia         (L)'
-  tauscl(9)  = 'Goldston             (L)'
-  tauscl(10) = 'T10                     '
-  tauscl(11) = 'JAERI-88                '
-  tauscl(12) = 'Kaye-Big Complex        '
-  tauscl(13) = 'ITER H90-P           (H)'
-  tauscl(14) = 'ITER Mix                '
-  tauscl(15) = 'Riedel               (L)'
-  tauscl(16) = 'Christiansen         (L)'
-  tauscl(17) = 'Lackner-Gottardi     (L)'
-  tauscl(18) = 'Neo-Kaye             (L)'
-  tauscl(19) = 'Riedel               (H)'
-  tauscl(20) = 'ITER H90-P amended   (H)'
-  tauscl(21) = 'LHD              (stell)'
-  tauscl(22) = 'Gyro-reduced Bohm(stell)'
-  tauscl(23) = 'Lackner-Gottardi (stell)'
-  tauscl(24) = 'ITER-93H             (H)'
-  tauscl(25) = 'TITAN RFP               '
-  tauscl(26) = 'ITER H-97P ELM-free  (H)'
-  tauscl(27) = 'ITER H-97P ELMy      (H)'
-  tauscl(28) = 'ITER-96P             (L)'
-  tauscl(29) = 'Valovic modified ELMy(H)'
-  tauscl(30) = 'Kaye PPPL April 98   (L)'
-  tauscl(31) = 'ITERH-PB98P(y)       (H)'
-  tauscl(32) = 'IPB98(y)             (H)'
-  tauscl(33) = 'IPB98(y,1)           (H)'
-  tauscl(34) = 'IPB98(y,2)           (H)'
-  tauscl(35) = 'IPB98(y,3)           (H)'
-  tauscl(36) = 'IPB98(y,4)           (H)'
 
   !  Quantities used in inequality constraints
 
@@ -1622,6 +1426,7 @@ subroutine check
   !+ad_desc  This routine performs a sanity check of the input variables
   !+ad_desc  and ensures other dependent variables are given suitable values.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  global_variables
   !+ad_call  numerics
   !+ad_call  process_output
@@ -1630,7 +1435,6 @@ subroutine check
   !+ad_call  cdriv.h90
   !+ad_call  htpwr.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
   !+ad_call  tfcoil.h90
@@ -1643,12 +1447,14 @@ subroutine check
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_hist  15/10/12 PJK Added global_variables module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use global_variables
+  use physics_variables
   use process_output
 
   implicit none
@@ -1658,7 +1464,6 @@ subroutine check
   include 'cdriv.h90'
   include 'htpwr.h90'
   include 'pfcoil.h90'
-  include 'phydat.h90'
   include 'pulse.h90'
   include 'rfp.h90'
   include 'tfcoil.h90'

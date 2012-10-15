@@ -17,13 +17,16 @@ module function_evaluator
   !+ad_desc  by the two equation solvers in the code.
   !+ad_prob  None
   !+ad_call  numerics
+  !+ad_call  physics_variables
   !+ad_hist  10/10/12 PJK Initial version of module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use numerics
+  use physics_variables
 
   implicit none
 
@@ -257,7 +260,6 @@ contains
     !+ad_desc  <P>Each equation for <CODE>fc<CODE> gives a value of the
     !+ad_desc  order of unity for the sake of the numerics.
     !+ad_prob  None
-    !+ad_call  phydat.h90
     !+ad_call  cdriv.h90
     !+ad_call  tfcoil.h90
     !+ad_call  cost.h90
@@ -273,7 +275,6 @@ contains
 
     implicit none
 
-    include 'phydat.h90'
     include 'cdriv.h90'
     include 'tfcoil.h90'
     include 'cost.h90'

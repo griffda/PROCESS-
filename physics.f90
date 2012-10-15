@@ -12,11 +12,11 @@ subroutine physics
   !+ad_desc  This routine calculates all the primary plasma physics
   !+ad_desc  characteristics for a tokamak device.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
-  !+ad_call  phydat.h90
   !+ad_call  pulse.h90
   !+ad_call  times.h90
   !+ad_call  beamfus
@@ -58,16 +58,17 @@ subroutine physics
   !+ad_hist  10/11/11 PJK Initial F90 version; retired routine CURREN
   !+ad_hisc               and switch ICULCR
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'cdriv.h90'
   include 'times.h90'
   include 'divrt.h90'
@@ -3062,8 +3063,8 @@ subroutine igmarcal(outfile)
   !+ad_desc  This routine calculates the ignition margin at the final point
   !+ad_desc  with different scalings.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
   !+ad_call  fhfac
   !+ad_call  oblnkl
@@ -3076,16 +3077,17 @@ subroutine igmarcal(outfile)
   !+ad_hist  17/07/01 PJK Modified PCOND arguments
   !+ad_hist  10/11/11 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'cdriv.h90'
 
   !  Arguments
@@ -3212,7 +3214,7 @@ function fhz(hhh)
   !+ad_desc  using routine <A HREF="zeroin.html">ZEROIN</A> to adjust the
   !+ad_desc  value of <CODE>hhh</CODE>, the confinement time H-factor.
   !+ad_prob  None
-  !+ad_call  phydat.h90
+  !+ad_call  physics_variables
   !+ad_call  cdriv.h90
   !+ad_call  pcond
   !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
@@ -3222,16 +3224,18 @@ function fhz(hhh)
   !+ad_hist  19/01/99 PJK Modified PCOND arguments
   !+ad_hist  16/07/01 PJK Modified PCOND arguments
   !+ad_hist  10/11/11 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
   real(kind(1.0D0)) :: fhz
 
-  include 'phydat.h90'
   include 'cdriv.h90'
 
   !  Arguments

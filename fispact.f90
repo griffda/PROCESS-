@@ -47,11 +47,12 @@
 !
 !CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
+        use physics_variables
+
 !  INCLUDE files
       INCLUDE 'blanket.h90'
       INCLUDE 'build.h90'
       INCLUDE 'fwblsh.h90'
-      INCLUDE 'phydat.h90'
       INCLUDE 'pulse.h90'
       INCLUDE 'fispact.h90'
 

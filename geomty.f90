@@ -17,7 +17,7 @@ subroutine geomty
   !+ad_args  iprint : input integer : Switch to write output to file (1=yes)
   !+ad_desc  This subroutine calculates the plasma geometry parameters.
   !+ad_prob  None
-  !+ad_call  phydat.h90
+  !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  rfp.h90
   !+ad_call  fvol
@@ -37,9 +37,10 @@ subroutine geomty
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
-  include 'phydat.h90'
   include 'build.h90'
   include 'rfp.h90'
 

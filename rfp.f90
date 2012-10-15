@@ -15,9 +15,9 @@ subroutine rfptfc(outfile,iprint)
   !+ad_desc  of a reversed field pinch machine. The coils are assumed to be
   !+ad_desc  circular.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  phydat.h90
   !+ad_call  rfp.h90
   !+ad_call  tfcoil.h90
   !+ad_call  oheadr
@@ -27,16 +27,17 @@ subroutine rfptfc(outfile,iprint)
   !+ad_hist  27/02/96 PJK Initial version
   !+ad_hist  09/05/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'build.h90'
   include 'tfcoil.h90'
   include 'rfp.h90'
@@ -204,11 +205,11 @@ subroutine rfppfc(outfile,iprint)
   !+ad_desc  of a reversed field pinch machine. The coils are scaled from the
   !+ad_desc  TITAN-I OH/EF coil set.
   !+ad_prob  bpf, bpf2, forcepf are never set...
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  fwblsh.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  rfp.h90
   !+ad_call  tfcoil.h90
   !+ad_call  vltcom.h90
@@ -220,16 +221,17 @@ subroutine rfppfc(outfile,iprint)
   !+ad_hist  29/02/96 PJK Initial version
   !+ad_hist  09/05/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'rfp.h90'
   include 'pfcoil.h90'
   include 'tfcoil.h90'
@@ -462,11 +464,11 @@ subroutine rfppfp(outfile,iprint)
   !+ad_desc  This subroutine calculates the MVA, power and energy requirements
   !+ad_desc  for the RFP PF coil systems.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  htpwr.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  pwrcom.h90
   !+ad_call  rfp.h90
   !+ad_call  times.h90
@@ -478,16 +480,17 @@ subroutine rfppfp(outfile,iprint)
   !+ad_hist  08/05/12 PJK Added necessary SAVE to pfbuspwr declaration
   !+ad_hist  09/05/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'pfcoil.h90'
   include 'vltcom.h90'
   include 'pwrcom.h90'
@@ -657,11 +660,11 @@ subroutine rfpphy
   !+ad_desc  This subroutine calculates the plasma physics of the
   !+ad_desc  reversed field pinch system.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
-  !+ad_call  phydat.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
   !+ad_call  times.h90
@@ -686,6 +689,7 @@ subroutine rfpphy
   !+ad_call  22/05/06 PJK Modified call to PALPH2
   !+ad_hist  09/05/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
   !+ad_docc                Scoping Phase Report, January 1987
@@ -693,11 +697,11 @@ subroutine rfpphy
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'cdriv.h90'
   include 'times.h90'
   include 'divrt.h90'

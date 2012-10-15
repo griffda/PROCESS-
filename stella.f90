@@ -90,9 +90,9 @@ subroutine stinit
   !+ad_prob  None
   !+ad_call  global_variables
   !+ad_call  numerics
+  !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  stella.h90
   !+ad_call  tfcoil.h90
   !+ad_call  times.h90
@@ -107,6 +107,7 @@ subroutine stinit
   !+ad_hist  20/09/12 PJK Initial F90 version
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_hist  15/10/12 PJK Added global_variables module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -114,12 +115,12 @@ subroutine stinit
 
   use global_variables
   use numerics
+  use physics_variables
 
   implicit none
 
   include 'build.h90'
   include 'pfcoil.h90'
-  include 'phydat.h90'
   include 'stella.h90'
   include 'tfcoil.h90'
   include 'times.h90'
@@ -230,8 +231,8 @@ subroutine stbild(outfile,iprint)
   !+ad_desc  as the actual radial and vertical build thicknesses vary with
   !+ad_desc  toroidal angle.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  phydat.h90
   !+ad_call  divrt.h90
   !+ad_call  build.h90
   !+ad_call  obuild
@@ -242,16 +243,17 @@ subroutine stbild(outfile,iprint)
   !+ad_hist  10/06/96 PJK Added first wall area calculation
   !+ad_hist  20/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'divrt.h90'
   include 'build.h90'
 
@@ -394,11 +396,11 @@ subroutine stphys
   !+ad_desc  This routine calculates the physics quantities relevant to
   !+ad_desc  a stellarator device.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
-  !+ad_call  phydat.h90
   !+ad_call  times.h90
   !+ad_call  beamfus
   !+ad_call  betcom
@@ -424,17 +426,18 @@ subroutine stphys
   !+ad_hist  22/05/06 PJK Modified PALPH2 call
   !+ad_hist  20/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'build.h90'
   include 'cdriv.h90'
   include 'times.h90'
@@ -574,8 +577,8 @@ subroutine stheat(outfile,iprint)
   !+ad_desc  This routine calculates the auxiliary heating power for
   !+ad_desc  a stellarator device.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
   !+ad_call  stella.h90
   !+ad_call  culnbi
@@ -587,17 +590,18 @@ subroutine stheat(outfile,iprint)
   !+ad_hist  01/04/98 PJK Modified call to CULNBI
   !+ad_hist  20/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'cdriv.h90'
   include 'stella.h90'
 
@@ -725,8 +729,8 @@ subroutine stcoil(outfile,iprint)
   !+ad_desc  This routine calculates the properties of the TF coils for
   !+ad_desc  a stellarator device.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  fwblsh.h90
   !+ad_call  outtf
@@ -736,15 +740,17 @@ subroutine stcoil(outfile,iprint)
   !+ad_call  tfcind
   !+ad_hist  20/07/94 PJK Initial version
   !+ad_hist  20/09/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
   include 'build.h90'
-  include 'phydat.h90'
   include 'tfcoil.h90'
   include 'fwblsh.h90'
 
@@ -1029,20 +1035,22 @@ subroutine stcshp
   !+ad_desc  <P>The code is almost identical to that in routine
   !+ad_desc  <A HREF="coilshap.html">COILSHAP</A>.
   !+ad_prob  This is clearly a highly dodgy approximation...
+  !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_hist  20/07/94 PJK Initial version
   !+ad_hist  20/09/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
   include 'build.h90'
-  include 'phydat.h90'
   include 'tfcoil.h90'
 
   !  Arguments
@@ -1140,22 +1148,24 @@ subroutine stclen(totlen)
   !+ad_desc  <P>The data are scaled with the machine's average major radius and
   !+ad_desc  the mean coil minor radius.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  phydat.h90
   !+ad_call  rzp
   !+ad_call  rzpxyz
   !+ad_call  stcdat
   !+ad_hist  11/07/94 PJK Initial version
   !+ad_hist  20/09/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  Wendelstein VII-X: Application for Preferential Support, Aug 1990
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
+
   implicit none
 
-  include 'phydat.h90'
   include 'build.h90'
 
   !  Arguments
@@ -1652,8 +1662,8 @@ subroutine stigma(outfile)
   !+ad_desc  This routine calculates the ignition margin at the final
   !+ad_desc  point with different stellarator confinement time scaling laws
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  phydat.h90
   !+ad_call  cdriv.h90
   !+ad_call  fhfac
   !+ad_call  oblnkl
@@ -1666,16 +1676,17 @@ subroutine stigma(outfile)
   !+ad_hist  16/07/01 PJK Modified call to PCOND
   !+ad_hist  24/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
 
-  include 'phydat.h90'
   include 'cdriv.h90'
 
   !  Arguments
@@ -1752,7 +1763,7 @@ subroutine stout(outfile)
   !+ad_desc  end of a run.
   !+ad_prob  None
   !+ad_call  costs_module
-  !+ad_call  phydat.h90
+  !+ad_call  physics_variables
   !+ad_call  acpow
   !+ad_call  avail
   !+ad_call  bldgcall
@@ -1779,16 +1790,16 @@ subroutine stout(outfile)
   !+ad_hist  19/05/99 PJK Added call to routine AVAIL
   !+ad_hist  24/09/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added costs_module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use costs_module
+  use physics_variables
 
   implicit none
-
-  include 'phydat.h90'
 
   !  Arguments
 
@@ -1840,21 +1851,24 @@ subroutine ststrc(outfile,iprint)
   !+ad_desc  This is the stellarator version of routine
   !+ad_desc  <A HREF="strucall.html">STRUCALL</A>.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  divrt.h90
   !+ad_call  fwblsh.h90
   !+ad_call  pfcoil.h90
-  !+ad_call  phydat.h90
   !+ad_call  struccom.h90
   !+ad_call  tfcoil.h90
   !+ad_call  struct
   !+ad_hist  01/07/94 PJK Initial version
   !+ad_hist  01/02/96 PJK Added itfsup, ipfres to argument list of STRUCT
   !+ad_hist  24/09/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use physics_variables
 
   implicit none
 
@@ -1862,7 +1876,6 @@ subroutine ststrc(outfile,iprint)
   include 'divrt.h90'
   include 'fwblsh.h90'
   include 'pfcoil.h90'
-  include 'phydat.h90'
   include 'struccom.h90'
   include 'tfcoil.h90'
 

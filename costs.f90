@@ -42,13 +42,16 @@ module costs_module
   !+ad_desc  This module contains the PROCESS fusion power plant costing model,
   !+ad_desc  split into separate cost accounts.
   !+ad_prob  None
+  !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_hist  15/10/12 PJK Initial version of module
+  !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_variables
   use process_output
 
   implicit none
@@ -63,7 +66,6 @@ module costs_module
   include 'htpwr.h90'
   include 'ife.h90'
   include 'pfcoil.h90'
-  include 'phydat.h90'
   include 'pulse.h90'
   include 'pwrcom.h90'
   include 'rfp.h90'
