@@ -5,7 +5,6 @@ module global_variables
 
   !+ad_name  global_variables
   !+ad_summ  Module containing miscellaneous global variables
-  !+ad_summ  availability
   !+ad_type  Module
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
@@ -24,12 +23,15 @@ module global_variables
 
   public
 
+  !+ad_vars  icase : string : description of run or PROCESS version number
   character(len=48) :: icase = 'PROCESS standard D-T tokamak model'
 
 end module global_variables
 
 
 module wibble
+
+  !  ex-blanket.h90
   real(kind(1.0D0)) :: &
        xtfi,xtfo,xtb,xpf,xdo,xdi,ph,pr,pin,pc,etahp,etainp, &
        etalp,etafp,etacp,fkblkt,sgeff
@@ -39,7 +41,8 @@ module wibble
 
   integer :: nipfwh,nlpfwh,lblnkt,estr,astr,bstr,costr,smstr
   common /blki/ nipfwh,nlpfwh,lblnkt,estr,astr,bstr,costr,smstr
-!  $Id::                                                                $
+
+  !  ex bldgcom.h90
 
   real(kind(1.0D0)) :: &
        admv,clh1,clh2,conv,fndt,hccl,hcwt,pibv,rbrt,rbwt,row, &
@@ -47,7 +50,8 @@ module wibble
   common /bldg1/ &
        admv,clh1,clh2,conv,fndt,hccl,hcwt,pibv,rbrt,rbwt,row, &
        rxcl,shmf,shov,stcl,trcl,wgt,wgt2
-!  $Id::                                                                $
+
+  !  ex bldgvol.h90
 
   real(kind(1.0D0)) :: &
        admvol,convol,cryvol,efloor,elevol,esbldgm3,pfbldgm3, &
@@ -55,7 +59,8 @@ module wibble
   common /bldgv1/ &
        admvol,convol,cryvol,efloor,elevol,esbldgm3,pfbldgm3, &
        rbvol,rmbvol,shovol,tfcbv,triv,volnucb,volrci,wrbi,wsvol 
-!  $Id::                                                                $
+
+  !  ex build.h90
 
   real(kind(1.0D0)) :: &
        aplasmin,bcylth,blnkith,blnkoth,bore,ddwex,ddwi,gapds, &
@@ -77,7 +82,8 @@ module wibble
        fmsbc,fmsbl,fmsdwe,fmsdwi,fmsfw,fmsoh,fmssh,fmstf
   common /marten/ &
        fmsbc,fmsbl,fmsdwe,fmsdwi,fmsfw,fmsoh,fmssh,fmstf
-!  $Id::                                                                $
+
+  !  ex cdriv.h90
 
   real(kind(1.0D0)) :: &
        beamwd,bigq,bootipf,bscfmax,cboot,cnbeam,echpwr,&
@@ -94,53 +100,8 @@ module wibble
 
   integer :: iefrf,irfcd
   common /cdriv1/ iefrf,irfcd
-!  $Id::                                                                $
 
-!--Version number 1.020
-!
-!--Description
-!  INCLUDE file containing all costs local to the costing routines
-!
-!--Author
-!  Peter Knight D3/G12 Culham Laboratory, ext.3330
-!
-!--Date
-!  14 March 1997
-!
-!--Reference
-!  None
-!  
-!--History
-!  21/12/93 PJK 1.000 Initial version
-!  06/03/96 PJK 1.010 Added c2234
-!  14/03/97 PJK 1.020 Added c22125,c22126,c22127
-!
-!--Contents
-!  Various cost account values (M$)
-
-  real(kind(1.0D0)) :: &
-       c21,c211,c212,c213,c214,c2141,c2142,c215,c216,c217,c2171, &
-       c2172,c2173,c2174,c22,c2211,c2212,c22121,c22122,c22123, &
-       c22124,c22125,c22126,c22127,c2213,c22131,c22132,c2214,c2215, &
-       c2221,c22211,c22212,c22213,c22214,c22215,c2222,c22221,c22222, &
-       c22223,c22224,c2223,c223,c2231,c2232,c2233,c2234,c224,c2241, &
-       c2242,c2243,c2244,c2245,c2246,c225,c2251,c22511,c22512,c22513, &
-       c22514,c22515,c2252,c22521,c22522,c22523,c22524,c22525,c22526, &
-       c22527,c2253,c226,c2261,c2262,c2263,c227,c2271,c2272,c2273, &
-       c2274,c228,c229,c23,c24,c241,c242,c243,c244,c245,c25,c26,ccont, &
-       chx,chxa,cindrt,cpp,cppa
-  common /cost2/ &
-       c21,c211,c212,c213,c214,c2141,c2142,c215,c216,c217,c2171, &
-       c2172,c2173,c2174,c22,c2211,c2212,c22121,c22122,c22123, &
-       c22124,c22125,c22126,c22127,c2213,c22131,c22132,c2214,c2215, &
-       c2221,c22211,c22212,c22213,c22214,c22215,c2222,c22221,c22222, &
-       c22223,c22224,c2223,c223,c2231,c2232,c2233,c2234,c224,c2241, &
-       c2242,c2243,c2244,c2245,c2246,c225,c2251,c22511,c22512,c22513, &
-       c22514,c22515,c2252,c22521,c22522,c22523,c22524,c22525,c22526, &
-       c22527,c2253,c226,c2261,c2262,c2263,c227,c2271,c2272,c2273, &
-       c2274,c228,c229,c23,c24,c241,c242,c243,c244,c245,c25,c26,ccont, &
-       chx,chxa,cindrt,cpp,cppa
-!  $Id::                                                                $
+  !  ex cost.h90
 
   real(kind(1.0D0)), dimension(4) :: cfind
   real(kind(1.0D0)), dimension(2) :: uchts
@@ -200,7 +161,8 @@ module wibble
        ucpfdr1,ucpfic,ucpfps,ucphx,ucpp,ucrb,ucsh,ucshld,ucswyd, &
        uctfbr,uctfbus,uctfdr,uctfgr,uctfic,uctfps,uctfsw,uctpmp, &
        uctr,ucvalv,ucvdsh,ucviac,ucwindpf,ucwindtf,ucws
-!  $Id::                                                                $
+
+  !  ex divrt.h90
 
   integer :: divdum
   common /divrti/ divdum
@@ -217,11 +179,13 @@ module wibble
        fgamp,fhout,fififi,frrp,hldiv,hldivlim,ksic,lamp,minstang, &
        omegan,omlarg,plsepo,ppdivr,prn1,ptpdiv,rconl,rlclolcn,rlenmax, &
        rsrd,rstrko,tconl,tdiv,tsep,xparain,xpertin,zeffdiv
-!  $Id::                                                                $
+
+  !  ex estocom.h90
 
   integer :: iscenr
   common /est1/ iscenr
-!  $Id::                                                                $
+
+  !  ex fispact.h90
 
 !--Version number 1.000
 !
@@ -274,7 +238,8 @@ module wibble
   common /fisp2/ &
        bliact,bligdr,blihkw,bloact,blogdr,blohkw,fwiact,fwigdr, &
        fwihkw,fwoact,fwogdr,fwohkw
-!  $Id::                                                                $
+
+  !  ex fwblsh.h90
 
   real(kind(1.0D0)) :: &
        bktlife,coolmass,cryomass,denstl,dewmkg,emult,fblbe,fblli2o, &
@@ -290,7 +255,8 @@ module wibble
        ptfnuc,vdewex,vdewin,vfblkt,vfshld,volblkt,volblkti,volblkto, &
        volshld,whtblbe,whtblkt,wtblli2o,wtbllipb,whtblli,whtblss, &
        whtblvd,whtshld,wpenshld,wtshldi,wtshldo
-!  $Id::                                                                $
+
+  !  ex htpwr.h90
 
   real(kind(1.0D0)) :: &
        baseel,crypmw,ctht,etahhten,etahhtex,etahlte,etahth,etath, &
@@ -307,7 +273,8 @@ module wibble
 
   integer :: ihplant,iprimhtp
   common /htpwr1/ ihplant,iprimhtp
-!  $Id::                                                                $
+
+  !  ex ife.h90
 
   !  Main switches
 
@@ -376,7 +343,8 @@ module wibble
 
   real(kind(1.0D0)) :: pifecr,tdspmw,tfacmw,ptargf
   common /ifep1/ pifecr,tdspmw,tfacmw,ptargf
-!  $Id::                                                                $
+
+  !  ex ineq.h90
 
   real(kind(1.0D0)) :: &
        auxmin,betpmx,bmxlim,dtmpmx,fauxmn,fbeta,fbetap,fbetatry, &
@@ -392,7 +360,8 @@ module wibble
        fq,fqval,frfpf,frfptf,frminor,fstrcase,fstrcond,ftburn,ftcycl, &
        ftmargtf,ftohs,ftpeak,fvdump,fvs,fwalld,gammax,mvalim,pnetelin, &
        powfmax,tbrnmn,tcycmn,tohsmn,tpkmax,walalw
-!  $Id::                                                                $
+
+  !  ex pfcoil.h90
 
   !  ngrpmx is the maximum number of PF coil groups
   !  nclsmx is the maximum number of coils in one group
@@ -441,7 +410,8 @@ module wibble
 
   real(kind(1.0D0)), dimension(ngrpmx) :: zref
   common /pfscl3/ zref
-!  $Id::                                                                $
+
+!  ex phydat.h90
 
   integer, parameter :: ipnlaws = 36  !  number of energy confinement time scaling laws
 
@@ -495,7 +465,8 @@ module wibble
        gtscale,ibss,iculbl,iculdl,icurr,idensl,idhe3,idivrt, &
        ifispact,igeom,iinvqd,iiter,ires,isc,iscrp,ishape,itart,ignite, &
        iwalld,ifalphap
-!  $Id::                                                                $
+
+!  ex pulse.h90
 
 !--Version number 1.100
 !
@@ -538,13 +509,15 @@ module wibble
 
   integer ::istore,itcycl,lpulse
   common /pulse2/ istore,itcycl,lpulse
-!  $Id::                                                                $
+
+!  ex pwrcom.h90
 
   real(kind(1.0D0)) :: &
        acptmax,ensxpfm,pfckts,spfbusl,spsmva,srcktpm,vpfskv
   common /pwrcom/ &
        acptmax,ensxpfm,pfckts,spfbusl,spsmva,srcktpm,vpfskv
-!  $Id::                                                                $
+
+!  ex rfp.h90
 
 !--Version number 1.000
 !
@@ -591,7 +564,8 @@ module wibble
 
   integer :: irfp
   common /rfpint/ irfp
-!  $Id::                                                                $
+
+!  ex start.h90
 
 !--Version number 1.000
 !
@@ -631,7 +605,8 @@ module wibble
 
   integer :: s
   common /strt2/ s
-!  $Id::                                                                $
+
+!  ex stella.h90
 
 !--Version number 1.000
 !
@@ -656,11 +631,13 @@ module wibble
 
   integer :: istell,isthtr
   common /stlint/ istell,isthtr
-!  $Id::                                                                $
+
+!  ex struccom.h90
 
   real(kind(1.0D0)) :: aintmass,clgsmass,coldmass,fncmass,gsmass
   common /struc1/ aintmass,clgsmass,coldmass,fncmass,gsmass
-!  $Id::                                                                $
+
+!  ex tfcoil.h90
 
   integer :: itfsup
   common /tfcom0/ itfsup
@@ -722,7 +699,8 @@ module wibble
 
   real(kind(1.0D0)), dimension(5) :: dthet,radctf,xarc,xctfc,yarc,yctfc
   common /tfcom7/ dthet,radctf,xarc,xctfc,yarc,yctfc    
-!  $Id::                                                                $
+
+!  ex times.h90
 
   real(kind(1.0D0)) :: &
        tburn,tburn0,tdown,tdwell,theat,tohs,tohsin,tpulse,tqnch,tramp
@@ -731,21 +709,24 @@ module wibble
 
   real(kind(1.0D0)), dimension(6) :: tim
   common /times1/ tim
-!  $Id::                                                                $
+
+!  ex torsdat.h90
 
   real(kind(1.0D0)) :: dlscal,vacdshm,vcdimax,vpumpn
   common /tors0/ dlscal,vacdshm,vcdimax,vpumpn
 
   integer :: nvduct,nvtype
   common /tors1/ nvduct,nvtype
-!  $Id::                                                                $
+
+!  ex vaccom.h90
 
   real(kind(1.0D0)) :: pbase,prdiv,rat,tn
   common /vac0/ pbase,prdiv,rat,tn
 
   integer :: ntype
   common /vac1/ ntype
-!  $Id::                                                                $
+
+!  ex vltcom.h90
 
   real(kind(1.0D0)) :: &
        vsbn,vsefbn,vsefsu,vseft,vsoh,vsohbn,vsohsu,vssu,vstot
@@ -754,4 +735,5 @@ module wibble
 
   real(kind(1.0D0)), dimension(ngc2,ngc2) :: sxlg
   common /vltcm1/ sxlg
+
 end module wibble

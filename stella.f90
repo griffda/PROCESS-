@@ -12,6 +12,7 @@ subroutine stcall
   !+ad_args  None
   !+ad_desc  This routine is the caller for the stellarator models.
   !+ad_prob  None
+  !+ad_call  costs_module
   !+ad_call  process_output
   !+ad_call  acpow
   !+ad_call  avail
@@ -36,11 +37,13 @@ subroutine stcall
   !+ad_hist  19/05/99 PJK Added call to routine AVAIL
   !+ad_hist  20/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added costs_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use costs_module
   use process_output
 
   implicit none
@@ -1748,6 +1751,7 @@ subroutine stout(outfile)
   !+ad_desc  This routine prints out the stellarator's parameters at the
   !+ad_desc  end of a run.
   !+ad_prob  None
+  !+ad_call  costs_module
   !+ad_call  phydat.h90
   !+ad_call  acpow
   !+ad_call  avail
@@ -1774,10 +1778,13 @@ subroutine stout(outfile)
   !+ad_hist  18/11/97 PJK Removed NOUT argument from FISPAC call
   !+ad_hist  19/05/99 PJK Added call to routine AVAIL
   !+ad_hist  24/09/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added costs_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use costs_module
 
   implicit none
 

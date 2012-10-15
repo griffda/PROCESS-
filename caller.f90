@@ -13,6 +13,7 @@ subroutine caller(xc,nvars)
   !+ad_desc  This routine is the principal caller of all the physics and
   !+ad_desc  engineering modules.
   !+ad_prob  None
+  !+ad_call  costs_module
   !+ad_call  numerics
   !+ad_call  process_output
   !+ad_call  ife.h90
@@ -67,11 +68,13 @@ subroutine caller(xc,nvars)
   !+ad_hist  24/09/12 PJK Swapped argument order of RADIALB, DIVCALL, INDUCT
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
+  !+ad_hist  15/10/12 PJK Added costs_module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use costs_module
   use process_output
   use numerics
 

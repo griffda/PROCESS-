@@ -198,6 +198,7 @@ subroutine ifecll
   !+ad_desc  This routine calls the physics and engineering modules
   !+ad_desc  relevant to inertial fusion energy power plants.
   !+ad_prob  None
+  !+ad_call  costs_module
   !+ad_call  process_output
   !+ad_call  avail
   !+ad_call  costs
@@ -215,12 +216,14 @@ subroutine ifecll
   !+ad_hist  19/05/99 PJK Added call to routine AVAIL
   !+ad_hist  24/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  15/10/12 PJK Added costs_module
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.66
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use costs_module
   use process_output
 
   implicit none
@@ -295,6 +298,7 @@ subroutine ifeout(outfile)
   !+ad_desc  This routine outputs the physics and engineering information
   !+ad_desc  relevant to inertial fusion energy power plants.
   !+ad_prob  None
+  !+ad_call  costs_module
   !+ad_call  avail
   !+ad_call  costs
   !+ad_call  ifeacp
@@ -310,11 +314,14 @@ subroutine ifeout(outfile)
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  19/05/99 PJK Added call to routine AVAIL
   !+ad_hist  24/09/12 PJK Initial F90 version
+  !+ad_hist  15/10/12 PJK Added costs_module
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.66
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use costs_module
 
   implicit none
 
