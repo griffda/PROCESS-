@@ -100,7 +100,6 @@ subroutine thrmal(outfile,iprint)
   !+ad_call  phydat.h90
   !+ad_call  fwblsh.h90
   !+ad_call  ineq.h90
-  !+ad_call  cost.h90
   !+ad_call  alpha
   !+ad_call  costrm
   !+ad_call  cycles
@@ -136,7 +135,6 @@ subroutine thrmal(outfile,iprint)
   include 'phydat.h90'
   include 'fwblsh.h90'
   include 'ineq.h90'
-  include 'cost.h90'
 
   !  Arguments
 

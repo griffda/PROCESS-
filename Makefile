@@ -57,6 +57,7 @@ source = \
  fispact.f90  \
  fwbs.f90     \
  geomty.f90   \
+ global_variables.90 \
  heatpwr.f90  \
  ife.f90      \
  initial.f90  \
@@ -96,6 +97,7 @@ object = \
  eqns.o       \
  fispact.o    \
  fwbs.o       \
+ global_variables.o \
  geomty.o     \
  heatpwr.o    \
  ife.o        \
@@ -206,7 +208,7 @@ default: process.exe
 # object dependencies (usually via modules or header files)
 
 aachange.o: 
-aamain.o: evaluators.o input.o numerics.o output.o scan.o cdriv.h90 cost.h90 \
+aamain.o: evaluators.o global_variables.o input.o numerics.o output.o scan.o cdriv.h90 cost.h90 \
   divrt.h90 htpwr.h90 ineq.h90 pfcoil.h90 phydat.h90 pwrcom.h90 tfcoil.h90
 acpow.o: output.o bldgvol.h90 estocom.h90 htpwr.h90 pwrcom.h90
 avail.o: output.o cost.h90 divrt.h90 fwblsh.h90 ife.h90 phydat.h90 \
@@ -233,7 +235,7 @@ heatpwr.o: output.o blanket.h90 cdriv.h90 cost.h90 fwblsh.h90 htpwr.h90 \
    pfcoil.h90 phydat.h90 pwrcom.h90 struccom.h90 tfcoil.h90 times.h90
 ife.o: output.o bldgcom.h90 bldgvol.h90 build.h90 cost.h90 fwblsh.h90 htpwr.h90 \
   ife.h90 phydat.h90 pulse.h90 struccom.h90 torsdat.h90 vaccom.h90
-initial.o: numerics.o output.o scan.o blanket.h90 bldgcom.h90 bldgvol.h90 \
+initial.o: global_variables.o output.o scan.o blanket.h90 bldgcom.h90 bldgvol.h90 \
   build.h90 cdriv.h90 cost.h90 divrt.h90 estocom.h90 fwblsh.h90 htpwr.h90 \
   ife.h90 ineq.h90 pfcoil.h90 phydat.h90 pulse.h90 pwrcom.h90 rfp.h90 stella.h90 \
   struccom.h90 tfcoil.h90 times.h90 torsdat.h90 vaccom.h90 vltcom.h90
@@ -258,7 +260,7 @@ rfp.o: input.o output.o build.h90 cdriv.h90 divrt.h90 fwblsh.h90 htpwr.h90 \
   vltcom.h90
 safety.o: output.o blanket.h90 build.h90 fispact.h90 fwblsh.h90 pfcoil.h90 \
   phydat.h90 tfcoil.h90
-scan.o: numerics.o output.o  phydat.h90 cdriv.h90 pwrcom.h90 tfcoil.h90 pfcoil.h90 \
+scan.o: global_variables.o numerics.o output.o  phydat.h90 cdriv.h90 pwrcom.h90 tfcoil.h90 pfcoil.h90 \
   ineq.h90 cost.h90 htpwr.h90 divrt.h90 
 sctfcoil.o: maths_library.o output.o build.h90 fwblsh.h90 phydat.h90 tfcoil.h90
 stella.o: maths_library.o numerics.o output.o scan.o blanket.h90 bldgcom.h90 \

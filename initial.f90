@@ -1622,6 +1622,7 @@ subroutine check
   !+ad_desc  This routine performs a sanity check of the input variables
   !+ad_desc  and ensures other dependent variables are given suitable values.
   !+ad_prob  None
+  !+ad_call  global_variables
   !+ad_call  numerics
   !+ad_call  process_output
   !+ad_call  bldgvol.h90
@@ -1641,12 +1642,13 @@ subroutine check
   !+ad_hist  19/01/99 PJK Added warning about IITER flag with non-ITER profiles
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
+  !+ad_hist  15/10/12 PJK Added global_variables module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use numerics  !  icase only
+  use global_variables
   use process_output
 
   implicit none

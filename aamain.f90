@@ -106,6 +106,7 @@ subroutine init
   !+ad_desc  the default values for the global variables, reads in data from
   !+ad_desc  the input file, and checks the run parameters for consistency.
   !+ad_prob  None
+  !+ad_call  global_variables
   !+ad_call  numerics
   !+ad_call  process_input
   !+ad_call  process_output
@@ -121,11 +122,13 @@ subroutine init
   !+ad_hist  08/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  09/10/12 PJK Modified to use new numerics module
+  !+ad_hist  15/10/12 PJK Added global_variables module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use global_variables
   use process_input
   use process_output
   use numerics

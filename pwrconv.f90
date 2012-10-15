@@ -16,7 +16,6 @@ subroutine tfpwr(outfile,iprint)
   !+ad_prob  None
   !+ad_call  process_output
   !+ad_call  times.h90
-  !+ad_call  cost.h90
   !+ad_call  phydat.h90
   !+ad_call  tfcoil.h90
   !+ad_call  oheadr
@@ -36,7 +35,6 @@ subroutine tfpwr(outfile,iprint)
   include 'phydat.h90'
   include 'tfcoil.h90'
   include 'times.h90'
-  include 'cost.h90'
 
   !  Arguments
 

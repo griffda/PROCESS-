@@ -52,8 +52,6 @@ module numerics
   character(len=22), dimension(ipnfoms) :: lablmm = ''
   character(len=8), dimension(ipnvars) :: lablxc = ''
 
-  character(len=48) :: icase = 'PROCESS standard D-T tokamak model'
-
   real(kind(1.0D0)) :: sqsumsq = 0.0D0
   real(kind(1.0D0)) :: epsfcn = 1.0D-3
   real(kind(1.0D0)) :: epsvmc = 1.0D-3
