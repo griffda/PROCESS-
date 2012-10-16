@@ -1680,6 +1680,7 @@ subroutine cudrv1(n,x,paux)
   !+ad_desc  This routine acts as the interface between the start-up routines
   !+ad_desc  and <A HREF="cudriv.html">CUDRIV</A>.
   !+ad_prob  None
+  !+ad_call  physics_module
   !+ad_call  physics_variables
   !+ad_call  cdriv.h90
   !+ad_call  physics
@@ -1687,12 +1688,14 @@ subroutine cudrv1(n,x,paux)
   !+ad_hist  25/11/93 PJK Incorporation into PROCESS
   !+ad_hist  02/10/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added physics_module
   !+ad_stat  Okay
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_module
   use physics_variables
 
   implicit none

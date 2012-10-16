@@ -396,6 +396,7 @@ subroutine stphys
   !+ad_desc  This routine calculates the physics quantities relevant to
   !+ad_desc  a stellarator device.
   !+ad_prob  None
+  !+ad_call  physics_module
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
@@ -427,12 +428,14 @@ subroutine stphys
   !+ad_hist  20/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added physics_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_module
   use physics_variables
   use process_output
 
@@ -448,10 +451,6 @@ subroutine stphys
   !  Local variables
 
   real(kind(1.0D0)) :: fusrat,pht,powht,sbar,sigvdt,taup,zion
-
-  !  External functions
-
-  real(kind(1.0D0)), external :: bpol
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -488,7 +487,7 @@ subroutine stphys
   !  Calculate fusion power
 
   call palph(alphan,alphat,deni,ealpha,fdeut,fhe3,ftr,ftrit, &
-       idhe3,iiter,pcoef,pi,ti,palp,pcharge,pneut,sigvdt)
+       idhe3,iiter,pcoef,ti,palp,pcharge,pneut,sigvdt)
 
   !  Calculate neutral beam slowing down effects
   !  If ignited, then ignore beam fusion effects
@@ -1662,6 +1661,7 @@ subroutine stigma(outfile)
   !+ad_desc  This routine calculates the ignition margin at the final
   !+ad_desc  point with different stellarator confinement time scaling laws
   !+ad_prob  None
+  !+ad_call  physics_module
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  cdriv.h90
@@ -1677,11 +1677,13 @@ subroutine stigma(outfile)
   !+ad_hist  24/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added physics_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use physics_module
   use physics_variables
   use process_output
 
@@ -1700,10 +1702,6 @@ subroutine stigma(outfile)
   integer :: i,iisc
   integer, parameter :: nstlaw = 3
   integer, dimension(nstlaw) :: istlaw
-
-  !  External functions
-
-  real(kind(1.0D0)), external :: fhfac
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

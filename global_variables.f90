@@ -96,178 +96,178 @@ module physics_variables
        'IPB98(y,4)           (H)' /)  !  36
 
   !+ad_vars  abeam : beam ion mass (amu)
-  real(kind(1.0D0)) :: abeam    = 0.0D0
+  real(kind(1.0D0)) :: abeam = 0.0D0
   !+ad_vars  afuel : average mass of fuel portion of ions (amu)
-  real(kind(1.0D0)) :: afuel    = 0.0D0
+  real(kind(1.0D0)) :: afuel = 0.0D0
   !+ad_vars  aion : average mass of all ions (amu)
-  real(kind(1.0D0)) :: aion     = 0.0D0
+  real(kind(1.0D0)) :: aion = 0.0D0
   !+ad_vars  alphaj /1.0/ : current profile index
-  real(kind(1.0D0)) :: alphaj   = 1.0D0
+  real(kind(1.0D0)) :: alphaj = 1.0D0
   !+ad_vars  alphan /0.5/ : density profile index
-  real(kind(1.0D0)) :: alphan   = 0.5D0
+  real(kind(1.0D0)) :: alphan = 0.5D0
   !+ad_vars  alphat /1.0/ : temperature profile index
-  real(kind(1.0D0)) :: alphat   = 1.0D0
+  real(kind(1.0D0)) :: alphat = 1.0D0
   !+ad_vars  alpmw : alpha power (MW)
-  real(kind(1.0D0)) :: alpmw    = 0.0D0
+  real(kind(1.0D0)) :: alpmw = 0.0D0
   !+ad_vars  aspect /3.5/ : aspect ratio (iteration variable 1)
-  real(kind(1.0D0)) :: aspect   = 3.5D0
+  real(kind(1.0D0)) :: aspect = 3.5D0
   !+ad_vars  beamfus0 /1.0/ : multiplier for beam-background fusion calculation
   real(kind(1.0D0)) :: beamfus0 = 1.0D0
   !+ad_vars  beta /0.042/ : total plasma beta (iteration variable 5)
-  real(kind(1.0D0)) :: beta     = 0.042D0
+  real(kind(1.0D0)) :: beta = 0.042D0
   !+ad_vars  betaft : fast alpha beta component
-  real(kind(1.0D0)) :: betaft   = 0.0D0
+  real(kind(1.0D0)) :: betaft = 0.0D0
   !+ad_vars  betalim : allowable beta
-  real(kind(1.0D0)) :: betalim  = 0.0D0
+  real(kind(1.0D0)) :: betalim = 0.0D0
   !+ad_vars  betanb : neutral beam beta component
-  real(kind(1.0D0)) :: betanb   = 0.0D0
+  real(kind(1.0D0)) :: betanb = 0.0D0
   !+ad_vars  betap : poloidal beta
-  real(kind(1.0D0)) :: betap    = 0.0D0
+  real(kind(1.0D0)) :: betap = 0.0D0
   !+ad_vars  betbm0 /1.5/ : leading coefficient for NB beta fraction
-  real(kind(1.0D0)) :: betbm0   = 1.5D0
+  real(kind(1.0D0)) :: betbm0 = 1.5D0
   !+ad_vars  bp : poloidal field (T)
-  real(kind(1.0D0)) :: bp       = 0.0D0
+  real(kind(1.0D0)) :: bp = 0.0D0
   !+ad_vars  bt /6.0/ : toroidal field on axis (T) (iteration variable 2)
-  real(kind(1.0D0)) :: bt       = 6.0D0
+  real(kind(1.0D0)) :: bt = 6.0D0
   !+ad_vars  btot : total toroidal + poloidal field (T)
-  real(kind(1.0D0)) :: btot     = 0.0D0
+  real(kind(1.0D0)) :: btot = 0.0D0
   !+ad_vars  burnup : fractional plasma burnup
-  real(kind(1.0D0)) :: burnup   = 0.0D0
+  real(kind(1.0D0)) :: burnup = 0.0D0
   !+ad_vars  carea /1.0/ : multiplying factor times plasma surface area
-  real(kind(1.0D0)) :: carea    = 1.0D0
+  real(kind(1.0D0)) :: carea = 1.0D0
   !+ad_vars  cfe0 /0.0/ : additional iron impurity fraction (n_fe/n_e)
   !+ad_varc               (iteration variable 43)
-  real(kind(1.0D0)) :: cfe0     = 0.0D0
+  real(kind(1.0D0)) :: cfe0 = 0.0D0
   !+ad_vars  csawth /1.0/ : coeff. for sawteeth effects on burn V-s requirement
-  real(kind(1.0D0)) :: csawth   = 1.0D0
+  real(kind(1.0D0)) :: csawth = 1.0D0
   !+ad_vars  cvol /1.0/ : multiplying factor times plasma volume (normally=1)
-  real(kind(1.0D0)) :: cvol     = 1.0D0
+  real(kind(1.0D0)) :: cvol = 1.0D0
   !+ad_vars  dene /1.5D20/ : electron density (m**-3) (iteration variable 6)
-  real(kind(1.0D0)) :: dene     = 1.5D20
+  real(kind(1.0D0)) :: dene = 1.5D20
   !+ad_vars  deni : fuel ion density (m**-3)
-  real(kind(1.0D0)) :: deni     = 0.0D0
+  real(kind(1.0D0)) :: deni = 0.0D0
   !+ad_vars  dign /1.0/ : ignition margin
-  real(kind(1.0D0)) :: dign     = 1.0D0
+  real(kind(1.0D0)) :: dign = 1.0D0
   !+ad_vars  dlamee : electron-electron coulomb logarithm
-  real(kind(1.0D0)) :: dlamee   = 0.0D0
+  real(kind(1.0D0)) :: dlamee = 0.0D0
   !+ad_vars  dlamie : ion-electron coulomb logarithm
-  real(kind(1.0D0)) :: dlamie   = 0.0D0
+  real(kind(1.0D0)) :: dlamie = 0.0D0
   !+ad_vars  dlimit(7) : density limit (m**-3) as calculated using various models
   real(kind(1.0D0)), dimension(7) :: dlimit = 0.0D0
   !+ad_vars  dnalp : fast alpha density (m**-3)
-  real(kind(1.0D0)) :: dnalp    = 0.0D0
+  real(kind(1.0D0)) :: dnalp = 0.0D0
   !+ad_vars  dnbeam : hot beam ion density, variable (m**-3)
-  real(kind(1.0D0)) :: dnbeam   = 0.0D0
+  real(kind(1.0D0)) :: dnbeam = 0.0D0
   !+ad_vars  dnbeam2 : hot beam ion density from calculation (m**-3)
-  real(kind(1.0D0)) :: dnbeam2  = 0.0D0
+  real(kind(1.0D0)) :: dnbeam2 = 0.0D0
   !+ad_vars  dnbeta /3.5/ : coefficient for Troyon beta scaling
-  real(kind(1.0D0)) :: dnbeta   = 3.5D0
+  real(kind(1.0D0)) :: dnbeta = 3.5D0
   !+ad_vars  dnelimt : density limit (m**-3)
-  real(kind(1.0D0)) :: dnelimt  = 0.0D0
+  real(kind(1.0D0)) :: dnelimt = 0.0D0
   !+ad_vars  dnitot : total ion density (m**-3)
-  real(kind(1.0D0)) :: dnitot   = 0.0D0
+  real(kind(1.0D0)) :: dnitot = 0.0D0
   !+ad_vars  dnla : line averaged electron density (m**-3)
-  real(kind(1.0D0)) :: dnla     = 0.0D0
+  real(kind(1.0D0)) :: dnla = 0.0D0
   !+ad_vars  dnprot : proton ash density (m**-3) (idhe3=1)
-  real(kind(1.0D0)) :: dnprot   = 0.0D0
+  real(kind(1.0D0)) :: dnprot = 0.0D0
   !+ad_vars  dntau : plasma average "n-tau" (m**-3-sec)
-  real(kind(1.0D0)) :: dntau    = 0.0D0
+  real(kind(1.0D0)) :: dntau = 0.0D0
   !+ad_vars  dnz : high Z ion density (m**-3)
-  real(kind(1.0D0)) :: dnz      = 0.0D0
+  real(kind(1.0D0)) :: dnz = 0.0D0
   !+ad_vars  ealpha : alpha birth energy in D-T reaction (= 3520 keV)
-  real(kind(1.0D0)), parameter :: ealpha   = 3520.0D0
+  real(kind(1.0D0)), parameter :: ealpha = 3520.0D0
   !+ad_vars  epbetmax /0.6/ : max (eps*beta_poloidal) for beta limit scaling 1
   real(kind(1.0D0)) :: epbetmax = 0.6D0
   !+ad_vars  eps : inverse aspect ratio
-  real(kind(1.0D0)) :: eps      = 0.2857142857D0
+  real(kind(1.0D0)) :: eps = 0.2857142857D0
   !+ad_vars  faccd : fraction of plasma current produced by aux. current drive
-  real(kind(1.0D0)) :: faccd    = 0.0D0
+  real(kind(1.0D0)) :: faccd = 0.0D0
   !+ad_vars  facoh : fraction of plasma current produced inductively
-  real(kind(1.0D0)) :: facoh    = 0.0D0
+  real(kind(1.0D0)) :: facoh = 0.0D0
   !+ad_vars  falpe : fraction of alpha energy to electrons
-  real(kind(1.0D0)) :: falpe    = 0.0D0
+  real(kind(1.0D0)) :: falpe = 0.0D0
   !+ad_vars  falpha /1.0/ : fraction of alpha power deposited to plasma
-  real(kind(1.0D0)) :: falpha   = 1.0D0
+  real(kind(1.0D0)) :: falpha = 1.0D0
   !+ad_vars  falpi : fraction of alpha power to ions
-  real(kind(1.0D0)) :: falpi    = 0.0D0
+  real(kind(1.0D0)) :: falpi = 0.0D0
   !+ad_vars  fbfe /0.35/ : fraction of Fe radiation to Bremsstrahlung
-  real(kind(1.0D0)) :: fbfe     = 0.35D0
+  real(kind(1.0D0)) :: fbfe = 0.35D0
   !+ad_vars  fdeut /0.5/ : deuterium fuel fraction (idhe3=1)
-  real(kind(1.0D0)) :: fdeut    = 0.5D0
+  real(kind(1.0D0)) :: fdeut = 0.5D0
   !+ad_vars  ffwal /0.92/ : fudge factor for the wall load calculation
-  real(kind(1.0D0)) :: ffwal    = 0.92D0
+  real(kind(1.0D0)) :: ffwal = 0.92D0
   !+ad_vars  fhe3 /0.0/ : helium-3 fuel fraction (idhe3=1)
-  real(kind(1.0D0)) :: fhe3     = 0.0D0
+  real(kind(1.0D0)) :: fhe3 = 0.0D0
   !+ad_vars  figmer : physics figure of merit (= plascur*aspect**sbar)
-  real(kind(1.0D0)) :: figmer   = 0.0D0
+  real(kind(1.0D0)) :: figmer = 0.0D0
   !+ad_vars  fradmin /0.0/ : minimum ratio of radiation to heating power
-  real(kind(1.0D0)) :: fradmin  = 0.0D0
+  real(kind(1.0D0)) :: fradmin = 0.0D0
   !+ad_vars  ftr : /0.5/ : fraction of DT ions that are tritium (idhe3=0)
   !+ad_varc                (if ftr < 0.001, H plasma is used)
-  real(kind(1.0D0)) :: ftr      = 0.5D0
+  real(kind(1.0D0)) :: ftr = 0.5D0
   !+ad_vars  ftrit /0.5/ : tritium fuel fraction (idhe3=1)
-  real(kind(1.0D0)) :: ftrit    = 0.5D0
+  real(kind(1.0D0)) :: ftrit = 0.5D0
   !+ad_vars  fvsbrnni /1.0/ : fraction of burn V-s from non-inductive means
   !+ad_varc                   (iteration variable 44)
   real(kind(1.0D0)) :: fvsbrnni = 1.0D0
   !+ad_vars  gamma /0.4/ : coefficient for resistive startup V-s formula
-  real(kind(1.0D0)) :: gamma    = 0.4D0
+  real(kind(1.0D0)) :: gamma = 0.4D0
   !+ad_vars  hfac(ipnlaws) : H factors for an ignited plasma for each scaling law
   real(kind(1.0D0)), dimension(ipnlaws) :: hfac = 0.0D0
   !+ad_vars  hfact /2.0/ : H factor on energy confinement times (iteration variable 10)
-  real(kind(1.0D0)) :: hfact    = 2.0D0
+  real(kind(1.0D0)) :: hfact = 2.0D0
   !+ad_vars  impc /1.0/ : carbon impurity multiplier
-  real(kind(1.0D0)) :: impc     = 1.0D0
+  real(kind(1.0D0)) :: impc = 1.0D0
   !+ad_vars  impfe /1.0/ : iron impurity multiplier
-  real(kind(1.0D0)) :: impfe    = 1.0D0
+  real(kind(1.0D0)) :: impfe = 1.0D0
   !+ad_vars  impo /1.0/ : oxygen impurity multiplier
-  real(kind(1.0D0)) :: impo     = 1.0D0
+  real(kind(1.0D0)) :: impo = 1.0D0
   !+ad_vars  kappa /2.218/ : plasma separatrix elongation
-  real(kind(1.0D0)) :: kappa    = 2.218D0
+  real(kind(1.0D0)) :: kappa = 2.218D0
   !+ad_vars  kappa95 : 95% plasma elongation
-  real(kind(1.0D0)) :: kappa95  = 0.0D0
+  real(kind(1.0D0)) :: kappa95 = 0.0D0
   !+ad_vars  kappaa : plasma elongation calculated as xarea/(pi.a**2)
-  real(kind(1.0D0)) :: kappaa   = 0.0D0
+  real(kind(1.0D0)) :: kappaa = 0.0D0
   !+ad_vars  palp : alpha power per volume (MW/m**3)
-  real(kind(1.0D0)) :: palp     = 0.0D0
+  real(kind(1.0D0)) :: palp = 0.0D0
   !+ad_vars  palpe : alpha power per volume to electrons (MW/m**3)
-  real(kind(1.0D0)) :: palpe    = 0.0D0
+  real(kind(1.0D0)) :: palpe = 0.0D0
   !+ad_vars  palpi : alpha power per volume to ions (MW/m**3)
-  real(kind(1.0D0)) :: palpi    = 0.0D0
+  real(kind(1.0D0)) :: palpi = 0.0D0
   !+ad_vars  palpnb : alpha power from hot neutral beam ions (MW)
-  real(kind(1.0D0)) :: palpnb   = 0.0D0
+  real(kind(1.0D0)) :: palpnb = 0.0D0
   !+ad_vars  pbrem : bremstrahhlung power per volume (MW/m**3)
-  real(kind(1.0D0)) :: pbrem    = 0.0D0
+  real(kind(1.0D0)) :: pbrem = 0.0D0
   !+ad_vars  pcharge : non-alpha charged particle fusion power (MW/m**3)
-  real(kind(1.0D0)) :: pcharge  = 0.0D0
+  real(kind(1.0D0)) :: pcharge = 0.0D0
   !+ad_vars  pcoef : profile factor ( = average T / n-weighted T )
-  real(kind(1.0D0)) :: pcoef    = 0.0D0
+  real(kind(1.0D0)) :: pcoef = 0.0D0
   !+ad_vars  pdivt : power to divertor (MW)
-  real(kind(1.0D0)) :: pdivt    = 0.0D0
+  real(kind(1.0D0)) :: pdivt = 0.0D0
   !+ad_vars  pfuscmw : charged particle fusion power (MW)
-  real(kind(1.0D0)) :: pfuscmw  = 0.0D0
+  real(kind(1.0D0)) :: pfuscmw = 0.0D0
   !+ad_vars  phiint : internal plasma V-s
-  real(kind(1.0D0)) :: phiint   = 0.0D0
+  real(kind(1.0D0)) :: phiint = 0.0D0
   !+ad_vars  pi : famous number
-  real(kind(1.0D0)) :: pi       = 3.141592653589793D0
+  real(kind(1.0D0)), parameter :: pi = 3.141592653589793D0
   !+ad_vars  pie : ion/electron equilibration power (MW/m**3)
-  real(kind(1.0D0)) :: pie      = 0.0D0
+  real(kind(1.0D0)) :: pie = 0.0D0
   !+ad_vars  plascur : plasma current (A)
-  real(kind(1.0D0)) :: plascur  = 0.0D0
+  real(kind(1.0D0)) :: plascur = 0.0D0
   !+ad_vars  plrad : edge line radiation power per volume (MW/m**3)
-  real(kind(1.0D0)) :: plrad    = 0.0D0
+  real(kind(1.0D0)) :: plrad = 0.0D0
   !+ad_vars  pneut : neutron fusion power per volume (MW/m**3)
-  real(kind(1.0D0)) :: pneut    = 0.0D0
+  real(kind(1.0D0)) :: pneut = 0.0D0
   !+ad_vars  pohmpv : ohmic heating per volume (MW/m**3)
-  real(kind(1.0D0)) :: pohmpv   = 0.0D0
+  real(kind(1.0D0)) :: pohmpv = 0.0D0
   !+ad_vars  powerht : heating power (MW) used in confinement time calculation
-  real(kind(1.0D0)) :: powerht  = 0.0D0
+  real(kind(1.0D0)) :: powerht = 0.0D0
   !+ad_vars  powfmw : fusion power, max (MW)
-  real(kind(1.0D0)) :: powfmw   = 0.0D0
+  real(kind(1.0D0)) :: powfmw = 0.0D0
   !+ad_vars  prad : total core radiation power (MW/m**3)
-  real(kind(1.0D0)) :: prad     = 0.0D0
+  real(kind(1.0D0)) :: prad = 0.0D0
   !+ad_vars  psync : synchrotron radiation power (MW/m**3)
-  real(kind(1.0D0)) :: psync    = 0.0D0
+  real(kind(1.0D0)) :: psync = 0.0D0
   !+ad_vars  pthrmw(5) : L-H power threshold (MW): <OL>
   !+ad_varc              <LI> ITER 1996 nominal
   !+ad_varc              <LI> ITER 1996 upper bound
@@ -276,123 +276,123 @@ module physics_variables
   !+ad_varc              <LI> ITER 1997 including elongation</OL>
   real(kind(1.0D0)), dimension(5) :: pthrmw = 0.0D0
   !+ad_vars  ptre : electron transport power (MW/m**3)
-  real(kind(1.0D0)) :: ptre     = 0.0D0
+  real(kind(1.0D0)) :: ptre = 0.0D0
   !+ad_vars  ptri : ion transport power (MW/m**3)
-  real(kind(1.0D0)) :: ptri     = 0.0D0
+  real(kind(1.0D0)) :: ptri = 0.0D0
   !+ad_vars  q /3.0/ : safety factor at plasma edge (q-"psi") (iteration variable 18):
   !+ad_varc            icurr = 2, q = mean safety factor qbar for divertors;
   !+ad_varc            icurr = 3,4, q = safety factor at 95% surface
-  real(kind(1.0D0)) :: q        = 3.0D0
+  real(kind(1.0D0)) :: q = 3.0D0
   !+ad_vars  q0 /1.0/ : safety factor on axis
-  real(kind(1.0D0)) :: q0       = 1.0D0
+  real(kind(1.0D0)) :: q0 = 1.0D0
   !+ad_vars  q95 : safety factor at 95% surface
-  real(kind(1.0D0)) :: q95      = 0.0D0
+  real(kind(1.0D0)) :: q95 = 0.0D0
   !+ad_vars  qfuel : fuelling rate for D-T (A)
-  real(kind(1.0D0)) :: qfuel    = 0.0D0
+  real(kind(1.0D0)) :: qfuel = 0.0D0
   !+ad_vars  qlim : lower limit for edge safety factor
-  real(kind(1.0D0)) :: qlim     = 0.0D0
+  real(kind(1.0D0)) :: qlim = 0.0D0
   !+ad_vars  qstar : cylindrical safety factor
-  real(kind(1.0D0)) :: qstar    = 0.0D0
+  real(kind(1.0D0)) :: qstar = 0.0D0
   !+ad_vars  ralpne /0.1/ : thermal alpha density / electron density
-  real(kind(1.0D0)) :: ralpne   = 0.10D0
+  real(kind(1.0D0)) :: ralpne = 0.10D0
   !+ad_vars  recyle /0.7/ : alpha fraction recycled to main plasma
-  real(kind(1.0D0)) :: recyle   = 0.7D0
+  real(kind(1.0D0)) :: recyle = 0.7D0
   !+ad_vars  rli /0.65/ : normalised inductivity, energy definition
-  real(kind(1.0D0)) :: rli      = 0.65D0
+  real(kind(1.0D0)) :: rli = 0.65D0
   !+ad_vars  rlp : plasma inductance (H)
-  real(kind(1.0D0)) :: rlp      = 0.0D0
+  real(kind(1.0D0)) :: rlp = 0.0D0
   !+ad_vars  rmajor /7.0/ plasma major radius (m) (iteration variable 3)
-  real(kind(1.0D0)) :: rmajor   = 7.0D0
+  real(kind(1.0D0)) :: rmajor = 7.0D0
   !+ad_vars  rminor : plasma minor radius (m)
-  real(kind(1.0D0)) :: rminor   = 2.0D0
-  !+ad_vars  rmu0 : 4.pi x 10-7
-  real(kind(1.0D0)) :: rmu0     = 1.256637D-6
+  real(kind(1.0D0)) :: rminor = 2.0D0
+  !+ad_vars  rmu0 : permeability of free space, 4.pi x 10^(-7) H/m
+  real(kind(1.0D0)), parameter :: rmu0 = 1.256637D-6
   !+ad_vars  rnbeam /0.005/ : hot beam density / n_e (iteration variable 7)
-  real(kind(1.0D0)) :: rnbeam   = 0.005D0
+  real(kind(1.0D0)) :: rnbeam = 0.005D0
   !+ad_vars  rncne : n_carbon / n_e
-  real(kind(1.0D0)) :: rncne    = 0.0D0
+  real(kind(1.0D0)) :: rncne = 0.0D0
   !+ad_vars  rndfuel : fuel burnup rate (A)
-  real(kind(1.0D0)) :: rndfuel  = 0.0D0
+  real(kind(1.0D0)) :: rndfuel = 0.0D0
   !+ad_vars  rnfene : n_iron / n_e
-  real(kind(1.0D0)) :: rnfene   = 0.0D0
+  real(kind(1.0D0)) :: rnfene = 0.0D0
   !+ad_vars  rnone : n_oxygen / n_e
-  real(kind(1.0D0)) :: rnone    = 0.0D0
+  real(kind(1.0D0)) :: rnone = 0.0D0
   !+ad_vars  rpfac : neo-classical correction factor to rplas
-  real(kind(1.0D0)) :: rpfac    = 0.0D0
+  real(kind(1.0D0)) :: rpfac = 0.0D0
   !+ad_vars  rplas : plasma resistance (ohm)
-  real(kind(1.0D0)) :: rplas    = 0.0D0
+  real(kind(1.0D0)) :: rplas = 0.0D0
   !+ad_vars  rtpte /5.0/ He part. confinement time / plasma energy confinement time
-  real(kind(1.0D0)) :: rtpte    = 5.0D0
+  real(kind(1.0D0)) :: rtpte = 5.0D0
   !+ad_vars  sarea : plasma surface area
-  real(kind(1.0D0)) :: sarea    = 0.0D0
+  real(kind(1.0D0)) :: sarea = 0.0D0
   !+ad_vars  sareao : outboard plasma surface area
-  real(kind(1.0D0)) :: sareao   = 0.0D0
+  real(kind(1.0D0)) :: sareao = 0.0D0
   !+ad_vars  sf : shape factor
-  real(kind(1.0D0)) :: sf       = 0.0D0
+  real(kind(1.0D0)) :: sf = 0.0D0
   !+ad_vars  ssync /0.8/ : synchrotron wall reflectivity factor
-  real(kind(1.0D0)) :: ssync    = 0.8D0
+  real(kind(1.0D0)) :: ssync = 0.8D0
   !+ad_vars  tauee : electron energy confinement time (sec)
-  real(kind(1.0D0)) :: tauee    = 0.0D0
+  real(kind(1.0D0)) :: tauee = 0.0D0
   !+ad_vars  taueff : global energy confinement time (sec)
-  real(kind(1.0D0)) :: taueff   = 0.0D0
+  real(kind(1.0D0)) :: taueff = 0.0D0
   !+ad_vars  tauei : ion energy confinement time (sec)
-  real(kind(1.0D0)) :: tauei    = 0.0D0
+  real(kind(1.0D0)) :: tauei = 0.0D0
   !+ad_vars  te : /15.0/ : volume averaged electron temperature (keV)
   !+ad_varc                (iteration variable 4)
-  real(kind(1.0D0)) :: te       = 15.0D0
+  real(kind(1.0D0)) :: te = 15.0D0
   !+ad_vars  ten : density weighted average electron temperature (keV)
-  real(kind(1.0D0)) :: ten      = 0.0D0
+  real(kind(1.0D0)) :: ten = 0.0D0
   !+ad_vars  ti /8.33/ : volume averaged ion temperature (keV)
-  real(kind(1.0D0)) :: ti       = 8.33D0
+  real(kind(1.0D0)) :: ti = 8.33D0
   !+ad_vars  tin : density weighted average ion temperature (keV)
-  real(kind(1.0D0)) :: tin      = 0.0D0
+  real(kind(1.0D0)) :: tin = 0.0D0
   !+ad_vars  tratio /1.0/ : ion temperature / electron temperature
-  real(kind(1.0D0)) :: tratio   = 1.0D0
+  real(kind(1.0D0)) :: tratio = 1.0D0
   !+ad_vars  triang /0.6/ : plasma separatrix triangularity
-  real(kind(1.0D0)) :: triang   = 0.6D0
+  real(kind(1.0D0)) :: triang = 0.6D0
   !+ad_vars  triang95 : plasma triangularity at 95% surface
   real(kind(1.0D0)) :: triang95 = 0.0D0
   !+ad_vars  vol : plasma volume (m**3)
-  real(kind(1.0D0)) :: vol      = 0.0D0
+  real(kind(1.0D0)) :: vol = 0.0D0
   !+ad_vars  vsbrn : V-s needed during burn (Wb)
-  real(kind(1.0D0)) :: vsbrn    = 0.0D0
+  real(kind(1.0D0)) :: vsbrn = 0.0D0
   !+ad_vars  vshift : plasma/device midplane vertical shift - single null
-  real(kind(1.0D0)) :: vshift   = 0.0D0
+  real(kind(1.0D0)) :: vshift = 0.0D0
   !+ad_vars  vsind : internal and external plasma inductance V-s (Wb)
-  real(kind(1.0D0)) :: vsind    = 0.0D0
+  real(kind(1.0D0)) :: vsind = 0.0D0
   !+ad_vars  vsres : resistive losses in startup V-s (Wb)
-  real(kind(1.0D0)) :: vsres    = 0.0D0
+  real(kind(1.0D0)) :: vsres = 0.0D0
   !+ad_vars  vsstt : total V-s needed (Wb)
-  real(kind(1.0D0)) :: vsstt    = 0.0D0
+  real(kind(1.0D0)) :: vsstt = 0.0D0
   !+ad_vars  wallmw : average neutron wall load, max (MW/m**2)
-  real(kind(1.0D0)) :: wallmw   = 0.0D0
+  real(kind(1.0D0)) :: wallmw = 0.0D0
   !+ad_vars  wtgpd : mass of fuel used per day (g)
-  real(kind(1.0D0)) :: wtgpd    = 0.0D0
+  real(kind(1.0D0)) :: wtgpd = 0.0D0
   !+ad_vars  xarea : plasma cross-sectional area (m**2)
-  real(kind(1.0D0)) :: xarea    = 0.0D0
+  real(kind(1.0D0)) :: xarea = 0.0D0
   !+ad_vars  zeff : plasma effective charge
-  real(kind(1.0D0)) :: zeff     = 0.0D0
+  real(kind(1.0D0)) :: zeff = 0.0D0
   !+ad_vars  zeffai : density weighted plasma effective charge
-  real(kind(1.0D0)) :: zeffai   = 0.0D0
+  real(kind(1.0D0)) :: zeffai = 0.0D0
 
   !+ad_vars  gtscale /0/ : switch for a/R scaling of dnbeta:
   !+ad_varc                = 0 do not scale dnbeta with eps; 
   !+ad_varc                otherwise scale dnbeta with eps  
-  integer :: gtscale  = 0
+  integer :: gtscale = 0
   !+ad_vars  ibss /1/ : switch for bootstrap current scaling:
   !+ad_varc             = 1 ITER bootstrap scaling (high R/a only);
   !+ad_varc             = 2 for more general scaling;
   !+ad_varc             = 3 for new Culham scaling as in AEA FUS 172
-  integer :: ibss     = 1
+  integer :: ibss  = 1
   !+ad_vars  iculbl /0/ : switch for Troyon beta limit scaling:
   !+ad_varc               = 0 apply limit to total beta;
   !+ad_varc               = 1 apply limit to thermal beta;
   !+ad_varc               = 2 apply limit to thermal + neutral beam beta
-  integer :: iculbl   = 0
+  integer :: iculbl = 0
   !+ad_vars  iculdl /0/ : switch for density limit:
   !+ad_varc               = 0 use old method;
   !+ad_varc               = 1 use new method (seven formulae to choose from)
-  integer :: iculdl   = 0
+  integer :: iculdl = 0
   !+ad_vars  icurr /4/ : switch for plasma current scaling to use:
   !+ad_varc              = 1 Peng analytic fit;
   !+ad_varc              = 2 Peng double null divertor scaling (TART);
@@ -401,7 +401,7 @@ module physics_variables
   !+ad_varc              = 5 Todd empirical scaling I;
   !+ad_varc              = 6 Todd empirical scaling II;
   !+ad_varc              = 7 Connor-Hastie model
-  integer :: icurr    = 4
+  integer :: icurr = 4
   !+ad_vars  idensl /3/ : switch for density limit to enforce (if ICULDL=1):
   !+ad_varc               = 1 old ASDEX;
   !+ad_varc               = 2 Borrass model for ITER (I);
@@ -410,16 +410,16 @@ module physics_variables
   !+ad_varc               = 5 JET simplified;
   !+ad_varc               = 6 Hugill-Murakami Mq limit;
   !+ad_varc               = 7 Greenwald limit
-  integer :: idensl   = 3
+  integer :: idensl = 3
   !+ad_vars  idhe3 /0/ : switch for main fusion reaction:
   !+ad_varc              = 0 D-T reaction;
   !+ad_varc              = 1 D-He3 reaction (+ daughters)
-  integer :: idhe3    = 0
+  integer :: idhe3 = 0
   !+ad_vars  idivrt /2/ : shape switch (use only idivrt= 2 for now):
   !+ad_varc               = 0 for limiter;
   !+ad_varc               = 1 for single null (diverted side down);
   !+ad_varc               = 2 for double null
-  integer :: idivrt   = 2
+  integer :: idivrt = 2
   !+ad_vars  ifalphap /0/ : switch for fast alpha pressure calculation:
   !+ad_varc                 = 0 ITER physics rules (Uckan) fit;
   !+ad_varc                 = 1 Modified fit (D. Ward) - better at high temperature
@@ -431,40 +431,40 @@ module physics_variables
   !+ad_vars  igeom /0/ : switch for plasma geometry calculation:
   !+ad_varc              = 0 original method;
   !+ad_varc              = 1 new method
-  integer :: igeom    = 0
+  integer :: igeom = 0
   !+ad_vars  ignite /0/ : switch for ignition assumption:
   !+ad_varc               = 0 do not assume plasma ignition;
   !+ad_varc               = 1 assume ignited (but include aux power in costs)
   !+ad_varc               Obviously, ignite must be zero if current drive
   !+ad_varc               is required. Note that whole code is not quite
   !+ad_varc               consistent yet...
-  integer :: ignite   = 0
+  integer :: ignite = 0
   !+ad_vars  iinvqd /1/ : switch for inverse quadrature in tauee laws (1=yes)
-  integer :: iinvqd   = 1
+  integer :: iinvqd = 1
   !+ad_vars  iiter /1/ : switch for ITER fusion power calculations, (1=yes)
   !+ad_varc              (bad fit if alphan /= 0.5 and/or alphat /= 1.0)
-  integer :: iiter    = 1
+  integer :: iiter = 1
   !+ad_vars  ires /1/ : switch for neo-classical plasma resistivity (1=yes)
-  integer :: ires     = 1
+  integer :: ires = 1
   !+ad_vars  isc /6/ switch for energy confinement time scaling law
   !+ad_varc          (see description in tauscl)
-  integer :: isc      = 6
+  integer :: isc = 6
   !+ad_vars  iscrp /1/ : switch for scrapeoff width:
   !+ad_varc              = 0 use 10% of rminor;
   !+ad_varc              = 1 use input (scrapli and scraplo)
-  integer :: iscrp    = 1
+  integer :: iscrp = 1
   !+ad_vars  ishape /0/ : switch for plasma cross-sectional shape calculation:
   !+ad_varc               = 0 use input kappa, triang;
   !+ad_varc               = 1 scale qlim, kappa, triang (TART)
-  integer :: ishape   = 0
+  integer :: ishape = 0
   !+ad_vars  itart /0/ : switch for tight aspect ratio models:
   !+ad_varc              = 0 use conventional aspect ratio models;
   !+ad_varc              = 1 use tight aspect ratio models
-  integer :: itart    = 0
+  integer :: itart = 0
   !+ad_vars  iwalld /1/ : switch for neutron wall load calculation:
   !+ad_varc               = 1 use scaled plasma surface area;
   !+ad_varc               = 2 use first wall area directly
-  integer :: iwalld   = 1
+  integer :: iwalld = 1
 
 end module physics_variables
 
