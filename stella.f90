@@ -399,11 +399,11 @@ subroutine stphys
   !+ad_desc  This routine calculates the physics quantities relevant to
   !+ad_desc  a stellarator device.
   !+ad_prob  None
+  !+ad_call  current_drive_variables
   !+ad_call  physics_module
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
   !+ad_call  times.h90
   !+ad_call  beamfus
@@ -432,12 +432,14 @@ subroutine stphys
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added physics_module
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use physics_module
   use physics_variables
   use process_output
@@ -445,7 +447,6 @@ subroutine stphys
   implicit none
 
   include 'build.h90'
-  include 'cdriv.h90'
   include 'times.h90'
   include 'divrt.h90'
 
@@ -579,9 +580,9 @@ subroutine stheat(outfile,iprint)
   !+ad_desc  This routine calculates the auxiliary heating power for
   !+ad_desc  a stellarator device.
   !+ad_prob  None
+  !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  cdriv.h90
   !+ad_call  stella.h90
   !+ad_call  culnbi
   !+ad_call  oblnkl
@@ -593,18 +594,19 @@ subroutine stheat(outfile,iprint)
   !+ad_hist  20/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use physics_variables
   use process_output
 
   implicit none
 
-  include 'cdriv.h90'
   include 'stella.h90'
 
   !  Arguments
@@ -1669,10 +1671,10 @@ subroutine stigma(outfile)
   !+ad_desc  This routine calculates the ignition margin at the final
   !+ad_desc  point with different stellarator confinement time scaling laws
   !+ad_prob  None
+  !+ad_call  current_drive_variables
   !+ad_call  physics_module
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  cdriv.h90
   !+ad_call  fhfac
   !+ad_call  oblnkl
   !+ad_call  osubhd
@@ -1686,18 +1688,18 @@ subroutine stigma(outfile)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added physics_module
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use physics_module
   use physics_variables
   use process_output
 
   implicit none
-
-  include 'cdriv.h90'
 
   !  Arguments
 

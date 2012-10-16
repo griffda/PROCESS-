@@ -1226,12 +1226,12 @@ subroutine burn(outfile,iprint)
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the burn time for a pulsed reactor.
   !+ad_prob  None
+  !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  pfcoil.h90
   !+ad_call  pulse.h90
   !+ad_call  vltcom.h90
-  !+ad_call  cdriv.h90
   !+ad_call  times.h90
   !+ad_call  osubhd
   !+ad_call  ovarre
@@ -1240,12 +1240,14 @@ subroutine burn(outfile,iprint)
   !+ad_hist  01/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0012
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use physics_variables
   use process_output
 
@@ -1254,7 +1256,6 @@ subroutine burn(outfile,iprint)
   include 'pfcoil.h90'
   include 'pulse.h90'
   include 'vltcom.h90'
-  include 'cdriv.h90'
   include 'times.h90'
 
   !  Arguments
@@ -1362,10 +1363,10 @@ subroutine startup(iprint)
   !+ad_desc  </PRE>
   !+ad_desc  to find the minimum auxiliary power required in start-up.
   !+ad_prob  None
+  !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  start.h90
-  !+ad_call  cdriv.h90
   !+ad_call  ineq.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
@@ -1376,19 +1377,20 @@ subroutine startup(iprint)
   !+ad_hist  02/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Not currently used
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use physics_variables
   use process_output
 
   implicit none
 
   include 'start.h90'
-  include 'cdriv.h90'
   include 'ineq.h90'
 
   !  Arguments
@@ -1683,27 +1685,27 @@ subroutine cudrv1(n,x,paux)
   !+ad_desc  This routine acts as the interface between the start-up routines
   !+ad_desc  and <A HREF="cudriv.html">CUDRIV</A>.
   !+ad_prob  None
+  !+ad_call  current_drive_variables
   !+ad_call  physics_module
   !+ad_call  physics_variables
-  !+ad_call  cdriv.h90
   !+ad_call  physics
   !+ad_call  cudrv1
   !+ad_hist  25/11/93 PJK Incorporation into PROCESS
   !+ad_hist  02/10/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added physics_module
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use physics_module
   use physics_variables
 
   implicit none
-
-  include 'cdriv.h90'
 
   !  Arguments
 

@@ -15,7 +15,6 @@ subroutine initial
   !+ad_prob  None
   !+ad_call  process_output
   !+ad_call  ineq.h90
-  !+ad_call  cdriv.h90
   !+ad_call  times.h90
   !+ad_call  divrt.h90
   !+ad_call  build.h90
@@ -70,6 +69,7 @@ subroutine initial
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_hist  15/10/12 PJK Removed physics variables from list
   !+ad_hist  15/10/12 PJK Removed numerics variables from list
+  !+ad_hist  16/10/12 PJK Removed current drive variables from list
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -80,7 +80,6 @@ subroutine initial
   implicit none
 
   include 'ineq.h90'
-  include 'cdriv.h90'
   include 'times.h90'
   include 'divrt.h90'
   include 'build.h90'
@@ -161,40 +160,6 @@ subroutine initial
   tohsmn   = 1.0D0
   tpkmax   = 600.0D0
   walalw   = 1.0D0
-
-  !  Current drive quantities
-
-  beamwd   = 0.31D0
-  bigq     = 0.0D0
-  bootipf  = 0.0D0
-  bscfmax  = 0.9D0
-  cboot    = 1.0D0
-  cnbeam   = 0.0D0
-  echpwr   = 0.0D0
-  echpwr0  = 2.0D6
-  echwpow  = 0.0D0
-  enbeam   = 1.0D3
-  etaech   = 0.5D0
-  etalh    = 0.5D0
-  etanbi   = 0.5D0
-  etaof    = 0.5D0
-  feffcd   = 1.0D0
-  frbeam   = 1.05D0
-  ftritbm  = 1.0D-6
-  gamcd    = 0.0D0
-  iefrf    = 5
-  irfcd    = 1
-  pheat    = 0.0D0
-  pinjalw  = 25.0D0
-  pinje    = 0.0D0
-  pinji    = 0.0D0
-  plhybd   = 0.0D0
-  pnbeam   = 0.0D0
-  pofcd    = 0.0D0
-  pwplh    = 0.0D0
-  pwpnb    = 0.0D0
-  taubeam  = 0.0D0
-  tbeamin  = 3.0D0
 
   !  Times for different phases
 
@@ -1049,13 +1014,13 @@ subroutine check
   !+ad_desc  This routine performs a sanity check of the input variables
   !+ad_desc  and ensures other dependent variables are given suitable values.
   !+ad_prob  None
+  !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  global_variables
   !+ad_call  numerics
   !+ad_call  process_output
   !+ad_call  bldgvol.h90
   !+ad_call  build.h90
-  !+ad_call  cdriv.h90
   !+ad_call  htpwr.h90
   !+ad_call  pfcoil.h90
   !+ad_call  pulse.h90
@@ -1071,11 +1036,13 @@ subroutine check
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_hist  15/10/12 PJK Added global_variables module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use global_variables
   use physics_variables
   use process_output
@@ -1084,7 +1051,6 @@ subroutine check
 
   include 'bldgvol.h90'
   include 'build.h90'
-  include 'cdriv.h90'
   include 'htpwr.h90'
   include 'pfcoil.h90'
   include 'pulse.h90'

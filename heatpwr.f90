@@ -13,9 +13,9 @@ subroutine power1
   !+ad_desc  This routine calculates the first part of the heat transport
   !+ad_desc  and plant power balance constituents.
   !+ad_prob  None
+  !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  blanket.h90
-  !+ad_call  cdriv.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  pfcoil.h90
@@ -26,17 +26,18 @@ subroutine power1
   !+ad_call  cryo
   !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use physics_variables
 
   implicit none
 
   include 'blanket.h90'
-  include 'cdriv.h90'
   include 'fwblsh.h90'
   include 'htpwr.h90'
   include 'pfcoil.h90'

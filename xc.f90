@@ -14,9 +14,9 @@ subroutine loadxc
   !+ad_desc  into the optimisation variables array <CODE>XCM</CODE>.
   !+ad_prob  None
   !+ad_call  numerics
+  !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
@@ -32,18 +32,19 @@ subroutine loadxc
   !+ad_hist  09/10/12 PJK Initial F90 version
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use numerics
   use physics_variables
 
   implicit none
 
   include 'ineq.h90'
-  include 'cdriv.h90'
   include 'tfcoil.h90'
   include 'build.h90'
   include 'pfcoil.h90'
@@ -259,10 +260,10 @@ subroutine convxc(xc,nn)
   !+ad_desc  This subroutine converts the scaled iteration variables back to
   !+ad_desc  their real values.
   !+ad_prob  None
+  !+ad_call  current_drive_variables
   !+ad_call  numerics
   !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
   !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
@@ -276,18 +277,19 @@ subroutine convxc(xc,nn)
   !+ad_hist  16/11/11 PJK Initial F90 version
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use numerics
   use physics_variables
 
   implicit none
 
   include 'ineq.h90'
-  include 'cdriv.h90'
   include 'tfcoil.h90'
   include 'build.h90'
   include 'pfcoil.h90'

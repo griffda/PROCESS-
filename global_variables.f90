@@ -23,7 +23,7 @@ module global_variables
 
   public
 
-  !+ad_vars  icase : string : description of run or PROCESS version number
+  !+ad_vars  icase : description of run or PROCESS version number
   character(len=48) :: icase = 'PROCESS standard D-T tokamak model'
 
 end module global_variables
@@ -503,6 +503,110 @@ module physics_variables
 
 end module physics_variables
 
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+module current_drive_variables
+
+  !+ad_name  current_drive_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  current drive system
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to tokamak
+  !+ad_desc  current drive systems. It is derived from <CODE>include</CODE> file
+  !+ad_desc  <CODE>cdriv.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  16/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  beamwd /0.31/ : beam width (m)
+  real(kind(1.0D0)) :: beamwd = 0.31D0
+  !+ad_vars  bigq : P_fusion / P_injection
+  real(kind(1.0D0)) :: bigq = 0.0D0
+  !+ad_vars  bootipf : bootstrap current fraction
+  real(kind(1.0D0)) :: bootipf = 0.0D0
+  !+ad_vars  bscfmax /0.9/ : max fraction of plasma current from bootstrap;
+  !+ad_varc                  if bscfmax < 0, bootstrap fraction = abs(bscfmax)
+  real(kind(1.0D0)) :: bscfmax = 0.9D0
+  !+ad_vars  cboot /1.0/ : bootstrap current fraction multiplier
+  real(kind(1.0D0)) :: cboot = 1.0D0
+  !+ad_vars  cnbeam : neutral beam current (A)
+  real(kind(1.0D0)) :: cnbeam = 0.0D0
+  !+ad_vars  echpwr : ECH power (W)
+  real(kind(1.0D0)) :: echpwr = 0.0D0
+  !+ad_vars  echpwr0 /2.0D6/ : startup ECH power (W)
+  real(kind(1.0D0)) :: echpwr0 = 2.0D6
+  !+ad_vars  echwpow : ECH wall plug power (W)
+  real(kind(1.0D0)) :: echwpow = 0.0D0
+  !+ad_vars  enbeam /1.0D3/ : neutral beam energy (keV) (iteration variable 19)
+  real(kind(1.0D0)) :: enbeam = 1.0D3
+  !+ad_vars  etaech /0.5/ : ECH wall plug to injector efficiency
+  real(kind(1.0D0)) :: etaech = 0.5D0
+  !+ad_vars  etalh /0.5/ : lower hybrid wall plug to injector efficiency
+  real(kind(1.0D0)) :: etalh = 0.5D0
+  !+ad_vars  etanbi /0.5/ : neutral beam wall plug to injector efficiency
+  real(kind(1.0D0)) :: etanbi = 0.5D0
+  !+ad_vars  etaof /0.5/ : OFCD wall plug to injector efficiency
+  real(kind(1.0D0)) :: etaof = 0.5D0
+  !+ad_vars  feffcd /1.0/ : current drive efficiency fudge factor (iteration variable 47)
+  real(kind(1.0D0)) :: feffcd = 1.0D0
+  !+ad_vars  frbeam /1.05/ : R_tangential / R_major for neutral beam injection
+  real(kind(1.0D0)) :: frbeam = 1.05D0
+  !+ad_vars  ftritbm /1.0D-6/ : fraction of beam that is tritium
+  real(kind(1.0D0)) :: ftritbm = 1.0D-6
+  !+ad_vars  gamcd : normalised current drive efficiency (A/W-m2)
+  real(kind(1.0D0)) :: gamcd = 0.0D0
+  !+ad_vars  iefrf /5/ : switch for current drive efficiency model: <OL>
+  !+ad_varc                <LI> Fenstermacher Lower Hybrid
+  !+ad_varc                <LI> Ion Cyclotron current drive
+  !+ad_varc                <LI> Fenstermacher ECH
+  !+ad_varc                <LI> Ehst Lower Hybrid
+  !+ad_varc                <LI> ITER Neutral Beam
+  !+ad_varc                <LI> new Culham Lower Hybrid model
+  !+ad_varc                <LI> new Culham ECCD model
+  !+ad_varc                <LI> new Culham Neutral Beam model
+  !+ad_varc                <LI> RFP Oscillating Field current drive </OL>
+  integer :: iefrf = 5
+  !+ad_vars  irfcd /1/ : switch for current drive calculation (1=yes,0=no)
+  integer :: irfcd = 1
+  !+ad_vars  pheat /0.0/ : heating power not used for current drive (W)
+  !+ad_varc                (iteration variable 11)
+  real(kind(1.0D0)) :: pheat = 0.0D0
+  !+ad_vars  pinjalw /25.0/ : Maximum allowable value for injected power (MW)
+  real(kind(1.0D0)) :: pinjalw = 25.0D0
+  !+ad_vars  pinje : auxiliary power to electrons (W)
+  real(kind(1.0D0)) :: pinje = 0.0D0
+  !+ad_vars  pinji : auxiliary power to ions (W)
+  real(kind(1.0D0)) :: pinji = 0.0D0
+  !+ad_vars  plhybd : lower hybrid injection power (W)
+  real(kind(1.0D0)) :: plhybd = 0.0D0
+  !+ad_vars  pnbeam : neutral beam injection power (W)
+  real(kind(1.0D0)) :: pnbeam = 0.0D0
+  !+ad_vars  pofcd : OFCD injection power (W)
+  real(kind(1.0D0)) :: pofcd = 0.0D0
+  !+ad_vars  pwplh : lower hybrid wall plug power (W)
+  real(kind(1.0D0)) :: pwplh = 0.0D0
+  !+ad_vars  pwpnb : neutral beam wall plug power (W)
+  real(kind(1.0D0)) :: pwpnb = 0.0D0
+  !+ad_vars  taubeam : neutral beam e-decay lengths to plasma centre
+  real(kind(1.0D0)) :: taubeam = 0.0D0
+  !+ad_vars  tbeamin /3.0/ : permitted neutral beam e-decay lengths to plasma centre
+  real(kind(1.0D0)) :: tbeamin = 3.0D0
+
+end module current_drive_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
 
   !  ex-blanket.h90
@@ -556,24 +660,6 @@ module wibble
        fmsbc,fmsbl,fmsdwe,fmsdwi,fmsfw,fmsoh,fmssh,fmstf
   common /marten/ &
        fmsbc,fmsbl,fmsdwe,fmsdwi,fmsfw,fmsoh,fmssh,fmstf
-
-  !  ex cdriv.h90
-
-  real(kind(1.0D0)) :: &
-       beamwd,bigq,bootipf,bscfmax,cboot,cnbeam,echpwr,&
-       echpwr0,echwpow,enbeam,etaech,etalh,etanbi,etaof,&
-       feffcd,frbeam,ftritbm,gamcd,pheat,pinjalw,pinje,&
-       pinji,plhybd,pnbeam,pofcd,pwplh,pwpnb,taubeam,&
-       tbeamin
-  common /cdriv0/ &
-       beamwd,bigq,bootipf,bscfmax,cboot,cnbeam,echpwr,&
-       echpwr0,echwpow,enbeam,etaech,etalh,etanbi,etaof,&
-       feffcd,frbeam,ftritbm,gamcd,pheat,pinjalw,pinje,&
-       pinji,plhybd,pnbeam,pofcd,pwplh,pwpnb,taubeam,&
-       tbeamin
-
-  integer :: iefrf,irfcd
-  common /cdriv1/ iefrf,irfcd
 
   !  ex cost.h90
 

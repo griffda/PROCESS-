@@ -41,17 +41,20 @@ module physics_module
   !+ad_desc  for a tokamak device.
   !+ad_prob  None
   !+ad_call  constants
+  !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  maths_library
   !+ad_hist  16/10/12 PJK Initial version of module
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use current_drive_variables
   use physics_variables
   use process_output
   use maths_library
@@ -76,7 +79,6 @@ contains
     !+ad_desc  characteristics for a tokamak device.
     !+ad_prob  None
     !+ad_call  build.h90
-    !+ad_call  cdriv.h90
     !+ad_call  divrt.h90
     !+ad_call  pulse.h90
     !+ad_call  times.h90
@@ -127,7 +129,6 @@ contains
 
     implicit none
 
-    include 'cdriv.h90'
     include 'times.h90'
     include 'divrt.h90'
     include 'build.h90'
@@ -3096,7 +3097,6 @@ contains
     !+ad_desc  This routine calculates the ignition margin at the final point
     !+ad_desc  with different scalings.
     !+ad_prob  None
-    !+ad_call  cdriv.h90
     !+ad_call  fhfac
     !+ad_call  oblnkl
     !+ad_call  osubhd
@@ -3115,8 +3115,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'cdriv.h90'
 
     !  Arguments
 
@@ -3231,7 +3229,6 @@ contains
     !+ad_desc  using routine <A HREF="zeroin.html">ZEROIN</A> to adjust the
     !+ad_desc  value of <CODE>hhh</CODE>, the confinement time H-factor.
     !+ad_prob  None
-    !+ad_call  cdriv.h90
     !+ad_call  pcond
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  01/04/98 PJK Modified PCOND arguments, and adding coding for
@@ -3249,8 +3246,6 @@ contains
     implicit none
 
     real(kind(1.0D0)) :: fhz
-
-    include 'cdriv.h90'
 
     !  Arguments
 

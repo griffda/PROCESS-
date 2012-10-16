@@ -16,15 +16,18 @@ module function_evaluator
   !+ad_desc  This module contains the function evaluators required
   !+ad_desc  by the two equation solvers in the code.
   !+ad_prob  None
+  !+ad_call  current_drive_variables
   !+ad_call  numerics
   !+ad_call  physics_variables
   !+ad_hist  10/10/12 PJK Initial version of module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use numerics
   use physics_variables
 
@@ -260,7 +263,6 @@ contains
     !+ad_desc  <P>Each equation for <CODE>fc<CODE> gives a value of the
     !+ad_desc  order of unity for the sake of the numerics.
     !+ad_prob  None
-    !+ad_call  cdriv.h90
     !+ad_call  tfcoil.h90
     !+ad_call  cost.h90
     !+ad_call  pwrcom.h90
@@ -275,7 +277,6 @@ contains
 
     implicit none
 
-    include 'cdriv.h90'
     include 'tfcoil.h90'
     include 'cost.h90'
     include 'pwrcom.h90'

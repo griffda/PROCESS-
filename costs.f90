@@ -43,17 +43,20 @@ module costs_module
   !+ad_desc  split into separate cost accounts.
   !+ad_prob  None
   !+ad_call  constants
+  !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_hist  15/10/12 PJK Initial version of module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use current_drive_variables
   use physics_variables
   use process_output
 
@@ -62,7 +65,6 @@ module costs_module
   include 'blanket.h90'
   include 'bldgvol.h90'
   include 'build.h90'
-  include 'cdriv.h90'
   include 'cost.h90'
   include 'divrt.h90'
   include 'fwblsh.h90'

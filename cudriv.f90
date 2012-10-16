@@ -14,9 +14,9 @@ subroutine cudriv(outfile,iprint)
   !+ad_desc  drive system, using a choice of models for the current drive
   !+ad_desc  efficiency.
   !+ad_prob  None
+  !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  cdriv.h90
   !+ad_call  culecd
   !+ad_call  cullhy
   !+ad_call  culnbi
@@ -31,17 +31,17 @@ subroutine cudriv(outfile,iprint)
   !+ad_hist  22/08/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use physics_variables
   use process_output
 
   implicit none
-
-  include 'cdriv.h90'
 
   !  Arguments
 
@@ -1600,7 +1600,6 @@ subroutine nbeam(outfile,iprint)
   !+ad_desc  <P>The output from the routine is <CODE>pwpnb</CODE>.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  cdriv.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
@@ -1609,11 +1608,10 @@ subroutine nbeam(outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use process_output
 
   implicit none
-
-  include 'cdriv.h90'
 
   !  Arguments
 
@@ -1663,7 +1661,6 @@ subroutine ech(outfile,iprint)
   !+ad_desc  included in PROCESS in January 1992 by P. C. Shipe.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  cdriv.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  14/09/01 PJK Initial version
@@ -1674,11 +1671,10 @@ subroutine ech(outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use process_output
 
   implicit none
-
-  include 'cdriv.h90'
 
   !  Arguments
 
@@ -1719,7 +1715,6 @@ subroutine lwhymod(outfile,iprint)
   !+ad_desc  PROCESS in January 1992 by P. C . Shipe.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  cdriv.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  27/07/11 PJK Initial F90 version
@@ -1729,11 +1724,10 @@ subroutine lwhymod(outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use process_output
 
   implicit none
-
-  include 'cdriv.h90'
 
   !  Arguments
 

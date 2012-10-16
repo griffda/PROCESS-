@@ -12,6 +12,7 @@ module scan_module
   !+ad_desc  This module contains routines to perform a parameter scan
   !+ad_desc  over a range of values of a particular scanning variable.
   !+ad_prob  None
+  !+ad_call  current_drive_variables
   !+ad_call  global_variables
   !+ad_call  numerics
   !+ad_call  physics_variables
@@ -20,11 +21,13 @@ module scan_module
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_hist  15/10/12 PJK Added global_variables module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use global_variables
   use numerics
   use physics_variables
@@ -86,7 +89,6 @@ contains
   !+ad_desc  a number of times, by performing a sweep over a range of
   !+ad_desc  values of a particular variable.
   !+ad_prob  None
-  !+ad_call  cdriv.h90
   !+ad_call  pwrcom.h90
   !+ad_call  tfcoil.h90
   !+ad_call  pfcoil.h90
@@ -113,7 +115,6 @@ contains
 
   implicit none
 
-  include 'cdriv.h90'
   include 'pwrcom.h90'
   include 'tfcoil.h90'
   include 'pfcoil.h90'

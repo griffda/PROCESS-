@@ -463,26 +463,27 @@ subroutine portsz
   !+ad_desc       <P><LI>prtszreq : required port size (m) </UL>
   !+ad_prob  None
   !+ad_call  constants
+  !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  cdriv.h90
   !+ad_call  tfcoil.h90
   !+ad_hist  27/07/11 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use current_drive_variables
   use physics_variables
 
   implicit none
 
   include 'build.h90'
   include 'tfcoil.h90'
-  include 'cdriv.h90'
 
   !  Arguments
 

@@ -666,11 +666,11 @@ subroutine rfpphy
   !+ad_desc  This subroutine calculates the plasma physics of the
   !+ad_desc  reversed field pinch system.
   !+ad_prob  None
+  !+ad_call  current_drive_variables
   !+ad_call  physics_module
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  cdriv.h90
   !+ad_call  divrt.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
@@ -698,6 +698,7 @@ subroutine rfpphy
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added physics_module
+  !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
   !+ad_docc                Scoping Phase Report, January 1987
@@ -705,13 +706,13 @@ subroutine rfpphy
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_variables
   use physics_module
   use physics_variables
   use process_output
 
   implicit none
 
-  include 'cdriv.h90'
   include 'times.h90'
   include 'divrt.h90'
   include 'build.h90'
