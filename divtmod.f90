@@ -17,6 +17,7 @@ subroutine divcall(outfile,iprint)
   !+ad_prob  Many of the parameters are scaled from the ~1990 ITER point
   !+ad_prob  (R=6.00, Bt = 4.85 T, Bp = 1.07 T, l_null-strike = 1.50 m).
   !+ad_prob  Variation far from these parameters is uncertain.
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
@@ -41,11 +42,13 @@ subroutine divcall(outfile,iprint)
   !+ad_hist  24/09/12 PJK Swapped argument order
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
 
@@ -67,7 +70,7 @@ subroutine divcall(outfile,iprint)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   if (itart == 1) then
-     call divtart(rmajor,rminor,triang,scrapli,vgap,pi,pdivt,hldiv, &
+     call divtart(rmajor,rminor,triang,scrapli,vgap,pdivt,hldiv, &
           iprint,outfile)
      return
   end if
@@ -285,16 +288,20 @@ subroutine divert(adas,aion,anginc,delne,c1div,c2div,c3div,c4div, &
   !+ad_desc  This subroutine performs the iteration described in M. Harrison's
   !+ad_desc  and Kukushkin's analytic ITER divertor model.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  erprcy
   !+ad_call  ftdiv
   !+ad_call  ftpts
   !+ad_call  gammash
   !+ad_hist  17/11/11 PJK Initial F90 version
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  Report ITER-IL-PH-13-9-e12
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use constants
 
   implicit none
 
@@ -312,7 +319,6 @@ subroutine divert(adas,aion,anginc,delne,c1div,c2div,c3div,c4div, &
   real(kind(1.0D0)), parameter :: c27 = 0.2857143D0
   real(kind(1.0D0)), parameter :: ei = 13.6D0
   real(kind(1.0D0)), parameter :: epsilon = 0.001D0
-  real(kind(1.0D0)), parameter :: pi = 3.141592653589793D0
   real(kind(1.0D0)), parameter :: relerr = 1.0D-9
 
   integer :: i
@@ -630,7 +636,7 @@ end subroutine divert
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine divtart(rmajor,rminor,triang,scrapli,vgap,pi,pdivt,hldiv, &
+subroutine divtart(rmajor,rminor,triang,scrapli,vgap,pdivt,hldiv, &
      iprint,outfile)
 
   !+ad_name  divtart
@@ -643,7 +649,6 @@ subroutine divtart(rmajor,rminor,triang,scrapli,vgap,pi,pdivt,hldiv, &
   !+ad_args  triang : input real : plasma triangularity
   !+ad_args  scrapli : input real : inboard scrape-off width (m)
   !+ad_args  vgap : input real : top scrape-off width (m)
-  !+ad_args  pi : input real : 3.14...
   !+ad_args  pdivt : input real : power to the divertor (MW)
   !+ad_args  hldiv : output real : heat load on the divertor (MW/m2)
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
@@ -653,6 +658,7 @@ subroutine divtart(rmajor,rminor,triang,scrapli,vgap,pi,pdivt,hldiv, &
   !+ad_desc  divertor chamber by the action of a gaseous target. Each divertor is
   !+ad_desc  assumed to be approximately triangular in the R,Z plane.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  process_output
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
@@ -662,12 +668,14 @@ subroutine divtart(rmajor,rminor,triang,scrapli,vgap,pi,pdivt,hldiv, &
   !+ad_hist  14/05/96 PJK Improved calculation of TART divertor area
   !+ad_hist  08/05/12 PJK Initial F90 version; Moved TART model into new routine
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  16/10/12 PJK Added constants; removed argument pi
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 64: Figure 2
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use process_output
 
   implicit none
@@ -675,7 +683,7 @@ subroutine divtart(rmajor,rminor,triang,scrapli,vgap,pi,pdivt,hldiv, &
   !  Arguments
 
   integer, intent(in) :: iprint, outfile
-  real(kind(1.0D0)), intent(in) :: rmajor,rminor,triang,scrapli,vgap,pi,pdivt
+  real(kind(1.0D0)), intent(in) :: rmajor,rminor,triang,scrapli,vgap,pdivt
   real(kind(1.0D0)), intent(out) :: hldiv
 
   !  Local variables

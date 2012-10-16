@@ -510,13 +510,17 @@ subroutine cfnbi(afast,efast,te,ne,nd,nt,zeffai,xlmbda,fpion)
   !+ad_desc  This routine calculates the fast particle energy coupled to
   !+ad_desc  the ions in the neutral beam system.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  xlmbdabi
   !+ad_hist  15/06/92 PJK Initial upgraded version
   !+ad_hist  22/08/12 PJK Initial F90 version
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use constants
 
   implicit none
 
@@ -534,10 +538,7 @@ subroutine cfnbi(afast,efast,te,ne,nd,nt,zeffai,xlmbda,fpion)
   real(kind(1.0D0)), parameter :: atmdt = 2.5D0
   real(kind(1.0D0)), parameter :: atmt = 3.0D0
   real(kind(1.0D0)), parameter :: c = 3.0D8
-  real(kind(1.0D0)), parameter :: echarge = 1.6022D-19
   real(kind(1.0D0)), parameter :: me = 9.1D-31
-  real(kind(1.0D0)), parameter :: mproton = 1.67D-27
-  real(kind(1.0D0)), parameter :: pi = 3.1415926D0
   real(kind(1.0D0)), parameter :: zd = 1.0D0
   real(kind(1.0D0)), parameter :: zt = 1.0D0
 

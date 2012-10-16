@@ -210,6 +210,7 @@ subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,outfile,iprint)
   !+ad_desc  For a synopsis of the model, see the description in routine
   !+ad_desc  <A HREF="blanket.html">blanket</A>.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  process_output
   !+ad_call  blanket.h90
   !+ad_call  flow
@@ -231,6 +232,7 @@ subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,outfile,iprint)
   !+ad_hist  --/--/-- PK  Initial version
   !+ad_hist  27/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  Blanket and Energy Conversion Model for Fusion Reactors,
   !+ad_docc  Dr. P.J. Karditsas, AEA Technology, Theoretical and Strategic Studies
@@ -239,6 +241,7 @@ subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use process_output
 
   implicit none
@@ -260,7 +263,7 @@ subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,outfile,iprint)
        fi,fo,g,ha1,ha2,ha3,ha4,ha5,ha6,ha7,hc,hg1,hgc,hgh,hgin, &
        hgr,hhe,hhes,hhi,hhsat,hi,hinsat,hles,hres,hrsat,hsat1, &
        hsi,hso,htc,kf,kfs,ksolid,lc,lp,lr,mf,mf1,mf2,mp,ms,mtb,p1, &
-       per,peri,pero,pi,pran,prans,px,qav,qc,qfusion,qin,qpump,qr, &
+       per,peri,pero,pran,prans,px,qav,qc,qfusion,qin,qpump,qr, &
        qsg,rhof,rhohi,rhori,sg1,sgc,sgh,sgin,sgr,shi,si,sum1,sum2, &
        sum3,sum4,tb,tfi,tfo,thes,thsat,ti,tinsat,tle,tles,tres, &
        trsat,ts,tsat1,tsi,vc,vhi,vhsat,vinsat,viscf,viscfs,vri,vrsat, &
@@ -283,7 +286,6 @@ subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,outfile,iprint)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   tol = 0.0001D0
-  pi = 4.0D0*atan(1.0D0)
 
   !  Common block Variables
   !  ----------------------

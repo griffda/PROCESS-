@@ -215,16 +215,19 @@ subroutine tfcpwr(outfile,iprint,ntfc,ettfmj,itfka, &
   !+ad_desc  FEDC/ORNL, April 1987, modified by J. Galambos in 1991 to
   !+ad_desc  run in TETRA, and included in PROCESS in 1992 by P. C. Shipe.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  process_output
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use process_output
 
   implicit none
@@ -267,7 +270,7 @@ subroutine tfcpwr(outfile,iprint,ntfc,ettfmj,itfka, &
   ntfbkr = ntfc/ncpbkr  !  number of circuit breakers
   lptfcs = ltfth/ntfc  !  inductance per TF coil, Henries
   albusa = itfka/djmka  !  aluminium bus section area, sq cm
-  tfbusl = 8.0D0*3.1416D0*rmajor + &  !  total TF system bus length, m
+  tfbusl = 8.0D0*pi*rmajor + &  !  total TF system bus length, m
        (1.0D0+ntfbkr)*(12.0D0*rmajor+80.0D0) + &
        0.2D0*itfka*sqrt(ntfc*rptfc*1000.0D0)
   albuswt = 2.7D0*albusa*tfbusl/1.0D4
@@ -383,6 +386,7 @@ subroutine pfpwr(outfile,iprint)
   !+ad_desc  The reactive (inductive) components use waves to calculate the
   !+ad_desc  <I>dI/dt</I> at the time periods.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
@@ -397,11 +401,13 @@ subroutine pfpwr(outfile,iprint)
   !+ad_hist  20/09/11 PJK Removed dble calls
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
 

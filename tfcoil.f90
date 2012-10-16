@@ -14,6 +14,7 @@ subroutine tfcoil(outfile,iprint)
   !+ad_desc  If the TF coils are superconducting the calculations are performed
   !+ad_desc  in routine <A HREF="sctfcoil.html">sctfcoil</A> instead.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
@@ -29,11 +30,13 @@ subroutine tfcoil(outfile,iprint)
   !+ad_hist  08/10/12 PJK Swapped concoptf argument order
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
 
@@ -164,6 +167,7 @@ subroutine concoptf(outfile,iprint)
   !+ad_desc  This subroutine calculates various additional parameters for a
   !+ad_desc  resistive TF coil set, including for TART machines.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
@@ -177,11 +181,13 @@ subroutine concoptf(outfile,iprint)
   !+ad_hist  08/10/12 PJK Swapped argument order
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
 
@@ -265,7 +271,7 @@ subroutine concoptf(outfile,iprint)
 
         !  Volume and resistive power losses of TART centrepost
 
-        call cpost(pi,rtop,ztop,rmid,hmax,ritfc,rhocp,fcoolcp,volcp,prescp)
+        call cpost(rtop,ztop,rmid,hmax,ritfc,rhocp,fcoolcp,volcp,prescp)
 
      end if
 
@@ -320,6 +326,7 @@ subroutine cntrpst(outfile,iprint)
   !+ad_desc  tight aspect ratio tokamak. The centrepost is assumed to be tapered,
   !+ad_desc  i.e. narrowest on the midplane (z=0).
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
@@ -332,11 +339,13 @@ subroutine cntrpst(outfile,iprint)
   !+ad_hist  08/05/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
 
@@ -480,14 +489,13 @@ end subroutine cntrpst
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine cpost(pi,rtop,ztop,rmid,hmax,curr,rho,fcool,volume,respow)
+subroutine cpost(rtop,ztop,rmid,hmax,curr,rho,fcool,volume,respow)
 
   !+ad_name  cpost
   !+ad_summ  Calculates the volume and resistive power losses of a TART centrepost
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  pi     : input real : 3.1415...
   !+ad_args  rtop   : input real : Radius of the ends of the centrepost (m)
   !+ad_args  ztop   : input real : Distance from the midplane to the top of the
   !+ad_argc                        tapered section (m)
@@ -505,20 +513,23 @@ subroutine cpost(pi,rtop,ztop,rmid,hmax,curr,rho,fcool,volume,respow)
   !+ad_desc  plasma. Above/below the plasma, the centrepost is cylindrical.
   !+ad_desc  The shape of the taper is assumed to be an arc of a circle.
   !+ad_prob  None
-  !+ad_call  None
+  !+ad_call  constants
   !+ad_hist  21/10/96 PJK Initial version
   !+ad_hist  08/05/12 PJK Initial F90 version
+  !+ad_hist  16/10/12 PJK Added constants; removed argument pi
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, pp.33,34
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
+
   implicit none
 
   !  Arguments
 
-  real(kind(1.0D0)), intent(in) :: pi,rtop,ztop,rmid,hmax,curr,rho,fcool
+  real(kind(1.0D0)), intent(in) :: rtop,ztop,rmid,hmax,curr,rho,fcool
   real(kind(1.0D0)), intent(out) :: volume,respow
 
   !  Local variables

@@ -15,6 +15,7 @@ subroutine rfptfc(outfile,iprint)
   !+ad_desc  of a reversed field pinch machine. The coils are assumed to be
   !+ad_desc  circular.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
@@ -28,11 +29,13 @@ subroutine rfptfc(outfile,iprint)
   !+ad_hist  09/05/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
 
@@ -205,6 +208,7 @@ subroutine rfppfc(outfile,iprint)
   !+ad_desc  of a reversed field pinch machine. The coils are scaled from the
   !+ad_desc  TITAN-I OH/EF coil set.
   !+ad_prob  bpf, bpf2, forcepf are never set...
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
@@ -222,11 +226,13 @@ subroutine rfppfc(outfile,iprint)
   !+ad_hist  09/05/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
 
@@ -877,7 +883,7 @@ subroutine rfpphy
 
   !  Calculate volt-second requirements (not done!)
 
-  !call vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rmu0,rplas, &
+  !call vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
   !      plascur,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
 
   !  Calculate auxiliary physics related information

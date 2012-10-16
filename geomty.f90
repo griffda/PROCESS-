@@ -17,6 +17,7 @@ subroutine geomty
   !+ad_args  iprint : input integer : Switch to write output to file (1=yes)
   !+ad_desc  This subroutine calculates the plasma geometry parameters.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  rfp.h90
@@ -31,12 +32,14 @@ subroutine geomty
   !+ad_hist  18/01/99 PJK New version incorporating upgraded coding and
   !+ad_hisc               improved algorithms for double-null plasmas
   !+ad_hist  14/11/11 PJK Initial F90 version
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK14, pp.41-43
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
 
   implicit none
@@ -482,12 +485,11 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: rc,third,twopi,vin,vout
+    real(kind(1.0D0)) :: rc,third,vin,vout
 
     !--End of preamble--CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
     third = 1.0D0/3.0D0
-    twopi = 2.0D0*pi
 
     rc = rmajor - rminor + xi
     vin = twopi * xi * &

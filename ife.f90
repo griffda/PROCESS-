@@ -398,6 +398,7 @@ subroutine ifephy(outfile,iprint)
   !+ad_desc  This routine calculates the physics parameters of an Inertial Fusion
   !+ad_desc  Energy power plant.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  ife.h90
@@ -413,12 +414,14 @@ subroutine ifephy(outfile,iprint)
   !+ad_hist  24/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, pp.68,85
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
 
@@ -576,10 +579,12 @@ subroutine iondrv(aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf, &
   !+ad_desc  complete, so it is recommended that the simple model is used
   !+ad_desc  (set <CODE>ISIMP=1</CODE>)
   !+ad_prob  See above
+  !+ad_call  constants
   !+ad_call  cbeam
   !+ad_call  betgam
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  24/09/12 PJK Initial F90 version
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  Heavy-ion Driver Design and Scaling, R. Bieri et al.,
   !+ad_docc      Fusion Technology, vol.21 (1992) 1583
@@ -587,6 +592,8 @@ subroutine iondrv(aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf, &
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use constants
 
   implicit none
 
@@ -599,11 +606,7 @@ subroutine iondrv(aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf, &
 
   !  Local variables
 
-  real(kind(1.0D0)), parameter :: degrad = 0.01745329251D0
-  real(kind(1.0D0)), parameter :: echrge = 1.60217733D-19
-  real(kind(1.0D0)), parameter :: mprot  = 1.6726231D-27
-  real(kind(1.0D0)), parameter :: c2     = 8.98755178737D16
-  real(kind(1.0D0)), parameter :: pi     = 3.141592653589793D0
+  real(kind(1.0D0)), parameter :: c2 = 8.98755178737D16
   integer, parameter :: isimp = 1  !  Switch for simple model (1=yes)
 
   real(kind(1.0D0)) :: ci,de,dgap,dlcore,drcore,e,eomc2,fins,floss, &
@@ -622,7 +625,7 @@ subroutine iondrv(aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf, &
 
      !  Electron charge / (proton mass * c**2)
 
-     eomc2 = echrge / (mprot*c2)
+     eomc2 = echarge / (mproton*c2)
 
      !  Degrees to radians
 
@@ -679,8 +682,8 @@ subroutine iondrv(aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf, &
      !  Transport beam radius (m)
 
      tbrad = ( (emitt**2 * sig0 * c2)/(sig**2 * bmax/1.5D0 * etai * &
-          sqrt(vi)) )**(0.333333D0) * sqrt(2.0D0 * aaion * mprot / &
-          (qion * echrge))
+          sqrt(vi)) )**(0.333333D0) * sqrt(2.0D0 * aaion * mproton / &
+          (qion * echarge))
 
      !  Extractor voltage (V)
 
@@ -705,7 +708,7 @@ subroutine iondrv(aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf, &
 
      !  Pulse length at injection (m)
 
-     lpi = taui * sqrt( 2.0D0 * qion * echrge * vi / (aaion * mprot) )
+     lpi = taui * sqrt( 2.0D0 * qion * echarge * vi / (aaion * mproton) )
 
      !  Initial voltage gradient (V/m)
 
@@ -736,8 +739,8 @@ subroutine iondrv(aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf, &
 
      !  Pulse length (m)
 
-     lpfo = taui * vi / vfo * sqrt( 2.0D0 * qion * echrge * vfo / &
-          (aaion * mprot) )
+     lpfo = taui * vi / vfo * sqrt( 2.0D0 * qion * echarge * vfo / &
+          (aaion * mproton) )
 
      !  Length of the low energy transport stage (m)
      !  (rearrangement of integral of PHI(V).dl)
@@ -747,7 +750,7 @@ subroutine iondrv(aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf, &
      !  End of Pulse Compression Stage:
      !  Pulse length = final pulse length (m)
 
-     lpf = tauf * sqrt( 2.0D0 * qion * echrge * vf / (aaion * mprot) )
+     lpf = tauf * sqrt( 2.0D0 * qion * echarge * vf / (aaion * mproton) )
      lppc = lpf
 
      !  Length of the pulse compression region (m)
@@ -846,7 +849,7 @@ subroutine iondrv(aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf, &
 
      lq = ( emitt * etai * sig0**2 * sqrt(c2*vi) / &
           (sig*(bmax/1.5D0)**2) )**(0.333333D0) * &
-          sqrt(2.0D0*aaion*mprot/(qion*echrge))
+          sqrt(2.0D0*aaion*mproton/(qion*echarge))
 
      write(*,*) '   lq = ',lq
 
@@ -1037,13 +1040,11 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: echrge = 1.60217733D-19
-    real(kind(1.0D0)), parameter :: mprot = 1.6726231D-27
     real(kind(1.0D0)), parameter :: c2 = 8.98755178737D16
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    betgam = sqrt( 2.0D0*qion*echrge*v / (aaion*mprot*c2) )
+    betgam = sqrt( 2.0D0*qion*echarge*v / (aaion*mproton*c2) )
 
   end function betgam
 
@@ -1242,6 +1243,7 @@ subroutine ifebld(outfile,iprint)
   !+ad_desc  This routine constructs the build of an inertial fusion energy device
   !+ad_desc  and calculates the material volumes for the device core.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  process_output
   !+ad_call  ife.h90
   !+ad_call  genbld
@@ -1253,12 +1255,14 @@ subroutine ifebld(outfile,iprint)
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  24/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.52
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use process_output
 
   implicit none
@@ -1438,7 +1442,6 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: pi = 3.141592653589793D0
     integer :: i,j
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1575,8 +1578,6 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: pi = 3.141592653589793D0
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Careful choice of thicknesses, and assuming that the FLiBe
@@ -1627,7 +1628,6 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: pi = 3.141592653589793D0
     real(kind(1.0D0)), parameter :: third  = 1.0D0/3.0D0
     real(kind(1.0D0)) :: chcylh,ddz,dvol
     integer :: i,j
@@ -1793,7 +1793,6 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: pi = 3.141592653589793D0
     real(kind(1.0D0)), parameter :: third = 1.0D0/3.0D0
     real(kind(1.0D0)) :: chcylh,ddz,dvol
     integer :: i,j

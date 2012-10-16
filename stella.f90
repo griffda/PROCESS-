@@ -231,6 +231,7 @@ subroutine stbild(outfile,iprint)
   !+ad_desc  as the actual radial and vertical build thicknesses vary with
   !+ad_desc  toroidal angle.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  divrt.h90
@@ -244,11 +245,13 @@ subroutine stbild(outfile,iprint)
   !+ad_hist  20/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
 
@@ -728,6 +731,7 @@ subroutine stcoil(outfile,iprint)
   !+ad_desc  This routine calculates the properties of the TF coils for
   !+ad_desc  a stellarator device.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  tfcoil.h90
@@ -740,11 +744,13 @@ subroutine stcoil(outfile,iprint)
   !+ad_hist  20/07/94 PJK Initial version
   !+ad_hist  20/09/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
 
   implicit none
@@ -1374,13 +1380,16 @@ contains
     !+ad_desc  <P>The data are estimated from pictures of the Wendelstein
     !+ad_desc  VII-X coil set.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  constants
     !+ad_hist  11/07/94 PJK Initial version
     !+ad_hist  20/09/12 PJK Initial F90 version
+    !+ad_hist  16/10/12 PJK Added constants
     !+ad_stat  Okay
     !+ad_docs  None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    use constants
 
     implicit none
 
@@ -1392,7 +1401,6 @@ contains
     !  Local variables
 
     real(kind(1.0D0)), dimension(58,5) :: philoc
-    real(kind(1.0D0)), parameter :: twopi = 6.28318530717958648D0
     integer :: itheta
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

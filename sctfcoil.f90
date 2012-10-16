@@ -16,6 +16,7 @@ subroutine sctfcoil(outfile,iprint)
   !+ad_desc  and fields.
   !+ad_desc  <P>It is a variant from the original FEDC/Tokamak systems code.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  fwblsh.h90
@@ -28,11 +29,13 @@ subroutine sctfcoil(outfile,iprint)
   !+ad_hist  25/07/11 PJK Simplified outboard leg cross-section
   !+ad_hist  10/05/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
 
   implicit none
@@ -377,7 +380,7 @@ subroutine stresscl
   !+ad_desc  This subroutine sets up the stress calculations for the
   !+ad_desc  TF coil set.
   !+ad_prob  None
-  !+ad_call  physics_variables
+  !+ad_call  constants
   !+ad_call  build.h90
   !+ad_call  tfcoil.h90
   !+ad_call  eyngeff
@@ -386,12 +389,13 @@ subroutine stresscl
   !+ad_call  tfstress
   !+ad_hist  10/05/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use physics_variables
+  use constants
 
   implicit none
 
@@ -517,16 +521,19 @@ subroutine tfstress(nu,rad,ey,j,sigr,sigt,deflect,iflag)
   !+ad_prob  Simple (correct) reordering of assignment statements or changing
   !+ad_prob  <CODE>else if (i == 3) then</CODE> to simply <CODE>else</CODE>
   !+ad_prob  causes the output values to change.
+  !+ad_call  constants
   !+ad_call  maths_library
   !+ad_call  linesolv
   !+ad_hist  09/05/91 JG  Initial version
   !+ad_hist  10/05/12 PJK Initial F90 version;
   !+ad_hisc               Converted from integer function to subroutine
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use maths_library
 
   implicit none
@@ -546,7 +553,6 @@ subroutine tfstress(nu,rad,ey,j,sigr,sigt,deflect,iflag)
   real(kind(1.0D0)) :: b03,b05,b07,k2,k3,kk1,kk2,l4,l5,m6,m7, &
        n8,n9,nufac,p1,p2,p3,q2,q3,q4,q5,r4,r5,r6,r7,s6,s7,s8,s9, &
        t10,t8,t9
-  real(kind(1.0D0)), parameter :: mu0 = 1.25663706D-6
   real(kind(1.0D0)), dimension(10,10) :: a
   real(kind(1.0D0)), dimension(10) :: b, c
 
@@ -590,12 +596,12 @@ subroutine tfstress(nu,rad,ey,j,sigr,sigt,deflect,iflag)
   b(9) = 0.0D0
   b(8) = 0.0D0
 
-  b07 = mu0 * (1.0D0-nu**2) * j(3)**2 * rad(4)**2/(16.0D0 * ey(3))
+  b07 = rmu0 * (1.0D0-nu**2) * j(3)**2 * rad(4)**2/(16.0D0 * ey(3))
   b(7) = b07 * (4.0D0 * log(rad(4)) + nufac )
 
   b(6) = b07 * (4.0D0 * log(rad(4)) - 1.0D0)
 
-  b05 = mu0 * (1.0D0-nu**2) * j(2)**2 * rad(3)**2/(16.0D0 * ey(2))
+  b05 = rmu0 * (1.0D0-nu**2) * j(2)**2 * rad(3)**2/(16.0D0 * ey(2))
   b(5) = b05 * ( (1.0D0 - j(3)/j(2) + j(3)/j(2)* &
        (rad(4)/rad(3))**2 - (j(3)/j(2))**2* &
        (rad(4)/rad(3))**2 ) * ( 4.0D0*log(rad(3)) &
@@ -607,7 +613,7 @@ subroutine tfstress(nu,rad,ey,j,sigr,sigt,deflect,iflag)
        (rad(4)/rad(3))**2*ey(2)/ey(3) )*4.0D0*log(rad(3)) - &
        ( 1.0D0 - (j(3)/j(2))**2*ey(2)/ey(3) ) )
 
-  b03 = mu0 * (1.0D0 - nu**2) * j(1)**2 * rad(2)**2/ (16.0D0*ey(1) )
+  b03 = rmu0 * (1.0D0 - nu**2) * j(1)**2 * rad(2)**2/ (16.0D0*ey(1) )
   b(3) = b03 * ( ( 1.0D0 - j(2)/j(1) + (j(2)/j(1) - &
        j(3)/j(1) ) * (rad(3)/rad(2))**2 + j(3)/j(1) * &
        (rad(4)/rad(2))**2 - (j(2)/j(1))**2 * (rad(3)/rad(2))**2 &
@@ -678,18 +684,18 @@ subroutine tfstress(nu,rad,ey,j,sigr,sigt,deflect,iflag)
   do i = 1,3
 
      if (i == 1) then
-        kk2 = mu0 * (1.0D0 - nu**2) * j(i) / (2.0D0 * ey(i) ) * &
+        kk2 = rmu0 * (1.0D0 - nu**2) * j(i) / (2.0D0 * ey(i) ) * &
              ( (j(1) - j(2) )*(rad(2))**2 + (j(2) - j(3)) * &
              (rad(3))**2 + j(3)*(rad(4))**2 )
      else if (i == 2) then
-        kk2 = mu0 * (1.0D0 - nu**2) * j(i) / (2.0D0 * ey(i) ) * &
+        kk2 = rmu0 * (1.0D0 - nu**2) * j(i) / (2.0D0 * ey(i) ) * &
              ( (j(2) - j(3)) * (rad(3))**2 + j(3)*(rad(4))**2 )
      else if (i == 3) then  !  Truncating after the 'else' causes the results to change!
-        kk2 = mu0 * (1.0D0 - nu**2) * j(i) / (2.0D0 * ey(i) ) * &
+        kk2 = rmu0 * (1.0D0 - nu**2) * j(i) / (2.0D0 * ey(i) ) * &
              j(3)*(rad(4))**2
      end if
 
-     kk1 = mu0 * (1.0D0 - nu**2) * j(i)**2 / (2.0D0 * ey(i))
+     kk1 = rmu0 * (1.0D0 - nu**2) * j(i)**2 / (2.0D0 * ey(i))
 
      sigt(i) = ey(i) / (1.0D0 - nu**2) * ( (1.0D0+nu) * c(i) + &
           (1.0D0-nu) * c(5+i)/(rad(i+1))**2 + &
@@ -996,16 +1002,20 @@ subroutine tfcind(narc,xarc,yarc,xctfc,yctfc,dthet,tfthk,tfind)
   !+ad_prob  From the array declarations, it appears that the code is hardwired
   !+ad_prob  to expect narc = 4.
   !+ad_prob  <P>This routine is very sensitive to trivial code changes...
+  !+ad_call  constants
   !+ad_call  build.h90
   !+ad_call  tfcoil.h90
   !+ad_hist  03/09/85 SSK Initial version
   !+ad_hist  27/01/88 JG  Modified to use arcs whose centres do not
   !+ad_hisc               have to lie on the radius of the adjacent arc.
   !+ad_hist  14/05/12 PJK Initial F90 version
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use constants
 
   implicit none
 
@@ -1025,8 +1035,6 @@ subroutine tfcind(narc,xarc,yarc,xctfc,yctfc,dthet,tfthk,tfind)
 
   real(kind(1.0D0)) :: al,ax,ay,b,deltht,dr,h,hstar,r,rc,rbore,t,theta
   real(kind(1.0D0)), dimension(6) :: ang,dtht,xc,yc,xs,ys
-  real(kind(1.0D0)), parameter :: amu = 1.25664D-6
-  real(kind(1.0D0)), parameter :: pi = 3.14159D0
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1059,7 +1067,7 @@ subroutine tfcind(narc,xarc,yarc,xctfc,yctfc,dthet,tfthk,tfind)
      do i = 1,npnt(k)
         theta = t + dble(i)*deltht
         r = xc(k) + rc*cos(theta)
-        b = amu/(2.0D0*pi*r)
+        b = rmu0/(2.0D0*pi*r)
         dr = rc*(cos(theta - 0.5D0*deltht) - cos(theta + 0.5D0*deltht))
         h = yc(k) + rc*sin(theta)
 

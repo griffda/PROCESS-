@@ -42,15 +42,18 @@ module costs_module
   !+ad_desc  This module contains the PROCESS fusion power plant costing model,
   !+ad_desc  split into separate cost accounts.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_hist  15/10/12 PJK Initial version of module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
 
@@ -1651,7 +1654,7 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
-         pfwndl,sccufac1,twopi
+         pfwndl,sccufac1
     real(kind(1.0D0)), dimension(4) :: cmlsa
     integer :: i,npf
 
@@ -1678,8 +1681,6 @@ contains
     cmlsa(2) = 0.8450D0
     cmlsa(3) = 0.9225D0
     cmlsa(4) = 1.0000D0
-
-    twopi = 8.0D0 * atan(1.0D0)
 
     !  Total length of PF coil windings (m)
 
@@ -1833,7 +1834,7 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: costpfcu,costpfsc,costpfsh,costwire,cpfconpm, &
-         pfwndl,sccufac1,twopi
+         pfwndl,sccufac1
     real(kind(1.0D0)), dimension(4) :: cmlsa
     integer :: i
 
@@ -1860,8 +1861,6 @@ contains
     cmlsa(2) = 0.8450D0
     cmlsa(3) = 0.9225D0
     cmlsa(4) = 1.0000D0
-
-    twopi = 8.0D0 * atan(1.0D0)
 
     !  Total length of PF coil windings (m)
 

@@ -13,6 +13,7 @@ subroutine pfcoil
   !+ad_desc  OH coils, to determine their size, location, current waveforms,
   !+ad_desc  stresses etc.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  pfcoil.h90
@@ -26,11 +27,13 @@ subroutine pfcoil
   !+ad_hist  09/05/12 PJK Initial F90 version
   !+ad_hist  11/10/12 PJK Removed work1 argument from efc
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
 
   implicit none
@@ -550,7 +553,7 @@ subroutine ohcalc
   !+ad_desc  This subroutine performs the calculations for the
   !+ad_desc  OH solenoid coil.
   !+ad_prob  None
-  !+ad_call  physics_variables
+  !+ad_call  constants
   !+ad_call  build.h90
   !+ad_call  pfcoil.h90
   !+ad_call  bfmax
@@ -559,12 +562,13 @@ subroutine ohcalc
   !+ad_hist  01/02/96 PJK Initial version
   !+ad_hist  09/05/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_host  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use physics_variables
+  use constants
 
   implicit none
 
@@ -1228,12 +1232,15 @@ subroutine bfield(ncmax, nc, rc, zc, cc, xc, rp, zp, br, bz, psi)
   !+ad_desc  the poloidal flux at an (R,Z) point, given the locations
   !+ad_desc  and currents of a set of conductor loops.
   !+ad_prob  None
-  !+ad_call  None
+  !+ad_call  constants
   !+ad_hist  19/09/11 PJK Initial F90 version
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use constants
 
   implicit none
 
@@ -1249,7 +1256,7 @@ subroutine bfield(ncmax, nc, rc, zc, cc, xc, rp, zp, br, bz, psi)
 
   integer :: i
   real(kind(1.0D0)) a0,a1,a2,a3,a4,b0,b1,b2,b3,b4,c1,c2,c3,c4,d1,d2,d3,d4
-  real(kind(1.0D0)) :: xmu,twopi,zs,dr,d,s,t,a,xk,xe,dz,sd,brx,bzx
+  real(kind(1.0D0)) :: zs,dr,d,s,t,a,xk,xe,dz,sd,brx,bzx
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1271,8 +1278,6 @@ subroutine bfield(ncmax, nc, rc, zc, cc, xc, rp, zp, br, bz, psi)
   d2 = 0.09200180037D0
   d3 = 0.04069697526D0
   d4 = 0.00526449639D0
-  xmu = 1.256637062D-6
-  twopi = 6.283185308D0
 
   br  = 0.0D0
   bz  = 0.0D0
@@ -1299,13 +1304,13 @@ subroutine bfield(ncmax, nc, rc, zc, cc, xc, rp, zp, br, bz, psi)
 
      !  Mutual inductances
 
-     xc(i) = 0.5D0*xmu*sd*((2.0D0 - s)*xk - 2.0D0*xe)
+     xc(i) = 0.5D0*rmu0*sd*((2.0D0 - s)*xk - 2.0D0*xe)
 
      !  Radial, vertical fields
 
-     brx = xmu*cc(i)*dz/(twopi*rp*sd)*(- xk + &
+     brx = rmu0*cc(i)*dz/(twopi*rp*sd)*(- xk + &
           (rc(i)**2 + rp**2 + zs)/(dr**2 + zs)*xe)
-     bzx = xmu*cc(i)/(twopi*sd)*(xk + &
+     bzx = rmu0*cc(i)/(twopi*sd)*(xk + &
           (rc(i)**2 - rp**2 - zs)/(dr**2 + zs)*xe)
 
      !  Sum fields, flux
@@ -1501,13 +1506,16 @@ function bfmax(rj,a,b,h)
   !+ad_desc  on p.22 of M. Wilson's book Superconducting Magnets,
   !+ad_desc  Clarendon Press, Oxford, N.Y., 1983
   !+ad_prob  None
-  !+ad_call  None
+  !+ad_call  constants
   !+ad_hist  09/05/12 PJK Initial F90 version
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  See above
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use constants
 
   implicit none
 
@@ -1520,7 +1528,6 @@ function bfmax(rj,a,b,h)
   !  Local variables
 
   real(kind(1.0D0)) :: alpha,b0,b1,beta,f,rat
-  real(kind(1.0D0)), parameter :: rmu = 1.256637D-6
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1529,12 +1536,12 @@ function bfmax(rj,a,b,h)
 
   !  Fits are for 1 < alpha < 2 , and 0.5 < beta < very large
 
-  b0 = rj*rmu*h * log( (alpha + sqrt(alpha**2+beta**2)) &
+  b0 = rj*rmu0*h * log( (alpha + sqrt(alpha**2+beta**2)) &
        / (1.0D0 + sqrt(1.0D0 + beta**2)) )
 
   if (beta > 3.0D0) then
 
-     b1 = rmu*rj*(b-a)
+     b1 = rmu0*rj*(b-a)
      f = (3.0D0/beta)**2
      bfmax = f*b0*(1.007D0 + (alpha-1.0D0)*0.0055D0) + (1.0D0-f)*b1
 
@@ -1808,6 +1815,7 @@ subroutine induct(outfile,iprint)
   !+ad_desc  This routine calculates the mutual inductances between all the
   !+ad_desc  PF coils.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
@@ -1822,11 +1830,13 @@ subroutine induct(outfile,iprint)
   !+ad_hist  24/09/12 PJK Swapped argument order
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
 

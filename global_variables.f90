@@ -30,6 +30,45 @@ end module global_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module constants
+
+  !+ad_name  constants
+  !+ad_summ  Module containing miscellaneous numerical and physical constants
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains miscellaneous numerical and
+  !+ad_desc  physical constants.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  16/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  degrad : degrees to radians, = pi/180
+  real(kind(1.0D0)), parameter :: degrad = 0.01745329251D0
+  !+ad_vars  echarge : electron charge (C)
+  real(kind(1.0D0)), parameter :: echarge = 1.60217733D-19
+  !+ad_vars  mproton : proton mass (kg)
+  real(kind(1.0D0)), parameter :: mproton = 1.6726231D-27
+  !+ad_vars  pi : famous number
+  real(kind(1.0D0)), parameter :: pi = 3.1415926535897932D0
+  !+ad_vars  rmu0 : permeability of free space, 4.pi x 10^(-7) H/m
+  real(kind(1.0D0)), parameter :: rmu0 = 1.256637062D-6
+  !+ad_vars  twopi : 2 pi
+  real(kind(1.0D0)), parameter :: twopi = 6.2831853071795862D0
+
+end module constants
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module physics_variables
 
   !+ad_name  physics_variables
@@ -248,8 +287,6 @@ module physics_variables
   real(kind(1.0D0)) :: pfuscmw = 0.0D0
   !+ad_vars  phiint : internal plasma V-s
   real(kind(1.0D0)) :: phiint = 0.0D0
-  !+ad_vars  pi : famous number
-  real(kind(1.0D0)), parameter :: pi = 3.141592653589793D0
   !+ad_vars  pie : ion/electron equilibration power (MW/m**3)
   real(kind(1.0D0)) :: pie = 0.0D0
   !+ad_vars  plascur : plasma current (A)
@@ -305,8 +342,6 @@ module physics_variables
   real(kind(1.0D0)) :: rmajor = 7.0D0
   !+ad_vars  rminor : plasma minor radius (m)
   real(kind(1.0D0)) :: rminor = 2.0D0
-  !+ad_vars  rmu0 : permeability of free space, 4.pi x 10^(-7) H/m
-  real(kind(1.0D0)), parameter :: rmu0 = 1.256637D-6
   !+ad_vars  rnbeam /0.005/ : hot beam density / n_e (iteration variable 7)
   real(kind(1.0D0)) :: rnbeam = 0.005D0
   !+ad_vars  rncne : n_carbon / n_e

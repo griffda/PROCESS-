@@ -15,6 +15,7 @@ subroutine con1(m,cc)
   !+ad_desc  All relevant consistency equations should be active in order
   !+ad_desc  to make a self-consistent machine.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  numerics
   !+ad_call  physics_variables
   !+ad_call  ineq.h90
@@ -44,11 +45,13 @@ subroutine con1(m,cc)
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use numerics
   use physics_variables
 

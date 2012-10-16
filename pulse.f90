@@ -96,6 +96,7 @@ subroutine thrmal(outfile,iprint)
   !+ad_desc  coolant pressure, and an upper limit governed by the peak
   !+ad_desc  temperature and the neutron fluence.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  pulse.h90
@@ -123,12 +124,14 @@ subroutine thrmal(outfile,iprint)
   !+ad_hist  01/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
 

@@ -12,6 +12,7 @@ subroutine radialb(outfile,iprint)
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine determines the radial build of the machine.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
@@ -26,11 +27,13 @@ subroutine radialb(outfile,iprint)
   !+ad_hist  24/09/12 PJK Swapped argument order
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
 
@@ -459,17 +462,20 @@ subroutine portsz
   !+ad_desc  <UL> <P><LI>prtsz : available port size (m)
   !+ad_desc       <P><LI>prtszreq : required port size (m) </UL>
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  cdriv.h90
   !+ad_call  tfcoil.h90
   !+ad_hist  27/07/11 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
 
   implicit none

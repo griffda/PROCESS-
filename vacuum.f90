@@ -99,6 +99,7 @@ subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
   !+ad_args  outfile : input integer : Fortran output unit identifier
   !+ad_desc  This routine calculates the parameters of the vacuum system.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  process_output
   !+ad_call  vaccom.h90
   !+ad_call  oblnkl
@@ -109,11 +110,13 @@ subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
   !+ad_call  ovarre
   !+ad_hist  20/09/11 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use process_output
 
   implicit none
@@ -131,7 +134,6 @@ subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
 
   !  Local variables
 
-  real(kind(1.0D0)), parameter :: pi = 3.14159D0
   real(kind(1.0D0)), parameter :: k = 1.38D-23  !  Boltzmann's constant (J/K)
 
   integer :: i, imax, ntf, nflag

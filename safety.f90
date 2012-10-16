@@ -156,6 +156,7 @@ subroutine loca(outfile,iprint)
   !+ad_desc  PROCESS. The model calculates the steady state temperatures that
   !+ad_desc  would develop following a loss of coolant accident.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
@@ -173,6 +174,7 @@ subroutine loca(outfile,iprint)
   !+ad_hist  19/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  This routine is untested in F90...
   !+ad_docs  F/MI/PJK/LOGBOOK12, pp.70,71,72,73
   !+ad_docs  Strategic Studies Note 96/30, January 1997
@@ -180,6 +182,7 @@ subroutine loca(outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
 
@@ -570,7 +573,7 @@ contains
     real(kind(1.0D0)), dimension(nreg,nmat) :: frcrho,ithcon,thcon
     real(kind(1.0D0)), dimension(0:nreg) :: sumqvl
 
-    real(kind(1.0D0)) :: epsiln,pi,qouter,stefan,tnew
+    real(kind(1.0D0)) :: epsiln,qouter,stefan,tnew
     integer ::  i,j,k
 
     !  Global variables passed via COMMON
@@ -595,7 +598,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    pi = acos(-1.0D0)
     stefan = 5.67D-8  !  Stefan-Boltzmann constant
 
     !  epsilon used in radiation model (assumed fixed)

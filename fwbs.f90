@@ -22,6 +22,7 @@ subroutine fwbs(outfile,iprint)
   !+ad_desc  Note: Costing and mass calculations elsewhere assume
   !+ad_desc  stainless steel only.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  blanket.h90
@@ -38,11 +39,13 @@ subroutine fwbs(outfile,iprint)
   !+ad_hist  14/11/11 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
 

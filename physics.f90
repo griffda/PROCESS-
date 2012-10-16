@@ -40,15 +40,18 @@ module physics_module
   !+ad_desc  This module contains all the primary plasma physics routines
   !+ad_desc  for a tokamak device.
   !+ad_prob  None
+  !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  maths_library
   !+ad_hist  16/10/12 PJK Initial version of module
+  !+ad_hist  16/10/12 PJK Added constants
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use physics_variables
   use process_output
   use maths_library
@@ -56,9 +59,6 @@ module physics_module
   implicit none
 
   public
-
-  real(kind(1.0D0)), parameter :: echarge = 1.6022D-19  !  electron charge (Coulomb)
-  real(kind(1.0D0)), parameter :: mproton = 1.6726D-27  !  proton mass (kg)
 
 contains
 
@@ -684,7 +684,6 @@ contains
 
       !  Local variables
 
-      real(kind(1.0D0)), parameter :: mu0 = 1.2566371D-6
       real(kind(1.0D0)) :: beta0, deltap, deltar, eprime, er, kap1, &
            lambda, lamp1, li, nu, tprime, tr
 
@@ -701,7 +700,7 @@ contains
 
       !  Central plasma beta
 
-      beta0 = 2.0D0 * mu0 * p0 / (bt**2)
+      beta0 = 2.0D0 * rmu0 * p0 / (bt**2)
 
       !  Plasma internal inductance
 
