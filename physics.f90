@@ -41,6 +41,7 @@ module physics_module
   !+ad_desc  for a tokamak device.
   !+ad_prob  None
   !+ad_call  constants
+  !+ad_call  current_drive_module
   !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
@@ -48,12 +49,14 @@ module physics_module
   !+ad_hist  16/10/12 PJK Initial version of module
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  16/10/12 PJK Added current_drive_variables
+  !+ad_hist  17/10/12 PJK Added current_drive_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use current_drive_module
   use current_drive_variables
   use physics_variables
   use process_output

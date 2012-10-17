@@ -580,6 +580,7 @@ subroutine stheat(outfile,iprint)
   !+ad_desc  This routine calculates the auxiliary heating power for
   !+ad_desc  a stellarator device.
   !+ad_prob  None
+  !+ad_call  current_drive_module
   !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
@@ -595,12 +596,14 @@ subroutine stheat(outfile,iprint)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
+  !+ad_hist  17/10/12 PJK Added current_drive_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use current_drive_module
   use current_drive_variables
   use physics_variables
   use process_output
