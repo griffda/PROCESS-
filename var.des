@@ -162,54 +162,6 @@ tqnch      dble /15.0/   # shut down time for PF coils (s); if pulsed, = tohs
 tramp      dble /15.0/   # initial PF coil charge time (s); if pulsed, = tohs
 $
 C______________________________________________________________________
-$  Input for the divertor model : (see divrt.h)
-$
-adas       dble          # area divertor / area main plasma (along separatrix)
-anginc     dble /0.262/  # angle of incidence of field line on plate (rad)
-bpsout     dble /0.60/   # reference B_p at outer divertor strike point (T)
-c1div      dble /0.45/   # fitting coefficient to adjust ptpdiv, ppdiv
-c2div      dble /-7.0/   # fitting coefficient to adjust ptpdiv, ppdiv
-c3div      dble /0.54/   # fitting coefficient to adjust ptpdiv, ppdiv
-c4div      dble /-3.60/  # fitting coefficient to adjust ptpdiv, ppdiv
-c5div      dble /0.7/    # fitting coefficient to adjust ptpdiv, ppdiv
-c6div      dble /0.0/    # fitting coefficient to adjust ptpdiv, ppdiv
-delld      dble /1.0/    # coef. for power distribution along main plasma
-dendiv     dble          # plasma density at divertor (10**20 m**-3)
-densin     dble          # density at plate (on separatrix) (10**20 m**-3)
-divclfr    dble /0.3/    # divertor coolant fraction
-divdens    dble /1.0D4/  # divertor structure density (kg/m**3)
-divdum     intg /0/      # switch for divertor Zeff model: 0=calc, 1=input
-divmas     dble          # divertor plate mass (kg)
-divplt     dble /0.035/  # divertor plate thickness (m) - Spears, 9/90
-fdfs       dble /10.0/   # radial gradient ratio
-fdiva      dble /1.11/   # divertor area fudge factor (for ITER 9/90)
-fgamp      dble /1.0/    # sheath potential factor (NEVER USED IN ANGER)
-fhout      dble          # fraction of power to outer divertor (for SN)
-fififi     dble /4.D-3/  # coefficient for gamdiv
-frrp       dble /0.40/   # fraction of radiated power to plate
-hldiv      dble          # outer divertor heat load (MW/m**2)
-hldivlim   dble /5.0/    # heat load limit (MW/m**2)
-ksic       dble /0.80/   # power fraction for in outer DN so plasma
-lamp       dble          # power flow width (m)
-omegan     dble /1.00/   # pressure ratio (nT)_p / (nT)_s
-omlarg     dble          # power spillage to private flux factor
-plsepo     dble /1.50/   # poloidal length, x-point to outer strike point (m)
-ppdivr     dble          # peak heat load at plate (with radiation) (MW/m**2)
-prn1       dble /0.285/  # n-scrape-off / n-average plasma
-ptpdiv     dble          # peak temperature at the plate (eV)
-rconl      dble          # connection length ratio, outer side
-rlclolcn   dble          # ratio of collision length / connection length
-rlenmax    dble /0.5/    # maximum value for length ratio (rlclolcn) (eqn.22)
-rsrd       dble          # effective separatrix/divertor radius ratio
-rstrko     dble          # outer strike point radius (m)
-tconl      dble          # "main plasma" connection length (m)
-tdiv       dble          # temperature at divertor (eV)
-tsep       dble          # temperature at the separatrix (eV)
-xparain    dble /2.1D3/  # parallel heat transport coefficient (m**2/s)
-xpertin    dble /2.0/    # perpendicular heat transport coefficient (m**2/s)
-zeffdiv    dble /1.0/    # Zeff in the divertor region (if divdum.ne.0)
-$
-C______________________________________________________________________
 $  Build description : (see build.h)
 $
 aplasmin   dble /0.25/   # minimum minor radius (m)
@@ -727,11 +679,6 @@ $                          = 3 High Temperature Electrolysis - exothermic
 $                          = 4 Thermo-chemical
 $
 C______________________________________________________________________
-$  Miscellaneous reactor components : (see divrt.h)
-$
-divsur     dble          # divertor surface area (m**2)
-$
-C______________________________________________________________________
 $  Cost information : (see cost.h)
 $
 abktflnc   dble /20.0/   # allowable f.w./blanket neutron fluence (MW-yr/m2)
@@ -904,39 +851,6 @@ ucwindpf   dble /465.0/  # cost of PF coil superconductor windings ($/m)
 ucwindtf   dble /480.0/  # cost of TF coil superconductor windings ($/m)
 ucws       dble /460.0/ FIX # cost of active assembly shop ($/vol)
 ucwst(4)   dble /0.0,3.94,5.91,7.88/ # cost of waste disposal (M$/y/1200MW)
-$
-C______________________________________________________________________
-$  Code sweeper : (see sweep.h)
-$
-isweep     intg /0/      # number of loops to do
-nsweep     intg /1/      # what to sweep :
-$                          = 1  aspect
-$                          = 2  hldivlim
-$                          = 3  pnetelin
-$                          = 4  hfact
-$                          = 5  oacdcp
-$                          = 6  walalw
-$                          = 7  beamfus0
-$                          = 8  fqval
-$                          = 9  te
-$                          = 10 boundu(15: fvs)
-$                          = 11 dnbeta
-$                          = 12 bscfmax (use negative values only)
-$                          = 13 boundu(10: hfact)
-$                          = 14 fiooic
-$                          = 15 fjprot
-$                          = 16 rmajor
-$                          = 17 bmxlim
-$                          = 18 gammax
-$                          = 19 boundl(16: ohcth)
-$                          = 20 tbrnmn
-$                          = 21 sigpfalw
-$                          = 22 cfactr
-$                          = 23 boundu(72: fipir)
-$                          = 24 powfmax
-$                          = 25 kappa
-$                          = 26 triang
-sweep(ipnscns) dble /../ # actual quantities to use in scan
 $
 C______________________________________________________________________
 $  Building volumes : (see bldgvol.h)

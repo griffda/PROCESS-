@@ -16,7 +16,6 @@ subroutine initial
   !+ad_call  process_output
   !+ad_call  ineq.h90
   !+ad_call  times.h90
-  !+ad_call  divrt.h90
   !+ad_call  build.h90
   !+ad_call  tfcoil.h90
   !+ad_call  pfcoil.h90
@@ -70,6 +69,7 @@ subroutine initial
   !+ad_hist  15/10/12 PJK Removed physics variables from list
   !+ad_hist  15/10/12 PJK Removed numerics variables from list
   !+ad_hist  16/10/12 PJK Removed current drive variables from list
+  !+ad_hist  17/10/12 PJK Removed divertor variables from list
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -81,7 +81,6 @@ subroutine initial
 
   include 'ineq.h90'
   include 'times.h90'
-  include 'divrt.h90'
   include 'build.h90'
   include 'tfcoil.h90'
   include 'pfcoil.h90'
@@ -174,55 +173,6 @@ subroutine initial
   tpulse   = 0.0D0
   tqnch    = 15.0D0
   tramp    = 15.0D0
-
-  !  Divertor model
-
-  adas     = 0.0D0
-  anginc   = 0.262D0
-  bpsout   = 0.60D0
-  c1div    = 0.45D0
-  c2div    = -7.0D0
-  c3div    = 0.54D0
-  c4div    = -3.60D0
-  c5div    = 0.7D0
-  c6div    = 0.0D0
-  delld    = 1.00D0
-  dendiv   = 0.0D0
-  densin   = 0.0D0
-  divclfr  = 0.3D0
-  divdens  = 1.0D4
-  divdum   = 0
-  divmas   = 0.0D0
-  divplt   = 0.035D0
-  divsur   = 0.0D0
-  fdfs     = 10.0D0
-  fdiva    = 1.11D0
-  fgamp    = 1.0D0
-  fhout    = 0.0D0
-  fififi   = 4.0D-3
-  frrp     = 0.40D0
-  hldiv    = 0.0D0
-  hldivlim = 5.0D0
-  ksic     = 0.80D0
-  lamp     = 0.0D0
-  minstang = 0.0D0
-  omegan   = 1.00D0
-  omlarg   = 0.0D0
-  plsepo   = 1.50D0
-  ppdivr   = 0.0D0
-  prn1     = 0.285D0
-  ptpdiv   = 0.0D0
-  rconl    = 0.00D0
-  rlclolcn = 0.0D0
-  rlenmax  = 0.5D0
-  rsrd     = 0.0D0
-  rstrko   = 0.0D0
-  tconl    = 0.0D0
-  tdiv     = 0.0D0
-  tsep     = 0.0D0
-  xparain  = 2.1D3
-  xpertin  = 2.0D0
-  zeffdiv  = 1.0D0
 
   !  Build description
 

@@ -44,12 +44,14 @@ module costs_module
   !+ad_prob  None
   !+ad_call  constants
   !+ad_call  current_drive_variables
+  !+ad_call  divertor_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_hist  15/10/12 PJK Initial version of module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  16/10/12 PJK Added current_drive_variables
+  !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -57,6 +59,7 @@ module costs_module
 
   use constants
   use current_drive_variables
+  use divertor_variables
   use physics_variables
   use process_output
 
@@ -66,7 +69,6 @@ module costs_module
   include 'bldgvol.h90'
   include 'build.h90'
   include 'cost.h90'
-  include 'divrt.h90'
   include 'fwblsh.h90'
   include 'htpwr.h90'
   include 'ife.h90'

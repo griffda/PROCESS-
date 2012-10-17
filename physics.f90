@@ -43,6 +43,7 @@ module physics_module
   !+ad_call  constants
   !+ad_call  current_drive_module
   !+ad_call  current_drive_variables
+  !+ad_call  divertor_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  maths_library
@@ -50,6 +51,7 @@ module physics_module
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  17/10/12 PJK Added current_drive_module
+  !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -58,6 +60,7 @@ module physics_module
   use constants
   use current_drive_module
   use current_drive_variables
+  use divertor_variables
   use physics_variables
   use process_output
   use maths_library
@@ -82,7 +85,6 @@ contains
     !+ad_desc  characteristics for a tokamak device.
     !+ad_prob  None
     !+ad_call  build.h90
-    !+ad_call  divrt.h90
     !+ad_call  pulse.h90
     !+ad_call  times.h90
     !+ad_call  beamfus
@@ -133,7 +135,6 @@ contains
     implicit none
 
     include 'times.h90'
-    include 'divrt.h90'
     include 'build.h90'
     include 'pulse.h90'
 

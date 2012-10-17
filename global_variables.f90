@@ -607,6 +607,127 @@ end module current_drive_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module divertor_variables
+
+  !+ad_name  divertor_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  tokamak divertor components
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to tokamak
+  !+ad_desc  divertor components. It is derived from <CODE>include</CODE> file
+  !+ad_desc  <CODE>divrt.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  17/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  adas : area divertor / area main plasma (along separatrix)
+  real(kind(1.0D0)) :: adas = 0.0D0
+  !+ad_vars  anginc /0.262/ : angle of incidence of field line on plate (rad)
+  real(kind(1.0D0)) :: anginc = 0.262D0
+  !+ad_vars  bpsout /0.6/ : reference B_p at outer divertor strike point (T)
+  real(kind(1.0D0)) :: bpsout = 0.60D0
+  !+ad_vars  c1div /0.45/ : fitting coefficient to adjust ptpdiv, ppdiv
+  real(kind(1.0D0)) :: c1div = 0.45D0
+  !+ad_vars  c2div /-7.0/ : fitting coefficient to adjust ptpdiv, ppdiv
+  real(kind(1.0D0)) :: c2div = -7.0D0
+  !+ad_vars  c3div /0.54/ : fitting coefficient to adjust ptpdiv, ppdiv
+  real(kind(1.0D0)) :: c3div = 0.54D0
+  !+ad_vars  c4div /-3.6/ : fitting coefficient to adjust ptpdiv, ppdiv
+  real(kind(1.0D0)) :: c4div = -3.6D0
+  !+ad_vars  c5div /0.7/ : fitting coefficient to adjust ptpdiv, ppdiv
+  real(kind(1.0D0)) :: c5div = 0.7D0
+  !+ad_vars  c6div /0.0/ : fitting coefficient to adjust ptpdiv, ppdiv
+  real(kind(1.0D0)) :: c6div = 0.0D0
+  !+ad_vars  delld /1.0/ : coeff for power distribution along main plasma
+  real(kind(1.0D0)) :: delld = 1.0D0
+  !+ad_vars  dendiv : plasma density at divertor (10**20 m**-3)
+  real(kind(1.0D0)) :: dendiv = 0.0D0
+  !+ad_vars  densin : density at plate (on separatrix) (10**20 m**-3)
+  real(kind(1.0D0)) :: densin = 0.0D0
+  !+ad_vars  divclfr /0.3/ : divertor coolant fraction
+  real(kind(1.0D0)) :: divclfr = 0.3D0
+  !+ad_vars  divdens /1.0D4/ : divertor structure density (kg/m**3)
+  real(kind(1.0D0)) :: divdens = 1.0D4
+  !+ad_vars  divdum /0/ : switch for divertor Zeff model: 0=calc, 1=input
+  integer :: divdum = 0
+  !+ad_vars  divmas : divertor plate mass (kg)
+  real(kind(1.0D0)) :: divmas = 0.0D0
+  !+ad_vars  divplt /0.035/ : divertor plate thickness (m) (from Spears, Sept 1990)
+  real(kind(1.0D0)) :: divplt = 0.035D0
+  !+ad_vars  divsur : divertor surface area (m**2)
+  real(kind(1.0D0)) :: divsur = 0.0D0
+  !+ad_vars  fdfs /10.0/ : radial gradient ratio
+  real(kind(1.0D0)) :: fdfs = 10.0D0
+  !+ad_vars  fdiva /1.11/ : divertor area fudge factor (for ITER, Sept 1990)
+  real(kind(1.0D0)) :: fdiva = 1.11D0
+  !+ad_vars  fgamp /1.0/ : sheath potential factor (not used)
+  real(kind(1.0D0)) :: fgamp = 1.0D0
+  !+ad_vars  fhout : fraction of power to outer divertor (for single null)
+  real(kind(1.0D0)) :: fhout = 0.0D0
+  !+ad_vars  fififi /0.004/ : coefficient for gamdiv
+  real(kind(1.0D0)) :: fififi = 4.0D-3
+  !+ad_vars  frrp /0.4/ : fraction of radiated power to plate
+  real(kind(1.0D0)) :: frrp = 0.4D0
+  !+ad_vars  hldiv : outer divertor heat load (MW/m**2)
+  real(kind(1.0D0)) :: hldiv = 0.0D0
+  !+ad_vars  hldivlim /5.0/ : heat load limit (MW/m**2)
+  real(kind(1.0D0)) :: hldivlim = 5.0D0
+  !+ad_vars  ksic /0.8/ : power fraction for outer double-null scrape-off plasma
+  real(kind(1.0D0)) :: ksic = 0.8D0
+  !+ad_vars  lamp : power flow width (m)
+  real(kind(1.0D0)) :: lamp = 0.0D0
+  !+ad_vars  minstang : minimum strike angle for heat flux calculation
+  real(kind(1.0D0)) :: minstang = 0.0D0
+  !+ad_vars  omegan /1.0/ : pressure ratio (nT)_plasma / (nT)_scrape-off
+  real(kind(1.0D0)) :: omegan = 1.0D0
+  !+ad_vars  omlarg : power spillage to private flux factor
+  real(kind(1.0D0)) :: omlarg = 0.0D0
+  !+ad_vars  plsepo /1.5/ : poloidal length, x-point to outer strike point (m)
+  real(kind(1.0D0)) :: plsepo = 1.5D0
+  !+ad_vars  ppdivr : peak heat load at plate (with radiation) (MW/m**2)
+  real(kind(1.0D0)) :: ppdivr = 0.0D0
+  !+ad_vars  prn1 /0.285/ : n-scrape-off / n-average plasma
+  real(kind(1.0D0)) :: prn1 = 0.285D0
+  !+ad_vars  ptpdiv : peak temperature at the plate (eV)
+  real(kind(1.0D0)) :: ptpdiv = 0.0D0
+  !+ad_vars  rconl : connection length ratio, outer side
+  real(kind(1.0D0)) :: rconl = 0.0D0
+  !+ad_vars  rlclolcn : ratio of collision length / connection length
+  real(kind(1.0D0)) :: rlclolcn = 0.0D0
+  !+ad_vars  rlenmax /0.5/ : maximum value for length ratio (rlclolcn) (eqn.22)
+  real(kind(1.0D0)) :: rlenmax = 0.5D0
+  !+ad_vars  rsrd : effective separatrix/divertor radius ratio
+  real(kind(1.0D0)) :: rsrd = 0.0D0
+  !+ad_vars  rstrko : outer strike point radius (m)
+  real(kind(1.0D0)) :: rstrko = 0.0D0
+  !+ad_vars  tconl : main plasma connection length (m)
+  real(kind(1.0D0)) :: tconl = 0.0D0
+  !+ad_vars  tdiv : temperature at divertor (eV)
+  real(kind(1.0D0)) :: tdiv = 0.0D0
+  !+ad_vars  tsep : temperature at the separatrix (eV)
+  real(kind(1.0D0)) :: tsep = 0.0D0
+  !+ad_vars  xparain /2.1D3/ : parallel heat transport coefficient (m**2/s)
+  real(kind(1.0D0)) :: xparain = 2.1D3
+  !+ad_vars  xpertin /2.0/ : perpendicular heat transport coefficient (m**2/s)
+  real(kind(1.0D0)) :: xpertin = 2.0D0
+  !+ad_vars  zeffdiv /1.0/ : Zeff in the divertor region (if divdum /= 0)
+  real(kind(1.0D0)) :: zeffdiv = 1.0D0
+
+end module divertor_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
 
   !  ex-blanket.h90
@@ -721,24 +842,6 @@ module wibble
        ucpfdr1,ucpfic,ucpfps,ucphx,ucpp,ucrb,ucsh,ucshld,ucswyd, &
        uctfbr,uctfbus,uctfdr,uctfgr,uctfic,uctfps,uctfsw,uctpmp, &
        uctr,ucvalv,ucvdsh,ucviac,ucwindpf,ucwindtf,ucws
-
-  !  ex divrt.h90
-
-  integer :: divdum
-  common /divrti/ divdum
-
-  real(kind(1.0D0)) :: &
-       adas,anginc,bpsout,c1div,c2div,c3div,c4div,c5div,c6div,delld, &
-       dendiv,densin,divclfr,divdens,divmas,divplt,divsur,fdfs,fdiva, &
-       fgamp,fhout,fififi,frrp,hldiv,hldivlim,ksic,lamp,minstang, &
-       omegan,omlarg,plsepo,ppdivr,prn1,ptpdiv,rconl,rlclolcn,rlenmax, &
-       rsrd,rstrko,tconl,tdiv,tsep,xparain,xpertin,zeffdiv
-  common /divrt/ &
-       adas,anginc,bpsout,c1div,c2div,c3div,c4div,c5div,c6div,delld, &
-       dendiv,densin,divclfr,divdens,divmas,divplt,divsur,fdfs,fdiva, &
-       fgamp,fhout,fififi,frrp,hldiv,hldivlim,ksic,lamp,minstang, &
-       omegan,omlarg,plsepo,ppdivr,prn1,ptpdiv,rconl,rlclolcn,rlenmax, &
-       rsrd,rstrko,tconl,tdiv,tsep,xparain,xpertin,zeffdiv
 
   !  ex estocom.h90
 

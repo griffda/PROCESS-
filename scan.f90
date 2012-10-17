@@ -13,6 +13,7 @@ module scan_module
   !+ad_desc  over a range of values of a particular scanning variable.
   !+ad_prob  None
   !+ad_call  current_drive_variables
+  !+ad_call  divertor_variables
   !+ad_call  global_variables
   !+ad_call  numerics
   !+ad_call  physics_variables
@@ -22,12 +23,15 @@ module scan_module
   !+ad_hist  15/10/12 PJK Added global_variables module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
+  !+ad_hist  17/10/12 PJK Added variable descriptions
+  !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use current_drive_variables
+  use divertor_variables
   use global_variables
   use numerics
   use physics_variables
@@ -37,39 +41,43 @@ module scan_module
 
   public
 
-  integer, parameter :: ipnscns = 50  !  maximum number of scan points
-  integer, parameter :: ipnscnv = 26  !  number of available scan variables
+  !+ad_vars  ipnscns : maximum number of scan points
+  integer, parameter :: ipnscns = 50
+  !+ad_vars  ipnscnv : number of available scan variables
+  integer, parameter :: ipnscnv = 26
 
-  integer :: isweep = 0  !  number of loops to perform
-  integer :: nsweep = 1  !  switch denoting quantity to scan
-  !                          = 1  aspect
-  !                          = 2  hldivlim
-  !                          = 3  pnetelin
-  !                          = 4  hfact
-  !                          = 5  oacdcp
-  !                          = 6  walalw
-  !                          = 7  beamfus0
-  !                          = 8  fqval
-  !                          = 9  te
-  !                          = 10 boundu(15: fvs)
-  !                          = 11 dnbeta
-  !                          = 12 bscfmax (use negative values only)
-  !                          = 13 boundu(10: hfact)
-  !                          = 14 fiooic
-  !                          = 15 fjprot
-  !                          = 16 rmajor
-  !                          = 17 bmxlim
-  !                          = 18 gammax
-  !                          = 19 boundl(16: ohcth)
-  !                          = 20 tbrnmn
-  !                          = 21 sigpfalw
-  !                          = 22 cfactr
-  !                          = 23 boundu(72: fipir)
-  !                          = 24 powfmax
-  !                          = 25 kappa
-  !                          = 26 triang
+  !+ad_vars  isweep /0/ : number of loops to perform
+  integer :: isweep = 0
+  !+ad_vars  nsweep /1/ : switch denoting quantity to scan:<UL>
+  !+ad_varc          <LI> 1  aspect
+  !+ad_varc          <LI> 2  hldivlim
+  !+ad_varc          <LI> 3  pnetelin
+  !+ad_varc          <LI> 4  hfact
+  !+ad_varc          <LI> 5  oacdcp
+  !+ad_varc          <LI> 6  walalw
+  !+ad_varc          <LI> 7  beamfus0
+  !+ad_varc          <LI> 8  fqval
+  !+ad_varc          <LI> 9  te
+  !+ad_varc          <LI> 10 boundu(15: fvs)
+  !+ad_varc          <LI> 11 dnbeta
+  !+ad_varc          <LI> 12 bscfmax (use negative values only)
+  !+ad_varc          <LI> 13 boundu(10: hfact)
+  !+ad_varc          <LI> 14 fiooic
+  !+ad_varc          <LI> 15 fjprot
+  !+ad_varc          <LI> 16 rmajor
+  !+ad_varc          <LI> 17 bmxlim
+  !+ad_varc          <LI> 18 gammax
+  !+ad_varc          <LI> 19 boundl(16: ohcth)
+  !+ad_varc          <LI> 20 tbrnmn
+  !+ad_varc          <LI> 21 sigpfalw
+  !+ad_varc          <LI> 22 cfactr
+  !+ad_varc          <LI> 23 boundu(72: fipir)
+  !+ad_varc          <LI> 24 powfmax
+  !+ad_varc          <LI> 25 kappa
+  !+ad_varc          <LI> 26 triang </UL>
+  integer :: nsweep = 1
 
-  !  Actual values to use in scan
+  !+ad_vars  sweep(ipnscns) : Actual values to use in scan
   real(kind(1.0D0)), dimension(ipnscns) :: sweep = 0.0D0
 
 contains
@@ -95,7 +103,6 @@ contains
   !+ad_call  ineq.h90
   !+ad_call  cost.h90
   !+ad_call  htpwr.h90
-  !+ad_call  divrt.h90
   !+ad_call  doopt
   !+ad_call  final
   !+ad_call  oblnkl
@@ -121,7 +128,6 @@ contains
   include 'ineq.h90'
   include 'cost.h90'
   include 'htpwr.h90'
-  include 'divrt.h90'
 
   !  Arguments
 

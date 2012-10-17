@@ -17,17 +17,20 @@ module function_evaluator
   !+ad_desc  by the two equation solvers in the code.
   !+ad_prob  None
   !+ad_call  current_drive_variables
+  !+ad_call  divertor_variables
   !+ad_call  numerics
   !+ad_call  physics_variables
   !+ad_hist  10/10/12 PJK Initial version of module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
+  !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use current_drive_variables
+  use divertor_variables
   use numerics
   use physics_variables
 
@@ -267,7 +270,6 @@ contains
     !+ad_call  cost.h90
     !+ad_call  pwrcom.h90
     !+ad_call  htpwr.h90
-    !+ad_call  divrt.h90
     !+ad_hist  02/10/96 PJK Initial upgraded version
     !+ad_hist  08/10/12 PJK Initial F90 version
     !+ad_stat  Okay
@@ -281,7 +283,6 @@ contains
     include 'cost.h90'
     include 'pwrcom.h90'
     include 'htpwr.h90'
-    include 'divrt.h90'
 
     !  Arguments
 

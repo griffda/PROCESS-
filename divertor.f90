@@ -18,10 +18,10 @@ subroutine divcall(outfile,iprint)
   !+ad_prob  (R=6.00, Bt = 4.85 T, Bp = 1.07 T, l_null-strike = 1.50 m).
   !+ad_prob  Variation far from these parameters is uncertain.
   !+ad_call  constants
+  !+ad_call  divertor_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  divrt.h90
   !+ad_call  divert
   !+ad_call  divtart
   !+ad_call  oblnkl
@@ -43,19 +43,20 @@ subroutine divcall(outfile,iprint)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use divertor_variables
   use physics_variables
   use process_output
 
   implicit none
 
   include 'build.h90'
-  include 'divrt.h90'
 
   !  Arguments
 

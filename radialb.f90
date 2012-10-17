@@ -307,23 +307,24 @@ subroutine divgeom(divht)
   !+ad_desc  are approximated by arcs, and followed past the X-point to
   !+ad_desc  determine the maximum height.
   !+ad_prob  No evidence of any inner plasma surface being used...
+  !+ad_call  divertor_variables
   !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  divrt.h90
   !+ad_hist  29/01/96 PJK Added TART option with expanded divertor chamber
   !+ad_hist  26/07/11 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_stat  Okay
   !+ad_docs  TART option: Peng SOFT paper
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use divertor_variables
   use physics_variables
 
   implicit none
 
   INCLUDE 'build.h90'
-  INCLUDE 'divrt.h90'
 
   !  Arguments
 

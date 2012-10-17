@@ -232,9 +232,9 @@ subroutine stbild(outfile,iprint)
   !+ad_desc  toroidal angle.
   !+ad_prob  None
   !+ad_call  constants
+  !+ad_call  divertor_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  divrt.h90
   !+ad_call  build.h90
   !+ad_call  obuild
   !+ad_call  oheadr
@@ -246,18 +246,19 @@ subroutine stbild(outfile,iprint)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use divertor_variables
   use physics_variables
   use process_output
 
   implicit none
 
-  include 'divrt.h90'
   include 'build.h90'
 
   !  Arguments
@@ -400,11 +401,11 @@ subroutine stphys
   !+ad_desc  a stellarator device.
   !+ad_prob  None
   !+ad_call  current_drive_variables
+  !+ad_call  divertor_variables
   !+ad_call  physics_module
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  divrt.h90
   !+ad_call  times.h90
   !+ad_call  beamfus
   !+ad_call  betcom
@@ -433,6 +434,7 @@ subroutine stphys
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added physics_module
   !+ad_hist  16/10/12 PJK Added current_drive_variables
+  !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -440,6 +442,7 @@ subroutine stphys
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use current_drive_variables
+  use divertor_variables
   use physics_module
   use physics_variables
   use process_output
@@ -448,7 +451,6 @@ subroutine stphys
 
   include 'build.h90'
   include 'times.h90'
-  include 'divrt.h90'
 
   !  Arguments
 
@@ -1862,9 +1864,9 @@ subroutine ststrc(outfile,iprint)
   !+ad_desc  This is the stellarator version of routine
   !+ad_desc  <A HREF="strucall.html">STRUCALL</A>.
   !+ad_prob  None
+  !+ad_call  divertor_variables
   !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  divrt.h90
   !+ad_call  fwblsh.h90
   !+ad_call  pfcoil.h90
   !+ad_call  struccom.h90
@@ -1874,17 +1876,18 @@ subroutine ststrc(outfile,iprint)
   !+ad_hist  01/02/96 PJK Added itfsup, ipfres to argument list of STRUCT
   !+ad_hist  24/09/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use divertor_variables
   use physics_variables
 
   implicit none
 
   include 'build.h90'
-  include 'divrt.h90'
   include 'fwblsh.h90'
   include 'pfcoil.h90'
   include 'struccom.h90'
