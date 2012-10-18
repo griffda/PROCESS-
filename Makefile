@@ -30,8 +30,8 @@
 #  Type 'make latex' to produce a dvi file from the PROCESS manual
 #    contained in the *.tex files and associated postscript pictures
 #
-#  ( TO DO... Type 'make doc' to produce full documentation (including web-compatible
-#   html files from the autodoc comments embedded in the source code) )
+#  Type 'make doc' to produce full documentation (including web-compatible
+#   html files from the autodoc comments embedded in the source code)
 #
 #  Type 'make tar' to produce a tar file containing all the source files
 #    and input files; the file will be called process.tar.gz
@@ -56,7 +56,7 @@ source = \
  fispact.f90  \
  fwbs.f90     \
  geomty.f90   \
- global_variables.90 \
+ global_variables.f90 \
  heatpwr.f90  \
  ife.f90      \
  initial.f90  \
@@ -279,7 +279,7 @@ clean:
 # from the current directory
 #  (excludes IN.DAT, device.dat for now)
 
-otherfiles = Makefile var.des *.tex *.ps
+otherfiles = Makefile var.des *.tex *.ps autodoc.f90 adheader.src adfooter.src
 
 tar:
 	rm -f process.tar process.tar.gz
