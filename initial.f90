@@ -17,7 +17,6 @@ subroutine initial
   !+ad_call  ineq.h90
   !+ad_call  times.h90
   !+ad_call  build.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  pwrcom.h90
   !+ad_call  htpwr.h90
   !+ad_call  cost.h90
@@ -68,6 +67,7 @@ subroutine initial
   !+ad_hist  17/10/12 PJK Removed divertor variables from list
   !+ad_hist  18/10/12 PJK Removed first wall, blanket, shield variables
   !+ad_hist  18/10/12 PJK Removed PF coil variables
+  !+ad_hist  18/10/12 PJK Removed TF coil variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -80,7 +80,6 @@ subroutine initial
   include 'ineq.h90'
   include 'times.h90'
   include 'build.h90'
-  include 'tfcoil.h90'
   include 'pwrcom.h90'
   include 'htpwr.h90'
   include 'cost.h90'
@@ -215,150 +214,6 @@ subroutine initial
   vgap     = 0.0D0
   vgap2    = 0.163D0
   vgaptf   = 0.0D0
-
-  !  TF coil quantities
-
-  acasetf  = 0.0D0
-  acndttf  = 0.0D0
-  acond    = 0.0D0
-  acstf    = 0.0D0
-  aiwp     = 0.0D0
-  alstrtf  = 0.0D0
-  arealeg  = 0.0D0
-  aspcstf  = 1.0D0
-  aswp     = 0.0D0
-  avwp     = 0.0D0
-  bcritsc  = 24.0D0
-  bmaxtf   = 0.0D0
-  bmaxtfrp = 0.0D0
-  borev    = 0.0D0
-  casestr  = 0.0D0
-  casfact  = 4.0D0
-  casthi   = 0.05D0
-  casths   = 0.07D0
-  cdtfleg  = 1.0D6
-  cforce   = 0.0D0
-  cph2o    = 4180.0D0
-  cpttf    = 3.79D4
-  csutf    = 1.4D9
-  csytf    = 8.25D8
-  dcase    = 8000.0D0
-  dcond(:) = 9000.0D0
-  dcopper  = 8900.0D0
-  deflect  = 0.0D0
-  denh2o   = 985.0D0
-  drtop    = 0.0D0
-  dthet(:) = 0.0D0
-  dztop    = 0.0D0
-  estotf   = 0.0D0
-  etapump  = 0.8D0
-  eyins    = 1.5D10
-  eyoung(:) = 0.0D0
-  eystl    = 2.0D11
-  eywp     = 6.6D8
-  farc4tf  = 0.7D0
-  fcoolcp  = 0.3D0
-  fcutfsu  = 0.69D0
-  frhocp   = 1.0D0
-  isumattf = 1
-  jcrit_model = 0
-  itfmod   = 1
-  itfsup   = 1
-  jcritsc  = 2.225D10
-  jbus     = 1.25D6
-  jeff(:) = 0.0D0
-  jwdgcrt  = 0.0D0
-  jwdgpro  = 0.0D0
-  jwptf    = 0.0D0
-  kcp      = 330.0D0
-  kh2o     = 0.651D0
-  magnt    = 2
-  muh2o    = 4.71D-4
-  ncool    = 0.0D0
-  oacdcp   = 1.4D7
-  poisson  = 0.30D0
-  ppump    = 0.0D0
-  prescp   = 0.0D0
-  ptempalw = 200.0D0
-  radctf(:) = 0.0D0
-  radtf(:) = 0.0D0
-  rbmax    = 0.0D0
-  rcool    = 0.005D0
-  rhocp    = 0.0D0
-  rhotfleg = 0.0D0
-  ripmax   = 5.0D0
-  ripple   = 0.0D0
-  ritfc    = 0.0D0
-  rjtfsual = 0.0D0
-  rnltf    = 0.0D0
-  sigrad   = 0.0D0
-  sigrcon  = 0.0D0
-  sigrtf(:) = 0.0D0
-  sigtan   = 0.0D0
-  sigtcon  = 0.0D0
-  sigttf(:) = 0.0D0
-  sigver   = 0.0D0
-  sigvert  = 0.0D0
-  strncon  = -0.005D0
-  strtf1   = 0.0D0
-  strtf2   = 0.0D0
-  tcoolin  = 40.0D0
-  tcpav    = 100.0D0
-  tcpav2   = 0.0D0
-  tcpmax   = 0.0D0
-  tcritsc  = 16.0D0
-  tdmptf   = 10.0D0
-  tfareain = 0.0D0
-  tfboreh  = 0.0D0
-  tfbusl   = 0.0D0
-  tfbusmas = 0.0D0
-  tfckw    = 0.0D0
-  tfcmw    = 0.0D0
-  tfcpmw   = 0.0D0
-  tficrn   = 0.0D0
-  tfind    = 0.0D0
-  tflegmw  = 0.0D0
-  tflegres = 2.5D-8
-  tfleng   = 0.0D0
-  tfno     = 16.0D0
-  tfocrn   = 0.0D0
-  tfsai    = 0.0D0
-  tfsao    = 0.0D0
-  tftmp    = 4.5D0
-  thicndut = 8.0D-4
-  thkcas   = 0.3D0
-  thkwp    = 0.0D0
-  thwcndut = 3.0D-3
-  tinstf   = 0.01D0
-  tmargmin = 2.5D0
-  tmargtf  = 0.0D0
-  tmaxpro  = 150.0D0
-  tmpcry   = 4.5D0
-  turnstf  = 0.0D0
-  vcool    = 20.0D0
-  vdalw    = 20.0D0
-  vforce   = 0.0D0
-  vftf     = 0.4D0
-  volcp    = 0.0D0
-  voltfleg = 0.0D0
-  vtfkv    = 0.0D0
-  vtfskv   = 0.0D0
-  whtcas   = 0.0D0
-  whtcon   = 0.0D0
-  whtconcu = 0.0D0
-  whtconsc = 0.0D0
-  whtconsh = 0.0D0
-  whtcp    = 0.0D0
-  whttf    = 0.0D0
-  whttflgs = 0.0D0
-  wpvf     = 0.0D0
-  wtbc     = 0.0D0
-  wwp1     = 0.0D0
-  wwp2     = 0.0D0
-  xarc(:)  = 0.0D0
-  xctfc(:) = 0.0D0
-  yarc(:)  = 0.0D0
-  yctfc(:) = 0.0D0
 
   !  PF coil power conversion
 
@@ -813,17 +668,17 @@ subroutine check
   !+ad_desc  and ensures other dependent variables are given suitable values.
   !+ad_prob  None
   !+ad_call  current_drive_variables
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
   !+ad_call  global_variables
   !+ad_call  numerics
+  !+ad_call  pfcoil_variables
+  !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  tfcoil_variables
   !+ad_call  bldgvol.h90
   !+ad_call  build.h90
   !+ad_call  htpwr.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  ife.h90
   !+ad_hist  08/10/96 PJK Initial upgraded version
   !+ad_hist  23/01/97 PJK Moved resetting of trithtmw from POWER
@@ -836,6 +691,7 @@ subroutine check
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -846,6 +702,7 @@ subroutine check
   use pfcoil_variables
   use physics_variables
   use process_output
+  use tfcoil_variables
 
   implicit none
 
@@ -854,7 +711,6 @@ subroutine check
   include 'htpwr.h90'
   include 'pulse.h90'
   include 'rfp.h90'
-  include 'tfcoil.h90'
   include 'ife.h90'
 
   !  Local variables

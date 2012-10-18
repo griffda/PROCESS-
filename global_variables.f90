@@ -1105,6 +1105,355 @@ end module pfcoil_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module tfcoil_variables
+
+  !+ad_name  tfcoil_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  toroidal field coil systems
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  toroidal field coil systems of a fusion power plant.
+  !+ad_desc  It is derived from <CODE>include</CODE> file
+  !+ad_desc  <CODE>tfcoil.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  18/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  acasetf : total external case area (inboard) (m**2)
+  real(kind(1.0D0)) :: acasetf = 0.0D0
+  !+ad_vars  acndttf : area of the cable conduit (m**2)
+  real(kind(1.0D0)) :: acndttf = 0.0D0
+  !+ad_vars  acond : conductor area (winding pack) (m**2)
+  real(kind(1.0D0)) :: acond = 0.0D0
+  !+ad_vars  acstf : internal area of the cable space (m**2)
+  real(kind(1.0D0)) :: acstf = 0.0D0
+  !+ad_vars  aiwp : winding pack insulation area (m**2)
+  real(kind(1.0D0)) :: aiwp = 0.0D0
+  !+ad_vars  alstrtf : allowable stress in TF coil (Pa)
+  real(kind(1.0D0)) :: alstrtf = 0.0D0
+  !+ad_vars  arealeg : outboard TF leg area (m**2)
+  real(kind(1.0D0)) :: arealeg = 0.0D0
+  !+ad_vars  aspcstf /1.0/ : TF conductor cable aspect ratio (radial/toroidal)
+  real(kind(1.0D0)) :: aspcstf = 1.0D0
+  !+ad_vars  aswp : winding pack structure area (m**2)
+  real(kind(1.0D0)) :: aswp = 0.0D0
+  !+ad_vars  avwp : winding pack void (He coolant) area (m**2)
+  real(kind(1.0D0)) :: avwp = 0.0D0
+  !+ad_vars  bcritsc /24.0/ : critical field for superconductor (isumattf=4 or 5)
+  real(kind(1.0D0)) :: bcritsc = 24.0D0
+  !+ad_vars  bmaxtf : peak field at TF coil (T)
+  real(kind(1.0D0)) :: bmaxtf = 0.0D0
+  !+ad_vars  bmaxtfrp : peak field at conductor with ripple (T)
+  real(kind(1.0D0)) :: bmaxtfrp = 0.0D0
+  !+ad_vars  borev : vertical inner bore of TF coil (m)
+  real(kind(1.0D0)) :: borev = 0.0D0
+  !+ad_vars  casestr : case strain
+  real(kind(1.0D0)) :: casestr = 0.0D0
+  !+ad_vars  casfact /4.0/ : TF coil case thickness factor
+  !+ad_varc                  = (average outboard / average inboard thickness)
+  real(kind(1.0D0)) :: casfact = 4.0D0
+  !+ad_vars  casthi /0.05/ : TF coil case inner (plasma side) thickness (m)
+  real(kind(1.0D0)) :: casthi = 0.05D0
+  !+ad_vars  casths /0.07/ : TF coil sidewall case thickness (m)
+  real(kind(1.0D0)) :: casths = 0.07D0
+  !+ad_vars  cdtfleg /1.0D6/ : TF leg overall current density (A/m**2)
+  !+ad_varc                    (iteration variable 24)
+  real(kind(1.0D0)) :: cdtfleg = 1.0D6
+  !+ad_vars  cforce : centering force on inner leg (per coil) (N/m)
+  real(kind(1.0D0)) :: cforce = 0.0D0
+  !+ad_vars  cph2o : specific heat of water (= 4180 J/kg/K)
+  real(kind(1.0D0)) :: cph2o = 4180.0D0
+  !+ad_vars  cpttf /3.79D4/ : current per turn (A) (single turn legs)
+  real(kind(1.0D0)) :: cpttf = 3.79D4
+  !+ad_vars  csutf /1.4D9/ : ultimate strength of case (Pa)
+  real(kind(1.0D0)) :: csutf = 1.4D9
+  !+ad_vars  csytf /8.25D8/ : yield strength of case (Pa)
+  real(kind(1.0D0)) :: csytf = 8.25D8
+  !+ad_vars  dcase /8000.0/ : density of coil case (kg/m**3)
+  real(kind(1.0D0)) :: dcase = 8000.0D0
+  !+ad_vars  dcond(5) /9000.0/ : density of superconductor (kg/m**3)
+  real(kind(1.0D0)), dimension(5) :: dcond = 9000.0D0
+  !+ad_vars  dcopper /8900.0/ : density of copper (kg/m**3)
+  real(kind(1.0D0)) :: dcopper = 8900.0D0
+  !+ad_vars  deflect : TF coil deflection at full field (m)
+  real(kind(1.0D0)) :: deflect = 0.0D0
+  !+ad_vars  denh2o : density of water (= 985 kg/m**3)
+  real(kind(1.0D0)) :: denh2o = 985.0D0
+  !+ad_vars  drtop /0.0/ : centrepost taper maximum radius adjustment (m)
+  real(kind(1.0D0)) :: drtop = 0.0D0
+  !+ad_vars  dztop /0.0/ : centrepost taper height adjustment (m)
+  real(kind(1.0D0)) :: dztop = 0.0D0
+  !+ad_vars  estotf : stored energy in TF coils (GJ)
+  real(kind(1.0D0)) :: estotf = 0.0D0
+  !+ad_vars  etapump /0.8/ : centrepost coolant pump efficiency
+  real(kind(1.0D0)) :: etapump = 0.8D0
+  !+ad_vars  eyins /1.5D10/ : insulator Young's modulus (Pa)
+  real(kind(1.0D0)) :: eyins = 1.5D10
+  !+ad_vars  eyoung(5) : work array used in stress calculation (Pa)
+  real(kind(1.0D0)), dimension(5) :: eyoung = 0.0D0
+  !+ad_vars  eystl /2.0D11/ : steel case Young's modulus (Pa)
+  real(kind(1.0D0)) :: eystl = 2.0D11
+  !+ad_vars  eywp /6.6D8/ : winding pack Young's modulus (Pa)
+  real(kind(1.0D0)) :: eywp = 6.6D8
+  !+ad_vars  farc4tf /0.7/ : factor to size height of point 4 on TF coil
+  real(kind(1.0D0)) :: farc4tf = 0.7D0
+  !+ad_vars  fcoolcp /0.3/ : coolant fraction of TF coil inner legs
+  !+ad_varc                  (iteration variable 23)
+  real(kind(1.0D0)) :: fcoolcp = 0.3D0
+  !+ad_vars  fcutfsu /0.69/ : copper fraction of cable conductor
+  !+ad_varc                   (iteration variable 59)
+  real(kind(1.0D0)) :: fcutfsu = 0.69D0
+  !+ad_vars  frhocp /1.0/ centrepost resistivity enhancement factor
+  real(kind(1.0D0)) :: frhocp = 1.0D0
+  !+ad_vars  isumattf /1/ : switch for superconductor material in TF coils:
+  !+ad_varc                 = 1 binary Nb3Sn;
+  !+ad_varc                 = 2 ternary Nb3Sn;
+  !+ad_varc                 = 3 NbTi;
+  !+ad_varc                 = 4 generic, but uses Nb3Sn current density model;
+  !+ad_varc                 = 5 generic, but uses NbTi current density model
+  integer :: isumattf = 1
+  !+ad_vars  itfmod /1/ : switch for TF coil magnet model:
+  !+ad_varc               = 0 use simple model;
+  !+ad_varc               = 1 use complex stress/superconductor models
+  integer :: itfmod = 1
+  !+ad_vars  itfsup /1/ : switch for TF coil conductor model:
+  !+ad_varc               = 0 conventional copper;
+  !+ad_varc               = 1 superconductor
+  integer :: itfsup = 1
+  !+ad_vars  jbus /1.25D6/ : bussing current density (A/m**2)
+  real(kind(1.0D0)) :: jbus = 1.25D6
+  !+ad_vars  jcrit_model /0/ : switch for binary Nb3Sn critical J model (isumattf=1):
+  !+ad_varc                    = 0 use original model;
+  !+ad_varc                    = 1 use ITER critical surface model
+  integer :: jcrit_model = 0
+  !+ad_vars  jcritsc /2.225D10/ : critical current density (A/m**2) for
+  !+ad_varc                       superconductor (isumattf=4 or 5)
+  real(kind(1.0D0)) :: jcritsc = 2.225D10
+  !+ad_vars  jeff(5) : work array used in stress calculation (A/m**2)
+  real(kind(1.0D0)), dimension(5) :: jeff = 0.0D0
+  !+ad_vars  jwdgcrt : critical current density for winding pack (A/m**2)
+  real(kind(1.0D0)) :: jwdgcrt = 0.0D0
+  !+ad_vars  jwdgpro : allowable TF coil winding pack current density,
+  !+ad_varc            for dump temperature rise protection (A/m**2)
+  real(kind(1.0D0)) :: jwdgpro = 0.0D0
+  !+ad_vars  jwptf : winding pack current density (A/m**2)
+  real(kind(1.0D0)) :: jwptf = 0.0D0
+  !+ad_vars  kcp : thermal conductivity of centrepost (= 330 W/m/K)
+  real(kind(1.0D0)) :: kcp = 330.0D0
+  !+ad_vars  kh2o : thermal conductivity of water (= 0.651 W/m/K)
+  real(kind(1.0D0)) :: kh2o = 0.651D0
+  !+ad_vars  magnt /2/ : switch for TF coil stress model:
+  !+ad_varc              = 1 for FER type configuration with bucking cylinder;
+  !+ad_varc              = 2 for NET type wedging; set casfi = 0.0;
+  !+ad_varc              = 3 for LLNL type buck on OH coil
+  integer :: magnt = 2
+  !+ad_vars  muh2o : water dynamic viscosity (= 4.71D-4 kg/m/s)
+  real(kind(1.0D0)) :: muh2o = 4.71D-4
+  !+ad_vars  ncool : number of centrepost coolant tubes
+  real(kind(1.0D0)) :: ncool = 0.0D0
+  !+ad_vars  oacdcp /1.4D7/ : overall current density in TF coil inner legs (A/m**2)
+  !+ad_varc                   (iteration variable 12)
+  real(kind(1.0D0)) :: oacdcp = 1.4D7
+  !+ad_vars  poisson /0.3/ : Poisson's ratio for TF stress calculation
+  real(kind(1.0D0)) :: poisson = 0.3D0
+  !+ad_vars  ppump : centrepost coolant pump power (W)
+  real(kind(1.0D0)) :: ppump = 0.0D0
+  !+ad_vars  prescp : resistive power in the centrepost (W)
+  real(kind(1.0D0)) :: prescp = 0.0D0
+  !+ad_vars  ptempalw /200.0/ : maximum peak centrepost temperature (C)
+  !+ad_varc                     (constraint equation 44)
+  real(kind(1.0D0)) :: ptempalw = 200.0D0
+  !+ad_vars  radtf(6) : work array used in stress calculation (m)
+  real(kind(1.0D0)), dimension(6) :: radtf = 0.0D0
+  !+ad_vars  rbmax : radius of maximum TF B-field (m)
+  real(kind(1.0D0)) :: rbmax = 0.0D0
+  !+ad_vars  rcool /0.005/ : average radius of coolant channel (m)
+  !+ad_varc                  (iteration variable 69)
+  real(kind(1.0D0)) :: rcool = 0.005D0
+  !+ad_vars  rhocp : TF coil inner leg resistance (Ohm)
+  real(kind(1.0D0)) :: rhocp = 0.0D0
+  !+ad_vars  rhotfleg : TF coil leg resistance (Ohm)
+  real(kind(1.0D0)) :: rhotfleg = 0.0D0
+  !+ad_vars  ripmax /5.0/ : maximum peak/average ripple at plasma edge (%)
+  real(kind(1.0D0)) :: ripmax = 5.0D0
+  !+ad_vars  ripple : peak/average ripple at plasma edge (%)
+  real(kind(1.0D0)) :: ripple = 0.0D0
+  !+ad_vars  ritfc : total current in TF coil (A)
+  real(kind(1.0D0)) :: ritfc = 0.0D0
+  !+ad_vars  rjtfsual : allowable overall coil current density (A/m**2)
+  real(kind(1.0D0)) :: rjtfsual = 0.0D0
+  !+ad_vars  rnltf : number of TF turns/pancake (radial direction)
+  real(kind(1.0D0)) :: rnltf = 0.0D0
+  !+ad_vars  sigrad : radial TF coil stress (MPa)
+  real(kind(1.0D0)) :: sigrad = 0.0D0
+  !+ad_vars  sigrcon : radial stress in the cable conduit (Pa)
+  real(kind(1.0D0)) :: sigrcon = 0.0D0
+  !+ad_vars  sigrtf(5) : radial stress in TF coil regions (Pa)
+  real(kind(1.0D0)), dimension(5) :: sigrtf = 0.0D0
+  !+ad_vars  sigtan : transverse TF coil stress (MPa)
+  real(kind(1.0D0)) :: sigtan = 0.0D0
+  !+ad_vars  sigtcon : tangential stress in the cable conduit (Pa)
+  real(kind(1.0D0)) :: sigtcon = 0.0D0
+  !+ad_vars  sigttf(5) : tangential stress in TF coil regions (Pa)
+  real(kind(1.0D0)), dimension(5) :: sigttf = 0.0D0
+  !+ad_vars  sigver : vertical TF coil stress (MPa)
+  real(kind(1.0D0)) :: sigver  = 0.0D0
+  !+ad_vars  sigvert : vertical tensile stress in TF coil (Pa)
+  real(kind(1.0D0)) :: sigvert = 0.0D0
+  !+ad_vars  strncon /-0.005/ : strain in superconductor material
+  real(kind(1.0D0)) :: strncon = -0.005D0
+  !+ad_vars  strtf1 : Von Mises stress in TF cable conduit (Pa)
+  real(kind(1.0D0)) :: strtf1 = 0.0D0
+  !+ad_vars  strtf2 : Von Mises stress in TF coil case (Pa)
+  real(kind(1.0D0)) :: strtf2 = 0.0D0
+  !+ad_vars  tcoolin /40.0/ : centrepost coolant inlet temperature (C)
+  real(kind(1.0D0)) :: tcoolin = 40.0D0
+  !+ad_vars  tcpav /100.0/ : average temp of TF coil inner leg conductor (C)
+  !+ad_varc                  (iteration variable 20)
+  real(kind(1.0D0)) :: tcpav = 100.0D0
+  !+ad_vars  tcpav2 : centrepost average temperature (C) (for consistency)
+  real(kind(1.0D0)) :: tcpav2 = 0.0D0
+  !+ad_vars  tcpmax : peak centrepost temperature (C)
+  real(kind(1.0D0)) :: tcpmax = 0.0D0
+  !+ad_vars  tcritsc /16.0/ : critical temperature (K) for superconductor
+  !+ad_varc                   (isumattf = 4 or 5)
+  real(kind(1.0D0)) :: tcritsc = 16.0D0
+  !+ad_vars  tdmptf /10.0/ : dump time for TF coil (s)
+  !+ad_varc                  (iteration variable 56)
+  real(kind(1.0D0)) :: tdmptf = 10.0D0
+  !+ad_vars  tfareain : area of inboard midplane TF legs (m**2)
+  real(kind(1.0D0)) :: tfareain = 0.0D0
+  !+ad_vars  tfboreh : TF coil horizontal bore (m)
+  real(kind(1.0D0)) :: tfboreh = 0.0D0
+  !+ad_vars  tfbusl : TF coil bus length (m)
+  real(kind(1.0D0)) :: tfbusl = 0.0D0
+  !+ad_vars  tfbusmas : TF coil bus mass (kg)
+  real(kind(1.0D0)) :: tfbusmas = 0.0D0
+  !+ad_vars  tfckw :  TF coil peak voltage in dump (kV)
+  real(kind(1.0D0)) :: tfckw = 0.0D0
+  !+ad_vars  tfcmw : peak power per TF power supply (MW)
+  real(kind(1.0D0)) :: tfcmw = 0.0D0
+  !+ad_vars  tfcpmw : peak resistive TF coil inner leg power (MW)
+  real(kind(1.0D0)) :: tfcpmw = 0.0D0
+  !+ad_vars  tficrn : TF coil half-width - inner bore (m)
+  real(kind(1.0D0)) :: tficrn = 0.0D0
+  !+ad_vars  tfind : TF coil inductance (H)
+  real(kind(1.0D0)) :: tfind = 0.0D0
+  !+ad_vars  tflegmw : TF coil outer leg resistive power (MW)
+  real(kind(1.0D0)) :: tflegmw = 0.0D0
+  !+ad_vars  tflegres /2.5D-8/ : resistivity of a TF coil leg (Ohm-m)
+  real(kind(1.0D0)) :: tflegres = 2.5D-8
+  !+ad_vars  tfleng : TF coil circumference (m)
+  real(kind(1.0D0)) :: tfleng = 0.0D0
+  !+ad_vars  tfno : number of TF coils
+  real(kind(1.0D0)) :: tfno = 16.0D0
+  !+ad_vars  tfocrn : TF coil half-width - outer bore (m)
+  real(kind(1.0D0)) :: tfocrn = 0.0D0
+  !+ad_vars  tfsai : area of the inboard TF coil legs
+  real(kind(1.0D0)) :: tfsai = 0.0D0
+  !+ad_vars  tfsao : area of the outboard TF coil legs
+  real(kind(1.0D0)) :: tfsao = 0.0D0
+  !+ad_vars  tftmp /4.5/ : peak TF coil He coolant temperature (K)
+  real(kind(1.0D0)) :: tftmp = 4.5D0
+  !+ad_vars  thicndut /8.0D-4/ : conduit insulation thickness (m)
+  real(kind(1.0D0)) :: thicndut = 8.0D-4
+  !+ad_vars  thkcas /0.3/ : external case thickness for superconductor (m)
+  !+ad_varc                 (iteration variable 57)
+  real(kind(1.0D0)) :: thkcas = 0.3D0
+  !+ad_vars  thkwp : radial thickness of winding pack (m)
+  real(kind(1.0D0)) :: thkwp = 0.0D0
+  !+ad_vars  thwcndut /3.0D-3/ : TF coil conduit case thickness (m)
+  !+ad_varc                      (iteration variable 58)
+  real(kind(1.0D0)) :: thwcndut = 3.0D-3
+  !+ad_vars  tinstf /0.01/ : ground wall insulation thickness (m)
+  real(kind(1.0D0)) :: tinstf = 0.01D0
+  !+ad_vars  tmargmin /2.5/ : minimum allowable temperature margin (K)
+  !+ad_varc                   (iteration variable 55)
+  real(kind(1.0D0)) :: tmargmin = 2.5D0
+  !+ad_vars  tmargtf :  TF coil temperature margin (K)
+  real(kind(1.0D0)) :: tmargtf = 0.0D0
+  !+ad_vars  tmaxpro /150.0/ : maximum temp rise during a quench for protection (K)
+  real(kind(1.0D0)) :: tmaxpro = 150.0D0
+  !+ad_vars  tmpcry /4.5/ : cryostat temperature for superconductor analysis (K)
+  real(kind(1.0D0)) :: tmpcry = 4.5D0
+  !+ad_vars  turnstf : number of turns per TF coil
+  real(kind(1.0D0)) :: turnstf = 0.0D0
+  !+ad_vars  vcool /20.0/ : max centrepost coolant flow speed at midplane (m/s)
+  !+ad_varc                 (iteration variable 70)
+  real(kind(1.0D0)) :: vcool = 20.0D0
+  !+ad_vars  vdalw /20.0/ : max voltage across TF coil during quench (kV)
+  !+ad_varc                 (iteration variable 52)
+  real(kind(1.0D0)) :: vdalw = 20.0D0
+  !+ad_vars  vforce : vertical separating force on inner leg/coil (N)
+  real(kind(1.0D0)) :: vforce = 0.0D0
+  !+ad_vars  vftf /0.4/ : coolant fraction of TF coil leg
+  real(kind(1.0D0)) :: vftf = 0.4D0
+  !+ad_vars  volcp : total volume of TF coil inner legs (m**3)
+  real(kind(1.0D0)) :: volcp = 0.0D0
+  !+ad_vars  voltfleg : volume of each TF coil outer leg (m**3)
+  real(kind(1.0D0)) :: voltfleg = 0.0D0
+  !+ad_vars  vtfkv : peak TF coil voltage (kV)
+  real(kind(1.0D0)) :: vtfkv = 0.0D0
+  !+ad_vars  vtfskv : voltage across a TF coil during quench (kV)
+  real(kind(1.0D0)) :: vtfskv = 0.0D0
+  !+ad_vars  whtcas : mass per coil of external case (kg)
+  real(kind(1.0D0)) :: whtcas = 0.0D0
+  !+ad_vars  whtcon : TF coil conductor cable mass per coil (kg)
+  real(kind(1.0D0)) :: whtcon = 0.0D0
+  !+ad_vars  whtconcu : copper mass in TF coil conductor cable (kg/coil)
+  real(kind(1.0D0)) :: whtconcu = 0.0D0
+  !+ad_vars  whtconsc : superconductor mass in TF coil conductor cable (kg/coil)
+  real(kind(1.0D0)) :: whtconsc = 0.0D0
+  !+ad_vars  whtconsh : steel conduit mass in TF coil conductor cable (kg/coil)
+  real(kind(1.0D0)) :: whtconsh = 0.0D0
+  !+ad_vars  whtcp : mass of TF coil inner legs (kg)
+  real(kind(1.0D0)) :: whtcp = 0.0D0
+  !+ad_vars  whttf : total mass of the TF coils (kg)
+  real(kind(1.0D0)) :: whttf = 0.0D0
+  !+ad_vars  whttflgs : mass of the TF coil legs (kg)
+  real(kind(1.0D0)) :: whttflgs = 0.0D0
+  !+ad_vars  wpvf /0.0/ : inter-turn void fraction of winding pack
+  real(kind(1.0D0)) :: wpvf = 0.0D0
+  !+ad_vars  wtbc : bucking cylinder mass (kg)
+  real(kind(1.0D0)) :: wtbc = 0.0D0
+  !+ad_vars  wwp1 : width of first step of winding pack (m)
+  real(kind(1.0D0)) :: wwp1 = 0.0D0
+  !+ad_vars  wwp2 : width of second step of winding pack (m)
+  real(kind(1.0D0)) :: wwp2 = 0.0D0
+
+  !  Superconducting TF coil shape parameters (see also farc4tf)
+  !  The TF inner surface top half is approximated by circular arcs
+  !  Arc 1 goes through points 1 and 2 on the inner surface. Arc 2
+  !  goes through points 2-3, etc.
+
+  !+ad_vars  dthet(5) : angle of arc i (rad)
+  real(kind(1.0D0)), dimension(5) :: dthet = 0.0D0
+  !+ad_vars  radctf(5) : radius of arc i (m)
+  real(kind(1.0D0)), dimension(5) :: radctf = 0.0D0
+  !+ad_vars  xarc(5) : x location of arc point i on surface (m)
+  real(kind(1.0D0)), dimension(5) :: xarc = 0.0D0
+  !+ad_vars  xctfc(5) : x location of arc centre i (m)
+  real(kind(1.0D0)), dimension(5) :: xctfc = 0.0D0
+  !+ad_vars  yarc(5) : y location of arc point i on surface (m)
+  real(kind(1.0D0)), dimension(5) :: yarc = 0.0D0
+  !+ad_vars  yctfc(5) : y location of arc centre i (m)
+  real(kind(1.0D0)), dimension(5) :: yctfc = 0.0D0
+
+end module tfcoil_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
 
   !  ex bldgcom.h90
@@ -1543,69 +1892,6 @@ module wibble
 
   real(kind(1.0D0)) :: aintmass,clgsmass,coldmass,fncmass,gsmass
   common /struc1/ aintmass,clgsmass,coldmass,fncmass,gsmass
-
-!  ex tfcoil.h90
-
-  integer :: itfsup
-  common /tfcom0/ itfsup
-
-  !  Resistive TF coil variables
-
-  real(kind(1.0D0)) :: &
-       arealeg,bmaxtf,cdtfleg,cforce,cpres,cpttf,drtop,dztop,estotf, &
-       fcoolcp,jbus,oacdcp,prescp,rbmax,rhocp,rhotfleg,ripmax,ripple, &
-       ritfc,sigrad,sigtan,sigver,tcpav,tfareain,tfboreh,tfbusl, &
-       tfbusmas,tfcmw,tfcpmw,tflegmw,tflegres,tfno,tmpcry,turnstf, &
-       vforce,vftf,volcp,voltfleg,vtfkv,whtcp,whttf,whttflgs,wpvf,wtbc
-  common /tfcom1/ &
-       arealeg,bmaxtf,cdtfleg,cforce,cpres,cpttf,drtop,dztop,estotf, &
-       fcoolcp,jbus,oacdcp,prescp,rbmax,rhocp,rhotfleg,ripmax,ripple, &
-       ritfc,sigrad,sigtan,sigver,tcpav,tfareain,tfboreh,tfbusl, &
-       tfbusmas,tfcmw,tfcpmw,tflegmw,tflegres,tfno,tmpcry,turnstf, &
-       vforce,vftf,volcp,voltfleg,vtfkv,whtcp,whttf,whttflgs,wpvf,wtbc
-
-  !  Centrepost variables
-
-  real(kind(1.0D0)) :: &
-       cph2o,denh2o,etapump,frhocp,kcp,kh2o,muh2o,ncool,ppump, &
-       ptempalw,rcool,tcoolin,tcpav2,tcpmax,vcool
-  common /tfcom2/ &
-       cph2o,denh2o,etapump,frhocp,kcp,kh2o,muh2o,ncool,ppump, &
-       ptempalw,rcool,tcoolin,tcpav2,tcpmax,vcool
-
-  !  Superconducting TF coil variables
-
-  integer :: isumattf,itfmod,magnt,jcrit_model
-  common /tfcom3/ isumattf,itfmod,magnt,jcrit_model
-
-  real(kind(1.0D0)) :: &
-       acasetf,acndttf,acond,acstf,aiwp,alstrtf,aspcstf,aswp,avwp, &
-       bcritsc,bmaxtfrp,borev,casestr,casfact,casthi,casths,csutf, &
-       csytf,dcase,dcopper,deflect,eyins,eystl,eywp,fcutfsu,jcritsc, &
-       jwdgcrt,jwdgpro,jwptf,poisson,rjtfsual,rnltf,sigrcon,sigtcon, &
-       sigvert,strncon,strtf1,strtf2,tcritsc,tdmptf,tfckw,tficrn, &
-       tfind,tfleng,tfocrn,tfsai,tfsao,tftmp,thicndut,thkcas,thkwp, &
-       thwcndut,tinstf,tmargmin,tmargtf,tmaxpro,vdalw,vtfskv,whtcas, &
-       whtcon,whtconcu,whtconsc,whtconsh,wwp1,wwp2
-  common /tfcom4/ &
-       acasetf,acndttf,acond,acstf,aiwp,alstrtf,aspcstf,aswp,avwp, &
-       bcritsc,bmaxtfrp,borev,casestr,casfact,casthi,casths,csutf, &
-       csytf,dcase,dcopper,deflect,eyins,eystl,eywp,fcutfsu,jcritsc, &
-       jwdgcrt,jwdgpro,jwptf,poisson,rjtfsual,rnltf,sigrcon,sigtcon, &
-       sigvert,strncon,strtf1,strtf2,tcritsc,tdmptf,tfckw,tficrn, &
-       tfind,tfleng,tfocrn,tfsai,tfsao,tftmp,thicndut,thkcas,thkwp, &
-       thwcndut,tinstf,tmargmin,tmargtf,tmaxpro,vdalw,vtfskv,whtcas, &
-       whtcon,whtconcu,whtconsc,whtconsh,wwp1,wwp2
-
-  real(kind(1.0D0)), dimension(5) :: dcond,eyoung,jeff,sigrtf,sigttf
-  real(kind(1.0D0)), dimension(6) :: radtf
-  common /tfcom5/ dcond,eyoung,jeff,radtf,sigrtf,sigttf
-
-  real(kind(1.0D0)) :: farc4tf
-  common /tfcom6/ farc4tf
-
-  real(kind(1.0D0)), dimension(5) :: dthet,radctf,xarc,xctfc,yarc,yctfc
-  common /tfcom7/ dthet,radctf,xarc,xctfc,yarc,yctfc    
 
 !  ex times.h90
 

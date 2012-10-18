@@ -17,8 +17,8 @@ subroutine tfcoil(outfile,iprint)
   !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  tfcoil_variables
   !+ad_call  build.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  concoptf
   !+ad_call  oheadr
   !+ad_call  osubhd
@@ -31,6 +31,7 @@ subroutine tfcoil(outfile,iprint)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -39,11 +40,11 @@ subroutine tfcoil(outfile,iprint)
   use constants
   use physics_variables
   use process_output
+  use tfcoil_variables
 
   implicit none
 
   include 'build.h90'
-  include 'tfcoil.h90'
 
   !  Arguments
 
@@ -171,7 +172,6 @@ subroutine concoptf(outfile,iprint)
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  cpost
   !+ad_call  osubhd
   !+ad_call  ovarre
@@ -190,10 +190,10 @@ subroutine concoptf(outfile,iprint)
   use constants
   use physics_variables
   use process_output
+  use tfcoil_variables
 
   implicit none
 
-  include 'tfcoil.h90'
   include 'build.h90'
 
   !  Arguments
@@ -331,7 +331,6 @@ subroutine cntrpst(outfile,iprint)
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  oheadr
   !+ad_call  osubhd
   !+ad_call  ovarre
@@ -350,10 +349,10 @@ subroutine cntrpst(outfile,iprint)
   use fwbs_variables
   use physics_variables
   use process_output
+  use tfcoil_variables
 
   implicit none
 
-  include 'tfcoil.h90'
   include 'build.h90'
 
   !  Arguments

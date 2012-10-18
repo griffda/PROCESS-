@@ -17,10 +17,10 @@ subroutine power1
   !+ad_call  fwbs_variables
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
+  !+ad_call  tfcoil_variables
   !+ad_call  htpwr.h90
   !+ad_call  pwrcom.h90
   !+ad_call  struccom.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  times.h90
   !+ad_call  cryo
   !+ad_hist  01/08/11 PJK Initial F90 version
@@ -28,6 +28,7 @@ subroutine power1
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -37,13 +38,13 @@ subroutine power1
   use fwbs_variables
   use pfcoil_variables
   use physics_variables
+  use tfcoil_variables
 
   implicit none
 
   include 'htpwr.h90'
   include 'pwrcom.h90'
   include 'struccom.h90'
-  include 'tfcoil.h90'
   include 'times.h90'
 
   !  Arguments
@@ -118,9 +119,9 @@ subroutine power2(outfile,iprint)
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  tfcoil_variables
   !+ad_call  cost.h90
   !+ad_call  htpwr.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  blanket
   !+ad_call  oblnkl
   !+ad_call  oheadr
@@ -136,6 +137,7 @@ subroutine power2(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  18/10/12 PJK Added fwbs_module
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -145,12 +147,12 @@ subroutine power2(outfile,iprint)
   use fwbs_variables
   use physics_variables
   use process_output
+  use tfcoil_variables
 
   implicit none
 
   include 'cost.h90'
   include 'htpwr.h90'
-  include 'tfcoil.h90'
 
   !  Arguments
 

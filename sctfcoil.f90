@@ -19,8 +19,8 @@ subroutine sctfcoil(outfile,iprint)
   !+ad_call  constants
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
+  !+ad_call  tfcoil_variables
   !+ad_call  build.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  coilshap
   !+ad_call  tfcind
   !+ad_call  stresscl
@@ -31,6 +31,7 @@ subroutine sctfcoil(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  18/10/12 PJK Added fwbs_variables
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -39,11 +40,11 @@ subroutine sctfcoil(outfile,iprint)
   use constants
   use fwbs_variables
   use physics_variables
+  use tfcoil_variables
 
   implicit none
 
   include 'build.h90'
-  include 'tfcoil.h90'
 
   !  Arguments
 
@@ -51,7 +52,7 @@ subroutine sctfcoil(outfile,iprint)
 
   !  Local variables
 
-  integer :: i,narc
+  integer :: i
   real(kind(1.0D0)) :: awpc,awptf,bcylir,dct,leni,leno,radwp,rbcndut, &
        rcoil,rcoilp,tant,tcan1,tcan2,tcan3,thtcoil,wbtf
 
@@ -137,8 +138,7 @@ subroutine sctfcoil(outfile,iprint)
 
   !  Calculation of TF coil magnetic energy
 
-  narc = 4
-  call tfcind(narc,xarc,yarc,xctfc,yctfc,dthet,tfcth,tfind)
+  call tfcind(tfcth)
 
   !  Find TF coil energy (GJ)
 
@@ -382,8 +382,8 @@ subroutine stresscl
   !+ad_desc  TF coil set.
   !+ad_prob  None
   !+ad_call  constants
+  !+ad_call  tfcoil_variables
   !+ad_call  build.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  eyngeff
   !+ad_call  sctfjalw
   !+ad_call  sigvm
@@ -391,17 +391,18 @@ subroutine stresscl
   !+ad_hist  10/05/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use tfcoil_variables
 
   implicit none
 
   include 'build.h90'
-  include 'tfcoil.h90'
 
   !  Arguments
 
@@ -892,22 +893,23 @@ subroutine coilshap
   !+ad_desc  The geometry is a fit to the 1989 ITER design.
   !+ad_prob  None
   !+ad_call  physics_variables
+  !+ad_call  tfcoil_variables
   !+ad_call  build.h90
-  !+ad_call  tfcoil.h90
   !+ad_hist  30/03/89 JG  Initial version
   !+ad_hist  14/05/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use physics_variables
+  use tfcoil_variables
 
   implicit none
 
   include 'build.h90'
-  include 'tfcoil.h90'
 
   !  Arguments
 
@@ -981,7 +983,7 @@ end subroutine coilshap
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine tfcind(narc,xarc,yarc,xctfc,yctfc,dthet,tfthk,tfind)
+subroutine tfcind(tfthk)
 
   !+ad_name  tfcind
   !+ad_summ  Calculates the self inductance of a TF coil
@@ -990,47 +992,41 @@ subroutine tfcind(narc,xarc,yarc,xctfc,yctfc,dthet,tfthk,tfind)
   !+ad_auth  J Galambos, FEDC/ORNL
   !+ad_auth  S S Kalsi, FEDC
   !+ad_cont  N/A
-  !+ad_args  narc         : input real : Number of arcs used
-  !+ad_args  xctfc, yctfc : input real arrays : X,Y coords of arc centres (m)
-  !+ad_args  xarc, yarc   : input real arrays : X,Y coords of starting points (m)
-  !+ad_args  dthet        : input real array : Angle subtended by each arc (rad)
   !+ad_args  tfthk        : input real : TF coil thickness (m)
-  !+ad_args  tfind        : output real coil inductance (H)
   !+ad_desc  This routine calculates the self inductance of a TF coil
-  !+ad_desc  that is simulated by a number of arcs.
+  !+ad_desc  that is simulated by four arcs.
   !+ad_desc  <P>Note: arcs start on the outboard side and go counter-clockwise
   !+ad_desc  in Kalsi notation. Top/bottom symmetry is assumed.
-  !+ad_prob  From the array declarations, it appears that the code is hardwired
-  !+ad_prob  to expect narc = 4.
+  !+ad_prob  The code is hardwired to expect narc = 4.
   !+ad_prob  <P>This routine is very sensitive to trivial code changes...
   !+ad_call  constants
+  !+ad_call  tfcoil_variables
   !+ad_call  build.h90
-  !+ad_call  tfcoil.h90
   !+ad_hist  03/09/85 SSK Initial version
   !+ad_hist  27/01/88 JG  Modified to use arcs whose centres do not
   !+ad_hisc               have to lie on the radius of the adjacent arc.
   !+ad_hist  14/05/12 PJK Initial F90 version
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
+  !+ad_hist  18/10/12 PJK Removed all but one argument
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use tfcoil_variables
 
   implicit none
 
   !  Arguments
 
-  integer, intent(in) :: narc
-  real(kind(1.0D0)), dimension(5), intent(in) :: xarc,yarc
-  real(kind(1.0D0)), dimension(4), intent(in) :: xctfc,yctfc,dthet
   real(kind(1.0D0)), intent(in) :: tfthk
-  real(kind(1.0D0)), intent(out) :: tfind
 
   !  Local variables
-
+  
   integer :: ns,i,k
+  integer, parameter :: narc = 4
   integer, parameter :: ntot = 100
   integer, dimension(6) :: npnt
 
@@ -1100,8 +1096,8 @@ subroutine outtf(outfile)
   !+ad_desc  to the output file.
   !+ad_prob  None
   !+ad_call  process_output
+  !+ad_call  tfcoil_variables
   !+ad_call  build.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
   !+ad_call  oheadr
@@ -1109,17 +1105,18 @@ subroutine outtf(outfile)
   !+ad_call  ovarre
   !+ad_hist  14/05/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use process_output
+  use tfcoil_variables
 
   implicit none
 
   include 'build.h90'
-  include 'tfcoil.h90'
 
   !  Arguments
 

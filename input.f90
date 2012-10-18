@@ -79,14 +79,15 @@ module process_input
   !+ad_desc  of what is being attempted.
   !+ad_desc  </UL>
   !+ad_prob  Some routines still contain GOTOs...
-  !+ad_call  numerics
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
+  !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  scan_module
+  !+ad_call  tfcoil_variables
   !+ad_call  bldgcom.h90
   !+ad_call  bldgvol.h90
   !+ad_call  build.h90
@@ -98,7 +99,6 @@ module process_input
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
   !+ad_call  stella.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  times.h90
   !+ad_call  vaccom.h90
   !+ad_hist  20/01/95 PJK Initial version (PROCESS)
@@ -112,20 +112,22 @@ module process_input
   !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use numerics
   use current_drive_variables
   use divertor_variables
   use fwbs_variables
+  use numerics
   use pfcoil_variables
   use physics_variables
   use process_output
   use scan_module
+  use tfcoil_variables
 
   implicit none
 
@@ -140,7 +142,6 @@ module process_input
   include 'pulse.h90'
   include 'rfp.h90'
   include 'stella.h90'
-  include 'tfcoil.h90'
   include 'times.h90'
   include 'vaccom.h90'
 

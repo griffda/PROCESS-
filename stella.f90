@@ -98,9 +98,9 @@ subroutine stinit
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
+  !+ad_call  tfcoil_variables
   !+ad_call  build.h90
   !+ad_call  stella.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  times.h90
   !+ad_hist  28/06/94 PJK Initial version
   !+ad_hist  09/09/94 PJK Changed ICASE
@@ -115,6 +115,7 @@ subroutine stinit
   !+ad_hist  15/10/12 PJK Added global_variables module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -124,12 +125,12 @@ subroutine stinit
   use numerics
   use pfcoil_variables
   use physics_variables
+  use tfcoil_variables
 
   implicit none
 
   include 'build.h90'
   include 'stella.h90'
-  include 'tfcoil.h90'
   include 'times.h90'
 
   !  Arguments
@@ -748,8 +749,8 @@ subroutine stcoil(outfile,iprint)
   !+ad_call  constants
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
+  !+ad_call  tfcoil_variables
   !+ad_call  build.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  outtf
   !+ad_call  stclen
   !+ad_call  stcshp
@@ -760,6 +761,8 @@ subroutine stcoil(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  18/10/12 PJK Added fwbs_variables
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
+  !+ad_hist  18/10/12 PJK Modified argument list of tfcind
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -768,11 +771,11 @@ subroutine stcoil(outfile,iprint)
   use constants
   use fwbs_variables
   use physics_variables
+  use tfcoil_variables
 
   implicit none
 
   include 'build.h90'
-  include 'tfcoil.h90'
 
   !  Arguments
 
@@ -781,7 +784,6 @@ subroutine stcoil(outfile,iprint)
   !  Local variables
 
   real(kind(1.0D0)) :: awpc,awptf,leni,leno,rbcndut,rcoil,tftort
-  integer :: narc
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -851,8 +853,7 @@ subroutine stcoil(outfile,iprint)
 
   !  Calculate TF coil self inductance
 
-  narc = 4
-  call tfcind(narc,xarc,yarc,xctfc,yctfc,dthet,tfcth,tfind)
+  call tfcind(tfcth)
 
   !  TF coil energy (0.5*L*I**2) (GJ)
 
@@ -1056,22 +1057,23 @@ subroutine stcshp
   !+ad_desc  <A HREF="coilshap.html">COILSHAP</A>.
   !+ad_prob  This is clearly a highly dodgy approximation...
   !+ad_call  physics_variables
+  !+ad_call  tfcoil_variables
   !+ad_call  build.h90
-  !+ad_call  tfcoil.h90
   !+ad_hist  20/07/94 PJK Initial version
   !+ad_hist  20/09/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use physics_variables
+  use tfcoil_variables
 
   implicit none
 
   include 'build.h90'
-  include 'tfcoil.h90'
 
   !  Arguments
 
@@ -1882,9 +1884,9 @@ subroutine ststrc(outfile,iprint)
   !+ad_call  fwbs_variables
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
+  !+ad_call  tfcoil_variables
   !+ad_call  build.h90
   !+ad_call  struccom.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  struct
   !+ad_hist  01/07/94 PJK Initial version
   !+ad_hist  01/02/96 PJK Added itfsup, ipfres to argument list of STRUCT
@@ -1893,6 +1895,7 @@ subroutine ststrc(outfile,iprint)
   !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1902,12 +1905,12 @@ subroutine ststrc(outfile,iprint)
   use fwbs_variables
   use pfcoil_variables
   use physics_variables
+  use tfcoil_variables
 
   implicit none
 
   include 'build.h90'
   include 'struccom.h90'
-  include 'tfcoil.h90'
 
   !  Arguments
 

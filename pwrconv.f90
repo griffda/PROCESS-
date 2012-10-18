@@ -16,14 +16,15 @@ subroutine tfpwr(outfile,iprint)
   !+ad_prob  None
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  tfcoil_variables
   !+ad_call  times.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_call  tfpwcall
   !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -31,10 +32,10 @@ subroutine tfpwr(outfile,iprint)
 
   use physics_variables
   use process_output
+  use tfcoil_variables
 
   implicit none
 
-  include 'tfcoil.h90'
   include 'times.h90'
 
   !  Arguments
@@ -141,22 +142,23 @@ subroutine tfpwcall(outfile,iprint)
   !+ad_desc  conversion requirements for superconducting TF coils.
   !+ad_prob  None
   !+ad_call  physics_variables
+  !+ad_call  tfcoil_variables
   !+ad_call  bldgvol.h90
   !+ad_call  htpwr.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  tfcpwr
   !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use physics_variables
+  use tfcoil_variables
  
   implicit none
 
-  include 'tfcoil.h90'
   include 'bldgvol.h90'
   include 'htpwr.h90'
 

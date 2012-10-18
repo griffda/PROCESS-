@@ -15,8 +15,8 @@ subroutine radialb(outfile,iprint)
   !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  tfcoil_variables
   !+ad_call  build.h90
-  !+ad_call  tfcoil.h90
   !+ad_call  obuild
   !+ad_call  ocmmnt
   !+ad_call  oheadr
@@ -28,6 +28,7 @@ subroutine radialb(outfile,iprint)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -36,11 +37,11 @@ subroutine radialb(outfile,iprint)
   use constants
   use physics_variables
   use process_output
+  use tfcoil_variables
 
   implicit none
 
   include 'build.h90'
-  include 'tfcoil.h90'
 
   !  Arguments
 
@@ -466,12 +467,13 @@ subroutine portsz
   !+ad_call  constants
   !+ad_call  current_drive_variables
   !+ad_call  physics_variables
+  !+ad_call  tfcoil_variables
   !+ad_call  build.h90
-  !+ad_call  tfcoil.h90
   !+ad_hist  27/07/11 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  16/10/12 PJK Added current_drive_variables
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -480,11 +482,11 @@ subroutine portsz
   use constants
   use current_drive_variables
   use physics_variables
+  use tfcoil_variables
 
   implicit none
 
   include 'build.h90'
-  include 'tfcoil.h90'
 
   !  Arguments
 

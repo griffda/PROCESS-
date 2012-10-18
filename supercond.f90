@@ -12,19 +12,20 @@ subroutine tfspcall(outfile,iprint)
   !+ad_args  iprint : input integer : Switch to write output to file (1=yes)
   !+ad_desc  This routine calls the TF coil superconductor module.
   !+ad_prob  None
-  !+ad_call  tfcoil.h90
+  !+ad_call  tfcoil_variables
   !+ad_call  supercon
   !+ad_hist  06/07/99 PJK Added extra arguments to SUPERCON call
   !+ad_hist  26/07/11 PJK Added JCRIT_MODEL argument to SUPERCON call
   !+ad_hist  21/09/11 PJK Initial F90 version
+  !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  implicit none
+  use tfcoil_variables
 
-  include 'tfcoil.h90'
+  implicit none
 
   !  Arguments
 
