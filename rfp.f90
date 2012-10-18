@@ -210,6 +210,7 @@ subroutine rfppfc(outfile,iprint)
   !+ad_prob  bpf, bpf2, forcepf are never set...
   !+ad_call  constants
   !+ad_call  fwbs_variables
+  !+ad_call  pfcoil_module
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
@@ -228,6 +229,7 @@ subroutine rfppfc(outfile,iprint)
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
+  !+ad_hist  18/10/12 PJK Added pfcoil_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -235,6 +237,7 @@ subroutine rfppfc(outfile,iprint)
 
   use constants
   use fwbs_variables
+  use pfcoil_module
   use pfcoil_variables
   use physics_variables
   use process_output
@@ -958,7 +961,7 @@ end subroutine ftheta
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine EFCURR(plascur,rmajor,rminor,betap,rli,nrfppf,rrpf, &
+subroutine efcurr(plascur,rmajor,rminor,betap,rli,nrfppf,rrpf, &
      zzpf,nturns,cptrfp)
 
   !+ad_name  efcurr
@@ -982,15 +985,19 @@ subroutine EFCURR(plascur,rmajor,rminor,betap,rli,nrfppf,rrpf, &
   !+ad_desc  in the RFP equilibrium field coils required to provide
   !+ad_desc  the correct vertical field at the plasma.
   !+ad_prob  None
+  !+ad_call  pfcoil_module
   !+ad_call  bfield
   !+ad_call  06/03/96 PJK Initial version
   !+ad_hist  09/05/12 PJK Initial F90 version
+  !+ad_hist  18/10/12 PJK Added pfcoil_module
   !+ad_stat  Okay
   !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
   !+ad_docc           Scoping Phase Report, January 1987
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use pfcoil_module
 
   implicit none
 

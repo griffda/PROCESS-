@@ -18,6 +18,7 @@ subroutine caller(xc,nvars)
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
   !+ad_call  numerics
+  !+ad_call  pfcoil_module
   !+ad_call  physics_module
   !+ad_call  physics_variables
   !+ad_call  process_output
@@ -78,6 +79,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  17/10/12 PJK Added current_drive_module
   !+ad_hist  17/10/12 PJK Added divertor_module
   !+ad_hist  18/10/12 PJK Added fwbs_module
+  !+ad_hist  18/10/12 PJK Added pfcoil_module
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -87,6 +89,7 @@ subroutine caller(xc,nvars)
   use current_drive_module
   use divertor_module
   use fwbs_module
+  use pfcoil_module
   use physics_module
   use physics_variables
   use process_output

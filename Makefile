@@ -199,15 +199,15 @@ default: process.exe
 
 aachange.o: 
 aamain.o: costs.o cudriv.o divertor.o evaluators.o fwbs.o global_variables.o input.o numerics.o \
-  output.o physics.o scan.o cost.h90 htpwr.h90 ineq.h90 \
+  output.o pfcoil.o physics.o scan.o cost.h90 htpwr.h90 ineq.h90 \
   pwrcom.h90 tfcoil.h90
 acpow.o: output.o bldgvol.h90 estocom.h90 htpwr.h90 pwrcom.h90
 avail.o: global_variables.o output.o cost.h90 ife.h90 \
   pulse.h90 rfp.h90
 bldgs.o: global_variables.o output.o bldgcom.h90 bldgvol.h90 build.h90 \
   htpwr.h90 pwrcom.h90 rfp.h90 struccom.h90 tfcoil.h90 times.h90
-caller.o: costs.o cudriv.o divertor.o fwbs.o global_variables.o numerics.o output.o physics.o ife.h90 \
-  rfp.h90 stella.h90
+caller.o: costs.o cudriv.o divertor.o fwbs.o global_variables.o numerics.o output.o pfcoil.o \
+  physics.o ife.h90 rfp.h90 stella.h90
 costs.o: global_variables.o output.o bldgvol.h90 build.h90 \
   cost.h90 htpwr.h90 ife.h90 pulse.h90 pwrcom.h90 \
   rfp.h90 struccom.h90 tfcoil.h90 times.h90 torsdat.h90
@@ -245,7 +245,7 @@ pulse.o: global_variables.o maths_library.o output.o physics.o build.h90 \
 pwrconv.o: global_variables.o output.o bldgvol.h90 build.h90 cost.h90 htpwr.h90 \
   pwrcom.h90 tfcoil.h90 times.h90
 radialb.o: global_variables.o output.o build.h90 rfp.h90 tfcoil.h90
-rfp.o: cudriv.o input.o global_variables.o output.o physics.o build.h90 \
+rfp.o: cudriv.o input.o global_variables.o output.o pfcoil.o physics.o build.h90 \
   htpwr.h90 pulse.h90 pwrcom.h90 rfp.h90 tfcoil.h90 times.h90
 safety.o: global_variables.o output.o build.h90 fispact.h90 \
   tfcoil.h90
