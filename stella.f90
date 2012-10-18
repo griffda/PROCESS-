@@ -14,6 +14,7 @@ subroutine stcall
   !+ad_prob  None
   !+ad_call  costs_module
   !+ad_call  divertor_module
+  !+ad_call  fwbs_module
   !+ad_call  process_output
   !+ad_call  acpow
   !+ad_call  avail
@@ -40,6 +41,7 @@ subroutine stcall
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added costs_module
   !+ad_hist  17/10/12 PJK Added divertor_module
+  !+ad_hist  18/10/12 PJK Added fwbs_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -47,6 +49,7 @@ subroutine stcall
 
   use costs_module
   use divertor_module
+  use fwbs_module
   use process_output
 
   implicit none
@@ -1781,6 +1784,7 @@ subroutine stout(outfile)
   !+ad_prob  None
   !+ad_call  costs_module
   !+ad_call  divertor_module
+  !+ad_call  fwbs_module
   !+ad_call  physics_variables
   !+ad_call  acpow
   !+ad_call  avail
@@ -1810,6 +1814,7 @@ subroutine stout(outfile)
   !+ad_hist  15/10/12 PJK Added costs_module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  17/10/12 PJK Added divertor_module
+  !+ad_hist  18/10/12 PJK Added fwbs_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1817,6 +1822,7 @@ subroutine stout(outfile)
 
   use costs_module
   use divertor_module
+  use fwbs_module
   use physics_variables
 
   implicit none

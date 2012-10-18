@@ -880,6 +880,7 @@ subroutine output(outfile)
   !+ad_call  costs_module
   !+ad_call  current_drive_module
   !+ad_call  divertor_module
+  !+ad_call  fwbs_module
   !+ad_call  physics_module
   !+ad_call  physics_variables
   !+ad_call  stella.h90
@@ -932,14 +933,16 @@ subroutine output(outfile)
   !+ad_hist  16/10/12 PJK Added physics_module
   !+ad_hist  17/10/12 PJK Added current_drive_module
   !+ad_hist  17/10/12 PJK Added divertor_module
+  !+ad_hist  18/10/12 PJK Added fwbs_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use costs_module
   use current_drive_module
   use divertor_module
-  use costs_module
+  use fwbs_module
   use physics_module
   use physics_variables
 

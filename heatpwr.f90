@@ -113,6 +113,7 @@ subroutine power2(outfile,iprint)
   !+ad_desc  and plant power balance constituents, not already calculated in
   !+ad_desc  <A HREF="acpow.html">ACPOW</A> or <A HREF="power1.html">POWER1</A>.
   !+ad_prob  None
+  !+ad_call  fwbs_module
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
@@ -133,11 +134,13 @@ subroutine power2(outfile,iprint)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  18/10/12 PJK Added fwbs_variables
+  !+ad_hist  18/10/12 PJK Added fwbs_module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use fwbs_module
   use fwbs_variables
   use physics_variables
   use process_output
