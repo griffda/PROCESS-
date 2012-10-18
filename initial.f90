@@ -21,7 +21,6 @@ subroutine initial
   !+ad_call  pfcoil.h90
   !+ad_call  vltcom.h90
   !+ad_call  pwrcom.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  cost.h90
   !+ad_call  bldgvol.h90
@@ -30,7 +29,6 @@ subroutine initial
   !+ad_call  struccom.h90
   !+ad_call  torsdat.h90
   !+ad_call  vaccom.h90
-  !+ad_call  blanket.h90
   !+ad_call  pulse.h90
   !+ad_call  stella.h90
   !+ad_call  rfp.h90
@@ -70,6 +68,7 @@ subroutine initial
   !+ad_hist  15/10/12 PJK Removed numerics variables from list
   !+ad_hist  16/10/12 PJK Removed current drive variables from list
   !+ad_hist  17/10/12 PJK Removed divertor variables from list
+  !+ad_hist  18/10/12 PJK Removed first wall, blanket, shield variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -86,7 +85,6 @@ subroutine initial
   include 'pfcoil.h90'
   include 'vltcom.h90'
   include 'pwrcom.h90'
-  include 'fwblsh.h90'
   include 'htpwr.h90'
   include 'cost.h90'
   include 'bldgvol.h90'
@@ -95,7 +93,6 @@ subroutine initial
   include 'struccom.h90'
   include 'torsdat.h90'
   include 'vaccom.h90'
-  include 'blanket.h90'
   include 'pulse.h90'
   include 'stella.h90'
   include 'rfp.h90'
@@ -458,69 +455,69 @@ subroutine initial
   srcktpm  = 0.0D0
   vpfskv   = 0.0D0
 
-  !  First wall, blanket and shield
+  ! !  First wall, blanket and shield
 
-  bktlife  = 0.0D0
-  coolmass = 0.0D0
-  cryomass = 0.0D0
-  denstl   = 7800.0D0
-  dewmkg   = 0.0D0
-  emult    = 1.27D0
-  fblbe    = 0.60D0
-  fblli2o  = 0.08D0
-  fbllipb  = 0.68D0
-  fblli    = 0.0D0
-  fblss    = 0.07D0
-  fblvd    = 0.0D0
-  fhole    = 0.15D0
-  fvolbi   = 1.0D0
-  fvolbo   = 0.75D0
-  fvolcry  = 1.4D0
-  fvoldw   = 1.4D0
-  fvolsi   = 0.64D0
-  fvolso   = 0.64D0
-  fwclfr   = 0.15D0
-  fwmass   = 0.0D0
-  pnucblkt = 0.0D0
-  pnuccp   = 0.0D0
-  pnucloss = 0.0D0
-  pnucshld = 0.0D0
-  ptfnuc   = 0.0D0
-  vdewex   = 0.0D0
-  vdewin   = 0.0D0
-  vfblkt   = 0.25D0
-  vfshld   = 0.25D0
-  volblkt  = 0.0D0
-  volshld  = 0.0D0
-  whtshld  = 0.0D0
-  wpenshld = 0.0D0
-  wtshldi  = 0.0D0
-  wtshldo  = 0.0D0
-  astr = 2
-  bstr = 1
-  costr = 2
-  estr = 1
-  etacp = 0.75D0
-  etafp = 0.75D0
-  etahp = 0.85D0
-  etainp = 0.85D0
-  etalp = 0.85D0
-  fkblkt = 1.0D0
-  lblnkt = 1
-  nipfwh = 1
-  nlpfwh = 1
-  pc = 0.005D0
-  ph = 8.6D0
-  pin = 0.2D0
-  pr = 1.0D0
-  sgeff = 1.0D0
-  smstr = 1
-  xdi = 2.0D0
-  xdo = 2.4D0
-  xpf = 8.6D0
-  xtb = 350.0D0
-  xtfi = 200.0D0
-  xtfo = 300.0D0
+  ! bktlife  = 0.0D0
+  ! coolmass = 0.0D0
+  ! cryomass = 0.0D0
+  ! denstl   = 7800.0D0
+  ! dewmkg   = 0.0D0
+  ! emult    = 1.27D0
+  ! fblbe    = 0.60D0
+  ! fblli2o  = 0.08D0
+  ! fbllipb  = 0.68D0
+  ! fblli    = 0.0D0
+  ! fblss    = 0.07D0
+  ! fblvd    = 0.0D0
+  ! fhole    = 0.15D0
+  ! fvolbi   = 1.0D0
+  ! fvolbo   = 0.75D0
+  ! fvolcry  = 1.4D0
+  ! fvoldw   = 1.4D0
+  ! fvolsi   = 0.64D0
+  ! fvolso   = 0.64D0
+  ! fwclfr   = 0.15D0
+  ! fwmass   = 0.0D0
+  ! pnucblkt = 0.0D0
+  ! pnuccp   = 0.0D0
+  ! pnucloss = 0.0D0
+  ! pnucshld = 0.0D0
+  ! ptfnuc   = 0.0D0
+  ! vdewex   = 0.0D0
+  ! vdewin   = 0.0D0
+  ! vfblkt   = 0.25D0
+  ! vfshld   = 0.25D0
+  ! volblkt  = 0.0D0
+  ! volshld  = 0.0D0
+  ! whtshld  = 0.0D0
+  ! wpenshld = 0.0D0
+  ! wtshldi  = 0.0D0
+  ! wtshldo  = 0.0D0
+  ! astr = 2
+  ! bstr = 1
+  ! costr = 2
+  ! estr = 1
+  ! etacp = 0.75D0
+  ! etafp = 0.75D0
+  ! etahp = 0.85D0
+  ! etainp = 0.85D0
+  ! etalp = 0.85D0
+  ! fkblkt = 1.0D0
+  ! lblnkt = 1
+  ! nipfwh = 1
+  ! nlpfwh = 1
+  ! pc = 0.005D0
+  ! ph = 8.6D0
+  ! pin = 0.2D0
+  ! pr = 1.0D0
+  ! sgeff = 1.0D0
+  ! smstr = 1
+  ! xdi = 2.0D0
+  ! xdo = 2.4D0
+  ! xpf = 8.6D0
+  ! xtb = 350.0D0
+  ! xtfi = 200.0D0
+  ! xtfo = 300.0D0
 
   !  Pulsed reactor
 

@@ -24,12 +24,11 @@ subroutine fwbs(outfile,iprint)
   !+ad_prob  None
   !+ad_call  constants
   !+ad_call  divertor_variables
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  blanket.h90
   !+ad_call  build.h90
   !+ad_call  cost.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  tfcoil.h90
   !+ad_call  blanket
@@ -41,6 +40,7 @@ subroutine fwbs(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  17/10/12 PJK Added divertor_variables
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -48,6 +48,7 @@ subroutine fwbs(outfile,iprint)
 
   use constants
   use divertor_variables
+  use fwbs_variables
   use physics_variables
   use process_output
 
@@ -55,10 +56,8 @@ subroutine fwbs(outfile,iprint)
 
   include 'build.h90'
   include 'tfcoil.h90'
-  include 'fwblsh.h90'
   include 'cost.h90'
   include 'htpwr.h90'
-  include 'blanket.h90'
 
   !  Arguments
 

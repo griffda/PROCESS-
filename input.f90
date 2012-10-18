@@ -82,16 +82,15 @@ module process_input
   !+ad_call  numerics
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  scan_module
-  !+ad_call  blanket.h90
   !+ad_call  bldgcom.h90
   !+ad_call  bldgvol.h90
   !+ad_call  build.h90
   !+ad_call  cost.h90
   !+ad_call  estocom.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
@@ -111,6 +110,7 @@ module process_input
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  17/10/12 PJK Added divertor_variables
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -120,19 +120,18 @@ module process_input
   use numerics
   use current_drive_variables
   use divertor_variables
+  use fwbs_variables
   use physics_variables
   use process_output
   use scan_module
 
   implicit none
 
-  include 'blanket.h90'
   include 'bldgcom.h90'
   include 'bldgvol.h90'
   include 'build.h90'
   include 'cost.h90'
   include 'estocom.h90'
-  include 'fwblsh.h90'
   include 'htpwr.h90'
   include 'ife.h90'
   include 'ineq.h90'

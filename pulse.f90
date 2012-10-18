@@ -13,10 +13,10 @@ subroutine pulse(outfile,iprint)
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This calls the routines relevant to a pulsed reactor scenario.
   !+ad_prob  None
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  pulse.h90
   !+ad_call  build.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  times.h90
   !+ad_call  thrmal
   !+ad_call  tohswg
@@ -25,19 +25,20 @@ subroutine pulse(outfile,iprint)
   !+ad_call  10/06/96 PJK Commented out call to STARTUP
   !+ad_hist  01/10/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use fwbs_variables
   use physics_variables
 
   implicit none
 
   include 'pulse.h90'
   include 'build.h90'
-  include 'fwblsh.h90'
   include 'times.h90'
 
   !  Arguments
@@ -97,11 +98,11 @@ subroutine thrmal(outfile,iprint)
   !+ad_desc  temperature and the neutron fluence.
   !+ad_prob  None
   !+ad_call  constants
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  pulse.h90
   !+ad_call  build.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  ineq.h90
   !+ad_call  alpha
   !+ad_call  costrm
@@ -125,6 +126,7 @@ subroutine thrmal(outfile,iprint)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -132,6 +134,7 @@ subroutine thrmal(outfile,iprint)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use fwbs_variables
   use physics_variables
   use process_output
 
@@ -139,7 +142,6 @@ subroutine thrmal(outfile,iprint)
 
   include 'pulse.h90'
   include 'build.h90'
-  include 'fwblsh.h90'
   include 'ineq.h90'
 
   !  Arguments

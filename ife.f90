@@ -2013,10 +2013,10 @@ subroutine ifefbs(outfile,iprint)
   !+ad_desc  This routine calculates the first wall, blanket and shield volumes,
   !+ad_desc  masses and other parameters, for an Inertial Fusion Energy device.
   !+ad_prob  None
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  ife.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  build.h90
   !+ad_call  cost.h90
   !+ad_call  pulse.h90
@@ -2026,6 +2026,7 @@ subroutine ifefbs(outfile,iprint)
   !+ad_hist  24/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.86
   !+ad_docs  Moir et al., Fusion Technology, vol.25 (1994) p.5
@@ -2033,13 +2034,13 @@ subroutine ifefbs(outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use fwbs_variables
   use physics_variables
   use process_output
 
   implicit none
 
   include 'ife.h90'
-  include 'fwblsh.h90'
   include 'build.h90'
   include 'cost.h90'
   include 'pulse.h90'
@@ -2185,13 +2186,14 @@ subroutine ifepw1
   !+ad_desc  This routine calculates the first part of the heat transport
   !+ad_desc  and plant power balance constituents, for an IFE power plant.
   !+ad_prob  None
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  ife.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  24/09/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, pp.67,89
   !+ad_docs  Bourque et al., Fusion Technology vol.21 (1992) 1465
@@ -2199,11 +2201,11 @@ subroutine ifepw1
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use fwbs_variables
   use physics_variables
 
   implicit none
 
-  include 'fwblsh.h90'
   include 'htpwr.h90'
   include 'ife.h90'
 
@@ -2389,10 +2391,10 @@ subroutine ifepw2(outfile,iprint)
   !+ad_desc  routines <A HREF="ifepw1.html">IFEPW1</A> or
   !+ad_desc  <A HREF="ifeacp.html">IFEACP</A>.
   !+ad_prob  None
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  cost.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  ife.h90
   !+ad_call  oblnkl
@@ -2404,19 +2406,20 @@ subroutine ifepw2(outfile,iprint)
   !+ad_hist  25/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.67
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use fwbs_variables
   use physics_variables
   use process_output
 
   implicit none
 
   include 'cost.h90'
-  include 'fwblsh.h90'
   include 'htpwr.h90'
   include 'ife.h90'
 
@@ -2593,10 +2596,10 @@ subroutine ifebdg(outfile,iprint)
   !+ad_desc  closely on that for tokamaks etc. in routine
   !+ad_desc  <A HREF="bldgs.html">BLDGS</A>.
   !+ad_prob  None
+  !+ad_call  fwbs_variables
   !+ad_call  process_output
   !+ad_call  bldgcom.h90
   !+ad_call  bldgvol.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  ife.h90
   !+ad_call  oheadr
@@ -2604,19 +2607,20 @@ subroutine ifebdg(outfile,iprint)
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  25/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.87
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use fwbs_variables
   use process_output
 
   implicit none
 
   include 'bldgcom.h90'
   include 'bldgvol.h90'
-  include 'fwblsh.h90'
   include 'htpwr.h90'
   include 'ife.h90'
 

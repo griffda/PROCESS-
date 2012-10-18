@@ -14,9 +14,8 @@ subroutine power1
   !+ad_desc  and plant power balance constituents.
   !+ad_prob  None
   !+ad_call  current_drive_variables
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
-  !+ad_call  blanket.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  pfcoil.h90
   !+ad_call  pwrcom.h90
@@ -27,18 +26,18 @@ subroutine power1
   !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use current_drive_variables
+  use fwbs_variables
   use physics_variables
 
   implicit none
 
-  include 'blanket.h90'
-  include 'fwblsh.h90'
   include 'htpwr.h90'
   include 'pfcoil.h90'
   include 'pwrcom.h90'
@@ -114,11 +113,10 @@ subroutine power2(outfile,iprint)
   !+ad_desc  and plant power balance constituents, not already calculated in
   !+ad_desc  <A HREF="acpow.html">ACPOW</A> or <A HREF="power1.html">POWER1</A>.
   !+ad_prob  None
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  blanket.h90
   !+ad_call  cost.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  tfcoil.h90
   !+ad_call  blanket
@@ -134,19 +132,19 @@ subroutine power2(outfile,iprint)
   !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use fwbs_variables
   use physics_variables
   use process_output
 
   implicit none
 
-  include 'blanket.h90'
   include 'cost.h90'
-  include 'fwblsh.h90'
   include 'htpwr.h90'
   include 'tfcoil.h90'
 

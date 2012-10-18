@@ -742,10 +742,10 @@ subroutine stcoil(outfile,iprint)
   !+ad_desc  a stellarator device.
   !+ad_prob  None
   !+ad_call  constants
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  build.h90
   !+ad_call  tfcoil.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  outtf
   !+ad_call  stclen
   !+ad_call  stcshp
@@ -755,19 +755,20 @@ subroutine stcoil(outfile,iprint)
   !+ad_hist  20/09/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use fwbs_variables
   use physics_variables
 
   implicit none
 
   include 'build.h90'
   include 'tfcoil.h90'
-  include 'fwblsh.h90'
 
   !  Arguments
 
@@ -1871,9 +1872,9 @@ subroutine ststrc(outfile,iprint)
   !+ad_desc  <A HREF="strucall.html">STRUCALL</A>.
   !+ad_prob  None
   !+ad_call  divertor_variables
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  pfcoil.h90
   !+ad_call  struccom.h90
   !+ad_call  tfcoil.h90
@@ -1883,18 +1884,19 @@ subroutine ststrc(outfile,iprint)
   !+ad_hist  24/09/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  17/10/12 PJK Added divertor_variables
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use divertor_variables
+  use fwbs_variables
   use physics_variables
 
   implicit none
 
   include 'build.h90'
-  include 'fwblsh.h90'
   include 'pfcoil.h90'
   include 'struccom.h90'
   include 'tfcoil.h90'

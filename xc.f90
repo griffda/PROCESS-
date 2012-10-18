@@ -16,9 +16,9 @@ subroutine loadxc
   !+ad_call  numerics
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
@@ -34,6 +34,7 @@ subroutine loadxc
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  17/10/12 PJK Added divertor_variables
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -41,6 +42,7 @@ subroutine loadxc
 
   use current_drive_variables
   use divertor_variables
+  use fwbs_variables
   use numerics
   use physics_variables
 
@@ -50,7 +52,6 @@ subroutine loadxc
   include 'tfcoil.h90'
   include 'build.h90'
   include 'pfcoil.h90'
-  include 'fwblsh.h90'
   include 'times.h90'
   include 'pulse.h90'
   include 'rfp.h90'
@@ -263,10 +264,10 @@ subroutine convxc(xc,nn)
   !+ad_prob  None
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  fwbs_variables
   !+ad_call  numerics
   !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
@@ -280,6 +281,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  17/10/12 PJK Added divertor_variables
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -287,6 +289,7 @@ subroutine convxc(xc,nn)
 
   use current_drive_variables
   use divertor_variables
+  use fwbs_variables
   use numerics
   use physics_variables
 
@@ -296,7 +299,6 @@ subroutine convxc(xc,nn)
   include 'tfcoil.h90'
   include 'build.h90'
   include 'pfcoil.h90'
-  include 'fwblsh.h90'
   include 'times.h90'
   include 'rfp.h90'
   include 'ife.h90'

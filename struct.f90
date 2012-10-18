@@ -13,9 +13,9 @@ subroutine strucall(outfile,iprint)
   !+ad_desc  This subroutine calls the structure module.
   !+ad_prob  None
   !+ad_call  divertor_variables
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  pfcoil.h90
   !+ad_call  struccom.h90
   !+ad_call  tfcoil.h90
@@ -23,18 +23,19 @@ subroutine strucall(outfile,iprint)
   !+ad_hist  28/07/11 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  17/10/12 PJK Added divertor_variables
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use divertor_variables
+  use fwbs_variables
   use physics_variables
 
   implicit none
 
   include 'build.h90'
-  include 'fwblsh.h90'
   include 'pfcoil.h90'
   include 'struccom.h90'
   include 'tfcoil.h90'

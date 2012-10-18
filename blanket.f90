@@ -92,16 +92,16 @@ subroutine blanket(icalc,outfile,iprint)
   !+ad_desc  <P>A more detailed description of the physical models
   !+ad_desc  used in the analysis can be found in the main reference.
   !+ad_prob  None
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
-  !+ad_call  fwblsh.h90
   !+ad_call  htpwr.h90
   !+ad_call  build.h90
-  !+ad_call  blanket.h90
   !+ad_call  blnkt
   !+ad_call  perim
   !+ad_hist  --/--/-- PK  Initial version
   !+ad_hist  25/09/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  Blanket and Energy Conversion Model for Fusion Reactors,
   !+ad_docc  Dr. P.J. Karditsas, AEA Technology, Theoretical and Strategic Studies
@@ -110,14 +110,13 @@ subroutine blanket(icalc,outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use fwbs_variables
   use physics_variables
 
   implicit none
 
-  include 'fwblsh.h90'
   include 'htpwr.h90'
   include 'build.h90'
-  include 'blanket.h90'
 
   !  Arguments
 
@@ -211,8 +210,8 @@ subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,outfile,iprint)
   !+ad_desc  <A HREF="blanket.html">blanket</A>.
   !+ad_prob  None
   !+ad_call  constants
+  !+ad_call  fwbs_variables
   !+ad_call  process_output
-  !+ad_call  blanket.h90
   !+ad_call  flow
   !+ad_call  oblnkl
   !+ad_call  ocentr
@@ -233,6 +232,7 @@ subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,outfile,iprint)
   !+ad_hist  27/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  Blanket and Energy Conversion Model for Fusion Reactors,
   !+ad_docc  Dr. P.J. Karditsas, AEA Technology, Theoretical and Strategic Studies
@@ -242,11 +242,10 @@ subroutine blnkt(rm,ap,xqfus,yc,xlr,xlp,vol,wnet1,icalc,outfile,iprint)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use fwbs_variables
   use process_output
 
   implicit none
-
-  include 'blanket.h90'
 
   !  Arguments
 
@@ -1333,7 +1332,6 @@ contains
     !+ad_desc  This routine calculates the fluid properties of the liquid
     !+ad_desc  coolant in the blanket.
     !+ad_prob  None
-    !+ad_call  blanket.h90
     !+ad_call  props
     !+ad_hist  --/--/-- PK  Initial version
     !+ad_hist  27/09/12 PJK Initial F90 version
@@ -1346,8 +1344,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'blanket.h90'
 
     !  Arguments
 
@@ -1438,7 +1434,7 @@ contains
     !+ad_desc  This routine calculates various temperature dependent properties
     !+ad_desc  of the liquid coolant in the blanket.
     !+ad_prob  None
-    !+ad_call  blanket.h90
+    !+ad_call  None
     !+ad_hist  --/--/-- PK  Initial version
     !+ad_hist  27/09/12 PJK Initial F90 version
     !+ad_stat  Okay
@@ -1450,8 +1446,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'blanket.h90'
 
     !  Arguments
 

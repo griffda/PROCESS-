@@ -17,9 +17,9 @@ subroutine sctfcoil(outfile,iprint)
   !+ad_desc  <P>It is a variant from the original FEDC/Tokamak systems code.
   !+ad_prob  None
   !+ad_call  constants
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  fwblsh.h90
   !+ad_call  tfcoil.h90
   !+ad_call  coilshap
   !+ad_call  tfcind
@@ -30,19 +30,20 @@ subroutine sctfcoil(outfile,iprint)
   !+ad_hist  10/05/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use fwbs_variables
   use physics_variables
 
   implicit none
 
   include 'build.h90'
   include 'tfcoil.h90'
-  include 'fwblsh.h90'
 
   !  Arguments
 

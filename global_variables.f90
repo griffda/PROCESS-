@@ -728,18 +728,195 @@ end module divertor_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module fwbs_variables
+
+  !+ad_name  fwbs_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  first wall, blanket and shield components
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the first
+  !+ad_desc  wall, blanket and shield components. It is derived from
+  !+ad_desc  <CODE>include</CODE> files <CODE>fwblsh.h90</CODE> and
+  !+ad_desc  <CODE>blanket.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  18/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  bktlife : blanket lifetime (years)
+  real(kind(1.0D0)) :: bktlife = 0.0D0
+  !+ad_vars  coolmass : Mass of water coolant (in shield, blanket,
+  !+ad_varc             first wall, divertor) (kg)
+  real(kind(1.0D0)) :: coolmass = 0.0D0
+  !+ad_vars  cryomass : cryostat mass (kg)
+  real(kind(1.0D0)) :: cryomass = 0.0D0
+  !+ad_vars  denstl /7800.0/ : density of steel (kg/m**3)
+  real(kind(1.0D0)) :: denstl = 7800.0D0
+  !+ad_vars  dewmkg : Dewar mass (kg)
+  real(kind(1.0D0)) :: dewmkg = 0.0D0
+  !+ad_vars  emult /1.27/ : energy multiplication in blanket and shield
+  real(kind(1.0D0)) :: emult = 1.27D0
+  !+ad_vars  fblbe /0.6/ : beryllium fraction of blanket
+  real(kind(1.0D0)) :: fblbe = 0.6D0
+  !+ad_vars  fblli /0.0/ : lithium fraction of blanket
+  real(kind(1.0D0)) :: fblli = 0.0D0
+  !+ad_vars  fblli2o /0.08/ : lithium oxide fraction of blanket
+  real(kind(1.0D0)) :: fblli2o = 0.08D0
+  !+ad_vars  fbllipb /0.68/ : lithium lead fraction of blanket
+  real(kind(1.0D0)) :: fbllipb = 0.68D0
+  !+ad_vars  fblss /0.07/ : stainless steel fraction of blanket
+  real(kind(1.0D0)) :: fblss = 0.07D0
+  !+ad_vars  fblvd /0.0/ : vanadium fraction of blanket
+  real(kind(1.0D0)) :: fblvd = 0.0D0
+  !+ad_vars  fhole /0.15/ : hole fraction of the 1st wall - that neutrons see
+  real(kind(1.0D0)) :: fhole = 0.15D0
+  !+ad_vars  fvolbi /1.0/ : fudge factor for inner blanket volume
+  real(kind(1.0D0)) :: fvolbi = 1.0D0
+  !+ad_vars  fvolbo /0.75/ : fudge factor for outer blanket volume
+  real(kind(1.0D0)) :: fvolbo = 0.75D0
+  !+ad_vars  fvolcry /1.4/ : fudge factor for cryostat volume
+  real(kind(1.0D0)) :: fvolcry = 1.4D0
+  !+ad_vars  fvoldw /1.4/ : fudge factor for dewar
+  real(kind(1.0D0)) :: fvoldw = 1.4D0
+  !+ad_vars  fvolsi /0.64/ : fudge factor for inner shield volume
+  real(kind(1.0D0)) :: fvolsi = 0.64D0
+  !+ad_vars  fvolso /0.64/ : fudge factor for outer shield volume
+  real(kind(1.0D0)) :: fvolso = 0.64D0
+  !+ad_vars  fwclfr /0.15/ : first wall coolant fraction
+  !+ad_varc                  (calculated if lpulse=1)
+  real(kind(1.0D0)) :: fwclfr = 0.15D0
+  !+ad_vars  fwmass : first wall mass (kg)
+  real(kind(1.0D0)) :: fwmass = 0.0D0
+  !+ad_vars  pnucblkt : nuclear heating in the blanket (MW)
+  real(kind(1.0D0)) :: pnucblkt = 0.0D0
+  !+ad_vars  pnuccp : nuclear heating in the centrepost (MW)
+  real(kind(1.0D0)) :: pnuccp = 0.0D0
+  !+ad_vars  pnucloss : nuclear heating lost via holes (MW)
+  real(kind(1.0D0)) :: pnucloss = 0.0D0
+  !+ad_vars  pnucshld : nuclear heating in the shield (MW)
+  real(kind(1.0D0)) :: pnucshld = 0.0D0
+  !+ad_vars  ptfnuc : nuclear heating in the TF coil (MW)
+  real(kind(1.0D0)) :: ptfnuc = 0.0D0
+  !+ad_vars  vdewex : external dewar volume (m**3)
+  real(kind(1.0D0)) :: vdewex = 0.0D0
+  !+ad_vars  vdewin : internal dewar volume (m**3)
+  real(kind(1.0D0)) :: vdewin = 0.0D0
+  !+ad_vars  vfblkt /0.25/ : coolant void fraction in blanket
+  real(kind(1.0D0)) :: vfblkt = 0.25D0
+  !+ad_vars  vfshld /0.25/ : coolant void fraction in shield
+  real(kind(1.0D0)) :: vfshld = 0.25D0
+  !+ad_vars  volblkt : volume of blanket (m**3)
+  real(kind(1.0D0)) :: volblkt = 0.0D0
+  !+ad_vars  volblkti : volume of inboard blanket (m**3)
+  real(kind(1.0D0)) :: volblkti = 0.0D0
+  !+ad_vars  volblkto : volume of outboard blanket (m**3)
+  real(kind(1.0D0)) :: volblkto = 0.0D0
+  !+ad_vars  volshld : volume of shield (m**3)
+  real(kind(1.0D0)) :: volshld = 0.0D0
+  !+ad_vars  whtblbe : mass of blanket - Be part (kg)
+  real(kind(1.0D0)) :: whtblbe = 0.0D0
+  !+ad_vars  whtblkt : mass of blanket (kg)
+  real(kind(1.0D0)) :: whtblkt = 0.0D0
+  !+ad_vars  whtblli : mass of blanket - Li part (kg)
+  real(kind(1.0D0)) :: whtblli = 0.0D0
+  !+ad_vars  whtblss : mass of blanket - stainless steel part (kg)
+  real(kind(1.0D0)) :: whtblss = 0.0D0
+  !+ad_vars  whtblvd : mass of blanket - Vanadium part (kg)
+  real(kind(1.0D0)) :: whtblvd = 0.0D0
+  !+ad_vars  whtshld : mass of shield (kg)
+  real(kind(1.0D0)) :: whtshld = 0.0D0
+  !+ad_vars  wpenshld : mass of the penetration shield (kg)
+  real(kind(1.0D0)) :: wpenshld = 0.0D0
+  !+ad_vars  wtblli2o : mass of blanket - Li_2O part (kg)
+  real(kind(1.0D0)) :: wtblli2o = 0.0D0
+  !+ad_vars  wtbllipb : mass of blanket - Li-Pb part (kg)
+  real(kind(1.0D0)) :: wtbllipb = 0.0D0
+  !+ad_vars  wtshldi : mass of inner shield (kg)
+  real(kind(1.0D0)) :: wtshldi = 0.0D0
+  !+ad_vars  wtshldo : mass of outer shield (kg)
+  real(kind(1.0D0)) :: wtshldo = 0.0D0
+
+  !  Following are used in the full thermodynamic blanket model (lblnkt=1)
+
+  !+ad_vars  etacp /0.75/ : condenser isentropic efficiency
+  real(kind(1.0D0)) :: etacp = 0.75D0
+  !+ad_vars  etafp /0.75/ : feed water pumps' isentropic efficiency
+  real(kind(1.0D0)) :: etafp = 0.75D0
+  !+ad_vars  etahp /0.85/ : high pressure turbine isentropic efficiency
+  real(kind(1.0D0)) :: etahp = 0.85D0
+  !+ad_vars  etainp /0.85/ : intermediate pressure turbine isentropic efficiency
+  real(kind(1.0D0)) :: etainp = 0.85D0
+  !+ad_vars  etalp /0.85/ : low pressure turbine isentropic efficiency
+  real(kind(1.0D0)) :: etalp = 0.85D0
+  !+ad_vars  fkblkt /1.0/ : blanket elongation / plasma elongation
+  real(kind(1.0D0)) :: fkblkt = 1.0D0
+  !+ad_vars  pc /0.005/ : low pressure turbine outlet pressure (MPa)
+  real(kind(1.0D0)) :: pc = 0.005D0
+  !+ad_vars  ph /8.6/ : high pressure turbine inlet pressure (MPa)
+  real(kind(1.0D0)) :: ph = 8.6D0
+  !+ad_vars  pin /0.2/ : low pressure turbine inlet pressure (MPa)
+  real(kind(1.0D0)) :: pin = 0.2D0
+  !+ad_vars  pr /1.0/ : intermediate pressure turbine inlet pressure (MPa)
+  real(kind(1.0D0)) :: pr = 1.0D0
+  !+ad_vars  sgeff /1.0/ : steam generator effectiveness
+  real(kind(1.0D0)) :: sgeff = 1.0D0
+  !+ad_vars  xdi /2.0/ : inner cooling channel diameter (cm)
+  real(kind(1.0D0)) :: xdi = 2.0D0
+  !+ad_vars  xdo /2.4/ : outer cooling channel diameter (cm)
+  real(kind(1.0D0)) :: xdo = 2.4D0
+  !+ad_vars  xpf /8.6/ : blanket coolant inlet pressure (MPa)
+  real(kind(1.0D0)) :: xpf = 8.6D0
+  !+ad_vars  xtb /350.0/ : maximum blanket temperature (C)
+  real(kind(1.0D0)) :: xtb = 350.0D0
+  !+ad_vars  xtfi /200.0/ : inlet coolant temperature (C)
+  real(kind(1.0D0)) :: xtfi = 200.0D0
+  !+ad_vars  xtfo /300.0/ : outlet coolant temperature (C)
+  real(kind(1.0D0)) :: xtfo = 300.0D0
+
+  !+ad_vars  astr /2/ : Switch for blanket cooling channel geometry (lblnkt=1):
+  !+ad_varc             = 1 circular cross section;
+  !+ad_varc             = 2 annular cross section
+  integer :: astr = 2
+  !+ad_vars  bstr /1/ : Switch for blanket boundary condition (lblnkt=1):
+  !+ad_varc             = 1 coolant outlet temperature fixed;
+  !+ad_varc             = 2 maximum blanket temperature fixed
+  integer :: bstr = 1
+  !+ad_vars  costr /2/ : Switch for blanket coolant material (lblnkt=1):
+  !+ad_varc              = 1 Gaseous helium coolant;
+  !+ad_varc              = 2 Pressurized water coolant
+  integer :: costr = 2
+  !+ad_vars  estr /1/ : Switch for cooling channel orientation (lblnkt=1):
+  !+ad_varc             = 1 radially orientated;
+  !+ad_varc             = 2 poloidally orientated
+  integer :: estr = 1
+  !+ad_vars  lblnkt /1/ : Switch for blanket model:
+  !+ad_varc               = 0 original model;
+  !+ad_varc               = 1 full thermodynamic model
+  integer :: lblnkt = 1
+  !+ad_vars  nipfwh /1/ : Number of intermediate pressure feed water heater pumps
+  integer :: nipfwh = 1
+  !+ad_vars  nlpfwh /1/ : Number of low pressure feed water heater pumps
+  integer :: nlpfwh = 1
+  !+ad_vars  smstr /1/ : Switch for blanket material (lblnkt=1):
+  !+ad_varc              = 1 Li2O/Be (solid blanket);
+  !+ad_varc              = 2 LiPb/Li (liquid blanket)
+  integer :: smstr = 1
+
+end module fwbs_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
-
-  !  ex-blanket.h90
-  real(kind(1.0D0)) :: &
-       xtfi,xtfo,xtb,xpf,xdo,xdi,ph,pr,pin,pc,etahp,etainp, &
-       etalp,etafp,etacp,fkblkt,sgeff
-  common /blkre/ &
-       xtfi,xtfo,xtb,xpf,xdo,xdi,ph,pr,pin,pc,etahp,etainp, &
-       etalp,etafp,etacp,fkblkt,sgeff
-
-  integer :: nipfwh,nlpfwh,lblnkt,estr,astr,bstr,costr,smstr
-  common /blki/ nipfwh,nlpfwh,lblnkt,estr,astr,bstr,costr,smstr
 
   !  ex bldgcom.h90
 
@@ -901,23 +1078,6 @@ module wibble
   common /fisp2/ &
        bliact,bligdr,blihkw,bloact,blogdr,blohkw,fwiact,fwigdr, &
        fwihkw,fwoact,fwogdr,fwohkw
-
-  !  ex fwblsh.h90
-
-  real(kind(1.0D0)) :: &
-       bktlife,coolmass,cryomass,denstl,dewmkg,emult,fblbe,fblli2o, &
-       fbllipb,fblli,fblss,fblvd,fhole,fvolbi,fvolbo,fvolcry,fvoldw, &
-       fvolsi,fvolso,fwclfr,fwmass,pnucblkt,pnuccp,pnucloss,pnucshld, &
-       ptfnuc,vdewex,vdewin,vfblkt,vfshld,volblkt,volblkti,volblkto, &
-       volshld,whtblbe,whtblkt,wtblli2o,wtbllipb,whtblli,whtblss, &
-       whtblvd,whtshld,wpenshld,wtshldi,wtshldo
-  common /fwbsxx/ &
-       bktlife,coolmass,cryomass,denstl,dewmkg,emult,fblbe,fblli2o, &
-       fbllipb,fblli,fblss,fblvd,fhole,fvolbi,fvolbo,fvolcry,fvoldw, &
-       fvolsi,fvolso,fwclfr,fwmass,pnucblkt,pnuccp,pnucloss,pnucshld, &
-       ptfnuc,vdewex,vdewin,vfblkt,vfshld,volblkt,volblkti,volblkto, &
-       volshld,whtblbe,whtblkt,wtblli2o,wtbllipb,whtblli,whtblss, &
-       whtblvd,whtshld,wpenshld,wtshldi,wtshldo
 
   !  ex htpwr.h90
 
