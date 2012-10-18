@@ -916,6 +916,195 @@ end module fwbs_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module pfcoil_variables
+
+  !+ad_name  pfcoil_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  poloidal field coil systems
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  poloidal field coil systems of a fusion power plant.
+  !+ad_desc  It is derived from <CODE>include</CODE> files
+  !+ad_desc  <CODE>pfcoil.h90</CODE> and <CODE>vltcom.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  18/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  ngrpmx : maximum number of groups of PF coils
+  integer, parameter :: ngrpmx = 8
+  !+ad_vars  nclsmx : maximum number of PF coils in a given group
+  integer, parameter :: nclsmx = 2
+  !+ad_vars  nptsmx : maximum number of points across the midplane of the
+  !+ad_varc           plasma at which the field from the PF coils is fixed
+  integer, parameter :: nptsmx = 32
+  !+ad_vars  nfixmx : maximum number of fixed current PF coils
+  integer, parameter :: nfixmx = 64
+
+  integer, parameter :: ngc = ngrpmx*nclsmx
+  integer, parameter :: ngc2 = ngc+2
+
+  !+ad_vars  ac1oh /0.0/ : OH coil cable conduit area (m**2)
+  real(kind(1.0D0)) :: ac1oh = 0.0D0
+  !+ad_vars  acsoh /3.0D-4/ : conduit conductor cross section (m**2)
+  real(kind(1.0D0)) :: acsoh = 3.0D-4
+  !+ad_vars  alfapf /5.0D-10/ : smoothing parameter used in BOP PF coil current calculation
+  real(kind(1.0D0)) :: alfapf = 5.0D-10
+  !+ad_vars  bmaxoh : B-max in OH coil at EOF (T)
+  real(kind(1.0D0)) :: bmaxoh = 0.0D0
+  !+ad_vars  bmaxoh0 : B-max in OH coil at BOP (T)
+  real(kind(1.0D0)) :: bmaxoh0 = 0.0D0
+  !+ad_vars  bpf(ngc2) : peak field at coil i (T)
+  real(kind(1.0D0)), dimension(ngc2) :: bpf = 0.0D0
+  !+ad_vars  cohbof : OH coil overall current density at BOF (A/m**2)
+  real(kind(1.0D0)) :: cohbof = 0.0D0
+  !+ad_vars  cohbop : OH coil overall current density at BOP (A/m**2)
+  real(kind(1.0D0)) :: cohbop = 0.0D0
+  !+ad_vars  coheof /1.85D7/ : OH coil overall current density at EOF (A/m**2)
+  !+ad_varc                    (iteration variable 37)
+  real(kind(1.0D0)) :: coheof = 1.85D7
+  !+ad_vars  cpt(ngc2,6) : current per turn in coil i at time j (A)
+  real(kind(1.0D0)), dimension(ngc2,6) :: cpt = 0.0D0
+  !+ad_vars  cptdin(ngc2) /4.0D4/: current per turn input for PF coil i (A)
+  real(kind(1.0D0)), dimension(ngc2) :: cptdin = 4.0D4
+  !+ad_vars  curpfb(ngc2) : work array
+  real(kind(1.0D0)), dimension(ngc2) :: curpfb = 0.0D0
+  !+ad_vars  curpff(ngc2) : work array
+  real(kind(1.0D0)), dimension(ngc2) :: curpff = 0.0D0
+  !+ad_vars  curpfs(ngc2) : work array
+  real(kind(1.0D0)), dimension(ngc2) :: curpfs = 0.0D0
+  !+ad_vars  fcohbof /0.9/ : = cohbof / coheof
+  real(kind(1.0D0)) :: fcohbof = 0.9D0
+  !+ad_vars  fcohbop /0.9/ : = cohbop / coheof (iteration variable 41)
+  real(kind(1.0D0)) :: fcohbop = 0.9D0
+  !+ad_vars  fcuoh /0.4/ : copper fraction of conductor in OH coil cable
+  real(kind(1.0D0)) :: fcuoh = 0.4D0
+  !+ad_vars  ipfloc(ngc) /1,2,3/ : switch for locating scheme of PF coil group i:
+  !+ad_varc           = 1, PF coil on top of OH coil;
+  !+ad_varc           = 2, PF coil on top of TF coil;
+  !+ad_varc           = 3, PF coil outside of TF coil
+  integer, dimension(ngc) :: ipfloc = (/1,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0/)
+  !+ad_vars  ipfres /0/ : switch for PF coil type:
+  !+ad_varc               = 0 superconducting PF coils;
+  !+ad_varc               = 1 resistive PF coils
+  integer :: ipfres = 0
+  !+ad_vars  isumatpf /1/ : switch for superconductor material in PF coils:
+  !+ad_varc                 = 1 binary Nb3Sn;
+  !+ad_varc                 = 2 ternary Nb3Sn;
+  !+ad_varc                 = 3 NbTi
+  integer :: isumatpf = 1
+  !+ad_vars  ncirt : number of PF coils (including OH coil and plasma)
+  integer :: ncirt = 0
+  !+ad_vars  ncls(ngrpmx+2) /2,2,2,1/ : number of PF coils in group j
+  integer, dimension(ngrpmx+2) :: ncls = (/2,2,2,1,0,0,0,0,0,0/)
+  !+ad_vars  nfxfh /7/ : number of coils the top and bottom of the OH coil
+  !+ad_varc              should be broken into during scaling (5 - 10 is good)
+  integer :: nfxfh = 7
+  !+ad_vars  ngrp /3/ : number of groups of PF coils.
+  !+ad_varc             Symmetric coil pairs should all be in the same group
+  integer :: ngrp = 3
+  !+ad_vars  nohc : number of PF coils (excluding the OH coil) + 1
+  integer :: nohc = 0
+  !+ad_vars  ohhghf /0.71/ : OH coil height / TF coil height
+  real(kind(1.0D0)) :: ohhghf = 0.71D0
+  !+ad_vars  pfclres /2.5D-8/ : PF coil resistivity if ipfres=1 (Ohm-m)
+  real(kind(1.0D0)) :: pfclres = 2.5D-8
+  !+ad_vars  powohres : OH coil resistive power during flattop (W)
+  real(kind(1.0D0)) :: powohres = 0.0D0
+  !+ad_vars  powpfres : total PF coil resistive losses during flattop (W)
+  real(kind(1.0D0)) :: powpfres = 0.0D0
+  !+ad_vars  ra(ngc2) : inner radius of coil i (m)
+  real(kind(1.0D0)), dimension(ngc2) :: ra = 0.0D0
+  !+ad_vars  rb(ngc2) : outer radius of coil i (m)
+  real(kind(1.0D0)), dimension(ngc2) :: rb = 0.0D0
+  !+ad_vars  ric(ngc2) : peak current in coil i (MA-turns)
+  real(kind(1.0D0)), dimension(ngc2) :: ric = 0.0D0
+  !+ad_vars  rjconpf(ngc2) /3.0D7/ : average current density of PF coil i (A/m**2)
+  real(kind(1.0D0)), dimension(ngc2) :: rjconpf = 3.0D7
+  !+ad_vars  rjohc : allowable OH coil current density at EOF (A/m**2)
+  real(kind(1.0D0)) :: rjohc = 0.0D0
+  !+ad_vars  rjohc0 : allowable OH coil current density at BOP (A/m**2)
+  real(kind(1.0D0)) :: rjohc0 = 0.0D0
+  !+ad_vars  rjpfalw(ngc2) : allowable current density of PF coil i (A/m**2)
+  real(kind(1.0D0)), dimension(ngc2) :: rjpfalw = 0.0D0
+  !+ad_vars  rohc : radius to the centre of the OH coil (m)
+  real(kind(1.0D0)) :: rohc = 0.0D0
+  !+ad_vars  routr /1.5/ : distance (m) from outer TF coil leg to centre of ipfloc=3 PF coils
+  real(kind(1.0D0)) :: routr = 1.5D0
+  !+ad_vars  rpf(ngc2) : radius of PF coil i (m)
+  real(kind(1.0D0)), dimension(ngc2) :: rpf = 0.0D0
+  !+ad_vars  rpf1 /0.0/ : offset (m) of radial position of ipfloc=1 PF coils
+  !+ad_varc               from being directly above the OH coil
+  real(kind(1.0D0)) :: rpf1 = 0.0D0
+  !+ad_vars  rpf2 /-1.63/ : offset of radial position of ipfloc=2 PF coils
+  !+ad_varc                 from being at rmajor (offset = rpf2*triang*rminor)
+  real(kind(1.0D0)) :: rpf2 = -1.63D0
+  !+ad_vars  sccufac /0.0188/ : ratio of superconductor to copper in PF/OH coil
+  !+ad_varc                     cable at a magnetic field of 1T
+  real(kind(1.0D0)) :: sccufac = 0.0188D0
+  !+ad_vars  sigpfalw /335.0/ : allowable stress in PF/OH coils (MPa)
+  real(kind(1.0D0)) :: sigpfalw = 335.0D0
+  !+ad_vars  sxlg(ngc2,ngc2) : mutual inductance matrix (H)
+  real(kind(1.0D0)), dimension(ngc2,ngc2) :: sxlg = 0.0D0
+  !+ad_vars  turns(ngc2) : number of turns in PF coil i
+  real(kind(1.0D0)), dimension(ngc2) :: turns = 0.0D0
+  !+ad_vars  vf(ngc2) /0.3/ : void fraction of PF coil i
+  real(kind(1.0D0)), dimension(ngc2) :: vf = 0.3D0
+  !+ad_vars  vfohc /0.4/ : OH coil void fraction for coolant
+  real(kind(1.0D0)) :: vfohc = 0.4D0
+  !+ad_vars  vsbn : total flux swing available for burn (Wb)
+  real(kind(1.0D0)) :: vsbn = 0.0D0
+  !+ad_vars  vsefbn : flux swing from PF coils for burn (Wb)
+  real(kind(1.0D0)) :: vsefbn = 0.0D0
+  !+ad_vars  vsefsu : flux swing from PF coils for startup (Wb)
+  real(kind(1.0D0)) :: vsefsu = 0.0D0
+  !+ad_vars  vseft : total flux swing from PF coils (Wb)
+  real(kind(1.0D0)) :: vseft = 0.0D0
+  !+ad_vars  vsoh : total flux swing from the OH coil (Wb)
+  real(kind(1.0D0)) :: vsoh = 0.0D0
+  !+ad_vars  vsohbn : OH coil flux swing for burn (Wb)
+  real(kind(1.0D0)) :: vsohbn = 0.0D0
+  !+ad_vars  vsohsu : OH coil flux swing for startup (Wb)
+  real(kind(1.0D0)) :: vsohsu = 0.0D0
+  !+ad_vars  vssu : total flux swing for startup (Wb)
+  real(kind(1.0D0)) :: vssu = 0.0D0
+  !+ad_vars  vstot : total flux swing for pulse (Wb)
+  real(kind(1.0D0)) :: vstot = 0.0D0
+  !+ad_vars  waves(ngc2,6) : used in current waveform of PF/OH coils
+  real(kind(1.0D0)), dimension(ngc2,6) :: waves = 0.0D0
+  !+ad_vars  whtpf : total mass of the PF coil conductor (kg)
+  real(kind(1.0D0)) :: whtpf = 0.0D0
+  !+ad_vars  whtpfs : total mass of the PF coil structure (kg)
+  real(kind(1.0D0)) :: whtpfs = 0.0D0
+  !+ad_vars  wtc(ngc2) : conductor mass for PF coil i (kg)
+  real(kind(1.0D0)), dimension(ngc2) :: wtc = 0.0D0
+  !+ad_vars  wts(ngc2) : structure mass for PF coil i (kg)
+  real(kind(1.0D0)), dimension(ngc2) :: wts = 0.0D0
+  !+ad_vars  zh(ngc2) : upper point of PF coil i (m)
+  real(kind(1.0D0)), dimension(ngc2) :: zh = 0.0D0
+  !+ad_vars  zl(ngc2) : lower point of PF coil i (m)
+  real(kind(1.0D0)), dimension(ngc2) :: zl = 0.0D0
+  !+ad_vars  zpf(ngc2) : z (height) location of PF coil i (m)
+  real(kind(1.0D0)), dimension(ngc2) :: zpf = 0.0D0
+  !+ad_vars  zref(ngrpmx) /../ : (height of coil group j) / minor radius,
+  !+ad_vars                      for groups with ipfloc = 3
+  real(kind(1.0D0)), dimension(ngrpmx) :: zref = (/3.6D0, 1.2D0, 2.5D0, &
+       1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
+
+end module pfcoil_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
 
   !  ex bldgcom.h90
@@ -1184,56 +1373,6 @@ module wibble
        ftmargtf,ftohs,ftpeak,fvdump,fvs,fwalld,gammax,mvalim,pnetelin, &
        powfmax,tbrnmn,tcycmn,tohsmn,tpkmax,walalw
 
-  !  ex pfcoil.h90
-
-  !  ngrpmx is the maximum number of PF coil groups
-  !  nclsmx is the maximum number of coils in one group
-  !  nptsmx is the maximum number of points across the plasma midplane
-  !         at which the magnetic field is fixed
-  !  nfixmx is the maximum number of fixed current coils
-
-  integer, parameter :: ngrpmx = 8
-  integer, parameter :: nclsmx = 2
-  integer, parameter :: nptsmx = 32
-  integer, parameter :: nfixmx = 64
-  integer, parameter :: ngc = ngrpmx*nclsmx
-  integer, parameter :: ngc2 = ngc+2
-
-  real(kind(1.0D0)) :: &
-       acsoh,ac1oh,alfapf,bmaxoh,bmaxoh0,cohbof,cohbop,coheof,cptoh, &
-       fcohbof,fcohbop,fcuoh,ohhghf,pfclres,powohres,powpfres,rjohc, &
-       rjohc0,rohc,rpf1,rpf2,sccufac,sigpfalw,vfohc,whtpf,whtpfs
-  common /pfc0/ &
-       acsoh,ac1oh,alfapf,bmaxoh,bmaxoh0,cohbof,cohbop,coheof,cptoh, &
-       fcohbof,fcohbop,fcuoh,ohhghf,pfclres,powohres,powpfres,rjohc, &
-       rjohc0,rohc,rpf1,rpf2,sccufac,sigpfalw,vfohc,whtpf,whtpfs
-
-  integer ::ipfres,isumatpf,ncirt,ngrp,nohc
-  common /pfc1/ ipfres,isumatpf,ncirt,ngrp,nohc
-
-  real(kind(1.0D0)), dimension(ngc2) :: &
-       bpf,cptdin,curpfb,curpff,curpfs,ra,rb,ric,rjconpf,rjpfalw, &
-       rpf,turns,vf,wtc,wts,zh,zl,zpf
-  real(kind(1.0D0)), dimension(ngc2,6) :: cpt,waves
-  common /pfc2/ &
-       bpf,cpt,cptdin,curpfb,curpff,curpfs,ra,rb,ric,rjconpf,rjpfalw, &
-       rpf,turns,vf,waves,wtc,wts,zh,zl,zpf
-
-  integer, dimension(ngc) :: ipfloc
-  integer, dimension(ngrpmx+2) :: ncls
-  common /pfc3/ ipfloc,ncls
-
-  !  PF scaling variables :
-
-  integer :: nfxfh
-  common /pfscl1/ nfxfh
-
-  real(kind(1.0D0)) :: routr
-  common /pfscl2/ routr
-
-  real(kind(1.0D0)), dimension(ngrpmx) :: zref
-  common /pfscl3/ zref
-
 !  ex pulse.h90
 
 !--Version number 1.100
@@ -1493,15 +1632,5 @@ module wibble
 
   integer :: ntype
   common /vac1/ ntype
-
-!  ex vltcom.h90
-
-  real(kind(1.0D0)) :: &
-       vsbn,vsefbn,vsefsu,vseft,vsoh,vsohbn,vsohsu,vssu,vstot
-  common /vltcm0/ &
-       vsbn,vsefbn,vsefsu,vseft,vsoh,vsohbn,vsohsu,vssu,vstot
-
-  real(kind(1.0D0)), dimension(ngc2,ngc2) :: sxlg
-  common /vltcm1/ sxlg
 
 end module wibble

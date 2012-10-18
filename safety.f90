@@ -158,10 +158,10 @@ subroutine loca(outfile,iprint)
   !+ad_prob  None
   !+ad_call  constants
   !+ad_call  fwbs_variables
+  !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  pfcoil.h90
   !+ad_call  tfcoil.h90
   !+ad_call  fispact.h90
   !+ad_call  blcyl3
@@ -175,6 +175,7 @@ subroutine loca(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  18/10/12 PJK Added fwbs_variables
+  !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_stat  This routine is untested in F90...
   !+ad_docs  F/MI/PJK/LOGBOOK12, pp.70,71,72,73
   !+ad_docs  Strategic Studies Note 96/30, January 1997
@@ -184,13 +185,13 @@ subroutine loca(outfile,iprint)
 
   use constants
   use fwbs_variables
+  use pfcoil_variables
   use physics_variables
   use process_output
 
   implicit none
 
   include 'build.h90'
-  include 'pfcoil.h90'
   include 'tfcoil.h90'
   include 'fispact.h90'
 

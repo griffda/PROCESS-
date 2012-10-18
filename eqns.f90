@@ -19,12 +19,11 @@ subroutine con1(m,cc)
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  numerics
+  !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  ineq.h90
   !+ad_call  tfcoil.h90
   !+ad_call  build.h90
-  !+ad_call  pfcoil.h90
-  !+ad_call  vltcom.h90
   !+ad_call  htpwr.h90
   !+ad_call  pwrcom.h90
   !+ad_call  pulse.h90
@@ -48,6 +47,7 @@ subroutine con1(m,cc)
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  17/10/12 PJK Added divertor_variables
+  !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -57,6 +57,7 @@ subroutine con1(m,cc)
   use current_drive_variables
   use divertor_variables
   use numerics
+  use pfcoil_variables
   use physics_variables
 
   implicit none
@@ -64,8 +65,6 @@ subroutine con1(m,cc)
   include 'ineq.h90'
   include 'tfcoil.h90'
   include 'build.h90'
-  include 'pfcoil.h90'
-  include 'vltcom.h90'
   include 'htpwr.h90'
   include 'pwrcom.h90'
   include 'pulse.h90'

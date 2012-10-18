@@ -1113,11 +1113,10 @@ subroutine tohswg(outfile,iprint)
   !+ad_desc  This routine calculates the minimum OH coil swing time
   !+ad_desc  for a pulsed reactor.
   !+ad_prob  None
+  !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  pfcoil.h90
   !+ad_call  pwrcom.h90
-  !+ad_call  vltcom.h90
   !+ad_call  ineq.h90
   !+ad_call  pulse.h90
   !+ad_call  osubhd
@@ -1127,6 +1126,7 @@ subroutine tohswg(outfile,iprint)
   !+ad_hist  01/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0013
   !+ad_docs  Work File Note F/PL/PJK/PROCESS/CODE/050
@@ -1134,14 +1134,13 @@ subroutine tohswg(outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use pfcoil_variables
   use physics_variables
   use process_output
 
   implicit none
 
-  include 'pfcoil.h90'
   include 'pwrcom.h90'
-  include 'vltcom.h90'
   include 'ineq.h90'
   include 'pulse.h90'
 
@@ -1229,11 +1228,10 @@ subroutine burn(outfile,iprint)
   !+ad_desc  This routine calculates the burn time for a pulsed reactor.
   !+ad_prob  None
   !+ad_call  current_drive_variables
+  !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  pfcoil.h90
   !+ad_call  pulse.h90
-  !+ad_call  vltcom.h90
   !+ad_call  times.h90
   !+ad_call  osubhd
   !+ad_call  ovarre
@@ -1243,6 +1241,7 @@ subroutine burn(outfile,iprint)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
+  !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0012
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1250,14 +1249,13 @@ subroutine burn(outfile,iprint)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use current_drive_variables
+  use pfcoil_variables
   use physics_variables
   use process_output
 
   implicit none
 
-  include 'pfcoil.h90'
   include 'pulse.h90'
-  include 'vltcom.h90'
   include 'times.h90'
 
   !  Arguments

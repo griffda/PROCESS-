@@ -387,14 +387,13 @@ subroutine pfpwr(outfile,iprint)
   !+ad_desc  <I>dI/dt</I> at the time periods.
   !+ad_prob  None
   !+ad_call  constants
+  !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  htpwr.h90
-  !+ad_call  pfcoil.h90
   !+ad_call  pwrcom.h90
   !+ad_call  times.h90
-  !+ad_call  vltcom.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  01/08/11 PJK Initial F90 version
@@ -402,19 +401,19 @@ subroutine pfpwr(outfile,iprint)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use pfcoil_variables
   use physics_variables
   use process_output
 
   implicit none
 
-  include 'pfcoil.h90'
-  include 'vltcom.h90'
   include 'pwrcom.h90'
   include 'build.h90'
   include 'times.h90'

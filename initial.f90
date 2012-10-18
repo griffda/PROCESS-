@@ -18,8 +18,6 @@ subroutine initial
   !+ad_call  times.h90
   !+ad_call  build.h90
   !+ad_call  tfcoil.h90
-  !+ad_call  pfcoil.h90
-  !+ad_call  vltcom.h90
   !+ad_call  pwrcom.h90
   !+ad_call  htpwr.h90
   !+ad_call  cost.h90
@@ -69,6 +67,7 @@ subroutine initial
   !+ad_hist  16/10/12 PJK Removed current drive variables from list
   !+ad_hist  17/10/12 PJK Removed divertor variables from list
   !+ad_hist  18/10/12 PJK Removed first wall, blanket, shield variables
+  !+ad_hist  18/10/12 PJK Removed PF coil variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -82,8 +81,6 @@ subroutine initial
   include 'times.h90'
   include 'build.h90'
   include 'tfcoil.h90'
-  include 'pfcoil.h90'
-  include 'vltcom.h90'
   include 'pwrcom.h90'
   include 'htpwr.h90'
   include 'cost.h90'
@@ -362,88 +359,6 @@ subroutine initial
   xctfc(:) = 0.0D0
   yarc(:)  = 0.0D0
   yctfc(:) = 0.0D0
-
-  !  PF coil data
-
-  ac1oh    = 0.0D0
-  acsoh    = 3.0D-4
-  alfapf   = 5.0D-10
-  bmaxoh   = 0.0D0
-  bmaxoh0  = 0.0D0
-  bpf(:) = 0.0D0
-  cohbof   = 0.0D0
-  cohbop   = 0.0D0
-  coheof   = 1.85D7
-  cpt(:,:) = 0.0D0
-  cptoh    = 0.0D0
-  cptdin(:) = 4.0D4
-  curpfb(:) = 0.0D0
-  curpff(:) = 0.0D0
-  curpfs(:) = 0.0D0
-  fcohbof  = 0.9D0
-  fcohbop  = 0.9D0
-  fcuoh    = 0.4D0
-  ipfloc(:) = 3
-  ipfloc(1) = 1
-  ipfloc(2) = 2
-  ipfloc(3) = 3
-  ipfres   = 0
-  isumatpf = 1
-  ncirt    = 0
-  ncls(:) = 0
-  ncls(1)  = 2
-  ncls(2)  = 2
-  ncls(3)  = 2
-  ncls(4)  = 1 
-  nfxfh    = 7
-  ngrp     = 3
-  nohc     = 0
-  ohhghf   = 0.71D0
-  pfclres  = 2.5D-8
-  powohres = 0.0D0
-  powpfres = 0.0D0
-  ra(:)    = 0.0D0
-  rb(:)    = 0.0D0
-  ric(:)   = 0.0D0
-  rjconpf(:) = 3.0D7
-  rjohc    = 0.0D0
-  rjohc0   = 0.0D0
-  rjpfalw(:) = 0.0D0
-  rohc     = 0.0D0
-  routr    = 1.5D0
-  rpf(:)   = 0.0D0
-  rpf1     = 0.0D0
-  rpf2     = -1.63D0
-  sccufac = 0.0188D0
-  sigpfalw = 335.0D0
-  turns(:) = 0.0D0
-  vf(:)    = 0.3D0
-  vfohc    = 0.4D0
-  waves(:,:) = 0.0D0
-  whtpf    = 0.0D0
-  whtpfs   = 0.0D0
-  wtc(:) = 0.0D0
-  wts(:) = 0.0D0
-  zh(:) = 0.0D0
-  zl(:) = 0.0D0
-  zpf(:) = 0.0D0
-  zref(:) = 1.0D0
-  zref(1)  = 3.6D0
-  zref(2)  = 1.2D0
-  zref(3)  = 2.5D0
-
-  !  PF coil volt second and inductance information
-
-  vsbn     = 0.0D0
-  vsefbn   = 0.0D0
-  vsefsu   = 0.0D0
-  vseft    = 0.0D0
-  vsoh     = 0.0D0
-  vsohbn   = 0.0D0
-  vsohsu   = 0.0D0
-  vssu     = 0.0D0
-  vstot    = 0.0D0
-  sxlg(:,:) = 0.0D0
 
   !  PF coil power conversion
 
@@ -898,6 +813,7 @@ subroutine check
   !+ad_desc  and ensures other dependent variables are given suitable values.
   !+ad_prob  None
   !+ad_call  current_drive_variables
+  !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  global_variables
   !+ad_call  numerics
@@ -905,7 +821,6 @@ subroutine check
   !+ad_call  bldgvol.h90
   !+ad_call  build.h90
   !+ad_call  htpwr.h90
-  !+ad_call  pfcoil.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
   !+ad_call  tfcoil.h90
@@ -920,6 +835,7 @@ subroutine check
   !+ad_hist  15/10/12 PJK Added global_variables module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
+  !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -927,6 +843,7 @@ subroutine check
 
   use current_drive_variables
   use global_variables
+  use pfcoil_variables
   use physics_variables
   use process_output
 
@@ -935,7 +852,6 @@ subroutine check
   include 'bldgvol.h90'
   include 'build.h90'
   include 'htpwr.h90'
-  include 'pfcoil.h90'
   include 'pulse.h90'
   include 'rfp.h90'
   include 'tfcoil.h90'

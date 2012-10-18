@@ -16,6 +16,7 @@ module scan_module
   !+ad_call  divertor_variables
   !+ad_call  global_variables
   !+ad_call  numerics
+  !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_hist  09/10/12 PJK Initial version of module
@@ -25,6 +26,7 @@ module scan_module
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  17/10/12 PJK Added variable descriptions
   !+ad_hist  17/10/12 PJK Added divertor_variables
+  !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -34,6 +36,7 @@ module scan_module
   use divertor_variables
   use global_variables
   use numerics
+  use pfcoil_variables
   use physics_variables
   use process_output
 
@@ -99,7 +102,6 @@ contains
   !+ad_prob  None
   !+ad_call  pwrcom.h90
   !+ad_call  tfcoil.h90
-  !+ad_call  pfcoil.h90
   !+ad_call  ineq.h90
   !+ad_call  cost.h90
   !+ad_call  htpwr.h90
@@ -124,7 +126,6 @@ contains
 
   include 'pwrcom.h90'
   include 'tfcoil.h90'
-  include 'pfcoil.h90'
   include 'ineq.h90'
   include 'cost.h90'
   include 'htpwr.h90'

@@ -16,7 +16,6 @@ subroutine pfcoil
   !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  pfcoil.h90
   !+ad_call  times.h90
   !+ad_call  efc
   !+ad_call  ohcalc
@@ -34,11 +33,11 @@ subroutine pfcoil
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use pfcoil_variables
   use physics_variables
 
   implicit none
 
-  include 'pfcoil.h90'
   include 'build.h90'
   include 'times.h90'
 
@@ -555,7 +554,6 @@ subroutine ohcalc
   !+ad_prob  None
   !+ad_call  constants
   !+ad_call  build.h90
-  !+ad_call  pfcoil.h90
   !+ad_call  bfmax
   !+ad_call  peakb
   !+ad_call  pfjalw
@@ -569,10 +567,10 @@ subroutine ohcalc
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use pfcoil_variables
 
   implicit none
 
-  include 'pfcoil.h90'
   include 'build.h90'
 
   !  Arguments
@@ -1346,7 +1344,6 @@ subroutine peakb(i,ii,it,bri,bro,bzi,bzo)
   !+ad_prob  None
   !+ad_call  physics_variables
   !+ad_call  build.h90
-  !+ad_call  pfcoil.h90
   !+ad_call  bfield
   !+ad_hist  09/05/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
@@ -1355,11 +1352,11 @@ subroutine peakb(i,ii,it,bri,bro,bzi,bzo)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use pfcoil_variables
   use physics_variables
 
   implicit none
 
-  include 'pfcoil.h90'
   include 'build.h90'
 
   !  Arguments
@@ -1588,7 +1585,6 @@ subroutine waveform
   !+ad_desc  normalized to the peak current in that coil at any time.
   !+ad_prob  None
   !+ad_call  physics_variables
-  !+ad_call  pfcoil.h90
   !+ad_hist  09/05/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_stat  Okay
@@ -1596,11 +1592,10 @@ subroutine waveform
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use pfcoil_variables
   use physics_variables
 
   implicit none
-
-  include 'pfcoil.h90'
 
   !  Arguments
 
@@ -1719,18 +1714,16 @@ subroutine vsec
   !+ad_desc  coil system.
   !+ad_prob  None
   !+ad_call  build.h90
-  !+ad_call  pfcoil.h90
-  !+ad_call  vltcom.h90
   !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use pfcoil_variables
+
   implicit none
 
-  include 'pfcoil.h90'
-  include 'vltcom.h90'
   include 'build.h90'
 
   !  Arguments
@@ -1819,8 +1812,6 @@ subroutine induct(outfile,iprint)
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  pfcoil.h90
-  !+ad_call  vltcom.h90
   !+ad_call  bfield
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
@@ -1837,13 +1828,12 @@ subroutine induct(outfile,iprint)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use pfcoil_variables
   use physics_variables
   use process_output
 
   implicit none
 
-  INCLUDE 'pfcoil.h90'
-  INCLUDE 'vltcom.h90'
   INCLUDE 'build.h90'
 
   !  Arguments
@@ -2044,7 +2034,6 @@ subroutine outpf(outfile)
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  pfcoil.h90
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
   !+ad_call  oheadr
@@ -2058,12 +2047,12 @@ subroutine outpf(outfile)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use pfcoil_variables
   use physics_variables
   use process_output
 
   implicit none
 
-  include 'pfcoil.h90'
   include 'build.h90'
 
   !  Arguments
@@ -2222,9 +2211,7 @@ subroutine outvolt(outfile)
   !+ad_desc  output file.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  pfcoil.h90
   !+ad_call  times.h90
-  !+ad_call  vltcom.h90
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
   !+ad_call  oheadr
@@ -2237,12 +2224,11 @@ subroutine outvolt(outfile)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use pfcoil_variables
   use process_output
 
   implicit none
 
-  include 'pfcoil.h90'
-  include 'vltcom.h90'
   include 'times.h90'
 
   !  Arguments
