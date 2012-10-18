@@ -27,7 +27,7 @@ module autodoc_data
   public
 
   character(len=*), parameter :: autodoc_version = &
-       '$Id:: autodoc.f90 411 2011-06-09 10:18:34Z pknight                     $'
+       '$Id::                                                                  $'
 
   !  Flags object: indicates whether each section associated with a
   !  given command is active (or open) (1) or inactive (or closed) (0)
