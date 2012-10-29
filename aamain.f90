@@ -884,6 +884,7 @@ subroutine output(outfile)
   !+ad_call  pfcoil_module
   !+ad_call  physics_module
   !+ad_call  physics_variables
+  !+ad_call  sctfcoil_module
   !+ad_call  tfcoil_module
   !+ad_call  stella.h90
   !+ad_call  rfp.h90
@@ -938,6 +939,7 @@ subroutine output(outfile)
   !+ad_hist  18/10/12 PJK Added fwbs_module
   !+ad_hist  18/10/12 PJK Added pfcoil_module
   !+ad_hist  29/10/12 PJK Added tfcoil_module
+  !+ad_hist  29/10/12 PJK Added sctfcoil_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -950,6 +952,7 @@ subroutine output(outfile)
   use pfcoil_module
   use physics_module
   use physics_variables
+  use sctfcoil_module
   use tfcoil_module
 
   implicit none

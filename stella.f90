@@ -749,6 +749,7 @@ subroutine stcoil(outfile,iprint)
   !+ad_call  constants
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
+  !+ad_call  sctfcoil_module
   !+ad_call  tfcoil_variables
   !+ad_call  build.h90
   !+ad_call  outtf
@@ -763,6 +764,7 @@ subroutine stcoil(outfile,iprint)
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  18/10/12 PJK Modified argument list of tfcind
+  !+ad_hist  29/10/12 PJK Added sctfcoil_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -771,6 +773,7 @@ subroutine stcoil(outfile,iprint)
   use constants
   use fwbs_variables
   use physics_variables
+  use sctfcoil_module
   use tfcoil_variables
 
   implicit none
@@ -1789,6 +1792,7 @@ subroutine stout(outfile)
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
   !+ad_call  physics_variables
+  !+ad_call  sctfcoil_module
   !+ad_call  acpow
   !+ad_call  avail
   !+ad_call  bldgcall
@@ -1818,6 +1822,7 @@ subroutine stout(outfile)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  17/10/12 PJK Added divertor_module
   !+ad_hist  18/10/12 PJK Added fwbs_module
+  !+ad_hist  29/10/12 PJK Added sctfcoil_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1827,6 +1832,7 @@ subroutine stout(outfile)
   use divertor_module
   use fwbs_module
   use physics_variables
+  use sctfcoil_module
 
   implicit none
 

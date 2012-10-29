@@ -4,7 +4,7 @@
 module tfcoil_module
 
   !+ad_name  tfcoil_module
-  !+ad_summ  Module containing TF coil routines
+  !+ad_summ  Module containing resistive TF coil routines
   !+ad_type  Module
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  tfcoil
@@ -19,8 +19,10 @@ module tfcoil_module
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  sctfcoil_module
   !+ad_call  tfcoil_variables
   !+ad_hist  29/10/12 PJK Initial version of module
+  !+ad_hist  29/10/12 PJK Added sctfcoil_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -30,6 +32,7 @@ module tfcoil_module
   use fwbs_variables
   use physics_variables
   use process_output
+  use sctfcoil_module
   use tfcoil_variables
 
   private
