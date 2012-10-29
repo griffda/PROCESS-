@@ -1,4 +1,0 @@
-!  $Id::                                                                $
-
-  integer :: iscenr
-  common /est1/ iscenr

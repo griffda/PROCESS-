@@ -1115,8 +1115,8 @@ subroutine tohswg(outfile,iprint)
   !+ad_prob  None
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
+  !+ad_call  power_conversion_variables
   !+ad_call  process_output
-  !+ad_call  pwrcom.h90
   !+ad_call  ineq.h90
   !+ad_call  pulse.h90
   !+ad_call  osubhd
@@ -1127,6 +1127,7 @@ subroutine tohswg(outfile,iprint)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
+  !+ad_hist  29/10/12 PJK Added power_conversion_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0013
   !+ad_docs  Work File Note F/PL/PJK/PROCESS/CODE/050
@@ -1136,11 +1137,11 @@ subroutine tohswg(outfile,iprint)
 
   use pfcoil_variables
   use physics_variables
+  use power_conversion_variables
   use process_output
 
   implicit none
 
-  include 'pwrcom.h90'
   include 'ineq.h90'
   include 'pulse.h90'
 

@@ -394,17 +394,6 @@ yarc(5)    dble          # y location of arc point i on surface (m)
 yctfc(5)   dble          # y location of arc centre i (m)
 $
 C______________________________________________________________________
-$  Power conversion : (see pwrcom.h)
-$
-acptmax    dble          # average of currents in PF circuits (A)
-ensxpfm    dble          # max. stored energy in the PF circuits (MJ)
-pfckts     dble          # number of PF coil circuits
-spfbusl    dble          # total PF coil circuit bus length (m)
-spsmva     dble          # sum of PF power supply ratings (MVA)
-srcktpm    dble          # sum of resistive PF coil power (kW)
-vpfskv     dble          # PF coil voltage (kV)
-$
-C______________________________________________________________________
 $  Pulsed reactor : (see pulse.h)
 $
 afw        dble /0.005/  # inner radius of each first wall structural tube (m)
@@ -712,14 +701,6 @@ wgt        dble /5.0D5/  # reactor building crane capacity
 $                          (calculated if 0 is input) (kg)
 wgt2       dble /1.0D5/  # hot cell crane capacity (calculated
 $                          if 0 is input) (kg)
-$
-C______________________________________________________________________
-$  Energy storage : (see estocom.h)
-$
-iscenr     intg /2/      # Switch for E-store option
-$                          = 1 all power from MGF units
-$                          = 2 all pulsed power from line
-$                          = 3 PF power from MGF, heating from line
 $
 C______________________________________________________________________
 $  FISPACT parameters : (see fispact.h)

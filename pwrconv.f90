@@ -391,10 +391,10 @@ subroutine pfpwr(outfile,iprint)
   !+ad_call  constants
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
+  !+ad_call  power_conversion_variables
   !+ad_call  process_output
   !+ad_call  build.h90
   !+ad_call  htpwr.h90
-  !+ad_call  pwrcom.h90
   !+ad_call  times.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
@@ -404,6 +404,7 @@ subroutine pfpwr(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
+  !+ad_hist  29/10/12 PJK Added power_conversion_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -412,11 +413,11 @@ subroutine pfpwr(outfile,iprint)
   use constants
   use pfcoil_variables
   use physics_variables
+  use power_conversion_variables
   use process_output
 
   implicit none
 
-  include 'pwrcom.h90'
   include 'build.h90'
   include 'times.h90'
   include 'htpwr.h90'

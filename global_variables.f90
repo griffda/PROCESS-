@@ -1550,6 +1550,55 @@ end module vacuum_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module power_conversion_variables
+
+  !+ad_name  power_conversion_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  PF coil power conversion system
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  PF coil power conversion system of a fusion power plant.
+  !+ad_desc  It is derived from <CODE>include</CODE> files
+  !+ad_desc  <CODE>pwrcom.h90</CODE> and <CODE>estocom.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  29/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  acptmax : average of currents in PF circuits (A)
+  real(kind(1.0D0)) :: acptmax = 0.0D0
+  !+ad_vars  ensxpfm : maximum stored energy in the PF circuits (MJ)
+  real(kind(1.0D0)) :: ensxpfm = 0.0D0
+  !+ad_vars  iscenr /2/ : Switch for energy storage option:
+  !+ad_varc               = 1 all power from MGF units;
+  !+ad_varc               = 2 all pulsed power from line;
+  !+ad_varc               = 3 PF power from MGF, heating from line
+  integer :: iscenr = 2
+  !+ad_vars  pfckts : number of PF coil circuits
+  real(kind(1.0D0)) :: pfckts = 0.0D0
+  !+ad_vars  spfbusl : total PF coil circuit bus length (m)
+  real(kind(1.0D0)) :: spfbusl = 0.0D0
+  !+ad_vars  spsmva : sum of PF power supply ratings (MVA)
+  real(kind(1.0D0)) :: spsmva = 0.0D0
+  !+ad_vars  srcktpm : sum of resistive PF coil power (kW)
+  real(kind(1.0D0)) :: srcktpm = 0.0D0
+  !+ad_vars  vpfskv : PF coil voltage (kV)
+  real(kind(1.0D0)) :: vpfskv = 0.0D0
+
+end module power_conversion_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
 
   !  ex bldgcom.h90
@@ -1653,11 +1702,6 @@ module wibble
        ucpfdr1,ucpfic,ucpfps,ucphx,ucpp,ucrb,ucsh,ucshld,ucswyd, &
        uctfbr,uctfbus,uctfdr,uctfgr,uctfic,uctfps,uctfsw,uctpmp, &
        uctr,ucvalv,ucvdsh,ucviac,ucwindpf,ucwindtf,ucws
-
-  !  ex estocom.h90
-
-  integer :: iscenr
-  common /est1/ iscenr
 
   !  ex fispact.h90
 
@@ -1861,13 +1905,6 @@ module wibble
 
   integer ::istore,itcycl,lpulse
   common /pulse2/ istore,itcycl,lpulse
-
-!  ex pwrcom.h90
-
-  real(kind(1.0D0)) :: &
-       acptmax,ensxpfm,pfckts,spfbusl,spsmva,srcktpm,vpfskv
-  common /pwrcom/ &
-       acptmax,ensxpfm,pfckts,spfbusl,spsmva,srcktpm,vpfskv
 
 !  ex rfp.h90
 

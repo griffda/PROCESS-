@@ -16,10 +16,9 @@ subroutine acpow(outfile,iprint)
   !+ad_desc  the plant. Included in STORAC in January 1992 by P.C. Shipe.
   !+ad_prob  None
   !+ad_call  process_output
+  !+ad_call  power_conversion_variables
   !+ad_call  bldgvol.h90
-  !+ad_call  estocom.h90
   !+ad_call  htpwr.h90
-  !+ad_call  pwrcom.h90
   !+ad_call  oblnkl
   !+ad_call  oheadr
   !+ad_call  ovarre
@@ -30,18 +29,18 @@ subroutine acpow(outfile,iprint)
   !+ad_hisc               htpwr.h
   !+ad_hist  27/07/11 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  29/10/12 PJK Added power_conversion_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use power_conversion_variables
   use process_output
 
   implicit none
 
   include 'bldgvol.h90'
-  include 'pwrcom.h90'
-  include 'estocom.h90'
   include 'htpwr.h90'
 
   !  Arguments

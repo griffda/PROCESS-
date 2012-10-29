@@ -17,11 +17,9 @@ subroutine initial
   !+ad_call  ineq.h90
   !+ad_call  times.h90
   !+ad_call  build.h90
-  !+ad_call  pwrcom.h90
   !+ad_call  htpwr.h90
   !+ad_call  cost.h90
   !+ad_call  bldgvol.h90
-  !+ad_call  estocom.h90
   !+ad_call  bldgcom.h90
   !+ad_call  pulse.h90
   !+ad_call  stella.h90
@@ -67,6 +65,7 @@ subroutine initial
   !+ad_hist  18/10/12 PJK Removed TF coil variables
   !+ad_hist  29/10/12 PJK Removed structure variables
   !+ad_hist  29/10/12 PJK Removed vacuum variables
+  !+ad_hist  29/10/12 PJK Removed PF coil power conversion variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -79,11 +78,9 @@ subroutine initial
   include 'ineq.h90'
   include 'times.h90'
   include 'build.h90'
-  include 'pwrcom.h90'
   include 'htpwr.h90'
   include 'cost.h90'
   include 'bldgvol.h90'
-  include 'estocom.h90'
   include 'bldgcom.h90'
   include 'pulse.h90'
   include 'stella.h90'
@@ -210,16 +207,6 @@ subroutine initial
   vgap     = 0.0D0
   vgap2    = 0.163D0
   vgaptf   = 0.0D0
-
-  !  PF coil power conversion
-
-  acptmax  = 0.0D0
-  ensxpfm  = 0.0D0
-  pfckts   = 0.0D0
-  spfbusl  = 0.0D0
-  spsmva   = 0.0D0
-  srcktpm  = 0.0D0
-  vpfskv   = 0.0D0
 
   !  Pulsed reactor
 
@@ -467,10 +454,6 @@ subroutine initial
   volrci   = 0.0D0
   wrbi     = 0.0D0
   wsvol    = 0.0D0
-
-  !  Energy storage
-
-  iscenr   = 2
 
   !  Buildings
 
