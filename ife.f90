@@ -1919,18 +1919,19 @@ subroutine ifestr(outfile,iprint)
   !+ad_desc  <P>In fact, the output masses are all trivially zero, as they are
   !+ad_desc  magnetic fusion specific.
   !+ad_prob  None
-  !+ad_call  struccom.h90
+  !+ad_call  structure_variables
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  24/09/12 PJK Initial F90 version
+  !+ad_hist  29/10/12 PJK Added structure_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.87
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  implicit none
+  use structure_variables
 
-  include 'struccom.h90'
+  implicit none
 
   !  Arguments
 

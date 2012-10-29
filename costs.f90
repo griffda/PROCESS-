@@ -49,6 +49,7 @@ module costs_module
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  structure_variables
   !+ad_call  tfcoil_variables
   !+ad_hist  15/10/12 PJK Initial version of module
   !+ad_hist  15/10/12 PJK Added physics_variables
@@ -58,6 +59,7 @@ module costs_module
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
+  !+ad_hist  29/10/12 PJK Added structure_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -70,6 +72,7 @@ module costs_module
   use pfcoil_variables
   use physics_variables
   use process_output
+  use structure_variables
   use tfcoil_variables
 
   implicit none
@@ -82,7 +85,6 @@ module costs_module
   include 'pulse.h90'
   include 'pwrcom.h90'
   include 'rfp.h90'
-  include 'struccom.h90'
   include 'times.h90'
   include 'torsdat.h90'
 

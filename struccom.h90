@@ -1,4 +1,0 @@
-!  $Id::                                                                $
-
-  real(kind(1.0D0)) :: aintmass,clgsmass,coldmass,fncmass,gsmass
-  common /struc1/ aintmass,clgsmass,coldmass,fncmass,gsmass

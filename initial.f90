@@ -23,7 +23,6 @@ subroutine initial
   !+ad_call  bldgvol.h90
   !+ad_call  estocom.h90
   !+ad_call  bldgcom.h90
-  !+ad_call  struccom.h90
   !+ad_call  torsdat.h90
   !+ad_call  vaccom.h90
   !+ad_call  pulse.h90
@@ -68,6 +67,7 @@ subroutine initial
   !+ad_hist  18/10/12 PJK Removed first wall, blanket, shield variables
   !+ad_hist  18/10/12 PJK Removed PF coil variables
   !+ad_hist  18/10/12 PJK Removed TF coil variables
+  !+ad_hist  29/10/12 PJK Removed structure variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -86,7 +86,6 @@ subroutine initial
   include 'bldgvol.h90'
   include 'estocom.h90'
   include 'bldgcom.h90'
-  include 'struccom.h90'
   include 'torsdat.h90'
   include 'vaccom.h90'
   include 'pulse.h90'
@@ -497,14 +496,6 @@ subroutine initial
   wgt      = 5.0D5
   wgt2     = 1.0D5
 
-  !  Structural masses
-
-  aintmass = 0.0D0
-  clgsmass = 0.0D0
-  coldmass = 0.0D0
-  fncmass  = 0.0D0
-  gsmass   = 0.0D0
-
   !  Vacuum parameters
 
   ntype    = 1
@@ -521,30 +512,6 @@ subroutine initial
   vacdshm  = 0.0D0
   vcdimax  = 0.0D0
   vpumpn   = 0.0D0
-
-!  !  Output file parameters
-!
-!  sect01   = 1
-!  sect02   = 1
-!  sect03   = 1
-!  sect04   = 1
-!  sect05   = 1
-!  sect06   = 1
-!  sect07   = 1
-!  sect08   = 1
-!  sect09   = 1
-!  sect10   = 1
-!  sect11   = 1
-!  sect12   = 1
-!  sect13   = 1
-!  sect14   = 1
-!  sect15   = 1
-!  sect16   = 1
-!  sect17   = 1
-!  sect18   = 1
-!  sect19   = 1
-!  sect20   = 1
-!  sect21   = 1
 
   !  Reversed field pinch parameters
 

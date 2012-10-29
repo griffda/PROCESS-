@@ -15,13 +15,13 @@ subroutine bldgcall(outfile,iprint)
   !+ad_call  fwbs_variables
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
+  !+ad_call  structure_variables
   !+ad_call  tfcoil_variables
   !+ad_call  bldgvol.h90
   !+ad_call  build.h90
   !+ad_call  htpwr.h90
   !+ad_call  pwrcom.h90
   !+ad_call  rfp.h90
-  !+ad_call  struccom.h90
   !+ad_call  times.h90
   !+ad_call  bldgs
   !+ad_hist  01/08/11 PJK Initial F90 version
@@ -29,6 +29,7 @@ subroutine bldgcall(outfile,iprint)
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
+  !+ad_hist  29/10/12 PJK Added structure_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -37,6 +38,7 @@ subroutine bldgcall(outfile,iprint)
   use fwbs_variables
   use pfcoil_variables
   use physics_variables
+  use structure_variables
   use tfcoil_variables
 
   implicit none
@@ -46,7 +48,6 @@ subroutine bldgcall(outfile,iprint)
   include 'times.h90'
   include 'htpwr.h90'
   include 'bldgvol.h90'
-  include 'struccom.h90'
   include 'rfp.h90'
 
   !  Arguments

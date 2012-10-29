@@ -722,17 +722,6 @@ $                          = 2 all pulsed power from line
 $                          = 3 PF power from MGF, heating from line
 $
 C______________________________________________________________________
-$  Structural masses : (see struccom.h)
-$
-aintmass   dble          # intercoil structure mass (kg)
-clgsmass   dble          # gravity support structure for TF,PF,ICS
-$                          systems (kg) 
-coldmass   dble          # total mass of components at cryogenic
-$                          temperatures (kg) 
-fncmass    dble          # PF outer coil support fence mass (kg)
-gsmass     dble          # reactor core gravity support mass (kg)
-$
-C______________________________________________________________________
 $  Vacuum systems : (see torsdat.h)
 $ 
 dlscal     dble          # duct length scaling (used in vacuum)

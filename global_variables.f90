@@ -1454,6 +1454,47 @@ end module tfcoil_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module structure_variables
+
+  !+ad_name  tfcoil_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  support structure
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  suppot structure of a fusion power plant.
+  !+ad_desc  It is derived from <CODE>include</CODE> file
+  !+ad_desc  <CODE>struccom.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  29/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  aintmass : intercoil structure mass (kg)
+  real(kind(1.0D0)) :: aintmass = 0.0D0
+  !+ad_vars  clgsmass : gravity support structure for TF coil, PF coil
+  !+ad_varc             and intercoil support systems (kg) 
+  real(kind(1.0D0)) :: clgsmass = 0.0D0
+  !+ad_vars  coldmass : total mass of components at cryogenic temperatures (kg)
+  real(kind(1.0D0)) :: coldmass = 0.0D0
+  !+ad_vars  fncmass : PF coil outer support fence mass (kg)
+  real(kind(1.0D0)) :: fncmass = 0.0D0
+  !+ad_vars  gsmass : reactor core gravity support mass (kg)
+  real(kind(1.0D0)) :: gsmass = 0.0D0
+
+end module structure_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
 
   !  ex bldgcom.h90
@@ -1887,11 +1928,6 @@ module wibble
 
   integer :: istell,isthtr
   common /stlint/ istell,isthtr
-
-!  ex struccom.h90
-
-  real(kind(1.0D0)) :: aintmass,clgsmass,coldmass,fncmass,gsmass
-  common /struc1/ aintmass,clgsmass,coldmass,fncmass,gsmass
 
 !  ex times.h90
 
