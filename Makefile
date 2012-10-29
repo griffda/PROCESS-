@@ -198,7 +198,7 @@ default: process.exe
 
 aachange.o: 
 aamain.o: costs.o cudriv.o divertor.o evaluators.o fwbs.o global_variables.o input.o \
-  numerics.o output.o pfcoil.o physics.o scan.o cost.h90 htpwr.h90 ineq.h90 \
+  numerics.o output.o pfcoil.o physics.o scan.o tfcoil.o cost.h90 htpwr.h90 ineq.h90 \
   pwrcom.h90
 acpow.o: output.o bldgvol.h90 estocom.h90 htpwr.h90 pwrcom.h90
 avail.o: global_variables.o output.o cost.h90 ife.h90 \
@@ -206,7 +206,7 @@ avail.o: global_variables.o output.o cost.h90 ife.h90 \
 bldgs.o: global_variables.o output.o bldgcom.h90 bldgvol.h90 build.h90 \
   htpwr.h90 pwrcom.h90 rfp.h90 struccom.h90 times.h90
 caller.o: costs.o cudriv.o divertor.o fwbs.o global_variables.o numerics.o output.o \
-  pfcoil.o physics.o ife.h90 rfp.h90 stella.h90
+  pfcoil.o physics.o tfcoil.o ife.h90 rfp.h90 stella.h90
 costs.o: global_variables.o output.o bldgvol.h90 build.h90 \
   cost.h90 htpwr.h90 ife.h90 pulse.h90 pwrcom.h90 \
   rfp.h90 struccom.h90 times.h90 torsdat.h90
