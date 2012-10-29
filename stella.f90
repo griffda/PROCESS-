@@ -1890,6 +1890,7 @@ subroutine ststrc(outfile,iprint)
   !+ad_call  fwbs_variables
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
+  !+ad_call  structure_module
   !+ad_call  structure_variables
   !+ad_call  tfcoil_variables
   !+ad_call  build.h90
@@ -1903,6 +1904,7 @@ subroutine ststrc(outfile,iprint)
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  29/10/12 PJK Added structure_variables
+  !+ad_hist  29/10/12 PJK Added structure_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1912,6 +1914,7 @@ subroutine ststrc(outfile,iprint)
   use fwbs_variables
   use pfcoil_variables
   use physics_variables
+  use structure_module
   use structure_variables
   use tfcoil_variables
 

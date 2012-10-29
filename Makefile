@@ -195,15 +195,15 @@ default: process.exe
 
 aachange.o: 
 aamain.o: costs.o cudriv.o divertor.o evaluators.o fwbs.o global_variables.o input.o \
-  numerics.o output.o pfcoil.o physics.o scan.o sctfcoil.o tfcoil.o cost.h90 htpwr.h90 \
-  ineq.h90 pwrcom.h90
+  numerics.o output.o pfcoil.o physics.o scan.o sctfcoil.o struct.o tfcoil.o cost.h90 \
+  htpwr.h90 ineq.h90 pwrcom.h90
 acpow.o: output.o bldgvol.h90 estocom.h90 htpwr.h90 pwrcom.h90
 avail.o: global_variables.o output.o cost.h90 ife.h90 \
   pulse.h90 rfp.h90
 bldgs.o: global_variables.o output.o bldgcom.h90 bldgvol.h90 build.h90 \
   htpwr.h90 pwrcom.h90 rfp.h90 times.h90
 caller.o: costs.o cudriv.o divertor.o fwbs.o global_variables.o numerics.o output.o \
-  pfcoil.o physics.o sctfcoil.o tfcoil.o ife.h90 rfp.h90 stella.h90
+  pfcoil.o physics.o sctfcoil.o struct.o tfcoil.o ife.h90 rfp.h90 stella.h90
 costs.o: global_variables.o output.o bldgvol.h90 build.h90 \
   cost.h90 htpwr.h90 ife.h90 pulse.h90 pwrcom.h90 \
   rfp.h90 times.h90 torsdat.h90
@@ -246,8 +246,8 @@ scan.o: global_variables.o numerics.o output.o pwrcom.h90 \
   ineq.h90 cost.h90 htpwr.h90
 sctfcoil.o: global_variables.o maths_library.o output.o build.h90
 stella.o: costs.o cudriv.o divertor.o fwbs.o global_variables.o maths_library.o \
-  numerics.o output.o physics.o scan.o sctfcoil.o bldgcom.h90 bldgvol.h90 build.h90 \
-  cost.h90 estocom.h90 htpwr.h90 ineq.h90 pulse.h90 pwrcom.h90 stella.h90 \
+  numerics.o output.o physics.o scan.o sctfcoil.o struct.o bldgcom.h90 bldgvol.h90 \
+  build.h90 cost.h90 estocom.h90 htpwr.h90 ineq.h90 pulse.h90 pwrcom.h90 stella.h90 \
   times.h90 torsdat.h90 vaccom.h90
 struct.o: global_variables.o output.o build.h90
 tfcoil.o: global_variables.o output.o sctfcoil.o build.h90
