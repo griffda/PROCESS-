@@ -887,6 +887,7 @@ subroutine output(outfile)
   !+ad_call  sctfcoil_module
   !+ad_call  structure_module
   !+ad_call  tfcoil_module
+  !+ad_call  vaccum_module
   !+ad_call  stella.h90
   !+ad_call  rfp.h90
   !+ad_call  ife.h90
@@ -942,6 +943,7 @@ subroutine output(outfile)
   !+ad_hist  29/10/12 PJK Added tfcoil_module
   !+ad_hist  29/10/12 PJK Added sctfcoil_module
   !+ad_hist  29/10/12 PJK Added structure_module
+  !+ad_hist  29/10/12 PJK Added vacuum_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -957,6 +959,7 @@ subroutine output(outfile)
   use sctfcoil_module
   use structure_module
   use tfcoil_module
+  use vacuum_module
 
   implicit none
 
