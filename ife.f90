@@ -2549,20 +2549,19 @@ subroutine ifevac(outfile,iprint)
   !+ad_desc  <P>The calculated values are hard-wired; they are based loosely
   !+ad_desc  on those for a tokamak of 6m major radius.
   !+ad_prob  None
-  !+ad_call  vaccom.h90
-  !+ad_call  torsdat.h90
+  !+ad_call  vacuum_variables
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  25/09/12 PJK Initial F90 version
+  !+ad_hist  29/10/12 PJK Added vacuum_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.87
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  implicit none
+  use vacuum_variables
 
-  include 'vaccom.h90'
-  include 'torsdat.h90'
+  implicit none
 
   !  Arguments
 

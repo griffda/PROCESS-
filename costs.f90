@@ -51,6 +51,7 @@ module costs_module
   !+ad_call  process_output
   !+ad_call  structure_variables
   !+ad_call  tfcoil_variables
+  !+ad_call  vacuum_variables
   !+ad_hist  15/10/12 PJK Initial version of module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
@@ -60,6 +61,7 @@ module costs_module
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  29/10/12 PJK Added structure_variables
+  !+ad_hist  29/10/12 PJK Added vacuum_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -74,6 +76,7 @@ module costs_module
   use process_output
   use structure_variables
   use tfcoil_variables
+  use vacuum_variables
 
   implicit none
 
@@ -86,7 +89,6 @@ module costs_module
   include 'pwrcom.h90'
   include 'rfp.h90'
   include 'times.h90'
-  include 'torsdat.h90'
 
   private
   public :: costs
@@ -2135,6 +2137,7 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad)hist  29/10/12 PJK Changed nvtype to ntype
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2159,7 +2162,7 @@ contains
 
     !  Account 224.1 : High vacuum pumps
 
-    if (nvtype == 1) then
+    if (ntype == 1) then
        c2241 = 1.0D-6 * vpumpn * uccpmp
     else
        c2241 = 1.0D-6 * vpumpn * uctpmp

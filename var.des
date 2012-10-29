@@ -722,30 +722,6 @@ $                          = 2 all pulsed power from line
 $                          = 3 PF power from MGF, heating from line
 $
 C______________________________________________________________________
-$  Vacuum systems : (see torsdat.h)
-$ 
-dlscal     dble          # duct length scaling (used in vacuum)
-nvduct     intg          # number of ducts (torus to pumps)
-vacdshm    dble          # mass of vacuum duct shield (kg)
-vcdimax    dble          # diameter of duct passage (m)
-vpumpn     dble          # number of high vacuum pumps 
-$
-C______________________________________________________________________
-$  Vacuum parameters : (see vaccom.h)
-$
-ntype      intg /1/      # pump type
-$                          = 0 for turbomolecular pump (mag. bearing)
-$                              with speed of 2.0 m**3/s
-$                              (1.95 for N2, 1.8 for He, 1.8 for DT)
-$                          = 1 for compound cryopump with nominal
-$                              speed of 10.0 m**3/s
-$                              (9.0 for N2, 5.0 for He and 25.0 for DT)
-pbase      dble /2.6D-6/ # base pressure (Pa)
-prdiv      dble /0.36/   # divertor chamber pressure during burn (Pa)
-rat        dble /1.3D-8/ # plasma chamber wall outgassing rate (Pa-m/s)
-tn         dble /300.0/  # neutral gas temperature in chamber (K)
-$
-C______________________________________________________________________
 $  FISPACT parameters : (see fispact.h)
 $
 $ (1) - at end of component life

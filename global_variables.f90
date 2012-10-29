@@ -1456,7 +1456,7 @@ end module tfcoil_variables
 
 module structure_variables
 
-  !+ad_name  tfcoil_variables
+  !+ad_name  structure_variables
   !+ad_summ  Module containing global variables relating to the
   !+ad_summ  support structure
   !+ad_type  Module
@@ -1464,7 +1464,7 @@ module structure_variables
   !+ad_cont  N/A
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
-  !+ad_desc  suppot structure of a fusion power plant.
+  !+ad_desc  support structure of a fusion power plant.
   !+ad_desc  It is derived from <CODE>include</CODE> file
   !+ad_desc  <CODE>struccom.h90</CODE>.
   !+ad_prob  None
@@ -1492,6 +1492,61 @@ module structure_variables
   real(kind(1.0D0)) :: gsmass = 0.0D0
 
 end module structure_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+module vacuum_variables
+
+  !+ad_name  vacuum_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  vacuum system
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  vacuum system of a fusion power plant.
+  !+ad_desc  It is derived from <CODE>include</CODE> files
+  !+ad_desc  <CODE>vaccom.h90</CODE> and <CODE>torsdat.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  29/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  ntype /1/ : switch for vacuum pump type:
+  !+ad_varc              = 0 for turbomolecular pump (magnetic bearing)
+  !+ad_varc                  with speed of 2.0 m3/s
+  !+ad_varc                  (1.95 for N2, 1.8 for He, 1.8 for DT);
+  !+ad_varc              = 1 for compound cryopump with nominal speed of 10.0 m3/s
+  !+ad_varc                  (9.0 for N2, 5.0 for He and 25.0 for DT)
+  integer :: ntype = 1
+  !+ad_vars  nvduct : number of ducts (torus to pumps)
+  integer :: nvduct = 0
+  !+ad_vars  dlscal : vacuum system duct length scaling
+  real(kind(1.0D0)) :: dlscal = 0.0D0
+  !+ad_vars  pbase /2.6D-6/ : base pressure (Pa)
+  real(kind(1.0D0)) :: pbase = 2.6D-6
+  !+ad_vars  prdiv /0.36/ : divertor chamber pressure during burn (Pa)
+  real(kind(1.0D0)) :: prdiv = 0.36D0
+  !+ad_vars  rat /1.3D-8/ : plasma chamber wall outgassing rate (Pa-m/s)
+  real(kind(1.0D0)) :: rat = 1.3D-8
+  !+ad_vars  tn /300.0/ : neutral gas temperature in chamber (K)
+  real(kind(1.0D0)) :: tn = 300.0D0
+  !+ad_vars  vacdshm : mass of vacuum duct shield (kg)
+  real(kind(1.0D0)) :: vacdshm = 0.0D0
+  !+ad_vars  vcdimax : diameter of duct passage (m)
+  real(kind(1.0D0)) :: vcdimax = 0.0D0
+  !+ad_vars  vpumpn : number of high vacuum pumps
+  real(kind(1.0D0)) :: vpumpn = 0.0D0
+
+end module vacuum_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1938,21 +1993,5 @@ module wibble
 
   real(kind(1.0D0)), dimension(6) :: tim
   common /times1/ tim
-
-!  ex torsdat.h90
-
-  real(kind(1.0D0)) :: dlscal,vacdshm,vcdimax,vpumpn
-  common /tors0/ dlscal,vacdshm,vcdimax,vpumpn
-
-  integer :: nvduct,nvtype
-  common /tors1/ nvduct,nvtype
-
-!  ex vaccom.h90
-
-  real(kind(1.0D0)) :: pbase,prdiv,rat,tn
-  common /vac0/ pbase,prdiv,rat,tn
-
-  integer :: ntype
-  common /vac1/ ntype
 
 end module wibble

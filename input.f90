@@ -88,6 +88,7 @@ module process_input
   !+ad_call  process_output
   !+ad_call  scan_module
   !+ad_call  tfcoil_variables
+  !+ad_call  vacuum_variables
   !+ad_call  bldgcom.h90
   !+ad_call  bldgvol.h90
   !+ad_call  build.h90
@@ -100,7 +101,6 @@ module process_input
   !+ad_call  rfp.h90
   !+ad_call  stella.h90
   !+ad_call  times.h90
-  !+ad_call  vaccom.h90
   !+ad_hist  20/01/95 PJK Initial version (PROCESS)
   !+ad_hist  05/01/04 PJK Initial F90 version (CENTORI)
   !+ad_hist  02/10/12 PJK Initial F90 version (PROCESS)
@@ -113,6 +113,7 @@ module process_input
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
+  !+ad_hist  29/10/12 PJK Added vacuum_variables
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -128,6 +129,7 @@ module process_input
   use process_output
   use scan_module
   use tfcoil_variables
+  use vacuum_variables
 
   implicit none
 
@@ -143,7 +145,6 @@ module process_input
   include 'rfp.h90'
   include 'stella.h90'
   include 'times.h90'
-  include 'vaccom.h90'
 
   private
   public :: input, run_summary, check_range_int, check_range_real

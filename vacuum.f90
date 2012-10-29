@@ -16,7 +16,6 @@ subroutine vaccall(outfile,iprint)
   !+ad_call  tfcoil_variables
   !+ad_call  build.h90
   !+ad_call  times.h90
-  !+ad_call  torsdat.h90
   !+ad_call  vacuum
   !+ad_hist  20/09/11 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
@@ -28,12 +27,12 @@ subroutine vaccall(outfile,iprint)
 
   use physics_variables
   use tfcoil_variables
+  use vacuum_variables
 
   implicit none
 
   include 'build.h90'
   include 'times.h90'
-  include 'torsdat.h90'
 
   !  Arguments
 
@@ -55,14 +54,14 @@ subroutine vaccall(outfile,iprint)
 
   call vacuum(powfmw,rmajor,rminor,kappa,shldoth,shldith,tfcth, &
        rsldi-gapds-ddwi,tfno,tdwell,dene,idivrt,qtorus,gasld, &
-       vpumpn,nvduct,nvtype,dlscal,vacdshm,vcdimax,iprint,outfile)
+       vpumpn,nvduct,dlscal,vacdshm,vcdimax,iprint,outfile)
 
 end subroutine vaccall
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
-     tdwell,nplasma,ndiv,qtorus,gasld,pumpn,nduct,nvtype,dlscal, &
+     tdwell,nplasma,ndiv,qtorus,gasld,pumpn,nduct,dlscalc, &
      mvdsh,dimax,iprint,outfile)
 
   !+ad_name  vaccall
@@ -92,8 +91,7 @@ subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
   !+ad_args  gasld : input real : Total D-T gas load (kg/s)
   !+ad_args  pumpn : output real : Number of high vacuum pumps
   !+ad_args  nduct : output integer : Number of ducts
-  !+ad_args  nvtype : output integer : Pump type (0 = turbo molecular, 1 = cryo)
-  !+ad_args  dlscal : output real : Duct-length equivalent for costing purposes (m)
+  !+ad_args  dlscalc : output real : Duct-length equivalent for costing purposes (m)
   !+ad_args  mvdsh : output real : Mass of a single vacuum duct shield (kg)
   !+ad_args  dimax : output real : Diameter of passage from divertor to pumping ducts (m)
   !+ad_args  iprint : input integer : Switch to write output (1=yes)
@@ -102,7 +100,6 @@ subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
   !+ad_prob  None
   !+ad_call  constants
   !+ad_call  process_output
-  !+ad_call  vaccom.h90
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
   !+ad_call  oheadr
@@ -119,10 +116,9 @@ subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
 
   use constants
   use process_output
+  use vacuum_variables
 
   implicit none
-
-  include 'vaccom.h90'
 
   !  Arguments
 
@@ -130,8 +126,8 @@ subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
   real(kind(1.0D0)), intent(in) :: pfusmw, r0, aw, kappa, thshldo, thshldi
   real(kind(1.0D0)), intent(in) :: thtf, ritf, tfno, tdwell, nplasma, qtorus
   real(kind(1.0D0)), intent(in) :: gasld
-  integer, intent(out) :: nduct, nvtype
-  real(kind(1.0D0)), intent(out) :: pumpn, dlscal, mvdsh, dimax
+  integer, intent(out) :: nduct
+  real(kind(1.0D0)), intent(out) :: pumpn, dlscalc, mvdsh, dimax
 
   !  Local variables
 
@@ -155,8 +151,6 @@ subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
   !              speed of 2.0 m^3/s (1.95 for N2, 1.8 for He, 1.8 for DT)
   !    ntype = 1 for compound cryopump with nominal speed of 10 m^3/s
   !              (9.0 for N2, 5.0 for He and 25. for DT)
-
-  nvtype = ntype
 
   pfus = pfusmw * 1.0D6  !  Fusion power (W)
   ntf = int(tfno)
@@ -342,7 +336,7 @@ subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
 
   !  Information for costing routine
 
-  dlscal = l1 * d(imax)**1.4D0 + (ltot-l1) * (d(imax)*1.2D0)**1.4D0
+  dlscalc = l1 * d(imax)**1.4D0 + (ltot-l1) * (d(imax)*1.2D0)**1.4D0
 
   !  Mass of duct shielding
 

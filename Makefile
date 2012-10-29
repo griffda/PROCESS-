@@ -134,9 +134,7 @@ headers = \
  rfp.h90       \
  start.h90     \
  stella.h90    \
- times.h90     \
- torsdat.h90   \
- vaccom.h90    
+ times.h90     
 
 ###### Architecture specifics #######
 #
@@ -206,7 +204,7 @@ caller.o: costs.o cudriv.o divertor.o fwbs.o global_variables.o numerics.o outpu
   pfcoil.o physics.o sctfcoil.o struct.o tfcoil.o ife.h90 rfp.h90 stella.h90
 costs.o: global_variables.o output.o bldgvol.h90 build.h90 \
   cost.h90 htpwr.h90 ife.h90 pulse.h90 pwrcom.h90 \
-  rfp.h90 times.h90 torsdat.h90
+  rfp.h90 times.h90
 cudriv.o: global_variables.o output.o
 divertor.o: global_variables.o output.o build.h90
 evaluators.o: global_variables.o numerics.o cost.h90 pwrcom.h90 htpwr.h90
@@ -219,14 +217,14 @@ geomty.o: global_variables.o build.h90 rfp.h90
 heatpwr.o: fwbs.o global_variables.o output.o cost.h90 \
   htpwr.h90 pwrcom.h90 times.h90
 ife.o: costs.o global_variables.o output.o bldgcom.h90 bldgvol.h90 build.h90 cost.h90 \
-  htpwr.h90 ife.h90 pulse.h90 torsdat.h90 vaccom.h90
+  htpwr.h90 ife.h90 pulse.h90
 initial.o: global_variables.o output.o scan.o bldgcom.h90 bldgvol.h90 \
   build.h90 cost.h90 estocom.h90 htpwr.h90 ife.h90 \
   ineq.h90 pulse.h90 pwrcom.h90 rfp.h90 stella.h90 \
-  times.h90 torsdat.h90 vaccom.h90
+  times.h90
 input.o: global_variables.o numerics.o output.o scan.o bldgcom.h90 \
   bldgvol.h90 build.h90 cost.h90 estocom.h90 htpwr.h90 \
-  ife.h90 ineq.h90 pulse.h90 rfp.h90 stella.h90 times.h90 vaccom.h90
+  ife.h90 ineq.h90 pulse.h90 rfp.h90 stella.h90 times.h90
 maths_library.o: 
 numerics.o: maths_library.o
 outplas.o: global_variables.o output.o ineq.h90 rfp.h90 times.h90
@@ -248,11 +246,10 @@ sctfcoil.o: global_variables.o maths_library.o output.o build.h90
 stella.o: costs.o cudriv.o divertor.o fwbs.o global_variables.o maths_library.o \
   numerics.o output.o physics.o scan.o sctfcoil.o struct.o bldgcom.h90 bldgvol.h90 \
   build.h90 cost.h90 estocom.h90 htpwr.h90 ineq.h90 pulse.h90 pwrcom.h90 stella.h90 \
-  times.h90 torsdat.h90 vaccom.h90
+  times.h90
 struct.o: global_variables.o output.o build.h90
 tfcoil.o: global_variables.o output.o sctfcoil.o build.h90
-vacuum.o: global_variables.o output.o build.h90 times.h90 \
-  torsdat.h90 vaccom.h90
+vacuum.o: global_variables.o output.o build.h90 times.h90
 xc.o: global_variables.o numerics.o build.h90 htpwr.h90 \
   ife.h90 ineq.h90 pulse.h90 rfp.h90 times.h90
 

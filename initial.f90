@@ -23,8 +23,6 @@ subroutine initial
   !+ad_call  bldgvol.h90
   !+ad_call  estocom.h90
   !+ad_call  bldgcom.h90
-  !+ad_call  torsdat.h90
-  !+ad_call  vaccom.h90
   !+ad_call  pulse.h90
   !+ad_call  stella.h90
   !+ad_call  rfp.h90
@@ -68,6 +66,7 @@ subroutine initial
   !+ad_hist  18/10/12 PJK Removed PF coil variables
   !+ad_hist  18/10/12 PJK Removed TF coil variables
   !+ad_hist  29/10/12 PJK Removed structure variables
+  !+ad_hist  29/10/12 PJK Removed vacuum variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -86,8 +85,6 @@ subroutine initial
   include 'bldgvol.h90'
   include 'estocom.h90'
   include 'bldgcom.h90'
-  include 'torsdat.h90'
-  include 'vaccom.h90'
   include 'pulse.h90'
   include 'stella.h90'
   include 'rfp.h90'
@@ -495,23 +492,6 @@ subroutine initial
   trcl     = 1.0D0
   wgt      = 5.0D5
   wgt2     = 1.0D5
-
-  !  Vacuum parameters
-
-  ntype    = 1
-  pbase    = 2.6D-6
-  prdiv    = 0.36D0
-  rat      = 1.3D-8
-  tn       = 300.0D0
-
-  !  Vacuum systems
-
-  dlscal   = 0.0D0
-  nvduct   = 0
-  nvtype   = ntype
-  vacdshm  = 0.0D0
-  vcdimax  = 0.0D0
-  vpumpn   = 0.0D0
 
   !  Reversed field pinch parameters
 
