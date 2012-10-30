@@ -2285,9 +2285,9 @@ subroutine ifeacp(outfile,iprint)
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calculates the AC power requirements for an IFE power plant.
   !+ad_prob  None
+  !+ad_call  buildings_variables
   !+ad_call  heat_transport_variables
   !+ad_call  process_output
-  !+ad_call  bldgvol.h90
   !+ad_call  ife.h90
   !+ad_call  oblnkl
   !+ad_call  oheadr
@@ -2296,18 +2296,19 @@ subroutine ifeacp(outfile,iprint)
   !+ad_hist  25/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
+  !+ad_hist  30/10/12 PJK Added buildings_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.68
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use buildings_variables
   use heat_transport_variables
   use process_output
 
   implicit none
 
-  include 'bldgvol.h90'
   include 'ife.h90'
 
   ! Arguments
@@ -2599,11 +2600,10 @@ subroutine ifebdg(outfile,iprint)
   !+ad_desc  closely on that for tokamaks etc. in routine
   !+ad_desc  <A HREF="bldgs.html">BLDGS</A>.
   !+ad_prob  None
+  !+ad_call  buildings_variables
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  process_output
-  !+ad_call  bldgcom.h90
-  !+ad_call  bldgvol.h90
   !+ad_call  ife.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
@@ -2612,20 +2612,20 @@ subroutine ifebdg(outfile,iprint)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
+  !+ad_hist  30/10/12 PJK Added buildings_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.87
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use buildings_variables
   use fwbs_variables
   use heat_transport_variables
   use process_output
 
   implicit none
 
-  include 'bldgcom.h90'
-  include 'bldgvol.h90'
   include 'ife.h90'
 
   !  Arguments

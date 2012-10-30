@@ -42,6 +42,7 @@ module costs_module
   !+ad_desc  This module contains the PROCESS fusion power plant costing model,
   !+ad_desc  split into separate cost accounts.
   !+ad_prob  None
+  !+ad_call  buildings_variables
   !+ad_call  constants
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
@@ -68,11 +69,13 @@ module costs_module
   !+ad_hist  29/10/12 PJK Added pf_power_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_hist  30/10/12 PJK Added times_variables
+  !+ad_hist  30/10/12 PJK Added buildings_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use buildings_variables
   use constants
   use current_drive_variables
   use divertor_variables
@@ -89,7 +92,6 @@ module costs_module
 
   implicit none
 
-  include 'bldgvol.h90'
   include 'build.h90'
   include 'cost.h90'
   include 'ife.h90'

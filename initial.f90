@@ -17,8 +17,6 @@ subroutine initial
   !+ad_call  ineq.h90
   !+ad_call  build.h90
   !+ad_call  cost.h90
-  !+ad_call  bldgvol.h90
-  !+ad_call  bldgcom.h90
   !+ad_call  pulse.h90
   !+ad_call  stella.h90
   !+ad_call  rfp.h90
@@ -66,6 +64,7 @@ subroutine initial
   !+ad_hist  29/10/12 PJK Removed PF coil power conversion variables
   !+ad_hist  30/10/12 PJK Removed heat transport variables
   !+ad_hist  30/10/12 PJK Removed times variables
+  !+ad_hist  30/10/12 PJK Removed buildings variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -78,8 +77,6 @@ subroutine initial
   include 'ineq.h90'
   include 'build.h90'
   include 'cost.h90'
-  include 'bldgvol.h90'
-  include 'bldgcom.h90'
   include 'pulse.h90'
   include 'stella.h90'
   include 'rfp.h90'
@@ -374,46 +371,6 @@ subroutine initial
   uchlte   = 400.0D0
   uchth    = 700.0D0
 
-  !  Building volumes
-
-  admvol   = 0.0D0
-  convol   = 0.0D0
-  cryvol   = 0.0D0
-  efloor   = 0.0D0
-  elevol   = 0.0D0
-  esbldgm3 = 1.0D3
-  pfbldgm3 = 2.0D4
-  rbvol    = 0.0D0
-  rmbvol   = 0.0D0
-  shovol   = 0.0D0
-  tfcbv    = 2.0D4
-  triv     = 4.0D4
-  volnucb  = 0.0D0
-  volrci   = 0.0D0
-  wrbi     = 0.0D0
-  wsvol    = 0.0D0
-
-  !  Buildings
-
-  admv     = 1.0D5
-  clh1     = 8.0D0
-  clh2     = 15.0D0
-  conv     = 6.0D4
-  fndt     = 2.0D0
-  hccl     = 5.0D0
-  hcwt     = 1.5D0
-  pibv     = 2.0D4
-  rbrt     = 1.0D0
-  rbwt     = 2.0D0
-  row      = 4.0D0
-  rxcl     = 4.0D0
-  shmf     = 0.5D0
-  shov     = 1.0D5
-  stcl     = 3.0D0
-  trcl     = 1.0D0
-  wgt      = 5.0D5
-  wgt2     = 1.0D5
-
   !  Reversed field pinch parameters
 
   irfp     = 0
@@ -535,6 +492,7 @@ subroutine check
   !+ad_desc  This routine performs a sanity check of the input variables
   !+ad_desc  and ensures other dependent variables are given suitable values.
   !+ad_prob  None
+  !+ad_call  buildings_variables
   !+ad_call  current_drive_variables
   !+ad_call  global_variables
   !+ad_call  heat_transport_variables
@@ -543,7 +501,6 @@ subroutine check
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  tfcoil_variables
-  !+ad_call  bldgvol.h90
   !+ad_call  build.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
@@ -561,11 +518,13 @@ subroutine check
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
+  !+ad_hist  30/10/12 PJK Added buildings_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use buildings_variables
   use current_drive_variables
   use global_variables
   use heat_transport_variables
@@ -576,7 +535,6 @@ subroutine check
 
   implicit none
 
-  include 'bldgvol.h90'
   include 'build.h90'
   include 'pulse.h90'
   include 'rfp.h90'

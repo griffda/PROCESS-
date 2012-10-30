@@ -1775,25 +1775,111 @@ end module times_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module buildings_variables
+
+  !+ad_name  buildings_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  plant buildings
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  plant buildings.
+  !+ad_desc  It is derived from <CODE>include</CODE> files
+  !+ad_desc  <CODE>bldgcom.h90</CODE> and <CODE>bldgvol.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  30/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  admv /1.0D5/ : administration building volume (m3)
+  real(kind(1.0D0)) :: admv = 1.0D5
+  !+ad_vars  admvol : volume of administration buildings (m3)
+  real(kind(1.0D0)) :: admvol = 0.0D0
+  !+ad_vars  clh1 /8.0/ : clearance from TF coil to cryostat top (m)
+  real(kind(1.0D0)) :: clh1 = 8.0D0
+  !+ad_vars  clh2 /15.0/ : clearance beneath TF coil to foundation
+  !+ad_varc                (including basement) (m)
+  real(kind(1.0D0)) :: clh2 = 15.0D0
+  !+ad_vars  conv /6.0D4/ : control building volume (m3)
+  real(kind(1.0D0)) :: conv = 6.0D4
+  !+ad_vars  convol : volume of control, protection and i&c building (m3)
+  real(kind(1.0D0)) :: convol = 0.0D0
+  !+ad_vars  cryvol : volume of cryoplant building (m3)
+  real(kind(1.0D0)) :: cryvol = 0.0D0
+  !+ad_vars  efloor : effective total floor space (m2)
+  real(kind(1.0D0)) :: efloor = 0.0D0
+  !+ad_vars  elevol : volume of electrical equipment building (m3)
+  real(kind(1.0D0)) :: elevol = 0.0D0
+  !+ad_vars  esbldgm3 /1.0D3/ : volume of energy storage equipment building (m3)
+  real(kind(1.0D0)) :: esbldgm3 = 1.0D3
+  !+ad_vars  fndt /2.0/ : foundation thickness (m)
+  real(kind(1.0D0)) :: fndt = 2.0D0
+  !+ad_vars  hccl /5.0/ : clearance around components in hot cell (m)
+  real(kind(1.0D0)) :: hccl = 5.0D0
+  !+ad_vars  hcwt /1.5/ : hot cell wall thickness (m)
+  real(kind(1.0D0)) :: hcwt = 1.5D0
+  !+ad_vars  pfbldgm3 /2.0D4/ : volume of PF coil power supply building (m3)
+  real(kind(1.0D0)) :: pfbldgm3 = 2.0D4
+  !+ad_vars  pibv /2.0D4/ : power injection building volume (m3)
+  real(kind(1.0D0)) :: pibv = 2.0D4
+  !+ad_vars  rbrt /1.0/ : reactor building roof thickness (m)
+  real(kind(1.0D0)) :: rbrt = 1.0D0
+  !+ad_vars  rbvol : reactor building volume (m3)
+  real(kind(1.0D0)) :: rbvol = 0.0D0
+  !+ad_vars  rbwt /2.0/ : reactor building wall thickness (m)
+  real(kind(1.0D0)) :: rbwt = 2.0D0
+  !+ad_vars  rmbvol : volume of maintenance and assembly building (m3)
+  real(kind(1.0D0)) :: rmbvol = 0.0D0
+  !+ad_vars  row /4.0/ : clearance to building wall for crane operation (m)
+  real(kind(1.0D0)) :: row = 4.0D0
+  !+ad_vars  rxcl /4.0/ : clearance around reactor (m)
+  real(kind(1.0D0)) :: rxcl = 4.0D0
+  !+ad_vars  shmf /0.5/ : fraction of shield mass per TF coil
+  !+ad_varc               to be moved in the maximum shield lift
+  real(kind(1.0D0)) :: shmf = 0.5D0
+  !+ad_vars  shov /1.0D5/ : shops and warehouse volume (m3)
+  real(kind(1.0D0)) :: shov = 1.0D5
+  !+ad_vars  shovol :volume of shops and buildings for plant auxiliaries (m3)
+  real(kind(1.0D0)) :: shovol = 0.0D0
+  !+ad_vars  stcl /3.0/ : clearance above crane to roof (m)
+  real(kind(1.0D0)) :: stcl = 3.0D0
+  !+ad_vars  tfcbv /2.0D4/ : volume of TF coil power supply building (m3)
+  !+ad_varc                  (calculated if TF coils are superconducting)
+  real(kind(1.0D0)) :: tfcbv = 2.0D4
+  !+ad_vars  trcl /1.0/ : transportation clearance between components (m)
+  real(kind(1.0D0)) :: trcl = 1.0D0
+  !+ad_vars  triv /4.0D4/ : volume of tritium, fuel handling and
+  !+ad_varc                 health physics buildings (m3)
+  real(kind(1.0D0)) :: triv = 4.0D4
+  !+ad_vars  volnucb : sum of nuclear buildings volumes (m3)
+  real(kind(1.0D0)) :: volnucb = 0.0D0
+  !+ad_vars  volrci : internal volume of reactor building (m3)
+  real(kind(1.0D0)) :: volrci = 0.0D0
+  !+ad_vars  wgt /5.0D5/ : reactor building crane capacity (kg)
+  !+ad_varc                (calculated if 0 is input)
+  real(kind(1.0D0)) :: wgt = 5.0D5
+  !+ad_vars  wgt2 /1.0D5/ : hot cell crane capacity (kg)
+  !+ad_varc                 (calculated if 0 is input)
+  real(kind(1.0D0)) :: wgt2 = 1.0D5
+  !+ad_vars  wrbi : distance from centre of tokamak to reactor (m)
+  real(kind(1.0D0)) :: wrbi = 0.0D0
+  !+ad_vars  wsvol : volume of warm shop building (m3)
+  real(kind(1.0D0)) :: wsvol = 0.0D0
+
+end module buildings_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
-
-  !  ex bldgcom.h90
-
-  real(kind(1.0D0)) :: &
-       admv,clh1,clh2,conv,fndt,hccl,hcwt,pibv,rbrt,rbwt,row, &
-       rxcl,shmf,shov,stcl,trcl,wgt,wgt2
-  common /bldg1/ &
-       admv,clh1,clh2,conv,fndt,hccl,hcwt,pibv,rbrt,rbwt,row, &
-       rxcl,shmf,shov,stcl,trcl,wgt,wgt2
-
-  !  ex bldgvol.h90
-
-  real(kind(1.0D0)) :: &
-       admvol,convol,cryvol,efloor,elevol,esbldgm3,pfbldgm3, &
-       rbvol,rmbvol,shovol,tfcbv,triv,volnucb,volrci,wrbi,wsvol 
-  common /bldgv1/ &
-       admvol,convol,cryvol,efloor,elevol,esbldgm3,pfbldgm3, &
-       rbvol,rmbvol,shovol,tfcbv,triv,volnucb,volrci,wrbi,wsvol 
 
   !  ex build.h90
 

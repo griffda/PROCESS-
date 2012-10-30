@@ -12,6 +12,7 @@ subroutine bldgcall(outfile,iprint)
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This routine calls the buildings calculations.
   !+ad_prob  None
+  !+ad_call  buildings_variables
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  pfcoil_variables
@@ -20,7 +21,6 @@ subroutine bldgcall(outfile,iprint)
   !+ad_call  structure_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
-  !+ad_call  bldgvol.h90
   !+ad_call  build.h90
   !+ad_call  rfp.h90
   !+ad_call  bldgs
@@ -33,11 +33,13 @@ subroutine bldgcall(outfile,iprint)
   !+ad_hist  29/10/12 PJK Added pf_power_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_hist  30/10/12 PJK Added times_variables
+  !+ad_hist  30/10/12 PJK Added buildings_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use buildings_variables
   use fwbs_variables
   use heat_transport_variables
   use pfcoil_variables
@@ -50,7 +52,6 @@ subroutine bldgcall(outfile,iprint)
   implicit none
 
   include 'build.h90'
-  include 'bldgvol.h90'
   include 'rfp.h90'
 
   !  Arguments
@@ -85,19 +86,15 @@ subroutine bldgcall(outfile,iprint)
   !  Reactor vault wall and roof thicknesses are hardwired
 
   call bldgs(idhe3,pfrmax,pfmmax,tfro,tfri,tfh,tfmtn,tfno,rsldo, &
-       rsldi,(hmax*2.0D0),whtshld,crrad,tfcbv,pfbldgm3, &
-       esbldgm3,helpow,iprint,outfile, &
-       cryvol,triv,volrci,efloor,rbvol,rmbvol,wsvol,elevol,wrbi, &
-       admvol,shovol,convol,volnucb)
+       rsldi,(hmax*2.0D0),whtshld,crrad,helpow,iprint,outfile, &
+       cryvol,volrci,rbvol,rmbvol,wsvol,elevol)
 
 end subroutine bldgcall
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine bldgs(idhe3,pfr,pfm,tfro,tfri,tfh,tfm,tfno,shro,shri, &
-     shh,shm,crr,tfcbv,pfbldgm3,esbldgm3,helpow,iprint,outfile, &
-     cryv,triv,vrci,efloor,rbv,rmbv,wsv,elev,wrbi,admvol,shovol, &
-     convol,volnucb)
+     shh,shm,crr,helpow,iprint,outfile,cryv,vrci,rbv,rmbv,wsv,elev)
 
   !+ad_name  bldgs
   !+ad_summ  Determines the sizes of the plant buildings
@@ -118,26 +115,15 @@ subroutine bldgs(idhe3,pfr,pfm,tfro,tfri,tfh,tfm,tfno,shro,shri, &
   !+ad_args  shh : input real : height of attached shield, m
   !+ad_args  shm : input real : total mass of attached shield, kg
   !+ad_args  crr : input real : outer radius of common cryostat, m
-  !+ad_args  tfcbv : input real : volume of TF coil power supply building, m3
-  !+ad_args  pfbldgm3 : input real : volume of PF coil power supply building, m3
-  !+ad_args  esbldgm3 : input real : volume of energy storage building, m3
   !+ad_args  helpow : input real : total cryogenic load, W
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_args  outfile : input integer : output file unit
   !+ad_args  cryv : output real : volume of cryogenic building, m3
-  !+ad_args  triv : input real : volume of tritium building, m3
   !+ad_args  vrci : output real : inner volume of reactor building, m3
-  !+ad_args  efloor : output real : effective floor area of buildings, m2
   !+ad_args  rbv : output real : outer volume of reactor building, m3
   !+ad_args  rmbv : output real : volume of reactor maintenance building, m3
   !+ad_args  wsv : output real : volume of warm shop, m3
   !+ad_args  elev : output real : volume of electrical buildings, m3
-  !+ad_args  wrbi : output real : distance from centre of tokamak to reactor
-  !+ad_argc                       building wall, m
-  !+ad_args  admvol : output real : administration building volume, m3
-  !+ad_args  shovol : output real : shops and warehouse volume, m3
-  !+ad_args  convol : output real : control building volume, m3
-  !+ad_args  volnucb : output real : volume of nuclear controlled buildings, m3
   !+ad_desc  This routine determines the size of the plant buildings.
   !+ad_desc  The reactor building and maintenance building are sized
   !+ad_desc  based on the tokamak dimensions. The cryogenic building volume is
@@ -148,32 +134,31 @@ subroutine bldgs(idhe3,pfr,pfm,tfro,tfri,tfh,tfm,tfno,shro,shri, &
   !+ad_desc  This routine was included in PROCESS in January 1992 by 
   !+ad_desc  P. C. Shipe.
   !+ad_prob  None
+  !+ad_call  buildings_variables
   !+ad_call  process_output
-  !+ad_call  bldgcom.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  30/10/12 PJK Added buildings_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use buildings_variables
   use process_output
 
   implicit none
-
-  include 'bldgcom.h90'
 
   !  Arguments
 
   integer, intent(in) :: idhe3, iprint, outfile
   real(kind(1.0D0)), intent(inout) :: pfr
   real(kind(1.0D0)), intent(in) :: pfm,tfro,tfri,tfh,tfm,tfno,shro, &
-       shri,shh,shm,crr,tfcbv,pfbldgm3,esbldgm3,helpow,triv
+       shri,shh,shm,crr,helpow
 
-  real(kind(1.0D0)), intent(out) :: cryv,vrci,efloor,rbv,rmbv,wsv, &
-       elev,wrbi,admvol,shovol,convol,volnucb
+  real(kind(1.0D0)), intent(out) :: cryv,vrci,rbv,rmbv,wsv,elev
 
   !  Local variables
 

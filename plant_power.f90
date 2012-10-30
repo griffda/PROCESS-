@@ -18,6 +18,7 @@ module power_module
   !+ad_desc  power supply requirements, heat transport system parameters
   !+ad_desc  and the power balance for a fusion power plant.
   !+ad_prob  None
+  !+ad_call  buildings_variables
   !+ad_call  constants
   !+ad_call  current_drive_variables
   !+ad_call  fwbs_module
@@ -32,11 +33,13 @@ module power_module
   !+ad_call  tfcoil_variables
   !+ad_hist  30/10/12 PJK Initial version of module
   !+ad_hist  30/10/12 PJK Added times_variables
+  !+ad_hist  30/10/12 PJK Added buildings_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use buildings_variables
   use constants
   use current_drive_variables
   use fwbs_module
@@ -190,7 +193,6 @@ contains
       !+ad_desc  This routine calls routine <CODE>tfcpwr</CODE> to calculate the power
       !+ad_desc  conversion requirements for superconducting TF coils.
       !+ad_prob  None
-      !+ad_call  bldgvol.h90
       !+ad_call  tfcpwr
       !+ad_hist  01/08/11 PJK Initial F90 version
       !+ad_hist  15/10/12 PJK Added physics_variables
@@ -202,8 +204,6 @@ contains
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       implicit none
-
-      include 'bldgvol.h90'
 
       !  Arguments
 
@@ -654,7 +654,6 @@ contains
     !+ad_desc  original TETRA routine to provide only the total power needs for
     !+ad_desc  the plant. Included in STORAC in January 1992 by P.C. Shipe.
     !+ad_prob  None
-    !+ad_call  bldgvol.h90
     !+ad_call  oblnkl
     !+ad_call  oheadr
     !+ad_call  ovarre
@@ -673,8 +672,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'bldgvol.h90'
 
     !  Arguments
 
