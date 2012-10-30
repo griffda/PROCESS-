@@ -13,14 +13,14 @@ subroutine bldgcall(outfile,iprint)
   !+ad_desc  This routine calls the buildings calculations.
   !+ad_prob  None
   !+ad_call  fwbs_variables
+  !+ad_call  heat_transport_variables
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
-  !+ad_call  power_conversion_variables
+  !+ad_call  pf_power_variables
   !+ad_call  structure_variables
   !+ad_call  tfcoil_variables
   !+ad_call  bldgvol.h90
   !+ad_call  build.h90
-  !+ad_call  htpwr.h90
   !+ad_call  rfp.h90
   !+ad_call  times.h90
   !+ad_call  bldgs
@@ -30,16 +30,18 @@ subroutine bldgcall(outfile,iprint)
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  29/10/12 PJK Added structure_variables
-  !+ad_hist  29/10/12 PJK Added power_conversion_variables
+  !+ad_hist  29/10/12 PJK Added pf_power_variables
+  !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use fwbs_variables
+  use heat_transport_variables
   use pfcoil_variables
   use physics_variables
-  use power_conversion_variables
+  use pf_power_variables
   use structure_variables
   use tfcoil_variables
 
@@ -47,7 +49,6 @@ subroutine bldgcall(outfile,iprint)
 
   include 'build.h90'
   include 'times.h90'
-  include 'htpwr.h90'
   include 'bldgvol.h90'
   include 'rfp.h90'
 

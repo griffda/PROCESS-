@@ -1550,9 +1550,9 @@ end module vacuum_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-module power_conversion_variables
+module pf_power_variables
 
-  !+ad_name  power_conversion_variables
+  !+ad_name  pf_power_variables
   !+ad_summ  Module containing global variables relating to the
   !+ad_summ  PF coil power conversion system
   !+ad_type  Module
@@ -1595,7 +1595,127 @@ module power_conversion_variables
   !+ad_vars  vpfskv : PF coil voltage (kV)
   real(kind(1.0D0)) :: vpfskv = 0.0D0
 
-end module power_conversion_variables
+end module pf_power_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+module heat_transport_variables
+
+  !+ad_name  heat_transport_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  heat transport system
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  heat transport system of a fusion power plant, and
+  !+ad_desc  also those for a hydrogen production plant.
+  !+ad_desc  It is derived from <CODE>include</CODE> file
+  !+ad_desc  <CODE>htpwr.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  30/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  baseel /5.0D6/ : base plant electric load (W)
+  real(kind(1.0D0)) :: baseel = 5.0D6
+  !+ad_vars  crypmw : cryogenic plant power (MW)
+  real(kind(1.0D0)) :: crypmw = 0.0D0
+  !+ad_vars  ctht : total plant heat removal (MW)
+  real(kind(1.0D0)) :: ctht = 0.0D0
+  !+ad_vars  etahhten /1.35/ : efficiency of H production for ihplant=2
+  real(kind(1.0D0)) :: etahhten = 1.35D0
+  !+ad_vars  etahhtex /1.12/ : efficiency of H production for ihplant=3
+  real(kind(1.0D0)) :: etahhtex = 1.12D0
+  !+ad_vars  etahlte /0.75/ : efficiency of H production for ihplant=1
+  real(kind(1.0D0)) :: etahlte = 0.75D0
+  !+ad_vars  etahth /0.5/ : efficiency of H production for ihplant=4
+  real(kind(1.0D0)) :: etahth = 0.5D0
+  !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency
+  !+ad_varc                 if lblnkt=0, otherwise calculated
+  real(kind(1.0D0)) :: etath = 0.35D0
+  !+ad_vars  facht : facility heat removal (MW)
+  real(kind(1.0D0)) :: facht = 0.0D0
+  !+ad_vars  fauxbop /0.06/ : fraction of gross electric power to balance-of-plant
+  real(kind(1.0D0)) :: fauxbop = 0.06D0
+  !+ad_vars  fcsht : total power to facility loads (MW)
+  real(kind(1.0D0)) :: fcsht = 0.0D0
+  !+ad_vars  ffwlg /1.0/ : fraction of first wall / divertor power to low grade heat
+  real(kind(1.0D0)) :: ffwlg = 1.0D0
+  !+ad_vars  fgrosbop : scaled fraction of gross power to balance-of-plant
+  real(kind(1.0D0)) :: fgrosbop = 0.0D0
+  !+ad_vars  fmgdmw /0.0/ : power to mgf units (MW)
+  real(kind(1.0D0)) :: fmgdmw = 0.0D0
+  !+ad_vars  helecmw /0.0/ : electrical power required for H production (MW)
+  !+ad_varc                  (iteration variable 87)
+  real(kind(1.0D0)) :: helecmw = 0.0D0
+  !+ad_vars  helpow : heat removal at cryogenic temperatures (W)
+  real(kind(1.0D0)) :: helpow = 0.0D0
+  !+ad_vars  hpower : hydrogen production (MW equivalent)
+  real(kind(1.0D0)) :: hpower = 0.0D0
+  !+ad_vars  hthermmw /0.0/ : thermal power required for H production (MW)
+  !+ad_varc                   (iteration variable 88)
+  !+ad_varc                   (N.B. calculated for ihplant=1,2,3)
+  real(kind(1.0D0)) :: hthermmw = 0.0D0
+  !+ad_vars  htpmw /10.0/ : heat transport system pump power (MW)
+  real(kind(1.0D0)) :: htpmw = 10.0D0
+  !+ad_vars  hvolume : hydrogen production (Normal m3/second)
+  real(kind(1.0D0)) :: hvolume = 0.0D0
+  !+ad_vars  ihplant /0/ : switch for hydrogen production plant:
+  !+ad_varc                = 0 no hydrogen plant;
+  !+ad_varc                = 1 Low Temperature Electrolysis;
+  !+ad_varc                = 2 High Temperature Electrolysis - endothermic;
+  !+ad_varc                = 3 High Temperature Electrolysis - exothermic;
+  !+ad_varc                = 4 Thermo-chemical
+  integer :: ihplant = 0
+  !+ad_vars  iprimhtp /0/ : switch for heat transport pump power:
+  !+ad_varc                 = 0 contributes to secondary heat;
+  !+ad_varc                 = 1 contributes to primary heat
+  integer :: iprimhtp = 0
+  !+ad_vars  pacpmw : total pulsed power system load (MW)
+  real(kind(1.0D0)) :: pacpmw = 0.0D0
+  !+ad_vars  peakmva : peak MVA requirement
+  real(kind(1.0D0)) :: peakmva = 0.0D0
+  !+ad_vars  pfwdiv : heat removal from first wall/divertor (MW)
+  real(kind(1.0D0)) :: pfwdiv = 0.0D0
+  !+ad_vars  pgrossmw : gross electric power (MW)
+  real(kind(1.0D0)) :: pgrossmw = 0.0D0
+  !+ad_vars  pinjht : heat removal from injection power (MW)
+  real(kind(1.0D0)) :: pinjht = 0.0D0
+  !+ad_vars  pinjwp : injector wall plug power (MW)
+  real(kind(1.0D0)) :: pinjwp = 0.0D0
+  !+ad_vars  pnetelmw : net electric power (MW)
+  real(kind(1.0D0)) :: pnetelmw = 0.0D0
+  !+ad_vars  priheat : primary nuclear heating (MW)
+  real(kind(1.0D0)) :: priheat = 0.0D0
+  !+ad_vars  psecht : secondary heat (MW)
+  real(kind(1.0D0)) :: psecht = 0.0D0
+  !+ad_vars  pthermmw : primary heat (useful for electric production) (MW)
+  real(kind(1.0D0)) :: pthermmw = 0.0D0
+  !+ad_vars  pwpm2 /150.0/ : base AC power requirement (W/m2)
+  real(kind(1.0D0)) :: pwpm2 = 150.0D0
+  !+ad_vars  rnihx : number of intermediate heat exchangers
+  real(kind(1.0D0)) :: rnihx = 0.0D0
+  !+ad_vars  rnphx : number of primary heat exchangers
+  real(kind(1.0D0)) :: rnphx = 0.0D0
+  !+ad_vars  tfacpd /0.0/ : total steady state TF coil AC power demand (MW)
+  real(kind(1.0D0)) :: tfacpd = 0.0D0
+  !+ad_vars  tlvpmw : estimate of total low voltage power (MW)
+  real(kind(1.0D0)) :: tlvpmw = 0.0D0
+  !+ad_vars  trithtmw /15.0/ : power required for tritium processing (MW)
+  real(kind(1.0D0)) :: trithtmw = 15.0D0
+  !+ad_vars  vachtmw /0.5/ : vacuum pump power (MW)
+  real(kind(1.0D0)) :: vachtmw = 0.5D0
+
+end module heat_transport_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1756,24 +1876,6 @@ module wibble
   common /fisp2/ &
        bliact,bligdr,blihkw,bloact,blogdr,blohkw,fwiact,fwigdr, &
        fwihkw,fwoact,fwogdr,fwohkw
-
-  !  ex htpwr.h90
-
-  real(kind(1.0D0)) :: &
-       baseel,crypmw,ctht,etahhten,etahhtex,etahlte,etahth,etath, &
-       facht,fauxbop,fcsht,ffwlg,fgrosbop,fmgdmw,helecmw,hpower, &
-       hthermmw,hvolume,helpow,htpmw,pacpmw,peakmva,pfwdiv,pgrossmw, &
-       pinjht,pinjwp,pnetelmw,ppmphemw,priheat,psecht,pthermmw,pwpm2, &
-       rnihx,rnphx,tfacpd,tlvpmw,trithtmw,vachtmw
-  common /htpwr0/ &
-       baseel,crypmw,ctht,etahhten,etahhtex,etahlte,etahth,etath, &
-       facht,fauxbop,fcsht,ffwlg,fgrosbop,fmgdmw,helecmw,hpower, &
-       hthermmw,hvolume,helpow,htpmw,pacpmw,peakmva,pfwdiv,pgrossmw, &
-       pinjht,pinjwp,pnetelmw,ppmphemw,priheat,psecht,pthermmw,pwpm2, &
-       rnihx,rnphx,tfacpd,tlvpmw,trithtmw,vachtmw
-
-  integer :: ihplant,iprimhtp
-  common /htpwr1/ ihplant,iprimhtp
 
   !  ex ife.h90
 

@@ -17,7 +17,6 @@ subroutine initial
   !+ad_call  ineq.h90
   !+ad_call  times.h90
   !+ad_call  build.h90
-  !+ad_call  htpwr.h90
   !+ad_call  cost.h90
   !+ad_call  bldgvol.h90
   !+ad_call  bldgcom.h90
@@ -66,6 +65,7 @@ subroutine initial
   !+ad_hist  29/10/12 PJK Removed structure variables
   !+ad_hist  29/10/12 PJK Removed vacuum variables
   !+ad_hist  29/10/12 PJK Removed PF coil power conversion variables
+  !+ad_hist  30/10/12 PJK Removed heat transport variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -78,7 +78,6 @@ subroutine initial
   include 'ineq.h90'
   include 'times.h90'
   include 'build.h90'
-  include 'htpwr.h90'
   include 'cost.h90'
   include 'bldgvol.h90'
   include 'bldgcom.h90'
@@ -222,62 +221,12 @@ subroutine initial
   tmprse = 40.0D0
   tpeak = 0.0D0
 
-  !  Heat transport / power
-
-  baseel   = 5.0D6
-  crypmw   = 0.0D0
-  ctht     = 0.0D0
-  etath    = 0.35D0
-  facht    = 0.0D0
-  fauxbop  = 0.06D0
-  fcsht    = 0.0D0
-  ffwlg    = 1.0D0
-  fgrosbop = 0.0D0
-  fmgdmw   = 0.0D0
-  helpow   = 0.0D0
-  htpmw    = 10.0D0
-  iprimhtp = 0
-  pacpmw   = 0.0D0
-  peakmva  = 0.0D0
-  pfwdiv   = 0.0D0
-  pgrossmw = 0.0D0
-  pinjht   = 0.0D0
-  pinjwp   = 0.0D0
-  pnetelmw = 0.0D0
-  ppmphemw = 0.0D0
-  priheat  = 0.0D0
-  psecht   = 0.0D0
-  pthermmw = 0.0D0
-  pwpm2    = 150.0D0
-  rnihx    = 0.0D0
-  rnphx    = 0.0D0
-  tfacpd   = 0.0D0
-  tlvpmw   = 0.0D0
-  trithtmw = 15.0D0
-  vachtmw  = 0.5D0
-
-  !  Hydrogen plant
-
-  chplant  = 0.0D0
-  etahhten = 1.35D0
-  etahhtex = 1.12D0
-  etahlte  = 0.75D0
-  etahth   = 0.5D0
-  helecmw  = 0.0D0
-  hpower   = 0.0D0
-  hthermmw = 0.0D0
-  hvolume  = 0.0D0
-  ihplant  = 0
-  uchhten  = 1350.0D0
-  uchhtex  = 900.0D0
-  uchlte   = 400.0D0
-  uchth    = 700.0D0
-
   !  Cost information
 
   abktflnc = 20.0D0
   adivflnc = 25.0D0
   blkcst   = 0.0D0
+  chplant  = 0.0D0
   c221     = 0.0D0
   c222     = 0.0D0
   capcost  = 0.0D0
@@ -435,6 +384,10 @@ subroutine initial
   ucwst(2) = 3.94D0
   ucwst(3) = 5.91D0
   ucwst(4) = 7.88D0
+  uchhten  = 1350.0D0
+  uchhtex  = 900.0D0
+  uchlte   = 400.0D0
+  uchth    = 700.0D0
 
   !  Building volumes
 
@@ -599,6 +552,7 @@ subroutine check
   !+ad_prob  None
   !+ad_call  current_drive_variables
   !+ad_call  global_variables
+  !+ad_call  heat_transport_variables
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
@@ -606,7 +560,6 @@ subroutine check
   !+ad_call  tfcoil_variables
   !+ad_call  bldgvol.h90
   !+ad_call  build.h90
-  !+ad_call  htpwr.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
   !+ad_call  ife.h90
@@ -622,6 +575,7 @@ subroutine check
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
+  !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -629,6 +583,7 @@ subroutine check
 
   use current_drive_variables
   use global_variables
+  use heat_transport_variables
   use pfcoil_variables
   use physics_variables
   use process_output
@@ -638,7 +593,6 @@ subroutine check
 
   include 'bldgvol.h90'
   include 'build.h90'
-  include 'htpwr.h90'
   include 'pulse.h90'
   include 'rfp.h90'
   include 'ife.h90'

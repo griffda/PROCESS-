@@ -141,26 +141,27 @@ subroutine tfpwcall(outfile,iprint)
   !+ad_desc  This routine calls routine <CODE>tfcpwr</CODE> to calculate the power
   !+ad_desc  conversion requirements for superconducting TF coils.
   !+ad_prob  None
+  !+ad_call  heat_transport_variables
   !+ad_call  physics_variables
   !+ad_call  tfcoil_variables
   !+ad_call  bldgvol.h90
-  !+ad_call  htpwr.h90
   !+ad_call  tfcpwr
   !+ad_hist  01/08/11 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
+  !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use heat_transport_variables
   use physics_variables
   use tfcoil_variables
  
   implicit none
 
   include 'bldgvol.h90'
-  include 'htpwr.h90'
 
   !  Arguments
 
@@ -389,12 +390,12 @@ subroutine pfpwr(outfile,iprint)
   !+ad_desc  <I>dI/dt</I> at the time periods.
   !+ad_prob  None
   !+ad_call  constants
+  !+ad_call  heat_transport_variables
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
-  !+ad_call  power_conversion_variables
+  !+ad_call  pf_power_variables
   !+ad_call  process_output
   !+ad_call  build.h90
-  !+ad_call  htpwr.h90
   !+ad_call  times.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
@@ -404,23 +405,24 @@ subroutine pfpwr(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
-  !+ad_hist  29/10/12 PJK Added power_conversion_variables
+  !+ad_hist  29/10/12 PJK Added pf_power_variables
+  !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use heat_transport_variables
   use pfcoil_variables
   use physics_variables
-  use power_conversion_variables
+  use pf_power_variables
   use process_output
 
   implicit none
 
   include 'build.h90'
   include 'times.h90'
-  include 'htpwr.h90'
 
   !  Arguments
 

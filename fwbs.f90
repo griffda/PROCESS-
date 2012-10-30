@@ -18,11 +18,13 @@ module fwbs_module
   !+ad_call  constants
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
+  !+ad_call  heat_transport_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  tfcoil_variables
   !+ad_hist  18/10/12 PJK Initial version of module
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
+  !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -31,6 +33,7 @@ module fwbs_module
   use constants
   use divertor_variables
   use fwbs_variables
+  use heat_transport_variables
   use physics_variables
   use process_output
   use tfcoil_variables
@@ -67,7 +70,6 @@ contains
     !+ad_prob  None
     !+ad_call  build.h90
     !+ad_call  cost.h90
-    !+ad_call  htpwr.h90
     !+ad_call  blanket
     !+ad_call  oheadr
     !+ad_call  osubhd
@@ -87,7 +89,6 @@ contains
 
     include 'build.h90'
     include 'cost.h90'
-    include 'htpwr.h90'
 
     !  Arguments
 
@@ -586,7 +587,6 @@ contains
     !+ad_desc  <P>A more detailed description of the physical models
     !+ad_desc  used in the analysis can be found in the main reference.
     !+ad_prob  None
-    !+ad_call  htpwr.h90
     !+ad_call  build.h90
     !+ad_call  blnkt
     !+ad_call  perim
@@ -604,7 +604,6 @@ contains
 
     implicit none
 
-    include 'htpwr.h90'
     include 'build.h90'
 
     !  Arguments

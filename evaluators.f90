@@ -18,16 +18,18 @@ module function_evaluator
   !+ad_prob  None
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  heat_transport_variables
   !+ad_call  numerics
   !+ad_call  physics_variables
-  !+ad_call  power_conversion_variables
+  !+ad_call  pf_power_variables
   !+ad_call  tfcoil_variables
   !+ad_hist  10/10/12 PJK Initial version of module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
-  !+ad_hist  29/10/12 PJK Added power_conversion_variables
+  !+ad_hist  29/10/12 PJK Added pf_power_variables
+  !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -35,9 +37,10 @@ module function_evaluator
 
   use current_drive_variables
   use divertor_variables
+  use heat_transport_variables
   use numerics
   use physics_variables
-  use power_conversion_variables
+  use pf_power_variables
   use tfcoil_variables
 
   implicit none
@@ -273,7 +276,6 @@ contains
     !+ad_desc  order of unity for the sake of the numerics.
     !+ad_prob  None
     !+ad_call  cost.h90
-    !+ad_call  htpwr.h90
     !+ad_hist  02/10/96 PJK Initial upgraded version
     !+ad_hist  08/10/12 PJK Initial F90 version
     !+ad_stat  Okay
@@ -284,7 +286,6 @@ contains
     implicit none
 
     include 'cost.h90'
-    include 'htpwr.h90'
 
     !  Arguments
 

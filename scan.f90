@@ -15,10 +15,11 @@ module scan_module
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  global_variables
+  !+ad_call  heat_transport_variables
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
-  !+ad_call  power_conversion_variables
+  !+ad_call  pf_power_variables
   !+ad_call  process_output
   !+ad_call  tfcoil_variables
   !+ad_hist  09/10/12 PJK Initial version of module
@@ -30,7 +31,8 @@ module scan_module
   !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
-  !+ad_hist  29/10/12 PJK Added power_conversion_variables
+  !+ad_hist  29/10/12 PJK Added pf_power_variables
+  !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -39,10 +41,11 @@ module scan_module
   use current_drive_variables
   use divertor_variables
   use global_variables
+  use heat_transport_variables
   use numerics
   use pfcoil_variables
   use physics_variables
-  use power_conversion_variables
+  use pf_power_variables
   use process_output
   use tfcoil_variables
 
@@ -108,7 +111,6 @@ contains
   !+ad_prob  None
   !+ad_call  ineq.h90
   !+ad_call  cost.h90
-  !+ad_call  htpwr.h90
   !+ad_call  doopt
   !+ad_call  final
   !+ad_call  oblnkl
@@ -130,7 +132,6 @@ contains
 
   include 'ineq.h90'
   include 'cost.h90'
-  include 'htpwr.h90'
 
   !  Arguments
 

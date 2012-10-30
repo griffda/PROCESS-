@@ -17,11 +17,11 @@ subroutine loadxc
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
+  !+ad_call  heat_transport_variables
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  tfcoil_variables
   !+ad_call  build.h90
-  !+ad_call  htpwr.h90
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
   !+ad_call  pulse.h90
@@ -37,6 +37,7 @@ subroutine loadxc
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
+  !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -45,6 +46,7 @@ subroutine loadxc
   use current_drive_variables
   use divertor_variables
   use fwbs_variables
+  use heat_transport_variables
   use numerics
   use pfcoil_variables
   use physics_variables
@@ -58,7 +60,6 @@ subroutine loadxc
   include 'pulse.h90'
   include 'rfp.h90'
   include 'ife.h90'
-  include 'htpwr.h90'
 
   !  Arguments
 
@@ -267,12 +268,12 @@ subroutine convxc(xc,nn)
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
+  !+ad_call  heat_transport_variables
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  tfcoil_variables
   !+ad_call  build.h90
-  !+ad_call  htpwr.h90
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
   !+ad_call  rfp.h90
@@ -286,6 +287,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
+  !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -294,6 +296,7 @@ subroutine convxc(xc,nn)
   use current_drive_variables
   use divertor_variables
   use fwbs_variables
+  use heat_transport_variables
   use numerics
   use pfcoil_variables
   use physics_variables
@@ -306,7 +309,6 @@ subroutine convxc(xc,nn)
   include 'times.h90'
   include 'rfp.h90'
   include 'ife.h90'
-  include 'htpwr.h90'
 
   !  Arguments
 

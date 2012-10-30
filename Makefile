@@ -125,7 +125,6 @@ headers = \
  build.h90     \
  cost.h90      \
  fispact.h90   \
- htpwr.h90     \
  ife.h90       \
  ineq.h90      \
  pulse.h90     \
@@ -192,34 +191,34 @@ default: process.exe
 aachange.o: 
 aamain.o: costs.o cudriv.o divertor.o evaluators.o fwbs.o global_variables.o input.o \
   numerics.o output.o pfcoil.o physics.o scan.o sctfcoil.o struct.o tfcoil.o vacuum.o \
-  cost.h90 htpwr.h90 ineq.h90
-acpow.o: global_variables.o output.o bldgvol.h90 htpwr.h90
+  cost.h90 ineq.h90
+acpow.o: global_variables.o output.o bldgvol.h90
 avail.o: global_variables.o output.o cost.h90 ife.h90 \
   pulse.h90 rfp.h90
 bldgs.o: global_variables.o output.o bldgcom.h90 bldgvol.h90 build.h90 \
-  htpwr.h90 rfp.h90 times.h90
+  rfp.h90 times.h90
 caller.o: costs.o cudriv.o divertor.o fwbs.o global_variables.o numerics.o output.o \
   pfcoil.o physics.o sctfcoil.o struct.o tfcoil.o vacuum.o ife.h90 rfp.h90 stella.h90
 costs.o: global_variables.o output.o bldgvol.h90 build.h90 \
-  cost.h90 htpwr.h90 ife.h90 pulse.h90 rfp.h90 times.h90
+  cost.h90 ife.h90 pulse.h90 rfp.h90 times.h90
 cudriv.o: global_variables.o output.o
 divertor.o: global_variables.o output.o build.h90
-evaluators.o: global_variables.o numerics.o cost.h90 htpwr.h90
-eqns.o: global_variables.o numerics.o build.h90 htpwr.h90 \
+evaluators.o: global_variables.o numerics.o cost.h90
+eqns.o: global_variables.o numerics.o build.h90 \
   ife.h90 ineq.h90 pulse.h90 rfp.h90 stella.h90 times.h90
 fispact.o: global_variables.o build.h90 fispact.h90 pulse.h90
-fwbs.o: global_variables.o output.o build.h90 cost.h90 htpwr.h90
+fwbs.o: global_variables.o output.o build.h90 cost.h90
 geomty.o: global_variables.o build.h90 rfp.h90
 heatpwr.o: fwbs.o global_variables.o output.o cost.h90 \
-  htpwr.h90 times.h90
+  times.h90
 ife.o: costs.o global_variables.o output.o bldgcom.h90 bldgvol.h90 build.h90 cost.h90 \
-  htpwr.h90 ife.h90 pulse.h90
+  ife.h90 pulse.h90
 initial.o: global_variables.o output.o scan.o bldgcom.h90 bldgvol.h90 \
-  build.h90 cost.h90 htpwr.h90 ife.h90 \
+  build.h90 cost.h90 ife.h90 \
   ineq.h90 pulse.h90 rfp.h90 stella.h90 \
   times.h90
 input.o: global_variables.o numerics.o output.o scan.o bldgcom.h90 \
-  bldgvol.h90 build.h90 cost.h90 htpwr.h90 \
+  bldgvol.h90 build.h90 cost.h90 \
   ife.h90 ineq.h90 pulse.h90 rfp.h90 stella.h90 times.h90
 maths_library.o: 
 numerics.o: maths_library.o
@@ -230,22 +229,22 @@ physics.o: cudriv.o global_variables.o maths_library.o output.o build.h90 \
    pulse.h90 start.h90 times.h90
 pulse.o: global_variables.o maths_library.o output.o physics.o build.h90 \
   cost.h90 ineq.h90 pulse.h90 start.h90 times.h90
-pwrconv.o: global_variables.o output.o bldgvol.h90 build.h90 cost.h90 htpwr.h90 \
+pwrconv.o: global_variables.o output.o bldgvol.h90 build.h90 cost.h90 \
   times.h90
 radialb.o: global_variables.o output.o build.h90 rfp.h90
 rfp.o: cudriv.o input.o global_variables.o output.o pfcoil.o physics.o build.h90 \
-  htpwr.h90 pulse.h90 rfp.h90 times.h90
+  pulse.h90 rfp.h90 times.h90
 safety.o: global_variables.o output.o build.h90 fispact.h90
-scan.o: global_variables.o numerics.o output.o ineq.h90 cost.h90 htpwr.h90
+scan.o: global_variables.o numerics.o output.o ineq.h90 cost.h90
 sctfcoil.o: global_variables.o maths_library.o output.o build.h90
 stella.o: costs.o cudriv.o divertor.o fwbs.o global_variables.o maths_library.o \
   numerics.o output.o physics.o scan.o sctfcoil.o struct.o vacuum.o \
-  bldgcom.h90 bldgvol.h90 build.h90 cost.h90 htpwr.h90 ineq.h90 pulse.h90 \
+  bldgcom.h90 bldgvol.h90 build.h90 cost.h90 ineq.h90 pulse.h90 \
   stella.h90 times.h90
 struct.o: global_variables.o output.o build.h90
 tfcoil.o: global_variables.o output.o sctfcoil.o build.h90
 vacuum.o: global_variables.o output.o build.h90 times.h90
-xc.o: global_variables.o numerics.o build.h90 htpwr.h90 \
+xc.o: global_variables.o numerics.o build.h90 \
   ife.h90 ineq.h90 pulse.h90 rfp.h90 times.h90
 
 process.exe: $(object)
