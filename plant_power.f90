@@ -18,6 +18,7 @@ module power_module
   !+ad_desc  power supply requirements, heat transport system parameters
   !+ad_desc  and the power balance for a fusion power plant.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  buildings_variables
   !+ad_call  constants
   !+ad_call  current_drive_variables
@@ -34,11 +35,13 @@ module power_module
   !+ad_hist  30/10/12 PJK Initial version of module
   !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_hist  30/10/12 PJK Added buildings_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use buildings_variables
   use constants
   use current_drive_variables
@@ -430,7 +433,6 @@ contains
     !+ad_desc  The reactive (inductive) components use waves to calculate the
     !+ad_desc  <I>dI/dt</I> at the time periods.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  oheadr
     !+ad_call  ovarre
     !+ad_hist  01/08/11 PJK Initial F90 version
@@ -447,8 +449,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 

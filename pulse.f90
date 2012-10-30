@@ -13,11 +13,11 @@ subroutine pulse(outfile,iprint)
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This calls the routines relevant to a pulsed reactor scenario.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  times_variables
   !+ad_call  pulse.h90
-  !+ad_call  build.h90
   !+ad_call  thrmal
   !+ad_call  tohswg
   !+ad_call  burn
@@ -27,12 +27,14 @@ subroutine pulse(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  30/10/12 PJK Added times_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use fwbs_variables
   use physics_variables
   use times_variables
@@ -40,7 +42,6 @@ subroutine pulse(outfile,iprint)
   implicit none
 
   include 'pulse.h90'
-  include 'build.h90'
 
   !  Arguments
 
@@ -98,12 +99,12 @@ subroutine thrmal(outfile,iprint)
   !+ad_desc  coolant pressure, and an upper limit governed by the peak
   !+ad_desc  temperature and the neutron fluence.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  pulse.h90
-  !+ad_call  build.h90
   !+ad_call  ineq.h90
   !+ad_call  alpha
   !+ad_call  costrm
@@ -128,12 +129,14 @@ subroutine thrmal(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  18/10/12 PJK Added fwbs_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use fwbs_variables
   use physics_variables
@@ -142,7 +145,6 @@ subroutine thrmal(outfile,iprint)
   implicit none
 
   include 'pulse.h90'
-  include 'build.h90'
   include 'ineq.h90'
 
   !  Arguments

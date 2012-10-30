@@ -15,11 +15,11 @@ subroutine rfptfc(outfile,iprint)
   !+ad_desc  of a reversed field pinch machine. The coils are assumed to be
   !+ad_desc  circular.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  tfcoil_variables
-  !+ad_call  build.h90
   !+ad_call  rfp.h90
   !+ad_call  oheadr
   !+ad_call  osubhd
@@ -31,11 +31,13 @@ subroutine rfptfc(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use physics_variables
   use process_output
@@ -43,7 +45,6 @@ subroutine rfptfc(outfile,iprint)
 
   implicit none
 
-  include 'build.h90'
   include 'rfp.h90'
 
   !  Arguments
@@ -209,6 +210,7 @@ subroutine rfppfc(outfile,iprint)
   !+ad_desc  of a reversed field pinch machine. The coils are scaled from the
   !+ad_desc  TITAN-I OH/EF coil set.
   !+ad_prob  bpf, bpf2, forcepf are never set...
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  fwbs_variables
   !+ad_call  pfcoil_module
@@ -216,7 +218,6 @@ subroutine rfppfc(outfile,iprint)
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  tfcoil_variables
-  !+ad_call  build.h90
   !+ad_call  rfp.h90
   !+ad_call  bfield
   !+ad_call  efcurr
@@ -232,11 +233,13 @@ subroutine rfppfc(outfile,iprint)
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_module
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use fwbs_variables
   use pfcoil_module
@@ -248,7 +251,6 @@ subroutine rfppfc(outfile,iprint)
   implicit none
 
   include 'rfp.h90'
-  include 'build.h90'
 
   !  Arguments
 
@@ -475,13 +477,13 @@ subroutine rfppfp(outfile,iprint)
   !+ad_desc  This subroutine calculates the MVA, power and energy requirements
   !+ad_desc  for the RFP PF coil systems.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  heat_transport_variables
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  pf_power_variables
   !+ad_call  process_output
   !+ad_call  times_variables
-  !+ad_call  build.h90
   !+ad_call  rfp.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
@@ -495,11 +497,13 @@ subroutine rfppfp(outfile,iprint)
   !+ad_hist  29/10/12 PJK Added pf_power_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_hist  30/10/12 PJK Added times_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use heat_transport_variables
   use pfcoil_variables
   use physics_variables
@@ -509,7 +513,6 @@ subroutine rfppfp(outfile,iprint)
 
   implicit none
 
-  include 'build.h90'
   include 'rfp.h90'
 
   !  Arguments
@@ -673,6 +676,7 @@ subroutine rfpphy
   !+ad_desc  This subroutine calculates the plasma physics of the
   !+ad_desc  reversed field pinch system.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  current_drive_module
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
@@ -680,7 +684,6 @@ subroutine rfpphy
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  times_variables
-  !+ad_call  build.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
   !+ad_call  beamfus
@@ -710,6 +713,7 @@ subroutine rfpphy
   !+ad_hist  17/10/12 PJK Added current_drive_module
   !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_hist  30/10/12 PJK Added times_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
   !+ad_docc                Scoping Phase Report, January 1987
@@ -717,6 +721,7 @@ subroutine rfpphy
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use current_drive_module
   use current_drive_variables
   use physics_module
@@ -726,7 +731,6 @@ subroutine rfpphy
 
   implicit none
 
-  include 'build.h90'
   include 'pulse.h90'
   include 'rfp.h90'
 

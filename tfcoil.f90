@@ -15,6 +15,7 @@ module tfcoil_module
   !+ad_desc  This module contains routines for calculating the
   !+ad_desc  parameters of a resistive TF coil system for a fusion power plant.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
@@ -23,11 +24,13 @@ module tfcoil_module
   !+ad_call  tfcoil_variables
   !+ad_hist  29/10/12 PJK Initial version of module
   !+ad_hist  29/10/12 PJK Added sctfcoil_module
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use fwbs_variables
   use physics_variables
@@ -55,7 +58,6 @@ contains
     !+ad_desc  If the TF coils are superconducting the calculations are performed
     !+ad_desc  in routine <A HREF="sctfcoil.html">sctfcoil</A> instead.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  concoptf
     !+ad_call  oheadr
     !+ad_call  osubhd
@@ -75,8 +77,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 
@@ -200,7 +200,6 @@ contains
     !+ad_desc  This subroutine calculates various additional parameters for a
     !+ad_desc  resistive TF coil set, including for TART machines.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  cpost
     !+ad_call  osubhd
     !+ad_call  ovarre
@@ -217,8 +216,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 
@@ -350,7 +347,6 @@ contains
     !+ad_desc  tight aspect ratio tokamak. The centrepost is assumed to be tapered,
     !+ad_desc  i.e. narrowest on the midplane (z=0).
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  oheadr
     !+ad_call  osubhd
     !+ad_call  ovarre
@@ -366,8 +362,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 

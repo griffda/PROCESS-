@@ -23,6 +23,7 @@ module pfcoil_module
   !+ad_desc  This module contains routines for calculating the
   !+ad_desc  parameters of the PF coil systems for a fusion power plant.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  maths_library
   !+ad_call  pfcoil_variables
@@ -31,11 +32,13 @@ module pfcoil_module
   !+ad_call  times_variables
   !+ad_hist  18/10/12 PJK Initial version of module
   !+ad_hist  30/10/12 PJK Added times_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use maths_library
   use pfcoil_variables
@@ -64,7 +67,6 @@ contains
     !+ad_desc  OH coils, to determine their size, location, current waveforms,
     !+ad_desc  stresses etc.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  efc
     !+ad_call  ohcalc
     !+ad_call  peakb
@@ -81,8 +83,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 
@@ -593,7 +593,6 @@ contains
     !+ad_desc  This subroutine performs the calculations for the
     !+ad_desc  OH solenoid coil.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  bfmax
     !+ad_call  peakb
     !+ad_call  pfjalw
@@ -607,8 +606,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 
@@ -1372,7 +1369,6 @@ contains
     !+ad_desc  The calculation includes the effects from all the coils
     !+ad_desc  and the plasma.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  bfield
     !+ad_hist  09/05/12 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
@@ -1382,8 +1378,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 
@@ -1734,7 +1728,6 @@ contains
     !+ad_desc  This routine calculates the volt-second capability of the PF
     !+ad_desc  coil system.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_hist  01/08/11 PJK Initial F90 version
     !+ad_stat  Okay
     !+ad_docs  None
@@ -1742,8 +1735,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 
@@ -1827,7 +1818,6 @@ contains
     !+ad_desc  This routine calculates the mutual inductances between all the
     !+ad_desc  PF coils.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  bfield
     !+ad_call  oblnkl
     !+ad_call  ocmmnt
@@ -1844,8 +1834,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    INCLUDE 'build.h90'
 
     !  Arguments
 
@@ -2042,7 +2030,6 @@ contains
     !+ad_args  outfile : input integer : output file unit
     !+ad_desc  This routine writes the PF coil information to the output file.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  oblnkl
     !+ad_call  ocmmnt
     !+ad_call  oheadr
@@ -2057,8 +2044,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 

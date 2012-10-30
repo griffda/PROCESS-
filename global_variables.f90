@@ -1879,30 +1879,140 @@ end module buildings_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module build_variables
+
+  !+ad_name  build_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  machine's radial and vertical build
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  fusion power core's radial and vertical geometry (build).
+  !+ad_desc  It is derived from <CODE>include</CODE> file
+  !+ad_desc  <CODE>build.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  30/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  aplasmin /0.25/ : minimum minor radius (m)
+  real(kind(1.0D0)) :: aplasmin = 0.25D0
+  !+ad_vars  bcylth /0.0/ : bucking cylinder thickness (m)
+  real(kind(1.0D0)) :: bcylth = 0.0D0
+  !+ad_vars  blnkith /0.115/ : inner blanket thickness (m)
+  real(kind(1.0D0)) :: blnkith = 0.115D0
+  !+ad_vars  blnkoth /0.235/ : outer blanket thickness (m)
+  real(kind(1.0D0)) :: blnkoth = 0.235D0
+  !+ad_vars  bore /1.42/ : OH coil inner radius (m)
+  !+ad_varc                (iteration variable 29)
+  real(kind(1.0D0)) :: bore = 1.42D0
+  !+ad_vars  ddwex /0.07/ : external dewar thickness (m)
+  real(kind(1.0D0)) :: ddwex = 0.07D0
+  !+ad_vars  ddwi /0.07/ : dewar thickness (TF coil / shield) (m)
+  real(kind(1.0D0)) :: ddwi = 0.07D0
+  !+ad_vars  fmsbc /0.0/ : Martensitic fraction of steel in bucking cylinder
+  real(kind(1.0D0)) :: fmsbc = 0.0D0
+  !+ad_vars  fmsbl /0.0/ : Martensitic fraction of steel in blanket
+  real(kind(1.0D0)) :: fmsbl = 0.0D0
+  !+ad_vars  fmsdwe /0.0/ : Martensitic fraction of steel in external dewar
+  real(kind(1.0D0)) :: fmsdwe = 0.0D0
+  !+ad_vars  fmsdwi /0.0/ : Martensitic fraction of steel in internal dewar
+  real(kind(1.0D0)) :: fmsdwi = 0.0D0
+  !+ad_vars  fmsfw /0.0/ : Martensitic fraction of steel in first wall
+  real(kind(1.0D0)) :: fmsfw = 0.0D0
+  !+ad_vars  fmsoh /0.0/ : Martensitic fraction of steel in OH coil
+  real(kind(1.0D0)) :: fmsoh = 0.0D0
+  !+ad_vars  fmssh /0.0/ : Martensitic fraction of steel in shield
+  real(kind(1.0D0)) :: fmssh = 0.0D0
+  !+ad_vars  fmstf /0.0/ : Martensitic fraction of steel in TF coil
+  real(kind(1.0D0)) :: fmstf = 0.0D0
+  !+ad_vars  fwarea : first wall surface area (m**2)
+  real(kind(1.0D0)) :: fwarea = 0.0D0
+  !+ad_vars  fwith /0.035/ : inner first wall thickness (m) (if lpulse=1, =2*bfw)
+  real(kind(1.0D0)) :: fwith = 0.035D0
+  !+ad_vars  fwoth /0.035/ : outer first wall thickness (m) (if lpulse=1, =2*bfw)
+  real(kind(1.0D0)) :: fwoth = 0.035D0
+  !+ad_vars  gapds /0.0/ : gap between dewar and shield
+  !+ad_varc                (iteration variable 61)
+  real(kind(1.0D0)) :: gapds = 0.0D0
+  !+ad_vars  gapoh /0.08/ : gap between OH coil and bucking cylinder
+  !+ad_varc                (iteration variable 42)
+  real(kind(1.0D0)) :: gapoh = 0.08D0
+  !+ad_vars  gapomin /0.21/ : minimum gap between outer shield and TF coil (m)
+  !+ad_varc                   (iteration variable 31)
+  real(kind(1.0D0)) :: gapomin = 0.21D0
+  !+ad_vars  gapsto : gap between the outer shield and TF coil (m)
+  real(kind(1.0D0)) :: gapsto = 0.0D0
+  !+ad_vars  hmax : maximum height of TF coil (m)
+  real(kind(1.0D0)) :: hmax = 0.0D0
+  !+ad_vars  hr1 : half-height of TF coil inboard leg straight section (m)
+  real(kind(1.0D0)) :: hr1 = 0.0D0
+  !+ad_vars  iohcl /1/ : switch for existence of OH coil:
+  !+ad_varc              = 0 OH coil not present;
+  !+ad_varc              = 1 OH coil exists
+  integer :: iohcl = 1
+  !+ad_vars  ohcth /0.63/ : OH coil thickness (m)
+  !+ad_varc                 (iteration variable 16)
+  real(kind(1.0D0)) :: ohcth = 0.63D0
+  !+ad_vars  prtsz : port size - width (m)
+  real(kind(1.0D0)) :: prtsz = 0.0D0
+  !+ad_vars  prtszreq : port size required for beam access (m)
+  real(kind(1.0D0)) :: prtszreq = 0.0D0
+  !+ad_vars  rbld : sum of thicknesses to the major radius (m)
+  real(kind(1.0D0)) :: rbld = 0.0D0
+  !+ad_vars  rinboard /0.651/ : plasma inboard radius (m)
+  !+ad_varc                     (consistency equation 29)
+  real(kind(1.0D0)) :: rinboard = 0.651D0
+  !+ad_vars  rsldi : radius to inner shield (inside point) (m)
+  real(kind(1.0D0)) :: rsldi = 0.0D0
+  !+ad_vars  rsldo : radius to outer shield (outside point) (m)
+  real(kind(1.0D0)) :: rsldo = 0.0D0
+  !+ad_vars  rtfcin : radius of centre of inboard TF leg (m)
+  real(kind(1.0D0)) :: rtfcin = 0.0D0
+  !+ad_vars  rtot : radius to the centre of the outer TF coil leg (m)
+  real(kind(1.0D0)) :: rtot = 0.0D0
+  !+ad_vars  scrapli /0.14/ : inner scrapeoff length (m) (used if iscrp=1)
+  !+ad_varc                   (iteration variable 73)
+  real(kind(1.0D0)) :: scrapli = 0.14D0
+  !+ad_vars  scraplo /0.15/ : outer scrapeoff length (m) (used if iscrp=1)
+  !+ad_varc                   (iteration variable 74)
+  real(kind(1.0D0)) :: scraplo = 0.15D0
+  !+ad_vars  shldith /0.69/ : inner shield thickness (m)
+  real(kind(1.0D0)) :: shldith = 0.69D0
+  !+ad_vars  shldoth /1.05/ : outer shield thickness (m)
+  real(kind(1.0D0)) :: shldoth = 1.05D0
+  !+ad_vars  shldtth /0.60/ : upper shield thickness (m)
+  real(kind(1.0D0)) :: shldtth = 0.6D0
+  !+ad_vars  tfcth /0.9/ : inner TF coil thickness, (centrepost for ST) (m)
+  !+ad_varc                (iteration variable 13)
+  real(kind(1.0D0)) :: tfcth = 0.9D0
+  !+ad_vars  tfootfi /1.8/ : TF coil outer leg / inner leg thickness ratio
+  !+ad_varc                  (iteration variable 75)
+  real(kind(1.0D0)) :: tfootfi = 1.8D0
+  !+ad_vars  tfthko : outboard TF coil thickness (m)
+  real(kind(1.0D0)) :: tfthko = 0.0D0
+  !+ad_vars  vgap : (see vgaptf)
+  real(kind(1.0D0)) :: vgap = 0.0D0
+  !+ad_vars  vgap2 /0.163/ : vertical gap between the TF coil and shield (m)
+  real(kind(1.0D0)) :: vgap2 = 0.163D0
+  !+ad_vars  vgaptf /0.0/ : vertical gap between x-point and divertor (m)
+  !+ad_varc                (if = 0, it is calculated)
+  real(kind(1.0D0)) :: vgaptf = 0.0D0
+
+end module build_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
-
-  !  ex build.h90
-
-  real(kind(1.0D0)) :: &
-       aplasmin,bcylth,blnkith,blnkoth,bore,ddwex,ddwi,gapds, &
-       gapoh,gapomin,gapsto,fwarea,fwith,fwoth,hmax,hr1,ohcth, &
-       prtsz,prtszreq,rbld,rinboard,rsldi,rsldo,rtfcin,rtot, &
-       scrapli,scraplo,shldith,shldoth,shldtth,tfcth,tfootfi, &
-       tfthko,vgap,vgaptf,vgap2
-  common /build0/ &
-       aplasmin,bcylth,blnkith,blnkoth,bore,ddwex,ddwi,gapds, &
-       gapoh,gapomin,gapsto,fwarea,fwith,fwoth,hmax,hr1,ohcth, &
-       prtsz,prtszreq,rbld,rinboard,rsldi,rsldo,rtfcin,rtot, &
-       scrapli,scraplo,shldith,shldoth,shldtth,tfcth,tfootfi, &
-       tfthko,vgap,vgaptf,vgap2
-
-  integer :: iohcl
-  common /build1/ iohcl
-
-  real(kind(1.0D0)) :: &
-       fmsbc,fmsbl,fmsdwe,fmsdwi,fmsfw,fmsoh,fmssh,fmstf
-  common /marten/ &
-       fmsbc,fmsbl,fmsdwe,fmsdwi,fmsfw,fmsoh,fmssh,fmstf
 
   !  ex cost.h90
 

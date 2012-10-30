@@ -47,11 +47,11 @@
 !
 !CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
+        use build_variables
         use fwbs_variables
         use physics_variables
 
 !  INCLUDE files
-      INCLUDE 'build.h90'
       INCLUDE 'pulse.h90'
       INCLUDE 'fispact.h90'
 

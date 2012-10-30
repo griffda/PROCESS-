@@ -14,16 +14,19 @@ module divertor_module
   !+ad_desc  This module contains routines relevant for calculating the
   !+ad_desc  divertor parameters for a fusion power plant.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  divertor_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_hist  17/10/12 PJK Initial version of module
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use divertor_variables
   use physics_variables
@@ -54,7 +57,6 @@ contains
     !+ad_prob  Many of the parameters are scaled from the ~1990 ITER point
     !+ad_prob  (R=6.00, Bt = 4.85 T, Bp = 1.07 T, l_null-strike = 1.50 m).
     !+ad_prob  Variation far from these parameters is uncertain.
-    !+ad_call  build.h90
     !+ad_call  divert
     !+ad_call  divtart
     !+ad_call  oblnkl
@@ -83,8 +85,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 

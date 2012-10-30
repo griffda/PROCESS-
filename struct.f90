@@ -14,6 +14,7 @@ module structure_module
   !+ad_desc  parameters of the support structure for a
   !+ad_desc  fusion power plant.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
   !+ad_call  pfcoil_variables
@@ -22,11 +23,13 @@ module structure_module
   !+ad_call  structure_variables
   !+ad_call  tfcoil_variables
   !+ad_hist  29/10/12 PJK Initial version of module
-  !+ad_stat  Okay
+  !+ad_hist  30/10/12 PJK Added build_variables
+   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use divertor_variables
   use fwbs_variables
   use pfcoil_variables
@@ -55,7 +58,6 @@ contains
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_desc  This subroutine calls the support structure mass calculations.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  struct
     !+ad_hist  28/07/11 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
@@ -69,8 +71,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 

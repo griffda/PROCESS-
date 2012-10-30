@@ -398,11 +398,11 @@ subroutine ifephy(outfile,iprint)
   !+ad_desc  This routine calculates the physics parameters of an Inertial Fusion
   !+ad_desc  Energy power plant.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  ife.h90
-  !+ad_call  build.h90
   !+ad_call  driver
   !+ad_call  lasdrv
   !+ad_call  iondrv
@@ -415,12 +415,14 @@ subroutine ifephy(outfile,iprint)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, pp.68,85
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use physics_variables
   use process_output
@@ -428,7 +430,6 @@ subroutine ifephy(outfile,iprint)
   implicit none
 
   include 'ife.h90'
-  include 'build.h90'
 
   !  Arguments
 
@@ -1243,6 +1244,7 @@ subroutine ifebld(outfile,iprint)
   !+ad_desc  This routine constructs the build of an inertial fusion energy device
   !+ad_desc  and calculates the material volumes for the device core.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  process_output
   !+ad_call  ife.h90
@@ -1256,12 +1258,14 @@ subroutine ifebld(outfile,iprint)
   !+ad_hist  24/09/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.52
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use process_output
 
@@ -1423,7 +1427,6 @@ contains
     !+ad_desc  device, assumed to be cylindrically-symmetric, and to calculate
     !+ad_desc  the material volumes for the device core.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  ife.h90
     !+ad_hist  21/03/97 PJK Initial version
     !+ad_hist  24/09/12 PJK Initial F90 version
@@ -1435,7 +1438,6 @@ contains
 
     implicit none
 
-    include 'build.h90'
     include 'ife.h90'
 
     !  Arguments
@@ -1558,7 +1560,6 @@ contains
     !+ad_desc  device, based on the design of the OSIRIS study, and to calculate
     !+ad_desc  the material volumes for the device core.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  ife.h90
     !+ad_call  genbld
     !+ad_hist  21/03/97 PJK Initial version
@@ -1571,7 +1572,6 @@ contains
 
     implicit none
 
-    include 'build.h90'
     include 'ife.h90'
 
     !  Arguments
@@ -1608,7 +1608,6 @@ contains
     !+ad_desc  device, based on the design of the SOMBRERO study, and to calculate
     !+ad_desc  the material volumes for the device core.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  ife.h90
     !+ad_hist  21/03/97 PJK Initial version
     !+ad_hist  24/09/12 PJK Initial F90 version
@@ -1621,7 +1620,6 @@ contains
 
     implicit none
 
-    include 'build.h90'
     include 'ife.h90'
 
     !  Arguments
@@ -1773,7 +1771,6 @@ contains
     !+ad_desc  device, based on the design of the HYLIFE-II study, and to calculate
     !+ad_desc  the material volumes for the device core.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  ife.h90
     !+ad_hist  21/03/97 PJK Initial version
     !+ad_hist  24/09/12 PJK Initial F90 version
@@ -1786,7 +1783,6 @@ contains
 
     implicit none
 
-    include 'build.h90'
     include 'ife.h90'
 
     !  Arguments
@@ -2014,11 +2010,11 @@ subroutine ifefbs(outfile,iprint)
   !+ad_desc  This routine calculates the first wall, blanket and shield volumes,
   !+ad_desc  masses and other parameters, for an Inertial Fusion Energy device.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  ife.h90
-  !+ad_call  build.h90
   !+ad_call  cost.h90
   !+ad_call  pulse.h90
   !+ad_call  oheadr
@@ -2028,6 +2024,7 @@ subroutine ifefbs(outfile,iprint)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  18/10/12 PJK Added fwbs_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.86
   !+ad_docs  Moir et al., Fusion Technology, vol.25 (1994) p.5
@@ -2035,6 +2032,7 @@ subroutine ifefbs(outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use fwbs_variables
   use physics_variables
   use process_output
@@ -2042,7 +2040,6 @@ subroutine ifefbs(outfile,iprint)
   implicit none
 
   include 'ife.h90'
-  include 'build.h90'
   include 'cost.h90'
   include 'pulse.h90'
 

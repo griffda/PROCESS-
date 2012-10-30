@@ -15,6 +15,7 @@ subroutine con1(m,cc)
   !+ad_desc  All relevant consistency equations should be active in order
   !+ad_desc  to make a self-consistent machine.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
@@ -26,7 +27,6 @@ subroutine con1(m,cc)
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_call  ineq.h90
-  !+ad_call  build.h90
   !+ad_call  pulse.h90
   !+ad_call  stella.h90
   !+ad_call  rfp.h90
@@ -52,11 +52,13 @@ subroutine con1(m,cc)
   !+ad_hist  29/10/12 PJK Added pf_power_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_hist  30/10/12 PJK Added times_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use current_drive_variables
   use divertor_variables
@@ -71,7 +73,6 @@ subroutine con1(m,cc)
   implicit none
 
   include 'ineq.h90'
-  include 'build.h90'
   include 'pulse.h90'
   include 'stella.h90'
   include 'rfp.h90'

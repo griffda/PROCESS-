@@ -103,13 +103,13 @@ subroutine stinit
   !+ad_desc  Many of these may override the values set in routine
   !+ad_desc  <A HREF="initial.html">initial</A>.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  global_variables
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
-  !+ad_call  build.h90
   !+ad_call  stella.h90
   !+ad_hist  28/06/94 PJK Initial version
   !+ad_hist  09/09/94 PJK Changed ICASE
@@ -126,11 +126,13 @@ subroutine stinit
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  30/10/12 PJK Added times_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use global_variables
   use numerics
   use pfcoil_variables
@@ -140,7 +142,6 @@ subroutine stinit
 
   implicit none
 
-  include 'build.h90'
   include 'stella.h90'
 
   !  Arguments
@@ -249,11 +250,11 @@ subroutine stbild(outfile,iprint)
   !+ad_desc  as the actual radial and vertical build thicknesses vary with
   !+ad_desc  toroidal angle.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  divertor_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  build.h90
   !+ad_call  obuild
   !+ad_call  oheadr
   !+ad_call  osubhd
@@ -265,19 +266,19 @@ subroutine stbild(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  17/10/12 PJK Added divertor_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use divertor_variables
   use physics_variables
   use process_output
 
   implicit none
-
-  include 'build.h90'
 
   !  Arguments
 
@@ -418,13 +419,13 @@ subroutine stphys
   !+ad_desc  This routine calculates the physics quantities relevant to
   !+ad_desc  a stellarator device.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  physics_module
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  times_variables
-  !+ad_call  build.h90
   !+ad_call  beamfus
   !+ad_call  betcom
   !+ad_call  palph
@@ -454,12 +455,14 @@ subroutine stphys
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_hist  30/10/12 PJK Added times_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use current_drive_variables
   use divertor_variables
   use physics_module
@@ -468,8 +471,6 @@ subroutine stphys
   use times_variables
 
   implicit none
-
-  include 'build.h90'
 
   !  Arguments
 
@@ -757,12 +758,12 @@ subroutine stcoil(outfile,iprint)
   !+ad_desc  This routine calculates the properties of the TF coils for
   !+ad_desc  a stellarator device.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  sctfcoil_module
   !+ad_call  tfcoil_variables
-  !+ad_call  build.h90
   !+ad_call  outtf
   !+ad_call  stclen
   !+ad_call  stcshp
@@ -776,11 +777,13 @@ subroutine stcoil(outfile,iprint)
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  18/10/12 PJK Modified argument list of tfcind
   !+ad_hist  29/10/12 PJK Added sctfcoil_module
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use fwbs_variables
   use physics_variables
@@ -788,8 +791,6 @@ subroutine stcoil(outfile,iprint)
   use tfcoil_variables
 
   implicit none
-
-  include 'build.h90'
 
   !  Arguments
 
@@ -1070,24 +1071,24 @@ subroutine stcshp
   !+ad_desc  <P>The code is almost identical to that in routine
   !+ad_desc  <A HREF="coilshap.html">COILSHAP</A>.
   !+ad_prob  This is clearly a highly dodgy approximation...
+  !+ad_call  build_variables
   !+ad_call  physics_variables
   !+ad_call  tfcoil_variables
-  !+ad_call  build.h90
   !+ad_hist  20/07/94 PJK Initial version
   !+ad_hist  20/09/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use physics_variables
   use tfcoil_variables
 
   implicit none
-
-  include 'build.h90'
 
   !  Arguments
 
@@ -1184,25 +1185,25 @@ subroutine stclen(totlen)
   !+ad_desc  <P>The data are scaled with the machine's average major radius and
   !+ad_desc  the mean coil minor radius.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  physics_variables
-  !+ad_call  build.h90
   !+ad_call  rzp
   !+ad_call  rzpxyz
   !+ad_call  stcdat
   !+ad_hist  11/07/94 PJK Initial version
   !+ad_hist  20/09/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  Wendelstein VII-X: Application for Preferential Support, Aug 1990
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use physics_variables
 
   implicit none
-
-  include 'build.h90'
 
   !  Arguments
 
@@ -1906,6 +1907,7 @@ subroutine ststrc(outfile,iprint)
   !+ad_desc  This is the stellarator version of routine
   !+ad_desc  <A HREF="strucall.html">STRUCALL</A>.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
   !+ad_call  pfcoil_variables
@@ -1913,7 +1915,6 @@ subroutine ststrc(outfile,iprint)
   !+ad_call  structure_module
   !+ad_call  structure_variables
   !+ad_call  tfcoil_variables
-  !+ad_call  build.h90
   !+ad_call  struct
   !+ad_hist  01/07/94 PJK Initial version
   !+ad_hist  01/02/96 PJK Added itfsup, ipfres to argument list of STRUCT
@@ -1925,11 +1926,13 @@ subroutine ststrc(outfile,iprint)
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  29/10/12 PJK Added structure_variables
   !+ad_hist  29/10/12 PJK Added structure_module
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use divertor_variables
   use fwbs_variables
   use pfcoil_variables
@@ -1939,8 +1942,6 @@ subroutine ststrc(outfile,iprint)
   use tfcoil_variables
 
   implicit none
-
-  include 'build.h90'
 
   !  Arguments
 

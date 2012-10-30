@@ -79,6 +79,7 @@ module process_input
   !+ad_desc  of what is being attempted.
   !+ad_desc  </UL>
   !+ad_prob  Some routines still contain GOTOs...
+  !+ad_call  build_variables
   !+ad_call  buildings_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
@@ -93,7 +94,6 @@ module process_input
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_call  vacuum_variables
-  !+ad_call  build.h90
   !+ad_call  cost.h90
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
@@ -117,12 +117,14 @@ module process_input
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_hist  30/10/12 PJK Added buildings_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use buildings_variables
   use current_drive_variables
   use divertor_variables
@@ -140,7 +142,6 @@ module process_input
 
   implicit none
 
-  include 'build.h90'
   include 'cost.h90'
   include 'ife.h90'
   include 'ineq.h90'

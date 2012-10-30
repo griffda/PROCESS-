@@ -100,58 +100,6 @@ tpkmax     dble /600.0/  # maximum f.w. peak temperature (C)    eqn.39
 walalw     dble /1.0/    # allowable wall-load (MW/m**2)        eqn.8
 $
 C______________________________________________________________________
-$  Build description : (see build.h)
-$
-aplasmin   dble /0.25/   # minimum minor radius (m)
-bcylth     dble /0.0/    # bucking cylinder thickness (m)
-blnkith    dble /0.115/  # inner blanket thickness (m)
-blnkoth    dble /0.235/  # outer blanket thickness (m)
-bore       dble /1.42/   # OH coil inner radius (m)                     var.29
-ddwex      dble /0.07/   # external dewar thickness (m)
-ddwi       dble /0.07/   # dewar thickness (TF coil / shield) (m)
-fmsbc      dble /0.0/    # Martensitic fraction of steel in bucking cylinder
-fmsbl      dble /0.0/    # Martensitic fraction of steel in blanket
-fmsdwe     dble /0.0/    # Martensitic fraction of steel in external dewar
-fmsdwi     dble /0.0/    # Martensitic fraction of steel in internal dewar
-fmsfw      dble /0.0/    # Martensitic fraction of steel in first wall
-fmsoh      dble /0.0/    # Martensitic fraction of steel in OH coil
-fmssh      dble /0.0/    # Martensitic fraction of steel in shield
-fmstf      dble /0.0/    # Martensitic fraction of steel in TF coil
-fwith      dble /0.035/  # inner first wall thickness (m) (if lpulse=1, =2*bfw)
-fwoth      dble /0.035/  # outer first wall thickness (m) (if lpulse=1, =2*bfw)
-fwarea     dble          # first wall surface area (m**2)
-gapds      dble /0.0/    # gap between dewar and shield                 var.61
-gapoh      dble /0.08/   # gap between OH coil and bucking cylinder     var.42
-gapomin    dble /0.21/   # minimum gap between outer shield and TFC (m),var.31
-gapsto     dble          # gap between the outer shield and TF coil (m)
-hmax       dble          # maximum height of TF coil (m)
-hr1        dble          # half-height of TFC inboard leg straight section (m)
-iohcl      intg /1/      # switch for existence of OH coil
-$                          = 0 OH coil not present
-$                          = 1 OH coil exists
-ohcth      dble /0.63/   # OH coil thickness (m)                        var.16
-prtsz      dble          # port size - width (m)
-prtszreq   dble          # port size required for beam penetration (m)
-rbld       dble          # sum of thicknesses to the major radius (m)
-rinboard   dble /0.651/  # plasma inboard radius (m) (eqn.29)
-rsldi      dble          # radius to inner shield (inside point) (m)
-rsldo      dble          # radius to outer shield (outside point) (m)
-rtfcin     dble          # radius of centre of inboard TF leg (m)
-rtot       dble          # radius to the centre of the outer TF coil leg (m)
-scrapli    dble /0.14/   # inner scrapeoff length (m) (used if iscrp=1) var.73
-scraplo    dble /0.15/   # outer scrapeoff length (m) (used if iscrp=1) var.74
-shldith    dble /0.69/   # inner shield thickness (m)
-shldoth    dble /1.05/   # outer shield thickness (m)
-shldtth    dble /0.60/   # upper shield thickness (m)
-tfcth      dble /0.9/    # inner TF coil thickness, c/post for ST (m)   var.13
-tfootfi    dble /1.8/    # TF coil outer leg /inner leg thickness ratio var.75
-tfthko     dble          # outboard TF coil thickness (m)
-vgap       dble          # (see vgaptf)
-vgaptf     dble /0.0/    # vertical gap between x-point and divertor (m)
-$                          (if = 0, it is calculated)
-vgap2      dble /0.163/  # vertical gap between the TF coil and shield (m)
-$
-C______________________________________________________________________
 $  Pulsed reactor : (see pulse.h)
 $
 afw        dble /0.005/  # inner radius of each first wall structural tube (m)

@@ -15,6 +15,7 @@ module fwbs_module
   !+ad_desc  parameters of the first wall, blanket and shield components
   !+ad_desc  of a fusion power plant.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
@@ -25,11 +26,13 @@ module fwbs_module
   !+ad_hist  18/10/12 PJK Initial version of module
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use divertor_variables
   use fwbs_variables
@@ -68,7 +71,6 @@ contains
     !+ad_desc  Note: Costing and mass calculations elsewhere assume
     !+ad_desc  stainless steel only.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  cost.h90
     !+ad_call  blanket
     !+ad_call  oheadr
@@ -87,7 +89,6 @@ contains
 
     implicit none
 
-    include 'build.h90'
     include 'cost.h90'
 
     !  Arguments
@@ -587,7 +588,6 @@ contains
     !+ad_desc  <P>A more detailed description of the physical models
     !+ad_desc  used in the analysis can be found in the main reference.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  blnkt
     !+ad_call  perim
     !+ad_hist  --/--/-- PK  Initial version
@@ -603,8 +603,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 

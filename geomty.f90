@@ -17,9 +17,9 @@ subroutine geomty
   !+ad_args  iprint : input integer : Switch to write output to file (1=yes)
   !+ad_desc  This subroutine calculates the plasma geometry parameters.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  physics_variables
-  !+ad_call  build.h90
   !+ad_call  rfp.h90
   !+ad_call  fvol
   !+ad_call  perim
@@ -33,18 +33,19 @@ subroutine geomty
   !+ad_hisc               improved algorithms for double-null plasmas
   !+ad_hist  14/11/11 PJK Initial F90 version
   !+ad_hist  16/10/12 PJK Added constants
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK14, pp.41-43
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use physics_variables
 
   implicit none
 
-  include 'build.h90'
   include 'rfp.h90'
 
   !  Arguments

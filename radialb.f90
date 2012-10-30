@@ -12,11 +12,11 @@ subroutine radialb(outfile,iprint)
   !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
   !+ad_desc  This subroutine determines the radial build of the machine.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  tfcoil_variables
-  !+ad_call  build.h90
   !+ad_call  obuild
   !+ad_call  ocmmnt
   !+ad_call  oheadr
@@ -34,14 +34,13 @@ subroutine radialb(outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use physics_variables
   use process_output
   use tfcoil_variables
 
   implicit none
-
-  include 'build.h90'
 
   !  Arguments
 
@@ -240,7 +239,6 @@ subroutine vbuild
   !+ad_desc  inside the TF coil.
   !+ad_prob  None
   !+ad_call  physics_variables
-  !+ad_call  build.h90
   !+ad_call  rfp.h90
   !+ad_call  divgeom
   !+ad_hist  26/07/11 PJK Initial F90 version
@@ -250,11 +248,11 @@ subroutine vbuild
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use physics_variables
 
   implicit none
 
-  include 'build.h90'
   include 'rfp.h90'
 
   !  Arguments
@@ -310,7 +308,6 @@ subroutine divgeom(divht)
   !+ad_prob  No evidence of any inner plasma surface being used...
   !+ad_call  divertor_variables
   !+ad_call  physics_variables
-  !+ad_call  build.h90
   !+ad_hist  29/01/96 PJK Added TART option with expanded divertor chamber
   !+ad_hist  26/07/11 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
@@ -320,12 +317,11 @@ subroutine divgeom(divht)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use divertor_variables
   use physics_variables
 
   implicit none
-
-  INCLUDE 'build.h90'
 
   !  Arguments
 
@@ -468,7 +464,6 @@ subroutine portsz
   !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  tfcoil_variables
-  !+ad_call  build.h90
   !+ad_hist  27/07/11 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added constants
@@ -479,14 +474,13 @@ subroutine portsz
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use current_drive_variables
   use physics_variables
   use tfcoil_variables
 
   implicit none
-
-  include 'build.h90'
 
   !  Arguments
 

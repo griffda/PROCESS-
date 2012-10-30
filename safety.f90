@@ -156,13 +156,13 @@ subroutine loca(outfile,iprint)
   !+ad_desc  PROCESS. The model calculates the steady state temperatures that
   !+ad_desc  would develop following a loss of coolant accident.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  fwbs_variables
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  tfcoil_variables
-  !+ad_call  build.h90
   !+ad_call  fispact.h90
   !+ad_call  blcyl3
   !+ad_call  oheadr
@@ -177,6 +177,7 @@ subroutine loca(outfile,iprint)
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  This routine is untested in F90...
   !+ad_docs  F/MI/PJK/LOGBOOK12, pp.70,71,72,73
   !+ad_docs  Strategic Studies Note 96/30, January 1997
@@ -184,6 +185,7 @@ subroutine loca(outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use fwbs_variables
   use pfcoil_variables
@@ -193,7 +195,6 @@ subroutine loca(outfile,iprint)
 
   implicit none
 
-  include 'build.h90'
   include 'fispact.h90'
 
   !  Arguments

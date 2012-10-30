@@ -22,6 +22,7 @@ module sctfcoil_module
   !+ad_desc  parameters of a superconducting TF coil system for a
   !+ad_desc  fusion power plant.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  fwbs_variables
   !+ad_call  maths_library
@@ -29,11 +30,13 @@ module sctfcoil_module
   !+ad_call  process_output
   !+ad_call  tfcoil_variables
   !+ad_hist  29/10/12 PJK Initial version of module
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use fwbs_variables
   use maths_library
@@ -63,7 +66,6 @@ contains
     !+ad_desc  and fields.
     !+ad_desc  <P>It is a variant from the original FEDC/Tokamak systems code.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  coilshap
     !+ad_call  tfcind
     !+ad_call  stresscl
@@ -81,8 +83,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 
@@ -419,7 +419,6 @@ contains
     !+ad_desc  This subroutine sets up the stress calculations for the
     !+ad_desc  TF coil set.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  eyngeff
     !+ad_call  sctfjalw
     !+ad_call  sigvm
@@ -434,8 +433,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 
@@ -916,7 +913,7 @@ contains
     !+ad_desc  approximated by four arcs along the edge facing the plasma.
     !+ad_desc  The geometry is a fit to the 1989 ITER design.
     !+ad_prob  None
-    !+ad_call  build.h90
+    !+ad_call  None
     !+ad_hist  30/03/89 JG  Initial version
     !+ad_hist  14/05/12 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
@@ -927,8 +924,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 
@@ -1018,7 +1013,7 @@ contains
     !+ad_desc  in Kalsi notation. Top/bottom symmetry is assumed.
     !+ad_prob  The code is hardwired to expect narc = 4.
     !+ad_prob  <P>This routine is very sensitive to trivial code changes...
-    !+ad_call  build.h90
+    !+ad_call  None
     !+ad_hist  03/09/85 SSK Initial version
     !+ad_hist  27/01/88 JG  Modified to use arcs whose centres do not
     !+ad_hisc               have to lie on the radius of the adjacent arc.
@@ -1109,7 +1104,6 @@ contains
     !+ad_desc  This routine writes the superconducting TF coil results
     !+ad_desc  to the output file.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  oblnkl
     !+ad_call  ocmmnt
     !+ad_call  oheadr
@@ -1124,8 +1118,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'build.h90'
 
     !  Arguments
 

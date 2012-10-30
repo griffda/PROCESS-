@@ -40,6 +40,7 @@ module physics_module
   !+ad_desc  This module contains all the primary plasma physics routines
   !+ad_desc  for a tokamak device.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  current_drive_module
   !+ad_call  current_drive_variables
@@ -54,11 +55,13 @@ module physics_module
   !+ad_hist  17/10/12 PJK Added current_drive_module
   !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_hist  30/10/12 PJK Added times_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constants
   use current_drive_module
   use current_drive_variables
@@ -87,7 +90,6 @@ contains
     !+ad_desc  This routine calculates all the primary plasma physics
     !+ad_desc  characteristics for a tokamak device.
     !+ad_prob  None
-    !+ad_call  build.h90
     !+ad_call  pulse.h90
     !+ad_call  beamfus
     !+ad_call  betcom
@@ -136,7 +138,6 @@ contains
 
     implicit none
 
-    include 'build.h90'
     include 'pulse.h90'
 
     !  Arguments

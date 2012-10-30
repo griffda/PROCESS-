@@ -15,7 +15,6 @@ subroutine initial
   !+ad_prob  None
   !+ad_call  process_output
   !+ad_call  ineq.h90
-  !+ad_call  build.h90
   !+ad_call  cost.h90
   !+ad_call  pulse.h90
   !+ad_call  stella.h90
@@ -65,6 +64,7 @@ subroutine initial
   !+ad_hist  30/10/12 PJK Removed heat transport variables
   !+ad_hist  30/10/12 PJK Removed times variables
   !+ad_hist  30/10/12 PJK Removed buildings variables
+  !+ad_hist  30/10/12 PJK Removed build variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -75,7 +75,6 @@ subroutine initial
   implicit none
 
   include 'ineq.h90'
-  include 'build.h90'
   include 'cost.h90'
   include 'pulse.h90'
   include 'stella.h90'
@@ -140,54 +139,6 @@ subroutine initial
   tohsmn   = 1.0D0
   tpkmax   = 600.0D0
   walalw   = 1.0D0
-
-  !  Build description
-
-  aplasmin = 0.25D0
-  bcylth   = 0.0D0
-  blnkith  = 0.115D0
-  blnkoth  = 0.235D0
-  bore     = 1.42D0
-  ddwex    = 0.07D0
-  ddwi     = 0.07D0
-  fmsbc    = 0.0D0
-  fmsbl    = 0.0D0
-  fmsdwe   = 0.0D0
-  fmsdwi   = 0.0D0
-  fmsfw    = 0.0D0
-  fmsoh    = 0.0D0
-  fmssh    = 0.0D0
-  fmstf    = 0.0D0
-  fwarea   = 0.0D0
-  fwith    = 0.035D0
-  fwoth    = 0.035D0
-  gapds    = 0.0D0
-  gapoh    = 0.08D0
-  gapomin  = 0.21D0
-  gapsto   = 0.0D0
-  hmax     = 0.0D0
-  hr1      = 0.0D0
-  iohcl    = 1
-  ohcth    = 0.63D0
-  prtsz    = 0.0D0
-  prtszreq = 0.0D0
-  rbld     = 0.0D0
-  rinboard = 0.651D0
-  rsldi    = 0.0D0
-  rsldo    = 0.0D0
-  rtfcin   = 0.0D0
-  rtot     = 0.0D0
-  scrapli  = 0.14D0
-  scraplo  = 0.15D0
-  shldith  = 0.69D0
-  shldoth  = 1.05D0
-  shldtth  = 0.60D0
-  tfcth    = 0.9D0
-  tfootfi  = 1.8D0
-  tfthko   = 0.0D0
-  vgap     = 0.0D0
-  vgap2    = 0.163D0
-  vgaptf   = 0.0D0
 
   !  Pulsed reactor
 
@@ -492,6 +443,7 @@ subroutine check
   !+ad_desc  This routine performs a sanity check of the input variables
   !+ad_desc  and ensures other dependent variables are given suitable values.
   !+ad_prob  None
+  !+ad_call  build_variables
   !+ad_call  buildings_variables
   !+ad_call  current_drive_variables
   !+ad_call  global_variables
@@ -501,7 +453,6 @@ subroutine check
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  tfcoil_variables
-  !+ad_call  build.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
   !+ad_call  ife.h90
@@ -519,11 +470,13 @@ subroutine check
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_hist  30/10/12 PJK Added buildings_variables
+  !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use buildings_variables
   use current_drive_variables
   use global_variables
@@ -535,7 +488,6 @@ subroutine check
 
   implicit none
 
-  include 'build.h90'
   include 'pulse.h90'
   include 'rfp.h90'
   include 'ife.h90'
