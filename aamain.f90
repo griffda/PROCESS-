@@ -877,6 +877,7 @@ subroutine output(outfile)
   !+ad_desc  This routine writes the program results to a file,
   !+ad_desc  in a tidy format.
   !+ad_prob  None
+  !+ad_call  buildings_module
   !+ad_call  costs_module
   !+ad_call  current_drive_module
   !+ad_call  divertor_module
@@ -945,12 +946,14 @@ subroutine output(outfile)
   !+ad_hist  29/10/12 PJK Added sctfcoil_module
   !+ad_hist  29/10/12 PJK Added structure_module
   !+ad_hist  29/10/12 PJK Added vacuum_module
-  !+ad_hist  29/10/12 PJK Added power_module
+  !+ad_hist  30/10/12 PJK Added power_module
+  !+ad_hist  30/10/12 PJK Added buildings_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use buildings_module
   use costs_module
   use current_drive_module
   use divertor_module

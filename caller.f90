@@ -13,6 +13,7 @@ subroutine caller(xc,nvars)
   !+ad_desc  This routine is the principal caller of all the physics and
   !+ad_desc  engineering modules.
   !+ad_prob  None
+  !+ad_call  buildings_module
   !+ad_call  costs_module
   !+ad_call  current_drive_module
   !+ad_call  divertor_module
@@ -90,11 +91,13 @@ subroutine caller(xc,nvars)
   !+ad_hist  29/10/12 PJK Added structure_module
   !+ad_hist  29/10/12 PJK Added vacuum_module
   !+ad_hist  30/10/12 PJK Added power_module
+  !+ad_hist  30/10/12 PJK Added buildings_module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use buildings_module
   use costs_module
   use current_drive_module
   use divertor_module

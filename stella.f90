@@ -12,6 +12,7 @@ subroutine stcall
   !+ad_args  None
   !+ad_desc  This routine is the caller for the stellarator models.
   !+ad_prob  None
+  !+ad_call  buildings_module
   !+ad_call  costs_module
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
@@ -46,11 +47,13 @@ subroutine stcall
   !+ad_hist  18/10/12 PJK Added fwbs_module
   !+ad_hist  18/10/12 PJK Added vacuum_module
   !+ad_hist  30/10/12 PJK Added power_module
+  !+ad_hist  30/10/12 PJK Added buildings_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use buildings_module
   use costs_module
   use divertor_module
   use fwbs_module
@@ -1796,6 +1799,7 @@ subroutine stout(outfile)
   !+ad_desc  This routine prints out the stellarator's parameters at the
   !+ad_desc  end of a run.
   !+ad_prob  None
+  !+ad_call  buildings_module
   !+ad_call  costs_module
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
@@ -1835,11 +1839,13 @@ subroutine stout(outfile)
   !+ad_hist  29/10/12 PJK Added sctfcoil_module
   !+ad_hist  29/10/12 PJK Added vacuum_module
   !+ad_hist  30/10/12 PJK Added power_module
+  !+ad_hist  30/10/12 PJK Added buildings_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use buildings_module
   use costs_module
   use divertor_module
   use fwbs_module
