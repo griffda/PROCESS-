@@ -15,6 +15,7 @@ subroutine rfptfc(outfile,iprint)
   !+ad_desc  of a reversed field pinch machine. The coils are assumed to be
   !+ad_desc  circular.
   !+ad_prob  None
+  !+ad_call  build_module
   !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  physics_variables
@@ -32,11 +33,13 @@ subroutine rfptfc(outfile,iprint)
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  30/10/12 PJK Added build_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_module
   use build_variables
   use constants
   use physics_variables

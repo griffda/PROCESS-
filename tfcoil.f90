@@ -15,6 +15,7 @@ module tfcoil_module
   !+ad_desc  This module contains routines for calculating the
   !+ad_desc  parameters of a resistive TF coil system for a fusion power plant.
   !+ad_prob  None
+  !+ad_call  build_module
   !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  fwbs_variables
@@ -25,11 +26,13 @@ module tfcoil_module
   !+ad_hist  29/10/12 PJK Initial version of module
   !+ad_hist  29/10/12 PJK Added sctfcoil_module
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  30/10/12 PJK Added build_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_module
   use build_variables
   use constants
   use fwbs_variables

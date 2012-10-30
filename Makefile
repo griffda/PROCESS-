@@ -59,6 +59,7 @@ source = \
  ife.f90      \
  initial.f90  \
  input.f90    \
+ machine_build.f90 \
  maths_library.f90 \
  numerics.f90 \
  outplas.f90  \
@@ -67,7 +68,6 @@ source = \
  physics.f90  \
  plant_power.f90 \
  pulse.f90    \
- radialb.f90  \
  rfp.f90      \
  safety.f90   \
  scan.f90     \
@@ -96,6 +96,7 @@ object = \
  ife.o        \
  initial.o    \
  input.o      \
+ machine_build.o \
  maths_library.o \
  numerics.o   \
  outplas.o    \
@@ -104,7 +105,6 @@ object = \
  physics.o    \
  plant_power.o \
  pulse.o      \
- radialb.o    \
  rfp.o        \
  safety.o     \
  scan.o       \
@@ -182,14 +182,14 @@ default: process.exe
 
 aachange.o: 
 aamain.o: bldgs.o costs.o cudriv.o divertor.o evaluators.o fwbs.o global_variables.o \
-  input.o numerics.o output.o pfcoil.o physics.o plant_power.o scan.o sctfcoil.o struct.o \
-  tfcoil.o vacuum.o cost.h90 ineq.h90
+  input.o machine_build.o numerics.o output.o pfcoil.o physics.o plant_power.o scan.o \
+  sctfcoil.o struct.o tfcoil.o vacuum.o cost.h90 ineq.h90
 avail.o: global_variables.o output.o cost.h90 ife.h90 \
   pulse.h90 rfp.h90
 bldgs.o: global_variables.o output.o rfp.h90
-caller.o: bldgs.o costs.o cudriv.o divertor.o fwbs.o global_variables.o numerics.o \
-  output.o pfcoil.o physics.o plant_power.o sctfcoil.o struct.o tfcoil.o vacuum.o \
-  ife.h90 rfp.h90 stella.h90
+caller.o: bldgs.o costs.o cudriv.o divertor.o fwbs.o global_variables.o \
+  machine_build.o numerics.o output.o pfcoil.o physics.o plant_power.o sctfcoil.o \
+  struct.o tfcoil.o vacuum.o ife.h90 rfp.h90 stella.h90
 costs.o: global_variables.o output.o cost.h90 ife.h90 pulse.h90 rfp.h90
 cudriv.o: global_variables.o output.o
 divertor.o: global_variables.o output.o
@@ -204,6 +204,7 @@ initial.o: global_variables.o output.o scan.o \
   cost.h90 ife.h90 ineq.h90 pulse.h90 rfp.h90 stella.h90
 input.o: global_variables.o numerics.o output.o scan.o cost.h90 \
   ife.h90 ineq.h90 pulse.h90 rfp.h90 stella.h90
+machine_build.o: global_variables.o output.o rfp.h90
 maths_library.o: 
 numerics.o: maths_library.o
 outplas.o: global_variables.o output.o ineq.h90 rfp.h90
@@ -214,8 +215,7 @@ physics.o: cudriv.o global_variables.o maths_library.o output.o \
 plant_power.o: fwbs.o global_variables.o output.o cost.h90
 pulse.o: global_variables.o maths_library.o output.o physics.o \
   cost.h90 ineq.h90 pulse.h90 start.h90
-radialb.o: global_variables.o output.o rfp.h90
-rfp.o: cudriv.o input.o global_variables.o output.o pfcoil.o physics.o \
+rfp.o: cudriv.o input.o global_variables.o machine_build.o output.o pfcoil.o physics.o \
   pulse.h90 rfp.h90
 safety.o: global_variables.o output.o fispact.h90
 scan.o: global_variables.o numerics.o output.o ineq.h90 cost.h90
@@ -224,7 +224,7 @@ stella.o: bldgs.o costs.o cudriv.o divertor.o fwbs.o global_variables.o maths_li
   numerics.o output.o physics.o plant_power.o scan.o sctfcoil.o struct.o vacuum.o \
   cost.h90 ineq.h90 pulse.h90 stella.h90
 struct.o: global_variables.o output.o
-tfcoil.o: global_variables.o output.o sctfcoil.o
+tfcoil.o: global_variables.o machine_build.o output.o sctfcoil.o
 vacuum.o: global_variables.o output.o
 xc.o: global_variables.o numerics.o ife.h90 ineq.h90 pulse.h90 rfp.h90
 

@@ -661,6 +661,8 @@ module divertor_variables
   real(kind(1.0D0)) :: divdens = 1.0D4
   !+ad_vars  divdum /0/ : switch for divertor Zeff model: 0=calc, 1=input
   integer :: divdum = 0
+  !+ad_vars  divfix : divertor structure vertical thickness (= 0.2 m)
+  real(kind(1.0D0)) :: divfix = 0.2D0
   !+ad_vars  divmas : divertor plate mass (kg)
   real(kind(1.0D0)) :: divmas = 0.0D0
   !+ad_vars  divplt /0.035/ : divertor plate thickness (m) (from Spears, Sept 1990)
