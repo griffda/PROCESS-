@@ -15,6 +15,7 @@ subroutine stcall
   !+ad_call  costs_module
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
+  !+ad_call  power_module
   !+ad_call  process_output
   !+ad_call  vacuum_module
   !+ad_call  acpow
@@ -44,6 +45,7 @@ subroutine stcall
   !+ad_hist  17/10/12 PJK Added divertor_module
   !+ad_hist  18/10/12 PJK Added fwbs_module
   !+ad_hist  18/10/12 PJK Added vacuum_module
+  !+ad_hist  30/10/12 PJK Added power_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -52,6 +54,7 @@ subroutine stcall
   use costs_module
   use divertor_module
   use fwbs_module
+  use power_module
   use process_output
   use vacuum_module
 
@@ -1795,6 +1798,7 @@ subroutine stout(outfile)
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
   !+ad_call  physics_variables
+  !+ad_call  power_module
   !+ad_call  sctfcoil_module
   !+ad_call  vacuum_module
   !+ad_call  acpow
@@ -1828,6 +1832,7 @@ subroutine stout(outfile)
   !+ad_hist  18/10/12 PJK Added fwbs_module
   !+ad_hist  29/10/12 PJK Added sctfcoil_module
   !+ad_hist  29/10/12 PJK Added vacuum_module
+  !+ad_hist  30/10/12 PJK Added power_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1837,6 +1842,7 @@ subroutine stout(outfile)
   use divertor_module
   use fwbs_module
   use physics_variables
+  use power_module
   use sctfcoil_module
   use vacuum_module
 
