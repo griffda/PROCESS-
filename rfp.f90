@@ -480,9 +480,9 @@ subroutine rfppfp(outfile,iprint)
   !+ad_call  physics_variables
   !+ad_call  pf_power_variables
   !+ad_call  process_output
+  !+ad_call  times_variables
   !+ad_call  build.h90
   !+ad_call  rfp.h90
-  !+ad_call  times.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  01/03/96 PJK Initial version
@@ -494,6 +494,7 @@ subroutine rfppfp(outfile,iprint)
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  29/10/12 PJK Added pf_power_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
+  !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -504,11 +505,11 @@ subroutine rfppfp(outfile,iprint)
   use physics_variables
   use pf_power_variables
   use process_output
+  use times_variables
 
   implicit none
 
   include 'build.h90'
-  include 'times.h90'
   include 'rfp.h90'
 
   !  Arguments
@@ -678,10 +679,10 @@ subroutine rfpphy
   !+ad_call  physics_module
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  times_variables
   !+ad_call  build.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
-  !+ad_call  times.h90
   !+ad_call  beamfus
   !+ad_call  betcom
   !+ad_call  cudriv
@@ -708,6 +709,7 @@ subroutine rfpphy
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  17/10/12 PJK Added current_drive_module
   !+ad_hist  17/10/12 PJK Added divertor_variables
+  !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_stat  Okay
   !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
   !+ad_docc                Scoping Phase Report, January 1987
@@ -720,10 +722,10 @@ subroutine rfpphy
   use physics_module
   use physics_variables
   use process_output
+  use times_variables
 
   implicit none
 
-  include 'times.h90'
   include 'build.h90'
   include 'pulse.h90'
   include 'rfp.h90'

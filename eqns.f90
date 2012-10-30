@@ -24,10 +24,10 @@ subroutine con1(m,cc)
   !+ad_call  physics_variables
   !+ad_call  pf_power_variables
   !+ad_call  tfcoil_variables
+  !+ad_call  times_variables
   !+ad_call  ineq.h90
   !+ad_call  build.h90
   !+ad_call  pulse.h90
-  !+ad_call  times.h90
   !+ad_call  stella.h90
   !+ad_call  rfp.h90
   !+ad_call  ife.h90
@@ -51,6 +51,7 @@ subroutine con1(m,cc)
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  29/10/12 PJK Added pf_power_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
+  !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -65,13 +66,13 @@ subroutine con1(m,cc)
   use physics_variables
   use pf_power_variables
   use tfcoil_variables
+  use times_variables
 
   implicit none
 
   include 'ineq.h90'
   include 'build.h90'
   include 'pulse.h90'
-  include 'times.h90'
   include 'stella.h90'
   include 'rfp.h90'
   include 'ife.h90'

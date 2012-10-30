@@ -1719,6 +1719,62 @@ end module heat_transport_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module times_variables
+
+  !+ad_name  times_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  plasma pulse timings
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  plasma pulse timings.
+  !+ad_desc  It is derived from <CODE>include</CODE> file
+  !+ad_desc  <CODE>times.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  30/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  tburn /227.9/ : burn time (s) (calculated if lpulse=1)
+  real(kind(1.0D0)) :: tburn = 227.9D0
+  !+ad_vars  tburn0 : burn time (s) - used in consistency equation 15
+  real(kind(1.0D0)) :: tburn0 = 0.0D0
+  !+ad_vars  tdown : down time (s)
+  real(kind(1.0D0)) :: tdown = 0.0D0
+  !+ad_vars  tdwell /100.0/ : time between pulses in a pulsed reactor (s)
+  !+ad_varc                   (iteration variable 17)
+  real(kind(1.0D0)) :: tdwell = 100.0D0
+  !+ad_vars  theat /10.0/ : heating time, after current ramp up (s)
+  real(kind(1.0D0)) :: theat = 10.0D0
+  !+ad_vars  tim(6) : array of time points during plasma pulse (s)
+  real(kind(1.0D0)), dimension(6) :: tim = 0.0D0
+  !+ad_vars  tohs /30.0/ : OH coil swing time for current initiation (s)
+  !+ad_varc                (iteration variable 65)
+  real(kind(1.0D0)) :: tohs = 30.0D0
+  !+ad_vars  tohsin /0.0/ : switch for OH coil swing time (if lpulse=0):
+  !+ad_varc                 = 0, tohs = tramp = tqnch = Ip(MA)/0.5;
+  !+ad_varc                 <>0, tohs = tohsin; tramp, tqnch are input
+  real(kind(1.0D0)) :: tohsin = 0.0D0
+  !+ad_vars  tpulse : pulse length = tohs + theat + tburn + tqnch
+  real(kind(1.0D0)) :: tpulse = 0.0D0
+  !+ad_vars  tqnch /15.0/ : shut down time for PF coils (s); if pulsed, = tohs
+  real(kind(1.0D0)) :: tqnch = 15.0D0
+  !+ad_vars  tramp /15.0/ : initial PF coil charge time (s); if pulsed, = tohs
+  real(kind(1.0D0)) :: tramp = 15.0D0
+
+end module times_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
 
   !  ex bldgcom.h90
@@ -2122,15 +2178,5 @@ module wibble
 
   integer :: istell,isthtr
   common /stlint/ istell,isthtr
-
-!  ex times.h90
-
-  real(kind(1.0D0)) :: &
-       tburn,tburn0,tdown,tdwell,theat,tohs,tohsin,tpulse,tqnch,tramp
-  common /times0/ &
-       tburn,tburn0,tdown,tdwell,theat,tohs,tohsin,tpulse,tqnch,tramp
-
-  real(kind(1.0D0)), dimension(6) :: tim
-  common /times1/ tim
 
 end module wibble

@@ -53,6 +53,7 @@ module costs_module
   !+ad_call  process_output
   !+ad_call  structure_variables
   !+ad_call  tfcoil_variables
+  !+ad_call  times_variables
   !+ad_call  vacuum_variables
   !+ad_hist  15/10/12 PJK Initial version of module
   !+ad_hist  15/10/12 PJK Added physics_variables
@@ -66,6 +67,7 @@ module costs_module
   !+ad_hist  29/10/12 PJK Added vacuum_variables
   !+ad_hist  29/10/12 PJK Added pf_power_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
+  !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -82,6 +84,7 @@ module costs_module
   use process_output
   use structure_variables
   use tfcoil_variables
+  use times_variables
   use vacuum_variables
 
   implicit none
@@ -92,7 +95,6 @@ module costs_module
   include 'ife.h90'
   include 'pulse.h90'
   include 'rfp.h90'
-  include 'times.h90'
 
   private
   public :: costs

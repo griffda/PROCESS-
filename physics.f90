@@ -44,14 +44,16 @@ module physics_module
   !+ad_call  current_drive_module
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  maths_library
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  maths_library
+  !+ad_call  times_variables
   !+ad_hist  16/10/12 PJK Initial version of module
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  17/10/12 PJK Added current_drive_module
   !+ad_hist  17/10/12 PJK Added divertor_variables
+  !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -64,6 +66,7 @@ module physics_module
   use physics_variables
   use process_output
   use maths_library
+  use times_variables
 
   implicit none
 
@@ -86,7 +89,6 @@ contains
     !+ad_prob  None
     !+ad_call  build.h90
     !+ad_call  pulse.h90
-    !+ad_call  times.h90
     !+ad_call  beamfus
     !+ad_call  betcom
     !+ad_call  bootst
@@ -134,7 +136,6 @@ contains
 
     implicit none
 
-    include 'times.h90'
     include 'build.h90'
     include 'pulse.h90'
 

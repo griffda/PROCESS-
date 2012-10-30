@@ -15,7 +15,6 @@ subroutine initial
   !+ad_prob  None
   !+ad_call  process_output
   !+ad_call  ineq.h90
-  !+ad_call  times.h90
   !+ad_call  build.h90
   !+ad_call  cost.h90
   !+ad_call  bldgvol.h90
@@ -66,6 +65,7 @@ subroutine initial
   !+ad_hist  29/10/12 PJK Removed vacuum variables
   !+ad_hist  29/10/12 PJK Removed PF coil power conversion variables
   !+ad_hist  30/10/12 PJK Removed heat transport variables
+  !+ad_hist  30/10/12 PJK Removed times variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -76,7 +76,6 @@ subroutine initial
   implicit none
 
   include 'ineq.h90'
-  include 'times.h90'
   include 'build.h90'
   include 'cost.h90'
   include 'bldgvol.h90'
@@ -144,20 +143,6 @@ subroutine initial
   tohsmn   = 1.0D0
   tpkmax   = 600.0D0
   walalw   = 1.0D0
-
-  !  Times for different phases
-
-  tburn    = 227.9D0
-  tburn0   = 0.0D0
-  tdown    = 0.0D0
-  tdwell   = 100.0D0
-  theat    = 10.0D0
-  tim(:) = 0.0D0
-  tohs     = 30.0D0
-  tohsin   = 0.0D0
-  tpulse   = 0.0D0
-  tqnch    = 15.0D0
-  tramp    = 15.0D0
 
   !  Build description
 

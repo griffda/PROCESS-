@@ -21,12 +21,12 @@ subroutine loadxc
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  tfcoil_variables
+  !+ad_call  times_variables
   !+ad_call  build.h90
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
-  !+ad_call  times.h90
   !+ad_hist  22/10/92 PJK Removed original arguments (xc,nn)
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  09/10/12 PJK Initial F90 version
@@ -38,6 +38,7 @@ subroutine loadxc
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
+  !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -51,12 +52,12 @@ subroutine loadxc
   use pfcoil_variables
   use physics_variables
   use tfcoil_variables
+  use times_variables
 
   implicit none
 
   include 'ineq.h90'
   include 'build.h90'
-  include 'times.h90'
   include 'pulse.h90'
   include 'rfp.h90'
   include 'ife.h90'
@@ -273,11 +274,11 @@ subroutine convxc(xc,nn)
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  tfcoil_variables
+  !+ad_call  times_variables
   !+ad_call  build.h90
   !+ad_call  ife.h90
   !+ad_call  ineq.h90
   !+ad_call  rfp.h90
-  !+ad_call  times.h90
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  16/11/11 PJK Initial F90 version
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
@@ -288,6 +289,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
+  !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -301,12 +303,12 @@ subroutine convxc(xc,nn)
   use pfcoil_variables
   use physics_variables
   use tfcoil_variables
+  use times_variables
 
   implicit none
 
   include 'ineq.h90'
   include 'build.h90'
-  include 'times.h90'
   include 'rfp.h90'
   include 'ife.h90'
 

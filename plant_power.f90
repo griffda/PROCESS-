@@ -28,8 +28,10 @@ module power_module
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  structure_variables
+  !+ad_call  times_variables
   !+ad_call  tfcoil_variables
   !+ad_hist  30/10/12 PJK Initial version of module
+  !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -46,6 +48,7 @@ module power_module
   use process_output
   use structure_variables
   use tfcoil_variables
+  use times_variables
 
   implicit none
 
@@ -70,7 +73,6 @@ contains
     !+ad_desc  resistive TF coils, or calls <CODE>tfpwcall</CODE> if the TF
     !+ad_desc  coils are superconducting.
     !+ad_prob  None
-    !+ad_call  times.h90
     !+ad_call  oheadr
     !+ad_call  ovarre
     !+ad_call  tfpwcall
@@ -84,8 +86,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'times.h90'
 
     !  Arguments
 
@@ -431,7 +431,6 @@ contains
     !+ad_desc  <I>dI/dt</I> at the time periods.
     !+ad_prob  None
     !+ad_call  build.h90
-    !+ad_call  times.h90
     !+ad_call  oheadr
     !+ad_call  ovarre
     !+ad_hist  01/08/11 PJK Initial F90 version
@@ -450,7 +449,6 @@ contains
     implicit none
 
     include 'build.h90'
-    include 'times.h90'
 
     !  Arguments
 
@@ -773,7 +771,6 @@ contains
     !+ad_desc  This routine calculates the first part of the heat transport
     !+ad_desc  and plant power balance constituents.
     !+ad_prob  None
-    !+ad_call  times.h90
     !+ad_call  cryo
     !+ad_hist  01/08/11 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
@@ -790,8 +787,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'times.h90'
 
     !  Arguments
 

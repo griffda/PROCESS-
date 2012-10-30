@@ -15,9 +15,9 @@ subroutine pulse(outfile,iprint)
   !+ad_prob  None
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
+  !+ad_call  times_variables
   !+ad_call  pulse.h90
   !+ad_call  build.h90
-  !+ad_call  times.h90
   !+ad_call  thrmal
   !+ad_call  tohswg
   !+ad_call  burn
@@ -26,6 +26,7 @@ subroutine pulse(outfile,iprint)
   !+ad_hist  01/10/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  18/10/12 PJK Added fwbs_variables
+  !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -34,12 +35,12 @@ subroutine pulse(outfile,iprint)
 
   use fwbs_variables
   use physics_variables
+  use times_variables
 
   implicit none
 
   include 'pulse.h90'
   include 'build.h90'
-  include 'times.h90'
 
   !  Arguments
 
@@ -1232,8 +1233,8 @@ subroutine burn(outfile,iprint)
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  times_variables
   !+ad_call  pulse.h90
-  !+ad_call  times.h90
   !+ad_call  osubhd
   !+ad_call  ovarre
   !+ad_hist  25/11/93 PJK Incorporation into PROCESS
@@ -1243,6 +1244,7 @@ subroutine burn(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
+  !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0012
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1253,11 +1255,11 @@ subroutine burn(outfile,iprint)
   use pfcoil_variables
   use physics_variables
   use process_output
+  use times_variables
 
   implicit none
 
   include 'pulse.h90'
-  include 'times.h90'
 
   !  Arguments
 

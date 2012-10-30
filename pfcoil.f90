@@ -28,7 +28,9 @@ module pfcoil_module
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  times_variables
   !+ad_hist  18/10/12 PJK Initial version of module
+  !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -39,6 +41,7 @@ module pfcoil_module
   use pfcoil_variables
   use physics_variables
   use process_output
+  use times_variables
 
   implicit none
 
@@ -62,7 +65,6 @@ contains
     !+ad_desc  stresses etc.
     !+ad_prob  None
     !+ad_call  build.h90
-    !+ad_call  times.h90
     !+ad_call  efc
     !+ad_call  ohcalc
     !+ad_call  peakb
@@ -81,7 +83,6 @@ contains
     implicit none
 
     include 'build.h90'
-    include 'times.h90'
 
     !  Arguments
 
@@ -2214,7 +2215,6 @@ contains
     !+ad_desc  This routine writes the PF coil volt-second data to the
     !+ad_desc  output file.
     !+ad_prob  None
-    !+ad_call  times.h90
     !+ad_call  oblnkl
     !+ad_call  ocmmnt
     !+ad_call  oheadr
@@ -2228,8 +2228,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'times.h90'
 
     !  Arguments
 
