@@ -108,9 +108,9 @@ subroutine stinit
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
+  !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
-  !+ad_call  stella.h90
   !+ad_hist  28/06/94 PJK Initial version
   !+ad_hist  09/09/94 PJK Changed ICASE
   !+ad_hist  07/12/94 PJK Changed default q and kappa values
@@ -127,6 +127,7 @@ subroutine stinit
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  31/10/12 PJK Added stellarator_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -137,12 +138,11 @@ subroutine stinit
   use numerics
   use pfcoil_variables
   use physics_variables
+  use stellarator_variables
   use tfcoil_variables
   use times_variables
 
   implicit none
-
-  include 'stella.h90'
 
   !  Arguments
 
@@ -192,8 +192,6 @@ subroutine stinit
   !  TF coil quantities
 
   tfno = 50.0D0
-
-  !  Stellarator switches
 
   isthtr = 3  !  auxiliary heating = NBI
 
@@ -606,7 +604,7 @@ subroutine stheat(outfile,iprint)
   !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  stella.h90
+  !+ad_call  stellarator_variables
   !+ad_call  culnbi
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
@@ -619,6 +617,7 @@ subroutine stheat(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  17/10/12 PJK Added current_drive_module
+  !+ad_hist  31/10/12 PJK Added stellarator_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -629,10 +628,9 @@ subroutine stheat(outfile,iprint)
   use current_drive_variables
   use physics_variables
   use process_output
+  use stellarator_variables
 
   implicit none
-
-  include 'stella.h90'
 
   !  Arguments
 

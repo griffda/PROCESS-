@@ -14,8 +14,8 @@ subroutine initial
   !+ad_desc  code, but are set to zero in this routine anyway.
   !+ad_prob  None
   !+ad_call  process_output
+  !+ad_call  stellarator_variables
   !+ad_call  pulse.h90
-  !+ad_call  stella.h90
   !+ad_call  rfp.h90
   !+ad_call  ife.h90
   !+ad_call  devtyp
@@ -65,17 +65,18 @@ subroutine initial
   !+ad_hist  30/10/12 PJK Removed build variables
   !+ad_hist  31/10/12 PJK Removed cost variables
   !+ad_hist  31/10/12 PJK Removed inequality variables
+  !+ad_hist  31/10/12 PJK Added stellarator_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use process_output
+  use stellarator_variables
 
   implicit none
 
   include 'pulse.h90'
-  include 'stella.h90'
   include 'rfp.h90'
   include 'ife.h90'
 
@@ -144,21 +145,23 @@ subroutine devtyp
   !+ad_desc  is to be modelled. If the file is not present in the current
   !+ad_desc  directory, a standard tokamak model is assumed.
   !+ad_prob  None
-  !+ad_call  stella.h90
+  !+ad_call  stellarator_variables
   !+ad_call  rfp.h90
   !+ad_call  ife.h90
   !+ad_hist  27/02/96 PJK Initial version
   !+ad_hist  08/10/96 PJK Fixed error: (istell.gt.2) should be (idev.gt.2)
   !+ad_hist  14/03/97 PJK idev=3 ==> inertial fusion power plant
   !+ad_hist  19/09/12 PJK Initial F90 version
+  !+ad_hist  31/10/12 PJK Added stellarator_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use stellarator_variables
+
   implicit none
 
-  include 'stella.h90'
   include 'rfp.h90'
   include 'ife.h90'
 

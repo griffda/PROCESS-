@@ -93,13 +93,13 @@ module process_input
   !+ad_call  pf_power_variables
   !+ad_call  process_output
   !+ad_call  scan_module
+  !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_call  vacuum_variables
   !+ad_call  ife.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
-  !+ad_call  stella.h90
   !+ad_hist  20/01/95 PJK Initial version (PROCESS)
   !+ad_hist  05/01/04 PJK Initial F90 version (CENTORI)
   !+ad_hist  02/10/12 PJK Initial F90 version (PROCESS)
@@ -120,6 +120,7 @@ module process_input
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_hist  31/10/12 PJK Added constraint_variables
+  !+ad_hist  31/10/12 PJK Added stellarator_variables
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -140,6 +141,7 @@ module process_input
   use pf_power_variables
   use process_output
   use scan_module
+  use stellarator_variables
   use tfcoil_variables
   use times_variables
   use vacuum_variables
@@ -149,7 +151,6 @@ module process_input
   include 'ife.h90'
   include 'pulse.h90'
   include 'rfp.h90'
-  include 'stella.h90'
 
   private
   public :: input, run_summary, check_range_int, check_range_real

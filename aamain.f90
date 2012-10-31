@@ -888,10 +888,10 @@ subroutine output(outfile)
   !+ad_call  physics_variables
   !+ad_call  power_module
   !+ad_call  sctfcoil_module
+  !+ad_call  stellarator_variables
   !+ad_call  structure_module
   !+ad_call  tfcoil_module
   !+ad_call  vaccum_module
-  !+ad_call  stella.h90
   !+ad_call  rfp.h90
   !+ad_call  ife.h90
   !+ad_call  acpow
@@ -950,6 +950,7 @@ subroutine output(outfile)
   !+ad_hist  30/10/12 PJK Added power_module
   !+ad_hist  30/10/12 PJK Added buildings_module
   !+ad_hist  30/10/12 PJK Added build_module
+  !+ad_hist  31/10/12 PJK Added stellarator_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -966,13 +967,13 @@ subroutine output(outfile)
   use physics_variables
   use power_module
   use sctfcoil_module
+  use stellarator_variables
   use structure_module
   use tfcoil_module
   use vacuum_module
 
   implicit none
 
-  include 'stella.h90'
   include 'rfp.h90'
   include 'ife.h90'
 

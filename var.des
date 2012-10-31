@@ -106,17 +106,6 @@ fwomzp     dble          # Outboard first wall mean zone power density/neutron
 fwtemp     dble          # Outboard first wall temperature after a LOCA (K)
 $
 C______________________________________________________________________
-$  Stellarator parameters : (see stella.h)
-$
-istell     intg /0/      # switch for stellarator option (device.dat)
-$                          = 0 use tokamak or RFP model
-$                          = 1 use stellarator model
-isthtr     intg /3/      # switch for stellarator auxiliary heating method
-$                          = 1 electron cyclotron resonance heating
-$                          = 2 lower hybrid heating
-$                          = 3 neutral beam injection
-$
-C______________________________________________________________________
 $  RFP parameters : (see rfp.h)
 $
 cptrfp(nrfppf) dble /.../# current per turn in each RFP PF coil (A/m2)

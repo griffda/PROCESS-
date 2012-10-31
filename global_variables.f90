@@ -2549,6 +2549,45 @@ end module constraint_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module stellarator_variables
+
+  !+ad_name  stellarator_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  stellarator model
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  stellarator model.
+  !+ad_desc  It is derived from <CODE>include</CODE> file
+  !+ad_desc  <CODE>stella.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  31/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  istell /0/ : switch for stellarator option (via device.dat):
+  !+ad_varc               = 0 use tokamak, RFP or IFE model;
+  !+ad_varc               = 1 use stellarator model
+  integer :: istell = 0
+  !+ad_vars  isthtr /3/ : switch for stellarator auxiliary heating method:
+  !+ad_varc               = 1 electron cyclotron resonance heating;
+  !+ad_varc               = 2 lower hybrid heating;
+  !+ad_varc               = 3 neutral beam injection
+  integer :: isthtr = 3
+
+end module stellarator_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
 
   !  ex fispact.h90
@@ -2807,31 +2846,5 @@ module wibble
 
   integer :: s
   common /strt2/ s
-
-!  ex stella.h90
-
-!--Version number 1.000
-!
-!--Description
-!  INCLUDE file for stellarator module in PROCESS.
-!
-!--Author
-!  Peter Knight D3/G12 Culham Laboratory, ext.3330
-!
-!--Date
-!  28 June 1994
-!
-!--Reference
-!  None
-!  
-!--History
-!  28/06/94 PJK 1.000 Initial version
-!
-!--Contents
-!  istell : Switch for stellarator option (0=off)
-!  isthtr : Switch for different auxiliary heating methods
-
-  integer :: istell,isthtr
-  common /stlint/ istell,isthtr
 
 end module wibble
