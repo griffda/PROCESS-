@@ -26,6 +26,7 @@ subroutine caller(xc,nvars)
   !+ad_call  power_module
   !+ad_call  process_output
   !+ad_call  sctfcoil_module
+  !+ad_call  stellarator_module
   !+ad_call  stellarator_variables
   !+ad_call  structure_module
   !+ad_call  tfcoil_module
@@ -95,6 +96,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  30/10/12 PJK Added buildings_module
   !+ad_hist  30/10/12 PJK Added build_module
   !+ad_hist  31/10/12 PJK Added stellarator_variables
+  !+ad_hist  31/10/12 PJK Added stellarator_module
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -113,6 +115,7 @@ subroutine caller(xc,nvars)
   use power_module
   use process_output
   use sctfcoil_module
+  use stellarator_module
   use stellarator_variables
   use structure_module
   use tfcoil_module
