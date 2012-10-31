@@ -2368,6 +2368,187 @@ end module cost_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module constraint_variables
+
+  !+ad_name  constraint_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  constraint equations
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  constraint equations (f-values, limits, etc.).
+  !+ad_desc  It is derived from <CODE>include</CODE> file
+  !+ad_desc  <CODE>ineq.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  31/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  auxmin /0.1/ : minimum auxiliary power (MW)
+  !+ad_varc                 (constraint equation 40)
+  real(kind(1.0D0)) :: auxmin = 0.1D0
+  !+ad_vars  betpmx /0.19/ : maximum poloidal beta
+  !+ad_varc                  (constraint equation 48)
+  real(kind(1.0D0)) :: betpmx = 0.19D0
+  !+ad_vars  bmxlim /12.0/ : maximum toroidal field (T)
+  !+ad_varc                  (constraint equation 25)
+  real(kind(1.0D0)) :: bmxlim = 12.0D0
+  !+ad_vars  dtmpmx /1.0D3/ : maximum first wall coolant temperature rise (K)
+  !+ad_varc                   (constraint equation 38)
+  real(kind(1.0D0)) :: dtmpmx = 1.0D3
+  !+ad_vars  fauxmn /1.0/ : f-value for minimum auxiliary power
+  !+ad_varc                 (constraint equation 40, iteration variable 64)
+  real(kind(1.0D0)) :: fauxmn = 1.0D0
+  !+ad_vars  fbeta /1.0/ : f-value for epsilon beta-poloidal
+  !+ad_varc                (constraint equation 6, iteration variable 8)
+  real(kind(1.0D0)) :: fbeta = 1.0D0
+  !+ad_vars  fbetap /1.0/ : f-value for poloidal beta
+  !+ad_varc                 (constraint equation 48, iteration variable 79)
+  real(kind(1.0D0)) :: fbetap = 1.0D0
+  !+ad_vars  fbetatry /1.0/ : f-value for Troyon beta limit
+  !+ad_varc                   (constraint equation 24, iteration variable 36)
+  real(kind(1.0D0)) :: fbetatry = 1.0D0
+  !+ad_vars  fdene /1.0/ : f-value for density limit
+  !+ad_varc                (constraint equation 5, iteration variable 5)
+  real(kind(1.0D0)) :: fdene = 1.0D0
+  !+ad_vars  fdivcol /1.0/ : f-value for divertor collisionality
+  !+ad_varc                  (constraint equation 22, iteration variable 34)
+  real(kind(1.0D0)) :: fdivcol = 1.0D0
+  !+ad_vars  fdtmp /1.0/ : f-value for first wall coolant temperature rise
+  !+ad_varc                (constraint equation 38, iteration variable 62)
+  real(kind(1.0D0)) :: fdtmp = 1.0D0
+  !+ad_vars  ffuspow /1.0/ : f-value for maximum fusion power
+  !+ad_varc                  (constraint equation 9, iteration variable 26)
+  real(kind(1.0D0)) :: ffuspow = 1.0D0
+  !+ad_vars  fgamcd /1.0/ : f-value for current drive gamma
+  !+ad_varc                 (constraint equation 37, iteration variable 40)
+  real(kind(1.0D0)) :: fgamcd = 1.0D0
+  !+ad_vars  fhldiv /1.0/ : f-value for divertor heat load
+  !+ad_varc                 (constraint equation 18, iteration variable 27)
+  real(kind(1.0D0)) :: fhldiv = 1.0D0
+  !+ad_vars  fiooic /0.5/ : f-value for TF coil operating current / critical
+  !+ad_varc                 current ratio
+  !+ad_varc                 (constraint equation 33, iteration variable 50)
+  real(kind(1.0D0)) :: fiooic = 0.5D0
+  !+ad_vars  fipir /1.0/ : f-value for Ip/Irod limit
+  !+ad_varc                (constraint equation 46, iteration variable 72)
+  real(kind(1.0D0)) :: fipir = 1.0D0
+  !+ad_vars  fjohc /1.0/ : f-value for OH coil current at end-of-flattop
+  !+ad_varc                (constraint equation 26, iteration variable 38)
+  real(kind(1.0D0)) :: fjohc = 1.0D0
+  !+ad_vars  fjohc0 /1.0/ : f-value for OH coil current at beginning of pulse
+  !+ad_varc                 (constraint equation 27, iteration variable 39)
+  real(kind(1.0D0)) :: fjohc0 = 1.0D0
+  !+ad_vars  fjprot /1.0/ : f-value for TF coil winding pack current density
+  !+ad_varc                 (constraint equation 35, iteration variable 53)
+  real(kind(1.0D0)) :: fjprot = 1.0D0
+  !+ad_vars  fjtfc /1.0/ : f-value for TF coil current density
+  !+ad_varc                (constraint equation 23, iteration variable 28)
+  real(kind(1.0D0)) :: fjtfc = 1.0D0
+  !+ad_vars  fmva /1.0/ : f-value for maximum MVA
+  !+ad_varc               (constraint equation 19, iteration variable 30)
+  real(kind(1.0D0)) :: fmva = 1.0D0
+  !+ad_vars  fpeakb /1.0/ : f-value for maximum toroidal field
+  !+ad_varc                 (constraint equation 25, iteration variable 35)
+  real(kind(1.0D0)) :: fpeakb = 1.0D0
+  !+ad_vars  fpinj /1.0/ : f-value for injection power
+  !+ad_varc                (constraint equation 30, iteration variable 46)
+  real(kind(1.0D0)) :: fpinj = 1.0D0
+  !+ad_vars  fpnetel /1.0/ : f value for net electric power
+  !+ad_varc                  (constraint equation 16, iteration variable 25)
+  real(kind(1.0D0)) :: fpnetel = 1.0D0
+  !+ad_vars  fportsz /1.0/ : f-value for port size
+  !+ad_varc                  (constraint equation 20, iteration variable 33)
+  real(kind(1.0D0)) :: fportsz = 1.0D0
+  !+ad_vars  fptemp /1.0/ : f-value for peak centrepost temperature
+  !+ad_varc                 (constraint equation 44, iteration variable 68)
+  real(kind(1.0D0)) :: fptemp = 1.0D0
+  !+ad_vars  fq /1.0/ : f-value for edge safety factor
+  !+ad_varc             (constraint equation 45, iteration variable 71)
+  real(kind(1.0D0)) :: fq = 1.0D0
+  !+ad_vars  fqval /1.0/ : f-value for Q
+  !+ad_varc                (constraint equation 28, iteration variable 45)
+  real(kind(1.0D0)) :: fqval = 1.0D0
+  !+ad_vars  frfpf /1.0/ : f-value for RFP reversal parameter
+  !+ad_varc                (constraint equation 49, iteration variable 80)
+  real(kind(1.0D0)) :: frfpf = 1.0D0
+  !+ad_vars  frfptf /1.0/ : f-value for RFP TF coil toroidal thickness
+  !+ad_varc                 (constraint equation 47, iteration variable 76)
+  real(kind(1.0D0)) :: frfptf = 1.0D0
+  !+ad_vars  frminor /1.0/ : f-value for minor radius limit
+  !+ad_varc                  (constraint equation 21, iteration variable 32)
+  real(kind(1.0D0)) :: frminor = 1.0D0
+  !+ad_vars  fstrcase /1.0/ : f-value for TF coil case stress
+  !+ad_varc                   (constraint equation 31, iteration variable 48)
+  real(kind(1.0D0)) :: fstrcase = 1.0D0
+  !+ad_vars  fstrcond /1.0/ : f-value for TF coil conduit stress
+  !+ad_varc                   (constraint equation 32, iteration variable 49)
+  real(kind(1.0D0)) :: fstrcond = 1.0D0
+  !+ad_vars  ftburn /1.0/ : f-value for minimum burn time
+  !+ad_varc                 (constraint equation 13, iteration variable 21)
+  real(kind(1.0D0)) :: ftburn = 1.0D0
+  !+ad_vars  ftcycl /1.0/ : f-value for cycle time
+  !+ad_varc                 (constraint equation 42, iteration variable 67)
+  real(kind(1.0D0)) :: ftcycl = 1.0D0
+  !+ad_vars  ftmargtf /1.0/ : f-value for TF coil temperature margin
+  !+ad_varc                   (constraint equation 36, iteration variable 54)
+  real(kind(1.0D0)) :: ftmargtf = 1.0D0
+  !+ad_vars  ftohs /1.0/ : f-value for OH coil swing time
+  !+ad_varc                (constraint equation 41, iteration variable 66)
+  real(kind(1.0D0)) :: ftohs = 1.0D0
+  !+ad_vars  ftpeak /1.0/ : f-value for first wall peak temperature
+  !+ad_varc                 (constraint equation 39, iteration variable 63)
+  real(kind(1.0D0)) :: ftpeak = 1.0D0
+  !+ad_vars  fvdump /1.0/ : f-value for dump voltage
+  !+ad_varc                 (constraint equation 34, iteration variable 51)
+  real(kind(1.0D0)) :: fvdump = 1.0D0
+  !+ad_vars  fvs /1.0/ : f-value for flux-swing (V-s) requirement
+  !+ad_varc              (constraint equation 12, iteration variable 15)
+  real(kind(1.0D0)) :: fvs = 1.0D0
+  !+ad_vars  fwalld /1.0/ : f-value for minimum wall load
+  !+ad_varc                 (constraint equation 8, iteration variable 14)
+  real(kind(1.0D0)) :: fwalld = 1.0D0
+  !+ad_vars  gammax /2.0/ : maximum current drive gamma
+  !+ad_varc                 (constraint equation 37)
+  real(kind(1.0D0)) :: gammax = 2.0D0
+  !+ad_vars  mvalim /40.0/ : maximum MVA limit
+  !+ad_varc                  (constraint equation 19)
+  real(kind(1.0D0)) :: mvalim = 40.0D0
+  !+ad_vars  pnetelin /1000.0/ : required net electric power (MW)
+  !+ad_varc                      (constraint equation 16)
+  real(kind(1.0D0)) :: pnetelin = 1.0D3
+  !+ad_vars  powfmax /1000.0/ : maximum fusion power (MW)
+  !+ad_varc                     (constraint equation 9)
+  real(kind(1.0D0)) :: powfmax = 1.0D3
+  !+ad_vars  tbrnmn /1.0/ : minimum burn time (s)
+  !+ad_varc                 (constraint equation 13)
+  real(kind(1.0D0)) :: tbrnmn = 1.0D0
+  !+ad_vars  tcycmn : minimum cycle time (s)
+  !+ad_varc           (constraint equation 42)
+  real(kind(1.0D0)) :: tcycmn = 0.0D0
+  !+ad_vars  tohsmn : minimum OH coil swing time (s)
+  !+ad_varc           (constraint equation 41)
+  real(kind(1.0D0)) :: tohsmn = 1.0D0
+  !+ad_vars  tpkmax /600.0/ : maximum first wall peak temperature (C)
+  !+ad_varc                   (constraint equation 39)
+  real(kind(1.0D0)) :: tpkmax = 600.0D0
+  !+ad_vars  walalw /1.0/ : allowable wall-load (MW/m2)
+  !+ad_varc                 (constraint equation 8)
+  real(kind(1.0D0)) :: walalw = 1.0D0
+
+end module constraint_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
 
   !  ex fispact.h90
@@ -2493,23 +2674,6 @@ module wibble
 
   real(kind(1.0D0)) :: pifecr,tdspmw,tfacmw,ptargf
   common /ifep1/ pifecr,tdspmw,tfacmw,ptargf
-
-  !  ex ineq.h90
-
-  real(kind(1.0D0)) :: &
-       auxmin,betpmx,bmxlim,dtmpmx,fauxmn,fbeta,fbetap,fbetatry, &
-       fdene,fdivcol,fdtmp,ffuspow,fgamcd,fhldiv,fiooic,fipir,fjohc, &
-       fjohc0,fjprot,fjtfc,fmva,fpeakb,fpinj,fpnetel,fportsz,fptemp, &
-       fq,fqval,frfpf,frfptf,frminor,fstrcase,fstrcond,ftburn,ftcycl, &
-       ftmargtf,ftohs,ftpeak,fvdump,fvs,fwalld,gammax,mvalim,pnetelin, &
-       powfmax,tbrnmn,tcycmn,tohsmn,tpkmax,walalw
-  common /ineq/ &
-       auxmin,betpmx,bmxlim,dtmpmx,fauxmn,fbeta,fbetap,fbetatry, &
-       fdene,fdivcol,fdtmp,ffuspow,fgamcd,fhldiv,fiooic,fipir,fjohc, &
-       fjohc0,fjprot,fjtfc,fmva,fpeakb,fpinj,fpnetel,fportsz,fptemp, &
-       fq,fqval,frfpf,frfptf,frminor,fstrcase,fstrcond,ftburn,ftcycl, &
-       ftmargtf,ftohs,ftpeak,fvdump,fvs,fwalld,gammax,mvalim,pnetelin, &
-       powfmax,tbrnmn,tcycmn,tohsmn,tpkmax,walalw
 
 !  ex pulse.h90
 

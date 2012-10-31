@@ -14,6 +14,7 @@ subroutine loadxc
   !+ad_desc  into the optimisation variables array <CODE>XCM</CODE>.
   !+ad_prob  None
   !+ad_call  build_variables
+  !+ad_call  constraint_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
@@ -24,7 +25,6 @@ subroutine loadxc
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_call  ife.h90
-  !+ad_call  ineq.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
   !+ad_hist  22/10/92 PJK Removed original arguments (xc,nn)
@@ -40,12 +40,14 @@ subroutine loadxc
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use build_variables
+  use constraint_variables
   use current_drive_variables
   use divertor_variables
   use fwbs_variables
@@ -58,7 +60,6 @@ subroutine loadxc
 
   implicit none
 
-  include 'ineq.h90'
   include 'pulse.h90'
   include 'rfp.h90'
   include 'ife.h90'
@@ -268,6 +269,7 @@ subroutine convxc(xc,nn)
   !+ad_desc  their real values.
   !+ad_prob  None
   !+ad_call  build_variables
+  !+ad_call  constraint_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
@@ -278,7 +280,6 @@ subroutine convxc(xc,nn)
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_call  ife.h90
-  !+ad_call  ineq.h90
   !+ad_call  rfp.h90
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  16/11/11 PJK Initial F90 version
@@ -292,12 +293,14 @@ subroutine convxc(xc,nn)
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use build_variables
+  use constraint_variables
   use current_drive_variables
   use divertor_variables
   use fwbs_variables
@@ -310,7 +313,6 @@ subroutine convxc(xc,nn)
 
   implicit none
 
-  include 'ineq.h90'
   include 'rfp.h90'
   include 'ife.h90'
 

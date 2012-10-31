@@ -101,11 +101,11 @@ subroutine thrmal(outfile,iprint)
   !+ad_prob  None
   !+ad_call  build_variables
   !+ad_call  constants
+  !+ad_call  constraint_variables
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  pulse.h90
-  !+ad_call  ineq.h90
   !+ad_call  alpha
   !+ad_call  costrm
   !+ad_call  cycles
@@ -130,6 +130,7 @@ subroutine thrmal(outfile,iprint)
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -138,6 +139,7 @@ subroutine thrmal(outfile,iprint)
 
   use build_variables
   use constants
+  use constraint_variables
   use fwbs_variables
   use physics_variables
   use process_output
@@ -145,7 +147,6 @@ subroutine thrmal(outfile,iprint)
   implicit none
 
   include 'pulse.h90'
-  include 'ineq.h90'
 
   !  Arguments
 
@@ -1116,11 +1117,11 @@ subroutine tohswg(outfile,iprint)
   !+ad_desc  This routine calculates the minimum OH coil swing time
   !+ad_desc  for a pulsed reactor.
   !+ad_prob  None
+  !+ad_call  constraint_variables
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  pf_power_variables
   !+ad_call  process_output
-  !+ad_call  ineq.h90
   !+ad_call  pulse.h90
   !+ad_call  osubhd
   !+ad_call  ovarre
@@ -1131,6 +1132,7 @@ subroutine tohswg(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  29/10/12 PJK Added pf_power_variables
+  !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0013
   !+ad_docs  Work File Note F/PL/PJK/PROCESS/CODE/050
@@ -1138,6 +1140,7 @@ subroutine tohswg(outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constraint_variables
   use pfcoil_variables
   use physics_variables
   use pf_power_variables
@@ -1145,7 +1148,6 @@ subroutine tohswg(outfile,iprint)
 
   implicit none
 
-  include 'ineq.h90'
   include 'pulse.h90'
 
   !  Arguments
@@ -1368,11 +1370,11 @@ subroutine startup(iprint)
   !+ad_desc  </PRE>
   !+ad_desc  to find the minimum auxiliary power required in start-up.
   !+ad_prob  None
+  !+ad_call  constraint_variables
   !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  start.h90
-  !+ad_call  ineq.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_call  start1
@@ -1383,12 +1385,14 @@ subroutine startup(iprint)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
+  !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_stat  Not currently used
   !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constraint_variables
   use current_drive_variables
   use physics_variables
   use process_output
@@ -1396,7 +1400,6 @@ subroutine startup(iprint)
   implicit none
 
   include 'start.h90'
-  include 'ineq.h90'
 
   !  Arguments
 

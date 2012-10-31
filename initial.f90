@@ -14,7 +14,6 @@ subroutine initial
   !+ad_desc  code, but are set to zero in this routine anyway.
   !+ad_prob  None
   !+ad_call  process_output
-  !+ad_call  ineq.h90
   !+ad_call  pulse.h90
   !+ad_call  stella.h90
   !+ad_call  rfp.h90
@@ -65,6 +64,7 @@ subroutine initial
   !+ad_hist  30/10/12 PJK Removed buildings variables
   !+ad_hist  30/10/12 PJK Removed build variables
   !+ad_hist  31/10/12 PJK Removed cost variables
+  !+ad_hist  31/10/12 PJK Removed inequality variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -74,7 +74,6 @@ subroutine initial
 
   implicit none
 
-  include 'ineq.h90'
   include 'pulse.h90'
   include 'stella.h90'
   include 'rfp.h90'
@@ -85,59 +84,6 @@ subroutine initial
   !  Local variables
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !  Quantities used in inequality constraints
-
-  auxmin   = 0.1D0
-  betpmx   = 0.19D0
-  bmxlim   = 12.0D0
-  dtmpmx   = 1.0D3
-  fauxmn   = 1.0D0
-  fbeta    = 1.0D0
-  fbetap   = 1.0D0
-  fbetatry = 1.0D0
-  fdene    = 1.0D0
-  fdivcol  = 1.0D0
-  fdtmp    = 1.0D0
-  ffuspow  = 1.0D0
-  fgamcd   = 1.0D0
-  fhldiv   = 1.0D0
-  fiooic   = 0.5D0
-  fipir    = 1.0D0
-  fjohc    = 1.0D0
-  fjohc0   = 1.0D0
-  fjprot   = 1.0D0
-  fjtfc    = 1.0D0
-  fmva     = 1.0D0
-  fpeakb   = 1.0D0
-  fpinj    = 1.0D0
-  fpnetel  = 1.0D0
-  fportsz  = 1.0D0
-  fptemp   = 1.0D0
-  fq       = 1.0D0
-  fqval    = 1.0D0
-  frfpf    = 1.0D0
-  frfptf   = 1.0D0
-  frminor  = 1.0D0
-  fstrcase = 1.0D0
-  fstrcond = 1.0D0
-  ftburn   = 1.0D0
-  ftcycl   = 1.0D0
-  ftmargtf = 1.0D0
-  ftohs    = 1.0D0
-  ftpeak   = 1.0D0
-  fvdump   = 1.0D0
-  fvs      = 1.0D0
-  fwalld   = 1.0D0
-  gammax   = 2.0D0
-  mvalim   = 40.0D0
-  pnetelin = 1000.0D0
-  powfmax  = 1.0D3
-  tbrnmn   = 1.0D0
-  tcycmn   = 0.0D0
-  tohsmn   = 1.0D0
-  tpkmax   = 600.0D0
-  walalw   = 1.0D0
 
   !  Pulsed reactor
 

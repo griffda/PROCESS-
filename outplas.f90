@@ -12,11 +12,11 @@ subroutine outplas(outfile)
   !+ad_desc  This routine writes the plasma physics information
   !+ad_desc  to a file, in a tidy format.
   !+ad_prob  None
+  !+ad_call  constraint_variables
   !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  times_variables
-  !+ad_call  ineq.h90
   !+ad_call  rfp.h90
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
@@ -36,11 +36,13 @@ subroutine outplas(outfile)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  30/10/12 PJK Added times_variables
+  !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constraint_variables
   use current_drive_variables
   use physics_variables
   use process_output
@@ -48,7 +50,6 @@ subroutine outplas(outfile)
 
   implicit none
 
-  include 'ineq.h90'
   include 'rfp.h90'
 
   !  Arguments
