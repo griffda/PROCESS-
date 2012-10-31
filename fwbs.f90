@@ -17,6 +17,7 @@ module fwbs_module
   !+ad_prob  None
   !+ad_call  build_variables
   !+ad_call  constants
+  !+ad_call  cost_variables
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
@@ -27,6 +28,7 @@ module fwbs_module
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -34,6 +36,7 @@ module fwbs_module
 
   use build_variables
   use constants
+  use cost_variables
   use divertor_variables
   use fwbs_variables
   use heat_transport_variables
@@ -71,7 +74,6 @@ contains
     !+ad_desc  Note: Costing and mass calculations elsewhere assume
     !+ad_desc  stainless steel only.
     !+ad_prob  None
-    !+ad_call  cost.h90
     !+ad_call  blanket
     !+ad_call  oheadr
     !+ad_call  osubhd
@@ -88,8 +90,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'cost.h90'
 
     !  Arguments
 

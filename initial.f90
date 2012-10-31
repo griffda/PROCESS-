@@ -15,7 +15,6 @@ subroutine initial
   !+ad_prob  None
   !+ad_call  process_output
   !+ad_call  ineq.h90
-  !+ad_call  cost.h90
   !+ad_call  pulse.h90
   !+ad_call  stella.h90
   !+ad_call  rfp.h90
@@ -65,6 +64,7 @@ subroutine initial
   !+ad_hist  30/10/12 PJK Removed times variables
   !+ad_hist  30/10/12 PJK Removed buildings variables
   !+ad_hist  30/10/12 PJK Removed build variables
+  !+ad_hist  31/10/12 PJK Removed cost variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -75,7 +75,6 @@ subroutine initial
   implicit none
 
   include 'ineq.h90'
-  include 'cost.h90'
   include 'pulse.h90'
   include 'stella.h90'
   include 'rfp.h90'
@@ -153,174 +152,6 @@ subroutine initial
   lpulse = 0
   tmprse = 40.0D0
   tpeak = 0.0D0
-
-  !  Cost information
-
-  abktflnc = 20.0D0
-  adivflnc = 25.0D0
-  blkcst   = 0.0D0
-  chplant  = 0.0D0
-  c221     = 0.0D0
-  c222     = 0.0D0
-  capcost  = 0.0D0
-  cdcost   = 0.0D0
-  cdirt    = 0.0D0
-  cdrlife  = 0.0D0
-  cfactr   = 0.75D0
-  cfind(1) = 0.244D0
-  cfind(2) = 0.244D0
-  cfind(3) = 0.244D0
-  cfind(4) = 0.29D0
-  coe      = 0.0D0
-  coecap   = 0.0D0
-  coefuelt = 0.0D0
-  coeoam   = 0.0D0
-  concost  = 0.0D0
-  cplife   = 0.0D0
-  cpstcst  = 0.0D0
-  cpstflnc  = 10.0D0
-  crctcore = 0.0D0
-  decomf   = 0.1D0
-  dintrt   = 0.0D0
-  divcst   = 0.0D0
-  divlife  = 0.0D0
-  dtlife   = 0.0D0
-  fcap0    = 1.165D0
-  fcap0cp  = 1.08D0
-  fcdfuel  = 0.1D0
-  fcr0     = 0.0966D0
-  fkind    = 1.0D0
-  fwallcst = 0.0D0
-  iavail   = 0
-  ifueltyp = 0
-  ipnet    = 0
-  ireactor = 1
-  lsa      = 4
-  moneyint = 0.0D0
-  ratecdol = 0.0435D0
-  tbktrepl = 0.5D0
-  tcomrepl = 0.5D0
-  tdivrepl = 0.25D0
-  tlife    = 30.0D0
-  uubop    = 0.02D0
-  uucd     = 0.02D0
-  uudiv    = 0.04D0
-  uufuel   = 0.02D0
-  uufw     = 0.04D0
-  uumag    = 0.02D0
-  uuves    = 0.04D0
-
-  !  Unit costs
-
-  cconfix  = 80.0D0
-  cconshpf = 70.0D0
-  cconshtf = 75.0D0
-  cland    = 19.2D0
-  cowner   = 0.15D0
-  csi      = 16.0D0
-  cturbb   = 380.0D0
-  fcontng  = 0.195D0
-  ucad     = 180.0D0
-  ucaf     = 1.5D6
-  ucahts   = 31.0D0
-  ucap     = 17.0D0
-  ucblbe   = 260.0D0
-  ucblli   = 875.0D0
-  ucblli2o = 600.0D0
-  ucbllipb = 10.3D0
-  ucblss   = 90.0D0
-  ucblvd   = 200.0D0
-  ucbpmp   = 2.925D5
-  ucbus    = 0.123D0
-  uccase   = 50.0D0
-  ucco     = 350.0D0
-  uccpcl1  = 250.0D0
-  uccpclb  = 150.0D0
-  uccpmp   = 3.9D5
-  uccr     = 460.0D0
-  uccry    = 9.3D4
-  uccryo   = 32.0D0
-  uccu     = 75.0D0
-  ucdgen   = 1.7D6
-  ucdiv    = 2.8D5
-  ucdtc    = 13.0D0
-  ucduct   = 4.225D4
-  ucech    = 3.0D0
-  ucel     = 380.0D0
-  uces1    = 3.2D4
-  uces2    = 8.8D3
-  ucf1     = 2.23D7
-  ucfnc    = 35.0D0
-  ucfpr    = 4.4D7
-  ucfuel   = 3.45D0
-  ucfwa    = 6.0D4
-  ucfwps   = 1.0D7
-  ucfws    = 5.3D4
-  ucgss    = 35.0D0
-  uche3    = 1.0D6
-  uchrs    = 87.9D6
-  uchts(1) = 15.3D0
-  uchts(2) = 19.1D0
-  uciac    = 1.5D8
-  ucich    = 3.0D0
-  ucihx    = 0.0D0
-  ucint    = 35.0D0
-  uclh     = 3.3D0
-  uclv     = 16.0D0
-  ucmb     = 260.0D0
-  ucme     = 1.25D8
-  ucmisc   = 2.5D7
-  ucnbi    = 3.3D0
-  ucnbv    = 1000.0D0
-  ucoam(1) = 68.8D0
-  ucoam(2) = 68.8D0
-  ucoam(3) = 68.8D0
-  ucoam(4) = 74.4D0
-  ucof     = 3.3D0
-  ucpens   = 32.0D0
-  ucpfb    = 210.0D0
-  ucpfbk   = 1.66D4
-  ucpfbs   = 4.9D3
-  ucpfcb   = 7.5D4
-  ucpfdr1  = 150.0D0
-  ucpfic   = 1.0D4
-  ucpfps   = 3.5D4
-  ucphx    = 15.0D0
-  ucpp     = 48.0D0
-  ucrb     = 400.0D0
-  ucsc(1)  = 600.0D0
-  ucsc(2)  = 600.0D0
-  ucsc(3)  = 300.0D0
-  ucsc(4)  = 600.0D0
-  ucsc(5)  = 600.0D0
-  ucsh     = 115.0D0
-  ucshld   = 32.0D0
-  ucswyd   = 1.84D7
-  uctfbr   = 1.22D0
-  uctfbus  = 100.0D0
-  uctfdr   = 1.75D-4
-  uctfgr   = 5000.0D0
-  uctfic   = 1.0D4
-  uctfps   = 24.0D0
-  uctfsw   = 1.0D0
-  uctpmp   = 1.105D5
-  uctr     = 370.0D0
-  ucturb(1) = 230.0D6
-  ucturb(2) = 245.0D6
-  ucvalv   = 3.9D5
-  ucvdsh   = 26.0D0
-  ucviac   = 1.3D6
-  ucwindpf = 465.0D0
-  ucwindtf = 480.0D0
-  ucws     = 460.0D0
-  ucwst(1) = 0.0D0
-  ucwst(2) = 3.94D0
-  ucwst(3) = 5.91D0
-  ucwst(4) = 7.88D0
-  uchhten  = 1350.0D0
-  uchhtex  = 900.0D0
-  uchlte   = 400.0D0
-  uchth    = 700.0D0
 
   !  Reversed field pinch parameters
 

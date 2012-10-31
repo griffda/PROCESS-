@@ -116,7 +116,6 @@ object = \
  xc.o
 
 headers = \
- cost.h90      \
  fispact.h90   \
  ife.h90       \
  ineq.h90      \
@@ -181,48 +180,45 @@ default: process.exe
 # object dependencies (usually via modules or header files)
 
 aachange.o: 
-aamain.o: buildings.o costs.o current_drive.o divertor.o evaluators.o fwbs.o global_variables.o \
-  input.o machine_build.o numerics.o output.o pfcoil.o physics.o plant_power.o scan.o \
-  sctfcoil.o structure.o tfcoil.o vacuum.o cost.h90 ineq.h90
-avail.o: global_variables.o output.o cost.h90 ife.h90 \
-  pulse.h90 rfp.h90
+aamain.o: buildings.o costs.o current_drive.o divertor.o evaluators.o fwbs.o \
+  global_variables.o input.o machine_build.o numerics.o output.o pfcoil.o physics.o \
+  plant_power.o scan.o sctfcoil.o structure.o tfcoil.o vacuum.o ineq.h90
+avail.o: global_variables.o output.o ife.h90 pulse.h90 rfp.h90
 buildings.o: global_variables.o output.o rfp.h90
 caller.o: buildings.o costs.o current_drive.o divertor.o fwbs.o global_variables.o \
   machine_build.o numerics.o output.o pfcoil.o physics.o plant_power.o sctfcoil.o \
   structure.o tfcoil.o vacuum.o ife.h90 rfp.h90 stella.h90
-costs.o: global_variables.o output.o cost.h90 ife.h90 pulse.h90 rfp.h90
+costs.o: global_variables.o output.o ife.h90 pulse.h90 rfp.h90
 current_drive.o: global_variables.o output.o
 divertor.o: global_variables.o output.o
-evaluators.o: global_variables.o numerics.o cost.h90
+evaluators.o: global_variables.o numerics.o
 eqns.o: global_variables.o numerics.o ife.h90 ineq.h90 pulse.h90 rfp.h90 stella.h90
 fispact.o: global_variables.o fispact.h90 pulse.h90
-fwbs.o: global_variables.o output.o cost.h90
+fwbs.o: global_variables.o output.o
 geomty.o: global_variables.o rfp.h90
-ife.o: costs.o global_variables.o output.o cost.h90 \
-  ife.h90 pulse.h90
-initial.o: global_variables.o output.o scan.o \
-  cost.h90 ife.h90 ineq.h90 pulse.h90 rfp.h90 stella.h90
-input.o: global_variables.o numerics.o output.o scan.o cost.h90 \
-  ife.h90 ineq.h90 pulse.h90 rfp.h90 stella.h90
+ife.o: costs.o global_variables.o output.o ife.h90 pulse.h90
+initial.o: global_variables.o output.o scan.o ife.h90 ineq.h90 pulse.h90 rfp.h90 \
+  stella.h90
+input.o: global_variables.o numerics.o output.o scan.o ife.h90 ineq.h90 pulse.h90 \
+  rfp.h90 stella.h90
 machine_build.o: global_variables.o output.o rfp.h90
 maths_library.o: 
 numerics.o: maths_library.o
 outplas.o: global_variables.o output.o ineq.h90 rfp.h90
 output.o:
 pfcoil.o: global_variables.o maths_library.o output.o
-physics.o: current_drive.o global_variables.o maths_library.o output.o \
-   pulse.h90 start.h90
-plant_power.o: fwbs.o global_variables.o output.o cost.h90
+physics.o: current_drive.o global_variables.o maths_library.o output.o pulse.h90 start.h90
+plant_power.o: fwbs.o global_variables.o output.o
 pulse.o: global_variables.o maths_library.o output.o physics.o \
-  cost.h90 ineq.h90 pulse.h90 start.h90
-rfp.o: current_drive.o input.o global_variables.o machine_build.o output.o pfcoil.o physics.o \
-  pulse.h90 rfp.h90
+  ineq.h90 pulse.h90 start.h90
+rfp.o: current_drive.o input.o global_variables.o machine_build.o output.o pfcoil.o \
+  physics.o pulse.h90 rfp.h90
 safety.o: global_variables.o output.o fispact.h90
-scan.o: global_variables.o numerics.o output.o ineq.h90 cost.h90
+scan.o: global_variables.o numerics.o output.o ineq.h90
 sctfcoil.o: global_variables.o maths_library.o output.o
-stella.o: buildings.o costs.o current_drive.o divertor.o fwbs.o global_variables.o maths_library.o \
-  numerics.o output.o physics.o plant_power.o scan.o sctfcoil.o structure.o vacuum.o \
-  cost.h90 ineq.h90 pulse.h90 stella.h90
+stella.o: buildings.o costs.o current_drive.o divertor.o fwbs.o global_variables.o \
+  maths_library.o numerics.o output.o physics.o plant_power.o scan.o sctfcoil.o \
+  structure.o vacuum.o ineq.h90 pulse.h90 stella.h90
 structure.o: global_variables.o output.o
 tfcoil.o: global_variables.o machine_build.o output.o sctfcoil.o
 vacuum.o: global_variables.o output.o

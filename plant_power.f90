@@ -21,6 +21,7 @@ module power_module
   !+ad_call  build_variables
   !+ad_call  buildings_variables
   !+ad_call  constants
+  !+ad_call  cost_variables
   !+ad_call  current_drive_variables
   !+ad_call  fwbs_module
   !+ad_call  fwbs_variables
@@ -36,6 +37,7 @@ module power_module
   !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_hist  30/10/12 PJK Added buildings_variables
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -44,6 +46,7 @@ module power_module
   use build_variables
   use buildings_variables
   use constants
+  use cost_variables
   use current_drive_variables
   use fwbs_module
   use fwbs_variables
@@ -853,7 +856,6 @@ contains
     !+ad_desc  and plant power balance constituents, not already calculated in
     !+ad_desc  <A HREF="acpow.html">ACPOW</A> or <A HREF="power1.html">POWER1</A>.
     !+ad_prob  None
-    !+ad_call  cost.h90
     !+ad_call  blanket
     !+ad_call  oblnkl
     !+ad_call  oheadr
@@ -877,8 +879,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'cost.h90'
 
     !  Arguments
 

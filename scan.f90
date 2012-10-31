@@ -12,6 +12,7 @@ module scan_module
   !+ad_desc  This module contains routines to perform a parameter scan
   !+ad_desc  over a range of values of a particular scanning variable.
   !+ad_prob  None
+  !+ad_call  cost_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  global_variables
@@ -33,11 +34,13 @@ module scan_module
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  29/10/12 PJK Added pf_power_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
+  !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use cost_variables
   use current_drive_variables
   use divertor_variables
   use global_variables
@@ -110,7 +113,6 @@ contains
   !+ad_desc  values of a particular variable.
   !+ad_prob  None
   !+ad_call  ineq.h90
-  !+ad_call  cost.h90
   !+ad_call  doopt
   !+ad_call  final
   !+ad_call  oblnkl
@@ -131,7 +133,6 @@ contains
   implicit none
 
   include 'ineq.h90'
-  include 'cost.h90'
 
   !  Arguments
 

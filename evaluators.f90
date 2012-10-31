@@ -16,6 +16,7 @@ module function_evaluator
   !+ad_desc  This module contains the function evaluators required
   !+ad_desc  by the two equation solvers in the code.
   !+ad_prob  None
+  !+ad_call  cost_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  heat_transport_variables
@@ -30,11 +31,13 @@ module function_evaluator
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  29/10/12 PJK Added pf_power_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
+  !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use cost_variables
   use current_drive_variables
   use divertor_variables
   use heat_transport_variables
@@ -44,6 +47,8 @@ module function_evaluator
   use tfcoil_variables
 
   implicit none
+
+  public
 
 contains
 
@@ -275,7 +280,7 @@ contains
     !+ad_desc  <P>Each equation for <CODE>fc<CODE> gives a value of the
     !+ad_desc  order of unity for the sake of the numerics.
     !+ad_prob  None
-    !+ad_call  cost.h90
+    !+ad_call  None
     !+ad_hist  02/10/96 PJK Initial upgraded version
     !+ad_hist  08/10/12 PJK Initial F90 version
     !+ad_stat  Okay
@@ -284,8 +289,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'cost.h90'
 
     !  Arguments
 

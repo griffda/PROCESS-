@@ -14,11 +14,11 @@ subroutine avail(outfile,iprint)
   !+ad_desc  This routine calculates the component lifetimes and the overall
   !+ad_desc  plant availability.
   !+ad_prob  None
+  !+ad_call  cost_variables
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  cost.h90
   !+ad_call  ife.h90
   !+ad_call  pulse.h90
   !+ad_call  rfp.h90
@@ -30,11 +30,13 @@ subroutine avail(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_hist  18/10/12 PJK Added fwbs_variables
+  !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_stat  Okay
   !+ad_docs  F/PL/PJK/PROCESS/CODE/043
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use cost_variables
   use divertor_variables
   use fwbs_variables
   use physics_variables
@@ -43,7 +45,6 @@ subroutine avail(outfile,iprint)
   implicit none
 
   include 'ife.h90'
-  include 'cost.h90'
   include 'rfp.h90'
   include 'pulse.h90'
 

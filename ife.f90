@@ -2011,11 +2011,11 @@ subroutine ifefbs(outfile,iprint)
   !+ad_desc  masses and other parameters, for an Inertial Fusion Energy device.
   !+ad_prob  None
   !+ad_call  build_variables
+  !+ad_call  cost_variables
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  ife.h90
-  !+ad_call  cost.h90
   !+ad_call  pulse.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
@@ -2025,6 +2025,7 @@ subroutine ifefbs(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.86
   !+ad_docs  Moir et al., Fusion Technology, vol.25 (1994) p.5
@@ -2033,6 +2034,7 @@ subroutine ifefbs(outfile,iprint)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use build_variables
+  use cost_variables
   use fwbs_variables
   use physics_variables
   use process_output
@@ -2040,7 +2042,6 @@ subroutine ifefbs(outfile,iprint)
   implicit none
 
   include 'ife.h90'
-  include 'cost.h90'
   include 'pulse.h90'
 
   !  Arguments
@@ -2392,11 +2393,11 @@ subroutine ifepw2(outfile,iprint)
   !+ad_desc  routines <A HREF="ifepw1.html">IFEPW1</A> or
   !+ad_desc  <A HREF="ifeacp.html">IFEACP</A>.
   !+ad_prob  None
+  !+ad_call  cost_variables
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  cost.h90
   !+ad_call  ife.h90
   !+ad_call  oblnkl
   !+ad_call  oheadr
@@ -2409,12 +2410,14 @@ subroutine ifepw2(outfile,iprint)
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
+  !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK12, p.67
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use cost_variables
   use fwbs_variables
   use heat_transport_variables
   use physics_variables
@@ -2422,7 +2425,6 @@ subroutine ifepw2(outfile,iprint)
 
   implicit none
 
-  include 'cost.h90'
   include 'ife.h90'
 
   !  Arguments

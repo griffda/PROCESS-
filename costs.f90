@@ -45,6 +45,7 @@ module costs_module
   !+ad_call  build_variables
   !+ad_call  buildings_variables
   !+ad_call  constants
+  !+ad_call  cost_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
@@ -72,6 +73,7 @@ module costs_module
   !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_hist  30/10/12 PJK Added buildings_variables
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -80,6 +82,7 @@ module costs_module
   use build_variables
   use buildings_variables
   use constants
+  use cost_variables
   use current_drive_variables
   use divertor_variables
   use fwbs_variables
@@ -95,7 +98,6 @@ module costs_module
 
   implicit none
 
-  include 'cost.h90'
   include 'ife.h90'
   include 'pulse.h90'
   include 'rfp.h90'
@@ -856,21 +858,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Unit costs in M$ / vol**exprb :
-    !  cland    : Land cost (M$) [19.2]
-    !  csi      : allowance for site costs (M$) [16.0]
-    !  cturbb   : turbine building (M$) [380.0]
-    !  ucrb     : reactor building [400.0]
-    !  exprb    : costing exponential for building volume [1.0]
-    !  ucmb     : reactor maintenance [260.0]
-    !  ucws     : active assembly shop [460.0]
-    !  uctr     : tritium building [370.0]
-    !  ucel     : electrical equipment buildings [380.0]
-    !  ucad     : administration buildings [180.0]
-    !  ucco     : control buildings [350.0]
-    !  ucsh     : shops and warehouses [115.0]
-    !  uccr     : cryogenic building [460.0]
-
     !  Cost multiplier for Level of Safety Assurance
 
     cmlsa(1) = 0.6800D0
@@ -1103,15 +1090,8 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  ucfwa    : first wall armour cost $/m2 [6.e4]
-    !  ucfws    : first wall structure cost $/m2 [5.3e4]
-    !  ucfwps   : first wall passive stabilizer cost $/m2 [1.e7]
-    !  fkind    : cost multiplier for Nth of a kind assumption [1.0]
-
     !  IFE plant material unit costs
-    !  ucblss   : stainless steel cost $/kg [90.0]
     !  uccarb   : carbon cloth cost $/kg [50.0]
-    !  ucblli2o : lithium oxide cost $/kg [600.0]
     !  ucconc   : concrete cost $/kg [0.1]
     !  fwmatm(J,I) : mass of material I in region J of first wall
 
@@ -1121,7 +1101,6 @@ contains
     cmlsa(2) = 0.7500D0
     cmlsa(3) = 0.8750D0
     cmlsa(4) = 1.0000D0
-
 
     !+**PJK 17/12/93 Why isn't ucfwps multiplied by fwarea?
     !  N.B. much higher unit cost than other components
@@ -1178,15 +1157,6 @@ contains
     real(kind(1.0D0)), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Costs are $/kg
-    !  ucblbe   : beryllium [260.0]
-    !  ucblli2o : Li_2O     [600.0]
-    !  ucbllipb : Li-Pb     [10.3]
-    !  ucblli   : Li        [875.0]
-    !  ucblss   : stainless steel [90.0]
-    !  ucblvd   : vanadium  [200.0]
-    !  fkind    : cost multiplier for Nth of a kind assumption [1.0]
 
     !  IFE unit costs
     !  uccarb   : carbon cloth [50.0]
@@ -1290,14 +1260,8 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Material costs are scaled linearly with mass, ($/kg)
-    !  ucshld   : structural steel [32.]
-    !  ucpens   : penetration shield [32.]
-    !  fkind    : cost multiplier for Nth of a kind assumption [1.0]
-
     !  IFE unit costs
     !  uccarb   : carbon cloth [50.0]
-    !  ucblli2o : lithium oxide [50.0]
     !  ucconc   : concrete [0.1]
     !  shmatm(J,I) : mass of material I in region J of shield
 
@@ -1365,9 +1329,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  ucgss    : cost of structure ($/kg) [35.]
-    !  fkind    : cost multiplier for Nth of a kind assumption [1.0]
-
     !  Cost multiplier for Level of Safety Assurance
 
     cmlsa(1) = 0.6700D0
@@ -1415,9 +1376,6 @@ contains
     real(kind(1.0D0)), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  ucdiv    : cost of divertor blade ($/m2) [2.8e5]
-    !  fkind    : cost multiplier for Nth of a kind assumption [1.0]
 
     if (ife /= 1) then
 
@@ -1532,34 +1490,6 @@ contains
     real(kind(1.0D0)), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  TF coils (copper)
-    !  whtcp    : Mass of the TF coil inner legs (kg)
-    !  whttflgs : Mass of the TF coil outer legs (kg)
-    !  
-    !  uccpcl1  : High strength tapered copper (inner legs) [250.0]
-    !  uccpclb  : Copper plate coils (outer legs) [150.0]
-    !  
-    !  TF coils (superconductor)
-    !  aintmass : Intercoil support mass (kg)
-    !  clgsmass : Total mass of (coil,dewar and ICS) gravity support (kg)
-    !  tfleng   : Centreline length (circumference) of one tf coil (m)
-    !  tfno     : Number of tf coils
-    !  turnstf  : Number of turns per coil
-    !  whtcas   : Mass of tf coil case (kg)
-    !  whtconcu : Mass of copper in tf coil winding pack (kg)
-    !  whtconsc : Mass of superconductor in tf coil winding pack (kg)
-    !  
-    !  cconfix  : Fixed cost of superconducting cable ($/m) [80.]
-    !  cconshtf : Unit cost of steel conduit/sheath ($/m) [75.]
-    !  uccase   : External case material cost ($/kg) [50.]
-    !  uccu     : Cost for copper in superconducting cable ($/kg) [75.]
-    !  ucgss    : Gravity support structure mass cost ($/kg) [35.]
-    !  ucint    : Inter-coil structure cost ($/kg) [35.]
-    !  ucsc     : Superconductor cost ($/kg) [600., 600., 300.]
-    !  ucwindtf : Winding cost ($/m) [480.]
-
-    !  fkind    : Cost multiplier for Nth of a kind assumption [1.0]
 
     !  Cost multiplier for Level of Safety Assurance
 
@@ -1682,21 +1612,6 @@ contains
     integer :: i,npf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  whtpf    : Total mass of winding packs (kg)
-    !  whtpfs   : Total mass of cases (kg)
-    !  fncmass  : Gravity pf fence mass (kg)
-    !  sccufac  : Ratio of superconductor to copper in the cable at a
-    !             magnetic field of 1T [0.0188]
-    !  
-    !  uccu     : Cost for copper in superconducting cable ($/kg) [75.]
-    !  ucsc     : Superconductor cost ($/kg) [600., 600., 300.]
-    !  cconfix  : Fixed cost of superconducting cable ($/m) [80.]
-    !  cconshpf : Unit cost of steel conduit/sheath ($/m) [70.]
-    !  ucwindpf : Winding cost ($/m) [465.]
-    !  uccase   : Unit cost of case & closeout, $/kg of case [50.]
-    !  ucfnc    : Unit cost of outer PF fence support ($/kg) [35.] 
-    !  fkind    : Cost multiplier for Nth of a kind assumption [1.0]
 
     !  Cost multiplier for Level of Safety Assurance
 
@@ -1863,21 +1778,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  whtpf    : Total mass of winding packs (kg)
-    !  whtpfs   : Total mass of cases (kg)
-    !  fncmass  : Gravity pf fence mass (kg)
-    !  sccufac  : Ratio of superconductor to copper in the cable at a
-    !             magnetic field of 1T [0.0188]
-    !  
-    !  uccu     : Cost for copper in superconducting cable ($/kg) [75.]
-    !  ucsc     : Superconductor cost ($/kg) [600., 600., 300.]
-    !  cconfix  : Fixed cost of superconducting cable ($/m) [80.]
-    !  cconshpf : Unit cost of steel conduit/sheath ($/m) [70.]
-    !  ucwindpf : Winding cost ($/m) [465.]
-    !  uccase   : Unit cost of case & closeout, $/kg of case [50.]
-    !  ucfnc    : Unit cost of outer PF fence support ($/kg) [35.] 
-    !  fkind    : Cost multiplier for Nth of a kind assumption [1.0]
-
     !  Cost multiplier for Level of Safety Assurance
 
     cmlsa(1) = 0.6900D0
@@ -1990,9 +1890,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  uccryo   : Unit cost of cryostat ($/kg) [32.0]
-    !  fkind    : Cost multiplier for Nth of a kind assumption [1.0]
-
     !  Cost multiplier for Level of Safety Assurance
 
     cmlsa(1) = 0.6900D0
@@ -2043,14 +1940,6 @@ contains
     real(kind(1.0D0)) :: switch
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  ucech    : ECH system cost          ($/W**exprf) [3.0]
-    !  ucich    : ICH system cost          ($/W**exprf) [3.0]
-    !  uclh     : Lower hybrid system cost ($/W**exprf) [3.3]
-    !  ucnbi    : Neutral beam system cost ($/W**exprf) [3.3]
-    !  ucof     : Oscillating field cost   ($/W**exprf) [3.3]
-    !  exprf    : Scaling exponent with power [1.0]
-    !  fkind    : Cost multiplier for Nth of a kind assumption [1.0]
 
     !  IFE costs (deflated to 1990 dollars) taken from
     !  Meier and Bieri (OSIRIS heavy ion beam), Fus Tech 21 (1992) 1547
@@ -2160,15 +2049,6 @@ contains
     !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  uccpmp   : Cryopump cost ($) [3.9d5]
-    !  uctpmp   : Turbomolecular pump cost ($) [1.105d5]
-    !  ucbpmp   : Backing pump cost ($) [2.925d5] 
-    !  ucduct   : Duct cost ($/m) [4.225d4]
-    !  ucvalv   : Valve cost ($) [3.9d5]
-    !  ucvdsh   : Vacuum duct shield cost ($/kg) [26.0]
-    !  ucviac   : Vacuum instrumentation and control ($) [1.3d6]
-    !  fkind    : Cost multiplier for Nth of a kind assumption [1.0]
 
     !  Account 224.1 : High vacuum pumps
 
@@ -2299,14 +2179,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  uctfps   : Cost of power supplies ($/W**0.7) [24.]
-    !  uctfbr   : Cost of breakers ($/W**0.7)  [1.22]
-    !  uctfsw   : Cost of slow dump switches ($/A) [1.]
-    !  ucbus    : Cost of aluminium bus (itfsup = 1) ($/(A*m)) [.123]
-    !  uctfbus  : Cost of bus (itfsup = 0) ($/kg) [100]
-    !  expel    : Scaling exponent for electrical equipment [0.7]
-    !  fkind    : Cost multiplier for Nth of a kind assumption [1.0]
-
     !  Account 225.1.1 : TF coil power supplies
 
     c22511 = 1.0D-6 * uctfps * (tfckw*1.0D3 + tfcmw*1.0D6)**expel
@@ -2324,7 +2196,7 @@ contains
 
     !  Account 225.1.3 : TF coil dump resistors
 
-    c22513 = 1.0D-6 * (uctfdr*(tfno*estotf*1.0D9)+uctfgr * 0.5D0*tfno)
+    c22513 = 1.0D-6 * (uctfdr*(tfno*estotf*1.0D9) + uctfgr * 0.5D0*tfno)
     c22513 = fkind * c22513
 
     !  Account 225.1.4 : TF coil instrumentation and control
@@ -2377,15 +2249,6 @@ contains
     !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  ucpfps   : Cost of pulsed-power power supplies ($/MVA) [3.5e4]
-    !  ucpfic   : PF coil instrum. and control cost ($/channel) [1.d4]
-    !  ucpfb    : Cost of bussing ($/kA*m) [210.]
-    !  ucpfbs   : Cost of burn power supplies ($/kW**0.7) [4.9e3]
-    !  ucpfbk   : Cost of DC breakers ($/MVA) [1.66e4]
-    !  ucpfdr1  : Cost factor for dump resistors ($/MJ) [150.]
-    !  ucpfcb   : Cost of AC breakers ($/circuit) [7.5e4]
-    !  fkind    : Cost multiplier for Nth of a kind assumption [1.0]
 
     !  Account 225.2.1 : PF coil power supplies
 
@@ -2463,12 +2326,6 @@ contains
     real(kind(1.0D0)) :: shcss
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  uces1    : MGF cost factor ($/MVA**0.8) [3.2d4]
-    !  uces2    : MGF cost factor ($/MJ**0.8) [8.8d3]
-    !  expes    : Scaling exponent for energy storage [0.8]
-    !  fkind    : Cost multiplier for Nth of a kind assumption [1.0]
-
 
     !  Energy storage costs set to zero for steady-state devices
     !  c2253 = 1.0d-6 * (uces1 * fmgmva**expes + uces2 * fmgmj**expes)
@@ -2611,16 +2468,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  uchts    : Cost of pumps and piping per loop ($/W**exphts)
-    !             [15.3,19.1] (dependent on blanket coolant type)
-    !  exphts   : Scaling exponent for hts equip. with heat removed [0.7]
-    !  ucphx    : Primary heat transp. cost ($/W**exphts) [15.0]
-    !  ucahts   : Aux heat transport piping, pumps ($/W**exphts) [31.0]
-    !  ucihx    : Cost of intermediate exchangers ($/W**exphts) [0.0]
-    !  uccry    : Cost of cryo plant ($/W**0.67) [9.3d4]
-    !  expcry   : Scaling exponent for cryogenic cost [0.67]
-    !  fkind    : Cost multiplier for Nth of a kind assumption [1.0]
-
     !  Cost multiplier for Level of Safety Assurance
 
     cmlsa(1) = 0.4000D0
@@ -2710,12 +2557,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  ucf1     : Cost of fuelling system ($) [2.23d7]
-    !  ucfpr    : Cost of 60g/day tritium processing unit ($) [4.4d7]
-    !  ucdtc    : Detritiation, air cleanup cost ($ per 1E4 m3/hr) [13.]
-    !  ucnbv    : Nuclear building ventilation ($/(m3)**0.8) [1000.]
-    !  fkind    : Cost multiplier for Nth of a kind assumption [1.0]
-
     !  Account 227.1 : Fuelling system
 
     c2271 = 1.0D-6 * ucf1
@@ -2789,10 +2630,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  uciac    : Instrumentation and control, and diagnostics ($/W**0.3)
-    !             [1.5d8]
-    !  fkind    : Cost multiplier for Nth of a kind assumption [1.0]
-
     c228 = 1.0D-6 * uciac
     c228 = fkind * c228
 
@@ -2825,9 +2662,6 @@ contains
     !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  ucme     : Unit cost of maintenance equipment ($/W**0.3) [1.25d8]
-    !  fkind    : Cost multiplier for Nth of a kind assumption [1.0]
 
     c229 = 1.0D-6 * ucme 
     c229 = fkind * c229
@@ -2863,9 +2697,6 @@ contains
     real(kind(1.0D0)), parameter :: exptpe = 0.83D0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  ucturb   : Cost of turbine plant equipment ($) [230.0D6,245.0D6]
-    !  exptpe   : Scaling exponent for turbine plant equipment [0.83]
 
     if (ireactor == 1) then
        c23 = 1.0D-6 * ucturb(costr) * (pgrossmw/1200.0D0)**exptpe
@@ -2903,14 +2734,6 @@ contains
     real(kind(1.0D0)), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  ucswyd   : Switchyard equipment costs ($) [1.84d7]
-    !  ucpp     : Primary power transformers ($/kVA**0.9) [48.]
-    !  ucap     : Auxiliary transformer costs ($/kVA) [17.]
-    !  uclv     : Low voltage equipment costs ($/kVA) [16.]
-    !  ucdgen   : Cost per 8MW diesel generator ($) [1.7d6]
-    !  ucaf     : Auxiliary facility power equipment ($) [1.5d6]
-    !  expepe   : Scaling exponent for electric plant equipment [0.9]
 
     !  Cost multiplier for Level of Safety Assurance
 
@@ -2978,8 +2801,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  ucmisc   : miscellaneous plant allowance ($) [2.5d7]
-
     !  Cost multiplier for Level of Safety Assurance
 
     cmlsa(1) = 0.7700D0
@@ -3024,8 +2845,6 @@ contains
     real(kind(1.0D0)), dimension(4) :: cmlsa
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  uchrs    : cost of heat rejection system ($) [87.9D6]
 
     !  Cost multiplier for Level of Safety Assurance
 
@@ -3075,11 +2894,6 @@ contains
     real(kind(1.0D0)) :: uchyd
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  uchlte  : unit cost for low temperature electrolysis ($/kW) [400.0]
-    !  uchhten : unit cost for high temp electrolysis - endo ($/kW) [1350.0]
-    !  uchhtex : unit cost for high temp electrolysis - exo ($/kW) [900.0]
-    !  uchth   : unit cost for thermo-chemical method ($/kW) [700.0]
 
     select case (ihplant)
 
@@ -3135,11 +2949,6 @@ contains
     !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  cfind    : indirect cost factor applied to direct costs
-    !             [0.244,0.244,0.244,0.29]
-    !  cowner   : owner cost factor applied to (direct+indirect) costs [0.15]
-    !  fcontng  : project contingency factor applied to total costs [0.195]
 
     !  Indirect costs
 

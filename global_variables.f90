@@ -181,9 +181,9 @@ module physics_variables
   real(kind(1.0D0)) :: csawth = 1.0D0
   !+ad_vars  cvol /1.0/ : multiplying factor times plasma volume (normally=1)
   real(kind(1.0D0)) :: cvol = 1.0D0
-  !+ad_vars  dene /1.5D20/ : electron density (m**-3) (iteration variable 6)
+  !+ad_vars  dene /1.5D20/ : electron density (/m3) (iteration variable 6)
   real(kind(1.0D0)) :: dene = 1.5D20
-  !+ad_vars  deni : fuel ion density (m**-3)
+  !+ad_vars  deni : fuel ion density (/m3)
   real(kind(1.0D0)) :: deni = 0.0D0
   !+ad_vars  dign /1.0/ : ignition margin
   real(kind(1.0D0)) :: dign = 1.0D0
@@ -191,29 +191,29 @@ module physics_variables
   real(kind(1.0D0)) :: dlamee = 0.0D0
   !+ad_vars  dlamie : ion-electron coulomb logarithm
   real(kind(1.0D0)) :: dlamie = 0.0D0
-  !+ad_vars  dlimit(7) : density limit (m**-3) as calculated using various models
+  !+ad_vars  dlimit(7) : density limit (/m3) as calculated using various models
   real(kind(1.0D0)), dimension(7) :: dlimit = 0.0D0
-  !+ad_vars  dnalp : fast alpha density (m**-3)
+  !+ad_vars  dnalp : fast alpha density (/m3)
   real(kind(1.0D0)) :: dnalp = 0.0D0
-  !+ad_vars  dnbeam : hot beam ion density, variable (m**-3)
+  !+ad_vars  dnbeam : hot beam ion density, variable (/m3)
   real(kind(1.0D0)) :: dnbeam = 0.0D0
-  !+ad_vars  dnbeam2 : hot beam ion density from calculation (m**-3)
+  !+ad_vars  dnbeam2 : hot beam ion density from calculation (/m3)
   real(kind(1.0D0)) :: dnbeam2 = 0.0D0
   !+ad_vars  dnbeta /3.5/ : coefficient for Troyon beta scaling
   real(kind(1.0D0)) :: dnbeta = 3.5D0
-  !+ad_vars  dnelimt : density limit (m**-3)
+  !+ad_vars  dnelimt : density limit (/m3)
   real(kind(1.0D0)) :: dnelimt = 0.0D0
-  !+ad_vars  dnitot : total ion density (m**-3)
+  !+ad_vars  dnitot : total ion density (/m3)
   real(kind(1.0D0)) :: dnitot = 0.0D0
-  !+ad_vars  dnla : line averaged electron density (m**-3)
+  !+ad_vars  dnla : line averaged electron density (/m3)
   real(kind(1.0D0)) :: dnla = 0.0D0
-  !+ad_vars  dnprot : proton ash density (m**-3) (idhe3=1)
+  !+ad_vars  dnprot : proton ash density (/m3) (idhe3=1)
   real(kind(1.0D0)) :: dnprot = 0.0D0
-  !+ad_vars  dntau : plasma average "n-tau" (m**-3-sec)
+  !+ad_vars  dntau : plasma average "n-tau" (seconds/m3)
   real(kind(1.0D0)) :: dntau = 0.0D0
-  !+ad_vars  dnz : high Z ion density (m**-3)
+  !+ad_vars  dnz : high Z ion density (/m3)
   real(kind(1.0D0)) :: dnz = 0.0D0
-  !+ad_vars  ealpha : alpha birth energy in D-T reaction (= 3520 keV)
+  !+ad_vars  ealpha /3520.0/ FIX : alpha birth energy in D-T reaction (keV)
   real(kind(1.0D0)), parameter :: ealpha = 3520.0D0
   !+ad_vars  epbetmax /0.6/ : max (eps*beta_poloidal) for beta limit scaling 1
   real(kind(1.0D0)) :: epbetmax = 0.6D0
@@ -265,19 +265,19 @@ module physics_variables
   real(kind(1.0D0)) :: kappa = 2.218D0
   !+ad_vars  kappa95 : 95% plasma elongation
   real(kind(1.0D0)) :: kappa95 = 0.0D0
-  !+ad_vars  kappaa : plasma elongation calculated as xarea/(pi.a**2)
+  !+ad_vars  kappaa : plasma elongation calculated as xarea/(pi.a2)
   real(kind(1.0D0)) :: kappaa = 0.0D0
-  !+ad_vars  palp : alpha power per volume (MW/m**3)
+  !+ad_vars  palp : alpha power per volume (MW/m3)
   real(kind(1.0D0)) :: palp = 0.0D0
-  !+ad_vars  palpe : alpha power per volume to electrons (MW/m**3)
+  !+ad_vars  palpe : alpha power per volume to electrons (MW/m3)
   real(kind(1.0D0)) :: palpe = 0.0D0
-  !+ad_vars  palpi : alpha power per volume to ions (MW/m**3)
+  !+ad_vars  palpi : alpha power per volume to ions (MW/m3)
   real(kind(1.0D0)) :: palpi = 0.0D0
   !+ad_vars  palpnb : alpha power from hot neutral beam ions (MW)
   real(kind(1.0D0)) :: palpnb = 0.0D0
-  !+ad_vars  pbrem : bremstrahhlung power per volume (MW/m**3)
+  !+ad_vars  pbrem : bremstrahhlung power per volume (MW/m3)
   real(kind(1.0D0)) :: pbrem = 0.0D0
-  !+ad_vars  pcharge : non-alpha charged particle fusion power (MW/m**3)
+  !+ad_vars  pcharge : non-alpha charged particle fusion power (MW/m3)
   real(kind(1.0D0)) :: pcharge = 0.0D0
   !+ad_vars  pcoef : profile factor ( = average T / n-weighted T )
   real(kind(1.0D0)) :: pcoef = 0.0D0
@@ -287,23 +287,23 @@ module physics_variables
   real(kind(1.0D0)) :: pfuscmw = 0.0D0
   !+ad_vars  phiint : internal plasma V-s
   real(kind(1.0D0)) :: phiint = 0.0D0
-  !+ad_vars  pie : ion/electron equilibration power (MW/m**3)
+  !+ad_vars  pie : ion/electron equilibration power (MW/m3)
   real(kind(1.0D0)) :: pie = 0.0D0
   !+ad_vars  plascur : plasma current (A)
   real(kind(1.0D0)) :: plascur = 0.0D0
-  !+ad_vars  plrad : edge line radiation power per volume (MW/m**3)
+  !+ad_vars  plrad : edge line radiation power per volume (MW/m3)
   real(kind(1.0D0)) :: plrad = 0.0D0
-  !+ad_vars  pneut : neutron fusion power per volume (MW/m**3)
+  !+ad_vars  pneut : neutron fusion power per volume (MW/m3)
   real(kind(1.0D0)) :: pneut = 0.0D0
-  !+ad_vars  pohmpv : ohmic heating per volume (MW/m**3)
+  !+ad_vars  pohmpv : ohmic heating per volume (MW/m3)
   real(kind(1.0D0)) :: pohmpv = 0.0D0
   !+ad_vars  powerht : heating power (MW) used in confinement time calculation
   real(kind(1.0D0)) :: powerht = 0.0D0
   !+ad_vars  powfmw : fusion power, max (MW)
   real(kind(1.0D0)) :: powfmw = 0.0D0
-  !+ad_vars  prad : total core radiation power (MW/m**3)
+  !+ad_vars  prad : total core radiation power (MW/m3)
   real(kind(1.0D0)) :: prad = 0.0D0
-  !+ad_vars  psync : synchrotron radiation power (MW/m**3)
+  !+ad_vars  psync : synchrotron radiation power (MW/m3)
   real(kind(1.0D0)) :: psync = 0.0D0
   !+ad_vars  pthrmw(5) : L-H power threshold (MW): <OL>
   !+ad_varc              <LI> ITER 1996 nominal
@@ -312,9 +312,9 @@ module physics_variables
   !+ad_varc              <LI> ITER 1997 excluding elongation
   !+ad_varc              <LI> ITER 1997 including elongation</OL>
   real(kind(1.0D0)), dimension(5) :: pthrmw = 0.0D0
-  !+ad_vars  ptre : electron transport power (MW/m**3)
+  !+ad_vars  ptre : electron transport power (MW/m3)
   real(kind(1.0D0)) :: ptre = 0.0D0
-  !+ad_vars  ptri : ion transport power (MW/m**3)
+  !+ad_vars  ptri : ion transport power (MW/m3)
   real(kind(1.0D0)) :: ptri = 0.0D0
   !+ad_vars  q /3.0/ : safety factor at plasma edge (q-"psi") (iteration variable 18):
   !+ad_varc            icurr = 2, q = mean safety factor qbar for divertors;
@@ -387,7 +387,7 @@ module physics_variables
   real(kind(1.0D0)) :: triang = 0.6D0
   !+ad_vars  triang95 : plasma triangularity at 95% surface
   real(kind(1.0D0)) :: triang95 = 0.0D0
-  !+ad_vars  vol : plasma volume (m**3)
+  !+ad_vars  vol : plasma volume (m3)
   real(kind(1.0D0)) :: vol = 0.0D0
   !+ad_vars  vsbrn : V-s needed during burn (Wb)
   real(kind(1.0D0)) :: vsbrn = 0.0D0
@@ -399,11 +399,11 @@ module physics_variables
   real(kind(1.0D0)) :: vsres = 0.0D0
   !+ad_vars  vsstt : total V-s needed (Wb)
   real(kind(1.0D0)) :: vsstt = 0.0D0
-  !+ad_vars  wallmw : average neutron wall load, max (MW/m**2)
+  !+ad_vars  wallmw : average neutron wall load, max (MW/m2)
   real(kind(1.0D0)) :: wallmw = 0.0D0
   !+ad_vars  wtgpd : mass of fuel used per day (g)
   real(kind(1.0D0)) :: wtgpd = 0.0D0
-  !+ad_vars  xarea : plasma cross-sectional area (m**2)
+  !+ad_vars  xarea : plasma cross-sectional area (m2)
   real(kind(1.0D0)) :: xarea = 0.0D0
   !+ad_vars  zeff : plasma effective charge
   real(kind(1.0D0)) :: zeff = 0.0D0
@@ -651,23 +651,23 @@ module divertor_variables
   real(kind(1.0D0)) :: c6div = 0.0D0
   !+ad_vars  delld /1.0/ : coeff for power distribution along main plasma
   real(kind(1.0D0)) :: delld = 1.0D0
-  !+ad_vars  dendiv : plasma density at divertor (10**20 m**-3)
+  !+ad_vars  dendiv : plasma density at divertor (10**20 /m3)
   real(kind(1.0D0)) :: dendiv = 0.0D0
-  !+ad_vars  densin : density at plate (on separatrix) (10**20 m**-3)
+  !+ad_vars  densin : density at plate (on separatrix) (10**20 /m3)
   real(kind(1.0D0)) :: densin = 0.0D0
   !+ad_vars  divclfr /0.3/ : divertor coolant fraction
   real(kind(1.0D0)) :: divclfr = 0.3D0
-  !+ad_vars  divdens /1.0D4/ : divertor structure density (kg/m**3)
+  !+ad_vars  divdens /1.0D4/ : divertor structure density (kg/m3)
   real(kind(1.0D0)) :: divdens = 1.0D4
   !+ad_vars  divdum /0/ : switch for divertor Zeff model: 0=calc, 1=input
   integer :: divdum = 0
-  !+ad_vars  divfix : divertor structure vertical thickness (= 0.2 m)
+  !+ad_vars  divfix /0.2/ FIX : divertor structure vertical thickness (m)
   real(kind(1.0D0)) :: divfix = 0.2D0
   !+ad_vars  divmas : divertor plate mass (kg)
   real(kind(1.0D0)) :: divmas = 0.0D0
   !+ad_vars  divplt /0.035/ : divertor plate thickness (m) (from Spears, Sept 1990)
   real(kind(1.0D0)) :: divplt = 0.035D0
-  !+ad_vars  divsur : divertor surface area (m**2)
+  !+ad_vars  divsur : divertor surface area (m2)
   real(kind(1.0D0)) :: divsur = 0.0D0
   !+ad_vars  fdfs /10.0/ : radial gradient ratio
   real(kind(1.0D0)) :: fdfs = 10.0D0
@@ -681,9 +681,9 @@ module divertor_variables
   real(kind(1.0D0)) :: fififi = 4.0D-3
   !+ad_vars  frrp /0.4/ : fraction of radiated power to plate
   real(kind(1.0D0)) :: frrp = 0.4D0
-  !+ad_vars  hldiv : outer divertor heat load (MW/m**2)
+  !+ad_vars  hldiv : outer divertor heat load (MW/m2)
   real(kind(1.0D0)) :: hldiv = 0.0D0
-  !+ad_vars  hldivlim /5.0/ : heat load limit (MW/m**2)
+  !+ad_vars  hldivlim /5.0/ : heat load limit (MW/m2)
   real(kind(1.0D0)) :: hldivlim = 5.0D0
   !+ad_vars  ksic /0.8/ : power fraction for outer double-null scrape-off plasma
   real(kind(1.0D0)) :: ksic = 0.8D0
@@ -697,7 +697,7 @@ module divertor_variables
   real(kind(1.0D0)) :: omlarg = 0.0D0
   !+ad_vars  plsepo /1.5/ : poloidal length, x-point to outer strike point (m)
   real(kind(1.0D0)) :: plsepo = 1.5D0
-  !+ad_vars  ppdivr : peak heat load at plate (with radiation) (MW/m**2)
+  !+ad_vars  ppdivr : peak heat load at plate (with radiation) (MW/m2)
   real(kind(1.0D0)) :: ppdivr = 0.0D0
   !+ad_vars  prn1 /0.285/ : n-scrape-off / n-average plasma
   real(kind(1.0D0)) :: prn1 = 0.285D0
@@ -719,9 +719,9 @@ module divertor_variables
   real(kind(1.0D0)) :: tdiv = 0.0D0
   !+ad_vars  tsep : temperature at the separatrix (eV)
   real(kind(1.0D0)) :: tsep = 0.0D0
-  !+ad_vars  xparain /2.1D3/ : parallel heat transport coefficient (m**2/s)
+  !+ad_vars  xparain /2.1D3/ : parallel heat transport coefficient (m2/s)
   real(kind(1.0D0)) :: xparain = 2.1D3
-  !+ad_vars  xpertin /2.0/ : perpendicular heat transport coefficient (m**2/s)
+  !+ad_vars  xpertin /2.0/ : perpendicular heat transport coefficient (m2/s)
   real(kind(1.0D0)) :: xpertin = 2.0D0
   !+ad_vars  zeffdiv /1.0/ : Zeff in the divertor region (if divdum /= 0)
   real(kind(1.0D0)) :: zeffdiv = 1.0D0
@@ -762,7 +762,7 @@ module fwbs_variables
   real(kind(1.0D0)) :: coolmass = 0.0D0
   !+ad_vars  cryomass : cryostat mass (kg)
   real(kind(1.0D0)) :: cryomass = 0.0D0
-  !+ad_vars  denstl /7800.0/ : density of steel (kg/m**3)
+  !+ad_vars  denstl /7800.0/ : density of steel (kg/m3)
   real(kind(1.0D0)) :: denstl = 7800.0D0
   !+ad_vars  dewmkg : Dewar mass (kg)
   real(kind(1.0D0)) :: dewmkg = 0.0D0
@@ -809,21 +809,21 @@ module fwbs_variables
   real(kind(1.0D0)) :: pnucshld = 0.0D0
   !+ad_vars  ptfnuc : nuclear heating in the TF coil (MW)
   real(kind(1.0D0)) :: ptfnuc = 0.0D0
-  !+ad_vars  vdewex : external dewar volume (m**3)
+  !+ad_vars  vdewex : external dewar volume (m3)
   real(kind(1.0D0)) :: vdewex = 0.0D0
-  !+ad_vars  vdewin : internal dewar volume (m**3)
+  !+ad_vars  vdewin : internal dewar volume (m3)
   real(kind(1.0D0)) :: vdewin = 0.0D0
   !+ad_vars  vfblkt /0.25/ : coolant void fraction in blanket
   real(kind(1.0D0)) :: vfblkt = 0.25D0
   !+ad_vars  vfshld /0.25/ : coolant void fraction in shield
   real(kind(1.0D0)) :: vfshld = 0.25D0
-  !+ad_vars  volblkt : volume of blanket (m**3)
+  !+ad_vars  volblkt : volume of blanket (m3)
   real(kind(1.0D0)) :: volblkt = 0.0D0
-  !+ad_vars  volblkti : volume of inboard blanket (m**3)
+  !+ad_vars  volblkti : volume of inboard blanket (m3)
   real(kind(1.0D0)) :: volblkti = 0.0D0
-  !+ad_vars  volblkto : volume of outboard blanket (m**3)
+  !+ad_vars  volblkto : volume of outboard blanket (m3)
   real(kind(1.0D0)) :: volblkto = 0.0D0
-  !+ad_vars  volshld : volume of shield (m**3)
+  !+ad_vars  volshld : volume of shield (m3)
   real(kind(1.0D0)) :: volshld = 0.0D0
   !+ad_vars  whtblbe : mass of blanket - Be part (kg)
   real(kind(1.0D0)) :: whtblbe = 0.0D0
@@ -956,9 +956,9 @@ module pfcoil_variables
   integer, parameter :: ngc = ngrpmx*nclsmx
   integer, parameter :: ngc2 = ngc+2
 
-  !+ad_vars  ac1oh /0.0/ : OH coil cable conduit area (m**2)
+  !+ad_vars  ac1oh /0.0/ : OH coil cable conduit area (m2)
   real(kind(1.0D0)) :: ac1oh = 0.0D0
-  !+ad_vars  acsoh /3.0D-4/ : conduit conductor cross section (m**2)
+  !+ad_vars  acsoh /3.0D-4/ : conduit conductor cross section (m2)
   real(kind(1.0D0)) :: acsoh = 3.0D-4
   !+ad_vars  alfapf /5.0D-10/ : smoothing parameter used in BOP PF coil current calculation
   real(kind(1.0D0)) :: alfapf = 5.0D-10
@@ -968,11 +968,11 @@ module pfcoil_variables
   real(kind(1.0D0)) :: bmaxoh0 = 0.0D0
   !+ad_vars  bpf(ngc2) : peak field at coil i (T)
   real(kind(1.0D0)), dimension(ngc2) :: bpf = 0.0D0
-  !+ad_vars  cohbof : OH coil overall current density at BOF (A/m**2)
+  !+ad_vars  cohbof : OH coil overall current density at BOF (A/m2)
   real(kind(1.0D0)) :: cohbof = 0.0D0
-  !+ad_vars  cohbop : OH coil overall current density at BOP (A/m**2)
+  !+ad_vars  cohbop : OH coil overall current density at BOP (A/m2)
   real(kind(1.0D0)) :: cohbop = 0.0D0
-  !+ad_vars  coheof /1.85D7/ : OH coil overall current density at EOF (A/m**2)
+  !+ad_vars  coheof /1.85D7/ : OH coil overall current density at EOF (A/m2)
   !+ad_varc                    (iteration variable 37)
   real(kind(1.0D0)) :: coheof = 1.85D7
   !+ad_vars  cpt(ngc2,6) : current per turn in coil i at time j (A)
@@ -1031,13 +1031,13 @@ module pfcoil_variables
   real(kind(1.0D0)), dimension(ngc2) :: rb = 0.0D0
   !+ad_vars  ric(ngc2) : peak current in coil i (MA-turns)
   real(kind(1.0D0)), dimension(ngc2) :: ric = 0.0D0
-  !+ad_vars  rjconpf(ngc2) /3.0D7/ : average current density of PF coil i (A/m**2)
+  !+ad_vars  rjconpf(ngc2) /3.0D7/ : average current density of PF coil i (A/m2)
   real(kind(1.0D0)), dimension(ngc2) :: rjconpf = 3.0D7
-  !+ad_vars  rjohc : allowable OH coil current density at EOF (A/m**2)
+  !+ad_vars  rjohc : allowable OH coil current density at EOF (A/m2)
   real(kind(1.0D0)) :: rjohc = 0.0D0
-  !+ad_vars  rjohc0 : allowable OH coil current density at BOP (A/m**2)
+  !+ad_vars  rjohc0 : allowable OH coil current density at BOP (A/m2)
   real(kind(1.0D0)) :: rjohc0 = 0.0D0
-  !+ad_vars  rjpfalw(ngc2) : allowable current density of PF coil i (A/m**2)
+  !+ad_vars  rjpfalw(ngc2) : allowable current density of PF coil i (A/m2)
   real(kind(1.0D0)), dimension(ngc2) :: rjpfalw = 0.0D0
   !+ad_vars  rohc : radius to the centre of the OH coil (m)
   real(kind(1.0D0)) :: rohc = 0.0D0
@@ -1132,25 +1132,25 @@ module tfcoil_variables
 
   public
 
-  !+ad_vars  acasetf : total external case area (inboard) (m**2)
+  !+ad_vars  acasetf : total external case area (inboard) (m2)
   real(kind(1.0D0)) :: acasetf = 0.0D0
-  !+ad_vars  acndttf : area of the cable conduit (m**2)
+  !+ad_vars  acndttf : area of the cable conduit (m2)
   real(kind(1.0D0)) :: acndttf = 0.0D0
-  !+ad_vars  acond : conductor area (winding pack) (m**2)
+  !+ad_vars  acond : conductor area (winding pack) (m2)
   real(kind(1.0D0)) :: acond = 0.0D0
-  !+ad_vars  acstf : internal area of the cable space (m**2)
+  !+ad_vars  acstf : internal area of the cable space (m2)
   real(kind(1.0D0)) :: acstf = 0.0D0
-  !+ad_vars  aiwp : winding pack insulation area (m**2)
+  !+ad_vars  aiwp : winding pack insulation area (m2)
   real(kind(1.0D0)) :: aiwp = 0.0D0
   !+ad_vars  alstrtf : allowable stress in TF coil (Pa)
   real(kind(1.0D0)) :: alstrtf = 0.0D0
-  !+ad_vars  arealeg : outboard TF leg area (m**2)
+  !+ad_vars  arealeg : outboard TF leg area (m2)
   real(kind(1.0D0)) :: arealeg = 0.0D0
   !+ad_vars  aspcstf /1.0/ : TF conductor cable aspect ratio (radial/toroidal)
   real(kind(1.0D0)) :: aspcstf = 1.0D0
-  !+ad_vars  aswp : winding pack structure area (m**2)
+  !+ad_vars  aswp : winding pack structure area (m2)
   real(kind(1.0D0)) :: aswp = 0.0D0
-  !+ad_vars  avwp : winding pack void (He coolant) area (m**2)
+  !+ad_vars  avwp : winding pack void (He coolant) area (m2)
   real(kind(1.0D0)) :: avwp = 0.0D0
   !+ad_vars  bcritsc /24.0/ : critical field for superconductor (isumattf=4 or 5)
   real(kind(1.0D0)) :: bcritsc = 24.0D0
@@ -1169,12 +1169,12 @@ module tfcoil_variables
   real(kind(1.0D0)) :: casthi = 0.05D0
   !+ad_vars  casths /0.07/ : TF coil sidewall case thickness (m)
   real(kind(1.0D0)) :: casths = 0.07D0
-  !+ad_vars  cdtfleg /1.0D6/ : TF leg overall current density (A/m**2)
+  !+ad_vars  cdtfleg /1.0D6/ : TF leg overall current density (A/m2)
   !+ad_varc                    (iteration variable 24)
   real(kind(1.0D0)) :: cdtfleg = 1.0D6
   !+ad_vars  cforce : centering force on inner leg (per coil) (N/m)
   real(kind(1.0D0)) :: cforce = 0.0D0
-  !+ad_vars  cph2o : specific heat of water (= 4180 J/kg/K)
+  !+ad_vars  cph2o /4180.0/ FIX : specific heat of water (J/kg/K)
   real(kind(1.0D0)) :: cph2o = 4180.0D0
   !+ad_vars  cpttf /3.79D4/ : current per turn (A) (single turn legs)
   real(kind(1.0D0)) :: cpttf = 3.79D4
@@ -1182,15 +1182,15 @@ module tfcoil_variables
   real(kind(1.0D0)) :: csutf = 1.4D9
   !+ad_vars  csytf /8.25D8/ : yield strength of case (Pa)
   real(kind(1.0D0)) :: csytf = 8.25D8
-  !+ad_vars  dcase /8000.0/ : density of coil case (kg/m**3)
+  !+ad_vars  dcase /8000.0/ : density of coil case (kg/m3)
   real(kind(1.0D0)) :: dcase = 8000.0D0
-  !+ad_vars  dcond(5) /9000.0/ : density of superconductor (kg/m**3)
+  !+ad_vars  dcond(5) /9000.0/ : density of superconductor (kg/m3)
   real(kind(1.0D0)), dimension(5) :: dcond = 9000.0D0
-  !+ad_vars  dcopper /8900.0/ : density of copper (kg/m**3)
+  !+ad_vars  dcopper /8900.0/ : density of copper (kg/m3)
   real(kind(1.0D0)) :: dcopper = 8900.0D0
   !+ad_vars  deflect : TF coil deflection at full field (m)
   real(kind(1.0D0)) :: deflect = 0.0D0
-  !+ad_vars  denh2o : density of water (= 985 kg/m**3)
+  !+ad_vars  denh2o /985.0/ FIX : density of water (kg/m3)
   real(kind(1.0D0)) :: denh2o = 985.0D0
   !+ad_vars  drtop /0.0/ : centrepost taper maximum radius adjustment (m)
   real(kind(1.0D0)) :: drtop = 0.0D0
@@ -1233,38 +1233,38 @@ module tfcoil_variables
   !+ad_varc               = 0 conventional copper;
   !+ad_varc               = 1 superconductor
   integer :: itfsup = 1
-  !+ad_vars  jbus /1.25D6/ : bussing current density (A/m**2)
+  !+ad_vars  jbus /1.25D6/ : bussing current density (A/m2)
   real(kind(1.0D0)) :: jbus = 1.25D6
   !+ad_vars  jcrit_model /0/ : switch for binary Nb3Sn critical J model (isumattf=1):
   !+ad_varc                    = 0 use original model;
   !+ad_varc                    = 1 use ITER critical surface model
   integer :: jcrit_model = 0
-  !+ad_vars  jcritsc /2.225D10/ : critical current density (A/m**2) for
+  !+ad_vars  jcritsc /2.225D10/ : critical current density (A/m2) for
   !+ad_varc                       superconductor (isumattf=4 or 5)
   real(kind(1.0D0)) :: jcritsc = 2.225D10
-  !+ad_vars  jeff(5) : work array used in stress calculation (A/m**2)
+  !+ad_vars  jeff(5) : work array used in stress calculation (A/m2)
   real(kind(1.0D0)), dimension(5) :: jeff = 0.0D0
-  !+ad_vars  jwdgcrt : critical current density for winding pack (A/m**2)
+  !+ad_vars  jwdgcrt : critical current density for winding pack (A/m2)
   real(kind(1.0D0)) :: jwdgcrt = 0.0D0
   !+ad_vars  jwdgpro : allowable TF coil winding pack current density,
-  !+ad_varc            for dump temperature rise protection (A/m**2)
+  !+ad_varc            for dump temperature rise protection (A/m2)
   real(kind(1.0D0)) :: jwdgpro = 0.0D0
-  !+ad_vars  jwptf : winding pack current density (A/m**2)
+  !+ad_vars  jwptf : winding pack current density (A/m2)
   real(kind(1.0D0)) :: jwptf = 0.0D0
-  !+ad_vars  kcp : thermal conductivity of centrepost (= 330 W/m/K)
+  !+ad_vars  kcp /330.0/ FIX : thermal conductivity of centrepost (W/m/K)
   real(kind(1.0D0)) :: kcp = 330.0D0
-  !+ad_vars  kh2o : thermal conductivity of water (= 0.651 W/m/K)
+  !+ad_vars  kh2o /0.651/ FIX : thermal conductivity of water (W/m/K)
   real(kind(1.0D0)) :: kh2o = 0.651D0
   !+ad_vars  magnt /2/ : switch for TF coil stress model:
   !+ad_varc              = 1 for FER type configuration with bucking cylinder;
   !+ad_varc              = 2 for NET type wedging; set casfi = 0.0;
   !+ad_varc              = 3 for LLNL type buck on OH coil
   integer :: magnt = 2
-  !+ad_vars  muh2o : water dynamic viscosity (= 4.71D-4 kg/m/s)
+  !+ad_vars  muh2o /4.71D-4/ FIX : water dynamic viscosity (kg/m/s)
   real(kind(1.0D0)) :: muh2o = 4.71D-4
   !+ad_vars  ncool : number of centrepost coolant tubes
   real(kind(1.0D0)) :: ncool = 0.0D0
-  !+ad_vars  oacdcp /1.4D7/ : overall current density in TF coil inner legs (A/m**2)
+  !+ad_vars  oacdcp /1.4D7/ : overall current density in TF coil inner legs (A/m2)
   !+ad_varc                   (iteration variable 12)
   real(kind(1.0D0)) :: oacdcp = 1.4D7
   !+ad_vars  poisson /0.3/ : Poisson's ratio for TF stress calculation
@@ -1293,7 +1293,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: ripple = 0.0D0
   !+ad_vars  ritfc : total current in TF coil (A)
   real(kind(1.0D0)) :: ritfc = 0.0D0
-  !+ad_vars  rjtfsual : allowable overall coil current density (A/m**2)
+  !+ad_vars  rjtfsual : allowable overall coil current density (A/m2)
   real(kind(1.0D0)) :: rjtfsual = 0.0D0
   !+ad_vars  rnltf : number of TF turns/pancake (radial direction)
   real(kind(1.0D0)) :: rnltf = 0.0D0
@@ -1334,7 +1334,7 @@ module tfcoil_variables
   !+ad_vars  tdmptf /10.0/ : dump time for TF coil (s)
   !+ad_varc                  (iteration variable 56)
   real(kind(1.0D0)) :: tdmptf = 10.0D0
-  !+ad_vars  tfareain : area of inboard midplane TF legs (m**2)
+  !+ad_vars  tfareain : area of inboard midplane TF legs (m2)
   real(kind(1.0D0)) :: tfareain = 0.0D0
   !+ad_vars  tfboreh : TF coil horizontal bore (m)
   real(kind(1.0D0)) :: tfboreh = 0.0D0
@@ -1401,9 +1401,9 @@ module tfcoil_variables
   real(kind(1.0D0)) :: vforce = 0.0D0
   !+ad_vars  vftf /0.4/ : coolant fraction of TF coil leg
   real(kind(1.0D0)) :: vftf = 0.4D0
-  !+ad_vars  volcp : total volume of TF coil inner legs (m**3)
+  !+ad_vars  volcp : total volume of TF coil inner legs (m3)
   real(kind(1.0D0)) :: volcp = 0.0D0
-  !+ad_vars  voltfleg : volume of each TF coil outer leg (m**3)
+  !+ad_vars  voltfleg : volume of each TF coil outer leg (m3)
   real(kind(1.0D0)) :: voltfleg = 0.0D0
   !+ad_vars  vtfkv : peak TF coil voltage (kV)
   real(kind(1.0D0)) :: vtfkv = 0.0D0
@@ -1937,7 +1937,7 @@ module build_variables
   real(kind(1.0D0)) :: fmssh = 0.0D0
   !+ad_vars  fmstf /0.0/ : Martensitic fraction of steel in TF coil
   real(kind(1.0D0)) :: fmstf = 0.0D0
-  !+ad_vars  fwarea : first wall surface area (m**2)
+  !+ad_vars  fwarea : first wall surface area (m2)
   real(kind(1.0D0)) :: fwarea = 0.0D0
   !+ad_vars  fwith /0.035/ : inner first wall thickness (m) (if lpulse=1, =2*bfw)
   real(kind(1.0D0)) :: fwith = 0.035D0
@@ -2014,68 +2014,361 @@ end module build_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module cost_variables
+
+  !+ad_name  cost_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  costing algorithms
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  costing algorithms of a fusion power plant.
+  !+ad_desc  It is derived from <CODE>include</CODE> file
+  !+ad_desc  <CODE>cost.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  31/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  abktflnc /20.0/ : allowable first wall/blanket neutron
+  !+ad_varc                    fluence (MW-yr/m2)
+  real(kind(1.0D0)) :: abktflnc = 20.0D0
+  !+ad_vars  adivflnc /25.0/ : allowable divertor heat fluence (MW-yr/m2)
+  real(kind(1.0D0)) :: adivflnc = 25.0D0
+  !+ad_vars  blkcst : blanket direct cost (M$)
+  real(kind(1.0D0)) :: blkcst = 0.0D0
+  !+ad_vars  c221 : total account 221 cost (M$) (first wall, blanket, shield,
+  !+ad_varc         support structure and divertor plates)
+  real(kind(1.0D0)) :: c221 = 0.0D0
+  !+ad_vars  c222 : total account 222 cost (M$) (TF coils + PF coils)
+  real(kind(1.0D0)) :: c222 = 0.0D0
+  !+ad_vars  capcost : total capital cost including interest (M$)
+  real(kind(1.0D0)) :: capcost = 0.0D0
+  !+ad_vars  cconfix /80.0/ : fixed cost of superconducting cable ($/m)
+  real(kind(1.0D0)) :: cconfix = 80.0D0
+  !+ad_vars  cconshpf /70.0/ : cost of PF coil steel conduit/sheath ($/m)
+  real(kind(1.0D0)) :: cconshpf = 70.0D0
+  !+ad_vars  cconshtf /75.0/ : cost of TF coil steel conduit/sheath ($/m)
+  real(kind(1.0D0)) :: cconshtf = 75.0D0
+  !+ad_vars  cdcost : current drive direct costs (M$)
+  real(kind(1.0D0)) :: cdcost = 0.0D0
+  !+ad_vars  cdirt : total plant direct cost (M$)
+  real(kind(1.0D0)) :: cdirt = 0.0D0
+  !+ad_vars  cdrlife : lifetime of current drive system (y)
+  real(kind(1.0D0)) :: cdrlife = 0.0D0
+  !+ad_vars  cfactr /0.75/ : plant capacity factor, availability;
+  !+ad_varc                  input if iavail = 0
+  real(kind(1.0D0)) :: cfactr = 0.75D0
+  !+ad_vars  cfind(4) /0.244,0.244,0.244,0.29/ : indirect cost factor (func of lsa)
+  real(kind(1.0D0)), dimension(4) :: cfind = &
+       (/0.244D0, 0.244D0, 0.244D0, 0.29D0/)
+  !+ad_vars  chplant : capital cost of hydrogen plant (M$)
+  real(kind(1.0D0)) :: chplant = 0.0D0
+  !+ad_vars  cland /19.2/ : cost of land (M$)
+  real(kind(1.0D0)) :: cland = 19.2D0
+  !+ad_vars  coe : cost of electricity (m$/kW-hr)
+  real(kind(1.0D0)) :: coe = 0.0D0
+  !+ad_vars  coecap : capital cost of electricity (m$/kW-hr)
+  real(kind(1.0D0)) :: coecap = 0.0D0
+  !+ad_vars  coefuelt : 'fuel' (including replaceable components) contribution to
+  !+ad_varc             cost of electricity (m$/kW-hr)
+  real(kind(1.0D0)) :: coefuelt = 0.0D0
+  !+ad_vars  coeoam : operation and maintenance contribution to
+  !+ad_varc           cost of electricity (m$/kW-hr)
+  real(kind(1.0D0)) :: coeoam = 0.0D0
+  !+ad_vars  concost : plant construction cost (M$)
+  real(kind(1.0D0)) :: concost = 0.0D0
+  !+ad_vars  cowner /0.15/ : owner cost factor
+  real(kind(1.0D0)) :: cowner = 0.15D0
+  !+ad_vars  cplife : lifetime of centrepost (y)
+  real(kind(1.0D0)) :: cplife = 0.0D0
+  !+ad_vars  cpstcst : TART centrepost direct cost (M$)
+  real(kind(1.0D0)) :: cpstcst = 0.0D0
+  !+ad_vars  cpstflnc /10.0/ : allowable TART centrepost neutron fluence (MW-yr/m2)
+  real(kind(1.0D0)) :: cpstflnc = 10.0D0
+  !+ad_vars  crctcore : reactor core costs (categories 221, 222 and 223)
+  real(kind(1.0D0)) :: crctcore = 0.0D0
+  !+ad_vars  csi /16.0/ : allowance for site costs (M$)
+  real(kind(1.0D0)) :: csi = 16.0D0
+  !+ad_vars  cturbb /380.0/ : cost of turbine building (M$)
+  real(kind(1.0D0)) :: cturbb = 380.0D0
+  !+ad_vars  decomf /0.1/ : proportion of constructed cost required for
+  !+ad_varc                 decommissioning fund
+  real(kind(1.0D0)) :: decomf = 0.1D0
+  !+ad_vars  dintrt /0.0/ : diff between borrowing and saving interest rates
+  real(kind(1.0D0)) :: dintrt = 0.0D0
+  !+ad_vars  divcst : divertor direct cost (M$)
+  real(kind(1.0D0)) :: divcst = 0.0D0
+  !+ad_vars  divlife : lifetime of divertor (y)
+  real(kind(1.0D0)) :: divlife = 0.0D0
+  !+ad_vars  dtlife /0.0/ : period prior to the end of the plant life that
+  !+ad_varc                 the decommissioning fund is used (years)
+  real(kind(1.0D0)) :: dtlife = 0.0D0
+  !+ad_vars  fcap0 /1.165/ : average cost of money for construction of plant
+  !+ad_varc                  assuming design/construction time of six years
+  real(kind(1.0D0)) :: fcap0 = 1.165D0
+  !+ad_vars  fcap0cp /1.08/ : average cost of money for replaceable components
+  !+ad_varc                   assuming lead time for these of two years
+  real(kind(1.0D0)) :: fcap0cp = 1.08D0
+  !+ad_vars  fcdfuel /0.1/ : fraction of current drive cost treated as fuel
+  !+ad_varc                  (if ifueltyp = 1)
+  real(kind(1.0D0)) :: fcdfuel = 0.1D0
+  !+ad_vars  fcontng /0.195/ : project contingency factor
+  real(kind(1.0D0)) :: fcontng = 0.195D0
+  !+ad_vars  fcr0 /0.0966/ : fixed charge rate during construction
+  real(kind(1.0D0)) :: fcr0 = 0.0966D0
+  !+ad_vars  fkind /1.0/ : multiplier for Nth of a kind costs
+  real(kind(1.0D0)) :: fkind = 1.0D0
+  !+ad_vars  fwallcst : first wall cost (M$)
+  real(kind(1.0D0)) :: fwallcst = 0.0D0
+  !+ad_vars  iavail /0/ : switch for plant availability model:
+  !+ad_varc               = 0 use input value for cfactr;
+  !+ad_varc               = 1 calculate cfactr using model
+  integer :: iavail= 0
+  !+ad_vars  ifueltyp /0/ : switch:
+  !+ad_varc                 = 1 treat blanket divertor, first wall and
+  !+ad_varc                     fraction fcdfuel of CD equipment as fuel cost;
+  !+ad_varc                 = 0 treat these as capital cost
+  integer :: ifueltyp = 0
+  !+ad_vars  ipnet /0/ : switch for net electric power calculation:
+  !+ad_varc              = 0 scale so that always > 0;
+  !+ad_varc              = 1 let go < 0 (no c-o-e)
+  integer :: ipnet = 0
+  !+ad_vars  ireactor /1/ : switch for net electric power and cost of
+  !+ad_varc                 electricity calculations:
+  !+ad_varc                 = 0 do not calculate MW(electric) or c-o-e;
+  !+ad_varc                 = 1 calculate MW(electric) and c-o-e
+  integer :: ireactor = 1
+  !+ad_vars  lsa /4/ : level of safety assurance switch (generally, use 3 or 4):
+  !+ad_varc            = 1 truly passively safe plant;
+  !+ad_varc            = 2,3 in-between;
+  !+ad_varc            = 4 like current fission plant
+  integer :: lsa = 4
+  !+ad_vars  moneyint : interest portion of capital cost (M$)
+  real(kind(1.0D0)) :: moneyint = 0.0D0
+  !+ad_vars  ratecdol /0.0435/ : effective cost of money in constant dollars
+  real(kind(1.0D0)) :: ratecdol = 0.0435D0
+  !+ad_vars  tbktrepl /0.5/ : time taken to replace blanket (y)
+  real(kind(1.0D0)) :: tbktrepl = 0.5D0
+  !+ad_vars  tcomrepl /0.5/ : time taken to replace both blanket and divertor (y)
+  real(kind(1.0D0)) :: tcomrepl = 0.5D0
+  !+ad_vars  tdivrepl /0.25/ : time taken to replace divertor (y)
+  real(kind(1.0D0)) :: tdivrepl = 0.25D0
+  !+ad_vars  tlife /30.0/ : plant life (years)
+  real(kind(1.0D0)) :: tlife = 30.0D0
+  !+ad_vars  ucad /180.0/ FIX : unit cost for administration buildings (M$/m3)
+  real(kind(1.0D0)) :: ucad = 180.0D0
+  !+ad_vars  ucaf /1.5D6/ FIX : unit cost for aux facility power equipment ($)
+  real(kind(1.0D0)) :: ucaf = 1.5D6
+  !+ad_vars  ucahts /31.0/ FIX : unit cost for aux heat transport equipment ($/W**exphts)
+  real(kind(1.0D0)) :: ucahts = 31.0D0
+  !+ad_vars  ucap /17.0/ FIX : unit cost of auxiliary transformer ($/kVA)
+  real(kind(1.0D0)) :: ucap = 17.0D0
+  !+ad_vars  ucblbe /260.0/ : unit cost for blanket beryllium ($/kg)
+  real(kind(1.0D0)) :: ucblbe = 260.0D0
+  !+ad_vars  ucblli /875.0/ : unit cost for blanket lithium ($/kg) (30% Li6)
+  real(kind(1.0D0)) :: ucblli = 875.0D0
+  !+ad_vars  ucblli2o /600.0/ : unit cost for blanket Li_2O ($/kg)
+  real(kind(1.0D0)) :: ucblli2o = 600.0D0
+  !+ad_vars  ucbllipb /10.3/ : unit cost for blanket Li-Pb ($/kg) (30% Li6)
+  real(kind(1.0D0)) :: ucbllipb = 10.3D0
+  !+ad_vars  ucblss /90.0/ : unit cost for blanket stainless steel ($/kg)
+  real(kind(1.0D0)) :: ucblss = 90.0D0
+  !+ad_vars  ucblvd /200.0/ : unit cost for blanket vanadium ($/kg)
+  real(kind(1.0D0)) :: ucblvd = 200.0D0
+  !+ad_vars  ucbpmp /2.925D5/ FIX : vacuum system backing pump cost ($)
+  real(kind(1.0D0)) :: ucbpmp = 2.925D5
+  !+ad_vars  ucbus /0.123/ : cost of aluminium bus for TF coil ($/A-m)
+  real(kind(1.0D0)) :: ucbus = 0.123D0
+  !+ad_vars  uccase /50.0/ : cost of superconductor case ($/kg)
+  real(kind(1.0D0)) :: uccase = 50.0D0
+  !+ad_vars  ucco /350.0/ FIX : unit cost for control buildings (M$/m3)
+  real(kind(1.0D0)) :: ucco = 350.0D0
+  !+ad_vars  uccpcl1 /250.0/ : cost of high strength tapered copper ($/kg)
+  real(kind(1.0D0)) :: uccpcl1 = 250.0D0
+  !+ad_vars  uccpclb /150.0/ : cost of TF outer leg plate coils ($/kg)
+  real(kind(1.0D0)) :: uccpclb = 150.0D0
+  !+ad_vars  uccpmp /3.9D5/ FIX : vacuum system cryopump cost ($)
+  real(kind(1.0D0)) :: uccpmp = 3.9D5
+  !+ad_vars  uccr /460.0/ FIX : unit cost for cryogenic building (M$/vol)
+  real(kind(1.0D0)) :: uccr = 460.0D0
+  !+ad_vars  uccry /9.3D4/ : heat transport system cryoplant costs ($/W**expcry)
+  real(kind(1.0D0)) :: uccry = 9.3D4
+  !+ad_vars  uccryo /32.0/ : unit cost for cryostat ($/kg)
+  real(kind(1.0D0)) :: uccryo = 32.0D0
+  !+ad_vars  uccu /75.0/ : unit cost for copper in superconducting cable ($/kg)
+  real(kind(1.0D0)) :: uccu = 75.0D0
+  !+ad_vars  ucdgen /1.7D6/ FIX : cost per 8 MW diesel generator ($)
+  real(kind(1.0D0)) :: ucdgen = 1.7D6
+  !+ad_vars  ucdiv /2.8D5/ : cost of divertor blade ($)
+  real(kind(1.0D0)) :: ucdiv = 2.8D5
+  !+ad_vars  ucdtc /13.0/ FIX : detritiation, air cleanup cost ($/10000m3/hr)
+  real(kind(1.0D0)) :: ucdtc = 13.0D0
+  !+ad_vars  ucduct /4.225D4/ FIX : vacuum system duct cost ($/m)
+  real(kind(1.0D0)) :: ucduct = 4.225D4
+  !+ad_vars  ucech /3.0/ : ECH system cost ($/W)
+  real(kind(1.0D0)) :: ucech = 3.0D0
+  !+ad_vars  ucel /380.0/ FIX : unit cost for electrical equipment building (M$/m3)
+  real(kind(1.0D0)) :: ucel = 380.0D0
+  !+ad_vars  uces1 /3.2D4/ FIX : MGF cost factor ($/MVA**0.8)
+  real(kind(1.0D0)) :: uces1 = 3.2D4
+  !+ad_vars  uces2 /8.8D3/ FIX : MGF cost factor ($/MJ**0.8)
+  real(kind(1.0D0)) :: uces2 = 8.8D3
+  !+ad_vars  ucf1 /2.23D7/ : cost of fuelling system ($)
+  real(kind(1.0D0)) :: ucf1 = 2.23D7
+  !+ad_vars  ucfnc /35.0/ : outer PF coil fence support cost ($/kg)
+  real(kind(1.0D0)) :: ucfnc = 35.0D0
+  !+ad_vars  ucfpr /4.4D7/ FIX : cost of 60g/day tritium processing unit ($)
+  real(kind(1.0D0)) :: ucfpr = 4.4D7
+  !+ad_vars  ucfuel /3.45/ : unit cost of fuel (M$/year/1200MW)
+  real(kind(1.0D0)) :: ucfuel = 3.45D0
+  !+ad_vars  ucfwa /6.0D4/ FIX : first wall armour cost ($/m2)
+  real(kind(1.0D0)) :: ucfwa = 6.0D4
+  !+ad_vars  ucfwps /1.0D7/ FIX : first wall passive stabiliser cost ($/m2)
+  real(kind(1.0D0)) :: ucfwps = 1.0D7
+  !+ad_vars  ucfws /5.3D4/ FIX : first wall structure cost ($/m2)
+  real(kind(1.0D0)) :: ucfws = 5.3D4
+  !+ad_vars  ucgss /35.0/ FIX : cost of reactor structure ($/kg)
+  real(kind(1.0D0)) :: ucgss = 35.0D0
+  !+ad_vars  uche3 /1.0D6/ : cost of helium-3 ($/kg)
+  real(kind(1.0D0)) :: uche3 = 1.0D6
+  !+ad_vars  uchhten /1350.0/ : cost of H production (HTE - endothermic) ($/kW Hyd)
+  real(kind(1.0D0)) :: uchhten = 1350.0D0
+  !+ad_vars  uchhtex /900.0/ : cost of H production (HTE - exothermic) ($/kW Hyd)
+  real(kind(1.0D0)) :: uchhtex = 900.0D0
+  !+ad_vars  uchlte /400.0/ : cost of H production (LTE) ($/kW Hydrogen)
+  real(kind(1.0D0)) :: uchlte = 400.0D0
+  !+ad_vars  uchrs /87.9D6/ : cost of heat rejection system ($)
+  real(kind(1.0D0)) :: uchrs = 87.9D6
+  !+ad_vars  uchth /700.0/ : cost of H production (thermo-chemical) ($/kW Hydrogen)
+  real(kind(1.0D0)) :: uchth = 700.0D0
+  !+ad_vars  uchts(2) /15.3,19.1/ : cost of heat transport system equipment
+  !+ad_varc                         per loop ($/W); dependent on coolant type
+  real(kind(1.0D0)), dimension(2) :: uchts = (/15.3D0, 19.1D0/)
+  !+ad_vars  uciac /1.5D8/ : cost of instrumentation, control & diagnostics ($/W)
+  real(kind(1.0D0)) :: uciac = 1.5D8
+  !+ad_vars  ucich /3.0/ : ICH system cost ($/W)
+  real(kind(1.0D0)) :: ucich = 3.0D0
+  !+ad_vars  ucihx /0.0/ : cost of intermediate heat exchangers ($/W**exphts)
+  real(kind(1.0D0)) :: ucihx = 0.0D0
+  !+ad_vars  ucint /35.0/ FIX : superconductor intercoil structure cost ($/kg)
+  real(kind(1.0D0)) :: ucint = 35.0D0
+  !+ad_vars  uclh /3.3/ : LH system cost ($/W)
+  real(kind(1.0D0)) :: uclh = 3.3D0
+  !+ad_vars  uclv /16.0/ FIX : low voltage system cost ($/kVA)
+  real(kind(1.0D0)) :: uclv = 16.0D0
+  !+ad_vars  ucmb /260.0/ FIX: unit cost for reactor maintenance building (M$/m3)
+  real(kind(1.0D0)) :: ucmb = 260.0D0
+  !+ad_vars  ucme /1.25D8/ : unit cost of maintenance equipment ($/W**0.3)
+  real(kind(1.0D0)) :: ucme = 1.25D8
+  !+ad_vars  ucmisc /2.5D7/ : miscellaneous plant allowance ($)
+  real(kind(1.0D0)) :: ucmisc = 2.5D7
+  !+ad_vars  ucnbi /3.3/ : NBI system cost ($/W)
+  real(kind(1.0D0)) :: ucnbi = 3.3D0
+  !+ad_vars  ucnbv /1000.0/ FIX : cost of nuclear building ventilation ($/m3)
+  real(kind(1.0D0)) :: ucnbv = 1000.0D0
+  !+ad_vars  ucoam(4) /68.8,68.8,68.8,74.4/ : annual cost of operation and
+  !+ad_varc                                   maintenance (M$/year/1200MW**0.5)
+  real(kind(1.0D0)), dimension(4) :: ucoam = &
+       (/68.8D0, 68.8D0, 68.8D0, 74.4D0/)
+  !+ad_vars  ucof /3.3/ : oscillating field current drive cost ($/W)
+  real(kind(1.0D0)) :: ucof = 3.3D0
+  !+ad_vars  ucpens /32.0/ : penetration shield cost ($/kg)
+  real(kind(1.0D0)) :: ucpens = 32.0D0
+  !+ad_vars  ucpfb /210.0/ : cost of PF coil buses ($/kA/m)
+  real(kind(1.0D0)) :: ucpfb = 210.0D0
+  !+ad_vars  ucpfbk /1.66D4/ : cost of PF coil DC breakers ($/MVA)
+  real(kind(1.0D0)) :: ucpfbk = 1.66D4
+  !+ad_vars  ucpfbs /4.9D3/ : cost of PF burn power supplies ($/kW**0.7)
+  real(kind(1.0D0)) :: ucpfbs = 4.9D3
+  !+ad_vars  ucpfcb /7.5D4/ : cost of PF coil AC breakers ($/circuit)
+  real(kind(1.0D0)) :: ucpfcb = 7.5D4
+  !+ad_vars  ucpfdr1 /150.0/ : cost factor for dump resistors ($/MJ)
+  real(kind(1.0D0)) :: ucpfdr1 = 150.0D0
+  !+ad_vars  ucpfic /1.0D4/ : cost of PF instrumentation and control ($/channel)
+  real(kind(1.0D0)) :: ucpfic = 1.0D4
+  !+ad_vars  ucpfps /3.5D4/ : cost of PF coil pulsed power supplies ($/MVA)
+  real(kind(1.0D0)) :: ucpfps = 3.5D4
+  !+ad_vars  ucphx /15.0/ FIX : primary heat transport cost ($/W**exphts)
+  real(kind(1.0D0)) :: ucphx = 15.0D0
+  !+ad_vars  ucpp /48.0/ FIX : cost of primary power transformers ($/kVA**0.9)
+  real(kind(1.0D0)) :: ucpp = 48.0D0
+  !+ad_vars  ucrb /400.0/ : cost of reactor building (M$/m3)
+  real(kind(1.0D0)) :: ucrb = 400.0D0
+  !+ad_vars  ucsc(5) /600.0,600.0,300.0,600.0,600.0/ : cost of superconductor ($/kg)
+  real(kind(1.0D0)), dimension(5) :: ucsc = &
+       (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0/)
+  !+ad_vars  ucsh /115.0/ FIX : cost of shops and warehouses (M$/m3)
+  real(kind(1.0D0)) :: ucsh = 115.0D0
+  !+ad_vars  ucshld /32.0/ : cost of shield structural steel ($/kg)
+  real(kind(1.0D0)) :: ucshld = 32.0D0
+  !+ad_vars  ucswyd /1.84D7/ FIX : switchyard equipment costs ($)
+  real(kind(1.0D0)) :: ucswyd = 1.84D7
+  !+ad_vars  uctfbr /1.22/ : cost of TF coil breakers ($/W**0.7)
+  real(kind(1.0D0)) :: uctfbr = 1.22D0
+  !+ad_vars  uctfbus /100.0/ : cost of TF coil bus ($/kg)
+  real(kind(1.0D0)) :: uctfbus = 100.0D0
+  !+ad_vars  uctfdr /1.75D-4/ FIX : cost of TF coil dump resistors ($/J)
+  real(kind(1.0D0)) :: uctfdr = 1.75D-4
+  !+ad_vars  uctfgr /5000.0/ FIX : additional cost of TF coil dump resistors ($/coil)
+  real(kind(1.0D0)) :: uctfgr = 5000.0D0
+  !+ad_vars  uctfic /1.0D4/ FIX : cost of TF coil instrumentation and control ($/coil/30)
+  real(kind(1.0D0)) :: uctfic = 1.0D4
+  !+ad_vars  uctfps /24.0/ : cost of TF coil power supplies ($/W**0.7)
+  real(kind(1.0D0)) :: uctfps = 24.0D0
+  !+ad_vars  uctfsw /1.0/ : cost of TF coil slow dump switches ($/A)
+  real(kind(1.0D0)) :: uctfsw = 1.0D0
+  !+ad_vars  uctpmp /1.105D5/ FIX : cost of turbomolecular pump ($)
+  real(kind(1.0D0)) :: uctpmp = 1.105D5
+  !+ad_vars  uctr /370.0/ FIX : cost of tritium building ($/m3)
+  real(kind(1.0D0)) :: uctr = 370.0D0
+  !+ad_vars  ucturb(2) /230.0D6,245.0D6/: cost of turbine plant equipment ($)
+  !+ad_varc                               (dependent on coolant type)
+  real(kind(1.0D0)), dimension(2) :: ucturb = (/230.0D6, 245.0D6/)
+  !+ad_vars  ucvalv /3.9D5/ FIX : vacuum system valve cost ($)
+  real(kind(1.0D0)) :: ucvalv = 3.9D5
+  !+ad_vars  ucvdsh /26.0/ FIX : vacuum duct shield cost ($/kg)
+  real(kind(1.0D0)) :: ucvdsh = 26.0D0
+  !+ad_vars  ucviac /1.3D6/ FIX : vacuum system instrumentation and control cost ($)
+  real(kind(1.0D0)) :: ucviac = 1.3D6
+  !+ad_vars  ucwindpf /465.0/ : cost of PF coil superconductor windings ($/m)
+  real(kind(1.0D0)) :: ucwindpf = 465.0D0
+  !+ad_vars  ucwindtf /480.0/ : cost of TF coil superconductor windings ($/m)
+  real(kind(1.0D0)) :: ucwindtf = 480.0D0
+  !+ad_vars  ucws /460.0/ FIX : cost of active assembly shop ($/m3)
+  real(kind(1.0D0)) :: ucws = 460.0D0
+  !+ad_vars  ucwst(4) /0.0,3.94,5.91,7.88/ : cost of waste disposal (M$/y/1200MW)
+  real(kind(1.0D0)), dimension(4) :: ucwst = &
+       (/0.0D0, 3.94D0, 5.91D0, 7.88D0/)
+  !+ad_vars  uubop /0.02/ : unplanned unavailability factor for balance of plant
+  real(kind(1.0D0)) :: uubop = 0.02D0
+  !+ad_vars  uucd /0.02/ : unplanned unavailability factor for current drive
+  real(kind(1.0D0)) :: uucd = 0.02D0
+  !+ad_vars  uudiv /0.04/ : unplanned unavailability factor for divertor
+  real(kind(1.0D0)) :: uudiv = 0.04D0
+  !+ad_vars  uufuel /0.02/ : unplanned unavailability factor for fuel system
+  real(kind(1.0D0)) :: uufuel = 0.02D0
+  !+ad_vars  uufw /0.04/ : unplanned unavailability factor for first wall
+  real(kind(1.0D0)) :: uufw = 0.04D0
+  !+ad_vars  uumag /0.02/ : unplanned unavailability factor for magnets
+  real(kind(1.0D0)) :: uumag = 0.02D0
+  !+ad_vars  uuves /0.04/ : unplanned unavailability factor for vessel
+  real(kind(1.0D0)) :: uuves = 0.04D0
+
+end module cost_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
-
-  !  ex cost.h90
-
-  real(kind(1.0D0)), dimension(4) :: cfind
-  real(kind(1.0D0)), dimension(2) :: uchts
-  real(kind(1.0D0)), dimension(4) :: ucoam
-  real(kind(1.0D0)), dimension(5) :: ucsc
-  real(kind(1.0D0)), dimension(2) :: ucturb
-  real(kind(1.0D0)), dimension(4) :: ucwst
-  common /cost00/ cfind,uchts,ucoam,ucsc,ucturb,ucwst
-
-  real(kind(1.0D0)) :: &
-       abktflnc,adivflnc,blkcst,capcost,cdcost,cdirt,cdrlife, &
-       cfactr,chplant,coe,coecap,coefuelt,coeoam,concost, &
-       cplife,cpstcst,cpstflnc,crctcore,c221,c222,decomf, &
-       dintrt,divcst,divlife,dtlife,fcap0,fcap0cp,fcdfuel, &
-       fcontng,fcr0,fkind,fwallcst,moneyint,ratecdol,tbktrepl, &
-       tcomrepl,tdivrepl,tlife,uubop,uucd,uudiv,uufuel,uufw, &
-       uumag,uuves
-  common /cost0/ &
-       abktflnc,adivflnc,blkcst,capcost,cdcost,cdirt,cdrlife, &
-       cfactr,chplant,coe,coecap,coefuelt,coeoam,concost, &
-       cplife,cpstcst,cpstflnc,crctcore,c221,c222,decomf, &
-       dintrt,divcst,divlife,dtlife,fcap0,fcap0cp,fcdfuel, &
-       fcontng,fcr0,fkind,fwallcst,moneyint,ratecdol,tbktrepl, &
-       tcomrepl,tdivrepl,tlife,uubop,uucd,uudiv,uufuel,uufw, &
-       uumag,uuves
-
-  integer :: iavail,ifueltyp,ipnet,ireactor,lsa
-  common /cost1/ iavail,ifueltyp,ipnet,ireactor,lsa
-
-  real(kind(1.0D0)) :: &
-       cconfix,cconshpf,cconshtf,cland,cowner,csi,cturbb
-  common /ucost0/ &
-       cconfix,cconshpf,cconshtf,cland,cowner,csi,cturbb
-
-  real(kind(1.0D0)) :: &
-       ucad,ucaf,ucahts,ucap,ucblbe,ucblli,ucblli2o,ucbllipb, &
-       ucblss,ucblvd,ucbpmp,ucbus,uccase,ucco,uccpclb,uccpcl1, &
-       uccpmp,uccr,uccry,uccryo,uccu,ucdgen,ucdiv,ucdtc,ucduct, &
-       ucech,ucel,uces1,uces2,ucfnc,ucfpr,ucfuel,ucfwa,ucfwps, &
-       ucfws,ucf1,ucgss,uche3,uchhten,uchhtex,uchlte,uchrs,uchth, &
-       uciac,ucich,ucihx,ucint,uclh,uclv,ucmb,ucme
-  common /ucost1/ &
-       ucad,ucaf,ucahts,ucap,ucblbe,ucblli,ucblli2o,ucbllipb, &
-       ucblss,ucblvd,ucbpmp,ucbus,uccase,ucco,uccpclb,uccpcl1, &
-       uccpmp,uccr,uccry,uccryo,uccu,ucdgen,ucdiv,ucdtc,ucduct, &
-       ucech,ucel,uces1,uces2,ucfnc,ucfpr,ucfuel,ucfwa,ucfwps, &
-       ucfws,ucf1,ucgss,uche3,uchhten,uchhtex,uchlte,uchrs,uchth, &
-       uciac,ucich,ucihx,ucint,uclh,uclv,ucmb,ucme
-
-  real(kind(1.0D0)) :: &
-       ucmisc,ucnbi,ucnbv,ucof,ucpens,ucpfb,ucpfbk,ucpfbs,ucpfcb, &
-       ucpfdr1,ucpfic,ucpfps,ucphx,ucpp,ucrb,ucsh,ucshld,ucswyd, &
-       uctfbr,uctfbus,uctfdr,uctfgr,uctfic,uctfps,uctfsw,uctpmp, &
-       uctr,ucvalv,ucvdsh,ucviac,ucwindpf,ucwindtf,ucws
-  common /ucost2/ &
-       ucmisc,ucnbi,ucnbv,ucof,ucpens,ucpfb,ucpfbk,ucpfbs,ucpfcb, &
-       ucpfdr1,ucpfic,ucpfps,ucphx,ucpp,ucrb,ucsh,ucshld,ucswyd, &
-       uctfbr,uctfbus,uctfdr,uctfgr,uctfic,uctfps,uctfsw,uctpmp, &
-       uctr,ucvalv,ucvdsh,ucviac,ucwindpf,ucwindtf,ucws
 
   !  ex fispact.h90
 
@@ -2330,7 +2623,7 @@ module wibble
 !  08/11/93 PJK 1.000 Initial version
 !
 !--Contents
-!  nign   : electron density at start-up (m**-3)
+!  nign   : electron density at start-up (/m3)
 !  tign   : electron temperature at start-up (keV)
 !  ptaue  : exponent in taue formula
 !  qtaue  : exponent in taue formula
