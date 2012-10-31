@@ -33,6 +33,7 @@ module pfcoil_module
   !+ad_hist  18/10/12 PJK Initial version of module
   !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  31/10/12 PJK Moved local common variables into module header
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -50,6 +51,16 @@ module pfcoil_module
 
   private
   public :: pfcoil, outpf, outvolt, induct, vsec, bfield
+
+  !  Local variables
+
+  integer :: nef,nfxf
+  real(kind(1.0D0)) :: ricpf, ssq0
+  real(kind(1.0D0)), dimension(nfixmx) :: rfxf,zfxf,cfxf,xind
+  real(kind(1.0D0)), dimension(ngrpmx,nclsmx) :: rcls,zcls
+  real(kind(1.0D0)), dimension(ngrpmx) :: ccls,ccls2,ccl0
+  real(kind(1.0D0)), dimension(ngc2) :: bpf2
+  real(kind(1.0D0)), dimension(ngc2,3) :: vsdum
 
 contains
 
@@ -91,24 +102,19 @@ contains
     integer, parameter :: lrow1 = 2*nptsmx + ngrpmx
     integer, parameter :: lcol1 = ngrpmx
 
-    integer :: i,ii,iii,ij,it,j,k,ncl,nfxf,nfxf0,ng2,ngrp0,nng,npts,npts0
+    integer :: i,ii,iii,ij,it,j,k,ncl,nfxf0,ng2,ngrp0,nng,npts,npts0
     integer, dimension(ngrpmx+2) :: ncls0
 
     real(kind(1.0D0)) :: area,areaspf,bri,bro,bzi,bzo,curstot,drpt, &
-         dx,dz,forcepf,respf,ricpf,rll,rpt0,ssq0,ssqef,volpf
-    real(kind(1.0D0)), dimension(ngrpmx,nclsmx) :: rcls,zcls,rcls0,zcls0
+         dx,dz,forcepf,respf,rll,rpt0,ssqef,volpf
+    real(kind(1.0D0)), dimension(ngrpmx,nclsmx) :: rcls0,zcls0
     real(kind(1.0D0)), dimension(ngrpmx/2) :: ccls0
-    real(kind(1.0D0)), dimension(ngrpmx) :: ccls,ccls2,ccl0,sigma,work2
+    real(kind(1.0D0)), dimension(ngrpmx) :: sigma,work2
     real(kind(1.0D0)), dimension(nclsmx) :: rc,zc,cc,xc
     real(kind(1.0D0)), dimension(nptsmx) :: brin,bzin,rpts,zpts
-    real(kind(1.0D0)), dimension(nfixmx) :: rfxf,zfxf,cfxf,xind
     real(kind(1.0D0)), dimension(lrow1) :: bfix,bvec
     real(kind(1.0D0)), dimension(lrow1,lcol1) :: gmat,umat,vmat
     real(kind(1.0D0)), dimension(2) :: signn
-    real(kind(1.0D0)), dimension(ngc2) :: bpf2
-
-    common/pfout/ssq0, ricpf
-    common/pfcom1/ rfxf,zfxf,cfxf,rcls,zcls,ccls,ccls2,ccl0,bpf2,xind,nfxf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -611,17 +617,10 @@ contains
 
     !  Local variables
 
-    integer :: itt,nfxf,nohc1
+    integer :: itt,nohc1
 
     real(kind(1.0D0)) :: areaspf,aroh,bmaxoh2,bohci,bohco,bri,bro, &
          bzi,bzo,forcepf,hohc,sgn,volohc
-
-    real(kind(1.0D0)), dimension(nfixmx) :: rfxf,zfxf,cfxf,xind
-    real(kind(1.0D0)), dimension(ngrpmx,nclsmx) :: rcls,zcls
-    real(kind(1.0D0)), dimension(ngrpmx) :: ccls,ccls2,ccl0
-    real(kind(1.0D0)), dimension(ngc2) :: bpf2
-
-    common/pfcom1/ rfxf,zfxf,cfxf,rcls,zcls,ccls,ccls2,ccl0,bpf2,xind,nfxf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1387,15 +1386,8 @@ contains
 
     !  Local variables
 
-    integer :: iii,iohc,jj,jjj,kk,n,nfxf
+    integer :: iii,iohc,jj,jjj,kk,n
     real(kind(1.0D0)) :: bpfin,bpfout,dzpf,psi,sgn
-
-    real(kind(1.0D0)), dimension(nfixmx) :: rfxf,zfxf,cfxf,xind
-    real(kind(1.0D0)), dimension(ngrpmx,nclsmx) :: rcls,zcls
-    real(kind(1.0D0)), dimension(ngrpmx) :: ccls,ccls2,ccl0
-    real(kind(1.0D0)), dimension(ngc2) :: bpf2
-
-    common/pfcom1/ rfxf,zfxf,cfxf,rcls,zcls,ccls,ccls2,ccl0,bpf2,xind,nfxf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1742,14 +1734,6 @@ contains
 
     integer :: i
 
-    !  COMMON variables
-
-    real(kind(1.0D0)), dimension(ngc2,3) :: vsdum
-    common/ind2a/ vsdum
-
-    integer :: nef
-    common/ind2b/ nef
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  PF volt-seconds during start-up
@@ -2052,9 +2036,6 @@ contains
     !  Local variables
 
     integer :: k,nef
-    real(kind(1.0D0)) :: ricpf,ssq0
-
-    common /pfout/ssq0, ricpf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2221,14 +2202,6 @@ contains
     !  Local variables
 
     integer :: jj,k
-
-    !  COMMON variables
-
-    real(kind(1.0D0)), dimension(ngc2,3) :: vsdum
-    common/ind2a/ vsdum
-
-    integer :: nef
-    common/ind2b/ nef
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

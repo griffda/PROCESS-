@@ -26,6 +26,7 @@ module current_drive_module
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_hist  17/10/12 PJK Initial version of module
+  !+ad_hist  31/10/12 PJK Changed public/private lists
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -38,7 +39,8 @@ module current_drive_module
 
   implicit none
 
-  public
+  private
+  public :: cudriv, nbeam, ech, lwhymod, culnbi
 
 contains
 

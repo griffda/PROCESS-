@@ -56,6 +56,8 @@ module physics_module
   !+ad_hist  17/10/12 PJK Added divertor_variables
   !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  31/10/12 PJK Changed private/public lists
+  !+ad_hist  31/10/12 PJK Moved local common variables into module header
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -73,7 +75,14 @@ module physics_module
 
   implicit none
 
-  public
+  private
+  public :: beamfus,betcom,bpol,fhfac,igmarcal,palph,palph2,pcond,phyaux, &
+       physics,pohm,radpwr,rether
+
+  !  Local variables
+
+  integer :: iscz
+  real(kind(1.0D0)) :: vcritx
 
 contains
 
@@ -3197,12 +3206,6 @@ contains
 
     integer, intent(in) :: is
 
-    !  Variables passed via COMMON
-    !  iscz   : (OUTPUT) Number of confinement time scaling law of interest
-
-    integer :: iscz
-    common /chfac/ iscz
-
     !  Local variables
 
     real(kind(1.0D0)) :: abserr = 0.003D0  !  numerical tolerance
@@ -3256,12 +3259,6 @@ contains
     !  Arguments
 
     real(kind(1.0D0)), intent(in) :: hhh
-
-    !  Variables passed via COMMON
-    !  iscz   : (INPUT)  confinement time scaling law of interest
-
-    integer :: iscz
-    common /chfac/ iscz
 
     !  Local variables
 
@@ -3635,13 +3632,6 @@ contains
       integer, intent(in) :: iabm
       real(kind(1.0D0)), intent(in) :: ebeam, vcrx
 
-      !  Variables passed via COMMON
-      !  vcritx : (OUTPUT) critical velocity for electron/ion slowing down of
-      !                    the beam ion (m/s)
-
-      real(kind(1.0D0)) :: vcritx
-      common /fvcrit/ vcritx
-
       !  Local variables
 
       integer :: nofun
@@ -3713,13 +3703,6 @@ contains
 
     real(kind(1.0D0)), intent(in) :: u
 
-    !  Variables passed via COMMON
-    !  vcritx : (INPUT)  critical velocity for electron/ion slowing down of
-    !                    the beam ion (m/s)
-
-    real(kind(1.0D0)) :: vcritx
-    common /fvcrit/ vcritx
-
     !  Local variables
 
     real(kind(1.0D0)) :: t1,t2,xvc,xvcs
@@ -3727,6 +3710,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     t1 = (u**3)/(1.0D0+u**3)
+
+    !  vcritx : critical velocity for electron/ion slowing down of beam ion (m/s)
 
     xvc = vcritx*u
     xvcs = xvc * xvc * mproton/(echarge * 1000.0D0)

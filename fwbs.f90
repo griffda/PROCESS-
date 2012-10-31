@@ -29,6 +29,7 @@ module fwbs_module
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  31/10/12 PJK Added cost_variables
+  !+ad_hist  31/10/12 PJK Moved local common variables into module header
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -48,6 +49,13 @@ module fwbs_module
 
   private
   public :: fwbs, blanket
+
+  !  Local variables
+
+  real(kind(1.0D0)) :: a,g0,pf,reyd
+  real(kind(1.0D0)) :: tc,tol,tso
+  real(kind(1.0D0)) :: hle,hli,hre,hri,sle,sli,sre,sri,tre
+  integer :: ncc
 
 contains
 
@@ -751,47 +759,9 @@ contains
          tsat,vsat,wp,wt
     integer :: i,np,npi,npo,nr,nri,nro,nt,nti,nto
 
-    real(kind(1.0D0)) :: a,g0,pf,reyd
-    integer :: ncc
-    common/com2/g0,a,pf,reyd,ncc
-
-    real(kind(1.0D0)) :: tc,tol,tso
-    common/com3/tol,tc,tso
-
-    real(kind(1.0D0)) :: hle,hli,hre,hri,sle,sli,sre,sri,tre
-    common/com4/hri,hre,sre,sri,hli,hle,sli,sle,tre
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     tol = 0.0001D0
-
-    !  Common block Variables
-    !  ----------------------
-    ! 
-    !  xtfi    (DP): blanket coolant inlet temperature (C)
-    !  xtfo    (DP): blanket coolant outlet temperature (C)
-    !  xtb     (DP): maximum blanket temperature (C)
-    !  xpf     (DP): blanket coolant inlet pressure (MPa)
-    !  estr   (INT): orientation of cooling channels
-    !  astr   (INT): shape of coolant channel
-    !  xdo     (DP): outside diameter of coolant channel (cm)
-    !  xdi     (DP): inside diameter of coolant channel (cm)
-    !  bstr   (INT): option for fixing the coolant outlet temperature
-    !                or the maximum blanket temperature.
-    !  costr  (INT): option for deciding the coolant type
-    !  smstr  (INT): option for deciding the blanket material
-    !  ph      (DP): high pressure (turbine/SG inlet) (MPa)
-    !  pr      (DP): intermed. turbine inlet (HP outlet) pressure (MPa)
-    !  pin     (DP): low pressure turbine inlet (IP outlet) (MPa)
-    !  pc      (DP): condenser pressure (LP outlet) (MPa)
-    !  etahp   (DP): HP turbine isentropic efficiency
-    !  etahp   (DP): IP turbine isentropic efficiency
-    !  etahp   (DP): LP turbine isentropic efficiency
-    !  etafp   (DP): feed pump isentropic efficiency
-    !  etacp   (DP): condensate pump isentropic efficiency
-    !  nipfwh (INT): number of IP feed water heaters
-    !  nlpfwh (INT): number of LP feed water heaters
-    !  sgeff   (DP): steam generator (SG) effectiveness
 
     !  Important local variables
     !  -------------------------
@@ -1834,10 +1804,6 @@ contains
       real(kind(1.0D0)) :: a0,b,b0,c,c0,cf,has,kf,kfs,ksolid,mf0, &
            mult,pran,prans,rhof,viscf,viscfs
 
-      real(kind(1.0D0)) :: a,g0,pf,reyd
-      integer :: ncc
-      common/com2/g0,a,pf,reyd,ncc
-
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       call props(tfo,tfi,tb,cf,rhof,viscf,viscfs,pran,prans, &
@@ -1935,10 +1901,6 @@ contains
       !  Local variables
 
       real(kind(1.0D0)) :: x,y,gascf,cfs,ks1,ks2
-
-      real(kind(1.0D0)) :: g0,a,pf,reyd
-      integer :: ncc
-      common/com2/g0,a,pf,reyd,ncc
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2314,9 +2276,6 @@ contains
            delta,dgg,gamma,gasc,gg,ggb,ggf,hr,mt,mw,pref,saa,sbb,sr, &
            t1,t2,theta,thetar,tr,x,xp,xtr
 
-      real(kind(1.0D0)) :: tol,tc,tso
-      common/com3/tol,tc,tso
-
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       !  Reference values
@@ -2540,9 +2499,6 @@ contains
            ad,ad2,ad3,ad4,ad5,as0,as1,as2,as3,b,bb,bcap,ccap,dgh, &
            gasc,gh,ghb,ghf,hr,mt,mw,pref,saa,sbb,sr,t1,t2,theta, &
            thetar,tr,x,xp,xtr
-
-      real(kind(1.0D0)) :: tol,tc,tso
-      common/com3/tol,tc,tso
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2769,12 +2725,6 @@ contains
            acap,ad,ad2,ad3,ad4,ad5,as0,as1,as2,as3,b,bb,bcap,ccap, &
            dgt,gasc,gt,gtb,gtf,h1,h2,hr,mt,mw,pref,s1,s2,saa,sbb, &
            sr,t1,t2,theta,thetar,tr,x,xp,xtr
-
-      real(kind(1.0D0)) :: tol,tc,tso
-      common/com3/tol,tc,tso
-
-      real(kind(1.0D0)) :: hri,hre,sri,sre,hli,hle,sli,sle,tre
-      common/com4/hri,hre,sri,sre,hli,hle,sli,sle,tre
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3218,12 +3168,6 @@ contains
       !  Local variables
 
       real(kind(1.0D0)) :: a,b,c,d,a1,a2,m,pp,ta1,ta2,ta3,ta4,ta5,ta6,ta7
-
-      real(kind(1.0D0)) :: tol,tc,tso
-      common/com3/tol,tc,tso
-
-      real(kind(1.0D0)) :: hri,hre,sri,sre,hli,hle,sli,sle,tre
-      common/com4/hri,hre,sri,sre,hli,hle,sli,sle,tre
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
