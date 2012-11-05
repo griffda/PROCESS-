@@ -883,6 +883,7 @@ subroutine output(outfile)
   !+ad_call  current_drive_module
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
+  !+ad_call  ife_variables
   !+ad_call  pfcoil_module
   !+ad_call  physics_module
   !+ad_call  physics_variables
@@ -895,7 +896,6 @@ subroutine output(outfile)
   !+ad_call  structure_module
   !+ad_call  tfcoil_module
   !+ad_call  vaccum_module
-  !+ad_call  ife.h90
   !+ad_call  acpow
   !+ad_call  avail
   !+ad_call  bldgcall
@@ -956,6 +956,7 @@ subroutine output(outfile)
   !+ad_hist  31/10/12 PJK Added stellarator_module
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added rfp_module
+  !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -967,6 +968,7 @@ subroutine output(outfile)
   use current_drive_module
   use divertor_module
   use fwbs_module
+  use ife_variables
   use pfcoil_module
   use physics_module
   use physics_variables
@@ -981,8 +983,6 @@ subroutine output(outfile)
   use vacuum_module
 
   implicit none
-
-  include 'ife.h90'
 
   !  Arguments
 

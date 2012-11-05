@@ -19,13 +19,13 @@ subroutine loadxc
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
+  !+ad_call  ife_variables
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  rfp_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
-  !+ad_call  ife.h90
   !+ad_call  pulse.h90
   !+ad_hist  22/10/92 PJK Removed original arguments (xc,nn)
   !+ad_hist  14/11/11 PJK Changed NaN error check
@@ -42,6 +42,7 @@ subroutine loadxc
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_hist  05/11/12 PJK Added rfp_variables
+  !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -53,6 +54,7 @@ subroutine loadxc
   use divertor_variables
   use fwbs_variables
   use heat_transport_variables
+  use ife_variables
   use numerics
   use pfcoil_variables
   use physics_variables
@@ -63,7 +65,6 @@ subroutine loadxc
   implicit none
 
   include 'pulse.h90'
-  include 'ife.h90'
 
   !  Arguments
 
@@ -275,13 +276,13 @@ subroutine convxc(xc,nn)
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
+  !+ad_call  ife_variables
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  rfp_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
-  !+ad_call  ife.h90
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  16/11/11 PJK Initial F90 version
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
@@ -296,6 +297,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_hist  05/11/12 PJK Added rfp_variables
+  !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -307,6 +309,7 @@ subroutine convxc(xc,nn)
   use divertor_variables
   use fwbs_variables
   use heat_transport_variables
+  use ife_variables
   use numerics
   use pfcoil_variables
   use physics_variables
@@ -315,8 +318,6 @@ subroutine convxc(xc,nn)
   use times_variables
 
   implicit none
-
-  include 'ife.h90'
 
   !  Arguments
 

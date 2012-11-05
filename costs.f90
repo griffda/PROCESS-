@@ -50,6 +50,7 @@ module costs_module
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
+  !+ad_call  ife_variables
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  pf_power_variables
@@ -76,6 +77,7 @@ module costs_module
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_hist  05/11/12 PJK Added rfp_variables
+  !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -89,6 +91,7 @@ module costs_module
   use divertor_variables
   use fwbs_variables
   use heat_transport_variables
+  use ife_variables
   use pfcoil_variables
   use physics_variables
   use pf_power_variables
@@ -101,7 +104,6 @@ module costs_module
 
   implicit none
 
-  include 'ife.h90'
   include 'pulse.h90'
 
   private

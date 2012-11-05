@@ -17,7 +17,6 @@ subroutine initial
   !+ad_call  stellarator_module
   !+ad_call  stellarator_variables
   !+ad_call  pulse.h90
-  !+ad_call  ife.h90
   !+ad_call  devtyp
   !+ad_call  ifeini
   !+ad_call  stinit
@@ -68,6 +67,7 @@ subroutine initial
   !+ad_hist  31/10/12 PJK Added stellarator_variables
   !+ad_hist  31/10/12 PJK Added stellarator_module
   !+ad_hist  31/10/12 PJK Removed RFP variables
+  !+ad_hist  05/11/12 PJK Removed call to ifeini
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -80,7 +80,6 @@ subroutine initial
   implicit none
 
   include 'pulse.h90'
-  include 'ife.h90'
 
   !  Arguments
 
@@ -110,10 +109,6 @@ subroutine initial
 
   if (istell == 1) call stinit
 
-  !  Initialise inertial fusion energy parameters if necessary
-
-  if (ife == 1) call ifeini
-
 end subroutine initial
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -131,26 +126,26 @@ subroutine devtyp
   !+ad_desc  is to be modelled. If the file is not present in the current
   !+ad_desc  directory, a standard tokamak model is assumed.
   !+ad_prob  None
+  !+ad_call  ife_variables
   !+ad_call  rfp_variables
   !+ad_call  stellarator_variables
-  !+ad_call  ife.h90
   !+ad_hist  27/02/96 PJK Initial version
   !+ad_hist  08/10/96 PJK Fixed error: (istell.gt.2) should be (idev.gt.2)
   !+ad_hist  14/03/97 PJK idev=3 ==> inertial fusion power plant
   !+ad_hist  19/09/12 PJK Initial F90 version
   !+ad_hist  31/10/12 PJK Added stellarator_variables
   !+ad_hist  05/11/12 PJK Added rfp_variables
+  !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use ife_variables
   use rfp_variables
   use stellarator_variables
 
   implicit none
-
-  include 'ife.h90'
 
   !  Local variables
 
@@ -184,7 +179,7 @@ subroutine devtyp
      case (2)  !  Reversed Field Pinch model
         irfp = 1
 
-     case (3)  !  Inertial Fusion Energy  model
+     case (3)  !  Inertial Fusion Energy model
         ife = 1
 
      case default  !  Tokamak model
@@ -215,6 +210,7 @@ subroutine check
   !+ad_call  current_drive_variables
   !+ad_call  global_variables
   !+ad_call  heat_transport_variables
+  !+ad_call  ife_variables
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
@@ -222,7 +218,6 @@ subroutine check
   !+ad_call  rfp_variables
   !+ad_call  tfcoil_variables
   !+ad_call  pulse.h90
-  !+ad_call  ife.h90
   !+ad_hist  08/10/96 PJK Initial upgraded version
   !+ad_hist  23/01/97 PJK Moved resetting of trithtmw from POWER
   !+ad_hist  14/03/97 PJK Added coding relevant to IFE device
@@ -239,6 +234,7 @@ subroutine check
   !+ad_hist  30/10/12 PJK Added buildings_variables
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  05/11/12 PJK Added rfp_variables
+  !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -249,6 +245,7 @@ subroutine check
   use current_drive_variables
   use global_variables
   use heat_transport_variables
+  use ife_variables
   use pfcoil_variables
   use physics_variables
   use process_output
@@ -258,7 +255,6 @@ subroutine check
   implicit none
 
   include 'pulse.h90'
-  include 'ife.h90'
 
   !  Local variables
 

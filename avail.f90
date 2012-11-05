@@ -17,10 +17,10 @@ subroutine avail(outfile,iprint)
   !+ad_call  cost_variables
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
+  !+ad_call  ife_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  rfp_variables
-  !+ad_call  ife.h90
   !+ad_call  pulse.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
@@ -32,6 +32,7 @@ subroutine avail(outfile,iprint)
   !+ad_hist  18/10/12 PJK Added fwbs_variables
   !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_hist  05/11/12 PJK Added rfp_variables
+  !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_stat  Okay
   !+ad_docs  F/PL/PJK/PROCESS/CODE/043
   !
@@ -40,13 +41,13 @@ subroutine avail(outfile,iprint)
   use cost_variables
   use divertor_variables
   use fwbs_variables
+  use ife_variables
   use physics_variables
   use process_output
   use rfp_variables
 
   implicit none
 
-  include 'ife.h90'
   include 'pulse.h90'
 
   !  Arguments

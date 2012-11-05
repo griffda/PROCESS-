@@ -87,6 +87,7 @@ module process_input
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
+  !+ad_call  ife_variables
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
@@ -98,7 +99,6 @@ module process_input
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_call  vacuum_variables
-  !+ad_call  ife.h90
   !+ad_call  pulse.h90
   !+ad_hist  20/01/95 PJK Initial version (PROCESS)
   !+ad_hist  05/01/04 PJK Initial F90 version (CENTORI)
@@ -122,6 +122,7 @@ module process_input
   !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_hist  31/10/12 PJK Added stellarator_variables
   !+ad_hist  05/11/12 PJK Added rfp_variables
+  !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -136,6 +137,7 @@ module process_input
   use divertor_variables
   use fwbs_variables
   use heat_transport_variables
+  use ife_variables
   use numerics
   use pfcoil_variables
   use physics_variables
@@ -150,7 +152,6 @@ module process_input
 
   implicit none
 
-  include 'ife.h90'
   include 'pulse.h90'
 
   private
@@ -2081,13 +2082,13 @@ contains
           call parse_real_array('V2MATF', v2matf, isub1, 3*(maxmat+1), &
                'IFE void 2 material fraction', icode)
        case ('V3DR')
-          call parse_real_variable('V3DR', v3dr, 0.0D0, 10.0D0, &
+          call parse_real_variable('V3DR', v3dr, 0.0D0, 50.0D0, &
                'IFE void 3 radial thickness (m)')
        case ('V3DZL')
-          call parse_real_variable('V3DZL', v3dzl, 0.0D0, 10.0D0, &
+          call parse_real_variable('V3DZL', v3dzl, 0.0D0, 30.0D0, &
                'IFE void 3 bottom part thickness (m)')
        case ('V3DZU')
-          call parse_real_variable('V3DZU', v3dzu, 0.0D0, 10.0D0, &
+          call parse_real_variable('V3DZU', v3dzu, 0.0D0, 30.0D0, &
                'IFE void 3 top part thickness (m)')
        case ('V3MATF')  !  N.B. actually a 2-D array
           call parse_real_array('V3MATF', v3matf, isub1, 3*(maxmat+1), &

@@ -19,6 +19,7 @@ subroutine caller(xc,nvars)
   !+ad_call  current_drive_module
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
+  !+ad_call  ife_variables
   !+ad_call  numerics
   !+ad_call  pfcoil_module
   !+ad_call  physics_module
@@ -33,7 +34,6 @@ subroutine caller(xc,nvars)
   !+ad_call  structure_module
   !+ad_call  tfcoil_module
   !+ad_call  vacuum_module
-  !+ad_call  ife.h90
   !+ad_call  acpow
   !+ad_call  avail
   !+ad_call  bldgcall
@@ -100,6 +100,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  31/10/12 PJK Added stellarator_module
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added rfp_module
+  !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -111,6 +112,7 @@ subroutine caller(xc,nvars)
   use current_drive_module
   use divertor_module
   use fwbs_module
+  use ife_variables
   use numerics
   use pfcoil_module
   use physics_module
@@ -127,8 +129,6 @@ subroutine caller(xc,nvars)
   use vacuum_module
 
   implicit none
-
-  include 'ife.h90'
 
   !  Arguments
 

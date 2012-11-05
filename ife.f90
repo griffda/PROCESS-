@@ -1,191 +1,6 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine ifeini
-
-  !+ad_name  ifeini
-  !+ad_summ  Routine to initialise the variables used by the Inertial Fusion
-  !+ad_summ  Energy model
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  None
-  !+ad_desc  This routine initialises the variables used by the Inertial Fusion
-  !+ad_desc  Energy model.
-  !+ad_prob  None
-  !+ad_call  ife.h90
-  !+ad_hist  21/03/97 PJK Initial version
-  !+ad_hist  10/09/97 PJK De-escalated driver costs from 1991-1990 dollars
-  !+ad_hist  24/09/12 PJK Initial F90 version
-  !+ad_stat  Okay
-  !+ad_docs  F/MI/PJK/LOGBOOK12, p.91
-  !+ad_docs  F/MI/PJK/LOGBOOK13, p.2
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  implicit none
-
-  include 'ife.h90'
-
-  !  Arguments
-
-  !  Local variables
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !  Default builds and material volumes are those
-  !  for the SOMBRERO device
-
-  bldr   = 1.0D0
-  bldzl  = 4.0D0
-  bldzu  = 4.0D0
-  cdriv0 = 154.3D0
-  cdriv1 = 163.2D0
-  cdriv2 = 244.9D0
-  chdzl  = 9.0D0
-  chdzu  = 9.0D0
-  chrad  = 6.5D0
-  chvol  = 0.0D0
-  dcdrv0 = 111.4D0
-  dcdrv1 = 78.0D0
-  dcdrv2 = 59.9D0
-  drveff = 0.28D0
-  edrive = 5.0D6
-  etadrv = 0.0D0
-  etave(1)  = 0.082D0
-  etave(2)  = 0.079D0
-  etave(3)  = 0.076D0
-  etave(4)  = 0.073D0
-  etave(5)  = 0.069D0
-  etave(6)  = 0.066D0
-  etave(7)  = 0.062D0
-  etave(8)  = 0.059D0
-  etave(9)  = 0.055D0
-  etave(10) = 0.051D0
-  fbreed = 0.51D0
-  fburn  = 0.3333D0
-  frrmax = 1.0D0
-  fwdr   = 0.01D0
-  fwdzl  = 0.01D0
-  fwdzu  = 0.01D0
-  gain   = 0.0D0
-  gainve(1)  = 60.0D0
-  gainve(2)  = 95.0D0
-  gainve(3)  = 115.0D0
-  gainve(4)  = 125.0D0
-  gainve(5)  = 133.0D0
-  gainve(6)  = 141.0D0
-  gainve(7)  = 152.0D0
-  gainve(8)  = 160.0D0
-  gainve(9)  = 165.0D0
-  gainve(10) = 170.0D0
-  ifedrv = 2
-  ifetyp = 0
-  mcdriv = 1.0D0
-  mflibe = 0.0D0
-  pdrive = 23.0D6
-  pifecr = 10.0D0
-  ptargf = 2.0D0
-  r1     = 0.0D0
-  r2     = 0.0D0
-  r3     = 0.0D0
-  r4     = 0.0D0
-  r5     = 0.0D0
-  r6     = 0.0D0
-  r7     = 0.0D0
-  reprat = 0.0D0
-  rrmax  = 20.0D0
-  shdr   = 1.7D0
-  shdzl  = 5.0D0
-  shdzu  = 5.0D0
-  sombdr = 2.7D0
-  somtdr = 2.7D0
-  tdspmw = 0.0D0
-  tfacmw = 0.0D0
-  tgain  = 85.0D0
-  uccarb = 50.0D0
-  ucconc = 0.1D0
-  ucflib = 84.0D0
-  uctarg = 0.3D0
-  v1dr   = 0.0D0
-  v1dzl  = 0.0D0
-  v1dzu  = 0.0D0
-  v2dr   = 2.0D0
-  v2dzl  = 7.0D0
-  v2dzu  = 7.0D0
-  v3dr   = 43.3D0
-  v3dzl  = 30.0D0
-  v3dzu  = 20.0D0
-  zl1    = 0.0D0
-  zl2    = 0.0D0
-  zl3    = 0.0D0
-  zl4    = 0.0D0
-  zl5    = 0.0D0
-  zl6    = 0.0D0
-  zl7    = 0.0D0
-  zu1    = 0.0D0
-  zu2    = 0.0D0
-  zu3    = 0.0D0
-  zu4    = 0.0D0
-  zu5    = 0.0D0
-  zu6    = 0.0D0
-  zu7    = 0.0D0
-
-  chmatf(:) = 0.0D0
-  chmatf(0) = 1.0D0
-
-  chmatm(:) = 0.0D0
-  chmatv(:) = 0.0D0
-
-  blmatf(:,:) = 0.0D0
-  blmatf(:,0) = 0.05D0
-  blmatf(:,2) = 0.45D0
-  blmatf(:,4) = 0.20D0
-  blmatf(:,6) = 0.30D0
-
-  blmatm(:,:) = 0.0D0
-  blmatv(:,:) = 0.0D0
-
-  fwmatf(:,:) = 0.0D0
-  fwmatf(:,0) = 0.05D0
-  fwmatf(:,2) = 0.95D0
-
-  fwmatm(:,:) = 0.0D0
-  fwmatv(:,:) = 0.0D0
-
-  shmatf(:,:) = 0.0D0
-  shmatf(:,0) = 0.05D0
-  shmatf(:,1) = 0.19D0
-  shmatf(:,5) = 0.665D0
-  shmatf(:,6) = 0.095D0
-
-  shmatm(:,:) = 0.0D0
-  shmatv(:,:) = 0.0D0
-
-  v1matf(:,:) = 0.0D0
-  v1matf(:,0) = 1.0D0
-
-  v1matm(:,:) = 0.0D0
-  v1matv(:,:) = 0.0D0
-
-  v2matf(:,:) = 0.0D0
-  v2matf(:,0) = 1.0D0
-
-  v2matm(:,:) = 0.0D0
-  v2matv(:,:) = 0.0D0
-
-  v3matf(:,:) = 0.0D0
-  v3matf(:,0) = 1.0D0
-
-  v3matm(:,:) = 0.0D0
-  v3matv(:,:) = 0.0D0
-
-
-end subroutine ifeini
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 subroutine ifecll
 
   !+ad_name  ifecll
@@ -402,7 +217,6 @@ subroutine ifephy(outfile,iprint)
   !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  ife.h90
   !+ad_call  driver
   !+ad_call  lasdrv
   !+ad_call  iondrv
@@ -424,12 +238,11 @@ subroutine ifephy(outfile,iprint)
 
   use build_variables
   use constants
+  use ife_variables
   use physics_variables
   use process_output
 
   implicit none
-
-  include 'ife.h90'
 
   !  Arguments
 
@@ -1247,7 +1060,6 @@ subroutine ifebld(outfile,iprint)
   !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  process_output
-  !+ad_call  ife.h90
   !+ad_call  genbld
   !+ad_call  hylbld
   !+ad_call  obuild
@@ -1267,11 +1079,10 @@ subroutine ifebld(outfile,iprint)
 
   use build_variables
   use constants
+  use ife_variables
   use process_output
 
   implicit none
-
-  include 'ife.h90'
 
   !  Arguments
 
@@ -1427,7 +1238,7 @@ contains
     !+ad_desc  device, assumed to be cylindrically-symmetric, and to calculate
     !+ad_desc  the material volumes for the device core.
     !+ad_prob  None
-    !+ad_call  ife.h90
+    !+ad_call  None
     !+ad_hist  21/03/97 PJK Initial version
     !+ad_hist  24/09/12 PJK Initial F90 version
     !+ad_stat  Okay
@@ -1437,8 +1248,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'ife.h90'
 
     !  Arguments
 
@@ -1560,7 +1369,6 @@ contains
     !+ad_desc  device, based on the design of the OSIRIS study, and to calculate
     !+ad_desc  the material volumes for the device core.
     !+ad_prob  None
-    !+ad_call  ife.h90
     !+ad_call  genbld
     !+ad_hist  21/03/97 PJK Initial version
     !+ad_hist  24/09/12 PJK Initial F90 version
@@ -1571,8 +1379,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'ife.h90'
 
     !  Arguments
 
@@ -1608,7 +1414,7 @@ contains
     !+ad_desc  device, based on the design of the SOMBRERO study, and to calculate
     !+ad_desc  the material volumes for the device core.
     !+ad_prob  None
-    !+ad_call  ife.h90
+    !+ad_call  None
     !+ad_hist  21/03/97 PJK Initial version
     !+ad_hist  24/09/12 PJK Initial F90 version
     !+ad_stat  Okay
@@ -1619,8 +1425,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'ife.h90'
 
     !  Arguments
 
@@ -1771,7 +1575,7 @@ contains
     !+ad_desc  device, based on the design of the HYLIFE-II study, and to calculate
     !+ad_desc  the material volumes for the device core.
     !+ad_prob  None
-    !+ad_call  ife.h90
+    !+ad_call  None
     !+ad_hist  21/03/97 PJK Initial version
     !+ad_hist  24/09/12 PJK Initial F90 version
     !+ad_stat  Okay
@@ -1782,8 +1586,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'ife.h90'
 
     !  Arguments
 
@@ -1963,7 +1765,7 @@ subroutine ifetgt(outfile,iprint)
   !+ad_desc  delivery system and the target factory, for an Inertial
   !+ad_desc  Fusion Energy power plant.
   !+ad_prob  None
-  !+ad_call  ife.h90
+  !+ad_call  None
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  24/09/12 PJK Initial F90 version
   !+ad_stat  Okay
@@ -1972,9 +1774,9 @@ subroutine ifetgt(outfile,iprint)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  implicit none
+  use ife_variables
 
-  include 'ife.h90'
+  implicit none
 
   !  Arguments
 
@@ -1986,7 +1788,7 @@ subroutine ifetgt(outfile,iprint)
 
   !  Target delivery system power (MWe) - effectively negligible
 
-  tdspmw = 1.0D-2
+!  tdspmw = 1.0D-2
 
   !  Target factory power (MWe)
   !  Assumed to scale with repetition rate (not quite linearly)
@@ -2015,7 +1817,6 @@ subroutine ifefbs(outfile,iprint)
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  ife.h90
   !+ad_call  pulse.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
@@ -2036,12 +1837,12 @@ subroutine ifefbs(outfile,iprint)
   use build_variables
   use cost_variables
   use fwbs_variables
+  use ife_variables
   use physics_variables
   use process_output
 
   implicit none
 
-  include 'ife.h90'
   include 'pulse.h90'
 
   !  Arguments
@@ -2188,7 +1989,6 @@ subroutine ifepw1
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  physics_variables
-  !+ad_call  ife.h90
   !+ad_hist  21/03/97 PJK Initial version
   !+ad_hist  24/09/12 PJK Initial F90 version
   !+ad_hist  15/10/12 PJK Added physics_variables
@@ -2203,11 +2003,10 @@ subroutine ifepw1
 
   use fwbs_variables
   use heat_transport_variables
+  use ife_variables
   use physics_variables
 
   implicit none
-
-  include 'ife.h90'
 
   !  Arguments
 
@@ -2286,7 +2085,6 @@ subroutine ifeacp(outfile,iprint)
   !+ad_call  buildings_variables
   !+ad_call  heat_transport_variables
   !+ad_call  process_output
-  !+ad_call  ife.h90
   !+ad_call  oblnkl
   !+ad_call  oheadr
   !+ad_call  ovarre
@@ -2303,11 +2101,10 @@ subroutine ifeacp(outfile,iprint)
 
   use buildings_variables
   use heat_transport_variables
+  use ife_variables
   use process_output
 
   implicit none
-
-  include 'ife.h90'
 
   ! Arguments
 
@@ -2398,7 +2195,6 @@ subroutine ifepw2(outfile,iprint)
   !+ad_call  heat_transport_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  ife.h90
   !+ad_call  oblnkl
   !+ad_call  oheadr
   !+ad_call  osubhd
@@ -2420,12 +2216,11 @@ subroutine ifepw2(outfile,iprint)
   use cost_variables
   use fwbs_variables
   use heat_transport_variables
+  use ife_variables
   use physics_variables
   use process_output
 
   implicit none
-
-  include 'ife.h90'
 
   !  Arguments
 
@@ -2603,7 +2398,6 @@ subroutine ifebdg(outfile,iprint)
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  process_output
-  !+ad_call  ife.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  21/03/97 PJK Initial version
@@ -2621,11 +2415,10 @@ subroutine ifebdg(outfile,iprint)
   use buildings_variables
   use fwbs_variables
   use heat_transport_variables
+  use ife_variables
   use process_output
 
   implicit none
-
-  include 'ife.h90'
 
   !  Arguments
 
