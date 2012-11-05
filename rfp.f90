@@ -1,6 +1,72 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module rfp_module
+
+  !+ad_name  rfp_module
+  !+ad_summ  Module containing Reversed Field Pinch device routines
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  rfptfc
+  !+ad_cont  rfppfc
+  !+ad_cont  rfppfp
+  !+ad_cont  rfpphy
+  !+ad_cont  ftheta
+  !+ad_cont  efcurr
+  !+ad_args  N/A
+  !+ad_desc  This module contains routines for calculating the
+  !+ad_desc  parameters of a Reversed Field Pinch fusion power plant.
+  !+ad_prob  None
+  !+ad_call  build_module
+  !+ad_call  build_variables
+  !+ad_call  constants
+  !+ad_call  current_drive_module
+  !+ad_call  current_drive_variables
+  !+ad_call  fwbs_variables
+  !+ad_call  heat_transport_variables
+  !+ad_call  pf_power_variables
+  !+ad_call  pfcoil_module
+  !+ad_call  pfcoil_variables
+  !+ad_call  physics_module
+  !+ad_call  physics_variables
+  !+ad_call  process_input
+  !+ad_call  process_output
+  !+ad_call  rfp_variables
+  !+ad_call  tfcoil_variables
+  !+ad_call  times_variables
+  !+ad_hist  05/11/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use build_module
+  use build_variables
+  use constants
+  use current_drive_module
+  use current_drive_variables
+  use fwbs_variables
+  use heat_transport_variables
+  use pf_power_variables
+  use pfcoil_module
+  use pfcoil_variables
+  use physics_module
+  use physics_variables
+  use process_input, only : check_range_real
+  use process_output
+  use rfp_variables
+  use tfcoil_variables
+  use times_variables
+
+  implicit none
+
+  private
+  public :: rfppfc,rfppfp,rfpphy,rfptfc
+
+contains
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 subroutine rfptfc(outfile,iprint)
 
   !+ad_name  rfptfc
@@ -15,13 +81,6 @@ subroutine rfptfc(outfile,iprint)
   !+ad_desc  of a reversed field pinch machine. The coils are assumed to be
   !+ad_desc  circular.
   !+ad_prob  None
-  !+ad_call  build_module
-  !+ad_call  build_variables
-  !+ad_call  constants
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_call  rfp_variables
-  !+ad_call  tfcoil_variables
   !+ad_call  oheadr
   !+ad_call  osubhd
   !+ad_call  ovarre
@@ -39,14 +98,6 @@ subroutine rfptfc(outfile,iprint)
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use build_module
-  use build_variables
-  use constants
-  use physics_variables
-  use process_output
-  use rfp_variables
-  use tfcoil_variables
 
   implicit none
 
@@ -213,14 +264,6 @@ subroutine rfppfc(outfile,iprint)
   !+ad_desc  of a reversed field pinch machine. The coils are scaled from the
   !+ad_desc  TITAN-I OH/EF coil set.
   !+ad_prob  bpf, bpf2, forcepf are never set...
-  !+ad_call  build_variables
-  !+ad_call  constants
-  !+ad_call  fwbs_variables
-  !+ad_call  pfcoil_module
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_call  tfcoil_variables
   !+ad_call  bfield
   !+ad_call  efcurr
   !+ad_call  oblnkl
@@ -240,16 +283,6 @@ subroutine rfppfc(outfile,iprint)
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use build_variables
-  use constants
-  use fwbs_variables
-  use pfcoil_module
-  use pfcoil_variables
-  use physics_variables
-  use process_output
-  use rfp_variables
-  use tfcoil_variables
 
   implicit none
 
@@ -478,13 +511,6 @@ subroutine rfppfp(outfile,iprint)
   !+ad_desc  This subroutine calculates the MVA, power and energy requirements
   !+ad_desc  for the RFP PF coil systems.
   !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  heat_transport_variables
-  !+ad_call  pfcoil_variables
-  !+ad_call  physics_variables
-  !+ad_call  pf_power_variables
-  !+ad_call  process_output
-  !+ad_call  times_variables
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  01/03/96 PJK Initial version
@@ -502,15 +528,6 @@ subroutine rfppfp(outfile,iprint)
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use build_variables
-  use heat_transport_variables
-  use pfcoil_variables
-  use physics_variables
-  use pf_power_variables
-  use process_output
-  use rfp_variables
-  use times_variables
 
   implicit none
 
@@ -675,14 +692,6 @@ subroutine rfpphy
   !+ad_desc  This subroutine calculates the plasma physics of the
   !+ad_desc  reversed field pinch system.
   !+ad_prob  None
-  !+ad_call  build_variables
-  !+ad_call  current_drive_module
-  !+ad_call  current_drive_variables
-  !+ad_call  divertor_variables
-  !+ad_call  physics_module
-  !+ad_call  physics_variables
-  !+ad_call  process_output
-  !+ad_call  times_variables
   !+ad_call  pulse.h90
   !+ad_call  beamfus
   !+ad_call  betcom
@@ -718,15 +727,6 @@ subroutine rfpphy
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use build_variables
-  use current_drive_module
-  use current_drive_variables
-  use physics_module
-  use physics_variables
-  use process_output
-  use rfp_variables
-  use times_variables
 
   implicit none
 
@@ -927,7 +927,6 @@ subroutine ftheta(theta,f)
   !+ad_desc  This subroutine calculates the RFP reversal parameter F,
   !+ad_desc  given the pinch parameter THETA, using a polynomial fit.
   !+ad_prob  None
-  !+ad_call  process_input
   !+ad_call  check_range_real
   !+ad_call  06/03/96 PJK Initial version
   !+ad_hist  09/05/12 PJK Initial F90 version
@@ -938,8 +937,6 @@ subroutine ftheta(theta,f)
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use process_input, only : check_range_real
 
   implicit none
 
@@ -993,7 +990,6 @@ subroutine efcurr(plascur,rmajor,rminor,betap,rli,nrfppf,rrpf, &
   !+ad_desc  in the RFP equilibrium field coils required to provide
   !+ad_desc  the correct vertical field at the plasma.
   !+ad_prob  None
-  !+ad_call  pfcoil_module
   !+ad_call  bfield
   !+ad_call  06/03/96 PJK Initial version
   !+ad_hist  09/05/12 PJK Initial F90 version
@@ -1004,8 +1000,6 @@ subroutine efcurr(plascur,rmajor,rminor,betap,rli,nrfppf,rrpf, &
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use pfcoil_module
 
   implicit none
 
@@ -1045,3 +1039,5 @@ subroutine efcurr(plascur,rmajor,rminor,betap,rli,nrfppf,rrpf, &
   cptrfp(16) = cptrfp(16) * bv/bz
 
 end subroutine efcurr
+
+end module rfp_module

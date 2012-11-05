@@ -25,6 +25,7 @@ subroutine caller(xc,nvars)
   !+ad_call  physics_variables
   !+ad_call  power_module
   !+ad_call  process_output
+  !+ad_call  rfp_module
   !+ad_call  rfp_variables
   !+ad_call  sctfcoil_module
   !+ad_call  stellarator_module
@@ -98,6 +99,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  31/10/12 PJK Added stellarator_variables
   !+ad_hist  31/10/12 PJK Added stellarator_module
   !+ad_hist  05/11/12 PJK Added rfp_variables
+  !+ad_hist  05/11/12 PJK Added rfp_module
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -115,6 +117,7 @@ subroutine caller(xc,nvars)
   use physics_variables
   use power_module
   use process_output
+  use rfp_module
   use rfp_variables
   use sctfcoil_module
   use stellarator_module

@@ -179,12 +179,12 @@ default: process.exe
 aachange.o: 
 aamain.o: buildings.o costs.o current_drive.o divertor.o evaluators.o fwbs.o \
   global_variables.o input.o machine_build.o numerics.o output.o pfcoil.o physics.o \
-  plant_power.o scan.o sctfcoil.o stellarator.o structure.o tfcoil.o vacuum.o
+  plant_power.o rfp.o scan.o sctfcoil.o stellarator.o structure.o tfcoil.o vacuum.o
 avail.o: global_variables.o output.o ife.h90 pulse.h90
 buildings.o: global_variables.o output.o
 caller.o: buildings.o costs.o current_drive.o divertor.o fwbs.o global_variables.o \
-  machine_build.o numerics.o output.o pfcoil.o physics.o plant_power.o sctfcoil.o \
-  structure.o stellarator.o tfcoil.o vacuum.o ife.h90
+  machine_build.o numerics.o output.o pfcoil.o physics.o plant_power.o rfp.o \
+  sctfcoil.o structure.o stellarator.o tfcoil.o vacuum.o ife.h90
 costs.o: global_variables.o output.o ife.h90 pulse.h90
 current_drive.o: global_variables.o output.o
 divertor.o: global_variables.o output.o
