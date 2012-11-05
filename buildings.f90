@@ -21,11 +21,13 @@ module buildings_module
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  rfp_variables
   !+ad_call  structure_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_hist  30/10/12 PJK Initial version of module
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -39,6 +41,7 @@ module buildings_module
   use pfcoil_variables
   use physics_variables
   use process_output
+  use rfp_variables
   use structure_variables
   use tfcoil_variables
   use times_variables
@@ -63,7 +66,6 @@ contains
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_desc  This routine calls the buildings calculations.
     !+ad_prob  None
-    !+ad_call  rfp.h90
     !+ad_call  bldgs
     !+ad_hist  01/08/11 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
@@ -81,8 +83,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'rfp.h90'
 
     !  Arguments
 

@@ -25,12 +25,12 @@ subroutine con1(m,cc)
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  pf_power_variables
+  !+ad_call  rfp_variables
   !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_call  pulse.h90
   !+ad_call  stella.h90
-  !+ad_call  rfp.h90
   !+ad_call  ife.h90
   !+ad_hist  01/07/94 PJK Improved layout and added stellarator constraints
   !+ad_hist  08/12/94 PJK Added stellarator radial build consistency
@@ -56,6 +56,7 @@ subroutine con1(m,cc)
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_hist  31/10/12 PJK Added stellarator_variables
+  !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -71,6 +72,7 @@ subroutine con1(m,cc)
   use pfcoil_variables
   use physics_variables
   use pf_power_variables
+  use rfp_variables
   use stellarator_variables
   use tfcoil_variables
   use times_variables
@@ -78,7 +80,6 @@ subroutine con1(m,cc)
   implicit none
 
   include 'pulse.h90'
-  include 'rfp.h90'
   include 'ife.h90'
 
   !  Arguments

@@ -106,26 +106,6 @@ fwomzp     dble          # Outboard first wall mean zone power density/neutron
 fwtemp     dble          # Outboard first wall temperature after a LOCA (K)
 $
 C______________________________________________________________________
-$  RFP parameters : (see rfp.h)
-$
-cptrfp(nrfppf) dble /.../# current per turn in each RFP PF coil (A/m2)
-drpf(nrfppf) dble /.../  # radial cross-section of each RFP PF coil (m)
-dzpf(nrfppf) dble /.../  # vertical cross-section of each RFP PF coil (m)
-irfp       intg /0/      # switch for RFP option (device.dat)
-$                          = 0 use tokamak or stellarator model
-$                          = 1 use RFP model
-nrfppf     intg /16/ PAR # number of RFP PF coils (final two are SC EF coils)
-nturns(nrfppf) dble /.../# number of turns of each RFP PF coil
-pfmmax     dble          # mass of heaviest PF coil (tonnes)
-pfrmax     dble          # radius of largest PF coil (m)
-resrfp(nrfppf) dble /.../# resistance of each RFP PF coil (ohms)
-rfpf       dble          # RFP reversal parameter F
-rfpth      dble /1.5/    # RFP pinch parameter theta                    var.78
-rrpf(nrfppf) dble /.../  # radius of each RFP PF coil (m)
-tftort     dble /0.33/   # TF coil toroidal thickness (m) (RFP only)    var.77
-zzpf(nrfppf) dble /.../  # vertical position of each RFP PF coil (m)
-$
-C______________________________________________________________________
 $  Inertial Fusion Energy parameters : (see ife.h)
 $
 $ 'region' = 1 radially outside chamber, = 2 above chamber, = 3 below chamber

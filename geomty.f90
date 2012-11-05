@@ -20,7 +20,7 @@ subroutine geomty
   !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  physics_variables
-  !+ad_call  rfp.h90
+  !+ad_call  rfp_variables
   !+ad_call  fvol
   !+ad_call  perim
   !+ad_call  surfa
@@ -34,6 +34,7 @@ subroutine geomty
   !+ad_hist  14/11/11 PJK Initial F90 version
   !+ad_hist  16/10/12 PJK Added constants
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_stat  Okay
   !+ad_docs  F/MI/PJK/LOGBOOK14, pp.41-43
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -43,10 +44,9 @@ subroutine geomty
   use build_variables
   use constants
   use physics_variables
+  use rfp_variables
 
   implicit none
-
-  include 'rfp.h90'
 
   !  Arguments
 

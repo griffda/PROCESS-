@@ -20,8 +20,8 @@ subroutine rfptfc(outfile,iprint)
   !+ad_call  constants
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  rfp_variables
   !+ad_call  tfcoil_variables
-  !+ad_call  rfp.h90
   !+ad_call  oheadr
   !+ad_call  osubhd
   !+ad_call  ovarre
@@ -34,6 +34,7 @@ subroutine rfptfc(outfile,iprint)
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  30/10/12 PJK Added build_module
+  !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -44,11 +45,10 @@ subroutine rfptfc(outfile,iprint)
   use constants
   use physics_variables
   use process_output
+  use rfp_variables
   use tfcoil_variables
 
   implicit none
-
-  include 'rfp.h90'
 
   !  Arguments
 
@@ -221,7 +221,6 @@ subroutine rfppfc(outfile,iprint)
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  tfcoil_variables
-  !+ad_call  rfp.h90
   !+ad_call  bfield
   !+ad_call  efcurr
   !+ad_call  oblnkl
@@ -249,11 +248,10 @@ subroutine rfppfc(outfile,iprint)
   use pfcoil_variables
   use physics_variables
   use process_output
+  use rfp_variables
   use tfcoil_variables
 
   implicit none
-
-  include 'rfp.h90'
 
   !  Arguments
 
@@ -487,7 +485,6 @@ subroutine rfppfp(outfile,iprint)
   !+ad_call  pf_power_variables
   !+ad_call  process_output
   !+ad_call  times_variables
-  !+ad_call  rfp.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_hist  01/03/96 PJK Initial version
@@ -512,11 +509,10 @@ subroutine rfppfp(outfile,iprint)
   use physics_variables
   use pf_power_variables
   use process_output
+  use rfp_variables
   use times_variables
 
   implicit none
-
-  include 'rfp.h90'
 
   !  Arguments
 
@@ -688,7 +684,6 @@ subroutine rfpphy
   !+ad_call  process_output
   !+ad_call  times_variables
   !+ad_call  pulse.h90
-  !+ad_call  rfp.h90
   !+ad_call  beamfus
   !+ad_call  betcom
   !+ad_call  cudriv
@@ -730,12 +725,12 @@ subroutine rfpphy
   use physics_module
   use physics_variables
   use process_output
+  use rfp_variables
   use times_variables
 
   implicit none
 
   include 'pulse.h90'
-  include 'rfp.h90'
 
   !  Arguments
 

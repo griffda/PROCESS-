@@ -23,8 +23,10 @@ module build_module
   !+ad_call  divertor_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  rfp_variables
   !+ad_call  tfcoil_variables
   !+ad_hist  30/10/12 PJK Initial version of module
+  !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -36,6 +38,7 @@ module build_module
   use divertor_variables
   use physics_variables
   use process_output
+  use rfp_variables
   use tfcoil_variables
 
   implicit none
@@ -272,7 +275,6 @@ contains
     !+ad_desc  This subroutine determines the vertical build of the machine
     !+ad_desc  inside the TF coil.
     !+ad_prob  None
-    !+ad_call  rfp.h90
     !+ad_call  divgeom
     !+ad_hist  26/07/11 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
@@ -282,8 +284,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'rfp.h90'
 
     !  Arguments
 

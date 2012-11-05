@@ -25,6 +25,7 @@ subroutine caller(xc,nvars)
   !+ad_call  physics_variables
   !+ad_call  power_module
   !+ad_call  process_output
+  !+ad_call  rfp_variables
   !+ad_call  sctfcoil_module
   !+ad_call  stellarator_module
   !+ad_call  stellarator_variables
@@ -32,7 +33,6 @@ subroutine caller(xc,nvars)
   !+ad_call  tfcoil_module
   !+ad_call  vacuum_module
   !+ad_call  ife.h90
-  !+ad_call  rfp.h90
   !+ad_call  acpow
   !+ad_call  avail
   !+ad_call  bldgcall
@@ -97,6 +97,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  30/10/12 PJK Added build_module
   !+ad_hist  31/10/12 PJK Added stellarator_variables
   !+ad_hist  31/10/12 PJK Added stellarator_module
+  !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -114,6 +115,7 @@ subroutine caller(xc,nvars)
   use physics_variables
   use power_module
   use process_output
+  use rfp_variables
   use sctfcoil_module
   use stellarator_module
   use stellarator_variables
@@ -123,7 +125,6 @@ subroutine caller(xc,nvars)
 
   implicit none
 
-  include 'rfp.h90'
   include 'ife.h90'
 
   !  Arguments

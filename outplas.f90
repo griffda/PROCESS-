@@ -16,8 +16,8 @@ subroutine outplas(outfile)
   !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  rfp_variables
   !+ad_call  times_variables
-  !+ad_call  rfp.h90
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
   !+ad_call  oheadr
@@ -37,6 +37,7 @@ subroutine outplas(outfile)
   !+ad_hist  16/10/12 PJK Added current_drive_variables
   !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_hist  31/10/12 PJK Added constraint_variables
+  !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -46,11 +47,10 @@ subroutine outplas(outfile)
   use current_drive_variables
   use physics_variables
   use process_output
+  use rfp_variables
   use times_variables
 
   implicit none
-
-  include 'rfp.h90'
 
   !  Arguments
 

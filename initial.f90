@@ -17,7 +17,6 @@ subroutine initial
   !+ad_call  stellarator_module
   !+ad_call  stellarator_variables
   !+ad_call  pulse.h90
-  !+ad_call  rfp.h90
   !+ad_call  ife.h90
   !+ad_call  devtyp
   !+ad_call  ifeini
@@ -68,6 +67,7 @@ subroutine initial
   !+ad_hist  31/10/12 PJK Removed inequality variables
   !+ad_hist  31/10/12 PJK Added stellarator_variables
   !+ad_hist  31/10/12 PJK Added stellarator_module
+  !+ad_hist  31/10/12 PJK Removed RFP variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -80,7 +80,6 @@ subroutine initial
   implicit none
 
   include 'pulse.h90'
-  include 'rfp.h90'
   include 'ife.h90'
 
   !  Arguments
@@ -102,22 +101,6 @@ subroutine initial
   lpulse = 0
   tmprse = 40.0D0
   tpeak = 0.0D0
-
-  !  Reversed field pinch parameters
-
-  irfp     = 0
-  pfmmax   = 0.0D0
-  pfrmax   = 0.0D0
-  rfpf     = 0.0D0
-  rfpth    = 1.5D0
-  tftort   = 0.33D0
-  rrpf(:)   = 0.0D0
-  zzpf(:)   = 0.0D0
-  drpf(:)   = 0.0D0
-  dzpf(:)   = 0.0D0
-  nturns(:) = 0.0D0
-  cptrfp(:) = 0.0D0
-  resrfp(:) = 0.0D0
 
   !  See which type of device is being modelled
 
@@ -148,24 +131,25 @@ subroutine devtyp
   !+ad_desc  is to be modelled. If the file is not present in the current
   !+ad_desc  directory, a standard tokamak model is assumed.
   !+ad_prob  None
+  !+ad_call  rfp_variables
   !+ad_call  stellarator_variables
-  !+ad_call  rfp.h90
   !+ad_call  ife.h90
   !+ad_hist  27/02/96 PJK Initial version
   !+ad_hist  08/10/96 PJK Fixed error: (istell.gt.2) should be (idev.gt.2)
   !+ad_hist  14/03/97 PJK idev=3 ==> inertial fusion power plant
   !+ad_hist  19/09/12 PJK Initial F90 version
   !+ad_hist  31/10/12 PJK Added stellarator_variables
+  !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use rfp_variables
   use stellarator_variables
 
   implicit none
 
-  include 'rfp.h90'
   include 'ife.h90'
 
   !  Local variables
@@ -235,9 +219,9 @@ subroutine check
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  rfp_variables
   !+ad_call  tfcoil_variables
   !+ad_call  pulse.h90
-  !+ad_call  rfp.h90
   !+ad_call  ife.h90
   !+ad_hist  08/10/96 PJK Initial upgraded version
   !+ad_hist  23/01/97 PJK Moved resetting of trithtmw from POWER
@@ -254,6 +238,7 @@ subroutine check
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_hist  30/10/12 PJK Added buildings_variables
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -267,12 +252,12 @@ subroutine check
   use pfcoil_variables
   use physics_variables
   use process_output
+  use rfp_variables
   use tfcoil_variables
 
   implicit none
 
   include 'pulse.h90'
-  include 'rfp.h90'
   include 'ife.h90'
 
   !  Local variables

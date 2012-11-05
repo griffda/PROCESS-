@@ -2588,6 +2588,69 @@ end module stellarator_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module rfp_variables
+
+  !+ad_name  rfp_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  reversed field pinch model
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  reversed field pinch model.
+  !+ad_desc  It is derived from <CODE>include</CODE> file
+  !+ad_desc  <CODE>rfp.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  31/10/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  nrfppf /16/ FIX : number of RFP PF coils (final two are SC EF coils)
+  integer, parameter :: nrfppf = 16
+
+  !+ad_vars  cptrfp(nrfppf) : current per turn in each RFP PF coil (A/m2)
+  real(kind(1.0D0)), dimension(nrfppf) :: cptrfp = 0.0D0
+  !+ad_vars  drpf(nrfppf) : radial cross-section of each RFP PF coil (m)
+  real(kind(1.0D0)), dimension(nrfppf) :: drpf = 0.0D0
+  !+ad_vars  dzpf(nrfppf) : vertical cross-section of each RFP PF coil (m)
+  real(kind(1.0D0)), dimension(nrfppf) :: dzpf = 0.0D0
+  !+ad_vars  irfp /0/ : switch for RFP option (via device.dat):
+  !+ad_varc             = 0 use tokamak, stellarator or IFE model;
+  !+ad_varc             = 1 use RFP model
+  integer :: irfp = 0
+  !+ad_vars  nturns(nrfppf) : number of turns of each RFP PF coil
+  real(kind(1.0D0)), dimension(nrfppf) :: nturns = 0.0D0
+  !+ad_vars  pfmmax : mass of heaviest PF coil (tonnes)
+  real(kind(1.0D0)) :: pfmmax = 0.0D0
+  !+ad_vars  pfrmax : radius of largest PF coil (m)
+  real(kind(1.0D0)) :: pfrmax = 0.0D0
+  !+ad_vars  resrfp(nrfppf) : resistance of each RFP PF coil (ohms)
+  real(kind(1.0D0)), dimension(nrfppf) :: resrfp = 0.0D0
+  !+ad_vars  rfpf : RFP reversal parameter F
+  real(kind(1.0D0)) :: rfpf = 0.0D0
+  !+ad_vars  rfpth /1.5/ : RFP pinch parameter theta
+  !+ad_varc                (iteration variable 78)
+  real(kind(1.0D0)) :: rfpth = 1.5D0
+  !+ad_vars  rrpf(nrfppf) : radius of each RFP PF coil (m)
+  real(kind(1.0D0)), dimension(nrfppf) :: rrpf = 0.0D0
+  !+ad_vars  tftort /0.33/ : TF coil toroidal thickness (m) (RFP only)
+  !+ad_varc                  (iteration variable 77)
+  real(kind(1.0D0)) :: tftort = 0.33D0
+  !+ad_vars  zzpf(nrfppf) : vertical position of each RFP PF coil (m)
+  real(kind(1.0D0)), dimension(nrfppf) :: zzpf = 0.0D0
+
+end module rfp_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
 
   !  ex fispact.h90
@@ -2757,54 +2820,6 @@ module wibble
 
   integer ::istore,itcycl,lpulse
   common /pulse2/ istore,itcycl,lpulse
-
-!  ex rfp.h90
-
-!--Version number 1.000
-!
-!--Description
-!  INCLUDE file for reversed-field pinch module in PROCESS.
-!
-!--Author
-!  Peter Knight D3/G12 Culham Laboratory, ext.3330
-!
-!--Date
-!  27 February 1996
-!
-!--Reference
-!  None
-!  
-!--History
-!  27/02/96 PJK 1.000 Initial version
-!
-!--Contents
-!  irfp   : Switch for rfp option (0=off)
-!  nrfppf : number of RFP PF coils
-!  rrpf   : radius of each RFP PF coil (m)
-!  zzpf   : vertical position of each RFP PF coil (m)
-!  drpf   : radial cross-section of each RFP PF coil (m)
-!  dzpf   : vertical cross-section of each RFP PF coil (m)
-!  nturns : number of turns of each RFP PF coil
-!  cptrfp : current per turn in each RFP PF coil (A/m2)
-!  resrfp : resistance of each RFP PF coil
-!  tftort : TF coil toroidal thickness (m)
-!  pfrmax : radius of largest PF coil (m)
-!  pfmmax : mass of heaviest PF coil (tonnes)
-!  rfpf   : reversal parameter F
-!  rfpth  : pinch parameter theta
-
-  integer, parameter :: nrfppf = 16
-
-  real(kind(1.0D0)), dimension(nrfppf) :: &
-       rrpf,zzpf,drpf,dzpf,nturns,cptrfp,resrfp
-  common /rfpdar/ &
-       rrpf,zzpf,drpf,dzpf,nturns,cptrfp,resrfp
-
-  real(kind(1.0D0)) :: tftort,pfrmax,pfmmax,rfpf,rfpth
-  common /rfpdbl/ tftort,pfrmax,pfmmax,rfpf,rfpth
-
-  integer :: irfp
-  common /rfpint/ irfp
 
 !  ex start.h90
 
