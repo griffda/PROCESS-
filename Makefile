@@ -118,8 +118,7 @@ object = \
  xc.o
 
 headers = \
- fispact.h90   \
- start.h90     
+ fispact.h90
 
 ###### Architecture specifics #######
 #
@@ -203,15 +202,15 @@ numerics.o: maths_library.o
 outplas.o: global_variables.o output.o
 output.o:
 pfcoil.o: global_variables.o maths_library.o output.o
-physics.o: current_drive.o global_variables.o maths_library.o output.o start.h90
+physics.o: current_drive.o global_variables.o maths_library.o output.o
 plant_power.o: fwbs.o global_variables.o output.o
-pulse.o: global_variables.o maths_library.o output.o physics.o start.h90
+pulse.o: global_variables.o maths_library.o output.o physics.o
 rfp.o: current_drive.o input.o global_variables.o machine_build.o output.o pfcoil.o \
   physics.o
 safety.o: global_variables.o output.o fispact.h90
 scan.o: global_variables.o numerics.o output.o
 sctfcoil.o: global_variables.o maths_library.o output.o
-startup.o: global_variables.o output.o physics.o start.h90
+startup.o: global_variables.o output.o physics.o
 stellarator.o: buildings.o costs.o current_drive.o divertor.o fwbs.o global_variables.o \
   maths_library.o numerics.o output.o physics.o plant_power.o scan.o sctfcoil.o \
   structure.o vacuum.o

@@ -49,6 +49,7 @@ module physics_module
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  pulse_variables
+  !+ad_call  startup_variables
   !+ad_call  times_variables
   !+ad_hist  16/10/12 PJK Initial version of module
   !+ad_hist  16/10/12 PJK Added constants
@@ -60,6 +61,7 @@ module physics_module
   !+ad_hist  31/10/12 PJK Changed private/public lists
   !+ad_hist  31/10/12 PJK Moved local common variables into module header
   !+ad_hist  05/11/12 PJK Added pulse_variables
+  !+ad_hist  05/11/12 PJK Added startup_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -74,6 +76,7 @@ module physics_module
   use process_output
   use pulse_variables
   use maths_library
+  use startup_variables
   use times_variables
 
   implicit none
@@ -1929,7 +1932,7 @@ contains
     !+ad_desc  using one of a large number of scaling laws, and the
     !+ad_desc  transport power loss terms.
     !+ad_prob  None
-    !+ad_call  start.h90
+    !+ad_call  None
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  30/06/94 PJK Added stellarator scaling laws 20-23
     !+ad_hist  07/12/95 PJK Added pcharge to plasma input power
@@ -1948,8 +1951,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'start.h90'
 
     !  Arguments
 

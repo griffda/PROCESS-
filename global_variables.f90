@@ -3045,48 +3045,52 @@ end module pulse_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module startup_variables
+
+  !+ad_name  startup_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  plasma start-up model
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  plasma start-up model.
+  !+ad_desc  It is derived from <CODE>include</CODE> file
+  !+ad_desc  <CODE>start.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  05/11/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  Work File Notes in F/MPE/MOD/CAG/PROCESS/PULSE
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  ftaue : factor in energy confinement time formula
+  real(kind(1.0D0)) :: ftaue = 0.0D0
+  !+ad_vars  gtaue : factor in energy confinement time formula
+  real(kind(1.0D0)) :: gtaue  = 0.0D0
+  !+ad_vars  nign : electron density at ignition (start-up) (/m3)
+  real(kind(1.0D0)) :: nign  = 0.0D0
+  !+ad_vars  ptaue : exponent in energy confinement time formula
+  real(kind(1.0D0)) :: ptaue  = 0.0D0
+  !+ad_vars  qtaue : exponent in energy confinement time formula
+  real(kind(1.0D0)) :: qtaue  = 0.0D0
+  !+ad_vars  rtaue : exponent in energy confinement time formula
+  real(kind(1.0D0)) :: rtaue  = 0.0D0
+  !+ad_vars  tign : electron temperature at ignition (start-up) (keV)
+  real(kind(1.0D0)) :: tign  = 0.0D0
+
+end module startup_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
-
-!  ex start.h90
-
-!--Version number 1.000
-!
-!--Description
-!  INCLUDE file for plasma start-up routine
-!
-!--Author
-!  Peter Knight D3/012 Culham Laboratory, ext.3330
-!
-!--Date
-!  08 November 1993
-!
-!--Reference
-!  Work File Notes in F/MPE/MOD/CAG/PROCESS/PULSE
-!  
-!--History
-!  08/11/93 PJK 1.000 Initial version
-!
-!--Contents
-!  nign   : electron density at start-up (/m3)
-!  tign   : electron temperature at start-up (keV)
-!  ptaue  : exponent in taue formula
-!  qtaue  : exponent in taue formula
-!  rtaue  : exponent in taue formula
-!  gtaue  : factor in taue formula
-!  ftaue  : factor in taue formula
-!  aa     : constant
-!  bb     : constant
-!  cc     : constant
-!  dd     : constant
-!  s      : constant
-
-  real(kind(1.0D0)) :: &
-       nign,tign,ptaue,qtaue,rtaue,gtaue,ftaue,aa,bb,cc,dd
-  common /strt1/ &
-       nign,tign,ptaue,qtaue,rtaue,gtaue,ftaue,aa,bb,cc,dd
-
-  integer :: s
-  common /strt2/ s
 
   !  ex fispact.h90
 

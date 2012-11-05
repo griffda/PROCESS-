@@ -59,7 +59,6 @@ subroutine startup(iprint)
   !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  start.h90
   !+ad_call  oheadr
   !+ad_call  ovarre
   !+ad_call  start1
@@ -81,10 +80,9 @@ subroutine startup(iprint)
   use current_drive_variables
   use physics_variables
   use process_output
+  use startup_variables
 
   implicit none
-
-  include 'start.h90'
 
   !  Arguments
 
@@ -92,8 +90,8 @@ subroutine startup(iprint)
 
   !  Local variables
 
-  real(kind(1.0D0)) :: ne20,te10,ti10,fd,fdt,rrplas,objf,tol
-  integer :: meq,maxfev,info,nfev,mode
+  real(kind(1.0D0)) :: aa,bb,cc,dd,ne20,te10,ti10,fd,fdt,rrplas,objf,tol
+  integer :: meq,maxfev,info,nfev,mode,s
 
   integer, parameter :: n = 2
   integer, parameter :: m = 2
@@ -460,7 +458,7 @@ subroutine constr(n,m,x,paux,conf)
   !+ad_desc  This routine calculates the constraint equations relevant
   !+ad_desc  to the minimisation of the auxiliary power.
   !+ad_prob  None
-  !+ad_call  start.h90
+  !+ad_call  None
   !+ad_hist  25/11/93 PJK Incorporation into PROCESS
   !+ad_hist  02/10/12 PJK Initial F90 version
   !+ad_stat  Okay
@@ -470,8 +468,6 @@ subroutine constr(n,m,x,paux,conf)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   implicit none
-
-  include 'start.h90'
 
   !  Arguments
 
