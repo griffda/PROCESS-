@@ -19,6 +19,7 @@ subroutine caller(xc,nvars)
   !+ad_call  current_drive_module
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
+  !+ad_call  ife_module
   !+ad_call  ife_variables
   !+ad_call  numerics
   !+ad_call  pfcoil_module
@@ -101,6 +102,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added rfp_module
   !+ad_hist  05/11/12 PJK Added ife_variables
+  !+ad_hist  05/11/12 PJK Added ife_module
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -112,6 +114,7 @@ subroutine caller(xc,nvars)
   use current_drive_module
   use divertor_module
   use fwbs_module
+  use ife_module
   use ife_variables
   use numerics
   use pfcoil_module

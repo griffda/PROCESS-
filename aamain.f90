@@ -883,6 +883,7 @@ subroutine output(outfile)
   !+ad_call  current_drive_module
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
+  !+ad_call  ife_module
   !+ad_call  ife_variables
   !+ad_call  pfcoil_module
   !+ad_call  physics_module
@@ -957,6 +958,7 @@ subroutine output(outfile)
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added rfp_module
   !+ad_hist  05/11/12 PJK Added ife_variables
+  !+ad_hist  05/11/12 PJK Added ife_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -968,6 +970,7 @@ subroutine output(outfile)
   use current_drive_module
   use divertor_module
   use fwbs_module
+  use ife_module
   use ife_variables
   use pfcoil_module
   use physics_module
