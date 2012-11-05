@@ -26,7 +26,7 @@ subroutine loadxc
   !+ad_call  rfp_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
-  !+ad_call  pulse.h90
+  !+ad_call  pulse_variables
   !+ad_hist  22/10/92 PJK Removed original arguments (xc,nn)
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  09/10/12 PJK Initial F90 version
@@ -43,6 +43,7 @@ subroutine loadxc
   !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added ife_variables
+  !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -58,13 +59,12 @@ subroutine loadxc
   use numerics
   use pfcoil_variables
   use physics_variables
+  use pulse_variables
   use rfp_variables
   use tfcoil_variables
   use times_variables
 
   implicit none
-
-  include 'pulse.h90'
 
   !  Arguments
 

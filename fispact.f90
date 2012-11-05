@@ -50,9 +50,9 @@
         use build_variables
         use fwbs_variables
         use physics_variables
+        use pulse_variables
 
 !  INCLUDE files
-      INCLUDE 'pulse.h90'
       INCLUDE 'fispact.h90'
 
 !  Arguments

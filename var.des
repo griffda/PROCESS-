@@ -46,35 +46,10 @@ CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
   so need not be initialised.
 
 C______________________________________________________________________
-$  Pulsed reactor : (see pulse.h)
-$
-afw        dble /0.005/  # inner radius of each first wall structural tube (m)
-bctmp      dble /320.0/  # first wall bulk coolant temperature (C)
-bfw        dble          # outer radius of each first wall structural tube (m)
-$                          (0.5 * average of fwith and fwoth)
-coolp      dble /15.5D6/ # first wall coolant pressure (Pa)
-dtstor     dble /300.0/  # max allowable temperature change in stainless
-$                          steel thermal storage block (K) (istore=3)
-fwlife     dble          # first wall lifetime (y)
-istore     intg /1/      # switch for thermal storage method
-$                          = 1 option 1 of Electrowatt report, AEA FUS 205
-$                          = 2 option 2 of Electrowatt report, AEA FUS 205
-$                          = 3 stainless steel block
-itcycl     intg /1/      # switch for first wall axial stress model
-$                          = 1 total axial constraint, no bending
-$                          = 2 no axial constraint, no bending
-$                          = 3 no axial constraint, bending
-lpulse     intg /0/      # switch for reactor model
-$                          = 0 continuous operation
-$                          = 1 pulsed operation
-tmprse     dble /40.0/   # first wall coolant temperature rise (C)
-tpeak      dble          # peak first wall temperature (C)
-$
-C______________________________________________________________________
 $  Start-up : (see start.h)
 $
-nign       dble          # electron density at ignition (start-up) (m**-3)
-tign       dble          # electron temperature at ignition (start-up) (keV)
+nign       dble          : electron density at ignition (start-up) (m**-3)
+tign       dble          : electron temperature at ignition (start-up) (keV)
 $
 C______________________________________________________________________
 $  FISPACT parameters : (see fispact.h)
@@ -83,26 +58,26 @@ $ (1) - at end of component life
 $ (2) - after 3 months cooling time
 $ (3) - 100 years after end of plant life
 $
-bliact(3)  dble          # Inboard blanket total activity (Bq)
-bligdr(3)  dble          # Inboard blanket total gamma dose rate (Sv/hr)
-blihkw(3)  dble          # Inboard blanket total heat output (kW)
-bliizp     dble          # Inboard blanket integrated zone power / neutron
-blimzp     dble          # Inboard blanket mean zone power density / neutron
-bloact(3)  dble          # Outboard blanket total activity (Bq)
-blogdr(3)  dble          # Outboard blanket total gamma dose rate (Sv/hr)
-blohkw(3)  dble          # Outboard blanket total heat output (kW)
-bloizp     dble          # Outboard blanket integrated zone power / neutron
-blomzp     dble          # Outboard blanket mean zone power density / neutron
-fwiact(3)  dble          # Inboard first wall total activity (Bq)
-fwigdr(3)  dble          # Inboard first wall total gamma dose rate (Sv/hr)
-fwihkw(3)  dble          # Inboard first wall total heat output (kW)
-fwiizp     dble          # Inboard first wall integrated zone power / neutron
-fwimzp     dble          # Inboard first wall mean zone power density/neutron
-fwoact(3)  dble          # Outboard first wall total activity (Bq)
-fwogdr(3)  dble          # Outboard first wall total gamma dose rate (Sv/hr)
-fwohkw(3)  dble          # Outboard first wall total heat output (kW)
-fwoizp     dble          # Outboard first wall integrated zone power / neutron
-fwomzp     dble          # Outboard first wall mean zone power density/neutron
-fwtemp     dble          # Outboard first wall temperature after a LOCA (K)
+bliact(3)  dble          : Inboard blanket total activity (Bq)
+bligdr(3)  dble          : Inboard blanket total gamma dose rate (Sv/hr)
+blihkw(3)  dble          : Inboard blanket total heat output (kW)
+bliizp     dble          : Inboard blanket integrated zone power / neutron
+blimzp     dble          : Inboard blanket mean zone power density / neutron
+bloact(3)  dble          : Outboard blanket total activity (Bq)
+blogdr(3)  dble          : Outboard blanket total gamma dose rate (Sv/hr)
+blohkw(3)  dble          : Outboard blanket total heat output (kW)
+bloizp     dble          : Outboard blanket integrated zone power / neutron
+blomzp     dble          : Outboard blanket mean zone power density / neutron
+fwiact(3)  dble          : Inboard first wall total activity (Bq)
+fwigdr(3)  dble          : Inboard first wall total gamma dose rate (Sv/hr)
+fwihkw(3)  dble          : Inboard first wall total heat output (kW)
+fwiizp     dble          : Inboard first wall integrated zone power / neutron
+fwimzp     dble          : Inboard first wall mean zone power density/neutron
+fwoact(3)  dble          : Outboard first wall total activity (Bq)
+fwogdr(3)  dble          : Outboard first wall total gamma dose rate (Sv/hr)
+fwohkw(3)  dble          : Outboard first wall total heat output (kW)
+fwoizp     dble          : Outboard first wall integrated zone power / neutron
+fwomzp     dble          : Outboard first wall mean zone power density/neutron
+fwtemp     dble          : Outboard first wall temperature after a LOCA (K)
 $
 C______________________________________________________________________

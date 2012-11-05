@@ -36,9 +36,11 @@ module ife_module
   !+ad_call  ife_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  pulse_variables
   !+ad_call  structure_variables
   !+ad_call  vacuum_variables
   !+ad_hist  05/11/12 PJK Initial version of module
+  !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -54,6 +56,7 @@ module ife_module
   use ife_variables
   use physics_variables
   use process_output
+  use pulse_variables
   use structure_variables
   use vacuum_variables
 
@@ -1844,7 +1847,6 @@ contains
     !+ad_desc  This routine calculates the first wall, blanket and shield volumes,
     !+ad_desc  masses and other parameters, for an Inertial Fusion Energy device.
     !+ad_prob  None
-    !+ad_call  pulse.h90
     !+ad_call  oheadr
     !+ad_call  ovarre
     !+ad_hist  21/03/97 PJK Initial version
@@ -1862,8 +1864,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'pulse.h90'
 
     !  Arguments
 

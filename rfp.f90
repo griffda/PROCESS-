@@ -31,10 +31,12 @@ module rfp_module
   !+ad_call  physics_variables
   !+ad_call  process_input
   !+ad_call  process_output
+  !+ad_call  pulse_variables
   !+ad_call  rfp_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_hist  05/11/12 PJK Initial version of module
+  !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -54,6 +56,7 @@ module rfp_module
   use physics_variables
   use process_input, only : check_range_real
   use process_output
+  use pulse_variables
   use rfp_variables
   use tfcoil_variables
   use times_variables
@@ -692,7 +695,6 @@ contains
     !+ad_desc  This subroutine calculates the plasma physics of the
     !+ad_desc  reversed field pinch system.
     !+ad_prob  None
-    !+ad_call  pulse.h90
     !+ad_call  beamfus
     !+ad_call  betcom
     !+ad_call  cudriv
@@ -729,8 +731,6 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
-    include 'pulse.h90'
 
     !  Arguments
 

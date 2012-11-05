@@ -16,9 +16,7 @@ subroutine initial
   !+ad_call  process_output
   !+ad_call  stellarator_module
   !+ad_call  stellarator_variables
-  !+ad_call  pulse.h90
   !+ad_call  devtyp
-  !+ad_call  ifeini
   !+ad_call  stinit
   !+ad_hist  08/10/96 PJK Initial upgraded version
   !+ad_hist  20/01/97 PJK Added htpmw
@@ -68,6 +66,7 @@ subroutine initial
   !+ad_hist  31/10/12 PJK Added stellarator_module
   !+ad_hist  31/10/12 PJK Removed RFP variables
   !+ad_hist  05/11/12 PJK Removed call to ifeini
+  !+ad_hist  05/11/12 PJK Removed pulsed reactor variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -79,27 +78,25 @@ subroutine initial
 
   implicit none
 
-  include 'pulse.h90'
-
   !  Arguments
 
   !  Local variables
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !  Pulsed reactor
+  ! !  Pulsed reactor
 
-  afw = 0.005D0
-  bctmp = 320.0D0
-  bfw = 0.0D0
-  coolp = 15.5D6
-  dtstor = 300.0D0
-  fwlife = 0.0D0
-  istore = 1
-  itcycl = 1
-  lpulse = 0
-  tmprse = 40.0D0
-  tpeak = 0.0D0
+  ! afw = 0.005D0
+  ! bctmp = 320.0D0
+  ! bfw = 0.0D0
+  ! coolp = 15.5D6
+  ! dtstor = 300.0D0
+  ! fwlife = 0.0D0
+  ! istore = 1
+  ! itcycl = 1
+  ! lpulse = 0
+  ! tmprse = 40.0D0
+  ! tpeak = 0.0D0
 
   !  See which type of device is being modelled
 
@@ -215,9 +212,9 @@ subroutine check
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  pulse_variables
   !+ad_call  rfp_variables
   !+ad_call  tfcoil_variables
-  !+ad_call  pulse.h90
   !+ad_hist  08/10/96 PJK Initial upgraded version
   !+ad_hist  23/01/97 PJK Moved resetting of trithtmw from POWER
   !+ad_hist  14/03/97 PJK Added coding relevant to IFE device
@@ -235,6 +232,7 @@ subroutine check
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added ife_variables
+  !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -249,12 +247,11 @@ subroutine check
   use pfcoil_variables
   use physics_variables
   use process_output
+  use pulse_variables
   use rfp_variables
   use tfcoil_variables
 
   implicit none
-
-  include 'pulse.h90'
 
   !  Local variables
 

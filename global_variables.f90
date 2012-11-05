@@ -2982,7 +2982,111 @@ end module ife_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module pulse_variables
+
+  !+ad_name  pulse_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  pulsed reactor model
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  pulsed reactor model.
+  !+ad_desc  It is derived from <CODE>include</CODE> file
+  !+ad_desc  <CODE>pulse.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  05/11/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  Work File Notes in F/MPE/MOD/CAG/PROCESS/PULSE
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  afw /0.005/ : inner radius of each first wall structural tube (m)
+  real(kind(1.0D0)) :: afw = 0.005D0
+  !+ad_vars  bctmp /320.0/ : first wall bulk coolant temperature (C)
+  real(kind(1.0D0)) :: bctmp = 320.0D0
+  !+ad_vars  bfw : outer radius of each first wall structural tube (m)
+  !+ad_varc        (0.5 * average of fwith and fwoth)
+  real(kind(1.0D0)) :: bfw = 0.0D0
+  !+ad_vars  coolp /15.5D6/ : first wall coolant pressure (Pa)
+  real(kind(1.0D0)) :: coolp = 15.5D6
+  !+ad_vars  dtstor /300.0/ : maximum allowable temperature change in stainless
+  !+ad_varc                   steel thermal storage block (K) (istore=3)
+  real(kind(1.0D0)) :: dtstor = 300.0D0
+  !+ad_vars  fwlife : first wall lifetime (y)
+  real(kind(1.0D0)) :: fwlife = 0.0D0
+  !+ad_vars  istore /1/ : switch for thermal storage method:
+  !+ad_varc               = 1 option 1 of Electrowatt report, AEA FUS 205;
+  !+ad_varc               = 2 option 2 of Electrowatt report, AEA FUS 205;
+  !+ad_varc               = 3 stainless steel block
+  integer :: istore = 1
+  !+ad_vars  itcycl /1/ : switch for first wall axial stress model:
+  !+ad_varc               = 1 total axial constraint, no bending;
+  !+ad_varc               = 2 no axial constraint, no bending;
+  !+ad_varc               = 3 no axial constraint, bending
+  integer :: itcycl = 1
+  !+ad_vars  lpulse /0/ : switch for reactor model:
+  !+ad_varc               = 0 continuous operation;
+  !+ad_varc               = 1 pulsed operation
+  integer :: lpulse = 0
+  !+ad_vars  tmprse /40.0/ : first wall coolant temperature rise (C)
+  real(kind(1.0D0)) :: tmprse = 40.0D0
+  !+ad_vars  tpeak : peak first wall temperature (C)
+  real(kind(1.0D0)) :: tpeak = 0.0D0
+
+end module pulse_variables
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module wibble
+
+!  ex start.h90
+
+!--Version number 1.000
+!
+!--Description
+!  INCLUDE file for plasma start-up routine
+!
+!--Author
+!  Peter Knight D3/012 Culham Laboratory, ext.3330
+!
+!--Date
+!  08 November 1993
+!
+!--Reference
+!  Work File Notes in F/MPE/MOD/CAG/PROCESS/PULSE
+!  
+!--History
+!  08/11/93 PJK 1.000 Initial version
+!
+!--Contents
+!  nign   : electron density at start-up (/m3)
+!  tign   : electron temperature at start-up (keV)
+!  ptaue  : exponent in taue formula
+!  qtaue  : exponent in taue formula
+!  rtaue  : exponent in taue formula
+!  gtaue  : factor in taue formula
+!  ftaue  : factor in taue formula
+!  aa     : constant
+!  bb     : constant
+!  cc     : constant
+!  dd     : constant
+!  s      : constant
+
+  real(kind(1.0D0)) :: &
+       nign,tign,ptaue,qtaue,rtaue,gtaue,ftaue,aa,bb,cc,dd
+  common /strt1/ &
+       nign,tign,ptaue,qtaue,rtaue,gtaue,ftaue,aa,bb,cc,dd
+
+  integer :: s
+  common /strt2/ s
 
   !  ex fispact.h90
 
@@ -3037,90 +3141,5 @@ module wibble
   common /fisp2/ &
        bliact,bligdr,blihkw,bloact,blogdr,blohkw,fwiact,fwigdr, &
        fwihkw,fwoact,fwogdr,fwohkw
-
-!  ex pulse.h90
-
-!--Version number 1.100
-!
-!--Description
-!  Include file containing pulsed reactor variables
-!
-!--Author
-!  Chris Gardner, c/o
-!  Peter Knight D3/G12 Culham Laboratory, ext.3330
-!
-!--Date
-!  11 April 1994
-!
-!--Reference
-!  Work File Notes in F/MPE/MOD/CAG/PROCESS/PULSE
-!  
-!--History
-!  08/11/93 PJK 1.000 Initial version
-!  11/04/94 PJK 1.100 Changed ITPULS to ITCYCL
-!
-!--Contents
-!  afw    : inner radius of each first wall structural cylinder (m)
-!  bfw    : outer radius of each first wall structural cylinder (m)
-!  bctmp  : bulk coolant temperature (C)
-!  coolp  : coolant pressure (Pa)
-!  dtstor : maximum allowable temperature change within the stainless
-!           steel thermal storage block (K)
-!  fwlife : first wall lifetime (yrs)
-!  tmprse : temperature rise in coolant along toroidal
-!           extent of first wall (C)
-!  tpeak  : peak temperature in first wall (C)
-!  istore : switch for thermal storage method (1/2/3)
-!  itcycl : switch for first wall axial stress model (1/2/3)
-!  lpulse : switch for reactor model : 1 = pulsed, 0 = continuous
-
-  real(kind(1.0D0)) :: &
-       afw,bfw,bctmp,coolp,dtstor,fwlife,tmprse,tpeak
-  common /pulse1/ &
-       afw,bfw,bctmp,coolp,dtstor,fwlife,tmprse,tpeak
-
-  integer ::istore,itcycl,lpulse
-  common /pulse2/ istore,itcycl,lpulse
-
-!  ex start.h90
-
-!--Version number 1.000
-!
-!--Description
-!  INCLUDE file for plasma start-up routine
-!
-!--Author
-!  Peter Knight D3/012 Culham Laboratory, ext.3330
-!
-!--Date
-!  08 November 1993
-!
-!--Reference
-!  Work File Notes in F/MPE/MOD/CAG/PROCESS/PULSE
-!  
-!--History
-!  08/11/93 PJK 1.000 Initial version
-!
-!--Contents
-!  nign   : electron density at start-up (/m3)
-!  tign   : electron temperature at start-up (keV)
-!  ptaue  : exponent in taue formula
-!  qtaue  : exponent in taue formula
-!  rtaue  : exponent in taue formula
-!  gtaue  : factor in taue formula
-!  ftaue  : factor in taue formula
-!  aa     : constant
-!  bb     : constant
-!  cc     : constant
-!  dd     : constant
-!  s      : constant
-
-  real(kind(1.0D0)) :: &
-       nign,tign,ptaue,qtaue,rtaue,gtaue,ftaue,aa,bb,cc,dd
-  common /strt1/ &
-       nign,tign,ptaue,qtaue,rtaue,gtaue,ftaue,aa,bb,cc,dd
-
-  integer :: s
-  common /strt2/ s
 
 end module wibble
