@@ -27,6 +27,7 @@ subroutine caller(xc,nvars)
   !+ad_call  physics_variables
   !+ad_call  power_module
   !+ad_call  process_output
+  !+ad_call  pulse_module
   !+ad_call  rfp_module
   !+ad_call  rfp_variables
   !+ad_call  sctfcoil_module
@@ -103,6 +104,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  05/11/12 PJK Added rfp_module
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added ife_module
+  !+ad_hist  05/11/12 PJK Added pulse_module
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -122,6 +124,7 @@ subroutine caller(xc,nvars)
   use physics_variables
   use power_module
   use process_output
+  use pulse_module
   use rfp_module
   use rfp_variables
   use sctfcoil_module

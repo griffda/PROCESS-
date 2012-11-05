@@ -889,6 +889,7 @@ subroutine output(outfile)
   !+ad_call  physics_module
   !+ad_call  physics_variables
   !+ad_call  power_module
+  !+ad_call  pulse_module
   !+ad_call  rfp_module
   !+ad_call  rfp_variables
   !+ad_call  sctfcoil_module
@@ -959,6 +960,7 @@ subroutine output(outfile)
   !+ad_hist  05/11/12 PJK Added rfp_module
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added ife_module
+  !+ad_hist  05/11/12 PJK Added pulse_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -976,6 +978,7 @@ subroutine output(outfile)
   use physics_module
   use physics_variables
   use power_module
+  use pulse_module
   use rfp_module
   use rfp_variables
   use sctfcoil_module

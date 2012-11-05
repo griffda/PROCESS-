@@ -84,20 +84,6 @@ subroutine initial
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! !  Pulsed reactor
-
-  ! afw = 0.005D0
-  ! bctmp = 320.0D0
-  ! bfw = 0.0D0
-  ! coolp = 15.5D6
-  ! dtstor = 300.0D0
-  ! fwlife = 0.0D0
-  ! istore = 1
-  ! itcycl = 1
-  ! lpulse = 0
-  ! tmprse = 40.0D0
-  ! tpeak = 0.0D0
-
   !  See which type of device is being modelled
 
   call devtyp
