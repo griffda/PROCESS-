@@ -893,6 +893,7 @@ subroutine output(outfile)
   !+ad_call  rfp_module
   !+ad_call  rfp_variables
   !+ad_call  sctfcoil_module
+  !+ad_call  startup_module
   !+ad_call  stellarator_module
   !+ad_call  stellarator_variables
   !+ad_call  structure_module
@@ -925,6 +926,7 @@ subroutine output(outfile)
   !+ad_call  rfppfc
   !+ad_call  rfppfp
   !+ad_call  rfptfc
+  !+ad_call  startup
   !+ad_call  stout
   !+ad_call  strucall
   !+ad_call  tfcoil
@@ -961,6 +963,7 @@ subroutine output(outfile)
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added ife_module
   !+ad_hist  05/11/12 PJK Added pulse_module
+  !+ad_hist  06/11/12 PJK Added startup_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -982,6 +985,7 @@ subroutine output(outfile)
   use rfp_module
   use rfp_variables
   use sctfcoil_module
+  use startup_module
   use stellarator_module
   use stellarator_variables
   use structure_module
@@ -1015,6 +1019,7 @@ subroutine output(outfile)
   call costs(outfile,1)
   call avail(outfile,1)
   call outplas(outfile)
+  !call startup(outfile,1)  !  commented-out for speed reasons
   call igmarcal(outfile)
   call cudriv(outfile,1)
   call pulse(outfile,1)

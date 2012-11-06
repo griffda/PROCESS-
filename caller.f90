@@ -31,6 +31,7 @@ subroutine caller(xc,nvars)
   !+ad_call  rfp_module
   !+ad_call  rfp_variables
   !+ad_call  sctfcoil_module
+  !+ad_call  startup_module
   !+ad_call  stellarator_module
   !+ad_call  stellarator_variables
   !+ad_call  structure_module
@@ -105,6 +106,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added ife_module
   !+ad_hist  05/11/12 PJK Added pulse_module
+  !+ad_hist  06/11/12 PJK Added startup_module
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -128,6 +130,7 @@ subroutine caller(xc,nvars)
   use rfp_module
   use rfp_variables
   use sctfcoil_module
+  use startup_module
   use stellarator_module
   use stellarator_variables
   use structure_module
@@ -181,8 +184,7 @@ subroutine caller(xc,nvars)
      call rfpphy
   end if
 
-  !  Commented out start-up option as it takes a long time
-  !  call startup(0)
+  !call startup(nout,0)  !  commented-out for speed reasons
 
   call ech(nout,0)
   call lwhymod(nout,0)

@@ -46,12 +46,6 @@ CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
   so need not be initialised.
 
 C______________________________________________________________________
-$  Start-up : (see start.h)
-$
-nign       dble          : electron density at ignition (start-up) (m**-3)
-tign       dble          : electron temperature at ignition (start-up) (keV)
-$
-C______________________________________________________________________
 $  FISPACT parameters : (see fispact.h)
 $
 $ (1) - at end of component life

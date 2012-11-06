@@ -1777,7 +1777,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine vmcon( &
+  recursive subroutine vmcon( &
        fcnvmc1,fcnvmc2,mode,n,m,meq,x,objf,fgrd,conf,cnorm,lcnorm, &
        b,lb,tol,maxfev,info,nfev,vlam,glag,vmu,cm,glaga,gamma,eta, &
        xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa,liwa,ilower, &
@@ -1894,6 +1894,7 @@ contains
     !+ad_hist  21/05/91 JG  Modified argument list
     !+ad_hist  21/05/91 JG  Modified for separate fcnvmc1, fcnvmc2 functions
     !+ad_hist  09/10/12 PJK Initial F90 version
+    !+ad_hist  06/11/12 PJK Added recursive attribute, for startup routine
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
