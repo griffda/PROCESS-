@@ -44,6 +44,7 @@ subroutine loadxc
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added pulse_variables
+  !+ad_hist  06/11/12 PJK Renamed source file iteration_variables.f90 from xc.f90
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !

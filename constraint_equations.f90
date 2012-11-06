@@ -1,9 +1,9 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine con1(m,cc)
+subroutine constraints(m,cc)
 
-  !+ad_name  con1
+  !+ad_name  constraints
   !+ad_summ  Routine that formulates the constraint equations
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
@@ -58,6 +58,9 @@ subroutine con1(m,cc)
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added pulse_variables
+  !+ad_hist  06/11/12 PJK Renamed routine from con1 to constraints,
+  !+ad_hisc               and the source file itself from eqns.f90 to
+  !+ad_hisc               constraint_equations.f90
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -151,7 +154,7 @@ subroutine con1(m,cc)
         if (ignite == 0) then
            cc(i) = 1.0D0 - dnbeam2/dnbeam
         else
-           write(*,*) 'Error in routine CON1:'
+           write(*,*) 'Error in routine CONSTRAINTS:'
            write(*,*) 'Do not use constraint 7 if IGNITE=1.'
            write(*,*) 'PROCESS stopping.'
            stop
@@ -249,7 +252,7 @@ subroutine con1(m,cc)
            cc(i) = 1.0D0 - (beta-betaft) / (fbetatry*betalim)
 
         else
-           write(*,*) 'Error in routine CON1:'
+           write(*,*) 'Error in routine CONSTRAINTS:'
            write(*,*) 'Illegal value for ICULBL, = ',iculbl
            write(*,*) 'PROCESS stopping.'
            stop
@@ -272,7 +275,7 @@ subroutine con1(m,cc)
         if (ignite == 0) then
            cc(i) = 1.0D0 - fqval * powfmw / (1.0D-6 * (pinji+pinje))
         else
-           write(*,*) 'Error in routine CON1:'
+           write(*,*) 'Error in routine CONSTRAINTS:'
            write(*,*) 'Do not use constraint 28 if IGNITE=1.'
            write(*,*) 'PROCESS stopping.'
            stop
@@ -430,7 +433,7 @@ subroutine con1(m,cc)
 
      case default
 
-        write(*,*) 'Error in routine CON1:'
+        write(*,*) 'Error in routine CONSTRAINTS:'
         write(*,*) 'No such equation number as ',icc(i)
         write(*,*) 'PROCESS stopping.'
         stop
@@ -440,7 +443,7 @@ subroutine con1(m,cc)
      !  Crude method of catching NaN errors
 
      if ((abs(cc(i)) > 9.99D99).or.(cc(i) /= cc(i))) then
-        write(*,*) 'Error in routine CON1:'
+        write(*,*) 'Error in routine CONSTRAINTS:'
         write(*,*) 'NaN error for constraint equation ',icc(i)
         write(*,*) 'PROCESS stopping.'
         stop
@@ -448,4 +451,4 @@ subroutine con1(m,cc)
 
   end do
 
-end subroutine con1
+end subroutine constraints

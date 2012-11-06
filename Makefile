@@ -42,76 +42,76 @@
 ################# Start of Custom Section #####################
 
 source = \
- avail.f90    \
+ avail.f90 \
  buildings.f90 \
- caller.f90   \
- costs.f90    \
+ caller.f90 \
+ constraint_equations.f90 \
+ costs.f90 \
  current_drive.f90 \
  divertor.f90 \
  evaluators.f90 \
- eqns.f90     \
- fispact.f90  \
- fwbs.f90     \
+ fispact.f90 \
+ fwbs.f90 \
  plasma_geometry.f90 \
  global_variables.f90 \
- ife.f90      \
- initial.f90  \
- input.f90    \
+ ife.f90 \
+ initial.f90 \
+ input.f90 \
+ iteration_variables.f90 \
  machine_build.f90 \
  maths_library.f90 \
  numerics.f90 \
- output.f90   \
- pfcoil.f90   \
- physics.f90  \
+ output.f90 \
+ pfcoil.f90 \
+ physics.f90 \
  plant_power.f90 \
- process.f90  \
- pulse.f90    \
- rfp.f90      \
- safety.f90   \
- scan.f90     \
- startup.f90  \
+ process.f90 \
+ pulse.f90 \
+ rfp.f90 \
+ safety.f90 \
+ scan.f90 \
+ startup.f90 \
  stellarator.f90 \
  structure.f90 \
- tfcoil.f90   \
+ tfcoil.f90 \
  sctfcoil.f90 \
- vacuum.f90   \
- xc.f90
+ vacuum.f90 
 
 object = \
- avail.o      \
- buildings.o  \
- caller.o     \
- costs.o      \
+ avail.o \
+ buildings.o \
+ caller.o \
+ constraint_equations.o \
+ costs.o \
  current_drive.o \
- divertor.o   \
+ divertor.o \
  evaluators.o \
- eqns.o       \
- fispact.o    \
- fwbs.o       \
+ fispact.o \
+ fwbs.o \
  global_variables.o \
  plasma_geometry.o \
- ife.o        \
- initial.o    \
- input.o      \
+ ife.o \
+ initial.o \
+ input.o \
+ iteration_variables.o \
  machine_build.o \
  maths_library.o \
- numerics.o   \
- output.o     \
- pfcoil.o     \
- physics.o    \
+ numerics.o \
+ output.o \
+ pfcoil.o \
+ physics.o \
  plant_power.o \
- process.o    \
- pulse.o      \
- rfp.o        \
- safety.o     \
- scan.o       \
- startup.o    \
+ process.o \
+ pulse.o \
+ rfp.o \
+ safety.o \
+ scan.o \
+ startup.o \
  stellarator.o \
- structure.o  \
- tfcoil.o     \
- sctfcoil.o   \
- vacuum.o     \
- xc.o
+ structure.o \
+ tfcoil.o \
+ sctfcoil.o \
+ vacuum.o 
 
 ###### Architecture specifics #######
 #
@@ -174,17 +174,18 @@ caller.o: avail.o buildings.o costs.o current_drive.o divertor.o fwbs.o \
   global_variables.o ife.o machine_build.o numerics.o output.o pfcoil.o physics.o \
   plant_power.o plasma_geometry.o pulse.o rfp.o sctfcoil.o startup.o structure.o \
   stellarator.o tfcoil.o vacuum.o
+constraint_equations.o: global_variables.o numerics.o
 costs.o: global_variables.o output.o
 current_drive.o: global_variables.o output.o
 divertor.o: global_variables.o output.o
 evaluators.o: global_variables.o numerics.o
-eqns.o: global_variables.o numerics.o
 fispact.o: global_variables.o
 fwbs.o: global_variables.o output.o plasma_geometry.o
 plasma_geometry.o: global_variables.o
 ife.o: avail.o costs.o global_variables.o output.o
 initial.o: global_variables.o output.o scan.o stellarator.o
 input.o: global_variables.o numerics.o output.o scan.o
+iteration_variables.o: global_variables.o numerics.o
 machine_build.o: global_variables.o output.o
 maths_library.o: 
 numerics.o: maths_library.o
@@ -209,7 +210,6 @@ stellarator.o: avail.o buildings.o costs.o current_drive.o divertor.o fwbs.o \
 structure.o: global_variables.o output.o
 tfcoil.o: global_variables.o machine_build.o output.o sctfcoil.o
 vacuum.o: global_variables.o output.o
-xc.o: global_variables.o numerics.o
 
 process.exe: $(object)
 	$(FORTRAN) $(LFLAGS) -o $@ $(object) $(LIBS)

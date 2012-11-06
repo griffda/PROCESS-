@@ -17,6 +17,7 @@ module numerics
   !+ad_call  maths_library
   !+ad_hist  10/10/12 PJK Initial version of module
   !+ad_hist  15/10/12 PJK Modified comment lines, and added default array values
+  !+ad_hist  06/11/12 PJK Modified comment lines
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -207,166 +208,319 @@ module numerics
        0,  &  !  87
        0  /)  !  88
 
-  !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
+  !+ad_vars  lablcc(ipeqns) : labels describing constraint equations:<BR>
   character(len=34), dimension(ipeqns) :: lablcc = (/ &
-       'Beta consistency                 ', &  !  1 (consistency equation)
-       'Global power balance consistency ', &  !  2 (consistency equation)
-       'Ion power balance                ', &  !  3
-       'Electron power balance           ', &  !  4
-       'Density limit                    ', &  !  5
-       'Epsilon * beta poloidal limit    ', &  !  6
-       'Beam ion density consistency     ', &  !  7 (NBI) (consistency equation)
-       'Neutron wall load limit          ', &  !  8
-       'Fusion power limit               ', &  !  9
-       'Toroidal field 1/R consistency   ', &  !  10 (consistency equation)
-       'Radial build consistency         ', &  !  11 (consistency equation)
-       'Volt second limit                ', &  !  12
-       'Burn time limit                  ', &  !  13 (PULSE)
-       'Energy of neutral beam           ', &  !  14 (NBI)
-       'Burn time consistency            ', &  !  15 (PULSE) (consistency equation)
-       'Net electric power limit         ', &  !  16
-       'Stellarator build consistency    ', &  !  17 (STELL) (consistency equation)
-       'Divertor heat load limit         ', &  !  18
-       'MVA limit                        ', &  !  19
-       'Port size constraint             ', &  !  20
-       'Plasma minor radius limit        ', &  !  21
-       'Divertor collisionality limit    ', &  !  22
-       'TF coil current density limit    ', &  !  23
-       'Troyon beta limit                ', &  !  24
-       'Peak toroidal field limit        ', &  !  25
-       'OH coil EOF current density limit', &  !  26
-       'OH coil BOP current density limit', &  !  27
-       'Energy multiplication Q limit    ', &  !  28
-       'Inboard radial build constraint  ', &  !  29
-       'Allowable injection power        ', &  !  30
-       'TF coil case stress limit        ', &  !  31 (SCTF)
-       'TF coil conduit stress limit     ', &  !  32 (SCTF)
-       'I_op / I_critical (TF coil)      ', &  !  33 (SCTF)
-       'Dump voltage limit               ', &  !  34 (SCTF)
-       'J_winding pack/J_protection limit', &  !  35 (SCTF)
-       'TF coil temperature margin limit ', &  !  36 (SCTF)
-       'Current drive gamma limit        ', &  !  37
-       '1st wall coolant temp rise limit ', &  !  38 (PULSE)
-       'First wall peak temperature limit', &  !  39 (PULSE)
-       'Start-up injection power limit   ', &  !  40 (PULSE)
-       'OH coil swing time limit         ', &  !  41 (PULSE)
-       'Cycle time limit                 ', &  !  42 (PULSE)
-       'Average centrepost temperature   ', &  !  43 (TART) (consistency equation)
-       'Peak centrepost temperature limit', &  !  44 (TART)
-       'Edge safety factor limit         ', &  !  45 (TART)
-       'Ip/Irod limit                    ', &  !  46 (TART)
-       'TF coil toroidal thickness limit ', &  !  47 (RFP)
-       'Poloidal beta limit              ', &  !  48
-       'RFP reversal parameter < 0       ', &  !  49 (RFP)
-       'IFE repetition rate limit        ' /)  !  50 (IFE)
+       !+ad_varc                   ( 1) Beta (consistency equation)<BR>
+       'Beta consistency                 ', &
+       !+ad_varc                   ( 2) Global power balance (consistency equation)<BR>
+       'Global power balance consistency ', &
+       !+ad_varc                   ( 3) Ion power balance<BR>
+       'Ion power balance                ', &
+       !+ad_varc                   ( 4) Electron power balance<BR>
+       'Electron power balance           ', &
+       !+ad_varc                   ( 5) Density limit<BR>
+       'Density limit                    ', &
+       !+ad_varc                   ( 6) Epsilon * beta poloidal limit<BR>
+       'Epsilon * beta poloidal limit    ', &
+       !+ad_varc                   ( 7) Beam ion density (NBI) (consistency equation)<BR>
+       'Beam ion density consistency     ', &
+       !+ad_varc                   ( 8) Neutron wall load limit<BR>
+       'Neutron wall load limit          ', &
+       !+ad_varc                   ( 9) Fusion power limit<BR>
+       'Fusion power limit               ', &
+       !+ad_varc                   (10) Toroidal field 1/R (consistency equation)<BR>
+       'Toroidal field 1/R consistency   ', &
+       !+ad_varc                   (11) Radial build (consistency equation)<BR>
+       'Radial build consistency         ', &
+       !+ad_varc                   (12) Volt second limit<BR>
+       'Volt second limit                ', &
+       !+ad_varc                   (13) Burn time limit (PULSE)<BR>
+       'Burn time limit                  ', &
+       !+ad_varc                   (14) Energy of neutral beam (NBI)<BR>
+       'Energy of neutral beam           ', &
+       !+ad_varc                   (15) Burn time (PULSE) (consistency equation)<BR>
+       'Burn time consistency            ', &
+       !+ad_varc                   (16) Net electric power limit<BR>
+       'Net electric power limit         ', &
+       !+ad_varc                   (17) Stellarator build (STELL)
+       !+ad_varc                        (consistency equation)<BR>
+       'Stellarator build consistency    ', &
+       !+ad_varc                   (18) Divertor heat load limit<BR>
+       'Divertor heat load limit         ', &
+       !+ad_varc                   (19) MVA limit<BR>
+       'MVA limit                        ', &
+       !+ad_varc                   (20) Port size constraint<BR>
+       'Port size constraint             ', &
+       !+ad_varc                   (21) Plasma minor radius limit<BR>
+       'Plasma minor radius limit        ', &
+       !+ad_varc                   (22) Divertor collisionality limit<BR>
+       'Divertor collisionality limit    ', &
+       !+ad_varc                   (23) TF coil current density limit<BR>
+       'TF coil current density limit    ', &
+       !+ad_varc                   (24) Troyon beta limit<BR>
+       'Troyon beta limit                ', &
+       !+ad_varc                   (25) Peak toroidal field limit<BR>
+       'Peak toroidal field limit        ', &
+       !+ad_varc                   (26) OH coil EOF current density limit<BR>
+       'OH coil EOF current density limit', &
+       !+ad_varc                   (27) OH coil BOP current density limit<BR>
+       'OH coil BOP current density limit', &
+       !+ad_varc                   (28) Energy multiplication Q limit<BR>
+       'Energy multiplication Q limit    ', &
+       !+ad_varc                   (29) Inboard radial build constraint<BR>
+       'Inboard radial build constraint  ', &
+       !+ad_varc                   (30) Allowable injection power<BR>
+       'Allowable injection power        ', &
+       !+ad_varc                   (31) TF coil case stress limit (SCTF)<BR>
+       'TF coil case stress limit        ', &
+       !+ad_varc                   (32) TF coil conduit stress limit (SCTF)<BR>
+       'TF coil conduit stress limit     ', &
+       !+ad_varc                   (33) I_op / I_critical (TF coil) (SCTF)<BR>
+       'I_op / I_critical (TF coil)      ', &
+       !+ad_varc                   (34) Dump voltage limit (SCTF)<BR>
+       'Dump voltage limit               ', &
+       !+ad_varc                   (35) J_winding pack/J_protection limit (SCTF)<BR>
+       'J_winding pack/J_protection limit', &
+       !+ad_varc                   (36) TF coil temperature margin limit (SCTF)<BR>
+       'TF coil temperature margin limit ', &
+       !+ad_varc                   (37) Current drive gamma limit<BR>
+       'Current drive gamma limit        ', &
+       !+ad_varc                   (38) 1st wall coolant temp rise limit (PULSE)<BR>
+       '1st wall coolant temp rise limit ', &
+       !+ad_varc                   (39) First wall peak temperature limit (PULSE)<BR>
+       'First wall peak temperature limit', &
+       !+ad_varc                   (40) Start-up injection power limit (PULSE)<BR>
+       'Start-up injection power limit   ', &
+       !+ad_varc                   (41) OH coil swing time limit (PULSE)<BR>
+       'OH coil swing time limit         ', &
+       !+ad_varc                   (42) Cycle time limit (PULSE)<BR>
+       'Cycle time limit                 ', &
+       !+ad_varc                   (43) Average centrepost temperature
+       !+ad_varc                        (TART) (consistency equation)<BR>
+       'Average centrepost temperature   ', &
+       !+ad_varc                   (44) Peak centrepost temperature limit (TART)<BR>
+       'Peak centrepost temperature limit', &
+       !+ad_varc                   (45) Edge safety factor limit (TART)<BR>
+       'Edge safety factor limit         ', &
+       !+ad_varc                   (46) Ip/Irod limit (TART)<BR>
+       'Ip/Irod limit                    ', &
+       !+ad_varc                   (47) TF coil toroidal thickness limit (RFP)<BR>
+       'TF coil toroidal thickness limit ', &
+       !+ad_varc                   (48) Poloidal beta limit<BR>
+       'Poloidal beta limit              ', &
+       !+ad_varc                   (49) RFP reversal parameter &lt; 0 (RFP)<BR>
+       'RFP reversal parameter < 0       ', &
+       !+ad_varc                   (50) IFE repetition rate limit (IFE)<BR>
+       'IFE repetition rate limit        ' /)
 
-  !+ad_vars  lablmm(ipnfoms) : labels describing figures of merit
+  !+ad_vars  lablmm(ipnfoms) : labels describing figures of merit:<BR>
   character(len=22), dimension(ipnfoms) :: lablmm = (/ &
-       'major radius.         ', &  !  1
-       'P_fus P_in-total.     ', &  !  2
-       'neutron wall load.    ', &  !  3
-       'P_tf + P_pf.          ', &  !  4
-       'energy multiplication.', &  !  5
-       'cost of electricity.  ', &  !  6
-       'capital cost.         ', &  !  7  !  direct cost if ireactor=0
-                                          !  or constructed cost otherwise
-       'aspect ratio.         ', &  !  8
-       'divertor heat load.   ', &  !  9
-       'toroidal field.       ', &  !  10
-       'total injected power. ', &  !  11
-       'H plant capital cost. ', &  !  12
-       'H production rate.    ' /)  !  13
+       !+ad_varc               ( 1) major radius<BR>
+       'major radius.         ', &
+       !+ad_varc               ( 2) P_fus P_in-total<BR>
+       'P_fus P_in-total.     ', &
+       !+ad_varc               ( 3) neutron wall load<BR>
+       'neutron wall load.    ', &
+       !+ad_varc               ( 4) P_tf + P_pf<BR>
+       'P_tf + P_pf.          ', &
+       !+ad_varc               ( 5) energy multiplication<BR>
+       'energy multiplication.', &
+       !+ad_varc               ( 6) cost of electricity<BR>
+       'cost of electricity.  ', &
+       !+ad_varc               ( 7) capital cost (direct cost if ireactor=0,
+       !+ad_varc                                  constructed cost otherwise)<BR>
+       'capital cost.         ', &
+       !+ad_varc               ( 8) aspect ratio<BR>
+       'aspect ratio.         ', &
+       !+ad_varc               ( 9) divertor heat load<BR>
+       'divertor heat load.   ', &
+       !+ad_varc               (10) toroidal field<BR>
+       'toroidal field.       ', &
+       !+ad_varc               (11) total injected power<BR>
+       'total injected power. ', &
+       !+ad_varc               (12) hydrogen plant capital cost<BR>
+       'H plant capital cost. ', &
+       !+ad_varc               (13) hydrogen production rate
+       'H production rate.    ' /)
 
-  !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
+  !+ad_vars  lablxc(ipnvars) : labels describing iteration variables:
   character(len=8), dimension(ipnvars) :: lablxc = (/ &
-       'aspect  ', &  !  1
-       'bt      ', &  !  2
-       'rmajor  ', &  !  3
-       'te      ', &  !  4
-       'beta    ', &  !  5
-       'dene    ', &  !  6
-       'rnbeam  ', &  !  7
-       'fbeta   ', &  !  8  (f-value for equation 6)
-       'fdene   ', &  !  9  (f-value for equation 5)
-       'hfact   ', &  !  10
-       'pheat   ', &  !  11
-       'oacdcp  ', &  !  12
-       'tfcth   ', &  !  13
-       'fwalld  ', &  !  14 (f-value for equation 8)
-       'fvs     ', &  !  15 (f-value for equation 12)
-       'ohcth   ', &  !  16
-       'tdwell  ', &  !  17
-       'q       ', &  !  18
-       'enbeam  ', &  !  19
-       'tcpav   ', &  !  20
-       'ftburn  ', &  !  21 (f-value for equation 13)
-       'tbrnmn  ', &  !  22
-       'fcoolcp ', &  !  23
-       'cdtfleg ', &  !  24
-       'fpnetel ', &  !  25 (f-value for equation 16)
-       'ffuspow ', &  !  26 (f-value for equation 9)
-       'fhldiv  ', &  !  27 (f-value for equation 18)
-       'fjtfc   ', &  !  28 (f-value for equation 23)
-       'bore    ', &  !  29
-       'fmva    ', &  !  30 (f-value for equation 19)
-       'gapomin ', &  !  31
-       'frminor ', &  !  32 (f-value for equation 21)
-       'fportsz ', &  !  33 (f-value for equation 20)
-       'fdivcol ', &  !  34 (f-value for equation 22)
-       'fpeakb  ', &  !  35 (f-value for equation 25)
-       'fbetatry', &  !  36 (f-value for equation 24)
-       'coheof  ', &  !  37
-       'fjohc   ', &  !  38 (f-value for equation 26)
-       'fjohc0  ', &  !  39 (f-value for equation 27)
-       'fgamcd  ', &  !  40 (f-value for equation 37)
-       'fcohbop ', &  !  41
-       'gapoh   ', &  !  42
-       'cfe0    ', &  !  43
-       'fvsbrnni', &  !  44
-       'fqval   ', &  !  45 (f-value for equation 28)
-       'fpinj   ', &  !  46 (f-value for equation 30)
-       'feffcd  ', &  !  47
-       'fstrcase', &  !  48 (f-value for equation 31)
-       'fstrcond', &  !  49 (f-value for equation 32)
-       'fiooic  ', &  !  50 (f-value for equation 33)
-       'fvdump  ', &  !  51 (f-value for equation 34)
-       'vdalw   ', &  !  52
-       'fjprot  ', &  !  53 (f-value for equation 35)
-       'ftmargtf', &  !  54 (f-value for equation 36)
-       'tmargmin', &  !  55
-       'tdmptf  ', &  !  56
-       'thkcas  ', &  !  57
-       'thwcndut', &  !  58
-       'fcutfsu ', &  !  59
-       'cpttf   ', &  !  60
-       'gapds   ', &  !  61
-       'fdtmp   ', &  !  62 (f-value for equation 38)
-       'ftpeak  ', &  !  63 (f-value for equation 39)
-       'fauxmn  ', &  !  64 (f-value for equation 40)
-       'tohs    ', &  !  65
-       'ftohs   ', &  !  66 (f-value for equation 41)
-       'ftcycl  ', &  !  67 (f-value for equation 42)
-       'fptemp  ', &  !  68 (f-value for equation 44)
-       'rcool   ', &  !  69
-       'vcool   ', &  !  70
-       'fq      ', &  !  71 (f-value for equation 45)
-       'fipir   ', &  !  72 (f-value for equation 46)
-       'scrapli ', &  !  73
-       'scraplo ', &  !  74
-       'tfootfi ', &  !  75
-       'frfptf  ', &  !  76 (f-value for equation 47)
-       'tftort  ', &  !  77
-       'rfpth   ', &  !  78
-       'fbetap  ', &  !  79 (f-value for equation 48)
-       'frfpf   ', &  !  80 (f-value for equation 49)
-       'edrive  ', &  !  81
-       'drveff  ', &  !  82
-       'tgain   ', &  !  83
-       'chrad   ', &  !  84
-       'pdrive  ', &  !  85
-       'frrmax  ', &  !  86 (f-value for equation 50)
-       'helecmw ', &  !  87
-       'hthermmw' /)  !  88
+       !+ad_varc  ( 1) aspect <BR>
+       'aspect  ', &
+       !+ad_varc  ( 2) bt <BR>
+       'bt      ', &
+       !+ad_varc  ( 3) rmajor <BR>
+       'rmajor  ', &
+       !+ad_varc  ( 4) te <BR>
+       'te      ', &
+       !+ad_varc  ( 5) beta <BR>
+       'beta    ', &
+       !+ad_varc  ( 6) dene <BR>
+       'dene    ', &
+       !+ad_varc  ( 7) rnbeam <BR>
+       'rnbeam  ', &
+       !+ad_varc  ( 8) fbeta (f-value for equation 6) <BR>
+       'fbeta   ', &
+       !+ad_varc  ( 9) fdene (f-value for equation 5) <BR>
+       'fdene   ', &
+       !+ad_varc  (10) hfact <BR>
+       'hfact   ', &
+       !+ad_varc  (11) pheat <BR>
+       'pheat   ', &
+       !+ad_varc  (12) oacdcp <BR>
+       'oacdcp  ', &
+       !+ad_varc  (13) tfcth <BR>
+       'tfcth   ', &
+       !+ad_varc  (14) fwalld (f-value for equation 8) <BR>
+       'fwalld  ', &
+       !+ad_varc  (15) fvs (f-value for equation 12) <BR>
+       'fvs     ', &
+       !+ad_varc  (16) ohcth <BR>
+       'ohcth   ', &
+       !+ad_varc  (17) tdwell <BR>
+       'tdwell  ', &
+       !+ad_varc  (18) q <BR>
+       'q       ', &
+       !+ad_varc  (19) enbeam <BR>
+       'enbeam  ', &
+       !+ad_varc  (20) tcpav <BR>
+       'tcpav   ', &
+       !+ad_varc  (21) ftburn (f-value for equation 13) <BR>
+       'ftburn  ', &
+       !+ad_varc  (22) tbrnmn <BR>
+       'tbrnmn  ', &
+       !+ad_varc  (23) fcoolcp<BR>
+       'fcoolcp ', &
+       !+ad_varc  (24) cdtfleg<BR>
+       'cdtfleg ', &
+       !+ad_varc  (25) fpnetel (f-value for equation 16) <BR>
+       'fpnetel ', &
+       !+ad_varc  (26) ffuspow (f-value for equation 9) <BR>
+       'ffuspow ', &
+       !+ad_varc  (27) fhldiv (f-value for equation 18) <BR>
+       'fhldiv  ', &
+       !+ad_varc  (28) fjtfc (f-value for equation 23) <BR>
+       'fjtfc   ', &
+       !+ad_varc  (29) bore <BR>
+       'bore    ', &
+       !+ad_varc  (30) fmva (f-value for equation 19) <BR>
+       'fmva    ', &
+       !+ad_varc  (31) gapomin<BR>
+       'gapomin ', &
+       !+ad_varc  (32) frminor (f-value for equation 21) <BR>
+       'frminor ', &
+       !+ad_varc  (33) fportsz (f-value for equation 20) <BR>
+       'fportsz ', &
+       !+ad_varc  (34) fdivcol (f-value for equation 22) <BR>
+       'fdivcol ', &
+       !+ad_varc  (35) fpeakb (f-value for equation 25) <BR>
+       'fpeakb  ', &
+       !+ad_varc  (36) fbetatry (f-value for equation 24) <BR>
+       'fbetatry', &
+       !+ad_varc  (37) coheof <BR>
+       'coheof  ', &
+       !+ad_varc  (38) fjohc (f-value for equation 26) <BR>
+       'fjohc   ', &
+       !+ad_varc  (39) fjohc0 (f-value for equation 27) <BR>
+       'fjohc0  ', &
+       !+ad_varc  (40) fgamcd (f-value for equation 37) <BR>
+       'fgamcd  ', &
+       !+ad_varc  (41) fcohbop<BR>
+       'fcohbop ', &
+       !+ad_varc  (42) gapoh <BR>
+       'gapoh   ', &
+       !+ad_varc  (43) cfe0 <BR>
+       'cfe0    ', &
+       !+ad_varc  (44) fvsbrnni <BR>
+       'fvsbrnni', &
+       !+ad_varc  (45) fqval (f-value for equation 28) <BR>
+       'fqval   ', &
+       !+ad_varc  (46) fpinj (f-value for equation 30) <BR>
+       'fpinj   ', &
+       !+ad_varc  (47) feffcd <BR>
+       'feffcd  ', &
+       !+ad_varc  (48) fstrcase 48 (f-value for equation 31) <BR>
+       'fstrcase', &
+       !+ad_varc  (49) fstrcond (f-value for equation 32) <BR>
+       'fstrcond', &
+       !+ad_varc  (50) fiooic (f-value for equation 33) <BR>
+       'fiooic  ', &
+       !+ad_varc  (51) fvdump (f-value for equation 34) <BR>
+       'fvdump  ', &
+       !+ad_varc  (52) vdalw <BR>
+       'vdalw   ', &
+       !+ad_varc  (53) fjprot (f-value for equation 35) <BR>
+       'fjprot  ', &
+       !+ad_varc  (54) ftmargtf (f-value for equation 36) <BR>
+       'ftmargtf', &
+       !+ad_varc  (55) tmargmin <BR>
+       'tmargmin', &
+       !+ad_varc  (56) tdmptf <BR>
+       'tdmptf  ', &
+       !+ad_varc  (57) thkcas <BR>
+       'thkcas  ', &
+       !+ad_varc  (58) thwcndut <BR>
+       'thwcndut', &
+       !+ad_varc  (59) fcutfsu<BR>
+       'fcutfsu ', &
+       !+ad_varc  (60) cpttf <BR>
+       'cpttf   ', &
+       !+ad_varc  (61) gapds <BR>
+       'gapds   ', &
+       !+ad_varc  (62) fdtmp (f-value for equation 38) <BR>
+       'fdtmp   ', &
+       !+ad_varc  (63) ftpeak (f-value for equation 39) <BR>
+       'ftpeak  ', &
+       !+ad_varc  (64) fauxmn (f-value for equation 40) <BR>
+       'fauxmn  ', &
+       !+ad_varc  (65) tohs <BR>
+       'tohs    ', &
+       !+ad_varc  (66) ftohs (f-value for equation 41) <BR>
+       'ftohs   ', &
+       !+ad_varc  (67) ftcycl (f-value for equation 42) <BR>
+       'ftcycl  ', &
+       !+ad_varc  (68) fptemp (f-value for equation 44) <BR>
+       'fptemp  ', &
+       !+ad_varc  (69) rcool <BR>
+       'rcool   ', &
+       !+ad_varc  (70) vcool <BR>
+       'vcool   ', &
+       !+ad_varc  (71) fq (f-value for equation 45) <BR>
+       'fq      ', &
+       !+ad_varc  (72) fipir (f-value for equation 46) <BR>
+       'fipir   ', &
+       !+ad_varc  (73) scrapli<BR>
+       'scrapli ', &
+       !+ad_varc  (74) scraplo<BR>
+       'scraplo ', &
+       !+ad_varc  (75) tfootfi<BR>
+       'tfootfi ', &
+       !+ad_varc  (76) frfptf (f-value for equation 47) <BR>
+       'frfptf  ', &
+       !+ad_varc  (77) tftort <BR>
+       'tftort  ', &
+       !+ad_varc  (78) rfpth <BR>
+       'rfpth   ', &
+       !+ad_varc  (79) fbetap (f-value for equation 48) <BR>
+       'fbetap  ', &
+       !+ad_varc  (80) frfpf (f-value for equation 49) <BR>
+       'frfpf   ', &
+       !+ad_varc  (81) edrive <BR>
+       'edrive  ', &
+       !+ad_varc  (82) drveff <BR>
+       'drveff  ', &
+       !+ad_varc  (83) tgain <BR>
+       'tgain   ', &
+       !+ad_varc  (84) chrad <BR>
+       'chrad   ', &
+       !+ad_varc  (85) pdrive <BR>
+       'pdrive  ', &
+       !+ad_varc  (86) frrmax (f-value for equation 50) <BR>
+       'frrmax  ', &
+       !+ad_varc  (87) helecmw<BR>
+       'helecmw ', &
+       !+ad_varc  (88) hthermmw
+       'hthermmw' /)
 
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
   real(kind(1.0D0)) :: sqsumsq = 0.0D0

@@ -72,8 +72,9 @@ contains
     !+ad_desc  <A HREF="eqsolv.html">EQSOLV</A> (q.v.).
     !+ad_prob  None
     !+ad_call  caller
-    !+ad_call  con1
+    !+ad_call  constraints
     !+ad_hist  27/07/11 PJK Initial F90 version
+    !+ad_hist  06/11/12 PJK Renamed routine con1 to constraints
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -98,7 +99,7 @@ contains
     ncon = neqns
 
     call caller(xc,nvars)
-    call con1(ncon,rc)
+    call constraints(ncon,rc)
 
     !  Set iflag < 0 if program is to be terminated here.
 
@@ -129,10 +130,11 @@ contains
     !+ad_desc  constraints in <CODE>conf</CODE>.
     !+ad_prob  None
     !+ad_call  caller
-    !+ad_call  con1
+    !+ad_call  constraints
     !+ad_call  funfom
     !+ad_hist  02/10/96 PJK Initial upgraded version
     !+ad_hist  08/10/12 PJK Initial F90 version
+    !+ad_hist  06/11/12 PJK Renamed routine con1 to constraints
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -164,7 +166,7 @@ contains
 
     !  Evaluate constraint equations
 
-    call con1(m,conf)
+    call constraints(m,conf)
 
     !  To stop the program, set ifail < 0 here.
 
@@ -198,10 +200,11 @@ contains
     !+ad_desc  or normals are returned as the columns of <CODE>cnorm</CODE>.
     !+ad_prob  None
     !+ad_call  caller
-    !+ad_call  con1
+    !+ad_call  constraints
     !+ad_call  funfom
     !+ad_hist  02/10/96 PJK Initial upgraded version
     !+ad_hist  08/10/12 PJK Initial F90 version
+    !+ad_hist  06/11/12 PJK Renamed routine con1 to constraints
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -240,13 +243,13 @@ contains
 
        call caller(xfor,n)
        call funfom(ffor)
-       call con1(m,cfor)
+       call constraints(m,cfor)
 
        !  Evaluate at (x-dx)
 
        call caller(xbac,n)
        call funfom(fbac)
-       call con1(m,cbac)
+       call constraints(m,cbac)
 
        !  Calculate finite difference gradients
 
