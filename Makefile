@@ -117,9 +117,6 @@ object = \
  vacuum.o     \
  xc.o
 
-headers = \
- fispact.h90
-
 ###### Architecture specifics #######
 #
 # Default = FUN (Fusion Unix Network)
@@ -190,7 +187,7 @@ current_drive.o: global_variables.o output.o
 divertor.o: global_variables.o output.o
 evaluators.o: global_variables.o numerics.o
 eqns.o: global_variables.o numerics.o
-fispact.o: global_variables.o fispact.h90
+fispact.o: global_variables.o
 fwbs.o: global_variables.o output.o
 geomty.o: global_variables.o
 ife.o: costs.o global_variables.o output.o
@@ -207,7 +204,7 @@ plant_power.o: fwbs.o global_variables.o output.o
 pulse.o: global_variables.o maths_library.o output.o physics.o
 rfp.o: current_drive.o input.o global_variables.o machine_build.o output.o pfcoil.o \
   physics.o
-safety.o: global_variables.o output.o fispact.h90
+safety.o: global_variables.o output.o
 scan.o: global_variables.o numerics.o output.o
 sctfcoil.o: global_variables.o maths_library.o output.o
 startup.o: global_variables.o maths_library.o output.o physics.o
@@ -242,7 +239,7 @@ otherfiles = Makefile var.des *.tex *.ps autodoc.f90 adheader.src adfooter.src
 
 tar:
 	rm -f process.tar process.tar.gz
-	tar cvf process.tar $(source) $(headers) $(otherfiles)
+	tar cvf process.tar $(source) $(otherfiles)
 	gzip process.tar
 
 # Make a tar archive of the source, input and output files

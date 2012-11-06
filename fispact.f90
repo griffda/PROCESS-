@@ -48,12 +48,10 @@
 !CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
         use build_variables
+        use fispact_variables
         use fwbs_variables
         use physics_variables
         use pulse_variables
-
-!  INCLUDE files
-      INCLUDE 'fispact.h90'
 
 !  Arguments
       INTEGER IPRINT

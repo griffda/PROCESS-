@@ -44,34 +44,3 @@ CSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCSCCS
 
   Variables not shown with a default value are calculated within PROCESS,
   so need not be initialised.
-
-C______________________________________________________________________
-$  FISPACT parameters : (see fispact.h)
-$
-$ (1) - at end of component life
-$ (2) - after 3 months cooling time
-$ (3) - 100 years after end of plant life
-$
-bliact(3)  dble          : Inboard blanket total activity (Bq)
-bligdr(3)  dble          : Inboard blanket total gamma dose rate (Sv/hr)
-blihkw(3)  dble          : Inboard blanket total heat output (kW)
-bliizp     dble          : Inboard blanket integrated zone power / neutron
-blimzp     dble          : Inboard blanket mean zone power density / neutron
-bloact(3)  dble          : Outboard blanket total activity (Bq)
-blogdr(3)  dble          : Outboard blanket total gamma dose rate (Sv/hr)
-blohkw(3)  dble          : Outboard blanket total heat output (kW)
-bloizp     dble          : Outboard blanket integrated zone power / neutron
-blomzp     dble          : Outboard blanket mean zone power density / neutron
-fwiact(3)  dble          : Inboard first wall total activity (Bq)
-fwigdr(3)  dble          : Inboard first wall total gamma dose rate (Sv/hr)
-fwihkw(3)  dble          : Inboard first wall total heat output (kW)
-fwiizp     dble          : Inboard first wall integrated zone power / neutron
-fwimzp     dble          : Inboard first wall mean zone power density/neutron
-fwoact(3)  dble          : Outboard first wall total activity (Bq)
-fwogdr(3)  dble          : Outboard first wall total gamma dose rate (Sv/hr)
-fwohkw(3)  dble          : Outboard first wall total heat output (kW)
-fwoizp     dble          : Outboard first wall integrated zone power / neutron
-fwomzp     dble          : Outboard first wall mean zone power density/neutron
-fwtemp     dble          : Outboard first wall temperature after a LOCA (K)
-$
-C______________________________________________________________________

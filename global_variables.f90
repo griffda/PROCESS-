@@ -3090,60 +3090,77 @@ end module startup_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-module wibble
+module fispact_variables
 
-  !  ex fispact.h90
+  !+ad_name  startup_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  fispact routines
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to the
+  !+ad_desc  nuclear data (fispact) routines.
+  !+ad_desc  It is derived from <CODE>include</CODE> file
+  !+ad_desc  <CODE>fispact.h90</CODE>.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  06/11/12 PJK Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!--Version number 1.000
-!
-!--Description
-!  INCLUDE file containing values calculated by FISPACT routines
-!
-!--Author
-!  Peter Knight D3/G12 Culham Laboratory, ext.3330
-!
-!--Date
-!  19 February 1997
-!
-!--Reference
-!  None
-!  
-!--History
-!  06/02/97 PJK 1.000 Initial version
-!
-!--Contents
-!  BLIIZP : Inboard blanket integrated zone power
-!  BLIMZP : Inboard blanket mean zone power density
-!  BLOIZP : Outboard blanket integrated zone power
-!  BLOMZP : Outboard blanket mean zone power density
-!  FWIIZP : Inboard first wall integrated zone power
-!  FWIMZP : Inboard first wall mean zone power density
-!  FWOIZP : Outboard first wall integrated zone power
-!  FWOMZP : Outboard first wall mean zone power density
-!  BLIACT : Inboard blanket total activity (Bq)
-!  BLIGDR : Inboard blanket total gamma dose rate (Sv/hr)
-!  BLIHKW : Inboard blanket total heat output (kW)
-!  BLOACT : Outboard blanket total activity (Bq)
-!  BLOGDR : Outboard blanket total gamma dose rate (Sv/hr)
-!  BLOHKW : Outboard blanket total heat output (kW)
-!  FWIACT : Inboard first wall total activity (Bq)
-!  FWIGDR : Inboard first wall total gamma dose rate (Sv/hr)
-!  FWIHKW : Inboard first wall total heat output (kW)
-!  FWOACT : Outboard first wall total activity (Bq)
-!  FWOGDR : Outboard first wall total gamma dose rate (Sv/hr)
-!  FWOHKW : Outboard first wall total heat output (kW)
-!  FWTEMP : Outboard first wall temperature after a LOCA (K)
+  implicit none
 
-  real(kind(1.0D0)) :: &
-       bliizp,blimzp,bloizp,blomzp,fwiizp,fwimzp,fwoizp,fwomzp,fwtemp
-  common /fisp1/ &
-       bliizp,blimzp,bloizp,blomzp,fwiizp,fwimzp,fwoizp,fwomzp,fwtemp
+  public
 
-  real(kind(1.0D0)), dimension(3) :: &
-       bliact,bligdr,blihkw,bloact,blogdr,blohkw,fwiact,fwigdr, &
-       fwihkw,fwoact,fwogdr,fwohkw
-  common /fisp2/ &
-       bliact,bligdr,blihkw,bloact,blogdr,blohkw,fwiact,fwigdr, &
-       fwihkw,fwoact,fwogdr,fwohkw
+  !  Arrays with 3 elements contain the data at the following times:
+  !  (1) - at end of component life
+  !  (2) - after 3 months cooling time
+  !  (3) - 100 years after end of plant life
 
-end module wibble
+  !+ad_vars  bliact(3) : inboard blanket total activity (Bq)
+  real(kind(1.0D0)), dimension(3) :: bliact = 0.0D0
+  !+ad_vars  bligdr(3) : inboard blanket total gamma dose rate (Sv/hr)
+  real(kind(1.0D0)), dimension(3) :: bligdr = 0.0D0
+  !+ad_vars  blihkw(3) : inboard blanket total heat output (kW)
+  real(kind(1.0D0)), dimension(3) :: blihkw = 0.0D0
+  !+ad_vars  bliizp : inboard blanket integrated zone power / neutron
+  real(kind(1.0D0)) :: bliizp = 0.0D0
+  !+ad_vars  blimzp : inboard blanket mean zone power density / neutron
+  real(kind(1.0D0)) :: blimzp = 0.0D0
+  !+ad_vars  bloact(3) : outboard blanket total activity (Bq)
+  real(kind(1.0D0)), dimension(3) :: bloact = 0.0D0
+  !+ad_vars  blogdr(3) : outboard blanket total gamma dose rate (Sv/hr)
+  real(kind(1.0D0)), dimension(3) :: blogdr = 0.0D0
+  !+ad_vars  blohkw(3) : outboard blanket total heat output (kW)
+  real(kind(1.0D0)), dimension(3) :: blohkw = 0.0D0
+  !+ad_vars  bloizp : outboard blanket integrated zone power / neutron
+  real(kind(1.0D0)) :: bloizp = 0.0D0
+  !+ad_vars  blomzp : outboard blanket mean zone power density / neutron
+  real(kind(1.0D0)) :: blomzp = 0.0D0
+  !+ad_vars  fwiact(3) : inboard first wall total activity (Bq)
+  real(kind(1.0D0)), dimension(3) :: fwiact = 0.0D0
+  !+ad_vars  fwigdr(3) : inboard first wall total gamma dose rate (Sv/hr)
+  real(kind(1.0D0)), dimension(3) :: fwigdr = 0.0D0
+  !+ad_vars  fwihkw(3) : inboard first wall total heat output (kW)
+  real(kind(1.0D0)), dimension(3) :: fwihkw = 0.0D0
+  !+ad_vars  fwiizp : inboard first wall integrated zone power / neutron
+  real(kind(1.0D0)) :: fwiizp = 0.0D0
+  !+ad_vars  fwimzp : inboard first wall mean zone power density/neutron
+  real(kind(1.0D0)) :: fwimzp = 0.0D0
+  !+ad_vars  fwoact(3) : outboard first wall total activity (Bq)
+  real(kind(1.0D0)), dimension(3) :: fwoact = 0.0D0
+  !+ad_vars  fwogdr(3) : outboard first wall total gamma dose rate (Sv/hr)
+  real(kind(1.0D0)), dimension(3) :: fwogdr = 0.0D0
+  !+ad_vars  fwohkw(3) : outboard first wall total heat output (kW)
+  real(kind(1.0D0)), dimension(3) :: fwohkw = 0.0D0
+  !+ad_vars  fwoizp : outboard first wall integrated zone power / neutron
+  real(kind(1.0D0)) :: fwoizp = 0.0D0
+  !+ad_vars  fwomzp : outboard first wall mean zone power density/neutron
+  real(kind(1.0D0)) :: fwomzp = 0.0D0
+  !+ad_vars  fwtemp : outboard first wall temperature after a LOCA (K)
+  real(kind(1.0D0)) :: fwtemp = 0.0D0
+
+end module fispact_variables

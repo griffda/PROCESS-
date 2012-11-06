@@ -158,12 +158,12 @@ subroutine loca(outfile,iprint)
   !+ad_prob  None
   !+ad_call  build_variables
   !+ad_call  constants
+  !+ad_call  fispact_variables
   !+ad_call  fwbs_variables
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  tfcoil_variables
-  !+ad_call  fispact.h90
   !+ad_call  blcyl3
   !+ad_call  oheadr
   !+ad_call  ovarre
@@ -178,6 +178,7 @@ subroutine loca(outfile,iprint)
   !+ad_hist  18/10/12 PJK Added pfcoil_variables
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  06/11/12 PJK Added fispact_variables
   !+ad_stat  This routine is untested in F90...
   !+ad_docs  F/MI/PJK/LOGBOOK12, pp.70,71,72,73
   !+ad_docs  Strategic Studies Note 96/30, January 1997
@@ -187,6 +188,7 @@ subroutine loca(outfile,iprint)
 
   use build_variables
   use constants
+  use fispact_variables
   use fwbs_variables
   use pfcoil_variables
   use physics_variables
@@ -194,8 +196,6 @@ subroutine loca(outfile,iprint)
   use tfcoil_variables
 
   implicit none
-
-  include 'fispact.h90'
 
   !  Arguments
 
