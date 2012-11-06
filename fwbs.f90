@@ -22,6 +22,7 @@ module fwbs_module
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  physics_variables
+  !+ad_call  plasma_geometry_module
   !+ad_call  process_output
   !+ad_call  tfcoil_variables
   !+ad_hist  18/10/12 PJK Initial version of module
@@ -30,6 +31,7 @@ module fwbs_module
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_hist  31/10/12 PJK Moved local common variables into module header
+  !+ad_hist  06/11/12 PJK Added plasma_geometry_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -42,6 +44,7 @@ module fwbs_module
   use fwbs_variables
   use heat_transport_variables
   use physics_variables
+  use plasma_geometry_module
   use process_output
   use tfcoil_variables
 
@@ -620,10 +623,6 @@ contains
 
     real(kind(1.0D0)) :: rm,ap,yc,xlr,xlp,xlf,volbl,wnet1
     real(kind(1.0D0)), dimension(3) :: qfus
-
-    !  External functions
-
-    real(kind(1.0D0)), external :: perim
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

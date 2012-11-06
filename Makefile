@@ -54,7 +54,7 @@ source = \
  eqns.f90     \
  fispact.f90  \
  fwbs.f90     \
- geomty.f90   \
+ plasma_geometry.f90 \
  global_variables.f90 \
  ife.f90      \
  initial.f90  \
@@ -93,7 +93,7 @@ object = \
  fispact.o    \
  fwbs.o       \
  global_variables.o \
- geomty.o     \
+ plasma_geometry.o \
  ife.o        \
  initial.o    \
  input.o      \
@@ -181,16 +181,16 @@ avail.o: global_variables.o output.o
 buildings.o: global_variables.o output.o
 caller.o: avail.o buildings.o costs.o current_drive.o divertor.o fwbs.o \
   global_variables.o ife.o machine_build.o numerics.o output.o pfcoil.o physics.o \
-  plant_power.o pulse.o rfp.o sctfcoil.o startup.o structure.o stellarator.o tfcoil.o \
-  vacuum.o
+  plant_power.o plasma_geometry.o pulse.o rfp.o sctfcoil.o startup.o structure.o \
+  stellarator.o tfcoil.o vacuum.o
 costs.o: global_variables.o output.o
 current_drive.o: global_variables.o output.o
 divertor.o: global_variables.o output.o
 evaluators.o: global_variables.o numerics.o
 eqns.o: global_variables.o numerics.o
 fispact.o: global_variables.o
-fwbs.o: global_variables.o output.o
-geomty.o: global_variables.o
+fwbs.o: global_variables.o output.o plasma_geometry.o
+plasma_geometry.o: global_variables.o
 ife.o: avail.o costs.o global_variables.o output.o
 initial.o: global_variables.o output.o scan.o stellarator.o
 input.o: global_variables.o numerics.o output.o scan.o
@@ -211,7 +211,7 @@ sctfcoil.o: global_variables.o maths_library.o output.o
 startup.o: global_variables.o maths_library.o output.o physics.o
 stellarator.o: avail.o buildings.o costs.o current_drive.o divertor.o fwbs.o \
   global_variables.o maths_library.o numerics.o output.o physics.o plant_power.o \
-  scan.o sctfcoil.o structure.o vacuum.o
+  plasma_geometry.o scan.o sctfcoil.o structure.o vacuum.o
 structure.o: global_variables.o output.o
 tfcoil.o: global_variables.o machine_build.o output.o sctfcoil.o
 vacuum.o: global_variables.o output.o

@@ -26,6 +26,7 @@ subroutine caller(xc,nvars)
   !+ad_call  pfcoil_module
   !+ad_call  physics_module
   !+ad_call  physics_variables
+  !+ad_call  plasma_geometry_module
   !+ad_call  power_module
   !+ad_call  process_output
   !+ad_call  pulse_module
@@ -109,6 +110,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  05/11/12 PJK Added pulse_module
   !+ad_hist  06/11/12 PJK Added startup_module
   !+ad_hist  06/11/12 PJK Added availability_module
+  !+ad_hist  06/11/12 PJK Added plasma_geometry_module
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -127,6 +129,7 @@ subroutine caller(xc,nvars)
   use pfcoil_module
   use physics_module
   use physics_variables
+  use plasma_geometry_module
   use power_module
   use process_output
   use pulse_module
