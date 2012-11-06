@@ -27,6 +27,7 @@ module stellarator_module
   !+ad_desc  parameters of the first wall, blanket and shield components
   !+ad_desc  of a fusion power plant.
   !+ad_prob  None
+  !+ad_call  availability_module
   !+ad_call  build_variables
   !+ad_call  buildings_module
   !+ad_call  constants
@@ -53,11 +54,13 @@ module stellarator_module
   !+ad_call  times_variables
   !+ad_call  vacuum_module
   !+ad_hist  31/10/12 PJK Initial version of module
+  !+ad_hist  06/11/12 PJK Added availability_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use availability_module
   use build_variables
   use buildings_module
   use constants

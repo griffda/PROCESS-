@@ -26,6 +26,7 @@ module ife_module
   !+ad_desc  This module contains routines for calculating the
   !+ad_desc  parameters of an Inertial Fusion Energy power plant.
   !+ad_prob  None
+  !+ad_call  availability_module
   !+ad_call  build_variables
   !+ad_call  buildings_variables
   !+ad_call  constants
@@ -41,11 +42,13 @@ module ife_module
   !+ad_call  vacuum_variables
   !+ad_hist  05/11/12 PJK Initial version of module
   !+ad_hist  05/11/12 PJK Added pulse_variables
+  !+ad_hist  06/11/12 PJK Added availability_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use availability_module
   use build_variables
   use buildings_variables
   use constants

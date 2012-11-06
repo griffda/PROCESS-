@@ -13,6 +13,7 @@ subroutine caller(xc,nvars)
   !+ad_desc  This routine is the principal caller of all the physics and
   !+ad_desc  engineering modules.
   !+ad_prob  None
+  !+ad_call  availability_module
   !+ad_call  build_module
   !+ad_call  buildings_module
   !+ad_call  costs_module
@@ -107,11 +108,13 @@ subroutine caller(xc,nvars)
   !+ad_hist  05/11/12 PJK Added ife_module
   !+ad_hist  05/11/12 PJK Added pulse_module
   !+ad_hist  06/11/12 PJK Added startup_module
+  !+ad_hist  06/11/12 PJK Added availability_module
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use availability_module
   use build_module
   use buildings_module
   use costs_module
