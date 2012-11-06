@@ -42,8 +42,6 @@
 ################# Start of Custom Section #####################
 
 source = \
- aachange.f90 \
- aamain.f90   \
  avail.f90    \
  buildings.f90 \
  caller.f90   \
@@ -66,6 +64,7 @@ source = \
  pfcoil.f90   \
  physics.f90  \
  plant_power.f90 \
+ process.f90  \
  pulse.f90    \
  rfp.f90      \
  safety.f90   \
@@ -79,8 +78,6 @@ source = \
  xc.f90
 
 object = \
- aachange.o   \
- aamain.o     \
  avail.o      \
  buildings.o  \
  caller.o     \
@@ -103,6 +100,7 @@ object = \
  pfcoil.o     \
  physics.o    \
  plant_power.o \
+ process.o    \
  pulse.o      \
  rfp.o        \
  safety.o     \
@@ -170,11 +168,6 @@ default: process.exe
 
 # object dependencies (usually via modules or header files)
 
-aachange.o: 
-aamain.o: avail.o buildings.o costs.o current_drive.o divertor.o evaluators.o fwbs.o \
-  global_variables.o ife.o input.o machine_build.o numerics.o output.o pfcoil.o \
-  physics.o plant_power.o pulse.o rfp.o scan.o sctfcoil.o startup.o stellarator.o \
-  structure.o tfcoil.o vacuum.o
 avail.o: global_variables.o output.o
 buildings.o: global_variables.o output.o
 caller.o: avail.o buildings.o costs.o current_drive.o divertor.o fwbs.o \
@@ -199,6 +192,10 @@ output.o:
 pfcoil.o: global_variables.o maths_library.o output.o
 physics.o: current_drive.o global_variables.o maths_library.o output.o
 plant_power.o: fwbs.o global_variables.o output.o
+process.o: avail.o buildings.o costs.o current_drive.o divertor.o evaluators.o fwbs.o \
+  global_variables.o ife.o input.o machine_build.o numerics.o output.o pfcoil.o \
+  physics.o plant_power.o pulse.o rfp.o scan.o sctfcoil.o startup.o stellarator.o \
+  structure.o tfcoil.o vacuum.o
 pulse.o: global_variables.o maths_library.o output.o physics.o
 rfp.o: current_drive.o input.o global_variables.o machine_build.o output.o pfcoil.o \
   physics.o
