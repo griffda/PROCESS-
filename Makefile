@@ -62,7 +62,6 @@ source = \
  machine_build.f90 \
  maths_library.f90 \
  numerics.f90 \
- outplas.f90  \
  output.f90   \
  pfcoil.f90   \
  physics.f90  \
@@ -100,7 +99,6 @@ object = \
  machine_build.o \
  maths_library.o \
  numerics.o   \
- outplas.o    \
  output.o     \
  pfcoil.o     \
  physics.o    \
@@ -197,7 +195,6 @@ input.o: global_variables.o numerics.o output.o scan.o
 machine_build.o: global_variables.o output.o
 maths_library.o: 
 numerics.o: maths_library.o
-outplas.o: global_variables.o output.o
 output.o:
 pfcoil.o: global_variables.o maths_library.o output.o
 physics.o: current_drive.o global_variables.o maths_library.o output.o
