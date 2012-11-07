@@ -17,6 +17,7 @@ module autodoc_data
   !+ad_hist  06/11/2006 PJK Changed lenmax from 80 to 85
   !+ad_hist  13/03/2009 PJK Changed lenmax from 85 to 100
   !+ad_hist  09/06/2011 PJK Added version number
+  !+ad_hist  07/11/2012 PJK Added variable descriptor file coding
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -46,12 +47,16 @@ module autodoc_data
      integer :: status
      integer :: author
      integer :: docs
+     integer :: variables
+     integer :: vdfileopen
+     integer :: vardes
   end type flags
 
-  integer, parameter :: iounit = 1, hfunit = 2
+  integer, parameter :: iounit = 1, hfunit = 2, vdunit = 3
   integer, parameter :: lenmax = 100
   character(len=lenmax) :: hfile = 'adheader.src'
   character(len=lenmax) :: ffile = 'adfooter.src'
+  character(len=lenmax) :: vdfile = 'vardes.html'
   character(len=lenmax) :: outfile
 
   !  Hypertext elements
@@ -82,6 +87,7 @@ module autodoc_data
   character(len=19), parameter :: html_status_header =    '<P><H3>Status:</H3>'
   character(len=19), parameter :: html_author_header =    '<P><H3>Author:</H3>'
   character(len=34), parameter :: html_doc_header =       '<P><H3>Further Documentation:</H3>'
+  character(len=22), parameter :: html_var_header =       '<P><H3>Variables:</H3>'
 
 end module autodoc_data
 
@@ -214,6 +220,9 @@ program autodoc
   !+ad_desc  <LI> <CODE>docs</CODE>: Further documentation
   !+ad_desc  <LI> <CODE>docc</CODE>: Continuation of a documentation description
   !+ad_desc       (to limit line lengths)
+  !+ad_desc  <LI> <CODE>vars</CODE>: Variable description
+  !+ad_desc  <LI> <CODE>varc</CODE>: Continuation of a variable description
+  !+ad_desc       (to limit line lengths)
   !+ad_desc  </UL>
   !+ad_desc  <P>
   !+ad_desc  A new html file is created whenever a 'name' command is found
@@ -247,6 +256,7 @@ program autodoc
   !+ad_call  check_calltree_depth
   !+ad_call  print_calltree
   !+ad_call  close_file
+  !+ad_call  close_vardes
   !+ad_call  open_file
   !+ad_call  read_line
   !+ad_call  reset_flags
@@ -265,8 +275,11 @@ program autodoc
   !+ad_call  section_status_cont
   !+ad_call  section_summary
   !+ad_call  section_type
+  !+ad_call  section_variables
+  !+ad_call  section_variables_cont
   !+ad_hist  20/04/2006 PJK Initial version
   !+ad_hist  11/02/2009 PJK Added calling tree routines
+  !+ad_hist  06/11/2012 PJK Added variable routines
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -290,6 +303,7 @@ program autodoc
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call reset_flags(flag)
+  flag%vdfileopen = 0  !  need to do this once only
 
   do while (read_line(line, command) /= -1)
 
@@ -311,6 +325,8 @@ program autodoc
      case ('stac') ; call section_status_cont(line,flag)
      case ('docs') ; call section_documentation(line,flag)
      case ('docc') ; call section_documentation_cont(line,flag)
+     case ('vars') ; call section_variables(line,flag)
+     case ('varc') ; call section_variables_cont(line,flag)
 
      case ('null') ; continue
      case default ; continue
@@ -322,6 +338,7 @@ program autodoc
   end do
 
   call close_file(flag)
+  call close_vardes(flag)
 
   !call check_calltree_depth
   call print_calltree(flag)
@@ -345,6 +362,7 @@ subroutine reset_flags(flag)
   !+ad_prob  None
   !+ad_call  autodoc_data
   !+ad_hist  20/04/2006 PJK Initial version
+  !+ad_hist  07/11/2012 PJK Added flag%variables, vardes
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -373,6 +391,8 @@ subroutine reset_flags(flag)
   flag%status    = 0
   flag%author    = 0
   flag%docs      = 0
+  flag%variables = 0
+  flag%vardes    = 0
 
 end subroutine reset_flags
 
@@ -484,15 +504,19 @@ subroutine open_file(line,flag)
   !+ad_desc  If another html file is already open, this is closed first.
   !+ad_desc  <P>After opening the new file, the header for the html is
   !+ad_desc  written to it, followed by a title line.
+  !+ad_desc  <P>Next, the title line is written to the variable descriptor file.
   !+ad_desc  <P>Finally, a new entry is added to the calling tree.
   !+ad_prob  None
   !+ad_call  autodoc_data
   !+ad_call  close_file
   !+ad_call  header
   !+ad_call  new_parent
+  !+ad_call  open_vardes
   !+ad_call  write_to_file
+  !+ad_call  write_to_vardes
   !+ad_hist  20/04/2006 PJK Initial version
   !+ad_hist  11/02/2009 PJK Added call to new_parent
+  !+ad_hist  07/11/2012 PJK Added variable descriptor file coding
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -508,6 +532,8 @@ subroutine open_file(line,flag)
   type(flags), intent(inout) :: flag
 
   !  Local variables
+
+  character(len=lenmax) :: string
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -528,6 +554,15 @@ subroutine open_file(line,flag)
   call write_to_file(html_h2_open,flag)
   call write_to_file(trim(line),flag)
   call write_to_file(html_h2_close,flag)
+
+  !  Write name to variable descriptor file
+
+  if (flag%vdfileopen == 0) call open_vardes(flag)
+  call write_to_vardes(html_h3_open,flag)
+  string = html_link_open//trim(line)//'.html'//html_link_mid//trim(line) &
+       //html_link_close
+  call write_to_vardes(trim(string),flag)
+  call write_to_vardes(html_h3_close,flag)
 
   !  Add a new 'parent' to the calling tree
 
@@ -554,7 +589,9 @@ subroutine close_file(flag)
   !+ad_call  close_sections
   !+ad_call  footer
   !+ad_call  reset_flags
+  !+ad_call  write_to_vardes
   !+ad_hist  20/04/2006 PJK Initial version
+  !+ad_hist  07/11/2012 PJK Added write_to_vardes call
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -579,6 +616,11 @@ subroutine close_file(flag)
      call footer(flag)
 
      close(unit=iounit)
+
+     if (flag%vardes == 1) then
+        call write_to_vardes(html_ulist_close,flag)
+     end if
+
      call reset_flags(flag)
   end if
 
@@ -644,6 +686,7 @@ subroutine close_sections(flag)
   !+ad_call  autodoc_data
   !+ad_call  write_to_file
   !+ad_hist  20/04/2006 PJK Initial version
+  !+ad_hist  07/11/2012 PJK Added variables stanza
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -695,6 +738,11 @@ subroutine close_sections(flag)
 
   if (flag%author == 1) then
      flag%author = 0
+     call write_to_file(html_ulist_close,flag)
+  end if
+
+  if (flag%variables == 1) then
+     flag%variables = 0
      call write_to_file(html_ulist_close,flag)
   end if
 
@@ -964,7 +1012,8 @@ subroutine section_contents(line,flag)
      call write_to_file(line,flag)
   else
      call write_to_file(html_listitem,flag)
-     string = html_link_open//trim(line)//'.html'//html_link_mid//trim(line)//html_link_close
+     string = html_link_open//trim(line)//'.html'//html_link_mid//trim(line) &
+          //html_link_close
      call write_to_file(string,flag)
 
      !  Add a new 'child' to the calling tree
@@ -1155,7 +1204,8 @@ subroutine section_calls(line,flag)
      call write_to_file(line,flag)
   else
      call write_to_file(html_listitem,flag)
-     string = html_link_open//trim(line)//'.html'//html_link_mid//trim(line)//html_link_close
+     string = html_link_open//trim(line)//'.html'//html_link_mid//trim(line) &
+          //html_link_close
      call write_to_file(string,flag)
 
      !  Add a new 'child' to the calling tree
@@ -1400,6 +1450,134 @@ end subroutine section_status_cont
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+subroutine section_variables(line,flag)
+
+  !+ad_name  section_variables
+  !+ad_summ  Routine that acts on a 'vars' command
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  line : input string : line of text to be written
+  !+ad_args  flag : input/output flags object : set of command flags
+  !+ad_desc  This routine is called if a 'vars' command is encountered. 
+  !+ad_desc  If one is not already open, a 'Variables' section is started
+  !+ad_desc  by writing the relevant section header line to the html file,
+  !+ad_desc  and an un-numbered list (of bullet points) is started.
+  !+ad_desc  The <CODE>line</CODE> argument is then written to the html file
+  !+ad_desc  and to the variable descriptor file as a list item.
+  !+ad_desc  <P>If a description of the variable extends over more than
+  !+ad_desc  one line of the source file, a 'varc' command should be used
+  !+ad_desc  instead for continuation lines, otherwise a new bullet will be
+  !+ad_desc  written to the html file, making the output look strange.
+  !+ad_prob  None
+  !+ad_call  autodoc_data
+  !+ad_call  close_sections
+  !+ad_call  write_to_file
+  !+ad_call  write_to_vardes
+  !+ad_hist  07/11/2012 PJK Initial version
+  !+ad_stat  Okay
+  !+ad_docs  None
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use autodoc_data
+
+  implicit none
+
+  !  Arguments
+
+  character(len=*), intent(in) :: line
+  type(flags), intent(inout) :: flag
+
+  !  Local variables
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  if (flag%fileopen == 0) return
+
+  if (flag%variables == 0) then
+     call close_sections(flag)
+     flag%variables = 1
+     call write_to_file(html_var_header,flag)
+     call write_to_file(html_ulist_open,flag)
+  end if
+
+  call write_to_file(html_listitem,flag)
+  call write_to_file(line,flag)
+
+  !  Add variable to variable descriptor file
+
+  if (flag%vardes == 0) then
+     call write_to_vardes(html_ulist_open,flag)
+     flag%vardes = 1
+  end if
+  call write_to_vardes(html_listitem,flag)
+  call write_to_vardes(line,flag)
+
+end subroutine section_variables
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine section_variables_cont(line,flag)
+
+  !+ad_name  section_variables_cont
+  !+ad_summ  Routine that acts on a 'varc' command
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  line : input string : line of text to be written
+  !+ad_args  flag : input/output flags object : set of command flags
+  !+ad_desc  This routine is called if a 'varc' command is encountered. 
+  !+ad_desc  If one is not already open, a 'Variables' section is started
+  !+ad_desc  by writing the relevant section header line to the html file,
+  !+ad_desc  and an un-numbered list (of bullet points) is started.
+  !+ad_desc  The <CODE>line</CODE> argument is then written to the html file
+  !+ad_desc  and the variable descriptor file as a continuation of a list item.
+  !+ad_desc  <P>The 'varc' command should be used to continue a 'vars'
+  !+ad_desc  command if the description of the variable extends over more than
+  !+ad_desc  one line of the source file, to prevent extra bullets being
+  !+ad_desc  written to the html file, making the output look strange.
+  !+ad_prob  None
+  !+ad_call  autodoc_data
+  !+ad_call  close_sections
+  !+ad_call  write_to_file
+  !+ad_call  write_to_vardes
+  !+ad_hist  07/11/2012 PJK Initial version
+  !+ad_stat  Okay
+  !+ad_docs  None
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use autodoc_data
+
+  implicit none
+
+  !  Arguments
+
+  character(len=*), intent(in) :: line
+  type(flags), intent(inout) :: flag
+
+  !  Local variables
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  if (flag%fileopen == 0) return
+
+  if (flag%variables == 0) then
+     call close_sections(flag)
+     flag%variables = 1
+     call write_to_file(html_var_header,flag)
+     call write_to_file(html_ulist_open,flag)
+     call write_to_file(html_listitem,flag)
+  end if
+
+  call write_to_file(line,flag)
+  call write_to_vardes(line,flag)
+
+end subroutine section_variables_cont
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 subroutine section_author(line,flag)
 
   !+ad_name  section_author
@@ -1626,7 +1804,7 @@ subroutine header(flag)
   end if
 
 99 continue
-  close(unit=hfunit)
+  if (file_exists) close(unit=hfunit)
 
 end subroutine header
 
@@ -1687,9 +1865,293 @@ subroutine footer(flag)
   end if
 
 99 continue
-  close(unit=hfunit)
+  if (file_exists) close(unit=hfunit)
 
 end subroutine footer
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine open_vardes(flag)
+
+  !+ad_name  open_vardes
+  !+ad_summ  Routine that opens a new variable descriptor html file for
+  !+ad_summ  autodoc to write to
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  flag : input/output flags object : set of command flags
+  !+ad_desc  This routine opens a new html file for autodoc to use for the
+  !+ad_desc  variable descriptor file. The filename to be used
+  !+ad_desc  is defined by variable <CODE>vdfile</CODE> in the
+  !+ad_desc  <A HREF="autodoc_data.html"><CODE>autodoc_data</CODE></A> module.
+  !+ad_desc  <P>After opening the new file, the header for the html is
+  !+ad_desc  written to it, followed by a title line.
+  !+ad_prob  None
+  !+ad_call  autodoc_data
+  !+ad_call  header_vardes
+  !+ad_call  write_to_vardes
+  !+ad_hist  07/11/2012 PJK Initial version
+  !+ad_stat  Okay
+  !+ad_docs  None
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use autodoc_data
+
+  implicit none
+
+  !  Arguments
+
+  type(flags), intent(inout) :: flag
+
+  !  Local variables
+
+  character(len=8) :: date
+  character(len=lenmax) :: string
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !  If the file is already open, exit the routine
+
+  if (flag%vdfileopen == 1) return
+
+  write(*,*) 'Writing '//trim(vdfile)//'...'
+
+  flag%vdfileopen = 1
+  open(unit=vdunit,file=vdfile,status='replace')
+
+  call header_vardes(flag)
+
+  call write_to_vardes(html_h2_open,flag)
+
+  call date_and_time(date=date)
+  string = 'PROCESS Variable Descriptor File : dated '//date
+  call write_to_vardes(trim(string),flag)
+
+  call write_to_vardes(html_h2_close,flag)
+
+  string = 'Variables labelled with FIX are initialised with the given'
+  call write_to_vardes(string,flag)
+  string = 'default value (shown between / / characters), but currently'
+  call write_to_vardes(string,flag)
+  string = 'are not available to be changed in the input file.'
+  call write_to_vardes(string,flag)
+  string = '<P>All other variables shown with a default value can be changed in'
+  call write_to_vardes(string,flag)
+  string = 'the input file.'
+  call write_to_vardes(string,flag)
+
+  string = '<P>Variables not shown with a default value are calculated'
+  call write_to_vardes(string,flag)
+  string = 'within PROCESS, so need not be initialised.'
+  call write_to_vardes(string,flag)
+
+end subroutine open_vardes
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine close_vardes(flag)
+
+  !+ad_name  close_vardes
+  !+ad_summ  Routine that completes and closes a variable descriptor html file
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  flag : input/output flags object : set of command flags
+  !+ad_desc  This routine closes the variable descriptor html file.
+  !+ad_desc  Firstly, the html footer is written to the file.
+  !+ad_desc  Then, the file is closed and the command flags are reset.
+  !+ad_prob  None
+  !+ad_call  autodoc_data
+  !+ad_call  footer_vardes
+  !+ad_call  write_to_vardes
+  !+ad_hist  07/11/2012 PJK Initial version
+  !+ad_stat  Okay
+  !+ad_docs  None
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use autodoc_data
+
+  implicit none
+
+  !  Arguments
+
+  type(flags), intent(inout) :: flag
+
+  !  Local variables
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  if (flag%vdfileopen == 1) then
+     call write_to_vardes(html_ulist_close,flag)
+     call footer_vardes(flag)
+     close(unit=vdunit)
+     flag%vdfileopen = 0
+  end if
+
+end subroutine close_vardes
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine header_vardes(flag)
+
+  !+ad_name  header_vardes
+  !+ad_summ  Routine that writes the header of the variable descriptor html file
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  flag : input/output flags object : set of command flags
+  !+ad_desc  This routine writes the header of the variable descriptor html file.
+  !+ad_desc  If file <CODE>adheader.src</CODE> exists in the current working
+  !+ad_desc  directory it is used as the html source for the header; this
+  !+ad_desc  can be modified as necessary to provide links to other files,
+  !+ad_desc  or to customise the html to local conditions, etc.
+  !+ad_desc  Otherwise, a plain header is written to the html file.
+  !+ad_prob  None
+  !+ad_call  autodoc_data
+  !+ad_call  write_to_vardes
+  !+ad_hist  07/11/2012 PJK Initial version
+  !+ad_stat  Okay
+  !+ad_docs  None
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use autodoc_data
+
+  implicit none
+
+  !  Arguments
+
+  type(flags), intent(inout) :: flag
+
+  !  Local variables
+
+  character(len=lenmax) :: string
+  logical :: file_exists
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  if (flag%vdfileopen == 0) return
+
+  inquire(file=hfile,exist=file_exists)
+
+  if (file_exists) then
+     open(unit=hfunit,file=hfile,status='old')
+     do
+        read(hfunit,'(A)',end=99) string
+        call write_to_vardes(string,flag)
+     end do
+  else
+     string = '<HTML><HEAD><TITLE>Variable Descriptor</TITLE></HEAD><BODY>'
+     call write_to_vardes(string,flag)
+  end if
+
+99 continue
+  if (file_exists) close(unit=hfunit)
+
+end subroutine header_vardes
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine footer_vardes(flag)
+
+  !+ad_name  footer
+  !+ad_summ  Routine that writes the footer of the variable descriptor html file
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  flag : input/output flags object : set of command flags
+  !+ad_desc  This routine writes the footer of the variable descriptor html file.
+  !+ad_desc  If file <CODE>adfooter.src</CODE> exists in the current working
+  !+ad_desc  directory it is used as the html source for the footer; this
+  !+ad_desc  can be modified as necessary to provide links to other files,
+  !+ad_desc  or to customise the html to local conditions, etc.
+  !+ad_desc  Otherwise a plain footer is written to the html file.
+  !+ad_prob  None
+  !+ad_call  autodoc_data
+  !+ad_call  write_to_vardes
+  !+ad_hist  07/11/2012 PJK Initial version
+  !+ad_stat  Okay
+  !+ad_docs  None
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use autodoc_data
+
+  implicit none
+
+  !  Arguments
+
+  type(flags), intent(inout) :: flag
+
+  !  Local variables
+
+  character(len=lenmax) :: string
+  logical :: file_exists
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  if (flag%vdfileopen == 0) return
+
+  inquire(file=ffile,exist=file_exists)
+
+  if (file_exists) then
+     open(unit=hfunit,file=ffile,status='old')
+     do
+        read(hfunit,'(A)',end=99) string
+        call write_to_vardes(string,flag)
+     end do
+  else
+     string = '</BODY></HTML>'
+     call write_to_vardes(string,flag)
+  end if
+
+99 continue
+  if (file_exists) close(unit=hfunit)
+
+end subroutine footer_vardes
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine write_to_vardes(line,flag)
+
+  !+ad_name  write_to_vardes
+  !+ad_summ  Routine that writes a line of text to the variable
+  !+ad_summ  descriptor html file
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  line : input string : text to be written
+  !+ad_args  flag : input flags object : set of command flags
+  !+ad_desc  This routine simply writes a line of text to the
+  !+ad_desc  variable descriptor html file.
+  !+ad_prob  None
+  !+ad_call  autodoc_data
+  !+ad_hist  07/11/2012 PJK Initial version
+  !+ad_stat  Okay
+  !+ad_docs  None
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use autodoc_data
+
+  implicit none
+
+  !  Arguments
+
+  character(len=*), intent(in) :: line
+  type(flags), intent(in) :: flag
+
+  !  Local variables
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  if (flag%vdfileopen == 1) then
+     write(vdunit,*) trim(line)
+  end if
+
+end subroutine write_to_vardes
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

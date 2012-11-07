@@ -23,7 +23,7 @@ module global_variables
 
   public
 
-  !+ad_vars  icase : description of run or PROCESS version number
+  !+ad_vars  icase : description of plant plant model being used
   character(len=48) :: icase = 'PROCESS standard D-T tokamak model'
 
 end module global_variables
@@ -52,17 +52,17 @@ module constants
 
   public
 
-  !+ad_vars  degrad : degrees to radians, = pi/180
+  !+ad_vars  degrad FIX : degrees to radians, = pi/180
   real(kind(1.0D0)), parameter :: degrad = 0.01745329251D0
-  !+ad_vars  echarge : electron charge (C)
+  !+ad_vars  echarge FIX : electron charge (C)
   real(kind(1.0D0)), parameter :: echarge = 1.60217733D-19
-  !+ad_vars  mproton : proton mass (kg)
+  !+ad_vars  mproton FIX : proton mass (kg)
   real(kind(1.0D0)), parameter :: mproton = 1.6726231D-27
-  !+ad_vars  pi : famous number
+  !+ad_vars  pi FIX : famous number
   real(kind(1.0D0)), parameter :: pi = 3.1415926535897932D0
-  !+ad_vars  rmu0 : permeability of free space, 4.pi x 10^(-7) H/m
+  !+ad_vars  rmu0 FIX : permeability of free space, 4.pi x 10^(-7) H/m
   real(kind(1.0D0)), parameter :: rmu0 = 1.256637062D-6
-  !+ad_vars  twopi : 2 pi
+  !+ad_vars  twopi FIX : 2 pi
   real(kind(1.0D0)), parameter :: twopi = 6.2831853071795862D0
 
 end module constants
@@ -92,47 +92,83 @@ module physics_variables
 
   public
 
-  !+ad_vars  ipnlaws : number of energy confinement time scaling laws
+  !+ad_vars  ipnlaws /36/ FIX : number of energy confinement time scaling laws
   integer, parameter :: ipnlaws = 36
 
-  !+ad_vars  tauscl(ipnlaws) : labels describing energy confinement scaling laws
+  !+ad_vars  tauscl(ipnlaws) : labels describing energy confinement scaling laws:<UL>
   character(len=24), dimension(ipnlaws) :: tauscl = (/ &
-       'Neo-Alcator      (ohmic)', &  !  1
-       'Mirnov               (H)', &  !  2
-       'Merezkhin-Muhkovatov (L)', &  !  3
-       'Shimomura            (H)', &  !  4
-       'Kaye-Goldston        (L)', &  !  5
-       'ITER 89-P            (L)', &  !  6
-       'ITER 89-O            (L)', &  !  7
-       'Rebut-Lallia         (L)', &  !  8
-       'Goldston             (L)', &  !  9
-       'T10                     ', &  !  10
-       'JAERI-88                ', &  !  11
-       'Kaye-Big Complex        ', &  !  12
-       'ITER H90-P           (H)', &  !  13
-       'ITER Mix                ', &  !  14
-       'Riedel               (L)', &  !  15
-       'Christiansen         (L)', &  !  16
-       'Lackner-Gottardi     (L)', &  !  17
-       'Neo-Kaye             (L)', &  !  18
-       'Riedel               (H)', &  !  19
-       'ITER H90-P amended   (H)', &  !  20
-       'LHD              (stell)', &  !  21
-       'Gyro-reduced Bohm(stell)', &  !  22
-       'Lackner-Gottardi (stell)', &  !  23
-       'ITER-93H             (H)', &  !  24
-       'TITAN RFP               ', &  !  25
-       'ITER H-97P ELM-free  (H)', &  !  26
-       'ITER H-97P ELMy      (H)', &  !  27
-       'ITER-96P             (L)', &  !  28
-       'Valovic modified ELMy(H)', &  !  29
-       'Kaye PPPL April 98   (L)', &  !  30
-       'ITERH-PB98P(y)       (H)', &  !  31
-       'IPB98(y)             (H)', &  !  32
-       'IPB98(y,1)           (H)', &  !  33
-       'IPB98(y,2)           (H)', &  !  34
-       'IPB98(y,3)           (H)', &  !  35
-       'IPB98(y,4)           (H)' /)  !  36
+  !+ad_varc  <LI> ( 1)  Neo-Alcator (ohmic)
+       'Neo-Alcator      (ohmic)', &
+  !+ad_varc  <LI> ( 2)  Mirnov (H-mode)
+       'Mirnov               (H)', &
+  !+ad_varc  <LI> ( 3)  Merezkhin-Muhkovatov (L-mode)
+       'Merezkhin-Muhkovatov (L)', &
+  !+ad_varc  <LI> ( 4)  Shimomura (H-mode)
+       'Shimomura            (H)', &
+  !+ad_varc  <LI> ( 5)  Kaye-Goldston (L-mode)
+       'Kaye-Goldston        (L)', &
+  !+ad_varc  <LI> ( 6)  ITER 89-P (L-mode)
+       'ITER 89-P            (L)', &
+  !+ad_varc  <LI> ( 7)  ITER 89-O (L-mode)
+       'ITER 89-O            (L)', &
+  !+ad_varc  <LI> ( 8)  Rebut-Lallia (L-mode)
+       'Rebut-Lallia         (L)', &
+  !+ad_varc  <LI> ( 9)  Goldston (L-mode)
+       'Goldston             (L)', &
+  !+ad_varc  <LI> (10)  T10
+       'T10                     ', &
+  !+ad_varc  <LI> (11)  JAERI-88
+       'JAERI-88                ', &
+  !+ad_varc  <LI> (12)  Kaye-Big Complex
+       'Kaye-Big Complex        ', &
+  !+ad_varc  <LI> (13)  ITER H90-P (H-mode)
+       'ITER H90-P           (H)', &
+  !+ad_varc  <LI> (14)  ITER Mix
+       'ITER Mix                ', &
+  !+ad_varc  <LI> (15)  Riedel (L-mode)
+       'Riedel               (L)', &
+  !+ad_varc  <LI> (16)  Christiansen (L-mode)
+       'Christiansen         (L)', &
+  !+ad_varc  <LI> (17)  Lackner-Gottardi (L-mode)
+       'Lackner-Gottardi     (L)', &
+  !+ad_varc  <LI> (18)  Neo-Kaye (L-mode)
+       'Neo-Kaye             (L)', &
+  !+ad_varc  <LI> (19)  Riedel (H-mode)
+       'Riedel               (H)', &
+  !+ad_varc  <LI> (20)  ITER H90-P amended (H-mode)
+       'ITER H90-P amended   (H)', &
+  !+ad_varc  <LI> (21)  LHD (stellarator)
+       'LHD              (stell)', &
+  !+ad_varc  <LI> (22)  Gyro-reduced Bohm (stellarator)
+       'Gyro-reduced Bohm(stell)', &
+  !+ad_varc  <LI> (23)  Lackner-Gottardi (stellarator)
+       'Lackner-Gottardi (stell)', &
+  !+ad_varc  <LI> (24)  ITER-93H (H-mode)
+       'ITER-93H             (H)', &
+  !+ad_varc  <LI> (25)  TITAN (RFP)
+       'TITAN RFP               ', &
+  !+ad_varc  <LI> (26)  ITER H-97P ELM-free (H-mode)
+       'ITER H-97P ELM-free  (H)', &
+  !+ad_varc  <LI> (27)  ITER H-97P ELMy (H-mode)
+       'ITER H-97P ELMy      (H)', &
+  !+ad_varc  <LI> (28)  ITER-96P (L-mode)
+       'ITER-96P             (L)', &
+  !+ad_varc  <LI> (29)  Valovic modified ELMy (H-mode)
+       'Valovic modified ELMy(H)', &
+  !+ad_varc  <LI> (30)  Kaye PPPL April 98 (L-mode)
+       'Kaye PPPL April 98   (L)', &
+  !+ad_varc  <LI> (31)  ITERH-PB98P(y) (H-mode)
+       'ITERH-PB98P(y)       (H)', &
+  !+ad_varc  <LI> (32)  IPB98(y) (H-mode)
+       'IPB98(y)             (H)', &
+  !+ad_varc  <LI> (33)  IPB98(y,1) (H-mode)
+       'IPB98(y,1)           (H)', &
+  !+ad_varc  <LI> (34)  IPB98(y,2) (H-mode)
+       'IPB98(y,2)           (H)', &
+  !+ad_varc  <LI> (35)  IPB98(y,3) (H-mode)
+       'IPB98(y,3)           (H)', &
+  !+ad_varc  <LI> (36)  IPB98(y,4) (H-mode)</UL>
+       'IPB98(y,4)           (H)' /)
 
   !+ad_vars  abeam : beam ion mass (amu)
   real(kind(1.0D0)) :: abeam = 0.0D0
@@ -251,16 +287,106 @@ module physics_variables
   real(kind(1.0D0)) :: fvsbrnni = 1.0D0
   !+ad_vars  gamma /0.4/ : coefficient for resistive startup V-s formula
   real(kind(1.0D0)) :: gamma = 0.4D0
+  !+ad_vars  gtscale /0/ : switch for a/R scaling of dnbeta:<UL>
+  !+ad_varc          <LI>  = 0 do not scale dnbeta with eps; 
+  !+ad_varc          <LI>  otherwise scale dnbeta with eps  </UL>
+  integer :: gtscale = 0
   !+ad_vars  hfac(ipnlaws) : H factors for an ignited plasma for each scaling law
   real(kind(1.0D0)), dimension(ipnlaws) :: hfac = 0.0D0
   !+ad_vars  hfact /2.0/ : H factor on energy confinement times (iteration variable 10)
   real(kind(1.0D0)) :: hfact = 2.0D0
+  !+ad_vars  ibss /1/ : switch for bootstrap current scaling:<UL>
+  !+ad_varc        <LI> = 1 ITER bootstrap scaling (high R/a only);
+  !+ad_varc        <LI> = 2 for more general scaling;
+  !+ad_varc        <LI> = 3 for new Culham scaling as in AEA FUS 172</UL>
+  integer :: ibss  = 1
+  !+ad_vars  iculbl /0/ : switch for Troyon beta limit scaling:<UL>
+  !+ad_varc          <LI> = 0 apply limit to total beta;
+  !+ad_varc          <LI> = 1 apply limit to thermal beta;
+  !+ad_varc          <LI> = 2 apply limit to thermal + neutral beam beta</UL>
+  integer :: iculbl = 0
+  !+ad_vars  iculdl /0/ : switch for density limit:<UL>
+  !+ad_varc          <LI> = 0 use old method;
+  !+ad_varc          <LI> = 1 use new method (seven formulae to choose from)</UL>
+  integer :: iculdl = 0
+  !+ad_vars  icurr /4/ : switch for plasma current scaling to use:<UL>
+  !+ad_varc         <LI> = 1 Peng analytic fit;
+  !+ad_varc         <LI> = 2 Peng double null divertor scaling (TART);
+  !+ad_varc         <LI> = 3 simple ITER scaling (k = 2.2, d = 0.6);
+  !+ad_varc         <LI> = 4 later ITER scaling, a la Uckan;
+  !+ad_varc         <LI> = 5 Todd empirical scaling I;
+  !+ad_varc         <LI> = 6 Todd empirical scaling II;
+  !+ad_varc         <LI> = 7 Connor-Hastie model</UL>
+  integer :: icurr = 4
+  !+ad_vars  idensl /3/ : switch for density limit to enforce (if ICULDL=1):<UL>
+  !+ad_varc          <LI> = 1 old ASDEX;
+  !+ad_varc          <LI> = 2 Borrass model for ITER (I);
+  !+ad_varc          <LI> = 3 Borrass model for ITER (II);
+  !+ad_varc          <LI> = 4 JET edge radiation;
+  !+ad_varc          <LI> = 5 JET simplified;
+  !+ad_varc          <LI> = 6 Hugill-Murakami Mq limit;
+  !+ad_varc          <LI> = 7 Greenwald limit</UL>
+  integer :: idensl = 3
+  !+ad_vars  idhe3 /0/ : switch for main fusion reaction:<UL>
+  !+ad_varc         <LI> = 0 D-T reaction;
+  !+ad_varc         <LI> = 1 D-He3 reaction (+ daughters)</UL>
+  integer :: idhe3 = 0
+  !+ad_vars  idivrt /2/ : shape switch (use only idivrt=2 for now):<UL>
+  !+ad_varc          <LI> = 0 for limiter;
+  !+ad_varc          <LI> = 1 for single null (diverted side down);
+  !+ad_varc          <LI> = 2 for double null</UL>
+  integer :: idivrt = 2
+  !+ad_vars  ifalphap /0/ : switch for fast alpha pressure calculation:<UL>
+  !+ad_varc            <LI> = 0 ITER physics rules (Uckan) fit;
+  !+ad_varc            <LI> = 1 Modified fit (D. Ward) - better at high temperature</UL>
+  integer :: ifalphap = 0
+  !+ad_vars  ifispact /1/ : switch for neutronics calculations:<UL>
+  !+ad_varc            <LI> = 0 neutronics calculations turned off;
+  !+ad_varc            <LI> = 1 neutronics calculations turned on</UL>
+  integer :: ifispact = 1
+  !+ad_vars  igeom /0/ : switch for plasma geometry calculation:<UL>
+  !+ad_varc         <LI> = 0 original method;
+  !+ad_varc         <LI> = 1 new method</UL>
+  integer :: igeom = 0
+  !+ad_vars  ignite /0/ : switch for ignition assumption:<UL>
+  !+ad_varc          <LI> = 0 do not assume plasma ignition;
+  !+ad_varc          <LI> = 1 assume ignited (but include aux power in costs).
+  !+ad_varc               Obviously, ignite must be zero if current drive
+  !+ad_varc               is required. Note that whole code is not quite
+  !+ad_varc               consistent yet...
+  integer :: ignite = 0
+  !+ad_vars  iinvqd /1/ : switch for inverse quadrature in tauee laws (1=yes)
+  integer :: iinvqd = 1
+  !+ad_vars  iiter /1/ : switch for ITER fusion power calculations, (1=yes)
+  !+ad_varc              (bad fit if alphan /= 0.5 and/or alphat /= 1.0)
+  integer :: iiter = 1
   !+ad_vars  impc /1.0/ : carbon impurity multiplier
   real(kind(1.0D0)) :: impc = 1.0D0
   !+ad_vars  impfe /1.0/ : iron impurity multiplier
   real(kind(1.0D0)) :: impfe = 1.0D0
   !+ad_vars  impo /1.0/ : oxygen impurity multiplier
   real(kind(1.0D0)) :: impo = 1.0D0
+  !+ad_vars  ires /1/ : switch for neo-classical plasma resistivity (1=yes)
+  integer :: ires = 1
+  !+ad_vars  isc /6/ switch for energy confinement time scaling law
+  !+ad_varc          (see description in tauscl)
+  integer :: isc = 6
+  !+ad_vars  iscrp /1/ : switch for scrapeoff width:<UL>
+  !+ad_varc         <LI> = 0 use 10% of rminor;
+  !+ad_varc         <LI> = 1 use input (scrapli and scraplo)</UL>
+  integer :: iscrp = 1
+  !+ad_vars  ishape /0/ : switch for plasma cross-sectional shape calculation:<UL>
+  !+ad_varc          <LI> = 0 use input kappa, triang;
+  !+ad_varc          <LI> = 1 scale qlim, kappa, triang (TART)</UL>
+  integer :: ishape = 0
+  !+ad_vars  itart /0/ : switch for tight aspect ratio models:<UL>
+  !+ad_varc         <LI> = 0 use conventional aspect ratio models;
+  !+ad_varc         <LI> = 1 use tight aspect ratio models</UL>
+  integer :: itart = 0
+  !+ad_vars  iwalld /1/ : switch for neutron wall load calculation:<UL>
+  !+ad_varc          <LI> = 1 use scaled plasma surface area;
+  !+ad_varc          <LI> = 2 use first wall area directly</UL>
+  integer :: iwalld = 1
   !+ad_vars  kappa /2.218/ : plasma separatrix elongation
   real(kind(1.0D0)) :: kappa = 2.218D0
   !+ad_vars  kappa95 : 95% plasma elongation
@@ -306,11 +432,11 @@ module physics_variables
   !+ad_vars  psync : synchrotron radiation power (MW/m3)
   real(kind(1.0D0)) :: psync = 0.0D0
   !+ad_vars  pthrmw(5) : L-H power threshold (MW): <OL>
-  !+ad_varc              <LI> ITER 1996 nominal
-  !+ad_varc              <LI> ITER 1996 upper bound
-  !+ad_varc              <LI> ITER 1996 lower bound
-  !+ad_varc              <LI> ITER 1997 excluding elongation
-  !+ad_varc              <LI> ITER 1997 including elongation</OL>
+  !+ad_varc         <LI> ITER 1996 nominal
+  !+ad_varc         <LI> ITER 1996 upper bound
+  !+ad_varc         <LI> ITER 1996 lower bound
+  !+ad_varc         <LI> ITER 1997 excluding elongation
+  !+ad_varc         <LI> ITER 1997 including elongation</OL>
   real(kind(1.0D0)), dimension(5) :: pthrmw = 0.0D0
   !+ad_vars  ptre : electron transport power (MW/m3)
   real(kind(1.0D0)) :: ptre = 0.0D0
@@ -410,97 +536,6 @@ module physics_variables
   !+ad_vars  zeffai : density weighted plasma effective charge
   real(kind(1.0D0)) :: zeffai = 0.0D0
 
-  !+ad_vars  gtscale /0/ : switch for a/R scaling of dnbeta:
-  !+ad_varc                = 0 do not scale dnbeta with eps; 
-  !+ad_varc                otherwise scale dnbeta with eps  
-  integer :: gtscale = 0
-  !+ad_vars  ibss /1/ : switch for bootstrap current scaling:
-  !+ad_varc             = 1 ITER bootstrap scaling (high R/a only);
-  !+ad_varc             = 2 for more general scaling;
-  !+ad_varc             = 3 for new Culham scaling as in AEA FUS 172
-  integer :: ibss  = 1
-  !+ad_vars  iculbl /0/ : switch for Troyon beta limit scaling:
-  !+ad_varc               = 0 apply limit to total beta;
-  !+ad_varc               = 1 apply limit to thermal beta;
-  !+ad_varc               = 2 apply limit to thermal + neutral beam beta
-  integer :: iculbl = 0
-  !+ad_vars  iculdl /0/ : switch for density limit:
-  !+ad_varc               = 0 use old method;
-  !+ad_varc               = 1 use new method (seven formulae to choose from)
-  integer :: iculdl = 0
-  !+ad_vars  icurr /4/ : switch for plasma current scaling to use:
-  !+ad_varc              = 1 Peng analytic fit;
-  !+ad_varc              = 2 Peng double null divertor scaling (TART);
-  !+ad_varc              = 3 simple ITER scaling (k = 2.2, d = 0.6);
-  !+ad_varc              = 4 later ITER scaling, a la Uckan;
-  !+ad_varc              = 5 Todd empirical scaling I;
-  !+ad_varc              = 6 Todd empirical scaling II;
-  !+ad_varc              = 7 Connor-Hastie model
-  integer :: icurr = 4
-  !+ad_vars  idensl /3/ : switch for density limit to enforce (if ICULDL=1):
-  !+ad_varc               = 1 old ASDEX;
-  !+ad_varc               = 2 Borrass model for ITER (I);
-  !+ad_varc               = 3 Borrass model for ITER (II);
-  !+ad_varc               = 4 JET edge radiation;
-  !+ad_varc               = 5 JET simplified;
-  !+ad_varc               = 6 Hugill-Murakami Mq limit;
-  !+ad_varc               = 7 Greenwald limit
-  integer :: idensl = 3
-  !+ad_vars  idhe3 /0/ : switch for main fusion reaction:
-  !+ad_varc              = 0 D-T reaction;
-  !+ad_varc              = 1 D-He3 reaction (+ daughters)
-  integer :: idhe3 = 0
-  !+ad_vars  idivrt /2/ : shape switch (use only idivrt= 2 for now):
-  !+ad_varc               = 0 for limiter;
-  !+ad_varc               = 1 for single null (diverted side down);
-  !+ad_varc               = 2 for double null
-  integer :: idivrt = 2
-  !+ad_vars  ifalphap /0/ : switch for fast alpha pressure calculation:
-  !+ad_varc                 = 0 ITER physics rules (Uckan) fit;
-  !+ad_varc                 = 1 Modified fit (D. Ward) - better at high temperature
-  integer :: ifalphap = 0
-  !+ad_vars  ifispact /1/ : switch for neutronics calculations:
-  !+ad_varc                 = 0 neutronics calculations turned off;
-  !+ad_varc                 = 1 neutronics calculations turned on
-  integer :: ifispact = 1
-  !+ad_vars  igeom /0/ : switch for plasma geometry calculation:
-  !+ad_varc              = 0 original method;
-  !+ad_varc              = 1 new method
-  integer :: igeom = 0
-  !+ad_vars  ignite /0/ : switch for ignition assumption:
-  !+ad_varc               = 0 do not assume plasma ignition;
-  !+ad_varc               = 1 assume ignited (but include aux power in costs)
-  !+ad_varc               Obviously, ignite must be zero if current drive
-  !+ad_varc               is required. Note that whole code is not quite
-  !+ad_varc               consistent yet...
-  integer :: ignite = 0
-  !+ad_vars  iinvqd /1/ : switch for inverse quadrature in tauee laws (1=yes)
-  integer :: iinvqd = 1
-  !+ad_vars  iiter /1/ : switch for ITER fusion power calculations, (1=yes)
-  !+ad_varc              (bad fit if alphan /= 0.5 and/or alphat /= 1.0)
-  integer :: iiter = 1
-  !+ad_vars  ires /1/ : switch for neo-classical plasma resistivity (1=yes)
-  integer :: ires = 1
-  !+ad_vars  isc /6/ switch for energy confinement time scaling law
-  !+ad_varc          (see description in tauscl)
-  integer :: isc = 6
-  !+ad_vars  iscrp /1/ : switch for scrapeoff width:
-  !+ad_varc              = 0 use 10% of rminor;
-  !+ad_varc              = 1 use input (scrapli and scraplo)
-  integer :: iscrp = 1
-  !+ad_vars  ishape /0/ : switch for plasma cross-sectional shape calculation:
-  !+ad_varc               = 0 use input kappa, triang;
-  !+ad_varc               = 1 scale qlim, kappa, triang (TART)
-  integer :: ishape = 0
-  !+ad_vars  itart /0/ : switch for tight aspect ratio models:
-  !+ad_varc              = 0 use conventional aspect ratio models;
-  !+ad_varc              = 1 use tight aspect ratio models
-  integer :: itart = 0
-  !+ad_vars  iwalld /1/ : switch for neutron wall load calculation:
-  !+ad_varc               = 1 use scaled plasma surface area;
-  !+ad_varc               = 2 use first wall area directly
-  integer :: iwalld = 1
-
 end module physics_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -567,15 +602,15 @@ module current_drive_variables
   !+ad_vars  gamcd : normalised current drive efficiency (A/W-m2)
   real(kind(1.0D0)) :: gamcd = 0.0D0
   !+ad_vars  iefrf /5/ : switch for current drive efficiency model: <OL>
-  !+ad_varc                <LI> Fenstermacher Lower Hybrid
-  !+ad_varc                <LI> Ion Cyclotron current drive
-  !+ad_varc                <LI> Fenstermacher ECH
-  !+ad_varc                <LI> Ehst Lower Hybrid
-  !+ad_varc                <LI> ITER Neutral Beam
-  !+ad_varc                <LI> new Culham Lower Hybrid model
-  !+ad_varc                <LI> new Culham ECCD model
-  !+ad_varc                <LI> new Culham Neutral Beam model
-  !+ad_varc                <LI> RFP Oscillating Field current drive </OL>
+  !+ad_varc         <LI> Fenstermacher Lower Hybrid
+  !+ad_varc         <LI> Ion Cyclotron current drive
+  !+ad_varc         <LI> Fenstermacher ECH
+  !+ad_varc         <LI> Ehst Lower Hybrid
+  !+ad_varc         <LI> ITER Neutral Beam
+  !+ad_varc         <LI> new Culham Lower Hybrid model
+  !+ad_varc         <LI> new Culham ECCD model
+  !+ad_varc         <LI> new Culham Neutral Beam model
+  !+ad_varc         <LI> RFP Oscillating Field current drive </OL>
   integer :: iefrf = 5
   !+ad_vars  irfcd /1/ : switch for current drive calculation (1=yes,0=no)
   integer :: irfcd = 1
@@ -848,8 +883,25 @@ module fwbs_variables
   !+ad_vars  wtshldo : mass of outer shield (kg)
   real(kind(1.0D0)) :: wtshldo = 0.0D0
 
-  !  Following are used in the full thermodynamic blanket model (lblnkt=1)
+  !+ad_vars  <P><B>The following are used in the full thermodynamic blanket model
+  !+ad_varc  (lblnkt=1):</B><P>
 
+  !+ad_vars  astr /2/ : Switch for blanket cooling channel geometry (lblnkt=1):<UL>
+  !+ad_varc        <LI> = 1 circular cross section;
+  !+ad_varc        <LI> = 2 annular cross section</UL>
+  integer :: astr = 2
+  !+ad_vars  bstr /1/ : Switch for blanket boundary condition (lblnkt=1):<UL>
+  !+ad_varc        <LI> = 1 coolant outlet temperature fixed;
+  !+ad_varc        <LI> = 2 maximum blanket temperature fixed</UL>
+  integer :: bstr = 1
+  !+ad_vars  costr /2/ : Switch for blanket coolant material (lblnkt=1):<UL>
+  !+ad_varc         <LI> = 1 Gaseous helium coolant;
+  !+ad_varc         <LI> = 2 Pressurized water coolant</UL>
+  integer :: costr = 2
+  !+ad_vars  estr /1/ : Switch for cooling channel orientation (lblnkt=1):<UL>
+  !+ad_varc        <LI> = 1 radially orientated;
+  !+ad_varc        <LI> = 2 poloidally orientated</UL>
+  integer :: estr = 1
   !+ad_vars  etacp /0.75/ : condenser isentropic efficiency
   real(kind(1.0D0)) :: etacp = 0.75D0
   !+ad_vars  etafp /0.75/ : feed water pumps' isentropic efficiency
@@ -862,6 +914,14 @@ module fwbs_variables
   real(kind(1.0D0)) :: etalp = 0.85D0
   !+ad_vars  fkblkt /1.0/ : blanket elongation / plasma elongation
   real(kind(1.0D0)) :: fkblkt = 1.0D0
+  !+ad_vars  lblnkt /1/ : Switch for blanket model:<UL>
+  !+ad_varc          <LI> = 0 original model;
+  !+ad_varc          <LI> = 1 full thermodynamic model</UL>
+  integer :: lblnkt = 1
+  !+ad_vars  nipfwh /1/ : Number of intermediate pressure feed water heater pumps
+  integer :: nipfwh = 1
+  !+ad_vars  nlpfwh /1/ : Number of low pressure feed water heater pumps
+  integer :: nlpfwh = 1
   !+ad_vars  pc /0.005/ : low pressure turbine outlet pressure (MPa)
   real(kind(1.0D0)) :: pc = 0.005D0
   !+ad_vars  ph /8.6/ : high pressure turbine inlet pressure (MPa)
@@ -872,6 +932,10 @@ module fwbs_variables
   real(kind(1.0D0)) :: pr = 1.0D0
   !+ad_vars  sgeff /1.0/ : steam generator effectiveness
   real(kind(1.0D0)) :: sgeff = 1.0D0
+  !+ad_vars  smstr /1/ : Switch for blanket material (lblnkt=1):<UL>
+  !+ad_varc         <LI> = 1 Li2O/Be (solid blanket);
+  !+ad_varc         <LI> = 2 LiPb/Li (liquid blanket)</UL>
+  integer :: smstr = 1
   !+ad_vars  xdi /2.0/ : inner cooling channel diameter (cm)
   real(kind(1.0D0)) :: xdi = 2.0D0
   !+ad_vars  xdo /2.4/ : outer cooling channel diameter (cm)
@@ -884,35 +948,6 @@ module fwbs_variables
   real(kind(1.0D0)) :: xtfi = 200.0D0
   !+ad_vars  xtfo /300.0/ : outlet coolant temperature (C)
   real(kind(1.0D0)) :: xtfo = 300.0D0
-
-  !+ad_vars  astr /2/ : Switch for blanket cooling channel geometry (lblnkt=1):
-  !+ad_varc             = 1 circular cross section;
-  !+ad_varc             = 2 annular cross section
-  integer :: astr = 2
-  !+ad_vars  bstr /1/ : Switch for blanket boundary condition (lblnkt=1):
-  !+ad_varc             = 1 coolant outlet temperature fixed;
-  !+ad_varc             = 2 maximum blanket temperature fixed
-  integer :: bstr = 1
-  !+ad_vars  costr /2/ : Switch for blanket coolant material (lblnkt=1):
-  !+ad_varc              = 1 Gaseous helium coolant;
-  !+ad_varc              = 2 Pressurized water coolant
-  integer :: costr = 2
-  !+ad_vars  estr /1/ : Switch for cooling channel orientation (lblnkt=1):
-  !+ad_varc             = 1 radially orientated;
-  !+ad_varc             = 2 poloidally orientated
-  integer :: estr = 1
-  !+ad_vars  lblnkt /1/ : Switch for blanket model:
-  !+ad_varc               = 0 original model;
-  !+ad_varc               = 1 full thermodynamic model
-  integer :: lblnkt = 1
-  !+ad_vars  nipfwh /1/ : Number of intermediate pressure feed water heater pumps
-  integer :: nipfwh = 1
-  !+ad_vars  nlpfwh /1/ : Number of low pressure feed water heater pumps
-  integer :: nlpfwh = 1
-  !+ad_vars  smstr /1/ : Switch for blanket material (lblnkt=1):
-  !+ad_varc              = 1 Li2O/Be (solid blanket);
-  !+ad_varc              = 2 LiPb/Li (liquid blanket)
-  integer :: smstr = 1
 
 end module fwbs_variables
 
@@ -943,14 +978,14 @@ module pfcoil_variables
 
   public
 
-  !+ad_vars  ngrpmx : maximum number of groups of PF coils
+  !+ad_vars  ngrpmx /8/ FIX : maximum number of groups of PF coils
   integer, parameter :: ngrpmx = 8
-  !+ad_vars  nclsmx : maximum number of PF coils in a given group
+  !+ad_vars  nclsmx /2/ FIX : maximum number of PF coils in a given group
   integer, parameter :: nclsmx = 2
-  !+ad_vars  nptsmx : maximum number of points across the midplane of the
+  !+ad_vars  nptsmx /32/ FIX : maximum number of points across the midplane of the
   !+ad_varc           plasma at which the field from the PF coils is fixed
   integer, parameter :: nptsmx = 32
-  !+ad_vars  nfixmx : maximum number of fixed current PF coils
+  !+ad_vars  nfixmx /64/ FIX : maximum number of fixed current PF coils
   integer, parameter :: nfixmx = 64
 
   integer, parameter :: ngc = ngrpmx*nclsmx
@@ -960,7 +995,8 @@ module pfcoil_variables
   real(kind(1.0D0)) :: ac1oh = 0.0D0
   !+ad_vars  acsoh /3.0D-4/ : conduit conductor cross section (m2)
   real(kind(1.0D0)) :: acsoh = 3.0D-4
-  !+ad_vars  alfapf /5.0D-10/ : smoothing parameter used in BOP PF coil current calculation
+  !+ad_vars  alfapf /5.0D-10/ : smoothing parameter used in BOP PF coil
+  !+ad_varc                     current calculation
   real(kind(1.0D0)) :: alfapf = 5.0D-10
   !+ad_vars  bmaxoh : B-max in OH coil at EOF (T)
   real(kind(1.0D0)) :: bmaxoh = 0.0D0
@@ -991,19 +1027,19 @@ module pfcoil_variables
   real(kind(1.0D0)) :: fcohbop = 0.9D0
   !+ad_vars  fcuoh /0.4/ : copper fraction of conductor in OH coil cable
   real(kind(1.0D0)) :: fcuoh = 0.4D0
-  !+ad_vars  ipfloc(ngc) /1,2,3/ : switch for locating scheme of PF coil group i:
-  !+ad_varc           = 1, PF coil on top of OH coil;
-  !+ad_varc           = 2, PF coil on top of TF coil;
-  !+ad_varc           = 3, PF coil outside of TF coil
+  !+ad_vars  ipfloc(ngc) /1,2,3/ : switch for locating scheme of PF coil group i:<UL>
+  !+ad_varc      <LI> = 1 PF coil on top of OH coil;
+  !+ad_varc      <LI> = 2 PF coil on top of TF coil;
+  !+ad_varc      <LI> = 3 PF coil outside of TF coil</UL>
   integer, dimension(ngc) :: ipfloc = (/1,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0/)
-  !+ad_vars  ipfres /0/ : switch for PF coil type:
-  !+ad_varc               = 0 superconducting PF coils;
-  !+ad_varc               = 1 resistive PF coils
+  !+ad_vars  ipfres /0/ : switch for PF coil type:<UL>
+  !+ad_varc          <LI> = 0 superconducting PF coils;
+  !+ad_varc          <LI> = 1 resistive PF coils</UL>
   integer :: ipfres = 0
-  !+ad_vars  isumatpf /1/ : switch for superconductor material in PF coils:
-  !+ad_varc                 = 1 binary Nb3Sn;
-  !+ad_varc                 = 2 ternary Nb3Sn;
-  !+ad_varc                 = 3 NbTi
+  !+ad_vars  isumatpf /1/ : switch for superconductor material in PF coils:<UL>
+  !+ad_varc            <LI> = 1 binary Nb3Sn;
+  !+ad_varc            <LI> = 2 ternary Nb3Sn;
+  !+ad_varc            <LI> = 3 NbTi</UL>
   integer :: isumatpf = 1
   !+ad_vars  ncirt : number of PF coils (including OH coil and plasma)
   integer :: ncirt = 0
@@ -1041,7 +1077,8 @@ module pfcoil_variables
   real(kind(1.0D0)), dimension(ngc2) :: rjpfalw = 0.0D0
   !+ad_vars  rohc : radius to the centre of the OH coil (m)
   real(kind(1.0D0)) :: rohc = 0.0D0
-  !+ad_vars  routr /1.5/ : distance (m) from outer TF coil leg to centre of ipfloc=3 PF coils
+  !+ad_vars  routr /1.5/ : distance (m) from outer TF coil leg to centre of
+  !+ad_varc                ipfloc=3 PF coils
   real(kind(1.0D0)) :: routr = 1.5D0
   !+ad_vars  rpf(ngc2) : radius of PF coil i (m)
   real(kind(1.0D0)), dimension(ngc2) :: rpf = 0.0D0
@@ -1218,26 +1255,26 @@ module tfcoil_variables
   real(kind(1.0D0)) :: fcutfsu = 0.69D0
   !+ad_vars  frhocp /1.0/ centrepost resistivity enhancement factor
   real(kind(1.0D0)) :: frhocp = 1.0D0
-  !+ad_vars  isumattf /1/ : switch for superconductor material in TF coils:
-  !+ad_varc                 = 1 binary Nb3Sn;
-  !+ad_varc                 = 2 ternary Nb3Sn;
-  !+ad_varc                 = 3 NbTi;
-  !+ad_varc                 = 4 generic, but uses Nb3Sn current density model;
-  !+ad_varc                 = 5 generic, but uses NbTi current density model
+  !+ad_vars  isumattf /1/ : switch for superconductor material in TF coils:<UL>
+  !+ad_varc            <LI> = 1 binary Nb3Sn;
+  !+ad_varc            <LI> = 2 ternary Nb3Sn;
+  !+ad_varc            <LI> = 3 NbTi;
+  !+ad_varc            <LI> = 4 generic, but uses Nb3Sn current density model;
+  !+ad_varc            <LI> = 5 generic, but uses NbTi current density model</UL>
   integer :: isumattf = 1
-  !+ad_vars  itfmod /1/ : switch for TF coil magnet model:
-  !+ad_varc               = 0 use simple model;
-  !+ad_varc               = 1 use complex stress/superconductor models
+  !+ad_vars  itfmod /1/ : switch for TF coil magnet model:<UL>
+  !+ad_varc          <LI> = 0 use simple model;
+  !+ad_varc          <LI> = 1 use complex stress/superconductor models</UL>
   integer :: itfmod = 1
-  !+ad_vars  itfsup /1/ : switch for TF coil conductor model:
-  !+ad_varc               = 0 conventional copper;
-  !+ad_varc               = 1 superconductor
+  !+ad_vars  itfsup /1/ : switch for TF coil conductor model:<UL>
+  !+ad_varc          <LI> = 0 conventional copper;
+  !+ad_varc          <LI> = 1 superconductor</UL>
   integer :: itfsup = 1
   !+ad_vars  jbus /1.25D6/ : bussing current density (A/m2)
   real(kind(1.0D0)) :: jbus = 1.25D6
-  !+ad_vars  jcrit_model /0/ : switch for binary Nb3Sn critical J model (isumattf=1):
-  !+ad_varc                    = 0 use original model;
-  !+ad_varc                    = 1 use ITER critical surface model
+  !+ad_vars  jcrit_model /0/ : switch for binary Nb3Sn critical J model (isumattf=1):<UL>
+  !+ad_varc               <LI> = 0 use original model;
+  !+ad_varc               <LI> = 1 use ITER critical surface model</UL>
   integer :: jcrit_model = 0
   !+ad_vars  jcritsc /2.225D10/ : critical current density (A/m2) for
   !+ad_varc                       superconductor (isumattf=4 or 5)
@@ -1255,10 +1292,10 @@ module tfcoil_variables
   real(kind(1.0D0)) :: kcp = 330.0D0
   !+ad_vars  kh2o /0.651/ FIX : thermal conductivity of water (W/m/K)
   real(kind(1.0D0)) :: kh2o = 0.651D0
-  !+ad_vars  magnt /2/ : switch for TF coil stress model:
-  !+ad_varc              = 1 for FER type configuration with bucking cylinder;
-  !+ad_varc              = 2 for NET type wedging; set casfi = 0.0;
-  !+ad_varc              = 3 for LLNL type buck on OH coil
+  !+ad_vars  magnt /2/ : switch for TF coil stress model:<UL>
+  !+ad_varc         <LI> = 1 for FER type configuration with bucking cylinder;
+  !+ad_varc         <LI> = 2 for NET type wedging; set casfi = 0.0;
+  !+ad_varc         <LI> = 3 for LLNL type buck on OH coil</UL>
   integer :: magnt = 2
   !+ad_vars  muh2o /4.71D-4/ FIX : water dynamic viscosity (kg/m/s)
   real(kind(1.0D0)) :: muh2o = 4.71D-4
@@ -1434,10 +1471,10 @@ module tfcoil_variables
   !+ad_vars  wwp2 : width of second step of winding pack (m)
   real(kind(1.0D0)) :: wwp2 = 0.0D0
 
-  !  Superconducting TF coil shape parameters (see also farc4tf)
-  !  The TF inner surface top half is approximated by circular arcs
-  !  Arc 1 goes through points 1 and 2 on the inner surface. Arc 2
-  !  goes through points 2-3, etc.
+  !+ad_vars  <P><B>Superconducting TF coil shape parameters</B> (see also farc4tf);
+  !+ad_varc  <BR>the TF inner surface top half is approximated by circular arcs.
+  !+ad_varc  Arc 1 goes through points 1 and 2 on the inner surface. Arc 2
+  !+ad_varc  goes through points 2-3, etc.<P>
 
   !+ad_vars  dthet(5) : angle of arc i (rad)
   real(kind(1.0D0)), dimension(5) :: dthet = 0.0D0
@@ -1522,12 +1559,12 @@ module vacuum_variables
 
   public
 
-  !+ad_vars  ntype /1/ : switch for vacuum pump type:
-  !+ad_varc              = 0 for turbomolecular pump (magnetic bearing)
+  !+ad_vars  ntype /1/ : switch for vacuum pump type:<UL>
+  !+ad_varc         <LI> = 0 for turbomolecular pump (magnetic bearing)
   !+ad_varc                  with speed of 2.0 m3/s
   !+ad_varc                  (1.95 for N2, 1.8 for He, 1.8 for DT);
-  !+ad_varc              = 1 for compound cryopump with nominal speed of 10.0 m3/s
-  !+ad_varc                  (9.0 for N2, 5.0 for He and 25.0 for DT)
+  !+ad_varc         <LI> = 1 for compound cryopump with nominal speed of 10.0 m3/s
+  !+ad_varc                  (9.0 for N2, 5.0 for He and 25.0 for DT)</UL>
   integer :: ntype = 1
   !+ad_vars  nvduct : number of ducts (torus to pumps)
   integer :: nvduct = 0
@@ -1581,10 +1618,10 @@ module pf_power_variables
   real(kind(1.0D0)) :: acptmax = 0.0D0
   !+ad_vars  ensxpfm : maximum stored energy in the PF circuits (MJ)
   real(kind(1.0D0)) :: ensxpfm = 0.0D0
-  !+ad_vars  iscenr /2/ : Switch for energy storage option:
-  !+ad_varc               = 1 all power from MGF units;
-  !+ad_varc               = 2 all pulsed power from line;
-  !+ad_varc               = 3 PF power from MGF, heating from line
+  !+ad_vars  iscenr /2/ : Switch for energy storage option:<UL>
+  !+ad_varc          <LI> = 1 all power from MGF units;
+  !+ad_varc          <LI> = 2 all pulsed power from line;
+  !+ad_varc          <LI> = 3 PF power from MGF, heating from line</UL>
   integer :: iscenr = 2
   !+ad_vars  pfckts : number of PF coil circuits
   real(kind(1.0D0)) :: pfckts = 0.0D0
@@ -1671,16 +1708,16 @@ module heat_transport_variables
   real(kind(1.0D0)) :: htpmw = 10.0D0
   !+ad_vars  hvolume : hydrogen production (Normal m3/second)
   real(kind(1.0D0)) :: hvolume = 0.0D0
-  !+ad_vars  ihplant /0/ : switch for hydrogen production plant:
-  !+ad_varc                = 0 no hydrogen plant;
-  !+ad_varc                = 1 Low Temperature Electrolysis;
-  !+ad_varc                = 2 High Temperature Electrolysis - endothermic;
-  !+ad_varc                = 3 High Temperature Electrolysis - exothermic;
-  !+ad_varc                = 4 Thermo-chemical
+  !+ad_vars  ihplant /0/ : switch for hydrogen production plant:<UL>
+  !+ad_varc           <LI> = 0 no hydrogen plant;
+  !+ad_varc           <LI> = 1 Low Temperature Electrolysis;
+  !+ad_varc           <LI> = 2 High Temperature Electrolysis - endothermic;
+  !+ad_varc           <LI> = 3 High Temperature Electrolysis - exothermic;
+  !+ad_varc           <LI> = 4 Thermo-chemical</UL>
   integer :: ihplant = 0
-  !+ad_vars  iprimhtp /0/ : switch for heat transport pump power:
-  !+ad_varc                 = 0 contributes to secondary heat;
-  !+ad_varc                 = 1 contributes to primary heat
+  !+ad_vars  iprimhtp /0/ : switch for heat transport pump power:<UL>
+  !+ad_varc            <LI> = 0 contributes to secondary heat;
+  !+ad_varc            <LI> = 1 contributes to primary heat</UL>
   integer :: iprimhtp = 0
   !+ad_vars  pacpmw : total pulsed power system load (MW)
   real(kind(1.0D0)) :: pacpmw = 0.0D0
@@ -1762,9 +1799,9 @@ module times_variables
   !+ad_vars  tohs /30.0/ : OH coil swing time for current initiation (s)
   !+ad_varc                (iteration variable 65)
   real(kind(1.0D0)) :: tohs = 30.0D0
-  !+ad_vars  tohsin /0.0/ : switch for OH coil swing time (if lpulse=0):
-  !+ad_varc                 = 0, tohs = tramp = tqnch = Ip(MA)/0.5;
-  !+ad_varc                 <>0, tohs = tohsin; tramp, tqnch are input
+  !+ad_vars  tohsin /0.0/ : switch for OH coil swing time (if lpulse=0):<UL>
+  !+ad_varc            <LI> = 0, tohs = tramp = tqnch = Ip(MA)/0.5;
+  !+ad_varc            <LI> <>0, tohs = tohsin; tramp, tqnch are input</UL>
   real(kind(1.0D0)) :: tohsin = 0.0D0
   !+ad_vars  tpulse : pulse length = tohs + theat + tburn + tqnch
   real(kind(1.0D0)) :: tpulse = 0.0D0
@@ -1958,9 +1995,9 @@ module build_variables
   real(kind(1.0D0)) :: hmax = 0.0D0
   !+ad_vars  hr1 : half-height of TF coil inboard leg straight section (m)
   real(kind(1.0D0)) :: hr1 = 0.0D0
-  !+ad_vars  iohcl /1/ : switch for existence of OH coil:
-  !+ad_varc              = 0 OH coil not present;
-  !+ad_varc              = 1 OH coil exists
+  !+ad_vars  iohcl /1/ : switch for existence of OH coil:<UL>
+  !+ad_varc         <LI> = 0 OH coil not present;
+  !+ad_varc         <LI> = 1 OH coil exists</UL>
   integer :: iohcl = 1
   !+ad_vars  ohcth /0.63/ : OH coil thickness (m)
   !+ad_varc                 (iteration variable 16)
@@ -2130,28 +2167,28 @@ module cost_variables
   real(kind(1.0D0)) :: fkind = 1.0D0
   !+ad_vars  fwallcst : first wall cost (M$)
   real(kind(1.0D0)) :: fwallcst = 0.0D0
-  !+ad_vars  iavail /0/ : switch for plant availability model:
-  !+ad_varc               = 0 use input value for cfactr;
-  !+ad_varc               = 1 calculate cfactr using model
+  !+ad_vars  iavail /0/ : switch for plant availability model:<UL>
+  !+ad_varc          <LI> = 0 use input value for cfactr;
+  !+ad_varc          <LI> = 1 calculate cfactr using model</UL>
   integer :: iavail= 0
-  !+ad_vars  ifueltyp /0/ : switch:
-  !+ad_varc                 = 1 treat blanket divertor, first wall and
+  !+ad_vars  ifueltyp /0/ : switch:<UL>
+  !+ad_varc            <LI> = 1 treat blanket divertor, first wall and
   !+ad_varc                     fraction fcdfuel of CD equipment as fuel cost;
-  !+ad_varc                 = 0 treat these as capital cost
+  !+ad_varc            <LI> = 0 treat these as capital cost</UL>
   integer :: ifueltyp = 0
-  !+ad_vars  ipnet /0/ : switch for net electric power calculation:
-  !+ad_varc              = 0 scale so that always > 0;
-  !+ad_varc              = 1 let go < 0 (no c-o-e)
+  !+ad_vars  ipnet /0/ : switch for net electric power calculation:<UL>
+  !+ad_varc         <LI> = 0 scale so that always > 0;
+  !+ad_varc         <LI> = 1 let go < 0 (no c-o-e)</UL>
   integer :: ipnet = 0
   !+ad_vars  ireactor /1/ : switch for net electric power and cost of
-  !+ad_varc                 electricity calculations:
-  !+ad_varc                 = 0 do not calculate MW(electric) or c-o-e;
-  !+ad_varc                 = 1 calculate MW(electric) and c-o-e
+  !+ad_varc                 electricity calculations:<UL>
+  !+ad_varc            <LI> = 0 do not calculate MW(electric) or c-o-e;
+  !+ad_varc            <LI> = 1 calculate MW(electric) and c-o-e</UL>
   integer :: ireactor = 1
-  !+ad_vars  lsa /4/ : level of safety assurance switch (generally, use 3 or 4):
-  !+ad_varc            = 1 truly passively safe plant;
-  !+ad_varc            = 2,3 in-between;
-  !+ad_varc            = 4 like current fission plant
+  !+ad_vars  lsa /4/ : level of safety assurance switch (generally, use 3 or 4):<UL>
+  !+ad_varc       <LI> = 1 truly passively safe plant;
+  !+ad_varc       <LI> = 2,3 in-between;
+  !+ad_varc       <LI> = 4 like current fission plant</UL>
   integer :: lsa = 4
   !+ad_vars  moneyint : interest portion of capital cost (M$)
   real(kind(1.0D0)) :: moneyint = 0.0D0
@@ -2574,14 +2611,15 @@ module stellarator_variables
 
   public
 
-  !+ad_vars  istell /0/ : switch for stellarator option (via device.dat):
-  !+ad_varc               = 0 use tokamak, RFP or IFE model;
-  !+ad_varc               = 1 use stellarator model
+  !+ad_vars  istell /0/ : switch for stellarator option
+  !+ad_varc               (set via <CODE>device.dat</CODE>):<UL>
+  !+ad_varc          <LI> = 0 use tokamak, RFP or IFE model;
+  !+ad_varc          <LI> = 1 use stellarator model</UL>
   integer :: istell = 0
-  !+ad_vars  isthtr /3/ : switch for stellarator auxiliary heating method:
-  !+ad_varc               = 1 electron cyclotron resonance heating;
-  !+ad_varc               = 2 lower hybrid heating;
-  !+ad_varc               = 3 neutral beam injection
+  !+ad_vars  isthtr /3/ : switch for stellarator auxiliary heating method:<UL>
+  !+ad_varc          <LI> = 1 electron cyclotron resonance heating;
+  !+ad_varc          <LI> = 2 lower hybrid heating;
+  !+ad_varc          <LI> = 3 neutral beam injection</UL>
   integer :: isthtr = 3
 
 end module stellarator_variables
@@ -2622,9 +2660,10 @@ module rfp_variables
   real(kind(1.0D0)), dimension(nrfppf) :: drpf = 0.0D0
   !+ad_vars  dzpf(nrfppf) : vertical cross-section of each RFP PF coil (m)
   real(kind(1.0D0)), dimension(nrfppf) :: dzpf = 0.0D0
-  !+ad_vars  irfp /0/ : switch for RFP option (via device.dat):
-  !+ad_varc             = 0 use tokamak, stellarator or IFE model;
-  !+ad_varc             = 1 use RFP model
+  !+ad_vars  irfp /0/ : switch for RFP option
+  !+ad_varc             (set via <CODE>device.dat</CODE>):<UL>
+  !+ad_varc        <LI> = 0 use tokamak, stellarator or IFE model;
+  !+ad_varc        <LI> = 1 use RFP model</UL>
   integer :: irfp = 0
   !+ad_vars  nturns(nrfppf) : number of turns of each RFP PF coil
   real(kind(1.0D0)), dimension(nrfppf) :: nturns = 0.0D0
@@ -2676,24 +2715,23 @@ module ife_variables
 
   public
 
-  !  Default builds and material volumes are those for the SOMBRERO device
-
-  !  The 2-dimensional arrays have indices (region, material), where
-  !  'region' = 1 radially outside chamber
-  !           = 2 above chamber
-  !           = 3 below chamber
-  !  and 'material' is defined as described in maxmat below.
+  !+ad_vars  Default IFE builds and material volumes are those for the SOMBRERO device.
+  !+ad_varc  The 2-dimensional arrays have indices (region, material), where<UL>
+  !+ad_varc  <LI>'region' = 1 radially outside chamber
+  !+ad_varc  <LI>         = 2 above chamber
+  !+ad_varc  <LI>         = 3 below chamber</UL>
+  !+ad_varc  and 'material' is defined as described in maxmat below.<P>
 
   !+ad_vars  maxmat /7/ FIX : total number of materials in IFE device.
-  !+ad_varc                   Material numbers are as follows:
-  !+ad_varc                   = 0 void;
-  !+ad_varc                   = 1 steel;
-  !+ad_varc                   = 2 carbon cloth;
-  !+ad_varc                   = 3 FLiBe;
-  !+ad_varc                   = 4 lithium oxide Li2O;
-  !+ad_varc                   = 5 concrete;
-  !+ad_varc                   = 6 helium;
-  !+ad_varc                   = 7 xenon
+  !+ad_varc                   Material numbers are as follows:<UL>
+  !+ad_varc              <LI> = 0 void;
+  !+ad_varc              <LI> = 1 steel;
+  !+ad_varc              <LI> = 2 carbon cloth;
+  !+ad_varc              <LI> = 3 FLiBe;
+  !+ad_varc              <LI> = 4 lithium oxide Li2O;
+  !+ad_varc              <LI> = 5 concrete;
+  !+ad_varc              <LI> = 6 helium;
+  !+ad_varc              <LI> = 7 xenon</UL>
   integer, parameter ::  maxmat = 7
 
   !+ad_vars  bldr /1.0/ : radial thickness of IFE blanket (m)
@@ -2797,21 +2835,22 @@ module ife_variables
   real(kind(1.0D0)), dimension(10) :: gainve = (/ &
         60.0D0, 95.0D0,115.0D0,125.0D0,133.0D0, &
        141.0D0,152.0D0,160.0D0,165.0D0,170.0D0 /)
-  !+ad_vars  ife /0/ : switch for IFE option (via device.dat):
-  !+ad_varc            = 0 use tokamak, RFP or stellarator model;
-  !+ad_varc            = 1 use IFE model
+  !+ad_vars  ife /0/ : switch for IFE option
+  !+ad_varc            (set via <CODE>device.dat</CODE>):<UL>
+  !+ad_varc       <LI> = 0 use tokamak, RFP or stellarator model;
+  !+ad_varc       <LI> = 1 use IFE model</UL>
   integer :: ife = 0
-  !+ad_vars  ifedrv /2/ : switch for type of IFE driver:
-  !+ad_varc               = -1 use gainve, etave for gain and driver efficiency;
-  !+ad_varc               =  0 use tgain, drveff for gain and driver efficiency;
-  !+ad_varc               =  1 use laser driver based on SOMBRERO design;
-  !+ad_varc               =  2 use heavy ion beam driver based on OSIRIS
+  !+ad_vars  ifedrv /2/ : switch for type of IFE driver:<UL>
+  !+ad_varc          <LI> = -1 use gainve, etave for gain and driver efficiency;
+  !+ad_varc          <LI> =  0 use tgain, drveff for gain and driver efficiency;
+  !+ad_varc          <LI> =  1 use laser driver based on SOMBRERO design;
+  !+ad_varc          <LI> =  2 use heavy ion beam driver based on OSIRIS</UL>
   integer :: ifedrv = 2
-  !+ad_vars  ifetyp /0/ : switch for type of IFE device build:
-  !+ad_varc               = 0 generic (cylindrical) build;
-  !+ad_varc               = 1 OSIRIS-like build;
-  !+ad_varc               = 2 SOMBRERO-like build;
-  !+ad_varc               = 3 HYLIFE-II-like build
+  !+ad_vars  ifetyp /0/ : switch for type of IFE device build:<UL>
+  !+ad_varc          <LI> = 0 generic (cylindrical) build;
+  !+ad_varc          <LI> = 1 OSIRIS-like build;
+  !+ad_varc          <LI> = 2 SOMBRERO-like build;
+  !+ad_varc          <LI> = 3 HYLIFE-II-like build</UL>
   integer :: ifetyp = 0
   !+ad_vars  mcdriv /1.0/ : IFE driver cost multiplier
   real(kind(1.0D0)) :: mcdriv = 1.0D0
@@ -3022,19 +3061,19 @@ module pulse_variables
   real(kind(1.0D0)) :: dtstor = 300.0D0
   !+ad_vars  fwlife : first wall lifetime (y)
   real(kind(1.0D0)) :: fwlife = 0.0D0
-  !+ad_vars  istore /1/ : switch for thermal storage method:
-  !+ad_varc               = 1 option 1 of Electrowatt report, AEA FUS 205;
-  !+ad_varc               = 2 option 2 of Electrowatt report, AEA FUS 205;
-  !+ad_varc               = 3 stainless steel block
+  !+ad_vars  istore /1/ : switch for thermal storage method:<UL>
+  !+ad_varc          <LI> = 1 option 1 of Electrowatt report, AEA FUS 205;
+  !+ad_varc          <LI> = 2 option 2 of Electrowatt report, AEA FUS 205;
+  !+ad_varc          <LI> = 3 stainless steel block</UL>
   integer :: istore = 1
-  !+ad_vars  itcycl /1/ : switch for first wall axial stress model:
-  !+ad_varc               = 1 total axial constraint, no bending;
-  !+ad_varc               = 2 no axial constraint, no bending;
-  !+ad_varc               = 3 no axial constraint, bending
+  !+ad_vars  itcycl /1/ : switch for first wall axial stress model:<UL>
+  !+ad_varc          <LI> = 1 total axial constraint, no bending;
+  !+ad_varc          <LI> = 2 no axial constraint, no bending;
+  !+ad_varc          <LI> = 3 no axial constraint, bending</UL>
   integer :: itcycl = 1
-  !+ad_vars  lpulse /0/ : switch for reactor model:
-  !+ad_varc               = 0 continuous operation;
-  !+ad_varc               = 1 pulsed operation
+  !+ad_vars  lpulse /0/ : switch for reactor model:<UL>
+  !+ad_varc          <LI> = 0 continuous operation;
+  !+ad_varc          <LI> = 1 pulsed operation</UL>
   integer :: lpulse = 0
   !+ad_vars  tmprse /40.0/ : first wall coolant temperature rise (C)
   real(kind(1.0D0)) :: tmprse = 40.0D0
@@ -3115,10 +3154,10 @@ module fispact_variables
 
   public
 
-  !  Arrays with 3 elements contain the data at the following times:
-  !  (1) - at end of component life
-  !  (2) - after 3 months cooling time
-  !  (3) - 100 years after end of plant life
+  !+ad_vars  Fispact arrays with 3 elements contain the results at the following times:
+  !+ad_varc    (1) - at end of component life
+  !+ad_varc    (2) - after 3 months cooling time
+  !+ad_varc    (3) - 100 years after end of plant life
 
   !+ad_vars  bliact(3) : inboard blanket total activity (Bq)
   real(kind(1.0D0)), dimension(3) :: bliact = 0.0D0

@@ -230,7 +230,9 @@ clean:
 # from the current directory
 #  (excludes IN.DAT, device.dat for now)
 
-otherfiles = Makefile var.des *.tex *.ps autodoc.f90 adheader.src adfooter.src
+otherfiles = Makefile vardes.html \
+             *.tex *.ps process.pdf \
+             autodoc.f90 adheader.src adfooter.src
 
 tar:
 	rm -f process.tar process.tar.gz
@@ -239,13 +241,12 @@ tar:
 
 # Make a tar archive of the source, input and output files
 # from the latest run in the current directory
-#
-# Need to move (manually) the output file into process.out first...
+
+iofiles = IN.DAT OUT.DAT device.dat
 
 archive:
 	rm -f process_run.tar process_run.tar.gz
-	tar cvf process_run.tar $(source) $(otherfiles) \
-		process.out
+	tar cvf process_run.tar $(source) $(iofiles) $(otherfiles)
 	gzip process_run.tar
 
 # Documentation
@@ -257,6 +258,7 @@ latex: process.tex
 	@ latex process
 	@ latex process # to make sure cross-references are included
 	@ latex process # to make doubly sure cross-references are included
+	@ dvipdf process
 
 doc: autodoc latex
 	@ cat $(source) | ./autodoc
