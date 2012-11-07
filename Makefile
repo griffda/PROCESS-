@@ -42,7 +42,7 @@
 ################# Start of Custom Section #####################
 
 source = \
- avail.f90 \
+ availability.f90 \
  buildings.f90 \
  caller.f90 \
  constraint_equations.f90 \
@@ -78,7 +78,7 @@ source = \
  vacuum.f90 
 
 object = \
- avail.o \
+ availability.o \
  buildings.o \
  caller.o \
  constraint_equations.o \
@@ -168,9 +168,9 @@ default: process.exe
 
 # object dependencies (usually via modules or header files)
 
-avail.o: global_variables.o output.o
+availability.o: global_variables.o output.o
 buildings.o: global_variables.o output.o
-caller.o: avail.o buildings.o costs.o current_drive.o divertor.o fwbs.o \
+caller.o: availability.o buildings.o costs.o current_drive.o divertor.o fwbs.o \
   global_variables.o ife.o machine_build.o numerics.o output.o pfcoil.o physics.o \
   plant_power.o plasma_geometry.o pulse.o rfp.o sctfcoil.o startup.o structure.o \
   stellarator.o tfcoil.o vacuum.o
@@ -182,7 +182,7 @@ evaluators.o: global_variables.o numerics.o
 fispact.o: global_variables.o
 fwbs.o: global_variables.o output.o plasma_geometry.o
 plasma_geometry.o: global_variables.o
-ife.o: avail.o costs.o global_variables.o output.o
+ife.o: availability.o costs.o global_variables.o output.o
 initial.o: global_variables.o output.o scan.o stellarator.o
 input.o: global_variables.o numerics.o output.o scan.o
 iteration_variables.o: global_variables.o numerics.o
@@ -193,8 +193,8 @@ output.o:
 pfcoil.o: global_variables.o maths_library.o output.o
 physics.o: current_drive.o global_variables.o maths_library.o output.o
 plant_power.o: fwbs.o global_variables.o output.o
-process.o: avail.o buildings.o costs.o current_drive.o divertor.o evaluators.o fwbs.o \
-  global_variables.o ife.o input.o machine_build.o numerics.o output.o pfcoil.o \
+process.o: availability.o buildings.o costs.o current_drive.o divertor.o evaluators.o \
+  fwbs.o global_variables.o ife.o input.o machine_build.o numerics.o output.o pfcoil.o \
   physics.o plant_power.o pulse.o rfp.o scan.o sctfcoil.o startup.o stellarator.o \
   structure.o tfcoil.o vacuum.o
 pulse.o: global_variables.o maths_library.o output.o physics.o
@@ -204,7 +204,7 @@ safety.o: global_variables.o output.o
 scan.o: global_variables.o numerics.o output.o
 sctfcoil.o: global_variables.o maths_library.o output.o
 startup.o: global_variables.o maths_library.o output.o physics.o
-stellarator.o: avail.o buildings.o costs.o current_drive.o divertor.o fwbs.o \
+stellarator.o: availability.o buildings.o costs.o current_drive.o divertor.o fwbs.o \
   global_variables.o maths_library.o numerics.o output.o physics.o plant_power.o \
   plasma_geometry.o scan.o sctfcoil.o structure.o vacuum.o
 structure.o: global_variables.o output.o

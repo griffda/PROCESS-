@@ -18,6 +18,7 @@ module autodoc_data
   !+ad_hist  13/03/2009 PJK Changed lenmax from 85 to 100
   !+ad_hist  09/06/2011 PJK Added version number
   !+ad_hist  07/11/2012 PJK Added variable descriptor file coding
+  !+ad_hist  07/11/2012 PJK Initialised all flags components to zero
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -34,22 +35,22 @@ module autodoc_data
   !  given command is active (or open) (1) or inactive (or closed) (0)
 
   type :: flags
-     integer :: fileopen
-     integer :: name
-     integer :: summary
-     integer :: type
-     integer :: contents
-     integer :: arguments
-     integer :: details
-     integer :: problems
-     integer :: calls
-     integer :: history
+     integer :: fileopen = 0
+     integer :: name = 0
+     integer :: summary = 0
+     integer :: type = 0
+     integer :: contents = 0
+     integer :: arguments = 0
+     integer :: details = 0
+     integer :: problems = 0
+     integer :: calls = 0
+     integer :: history = 0
      integer :: status
-     integer :: author
-     integer :: docs
-     integer :: variables
-     integer :: vdfileopen
-     integer :: vardes
+     integer :: author = 0
+     integer :: docs = 0
+     integer :: variables = 0
+     integer :: vdfileopen = 0
+     integer :: vardes = 0
   end type flags
 
   integer, parameter :: iounit = 1, hfunit = 2, vdunit = 3
@@ -303,7 +304,6 @@ program autodoc
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call reset_flags(flag)
-  flag%vdfileopen = 0  !  need to do this once only
 
   do while (read_line(line, command) /= -1)
 

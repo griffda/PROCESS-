@@ -29,21 +29,21 @@ module numerics
 
   public
 
-  !+ad_vars  ipnvars : total number of variables available for iteration
+  !+ad_vars  ipnvars /88/ FIX : total number of variables available for iteration
   integer, parameter :: ipnvars = 88
-  !+ad_vars  ipeqns : number of constraint equations available
+  !+ad_vars  ipeqns /50/ FIX : number of constraint equations available
   integer, parameter :: ipeqns  = 50
-  !+ad_vars  ipmfoms : number of available figures of merit
+  !+ad_vars  ipmfoms /13/ FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 13
 
   integer, parameter :: ipvlam  = ipeqns+2*ipnvars+1
   integer, parameter :: iptnt   = (ipeqns*(3*ipeqns+13))/2
   integer, parameter :: ipvp1   = ipnvars+1
 
-  !+ad_vars  ioptimz /1/ : code operation switch:
-  !+ad_varc                < 0 for no optimisation, HYBRD only;
-  !+ad_varc                = 0 for HYBRD and VMCON;
-  !+ad_varc                > 0 for optimisation, VMCON only
+  !+ad_vars  ioptimz /1/ : code operation switch:<UL>
+  !+ad_varc           <LI> < 0 for no optimisation, HYBRD only;
+  !+ad_varc           <LI> = 0 for HYBRD and VMCON;
+  !+ad_varc           <LI> > 0 for optimisation, VMCON only</UL>
   integer :: ioptimz = 1
   !+ad_vars  maxcal /200/ : maximum number of VMCON iterations
   integer :: maxcal  = 200
@@ -534,7 +534,7 @@ module numerics
 
   !+ad_vars  boundl(ipnvars) : lower bounds used on ixc variables during
   !+ad_varc                    VMCON optimisation runs
-  real(kind(1.0D0)), dimension(ipnvars) :: boundl = (/ &  !  
+  real(kind(1.0D0)), dimension(ipnvars) :: boundl = (/ &
        1.100D0, &  !  1 
        0.010D0, &  !  2 
        0.100D0, &  !  3 
