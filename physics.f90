@@ -504,6 +504,7 @@ contains
     !+ad_hist  20/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  29/01/96 PJK Added icurr=2 TART option
     !+ad_hist  09/11/11 PJK Initial F90 version
+    !+ad_hist  22/11/12 PJK Added stop statement in error block
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -562,6 +563,7 @@ contains
        write(*,*) 'Error in routine CULCUR:'
        write(*,*) 'Illegal value for ICURR, = ',icurr
        write(*,*) 'PROCESS stopping.'
+       stop
 
     end select
 

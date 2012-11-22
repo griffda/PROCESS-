@@ -163,6 +163,7 @@ contains
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
+    !+ad_hist  22/11/12 PJK Typo fix in comment
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -202,7 +203,7 @@ contains
 
     call acc26
 
-    !  Hydrogran Production Plant
+    !  Hydrogen Production Plant
 
     call acchyd
 
