@@ -27,17 +27,19 @@
 #
 #  Type 'make clean' to clean up the directory to allow a full recompilation
 #
-#  Type 'make latex' to produce a dvi file from the PROCESS manual
+#  Type 'make html' to produce web-compatible html files from the autodoc
+#    comments embedded in the source code
+#
+#  Type 'make manual' to produce dvi and pdf files from the PROCESS manual
 #    contained in the *.tex files and associated postscript pictures
 #
-#  Type 'make doc' to produce full documentation (including web-compatible
-#   html files from the autodoc comments embedded in the source code)
+#  Type 'make doc' to produce both html files and the PROCESS manual
 #
 #  Type 'make tar' to produce a tar file containing all the source files
-#    and input files; the file will be called process.tar.gz
+#    and primary documentation files; the file will be called process.tar.gz
 #
 #  Type 'make archive' to produce an archive of the latest run in this directory
-#    (including output files); this produces a file called process_run.tar
+#    (including input and output files); this produces a file called process_run.tar.gz
 #
 ################# Start of Custom Section #####################
 
@@ -228,7 +230,7 @@ clean:
 
 # Make a tar distribution of the source and other critical files
 # from the current directory
-#  (excludes IN.DAT, device.dat for now)
+# (excludes input files IN.DAT, device.dat)
 
 otherfiles = Makefile vardes.html \
              *.tex *.ps process.pdf \
@@ -254,11 +256,13 @@ archive:
 autodoc: autodoc.f90
 	$(FORTRAN) -o autodoc autodoc.f90
 
-latex: process.tex
+html: autodoc
+	@ cat $(source) | ./autodoc
+
+manual: process.tex
 	@ latex process
 	@ latex process # to make sure cross-references are included
 	@ latex process # to make doubly sure cross-references are included
 	@ dvipdf process
 
-doc: autodoc latex
-	@ cat $(source) | ./autodoc
+doc: html manual

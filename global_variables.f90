@@ -353,7 +353,7 @@ module physics_variables
   !+ad_varc          <LI> = 1 assume ignited (but include aux power in costs).
   !+ad_varc               Obviously, ignite must be zero if current drive
   !+ad_varc               is required. Note that whole code is not quite
-  !+ad_varc               consistent yet...
+  !+ad_varc               consistent yet...</UL>
   integer :: ignite = 0
   !+ad_vars  iinvqd /1/ : switch for inverse quadrature in tauee laws (1=yes)
   integer :: iinvqd = 1
