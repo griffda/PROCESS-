@@ -18,6 +18,7 @@ module numerics
   !+ad_hist  10/10/12 PJK Initial version of module
   !+ad_hist  15/10/12 PJK Modified comment lines, and added default array values
   !+ad_hist  06/11/12 PJK Modified comment lines
+  !+ad_hist  11/12/12 PJK Comment typo fixed
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -33,7 +34,7 @@ module numerics
   integer, parameter :: ipnvars = 88
   !+ad_vars  ipeqns /50/ FIX : number of constraint equations available
   integer, parameter :: ipeqns  = 50
-  !+ad_vars  ipmfoms /13/ FIX : number of available figures of merit
+  !+ad_vars  ipnfoms /13/ FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 13
 
   integer, parameter :: ipvlam  = ipeqns+2*ipnvars+1

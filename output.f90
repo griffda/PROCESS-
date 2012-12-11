@@ -25,6 +25,7 @@ module process_output
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  09/10/12 PJK Initial version of module
+  !+ad_hist  29/11/12 PJK Added shared variable autodoc comments
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -40,28 +41,48 @@ module process_output
 
   !  Switches for turning on/off output sections
   !  1 = on, 0 = off
-
-  integer :: sect01 = 1  !  Power Reactor Costs
-  integer :: sect02 = 1  !  Detailed Costings
-  integer :: sect03 = 1  !  Plasma
-  integer :: sect04 = 1  !  Current Drive System
-  integer :: sect05 = 1  !  Divertor
-  integer :: sect06 = 1  !  Machine Build
-  integer :: sect07 = 1  !  TF Coils
-  integer :: sect08 = 1  !  PF Coils
-  integer :: sect09 = 1  !  Volt Second Consumption
-  integer :: sect10 = 1  !  Support Structure
-  integer :: sect11 = 1  !  PF Coil Inductances
-  integer :: sect12 = 1  !  Shield / Blanket
-  integer :: sect13 = 1  !  Power Conversion
-  integer :: sect14 = 1  !  Power / Heat Transport
-  integer :: sect15 = 1  !  Vacuum System
-  integer :: sect16 = 1  !  Plant Buildings System
-  integer :: sect17 = 1  !  AC Power
-  integer :: sect18 = 1  !  Neutral Beams
-  integer :: sect19 = 1  !  Electron Cyclotron Heating
-  integer :: sect20 = 1  !  Lower Hybrid Heating
-  integer :: sect21 = 1  !  Times
+  !+ad_vars  sect01 /1/ : Turn on/off output for power reactor costs
+  integer :: sect01 = 1
+  !+ad_vars  sect02 /1/ : Turn on/off output for detailed costings
+  integer :: sect02 = 1
+  !+ad_vars  sect03 /1/ : Turn on/off output for plasma
+  integer :: sect03 = 1
+  !+ad_vars  sect04 /1/ : Turn on/off output for current drive system
+  integer :: sect04 = 1
+  !+ad_vars  sect05 /1/ : Turn on/off output for divertor
+  integer :: sect05 = 1
+  !+ad_vars  sect06 /1/ : Turn on/off output for machine build
+  integer :: sect06 = 1
+  !+ad_vars  sect07 /1/ : Turn on/off output for TF coils
+  integer :: sect07 = 1
+  !+ad_vars  sect08 /1/ : Turn on/off output for PF coils
+  integer :: sect08 = 1
+  !+ad_vars  sect09 /1/ : Turn on/off output for volt second consumption
+  integer :: sect09 = 1
+  !+ad_vars  sect10 /1/ : Turn on/off output for support structure
+  integer :: sect10 = 1
+  !+ad_vars  sect11 /1/ : Turn on/off output for PF coil inductances
+  integer :: sect11 = 1
+  !+ad_vars  sect12 /1/ : Turn on/off output for shield / blanket
+  integer :: sect12 = 1
+  !+ad_vars  sect13 /1/ : Turn on/off output for power conversion
+  integer :: sect13 = 1
+  !+ad_vars  sect14 /1/ : Turn on/off output for power / heat transport
+  integer :: sect14 = 1
+  !+ad_vars  sect15 /1/ : Turn on/off output for vacuum system
+  integer :: sect15 = 1
+  !+ad_vars  sect16 /1/ : Turn on/off output for plant buildings system
+  integer :: sect16 = 1
+  !+ad_vars  sect17 /1/ : Turn on/off output for AC power
+  integer :: sect17 = 1
+  !+ad_vars  sect18 /1/ : Turn on/off output for neutral beams
+  integer :: sect18 = 1
+  !+ad_vars  sect19 /1/ : Turn on/off output for electron cyclotron heating
+  integer :: sect19 = 1
+  !+ad_vars  sect20 /1/ : Turn on/off output for lower hybrid heating
+  integer :: sect20 = 1
+  !+ad_vars  sect21 /1/ : Turn on/off output for times
+  integer :: sect21 = 1
 
 contains
 
