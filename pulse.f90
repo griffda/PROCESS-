@@ -1236,6 +1236,7 @@ contains
     !+ad_type  Subroutine
     !+ad_auth  C A Gardner, AEA Fusion, Culham Laboratory
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
     !+ad_cont  None
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
@@ -1251,6 +1252,7 @@ contains
     !+ad_hist  16/10/12 PJK Added current_drive_variables
     !+ad_hist  18/10/12 PJK Added pfcoil_variables
     !+ad_hist  30/10/12 PJK Added times_variables
+    !+ad_hist  17/12/12 PJK Modified burn volt-seconds calculation (RK)
     !+ad_stat  Okay
     !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0012
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1279,10 +1281,10 @@ contains
 
        vssoft = vsres + vsind
 
-       !  Total volt-seconds available during burn (vstot is the total
-       !  volt-second capability provided by the PF/OH coils)
+       !  Total volt-seconds available during burn
+       !  (Previously calculated as (abs(vstot) - vssoft) )
 
-       vsmax = abs(vstot) - vssoft
+       vsmax = abs(vsbn)
 
        !  Loop voltage during burn (including MHD sawtooth enhancement)
 
