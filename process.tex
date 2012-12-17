@@ -598,7 +598,7 @@ J_{\mbox{\scriptsize protection}}$ limit (SCTF)               & L    & \textbf{5
 48  & poloidal beta limit                                 & L    & \textbf{79},2,3,18 \\
 49  & reversal parameter $< 0$ (RFP)                      & L    & \textbf{80},78,3,1 \\
 50  & IFE repetition rate limit (IFE)                     & L    & \textbf{86} \\
-51  & Startup volt-seconds consistency (PULSE)            & C    & \textbf{3},1 \\
+51  & Startup volt-seconds consistency (PULSE)            & C    & \textbf{16},29,3,1 \\
 \hline
 \end{tabular}
 \end{center}
@@ -813,6 +813,7 @@ $\pm 10$        & toroidal field on axis \\
 $\pm 11$        & injection power \\
 $\pm 12$        & hydrogen plant capital cost \\
 $\pm 13$        & hydrogen production rate \\
+$\pm 14$        & pulse length \\
 \hline
 \end{tabular}
 \end{center}
@@ -3272,7 +3273,7 @@ the following way:
   existing examples. The value of \texttt{fc} should be of order unity, so
   select a reasonable scaling factor if necessary. Ensure that all the
   variables used in the new equation are contained in the modules specified
-  via \texttt{use} statements present at the start of this routine.
+  via \texttt{use} statements present at the start of this file.
 
 \end{enumerate}
 

@@ -24,6 +24,7 @@ module function_evaluator
   !+ad_call  physics_variables
   !+ad_call  pf_power_variables
   !+ad_call  tfcoil_variables
+  !+ad_call  times_variables
   !+ad_hist  10/10/12 PJK Initial version of module
   !+ad_hist  15/10/12 PJK Added physics_variables
   !+ad_hist  16/10/12 PJK Added current_drive_variables
@@ -32,6 +33,7 @@ module function_evaluator
   !+ad_hist  29/10/12 PJK Added pf_power_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_hist  31/10/12 PJK Added cost_variables
+  !+ad_hist  17/12/12 PJK Added times_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -45,6 +47,7 @@ module function_evaluator
   use physics_variables
   use pf_power_variables
   use tfcoil_variables
+  use times_variables
 
   implicit none
 
@@ -286,6 +289,7 @@ contains
     !+ad_call  None
     !+ad_hist  02/10/96 PJK Initial upgraded version
     !+ad_hist  08/10/12 PJK Initial F90 version
+    !+ad_hist  17/12/12 PJK Added new figure of merit 14
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -354,6 +358,9 @@ contains
 
     case (13)  !  hydrogen production rate
        fc = sgn * hpower / 1.0D2
+
+    case (14)  !  pulse length
+       fc = sgn * tburn / 2.0D4
 
     case default
        write(*,*) 'Error in routine FUNFOM :'

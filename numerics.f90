@@ -20,6 +20,7 @@ module numerics
   !+ad_hist  06/11/12 PJK Modified comment lines
   !+ad_hist  11/12/12 PJK Comment typo fixed
   !+ad_hist  17/12/12 PJK New constraint equation 51 added
+  !+ad_hist  17/12/12 PJK New figure of merit 14 added
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -35,8 +36,8 @@ module numerics
   integer, parameter :: ipnvars = 88
   !+ad_vars  ipeqns /51/ FIX : number of constraint equations available
   integer, parameter :: ipeqns  = 51
-  !+ad_vars  ipnfoms /13/ FIX : number of available figures of merit
-  integer, parameter :: ipnfoms = 13
+  !+ad_vars  ipnfoms /14/ FIX : number of available figures of merit
+  integer, parameter :: ipnfoms = 14
 
   integer, parameter :: ipvlam  = ipeqns+2*ipnvars+1
   integer, parameter :: iptnt   = (ipeqns*(3*ipeqns+13))/2
@@ -344,8 +345,10 @@ module numerics
        'total injected power. ', &
        !+ad_varc  <LI> (12) hydrogen plant capital cost
        'H plant capital cost. ', &
-       !+ad_varc  <LI> (13) hydrogen production rate</UL>
-       'H production rate.    ' /)
+       !+ad_varc  <LI> (13) hydrogen production rate
+       'H production rate.    ', &
+       !+ad_varc  <LI> (14) pulse length</UL>
+       'pulse length.         ' /)
 
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables:<UL>
   character(len=8), dimension(ipnvars) :: lablxc = (/ &
