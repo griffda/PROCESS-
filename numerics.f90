@@ -19,6 +19,7 @@ module numerics
   !+ad_hist  15/10/12 PJK Modified comment lines, and added default array values
   !+ad_hist  06/11/12 PJK Modified comment lines
   !+ad_hist  11/12/12 PJK Comment typo fixed
+  !+ad_hist  17/12/12 PJK New constraint equation 51 added
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -32,8 +33,8 @@ module numerics
 
   !+ad_vars  ipnvars /88/ FIX : total number of variables available for iteration
   integer, parameter :: ipnvars = 88
-  !+ad_vars  ipeqns /50/ FIX : number of constraint equations available
-  integer, parameter :: ipeqns  = 50
+  !+ad_vars  ipeqns /51/ FIX : number of constraint equations available
+  integer, parameter :: ipeqns  = 51
   !+ad_vars  ipnfoms /13/ FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 13
 
@@ -115,7 +116,8 @@ module numerics
        0,  &  !  47
        0,  &  !  48
        0,  &  !  49
-       0  /)  !  50
+       0,  &  !  50
+       0  /)  !  51
 
   !+ad_vars  ixc(ipnvars) : array defining which iteration variables to
   !+ad_varc                 activate (see lablxc for descriptions)
@@ -310,8 +312,10 @@ module numerics
        'Poloidal beta limit              ', &
        !+ad_varc  <LI> (49) RFP reversal parameter &lt; 0 (RFP)
        'RFP reversal parameter < 0       ', &
-       !+ad_varc  <LI> (50) IFE repetition rate limit (IFE)</UL>
-       'IFE repetition rate limit        ' /)
+       !+ad_varc  <LI> (50) IFE repetition rate limit (IFE)
+       'IFE repetition rate limit        ', &
+       !+ad_varc  <LI> (51) Startup volt-seconds consistency (PULSE)</UL>
+       'Startup volt-seconds consistency ' /)
 
   !+ad_vars  lablmm(ipnfoms) : labels describing figures of merit:<UL>
   character(len=22), dimension(ipnfoms) :: lablmm = (/ &

@@ -61,6 +61,8 @@ subroutine constraints(m,cc)
   !+ad_hist  06/11/12 PJK Renamed routine from con1 to constraints,
   !+ad_hisc               and the source file itself from eqns.f90 to
   !+ad_hisc               constraint_equations.f90
+  !+ad_hist  17/12/12 PJK Eqn 30 inverted to prevent problems if pinj=0;
+  !+ad_hisc               Added new eqn 51, plus debug lines
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -287,7 +289,10 @@ subroutine constraints(m,cc)
 
      case (30)  !  Equation to limit injection power
 
-        cc(i) = 1.0D0 - fpinj * 1.0D6 * pinjalw / (pinji + pinje)
+        !  Inverted from usual form to prevent problems
+        !  with zero injected power
+
+        cc(i) = 1.0D0 - (pinji + pinje) / (fpinj * 1.0D6 * pinjalw)
 
      case (31)  !  Equation to limit TFC case stress (SCTF)
 
@@ -431,6 +436,10 @@ subroutine constraints(m,cc)
         end if
         cc(i) = 1.0D0 - frrmax*rrmax/reprat
 
+     case (51)  !  Equation to enforce startup flux = available startup flux
+
+        cc(i) = 1.0D0 - (vsres+vsind) / vssu
+
      case default
 
         write(*,*) 'Error in routine CONSTRAINTS:'
@@ -444,7 +453,38 @@ subroutine constraints(m,cc)
 
      if ((abs(cc(i)) > 9.99D99).or.(cc(i) /= cc(i))) then
         write(*,*) 'Error in routine CONSTRAINTS:'
-        write(*,*) 'NaN error for constraint equation ',icc(i)
+        write(*,*) 'NaN/infty error for constraint equation ',icc(i)
+        write(*,*) 'Value is ',cc(i)
+        write(*,*) ' '
+
+        !  Add debugging lines as appropriate...
+
+        select case (icc(i))
+
+        case (1)
+           write(*,*) 'betaft = ', betaft
+           write(*,*) 'betanb = ', betanb
+           write(*,*) 'dene = ', dene
+           write(*,*) 'ten = ', ten
+           write(*,*) 'dnitot = ', dnitot
+           write(*,*) 'tin = ', tin
+           write(*,*) 'btot = ',btot
+           write(*,*) 'beta = ', beta
+
+        case (16)
+           write(*,*) 'fpnetel = ', fpnetel
+           write(*,*) 'pnetelmw = ', pnetelmw
+           write(*,*) 'pnetelin = ', pnetelin
+
+        case (30)
+           write(*,*) 'fpinj = ', fpinj
+           write(*,*) 'pinjalw = ', pinjalw
+           write(*,*) 'pinji = ', pinji
+           write(*,*) 'pinje = ', pinje
+ 
+        end select
+
+        write(*,*) ' '
         write(*,*) 'PROCESS stopping.'
         stop
      end if
