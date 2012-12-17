@@ -315,6 +315,7 @@ contains
     !+ad_hist  05/01/04 PJK Initial F90 version (CENTORI)
     !+ad_hist  03/10/12 PJK CENTORI version converted for PROCESS
     !+ad_hist  10/10/12 PJK Removed IVMS
+    !+ad_hist  17/12/12 PJK Added ZFEAR
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -632,6 +633,9 @@ contains
        case ('TRIANG')
           call parse_real_variable('TRIANG', triang, 0.0D0, 1.0D0, &
                'Plasma separatrix triangularity')
+       case ('ZFEAR')
+          call parse_int_variable('ZFEAR', zfear, 0, 1, &
+               'Switch for high-Z inpurity')
 
           !  Inequality settings
 

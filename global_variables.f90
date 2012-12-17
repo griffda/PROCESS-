@@ -83,6 +83,7 @@ module physics_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  15/10/12 PJK Initial version of module
+  !+ad_hist  17/12/12 PJK Added zfear; modified impfe, cfe0, rnfene, fbfe comments
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -210,7 +211,7 @@ module physics_variables
   real(kind(1.0D0)) :: burnup = 0.0D0
   !+ad_vars  carea /1.0/ : multiplying factor times plasma surface area
   real(kind(1.0D0)) :: carea = 1.0D0
-  !+ad_vars  cfe0 /0.0/ : additional iron impurity fraction (n_fe/n_e)
+  !+ad_vars  cfe0 /0.0/ : seeded high-Z impurity fraction (n_highZ / n_e)
   !+ad_varc               (iteration variable 43)
   real(kind(1.0D0)) :: cfe0 = 0.0D0
   !+ad_vars  csawth /1.0/ : coeff. for sawteeth effects on burn V-s requirement
@@ -265,7 +266,7 @@ module physics_variables
   real(kind(1.0D0)) :: falpha = 1.0D0
   !+ad_vars  falpi : fraction of alpha power to ions
   real(kind(1.0D0)) :: falpi = 0.0D0
-  !+ad_vars  fbfe /0.35/ : fraction of Fe radiation to Bremsstrahlung
+  !+ad_vars  fbfe /0.35/ : fraction of high-Z radiation to Bremsstrahlung
   real(kind(1.0D0)) :: fbfe = 0.35D0
   !+ad_vars  fdeut /0.5/ : deuterium fuel fraction (idhe3=1)
   real(kind(1.0D0)) :: fdeut = 0.5D0
@@ -362,7 +363,7 @@ module physics_variables
   integer :: iiter = 1
   !+ad_vars  impc /1.0/ : carbon impurity multiplier
   real(kind(1.0D0)) :: impc = 1.0D0
-  !+ad_vars  impfe /1.0/ : iron impurity multiplier
+  !+ad_vars  impfe /1.0/ : iron impurity multiplier (OBSOLETE)
   real(kind(1.0D0)) :: impfe = 1.0D0
   !+ad_vars  impo /1.0/ : oxygen impurity multiplier
   real(kind(1.0D0)) :: impo = 1.0D0
@@ -474,7 +475,7 @@ module physics_variables
   real(kind(1.0D0)) :: rncne = 0.0D0
   !+ad_vars  rndfuel : fuel burnup rate (A)
   real(kind(1.0D0)) :: rndfuel = 0.0D0
-  !+ad_vars  rnfene : n_iron / n_e
+  !+ad_vars  rnfene : n_highZ / n_e
   real(kind(1.0D0)) :: rnfene = 0.0D0
   !+ad_vars  rnone : n_oxygen / n_e
   real(kind(1.0D0)) :: rnone = 0.0D0
@@ -535,6 +536,8 @@ module physics_variables
   real(kind(1.0D0)) :: zeff = 0.0D0
   !+ad_vars  zeffai : density weighted plasma effective charge
   real(kind(1.0D0)) :: zeffai = 0.0D0
+  !+ad_vars  zfear /0/ : high-Z impurity switch; 0=iron, 1=argon
+  integer :: zfear = 0
 
 end module physics_variables
 

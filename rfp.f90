@@ -723,6 +723,7 @@ contains
     !+ad_hist  17/10/12 PJK Added divertor_variables
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  30/10/12 PJK Added build_variables
+    !+ad_hist  17/12/12 PJK Added zfear to betcom, radpwr argument lists
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -746,7 +747,7 @@ contains
     call betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3,ftr,ftritbm, &
          idhe3,ignite,impc,impfe,impo,ralpne,rnbeam,te,zeff,abeam, &
          afuel,aion,deni,dlamee,dlamie,dnalp,dnbeam,dnitot,dnla, &
-         dnprot,dnz,falpe,falpi,pcoef,rncne,rnone,rnfene,zeffai,zion)
+         dnprot,dnz,falpe,falpi,pcoef,rncne,rnone,rnfene,zeffai,zion,zfear)
 
     ten = te * pcoef
     tin = ti * pcoef
@@ -866,7 +867,7 @@ contains
 
     call radpwr(alphan,alphat,aspect,bt,dene,deni,fbfe,kappa95,rmajor, &
          rminor,ralpne,rncne,rnone,rnfene,ssync,ten,vol,pbrem,plrad, &
-         prad,psync)
+         prad,psync,zfear)
 
     !  Limit for minimum radiation power
 

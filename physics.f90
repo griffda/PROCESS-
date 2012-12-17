@@ -153,6 +153,7 @@ contains
     !+ad_hisc               and switch ICULCR
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/10/12 PJK Added physics_variables
+    !+ad_hist  17/12/12 PJK Added ZFEAR to argument lists of BETCOM, RADPWR
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -174,7 +175,7 @@ contains
     call betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3,ftr,ftritbm, &
          idhe3,ignite,impc,impfe,impo,ralpne,rnbeam,te,zeff,abeam, &
          afuel,aion,deni,dlamee,dlamie,dnalp,dnbeam,dnitot,dnla, &
-         dnprot,dnz,falpe,falpi,pcoef,rncne,rnone,rnfene,zeffai,zion)
+         dnprot,dnz,falpe,falpi,pcoef,rncne,rnone,rnfene,zeffai,zion,zfear)
 
     !  Density-weighted temperatures
 
@@ -331,7 +332,7 @@ contains
 
     call radpwr(alphan,alphat,aspect,bt,dene,deni,fbfe,kappa95,rmajor, &
          rminor,ralpne,rncne,rnone,rnfene,ssync,ten,vol,pbrem,plrad, &
-         prad,psync)
+         prad,psync,zfear)
 
     !  Limit for minimum radiation power
 
@@ -906,7 +907,8 @@ contains
   subroutine betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3,ftr, &
        ftritbm,idhe3,ignite,impc,impfe,impo,ralpne,rnbeam,te,zeff, &
        abeam,afuel,aion,deni,dlamee,dlamie,dnalp,dnbeam,dnitot, &
-       dnla,dnprot,dnz,falpe,falpi,pcoef,rncne,rnone,rnfene,zeffai,zion)
+       dnla,dnprot,dnz,falpe,falpi,pcoef,rncne,rnone,rnfene,zeffai, &
+       zion,zfear)
 
     !+ad_name  betcom
     !+ad_summ  Calculates various plasma component fractional makeups
@@ -930,6 +932,7 @@ contains
     !+ad_args  ralpne : input real :  thermal alpha density / electron density
     !+ad_args  rnbeam : input real :  hot beam density / electron density
     !+ad_args  te     : input real :  electron temperature (keV)
+    !+ad_args  zfear  : input integer :  high-Z impurity switch; 0=iron, 1=argon
     !+ad_args  abeam  : output real : beam ion mass (amu)
     !+ad_args  afuel  : output real : average mass of fuel portion of ions (amu)
     !+ad_args  aion   : output real : average mass of all ions (amu)
@@ -953,7 +956,8 @@ contains
     !+ad_args  zion   : output real : density weighted charge
     !+ad_desc  This subroutine determines the various plasma component
     !+ad_desc  fractional makeups.
-    !+ad_prob  None
+    !+ad_prob  The calculation of ZEFFAI is unclear, and is inconsistent
+    !+ad_prob  between D-T and D-He3 versions.
     !+ad_call  gamfun
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  06/12/95 PJK Added D-He3 calculations
@@ -962,6 +966,8 @@ contains
     !+ad_hist  24/04/98 PJK Added IMPC, IMPFE, IMPO impurity multipliers
     !+ad_hist  23/05/06 PJK Ensured that deni is positive
     !+ad_hist  09/11/11 PJK Initial F90 version
+    !+ad_hist  17/12/12 PJK Added ZFEAR coding, and updated AION and other
+    !+ad_hisc               high-Z impurity terms
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  F/MI/PJK/LOGBOOK11, p.38 for D-He3 deni calculation
@@ -972,7 +978,7 @@ contains
 
     !  Arguments
 
-    integer, intent(in) :: idhe3, ignite
+    integer, intent(in) :: idhe3, ignite, zfear
     real(kind(1.0D0)), intent(in) :: alphan, alphat, cfe0, dene, fdeut, &
          ftrit, fhe3, ftr, ftritbm, impc, impfe, impo, ralpne, rnbeam, te
     real(kind(1.0D0)), intent(out) :: abeam, afuel, aion, deni, dlamee, &
@@ -981,7 +987,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: fc, ffe, fo, znfuel
+    real(kind(1.0D0)) :: fc, f_highz, fo, m_highz, znfuel, z_highz
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1024,16 +1030,25 @@ contains
     fo = impo * 0.001D0
     rnone = fo
 
-    !  Iron portion
+    !  High-Z portion (formerly assumed to be iron)
 
-    ffe = impfe * (0.0005D0 * (7.0D19/dene)**2.3D0 + cfe0)
-    rnfene = ffe
+    !ffe = impfe * (0.0005D0 * (7.0D19/dene)**2.3D0 + cfe0)
+    f_highz = cfe0
+    rnfene = f_highz
+
+    if (zfear == 1) then  !  High-Z impurity is argon
+       z_highz = 18.0D0
+       m_highz = 40.0D0
+    else  !  Iron
+       z_highz = 26.0D0
+       m_highz = 56.0D0
+    end if
 
     !  Fuel portion - conserve charge neutrality
     !  znfuel is the sum of Zi.ni for the three fuel ions
 
     znfuel = dene - 2.0D0*dnalp - dnprot - dnbeam - &
-         dene*(6.0D0*fc + 8.0D0*fo + 26.0D0*ffe)
+         dene*(6.0D0*fc + 8.0D0*fo + z_highz*f_highz)
 
     if (idhe3 == 0) then
        deni = znfuel
@@ -1047,7 +1062,7 @@ contains
 
     !  Total ion density
 
-    dnz = dene * (fc + fo + ffe)
+    dnz = dene * (fc + fo + f_highz)
     dnitot = deni + dnz + dnalp + dnprot + dnbeam
 
     !  Effective charge
@@ -1056,11 +1071,11 @@ contains
 
     if (idhe3 == 0) then
        zeff = (deni + dnbeam)/dene + 4.0D0*ralpne + 36.0D0*fc + &
-            64.0D0*fo + 676.0D0*ffe
+            64.0D0*fo + z_highz*z_highz*f_highz
     else
        zeff = (fdeut + ftrit)*deni/dene + 4.0D0*fhe3*deni/dene + &
             dnbeam/dene + 4.0D0*ralpne + dnprot/dene + 36.0D0*fc + &
-            64.0D0*fo + 676.0D0*ffe
+            64.0D0*fo + z_highz*z_highz*f_highz
     end if
 
     !  Define coulomb logarithm
@@ -1099,22 +1114,20 @@ contains
        !  aion = sum over ions: A_i . n_i / total ion density
 
        aion = ( afuel*deni + 4.0D0*dnalp + dnprot + abeam*dnbeam + &
-            dene*(6.0D0*fc + 8.0D0*fo + 28.0D0*ffe) )/ dnitot
-
-       !+**PJK 15/01/96 Possibly more correct...
-       !+**PJK 15/01/96 aion = ( afuel*deni + 4.0D0*dnalp + dnprot +
-       !+**PJK 15/01/96  +  abeam*dnbeam + dene*(12.0D0*fc + 16.0D0*fo +
-       !+**PJK 15/01/96  +  56.0D0*ffe) )/ dnitot
+            dene*(12.0D0*fc + 16.0D0*fo + m_highz*f_highz) )/ dnitot
 
        !  zion = sum over ions: Z_i . n_i / total ion density
 
        zion = ( deni + 2.0D0*dnalp + dnprot + dnbeam + &
-            dene*(6.0D0*fc + 8.0D0*fo + 26.0D0*ffe) )/dnitot
+            dene*(6.0D0*fc + 8.0D0*fo + z_highz*f_highz) )/dnitot
 
        !  zeffai = sum over ions: (Z_i)**2 . n_i / (A_i . n_e)
+!+PJK Comment above is not consistent with coding...
 
        zeffai = ( deni/afuel + dnalp + dnprot + dnbeam/abeam + &
-            dene*(6.0D0*fc + 8.0D0*fo + 24.0D0*ffe) ) / dene
+!            dene*(6.0D0*fc + 8.0D0*fo + 24.0D0*f_highz) ) / dene
+            dene*(6.0D0*fc + 8.0D0*fo + &
+            (2.0D0*z_highz*z_highz/m_highz)*f_highz) ) / dene
 
        !+**PJK 15/01/96 Possibly more correct...
        !+**PJK 15/01/96 zeffai = ( (1.0D0-ftr)*deni/2.0D0 + ftr*deni/3.0D0 +
@@ -1125,16 +1138,16 @@ contains
     else
 
        aion = ( afuel*deni + 4.0D0*dnalp + dnprot + abeam*dnbeam + &
-            dene*(12.0D0*fc + 16.0D0*fo + 56.0D0*ffe) )/ dnitot
+            dene*(12.0D0*fc + 16.0D0*fo + m_highz*f_highz) )/ dnitot
 
        zion = ( fdeut*deni + ftrit*deni + 2.0D0*fhe3*deni + &
             2.0D0*dnalp + dnprot + dnbeam + dene * &
-            (6.0D0*fc + 8.0D0*fo + 26.0D0*ffe) )/dnitot
-
+            (6.0D0*fc + 8.0D0*fo + z_highz*f_highz) )/dnitot
+!+PJK Dodgy (see above...)
        zeffai = ( fdeut*deni/2.0D0 + ftrit*deni/3.0D0 + &
             4.0D0*fhe3*deni/3.0D0 + dnalp + dnprot + &
             (1.0D0-ftritbm)*dnbeam/2.0D0 + ftritbm*dnbeam/3.0D0 + &
-            dene*(3.0D0*fc + 4.0D0*fo + 12.0D0*ffe) )/dene
+            dene*(3.0D0*fc + 4.0D0*fo + (z_highz*z_highz/m_highz)*f_highz) )/dene
 
     end if
 
@@ -2823,7 +2836,7 @@ contains
 
   subroutine radpwr(alphan,alphat,aspect,bt,dene,deni,fbfe,kappa95, &
        rmajor,rminor,ralpne,rncne,rnone,rnfene,ssync,ten,vol, &
-       pbrem,plrad,prad,psync)
+       pbrem,plrad,prad,psync,zfear)
 
     !+ad_name  radpwr
     !+ad_summ  Radiation power calculation
@@ -2837,7 +2850,7 @@ contains
     !+ad_args  bt     : input real :  toroidal field on axis (T)
     !+ad_args  dene   : input real :  electron density (/m3)
     !+ad_args  deni   : input real :  fuel ion density (/m3)
-    !+ad_args  fbfe   : input real :  fraction of iron radiation to bremsstrahlung
+    !+ad_args  fbfe   : input real :  fraction of high-Z radiation to bremsstrahlung
     !+ad_args  kappa95: input real :  plasma elongation at 95% surface
     !+ad_args  ralpne : input real :  thermal alpha density / electron density
     !+ad_args  rmajor : input real :  plasma major radius (m)
@@ -2848,6 +2861,7 @@ contains
     !+ad_args  ssync  : input real :  synchrotron wall reflectivity factor
     !+ad_args  ten    : input real :  density weighted average electron temperature (keV)
     !+ad_args  vol    : input real :  plasma volume (m3)
+    !+ad_args  zfear  : input integer :  high-Z impurity switch; 0=iron, 1=argon
     !+ad_args  pbrem  : output real : bremsstrahlung radiation power/volume (MW/m3)
     !+ad_args  plrad  : output real : edge line radiation power/volume (MW/m3)
     !+ad_args  prad   : output real : total core radiation power/volume (MW/m3)
@@ -2859,6 +2873,7 @@ contains
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  21/07/11 RK  Implemented Albajar for P_sync
     !+ad_hist  09/11/11 PJK Initial F90 version
+    !+ad_hist  17/12/12 PJK Added ZFEAR coding for high-Z impurities
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  Albajar, Nuclear Fusion 41 (2001) 665
@@ -2870,6 +2885,7 @@ contains
 
     !  Arguments
 
+    integer, intent(in) :: zfear
     real(kind(1.0D0)), intent(in) :: alphan, alphat, aspect, bt, &
          dene, deni, fbfe, kappa95, ralpne, rmajor, rminor, rncne, &
          rnfene, rnone, ssync, ten, vol
@@ -2877,8 +2893,8 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: den20,fbc,fbhe,fbo,pbremdt,pbremz,pc,pfe, &
-         phe,po,radexp,t10,vr,xfact,kfun,gfun,pao,de2o,teo,dum, &
+    real(kind(1.0D0)) :: den20,fbc,fbhe,fbo,pbremdt,pbremz,pc,phe, &
+         phighz,po,radexp,t10,vr,xfact,kfun,gfun,pao,de2o,teo,dum, &
          tbet,rpow,kap
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2902,15 +2918,19 @@ contains
     phe = 65.8D0 * ralpne * (dene/7.0D19)**1.5D0 * vr
     pc  = 1120.0D0 * rncne * (dene/7.0D19)**1.5D0 * vr
     po  = 2240.0D0 * rnone * (dene/7.0D19)**1.5D0 * vr
-    pfe = 44800.0D0 * rnfene * (dene/7.0D19)**2.5D0 * vr
-    pbremz = fbhe*phe + fbc*pc + fbo*po + fbfe*pfe
+    if (zfear == 1) then  !  high-Z impurity is argon
+       phighz = 16000.0D0 * rnfene * (dene/7.0D19)**1.5D0 * vr
+    else  !  iron
+       phighz = 44800.0D0 * rnfene * (dene/7.0D19)**2.5D0 * vr
+    end if
+    pbremz = fbhe*phe + fbc*pc + fbo*po + fbfe*phighz
 
     pbrem = pbremz + pbremdt
 
     !  Line radiation
 
     plrad = (1.0D0-fbhe)*phe + (1.0D0-fbc)*pc + (1.0D0-fbo)*po + &
-         (1.0D0-fbfe)*pfe
+         (1.0D0-fbfe)*phighz
 
     !  Synchrotron power
 
@@ -4196,6 +4216,7 @@ contains
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  31/10/12 PJK Added constraint_variables
     !+ad_hist  05/11/12 PJK Added rfp_variables
+    !+ad_hist  17/12/12 PJK Added ZFEAR lines
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4332,7 +4353,14 @@ contains
 
     call ovarre(outfile,'Hot beam density (/m3)','(dnbeam)',dnbeam)
     call ovarre(outfile,'Density limit (enforced) (/m3)','(dnelimt)',dnelimt)
-    call ovarre(outfile,'Seeded iron concentration','(cfe0)',cfe0)
+
+    if (zfear == 1) then
+       call ocmmnt(outfile,'High-Z impurity assumed: Argon')
+    else
+       call ocmmnt(outfile,'High-Z impurity assumed: Iron')
+    end if
+
+    call ovarre(outfile,'Seeded high-Z concentration','(cfe0)',cfe0)
     call ovarre(outfile,'Effective charge','(zeff)',zeff)
     call ovarre(outfile,'Mass weighted effective charge','(zeffai)',zeffai)
     call ovarrf(outfile,'Density profile factor','(alphan)',alphan)
