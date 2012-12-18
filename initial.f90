@@ -219,6 +219,7 @@ subroutine check
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added pulse_variables
+  !+ad_hist  18/12/12 PJK Added snull and other PF coil location checks
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -240,6 +241,8 @@ subroutine check
   implicit none
 
   !  Local variables
+
+  integer :: i,j,k
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -280,8 +283,15 @@ subroutine check
      ipfloc(2) = 3
      ipfloc(3) = 3
      itfsup = 0
+
      if (ibss == 1) then
         write(nout,*) 'ibss=1 is not a valid option for a TART device'
+        write(nout,*) 'PROCESS stopping.'
+        stop
+     end if
+
+     if (snull == 1) then
+        write(nout,*) 'snull=1 is not a valid option for a TART device.'
         write(nout,*) 'PROCESS stopping.'
         stop
      end if
@@ -292,6 +302,51 @@ subroutine check
      if (icurr == 2) then
         write(nout,*) &
              'icurr=2 is not a valid option for a non-TART device'
+        write(nout,*) 'PROCESS stopping.'
+        stop
+     end if
+
+     if (snull == 0) then
+        idivrt = 2
+     else  !  snull == 1
+        idivrt = 1
+     end if
+
+     !  Check PF coil configurations
+
+     j = 0 ; k = 0
+     do i = 1, ngrp
+        if ((ipfloc(i) /= 2).and.(ncls(i) /= 2)) then
+           write(nout,*) &
+                'ncls(i) .ne. 2 is not a valid option except for (ipfloc = 2)'
+           write(nout,*) 'PROCESS stopping.'
+           stop
+        end if
+
+        if (ipfloc(i) == 2) then
+           j = j + 1
+           k = k + ncls(i)
+        end if
+     end do
+
+     if (k == 1) then
+        write(nout,*) &
+             'Only 1 divertor coil (ipfloc = 2) is not a valid configuration.'
+        write(nout,*) 'PROCESS stopping.'
+        stop
+     end if
+
+     if (k > 2) then
+        write(nout,*) &
+             'More than 2 divertor coils (ipfloc = 2) is not a valid configuration.'
+        write(nout,*) 'PROCESS stopping.'
+        stop
+     end if
+
+     if ((snull == 1).and.(j < 2)) then
+        write(nout,*) &
+             'Use 2 individual divertor coils (ipfloc = 2, 2; ncls = 1, 1)'
+        write(nout,*) 'for single null (snull = 1).'
         write(nout,*) 'PROCESS stopping.'
         stop
      end if

@@ -316,6 +316,7 @@ contains
     !+ad_hist  03/10/12 PJK CENTORI version converted for PROCESS
     !+ad_hist  10/10/12 PJK Removed IVMS
     !+ad_hist  17/12/12 PJK Added ZFEAR
+    !+ad_hist  18/12/12 PJK Added SNULL; removed IDIVRT
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -540,9 +541,6 @@ contains
        case ('IDHE3')
           call parse_int_variable('IDHE3', idhe3, 0, 1, &
                'Switch for main fusion reaction (1 = DHe3)')
-       case ('IDIVRT')
-          call parse_int_variable('IDIVRT', idivrt, 2, 2, &
-               'Switch for divertor configuration')
        case ('IFALPHAP')
           call parse_int_variable('IFALPHAP', ifalphap, 0, 1, &
                'Switch for fast alpha pressure fit')
@@ -618,6 +616,9 @@ contains
        case ('RTPTE')
           call parse_real_variable('RTPTE', rtpte, 0.1D0, 20.0D0, &
                'He particle / plas. energy confin. time')
+       case ('SNULL')
+          call parse_int_variable('SNULL', snull, 0, 1, &
+               'Switch for single/double null plasma')
        case ('SSYNC')
           call parse_real_variable('SSYNC', ssync, 0.0D0, 1.0D0, &
                'Synchrotron wall reflectivity factor')

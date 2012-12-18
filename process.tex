@@ -60,7 +60,7 @@ Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 %  scaling law references into table
 %  IFE model
 %  check and expand references
-%  
+%  add figure for snull=1 build
 %  
 %  
 %  
@@ -1066,8 +1066,9 @@ relative locations of the major components. Their positions are referenced to
 the $(R,Z)$ coordinate system, where $R$ is the radial distance from the
 vertical centreline (axis) of the torus, and $Z$ is the vertical distance from
 the equatorial midplane, about which the machine is assumed to be up-down
-symmetrical (by default). Components are often referred to as being `inboard'
-or `outboard', which simply means that they lie at a radius $R$ less than or
+symmetrical (by default; the vertical build is slightly different for single
+null plasma devices). Components are often referred to as being `inboard' or
+`outboard', which simply means that they lie at a radius $R$ less than or
 greater than $R_0$, respectively, where $R_0$ is the plasma major radius
 (\texttt{rmajor}). For the sake of clarity the thicknesses are not drawn to
 scale, and the space labelled as the divertor does not indicate in any way the
@@ -1076,12 +1077,15 @@ actual shape of that component.
 \begin{figure}[tbph]
 \epsfig{file=build.eps,width=170mm}
 \caption[build] {\label{fig:build}
-  \textit{Schematic diagram of the fusion power core of a typical tokamak
-    power plant modelled by \process, showing the relative positions of the
-    components. Also shown are the code variables used to define the
-    thicknesses of the components. The arrowed labels adjacent to the axes are
-    the total `builds' to that point. The precise locations and sizes of the
+
+    \textit{Schematic diagram of the fusion power core of a typical tokamak
+      power plant modelled by \process, showing the relative positions of the
+      components. A double null plasma is assumed (\texttt{snull=0}). Also
+      shown are the code variables used to define the thicknesses of the
+      components. The arrowed labels adjacent to the axes are the total
+      `builds' to that point. The precise locations and sizes of the 
     PF coils are calculated within the code (see Section~\ref{sec:pfcoils}).}
+
 }
 \end{figure}
 
@@ -1095,11 +1099,12 @@ Section~\ref{sec:itvars}) to help in the optimisation process.
 
 Arguably, the most important component of the machine is the plasma itself. By
 default, this is assumed to have an up-down symmetric, double null
-configuration (although this can be changed if desired), with elongation and
-triangularity specified by the user. A great number of physics models are
-coded within \process\/ to describe the behaviour of the plasma parameters
-such as its current, temperature, density, pressure, confinement etc., and
-also the various limits that define the stable operating domain.
+configuration (although this can be changed if desired --- see
+Section~\ref{sec:divertor}), with elongation and triangularity specified by
+the user. A great number of physics models are coded within \process\/ to
+describe the behaviour of the plasma parameters such as its current,
+temperature, density, pressure, confinement etc., and also the various limits
+that define the stable operating domain.
 
 \subsubsection{Fusion reactions}
 
@@ -1354,10 +1359,12 @@ routine~\texttt{PTHRESH}.
 \begin{tabular}{||c||l||l||} \hline
  & name & reference \\ \hline
 (1) & 1996 ITER scaling: nominal & ITER Physics Design Description Document, \\
-(2) & 1996 ITER Scaling: upper bound & D. Boucher, p.2-2 \\
-(3) & 1996 ITER Scaling: lower bound &  \\ \hline
-(4) & 1997 ITER Scaling (1) & J. A. Snipes, ITER H-mode Threshold Database \\
-(5) & 1997 ITER Scaling (2) &  Working Group, Controlled Fusion and Plasma \\
+(2) & 1996 ITER scaling: upper bound & D. Boucher, p.2-2 \\
+(3) & 1996 ITER scaling: lower bound &  \\ \hline
+(4) & 1997 ITER scaling, excluding elongation & J. A. Snipes, ITER H-mode
+Threshold Database \\
+(5) & 1997 ITER scaling, including elongation &  Working Group, Controlled
+Fusion and Plasma \\
  & & Physics, 24th EPS Conference, Berchtesgaden, \\
  & & June 1997, vol.21A, part III, p.961 \\ \hline
 (6) & 2008 Martin scaling: nominal & Martin et al, 11th IAEA Tech. Meeting on
@@ -1402,7 +1409,7 @@ entering this region is not confined and is removed by the
 divertor. \process\/ treats the scrape-off layer merely as a gap. Switch
 \texttt{iscrp} determines whether the scrape-off widths should be calculated
 as 10\% of the plasma minor radius (\texttt{iscrp = 0}), or set equal to the
-input values \texttt{scrapli} and {\tt scraplo} (\texttt{iscrp = 1}).
+input values \texttt{scrapli} and \texttt{scraplo} (\texttt{iscrp = 1}).
 
 \textbf{High-Z impurities}
 
@@ -1432,6 +1439,7 @@ unit area) should be calculated using the plasma surface area (\texttt{iwalld
   = 1}) or the first wall area (\texttt{iwalld = 2}) as the denominator.
 
 \subsection{Divertor}
+\label{sec:divertor}
 
 The divertor provides a means of removing plasma reaching the scrape-off layer
 and heavy ions that are ejected from the first wall.  By default, two
@@ -1440,10 +1448,12 @@ and below the plasma. The principal outputs from the code are the divertor
 heat load, used to determine its lifetime, and its peak temperature. The
 divertor is cooled either by gaseous helium or by pressurised water.
 
-Switch \texttt{idivrt} controls the overall plasma configuration. At present,
-it is only possible to use \texttt{idivrt = 2}, which corresponds to an
-up-down symmetric, double null configuration, as the PF coil current scaling
-algorithms only allow for this model.
+Switch \texttt{snull} controls the overall plasma configuration. Setting
+\texttt{snull = 0} corresponds to an up-down symmetric, double null
+configuration (the default), while \texttt{snull = 1} assumes a single null
+plasma with the divertor at the bottom of the machine. The vertical build and
+PF coil current scaling algorithms take the value of this switch into account,
+although not the plasma geometry at present.
 
 The Harrison-Kukushkin-Hotston divertor model~\cite{IPDG} developed for ITER
 is used (except for the case of tight aspect ratio tokamaks --- see
@@ -1690,7 +1700,7 @@ Z & = & \pm (\mathtt{hmax + tfcth + 0.86})
 \end{eqnarray*}
 
 \item [\texttt{ipfloc(j) = 3} :]  PF coils are placed radially outside the TF
-coils (any number of groups);
+coils (any number of groups \Red{(?)});
 \begin{eqnarray*}
 R & = & \mathtt{rtot + tfthko/2.0D0 + routr} \hspace{63mm}\\
 Z & = & \pm(\mathtt{rminor*zref(j)})

@@ -58,6 +58,7 @@ contains
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_auth  J Galambos, FEDC/ORNL
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
@@ -77,6 +78,7 @@ contains
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  18/10/12 PJK Added fwbs_variables
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
+    !+ad_hist  18/12/12 PJK/RK Modified vertical bore for single-null cases
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -166,7 +168,7 @@ contains
     !  Horizontal and vertical bores
 
     tfboreh = rtot - rtfcin - 0.5D0*(tfthko + tfcth)
-    borev = 2.0D0 * hmax
+    borev = (hpfu - tfcth) + hmax
 
     !  The rest of this routine deals with superconducting coils.
 
@@ -906,6 +908,7 @@ contains
     !+ad_summ  Calculates the TF coil shape
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
     !+ad_auth  J Galambos, FEDC/ORNL
     !+ad_cont  N/A
     !+ad_args  None
@@ -918,6 +921,7 @@ contains
     !+ad_hist  14/05/12 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
+    !+ad_hist  18/12/12 PJK/RK Modified coil shape yarc(3) for single-null cases
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -941,7 +945,7 @@ contains
     !  Point at top of coil
 
     xarc(3) = rmajor - 0.2D0*rminor
-    yarc(3) = hmax
+    yarc(3) = 0.5D0*(hpfu - tfcth + hmax)
 
     !  Point at top of straight section
 

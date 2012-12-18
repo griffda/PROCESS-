@@ -85,6 +85,7 @@ module physics_variables
   !+ad_hist  15/10/12 PJK Initial version of module
   !+ad_hist  17/12/12 PJK Added zfear; modified impfe, cfe0, rnfene, fbfe comments
   !+ad_hist  18/12/12 PJK Added pthrmw(6 to 8)
+  !+ad_hist  18/12/12 PJK Added snull; modified idivrt
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -333,10 +334,7 @@ module physics_variables
   !+ad_varc         <LI> = 0 D-T reaction;
   !+ad_varc         <LI> = 1 D-He3 reaction (+ daughters)</UL>
   integer :: idhe3 = 0
-  !+ad_vars  idivrt /2/ : shape switch (use only idivrt=2 for now):<UL>
-  !+ad_varc          <LI> = 0 for limiter;
-  !+ad_varc          <LI> = 1 for single null (diverted side down);
-  !+ad_varc          <LI> = 2 for double null</UL>
+  !+ad_vars  idivrt : number of divertors (calculated from snull)
   integer :: idivrt = 2
   !+ad_vars  ifalphap /0/ : switch for fast alpha pressure calculation:<UL>
   !+ad_varc            <LI> = 0 ITER physics rules (Uckan) fit;
@@ -495,6 +493,10 @@ module physics_variables
   real(kind(1.0D0)) :: sareao = 0.0D0
   !+ad_vars  sf : shape factor
   real(kind(1.0D0)) :: sf = 0.0D0
+  !+ad_vars  snull /0/ : switch for single null / double null plasma:<UL>
+  !+ad_varc          <LI> = 0 for double null;
+  !+ad_varc          <LI> = 1 for single null (diverted side down)</UL>
+  integer :: snull = 0
   !+ad_vars  ssync /0.8/ : synchrotron wall reflectivity factor
   real(kind(1.0D0)) :: ssync = 0.8D0
   !+ad_vars  tauee : electron energy confinement time (sec)
@@ -1941,6 +1943,7 @@ module build_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  30/10/12 PJK Initial version of module
+  !+ad_hist  18/12/12 PJK Added hpfdif, hpfu
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2000,6 +2003,11 @@ module build_variables
   real(kind(1.0D0)) :: gapsto = 0.0D0
   !+ad_vars  hmax : maximum height of TF coil (m)
   real(kind(1.0D0)) :: hmax = 0.0D0
+  !+ad_vars  hpfdif : difference in distance from midplane of upper and lower
+  !+ad_varc           portions of TF legs (non-zero for single-null devices) (m)
+  real(kind(1.0D0)) :: hpfdif = 0.0D0
+  !+ad_vars  hpfu : height to top of (upper) TF coil leg (m)
+  real(kind(1.0D0)) :: hpfu = 0.0D0
   !+ad_vars  hr1 : half-height of TF coil inboard leg straight section (m)
   real(kind(1.0D0)) :: hr1 = 0.0D0
   !+ad_vars  iohcl /1/ : switch for existence of OH coil:<UL>

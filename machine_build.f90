@@ -56,6 +56,7 @@ contains
     !+ad_summ  Radial build
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
@@ -73,6 +74,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
+    !+ad_hist  18/12/12 PJK/RK Added single-null code
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -144,7 +146,7 @@ contains
     radius = radius + bore
     call obuild(outfile,'Machine bore',bore,radius)
 
-    if (itart.eq.1) then
+    if (itart == 1) then
 
        radius = radius + bcylth
        call obuild(outfile,'Bucking cylinder',bcylth,radius)
@@ -223,35 +225,93 @@ contains
 
     call oheadr(outfile,'Vertical Build')
 
-    call ocmmnt(outfile,'Double null case')
+    if (snull == 0) then
+       call ocmmnt(outfile,'Double null case')
 
-    write(outfile,20)
-20  format(t43,'Thickness (m)',t60,'Height (m)')
+       write(outfile,20)
+20     format(t43,'Thickness (m)',t60,'Height (m)')
 
-    vbuild = 0.D0
-    call obuild(outfile,'Midplane',0.0D0,vbuild)
+       vbuild = 0.0D0
+       call obuild(outfile,'Midplane',0.0D0,vbuild)
 
-    vbuild = vbuild + rminor * kappa
-    call obuild(outfile,'Plasma top',rminor*kappa,vbuild)
+       vbuild = vbuild + rminor * kappa
+       call obuild(outfile,'Plasma top',rminor*kappa,vbuild)
 
-    vbuild = vbuild + vgap
-    call obuild(outfile,'Top scrape-off',vgap,vbuild)
+       vbuild = vbuild + vgap
+       call obuild(outfile,'Top scrape-off',vgap,vbuild)
 
-    vbuild = vbuild + divfix
-    call obuild(outfile,'Divertor structure',divfix,vbuild)
+       vbuild = vbuild + divfix
+       call obuild(outfile,'Divertor structure',divfix,vbuild)
 
-    vbuild = vbuild + shldtth
-    call obuild(outfile,'Top shield',shldtth,vbuild)
+       vbuild = vbuild + shldtth
+       call obuild(outfile,'Top shield',shldtth,vbuild)
 
-    vbuild = vbuild + vgap2
-    call obuild(outfile,'Gap',vgap2,vbuild)
+       vbuild = vbuild + vgap2
+       call obuild(outfile,'Gap',vgap2,vbuild)
 
-    !+**PJK 25/07/11 Added dewar thickness to vertical build
-    vbuild = vbuild + ddwi
-    call obuild(outfile,'Vacuum vessel',ddwi,vbuild)
+       vbuild = vbuild + ddwi
+       call obuild(outfile,'Vacuum vessel',ddwi,vbuild)
 
-    vbuild = vbuild + tfcth
-    call obuild(outfile,'TF coil',tfcth,vbuild)
+       vbuild = vbuild + tfcth
+       call obuild(outfile,'TF coil',tfcth,vbuild)
+
+    else
+       call ocmmnt(outfile,'Single null case')
+
+       write(outfile,20)
+
+       vbuild = tfcth + ddwi + vgap2 + &
+            0.5D0*( shldith+shldoth + blnkith+blnkoth + fwith+fwoth + &
+            scrapli+scraplo ) + rminor*kappa
+     
+       call obuild(outfile,'TF coil',tfcth,vbuild)
+       vbuild = vbuild - tfcth
+
+       call obuild(outfile,'Vacuum vessel',ddwi,vbuild)
+       vbuild = vbuild - ddwi
+
+       call obuild(outfile,'Gap',vgap2,vbuild)
+       vbuild = vbuild - vgap2
+
+       call obuild(outfile,'Top shield',(shldith+shldoth)/2.0D0,vbuild)
+       vbuild = vbuild - (shldith+shldoth)/2.0D0
+
+       call obuild(outfile,'Top blanket',(blnkith+blnkoth)/2.0D0,vbuild)
+       vbuild = vbuild - (blnkith+blnkoth)/2.0D0
+
+       call obuild(outfile,'Top first wall',(fwith+fwoth)/2.0D0,vbuild)
+       vbuild = vbuild - (fwith+fwoth)/2.0D0
+
+       call obuild(outfile,'Top scrape-off',(scrapli+scraplo)/2.0D0,vbuild)
+       vbuild = vbuild - (scrapli+scraplo)/2.0D0
+
+       call obuild(outfile,'Plasma top',rminor*kappa,vbuild)
+       vbuild = vbuild - rminor*kappa
+
+       call obuild(outfile,'Midplane',0.0D0,vbuild)
+
+       vbuild = vbuild - rminor*kappa
+       call obuild(outfile,'Plasma bottom',rminor*kappa,vbuild)
+
+       vbuild = vbuild - vgap
+       call obuild(nout,'Lower scrape-off',vgap,vbuild)
+
+       vbuild = vbuild - divfix
+       call obuild(outfile,'Divertor structure',divfix,vbuild)
+
+       vbuild = vbuild - shldtth
+       call obuild(nout,'Lower shield',shldtth,vbuild)
+
+       vbuild = vbuild - vgap2
+       call obuild(nout,'Gap',vgap2,vbuild)
+
+       vbuild = vbuild - ddwi
+       call obuild(nout,'Vacuum vessel',ddwi,vbuild)
+
+       vbuild = vbuild - tfcth
+       call obuild(nout,'TF coil',tfcth,vbuild)
+	
+    end if
 
     !  Port size information
 
@@ -270,6 +330,7 @@ contains
     !+ad_summ  Vertical build
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
     !+ad_desc  This subroutine determines the vertical build of the machine
@@ -278,6 +339,7 @@ contains
     !+ad_call  divgeom
     !+ad_hist  26/07/11 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
+    !+ad_hist  18/12/12 PJK/RK Added single-null code
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -293,7 +355,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Calculated the divertor geometry
+    !  Calculate the divertor geometry
 
     call divgeom(divht)
 
@@ -304,15 +366,26 @@ contains
     end if
 
     !  Height to inside edge of TF coil
-    !  PJK 25/07/11 Added previously-missing ddwi
 
     if (irfp == 0) then
-       hmax = rminor * kappa + vgap + shldtth + divfix + vgap2 + ddwi
+       hmax = rminor*kappa + vgap + shldtth + divfix + vgap2 + ddwi
     else
        !  RFP: TF coil is assumed circular
        hmax = 0.5D0 * &
             (ddwi+gapds+shldith+blnkith+fwith+scrapli+rminor &
             +rminor+scraplo+fwoth+blnkoth+shldoth+gapsto+ddwi)
+    end if
+
+    !  Vertical locations of divertor coils
+
+    if (snull == 0) then
+       hpfu = hmax + tfcth
+       hpfdif = 0.0D0
+    else
+       hpfu = tfcth + ddwi + vgap2 + &
+            0.5D0*( shldith+shldoth + blnkith+blnkoth + fwith+fwoth + &
+            scrapli+scraplo ) + rminor*kappa
+       hpfdif = (hpfu - hmax - tfcth) / 2.0D0
     end if
 
   end subroutine vbuild

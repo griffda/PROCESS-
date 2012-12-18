@@ -7,6 +7,7 @@ module pfcoil_module
   !+ad_summ  Module containing PF coil routines
   !+ad_type  Module
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_auth  R Kemp, CCFE, Culham Science Centre
   !+ad_cont  pfcoil
   !+ad_cont  ohcalc
   !+ad_cont  efc
@@ -29,6 +30,7 @@ module pfcoil_module
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_hist  18/10/12 PJK Initial version of module
   !+ad_hist  30/10/12 PJK Added times_variables
@@ -45,6 +47,7 @@ module pfcoil_module
   use pfcoil_variables
   use physics_variables
   use process_output
+  use tfcoil_variables
   use times_variables
 
   implicit none
@@ -72,6 +75,7 @@ contains
     !+ad_summ  Routine to perform calculations for the PF and OH coils
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
     !+ad_desc  This subroutine performs the calculations for the PF and
@@ -88,6 +92,7 @@ contains
     !+ad_hist  11/10/12 PJK Removed work1 argument from efc
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
+    !+ad_host  18/12/12 PJK/RK Added single-null coding
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -102,11 +107,14 @@ contains
     integer, parameter :: lrow1 = 2*nptsmx + ngrpmx
     integer, parameter :: lcol1 = ngrpmx
 
-    integer :: i,ii,iii,ij,it,j,k,ncl,nfxf0,ng2,ngrp0,nng,npts,npts0
+    integer :: i,ii,iii,ij,it,j,k,ncl,nfxf0,ng2,ngrp0,nng,nocoil,npts,npts0
+    integer :: ccount, snswit
+    integer, dimension(ngrpmx) :: pcls0
     integer, dimension(ngrpmx+2) :: ncls0
 
     real(kind(1.0D0)) :: area,areaspf,bri,bro,bzi,bzo,curstot,drpt, &
-         dx,dz,forcepf,respf,rll,rpt0,ssqef,volpf
+         dx,dz,forcepf,rclsnorm,respf,rll,rpt0,ssqef,volpf, &
+         pfflux,csflux,dics,ddics
     real(kind(1.0D0)), dimension(ngrpmx,nclsmx) :: rcls0,zcls0
     real(kind(1.0D0)), dimension(ngrpmx/2) :: ccls0
     real(kind(1.0D0)), dimension(ngrpmx) :: sigma,work2
@@ -117,6 +125,10 @@ contains
     real(kind(1.0D0)), dimension(2) :: signn
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Single-null configuration switch
+
+    snswit = 1
 
     !  Set up the number of PF coils including the OH coil (nohc),
     !  and the number of PF circuits including the plasma (ncirt)
@@ -214,6 +226,7 @@ contains
 
     signn(1) =  1.0D0
     signn(2) = -1.0D0
+    rclsnorm = rtot + tfthko/2.0D0 + routr - xctfc(5)
 
     !  N.B. Problems here if k=ncls(group) is greater than 2.
 
@@ -242,7 +255,14 @@ contains
              if (itart == 1) then
                 zcls(j,k) = (hmax-zref(j)) * signn(k)
              else
-                zcls(j,k) = (hmax + tfcth + 0.86D0) * signn(k)
+                !zcls(j,k) = (hmax + tfcth + 0.86D0) * signn(k)
+                if (snswit == 1) then
+                   zcls(j,k) = hpfu + 0.86D0
+                   snswit = -1 * snswit
+                else
+                   zcls(j,k) = -1.0D0 * (hpfu - 2.0D0*hpfdif + 0.86D0)
+                   snswit = -1 * snswit
+                end if
              end if
           end do
 
@@ -251,8 +271,10 @@ contains
           !  PF coil is radially outside the TF coil
 
           do k = 1,ncls(j)
-             rcls(j,k) = rtot + 0.5D0*tfthko + routr
              zcls(j,k) = rminor * zref(j) * signn(k)
+             !  Changed to follow TF coil curve
+             !  rcls(j,k) = rtot + 0.5D0*tfthko + routr
+             rcls(j,k) = sqrt(rclsnorm**2 - zcls(j,k)**2) + xctfc(5)
           end do
 
        else
@@ -339,45 +361,50 @@ contains
 
        !  Conventional aspect ratio scaling
 
+       nfxf0 = 0 ; ngrp0 = 0 ; nocoil = 0
        do i = 1,ngrp
 
           if (ipfloc(i) == 1) then
 
              !  PF coil is stacked on top of the OH coil
+             !  This coil is to balance OH coil flux and should not be involved
+             !  in equilibrium calculation -- RK 07/12
+             !  This is a fixed current for this calculation
+             !  ccls(i) = 0.2D0 * plascur
 
-             ccls(i) = 0.2D0 * plascur
+             ccls(i) = 0.0D0
+             nfxf0 = nfxf0 + ncls(i)
+             do ccount = 1,ncls(i)
+                nocoil = nocoil + 1
+                rfxf(nocoil) = rcls(i, ccount)
+                zfxf(nocoil) = zcls(i, ccount)
+                cfxf(nocoil) = ccls(i)
+             end do
 
           else if (ipfloc(i) == 2) then
 
-             !  PF coil is on top of the TF coil
+             !  PF coil is on top of the TF coil; divertor coil
+             !  This is a fixed current for this calculation -- RK 07/12
+             !  ccls(i) = 0.2D0 * plascur
 
-             ccls(i) = 0.2D0 * plascur
+             ccls(i) = plascur * 2.0D0 * &
+                  ( 1.0D0 - (kappa * rminor)/abs(zcls(i,1)) )
+             nfxf0 = nfxf0 + ncls(i)
+             do ccount = 1, ncls(i)
+                nocoil = nocoil + 1
+                rfxf(nocoil) = rcls(i, ccount)
+                zfxf(nocoil) = zcls(i, ccount)
+                cfxf(nocoil) = ccls(i)
+             end do
 
           else if (ipfloc(i) == 3) then
 
              !  PF coil is radially outside the TF coil
+             !  This is a free current and must be solved for
 
-             npts0 = 1
-             rpts(1) = rmajor
-             zpts(1) = 0.0D0
-             brin(1) = 0.0D0
-             bzin(1) = -1.0D-7 * plascur/rmajor * &
-                  ( log(8.0D0*aspect) + betap - 1.125D0)
-             nfxf0 = 0
-             ngrp0 = 1
-             ncls0(1) = 2
-             rcls0(1,1) = rcls(i,1)
-             rcls0(1,2) = rcls(i,2)
-             zcls0(1,1) = zcls(i,1)
-             zcls0(1,2) = zcls(i,2)
-
-             call efc(ngrpmx,nclsmx,nptsmx,nfixmx,lrow1,lcol1, &
-                  npts0,rpts,zpts,brin,bzin,nfxf0,rfxf,zfxf,cfxf, &
-                  ngrp0,ncls0,rcls0,zcls0,alfapf,bfix,gmat, &
-                  bvec,rc,zc,cc,xc,umat,vmat,sigma,work2,ssqef, &
-                  ccls0)
-             ccls(i) = ccls0(1)
-
+             ngrp0 = ngrp0 + 1
+             pcls0(ngrp0) = i
+	    
           else
              write(*,*) 'Error in routine PFCOIL :'
              write(*,*) 'Illegal value of IPFLOC(',i,'), = ',ipfloc(i)
@@ -386,7 +413,73 @@ contains
           end if
        end do
 
+       do ccount = 1, ngrp0
+          ncls0(ccount) = 2
+          rcls0(ccount,1) = rcls(pcls0(ccount),1)
+          rcls0(ccount,2) = rcls(pcls0(ccount),2)
+          zcls0(ccount,1) = zcls(pcls0(ccount),1)
+          zcls0(ccount,2) = zcls(pcls0(ccount),2)
+       end do
+
+       npts0 = 1
+       rpts(1) = rmajor
+       zpts(1) = 0.0D0
+       brin(1) = 0.0D0
+
+       !  Added rli term correctly -- RK 07/12
+
+       bzin(1) = -1.0D-7 * plascur/rmajor * &
+            (log(8.0D0*aspect) + betap + (rli/2.0D0) - 1.5D0)
+
+       call efc(ngrpmx,nclsmx,nptsmx,nfixmx,lrow1,lcol1,npts0, &
+            rpts,zpts,brin,bzin,nfxf0,rfxf,zfxf,cfxf,ngrp0,ncls0, &
+            rcls0,zcls0,alfapf,bfix,gmat,bvec,rc,zc,cc,xc,umat,vmat, &
+            sigma,work2,ssqef,ccls0)
+
+       do ccount = 1,ngrp0
+          ccls(pcls0(ccount)) = ccls0(ccount)
+       end do
+
     end if
+      
+    !  Flux swing from vertical field
+
+    pfflux = 0.0D0
+    nocoil = 0
+    do ccount = 1, ngrp
+       do i = 1, ncls(ccount)
+          nocoil = nocoil + 1
+          pfflux = pfflux + (ccls(ccount) * sxlg(nocoil,ncirt) &
+               / turns(nocoil))
+          !write(*,*) nocoil,pfflux,ccls(ccount),sxlg(nocoil,ncirt),turns(nocoil)
+       end do
+    end do
+    if (pfflux /= pfflux) then  !  NaN trap...
+       pfflux = 0.0D0
+    end if
+
+    !  Flux swing required from CS coil
+
+    csflux = -(vsres + vsind) - pfflux 
+
+    if (iohcl == 1) then
+       !  Required current change in CS coil
+       ddics = 4.0D-7 * pi*pi * ( &
+            (bore*bore) + (ohcth*ohcth)/6.0D0 + (ohcth*bore)/2.0D0 ) &
+            / (hmax*ohhghf*2.0D0)
+       dics = csflux/ddics
+       !  write (*,*) bzin(1), pfflux, csflux, ddics, dics
+    else
+       write(*,*) 'In routine PFCOIL'
+       write(*,*) 'OH coil not present -- check V-s calcs!'
+    end if
+    if (dics /= dics) then  !  NaN trap...
+       dics = 0.0D0
+    end if
+      
+    fcohbof = ((-curstot * fcohbop) + dics)/curstot
+    fcohbof = min(fcohbof,  1.0D0)
+    fcohbof = max(fcohbof, -1.0D0)
 
     !  Split groups of coils into one set containing ncl coils
 
@@ -399,18 +492,19 @@ contains
 
           !  Currents at different times
 
-          curpfb(ncl) = 1.0D-6 * ccls(nng)
-          curpff(ncl) = 1.0D-6 * ccls(nng) * fcohbof
+          !curpfb(ncl) = 1.0D-6 * ccls(nng)
           curpfs(ncl) = 1.0D-6 * ccl0(nng)
+          curpff(ncl) = 1.0D-6 * (ccls(nng) - (ccl0(nng) * fcohbof/fcohbop))
+          curpfb(ncl) = 1.0D-6 * (ccls(nng) - (ccl0(nng) * (1.0D0/fcohbop)))
        end do
     end do
 
     !  Current in OH coil as a function of time
     !  N.B. If the OH coil is not present then curstot is zero.
 
-    curpfs(ncl+1) =  1.0D-6 * curstot * cohbop/coheof
-    curpff(ncl+1) = -1.0D-6 * curstot * cohbof/coheof
-    curpfb(ncl+1) = -1.0D-6 * curstot
+    curpfs(ncl+1) = -1.0D-6 * curstot * fcohbop
+    curpff(ncl+1) = 1.0D-6 * curstot * fcohbof
+    curpfb(ncl+1) = 1.0D-6 * curstot
 
     !  Set up coil current waveforms, normalised to the peak current in
     !  each coil
@@ -1597,6 +1691,7 @@ contains
     !+ad_call  None
     !+ad_hist  09/05/12 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
+    !+ad_hist  18/12/12 PJK Modified if-logic to >= throughout
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1624,16 +1719,16 @@ contains
 
        !  Find where the peak current occurs
 
-       if ( (abs(curpfs(ic)) > abs(curpfb(ic))) .and. &
-            (abs(curpfs(ic)) > abs(curpff(ic))) ) &
+       if ( (abs(curpfs(ic)) >= abs(curpfb(ic))) .and. &
+            (abs(curpfs(ic)) >= abs(curpff(ic))) ) &
             ric(ic) = curpfs(ic)
 
-       if ( (abs(curpff(ic)) > abs(curpfb(ic))) .and. &
-            (abs(curpff(ic)) > abs(curpfs(ic))) ) &
+       if ( (abs(curpff(ic)) >= abs(curpfb(ic))) .and. &
+            (abs(curpff(ic)) >= abs(curpfs(ic))) ) &
             ric(ic) = curpff(ic)
 
        if ( (abs(curpfb(ic)) >= abs(curpfs(ic))) .and. &
-            (abs(curpfb(ic)) >  abs(curpff(ic))) ) &
+            (abs(curpfb(ic)) >= abs(curpff(ic))) ) &
             ric(ic) = curpfb(ic)
 
        !  Set normalized current waveforms
@@ -2176,6 +2271,7 @@ contains
     !+ad_summ  Writes volt-second information to output file
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  outfile : input integer : output file unit
     !+ad_desc  This routine writes the PF coil volt-second data to the
@@ -2188,6 +2284,7 @@ contains
     !+ad_call  osubhd
     !+ad_hist  01/08/11 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
+    !+ad_hist  18/12/12 PJK/RK Modified for new PF coil current calculations
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2245,8 +2342,36 @@ contains
     end do
 60  format(t3,i2,t12,6(1pe11.3))
 
-    write(outfile,80) (cpt(ncirt,jj),jj=1,6)
-80  format(' Plasma (A)',t12,6(1pe11.3))
+    write(outfile,70) (cpt(ncirt,jj),jj=1,6)
+70  format(' Plasma (A)',t12,6(1pe11.3))
+
+    call oblnkl(outfile)
+    call ocmmnt(outfile,'This consists of: CS coil field balancing:')
+    do k = 1,ncirt-1
+       write(outfile,80) k,cpt(k,1)*turns(k), &
+            cpt(k,2)*turns(k), &
+            -cpt(k,2)*turns(k)*(fcohbof/fcohbop), &
+            -cpt(k,2)*turns(k)*(fcohbof/fcohbop), &
+            -cpt(k,2)*turns(k)*(1.0D0/fcohbop), &
+            cpt(k,6)*turns(k)
+    end do
+80  format(t3,i2,t12,6(1pe11.3))
+
+    call oblnkl(outfile)
+    call ocmmnt(outfile,'And: equilibrium field:')
+    do k = 1,ncirt-1
+       write(outfile,90) k,0.0D0, &
+            0.0D0, &
+            (cpt(k,3)+cpt(k,2)*(fcohbof/fcohbop))*turns(k), &
+            (cpt(k,4)+cpt(k,2)*(fcohbof/fcohbop))*turns(k), &
+            (cpt(k,5)+cpt(k,2)*(1.0D0/fcohbop))*turns(k), &
+            0.0D0
+    end do
+90  format(t3,i2,t12,6(1pe11.3))
+
+    call oblnkl(outfile)
+    write(outfile,100) fcohbop, fcohbof
+100 format(' fcohbop:',f10.3,5x,'fcohbof:',f10.3)
 
   end subroutine outvolt
 
