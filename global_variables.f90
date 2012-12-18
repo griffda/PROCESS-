@@ -84,6 +84,7 @@ module physics_variables
   !+ad_call  None
   !+ad_hist  15/10/12 PJK Initial version of module
   !+ad_hist  17/12/12 PJK Added zfear; modified impfe, cfe0, rnfene, fbfe comments
+  !+ad_hist  18/12/12 PJK Added pthrmw(6 to 8)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -432,13 +433,16 @@ module physics_variables
   real(kind(1.0D0)) :: prad = 0.0D0
   !+ad_vars  psync : synchrotron radiation power (MW/m3)
   real(kind(1.0D0)) :: psync = 0.0D0
-  !+ad_vars  pthrmw(5) : L-H power threshold (MW): <OL>
+  !+ad_vars  pthrmw(8) : L-H power threshold (MW): <OL>
   !+ad_varc         <LI> ITER 1996 nominal
   !+ad_varc         <LI> ITER 1996 upper bound
   !+ad_varc         <LI> ITER 1996 lower bound
   !+ad_varc         <LI> ITER 1997 excluding elongation
-  !+ad_varc         <LI> ITER 1997 including elongation</OL>
-  real(kind(1.0D0)), dimension(5) :: pthrmw = 0.0D0
+  !+ad_varc         <LI> ITER 1997 including elongation
+  !+ad_varc         <LI> 2008 Martin scaling: nominal
+  !+ad_varc         <LI> 2008 Martin scaling: 95% upper bound
+  !+ad_varc         <LI> 2008 Martin scaling: 95% lower bound</OL>
+  real(kind(1.0D0)), dimension(8) :: pthrmw = 0.0D0
   !+ad_vars  ptre : electron transport power (MW/m3)
   real(kind(1.0D0)) :: ptre = 0.0D0
   !+ad_vars  ptri : ion transport power (MW/m3)

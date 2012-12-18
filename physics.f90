@@ -154,6 +154,7 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  17/12/12 PJK Added ZFEAR to argument lists of BETCOM, RADPWR
+    !+ad_hist  18/12/12 PJK Added SAREA,AION to argument list of PTHRESH
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -347,7 +348,7 @@ contains
 
     !  Calculate L- to H-mode power threshold
 
-    call pthresh(dene,dnla,bt,rmajor,kappa,pthrmw)
+    call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
 
     !  Density limit
 
@@ -3063,7 +3064,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine pthresh(dene,dnla,bt,rmajor,kappa,pthrmw)
+  subroutine pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
 
     !+ad_name  pthresh
     !+ad_summ  L-mode to H-mode power threshold calculation
@@ -3075,17 +3076,23 @@ contains
     !+ad_args  bt     : input real :  toroidal field on axis (T)
     !+ad_args  rmajor : input real :  plasma major radius (m)
     !+ad_args  kappa  : input real :  plasma elongation
-    !+ad_args  pthrmw(5) : output real array : power threshold (different scalings)
+    !+ad_args  sarea  : input real :  plasma surface area (m**2)
+    !+ad_args  aion   : input real :  average mass of all ions (amu)
+    !+ad_args  pthrmw(8) : output real array : power threshold (different scalings)
     !+ad_desc  This routine calculates the power threshold for the L-mode to
     !+ad_desc  H-mode transition.
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  17/07/98 PJK New routine
     !+ad_hist  10/11/11 PJK Initial F90 version
+    !+ad_hist  18/12/12 PJK Added scalings 6-8
     !+ad_stat  Okay
     !+ad_docs  ITER Physics Design Description Document, p.2-2
     !+ad_docs  ITER-FDR Plasma Performance Assessments, p.III-9
     !+ad_docs  Snipes, 24th EPS Conference, Berchtesgaden 1997, p.961
+    !+ad_docs  Martin et al, 11th IAEA Tech. Meeting on H-mode Physics and
+    !+ad_docc  Transport Barriers, Journal of Physics: Conference Series
+    !+ad_docc  123 (2008) 012033
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3094,12 +3101,12 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: dene, dnla, bt, rmajor, kappa
-    real(kind(1.0D0)), dimension(5), intent(out) :: pthrmw
+    real(kind(1.0D0)), intent(in) :: dene,dnla,bt,rmajor,kappa,sarea,aion
+    real(kind(1.0D0)), dimension(8), intent(out) :: pthrmw
 
     !  Local variables
 
-    real(kind(1.0D0)) :: dene20,dnla20
+    real(kind(1.0D0)) :: dene20,dnla20,marterr
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3127,6 +3134,19 @@ contains
 
     pthrmw(5) = 0.42D0 * dnla20**0.80D0 * bt**0.90D0 * rmajor**1.99D0 &
          * kappa**0.76D0
+
+    !  Martin et al (2008) for recent ITER scaling, with mass correction
+    !  and 95% confidence limits
+
+    pthrmw(6) = 0.0488D0 * dnla20**0.717D0 * bt**0.803D0 &
+         * sarea**0.941D0 * (2.0D0/aion)
+
+    marterr = 0.057D0**2 + (0.035D0 * log(dnla20))**2 &
+         + (0.032D0 * log(bt))**2 + (0.019D0 * log(sarea))**2
+    marterr = sqrt(marterr) * pthrmw(6)
+
+    pthrmw(7) = pthrmw(6) + 2.0D0*marterr
+    pthrmw(8) = pthrmw(6) - 2.0D0*marterr
 
   end subroutine pthresh
 
@@ -4217,6 +4237,7 @@ contains
     !+ad_hist  31/10/12 PJK Added constraint_variables
     !+ad_hist  05/11/12 PJK Added rfp_variables
     !+ad_hist  17/12/12 PJK Added ZFEAR lines
+    !+ad_hist  18/12/12 PJK Added PTHRMW(6 to 8)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4302,16 +4323,16 @@ contains
     end if
 
     call osubhd(outfile,'Beta Information :')
-    call ovarrf(outfile,'Total plasma beta','(beta)',beta)
-    call ovarrf(outfile,'Total poloidal beta','(betap)',betap)
-    call ovarrf(outfile,'Total toroidal beta',' ',beta*(btot/bt)**2)
-    call ovarrf(outfile,'Fast alpha beta','(betaft)',betaft)
-    call ovarrf(outfile,'Beam ion beta','(betanb)',betanb)
+    call ovarre(outfile,'Total plasma beta','(beta)',beta)
+    call ovarre(outfile,'Total poloidal beta','(betap)',betap)
+    call ovarre(outfile,'Total toroidal beta',' ',beta*(btot/bt)**2)
+    call ovarre(outfile,'Fast alpha beta','(betaft)',betaft)
+    call ovarre(outfile,'Beam ion beta','(betanb)',betanb)
 
     betath = beta-betaft-betanb
-    call ovarrf(outfile,'Thermal beta',' ',betath)
-    call ovarrf(outfile,'Thermal poloidal beta',' ',betath*(btot/bp)**2)
-    call ovarrf(outfile,'Thermal toroidal beta (= beta-exp)',' ', &
+    call ovarre(outfile,'Thermal beta',' ',betath)
+    call ovarre(outfile,'Thermal poloidal beta',' ',betath*(btot/bp)**2)
+    call ovarre(outfile,'Thermal toroidal beta (= beta-exp)',' ', &
          betath*(btot/bt)**2)
 
     call ovarrf(outfile,'2nd stability beta : beta_p / (R/a)', &
@@ -4420,14 +4441,20 @@ contains
 
     call osubhd(outfile,'H-mode Power Threshold Scalings :')
 
-    call ovarre(outfile,'1996 ITER Scaling: nominal (MW)','(pthrmw(1))', &
+    call ovarre(outfile,'1996 ITER scaling: nominal (MW)','(pthrmw(1))', &
          pthrmw(1))
-    call ovarre(outfile,'1996 ITER Scaling: upper bound (MW)','(pthrmw(2))', &
+    call ovarre(outfile,'1996 ITER scaling: upper bound (MW)','(pthrmw(2))', &
          pthrmw(2))
-    call ovarre(outfile,'1996 ITER Scaling: lower bound (MW)','(pthrmw(3))', &
+    call ovarre(outfile,'1996 ITER scaling: lower bound (MW)','(pthrmw(3))', &
          pthrmw(3))
-    call ovarre(outfile,'1997 ITER Scaling (1) (MW)','(pthrmw(4))',pthrmw(4))
-    call ovarre(outfile,'1997 ITER Scaling (2) (MW)','(pthrmw(5))',pthrmw(5))
+    call ovarre(outfile,'1997 ITER scaling (1) (MW)','(pthrmw(4))',pthrmw(4))
+    call ovarre(outfile,'1997 ITER scaling (2) (MW)','(pthrmw(5))',pthrmw(5))
+    call ovarre(outfile,'2008 Martin scaling: nominal (MW)', &
+         '(pthrmw(6))',pthrmw(6))
+    call ovarre(outfile,'2008 Martin scaling: 95% upper bound (MW)', &
+         '(pthrmw(7))',pthrmw(7))
+    call ovarre(outfile,'2008 Martin scaling: 95% lower bound (MW)', &
+         '(pthrmw(8))',pthrmw(8))
 
     call osubhd(outfile,'Confinement :')
 

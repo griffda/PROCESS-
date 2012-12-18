@@ -60,7 +60,6 @@ Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 %  scaling law references into table
 %  IFE model
 %  check and expand references
-%  mention power threshold scalings
 %  
 %  
 %  
@@ -1339,7 +1338,42 @@ methods, as summarised here.
 
 \subsubsection{L-H power threshold scalings}
 
-\ldots
+Transitions from a standard confinement mode (L-mode) to an improved
+confinement regime (H-mode), called L-H transitions, are observed in most
+tokamaks. A range of scaling laws are available that provide estimates of the
+auxiliary power required to initiate these transitions, via extrapolations
+from present-day devices. \process\/ calculates these power threshold values
+for the scaling laws listed in Table~\ref{tab:power_thresholds}, in
+routine~\texttt{PTHRESH}.
+
+% Table summarising L-H power threshold scalings
+
+\begin{table}[tbph]
+\small
+\begin{center}
+\begin{tabular}{||c||l||l||} \hline
+ & name & reference \\ \hline
+(1) & 1996 ITER scaling: nominal & ITER Physics Design Description Document, \\
+(2) & 1996 ITER Scaling: upper bound & D. Boucher, p.2-2 \\
+(3) & 1996 ITER Scaling: lower bound &  \\ \hline
+(4) & 1997 ITER Scaling (1) & J. A. Snipes, ITER H-mode Threshold Database \\
+(5) & 1997 ITER Scaling (2) &  Working Group, Controlled Fusion and Plasma \\
+ & & Physics, 24th EPS Conference, Berchtesgaden, \\
+ & & June 1997, vol.21A, part III, p.961 \\ \hline
+(6) & 2008 Martin scaling: nominal & Martin et al, 11th IAEA Tech. Meeting on
+H-mode \\
+(7) & 2008 Martin scaling: 95\% upper bound &  Physics and Transport Barriers,
+Journal of Physics: \\
+(8) & 2008 Martin scaling: 95\% lower bound & Conference Series \textbf{123}
+(2008) 012033 \\
+\hline
+\end{tabular}
+\end{center}
+\normalsize
+\caption[TABLE_LHPOWER] {\label{tab:power_thresholds}
+  \textit{Summary of the L-H power threshold scalings implemented in \process.}
+}
+\end{table}
 
 \subsubsection{Other plasma physics options}
 
