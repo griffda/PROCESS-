@@ -60,7 +60,6 @@ Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 %  scaling law references into table
 %  IFE model
 %  check and expand references
-%  add figure for snull=1 build
 %  
 %  
 %  
@@ -1067,25 +1066,24 @@ the $(R,Z)$ coordinate system, where $R$ is the radial distance from the
 vertical centreline (axis) of the torus, and $Z$ is the vertical distance from
 the equatorial midplane, about which the machine is assumed to be up-down
 symmetrical (by default; the vertical build is slightly different for single
-null plasma devices). Components are often referred to as being `inboard' or
-`outboard', which simply means that they lie at a radius $R$ less than or
-greater than $R_0$, respectively, where $R_0$ is the plasma major radius
-(\texttt{rmajor}). For the sake of clarity the thicknesses are not drawn to
-scale, and the space labelled as the divertor does not indicate in any way the
-actual shape of that component.
+null plasma devices --- see Figure~\ref{fig:buildsnd}). Components are often
+referred to as being `inboard' or `outboard', which simply means that they lie
+at a radius $R$ less than or greater than $R_0$, respectively, where $R_0$ is
+the plasma major radius (\texttt{rmajor}). For the sake of clarity the
+thicknesses are not drawn to scale, and the space labelled as the divertor
+does not indicate in any way the actual shape of that component.
 
 \begin{figure}[tbph]
 \epsfig{file=build.eps,width=170mm}
 \caption[build] {\label{fig:build}
-
-    \textit{Schematic diagram of the fusion power core of a typical tokamak
-      power plant modelled by \process, showing the relative positions of the
-      components. A double null plasma is assumed (\texttt{snull=0}). Also
-      shown are the code variables used to define the thicknesses of the
-      components. The arrowed labels adjacent to the axes are the total
-      `builds' to that point. The precise locations and sizes of the 
-    PF coils are calculated within the code (see Section~\ref{sec:pfcoils}).}
-
+  \textit{Schematic diagram of the fusion power core of a typical tokamak
+    power plant modelled by \process, showing the relative positions of the
+    components. A double null plasma is assumed (\texttt{snull=0}) --- compare
+    Figure~\ref{fig:buildsnd}. Also shown are the code variables used to
+    define the thicknesses of the components. The arrowed labels adjacent to
+    the axes are the total `builds' to that point. The precise locations and
+    sizes of the PF coils are calculated within the code (see
+    Section~\ref{sec:pfcoils}).}
 }
 \end{figure}
 
@@ -1094,6 +1092,21 @@ so are not changed during the course of the simulation.  The rest are
 calculated by the code during execution. In addition, some of the component
 sizes can be used as \textit{iteration variables}\/ (see
 Section~\ref{sec:itvars}) to help in the optimisation process.
+
+\begin{figure}[tbph]
+\epsfig{file=buildsnd.eps,height=200mm}
+\caption[build] {\label{fig:buildsnd}
+  \textit{Schematic diagram of the fusion power core of a typical tokamak
+    power plant modelled by \process, showing the relative positions of the
+    components. A single null plasma is assumed (\texttt{snull=1}) --- compare
+    Figure~\ref{fig:build}. The radial build is the same as for a double null
+    configuration; shown along the vertical axis are the code variables used
+    to define the vertical thicknesses of the components. The arrowed labels
+    adjacent to the axis are the total `builds' (distance from the midplane,
+    Z=0) to that point. The precise locations and sizes of the  PF coils are
+    calculated within the code (see Section~\ref{sec:pfcoils}).}
+}
+\end{figure}
 
 \subsection{Plasma physics models}
 
@@ -1451,9 +1464,10 @@ divertor is cooled either by gaseous helium or by pressurised water.
 Switch \texttt{snull} controls the overall plasma configuration. Setting
 \texttt{snull = 0} corresponds to an up-down symmetric, double null
 configuration (the default), while \texttt{snull = 1} assumes a single null
-plasma with the divertor at the bottom of the machine. The vertical build and
-PF coil current scaling algorithms take the value of this switch into account,
-although not the plasma geometry at present.
+plasma with the divertor at the bottom of the machine. The vertical build (see
+Figure~\ref{fig:buildsnd}) and PF coil current scaling algorithms take the
+value of this switch into account, although not the plasma geometry at
+present.
 
 The Harrison-Kukushkin-Hotston divertor model~\cite{IPDG} developed for ITER
 is used (except for the case of tight aspect ratio tokamaks --- see

@@ -1,0 +1,250 @@
+#! /usr/bin/env python
+
+import sys
+from pylab import *
+import getopt
+from proc_func import *
+
+# Main program below here
+def main():
+    try:
+        opts, args = getopt.gnu_getopt(sys.argv[1:], "gho:", ["graphics", "file", "help", "output="])
+    except getopt.GetoptError as err:
+        # print help information and exit:
+        print str(err) # will print something like "option -a not recognized"
+        usage()
+        sys.exit(2)
+    infile = 'OUT.DAT'
+    if args != []:
+        infile = args[0]
+    outfile = infile + '.eps'
+    isps = False
+    for o, a in opts:
+        if o in ("-g", "--graphics"):
+            isps = True
+        elif o in ("-h", "--help"):
+            usage()
+            sys.exit()
+        elif o in ("-o", "--output"):
+            outfile = a
+	    isps = True	    
+        else:
+            assert False, "unhandled option"
+    try:
+        with open(infile) as f: pass
+    except IOError as e:
+        print 'File '+infile+' not found: stopping.'
+	sys.exit(2)
+
+    if isps:
+        try:
+            with open(outfile) as f:
+                print 'File '+outfile+' already exists.'
+                owrite = raw_input('Overwrite (y/n)?\n')
+                if owrite in ("y", "Y", "yes", "YES"): pass
+	        else: sys.exit()
+        except IOError as e: pass
+
+    f = open(infile, 'r')
+
+# gather build data    
+    dat, otherdat = get_build(f)
+    rmajor = find_val_one(f, 'rmajor')
+    rminor = find_val_one(f, 'rminor')
+    triang = find_val_one(f, 'triang95')
+    kappa = find_val_one(f, 'kappa95')
+    snull = otherdat[-1]
+
+# get coil information
+    coils, cnames = get_coils(f)
+    ncoils = len(cnames) - 1
+    
+# create the main plot
+    allplot = figure(figsize=(12, 9), dpi=80)
+
+# set up first plot: radial and vertical build
+    plot0 = allplot.add_subplot(231, aspect='equal')
+# plot coils
+    for i in range(ncoils):
+        plot_coil(coils[i], cnames[i])
+# plot TF coils -- FIX THIS FOR SNULL
+    tf_type, insx, insy, outsx, outsy = get_tf(f, dat, otherdat)
+    plot(insx, insy, color='black'), plot(outsx, outsy, color='black')
+# single-null vertical build
+    if snull:
+# plot cryostat upper
+        for i in range(2):
+            radx = (otherdat[19-i] + otherdat[5+i])/2.
+            rminx = (otherdat[19-i] - otherdat[5+i])/2.
+            kapx = otherdat[22+i]/rminx
+            plotdh(radx, rminx, triang, kapx)
+# plot shield, blanket, FW upper
+        for i in range(4):
+            radx = (otherdat[17-i] + otherdat[7+i])/2.
+            rminx = (otherdat[17-i] - otherdat[7+i])/2.
+            kapx = otherdat[24+i]/rminx
+            plotdh(radx, rminx, triang, kapx)
+# plot cryostat, shield, lower
+        for i in range(2):
+            radx = (otherdat[19-i] + otherdat[5+i])/2.
+            rminx = (otherdat[19-i] - otherdat[5+i])/2.
+            kapx = otherdat[34-i]/rminx
+            plotdh(radx, rminx, triang, kapx)
+        for i in range(2):
+            radx = (otherdat[17-i] + otherdat[7+i])/2.
+            rminx = (otherdat[17-i] - otherdat[7+i])/2.
+            kapx = otherdat[33-i]/rminx
+            plotdh(radx, rminx, triang, kapx)
+# plot lower blanket, FW
+        plotdhgap(otherdat[8], otherdat[16], dat[9], dat[16], otherdat[32], -dat[25], triang)
+	plotdhgap(otherdat[9], otherdat[15], dat[10], dat[15], otherdat[32]+dat[25], -dat[26], triang)
+    else:
+# double-null vertical build
+# cryostat and gap
+        plotthick(otherdat[5], otherdat[19], dat[6], dat[19], otherdat[27], dat[27], triang)
+# shield
+        plotthick(otherdat[7], otherdat[17], dat[8], dat[17], otherdat[25], dat[25], triang)
+# blanket, first wall, and divertor chunk
+        plotdgap(otherdat[8], otherdat[16], dat[9], dat[16], otherdat[24], dat[24]/2., triang)
+        plotdgap(otherdat[9], otherdat[15], dat[10], dat[15], otherdat[24]-dat[24]/2., dat[24]/2., triang)
+# SOL
+        plotdgap(otherdat[10], otherdat[14], dat[11], dat[14], otherdat[23], dat[23], triang)
+    
+# plot plasma
+    plot_plas_arcs(rmajor, rminor, 1.5*triang, 1.1*kappa+0.04, snull)
+# plot centre cross
+    plot([rmajor-0.25, rmajor+0.25, rmajor, rmajor, rmajor], [0, 0, 0, 0.25, -0.25], color='black')
+    xlabel('R / m')
+    ylabel('Z / m')
+    title('Radial build')
+
+# gather data
+    data, info = gather_info(f, tf_type)
+    rcParams.update({'font.size': 7})
+    xmin = 0
+    xmax = 1
+    ymin = -16
+    ymax = 1
+    eqpos = 0.7
+# plot data: field 1: geometry
+    plot1 = allplot.add_subplot(232)
+    count = 0
+    text(-0.05, 1, 'Geometry:', ha='left', va='center')
+    plot1.set_ylim([ymin, ymax])
+    plot1.set_xlim([xmin, xmax])
+    plot1.set_axis_off()
+    plot1.set_autoscaley_on(False)
+    plot1.set_autoscalex_on(False)
+    for i in range(len(data)):
+        if float(data[i][0]) == 1:
+            text(0, -count, data[i][2], ha='left', va='center')
+            text(eqpos, -count, '= '+data[i][3]+' '+data[i][4], ha='left', va='center')
+            count = count + 1
+    count = count + 1
+    for i in range(4):
+        text(0, -count, info[i], ha='left', va='center', fontsize='smaller')
+	count = count + 1
+    optim = find_val_one(f, 'ioptimz')
+    if optim >= 0:
+        swit = find_val_one(f, 'minmax')
+	minmax = swit/abs(swit)
+	swit = abs(swit)
+        optopts = {1 : 'Plasma major radius',
+                   2 : 'ratio fusion power:input power',
+                   3 : 'neutron wall load',
+                   4 : 'total TF + PF coil power',
+                   5 : 'ratio fusion power:injection power',
+                   6 : 'cost of electricity',
+                   7 : 'constructed cost',
+                   8 : 'aspect ratio',
+                   9 : 'divertor heat load',
+                   10 : 'toroidal field on axis',
+                   11 : 'injection power',
+                   14 : 'pulse length'}
+        if minmax > 0 : opmode = 'minimise '
+	else : opmode = 'maximise '
+	text(0, -count, 'Optimised to '+opmode+optopts[swit]+'.', ha='left', va='center', fontsize='smaller')
+	text(0, -count-1, infile, ha='left', va='center', fontsize='smaller')
+    text(0, -count-2, 'See PROCESS user guide for radial build details', ha='left', va='center', fontsize='smaller')
+
+# plot data: field 2: physics
+    plot2 = allplot.add_subplot(233)
+    count = 0
+    text(-0.05, 1, 'Physics:', ha='left', va='center')
+    plot2.set_ylim([ymin, ymax])
+    plot2.set_xlim([xmin, xmax])
+    plot2.set_axis_off()
+    plot2.set_autoscaley_on(False)
+    plot2.set_autoscalex_on(False)
+    for i in range(len(data)):
+        if float(data[i][0]) == 2:
+            text(0, -count, data[i][2], ha='left', va='center')
+            text(eqpos, -count, '= '+data[i][3]+' '+data[i][4], ha='left', va='center')
+            count = count + 1
+
+# plot data: field 3: magnetics
+    plot3 = allplot.add_subplot(234)
+    count = 0
+    text(-0.05, 1, 'Coil currents etc:', ha='left', va='center')
+    plot3.set_ylim([ymin, ymax])
+    plot3.set_xlim([xmin, xmax])
+    plot3.set_axis_off()
+    plot3.set_autoscaley_on(False)
+    plot3.set_autoscalex_on(False)
+    for i in range(len(data)):
+        if float(data[i][0]) == 3:
+            text(0, -count, data[i][2], ha='left', va='center')
+            text(eqpos, -count, '= '+data[i][3]+' '+data[i][4], ha='left', va='center')
+            count = count + 1
+    count = count + 1
+    text(0.1, -count, 'TF coil type is '+tf_type, ha='left', va='center')
+    count = count + 1
+    for i in range(len(data)):
+        if float(data[i][0]) == 35:
+            text(0, -count, data[i][2], ha='left', va='center')
+            text(eqpos, -count, '= '+data[i][3]+' '+data[i][4], ha='left', va='center')
+            count = count + 1
+
+# plot data: field 4: power flows/economics
+    plot4 = allplot.add_subplot(235)
+    count = 0
+    text(-0.05, 1, 'Power flows/economics:', ha='left', va='center')
+    plot4.set_ylim([ymin, ymax])
+    plot4.set_xlim([xmin, xmax])
+    plot4.set_axis_off()
+    plot4.set_autoscaley_on(False)
+    plot4.set_autoscalex_on(False)
+    for i in range(len(data)):
+        if float(data[i][0]) == 4:
+            text(0, -count, data[i][2], ha='left', va='center')
+            text(eqpos, -count, '= '+data[i][3]+' '+data[i][4], ha='left', va='center')
+            count = count + 1
+
+ # plot data: field 5: Current drive
+    plot5 = allplot.add_subplot(236)
+    count = 0
+    for i in range(len(data)):
+        if float(data[i][0]) == 51:
+            text(-0.05, 1, data[i][2], ha='left', va='center')
+    plot5.set_ylim([ymin, ymax])
+    plot5.set_xlim([xmin, xmax])
+    plot5.set_axis_off()
+    plot5.set_autoscaley_on(False)
+    plot5.set_autoscalex_on(False)
+    for i in range(len(data)):
+        if float(data[i][0]) == 5:
+            text(0, -count, data[i][2], ha='left', va='center')
+            text(eqpos, -count, '= '+data[i][3]+' '+data[i][4], ha='left', va='center')
+            count = count + 1
+   
+#    print data
+    
+    f.close()
+
+    if isps:
+        savefig(outfile, orientation='landscape')
+    else:
+        show()
+    
+if __name__ == "__main__":
+    main()
