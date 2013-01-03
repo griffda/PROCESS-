@@ -13,7 +13,6 @@ module physics_module
   !+ad_cont  bpol
   !+ad_cont  culblm
   !+ad_cont  betcom
-  !+ad_cont  denlim
   !+ad_cont  culdlm
   !+ad_cont  palph
   !+ad_cont  fpower
@@ -67,6 +66,7 @@ module physics_module
   !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_hist  05/11/12 PJK Added startup_variables
   !+ad_hist  06/11/12 PJK Inserted routines outplas, outtim from outplas.f90
+  !+ad_hist  03/01/13 PJK Removed denlim routine
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -121,7 +121,6 @@ contains
     !+ad_call  culbst
     !+ad_call  culcur
     !+ad_call  culdlm
-    !+ad_call  denlim
     !+ad_call  fnewbs
     !+ad_call  palph
     !+ad_call  palph2
@@ -155,6 +154,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  17/12/12 PJK Added ZFEAR to argument lists of BETCOM, RADPWR
     !+ad_hist  18/12/12 PJK Added SAREA,AION to argument list of PTHRESH
+    !+ad_hist  03/01/13 PJK Removed switch ICULDL and call to DENLIM
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -356,19 +356,10 @@ contains
     pdivt = vol * (palp + pcharge + pinj + pohmpv - prad - plrad)
     pdivt = max(0.001D0, pdivt)
 
-    if (iculdl == 0) then  !  Use old method
-       call denlim(bt,rmajor,prn1,pdivt,q95,sarea,dnelimt)
-
-    else if (iculdl == 1) then
-       call culdlm(bt,idensl,pdivt,plascur,prn1,qstar,q95, &
-            rmajor,rminor,sarea,zeff,dlimit,dnelimt)
-
-    else
-       write(*,*) 'Error in routine PHYSICS:'
-       write(*,*) 'Illegal value for ICULDL, = ',iculdl
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
+    !  Old method (iculdl=0)
+    !call denlim(bt,rmajor,prn1,pdivt,q95,sarea,dnelimt)
+    call culdlm(bt,idensl,pdivt,plascur,prn1,qstar,q95, &
+         rmajor,rminor,sarea,zeff,dlimit,dnelimt)
 
     !  Calculate transport losses and energy confinement time using the
     !  chosen scaling law
@@ -1156,53 +1147,6 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine denlim(bt,rmajor,prn1,pdiv,q,sarea,dnelimt)
-
-    !+ad_name  denlim
-    !+ad_summ  Calculates Borrass density limit
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  bt      : input real :  toroidal field on axis (T)
-    !+ad_args  rmajor  : input real :  major radius (m)
-    !+ad_args  prn1    : input real :  edge density / average plasma density
-    !+ad_args  pdiv    : input real :  power flowing to the edge plasma (MW)
-    !+ad_args  q       : input real :  safety factor at 95% surface
-    !+ad_args  sarea   : input real :  plasma surface area (m**2)
-    !+ad_args  dnelimt : output real : average plasma density limit (m**-3)
-    !+ad_desc  This subroutine calculates the density limit using the
-    !+ad_desc  Borrass model.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    real(kind(1.0D0)), intent(in) :: bt, rmajor, prn1, pdiv, q, sarea
-    real(kind(1.0D0)), intent(out) :: dnelimt
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: denslim, qparll
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    qparll = pdiv/sarea
-    denslim = 0.5D20 * qparll**0.57D0 * bt**0.31D0 / (q*rmajor)**0.1D0
-
-    dnelimt = denslim/prn1
-
-  end subroutine denlim
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   subroutine culdlm(bt,idensl,pdivt,plascur,prn1,qcyl,q95, &
        rmajor,rminor,sarea,zeff,dlimit,dnelimt)
 
@@ -1287,6 +1231,8 @@ contains
     !  Borrass density limit model for ITER (II)
     !  This applies to the density at the plasma edge, so must be scaled
     !  to give the density limit applying to the average plasma density.
+    !  This formula is (almost) identical to that in the original routine
+    !  denlim (now deleted).
 
     dlim = 0.5D20 * qperp**0.57D0 * bt**0.31D0 /(q95*rmajor)**0.09D0
     dlimit(3) = dlim/prn1
@@ -4238,6 +4184,7 @@ contains
     !+ad_hist  05/11/12 PJK Added rfp_variables
     !+ad_hist  17/12/12 PJK Added ZFEAR lines
     !+ad_hist  18/12/12 PJK Added PTHRMW(6 to 8)
+    !+ad_hist  03/01/13 PJK Removed ICULDL if-statement
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4387,16 +4334,14 @@ contains
     call ovarrf(outfile,'Density profile factor','(alphan)',alphan)
     call ovarrf(outfile,'Temperature profile factor','(alphat)',alphat)
 
-    if (iculdl == 1) then
-       call osubhd(outfile,'Density Limit using different models :')
-       call ovarre(outfile,'Old ASDEX model','(dlimit(1))',dlimit(1))
-       call ovarre(outfile,'Borrass ITER model I','(dlimit(2))',dlimit(2))
-       call ovarre(outfile,'Borrass ITER model II','(dlimit(3))',dlimit(3))
-       call ovarre(outfile,'JET edge radiation model','(dlimit(4))',dlimit(4))
-       call ovarre(outfile,'JET simplified model','(dlimit(5))',dlimit(5))
-       call ovarre(outfile,'Hugill-Murakami Mq model','(dlimit(6))',dlimit(6))
-       call ovarre(outfile,'Greenwald model','(dlimit(7))',dlimit(7))
-    end if
+    call osubhd(outfile,'Density Limit using different models :')
+    call ovarre(outfile,'Old ASDEX model','(dlimit(1))',dlimit(1))
+    call ovarre(outfile,'Borrass ITER model I','(dlimit(2))',dlimit(2))
+    call ovarre(outfile,'Borrass ITER model II','(dlimit(3))',dlimit(3))
+    call ovarre(outfile,'JET edge radiation model','(dlimit(4))',dlimit(4))
+    call ovarre(outfile,'JET simplified model','(dlimit(5))',dlimit(5))
+    call ovarre(outfile,'Hugill-Murakami Mq model','(dlimit(6))',dlimit(6))
+    call ovarre(outfile,'Greenwald model','(dlimit(7))',dlimit(7))
 
     call osubhd(outfile,'Fuel Constituents :')
     if (idhe3 == 0) then

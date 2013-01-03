@@ -317,6 +317,7 @@ contains
     !+ad_hist  10/10/12 PJK Removed IVMS
     !+ad_hist  17/12/12 PJK Added ZFEAR
     !+ad_hist  18/12/12 PJK Added SNULL; removed IDIVRT
+    !+ad_hist  03/01/13 PJK Removed ICULDL (replaced with error trap)
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -530,8 +531,13 @@ contains
           call parse_int_variable('ICULBL', iculbl, 0, 2, &
                'Switch for Troyon beta limit scaling')
        case ('ICULDL')
-          call parse_int_variable('ICULDL', iculdl, 0, 1, &
-               'Switch for density limit formulae')
+          write(outfile,*) 'ICULDL is now obsolete -'
+          write(outfile,*) 'please remove it from the input file'
+          write(outfile,*) '(use IDENSL=3 for equivalent model).'
+          error_code = lineno
+          error_routine = 'PARSE_INPUT_FILE'
+          error_message = 'Obsolete variable ICULDL specified'
+          call report_error
        case ('ICURR')
           call parse_int_variable('ICURR', icurr, 1, 7, &
                'Switch for plasma current scaling')

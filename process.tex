@@ -1231,11 +1231,9 @@ $\epsilon.\beta_p$ should be set using input parameter \texttt{epbetmax}.
 
 Several density limit models~\cite{172} are available in \process. These are
 calculated in routine \texttt{CULDLM}, which is called by \texttt{PHYSICS}.
-To enforce any of these limits,
-% set \texttt{iculdl = 1} and
-turn on constraint equation no.~5 with iteration variable no.~9
-(\texttt{fdene}).  In addition, switch \texttt{idensl} must be set to the
-relevant value, as follows:-
+To enforce any of these limits, turn on constraint equation no.~5 with
+iteration variable no.~9 (\texttt{fdene}).  In addition, switch
+\texttt{idensl} must be set to the relevant value, as follows:-
 \begin{description}
 \item [\texttt{idensl = 1} :] ASDEX model
 \item [\texttt{idensl = 2} :] Borrass model for ITER, I

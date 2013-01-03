@@ -86,6 +86,7 @@ module physics_variables
   !+ad_hist  17/12/12 PJK Added zfear; modified impfe, cfe0, rnfene, fbfe comments
   !+ad_hist  18/12/12 PJK Added pthrmw(6 to 8)
   !+ad_hist  18/12/12 PJK Added snull; modified idivrt
+  !+ad_hist  03/01/13 PJK Removed iculdl
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -308,10 +309,6 @@ module physics_variables
   !+ad_varc          <LI> = 1 apply limit to thermal beta;
   !+ad_varc          <LI> = 2 apply limit to thermal + neutral beam beta</UL>
   integer :: iculbl = 0
-  !+ad_vars  iculdl /0/ : switch for density limit:<UL>
-  !+ad_varc          <LI> = 0 use old method;
-  !+ad_varc          <LI> = 1 use new method (seven formulae to choose from)</UL>
-  integer :: iculdl = 0
   !+ad_vars  icurr /4/ : switch for plasma current scaling to use:<UL>
   !+ad_varc         <LI> = 1 Peng analytic fit;
   !+ad_varc         <LI> = 2 Peng double null divertor scaling (TART);
@@ -321,7 +318,7 @@ module physics_variables
   !+ad_varc         <LI> = 6 Todd empirical scaling II;
   !+ad_varc         <LI> = 7 Connor-Hastie model</UL>
   integer :: icurr = 4
-  !+ad_vars  idensl /3/ : switch for density limit to enforce (if ICULDL=1):<UL>
+  !+ad_vars  idensl /3/ : switch for density limit to enforce:<UL>
   !+ad_varc          <LI> = 1 old ASDEX;
   !+ad_varc          <LI> = 2 Borrass model for ITER (I);
   !+ad_varc          <LI> = 3 Borrass model for ITER (II);
@@ -3146,7 +3143,7 @@ end module startup_variables
 
 module fispact_variables
 
-  !+ad_name  startup_variables
+  !+ad_name  fispact_variables
   !+ad_summ  Module containing global variables relating to the
   !+ad_summ  fispact routines
   !+ad_type  Module
