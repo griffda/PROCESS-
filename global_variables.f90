@@ -87,6 +87,7 @@ module physics_variables
   !+ad_hist  18/12/12 PJK Added pthrmw(6 to 8)
   !+ad_hist  18/12/12 PJK Added snull; modified idivrt
   !+ad_hist  03/01/13 PJK Removed iculdl
+  !+ad_hist  08/01/13 PJK Modified iinvqd, iiter, ires comments
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -352,10 +353,14 @@ module physics_variables
   !+ad_varc               is required. Note that whole code is not quite
   !+ad_varc               consistent yet...</UL>
   integer :: ignite = 0
-  !+ad_vars  iinvqd /1/ : switch for inverse quadrature in tauee laws (1=yes)
+  !+ad_vars  iinvqd /1/ : switch for inverse quadrature in tauee laws:<UL>
+  !+ad_varc          <LI> = 0 inverse quadrature not used;
+  !+ad_varc          <LI> = 1 inverse quadrature used</UL>
   integer :: iinvqd = 1
-  !+ad_vars  iiter /1/ : switch for ITER fusion power calculations, (1=yes)
-  !+ad_varc              (bad fit if alphan /= 0.5 and/or alphat /= 1.0)
+  !+ad_vars  iiter /1/ : switch for ITER fusion power calculations:<UL>
+  !+ad_varc         <LI> = 0 fusion power integrated over plasma profiles;
+  !+ad_varc         <LI> = 1 fusion power calculated from ITER analytical formula
+  !+ad_varc                  (bad fit if alphan /= 0.5 and/or alphat /= 1.0)</UL>
   integer :: iiter = 1
   !+ad_vars  impc /1.0/ : carbon impurity multiplier
   real(kind(1.0D0)) :: impc = 1.0D0
@@ -363,7 +368,9 @@ module physics_variables
   real(kind(1.0D0)) :: impfe = 1.0D0
   !+ad_vars  impo /1.0/ : oxygen impurity multiplier
   real(kind(1.0D0)) :: impo = 1.0D0
-  !+ad_vars  ires /1/ : switch for neo-classical plasma resistivity (1=yes)
+  !+ad_vars  ires /1/ : switch for neo-classical plasma resistivity:<UL>
+  !+ad_varc        <LI> = 0 term excluded from plasma resistivity;
+  !+ad_varc        <LI> = 1 term included in plasma resistivity</UL>
   integer :: ires = 1
   !+ad_vars  isc /6/ switch for energy confinement time scaling law
   !+ad_varc          (see description in tauscl)
@@ -561,6 +568,7 @@ module current_drive_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  16/10/12 PJK Initial version of module
+  !+ad_hist  08/01/13 PJK Modified irfcd comments
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -618,7 +626,9 @@ module current_drive_variables
   !+ad_varc         <LI> new Culham Neutral Beam model
   !+ad_varc         <LI> RFP Oscillating Field current drive </OL>
   integer :: iefrf = 5
-  !+ad_vars  irfcd /1/ : switch for current drive calculation (1=yes,0=no)
+  !+ad_vars  irfcd /1/ : switch for current drive calculation:<UL>
+  !+ad_varc         <LI> = 0 turned off;
+  !+ad_varc         <LI> = 0 turned on</UL>
   integer :: irfcd = 1
   !+ad_vars  pheat /0.0/ : heating power not used for current drive (W)
   !+ad_varc                (iteration variable 11)

@@ -1811,11 +1811,14 @@ contains
     !+ad_args  t      : input real :  weighted ion temperature (keV)
     !+ad_args  ft     : output real : ?
     !+ad_args  sigv   : output real : fusion reaction rate
-    !+ad_desc  This subroutine calculates the D-T fusion reaction rate.
+    !+ad_desc  This subroutine calculates the D-T fusion reaction rate using
+    !+ad_desc  an analytical formula derived for ITER. The fit is not expected
+    !+ad_desc  to be good unless <CODE>alphan=0.5</CODE> and <CODE>alphat=1.0</CODE>.
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  09/11/11 PJK Initial F90 version
+    !+ad_hist  08/01/13 PJK Modified comments
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
