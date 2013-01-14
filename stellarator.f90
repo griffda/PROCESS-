@@ -630,7 +630,7 @@ contains
   subroutine stheat(outfile,iprint)
 
     !+ad_name  stheat
-    !+ad_summ  Routine to calculate calculate the auxiliary heating power
+    !+ad_summ  Routine to calculate the auxiliary heating power
     !+ad_summ  in a stellarator
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre

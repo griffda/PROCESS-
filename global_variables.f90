@@ -569,6 +569,7 @@ module current_drive_variables
   !+ad_call  None
   !+ad_hist  16/10/12 PJK Initial version of module
   !+ad_hist  08/01/13 PJK Modified irfcd comments
+  !+ad_hist  14/01/13 PJK Corrected some more comments
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -628,7 +629,7 @@ module current_drive_variables
   integer :: iefrf = 5
   !+ad_vars  irfcd /1/ : switch for current drive calculation:<UL>
   !+ad_varc         <LI> = 0 turned off;
-  !+ad_varc         <LI> = 0 turned on</UL>
+  !+ad_varc         <LI> = 1 turned on</UL>
   integer :: irfcd = 1
   !+ad_vars  pheat /0.0/ : heating power not used for current drive (W)
   !+ad_varc                (iteration variable 11)
@@ -1152,7 +1153,7 @@ module pfcoil_variables
   !+ad_vars  zpf(ngc2) : z (height) location of PF coil i (m)
   real(kind(1.0D0)), dimension(ngc2) :: zpf = 0.0D0
   !+ad_vars  zref(ngrpmx) /../ : (height of coil group j) / minor radius,
-  !+ad_vars                      for groups with ipfloc = 3
+  !+ad_varc                      for groups with ipfloc = 3
   real(kind(1.0D0)), dimension(ngrpmx) :: zref = (/3.6D0, 1.2D0, 2.5D0, &
        1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
 

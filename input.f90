@@ -124,6 +124,7 @@ module process_input
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added pulse_variables
+  !+ad_hist  14/01/13 PJK Changed (maximum) line length from 200 to maxlen
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -162,7 +163,8 @@ module process_input
   public :: parse_input_file
 #endif
 
-  character(len=200) :: line  !  current line of text from input file
+  integer, parameter :: maxlen = 300  !  maximum line length
+  character(len=maxlen) :: line  !  current line of text from input file
   integer :: linelen, lineno  !  current line length, line number
   integer :: iptr             !  current position on line
   integer :: infile, outfile, report_changes, icode
@@ -367,6 +369,7 @@ contains
 
        line = adjustl(line)  !  rotate any leading blanks to the end
        linelen = len_trim(line)
+if (linelen > 80) write(*,*) line
 
 20     continue
 
@@ -2329,6 +2332,7 @@ contains
     !+ad_call  get_substring
     !+ad_call  report_error
     !+ad_hist  13/04/11 PJK Initial version
+    !+ad_hist  14/01/13 PJK Used maxlen for character array size
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2343,7 +2347,7 @@ contains
 
     !  Local variables
 
-    character(len=200) :: oldval
+    character(len=maxlen) :: oldval
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2582,6 +2586,7 @@ contains
     !+ad_hist  05/01/04 PJK Initial F90 version
     !+ad_hist  01/04/08 PJK (v2.3.0.0) Replaced the use of an overflowing
     !+ad_hisc    integer as a flag, with a non-overflowing but large value
+    !+ad_hist  14/01/13 PJK Used maxlen for character array size
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2597,7 +2602,7 @@ contains
 
     !  Local variables
 
-    character(len=200) :: xstr
+    character(len=maxlen) :: xstr
     integer :: iptr,izero,xlen
     logical :: negate
 
@@ -2903,6 +2908,7 @@ contains
     !+ad_prob  None
     !+ad_call  string_to_int
     !+ad_hist  05/01/04 PJK Initial F90 version
+    !+ad_hist  14/01/13 PJK Used maxlen for character array size
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2916,7 +2922,7 @@ contains
 
     !  Local variables
 
-    character(len=200) :: varval
+    character(len=maxlen) :: varval
     integer :: varlen,iost
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3039,6 +3045,7 @@ contains
     !+ad_prob  None
     !+ad_call  string_to_real
     !+ad_hist  05/01/04 PJK Initial F90 version
+    !+ad_hist  14/01/13 PJK Used maxlen for character array size
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -3053,7 +3060,7 @@ contains
 
     !  Local variables
 
-    character(len=200) :: varval
+    character(len=maxlen) :: varval
     integer :: varlen,iost
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3177,6 +3184,7 @@ contains
     !+ad_prob  non-leading blank, so routine <A HREF="get_substring.html">get_substring</A>
     !+ad_prob  is used in practice.
     !+ad_hist  05/01/04 PJK Initial F90 version
+    !+ad_hist  14/01/13 PJK Used maxlen for character array size
     !+ad_stat  Okay, but not used at present
     !+ad_docs  None
     !
@@ -3191,7 +3199,7 @@ contains
 
     !  Local variables
 
-    character(len=200) :: varval
+    character(len=maxlen) :: varval
     integer :: varlen,iost
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3317,6 +3325,7 @@ contains
     !+ad_desc  non-leading blank.
     !+ad_prob  None
     !+ad_hist  05/01/04 PJK Initial F90 version
+    !+ad_hist  14/01/13 PJK Used maxlen for character array size
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -3331,7 +3340,7 @@ contains
 
     !  Local variables
 
-    character(len=200) :: varval
+    character(len=maxlen) :: varval
     integer :: varlen,iost
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3626,6 +3635,7 @@ contains
     !+ad_call  get_subscript
     !+ad_call  upper_case
     !+ad_hist  05/01/04 PJK Initial F90 version
+    !+ad_hist  14/01/13 PJK Used maxlen for character array size
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -3640,7 +3650,7 @@ contains
 
     !  Local variables
 
-    character(len=80) :: line1
+    character(len=maxlen) :: line1
     integer :: ifrom,ito,icode
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
