@@ -127,6 +127,7 @@ contains
     !+ad_hist  25/05/06 PJK Added implied-DO loops for sweep outputs
     !+ad_hist  08/10/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
+    !+ad_hist  15/01/13 PJK Clarified some output labels
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -409,7 +410,7 @@ contains
 915 format('B Toroidal Axis (T)      ', 20e11.4)
 916 format('B total on axis (T)      ', 20e11.4)
 917 format('Safety Factor            ', 20e11.4)
-918 format('Should be zero...........', 20e11.4)
+918 format('qlim (zero if ishape=0)  ', 20e11.4)
 919 format('Beta                     ', 20e11.4)
 920 format('Beta Limit               ', 20e11.4)
 921 format('Epsilon Beta Poloidal    ', 20e11.4)
@@ -432,12 +433,12 @@ contains
 938 format('TF coil weight (kg)      ', 20e11.4)
 939 format('TF stress (MPa)          ', 20e11.4)
 940 format('J   TF inner leg (MA/m^2)', 20e11.4)
-941 format('Should be zero...........', 20e11.4)
+941 format('Centrepost max T (TART)  ', 20e11.4)
 942 format('Res TF inner leg Pwr (MW)', 20e11.4)
 943 format('Coolant Fraction Ctr.    ', 20e11.4)
-944 format('Should be zero...........', 20e11.4)
-945 format('Should be zero...........', 20e11.4)
-946 format('Should be zero...........', 20e11.4)
+944 format('C/P coolant radius (m)   ', 20e11.4)
+945 format('C/P coolant velocity(m/s)', 20e11.4)
+946 format('C/P pump power (MW)      ', 20e11.4)
 947 format('PF coil Power (MW)       ', 20e11.4)
 948 format('PF coil weight (kg)      ', 20e11.4)
 949 format('Gross Elect Pwr (MW)     ', 20e11.4)
