@@ -299,6 +299,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added ife_variables
+  !+ad_hist  17/01/13 PJK Removed bounds checking of iteration variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -332,26 +333,6 @@ subroutine convxc(xc,nn)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   do i = 1,nn
-
-     if (ioptimz >= 0) then
-
-        if ( ((boundl(ixc(i))-xc(i)/scale(i)) > 1.0D-12).or. &
-             ((xc(i)/scale(i)-boundu(ixc(i))) > 1.0D-12) ) then
-           write(*,*) ' '
-           write(*,*) 'Warning in routine CONVXP :'
-           write(*,*) 'Iteration variable ',ixc(i), &
-                '(',trim(lablxc(ixc(i))),') is outside its bounds.'
-           write(*,*) trim(lablxc(ixc(i))), ' = ',xc(i)/scale(i)
-           write(*,*) 'Enforcing bound...'
-           if ((boundl(ixc(i))-xc(i)/scale(i)) > 1.0D-12) then
-              xc(i) = boundl(ixc(i))*scale(i)
-           else
-              xc(i) = boundu(ixc(i))*scale(i)
-           end if
-           write(*,*) trim(lablxc(ixc(i))), ' = ',xc(i)/scale(i)
-        end if
-
-     end if
 
      select case (ixc(i))
 

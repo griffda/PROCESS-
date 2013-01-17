@@ -124,7 +124,7 @@ contains
     !+ad_args  xv(n)   : input real array  : scaled variable values
     !+ad_args  objf    : output real       : objective function
     !+ad_args  conf(m) : output real array : constraint functions
-    !+ad_args  ifail   : output integer    : error flag, if < 0 stops calculation
+    !+ad_args  ifail   : input/output integer  : error flag, if < 0 stops calculation
     !+ad_desc  This routine is the function evaluator for the VMCON
     !+ad_desc  maximisation/minimisation routine.
     !+ad_desc  <P>It calculates the objective and constraint functions at the
@@ -138,6 +138,7 @@ contains
     !+ad_hist  02/10/96 PJK Initial upgraded version
     !+ad_hist  08/10/12 PJK Initial F90 version
     !+ad_hist  06/11/12 PJK Renamed routine con1 to constraints
+    !+ad_hist  17/01/13 PJK Corrected ifail to be input/output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -151,7 +152,7 @@ contains
     real(kind(1.0D0)), dimension(n), intent(in) :: xv
     real(kind(1.0D0)), intent(out) :: objf
     real(kind(1.0D0)), dimension(m), intent(out) :: conf
-    integer, intent(out) :: ifail
+    integer, intent(inout) :: ifail
 
     !  Local variables
 
@@ -193,7 +194,7 @@ contains
     !+ad_args  cnorm(lcnorm,m) : output real array : constraint gradients, i.e.
     !+ad_argc           cnorm(i,j) is the derivative of constraint j w.r.t. variable i
     !+ad_args  lcnorm  : input integer     : number of columns in cnorm
-    !+ad_args  ifail   : output integer    : error flag, if < 0 stops calculation
+    !+ad_args  ifail   : input/output integer  : error flag, if < 0 stops calculation
     !+ad_desc  This routine is the gradient function evaluator for the VMCON
     !+ad_desc  maximisation/minimisation routine.
     !+ad_desc  <P>It calculates the gradients of the objective and constraint
@@ -208,6 +209,7 @@ contains
     !+ad_hist  02/10/96 PJK Initial upgraded version
     !+ad_hist  08/10/12 PJK Initial F90 version
     !+ad_hist  06/11/12 PJK Renamed routine con1 to constraints
+    !+ad_hist  17/01/13 PJK Corrected ifail to be input/output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -221,7 +223,7 @@ contains
     real(kind(1.0D0)), dimension(n), intent(in) :: xv
     real(kind(1.0D0)), dimension(n), intent(out) :: fgrd
     real(kind(1.0D0)), dimension(lcnorm,m), intent(out) :: cnorm
-    integer, intent(out) :: ifail
+    integer, intent(inout) :: ifail
 
     !  Local variables
 
