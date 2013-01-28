@@ -314,7 +314,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &
-       '$Revision::       $ $Date::           $'
+       '$Revision:: 142   $ $Date::           $'
   character(len=72), dimension(10) :: id
 
   !  External routines
