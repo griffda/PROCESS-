@@ -53,6 +53,7 @@ module physics_module
   !+ad_call  pulse_variables
   !+ad_call  rfp_variables
   !+ad_call  startup_variables
+  !+ad_call  stellarator_variables
   !+ad_call  times_variables
   !+ad_hist  16/10/12 PJK Initial version of module
   !+ad_hist  16/10/12 PJK Added constants
@@ -67,6 +68,7 @@ module physics_module
   !+ad_hist  05/11/12 PJK Added startup_variables
   !+ad_hist  06/11/12 PJK Inserted routines outplas, outtim from outplas.f90
   !+ad_hist  03/01/13 PJK Removed denlim routine
+  !+ad_hist  23/01/13 PJK Added stellarator_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -74,18 +76,18 @@ module physics_module
 
   use build_variables
   use constants
+  use constraint_variables
   use current_drive_module
   use current_drive_variables
   use divertor_variables
+  use maths_library
   use physics_variables
   use process_output
   use pulse_variables
-  use maths_library
-  use startup_variables
-  use times_variables
-
-  use constraint_variables
   use rfp_variables
+  use startup_variables
+  use stellarator_variables
+  use times_variables
 
   implicit none
 
@@ -421,7 +423,9 @@ contains
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  16/10/12 PJK Removed pi from argument list
     !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  N. A. Uckan and ITER Physics Group,
+    !+ad_docc    "ITER Physics Design Guidelines: 1989",
+    !+ad_docc    ITER Documentation Series, No. 10, IAEA/ITER/DS/10 (1990) 
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1885,7 +1889,8 @@ contains
     !+ad_args  plascur: input real :  plasma current (A)
     !+ad_args  pohmpv : input real :  ohmic heating per unit volume (MW/m**3)
     !+ad_args  prad   : input real :  total core radiation power (MW/m**3)
-    !+ad_args  q      : input real :  edge safety factor
+    !+ad_args  q      : input real :  edge safety factor (tokamaks), or
+    !+ad_argc                         rotational transform iotabar (stellarators)
     !+ad_args  qstar  : input real :  equivalent cylindrical edge safety factor
     !+ad_args  rmajor : input real :  plasma major radius (m)
     !+ad_args  rminor : input real :  plasma minor radius (m)
@@ -1918,8 +1923,12 @@ contains
     !+ad_hist  16/07/01 PJK Added KAPPAA to argument list
     !+ad_hist  23/05/06 PJK Ensured that powerht is always positive
     !+ad_hist  09/11/11 PJK Initial F90 version
+    !+ad_hist  23/01/13 PJK Added stellarator scaling laws 37,38
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  N. A. Uckan and ITER Physics Group,
+    !+ad_docc    "ITER Physics Design Guidelines: 1989",
+    !+ad_docc    ITER Documentation Series, No. 10, IAEA/ITER/DS/10 (1990) 
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1937,7 +1946,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: chii,ck2,denfac,dnla19,dnla20,eps2,gjaeri, &
+    real(kind(1.0D0)) :: chii,ck2,denfac,dnla19,dnla20,eps2,gjaeri,iotabar, &
          n20,pcur,qhat,ratio,rll,str2,str5,taueena,tauit1,tauit2, &
          term1,term2
 
@@ -1992,6 +2001,12 @@ contains
     !  Calculate Neo-Alcator confinement time (used in several scalings)
 
     taueena = 0.07D0 * n20 * rminor * rmajor*rmajor * qstar
+
+    !  For reference (see startup.f90):
+    !  gtaue = offset term in tauee scaling
+    !  ptaue = exponent for density term in tauee scaling
+    !  qtaue = exponent for temperature term in tauee scaling
+    !  rtaue = exponent for power term in tauee scaling
 
     !  Electron energy confinement times
 
@@ -2227,10 +2242,10 @@ contains
        rtaue = -0.6D0
 
     case (23)  !  Lackner-Gottardi stellarator scaling
-       !  (assumed q = 1/rotational transform)
        !  K.Lackner and N.A.O.Gottardi, Nuclear Fusion, 30, p.767 (1990)
+       iotabar = q  !  dummy argument q is actual argument iotabar for stellarators
        tauee = hfact * 0.17D0 * rmajor * rminor**2 * dnla20**0.6D0 * &
-            bt**0.8D0 * powerht**(-0.6D0) * q**(-0.4D0)
+            bt**0.8D0 * powerht**(-0.6D0) * iotabar**0.4D0
        gtaue = 0.0D0
        ptaue = 0.6D0
        qtaue = 0.0D0
@@ -2266,7 +2281,7 @@ contains
             rmajor**1.92D0 * aspect**(-0.08D0) * kappa**0.63D0 * &
             afuel**0.42D0
        gtaue = 0.0D0
-       ptaue = 0.35D0  !  N.B. problems with ptaue if pulsed option is used with isc=26
+       ptaue = 0.35D0
        qtaue = 0.0D0
        rtaue = -0.67D0
 
@@ -2276,7 +2291,7 @@ contains
             rmajor**2.03D0 * aspect**(-0.19D0) * kappa**0.92D0 * &
             afuel**0.2D0
        gtaue = 0.0D0
-       ptaue = 0.4D0  ! N.B. problems with ptaue if pulsed option is used with isc=27
+       ptaue = 0.4D0
        qtaue = 0.0D0
        rtaue = -0.66D0
 
@@ -2288,7 +2303,7 @@ contains
             kappa95**0.64D0 * rmajor**1.83D0 * aspect**0.06D0 * &
             dnla19**0.40D0 * afuel**0.20D0 * powerht**(-0.73D0)
        gtaue = 0.0D0
-       ptaue = 0.4D0  !  N.B. problems with ptaue if pulsed option is used with isc=28
+       ptaue = 0.4D0
        qtaue = 0.0D0
        rtaue = -0.73D0
 
@@ -2297,7 +2312,7 @@ contains
             dnla19**0.45D0 * afuel**0.05D0 * rmajor**1.316D0 * &
             rminor**0.79D0 * kappa**0.56D0 * powerht**(-0.68D0)
        gtaue = 0.0D0
-       ptaue = 0.45D0  !  N.B. problems with ptaue if pulsed option is used with isc=29
+       ptaue = 0.45D0
        qtaue = 0.0D0
        rtaue = -0.68D0
 
@@ -2306,7 +2321,7 @@ contains
             kappa**0.7D0 * rmajor**2.01D0 * aspect**(-0.18D0) * &
             dnla19**0.47D0 * afuel**0.25D0 * powerht**(-0.73D0)
        gtaue = 0.0D0
-       ptaue = 0.47D0  ! N.B. problems with ptaue if pulsed option is used with isc=30
+       ptaue = 0.47D0
        qtaue = 0.0D0
        rtaue = -0.73D0
 
@@ -2315,7 +2330,7 @@ contains
             dnla19**0.4D0 * powerht**(-0.66D0) * rmajor**2 * &
             kappaa**0.75D0 * aspect**(-0.66D0) * afuel**0.2D0
        gtaue = 0.0D0
-       ptaue = 0.4D0  !  N.B. problems with ptaue if pulsed option is used with isc=31
+       ptaue = 0.4D0
        qtaue = 0.0D0
        rtaue = -0.66D0
 
@@ -2324,7 +2339,7 @@ contains
             dnla19**0.41D0 * powerht**(-0.63D0) * rmajor**1.93D0 * &
             kappa**0.67D0 * aspect**(-0.23D0) * afuel**0.2D0
        gtaue = 0.0D0
-       ptaue = 0.41D0  !  N.B. problems with ptaue if pulsed option is used with isc=32
+       ptaue = 0.41D0
        qtaue = 0.0D0
        rtaue = -0.63D0
 
@@ -2333,7 +2348,7 @@ contains
             dnla19**0.44D0 * powerht**(-0.65D0) * rmajor**2.05D0 * &
             kappaa**0.72D0 * aspect**(-0.57D0) * afuel**0.13D0
        gtaue = 0.0D0
-       ptaue = 0.44D0  !  N.B. problems with ptaue if pulsed option is used with isc=33
+       ptaue = 0.44D0
        qtaue = 0.0D0
        rtaue = -0.65D0
 
@@ -2342,7 +2357,7 @@ contains
             dnla19**0.41D0 * powerht**(-0.69D0) * rmajor**1.97D0 * &
             kappaa**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
        gtaue = 0.0D0
-       ptaue = 0.41D0  !  N.B. problems with ptaue if pulsed option is used with isc=34
+       ptaue = 0.41D0
        qtaue = 0.0D0
        rtaue = -0.69D0
 
@@ -2351,7 +2366,7 @@ contains
             dnla19**0.40D0 * powerht**(-0.69D0) * rmajor**2.15D0 * &
             kappaa**0.78D0 * aspect**(-0.64D0) * afuel**0.20D0
        gtaue = 0.0D0
-       ptaue = 0.4D0  !  N.B. problems with ptaue if pulsed option is used with isc=35
+       ptaue = 0.4D0
        qtaue = 0.0D0
        rtaue = -0.69D0
 
@@ -2360,9 +2375,31 @@ contains
             dnla19**0.39D0 * powerht**(-0.70D0) * rmajor**2.08D0 * &
             kappaa**0.76D0 * aspect**(-0.69D0) * afuel**0.17D0
        gtaue = 0.0D0
-       ptaue = 0.39D0  !  N.B. problems with ptaue if pulsed option is used with isc=36
+       ptaue = 0.39D0
        qtaue = 0.0D0
        rtaue = -0.70D0
+
+    case (37)  !  ISS95 stellarator scaling
+       !  U. Stroth et al., Nuclear Fusion, 36, p.1063 (1996)
+       !  Assumes kappa = 1.0, triang = 0.0
+       iotabar = q  !  dummy argument q is actual argument iotabar for stellarators
+       tauee = hfact * 0.079D0 * rminor**2.21D0 * rmajor**0.65D0 * dnla19**0.51D0 * &
+            bt**0.83D0 * powerht**(-0.59D0) * iotabar**0.4D0
+       gtaue = 0.0D0
+       ptaue = 0.51D0
+       qtaue = 0.0D0
+       rtaue = -0.59D0
+
+    case (38)  !  ISS04 stellarator scaling
+       !  H. Yamada et al., Nuclear Fusion, 45, p.1684 (2005)
+       !  Assumes kappa = 1.0, triang = 0.0
+       iotabar = q  !  dummy argument q is actual argument iotabar for stellarators
+       tauee = hfact * 0.134D0 * rminor**2.28D0 * rmajor**0.64D0 * dnla19**0.54D0 * &
+            bt**0.84D0 * powerht**(-0.61D0) * iotabar**0.41D0
+       gtaue = 0.0D0
+       ptaue = 0.54D0
+       qtaue = 0.0D0
+       rtaue = -0.61D0
 
     case default
        write(*,*) 'Error in routine PCOND:'
@@ -3967,8 +4004,7 @@ contains
     !+ad_args  rminor  : input real :  minor radius (m)
     !+ad_args  itart   : input integer :  switch denoting tight aspect ratio option
     !+ad_desc  This function calculates the bootstrap current fraction
-    !+ad_desc  using the algorithm written by Howard Wilson and described
-    !+ad_desc  in AEA FUS 172.
+    !+ad_desc  using the numerically fitted algorithm written by Howard Wilson.
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
@@ -3977,7 +4013,7 @@ contains
     !+ad_hist  10/11/11 PJK Initial F90 version
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  H. R. Wilson, Nuclear Fusion <B>32</B> (1992) 257
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4188,6 +4224,7 @@ contains
     !+ad_hist  17/12/12 PJK Added ZFEAR lines
     !+ad_hist  18/12/12 PJK Added PTHRMW(6 to 8)
     !+ad_hist  03/01/13 PJK Removed ICULDL if-statement
+    !+ad_hist  23/01/13 PJK Modified logic for stellarators and ignite=1
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4209,19 +4246,24 @@ contains
 
     call oheadr(outfile,'Plasma')
 
-    select case (idivrt)
-    case (0)
-       call ocmmnt(outfile,'Plasma configuration = limiter')
-    case (1)
-       call ocmmnt(outfile,'Plasma configuration = single null divertor')
-    case (2)
-       call ocmmnt(outfile,'Plasma configuration = double null divertor')
-    case default
-       write(outfile,*) 'Error in routine OUTPLAS:'
-       write(outfile,*) 'Illegal value of idivrt, = ',idivrt
-       write(outfile,*) 'PROCESS stopping.'
-       stop
-    end select
+    if (istell == 0) then
+       select case (idivrt)
+       case (0)
+          call ocmmnt(outfile,'Plasma configuration = limiter')
+       case (1)
+          call ocmmnt(outfile,'Plasma configuration = single null divertor')
+       case (2)
+          call ocmmnt(outfile,'Plasma configuration = double null divertor')
+       case default
+          write(outfile,*) 'Error in routine OUTPLAS:'
+          write(outfile,*) 'Illegal value of idivrt, = ',idivrt
+          write(outfile,*) 'PROCESS stopping.'
+          stop
+       end select
+    else
+       call ocmmnt(outfile,'Plasma configuration = stellarator')
+    end if
+
     call oblnkl(outfile)
 
     if (idhe3 == 0) then
@@ -4260,11 +4302,16 @@ contains
     end if
 
     call ovarrf(outfile,'Total field (T)','(btot)',btot)
-    call ovarrf(outfile,'Edge safety factor','(q)',q)
-    call ovarrf(outfile,'Cylindrical safety factor','(qstar)',qstar)
 
-    if (ishape == 1) then
-       call ovarrf(outfile,'Lower limit for edge safety factor','(qlim)',qlim)
+    if (istell == 0) then
+       call ovarrf(outfile,'Edge safety factor','(q)',q)
+       call ovarrf(outfile,'Cylindrical safety factor','(qstar)',qstar)
+
+       if (ishape == 1) then
+          call ovarrf(outfile,'Lower limit for edge safety factor','(qlim)',qlim)
+       end if
+    else
+       call ovarrf(outfile,'Rotational transform','(iotabar)',iotabar)
     end if
 
     if (icurr == 2) then
@@ -4290,8 +4337,10 @@ contains
     call ovarrf(outfile,'2nd stability beta upper limit','(epbetmax)', &
          epbetmax)
 
-    call ovarrf(outfile,'Troyon g coefficient','(dnbeta)',dnbeta)
-    call ovarrf(outfile,'Normalised beta',' ',fbetatry*dnbeta)
+    if (istell == 0) then
+       call ovarrf(outfile,'Troyon g coefficient','(dnbeta)',dnbeta)
+       call ovarrf(outfile,'Normalised beta',' ',fbetatry*dnbeta)
+    end if
 
     if (itart == 1) then
        call ovarrf(outfile,'Normalised thermal toroidal beta', &
@@ -4337,14 +4386,16 @@ contains
     call ovarrf(outfile,'Density profile factor','(alphan)',alphan)
     call ovarrf(outfile,'Temperature profile factor','(alphat)',alphat)
 
-    call osubhd(outfile,'Density Limit using different models :')
-    call ovarre(outfile,'Old ASDEX model','(dlimit(1))',dlimit(1))
-    call ovarre(outfile,'Borrass ITER model I','(dlimit(2))',dlimit(2))
-    call ovarre(outfile,'Borrass ITER model II','(dlimit(3))',dlimit(3))
-    call ovarre(outfile,'JET edge radiation model','(dlimit(4))',dlimit(4))
-    call ovarre(outfile,'JET simplified model','(dlimit(5))',dlimit(5))
-    call ovarre(outfile,'Hugill-Murakami Mq model','(dlimit(6))',dlimit(6))
-    call ovarre(outfile,'Greenwald model','(dlimit(7))',dlimit(7))
+    if (istell == 0) then
+       call osubhd(outfile,'Density Limit using different models :')
+       call ovarre(outfile,'Old ASDEX model','(dlimit(1))',dlimit(1))
+       call ovarre(outfile,'Borrass ITER model I','(dlimit(2))',dlimit(2))
+       call ovarre(outfile,'Borrass ITER model II','(dlimit(3))',dlimit(3))
+       call ovarre(outfile,'JET edge radiation model','(dlimit(4))',dlimit(4))
+       call ovarre(outfile,'JET simplified model','(dlimit(5))',dlimit(5))
+       call ovarre(outfile,'Hugill-Murakami Mq model','(dlimit(6))',dlimit(6))
+       call ovarre(outfile,'Greenwald model','(dlimit(7))',dlimit(7))
+    end if
 
     call osubhd(outfile,'Fuel Constituents :')
     if (idhe3 == 0) then
@@ -4385,24 +4436,29 @@ contains
          pinji/1.0D6)
     call ovarre(outfile,'Injection power to electrons (MW)','(pinje/1.d6)', &
          pinje/1.0D6)
+    if (ignite == 1) then
+       call ocmmnt(outfile,'  (Injected power only used for start-up phase)')
+    end if
     call ovarre(outfile,'Power to divertor (MW)','(pdivt)',pdivt)
 
-    call osubhd(outfile,'H-mode Power Threshold Scalings :')
+    if (istell == 0) then
+       call osubhd(outfile,'H-mode Power Threshold Scalings :')
 
-    call ovarre(outfile,'1996 ITER scaling: nominal (MW)','(pthrmw(1))', &
-         pthrmw(1))
-    call ovarre(outfile,'1996 ITER scaling: upper bound (MW)','(pthrmw(2))', &
-         pthrmw(2))
-    call ovarre(outfile,'1996 ITER scaling: lower bound (MW)','(pthrmw(3))', &
-         pthrmw(3))
-    call ovarre(outfile,'1997 ITER scaling (1) (MW)','(pthrmw(4))',pthrmw(4))
-    call ovarre(outfile,'1997 ITER scaling (2) (MW)','(pthrmw(5))',pthrmw(5))
-    call ovarre(outfile,'2008 Martin scaling: nominal (MW)', &
-         '(pthrmw(6))',pthrmw(6))
-    call ovarre(outfile,'2008 Martin scaling: 95% upper bound (MW)', &
-         '(pthrmw(7))',pthrmw(7))
-    call ovarre(outfile,'2008 Martin scaling: 95% lower bound (MW)', &
-         '(pthrmw(8))',pthrmw(8))
+       call ovarre(outfile,'1996 ITER scaling: nominal (MW)','(pthrmw(1))', &
+            pthrmw(1))
+       call ovarre(outfile,'1996 ITER scaling: upper bound (MW)','(pthrmw(2))', &
+            pthrmw(2))
+       call ovarre(outfile,'1996 ITER scaling: lower bound (MW)','(pthrmw(3))', &
+            pthrmw(3))
+       call ovarre(outfile,'1997 ITER scaling (1) (MW)','(pthrmw(4))',pthrmw(4))
+       call ovarre(outfile,'1997 ITER scaling (2) (MW)','(pthrmw(5))',pthrmw(5))
+       call ovarre(outfile,'2008 Martin scaling: nominal (MW)', &
+            '(pthrmw(6))',pthrmw(6))
+       call ovarre(outfile,'2008 Martin scaling: 95% upper bound (MW)', &
+            '(pthrmw(7))',pthrmw(7))
+       call ovarre(outfile,'2008 Martin scaling: 95% lower bound (MW)', &
+            '(pthrmw(8))',pthrmw(8))
+    end if
 
     call osubhd(outfile,'Confinement :')
 
@@ -4423,16 +4479,18 @@ contains
     call ovarre(outfile,'n-tau (s/m3)','(dntau)',dntau)
     call ovarre(outfile,'Heating power assumed (MW)','(powerht)',powerht)
 
-    call osubhd(outfile,'Plasma Volt-second Requirements :')
-    call ovarre(outfile,'Total volt-second requirement (Wb)','(vsstt)',vsstt)
-    call ovarre(outfile,'Inductive volt-seconds (Wb)','(vsind)',vsind)
-    call ovarre(outfile,'Start-up resistive (Wb)','(vsres)',vsres)
-    call ovarre(outfile,'Flat-top resistive (Wb)','(vsbrn)',vsbrn)
-    call ovarrf(outfile,'Bootstrap fraction','(bootipf)',bootipf)
-    call ovarrf(outfile,'Auxiliary current drive fraction','(faccd)',faccd)
-    call ovarre(outfile,'Plasma resistance (ohm)','(rplas)',rplas)
-    call ovarre(outfile,'Plasma inductance (H)','(rlp)',rlp)
-    call ovarre(outfile,'Sawteeth coefficient','(csawth)',csawth)
+    if (istell == 0) then
+       call osubhd(outfile,'Plasma Volt-second Requirements :')
+       call ovarre(outfile,'Total volt-second requirement (Wb)','(vsstt)',vsstt)
+       call ovarre(outfile,'Inductive volt-seconds (Wb)','(vsind)',vsind)
+       call ovarre(outfile,'Start-up resistive (Wb)','(vsres)',vsres)
+       call ovarre(outfile,'Flat-top resistive (Wb)','(vsbrn)',vsbrn)
+       call ovarrf(outfile,'Bootstrap fraction','(bootipf)',bootipf)
+       call ovarrf(outfile,'Auxiliary current drive fraction','(faccd)',faccd)
+       call ovarre(outfile,'Plasma resistance (ohm)','(rplas)',rplas)
+       call ovarre(outfile,'Plasma inductance (H)','(rlp)',rlp)
+       call ovarre(outfile,'Sawteeth coefficient','(csawth)',csawth)
+    end if
     call ovarre(outfile,'Burn time (s)','(tburn)',tburn)
 
     call osubhd(outfile,'Auxiliary Information :')

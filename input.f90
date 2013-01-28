@@ -322,6 +322,7 @@ contains
     !+ad_hist  03/01/13 PJK Removed ICULDL (replaced with error trap)
     !+ad_hist  08/01/13 PJK Commented out ICULDL error trap for time being
     !+ad_hisc               (ICULDL simply ignored now)
+    !+ad_hist  23/01/13 PJK Added IOTABAR
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1935,6 +1936,9 @@ if (linelen > 80) write(*,*) line
 
           !  Stellarator settings
 
+       case ('IOTABAR')
+          call parse_real_variable('IOTABAR', iotabar, 0.1D0, 10.0D0, &
+               'Stellarator rotational transform')
        case ('ISTHTR')
           call parse_int_variable('ISTHTR', isthtr, 1, 3, &
                'Stellarator method of auxiliary heating')

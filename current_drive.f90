@@ -74,6 +74,7 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added current_drive_variables
+    !+ad_hist  23/01/13 PJK Added comment about ignited plasma
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -250,23 +251,18 @@ contains
 
     case (1,4,6)
        call ocmmnt(outfile,'Lower Hybrid Current Drive')
-       call oblnkl(outfile)
 
     case (2)
        call ocmmnt(outfile,'Ion Cyclotron Current Drive')
-       call oblnkl(outfile)
 
     case (3,7)
        call ocmmnt(outfile,'Electron Cyclotron Current Drive')
-       call oblnkl(outfile)
 
     case (5,8)
        call ocmmnt(outfile,'Neutral Beam Current Drive')
-       call oblnkl(outfile)
 
     case (9)
        call ocmmnt(outfile,'Oscillating Field Current Drive')
-       call oblnkl(outfile)
 
     case default
        write(*,*) 'Error in routine CUDRIV:'
@@ -275,6 +271,13 @@ contains
        stop
 
     end select
+
+    if (ignite == 1) then
+       call ocmmnt(outfile, &
+            'Ignited plasma; injected power only used for start-up phase')
+    end if
+
+    call oblnkl(outfile)
 
     if (abs(facoh) > 1.0D-8) then
        call ocmmnt(outfile,'Current is driven by both inductive')

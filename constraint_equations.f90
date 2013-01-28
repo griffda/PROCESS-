@@ -63,6 +63,7 @@ subroutine constraints(m,cc)
   !+ad_hisc               constraint_equations.f90
   !+ad_hist  17/12/12 PJK Eqn 30 inverted to prevent problems if pinj=0;
   !+ad_hisc               Added new eqn 51, plus debug lines
+  !+ad_hist  23/01/13 PJK Allowed eqn.47 to be used for stellarators
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -406,11 +407,11 @@ subroutine constraints(m,cc)
         cc(i) = 1.0D0 - fipir * cratmx * ritfc/plascur
 
      case (47)  !  Equation for maximum TF coil toroidal thickness (tftort)
-                !  Relevant only to reversed field pinch devices
+                !  Relevant only to reversed field pinch or stellarator devices
 
-        if (irfp == 0) then
+        if ((irfp == 0).and.(istell == 0)) then
            write(*,*) 'Error in routine EQNS:'
-           write(*,*) 'Do not use constraint 47 if irfp=0.'
+           write(*,*) 'Do not use constraint 47 if irfp=0 and istell=0.'
            write(*,*) 'PROCESS stopping.'
            stop
         end if

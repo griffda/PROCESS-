@@ -1,4 +1,4 @@
-!  $Id::                                                                $
+!  $Id:: process.f90 121 2012-11-06 14:28:03Z pknight                   $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 program process
@@ -298,6 +298,7 @@ subroutine inform(progid)
   !+ad_hist  22/05/06 PJK PROCESS 3028
   !+ad_hist  22/05/07 PJK PROCESS 3029
   !+ad_hist  21/08/12 PJK Initial F90 version
+  !+ad_hist  23/01/13 PJK Changed progver to update automatically with SVN
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -311,7 +312,9 @@ subroutine inform(progid)
 
   !  Local variables
 
-  character(len=10) :: progname, progver
+  character(len=10) :: progname
+  character(len=*), parameter :: progver = &
+       '$Revision::       $ $Date::           $'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -323,7 +326,6 @@ subroutine inform(progid)
   !  Program name and version number
 
   progname = 'PROCESS'
-  progver = '4.000'
 
   !  Create temporary data file
 
@@ -949,6 +951,7 @@ subroutine final(ifail)
   !+ad_hist  08/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
+  !+ad_hist  23/01/13 PJK Changed format for single iteration outputs
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -975,8 +978,23 @@ subroutine final(ifail)
 
   call output(nout)
 
-  write(iotty,10) nfev1,nfev2,ncalls
+  if (nfev1 == 1) then ! (unlikely that nfev2 is also 1...)
+     write(iotty,10) nfev1,nfev2,ncalls
+  else if (nfev2 == 1) then ! (unlikely that nfev1 is also 1...)
+     write(iotty,20) nfev1,nfev2,ncalls
+  else
+     write(iotty,30) nfev1,nfev2,ncalls
+  end if
+
 10 format( &
+       t2,'The HYBRD point required ',i5,' iteration',/, &
+       t2,'The optimisation required ',i5,' iterations',/, &
+       t2,'There were ',i6,' function calls')
+20 format( &
+       t2,'The HYBRD point required ',i5,' iterations',/, &
+       t2,'The optimisation required ',i5,' iteration',/, &
+       t2,'There were ',i6,' function calls')
+30 format( &
        t2,'The HYBRD point required ',i5,' iterations',/, &
        t2,'The optimisation required ',i5,' iterations',/, &
        t2,'There were ',i6,' function calls')

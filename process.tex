@@ -592,7 +592,7 @@ J_{\mbox{\scriptsize protection}}$ limit (SCTF)               & L    & \textbf{5
 44  & peak centrepost temperature limit (TART)            & L    & \textbf{68},69,70 \\
 45  & edge safety factor limit    (TART)                  & L    & \textbf{71},1,2,3 \\
 46  & Ip/Irod limit               (TART)                  & L    & \textbf{72},2,60 \\
-47  & TF coil toroidal thickness  (RFP)                   & L    & \textbf{76},77,13,3 \\
+47  & TF coil toroidal thickness  (RFP, STELLARATOR)      & L    & \textbf{76},77,13,3 \\
 48  & poloidal beta limit                                 & L    & \textbf{79},2,3,18 \\
 49  & reversal parameter $< 0$ (RFP)                      & L    & \textbf{80},78,3,1 \\
 50  & IFE repetition rate limit (IFE)                     & L    & \textbf{86} \\
@@ -1264,63 +1264,72 @@ relevant value, as follows:-
 
 \subsubsection{Confinement time scaling laws}
 
-Many energy confinement time scaling laws~\cite{IPDG,172,H90P,iter93h} are
-present within \process, for tokamaks, RFPs or stellarators. These are
-calculated in routine \texttt{PCOND}. The value of \texttt{isc} determines
-which of the scalings is used in the plasma energy balance calculation.
-Table~\ref{tab:scaling_laws} summarises the available scaling laws.
+Many energy confinement time scaling laws are present within \process, for
+tokamaks, RFPs or stellarators. These are calculated in routine
+\texttt{PCOND}. The value of \texttt{isc} determines which of the scalings is
+used in the plasma energy balance calculation.  Table~\ref{tab:scaling_laws}
+summarises the available scaling laws.
 
 % Table summarising confinement time scaling laws in PROCESS.
 \begin{table}[tbph]
 \begin{center}
-
-\begin{tabular}{||c||l||} \hline
-\texttt{isc} & scaling law \\ \hline
-\texttt{1}  & Neo-Alcator (ohmic) \\
-\texttt{2}  & Mirnov (H-mode) \\
-\texttt{3}  & Merezhkin-Muhkovatov (L-mode) \\
-\texttt{4}  & Shimomura (H-mode) \\
-\texttt{5}  & Kaye-Goldston (L-mode) \\
-\texttt{6}  & ITER 89-P (L-mode) \\
-\texttt{7}  & ITER 89-O (L-mode) \\
-\texttt{8}  & Rebut-Lallia (L-mode) \\
-\texttt{9}  & Goldston (L-mode) \\
-\texttt{10} & T10 \\
-\texttt{11} & JAERI-88 \\
-\texttt{12} & Kaye-Big Complex \\
-\texttt{13} & ITER H90-P (H-mode) \\
-\texttt{14} & ITER Mix (minimum of \texttt{6} and \texttt{7}) \\
-\texttt{15} & Riedel (L-mode) \\
-\texttt{16} & Christiansen et al. (L-mode) \\
-\texttt{17} & Lackner-Gottardi (L-mode) \\
-\texttt{18} & Neo-Kaye (L-mode) \\
-\texttt{19} & Riedel (H-mode) \\
-\texttt{20} & ITER H90-P (amended) \\
-\texttt{21} & Large Helical Device (stellarator) \\
-\texttt{22} & Gyro-reduced Bohm (stellarator) \\
-\texttt{23} & Lackner-Gottardi (stellarator) \\
-\texttt{24} & ITER-93H (H-mode) \\
-\texttt{25} & TITAN (RFP) \\
-\texttt{26} & ITER H-97P ELM-free (H-mode) \\
-\texttt{27} & ITER H-97P ELMy (H-mode) \\
-\texttt{28} & ITER-96P (L-mode) \\
-\texttt{29} & Valovic modified ELMy (H-mode) \\
-\texttt{30} & Kaye PPPL April 98 (L-mode) \\
-\texttt{31} & ITERH-PB98P(y) (H-mode) \\
-\texttt{32} & IPB98(y) (H-mode) \\
-\texttt{33} & IPB98(y,1) (H-mode) \\
-\texttt{34} & IPB98(y,2) (H-mode) \\
-\texttt{35} & IPB98(y,3) (H-mode) \\
-\texttt{36} & IPB98(y,4) (H-mode) \\
+\footnotesize
+\begin{tabular}{||c||l|l||} \hline
+\texttt{isc} & scaling law & reference \\ \hline
+\texttt{1}  & Neo-Alcator (ohmic) & \cite{IPDG} \\
+\texttt{2}  & Mirnov (H-mode) & \cite{IPDG} \\
+\texttt{3}  & Merezhkin-Muhkovatov (L-mode) & \cite{IPDG} \\
+\texttt{4}  & Shimomura (H-mode) & JAERI-M 87-080 (1987) \\
+\texttt{5}  & Kaye-Goldston (L-mode) & Nuclear Fusion \textbf{25} (1985) p.65 \\
+\texttt{6}  & ITER 89-P (L-mode) & Nuclear Fusion \textbf{30} (1990) p.1999 \\
+\texttt{7}  & ITER 89-O (L-mode) & \cite{IPDG} \\
+\texttt{8}  & Rebut-Lallia (L-mode) & Plasma Physics and Controlled Nuclear Fusion
+Research \\
+ & &  \textbf{2} (1987) p. 187 \\
+\texttt{9}  & Goldston (L-mode) & Plas.\ Phys.\ Controlled Fusion \textbf{26} (1984) p.87 \\
+\texttt{10} & T10 (L-mode) & \cite{IPDG} \\
+\texttt{11} & JAERI-88 (L-mode) & JAERI-M 88-068 (1988) \\
+\texttt{12} & Kaye-Big Complex (L-mode) & Phys.\ Fluids B \textbf{2} (1990) p.2926 \\
+\texttt{13} & ITER H90-P (H-mode) &  \\
+\texttt{14} & ITER Mix (minimum of \texttt{6} and \texttt{7}) &  \\
+\texttt{15} & Riedel (L-mode) &  \\
+\texttt{16} & Christiansen et al. (L-mode) & JET Report JET-P (1991) 03 \\
+\texttt{17} & Lackner-Gottardi (L-mode) & Nuclear Fusion \textbf{30} (1990) p.767  \\
+\texttt{18} & Neo-Kaye (L-mode) & \cite{IPDG} \\
+\texttt{19} & Riedel (H-mode) &  \\
+\texttt{20} & ITER H90-P (amended) & Nuclear Fusion \textbf{32} (1992) p.318 \\
+\texttt{21} & Large Helical Device (stellarator) & Nuclear Fusion \textbf{30} (1990)
+p.11 \\
+\texttt{22} & Gyro-reduced Bohm (stellarator) & Bull. Am. Phys. Society, \textbf{34}
+(1989) p.1964 \\
+\texttt{23} & Lackner-Gottardi (stellarator) & Nuclear Fusion \textbf{30} (1990) p.767 \\
+\texttt{24} & ITER-93H (H-mode) & Plasma Physics and Controlled Nuclear Fusion
+Research \\
+ & & (Proc. 15th Int. Conf., Seville, 1994) IAEA-CN-60/E-P-3 \\
+\texttt{25} & TITAN (RFP) & TITAN RFP Fusion Reactor Study, Scoping Phase
+Report \\
+ & & UCLA-PPG-1100, page 5--9, Jan 1987 \\
+\texttt{26} & ITER H-97P ELM-free (H-mode) & J. G. Cordey et al., EPS
+Berchtesgaden, 1997 \\
+\texttt{27} & ITER H-97P ELMy (H-mode) & J. G. Cordey et al., EPS
+Berchtesgaden, 1997 \\
+\texttt{28} & ITER-96P (L-mode) & Nuclear Fusion \textbf{37} (1997) p.1303 \\
+\texttt{29} & Valovic modified ELMy (H-mode) &  \\
+\texttt{30} & Kaye PPPL April 98 (L-mode) &  \\
+\texttt{31} & ITERH-PB98P(y) (H-mode) &  \\
+\texttt{32} & IPB98(y) (H-mode) &  \\
+\texttt{33} & IPB98(y,1) (H-mode) &  \\
+\texttt{34} & IPB98(y,2) (H-mode) &  \\
+\texttt{35} & IPB98(y,3) (H-mode) &  \\
+\texttt{36} & IPB98(y,4) (H-mode) &  \\
+\texttt{37} & ISS95 (stellarator) & Nuclear Fusion \textbf{36} (1996) p.1063 \\
+\texttt{38} & ISS04 (stellarator) & Nuclear Fusion \textbf{45} (2005) p.1684 \\
 \hline
 \end{tabular}
+\normalsize
 \end{center}
 \caption[TABLE_TAU] {\label{tab:scaling_laws}
-  \textit{Summary of the energy confinement time scaling laws in
-    \process. These laws are all cited in ~\cite{172,IPDG} and references
-    therein, with the exception of laws~20~\cite{H90P}, 21~\cite{LHD},
-    22~\cite{GRB}, 23~\cite{LG}, 24~\cite{iter93h}, 25~\cite{titan1}, and
-    26--36 (various).}
+  \textit{Summary of the energy confinement time scaling laws in \process.}
 }
 \end{table}
 
@@ -1345,7 +1354,7 @@ methods, as summarised here.
   \texttt{ibss = 2}, and \texttt{bscfmax} to the maximum required bootstrap
   current fraction ($\leq 1$).
 
-\item Numerically fitted scaling~\cite{172}: To use a numerically fitted
+\item Numerically fitted scaling~\cite{WilsonBS}: To use a numerically fitted
   scaling method, valid for all aspect ratios, set \texttt{ibss = 3}, and
   \texttt{bscfmax} to the maximum required bootstrap current fraction ($\leq
   1$).
@@ -1809,6 +1818,8 @@ equation no.\ 26 should be turned on with iteration variable no.\ 38
 
 \subsection{Auxiliary power systems: heating and current drive}
 
+\subsubsection{Current Drive}
+
 The use of purely inductive current drive leads to pulsed plant operation
 because of the limited flux swing that can be achieved using the OH coil. This
 poses problems due to the fact that fatigue failures may result, and there
@@ -1845,6 +1856,26 @@ values produced by these routines. This can be achieved by setting the scaling
 coefficient \texttt{feffcd}. The wall plug to plasma efficiencies can also be
 adjusted, by changing the relevant variable (\texttt{etaech}, \texttt{etalh},
 \texttt{etanbi} or \texttt{etaof}).
+
+\subsubsection{Plasma heating}
+
+In addition to current drive, some auxiliary power can be used purely to heat
+the plasma. The value of input parameter \texttt{pheat} determines the amount
+of auxiliary \textit{heating}\/ power (in Watts) to be applied to the
+plasma. This variable may be used as an iteration variable (no.\ 11).
+
+\subsubsection{Ignited plasma}
+\label{sec:ignited}
+
+Switch \texttt{ignite} can be used to denote whether the plasma is ignited,
+i.e.\ fully self-sustaining without the need for any injected auxiliary power
+during the burn. If \texttt{ignite = 1}, the calculated injected power does not
+contribute to the plasma power balance, although the cost of the auxiliary
+power system is taken into account (the system is then assumed to be required to
+provide heating etc.\ during the plasma start-up phase only --- use
+\texttt{pheat} to indicate the power requirement). If
+\texttt{ignite = 0}, the plasma is not ignited, and the auxiliary power is
+taken into account in the plasma power balance during the burn phase.
 
 \subsection{Structural components}
 
@@ -2191,18 +2222,18 @@ no.\ 5 with iteration variable no.\ 9 (\texttt{fdene}).
 
 \subsubsection{$\tau_E$ scaling laws}
 
-Three confinement time scaling laws relevant to stellarators are present
+Five confinement time scaling laws relevant to stellarators are present
 within \process. The value of switch \texttt{isc} determines which of these is
 used in the plasma energy balance calculation.
 \begin{eqnarray}
-\tau_E\; (\mbox{Large Helical Device~\cite{LHD}: \texttt{isc=21}})
+\tau_E\; (\mbox{Large Helical Device: \texttt{isc=21}})
 & = & 0.17 \, R_0^{0.75} \, a_p^2 \, n^{0.69} \, B_0^{0.84} \, P^{-0.58} \\
-\tau_E\; (\mbox{Gyro-reduced Bohm~\cite{GRB}: \texttt{isc=22}})
+\tau_E\; (\mbox{Gyro-reduced Bohm: \texttt{isc=22}})
  & = & 0.25 \, B_0^{0.8} \, n^{0.6} \, P^{-0.6} \, a_p^{2.4} \, R_0^{0.6} \\
-\tau_E\; (\mbox{Lackner-Gottardi~\cite{LG}: \texttt{isc=23}})
+\tau_E\; (\mbox{Lackner-Gottardi: \texttt{isc=23}})
 & = & 0.17 \, R_0 \, a_p^2 \, n^{0.6} \, B_0^{0.8} \, P^{-0.6} \, \iota^{0.4}
 \end{eqnarray}
-Here, $\iota$ is the rotational transform, which is equal to the reciprocal
+Here, $\bar{\iota}$ is the rotational transform, which is equal to the reciprocal
 of the tokamak safety factor $q$.
 
 \subsubsection{Heating power options}
@@ -2217,7 +2248,8 @@ is supplied is determined by the switch \texttt{isthtr}:
 \end{description}
 The value of variable \texttt{pheat} determines the actual amount of auxiliary
 heating power (in Watts) to be applied to the plasma. This variable may be
-used as an iteration variable (no.\ 11).
+used as an iteration variable (no.\ 11). Switch \texttt{ignite} may be used if
+necessary --- see Section~\ref{sec:ignited}.
 
 \subsection{Machine configuration}
 
@@ -2277,6 +2309,12 @@ the inboard coil conductor area to change, and also the shape of the winding
 pack cross-section. This is assumed to be rectangular for the stellarator
 coils, rather than the complicated two-step cross-section assumed for tokamaks
 (see Figure~\ref{fig:stell1}).
+
+The radial thickness is set using \texttt{tfcth} as usual, but the toroidal
+thickness may also be set, using iteration variable no.\ 77
+(\texttt{tftort}). This is constrained to be no larger than is geometrically
+possible using constraint equation no.\ 47 with iteration variable no.\ 76
+(\texttt{frfptf}).
 
 \begin{figure}[tbph]
 \epsfig{file=stellarator_windingpack.eps,width=160mm}
@@ -2430,6 +2468,9 @@ using input parameter \texttt{ucof}. The default value for \texttt{ucof} is
 3.3~\$ per Watt of injected power.
 
 The bootstrap fraction is assumed to be zero.
+
+Plasma ignition, and additional plasma heating using auxiliary power, are
+treated as for tokamaks.
 
 \subsection{TF coils}
 
@@ -3497,17 +3538,17 @@ Morris, M.\ R.\ O'Brien, M.\ F.\ Turner and H.\ R.\ Wilson,
 AEA Fusion Report AEA FUS 172
 (1992)
 
-\bibitem{H90P}
-J.\ P.\ Christiansen et al.,
-\textit{``Global Energy Confinement H-Mode Database for ITER''},
-\textit{Nuclear Fusion} \textbf{32} (1992) 291-338, Eqn.\ 6
-
 \bibitem{Nevins}
 W.\ M.\ Nevins et al.,
 \textit{``Summary Report: ITER Specialists' Meeting on Heating and
 Current Drive''},
 ITER-TN-PH-8-4,
 13--17 June 1988, Garching, FRG
+
+\bibitem{WilsonBS}
+H.\ R.\ Wilson,
+Nuclear Fusion \textbf{32} (1992) 257
+
 
 \bibitem{FISPACT}
 N.\ P.\ Taylor, R.\ A.\ Forrest, P.\ J.\ Knight and L.\ J.\ Baker,
@@ -3517,29 +3558,16 @@ Strategic Studies Note 94/14
 
 \bibitem{Uckan}
 N.\ A.\ Uckan et al.,
-\textit{Fusion Technology} \textbf{13} (1988) 411
+Fusion Technology \textbf{13} (1988) 411
 
 \bibitem{Nuhrenberg}
 %%MHD-Theoretical Aspects of Stellarators
-J.\ N\"{u}hrenberg et al., \textit{Plasma Physics and Controlled Fusion}, {\bf
-35} (1993) B115
+J.\ N\"{u}hrenberg et al., \textit{Plasma Physics and Controlled Fusion},
+\textbf{35} (1993) B115
 
 \bibitem{LHD}
 S.\ Sudo, Y.\ Takeiri, H.\ Zushi et al., \textit{Nuclear Fusion}, \textbf{30} (1990)
 11
-
-\bibitem{GRB}
-R.\ J.\ Goldston, H.\ Biglari, G.\ W.\ Hammett et al., \textit{Bull.\ Am.\ Phys.\
-Soc.}, \textbf{34} (1989) 1964
-
-\bibitem{LG}
-K.\ Lackner and N.\ A.\ O.\ Gottardi, \textit{Nuclear Fusion}, \textbf{30} (1990)
-767
-
-\bibitem{iter93h}
-S.\ Kaye and the ITER Joint Central Team and Home Teams, in \textit{Plasma
-Physics and Controlled Nuclear Fusion Research} (Proc.\ 15th Int.\ Conf.,
-Seville, 1994) IAEA-CN-60/E-P-3
 
 \bibitem{process_ife}
 P.\ J.\ Knight,

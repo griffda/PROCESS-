@@ -233,8 +233,10 @@ clean:
 # (excludes input files IN.DAT, device.dat)
 
 otherfiles = Makefile vardes.html \
-             *.tex *.ps process.pdf \
-             autodoc.f90 adheader.src adfooter.src
+             *.tex *.ps *.eps process.pdf \
+             autodoc.f90 adheader.src adfooter.src \
+             utilities/plot_proc utilities/plot_proc2.pro \
+             utilities/plot_sweep.py utilities/proc_func.py
 
 tar:
 	rm -f process.tar process.tar.gz

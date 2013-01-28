@@ -88,6 +88,7 @@ module physics_variables
   !+ad_hist  18/12/12 PJK Added snull; modified idivrt
   !+ad_hist  03/01/13 PJK Removed iculdl
   !+ad_hist  08/01/13 PJK Modified iinvqd, iiter, ires comments
+  !+ad_hist  22/01/13 PJK Added two stellarator scaling laws; modified comments
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -97,8 +98,8 @@ module physics_variables
 
   public
 
-  !+ad_vars  ipnlaws /36/ FIX : number of energy confinement time scaling laws
-  integer, parameter :: ipnlaws = 36
+  !+ad_vars  ipnlaws /38/ FIX : number of energy confinement time scaling laws
+  integer, parameter :: ipnlaws = 38
 
   !+ad_vars  tauscl(ipnlaws) : labels describing energy confinement scaling laws:<UL>
   character(len=24), dimension(ipnlaws) :: tauscl = (/ &
@@ -120,16 +121,16 @@ module physics_variables
        'Rebut-Lallia         (L)', &
   !+ad_varc  <LI> ( 9)  Goldston (L-mode)
        'Goldston             (L)', &
-  !+ad_varc  <LI> (10)  T10
-       'T10                     ', &
-  !+ad_varc  <LI> (11)  JAERI-88
-       'JAERI-88                ', &
-  !+ad_varc  <LI> (12)  Kaye-Big Complex
-       'Kaye-Big Complex        ', &
+  !+ad_varc  <LI> (10)  T10 (L-mode)
+       'T10                  (L)', &
+  !+ad_varc  <LI> (11)  JAERI-88 (L-mode)
+       'JAERI-88             (L)', &
+  !+ad_varc  <LI> (12)  Kaye-Big Complex (L-mode)
+       'Kaye-Big Complex     (L)', &
   !+ad_varc  <LI> (13)  ITER H90-P (H-mode)
        'ITER H90-P           (H)', &
-  !+ad_varc  <LI> (14)  ITER Mix
-       'ITER Mix                ', &
+  !+ad_varc  <LI> (14)  ITER Mix (L-mode)
+       'ITER Mix             (L)', &
   !+ad_varc  <LI> (15)  Riedel (L-mode)
        'Riedel               (L)', &
   !+ad_varc  <LI> (16)  Christiansen (L-mode)
@@ -172,8 +173,12 @@ module physics_variables
        'IPB98(y,2)           (H)', &
   !+ad_varc  <LI> (35)  IPB98(y,3) (H-mode)
        'IPB98(y,3)           (H)', &
-  !+ad_varc  <LI> (36)  IPB98(y,4) (H-mode)</UL>
-       'IPB98(y,4)           (H)' /)
+  !+ad_varc  <LI> (36)  IPB98(y,4) (H-mode)
+       'IPB98(y,4)           (H)', &
+  !+ad_varc  <LI> (37)  ISS95 (stellarator)
+       'ISS95            (stell)', &
+  !+ad_varc  <LI> (38)  ISS04 (stellarator)</UL>
+       'ISS04            (stell)' /)
 
   !+ad_vars  abeam : beam ion mass (amu)
   real(kind(1.0D0)) :: abeam = 0.0D0
@@ -302,8 +307,8 @@ module physics_variables
   real(kind(1.0D0)) :: hfact = 2.0D0
   !+ad_vars  ibss /1/ : switch for bootstrap current scaling:<UL>
   !+ad_varc        <LI> = 1 ITER bootstrap scaling (high R/a only);
-  !+ad_varc        <LI> = 2 for more general scaling;
-  !+ad_varc        <LI> = 3 for new Culham scaling as in AEA FUS 172</UL>
+  !+ad_varc        <LI> = 2 for Nevins general scaling;
+  !+ad_varc        <LI> = 3 for Wilson numerical scaling</UL>
   integer :: ibss  = 1
   !+ad_vars  iculbl /0/ : switch for Troyon beta limit scaling:<UL>
   !+ad_varc          <LI> = 0 apply limit to total beta;
@@ -2625,6 +2630,7 @@ module stellarator_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  31/10/12 PJK Initial version of module
+  !+ad_hist  23/01/13 PJK Added iotabar
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2634,6 +2640,9 @@ module stellarator_variables
 
   public
 
+  !+ad_vars  iotabar /1.0/ : rotational transform (reciprocal of tokamak q)
+  !+ad_varc                  for stellarator confinement time scaling laws
+  real(kind(1.0D0)) :: iotabar = 1.0D0
   !+ad_vars  istell /0/ : switch for stellarator option
   !+ad_varc               (set via <CODE>device.dat</CODE>):<UL>
   !+ad_varc          <LI> = 0 use tokamak, RFP or IFE model;
@@ -2703,7 +2712,7 @@ module rfp_variables
   real(kind(1.0D0)) :: rfpth = 1.5D0
   !+ad_vars  rrpf(nrfppf) : radius of each RFP PF coil (m)
   real(kind(1.0D0)), dimension(nrfppf) :: rrpf = 0.0D0
-  !+ad_vars  tftort /0.33/ : TF coil toroidal thickness (m) (RFP only)
+  !+ad_vars  tftort /0.33/ : TF coil toroidal thickness (m) (RFP, stellarator only)
   !+ad_varc                  (iteration variable 77)
   real(kind(1.0D0)) :: tftort = 0.33D0
   !+ad_vars  zzpf(nrfppf) : vertical position of each RFP PF coil (m)

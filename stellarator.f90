@@ -47,6 +47,7 @@ module stellarator_module
   !+ad_call  plasma_geometry_module
   !+ad_call  power_module
   !+ad_call  process_output
+  !+ad_call  rfp_variables
   !+ad_call  sctfcoil_module
   !+ad_call  stellarator_variables
   !+ad_call  structure_module
@@ -82,6 +83,7 @@ module stellarator_module
   use plasma_geometry_module
   use power_module
   use process_output
+  use rfp_variables
   use sctfcoil_module
   use stellarator_variables
   use structure_module
@@ -204,6 +206,7 @@ contains
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  31/10/12 PJK Added stellarator_variables
+    !+ad_hist  23/01/13 PJK Turned off some output sections
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -248,6 +251,10 @@ contains
     q = 1.03D0
     idhe3 = 0
 
+    !  Turn off current drive
+
+    irfcd = 0
+
     !  Times for different phases
 
     tburn = 3.15576D7  !  one year
@@ -259,6 +266,14 @@ contains
     !  TF coil quantities
 
     tfno = 50.0D0
+
+    !  Output sections
+
+    sect05 = 0
+    sect08 = 0
+    sect09 = 0
+    sect11 = 0
+    sect21 = 0
 
   end subroutine stinit
 
@@ -502,6 +517,8 @@ contains
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  17/12/12 PJK Added zfear to betcom, radpwr argument lists
+    !+ad_hist  23/01/13 PJK Modified poloidal field calculation to use iotabar;
+    !+ad_hisc               Changed PCOND q95 argument to iotabar
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -532,9 +549,9 @@ contains
 
     q95 = q
 
-    !  Calculate poloidal field
+    !  Calculate poloidal field using rotation transform
 
-    bp = bpol(q,aspect,bt,kappa,triang)
+    bp = rminor * bt / rmajor * iotabar
 
     !  Total field
 
@@ -606,10 +623,11 @@ contains
 
     !  Calculate transport losses and energy confinement time using the
     !  chosen scaling law
+    !  N.B. iotabar replaces tokamak q95 in argument list
 
     call pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
          iinvqd,isc,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-         plascur,pohmpv,prad,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
+         plascur,pohmpv,prad,rmajor,rminor,te,ten,tin,iotabar,qstar,vol, &
          xarea,zeff,ptre,ptri,tauee,tauei,taueff,powerht)
 
     !  Calculate auxiliary physics related information
@@ -653,6 +671,7 @@ contains
     !+ad_hist  16/10/12 PJK Added current_drive_variables
     !+ad_hist  17/10/12 PJK Added current_drive_module
     !+ad_hist  31/10/12 PJK Added stellarator_variables
+    !+ad_hist  23/01/13 PJK Added comment about ignited plasma
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -750,6 +769,10 @@ contains
        write(*,*) 'PROCESS stopping.'
        stop
     end select
+    if (ignite == 1) then
+       call ocmmnt(outfile, &
+            'Ignited plasma; injected power only used for start-up phase')
+    end if
     call oblnkl(outfile)
 
     call ovarre(outfile,'Auxiliary power supplied to plasma (W)', &
@@ -799,6 +822,8 @@ contains
     !+ad_hist  18/10/12 PJK Modified argument list of tfcind
     !+ad_hist  29/10/12 PJK Added sctfcoil_module
     !+ad_hist  30/10/12 PJK Added build_variables
+    !+ad_hist  23/01/13 PJK TFTORT now assumed to be the input value unless
+    !+ad_hisc               limited by space available
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -812,7 +837,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: awpc,awptf,leni,leno,rbcndut,rcoil,tftort
+    real(kind(1.0D0)) :: awpc,awptf,leni,leno,rbcndut,rcoil,tftort2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -836,17 +861,18 @@ contains
 
     rcoil = rtfcin + 0.5D0*tfcth
 
-    !  Unlike in a tokamak, the inboard legs do not necessarily form
-    !  a continuous ring. tftort is calculated ensuring that adjacent
-    !  coils are not wider than their inboard edge centres are apart.
+    !  Unlike in a tokamak, the inboard legs do not necessarily form a
+    !  continuous ring. The maximum value of tftort is calculated ensuring
+    !  that adjacent coils are not wider than their inboard edge centres are
+    !  apart.
 
     !  Thickness of inboard leg in toroidal direction
 
-    tftort = min(tfcth,2.0D0*(rcoil-tfcth)*tan(pi/tfno))
+    tftort2 = min(tftort, 2.0D0*(rcoil-tfcth)*tan(pi/tfno))
 
     !  Total area of inboard legs (coils have rectangular cross-section)
 
-    tfareain = tfno * tfcth * tftort
+    tfareain = tfno * tfcth * tftort2
 
     !  Total current in TF coils
 
@@ -907,7 +933,7 @@ contains
 
     !  'Toroidal' dimension
 
-    wwp1 = tftort - 2.0D0*(casths+tinstf)
+    wwp1 = tftort2 - 2.0D0*(casths+tinstf)
 
     !  Cross-sectional area
 
@@ -919,7 +945,7 @@ contains
 
     !  Cross-sectional area of surrounding case
 
-    acasetf = tfcth*tftort - awpc
+    acasetf = tfcth*tftort2 - awpc
 
     !  Checks for negative lengths or areas
 
@@ -930,7 +956,7 @@ contains
          (acasetf <= 0.0D0) ) then
        write(*,*) 'Error in routine STCOIL:'
        write(*,*) 'Winding pack cross-section problem'
-       write(*,*) 'tftort = ',tftort
+       write(*,*) 'tftort2 = ',tftort2
        write(*,*) 'thkwp = ',thkwp
        write(*,*) 'wwp1 = ',wwp1
        write(*,*) 'awptf = ',awptf
@@ -1013,11 +1039,11 @@ contains
 
     !  Half-width of side of coil nearest torus centreline
 
-    tfocrn = 0.5D0 * tftort
+    tfocrn = 0.5D0 * tftort2
 
     !  Half-width of side of coil nearest plasma
 
-    tficrn = 0.5D0 * tftort
+    tficrn = 0.5D0 * tftort2
 
     !  Total surface area of coil side facing plasma: inboard region
 
@@ -1713,6 +1739,8 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added physics_module
     !+ad_hist  16/10/12 PJK Added current_drive_variables
+    !+ad_hist  23/01/13 PJK Added two more scaling laws; changed PCOND argument
+    !+ad_hisc               q95 to iotabar
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1729,7 +1757,7 @@ contains
     real(kind(1.0D0)) :: d2,powerhtz,ptrez,ptriz,taueez,taueezz, &
          taueffz,taueiz
     integer :: i,iisc
-    integer, parameter :: nstlaw = 3
+    integer, parameter :: nstlaw = 5
     integer, dimension(nstlaw) :: istlaw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1756,6 +1784,8 @@ contains
     istlaw(1) = 21
     istlaw(2) = 22
     istlaw(3) = 23
+    istlaw(4) = 37
+    istlaw(5) = 38
 
     !  Calculate power balances for all stellarator scaling laws
     !  assuming H = 2
@@ -1766,7 +1796,7 @@ contains
 
        call pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,d2, &
             iinvqd,i,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-            plascur,pohmpv,prad,rmajor,rminor,te,ten,tin,q,qstar,vol, &
+            plascur,pohmpv,prad,rmajor,rminor,te,ten,tin,iotabar,qstar,vol, &
             xarea,zeff,ptrez,ptriz,taueez,taueiz,taueffz,powerhtz)
 
        hfac(iisc) = fhfac(i)
@@ -1822,6 +1852,7 @@ contains
     !+ad_hist  29/10/12 PJK Added vacuum_module
     !+ad_hist  30/10/12 PJK Added power_module
     !+ad_hist  30/10/12 PJK Added buildings_module
+    !+ad_hist  23/01/13 PJK Commented out fispac, loca calls
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1849,12 +1880,12 @@ contains
     call ststrc(outfile,1)
     call fwbs(outfile,1)
 
-    if (ifispact == 1) then
-       call fispac(0)
-       call fispac(1)
-       call loca(outfile,0)
-       call loca(outfile,1)
-    end if
+    !if (ifispact == 1) then
+    !   call fispac(0)
+    !   call fispac(1)
+    !   call loca(outfile,0)
+    !   call loca(outfile,1)
+    !end if
 
     call tfpwr(outfile,1)
     call vaccall(outfile,1)

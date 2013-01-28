@@ -21,6 +21,7 @@ module numerics
   !+ad_hist  11/12/12 PJK Comment typo fixed
   !+ad_hist  17/12/12 PJK New constraint equation 51 added
   !+ad_hist  17/12/12 PJK New figure of merit 14 added
+  !+ad_hist  13/01/13 PJK Modified lablcc comment for eqn.47
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -307,7 +308,7 @@ module numerics
        'Edge safety factor limit         ', &
        !+ad_varc  <LI> (46) Ip/Irod limit (TART)
        'Ip/Irod limit                    ', &
-       !+ad_varc  <LI> (47) TF coil toroidal thickness limit (RFP)
+       !+ad_varc  <LI> (47) TF coil toroidal thickness limit (RFP, STELL)
        'TF coil toroidal thickness limit ', &
        !+ad_varc  <LI> (48) Poloidal beta limit
        'Poloidal beta limit              ', &

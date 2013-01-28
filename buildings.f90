@@ -22,12 +22,14 @@ module buildings_module
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  rfp_variables
+  !+ad_call  stellarator_variables
   !+ad_call  structure_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_hist  30/10/12 PJK Initial version of module
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  05/11/12 PJK Added rfp_variables
+  !+ad_hist  24/01/13 PJK Added stellarator_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -42,6 +44,7 @@ module buildings_module
   use physics_variables
   use process_output
   use rfp_variables
+  use stellarator_variables
   use structure_variables
   use tfcoil_variables
   use times_variables
@@ -77,6 +80,7 @@ contains
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  30/10/12 PJK Added buildings_variables
+    !+ad_hist  24/01/13 PJK Corrected cryostat radius for stellarators
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -111,7 +115,15 @@ contains
     tfro = rtot + 0.5D0*tfthko
     tfri = rtfcin - 0.5D0*tfcth
     tfh = (hmax + tfcth)*2.0D0
-    crrad = pfrmax + 0.5D0
+
+    !  External vacuum vessel radius
+
+    if (istell == 0) then
+       crrad = pfrmax + 0.5D0
+    else
+       !  perhaps change this to rdewex once this is corrected and global
+       crrad = tfro + 2.0D0
+    end if
 
     !  Reactor vault wall and roof thicknesses are hardwired
 
