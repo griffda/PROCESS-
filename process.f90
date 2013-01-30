@@ -1215,3 +1215,5 @@ subroutine output(outfile)
   call lwhymod(outfile,1)
 
 end subroutine output
+
+! SVN 145: New CICC plots for User Guide

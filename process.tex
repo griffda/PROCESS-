@@ -1605,13 +1605,14 @@ on the structure, the energy stored and the magnetic field produced by the
 coils.
 
 \begin{figure}[tbph]
-\epsfig{file=cicc.eps,width=160mm}
-\caption[CICC] {\label{fig:CICC}
-  \textit{Schematic diagram of the cross-section of a superconducting TF coil,
-    showing the CICC (Conductor In Cable Conduit) construction. The cable
-    space contains superconducting filaments and circulating liquid helium
-    coolant.}
-}
+\epsfig{file=tokamak_tfcoil.eps,width=160mm}
+\caption[CICC] {\label{fig:CICC} \textit{Schematic diagram of the
+    cross-section of the inner leg of a superconducting TF coil, showing the
+    CICC (Conductor In Cable Conduit) construction. The winding pack contains
+    many turns of cable conduit. The cable space contains the superconducting
+    filaments, and circulating liquid helium coolant. The variables shown in
+    \Red{red} may be changed by the user, and those in italics may be chosen
+    as iteration variables.}  }
 \end{figure}
 
 Each TF coil is defined in the $(R,Z)$ plane by four circular arcs of
@@ -1638,6 +1639,8 @@ used:
 \item [\texttt{isumattf = 4} :] generic Nb$_3$Sn superconductor
 \item [\texttt{isumattf = 5} :] generic NbTi superconductor
 \end{description}
+The fraction of copper present in the superconducting filaments is given by
+the value of variable \texttt{fcutfsu} (iteration variable no.\ 59).
 
 \subsubsection{Stress model}
 
@@ -2317,11 +2320,14 @@ possible using constraint equation no.\ 47 with iteration variable no.\ 76
 (\texttt{frfptf}).
 
 \begin{figure}[tbph]
-\epsfig{file=stellarator_windingpack.eps,width=160mm}
-\caption[tosh] {\label{fig:stell1}
-  \textit{TF coil inboard leg cross-sections for tokamak and stellarator
-    devices.}
-}
+\epsfig{file=stellarator_coil.eps,width=160mm}
+\caption[tosh] {\label{fig:stell1} \textit{Schematic diagram of the
+    cross-section of the inner leg of a superconducting stellarator coil,
+    showing the CICC (Conductor In Cable Conduit) construction. The winding
+    pack contains many turns of cable conduit. The cable space contains the
+    superconducting filaments, and circulating liquid helium coolant. The
+    variables shown in \Red{red} may be changed by the user, and those in
+    italics may be chosen as iteration variables.}  }
 \end{figure}
 
 Secondly, the shape of the coils in the poloidal plane is not D-shaped, and

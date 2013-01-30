@@ -1182,6 +1182,7 @@ module tfcoil_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  18/10/12 PJK Initial version of module
+  !+ad_hist  30/01/13 PJK Modified vftf comments
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1458,7 +1459,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: vdalw = 20.0D0
   !+ad_vars  vforce : vertical separating force on inner leg/coil (N)
   real(kind(1.0D0)) :: vforce = 0.0D0
-  !+ad_vars  vftf /0.4/ : coolant fraction of TF coil leg
+  !+ad_vars  vftf /0.4/ : coolant fraction of TF coil leg (itfsup=0)
+  !+ad_varc               or of TF coil cable space (itfsup=1)
   real(kind(1.0D0)) :: vftf = 0.4D0
   !+ad_vars  volcp : total volume of TF coil inner legs (m3)
   real(kind(1.0D0)) :: volcp = 0.0D0
