@@ -1,4 +1,4 @@
-!  $Id:: process.f90 121 2012-11-06 14:28:03Z pknight                   $
+!  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 program process
@@ -314,7 +314,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &
-       '$Revision:: 142   $ $Date::             $'
+       '$Revision:: 142   $ $Date:: 2013-01-30 #$'
   character(len=72), dimension(10) :: id
 
   !  External routines
