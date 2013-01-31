@@ -3020,8 +3020,14 @@ optimisation mode and non-optimisation mode are:
 
 \end{enumerate}
 
-Switch \texttt{ioptimz} must be set to \texttt{1} for optimisation mode. As
-before, the user must decide which constraint equations and iteration
+Switch \texttt{ioptimz} must be set to \texttt{0} or \texttt{1} for
+optimisation mode. If \texttt{ioptimz = 0}, a non-optimisation pass is
+performed first, to provide a (hopefully) feasible set of initial conditions;
+if \texttt{ioptimz = 1}, this is skipped and the code runs in optimisation
+mode from the start. It is usually recommended to use \texttt{ioptimiz = 0}
+for optimisation runs.
+
+As before, the user must decide which constraint equations and iteration
 variables to activate. Again, the choice depends largely on the information
 required by the user and the extent of the freedom that the code may have with
 the machine's parameters.
@@ -3145,24 +3151,48 @@ discontinuous in gradient, and trends may suddenly change direction.
 \subsection{Unfeasible results}
 
 In the numerics section of the output file, the code indicates whether the run
-produced a feasible or unfeasible result. The former implies a successful
-outcome. An unfeasible result, however, occurs if \process\/ cannot find a set
-of values for the iteration variables which satisfies all the given
-constraints. In this case, the values of the constraint residues shown in the
-output give some indication of which constraint equations are not being
-satisfied --- those with the highest residues should be examined further. In
-optimisation mode, the code also indicates which iteration variables lie at
-the edge of their allowed range.
+produced a feasible or unfeasible result.
+
+The former implies a successful outcome, although it is always worth checking
+that the estimate of the constraints (\texttt{sqsumsq}) is small ($\sim
+10^{-3}$ or less); the code will issue a warning if the run seems feasible but
+the value of \texttt{sqsumsq} exceeds $10^{-2}$. If this occurs, reducing the
+value of the HYBRID tolerance \texttt{ftol} or VMCON tolerance \texttt{epsvmc}
+(as appropriate) should indicate whether the result is valid or not; the
+output can usually be trusted if (1) the constraint residues\footnote{The
+  constraint residues are the final values of $c_i$ in the constraint
+  equations --- see Section~\ref{sec:constraints}. The value \texttt{sqsumsq}
+  is the square root of the sum of the squares of these residuals.} fall as
+the tolerance is reduced to about $10^{-8}$, and (2) the code indicates that a
+feasible solution is still found.
+
+An unfeasible result occurs if \process\/ cannot find a set of values for the
+iteration variables which satisfies all the given constraints. In this case,
+the values of the constraint residues shown in the output give some indication
+of which constraint equations are not being satisfied --- those with the
+highest residues should be examined further. In optimisation mode, the code
+also indicates which iteration variables lie at the edge of their allowed
+range.
 
 Unfeasible runs are caused either by ill-defining the problem to be solved, or
 by starting the problem in an unfavourable region of parameter space. The
-latter can be checked simply by changing the initial values of the \textit{
-  active}\/ iteration variables in the input file, but the former requires
-some extra work. This situation arises if there are insufficient iteration
-variables for the given constraint equations. It is important to choose the
-right number of \textit{useful}\/ iteration variables for the problem to be
-solved --- it is possible to activate too many iteration variables as well as
-too few, some of which may be redundant.
+latter can be checked simply by changing the initial values of the
+\textit{active}\/ iteration variables in the input file, but the former
+requires some extra work. This situation arises if there are insufficient
+iteration variables for the given constraint equations. It is important to
+choose the right number of \textit{useful}\/ iteration variables for the
+problem to be solved --- it is possible to activate too many iteration
+variables as well as too few, some of which may be redundant.
+
+Both optimisation and non-optimisation runs can fail with an error message
+suggesting that the iteration process is not making good progress. This is
+likely to be due to the code finding itself unable to escape a region of the
+parameter space where the minimum in the residuals is significantly above
+zero. In this situation, there is either no solution possible (the residuals
+can therefore never approach zero), or the topology of the local minimum makes
+it difficult for the code to escape to the global minimum. Again, a helpful
+technique is to either change the list of iteration variables in use, or to
+simply modify their initial values to try to help the code avoid such regions.
 
 A technique that occasionally removes problems due to unfeasible results,
 particularly if an error code \texttt{ifail = 3} is encountered during an
@@ -3180,17 +3210,17 @@ are stored in the \texttt{icc} and \texttt{ixc} arrays can make the difference
 between a feasible and unfeasible result. This seemingly illogical behaviour
 is, sadly, typical of the way in which the code works.
 
-\textit{Note added 17/01/2013}: It has been found that, during optimisation
-runs, the iteration variable indicated by the final specified element in array
-\texttt{ixc} (i.e.\ \texttt{ixc(nvar)}) does not finish the run with
-consistent values in the output file (its value is \texttt{(1-epsvmc)} times
-the correct value). The reason is partly understood, but
-difficult to correct in the source code. A quick fix is to increment
-\texttt{nvar} by one, and add another iteration variable to the \texttt{end}\/
-of \texttt{ixc} which will have no effect on the convergence; for instance,
-use an f-value for a constraint equation which has not been turned on. Then it
-will be this redundant variable which will have an inconsistency, but this is
-of no consequence.
+\Red{\textit{Note added 17/01/2013}}: It has been found that, during
+optimisation runs, the iteration variable indicated by the final specified
+element in array \texttt{ixc} (i.e.\ \texttt{ixc(nvar)}) does not finish the
+run with consistent values in the output file (its value is roughly 0.1\% less
+than the correct value). The reason is partly understood, but difficult to
+correct in the source code. A quick fix is to increment \texttt{nvar} by one,
+and add another iteration variable to the \texttt{end}\/ of \texttt{ixc} which
+will have no effect on the convergence; for instance, use an f-value for a
+constraint equation which has not been turned on. Then it will be this
+redundant variable which will have an inconsistency, but this is of no
+consequence.
 
 Unfeasible cases often produce unrealistic machines, so one should not believe
 the output values from these runs. Unfortunately, the stationary scan method

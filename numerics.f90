@@ -22,6 +22,7 @@ module numerics
   !+ad_hist  17/12/12 PJK New constraint equation 51 added
   !+ad_hist  17/12/12 PJK New figure of merit 14 added
   !+ad_hist  13/01/13 PJK Modified lablcc comment for eqn.47
+  !+ad_hist  31/01/13 PJK Changed FACTOR comment
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -536,7 +537,7 @@ module numerics
   real(kind(1.0D0)) :: epsfcn = 1.0D-3
   !+ad_vars  epsvmc /1.0D-3/ : error tolerance for VMCON
   real(kind(1.0D0)) :: epsvmc = 1.0D-3
-  !+ad_vars  factor /0.1/ : used in VMCON for first step size
+  !+ad_vars  factor /0.1/ : used in HYBRD for first step size
   real(kind(1.0D0)) :: factor = 0.1D0
   !+ad_vars  ftol /1.0D-4/ : error tolerance for HYBRD
   real(kind(1.0D0)) :: ftol = 1.0D-4

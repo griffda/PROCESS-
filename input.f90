@@ -323,6 +323,7 @@ contains
     !+ad_hist  08/01/13 PJK Commented out ICULDL error trap for time being
     !+ad_hisc               (ICULDL simply ignored now)
     !+ad_hist  23/01/13 PJK Added IOTABAR
+    !+ad_hist  31/01/13 PJK Changed FACTOR comment
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -418,7 +419,7 @@ if (linelen > 80) write(*,*) line
                'VMCON error tolerance')
        case ('FACTOR')
           call parse_real_variable('FACTOR', factor, 0.0D0, 10.0D0, &
-               'VMCON initial step size')
+               'HYBRID initial step size')
        case ('FTOL')
           call parse_real_variable('FTOL', ftol, 0.0D0, 1.0D0, &
                'HYBRID tolerance')

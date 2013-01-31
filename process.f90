@@ -399,6 +399,8 @@ subroutine eqslv(ifail)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  10/10/12 PJK Modified to use new numerics, function_evaluator
   !+ad_hisc               modules
+  !+ad_hist  31/01/13 PJK Added warning about high residuals if the convergence
+  !+ad_hisc               is suspicious
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -471,12 +473,25 @@ subroutine eqslv(ifail)
 
   call ovarre(nout,'Estimate of the constraints','(sqsumsq)',sqsumsq)
 
-  !  If necessary, write out the relevant error message
+  !  If necessary, write out a relevant error message
 
   if (ifail /= 1) then
      call oblnkl(nout)
      call herror(ifail)
      call oblnkl(iotty)
+  else
+     !  Show a warning if the constraints appear high even if allegedly converged
+     if (sqsumsq >= 1.0D-2) then
+        call oblnkl(nout)
+        call ocmmnt(nout,'WARNING: Constraint residues are HIGH; consider re-running')
+        call ocmmnt(nout,'   with lower values of FTOL to confirm convergence...')
+        call ocmmnt(nout,'   (should be able to get down to about 1.0E-8 okay)')
+
+        call ocmmnt(iotty,'WARNING: Constraint residues are HIGH; consider re-running')
+        call ocmmnt(iotty,'   with lower values of FTOL to confirm convergence...')
+        call ocmmnt(iotty,'   (should be able to get down to about 1.0E-8 okay)')
+        call oblnkl(iotty)
+     end if
   end if
 
   call osubhd(nout,'The solution vector is comprised as follows :')
@@ -524,10 +539,12 @@ subroutine herror(ifail)
   !+ad_desc  found and therefore no error message is required.
   !+ad_prob  None
   !+ad_call  process_output
+  !+ad_call  oblnkl
   !+ad_call  ocmmnt
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  08/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  31/01/13 PJK Reworded the ifail=4 error message
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -587,16 +604,28 @@ subroutine herror(ifail)
 
   case (4)
      call ocmmnt(nout,'The iteration is not making good progress.')
-     call ocmmnt(nout,'Try changing the variables in IXC.')
+     call ocmmnt(nout,'The code may be stuck in a minimum in the residual')
+     call ocmmnt(nout,'space that is significantly above zero.')
+     call oblnkl(nout)
+     call ocmmnt(nout,'There is either no solution possible, or the code')
+     call ocmmnt(nout,'is failing to escape from a deep local minimum.')
+     call ocmmnt(nout,'Try changing the variables in IXC, or')
+     call ocmmnt(nout,'modify their initial values.')
 
      call ocmmnt(iotty,'The iteration is not making good progress.')
-     call ocmmnt(iotty,'Try changing the variables in IXC.')
+     call ocmmnt(iotty,'The code may be stuck in a minimum in the residual')
+     call ocmmnt(iotty,'space that is significantly above zero.')
+     call oblnkl(iotty)
+     call ocmmnt(iotty,'There is either no solution possible, or the code')
+     call ocmmnt(iotty,'is failing to escape from a deep local minimum.')
+     call ocmmnt(iotty,'Try changing the variables in IXC, or')
+     call ocmmnt(iotty,'modify their initial values.')
 
   case default
      call ocmmnt(nout, 'This value of IFAIL should not be possible...')
      call ocmmnt(nout,'See source code for details.')
 
-     call ocmmnt(iotty,'This value of ifail should not be possible...')
+     call ocmmnt(iotty,'This value of IFAIL should not be possible...')
      call ocmmnt(iotty,'See source code for details.')
 
   end select
@@ -626,6 +655,7 @@ subroutine verror(ifail)
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  08/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  31/01/13 PJK Reworded the ifail=2 error message
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -662,15 +692,27 @@ subroutine verror(ifail)
   case (2)
      call ocmmnt(nout, &
           'The maximum number of calls has been reached without')
-     call ocmmnt(nout, 'solution, suggesting that the iteration is not')
+     call ocmmnt(nout,'solution, suggesting that the iteration is not')
      call ocmmnt(nout,'making good progress.')
-     call ocmmnt(nout,'Try changing or adding variables to IXC.')
+     call ocmmnt(nout,'The code may be stuck in a minimum in the residual')
+     call ocmmnt(nout,'space that is significantly above zero.')
+     call oblnkl(nout)
+     call ocmmnt(nout,'There is either no solution possible, or the code')
+     call ocmmnt(nout,'is failing to escape from a deep local minimum.')
+     call ocmmnt(nout,'Try changing the variables in IXC, or')
+     call ocmmnt(nout,'modify their initial values.')
 
      call ocmmnt(iotty, &
           'The maximum number of calls has been reached without')
      call ocmmnt(iotty,'solution, suggesting that the iteration is not')
      call ocmmnt(iotty,'making good progress.')
-     call ocmmnt(iotty,'Try changing or adding variables to IXC.')
+     call ocmmnt(iotty,'The code may be stuck in a minimum in the residual')
+     call ocmmnt(iotty,'space that is significantly above zero.')
+     call oblnkl(iotty)
+     call ocmmnt(iotty,'There is either no solution possible, or the code')
+     call ocmmnt(iotty,'is failing to escape from a deep local minimum.')
+     call ocmmnt(iotty,'Try changing the variables in IXC, or')
+     call ocmmnt(iotty,'modify their initial values.')
 
   case (3)
      call ocmmnt(nout, &
@@ -723,10 +765,10 @@ subroutine verror(ifail)
      call ocmmnt(iotty,'adding new variables to IXC.')
 
   case default
-     call ocmmnt(nout,'This value of ifail should not be possible...')
+     call ocmmnt(nout,'This value of IFAIL should not be possible...')
      call ocmmnt(nout,'See source code for details.')
 
-     call ocmmnt(iotty,'This value of ifail should not be possible...')
+     call ocmmnt(iotty,'This value of IFAIL should not be possible...')
      call ocmmnt(iotty,'See source code for details.')
 
   end select
@@ -763,6 +805,8 @@ subroutine doopt(ifail)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  10/10/12 PJK Modified to use new numerics and function_evaluator
   !+ad_hisc               modules
+  !+ad_hist  31/01/13 PJK Added warning about high residuals if the convergence
+  !+ad_hisc               is suspicious
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -821,12 +865,25 @@ subroutine doopt(ifail)
 
   call oblnkl(nout)
 
-  !  If necessary, write the relevant error message
+  !  If necessary, write out a relevant error message
 
   if (ifail /= 1) then
      call verror(ifail)
      call oblnkl(nout)
      call oblnkl(iotty)
+  else
+     !  Show a warning if the constraints appear high even if allegedly converged
+     if (sqsumsq >= 1.0D-2) then
+        call oblnkl(nout)
+        call ocmmnt(nout,'WARNING: Constraint residues are HIGH; consider re-running')
+        call ocmmnt(nout,'   with lower values of EPSVMC to confirm convergence...')
+        call ocmmnt(nout,'   (should be able to get down to about 1.0E-8 okay)')
+
+        call ocmmnt(iotty,'WARNING: Constraint residues are HIGH; consider re-running')
+        call ocmmnt(iotty,'   with lower values of EPSVMC to confirm convergence...')
+        call ocmmnt(iotty,'   (should be able to get down to about 1.0E-8 okay)')
+        call oblnkl(iotty)
+     end if
   end if
 
   call ovarin(nout,'Optimisation switch','(ioptimz)',ioptimz)
