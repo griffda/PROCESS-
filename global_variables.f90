@@ -1183,6 +1183,7 @@ module tfcoil_variables
   !+ad_call  None
   !+ad_hist  18/10/12 PJK Initial version of module
   !+ad_hist  30/01/13 PJK Modified vftf comments
+  !+ad_hist  08/04/13 PJK Modified cpttf, tfno comments
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1236,7 +1237,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: cforce = 0.0D0
   !+ad_vars  cph2o /4180.0/ FIX : specific heat of water (J/kg/K)
   real(kind(1.0D0)) :: cph2o = 4180.0D0
-  !+ad_vars  cpttf /3.79D4/ : current per turn (A) (single turn legs)
+  !+ad_vars  cpttf /3.79D4/ : TF coil current per turn (A)
+  !+ad_varc                  (iteration variable 60)
   real(kind(1.0D0)) :: cpttf = 3.79D4
   !+ad_vars  csutf /1.4D9/ : ultimate strength of case (Pa)
   real(kind(1.0D0)) :: csutf = 1.4D9
@@ -1418,7 +1420,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tflegres = 2.5D-8
   !+ad_vars  tfleng : TF coil circumference (m)
   real(kind(1.0D0)) :: tfleng = 0.0D0
-  !+ad_vars  tfno : number of TF coils
+  !+ad_vars  tfno /16.0/ : number of TF coils (default = 50 for stellarators)
   real(kind(1.0D0)) :: tfno = 16.0D0
   !+ad_vars  tfocrn : TF coil half-width - outer bore (m)
   real(kind(1.0D0)) :: tfocrn = 0.0D0
@@ -1858,6 +1860,7 @@ module buildings_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  30/10/12 PJK Initial version of module
+  !+ad_hist  08/04/13 PJK Modified wrbi comment
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1937,7 +1940,8 @@ module buildings_variables
   !+ad_vars  wgt2 /1.0D5/ : hot cell crane capacity (kg)
   !+ad_varc                 (calculated if 0 is input)
   real(kind(1.0D0)) :: wgt2 = 1.0D5
-  !+ad_vars  wrbi : distance from centre of tokamak to reactor (m)
+  !+ad_vars  wrbi : distance from centre of machine to building wall (m),
+  !+ad_varc         i.e. reactor building half-width
   real(kind(1.0D0)) :: wrbi = 0.0D0
   !+ad_vars  wsvol : volume of warm shop building (m3)
   real(kind(1.0D0)) :: wsvol = 0.0D0

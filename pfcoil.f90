@@ -93,6 +93,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_host  18/12/12 PJK/RK Added single-null coding
+    !+ad_hist  08/04/13 PJK Comment change
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -665,7 +666,7 @@ contains
     turns(nohc+1) = 1.0D0
 
     !  Generate coil currents as a function of time using
-    !  input current wave forms
+    !  user-provided waveforms etc. (cptdin, fcohbop, fcohbof)
 
     do k = 1,6  !  time points
        do i = 1,ncirt-1

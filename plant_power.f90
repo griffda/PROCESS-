@@ -241,6 +241,7 @@ contains
 
       !+ad_name  tfcpwr
       !+ad_summ  Calculates the TF coil power conversion system parameters
+      !+ad_summ  for superconducting coils
       !+ad_type  Subroutine
       !+ad_auth  P J Knight, CCFE, Culham Science Centre
       !+ad_auth  P C Shipe, ORNL
@@ -273,6 +274,7 @@ contains
       !+ad_hist  01/08/11 PJK Initial F90 version
       !+ad_hist  09/10/12 PJK Modified to use new process_output module
       !+ad_hist  16/10/12 PJK Added constants
+      !+ad_hist  08/04/13 PJK Comment changes; xpower units changed from MW to MVA
       !+ad_stat  Okay
       !+ad_docs  None
       !
@@ -342,8 +344,8 @@ contains
       !  during quench, MW
       r1emj = nsptfc*ettfc/(ndumpr+0.0001D0)  !  energy to dump resistor during quench, MJ
       rpower = (ntfc*rptfc+rtfbus)*itfka**2
-      xpower = ltfth/(3600.0D0*tchghr)*itfka**2  !  total TF coil mgf peak inductive
-      !  power demand, MW
+      xpower = ltfth/(3600.0D0*tchghr)*itfka**2  !  total TF coil peak inductive
+      !  power demand, MVA
 
       part1 = fspc1*ntfpm*tfpmkw**0.667D0
       part2 = fspc2*ntfbkr*(vtfskv*itfka)**0.667D0
@@ -391,7 +393,7 @@ contains
       call ovarre(outfile,'DC power supply rating (kW)','(tfckw)',tfckw)
       call ovarre(outfile,'AC power for charging (kW)','(tfackw)',tfackw)
       call ovarre(outfile,'TF coil resistive power (MW)','(rpower)',rpower)
-      call ovarre(outfile,'TF coil inductive power (MW)','(xpower)',xpower)
+      call ovarre(outfile,'TF coil inductive power (MVA)','(xpower)',xpower)
       call ovarre(outfile,'Aluminium bus current density (kA/cm2)', &
            '(djmka)',djmka)
       call ovarre(outfile,'Aluminium bus cross-sectional area (cm2)', &
