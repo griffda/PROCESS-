@@ -3556,6 +3556,8 @@ contains
        mode,factor,nprint,info,nfev,fjac,ldfjac,r,lr, &
        qtf,wa1,wa2,wa3,wa4,resdl)
 
+    !  www.math.utah.edu/software/minpack/minpack/hybrd.html
+
     !  The purpose of HYBRD is to find a zero of a system of
     !  N nonlinear functions in N variables by a modification
     !  of the Powell Hybrid method. The user must provide a
@@ -5039,49 +5041,62 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  real(kind(1.0D0)) FUNCTION SPMPAR(i)
+  function spmpar(i)
 
-    !  This function provides certain machine parameters.
+    !+ad_name  spmpar
+    !+ad_summ  Calculates machine (computing) parameters
+    !+ad_type  Function returning real
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  i : input integer : Switch for return value:
+    !+ad_argc                      i=1 : B**(1 - P), the machine precision
+    !+ad_argc                      i=2 : B**(EMIN - 1), the smallest magnitude
+    !+ad_argc                      i=3 : B**EMAX*(1 - B**(-P)), the largest magnitude
+    !+ad_argc     where the machine being used has P base B digits, and its smallest
+    !+ad_arc      and largest exponents are EMIN and EMAX, respectively.
+    !+ad_desc  This routine evaluates the numerical machine parameters of the
+    !+ad_desc  computer being used to run the program, as defined above.
+    !+ad_desc  <P>Note that the values of these parameters can be found for a given
+    !+ad_desc  machine if the Mark 12 or later NAg library is installed on it.
+    !+ad_desc  <P><CODE>SPMPAR(1)</CODE> is equivalent to <CODE>X02AJF()</CODE>;
+    !+ad_desc  <BR><CODE>SPMPAR(2)</CODE> is equivalent to <CODE>X02AKF()</CODE>;
+    !+ad_desc  <BR><CODE>SPMPAR(3)</CODE> is equivalent to <CODE>X02ALF()</CODE>.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  28/07/11 PJK Initial F90 version
+    !+ad_hist  08/04/13 PJK Modified to use Fortran intrinsic functions
+    !+ad_stat  Okay
+    !+ad_docs  Metcalf and Reid, Fortran 90/95 Explained, 2nd Edition (section 8.7.2)
     !
-    !  I is an integer input variable set to 1, 2, or 3 which
-    !  selects the desired machine parameter. If the machine has
-    !  P base B digits and its smallest and largest exponents are
-    !  EMIN and EMAX, respectively, then these parameters are
-    !
-    !  SPMPAR(1) = B**(1 - P), the machine precision,
-    !
-    !  SPMPAR(2) = B**(EMIN - 1), the smallest magnitude,
-    !
-    !  SPMPAR(3) = B**EMAX*(1 - B**(-P)), the largest magnitude.
-    !
-    !  Note that the values of these parameters can be found for a given
-    !  machine if the Mark 12 or later NAg library is installed on it.
-    !
-    !  SPMPAR(1) is equivalent to X02AJF()
-    !  SPMPAR(2) is equivalent to X02AKF()
-    !  SPMPAR(3) is equivalent to X02ALF()
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    IMPLICIT NONE
+    implicit none
 
-    INTEGER i
+    real(kind(1.0D0)) :: spmpar
 
-    real(kind(1.0D0)) rmach(3)
+    !  Arguments
 
-    !  Original single-precision values
+    integer, intent(in) :: i
 
-    !      rmach(1) = 0.000001D0
-    !      rmach(2) = 0.5D-37
-    !      rmach(3) = 0.1D+38
+    !  Local variables
 
-    !+**PJK 15/11/11 Values relevant for the present FUN machines
+    real(kind(1.0D0)), dimension(3) :: rmach
 
-    rmach(1) = 1.110223024625157D-016
-    rmach(2) = 2.3D-308  !  actual value 2.225073858507201D-308
-    rmach(3) = 1.797693134862316D+308
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Previously-used hardwired values shown in comments
+
+    !rmach(1) = 1.110223024625157D-016
+    rmach(1) = epsilon(0.0D0)
+
+    !rmach(2) = 2.3D-308
+    rmach(2) = tiny(0.0D0)
+
+    !rmach(3) = 1.797693134862316D+308
+    rmach(3) = huge(0.0D0)
 
     spmpar = rmach(i)
 
-    return
-  end FUNCTION SPMPAR
+  end function spmpar
 
 end module maths_library
