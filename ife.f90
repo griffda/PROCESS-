@@ -2106,6 +2106,8 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  30/10/12 PJK Added buildings_variables
+    !+ad_hist  05/02/13 PJK Clarified MGF output
+    !+ad_hist  27/03/13 PJK MGF power removed; irrelevant for IFE
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.68
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2136,7 +2138,7 @@ contains
 
        !  Total pulsed power system load, MW
 
-       pacpmw = fmgdmw + crypmw + vachtmw + tdspmw + tfacmw + &
+       pacpmw = crypmw + vachtmw + tdspmw + tfacmw + &
             (htpmw*reprat/6.0D0) + trithtmw + pinjwp + basemw + &
             (efloor*pmwpm2)
 
@@ -2160,7 +2162,6 @@ contains
     call ovarre(outfile,'Facility base load (MW)','(basemw)',basemw)
     call ovarre(outfile,'Total floor space (m2)','(efloor)',efloor)
     call ovarre(outfile,'Power/floor area (MW/m2)','(pmwpm2)',pmwpm2)
-    call ovarre(outfile,'MGF units (MW)','(fmgdmw)',fmgdmw)
     call ovarre(outfile,'Driver power supplies (MW)','(pinjwp)', &
          pinjwp)
     call ovarre(outfile,'Target delivery system (MW)','(tdspmw)', &

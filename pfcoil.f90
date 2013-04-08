@@ -490,11 +490,15 @@ contains
           rpf(ncl) = rcls(nng,ng2)
           zpf(ncl) = zcls(nng,ng2)
 
-          !  Currents at different times
+          !  Currents at different times:
 
-          !curpfb(ncl) = 1.0D-6 * ccls(nng)
+          !  Beginning of pulse: t = tramp
           curpfs(ncl) = 1.0D-6 * ccl0(nng)
+
+          !  Beginning of flat-top: t = tramp+tohs
           curpff(ncl) = 1.0D-6 * (ccls(nng) - (ccl0(nng) * fcohbof/fcohbop))
+
+          !  End of flat-top: t = tramp+tohs+theat+tburn
           curpfb(ncl) = 1.0D-6 * (ccls(nng) - (ccl0(nng) * (1.0D0/fcohbop)))
        end do
     end do
@@ -1692,6 +1696,7 @@ contains
     !+ad_hist  09/05/12 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  18/12/12 PJK Modified if-logic to >= throughout
+    !+ad_hist  27/03/13 PJK Changed comment: TF coil to plasma
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1703,29 +1708,35 @@ contains
 
     !  Local variables
 
-    integer :: ic,it,nntf
+    integer :: ic,it,nplas
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Initialize TF coil waveform to 1.0
-    !  (TF coil??? More likely OH coil!)
+    !  Initialize plasma current waveform to 1.0
+    !  (never actually used)
 
-    nntf = nohc+1
+    nplas = nohc+1
     do it = 1,6
-       waves(nntf,it) = 1.0D0
+       waves(nplas,it) = 1.0D0
     end do
 
     do ic = 1,nohc
 
        !  Find where the peak current occurs
 
+       !  Beginning of pulse, t = tramp
+
        if ( (abs(curpfs(ic)) >= abs(curpfb(ic))) .and. &
             (abs(curpfs(ic)) >= abs(curpff(ic))) ) &
             ric(ic) = curpfs(ic)
 
+       !  Beginning of flat-top, t = tramp + tohs
+
        if ( (abs(curpff(ic)) >= abs(curpfb(ic))) .and. &
             (abs(curpff(ic)) >= abs(curpfs(ic))) ) &
             ric(ic) = curpff(ic)
+
+       !  End of flat-top, t = tramp + tohs + theat + tburn
 
        if ( (abs(curpfb(ic)) >= abs(curpfs(ic))) .and. &
             (abs(curpfb(ic)) >= abs(curpff(ic))) ) &

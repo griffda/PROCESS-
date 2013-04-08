@@ -2238,11 +2238,12 @@ contains
     !+ad_desc  This routine evaluates the Account 225.2 (PF coil power
     !+ad_desc  conditioning) costs.
     !+ad_desc  Costs are taken from the equipment specification of the
-    !+ad_desc  pwrconv module.
+    !+ad_desc  <A HREF="pfpwr.html">pfpwr</A> routine from the plant power module.
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  04/02/13 PJK Comment change
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !

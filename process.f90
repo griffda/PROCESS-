@@ -1274,3 +1274,4 @@ subroutine output(outfile)
 end subroutine output
 
 ! SVN 145: New CICC plots for User Guide
+! SVN 149: MGF power usage correction

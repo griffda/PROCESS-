@@ -1629,6 +1629,7 @@ module pf_power_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  29/10/12 PJK Initial version of module
+  !+ad_hist  27/03/13 PJK Comment change to ISCENR
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1643,9 +1644,10 @@ module pf_power_variables
   !+ad_vars  ensxpfm : maximum stored energy in the PF circuits (MJ)
   real(kind(1.0D0)) :: ensxpfm = 0.0D0
   !+ad_vars  iscenr /2/ : Switch for energy storage option:<UL>
-  !+ad_varc          <LI> = 1 all power from MGF units;
+  !+ad_varc          <LI> = 1 all power from MGF (motor-generator flywheel) units;
   !+ad_varc          <LI> = 2 all pulsed power from line;
   !+ad_varc          <LI> = 3 PF power from MGF, heating from line</UL>
+  !+ad_varc          (In fact, options 1 and 3 are not treated differently)
   integer :: iscenr = 2
   !+ad_vars  pfckts : number of PF coil circuits
   real(kind(1.0D0)) :: pfckts = 0.0D0
@@ -1679,6 +1681,7 @@ module heat_transport_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  30/10/12 PJK Initial version of module
+  !+ad_hist  27/03/13 PJK Comment change to FMGDMW
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1715,7 +1718,8 @@ module heat_transport_variables
   real(kind(1.0D0)) :: ffwlg = 1.0D0
   !+ad_vars  fgrosbop : scaled fraction of gross power to balance-of-plant
   real(kind(1.0D0)) :: fgrosbop = 0.0D0
-  !+ad_vars  fmgdmw /0.0/ : power to mgf units (MW)
+  !+ad_vars  fmgdmw /0.0/ : power to mgf (motor-generator flywheel) units (MW)
+  !+ad_varc                 (ignored if iscenr=2)
   real(kind(1.0D0)) :: fmgdmw = 0.0D0
   !+ad_vars  helecmw /0.0/ : electrical power required for H production (MW)
   !+ad_varc                  (iteration variable 87)
@@ -2286,9 +2290,9 @@ module cost_variables
   real(kind(1.0D0)) :: ucech = 3.0D0
   !+ad_vars  ucel /380.0/ FIX : unit cost for electrical equipment building (M$/m3)
   real(kind(1.0D0)) :: ucel = 380.0D0
-  !+ad_vars  uces1 /3.2D4/ FIX : MGF cost factor ($/MVA**0.8)
+  !+ad_vars  uces1 /3.2D4/ FIX : MGF (motor-generator flywheel) cost factor ($/MVA**0.8)
   real(kind(1.0D0)) :: uces1 = 3.2D4
-  !+ad_vars  uces2 /8.8D3/ FIX : MGF cost factor ($/MJ**0.8)
+  !+ad_vars  uces2 /8.8D3/ FIX : MGF (motor-generator flywheel) cost factor ($/MJ**0.8)
   real(kind(1.0D0)) :: uces2 = 8.8D3
   !+ad_vars  ucf1 /2.23D7/ : cost of fuelling system ($)
   real(kind(1.0D0)) :: ucf1 = 2.23D7

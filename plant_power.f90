@@ -423,7 +423,7 @@ contains
   subroutine pfpwr(outfile,iprint)
 
     !+ad_name  pfpwr
-    !+ad_summ  PF coil power supply requirements for resistive coils
+    !+ad_summ  PF coil power supply requirements
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
@@ -446,6 +446,7 @@ contains
     !+ad_hist  18/10/12 PJK Added pfcoil_variables
     !+ad_hist  29/10/12 PJK Added pf_power_variables
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
+    !+ad_hist  04/02/13 PJK Comment change
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -669,6 +670,8 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  29/10/12 PJK Added pf_power_variables
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
+    !+ad_hist  05/02/13 PJK Clarified MGF output
+    !+ad_hist  27/03/13 PJK MGF power only included if iscenr /= 2
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -717,8 +720,13 @@ contains
 
     !  Total pulsed power system load, MW
 
-    pacpmw = fmgdmw + ppfmw + bdvmw + ptfmw + crymw + vachtmw + &
+    pacpmw = ppfmw + bdvmw + ptfmw + crymw + vachtmw + &
          htpmw + trithtmw + pheatmw + basemw + efloor*pkwpm2/1000.0D0
+
+    !  Add contribution from motor-generator flywheels if these are part of
+    !  the energy storage system
+
+    if (iscenr /= 2) pacpmw = pacpmw + fmgdmw
 
     !  Total power to facility loads, MW
 
@@ -738,7 +746,8 @@ contains
     call ovarre(outfile,'Divertor coil power supplies (MW)','(bdvmw)',bdvmw)
     call ovarre(outfile,'Cryogenic comp motors (MW)','(crymw)',crymw)
     call ovarre(outfile,'Total floor space (m2)','(efloor)',efloor)
-    call ovarre(outfile,'MGF units (MW)','(fmgdmw)',fmgdmw)
+    call ovarre(outfile,'MGF (motor-generator flywheel) units (MW)', &
+         '(fmgdmw)',fmgdmw)
     call ovarre(outfile,'Heat transport system pump motors (MW)', &
          '(htpmw)',htpmw)
     call ovarre(outfile,'PF coil power supplies (MW)','(ppfmw)',ppfmw)

@@ -1149,6 +1149,7 @@ contains
     !+ad_hist  18/10/12 PJK Added pfcoil_variables
     !+ad_hist  29/10/12 PJK Added pf_power_variables
     !+ad_hist  31/10/12 PJK Added constraint_variables
+    !+ad_hist  04/02/13 PJK Comment change
     !+ad_stat  Okay
     !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0013
     !+ad_docs  Work File Note F/PL/PJK/PROCESS/CODE/050
@@ -1189,7 +1190,7 @@ contains
        end if
 
        !  OH coil bus resistance (ohms) (assumed to include power supply)
-       !  Bus parameters taken from routine PWRCONV.
+       !  Bus parameters taken from routine PFPWR.
 
        pfbusl = 8.0D0 * rmajor + 140.0D0
        albusa = abs(cptdin(nohc))/100.0D0
