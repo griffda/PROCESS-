@@ -74,6 +74,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
+    !+ad_hist  09/04/13 PJK Changed local variables routr to rout, rinr to rin
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -87,7 +88,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: r1,routr,rinr,tfcind1
+    real(kind(1.0D0)) :: r1,rout,rin,tfcind1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -123,11 +124,11 @@ contains
 
        !  Radius of inner edge of outboard TF coil leg (m)
 
-       routr = rtot - 0.5D0*tfcth
+       rout = rtot - 0.5D0*tfcth
 
        !  Radius of outer edge of inboard TF coil leg (m)
 
-       rinr = rbmax
+       rin = rbmax
 
        !  Centering and vertical forces
 
@@ -136,7 +137,7 @@ contains
        else
           cforce = bmaxtf * ritfc/(2.0D0*tfno)  !  N/m
        end if
-       vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(routr/rinr) / tfno  !  N
+       vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(rout/rin) / tfno  !  N
 
        !  Bore (gap between inner and outer TF coil legs) (m)
 
@@ -148,7 +149,7 @@ contains
 
        !  Inductance
 
-       tfcind1 = hmax * rmu0/pi * log(routr/rinr)
+       tfcind1 = hmax * rmu0/pi * log(rout/rin)
 
        !  Stored energy per coil (GJ)
 

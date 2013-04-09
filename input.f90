@@ -324,6 +324,7 @@ contains
     !+ad_hisc               (ICULDL simply ignored now)
     !+ad_hist  23/01/13 PJK Added IOTABAR
     !+ad_hist  31/01/13 PJK Changed FACTOR comment
+    !+ad_hist  09/04/13 PJK Added RPF2DEWAR
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -976,10 +977,10 @@ if (linelen > 80) write(*,*) line
                'Machine bore (m)')
        case ('DDWEX')
           call parse_real_variable('DDWEX', ddwex, 0.0D0, 10.0D0, &
-               'External dewar thickness (m)')
+               'External cryostat thickness (m)')
        case ('DDWI')
           call parse_real_variable('DDWI', ddwi, 0.0D0, 10.0D0, &
-               'Dewar thickness (m)')
+               'Vacuum vessel thickness (m)')
        case ('FMSBC')
           call parse_real_variable('FMSBC', fmsbc, 0.0D0, 1.0D0, &
                'Martensitic frac of steel in buck cyl')
@@ -988,10 +989,10 @@ if (linelen > 80) write(*,*) line
                'Martensitic frac of steel in blanket')
        case ('FMSDWE')
           call parse_real_variable('FMSDWE', fmsdwe, 0.0D0, 1.0D0, &
-               'Martensitic frac of steel in external dewar')
+               'Martensitic frac of steel in external cryostat')
        case ('FMSDWI')
           call parse_real_variable('FMSDWI', fmsdwi, 0.0D0, 1.0D0, &
-               'Martensitic frac of steel in dewar')
+               'Martensitic frac of steel in vacuum vessel')
        case ('FMSFW')
           call parse_real_variable('FMSFW', fmsfw, 0.0D0, 1.0D0, &
                'Martensitic frac of steel in first wall')
@@ -1015,7 +1016,7 @@ if (linelen > 80) write(*,*) line
                'Gap between OHC and bucking cylinder (m)')
        case ('GAPDS')
           call parse_real_variable('GAPDS', gapds, 0.0D0, 10.0D0, &
-               'Gap between dewar and shield (m)')
+               'Gap between vacuum vessel and shield (m)')
        case ('GAPOMIN')
           call parse_real_variable('GAPOMIN', gapomin, 0.0D0, 10.0D0, &
                'Min gap between outer shield & TFC (m)')
@@ -1028,6 +1029,9 @@ if (linelen > 80) write(*,*) line
        case ('RINBOARD')
           call parse_real_variable('RINBOARD', rinboard, 0.1D0, 10.0D0, &
                'Plasma inboard radius (m)')
+       case ('RPF2DEWAR')
+          call parse_real_variable('RPF2DEWAR', rpf2dewar, 0.1D0, 5.0D0, &
+               'Outer PF coil to cryostat distance (m)')
        case ('SCRAPLI')
           call parse_real_variable('SCRAPLI', scrapli, 0.0D0, 10.0D0, &
                'Inboard scrapeoff length (m)')
@@ -1393,10 +1397,10 @@ if (linelen > 80) write(*,*) line
                'Fudge factor for outer blanket volume')
        case ('FVOLCRY')
           call parse_real_variable('FVOLCRY', fvolcry, 0.0D0, 10.0D0, &
-               'Fudge factor for cryostat volume')
+               'Fudge factor for external cryostat volume (OBSOLETE)')
        case ('FVOLDW')
           call parse_real_variable('FVOLDW', fvoldw, 0.0D0, 10.0D0, &
-               'Fudge factor for dewar')
+               'Fudge factor for vacuum vessel volume')
        case ('FVOLSI')
           call parse_real_variable('FVOLSI', fvolsi, 0.0D0, 10.0D0, &
                'Fudge factor for inner shield volume')

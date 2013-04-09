@@ -179,6 +179,7 @@ subroutine loca(outfile,iprint)
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  06/11/12 PJK Added fispact_variables
+  !+ad_hist  09/04/13 PJK Comment changes
   !+ad_stat  This routine is untested in F90...
   !+ad_docs  F/MI/PJK/LOGBOOK12, pp.70,71,72,73
   !+ad_docs  Strategic Studies Note 96/30, January 1997
@@ -394,7 +395,7 @@ subroutine loca(outfile,iprint)
 
      end if
 
-     !  Inboard dewar
+     !  Inboard vacuum vessel
 
      matfrc(5,1) = fmsdwi
      matfrc(5,2) = 1.0D0 - fmsdwi
@@ -470,7 +471,7 @@ subroutine loca(outfile,iprint)
      matfrc(12,2) = (1.0D0 - vfshld) * (1.0D0 - fmssh)
      matfrc(12,5) = vfshld
 
-     !  Outboard dewar
+     !  Outboard vacuum vessel
 
      matfrc(13,1) = fmsdwi
      matfrc(13,2) = 1.0D0 - fmsdwi
@@ -502,7 +503,7 @@ subroutine loca(outfile,iprint)
 
      end if
 
-     !  External dewar
+     !  External cryostat
 
      matfrc(15,1) = fmsdwe
      matfrc(15,2) = 1.0D0 - fmsdwe

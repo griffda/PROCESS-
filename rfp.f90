@@ -110,7 +110,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: ltfleg,rinr,routr,tfcind1
+    real(kind(1.0D0)) :: ltfleg,rin,rout,tfcind1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -120,7 +120,7 @@ contains
 
     !  Radius of outer edge of inboard TF coil leg
 
-    rinr = rtfcin + 0.5D0*tfcth
+    rin = rtfcin + 0.5D0*tfcth
 
     !  Unlike in a tokamak, the inboard legs do not necessarily form
     !  a continuous ring. tftort is calculated ensuring that adjacent
@@ -137,12 +137,12 @@ contains
 
     !  Peak toroidal field and radius of its occurrence
 
-    rbmax = rinr
+    rbmax = rin
     bmaxtf = 2.0D-7 * ritfc / rbmax
 
     !  Radius of inner edge of outboard TF coil leg
 
-    routr = rtot - 0.5D0*tfcth
+    rout = rtot - 0.5D0*tfcth
 
     !  Centering and vertical forces
 
@@ -151,7 +151,7 @@ contains
     else
        cforce = bmaxtf * ritfc/(2.0D0*tfno)
     end if
-    vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(routr/rinr)/tfno
+    vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(rout/rin)/tfno
 
     !  Bore (gap between inner and outer TF coil legs)
 
@@ -215,7 +215,7 @@ contains
 
     !  Inductance (N.B. hmax may not be equal to the coil radius)
 
-    tfcind1 = hmax * rmu0/pi * log(routr/rinr)
+    tfcind1 = hmax * rmu0/pi * log(rout/rin)
 
     !  Stored energy per coil (GJ)
 

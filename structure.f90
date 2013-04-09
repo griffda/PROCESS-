@@ -123,7 +123,7 @@ contains
     !+ad_args  fwmass : input real : first wall mass (kg)
     !+ad_args  coolmass : input real : total water coolant mass (kg)
     !+ad_args  wtbc : input real : bucking cylinder mass (kg)
-    !+ad_args  dewmass : input real : dewar mass (kg)
+    !+ad_args  dewmass : input real : vacuum vessel + cryostat mass (kg)
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_args  fncmass : output real : mass of outer pf coil support fence (kg)
@@ -137,6 +137,7 @@ contains
     !+ad_call  ovarre
     !+ad_hist  28/07/11 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
+    !+ad_hist  09/04/13 PJK Comment changes
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -167,7 +168,7 @@ contains
 
     aintmass = 1.4D6 * (ai/2.2D7) * b0/4.85D0 * boreh**2/50.0D0
 
-    !  Total mass of coils plus support plus dewar
+    !  Total mass of coils plus support plus vacuum vessel + cryostat
 
     coilmass = tfmass + pfmass + aintmass + dewmass + wtbc
 

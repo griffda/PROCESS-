@@ -803,6 +803,7 @@ module fwbs_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  18/10/12 PJK Initial version of module
+  !+ad_hist  09/04/13 PJK Added rdewex, rpf2dewar; changed some labels
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -817,11 +818,11 @@ module fwbs_variables
   !+ad_vars  coolmass : Mass of water coolant (in shield, blanket,
   !+ad_varc             first wall, divertor) (kg)
   real(kind(1.0D0)) :: coolmass = 0.0D0
-  !+ad_vars  cryomass : cryostat mass (kg)
+  !+ad_vars  cryomass : vacuum vessel mass (kg)
   real(kind(1.0D0)) :: cryomass = 0.0D0
   !+ad_vars  denstl /7800.0/ : density of steel (kg/m3)
   real(kind(1.0D0)) :: denstl = 7800.0D0
-  !+ad_vars  dewmkg : Dewar mass (kg)
+  !+ad_vars  dewmkg : total mass of vacuum vessel + cryostat (kg)
   real(kind(1.0D0)) :: dewmkg = 0.0D0
   !+ad_vars  emult /1.27/ : energy multiplication in blanket and shield
   real(kind(1.0D0)) :: emult = 1.27D0
@@ -843,9 +844,9 @@ module fwbs_variables
   real(kind(1.0D0)) :: fvolbi = 1.0D0
   !+ad_vars  fvolbo /0.75/ : fudge factor for outer blanket volume
   real(kind(1.0D0)) :: fvolbo = 0.75D0
-  !+ad_vars  fvolcry /1.4/ : fudge factor for cryostat volume
+  !+ad_vars  fvolcry /1.4/ : fudge factor for cryostat volume (obsolete)
   real(kind(1.0D0)) :: fvolcry = 1.4D0
-  !+ad_vars  fvoldw /1.4/ : fudge factor for dewar
+  !+ad_vars  fvoldw /1.4/ : fudge factor for vacuum vessel volume
   real(kind(1.0D0)) :: fvoldw = 1.4D0
   !+ad_vars  fvolsi /0.64/ : fudge factor for inner shield volume
   real(kind(1.0D0)) :: fvolsi = 0.64D0
@@ -866,9 +867,14 @@ module fwbs_variables
   real(kind(1.0D0)) :: pnucshld = 0.0D0
   !+ad_vars  ptfnuc : nuclear heating in the TF coil (MW)
   real(kind(1.0D0)) :: ptfnuc = 0.0D0
-  !+ad_vars  vdewex : external dewar volume (m3)
+  !+ad_vars  rdewex : external cryostat radius (m)
+  real(kind(1.0D0)) :: rdewex = 0.0D0
+  !+ad_vars  rpf2dewar /0.5/ : radial distance between centre of ipfloc=3
+  !+ad_varc                    PF coil conductor and external cryostat (m)
+  real(kind(1.0D0)) :: rpf2dewar = 0.5D0
+  !+ad_vars  vdewex : external cryostat volume (m3)
   real(kind(1.0D0)) :: vdewex = 0.0D0
-  !+ad_vars  vdewin : internal dewar volume (m3)
+  !+ad_vars  vdewin : vacuum vessel volume (m3)
   real(kind(1.0D0)) :: vdewin = 0.0D0
   !+ad_vars  vfblkt /0.25/ : coolant void fraction in blanket
   real(kind(1.0D0)) :: vfblkt = 0.25D0
@@ -1861,6 +1867,7 @@ module buildings_variables
   !+ad_call  None
   !+ad_hist  30/10/12 PJK Initial version of module
   !+ad_hist  08/04/13 PJK Modified wrbi comment
+  !+ad_hist  09/04/13 PJK Changed clh1 default from 8.0 to 2.5
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1874,8 +1881,8 @@ module buildings_variables
   real(kind(1.0D0)) :: admv = 1.0D5
   !+ad_vars  admvol : volume of administration buildings (m3)
   real(kind(1.0D0)) :: admvol = 0.0D0
-  !+ad_vars  clh1 /8.0/ : clearance from TF coil to cryostat top (m)
-  real(kind(1.0D0)) :: clh1 = 8.0D0
+  !+ad_vars  clh1 /2.5/ : minimum vertical clearance from TF coil to cryostat (m)
+  real(kind(1.0D0)) :: clh1 = 2.5D0
   !+ad_vars  clh2 /15.0/ : clearance beneath TF coil to foundation
   !+ad_varc                (including basement) (m)
   real(kind(1.0D0)) :: clh2 = 15.0D0
@@ -1967,6 +1974,7 @@ module build_variables
   !+ad_call  None
   !+ad_hist  30/10/12 PJK Initial version of module
   !+ad_hist  18/12/12 PJK Added hpfdif, hpfu
+  !+ad_hist  09/04/13 PJK Relabelled ddwex, ddwi etc.
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1987,17 +1995,17 @@ module build_variables
   !+ad_vars  bore /1.42/ : OH coil inner radius (m)
   !+ad_varc                (iteration variable 29)
   real(kind(1.0D0)) :: bore = 1.42D0
-  !+ad_vars  ddwex /0.07/ : external dewar thickness (m)
+  !+ad_vars  ddwex /0.07/ : external cryostat thickness (m)
   real(kind(1.0D0)) :: ddwex = 0.07D0
-  !+ad_vars  ddwi /0.07/ : dewar thickness (TF coil / shield) (m)
+  !+ad_vars  ddwi /0.07/ : vacuum vessel thickness (TF coil / shield) (m)
   real(kind(1.0D0)) :: ddwi = 0.07D0
   !+ad_vars  fmsbc /0.0/ : Martensitic fraction of steel in bucking cylinder
   real(kind(1.0D0)) :: fmsbc = 0.0D0
   !+ad_vars  fmsbl /0.0/ : Martensitic fraction of steel in blanket
   real(kind(1.0D0)) :: fmsbl = 0.0D0
-  !+ad_vars  fmsdwe /0.0/ : Martensitic fraction of steel in external dewar
+  !+ad_vars  fmsdwe /0.0/ : Martensitic fraction of steel in external cryostat
   real(kind(1.0D0)) :: fmsdwe = 0.0D0
-  !+ad_vars  fmsdwi /0.0/ : Martensitic fraction of steel in internal dewar
+  !+ad_vars  fmsdwi /0.0/ : Martensitic fraction of steel in vacuum vessel
   real(kind(1.0D0)) :: fmsdwi = 0.0D0
   !+ad_vars  fmsfw /0.0/ : Martensitic fraction of steel in first wall
   real(kind(1.0D0)) :: fmsfw = 0.0D0
@@ -2013,7 +2021,7 @@ module build_variables
   real(kind(1.0D0)) :: fwith = 0.035D0
   !+ad_vars  fwoth /0.035/ : outer first wall thickness (m) (if lpulse=1, =2*bfw)
   real(kind(1.0D0)) :: fwoth = 0.035D0
-  !+ad_vars  gapds /0.0/ : gap between dewar and shield
+  !+ad_vars  gapds /0.0/ : gap between vacuum vessel and shield
   !+ad_varc                (iteration variable 61)
   real(kind(1.0D0)) :: gapds = 0.0D0
   !+ad_vars  gapoh /0.08/ : gap between OH coil and bucking cylinder
@@ -2024,7 +2032,7 @@ module build_variables
   real(kind(1.0D0)) :: gapomin = 0.21D0
   !+ad_vars  gapsto : gap between the outer shield and TF coil (m)
   real(kind(1.0D0)) :: gapsto = 0.0D0
-  !+ad_vars  hmax : maximum height of TF coil (m)
+  !+ad_vars  hmax : maximum (half-)height of TF coil (m)
   real(kind(1.0D0)) :: hmax = 0.0D0
   !+ad_vars  hpfdif : difference in distance from midplane of upper and lower
   !+ad_varc           portions of TF legs (non-zero for single-null devices) (m)

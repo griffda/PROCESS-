@@ -81,6 +81,7 @@ contains
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  30/10/12 PJK Added buildings_variables
     !+ad_hist  24/01/13 PJK Corrected cryostat radius for stellarators
+    !+ad_hist  09/04/13 PJK Used rdewex instead of tfro+2 for cryostat radius
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -121,8 +122,8 @@ contains
     if (istell == 0) then
        crrad = pfrmax + 0.5D0
     else
-       !  perhaps change this to rdewex once this is corrected and global
-       crrad = tfro + 2.0D0
+       !crrad = tfro + 2.0D0
+       crrad = rdewex
     end if
 
     !  Reactor vault wall and roof thicknesses are hardwired
@@ -149,7 +150,7 @@ contains
     !+ad_args  pfm : : input real : largest PF coil mass, tonne
     !+ad_args  tfro : input real : outer radius of TF coil, m
     !+ad_args  tfri : input real : inner radius of TF coil, m
-    !+ad_args  tfh : input real : height of TF coil, m
+    !+ad_args  tfh : input real : full height of TF coil, m
     !+ad_args  tfm : input real : mass of one TF coil, tonne
     !+ad_args  tfno : input real : number of tf coils
     !+ad_args  shro : input real : outer radius of attached shield, m
@@ -181,6 +182,7 @@ contains
     !+ad_hist  01/08/11 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  30/10/12 PJK Added buildings_variables
+    !+ad_hist  09/04/13 PJK Removed extra tfh term from hrbi
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -247,11 +249,13 @@ contains
     crcl = 9.41D-6*wt + 5.1D0
 
     !  Building height
-    !  clh1 : clearance from TF coil to cryostat top, m
+    !  clh1 : (minimum) clearance from TF coil to cryostat top, m
+    !         Slight inconsistency, as elsewhere this clearance may have been
+    !         extended to ensure the PF coils lie within the cryostat.
     !  clh2 : clearance beneath TF coil to foundation, including basement, m
     !  stcl : clearance above crane to roof, m
 
-    hrbi = clh2 + tfh + clh1 + trcl + tfh + crcl + stcl
+    hrbi = clh2 + tfh + clh1 + trcl + crcl + stcl
 
     !  Internal volume
 

@@ -16,14 +16,18 @@ module fwbs_module
   !+ad_desc  of a fusion power plant.
   !+ad_prob  None
   !+ad_call  build_variables
+  !+ad_call  buildings_variables
   !+ad_call  constants
   !+ad_call  cost_variables
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
+  !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  plasma_geometry_module
   !+ad_call  process_output
+  !+ad_call  rfp_variables
+  !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
   !+ad_hist  18/10/12 PJK Initial version of module
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
@@ -32,20 +36,26 @@ module fwbs_module
   !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_hist  31/10/12 PJK Moved local common variables into module header
   !+ad_hist  06/11/12 PJK Added plasma_geometry_module
+  !+ad_hist  09/04/13 PJK Added buildings_variables, pfcoil_variables,
+  !+ad_hisc               rfp_variables, stellarator_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use build_variables
+  use buildings_variables
   use constants
   use cost_variables
   use divertor_variables
   use fwbs_variables
   use heat_transport_variables
+  use pfcoil_variables
   use physics_variables
   use plasma_geometry_module
   use process_output
+  use rfp_variables
+  use stellarator_variables
   use tfcoil_variables
 
   implicit none
@@ -95,6 +105,10 @@ contains
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  17/10/12 PJK Added divertor_variables
     !+ad_hist  18/10/12 PJK Added fwbs_variables
+    !+ad_hist  09/04/13 PJK Replaced hardwired 5.0 by 2*clh1 in vdewex calculation;
+    !+ad_hisc               rdewex transferred to fwbs_variables, and now uses
+    !+ad_hisc               routr + rpf2dewar instead of hardwired value.
+    !+ad_hisc               New cryomass calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -116,7 +130,7 @@ contains
     real(kind(1.0D0)) :: coilhtmx,decaybl,dpacop,dshieq,dshoeq,elong, &
          flumax,fpsdt,fpydt,frachit,hb1,hblnkt,hecan,ht1,htheci, &
          pheci,pheco,pneut1,pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2, &
-         r3,r4,raddose,rdewex,volshldi,volshldo,wpthk
+         r3,r4,raddose,volshldi,volshldo,wpthk,zdewex
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -367,11 +381,6 @@ contains
 
     fwmass = fwarea * (fwith+fwoth)/2.0D0 * denstl * (1.0D0-fwclfr)
 
-    !  Cryostat mass
-
-    cryomass = fvolcry * 4.0D0 * (2.0D0*(rtot-rsldi) + 2.0D0*hmax) * &
-         2.0D0 * pi * rmajor * ddwi * denstl
-
     !  Surface areas adjacent to plasma
 
     coolmass = coolmass + fwarea * (fwith+fwoth)/2.0D0 * fwclfr
@@ -385,17 +394,49 @@ contains
        coolmass = coolmass*806.719D0
     end if
 
-    !  Dewar volumes and mass
+    !  External cryostat radius (m)
+    !  rb(i) = outer radius of PF coil i (tokamaks)
+    !  rrpf(i) = radius of RFP coil i (RFPs)
 
-    rdewex = rtot + 0.5D0*tfthko + 2.0D0
-    vdewex = ( (2.0D0*pi*rdewex) * (2.0D0*hmax + tfcth + 5.0D0) + &
+    if (istell == 1) then
+       rdewex = rtot + 0.5D0*tfthko + rpf2dewar
+    else if (irfp == 1) then
+       rdewex = maxval(rrpf + 0.5D0*drpf) + rpf2dewar
+    else  !  tokamaks
+       rdewex = maxval(rb) + rpf2dewar
+    end if
+
+    !  Check that uppermost PF coils lie within cryostat
+    !  clh1 = (minimum) vertical clearance between TF coil and cryostat
+
+    if (irfp /= 1) then
+       zdewex = max(maxval(zh), hmax + tfcth + clh1)
+    else
+       zdewex = max(maxval(zzpf + 0.5D0*dzpf), hmax + tfcth + clh1)
+    end if
+
+    !  External cryostat volume
+
+    vdewex = ( (2.0D0*pi*rdewex) * 2.0D0*zdewex + &
          (2.0D0*pi*rdewex**2) ) * ddwex
+
+    !  Internal vacuum vessel volume
 
     !  Factor of 2 to account for outside part of TF coil
     !  fvoldw accounts for ports, support, etc. additions
 
     vdewin = (2.0D0*(2.0D0*hmax) + 2.0D0 * (rsldo-rsldi)) * &
          2.0D0 * pi * rmajor * ddwi * 2.0D0 * fvoldw
+
+    !  Cryostat mass - original obscure calculation replaced
+
+    !cryomass = fvolcry * 4.0D0 * (2.0D0*(rtot-rsldi) + 2.0D0*hmax) * &
+    !     2.0D0 * pi * rmajor * ddwi * denstl
+
+    cryomass = vdewex * denstl
+
+    !  Sum of internal vacuum vessel and external cryostat masses
+
     dewmkg = (vdewin + vdewex) * denstl
 
     if ((iprint == 0).or.(sect12 == 0)) return
@@ -497,9 +538,11 @@ contains
     call osubhd(outfile,'Other volumes, masses and areas :')
     call ovarre(outfile,'First wall area (m2)','(fwarea)',fwarea)
     call ovarre(outfile,'First wall mass (kg)','(fwmass)',fwmass)
-    call ovarre(outfile,'External dewar volume (m3)','(vdewex)',vdewex)
-    call ovarre(outfile,'External dewar mass (kg)','(dewmkg)',dewmkg)
-    call ovarre(outfile,'Internal dewar volume (m3)','(vdewin)',vdewin)
+    call ovarre(outfile,'External cryostat radius (m)','(rdewex)',rdewex)
+    call ovarre(outfile,'External cryostat half-height (m)','(zdewex)',zdewex)
+    call ovarre(outfile,'External cryostat volume (m3)','(vdewex)',vdewex)
+    call ovarre(outfile,'Total cryostat + vacuum vessel mass (kg)','(dewmkg)',dewmkg)
+    call ovarre(outfile,'Internal vacuum vessel volume (m3)','(vdewin)',vdewin)
     call ovarre(outfile,'Cryostat mass (kg)','(cryomass)',cryomass)
     call ovarre(outfile,'Divertor area (m2)','(divsur)',divsur)
     call ovarre(outfile,'Divertor mass (kg)','(divmas)',divmas)
