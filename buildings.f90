@@ -82,6 +82,7 @@ contains
     !+ad_hist  30/10/12 PJK Added buildings_variables
     !+ad_hist  24/01/13 PJK Corrected cryostat radius for stellarators
     !+ad_hist  09/04/13 PJK Used rdewex instead of tfro+2 for cryostat radius
+    !+ad_hist  09/04/13 PJK Modified use of tfmtn to be mass of one TF coil
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -100,7 +101,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Find maximum PF coil radius and mass
+    !  Find maximum PF coil radius and mass (tonnes)
     !  (already calculated for RFPs)
 
     if (irfp == 0) then
@@ -112,7 +113,7 @@ contains
        end do
     end if
 
-    tfmtn = 1.0D-3 * whttf
+    tfmtn = 1.0D-3 * whttf/tfno  !  mass per TF coil, tonnes
     tfro = rtot + 0.5D0*tfthko
     tfri = rtfcin - 0.5D0*tfcth
     tfh = (hmax + tfcth)*2.0D0
@@ -122,7 +123,6 @@ contains
     if (istell == 0) then
        crrad = pfrmax + 0.5D0
     else
-       !crrad = tfro + 2.0D0
        crrad = rdewex
     end if
 
@@ -183,6 +183,7 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  30/10/12 PJK Added buildings_variables
     !+ad_hist  09/04/13 PJK Removed extra tfh term from hrbi
+    !+ad_hist  09/04/13 PJK Converted pfm, tfm to kg in wt calculation
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -244,7 +245,7 @@ contains
        wt = wgt
     else
        wt = shmf*shm/tfno
-       wt = max(wt,pfm,tfm)
+       wt = max(wt, 1.0D3*pfm, 1.0D3*tfm)
     end if
     crcl = 9.41D-6*wt + 5.1D0
 
