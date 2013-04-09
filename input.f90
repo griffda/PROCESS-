@@ -324,7 +324,7 @@ contains
     !+ad_hisc               (ICULDL simply ignored now)
     !+ad_hist  23/01/13 PJK Added IOTABAR
     !+ad_hist  31/01/13 PJK Changed FACTOR comment
-    !+ad_hist  09/04/13 PJK Added RPF2DEWAR
+    !+ad_hist  09/04/13 PJK Added RPF2DEWAR, RBVFAC, MBVFAC, WSVFAC
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1806,6 +1806,9 @@ if (linelen > 80) write(*,*) line
        case ('HCWT')
           call parse_real_variable('HCWT', hcwt, 0.0D0, 10.0D0, &
                'Hot cell wall thickness (m)')
+       case ('MBVFAC')
+          call parse_real_variable('MBVFAC', mbvfac, 0.9D0, 3.0D0, &
+               'Maintenance building volume multiplier')
        case ('PFBLDGM3')
           call parse_real_variable('PFBLDGM3', pfbldgm3, 1.0D4, 1.0D6, &
                'PF coil power conv. bldg volume (m3)')
@@ -1815,6 +1818,9 @@ if (linelen > 80) write(*,*) line
        case ('RBRT')
           call parse_real_variable('RBRT', rbrt, 0.0D0, 10.0D0, &
                'Reactor building roof thickness (m)')
+       case ('RBVFAC')
+          call parse_real_variable('RBVFAC', rbvfac, 0.9D0, 3.0D0, &
+               'Reactor building volume multiplier')
        case ('RBWT')
           call parse_real_variable('RBWT', rbwt, 0.0D0, 10.0D0, &
                'Reactor building wall thickness (m)')
@@ -1848,6 +1854,9 @@ if (linelen > 80) write(*,*) line
        case ('WGT2')
           call parse_real_variable('WGT2', wgt2, 1.0D4, 1.0D6, &
                'Hot cell crane capacity (kg)')
+       case ('WSVFAC')
+          call parse_real_variable('WSVFAC', wsvfac, 0.9D0, 3.0D0, &
+               'Warm shop building volume multiplier')
 
           !  Energy storage settings
 

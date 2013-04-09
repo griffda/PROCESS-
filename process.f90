@@ -1279,3 +1279,5 @@ end subroutine output
 ! SVN 151: Minor comment changes relating to coils, powers, buildings
 ! SVN 152: Changes to vacuum vessel and cryostat dimensions
 ! SVN 153: Corrected maximum crane lift requirement
+! SVN 154: Building volume multipliers now input parameters;
+!          corrected maintenance building height calculation

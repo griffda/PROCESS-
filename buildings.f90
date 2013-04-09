@@ -183,7 +183,9 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  30/10/12 PJK Added buildings_variables
     !+ad_hist  09/04/13 PJK Removed extra tfh term from hrbi
-    !+ad_hist  09/04/13 PJK Converted pfm, tfm to kg in wt calculation
+    !+ad_hist  09/04/13 PJK Converted pfm, tfm to kg in wt calculation;
+    !+ad_hisc               removed extraneous 5.1m from rmbh calculation;
+    !+ad_hisc               building volume multipliers now input parameters
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -203,8 +205,8 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: ang, bmr, coill, crcl, cran, dcl,dcw, drbi, &
-         fac1, fac2, fac3, hcl, hcw, hrbi, hy, rbh, rbl, rbw, rmbh, &
-         rmbl, rmbw, rwl, rww, sectl, tch, tcl, tcw, wgts, wsa, wt
+         hcl, hcw, hrbi, hy, rbh, rbl, rbw, rmbh, rmbl, rmbw, rwl, rww, &
+         sectl, tch, tcl, tcw, wgts, wsa, wt
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -260,8 +262,7 @@ contains
 
     !  Internal volume
 
-    fac1 = 1.6D0
-    vrci = fac1 * 2.0D0*wrbi*drbi*hrbi
+    vrci = rbvfac * 2.0D0*wrbi*drbi*hrbi
 
     !  External dimensions of reactor building
     !  rbwt : reactor building wall thickness, m
@@ -271,7 +272,7 @@ contains
     rbw = 2.0D0*wrbi + 2.0D0*rbwt
     rbl = drbi + 2.0D0*rbwt
     rbh = hrbi + rbrt + fndt
-    rbv = fac1 * rbw*rbl*rbh
+    rbv = rbvfac * rbw*rbl*rbh
 
     !  Maintenance building
     !  The reactor maintenance building includes the hot cells, the
@@ -316,19 +317,17 @@ contains
        wgts = shmf*shm/tfno
     end if
     cran = 9.41D-6*wgts + 5.1D0
-    rmbh = 10.0D0 + shh + trcl + cran + 5.1D0 + stcl + fndt
+    rmbh = 10.0D0 + shh + trcl + cran + stcl + fndt
     tch = shh + stcl + fndt
 
     !  Volume
 
-    fac2 = 2.8D0
-    rmbv = fac2 * rmbw*rmbl*rmbh + tcw*tcl*tch
+    rmbv = mbvfac * rmbw*rmbl*rmbh + tcw*tcl*tch
 
     !  Warm shop and hot cell gallery
 
     wsa = (rmbw+7.0D0)*20.0D0 + rmbl*7.0D0
-    fac3 = 1.9D0
-    wsv = fac3 * wsa*rmbh
+    wsv = wsvfac * wsa*rmbh
 
     !  Cryogenic building volume
 

@@ -1868,6 +1868,7 @@ module buildings_variables
   !+ad_hist  30/10/12 PJK Initial version of module
   !+ad_hist  08/04/13 PJK Modified wrbi comment
   !+ad_hist  09/04/13 PJK Changed clh1 default from 8.0 to 2.5
+  !+ad_hist  09/04/13 PJK Added building volume multipliers rbvfac, mbvfac, wsvfac
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1904,12 +1905,16 @@ module buildings_variables
   real(kind(1.0D0)) :: hccl = 5.0D0
   !+ad_vars  hcwt /1.5/ : hot cell wall thickness (m)
   real(kind(1.0D0)) :: hcwt = 1.5D0
+  !+ad_vars  mbvfac /2.8/ : maintenance building volume multiplication factor
+  real(kind(1.0D0)) :: mbvfac = 2.8D0
   !+ad_vars  pfbldgm3 /2.0D4/ : volume of PF coil power supply building (m3)
   real(kind(1.0D0)) :: pfbldgm3 = 2.0D4
   !+ad_vars  pibv /2.0D4/ : power injection building volume (m3)
   real(kind(1.0D0)) :: pibv = 2.0D4
   !+ad_vars  rbrt /1.0/ : reactor building roof thickness (m)
   real(kind(1.0D0)) :: rbrt = 1.0D0
+  !+ad_vars  rbvfac /1.6/ : reactor building volume multiplication factor
+  real(kind(1.0D0)) :: rbvfac = 1.6D0
   !+ad_vars  rbvol : reactor building volume (m3)
   real(kind(1.0D0)) :: rbvol = 0.0D0
   !+ad_vars  rbwt /2.0/ : reactor building wall thickness (m)
@@ -1950,6 +1955,8 @@ module buildings_variables
   !+ad_vars  wrbi : distance from centre of machine to building wall (m),
   !+ad_varc         i.e. reactor building half-width
   real(kind(1.0D0)) :: wrbi = 0.0D0
+  !+ad_vars  wsvfac /1.9/ : warm shop building volume multiplication factor
+  real(kind(1.0D0)) :: wsvfac = 1.9D0
   !+ad_vars  wsvol : volume of warm shop building (m3)
   real(kind(1.0D0)) :: wsvol = 0.0D0
 
