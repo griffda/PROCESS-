@@ -1281,3 +1281,5 @@ end subroutine output
 ! SVN 153: Corrected maximum crane lift requirement
 ! SVN 154: Building volume multipliers now input parameters;
 !          corrected maintenance building height calculation
+! SVN 155: Corrected blanket and shield height calculations;
+!          clarified 'inner' to 'inboard', and 'outer' to 'outboard' throughout

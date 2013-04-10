@@ -140,8 +140,8 @@ contains
 
        !  Resistive powers (MW):
 
-       tfcpmw  = 1.0D-6 * prescp  !  inner legs
-       tflegmw = 1.0D-6 * (ritfc/tfno)**2 * rhotfleg * tfno  !  outer legs
+       tfcpmw  = 1.0D-6 * prescp  !  inboard legs
+       tflegmw = 1.0D-6 * (ritfc/tfno)**2 * rhotfleg * tfno  !  outboard legs
        tfbusmw = 1.0D-6 * cpttf**2 * rhobus  !  TF coil bus
 
        !  TF coil reactive power
@@ -173,9 +173,9 @@ contains
     call ovarre(outfile,'Maximum impedance (ohm)','(ztot)',ztot)
     call ovarre(outfile,'Peak voltage per coil (kV)','(vtfkv)',vtfkv)
     call ovarre(outfile,'Peak power (MW)','(tfcmw)',tfcmw)
-    call ovarre(outfile,'TF coil inner leg resistive power (MW)', &
+    call ovarre(outfile,'TF coil inboard leg resistive power (MW)', &
          '(tfcpmw)',tfcpmw)
-    call ovarre(outfile,'TF coil outer leg resistive power (MW)', &
+    call ovarre(outfile,'TF coil outboard leg resistive power (MW)', &
          '(tflegmw)',tflegmw)
     call ovarre(outfile,'TF coil buswork resistive power','(tfbusmw)', &
          tfbusmw)

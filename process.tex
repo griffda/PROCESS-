@@ -668,8 +668,8 @@ no. & variable name     & description                                   & eqn & 
 9   & \texttt{fdene}    & f-value for density limit equation            & 5   & \texttt{0.001D0} & \texttt{1.000D0} \\
 10  & \texttt{hfact}    & confinement time $H$-factor                   &     & \texttt{0.100D0} & \texttt{3.000D0} \\
 11  & \texttt{pheat}    & heating power not used for current drive      &     & \texttt{1.000D6} & \texttt{1.000D9} \\
-12  & \texttt{oacdcp}   & overall current density in TF coil inner leg  &     & \texttt{1.000D5} & \texttt{1.500D8} \\
-13  & \texttt{tfcth}    & TF coil inner leg thickness                   &     & \texttt{0.100D0} & \texttt{5.000D0} \\
+12  & \texttt{oacdcp}   & overall current density in TF coil inboard leg&     & \texttt{1.000D5} & \texttt{1.500D8} \\
+13  & \texttt{tfcth}    & TF coil inboard leg thickness                 &     & \texttt{0.100D0} & \texttt{5.000D0} \\
 14  & \texttt{fwalld}   & f-value for wall load limit equation          & 8   & \texttt{0.001D0} & \texttt{1.000D0} \\
 15  & \texttt{fvs}      & f-value for volt second limit equation        & 12  & \texttt{0.000D0} & \texttt{1.000D0} \\
 16  & \texttt{ohcth}    & OH coil thickness                             &     & \texttt{0.001D0} & \texttt{1.000D2} \\
@@ -687,7 +687,7 @@ no. & variable name     & description                                   & eqn & 
 28  & \texttt{fjtfc}    & f-value for TF coil current density limit equation & 23  & \texttt{0.100D0} & \texttt{1.000D0} \\
 29  & \texttt{bore}     & machine bore                                  &     & \texttt{0.100D0} & \texttt{10.00D0} \\
 30  & \texttt{fmva}     & f-value for MVA limit equation                & 19  & \texttt{0.010D0} & \texttt{1.000D0} \\
-31  & \texttt{gapomin}  & minimum gap between outer shield and TF coil  &     & \texttt{0.001D0} & \texttt{10.00D0} \\
+31  & \texttt{gapomin}  & minimum gap between outboard shield and vacuum vessel &     & \texttt{0.001D0} & \texttt{10.00D0} \\
 32  & \texttt{frminor}  & f-value for minor radius limit equation       & 21  & \texttt{0.001D0} & \texttt{1.000D0} \\
 33  & \texttt{fportsz}  & f-value for port size limit equation          & 20  & \texttt{0.010D0} & \texttt{1.000D0} \\
 34  & \texttt{fdivcol}  & f-value for divertor collisionality limit equation & 22  & \texttt{0.001D0} & \texttt{1.000D0} \\
@@ -735,7 +735,7 @@ no. & variable name     & description                                           
 58  & \texttt{thwcndut} & TF coil conduit case thickness                          &     & \texttt{0.001D0} & \texttt{1.000D0} \\
 59  & \texttt{fcutfsu}  & copper fraction of cable conductor                      &     & \texttt{0.001D0} & \texttt{1.000D0} \\
 60  & \texttt{cpttf}    & current per turn in the TF coils                        &     & \texttt{0.001D0} & \texttt{4.000D4} \\
-61  & \texttt{gapds}    & gap between dewar and shield                            &     & \texttt{0.000D0} & \texttt{10.00D0} \\
+61  & \texttt{gapds}    & gap between vacuum vessel and inboard shield            &     & \texttt{0.000D0} & \texttt{10.00D0} \\
 62  & \texttt{fdtmp}    & f-value for 1st wall coolant temperature rise limit equation & 38  & \texttt{0.001D0} & \texttt{1.000D0} \\
 63  & \texttt{ftpeak}   & f-value for 1st wall peak temperature limit equation    & 39  & \texttt{0.001D0} & \texttt{1.000D0} \\
 64  & \texttt{fauxmn}   & f-value for minimum auxiliary power limit equation      & 40  & \texttt{0.001D0} & \texttt{1.000D0} \\
@@ -749,7 +749,7 @@ no. & variable name     & description                                           
 72  & \texttt{fipir}    & f-value for maximum $I_p/I_{rod}$ limit equation         & 46  & \texttt{0.001D0} & \texttt{1.000D0} \\
 73  & \texttt{scrapli}  & inboard scrape-off layer thickness                      &     & \texttt{0.000D0} & \texttt{10.00D0} \\
 74  & \texttt{scraplo}  & outboard scrape-off layer thickness                     &     & \texttt{0.000D0} & \texttt{10.00D0} \\
-75  & \texttt{tfootfi}  & ratio of TF coil outer/inner leg thickness              &     & \texttt{0.200D0} & \texttt{5.000D0} \\
+75  & \texttt{tfootfi}  & ratio of TF coil outboard/inboard leg thickness         &     & \texttt{0.200D0} & \texttt{5.000D0} \\
 76  & \texttt{frfptf}   & f-value for TF coil toroidal thickness limit equation   & 47  & \texttt{0.001D0} & \texttt{1.000D0} \\
 77  & \texttt{tftort}   & TF coil toroidal thickness                              &     & \texttt{0.050D0} & \texttt{2.000D0} \\
 78  & \texttt{rfpth}    & RFP pinch parameter, $\Theta$                           &     & \texttt{0.010D0} & \texttt{1.800D0} \\
@@ -857,7 +857,7 @@ $1 $ & \texttt{aspect}     & plasma aspect ratio \\
 $2 $ & \texttt{hldivlim}   & maximum divertor heat load \\
 $3 $ & \texttt{pnetelin}   & required net electric power \\
 $4 $ & \texttt{hfact}      & confinement time $H$-factor \\
-$5 $ & \texttt{oacdcp}     & overall current density in TF coil inner leg \\
+$5 $ & \texttt{oacdcp}     & overall current density in TF coil inboard leg \\
 $6 $ & \texttt{walalw}     & allowable wall load \\
 $7 $ & \texttt{beamfus0}   & beam-background fusion multiplier \\
 $8 $ & \texttt{fqval}      & f-value for energy multiplication limit eqn \\
@@ -1607,7 +1607,7 @@ coils.
 \begin{figure}[tbph]
 \epsfig{file=tokamak_tfcoil.eps,width=160mm}
 \caption[CICC] {\label{fig:CICC} \textit{Schematic diagram of the
-    cross-section of the inner leg of a superconducting TF coil, showing the
+    cross-section of the inboard leg of a superconducting TF coil, showing the
     CICC (Conductor In Cable Conduit) construction. The winding pack contains
     many turns of cable conduit. The cable space contains the superconducting
     filaments, and circulating liquid helium coolant. The variables shown in
@@ -2321,7 +2321,7 @@ possible using constraint equation no.\ 47 with iteration variable no.\ 76
 \begin{figure}[tbph]
 \epsfig{file=stellarator_coil.eps,width=160mm}
 \caption[tosh] {\label{fig:stell1} \textit{Schematic diagram of the
-    cross-section of the inner leg of a superconducting stellarator coil,
+    cross-section of the inboard leg of a superconducting stellarator coil,
     showing the CICC (Conductor In Cable Conduit) construction. The winding
     pack contains many turns of cable conduit. The cable space contains the
     superconducting filaments, and circulating liquid helium coolant. The
@@ -3768,7 +3768,7 @@ BORE = 0.12,                          [Machine bore]
 OHCTH = 0.1,                          [OH coil thickness]
 GAPOH = 0.08,                         [Inboard gap]
 TFCTH = 0.9,                          [Inboard TF coil leg thickness]
-DDWI = 0.07,                          [Internal dewar thickness]
+DDWI = 0.07,                          [Vacuum vessel thickness]
 SHLDITH = 0.69,                       [Inboard shield thickness]
 BLNKITH = 0.115,                      [Inboard blanket thickness]
 FWITH = 0.035,                        [Inboard first wall thickness]
@@ -3898,7 +3898,7 @@ BORE = 0.12,                          [N.B. active iteration variable 29]
 OHCTH = 0.1,                          [N.B. active iteration variable 16]
 GAPOH = 0.08,                         [Inboard gap]
 TFCTH = 0.9,                          [N.B. active iteration variable 13]
-DDWI = 0.07,                          [Internal dewar thickness]
+DDWI = 0.07,                          [Vacuum vessel thickness]
 SHLDITH = 0.69,                       [Inboard shield thickness]
 BLNKITH = 0.115,                      [Inboard blanket thickness]
 FWITH = 0.035,                        [Inboard first wall thickness]

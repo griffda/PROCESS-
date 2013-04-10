@@ -307,9 +307,9 @@ contains
           if (itart == 1) then
              call ocosts(outfile,'22211','Centrepost costs',c22211)
           else
-             call ocosts(outfile,'22211','Inner leg costs',c22211)
+             call ocosts(outfile,'22211','Inboard leg costs',c22211)
           end if
-          call ocosts(outfile,'22212','Outer leg costs',c22212)
+          call ocosts(outfile,'22212','Outboard leg costs',c22212)
           call ocosts(outfile,'2221','TF magnet assemblies',c2221)
        else  !  Superconducting TF coils
           call ocosts(outfile,'22211','TF coil conductor',c22211)
@@ -1506,7 +1506,7 @@ contains
 
     if (itfsup == 0) then  !  Resistive TF coils
 
-       !  Account 222.1.1 : Inner TF coil legs
+       !  Account 222.1.1 : Inboard TF coil legs
 
        c22211 = 1.0D-6 * whtcp * uccpcl1 * cmlsa(lsa)
        c22211 = fkind * c22211
@@ -1517,7 +1517,7 @@ contains
           c22211 = 0.0D0
        end if
 
-       !  Account 222.1.2 : Outer TF coil legs
+       !  Account 222.1.2 : Outboard TF coil legs
 
        c22212 = 1.0D-6 * whttflgs * uccpclb * cmlsa(lsa)
        c22212 = fkind * c22212

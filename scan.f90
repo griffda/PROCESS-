@@ -190,7 +190,7 @@ contains
           xlabel = 'Confinement hfact'
        case (5)
           oacdcp = sweep(i)
-          xlabel = 'j TF inner leg MA/m2'
+          xlabel = 'j TF inboard leg MA/m2'
        case (6)
           walalw = sweep(i)
           xlabel = 'All. wall load MW/m2'
@@ -432,9 +432,9 @@ contains
 937 format('TF coil Power (MW)       ', 20e11.4)
 938 format('TF coil weight (kg)      ', 20e11.4)
 939 format('TF stress (MPa)          ', 20e11.4)
-940 format('J   TF inner leg (MA/m^2)', 20e11.4)
+940 format('J TF inboard leg (MA/m^2)', 20e11.4)
 941 format('Centrepost max T (TART)  ', 20e11.4)
-942 format('Res TF inner leg Pwr (MW)', 20e11.4)
+942 format('Res TF inbrd leg Pwr (MW)', 20e11.4)
 943 format('Coolant Fraction Ctr.    ', 20e11.4)
 944 format('C/P coolant radius (m)   ', 20e11.4)
 945 format('C/P coolant velocity(m/s)', 20e11.4)

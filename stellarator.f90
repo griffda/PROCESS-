@@ -417,7 +417,7 @@ contains
     call obuild(outfile,'Machine bore',drbild,radius)
 
     radius = radius + tfcth
-    call obuild(outfile,'TF coil inner leg',tfcth,radius)
+    call obuild(outfile,'TF coil inboard leg',tfcth,radius)
 
     radius = radius + ddwi
     call obuild(outfile,'Cryostat',ddwi,radius)
@@ -441,7 +441,7 @@ contains
     call obuild(outfile,'Plasma geometric centre',rminor,radius)
 
     radius = radius + rminor
-    call obuild(outfile,'Plasma outer edge',rminor,radius)
+    call obuild(outfile,'Plasma outboard edge',rminor,radius)
 
     radius = radius + scraplo
     call obuild(outfile,'Outboard scrape-off',scraplo,radius)
@@ -462,7 +462,7 @@ contains
     call obuild(outfile,'Cryostat',ddwi,radius)
 
     radius = radius + tfthko
-    call obuild(outfile,'TF coil outer leg',tfthko,radius)
+    call obuild(outfile,'TF coil outboard leg',tfthko,radius)
 
     !  Port size information
 

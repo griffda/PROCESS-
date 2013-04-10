@@ -153,7 +153,7 @@ contains
     end if
     vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(rout/rin)/tfno
 
-    !  Bore (gap between inner and outer TF coil legs)
+    !  Bore (gap between inboard and outboard TF coil legs)
 
     tfboreh = rtot - rbmax - 0.5D0*tfcth
 
@@ -161,7 +161,7 @@ contains
 
     turnstf = ritfc / (tfno * cpttf)
 
-    !  Outer leg information (per leg)
+    !  Outboard leg information (per leg)
 
     !  Cross-sectional area
 
@@ -183,7 +183,7 @@ contains
 
     whttflgs = voltfleg * tfno * (1.0D0-vftf) * 8900.0D0
 
-    !  Inner leg information (all legs)
+    !  Inboard leg information (all legs)
 
     !  Volume
 
@@ -239,14 +239,14 @@ contains
 
     call osubhd(outfile,'Energy and Forces :')
     call ovarre(outfile,'Stored energy per coil (GJ)','(estotf)',estotf)
-    call ovarre(outfile,'Vertical force on inner leg (N)','(vforce)',vforce)
-    call ovarre(outfile,'Centering force on inner leg (N/m)','(cforce)',cforce)
+    call ovarre(outfile,'Vertical force on inboard leg (N)','(vforce)',vforce)
+    call ovarre(outfile,'Centering force on inboard leg (N/m)','(cforce)',cforce)
     call ovarre(outfile,'Radial stress (Pa)','(sigrad)',sigrad)
     call ovarre(outfile,'Transverse stress (Pa)','(sigtan)',sigtan)
     call ovarre(outfile,'Vertical stress (Pa)','(sigver)',sigver)
-    call ovarre(outfile,'Weight of inner legs (kg)','(whtcp)',whtcp)
+    call ovarre(outfile,'Weight of inboard legs (kg)','(whtcp)',whtcp)
     call ovarre(outfile,'Total TF coil weight (kg)','(whttf)',whttf)
-    call ovarre(outfile,'Inner leg resistive power (W)','(prescp)',prescp)
+    call ovarre(outfile,'Inboard leg resistive power (W)','(prescp)',prescp)
     call ovarre(outfile,'Average conductor temperature (C)','(tcpav)',tcpav)
 
   end subroutine rfptfc

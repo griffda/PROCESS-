@@ -139,7 +139,7 @@ contains
        end if
        vforce = 0.55D0 * bt * rmajor * 0.5D0*ritfc * log(rout/rin) / tfno  !  N
 
-       !  Bore (gap between inner and outer TF coil legs) (m)
+       !  Bore (gap between inboard and outboard TF coil legs) (m)
 
        tfboreh = rtot - rbmax - 0.5D0*tfcth
 
@@ -178,8 +178,8 @@ contains
 
        call osubhd(outfile,'Energy and Forces :')
        call ovarre(outfile,'Stored energy per coil (GJ)','(estotf)',estotf)
-       call ovarre(outfile,'Vertical force on inner leg (N)','(vforce)',vforce)
-       call ovarre(outfile,'Centering force on inner leg (N/m)','(cforce)',cforce)
+       call ovarre(outfile,'Vertical force on inboard leg (N)','(vforce)',vforce)
+       call ovarre(outfile,'Centering force on inboard leg (N/m)','(cforce)',cforce)
        call ovarre(outfile,'Radial stress (Pa)','(sigrad)',sigrad)
        call ovarre(outfile,'Transverse stress (Pa)','(sigtan)',sigtan)
        call ovarre(outfile,'Vertical stress (Pa)','(sigver)',sigver)
@@ -243,7 +243,7 @@ contains
           cpttf = ritfc/(turnstf*tfno)
        end if
 
-       !  Outer leg information (per leg)
+       !  Outboard leg information (per leg)
 
        !  Cross-sectional area
 
@@ -266,7 +266,7 @@ contains
 
        whttflgs = voltfleg * tfno * (1.0D0 - vftf) * 8900.0D0
 
-       !  Inner leg information (all legs)
+       !  Inboard leg information (all legs)
 
        !  Resistivity (0.92 factor for glidcop C15175)
 
@@ -321,18 +321,18 @@ contains
     !  Output section
 
     call osubhd(outfile,'Conventional Copper TF Coil Information :')
-    call ovarre(outfile,'Inner leg current density (A/m2)','(oacdcp)',oacdcp)
-    call ovarre(outfile,'Outer leg current density (A/m2)','(cdtfleg)',cdtfleg)
-    call ovarre(outfile,'Number of turns per outer leg','(turnstf)',turnstf)
-    call ovarre(outfile,'Outer leg current per turn (A)','(cpttf)',cpttf)
-    call ovarre(outfile,'Inner leg volume (m3)','(volcp)',volcp)
-    call ovarre(outfile,'Outer leg volume per coil (m3)','(voltfleg)',voltfleg)
-    call ovarre(outfile,'Mass of inner legs (kg)','(whtcp)',whtcp)
-    call ovarre(outfile,'Mass of outer legs (kg)','(whttflgs)',whttflgs)
+    call ovarre(outfile,'Inboard leg current density (A/m2)','(oacdcp)',oacdcp)
+    call ovarre(outfile,'Outboard leg current density (A/m2)','(cdtfleg)',cdtfleg)
+    call ovarre(outfile,'Number of turns per outboard leg','(turnstf)',turnstf)
+    call ovarre(outfile,'Outboard leg current per turn (A)','(cpttf)',cpttf)
+    call ovarre(outfile,'Inboard leg volume (m3)','(volcp)',volcp)
+    call ovarre(outfile,'Outboard leg volume per coil (m3)','(voltfleg)',voltfleg)
+    call ovarre(outfile,'Mass of inboard legs (kg)','(whtcp)',whtcp)
+    call ovarre(outfile,'Mass of outboard legs (kg)','(whttflgs)',whttflgs)
     call ovarre(outfile,'Total TF coil mass (kg)','(whttf)',whttf)
-    call ovarre(outfile,'Inner leg resistive power (W)','(prescp)',prescp)
-    call ovarre(outfile,'Outer leg resistance per coil (ohm)','(rhotfleg)',rhotfleg)
-    call ovarre(outfile,'Average inner leg temperature (C)','(tcpav)',tcpav)
+    call ovarre(outfile,'Inboard leg resistive power (W)','(prescp)',prescp)
+    call ovarre(outfile,'Outboard leg resistance per coil (ohm)','(rhotfleg)',rhotfleg)
+    call ovarre(outfile,'Average inboard leg temperature (C)','(tcpav)',tcpav)
 
   end subroutine concoptf
 

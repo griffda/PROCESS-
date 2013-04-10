@@ -109,6 +109,7 @@ contains
     !+ad_hisc               rdewex transferred to fwbs_variables, and now uses
     !+ad_hisc               routr + rpf2dewar instead of hardwired value.
     !+ad_hisc               New cryomass calculation
+    !+ad_hist  10/04/13 PJK Removed irrelevant vgap2 from ht1 calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -325,7 +326,7 @@ contains
        r2 = r1 - shldoth
        r3 = r2 - blnkoth
        r4 = rsldi + shldith
-       ht1 = rminor*kappa + vgap2 + vgap
+       ht1 = rminor*kappa + vgap
 
        if (idivrt == 2) then
           hb1 = ht1
@@ -447,11 +448,11 @@ contains
     call ovarre(outfile,'Average neutron wall load (MW)','(wallmw)', wallmw)
     call ovarre(outfile,'DT full power TF coil operation (yrs)', &
          '(fpydt)',fpydt)
-    call ovarre(outfile,'Inner shield thickness (m)','(shldith)',shldith)
-    call ovarre(outfile,'Outer shield thickness (m)','(shldoth)',shldoth)
-    call ovarre(outfile,'Inner blanket thickness (m)','(blnkith)', blnkith)
-    call ovarre(outfile,'Outer blanket thickness (m)','(blnkoth)', blnkoth)
-    call ovarre(outfile,'Inner side TF coil case thickness (m)', &
+    call ovarre(outfile,'Inboard shield thickness (m)','(shldith)',shldith)
+    call ovarre(outfile,'Outboard shield thickness (m)','(shldoth)',shldoth)
+    call ovarre(outfile,'Inboard blanket thickness (m)','(blnkith)', blnkith)
+    call ovarre(outfile,'Outboard blanket thickness (m)','(blnkoth)', blnkoth)
+    call ovarre(outfile,'Inboard side TF coil case thickness (m)', &
          '(hecan)',hecan)
 
     if (itart == 1) then
@@ -461,14 +462,14 @@ contains
        call osubhd(outfile,'TF coil nuclear parameters :')
        call ovarre(outfile,'Peak magnet heating (MW/m3)','(coilhtmx)', &
             coilhtmx)
-       call ovarre(outfile,'Inner TF coil winding pack heating (MW)', &
+       call ovarre(outfile,'Inboard TF coil winding pack heating (MW)', &
             '(ptfiwp)',ptfiwp)
-       call ovarre(outfile,'Outer TF coil winding pack heating (MW)', &
+       call ovarre(outfile,'Outboard TF coil winding pack heating (MW)', &
             '(ptfowp)',ptfowp)
        call ovarre(outfile,'Peak He can heating (MW/m3)','(htheci)', &
             htheci)
-       call ovarre(outfile,'Inner He can heating (MW)','(pheci)',pheci)
-       call ovarre(outfile,'Outer He can heating (MW)','(pheco)',pheco)
+       call ovarre(outfile,'Inboard He can heating (MW)','(pheci)',pheci)
+       call ovarre(outfile,'Outboard He can heating (MW)','(pheco)',pheco)
        call ovarre(outfile,'Insulator dose (rad)','(raddose)',raddose)
        call ovarre(outfile,'Maximum neutron fluence (n/m2)','(flumax)', &
             flumax)
@@ -504,16 +505,16 @@ contains
 600 format( &
          t32,'volume (m3)',t45,'vol fraction',t62,'weight (kg)'/ &
          t32,'-----------',t45,'------------',t62,'-----------'/ &
-         '    Inner blanket' ,t32,1pe10.3,/ &
-         '    Outer blanket' ,t32,1pe10.3,/ &
+         '    Inboard blanket' ,t32,1pe10.3,/ &
+         '    Outboard blanket' ,t32,1pe10.3,/ &
          '    Total blanket' ,t32,1pe10.3,t62,1pe10.3/ &
          '       Void fraction' ,t45,1pe10.3,/ &
          '       Blanket Be   ',t45,1pe10.3,t62,1pe10.3/ &
          '       Blanket Li2O ',t45,1pe10.3,t62,1pe10.3/ &
          '       Blanket ss   ',t45,1pe10.3,t62,1pe10.3/ &
          '       Blanket Vd   ',t45,1pe10.3,t62,1pe10.3/ &
-         '    Inner shield'  ,t32,1pe10.3,/ &
-         '    Outer shield'  ,t32,1pe10.3,/ &
+         '    Inboard shield'  ,t32,1pe10.3,/ &
+         '    Outboard shield'  ,t32,1pe10.3,/ &
          '    Primary shield',t32,1pe10.3,t62,1pe10.3/ &
          '       Void fraction' ,t45,1pe10.3,/ &
          '    Penetration shield'        ,t62,1pe10.3)
@@ -521,16 +522,16 @@ contains
 601 format( &
          t32,'volume (m3)',t45,'vol fraction',t62,'weight (kg)'/ &
          t32,'-----------',t45,'------------',t62,'-----------'/ &
-         '    Inner blanket' ,t32,1pe10.3,/ &
-         '    Outer blanket' ,t32,1pe10.3,/ &
+         '    Inboard blanket' ,t32,1pe10.3,/ &
+         '    Outboard blanket' ,t32,1pe10.3,/ &
          '    Total blanket' ,t32,1pe10.3,t62,1pe10.3/ &
          '       Void fraction' ,t45,1pe10.3,/ &
          '       Blanket LiPb ',t45,1pe10.3,t62,1pe10.3/ &
          '       Blanket Li   ',t45,1pe10.3,t62,1pe10.3/ &
          '       Blanket ss   ',t45,1pe10.3,t62,1pe10.3/ &
          '       Blanket Vd   ',t45,1pe10.3,t62,1pe10.3/ &
-         '    Inner shield'  ,t32,1pe10.3,/ &
-         '    Outer shield'  ,t32,1pe10.3,/ &
+         '    Inboard shield'  ,t32,1pe10.3,/ &
+         '    Outboard shield'  ,t32,1pe10.3,/ &
          '    Primary shield',t32,1pe10.3,t62,1pe10.3/ &
          '       Void fraction' ,t45,1pe10.3,/ &
          '    Penetration shield'        ,t62,1pe10.3)

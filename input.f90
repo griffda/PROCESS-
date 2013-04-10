@@ -881,7 +881,7 @@ if (linelen > 80) write(*,*) line
                'Field line ang of incid on dvrtr (rad)')
        case ('BPSOUT')
           call parse_real_variable('BPSOUT', bpsout, 0.0D0, 10.0D0, &
-               'Ref B_p at outer divertor strike point')
+               'Ref B_p at outboard divertor strike point')
        case ('C1DIV')
           call parse_real_variable('C1DIV', c1div, -100.0D0, 100.0D0, &
                'Divertor model fitting coefficient')
@@ -941,7 +941,7 @@ if (linelen > 80) write(*,*) line
                'Pressure ratio (nT)_p / (nT)_s')
        case ('PLSEPO')
           call parse_real_variable('PLSEPO', plsepo, 0.1D0, 10.0D0, &
-               'Poloidal length, x to outer strike point')
+               'Poloidal length, x to outboard strike point')
        case ('PRN1')
           call parse_real_variable('PRN1', prn1, 0.0D0, 1.0D0, &
                'n_scrapeoff / n_average plasma')
@@ -1016,10 +1016,10 @@ if (linelen > 80) write(*,*) line
                'Gap between OHC and bucking cylinder (m)')
        case ('GAPDS')
           call parse_real_variable('GAPDS', gapds, 0.0D0, 10.0D0, &
-               'Gap between vacuum vessel and shield (m)')
+               'Gap between inboard vacuum vessel and shield (m)')
        case ('GAPOMIN')
           call parse_real_variable('GAPOMIN', gapomin, 0.0D0, 10.0D0, &
-               'Min gap between outer shield & TFC (m)')
+               'Min gap between outboard shield & vac vessel (m)')
        case ('IOHCL')
           call parse_int_variable('IOHCL', iohcl, 0, 1, &
                'Switch for existence of OH coil')
@@ -1121,7 +1121,7 @@ if (linelen > 80) write(*,*) line
                'TF coil shape parameter')
        case ('FCOOLCP')
           call parse_real_variable('FCOOLCP', fcoolcp, 0.0D0, 1.0D0, &
-               'Coolant fraction of TF inner leg')
+               'Coolant fraction of TF inboard leg')
        case ('FCUTFSU')
           call parse_real_variable('FCUTFSU', fcutfsu, 0.0D0, 1.0D0, &
                'Cu fraction of SCTF cable conductor')
@@ -1280,7 +1280,7 @@ if (linelen > 80) write(*,*) line
                'Average J of PF coil (A/m2)', icode)
        case ('ROUTR')
           call parse_real_variable('ROUTR', routr, -3.0D0, 3.0D0, &
-               'Gap from outer TFC leg for PFC')
+               'Gap from outboard TFC leg for PFC')
        case ('RPF1')
           call parse_real_variable('RPF1', rpf1, 0.0D0, 3.0D0, &
                'Radial offset for group 1 PF coils')
@@ -1391,10 +1391,10 @@ if (linelen > 80) write(*,*) line
                'Blanket elongation / plasma elongation')
        case ('FVOLBI')
           call parse_real_variable('FVOLBI', fvolbi, 0.0D0, 10.0D0, &
-               'Fudge factor for inner blanket volume')
+               'Fudge factor for inboard blanket volume')
        case ('FVOLBO')
           call parse_real_variable('FVOLBO', fvolbo, 0.0D0, 10.0D0, &
-               'Fudge factor for outer blanket volume')
+               'Fudge factor for outboard blanket volume')
        case ('FVOLCRY')
           call parse_real_variable('FVOLCRY', fvolcry, 0.0D0, 10.0D0, &
                'Fudge factor for external cryostat volume (OBSOLETE)')
@@ -1403,10 +1403,10 @@ if (linelen > 80) write(*,*) line
                'Fudge factor for vacuum vessel volume')
        case ('FVOLSI')
           call parse_real_variable('FVOLSI', fvolsi, 0.0D0, 10.0D0, &
-               'Fudge factor for inner shield volume')
+               'Fudge factor for inboard shield volume')
        case ('FVOLSO')
           call parse_real_variable('FVOLSO', fvolso, 0.0D0, 10.0D0, &
-               'Fudge factor for outer shield volume')
+               'Fudge factor for outboard shield volume')
        case ('FWCLFR')
           call parse_real_variable('FWCLFR', fwclfr, 0.0D0, 1.0D0, &
                'First wall coolant fraction')

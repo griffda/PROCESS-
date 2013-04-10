@@ -110,10 +110,10 @@ contains
     !+ad_args  r0 : input real : Major radius (m)
     !+ad_args  aw : input real : Minor radius (m)
     !+ad_args  kappa : input real : Plasma elongation
-    !+ad_args  thshldo : input real : Outer shield thickness (m)
-    !+ad_args  thshldi : input real : Inner shield thickness (m)
+    !+ad_args  thshldo : input real : Outboard shield thickness (m)
+    !+ad_args  thshldi : input real : Inboard shield thickness (m)
     !+ad_args  thtf : input real : TF coil thickness (m)
-    !+ad_args  ritf : input real : Radius of inner TF leg point nearest plasma (m)
+    !+ad_args  ritf : input real : Radius of inboard TF leg point nearest plasma (m)
     !+ad_args  tfno : input real : Number of TF coils
     !+ad_args  tdwell : input real : Dwell time between pulses (s)
     !+ad_args  nplasma : input real : Plasma density (m**-3)
@@ -316,7 +316,7 @@ contains
           theta = pi / ntf
 
           !  Area between adjacent TF coils available for pump ducts
-          !  ritf = outer radius of inner leg of TF coil (m)
+          !  ritf = outer radius of inboard leg of TF coil (m)
 
           a1max = (r0 + aw - ritf - thcsh / tan(theta))**2 * tan(theta)
           d1max = sqrt (4.0D0 * a1max / pi)  !  Equivalent diameter

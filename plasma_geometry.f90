@@ -121,7 +121,7 @@ contains
 
        vol = cvol * 2.0D0 * pi**2 * rmajor * rminor**2 * kappa
 
-       !  Plasma surface area (very bad approx for outer area...)
+       !  Plasma surface area (very bad approx for outboard area...)
 
        sarea = 4.0D0 * pi**2 * rmajor * rminor * 0.5D0*(kappa+1.0D0)
        sareao = 0.5D0 * sarea
@@ -193,7 +193,7 @@ contains
       !+ad_args  k      : input real :  plasma separatrix elongation
       !+ad_args  d      : input real :  plasma separatrix triangularity
       !+ad_args  sa     : output real : plasma total surface area (m2)
-      !+ad_args  so     : output real : plasma outer surface area (m2)
+      !+ad_args  so     : output real : plasma outboard surface area (m2)
       !+ad_desc  This function finds the plasma surface area, using the
       !+ad_desc  revolution of two intersecting arcs around the device centreline.
       !+ad_desc  This calculation is appropriate for plasmas with a separatrix.
@@ -220,14 +220,14 @@ contains
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      !  Outer side
+      !  Outboard side
 
       radco = a * (1.0D0 + (k**2 + d**2 - 1.0D0)/(2.0D0 * (1.0D0 + d)))
       b = k * a
       thto = asin(b/radco)
       so = 4.0D0 * pi * radco * ( (r + a - radco)*thto + b)
 
-      !  Inner side
+      !  Inboard side
 
       radci = a * (1.0D0 + (k**2 + d**2 - 1.0D0)/(2.0D0 * (1.0D0 - d)))
       thti = asin(b/radci)
@@ -282,7 +282,7 @@ contains
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      !  Find radius and half-angle of inner arc
+      !  Find radius and half-angle of inboard arc
 
       denomi = (tri**2 + kap**2 - 1.0D0)/( 2.0D0*(1.0D0-tri) ) + tri
       thetai = atan(kap/denomi)
@@ -291,7 +291,7 @@ contains
       cti = cos(thetai)
       sti = sin(thetai)
 
-      !  Find radius and half-angle of outer arc
+      !  Find radius and half-angle of outboard arc
 
       denomo = (tri**2 + kap**2 - 1.0D0)/( 2.0D0*(1.0D0+tri) ) - tri
       thetao = atan(kap/denomo)
@@ -413,14 +413,14 @@ contains
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      !  Find radius and half-angle of inner arc
+      !  Find radius and half-angle of inboard arc
 
       t = 1.0D0 - tri
       denomi = (kap**2 - t**2)/(2.0D0*t)
       thetai = atan(kap/denomi)
       xi = a * (denomi + 1.0D0 - tri )
 
-      !  Find radius and half-angle of outer arc
+      !  Find radius and half-angle of outboard arc
 
       n = 1.0D0 + tri
       denomo = (kap**2 - n**2)/(2.0D0*n)
@@ -632,13 +632,13 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Inner arc
+    !  Inboard arc
 
     denomi = (tri**2 + kap**2 - 1.0D0)/( 2.0D0*(1.0D0-tri) ) + tri
     thetai = atan(kap/denomi)
     xli = a * (denomi + 1.0D0 - tri )
 
-    !  Outer arc
+    !  Outboard arc
 
     denomo = (tri**2 + kap**2 - 1.0D0)/( 2.0D0*(1.0D0+tri) ) - tri
     thetao = atan(kap/denomo)

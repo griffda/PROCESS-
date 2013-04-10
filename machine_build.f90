@@ -117,11 +117,11 @@ contains
 
     call rippl(ripmax,rmajor,rminor,rtot,tfno,ripple,rtotl)
 
-    !  If the ripple is too large then move the outer TF coil leg
+    !  If the ripple is too large then move the outboard TF coil leg
 
     if (rtotl > rtot) then
        rtot = rtotl
-       gapsto = rtot - rsldo - ddwi - tfthko/2.d0
+       gapsto = rtot - rsldo - ddwi - tfthko/2.0D0
     else
        gapsto = gapomin
     end if
@@ -152,7 +152,7 @@ contains
        call obuild(outfile,'Bucking cylinder',bcylth,radius)
 
        radius = radius + tfcth
-       call obuild(outfile,'TF coil inner leg',tfcth,radius)
+       call obuild(outfile,'TF coil inboard leg',tfcth,radius)
 
        radius = radius + gapoh
        call obuild(outfile,'Gap',gapoh,radius)
@@ -172,7 +172,7 @@ contains
        call obuild(outfile,'Bucking cylinder',bcylth,radius)
 
        radius = radius + tfcth
-       call obuild(outfile,'TF coil inner leg',tfcth,radius)
+       call obuild(outfile,'TF coil inboard leg',tfcth,radius)
 
     end if
 
@@ -198,7 +198,7 @@ contains
     call obuild(outfile,'Plasma geometric centre',rminor,radius)
 
     radius = radius + rminor
-    call obuild(outfile,'Plasma outer edge',rminor,radius)
+    call obuild(outfile,'Plasma outboard edge',rminor,radius)
 
     radius = radius + scraplo
     call obuild(outfile,'Outboard scrape-off',scraplo,radius)
@@ -219,7 +219,7 @@ contains
     call obuild(outfile,'Vacuum vessel',ddwi,radius)
 
     radius = radius + tfthko
-    call obuild(outfile,'TF coil outer leg',tfthko,radius)
+    call obuild(outfile,'TF coil outboard leg',tfthko,radius)
 
     !  Vertical build
 
@@ -402,10 +402,10 @@ contains
     !+ad_cont  N/A
     !+ad_args  divht : output real : divertor height (m)
     !+ad_desc  This subroutine determines the divertor geometry.
-    !+ad_desc  The inner (i) and outer (o) plasma surfaces
+    !+ad_desc  The inboard (i) and outboard (o) plasma surfaces
     !+ad_desc  are approximated by arcs, and followed past the X-point to
     !+ad_desc  determine the maximum height.
-    !+ad_prob  No evidence of any inner plasma surface being used...
+    !+ad_prob  No evidence of any inboard plasma surface being used...
     !+ad_call  None
     !+ad_hist  29/01/96 PJK Added TART option with expanded divertor chamber
     !+ad_hist  26/07/11 PJK Initial F90 version
@@ -424,7 +424,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: soleno = 0.2D0  !  length along outer divertor
+    real(kind(1.0D0)), parameter :: soleno = 0.2D0  !  length along outboard divertor
     !  plate that scrapeoff hits
     real(kind(1.0D0)) :: kap,tri,xpointo,rprimeo,phio,thetao
     real(kind(1.0D0)) :: yspointo,xspointo,yprimeb 
@@ -443,7 +443,7 @@ contains
     kap = kappa
     tri = triang
 
-    !  Outer side
+    !  Outboard side
     !  plsepo = poloidal length along the separatrix from null to
     !           strike point on outboard [default 1.5 m]
     !  thetao = arc angle between the strike point and the null point
@@ -459,7 +459,7 @@ contains
     yspointo = rprimeo * sin(thetao + phio)
     xspointo = xpointo - rprimeo * cos(thetao + phio)
 
-    !  Outer strike point radius - normalized to ITER
+    !  Outboard strike point radius - normalized to ITER
 
     rstrko = xspointo + 0.14D0
 
@@ -486,15 +486,15 @@ contains
     !+ad_args  ripmax : input real : max ripple at plasma edge (peak to average) (%)
     !+ad_args  rmajor : input real : plasma major radius (m)
     !+ad_args  rminor : input real : plasma minor radius (m)
-    !+ad_args  rtot   : input real : default radius to the outer TF coil leg (m)
+    !+ad_args  rtot   : input real : default radius to the outboard TF coil leg (m)
     !+ad_args  tfno   : input real(!) : number of TF coils
     !+ad_args  ripple : output real : ripple at plasma edge (%)
     !+ad_args  rtotl  : output real : required minimum radius to the centre
-    !+ad_argc                         of the outer TF coil leg (m)
-    !+ad_desc  Subroutine to calculate TFC ripple and outer TFC leg radius.
-    !+ad_desc  Input the max. ripple and default outer leg location and the
+    !+ad_argc                         of the outboard TF coil leg (m)
+    !+ad_desc  Subroutine to calculate TFC ripple and outboard TFC leg radius.
+    !+ad_desc  Input the max. ripple and default outboard leg location and the
     !+ad_desc  routine checks to see if the ripple is OK. If not it moves
-    !+ad_desc  the outer leg appropriately.
+    !+ad_desc  the outboard leg appropriately.
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  27/07/11 PJK Initial F90 version
@@ -580,7 +580,7 @@ contains
 
     rtan = frbeam * rmajor
 
-    !  Assume the outer TF leg has a width / depth ratio of 1 / 2
+    !  Assume the outboard TF leg has a width / depth ratio of 1 / 2
     !  Depth and width calculated from the cross-sectional area
 
     tfoll = 1.414D0 * sqrt(arealeg)  !  depth (m)

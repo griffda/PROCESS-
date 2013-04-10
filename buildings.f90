@@ -83,6 +83,7 @@ contains
     !+ad_hist  24/01/13 PJK Corrected cryostat radius for stellarators
     !+ad_hist  09/04/13 PJK Used rdewex instead of tfro+2 for cryostat radius
     !+ad_hist  09/04/13 PJK Modified use of tfmtn to be mass of one TF coil
+    !+ad_hist  10/04/13 PJK Modified shield height definition
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -129,8 +130,8 @@ contains
     !  Reactor vault wall and roof thicknesses are hardwired
 
     call bldgs(idhe3,pfrmax,pfmmax,tfro,tfri,tfh,tfmtn,tfno,rsldo, &
-         rsldi,(hmax*2.0D0),whtshld,crrad,helpow,iprint,outfile, &
-         cryvol,volrci,rbvol,rmbvol,wsvol,elevol)
+         rsldi,2.0D0*(hmax-ddwi-vgap2),whtshld,crrad,helpow,iprint, &
+         outfile,cryvol,volrci,rbvol,rmbvol,wsvol,elevol)
 
   end subroutine bldgcall
 

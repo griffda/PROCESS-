@@ -692,7 +692,7 @@ module divertor_variables
   real(kind(1.0D0)) :: adas = 0.0D0
   !+ad_vars  anginc /0.262/ : angle of incidence of field line on plate (rad)
   real(kind(1.0D0)) :: anginc = 0.262D0
-  !+ad_vars  bpsout /0.6/ : reference B_p at outer divertor strike point (T)
+  !+ad_vars  bpsout /0.6/ : reference B_p at outboard divertor strike point (T)
   real(kind(1.0D0)) :: bpsout = 0.60D0
   !+ad_vars  c1div /0.45/ : fitting coefficient to adjust ptpdiv, ppdiv
   real(kind(1.0D0)) :: c1div = 0.45D0
@@ -732,17 +732,17 @@ module divertor_variables
   real(kind(1.0D0)) :: fdiva = 1.11D0
   !+ad_vars  fgamp /1.0/ : sheath potential factor (not used)
   real(kind(1.0D0)) :: fgamp = 1.0D0
-  !+ad_vars  fhout : fraction of power to outer divertor (for single null)
+  !+ad_vars  fhout : fraction of power to outboard divertor (for single null)
   real(kind(1.0D0)) :: fhout = 0.0D0
   !+ad_vars  fififi /0.004/ : coefficient for gamdiv
   real(kind(1.0D0)) :: fififi = 4.0D-3
   !+ad_vars  frrp /0.4/ : fraction of radiated power to plate
   real(kind(1.0D0)) :: frrp = 0.4D0
-  !+ad_vars  hldiv : outer divertor heat load (MW/m2)
+  !+ad_vars  hldiv : outboard divertor heat load (MW/m2)
   real(kind(1.0D0)) :: hldiv = 0.0D0
   !+ad_vars  hldivlim /5.0/ : heat load limit (MW/m2)
   real(kind(1.0D0)) :: hldivlim = 5.0D0
-  !+ad_vars  ksic /0.8/ : power fraction for outer double-null scrape-off plasma
+  !+ad_vars  ksic /0.8/ : power fraction for outboard double-null scrape-off plasma
   real(kind(1.0D0)) :: ksic = 0.8D0
   !+ad_vars  lamp : power flow width (m)
   real(kind(1.0D0)) :: lamp = 0.0D0
@@ -752,7 +752,7 @@ module divertor_variables
   real(kind(1.0D0)) :: omegan = 1.0D0
   !+ad_vars  omlarg : power spillage to private flux factor
   real(kind(1.0D0)) :: omlarg = 0.0D0
-  !+ad_vars  plsepo /1.5/ : poloidal length, x-point to outer strike point (m)
+  !+ad_vars  plsepo /1.5/ : poloidal length, x-point to outboard strike point (m)
   real(kind(1.0D0)) :: plsepo = 1.5D0
   !+ad_vars  ppdivr : peak heat load at plate (with radiation) (MW/m2)
   real(kind(1.0D0)) :: ppdivr = 0.0D0
@@ -760,7 +760,7 @@ module divertor_variables
   real(kind(1.0D0)) :: prn1 = 0.285D0
   !+ad_vars  ptpdiv : peak temperature at the plate (eV)
   real(kind(1.0D0)) :: ptpdiv = 0.0D0
-  !+ad_vars  rconl : connection length ratio, outer side
+  !+ad_vars  rconl : connection length ratio, outboard side
   real(kind(1.0D0)) :: rconl = 0.0D0
   !+ad_vars  rlclolcn : ratio of collision length / connection length
   real(kind(1.0D0)) :: rlclolcn = 0.0D0
@@ -768,7 +768,7 @@ module divertor_variables
   real(kind(1.0D0)) :: rlenmax = 0.5D0
   !+ad_vars  rsrd : effective separatrix/divertor radius ratio
   real(kind(1.0D0)) :: rsrd = 0.0D0
-  !+ad_vars  rstrko : outer strike point radius (m)
+  !+ad_vars  rstrko : outboard strike point radius (m)
   real(kind(1.0D0)) :: rstrko = 0.0D0
   !+ad_vars  tconl : main plasma connection length (m)
   real(kind(1.0D0)) :: tconl = 0.0D0
@@ -840,17 +840,17 @@ module fwbs_variables
   real(kind(1.0D0)) :: fblvd = 0.0D0
   !+ad_vars  fhole /0.15/ : hole fraction of the 1st wall - that neutrons see
   real(kind(1.0D0)) :: fhole = 0.15D0
-  !+ad_vars  fvolbi /1.0/ : fudge factor for inner blanket volume
+  !+ad_vars  fvolbi /1.0/ : fudge factor for inboard blanket volume
   real(kind(1.0D0)) :: fvolbi = 1.0D0
-  !+ad_vars  fvolbo /0.75/ : fudge factor for outer blanket volume
+  !+ad_vars  fvolbo /0.75/ : fudge factor for outboard blanket volume
   real(kind(1.0D0)) :: fvolbo = 0.75D0
   !+ad_vars  fvolcry /1.4/ : fudge factor for cryostat volume (obsolete)
   real(kind(1.0D0)) :: fvolcry = 1.4D0
   !+ad_vars  fvoldw /1.4/ : fudge factor for vacuum vessel volume
   real(kind(1.0D0)) :: fvoldw = 1.4D0
-  !+ad_vars  fvolsi /0.64/ : fudge factor for inner shield volume
+  !+ad_vars  fvolsi /0.64/ : fudge factor for inboard shield volume
   real(kind(1.0D0)) :: fvolsi = 0.64D0
-  !+ad_vars  fvolso /0.64/ : fudge factor for outer shield volume
+  !+ad_vars  fvolso /0.64/ : fudge factor for outboard shield volume
   real(kind(1.0D0)) :: fvolso = 0.64D0
   !+ad_vars  fwclfr /0.15/ : first wall coolant fraction
   !+ad_varc                  (calculated if lpulse=1)
@@ -906,9 +906,9 @@ module fwbs_variables
   real(kind(1.0D0)) :: wtblli2o = 0.0D0
   !+ad_vars  wtbllipb : mass of blanket - Li-Pb part (kg)
   real(kind(1.0D0)) :: wtbllipb = 0.0D0
-  !+ad_vars  wtshldi : mass of inner shield (kg)
+  !+ad_vars  wtshldi : mass of inboard shield (kg)
   real(kind(1.0D0)) :: wtshldi = 0.0D0
-  !+ad_vars  wtshldo : mass of outer shield (kg)
+  !+ad_vars  wtshldo : mass of outboard shield (kg)
   real(kind(1.0D0)) :: wtshldo = 0.0D0
 
   !+ad_vars  <P><B>The following are used in the full thermodynamic blanket model
@@ -1105,7 +1105,7 @@ module pfcoil_variables
   real(kind(1.0D0)), dimension(ngc2) :: rjpfalw = 0.0D0
   !+ad_vars  rohc : radius to the centre of the OH coil (m)
   real(kind(1.0D0)) :: rohc = 0.0D0
-  !+ad_vars  routr /1.5/ : distance (m) from outer TF coil leg to centre of
+  !+ad_vars  routr /1.5/ : distance (m) from outboard TF coil leg to centre of
   !+ad_varc                ipfloc=3 PF coils
   real(kind(1.0D0)) :: routr = 1.5D0
   !+ad_vars  rpf(ngc2) : radius of PF coil i (m)
@@ -1239,7 +1239,7 @@ module tfcoil_variables
   !+ad_vars  cdtfleg /1.0D6/ : TF leg overall current density (A/m2)
   !+ad_varc                    (iteration variable 24)
   real(kind(1.0D0)) :: cdtfleg = 1.0D6
-  !+ad_vars  cforce : centering force on inner leg (per coil) (N/m)
+  !+ad_vars  cforce : centering force on inboard leg (per coil) (N/m)
   real(kind(1.0D0)) :: cforce = 0.0D0
   !+ad_vars  cph2o /4180.0/ FIX : specific heat of water (J/kg/K)
   real(kind(1.0D0)) :: cph2o = 4180.0D0
@@ -1278,7 +1278,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: eywp = 6.6D8
   !+ad_vars  farc4tf /0.7/ : factor to size height of point 4 on TF coil
   real(kind(1.0D0)) :: farc4tf = 0.7D0
-  !+ad_vars  fcoolcp /0.3/ : coolant fraction of TF coil inner legs
+  !+ad_vars  fcoolcp /0.3/ : coolant fraction of TF coil inboard legs
   !+ad_varc                  (iteration variable 23)
   real(kind(1.0D0)) :: fcoolcp = 0.3D0
   !+ad_vars  fcutfsu /0.69/ : copper fraction of cable conductor
@@ -1332,7 +1332,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: muh2o = 4.71D-4
   !+ad_vars  ncool : number of centrepost coolant tubes
   real(kind(1.0D0)) :: ncool = 0.0D0
-  !+ad_vars  oacdcp /1.4D7/ : overall current density in TF coil inner legs (A/m2)
+  !+ad_vars  oacdcp /1.4D7/ : overall current density in TF coil inboard legs (A/m2)
   !+ad_varc                   (iteration variable 12)
   real(kind(1.0D0)) :: oacdcp = 1.4D7
   !+ad_vars  poisson /0.3/ : Poisson's ratio for TF stress calculation
@@ -1351,7 +1351,7 @@ module tfcoil_variables
   !+ad_vars  rcool /0.005/ : average radius of coolant channel (m)
   !+ad_varc                  (iteration variable 69)
   real(kind(1.0D0)) :: rcool = 0.005D0
-  !+ad_vars  rhocp : TF coil inner leg resistance (Ohm)
+  !+ad_vars  rhocp : TF coil inboard leg resistance (Ohm)
   real(kind(1.0D0)) :: rhocp = 0.0D0
   !+ad_vars  rhotfleg : TF coil leg resistance (Ohm)
   real(kind(1.0D0)) :: rhotfleg = 0.0D0
@@ -1389,7 +1389,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: strtf2 = 0.0D0
   !+ad_vars  tcoolin /40.0/ : centrepost coolant inlet temperature (C)
   real(kind(1.0D0)) :: tcoolin = 40.0D0
-  !+ad_vars  tcpav /100.0/ : average temp of TF coil inner leg conductor (C)
+  !+ad_vars  tcpav /100.0/ : average temp of TF coil inboard leg conductor (C)
   !+ad_varc                  (iteration variable 20)
   real(kind(1.0D0)) :: tcpav = 100.0D0
   !+ad_vars  tcpav2 : centrepost average temperature (C) (for consistency)
@@ -1414,13 +1414,13 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfckw = 0.0D0
   !+ad_vars  tfcmw : peak power per TF power supply (MW)
   real(kind(1.0D0)) :: tfcmw = 0.0D0
-  !+ad_vars  tfcpmw : peak resistive TF coil inner leg power (MW)
+  !+ad_vars  tfcpmw : peak resistive TF coil inboard leg power (MW)
   real(kind(1.0D0)) :: tfcpmw = 0.0D0
   !+ad_vars  tficrn : TF coil half-width - inner bore (m)
   real(kind(1.0D0)) :: tficrn = 0.0D0
   !+ad_vars  tfind : TF coil inductance (H)
   real(kind(1.0D0)) :: tfind = 0.0D0
-  !+ad_vars  tflegmw : TF coil outer leg resistive power (MW)
+  !+ad_vars  tflegmw : TF coil outboard leg resistive power (MW)
   real(kind(1.0D0)) :: tflegmw = 0.0D0
   !+ad_vars  tflegres /2.5D-8/ : resistivity of a TF coil leg (Ohm-m)
   real(kind(1.0D0)) :: tflegres = 2.5D-8
@@ -1465,14 +1465,14 @@ module tfcoil_variables
   !+ad_vars  vdalw /20.0/ : max voltage across TF coil during quench (kV)
   !+ad_varc                 (iteration variable 52)
   real(kind(1.0D0)) :: vdalw = 20.0D0
-  !+ad_vars  vforce : vertical separating force on inner leg/coil (N)
+  !+ad_vars  vforce : vertical separating force on inboard leg/coil (N)
   real(kind(1.0D0)) :: vforce = 0.0D0
   !+ad_vars  vftf /0.4/ : coolant fraction of TF coil leg (itfsup=0)
   !+ad_varc               or of TF coil cable space (itfsup=1)
   real(kind(1.0D0)) :: vftf = 0.4D0
-  !+ad_vars  volcp : total volume of TF coil inner legs (m3)
+  !+ad_vars  volcp : total volume of TF coil inboard legs (m3)
   real(kind(1.0D0)) :: volcp = 0.0D0
-  !+ad_vars  voltfleg : volume of each TF coil outer leg (m3)
+  !+ad_vars  voltfleg : volume of each TF coil outboard leg (m3)
   real(kind(1.0D0)) :: voltfleg = 0.0D0
   !+ad_vars  vtfkv : peak TF coil voltage (kV)
   real(kind(1.0D0)) :: vtfkv = 0.0D0
@@ -1488,7 +1488,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: whtconsc = 0.0D0
   !+ad_vars  whtconsh : steel conduit mass in TF coil conductor cable (kg/coil)
   real(kind(1.0D0)) :: whtconsh = 0.0D0
-  !+ad_vars  whtcp : mass of TF coil inner legs (kg)
+  !+ad_vars  whtcp : mass of TF coil inboard legs (kg)
   real(kind(1.0D0)) :: whtcp = 0.0D0
   !+ad_vars  whttf : total mass of the TF coils (kg)
   real(kind(1.0D0)) :: whttf = 0.0D0
@@ -1982,6 +1982,7 @@ module build_variables
   !+ad_hist  30/10/12 PJK Initial version of module
   !+ad_hist  18/12/12 PJK Added hpfdif, hpfu
   !+ad_hist  09/04/13 PJK Relabelled ddwex, ddwi etc.
+  !+ad_hist  10/04/13 PJK Relabelled gapsto, gapomin etc.
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1995,11 +1996,11 @@ module build_variables
   real(kind(1.0D0)) :: aplasmin = 0.25D0
   !+ad_vars  bcylth /0.0/ : bucking cylinder thickness (m)
   real(kind(1.0D0)) :: bcylth = 0.0D0
-  !+ad_vars  blnkith /0.115/ : inner blanket thickness (m)
+  !+ad_vars  blnkith /0.115/ : inboard blanket thickness (m)
   real(kind(1.0D0)) :: blnkith = 0.115D0
-  !+ad_vars  blnkoth /0.235/ : outer blanket thickness (m)
+  !+ad_vars  blnkoth /0.235/ : outboard blanket thickness (m)
   real(kind(1.0D0)) :: blnkoth = 0.235D0
-  !+ad_vars  bore /1.42/ : OH coil inner radius (m)
+  !+ad_vars  bore /1.42/ : OH coil inboard radius (m)
   !+ad_varc                (iteration variable 29)
   real(kind(1.0D0)) :: bore = 1.42D0
   !+ad_vars  ddwex /0.07/ : external cryostat thickness (m)
@@ -2024,20 +2025,20 @@ module build_variables
   real(kind(1.0D0)) :: fmstf = 0.0D0
   !+ad_vars  fwarea : first wall surface area (m2)
   real(kind(1.0D0)) :: fwarea = 0.0D0
-  !+ad_vars  fwith /0.035/ : inner first wall thickness (m) (if lpulse=1, =2*bfw)
+  !+ad_vars  fwith /0.035/ : inboard first wall thickness (m) (if lpulse=1, =2*bfw)
   real(kind(1.0D0)) :: fwith = 0.035D0
-  !+ad_vars  fwoth /0.035/ : outer first wall thickness (m) (if lpulse=1, =2*bfw)
+  !+ad_vars  fwoth /0.035/ : outboard first wall thickness (m) (if lpulse=1, =2*bfw)
   real(kind(1.0D0)) :: fwoth = 0.035D0
-  !+ad_vars  gapds /0.0/ : gap between vacuum vessel and shield
+  !+ad_vars  gapds /0.0/ : gap between vacuum vessel and inboard shield
   !+ad_varc                (iteration variable 61)
   real(kind(1.0D0)) :: gapds = 0.0D0
   !+ad_vars  gapoh /0.08/ : gap between OH coil and bucking cylinder
   !+ad_varc                (iteration variable 42)
   real(kind(1.0D0)) :: gapoh = 0.08D0
-  !+ad_vars  gapomin /0.21/ : minimum gap between outer shield and TF coil (m)
+  !+ad_vars  gapomin /0.21/ : minimum gap between outboard shield and vacuum vessel (m)
   !+ad_varc                   (iteration variable 31)
   real(kind(1.0D0)) :: gapomin = 0.21D0
-  !+ad_vars  gapsto : gap between the outer shield and TF coil (m)
+  !+ad_vars  gapsto : gap between outboard shield and vacuum vessel (m)
   real(kind(1.0D0)) :: gapsto = 0.0D0
   !+ad_vars  hmax : maximum (half-)height of TF coil (m)
   real(kind(1.0D0)) :: hmax = 0.0D0
@@ -2064,30 +2065,30 @@ module build_variables
   !+ad_vars  rinboard /0.651/ : plasma inboard radius (m)
   !+ad_varc                     (consistency equation 29)
   real(kind(1.0D0)) :: rinboard = 0.651D0
-  !+ad_vars  rsldi : radius to inner shield (inside point) (m)
+  !+ad_vars  rsldi : radius to inboard shield (inside point) (m)
   real(kind(1.0D0)) :: rsldi = 0.0D0
-  !+ad_vars  rsldo : radius to outer shield (outside point) (m)
+  !+ad_vars  rsldo : radius to outboard shield (outside point) (m)
   real(kind(1.0D0)) :: rsldo = 0.0D0
   !+ad_vars  rtfcin : radius of centre of inboard TF leg (m)
   real(kind(1.0D0)) :: rtfcin = 0.0D0
-  !+ad_vars  rtot : radius to the centre of the outer TF coil leg (m)
+  !+ad_vars  rtot : radius to the centre of the outboard TF coil leg (m)
   real(kind(1.0D0)) :: rtot = 0.0D0
-  !+ad_vars  scrapli /0.14/ : inner scrapeoff length (m) (used if iscrp=1)
+  !+ad_vars  scrapli /0.14/ : inboard scrapeoff length (m) (used if iscrp=1)
   !+ad_varc                   (iteration variable 73)
   real(kind(1.0D0)) :: scrapli = 0.14D0
-  !+ad_vars  scraplo /0.15/ : outer scrapeoff length (m) (used if iscrp=1)
+  !+ad_vars  scraplo /0.15/ : outboard scrapeoff length (m) (used if iscrp=1)
   !+ad_varc                   (iteration variable 74)
   real(kind(1.0D0)) :: scraplo = 0.15D0
-  !+ad_vars  shldith /0.69/ : inner shield thickness (m)
+  !+ad_vars  shldith /0.69/ : inboard shield thickness (m)
   real(kind(1.0D0)) :: shldith = 0.69D0
-  !+ad_vars  shldoth /1.05/ : outer shield thickness (m)
+  !+ad_vars  shldoth /1.05/ : outboard shield thickness (m)
   real(kind(1.0D0)) :: shldoth = 1.05D0
   !+ad_vars  shldtth /0.60/ : upper shield thickness (m)
   real(kind(1.0D0)) :: shldtth = 0.6D0
-  !+ad_vars  tfcth /0.9/ : inner TF coil thickness, (centrepost for ST) (m)
+  !+ad_vars  tfcth /0.9/ : inboard TF coil thickness, (centrepost for ST) (m)
   !+ad_varc                (iteration variable 13)
   real(kind(1.0D0)) :: tfcth = 0.9D0
-  !+ad_vars  tfootfi /1.8/ : TF coil outer leg / inner leg thickness ratio
+  !+ad_vars  tfootfi /1.8/ : TF coil outboard leg / inboard leg thickness ratio
   !+ad_varc                  (iteration variable 75)
   real(kind(1.0D0)) :: tfootfi = 1.8D0
   !+ad_vars  tfthko : outboard TF coil thickness (m)
@@ -2285,7 +2286,7 @@ module cost_variables
   real(kind(1.0D0)) :: ucco = 350.0D0
   !+ad_vars  uccpcl1 /250.0/ : cost of high strength tapered copper ($/kg)
   real(kind(1.0D0)) :: uccpcl1 = 250.0D0
-  !+ad_vars  uccpclb /150.0/ : cost of TF outer leg plate coils ($/kg)
+  !+ad_vars  uccpclb /150.0/ : cost of TF outboard leg plate coils ($/kg)
   real(kind(1.0D0)) :: uccpclb = 150.0D0
   !+ad_vars  uccpmp /3.9D5/ FIX : vacuum system cryopump cost ($)
   real(kind(1.0D0)) :: uccpmp = 3.9D5

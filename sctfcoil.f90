@@ -857,9 +857,9 @@ contains
     !+ad_auth  J Galambos, FEDC/ORNL
     !+ad_cont  N/A
     !+ad_args  bmaxtf  : input real : peak field including ripple (T)
-    !+ad_args  rtfmi   : input real : mean inner leg radius (m)
-    !+ad_args  rtfmo   : input real : mean outer leg radius (m)
-    !+ad_args  rtf2    : input real : radius of inner leg point nearest plasma (m)
+    !+ad_args  rtfmi   : input real : mean inboard leg radius (m)
+    !+ad_args  rtfmo   : input real : mean outboard leg radius (m)
+    !+ad_args  rtf2    : input real : radius of inboard leg point nearest plasma (m)
     !+ad_args  sigmatf : input real : allowable structure stress (MPa)
     !+ad_args  tdump   : input real : dump time (s)
     !+ad_args  jtfalw  : output real : overall allowable current density (A/m2)
@@ -1089,7 +1089,7 @@ contains
        end do
     end do
 
-    !  Add contribution in TF coil inner leg
+    !  Add contribution in TF coil inboard leg
 
     tfind = tfind + b*tfthk*ys(ns)
 
@@ -1157,7 +1157,7 @@ contains
 
     call osubhd(outfile,'General Coil Parameters :')
     call ovarre(outfile,'Area per coil (m2)','(tfarea/tfno)',tfareain/tfno)
-    call ovarre(outfile,'Total inner leg radial thickness (m)','(tfcth)',tfcth)
+    call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)
     call ovarre(outfile,'Inside half-width (m)','(tficrn)',tficrn)
     call ovarre(outfile,'Outside half width (m)','(tfocrn)',tfocrn)
     call ovarre(outfile,'Total current (MA)','(ritfc/1.D6)',1.0D-6*ritfc)
@@ -1172,9 +1172,9 @@ contains
     call ovarre(outfile,'Outer coil case area (m2)','(acasetf)',acasetf)
 
     call osubhd(outfile,'Coil Geometry :')
-    call ovarre(outfile,'Inner leg centre radius (m)','(rtfcin)',rtfcin)
-    call ovarre(outfile,'Outer leg centre radius (m)','(rtot)',rtot)
-    call ovarre(outfile,'Maximum inner edge height (m)','(hmax)',hmax)
+    call ovarre(outfile,'Inboard leg centre radius (m)','(rtfcin)',rtfcin)
+    call ovarre(outfile,'Outboard leg centre radius (m)','(rtot)',rtot)
+    call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax)
     call ovarre(outfile,'Clear bore (m)','(tfboreh)',tfboreh)
     call ovarre(outfile,'Clear vertical bore (m)','(borev)',borev)
 
