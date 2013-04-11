@@ -157,6 +157,7 @@ contains
     !+ad_hist  17/12/12 PJK Added ZFEAR to argument lists of BETCOM, RADPWR
     !+ad_hist  18/12/12 PJK Added SAREA,AION to argument list of PTHRESH
     !+ad_hist  03/01/13 PJK Removed switch ICULDL and call to DENLIM
+    !+ad_hist  11/04/13 PJK Removed switch IRES from POHM call
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -179,6 +180,10 @@ contains
          idhe3,ignite,impc,impfe,impo,ralpne,rnbeam,te,zeff,abeam, &
          afuel,aion,deni,dlamee,dlamie,dnalp,dnbeam,dnitot,dnla, &
          dnprot,dnz,falpe,falpi,pcoef,rncne,rnone,rnfene,zeffai,zion,zfear)
+
+    !  Ion temperature (user-defined if tratio is not zero)
+
+    if (tratio > 0.0D0) ti = tratio * te
 
     !  Density-weighted temperatures
 
@@ -345,7 +350,7 @@ contains
 
     !  Calculate ohmic power
 
-    call pohm(facoh,ires,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
+    call pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
          pohmpv,rpfac,rplas)
 
     !  Calculate L- to H-mode power threshold
@@ -2966,7 +2971,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine pohm(facoh,ires,kappa,plascur,rmajor,rminor,ten,vol, &
+  subroutine pohm(facoh,kappa,plascur,rmajor,rminor,ten,vol, &
        zeff,pohmpv,rpfac,rplas)
 
     !+ad_name  pohm
@@ -2975,7 +2980,6 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  facoh  : input real :  fraction of plasma current produced inductively
-    !+ad_args  ires   : input integer :  switch for neoclassical plasma resistivity
     !+ad_args  kappa  : input real :  plasma elongation
     !+ad_args  plascur: input real :  plasma current (A)
     !+ad_args  rmajor : input real :  plasma major radius (m)
@@ -2994,6 +2998,7 @@ contains
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  25/07/11 PJK Correction to facoh coding
     !+ad_hist  09/11/11 PJK Initial F90 version
+    !+ad_hist  11/04/13 PJK Removed ires argument
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -3003,7 +3008,6 @@ contains
 
     !  Arguments
 
-    integer, intent(in) :: ires
     real(kind(1.0D0)), intent(in) :: facoh, kappa, plascur, rmajor, &
          rminor, ten, vol, zeff
     real(kind(1.0D0)), intent(out) :: pohmpv, rpfac, rplas
@@ -3027,13 +3031,11 @@ contains
     !  Taken from  N. A. Uckan et al, Fusion Technology 13 (1988) p.411.
     !  The expression is valid for aspect ratios in the range 2.5--4.
 
-    if (ires == 1) then
-       rpfac = 4.3D0 - 0.6D0*rmajor/rminor
-       rplas = rplas * rpfac
-    end if
+    rpfac = 4.3D0 - 0.6D0*rmajor/rminor
+    rplas = rplas * rpfac
 
     !  Check to see if plasma resistance is negative
-    !  (possible if ires = 1 and aspect ratio is too high)
+    !  (possible if aspect ratio is too high)
 
     if (rplas <= 0.0D0) then
        write(*,*) 'Warning in routine POHM:'

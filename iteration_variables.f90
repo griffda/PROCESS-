@@ -300,6 +300,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  17/01/13 PJK Removed bounds checking of iteration variables
+  !+ad_hist  11/04/13 PJK Removed ti recalculation (moved to physics)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -461,10 +462,6 @@ subroutine convxc(xc,nn)
      end if
 
   end do
-
-  !  Reset some other values
-
-  if (tratio > 0.0D0) ti = tratio*te
 
 end subroutine convxc
 

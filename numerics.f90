@@ -23,6 +23,8 @@ module numerics
   !+ad_hist  17/12/12 PJK New figure of merit 14 added
   !+ad_hist  13/01/13 PJK Modified lablcc comment for eqn.47
   !+ad_hist  31/01/13 PJK Changed FACTOR comment
+  !+ad_hist  11/04/13 PJK Listed explicitly the icc, ixc elements turned on
+  !+ad_hisc               by default
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -67,7 +69,8 @@ module numerics
   integer :: nvar    = 25
   integer :: nvrbl   = 0
 
-  !+ad_vars  icc(ipeqns) : array defining which constraint equations to activate
+  !+ad_vars  icc(ipeqns) /2,10,11,24,31,32,33,34,35,36,1,7,14,16/ :
+  !+ad_varc                array defining which constraint equations to activate
   !+ad_varc                (see lablcc for descriptions)
   integer, dimension(ipeqns) :: icc = (/ &
        2,  &  !  1
@@ -122,8 +125,9 @@ module numerics
        0,  &  !  50
        0  /)  !  51
 
-  !+ad_vars  ixc(ipnvars) : array defining which iteration variables to
-  !+ad_varc                 activate (see lablxc for descriptions)
+  !+ad_vars  ixc(ipnvars) /10,12,3,36,48,49,50,51,53,54,5,7,19,1,2,6,13,16,29,56,57,58,59,60,4/ :
+  !+ad_varc                 array defining which iteration variables to activate
+  !+ad_varc                 (see lablxc for descriptions)
   integer, dimension(ipnvars) :: ixc = (/ &
        10, &  !  1
        12, &  !  2
@@ -214,11 +218,12 @@ module numerics
        0,  &  !  87
        0  /)  !  88
 
-  !+ad_vars  lablcc(ipeqns) : labels describing constraint equations:<UL>
+  !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
+  !+ad_varc                   (starred ones are turned on by default):<UL>
   character(len=34), dimension(ipeqns) :: lablcc = (/ &
-       !+ad_varc  <LI> ( 1) Beta (consistency equation)
+       !+ad_varc  <LI> ( 1) * Beta (consistency equation)
        'Beta consistency                 ', &
-       !+ad_varc  <LI> ( 2) Global power balance (consistency equation)
+       !+ad_varc  <LI> ( 2) * Global power balance (consistency equation)
        'Global power balance consistency ', &
        !+ad_varc  <LI> ( 3) Ion power balance
        'Ion power balance                ', &
@@ -228,25 +233,25 @@ module numerics
        'Density limit                    ', &
        !+ad_varc  <LI> ( 6) Epsilon * beta poloidal limit
        'Epsilon * beta poloidal limit    ', &
-       !+ad_varc  <LI> ( 7) Beam ion density (NBI) (consistency equation)
+       !+ad_varc  <LI> ( 7) * Beam ion density (NBI) (consistency equation)
        'Beam ion density consistency     ', &
        !+ad_varc  <LI> ( 8) Neutron wall load limit
        'Neutron wall load limit          ', &
        !+ad_varc  <LI> ( 9) Fusion power limit
        'Fusion power limit               ', &
-       !+ad_varc  <LI> (10) Toroidal field 1/R (consistency equation)
+       !+ad_varc  <LI> (10) * Toroidal field 1/R (consistency equation)
        'Toroidal field 1/R consistency   ', &
-       !+ad_varc  <LI> (11) Radial build (consistency equation)
+       !+ad_varc  <LI> (11) * Radial build (consistency equation)
        'Radial build consistency         ', &
        !+ad_varc  <LI> (12) Volt second limit
        'Volt second limit                ', &
        !+ad_varc  <LI> (13) Burn time limit (PULSE)
        'Burn time limit                  ', &
-       !+ad_varc  <LI> (14) Energy of neutral beam (NBI)
+       !+ad_varc  <LI> (14) * Energy of neutral beam (NBI)
        'Energy of neutral beam           ', &
        !+ad_varc  <LI> (15) Burn time (PULSE) (consistency equation)
        'Burn time consistency            ', &
-       !+ad_varc  <LI> (16) Net electric power limit
+       !+ad_varc  <LI> (16) * Net electric power limit
        'Net electric power limit         ', &
        !+ad_varc  <LI> (17) Stellarator build (STELL) (consistency equation)
        'Stellarator build consistency    ', &
@@ -262,7 +267,7 @@ module numerics
        'Divertor collisionality limit    ', &
        !+ad_varc  <LI> (23) TF coil current density limit
        'TF coil current density limit    ', &
-       !+ad_varc  <LI> (24) Troyon beta limit
+       !+ad_varc  <LI> (24) * Troyon beta limit
        'Troyon beta limit                ', &
        !+ad_varc  <LI> (25) Peak toroidal field limit
        'Peak toroidal field limit        ', &
@@ -276,17 +281,17 @@ module numerics
        'Inboard radial build constraint  ', &
        !+ad_varc  <LI> (30) Allowable injection power
        'Allowable injection power        ', &
-       !+ad_varc  <LI> (31) TF coil case stress limit (SCTF)
+       !+ad_varc  <LI> (31) * TF coil case stress limit (SCTF)
        'TF coil case stress limit        ', &
-       !+ad_varc  <LI> (32) TF coil conduit stress limit (SCTF)
+       !+ad_varc  <LI> (32) * TF coil conduit stress limit (SCTF)
        'TF coil conduit stress limit     ', &
-       !+ad_varc  <LI> (33) I_op / I_critical (TF coil) (SCTF)
+       !+ad_varc  <LI> (33) * I_op / I_critical (TF coil) (SCTF)
        'I_op / I_critical (TF coil)      ', &
-       !+ad_varc  <LI> (34) Dump voltage limit (SCTF)
+       !+ad_varc  <LI> (34) * Dump voltage limit (SCTF)
        'Dump voltage limit               ', &
-       !+ad_varc  <LI> (35) J_winding pack/J_protection limit (SCTF)
+       !+ad_varc  <LI> (35) * J_winding pack/J_protection limit (SCTF)
        'J_winding pack/J_protection limit', &
-       !+ad_varc  <LI> (36) TF coil temperature margin limit (SCTF)
+       !+ad_varc  <LI> (36) * TF coil temperature margin limit (SCTF)
        'TF coil temperature margin limit ', &
        !+ad_varc  <LI> (37) Current drive gamma limit
        'Current drive gamma limit        ', &
@@ -352,45 +357,46 @@ module numerics
        !+ad_varc  <LI> (14) pulse length</UL>
        'pulse length.         ' /)
 
-  !+ad_vars  lablxc(ipnvars) : labels describing iteration variables:<UL>
+  !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
+  !+ad_varc                   (starred ones are turned on by default):<UL>
   character(len=8), dimension(ipnvars) :: lablxc = (/ &
-       !+ad_varc  <LI> ( 1) aspect
+       !+ad_varc  <LI> ( 1) * aspect
        'aspect  ', &
-       !+ad_varc  <LI> ( 2) bt
+       !+ad_varc  <LI> ( 2) * bt
        'bt      ', &
-       !+ad_varc  <LI> ( 3) rmajor
+       !+ad_varc  <LI> ( 3) * rmajor
        'rmajor  ', &
-       !+ad_varc  <LI> ( 4) te
+       !+ad_varc  <LI> ( 4) * te
        'te      ', &
-       !+ad_varc  <LI> ( 5) beta
+       !+ad_varc  <LI> ( 5) * beta
        'beta    ', &
-       !+ad_varc  <LI> ( 6) dene
+       !+ad_varc  <LI> ( 6) * dene
        'dene    ', &
-       !+ad_varc  <LI> ( 7) rnbeam
+       !+ad_varc  <LI> ( 7) * rnbeam
        'rnbeam  ', &
        !+ad_varc  <LI> ( 8) fbeta (f-value for equation 6)
        'fbeta   ', &
        !+ad_varc  <LI> ( 9) fdene (f-value for equation 5)
        'fdene   ', &
-       !+ad_varc  <LI> (10) hfact
+       !+ad_varc  <LI> (10) * hfact
        'hfact   ', &
        !+ad_varc  <LI> (11) pheat
        'pheat   ', &
-       !+ad_varc  <LI> (12) oacdcp
+       !+ad_varc  <LI> (12) * oacdcp
        'oacdcp  ', &
-       !+ad_varc  <LI> (13) tfcth
+       !+ad_varc  <LI> (13) * tfcth
        'tfcth   ', &
        !+ad_varc  <LI> (14) fwalld (f-value for equation 8)
        'fwalld  ', &
        !+ad_varc  <LI> (15) fvs (f-value for equation 12)
        'fvs     ', &
-       !+ad_varc  <LI> (16) ohcth
+       !+ad_varc  <LI> (16) * ohcth
        'ohcth   ', &
        !+ad_varc  <LI> (17) tdwell
        'tdwell  ', &
        !+ad_varc  <LI> (18) q
        'q       ', &
-       !+ad_varc  <LI> (19) enbeam
+       !+ad_varc  <LI> (19) * enbeam
        'enbeam  ', &
        !+ad_varc  <LI> (20) tcpav
        'tcpav   ', &
@@ -410,7 +416,7 @@ module numerics
        'fhldiv  ', &
        !+ad_varc  <LI> (28) fjtfc (f-value for equation 23)
        'fjtfc   ', &
-       !+ad_varc  <LI> (29) bore
+       !+ad_varc  <LI> (29) * bore
        'bore    ', &
        !+ad_varc  <LI> (30) fmva (f-value for equation 19)
        'fmva    ', &
@@ -424,7 +430,7 @@ module numerics
        'fdivcol ', &
        !+ad_varc  <LI> (35) fpeakb (f-value for equation 25)
        'fpeakb  ', &
-       !+ad_varc  <LI> (36) fbetatry (f-value for equation 24)
+       !+ad_varc  <LI> (36) * fbetatry (f-value for equation 24)
        'fbetatry', &
        !+ad_varc  <LI> (37) coheof
        'coheof  ', &
@@ -448,31 +454,31 @@ module numerics
        'fpinj   ', &
        !+ad_varc  <LI> (47) feffcd
        'feffcd  ', &
-       !+ad_varc  <LI> (48) fstrcase 48 (f-value for equation 31)
+       !+ad_varc  <LI> (48) * fstrcase (f-value for equation 31)
        'fstrcase', &
-       !+ad_varc  <LI> (49) fstrcond (f-value for equation 32)
+       !+ad_varc  <LI> (49) * fstrcond (f-value for equation 32)
        'fstrcond', &
-       !+ad_varc  <LI> (50) fiooic (f-value for equation 33)
+       !+ad_varc  <LI> (50) * fiooic (f-value for equation 33)
        'fiooic  ', &
-       !+ad_varc  <LI> (51) fvdump (f-value for equation 34)
+       !+ad_varc  <LI> (51) * fvdump (f-value for equation 34)
        'fvdump  ', &
        !+ad_varc  <LI> (52) vdalw
        'vdalw   ', &
-       !+ad_varc  <LI> (53) fjprot (f-value for equation 35)
+       !+ad_varc  <LI> (53) * fjprot (f-value for equation 35)
        'fjprot  ', &
-       !+ad_varc  <LI> (54) ftmargtf (f-value for equation 36)
+       !+ad_varc  <LI> (54) * ftmargtf (f-value for equation 36)
        'ftmargtf', &
        !+ad_varc  <LI> (55) tmargmin
        'tmargmin', &
-       !+ad_varc  <LI> (56) tdmptf
+       !+ad_varc  <LI> (56) * tdmptf
        'tdmptf  ', &
-       !+ad_varc  <LI> (57) thkcas
+       !+ad_varc  <LI> (57) * thkcas
        'thkcas  ', &
-       !+ad_varc  <LI> (58) thwcndut
+       !+ad_varc  <LI> (58) * thwcndut
        'thwcndut', &
-       !+ad_varc  <LI> (59) fcutfsu
+       !+ad_varc  <LI> (59) * fcutfsu
        'fcutfsu ', &
-       !+ad_varc  <LI> (60) cpttf
+       !+ad_varc  <LI> (60) * cpttf
        'cpttf   ', &
        !+ad_varc  <LI> (61) gapds
        'gapds   ', &

@@ -1284,3 +1284,5 @@ end subroutine output
 ! SVN 155: Corrected blanket and shield height calculations;
 !          clarified 'inner' to 'inboard', and 'outer' to 'outboard' throughout
 ! SVN 156: Modified case and winding pack thicknesses for TF nuclear heating calcs.
+! SVN 157: Removed some obsolete variables, changed some default switch settings;
+!          changed beryllium density

@@ -111,6 +111,7 @@ contains
     !+ad_hist  31/10/12 PJK Added constraint_variables
     !+ad_hist  06/11/12 PJK Added outfile argument.
     !+ad_hisc               Routine now calls VMCON instead of local version VMCON1.
+    !+ad_hist  11/04/13 PJK Removed ires if-statement
     !+ad_stat  Not currently used
     !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -201,9 +202,7 @@ contains
        !  routine POHM, but with t10 replaced by pcoef
 
        rrplas = 2.15D-9*zeff*rmajor/(kappa*rminor**2*pcoef**1.5D0)
-       if (ires == 1) then
-          rrplas = rrplas*rpfac
-       end if
+       rrplas = rrplas*rpfac
 
        dd = (facoh*plascur)**2 * rrplas * 1.0D-6/vol
 

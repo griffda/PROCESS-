@@ -724,6 +724,7 @@ contains
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  17/12/12 PJK Added zfear to betcom, radpwr argument lists
+    !+ad_hist  11/04/13 PJK Removed switch ires from pohm call
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -877,7 +878,7 @@ contains
 
     !  Calculate ohmic power
 
-    call pohm(facoh,ires,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
+    call pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
          pohmpv,rpfac,rplas)
 
     !  Density limit (arbitrary large number for now...)

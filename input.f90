@@ -325,6 +325,7 @@ contains
     !+ad_hist  23/01/13 PJK Added IOTABAR
     !+ad_hist  31/01/13 PJK Changed FACTOR comment
     !+ad_hist  09/04/13 PJK Added RPF2DEWAR, RBVFAC, MBVFAC, WSVFAC
+    !+ad_hist  11/04/13 PJK Removed IRES (replaced with warning), RTPTE, ECHPWR0
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -583,8 +584,8 @@ if (linelen > 80) write(*,*) line
           call parse_real_variable('IMPO', impo, 0.0D0, 10.0D0, &
                'Oxygen impurity multiplier')
        case ('IRES')
-          call parse_int_variable('IRES', ires, 0, 1, &
-               'Switch for neo-cl. plasma resistivity')
+          write(outfile,*) 'IRES is now obsolete -'
+          write(outfile,*) 'please remove it from the input file'
        case ('ISC')
           call parse_int_variable('ISC', isc, 1, ipnlaws, &
                'Switch for confinement scaling law')
@@ -627,9 +628,6 @@ if (linelen > 80) write(*,*) line
        case ('RNBEAM')
           call parse_real_variable('RNBEAM', rnbeam, 0.0D0, 1.0D0, &
                'Hot beam density / electron density')
-       case ('RTPTE')
-          call parse_real_variable('RTPTE', rtpte, 0.1D0, 20.0D0, &
-               'He particle / plas. energy confin. time')
        case ('SNULL')
           call parse_int_variable('SNULL', snull, 0, 1, &
                'Switch for single/double null plasma')
@@ -807,9 +805,6 @@ if (linelen > 80) write(*,*) line
        case ('CBOOT')
           call parse_real_variable('CBOOT', cboot, 0.0D0, 10.0D0, &
                'Bootstrap current fraction multiplier')
-       case ('ECHPWR0')
-          call parse_real_variable('ECHPWR0', echpwr0, 0.0D0, 1.0D8, &
-               'Startup ECH power (W)')
        case ('ENBEAM')
           call parse_real_variable('ENBEAM', enbeam, 1.0D0, 20.0D3, &
                'Neutral beam energy (keV)')

@@ -89,6 +89,7 @@ module physics_variables
   !+ad_hist  03/01/13 PJK Removed iculdl
   !+ad_hist  08/01/13 PJK Modified iinvqd, iiter, ires comments
   !+ad_hist  22/01/13 PJK Added two stellarator scaling laws; modified comments
+  !+ad_hist  11/04/13 PJK Removed ires, rtpte; changed isc, ifispact default values
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -239,7 +240,7 @@ module physics_variables
   real(kind(1.0D0)) :: dlamie = 0.0D0
   !+ad_vars  dlimit(7) : density limit (/m3) as calculated using various models
   real(kind(1.0D0)), dimension(7) :: dlimit = 0.0D0
-  !+ad_vars  dnalp : fast alpha density (/m3)
+  !+ad_vars  dnalp : thermal alpha density (/m3)
   real(kind(1.0D0)) :: dnalp = 0.0D0
   !+ad_vars  dnbeam : hot beam ion density, variable (/m3)
   real(kind(1.0D0)) :: dnbeam = 0.0D0
@@ -343,10 +344,10 @@ module physics_variables
   !+ad_varc            <LI> = 0 ITER physics rules (Uckan) fit;
   !+ad_varc            <LI> = 1 Modified fit (D. Ward) - better at high temperature</UL>
   integer :: ifalphap = 0
-  !+ad_vars  ifispact /1/ : switch for neutronics calculations:<UL>
+  !+ad_vars  ifispact /0/ : switch for neutronics calculations:<UL>
   !+ad_varc            <LI> = 0 neutronics calculations turned off;
   !+ad_varc            <LI> = 1 neutronics calculations turned on</UL>
-  integer :: ifispact = 1
+  integer :: ifispact = 0
   !+ad_vars  igeom /0/ : switch for plasma geometry calculation:<UL>
   !+ad_varc         <LI> = 0 original method;
   !+ad_varc         <LI> = 1 new method</UL>
@@ -373,13 +374,9 @@ module physics_variables
   real(kind(1.0D0)) :: impfe = 1.0D0
   !+ad_vars  impo /1.0/ : oxygen impurity multiplier
   real(kind(1.0D0)) :: impo = 1.0D0
-  !+ad_vars  ires /1/ : switch for neo-classical plasma resistivity:<UL>
-  !+ad_varc        <LI> = 0 term excluded from plasma resistivity;
-  !+ad_varc        <LI> = 1 term included in plasma resistivity</UL>
-  integer :: ires = 1
-  !+ad_vars  isc /6/ switch for energy confinement time scaling law
+  !+ad_vars  isc /34 (=IPB98(y,2))/ switch for energy confinement time scaling law
   !+ad_varc          (see description in tauscl)
-  integer :: isc = 6
+  integer :: isc = 34
   !+ad_vars  iscrp /1/ : switch for scrapeoff width:<UL>
   !+ad_varc         <LI> = 0 use 10% of rminor;
   !+ad_varc         <LI> = 1 use input (scrapli and scraplo)</UL>
@@ -494,8 +491,6 @@ module physics_variables
   real(kind(1.0D0)) :: rpfac = 0.0D0
   !+ad_vars  rplas : plasma resistance (ohm)
   real(kind(1.0D0)) :: rplas = 0.0D0
-  !+ad_vars  rtpte /5.0/ He part. confinement time / plasma energy confinement time
-  real(kind(1.0D0)) :: rtpte = 5.0D0
   !+ad_vars  sarea : plasma surface area
   real(kind(1.0D0)) :: sarea = 0.0D0
   !+ad_vars  sareao : outboard plasma surface area
@@ -519,11 +514,13 @@ module physics_variables
   real(kind(1.0D0)) :: te = 15.0D0
   !+ad_vars  ten : density weighted average electron temperature (keV)
   real(kind(1.0D0)) :: ten = 0.0D0
-  !+ad_vars  ti /8.33/ : volume averaged ion temperature (keV)
+  !+ad_vars  ti /8.33/ : volume averaged ion temperature (keV);
+  !+ad_varc              N.B. calculated from te if tratio > 0.0
   real(kind(1.0D0)) :: ti = 8.33D0
   !+ad_vars  tin : density weighted average ion temperature (keV)
   real(kind(1.0D0)) :: tin = 0.0D0
-  !+ad_vars  tratio /1.0/ : ion temperature / electron temperature
+  !+ad_vars  tratio /1.0/ : ion temperature / electron temperature;
+  !+ad_varc                 used to calculate ti if tratio > 0.0
   real(kind(1.0D0)) :: tratio = 1.0D0
   !+ad_vars  triang /0.6/ : plasma separatrix triangularity
   real(kind(1.0D0)) :: triang = 0.6D0
@@ -574,7 +571,7 @@ module current_drive_variables
   !+ad_call  None
   !+ad_hist  16/10/12 PJK Initial version of module
   !+ad_hist  08/01/13 PJK Modified irfcd comments
-  !+ad_hist  14/01/13 PJK Corrected some more comments
+  !+ad_hist  14/01/13 PJK Corrected some more comments; removed echpwr0
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -599,8 +596,6 @@ module current_drive_variables
   real(kind(1.0D0)) :: cnbeam = 0.0D0
   !+ad_vars  echpwr : ECH power (W)
   real(kind(1.0D0)) :: echpwr = 0.0D0
-  !+ad_vars  echpwr0 /2.0D6/ : startup ECH power (W)
-  real(kind(1.0D0)) :: echpwr0 = 2.0D6
   !+ad_vars  echwpow : ECH wall plug power (W)
   real(kind(1.0D0)) :: echwpow = 0.0D0
   !+ad_vars  enbeam /1.0D3/ : neutral beam energy (keV) (iteration variable 19)
@@ -640,6 +635,7 @@ module current_drive_variables
   !+ad_varc                (iteration variable 11)
   real(kind(1.0D0)) :: pheat = 0.0D0
   !+ad_vars  pinjalw /25.0/ : Maximum allowable value for injected power (MW)
+  !+ad_varc                   (constraint equation 30)
   real(kind(1.0D0)) :: pinjalw = 25.0D0
   !+ad_vars  pinje : auxiliary power to electrons (W)
   real(kind(1.0D0)) :: pinje = 0.0D0
@@ -826,17 +822,17 @@ module fwbs_variables
   real(kind(1.0D0)) :: dewmkg = 0.0D0
   !+ad_vars  emult /1.27/ : energy multiplication in blanket and shield
   real(kind(1.0D0)) :: emult = 1.27D0
-  !+ad_vars  fblbe /0.6/ : beryllium fraction of blanket
+  !+ad_vars  fblbe /0.6/ : beryllium fraction of blanket by volume
   real(kind(1.0D0)) :: fblbe = 0.6D0
-  !+ad_vars  fblli /0.0/ : lithium fraction of blanket
+  !+ad_vars  fblli /0.0/ : lithium fraction of blanket by volume
   real(kind(1.0D0)) :: fblli = 0.0D0
-  !+ad_vars  fblli2o /0.08/ : lithium oxide fraction of blanket
+  !+ad_vars  fblli2o /0.08/ : lithium oxide fraction of blanket by volume
   real(kind(1.0D0)) :: fblli2o = 0.08D0
-  !+ad_vars  fbllipb /0.68/ : lithium lead fraction of blanket
+  !+ad_vars  fbllipb /0.68/ : lithium lead fraction of blanket by volume
   real(kind(1.0D0)) :: fbllipb = 0.68D0
-  !+ad_vars  fblss /0.07/ : stainless steel fraction of blanket
+  !+ad_vars  fblss /0.07/ : stainless steel fraction of blanket by volume
   real(kind(1.0D0)) :: fblss = 0.07D0
-  !+ad_vars  fblvd /0.0/ : vanadium fraction of blanket
+  !+ad_vars  fblvd /0.0/ : vanadium fraction of blanket by volume
   real(kind(1.0D0)) :: fblvd = 0.0D0
   !+ad_vars  fhole /0.15/ : hole fraction of the 1st wall - that neutrons see
   real(kind(1.0D0)) :: fhole = 0.15D0
@@ -1390,7 +1386,7 @@ module tfcoil_variables
   !+ad_vars  tcoolin /40.0/ : centrepost coolant inlet temperature (C)
   real(kind(1.0D0)) :: tcoolin = 40.0D0
   !+ad_vars  tcpav /100.0/ : average temp of TF coil inboard leg conductor (C)
-  !+ad_varc                  (iteration variable 20)
+  !+ad_varc                  (resistive coils) (iteration variable 20)
   real(kind(1.0D0)) :: tcpav = 100.0D0
   !+ad_vars  tcpav2 : centrepost average temperature (C) (for consistency)
   real(kind(1.0D0)) :: tcpav2 = 0.0D0

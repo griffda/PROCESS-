@@ -110,7 +110,8 @@ contains
     !+ad_hisc               routr + rpf2dewar instead of hardwired value.
     !+ad_hisc               New cryomass calculation
     !+ad_hist  10/04/13 PJK Removed irrelevant vgap2 from ht1 calculation
-    !+ad_hist  11/04/13 PJK Modified definition of hecan and wpthk
+    !+ad_hist  11/04/13 PJK Modified definition of hecan and wpthk;
+    !+ad_hisc               modified beryllium density
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -355,11 +356,10 @@ contains
 
     end if
 
-    !  Blanket - stainless steel, Vanadium, Li2O, and Be options
-    !  (assume 65% packing fraction for Be)
+    !  Blanket - stainless steel, vanadium, Li2O, and Be options
 
     whtblss = volblkt * denstl * fblss
-    whtblbe = volblkt * 1900.0D0  * fblbe 
+    whtblbe = volblkt * 1850.0D0  * fblbe  !  density modified from 1900 kg/m3
     whtblvd = volblkt * 5870.0D0  * fblvd
     wtblli2o = volblkt * 2010.0D0  * fblli2o
     whtblkt = whtblss + whtblvd + wtblli2o + whtblbe
@@ -658,6 +658,7 @@ contains
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  18/10/12 PJK Added fwbs_variables
+    !+ad_hist  11/04/13 PJK Modified beryllium density
     !+ad_stat  Okay
     !+ad_docs  Blanket and Energy Conversion Model for Fusion Reactors,
     !+ad_docc  Dr. P.J. Karditsas, AEA Technology, Theoretical and Strategic Studies
@@ -706,7 +707,7 @@ contains
 
     if (smstr == 1) then
        wtblli2o = volblkt * fblli2o * 2010.0D0
-       whtblbe = volblkt * fblbe * 1900.0D0
+       whtblbe = volblkt * fblbe * 1850.0D0  !  density changed from 1900 kg/m3
        whtblkt = wtblli2o + whtblbe
     else if (smstr == 2) then
        wtbllipb = volblkt * fbllipb * 9400.0D0
