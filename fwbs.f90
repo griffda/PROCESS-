@@ -90,8 +90,8 @@ contains
     !+ad_desc  <P>The arrays <CODE>coef(i,j)</CODE> and <CODE>decay(i,j)</CODE>
     !+ad_desc  are used for exponential decay approximations of the
     !+ad_desc  (superconducting) TF coil nuclear parameters.
-    !+ad_desc  <UL><P><LI><CODE>j = 1</CODE> : stainless steel shield
-    !+ad_desc      <P><LI><CODE>j = 2</CODE> : tungsten shield.</UL>
+    !+ad_desc  <UL><P><LI><CODE>j = 1</CODE> : stainless steel shield (assumed)
+    !+ad_desc      <P><LI><CODE>j = 2</CODE> : tungsten shield (not used)</UL>
     !+ad_desc  Note: Costing and mass calculations elsewhere assume
     !+ad_desc  stainless steel only.
     !+ad_prob  None
@@ -110,6 +110,7 @@ contains
     !+ad_hisc               routr + rpf2dewar instead of hardwired value.
     !+ad_hisc               New cryomass calculation
     !+ad_hist  10/04/13 PJK Removed irrelevant vgap2 from ht1 calculation
+    !+ad_hist  11/04/13 PJK Modified definition of hecan and wpthk
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -127,7 +128,8 @@ contains
     real(kind(1.0D0)), dimension(5,2) :: coef
     real(kind(1.0D0)), dimension(7,2) :: decay
 
-    integer :: ishmat
+    integer, parameter :: ishmat = 1  !  stainless steel coil casing is assumed
+
     real(kind(1.0D0)) :: coilhtmx,decaybl,dpacop,dshieq,dshoeq,elong, &
          flumax,fpsdt,fpydt,frachit,hb1,hblnkt,hecan,ht1,htheci, &
          pheci,pheco,pneut1,pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2, &
@@ -216,21 +218,28 @@ contains
     fpsdt = fpydt * 3.154D7
 
     !  Superconducting TF coil shielding calculations
+    !  The 'He can' previously referred to is actually the steel case on the
+    !  plasma-facing side of the TF coil.
 
     if (itfsup == 1) then
+
+       !  N.B. The vacuum vessel appears to be ignored
 
        dshieq = shldith + fwith + blnkith
        dshoeq = shldoth + fwoth + blnkoth
 
-       !  Assume case thickness on plasma side = 1/2 average thickness
+       !  Case thickness on plasma-facing side of TF coil
 
-       hecan = 0.5D0*thkcas
-       wpthk = tfcth - 1.5D0 * thkcas
+       !hecan = 0.5D0*thkcas  !  Old calculation, assumes 1/2 average thickness
+       hecan = casthi
+
+       !  Winding pack radial thickness, including groundwall insulation
+
+       !wpthk = tfcth - 1.5D0 * thkcas  !  Old calculation
+       wpthk = thkwp + 2.0D0*tinstf
 
        !  Nuclear heating rate in inboard TF coil (MW/m**3)
-       !  Set shield material to stainless steel
 
-       ishmat = 1
        coilhtmx = fact(1) * wallmw * coef(1,ishmat) * &
             exp(-decay(6,ishmat) * (dshieq + hecan))
 
@@ -242,7 +251,7 @@ contains
             exp(-decay(6,ishmat) * (dshoeq + hecan)) * tfsao * &
             (1.0D0 - exp(-decay(1,ishmat)*wpthk)) / decay(1,ishmat)
 
-       !  Nuclear heating in He can (MW)
+       !  Nuclear heating in plasma-side TF coil case (MW)
 
        htheci = fact(2) * wallmw * coef(2,ishmat) * &
             exp(-decay(7,ishmat) * dshieq)
@@ -466,10 +475,10 @@ contains
             '(ptfiwp)',ptfiwp)
        call ovarre(outfile,'Outboard TF coil winding pack heating (MW)', &
             '(ptfowp)',ptfowp)
-       call ovarre(outfile,'Peak He can heating (MW/m3)','(htheci)', &
+       call ovarre(outfile,'Peak TF coil case heating (MW/m3)','(htheci)', &
             htheci)
-       call ovarre(outfile,'Inboard He can heating (MW)','(pheci)',pheci)
-       call ovarre(outfile,'Outboard He can heating (MW)','(pheco)',pheco)
+       call ovarre(outfile,'Inboard coil case heating (MW)','(pheci)',pheci)
+       call ovarre(outfile,'Outboard coil case heating (MW)','(pheco)',pheco)
        call ovarre(outfile,'Insulator dose (rad)','(raddose)',raddose)
        call ovarre(outfile,'Maximum neutron fluence (n/m2)','(flumax)', &
             flumax)

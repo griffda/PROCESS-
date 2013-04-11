@@ -1283,3 +1283,4 @@ end subroutine output
 !          corrected maintenance building height calculation
 ! SVN 155: Corrected blanket and shield height calculations;
 !          clarified 'inner' to 'inboard', and 'outer' to 'outboard' throughout
+! SVN 156: Modified case and winding pack thicknesses for TF nuclear heating calcs.

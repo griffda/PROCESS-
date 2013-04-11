@@ -1116,6 +1116,7 @@ contains
     !+ad_hist  14/05/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
+    !+ad_hist  11/04/13 PJK Clarified some output labels
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1156,7 +1157,8 @@ contains
     end if
 
     call osubhd(outfile,'General Coil Parameters :')
-    call ovarre(outfile,'Area per coil (m2)','(tfarea/tfno)',tfareain/tfno)
+    call ovarre(outfile,'Cross-sectional area per coil (m2)','(tfarea/tfno)', &
+         tfareain/tfno)
     call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)
     call ovarre(outfile,'Inside half-width (m)','(tficrn)',tficrn)
     call ovarre(outfile,'Outside half width (m)','(tfocrn)',tfocrn)
@@ -1168,8 +1170,10 @@ contains
     call ovarre(outfile,'Stored energy per coil (GJ)','(estotf)',estotf)
     call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng)
     call ovarre(outfile,'Number of TF coils','(tfno)',tfno)
-    call ovarre(outfile,'Outer coil case thickness (m)','(thkcas)',thkcas)
-    call ovarre(outfile,'Outer coil case area (m2)','(acasetf)',acasetf)
+    call ovarre(outfile,'Plasma-side coil case thickness (m)','(casthi)',casthi)
+    call ovarre(outfile,'Opposite side coil case thickness (m)','(thkcas)',thkcas)
+    call ovarre(outfile,'X-sectional ext. case area per coil (m2)', &
+         '(acasetf)',acasetf)
 
     call osubhd(outfile,'Coil Geometry :')
     call ovarre(outfile,'Inboard leg centre radius (m)','(rtfcin)',rtfcin)
