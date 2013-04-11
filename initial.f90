@@ -220,6 +220,7 @@ subroutine check
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_hist  18/12/12 PJK Added snull and other PF coil location checks
+  !+ad_hist  11/04/13 PJK Energy storage building volume set to zero if lpulse=0
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -245,10 +246,6 @@ subroutine check
   integer :: i,j,k
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !  Pulsed power plant model
-
-  if (lpulse == 1) icase = 'PROCESS pulsed tokamak model'
 
   !  D-He3 option
 
@@ -387,6 +384,14 @@ subroutine check
      icase    = 'PROCESS inertial fusion energy model'
      lpulse   = 0
      idhe3    = 0
+  end if
+
+  !  Pulsed power plant model
+
+  if (lpulse == 1) then
+     icase = 'PROCESS pulsed tokamak model'
+  else
+     esbldgm3 = 0.0D0
   end if
 
   !  Ensure that if TF coils are non-superconducting,

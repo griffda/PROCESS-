@@ -24,7 +24,7 @@ module numerics
   !+ad_hist  13/01/13 PJK Modified lablcc comment for eqn.47
   !+ad_hist  31/01/13 PJK Changed FACTOR comment
   !+ad_hist  11/04/13 PJK Listed explicitly the icc, ixc elements turned on
-  !+ad_hisc               by default
+  !+ad_hisc               by default; lowered boundu(rnbeam) to 1.0 from 1.0D20
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -649,7 +649,7 @@ module numerics
        500.0D0, &  !  4 
        1.000D0, &  !  5 
        1.00D21, &  !  6 
-       1.00D20, &  !  7 
+       1.000D0, &  !  7 
        1.000D0, &  !  8 
        1.000D0, &  !  9 
        3.000D0, &  !  10

@@ -948,7 +948,7 @@ contains
     !+ad_args  dnz    : output real : high Z ion density (/m3)
     !+ad_args  falpe  : output real : fraction of alpha energy to electrons
     !+ad_args  falpi  : output real : fraction of alpha energy to ions
-    !+ad_args  pcoef  : output real : profile factor (= average T / n-weighted T)
+    !+ad_args  pcoef  : output real : profile factor (= n-weighted T / average T)
     !+ad_args  rncne  : output real : carbon density / electron density
     !+ad_args  rnfene : output real : iron density / electron density
     !+ad_args  rnone  : output real : oxygen density / electron density
@@ -1310,7 +1310,7 @@ contains
     !+ad_args  ftrit   : input real :  tritium fuel fraction
     !+ad_args  idhe3   : input integer :  switch for D-T or D-He3 calculations
     !+ad_args  iiter   : input integer :  switch for ITER fusion power calculations
-    !+ad_args  pcoef   : input real :  profile factor (= average T / n-weighted T)
+    !+ad_args  pcoef   : input real :  profile factor (= n-weighted T / average T)
     !+ad_args  ti      : input real :  ion temperature (keV)
     !+ad_args  palp    : output real : alpha particle fusion power (MW/m3)
     !+ad_args  pcharge : output real : other charged particle fusion power (MW/m3)
@@ -1714,7 +1714,7 @@ contains
     !+ad_args  ifalphap : input integer :  switch for fast alpha pressure method
     !+ad_args  palpnb   : input real :  alpha power from hot neutral beam ions (MW)
     !+ad_args  pcharge  : input real :  other charged particle fusion power (MW/m3)
-    !+ad_args  pcoef    : input real :  profile factor ( = average T / n-weighted T )
+    !+ad_args  pcoef    : input real :  profile factor (= n-weighted T / average T)
     !+ad_args  pneut    : input/output real neutron fusion power (MW/m3)
     !+ad_args  te       : input real :  electron temperature (keV)
     !+ad_args  ti       : input real :  ion temperature (keV)

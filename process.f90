@@ -1286,3 +1286,4 @@ end subroutine output
 ! SVN 156: Modified case and winding pack thicknesses for TF nuclear heating calcs.
 ! SVN 157: Removed some obsolete variables, changed some default switch settings;
 !          changed beryllium density
+! SVN 158: Removed energy storage building if lpulse=0

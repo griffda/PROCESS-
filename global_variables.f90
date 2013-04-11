@@ -411,7 +411,7 @@ module physics_variables
   real(kind(1.0D0)) :: pbrem = 0.0D0
   !+ad_vars  pcharge : non-alpha charged particle fusion power (MW/m3)
   real(kind(1.0D0)) :: pcharge = 0.0D0
-  !+ad_vars  pcoef : profile factor ( = average T / n-weighted T )
+  !+ad_vars  pcoef : profile factor (= n-weighted T / average T)
   real(kind(1.0D0)) :: pcoef = 0.0D0
   !+ad_vars  pdivt : power to divertor (MW)
   real(kind(1.0D0)) :: pdivt = 0.0D0
@@ -1092,6 +1092,8 @@ module pfcoil_variables
   !+ad_vars  ric(ngc2) : peak current in coil i (MA-turns)
   real(kind(1.0D0)), dimension(ngc2) :: ric = 0.0D0
   !+ad_vars  rjconpf(ngc2) /3.0D7/ : average current density of PF coil i (A/m2)
+  !+ad_varc                          at time of peak current in that coil
+  !+ad_varc                          (calculated for ipfloc=1 coils)
   real(kind(1.0D0)), dimension(ngc2) :: rjconpf = 3.0D7
   !+ad_vars  rjohc : allowable OH coil current density at EOF (A/m2)
   real(kind(1.0D0)) :: rjohc = 0.0D0
@@ -1686,6 +1688,7 @@ module heat_transport_variables
   !+ad_call  None
   !+ad_hist  30/10/12 PJK Initial version of module
   !+ad_hist  27/03/13 PJK Comment change to FMGDMW
+  !+ad_hist  11/04/13 PJK Comment change to TFACPD
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1778,6 +1781,7 @@ module heat_transport_variables
   !+ad_vars  rnphx : number of primary heat exchangers
   real(kind(1.0D0)) :: rnphx = 0.0D0
   !+ad_vars  tfacpd /0.0/ : total steady state TF coil AC power demand (MW)
+  !+ad_varc                 (itfsup=0 only; calculated for itfsup=1)
   real(kind(1.0D0)) :: tfacpd = 0.0D0
   !+ad_vars  tlvpmw : estimate of total low voltage power (MW)
   real(kind(1.0D0)) :: tlvpmw = 0.0D0
@@ -1865,6 +1869,7 @@ module buildings_variables
   !+ad_hist  08/04/13 PJK Modified wrbi comment
   !+ad_hist  09/04/13 PJK Changed clh1 default from 8.0 to 2.5
   !+ad_hist  09/04/13 PJK Added building volume multipliers rbvfac, mbvfac, wsvfac
+  !+ad_hist  11/04/13 PJK Comment change to esbldgm3
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1894,6 +1899,7 @@ module buildings_variables
   !+ad_vars  elevol : volume of electrical equipment building (m3)
   real(kind(1.0D0)) :: elevol = 0.0D0
   !+ad_vars  esbldgm3 /1.0D3/ : volume of energy storage equipment building (m3)
+  !+ad_varc                     (not used if lpulse=0)
   real(kind(1.0D0)) :: esbldgm3 = 1.0D3
   !+ad_vars  fndt /2.0/ : foundation thickness (m)
   real(kind(1.0D0)) :: fndt = 2.0D0

@@ -187,6 +187,7 @@ contains
     !+ad_hist  09/04/13 PJK Converted pfm, tfm to kg in wt calculation;
     !+ad_hisc               removed extraneous 5.1m from rmbh calculation;
     !+ad_hisc               building volume multipliers now input parameters
+    !+ad_hist  11/04/13 PJK Comment change
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -336,6 +337,7 @@ contains
 
     !  Other building volumes
     !  pibv : power injection building volume, m3
+    !  esbldgm3 is forced to be zero if no energy storage is required (lpulse=0)
 
     elev = tfcbv + pfbldgm3 + esbldgm3 + pibv
 
