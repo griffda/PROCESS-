@@ -26,6 +26,7 @@ module pfcoil_module
   !+ad_prob  None
   !+ad_call  build_variables
   !+ad_call  constants
+  !+ad_call  fwbs_variables
   !+ad_call  maths_library
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
@@ -36,6 +37,7 @@ module pfcoil_module
   !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  31/10/12 PJK Moved local common variables into module header
+  !+ad_hist  15/04/13 PJK Added fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -43,6 +45,7 @@ module pfcoil_module
 
   use build_variables
   use constants
+  use fwbs_variables
   use maths_library
   use pfcoil_variables
   use physics_variables
@@ -94,6 +97,7 @@ contains
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_host  18/12/12 PJK/RK Added single-null coding
     !+ad_hist  08/04/13 PJK Comment change
+    !+ad_hist  15/04/13 PJK Modified PF coil case area for superconducting coils
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -629,10 +633,12 @@ contains
 
           if (ipfres /= 1) then
 
-             !  Superconducting coil : Assume 500 MPa stress limit, 2/3 of the
-             !  force is supported in the outer (steel) case
+             !  Superconducting coil
+             !  Previous assumptions: 500 MPa stress limit with 2/3 of the force
+             !  supported in the outer (steel) case.
+             !  Now, 500 MPa replaced by sigpfalw, 2/3 factor replaced by sigpfcf
 
-             areaspf = 0.666D0 * forcepf / 5.0D8
+             areaspf = sigpfcf * forcepf / (sigpfalw*1.0D6)
 
           else
              areaspf = 0.0D0  !  Resistive coil - no steel needed
@@ -640,7 +646,7 @@ contains
 
           !  Weight of steel
 
-          wts(i) = areaspf * 2.0D0*pi*rpf(i) * 7800.0D0
+          wts(i) = areaspf * 2.0D0*pi*rpf(i) * denstl
        end do
     end do
 

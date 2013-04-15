@@ -1290,3 +1290,4 @@ end subroutine output
 ! SVN 159: Corrected in-code comments about tfckw
 ! SVN 160: Corrected use of fhole in pulse.f90 (improved first wall nuclear heating
 !          calculation)
+! SVN 161: PF coil case area modified for superconducting coils; new sigpfcf input

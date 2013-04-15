@@ -993,6 +993,7 @@ module pfcoil_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  18/10/12 PJK Initial version of module
+  !+ad_hist  15/04/13 PJK Added sigpfcf
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1119,6 +1120,9 @@ module pfcoil_variables
   real(kind(1.0D0)) :: sccufac = 0.0188D0
   !+ad_vars  sigpfalw /335.0/ : allowable stress in PF/OH coils (MPa)
   real(kind(1.0D0)) :: sigpfalw = 335.0D0
+  !+ad_vars  sigpfcf /0.666/ : fraction of JxB force supported by steel case
+  !+ad_varc                    for superconducting PF coils (ipfres=0)
+  real(kind(1.0D0)) :: sigpfcf = 0.666D0
   !+ad_vars  sxlg(ngc2,ngc2) : mutual inductance matrix (H)
   real(kind(1.0D0)), dimension(ngc2,ngc2) :: sxlg = 0.0D0
   !+ad_vars  turns(ngc2) : number of turns in PF coil i
