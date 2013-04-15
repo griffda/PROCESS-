@@ -1188,6 +1188,7 @@ module tfcoil_variables
   !+ad_hist  18/10/12 PJK Initial version of module
   !+ad_hist  30/01/13 PJK Modified vftf comments
   !+ad_hist  08/04/13 PJK Modified cpttf, tfno comments
+  !+ad_hist  15/04/13 PJK Modified tfckw comments
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1408,7 +1409,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfbusl = 0.0D0
   !+ad_vars  tfbusmas : TF coil bus mass (kg)
   real(kind(1.0D0)) :: tfbusmas = 0.0D0
-  !+ad_vars  tfckw :  TF coil peak voltage in dump (kV)
+  !+ad_vars  tfckw :  available DC power for charging the TF coils (kW)
   real(kind(1.0D0)) :: tfckw = 0.0D0
   !+ad_vars  tfcmw : peak power per TF power supply (MW)
   real(kind(1.0D0)) :: tfcmw = 0.0D0

@@ -275,6 +275,7 @@ contains
       !+ad_hist  09/10/12 PJK Modified to use new process_output module
       !+ad_hist  16/10/12 PJK Added constants
       !+ad_hist  08/04/13 PJK Comment changes; xpower units changed from MW to MVA
+      !+ad_hist  15/04/13 PJK Comment changes
       !+ad_stat  Okay
       !+ad_docs  None
       !
@@ -332,11 +333,11 @@ contains
       ntfpm = (itfka * (1.0D0 + nsptfc) )/5.0D0  !  number of TF power modules
       tfpmv = rtfps*tfcv/(1.0D0+nsptfc)  !  TF coil power module voltage, volts
       tfpsv = rtfps*tfcv
-      tfpska = rtfps*itfka
+      tfpska = rtfps*itfka  !  power supply current, kA
       tfpmka = rtfps*itfka/(ntfpm/(1.0D0+nsptfc))  !  TF power module current, kA
       tfpmkw = tfpmv*tfpmka  !  TF power module power, kW
-      tfckw = tfpmkw*ntfpm  !  peak AC power needed to charge coils, kW
-      tfackw = tfckw/0.9D0
+      tfckw = tfpmkw*ntfpm  !  available DC power for charging the TF coils, kW
+      tfackw = tfckw/0.9D0  !  peak AC power needed to charge coils, kW
       r1dump = nsptfc*vtfskv*ncpbkr/itfka  !  resistance of dump resistor, ohms
       ttfsec = lptfcs*ncpbkr/(r1dump*nsptfc+rptfc*(1.0D0-nsptfc))  !  time constant, s
       ndumpr = ntfbkr*4.0D0  !  number of dump resistors
