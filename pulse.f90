@@ -165,6 +165,7 @@ contains
     !+ad_hist  18/10/12 PJK Added fwbs_variables
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  31/10/12 PJK Added constraint_variables
+    !+ad_hist  15/04/13 PJK Changed approximation for first wall nuclear heating
     !+ad_stat  Okay
     !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -179,7 +180,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: boa,eptbar,eptrc,eptthc,eptzc,fboa,fwlifs, &
+    real(kind(1.0D0)) :: boa,decay,eptbar,eptrc,eptthc,eptzc,fboa,fwlifs, &
          fwndep,fwvol,masflx,mindif,min01,min02,min03,poissn,rad, &
          sigpm,sigpr,sigpth,sgpthn,sigpz,sigtr,sigtri,sigtrs,sgtshs, &
          sigtth,sgtthi,sgtths,temp,tfwav,tmax,tmpdif,tmthet,torlen,tpeakr
@@ -242,17 +243,6 @@ contains
 
     if (iprint /= 1) then
 
-       !  Check valid input for pulsed reactor
-
-       if (fhole == 0.0D0) then
-          write(*,*) 'Error in routine THRMAL:'
-          write(*,*) 'fhole should not be zero for a pulsed reactor -'
-          write(*,*) 'a fraction fhole of the neutrons leaving the'
-          write(*,*) 'plasma are assumed to interact in the first wall.'
-          write(*,*) 'PROCESS stopping.'
-          stop
-       end if
-
        !  We will assume that 2*bfw is the average of the inboard and
        !  outboard first wall thicknesses (fwith and fwoth respectively).
 
@@ -292,10 +282,20 @@ contains
           fwlifs = 3.1536D7*fwlife
 
           !  First wall properties
-          !  This assumes that the neutrons lost via fhole actually stop in
-          !  the first wall, so are not lost at all...
 
-          fwndep = (pneut*vol)*fhole*1.0D6
+          !  Heating power due to neutron deposition (W)
+          !  The previous method assumed that the neutrons lost via fhole
+          !  actually stop in the first wall, so are not lost at all...
+          !fwndep = (pneut*vol)*fhole*1.0D6
+
+          !  New method based on that for nuclear heating in the blanket
+          !  in fwbs.f90. A neutron decay length of 0.075m is assumed, and
+          !  the TART centrepost term is ignored.
+
+          decay = 0.075D0 / (1.0D0 - afw*afw/(bfw*bfw))  !  a2/b2 = coolant fraction
+
+          fwndep = (1.0D6*pneut*vol) * (1.0D0-fhole) * &
+               ( 1.0D0 - exp( -(2.0D0*bfw)/decay) )
 
           !  Assume that the first wall volume is equal to its surface area
           !  multiplied by the external diameter of the hollow cylindrical

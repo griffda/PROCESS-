@@ -1288,3 +1288,5 @@ end subroutine output
 !          changed beryllium density
 ! SVN 158: Removed energy storage building if lpulse=0
 ! SVN 159: Corrected in-code comments about tfckw
+! SVN 160: Corrected use of fhole in pulse.f90 (improved first wall nuclear heating
+!          calculation)
