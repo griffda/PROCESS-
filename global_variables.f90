@@ -1199,6 +1199,8 @@ module tfcoil_variables
   !+ad_hist  30/01/13 PJK Modified vftf comments
   !+ad_hist  08/04/13 PJK Modified cpttf, tfno comments
   !+ad_hist  15/04/13 PJK Modified tfckw comments
+  !+ad_hist  16/04/13 PJK Redefined isumattf; removed jcrit_model;
+  !+ad_hisc               changed dcond dimensions
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1228,7 +1230,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: aswp = 0.0D0
   !+ad_vars  avwp : winding pack void (He coolant) area (m2)
   real(kind(1.0D0)) :: avwp = 0.0D0
-  !+ad_vars  bcritsc /24.0/ : critical field for superconductor (isumattf=4 or 5)
+  !+ad_vars  bcritsc /24.0/ : upper critical field (T) for Nb3Sn superconductor
+  !+ad_varc                   at zero temperature and strain (isumattf=4, =bc20m)
   real(kind(1.0D0)) :: bcritsc = 24.0D0
   !+ad_vars  bmaxtf : peak field at TF coil (T)
   real(kind(1.0D0)) :: bmaxtf = 0.0D0
@@ -1261,8 +1264,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: csytf = 8.25D8
   !+ad_vars  dcase /8000.0/ : density of coil case (kg/m3)
   real(kind(1.0D0)) :: dcase = 8000.0D0
-  !+ad_vars  dcond(5) /9000.0/ : density of superconductor (kg/m3)
-  real(kind(1.0D0)), dimension(5) :: dcond = 9000.0D0
+  !+ad_vars  dcond(4) /9000.0/ : density of superconductor (kg/m3)
+  real(kind(1.0D0)), dimension(4) :: dcond = 9000.0D0
   !+ad_vars  dcopper /8900.0/ : density of copper (kg/m3)
   real(kind(1.0D0)) :: dcopper = 8900.0D0
   !+ad_vars  deflect : TF coil deflection at full field (m)
@@ -1296,11 +1299,11 @@ module tfcoil_variables
   !+ad_vars  frhocp /1.0/ centrepost resistivity enhancement factor
   real(kind(1.0D0)) :: frhocp = 1.0D0
   !+ad_vars  isumattf /1/ : switch for superconductor material in TF coils:<UL>
-  !+ad_varc            <LI> = 1 binary Nb3Sn;
-  !+ad_varc            <LI> = 2 ternary Nb3Sn;
+  !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
+  !+ad_varc                     ITER parameters;
+  !+ad_varc            <LI> = 2 not in use;
   !+ad_varc            <LI> = 3 NbTi;
-  !+ad_varc            <LI> = 4 generic, but uses Nb3Sn current density model;
-  !+ad_varc            <LI> = 5 generic, but uses NbTi current density model</UL>
+  !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters</UL>
   integer :: isumattf = 1
   !+ad_vars  itfmod /1/ : switch for TF coil magnet model:<UL>
   !+ad_varc          <LI> = 0 use simple model;
@@ -1312,13 +1315,6 @@ module tfcoil_variables
   integer :: itfsup = 1
   !+ad_vars  jbus /1.25D6/ : bussing current density (A/m2)
   real(kind(1.0D0)) :: jbus = 1.25D6
-  !+ad_vars  jcrit_model /0/ : switch for binary Nb3Sn critical J model (isumattf=1):<UL>
-  !+ad_varc               <LI> = 0 use original model;
-  !+ad_varc               <LI> = 1 use ITER critical surface model</UL>
-  integer :: jcrit_model = 0
-  !+ad_vars  jcritsc /2.225D10/ : critical current density (A/m2) for
-  !+ad_varc                       superconductor (isumattf=4 or 5)
-  real(kind(1.0D0)) :: jcritsc = 2.225D10
   !+ad_vars  jeff(5) : work array used in stress calculation (A/m2)
   real(kind(1.0D0)), dimension(5) :: jeff = 0.0D0
   !+ad_vars  jwdgcrt : critical current density for winding pack (A/m2)
@@ -1406,7 +1402,7 @@ module tfcoil_variables
   !+ad_vars  tcpmax : peak centrepost temperature (C)
   real(kind(1.0D0)) :: tcpmax = 0.0D0
   !+ad_vars  tcritsc /16.0/ : critical temperature (K) for superconductor
-  !+ad_varc                   (isumattf = 4 or 5)
+  !+ad_varc                   at zero field and strain (isumattf=4, =tc0m)
   real(kind(1.0D0)) :: tcritsc = 16.0D0
   !+ad_vars  tdmptf /10.0/ : dump time for TF coil (s)
   !+ad_varc                  (iteration variable 56)
@@ -2134,6 +2130,7 @@ module cost_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  31/10/12 PJK Initial version of module
+  !+ad_hist  16/04/13 PJK Changed ucsc dimensions
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2408,9 +2405,9 @@ module cost_variables
   real(kind(1.0D0)) :: ucpp = 48.0D0
   !+ad_vars  ucrb /400.0/ : cost of reactor building (M$/m3)
   real(kind(1.0D0)) :: ucrb = 400.0D0
-  !+ad_vars  ucsc(5) /600.0,600.0,300.0,600.0,600.0/ : cost of superconductor ($/kg)
-  real(kind(1.0D0)), dimension(5) :: ucsc = &
-       (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0/)
+  !+ad_vars  ucsc(4) /600.0,600.0,300.0,600.0/ : cost of superconductor ($/kg)
+  real(kind(1.0D0)), dimension(4) :: ucsc = &
+       (/600.0D0, 600.0D0, 300.0D0, 600.0D0/)
   !+ad_vars  ucsh /115.0/ FIX : cost of shops and warehouses (M$/m3)
   real(kind(1.0D0)) :: ucsh = 115.0D0
   !+ad_vars  ucshld /32.0/ : cost of shield structural steel ($/kg)

@@ -1263,6 +1263,7 @@ contains
     !+ad_hist  21/09/11 PJK Initial F90 version
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  29/10/12 PJK Moved routine and contents into sctfcoil.f90
+    !+ad_hist  16/04/13 PJK Removed jcritsc from supercon argument list
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1295,8 +1296,8 @@ contains
 
     ifail = 0
     call supercon(acstf,aturn,bmaxtfrp,vftf,fcutfsu,cpttf,isumattf, &
-         jcrit_model,strncon,tdmptf,tfes,tftmp,tmaxpro,bcritsc,jcritsc, &
-         tcritsc,iprint,outfile,jwdgpro,jwdgcrt,vdump,tmargtf,ifail)
+         strncon,tdmptf,tfes,tftmp,tmaxpro,bcritsc,tcritsc,iprint, &
+         outfile,jwdgpro,jwdgcrt,vdump,tmargtf,ifail)
 
     if (ifail /= 0) then
        write(*,*) 'Error in routine TFSPCALL:'
@@ -1313,8 +1314,8 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,isumat,jcrit_model, &
-         strain,tdump,tfes,the,tmax,bcritsc,jcritsc,tcritsc,iprint,outfile, &
+    subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,isumat, &
+         strain,tdump,tfes,the,tmax,bcritsc,tcritsc,iprint,outfile, &
          jwdgpro,jwdgcrt,vd,tmarg,ifail)
 
       !+ad_name  supercon
@@ -1331,22 +1332,17 @@ contains
       !+ad_args  fcu : input real : Fraction of conductor that is copper
       !+ad_args  iop : input real : Operating current per turn (A)
       !+ad_args  isumat : input integer : Switch for conductor type:
-      !+ad_argc                           1 = binary Nb3Sn,
-      !+ad_argc                           2 = ternary Nb3Sn,
+      !+ad_argc                           1 = ITER Nb3Sn, standard parameters,
+      !+ad_argc                           2 = not used,
       !+ad_argc                           3 = NbTi,
-      !+ad_argc                           4 = generic, but uses Nb3Sn current density calc.
-      !+ad_argc                           5 = generic, but uses NbTi current density calc.
-      !+ad_args  jcrit_model : input integer : Switch for Jcrit model for isumat=1 only:
-      !+ad_argc                                0 = original model
-      !+ad_argc                                1 = ITER Nb3Sn critical surface implementation
+      !+ad_argc                           4 = ITER Nb3Sn, user-defined parameters
       !+ad_args  strain : input real : Strain on superconductor at operation conditions
       !+ad_args  tdump : input real : Dump time (sec)
       !+ad_args  tfes : input real : Energy stored in one TF coil (J)
       !+ad_args  the : input real : He temperature at peak field point (K)
       !+ad_args  tmax : input real : Max conductor temperature during quench (K)
-      !+ad_args  bcritsc : input real : Critical field (T) (isumat=4,5 only)
-      !+ad_args  jcritsc : input real : Critical J (A/m2) (isumat=4,5 only)
-      !+ad_args  tcritsc : input real : Critical temperature (K) (isumat=4,5 only)
+      !+ad_args  bcritsc : input real : Critical field (T) (isumat=4 only)
+      !+ad_args  tcritsc : input real : Critical temperature (K) (isumat=4 only)
       !+ad_args  iprint : input integer : Switch for printing (1 = yes, 0 = no)
       !+ad_args  outfile : input integer : Fortran output unit identifier
       !+ad_args  jwdgpro : output real : Winding pack current density from temperature 
@@ -1373,6 +1369,8 @@ contains
       !+ad_hist  21/09/11 PJK Initial F90 version; converted to subroutine from function
       !+ad_hist  26/09/11 PJK Converted itersc to a subroutine
       !+ad_hist  09/10/12 PJK Modified to use new process_output module
+      !+ad_hist  16/04/13 PJK Removed jcrit_model, jcritsc arguments;
+      !+ad_hisc               redefined isumat usage; modified itersc arguments
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
@@ -1382,17 +1380,16 @@ contains
 
       !  Arguments
 
-      integer, intent(in) :: isumat, jcrit_model, iprint, outfile
-      real(kind(1.0D0)), intent(in) :: acs, aturn, bmax, fhe, fcu, iop, strain, &
-           tdump, tfes, the, tmax, bcritsc, jcritsc, tcritsc
+      integer, intent(in) :: isumat, iprint, outfile
+      real(kind(1.0D0)), intent(in) :: acs, aturn, bmax, fhe, fcu, &
+           iop, strain, tdump, tfes, the, tmax, bcritsc, tcritsc
       integer, intent(inout) :: ifail
       real(kind(1.0D0)), intent(out) :: jwdgpro, jwdgcrt, vd, tmarg
 
       !  Local variables
 
-      real(kind(1.0D0)) :: astrain, bbar, bc2, bc20, bc20m, cstrain, c0, &
-           fac1, fac2, fcond, fstrain, icrit, iooic, jc, jwdgop, tbar, tc0, &
-           tc0m, tc1
+      real(kind(1.0D0)) :: bc20m,c0,fac1,fac2,fcond,icrit,iooic,jc, &
+           jwdgop,tbar,tc0m,tc1
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1404,62 +1401,61 @@ contains
 
       select case (isumat)
 
-      case (1)  !  binary Nb3Sn data
-         bc20m = 28.0D0
-         tc0m = 18.0D0
-         c0 = 1.315D10
+      case (1)  !  ITER Nb3Sn critical surface parameterization
+         bc20m = 32.97D0  !  previously 28.0D0 for old model
+         tc0m = 16.06D0   !  previously 18.0D0 for old model
+         !c0 = 1.315D10   !  obsolete
 
-      case (2)  !  ternary Nb3Sn data
-         bc20m = 24.0D0
-         tc0m = 16.0D0
-         c0 = 2.225D10
+      !case (2)  !  No longer used; values given are for ternary Nb3Sn
+      !   bc20m = 24.0D0
+      !   tc0m = 16.0D0
+      !   c0 = 2.225D10
 
       case (3)  !  NbTi data
          bc20m = 15.0D0
          tc0m = 9.3D0
          c0 = 10.0D9
 
-      case default  !  generic superconductor - use input values
+      case (4)  !  As (1), but user-defined parameters
          bc20m = bcritsc
          tc0m = tcritsc
-         c0 = jcritsc
+
+      case default  !  Error condition
+         write(*,*) 'Error in routine SUPERCON:'
+         write(*,*) 'Illegal value for isumattf, = ',isumattf
+         write(*,*) ' '
+         write(*,*) 'PROCESS stopping.'
+         stop
 
       end select
 
-      if (strain <  0.0D0) then
-         astrain = 900.0D0
-      else
-         astrain = 1250.0D0
-      end IF
+      !  Original model
+      !if (strain < 0.0D0) then
+      !   astrain = 900.0D0
+      !else
+      !   astrain = 1250.0D0
+      !end if
+      !fstrain = 1.0D0 - astrain * abs(strain)**1.7D0
+      !cstrain = c0 * sqrt(fstrain)
 
-      fstrain = 1.0D0 - astrain * abs(strain)**1.7D0
-      cstrain = c0 * sqrt(fstrain)
+      !  Calculate critical current density and temperature
 
-      !  Calculate current density, taking into account critical values
+      if (isumat /= 3) then  !  ITER Nb3Sn critical surface model
 
-      if ((isumat /= 3).and.(isumat /= 5)) then  !  Nb3Sn model
+         call itersc(the,bmax,strain,bc20m,tc0m,jc,tc1)
 
-         if ((isumat == 1).and.(jcrit_model == 1)) then
-
-            !  Use ITER Nb3Sn critical surface implementation model
-
-            call itersc(the,bmax,strain,jc,tc1)
-
-         else
-            tc0 = tc0m * fstrain**(1.0D0/3.0D0)
-            tc1 = tc0m * (1.0D0 - bmax/bc20m)
-            bc20 = bc20m * fstrain
-            tbar = the/tc0
-            tbar = min(tbar,0.999D0)
-            bc2 = bc20 * (1.0D0 - tbar**2) * &
-                 ( 1.0D0 - 0.31D0*tbar**2 * (1.0D0 - 1.77D0*log(tbar)) )
-            bbar = bmax/bc2
-            bbar = min(bbar,0.999D0)
-
-            !+**PJK 25/07/11 Corrected SQRT(BBAR) to SQRT(BMAX) in denominator
-            jc = cstrain * (1.0D0 - tbar**2)**2 * (1.0D0 - bbar)**2 &
-                 / (sqrt(bc2) * sqrt(bmax))
-         end if
+         !  Original model; previously jcrit_model = 0
+         !tc0 = tc0m * fstrain**(1.0D0/3.0D0)
+         !tc1 = tc0m * (1.0D0 - bmax/bc20m)
+         !bc20 = bc20m * fstrain
+         !tbar = the/tc0
+         !tbar = min(tbar,0.999D0)
+         !bc2 = bc20 * (1.0D0 - tbar**2) * &
+         !     ( 1.0D0 - 0.31D0*tbar**2 * (1.0D0 - 1.77D0*log(tbar)) )
+         !bbar = bmax/bc2
+         !bbar = min(bbar,0.999D0)
+         !jc = cstrain * (1.0D0 - tbar**2)**2 * (1.0D0 - bbar)**2 &
+         !     / (sqrt(bc2) * sqrt(bmax))
 
       else  !  NbTi model
 
@@ -1505,22 +1501,16 @@ contains
       select case (isumat)
 
       case (1)
-         call ocmmnt(outfile,'Superconductor used: Nb3Sn (binary)')
-         if (jcrit_model == 0) then
-            call ocmmnt(outfile,'  (original Jcrit model)')
-         else
-            call ocmmnt(outfile,'  (ITER Jcrit model)')
-         end if
+         call ocmmnt(outfile,'Superconductor used: Nb3Sn')
+         call ocmmnt(outfile,'  (ITER Jcrit model, standard parameters)')
       case (2)
-         call ocmmnt(outfile,'Superconductor used: Nb3Sn (ternary)')
+         continue
       case (3)
          call ocmmnt(outfile,'Superconductor used: NbTi')
       case (4)
-         call ocmmnt(outfile, &
-              'Generic superconductor used: Nb3Sn current density model')
+         call ocmmnt(outfile,'Superconductor used: Nb3Sn')
+         call ocmmnt(outfile,'  (ITER Jcrit model, user-defined parameters)')
       case default
-         call ocmmnt(outfile, &
-              'Generic superconductor used: NbTi current density model')
 
       end select
 
@@ -1531,6 +1521,10 @@ contains
       call ovarre(outfile,'Copper fraction of conductor','(fcu)',fcu)
 
       call osubhd(outfile,'Critical Current Information :')
+      call ovarre(outfile,'Critical field at zero temp., strain (T)', &
+           '(bc20m)',bc20m)
+      call ovarre(outfile,'Critical temp. at zero field, strain (K)', &
+           '(tc0m)',tc0m)
       call ovarre(outfile,'Operating winding pack J (A/m2)','(jwdgop)',jwdgop)
       call ovarre(outfile,'Critical winding pack curr. density (A/m2)', &
            '(jwdgcrt)',jwdgcrt)
@@ -1551,7 +1545,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    subroutine itersc(the,bmax,strain,jcrit,tcrit)
+    subroutine itersc(the,bmax,strain,bctw,tco,jcrit,tcrit)
 
       !+ad_name  itersc
       !+ad_summ  Implementation of ITER Nb3Sn critical surface implementation
@@ -1562,6 +1556,9 @@ contains
       !+ad_args  the : input real : Coolant/SC temperature (K)
       !+ad_args  bmax : input real : Magnetic field at conductor (T)
       !+ad_args  strain : input real : Strain in superconductor
+      !+ad_args  bctw : input real : Upper critical field (T) for superconductor
+      !+ad_argc                      at zero temperature and strain
+      !+ad_args  tco : input real : Critical temperature (K) at zero field and strain
       !+ad_args  jcrit : output real : Critical current density (A/m2)
       !+ad_args  tcrit : output real : Critical temperature (K)
       !+ad_desc  This routine calculates the critical current density and
@@ -1577,6 +1574,8 @@ contains
       !+ad_hisc               Added range-checking for tzero, bred
       !+ad_hist  26/09/11 PJK Converted to a subroutine, and added jcrit, tcrit
       !+ad_hisc               arguments
+      !+ad_hist  16/04/13 PJK Converted bctw, tco to arguments instead of hardwired.
+      !+ad_hisc               Corrected problems with jcrit and tcrit formulae
       !+ad_stat  Okay
       !+ad_docs  ITER Nb3Sn critical surface parameterization (2MMF7J) (2008),
       !+ad_docc    https://user.iter.org/?uid=2MMF7J&action=get_document
@@ -1589,22 +1588,25 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: the, bmax, strain
+      real(kind(1.0D0)), intent(in) :: the, bmax, strain, bctw, tco
       real(kind(1.0D0)), intent(out) :: jcrit, tcrit
 
       !  Local variables
 
       real(kind(1.0D0)), parameter :: csc = 16500.0D6
-      real(kind(1.0D0)), parameter :: bctw = 32.97D0
-      real(kind(1.0D0)), parameter :: tco = 16.06D0
+      !real(kind(1.0D0)), parameter :: bctw = 32.97D0  !  now an argument
+      !real(kind(1.0D0)), parameter :: tco = 16.06D0  !  now an argument
       real(kind(1.0D0)), parameter :: cp = 0.63D0
       real(kind(1.0D0)), parameter :: cq = 2.1D0
       real(kind(1.0D0)), parameter :: caone = 44.0D0
       real(kind(1.0D0)), parameter :: catwo = 4.0D0
       real(kind(1.0D0)), parameter :: etaoa = 0.00256D0
       real(kind(1.0D0)), parameter :: etamax = -0.003253075D0
+      real(kind(1.0D0)), parameter :: diter = 0.82D0  !  ITER strand diameter (mm)
+      real(kind(1.0D0)), parameter :: cuiter = 0.5D0  !  ITER strand copper fraction
+
       real(kind(1.0D0)) :: tred, bcrit, bred, etash, tzero, bcro, &
-           tcro, bzero, strfun, jc1, jc2, jc3
+           tcro, bzero, strfun, jc1, jc2, jc3, scalefac
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1626,7 +1628,14 @@ contains
       bzero = bmax/bcro
       bcrit = bcro * (1.0D0 - tzero**1.52D0)
       bred = bmax/bcrit
-      tcrit = tcro * (1.0D0 - bzero)**(1.0D0/1.52D0)
+
+      !  New correction to prevent NaNs
+      if (bzero < 1.0D0) then
+         tcrit = tcro * (1.0D0 - bzero)**(1.0D0/1.52D0)
+      else
+         tcrit = the * (1.0D0 - bzero)  !  ??? tcrit will be zero or negative!
+      end if
+
       tred = the/tcrit
 
       !  Enforce upper limits on tzero and bred
@@ -1635,12 +1644,16 @@ contains
       bred = min(bred, 0.9999D0)
 
       !  Critical current density (A/m2)
+      !  ITER parameterization is for the current in a single strand,
+      !  not per unit area, so scalefac converts to current density
+
+      scalefac = pi * (0.5D0*diter)**2 * (1.0D0-cuiter)
 
       jc1 = (csc/bmax)*strfun
       jc2 = (1.0D0-tzero**1.52D0)*(1.0D0-tzero**2)
       jc3 = bred**cp * (1.0D0-bred)**cq
 
-      jcrit = jc1 * jc2 * jc3
+      jcrit = jc1 * jc2 * jc3 / scalefac
 
     end subroutine itersc
 

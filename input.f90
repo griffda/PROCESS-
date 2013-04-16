@@ -327,7 +327,7 @@ contains
     !+ad_hist  09/04/13 PJK Added RPF2DEWAR, RBVFAC, MBVFAC, WSVFAC
     !+ad_hist  11/04/13 PJK Removed IRES (replaced with warning), RTPTE, ECHPWR0
     !+ad_hist  15/04/13 PJK Added SIGPFCF
-    !+ad_hist  16/04/13 PJK Added SIGPFCALW
+    !+ad_hist  16/04/13 PJK Added SIGPFCALW; removed JCRIT_MODEL, JCRITSC
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1090,8 +1090,8 @@ if (linelen > 80) write(*,*) line
           call parse_real_variable('DCASE', dcase, 1.0D3, 1.0D5, &
                'Density of TF coil case (kg/m3)')
        case ('DCOND')
-          call parse_real_array('DCOND', dcond, isub1, 5, &
-               'TF coil superconductor density (kg/m3)', icode)
+          call parse_real_array('DCOND', dcond, isub1, 4, &
+               'TF/PF coil superconductor density (kg/m3)', icode)
        case ('DCOPPER')
           call parse_real_variable('DCOPPER', dcopper, 8.0D3, 1.0D4, &
                'Density of copper (kg/m3)')
@@ -1126,8 +1126,14 @@ if (linelen > 80) write(*,*) line
           call parse_real_variable('FRHOCP', frhocp, 0.01D0, 5.0D0, &
                'TART c/p resistivity enhancement factor')
        case ('ISUMATTF')
-          call parse_int_variable('ISUMATTF', isumattf, 1, 5, &
+          call parse_int_variable('ISUMATTF', isumattf, 1, 4, &
                'TF coil superconductor material')
+          if (isumattf == 2) then
+             write(outfile,*) 'ISUMATTF=2 is now obsolete -'
+             write(outfile,*) 'please choose a different option.'
+             write(outfile,*) 'PROCESS stopping...'
+             stop
+          end if
        case ('ITFMOD')
           call parse_int_variable('ITFMOD', itfmod, 0, 1, &
                'Switch for TF magnet model')
@@ -1138,11 +1144,11 @@ if (linelen > 80) write(*,*) line
           call parse_real_variable('JBUS', jbus, 1.0D4, 1.0D8, &
                'TF coil bus current density (A/m2)')
        case ('JCRIT_MODEL')
-          call parse_int_variable('JCRIT_MODEL', jcrit_model, 0, 1, &
-               'Critical J model for binary Nb3Sn')
+          write(outfile,*) 'JCRIT_MODEL is now obsolete -'
+          write(outfile,*) 'please remove it from the input file'
        case ('JCRITSC')
-          call parse_real_variable('JCRITSC', jcritsc, 1.0D9, 5.0D11, &
-               'Critical J for superconductor')
+          write(outfile,*) 'JCRITSC is now obsolete -'
+          write(outfile,*) 'please remove it from the input file'
        case ('MAGNT')
           call parse_int_variable('MAGNT', magnt, 1, 3, &
                'SCTF coil stress model')
@@ -1162,7 +1168,7 @@ if (linelen > 80) write(*,*) line
           call parse_real_variable('RIPMAX', ripmax, 0.1D0, 100.0D0, &
                'Max peak/ave ripple at plasma edge (%)')
        case ('STRNCON')
-          call parse_real_variable('STRNCON', strncon, -1.0D0, 1.0D0, &
+          call parse_real_variable('STRNCON', strncon, -0.02D0, 0.02D0, &
                'Strain in superconductor material')
        case ('TCOOLIN')
           call parse_real_variable('TCOOLIN', tcoolin, -273.1D0, 100.0D0, &

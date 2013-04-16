@@ -1633,14 +1633,19 @@ The following options are available within the superconducting TF coil model
 Switch \texttt{isumattf} specifies which superconducting material is to be
 used:
 \begin{description}
-\item [\texttt{isumattf = 1} :] binary Nb$_3$Sn superconductor
-\item [\texttt{isumattf = 2} :] ternary Nb$_3$Sn superconductor
+\item [\texttt{isumattf = 1} :] Nb$_3$Sn superconductor, ITER critical surface
+  parameterization~\cite{iter_nb3sn}, standard critical values
+\item [\texttt{isumattf = 2} :] (not used)
 \item [\texttt{isumattf = 3} :] NbTi superconductor
-\item [\texttt{isumattf = 4} :] generic Nb$_3$Sn superconductor
-\item [\texttt{isumattf = 5} :] generic NbTi superconductor
+\item [\texttt{isumattf = 4} :] Nb$_3$Sn superconductor, ITER critical surface
+  parameterization~\cite{iter_nb3sn}, user-defined critical parameters
 \end{description}
 The fraction of copper present in the superconducting filaments is given by
-the value of variable \texttt{fcutfsu} (iteration variable no.\ 59).
+the value of variable \texttt{fcutfsu} (iteration variable no.\ 59). For
+\texttt{isumattf = 4}, important superconductor properties may be input by the
+user as follows: the upper critical field at zero temperature and strain is
+set using input parameter \texttt{bcritsc}, and the critical temperature at
+zero field and strain is set using input parameter \texttt{tcritsc}.
 
 \subsubsection{Stress model}
 
@@ -1654,8 +1659,6 @@ stress limit can be adjusted using input parameters \texttt{csutf} and
 \texttt{csytf}.
 
 \subsubsection{Current density limits}
-
-% ADD jcrit_model switch
 
 The current in the TF coils must be sufficient to produce the required
 toroidal field at the centre of the plasma. The field falls off at a rate
@@ -3510,6 +3513,13 @@ N.\ P.\ Taylor (holder) and P.\ J. Knight,
 \textit{``\process\/ Reactor Systems Code''},
 AEA Fusion Project Work File, F/RS/CIRE5523/PWF
 (1992)
+
+\bibitem{iter_nb3sn}
+L.\ Bottura,
+\textit{``$J_c(B,T,\epsilon)$ Parameterizations for the ITER Nb$_3$Sn
+  Production"},
+ITER Document 2MMF7J (2008),
+\texttt{https://user.iter.org/?uid=2MMF7J\&action=get\_document}
 
 \bibitem{tart}
 Y-K.\ M.\ Peng and J.\ B.\ Hicks,
