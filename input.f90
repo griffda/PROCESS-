@@ -327,6 +327,7 @@ contains
     !+ad_hist  09/04/13 PJK Added RPF2DEWAR, RBVFAC, MBVFAC, WSVFAC
     !+ad_hist  11/04/13 PJK Removed IRES (replaced with warning), RTPTE, ECHPWR0
     !+ad_hist  15/04/13 PJK Added SIGPFCF
+    !+ad_hist  16/04/13 PJK Added SIGPFCALW
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1289,6 +1290,9 @@ if (linelen > 80) write(*,*) line
        case ('SIGPFALW')
           call parse_real_variable('SIGPFALW', sigpfalw, 1.0D0, 1.0D3, &
                'Allowable stress in the PF coil (MPa)')
+       case ('SIGPFCALW')
+          call parse_real_variable('SIGPFCALW', sigpfcalw, 1.0D0, 1.0D3, &
+               'Allowable stress in the PF coil case (MPa)')
        case ('SIGPFCF')
           call parse_real_variable('SIGPFCF', sigpfcf, 0.1D0, 1.0D0, &
                'Fraction of JxB force supported by PF coil case')

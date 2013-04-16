@@ -994,6 +994,7 @@ module pfcoil_variables
   !+ad_call  None
   !+ad_hist  18/10/12 PJK Initial version of module
   !+ad_hist  15/04/13 PJK Added sigpfcf
+  !+ad_hist  16/04/13 PJK Added sigpfcalw
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1119,8 +1120,13 @@ module pfcoil_variables
   !+ad_varc                     cable at a magnetic field of 1T
   real(kind(1.0D0)) :: sccufac = 0.0188D0
   !+ad_vars  sigpfalw /335.0/ : allowable stress in PF/OH coils (MPa)
+  !+ad_varc                     excluding the steel coil case
+  real(kind(1.0D0)) :: sigpfcalw = 500.0D0
+  !+ad_vars  sigpfcalw /500.0/ : maximum permissible tensile stress (MPa) in
+  !+ad_varc                      steel coil cases for superconducting PF coils
+  !+ad_varc                      (ipfres=0)
   real(kind(1.0D0)) :: sigpfalw = 335.0D0
-  !+ad_vars  sigpfcf /0.666/ : fraction of JxB force supported by steel case
+  !+ad_vars  sigpfcf /0.666/ : fraction of JxB hoop force supported by steel case
   !+ad_varc                    for superconducting PF coils (ipfres=0)
   real(kind(1.0D0)) :: sigpfcf = 0.666D0
   !+ad_vars  sxlg(ngc2,ngc2) : mutual inductance matrix (H)

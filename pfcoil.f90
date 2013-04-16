@@ -98,6 +98,7 @@ contains
     !+ad_host  18/12/12 PJK/RK Added single-null coding
     !+ad_hist  08/04/13 PJK Comment change
     !+ad_hist  15/04/13 PJK Modified PF coil case area for superconducting coils
+    !+ad_hist  16/04/13 PJK Replaced sigpfalw by sigpfcalw in above calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -636,9 +637,9 @@ contains
              !  Superconducting coil
              !  Previous assumptions: 500 MPa stress limit with 2/3 of the force
              !  supported in the outer (steel) case.
-             !  Now, 500 MPa replaced by sigpfalw, 2/3 factor replaced by sigpfcf
+             !  Now, 500 MPa replaced by sigpfcalw, 2/3 factor replaced by sigpfcf
 
-             areaspf = sigpfcf * forcepf / (sigpfalw*1.0D6)
+             areaspf = sigpfcf * forcepf / (sigpfcalw*1.0D6)
 
           else
              areaspf = 0.0D0  !  Resistive coil - no steel needed
@@ -2186,6 +2187,12 @@ contains
             powpfres)
        call ovarre(outfile,'OH coil resistive power (W)','(powohres)', &
             powohres)
+    else
+       call osubhd(outfile,'Coil Case Stress :')
+       call ovarre(outfile,'Maximum permissible tensile stress (MPa)', &
+            '(sigpfcalw)',sigpfcalw)
+       call ovarre(outfile,'JxB hoop force fraction supported by case', &
+            '(sigpfcf)',sigpfcf)
     end if
 
     !  nef is the number of coils excluding the OH coil
