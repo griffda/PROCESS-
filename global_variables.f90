@@ -1694,6 +1694,7 @@ module heat_transport_variables
   !+ad_hist  30/10/12 PJK Initial version of module
   !+ad_hist  27/03/13 PJK Comment change to FMGDMW
   !+ad_hist  11/04/13 PJK Comment change to TFACPD
+  !+ad_hist  17/04/13 PJK Comment change to FCSHT, PRIHEAT
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1724,7 +1725,7 @@ module heat_transport_variables
   real(kind(1.0D0)) :: facht = 0.0D0
   !+ad_vars  fauxbop /0.06/ : fraction of gross electric power to balance-of-plant
   real(kind(1.0D0)) :: fauxbop = 0.06D0
-  !+ad_vars  fcsht : total power to facility loads (MW)
+  !+ad_vars  fcsht : total baseline power required at all times (MW)
   real(kind(1.0D0)) :: fcsht = 0.0D0
   !+ad_vars  ffwlg /1.0/ : fraction of first wall / divertor power to low grade heat
   real(kind(1.0D0)) :: ffwlg = 1.0D0
@@ -1773,11 +1774,11 @@ module heat_transport_variables
   real(kind(1.0D0)) :: pinjwp = 0.0D0
   !+ad_vars  pnetelmw : net electric power (MW)
   real(kind(1.0D0)) :: pnetelmw = 0.0D0
-  !+ad_vars  priheat : primary nuclear heating (MW)
+  !+ad_vars  priheat : total thermal power removed from fusion core (MW)
   real(kind(1.0D0)) :: priheat = 0.0D0
-  !+ad_vars  psecht : secondary heat (MW)
+  !+ad_vars  psecht : secondary (low-grade) heat (MW)
   real(kind(1.0D0)) :: psecht = 0.0D0
-  !+ad_vars  pthermmw : primary heat (useful for electric production) (MW)
+  !+ad_vars  pthermmw : primary (high-grade) heat (useful for electric production) (MW)
   real(kind(1.0D0)) :: pthermmw = 0.0D0
   !+ad_vars  pwpm2 /150.0/ : base AC power requirement (W/m2)
   real(kind(1.0D0)) :: pwpm2 = 150.0D0

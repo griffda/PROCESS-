@@ -248,7 +248,7 @@ contains
       !+ad_cont  N/A
       !+ad_args  outfile : input integer : output file unit
       !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-      !+ad_args  ntfc : input real : number of tf coils
+      !+ad_args  ntfc : input real : number of TF coils
       !+ad_args  ettfmj : input real : total stored energy of one TF coils, MJ
       !+ad_args  itfka : input real : design current for the TF coils, kA
       !+ad_args  rptfc : input real : resistance of a TF coil, ohms
@@ -675,6 +675,7 @@ contains
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  05/02/13 PJK Clarified MGF output
     !+ad_hist  27/03/13 PJK MGF power only included if iscenr /= 2
+    !+ad_hist  17/04/13 PJK Removed 0.05*pacpmw contribution to fcsht
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -731,9 +732,9 @@ contains
 
     if (iscenr /= 2) pacpmw = pacpmw + fmgdmw
 
-    !  Total power to facility loads, MW
+    !  Total baseline power to facility loads, MW
 
-    fcsht  = basemw + efloor*pkwpm2/1000.0D0 + 0.05D0*pacpmw
+    fcsht  = basemw + efloor*pkwpm2/1000.0D0
 
     !  Estimate of the total low voltage power, MW
 
@@ -764,7 +765,8 @@ contains
     call oblnkl(outfile)
 
     call ovarre(outfile,'Total pulsed power (MW)','(pacpmw)',pacpmw)
-    call ovarre(outfile,'Total facility power (MW)','(fcsht)',fcsht)
+    call ovarre(outfile,'Total base power reqd at all times (MW)', &
+         '(fcsht)',fcsht)
     call ovarre(outfile,'Total low voltage power (MW)','(tlvpmw)',tlvpmw)
 
   end subroutine acpow
@@ -793,6 +795,7 @@ contains
     !+ad_hist  29/10/12 PJK Added structure_variables
     !+ad_hist  29/10/12 PJK Added pf_power_variables
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
+    !+ad_hist  17/04/13 PJK Changed priheat to pthermmw in rnphx calculation
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -807,6 +810,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Primary nuclear heating
+    !  pthermmw is the high grade thermal power
+    !  priheat is the total thermal power removed from fusion core
 
     pfwdiv = pfuscmw + 1.0D-6 * (pinje + pinji)
     pthermmw = pnucblkt + pnucshld + (1.0D0-ffwlg)*pfwdiv
@@ -819,7 +824,7 @@ contains
 
     !  Number of primary heat exchangers
 
-    rnphx = max(2.0D0, (priheat/400.0D0 + 0.8D0) )
+    rnphx = max(2.0D0, (pthermmw/400.0D0 + 0.8D0) )
 
     !  For the Rankine cycle employed by the new (1993) blanket model,
     !  the number of primary heat exchangers is two
@@ -885,6 +890,7 @@ contains
     !+ad_hist  18/10/12 PJK Added fwbs_module
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
+    !+ad_hist  17/04/13 PJK Corrected precir, psecht, ctht
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -933,13 +939,13 @@ contains
     !  Total secondary heat
 
     psecht = pinjht + pnucloss + facht + vachtmw + trithtmw + &
-         tfcmw + crypmw + ppumpmw + helecmw + hthermmw
+         tfcmw + crypmw + ppumpmw + helecmw + hthermmw + ffwlg*pfwdiv
 
     if (iprimhtp == 0) psecht = psecht + htpmw
 
     !  Total plant heat removal
 
-    ctht = priheat + psecht 
+    ctht = pthermmw + psecht
 
     !  Number of intermediate heat exchangers
 
@@ -969,8 +975,8 @@ contains
 
        !  Total recirculating power
 
-       precir = fgrosbop * pgrossmw + pinjwp + tfcmw + crypmw + &
-            ppumpmw + htpmw + helecmw
+       precir = fgrosbop*pgrossmw + pinjwp + tfcmw + crypmw + &
+            ppumpmw + htpmw + helecmw + facht + vachtmw + trithtmw
 
        !  Net electric power
 
@@ -999,8 +1005,8 @@ contains
     call ovarre(outfile,'TF coil resistive power (MW)','(tfcmw)',tfcmw)
     call ovarre(outfile,'Centrepost coolant pump power (MW)','(ppumpmw)' &
          ,ppumpmw)
-    call ovarre(outfile,'Primary heat (MW)','(pthermmw)',pthermmw)
-    call ovarre(outfile,'Secondary heat (MW)','(psecht)',psecht)
+    call ovarre(outfile,'Primary (high-grade) heat (MW)','(pthermmw)',pthermmw)
+    call ovarre(outfile,'Secondary (low-grade) heat (MW)','(psecht)',psecht)
     call oblnkl(outfile)
     call ovarre(outfile,'Heat removal from F.W./divertor (MW)', &
          '(pfwdiv)',pfwdiv)

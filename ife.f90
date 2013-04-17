@@ -2015,6 +2015,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  18/10/12 PJK Added fwbs_variables
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
+    !+ad_hist  17/04/13 PJK Changed priheat to pthermmw in rnphx calculation
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, pp.67,89
     !+ad_docs  Bourque et al., Fusion Technology vol.21 (1992) 1465
@@ -2037,6 +2038,7 @@ contains
     pdrvmw = 1.0D-6 * pdrive
 
     !  Primary nuclear heating (MW)
+    !  Total thermal power removed from fusion core
 
     priheat = emult * powfmw
 
@@ -2061,11 +2063,11 @@ contains
 
     !  Lost fusion power (MW)
 
-    pnucloss = priheat - pthermmw
+    pnucloss = priheat - pthermmw  !  = priheat*fhole
 
     !  Number of primary heat exchangers
 
-    rnphx = max(2.0D0, (priheat/400.0D0 + 0.8D0) )
+    rnphx = max(2.0D0, (pthermmw/400.0D0 + 0.8D0) )
 
     !  Secondary heat (some of it... rest calculated in IFEPW2)
 
@@ -2108,6 +2110,7 @@ contains
     !+ad_hist  30/10/12 PJK Added buildings_variables
     !+ad_hist  05/02/13 PJK Clarified MGF output
     !+ad_hist  27/03/13 PJK MGF power removed; irrelevant for IFE
+    !+ad_hist  17/04/13 PJK Removed 0.05*pacpmw contribution to fcsht
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.68
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2142,9 +2145,9 @@ contains
             (htpmw*reprat/6.0D0) + trithtmw + pinjwp + basemw + &
             (efloor*pmwpm2)
 
-       !  Total power to facility loads, MW
+       !  Total baseline power to facility loads, MW
 
-       fcsht  = basemw + (efloor*pmwpm2) + 0.05D0*pacpmw
+       fcsht  = basemw + (efloor*pmwpm2)
 
        !  Estimate of the total low voltage power, MW
 
@@ -2176,7 +2179,8 @@ contains
          '(htpmw*reprat/6)',htpmw*reprat/6.0D0)
     call oblnkl(outfile)
     call ovarre(outfile,'Total pulsed power (MW)','(pacpmw)',pacpmw)
-    call ovarre(outfile,'Total facility power (MW)','(fcsht)',fcsht)
+    call ovarre(outfile,'Total base power reqd at all times (MW)', &
+         '(fcsht)',fcsht)
     call ovarre(outfile,'Total low voltage power (MW)','(tlvpmw)',tlvpmw)
 
   end subroutine ifeacp
@@ -2211,6 +2215,7 @@ contains
     !+ad_hist  18/10/12 PJK Added fwbs_variables
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  31/10/12 PJK Added cost_variables
+    !+ad_hist  17/04/13 PJK Corrected ctht
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.67
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2242,7 +2247,7 @@ contains
 
        !  Total plant heat removal
 
-       ctht = priheat + psecht 
+       ctht = pthermmw + psecht
 
        !  Number of intermediate heat exchangers
 
