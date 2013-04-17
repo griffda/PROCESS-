@@ -1,6 +1,6 @@
 import sys
 from pylab import *
-import getopt
+#import getopt
 
 def usage():
     print ''
@@ -41,8 +41,9 @@ def find_val_two(f, name):
     ans = -1
     f.seek(0)
     for line in f:
-        if name in line[41:41+len(name)]:
-	    ans = float(line[52:])
+        if name in line:
+	    line2 = line.split('=')
+	    ans = float(line2[1])
     return ans
 
 def find_val_three(f, target, posn, leng):
@@ -241,7 +242,7 @@ def get_tf(f, dat, otherdat):
     inpointsy = inpointsy + dat[-1]
     return sctype, inpointsx, inpointsy, outpointsx, outpointsy
     
-def plotthick(inpt, outpt, inthk, outthk, toppt, topthk, delta):
+def plotthick(inpt, outpt, inthk, outthk, toppt, topthk, delta, col):
     """Plots a thick continuous radial D-section."""
     r01 = (inpt+outpt)/2.
     r02 = (inpt+inthk + outpt-outthk)/2.
@@ -254,14 +255,18 @@ def plotthick(inpt, outpt, inthk, outthk, toppt, topthk, delta):
     zs1 = kap1 * a1 * np.sin(angs)
     rs2 = r02 + a2*np.cos(angs - delta*np.sin(-1.*angs))
     zs2 = kap2 * a2 * np.sin(angs)
-    plot(rs1, zs1, color = 'black'), plot(rs2, zs2, color='black')
+#    plot(rs1, zs1, color = 'black'), plot(rs2, zs2, color='black')
+#   code below plots filled shape
+    rs = concatenate( (rs1, rs2[::-1]) )
+    zs = concatenate( (zs1, zs2[::-1]) )
+    fill(rs, zs, color=col)
 
-def plotdgap(inpt, outpt, inthk, outthk, toppt, topthk, delta):
+def plotdgap(inpt, outpt, inthk, outthk, toppt, topthk, delta, col):
     """Plots a thick D-section with a gap top and bottom."""
-    plotdhgap(inpt, outpt, inthk, outthk, toppt, topthk, delta)
-    plotdhgap(inpt, outpt, inthk, outthk, -toppt, -topthk, delta)
+    plotdhgap(inpt, outpt, inthk, outthk, toppt, topthk, delta, col)
+    plotdhgap(inpt, outpt, inthk, outthk, -toppt, -topthk, delta, col)
 
-def plotdhgap(inpt, outpt, inthk, outthk, toppt, topthk, delta):
+def plotdhgap(inpt, outpt, inthk, outthk, toppt, topthk, delta, col):
     """Plots half a thick D-section with a gap."""
     arc = np.pi/4.
     r01 = (inpt+outpt)/2.
@@ -284,6 +289,8 @@ def plotdhgap(inpt, outpt, inthk, outthk, toppt, topthk, delta):
     zs4 = kap2 * a2 * np.sin(angs)
     plot(np.concatenate([rs1,rs2[::-1]]), np.concatenate([zs1,zs2[::-1]]), color='black')
     plot(np.concatenate([rs3,rs4[::-1]]), -np.concatenate([zs3,zs4[::-1]]), color='black')
+    fill(np.concatenate([rs1,rs2[::-1]]), np.concatenate([zs1,zs2[::-1]]), color=col)
+    fill(np.concatenate([rs3,rs4[::-1]]), -np.concatenate([zs3,zs4[::-1]]), color=col)
     
 def plotdh(r0, a, delta, kap):
     """Plots half a thin D-section."""
@@ -291,6 +298,7 @@ def plotdh(r0, a, delta, kap):
     rs = r0 + a*np.cos(angs + delta*np.sin(1.*angs))
     zs = kap * a * np.sin(angs)
     plot(rs, zs, color = 'black')
+    return rs, zs
 
 def gather_info(f, tf_type):
     """Gathers all the data into two structures, data and info."""
@@ -358,7 +366,7 @@ def gather_info(f, tf_type):
     data.append(['2', 'te', r'$<T_e>$', str(find_val_one(f, 'te')), 'keV'])
     data.append(['2', 'dene', r'$<n_{\mathrm{e, vol}}>$', '%.3e' % find_val_one(f, 'dene'), 'm$^{-3}$'])
     nong = find_val_one(f, 'dnla')/find_val_one(f, 'dlimit(7)')
-    data.append(['2', 'dlimit(7)', r'$<n_{\mathrm{e, line}}>/n_G$', str(nong), ''])
+    data.append(['2', 'dlimit(7)', r'$<n_{\mathrm{e, line}}>/n_G$', '%.3f' % nong, ''])
     data.append(['2', 'alphat', r'$T_{e0}/<T_e>$', str(1.+find_val_one(f, 'alphat')), ''])
     data.append(['2', 'alphan', r'$n_{e0}/<n_{\mathrm{e, vol}}>$', str(1.+find_val_one(f, 'alphan')), ''])
     data.append(['2', 'zeff', r'$Z_{\mathrm{eff}}$', str(find_val_one(f, 'zeff')), ''])
@@ -412,9 +420,9 @@ def gather_info(f, tf_type):
     data.append(['4', 'hldiv', 'Divertor peak heat flux', str(find_val_one(f, 'hldiv')), r'MW m$^{-2}$'])
     data.append(['4', 'FWlife', 'FW/blanket life', str(float(find_val_three(f, 'First wall / blanket life', 60, 13))), 'years'])
     data.append(['4', 'Divlife', 'Divertor life', find_val_three(f, 'Divertor life ', 60, 13), 'years'])
-    data.append(['4', 'CoE', 'Cost of electricity', find_val_three(f, 'Cost of electricity', 60, 13), '$/MWh'])
+    data.append(['4', 'CoE', 'Cost of electricity', find_val_three(f, 'Cost of electricity', 60, 13), '\$/MWh'])
     data.append(['4', 'HGtherm', 'Thermal power', find_val_three(f, 'High grade thermal power', 60, 13), 'MW'])
-    data.append(['4', 'pgrossmw/pthermmw', 'Thermal efficiency', '%.3f' % (find_val_one(f, 'pgrossmw')/find_val_one(f, 'pthermmw')), '%'])
+    data.append(['4', 'pgrossmw/pthermmw', 'Thermal efficiency', '%.1f' % (100.*find_val_one(f, 'pgrossmw')/find_val_one(f, 'pthermmw')), '%'])
     data.append(['4', 'pgrossmw', 'Gross electric power', str(find_val_one(f, 'pgrossmw')), 'MW'])
     data.append(['4', 'pnetelmw', 'Net electric power', str(find_val_one(f, 'pnetelmw')), 'MW'])
     data.append(['4', 'burnup', 'Fuel burnup fraction', str(find_val_one(f, 'burnup')), ''])
@@ -462,5 +470,11 @@ def gather_info(f, tf_type):
     rmajor = find_val_one(f,'rmajor')
     divwid = (pdivt/hldiv)/(2.*np.pi*rmajor)
     data.append(['5', 'divwid', 'Guessed div. width', '%.3f' % divwid, 'm'])
-
+# Experimental H-factor -- without radiation correction
+    powerht = find_val_one(f,'powerht')
+    psync = find_val_one(f,'psync*vol')
+    pbrem = find_val_one(f,'pbrem*vol')
+    hfact = find_val_one(f,'hfact')
+    hstar = hfact * (powerht/(powerht+psync+pbrem))**0.31
+    data.append(['5', 'hstar', 'H* (non-rad. corr.)', '%.3f' % hstar, ''])
     return data, info

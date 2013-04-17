@@ -14,7 +14,7 @@ def usage():
     print '  -g, --graphics         plots to a file [default: plot to screen]'
     print '  -h, --help             prints this message and exits'
     print '  -o, --output outfile   specifies output filename [default=PLOT.DAT.eps]'
-    print '  params                 set of outputs to plot'
+    print '  params                 set of outputs to plot (from position in PLOT.DAT)'
     print ''
     print '  By default the -g option prints to PLOT.DAT.eps, but providing an output filename'
     print '  using -o outfile.png, for example, will create a file of the appropriate type.'

@@ -1695,6 +1695,7 @@ module heat_transport_variables
   !+ad_hist  27/03/13 PJK Comment change to FMGDMW
   !+ad_hist  11/04/13 PJK Comment change to TFACPD
   !+ad_hist  17/04/13 PJK Comment change to FCSHT, PRIHEAT
+  !+ad_hist  17/04/13 PJK Added IPRIMNLOSS
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1756,10 +1757,14 @@ module heat_transport_variables
   !+ad_varc           <LI> = 3 High Temperature Electrolysis - exothermic;
   !+ad_varc           <LI> = 4 Thermo-chemical</UL>
   integer :: ihplant = 0
-  !+ad_vars  iprimhtp /0/ : switch for heat transport pump power:<UL>
+  !+ad_vars  iprimhtp /0/ : switch for heat transport pump power destiny:<UL>
   !+ad_varc            <LI> = 0 contributes to secondary heat;
   !+ad_varc            <LI> = 1 contributes to primary heat</UL>
   integer :: iprimhtp = 0
+  !+ad_vars  iprimnloss /0/ : switch for lost neutron power through holes destiny:<UL>
+  !+ad_varc            <LI> = 0 contributes to secondary heat;
+  !+ad_varc            <LI> = 1 contributes to primary heat</UL>
+  integer :: iprimnloss = 0
   !+ad_vars  pacpmw : total pulsed power system load (MW)
   real(kind(1.0D0)) :: pacpmw = 0.0D0
   !+ad_vars  peakmva : peak MVA requirement

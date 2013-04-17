@@ -1503,7 +1503,10 @@ contains
                'Heat transport system pump power')
        case ('IPRIMHTP')
           call parse_int_variable('IPRIMHTP', iprimhtp, 0, 1, &
-               'Switch for heat transport pump power')
+               'Switch for heat transport pump power destiny')
+       case ('IPRIMNLOSS')
+          call parse_int_variable('IPRIMNLOSS', iprimnloss, 0, 1, &
+               'Switch for lost neutron power destiny')
        case ('PWPM2')
           call parse_real_variable('PWPM2', pwpm2, 0.0D0, 1.0D3, &
                'Base AC power requirement (W/m2)')

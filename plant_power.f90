@@ -796,6 +796,8 @@ contains
     !+ad_hist  29/10/12 PJK Added pf_power_variables
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  17/04/13 PJK Changed priheat to pthermmw in rnphx calculation
+    !+ad_hist  17/04/13 PJK Added iprimnloss switch for pnucloss contribution
+    !+ad_hisc               to primary heating
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -817,9 +819,18 @@ contains
     pthermmw = pnucblkt + pnucshld + (1.0D0-ffwlg)*pfwdiv
     priheat = pnucblkt + pnucshld + pfwdiv
 
+    !  Add heat transport pump power to primary heat if requested
+
     if (iprimhtp == 1) then
        pthermmw = pthermmw + htpmw
        priheat = priheat + htpmw
+    end if
+
+    !  Add neutron power lost through holes to primary heat if requested
+
+    if (iprimnloss == 1) then
+       pthermmw = pthermmw + pnucloss
+       priheat = priheat + pnucloss
     end if
 
     !  Number of primary heat exchangers
@@ -891,6 +902,8 @@ contains
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  17/04/13 PJK Corrected precir, psecht, ctht
+    !+ad_hist  17/04/13 PJK Added iprimnloss switch for pnucloss contribution
+    !+ad_hisc               to secondary heating
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -938,10 +951,13 @@ contains
 
     !  Total secondary heat
 
-    psecht = pinjht + pnucloss + facht + vachtmw + trithtmw + &
+    psecht = pinjht + facht + vachtmw + trithtmw + &
          tfcmw + crypmw + ppumpmw + helecmw + hthermmw + ffwlg*pfwdiv
 
+    !  Add optional additional powers to secondary heat if requested
+
     if (iprimhtp == 0) psecht = psecht + htpmw
+    if (iprimnloss == 0) psecht = psecht + pnucloss
 
     !  Total plant heat removal
 
