@@ -328,6 +328,8 @@ contains
     !+ad_hist  11/04/13 PJK Removed IRES (replaced with warning), RTPTE, ECHPWR0
     !+ad_hist  15/04/13 PJK Added SIGPFCF
     !+ad_hist  16/04/13 PJK Added SIGPFCALW; removed JCRIT_MODEL, JCRITSC
+    !+ad_hist  17/04/13 PJK Removed FCOHBOF; added obsolete_var usage to abort code
+    !+ad_hisc               if an obsolete variable is found in the input file
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -348,6 +350,8 @@ contains
     character(len=40) :: clabel, clbl,clbl2
     character(len=32) :: varnam
     real(kind(1.0D0)) :: oldval,rval
+
+    logical :: obsolete_var = .false.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -375,7 +379,8 @@ contains
 
        line = adjustl(line)  !  rotate any leading blanks to the end
        linelen = len_trim(line)
-if (linelen > 80) write(*,*) line
+
+       if (linelen > 80) write(*,*) line
 
 20     continue
 
@@ -545,10 +550,7 @@ if (linelen > 80) write(*,*) line
           write(outfile,*) 'ICULDL is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
           write(outfile,*) '(use IDENSL=3 for equivalent model to ICULDL=0).'
-!          error_code = lineno
-!          error_routine = 'PARSE_INPUT_FILE'
-!          error_message = 'Obsolete variable ICULDL specified'
-!          call report_error
+          obsolete_var = .true.
        case ('ICURR')
           call parse_int_variable('ICURR', icurr, 1, 7, &
                'Switch for plasma current scaling')
@@ -588,6 +590,7 @@ if (linelen > 80) write(*,*) line
        case ('IRES')
           write(outfile,*) 'IRES is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
+          obsolete_var = .true.
        case ('ISC')
           call parse_int_variable('ISC', isc, 1, ipnlaws, &
                'Switch for confinement scaling law')
@@ -1146,9 +1149,11 @@ if (linelen > 80) write(*,*) line
        case ('JCRIT_MODEL')
           write(outfile,*) 'JCRIT_MODEL is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
+          obsolete_var = .true.
        case ('JCRITSC')
           write(outfile,*) 'JCRITSC is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
+          obsolete_var = .true.
        case ('MAGNT')
           call parse_int_variable('MAGNT', magnt, 1, 3, &
                'SCTF coil stress model')
@@ -1246,8 +1251,9 @@ if (linelen > 80) write(*,*) line
           call parse_real_array('CPTDIN', cptdin, isub1, ngc2, &
                'Current per turn for PF coil', icode)
        case ('FCOHBOF')
-          call parse_real_variable('FCOHBOF', fcohbof, 0.0D0, 1.0D0, &
-               'OH coil J ratio : BOF/EOF')
+          write(outfile,*) 'FCOHBOF is now obsolete -'
+          write(outfile,*) 'please remove it from the input file'
+          obsolete_var = .true.
        case ('FCOHBOP')
           call parse_real_variable('FCOHBOP', fcohbop, 0.0D0, 1.0D0, &
                'OH coil J ratio : BOP/EOF')
@@ -1405,8 +1411,9 @@ if (linelen > 80) write(*,*) line
           call parse_real_variable('FVOLBO', fvolbo, 0.0D0, 10.0D0, &
                'Fudge factor for outboard blanket volume')
        case ('FVOLCRY')
-          call parse_real_variable('FVOLCRY', fvolcry, 0.0D0, 10.0D0, &
-               'Fudge factor for external cryostat volume (OBSOLETE)')
+          write(outfile,*) 'FVOLCRY is now obsolete -'
+          write(outfile,*) 'please remove it from the input file'
+          obsolete_var = .true.
        case ('FVOLDW')
           call parse_real_variable('FVOLDW', fvoldw, 0.0D0, 10.0D0, &
                'Fudge factor for vacuum vessel volume')
@@ -2181,6 +2188,17 @@ if (linelen > 80) write(*,*) line
           call report_error
 
        end select variable
+
+       !  Uncomment the following to abort the code if an obsolete variable name
+       !  has been found in the input file
+
+       if (obsolete_var) then
+          error_code = lineno
+          error_routine = 'PARSE_INPUT_FILE'
+          error_message = &
+               'Obsolete variable specified - see output file for details'
+          call report_error
+       end if
 
        !  If we have just read in an array, a different loop-back is needed
 

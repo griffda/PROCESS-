@@ -800,6 +800,7 @@ module fwbs_variables
   !+ad_call  None
   !+ad_hist  18/10/12 PJK Initial version of module
   !+ad_hist  09/04/13 PJK Added rdewex, rpf2dewar; changed some labels
+  !+ad_hist  17/04/13 PJK Removed fvolcry
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -840,8 +841,6 @@ module fwbs_variables
   real(kind(1.0D0)) :: fvolbi = 1.0D0
   !+ad_vars  fvolbo /0.75/ : fudge factor for outboard blanket volume
   real(kind(1.0D0)) :: fvolbo = 0.75D0
-  !+ad_vars  fvolcry /1.4/ : fudge factor for cryostat volume (obsolete)
-  real(kind(1.0D0)) :: fvolcry = 1.4D0
   !+ad_vars  fvoldw /1.4/ : fudge factor for vacuum vessel volume
   real(kind(1.0D0)) :: fvoldw = 1.4D0
   !+ad_vars  fvolsi /0.64/ : fudge factor for inboard shield volume
@@ -995,6 +994,7 @@ module pfcoil_variables
   !+ad_hist  18/10/12 PJK Initial version of module
   !+ad_hist  15/04/13 PJK Added sigpfcf
   !+ad_hist  16/04/13 PJK Added sigpfcalw
+  !+ad_hist  17/04/13 PJK Removed cohbof; changed fcohbof initial value
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1030,8 +1030,6 @@ module pfcoil_variables
   real(kind(1.0D0)) :: bmaxoh0 = 0.0D0
   !+ad_vars  bpf(ngc2) : peak field at coil i (T)
   real(kind(1.0D0)), dimension(ngc2) :: bpf = 0.0D0
-  !+ad_vars  cohbof : OH coil overall current density at BOF (A/m2)
-  real(kind(1.0D0)) :: cohbof = 0.0D0
   !+ad_vars  cohbop : OH coil overall current density at BOP (A/m2)
   real(kind(1.0D0)) :: cohbop = 0.0D0
   !+ad_vars  coheof /1.85D7/ : OH coil overall current density at EOF (A/m2)
@@ -1047,8 +1045,8 @@ module pfcoil_variables
   real(kind(1.0D0)), dimension(ngc2) :: curpff = 0.0D0
   !+ad_vars  curpfs(ngc2) : work array
   real(kind(1.0D0)), dimension(ngc2) :: curpfs = 0.0D0
-  !+ad_vars  fcohbof /0.9/ : = cohbof / coheof
-  real(kind(1.0D0)) :: fcohbof = 0.9D0
+  !+ad_vars  fcohbof : ratio of OH coil overall current density at BOF / coheof
+  real(kind(1.0D0)) :: fcohbof = 0.0D0
   !+ad_vars  fcohbop /0.9/ : = cohbop / coheof (iteration variable 41)
   real(kind(1.0D0)) :: fcohbop = 0.9D0
   !+ad_vars  fcuoh /0.4/ : copper fraction of conductor in OH coil cable

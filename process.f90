@@ -1293,3 +1293,4 @@ end subroutine output
 ! SVN 161: PF coil case area modified for superconducting coils; new sigpfcf input
 ! SVN 162: sigpfcalw added, replacing sigpfalw in PF coil case area calculation
 ! SVN 163: Modified isumattf usage; implemented Richard Kemp's corrections to itersc
+! SVN 164: Removed cohbof; fcohbof no longer an input parameter

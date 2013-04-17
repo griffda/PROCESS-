@@ -99,6 +99,7 @@ contains
     !+ad_hist  08/04/13 PJK Comment change
     !+ad_hist  15/04/13 PJK Modified PF coil case area for superconducting coils
     !+ad_hist  16/04/13 PJK Replaced sigpfalw by sigpfcalw in above calculation
+    !+ad_hist  17/04/13 PJK Removed cohbof calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -173,10 +174,9 @@ contains
 
     ncirt = nohc + 1
 
-    !  Currents in the OH coil at various times
+    !  Current in the OH coil at beginning of pulse
 
     cohbop = coheof * fcohbop
-    cohbof = coheof * fcohbof
 
     !  Set up array of times
 
