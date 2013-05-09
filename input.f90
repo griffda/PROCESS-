@@ -330,6 +330,7 @@ contains
     !+ad_hist  16/04/13 PJK Added SIGPFCALW; removed JCRIT_MODEL, JCRITSC
     !+ad_hist  17/04/13 PJK Removed FCOHBOF; added obsolete_var usage to abort code
     !+ad_hisc               if an obsolete variable is found in the input file
+    !+ad_hist  09/05/13 PJK Added FWBSSHAPE
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1426,6 +1427,9 @@ contains
        case ('FWCLFR')
           call parse_real_variable('FWCLFR', fwclfr, 0.0D0, 1.0D0, &
                'First wall coolant fraction')
+       case ('FWBSSHAPE')
+          call parse_int_variable('FWBSSHAPE', fwbsshape, 1, 2, &
+               'Switch for fw/blanket/shield/vv shape')
        case ('LBLNKT')
           call parse_int_variable('LBLNKT', lblnkt, 0, 1, &
                'Switch for blanket model invoked')

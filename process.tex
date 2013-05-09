@@ -1059,8 +1059,8 @@ alternative models are introduced later in the Chapter.
 
 \subsection{Radial and vertical build}
 
-Figure~\ref{fig:build} shows schematically the layout of a typical tokamak as
-modelled by \process. This is the so-called `build' of the machine --- the
+Figure~\ref{fig:build_d} shows schematically the layout of a typical tokamak
+as modelled by \process. This is the so-called `build' of the machine --- the
 relative locations of the major components. Their positions are referenced to
 the $(R,Z)$ coordinate system, where $R$ is the radial distance from the
 vertical centreline (axis) of the torus, and $Z$ is the vertical distance from
@@ -1073,33 +1073,51 @@ the plasma major radius (\texttt{rmajor}). For the sake of clarity the
 thicknesses are not drawn to scale, and the space labelled as the divertor
 does not indicate in any way the actual shape of that component.
 
+The first wall, blanket, shield and vacuum vessel may be either D-shaped in
+cross-section, or each may be defined by two half-ellipses; compare their
+shapes in Figures~\ref{fig:build_d} and~\ref{fig:build_e}. The choice between
+these two possibilities is set using input parameter
+\texttt{fwbsshape}~\cite{fwbsshape}, which should be \texttt{1} for D-shaped,
+or \texttt{2} for ellipses.
+
 \begin{figure}[tbph]
-\epsfig{file=build.eps,width=170mm}
-\caption[build] {\label{fig:build}
-  \textit{Schematic diagram of the fusion power core of a typical tokamak
-    power plant modelled by \process, showing the relative positions of the
-    components. A double null plasma is assumed (\texttt{snull=0}) --- compare
-    Figure~\ref{fig:buildsnd}. Also shown are the code variables used to
+\epsfig{file=build_d.eps,width=170mm}
+\caption[build] {\label{fig:build_d} \textit{Schematic diagram of the fusion
+    power core of a typical tokamak power plant modelled by \process, showing
+    the relative positions of the components. A double null plasma is assumed
+    (\texttt{snull=0}) --- compare Figure~\ref{fig:buildsnd}, and the first
+    wall, blanket, shield and vacuum vessel are D-shaped in cross-section
+    (chosen by setting switch \texttt{fwbsshape=1}) --- compare
+    Figure~\ref{fig:build_e} (N.B.\ the vacuum vessel shape is drawn
+    inaccurately in these figures). Also shown are the code variables used to
     define the thicknesses of the components. The arrowed labels adjacent to
     the axes are the total `builds' to that point. The precise locations and
     sizes of the PF coils are calculated within the code (see
-    Section~\ref{sec:pfcoils}).}
-}
+    Section~\ref{sec:pfcoils}).}  }
 \end{figure}
 
-Most of the thicknesses shown in Figure~\ref{fig:build} are input parameters,
-so are not changed during the course of the simulation.  The rest are
-calculated by the code during execution. In addition, some of the component
-sizes can be used as \textit{iteration variables}\/ (see
+\begin{figure}[tbph]
+\epsfig{file=build_e.eps,width=170mm}
+\caption[build] {\label{fig:build_e} \textit{Schematic diagram of the fusion
+    power core of a typical tokamak power plant modelled by \process. The
+    first wall, blanket, shield and vacuum vessel cross-sectional shapes are
+    each assumed to be defined by two ellipses (chosen by setting switch
+    \texttt{fwbsshape=2}) --- compare Figure~\ref{fig:build_d}.}  }
+\end{figure}
+
+Most of the thicknesses shown in Figures~\ref{fig:build_d} and~\ref{fig:build_e}
+are input parameters, so are not changed during the course of the simulation.
+The rest are calculated by the code during execution. In addition, some of the
+component sizes can be used as \textit{iteration variables}\/ (see
 Section~\ref{sec:itvars}) to help in the optimisation process.
 
 \begin{figure}[tbph]
-\epsfig{file=buildsnd.eps,height=200mm}
+\epsfig{file=build_e_snd.eps,height=200mm}
 \caption[build] {\label{fig:buildsnd}
   \textit{Schematic diagram of the fusion power core of a typical tokamak
     power plant modelled by \process, showing the relative positions of the
     components. A single null plasma is assumed (\texttt{snull=1}) --- compare
-    Figure~\ref{fig:build}. The radial build is the same as for a double null
+    Figure~\ref{fig:build_e}. The radial build is the same as for a double null
     configuration; shown along the vertical axis are the code variables used
     to define the vertical thicknesses of the components. The arrowed labels
     adjacent to the axis are the total `builds' (distance from the midplane,
@@ -1620,10 +1638,11 @@ different radius, which create a D-shaped profile. Because of the finite
 number of TF coils used in a tokamak (typically around 20), the toroidal field
 has a ripple introduced into it, the amplitude of which can be limited to a
 few percent by the code by adjusting the outboard gap thickness (labelled
-\texttt{gapsto} in Figure~\ref{fig:build}).  Ports are often necessary for
-auxiliary power systems etc., and the gaps between adjacent TF coils can be
-made large enough to accommodate such equipment, using constraint equation
-no.\ 20 with iteration variable no.\ 33 (\texttt{fportsz}).
+\texttt{gapsto} in Figures~\ref{fig:build_d} and~\ref{fig:build_e}).  Ports
+are often necessary for auxiliary power systems etc., and the gaps between
+adjacent TF coils can be made large enough to accommodate such equipment,
+using constraint equation no.\ 20 with iteration variable no.\ 33
+(\texttt{fportsz}).
 
 The following options are available within the superconducting TF coil model
 (\texttt{itfsup = 1}).
@@ -1693,7 +1712,7 @@ calculated after consideration of the required currents and allowable current
 density.
 
 The PF coil locations are controlled using a set of switches stored in array
-\texttt{ipfloc} (see Figure~\ref{fig:build}), and are calculated in routine
+\texttt{ipfloc} (see Figure~\ref{fig:build_d}), and are calculated in routine
 \texttt{PFCOIL}. The coils are (usually) organised into groups containing two
 PF coils placed symmetrically above and below the midplane, and each group
 \texttt{j} has an element \texttt{ipfloc(j)} assigned to it. Input parameter
@@ -1961,7 +1980,9 @@ the following special models~\cite{storac} in \process.
   (and possibly no inboard shield), and the inboard TF coil legs are replaced
   by a single centrepost. The radial build is altered so that, starting from
   the centreline ($R = 0$), the component order is: bucking cylinder, TF coil,
-  gap, OH coil, cryostat, and then continuing as in Figure~\ref{fig:build}.
+  gap, OH coil, cryostat, and then continuing as in Figure~\ref{fig:build_d}
+  (a D-shaped cross-section is assumed for the first wall, blanket, shield and
+  vacuum vessel).
 
 \item Tight aspect ratio tokamaks have resistive TF coils that combine into a
   single centrepost at the centre of the machine. The centrepost is
@@ -3568,6 +3589,11 @@ R.\ L.\ Crane, K.\ E.\ Hillstrom and M.\ Minkoff,
 Subroutine VMCON''},
 Argonne National Laboratory Report ANL-80-64
 (1980)
+
+\bibitem{fwbsshape}
+P.\ J.\ Knight,
+\textit{``Surface Area and Volume Calculations for Toroidal Shells''},
+CCFE internal note T\&M/PKNIGHT/PROCESS/009, May 2013
 
 \bibitem{IPDG}
 N.\ A.\ Uckan and ITER Physics Group,

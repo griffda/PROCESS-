@@ -8,6 +8,8 @@ module fwbs_module
   !+ad_type  Module
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  fwbs
+  !+ad_cont  dshellvol
+  !+ad_cont  eshellvol
   !+ad_cont  blanket
   !+ad_cont  blnkt
   !+ad_args  N/A
@@ -38,6 +40,7 @@ module fwbs_module
   !+ad_hist  06/11/12 PJK Added plasma_geometry_module
   !+ad_hist  09/04/13 PJK Added buildings_variables, pfcoil_variables,
   !+ad_hisc               rfp_variables, stellarator_variables
+  !+ad_hist  08/05/13 PJK Added dshellvol, eshellvol
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -99,6 +102,8 @@ contains
     !+ad_call  oheadr
     !+ad_call  osubhd
     !+ad_call  ovarre
+    !+ad_call  dshellvol
+    !+ad_call  eshellvol
     !+ad_hist  14/11/11 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/10/12 PJK Added physics_variables
@@ -112,6 +117,7 @@ contains
     !+ad_hist  10/04/13 PJK Removed irrelevant vgap2 from ht1 calculation
     !+ad_hist  11/04/13 PJK Modified definition of hecan and wpthk;
     !+ad_hisc               modified beryllium density
+    !+ad_hist  09/05/13 PJK Redefined blanket, shield and vacuum vessel volumes
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -131,10 +137,10 @@ contains
 
     integer, parameter :: ishmat = 1  !  stainless steel coil casing is assumed
 
-    real(kind(1.0D0)) :: coilhtmx,decaybl,dpacop,dshieq,dshoeq,elong, &
-         flumax,fpsdt,fpydt,frachit,hb1,hblnkt,hecan,ht1,htheci, &
-         pheci,pheco,pneut1,pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2, &
-         r3,r4,raddose,volshldi,volshldo,wpthk,zdewex
+    real(kind(1.0D0)) :: blnktth,coilhtmx,decaybl,dpacop,dshieq,dshoeq,elong, &
+         flumax,fpsdt,fpydt,frachit,hbot,hblnkt,hecan,hshld,htop,htheci,hvv, &
+         pheci,pheco,pneut1,pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2,r3, &
+         raddose,v1,v2,volshldi,volshldo,wpthk,zdewex
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -311,48 +317,124 @@ contains
 
     !  Blanket and shield volumes and masses
 
-    if (itart == 1) then
+    !  N.B. The blanket is not well-defined at top and bottom of the device,
+    !  i.e. whether or not it actually extends into the divertor region
+    !  is not clear (it is assumed to do so for the volume calculation)...
+    !  Its vertical thickness there is assumed to be the average of blnkith
+    !  and blnkoth.
 
-       elong = hmax/rtot
-       r1 = rsldo - shldoth
-       r2 = rsldi + shldith
-       volblkto = fvolbo * 1.333D0 * pi * elong * &
-            ( r1**3  - (r1-blnkoth)**3)
-       volshldo = fvolso * 1.333D0 * pi * elong * (rsldo**3 - r1**3)
+    !  Blanket top/bottom thickness
 
-       !  Approximate TART inboard shield and blanket volumes by
-       !  hollow cylinders the same height as the plasma
+    blnktth = 0.5D0*(blnkith+blnkoth)
 
-       volshldi = fvolsi * 2.0D0 * rminor*kappa * pi * (r2**2 - rsldi**2)
-       volblkti = fvolbi * 2.0D0 * rminor*kappa * pi * &
-            ( (r2+blnkith)**2 - r2**2 )
+    !  Internal half-height of blanket
+    !  (average of above- and below-midplane parts)
 
-       volblkt = volblkto + volblkti
-       volshld = volshldo + volshldi
-
+    hbot = rminor*kappa + vgap + divfix - blnktth
+    if (idivrt == 2) then  !  (i.e. snull=0)
+       htop = hbot
     else
+       htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth)
+    end if
+    hblnkt = 0.5D0*(htop + hbot)
 
-       r1 = rsldo - rmajor + rminor
-       r2 = r1 - shldoth
-       r3 = r2 - blnkoth
-       r4 = rsldi + shldith
-       ht1 = rminor*kappa + vgap
+    !  Internal half-height of shield
+    !  (average of above- and below-midplane parts)
 
-       if (idivrt == 2) then
-          hb1 = ht1
-       else
-          hb1 = ht1-vgap
-       end if
+    hbot = rminor*kappa + vgap + divfix
+    if (idivrt == 2) then  !  (i.e. snull=0)
+       htop = hbot
+    else
+       htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth) + blnktth
+    end if
+    hshld = 0.5D0*(htop + hbot)
 
-       hblnkt = 0.5D0*(ht1+hb1)
+    if ((itart == 1).or.(fwbsshape == 1)) then  !  D-shaped 
 
-       volblkto = 1.333D0 * fvolbo * pi**2 * (r2**3 - r3**3)
-       volblkti = fvolbi * hblnkt * 2.0D0*pi*((r4+blnkith)**2 - r4**2)
-       volshldo = 1.333D0 * fvolso * pi**2 * (r1**3 - r2**3)
-       volshldi = fvolsi * hblnkt * 2.0D0*pi*((r4**2 - rsldi**2) + &
-            ((r4+shldith)**2 - r4**2) /2.0D0)
-       volshld = volshldi + volshldo
+       !  Major radius to outer edge of inboard blanket
+
+       r1 = rsldi + shldith + blnkith
+
+       !  Horizontal distance between inside edges of blanket,
+       !  i.e. outer radius of inboard part to inner radius of outboard part
+
+       r2 = fwith + scrapli + 2.0D0*rminor + scraplo + fwoth
+
+       !  Calculate blanket volumes, assuming 100% coverage
+
+       call dshellvol(r1,r2,hblnkt,blnkith,blnkoth,blnktth, &
+            volblkti,volblkto,volblkt)
+
+       !  Apply area coverage factors
+
+       volblkti = fvolbi*volblkti
+       volblkto = fvolbo*volblkto
        volblkt = volblkti + volblkto
+
+       !  Major radius to outer edge of inboard shield
+
+       r1 = rsldi + shldith
+
+       !  Horizontal distance between inside edges of shield,
+       !  i.e. outer radius of inboard part to inner radius of outboard part
+
+       r2 = blnkith + fwith + scrapli + 2.0D0*rminor + scraplo + fwoth + blnkoth
+
+       !  Calculate shield volumes, assuming 100% coverage
+
+       call dshellvol(r1,r2,hshld,shldith,shldoth,shldtth, &
+            volshldi,volshldo,volshld)
+
+       !  Apply area coverage factors
+
+       volshldi = fvolsi*volshldi
+       volshldo = fvolso*volshldo
+       volshld = volshldi + volshldo
+
+    else  !  Cross-sections are assumed to be defined by two ellipses
+
+       !  Major radius to centre of inboard and outboard ellipses
+       !  (coincident in radius with top of plasma)
+
+       r1 = rmajor - rminor*triang
+
+       !  Distance between r1 and outer edge of inboard blanket
+
+       r2 = r1 - (rsldi + shldith + blnkith)
+
+       !  Distance between r1 and inner edge of outboard blanket
+
+       r3 = (rsldo - shldoth - blnkoth) - r1
+
+       !  Calculate blanket volumes, assuming 100% coverage
+
+       call eshellvol(r1,r2,r3,hblnkt,blnkith,blnkoth,blnktth, &
+            volblkti,volblkto,volblkt)
+
+       !  Apply area coverage factors
+
+       volblkti = fvolbi*volblkti
+       volblkto = fvolbo*volblkto
+       volblkt = volblkti + volblkto
+
+       !  Distance between r1 and outer edge of inboard shield
+
+       r2 = r1 - (rsldi + shldith)
+
+       !  Distance between r1 and inner edge of outboard shield
+
+       r3 = (rsldo - shldoth) - r1
+
+       !  Calculate shield volumes, assuming 100% coverage
+
+       call eshellvol(r1,r2,r3,hshld,shldith,shldoth,shldtth, &
+            volshldi,volshldo,volshld)
+
+       !  Apply area coverage factors
+
+       volshldi = fvolsi*volshldi
+       volshldo = fvolso*volshldo
+       volshld = volshldi + volshldo
 
     end if
 
@@ -432,11 +514,65 @@ contains
 
     !  Internal vacuum vessel volume
 
+    !  Original method:
     !  Factor of 2 to account for outside part of TF coil
     !  fvoldw accounts for ports, support, etc. additions
+    !
+    !vdewin = (2.0D0*(2.0D0*hmax) + 2.0D0 * (rsldo-rsldi)) * &
+    !     2.0D0 * pi * rmajor * ddwi * 2.0D0 * fvoldw
 
-    vdewin = (2.0D0*(2.0D0*hmax) + 2.0D0 * (rsldo-rsldi)) * &
-         2.0D0 * pi * rmajor * ddwi * 2.0D0 * fvoldw
+    hbot = hmax - ddwi
+    if (idivrt == 2) then  !  (i.e. snull=0)
+       htop = hbot
+    else
+       htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth) &
+            + blnktth + shldtth + vgap2
+    end if
+    hvv = 0.5D0*(htop + hbot)
+
+    if ((itart == 1).or.(fwbsshape == 1)) then  !  D-shaped
+
+       !  Major radius to outer edge of inboard section
+
+       r1 = rsldi - gapds
+
+       !  Horizontal distance between inside edges,
+       !  i.e. outer radius of inboard part to inner radius of outboard part
+
+       r2 = (rsldo + gapsto) - r1
+
+       !  Calculate volume, assuming 100% coverage
+
+       call dshellvol(r1,r2,hvv,ddwi,ddwi,ddwi,v1,v2,vdewin)
+
+       !  Apply area coverage factor
+
+       vdewin = fvoldw*vdewin
+
+    else  !  Cross-section is assumed to be defined by two ellipses
+
+       !  Major radius to centre of inboard and outboard ellipses
+       !  (coincident in radius with top of plasma)
+
+       r1 = rmajor - rminor*triang  !  (Can this be improved? R of top of TF coil?)
+
+       !  Distance between r1 and outer edge of inboard section
+
+       r2 = r1 - (rsldi - gapds)
+
+       !  Distance between r1 and inner edge of outboard section
+
+       r3 = (rsldo + gapsto) - r1
+
+       !  Calculate volume, assuming 100% coverage
+
+       call eshellvol(r1,r2,r3,hvv,ddwi,ddwi,ddwi,v1,v2,vdewin)
+
+       !  Apply area coverage factor
+
+       vdewin = fvoldw*vdewin
+
+    end if
 
     !  Cryostat mass - original obscure calculation replaced
 
@@ -558,6 +694,175 @@ contains
     call ovarre(outfile,'Divertor mass (kg)','(divmas)',divmas)
 
   end subroutine fwbs
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine dshellvol(rmajor,rminor,zminor,drin,drout,dz,vin,vout,vtot)
+
+    !+ad_name  dshellvol
+    !+ad_summ  Routine to calculate the inboard, outboard and total volumes
+    !+ad_summ  of a D-shaped toroidal shell
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  rmajor : input real : major radius to outer point of inboard
+    !+ad_argc                        straight section of shell (m)
+    !+ad_args  rminor : input real : horizontal internal width of shell (m)
+    !+ad_args  zminor : input real : vertical internal half-height of shell (m)
+    !+ad_args  drin   : input real : horiz. thickness of inboard shell at midplane (m)
+    !+ad_args  drout  : input real : horiz. thickness of outboard shell at midplane (m)
+    !+ad_args  dz     : input real : vertical thickness of shell at top/bottom (m)
+    !+ad_args  vin    : output real : volume of inboard straight section (m3)
+    !+ad_args  vout   : output real : volume of outboard curved section (m3)
+    !+ad_args  vtot   : output real : total volume of shell (m3)
+    !+ad_desc  This routine calculates the volume of the inboard and outboard sections
+    !+ad_desc  of a D-shaped toroidal shell defined by the above input parameters.
+    !+ad_desc  The inboard section is assumed to be a cylinder of uniform thickness.
+    !+ad_desc  The outboard section's internal and external surfaces are defined
+    !+ad_desc  by two semi-ellipses, centred on the outer edge of the inboard section;
+    !+ad_desc  its volume is calculated as the difference in those of the volumes of
+    !+ad_desc  revolution enclosed by the two surfaces.
+    !+ad_desc  <P>See also <A HREF="dshellarea.html"><CODE>dshellarea</CODE></A>
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  09/05/13 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
+    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: rmajor,rminor,zminor,drin,drout,dz
+    real(kind(1.0D0)), intent(out) :: vin,vout,vtot
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: a,b,elong,v1,v2
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Volume of inboard cylindrical shell
+
+    vin = 2.0D0*(zminor+dz) * pi*(rmajor**2 - (rmajor-drin)**2)
+
+    !  Volume enclosed by inner surface of elliptical outboard section
+    !  and the vertical straight line joining its ends
+
+    a = rminor ; b = zminor ; elong = b/a
+    v1 = twopi * elong * (0.5D0*pi*rmajor*a*a + 2.0D0/3.0D0*a*a*a)
+
+    !  Volume enclosed by outer surface of elliptical outboard section
+    !  and the vertical straight line joining its ends
+
+    a = rminor+drout ; b = zminor+dz ; elong = b/a
+    v2 = twopi * elong * (0.5D0*pi*rmajor*a*a + 2.0D0/3.0D0*a*a*a)
+
+    !  Volume of elliptical outboard shell
+
+    vout = v2 - v1
+
+    !  Total shell volume
+
+    vtot = vin + vout
+
+  end subroutine dshellvol
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine eshellvol(rshell,rmini,rmino,zminor,drin,drout,dz,vin,vout,vtot)
+
+    !+ad_name  eshellvol
+    !+ad_summ  Routine to calculate the inboard, outboard and total volumes
+    !+ad_summ  of a toroidal shell comprising two elliptical sections
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  rshell : input real : major radius of centre of both ellipses (m)
+    !+ad_args  rmini  : input real : horizontal distance from rshell to outer edge
+    !+ad_argc                        of inboard elliptical shell (m)
+    !+ad_args  rmino  : input real : horizontal distance from rshell to inner edge
+    !+ad_argc                        of outboard elliptical shell (m)
+    !+ad_args  zminor : input real : vertical internal half-height of shell (m)
+    !+ad_args  drin   : input real : horiz. thickness of inboard shell at midplane (m)
+    !+ad_args  drout  : input real : horiz. thickness of outboard shell at midplane (m)
+    !+ad_args  dz     : input real : vertical thickness of shell at top/bottom (m)
+    !+ad_args  vin    : output real : volume of inboard section (m3)
+    !+ad_args  vout   : output real : volume of outboard section (m3)
+    !+ad_args  vtot   : output real : total volume of shell (m3)
+    !+ad_desc  This routine calculates the volume of the inboard and outboard sections
+    !+ad_desc  of a toroidal shell defined by two co-centred semi-ellipses.
+    !+ad_desc  Each section's internal and external surfaces are in turn defined
+    !+ad_desc  by two semi-ellipses. The volumes of each section are calculated as
+    !+ad_desc  the difference in those of the volumes of revolution enclosed by their
+    !+ad_desc  inner and outer surfaces.
+    !+ad_desc  <P>See also <A HREF="eshellarea.html"><CODE>eshellarea</CODE></A>
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  09/05/13 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
+    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: rshell,rmini,rmino,zminor,drin,drout,dz
+    real(kind(1.0D0)), intent(out) :: vin,vout,vtot
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: a,b,elong,v1,v2
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Inboard section
+
+    !  Volume enclosed by outer (higher R) surface of elliptical section
+    !  and the vertical straight line joining its ends
+
+    a = rmini ; b = zminor ; elong = b/a
+    v1 = twopi * elong * (0.5D0*pi*rshell*a*a - 2.0D0/3.0D0*a*a*a)
+
+    !  Volume enclosed by inner (lower R) surface of elliptical section
+    !  and the vertical straight line joining its ends
+
+    a = rmini+drin ; b = zminor+dz ; elong = b/a
+    v2 = twopi * elong * (0.5D0*pi*rshell*a*a - 2.0D0/3.0D0*a*a*a)
+
+    !  Volume of inboard section of shell
+
+    vin = v2 - v1
+
+    !  Outboard section
+
+    !  Volume enclosed by inner (lower R) surface of elliptical section
+    !  and the vertical straight line joining its ends
+
+    a = rmino ; b = zminor ; elong = b/a
+    v1 = twopi * elong * (0.5D0*pi*rshell*a*a + 2.0D0/3.0D0*a*a*a)
+
+    !  Volume enclosed by outer (higher R) surface of elliptical section
+    !  and the vertical straight line joining its ends
+
+    a = rmino+drout ; b = zminor+dz ; elong = b/a
+    v2 = twopi * elong * (0.5D0*pi*rshell*a*a + 2.0D0/3.0D0*a*a*a)
+
+    !  Volume of outboard section of shell
+
+    vout = v2 - v1
+
+    !  Total shell volume
+
+    vtot = vin + vout
+
+  end subroutine eshellvol
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

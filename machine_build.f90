@@ -12,6 +12,8 @@ module build_module
   !+ad_cont  divgeom
   !+ad_cont  rippl
   !+ad_cont  portsz
+  !+ad_cont  dshellarea
+  !+ad_cont  eshellarea
   !+ad_args  N/A
   !+ad_desc  This module contains routines for calculating the
   !+ad_desc  geometry (radial and vertical builds) of the fusion power
@@ -21,12 +23,14 @@ module build_module
   !+ad_call  constants
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  rfp_variables
   !+ad_call  tfcoil_variables
   !+ad_hist  30/10/12 PJK Initial version of module
   !+ad_hist  05/11/12 PJK Added rfp_variables
+  !+ad_hist  09/05/13 PJK Added dshellarea, eshellarea
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -36,6 +40,7 @@ module build_module
   use constants
   use current_drive_variables
   use divertor_variables
+  use fwbs_variables
   use physics_variables
   use process_output
   use rfp_variables
@@ -62,6 +67,8 @@ contains
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_desc  This subroutine determines the radial build of the machine.
     !+ad_prob  None
+    !+ad_call  dshellarea
+    !+ad_call  eshellarea
     !+ad_call  obuild
     !+ad_call  ocmmnt
     !+ad_call  oheadr
@@ -75,6 +82,9 @@ contains
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  18/12/12 PJK/RK Added single-null code
+    !+ad_hist  02/05/13 PJK Changed snull=1 top shield thickness to shldtth
+    !+ad_hist  09/05/13 PJK Changed first wall area calculation to be
+    !+ad_hisc               consistent with fwbsshape switch
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -88,7 +98,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: rtotl,radius,vbuild
+    real(kind(1.0D0)) :: a1,a2,hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -111,7 +121,7 @@ contains
 
     !  Radius to centre of outboard TF coil legs
 
-    rtot = rsldo + gapomin + ddwi + 0.5d0 * tfthko
+    rtot = rsldo + gapomin + ddwi + 0.5D0*tfthko
 
     !  Check ripple
 
@@ -121,15 +131,69 @@ contains
 
     if (rtotl > rtot) then
        rtot = rtotl
-       gapsto = rtot - rsldo - ddwi - tfthko/2.0D0
+       gapsto = rtot - rsldo - ddwi - 0.5D0*tfthko
     else
        gapsto = gapomin
     end if
 
     !  Calculate first wall area (includes a mysterious factor 0.875...)
+    !  Old calculation...
+    !fwarea = 0.875D0 * &
+    !     ( 4.0D0*pi**2*sf*rmajor*(rminor+0.5D0*(scrapli+scraplo)) )
 
-    fwarea = 0.875D0 * &
-         ( 4.0D0*pi**2*sf*rmajor*(rminor+0.5D0*(scrapli+scraplo)) )
+    !  Half-height of first wall (internal surface)
+
+    hbot = rminor*kappa + vgap + divfix - 0.5D0*(blnkith+blnkoth + fwith+fwoth)
+    if (idivrt == 2) then  !  (i.e. snull=0)
+       htop = hbot
+    else
+       htop = rminor*kappa + 0.5D0*(scrapli+scraplo)
+    end if
+    hfw = 0.5D0*(htop + hbot)
+
+    if ((itart == 1).or.(fwbsshape == 1)) then  !  D-shaped
+
+       !  Major radius to outer edge of inboard section
+
+       r1 = rmajor - rminor - scrapli
+
+       !  Horizontal distance between inside edges,
+       !  i.e. outer radius of inboard part to inner radius of outboard part
+
+       r2 = (rmajor + rminor + scraplo) - r1
+
+       !  Calculate surface area, assuming 100% coverage
+
+       call dshellarea(r1,r2,hfw,a1,a2,fwarea)
+
+       !  Apply area coverage factor - uses fhole
+
+       fwarea = (1.0D0-fhole) * fwarea
+
+    else  !  Cross-section is assumed to be defined by two ellipses
+
+       !  Major radius to centre of inboard and outboard ellipses
+       !  (coincident in radius with top of plasma)
+
+       r1 = rmajor - rminor*triang
+
+       !  Distance between r1 and outer edge of inboard section
+
+       r2 = r1 - (rmajor - rminor - scrapli)
+
+       !  Distance between r1 and inner edge of outboard section
+
+       r3 = (rmajor + rminor + scraplo) - r1
+
+       !  Calculate surface area, assuming 100% coverage
+
+       call eshellarea(r1,r2,r3,hfw,a1,a2,fwarea)
+
+       !  Apply area coverage factor - uses fhole
+
+       fwarea = (1.0D0-fhole) * fwarea
+
+    end if
 
     if ((iprint == 0).or.(sect06 == 0)) return
 
@@ -273,8 +337,8 @@ contains
        call obuild(outfile,'Gap',vgap2,vbuild)
        vbuild = vbuild - vgap2
 
-       call obuild(outfile,'Top shield',(shldith+shldoth)/2.0D0,vbuild)
-       vbuild = vbuild - (shldith+shldoth)/2.0D0
+       call obuild(outfile,'Top shield',shldtth,vbuild)
+       vbuild = vbuild - shldtth
 
        call obuild(outfile,'Top blanket',(blnkith+blnkoth)/2.0D0,vbuild)
        vbuild = vbuild - (blnkith+blnkoth)/2.0D0
@@ -616,5 +680,125 @@ contains
     prtsz = ( 2.0D0 * pi * (rtot - 0.5D0*tfthko) - tfno* tfolw ) / tfno
 
   end subroutine portsz
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine dshellarea(rmajor,rminor,zminor,ain,aout,atot)
+
+    !+ad_name  dshellarea
+    !+ad_summ  Routine to calculate the inboard, outboard and total surface areas
+    !+ad_summ  of a D-shaped toroidal shell
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  rmajor : input real : major radius of inboard straight section (m)
+    !+ad_args  rminor : input real : horizontal width of shell (m)
+    !+ad_args  zminor : input real : vertical half-height of shell (m)
+    !+ad_args  ain    : output real : surface area of inboard straight section (m3)
+    !+ad_args  aout   : output real : surface area of outboard curved section (m3)
+    !+ad_args  atot   : output real : total surface area of shell (m3)
+    !+ad_desc  This routine calculates the surface area of the inboard and outboard
+    !+ad_desc  sections of a D-shaped toroidal shell defined by the above input
+    !+ad_desc  parameters.
+    !+ad_desc  The inboard section is assumed to be a cylinder.
+    !+ad_desc  The outboard section is defined by a semi-ellipse, centred on the
+    !+ad_desc  major radius of the inboard section.
+    !+ad_desc  <P>See also <A HREF="dshellvol.html"><CODE>dshellvol</CODE></A>
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  09/05/13 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
+    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: rmajor,rminor,zminor
+    real(kind(1.0D0)), intent(out) :: ain,aout,atot
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: elong
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Area of inboard cylindrical shell
+
+    ain = 4.0D0*zminor*pi*rmajor
+
+    !  Area of elliptical outboard section
+
+    elong = zminor/rminor
+    aout = twopi * elong * (pi*rmajor*rminor + 2.0D0*rminor*rminor)
+
+    !  Total surface area
+
+    atot = ain + aout
+
+  end subroutine dshellarea
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine eshellarea(rshell,rmini,rmino,zminor,ain,aout,atot)
+
+    !+ad_name  eshellarea
+    !+ad_summ  Routine to calculate the inboard, outboard and total surface areas
+    !+ad_summ  of a toroidal shell comprising two elliptical sections
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  rshell : input real : major radius of centre of both ellipses (m)
+    !+ad_args  rmini  : input real : horizontal distance from rshell to
+    !+ad_argc                        inboard elliptical shell (m)
+    !+ad_args  rmino  : input real : horizontal distance from rshell to
+    !+ad_argc                        outboard elliptical shell (m)
+    !+ad_args  zminor : input real : vertical internal half-height of shell (m)
+    !+ad_args  ain    : output real : surface area of inboard section (m3)
+    !+ad_args  aout   : output real : surface area of outboard section (m3)
+    !+ad_args  atot   : output real : total surface area of shell (m3)
+    !+ad_desc  This routine calculates the surface area of the inboard and outboard
+    !+ad_desc  sections of a toroidal shell defined by two co-centred semi-ellipses.
+    !+ad_desc  <P>See also <A HREF="eshellvol.html"><CODE>eshellvol</CODE></A>
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  09/05/13 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
+    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: rshell,rmini,rmino,zminor
+    real(kind(1.0D0)), intent(out) :: ain,aout,atot
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: elong
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Inboard section
+
+    elong = zminor/rmini
+    ain = twopi * elong * (pi*rshell*rmini - 2.0D0*rmini*rmini)
+
+    !  Outboard section
+
+    elong = zminor/rmino
+    aout = twopi * elong * (pi*rshell*rmino + 2.0D0*rmino*rmino)
+
+    !  Total surface area
+
+    atot = ain + aout
+
+  end subroutine eshellarea
 
 end module build_module

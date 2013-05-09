@@ -1296,3 +1296,6 @@ end subroutine output
 ! SVN 164: Removed cohbof; fcohbof no longer an input parameter
 ! SVN 165: Corrected various power conversion values
 ! SVN 166: Added new switch iprimnloss to control destiny of pnucloss
+! SVN 167: New switch fwbsshape to control first wall, blanket, shield and
+!          vacuum vessel cross-sectional shape; volume and area calculations for
+!          these fully updated

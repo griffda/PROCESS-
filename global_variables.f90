@@ -801,6 +801,7 @@ module fwbs_variables
   !+ad_hist  18/10/12 PJK Initial version of module
   !+ad_hist  09/04/13 PJK Added rdewex, rpf2dewar; changed some labels
   !+ad_hist  17/04/13 PJK Removed fvolcry
+  !+ad_hist  09/05/13 PJK Added fwbsshape
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -835,21 +836,26 @@ module fwbs_variables
   real(kind(1.0D0)) :: fblss = 0.07D0
   !+ad_vars  fblvd /0.0/ : vanadium fraction of blanket by volume
   real(kind(1.0D0)) :: fblvd = 0.0D0
-  !+ad_vars  fhole /0.15/ : hole fraction of the 1st wall - that neutrons see
+  !+ad_vars  fhole /0.15/ : hole fraction of the 1st wall - that neutrons see;
+  !+ad_varc                 = (1 - first wall area coverage factor)
   real(kind(1.0D0)) :: fhole = 0.15D0
-  !+ad_vars  fvolbi /1.0/ : fudge factor for inboard blanket volume
+  !+ad_vars  fvolbi /1.0/ : area coverage factor for inboard blanket volume
   real(kind(1.0D0)) :: fvolbi = 1.0D0
-  !+ad_vars  fvolbo /0.75/ : fudge factor for outboard blanket volume
+  !+ad_vars  fvolbo /0.75/ : area coverage factor for outboard blanket volume
   real(kind(1.0D0)) :: fvolbo = 0.75D0
-  !+ad_vars  fvoldw /1.4/ : fudge factor for vacuum vessel volume
+  !+ad_vars  fvoldw /1.4/ : area coverage factor for vacuum vessel volume
   real(kind(1.0D0)) :: fvoldw = 1.4D0
-  !+ad_vars  fvolsi /0.64/ : fudge factor for inboard shield volume
+  !+ad_vars  fvolsi /0.64/ : area coverage factor for inboard shield volume
   real(kind(1.0D0)) :: fvolsi = 0.64D0
-  !+ad_vars  fvolso /0.64/ : fudge factor for outboard shield volume
+  !+ad_vars  fvolso /0.64/ : area coverage factor for outboard shield volume
   real(kind(1.0D0)) :: fvolso = 0.64D0
   !+ad_vars  fwclfr /0.15/ : first wall coolant fraction
   !+ad_varc                  (calculated if lpulse=1)
   real(kind(1.0D0)) :: fwclfr = 0.15D0
+  !+ad_vars  fwbsshape /1/ : first wall, blanket, shield and vacuum vessel shape:<UL>
+  !+ad_varc                  <LI> = 1 D-shaped (cylinder inboard + ellipse outboard)
+  !+ad_varc                  <LI> = 2 defined by two ellipses</UL>
+  integer :: fwbsshape = 1
   !+ad_vars  fwmass : first wall mass (kg)
   real(kind(1.0D0)) :: fwmass = 0.0D0
   !+ad_vars  pnucblkt : nuclear heating in the blanket (MW)
