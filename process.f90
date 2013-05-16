@@ -1299,3 +1299,4 @@ end subroutine output
 ! SVN 167: New switch fwbsshape to control first wall, blanket, shield and
 !          vacuum vessel cross-sectional shape; volume and area calculations for
 !          these fully updated
+! SVN 168: Swapped build order of vacuum vessel and adjacent gaps

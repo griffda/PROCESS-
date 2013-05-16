@@ -714,7 +714,7 @@ module divertor_variables
   real(kind(1.0D0)) :: divdens = 1.0D4
   !+ad_vars  divdum /0/ : switch for divertor Zeff model: 0=calc, 1=input
   integer :: divdum = 0
-  !+ad_vars  divfix /0.2/ FIX : divertor structure vertical thickness (m)
+  !+ad_vars  divfix /0.2/ : divertor structure vertical thickness (m)
   real(kind(1.0D0)) :: divfix = 0.2D0
   !+ad_vars  divmas : divertor plate mass (kg)
   real(kind(1.0D0)) :: divmas = 0.0D0
@@ -2002,6 +2002,7 @@ module build_variables
   !+ad_hist  18/12/12 PJK Added hpfdif, hpfu
   !+ad_hist  09/04/13 PJK Relabelled ddwex, ddwi etc.
   !+ad_hist  10/04/13 PJK Relabelled gapsto, gapomin etc.
+  !+ad_hist  15/05/13 PJK Relabelled gapds, gapomin, gapsto, vgap2; added blnktth
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2019,6 +2020,8 @@ module build_variables
   real(kind(1.0D0)) :: blnkith = 0.115D0
   !+ad_vars  blnkoth /0.235/ : outboard blanket thickness (m)
   real(kind(1.0D0)) :: blnkoth = 0.235D0
+  !+ad_vars  blnktth /0.175/ : top blanket thickness (m)
+  real(kind(1.0D0)) :: blnktth = 0.175D0
   !+ad_vars  bore /1.42/ : OH coil inboard radius (m)
   !+ad_varc                (iteration variable 29)
   real(kind(1.0D0)) :: bore = 1.42D0
@@ -2048,16 +2051,16 @@ module build_variables
   real(kind(1.0D0)) :: fwith = 0.035D0
   !+ad_vars  fwoth /0.035/ : outboard first wall thickness (m) (if lpulse=1, =2*bfw)
   real(kind(1.0D0)) :: fwoth = 0.035D0
-  !+ad_vars  gapds /0.0/ : gap between vacuum vessel and inboard shield
+  !+ad_vars  gapds /0.0/ : gap between inboard vacuum vessel and TF coil (m)
   !+ad_varc                (iteration variable 61)
   real(kind(1.0D0)) :: gapds = 0.0D0
   !+ad_vars  gapoh /0.08/ : gap between OH coil and bucking cylinder
   !+ad_varc                (iteration variable 42)
   real(kind(1.0D0)) :: gapoh = 0.08D0
-  !+ad_vars  gapomin /0.21/ : minimum gap between outboard shield and vacuum vessel (m)
+  !+ad_vars  gapomin /0.21/ : minimum gap between outboard vacuum vessel and TF coil (m)
   !+ad_varc                   (iteration variable 31)
   real(kind(1.0D0)) :: gapomin = 0.21D0
-  !+ad_vars  gapsto : gap between outboard shield and vacuum vessel (m)
+  !+ad_vars  gapsto : gap between outboard vacuum vessel and TF coil (m)
   real(kind(1.0D0)) :: gapsto = 0.0D0
   !+ad_vars  hmax : maximum (half-)height of TF coil (m)
   real(kind(1.0D0)) :: hmax = 0.0D0
@@ -2102,7 +2105,7 @@ module build_variables
   real(kind(1.0D0)) :: shldith = 0.69D0
   !+ad_vars  shldoth /1.05/ : outboard shield thickness (m)
   real(kind(1.0D0)) :: shldoth = 1.05D0
-  !+ad_vars  shldtth /0.60/ : upper shield thickness (m)
+  !+ad_vars  shldtth /0.60/ : upper/lower shield thickness (m)
   real(kind(1.0D0)) :: shldtth = 0.6D0
   !+ad_vars  tfcth /0.9/ : inboard TF coil thickness, (centrepost for ST) (m)
   !+ad_varc                (iteration variable 13)
@@ -2114,7 +2117,7 @@ module build_variables
   real(kind(1.0D0)) :: tfthko = 0.0D0
   !+ad_vars  vgap : (see vgaptf)
   real(kind(1.0D0)) :: vgap = 0.0D0
-  !+ad_vars  vgap2 /0.163/ : vertical gap between the TF coil and shield (m)
+  !+ad_vars  vgap2 /0.163/ : vertical gap between vacuum vessel and TF coil (m)
   real(kind(1.0D0)) :: vgap2 = 0.163D0
   !+ad_vars  vgaptf /0.0/ : vertical gap between x-point and divertor (m)
   !+ad_varc                (if = 0, it is calculated)

@@ -340,6 +340,7 @@ contains
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  17/10/12 PJK Added divertor_variables
     !+ad_hist  30/10/12 PJK Added build_variables
+    !+ad_hist  15/05/13 PJK Swapped build order of vacuum vessel and gap
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -361,8 +362,8 @@ contains
 
        !  Radial build to centre of plasma (should be equal to rmajor)
 
-       rbld = bore + ohcth + gapoh + bcylth + tfcth + ddwi + &
-            gapds + shldith + blnkith + fwith + scrapli + rminor
+       rbld = bore + ohcth + gapoh + bcylth + tfcth + gapds + &
+            ddwi + shldith + blnkith + fwith + scrapli + rminor
 
        !  Radius to inner edge of inboard shield
 
@@ -379,15 +380,15 @@ contains
        !  Radius to centre of outboard TF coil legs
 
        gapsto = gapomin
-       rtot = rsldo + gapsto + ddwi + 0.5D0*tfthko
+       rtot = rsldo + ddwi + gapsto + 0.5D0*tfthko
 
        !  Height to inside edge of TF coil
        !  Roughly equal to average of (inboard build from TF coil to plasma
        !  centre) and (outboard build from plasma centre to TF coil)
 
        hmax = 0.5D0 * ( &
-            (ddwi+gapds+shldith+blnkith+fwith+scrapli+rminor) + &
-            (rminor+scraplo+fwoth+blnkoth+shldoth+gapsto+ddwi) )
+            (gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor) + &
+            (rminor+scraplo+fwoth+blnkoth+shldoth+ddwi+gapsto) )
 
        !  Outer divertor strike point radius, set equal to major radius
 
@@ -419,11 +420,11 @@ contains
     radius = radius + tfcth
     call obuild(outfile,'TF coil inboard leg',tfcth,radius)
 
-    radius = radius + ddwi
-    call obuild(outfile,'Cryostat',ddwi,radius)
-
     radius = radius + gapds
     call obuild(outfile,'Gap',gapds,radius)
+
+    radius = radius + ddwi
+    call obuild(outfile,'Vacuum vessel',ddwi,radius)
 
     radius = radius + shldith
     call obuild(outfile,'Inboard shield',shldith,radius)
@@ -455,11 +456,11 @@ contains
     radius = radius + shldoth
     call obuild(outfile,'Outboard shield',shldoth,radius)
 
+    radius = radius + ddwi
+    call obuild(outfile,'Vacuum vessel',ddwi,radius)
+
     radius = radius + gapsto
     call obuild(outfile,'Gap',gapsto,radius)
-
-    radius = radius + ddwi
-    call obuild(outfile,'Cryostat',ddwi,radius)
 
     radius = radius + tfthko
     call obuild(outfile,'TF coil outboard leg',tfthko,radius)
@@ -1226,6 +1227,7 @@ contains
     !+ad_hist  20/09/12 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  30/10/12 PJK Added build_variables
+    !+ad_hist  15/05/13 PJK Swapped build order of vacuum vessel and gap
     !+ad_stat  Okay
     !+ad_docs  Wendelstein VII-X: Application for Preferential Support, Aug 1990
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1249,11 +1251,11 @@ contains
 
     !  Coil mean minor radius (m) --- average of inboard and outboard
 
-    a0i = 0.5D0*tfcth + ddwi + gapds + shldith + blnkith + fwith + &
+    a0i = 0.5D0*tfcth + gapds + ddwi + shldith + blnkith + fwith + &
          scrapli + rminor
 
-    a0o = rminor + scraplo + fwoth + blnkoth + shldoth + gapsto + &
-         ddwi + 0.5D0*tfthko
+    a0o = rminor + scraplo + fwoth + blnkoth + shldoth + ddwi + &
+         gapsto + 0.5D0*tfthko
 
     a0 = 0.5D0*(a0i + a0o)
 

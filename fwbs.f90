@@ -118,6 +118,7 @@ contains
     !+ad_hist  11/04/13 PJK Modified definition of hecan and wpthk;
     !+ad_hisc               modified beryllium density
     !+ad_hist  09/05/13 PJK Redefined blanket, shield and vacuum vessel volumes
+    !+ad_hist  15/05/13 PJK Swapped build order of vacuum vessel and gap
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -137,7 +138,7 @@ contains
 
     integer, parameter :: ishmat = 1  !  stainless steel coil casing is assumed
 
-    real(kind(1.0D0)) :: blnktth,coilhtmx,decaybl,dpacop,dshieq,dshoeq,elong, &
+    real(kind(1.0D0)) :: coilhtmx,decaybl,dpacop,dshieq,dshoeq,elong, &
          flumax,fpsdt,fpydt,frachit,hbot,hblnkt,hecan,hshld,htop,htheci,hvv, &
          pheci,pheco,pneut1,pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2,r3, &
          raddose,v1,v2,volshldi,volshldo,wpthk,zdewex
@@ -320,12 +321,6 @@ contains
     !  N.B. The blanket is not well-defined at top and bottom of the device,
     !  i.e. whether or not it actually extends into the divertor region
     !  is not clear (it is assumed to do so for the volume calculation)...
-    !  Its vertical thickness there is assumed to be the average of blnkith
-    !  and blnkoth.
-
-    !  Blanket top/bottom thickness
-
-    blnktth = 0.5D0*(blnkith+blnkoth)
 
     !  Internal half-height of blanket
     !  (average of above- and below-midplane parts)
@@ -453,7 +448,7 @@ contains
     if (lblnkt == 1) then
        call blanket(1,outfile,iprint)
 
-       !  Improved approximation for inboard/outboard
+       !  Different (!) approximation for inboard/outboard
        !  blanket volumes: assume cylinders of equal heights
 
        r1 = rsldi + shldith + 0.5D0*blnkith
@@ -521,12 +516,12 @@ contains
     !vdewin = (2.0D0*(2.0D0*hmax) + 2.0D0 * (rsldo-rsldi)) * &
     !     2.0D0 * pi * rmajor * ddwi * 2.0D0 * fvoldw
 
-    hbot = hmax - ddwi
+    hbot = hmax - vgap2 - ddwi
     if (idivrt == 2) then  !  (i.e. snull=0)
        htop = hbot
     else
        htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth) &
-            + blnktth + shldtth + vgap2
+            + blnktth + shldtth
     end if
     hvv = 0.5D0*(htop + hbot)
 
@@ -534,12 +529,12 @@ contains
 
        !  Major radius to outer edge of inboard section
 
-       r1 = rsldi - gapds
+       r1 = rsldi
 
        !  Horizontal distance between inside edges,
        !  i.e. outer radius of inboard part to inner radius of outboard part
 
-       r2 = (rsldo + gapsto) - r1
+       r2 = rsldo - r1
 
        !  Calculate volume, assuming 100% coverage
 
@@ -554,15 +549,15 @@ contains
        !  Major radius to centre of inboard and outboard ellipses
        !  (coincident in radius with top of plasma)
 
-       r1 = rmajor - rminor*triang  !  (Can this be improved? R of top of TF coil?)
+       r1 = rmajor - rminor*triang
 
        !  Distance between r1 and outer edge of inboard section
 
-       r2 = r1 - (rsldi - gapds)
+       r2 = r1 - rsldi
 
        !  Distance between r1 and inner edge of outboard section
 
-       r3 = (rsldo + gapsto) - r1
+       r3 = rsldo - r1
 
        !  Calculate volume, assuming 100% coverage
 
@@ -595,8 +590,10 @@ contains
          '(fpydt)',fpydt)
     call ovarre(outfile,'Inboard shield thickness (m)','(shldith)',shldith)
     call ovarre(outfile,'Outboard shield thickness (m)','(shldoth)',shldoth)
+    call ovarre(outfile,'Top shield thickness (m)','(shldtth)',shldtth)
     call ovarre(outfile,'Inboard blanket thickness (m)','(blnkith)', blnkith)
     call ovarre(outfile,'Outboard blanket thickness (m)','(blnkoth)', blnkoth)
+    call ovarre(outfile,'Top blanket thickness (m)','(blnktth)',blnktth)
     call ovarre(outfile,'Inboard side TF coil case thickness (m)', &
          '(hecan)',hecan)
 

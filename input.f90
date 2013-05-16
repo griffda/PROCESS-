@@ -331,6 +331,7 @@ contains
     !+ad_hist  17/04/13 PJK Removed FCOHBOF; added obsolete_var usage to abort code
     !+ad_hisc               if an obsolete variable is found in the input file
     !+ad_hist  09/05/13 PJK Added FWBSSHAPE
+    !+ad_hist  15/05/13 PJK Added BLNKTTH, DIVFIX
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -913,6 +914,9 @@ contains
        case ('DIVDUM')
           call parse_int_variable('DIVDUM', divdum, 0, 1, &
                'Switch for divertor Zeff value')
+       case ('DIVFIX')
+          call parse_real_variable('DIVFIX', divfix, 0.1D0, 5.0D0, &
+               'Divertor structure vertical extent (m)')
        case ('DIVPLT')
           call parse_real_variable('DIVPLT', divplt, 0.1D0, 1.0D0, &
                'Divertor plate thickness (m)')
@@ -970,6 +974,9 @@ contains
        case ('BLNKOTH')
           call parse_real_variable('BLNKOTH', blnkoth, 0.0D0, 10.0D0, &
                'Outboard blanket thickness (m)')
+       case ('BLNKTTH')
+          call parse_real_variable('BLNKTTH', blnktth, 0.0D0, 10.0D0, &
+               'Top blanket thickness (m)')
        case ('BCYLTH')
           call parse_real_variable('BCYLTH', bcylth, 0.0D0, 10.0D0, &
                'Bucking cylinder thickness (m)')
