@@ -49,7 +49,7 @@ module build_module
   implicit none
 
   private
-  public :: radialb,vbuild,portsz
+  public :: radialb,vbuild,portsz,dshellarea,eshellarea
 
 contains
 
@@ -86,6 +86,8 @@ contains
     !+ad_hist  09/05/13 PJK Changed first wall area calculation to be
     !+ad_hisc               consistent with fwbsshape switch
     !+ad_hist  15/05/13 PJK Swapped build order of vacuum vessel and gap
+    !+ad_hist  22/05/13 PJK Introduced fwareaib, fwareaob; added blanket thickness
+    !+ad_hisc               calculations
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -102,6 +104,14 @@ contains
     real(kind(1.0D0)) :: a1,a2,hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Calculate total blanket thicknesses if blktmodel > 0
+
+    if (blktmodel > 0) then
+       blnkith = blbuith + blbmith + blbpith
+       blnkoth = blbuoth + blbmoth + blbpoth
+       blnktth = 0.5D0*(blnkith+blnkoth)
+    end if
 
     !  Radial build to centre of plasma (should be equal to rmajor)
 
@@ -137,8 +147,8 @@ contains
        gapsto = gapomin
     end if
 
-    !  Calculate first wall area (includes a mysterious factor 0.875...)
-    !  Old calculation...
+    !  Calculate first wall area
+    !  Old calculation... includes a mysterious factor 0.875
     !fwarea = 0.875D0 * &
     !     ( 4.0D0*pi**2*sf*rmajor*(rminor+0.5D0*(scrapli+scraplo)) )
 
@@ -165,11 +175,13 @@ contains
 
        !  Calculate surface area, assuming 100% coverage
 
-       call dshellarea(r1,r2,hfw,a1,a2,fwarea)
+       call dshellarea(r1,r2,hfw,fwareaib,fwareaob,fwarea)
 
        !  Apply area coverage factor - uses fhole
 
-       fwarea = (1.0D0-fhole) * fwarea
+       fwareaib = (1.0D0-fhole) * fwareaib
+       fwareaob = (1.0D0-fhole) * fwareaob
+       fwarea = fwareaib + fwareaob
 
     else  !  Cross-section is assumed to be defined by two ellipses
 
@@ -188,11 +200,13 @@ contains
 
        !  Calculate surface area, assuming 100% coverage
 
-       call eshellarea(r1,r2,r3,hfw,a1,a2,fwarea)
+       call eshellarea(r1,r2,r3,hfw,fwareaib,fwareaob,fwarea)
 
        !  Apply area coverage factor - uses fhole
 
-       fwarea = (1.0D0-fhole) * fwarea
+       fwareaib = (1.0D0-fhole) * fwareaib
+       fwareaob = (1.0D0-fhole) * fwareaob
+       fwarea = fwareaib + fwareaob
 
     end if
 

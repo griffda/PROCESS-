@@ -25,6 +25,8 @@ module numerics
   !+ad_hist  31/01/13 PJK Changed FACTOR comment
   !+ad_hist  11/04/13 PJK Listed explicitly the icc, ixc elements turned on
   !+ad_hisc               by default; lowered boundu(rnbeam) to 1.0 from 1.0D20
+  !+ad_hist  04/06/13 PJK New constraint eqns 52-55 added; new iteration
+  !+ad_hisc               variables 89-96 added
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -36,10 +38,10 @@ module numerics
 
   public
 
-  !+ad_vars  ipnvars /88/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 88
-  !+ad_vars  ipeqns /51/ FIX : number of constraint equations available
-  integer, parameter :: ipeqns  = 51
+  !+ad_vars  ipnvars /96/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 96
+  !+ad_vars  ipeqns /55/ FIX : number of constraint equations available
+  integer, parameter :: ipeqns  = 55
   !+ad_vars  ipnfoms /14/ FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 14
 
@@ -123,7 +125,12 @@ module numerics
        0,  &  !  48
        0,  &  !  49
        0,  &  !  50
-       0  /)  !  51
+       0,  &  !  51
+       0,  &  !  52
+       0,  &  !  53
+       0,  &  !  54
+       0   &  !  55
+       /)
 
   !+ad_vars  ixc(ipnvars) /10,12,3,36,48,49,50,51,53,54,5,7,19,1,2,6,13,16,29,56,57,58,59,60,4/ :
   !+ad_varc                 array defining which iteration variables to activate
@@ -216,7 +223,16 @@ module numerics
        0,  &  !  85
        0,  &  !  86
        0,  &  !  87
-       0  /)  !  88
+       0,  &  !  88
+       0,  &  !  89
+       0,  &  !  90
+       0,  &  !  91
+       0,  &  !  92
+       0,  &  !  93
+       0,  &  !  94
+       0,  &  !  95
+       0   &  !  96
+       /)
 
   !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -322,8 +338,17 @@ module numerics
        'RFP reversal parameter < 0       ', &
        !+ad_varc  <LI> (50) IFE repetition rate limit (IFE)
        'IFE repetition rate limit        ', &
-       !+ad_varc  <LI> (51) Startup volt-seconds consistency (PULSE)</UL>
-       'Startup volt-seconds consistency ' /)
+       !+ad_varc  <LI> (51) Startup volt-seconds consistency (PULSE)
+       'Startup volt-seconds consistency ', &
+       !+ad_varc  <LI> (52) Minimum tritium breeding ratio limit</UL>
+       'Tritium breeding ratio limit     ', &
+       !+ad_varc  <LI> (53) Neutron fluence on TF coil limit</UL>
+       'Neutron fluence on TF coil limit ', &
+       !+ad_varc  <LI> (54) Peak TF coil nuclear heating limit</UL>
+       'Peak TF coil nucl. heating limit ', &
+       !+ad_varc  <LI> (54) Vacuum vessel helium concentration limit</UL>
+       'Vessel helium concentration limit'  &
+       /)
 
   !+ad_vars  lablmm(ipnfoms) : labels describing figures of merit:<UL>
   character(len=22), dimension(ipnfoms) :: lablmm = (/ &
@@ -534,8 +559,25 @@ module numerics
        'frrmax  ', &
        !+ad_varc  <LI> (87) helecmw
        'helecmw ', &
-       !+ad_varc  <LI> (88) hthermmw </UL>
-       'hthermmw' /)
+       !+ad_varc  <LI> (88) hthermmw
+       'hthermmw', &
+       !+ad_varc  <LI> (89) ftbr (f-value for equation 52)
+       'ftbr    ', &
+       !+ad_varc  <LI> (90) blbuith
+       'blbuith ', &
+       !+ad_varc  <LI> (91) blbuoth
+       'blbuoth ', &
+       !+ad_varc  <LI> (92) fflutf (f-value for equation 53)
+       'fflutf  ', &
+       !+ad_varc  <LI> (93) shldith
+       'shldith ', &
+       !+ad_varc  <LI> (94) shldoth
+       'shldoth ', &
+       !+ad_varc  <LI> (95) fptfnuc (f-value for equation 54)
+       'fptfnuc ', &
+       !+ad_varc  <LI> (96) fvvhe (f-value for equation 55)</UL>
+       'fvvhe   '  &
+       /)
 
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
   real(kind(1.0D0)) :: sqsumsq = 0.0D0
@@ -638,8 +680,17 @@ module numerics
        1.000D6, &  !  85
        0.001D0, &  !  86
        1.000D0, &  !  87
-       1.000D0 /)  !  88
-       
+       1.000D0, &  !  88
+       0.001D0, &  !  89
+       0.001D0, &  !  90
+       0.001D0, &  !  91
+       0.001D0, &  !  92
+       0.001D0, &  !  93
+       0.001D0, &  !  94
+       0.001D0, &  !  95
+       0.001D0  &  !  96
+       /)
+
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
   !+ad_varc                    VMCON optimisation runs
   real(kind(1.0D0)), dimension(ipnvars) :: boundu = (/ &
@@ -730,7 +781,16 @@ module numerics
        200.0D6, &  !  85
        1.000D0, &  !  86
        4.000D3, &  !  87
-       4.000D3 /)  !  88
+       4.000D3, &  !  88
+       1.000D0, &  !  89
+       2.000D0, &  !  90
+       2.000D0, &  !  91
+       1.000D0, &  !  92
+       10.00D0, &  !  93
+       10.00D0, &  !  94
+       1.000D0, &  !  95
+       1.000D0  &  !  96
+       /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0
   real(kind(1.0D0)), dimension(ipnvars) :: bondu = 0.0D0

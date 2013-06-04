@@ -268,7 +268,7 @@ contains
 
        else
           call ocosts(outfile,'22121','Blanket beryllium',c22121)
-          call ocosts(outfile,'22122','Blanket lithium oxide',c22122)
+          call ocosts(outfile,'22122','Blanket breeder material',c22122)
           call ocosts(outfile,'22123','Blanket stainless steel',c22123)
           call ocosts(outfile,'22124','Blanket vanadium',c22124)
        end if
@@ -1149,6 +1149,7 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  03/06/13 PJK Added blktmodel>0 breeder cost
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1192,7 +1193,11 @@ contains
           end if
        else
           c22121 = 1.0D-6 * whtblbe * ucblbe
-          c22122 = 1.0D-6 * wtblli2o * ucblli2o
+          if (blktmodel == 0) then
+             c22122 = 1.0D-6 * wtblli2o * ucblli2o
+          else
+             c22122 = 1.0D-6 * whtblbreed * ucblbreed
+          end if
        end if
 
        c22123 = 1.0D-6 * whtblss * ucblss
@@ -2458,6 +2463,7 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  23/05/13 PJK Added blktmodel comment about coolant inconsistency
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2485,6 +2491,9 @@ contains
     !  Account 226.1 : Reactor cooling system
 
     !  Pumps and piping system
+    !  N.B. with blktmodel > 0, the blanket is assumed to be helium-cooled,
+    !  but the shield etc. is water-cooled (costr=2). Therefore, a slight
+    !  inconsistency exists here...
 
     cpp = 1.0D-6 * uchts(costr) * ( (1.0D6*pfwdiv)**exphts + &
          (1.0D6*pnucblkt)**exphts + (1.0D6*pnucshld)**exphts)

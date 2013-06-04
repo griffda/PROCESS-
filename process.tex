@@ -597,6 +597,10 @@ J_{\mbox{\scriptsize protection}}$ limit (SCTF)               & L    & \textbf{5
 49  & reversal parameter $< 0$ (RFP)                      & L    & \textbf{80},78,3,1 \\
 50  & IFE repetition rate limit (IFE)                     & L    & \textbf{86} \\
 51  & Startup volt-seconds consistency (PULSE)            & C    & \textbf{16},29,3,1 \\
+52  & Minimum tritium breeding ratio limit                & L    & \textbf{89},90,91 \\
+53  & Peak neutron fluence on TF coil limit               & L    & \textbf{92},93,94 \\
+54  & Peak TF coil nuclear heating limit                  & L    & \textbf{95},93,94 \\
+55  & Final He concentration in vacuum vessel limit       & L    & \textbf{96},93,94 \\
 \hline
 \end{tabular}
 \end{center}
@@ -687,7 +691,7 @@ no. & variable name     & description                                   & eqn & 
 28  & \texttt{fjtfc}    & f-value for TF coil current density limit equation & 23  & \texttt{0.100D0} & \texttt{1.000D0} \\
 29  & \texttt{bore}     & machine bore                                  &     & \texttt{0.100D0} & \texttt{10.00D0} \\
 30  & \texttt{fmva}     & f-value for MVA limit equation                & 19  & \texttt{0.010D0} & \texttt{1.000D0} \\
-31  & \texttt{gapomin}  & minimum gap between outboard shield and vacuum vessel &     & \texttt{0.001D0} & \texttt{10.00D0} \\
+31  & \texttt{gapomin}  & minimum gap between outboard vacuum vessel and TF coil &     & \texttt{0.001D0} & \texttt{10.00D0} \\
 32  & \texttt{frminor}  & f-value for minor radius limit equation       & 21  & \texttt{0.001D0} & \texttt{1.000D0} \\
 33  & \texttt{fportsz}  & f-value for port size limit equation          & 20  & \texttt{0.010D0} & \texttt{1.000D0} \\
 34  & \texttt{fdivcol}  & f-value for divertor collisionality limit equation & 22  & \texttt{0.001D0} & \texttt{1.000D0} \\
@@ -763,11 +767,19 @@ no. & variable name     & description                                           
 86  & \texttt{frrmax}   & f-value for maximum IFE repetition rate equation        & 50  & \texttt{0.001D0} & \texttt{1.000D0} \\
 87  & \texttt{helecmw}  & electrical power required for hydrogen production       &     & \texttt{1.000D0} & \texttt{4.000D3} \\
 88  & \texttt{hthermmw} & thermal power required for hydrogen production          &     & \texttt{1.000D0} & \texttt{4.000D3} \\
+89  & \texttt{ftbr}     & f-value for tritium breeding ratio limit equation       & 52  & \texttt{0.001D0} & \texttt{1.000D0} \\
+90  & \texttt{blbuith}  & inboard blanket breeding unit thickness                 &     & \texttt{0.001D0} & \texttt{2.000D0} \\
+91  & \texttt{blbuoth}  & outboard blanket breeding unit thickness                &     & \texttt{0.001D0} & \texttt{2.000D0} \\
+92  & \texttt{fflutf}   & f-value for fast neutron fluence on TF coil equation    & 53  & \texttt{0.001D0} & \texttt{1.000D0} \\
+93  & \texttt{shldith}  & inboard shield thickness                                &     & \texttt{0.001D0} & \texttt{10.00D0} \\
+94  & \texttt{shldoth}  & outboard shield thickness                               &     & \texttt{0.001D0} & \texttt{10.00D0} \\
+95  & \texttt{fptfnuc}  & f-value for TF coil nuclear heating limit equation      & 54  & \texttt{0.001D0} & \texttt{1.000D0} \\
+96  & \texttt{fvvhe}    & f-value for vessel He concentration limit equation      & 55  & \texttt{0.001D0} & \texttt{1.000D0} \\
 \hline
 \end{tabular}
 \end{center}
 \caption[TABLE_VARS2] {\label{tab:itvars2}
-  \textit{Iteration variables 51 to 88 present in \process. The f-values correspond to the
+  \textit{Iteration variables 51 to 96 present in \process. The f-values correspond to the
     given constraint equations (see Table~\ref{tab:eqns}). The other iteration
     variables are shown in Table~\ref{tab:itvars1}.}
 }

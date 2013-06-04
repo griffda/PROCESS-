@@ -182,7 +182,7 @@ current_drive.o: global_variables.o output.o
 divertor.o: global_variables.o output.o
 evaluators.o: global_variables.o numerics.o
 fispact.o: global_variables.o
-fwbs.o: global_variables.o output.o plasma_geometry.o
+fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o
 plasma_geometry.o: global_variables.o
 ife.o: availability.o costs.o global_variables.o output.o
 initial.o: global_variables.o output.o scan.o stellarator.o

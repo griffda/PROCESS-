@@ -191,6 +191,7 @@ subroutine check
   !+ad_call  build_variables
   !+ad_call  buildings_variables
   !+ad_call  current_drive_variables
+  !+ad_call  fwbs_variables
   !+ad_call  global_variables
   !+ad_call  heat_transport_variables
   !+ad_call  ife_variables
@@ -221,6 +222,7 @@ subroutine check
   !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_hist  18/12/12 PJK Added snull and other PF coil location checks
   !+ad_hist  11/04/13 PJK Energy storage building volume set to zero if lpulse=0
+  !+ad_hist  23/05/13 PJK Coolant type set to water if blktmodel>0
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -229,6 +231,7 @@ subroutine check
   use build_variables
   use buildings_variables
   use current_drive_variables
+  use fwbs_variables
   use global_variables
   use heat_transport_variables
   use ife_variables
@@ -420,5 +423,16 @@ subroutine check
      write(iotty,*) 'PROCESS continuing...'
      write(iotty,*) ' '
   end if
+
+  !  Coolant set to water if blktmodel > 0
+  !  Although the blanket is by definition helium-cooled in this case,
+  !  the shield etc. are assumed to be water-cooled, and since water is
+  !  heavier (and the unit cost of pumping it is higher), the calculation
+  !  for coolmass is better done with costr=2 if blktmodel > 0 to give
+  !  slightly pessimistic results.
+  !  However, this also means that if lblnkt=1 the wrong coolant will be assumed
+  !  in the thermodynamic blanket model...
+
+  if (blktmodel > 0) costr = 2
 
 end subroutine check

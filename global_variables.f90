@@ -802,6 +802,8 @@ module fwbs_variables
   !+ad_hist  09/04/13 PJK Added rdewex, rpf2dewar; changed some labels
   !+ad_hist  17/04/13 PJK Removed fvolcry
   !+ad_hist  09/05/13 PJK Added fwbsshape
+  !+ad_hist  16/05/13 PJK Changed default value of fwbsshape
+  !+ad_hist  20/05/13 PJK Added KIT PPCS model variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -813,36 +815,66 @@ module fwbs_variables
 
   !+ad_vars  bktlife : blanket lifetime (years)
   real(kind(1.0D0)) :: bktlife = 0.0D0
+  !+ad_vars  blktmodel /0/ : switch for blanket model (but see <CODE>lblnkt</CODE>):<UL>
+  !+ad_varc              <LI> = 0 original simple model;
+  !+ad_varc              <LI> = 1 KIT PPCS model, HCPB</UL>
+  integer :: blktmodel = 0
+  !+ad_vars  breedmat /1/ : breeder material switch (blktmodel>0):<UL>
+  !+ad_varc                  <LI> = 1 Lithium orthosilicate;
+  !+ad_varc                  <LI> = 2 Lithium methatitanate;
+  !+ad_varc                  <LI> = 3 Lithium zirconate</UL>
+  integer :: breedmat = 1
   !+ad_vars  coolmass : Mass of water coolant (in shield, blanket,
   !+ad_varc             first wall, divertor) (kg)
   real(kind(1.0D0)) :: coolmass = 0.0D0
-  !+ad_vars  cryomass : vacuum vessel mass (kg)
+  !+ad_vars  cryomass : cryostat mass (kg)
   real(kind(1.0D0)) :: cryomass = 0.0D0
+  !+ad_vars  densbreed : density of breeder material (kg/m3) (blktmodel>0)
+  real(kind(1.0D0)) :: densbreed = 0.0D0
   !+ad_vars  denstl /7800.0/ : density of steel (kg/m3)
   real(kind(1.0D0)) :: denstl = 7800.0D0
   !+ad_vars  dewmkg : total mass of vacuum vessel + cryostat (kg)
   real(kind(1.0D0)) :: dewmkg = 0.0D0
   !+ad_vars  emult /1.27/ : energy multiplication in blanket and shield
+  !                         (calculated if blktmodel>0)
   real(kind(1.0D0)) :: emult = 1.27D0
   !+ad_vars  fblbe /0.6/ : beryllium fraction of blanket by volume
+  !+ad_varc                (if blktmodel>0, Be fraction of breeding unit)
   real(kind(1.0D0)) :: fblbe = 0.6D0
+  !+ad_vars  fblbreed /0.154/ : beryllium fraction of blanket breeding unit by volume
+  !+ad_varc                     (blktmodel>0)
+  real(kind(1.0D0)) :: fblbreed = 0.154D0
+  !+ad_vars  fblhebmi /0.40/ : helium fraction of inboard blanket box manifold by volume
+  !+ad_varc                     (blktmodel>0)
+  real(kind(1.0D0)) :: fblhebmi = 0.4D0
+  !+ad_vars  fblhebmo /0.40/ : helium fraction of outboard blanket box manifold by volume
+  !+ad_varc                     (blktmodel>0)
+  real(kind(1.0D0)) :: fblhebmo = 0.4D0
+  !+ad_vars  fblhebpi /0.6595/ : helium fraction of inboard blanket back plate by volume
+  !+ad_varc                     (blktmodel>0)
+  real(kind(1.0D0)) :: fblhebpi = 0.6595D0
+  !+ad_vars  fblhebpo /0.6713/ : helium fraction of outboard blanket back plate by volume
+  !+ad_varc                     (blktmodel>0)
+  real(kind(1.0D0)) :: fblhebpo = 0.6713D0
   !+ad_vars  fblli /0.0/ : lithium fraction of blanket by volume
+  !+ad_varc                (blktmodel=0, lblnkt=1, smstr=2)
   real(kind(1.0D0)) :: fblli = 0.0D0
   !+ad_vars  fblli2o /0.08/ : lithium oxide fraction of blanket by volume
+  !+ad_varc                   (blktmodel=0, lblnkt=1, smstr=1)
   real(kind(1.0D0)) :: fblli2o = 0.08D0
   !+ad_vars  fbllipb /0.68/ : lithium lead fraction of blanket by volume
+  !+ad_varc                   (blktmodel=0, lblnkt=0 or 1, smstr=2)
   real(kind(1.0D0)) :: fbllipb = 0.68D0
   !+ad_vars  fblss /0.07/ : stainless steel fraction of blanket by volume
+  !+ad_varc                 (if blktmodel>0, steel fraction of breeding unit)
   real(kind(1.0D0)) :: fblss = 0.07D0
   !+ad_vars  fblvd /0.0/ : vanadium fraction of blanket by volume
+  !+ad_varc                (blktmodel=0)
   real(kind(1.0D0)) :: fblvd = 0.0D0
-  !+ad_vars  fhole /0.15/ : hole fraction of the 1st wall - that neutrons see;
+  !+ad_vars  fhole /0.15/ : hole fraction of the first wall and blanket that
+  !+ad_varc                 neutrons see, due to presence of divertor;
   !+ad_varc                 = (1 - first wall area coverage factor)
   real(kind(1.0D0)) :: fhole = 0.15D0
-  !+ad_vars  fvolbi /1.0/ : area coverage factor for inboard blanket volume
-  real(kind(1.0D0)) :: fvolbi = 1.0D0
-  !+ad_vars  fvolbo /0.75/ : area coverage factor for outboard blanket volume
-  real(kind(1.0D0)) :: fvolbo = 0.75D0
   !+ad_vars  fvoldw /1.4/ : area coverage factor for vacuum vessel volume
   real(kind(1.0D0)) :: fvoldw = 1.4D0
   !+ad_vars  fvolsi /0.64/ : area coverage factor for inboard shield volume
@@ -852,12 +884,28 @@ module fwbs_variables
   !+ad_vars  fwclfr /0.15/ : first wall coolant fraction
   !+ad_varc                  (calculated if lpulse=1)
   real(kind(1.0D0)) :: fwclfr = 0.15D0
-  !+ad_vars  fwbsshape /1/ : first wall, blanket, shield and vacuum vessel shape:<UL>
-  !+ad_varc                  <LI> = 1 D-shaped (cylinder inboard + ellipse outboard)
+  !+ad_vars  fwbsshape /2/ : first wall, blanket, shield and vacuum vessel shape:<UL>
+  !+ad_varc                  <LI> = 1 D-shaped (cylinder inboard + ellipse outboard);
   !+ad_varc                  <LI> = 2 defined by two ellipses</UL>
-  integer :: fwbsshape = 1
+  integer :: fwbsshape = 2
   !+ad_vars  fwmass : first wall mass (kg)
   real(kind(1.0D0)) :: fwmass = 0.0D0
+  !+ad_vars  hcdportsize /1/ : size of heating/current drive ports (blktmodel>0):<UL>
+  !+ad_varc                  <LI> = 1 'small'
+  !+ad_varc                  <LI> = 2 'large'</UL>
+  integer :: hcdportsize = 1
+  !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)
+  real(kind(1.0D0)) :: li6enrich = 30.0D0
+  !+ad_vars  nflutf : peak fast neutron fluence on TF coil superconductor (n/m2)
+  real(kind(1.0D0)) :: nflutf = 0.0D0
+  !+ad_vars  npdiv /2/ : number of divertor ports (blktmodel>0)
+  integer :: npdiv = 2
+  !+ad_vars  nphcdin /2/ : number of inboard ports for heating/current drive
+  !+ad_varc                (blktmodel>0)
+  integer :: nphcdin = 2
+  !+ad_vars  nphcdout /2/ : number of outboard ports for heating/current drive
+  !+ad_varc                 (blktmodel>0)
+  integer :: nphcdout = 2
   !+ad_vars  pnucblkt : nuclear heating in the blanket (MW)
   real(kind(1.0D0)) :: pnucblkt = 0.0D0
   !+ad_vars  pnuccp : nuclear heating in the centrepost (MW)
@@ -868,16 +916,23 @@ module fwbs_variables
   real(kind(1.0D0)) :: pnucshld = 0.0D0
   !+ad_vars  ptfnuc : nuclear heating in the TF coil (MW)
   real(kind(1.0D0)) :: ptfnuc = 0.0D0
+  !+ad_vars  ptfnucpm3 : nuclear heating in the TF coil (MW/m3) (blktmodel>0)
+  real(kind(1.0D0)) :: ptfnucpm3 = 0.0D0
   !+ad_vars  rdewex : external cryostat radius (m)
   real(kind(1.0D0)) :: rdewex = 0.0D0
   !+ad_vars  rpf2dewar /0.5/ : radial distance between centre of ipfloc=3
   !+ad_varc                    PF coil conductor and external cryostat (m)
   real(kind(1.0D0)) :: rpf2dewar = 0.5D0
+  !+ad_vars  tbr : tritium breeding ratio (blktmodel>0)
+  real(kind(1.0D0)) :: tbr = 0.0D0
+  !+ad_vars  tritprate : tritium production rate (g/day) (blktmodel>0)
+  real(kind(1.0D0)) :: tritprate = 0.0D0
   !+ad_vars  vdewex : external cryostat volume (m3)
   real(kind(1.0D0)) :: vdewex = 0.0D0
   !+ad_vars  vdewin : vacuum vessel volume (m3)
   real(kind(1.0D0)) :: vdewin = 0.0D0
-  !+ad_vars  vfblkt /0.25/ : coolant void fraction in blanket
+  !+ad_vars  vfblkt /0.25/ : coolant void fraction in blanket (blktmodel=0),
+  !+ad_varc                  (calculated if blktmodel > 0)
   real(kind(1.0D0)) :: vfblkt = 0.25D0
   !+ad_vars  vfshld /0.25/ : coolant void fraction in shield
   real(kind(1.0D0)) :: vfshld = 0.25D0
@@ -889,8 +944,15 @@ module fwbs_variables
   real(kind(1.0D0)) :: volblkto = 0.0D0
   !+ad_vars  volshld : volume of shield (m3)
   real(kind(1.0D0)) :: volshld = 0.0D0
+  !+ad_vars  vvhemax : maximum helium concentration in vacuum vessel at end of
+  !+ad_varc            plant life (appm) (blktmodel>0)
+  real(kind(1.0D0)) :: vvhemax = 0.0D0
+  !+ad_vars  wallpf /1.21/ : neutron wall load peaking factor (blktmodel>0)
+  real(kind(1.0D0)) :: wallpf = 1.21D0
   !+ad_vars  whtblbe : mass of blanket - Be part (kg)
   real(kind(1.0D0)) :: whtblbe = 0.0D0
+  !+ad_vars  whtblbreed : mass of blanket - breeder part (kg) (blktmodel>0)
+  real(kind(1.0D0)) :: whtblbreed = 0.0D0
   !+ad_vars  whtblkt : mass of blanket (kg)
   real(kind(1.0D0)) :: whtblkt = 0.0D0
   !+ad_vars  whtblli : mass of blanket - Li part (kg)
@@ -926,6 +988,8 @@ module fwbs_variables
   !+ad_vars  costr /2/ : Switch for blanket coolant material (lblnkt=1):<UL>
   !+ad_varc         <LI> = 1 Gaseous helium coolant;
   !+ad_varc         <LI> = 2 Pressurized water coolant</UL>
+  !+ad_varc         (costr=2 (sic) is forced if blktmodel > 0, as only the
+  !+ad_varc         blanket is helium-cooled in this model)
   integer :: costr = 2
   !+ad_vars  estr /1/ : Switch for cooling channel orientation (lblnkt=1):<UL>
   !+ad_varc        <LI> = 1 radially orientated;
@@ -944,7 +1008,7 @@ module fwbs_variables
   !+ad_vars  fkblkt /1.0/ : blanket elongation / plasma elongation
   real(kind(1.0D0)) :: fkblkt = 1.0D0
   !+ad_vars  lblnkt /1/ : Switch for blanket model:<UL>
-  !+ad_varc          <LI> = 0 original model;
+  !+ad_varc          <LI> = 0 original model (but see <CODE>blktmodel</CODE>);
   !+ad_varc          <LI> = 1 full thermodynamic model</UL>
   integer :: lblnkt = 1
   !+ad_vars  nipfwh /1/ : Number of intermediate pressure feed water heater pumps
@@ -1439,9 +1503,9 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfno = 16.0D0
   !+ad_vars  tfocrn : TF coil half-width - outer bore (m)
   real(kind(1.0D0)) :: tfocrn = 0.0D0
-  !+ad_vars  tfsai : area of the inboard TF coil legs
+  !+ad_vars  tfsai : area of the inboard TF coil legs (m2)
   real(kind(1.0D0)) :: tfsai = 0.0D0
-  !+ad_vars  tfsao : area of the outboard TF coil legs
+  !+ad_vars  tfsao : area of the outboard TF coil legs (m2)
   real(kind(1.0D0)) :: tfsao = 0.0D0
   !+ad_vars  tftmp /4.5/ : peak TF coil He coolant temperature (K)
   real(kind(1.0D0)) :: tftmp = 4.5D0
@@ -2003,6 +2067,7 @@ module build_variables
   !+ad_hist  09/04/13 PJK Relabelled ddwex, ddwi etc.
   !+ad_hist  10/04/13 PJK Relabelled gapsto, gapomin etc.
   !+ad_hist  15/05/13 PJK Relabelled gapds, gapomin, gapsto, vgap2; added blnktth
+  !+ad_hist  22/05/13 PJK Added blanket subcomponent thicknesses
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2016,11 +2081,40 @@ module build_variables
   real(kind(1.0D0)) :: aplasmin = 0.25D0
   !+ad_vars  bcylth /0.0/ : bucking cylinder thickness (m)
   real(kind(1.0D0)) :: bcylth = 0.0D0
-  !+ad_vars  blnkith /0.115/ : inboard blanket thickness (m)
+  !+ad_vars  blarea : blanket total surface area (m2)
+  real(kind(1.0D0)) :: blarea = 0.0D0
+  !+ad_vars  blareaib : inboard blanket surface area (m2)
+  real(kind(1.0D0)) :: blareaib = 0.0D0
+  !+ad_vars  blareaob : outboard blanket surface area (m2)
+  real(kind(1.0D0)) :: blareaob = 0.0D0
+  !+ad_vars  blbmith /0.17/ : inboard blanket box manifold thickness (m)
+  !+ad_varc                    (blktmodel>0)
+  real(kind(1.0D0)) :: blbmith = 0.17D0
+  !+ad_vars  blbmoth /0.27/ : outboard blanket box manifold thickness (m)
+  !+ad_varc                    (blktmodel>0)
+  real(kind(1.0D0)) :: blbmoth = 0.27D0
+  !+ad_vars  blbpith /0.30/ : inboard blanket base plate thickness (m)
+  !+ad_varc                    (blktmodel>0)
+  real(kind(1.0D0)) :: blbpith = 0.30D0
+  !+ad_vars  blbpoth /0.35/ : outboard blanket base plate thickness (m)
+  !+ad_varc                    (blktmodel>0)
+  real(kind(1.0D0)) :: blbpoth = 0.35D0
+  !+ad_vars  blbuith /0.365/ : inboard blanket breeding unit thickness (m)
+  !+ad_varc                    (blktmodel>0)
+  !+ad_varc                    (iteration variable 90)
+  real(kind(1.0D0)) :: blbuith = 0.365D0
+  !+ad_vars  blbuoth /0.465/ : outboard blanket breeding unit thickness (m)
+  !+ad_varc                    (blktmodel>0)
+  !+ad_varc                    (iteration variable 91)
+  real(kind(1.0D0)) :: blbuoth = 0.465D0
+  !+ad_vars  blnkith /0.115/ : inboard blanket thickness (m);
+  !+ad_varc                    calculated if blktmodel > 0
   real(kind(1.0D0)) :: blnkith = 0.115D0
-  !+ad_vars  blnkoth /0.235/ : outboard blanket thickness (m)
+  !+ad_vars  blnkoth /0.235/ : outboard blanket thickness (m);
+  !+ad_varc                    calculated if blktmodel > 0
   real(kind(1.0D0)) :: blnkoth = 0.235D0
-  !+ad_vars  blnktth /0.175/ : top blanket thickness (m)
+  !+ad_vars  blnktth /0.175/ : top blanket thickness (m);
+  !+ad_varc                    calculated if blktmodel > 0
   real(kind(1.0D0)) :: blnktth = 0.175D0
   !+ad_vars  bore /1.42/ : OH coil inboard radius (m)
   !+ad_varc                (iteration variable 29)
@@ -2045,8 +2139,12 @@ module build_variables
   real(kind(1.0D0)) :: fmssh = 0.0D0
   !+ad_vars  fmstf /0.0/ : Martensitic fraction of steel in TF coil
   real(kind(1.0D0)) :: fmstf = 0.0D0
-  !+ad_vars  fwarea : first wall surface area (m2)
+  !+ad_vars  fwarea : first wall total surface area (m2)
   real(kind(1.0D0)) :: fwarea = 0.0D0
+  !+ad_vars  fwareaib : inboard first wall surface area (m2)
+  real(kind(1.0D0)) :: fwareaib = 0.0D0
+  !+ad_vars  fwareaob : outboard first wall surface area (m2)
+  real(kind(1.0D0)) :: fwareaob = 0.0D0
   !+ad_vars  fwith /0.035/ : inboard first wall thickness (m) (if lpulse=1, =2*bfw)
   real(kind(1.0D0)) :: fwith = 0.035D0
   !+ad_vars  fwoth /0.035/ : outboard first wall thickness (m) (if lpulse=1, =2*bfw)
@@ -2101,9 +2199,17 @@ module build_variables
   !+ad_vars  scraplo /0.15/ : outboard scrapeoff length (m) (used if iscrp=1)
   !+ad_varc                   (iteration variable 74)
   real(kind(1.0D0)) :: scraplo = 0.15D0
+  !+ad_vars  sharea : shield total surface area (m2)
+  real(kind(1.0D0)) :: sharea = 0.0D0
+  !+ad_vars  shareaib : inboard shield surface area (m2)
+  real(kind(1.0D0)) :: shareaib = 0.0D0
+  !+ad_vars  shareaob : outboard shield surface area (m2)
+  real(kind(1.0D0)) :: shareaob = 0.0D0
   !+ad_vars  shldith /0.69/ : inboard shield thickness (m)
+  !+ad_varc                   (iteration variable 93)
   real(kind(1.0D0)) :: shldith = 0.69D0
   !+ad_vars  shldoth /1.05/ : outboard shield thickness (m)
+  !+ad_varc                   (iteration variable 94)
   real(kind(1.0D0)) :: shldoth = 1.05D0
   !+ad_vars  shldtth /0.60/ : upper/lower shield thickness (m)
   real(kind(1.0D0)) :: shldtth = 0.6D0
@@ -2154,7 +2260,7 @@ module cost_variables
   public
 
   !+ad_vars  abktflnc /20.0/ : allowable first wall/blanket neutron
-  !+ad_varc                    fluence (MW-yr/m2)
+  !+ad_varc                    fluence (MW-yr/m2) (blktmodel=0)
   real(kind(1.0D0)) :: abktflnc = 20.0D0
   !+ad_vars  adivflnc /25.0/ : allowable divertor heat fluence (MW-yr/m2)
   real(kind(1.0D0)) :: adivflnc = 25.0D0
@@ -2289,6 +2395,8 @@ module cost_variables
   real(kind(1.0D0)) :: ucap = 17.0D0
   !+ad_vars  ucblbe /260.0/ : unit cost for blanket beryllium ($/kg)
   real(kind(1.0D0)) :: ucblbe = 260.0D0
+  !+ad_vars  ucblbreed /875.0/ : unit cost for breeder material ($/kg) (blktmodel>0)
+  real(kind(1.0D0)) :: ucblbreed = 875.0D0
   !+ad_vars  ucblli /875.0/ : unit cost for blanket lithium ($/kg) (30% Li6)
   real(kind(1.0D0)) :: ucblli = 875.0D0
   !+ad_vars  ucblli2o /600.0/ : unit cost for blanket Li_2O ($/kg)
@@ -2540,6 +2648,9 @@ module constraint_variables
   !+ad_vars  fdtmp /1.0/ : f-value for first wall coolant temperature rise
   !+ad_varc                (constraint equation 38, iteration variable 62)
   real(kind(1.0D0)) :: fdtmp = 1.0D0
+  !+ad_vars  fflutf /1.0/ : f-value for neutron fluence on TF coil
+  !+ad_varc                  (constraint equation 53, iteration variable 92)
+  real(kind(1.0D0)) :: fflutf = 1.0D0
   !+ad_vars  ffuspow /1.0/ : f-value for maximum fusion power
   !+ad_varc                  (constraint equation 9, iteration variable 26)
   real(kind(1.0D0)) :: ffuspow = 1.0D0
@@ -2586,6 +2697,9 @@ module constraint_variables
   !+ad_vars  fptemp /1.0/ : f-value for peak centrepost temperature
   !+ad_varc                 (constraint equation 44, iteration variable 68)
   real(kind(1.0D0)) :: fptemp = 1.0D0
+  !+ad_vars  fptfnuc /1.0/ : f value for maximum TF coil nuclear heating
+  !+ad_varc                  (constraint equation 54, iteration variable 95)
+  real(kind(1.0D0)) :: fptfnuc = 1.0D0
   !+ad_vars  fq /1.0/ : f-value for edge safety factor
   !+ad_varc             (constraint equation 45, iteration variable 71)
   real(kind(1.0D0)) :: fq = 1.0D0
@@ -2607,6 +2721,9 @@ module constraint_variables
   !+ad_vars  fstrcond /1.0/ : f-value for TF coil conduit stress
   !+ad_varc                   (constraint equation 32, iteration variable 49)
   real(kind(1.0D0)) :: fstrcond = 1.0D0
+  !+ad_vars  ftbr /1.0/ : f-value for minimum tritium breeding ratio (blktmodel>0)
+  !+ad_varc                 (constraint equation 52, iteration variable 89)
+  real(kind(1.0D0)) :: ftbr = 1.0D0
   !+ad_vars  ftburn /1.0/ : f-value for minimum burn time
   !+ad_varc                 (constraint equation 13, iteration variable 21)
   real(kind(1.0D0)) :: ftburn = 1.0D0
@@ -2628,6 +2745,10 @@ module constraint_variables
   !+ad_vars  fvs /1.0/ : f-value for flux-swing (V-s) requirement
   !+ad_varc              (constraint equation 12, iteration variable 15)
   real(kind(1.0D0)) :: fvs = 1.0D0
+  !+ad_vars  fvvhe /1.0/ : f-value for vacuum vessel He concentration limit
+  !+ad_varc                (blktmodel>0)
+  !+ad_varc                (constraint equation 55, iteration variable 96)
+  real(kind(1.0D0)) :: fvvhe = 1.0D0
   !+ad_vars  fwalld /1.0/ : f-value for minimum wall load
   !+ad_varc                 (constraint equation 8, iteration variable 14)
   real(kind(1.0D0)) :: fwalld = 1.0D0
@@ -2637,12 +2758,22 @@ module constraint_variables
   !+ad_vars  mvalim /40.0/ : maximum MVA limit
   !+ad_varc                  (constraint equation 19)
   real(kind(1.0D0)) :: mvalim = 40.0D0
+  !+ad_vars  nflutfmax /1.0D23/ : max fast neutron fluence on TF coil (n/m2)
+  !+ad_varc                      (blktmodel>0)
+  !+ad_varc                      (constraint equation 53)
+  real(kind(1.0D0)) :: nflutfmax = 1.0D23
   !+ad_vars  pnetelin /1000.0/ : required net electric power (MW)
   !+ad_varc                      (constraint equation 16)
   real(kind(1.0D0)) :: pnetelin = 1.0D3
   !+ad_vars  powfmax /1000.0/ : maximum fusion power (MW)
   !+ad_varc                     (constraint equation 9)
   real(kind(1.0D0)) :: powfmax = 1.0D3
+  !+ad_vars  ptfnucmax /1.0D-3/ : maximum nuclear heating in TF coil (MW/m3)
+  !+ad_varc                       (constraint equation 54)
+  real(kind(1.0D0)) :: ptfnucmax = 1.0D-3
+  !+ad_vars  tbrmin /1.1/ : minimum tritium breeding ratio (blktmodel>0)
+  !+ad_varc                 (constraint equation 52)
+  real(kind(1.0D0)) :: tbrmin = 1.1D0
   !+ad_vars  tbrnmn /1.0/ : minimum burn time (s)
   !+ad_varc                 (constraint equation 13)
   real(kind(1.0D0)) :: tbrnmn = 1.0D0
@@ -2655,6 +2786,10 @@ module constraint_variables
   !+ad_vars  tpkmax /600.0/ : maximum first wall peak temperature (C)
   !+ad_varc                   (constraint equation 39)
   real(kind(1.0D0)) :: tpkmax = 600.0D0
+  !+ad_vars  vvhealw /1.0/ : allowed maximum helium concentration in vacuum vessel
+  !+ad_varc                  at end of plant life (appm) (blktmodel>0)
+  !+ad_varc                  (constraint equation 55)
+  real(kind(1.0D0)) :: vvhealw = 1.0D0
   !+ad_vars  walalw /1.0/ : allowable wall-load (MW/m2)
   !+ad_varc                 (constraint equation 8)
   real(kind(1.0D0)) :: walalw = 1.0D0

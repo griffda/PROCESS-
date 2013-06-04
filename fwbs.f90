@@ -1,6 +1,748 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module kit_blanket_model
+
+!  Blanket neutronics model, created by Fabrizio Franza (KIT), migrated to Fortran
+
+  implicit none
+
+  private
+  public :: kit_blanket
+
+  !  Radial coordinate arrays for the blanket sub-assemblies:
+  !  BU = Breeding Unit
+  !  BM = Box Manifold
+  !  BP = Back Plates
+  !  VV = Vacuum Vessel
+  !  Element 1 = 'inner' edge, element 2 = 'outer' edge
+
+  real(kind(1.0D0)), dimension(2) :: x_BU_IB, x_BM_IB, x_BP_IB, x_VV_IB
+  real(kind(1.0D0)), dimension(2) :: x_BU_OB, x_BM_OB, x_BP_OB, x_VV_OB
+
+  !  Values shared between subroutines in this module
+
+  real(kind(1.0D0)) :: q_BU_IB_end,q_BM_IB_end,q_BP_IB_end
+  real(kind(1.0D0)) :: q_BU_OB_end,q_BM_OB_end,q_BP_OB_end
+  real(kind(1.0D0)) :: phi_n_vv_IB_start,phi_n_vv_OB_start
+
+  !  Universal constants
+
+  real(kind(1.0D0)), parameter :: E_n = 14.1D0    ! [MeV] Average neutron energy
+  real(kind(1.0D0)), parameter :: PA_T = 3.0D0    ! [g/mol] Tritium atomic weight
+  real(kind(1.0D0)), parameter :: N_Av = 6.02D23  ! [at/mol] Avogadro number
+  integer, parameter :: K_tau = 31536000          ! [sec/yr] Number of seconds per year
+
+  !  Constants and fixed coefficients used in the model
+  !  Based on Helium-Cooled Pebble Beds (HCBP) configuration
+  !  of the PPCS Model B design
+
+  real(kind(1.0D0)) :: A_cov_PPCS = 1365.0D0   ! [m^2] Total blanket coverage area
+  real(kind(1.0D0)) :: A_FW_PPCS = 1253.0D0    ! [m^2] First wall area
+  real(kind(1.0D0)) :: A_FW_IB_PPCS = 348.2D0  ! [m^2] IB first wall area
+  real(kind(1.0D0)) :: A_FW_OB_PPCS = 905.6D0  ! [m^2] OB first wall area
+  real(kind(1.0D0)) :: NWL_av_PPCS = 1.94D0    ! [MW/m^2] Average neutron wall load
+  real(kind(1.0D0)) :: f_peak_PPCS = 1.21      ! [--] Neutron wall load peaking factor
+  real(kind(1.0D0)) :: CF_bl_PPCS              ! [%] Blanket coverage factor (calculated)
+  real(kind(1.0D0)) :: e_Li_PPCS = 30.0D0      ! [%] Li6 enrichment
+  character(len=13) :: breeder_PPCS = 'Orthosilicate' ! Breeder type
+
+  real(kind(1.0D0)) :: t_BU_IB_PPCS = 36.5D0   ! [cm] IB Breeding Unit thickness
+  real(kind(1.0D0)) :: t_BU_OB_PPCS = 46.5D0   ! [cm] OB Breeding Unit thickness
+  real(kind(1.0D0)) :: TBR_PPCS = 1.12D0       ! [--] Tritium Breeding Ratio
+  real(kind(1.0D0)) :: M_E_PPCS = 1.38D0       ! [--] Energy multiplication factor
+  ! not used...
+  !real(kind(1.0D0)) :: t_HTS_IB_PPCS = 17.0D0  ! [cm] IB high temp. shield thickness
+  !real(kind(1.0D0)) :: alpha_HTS_IB_PPCS = 40.0D0 ! [%] IB HTS helium fraction
+  !real(kind(1.0D0)) :: t_HTS_OB_PPCS = 27.0D0  ! [cm] OB high temp. shield thickness
+  !real(kind(1.0D0)) :: alpha_HTS_OB_PPCS = 40.0D0 ! [%] OB HTS helium fraction
+
+  !  Power density pre-exponential terms and decay lengths
+
+  real(kind(1.0D0)) :: q_0_BU_breed_IB = 31.348D0 ! [W/cm^3] Pre-exp term in IB BU breeder
+  real(kind(1.0D0)) :: q_0_BU_breed_OB = 37.144D0 ! [W/cm^3] Pre-exp term in OB BU breeder
+  real(kind(1.0D0)) :: lambda_q_BU_breed_IB = 29.42D0 ! [cm] Decay length in IB BU breeder
+  real(kind(1.0D0)) :: lambda_q_BU_breed_OB = 27.03D0 ! [cm] Decay length in OB BU breeder
+
+  real(kind(1.0D0)) :: q_0_BU_Be_IB = 9.532D0 ! [W/cm^3] Pre-exp term in IB BU Beryllium
+  real(kind(1.0D0)) :: q_0_BU_Be_OB = 11.809D0 ! [W/cm^3] Pre-exp term in OB BU Beryllium
+  real(kind(1.0D0)) :: lambda_q_BU_Be_IB = 16.39D0 ! [cm] Decay length in IB BU Beryllium
+  real(kind(1.0D0)) :: lambda_q_BU_Be_OB = 16.39D0 ! [cm] Decay length in OB BU Beryllium
+
+  real(kind(1.0D0)) :: q_0_BU_steels_IB = 16.067D0 ! [W/cm^3] Pre-exp term in IB BU steels
+  real(kind(1.0D0)) :: q_0_BU_steels_OB = 18.788D0 ! [W/cm^3] Pre-exp term in OB BU steels
+  real(kind(1.0D0)) :: lambda_q_BU_steels_IB = 21.27D0 ! [cm] Decay length in IB BU steels
+  real(kind(1.0D0)) :: lambda_q_BU_steels_OB = 21.27D0 ! [cm] Decay length in OB BU steels
+
+  real(kind(1.0D0)) :: lambda_EU = 11.57D0  ! [cm] Decay length in EUROFER
+  real(kind(1.0D0)) :: lambda_q_BM_IB       ! [cm] Decay length in IB BM (calculated)
+  real(kind(1.0D0)) :: lambda_q_BM_OB       ! [cm] Decay length in OB BM (calculated)
+  real(kind(1.0D0)) :: lambda_q_BP_IB       ! [cm] Decay length in IB BP (calculated)
+  real(kind(1.0D0)) :: lambda_q_BP_OB       ! [cm] Decay length in OB BP (calculated)
+  real(kind(1.0D0)) :: lambda_q_VV = 6.92D0 ! [cm] Decay length in Vacuum Vessel
+
+  !  Fast neutron flux pre-exponential terms and decay lengths
+
+  real(kind(1.0D0)) :: phi_0_n_BU_IB = 5.12D14  ! [n/cm^2/sec] Pre-exp term in IB BU
+  real(kind(1.0D0)) :: phi_0_n_BU_OB = 5.655D14 ! [n/cm^2/sec] Pre-exp term in OB BU
+  real(kind(1.0D0)) :: lambda_n_BU_IB = 18.79D0 ! [cm] Decay length in IB BU
+  real(kind(1.0D0)) :: lambda_n_BU_OB = 19.19D0 ! [cm] Decay length in OB BU
+  real(kind(1.0D0)) :: lambda_n_VV = 8.153D0    ! [cm] Decay length in VV
+
+  !  [n/cm^2/sec] Reference fast neutron flux on VV inner side [Fish09]
+
+  real(kind(1.0D0)) :: phi_n_0_VV_ref = 2.0D10  
+
+  !  Vacuum vessel helium production pre-exponential terms and decay lengths
+
+  real(kind(1.0D0)) :: Gamma_He_0_ref = 1.8D-3  ! [appm/yr] Pre-exp term
+  real(kind(1.0D0)) :: lambda_He_VV = 7.6002D0  ! [cm] Decay length
+
+  !  [dpa] Allowable neutron damage to the FW EUROFER
+
+  real(kind(1.0D0)) :: D_EU_max = 60.0D0  
+
+  !  Variables used in this module, ultimately to be set via the calling routine
+  !  to values given by PROCESS variables
+
+  real(kind(1.0D0)), public :: P_n = 2720.0D0    ! [MW] Fusion neutron power
+  real(kind(1.0D0)), public :: NWL_av = 1.94D0   ! [MW/m^2] Average neutron wall load
+  real(kind(1.0D0)), public :: f_peak = 1.21D0   ! [--] NWL peaking factor
+  real(kind(1.0D0)), public :: t_FW_IB = 2.3D0   ! [cm] IB first wall thickness
+  real(kind(1.0D0)), public :: t_FW_OB = 2.3D0   ! [cm] OB first wall thickness
+  real(kind(1.0D0)), public :: A_FW_IB = 3.5196D6 ! [cm^2] IB first wall area
+  real(kind(1.0D0)), public :: A_FW_OB = 9.0504D6 ! [cm^2] OB first wall area
+  real(kind(1.0D0)), public :: A_bl_IB = 3.4844D6 ! [cm^2] IB blanket area
+  real(kind(1.0D0)), public :: A_bl_OB = 8.9599D6 ! [cm^2] OB blanket area
+  real(kind(1.0D0)), public :: A_VV_IB = 3.8220D6 ! [cm^2] IB shield/VV area
+  real(kind(1.0D0)), public :: A_VV_OB = 9.8280D6 ! [cm^2] OB shield/VV area
+  real(kind(1.0D0)), public :: CF_bl = 91.7949D0 ! [%] Blanket coverage factor
+  integer, public :: n_ports_div = 2             ! [ports] Number of divertor ports
+  integer, public :: n_ports_H_CD_IB = 2         ! [ports] Number of IB H&CD ports
+  integer, public :: n_ports_H_CD_OB = 2         ! [ports] Number of OB H&CD ports
+  character(len=5), public :: H_CD_ports = 'small' ! Type of H&CD ports (small or large)
+  real(kind(1.0D0)), public :: e_Li = 30.0D0     ! [%] Lithium 6 enrichment
+  real(kind(1.0D0)), public :: t_plant = 40.0D0  ! [FPY] Plant lifetime
+  real(kind(1.0D0)), public :: alpha_m = 0.75D0  ! [--] Availability factor
+  real(kind(1.0D0)), public :: alpha_puls = 1.0D0 ! [--] Pulsed regime fraction
+
+  !  Breeder type (allowed values are Orthosilicate, Metatitanate or Zirconate)
+
+  character(len=20), public :: breeder = 'Orthosilicate'
+
+  !  Inboard parameters
+
+  real(kind(1.0D0)), public :: t_BU_IB = 36.5D0     ! [cm] BU thickness
+  real(kind(1.0D0)), public :: t_BM_IB = 17.0D0     ! [cm] BM thickness
+  real(kind(1.0D0)), public :: t_BP_IB = 30.0D0     ! [cm] BP thickness
+  real(kind(1.0D0)), public :: t_VV_IB = 35.0D0     ! [cm] VV thickness
+  real(kind(1.0D0)), public :: alpha_BM_IB = 40.0D0  ! [%] Helium fraction in the IB BM
+  real(kind(1.0D0)), public :: alpha_BP_IB = 65.95D0 ! [%] Helium fraction in the IB BP
+  real(kind(1.0D0)), public :: chi_Be_BU_IB = 69.2D0 ! [%] Beryllium vol. frac. in IB BU
+  real(kind(1.0D0)), public :: chi_breed_BU_IB = 15.4D0 ! [%] Breeder vol. frac. in IB BU
+  real(kind(1.0D0)), public :: chi_steels_BU_IB = 9.8D0 ! [%] Steels vol. frac. in IB BU
+
+  !  Outboard parameters
+
+  real(kind(1.0D0)), public :: t_BU_OB = 46.5D0     ! [cm] BU thickness
+  real(kind(1.0D0)), public :: t_BM_OB = 27.0D0     ! [cm] BM thickness
+  real(kind(1.0D0)), public :: t_BP_OB = 35.0D0     ! [cm] BP thickness
+  real(kind(1.0D0)), public :: t_VV_OB = 65.0D0     ! [cm] VV thickness
+  real(kind(1.0D0)), public :: alpha_BM_OB = 40.0D0  ! [%] Helium fraction in the OB BM
+  real(kind(1.0D0)), public :: alpha_BP_OB = 67.13D0 ! [%] Helium fraction in the OB BP
+  real(kind(1.0D0)), public :: chi_Be_BU_OB = 69.2D0 ! [%] Beryllium vol. frac. in OB BU
+  real(kind(1.0D0)), public :: chi_breed_BU_OB = 15.4D0 ! [%] Breeder vol. frac. in OB BU
+  real(kind(1.0D0)), public :: chi_steels_BU_OB = 9.8D0 ! [%] Steels vol. frac. in OB BU
+
+  !  Model outputs
+
+  real(kind(1.0D0)), public :: pnuctfi  ! [MW/m3] Nuclear heating on IB TF coil
+  real(kind(1.0D0)), public :: pnuctfo  ! [MW/m3] Nuclear heating on OB TF coil
+  real(kind(1.0D0)), public :: P_th_tot ! [MW] Nuclear power generated in blanket
+  real(kind(1.0D0)), public :: pnucsh   ! [MW] Nuclear power generated in shield/VV
+  real(kind(1.0D0)), public :: M_E      ! [--] Energy multiplication factor
+  real(kind(1.0D0)), public :: tbratio  ! [--] Tritium breeding ratio
+  real(kind(1.0D0)), public :: G_tot    ! [g/day] Tritium production rate
+  real(kind(1.0D0)), public :: nflutfi  ! [n/cm2] Fast neutron fluence on IB TF coil
+  real(kind(1.0D0)), public :: nflutfo  ! [n/cm2] Fast neutron fluence on OB TF coil
+  real(kind(1.0D0)), public :: vvhemini ! [appm] minimum final He. conc in IB VV
+  real(kind(1.0D0)), public :: vvhemino ! [appm] minimum final He. conc in OB VV
+  real(kind(1.0D0)), public :: vvhemaxi ! [appm] maximum final He. conc in IB VV
+  real(kind(1.0D0)), public :: vvhemaxo ! [appm] maximum final He. conc in OB VV
+  real(kind(1.0D0)), public :: t_bl_fpy ! [y] blanket lifetime in full power years
+  real(kind(1.0D0)), public :: t_bl_y   ! [y] blanket lifetime in calendar years
+
+contains
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function f_alpha(alpha)
+
+    !  Calculates decay length multiplier given the
+    !  helium fraction alpha (percent)
+
+    real(kind(1.0D0)) :: f_alpha
+    real(kind(1.0D0)), intent(in) :: alpha
+
+    f_alpha = 1.0D0 + 0.019D0*alpha
+
+  end function f_alpha
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine kit_blanket
+
+    !  Main routine for the KIT Blanket Model
+
+    implicit none
+
+    !  Perform preliminary calculations for the PPCS Model B configuration
+
+    !  Blanket coverage factor (%)
+
+    CF_bl_PPCS = A_FW_PPCS/A_cov_PPCS * 100.0D0
+
+    !  Power density decay lengths (cm)
+
+    lambda_q_BM_IB = lambda_EU * f_alpha(alpha_BM_IB)
+    lambda_q_BM_OB = lambda_EU * f_alpha(alpha_BM_OB)
+    lambda_q_BP_IB = lambda_EU * f_alpha(alpha_BP_IB)
+    lambda_q_BP_OB = lambda_EU * f_alpha(alpha_BP_OB)
+
+    !  Initialise the radial coordinate arrays
+
+    call radial_coordinates
+
+    !  Perform the main calculations
+
+    call power_density(q_BU_IB_end,q_BM_IB_end,q_BP_IB_end, &
+         q_BU_OB_end,q_BM_OB_end,q_BP_OB_end,pnuctfi,pnuctfo)
+
+    call nuclear_power_production(q_BU_IB_end,q_BM_IB_end,q_BP_IB_end, &
+         q_BU_OB_end,q_BM_OB_end,q_BP_OB_end,P_th_tot,M_E,pnucsh)
+
+    call tritium_breeding_ratio(tbratio,G_tot)
+
+    call fast_neutron_fluence(phi_n_vv_IB_start,phi_n_vv_OB_start, &
+         nflutfi,nflutfo)
+
+    call He_production_vacuum_vessel(phi_n_vv_IB_start,phi_n_vv_OB_start, &
+         vvhemini,vvhemino,vvhemaxi,vvhemaxo)
+
+    call blanket_lifetime(t_bl_FPY,t_bl_Y)
+
+  end subroutine kit_blanket
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine radial_coordinates
+
+    implicit none
+
+    !  Radial coordinates in each inboard sub-assembly (cm)
+    !  Element 1 is 'inner' edge, element 2 is 'outer' edge
+
+    x_BU_IB(1) = 0.0D0 ; x_BU_IB(2) = t_FW_IB + t_BU_IB
+    x_BM_IB(1) = 0.0D0 ; x_BM_IB(2) = t_BM_IB
+    x_BP_IB(1) = 0.0D0 ; x_BP_IB(2) = t_BP_IB
+    x_VV_IB(1) = 0.0D0 ; x_VV_IB(2) = t_VV_IB
+
+    !  Radial coordinates in each outboard sub-assembly (cm)
+
+    x_BU_OB(1) = 0.0D0 ; x_BU_OB(2) = t_FW_OB + t_BU_OB
+    x_BM_OB(1) = 0.0D0 ; x_BM_OB(2) = t_BM_OB
+    x_BP_OB(1) = 0.0D0 ; x_BP_OB(2) = t_BP_OB
+    x_VV_OB(1) = 0.0D0 ; x_VV_OB(2) = t_VV_OB
+
+  end subroutine radial_coordinates
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine power_density(q_BU_IB_end,q_BM_IB_end,q_BP_IB_end, &
+       q_BU_OB_end,q_BM_OB_end,q_BP_OB_end,pnuctfi,pnuctfo)
+
+    !  Power Density profiles
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(out) :: q_BU_IB_end,q_BM_IB_end,q_BP_IB_end
+    real(kind(1.0D0)), intent(out) :: q_BU_OB_end,q_BM_OB_end,q_BP_OB_end
+    real(kind(1.0D0)), intent(out) :: pnuctfi, pnuctfo
+
+    !  Local variables
+
+    real(kind(1.0D0)), dimension(2) :: q_steels_BU_IB, q_steels_BU_OB
+    real(kind(1.0D0)), dimension(2) :: q_BM_IB, q_BP_IB, q_VV_IB
+    real(kind(1.0D0)), dimension(2) :: q_BM_OB, q_BP_OB, q_VV_OB
+
+    !  Inboard profiles
+
+    ! [W/cm^3] Power density profile in IB BU steels
+
+    q_steels_BU_IB(:) = NWL_av/NWL_av_PPCS * q_0_BU_steels_IB * &
+         exp(-x_BU_IB(:)/lambda_q_BU_steels_IB)
+    q_BU_IB_end = q_steels_BU_IB(2)
+
+    ! [W/cm^3] Power density profile in IB BM
+
+    q_BM_IB(:) = q_steels_BU_IB(2) * exp(-x_BM_IB(:)/lambda_q_BM_IB)
+    q_BM_IB_end = q_BM_IB(2)
+
+    ! [W/cm^3] Power density profile in IB BP
+
+    q_BP_IB(:) = q_BM_IB(2) * exp(-x_BP_IB(:)/lambda_q_BP_IB)
+    q_BP_IB_end = q_BP_IB(2)
+
+    ! [W/cm^3] Power density profile in IB VV
+
+    q_VV_IB(:) = q_BP_IB(2) * exp(-x_VV_IB(:)/lambda_q_VV)
+
+    !  Outboard profiles
+
+    ! [W/cm^3] Power density profile in OB BU steels
+
+    q_steels_BU_OB(:) = NWL_av/NWL_av_PPCS * q_0_BU_steels_OB * &
+         exp(-x_BU_OB(:)/lambda_q_BU_steels_OB)
+    q_BU_OB_end = q_steels_BU_OB(2)
+
+    ! [W/cm^3] Power density profile in OB BM
+
+    q_BM_OB(:) = q_steels_BU_OB(2) * exp(-x_BM_OB(:)/lambda_q_BM_OB)
+    q_BM_OB_end = q_BM_OB(2)
+
+    ! [W/cm^3] Power density profile in OB BP
+
+    q_BP_OB(:) = q_BM_OB(2) * exp(-x_BP_OB(:)/lambda_q_BP_OB)
+    q_BP_OB_end = q_BP_OB(2)
+
+    ! [W/cm^3] Power density profile in OB VV
+
+    q_VV_OB(:) = q_BP_OB(2) * exp(-x_VV_OB(:)/lambda_q_VV)
+
+    !write(*,*) ' '
+    !write(*,*) 'POWER DENSITY'
+    !write(*,*) 'Nuclear Heating on IB TFC Winding Pack: ',q_VV_IB(2), ' [W/cm^3]'
+    !write(*,*) 'Nuclear Heating on OB TFC Winding Pack: ',q_VV_OB(2), ' [W/cm^3]'
+
+    !  MW/m3 = W/cm3
+
+    pnuctfi = q_VV_IB(2)
+    pnuctfo = q_VV_OB(2)
+
+  end subroutine power_density
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine nuclear_power_production(q_BU_IB_end,q_BM_IB_end,q_BP_IB_end, &
+       q_BU_OB_end,q_BM_OB_end,q_BP_OB_end,P_th_tot,M_E,pnucsh)
+
+    !  Nuclear power production and energy multiplication factor
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: q_BU_IB_end,q_BM_IB_end,q_BP_IB_end
+    real(kind(1.0D0)), intent(in) :: q_BU_OB_end,q_BM_OB_end,q_BP_OB_end
+    real(kind(1.0D0)), intent(out) :: P_th_tot, M_E, pnucsh
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: A_BU_breed_IB, A_BU_breed_OB, A_BU_Be_IB, A_BU_Be_OB
+    real(kind(1.0D0)) :: A_BU_steels_IB, A_BU_steels_OB
+    real(kind(1.0D0)) :: P_BU_breed_IB, P_BU_Be_IB, P_BU_steels_IB
+    real(kind(1.0D0)) :: P_BU_IB, P_BM_IB, P_BP_IB, P_VV_IB
+    real(kind(1.0D0)) :: P_BU_breed_OB, P_BU_Be_OB, P_BU_steels_OB
+    real(kind(1.0D0)) :: P_BU_OB, P_BM_OB, P_BP_OB, P_VV_OB
+    real(kind(1.0D0)) :: P_tot_IB, P_tot_OB, P_n_FW
+
+    real(kind(1.0D0)) :: nwl_ratio
+
+    nwl_ratio = NWL_av/NWL_av_PPCS
+
+    !  Cross-sectional areas (cm2)
+
+    !  Breeder (chi = volumetric fraction as a percentage)
+
+    A_BU_breed_IB = A_bl_IB * 0.01D0*chi_breed_BU_IB
+    A_BU_breed_OB = A_bl_OB * 0.01D0*chi_breed_BU_OB
+
+    !  Beryllium pebbles
+
+    A_BU_Be_IB = A_bl_IB * 0.01D0*chi_Be_BU_IB
+    A_BU_Be_OB = A_bl_OB * 0.01D0*chi_Be_BU_OB
+
+    !  Breeder Unit steels
+
+    A_BU_steels_IB = A_bl_IB * 0.01D0*chi_steels_BU_IB
+    A_BU_steels_OB = A_bl_OB * 0.01D0*chi_steels_BU_OB
+
+    !  Inboard power terms
+
+    ! [MW] Nuclear power in IB breeder pebbles
+
+    P_BU_breed_IB = 1.0D-6 * nwl_ratio * A_BU_breed_IB * &
+         lambda_q_BU_breed_IB * q_0_BU_breed_IB * &
+         ( exp(-t_FW_IB/lambda_q_BU_breed_IB) - &
+         exp(-(t_FW_IB+t_BU_IB)/lambda_q_BU_breed_IB) )
+
+    ! [MW] Nuclear power in IB Be pebbles     
+
+    P_BU_Be_IB = 1.0D-6 * nwl_ratio * A_BU_Be_IB * &
+         lambda_q_BU_Be_IB * q_0_BU_Be_IB * &
+         ( exp(-t_FW_IB/lambda_q_BU_Be_IB) - &
+         exp(-(t_FW_IB+t_BU_IB)/lambda_q_BU_Be_IB) )
+
+    ! [MW] Nuclear power in IB BU steels
+
+    P_BU_steels_IB = 1.0D-6 * nwl_ratio * A_BU_steels_IB * &
+         lambda_q_BU_steels_IB * q_0_BU_steels_IB * &
+         (1.0D0-exp(-(t_FW_IB+t_BU_IB)/lambda_q_BU_steels_IB))
+
+    ! [MW] Total Nuclear power in IB BU
+
+    P_BU_IB = P_BU_breed_IB + P_BU_Be_IB + P_BU_steels_IB
+
+    ! [MW] Nuclear power in IB BM
+
+    P_BM_IB = 1.0D-6 * A_bl_IB * &
+         lambda_q_BM_IB * q_BU_IB_end * &
+         (1.0D0-exp(-t_BM_IB/lambda_q_BM_IB))
+
+    ! [MW] Nuclear power in IB BP
+
+    P_BP_IB = 1.0D-6 * A_bl_IB * &
+         lambda_q_BP_IB * q_BM_IB_end * &
+         (1.0D0-exp(-t_BP_IB/lambda_q_BP_IB))
+
+    ! [MW] Nuclear power in IB VV
+
+    P_VV_IB = 1.0D-6 * A_VV_IB * &
+         lambda_q_VV * q_BP_IB_end * &
+         (1.0D0-exp(-t_VV_IB/lambda_q_VV))
+
+    !  Outboard power terms
+
+    ! [MW] Nuclear power in OB BU breeder pebbles
+
+    P_BU_breed_OB = 1.0D-6 * nwl_ratio * A_BU_breed_OB * &
+         lambda_q_BU_breed_OB * q_0_BU_breed_OB * &
+         ( exp(-t_FW_OB/lambda_q_BU_breed_OB) - &
+         exp(-(t_FW_OB+t_BU_OB)/lambda_q_BU_breed_OB) )
+
+    ! [MW] Nuclear power in OB BU Be pebbles
+
+    P_BU_Be_OB = 1.0D-6 * nwl_ratio * A_BU_Be_OB * &
+         lambda_q_BU_Be_OB * q_0_BU_Be_OB * &
+         ( exp(-t_FW_OB/lambda_q_BU_Be_OB) - &
+         exp(-(t_FW_OB+t_BU_OB)/lambda_q_BU_Be_OB) )
+
+    ! [MW] Nuclear power in OB BU steels
+
+    P_BU_steels_OB = 1.0D-6 * nwl_ratio * A_BU_steels_OB * &
+         lambda_q_BU_steels_OB * q_0_BU_steels_OB * &
+         (1.0D0-exp(-(t_FW_OB+t_BU_OB)/lambda_q_BU_steels_OB))
+
+    ! [MW] Total Nuclear power in OB BU
+
+    P_BU_OB = P_BU_breed_OB + P_BU_Be_OB + P_BU_steels_OB
+
+    ! [MW] Nuclear power in OB BM
+
+    P_BM_OB = 1.0D-6 * A_bl_OB * &
+         lambda_q_BM_OB * q_BU_OB_end * &
+         (1.0D0-exp(-t_BM_OB/lambda_q_BM_OB))
+
+    ! [MW] Nuclear power in OB BP
+
+    P_BP_OB = 1.0D-6 * A_bl_OB * &
+         lambda_q_BP_OB * q_BM_OB_end * &
+         (1.0D0-exp(-t_BP_OB/lambda_q_BP_OB))
+
+    ! [MW] Nuclear power in OB VV
+
+    P_VV_OB = 1.0D-6 * A_VV_OB * &
+         lambda_q_VV * q_BP_OB_end * &
+         (1.0D0-exp(-t_VV_OB/lambda_q_VV))
+
+    !  [MW] Total nuclear power in IB and OB regions
+    !  Excludes contribution from shield/vacuum vessel
+
+    P_tot_IB = P_BU_IB + P_BM_IB + P_BP_IB
+    P_tot_OB = P_BU_OB + P_BM_OB + P_BP_OB
+
+    !  [MW] Total nuclear power
+
+    P_th_tot = P_tot_IB + P_tot_OB
+
+    !  [MW] Total nuclear power in shield/VV
+
+    pnucsh = P_VV_IB + P_VV_OB
+
+    !  [MW] Fusion neutron power impinging first wall
+
+    P_n_FW = P_n * 0.01D0*CF_bl
+
+    !  Energy multiplication factor
+
+    M_E = P_th_tot/P_n_FW
+
+    !write(*,*) ' '
+    !write(*,*) 'NUCLEAR POWER PRODUCTION'
+    !write(*,*) 'Nuclear Power in Inboard Breeding Unit:     ', P_BU_IB, ' [MW]'
+    !write(*,*) 'Nuclear Power in Inboard Box Manifolds:     ', P_BM_IB, ' [MW]'
+    !write(*,*) 'Nuclear Power in Inboard Back Plates:       ', P_BP_IB, ' [MW]'
+    !write(*,*) 'Nuclear Power in Inboard Vacuum Vessel:     ', P_VV_IB, ' [MW]'
+    !write(*,*) 'Nuclear Power in Outboard Breeding Unit:    ', P_BU_OB, ' [MW]'
+    !write(*,*) 'Nuclear Power in Outboard Box Manifolds:    ', P_BM_OB, ' [MW]'
+    !write(*,*) 'Nuclear Power in Outboard Back Plates:      ', P_BP_OB, ' [MW]'
+    !write(*,*) 'Nuclear Power in Outboard Vacuum Vessel:    ', P_VV_OB, ' [MW]'
+    !write(*,*) 'Total Nuclear Power into Inboard Blanket:   ', P_tot_IB,' [MW]'
+    !write(*,*) 'Total Nuclear Power into Outboard Blankets: ', P_tot_OB,' [MW]'
+    !write(*,*) 'Total Nuclear Power into blanket:           ', P_th_tot,' [MW]'
+    !write(*,*) 'Fusion Neutron Power onto FW:               ', P_n_FW,  ' [MW]'
+    !write(*,*) 'Energy Multiplication Factor:               ', M_E
+
+  end subroutine nuclear_power_production
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine tritium_breeding_ratio(TBR,G_tot)
+
+    !  Tritium Breeding Ratio
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(out) :: TBR, G_tot
+
+    TBR = TBR_PPCS * CF_bl/CF_bl_PPCS * &
+         TBR_breed(e_Li, breeder)/TBR_breed(e_Li_PPCS, breeder) * &
+         (1.0D0-exp(-t_BU_IB/lambda_q_BU_breed_IB)) / &
+         (1.0D0-exp(-t_BU_IB_PPCS/lambda_q_BU_breed_IB)) * &
+         (1.0D0-exp(-t_BU_OB/lambda_q_BU_breed_OB)) / &
+         (1.0D0-exp(-t_BU_OB_PPCS/lambda_q_BU_breed_OB)) * &
+         TBR_ports(n_ports_div, n_ports_H_CD_IB, n_ports_H_CD_OB, H_CD_ports)
+
+    !  [g/d] Total tritium production rate
+
+    G_tot = TBR * P_n/(E_n*1.602D-19)/N_Av * PA_T*3600*24
+
+    !write(*,*) ' '
+    !write(*,*) 'TRITIUM BREEDING RATIO'
+    !write(*,*) 'Tritium Breeding Ratio:                     ', TBR
+    !write(*,*) 'Tritium Production Rate:                    ', G_tot, ' [g/d]'
+
+  contains
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    function TBR_breed(e_Li, breeder)
+
+      implicit none
+
+      real(kind(1.0D0)) :: TBR_breed
+
+      !  Arguments
+
+      real(kind(1.0D0)), intent(in) :: e_Li
+      character(len=*), intent(in) :: breeder
+
+      if (trim(breeder) == 'Orthosilicate') then
+         TBR_breed = 0.1361D0*log(e_Li) + 0.6331D0
+      else if (trim(breeder) == 'Metatitanate') then
+         TBR_breed = 0.1564D0*log(e_Li) + 0.9140D0
+      else if (trim(breeder) == 'Zirconate') then
+         TBR_breed = 0.1640D0*log(e_Li) + 0.4325D0
+      else
+         write(*,*) 'Unknown tritium breeder specified...'
+         write(*,*) 'Program stopping.'
+         stop
+      end if
+
+    end function TBR_breed
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    function TBR_ports(n_ports_div, n_ports_H_CD_IB, n_ports_H_CD_OB, H_CD_ports)
+
+      implicit none
+
+      real(kind(1.0D0)) :: TBR_ports
+
+      !  Arguments
+
+      integer, intent(in) :: n_ports_div, n_ports_H_CD_IB, n_ports_H_CD_OB
+      character(len=*), intent(in) :: H_CD_ports
+
+      if (trim(H_CD_ports) == 'small') then
+         TBR_ports = (1.0D0 - 0.0055D0*n_ports_div) * &
+              (1.0D0 - 0.0031D0*n_ports_H_CD_IB) * &
+              (1.0D0 - 0.0031D0*n_ports_H_CD_OB)
+      else  !  if (trim(H_CD_ports) == 'large') then
+         TBR_ports = (1.0D0-0.0055D0*n_ports_div) * &
+              (1.0D0 - 0.0107D0*n_ports_H_CD_IB) * &
+              (1.0D0 - 0.0107D0*n_ports_H_CD_OB)
+      end if
+
+    end function TBR_ports
+
+  end subroutine tritium_breeding_ratio
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine fast_neutron_fluence(phi_n_vv_IB_start,phi_n_vv_OB_start, &
+       phi_n_IB_TFC,phi_n_OB_TFC)
+
+    !  Fast Neutron Fluence
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(out) :: phi_n_VV_IB_start,phi_n_VV_OB_start
+    real(kind(1.0D0)), intent(out) :: phi_n_IB_TFC, phi_n_OB_TFC
+
+    !  Local variables
+
+    real(kind(1.0D0)), dimension(2) :: phi_n_BU_IB, phi_n_BM_IB
+    real(kind(1.0D0)), dimension(2) :: phi_n_BP_IB, phi_n_VV_IB
+    real(kind(1.0D0)), dimension(2) :: phi_n_BU_OB, phi_n_BM_OB
+    real(kind(1.0D0)), dimension(2) :: phi_n_BP_OB, phi_n_VV_OB
+    real(kind(1.0D0)) :: nwl_ratio
+
+    nwl_ratio = NWL_av/NWL_av_PPCS
+
+    !  Inboard profiles
+
+    ! [n/cm^2/sec] Fast neutron flux profile in IB BU
+
+    phi_n_BU_IB(:) = nwl_ratio * phi_0_n_BU_IB * &
+         exp(-x_BU_IB(:)/lambda_n_BU_IB)
+
+    ! [n/cm^2/sec] Fast neutron flux profile in IB BM
+
+    phi_n_BM_IB(:) = phi_n_BU_IB(2) * exp(-x_BM_IB(:)/lambda_q_BM_IB)
+
+    ! [n/cm^2/sec] Fast neutron flux profile in IB BP
+
+    phi_n_BP_IB(:) = phi_n_BM_IB(2) * exp(-x_BP_IB(:)/lambda_q_BP_IB)
+
+    ! [n/cm^2/sec] Fast neutron flux profile in IB VV
+
+    phi_n_VV_IB(:) = phi_n_BP_IB(2) * exp(-x_VV_IB(:)/lambda_q_VV)
+    phi_n_vv_IB_start = phi_n_VV_IB(1)
+
+    ! [n/cm^2] Fast IB neutron fluence at TF coil
+
+    phi_n_IB_TFC = phi_n_VV_IB(2) * t_plant * K_tau
+
+    !  Outboard profiles
+
+    ! [n/cm^2/sec] Fast neutron flux profile in OB BU
+
+    phi_n_BU_OB(:) = nwl_ratio * phi_0_n_BU_OB * &
+         exp(-x_BU_OB(:)/lambda_n_BU_OB)
+
+    ! [n/cm^2/sec] Fast neutron flux profile in OB BM
+
+    phi_n_BM_OB(:) = phi_n_BU_OB(2) * exp(-x_BM_OB(:)/lambda_q_BM_OB)
+
+    ! [n/cm^2/sec] Fast neutron flux profile in OB BP
+
+    phi_n_BP_OB(:) = phi_n_BM_OB(2) * exp(-x_BP_OB(:)/lambda_q_BP_OB)
+
+    ! [n/cm^2/sec] Fast neutron flux profile in OB VV
+
+    phi_n_VV_OB(:) = phi_n_BP_OB(2) * exp(-x_VV_OB(:)/lambda_q_VV)
+    phi_n_vv_OB_start = phi_n_VV_OB(1)
+
+    ! [n/cm^2] Fast OB neutron fluence at TF coil
+
+    phi_n_OB_TFC = phi_n_VV_OB(2) * t_plant * K_tau
+
+    !write(*,*) ' '
+    !write(*,*) 'FAST NEUTRON FLUENCE ON TFC'
+    !write(*,*) 'Fast Neutron Fluence on Inboard TFC:         ', phi_n_IB_TFC, '[n/cm^2]'
+    !write(*,*) 'Fast Neutron Fluence on Outboard TFC:        ', phi_n_OB_TFC, '[n/cm^2]'
+
+  end subroutine fast_neutron_fluence
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine He_production_vacuum_vessel(phi_n_VV_IB_start,phi_n_VV_OB_start, &
+       vvhemini,vvhemino,vvhemaxi,vvhemaxo)
+
+    !  He Production in Vacuum Vessel
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: phi_n_VV_IB_start,phi_n_VV_OB_start
+    real(kind(1.0D0)), intent(out) :: vvhemini,vvhemino,vvhemaxi,vvhemaxo
+
+    !  Local variables
+
+    real(kind(1.0D0)), dimension(2) :: Gamma_He_IB, Gamma_He_OB
+    real(kind(1.0D0)), dimension(2) :: C_He_IB, C_He_OB
+
+    !  Helium production
+
+    Gamma_He_IB(:) = phi_n_VV_IB_start / phi_n_0_VV_ref * &
+         Gamma_He_0_ref * exp(-x_VV_IB(:)/lambda_He_VV)
+
+    Gamma_He_OB(:) = phi_n_VV_OB_start / phi_n_0_VV_ref * &
+         Gamma_He_0_ref * exp(-x_VV_OB(:)/lambda_He_VV)
+
+    C_He_IB(:) = Gamma_He_IB(:) * t_plant
+    C_He_OB(:) = Gamma_He_OB(:) * t_plant
+
+    !write(*,*) ' '
+    !write(*,*) 'HELIUM PRODUCTION IN VACUUM VESSEL'
+    !write(*,*) 'Min He Conc. at t = plant lifetime in IB VV: ', C_He_IB(2), '[appm]'
+    !write(*,*) 'Max He Conc. at t = plant lifetime in IB VV: ', C_He_IB(1), '[appm]'
+    !write(*,*) 'Min He Conc. at t = plant lifetime in OB VV: ', C_He_OB(2), '[appm]'
+    !write(*,*) 'Max He Conc. at t = plant lifetime in OB VV: ', C_He_OB(1), '[appm]'
+
+    vvhemini = C_He_IB(2)
+    vvhemino = C_He_OB(2)
+    vvhemaxi = C_He_IB(1)
+    vvhemaxo = C_He_OB(1)
+
+  end subroutine He_production_vacuum_vessel
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine blanket_lifetime(t_bl_FPY,t_bl_Y)
+
+    !  Blanket Lifetime
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(out) :: t_bl_FPY, t_bl_Y
+
+    !  10 dpa equates to 1 MW-yr/m2 (steel)
+
+    t_bl_FPY = D_EU_max / (10.0D0*NWL_av*f_peak)
+    t_bl_Y = t_bl_FPY / (alpha_m*alpha_puls)
+
+    !write(*,*) ' '
+    !write(*,*) 'BLANKET LIFETIME'
+    !write(*,*) 'Blanket Lifetime in Full Power Years:       ', t_bl_FPY, ' [FPY]'
+    !write(*,*) 'Blanket Lifetime in Calendar Years:         ', t_bl_Y, ' [yr]'
+
+  end subroutine blanket_lifetime
+
+end module kit_blanket_model
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 module fwbs_module
 
   !+ad_name  fwbs_module
@@ -12,11 +754,13 @@ module fwbs_module
   !+ad_cont  eshellvol
   !+ad_cont  blanket
   !+ad_cont  blnkt
+  !+ad_cont  blanket_neutronics
   !+ad_args  N/A
   !+ad_desc  This module contains routines for calculating the
   !+ad_desc  parameters of the first wall, blanket and shield components
   !+ad_desc  of a fusion power plant.
   !+ad_prob  None
+  !+ad_call  build_module
   !+ad_call  build_variables
   !+ad_call  buildings_variables
   !+ad_call  constants
@@ -24,6 +768,7 @@ module fwbs_module
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
+  !+ad_call  kit_blanket_model
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  plasma_geometry_module
@@ -31,6 +776,7 @@ module fwbs_module
   !+ad_call  rfp_variables
   !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
+  !+ad_call  times_variables
   !+ad_hist  18/10/12 PJK Initial version of module
   !+ad_hist  18/10/12 PJK Added tfcoil_variables
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
@@ -41,11 +787,13 @@ module fwbs_module
   !+ad_hist  09/04/13 PJK Added buildings_variables, pfcoil_variables,
   !+ad_hisc               rfp_variables, stellarator_variables
   !+ad_hist  08/05/13 PJK Added dshellvol, eshellvol
+  !+ad_hist  22/05/13 PJK Added kit_blanket_model, build_module, times_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_module
   use build_variables
   use buildings_variables
   use constants
@@ -53,6 +801,7 @@ module fwbs_module
   use divertor_variables
   use fwbs_variables
   use heat_transport_variables
+  use kit_blanket_model
   use pfcoil_variables
   use physics_variables
   use plasma_geometry_module
@@ -60,6 +809,7 @@ module fwbs_module
   use rfp_variables
   use stellarator_variables
   use tfcoil_variables
+  use times_variables
 
   implicit none
 
@@ -99,10 +849,14 @@ contains
     !+ad_desc  stainless steel only.
     !+ad_prob  None
     !+ad_call  blanket
+    !+ad_call  blanket_neutronics
     !+ad_call  oheadr
     !+ad_call  osubhd
+    !+ad_call  ovarin
     !+ad_call  ovarre
+    !+ad_call  dshellarea
     !+ad_call  dshellvol
+    !+ad_call  eshellarea
     !+ad_call  eshellvol
     !+ad_hist  14/11/11 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
@@ -119,6 +873,7 @@ contains
     !+ad_hisc               modified beryllium density
     !+ad_hist  09/05/13 PJK Redefined blanket, shield and vacuum vessel volumes
     !+ad_hist  15/05/13 PJK Swapped build order of vacuum vessel and gap
+    !+ad_hist  21/05/13 PJK Added blanket, shield area calculations
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -139,182 +894,11 @@ contains
     integer, parameter :: ishmat = 1  !  stainless steel coil casing is assumed
 
     real(kind(1.0D0)) :: coilhtmx,decaybl,dpacop,dshieq,dshoeq,elong, &
-         flumax,fpsdt,fpydt,frachit,hbot,hblnkt,hecan,hshld,htop,htheci,hvv, &
+         fpsdt,fpydt,frachit,hbot,hblnkt,hecan,hshld,htop,htheci,hvv, &
          pheci,pheco,pneut1,pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2,r3, &
          raddose,v1,v2,volshldi,volshldo,wpthk,zdewex
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    fact(1) = 8.0D0
-    fact(2) = 8.0D0
-    fact(3) = 6.0D0
-    fact(4) = 4.0D0
-    fact(5) = 4.0D0
-
-    coef(1,1) = 10.3D0
-    coef(2,1) = 11.6D0
-    coef(3,1) = 7.08D5
-    coef(4,1) = 2.19D18
-    coef(5,1) = 3.33D-7
-    coef(1,2) = 8.32D0
-    coef(2,2) = 10.6D0
-    coef(3,2) = 7.16D5
-    coef(4,2) = 2.39D18
-    coef(5,2) = 3.84D-7
-
-    decay(1,1) = 10.05D0
-    decay(2,1) = 17.61D0
-    decay(3,1) = 13.82D0
-    decay(4,1) = 13.24D0
-    decay(5,1) = 14.31D0
-    decay(6,1) = 13.26D0
-    decay(7,1) = 13.25D0
-    decay(1,2) = 10.02D0
-    decay(2,2) = 3.33D0
-    decay(3,2) = 15.45D0
-    decay(4,2) = 14.47D0
-    decay(5,2) = 15.87D0
-    decay(6,2) = 15.25D0
-    decay(7,2) = 17.25D0
-
-    !  Neutron power from plasma
-
-    pneut1 = pneut*vol
-
-    !  Neutron power lost through 'holes'
-
-    pnucloss = pneut1 * fhole
-
-    !  TART centrepost nuclear heating. Estimate fraction hitting from a
-    !  point source at the plasma centre, and assume average path length
-    !  of 2*tfcth, and e-fold decay length of 0.08m (copper water mixture).
-
-    if (itart == 1) then
-       frachit = hmax / sqrt(hmax**2 + (rmajor-tfcth)**2 ) * &
-            atan(tfcth/(rmajor-tfcth) )/pi
-       pnuccp = pneut1 * frachit * (1.0D0 - exp(-2.0D0*tfcth/0.08D0))
-    else
-       pnuccp = 0.0D0
-    end if
-
-    !  Energy-multiplied neutron power
-
-    pneut2 = (pneut1 - pnucloss - pnuccp) * emult
-
-    !  Nuclear heating in the blanket
-
-    if (lblnkt == 1) then
-       if (smstr == 1) then  !  solid blanket
-          decaybl = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
-       else  !  liquid blanket
-          decaybl = 0.075D0 / (1.0D0 - vfblkt - fbllipb - fblli)
-       end if
-    else  !  original blanket model - solid blanket
-       decaybl = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
-    end if
-
-    pnucblkt = pneut2 * (1.0D0 - exp(-blnkoth/decaybl) )
-
-    !  Nuclear heating in the shield
-
-    pnucshld = pneut2 - pnucblkt
-
-    !  Full power DT operation years for replacement of TF Coil
-    !  (or Plant Life)
-
-    fpydt = cfactr * tlife
-    fpsdt = fpydt * 3.154D7
-
-    !  Superconducting TF coil shielding calculations
-    !  The 'He can' previously referred to is actually the steel case on the
-    !  plasma-facing side of the TF coil.
-
-    if (itfsup == 1) then
-
-       !  N.B. The vacuum vessel appears to be ignored
-
-       dshieq = shldith + fwith + blnkith
-       dshoeq = shldoth + fwoth + blnkoth
-
-       !  Case thickness on plasma-facing side of TF coil
-
-       !hecan = 0.5D0*thkcas  !  Old calculation, assumes 1/2 average thickness
-       hecan = casthi
-
-       !  Winding pack radial thickness, including groundwall insulation
-
-       !wpthk = tfcth - 1.5D0 * thkcas  !  Old calculation
-       wpthk = thkwp + 2.0D0*tinstf
-
-       !  Nuclear heating rate in inboard TF coil (MW/m**3)
-
-       coilhtmx = fact(1) * wallmw * coef(1,ishmat) * &
-            exp(-decay(6,ishmat) * (dshieq + hecan))
-
-       !  Total nuclear heating (MW)
-
-       ptfiwp = coilhtmx * tfsai * &
-            (1.0D0-exp(-decay(1,ishmat)*wpthk)) / decay(1,ishmat)
-       ptfowp = fact(1) * wallmw * coef(1,ishmat) * &
-            exp(-decay(6,ishmat) * (dshoeq + hecan)) * tfsao * &
-            (1.0D0 - exp(-decay(1,ishmat)*wpthk)) / decay(1,ishmat)
-
-       !  Nuclear heating in plasma-side TF coil case (MW)
-
-       htheci = fact(2) * wallmw * coef(2,ishmat) * &
-            exp(-decay(7,ishmat) * dshieq)
-       pheci = htheci * tfsai * (1.0D0-exp(-decay(2,ishmat)*hecan))/ &
-            decay(2,ishmat)
-       pheco = fact(2) * wallmw * coef(2,ishmat) * &
-            exp(-decay(7,ishmat) * dshoeq) * tfsao * &
-            (1.0D0-exp(-decay(2,ishmat)*hecan))/decay(2,ishmat)
-       ptfi = ptfiwp + pheci
-       ptfo = ptfowp + pheco
-       ptfnuc = ptfi + ptfo
-
-       !  Insulator dose (rad)
-
-       raddose = coef(3,ishmat) * fpsdt * fact(3) * wallmw * &
-            exp(-decay(3,ishmat) * (dshieq+hecan))
-
-       !  Maximum neutron fluence in superconductor (n/m**2)
-
-       flumax = fpsdt * fact(4) * wallmw * coef(4,ishmat) * &
-            exp(-decay(4,ishmat) * (dshieq+hecan))
-
-       !  Atomic displacement in copper stabilizer
-
-       dpacop = fpsdt * fact(5) * wallmw * coef(5,ishmat) * &
-            exp(-decay(5,ishmat) * (dshieq + hecan) )
-
-    else  !  Resistive TF coils
-       dshieq = 0.0D0
-       dshoeq = 0.0D0
-       hecan = 0.0D0
-       wpthk = 0.0D0
-       coilhtmx = 0.0D0
-       ptfiwp = 0.0D0
-       ptfowp = 0.0D0
-       htheci = 0.0D0
-       pheci = 0.0D0
-       pheco = 0.0D0
-       ptfi = 0.0D0
-       ptfo = 0.0D0
-       ptfnuc = 0.0D0
-       raddose = 0.0D0
-       flumax = 0.0D0
-       dpacop = 0.0D0
-    end if
-
-    !  Divertor mass
-
-    divsur = fdiva * 2.0D0 * pi * rmajor * rminor
-    if (idivrt == 2) divsur = divsur * 2.0D0
-    divmas = divsur * divdens * (1.0D0 - divclfr) * divplt
-
-    !  Start adding components of the coolant mass
-
-    coolmass = divsur * divclfr * divplt
 
     !  Blanket and shield volumes and masses
 
@@ -355,15 +939,23 @@ contains
 
        r2 = fwith + scrapli + 2.0D0*rminor + scraplo + fwoth
 
+       !  Calculate blanket surface area, assuming 100% coverage
+
+       call dshellarea(r1,r2,hblnkt,blareaib,blareaob,blarea)
+
        !  Calculate blanket volumes, assuming 100% coverage
 
        call dshellvol(r1,r2,hblnkt,blnkith,blnkoth,blnktth, &
             volblkti,volblkto,volblkt)
 
-       !  Apply area coverage factors
+       !  Apply area (and volume) coverage factor - uses fhole
 
-       volblkti = fvolbi*volblkti
-       volblkto = fvolbo*volblkto
+       blareaib = (1.0D0-fhole) * blareaib
+       blareaob = (1.0D0-fhole) * blareaob
+       blarea = blareaib + blareaob
+
+       volblkti = (1.0D0-fhole) * volblkti
+       volblkto = (1.0D0-fhole) * volblkto
        volblkt = volblkti + volblkto
 
        !  Major radius to outer edge of inboard shield
@@ -375,12 +967,20 @@ contains
 
        r2 = blnkith + fwith + scrapli + 2.0D0*rminor + scraplo + fwoth + blnkoth
 
+       !  Calculate shield surface area, assuming 100% coverage
+
+       call dshellarea(r1,r2,hshld,shareaib,shareaob,sharea)
+
        !  Calculate shield volumes, assuming 100% coverage
 
        call dshellvol(r1,r2,hshld,shldith,shldoth,shldtth, &
             volshldi,volshldo,volshld)
 
-       !  Apply area coverage factors
+       !  Apply area (and volume) coverage factors
+
+       shareaib = fvolsi*shareaib
+       shareaob = fvolso*shareaob
+       sharea = shareaib + shareaob
 
        volshldi = fvolsi*volshldi
        volshldo = fvolso*volshldo
@@ -401,15 +1001,23 @@ contains
 
        r3 = (rsldo - shldoth - blnkoth) - r1
 
-       !  Calculate blanket volumes, assuming 100% coverage
+       !  Calculate blanket surface area, assuming 100% coverage
+
+       call eshellarea(r1,r2,r3,hblnkt,blareaib,blareaob,blarea)
+
+        !  Calculate blanket volumes, assuming 100% coverage
 
        call eshellvol(r1,r2,r3,hblnkt,blnkith,blnkoth,blnktth, &
             volblkti,volblkto,volblkt)
 
-       !  Apply area coverage factors
+       !  Apply area (and volume) coverage factor - uses fhole
 
-       volblkti = fvolbi*volblkti
-       volblkto = fvolbo*volblkto
+       blareaib = (1.0D0-fhole) * blareaib
+       blareaob = (1.0D0-fhole) * blareaob
+       blarea = blareaib + blareaob
+
+       volblkti = (1.0D0-fhole) * volblkti
+       volblkto = (1.0D0-fhole) * volblkto
        volblkt = volblkti + volblkto
 
        !  Distance between r1 and outer edge of inboard shield
@@ -420,12 +1028,20 @@ contains
 
        r3 = (rsldo - shldoth) - r1
 
+       !  Calculate shield surface area, assuming 100% coverage
+
+       call eshellarea(r1,r2,r3,hshld,shareaib,shareaob,sharea)
+
        !  Calculate shield volumes, assuming 100% coverage
 
        call eshellvol(r1,r2,r3,hshld,shldith,shldoth,shldtth, &
             volshldi,volshldo,volshld)
 
-       !  Apply area coverage factors
+       !  Apply area (and volume) coverage factors
+
+       shareaib = fvolsi*shareaib
+       shareaob = fvolso*shareaob
+       sharea = shareaib + shareaob
 
        volshldi = fvolsi*volshldi
        volshldo = fvolso*volshldo
@@ -433,17 +1049,231 @@ contains
 
     end if
 
-    !  Blanket - stainless steel, vanadium, Li2O, and Be options
+    !  Neutron power from plasma
 
-    whtblss = volblkt * denstl * fblss
-    whtblbe = volblkt * 1850.0D0  * fblbe  !  density modified from 1900 kg/m3
-    whtblvd = volblkt * 5870.0D0  * fblvd
-    wtblli2o = volblkt * 2010.0D0  * fblli2o
-    whtblkt = whtblss + whtblvd + wtblli2o + whtblbe
+    pneut1 = pneut*vol
+
+    !  Neutron power lost through divertor gap in first wall
+
+    pnucloss = pneut1 * fhole
+
+    !  Blanket neutronics calculations
+
+    if (blktmodel == 1) then
+
+       call blanket_neutronics
+
+       fpydt = cfactr * tlife
+
+    else
+
+       !  TF coil nuclear heating parameters
+
+       fact(1) = 8.0D0
+       fact(2) = 8.0D0
+       fact(3) = 6.0D0
+       fact(4) = 4.0D0
+       fact(5) = 4.0D0
+
+       coef(1,1) = 10.3D0
+       coef(2,1) = 11.6D0
+       coef(3,1) = 7.08D5
+       coef(4,1) = 2.19D18
+       coef(5,1) = 3.33D-7
+       coef(1,2) = 8.32D0
+       coef(2,2) = 10.6D0
+       coef(3,2) = 7.16D5
+       coef(4,2) = 2.39D18
+       coef(5,2) = 3.84D-7
+
+       decay(1,1) = 10.05D0
+       decay(2,1) = 17.61D0
+       decay(3,1) = 13.82D0
+       decay(4,1) = 13.24D0
+       decay(5,1) = 14.31D0
+       decay(6,1) = 13.26D0
+       decay(7,1) = 13.25D0
+       decay(1,2) = 10.02D0
+       decay(2,2) = 3.33D0
+       decay(3,2) = 15.45D0
+       decay(4,2) = 14.47D0
+       decay(5,2) = 15.87D0
+       decay(6,2) = 15.25D0
+       decay(7,2) = 17.25D0
+
+       !  TART centrepost nuclear heating. Estimate fraction hitting from a
+       !  point source at the plasma centre, and assume average path length
+       !  of 2*tfcth, and e-fold decay length of 0.08m (copper water mixture).
+
+       if (itart == 1) then
+          frachit = hmax / sqrt(hmax**2 + (rmajor-tfcth)**2 ) * &
+               atan(tfcth/(rmajor-tfcth) )/pi
+          pnuccp = pneut1 * frachit * (1.0D0 - exp(-2.0D0*tfcth/0.08D0))
+       else
+          pnuccp = 0.0D0
+       end if
+
+       !  Energy-multiplied neutron power
+
+       pneut2 = (pneut1 - pnucloss - pnuccp) * emult
+
+       !  Nuclear heating in the blanket
+
+       if (lblnkt == 1) then
+          if (smstr == 1) then  !  solid blanket
+             decaybl = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
+          else  !  liquid blanket
+             decaybl = 0.075D0 / (1.0D0 - vfblkt - fbllipb - fblli)
+          end if
+       else  !  original blanket model - solid blanket
+          decaybl = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
+       end if
+
+       pnucblkt = pneut2 * (1.0D0 - exp(-blnkoth/decaybl) )
+
+       !  Nuclear heating in the shield
+
+       pnucshld = pneut2 - pnucblkt
+
+       !  Full power DT operation years for replacement of TF Coil
+       !  (or Plant Life)
+
+       fpydt = cfactr * tlife
+       fpsdt = fpydt * 3.154D7
+
+       !  Superconducting TF coil shielding calculations
+       !  The 'He can' previously referred to is actually the steel case on the
+       !  plasma-facing side of the TF coil.
+
+       if (itfsup == 1) then
+
+          !  N.B. The vacuum vessel appears to be ignored
+
+          dshieq = shldith + fwith + blnkith
+          dshoeq = shldoth + fwoth + blnkoth
+
+          !  Case thickness on plasma-facing side of TF coil
+
+          !hecan = 0.5D0*thkcas  !  Old calculation, assumes 1/2 average thickness
+          hecan = casthi
+
+          !  Winding pack radial thickness, including groundwall insulation
+
+          !wpthk = tfcth - 1.5D0 * thkcas  !  Old calculation
+          wpthk = thkwp + 2.0D0*tinstf
+
+          !  Nuclear heating rate in inboard TF coil (MW/m**3)
+
+          coilhtmx = fact(1) * wallmw * coef(1,ishmat) * &
+               exp(-decay(6,ishmat) * (dshieq + hecan))
+
+          !  Total nuclear heating (MW)
+
+          ptfiwp = coilhtmx * tfsai * &
+               (1.0D0-exp(-decay(1,ishmat)*wpthk)) / decay(1,ishmat)
+          ptfowp = fact(1) * wallmw * coef(1,ishmat) * &
+               exp(-decay(6,ishmat) * (dshoeq + hecan)) * tfsao * &
+               (1.0D0 - exp(-decay(1,ishmat)*wpthk)) / decay(1,ishmat)
+
+          !  Nuclear heating in plasma-side TF coil case (MW)
+
+          htheci = fact(2) * wallmw * coef(2,ishmat) * &
+               exp(-decay(7,ishmat) * dshieq)
+          pheci = htheci * tfsai * (1.0D0-exp(-decay(2,ishmat)*hecan))/ &
+               decay(2,ishmat)
+          pheco = fact(2) * wallmw * coef(2,ishmat) * &
+               exp(-decay(7,ishmat) * dshoeq) * tfsao * &
+               (1.0D0-exp(-decay(2,ishmat)*hecan))/decay(2,ishmat)
+          ptfi = ptfiwp + pheci
+          ptfo = ptfowp + pheco
+          ptfnuc = ptfi + ptfo
+
+          !  Insulator dose (rad)
+
+          raddose = coef(3,ishmat) * fpsdt * fact(3) * wallmw * &
+               exp(-decay(3,ishmat) * (dshieq+hecan))
+
+          !  Maximum neutron fluence in superconductor (n/m**2)
+
+          nflutf = fpsdt * fact(4) * wallmw * coef(4,ishmat) * &
+               exp(-decay(4,ishmat) * (dshieq+hecan))
+
+          !  Atomic displacement in copper stabilizer
+
+          dpacop = fpsdt * fact(5) * wallmw * coef(5,ishmat) * &
+               exp(-decay(5,ishmat) * (dshieq + hecan) )
+
+       else  !  Resistive TF coils
+          dshieq = 0.0D0
+          dshoeq = 0.0D0
+          hecan = 0.0D0
+          wpthk = 0.0D0
+          coilhtmx = 0.0D0
+          ptfiwp = 0.0D0
+          ptfowp = 0.0D0
+          htheci = 0.0D0
+          pheci = 0.0D0
+          pheco = 0.0D0
+          ptfi = 0.0D0
+          ptfo = 0.0D0
+          ptfnuc = 0.0D0
+          raddose = 0.0D0
+          nflutf = 0.0D0
+          dpacop = 0.0D0
+       end if
+
+    end if ! blktmodel = 0
+
+    !  Divertor mass
+
+    divsur = fdiva * 2.0D0 * pi * rmajor * rminor
+    if (idivrt == 2) divsur = divsur * 2.0D0
+    divmas = divsur * divdens * (1.0D0 - divclfr) * divplt
+
+    !  Start adding components of the coolant mass:
+    !  Divertor coolant volume (m3)
+
+    coolmass = divsur * divclfr * divplt  !  volume
+
+    !  Blanket mass, excluding coolant
+
+    if (blktmodel == 0) then
+       whtblss = volblkt * denstl * fblss
+       whtblbe = volblkt * 1850.0D0  * fblbe  !  density modified from 1900 kg/m3
+       whtblvd = volblkt * 5870.0D0  * fblvd
+       wtblli2o = volblkt * 2010.0D0  * fblli2o
+       whtblkt = whtblss + whtblvd + wtblli2o + whtblbe
+    else  !  volume fractions proportional to sub-assembly thicknesses
+       whtblss = denstl * ( &
+            volblkti/blnkith * ( &
+            blbuith * fblss + &
+            blbmith * (1.0D0-fblhebmi) + &
+            blbpith * (1.0D0-fblhebpi) ) &
+            + volblkto/blnkoth * ( &
+            blbuoth * fblss + &
+            blbmoth * (1.0D0-fblhebmo) + &
+            blbpoth * (1.0D0-fblhebpo) ) )
+       whtblbe = 1850.0D0 * fblbe * ( &
+            (volblkti * blbuith/blnkith) + (volblkto * blbuoth/blnkoth) )
+       whtblbreed = densbreed * fblbreed * ( &
+            (volblkti * blbuith/blnkith) + (volblkto * blbuoth/blnkoth) )
+       whtblkt = whtblss + whtblbe + whtblbreed
+
+       vfblkt = volblkti/volblkt * ( &  !  inboard portion
+            (blbuith/blnkith) * (1.0D0 - fblbe - fblbreed - fblss) &
+            + (blbmith/blnkith) * fblhebmi &
+            + (blbpith/blnkith) * fblhebpi )
+       vfblkt = vfblkt + volblkto/volblkt * ( &  !  outboard portion
+            (blbuoth/blnkoth) * (1.0D0 - fblbe - fblbreed - fblss) &
+            + (blbmoth/blnkoth) * fblhebmo &
+            + (blbpoth/blnkoth) * fblhebpo )
+
+    end if
 
     whtshld = volshld * denstl * (1.0D0 - vfshld)
 
-    !  New blanket model (supersedes above calculations)
+    !  Thermodynamic blanket model
+    !  (supersedes above calculations of blanket mass and volume)
 
     if (lblnkt == 1) then
        call blanket(1,outfile,iprint)
@@ -458,10 +1288,17 @@ contains
 
     end if
 
+    !  Blanket coolant is assumed to be helium for the models used
+    !  when blktmodel > 0
+
+    if (blktmodel == 0) then
+       coolmass = coolmass + volblkt*vfblkt  !  volume
+    end if
+
     !  Penetration shield (set = internal shield)
 
     wpenshld = whtshld
-    coolmass = coolmass + volblkt*vfblkt + volshld*vfshld
+    coolmass = coolmass + volshld*vfshld  !  volume
 
     !  First wall mass
     !  (first wall area is calculated elsewhere)
@@ -470,15 +1307,16 @@ contains
 
     !  Surface areas adjacent to plasma
 
-    coolmass = coolmass + fwarea * (fwith+fwoth)/2.0D0 * fwclfr
+    coolmass = coolmass + fwarea * (fwith+fwoth)/2.0D0 * fwclfr  !  volume
 
     !  Mass of coolant = volume * density at typical coolant
     !  temperatures and pressures
+    !  N.B. for blktmodel > 0, mass of helium coolant in blanket is ignored...
 
-    if (costr == 1) then  !  gaseous helium coolant
-       coolmass = coolmass*1.517D0
-    else  !  pressurised water coolant
+    if ((blktmodel > 0).or.(costr == 2)) then  !  pressurised water coolant
        coolmass = coolmass*806.719D0
+    else  !  gaseous helium coolant
+       coolmass = coolmass*1.517D0
     end if
 
     !  External cryostat radius (m)
@@ -586,12 +1424,25 @@ contains
 
     call oheadr(outfile,'Shield / Blanket')
     call ovarre(outfile,'Average neutron wall load (MW)','(wallmw)', wallmw)
+    if (blktmodel > 0) then
+       call ovarre(outfile,'Neutron wall load peaking factor','(wallpf)', wallpf)
+    end if
     call ovarre(outfile,'DT full power TF coil operation (yrs)', &
          '(fpydt)',fpydt)
     call ovarre(outfile,'Inboard shield thickness (m)','(shldith)',shldith)
     call ovarre(outfile,'Outboard shield thickness (m)','(shldoth)',shldoth)
     call ovarre(outfile,'Top shield thickness (m)','(shldtth)',shldtth)
+    if (blktmodel > 0) then
+       call ovarre(outfile,'Inboard breeding unit thickness (m)','(blbuith)', blbuith)
+       call ovarre(outfile,'Inboard box manifold thickness (m)','(blbmith)', blbmith)
+       call ovarre(outfile,'Inboard back plate thickness (m)','(blbpith)', blbpith)
+    end if
     call ovarre(outfile,'Inboard blanket thickness (m)','(blnkith)', blnkith)
+    if (blktmodel > 0) then
+       call ovarre(outfile,'Outboard breeding unit thickness (m)','(blbuoth)', blbuoth)
+       call ovarre(outfile,'Outboard box manifold thickness (m)','(blbmoth)', blbmoth)
+       call ovarre(outfile,'Outboard back plate thickness (m)','(blbpoth)', blbpoth)
+    end if
     call ovarre(outfile,'Outboard blanket thickness (m)','(blnkoth)', blnkoth)
     call ovarre(outfile,'Top blanket thickness (m)','(blnktth)',blnktth)
     call ovarre(outfile,'Inboard side TF coil case thickness (m)', &
@@ -600,7 +1451,7 @@ contains
     if (itart == 1) then
        call osubhd(outfile,'(Copper centrepost used)')
        call ovarre(outfile,'Centrepost heating (MW)','(pnuccp)',pnuccp)
-    else
+    else if (blktmodel == 0) then
        call osubhd(outfile,'TF coil nuclear parameters :')
        call ovarre(outfile,'Peak magnet heating (MW/m3)','(coilhtmx)', &
             coilhtmx)
@@ -613,15 +1464,59 @@ contains
        call ovarre(outfile,'Inboard coil case heating (MW)','(pheci)',pheci)
        call ovarre(outfile,'Outboard coil case heating (MW)','(pheco)',pheco)
        call ovarre(outfile,'Insulator dose (rad)','(raddose)',raddose)
-       call ovarre(outfile,'Maximum neutron fluence (n/m2)','(flumax)', &
-            flumax)
+       call ovarre(outfile,'Maximum neutron fluence (n/m2)','(nflutf)', &
+            nflutf)
        call ovarre(outfile,'Copper stabiliser displacements/atom', &
             '(dpacop)',dpacop)
     end if
 
-    call osubhd(outfile,'Nuclear heating :')
-    call ovarre(outfile,'Blanket heating (MW)','(pnucblkt)',pnucblkt)
-    call ovarre(outfile,'Shield heating (MW)','(pnucshld)',pnucshld)
+    if (blktmodel == 0) then
+       call osubhd(outfile,'Nuclear heating :')
+       call ovarre(outfile,'Blanket heating (MW)','(pnucblkt)',pnucblkt)
+       call ovarre(outfile,'Shield heating (MW)','(pnucshld)',pnucshld)
+    else
+       call osubhd(outfile,'Blanket neutronics :')
+       call ovarre(outfile,'Blanket heating (MW)','(pnucblkt)',pnucblkt)
+       call ovarre(outfile,'Shield heating (MW)','(pnucshld)',pnucshld)
+       call ovarre(outfile,'Energy multiplication in blanket','(emult)',emult)
+       call ovarin(outfile,'Number of divertor ports assumed','(npdiv)',npdiv)
+       call ovarin(outfile,'Number of inboard H/CD ports assumed', &
+            '(nphcdin)',nphcdin)
+       call ovarin(outfile,'Number of outboard H/CD ports assumed', &
+            '(nphcdout)',nphcdout)
+       select case (hcdportsize)
+       case (1)
+          call ocmmnt(outfile,'     (small heating/current drive ports assumed)')
+       case default
+          call ocmmnt(outfile,'     (large heating/current drive ports assumed)')
+       end select
+       select case (breedmat)
+       case (1)
+          call ocmmnt(outfile,'Breeder material: Lithium orthosilicate (Li4Si04)')
+       case (2)
+          call ocmmnt(outfile,'Breeder material: Lithium methatitanate (Li2TiO3)')
+       case (3)
+          call ocmmnt(outfile,'Breeder material: Lithium zirconate (Li2ZrO3)')
+       case default  !  shouldn't get here...
+          call ocmmnt(outfile,'Unknown breeder material...')
+       end select
+       call ovarre(outfile,'Lithium-6 enrichment (%)','(li6enrich)',li6enrich)
+       call ovarre(outfile,'Tritium breeding ratio','(tbr)',tbr)
+       call ovarre(outfile,'Tritium production rate (g/day)','(tritprate)',tritprate)
+       call ovarre(outfile,'Nuclear heating on i/b TF coil (MW/m3)','(pnuctfi)',pnuctfi)
+       call ovarre(outfile,'Nuclear heating on o/b TF coil (MW/m3)','(pnuctfo)',pnuctfo)
+       call ovarre(outfile,'Total nuclear heating on TF coil (MW)','(ptfnuc)',ptfnuc)
+       call ovarre(outfile,'Fast neut. fluence on i/b TF coil (n/m2)', &
+            '(nflutfi)',nflutfi*1.0D4)
+       call ovarre(outfile,'Fast neut. fluence on o/b TF coil (n/m2)', &
+            '(nflutfo)',nflutfo*1.0D4)
+       call ovarre(outfile,'Minimum final He conc. in IB VV (appm)','(vvhemini)',vvhemini)
+       call ovarre(outfile,'Minimum final He conc. in OB VV (appm)','(vvhemino)',vvhemino)
+       call ovarre(outfile,'Maximum final He conc. in IB VV (appm)','(vvhemaxi)',vvhemaxi)
+       call ovarre(outfile,'Maximum final He conc. in OB VV (appm)','(vvhemaxo)',vvhemaxo)
+       call ovarre(outfile,'Blanket lifetime (full power years)','(bktlife)',bktlife)
+       call ovarre(outfile,'Blanket lifetime (calendar years)','(t_bl_y)',t_bl_y)
+    end if
 
     call osubhd(outfile,'Blanket / shield volumes and weights :')
 
@@ -637,11 +1532,23 @@ contains
                fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
                volshld, whtshld, vfshld, wpenshld
        end if
-    else
+    else if (blktmodel == 0) then
        write(outfile,600) volblkti, volblkto, volblkt, whtblkt, vfblkt, &
             fblbe, whtblbe, fblli2o, wtblli2o, fblss, whtblss, fblvd, &
             whtblvd, volshldi, volshldo, volshld, whtshld, vfshld, &
             wpenshld
+    else
+       write(outfile,602) volblkti, volblkto, volblkt, whtblkt, vfblkt, &
+            (volblkti/volblkt * blbuith/blnkith + &
+            volblkto/volblkt * blbuoth/blnkoth) * fblbe, whtblbe, &
+            (volblkti/volblkt * blbuith/blnkith + &
+            volblkto/volblkt * blbuoth/blnkoth) * fblbreed, whtblbreed, &
+            volblkti/volblkt/blnkith * (blbuith * fblss &
+            + blbmith * (1.0D0-fblhebmi) + blbpith * (1.0D0-fblhebpi)) + &
+            volblkto/volblkt/blnkoth * (blbuoth * fblss &
+            + blbmoth * (1.0D0-fblhebmo) + blbpoth * (1.0D0-fblhebpo)), &
+            whtblss, &
+            volshldi, volshldo, volshld, whtshld, vfshld, wpenshld
     end if
 
 600 format( &
@@ -672,6 +1579,22 @@ contains
          '       Blanket Li   ',t45,1pe10.3,t62,1pe10.3/ &
          '       Blanket ss   ',t45,1pe10.3,t62,1pe10.3/ &
          '       Blanket Vd   ',t45,1pe10.3,t62,1pe10.3/ &
+         '    Inboard shield'  ,t32,1pe10.3,/ &
+         '    Outboard shield'  ,t32,1pe10.3,/ &
+         '    Primary shield',t32,1pe10.3,t62,1pe10.3/ &
+         '       Void fraction' ,t45,1pe10.3,/ &
+         '    Penetration shield'        ,t62,1pe10.3)
+
+602 format( &
+         t32,'volume (m3)',t45,'vol fraction',t62,'weight (kg)'/ &
+         t32,'-----------',t45,'------------',t62,'-----------'/ &
+         '    Inboard blanket' ,t32,1pe10.3,/ &
+         '    Outboard blanket' ,t32,1pe10.3,/ &
+         '    Total blanket' ,t32,1pe10.3,t62,1pe10.3/ &
+         '       Void fraction' ,t45,1pe10.3,/ &
+         '       Blanket Be   ',t45,1pe10.3,t62,1pe10.3/ &
+         '       Blanket breeder',t45,1pe10.3,t62,1pe10.3/ &
+         '       Blanket steel',t45,1pe10.3,t62,1pe10.3/ &
          '    Inboard shield'  ,t32,1pe10.3,/ &
          '    Outboard shield'  ,t32,1pe10.3,/ &
          '    Primary shield',t32,1pe10.3,t62,1pe10.3/ &
@@ -1171,7 +2094,7 @@ contains
     !  wt(*)   (DP): power output from turbines (MW)
     !  wp(*)   (DP): power input to FWHPs (MW)
 
-    !  Ensure that W >= 1.25 DO for both circular and annular
+    !  Ensure that W >= d0*1.25 for both circular and annular
     !  geometry.
 
     if ( yc > pi/4.0D0/(1.25D0)**2 ) &
@@ -3578,5 +4501,118 @@ contains
     end subroutine twophas2
 
   end subroutine blnkt
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine blanket_neutronics
+
+    implicit none
+
+    !  Arguments
+
+    A_FW_IB = fwareaib * 1.0D4 ! [cm^2] IB first wall area
+    A_FW_OB = fwareaob * 1.0D4 ! [cm^2] OB first wall area
+    A_bl_IB = blareaib * 1.0D4 ! [cm^2] IB blanket area
+    A_bl_OB = blareaob * 1.0D4 ! [cm^2] OB blanket area
+    A_VV_IB = shareaib * 1.0D4 ! [cm^2] IB shield/VV area
+    A_VV_OB = shareaob * 1.0D4 ! [cm^2] OB shield/VV area
+    P_n = pneut*vol  ! [MW] Fusion neutron power
+    NWL_av = wallmw   ! [MW/m^2] Average neutron wall load
+    f_peak = wallpf   ! [--] NWL peaking factor
+    t_FW_IB = fwith * 100.0D0  ! [cm] IB first wall thickness
+    t_FW_OB = fwoth * 100.0D0  ! [cm] OB first wall thickness
+    !  f_FW = 0.99D0     ! [--] Frac. FW area for junctions, etc.
+    CF_bl = (1.0D0-fhole) * 100.0D0 ! [%] Blanket coverage factor
+    n_ports_div = npdiv  ! [ports] Number of divertor ports
+    n_ports_H_CD_IB = nphcdin  ! [ports] Number of IB H&CD ports
+    n_ports_H_CD_OB = nphcdout  ! [ports] Number of OB H&CD ports
+    if (hcdportsize == 1) then
+       H_CD_ports = 'small'
+    else
+       H_CD_ports = 'large'
+    end if
+    e_Li = li6enrich     ! [%] Lithium 6 enrichment
+    t_plant = tlife/cfactr  ! [FPY] Plant lifetime
+    alpha_m = cfactr  ! [--] Availability factor
+    alpha_puls = tpulse/(tramp+tpulse+tdwell) ! [--] Pulsed regime fraction
+
+    !  Breeder type (allowed values are Orthosilicate, Metatitanate or Zirconate)
+
+    !  Mass densities supplied by F. Franza, taken from Seventh International
+    !  Workshop on Ceramic Breeder Blanket Interactions, September 14-16, 1998,
+    !  Petten, Netherlands:
+    !                              Li4Si04      Li2TiO3      Li2ZrO3
+    !  Theory density [g/cm^3]      2.40         3.45         4.19
+    !  Material density             98 %         94 %         89 %
+    !  Packing factor               64 %         55 %         57 %
+    !  Pebble bed density [g/cm^3]  1.50         1.78         2.12
+
+    if (breedmat == 1) then
+       breeder = 'Orthosilicate'
+       densbreed = 1.50D3
+    else if (breedmat == 2) then
+       breeder = 'Metatitanate'
+       densbreed = 1.78D3
+    else
+       breeder = 'Zirconate'  !  (In reality, rarely used - activation problems)
+       densbreed = 2.12D3
+    end if
+
+    !  Inboard parameters
+
+    t_BU_IB = blbuith * 100.0D0  ! [cm] BU thickness
+    t_BM_IB = blbmith * 100.0D0  ! [cm] BM thickness
+    t_BP_IB = blbpith * 100.0D0  ! [cm] BP thickness
+    t_VV_IB = (shldith+ddwi) * 100.0D0  ! [cm] VV thickness
+    alpha_BM_IB = fblhebmi * 100.0D0  ! [%] Helium fraction in the IB BM
+    alpha_BP_IB = fblhebpi * 100.0D0  ! [%] Helium fraction in the IB BP
+    chi_Be_BU_IB = fblbe * 100.0D0 ! [%] Beryllium vol. frac. in IB BU
+    chi_breed_BU_IB = fblbreed * 100.0D0 ! [%] Breeder vol. frac. in IB BU
+    chi_steels_BU_IB = fblss * 100.0D0 ! [%] Steels vol. frac. in IB BU
+
+    !  Outboard parameters
+
+    t_BU_OB = blbuoth * 100.0D0  ! [cm] BU thickness
+    t_BM_OB = blbmoth * 100.0D0  ! [cm] BM thickness
+    t_BP_OB = blbpoth * 100.0D0  ! [cm] BP thickness
+    t_VV_OB = (shldoth+ddwi) * 100.0D0  ! [cm] VV thickness
+    alpha_BM_OB = fblhebmo * 100.0D0  ! [%] Helium fraction in the OB BM
+    alpha_BP_OB = fblhebpo * 100.0D0  ! [%] Helium fraction in the OB BP
+    chi_Be_BU_OB = fblbe * 100.0D0 ! [%] Beryllium vol. frac. in OB BU
+    chi_breed_BU_OB = fblbreed * 100.0D0 ! [%] Breeder vol. frac. in OB BU
+    chi_steels_BU_OB = fblss * 100.0D0 ! [%] Steels vol. frac. in OB BU
+
+    call kit_blanket
+
+    !  Outputs from model
+
+    pnucblkt = P_th_tot
+    pnucshld = pnucsh
+    emult = M_E
+    tbr = tbratio
+    tritprate = G_tot
+    bktlife = t_bl_fpy
+
+    !  Peak fast neutron fluence on TF coils (neutrons/m2)
+
+    nflutf = max(nflutfi,nflutfo) * 1.0D4
+
+    !  Peak nuclear heating in TF coil (MW/m3)
+
+    ptfnucpm3 = max(pnuctfi,pnuctfo)
+
+    !  Total nuclear heating in TF coil (MW)
+    !  Rough estimate of TF coil volume used, assuming 25% of the total
+    !  TF coil perimeter is inboard, 75% outboard
+
+    ptfnuc = 0.25D0*tfleng*tfareain * pnuctfi &
+         + 0.75D0*tfleng*arealeg*tfno * pnuctfo
+
+    !  Maximum helium concentration in vacuum vessel at
+    !  end of plant lifetime (appm)
+
+    vvhemax = max(vvhemaxi,vvhemaxo)
+
+  end subroutine blanket_neutronics
 
 end module fwbs_module

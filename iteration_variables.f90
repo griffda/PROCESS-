@@ -45,6 +45,9 @@ subroutine loadxc
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_hist  06/11/12 PJK Renamed source file iteration_variables.f90 from xc.f90
+  !+ad_hist  04/06/13 PJK Added ftbr (89), blbuith (90), blbuoth (91),
+  !+ad_hisc               fflutf (92), shldith (93), shldoth (94),
+  !+ad_hisc               fptfnuc (95), fvvhe (96)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -213,6 +216,14 @@ subroutine loadxc
            write(*,*) 'PROCESS stopping.'
            stop
         end if
+     case (89) ; xcm(i) = ftbr
+     case (90) ; xcm(i) = blbuith
+     case (91) ; xcm(i) = blbuoth
+     case (92) ; xcm(i) = fflutf
+     case (93) ; xcm(i) = shldith
+     case (94) ; xcm(i) = shldoth
+     case (95) ; xcm(i) = fptfnuc
+     case (96) ; xcm(i) = fvvhe
 
      case default
         write(*,*) 'Error in routine LOADXC :'
@@ -301,6 +312,9 @@ subroutine convxc(xc,nn)
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  17/01/13 PJK Removed bounds checking of iteration variables
   !+ad_hist  11/04/13 PJK Removed ti recalculation (moved to physics)
+  !+ad_hist  04/06/13 PJK Added ftbr (89), blbuith (90), blbuoth (91),
+  !+ad_hisc               fflutf (92), shldith (93), shldoth (94),
+  !+ad_hisc               fptfnuc (95), fvvhe (96)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -425,6 +439,14 @@ subroutine convxc(xc,nn)
      case (86) ; frrmax   = xc(i)/scale(i)
      case (87) ; helecmw  = xc(i)/scale(i)
      case (88) ; hthermmw = xc(i)/scale(i)
+     case (89) ; ftbr     = xc(i)/scale(i)
+     case (90) ; blbuith  = xc(i)/scale(i)
+     case (91) ; blbuoth  = xc(i)/scale(i)
+     case (92) ; fflutf   = xc(i)/scale(i)
+     case (93) ; shldith  = xc(i)/scale(i)
+     case (94) ; shldoth  = xc(i)/scale(i)
+     case (95) ; fptfnuc  = xc(i)/scale(i)
+     case (96) ; fvvhe    = xc(i)/scale(i)
 
      case default
         write(*,*) 'Error in routine CONVXC :'

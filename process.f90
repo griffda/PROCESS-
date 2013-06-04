@@ -1300,3 +1300,4 @@ end subroutine output
 !          vacuum vessel cross-sectional shape; volume and area calculations for
 !          these fully updated
 ! SVN 168: Swapped build order of vacuum vessel and adjacent gaps
+! SVN 169: Added new KIT blanket neutronics model (User Guide still to do)

@@ -20,6 +20,7 @@ subroutine constraints(m,cc)
   !+ad_call  constraint_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  ife_variables
   !+ad_call  numerics
@@ -64,6 +65,7 @@ subroutine constraints(m,cc)
   !+ad_hist  17/12/12 PJK Eqn 30 inverted to prevent problems if pinj=0;
   !+ad_hisc               Added new eqn 51, plus debug lines
   !+ad_hist  23/01/13 PJK Allowed eqn.47 to be used for stellarators
+  !+ad_hist  04/06/13 PJK Added fwbs_variables, eqns 52-55
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -74,6 +76,7 @@ subroutine constraints(m,cc)
   use constraint_variables
   use current_drive_variables
   use divertor_variables
+  use fwbs_variables
   use heat_transport_variables
   use ife_variables
   use numerics
@@ -440,6 +443,22 @@ subroutine constraints(m,cc)
      case (51)  !  Equation to enforce startup flux = available startup flux
 
         cc(i) = 1.0D0 - (vsres+vsind) / vssu
+
+     case (52)  !  Equation to limit minimum tritium breeding ratio
+
+        cc(i) = 1.0D0 - ftbr * tbr/tbrmin
+
+     case (53)  !  Equation for fast neutron fluence on TF coil limit
+
+        cc(i) = 1.0D0 - fflutf * nflutfmax/nflutf
+
+     case (54)  !  Equation for peak TF coil nuclear heating limit
+
+        cc(i) = 1.0D0 - fptfnuc * ptfnucmax/ptfnucpm3
+
+     case (55)  !  Equation for final helium concentration in vacuum vessel limit
+
+        cc(i) = 1.0D0 - fvvhe * vvhealw/vvhemax
 
      case default
 

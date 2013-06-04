@@ -332,6 +332,7 @@ contains
     !+ad_hisc               if an obsolete variable is found in the input file
     !+ad_hist  09/05/13 PJK Added FWBSSHAPE
     !+ad_hist  15/05/13 PJK Added BLNKTTH, DIVFIX
+    !+ad_hist  22/05/13 PJK Added BLKTMODEL variables, removed FVOLBI,FVOLBO
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -707,6 +708,9 @@ contains
        case ('FHLDIV')
           call parse_real_variable('FHLDIV', fhldiv, 0.001D0, 10.0D0, &
                'F-value for divertor heat load')
+       case ('FFLUTF')
+          call parse_real_variable('FFLUTF', fflutf, 0.001D0, 10.0D0, &
+               'F-value for neutron fluence on TF coil')
        case ('FFUSPOW')
           call parse_real_variable('FFUSPOW', ffuspow, 0.001D0, 10.0D0, &
                'F-value for maximum fusion power')
@@ -734,6 +738,9 @@ contains
        case ('FPTEMP')
           call parse_real_variable('FPTEMP', fptemp, 0.001D0, 10.0D0, &
                'F-value for peak centrepost temperature')
+       case ('FPTFNUC')
+          call parse_real_variable('FPTFNUC', fptfnuc, 0.001D0, 10.0D0, &
+               'F-value for max TF coil nuclear heating')
        case ('FQ')
           call parse_real_variable('FQ', fq, 0.001D0, 10.0D0, &
                'F-value for edge safety factor')
@@ -755,6 +762,9 @@ contains
        case ('FSTRCOND')
           call parse_real_variable('FSTRCOND', fstrcond, 0.001D0, 10.0D0, &
                'F-value for TF coil conduit stress')
+       case ('FTBR')
+          call parse_real_variable('FTBR', ftbr, 0.001D0, 10.0D0, &
+               'F-value for tritium breeding ratio limit')
        case ('FTBURN')
           call parse_real_variable('FTBURN', ftburn, 0.001D0, 10.0D0, &
                'F-value for burn time limit')
@@ -776,6 +786,9 @@ contains
        case ('FVS')
           call parse_real_variable('FVS', fvs, 0.001D0, 10.0D0, &
                'F-value for startup V-s requirement')
+       case ('FVVHE')
+          call parse_real_variable('FVVHE', fvvhe, 0.001D0, 10.0D0, &
+               'F-value for VV He concentration limit')
        case ('FWALLD')
           call parse_real_variable('FWALLD', fwalld, 0.001D0, 10.0D0, &
                'F-value for wall load limit')
@@ -785,18 +798,30 @@ contains
        case ('MVALIM')
           call parse_real_variable('MVALIM', mvalim, 0.0D0, 1000.0D0, &
                'Maximum MVA limit')
+       case ('NFLUTFMAX')
+          call parse_real_variable('NFLUTFMAX', nflutfmax, 1.0D22, 1.0D24, &
+               'Max fast neutron fluence on TF coil (n/m2)')
        case ('PNETELIN')
           call parse_real_variable('PNETELIN', pnetelin, 1.0D0, 1.0D4, &
                'Required net electric power (MW)')
        case ('POWFMAX')
           call parse_real_variable('POWFMAX', powfmax, 1.0D0, 1.0D4, &
                'Maximum fusion power (MW)')
+       case ('PTFNUCMAX')
+          call parse_real_variable('PTFNUCMAX', ptfnucmax, 1.0D-6, 1.0D0, &
+               'Maximum TF coil nuclear heating (MW/m3)')
+       case ('TBRMIN')
+          call parse_real_variable('TBRMIN', tbrmin, 1.0D0, 2.0D0, &
+               'Minimum tritium breeding ratio')
        case ('TBRNMN')
           call parse_real_variable('TBRNMN', tbrnmn, 1.0D-3, 1.0D6, &
                'Minimum burn time (s)')
        case ('TPKMAX')
           call parse_real_variable('TPKMAX', tpkmax, 100.0D0, 1.0D3, &
                'Maximum first wall peak temperature (C)')
+       case ('VVHEALW')
+          call parse_real_variable('VVHEALW', vvhealw, 0.01D0, 10.0D0, &
+               'Allowable maximum He conc. in VV (appm)')
        case ('WALALW')
           call parse_real_variable('WALALW', walalw, 0.001D0, 50.0D0, &
                'Allowable wall load (MW/m2)')
@@ -968,6 +993,24 @@ contains
        case ('APLASMIN')
           call parse_real_variable('APLASMIN', aplasmin, 0.01D0, 10.0D0, &
                'Minimum minor radius (m)')
+       case ('BLBMITH')
+          call parse_real_variable('BLBMITH', blbmith, 0.0D0, 2.0D0, &
+               'Inboard blanket box manifold thickness (m)')
+       case ('BLBMOTH')
+          call parse_real_variable('BLBMOTH', blbmoth, 0.0D0, 2.0D0, &
+               'Outboard blanket box manifold thickness (m)')
+       case ('BLBPITH')
+          call parse_real_variable('BLBPITH', blbpith, 0.0D0, 2.0D0, &
+               'Inboard blanket back plate thickness (m)')
+       case ('BLBPOTH')
+          call parse_real_variable('BLBPOTH', blbpoth, 0.0D0, 2.0D0, &
+               'Outboard blanket back plate thickness (m)')
+       case ('BLBUITH')
+          call parse_real_variable('BLBUITH', blbuith, 0.0D0, 2.0D0, &
+               'Inboard blanket breeding unit thickness (m)')
+       case ('BLBUOTH')
+          call parse_real_variable('BLBUOTH', blbuoth, 0.0D0, 2.0D0, &
+               'Outboard blanket breeding unit thickness (m)')
        case ('BLNKITH')
           call parse_real_variable('BLNKITH', blnkith, 0.0D0, 10.0D0, &
                'Inboard blanket thickness (m)')
@@ -1358,6 +1401,12 @@ contains
        case ('ASTR')
           call parse_int_variable('ASTR', astr, 1, 2, &
                'Switch for cooling channel geometry')
+       case ('BLKTMODEL')
+          call parse_int_variable('BLKTMODEL', blktmodel, 0, 1, &
+               'Switch for blanket neutronics calculations')
+       case ('BREEDMAT')
+          call parse_int_variable('BREEDMAT', breedmat, 1, 3, &
+               'Switch for blanket breeder material')
        case ('BSTR')
           call parse_int_variable('BSTR', bstr, 1, 2, &
                'Switch for blanket boundary condition')
@@ -1391,6 +1440,21 @@ contains
        case ('FBLBE')
           call parse_real_variable('FBLBE', fblbe, 0.0D0, 1.0D0, &
                'Beryllium fraction of blanket')
+       case ('FBLBREED')
+          call parse_real_variable('FBLBREED', fblbreed, 0.0D0, 1.0D0, &
+               'Breeder fraction of blanket breeding unit')
+       case ('FBLHEBMI')
+          call parse_real_variable('FBLHEBMI', fblhebmi, 0.0D0, 1.0D0, &
+               'Helium fraction of IB blanket box manifold')
+       case ('FBLHEBMO')
+          call parse_real_variable('FBLHEBMO', fblhebmo, 0.0D0, 1.0D0, &
+               'Helium fraction of OB blanket box manifold')
+       case ('FBLHEBPI')
+          call parse_real_variable('FBLHEBPI', fblhebpi, 0.0D0, 1.0D0, &
+               'Helium fraction of IB blanket back plate')
+       case ('FBLHEBPO')
+          call parse_real_variable('FBLHEBPO', fblhebpo, 0.0D0, 1.0D0, &
+               'Helium fraction of OB blanket back plate')
        case ('FBLLI')
           call parse_real_variable('FBLLI', fblli, 0.0D0, 1.0D0, &
                'Lithium fraction of blanket')
@@ -1408,16 +1472,18 @@ contains
                'Vanadium fraction of blanket')
        case ('FHOLE')
           call parse_real_variable('FHOLE', fhole, 0.0D0, 1.0D0, &
-               'Hole frac of 1st wall (to neutrons)')
+               'Hole frac of FW/blanket (to neutrons)')
        case ('FKBLKT')
           call parse_real_variable('FKBLKT', fkblkt, 0.2D0, 5.0D0, &
                'Blanket elongation / plasma elongation')
        case ('FVOLBI')
-          call parse_real_variable('FVOLBI', fvolbi, 0.0D0, 10.0D0, &
-               'Fudge factor for inboard blanket volume')
+          write(outfile,*) 'FVOLBI is now obsolete - (use FHOLE)'
+          write(outfile,*) 'please remove it from the input file'
+          obsolete_var = .true.
        case ('FVOLBO')
-          call parse_real_variable('FVOLBO', fvolbo, 0.0D0, 10.0D0, &
-               'Fudge factor for outboard blanket volume')
+          write(outfile,*) 'FVOLBO is now obsolete - (use FHOLE)'
+          write(outfile,*) 'please remove it from the input file'
+          obsolete_var = .true.
        case ('FVOLCRY')
           write(outfile,*) 'FVOLCRY is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
@@ -1437,15 +1503,30 @@ contains
        case ('FWBSSHAPE')
           call parse_int_variable('FWBSSHAPE', fwbsshape, 1, 2, &
                'Switch for fw/blanket/shield/vv shape')
+       case ('HCDPORTSIZE')
+          call parse_int_variable('HCDPORTSIZE', hcdportsize, 1, 2, &
+               'H/CD port size')
        case ('LBLNKT')
           call parse_int_variable('LBLNKT', lblnkt, 0, 1, &
                'Switch for blanket model invoked')
+       case ('LI6ENRICH')
+          call parse_real_variable('LI6ENRICH', li6enrich, 0.0D0, 100.0D0, &
+               'Li-6 enrichment')
        case ('NIPFWH')
           call parse_int_variable('NIPFWH', nipfwh, 1, 4, &
                'Number of IP feed water heater pumps')
        case ('NLPFWH')
           call parse_int_variable('NLPFWH', nlpfwh, 1, 4, &
                'Number of LP feed water heater pumps')
+       case ('NPDIV')
+          call parse_int_variable('NPDIV', npdiv, 0, 4, &
+               'Number of divertor ports')
+       case ('NPHCDIN')
+          call parse_int_variable('NPHCDIN', nphcdin, 0, 4, &
+               'Number of inboard H/CD ports')
+       case ('NPHCDOUT')
+          call parse_int_variable('NPHCDOUT', nphcdout, 0, 4, &
+               'Number of outboard H/CD ports')
        case ('PC')
           call parse_real_variable('PC', pc, 0.004D0, 0.01D0, &
                'Condenser pressure (MPa)')
@@ -1470,6 +1551,9 @@ contains
        case ('VFSHLD')
           call parse_real_variable('VFSHLD', vfshld, 0.0D0, 1.0D0, &
                'Coolant void fraction in shield')
+       case ('WALLPF')
+          call parse_real_variable('WALLPF', wallpf, 1.0D0, 2.0D0, &
+               'Neutron wall load peaking factor')
        case ('XDI')
           call parse_real_variable('XDI', xdi, 1.0D0, 10.0D0, &
                'Inner cooling channel diameter (cm)')
@@ -1653,6 +1737,9 @@ contains
        case ('UCBLBE')
           call parse_real_variable('UCBLBE', ucblbe, 1.0D0, 1.0D3, &
                'Unit cost for blanket Be ($/kg)')
+       case ('UCBLBREED')
+          call parse_real_variable('UCBLBREED', ucblbreed, 1.0D0, 1.0D3, &
+               'Unit cost for blanket breeder material ($/kg)')
        case ('UCBLLI')
           call parse_real_variable('UCBLLI', ucblli, 1.0D2, 1.0D4, &
                'Unit cost for blanket Li ($/kg)')

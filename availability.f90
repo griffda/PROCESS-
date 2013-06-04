@@ -69,6 +69,7 @@ contains
     !+ad_hist  05/11/12 PJK Added rfp_variables
     !+ad_hist  05/11/12 PJK Added ife_variables
     !+ad_hist  05/11/12 PJK Added pulse_variables
+    !+ad_hist  23/05/13 PJK Removed bktlife calculation if blktmodel>0
     !+ad_stat  Okay
     !+ad_docs  F/PL/PJK/PROCESS/CODE/043
     !
@@ -97,7 +98,7 @@ contains
 
           !  First wall / blanket
 
-          bktlife = min( abktflnc/wallmw, tlife )
+          if (blktmodel == 0) bktlife = min( abktflnc/wallmw, tlife )
           fwlife = bktlife
 
           !  Divertor
