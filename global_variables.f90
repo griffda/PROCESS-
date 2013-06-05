@@ -2070,6 +2070,7 @@ module build_variables
   !+ad_hist  10/04/13 PJK Relabelled gapsto, gapomin etc.
   !+ad_hist  15/05/13 PJK Relabelled gapds, gapomin, gapsto, vgap2; added blnktth
   !+ad_hist  22/05/13 PJK Added blanket subcomponent thicknesses
+  !+ad_hist  05/06/13 PJK Modified shldtth comment
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2213,7 +2214,8 @@ module build_variables
   !+ad_vars  shldoth /1.05/ : outboard shield thickness (m)
   !+ad_varc                   (iteration variable 94)
   real(kind(1.0D0)) :: shldoth = 1.05D0
-  !+ad_vars  shldtth /0.60/ : upper/lower shield thickness (m)
+  !+ad_vars  shldtth /0.60/ : upper/lower shield thickness (m);
+  !+ad_varc                   calculated if blktmodel > 0
   real(kind(1.0D0)) :: shldtth = 0.6D0
   !+ad_vars  tfcth /0.9/ : inboard TF coil thickness, (centrepost for ST) (m)
   !+ad_varc                (iteration variable 13)

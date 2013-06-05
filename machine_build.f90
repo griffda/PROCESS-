@@ -88,6 +88,7 @@ contains
     !+ad_hist  15/05/13 PJK Swapped build order of vacuum vessel and gap
     !+ad_hist  22/05/13 PJK Introduced fwareaib, fwareaob; added blanket thickness
     !+ad_hisc               calculations
+    !+ad_hist  05/06/13 PJK shldtth now calculated if blktmodel>0
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -111,6 +112,7 @@ contains
        blnkith = blbuith + blbmith + blbpith
        blnkoth = blbuoth + blbmoth + blbpoth
        blnktth = 0.5D0*(blnkith+blnkoth)
+       shldtth = 0.5D0*(shldith+shldoth)
     end if
 
     !  Radial build to centre of plasma (should be equal to rmajor)

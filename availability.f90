@@ -70,6 +70,7 @@ contains
     !+ad_hist  05/11/12 PJK Added ife_variables
     !+ad_hist  05/11/12 PJK Added pulse_variables
     !+ad_hist  23/05/13 PJK Removed bktlife calculation if blktmodel>0
+    !+ad_hist  05/06/13 PJK Removed abktflnc output if blktmodel>0
     !+ad_stat  Okay
     !+ad_docs  F/PL/PJK/PROCESS/CODE/043
     !
@@ -192,8 +193,10 @@ contains
        !  Output section
 
        call oheadr(outfile,'Plant Availability')
-       call ovarre(outfile,'Allowable blanket neut. fluence (MW-yr/m2)', &
-            '(abktflnc)',abktflnc)
+       if (blktmodel == 0) then
+          call ovarre(outfile,'Allowable blanket neut. fluence (MW-yr/m2)', &
+               '(abktflnc)',abktflnc)
+       end if
        call ovarre(outfile,'Allowable divertor heat fluence (MW-yr/m2)', &
             '(adivflnc)',adivflnc)
        call ovarre(outfile,'First wall / blanket lifetime (years)', &
