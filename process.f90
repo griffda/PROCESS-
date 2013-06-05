@@ -1301,3 +1301,4 @@ end subroutine output
 !          these fully updated
 ! SVN 168: Swapped build order of vacuum vessel and adjacent gaps
 ! SVN 169: Added new KIT blanket neutronics model (User Guide still to do)
+! SVN 170: Updated User Guide to describe new blanket model

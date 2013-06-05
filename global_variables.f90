@@ -841,7 +841,7 @@ module fwbs_variables
   !+ad_vars  fblbe /0.6/ : beryllium fraction of blanket by volume
   !+ad_varc                (if blktmodel>0, Be fraction of breeding unit)
   real(kind(1.0D0)) :: fblbe = 0.6D0
-  !+ad_vars  fblbreed /0.154/ : beryllium fraction of blanket breeding unit by volume
+  !+ad_vars  fblbreed /0.154/ : breeder fraction of blanket breeding unit by volume
   !+ad_varc                     (blktmodel>0)
   real(kind(1.0D0)) :: fblbreed = 0.154D0
   !+ad_vars  fblhebmi /0.40/ : helium fraction of inboard blanket box manifold by volume
@@ -895,8 +895,10 @@ module fwbs_variables
   !+ad_varc                  <LI> = 2 'large'</UL>
   integer :: hcdportsize = 1
   !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)
+  !+ad_varc                     (blktmodel>0)
   real(kind(1.0D0)) :: li6enrich = 30.0D0
   !+ad_vars  nflutf : peak fast neutron fluence on TF coil superconductor (n/m2)
+  !+ad_varc           (blktmodel>0)
   real(kind(1.0D0)) :: nflutf = 0.0D0
   !+ad_vars  npdiv /2/ : number of divertor ports (blktmodel>0)
   integer :: npdiv = 2

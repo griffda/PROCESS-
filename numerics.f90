@@ -340,13 +340,13 @@ module numerics
        'IFE repetition rate limit        ', &
        !+ad_varc  <LI> (51) Startup volt-seconds consistency (PULSE)
        'Startup volt-seconds consistency ', &
-       !+ad_varc  <LI> (52) Minimum tritium breeding ratio limit</UL>
+       !+ad_varc  <LI> (52) Minimum tritium breeding ratio limit
        'Tritium breeding ratio limit     ', &
-       !+ad_varc  <LI> (53) Neutron fluence on TF coil limit</UL>
+       !+ad_varc  <LI> (53) Neutron fluence on TF coil limit
        'Neutron fluence on TF coil limit ', &
-       !+ad_varc  <LI> (54) Peak TF coil nuclear heating limit</UL>
+       !+ad_varc  <LI> (54) Peak TF coil nuclear heating limit
        'Peak TF coil nucl. heating limit ', &
-       !+ad_varc  <LI> (54) Vacuum vessel helium concentration limit</UL>
+       !+ad_varc  <LI> (55) Vacuum vessel helium concentration limit</UL>
        'Vessel helium concentration limit'  &
        /)
 
