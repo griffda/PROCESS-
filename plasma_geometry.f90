@@ -67,6 +67,8 @@ contains
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  05/11/12 PJK Added rfp_variables
+    !+ad_hist  10/06/13 PJK New ISHAPE=2 elongation scaling; sf2 replaced by
+    !+ad_hisc               global variable pperim
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK14, pp.41-43
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -79,7 +81,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: sa,sf2,so,xsi,xso,thetai,thetao,xi,xo
+    real(kind(1.0D0)) :: sa,so,xsi,xso,thetai,thetao,xi,xo
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -88,17 +90,27 @@ contains
     rminor = rmajor / aspect
     eps = 1.0D0 / aspect
 
-    !  Calculate shaping terms, rather than use input values (TART)
+    !  Calculate shaping terms, rather than use input values
 
-    if (ishape == 1) then
+    if (ishape == 1) then  !  TART scaling
        kappa = 2.05D0 * (1.0D0 + 0.44D0 * eps**2.1D0)
        triang = 0.53D0 * (1.0D0 + 0.77D0 * eps**3)
        qlim = 3.0D0 * (1.0D0 + 2.6D0*eps**2.8D0)
+    else if (ishape == 2) then
+       !  Zohm et al, On the Physics Guidelines for a Tokamak DEMO,
+       !  FTP/3-3, Proc. IAEA Fusion Energy Conference, October 2012, San Diego
+       kappa = min(2.0D0, 1.5D0 + 0.5D0/(aspect-1.0D0))
+    else
+       continue  !  use input values
     end if
 
     !  Rough estimate of 95% values
 
-    kappa95 = (kappa - 0.04D0) / 1.10D0
+    if (ishape == 2) then  !  Tobias Hartmann suggestion
+       kappa95 = kappa / 1.12D0
+    else
+       kappa95 = (kappa - 0.04D0) / 1.10D0
+    end if
     triang95 = triang / 1.50D0
 
     !  Scrape-off layer thicknesses
@@ -114,7 +126,7 @@ contains
 
        !  Plasma poloidal perimeter
 
-       sf2 = 2.0D0*pi*rminor
+       pperim = 2.0D0*pi*rminor
        sf = 1.0D0
 
        !  Plasma volume (kappa should be 1.0)
@@ -139,8 +151,8 @@ contains
 
        !  Use original methods
 
-       sf2 = perim(rminor,kappa,triang)
-       sf = sf2 / (2.0D0*pi*rminor)
+       pperim = perim(rminor,kappa,triang)
+       sf = pperim / (2.0D0*pi*rminor)
 
        vol = cvol * fvol(rmajor,rminor,kappa,triang)
 
@@ -158,8 +170,8 @@ contains
 
        !  Poloidal perimeter
 
-       sf2 = 2.0D0 * ( xo*thetao + xi*thetai )
-       sf = sf2 / (2.0D0*pi*rminor)
+       pperim = 2.0D0 * ( xo*thetao + xi*thetai )
+       sf = pperim / (2.0D0*pi*rminor)
 
        !  Volume
 

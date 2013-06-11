@@ -3,19 +3,52 @@
 
 module kit_blanket_model
 
-!  Blanket neutronics model, created by Fabrizio Franza (KIT), migrated to Fortran
+  !+ad_name  kit_blanket_model
+  !+ad_summ  Module containing the KIT blanket model
+  !+ad_summ  based on the HCPB concept
+  !+ad_type  Module
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_auth  F Franza, KIT (original MATLAB implementation)
+  !+ad_cont  blanket_lifetime
+  !+ad_cont  f_alpha
+  !+ad_cont  fast_neutron_fluence
+  !+ad_cont  he_production_vacuum_vessel
+  !+ad_cont  kit_blanket
+  !+ad_cont  nuclear_power_production
+  !+ad_cont  power_density
+  !+ad_cont  radial_coordinates
+  !+ad_cont  tritium_breeding_ratio
+  !+ad_args  N/A
+  !+ad_desc  This module contains the blanket neutronics model developed
+  !+ad_desc  by Fabrizio Franza et al. from Karlsruhe Institute of Technology (KIT)
+  !+ad_desc  based on the Helium-Cooled Pebble Bed (HCPB) blanket concept
+  !+ad_desc  of the PPCS Model B design.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  06/06/13 PJK Initial release for comments
+  !+ad_stat  Okay
+  !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+  !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+  !+ad_docc  Karlsruhe Institute of Technology, January 2013;
+  !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   implicit none
 
   private
   public :: kit_blanket
 
+  !  Local variables
+
   !  Radial coordinate arrays for the blanket sub-assemblies:
   !  BU = Breeding Unit
   !  BM = Box Manifold
   !  BP = Back Plates
-  !  VV = Vacuum Vessel
+  !  VV = Vacuum Vessel (includes low-temperature shield)
   !  Element 1 = 'inner' edge, element 2 = 'outer' edge
+  !
+  !  IB = inboard, OB = outboard
 
   real(kind(1.0D0)), dimension(2) :: x_BU_IB, x_BM_IB, x_BP_IB, x_VV_IB
   real(kind(1.0D0)), dimension(2) :: x_BU_OB, x_BM_OB, x_BP_OB, x_VV_OB
@@ -34,7 +67,7 @@ module kit_blanket_model
   integer, parameter :: K_tau = 31536000          ! [sec/yr] Number of seconds per year
 
   !  Constants and fixed coefficients used in the model
-  !  Based on Helium-Cooled Pebble Beds (HCBP) configuration
+  !  Based on Helium-Cooled Pebble Beds (HCPB) configuration
   !  of the PPCS Model B design
 
   real(kind(1.0D0)) :: A_cov_PPCS = 1365.0D0   ! [m^2] Total blanket coverage area
@@ -178,11 +211,40 @@ contains
 
   function f_alpha(alpha)
 
-    !  Calculates decay length multiplier given the
-    !  helium fraction alpha (percent)
+    !+ad_name  f_alpha
+    !+ad_summ  Calculates the power density decay length multiplier
+    !+ad_summ  in a blanket region given the helium fraction
+    !+ad_type  Function returning real
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  F Franza, KIT (original MATLAB implementation)
+    !+ad_cont  None
+    !+ad_args  alpha : input real : helium fraction (%)
+    !+ad_desc  This routine calculates the power density decay length
+    !+ad_desc  multiplier in a blanket region comprising EUROFER steel and
+    !+ad_desc  helium coolant, given the helium volume fraction within the
+    !+ad_desc  region.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  06/06/13 PJK Initial release
+    !+ad_stat  Okay
+    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
+    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
 
     real(kind(1.0D0)) :: f_alpha
+
+    !  Arguments
+
     real(kind(1.0D0)), intent(in) :: alpha
+
+    !  Local variables
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     f_alpha = 1.0D0 + 0.019D0*alpha
 
@@ -192,9 +254,39 @@ contains
 
   subroutine kit_blanket
 
-    !  Main routine for the KIT Blanket Model
+    !+ad_name  kit_blanket
+    !+ad_summ  Main routine for the KIT HCPB blanket model
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  F Franza, KIT (original MATLAB implementation)
+    !+ad_cont  None
+    !+ad_args  None
+    !+ad_desc  This routine calls the main work routines for the KIT HCPB
+    !+ad_desc  blanket model.
+    !+ad_prob  None
+    !+ad_call  radial_coordinates
+    !+ad_call  power_density
+    !+ad_call  nuclear_power_production
+    !+ad_call  tritium_breeding_ratio
+    !+ad_call  fast_neutron_fluence
+    !+ad_call  he_production_vacuum_vessel
+    !+ad_call  blanket_lifetime
+    !+ad_hist  06/06/13 PJK Initial release
+    !+ad_stat  Okay
+    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
+    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
+
+    !  Arguments
+
+    !  Local variables
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Perform preliminary calculations for the PPCS Model B configuration
 
@@ -202,14 +294,16 @@ contains
 
     CF_bl_PPCS = A_FW_PPCS/A_cov_PPCS * 100.0D0
 
-    !  Power density decay lengths (cm)
+    !  Power density decay lengths (cm) in the BM and BP regions,
+    !  given the helium fractions
 
     lambda_q_BM_IB = lambda_EU * f_alpha(alpha_BM_IB)
     lambda_q_BM_OB = lambda_EU * f_alpha(alpha_BM_OB)
     lambda_q_BP_IB = lambda_EU * f_alpha(alpha_BP_IB)
     lambda_q_BP_OB = lambda_EU * f_alpha(alpha_BP_OB)
 
-    !  Initialise the radial coordinate arrays
+    !  Initialise the radial coordinate arrays, defining the blanket
+    !  sub-assembly thicknesses
 
     call radial_coordinates
 
@@ -226,7 +320,7 @@ contains
     call fast_neutron_fluence(phi_n_vv_IB_start,phi_n_vv_OB_start, &
          nflutfi,nflutfo)
 
-    call He_production_vacuum_vessel(phi_n_vv_IB_start,phi_n_vv_OB_start, &
+    call he_production_vacuum_vessel(phi_n_vv_IB_start,phi_n_vv_OB_start, &
          vvhemini,vvhemino,vvhemaxi,vvhemaxo)
 
     call blanket_lifetime(t_bl_FPY,t_bl_Y)
@@ -237,10 +331,40 @@ contains
 
   subroutine radial_coordinates
 
+    !+ad_name  radial_coordinates
+    !+ad_summ  Sets up the radial build within the KIT blanket
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  F Franza, KIT (original MATLAB implementation)
+    !+ad_cont  None
+    !+ad_args  None
+    !+ad_desc  This routine sets up the arrays containing the radial
+    !+ad_desc  build within each blanket sub-assembly.
+    !+ad_desc  <P>At present, the arrays contain only NP=2 elements, i.e. contain the
+    !+ad_desc  values at the inner and outer radial locations; however, if required,
+    !+ad_desc  they may be changed easily to provide several points for plotting
+    !+ad_desc  purposes, for example.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  06/06/13 PJK Initial release
+    !+ad_stat  Okay
+    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
+    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     implicit none
 
+    !  Arguments
+
+    !  Local variables
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     !  Radial coordinates in each inboard sub-assembly (cm)
-    !  Element 1 is 'inner' edge, element 2 is 'outer' edge
+    !  Element 1 is 'inner' edge (nearer the plasma), element 2 is 'outer' edge
 
     x_BU_IB(1) = 0.0D0 ; x_BU_IB(2) = t_FW_IB + t_BU_IB
     x_BM_IB(1) = 0.0D0 ; x_BM_IB(2) = t_BM_IB
@@ -261,7 +385,40 @@ contains
   subroutine power_density(q_BU_IB_end,q_BM_IB_end,q_BP_IB_end, &
        q_BU_OB_end,q_BM_OB_end,q_BP_OB_end,pnuctfi,pnuctfo)
 
-    !  Power Density profiles
+    !+ad_name  power_density
+    !+ad_summ  Calculates the nuclear power density profiles
+    !+ad_dumm  within the KIT blanket sub-assemblies
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  F Franza, KIT (original MATLAB implementation)
+    !+ad_cont  None
+    !+ad_args  q_BU_IB_end : output real : power density at outer edge of IB BU (MW/m3)
+    !+ad_args  q_BM_IB_end : output real : power density at outer edge of IB BM (MW/m3)
+    !+ad_args  q_BP_IB_end : output real : power density at outer edge of IB BP (MW/m3)
+    !+ad_args  q_BU_OB_end : output real : power density at outer edge of OB BU (MW/m3)
+    !+ad_args  q_BM_OB_end : output real : power density at outer edge of OB BM (MW/m3)
+    !+ad_args  q_BP_OB_end : output real : power density at outer edge of OB BP (MW/m3)
+    !+ad_args  pnuctfi     : output real : power density at outer edge of IB VV (MW/m3)
+    !+ad_argc                              = that on inner TF coil winding pack
+    !+ad_args  pnuctfo     : output real : power density at outer edge of OB VV (MW/m3)
+    !+ad_argc                              = that on outer TF coil winding pack
+    !+ad_desc  This routine calculates the nuclear power density profiles within each
+    !+ad_desc  blanket sub-assembly, assuming an exponential decay with distance through
+    !+ad_desc  each region, with the decay indices dependent on the material fractions.
+    !+ad_desc  <P>At present, the arrays contain only NP=2 elements, i.e. contain the
+    !+ad_desc  values at the inner and outer radial locations; however, if required,
+    !+ad_desc  they may be changed easily to provide several points for plotting
+    !+ad_desc  purposes, for example.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  06/06/13 PJK Initial release
+    !+ad_stat  Okay
+    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
+    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
@@ -277,56 +434,56 @@ contains
     real(kind(1.0D0)), dimension(2) :: q_BM_IB, q_BP_IB, q_VV_IB
     real(kind(1.0D0)), dimension(2) :: q_BM_OB, q_BP_OB, q_VV_OB
 
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  N.B. Power density is in W/cm3 = MW/m3
+
     !  Inboard profiles
 
-    ! [W/cm^3] Power density profile in IB BU steels
+    !  Power density profile in IB BU steels
 
     q_steels_BU_IB(:) = NWL_av/NWL_av_PPCS * q_0_BU_steels_IB * &
          exp(-x_BU_IB(:)/lambda_q_BU_steels_IB)
     q_BU_IB_end = q_steels_BU_IB(2)
 
-    ! [W/cm^3] Power density profile in IB BM
+    ! Power density profile in IB BM
 
     q_BM_IB(:) = q_steels_BU_IB(2) * exp(-x_BM_IB(:)/lambda_q_BM_IB)
     q_BM_IB_end = q_BM_IB(2)
 
-    ! [W/cm^3] Power density profile in IB BP
+    !  Power density profile in IB BP
 
     q_BP_IB(:) = q_BM_IB(2) * exp(-x_BP_IB(:)/lambda_q_BP_IB)
     q_BP_IB_end = q_BP_IB(2)
 
-    ! [W/cm^3] Power density profile in IB VV
+    !  Power density profile in IB VV
 
     q_VV_IB(:) = q_BP_IB(2) * exp(-x_VV_IB(:)/lambda_q_VV)
 
     !  Outboard profiles
 
-    ! [W/cm^3] Power density profile in OB BU steels
+    !  Power density profile in OB BU steels
 
     q_steels_BU_OB(:) = NWL_av/NWL_av_PPCS * q_0_BU_steels_OB * &
          exp(-x_BU_OB(:)/lambda_q_BU_steels_OB)
     q_BU_OB_end = q_steels_BU_OB(2)
 
-    ! [W/cm^3] Power density profile in OB BM
+    !  Power density profile in OB BM
 
     q_BM_OB(:) = q_steels_BU_OB(2) * exp(-x_BM_OB(:)/lambda_q_BM_OB)
     q_BM_OB_end = q_BM_OB(2)
 
-    ! [W/cm^3] Power density profile in OB BP
+    !  Power density profile in OB BP
 
     q_BP_OB(:) = q_BM_OB(2) * exp(-x_BP_OB(:)/lambda_q_BP_OB)
     q_BP_OB_end = q_BP_OB(2)
 
-    ! [W/cm^3] Power density profile in OB VV
+    !  Power density profile in OB VV
 
     q_VV_OB(:) = q_BP_OB(2) * exp(-x_VV_OB(:)/lambda_q_VV)
 
-    !write(*,*) ' '
-    !write(*,*) 'POWER DENSITY'
-    !write(*,*) 'Nuclear Heating on IB TFC Winding Pack: ',q_VV_IB(2), ' [W/cm^3]'
-    !write(*,*) 'Nuclear Heating on OB TFC Winding Pack: ',q_VV_OB(2), ' [W/cm^3]'
-
-    !  MW/m3 = W/cm3
+    !  Nuclear heating on TF coil winding pack is assumed to be equal to
+    !  the value at the outer edge of the VV (neglecting the steel TF coil case
 
     pnuctfi = q_VV_IB(2)
     pnuctfo = q_VV_OB(2)
@@ -338,7 +495,38 @@ contains
   subroutine nuclear_power_production(q_BU_IB_end,q_BM_IB_end,q_BP_IB_end, &
        q_BU_OB_end,q_BM_OB_end,q_BP_OB_end,P_th_tot,M_E,pnucsh)
 
-    !  Nuclear power production and energy multiplication factor
+    !+ad_name  nuclear_power_production
+    !+ad_summ  Calculates nuclear power production and energy multiplication factor
+    !+ad_dumm  within the KIT blanket sub-assemblies
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  F Franza, KIT (original MATLAB implementation)
+    !+ad_cont  None
+    !+ad_args  q_BU_IB_end : input real : power density at outer edge of IB BU (MW/m3)
+    !+ad_args  q_BM_IB_end : input real : power density at outer edge of IB BM (MW/m3)
+    !+ad_args  q_BP_IB_end : input real : power density at outer edge of IB BP (MW/m3)
+    !+ad_args  q_BU_OB_end : input real : power density at outer edge of OB BU (MW/m3)
+    !+ad_args  q_BM_OB_end : input real : power density at outer edge of OB BM (MW/m3)
+    !+ad_args  q_BP_OB_end : input real : power density at outer edge of OB BP (MW/m3)
+    !+ad_args  p_th_tot    : output real : total nuclear power in the blanket (MW)
+    !+ad_args  m_e         : output real : energy multiplication factor in the blanket
+    !+ad_args  pnucsh      : output real : total nuclear power in the shield (MW)
+    !+ad_desc  This routine calculates the nuclear power production within each
+    !+ad_desc  blanket sub-assembly, assuming an exponential decay with distance through
+    !+ad_desc  each region, with the decay indices dependent on the material fractions.
+    !+ad_desc  These are summed to give the total nuclear power produced in the 'blanket'
+    !+ad_desc  (BU+BM+BP) and 'shield' regions, and the energy multiplication factor
+    !+ad_desc  in the blanket is calculated.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  06/06/13 PJK Initial release
+    !+ad_stat  Okay
+    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
+    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
@@ -360,11 +548,13 @@ contains
 
     real(kind(1.0D0)) :: nwl_ratio
 
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     nwl_ratio = NWL_av/NWL_av_PPCS
 
-    !  Cross-sectional areas (cm2)
+    !  Cross-sectional areas in the breeder unit (cm2)
 
-    !  Breeder (chi = volumetric fraction as a percentage)
+    !  Breeder (chi... = volumetric fraction as a percentage)
 
     A_BU_breed_IB = A_bl_IB * 0.01D0*chi_breed_BU_IB
     A_BU_breed_OB = A_bl_OB * 0.01D0*chi_breed_BU_OB
@@ -379,109 +569,109 @@ contains
     A_BU_steels_IB = A_bl_IB * 0.01D0*chi_steels_BU_IB
     A_BU_steels_OB = A_bl_OB * 0.01D0*chi_steels_BU_OB
 
-    !  Inboard power terms
+    !  Inboard power terms (MW)
 
-    ! [MW] Nuclear power in IB breeder pebbles
+    !  Nuclear power in IB breeder pebbles
 
     P_BU_breed_IB = 1.0D-6 * nwl_ratio * A_BU_breed_IB * &
          lambda_q_BU_breed_IB * q_0_BU_breed_IB * &
          ( exp(-t_FW_IB/lambda_q_BU_breed_IB) - &
          exp(-(t_FW_IB+t_BU_IB)/lambda_q_BU_breed_IB) )
 
-    ! [MW] Nuclear power in IB Be pebbles     
+    !  Nuclear power in IB Be pebbles     
 
     P_BU_Be_IB = 1.0D-6 * nwl_ratio * A_BU_Be_IB * &
          lambda_q_BU_Be_IB * q_0_BU_Be_IB * &
          ( exp(-t_FW_IB/lambda_q_BU_Be_IB) - &
          exp(-(t_FW_IB+t_BU_IB)/lambda_q_BU_Be_IB) )
 
-    ! [MW] Nuclear power in IB BU steels
+    !  Nuclear power in IB BU steels
 
     P_BU_steels_IB = 1.0D-6 * nwl_ratio * A_BU_steels_IB * &
          lambda_q_BU_steels_IB * q_0_BU_steels_IB * &
          (1.0D0-exp(-(t_FW_IB+t_BU_IB)/lambda_q_BU_steels_IB))
 
-    ! [MW] Total Nuclear power in IB BU
+    !  Total Nuclear power in IB BU
 
     P_BU_IB = P_BU_breed_IB + P_BU_Be_IB + P_BU_steels_IB
 
-    ! [MW] Nuclear power in IB BM
+    !  Nuclear power in IB BM
 
     P_BM_IB = 1.0D-6 * A_bl_IB * &
          lambda_q_BM_IB * q_BU_IB_end * &
          (1.0D0-exp(-t_BM_IB/lambda_q_BM_IB))
 
-    ! [MW] Nuclear power in IB BP
+    !  Nuclear power in IB BP
 
     P_BP_IB = 1.0D-6 * A_bl_IB * &
          lambda_q_BP_IB * q_BM_IB_end * &
          (1.0D0-exp(-t_BP_IB/lambda_q_BP_IB))
 
-    ! [MW] Nuclear power in IB VV
+    !  Nuclear power in IB VV
 
     P_VV_IB = 1.0D-6 * A_VV_IB * &
          lambda_q_VV * q_BP_IB_end * &
          (1.0D0-exp(-t_VV_IB/lambda_q_VV))
 
-    !  Outboard power terms
+    !  Outboard power terms (MW)
 
-    ! [MW] Nuclear power in OB BU breeder pebbles
+    !  Nuclear power in OB BU breeder pebbles
 
     P_BU_breed_OB = 1.0D-6 * nwl_ratio * A_BU_breed_OB * &
          lambda_q_BU_breed_OB * q_0_BU_breed_OB * &
          ( exp(-t_FW_OB/lambda_q_BU_breed_OB) - &
          exp(-(t_FW_OB+t_BU_OB)/lambda_q_BU_breed_OB) )
 
-    ! [MW] Nuclear power in OB BU Be pebbles
+    !  Nuclear power in OB BU Be pebbles
 
     P_BU_Be_OB = 1.0D-6 * nwl_ratio * A_BU_Be_OB * &
          lambda_q_BU_Be_OB * q_0_BU_Be_OB * &
          ( exp(-t_FW_OB/lambda_q_BU_Be_OB) - &
          exp(-(t_FW_OB+t_BU_OB)/lambda_q_BU_Be_OB) )
 
-    ! [MW] Nuclear power in OB BU steels
+    !  Nuclear power in OB BU steels
 
     P_BU_steels_OB = 1.0D-6 * nwl_ratio * A_BU_steels_OB * &
          lambda_q_BU_steels_OB * q_0_BU_steels_OB * &
          (1.0D0-exp(-(t_FW_OB+t_BU_OB)/lambda_q_BU_steels_OB))
 
-    ! [MW] Total Nuclear power in OB BU
+    !  Total nuclear power in OB BU
 
     P_BU_OB = P_BU_breed_OB + P_BU_Be_OB + P_BU_steels_OB
 
-    ! [MW] Nuclear power in OB BM
+    !  Nuclear power in OB BM
 
     P_BM_OB = 1.0D-6 * A_bl_OB * &
          lambda_q_BM_OB * q_BU_OB_end * &
          (1.0D0-exp(-t_BM_OB/lambda_q_BM_OB))
 
-    ! [MW] Nuclear power in OB BP
+    !  Nuclear power in OB BP
 
     P_BP_OB = 1.0D-6 * A_bl_OB * &
          lambda_q_BP_OB * q_BM_OB_end * &
          (1.0D0-exp(-t_BP_OB/lambda_q_BP_OB))
 
-    ! [MW] Nuclear power in OB VV
+    !  Nuclear power in OB VV
 
     P_VV_OB = 1.0D-6 * A_VV_OB * &
          lambda_q_VV * q_BP_OB_end * &
          (1.0D0-exp(-t_VV_OB/lambda_q_VV))
 
-    !  [MW] Total nuclear power in IB and OB regions
+    !  Total nuclear power in IB and OB regions (MW)
     !  Excludes contribution from shield/vacuum vessel
 
     P_tot_IB = P_BU_IB + P_BM_IB + P_BP_IB
     P_tot_OB = P_BU_OB + P_BM_OB + P_BP_OB
 
-    !  [MW] Total nuclear power
+    !  Total nuclear power in the 'blanket' (MW)
 
     P_th_tot = P_tot_IB + P_tot_OB
 
-    !  [MW] Total nuclear power in shield/VV
+    !  Total nuclear power in shield/VV (MW)
 
     pnucsh = P_VV_IB + P_VV_OB
 
-    !  [MW] Fusion neutron power impinging first wall
+    !  Fusion neutron power impinging first wall (MW)
 
     P_n_FW = P_n * 0.01D0*CF_bl
 
@@ -489,37 +679,48 @@ contains
 
     M_E = P_th_tot/P_n_FW
 
-    !write(*,*) ' '
-    !write(*,*) 'NUCLEAR POWER PRODUCTION'
-    !write(*,*) 'Nuclear Power in Inboard Breeding Unit:     ', P_BU_IB, ' [MW]'
-    !write(*,*) 'Nuclear Power in Inboard Box Manifolds:     ', P_BM_IB, ' [MW]'
-    !write(*,*) 'Nuclear Power in Inboard Back Plates:       ', P_BP_IB, ' [MW]'
-    !write(*,*) 'Nuclear Power in Inboard Vacuum Vessel:     ', P_VV_IB, ' [MW]'
-    !write(*,*) 'Nuclear Power in Outboard Breeding Unit:    ', P_BU_OB, ' [MW]'
-    !write(*,*) 'Nuclear Power in Outboard Box Manifolds:    ', P_BM_OB, ' [MW]'
-    !write(*,*) 'Nuclear Power in Outboard Back Plates:      ', P_BP_OB, ' [MW]'
-    !write(*,*) 'Nuclear Power in Outboard Vacuum Vessel:    ', P_VV_OB, ' [MW]'
-    !write(*,*) 'Total Nuclear Power into Inboard Blanket:   ', P_tot_IB,' [MW]'
-    !write(*,*) 'Total Nuclear Power into Outboard Blankets: ', P_tot_OB,' [MW]'
-    !write(*,*) 'Total Nuclear Power into blanket:           ', P_th_tot,' [MW]'
-    !write(*,*) 'Fusion Neutron Power onto FW:               ', P_n_FW,  ' [MW]'
-    !write(*,*) 'Energy Multiplication Factor:               ', M_E
-
   end subroutine nuclear_power_production
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine tritium_breeding_ratio(TBR,G_tot)
+  subroutine tritium_breeding_ratio(tbr,g_tot)
 
-    !  Tritium Breeding Ratio
+    !+ad_name  nuclear_power_production
+    !+ad_summ  Calculates the tritium breeding ratio for the KIT blanket
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  F Franza, KIT (original MATLAB implementation)
+    !+ad_cont  tbr_breed
+    !+ad_cont  tbr_ports
+    !+ad_args  tbr   : output real : tritium breeding ratio
+    !+ad_args  g_tot : output real : tritium production rate (g/day)
+    !+ad_desc  This routine calculates the tritium breeding ratio and the rate
+    !+ad_desc  of production of tritium in the KIT blanket design, taking into
+    !+ad_desc  account the breeding material and the number and size of ports
+    !+ad_desc  in the blanket.
+    !+ad_prob  None
+    !+ad_call  tbr_breed
+    !+ad_call  tbr_ports
+    !+ad_hist  06/06/13 PJK Initial release
+    !+ad_stat  Okay
+    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
+    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(out) :: TBR, G_tot
+    real(kind(1.0D0)), intent(out) :: tbr, g_tot
 
-    TBR = TBR_PPCS * CF_bl/CF_bl_PPCS * &
+    !  Local variables
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    tbr = TBR_PPCS * CF_bl/CF_bl_PPCS * &
          TBR_breed(e_Li, breeder)/TBR_breed(e_Li_PPCS, breeder) * &
          (1.0D0-exp(-t_BU_IB/lambda_q_BU_breed_IB)) / &
          (1.0D0-exp(-t_BU_IB_PPCS/lambda_q_BU_breed_IB)) * &
@@ -527,20 +728,41 @@ contains
          (1.0D0-exp(-t_BU_OB_PPCS/lambda_q_BU_breed_OB)) * &
          TBR_ports(n_ports_div, n_ports_H_CD_IB, n_ports_H_CD_OB, H_CD_ports)
 
-    !  [g/d] Total tritium production rate
+    !  Total tritium production rate (grammes/day)
 
-    G_tot = TBR * P_n/(E_n*1.602D-19)/N_Av * PA_T*3600*24
-
-    !write(*,*) ' '
-    !write(*,*) 'TRITIUM BREEDING RATIO'
-    !write(*,*) 'Tritium Breeding Ratio:                     ', TBR
-    !write(*,*) 'Tritium Production Rate:                    ', G_tot, ' [g/d]'
+    g_tot = tbr * P_n/(E_n*1.602D-19)/N_Av * PA_T*3600*24
 
   contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     function TBR_breed(e_Li, breeder)
+
+      !+ad_name  tbr_breed
+      !+ad_summ  Returns a fit to the tritium breeding ratio for different breeder
+      !+ad_summ  materials
+      !+ad_type  Function returning real
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_auth  F Franza, KIT (original MATLAB implementation)
+      !+ad_cont  None
+      !+ad_args  e_li   : input real : Lithium-6 enrichment (%)
+      !+ad_args  breeder : input character string : breeder material; either
+      !+ad_argc          <UL><LI>'Orthosilicate' or
+      !+ad_argc              <LI>'Metatitanate' or
+      !+ad_argc              <LI>'Zirconate'</UL>
+      !+ad_desc  This routine provides the dependence of the tritium breeding
+      !+ad_desc  ratio on the ceramic breeder in use and the lithium-6 enrichment of
+      !+ad_desc  the breeder.
+      !+ad_prob  None
+      !+ad_call  None
+      !+ad_hist  06/06/13 PJK Initial release
+      !+ad_stat  Okay
+      !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+      !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+      !+ad_docc  Karlsruhe Institute of Technology, January 2013;
+      !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       implicit none
 
@@ -551,12 +773,22 @@ contains
       real(kind(1.0D0)), intent(in) :: e_Li
       character(len=*), intent(in) :: breeder
 
+      !  Local variables
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
       if (trim(breeder) == 'Orthosilicate') then
+
          TBR_breed = 0.1361D0*log(e_Li) + 0.6331D0
+
       else if (trim(breeder) == 'Metatitanate') then
+
          TBR_breed = 0.1564D0*log(e_Li) + 0.9140D0
+
       else if (trim(breeder) == 'Zirconate') then
+
          TBR_breed = 0.1640D0*log(e_Li) + 0.4325D0
+
       else
          write(*,*) 'Unknown tritium breeder specified...'
          write(*,*) 'Program stopping.'
@@ -569,6 +801,34 @@ contains
 
     function TBR_ports(n_ports_div, n_ports_H_CD_IB, n_ports_H_CD_OB, H_CD_ports)
 
+      !+ad_name  tbr_ports
+      !+ad_summ  Returns a fit to the tritium breeding ratio with different
+      !+ad_summ  machine port types
+      !+ad_type  Function returning real
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_auth  F Franza, KIT (original MATLAB implementation)
+      !+ad_cont  None
+      !+ad_args  n_ports_div : input integer : number of divertor ports
+      !+ad_args  n_ports_h_cd_ib : input integer : number of inboard H/CD ports
+      !+ad_args  n_ports_h_cd_ob : input integer : number of outboard H/CD ports
+      !+ad_args  h_cd_ports : input character string : H/CD port size;
+      !+ad_argc          <UL><LI>'small' or <LI>'large'</UL>
+      !+ad_desc  This routine provides the dependence of the tritium breeding
+      !+ad_desc  ratio on the number and size of machine ports.
+      !+ad_desc  The equatorial heating/current drive ports may be specified as
+      !+ad_desc  being either <CODE>'small'</CODE> (1.27 x 1.5 m2) or
+      !+ad_desc  <CODE>'large'</CODE> (3 x 3 m2).
+      !+ad_prob  None
+      !+ad_call  None
+      !+ad_hist  06/06/13 PJK Initial release
+      !+ad_stat  Okay
+      !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+      !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+      !+ad_docc  Karlsruhe Institute of Technology, January 2013;
+      !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
       implicit none
 
       real(kind(1.0D0)) :: TBR_ports
@@ -578,14 +838,22 @@ contains
       integer, intent(in) :: n_ports_div, n_ports_H_CD_IB, n_ports_H_CD_OB
       character(len=*), intent(in) :: H_CD_ports
 
+      !  Local variables
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
       if (trim(H_CD_ports) == 'small') then
+
          TBR_ports = (1.0D0 - 0.0055D0*n_ports_div) * &
               (1.0D0 - 0.0031D0*n_ports_H_CD_IB) * &
               (1.0D0 - 0.0031D0*n_ports_H_CD_OB)
+
       else  !  if (trim(H_CD_ports) == 'large') then
+
          TBR_ports = (1.0D0-0.0055D0*n_ports_div) * &
               (1.0D0 - 0.0107D0*n_ports_H_CD_IB) * &
               (1.0D0 - 0.0107D0*n_ports_H_CD_OB)
+
       end if
 
     end function TBR_ports
@@ -597,7 +865,35 @@ contains
   subroutine fast_neutron_fluence(phi_n_vv_IB_start,phi_n_vv_OB_start, &
        phi_n_IB_TFC,phi_n_OB_TFC)
 
-    !  Fast Neutron Fluence
+    !+ad_name  fast_neutron_fluence
+    !+ad_summ  Calculates fast neutron fluence within the KIT blanket sub-assemblies
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  F Franza, KIT (original MATLAB implementation)
+    !+ad_cont  None
+    !+ad_args  phi_n_vv_IB_start : output real : flux at inner edge of IB VV (n/cm2/s)
+    !+ad_args  phi_n_vv_OB_start : output real : flux at inner edge of OB VV (n/cm2/s)
+    !+ad_args  phi_n_IB_TFC      : output real : lifetime fluence at IB TF coil (n/cm2)
+    !+ad_args  phi_n_OB_TFC      : output real : lifetime fluence at OB TF coil (n/cm2)
+    !+ad_desc  This routine calculates the fast neutron flux profiles within each
+    !+ad_desc  blanket sub-assembly, assuming an exponential decay with distance through
+    !+ad_desc  each region, with the decay indices dependent on the material fractions.
+    !+ad_desc  <P>At present, the arrays contain only NP=2 elements, i.e. contain the
+    !+ad_desc  values at the inner and outer radial locations; however, if required,
+    !+ad_desc  they may be changed easily to provide several points for plotting
+    !+ad_desc  purposes, for example.
+    !+ad_desc  <P>The total neutron fluence over the plant lifetime reaching the
+    !+ad_desc  TF coils is also calculated.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  06/06/13 PJK Initial release
+    !+ad_stat  Okay
+    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
+    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
@@ -614,60 +910,57 @@ contains
     real(kind(1.0D0)), dimension(2) :: phi_n_BP_OB, phi_n_VV_OB
     real(kind(1.0D0)) :: nwl_ratio
 
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     nwl_ratio = NWL_av/NWL_av_PPCS
 
-    !  Inboard profiles
+    !  Inboard fast neutron flux profiles (n/cm2/second)
 
-    ! [n/cm^2/sec] Fast neutron flux profile in IB BU
+    !  Fast neutron flux profile in IB BU
 
     phi_n_BU_IB(:) = nwl_ratio * phi_0_n_BU_IB * &
          exp(-x_BU_IB(:)/lambda_n_BU_IB)
 
-    ! [n/cm^2/sec] Fast neutron flux profile in IB BM
+    !  Fast neutron flux profile in IB BM
 
     phi_n_BM_IB(:) = phi_n_BU_IB(2) * exp(-x_BM_IB(:)/lambda_q_BM_IB)
 
-    ! [n/cm^2/sec] Fast neutron flux profile in IB BP
+    !  Fast neutron flux profile in IB BP
 
     phi_n_BP_IB(:) = phi_n_BM_IB(2) * exp(-x_BP_IB(:)/lambda_q_BP_IB)
 
-    ! [n/cm^2/sec] Fast neutron flux profile in IB VV
+    !  Fast neutron flux profile in IB VV
 
     phi_n_VV_IB(:) = phi_n_BP_IB(2) * exp(-x_VV_IB(:)/lambda_q_VV)
     phi_n_vv_IB_start = phi_n_VV_IB(1)
 
-    ! [n/cm^2] Fast IB neutron fluence at TF coil
+    !  Fast neutron lifetime fluence at IB TF coil (n/cm2)
 
     phi_n_IB_TFC = phi_n_VV_IB(2) * t_plant * K_tau
 
-    !  Outboard profiles
+    !  Outboard fast neutron flux profiles (n/cm2/second)
 
-    ! [n/cm^2/sec] Fast neutron flux profile in OB BU
+    !  Fast neutron flux profile in OB BU
 
     phi_n_BU_OB(:) = nwl_ratio * phi_0_n_BU_OB * &
          exp(-x_BU_OB(:)/lambda_n_BU_OB)
 
-    ! [n/cm^2/sec] Fast neutron flux profile in OB BM
+    !  Fast neutron flux profile in OB BM
 
     phi_n_BM_OB(:) = phi_n_BU_OB(2) * exp(-x_BM_OB(:)/lambda_q_BM_OB)
 
-    ! [n/cm^2/sec] Fast neutron flux profile in OB BP
+    !  Fast neutron flux profile in OB BP
 
     phi_n_BP_OB(:) = phi_n_BM_OB(2) * exp(-x_BP_OB(:)/lambda_q_BP_OB)
 
-    ! [n/cm^2/sec] Fast neutron flux profile in OB VV
+    !  Fast neutron flux profile in OB VV
 
     phi_n_VV_OB(:) = phi_n_BP_OB(2) * exp(-x_VV_OB(:)/lambda_q_VV)
     phi_n_vv_OB_start = phi_n_VV_OB(1)
 
-    ! [n/cm^2] Fast OB neutron fluence at TF coil
+    !  Fast neutron lifetime fluence at OB TF coil (n/cm2)
 
     phi_n_OB_TFC = phi_n_VV_OB(2) * t_plant * K_tau
-
-    !write(*,*) ' '
-    !write(*,*) 'FAST NEUTRON FLUENCE ON TFC'
-    !write(*,*) 'Fast Neutron Fluence on Inboard TFC:         ', phi_n_IB_TFC, '[n/cm^2]'
-    !write(*,*) 'Fast Neutron Fluence on Outboard TFC:        ', phi_n_OB_TFC, '[n/cm^2]'
 
   end subroutine fast_neutron_fluence
 
@@ -676,7 +969,36 @@ contains
   subroutine He_production_vacuum_vessel(phi_n_VV_IB_start,phi_n_VV_OB_start, &
        vvhemini,vvhemino,vvhemaxi,vvhemaxo)
 
-    !  He Production in Vacuum Vessel
+    !+ad_name  he_production_vacuum_vessel
+    !+ad_summ  Calculates helium concentrations in the vacuum vessel at the end
+    !+ad_summ  of the plant lifetime
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  F Franza, KIT (original MATLAB implementation)
+    !+ad_cont  None
+    !+ad_args  phi_n_vv_IB_start : input real : n flux at inner edge of IB VV (n/cm2/s)
+    !+ad_args  phi_n_vv_OB_start : input real : n flux at inner edge of OB VV (n/cm2/s)
+    !+ad_args  vvhemini : output real : final He concentr. at outer edge of IB VV (appm)
+    !+ad_args  vvhemino : output real : final He concentr. at outer edge of OB VV (appm)
+    !+ad_args  vvhemaxi : output real : final He concentr. at inner edge of IB VV (appm)
+    !+ad_args  vvhemaxo : output real : final He concentr. at inner edge of OB VV (appm)
+    !+ad_desc  This routine calculates the helium production profiles, and the
+    !+ad_desc  minimum and maximum helium concentrations in the vacuum vessel
+    !+ad_desc  at the end of the plant lifetime.
+    !+ad_desc  <P>At present, the arrays contain only NP=2 elements, i.e. contain the
+    !+ad_desc  values at the inner and outer radial locations; however, if required,
+    !+ad_desc  they may be changed easily to provide several points for plotting
+    !+ad_desc  purposes, for example.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  06/06/13 PJK Initial release
+    !+ad_stat  Okay
+    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
+    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
@@ -690,7 +1012,9 @@ contains
     real(kind(1.0D0)), dimension(2) :: Gamma_He_IB, Gamma_He_OB
     real(kind(1.0D0)), dimension(2) :: C_He_IB, C_He_OB
 
-    !  Helium production
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Helium production rate (appm/year)
 
     Gamma_He_IB(:) = phi_n_VV_IB_start / phi_n_0_VV_ref * &
          Gamma_He_0_ref * exp(-x_VV_IB(:)/lambda_He_VV)
@@ -698,18 +1022,18 @@ contains
     Gamma_He_OB(:) = phi_n_VV_OB_start / phi_n_0_VV_ref * &
          Gamma_He_0_ref * exp(-x_VV_OB(:)/lambda_He_VV)
 
+    !  Helium concentrations at end of plant lifetime (appm)
+
     C_He_IB(:) = Gamma_He_IB(:) * t_plant
     C_He_OB(:) = Gamma_He_OB(:) * t_plant
 
-    !write(*,*) ' '
-    !write(*,*) 'HELIUM PRODUCTION IN VACUUM VESSEL'
-    !write(*,*) 'Min He Conc. at t = plant lifetime in IB VV: ', C_He_IB(2), '[appm]'
-    !write(*,*) 'Max He Conc. at t = plant lifetime in IB VV: ', C_He_IB(1), '[appm]'
-    !write(*,*) 'Min He Conc. at t = plant lifetime in OB VV: ', C_He_OB(2), '[appm]'
-    !write(*,*) 'Max He Conc. at t = plant lifetime in OB VV: ', C_He_OB(1), '[appm]'
+    !  Minimum concentrations occur furthest from the plasma
 
     vvhemini = C_He_IB(2)
     vvhemino = C_He_OB(2)
+
+    !  Maximum concentrations occur nearest the plasma
+
     vvhemaxi = C_He_IB(1)
     vvhemaxo = C_He_OB(1)
 
@@ -719,7 +1043,26 @@ contains
 
   subroutine blanket_lifetime(t_bl_FPY,t_bl_Y)
 
-    !  Blanket Lifetime
+    !+ad_name  blanket_lifetime
+    !+ad_summ  Calculates the blanket lifetime
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  F Franza, KIT (original MATLAB implementation)
+    !+ad_cont  None
+    !+ad_args  t_bl_fpy : output real : blanket lifetime (full power years)
+    !+ad_args  t_bl_y   : output real : blanket lifetime (calendar years)
+    !+ad_desc  This routine calculates the blanket lifetime, assuming that the
+    !+ad_desc  maximum allowed neutron damage to the EUROFER steel is 60 dpa.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  06/06/13 PJK Initial release
+    !+ad_stat  Okay
+    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
+    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
@@ -727,15 +1070,18 @@ contains
 
     real(kind(1.0D0)), intent(out) :: t_bl_FPY, t_bl_Y
 
+    !  Local variables
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Lifetime in full-power years
     !  10 dpa equates to 1 MW-yr/m2 (steel)
 
     t_bl_FPY = D_EU_max / (10.0D0*NWL_av*f_peak)
-    t_bl_Y = t_bl_FPY / (alpha_m*alpha_puls)
 
-    !write(*,*) ' '
-    !write(*,*) 'BLANKET LIFETIME'
-    !write(*,*) 'Blanket Lifetime in Full Power Years:       ', t_bl_FPY, ' [FPY]'
-    !write(*,*) 'Blanket Lifetime in Calendar Years:         ', t_bl_Y, ' [yr]'
+    !  Lifetime in calendar years, given availability and pulsed factors
+
+    t_bl_Y = t_bl_FPY / (alpha_m*alpha_puls)
 
   end subroutine blanket_lifetime
 
@@ -4506,38 +4852,65 @@ contains
 
   subroutine blanket_neutronics
 
+    !+ad_name  blanket_neutronics
+    !+ad_summ  Interface between PROCESS and the KIT HCPB blanket model
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  None
+    !+ad_args  None
+    !+ad_desc  This routine provides the interface between the KIT HCPB
+    !+ad_desc  blanket neutronics model and the rest of the code.
+    !+ad_prob  None
+    !+ad_call  kit_blanket
+    !+ad_hist  06/06/13 PJK Initial release
+    !+ad_stat  Okay
+    !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
+    !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
+    !+ad_docc  Karlsruhe Institute of Technology, January 2013;
+    !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     implicit none
 
     !  Arguments
 
-    A_FW_IB = fwareaib * 1.0D4 ! [cm^2] IB first wall area
-    A_FW_OB = fwareaob * 1.0D4 ! [cm^2] OB first wall area
-    A_bl_IB = blareaib * 1.0D4 ! [cm^2] IB blanket area
-    A_bl_OB = blareaob * 1.0D4 ! [cm^2] OB blanket area
-    A_VV_IB = shareaib * 1.0D4 ! [cm^2] IB shield/VV area
-    A_VV_OB = shareaob * 1.0D4 ! [cm^2] OB shield/VV area
-    P_n = pneut*vol  ! [MW] Fusion neutron power
-    NWL_av = wallmw   ! [MW/m^2] Average neutron wall load
-    f_peak = wallpf   ! [--] NWL peaking factor
-    t_FW_IB = fwith * 100.0D0  ! [cm] IB first wall thickness
-    t_FW_OB = fwoth * 100.0D0  ! [cm] OB first wall thickness
-    !  f_FW = 0.99D0     ! [--] Frac. FW area for junctions, etc.
+    !  Local variables
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Convert global variables into KIT blanket inputs
+
+    A_FW_IB = fwareaib * 1.0D4  ! [cm^2] IB first wall area
+    A_FW_OB = fwareaob * 1.0D4  ! [cm^2] OB first wall area
+    A_bl_IB = blareaib * 1.0D4  ! [cm^2] IB blanket area
+    A_bl_OB = blareaob * 1.0D4  ! [cm^2] OB blanket area
+    A_VV_IB = shareaib * 1.0D4  ! [cm^2] IB shield/VV area
+    A_VV_OB = shareaob * 1.0D4  ! [cm^2] OB shield/VV area
+    P_n = pneut*vol             ! [MW] Fusion neutron power
+    NWL_av = wallmw             ! [MW/m^2] Average neutron wall load
+    f_peak = wallpf             ! [--] NWL peaking factor
+    t_FW_IB = fwith * 100.0D0   ! [cm] IB first wall thickness
+    t_FW_OB = fwoth * 100.0D0   ! [cm] OB first wall thickness
+    !  f_FW = 0.99D0            ! [--] Frac. FW area for junctions, etc.
     CF_bl = (1.0D0-fhole) * 100.0D0 ! [%] Blanket coverage factor
-    n_ports_div = npdiv  ! [ports] Number of divertor ports
-    n_ports_H_CD_IB = nphcdin  ! [ports] Number of IB H&CD ports
+    n_ports_div = npdiv         ! [ports] Number of divertor ports
+    n_ports_H_CD_IB = nphcdin   ! [ports] Number of IB H&CD ports
     n_ports_H_CD_OB = nphcdout  ! [ports] Number of OB H&CD ports
+
     if (hcdportsize == 1) then
        H_CD_ports = 'small'
     else
        H_CD_ports = 'large'
     end if
-    e_Li = li6enrich     ! [%] Lithium 6 enrichment
-    t_plant = tlife/cfactr  ! [FPY] Plant lifetime
-    alpha_m = cfactr  ! [--] Availability factor
+
+    e_Li = li6enrich            ! [%] Lithium 6 enrichment
+    t_plant = tlife/cfactr      ! [FPY] Plant lifetime
+    alpha_m = cfactr            ! [--] Availability factor
     alpha_puls = tpulse/(tramp+tpulse+tdwell) ! [--] Pulsed regime fraction
 
     !  Breeder type (allowed values are Orthosilicate, Metatitanate or Zirconate)
-
+    !
     !  Mass densities supplied by F. Franza, taken from Seventh International
     !  Workshop on Ceramic Breeder Blanket Interactions, September 14-16, 1998,
     !  Petten, Netherlands:
@@ -4560,31 +4933,31 @@ contains
 
     !  Inboard parameters
 
-    t_BU_IB = blbuith * 100.0D0  ! [cm] BU thickness
-    t_BM_IB = blbmith * 100.0D0  ! [cm] BM thickness
-    t_BP_IB = blbpith * 100.0D0  ! [cm] BP thickness
-    t_VV_IB = (shldith+ddwi) * 100.0D0  ! [cm] VV thickness
-    alpha_BM_IB = fblhebmi * 100.0D0  ! [%] Helium fraction in the IB BM
-    alpha_BP_IB = fblhebpi * 100.0D0  ! [%] Helium fraction in the IB BP
-    chi_Be_BU_IB = fblbe * 100.0D0 ! [%] Beryllium vol. frac. in IB BU
+    t_BU_IB = blbuith * 100.0D0          ! [cm] BU thickness
+    t_BM_IB = blbmith * 100.0D0          ! [cm] BM thickness
+    t_BP_IB = blbpith * 100.0D0          ! [cm] BP thickness
+    t_VV_IB = (shldith+ddwi) * 100.0D0   ! [cm] VV thickness
+    alpha_BM_IB = fblhebmi * 100.0D0     ! [%] Helium fraction in the IB BM
+    alpha_BP_IB = fblhebpi * 100.0D0     ! [%] Helium fraction in the IB BP
+    chi_Be_BU_IB = fblbe * 100.0D0       ! [%] Beryllium vol. frac. in IB BU
     chi_breed_BU_IB = fblbreed * 100.0D0 ! [%] Breeder vol. frac. in IB BU
-    chi_steels_BU_IB = fblss * 100.0D0 ! [%] Steels vol. frac. in IB BU
+    chi_steels_BU_IB = fblss * 100.0D0   ! [%] Steels vol. frac. in IB BU
 
     !  Outboard parameters
 
-    t_BU_OB = blbuoth * 100.0D0  ! [cm] BU thickness
-    t_BM_OB = blbmoth * 100.0D0  ! [cm] BM thickness
-    t_BP_OB = blbpoth * 100.0D0  ! [cm] BP thickness
-    t_VV_OB = (shldoth+ddwi) * 100.0D0  ! [cm] VV thickness
-    alpha_BM_OB = fblhebmo * 100.0D0  ! [%] Helium fraction in the OB BM
-    alpha_BP_OB = fblhebpo * 100.0D0  ! [%] Helium fraction in the OB BP
-    chi_Be_BU_OB = fblbe * 100.0D0 ! [%] Beryllium vol. frac. in OB BU
+    t_BU_OB = blbuoth * 100.0D0          ! [cm] BU thickness
+    t_BM_OB = blbmoth * 100.0D0          ! [cm] BM thickness
+    t_BP_OB = blbpoth * 100.0D0          ! [cm] BP thickness
+    t_VV_OB = (shldoth+ddwi) * 100.0D0   ! [cm] VV thickness
+    alpha_BM_OB = fblhebmo * 100.0D0     ! [%] Helium fraction in the OB BM
+    alpha_BP_OB = fblhebpo * 100.0D0     ! [%] Helium fraction in the OB BP
+    chi_Be_BU_OB = fblbe * 100.0D0       ! [%] Beryllium vol. frac. in OB BU
     chi_breed_BU_OB = fblbreed * 100.0D0 ! [%] Breeder vol. frac. in OB BU
-    chi_steels_BU_OB = fblss * 100.0D0 ! [%] Steels vol. frac. in OB BU
+    chi_steels_BU_OB = fblss * 100.0D0   ! [%] Steels vol. frac. in OB BU
 
     call kit_blanket
 
-    !  Outputs from model
+    !  Transfer output values from model to global variables
 
     pnucblkt = P_th_tot
     pnucshld = pnucsh

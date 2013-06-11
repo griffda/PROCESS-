@@ -223,6 +223,7 @@ subroutine check
   !+ad_hist  18/12/12 PJK Added snull and other PF coil location checks
   !+ad_hist  11/04/13 PJK Energy storage building volume set to zero if lpulse=0
   !+ad_hist  23/05/13 PJK Coolant type set to water if blktmodel>0
+  !+ad_hist  10/06/13 PJK Removed enforcement of ishape=0 for non-TART tokamaks
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -298,7 +299,6 @@ subroutine check
 
   else
 
-     ishape = 0
      if (icurr == 2) then
         write(nout,*) &
              'icurr=2 is not a valid option for a non-TART device'

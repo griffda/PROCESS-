@@ -54,6 +54,7 @@ module physics_module
   !+ad_call  rfp_variables
   !+ad_call  startup_variables
   !+ad_call  stellarator_variables
+  !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_hist  16/10/12 PJK Initial version of module
   !+ad_hist  16/10/12 PJK Added constants
@@ -69,6 +70,7 @@ module physics_module
   !+ad_hist  06/11/12 PJK Inserted routines outplas, outtim from outplas.f90
   !+ad_hist  03/01/13 PJK Removed denlim routine
   !+ad_hist  23/01/13 PJK Added stellarator_variables
+  !+ad_hist  10/06/13 PJK Added tfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -87,6 +89,7 @@ module physics_module
   use rfp_variables
   use startup_variables
   use stellarator_variables
+  use tfcoil_variables
   use times_variables
 
   implicit none
@@ -870,7 +873,7 @@ contains
     !+ad_desc  the algorithm documented in AEA FUS 172.
     !+ad_desc  <P>The limit applies to beta defined with respect to the total B-field.
     !+ad_desc  Switch ICULBL determines which components of beta to include (see
-    !+ad_desc  file eqns.f90 for coding):
+    !+ad_desc  routine <A HREF="constraints.html">constraints</A> for coding):
     !+ad_desc  <UL>
     !+ad_desc  <P><LI>If ICULBL = 0, then the limit is applied to the total beta
     !+ad_desc  <P><LI>If ICULBL = 1, then the limit is applied to the thermal beta only
@@ -2449,7 +2452,7 @@ contains
     !+ad_args  csawth : input real :  coefficient for sawteeth effects
     !+ad_args  eps    : input real :  inverse aspect ratio
     !+ad_args  facoh  : input real :  fraction of plasma current produced inductively
-    !+ad_args  gamma  : input real :  coefficient for resistive start-up V-s component
+    !+ad_args  gamma  : input real :  Ejima coeff for resistive start-up V-s component
     !+ad_args  kappa  : input real :  plasma elongation
     !+ad_args  plascur: input real :  plasma current (A)
     !+ad_args  rli    : input real :  plasma normalised inductivity
@@ -4227,6 +4230,7 @@ contains
     !+ad_hist  18/12/12 PJK Added PTHRMW(6 to 8)
     !+ad_hist  03/01/13 PJK Removed ICULDL if-statement
     !+ad_hist  23/01/13 PJK Modified logic for stellarators and ignite=1
+    !+ad_hist  10/06/13 PJK Added ISHAPE=2 and other outputs
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4282,19 +4286,29 @@ contains
     call ovarrf(outfile,'Major radius (m)','(rmajor)',rmajor)
     call ovarrf(outfile,'Minor radius (m)','(rminor)',rminor)
     call ovarrf(outfile,'Aspect ratio','(aspect)',aspect)
-    call ovarrf(outfile,'Elongation, X-point','(kappa)',kappa)
-    call ovarrf(outfile,'Elongation, 95% surface','(kappa95)',kappa95)
+    if (ishape == 2) then
+       call ovarrf(outfile,'Elongation, X-point (Zohm scaling)','(kappa)',kappa)
+       call ovarrf(outfile,'Elongation, 95% surface (kappa/1.12)','(kappa95)',kappa95)
+    else
+       call ovarrf(outfile,'Elongation, X-point','(kappa)',kappa)
+    call ovarrf(outfile,'Elongation, 95% surface (kappa-0.04)/1.1','(kappa95)',kappa95)
+    end if
     call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa)
     call ovarrf(outfile,'Triangularity, X-point','(triang)',triang)
     call ovarrf(outfile,'Triangularity, 95% surface','(triang95)',triang95)
+    call ovarre(outfile,'Plasma poloidal perimeter (m)','(pperim)',pperim)
+    call ovarre(outfile,'Plasma cross-sectional area (m2)','(xarea)',xarea)
     call ovarre(outfile,'Plasma surface area (m2)','(sarea)',sarea)
     call ovarre(outfile,'Plasma volume (m3)','(vol)',vol)
 
     call osubhd(outfile,'Current and Field :')
     call ovarrf(outfile,'Plasma current (MA)','(plascur/1D6)',plascur/1.0D6)
+    call ovarrf(outfile,'Current density profile factor','(alphaj)',alphaj)
+    call ovarrf(outfile,'Plasma internal inductance, li','(rli)',rli)
 
     if (irfp == 0) then
        call ovarrf(outfile,'Vacuum toroidal field at R (T)','(bt)',bt)
+       call ovarrf(outfile,'Maximum toroidal field at TF coils (T)','(bmaxtf)',bmaxtf)
        call ovarrf(outfile,'Average poloidal field (T)','(bp)',bp)
     else
        call ovarrf(outfile,'Toroidal field at plasma edge (T)','(-bt)',-bt)
@@ -4303,9 +4317,10 @@ contains
        call ovarrf(outfile,'Pinch parameter theta','(rfpth)',rfpth)
     end if
 
-    call ovarrf(outfile,'Total field (T)','(btot)',btot)
+    call ovarrf(outfile,'Total field (sqrt(bp^2 + bt^2)) (T)','(btot)',btot)
 
     if (istell == 0) then
+       call ovarrf(outfile,'Safety factor on axis','(q0)',q0)
        call ovarrf(outfile,'Edge safety factor','(q)',q)
        call ovarrf(outfile,'Cylindrical safety factor','(qstar)',qstar)
 
@@ -4341,7 +4356,9 @@ contains
 
     if (istell == 0) then
        call ovarrf(outfile,'Troyon g coefficient','(dnbeta)',dnbeta)
-       call ovarrf(outfile,'Normalised beta',' ',fbetatry*dnbeta)
+       !call ovarrf(outfile,'Normalised beta',' ',fbetatry*dnbeta)
+       call ovarrf(outfile,'Normalised thermal beta',' ',1.0D8*betath*rminor*bt/plascur)
+       call ovarrf(outfile,'Normalised total beta',' ',1.0D8*beta*rminor*bt/plascur)
     end if
 
     if (itart == 1) then
@@ -4376,13 +4393,15 @@ contains
     call ovarre(outfile,'Hot beam density (/m3)','(dnbeam)',dnbeam)
     call ovarre(outfile,'Density limit (enforced) (/m3)','(dnelimt)',dnelimt)
 
+    call ovarre(outfile,'Carbon impurity concentration','(rncne)',rncne)
+    call ovarre(outfile,'Oxygen impurity concentration','(rnone)',rnone)
+    
     if (zfear == 1) then
-       call ocmmnt(outfile,'High-Z impurity assumed: Argon')
+       call ovarre(outfile,'Argon impurity concentration','(cfe0)',cfe0)
     else
-       call ocmmnt(outfile,'High-Z impurity assumed: Iron')
+       call ovarre(outfile,'Iron impurity concentration','(cfe0)',cfe0)
     end if
 
-    call ovarre(outfile,'Seeded high-Z concentration','(cfe0)',cfe0)
     call ovarre(outfile,'Effective charge','(zeff)',zeff)
     call ovarre(outfile,'Mass weighted effective charge','(zeffai)',zeffai)
     call ovarrf(outfile,'Density profile factor','(alphan)',alphan)
@@ -4485,10 +4504,13 @@ contains
        call osubhd(outfile,'Plasma Volt-second Requirements :')
        call ovarre(outfile,'Total volt-second requirement (Wb)','(vsstt)',vsstt)
        call ovarre(outfile,'Inductive volt-seconds (Wb)','(vsind)',vsind)
+       call ovarre(outfile,'Ejima coefficient','(gamma)',gamma)
        call ovarre(outfile,'Start-up resistive (Wb)','(vsres)',vsres)
        call ovarre(outfile,'Flat-top resistive (Wb)','(vsbrn)',vsbrn)
        call ovarrf(outfile,'Bootstrap fraction','(bootipf)',bootipf)
        call ovarrf(outfile,'Auxiliary current drive fraction','(faccd)',faccd)
+       call ovarre(outfile,'Loop voltage during burn (V)','(vburn)', &
+            plascur*rplas*facoh)
        call ovarre(outfile,'Plasma resistance (ohm)','(rplas)',rplas)
        call ovarre(outfile,'Plasma inductance (H)','(rlp)',rlp)
        call ovarre(outfile,'Sawteeth coefficient','(csawth)',csawth)

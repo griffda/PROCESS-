@@ -333,6 +333,7 @@ contains
     !+ad_hist  09/05/13 PJK Added FWBSSHAPE
     !+ad_hist  15/05/13 PJK Added BLNKTTH, DIVFIX
     !+ad_hist  22/05/13 PJK Added BLKTMODEL variables, removed FVOLBI,FVOLBO
+    !+ad_hist  10/06/13 PJK Modified ISHAPE range
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -536,7 +537,7 @@ contains
                'Non-inductive volt-sec burn fraction')
        case ('GAMMA')
           call parse_real_variable('GAMMA', gamma, 0.1D0, 1.0D0, &
-               'Coefficient for resistive V-s formula')
+               'Ejima coefficient for resistive V-s formula')
        case ('GTSCALE')
           call parse_int_variable('GTSCALE', gtscale, 0, 1, &
                'Flag to scale Troyon coefficient with R/a')
@@ -601,7 +602,7 @@ contains
           call parse_int_variable('ISCRP', iscrp, 0, 1, &
                'Switch for scrapeoff width')
        case ('ISHAPE')
-          call parse_int_variable('ISHAPE', ishape, 0, 1, &
+          call parse_int_variable('ISHAPE', ishape, 0, 2, &
                'Switch for plasma shape vs. aspect')
        case ('ITART')
           call parse_int_variable('ITART', itart, 0, 1, &

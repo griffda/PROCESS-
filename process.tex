@@ -1552,7 +1552,7 @@ shielding materials and sub-assembly thicknesses, and for constraints to be
 applied to satisfy the engineering requirements. The rest of this section
 describes this model in more detail.
 
-The model is based on the Helium-Cooled Pebble Beds (HCPB) DEMO blanket concept
+The model is based on the Helium-Cooled Pebble Bed (HCPB) blanket concept
 developed by KIT (a second advanced model --- Helium-Cooled Lithium Lead, HCLL
 --- will be implemented in due course). The blanket, shield and vacuum vessel
 are segmented radially into a number of sub-assemblies. Moving in the
@@ -1560,13 +1560,14 @@ direction away from the plasma/first wall, these are:
 
 \begin{itemize}
 
-\item Breeding Unit (BU), with radial thicknesses (inboard and outboard,
-  respectively) \texttt{blbuith}, \texttt{blbuoth}. This consists of beryllium
-  (with fraction by volume \texttt{fblbe}), breeder material
-  (\texttt{fblbreed}), steel (\texttt{fblss}) and helium coolant. Three forms
-  of breeder material are available: lithium orthosilicate (Li$_4$SiO$_4$)
-  (chosen by setting \texttt{breedmat = 1}), lithium metatitanate
-  (Li$_2$TiO$_3$) (\texttt{breedmat = 2}) or lithium zirconate (Li$_2$ZrO$_3$)
+\item Breeding Unit (BU) (which includes the first wall), with radial
+  thicknesses (inboard and outboard, respectively) \texttt{fwith+blbuith},
+  \texttt{fwoth+blbuoth}. This consists of beryllium (with fraction by volume
+  \texttt{fblbe}), breeder material (\texttt{fblbreed}), steel
+  (\texttt{fblss}) and helium coolant. Three forms of breeder material are
+  available: lithium orthosilicate (Li$_4$SiO$_4$) (chosen by setting
+  \texttt{breedmat = 1}), lithium metatitanate (Li$_2$TiO$_3$)
+  (\texttt{breedmat = 2}) or lithium zirconate (Li$_2$ZrO$_3$)
   (\texttt{breedmat = 3}). The $^6$Li enrichment percentage may be modified
   from the default 30\% using input parameter \texttt{li6enrich}.
 

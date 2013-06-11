@@ -1303,3 +1303,5 @@ end subroutine output
 ! SVN 169: Added new KIT blanket neutronics model (User Guide still to do)
 ! SVN 170: Updated User Guide to describe new blanket model
 ! SVN 171: Top/bottom shield thickness now calculated if new blanket model is in use
+! SVN 172: Produced in-source comments for new blanket model; added a number of
+!          requested outputs. New ISHAPE=2 option for elongation scaling with aspect ratio

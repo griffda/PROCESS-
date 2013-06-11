@@ -904,6 +904,7 @@ contains
     !+ad_hist  17/04/13 PJK Corrected precir, psecht, ctht
     !+ad_hist  17/04/13 PJK Added iprimnloss switch for pnucloss contribution
     !+ad_hisc               to secondary heating
+    !+ad_hist  11/06/13 PJK Added output section on recirculating power
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1070,6 +1071,23 @@ contains
          '(fgrosbop)',fgrosbop)
     call ovarre(outfile,'First wall low grade heat fraction','(ffwlg)', &
          ffwlg)
+
+    call osubhd(outfile,'Recirculating power :')
+    call ovarre(outfile,'Total recirculating power (MW)','(precir)', &
+         precir)
+    call ovarre(outfile,'Balance of plant recirculating power (MW)',' ', &
+         fgrosbop*pgrossmw)
+    call ovarre(outfile,'H/CD injected power (MW)','(pinjwp)',pinjwp)
+    call ovarre(outfile,'TF coil resistive power (MW)','(tfcmw)',tfcmw)
+    call ovarre(outfile,'Cryogenic plant power (MW)','(crypmw)',crypmw)
+    if (itart == 1) call ovarre(outfile,'TF coolant pump power (MW)', &
+         '(ppumpmw)',ppumpmw)
+    call ovarre(outfile,'Heat transport pump power (MW)','(htpmw)',htpmw)
+    if (ihplant /= 0) call ovarre(outfile,'Hydrogen production electrical power (MW)', &
+         '(helecmw)',helecmw)
+    call ovarre(outfile,'Facility heat removal power (MW)','(facht)',facht)
+    call ovarre(outfile,'Vacuum pump power (MW)','(vachtmw)',vachtmw)
+    call ovarre(outfile,'Tritium processing power (MW)','(trithtmw)',trithtmw)
 
   end subroutine power2
 

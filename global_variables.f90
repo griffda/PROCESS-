@@ -90,6 +90,7 @@ module physics_variables
   !+ad_hist  08/01/13 PJK Modified iinvqd, iiter, ires comments
   !+ad_hist  22/01/13 PJK Added two stellarator scaling laws; modified comments
   !+ad_hist  11/04/13 PJK Removed ires, rtpte; changed isc, ifispact default values
+  !+ad_hist  10/06/13 PJK Modified ishape
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -296,7 +297,7 @@ module physics_variables
   !+ad_vars  fvsbrnni /1.0/ : fraction of burn V-s from non-inductive means
   !+ad_varc                   (iteration variable 44)
   real(kind(1.0D0)) :: fvsbrnni = 1.0D0
-  !+ad_vars  gamma /0.4/ : coefficient for resistive startup V-s formula
+  !+ad_vars  gamma /0.4/ : Ejima coefficient for resistive startup V-s formula
   real(kind(1.0D0)) :: gamma = 0.4D0
   !+ad_vars  gtscale /0/ : switch for a/R scaling of dnbeta:<UL>
   !+ad_varc          <LI>  = 0 do not scale dnbeta with eps; 
@@ -383,7 +384,8 @@ module physics_variables
   integer :: iscrp = 1
   !+ad_vars  ishape /0/ : switch for plasma cross-sectional shape calculation:<UL>
   !+ad_varc          <LI> = 0 use input kappa, triang;
-  !+ad_varc          <LI> = 1 scale qlim, kappa, triang (TART)</UL>
+  !+ad_varc          <LI> = 1 scale qlim, kappa, triang (TART)
+  !+ad_varc          <LI> = 2 scale kappa (Zohm ITER scaling), triang input</UL>
   integer :: ishape = 0
   !+ad_vars  itart /0/ : switch for tight aspect ratio models:<UL>
   !+ad_varc         <LI> = 0 use conventional aspect ratio models;
@@ -433,6 +435,8 @@ module physics_variables
   real(kind(1.0D0)) :: powerht = 0.0D0
   !+ad_vars  powfmw : fusion power, max (MW)
   real(kind(1.0D0)) :: powfmw = 0.0D0
+  !+ad_vars  pperim : plasma poloidal perimeter (m)
+  real(kind(1.0D0)) :: pperim = 0.0D0
   !+ad_vars  prad : total core radiation power (MW/m3)
   real(kind(1.0D0)) :: prad = 0.0D0
   !+ad_vars  psync : synchrotron radiation power (MW/m3)
