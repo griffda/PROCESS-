@@ -2558,6 +2558,7 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  12/06/13 PJK Modified wtgpd calculation with new rndfuel definition
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2581,7 +2582,12 @@ contains
     !  Account 227.2 : Fuel processing and purification
 
     if (ife /= 1) then
-       wtgpd = burnup * qfuel * 1.3D0
+       !  Previous calculation, using qfuel in Amps:
+       !  1.3 should have been afuel*umass/echarge*1000*s/day = 2.2
+       !wtgpd = burnup * qfuel * 1.3D0
+
+       !  New calculation: 2 nucleons * reactions/sec * kg/nucleon * g/kg * sec/day
+       wtgpd = 2.0D0*rndfuel * afuel*umass*1000.0D0 * 86400.0D0
     else
        targtm = gain * edrive * 3.0D0 * 1.67D-27 * 1.0D3 / &
             (1.602D-19 * 17.6D6 * fburn)

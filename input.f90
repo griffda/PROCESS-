@@ -334,6 +334,7 @@ contains
     !+ad_hist  15/05/13 PJK Added BLNKTTH, DIVFIX
     !+ad_hist  22/05/13 PJK Added BLKTMODEL variables, removed FVOLBI,FVOLBO
     !+ad_hist  10/06/13 PJK Modified ISHAPE range
+    !+ad_hist  12/06/13 PJK Restricted DIGN range
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -500,7 +501,7 @@ contains
           call parse_real_variable('DENE', dene, 1.0D18, 1.0D22, &
                'Electron density (/m3)')
        case ('DIGN')
-          call parse_real_variable('DIGN', dign, 0.01D0, 100.0D0, &
+          call parse_real_variable('DIGN', dign, 0.99D0, 1.01D0, &
                'Guess for ignition margin')
        case ('DNBETA')
           call parse_real_variable('DNBETA', dnbeta, 0.3D0, 20.0D0, &

@@ -60,6 +60,7 @@ contains
     !+ad_hist  20/09/11 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
+    !+ad_hist  12/06/13 PJK Modified gasld calculation with new qfuel definition
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -81,9 +82,10 @@ contains
 
     qtorus = 0.0D0
 
-    !  Total D-T gas load (kg/s) (Amperes * atomic mass units * 1.0D-8 ?)
+    !  Total D-T gas load (kg/s)
+    !  2 nucleons * nucleon-pairs/sec * mass/nucleon
 
-    gasld = qfuel * afuel * 1.0D-8
+    gasld = 2.0D0*qfuel * afuel*umass
 
     call vacuum(powfmw,rmajor,rminor,kappa,shldoth,shldith,tfcth, &
          rsldi-gapds-ddwi,tfno,tdwell,dene,idivrt,qtorus,gasld, &

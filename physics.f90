@@ -161,6 +161,7 @@ contains
     !+ad_hist  18/12/12 PJK Added SAREA,AION to argument list of PTHRESH
     !+ad_hist  03/01/13 PJK Removed switch ICULDL and call to DENLIM
     !+ad_hist  11/04/13 PJK Removed switch IRES from POHM call
+    !+ad_hist  12/06/13 PJK TAUP now global
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -173,7 +174,7 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: alphap,betat,betpth,fusrat,n0e,n0i,pht,pinj,p0, &
-         sbar,sigvdt,taup,t0e,t0i,zimp,zion
+         sbar,sigvdt,t0e,t0i,zimp,zion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -184,7 +185,7 @@ contains
          afuel,aion,deni,dlamee,dlamie,dnalp,dnbeam,dnitot,dnla, &
          dnprot,dnz,falpe,falpi,pcoef,rncne,rnone,rnfene,zeffai,zion,zfear)
 
-    !  Ion temperature (user-defined if tratio is not zero)
+    !  Ion temperature (input value used directly if tratio=0.0)
 
     if (tratio > 0.0D0) ti = tratio * te
 
@@ -2472,6 +2473,7 @@ contains
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  16/10/12 PJK Removed rmu0 from argument list
+    !+ad_hist  11/06/13 PJK Removed 1.25 enhancement in rlp formula
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2510,7 +2512,7 @@ contains
          + 3.7D0*eps**6)
     rlpext = rmajor*rmu0 * aeps*(1.0D0-eps)/(1.0D0-eps+beps*kappa)
 
-    rlp = 1.25D0 * (rlpext + rlpint)
+    rlp = rlpext + rlpint
 
     !  Inductive V-s component
 
@@ -2557,9 +2559,9 @@ contains
     !+ad_args  dntau  : output real : plasma average n-tau (s/m3)
     !+ad_args  figmer : output real : physics figure of merit
     !+ad_args  fusrat : output real : number of fusion reactions per second
-    !+ad_args  qfuel  : output real : fuelling rate for D-T (A)
-    !+ad_args  rndfuel: output real : fuel burnup rate (A)
-    !+ad_args  taup   : output real : 5 * global energy confinement time
+    !+ad_args  qfuel  : output real : fuelling rate for D-T (nucleon-pairs/sec)
+    !+ad_args  rndfuel: output real : fuel burnup rate (reactions/s)
+    !+ad_args  taup   : output real : (alpha) particle confinement time (s)
     !+ad_desc  This subroutine calculates extra physics related items
     !+ad_desc  needed by other parts of the code
     !+ad_prob  None
@@ -2567,6 +2569,7 @@ contains
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  07/12/95 PJK Added D-He3 calculations
     !+ad_hist  09/11/11 PJK Initial F90 version
+    !+ad_hist  12/06/13 PJK Changed rndfuel, qfuel units from Amps
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2590,13 +2593,16 @@ contains
 
     dntau = taueff*dene
 
-    taup = taueff*5.0D0
-
     if (idhe3 == 0) then
-       fusrat = powfmw /(17.6D0 * 1.6022D-19)
+       fusrat = powfmw /(17.6D0 * echarge)
     else
-       fusrat = powfmw /(18.3D0 * 1.6022D-19)
+       fusrat = powfmw /(18.3D0 * echarge)
     end if
+
+    !  Alpha particle confinement time (s)
+    !  Number of alphas / fusion reaction rate
+
+    taup = dnalp*vol/fusrat
 
     !  Assume that the ash and fuel particle confinement times are equal
 
@@ -2606,9 +2612,11 @@ contains
        burnup = 1.0D0/ (1.0D0 + deni/(dnalp+dnprot) )
     end if
 
-    !  Factor 2 should be changed for D-He3?
+    !  Fuel burnup rate (reactions/second) (previously Amps)
 
-    rndfuel = 1.6022D-19 * 2.0D0 * fusrat
+    rndfuel = fusrat
+
+    !  Required fuelling rate (D-T pairs/second) (previously Amps)
 
     qfuel = rndfuel/burnup
 
@@ -4231,6 +4239,7 @@ contains
     !+ad_hist  03/01/13 PJK Removed ICULDL if-statement
     !+ad_hist  23/01/13 PJK Modified logic for stellarators and ignite=1
     !+ad_hist  10/06/13 PJK Added ISHAPE=2 and other outputs
+    !+ad_hist  12/06/13 PJK Added plasma energy and other outputs
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4296,8 +4305,8 @@ contains
     call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa)
     call ovarrf(outfile,'Triangularity, X-point','(triang)',triang)
     call ovarrf(outfile,'Triangularity, 95% surface','(triang95)',triang95)
-    call ovarre(outfile,'Plasma poloidal perimeter (m)','(pperim)',pperim)
-    call ovarre(outfile,'Plasma cross-sectional area (m2)','(xarea)',xarea)
+    call ovarrf(outfile,'Plasma poloidal perimeter (m)','(pperim)',pperim)
+    call ovarrf(outfile,'Plasma cross-sectional area (m2)','(xarea)',xarea)
     call ovarre(outfile,'Plasma surface area (m2)','(sarea)',sarea)
     call ovarre(outfile,'Plasma volume (m3)','(vol)',vol)
 
@@ -4337,13 +4346,17 @@ contains
     end if
 
     call osubhd(outfile,'Beta Information :')
+
+    betath = beta-betaft-betanb
+    gammaft = (betaft + betanb)/betath
+
     call ovarre(outfile,'Total plasma beta','(beta)',beta)
     call ovarre(outfile,'Total poloidal beta','(betap)',betap)
     call ovarre(outfile,'Total toroidal beta',' ',beta*(btot/bt)**2)
     call ovarre(outfile,'Fast alpha beta','(betaft)',betaft)
     call ovarre(outfile,'Beam ion beta','(betanb)',betanb)
+    call ovarre(outfile,'(Fast alpha + beam beta)/(thermal beta)','(gammaft)',gammaft)
 
-    betath = beta-betaft-betanb
     call ovarre(outfile,'Thermal beta',' ',betath)
     call ovarre(outfile,'Thermal poloidal beta',' ',betath*(btot/bp)**2)
     call ovarre(outfile,'Thermal toroidal beta (= beta-exp)',' ', &
@@ -4375,6 +4388,11 @@ contains
             betalim)
     end if
 
+    call ovarre(outfile,'Plasma thermal energy (J)',' ', &
+         betath*btot*btot/(2.0D0*rmu0)*vol)
+    call ovarre(outfile,'Total plasma internal energy (J)',' ', &
+         beta*btot*btot/(2.0D0*rmu0)*vol)
+
     call osubhd(outfile,'Temperature and Density (volume averaged) :')
     call ovarrf(outfile,'Electron temperature (keV)','(te)',te)
     call ovarrf(outfile,'Ion temperature (keV)','(ti)',ti)
@@ -4393,17 +4411,17 @@ contains
     call ovarre(outfile,'Hot beam density (/m3)','(dnbeam)',dnbeam)
     call ovarre(outfile,'Density limit (enforced) (/m3)','(dnelimt)',dnelimt)
 
-    call ovarre(outfile,'Carbon impurity concentration','(rncne)',rncne)
-    call ovarre(outfile,'Oxygen impurity concentration','(rnone)',rnone)
+    call ovarre(outfile,'Carbon impurity concentration (%)','(rncne*100)',rncne*100)
+    call ovarre(outfile,'Oxygen impurity concentration (%)','(rnone*100)',rnone*100)
     
     if (zfear == 1) then
-       call ovarre(outfile,'Argon impurity concentration','(cfe0)',cfe0)
+       call ovarre(outfile,'Argon impurity concentration (%)','(cfe0*100)',cfe0*100)
     else
-       call ovarre(outfile,'Iron impurity concentration','(cfe0)',cfe0)
+       call ovarre(outfile,'Iron impurity concentration (%)','(cfe0*100)',cfe0*100)
     end if
 
-    call ovarre(outfile,'Effective charge','(zeff)',zeff)
-    call ovarre(outfile,'Mass weighted effective charge','(zeffai)',zeffai)
+    call ovarrf(outfile,'Effective charge','(zeff)',zeff)
+    call ovarrf(outfile,'Mass weighted effective charge','(zeffai)',zeffai)
     call ovarrf(outfile,'Density profile factor','(alphan)',alphan)
     call ovarrf(outfile,'Temperature profile factor','(alphat)',alphat)
 
@@ -4420,12 +4438,12 @@ contains
 
     call osubhd(outfile,'Fuel Constituents :')
     if (idhe3 == 0) then
-       call ovarre(outfile,'Deuterium fuel fraction','(1-ftr)',1.0D0-ftr)
-       call ovarre(outfile,'Tritium fuel fraction','(ftr)',ftr)
+       call ovarrf(outfile,'Deuterium fuel fraction','(1-ftr)',1.0D0-ftr)
+       call ovarrf(outfile,'Tritium fuel fraction','(ftr)',ftr)
     else
-       call ovarre(outfile,'Deuterium fuel fraction','(fdeut)',fdeut)
-       call ovarre(outfile,'Tritium fuel fraction','(ftrit)',ftrit)
-       call ovarre(outfile,'3-Helium fuel fraction','(fhe3)',fhe3)
+       call ovarrf(outfile,'Deuterium fuel fraction','(fdeut)',fdeut)
+       call ovarrf(outfile,'Tritium fuel fraction','(ftrit)',ftrit)
+       call ovarrf(outfile,'3-Helium fuel fraction','(fhe3)',fhe3)
     end if
 
     call osubhd(outfile,'Fusion Power :')
@@ -4438,7 +4456,7 @@ contains
        call ovarre(outfile,'Proton power (MW)','(pcharge*vol)',pcharge*vol)
     end if
 
-    call ovarre(outfile,'Neutron wall load (MW/m2)','(wallmw)',wallmw)
+    call ovarrf(outfile,'Neutron wall load (MW/m2)','(wallmw)',wallmw)
     call ovarrf(outfile,'Fraction of power to electrons','(falpe)',falpe)
     call ovarrf(outfile,'Fraction of power to ions','(falpi)',falpi)
 
@@ -4448,7 +4466,7 @@ contains
          pbrem*vol)
     call ovarre(outfile,'Synchrotron radiation power (MW)','(psync*vol)', &
          psync*vol)
-    call ovarre(outfile,'Synchrotron reflection factor','(ssync)',ssync)
+    call ovarrf(outfile,'Synchrotron reflection factor','(ssync)',ssync)
     call ovarre(outfile,'Scrape-off line radiation power (MW)','(plrad*vol)', &
          plrad*vol)
     call ovarre(outfile,'Ion transport (MW)','(ptri*vol))',ptri*vol)
@@ -4494,17 +4512,18 @@ contains
 10  format(' Confinement scaling law',T45,A24)
 
     call ovarrf(outfile,'Confinement H factor','(hfact)',hfact)
-    call ovarre(outfile,'Global confinement time (s)','(taueff)',taueff)
-    call ovarre(outfile,'Ion confinement time (s)','(tauei)',tauei)
-    call ovarre(outfile,'Electron confinement time (s)','(tauee)',tauee)
+    call ovarrf(outfile,'Global energy confinement time (s)','(taueff)',taueff)
+    call ovarrf(outfile,'Ion energy confinement time (s)','(tauei)',tauei)
+    call ovarrf(outfile,'Electron energy confinement time (s)','(tauee)',tauee)
     call ovarre(outfile,'n-tau (s/m3)','(dntau)',dntau)
-    call ovarre(outfile,'Heating power assumed (MW)','(powerht)',powerht)
+    call ovarre(outfile,'Transport loss power (MW)','(powerht)',powerht)
+    call ovarrf(outfile,'Particle confinement time (s)','(taup)',taup)
 
     if (istell == 0) then
        call osubhd(outfile,'Plasma Volt-second Requirements :')
        call ovarre(outfile,'Total volt-second requirement (Wb)','(vsstt)',vsstt)
        call ovarre(outfile,'Inductive volt-seconds (Wb)','(vsind)',vsind)
-       call ovarre(outfile,'Ejima coefficient','(gamma)',gamma)
+       call ovarrf(outfile,'Ejima coefficient','(gamma)',gamma)
        call ovarre(outfile,'Start-up resistive (Wb)','(vsres)',vsres)
        call ovarre(outfile,'Flat-top resistive (Wb)','(vsbrn)',vsbrn)
        call ovarrf(outfile,'Bootstrap fraction','(bootipf)',bootipf)
@@ -4513,13 +4532,14 @@ contains
             plascur*rplas*facoh)
        call ovarre(outfile,'Plasma resistance (ohm)','(rplas)',rplas)
        call ovarre(outfile,'Plasma inductance (H)','(rlp)',rlp)
-       call ovarre(outfile,'Sawteeth coefficient','(csawth)',csawth)
+       call ovarrf(outfile,'Sawteeth coefficient','(csawth)',csawth)
     end if
     call ovarre(outfile,'Burn time (s)','(tburn)',tburn)
 
     call osubhd(outfile,'Auxiliary Information :')
-    call ovarre(outfile,'Convective loss rate (A)','(qfuel)',qfuel)
-    call ovarre(outfile,'Burn-up fraction','(burnup)',burnup)
+    call ovarre(outfile,'Fuelling rate (nucleon-pairs/s)','(qfuel)',qfuel)
+    call ovarre(outfile,'Fuel burn-up rate (reactions/s)','(rndfuel)',rndfuel)
+    call ovarrf(outfile,'Burn-up fraction','(burnup)',burnup)
 
   end subroutine outplas
 

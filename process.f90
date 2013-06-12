@@ -1305,3 +1305,5 @@ end subroutine output
 ! SVN 171: Top/bottom shield thickness now calculated if new blanket model is in use
 ! SVN 172: Produced in-source comments for new blanket model; added a number of
 !          requested outputs. New ISHAPE=2 option for elongation scaling with aspect ratio
+! SVN 173: Corrected rlp, ipdot, tohsmn calculations; changed units for qfuel, rndfuel;
+!          added several more requested outputs

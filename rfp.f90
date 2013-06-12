@@ -725,6 +725,7 @@ contains
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  17/12/12 PJK Added zfear to betcom, radpwr argument lists
     !+ad_hist  11/04/13 PJK Removed switch ires from pohm call
+    !+ad_hist  12/06/13 PJK taup now global
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -739,7 +740,7 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: alphap,betat,bphi,fusrat,n0e,n0i,pht,pinj,p0, &
-         sbar,sigvdt,taup,t0e,t0i,zimp,zion
+         sbar,sigvdt,t0e,t0i,zimp,zion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

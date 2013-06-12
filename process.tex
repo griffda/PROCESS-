@@ -586,7 +586,7 @@ J_{\mbox{\scriptsize protection}}$ limit (SCTF)               & L    & \textbf{5
 38  & first wall coolant temperature rise limit (PULSE)   & L    & \textbf{62} \\
 39  & first wall peak temperature limit (PULSE)           & L    & \textbf{63} \\
 40  & minimum injection power for ignition limit (PULSE)  & L    & \textbf{64} \\
-41  & OH coil swing time limit (PULSE)                    & L    & \textbf{66},65 \\
+41  & OH coil current ramp-up time limit (PULSE)          & L    & \textbf{66},65 \\
 42  & cycle time limit (PULSE)                            & L    & \textbf{67},65,17 \\
 43  & average centrepost temperature (TART)               & C    & \textbf{69},70,13 \\
 44  & peak centrepost temperature limit (TART)            & L    & \textbf{68},69,70 \\
@@ -743,8 +743,8 @@ no. & variable name     & description                                           
 62  & \texttt{fdtmp}    & f-value for 1st wall coolant temperature rise limit equation & 38  & \texttt{0.001D0} & \texttt{1.000D0} \\
 63  & \texttt{ftpeak}   & f-value for 1st wall peak temperature limit equation    & 39  & \texttt{0.001D0} & \texttt{1.000D0} \\
 64  & \texttt{fauxmn}   & f-value for minimum auxiliary power limit equation      & 40  & \texttt{0.001D0} & \texttt{1.000D0} \\
-65  & \texttt{tohs}     & OH coil swing time                                      &     & \texttt{0.100D0} & \texttt{1.000D3} \\
-66  & \texttt{ftohs}    & f-value for OH coil swing time limit equation           & 41  & \texttt{0.001D0} & \texttt{1.000D0} \\
+65  & \texttt{tohs}     & OH coil current ramp-up time                            &     & \texttt{0.100D0} & \texttt{1.000D3} \\
+66  & \texttt{ftohs}    & f-value for OH coil current ramp-up time limit equation & 41  & \texttt{0.001D0} & \texttt{1.000D0} \\
 67  & \texttt{ftcycl}   & f-value for minimum cycle time limit equation           & 42  & \texttt{0.001D0} & \texttt{1.000D0} \\
 68  & \texttt{fptemp}   & f-value for maximum centrepost temperature limit equation & 44  & \texttt{0.001D0} & \texttt{1.000D0} \\
 69  & \texttt{rcool}    & average radius of centrepost coolant channel            &     & \texttt{0.001D0} & \texttt{0.010D0} \\
@@ -1982,13 +1982,14 @@ no OH coil is present, in which case the thickness \texttt{ohcth} should be
 set to zero. No PF coils should be located at positions defined by
 \texttt{ipfloc(j) = 1} if no OH coil is present.
 
-\subsubsection{OH coil swing time}
+\subsubsection{Plasma current ramp-up time}
 \label{sec:tohs}
 
 In the steady-state power plant scenario ($\mathtt{lpulse \not= 1}$ --- see
 Section~\ref{sec:pulsed}), the length of time taken for the OH coil current to
-reverse (see Figure~\ref{fig:current_vs_time}) is determined from the value of
-switch \texttt{tohsin}. If \texttt{tohsin = 0.0D0}, then the swing time
+reverse (which is equal to the plasma current ramp-up time --- see
+Figure~\ref{fig:current_vs_time}) is determined from the value of switch
+\texttt{tohsin}. If \texttt{tohsin = 0.0D0}, then the swing time
 \texttt{tohs} in seconds is given by $\mathtt{tohs} = I_p / 0.5$, where $I_p$
 is the plasma current in MA\@. Furthermore, the PF coil ramp time
 \texttt{tramp} and shutdown time \texttt{tqnch} are set equal to

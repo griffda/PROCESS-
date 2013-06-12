@@ -43,6 +43,7 @@ module constants
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  16/10/12 PJK Initial version of module
+  !+ad_hist  12/06/13 PJK Added umass
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -64,6 +65,8 @@ module constants
   real(kind(1.0D0)), parameter :: rmu0 = 1.256637062D-6
   !+ad_vars  twopi FIX : 2 pi
   real(kind(1.0D0)), parameter :: twopi = 6.2831853071795862D0
+  !+ad_vars  umass FIX : unified atomic mass unit (kg)
+  real(kind(1.0D0)), parameter :: umass = 1.660538921D-27
 
 end module constants
 
@@ -91,6 +94,7 @@ module physics_variables
   !+ad_hist  22/01/13 PJK Added two stellarator scaling laws; modified comments
   !+ad_hist  11/04/13 PJK Removed ires, rtpte; changed isc, ifispact default values
   !+ad_hist  10/06/13 PJK Modified ishape
+  !+ad_hist  12/06/13 PJK Added gammaft, taup; changed rndfuel, qfuel units
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -299,6 +303,8 @@ module physics_variables
   real(kind(1.0D0)) :: fvsbrnni = 1.0D0
   !+ad_vars  gamma /0.4/ : Ejima coefficient for resistive startup V-s formula
   real(kind(1.0D0)) :: gamma = 0.4D0
+  !+ad_vars  gammaft : ratio of (fast alpha + neutral beam beta) to thermal beta
+  real(kind(1.0D0)) :: gammaft = 0.0D0
   !+ad_vars  gtscale /0/ : switch for a/R scaling of dnbeta:<UL>
   !+ad_varc          <LI>  = 0 do not scale dnbeta with eps; 
   !+ad_varc          <LI>  otherwise scale dnbeta with eps  </UL>
@@ -431,7 +437,8 @@ module physics_variables
   real(kind(1.0D0)) :: pneut = 0.0D0
   !+ad_vars  pohmpv : ohmic heating per volume (MW/m3)
   real(kind(1.0D0)) :: pohmpv = 0.0D0
-  !+ad_vars  powerht : heating power (MW) used in confinement time calculation
+  !+ad_vars  powerht : heating power (= transport loss power) (MW) used in
+  !+ad_varc            confinement time calculation
   real(kind(1.0D0)) :: powerht = 0.0D0
   !+ad_vars  powfmw : fusion power, max (MW)
   real(kind(1.0D0)) :: powfmw = 0.0D0
@@ -463,7 +470,7 @@ module physics_variables
   real(kind(1.0D0)) :: q0 = 1.0D0
   !+ad_vars  q95 : safety factor at 95% surface
   real(kind(1.0D0)) :: q95 = 0.0D0
-  !+ad_vars  qfuel : fuelling rate for D-T (A)
+  !+ad_vars  qfuel : fuelling rate for D-T (D-T nucleon-pairs/s)
   real(kind(1.0D0)) :: qfuel = 0.0D0
   !+ad_vars  qlim : lower limit for edge safety factor
   real(kind(1.0D0)) :: qlim = 0.0D0
@@ -485,7 +492,7 @@ module physics_variables
   real(kind(1.0D0)) :: rnbeam = 0.005D0
   !+ad_vars  rncne : n_carbon / n_e
   real(kind(1.0D0)) :: rncne = 0.0D0
-  !+ad_vars  rndfuel : fuel burnup rate (A)
+  !+ad_vars  rndfuel : fuel burnup rate (reactions/second)
   real(kind(1.0D0)) :: rndfuel = 0.0D0
   !+ad_vars  rnfene : n_highZ / n_e
   real(kind(1.0D0)) :: rnfene = 0.0D0
@@ -513,6 +520,8 @@ module physics_variables
   real(kind(1.0D0)) :: taueff = 0.0D0
   !+ad_vars  tauei : ion energy confinement time (sec)
   real(kind(1.0D0)) :: tauei = 0.0D0
+  !+ad_vars  taup : particle confinement time (sec)
+  real(kind(1.0D0)) :: taup = 0.0D0
   !+ad_vars  te : /15.0/ : volume averaged electron temperature (keV)
   !+ad_varc                (iteration variable 4)
   real(kind(1.0D0)) :: te = 15.0D0
@@ -1350,7 +1359,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: drtop = 0.0D0
   !+ad_vars  dztop /0.0/ : centrepost taper height adjustment (m)
   real(kind(1.0D0)) :: dztop = 0.0D0
-  !+ad_vars  estotf : stored energy in TF coils (GJ)
+  !+ad_vars  estotf : stored energy per TF coil (GJ)
   real(kind(1.0D0)) :: estotf = 0.0D0
   !+ad_vars  etapump /0.8/ : centrepost coolant pump efficiency
   real(kind(1.0D0)) :: etapump = 0.8D0
@@ -1920,6 +1929,7 @@ module times_variables
   !+ad_vars  tim(6) : array of time points during plasma pulse (s)
   real(kind(1.0D0)), dimension(6) :: tim = 0.0D0
   !+ad_vars  tohs /30.0/ : OH coil swing time for current initiation (s)
+  !+ad_varc                (but calculated if lpulse=0)
   !+ad_varc                (iteration variable 65)
   real(kind(1.0D0)) :: tohs = 30.0D0
   !+ad_vars  tohsin /0.0/ : switch for OH coil swing time (if lpulse=0):<UL>
@@ -2788,7 +2798,7 @@ module constraint_variables
   !+ad_vars  tcycmn : minimum cycle time (s)
   !+ad_varc           (constraint equation 42)
   real(kind(1.0D0)) :: tcycmn = 0.0D0
-  !+ad_vars  tohsmn : minimum OH coil swing time (s)
+  !+ad_vars  tohsmn : minimum OH coil swing time (= plasma current ramp-up time) (s)
   !+ad_varc           (constraint equation 41)
   real(kind(1.0D0)) :: tohsmn = 1.0D0
   !+ad_vars  tpkmax /600.0/ : maximum first wall peak temperature (C)

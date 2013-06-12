@@ -27,6 +27,7 @@ module numerics
   !+ad_hisc               by default; lowered boundu(rnbeam) to 1.0 from 1.0D20
   !+ad_hist  04/06/13 PJK New constraint eqns 52-55 added; new iteration
   !+ad_hisc               variables 89-96 added
+  !+ad_hist  11/06/13 PJK Changed eqn 41 description
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -317,8 +318,8 @@ module numerics
        'First wall peak temperature limit', &
        !+ad_varc  <LI> (40) Start-up injection power limit (PULSE)
        'Start-up injection power limit   ', &
-       !+ad_varc  <LI> (41) OH coil swing time limit (PULSE)
-       'OH coil swing time limit         ', &
+       !+ad_varc  <LI> (41) Plasma current ramp-up time limit (PULSE)
+       'Plasma current ramp-up time limit', &
        !+ad_varc  <LI> (42) Cycle time limit (PULSE)
        'Cycle time limit                 ', &
        !+ad_varc  <LI> (43) Average centrepost temperature

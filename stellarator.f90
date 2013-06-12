@@ -520,6 +520,7 @@ contains
     !+ad_hist  17/12/12 PJK Added zfear to betcom, radpwr argument lists
     !+ad_hist  23/01/13 PJK Modified poloidal field calculation to use iotabar;
     !+ad_hisc               Changed PCOND q95 argument to iotabar
+    !+ad_hist  12/06/13 PJK taup now global
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -532,7 +533,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: fusrat,pht,powht,sbar,sigvdt,taup,zion
+    real(kind(1.0D0)) :: fusrat,pht,powht,sbar,sigvdt,zion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

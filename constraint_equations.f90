@@ -66,6 +66,8 @@ subroutine constraints(m,cc)
   !+ad_hisc               Added new eqn 51, plus debug lines
   !+ad_hist  23/01/13 PJK Allowed eqn.47 to be used for stellarators
   !+ad_hist  04/06/13 PJK Added fwbs_variables, eqns 52-55
+  !+ad_hist  11/06/13 PJK Changed wording for eqn 41; added note about
+  !+ad_hisc               dign range
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -115,6 +117,9 @@ subroutine constraints(m,cc)
 
      case (2)  !  Global plasma power balance equation
                !  This is a consistency equation.
+
+        !  N.B. User-defined ignition margin dign is restricted elsewhere
+        !  to be close to 1.0
 
         if (ignite == 0) then
            cc(i) = 1.0D0 - dign*(ptre+ptri+prad)/( falpha*palp &
@@ -347,7 +352,7 @@ subroutine constraints(m,cc)
 
         cc(i) = 1.0D0 - fauxmn * 1.0D-6 * (pinje+pinji)/auxmin
 
-     case (41)  !  Equation to limit minimum OH swing time
+     case (41)  !  Equation to limit minimum plasma current ramp-up time
 
         cc(i) = 1.0D0 - ftohs * tohs/tohsmn
 

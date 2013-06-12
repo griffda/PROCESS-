@@ -1129,15 +1129,15 @@ contains
   subroutine tohswg(outfile,iprint)
 
     !+ad_name  tohswg
-    !+ad_summ  Routine to calculate the minimum OH coil swing time
+    !+ad_summ  Routine to calculate the plasma current ramp-up time
     !+ad_type  Subroutine
     !+ad_auth  C A Gardner, AEA Fusion, Culham Laboratory
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  None
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine calculates the minimum OH coil swing time
-    !+ad_desc  for a pulsed reactor.
+    !+ad_desc  This routine calculates the plasma current ramp-up time
+    !+ad_desc  (which is equal to the OH coil swing time) for a pulsed reactor.
     !+ad_prob  None
     !+ad_call  osubhd
     !+ad_call  ovarre
@@ -1150,6 +1150,7 @@ contains
     !+ad_hist  29/10/12 PJK Added pf_power_variables
     !+ad_hist  31/10/12 PJK Added constraint_variables
     !+ad_hist  04/02/13 PJK Comment change
+    !+ad_hist  11/06/13 PJK Modified ipdot and tohsmn equations
     !+ad_stat  Okay
     !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0013
     !+ad_docs  Work File Note F/PL/PJK/PROCESS/CODE/050
@@ -1165,7 +1166,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: ioht1,ioht2,r,rho,pfbusl,albusa,v,m,loh,ipdot
+    real(kind(1.0D0)) :: albusa,ioht1,ioht2,ipdot,loh,m,pfbusl,r,rho,v
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1210,18 +1211,20 @@ contains
        loh = sxlg(nohc,nohc)
 
        !  Maximum rate of change of plasma current (A/s)
+       !  - now a function of the plasma current itself (previously just 0.5D6)
 
-       ipdot = 0.5D6
+       ipdot = 0.0455D0*plascur
 
-       !  Minimum OH coil swing time (s)
+       !  Minimum plasma current ramp-up time (s)
+       !  - corrected (bus resistance is not a function of turns)
 
        tohsmn = loh*(ioht2 - ioht1) / &
-            (ioht2*turns(nohc)*(r+rho) - v + m*ipdot)
+            (ioht2*(r*turns(nohc) + rho) - v + m*ipdot)
 
     else
 
        call osubhd(outfile,'OH coil swing time considerations:')
-       call ovarre(outfile,'Minimum OH coil swing time (s)', &
+       call ovarre(outfile,'Minimum plasma current ramp-up time (s)', &
             '(tohsmn)',tohsmn)
 
     end if
