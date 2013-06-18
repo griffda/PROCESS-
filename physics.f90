@@ -2559,7 +2559,7 @@ contains
     !+ad_args  dntau  : output real : plasma average n-tau (s/m3)
     !+ad_args  figmer : output real : physics figure of merit
     !+ad_args  fusrat : output real : number of fusion reactions per second
-    !+ad_args  qfuel  : output real : fuelling rate for D-T (nucleon-pairs/sec)
+    !+ad_args  qfuel  : output real : fuelling rate for D-T (nucleus-pairs/sec)
     !+ad_args  rndfuel: output real : fuel burnup rate (reactions/s)
     !+ad_args  taup   : output real : (alpha) particle confinement time (s)
     !+ad_desc  This subroutine calculates extra physics related items
@@ -4537,7 +4537,7 @@ contains
     call ovarre(outfile,'Burn time (s)','(tburn)',tburn)
 
     call osubhd(outfile,'Auxiliary Information :')
-    call ovarre(outfile,'Fuelling rate (nucleon-pairs/s)','(qfuel)',qfuel)
+    call ovarre(outfile,'Fuelling rate (nucleus-pairs/s)','(qfuel)',qfuel)
     call ovarre(outfile,'Fuel burn-up rate (reactions/s)','(rndfuel)',rndfuel)
     call ovarrf(outfile,'Burn-up fraction','(burnup)',burnup)
 

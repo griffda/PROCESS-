@@ -95,6 +95,7 @@ module physics_variables
   !+ad_hist  11/04/13 PJK Removed ires, rtpte; changed isc, ifispact default values
   !+ad_hist  10/06/13 PJK Modified ishape
   !+ad_hist  12/06/13 PJK Added gammaft, taup; changed rndfuel, qfuel units
+  !+ad_hist  18/06/13 PJK Removed dign; changed ffwal, ishape comments
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -237,8 +238,6 @@ module physics_variables
   real(kind(1.0D0)) :: dene = 1.5D20
   !+ad_vars  deni : fuel ion density (/m3)
   real(kind(1.0D0)) :: deni = 0.0D0
-  !+ad_vars  dign /1.0/ : ignition margin
-  real(kind(1.0D0)) :: dign = 1.0D0
   !+ad_vars  dlamee : electron-electron coulomb logarithm
   real(kind(1.0D0)) :: dlamee = 0.0D0
   !+ad_vars  dlamie : ion-electron coulomb logarithm
@@ -285,7 +284,8 @@ module physics_variables
   real(kind(1.0D0)) :: fbfe = 0.35D0
   !+ad_vars  fdeut /0.5/ : deuterium fuel fraction (idhe3=1)
   real(kind(1.0D0)) :: fdeut = 0.5D0
-  !+ad_vars  ffwal /0.92/ : fudge factor for the wall load calculation
+  !+ad_vars  ffwal /0.92/ : factor to convert plasma surface area to first wall
+  !+ad_varc                 area in neutron wall load calculation
   real(kind(1.0D0)) :: ffwal = 0.92D0
   !+ad_vars  fhe3 /0.0/ : helium-3 fuel fraction (idhe3=1)
   real(kind(1.0D0)) :: fhe3 = 0.0D0
@@ -391,7 +391,8 @@ module physics_variables
   !+ad_vars  ishape /0/ : switch for plasma cross-sectional shape calculation:<UL>
   !+ad_varc          <LI> = 0 use input kappa, triang;
   !+ad_varc          <LI> = 1 scale qlim, kappa, triang (TART)
-  !+ad_varc          <LI> = 2 scale kappa (Zohm ITER scaling), triang input</UL>
+  !+ad_varc          <LI> = 2 set kappa to maximum stable value (Zohm ITER scaling);
+  !+ad_varc                   triang input</UL>
   integer :: ishape = 0
   !+ad_vars  itart /0/ : switch for tight aspect ratio models:<UL>
   !+ad_varc         <LI> = 0 use conventional aspect ratio models;
@@ -470,7 +471,7 @@ module physics_variables
   real(kind(1.0D0)) :: q0 = 1.0D0
   !+ad_vars  q95 : safety factor at 95% surface
   real(kind(1.0D0)) :: q95 = 0.0D0
-  !+ad_vars  qfuel : fuelling rate for D-T (D-T nucleon-pairs/s)
+  !+ad_vars  qfuel : fuelling rate for D-T (D-T nucleus-pairs/s)
   real(kind(1.0D0)) :: qfuel = 0.0D0
   !+ad_vars  qlim : lower limit for edge safety factor
   real(kind(1.0D0)) :: qlim = 0.0D0
@@ -817,6 +818,7 @@ module fwbs_variables
   !+ad_hist  09/05/13 PJK Added fwbsshape
   !+ad_hist  16/05/13 PJK Changed default value of fwbsshape
   !+ad_hist  20/05/13 PJK Added KIT PPCS model variables
+  !+ad_hist  18/06/13 PJK Changed cryomass description
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -840,7 +842,7 @@ module fwbs_variables
   !+ad_vars  coolmass : Mass of water coolant (in shield, blanket,
   !+ad_varc             first wall, divertor) (kg)
   real(kind(1.0D0)) :: coolmass = 0.0D0
-  !+ad_vars  cryomass : cryostat mass (kg)
+  !+ad_vars  cryomass : vacuum vessel mass (kg)
   real(kind(1.0D0)) :: cryomass = 0.0D0
   !+ad_vars  densbreed : density of breeder material (kg/m3) (blktmodel>0)
   real(kind(1.0D0)) :: densbreed = 0.0D0
@@ -1447,7 +1449,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: ripmax = 5.0D0
   !+ad_vars  ripple : peak/average ripple at plasma edge (%)
   real(kind(1.0D0)) :: ripple = 0.0D0
-  !+ad_vars  ritfc : total current in TF coil (A)
+  !+ad_vars  ritfc : total (summed) current in TF coils (A)
   real(kind(1.0D0)) :: ritfc = 0.0D0
   !+ad_vars  rjtfsual : allowable overall coil current density (A/m2)
   real(kind(1.0D0)) :: rjtfsual = 0.0D0
@@ -2268,6 +2270,7 @@ module cost_variables
   !+ad_call  None
   !+ad_hist  31/10/12 PJK Initial version of module
   !+ad_hist  16/04/13 PJK Changed ucsc dimensions
+  !+ad_hist  18/06/13 PJK Changed uccryo from cryostat to vacuum vessel
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2443,7 +2446,7 @@ module cost_variables
   real(kind(1.0D0)) :: uccr = 460.0D0
   !+ad_vars  uccry /9.3D4/ : heat transport system cryoplant costs ($/W**expcry)
   real(kind(1.0D0)) :: uccry = 9.3D4
-  !+ad_vars  uccryo /32.0/ : unit cost for cryostat ($/kg)
+  !+ad_vars  uccryo /32.0/ : unit cost for vacuum vessel ($/kg)
   real(kind(1.0D0)) :: uccryo = 32.0D0
   !+ad_vars  uccu /75.0/ : unit cost for copper in superconducting cable ($/kg)
   real(kind(1.0D0)) :: uccu = 75.0D0

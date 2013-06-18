@@ -68,6 +68,7 @@ subroutine constraints(m,cc)
   !+ad_hist  04/06/13 PJK Added fwbs_variables, eqns 52-55
   !+ad_hist  11/06/13 PJK Changed wording for eqn 41; added note about
   !+ad_hisc               dign range
+  !+ad_hist  18/06/13 PJK Removed dign from power balance equations
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -118,33 +119,30 @@ subroutine constraints(m,cc)
      case (2)  !  Global plasma power balance equation
                !  This is a consistency equation.
 
-        !  N.B. User-defined ignition margin dign is restricted elsewhere
-        !  to be close to 1.0
-
         if (ignite == 0) then
-           cc(i) = 1.0D0 - dign*(ptre+ptri+prad)/( falpha*palp &
+           cc(i) = 1.0D0 - (ptre+ptri+prad)/( falpha*palp &
                 + pcharge + pohmpv + 1.0D-6*(pinji+pinje)/vol )
         else
-           cc(i) = 1.0D0 - dign*(ptre+ptri+prad)/ &
+           cc(i) = 1.0D0 - (ptre+ptri+prad)/ &
                 (falpha*palp + pcharge + pohmpv)
         end if
 
      case (3)  !  Global power balance equation for ions
 
         if (ignite == 0) then
-           cc(i) = 1.0D0 - dign*(ptri+pie)/ &
+           cc(i) = 1.0D0 - (ptri+pie)/ &
                 ( falpha*palpi + 1.0D-6*pinji/vol )
         else
-           cc(i) = 1.0D0 - dign*(ptri+pie)/(falpha*palpi)
+           cc(i) = 1.0D0 - (ptri+pie)/(falpha*palpi)
         end if
 
      case (4)  !  Global power balance equation for electrons
 
         if (ignite == 0) then
-           cc(i) = 1.0D0 - dign*(ptre+prad)/ &
+           cc(i) = 1.0D0 - (ptre+prad)/ &
                 ( (falpha*palpe)+pie + 1.0D-6*pinje/vol )
         else
-           cc(i) = 1.0D0 - dign*(ptre+prad)/( (falpha*palpe)+pie )
+           cc(i) = 1.0D0 - (ptre+prad)/( (falpha*palpe)+pie )
         end if
 
      case (5)  !  Equation for density limit

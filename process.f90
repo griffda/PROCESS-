@@ -1307,3 +1307,6 @@ end subroutine output
 !          requested outputs. New ISHAPE=2 option for elongation scaling with aspect ratio
 ! SVN 173: Corrected rlp, ipdot, tohsmn calculations; changed units for qfuel, rndfuel;
 !          added several more requested outputs
+! SVN 174: Corrected reactor building height and vacuum vessel mass calculations;
+!          removed dign; added section to User Guide about requirements for new models;
+!          modified/clarified various comments

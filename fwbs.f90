@@ -1220,6 +1220,7 @@ contains
     !+ad_hist  09/05/13 PJK Redefined blanket, shield and vacuum vessel volumes
     !+ad_hist  15/05/13 PJK Swapped build order of vacuum vessel and gap
     !+ad_hist  21/05/13 PJK Added blanket, shield area calculations
+    !+ad_hist  18/06/13 PJK Corrected cryomass (= vacuum vessel mass, not cryostat mass)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1753,12 +1754,12 @@ contains
 
     end if
 
-    !  Cryostat mass - original obscure calculation replaced
+    !  Vacuum vessel mass - original obscure calculation replaced
 
     !cryomass = fvolcry * 4.0D0 * (2.0D0*(rtot-rsldi) + 2.0D0*hmax) * &
     !     2.0D0 * pi * rmajor * ddwi * denstl
 
-    cryomass = vdewex * denstl
+    cryomass = vdewin * denstl
 
     !  Sum of internal vacuum vessel and external cryostat masses
 
@@ -1955,7 +1956,7 @@ contains
     call ovarre(outfile,'External cryostat volume (m3)','(vdewex)',vdewex)
     call ovarre(outfile,'Total cryostat + vacuum vessel mass (kg)','(dewmkg)',dewmkg)
     call ovarre(outfile,'Internal vacuum vessel volume (m3)','(vdewin)',vdewin)
-    call ovarre(outfile,'Cryostat mass (kg)','(cryomass)',cryomass)
+    call ovarre(outfile,'Vacuum vessel mass (kg)','(cryomass)',cryomass)
     call ovarre(outfile,'Divertor area (m2)','(divsur)',divsur)
     call ovarre(outfile,'Divertor mass (kg)','(divmas)',divmas)
 

@@ -410,6 +410,7 @@ Section~\ref{sec:scans}. This method ensures that a smooth variation in the
 machine parameters is achieved.
 
 \section{The Variable Descriptor File}
+\label{sec:vardes}
 
 The variable descriptor file \texttt{vardes.html} is an invaluable resource for
 the user of \process. It acts as a dictionary / reference manual for the
@@ -3476,7 +3477,7 @@ result is found.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\mychapter{Inclusion of Additional Variables and Equations}
+\mychapter{Inclusion of New Models, Additional Variables and Equations}
 \label{chap:modify}
 
 It is often useful to add extra features to the code in order to model new
@@ -3651,6 +3652,42 @@ the following way:
   start of this routine.
 
 \end{enumerate}
+
+\section{Submission of New Models}
+
+The \process\ source code is maintained by CCFE, and resides in a
+\textit{Subversion}~\cite{svn} repository on the CCFE servers. We welcome
+contributions of alternative or improved models and algorithms.
+
+The Fortran~90/95 source code has a uniform visual style and structural
+layout. CCFE will transfer any contributed models into \process, in order for
+us to maintain its present coding standard. To simplify this task, we request
+that contributors provide the following information for any new models that
+they provide:
+
+\begin{itemize}
+
+\item A comprehensive description of the model; please provide a full list of
+  references.
+
+\item A list of all inputs and outputs: descriptions, default (input) values,
+  allowed ranges, units.
+
+\item If possible, please cross-reference any input/output variables to
+  existing global variables listed in the variable descriptor file (see
+  Section~\ref{sec:vardes}).
+
+\item A description of any new numerics requirements (input parameters,
+  iteration variables, constraint equations, figures of merit etc.).
+
+\item A definition of any pre-requisites.
+
+\item A description of any side-effects.
+
+\item Any available test data, code examples or test programs (in Fortran or
+  other language) would be useful.
+
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -3922,6 +3959,9 @@ J.\ P.\ Holdren et al.,
 \textit{``Report of the Senior Committee on Environmental Safety and
 Economic Aspects of Magnetic Fusion Energy''},
 \textit{Fusion Technology}, \textbf{13} (1988) 7
+
+\bibitem{svn}
+Subversion revision control system, \texttt{http://subversion.apache.org/}
 
 \end{thebibliography}
 

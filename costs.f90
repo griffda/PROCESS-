@@ -164,6 +164,7 @@ contains
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  22/11/12 PJK Typo fix in comment
+    !+ad_hist  18/06/13 PJK Changed cryostat to vacuum vessel for c2223
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -326,7 +327,7 @@ contains
        call ocosts(outfile,'22223','PF coil case',c22223)
        call ocosts(outfile,'22224','PF coil support structure',c22224)
        call ocosts(outfile,'2222','PF magnet assemblies',c2222)
-       call ocosts(outfile,'2223','Cryostat assembly',c2223)
+       call ocosts(outfile,'2223','Vacuum vessel assembly',c2223)
 
        if ((itart == 1).and.(ifueltyp == 1)) then
           call oblnkl(outfile)
@@ -1876,16 +1877,17 @@ contains
   subroutine acc2223
 
     !+ad_name  acc2223
-    !+ad_summ  Account 222.3 : Cryostat
+    !+ad_summ  Account 222.3 : Vacuum vessel
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
-    !+ad_desc  This routine evaluates the Account 222.3 (cryostat) costs.
+    !+ad_desc  This routine evaluates the Account 222.3 (vacuum vessel) costs.
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  18/06/13 PJK Changed wording from cryostat to vacuum vessel
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2586,7 +2588,7 @@ contains
        !  1.3 should have been afuel*umass/echarge*1000*s/day = 2.2
        !wtgpd = burnup * qfuel * 1.3D0
 
-       !  New calculation: 2 nucleons * reactions/sec * kg/nucleon * g/kg * sec/day
+       !  New calculation: 2 nuclei * reactions/sec * kg/nucleus * g/kg * sec/day
        wtgpd = 2.0D0*rndfuel * afuel*umass*1000.0D0 * 86400.0D0
     else
        targtm = gain * edrive * 3.0D0 * 1.67D-27 * 1.0D3 / &

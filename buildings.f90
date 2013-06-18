@@ -188,6 +188,7 @@ contains
     !+ad_hisc               removed extraneous 5.1m from rmbh calculation;
     !+ad_hisc               building volume multipliers now input parameters
     !+ad_hist  11/04/13 PJK Comment change
+    !+ad_hist  18/06/13 PJK Added back extra tfh term to hrbi
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -259,8 +260,9 @@ contains
     !         extended to ensure the PF coils lie within the cryostat.
     !  clh2 : clearance beneath TF coil to foundation, including basement, m
     !  stcl : clearance above crane to roof, m
+    !  Additional tfh allows TF coil to be lifted right out
 
-    hrbi = clh2 + tfh + clh1 + trcl + crcl + stcl
+    hrbi = clh2 + 2.0D0*tfh + clh1 + trcl + crcl + stcl
 
     !  Internal volume
 

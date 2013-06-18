@@ -83,7 +83,7 @@ contains
     qtorus = 0.0D0
 
     !  Total D-T gas load (kg/s)
-    !  2 nucleons * nucleon-pairs/sec * mass/nucleon
+    !  2 nuclei * nucleus-pairs/sec * mass/nucleus
 
     gasld = 2.0D0*qfuel * afuel*umass
 
