@@ -1311,3 +1311,4 @@ end subroutine output
 !          removed dign; added section to User Guide about requirements for new models;
 !          modified/clarified various comments
 ! SVN 175: Removed obsolete TF coil current density equation 23
+! SVN 176: Corrected NBI path length calculation

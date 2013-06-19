@@ -377,6 +377,7 @@ contains
     !+ad_call  sigbeam
     !+ad_hist  15/06/92 PJK Initial upgraded version
     !+ad_hist  22/08/12 PJK Initial F90 version
+    !+ad_hist  19/06/13 PJK Corrected dpath calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -394,7 +395,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: d1,d2,dend,dent,dpath,sigstop
+    real(kind(1.0D0)) :: dend,dent,dpath,sigstop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -403,19 +404,14 @@ contains
     if ((1.0D0+eps) < frbeam) then
        write(*,*) 'Error in routine ITERNB:'
        write(*,*) 'Imminent negative square root argument... ', eps, frbeam
+       write(*,*) 'NBI will miss plasma completely!'
        write(*,*) 'PROCESS stopping.'
        stop
     end if
 
     !  Calculate beam path length to centre
 
-    d1 = rmajor * sqrt( (1.0D0 + eps)**2 - frbeam**2)
-    if (frbeam < 1.0D0) then
-       d2 =  rmajor*sqrt(1.0D0-frbeam**2)
-       dpath = d1 - d2
-    else
-       dpath = d1
-    end if
+    dpath = rmajor * sqrt( (1.0D0 + eps)**2 - frbeam**2)
 
     !  Calculate beam stopping cross-section
 
@@ -427,7 +423,7 @@ contains
 
     !  Shine-through fraction of beam
 
-    fshine = exp (-2.0D0 * d1*dene*sigstop)
+    fshine = exp (-2.0D0 * dpath*dene*sigstop)
 
     !  Deuterium and tritium beam densities
 
@@ -1381,6 +1377,7 @@ contains
     !+ad_call  sigbeam
     !+ad_hist  17/06/92 PJK Initial upgraded version
     !+ad_hist  18/09/12 PJK Initial F90 version
+    !+ad_hist  19/06/13 PJK Corrected dpath calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1399,7 +1396,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: dend,dent,dpath,d1,d2,sigstop
+    real(kind(1.0D0)) :: dend,dent,dpath,sigstop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1408,19 +1405,14 @@ contains
     if ((1.0D0+eps) < frbeam) then
        write(*,*) 'Error in routine CULNBI:'
        write(*,*) 'Imminent negative square root argument... ', eps, frbeam
+       write(*,*) 'NBI will miss plasma completely!'
        write(*,*) 'PROCESS stopping.'
        stop
     end if
 
     !  Calculate beam path length to centre
 
-    d1 = rmajor * sqrt( (1.0D0 + eps)**2 - frbeam**2)
-    if (frbeam < 1.0D0) then
-       d2 =  rmajor*sqrt(1.0D0-frbeam**2)
-       dpath = d1 - d2
-    else
-       dpath = d1
-    end if
+    dpath = rmajor * sqrt( (1.0D0 + eps)**2 - frbeam**2)
 
     !  Calculate beam stopping cross-section
 
@@ -1432,7 +1424,7 @@ contains
 
     !  Shine-through fraction of beam
 
-    fshine = exp(-2.0D0 * d1*dnla*sigstop)
+    fshine = exp(-2.0D0 * dpath*dnla*sigstop)
 
     !  Deuterium and tritium beam densities
 
