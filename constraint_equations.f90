@@ -234,8 +234,12 @@ subroutine constraints(m,cc)
         cc(i) = 1.0D0 - fdivcol * rlenmax / rlclolcn
 
      case (23)  !  Equation for allowable TF Coil current density
+        !  This equation is redundant... pre-1992!
 
-        cc(i) = 1.0D0 - fjtfc * rjtfsual / oacdcp
+        write(*,*) 'Constraint equation 23 is redundant -'
+        write(*,*) 'please use eqns.33 and/or 35 instead.'
+        write(*,*) 'PROCESS stopping'
+        stop
 
      case (24)  !  Equation for beta limit (Troyon limit in tokamaks)
 

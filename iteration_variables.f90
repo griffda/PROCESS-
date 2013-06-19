@@ -48,6 +48,7 @@ subroutine loadxc
   !+ad_hist  04/06/13 PJK Added ftbr (89), blbuith (90), blbuoth (91),
   !+ad_hisc               fflutf (92), shldith (93), shldoth (94),
   !+ad_hisc               fptfnuc (95), fvvhe (96)
+  !+ad_hist  19/06/13 PJK fjtfc (var.28) is obsolete - added error trap
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -116,7 +117,10 @@ subroutine loadxc
      case (25) ; xcm(i) = fpnetel
      case (26) ; xcm(i) = ffuspow
      case (27) ; xcm(i) = fhldiv
-     case (28) ; xcm(i) = fjtfc
+     case (28) ;
+        write(*,*) 'Iteration variable 28 is currently not in use...'
+        write(*,*) 'PROCESS stopping.'
+        stop
      case (29) ; xcm(i) = bore
      case (30) ; xcm(i) = fmva
      case (31) ; xcm(i) = gapomin
@@ -315,6 +319,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  04/06/13 PJK Added ftbr (89), blbuith (90), blbuoth (91),
   !+ad_hisc               fflutf (92), shldith (93), shldoth (94),
   !+ad_hisc               fptfnuc (95), fvvhe (96)
+  !+ad_hist  19/06/13 PJK fjtfc (var.28) is obsolete - added error trap
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -378,7 +383,10 @@ subroutine convxc(xc,nn)
      case (25) ; fpnetel  = xc(i)/scale(i)
      case (26) ; ffuspow  = xc(i)/scale(i)
      case (27) ; fhldiv   = xc(i)/scale(i)
-     case (28) ; fjtfc    = xc(i)/scale(i)
+     case (28) ; 
+        write(*,*) 'Iteration variable 28 is currently not in use...'
+        write(*,*) 'PROCESS stopping.'
+        stop
      case (29) ; bore     = xc(i)/scale(i)
      case (30) ; fmva     = xc(i)/scale(i)
      case (31) ; gapomin  = xc(i)/scale(i)

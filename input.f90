@@ -336,6 +336,7 @@ contains
     !+ad_hist  10/06/13 PJK Modified ISHAPE range
     !+ad_hist  12/06/13 PJK Restricted DIGN range
     !+ad_hist  18/06/13 PJK Removed DIGN altogether
+    !+ad_hist  19/06/13 PJK Removed FJTFC
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -703,8 +704,9 @@ contains
           call parse_real_variable('FJOHC0', fjohc0, 0.001D0, 10.0D0, &
                'F-value for OH coil current at BOP')
        case ('FJTFC')
-          call parse_real_variable('FJTFC', fjtfc, 0.001D0, 10.0D0, &
-               'F-value for TF coil current density')
+          write(outfile,*) 'FJTFC is now obsolete -'
+          write(outfile,*) 'please remove it from the input file'
+          obsolete_var = .true.
        case ('FHLDIV')
           call parse_real_variable('FHLDIV', fhldiv, 0.001D0, 10.0D0, &
                'F-value for divertor heat load')

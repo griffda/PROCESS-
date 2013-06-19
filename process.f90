@@ -1310,3 +1310,4 @@ end subroutine output
 ! SVN 174: Corrected reactor building height and vacuum vessel mass calculations;
 !          removed dign; added section to User Guide about requirements for new models;
 !          modified/clarified various comments
+! SVN 175: Removed obsolete TF coil current density equation 23

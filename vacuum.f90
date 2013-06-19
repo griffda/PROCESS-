@@ -99,7 +99,7 @@ contains
        tdwell,nplasma,ndiv,qtorus,gasld,pumpn,nduct,dlscalc, &
        mvdsh,dimax,iprint,outfile)
 
-    !+ad_name  vaccall
+    !+ad_name  vacuum
     !+ad_summ  Routine to calculate the parameters of the vacuum system
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre

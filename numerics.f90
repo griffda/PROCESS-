@@ -28,6 +28,7 @@ module numerics
   !+ad_hist  04/06/13 PJK New constraint eqns 52-55 added; new iteration
   !+ad_hisc               variables 89-96 added
   !+ad_hist  11/06/13 PJK Changed eqn 41 description
+  !+ad_hist  19/06/13 PJK Changed eqn.23, var.28 descriptions
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -282,8 +283,8 @@ module numerics
        'Plasma minor radius limit        ', &
        !+ad_varc  <LI> (22) Divertor collisionality limit
        'Divertor collisionality limit    ', &
-       !+ad_varc  <LI> (23) TF coil current density limit
-       'TF coil current density limit    ', &
+       !+ad_varc  <LI> (23) UNUSED
+       'UNUSED                           ', &
        !+ad_varc  <LI> (24) * Troyon beta limit
        'Troyon beta limit                ', &
        !+ad_varc  <LI> (25) Peak toroidal field limit
@@ -440,8 +441,8 @@ module numerics
        'ffuspow ', &
        !+ad_varc  <LI> (27) fhldiv (f-value for equation 18)
        'fhldiv  ', &
-       !+ad_varc  <LI> (28) fjtfc (f-value for equation 23)
-       'fjtfc   ', &
+       !+ad_varc  <LI> (28) UNUSED
+       'UNUSED  ', &
        !+ad_varc  <LI> (29) * bore
        'bore    ', &
        !+ad_varc  <LI> (30) fmva (f-value for equation 19)

@@ -1286,6 +1286,7 @@ module tfcoil_variables
   !+ad_hist  15/04/13 PJK Modified tfckw comments
   !+ad_hist  16/04/13 PJK Redefined isumattf; removed jcrit_model;
   !+ad_hisc               changed dcond dimensions
+  !+ad_hist  19/06/13 PJK Removed rjtfsual
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1451,8 +1452,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: ripple = 0.0D0
   !+ad_vars  ritfc : total (summed) current in TF coils (A)
   real(kind(1.0D0)) :: ritfc = 0.0D0
-  !+ad_vars  rjtfsual : allowable overall coil current density (A/m2)
-  real(kind(1.0D0)) :: rjtfsual = 0.0D0
   !+ad_vars  rnltf : number of TF turns/pancake (radial direction)
   real(kind(1.0D0)) :: rnltf = 0.0D0
   !+ad_vars  sigrad : radial TF coil stress (MPa)
@@ -2627,6 +2626,7 @@ module constraint_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  31/10/12 PJK Initial version of module
+  !+ad_hist  19/06/13 PJK Removed fjtfc
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2697,9 +2697,6 @@ module constraint_variables
   !+ad_vars  fjprot /1.0/ : f-value for TF coil winding pack current density
   !+ad_varc                 (constraint equation 35, iteration variable 53)
   real(kind(1.0D0)) :: fjprot = 1.0D0
-  !+ad_vars  fjtfc /1.0/ : f-value for TF coil current density
-  !+ad_varc                (constraint equation 23, iteration variable 28)
-  real(kind(1.0D0)) :: fjtfc = 1.0D0
   !+ad_vars  fmva /1.0/ : f-value for maximum MVA
   !+ad_varc               (constraint equation 19, iteration variable 30)
   real(kind(1.0D0)) :: fmva = 1.0D0
