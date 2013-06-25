@@ -118,7 +118,7 @@ object = \
 ###### Architecture specifics #######
 #
 # Default = FUN (Fusion Unix Network)
-# Alternatives: FUN, JAC
+# Alternatives: FUN, JAC, GFORT
 ARCH = FUN
 DEBUG = NO
 
@@ -140,6 +140,16 @@ LFLAGS_JAC =
 LIBS_JAC   = 
 ifeq (${DEBUG},YES)
 	FFLAGS_JAC = -Mpreprocess -g -C -Mchkptr -traceback
+endif
+
+###### gfortran
+
+FORTRAN_GFORT = f95
+FFLAGS_GFORT = -cpp 
+LFLAGS_GFORT = 
+LIBS_GFORT   = 
+ifeq (${DEBUG},YES)
+	FFLAGS_GFORT = -cpp -g -fcheck=all -fbacktrace
 endif
 
 ################### End of Custom Section #####################

@@ -292,6 +292,7 @@ contains
     !+ad_hist  02/10/96 PJK Initial upgraded version
     !+ad_hist  08/10/12 PJK Initial F90 version
     !+ad_hist  17/12/12 PJK Added new figure of merit 14
+    !+ad_hist  25/06/13 PJK Added kind() to sgn assignment
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -311,7 +312,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     iab = abs(minmax)
-    sgn = sign(1.0D0, real(minmax))
+    sgn = sign(1.0D0, real(minmax, kind(1.0D0)))
 
     !  If sgn is -1 the value of fc will be maximised
     !  If sgn is +1 the value of fc will be minimised

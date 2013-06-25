@@ -2644,6 +2644,7 @@ contains
     !+ad_call  get_value_int
     !+ad_call  report_error
     !+ad_hist  03/10/12 PJK Initial version
+    !+ad_hist  25/06/13 PJK Modified format statement to help gfortran compilation
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2705,7 +2706,7 @@ contains
        end do
     end if
 
-10  format(a,a,a,a1,i3,a,i)
+10  format(a,a,a,a1,i3,a,i12)
 
   end subroutine parse_int_array
 

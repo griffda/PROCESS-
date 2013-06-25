@@ -1221,6 +1221,7 @@ contains
     !+ad_hist  15/05/13 PJK Swapped build order of vacuum vessel and gap
     !+ad_hist  21/05/13 PJK Added blanket, shield area calculations
     !+ad_hist  18/06/13 PJK Corrected cryomass (= vacuum vessel mass, not cryostat mass)
+    !+ad_hist  25/06/13 PJK Removed hecan output if blktmodel > 0
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1792,7 +1793,8 @@ contains
     end if
     call ovarre(outfile,'Outboard blanket thickness (m)','(blnkoth)', blnkoth)
     call ovarre(outfile,'Top blanket thickness (m)','(blnktth)',blnktth)
-    call ovarre(outfile,'Inboard side TF coil case thickness (m)', &
+    if (blktmodel == 0) &
+         call ovarre(outfile,'Inboard side TF coil case thickness (m)', &
          '(hecan)',hecan)
 
     if (itart == 1) then

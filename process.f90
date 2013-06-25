@@ -1312,3 +1312,4 @@ end subroutine output
 !          modified/clarified various comments
 ! SVN 175: Removed obsolete TF coil current density equation 23
 ! SVN 176: Corrected NBI path length calculation
+! SVN 177: Minor changes to allow compilation with gfortran

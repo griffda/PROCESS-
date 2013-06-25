@@ -2940,6 +2940,8 @@ module ife_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  05/11/12 PJK Initial version of module
+  !+ad_hist  25/06/13 PJK Modified declaration of rank-2 arrays to be
+  !+ad_hist               standard-conforming
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2975,7 +2977,7 @@ module ife_variables
   !+ad_vars  bldzu /4.0/ : vertical thickness of IFE blanket above chamber (m)
   real(kind(1.0D0)) :: bldzu  = 4.0D0
   !+ad_vars  blmatf(3,0:maxmat) /.../ : IFE blanket material fractions
-  real(kind(1.0D0)), dimension(3,0:maxmat) :: blmatf = (/ &
+  real(kind(1.0D0)), dimension(3,0:maxmat) :: blmatf = reshape( (/ &
        0.05D0,0.05D0,0.05D0, &
        0.0D0, 0.0D0, 0.0D0,  &
        0.45D0,0.45D0,0.45D0, &
@@ -2983,7 +2985,7 @@ module ife_variables
        0.20D0,0.20D0,0.20D0, &
        0.0D0, 0.0D0, 0.0D0,  &
        0.30D0,0.30D0,0.30D0, &
-       0.0D0, 0.0D0, 0.0D0  /)
+       0.0D0, 0.0D0, 0.0D0  /), shape(blmatf))
   !+ad_vars  blmatm(3,0:maxmat) : IFE blanket material masses (kg)
   real(kind(1.0D0)), dimension(3,0:maxmat) :: blmatm = 0.0D0
   !+ad_vars  blmatv(3,0:maxmat) : IFE blanket material volumes (m3)
@@ -3048,7 +3050,7 @@ module ife_variables
   !+ad_vars  fwdzu /0.01/ : vertical thickness of IFE first wall above chamber (m)
   real(kind(1.0D0)) :: fwdzu = 0.01D0
   !+ad_vars  fwmatf(3,0:maxmat) /.../ : IFE first wall material fractions
-  real(kind(1.0D0)), dimension(3,0:maxmat) :: fwmatf = (/ &
+  real(kind(1.0D0)), dimension(3,0:maxmat) :: fwmatf = reshape( (/ &
        0.05D0,0.05D0,0.05D0, &
        0.0D0, 0.0D0, 0.0D0,  &
        0.95D0,0.95D0,0.95D0, &
@@ -3056,7 +3058,7 @@ module ife_variables
        0.0D0, 0.0D0, 0.0D0,  &
        0.0D0, 0.0D0, 0.0D0,  &
        0.0D0, 0.0D0, 0.0D0,  &
-       0.0D0, 0.0D0, 0.0D0  /)
+       0.0D0, 0.0D0, 0.0D0  /), shape(fwmatf))
   !+ad_vars  fwmatm(3,0:maxmat) : IFE first wall material masses (kg)
   real(kind(1.0D0)), dimension(3,0:maxmat) :: fwmatm = 0.0D0
   !+ad_vars  fwmatv(3,0:maxmat) : IFE first wall material volumes (kg)
@@ -3122,7 +3124,7 @@ module ife_variables
   !+ad_vars  shdzu /5.0/ : vertical thickness of IFE shield above chamber (m)
   real(kind(1.0D0)) :: shdzu  = 5.0D0
   !+ad_vars  shmatf(3,0:maxmat) /.../ : IFE shield material fractions
-  real(kind(1.0D0)), dimension(3,0:maxmat) :: shmatf = (/ &
+  real(kind(1.0D0)), dimension(3,0:maxmat) :: shmatf = reshape( (/ &
        0.05D0,0.05D0,0.05D0, &
        0.19D0,0.19D0,0.19D0, &
        0.0D0, 0.0D0, 0.0D0,  &
@@ -3130,7 +3132,7 @@ module ife_variables
        0.0D0, 0.0D0, 0.0D0,  &
        0.665D0,0.665D0,0.665D0, &
        0.095D0,0.095D0,0.095D0, &
-       0.0D0, 0.0D0, 0.0D0  /)
+       0.0D0, 0.0D0, 0.0D0  /), shape(shmatf))
   !+ad_vars  shmatm(3,0:maxmat) : IFE shield material masses (kg)
   real(kind(1.0D0)), dimension(3,0:maxmat) :: shmatm = 0.0D0
   !+ad_vars  shmatv(3,0:maxmat) : IFE shield material volumes (kg)
@@ -3163,7 +3165,7 @@ module ife_variables
   !+ad_vars  v1dzu /0.0/ : vertical thickness of IFE void 1 above chamber (m)
   real(kind(1.0D0)) :: v1dzu = 0.0D0
   !+ad_vars  v1matf(3,0:maxmat) /.../ : IFE void 1 material fractions
-  real(kind(1.0D0)), dimension(3,0:maxmat) :: v1matf = (/ &
+  real(kind(1.0D0)), dimension(3,0:maxmat) :: v1matf = reshape( (/ &
        1.0D0, 1.0D0, 1.0D0, &
        0.0D0, 0.0D0, 0.0D0, &
        0.0D0, 0.0D0, 0.0D0, &
@@ -3171,7 +3173,7 @@ module ife_variables
        0.0D0, 0.0D0, 0.0D0, &
        0.0D0, 0.0D0, 0.0D0, &
        0.0D0, 0.0D0, 0.0D0, &
-       0.0D0, 0.0D0, 0.0D0  /)
+       0.0D0, 0.0D0, 0.0D0  /), shape(v1matf))
   !+ad_vars  v1matm(3,0:maxmat) : IFE void 1 material masses (kg)
   real(kind(1.0D0)), dimension(3,0:maxmat) :: v1matm = 0.0D0
   !+ad_vars  v1matv(3,0:maxmat) : IFE void 1 material volumes (kg)
@@ -3185,7 +3187,7 @@ module ife_variables
   !+ad_vars  v2dzu /7.0/ : vertical thickness of IFE void 2 above chamber (m)
   real(kind(1.0D0)) :: v2dzu = 7.0D0
   !+ad_vars  v2matf(3,0:maxmat) /.../ : IFE void 2 material fractions
-  real(kind(1.0D0)), dimension(3,0:maxmat) :: v2matf = (/ &
+  real(kind(1.0D0)), dimension(3,0:maxmat) :: v2matf = reshape( (/ &
        1.0D0, 1.0D0, 1.0D0, &
        0.0D0, 0.0D0, 0.0D0, &
        0.0D0, 0.0D0, 0.0D0, &
@@ -3193,7 +3195,7 @@ module ife_variables
        0.0D0, 0.0D0, 0.0D0, &
        0.0D0, 0.0D0, 0.0D0, &
        0.0D0, 0.0D0, 0.0D0, &
-       0.0D0, 0.0D0, 0.0D0  /)
+       0.0D0, 0.0D0, 0.0D0  /), shape(v2matf))
   !+ad_vars  v2matm(3,0:maxmat) : IFE void 2 material masses (kg)
   real(kind(1.0D0)), dimension(3,0:maxmat) :: v2matm = 0.0D0
   !+ad_vars  v2matv(3,0:maxmat) : IFE void 2 material volumes (kg)
@@ -3207,7 +3209,7 @@ module ife_variables
   !+ad_vars  v3dzu /20.0/ : vertical thickness of IFE void 3 above chamber (m)
   real(kind(1.0D0)) :: v3dzu  = 20.0D0
   !+ad_vars  v3matf(3,0:maxmat) /.../ : IFE void 3 material fractions
-  real(kind(1.0D0)), dimension(3,0:maxmat) :: v3matf = (/ &
+  real(kind(1.0D0)), dimension(3,0:maxmat) :: v3matf = reshape( (/ &
        1.0D0, 1.0D0, 1.0D0, &
        0.0D0, 0.0D0, 0.0D0, &
        0.0D0, 0.0D0, 0.0D0, &
@@ -3215,7 +3217,7 @@ module ife_variables
        0.0D0, 0.0D0, 0.0D0, &
        0.0D0, 0.0D0, 0.0D0, &
        0.0D0, 0.0D0, 0.0D0, &
-       0.0D0, 0.0D0, 0.0D0  /)
+       0.0D0, 0.0D0, 0.0D0  /), shape(v3matf))
   !+ad_vars  v3matm(3,0:maxmat) : IFE void 3 material masses (kg)
   real(kind(1.0D0)), dimension(3,0:maxmat) :: v3matm = 0.0D0
   !+ad_vars  v3matv(3,0:maxmat) : IFE void 3 material volumes (kg)
