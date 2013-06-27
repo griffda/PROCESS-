@@ -128,6 +128,7 @@ contains
     !+ad_hist  08/10/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/01/13 PJK Clarified some output labels
+    !+ad_hist  27/06/13 PJK Modified beta coefficient label
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -208,7 +209,7 @@ contains
           xlabel = 'Volt-sec upper bound'
        case (11)
           dnbeta = sweep(i)
-          xlabel = 'Troyon coefficient'
+          xlabel = 'Beta coefficient'
        case (12)
           bscfmax = sweep(i)
           xlabel = 'Bootstrap Fraction'

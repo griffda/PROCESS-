@@ -29,6 +29,7 @@ module numerics
   !+ad_hisc               variables 89-96 added
   !+ad_hist  11/06/13 PJK Changed eqn 41 description
   !+ad_hist  19/06/13 PJK Changed eqn.23, var.28 descriptions
+  !+ad_hist  27/06/13 PJK Changed eqn.24 description
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -285,8 +286,8 @@ module numerics
        'Divertor collisionality limit    ', &
        !+ad_varc  <LI> (23) UNUSED
        'UNUSED                           ', &
-       !+ad_varc  <LI> (24) * Troyon beta limit
-       'Troyon beta limit                ', &
+       !+ad_varc  <LI> (24) * Beta limit
+       'Beta limit                       ', &
        !+ad_varc  <LI> (25) Peak toroidal field limit
        'Peak toroidal field limit        ', &
        !+ad_varc  <LI> (26) OH coil EOF current density limit

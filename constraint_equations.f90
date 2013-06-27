@@ -69,6 +69,7 @@ subroutine constraints(m,cc)
   !+ad_hist  11/06/13 PJK Changed wording for eqn 41; added note about
   !+ad_hisc               dign range
   !+ad_hist  18/06/13 PJK Removed dign from power balance equations
+  !+ad_hist  27/06/13 PJK Removed Troyon as a beta limit descriptor
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -241,7 +242,7 @@ subroutine constraints(m,cc)
         write(*,*) 'PROCESS stopping'
         stop
 
-     case (24)  !  Equation for beta limit (Troyon limit in tokamaks)
+     case (24)  !  Equation for beta limit
 
         if ((iculbl == 0).or.(istell /= 0)) then
 

@@ -76,6 +76,7 @@ contains
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  05/11/12 PJK Added pulse_variables
+    !+ad_hist  27/06/13 PJK Comment change
     !+ad_stat  Okay
     !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -96,7 +97,7 @@ contains
 
     call thrmal(outfile,iprint)
 
-    !  Evaluate minimum OH coil swing time
+    !  Evaluate minimum plasma current ramp-up time
 
     call tohswg(outfile,iprint)
 
@@ -1137,7 +1138,7 @@ contains
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_desc  This routine calculates the plasma current ramp-up time
-    !+ad_desc  (which is equal to the OH coil swing time) for a pulsed reactor.
+    !+ad_desc  for a pulsed reactor.
     !+ad_prob  None
     !+ad_call  osubhd
     !+ad_call  ovarre
@@ -1151,6 +1152,7 @@ contains
     !+ad_hist  31/10/12 PJK Added constraint_variables
     !+ad_hist  04/02/13 PJK Comment change
     !+ad_hist  11/06/13 PJK Modified ipdot and tohsmn equations
+    !+ad_hist  27/06/13 PJK Modified output heading
     !+ad_stat  Okay
     !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0013
     !+ad_docs  Work File Note F/PL/PJK/PROCESS/CODE/050
@@ -1223,7 +1225,7 @@ contains
 
     else
 
-       call osubhd(outfile,'OH coil swing time considerations:')
+       call osubhd(outfile,'OH coil considerations:')
        call ovarre(outfile,'Minimum plasma current ramp-up time (s)', &
             '(tohsmn)',tohsmn)
 

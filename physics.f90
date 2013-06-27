@@ -861,16 +861,16 @@ contains
   subroutine culblm(bt,dnbeta,plascur,rminor,betalim)
 
     !+ad_name  culblm
-    !+ad_summ  Troyon beta scaling limit
+    !+ad_summ  Beta scaling limit
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  bt      : input real :  toroidal B-field on plasma axis (T)
-    !+ad_args  dnbeta  : input real :  Troyon g coefficient
+    !+ad_args  dnbeta  : input real :  Troyon-like g coefficient
     !+ad_args  plascur : input real :  plasma current (A)
     !+ad_args  rminor  : input real :  plasma minor axis (m)
     !+ad_args  betalim : output real : beta limit as defined below
-    !+ad_desc  This subroutine calculates the Troyon scaling beta limit, using
+    !+ad_desc  This subroutine calculates the beta limit, using
     !+ad_desc  the algorithm documented in AEA FUS 172.
     !+ad_desc  <P>The limit applies to beta defined with respect to the total B-field.
     !+ad_desc  Switch ICULBL determines which components of beta to include (see
@@ -881,11 +881,12 @@ contains
     !+ad_desc  <P><LI>If ICULBL = 2, then the limit is applied to the thermal +
     !+ad_desc                        neutral beam beta components
     !+ad_desc  </UL>
-    !+ad_desc  The default value for the Troyon g coefficient is DNBETA = 3.5
+    !+ad_desc  The default value for the g coefficient is DNBETA = 3.5
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  09/11/11 PJK Initial F90 version
+    !+ad_hist  27/06/13 PJK Modified header comments
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -4368,7 +4369,7 @@ contains
          epbetmax)
 
     if (istell == 0) then
-       call ovarrf(outfile,'Troyon g coefficient','(dnbeta)',dnbeta)
+       call ovarrf(outfile,'Beta g coefficient','(dnbeta)',dnbeta)
        !call ovarrf(outfile,'Normalised beta',' ',fbetatry*dnbeta)
        call ovarrf(outfile,'Normalised thermal beta',' ',1.0D8*betath*rminor*bt/plascur)
        call ovarrf(outfile,'Normalised total beta',' ',1.0D8*beta*rminor*bt/plascur)
@@ -4562,6 +4563,7 @@ contains
     !+ad_call  ovarrf
     !+ad_hist  20/09/11 PJK Initial F90 version
     !+ad_hist  30/10/12 PJK Added times_variables
+    !+ad_hist  27/06/13 PJK Relabelled tohs
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4587,7 +4589,7 @@ contains
 
     call ovarrf(outfile,'Initial charge time for PF coils (s)','(tramp)', &
          tramp)
-    call ovarrf(outfile,'OH coil swing time (s)','(tohs)',tohs)
+    call ovarrf(outfile,'Plasma current ramp-up time (s)','(tohs)',tohs)
     call ovarrf(outfile,'Heating time (s)','(theat)',theat)
     call ovarre(outfile,'Burn time (s)','(tburn)',tburn)
     call ovarrf(outfile,'Shutdown time for PF coils (s)','(tqnch)',tqnch)

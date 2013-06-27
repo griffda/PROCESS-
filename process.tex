@@ -568,7 +568,7 @@ no. & description                                         & type & \texttt{ixc} 
 21  & minor radius limit                                  & L    & \textbf{32} \\
 22  & divertor collisionality limit                       & L    & \textbf{34},43 \\
 23  & UNUSED                                              &      & \\
-24  & Troyon beta limit (also beta limit in stellarators) & L    & \textbf{36},1,2,3,4,6,18 \\
+24  & Beta limit (also beta limit in stellarators)        & L    & \textbf{36},1,2,3,4,6,18 \\
 25  & peak toroidal field limit                           & L    & \textbf{35},3,13,29 \\
 26  & OH coil current density at End of Flat-top limit    & L    & \textbf{38},37,41,12 \\
 27  & OH coil current density at Beginning of Pulse limit & L    & \textbf{39},37,41,12 \\
@@ -697,7 +697,7 @@ no. & variable name     & description                                   & eqn & 
 33  & \texttt{fportsz}  & f-value for port size limit equation          & 20  & \texttt{0.010D0} & \texttt{1.000D0} \\
 34  & \texttt{fdivcol}  & f-value for divertor collisionality limit equation & 22  & \texttt{0.001D0} & \texttt{1.000D0} \\
 35  & \texttt{fpeakb}   & f-value for peak toroidal field limit equation & 25  & \texttt{0.001D0} & \texttt{1.000D0} \\
-36  & \texttt{fbetatry} & f-value for Troyon beta limit equation        & 24  & \texttt{0.001D0} & \texttt{1.000D0} \\
+36  & \texttt{fbetatry} & f-value for beta limit equation               & 24  & \texttt{0.001D0} & \texttt{1.000D0} \\
 37  & \texttt{coheof}   & OH coil current density at end of flat-top    &     & \texttt{1.000D5} & \texttt{1.000D8} \\
 38  & \texttt{fjohc}    & f-value for OH coil current at EOF limit equation & 26  & \texttt{0.010D0} & \texttt{1.000D0} \\
 39  & \texttt{fjohc0}   & f-value for OH coil current at BOP limit equation & 27  & \texttt{0.001D0} & \texttt{1.000D0} \\
@@ -876,7 +876,7 @@ $7 $ & \texttt{beamfus0}   & beam-background fusion multiplier \\
 $8 $ & \texttt{fqval}      & f-value for energy multiplication limit eqn \\
 $9 $ & \texttt{te}         & electron temperature \\
 $10$ & \texttt{boundu(15)} & upper bound on f-value \texttt{fvs} \\
-$11$ & \texttt{dnbeta}     & Troyon $g$ coefficient \\
+$11$ & \texttt{dnbeta}     & beta $g$ coefficient \\
 $12$ & \texttt{bscfmax}    & bootstrap current fraction (use negative values) \\
 $13$ & \texttt{boundu(10)} & upper bound on confinement time H-factor \texttt{hfact}\\
 $14$ & \texttt{fiooic}     & f-value for TF coil operational current limit eqn \\
@@ -1229,13 +1229,13 @@ be described as ``$\frac{1}{2}$-D''.  The relevant profile index variables are
 
 \subsubsection{Beta limits}
 
-The Troyon beta limit~\cite{IPDG,172} is given by
+The plasma beta limit~\cite{IPDG,172} is given by
 \begin{equation}
 \langle \beta \rangle < g \, \frac{I(\mbox{MA})}{a(\mbox{m}) \, B_0(\mbox{T})}
 \label{eq:troyon}
 \end{equation}
 where $B_0$ is the axial vacuum toroidal field, and $\beta$ is defined with
-respect to the total equilibrium $\mathbf{B}$-field~\cite{172}. The Troyon
+respect to the total equilibrium $\mathbf{B}$-field~\cite{172}. The beta
 coefficient $g$ is set using input parameter \texttt{dnbeta}. To apply the
 beta limit, constraint equation no.\ 24 should be turned on with iteration
 variable no.\ 36 (\texttt{fbetatry}). The limit can be applied to either the
@@ -1244,9 +1244,9 @@ to only the thermal component of the plasma beta, in which case
 \texttt{iculbl} should be set to 1, or to the thermal plus neutral beam
 components, in which case \texttt{iculbl} should be set to 2.
 
-\subsubsection*{Aspect ratio scaling of Troyon $g$ coefficient}
+\subsubsection*{Aspect ratio scaling of beta $g$ coefficient}
 
-Switch \texttt{gtscale} determines whether the Troyon $g$ coefficient
+Switch \texttt{gtscale} determines whether the beta $g$ coefficient
 \texttt{dnbeta} should scale with aspect ratio ($\mathtt{gtscale \not= 0}$),
 or be fixed at the input value (\texttt{gtscale = 0}).
 
@@ -1990,15 +1990,16 @@ In the steady-state power plant scenario ($\mathtt{lpulse \not= 1}$ --- see
 Section~\ref{sec:pulsed}), the length of time taken for the OH coil current to
 reverse (which is equal to the plasma current ramp-up time --- see
 Figure~\ref{fig:current_vs_time}) is determined from the value of switch
-\texttt{tohsin}. If \texttt{tohsin = 0.0D0}, then the swing time
-\texttt{tohs} in seconds is given by $\mathtt{tohs} = I_p / 0.5$, where $I_p$
-is the plasma current in MA\@. Furthermore, the PF coil ramp time
+\texttt{tohsin}. If \texttt{tohsin = 0.0D0}, then the plasma current ramp-up
+time \texttt{tohs} in seconds is given by $\mathtt{tohs} = I_p / 0.5$, where
+$I_p$ is the plasma current in MA\@. Furthermore, the PF coil ramp time
 \texttt{tramp} and shutdown time \texttt{tqnch} are set equal to
-\texttt{tohs}.  If $\mathtt{tohsin \not= 0.0D0}$, the swing time \texttt{tohs
-  = tohsin}, and the ramp and shutdown times are input parameters.
+\texttt{tohs}.  If $\mathtt{tohsin \not= 0.0D0}$, the plasma current ramp-up
+time \texttt{tohs = tohsin}, and the PF coil ramp and shutdown times are input
+parameters.
 
 If, however, a pulsed power plant is being modelled (\texttt{lpulse = 1}), the
-OH coil swing time \texttt{tohs} is either an input parameter, or it can be
+plasma current ramp-up time \texttt{tohs} is either an input parameter, or it can be
 iterated by using iteration variable~65. The ramp and shutdown times in the
 pulsed case are always set equal to \texttt{tohs}. To ensure that the plasma
 current ramp rate during start-up is prevented from being too high, as
@@ -2199,7 +2200,7 @@ the following special models~\cite{storac} in \process.
 
 \item Among the physics models that differ from those relevant to conventional
   aspect ratio machines are (i) the bootstrap current fraction, (ii) the
-  Troyon beta limit, and (iii) the neutron heating of the centrepost.
+  beta limit, and (iii) the neutron heating of the centrepost.
 
 \end{enumerate}
 
@@ -2289,7 +2290,7 @@ minimum allowable value \texttt{auxmin} by turning on constraint equation no.\
 \texttt{auxmin} is determined by the code if the start-up model is activated,
 otherwise it may be initialised via the input file.
 
-\subsection{OH coil swing time}
+\subsection{Plasma current ramp-up time}
 
 This calculation ensures that the plasma current ramp rate during start-up is
 prevented from being too high, as governed by the requirement to maintain
@@ -3120,7 +3121,7 @@ the machine to be modelled. This may include some or all of the following:
 \item electron temperature
 \item elongation
 \item triangularity
-\item Troyon $g$ coefficient
+\item beta $g$ coefficient
 \item edge safety factor
 \end{itemize}
 \end{itemize}
@@ -3164,10 +3165,10 @@ non-optimisation mode, the number of variables must be equal to the number of
 equations, we have scope to add a ``free'' iteration variable (refer to
 Tables~\ref{tab:itvars1} and~\ref{tab:itvars2}), in this case no.\ 4 ---
 electron temperature, to help raise the fusion power sufficiently to obtain
-the required net electric power. Finally, note the use of the density and
-Troyon beta limit equations (\texttt{5} and \texttt{24}, respectively); the
-final values of the corresponding f-values will indicate if the limits are
-exceeded and by how much.
+the required net electric power. Finally, note the use of the density and beta
+limit equations (\texttt{5} and \texttt{24}, respectively); the final values
+of the corresponding f-values will indicate if the limits are exceeded and by
+how much.
 
 On running \process\/ and (hopefully) achieving a feasible result, examination
 of the output may well show up discrepancies between some of the parameter
@@ -3262,7 +3263,7 @@ drive --- the number of decay lengths to the plasma centre is constrained to
 be equal to the input value (\texttt{tbeamin}, which is not shown here).
 Furthermore, there are now more iteration variables than constraint equations,
 to aid the minimisation process.  Finally, note that a three-point scan in the
-Troyon $g$ coefficient \texttt{dnbeta} --- scanning variable~11, is to be
+beta $g$ coefficient \texttt{dnbeta} --- scanning variable~11, is to be
 performed.
 
 A useful practice in optimisation mode is to perform ``stationary'' scans,
@@ -3998,7 +3999,7 @@ BETA = 0.042,                         [N.B. active iteration variable 5]
 BT = 6.,                              [Toroidal field on axis]
 DENE = 1.5e20,                        [N.B. active iteration variable 6]
 FVSBRNNI = 1.0,                       [Non-inductive volt seconds fraction]
-DNBETA = 3.5,                         [Troyon g coefficient]
+DNBETA = 3.5,                         [Beta g coefficient]
 HFACT = 2.,                           [N.B. active iteration variable 10]
 ICURR = 4,                            [Use ITER current scaling]
 ISC = 6,                              [Use ITER 89-P confinement time scaling law]
@@ -4128,7 +4129,7 @@ BETA = 0.042,                         [N.B. active iteration variable 5]
 BT = 6.,                              [N.B. active iteration variable 2]
 DENE = 1.5e20,                        [N.B. active iteration variable 6]
 FVSBRNNI = 1.0,                       [Non-inductive volt seconds fraction]
-DNBETA = 3.5,                         [Troyon g coefficient]
+DNBETA = 3.5,                         [Beta g coefficient]
 HFACT = 2.,                           [N.B. active iteration variable 10]
 ICURR = 4,                            [Use ITER current scaling]
 ISC = 6,                              [Use ITER 89-P confinement time scaling law]

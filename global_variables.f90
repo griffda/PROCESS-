@@ -96,6 +96,7 @@ module physics_variables
   !+ad_hist  10/06/13 PJK Modified ishape
   !+ad_hist  12/06/13 PJK Added gammaft, taup; changed rndfuel, qfuel units
   !+ad_hist  18/06/13 PJK Removed dign; changed ffwal, ishape comments
+  !+ad_hist  27/06/13 PJK Changed iculbl comment
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -250,7 +251,7 @@ module physics_variables
   real(kind(1.0D0)) :: dnbeam = 0.0D0
   !+ad_vars  dnbeam2 : hot beam ion density from calculation (/m3)
   real(kind(1.0D0)) :: dnbeam2 = 0.0D0
-  !+ad_vars  dnbeta /3.5/ : coefficient for Troyon beta scaling
+  !+ad_vars  dnbeta /3.5/ : (Troyon-like) coefficient for beta scaling
   real(kind(1.0D0)) :: dnbeta = 3.5D0
   !+ad_vars  dnelimt : density limit (/m3)
   real(kind(1.0D0)) :: dnelimt = 0.0D0
@@ -318,7 +319,7 @@ module physics_variables
   !+ad_varc        <LI> = 2 for Nevins general scaling;
   !+ad_varc        <LI> = 3 for Wilson numerical scaling</UL>
   integer :: ibss  = 1
-  !+ad_vars  iculbl /0/ : switch for Troyon beta limit scaling:<UL>
+  !+ad_vars  iculbl /0/ : switch for beta limit scaling:<UL>
   !+ad_varc          <LI> = 0 apply limit to total beta;
   !+ad_varc          <LI> = 1 apply limit to thermal beta;
   !+ad_varc          <LI> = 2 apply limit to thermal + neutral beam beta</UL>
@@ -937,8 +938,8 @@ module fwbs_variables
   real(kind(1.0D0)) :: ptfnucpm3 = 0.0D0
   !+ad_vars  rdewex : external cryostat radius (m)
   real(kind(1.0D0)) :: rdewex = 0.0D0
-  !+ad_vars  rpf2dewar /0.5/ : radial distance between centre of ipfloc=3
-  !+ad_varc                    PF coil conductor and external cryostat (m)
+  !+ad_vars  rpf2dewar /0.5/ : radial distance between outer edge of largest
+  !+ad_varc                    ipfloc=3 PF coil and external cryostat (m)
   real(kind(1.0D0)) :: rpf2dewar = 0.5D0
   !+ad_vars  tbr : tritium breeding ratio (blktmodel>0)
   real(kind(1.0D0)) :: tbr = 0.0D0
@@ -1907,6 +1908,7 @@ module times_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  30/10/12 PJK Initial version of module
+  !+ad_hist  27/06/13 PJK Relabelled tohs, tohsin
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1929,11 +1931,11 @@ module times_variables
   real(kind(1.0D0)) :: theat = 10.0D0
   !+ad_vars  tim(6) : array of time points during plasma pulse (s)
   real(kind(1.0D0)), dimension(6) :: tim = 0.0D0
-  !+ad_vars  tohs /30.0/ : OH coil swing time for current initiation (s)
+  !+ad_vars  tohs /30.0/ : plasma current ramp-up time for current initiation (s)
   !+ad_varc                (but calculated if lpulse=0)
   !+ad_varc                (iteration variable 65)
   real(kind(1.0D0)) :: tohs = 30.0D0
-  !+ad_vars  tohsin /0.0/ : switch for OH coil swing time (if lpulse=0):<UL>
+  !+ad_vars  tohsin /0.0/ : switch for plasma current ramp-up time (if lpulse=0):<UL>
   !+ad_varc            <LI> = 0, tohs = tramp = tqnch = Ip(MA)/0.5;
   !+ad_varc            <LI> <>0, tohs = tohsin; tramp, tqnch are input</UL>
   real(kind(1.0D0)) :: tohsin = 0.0D0
@@ -2627,6 +2629,7 @@ module constraint_variables
   !+ad_call  None
   !+ad_hist  31/10/12 PJK Initial version of module
   !+ad_hist  19/06/13 PJK Removed fjtfc
+  !+ad_hist  27/06/13 PJK Relabelled ftohs, tohsmn, fbetatry
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2657,7 +2660,7 @@ module constraint_variables
   !+ad_vars  fbetap /1.0/ : f-value for poloidal beta
   !+ad_varc                 (constraint equation 48, iteration variable 79)
   real(kind(1.0D0)) :: fbetap = 1.0D0
-  !+ad_vars  fbetatry /1.0/ : f-value for Troyon beta limit
+  !+ad_vars  fbetatry /1.0/ : f-value for beta limit
   !+ad_varc                   (constraint equation 24, iteration variable 36)
   real(kind(1.0D0)) :: fbetatry = 1.0D0
   !+ad_vars  fdene /1.0/ : f-value for density limit
@@ -2751,7 +2754,7 @@ module constraint_variables
   !+ad_vars  ftmargtf /1.0/ : f-value for TF coil temperature margin
   !+ad_varc                   (constraint equation 36, iteration variable 54)
   real(kind(1.0D0)) :: ftmargtf = 1.0D0
-  !+ad_vars  ftohs /1.0/ : f-value for OH coil swing time
+  !+ad_vars  ftohs /1.0/ : f-value for plasma current ramp-up time
   !+ad_varc                (constraint equation 41, iteration variable 66)
   real(kind(1.0D0)) :: ftohs = 1.0D0
   !+ad_vars  ftpeak /1.0/ : f-value for first wall peak temperature
@@ -2798,7 +2801,7 @@ module constraint_variables
   !+ad_vars  tcycmn : minimum cycle time (s)
   !+ad_varc           (constraint equation 42)
   real(kind(1.0D0)) :: tcycmn = 0.0D0
-  !+ad_vars  tohsmn : minimum OH coil swing time (= plasma current ramp-up time) (s)
+  !+ad_vars  tohsmn : minimum plasma current ramp-up time (s)
   !+ad_varc           (constraint equation 41)
   real(kind(1.0D0)) :: tohsmn = 1.0D0
   !+ad_vars  tpkmax /600.0/ : maximum first wall peak temperature (C)

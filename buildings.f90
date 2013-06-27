@@ -84,6 +84,7 @@ contains
     !+ad_hist  09/04/13 PJK Used rdewex instead of tfro+2 for cryostat radius
     !+ad_hist  09/04/13 PJK Modified use of tfmtn to be mass of one TF coil
     !+ad_hist  10/04/13 PJK Modified shield height definition
+    !+ad_hist  27/06/13 PJK Used rdewex directly in all cases in call to bldgs
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -97,7 +98,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: crrad,tfh,tfmtn,tfri,tfro
+    real(kind(1.0D0)) :: tfh,tfmtn,tfri,tfro
     integer :: i
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -119,18 +120,10 @@ contains
     tfri = rtfcin - 0.5D0*tfcth
     tfh = (hmax + tfcth)*2.0D0
 
-    !  External vacuum vessel radius
-
-    if (istell == 0) then
-       crrad = pfrmax + 0.5D0
-    else
-       crrad = rdewex
-    end if
-
     !  Reactor vault wall and roof thicknesses are hardwired
 
     call bldgs(idhe3,pfrmax,pfmmax,tfro,tfri,tfh,tfmtn,tfno,rsldo, &
-         rsldi,2.0D0*(hmax-ddwi-vgap2),whtshld,crrad,helpow,iprint, &
+         rsldi,2.0D0*(hmax-ddwi-vgap2),whtshld,rdewex,helpow,iprint, &
          outfile,cryvol,volrci,rbvol,rmbvol,wsvol,elevol)
 
   end subroutine bldgcall

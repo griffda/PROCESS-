@@ -337,6 +337,7 @@ contains
     !+ad_hist  12/06/13 PJK Restricted DIGN range
     !+ad_hist  18/06/13 PJK Removed DIGN altogether
     !+ad_hist  19/06/13 PJK Removed FJTFC
+    !+ad_hist  27/06/13 PJK Relabelled TOHS, FTOHS, DNBETA, GTSCALE, ICULBL, FBETATRY
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -504,7 +505,7 @@ contains
                'Electron density (/m3)')
        case ('DNBETA')
           call parse_real_variable('DNBETA', dnbeta, 0.3D0, 20.0D0, &
-               'Troyon beta coefficient')
+               'beta coefficient')
        case ('EPBETMAX')
           call parse_real_variable('EPBETMAX', epbetmax, 0.01D0, 10.0D0, &
                'Max epsilon*beta value')
@@ -540,7 +541,7 @@ contains
                'Ejima coefficient for resistive V-s formula')
        case ('GTSCALE')
           call parse_int_variable('GTSCALE', gtscale, 0, 1, &
-               'Flag to scale Troyon coefficient with R/a')
+               'Flag to scale beta coefficient with R/a')
        case ('HFACT')
           call parse_real_variable('HFACT', hfact, 0.01D0, 10.0D0, &
                'Energy confinement time H factor')
@@ -549,7 +550,7 @@ contains
                'Switch for bootstrap scaling')
        case ('ICULBL')
           call parse_int_variable('ICULBL', iculbl, 0, 2, &
-               'Switch for Troyon beta limit scaling')
+               'Switch for beta limit scaling')
        case ('ICULDL')
           write(outfile,*) 'ICULDL is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
@@ -684,7 +685,7 @@ contains
                'F-value for poloidal beta limit')
        case ('FBETATRY')
           call parse_real_variable('FBETATRY', fbetatry, 0.001D0, 10.0D0, &
-               'F-value for Troyon beta limit')
+               'F-value for beta limit')
        case ('FDENE')
           call parse_real_variable('FDENE', fdene, 0.001D0, 10.0D0, &
                'F-value for density limit')
@@ -778,7 +779,7 @@ contains
                'F-value for TF coil temp. margin')
        case ('FTOHS')
           call parse_real_variable('FTOHS', ftohs, 0.001D0, 10.0D0, &
-               'F-value for OH coil swing time')
+               'F-value for plasma current ramp-up time')
        case ('FTPEAK')
           call parse_real_variable('FTPEAK', ftpeak, 0.001D0, 10.0D0, &
                'F-value for peak first wall temperature')
@@ -892,7 +893,7 @@ contains
                'Heating time after current ramp (s)')
        case ('TOHS')
           call parse_real_variable('TOHS', tohs, 0.0D0, 1.0D4, &
-               'OH coil swing time for current init (s)')
+               'Plasma current ramp-up time for current init (s)')
        case ('TOHSIN')
           call parse_real_variable('TOHSIN', tohsin, 0.0D0, 1.0D4, &
                'Switch for TOHS calculation')

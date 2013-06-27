@@ -1312,4 +1312,7 @@ end subroutine output
 !          modified/clarified various comments
 ! SVN 175: Removed obsolete TF coil current density equation 23
 ! SVN 176: Corrected NBI path length calculation
-! SVN 177: Minor changes to allow compilation with gfortran
+! SVN 177: Minor changes to allow compilation with gfortran (4.6.3 - won't compile with
+!          gfortran 4.4.5...)
+! SVN 178: Correction to cryostat radius used in buildings call; modified swing time
+!          comments; removed 'Troyon' descriptor for tokamak beta limits
