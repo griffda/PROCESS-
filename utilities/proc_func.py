@@ -149,8 +149,11 @@ def get_coils(f):
     coilnames = []
     for i in range(lcount):
         line = f.readline()
-        coilnames.append(line[0:10].replace(' ',''))
+        coilnames.append(line[0:10].replace(' ','')[-1])
 	dats.append(line[10:].split())
+    print coilnames
+    if coilnames[-2] == "H":
+        coilnames[-2] = "OH"
     dat = dats
     for i in range(len(dats)):
         for j in range(len(dats[1])):
@@ -340,29 +343,38 @@ def gather_info(f, tf_type):
     data.append(['2', 'q', r'$q_{\mathrm{edge}}$', str(find_val_one(f, 'q')), ''])
     bettype = find_val_two(f, 'ICULBL')
 # defines which beta limit applies to and hence which normalised beta is quoted
-    betna = float(find_val_three(f, 'Normalised beta', 58, 20))
-    betaa = find_val_one(f, 'beta')
-    betta = float(find_val_three(f, 'Thermal beta', 58, 20))
-    betnba = find_val_one(f, 'betanb')
-    if bettype == -1:
-        betn = betna
-        bett = betna * betta/betaa
-    elif bettype == 0:
-        betn = betna
-        bett = betna * betta/betaa
-    elif bettype == 1:
-        betn = betna * betaa/betta
-        bett = betna
-    elif bettype == 2:
-        betn = betna * betaa/(betta+betnba)
-        bett = betna * betta/(betta+betnba)
+    betna = find_val_three(f, 'Normalised beta', 58, 20)
+# if this returns "None" then we are in new format and can get explicit values
+# otherwise we are in old format
+    if betna != None:
+        betna = float(betna)
+        betaa = find_val_one(f, 'beta')
+        betta = float(find_val_three(f, 'Thermal beta', 58, 20))
+        betnba = find_val_one(f, 'betanb')
+        if bettype == -1:
+            betn = betna
+            bett = betna * betta/betaa
+        elif bettype == 0:
+            betn = betna
+            bett = betna * betta/betaa
+        elif bettype == 1:
+            betn = betna * betaa/betta
+            bett = betna
+        elif bettype == 2:
+            betn = betna * betaa/(betta+betnba)
+            bett = betna * betta/(betta+betnba)
+        else:
+            print 'ICULBL value not identified: ', bettype
+            betn = 0.0
+            bett = 0.0
     else:
-        print 'ICULBL value not identified: ', bettype
-        betn = 0.0
-        bett = 0.0
+        bett = float(find_val_three(f, 'Normalised thermal beta', 58, 20))
+	betn = float(find_val_three(f, 'Normalised total beta', 58, 20))
     data.append(['2', 'beta_nt', r'$\beta_N$, thermal', str(round(bett,3)), r'% MA m$^{-1}$ T$^{-1}$'])
     data.append(['2', 'beta_n', r'$\beta_N$, total', str(round(betn,3)), r'% MA m$^{-1}$ T$^{-1}$'])
-    data.append(['2', 'betap', r'$\beta_P$', str(find_val_one(f, 'betap')), ''])
+    betapt = float(find_val_three(f, 'Thermal poloidal beta', 58, 20))
+    data.append(['2', 'beta_pt', r'$\beta_P$, thermal', str(round(betapt,3)), ''])
+    data.append(['2', 'betap', r'$\beta_P$, total', str(find_val_one(f, 'betap')), ''])
     data.append(['2', 'te', r'$<T_e>$', str(find_val_one(f, 'te')), 'keV'])
     data.append(['2', 'dene', r'$<n_{\mathrm{e, vol}}>$', '%.3e' % find_val_one(f, 'dene'), 'm$^{-3}$'])
     nong = find_val_one(f, 'dnla')/find_val_one(f, 'dlimit(7)')
@@ -409,6 +421,10 @@ def gather_info(f, tf_type):
         data.append(['35', 'alstrtf', 'Allowable stress', '%.3e' % (find_val_one(f, 'alstrtf')), 'Pa'])
     else:
         pass
+# field 3.7: Costs
+    data.append(['37', 'CoE', 'Cost of electricity', find_val_three(f, 'Cost of electricity', 60, 13), '\$/MWh'])
+    data.append(['37', 'concost', 'Constructed cost', find_val_three(f, 'concost', 60, 13), 'M\$'])
+    data.append(['37', 'capcost', 'Total capex', find_val_three(f, 'capcost', 60, 13), 'M\$'])
 # field 4: power flows and economics
     data.append(['4', 'wallmw', 'Av. neutron wall load', str(find_val_one(f, 'wallmw')), r'MW m$^{-2}$'])
     data.append(['4', 'pbrem*vol', 'Bremsstrahlung radiation', str(find_val_one(f, 'pbrem*vol')), 'MW'])
@@ -420,7 +436,6 @@ def gather_info(f, tf_type):
     data.append(['4', 'hldiv', 'Divertor peak heat flux', str(find_val_one(f, 'hldiv')), r'MW m$^{-2}$'])
     data.append(['4', 'FWlife', 'FW/blanket life', str(float(find_val_three(f, 'First wall / blanket life', 60, 13))), 'years'])
     data.append(['4', 'Divlife', 'Divertor life', find_val_three(f, 'Divertor life ', 60, 13), 'years'])
-    data.append(['4', 'CoE', 'Cost of electricity', find_val_three(f, 'Cost of electricity', 60, 13), '\$/MWh'])
     data.append(['4', 'HGtherm', 'Thermal power', find_val_three(f, 'High grade thermal power', 60, 13), 'MW'])
     data.append(['4', 'pgrossmw/pthermmw', 'Thermal efficiency', '%.1f' % (100.*find_val_one(f, 'pgrossmw')/find_val_one(f, 'pthermmw')), '%'])
     data.append(['4', 'pgrossmw', 'Gross electric power', str(find_val_one(f, 'pgrossmw')), 'MW'])
@@ -464,12 +479,19 @@ def gather_info(f, tf_type):
     err = 0.057**2 + (0.035*np.log(dnla))**2 + (0.032*np.log(bt))**2 + (0.019*np.log(surf))**2
     err = np.sqrt(err) * pthresh
     data.append(['5', 'pthresh', 'H-mode threshold (M=2.5)', '%.3f' % pthresh + r' $\pm$ ' + '%.3f' % err, 'MW'])
+# additional divertor calculations
 # divertor width assuming hldiv = average heat load and r = R0
-    hldiv = find_val_one(f,'hldiv')
+#    hldiv = find_val_one(f,'hldiv')
     pdivt = find_val_one(f,'pdivt')
     rmajor = find_val_one(f,'rmajor')
-    divwid = (pdivt/hldiv)/(2.*np.pi*rmajor)
-    data.append(['5', 'divwid', 'Guessed div. width', '%.3f' % divwid, 'm'])
+    dene = find_val_one(f,'dene')
+#    divwid = (pdivt/hldiv)/(2.*np.pi*rmajor)
+#    data.append(['5', 'divwid', 'Guessed div. width', '%.3f' % divwid, 'm'])
+    pdivr = pdivt/rmajor
+    pdivnr = 10.0e20 * pdivt/(rmajor*dene)
+    data.append(['5', 'pdivr', r'$\frac{P_{\mathrm{div}}}{R_{0}}$', '%.3f' % pdivr, r'MW m$^{-1}$'])
+    data.append(['5', 'pdivnr', r'$\frac{P_{\mathrm{div}}}{<n> R_{0}}$', '%.3f' % pdivnr, r'$\times 10^{-20}$ MW m$^{2}$'])    
+
 # Experimental H-factor -- without radiation correction
     powerht = find_val_one(f,'powerht')
     psync = find_val_one(f,'psync*vol')

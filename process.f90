@@ -1316,3 +1316,4 @@ end subroutine output
 !          gfortran 4.4.5...)
 ! SVN 178: Correction to cryostat radius used in buildings call; modified swing time
 !          comments; removed 'Troyon' descriptor for tokamak beta limits
+! SVN 179: Updated plotting utilities (requires python 2.7.3 or higher)
