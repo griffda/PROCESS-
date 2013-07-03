@@ -958,12 +958,11 @@ contains
     !+ad_args  rnfene : output real : iron density / electron density
     !+ad_args  rnone  : output real : oxygen density / electron density
     !+ad_args  zeff   : output real : plasma effective charge
-    !+ad_args  zeffai : output real : density weighted plasma effective charge
+    !+ad_args  zeffai : output real : mass weighted plasma effective charge
     !+ad_args  zion   : output real : density weighted charge
     !+ad_desc  This subroutine determines the various plasma component
     !+ad_desc  fractional makeups.
-    !+ad_prob  The calculation of ZEFFAI is unclear, and is inconsistent
-    !+ad_prob  between D-T and D-He3 versions.
+    !+ad_prob  None
     !+ad_call  gamfun
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  06/12/95 PJK Added D-He3 calculations
@@ -974,6 +973,7 @@ contains
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  17/12/12 PJK Added ZFEAR coding, and updated AION and other
     !+ad_hisc               high-Z impurity terms
+    !+ad_hist  03/07/13 PJK Amended ZEFFAI coding as per long-standing comment
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  F/MI/PJK/LOGBOOK11, p.38 for D-He3 deni calculation
@@ -1128,18 +1128,13 @@ contains
             dene*(6.0D0*fc + 8.0D0*fo + z_highz*f_highz) )/dnitot
 
        !  zeffai = sum over ions: (Z_i)**2 . n_i / (A_i . n_e)
-!+PJK Comment above is not consistent with coding...
 
-       zeffai = ( deni/afuel + dnalp + dnprot + dnbeam/abeam + &
-!            dene*(6.0D0*fc + 8.0D0*fo + 24.0D0*f_highz) ) / dene
-            dene*(6.0D0*fc + 8.0D0*fo + &
-            (2.0D0*z_highz*z_highz/m_highz)*f_highz) ) / dene
-
-       !+**PJK 15/01/96 Possibly more correct...
-       !+**PJK 15/01/96 zeffai = ( (1.0D0-ftr)*deni/2.0D0 + ftr*deni/3.0D0 +
-       !+**PJK 15/01/96  +  dnalp + dnprot + (1.0D0-ftritbm)*dnbeam/2.0D0 +
-       !+**PJK 15/01/96  +  ftritbm*dnbeam/3.0D0 + dene*(3.0D0*fc + 4.0D0*fo +
-       !+**PJK 15/01/96  +  12.0D0*ffe) )/dene
+       zeffai = ( &
+            (1.0D0-ftr)*deni/2.0D0 + ftr*deni/3.0D0 + &
+            dnalp + dnprot + &
+            (1.0D0-ftritbm)*dnbeam/2.0D0 + ftritbm*dnbeam/3.0D0 + &
+            dene*(3.0D0*fc + 4.0D0*fo + (z_highz*z_highz/m_highz)*f_highz) &
+            ) / dene
 
     else
 
@@ -1149,11 +1144,13 @@ contains
        zion = ( fdeut*deni + ftrit*deni + 2.0D0*fhe3*deni + &
             2.0D0*dnalp + dnprot + dnbeam + dene * &
             (6.0D0*fc + 8.0D0*fo + z_highz*f_highz) )/dnitot
-!+PJK Dodgy (see above...)
-       zeffai = ( fdeut*deni/2.0D0 + ftrit*deni/3.0D0 + &
-            4.0D0*fhe3*deni/3.0D0 + dnalp + dnprot + &
+
+       zeffai = ( &
+            fdeut*deni/2.0D0 + ftrit*deni/3.0D0 + 4.0D0*fhe3*deni/3.0D0 + &
+            dnalp + dnprot + &
             (1.0D0-ftritbm)*dnbeam/2.0D0 + ftritbm*dnbeam/3.0D0 + &
-            dene*(3.0D0*fc + 4.0D0*fo + (z_highz*z_highz/m_highz)*f_highz) )/dene
+            dene*(3.0D0*fc + 4.0D0*fo + (z_highz*z_highz/m_highz)*f_highz) &
+            ) / dene
 
     end if
 
@@ -2800,7 +2797,7 @@ contains
     !+ad_args  dlamie : input real :  ion-electron coulomb logarithm
     !+ad_args  te     : input real :  electron temperature (keV)
     !+ad_args  ti     : input real :  ion temperature (keV)
-    !+ad_args  zeffai : input real :  density weighted plasma effective charge
+    !+ad_args  zeffai : input real :  mass weighted plasma effective charge
     !+ad_args  pie    : output real : ion/electron equilibration power (MW/m3)
     !+ad_desc  This routine calculates the equilibration power between the
     !+ad_desc  ions and electrons.
@@ -2808,6 +2805,7 @@ contains
     !+ad_call  None
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  09/11/11 PJK Initial F90 version
+    !+ad_hist  03/07/13 PJK Changed zeffai description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -3368,7 +3366,7 @@ contains
     !+ad_args  ten    : input real :  density weighted average electron temperature (keV)
     !+ad_args  tin    : input real :  density weighted average ion temperature (keV)
     !+ad_args  vol    : input real :  plasma volume (m3)
-    !+ad_args  zeffai : input real :  density weighted plasma effective charge
+    !+ad_args  zeffai : input real :  mass weighted plasma effective charge
     !+ad_args  betanb : output real : neutral beam beta component
     !+ad_args  dnbeam2: output real : hot beam ion density (/m3)
     !+ad_args  palpnb : output real : alpha power from hot neutral beam ions (MW)
@@ -3379,6 +3377,7 @@ contains
     !+ad_hist  05/12/95 PJK Added ealpha to argument list
     !+ad_hist  11/12/95 PJK Added fdeut to argument list
     !+ad_hist  10/11/11 PJK Initial F90 version
+    !+ad_hist  03/07/13 PJK Changed zeffai description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !

@@ -364,7 +364,7 @@ contains
     !+ad_args  te      : input real : volume averaged electron temperature (keV)
     !+ad_args  ten     : input real : density weighted average electron temp. (keV)
     !+ad_args  zeff    : input real : plasma effective charge
-    !+ad_args  zeffai  : input real : density weighted plasma effective charge
+    !+ad_args  zeffai  : input real : mass weighted plasma effective charge
     !+ad_args  effnbss : output real : neutral beam current drive efficiency (A/W)
     !+ad_args  fpion   : output real : fraction of NB power given to ions
     !+ad_args  fshine  : output real : shine-through fraction of beam
@@ -378,6 +378,7 @@ contains
     !+ad_hist  15/06/92 PJK Initial upgraded version
     !+ad_hist  22/08/12 PJK Initial F90 version
     !+ad_hist  19/06/13 PJK Corrected dpath calculation
+    !+ad_hist  03/07/13 PJK Changed zeffai description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -537,7 +538,7 @@ contains
     !+ad_args  ne      : input real : volume averaged electron density (m**-3)
     !+ad_args  nd      : input real : deuterium beam density (m**-3)
     !+ad_args  nt      : input real : tritium beam density (m**-3)
-    !+ad_args  zeffai  : input real : density weighted plasma effective charge
+    !+ad_args  zeffai  : input real : mass weighted plasma effective charge
     !+ad_args  xlmbda  : input real : ion-electron coulomb logarithm
     !+ad_args  fpion   : output real : fraction of fast particle energy coupled to ions
     !+ad_desc  This routine calculates the fast particle energy coupled to
@@ -547,6 +548,7 @@ contains
     !+ad_hist  15/06/92 PJK Initial upgraded version
     !+ad_hist  22/08/12 PJK Initial F90 version
     !+ad_hist  16/10/12 PJK Added constants
+    !+ad_hist  03/07/13 PJK Changed zeffai description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1362,7 +1364,7 @@ contains
     !+ad_args  te      : input real : volume averaged electron temperature (keV)
     !+ad_args  ten     : input real : density weighted average electron temp. (keV)
     !+ad_args  zeff    : input real : plasma effective charge
-    !+ad_args  zeffai  : input real : density weighted plasma effective charge
+    !+ad_args  zeffai  : input real : mass weighted plasma effective charge
     !+ad_args  effnbss : output real : neutral beam current drive efficiency (A/W)
     !+ad_args  fpion   : output real : fraction of NB power given to ions
     !+ad_args  fshine  : output real : shine-through fraction of beam
@@ -1378,6 +1380,7 @@ contains
     !+ad_hist  17/06/92 PJK Initial upgraded version
     !+ad_hist  18/09/12 PJK Initial F90 version
     !+ad_hist  19/06/13 PJK Corrected dpath calculation
+    !+ad_hist  03/07/13 PJK Changed zeffai description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study

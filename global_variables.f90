@@ -97,6 +97,7 @@ module physics_variables
   !+ad_hist  12/06/13 PJK Added gammaft, taup; changed rndfuel, qfuel units
   !+ad_hist  18/06/13 PJK Removed dign; changed ffwal, ishape comments
   !+ad_hist  27/06/13 PJK Changed iculbl comment
+  !+ad_hist  03/07/13 PJK Changed zeffai comment
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -561,7 +562,7 @@ module physics_variables
   real(kind(1.0D0)) :: xarea = 0.0D0
   !+ad_vars  zeff : plasma effective charge
   real(kind(1.0D0)) :: zeff = 0.0D0
-  !+ad_vars  zeffai : density weighted plasma effective charge
+  !+ad_vars  zeffai : mass weighted plasma effective charge
   real(kind(1.0D0)) :: zeffai = 0.0D0
   !+ad_vars  zfear /0/ : high-Z impurity switch; 0=iron, 1=argon
   integer :: zfear = 0
