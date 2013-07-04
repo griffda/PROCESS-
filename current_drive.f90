@@ -381,6 +381,8 @@ contains
     !+ad_hist  03/07/13 PJK Changed zeffai description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -469,6 +471,8 @@ contains
       !+ad_hist  22/08/12 PJK Initial F90 version
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+      !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1154,8 +1158,8 @@ contains
       !+ad_desc  It works out the ECCD efficiency using the formula due to Cohen
       !+ad_desc  quoted in the ITER Physics Design Guidelines : 1989
       !+ad_desc  (but including division by the Coulomb Logarithm omitted from
-      !+ad_desc  IPDG). We have assumed gamma**2-1 << 1, where gamma is the
-      !+ad_desc  relativistic factor. The notation follows that in IPDG.
+      !+ad_desc  IPDG89). We have assumed gamma**2-1 << 1, where gamma is the
+      !+ad_desc  relativistic factor. The notation follows that in IPDG89.
       !+ad_desc  <P>The answer ECGAM is the normalised efficiency nIR/P with n the
       !+ad_desc  local density in 10**20 /m**3, I the driven current in MAmps,
       !+ad_desc  R the major radius in metres, and P the absorbed power in MWatts.
@@ -1167,6 +1171,8 @@ contains
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+      !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+      !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1192,7 +1198,7 @@ contains
 
       fp = 16.0D0 * tlocal/mcsq
 
-      !  lam is IPDG's lambda. LEGEND calculates the Legendre function of
+      !  lam is IPDG89's lambda. LEGEND calculates the Legendre function of
       !  order alpha and argument lam, palpha, and its derivative, palphap.
       !  Here alpha satisfies alpha(alpha+1) = -8/(1+zlocal). alpha is of the
       !  form  (-1/2 + ix), with x a real number and i = sqrt(-1).
@@ -1203,17 +1209,17 @@ contains
       lams = sqrt(2.0D0*epsloc/(1.0D0+epsloc))
       call legend(zlocal,lams,palphas,palphaps)
 
-      !  hp is the derivative of IPDG's h function with respect to lam
+      !  hp is the derivative of IPDG89's h function with respect to lam
 
       h = -4.0D0 * lam/(zlocal+5.0D0) * (1.0D0-lams*palpha/(lam*palphas))
       hp = -4.0D0 / (zlocal+5.0D0) * (1.0D0-lams*palphap/palphas)
 
-      !  facm is IPDG's momentum conserving factor
+      !  facm is IPDG89's momentum conserving factor
 
       facm = 1.5D0
       y = mcsq/(2.0D0*tlocal) * (1.0D0 + epsloc*cosang)
 
-      !  We take the negative of the IPDG expression to get a positive
+      !  We take the negative of the IPDG89 expression to get a positive
       !  number
 
       ecgam = -7.8D0 * facm * sqrt((1.0D0+epsloc)/(1.0D0-epsloc)) / coulog &
@@ -1474,8 +1480,7 @@ contains
       !+ad_desc  This routine calculates the current drive efficiency in A/W of
       !+ad_desc  a neutral beam system, based on the 1990 ITER model,
       !+ad_desc  plus correction terms outlined in Culham Report AEA FUS 172.
-      !+ad_desc  <P>The formulae are from AEA FUS 172, unless denoted by IPDG
-      !+ad_desc  (ITER Physics Design Guidelines: 1989).
+      !+ad_desc  <P>The formulae are from AEA FUS 172, unless denoted by IPDG89.
       !+ad_prob  None
       !+ad_call  None
       !+ad_hist  17/06/92 PJK Initial upgraded version
@@ -1484,6 +1489,8 @@ contains
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+      !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+      !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1508,7 +1515,7 @@ contains
 
       zbeam = 1.0D0
 
-      !  Fitting factor (IPDG)
+      !  Fitting factor (IPDG89)
 
       bbd = 1.0D0
 
@@ -1520,7 +1527,7 @@ contains
 
       dnla20 = dnla/1.0D20
 
-      !  Critical energy (MeV) (power to electrons = power to ions) (IPDG)
+      !  Critical energy (MeV) (power to electrons = power to ions) (IPDG89)
       !  N.B. ten is in keV
 
       ecrit = 0.01D0 * abeam * ten
@@ -1529,7 +1536,7 @@ contains
 
       ebmev = enbeam/1.0D3
 
-      !  x and y coefficients of function J0(x,y) (IPDG)
+      !  x and y coefficients of function J0(x,y) (IPDG89)
 
       xjs = ebmev/(bbd*ecrit)
       xj = sqrt(xjs)
@@ -1593,7 +1600,7 @@ contains
       abd = 0.107D0 * (1.0D0 - 0.35D0*alphan + 0.14D0*alphan**2) * &
            (1.0D0 - 0.21D0*alphat) * (1.0D0 - 0.2D0*ebnorm + 0.09D0*ebnorm**2)
 
-      !  Normalised current drive efficiency (A/W m**-2) (IPDG)
+      !  Normalised current drive efficiency (A/W m**-2) (IPDG89)
 
       gamnb = 5.0D0 * abd * 0.1D0*ten * (1.0D0-fshine) * frbeam * &
            j0/0.2D0 * ffac

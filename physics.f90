@@ -432,9 +432,8 @@ contains
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  16/10/12 PJK Removed pi from argument list
     !+ad_stat  Okay
-    !+ad_docs  N. A. Uckan and ITER Physics Group,
-    !+ad_docc    "ITER Physics Design Guidelines: 1989",
-    !+ad_docc    ITER Documentation Series, No. 10, IAEA/ITER/DS/10 (1990) 
+    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -513,6 +512,8 @@ contains
     !+ad_hist  22/11/12 PJK Added stop statement in error block
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -549,7 +550,7 @@ contains
     case (3)  !  Simple ITER scaling (simply the cylindrical case)
        fq = 1.0D0
 
-    case (4)  !  ITER formula
+    case (4)  !  ITER formula (IPDG89)
        fq = 0.5D0 * (1.17D0-0.65D0*eps)/((1.0D0-eps*eps)**2) * &
             (1.0D0 + kappa95**2 * &
             (1.0D0 + 2.0D0*triang95**2 - 1.2D0*triang95**3) )
@@ -977,6 +978,8 @@ contains
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  F/MI/PJK/LOGBOOK11, p.38 for D-He3 deni calculation
+    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1026,19 +1029,19 @@ contains
        dnbeam = 0.0D0
     end if
 
-    !  Carbon portion
+    !  Carbon portion (IPDG89)
 
     fc = impc * (0.009D0 + 0.006D0 * (7.0D19/dene)**2.6D0)
     rncne = fc
 
-    !  Oxygen portion
+    !  Oxygen portion (IPDG89)
 
     fo = impo * 0.001D0
     rnone = fo
 
     !  High-Z portion (formerly assumed to be iron)
 
-    !ffe = impfe * (0.0005D0 * (7.0D19/dene)**2.3D0 + cfe0)
+    !ffe = impfe * (0.0005D0 * (7.0D19/dene)**2.3D0 + cfe0)  !  IPDG89
     f_highz = cfe0
     rnfene = f_highz
 
@@ -1235,6 +1238,7 @@ contains
     !  Borrass density limit model for ITER (I)
     !  This applies to the density at the plasma edge, so must be scaled
     !  to give the density limit applying to the average plasma density.
+    !  Borrass et al, ITER-TN-PH-9-6 (1989)
 
     dlim = 1.8D20 * qperp**0.53D0 * bt**0.31D0 /(q95*rmajor)**0.22D0
     dlimit(2) = dlim/prn1
@@ -3011,6 +3015,8 @@ contains
     !+ad_hist  11/04/13 PJK Removed ires argument
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3029,11 +3035,10 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Density weighted electron temperature in 10 keV units
-    !  (not sure why ten is used instead of te)
 
     t10 = ten/10.0D0
 
-    !  Plasma resistance
+    !  Plasma resistance, from loop voltage calculation in IPDG89
 
     rplas = 2.15D-9 * zeff*rmajor / (kappa*rminor**2 * t10**1.5D0)
 

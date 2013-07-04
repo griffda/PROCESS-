@@ -656,6 +656,7 @@ subroutine verror(ifail)
   !+ad_hist  08/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  31/01/13 PJK Reworded the ifail=2 error message
+  !+ad_hist  04/07/13 PJK Reworded the ifail=5 error message
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -740,12 +741,18 @@ subroutine verror(ifail)
      call ocmmnt(nout, &
           'The quadratic programming technique was unable to')
      call ocmmnt(nout,'find a feasible point.')
-     call ocmmnt(nout,'Try changing or adding variables to IXC.')
+     call oblnkl(nout)
+     call ocmmnt(nout,'Try changing or adding variables to IXC, or modify')
+     call ocmmnt(nout,'their initial values (especially if only 1 optimisation')
+     call ocmmnt(nout,'iteration was performed).')
 
      call ocmmnt(iotty, &
           'The quadratic programming technique was unable to')
      call ocmmnt(iotty,'find a feasible point.')
-     call ocmmnt(iotty,'Try changing or adding variables to IXC.')
+     call oblnkl(iotty)
+     call ocmmnt(iotty,'Try changing or adding variables to IXC, or modify')
+     call ocmmnt(iotty,'their initial values (especially if only 1 optimisation')
+     call ocmmnt(iotty,'iteration was performed).')
 
   case (6)
      call ocmmnt(nout, &
@@ -807,6 +814,7 @@ subroutine doopt(ifail)
   !+ad_hisc               modules
   !+ad_hist  31/01/13 PJK Added warning about high residuals if the convergence
   !+ad_hisc               is suspicious
+  !+ad_hist  04/07/13 PJK Modified wording for variables at/beyond their bounds
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -925,14 +933,14 @@ subroutine doopt(ifail)
            call ocmmnt(nout, &
                 'Certain operating limits have been reached,')
            call ocmmnt(nout, &
-                'as shown by the following variables that are')
+                'as shown by the following iteration variables that are')
            call ocmmnt(nout, &
                 'at the edge of their prescribed range :')
            call oblnkl(nout)
            iflag = 1
         end if
         xcval = xcm(ii)*scafc(ii)
-        write(nout,40) ii,lablxc(ixc(ii)),xcval
+        write(nout,40) ii,lablxc(ixc(ii)),xcval,bondl(ii)*scafc(ii)
      end if
 
      if (xcm(ii) > xmaxx) then
@@ -940,21 +948,21 @@ subroutine doopt(ifail)
            call ocmmnt(nout, &
                 'Certain operating limits have been reached,')
            call ocmmnt(nout, &
-                'as shown by the following variables that are')
+                'as shown by the following iteration variables that are')
            call ocmmnt(nout, &
                 'at the edge of their prescribed range :')
            call oblnkl(nout)
            iflag = 1
         end if
         xcval = xcm(ii)*scafc(ii)
-        write(nout,50) ii,lablxc(ixc(ii)),xcval
+        write(nout,50) ii,lablxc(ixc(ii)),xcval,bondu(ii)*scafc(ii)
      end if
   end do
 
-40 format(t4,'Variable ',i3,'  (',a8, &
-        ')  is at its lower bound of ',1pe12.4)
-50 format(t4,'Variable ',i3,'  (',a8, &
-        ')  is at its upper bound of ',1pe12.4)
+40 format(t4,'Variable ',i3,' (',a8, &
+        ',',1pe12.4,') is at or below its lower bound:',1pe12.4)
+50 format(t4,'Variable ',i3,' (',a8, &
+        ',',1pe12.4,') is at or above its upper bound:',1pe12.4)
 
   !  Print out information on numerics
 
@@ -1318,3 +1326,4 @@ end subroutine output
 !          comments; removed 'Troyon' descriptor for tokamak beta limits
 ! SVN 179: Updated plotting utilities (requires python 2.7.3 or higher)
 ! SVN 180: Corrected long-standing niggle with zeffai formula; now matches description
+! SVN 181: Modified numerics output hints for optimising runs
