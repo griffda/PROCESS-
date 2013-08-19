@@ -290,6 +290,7 @@ contains
     !+ad_summ  Routine that parses the contents of the input file
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  F Warmer, IPP Greifswald
     !+ad_cont  N/A
     !+ad_args  in_file  : input integer : Fortran input unit identifier
     !+ad_args  out_file : input integer : Fortran output unit identifier
@@ -338,6 +339,8 @@ contains
     !+ad_hist  18/06/13 PJK Removed DIGN altogether
     !+ad_hist  19/06/13 PJK Removed FJTFC
     !+ad_hist  27/06/13 PJK Relabelled TOHS, FTOHS, DNBETA, GTSCALE, ICULBL, FBETATRY
+    !+ad_hist  14/08/13 PJK/FW Added stellarator divertor variables
+    !+ad_hist  15/08/13 PJK/FW Added stellarator VMEC filenames
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -981,6 +984,9 @@ contains
        case ('RLENMAX')
           call parse_real_variable('RLENMAX', rlenmax, 0.0D0, 1.0D0, &
                'Maximum value for length ratio')
+       case ('TDIV')
+          call parse_real_variable('TDIV', tdiv, 0.1D0, 100.0D0, &
+               'Plasma temperature at divertor (eV)')
        case ('XPARAIN')
           call parse_real_variable('XPARAIN', xparain, 0.01D0, 1.0D4, &
                'Parallel heat transport coeff (m2/s)')
@@ -1494,12 +1500,14 @@ contains
        case ('FVOLDW')
           call parse_real_variable('FVOLDW', fvoldw, 0.0D0, 10.0D0, &
                'Fudge factor for vacuum vessel volume')
+!+PJK FVOLSI, FVOLSO should now be restricted to <= 1
        case ('FVOLSI')
           call parse_real_variable('FVOLSI', fvolsi, 0.0D0, 10.0D0, &
                'Fudge factor for inboard shield volume')
        case ('FVOLSO')
           call parse_real_variable('FVOLSO', fvolso, 0.0D0, 10.0D0, &
                'Fudge factor for outboard shield volume')
+!-PJK
        case ('FWCLFR')
           call parse_real_variable('FWCLFR', fwclfr, 0.0D0, 1.0D0, &
                'First wall coolant fraction')
@@ -2070,12 +2078,45 @@ contains
 
           !  Stellarator settings
 
+       case ('BMN')
+          call parse_real_variable('BMN', bmn, 1.0D-4, 1.0D-2, &
+               'Relative radial field perturbation')
+       case ('F_ASYM')
+          call parse_real_variable('F_ASYM', f_asym, 0.9D0, 2.0D0, &
+               'Heat load peaking factor')
+       case ('F_RAD')
+          call parse_real_variable('F_RAD', f_rad, 0.0D0, 1.0D0, &
+               'Radiated power fraction in SOL')
+       case ('F_W')
+          call parse_real_variable('F_W', f_w, 0.1D0, 1.0D0, &
+               'Island size fraction factor')
+       case ('FLPITCH')
+          call parse_real_variable('FLPITCH', flpitch, 1.0D-4, 1.0D-2, &
+               'Field line pitch (rad)')
        case ('IOTABAR')
           call parse_real_variable('IOTABAR', iotabar, 0.1D0, 10.0D0, &
                'Stellarator rotational transform')
        case ('ISTHTR')
           call parse_int_variable('ISTHTR', isthtr, 1, 3, &
                'Stellarator method of auxiliary heating')
+       case ('M_RES')
+          call parse_int_variable('M_RES', m_res, 1, 10, &
+               'Poloidal resonance number')
+       case ('N_RES')
+          call parse_int_variable('N_RES', n_res, 3, 6, &
+               'Toroidal resonance number')
+       case ('SHEAR')
+          call parse_real_variable('SHEAR', shear, 0.1D0, 10.0D0, &
+               'Magnetic shear')
+       case ('VMEC_INFO_FILE')
+          call parse_string_variable('VMEC_INFO_FILE', vmec_info_file, &
+               'VMEC information filename')
+       case ('VMEC_RMN_FILE')
+          call parse_string_variable('VMEC_RMN_FILE', vmec_rmn_file, &
+               'VMEC R(m,n) filename')
+       case ('VMEC_ZMN_FILE')
+          call parse_string_variable('VMEC_ZMN_FILE', vmec_zmn_file, &
+               'VMEC Z(m,n) filename')
 
           !  Inertial Fusion Energy plant settings
 

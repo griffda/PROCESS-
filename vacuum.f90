@@ -61,6 +61,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  12/06/13 PJK Modified gasld calculation with new qfuel definition
+    !+ad_hist  15/08/13 PJK Changed arguments to vacuum call
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -87,16 +88,16 @@ contains
 
     gasld = 2.0D0*qfuel * afuel*umass
 
-    call vacuum(powfmw,rmajor,rminor,kappa,shldoth,shldith,tfcth, &
-         rsldi-gapds-ddwi,tfno,tdwell,dene,idivrt,qtorus,gasld, &
-         vpumpn,nvduct,dlscal,vacdshm,vcdimax,iprint,outfile)
+    call vacuum(powfmw,rmajor,rminor,0.5D0*(scrapli+scraplo),sarea,vol, &
+         shldoth,shldith,tfcth,rsldi-gapds-ddwi,tfno,tdwell,dene,idivrt, &
+         qtorus,gasld,vpumpn,nvduct,dlscal,vacdshm,vcdimax,iprint,outfile)
 
   end subroutine vaccall
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine vacuum(pfusmw,r0,aw,kappa,thshldo,thshldi,thtf,ritf,tfno, &
-       tdwell,nplasma,ndiv,qtorus,gasld,pumpn,nduct,dlscalc, &
+  subroutine vacuum(pfusmw,r0,aw,dsol,plasma_sarea,plasma_vol,thshldo,thshldi, &
+       thtf,ritf,tfno,tdwell,nplasma,ndiv,qtorus,gasld,pumpn,nduct,dlscalc, &
        mvdsh,dimax,iprint,outfile)
 
     !+ad_name  vacuum
@@ -111,7 +112,9 @@ contains
     !+ad_args  pfusmw : input real : Fusion power (MW)
     !+ad_args  r0 : input real : Major radius (m)
     !+ad_args  aw : input real : Minor radius (m)
-    !+ad_args  kappa : input real : Plasma elongation
+    !+ad_args  dsol : input real : Scrape-off layer average width (m)
+    !+ad_args  plasma_sarea : input real : Plasma surface area (m2)
+    !+ad_args  plasma_vol : input real : Plasma volume (m3)
     !+ad_args  thshldo : input real : Outboard shield thickness (m)
     !+ad_args  thshldi : input real : Inboard shield thickness (m)
     !+ad_args  thtf : input real : TF coil thickness (m)
@@ -142,6 +145,8 @@ contains
     !+ad_hist  20/09/11 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  16/10/12 PJK Added constants
+    !+ad_hist  15/08/13 PJK Modified arguments for new chamber surface area
+    !+ad_hisc               and volume calculations
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -152,9 +157,9 @@ contains
     !  Arguments
 
     integer, intent(in) :: ndiv, iprint, outfile
-    real(kind(1.0D0)), intent(in) :: pfusmw, r0, aw, kappa, thshldo, thshldi
-    real(kind(1.0D0)), intent(in) :: thtf, ritf, tfno, tdwell, nplasma, qtorus
-    real(kind(1.0D0)), intent(in) :: gasld
+    real(kind(1.0D0)), intent(in) :: pfusmw, r0, aw, dsol, plasma_sarea, plasma_vol
+    real(kind(1.0D0)), intent(in) :: thshldo, thshldi, thtf, ritf, tfno, tdwell
+    real(kind(1.0D0)), intent(in) :: nplasma, qtorus, gasld
     integer, intent(out) :: nduct
     real(kind(1.0D0)), intent(out) :: pumpn, dlscalc, mvdsh, dimax
 
@@ -230,7 +235,10 @@ contains
     !  rat = outgassing rate (effective for N2) of plasma chamber surface (Pa-m/s)
     !  pbase = base pressure (Pa)
 
-    area = 4.0D0 * pi*pi * r0 * aw * sqrt(0.5D0*(1.0D0 + kappa*kappa))
+    !  Old method: area = 4.0D0 * pi*pi * r0 * aw * sqrt(0.5D0*(1.0D0 + kappa*kappa))
+
+    area = plasma_sarea * (aw+dsol)/aw
+
     ogas = rat * area * 10.0D0  !  Outgassing rate (Pa-m^3/s)
     s(1) = ogas  / pbase
 
@@ -241,7 +249,13 @@ contains
 
     pend = 0.5D0*nplasma * k * tn  !  pressure in plasma chamber after burn (Pa)
     pstart = 0.01D0 * pend  !  pressure in chamber before start of burn (Pa)
-    volume = 2.0D0 * pi*pi * r0 * aw*aw * kappa  !  chamber volume (m^3)
+
+    !  Chamber volume (m^3)
+
+    !  Old method: volume = 2.0D0 * pi*pi * r0 * aw*aw * kappa
+
+    volume = plasma_vol * (aw+dsol)*(aw+dsol)/(aw*aw)
+
     s(2) = volume / tdwell * log(pend / pstart)
 
     !  Helium ash removal

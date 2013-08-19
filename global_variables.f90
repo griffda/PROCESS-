@@ -691,6 +691,8 @@ module divertor_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  17/10/12 PJK Initial version of module
+  !+ad_hist  13/08/13 PJK Changed hldiv comment (no 'outboard');
+  !+ad_hisc               tdiv now an input for stellarators
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -750,7 +752,7 @@ module divertor_variables
   real(kind(1.0D0)) :: fififi = 4.0D-3
   !+ad_vars  frrp /0.4/ : fraction of radiated power to plate
   real(kind(1.0D0)) :: frrp = 0.4D0
-  !+ad_vars  hldiv : outboard divertor heat load (MW/m2)
+  !+ad_vars  hldiv : divertor heat load (MW/m2)
   real(kind(1.0D0)) :: hldiv = 0.0D0
   !+ad_vars  hldivlim /5.0/ : heat load limit (MW/m2)
   real(kind(1.0D0)) :: hldivlim = 5.0D0
@@ -784,8 +786,9 @@ module divertor_variables
   real(kind(1.0D0)) :: rstrko = 0.0D0
   !+ad_vars  tconl : main plasma connection length (m)
   real(kind(1.0D0)) :: tconl = 0.0D0
-  !+ad_vars  tdiv : temperature at divertor (eV)
-  real(kind(1.0D0)) :: tdiv = 0.0D0
+  !+ad_vars  tdiv /2.0/ : temperature at divertor (eV)
+  !+ad_varc               (input for stellarator only, calculated for tokamaks)
+  real(kind(1.0D0)) :: tdiv = 2.0D0
   !+ad_vars  tsep : temperature at the separatrix (eV)
   real(kind(1.0D0)) :: tsep = 0.0D0
   !+ad_vars  xparain /2.1D3/ : parallel heat transport coefficient (m2/s)
@@ -2273,6 +2276,7 @@ module cost_variables
   !+ad_hist  31/10/12 PJK Initial version of module
   !+ad_hist  16/04/13 PJK Changed ucsc dimensions
   !+ad_hist  18/06/13 PJK Changed uccryo from cryostat to vacuum vessel
+  !+ad_hist  15/08/13 PJK Changed cdrlife description
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2306,7 +2310,7 @@ module cost_variables
   real(kind(1.0D0)) :: cdcost = 0.0D0
   !+ad_vars  cdirt : total plant direct cost (M$)
   real(kind(1.0D0)) :: cdirt = 0.0D0
-  !+ad_vars  cdrlife : lifetime of current drive system (y)
+  !+ad_vars  cdrlife : lifetime of heating/current drive system (y)
   real(kind(1.0D0)) :: cdrlife = 0.0D0
   !+ad_vars  cfactr /0.75/ : plant capacity factor, availability;
   !+ad_varc                  input if iavail = 0
@@ -2827,6 +2831,7 @@ module stellarator_variables
   !+ad_summ  stellarator model
   !+ad_type  Module
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_auth  F Warmer, IPP Greifswald
   !+ad_cont  N/A
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
@@ -2837,6 +2842,7 @@ module stellarator_variables
   !+ad_call  None
   !+ad_hist  31/10/12 PJK Initial version of module
   !+ad_hist  23/01/13 PJK Added iotabar
+  !+ad_hist  14/08/13 PJK/FW Added stellarator divertor variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2846,6 +2852,16 @@ module stellarator_variables
 
   public
 
+  !+ad_vars  bmn /0.001/ : relative radial field perturbation
+  real(kind(1.0D0)) :: bmn = 1.0D-3
+  !+ad_vars  f_asym /1.0/ : heat load peaking factor
+  real(kind(1.0D0)) :: f_asym = 1.0D0
+  !+ad_vars  f_rad /0.85/ : radiated power fraction in SOL
+  real(kind(1.0D0)) :: f_rad = 0.85D0
+  !+ad_vars  f_w /0.5/ : island size fraction factor
+  real(kind(1.0D0)) :: f_w = 0.5D0
+  !+ad_vars  flpitch /0.001/ : field line pitch (rad)
+  real(kind(1.0D0)) :: flpitch = 1.0D-3
   !+ad_vars  iotabar /1.0/ : rotational transform (reciprocal of tokamak q)
   !+ad_varc                  for stellarator confinement time scaling laws
   real(kind(1.0D0)) :: iotabar = 1.0D0
@@ -2859,6 +2875,20 @@ module stellarator_variables
   !+ad_varc          <LI> = 2 lower hybrid heating;
   !+ad_varc          <LI> = 3 neutral beam injection</UL>
   integer :: isthtr = 3
+  !+ad_vars  m_res /5/ : poloidal resonance number
+  integer :: m_res = 5
+  !+ad_vars  n_res /5/ : toroidal resonance number
+  integer :: n_res = 5
+  !+ad_vars  shear /0.5/ : magnetic shear, derivative of iotabar
+  real(kind(1.0D0)) :: shear = 0.5D0
+  !+ad_vars  vmec_info_file /vmec_info.dat/ : file containing general VMEC settings
+  character(len=48) :: vmec_info_file = 'vmec_info.dat'
+  !+ad_vars  vmec_rmn_file /vmec_Rmn.dat/ : file containing plasma boundary R(m,n)
+  !+ad_varc                                 Fourier components
+  character(len=48) :: vmec_rmn_file = 'vmec_Rmn.dat'
+  !+ad_vars  vmec_zmn_file /vmec_Zmn.dat/ : file containing plasma boundary Z(m,n)
+  !+ad_varc                                 Fourier components
+  character(len=48) :: vmec_zmn_file = 'vmec_Zmn.dat'
 
 end module stellarator_variables
 

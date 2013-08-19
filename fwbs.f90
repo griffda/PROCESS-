@@ -1134,6 +1134,7 @@ module fwbs_module
   !+ad_hisc               rfp_variables, stellarator_variables
   !+ad_hist  08/05/13 PJK Added dshellvol, eshellvol
   !+ad_hist  22/05/13 PJK Added kit_blanket_model, build_module, times_variables
+  !+ad_hist  14/08/13 PJK Made blanket_neutronics public
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1160,7 +1161,7 @@ module fwbs_module
   implicit none
 
   private
-  public :: fwbs, blanket
+  public :: fwbs, blanket, blanket_neutronics
 
   !  Local variables
 
@@ -1222,6 +1223,8 @@ contains
     !+ad_hist  21/05/13 PJK Added blanket, shield area calculations
     !+ad_hist  18/06/13 PJK Corrected cryomass (= vacuum vessel mass, not cryostat mass)
     !+ad_hist  25/06/13 PJK Removed hecan output if blktmodel > 0
+    !+ad_hist  16/08/13 PJK Removed obsolete stellarator clause (this routine
+    !+ad_hisc               is no longer used for stellarators)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1671,9 +1674,7 @@ contains
     !  rb(i) = outer radius of PF coil i (tokamaks)
     !  rrpf(i) = radius of RFP coil i (RFPs)
 
-    if (istell == 1) then
-       rdewex = rtot + 0.5D0*tfthko + rpf2dewar
-    else if (irfp == 1) then
+    if (irfp == 1) then
        rdewex = maxval(rrpf + 0.5D0*drpf) + rpf2dewar
     else  !  tokamaks
        rdewex = maxval(rb) + rpf2dewar

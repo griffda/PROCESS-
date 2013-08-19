@@ -975,6 +975,7 @@ contains
     !+ad_hist  17/12/12 PJK Added ZFEAR coding, and updated AION and other
     !+ad_hisc               high-Z impurity terms
     !+ad_hist  03/07/13 PJK Amended ZEFFAI coding as per long-standing comment
+    !+ad_hist  24/07/13 PJK Clarified DNLA comment
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  F/MI/PJK/LOGBOOK11, p.38 for D-He3 deni calculation
@@ -1000,14 +1001,15 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Profile factor
+    !  Profile factor; ratio of density-weighted to volume-averaged temperature
 
     pcoef = (1.0D0 + alphan)*(1.0D0 + alphat)/(1.0D0+alphan+alphat)
 
-    !  Line averaged electron density
+    !  Line averaged electron density (IPDG89)
+    !  0.5*gamfun(0.5) = 0.5*sqrt(pi) = 0.886227
 
-    dnla = 0.886227D0 * dene * gamfun(alphan+1.0D0) / &
-         gamfun(alphan+1.5D0) * (1.0D0+alphan)
+    dnla = dene*(1.0D0+alphan) * 0.886227D0 * gamfun(alphan+1.0D0) / &
+         gamfun(alphan+1.5D0)
 
     !  Ion density components
     !  ======================
@@ -4245,6 +4247,7 @@ contains
     !+ad_hist  23/01/13 PJK Modified logic for stellarators and ignite=1
     !+ad_hist  10/06/13 PJK Added ISHAPE=2 and other outputs
     !+ad_hist  12/06/13 PJK Added plasma energy and other outputs
+    !+ad_hist  12/08/13 PJK Removed some stellarator-irrelevant outputs
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4300,29 +4303,37 @@ contains
     call ovarrf(outfile,'Major radius (m)','(rmajor)',rmajor)
     call ovarrf(outfile,'Minor radius (m)','(rminor)',rminor)
     call ovarrf(outfile,'Aspect ratio','(aspect)',aspect)
-    if (ishape == 2) then
-       call ovarrf(outfile,'Elongation, X-point (Zohm scaling)','(kappa)',kappa)
-       call ovarrf(outfile,'Elongation, 95% surface (kappa/1.12)','(kappa95)',kappa95)
-    else
-       call ovarrf(outfile,'Elongation, X-point','(kappa)',kappa)
-    call ovarrf(outfile,'Elongation, 95% surface (kappa-0.04)/1.1','(kappa95)',kappa95)
+    if (istell == 0) then
+       if (ishape == 2) then
+          call ovarrf(outfile,'Elongation, X-point (Zohm scaling)', &
+               '(kappa)',kappa)
+          call ovarrf(outfile,'Elongation, 95% surface (kappa/1.12)', &
+               '(kappa95)',kappa95)
+       else
+          call ovarrf(outfile,'Elongation, X-point','(kappa)',kappa)
+          call ovarrf(outfile,'Elongation, 95% surface (kappa-0.04)/1.1', &
+               '(kappa95)',kappa95)
+       end if
+       call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa)
+       call ovarrf(outfile,'Triangularity, X-point','(triang)',triang)
+       call ovarrf(outfile,'Triangularity, 95% surface','(triang95)',triang95)
+       call ovarrf(outfile,'Plasma poloidal perimeter (m)','(pperim)',pperim)
     end if
-    call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa)
-    call ovarrf(outfile,'Triangularity, X-point','(triang)',triang)
-    call ovarrf(outfile,'Triangularity, 95% surface','(triang95)',triang95)
-    call ovarrf(outfile,'Plasma poloidal perimeter (m)','(pperim)',pperim)
     call ovarrf(outfile,'Plasma cross-sectional area (m2)','(xarea)',xarea)
     call ovarre(outfile,'Plasma surface area (m2)','(sarea)',sarea)
     call ovarre(outfile,'Plasma volume (m3)','(vol)',vol)
 
     call osubhd(outfile,'Current and Field :')
-    call ovarrf(outfile,'Plasma current (MA)','(plascur/1D6)',plascur/1.0D6)
-    call ovarrf(outfile,'Current density profile factor','(alphaj)',alphaj)
-    call ovarrf(outfile,'Plasma internal inductance, li','(rli)',rli)
+    if (istell == 0) then
+       call ovarrf(outfile,'Plasma current (MA)','(plascur/1D6)',plascur/1.0D6)
+       call ovarrf(outfile,'Current density profile factor','(alphaj)',alphaj)
+       call ovarrf(outfile,'Plasma internal inductance, li','(rli)',rli)
+    end if
 
     if (irfp == 0) then
        call ovarrf(outfile,'Vacuum toroidal field at R (T)','(bt)',bt)
-       call ovarrf(outfile,'Maximum toroidal field at TF coils (T)','(bmaxtf)',bmaxtf)
+       call ovarrf(outfile,'Maximum toroidal field at TF coils (T)', &
+            '(bmaxtf)',bmaxtf)
        call ovarrf(outfile,'Average poloidal field (T)','(bp)',bp)
     else
        call ovarrf(outfile,'Toroidal field at plasma edge (T)','(-bt)',-bt)
@@ -4339,7 +4350,8 @@ contains
        call ovarrf(outfile,'Cylindrical safety factor','(qstar)',qstar)
 
        if (ishape == 1) then
-          call ovarrf(outfile,'Lower limit for edge safety factor','(qlim)',qlim)
+          call ovarrf(outfile,'Lower limit for edge safety factor', &
+               '(qlim)',qlim)
        end if
     else
        call ovarrf(outfile,'Rotational transform','(iotabar)',iotabar)

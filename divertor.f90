@@ -149,9 +149,9 @@ contains
     adas = diva/sarea
 
     !  Main plasma separatrix area to divertor (and power fraction)
-
+!+PJK Is the 2 related to 2 divertors (i.e. double-null assumed)?
     frgd = (sareao)/(2.0D0*sarea)
-
+!-PJK
     !  Power flow to divertor
 
     pdiv = pwr * ksic/2.0D0

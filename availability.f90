@@ -71,6 +71,7 @@ contains
     !+ad_hist  05/11/12 PJK Added pulse_variables
     !+ad_hist  23/05/13 PJK Removed bktlife calculation if blktmodel>0
     !+ad_hist  05/06/13 PJK Removed abktflnc output if blktmodel>0
+    !+ad_hist  15/08/13 PJK Changed cdrlife description
     !+ad_stat  Okay
     !+ad_docs  F/PL/PJK/PROCESS/CODE/043
     !
@@ -208,7 +209,7 @@ contains
           call ovarre(outfile,'Centrepost lifetime (years)','(cplife)',cplife)
        end if
 
-       call ovarre(outfile,'Current drive system lifetime (years)', &
+       call ovarre(outfile,'Heating/CD system lifetime (years)', &
             '(cdrlife)',cdrlife)
        call ovarre(outfile,'Total plant lifetime (years)','(tlife)',tlife)
 
