@@ -1816,6 +1816,7 @@ contains
     !+ad_summ  for a stellarator
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  F Warmer, IPP Greifswald
     !+ad_cont  None
     !+ad_args  outfile : input integer : Fortran output unit identifier
     !+ad_args  iprint : input integer : Switch to write output to file (1=yes)
@@ -2060,7 +2061,7 @@ contains
     end if ! blktmodel = 0
 
     !  Divertor mass
-!+PJK
+!+PJK  Divertor surface area calculation needs updating
     divsur = fdiva * 2.0D0 * pi * rmajor * rminor
     divmas = divsur * divdens * (1.0D0 - divclfr) * divplt
 !-PJK

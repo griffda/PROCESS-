@@ -1327,3 +1327,5 @@ end subroutine output
 ! SVN 179: Updated plotting utilities (requires python 2.7.3 or higher)
 ! SVN 180: Corrected long-standing niggle with zeffai formula; now matches description
 ! SVN 181: Modified numerics output hints for optimising runs
+! SVN 182: New stellarator plasma geometry and divertor models incorporated
+! SVN 183: Comment changes
