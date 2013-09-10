@@ -98,6 +98,7 @@ module physics_variables
   !+ad_hist  18/06/13 PJK Removed dign; changed ffwal, ishape comments
   !+ad_hist  27/06/13 PJK Changed iculbl comment
   !+ad_hist  03/07/13 PJK Changed zeffai comment
+  !+ad_hist  10/09/13 PJK Added alpharate, fusionrate, protonrate
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -199,6 +200,8 @@ module physics_variables
   real(kind(1.0D0)) :: alphaj = 1.0D0
   !+ad_vars  alphan /0.5/ : density profile index
   real(kind(1.0D0)) :: alphan = 0.5D0
+  !+ad_vars  alpharate : alpha particle production rate (particles/m3/sec)
+  real(kind(1.0D0)) :: alpharate = 0.0D0
   !+ad_vars  alphat /1.0/ : temperature profile index
   real(kind(1.0D0)) :: alphat = 1.0D0
   !+ad_vars  alpmw : alpha power (MW)
@@ -284,7 +287,7 @@ module physics_variables
   real(kind(1.0D0)) :: falpi = 0.0D0
   !+ad_vars  fbfe /0.35/ : fraction of high-Z radiation to Bremsstrahlung
   real(kind(1.0D0)) :: fbfe = 0.35D0
-  !+ad_vars  fdeut /0.5/ : deuterium fuel fraction (idhe3=1)
+  !+ad_vars  fdeut /0.5/ : deuterium fuel fraction (input if idhe3=1, otherwise = 1-ftr)
   real(kind(1.0D0)) :: fdeut = 0.5D0
   !+ad_vars  ffwal /0.92/ : factor to convert plasma surface area to first wall
   !+ad_varc                 area in neutron wall load calculation
@@ -300,6 +303,8 @@ module physics_variables
   real(kind(1.0D0)) :: ftr = 0.5D0
   !+ad_vars  ftrit /0.5/ : tritium fuel fraction (idhe3=1)
   real(kind(1.0D0)) :: ftrit = 0.5D0
+  !+ad_vars  fusionrate : fusion reaction rate (reactions/m3/sec)
+  real(kind(1.0D0)) :: fusionrate = 0.0D0
   !+ad_vars  fvsbrnni /1.0/ : fraction of burn V-s from non-inductive means
   !+ad_varc                   (iteration variable 44)
   real(kind(1.0D0)) :: fvsbrnni = 1.0D0
@@ -449,6 +454,8 @@ module physics_variables
   real(kind(1.0D0)) :: pperim = 0.0D0
   !+ad_vars  prad : total core radiation power (MW/m3)
   real(kind(1.0D0)) :: prad = 0.0D0
+  !+ad_vars  protonrate : proton production rate (particles/m3/sec)
+  real(kind(1.0D0)) :: protonrate = 0.0D0
   !+ad_vars  psync : synchrotron radiation power (MW/m3)
   real(kind(1.0D0)) :: psync = 0.0D0
   !+ad_vars  pthrmw(8) : L-H power threshold (MW): <OL>
@@ -473,7 +480,7 @@ module physics_variables
   real(kind(1.0D0)) :: q0 = 1.0D0
   !+ad_vars  q95 : safety factor at 95% surface
   real(kind(1.0D0)) :: q95 = 0.0D0
-  !+ad_vars  qfuel : fuelling rate for D-T (D-T nucleus-pairs/s)
+  !+ad_vars  qfuel : plasma fuelling rate (nucleus-pairs/s)
   real(kind(1.0D0)) :: qfuel = 0.0D0
   !+ad_vars  qlim : lower limit for edge safety factor
   real(kind(1.0D0)) :: qlim = 0.0D0

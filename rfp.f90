@@ -726,6 +726,7 @@ contains
     !+ad_hist  17/12/12 PJK Added zfear to betcom, radpwr argument lists
     !+ad_hist  11/04/13 PJK Removed switch ires from pohm call
     !+ad_hist  12/06/13 PJK taup now global
+    !+ad_hist  10/09/13 PJK Modified calls to PALPH, PHYAUX
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -743,6 +744,8 @@ contains
          sbar,sigvdt,t0e,t0i,zimp,zion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (idhe3 == 0) fdeut = 1.0D0-ftr
 
     !  Calculate plasma composition
 
@@ -842,7 +845,8 @@ contains
     !  Calculate fusion power
 
     call palph(alphan,alphat,deni,ealpha,fdeut,fhe3,ftr,ftrit, &
-         idhe3,iiter,pcoef,ti,palp,pcharge,pneut,sigvdt)
+         idhe3,iiter,pcoef,ti,palp,pcharge,pneut,sigvdt, &
+         fusionrate,alpharate,protonrate)
 
     !  Calculate neutral beam slowing down effects
     !  If ignited, then ignore beam fusion effects
@@ -851,6 +855,8 @@ contains
        call beamfus(beamfus0,betbm0,bp,bt,cnbeam,dene,deni,dlamie, &
             ealpha,enbeam,fdeut,ftrit,ftritbm,sigvdt,ten,tin,vol, &
             zeffai,betanb,dnbeam2,palpnb)
+       fusionrate = fusionrate + 1.0D6*palpnb / (1.0D3*ealpha*echarge) / vol
+       alpharate = alpharate + 1.0D6*palpnb / (1.0D3*ealpha*echarge) / vol
     end if
 
     call palph2(bt,bp,dene,deni,dnitot,ftr,falpe,falpi,palpnb, &
@@ -908,8 +914,8 @@ contains
 
     sbar = 1.0D0
 
-    call phyaux(aspect,dene,deni,idhe3,plascur,powfmw,sbar,dnalp, &
-         dnprot,taueff,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
+    call phyaux(aspect,dene,deni,fusionrate,idhe3,plascur,sbar,dnalp, &
+         dnprot,taueff,burnup,vol,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !  Poloidal beta limit is set by input parameter betpmx
 

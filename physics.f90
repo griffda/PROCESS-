@@ -162,6 +162,7 @@ contains
     !+ad_hist  03/01/13 PJK Removed switch ICULDL and call to DENLIM
     !+ad_hist  11/04/13 PJK Removed switch IRES from POHM call
     !+ad_hist  12/06/13 PJK TAUP now global
+    !+ad_hist  10/09/13 PJK Added FUSIONRATE,ALPHARATE,PROTONRATE to PALPH arguments
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -177,6 +178,8 @@ contains
          sbar,sigvdt,t0e,t0i,zimp,zion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (idhe3 == 0) fdeut = 1.0D0-ftr
 
     !  Calculate plasma composition
 
@@ -201,7 +204,7 @@ contains
     t0i = ti * (1.0D0+alphat)
     n0e =   dene * (1.0D0+alphan)
     n0i = dnitot * (1.0D0+alphan)
-    p0 = (n0e*t0e + n0i*t0i) * 1.6022D-16
+    p0 = (n0e*t0e + n0i*t0i) * 1.0D3 * echarge
 
     !  Pressure profile index
     !  From ideal gas law : p = nkT
@@ -313,7 +316,8 @@ contains
     !  Calculate fusion power
 
     call palph(alphan,alphat,deni,ealpha,fdeut,fhe3,ftr,ftrit, &
-         idhe3,iiter,pcoef,ti,palp,pcharge,pneut,sigvdt)
+         idhe3,iiter,pcoef,ti,palp,pcharge,pneut,sigvdt, &
+         fusionrate,alpharate,protonrate)
 
     !  Calculate neutral beam slowing down effects
     !  If ignited, then ignore beam fusion effects
@@ -322,6 +326,8 @@ contains
        call beamfus(beamfus0,betbm0,bp,bt,cnbeam,dene,deni,dlamie, &
             ealpha,enbeam,fdeut,ftrit,ftritbm,sigvdt,ten,tin,vol, &
             zeffai,betanb,dnbeam2,palpnb)
+       fusionrate = fusionrate + 1.0D6*palpnb / (1.0D3*ealpha*echarge) / vol
+       alpharate = alpharate + 1.0D6*palpnb / (1.0D3*ealpha*echarge) / vol
     end if
 
     call palph2(bt,bp,dene,deni,dnitot,ftr,falpe,falpi,palpnb, &
@@ -389,8 +395,8 @@ contains
     !  for the rest of the code
 
     sbar = 1.0D0
-    call phyaux(aspect,dene,deni,idhe3,plascur,powfmw,sbar,dnalp, &
-         dnprot,taueff,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
+    call phyaux(aspect,dene,deni,fusionrate,idhe3,plascur,sbar,dnalp, &
+         dnprot,taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !  Calculate beta limit
 
@@ -976,6 +982,8 @@ contains
     !+ad_hisc               high-Z impurity terms
     !+ad_hist  03/07/13 PJK Amended ZEFFAI coding as per long-standing comment
     !+ad_hist  24/07/13 PJK Clarified DNLA comment
+    !+ad_hist  10/09/13 PJK Clarified DENI calculation for D-He3;
+    !+ad_hist               modified dnprot calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  F/MI/PJK/LOGBOOK11, p.38 for D-He3 deni calculation
@@ -1019,8 +1027,16 @@ contains
     dnalp = dene * ralpne
 
     !  Proton ash portion
+    !  This calculation will be wrong on the first call as the particle
+    !  production rates are evaluated later in the calling sequence
 
-    if (idhe3 == 1) dnprot = dnalp  !  otherwise zero
+    if (idhe3 == 0) then
+       dnprot = 0.0D0
+    else if (alpharate == 0.0D0) then  !  not calculated yet...
+       dnprot = dnalp
+    else
+       dnprot = dnalp * protonrate/alpharate
+    end if
 
     !  Beam hot ion component
     !  If ignited, prevent beam fusion effects
@@ -1061,9 +1077,13 @@ contains
     znfuel = dene - 2.0D0*dnalp - dnprot - dnbeam - &
          dene*(6.0D0*fc + 8.0D0*fo + z_highz*f_highz)
 
+    !  Fuel ion density, deni
+
     if (idhe3 == 0) then
-       deni = znfuel
+       deni = znfuel  !  since hydrogen charge = 1
     else
+       !  For D-T-He3 mix, deni = nD + nT + nHe3, while znfuel = nD + nT + 2*nHe3
+       !  So deni = znfuel - nHe3 = znfuel - fhe3*deni
        deni = znfuel/(1.0D0+fhe3)
     end if
 
@@ -1301,7 +1321,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine palph(alphan,alphat,deni,ealpha,fdeut,fhe3,ftr,ftrit, &
-       idhe3,iiter,pcoef,ti,palp,pcharge,pneut,sigvdt)
+       idhe3,iiter,pcoef,ti,palp,pcharge,pneut,sigvdt,fusionrate,alpharate,protonrate)
 
     !+ad_name  palph
     !+ad_summ  (Initial part of) fusion power and fast alpha pressure calculations
@@ -1324,6 +1344,9 @@ contains
     !+ad_args  pcharge : output real : other charged particle fusion power (MW/m3)
     !+ad_args  pneut   : output real : neutron fusion power (MW/m3)
     !+ad_args  sigvdt  : output real : profile averaged <sigma v DT> (m3/s)
+    !+ad_args  fusionrate  : output real : fusion reaction rate (reactions/m3/s)
+    !+ad_args  alpharate  : output real : alpha particle production rate (/m3/s)
+    !+ad_args  protonrate  : output real : proton production rate (/m3/s)
     !+ad_desc  This subroutine numerically integrates over plasma cross-section to
     !+ad_desc  find the fusion power and fast alpha pressure.
     !+ad_prob  None
@@ -1335,6 +1358,7 @@ contains
     !+ad_hist  06/12/95 PJK Added D-He3 calculations
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  16/10/12 PJK Removed pi from argument list
+    !+ad_hist  10/09/13 PJK Added fusion, alpha and proton rate calculations
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1347,14 +1371,15 @@ contains
     integer, intent(in) :: idhe3, iiter
     real(kind(1.0D0)), intent(in) :: alphan, alphat, deni, ealpha, fdeut, &
          fhe3, ftr, ftrit, pcoef, ti
-    real(kind(1.0D0)), intent(out) :: palp, pcharge, pneut, sigvdt
+    real(kind(1.0D0)), intent(out) :: palp, pcharge, pneut, sigvdt, &
+         fusionrate, alpharate, protonrate
 
     !  Local variables
 
-    integer :: iopt, nofun
-    real(kind(1.0D0)) :: alow, bhigh, ealphaj, epsq8, errest, flag, ft, &
-         rint, svdt, tn, pa, pc, pn, sigmav
-    real(kind(1.0D0)) :: alphatd, alphand, tidum
+    integer :: iopt,nofun
+    real(kind(1.0D0)) :: alow,arate,bhigh,ealphaj,epsq8,errest,flag,frate,ft, &
+         rint,svdt,tn,pa,pc,pn,prate,sigmav
+    real(kind(1.0D0)) :: alphatd,alphand,tidum
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1364,7 +1389,7 @@ contains
     bhigh = 0.999D0
     epsq8 = 1.0D-9
 
-    ealphaj = ealpha * 1.6022D-16  !  Alpha birth energy (Joules)
+    ealphaj = ealpha * 1.0D3 * echarge  !  Alpha birth energy (D-T reaction) (Joules)
 
     !  Initialise shared quantities
 
@@ -1390,6 +1415,9 @@ contains
        palp = sigvdt * ftr*(1.0D0-ftr) * ealphaj * 1.0D-6 * deni**2
        pcharge = 0.0D0
        pneut = 4.0D0 * palp
+       alpharate = 1.0D6 * palp/ealphaj
+       fusionrate = alpharate
+       protonrate = 0.0D0
 
     else  !  D-He3 option
 
@@ -1397,11 +1425,15 @@ contains
        !  No profile averaging yet...
 
        palp = 0.0D0 ; pcharge = 0.0D0 ; pneut = 0.0D0
+       alpharate = 0.0D0 ; protonrate = 0.0D0 ; fusionrate = 0.0D0
        do iopt = 1,4
-          call fpower(ftrit,fdeut,fhe3,deni,ti,iopt,pa,pc,pn,sigmav)
+          call fpower(ftrit,fdeut,fhe3,deni,ti,iopt,pa,pc,pn,sigmav,frate,arate,prate)
           palp = palp + pa
           pcharge = pcharge + pc
           pneut = pneut + pn
+          fusionrate = fusionrate + frate
+          alpharate = alpharate + arate
+          protonrate = protonrate + prate
           if (iopt == 1) sigvdt = sigmav
        end do
 
@@ -1459,7 +1491,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine fpower(ftrit,fdeut,fhe3,deni,ti,iopt,palp,pcharge, &
-       pneut,sigmav)
+       pneut,sigmav,fusionrate,alpharate,protonrate)
 
     !+ad_name  fpower
     !+ad_summ  Fusion power calculation
@@ -1481,19 +1513,26 @@ contains
     !+ad_args  pcharge : output real : other charged particle fusion power (MW/m3)
     !+ad_args  pneut   : output real : neutron fusion power (MW/m3)
     !+ad_args  sigmav  : output real : fusion reaction rate (m3/s)
+    !+ad_args  fusionrate  : output real : fusion reaction rate (reactions/m3/s)
+    !+ad_args  alpharate  : output real : alpha particle production rate (/m3/s)
+    !+ad_args  protonrate  : output real : proton production rate (/m3/s)
     !+ad_desc  This routine calculates the fusion power given to the alpha
     !+ad_desc  particles, neutrons and charged particles generated in one of
     !+ad_desc  four fusion processes, selected via <CODE>iopt</CODE>.
     !+ad_desc  <P>It is assumed that alphas and the protons give up all their energy
     !+ad_desc  to the plasma.
     !+ad_desc  The values are quoted to be valid for ti = 0 to 100 keV.
-    !+ad_prob  None
+    !+ad_prob  A comparison between D-T fusion power calculated elsewhere (when idhe3=0)
+    !+ad_prob  and the D-T fusion power calculated here indicates that this routine
+    !+ad_prob  produces values 30%-40% lower, possibly because it does not take into
+    !+ad_prob  account the density and temperature profile shapes.
     !+ad_call  pade
     !+ad_hist  20/04/95 MRG Initial version (ypbeta.f)
     !+ad_hist  04/05/95 MRG Added N_LOCAL and T_LOCAL to arguments
     !+ad_hist  05/12/95 PJK Modified for inclusion into PROCESS code
     !+ad_hist  10/11/11 PJK Initial F90 version
     !+ad_hist  16/10/12 PJK Removed pi from argument list
+    !+ad_hist  10/09/13 PJK Added fusionrate, alpharate, protonrate
     !+ad_stat  Okay
     !+ad_docs  'Fusion cross sections and thermonuclear reaction rates',
     !+ad_docc  Asher Peres, J.Applied Physics 50(9), pp.5569-71, September 1979
@@ -1508,6 +1547,7 @@ contains
     integer, intent(in) :: iopt
     real(kind(1.0D0)), intent(in) :: ftrit,fdeut,fhe3,deni,ti
     real(kind(1.0D0)), intent(out) :: palp,pcharge,pneut,sigmav
+    real(kind(1.0D0)), intent(out) :: alpharate,protonrate,fusionrate
 
     !  Local variables
 
@@ -1551,7 +1591,7 @@ contains
        num2 = ftrit*deni
        ch2 = 1.0D0
        wht = 1.0D0
-       etot = 17.58D6 * 1.6022D-19
+       etot = 17.58D6 * echarge
        mc2 = 1124656.0D0
        p1 = 9.494748D-10
        p2 = 2.818421D-2
@@ -1566,7 +1606,7 @@ contains
        num2 = fhe3*deni
        ch2 = 2.0D0
        wht = 1.0D0
-       etot = 18.34D6 * 1.6022D-19
+       etot = 18.34D6 * echarge
        mc2 = 1124572.0D0
        p1 = 5.817887D-10
        p2 = 8.681070D-3
@@ -1581,7 +1621,7 @@ contains
        num2 = num1
        ch2 = 1.0D0
        wht = 0.5D0
-       etot = 3.28D6 * 1.6022D-19
+       etot = 3.28D6 * echarge
        mc2 = 937814.0D0
        p1 = 5.397811D-12
        p2 = 3.328985D-3
@@ -1596,7 +1636,7 @@ contains
        num2 = num1
        ch2 = 1.0D0
        wht = 0.5D0
-       etot = 4.03D6 * 1.6022D-19
+       etot = 4.03D6 * echarge
        mc2 = 937814.0D0
        p1 = 5.988513D-12
        p2 = 2.543079D-3
@@ -1630,24 +1670,42 @@ contains
     fuspow = 1.0D-12 * reactrt * etot * num1 * num2 * wht
 
     !  Split this power into the various particle powers
+    !  and calculate particle production rates /m3 /second
 
     select case (iopt)
+
     case (1)
        palp = 0.2D0 * fuspow
        pneut = 0.8D0 * fuspow
        pcharge = 0.0D0
+       fusionrate = 1.0D6 * fuspow / etot
+       alpharate = fusionrate
+       protonrate = 0.0D0
+
     case (2)
        palp = 0.2D0 * fuspow
        pneut = 0.0D0
        pcharge = 0.8D0 * fuspow
+       fusionrate = 1.0D6 * fuspow / etot
+       alpharate = fusionrate
+       protonrate = fusionrate
+
     case (3)
        palp = 0.0D0
        pneut = 0.75D0 * fuspow
        pcharge = 0.25D0 * fuspow
+       fusionrate = 1.0D6 * fuspow / etot
+       alpharate = 0.0D0
+       protonrate = fusionrate
+
     case (4)
        palp = 0.0D0
        pneut = 0.0D0
        pcharge = 1.0D0 * fuspow
+       fusionrate = 1.0D6 * fuspow / etot
+       alpharate = 0.0D0
+       protonrate = fusionrate
+
     end select
 
   contains
@@ -2541,8 +2599,8 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine phyaux(aspect,dene,deni,idhe3,plascur,powfmw,sbar,dnalp, &
-       dnprot,taueff,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
+  subroutine phyaux(aspect,dene,deni,fusionrate,idhe3,plascur,sbar,dnalp, &
+       dnprot,taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !+ad_name  phyaux
     !+ad_summ  Auxiliary physics quantities
@@ -2554,11 +2612,12 @@ contains
     !+ad_args  deni   : input real :  fuel ion density (/m3)
     !+ad_args  dnalp  : input real :  alpha ash density (/m3)
     !+ad_args  dnprot : input real :  proton ash density (/m3)
+    !+ad_args  fusionrate : input real :  fusion reaction rate (/m3/s)
     !+ad_args  idhe3  : input integer :  switch denoting D-T or D-He3 reaction
     !+ad_args  plascur: input real :  plasma current (A)
-    !+ad_args  powfmw : input real :  fusion power (MW)
     !+ad_args  sbar   : input real :  exponent for aspect ratio (normally 1)
     !+ad_args  taueff : input real :  global energy confinement time (s)
+    !+ad_args  vol    : input real :  plasma volume (m3)
     !+ad_args  burnup : output real : fractional plasma burnup
     !+ad_args  dntau  : output real : plasma average n-tau (s/m3)
     !+ad_args  figmer : output real : physics figure of merit
@@ -2574,6 +2633,7 @@ contains
     !+ad_hist  07/12/95 PJK Added D-He3 calculations
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  12/06/13 PJK Changed rndfuel, qfuel units from Amps
+    !+ad_hist  10/09/13 PJK Modified fusion reaction rate calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2585,7 +2645,7 @@ contains
 
     integer, intent(in) :: idhe3
     real(kind(1.0D0)), intent(in) :: aspect, dene, deni, dnalp, dnprot, &
-         plascur, powfmw, sbar, taueff
+         fusionrate, plascur, sbar, taueff, vol
     real(kind(1.0D0)), intent(out) :: burnup, dntau, figmer, fusrat, &
          qfuel, rndfuel, taup
 
@@ -2597,11 +2657,16 @@ contains
 
     dntau = taueff*dene
 
-    if (idhe3 == 0) then
-       fusrat = powfmw /(17.6D0 * echarge)
-    else
-       fusrat = powfmw /(18.3D0 * echarge)
-    end if
+    !  Fusion reactions per second
+
+    !  Old calculation; for D-He3 took no account of fuel fractions
+    !if (idhe3 == 0) then
+    !   fusrat = powfmw /(17.6D0 * echarge)
+    !else
+    !   fusrat = powfmw /(18.3D0 * echarge)
+    !end if
+
+    fusrat = fusionrate*vol
 
     !  Alpha particle confinement time (s)
     !  Number of alphas / fusion reaction rate
@@ -2620,7 +2685,7 @@ contains
 
     rndfuel = fusrat
 
-    !  Required fuelling rate (D-T pairs/second) (previously Amps)
+    !  Required fuelling rate (fuel ion pairs/second) (previously Amps)
 
     qfuel = rndfuel/burnup
 
@@ -3917,7 +3982,7 @@ contains
 
     !  Calculate peak electron beta
 
-    betae0 = denez * tez *1.6022D-16/ ( btz**2 /(2.0D0*rmu0) ) * &
+    betae0 = denez * tez * 1.0D3*echarge / ( btz**2 /(2.0D0*rmu0) ) * &
          (1.0D0+alphanz+alphatz)
 
     !  Call integration routine
@@ -3978,7 +4043,7 @@ contains
 
       !  Compute average electron beta
 
-      betae = denez*tez*1.6022D-16/(btz**2/(2.0D0*rmu0))
+      betae = denez*tez*1.0D3*echarge/(btz**2/(2.0D0*rmu0))
 
       del = rminorz*sqrt(y)/rmajorz
       x = (1.46D0*sqrt(del) + 2.4D0*del)/(1.0D0 - del)**1.5D0

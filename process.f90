@@ -1329,3 +1329,5 @@ end subroutine output
 ! SVN 181: Modified numerics output hints for optimising runs
 ! SVN 182: New stellarator plasma geometry and divertor models incorporated
 ! SVN 183: Comment changes
+! SVN 184: Fixed a number of discrepancies in the D-He3 model, although the fusion
+!          power calculations use different fits for D-T fusion to Bosch-Hale
