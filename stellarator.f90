@@ -215,6 +215,7 @@ contains
     !+ad_hist  31/10/12 PJK Added stellarator_variables
     !+ad_hist  23/01/13 PJK Turned off some output sections
     !+ad_hist  12/08/13 PJK/FW Changed kappa values to 1.0
+    !+ad_hist  11/09/13 PJK Removed idhe3 setting
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -258,7 +259,6 @@ contains
     kappa95 = 1.0D0
     triang = 0.0D0
     q = 1.03D0
-    idhe3 = 0
 
     !  Turn off current drive
 
@@ -755,6 +755,7 @@ contains
     !+ad_hist  12/06/13 PJK taup now global
     !+ad_hist  14/08/13 PJK/FW New definition for plrad, using f_rad
     !+ad_hist  10/09/13 PJK Modified calls to PALPH, PHYAUX
+    !+ad_hist  11/09/13 PJK Removed idhe3, ftr, iiter usage
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -771,13 +772,10 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (idhe3 == 0) fdeut = 1.0D0-ftr
-    if (idhe3 == 1) ftr = max(ftrit,1.0D-6)
-
     !  Calculate plasma composition
 
-    call betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3,ftr,ftritbm, &
-         idhe3,ignite,impc,impfe,impo,ralpne,rnbeam,te,zeff,abeam, &
+    call betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3,ftritbm, &
+         ignite,impc,impfe,impo,ralpne,rnbeam,te,zeff,abeam, &
          afuel,aion,deni,dlamee,dlamie,dnalp,dnbeam,dnitot,dnla, &
          dnprot,dnz,falpe,falpi,pcoef,rncne,rnone,rnfene,zeffai,zion,zfear)
 
@@ -804,8 +802,8 @@ contains
 
     !  Calculate fusion power
 
-    call palph(alphan,alphat,deni,ealpha,fdeut,fhe3,ftr,ftrit, &
-         idhe3,iiter,pcoef,ti,palp,pcharge,pneut,sigvdt, &
+    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit, &
+         pcoef,ti,palp,pcharge,pneut,sigvdt, &
          fusionrate,alpharate,protonrate)
 
     !  Calculate neutral beam slowing down effects
@@ -813,13 +811,13 @@ contains
 
     if ((pnbeam /= 0.0D0).and.(ignite == 0)) then
        call beamfus(beamfus0,betbm0,bp,bt,cnbeam,dene,deni,dlamie, &
-            ealpha,enbeam,fdeut,ftrit,ftritbm,sigvdt,ten,tin,vol, &
+            ealphadt,enbeam,fdeut,ftrit,ftritbm,sigvdt,ten,tin,vol, &
             zeffai,betanb,dnbeam2,palpnb)
-       fusionrate = fusionrate + 1.0D6*palpnb / (1.0D3*ealpha*echarge) / vol
-       alpharate = alpharate + 1.0D6*palpnb / (1.0D3*ealpha*echarge) / vol
+       fusionrate = fusionrate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
+       alpharate = alpharate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
     end if
 
-    call palph2(bt,bp,dene,deni,dnitot,ftr,falpe,falpi,palpnb, &
+    call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
          ifalphap,pcharge,pcoef,pneut,te,ti,vol,alpmw,betaft, &
          palp,palpi,palpe,pfuscmw,powfmw)
 
@@ -880,7 +878,7 @@ contains
     !  for the rest of the code
 
     sbar = 1.0D0
-    call phyaux(aspect,dene,deni,fusionrate,idhe3,plascur,sbar,dnalp, &
+    call phyaux(aspect,dene,deni,fusionrate,plascur,sbar,dnalp, &
          dnprot,taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !  Calculate beta limit
@@ -918,6 +916,7 @@ contains
     !+ad_hist  17/10/12 PJK Added current_drive_module
     !+ad_hist  31/10/12 PJK Added stellarator_variables
     !+ad_hist  23/01/13 PJK Added comment about ignited plasma
+    !+ad_hist  11/09/13 PJK Changed ftr to ftritbm
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -962,7 +961,7 @@ contains
 
           call culnbi( &
                abeam,alphan,alphat,aspect,dene,deni,dlamie,dnla,enbeam, &
-               eps,feffcd,frbeam,ftr,ralpne,rmajor,rminor,rncne,rnfene, &
+               eps,feffcd,frbeam,ftritbm,ralpne,rmajor,rminor,rncne,rnfene, &
                rnone,te,ten,zeff,zeffai,effnbss,fpion,fshine,taubeam)
 
           pnbeam = pheat

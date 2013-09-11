@@ -99,6 +99,7 @@ module physics_variables
   !+ad_hist  27/06/13 PJK Changed iculbl comment
   !+ad_hist  03/07/13 PJK Changed zeffai comment
   !+ad_hist  10/09/13 PJK Added alpharate, fusionrate, protonrate
+  !+ad_hist  11/09/13 PJK Removed ftr, idhe3, iiter; changed ealpha to ealphadt
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -263,14 +264,14 @@ module physics_variables
   real(kind(1.0D0)) :: dnitot = 0.0D0
   !+ad_vars  dnla : line averaged electron density (/m3)
   real(kind(1.0D0)) :: dnla = 0.0D0
-  !+ad_vars  dnprot : proton ash density (/m3) (idhe3=1)
+  !+ad_vars  dnprot : proton ash density (/m3)
   real(kind(1.0D0)) :: dnprot = 0.0D0
   !+ad_vars  dntau : plasma average "n-tau" (seconds/m3)
   real(kind(1.0D0)) :: dntau = 0.0D0
   !+ad_vars  dnz : high Z ion density (/m3)
   real(kind(1.0D0)) :: dnz = 0.0D0
-  !+ad_vars  ealpha /3520.0/ FIX : alpha birth energy in D-T reaction (keV)
-  real(kind(1.0D0)), parameter :: ealpha = 3520.0D0
+  !+ad_vars  ealphadt /3520.0/ FIX : alpha birth energy in D-T reaction (keV)
+  real(kind(1.0D0)), parameter :: ealphadt = 3520.0D0
   !+ad_vars  epbetmax /0.6/ : max (eps*beta_poloidal) for beta limit scaling 1
   real(kind(1.0D0)) :: epbetmax = 0.6D0
   !+ad_vars  eps : inverse aspect ratio
@@ -287,21 +288,18 @@ module physics_variables
   real(kind(1.0D0)) :: falpi = 0.0D0
   !+ad_vars  fbfe /0.35/ : fraction of high-Z radiation to Bremsstrahlung
   real(kind(1.0D0)) :: fbfe = 0.35D0
-  !+ad_vars  fdeut /0.5/ : deuterium fuel fraction (input if idhe3=1, otherwise = 1-ftr)
+  !+ad_vars  fdeut /0.5/ : deuterium fuel fraction
   real(kind(1.0D0)) :: fdeut = 0.5D0
   !+ad_vars  ffwal /0.92/ : factor to convert plasma surface area to first wall
   !+ad_varc                 area in neutron wall load calculation
   real(kind(1.0D0)) :: ffwal = 0.92D0
-  !+ad_vars  fhe3 /0.0/ : helium-3 fuel fraction (idhe3=1)
+  !+ad_vars  fhe3 /0.0/ : helium-3 fuel fraction
   real(kind(1.0D0)) :: fhe3 = 0.0D0
   !+ad_vars  figmer : physics figure of merit (= plascur*aspect**sbar)
   real(kind(1.0D0)) :: figmer = 0.0D0
   !+ad_vars  fradmin /0.0/ : minimum ratio of radiation to heating power
   real(kind(1.0D0)) :: fradmin = 0.0D0
-  !+ad_vars  ftr : /0.5/ : fraction of DT ions that are tritium (idhe3=0)
-  !+ad_varc                (if ftr < 0.001, H plasma is used)
-  real(kind(1.0D0)) :: ftr = 0.5D0
-  !+ad_vars  ftrit /0.5/ : tritium fuel fraction (idhe3=1)
+  !+ad_vars  ftrit /0.5/ : tritium fuel fraction
   real(kind(1.0D0)) :: ftrit = 0.5D0
   !+ad_vars  fusionrate : fusion reaction rate (reactions/m3/sec)
   real(kind(1.0D0)) :: fusionrate = 0.0D0
@@ -348,10 +346,6 @@ module physics_variables
   !+ad_varc          <LI> = 6 Hugill-Murakami Mq limit;
   !+ad_varc          <LI> = 7 Greenwald limit</UL>
   integer :: idensl = 3
-  !+ad_vars  idhe3 /0/ : switch for main fusion reaction:<UL>
-  !+ad_varc         <LI> = 0 D-T reaction;
-  !+ad_varc         <LI> = 1 D-He3 reaction (+ daughters)</UL>
-  integer :: idhe3 = 0
   !+ad_vars  idivrt : number of divertors (calculated from snull)
   integer :: idivrt = 2
   !+ad_vars  ifalphap /0/ : switch for fast alpha pressure calculation:<UL>
@@ -377,11 +371,6 @@ module physics_variables
   !+ad_varc          <LI> = 0 inverse quadrature not used;
   !+ad_varc          <LI> = 1 inverse quadrature used</UL>
   integer :: iinvqd = 1
-  !+ad_vars  iiter /1/ : switch for ITER fusion power calculations:<UL>
-  !+ad_varc         <LI> = 0 fusion power integrated over plasma profiles;
-  !+ad_varc         <LI> = 1 fusion power calculated from ITER analytical formula
-  !+ad_varc                  (bad fit if alphan /= 0.5 and/or alphat /= 1.0)</UL>
-  integer :: iiter = 1
   !+ad_vars  impc /1.0/ : carbon impurity multiplier
   real(kind(1.0D0)) :: impc = 1.0D0
   !+ad_vars  impfe /1.0/ : iron impurity multiplier (OBSOLETE)
@@ -2485,7 +2474,7 @@ module cost_variables
   real(kind(1.0D0)) :: ucfnc = 35.0D0
   !+ad_vars  ucfpr /4.4D7/ FIX : cost of 60g/day tritium processing unit ($)
   real(kind(1.0D0)) :: ucfpr = 4.4D7
-  !+ad_vars  ucfuel /3.45/ : unit cost of fuel (M$/year/1200MW)
+  !+ad_vars  ucfuel /3.45/ : unit cost of D-T fuel (M$/year/1200MW)
   real(kind(1.0D0)) :: ucfuel = 3.45D0
   !+ad_vars  ucfwa /6.0D4/ FIX : first wall armour cost ($/m2)
   real(kind(1.0D0)) :: ucfwa = 6.0D4

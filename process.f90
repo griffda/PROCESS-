@@ -1331,3 +1331,6 @@ end subroutine output
 ! SVN 183: Comment changes
 ! SVN 184: Fixed a number of discrepancies in the D-He3 model, although the fusion
 !          power calculations use different fits for D-T fusion to Bosch-Hale
+! SVN 185: Rationalised fusion power calculations to use Bosch-Hale parametrization
+!          in all cases; no iiter or idhe3 switches; D-He3 reaction is now controlled
+!          via fhe3 only

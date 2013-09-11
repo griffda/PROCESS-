@@ -727,6 +727,7 @@ contains
     !+ad_hist  11/04/13 PJK Removed switch ires from pohm call
     !+ad_hist  12/06/13 PJK taup now global
     !+ad_hist  10/09/13 PJK Modified calls to PALPH, PHYAUX
+    !+ad_hist  11/09/13 PJK Removed idhe3, ftr, iiter usage
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -745,12 +746,10 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (idhe3 == 0) fdeut = 1.0D0-ftr
-
     !  Calculate plasma composition
 
-    call betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3,ftr,ftritbm, &
-         idhe3,ignite,impc,impfe,impo,ralpne,rnbeam,te,zeff,abeam, &
+    call betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3,ftritbm, &
+         ignite,impc,impfe,impo,ralpne,rnbeam,te,zeff,abeam, &
          afuel,aion,deni,dlamee,dlamie,dnalp,dnbeam,dnitot,dnla, &
          dnprot,dnz,falpe,falpi,pcoef,rncne,rnone,rnfene,zeffai,zion,zfear)
 
@@ -844,8 +843,8 @@ contains
 
     !  Calculate fusion power
 
-    call palph(alphan,alphat,deni,ealpha,fdeut,fhe3,ftr,ftrit, &
-         idhe3,iiter,pcoef,ti,palp,pcharge,pneut,sigvdt, &
+    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit, &
+         pcoef,ti,palp,pcharge,pneut,sigvdt, &
          fusionrate,alpharate,protonrate)
 
     !  Calculate neutral beam slowing down effects
@@ -853,13 +852,13 @@ contains
 
     if ((pnbeam /= 0.0D0).and.(ignite == 0)) then
        call beamfus(beamfus0,betbm0,bp,bt,cnbeam,dene,deni,dlamie, &
-            ealpha,enbeam,fdeut,ftrit,ftritbm,sigvdt,ten,tin,vol, &
+            ealphadt,enbeam,fdeut,ftrit,ftritbm,sigvdt,ten,tin,vol, &
             zeffai,betanb,dnbeam2,palpnb)
-       fusionrate = fusionrate + 1.0D6*palpnb / (1.0D3*ealpha*echarge) / vol
-       alpharate = alpharate + 1.0D6*palpnb / (1.0D3*ealpha*echarge) / vol
+       fusionrate = fusionrate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
+       alpharate = alpharate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
     end if
 
-    call palph2(bt,bp,dene,deni,dnitot,ftr,falpe,falpi,palpnb, &
+    call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
          ifalphap,pcharge,pcoef,pneut,te,ti,vol,alpmw,betaft, &
          palp,palpi,palpe,pfuscmw,powfmw)
 
@@ -914,7 +913,7 @@ contains
 
     sbar = 1.0D0
 
-    call phyaux(aspect,dene,deni,fusionrate,idhe3,plascur,sbar,dnalp, &
+    call phyaux(aspect,dene,deni,fusionrate,plascur,sbar,dnalp, &
          dnprot,taueff,burnup,vol,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !  Poloidal beta limit is set by input parameter betpmx

@@ -206,7 +206,7 @@ subroutine check
   !+ad_hist  23/01/97 PJK Moved resetting of trithtmw from POWER
   !+ad_hist  14/03/97 PJK Added coding relevant to IFE device
   !+ad_hist  01/04/98 PJK Added rnbeam reset for no NBI
-  !+ad_hist  19/01/99 PJK Added warning about IITER flag with non-ITER profiles
+  !+ad_hist  19/01/99 PJK Added warning about iiter flag with non-ITER profiles
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_hist  15/10/12 PJK Added global_variables module
@@ -224,6 +224,8 @@ subroutine check
   !+ad_hist  11/04/13 PJK Energy storage building volume set to zero if lpulse=0
   !+ad_hist  23/05/13 PJK Coolant type set to water if blktmodel>0
   !+ad_hist  10/06/13 PJK Removed enforcement of ishape=0 for non-TART tokamaks
+  !+ad_hist  11/09/13 PJK Added check for fuel ion fractions; removed idhe3 setting;
+  !+ad_hisc               removed iiter usage
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -251,11 +253,16 @@ subroutine check
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !  D-He3 option
+  !  Fuel ion fractions must add up to 1.0
 
-  if (idhe3 == 1) then
-     icase = 'PROCESS D-He3 tokamak model'
-     ftr = max(ftrit,1.0D-6)
+  if (abs(1.0D0 - fdeut - ftrit - fhe3) > 1.0D-6) then
+     write(nout,*) 'Fuel ion fractions do not sum to 1.0'
+     write(nout,*) 'Check fdeut, ftrit, fhe3 values.'
+     write(nout,*) 'PROCESS stopping.'
+     stop
+  end if
+
+  if (ftrit < 1.0D-3) then  !  tritium fraction is negligible
      triv = 0.0D0
      ifispact = 0
      trithtmw = 0.0D0
@@ -386,7 +393,6 @@ subroutine check
   if (ife == 1) then
      icase    = 'PROCESS inertial fusion energy model'
      lpulse   = 0
-     idhe3    = 0
   end if
 
   !  Pulsed power plant model
@@ -412,16 +418,6 @@ subroutine check
      if ((iefrf /= 5).and.(iefrf /= 8)) rnbeam = 0.0D0
   else
      rnbeam = 0.0D0
-  end if
-
-  !  Check on use of iiter
-
-  if ( (iiter /= 0).and. &
-       ((alphan /= 0.5D0).or.(alphat /= 1.0D0)) ) then
-     write(iotty,*) 'Warning: IITER = 1 should only be used if'
-     write(iotty,*) '         ALPHAN = 0.5 and ALPHAT = 1.0'
-     write(iotty,*) 'PROCESS continuing...'
-     write(iotty,*) ' '
   end if
 
   !  Coolant set to water if blktmodel > 0

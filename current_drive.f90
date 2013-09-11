@@ -75,6 +75,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added current_drive_variables
     !+ad_hist  23/01/13 PJK Added comment about ignited plasma
+    !+ad_hist  11/09/13 PJK Corrected error in NBI calls; ftr replaced by ftritbm
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -131,7 +132,7 @@ contains
        case (5)  !  ITER Neutral Beam current drive
 
           call iternb(abeam,alphan,alphat,aspect,dene,deni,dlamie, &
-               enbeam,eps,feffcd,frbeam,ftr,ralpne,rmajor,rncne, &
+               enbeam,eps,feffcd,frbeam,ftritbm,ralpne,rmajor,rncne, &
                rnfene,rnone,te,ten,zeff,zeffai,effnbss,fpion, &
                fshine,taubeam)
 
@@ -148,7 +149,7 @@ contains
        case (8)  !  Culham Neutral Beam model
 
           call culnbi(abeam,alphan,alphat,aspect,dene,deni,dlamie, &
-               dnla,enbeam,eps,feffcd,frbeam,ftr,ralpne,rmajor, &
+               dnla,enbeam,eps,feffcd,frbeam,ftritbm,ralpne,rmajor, &
                rminor,rncne,rnfene,rnone,te,ten,zeff,zeffai, &
                effnbss,fpion,fshine,taubeam)
 
@@ -336,7 +337,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine iternb(abeam,alphan,alphat,aspect,dene,deni,dlamie,enbeam, &
-       eps,feffcd,frbeam,ftr,ralpne,rmajor,rncne,rnfene,rnone,te,ten, &
+       eps,feffcd,frbeam,ftritbm,ralpne,rmajor,rncne,rnfene,rnone,te,ten, &
        zeff,zeffai,effnbss,fpion,fshine,taubeam)
 
     !+ad_name  iternb
@@ -355,7 +356,7 @@ contains
     !+ad_args  eps     : input real : inverse aspect ratio
     !+ad_args  feffcd  : input real : current drive efficiency fudge factor
     !+ad_args  frbeam  : input real : R_tangent / R_major for neutral beam injection
-    !+ad_args  ftr     : input real : tritium fraction of D-T ions in beam
+    !+ad_args  ftritbm : input real : tritium fraction of D-T ions in beam
     !+ad_args  ralpne  : input real : thermal alpha density / electron density
     !+ad_args  rmajor  : input real : plasma major radius (m)
     !+ad_args  rncne   : input real : beam carbon density / electron density
@@ -391,7 +392,7 @@ contains
     !  Arguments
 
     real(kind(1.0D0)), intent(in) :: abeam,alphan,alphat,aspect, &
-         dene,deni,dlamie,enbeam,eps,feffcd,frbeam,ftr,ralpne, &
+         dene,deni,dlamie,enbeam,eps,feffcd,frbeam,ftritbm,ralpne, &
          rmajor,rncne,rnfene,rnone,te,ten,zeff,zeffai
 
     real(kind(1.0D0)), intent(out) :: effnbss,fpion,fshine,taubeam
@@ -430,8 +431,8 @@ contains
 
     !  Deuterium and tritium beam densities
 
-    dend = deni * (1.0D0-ftr)
-    dent = deni * ftr
+    dend = deni * (1.0D0-ftritbm)
+    dent = deni * ftritbm
 
     !  Power split to ions / electrons
 
@@ -1340,7 +1341,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine culnbi(abeam,alphan,alphat,aspect,dene,deni,dlamie,dnla, &
-       enbeam,eps,feffcd,frbeam,ftr,ralpne,rmajor,rminor,rncne,rnfene, &
+       enbeam,eps,feffcd,frbeam,ftritbm,ralpne,rmajor,rminor,rncne,rnfene, &
        rnone,te,ten,zeff,zeffai,effnbss,fpion,fshine,taubeam)
 
     !+ad_name  culnbi
@@ -1360,7 +1361,7 @@ contains
     !+ad_args  eps     : input real : inverse aspect ratio
     !+ad_args  feffcd  : input real : current drive efficiency fudge factor
     !+ad_args  frbeam  : input real : R_tangent / R_major for neutral beam injection
-    !+ad_args  ftr     : input real : tritium fraction of D-T ions
+    !+ad_args  ftritbm : input real : tritium fraction of D-T ions in beam
     !+ad_args  ralpne  : input real : thermal alpha density / electron density
     !+ad_args  rmajor  : input real : plasma major radius (m)
     !+ad_args  rminor  : input real : plasma minor radius (m)
@@ -1398,7 +1399,7 @@ contains
     !  Arguments
 
     real(kind(1.0D0)), intent(in) :: abeam,alphan,alphat,aspect,dene,deni, &
-         dlamie,dnla,enbeam,eps,feffcd,frbeam,ftr,ralpne,rmajor,rminor,rncne, &
+         dlamie,dnla,enbeam,eps,feffcd,frbeam,ftritbm,ralpne,rmajor,rminor,rncne, &
          rnfene,rnone,te,ten,zeff,zeffai
 
     real(kind(1.0D0)), intent(out) :: effnbss,fpion,fshine,taubeam
@@ -1437,8 +1438,8 @@ contains
 
     !  Deuterium and tritium beam densities
 
-    dend = deni * (1.0D0-ftr)
-    dent = deni * ftr
+    dend = deni * (1.0D0-ftritbm)
+    dent = deni * ftritbm
 
     !  Power split to ions / electrons
 

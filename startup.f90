@@ -112,6 +112,7 @@ contains
     !+ad_hist  06/11/12 PJK Added outfile argument.
     !+ad_hisc               Routine now calls VMCON instead of local version VMCON1.
     !+ad_hist  11/04/13 PJK Removed ires if-statement
+    !+ad_hist  11/09/13 PJK Changed ftr to ftrit; N.B. D-T reaction is assumed.
     !+ad_stat  Not currently used
     !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -178,7 +179,7 @@ contains
           s = 2
        end if
 
-       fd = 1.0D0 - ftr
+       fd = 1.0D0 - ftrit
        fdt = deni/dene
 
        !  Alpha power multiplier

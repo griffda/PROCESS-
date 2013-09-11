@@ -85,6 +85,7 @@ contains
     !+ad_hist  09/04/13 PJK Modified use of tfmtn to be mass of one TF coil
     !+ad_hist  10/04/13 PJK Modified shield height definition
     !+ad_hist  27/06/13 PJK Used rdewex directly in all cases in call to bldgs
+    !+ad_hist  11/09/13 PJK Removed idhe3 from bldgs call
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -122,7 +123,7 @@ contains
 
     !  Reactor vault wall and roof thicknesses are hardwired
 
-    call bldgs(idhe3,pfrmax,pfmmax,tfro,tfri,tfh,tfmtn,tfno,rsldo, &
+    call bldgs(pfrmax,pfmmax,tfro,tfri,tfh,tfmtn,tfno,rsldo, &
          rsldi,2.0D0*(hmax-ddwi-vgap2),whtshld,rdewex,helpow,iprint, &
          outfile,cryvol,volrci,rbvol,rmbvol,wsvol,elevol)
 
@@ -130,7 +131,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine bldgs(idhe3,pfr,pfm,tfro,tfri,tfh,tfm,tfno,shro,shri, &
+  subroutine bldgs(pfr,pfm,tfro,tfri,tfh,tfm,tfno,shro,shri, &
        shh,shm,crr,helpow,iprint,outfile,cryv,vrci,rbv,rmbv,wsv,elev)
 
     !+ad_name  bldgs
@@ -139,7 +140,6 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_auth  P C Shipe, ORNL
     !+ad_cont  N/A
-    !+ad_args  idhe3 : input integer : switch for D-He3 operation (1=yes)
     !+ad_args  pfr : input/output real :  largest PF coil outer radius, m
     !+ad_args  pfm : : input real : largest PF coil mass, tonne
     !+ad_args  tfro : input real : outer radius of TF coil, m
@@ -182,6 +182,7 @@ contains
     !+ad_hisc               building volume multipliers now input parameters
     !+ad_hist  11/04/13 PJK Comment change
     !+ad_hist  18/06/13 PJK Added back extra tfh term to hrbi
+    !+ad_hist  11/09/13 PJK Removed obsolete argument idhe3
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -191,7 +192,7 @@ contains
 
     !  Arguments
 
-    integer, intent(in) :: idhe3, iprint, outfile
+    integer, intent(in) :: iprint, outfile
     real(kind(1.0D0)), intent(inout) :: pfr
     real(kind(1.0D0)), intent(in) :: pfm,tfro,tfri,tfh,tfm,tfno,shro, &
          shri,shh,shm,crr,helpow

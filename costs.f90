@@ -493,6 +493,7 @@ contains
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
+    !+ad_hist  11/09/13 PJK Modified annfuel cost calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -681,12 +682,9 @@ contains
     !  Annual cost of fuel
 
     if (ife /= 1) then
-       if (idhe3 == 0) then
-          annfuel = ucfuel * pnetelmw/1200.0D0
-       else
-          annfuel = 1.0D-6 * fhe3 * wtgpd * 1.0D-3 * uche3 * &
-               365.0D0 * cfactr
-       end if
+       !  Sum D-T fuel cost and He3 fuel cost
+       annfuel = ucfuel * pnetelmw/1200.0D0 + &
+            1.0D-6 * fhe3 * wtgpd * 1.0D-3 * uche3 * 365.0D0 * cfactr
     else
        annfuel = 1.0D-6 * uctarg * reprat * 3.1536D7 * cfactr
     end if
@@ -2561,6 +2559,7 @@ contains
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  12/06/13 PJK Modified wtgpd calculation with new rndfuel definition
+    !+ad_hist  11/09/13 PJK Changed logic for detritiation costs
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2604,8 +2603,8 @@ contains
 
     cfrht = 1.0D5
 
-    !  No detritiation needed if D-He3 reaction
-    if (idhe3 == 0) then
+    !  No detritiation needed if purely D-He3 reaction
+    if (ftrit > 1.0D-3) then
        c2273 = 1.0D-6 * ucdtc * ( (cfrht/1.0D4)**0.6D0 * &
             (volrci + wsvol) )
     else

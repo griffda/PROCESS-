@@ -341,6 +341,7 @@ contains
     !+ad_hist  27/06/13 PJK Relabelled TOHS, FTOHS, DNBETA, GTSCALE, ICULBL, FBETATRY
     !+ad_hist  14/08/13 PJK/FW Added stellarator divertor variables
     !+ad_hist  15/08/13 PJK/FW Added stellarator VMEC filenames
+    !+ad_hist  11/09/13 PJK Removed FTR, IDHE3, IITER
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -520,22 +521,24 @@ contains
                'Fraction of Fe radn to Bremsstrahlung')
        case ('FDEUT')
           call parse_real_variable('FDEUT', fdeut, 0.0D0, 1.0D0, &
-               'Deuterium fuel fraction in D-He3 reaction')
+               'Deuterium fuel fraction')
        case ('FFWAL')
           call parse_real_variable('FFWAL', ffwal, 0.0D0, 10.0D0, &
                'Wall load fiddle factor')
        case ('FHE3')
           call parse_real_variable('FHE3', fhe3, 0.0D0, 1.0D0, &
-               'Helium-3 fuel fraction in D-He3 reaction')
+               'Helium-3 fuel fraction')
        case ('FRADMIN')
           call parse_real_variable('FRADMIN', fradmin, 0.0D0, 1.0D0, &
                'F-value for minimum radiation power')
        case ('FTR')
-          call parse_real_variable('FTR', ftr, 0.0D0, 1.0D0, &
-               'Tritium fraction of DT ions')
+          write(outfile,*) 'FTR is now obsolete -'
+          write(outfile,*) 'please remove it from the input file'
+          write(outfile,*) '(use FTRIT instead).'
+          obsolete_var = .true.
        case ('FTRIT')
           call parse_real_variable('FTRIT', ftrit, 0.0D0, 1.0D0, &
-               'Tritium fuel fraction in D-He3 reaction')
+               'Tritium fuel fraction')
        case ('FVSBRNNI')
           call parse_real_variable('FVSBRNNI', fvsbrnni, 0.0D0, 1.0D0, &
                'Non-inductive volt-sec burn fraction')
@@ -566,8 +569,10 @@ contains
           call parse_int_variable('IDENSL', idensl, 1, 7, &
                'Switch for enforced density limit')
        case ('IDHE3')
-          call parse_int_variable('IDHE3', idhe3, 0, 1, &
-               'Switch for main fusion reaction (1 = DHe3)')
+          write(outfile,*) 'IDHE3 is now obsolete -'
+          write(outfile,*) 'please remove it from the input file'
+          write(outfile,*) '(use fhe3 to adjust 3He fuel fraction).'
+          obsolete_var = .true.
        case ('IFALPHAP')
           call parse_int_variable('IFALPHAP', ifalphap, 0, 1, &
                'Switch for fast alpha pressure fit')
@@ -584,8 +589,9 @@ contains
           call parse_int_variable('IINVQD', iinvqd, 0, 1, &
                'Switch for inverse quadrature')
        case ('IITER')
-          call parse_int_variable('IITER', iiter, 0, 1, &
-               'Switch for ITER fusion power calcs')
+          write(outfile,*) 'IITER is now obsolete -'
+          write(outfile,*) 'please remove it from the input file.'
+          obsolete_var = .true.
        case ('IMPC')
           call parse_real_variable('IMPC', impc, 0.0D0, 10.0D0, &
                'Carbon impurity multiplier')
