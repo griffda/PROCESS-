@@ -1334,3 +1334,4 @@ end subroutine output
 ! SVN 185: Rationalised fusion power calculations to use Bosch-Hale parametrization
 !          in all cases; no iiter or idhe3 switches; D-He3 reaction is now controlled
 !          via fhe3 only
+! SVN 186: Removed obsolete fusion power routines; fixed problem with betaft if fdeut=1

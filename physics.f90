@@ -16,13 +16,10 @@ module physics_module
   !+ad_cont  culdlm
   !+ad_cont  palph
   !+ad_cont  palph2
-  !+ad_cont  ffus
+  !+ad_cont  bosch_hale
   !+ad_cont  pcond
   !+ad_cont  vscalc
   !+ad_cont  phyaux
-  !+ad_cont  svfdt_orig
-  !+ad_cont  svfdt
-  !+ad_cont  bosch_hale
   !+ad_cont  rether
   !+ad_cont  radpwr
   !+ad_cont  pohm
@@ -71,6 +68,7 @@ module physics_module
   !+ad_hist  03/01/13 PJK Removed denlim routine
   !+ad_hist  23/01/13 PJK Added stellarator_variables
   !+ad_hist  10/06/13 PJK Added tfcoil_variables
+  !+ad_hist  12/09/13 PJK Removed svfdt,svfdt_orig,fpower,ffus; added bosch_hale
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -372,8 +370,6 @@ contains
     pdivt = vol * (palp + pcharge + pinj + pohmpv - prad - plrad)
     pdivt = max(0.001D0, pdivt)
 
-    !  Old method (iculdl=0)
-    !call denlim(bt,rmajor,prn1,pdivt,q95,sarea,dnelimt)
     call culdlm(bt,idensl,pdivt,plascur,prn1,qstar,q95, &
          rmajor,rminor,sarea,zeff,dlimit,dnelimt)
 
@@ -1298,7 +1294,6 @@ contains
     !+ad_desc  This subroutine numerically integrates over plasma cross-section to
     !+ad_desc  find the fusion power and fast alpha pressure.
     !+ad_prob  None
-    !+ad_call  ffus
     !+ad_call  fint
     !+ad_call  quanc8
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
@@ -1478,275 +1473,6 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine fpower(ftrit,fdeut,fhe3,deni,ti,ireaction,palp,pcharge, &
-       pneut,sigmav,fusionrate,alpharate,protonrate)
-
-    !+ad_name  fpower
-    !+ad_summ  Fusion power calculation
-    !+ad_type  Subroutine
-    !+ad_auth  M R Gardner, UKAEA Fusion
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  pade
-    !+ad_args  ftrit   : input real :  tritium fuel fraction
-    !+ad_args  fdeut   : input real :  deuterium fuel fraction
-    !+ad_args  fhe3    : input real :  helium-3 fuel fraction
-    !+ad_args  deni    : input real :  fuel ion number density (/m3)
-    !+ad_args  ti      : input real :  ion temperature (keV)
-    !+ad_args  ireaction : input integer : flag for fusion reaction to use:
-    !+ad_argc                            1 : D-T reaction
-    !+ad_argc                            2 : D-3He reaction
-    !+ad_argc                            3 : D-D 1st reaction (50% probability)
-    !+ad_argc                            4 : D-D 2nd reaction (50% probability)
-    !+ad_args  palp    : output real : alpha particle fusion power (MW/m3)
-    !+ad_args  pcharge : output real : other charged particle fusion power (MW/m3)
-    !+ad_args  pneut   : output real : neutron fusion power (MW/m3)
-    !+ad_args  sigmav  : output real : fusion reaction rate (m3/s)
-    !+ad_args  fusionrate  : output real : fusion reaction rate (reactions/m3/s)
-    !+ad_args  alpharate  : output real : alpha particle production rate (/m3/s)
-    !+ad_args  protonrate  : output real : proton production rate (/m3/s)
-    !+ad_desc  This routine calculates the fusion power given to the alpha
-    !+ad_desc  particles, neutrons and charged particles generated in one of
-    !+ad_desc  four fusion processes, selected via <CODE>ireaction</CODE>.
-    !+ad_desc  <P>It is assumed that alphas and the protons give up all their energy
-    !+ad_desc  to the plasma.
-    !+ad_desc  The values are quoted to be valid for ti = 0 to 100 keV.
-    !+ad_prob  A comparison between D-T fusion power calculated elsewhere (when idhe3=0)
-    !+ad_prob  and the D-T fusion power calculated here indicates that this routine
-    !+ad_prob  produces values 30%-40% lower, possibly because it does not take into
-    !+ad_prob  account the density and temperature profile shapes.
-    !+ad_call  pade
-    !+ad_hist  20/04/95 MRG Initial version (ypbeta.f)
-    !+ad_hist  04/05/95 MRG Added N_LOCAL and T_LOCAL to arguments
-    !+ad_hist  05/12/95 PJK Modified for inclusion into PROCESS code
-    !+ad_hist  10/11/11 PJK Initial F90 version
-    !+ad_hist  16/10/12 PJK Removed pi from argument list
-    !+ad_hist  10/09/13 PJK Added fusionrate, alpharate, protonrate
-    !+ad_stat  Okay
-    !+ad_docs  'Fusion cross sections and thermonuclear reaction rates',
-    !+ad_docc  Asher Peres, J.Applied Physics 50(9), pp.5569-71, September 1979
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    integer, intent(in) :: ireaction
-    real(kind(1.0D0)), intent(in) :: ftrit,fdeut,fhe3,deni,ti
-    real(kind(1.0D0)), intent(out) :: palp,pcharge,pneut,sigmav
-    real(kind(1.0D0)), intent(out) :: alpharate,protonrate,fusionrate
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: const,eta,num1,num2,reactrt,theta,wht,etot
-    real(kind(1.0D0)) :: mc2,p1,p2,p3,p4,p5,p6,fuspow,ch2
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  const is the fine structure constant x pi
-
-    const = pi * 7.2974D-3
-
-    !  Check to see if ion temperature is zero
-
-    if (ti == 0.0D0) then
-       write(*,*) 'Error in routine FPOWER:'
-       write(*,*) 'Ion temperature is zero.'
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
-
-    !  Check to see if ion temperature exceeds 200 keV for D-3He option
-
-    if ((ti > 200.0D0).and.(ireaction == 2)) then
-       write(*,*) 'Error in routine FPOWER:'
-       write(*,*) 'Ion temperature has exceeded 200 keV.'
-       write(*,*) 'Reactivity D-3He equation is no longer valid.'
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
-
-    !  wht is the the probability weighting
-    !  etot is the total fusion energy produced (J)
-    !  ch2 is the product of the two reactant charges
-
-    select case (ireaction)
-
-    case (1)  !  D + T --> 4He + n reaction
-
-       num1 = fdeut*deni
-       num2 = ftrit*deni
-       ch2 = 1.0D0
-       wht = 1.0D0
-       etot = 17.58D6 * echarge
-       mc2 = 1124656.0D0
-       p1 = 9.494748D-10
-       p2 = 2.818421D-2
-       p3 = 6.166184D-2
-       p4 = 2.834474D-3
-       p5 = 8.955113D-3
-       p6 = -5.734052D-5
-
-    case (2)  !  D + 3He --> 4He + p reaction
-
-       num1 = fdeut*deni
-       num2 = fhe3*deni
-       ch2 = 2.0D0
-       wht = 1.0D0
-       etot = 18.34D6 * echarge
-       mc2 = 1124572.0D0
-       p1 = 5.817887D-10
-       p2 = 8.681070D-3
-       p3 = 1.010217D-3
-       p4 = -3.516677D-6
-       p5 = 3.671273D-4
-       p6 = 0.0D0
-
-    case (3)  !  D + D --> 3He + n reaction
-
-       num1 = fdeut*deni/2.0D0
-       num2 = num1
-       ch2 = 1.0D0
-       wht = 0.5D0
-       etot = 3.28D6 * echarge
-       mc2 = 937814.0D0
-       p1 = 5.397811D-12
-       p2 = 3.328985D-3
-       p3 = 2.948735D-3
-       p4 = 0.0D0
-       p5 = 0.0D0
-       p6 = 0.0D0
-
-    case (4)  !  D + D --> T + p reaction
-
-       num1 = fdeut*deni/2.0D0
-       num2 = num1
-       ch2 = 1.0D0
-       wht = 0.5D0
-       etot = 4.03D6 * echarge
-       mc2 = 937814.0D0
-       p1 = 5.988513D-12
-       p2 = 2.543079D-3
-       p3 = 2.216964D-3
-       p4 = 0.0D0
-       p5 = 0.0D0
-       p6 = 0.0D0
-
-    case default
-       write(*,*) 'Error in routine FPOWER:'
-       write(*,*) 'IREACTION is out of range, = ',ireaction
-       write(*,*) 'PROCESS stopping.'
-       stop
-
-    end select
-
-    theta = pade(ti,p2,p3,p4,p5,p6)
-
-    eta = (ch2**2 * const**2 * mc2 /(2.0D0*theta))**(0.333333333D0)
-
-    !  Reaction rate <sigma.v> (cm**3 / sec)
-
-    reactrt = p1 * theta * sqrt(eta/(mc2 * ti**3)) * exp(-3.0D0*eta)
-
-    !  Convert to m3/s
-
-    sigmav = reactrt * 1.0D-6
-
-    !  Total fusion power (MW/m3)
-
-    fuspow = 1.0D-12 * reactrt * etot * num1 * num2 * wht
-
-    !  Split this power into the various particle powers
-    !  and calculate particle production rates /m3 /second
-
-    select case (ireaction)
-
-    case (1)
-       palp = 0.2D0 * fuspow
-       pneut = 0.8D0 * fuspow
-       pcharge = 0.0D0
-       fusionrate = 1.0D6 * fuspow / etot
-       alpharate = fusionrate
-       protonrate = 0.0D0
-
-    case (2)
-       palp = 0.2D0 * fuspow
-       pneut = 0.0D0
-       pcharge = 0.8D0 * fuspow
-       fusionrate = 1.0D6 * fuspow / etot
-       alpharate = fusionrate
-       protonrate = fusionrate
-
-    case (3)
-       palp = 0.0D0
-       pneut = 0.75D0 * fuspow
-       pcharge = 0.25D0 * fuspow
-       fusionrate = 1.0D6 * fuspow / etot
-       alpharate = 0.0D0
-       protonrate = fusionrate
-
-    case (4)
-       palp = 0.0D0
-       pneut = 0.0D0
-       pcharge = 1.0D0 * fuspow
-       fusionrate = 1.0D6 * fuspow / etot
-       alpharate = 0.0D0
-       protonrate = fusionrate
-
-    end select
-
-  contains
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    function pade(t,p2,p3,p4,p5,p6)
-
-      !+ad_name  pade
-      !+ad_summ  Pade approximant used by routine FPOWER
-      !+ad_type  Function returning real
-      !+ad_auth  M R Gardner, UKAEA Fusion
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  t  : input real : local temperature (keV)
-      !+ad_args  p2 : input real : parameter
-      !+ad_args  p3 : input real : parameter
-      !+ad_args  p4 : input real : parameter
-      !+ad_args  p5 : input real : parameter
-      !+ad_args  p6 : input real : parameter
-      !+ad_desc  This routine calculates the Pade approximant used by
-      !+ad_desc  routine <A HREF="fpower.html">FPOWER</A> in calculating
-      !+ad_desc  the fusion reaction rate.
-      !+ad_prob  None
-      !+ad_call  None
-      !+ad_hist  05/12/95 PJK Modified for inclusion into PROCESS code
-      !+ad_hist  10/11/11 PJK Initial F90 version
-      !+ad_stat  Okay
-      !+ad_docs  'Fusion cross sections and thermonuclear reaction rates',
-      !+ad_docc  Asher Peres, J.Applied Physics 50(9), pp.5569-71, September 1979
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-      !
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      implicit none
-
-      real(kind(1.0D0)) :: pade
-
-      !  Arguments
-
-      real(kind(1.0D0)), intent(in) :: t,p2,p3,p4,p5,p6
-
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      pade = t / ( 1.0D0 - t*( p2 + t*(p4 + t*p6) ) / &
-           ( 1.0D0 + t*(p3 + t*p5) ) )
-
-    end function pade
-
-  end subroutine fpower
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   subroutine palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
        ifalphap,pcharge,pcoef,pneut,te,ti,vol,alpmw,betaft,palp,palpi, &
        palpe,pfuscmw,powfmw)
@@ -1788,6 +1514,7 @@ contains
     !+ad_hist  22/05/06 PJK Added modified fit to fast alpha pressure
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  11/09/13 PJK Removed obsolete argument ftr
+    !+ad_hist  12/09/13 PJK Fixed betaft calculation when fdeut=1
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1839,80 +1566,137 @@ contains
 
     !  Determine average fast alpha density
 
-    betath = 4.021D-22 * pcoef * (dene*te + dnitot*ti)/(bt**2 + bp**2)
+    if (fdeut < 1.0D0) then
 
-    if (ifalphap == 0) then
-       !  N Uckan fast alpha scaling
-       fact = min( 0.30D0, &
-            0.29D0*(deni/dene)**2 * ( pcoef*(te+ti)/20.0D0 - 0.37D0) )
-    else
-       !  Modified scaling, D J Ward, April 2006
-       fact = min( 0.30D0, &
-            0.26D0*(deni/dene)**2 * &
-            sqrt( max(0.0D0, (pcoef*(te+ti)/20.0D0 - 0.65D0)) ) )
+       betath = 4.021D-22 * pcoef * (dene*te + dnitot*ti)/(bt**2 + bp**2)
+
+       if (ifalphap == 0) then
+          !  N Uckan fast alpha scaling
+          fact = min( 0.30D0, &
+               0.29D0*(deni/dene)**2 * ( pcoef*(te+ti)/20.0D0 - 0.37D0) )
+       else
+          !  Modified scaling, D J Ward, April 2006
+          fact = min( 0.30D0, &
+               0.26D0*(deni/dene)**2 * &
+               sqrt( max(0.0D0, (pcoef*(te+ti)/20.0D0 - 0.65D0)) ) )
+       end if
+
+       fact = max(fact,0.0D0)
+       fact2 = palp/(palp-(palpnb/vol))
+       betaft = betath * fact*fact2
+
+    else  !  negligible alpha production, palp = palpnb = 0
+       betaft = 0.0D0
     end if
-
-    fact = max(fact,0.0D0)
-    !if (ftr < 1.0D-3) fact = 0.0D0  !  suspect this is an obsolescent line for H plasmas
-
-    fact2 = palp/(palp-(palpnb/vol))
-    betaft = betath * fact*fact2
 
   end subroutine palph2
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine ffus(t,alphan,alphat,ft,sigv)
+  function bosch_hale(t,reaction)
 
-    !+ad_name  ffus
-    !+ad_summ  D-T fusion reaction rate
-    !+ad_type  Subroutine
+    !+ad_name  bosch_hale
+    !+ad_summ  Routine to calculate the fusion reaction rate
+    !+ad_type  Function returning real
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_args  alphan : input real :  density profile index
-    !+ad_args  alphat : input real :  temperature profile index
-    !+ad_args  t      : input real :  weighted ion temperature (keV)
-    !+ad_args  ft     : output real : ?
-    !+ad_args  sigv   : output real : fusion reaction rate
-    !+ad_desc  This subroutine calculates the D-T fusion reaction rate using
-    !+ad_desc  an analytical formula derived for ITER. The fit is not expected
-    !+ad_desc  to be good unless <CODE>alphan=0.5</CODE> and <CODE>alphat=1.0</CODE>.
+    !+ad_args  t : input real : Maxwellian density-weighted ion temperature (keV)
+    !+ad_args  reaction : input integer : flag for fusion reaction to use:
+    !+ad_argc                            1 : D-T reaction
+    !+ad_argc                            2 : D-3He reaction
+    !+ad_argc                            3 : D-D 1st reaction (50% probability)
+    !+ad_argc                            4 : D-D 2nd reaction (50% probability)
+    !+ad_desc  This routine calculates the volumetric fusion reaction rate
+    !+ad_desc  <I>&lt;sigma v&gt;</I> in m3/s for one of four nuclear reactions,
+    !+ad_desc  using the Bosch-Hale parametrization.
+    !+ad_desc  <P>The valid range of the fit is 0.2 keV < t < 100 keV
     !+ad_prob  None
     !+ad_call  None
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  08/01/13 PJK Modified comments
+    !+ad_hist  11/09/13 PJK Initial version
     !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  Bosch and Hale, Nuclear Fusion 32 (1992) 611-631
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
+    real(kind(1.0D0)) :: bosch_hale
+
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: alphan, alphat, t
-    real(kind(1.0D0)), intent(out) :: ft, sigv
+    real(kind(1.0D0)), intent(in) :: t
+    integer, intent(in) :: reaction
 
     !  Local variables
 
-    real(kind(1.0D0)) :: c1, c2, y
+    integer, parameter :: DT=1, DHE3=2, DD1=3, DD2=4
+    real(kind(1.0D0)) :: theta1, theta, xi
+    real(kind(1.0D0)), dimension(4) :: bg, mrc2
+    real(kind(1.0D0)), dimension(4,7) :: cc
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    c1 = -0.395D0 + 1.128D0*alphan + 3.777D0*alphat - &
-         1.022D0*alphat*alphan
+    !  Gamov constant, BG
 
-    c2 = 0.009D0 - 0.023D0*alphan - 0.385D0*alphat + &
-         0.15D0*alphan*alphat
+    bg(DT)   = 34.3827D0  !  D + T --> 4He + n reaction
+    bg(DHE3) = 68.7508D0  !  D + 3He --> 4He + p reaction
+    bg(DD1)  = 31.3970D0  !  D + D --> 3He + n reaction
+    bg(DD2)  = 31.3970D0  !  D + D --> T + p reaction
 
-    ft = c1 * t**c2
+    !  Reduced mass of the particles, keV
 
-    y = log(t)
-    sigv = 0.977D-22 * &
-         exp(0.0382D0*y**3 - 1.007D0*y**2 + 6.398D0*y - 9.75D0)
+    mrc2(DT)   = 1.124656D6
+    mrc2(DHE3) = 1.124572D6
+    mrc2(DD1)  = 0.937814D6
+    mrc2(DD2)  = 0.937814D6
 
-  end subroutine ffus
+    !  Parametrization coefficients
+
+    cc(DT,1) =  1.17302D-9
+    cc(DT,2) =  1.51361D-2
+    cc(DT,3) =  7.51886D-2
+    cc(DT,4) =  4.60643D-3
+    cc(DT,5) =  1.35000D-2
+    cc(DT,6) = -1.06750D-4
+    cc(DT,7) =  1.36600D-5
+
+    cc(DHE3,1) =  5.51036D-10
+    cc(DHE3,2) =  6.41918D-3
+    cc(DHE3,3) = -2.02896D-3
+    cc(DHE3,4) = -1.91080D-5
+    cc(DHE3,5) =  1.35776D-4
+    cc(DHE3,6) =  0.00000D0
+    cc(DHE3,7) =  0.00000D0
+
+    cc(DD1,1) =  5.43360D-12
+    cc(DD1,2) =  5.85778D-3
+    cc(DD1,3) =  7.68222D-3
+    cc(DD1,4) =  0.00000D0
+    cc(DD1,5) = -2.96400D-6
+    cc(DD1,6) =  0.00000D0
+    cc(DD1,7) =  0.00000D0
+
+    cc(DD2,1) =  5.65718D-12
+    cc(DD2,2) =  3.41267D-3
+    cc(DD2,3) =  1.99167D-3
+    cc(DD2,4) =  0.00000D0
+    cc(DD2,5) =  1.05060D-5
+    cc(DD2,6) =  0.00000D0
+    cc(DD2,7) =  0.00000D0
+
+    theta1 = t*(cc(reaction,2) + t*(cc(reaction,4) + t*cc(reaction,6))) / &
+         (1.0D0 + t*(cc(reaction,3) + t*(cc(reaction,5) + t*cc(reaction,7))))
+    theta = t/(1.0D0 - theta1)
+
+    xi = ((bg(reaction)**2)/(4.0D0*theta))**0.3333333333D0
+
+    !  Volumetric reaction rate <sigma v> (m3/s)
+
+    bosch_hale = 1.0D-6 * cc(reaction,1) * theta * &
+         sqrt( xi/(mrc2(reaction)*t**3) ) * exp(-3.0D0*xi)
+
+  end function bosch_hale
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2676,274 +2460,6 @@ contains
     qfuel = rndfuel/burnup
 
   end subroutine phyaux
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  function svfdt_orig(t)
-
-    !+ad_name  svfdt_orig
-    !+ad_summ  Routine to calculate the D-T reaction rate
-    !+ad_type  Function returning real
-    !+ad_auth  Ronald L. Miller, LANL
-    !+ad_auth  J. Galambos, ORNL (fits by L Hivley)
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  t : input real :  temperature (keV)
-    !+ad_desc  This routine calculates the D-T reaction rate in m3/s.
-    !+ad_desc  The range of the fit is 0 < t(keV) < 80
-    !+ad_desc  <P>
-    !+ad_desc  Copyright, 1987, the Regents of the University of California.
-    !+ad_desc  This software was produced under a U.S. Government contract
-    !+ad_desc  (W-7405-ENG-36) by the Los Alamos National Laboratory, which
-    !+ad_desc  is operated by the University of California for the U.S.
-    !+ad_desc  Department of Energy.  The U.S. Government is licensed to use,
-    !+ad_desc  reproduce, and distribute the software.  Permission is granted
-    !+ad_desc  to the public to copy and use this software without charge,
-    !+ad_desc  provided that this notice and any statement of authorship are
-    !+ad_desc  reproduced on all copies.  Neither the Government nor the
-    !+ad_desc  University makes any warranty, express or implied, or assumes
-    !+ad_desc  any liability or responsibility for the use of this software.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  25/07/11 PJK Changed name to SVFDT_ORIG; superseded by
-    !+ad_hisc               new routine <A HREF="svfdt.html">svfdt</A>.
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  Jarmie, Brown, &amp; Hardekopf, Phys Rev C 29, 2031 (1984)
-    !+ad_docc                      and erratum Phys Rev C 33,  385 (1986)
-    !+ad_docs  Hivley, Nuclear Fusion 17 (1977) 873
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    real(kind(1.0D0)) :: svfdt_orig
-
-    !  Arguments
-
-    real(kind(1.0D0)), intent(in) :: t
-
-    !  Local variables
-
-    integer :: j
-    real(kind(1.0D0)) :: dummy, sdtjbh, ss, tau, z
-    real(kind(1.0D0)), dimension(7)  :: acoef
-    real(kind(1.0D0)), dimension(12) :: tn
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    tn(1)  =  0.115919516928D2
-    tn(2)  =  0.171469900884D1
-    tn(3)  = -0.192406821958D2
-    tn(4)  =  0.101380998163D3
-    tn(5)  = -0.276406974777D3
-    tn(6)  =  0.462387793663D3
-    tn(7)  = -0.495796101221D3
-    tn(8)  =  0.346206957555D3
-    tn(9)  = -0.155600394210D3
-    tn(10) =  0.431789037054D2
-    tn(11) = -0.671263871904D1
-    tn(12) =  0.446674956199D0
-
-    acoef(1) = -21.377692D0
-    acoef(2) = -25.204054D0
-    acoef(3) = -0.071013427D0
-    acoef(4) = 1.9375451D-4
-    acoef(5) = 4.9246592D-6
-    acoef(6) = -3.9836572D-8
-    acoef(7) = 0.2935D0
-
-    if (t <= 20.0D0) then  !  Jarmie, Brown and Hardekopf method
-
-       z = t**0.33333333333333D0
-       ss = 0.0D0
-       do j = 1,12
-          ss = ss+tn(j)*z**(j-1)
-       end do
-       tau = 19.983D0/z
-
-       sdtjbh = 5.967D-22*ss*tau**2*exp(-tau)*(1.0D0+5.0D0/(12.0D0*tau))
-       svfdt_orig = sdtjbh
-
-    else  !  Hivley fit
-
-       dummy = acoef(1)/t**acoef(7) + acoef(2) + acoef(3)*t + &
-            acoef(4)*t**2 + acoef(5)*t**3 + acoef(6)*t**4
-       svfdt_orig = 1.0D-6 * exp(dummy)
-
-    end if
-
-  end function svfdt_orig
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  function svfdt(t)
-
-    !+ad_name  svfdt
-    !+ad_summ  Routine to calculate the D-T reaction rate
-    !+ad_type  Function returning real
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  t : input real :  Maxwellian density-weighted ion temperature (keV)
-    !+ad_desc  This routine calculates the D-T reaction rate in m3/s.
-    !+ad_desc  The range of the fit is 0.2 < t(keV) < 100
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  25/07/11 PJK Changed name to SVFDT_ORIG; superseded by
-    !+ad_hisc               new routine <A HREF="svfdt.html">svfdt</A>.
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  Bosch and Hale, Nuclear Fusion 32 (1992) 611-631
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    real(kind(1.0D0)) :: svfdt
-
-    !  Arguments
-
-    real(kind(1.0D0)), intent(in) :: t
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: bg, mrc2, theta1, theta, xi
-    real(kind(1.0D0)), dimension(7) :: acoef
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    bg = 34.3827D0
-    mrc2 = 1.124656D6
-
-    acoef(1) =  1.17302D-9
-    acoef(2) =  1.51361D-2
-    acoef(3) =  7.51886D-2
-    acoef(4) =  4.60643D-3
-    acoef(5) =  1.35000D-2
-    acoef(6) = -1.06750D-4
-    acoef(7) =  1.36600D-5
-
-    theta1 = t*(acoef(2) + t*(acoef(4) + t*acoef(6))) / &
-         (1.0D0 + t*(acoef(3) + t*(acoef(5) + t*acoef(7))))
-    theta = t/(1.0D0 - theta1)
-
-    xi = ((bg**2)/(4.0D0*theta))**0.3333333333D0
-
-    svfdt = 1.0D-6 * acoef(1)*theta*sqrt(xi/(mrc2*t**3)) * &
-         exp(-3.0D0 * xi)
-
-  end function svfdt
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  function bosch_hale(t,reaction)
-
-    !+ad_name  bosch_hale
-    !+ad_summ  Routine to calculate the fusion reaction rate
-    !+ad_type  Function returning real
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  t : input real : Maxwellian density-weighted ion temperature (keV)
-    !+ad_args  reaction : input integer : flag for fusion reaction to use:
-    !+ad_argc                            1 : D-T reaction
-    !+ad_argc                            2 : D-3He reaction
-    !+ad_argc                            3 : D-D 1st reaction (50% probability)
-    !+ad_argc                            4 : D-D 2nd reaction (50% probability)
-    !+ad_desc  This routine calculates the volumetric fusion reaction rate
-    !+ad_desc  <I>&lt;sigma v&gt;</I> in m3/s for one of four nuclear reactions,
-    !+ad_desc  using the Bosch-Hale parametrization.
-    !+ad_desc  <P>The valid range of the fit is 0.2 keV < t < 100 keV
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  11/09/13 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  Bosch and Hale, Nuclear Fusion 32 (1992) 611-631
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    real(kind(1.0D0)) :: bosch_hale
-
-    !  Arguments
-
-    real(kind(1.0D0)), intent(in) :: t
-    integer, intent(in) :: reaction
-
-    !  Local variables
-
-    integer, parameter :: DT=1, DHE3=2, DD1=3, DD2=4
-    real(kind(1.0D0)) :: theta1, theta, xi
-    real(kind(1.0D0)), dimension(4) :: bg, mrc2
-    real(kind(1.0D0)), dimension(4,7) :: cc
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Gamov constant, BG
-
-    bg(DT)   = 34.3827D0  !  D + T --> 4He + n reaction
-    bg(DHE3) = 68.7508D0  !  D + 3He --> 4He + p reaction
-    bg(DD1)  = 31.3970D0  !  D + D --> 3He + n reaction
-    bg(DD2)  = 31.3970D0  !  D + D --> T + p reaction
-
-    !  Reduced mass of the particles, keV
-
-    mrc2(DT)   = 1.124656D6
-    mrc2(DHE3) = 1.124572D6
-    mrc2(DD1)  = 0.937814D6
-    mrc2(DD2)  = 0.937814D6
-
-    !  Parametrization coefficients
-
-    cc(DT,1) =  1.17302D-9
-    cc(DT,2) =  1.51361D-2
-    cc(DT,3) =  7.51886D-2
-    cc(DT,4) =  4.60643D-3
-    cc(DT,5) =  1.35000D-2
-    cc(DT,6) = -1.06750D-4
-    cc(DT,7) =  1.36600D-5
-
-    cc(DHE3,1) =  5.51036D-10
-    cc(DHE3,2) =  6.41918D-3
-    cc(DHE3,3) = -2.02896D-3
-    cc(DHE3,4) = -1.91080D-5
-    cc(DHE3,5) =  1.35776D-4
-    cc(DHE3,6) =  0.00000D0
-    cc(DHE3,7) =  0.00000D0
-
-    cc(DD1,1) =  5.43360D-12
-    cc(DD1,2) =  5.85778D-3
-    cc(DD1,3) =  7.68222D-3
-    cc(DD1,4) =  0.00000D0
-    cc(DD1,5) = -2.96400D-6
-    cc(DD1,6) =  0.00000D0
-    cc(DD1,7) =  0.00000D0
-
-    cc(DD2,1) =  5.65718D-12
-    cc(DD2,2) =  3.41267D-3
-    cc(DD2,3) =  1.99167D-3
-    cc(DD2,4) =  0.00000D0
-    cc(DD2,5) =  1.05060D-5
-    cc(DD2,6) =  0.00000D0
-    cc(DD2,7) =  0.00000D0
-
-    theta1 = t*(cc(reaction,2) + t*(cc(reaction,4) + t*cc(reaction,6))) / &
-         (1.0D0 + t*(cc(reaction,3) + t*(cc(reaction,5) + t*cc(reaction,7))))
-    theta = t/(1.0D0 - theta1)
-
-    xi = ((bg(reaction)**2)/(4.0D0*theta))**0.3333333333D0
-
-    !  Volumetric reaction rate <sigma v> (m3/s)
-
-    bosch_hale = 1.0D-6 * cc(reaction,1) * theta * &
-         sqrt( xi/(mrc2(reaction)*t**3) ) * exp(-3.0D0*xi)
-
-  end function bosch_hale
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3783,10 +3299,11 @@ contains
       !+ad_desc  This routine calculates the alpha power from
       !+ad_desc  beam-background fusion.
       !+ad_prob  None
-      !+ad_call  svfdt
+      !+ad_call  bosch_hale
       !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
       !+ad_hist  05/12/95 PJK Moved ealpha to argument list
       !+ad_hist  10/11/11 PJK Initial F90 version
+      !+ad_hist  12/09/13 PJK Replaced svfdt usage with bosch_hale
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
@@ -3798,19 +3315,17 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)) ealphadt,nblk,nbm,sigv,svdt,ti,vol
+      real(kind(1.0D0)), intent(in) :: ealphadt,nblk,nbm,sigv,svdt,ti,vol
 
       !  Local variables
 
-      real(kind(1.0D0)) :: ans, ratio
+      real(kind(1.0D0)) :: ratio
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       ratio = svdt / bosch_hale(ti,1)
 
-      ans = echarge/1000.0D0 * nbm * nblk * sigv * ealphadt * vol * ratio
-
-      palphabm = ans
+      palphabm = echarge/1000.0D0 * nbm * nblk * sigv * ealphadt * vol * ratio
 
     end function palphabm
 
