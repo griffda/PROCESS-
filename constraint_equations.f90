@@ -70,6 +70,8 @@ subroutine constraints(m,cc)
   !+ad_hisc               dign range
   !+ad_hist  18/06/13 PJK Removed dign from power balance equations
   !+ad_hist  27/06/13 PJK Removed Troyon as a beta limit descriptor
+  !+ad_hist  25/09/13 PJK Modified eqn.20 from port size limit to
+  !+ad_hisc               neutral beam tangency radius limit
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -222,9 +224,9 @@ subroutine constraints(m,cc)
         totmva = tfcpmw + tflegmw
         cc(i) = 1.0D0 - fmva * mvalim/totmva
 
-     case (20)  !  Equation for port size
+     case (20)  !  Equation for neutral beam tangency radius limit
 
-        cc(i) = 1.0D0 - prtszreq/(fportsz * prtsz)
+        cc(i) = 1.0D0 - rtanbeam/(fportsz * rtanmax)
 
      case (21)  !  Equation for minimum minor radius
 

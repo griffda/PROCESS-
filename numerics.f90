@@ -30,6 +30,7 @@ module numerics
   !+ad_hist  11/06/13 PJK Changed eqn 41 description
   !+ad_hist  19/06/13 PJK Changed eqn.23, var.28 descriptions
   !+ad_hist  27/06/13 PJK Changed eqn.24 description
+  !+ad_hist  25/09/13 PJK Changed eqn.20 description
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -278,8 +279,8 @@ module numerics
        'Divertor heat load limit         ', &
        !+ad_varc  <LI> (19) MVA limit
        'MVA limit                        ', &
-       !+ad_varc  <LI> (20) Port size constraint
-       'Port size constraint             ', &
+       !+ad_varc  <LI> (20) Neutral beam tangency radius limit (NBI)
+       'Beam tangency radius limit       ', &
        !+ad_varc  <LI> (21) Plasma minor radius limit
        'Plasma minor radius limit        ', &
        !+ad_varc  <LI> (22) Divertor collisionality limit

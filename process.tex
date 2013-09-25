@@ -563,7 +563,7 @@ no. & description                                         & type & \texttt{ixc} 
 17  & stellarator radial build (STELLARATOR)              & C    & \textbf{61} \\
 18  & divertor heat load limit                            & L    & \textbf{27} \\
 19  & MVA limit                                           & L    & \textbf{30} \\
-20  & port size limit                                     & L    & \textbf{33},31,3,13 \\
+20  & neutral beam tangency radius limit (NBI)            & L    & \textbf{33},31,3,13 \\
 21  & minor radius limit                                  & L    & \textbf{32} \\
 22  & divertor collisionality limit                       & L    & \textbf{34},43 \\
 23  & UNUSED                                              &      & \\
@@ -693,7 +693,7 @@ no. & variable name     & description                                   & eqn & 
 30  & \texttt{fmva}     & f-value for MVA limit equation                & 19  & \texttt{0.010D0} & \texttt{1.000D0} \\
 31  & \texttt{gapomin}  & minimum gap between outboard vacuum vessel and TF coil &     & \texttt{0.001D0} & \texttt{10.00D0} \\
 32  & \texttt{frminor}  & f-value for minor radius limit equation       & 21  & \texttt{0.001D0} & \texttt{1.000D0} \\
-33  & \texttt{fportsz}  & f-value for port size limit equation          & 20  & \texttt{0.010D0} & \texttt{1.000D0} \\
+33  & \texttt{fportsz}  & f-value for beam tangency radius limit equation & 20  & \texttt{0.010D0} & \texttt{1.000D0} \\
 34  & \texttt{fdivcol}  & f-value for divertor collisionality limit equation & 22  & \texttt{0.001D0} & \texttt{1.000D0} \\
 35  & \texttt{fpeakb}   & f-value for peak toroidal field limit equation & 25  & \texttt{0.001D0} & \texttt{1.000D0} \\
 36  & \texttt{fbetatry} & f-value for beta limit equation               & 24  & \texttt{0.001D0} & \texttt{1.000D0} \\
@@ -1815,11 +1815,7 @@ different radius, which create a D-shaped profile. Because of the finite
 number of TF coils used in a tokamak (typically around 20), the toroidal field
 has a ripple introduced into it, the amplitude of which can be limited to a
 few percent by the code by adjusting the outboard gap thickness (labelled
-\texttt{gapsto} in Figures~\ref{fig:build_d} and~\ref{fig:build_e}).  Ports
-are often necessary for auxiliary power systems etc., and the gaps between
-adjacent TF coils can be made large enough to accommodate such equipment,
-using constraint equation no.\ 20 with iteration variable no.\ 33
-(\texttt{fportsz}).
+\texttt{gapsto} in Figures~\ref{fig:build_d} and~\ref{fig:build_e}).
 
 The following options are available within the superconducting TF coil model
 (\texttt{itfsup = 1}).
@@ -2067,6 +2063,27 @@ In addition to current drive, some auxiliary power can be used purely to heat
 the plasma. The value of input parameter \texttt{pheat} determines the amount
 of auxiliary \textit{heating}\/ power (in Watts) to be applied to the
 plasma. This variable may be used as an iteration variable (no.\ 11).
+
+\subsubsection{Neutral beam access}
+
+If present, a neutral beam injection system needs sufficient space between the
+TF coils to be able to intercept the plasma tangentially. The major radius
+\texttt{rtanbeam} at which the centreline of the beam is tangential to the
+toroidal direction is user-defined using input parameter \texttt{frbeam},
+which is the ratio of \texttt{rtanbeam} to the plasma major radius
+\texttt{rmajor}. The maximum possible tangency radius \texttt{rtanmax} is
+determined by the geometry of the TF coils --- see Figure~\ref{fig:portsize},
+and this can be enforced using constraint equation no.\ 20 with iteration
+variable no.\ 33 (\texttt{fportsz}). The thickness of the beam duct walls may
+be set using input parameter \texttt{nbshield}.
+
+\begin{figure}[tbph]
+\epsfig{file=portsize.eps,width=160mm}
+\caption[portsize] {\label{fig:portsize}
+  \textit{Top-down schematic view of the neutral beam access geometry. The beam
+    with the maximum possible tangency radius is shown here.}
+}
+\end{figure}
 
 \subsubsection{Ignited plasma}
 \label{sec:ignited}

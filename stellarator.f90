@@ -567,6 +567,7 @@ contains
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  15/05/13 PJK Swapped build order of vacuum vessel and gap
     !+ad_hist  12/08/13 PJK/FW Better approximation for fwarea
+    !+ad_hist  25/09/13 PJK Removed port size output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -695,13 +696,6 @@ contains
 
     radius = radius + tfthko
     call obuild(outfile,'TF coil outboard leg',tfthko,radius)
-
-    !  Port size information
-
-    call osubhd(outfile,'Port Size Information :')
-    call ovarre(outfile,'Port width (m)','(prtsz)',prtsz)
-    call ovarre(outfile,'Port requirement for beams (m)','(prtszreq)', &
-         prtszreq)
 
   end subroutine stbild
 
@@ -917,6 +911,7 @@ contains
     !+ad_hist  31/10/12 PJK Added stellarator_variables
     !+ad_hist  23/01/13 PJK Added comment about ignited plasma
     !+ad_hist  11/09/13 PJK Changed ftr to ftritbm
+    !+ad_hist  25/09/13 PJK Added nbshield, rtanbeam, rtanmax outputs
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1031,8 +1026,13 @@ contains
             fpion)
        call ovarre(outfile,'Neutral beam shine-through','(fshine)', &
             fshine)
+       call ovarre(outfile,'Beam duct shielding thickness (m)','(nbshield)',nbshield)
        call ovarre(outfile,'R injection tangent / R-major','(frbeam)', &
             frbeam)
+       call ovarre(outfile,'Beam centreline tangency radius (m)','(rtanbeam)', &
+            rtanbeam)
+       call ovarre(outfile,'Maximum possible tangency radius (m)','(rtanmax)', &
+            rtanmax)
        call ovarre(outfile,'Beam decay lengths to centre','(taubeam)', &
             taubeam)
     end if

@@ -76,6 +76,7 @@ contains
     !+ad_hist  16/10/12 PJK Added current_drive_variables
     !+ad_hist  23/01/13 PJK Added comment about ignited plasma
     !+ad_hist  11/09/13 PJK Corrected error in NBI calls; ftr replaced by ftritbm
+    !+ad_hist  25/09/13 PJK Added nbshield, rtanbeam, rtanmax outputs
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -318,7 +319,12 @@ contains
        call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam)
        call ovarre(outfile,'Fraction of beam energy to ions','(fpion)',fpion)
        call ovarre(outfile,'Neutral beam shine-through','(fshine)',fshine)
+       call ovarre(outfile,'Beam duct shielding thickness (m)','(nbshield)',nbshield)
        call ovarre(outfile,'R injection tangent / R-major','(frbeam)',frbeam)
+       call ovarre(outfile,'Beam centreline tangency radius (m)','(rtanbeam)', &
+            rtanbeam)
+       call ovarre(outfile,'Maximum possible tangency radius (m)','(rtanmax)', &
+            rtanmax)
        call ovarre(outfile,'Beam decay lengths to centre','(taubeam)',taubeam)
     end if
 

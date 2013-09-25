@@ -584,6 +584,7 @@ module current_drive_variables
   !+ad_hist  16/10/12 PJK Initial version of module
   !+ad_hist  08/01/13 PJK Modified irfcd comments
   !+ad_hist  14/01/13 PJK Corrected some more comments; removed echpwr0
+  !+ad_hist  25/09/13 PJK Added rtanbeam, rtanmax, nbshield
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -643,6 +644,8 @@ module current_drive_variables
   !+ad_varc         <LI> = 0 turned off;
   !+ad_varc         <LI> = 1 turned on</UL>
   integer :: irfcd = 1
+  !+ad_vars  nbshield /0.1/ : neutral beam duct shielding thickness (m)
+  real(kind(1.0D0)) :: nbshield = 0.1D0
   !+ad_vars  pheat /0.0/ : heating power not used for current drive (W)
   !+ad_varc                (iteration variable 11)
   real(kind(1.0D0)) :: pheat = 0.0D0
@@ -663,6 +666,10 @@ module current_drive_variables
   real(kind(1.0D0)) :: pwplh = 0.0D0
   !+ad_vars  pwpnb : neutral beam wall plug power (W)
   real(kind(1.0D0)) :: pwpnb = 0.0D0
+  !+ad_vars  rtanbeam : neutral beam centreline tangency radius (m)
+  real(kind(1.0D0)) :: rtanbeam = 0.0D0
+  !+ad_vars  rtanmax : maximum tangency radius for centreline of beam (m)
+  real(kind(1.0D0)) :: rtanmax = 0.0D0
   !+ad_vars  taubeam : neutral beam e-decay lengths to plasma centre
   real(kind(1.0D0)) :: taubeam = 0.0D0
   !+ad_vars  tbeamin /3.0/ : permitted neutral beam e-decay lengths to plasma centre
@@ -2088,6 +2095,7 @@ module build_variables
   !+ad_hist  15/05/13 PJK Relabelled gapds, gapomin, gapsto, vgap2; added blnktth
   !+ad_hist  22/05/13 PJK Added blanket subcomponent thicknesses
   !+ad_hist  05/06/13 PJK Modified shldtth comment
+  !+ad_hist  25/09/13 PJK Removed prtsz, prtszreq
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2196,10 +2204,6 @@ module build_variables
   !+ad_vars  ohcth /0.63/ : OH coil thickness (m)
   !+ad_varc                 (iteration variable 16)
   real(kind(1.0D0)) :: ohcth = 0.63D0
-  !+ad_vars  prtsz : port size - width (m)
-  real(kind(1.0D0)) :: prtsz = 0.0D0
-  !+ad_vars  prtszreq : port size required for beam access (m)
-  real(kind(1.0D0)) :: prtszreq = 0.0D0
   !+ad_vars  rbld : sum of thicknesses to the major radius (m)
   real(kind(1.0D0)) :: rbld = 0.0D0
   !+ad_vars  rinboard /0.651/ : plasma inboard radius (m)
@@ -2631,6 +2635,7 @@ module constraint_variables
   !+ad_hist  31/10/12 PJK Initial version of module
   !+ad_hist  19/06/13 PJK Removed fjtfc
   !+ad_hist  27/06/13 PJK Relabelled ftohs, tohsmn, fbetatry
+  !+ad_hist  25/09/13 PJK Changed fportsz description
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2713,7 +2718,7 @@ module constraint_variables
   !+ad_vars  fpnetel /1.0/ : f value for net electric power
   !+ad_varc                  (constraint equation 16, iteration variable 25)
   real(kind(1.0D0)) :: fpnetel = 1.0D0
-  !+ad_vars  fportsz /1.0/ : f-value for port size
+  !+ad_vars  fportsz /1.0/ : f-value for neutral beam tangency radius limit
   !+ad_varc                  (constraint equation 20, iteration variable 33)
   real(kind(1.0D0)) :: fportsz = 1.0D0
   !+ad_vars  fptemp /1.0/ : f-value for peak centrepost temperature

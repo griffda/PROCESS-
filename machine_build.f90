@@ -89,6 +89,7 @@ contains
     !+ad_hist  22/05/13 PJK Introduced fwareaib, fwareaob; added blanket thickness
     !+ad_hisc               calculations
     !+ad_hist  05/06/13 PJK shldtth now calculated if blktmodel>0
+    !+ad_hist  25/09/13 PJK Removed port size output
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -393,13 +394,6 @@ contains
 	
     end if
 
-    !  Port size information
-
-    call osubhd(outfile,'Port Size Information :')
-    call ovarre(outfile,'Port width (m)','(prtsz)',prtsz)
-    call ovarre(outfile,'Port requirement for beams (m)','(prtszreq)', &
-         prtszreq)
-
   end subroutine radialb
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -627,21 +621,24 @@ contains
     !+ad_summ  Port size calculation
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  M D Kovari, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
-    !+ad_desc  This subroutine finds the required distance between the TF legs
+    !+ad_desc  This subroutine finds the maximum possible tangency radius
     !+ad_desc  for adequate beam access.
     !+ad_desc  <P>The outputs from the routine are
-    !+ad_desc  <UL> <P><LI>prtsz : available port size (m)
-    !+ad_desc       <P><LI>prtszreq : required port size (m) </UL>
+    !+ad_desc  <UL> <P><LI>rtanbeam : Beam tangency radius (m)
+    !+ad_desc       <P><LI>rtanmax : Maximum possible tangency radius (m) </UL>
     !+ad_prob  None
     !+ad_hist  27/07/11 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  16/10/12 PJK Added current_drive_variables
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
+    !+ad_hist  08/04/13 MDK Recalculated the geometry, and expressed in terms of
+    !+ad_hist               tangency radius
     !+ad_stat  Okay
-    !+ad_docs  None
+    !+ad_docs  A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -651,49 +648,52 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: rtan,tfoll,tfolw,rl1,ang1,ang2,ang3, &
-         ps1,rl2,ang4,rl3,ang5,ang6,ang7,ang8,ps2
+    real(kind(1.0D0)) :: a,b,c,d,e,f,g,h
+    real(kind(1.0D0)) :: alpha,eps,theta,phi,omega
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Beam tangency radius (m)
 
-    rtan = frbeam * rmajor
+    rtanbeam = frbeam * rmajor
 
-    !  Assume the outboard TF leg has a width / depth ratio of 1 / 2
-    !  Depth and width calculated from the cross-sectional area
+    !  Toroidal angle between adjacent TF coils
 
-    tfoll = 1.414D0 * sqrt(arealeg)  !  depth (m)
-    tfolw = sqrt(arealeg) / 1.414D0  !  width (m)
+    omega = twopi/tfno
 
-    !  beamwd = beam width (m)
-    !  rtot   = radius to the centre of the outboard TF leg (m)
-    !  tfno   = number of TF coils
+    !  Half-width of TF coil in toroidal direction (m)
 
-    rl1 = sqrt ( (rtot - 0.5D0*tfthko)**2 + tfolw**2 )
-    ang1 = asin ( (rtan + 0.5D0*beamwd) / rl1 )
-    ang2 = 0.5D0*pi - pi/tfno + asin( tfolw/(2.0D0*rl1) )
-    ang3 = ang1 + ang2 - 0.5D0*pi
-    ps1 = beamwd / cos(ang3)
+    a = (rtfcin + 0.5D0*tfcth)*sin(0.5D0*omega)
 
-    if (rtan > (0.5D0*beamwd)) then
-       rl2 = rtot - 0.5D0*tfthko + tfoll
-       ang4 = atan(tfolw/rl2)
-       rl3 = rl2/cos(ang4)
-       ang5 = acos ( (rl3**2 + tfoll**2 - rl1**2)/(2.0D0*rl3*tfoll))
-       ang6 = asin( (rtan - 0.5D0*beamwd) / rl3 )
-       ang7 = ang6 - ang5
-       ang8 = 0.5D0*pi - ang3
-       ps2 = tfoll * sin(ang7) / sin(ang8)
-    else
-       ps2 = 0.0D0
-    end if
+    !  Radial thickness of outboard TF coil leg (m)
 
-    prtszreq = ps1 + ps2
+    b = tfthko
 
-    !  Port size available
+    !  Width of beam duct, including shielding on both sides (m)
 
-    prtsz = ( 2.0D0 * pi * (rtot - 0.5D0*tfthko) - tfno* tfolw ) / tfno
+    c = beamwd + 2.0D0*nbshield
+
+    !  Major radius of inner edge of outboard TF coil (m)
+
+    d = rtot - 0.5D0*b
+
+    !  Refer to figure in User Guide for remaining geometric calculations
+
+    e = sqrt( a*a + (d+b)*(d+b) )
+    f = sqrt( a*a + d*d )
+
+    theta = omega - atan(a/d)
+    phi = theta - asin(a/e)
+
+    g = sqrt( e*e + f*f - 2.0D0*e*f*cos(phi) )  !  cosine rule
+    h = sqrt( g*g - c*c )
+
+    alpha = atan(h/c)
+    eps = asin(e*sin(phi)/g) - alpha  !  from sine rule
+
+    !  Maximum tangency radius for centreline of beam (m)
+
+    rtanmax = f*cos(eps) - 0.5D0*c
 
   end subroutine portsz
 

@@ -1335,3 +1335,4 @@ end subroutine output
 !          in all cases; no iiter or idhe3 switches; D-He3 reaction is now controlled
 !          via fhe3 only
 ! SVN 186: Removed obsolete fusion power routines; fixed problem with betaft if fdeut=1
+! SVN 187: New port size (beam tangency radius) calculation

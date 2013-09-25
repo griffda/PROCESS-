@@ -342,6 +342,7 @@ contains
     !+ad_hist  14/08/13 PJK/FW Added stellarator divertor variables
     !+ad_hist  15/08/13 PJK/FW Added stellarator VMEC filenames
     !+ad_hist  11/09/13 PJK Removed FTR, IDHE3, IITER
+    !+ad_hist  25/09/13 PJK Added NBSHIELD
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -879,6 +880,9 @@ contains
        case ('IRFCD')
           call parse_int_variable('IRFCD', irfcd, 0, 1, &
                'Switch for current drive calculation')
+       case ('NBSHIELD')
+          call parse_real_variable('NBSHIELD', nbshield, 0.01D0, 0.5D0, &
+               'Wall thickness of neutral beam duct (m)')
        case ('PHEAT')
           call parse_real_variable('PHEAT', pheat, 0.0D0, 1.0D9, &
                'Heating power not used for C.D. (W)')
@@ -4123,6 +4127,7 @@ contains
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  03/10/12 PJK Initial version
+    !+ad_hist  16/09/13 PJK Added 'Please check...' line
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -4135,6 +4140,9 @@ contains
     write(*,*) 'Error trapped...'
     write(*,*) 'Routine ',trim(error_routine),': ',trim(error_message)
     write(*,*) 'Error Code: ',error_code
+    write(*,*)
+    write(*,*) 'Please check the output file for further information.'
+    write(*,*)
 
     stop 1
 
