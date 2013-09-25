@@ -1336,3 +1336,4 @@ end subroutine output
 !          via fhe3 only
 ! SVN 186: Removed obsolete fusion power routines; fixed problem with betaft if fdeut=1
 ! SVN 187: New port size (beam tangency radius) calculation
+! SVN 188: Modified output formatting for reporting of arrays set in input file

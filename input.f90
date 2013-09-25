@@ -343,6 +343,7 @@ contains
     !+ad_hist  15/08/13 PJK/FW Added stellarator VMEC filenames
     !+ad_hist  11/09/13 PJK Removed FTR, IDHE3, IITER
     !+ad_hist  25/09/13 PJK Added NBSHIELD
+    !+ad_hist  25/09/13 PJK Modified treatment for isumattf=2
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1204,8 +1205,7 @@ contains
           if (isumattf == 2) then
              write(outfile,*) 'ISUMATTF=2 is now obsolete -'
              write(outfile,*) 'please choose a different option.'
-             write(outfile,*) 'PROCESS stopping...'
-             stop
+             obsolete_var = .true.
           end if
        case ('ITFMOD')
           call parse_int_variable('ITFMOD', itfmod, 0, 1, &
@@ -2604,6 +2604,7 @@ contains
     !+ad_call  get_value_real
     !+ad_call  report_error
     !+ad_hist  03/10/12 PJK Initial version
+    !+ad_hist  25/09/13 PJK Slight output formatting change
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2641,8 +2642,8 @@ contains
 
        varval(isub1) = val
        if ((report_changes == 1).and.(varval(isub1) /= oldval)) then
-          write(outfile,10) trim(description),', &
-               ',trim(varnam),'(',isub1,') = ',varval(isub1)
+          write(outfile,10) trim(description),', ', &
+               trim(varnam),'(',isub1,') = ',varval(isub1)
        end if
 
     else
@@ -2658,8 +2659,8 @@ contains
           oldval = varval(isub1)
           varval(isub1) = val
           if ((report_changes == 1).and.(varval(isub1) /= oldval)) then
-             write(outfile,10) trim(description),', &
-                  ',trim(varnam),'(',isub1,') = ',varval(isub1)
+             write(outfile,10) trim(description),', ', &
+                  trim(varnam),'(',isub1,') = ',varval(isub1)
           end if
           isub1 = isub1 + 1
        end do
@@ -2697,6 +2698,7 @@ contains
     !+ad_call  report_error
     !+ad_hist  03/10/12 PJK Initial version
     !+ad_hist  25/06/13 PJK Modified format statement to help gfortran compilation
+    !+ad_hist  25/09/13 PJK Slight output formatting change
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2734,8 +2736,8 @@ contains
 
        varval(isub1) = val
        if ((report_changes == 1).and.(varval(isub1) /= oldval)) then
-          write(outfile,10) trim(description),', &
-               ',trim(varnam),'(',isub1,') = ',varval(isub1)
+          write(outfile,10) trim(description),', ', &
+               trim(varnam),'(',isub1,') = ',varval(isub1)
        end if
 
     else
@@ -2751,8 +2753,8 @@ contains
           oldval = varval(isub1)
           varval(isub1) = val
           if ((report_changes == 1).and.(varval(isub1) /= oldval)) then
-             write(outfile,10) trim(description),', &
-                  ',trim(varnam),'(',isub1,') = ',varval(isub1)
+             write(outfile,10) trim(description),', ', &
+                  trim(varnam),'(',isub1,') = ',varval(isub1)
           end if
           isub1 = isub1 + 1
        end do
