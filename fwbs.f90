@@ -75,6 +75,10 @@ module kit_blanket_model
   real(kind(1.0D0)) :: A_FW_IB_PPCS = 348.2D0  ! [m^2] IB first wall area
   real(kind(1.0D0)) :: A_FW_OB_PPCS = 905.6D0  ! [m^2] OB first wall area
   real(kind(1.0D0)) :: NWL_av_PPCS = 1.94D0    ! [MW/m^2] Average neutron wall load
+  real(kind(1.0D0)) :: NWL_av_IB_PPCS = 1.73D0 ! [MW/m^2] Average IB wall load
+  real(kind(1.0D0)) :: NWL_av_OB_PPCS = 1.92D0 ! [MW/m^2] Average OB wall load
+  real(kind(1.0D0)) :: NWL_max_IB_PPCS = 1.99D0 ! [MW/m^2] Maximum IB wall load
+  real(kind(1.0D0)) :: NWL_max_OB_PPCS = 2.41D0 ! [MW/m^2] Maximum OB wall load
   real(kind(1.0D0)) :: f_peak_PPCS = 1.21      ! [--] Neutron wall load peaking factor
   real(kind(1.0D0)) :: CF_bl_PPCS              ! [%] Blanket coverage factor (calculated)
   real(kind(1.0D0)) :: e_Li_PPCS = 30.0D0      ! [%] Li6 enrichment
@@ -520,11 +524,15 @@ contains
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  06/06/13 PJK Initial release
+    !+ad_hist  26/09/13 PJK/FF Refined model to take into account average/peak PPCS
+    !+ad_hisc               wall load scaling in inboard and outboard regions
     !+ad_stat  Okay
     !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
     !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
     !+ad_docc  Karlsruhe Institute of Technology, January 2013;
     !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !+ad_docs  WP13-SYS01-A-T02 Interim Review Meeting, 10.07.2013, F. Franza
+    !+ad_docc  (describes 26/09/2013 model refinement)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -546,11 +554,13 @@ contains
     real(kind(1.0D0)) :: P_BU_OB, P_BM_OB, P_BP_OB, P_VV_OB
     real(kind(1.0D0)) :: P_tot_IB, P_tot_OB, P_n_FW
 
-    real(kind(1.0D0)) :: nwl_ratio
+    real(kind(1.0D0)) :: nwl_ratio, nwl_IB_ratio_PPCS, nwl_OB_ratio_PPCS
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     nwl_ratio = NWL_av/NWL_av_PPCS
+    nwl_IB_ratio_PPCS = NWL_av_IB_PPCS / NWL_max_IB_PPCS
+    nwl_OB_ratio_PPCS = NWL_av_OB_PPCS / NWL_max_OB_PPCS
 
     !  Cross-sectional areas in the breeder unit (cm2)
 
@@ -573,43 +583,43 @@ contains
 
     !  Nuclear power in IB breeder pebbles
 
-    P_BU_breed_IB = 1.0D-6 * nwl_ratio * A_BU_breed_IB * &
+    P_BU_breed_IB = 1.0D-6 * nwl_ratio * nwl_IB_ratio_PPCS * A_BU_breed_IB * &
          lambda_q_BU_breed_IB * q_0_BU_breed_IB * &
          ( exp(-t_FW_IB/lambda_q_BU_breed_IB) - &
          exp(-(t_FW_IB+t_BU_IB)/lambda_q_BU_breed_IB) )
 
     !  Nuclear power in IB Be pebbles     
 
-    P_BU_Be_IB = 1.0D-6 * nwl_ratio * A_BU_Be_IB * &
+    P_BU_Be_IB = 1.0D-6 * nwl_ratio * nwl_IB_ratio_PPCS * A_BU_Be_IB * &
          lambda_q_BU_Be_IB * q_0_BU_Be_IB * &
          ( exp(-t_FW_IB/lambda_q_BU_Be_IB) - &
          exp(-(t_FW_IB+t_BU_IB)/lambda_q_BU_Be_IB) )
 
     !  Nuclear power in IB BU steels
 
-    P_BU_steels_IB = 1.0D-6 * nwl_ratio * A_BU_steels_IB * &
+    P_BU_steels_IB = 1.0D-6 * nwl_ratio * nwl_IB_ratio_PPCS * A_BU_steels_IB * &
          lambda_q_BU_steels_IB * q_0_BU_steels_IB * &
          (1.0D0-exp(-(t_FW_IB+t_BU_IB)/lambda_q_BU_steels_IB))
 
-    !  Total Nuclear power in IB BU
+    !  Total nuclear power in IB BU
 
     P_BU_IB = P_BU_breed_IB + P_BU_Be_IB + P_BU_steels_IB
 
     !  Nuclear power in IB BM
 
-    P_BM_IB = 1.0D-6 * A_bl_IB * &
+    P_BM_IB = 1.0D-6 * nwl_IB_ratio_PPCS * A_bl_IB * &
          lambda_q_BM_IB * q_BU_IB_end * &
          (1.0D0-exp(-t_BM_IB/lambda_q_BM_IB))
 
     !  Nuclear power in IB BP
 
-    P_BP_IB = 1.0D-6 * A_bl_IB * &
+    P_BP_IB = 1.0D-6 * nwl_IB_ratio_PPCS * A_bl_IB * &
          lambda_q_BP_IB * q_BM_IB_end * &
          (1.0D0-exp(-t_BP_IB/lambda_q_BP_IB))
 
     !  Nuclear power in IB VV
 
-    P_VV_IB = 1.0D-6 * A_VV_IB * &
+    P_VV_IB = 1.0D-6 * nwl_IB_ratio_PPCS * A_VV_IB * &
          lambda_q_VV * q_BP_IB_end * &
          (1.0D0-exp(-t_VV_IB/lambda_q_VV))
 
@@ -617,21 +627,21 @@ contains
 
     !  Nuclear power in OB BU breeder pebbles
 
-    P_BU_breed_OB = 1.0D-6 * nwl_ratio * A_BU_breed_OB * &
+    P_BU_breed_OB = 1.0D-6 * nwl_ratio * nwl_OB_ratio_PPCS * A_BU_breed_OB * &
          lambda_q_BU_breed_OB * q_0_BU_breed_OB * &
          ( exp(-t_FW_OB/lambda_q_BU_breed_OB) - &
          exp(-(t_FW_OB+t_BU_OB)/lambda_q_BU_breed_OB) )
 
     !  Nuclear power in OB BU Be pebbles
 
-    P_BU_Be_OB = 1.0D-6 * nwl_ratio * A_BU_Be_OB * &
+    P_BU_Be_OB = 1.0D-6 * nwl_ratio * nwl_OB_ratio_PPCS * A_BU_Be_OB * &
          lambda_q_BU_Be_OB * q_0_BU_Be_OB * &
          ( exp(-t_FW_OB/lambda_q_BU_Be_OB) - &
          exp(-(t_FW_OB+t_BU_OB)/lambda_q_BU_Be_OB) )
 
     !  Nuclear power in OB BU steels
 
-    P_BU_steels_OB = 1.0D-6 * nwl_ratio * A_BU_steels_OB * &
+    P_BU_steels_OB = 1.0D-6 * nwl_ratio * nwl_OB_ratio_PPCS * A_BU_steels_OB * &
          lambda_q_BU_steels_OB * q_0_BU_steels_OB * &
          (1.0D0-exp(-(t_FW_OB+t_BU_OB)/lambda_q_BU_steels_OB))
 
@@ -641,19 +651,19 @@ contains
 
     !  Nuclear power in OB BM
 
-    P_BM_OB = 1.0D-6 * A_bl_OB * &
+    P_BM_OB = 1.0D-6 * nwl_OB_ratio_PPCS * A_bl_OB * &
          lambda_q_BM_OB * q_BU_OB_end * &
          (1.0D0-exp(-t_BM_OB/lambda_q_BM_OB))
 
     !  Nuclear power in OB BP
 
-    P_BP_OB = 1.0D-6 * A_bl_OB * &
+    P_BP_OB = 1.0D-6 * nwl_OB_ratio_PPCS * A_bl_OB * &
          lambda_q_BP_OB * q_BM_OB_end * &
          (1.0D0-exp(-t_BP_OB/lambda_q_BP_OB))
 
     !  Nuclear power in OB VV
 
-    P_VV_OB = 1.0D-6 * A_VV_OB * &
+    P_VV_OB = 1.0D-6 * nwl_OB_ratio_PPCS * A_VV_OB * &
          lambda_q_VV * q_BP_OB_end * &
          (1.0D0-exp(-t_VV_OB/lambda_q_VV))
 
@@ -702,11 +712,14 @@ contains
     !+ad_call  tbr_breed
     !+ad_call  tbr_ports
     !+ad_hist  06/06/13 PJK Initial release
+    !+ad_hist  26/09/13 PJK/FF Refinement to take into account IB/OB contributions
     !+ad_stat  Okay
     !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
     !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
     !+ad_docc  Karlsruhe Institute of Technology, January 2013;
     !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
+    !+ad_docs  WP13-SYS01-A-T02 Interim Review Meeting, 10.07.2013, F. Franza
+    !+ad_docc  (describes 26/09/2013 model refinement)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -718,14 +731,20 @@ contains
 
     !  Local variables
 
+    real(kind(1.0D0)) :: wib, wob
+    real(kind(1.0D0)), parameter :: wib_PPCS = 0.28D0, wob_PPCS = 0.72D0
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    wib = A_FW_IB / (A_FW_IB + A_FW_OB)
+    wob = A_FW_OB / (A_FW_IB + A_FW_OB)
 
     tbr = TBR_PPCS * CF_bl/CF_bl_PPCS * &
          TBR_breed(e_Li, breeder)/TBR_breed(e_Li_PPCS, breeder) * &
-         (1.0D0-exp(-t_BU_IB/lambda_q_BU_breed_IB)) / &
-         (1.0D0-exp(-t_BU_IB_PPCS/lambda_q_BU_breed_IB)) * &
-         (1.0D0-exp(-t_BU_OB/lambda_q_BU_breed_OB)) / &
-         (1.0D0-exp(-t_BU_OB_PPCS/lambda_q_BU_breed_OB)) * &
+         ( 1.0D0 - exp( -(wib*t_BU_IB + wob*t_BU_OB) / &
+         (wib*lambda_q_BU_breed_IB + wob*lambda_q_BU_breed_OB)) ) / &
+         ( 1.0D0 - exp( -(wib_PPCS*t_BU_IB_PPCS + wob_PPCS*t_BU_OB_PPCS) / &
+         (wib_PPCS*lambda_q_BU_breed_IB + wob_PPCS*lambda_q_BU_breed_OB)) ) * &
          TBR_ports(n_ports_div, n_ports_H_CD_IB, n_ports_H_CD_OB, H_CD_ports)
 
     !  Total tritium production rate (grammes/day)
