@@ -1338,3 +1338,4 @@ end subroutine output
 ! SVN 187: New port size (beam tangency radius) calculation
 ! SVN 188: Modified output formatting for reporting of arrays set in input file
 ! SVN 189: Incorporated Fabrizio Franza's suggested revisions to the KIT blanket model
+! SVN 190: Added Psep/R limit equation (no.56)

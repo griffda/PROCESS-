@@ -31,6 +31,8 @@ module numerics
   !+ad_hist  19/06/13 PJK Changed eqn.23, var.28 descriptions
   !+ad_hist  27/06/13 PJK Changed eqn.24 description
   !+ad_hist  25/09/13 PJK Changed eqn.20 description
+  !+ad_hist  30/09/13 PJK New constraint eqn.56 added; new iteration variable
+  !+ad_hisc               97 added
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -42,10 +44,10 @@ module numerics
 
   public
 
-  !+ad_vars  ipnvars /96/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 96
-  !+ad_vars  ipeqns /55/ FIX : number of constraint equations available
-  integer, parameter :: ipeqns  = 55
+  !+ad_vars  ipnvars /97/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 97
+  !+ad_vars  ipeqns /56/ FIX : number of constraint equations available
+  integer, parameter :: ipeqns  = 56
   !+ad_vars  ipnfoms /14/ FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 14
 
@@ -133,7 +135,8 @@ module numerics
        0,  &  !  52
        0,  &  !  53
        0,  &  !  54
-       0   &  !  55
+       0,  &  !  55
+       0   &  !  56
        /)
 
   !+ad_vars  ixc(ipnvars) /10,12,3,36,48,49,50,51,53,54,5,7,19,1,2,6,13,16,29,56,57,58,59,60,4/ :
@@ -235,7 +238,8 @@ module numerics
        0,  &  !  93
        0,  &  !  94
        0,  &  !  95
-       0   &  !  96
+       0,  &  !  96
+       0   &  !  97
        /)
 
   !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
@@ -350,8 +354,10 @@ module numerics
        'Neutron fluence on TF coil limit ', &
        !+ad_varc  <LI> (54) Peak TF coil nuclear heating limit
        'Peak TF coil nucl. heating limit ', &
-       !+ad_varc  <LI> (55) Vacuum vessel helium concentration limit</UL>
-       'Vessel helium concentration limit'  &
+       !+ad_varc  <LI> (55) Vacuum vessel helium concentration limit
+       'Vessel helium concentration limit', &
+       !+ad_varc  <LI> (56) Pseparatrix/Rmajor limit</UL>
+       'Psep / R limit'  &
        /)
 
   !+ad_vars  lablmm(ipnfoms) : labels describing figures of merit:<UL>
@@ -579,8 +585,10 @@ module numerics
        'shldoth ', &
        !+ad_varc  <LI> (95) fptfnuc (f-value for equation 54)
        'fptfnuc ', &
-       !+ad_varc  <LI> (96) fvvhe (f-value for equation 55)</UL>
-       'fvvhe   '  &
+       !+ad_varc  <LI> (96) fvvhe (f-value for equation 55)
+       'fvvhe   ', &
+       !+ad_varc  <LI> (97) fpsepr (f-value for equation 56)</UL>
+       'fpsepr  '  &
        /)
 
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
@@ -692,7 +700,8 @@ module numerics
        0.001D0, &  !  93
        0.001D0, &  !  94
        0.001D0, &  !  95
-       0.001D0  &  !  96
+       0.001D0, &  !  96
+       0.001D0  &  !  97
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -793,7 +802,8 @@ module numerics
        10.00D0, &  !  93
        10.00D0, &  !  94
        1.000D0, &  !  95
-       1.000D0  &  !  96
+       1.000D0, &  !  96
+       1.000D0  &  !  97
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

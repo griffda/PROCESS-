@@ -596,11 +596,12 @@ J_{\mbox{\scriptsize protection}}$ limit (SCTF)               & L    & \textbf{5
 48  & poloidal beta limit                                 & L    & \textbf{79},2,3,18 \\
 49  & reversal parameter $< 0$ (RFP)                      & L    & \textbf{80},78,3,1 \\
 50  & IFE repetition rate limit (IFE)                     & L    & \textbf{86} \\
-51  & Startup volt-seconds consistency (PULSE)            & C    & \textbf{16},29,3,1 \\
-52  & Minimum tritium breeding ratio limit                & L    & \textbf{89},90,91 \\
-53  & Peak neutron fluence on TF coil limit               & L    & \textbf{92},93,94 \\
-54  & Peak TF coil nuclear heating limit                  & L    & \textbf{95},93,94 \\
-55  & Final He concentration in vacuum vessel limit       & L    & \textbf{96},93,94 \\
+51  & startup volt-seconds consistency (PULSE)            & C    & \textbf{16},29,3,1 \\
+52  & minimum tritium breeding ratio limit                & L    & \textbf{89},90,91 \\
+53  & peak neutron fluence on TF coil limit               & L    & \textbf{92},93,94 \\
+54  & peak TF coil nuclear heating limit                  & L    & \textbf{95},93,94 \\
+55  & final He concentration in vacuum vessel limit       & L    & \textbf{96},93,94 \\
+56  & $P_{\mbox{\scriptsize separatrix}}/R_{\mbox{\scriptsize major}}$ limit & L    & \textbf{97},1,3 \\
 \hline
 \end{tabular}
 \end{center}
@@ -775,11 +776,13 @@ no. & variable name     & description                                           
 94  & \texttt{shldoth}  & outboard shield thickness                               &     & \texttt{0.001D0} & \texttt{10.00D0} \\
 95  & \texttt{fptfnuc}  & f-value for TF coil nuclear heating limit equation      & 54  & \texttt{0.001D0} & \texttt{1.000D0} \\
 96  & \texttt{fvvhe}    & f-value for vessel He concentration limit equation      & 55  & \texttt{0.001D0} & \texttt{1.000D0} \\
+97  & \texttt{fpsepr}   & f-value for $P_{\mbox{\scriptsize separatrix}}/R_{\mbox{\scriptsize major}}$ limit equation & 56
+  & \texttt{0.001D0} & \texttt{1.000D0} \\
 \hline
 \end{tabular}
 \end{center}
 \caption[TABLE_VARS2] {\label{tab:itvars2}
-  \textit{Iteration variables 51 to 96 present in \process. The f-values correspond to the
+  \textit{Iteration variables 51 to 97 present in \process. The f-values correspond to the
     given constraint equations (see Table~\ref{tab:eqns}). The other iteration
     variables are shown in Table~\ref{tab:itvars1}.}
 }

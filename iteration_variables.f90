@@ -49,6 +49,7 @@ subroutine loadxc
   !+ad_hisc               fflutf (92), shldith (93), shldoth (94),
   !+ad_hisc               fptfnuc (95), fvvhe (96)
   !+ad_hist  19/06/13 PJK fjtfc (var.28) is obsolete - added error trap
+  !+ad_hist  30/09/13 PJK Added fpsepr (97)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -228,6 +229,7 @@ subroutine loadxc
      case (94) ; xcm(i) = shldoth
      case (95) ; xcm(i) = fptfnuc
      case (96) ; xcm(i) = fvvhe
+     case (97) ; xcm(i) = fpsepr
 
      case default
         write(*,*) 'Error in routine LOADXC :'
@@ -320,6 +322,7 @@ subroutine convxc(xc,nn)
   !+ad_hisc               fflutf (92), shldith (93), shldoth (94),
   !+ad_hisc               fptfnuc (95), fvvhe (96)
   !+ad_hist  19/06/13 PJK fjtfc (var.28) is obsolete - added error trap
+  !+ad_hist  30/09/13 PJK Added fpsepr (97)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -455,6 +458,7 @@ subroutine convxc(xc,nn)
      case (94) ; shldoth  = xc(i)/scale(i)
      case (95) ; fptfnuc  = xc(i)/scale(i)
      case (96) ; fvvhe    = xc(i)/scale(i)
+     case (97) ; fpsepr   = xc(i)/scale(i)
 
      case default
         write(*,*) 'Error in routine CONVXC :'

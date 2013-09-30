@@ -2636,6 +2636,7 @@ module constraint_variables
   !+ad_hist  19/06/13 PJK Removed fjtfc
   !+ad_hist  27/06/13 PJK Relabelled ftohs, tohsmn, fbetatry
   !+ad_hist  25/09/13 PJK Changed fportsz description
+  !+ad_hist  30/09/13 PJK Added pseprmax, fpsepr
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2721,6 +2722,9 @@ module constraint_variables
   !+ad_vars  fportsz /1.0/ : f-value for neutral beam tangency radius limit
   !+ad_varc                  (constraint equation 20, iteration variable 33)
   real(kind(1.0D0)) :: fportsz = 1.0D0
+  !+ad_vars  fpsepr /1.0/ : f-value for maximum Psep/R limit
+  !+ad_varc                 (constraint equation 56, iteration variable 97)
+  real(kind(1.0D0)) :: fpsepr = 1.0D0
   !+ad_vars  fptemp /1.0/ : f-value for peak centrepost temperature
   !+ad_varc                 (constraint equation 44, iteration variable 68)
   real(kind(1.0D0)) :: fptemp = 1.0D0
@@ -2795,6 +2799,10 @@ module constraint_variables
   !+ad_vars  powfmax /1000.0/ : maximum fusion power (MW)
   !+ad_varc                     (constraint equation 9)
   real(kind(1.0D0)) :: powfmax = 1.0D3
+  !+ad_vars  pseprmax /25.0D0/ : maximum ratio of power crossing the separatrix to
+  !+ad_varc                      plasma major radius (Psep/R) (MW/m)
+  !+ad_varc                      (constraint equation 56)
+  real(kind(1.0D0)) :: pseprmax = 25.0D0
   !+ad_vars  ptfnucmax /1.0D-3/ : maximum nuclear heating in TF coil (MW/m3)
   !+ad_varc                       (constraint equation 54)
   real(kind(1.0D0)) :: ptfnucmax = 1.0D-3

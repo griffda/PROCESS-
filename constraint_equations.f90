@@ -72,6 +72,7 @@ subroutine constraints(m,cc)
   !+ad_hist  27/06/13 PJK Removed Troyon as a beta limit descriptor
   !+ad_hist  25/09/13 PJK Modified eqn.20 from port size limit to
   !+ad_hisc               neutral beam tangency radius limit
+  !+ad_hist  30/09/13 PJK Added new eqn 56
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -469,6 +470,10 @@ subroutine constraints(m,cc)
      case (55)  !  Equation for final helium concentration in vacuum vessel limit
 
         cc(i) = 1.0D0 - fvvhe * vvhealw/vvhemax
+
+     case (56)  !  Equation for power through separatrix / major radius limit
+
+        cc(i) = 1.0D0 - fpsepr * pseprmax / (pdivt/rmajor)
 
      case default
 

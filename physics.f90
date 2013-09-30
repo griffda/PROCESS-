@@ -3921,6 +3921,7 @@ contains
     !+ad_hist  10/06/13 PJK Added ISHAPE=2 and other outputs
     !+ad_hist  12/06/13 PJK Added plasma energy and other outputs
     !+ad_hist  12/08/13 PJK Removed some stellarator-irrelevant outputs
+    !+ad_hist  30/09/13 PJK Added Psep/R output line
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4146,6 +4147,7 @@ contains
        call ocmmnt(outfile,'  (Injected power only used for start-up phase)')
     end if
     call ovarre(outfile,'Power to divertor (MW)','(pdivt)',pdivt)
+    call ovarre(outfile,'Psep / R ratio (MW/m)','',pdivt/rmajor)
 
     if (istell == 0) then
        call osubhd(outfile,'H-mode Power Threshold Scalings :')

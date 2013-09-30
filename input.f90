@@ -344,6 +344,7 @@ contains
     !+ad_hist  11/09/13 PJK Removed FTR, IDHE3, IITER
     !+ad_hist  25/09/13 PJK Added NBSHIELD
     !+ad_hist  25/09/13 PJK Modified treatment for isumattf=2
+    !+ad_hist  30/09/13 PJK Added PSEPRMAX, FPSEPR
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -749,6 +750,9 @@ contains
        case ('FPORTSZ')
           call parse_real_variable('FPORTSZ', fportsz, 0.001D0, 10.0D0, &
                'F-value for port size')
+       case ('FPSEPR')
+          call parse_real_variable('FPSEPR', fpsepr, 0.001D0, 10.0D0, &
+               'F-value for Psep/R limit')
        case ('FPTEMP')
           call parse_real_variable('FPTEMP', fptemp, 0.001D0, 10.0D0, &
                'F-value for peak centrepost temperature')
@@ -821,6 +825,9 @@ contains
        case ('POWFMAX')
           call parse_real_variable('POWFMAX', powfmax, 1.0D0, 1.0D4, &
                'Maximum fusion power (MW)')
+       case ('PSEPRMAX')
+          call parse_real_variable('PSEPRMAX', pseprmax, 1.0D0, 50.0D0, &
+               'Maximum Psep/R ratio (MW/m)')
        case ('PTFNUCMAX')
           call parse_real_variable('PTFNUCMAX', ptfnucmax, 1.0D-6, 1.0D0, &
                'Maximum TF coil nuclear heating (MW/m3)')
