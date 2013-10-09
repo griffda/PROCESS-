@@ -343,8 +343,9 @@ contains
     !+ad_hist  15/08/13 PJK/FW Added stellarator VMEC filenames
     !+ad_hist  11/09/13 PJK Removed FTR, IDHE3, IITER
     !+ad_hist  25/09/13 PJK Added NBSHIELD
-    !+ad_hist  25/09/13 PJK Modified treatment for isumattf=2
+    !+ad_hist  25/09/13 PJK Modified treatment for ISUMATTF=2
     !+ad_hist  30/09/13 PJK Added PSEPRMAX, FPSEPR
+    !+ad_hist  08/10/13 PJK Reassigned ISUMATTF=2; added FHTS
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1203,6 +1204,9 @@ contains
        case ('FCUTFSU')
           call parse_real_variable('FCUTFSU', fcutfsu, 0.0D0, 1.0D0, &
                'Cu fraction of SCTF cable conductor')
+       case ('FHTS')
+          call parse_real_variable('FHTS', fhts, 0.01D0, 1.0D0, &
+               'Technology adjustment factor for Bi-2212 HTS')
        case ('FRHOCP')
           call parse_real_variable('FRHOCP', frhocp, 0.01D0, 5.0D0, &
                'TART c/p resistivity enhancement factor')
@@ -1210,9 +1214,9 @@ contains
           call parse_int_variable('ISUMATTF', isumattf, 1, 4, &
                'TF coil superconductor material')
           if (isumattf == 2) then
-             write(outfile,*) 'ISUMATTF=2 is now obsolete -'
-             write(outfile,*) 'please choose a different option.'
-             obsolete_var = .true.
+             write(outfile,*) 'Warning if you are using an old input file:'
+             write(outfile,*) 'ISUMATTF=2 usage has changed -'
+             write(outfile,*) 'please check validity!'
           end if
        case ('ITFMOD')
           call parse_int_variable('ITFMOD', itfmod, 0, 1, &

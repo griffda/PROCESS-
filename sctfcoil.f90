@@ -259,6 +259,7 @@ contains
     end if
 
     !  Winding pack current density (forced to be positive)
+    !  (takes into account the winding pack void fraction wpvf)
 
     jwptf = max(1.0D0, ritfc/(tfno*awptf*(1.0D0-wpvf)) )
 
@@ -1252,6 +1253,7 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  supercon
     !+ad_cont  itersc
+    !+ad_cont  bi2212
     !+ad_cont  protect
     !+ad_args  outfile : input integer : Fortran output unit identifier
     !+ad_args  iprint : input integer : Switch to write output to file (1=yes)
@@ -1264,6 +1266,7 @@ contains
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  29/10/12 PJK Moved routine and contents into sctfcoil.f90
     !+ad_hist  16/04/13 PJK Removed jcritsc from supercon argument list
+    !+ad_hist  08/10/13 PJK Added bi2212; removed obsolete ifail usage
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1278,7 +1281,6 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: aturn, tfes, vdump
-    integer :: ifail
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1294,17 +1296,9 @@ contains
     tfes = estotf * 1.0D9
     aturn = ritfc/(jwptf*tfno*turnstf)
 
-    ifail = 0
-    call supercon(acstf,aturn,bmaxtfrp,vftf,fcutfsu,cpttf,isumattf, &
-         strncon,tdmptf,tfes,tftmp,tmaxpro,bcritsc,tcritsc,iprint, &
-         outfile,jwdgpro,jwdgcrt,vdump,tmargtf,ifail)
-
-    if (ifail /= 0) then
-       write(*,*) 'Error in routine TFSPCALL:'
-       write(*,*) 'SUPERCON returns with value ',ifail
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
+    call supercon(acstf,aturn,bmaxtfrp,vftf,fcutfsu,cpttf,jwptf,isumattf, &
+         fhts,strncon,tdmptf,tfes,tftmp,tmaxpro,bcritsc,tcritsc,iprint, &
+         outfile,jwdgpro,jwdgcrt,vdump,tmargtf)
 
     !  Dump voltage in kV
 
@@ -1314,32 +1308,37 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,isumat, &
-         strain,tdump,tfes,the,tmax,bcritsc,tcritsc,iprint,outfile, &
-         jwdgpro,jwdgcrt,vd,tmarg,ifail)
+    subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,jwp,isumat,fhts, &
+         strain,tdump,tfes,thelium,tmax,bcritsc,tcritsc,iprint,outfile, &
+         jwdgpro,jwdgcrt,vd,tmarg)
 
       !+ad_name  supercon
       !+ad_summ  Routine to calculate the TF coil superconductor properties
       !+ad_type  Subroutine
       !+ad_auth  P J Knight, CCFE, Culham Science Centre
       !+ad_auth  J Galambos, ORNL
+      !+ad_auth  R Kemp, CCFE, Culham Science Centre
+      !+ad_auth  M Kovari, CCFE, Culham Science Centre
       !+ad_auth  J Miller, ORNL
       !+ad_cont  N/A
       !+ad_args  acs : input real : Cable space - inside area (m2)
-      !+ad_args  aturn : input real : Area per turn (i.e.  entire cable) (m2)
+      !+ad_args  aturn : input real : Area per turn (i.e. entire jacketed cable) (m2)
       !+ad_args  bmax : input real : Peak field at conductor (T)
       !+ad_args  fhe : input real : Fraction of cable space that is for He cooling
       !+ad_args  fcu : input real : Fraction of conductor that is copper
       !+ad_args  iop : input real : Operating current per turn (A)
+      !+ad_args  jwp : input real : Actual winding pack current density (A/m2)
       !+ad_args  isumat : input integer : Switch for conductor type:
       !+ad_argc                           1 = ITER Nb3Sn, standard parameters,
-      !+ad_argc                           2 = not used,
+      !+ad_argc                           2 = Bi-2212 High Temperature Superconductor,
       !+ad_argc                           3 = NbTi,
       !+ad_argc                           4 = ITER Nb3Sn, user-defined parameters
+      !+ad_args  fhts    : input real : Adjustment factor (<= 1) to account for strain,
+      !+ad_argc                         radiation damage, fatigue or AC losses
       !+ad_args  strain : input real : Strain on superconductor at operation conditions
       !+ad_args  tdump : input real : Dump time (sec)
       !+ad_args  tfes : input real : Energy stored in one TF coil (J)
-      !+ad_args  the : input real : He temperature at peak field point (K)
+      !+ad_args  thelium : input real : He temperature at peak field point (K)
       !+ad_args  tmax : input real : Max conductor temperature during quench (K)
       !+ad_args  bcritsc : input real : Critical field (T) (isumat=4 only)
       !+ad_args  tcritsc : input real : Critical temperature (K) (isumat=4 only)
@@ -1350,13 +1349,14 @@ contains
       !+ad_args  jwdgcrt : output real : Critical winding pack current density (A/m2)
       !+ad_args  vd : output real : Discharge voltage imposed on a TF coil (V)
       !+ad_args  tmarg : output real : Temperature margin (K)
-      !+ad_args  ifail : input/output integer : error flag (though never returns an error!)
       !+ad_desc  This routine calculates the superconductor properties for the TF coils.
-      !+ad_desc  Programmed by J. Galambos 1991, from algorithms provided by J. Miller.
-      !+ad_desc  <P>These are the ITER rules for Nb3Sn modelling. The routine calculates
-      !+ad_desc  the critical current density (winding pack) and also the protection
-      !+ad_desc  information (for a quench).
+      !+ad_desc  It was originally programmed by J. Galambos 1991, from algorithms provided
+      !+ad_desc  by J. Miller.
+      !+ad_desc  <P>The routine calculates the critical current density (winding pack)
+      !+ad_desc  and also the protection information (for a quench).
       !+ad_prob  None
+      !+ad_call  bi2212
+      !+ad_call  itersc
       !+ad_call  oblnkl
       !+ad_call  ocmmnt
       !+ad_call  oheadr
@@ -1371,6 +1371,7 @@ contains
       !+ad_hist  09/10/12 PJK Modified to use new process_output module
       !+ad_hist  16/04/13 PJK Removed jcrit_model, jcritsc arguments;
       !+ad_hisc               redefined isumat usage; modified itersc arguments
+      !+ad_hist  07/10/13 PJK Added Bi-2212 option; removed ifail
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
@@ -1381,15 +1382,14 @@ contains
       !  Arguments
 
       integer, intent(in) :: isumat, iprint, outfile
-      real(kind(1.0D0)), intent(in) :: acs, aturn, bmax, fhe, fcu, &
-           iop, strain, tdump, tfes, the, tmax, bcritsc, tcritsc
-      integer, intent(inout) :: ifail
+      real(kind(1.0D0)), intent(in) :: acs, aturn, bmax, fcu, fhe, fhts, &
+           iop, jwp, strain, tdump, tfes, thelium, tmax, bcritsc, tcritsc
       real(kind(1.0D0)), intent(out) :: jwdgpro, jwdgcrt, vd, tmarg
 
       !  Local variables
 
       real(kind(1.0D0)) :: bc20m,c0,fac1,fac2,fcond,icrit,iooic,jc, &
-           jwdgop,tbar,tc0m,tc1
+           jstrand,jwdgop,tbar,tc0m,tc1
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1401,15 +1401,13 @@ contains
 
       select case (isumat)
 
-      case (1)  !  ITER Nb3Sn critical surface parameterization
+      case (1)  !  ITER Nb3Sn critical surface parametrization
          bc20m = 32.97D0  !  previously 28.0D0 for old model
          tc0m = 16.06D0   !  previously 18.0D0 for old model
          !c0 = 1.315D10   !  obsolete
 
-      !case (2)  !  No longer used; values given are for ternary Nb3Sn
-      !   bc20m = 24.0D0
-      !   tc0m = 16.0D0
-      !   c0 = 2.225D10
+      case (2)  !  Bi-2212 high temperature superconductor parametrization
+	      continue  !  ...see below
 
       case (3)  !  NbTi data
          bc20m = 15.0D0
@@ -1429,46 +1427,41 @@ contains
 
       end select
 
-      !  Original model
-      !if (strain < 0.0D0) then
-      !   astrain = 900.0D0
-      !else
-      !   astrain = 1250.0D0
-      !end if
-      !fstrain = 1.0D0 - astrain * abs(strain)**1.7D0
-      !cstrain = c0 * sqrt(fstrain)
-
       !  Calculate critical current density and temperature
 
-      if (isumat /= 3) then  !  ITER Nb3Sn critical surface model
+      select case (isumat)
 
-         call itersc(the,bmax,strain,bc20m,tc0m,jc,tc1)
+      case (1,4)  !  ITER Nb3Sn critical surface model
 
-         !  Original model; previously jcrit_model = 0
-         !tc0 = tc0m * fstrain**(1.0D0/3.0D0)
-         !tc1 = tc0m * (1.0D0 - bmax/bc20m)
-         !bc20 = bc20m * fstrain
-         !tbar = the/tc0
-         !tbar = min(tbar,0.999D0)
-         !bc2 = bc20 * (1.0D0 - tbar**2) * &
-         !     ( 1.0D0 - 0.31D0*tbar**2 * (1.0D0 - 1.77D0*log(tbar)) )
-         !bbar = bmax/bc2
-         !bbar = min(bbar,0.999D0)
-         !jc = cstrain * (1.0D0 - tbar**2)**2 * (1.0D0 - bbar)**2 &
-         !     / (sqrt(bc2) * sqrt(bmax))
+         call itersc(thelium,bmax,strain,bc20m,tc0m,jc,tc1)
 
-      else  !  NbTi model
+      case (2)  !  Bi-2212 high temperature superconductor model
+
+         !  Current density in a strand of Bi-2212 conductor
+         !  N.B. the parametrization for jc assumes a particular strand composition
+         !  that does not require a user-defined copper fraction, so this is
+         !  irrelevant in this model
+
+         jstrand = jwp * acs*(1.0D0-fhe)/aturn
+
+         call bi2212(bmax,jstrand,thelium,fhts,jc,tmarg)
+
+      case (3)  !  NbTi model
 
          tc1 = tc0m * (1.0D0 - bmax/bc20m)**0.59D0
          tc1 = max(tc1, 0.001D0)
-         tbar = max((1.0D0 - the/tc1), 0.001D0)
+         tbar = max((1.0D0 - thelium/tc1), 0.001D0)
          jc = c0 * (1.0D0 - bmax/bc20m) * tbar
 
-      end if
+      end select
 
       !  Critical current
 
-      icrit = jc * acs * (1.0D0 - fhe) * (1.0D0 - fcu)
+      if (isumat /= 2) then
+         icrit = jc * acs * (1.0D0 - fhe) * (1.0D0 - fcu)
+      else
+         icrit = jc * acs * (1.0D0 - fhe)  !  see comment above
+      end if
 
       !  Critical current density in winding pack
 
@@ -1482,17 +1475,19 @@ contains
 
       jwdgop = iop / aturn
 
-      !  Temperature margin
+      !  Temperature margin (already calculated in bi2212 for isumat=2)
 
-      fac1 = max( 0.01D0, (1.0D0 - iooic) )
-      fac2 = max( 0.01D0, (tc1-the) )
-      tmarg = fac1 * fac2
+      if (isumat /= 2) then
+         fac1 = max( 0.01D0, (1.0D0 - iooic) )
+         fac2 = max( 0.01D0, (tc1-thelium) )
+         tmarg = fac1 * fac2
+      end if
 
       !  Find the current density limited by the protection limit
+      !  (N.B. Unclear of this routine's relevance for Bi-2212 (isumat=2), due
+      !  to presence of fcu argument, which is not used for this model above)
 
-      call protect(iop,tfes,acs,aturn,tdump,fcond,fcu,the,tmax,jwdgpro,vd)
-
-      ifail = 0
+      call protect(iop,tfes,acs,aturn,tdump,fcond,fcu,thelium,tmax,jwdgpro,vd)
 
       if ((iprint == 0).or.(sect07 == 0)) return
 
@@ -1504,7 +1499,7 @@ contains
          call ocmmnt(outfile,'Superconductor used: Nb3Sn')
          call ocmmnt(outfile,'  (ITER Jcrit model, standard parameters)')
       case (2)
-         continue
+         call ocmmnt(outfile,'Superconductor used: Bi-2212 HTS')
       case (3)
          call ocmmnt(outfile,'Superconductor used: NbTi')
       case (4)
@@ -1516,15 +1511,17 @@ contains
 
       call oblnkl(outfile)
       call ovarre(outfile,'Peak field at conductor (T)','(bmax)',bmax)
-      call ovarre(outfile,'Helium temperature at peak field (K)','(the)',the)
+      call ovarre(outfile,'Helium temperature at peak field (K)','(thelium)',thelium)
       call ovarre(outfile,'Helium fraction inside cable space','(fhe)',fhe)
       call ovarre(outfile,'Copper fraction of conductor','(fcu)',fcu)
 
       call osubhd(outfile,'Critical Current Information :')
-      call ovarre(outfile,'Critical field at zero temp., strain (T)', &
-           '(bc20m)',bc20m)
-      call ovarre(outfile,'Critical temp. at zero field, strain (K)', &
-           '(tc0m)',tc0m)
+      if (isumat /= 2) then
+         call ovarre(outfile,'Critical field at zero temp., strain (T)', &
+              '(bc20m)',bc20m)
+         call ovarre(outfile,'Critical temp. at zero field, strain (K)', &
+              '(tc0m)',tc0m)
+      end if
       call ovarre(outfile,'Operating winding pack J (A/m2)','(jwdgop)',jwdgop)
       call ovarre(outfile,'Critical winding pack curr. density (A/m2)', &
            '(jwdgcrt)',jwdgcrt)
@@ -1545,15 +1542,15 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    subroutine itersc(the,bmax,strain,bctw,tco,jcrit,tcrit)
+    subroutine itersc(thelium,bmax,strain,bctw,tco,jcrit,tcrit)
 
       !+ad_name  itersc
       !+ad_summ  Implementation of ITER Nb3Sn critical surface implementation
-      !+ad_type  Function returning real
+      !+ad_type  Subroutine
       !+ad_auth  R Kemp, CCFE, Culham Science Centre
       !+ad_auth  P J Knight, CCFE, Culham Science Centre
       !+ad_cont  N/A
-      !+ad_args  the : input real : Coolant/SC temperature (K)
+      !+ad_args  thelium : input real : Coolant/SC temperature (K)
       !+ad_args  bmax : input real : Magnetic field at conductor (T)
       !+ad_args  strain : input real : Strain in superconductor
       !+ad_args  bctw : input real : Upper critical field (T) for superconductor
@@ -1577,7 +1574,7 @@ contains
       !+ad_hist  16/04/13 PJK Converted bctw, tco to arguments instead of hardwired.
       !+ad_hisc               Corrected problems with jcrit and tcrit formulae
       !+ad_stat  Okay
-      !+ad_docs  ITER Nb3Sn critical surface parameterization (2MMF7J) (2008),
+      !+ad_docs  ITER Nb3Sn critical surface parametrization (2MMF7J) (2008),
       !+ad_docc    https://user.iter.org/?uid=2MMF7J&action=get_document
       !+ad_docs  ITER DDD 11-7: Magnets - conductors (2NBKXY) (2009),
       !+ad_docc    https://user.iter.org/?uid=2NBKXY&action=get_document
@@ -1588,14 +1585,12 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: the, bmax, strain, bctw, tco
+      real(kind(1.0D0)), intent(in) :: thelium, bmax, strain, bctw, tco
       real(kind(1.0D0)), intent(out) :: jcrit, tcrit
 
       !  Local variables
 
       real(kind(1.0D0)), parameter :: csc = 16500.0D6
-      !real(kind(1.0D0)), parameter :: bctw = 32.97D0  !  now an argument
-      !real(kind(1.0D0)), parameter :: tco = 16.06D0  !  now an argument
       real(kind(1.0D0)), parameter :: cp = 0.63D0
       real(kind(1.0D0)), parameter :: cq = 2.1D0
       real(kind(1.0D0)), parameter :: caone = 44.0D0
@@ -1624,7 +1619,7 @@ contains
 
       !  tred and bred
 
-      tzero = the/tcro
+      tzero = thelium/tcro
       bzero = bmax/bcro
       bcrit = bcro * (1.0D0 - tzero**1.52D0)
       bred = bmax/bcrit
@@ -1633,10 +1628,10 @@ contains
       if (bzero < 1.0D0) then
          tcrit = tcro * (1.0D0 - bzero)**(1.0D0/1.52D0)
       else
-         tcrit = the * (1.0D0 - bzero)  !  ??? tcrit will be zero or negative!
+         tcrit = thelium * (1.0D0 - bzero)  !  ??? tcrit will be zero or negative!
       end if
 
-      tred = the/tcrit
+      tred = thelium/tcrit
 
       !  Enforce upper limits on tzero and bred
 
@@ -1644,7 +1639,7 @@ contains
       bred = min(bred, 0.9999D0)
 
       !  Critical current density (A/m2)
-      !  ITER parameterization is for the current in a single strand,
+      !  ITER parametrization is for the current in a single strand,
       !  not per unit area, so scalefac converts to current density
 
       scalefac = pi * (0.5D0*diter)**2 * (1.0D0-cuiter)
@@ -1656,6 +1651,73 @@ contains
       jcrit = jc1 * jc2 * jc3 / scalefac
 
     end subroutine itersc
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    subroutine bi2212(bmax,jstrand,tsc,fhts,jcrit,tmarg)
+
+      !+ad_name  bi2212
+      !+ad_summ  Fitted parametrization to Bi-2212 superconductor properties
+      !+ad_type  Subroutine
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_auth  M Kovari, CCFE, Culham Science Centre
+      !+ad_cont  N/A
+      !+ad_args  bmax    : input real : Magnetic field at conductor (T)
+      !+ad_args  jstrand : input real : Current density in strand (A/m2)
+      !+ad_args  tsc     : input real : Superconductor temperature (K)
+      !+ad_args  fhts    : input real : Adjustment factor (<= 1) to account for strain,
+      !+ad_argc                         radiation damage, fatigue or AC losses
+      !+ad_args  jcrit : output real : Critical current density in strand (A/m2)
+      !+ad_args  tmarg : output real : Temperature margin (K)
+      !+ad_desc  This routine calculates the critical current density and
+      !+ad_desc  the temperature margin for Bi-2212 superconductor in the TF coils
+      !+ad_desc  using a fit by M. Kovari to measurements described in the reference,
+      !+ad_desc  specifically from the points shown in Figure 6.
+      !+ad_desc  <P>Bi-2212 (Bi<SUB>2</SUB>Sr<SUB>2</SUB>CaCu<SUB>2</SUB>O<SUB>8-x</SUB>)
+      !+ad_desc  is a first-generation high temperature superconductor; it still needs
+      !+ad_desc  to be operated below about 10K, but remains superconducting at much
+      !+ad_desc  higher fields at that temperature than Nb3Sn etc.
+      !+ad_prob  None
+      !+ad_call  None
+      !+ad_hist  08/10/13 PJK Initial version
+      !+ad_stat  Okay
+      !+ad_docs  A transformative superconducting magnet technology for fields well
+      !+ad_docc  above 30 T using isotropic round wire multifilament
+      !+ad_docc  Bi2Sr2CaCu2O8-x conductor, D. C. Larbalestier et al., preprint,
+      !+ad_docc  9th April 2013
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      implicit none
+
+      !  Arguments
+
+      real(kind(1.0D0)), intent(in) :: bmax, jstrand, tsc, fhts
+      real(kind(1.0D0)), intent(out) :: jcrit, tmarg
+
+      !  Local variables
+
+      real(kind(1.0D0)) :: b, tcrit
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      !  Adjusted field (T)
+
+      b = bmax / exp(-0.168D0*(tsc-4.2D0))
+
+      !  Engineering (i.e. strand) critical current density (A/m2)
+
+      jcrit = fhts * (1.175D9*exp(-0.02115D0*b) - 1.288D8)
+
+      !  Temperature margin (K)
+      !  Simple inversion of above calculation, using actual current density
+      !  in strand instead of jcrit
+
+      tmarg = 1.0D0/0.168D0 * &
+           log( log(1.175D9/(jstrand/fhts + 1.288D8)) / (0.02115*bmax) ) &
+           + 4.2D0 - tsc
+
+    end subroutine bi2212
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1683,7 +1745,8 @@ contains
       !+ad_desc  limits the peak temperature in the winding to a given limit (tmax).
       !+ad_desc  It also finds the dump voltage.
       !+ad_desc  <P>These calculations are based on Miller's formulations.
-      !+ad_prob  None
+      !+ad_prob  This routine may be misleading for the Bi-2212 superconductor model,
+      !+ad_prob  as fcu is not used elsewhere in modelling this material.
       !+ad_call  None
       !+ad_hist  06/07/99 PJK Initial upgraded version
       !+ad_hist  21/09/11 PJK Initial F90 version

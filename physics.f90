@@ -3922,6 +3922,7 @@ contains
     !+ad_hist  12/06/13 PJK Added plasma energy and other outputs
     !+ad_hist  12/08/13 PJK Removed some stellarator-irrelevant outputs
     !+ad_hist  30/09/13 PJK Added Psep/R output line
+    !+ad_hist  02/10/13 PJK Changed pcharge output description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4122,7 +4123,8 @@ contains
     call ovarre(outfile,'Alpha power: total (MW)','(alpmw)',alpmw)
     call ovarre(outfile,'Alpha power: beam-plasma (MW)','(palpnb)',palpnb)
     call ovarre(outfile,'Neutron power (MW)','(pneut*vol)',pneut*vol)
-    call ovarre(outfile,'Proton power (MW)','(pcharge*vol)',pcharge*vol)
+    call ovarre(outfile,'Charged particle power (excl. alphas) (MW)', &
+         '(pcharge*vol)',pcharge*vol)
 
     call ovarrf(outfile,'Neutron wall load (MW/m2)','(wallmw)',wallmw)
     call ovarrf(outfile,'Fraction of power to electrons','(falpe)',falpe)

@@ -1295,6 +1295,7 @@ module tfcoil_variables
   !+ad_hist  16/04/13 PJK Redefined isumattf; removed jcrit_model;
   !+ad_hisc               changed dcond dimensions
   !+ad_hist  19/06/13 PJK Removed rjtfsual
+  !+ad_hist  08/10/13 PJK Reassigned isumattf=2; added fhts
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1390,12 +1391,18 @@ module tfcoil_variables
   !+ad_vars  fcutfsu /0.69/ : copper fraction of cable conductor
   !+ad_varc                   (iteration variable 59)
   real(kind(1.0D0)) :: fcutfsu = 0.69D0
-  !+ad_vars  frhocp /1.0/ centrepost resistivity enhancement factor
+  !+ad_vars  fhts /0.5/ : technology adjustment factor for critical current density fit
+  !+ad_varc               for isumattf=2 Bi-2212 superconductor, to describe the level
+  !+ad_varc               of technology assumed (i.e. to account for stress, fatigue,
+  !+ad_varc               radiation, AC losses, joints or manufacturing variations;
+  !+ad_varc               1.0 would be very optimistic)
+  real(kind(1.0D0)) :: fhts = 0.5D0
+  !+ad_vars  frhocp /1.0/ : centrepost resistivity enhancement factor
   real(kind(1.0D0)) :: frhocp = 1.0D0
   !+ad_vars  isumattf /1/ : switch for superconductor material in TF coils:<UL>
   !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
   !+ad_varc                     ITER parameters;
-  !+ad_varc            <LI> = 2 not in use;
+  !+ad_varc            <LI> = 2 Bi-2212 high temperature superconductor;
   !+ad_varc            <LI> = 3 NbTi;
   !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters</UL>
   integer :: isumattf = 1
