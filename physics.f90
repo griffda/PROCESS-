@@ -1515,6 +1515,7 @@ contains
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  11/09/13 PJK Removed obsolete argument ftr
     !+ad_hist  12/09/13 PJK Fixed betaft calculation when fdeut=1
+    !+ad_hist  10/10/13 PJK Made multiplier in betath equation explicit
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1568,7 +1569,7 @@ contains
 
     if (fdeut < 1.0D0) then
 
-       betath = 4.021D-22 * pcoef * (dene*te + dnitot*ti)/(bt**2 + bp**2)
+       betath = 2.0D3*rmu0*echarge * pcoef * (dene*te + dnitot*ti)/(bt**2 + bp**2)
 
        if (ifalphap == 0) then
           !  N Uckan fast alpha scaling

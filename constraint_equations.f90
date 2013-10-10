@@ -73,6 +73,7 @@ subroutine constraints(m,cc)
   !+ad_hist  25/09/13 PJK Modified eqn.20 from port size limit to
   !+ad_hisc               neutral beam tangency radius limit
   !+ad_hist  30/09/13 PJK Added new eqn 56
+  !+ad_hist  10/10/13 PJK Made multiplier in beta equation explicit
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -114,11 +115,11 @@ subroutine constraints(m,cc)
 
      select case (icc(i))
 
-     case (1)  !  Relationship between beta, temperature and density
+     case (1)  !  Relationship between beta, temperature (keV) and density
                !  This is a consistency equation.
 
-        cc(i) = 1.0D0 - (betaft + betanb + 3.204D-16 &
-             * rmu0 * (dene*ten + dnitot*tin)/btot**2 )/beta
+        cc(i) = 1.0D0 - (betaft + betanb + 2.0D3*rmu0*echarge &
+             * (dene*ten + dnitot*tin)/btot**2 )/beta
 
      case (2)  !  Global plasma power balance equation
                !  This is a consistency equation.

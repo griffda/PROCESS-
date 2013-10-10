@@ -1340,3 +1340,4 @@ end subroutine output
 ! SVN 189: Incorporated Fabrizio Franza's suggested revisions to the KIT blanket model
 ! SVN 190: Added Psep/R limit equation (no.56)
 ! SVN 191: Re-assigned isumattf=2 to new Bi-2212 high-temperature superconductor model
+! SVN 192: Minor adjustment of multiplier in beta calculations for consistency
