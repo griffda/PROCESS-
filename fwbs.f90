@@ -906,6 +906,7 @@ contains
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  06/06/13 PJK Initial release
+    !+ad_hist  05/11/13 PJK Corrected lambda_q_VV to lambda_n_VV in two places
     !+ad_stat  Okay
     !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
     !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
@@ -950,7 +951,7 @@ contains
 
     !  Fast neutron flux profile in IB VV
 
-    phi_n_VV_IB(:) = phi_n_BP_IB(2) * exp(-x_VV_IB(:)/lambda_q_VV)
+    phi_n_VV_IB(:) = phi_n_BP_IB(2) * exp(-x_VV_IB(:)/lambda_n_VV)
     phi_n_vv_IB_start = phi_n_VV_IB(1)
 
     !  Fast neutron lifetime fluence at IB TF coil (n/cm2)
@@ -974,7 +975,7 @@ contains
 
     !  Fast neutron flux profile in OB VV
 
-    phi_n_VV_OB(:) = phi_n_BP_OB(2) * exp(-x_VV_OB(:)/lambda_q_VV)
+    phi_n_VV_OB(:) = phi_n_BP_OB(2) * exp(-x_VV_OB(:)/lambda_n_VV)
     phi_n_vv_OB_start = phi_n_VV_OB(1)
 
     !  Fast neutron lifetime fluence at OB TF coil (n/cm2)

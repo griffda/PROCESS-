@@ -1341,3 +1341,4 @@ end subroutine output
 ! SVN 190: Added Psep/R limit equation (no.56)
 ! SVN 191: Re-assigned isumattf=2 to new Bi-2212 high-temperature superconductor model
 ! SVN 192: Minor adjustment of multiplier in beta calculations for consistency
+! SVN 193: Correction to fast neutron flux profiles in VV in KIT blanket model
