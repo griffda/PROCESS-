@@ -1851,6 +1851,7 @@ contains
     !+ad_hist  10/06/96 PJK Moved first wall area calculation into STBILD
     !+ad_hist  24/09/12 PJK Initial F90 version
     !+ad_hist  14/08/13 PJK/FW First full replacement for FWBS
+    !+ad_hist  07/11/13 PJK Added fwareaib/ob calculations
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1875,6 +1876,11 @@ contains
          ptfo,ptfowp,r1,r2,raddose,volshldi,volshldo,wpthk
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  First wall inboard, outboard areas (assume 50% of total each)
+
+    fwareaib = 0.5D0*fwarea
+    fwareaob = 0.5D0*fwarea
 
     !  Blanket volume; assume that its surface area is scaled directly from the
     !  plasma surface area.
