@@ -568,6 +568,7 @@ contains
     !+ad_hist  15/05/13 PJK Swapped build order of vacuum vessel and gap
     !+ad_hist  12/08/13 PJK/FW Better approximation for fwarea
     !+ad_hist  25/09/13 PJK Removed port size output
+    !+ad_hist  07/11/13 PJK Corrected blanket/shield thicknesses if blktmodel > 0
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -586,6 +587,15 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     if (iprint /= 1) then
+
+       !  Calculate total blanket thicknesses if blktmodel > 0
+
+       if (blktmodel > 0) then
+          blnkith = blbuith + blbmith + blbpith
+          blnkoth = blbuoth + blbmoth + blbpoth
+          blnktth = 0.5D0*(blnkith+blnkoth)
+          shldtth = 0.5D0*(shldith+shldoth)
+       end if
 
        !  Radial build to centre of plasma (should be equal to rmajor)
 

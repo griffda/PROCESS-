@@ -1343,3 +1343,4 @@ end subroutine output
 ! SVN 192: Minor adjustment of multiplier in beta calculations for consistency
 ! SVN 193: Correction to fast neutron flux profiles in VV in KIT blanket model
 ! SVN 194: Added fwareaib, fwareaob to calculations in stfwbs
+! SVN 195: Modified stellarator blanket thicknesses consistently with KIT blanket model
