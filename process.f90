@@ -1344,3 +1344,4 @@ end subroutine output
 ! SVN 193: Correction to fast neutron flux profiles in VV in KIT blanket model
 ! SVN 194: Added fwareaib, fwareaob to calculations in stfwbs
 ! SVN 195: Modified stellarator blanket thicknesses consistently with KIT blanket model
+! SVN 196/7 : Modified TF coil case mass calculation
