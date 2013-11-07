@@ -100,6 +100,7 @@ module physics_variables
   !+ad_hist  03/07/13 PJK Changed zeffai comment
   !+ad_hist  10/09/13 PJK Added alpharate, fusionrate, protonrate
   !+ad_hist  11/09/13 PJK Removed ftr, idhe3, iiter; changed ealpha to ealphadt
+  !+ad_hist  10/10/13 PJK Modified prad comment
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -441,7 +442,7 @@ module physics_variables
   real(kind(1.0D0)) :: powfmw = 0.0D0
   !+ad_vars  pperim : plasma poloidal perimeter (m)
   real(kind(1.0D0)) :: pperim = 0.0D0
-  !+ad_vars  prad : total core radiation power (MW/m3)
+  !+ad_vars  prad : total radiation power from inside separatrix (MW/m3)
   real(kind(1.0D0)) :: prad = 0.0D0
   !+ad_vars  protonrate : proton production rate (particles/m3/sec)
   real(kind(1.0D0)) :: protonrate = 0.0D0
@@ -1296,6 +1297,8 @@ module tfcoil_variables
   !+ad_hisc               changed dcond dimensions
   !+ad_hist  19/06/13 PJK Removed rjtfsual
   !+ad_hist  08/10/13 PJK Reassigned isumattf=2; added fhts
+  !+ad_hist  17/10/13 PJK Modified cdtfleg comment; imported tftort from RFP module
+  !+ad_hist  06/11/13 PJK Modified various comments; removed obsolete switch magnt
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1336,15 +1339,14 @@ module tfcoil_variables
   real(kind(1.0D0)) :: borev = 0.0D0
   !+ad_vars  casestr : case strain
   real(kind(1.0D0)) :: casestr = 0.0D0
-  !+ad_vars  casfact /4.0/ : TF coil case thickness factor
-  !+ad_varc                  = (average outboard / average inboard thickness)
+  !+ad_vars  casfact /4.0/ : TF coil case outboard/inboard area ratio
   real(kind(1.0D0)) :: casfact = 4.0D0
-  !+ad_vars  casthi /0.05/ : TF coil case inner (plasma side) thickness (m)
+  !+ad_vars  casthi /0.05/ : inboard TF coil case inner (plasma side) thickness (m)
   real(kind(1.0D0)) :: casthi = 0.05D0
-  !+ad_vars  casths /0.07/ : TF coil sidewall case thickness (m)
+  !+ad_vars  casths /0.07/ : inboard TF coil sidewall case thickness (m)
   real(kind(1.0D0)) :: casths = 0.07D0
   !+ad_vars  cdtfleg /1.0D6/ : TF leg overall current density (A/m2)
-  !+ad_varc                    (iteration variable 24)
+  !+ad_varc                    (resistive coils only) (iteration variable 24)
   real(kind(1.0D0)) :: cdtfleg = 1.0D6
   !+ad_vars  cforce : centering force on inboard leg (per coil) (N/m)
   real(kind(1.0D0)) :: cforce = 0.0D0
@@ -1429,11 +1431,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: kcp = 330.0D0
   !+ad_vars  kh2o /0.651/ FIX : thermal conductivity of water (W/m/K)
   real(kind(1.0D0)) :: kh2o = 0.651D0
-  !+ad_vars  magnt /2/ : switch for TF coil stress model:<UL>
-  !+ad_varc         <LI> = 1 for FER type configuration with bucking cylinder;
-  !+ad_varc         <LI> = 2 for NET type wedging; set casfi = 0.0;
-  !+ad_varc         <LI> = 3 for LLNL type buck on OH coil</UL>
-  integer :: magnt = 2
   !+ad_vars  muh2o /4.71D-4/ FIX : water dynamic viscosity (kg/m/s)
   real(kind(1.0D0)) :: muh2o = 4.71D-4
   !+ad_vars  ncool : number of centrepost coolant tubes
@@ -1540,6 +1537,10 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfsao = 0.0D0
   !+ad_vars  tftmp /4.5/ : peak TF coil He coolant temperature (K)
   real(kind(1.0D0)) :: tftmp = 4.5D0
+  !+ad_vars  tftort /0.33/ : TF coil toroidal thickness (m)
+  !+ad_varc                  (RFP - inboard and outboard; tokamak - outboard leg only)
+  !+ad_varc                  (iteration variable 77)
+  real(kind(1.0D0)) :: tftort = 0.33D0
   !+ad_vars  thicndut /8.0D-4/ : conduit insulation thickness (m)
   real(kind(1.0D0)) :: thicndut = 8.0D-4
   !+ad_vars  thkcas /0.3/ : external case thickness for superconductor (m)
@@ -2644,6 +2645,7 @@ module constraint_variables
   !+ad_hist  27/06/13 PJK Relabelled ftohs, tohsmn, fbetatry
   !+ad_hist  25/09/13 PJK Changed fportsz description
   !+ad_hist  30/09/13 PJK Added pseprmax, fpsepr
+  !+ad_hist  28/10/13 PJK Corrected fdene comment
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2678,7 +2680,7 @@ module constraint_variables
   !+ad_varc                   (constraint equation 24, iteration variable 36)
   real(kind(1.0D0)) :: fbetatry = 1.0D0
   !+ad_vars  fdene /1.0/ : f-value for density limit
-  !+ad_varc                (constraint equation 5, iteration variable 5)
+  !+ad_varc                (constraint equation 5, iteration variable 9)
   real(kind(1.0D0)) :: fdene = 1.0D0
   !+ad_vars  fdivcol /1.0/ : f-value for divertor collisionality
   !+ad_varc                  (constraint equation 22, iteration variable 34)
@@ -2926,6 +2928,7 @@ module rfp_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  31/10/12 PJK Initial version of module
+  !+ad_hist  17/10/13 PJK Moved tftort to TF coil module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2964,9 +2967,6 @@ module rfp_variables
   real(kind(1.0D0)) :: rfpth = 1.5D0
   !+ad_vars  rrpf(nrfppf) : radius of each RFP PF coil (m)
   real(kind(1.0D0)), dimension(nrfppf) :: rrpf = 0.0D0
-  !+ad_vars  tftort /0.33/ : TF coil toroidal thickness (m) (RFP, stellarator only)
-  !+ad_varc                  (iteration variable 77)
-  real(kind(1.0D0)) :: tftort = 0.33D0
   !+ad_vars  zzpf(nrfppf) : vertical position of each RFP PF coil (m)
   real(kind(1.0D0)), dimension(nrfppf) :: zzpf = 0.0D0
 

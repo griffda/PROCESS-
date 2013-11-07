@@ -148,6 +148,7 @@ contains
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  15/08/13 PJK Modified arguments for new chamber surface area
     !+ad_hisc               and volume calculations
+    !+ad_hist  14/10/13 PJK Added lap counter to help in pathological cases
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -168,7 +169,7 @@ contains
 
     real(kind(1.0D0)), parameter :: k = 1.38D-23  !  Boltzmann's constant (J/K)
 
-    integer :: i, imax, ntf, nflag
+    integer :: i, imax, lap, ntf, nflag
     real(kind(1.0D0)) :: a1,a1max,a2,a3,area,arsh,c1,c2,c3,cap,ccc, &
          ceff1,cmax,cnew,d1max,dc1,dc2,dc3,dcap,dd,densh,dnew,dout,dy, &
          fhe,frate,fsolid,k1,k2,k3,l1,l2,l3,ltot,ogas,pend,pfus,pstart, &
@@ -306,6 +307,7 @@ contains
        outer: do
           d(i) = 1.0D0
 
+          lap = 0
           inner: do
              a1 = 0.25D0*pi * d(i) * d(i)  !  Area of aperture and duct (m^2)
              a2 = 1.44D0 * a1
@@ -328,6 +330,16 @@ contains
              dd = abs((d(i) - dnew)/d(i))
              d(i) = dnew
              if (dd <= 0.01D0) exit inner
+
+             lap = lap + 1
+             if (lap > 99) then
+                write(*,*) 'Problem in routine VACUUM:'
+                write(*,*) "Newton's Method is not converging..."
+                write(*,*) 'Check fusion power is not negative perhaps'
+                write(*,*) 'due to iteration variable te < 0.'
+                write(*,*) 'powfmw,te = ',powfmw,te
+                exit inner
+             end if
           end do inner
 
           theta = pi / ntf

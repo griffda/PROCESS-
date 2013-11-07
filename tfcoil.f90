@@ -246,7 +246,7 @@ contains
 
        !  Outboard leg information (per leg)
 
-       !  Cross-sectional area
+       !  Cross-sectional area (N.B. does not use tfthko*tftort...)
 
        arealeg = ritfc/(tfno * cdtfleg)
        extra = sqrt(arealeg)

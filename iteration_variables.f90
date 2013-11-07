@@ -50,6 +50,7 @@ subroutine loadxc
   !+ad_hisc               fptfnuc (95), fvvhe (96)
   !+ad_hist  19/06/13 PJK fjtfc (var.28) is obsolete - added error trap
   !+ad_hist  30/09/13 PJK Added fpsepr (97)
+  !+ad_hist  17/10/13 PJK Modified logic for cdtfleg usage
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -108,10 +109,10 @@ subroutine loadxc
      case (22) ; xcm(i) = tbrnmn
      case (23) ; xcm(i) = fcoolcp
      case (24) ; xcm(i) = cdtfleg
-        if (irfp == 1) then
+        if ((itfsup == 1).or.(irfp == 1)) then
            write(*,*) 'Error in routine LOADXC:'
            write(*,*) 'CDTFLEG should not be used as an iteration'
-           write(*,*) 'variable if IRFP = 1.'
+           write(*,*) 'variable if ITFSUP = 1 or IRFP = 1.'
            write(*,*) 'PROCESS stopping.'
            stop
         end if

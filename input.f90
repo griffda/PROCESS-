@@ -346,6 +346,7 @@ contains
     !+ad_hist  25/09/13 PJK Modified treatment for ISUMATTF=2
     !+ad_hist  30/09/13 PJK Added PSEPRMAX, FPSEPR
     !+ad_hist  08/10/13 PJK Reassigned ISUMATTF=2; added FHTS
+    !+ad_hist  07/11/13 PJK Removed obsolete switch MAGNT
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1235,9 +1236,6 @@ contains
           write(outfile,*) 'JCRITSC is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
           obsolete_var = .true.
-       case ('MAGNT')
-          call parse_int_variable('MAGNT', magnt, 1, 3, &
-               'SCTF coil stress model')
        case ('OACDCP')
           call parse_real_variable('OACDCP', oacdcp, 1.0D4, 1.0D9, &
                'Overall J in inboard TF coil midplane')

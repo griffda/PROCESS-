@@ -79,6 +79,7 @@ contains
     !+ad_hist  18/10/12 PJK Added fwbs_variables
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  18/12/12 PJK/RK Modified vertical bore for single-null cases
+    !+ad_hist  06/11/13 PJK Modified coil case mass and leg area calculations
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -93,7 +94,7 @@ contains
     !  Local variables
 
     integer :: i
-    real(kind(1.0D0)) :: awpc,awptf,bcylir,dct,leni,leno,radwp,rbcndut, &
+    real(kind(1.0D0)) :: awpc,awptf,bcylir,cplen,dct,leni,leno,radwp,rbcndut, &
          rcoil,rcoilp,tant,tcan1,tcan2,tcan3,thtcoil,wbtf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -102,9 +103,9 @@ contains
     !  Original opaque algorithm...
     !  arealeg = 4.0D0 * tfthko * (rtot-0.5D0*tfthko) * sin(pi/tfno)
 
-    !  Rectangular shape, aspect ratio = 2
+    !  Rectangular shape
 
-    arealeg = 0.5D0 * tfthko*tfthko
+    arealeg = tfthko*tftort
 
     !  Determine layout of the inboard midplane TF coil leg
 
@@ -191,7 +192,7 @@ contains
        tfleng = tfleng + 2.0D0*(radctf(i) + 0.5D0*tfcth) * dthet(i)
     end do
 
-    !  Case thicknesses
+    !  Case thicknesses (inboard leg)
 
     if (itfmod /= 1) thkcas = tfcth * 0.5D0
 
@@ -207,7 +208,7 @@ contains
 
     tcan3 = casths
 
-    !  Winding pack dimensions (each leg)
+    !  Winding pack dimensions (each inboard leg)
 
     !  Radial extent
 
@@ -339,6 +340,18 @@ contains
 
     aswp = (turnstf*acndttf)
 
+    !  Check of outboard leg toroidal thickness, tftort
+    !  Must be thicker than the width of the winding pack etc., which
+    !  is likely to be the same width as at the inboard side
+
+    if ( tftort < (wwp1 + 2.0D0*tinstf) ) then
+       write(*,*) 'Warning in routine SCTFCOIL:'
+       write(*,*) '  TF outboard length toroidal thickness, tftort = ',tftort
+       write(*,*) '                Winding pack + insulation width = ', &
+            wwp1 + 2.0D0*tinstf
+       write(*,*) 'Consider raising tftort in input file...'
+    end if
+
     !  TF Coil areas and masses
 
     !  Surface areas (for cryo system)
@@ -349,12 +362,17 @@ contains
     tfsai = 4.0D0 * tfno * tficrn * hr1
     tfsao = 2.0D0 * tfno * tficrn * (tfleng - 2.0D0*hr1)
 
-    !  Mass of case : add correction factor to maintain enough
-    !  structure when the inboard case gets small
-    !  (normalized to 1990 ITER)
+    !  Mass of case
 
-    whtcas = casfact * tfleng * acasetf * dcase * &
-         sqrt( 0.41D0 * tfareain/(acasetf *tfno) )
+    !  The length of the vertical section is that of the first (inboard) segment
+
+    cplen = 2.0D0*(radctf(1) + 0.5D0*tfcth) * dthet(1)
+
+    !  The outboard to inboard case area ratio is casfact
+    !  The 1.4 factor is a scaling factor to fit to the ITER-FDR value
+    !  of 450 tonnes; see CCFE note T&M/PKNIGHT/PROCESS/022
+
+    whtcas = 1.4D0 * dcase * acasetf * ( cplen + (tfleng-cplen)*casfact )
 
     !  Masses of conductor constituents:
 
@@ -1118,6 +1136,7 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  11/04/13 PJK Clarified some output labels
+    !+ad_hist  07/11/13 PJK Removed obsolete switch magnt; modified layout
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1141,11 +1160,7 @@ contains
     call oheadr(outfile,'TF Coils')
     call ocmmnt(outfile,'Superconducting TF coils')
 
-    if (magnt == 2) then
-       call osubhd(outfile,'Wedged TF Coils, with two-step winding')
-    else
-       call osubhd(outfile,'Bucked TF Coils, with two-step winding')
-    end if
+    call osubhd(outfile,'Wedged TF Coils, with two-step winding')
 
     call ocmmnt(outfile,'Current Density :')
     call oblnkl(outfile)
@@ -1158,23 +1173,22 @@ contains
     end if
 
     call osubhd(outfile,'General Coil Parameters :')
+    call ovarre(outfile,'Number of TF coils','(tfno)',tfno)
     call ovarre(outfile,'Cross-sectional area per coil (m2)','(tfarea/tfno)', &
          tfareain/tfno)
     call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)
-    call ovarre(outfile,'Inside half-width (m)','(tficrn)',tficrn)
-    call ovarre(outfile,'Outside half width (m)','(tfocrn)',tfocrn)
+    call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko)',tfthko)
+    call ovarre(outfile,'Inboard leg outboard half-width (m)','(tficrn)',tficrn)
+    call ovarre(outfile,'Inboard leg inboard half-width (m)','(tfocrn)',tfocrn)
+    call ovarre(outfile,'Outboard leg toroidal thickness (m)','(tftort)',tftort)
+    call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng)
     call ovarre(outfile,'Total current (MA)','(ritfc/1.D6)',1.0D-6*ritfc)
-    call ovarre(outfile,'Vertical separating force per coil (N)','(vforce)',vforce)
-    call ovarre(outfile,'Centering force per coil (N/m)','(cforce)',cforce)
     call ovarre(outfile,'Peak field (Amperes Law,T)','(bmaxtf)',bmaxtf)
     call ovarre(outfile,'Peak field (with ripple,T)','(bmaxtfrp)',bmaxtfrp)
     call ovarre(outfile,'Stored energy per coil (GJ)','(estotf)',estotf)
-    call ovarre(outfile,'Mean coil circumference (m)','(tfleng)',tfleng)
-    call ovarre(outfile,'Number of TF coils','(tfno)',tfno)
-    call ovarre(outfile,'Plasma-side coil case thickness (m)','(casthi)',casthi)
-    call ovarre(outfile,'Opposite side coil case thickness (m)','(thkcas)',thkcas)
-    call ovarre(outfile,'X-sectional ext. case area per coil (m2)', &
-         '(acasetf)',acasetf)
+    call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf)
+    call ovarre(outfile,'Vertical separating force per coil (N)','(vforce)',vforce)
+    call ovarre(outfile,'Centering force per coil (N/m)','(cforce)',cforce)
 
     call osubhd(outfile,'Coil Geometry :')
     call ovarre(outfile,'Inboard leg centre radius (m)','(rtfcin)',rtfcin)
@@ -1205,13 +1219,12 @@ contains
     end do
 
     call osubhd(outfile,'Conductor Information :')
-    call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf)
     call ovarre(outfile,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc)
     call ovarre(outfile,'Copper mass per coil (kg)','(whtconcu)',whtconcu)
     call ovarre(outfile,'Steel conduit mass per coil (kg)','(whtconsh)',whtconsh)
     call ovarre(outfile,'Total conductor cable mass per coil (kg)','(whtcon)',whtcon)
-    call ovarre(outfile,'External case mass per coil (kg)','(whtcas)',whtcas)
     call ovarre(outfile,'Cable conductor + void area (m2)','(acstf)',acstf)
+    call ovarre(outfile,'Cable space coolant fraction','(vftf)',vftf)
     call ovarre(outfile,'Conduit case thickness (m)','(thwcndut)',thwcndut)
     call ovarre(outfile,'Cable insulation thickness (m)','(thicndut)',thicndut)
     call ovarre(outfile,'Cable radial/toroidal aspect ratio','(aspcstf)',aspcstf)
@@ -1224,11 +1237,23 @@ contains
     call ovarre(outfile,'Structure fraction of winding pack','(aswp/ap)',aswp/ap)
     call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap)
     call ovarre(outfile,'Helium fraction of winding pack','(avwp/ap)',avwp/ap)
-    call ovarre(outfile,'Winding thickness (m)','(thkwp)',thkwp)
+    call ovarre(outfile,'Inter-turn void fraction','(wpvf)',wpvf)
+    call ovarre(outfile,'Winding radial thickness (m)','(thkwp)',thkwp)
     call ovarre(outfile,'Winding width 1 (m)','(wwp1)',wwp1)
     call ovarre(outfile,'Winding width 2 (m)','(wwp2)',wwp2)
+    call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
     call ovarre(outfile,'Number of turns per TF coil','(turnstf)',turnstf)
     call ovarre(outfile,'Current per turn (A)','(cpttf)',cpttf)
+
+    call osubhd(outfile,'External Case Information :')
+
+    call ovarre(outfile,'Inboard leg case outboard thickness (m)','(casthi)',casthi)
+    call ovarre(outfile,'Inboard leg case inboard thickness (m)','(thkcas)',thkcas)
+    call ovarre(outfile,'Inboard leg case toroidal thickness (m)','(casths)',casths)
+    call ovarre(outfile,'Inboard leg case area per coil (m2)','(acasetf)',acasetf)
+    call ovarre(outfile,'Outboard leg case area per coil (m2)', &
+         '(...*casfact)',acasetf*casfact)
+    call ovarre(outfile,'External case mass per coil (kg)','(whtcas)',whtcas)
 
     call osubhd(outfile,'TF Coil Stresses :')
     call ovarre(outfile,'Vertical stress (Pa)','(sigvert)',sigvert)

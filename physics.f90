@@ -1732,7 +1732,7 @@ contains
     !+ad_args  pinji  : input real :  auxiliary power to ions (W)
     !+ad_args  plascur: input real :  plasma current (A)
     !+ad_args  pohmpv : input real :  ohmic heating per unit volume (MW/m**3)
-    !+ad_args  prad   : input real :  total core radiation power (MW/m**3)
+    !+ad_args  prad   : input real :  total radiation power from within separatrix (MW/m3)
     !+ad_args  q      : input real :  edge safety factor (tokamaks), or
     !+ad_argc                         rotational transform iotabar (stellarators)
     !+ad_args  qstar  : input real :  equivalent cylindrical edge safety factor
@@ -1768,6 +1768,7 @@ contains
     !+ad_hist  23/05/06 PJK Ensured that powerht is always positive
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  23/01/13 PJK Added stellarator scaling laws 37,38
+    !+ad_hist  07/11/13 PJK Modified prad description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  N. A. Uckan and ITER Physics Group,
@@ -2547,7 +2548,8 @@ contains
     !+ad_args  zfear  : input integer :  high-Z impurity switch; 0=iron, 1=argon
     !+ad_args  pbrem  : output real : bremsstrahlung radiation power/volume (MW/m3)
     !+ad_args  plrad  : output real : edge line radiation power/volume (MW/m3)
-    !+ad_args  prad   : output real : total core radiation power/volume (MW/m3)
+    !+ad_args  prad   : output real : total radiation power/volume from within
+    !+ad_argc                         separatrix (MW/m3)
     !+ad_args  psync  : output real : synchrotron radiation power/volume (MW/m3)
     !+ad_desc  This routine finds the radiation power in MW/m3.
     !+ad_desc  The Bremsstrahlung and synchrotron powers are included.
@@ -2557,6 +2559,7 @@ contains
     !+ad_hist  21/07/11 RK  Implemented Albajar for P_sync
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  17/12/12 PJK Added ZFEAR coding for high-Z impurities
+    !+ad_hist  07/11/13 PJK Modified prad description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  Albajar, Nuclear Fusion 41 (2001) 665

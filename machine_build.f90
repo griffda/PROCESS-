@@ -637,6 +637,7 @@ contains
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  08/04/13 MDK Recalculated the geometry, and expressed in terms of
     !+ad_hist               tangency radius
+    !+ad_hist  07/11/13 PJK Modified TF coil toroidal half-width calculation
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code
     !
@@ -661,9 +662,9 @@ contains
 
     omega = twopi/tfno
 
-    !  Half-width of TF coil in toroidal direction (m)
+    !  Half-width of outboard TF coil in toroidal direction (m)
 
-    a = (rtfcin + 0.5D0*tfcth)*sin(0.5D0*omega)
+    a = 0.5D0*tftort  !  (previously used inboard leg width)
 
     !  Radial thickness of outboard TF coil leg (m)
 
