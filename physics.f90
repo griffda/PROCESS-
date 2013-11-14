@@ -3927,6 +3927,7 @@ contains
     !+ad_hist  12/08/13 PJK Removed some stellarator-irrelevant outputs
     !+ad_hist  30/09/13 PJK Added Psep/R output line
     !+ad_hist  02/10/13 PJK Changed pcharge output description
+    !+ad_hist  14/11/13 PJK Corrected thermal energy outputs by 3/2
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4073,9 +4074,9 @@ contains
     end if
 
     call ovarre(outfile,'Plasma thermal energy (J)',' ', &
-         betath*btot*btot/(2.0D0*rmu0)*vol)
+         1.5D0*betath*btot*btot/(2.0D0*rmu0)*vol)
     call ovarre(outfile,'Total plasma internal energy (J)',' ', &
-         beta*btot*btot/(2.0D0*rmu0)*vol)
+         1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol)
 
     call osubhd(outfile,'Temperature and Density (volume averaged) :')
     call ovarrf(outfile,'Electron temperature (keV)','(te)',te)

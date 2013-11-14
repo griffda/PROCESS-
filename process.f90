@@ -1345,3 +1345,4 @@ end subroutine output
 ! SVN 194: Added fwareaib, fwareaob to calculations in stfwbs
 ! SVN 195: Modified stellarator blanket thicknesses consistently with KIT blanket model
 ! SVN 196/7 : Modified TF coil case mass calculation
+! SVN 198: Corrected thermal energy outputs by 3/2 factor
