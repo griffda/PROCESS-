@@ -3928,6 +3928,7 @@ contains
     !+ad_hist  30/09/13 PJK Added Psep/R output line
     !+ad_hist  02/10/13 PJK Changed pcharge output description
     !+ad_hist  14/11/13 PJK Corrected thermal energy outputs by 3/2
+    !+ad_hist  14/11/13 PJK Changed kappa95 output description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -3975,13 +3976,11 @@ contains
        if (ishape == 2) then
           call ovarrf(outfile,'Elongation, X-point (Zohm scaling)', &
                '(kappa)',kappa)
-          call ovarrf(outfile,'Elongation, 95% surface (kappa/1.12)', &
-               '(kappa95)',kappa95)
        else
           call ovarrf(outfile,'Elongation, X-point','(kappa)',kappa)
-          call ovarrf(outfile,'Elongation, 95% surface (kappa-0.04)/1.1', &
-               '(kappa95)',kappa95)
        end if
+       call ovarrf(outfile,'Elongation, 95% surface (kappa/1.12)', &
+            '(kappa95)',kappa95)
        call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa)
        call ovarrf(outfile,'Triangularity, X-point','(triang)',triang)
        call ovarrf(outfile,'Triangularity, 95% surface','(triang95)',triang95)

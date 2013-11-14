@@ -69,6 +69,7 @@ contains
     !+ad_hist  05/11/12 PJK Added rfp_variables
     !+ad_hist  10/06/13 PJK New ISHAPE=2 elongation scaling; sf2 replaced by
     !+ad_hisc               global variable pperim
+    !+ad_hist  14/11/13 PJK Unified kappa95 estimate to Hartmann suggestion
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK14, pp.41-43
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -105,12 +106,10 @@ contains
     end if
 
     !  Rough estimate of 95% values
+    !  Tobias Hartmann suggestion for kappa95 (close to previous estimate
+    !  of (kappa - 0.04) / 1.1 over a large kappa range)
 
-    if (ishape == 2) then  !  Tobias Hartmann suggestion
-       kappa95 = kappa / 1.12D0
-    else
-       kappa95 = (kappa - 0.04D0) / 1.10D0
-    end if
+    kappa95 = kappa / 1.12D0
     triang95 = triang / 1.50D0
 
     !  Scrape-off layer thicknesses

@@ -1346,3 +1346,4 @@ end subroutine output
 ! SVN 195: Modified stellarator blanket thicknesses consistently with KIT blanket model
 ! SVN 196/7 : Modified TF coil case mass calculation
 ! SVN 198: Corrected thermal energy outputs by 3/2 factor
+! SVN 199: Unified kappa95 definition to be kappa/1.12
