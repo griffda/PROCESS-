@@ -1351,3 +1351,4 @@ end subroutine output
 !          Changed 'breeding unit' to 'breeding zone' in KIT blanket model;
 !          Raised tftort upper limit
 ! SVN 201: Changed boundl(25: fpnetel) to 0.001 from 1.0
+! SVN 202: Changed some other unusual boundl, boundu values

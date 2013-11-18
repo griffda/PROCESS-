@@ -34,6 +34,7 @@ module numerics
   !+ad_hist  30/09/13 PJK New constraint eqn.56 added; new iteration variable
   !+ad_hisc               97 added
   !+ad_hist  18/11/13 PJK Changed boundl(25: fpnetel) to 0.001
+  !+ad_hist  18/11/13 PJK Changed various boundl, boundu values
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -638,7 +639,7 @@ module numerics
        0.010D0, &  !  30
        0.001D0, &  !  31
        0.001D0, &  !  32
-       0.010D0, &  !  33
+       0.001D0, &  !  33
        0.001D0, &  !  34
        0.001D0, &  !  35
        0.001D0, &  !  36
@@ -647,10 +648,10 @@ module numerics
        0.001D0, &  !  39
        0.001D0, &  !  40
        0.001D0, &  !  41
-       0.000D0, &  !  42  N.B. Is 0.0 wise?
+       0.001D0, &  !  42
        1.00D-6, &  !  43
        0.001D0, &  !  44
-       0.010D0, &  !  45
+       0.001D0, &  !  45
        0.001D0, &  !  46
        0.001D0, &  !  47
        0.001D0, &  !  48
@@ -752,7 +753,7 @@ module numerics
        10.00D0, &  !  42
        3.00D-3, &  !  43
        1.000D0, &  !  44
-       0.330D0, &  !  45
+       1.000D0, &  !  45
        1.000D0, &  !  46
        1.000D0, &  !  47
        1.000D0, &  !  48
@@ -784,7 +785,7 @@ module numerics
        10.00D0, &  !  74
        5.000D0, &  !  75
        1.000D0, &  !  76
-       2.000D0, &  !  77
+       4.000D0, &  !  77
        1.800D0, &  !  78
        1.000D0, &  !  79
        1.000D0, &  !  80
