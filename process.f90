@@ -1347,3 +1347,6 @@ end subroutine output
 ! SVN 196/7 : Modified TF coil case mass calculation
 ! SVN 198: Corrected thermal energy outputs by 3/2 factor
 ! SVN 199: Unified kappa95 definition to be kappa/1.12
+! SVN 200: Removed obscure upper limit on divertor null-to-strike distance;
+!          Changed 'breeding unit' to 'breeding zone' in KIT blanket model;
+!          Raised tftort upper limit

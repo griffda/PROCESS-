@@ -1565,7 +1565,7 @@ direction away from the plasma/first wall, these are:
 
 \begin{itemize}
 
-\item Breeding Unit (BU) (which includes the first wall), with radial
+\item Breeding Zone (BZ) (which includes the first wall), with radial
   thicknesses (inboard and outboard, respectively) \texttt{fwith+blbuith},
   \texttt{fwoth+blbuoth}. This consists of beryllium (with fraction by volume
   \texttt{fblbe}), breeder material (\texttt{fblbreed}), steel
@@ -1584,9 +1584,9 @@ direction away from the plasma/first wall, these are:
   respectively) \texttt{blbpith}, \texttt{blbpoth} and helium fractions
   \texttt{fblhebpi}, \texttt{fblhebpo} (the rest being steel).
 
-Together, the BU, BM and BP make up the `blanket', with total radial
+Together, the BZ, BM and BP make up the `blanket', with total radial
 thicknesses \texttt{blnkith} (inboard) and \texttt{blnkoth} (outboard), and
-void (coolant) fraction \texttt{vfblkt}; these
+void (coolant) fraction \texttt{vfblkt}; Note that these
 quantities are \textit{calculated}\ from the sub-assembly values if
 \texttt{blktmodel > 0}, rather than being input parameters.
 
@@ -1654,7 +1654,7 @@ The advanced blanket neutronics model provides the following outputs:
 \item The tritium breeding ratio, \texttt{tbr}. This can be constrained to be
   no less than a certain value \texttt{tbrmin} for tritium self-sufficiency by
   turning on constraint equation no.\ 52 with iteration variable no.\ 89
-  (\texttt{ftbr}). The inboard and outboard blanket BU thicknesses,
+  (\texttt{ftbr}). The inboard and outboard blanket BZ thicknesses,
   \texttt{blbuith} and \texttt{blbuoth} can also be used as iteration
   variables (90 and 91, respectively) to help the constraint to be met.
 

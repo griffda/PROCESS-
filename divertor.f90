@@ -79,6 +79,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  17/10/12 PJK Added divertor_variables
+    !+ad_hist  14/11/13 PJK Removed upper limit on plsep
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -114,7 +115,8 @@ contains
     !  Reference null to strike distances
     !  Only set up for outer divertor for double-null
 
-    plsep = min(plsepo,pi*rminor)
+    !plsep = min(plsepo,pi*rminor)  !  Obscure reason to set a limit...
+    plsep = plsepo
 
     !  Scale plasma quantities
 

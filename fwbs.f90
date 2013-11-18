@@ -26,6 +26,7 @@ module kit_blanket_model
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  06/06/13 PJK Initial release for comments
+  !+ad_hist  14/11/13 PJK Global replacement of BU by BZ (Unit --> Zone)
   !+ad_stat  Okay
   !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
   !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
@@ -42,7 +43,7 @@ module kit_blanket_model
   !  Local variables
 
   !  Radial coordinate arrays for the blanket sub-assemblies:
-  !  BU = Breeding Unit
+  !  BZ = Breeding Zone
   !  BM = Box Manifold
   !  BP = Back Plates
   !  VV = Vacuum Vessel (includes low-temperature shield)
@@ -50,13 +51,13 @@ module kit_blanket_model
   !
   !  IB = inboard, OB = outboard
 
-  real(kind(1.0D0)), dimension(2) :: x_BU_IB, x_BM_IB, x_BP_IB, x_VV_IB
-  real(kind(1.0D0)), dimension(2) :: x_BU_OB, x_BM_OB, x_BP_OB, x_VV_OB
+  real(kind(1.0D0)), dimension(2) :: x_BZ_IB, x_BM_IB, x_BP_IB, x_VV_IB
+  real(kind(1.0D0)), dimension(2) :: x_BZ_OB, x_BM_OB, x_BP_OB, x_VV_OB
 
   !  Values shared between subroutines in this module
 
-  real(kind(1.0D0)) :: q_BU_IB_end,q_BM_IB_end,q_BP_IB_end
-  real(kind(1.0D0)) :: q_BU_OB_end,q_BM_OB_end,q_BP_OB_end
+  real(kind(1.0D0)) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
+  real(kind(1.0D0)) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
   real(kind(1.0D0)) :: phi_n_vv_IB_start,phi_n_vv_OB_start
 
   !  Universal constants
@@ -84,8 +85,8 @@ module kit_blanket_model
   real(kind(1.0D0)) :: e_Li_PPCS = 30.0D0      ! [%] Li6 enrichment
   character(len=13) :: breeder_PPCS = 'Orthosilicate' ! Breeder type
 
-  real(kind(1.0D0)) :: t_BU_IB_PPCS = 36.5D0   ! [cm] IB Breeding Unit thickness
-  real(kind(1.0D0)) :: t_BU_OB_PPCS = 46.5D0   ! [cm] OB Breeding Unit thickness
+  real(kind(1.0D0)) :: t_BZ_IB_PPCS = 36.5D0   ! [cm] IB Breeding Zone thickness
+  real(kind(1.0D0)) :: t_BZ_OB_PPCS = 46.5D0   ! [cm] OB Breeding Zone thickness
   real(kind(1.0D0)) :: TBR_PPCS = 1.12D0       ! [--] Tritium Breeding Ratio
   real(kind(1.0D0)) :: M_E_PPCS = 1.38D0       ! [--] Energy multiplication factor
   ! not used...
@@ -96,20 +97,20 @@ module kit_blanket_model
 
   !  Power density pre-exponential terms and decay lengths
 
-  real(kind(1.0D0)) :: q_0_BU_breed_IB = 31.348D0 ! [W/cm^3] Pre-exp term in IB BU breeder
-  real(kind(1.0D0)) :: q_0_BU_breed_OB = 37.144D0 ! [W/cm^3] Pre-exp term in OB BU breeder
-  real(kind(1.0D0)) :: lambda_q_BU_breed_IB = 29.42D0 ! [cm] Decay length in IB BU breeder
-  real(kind(1.0D0)) :: lambda_q_BU_breed_OB = 27.03D0 ! [cm] Decay length in OB BU breeder
+  real(kind(1.0D0)) :: q_0_BZ_breed_IB = 31.348D0 ! [W/cm^3] Pre-exp term in IB BZ breeder
+  real(kind(1.0D0)) :: q_0_BZ_breed_OB = 37.144D0 ! [W/cm^3] Pre-exp term in OB BZ breeder
+  real(kind(1.0D0)) :: lambda_q_BZ_breed_IB = 29.42D0 ! [cm] Decay length in IB BZ breeder
+  real(kind(1.0D0)) :: lambda_q_BZ_breed_OB = 27.03D0 ! [cm] Decay length in OB BZ breeder
 
-  real(kind(1.0D0)) :: q_0_BU_Be_IB = 9.532D0 ! [W/cm^3] Pre-exp term in IB BU Beryllium
-  real(kind(1.0D0)) :: q_0_BU_Be_OB = 11.809D0 ! [W/cm^3] Pre-exp term in OB BU Beryllium
-  real(kind(1.0D0)) :: lambda_q_BU_Be_IB = 16.39D0 ! [cm] Decay length in IB BU Beryllium
-  real(kind(1.0D0)) :: lambda_q_BU_Be_OB = 16.39D0 ! [cm] Decay length in OB BU Beryllium
+  real(kind(1.0D0)) :: q_0_BZ_Be_IB = 9.532D0 ! [W/cm^3] Pre-exp term in IB BZ Beryllium
+  real(kind(1.0D0)) :: q_0_BZ_Be_OB = 11.809D0 ! [W/cm^3] Pre-exp term in OB BZ Beryllium
+  real(kind(1.0D0)) :: lambda_q_BZ_Be_IB = 16.39D0 ! [cm] Decay length in IB BZ Beryllium
+  real(kind(1.0D0)) :: lambda_q_BZ_Be_OB = 16.39D0 ! [cm] Decay length in OB BZ Beryllium
 
-  real(kind(1.0D0)) :: q_0_BU_steels_IB = 16.067D0 ! [W/cm^3] Pre-exp term in IB BU steels
-  real(kind(1.0D0)) :: q_0_BU_steels_OB = 18.788D0 ! [W/cm^3] Pre-exp term in OB BU steels
-  real(kind(1.0D0)) :: lambda_q_BU_steels_IB = 21.27D0 ! [cm] Decay length in IB BU steels
-  real(kind(1.0D0)) :: lambda_q_BU_steels_OB = 21.27D0 ! [cm] Decay length in OB BU steels
+  real(kind(1.0D0)) :: q_0_BZ_steels_IB = 16.067D0 ! [W/cm^3] Pre-exp term in IB BZ steels
+  real(kind(1.0D0)) :: q_0_BZ_steels_OB = 18.788D0 ! [W/cm^3] Pre-exp term in OB BZ steels
+  real(kind(1.0D0)) :: lambda_q_BZ_steels_IB = 21.27D0 ! [cm] Decay length in IB BZ steels
+  real(kind(1.0D0)) :: lambda_q_BZ_steels_OB = 21.27D0 ! [cm] Decay length in OB BZ steels
 
   real(kind(1.0D0)) :: lambda_EU = 11.57D0  ! [cm] Decay length in EUROFER
   real(kind(1.0D0)) :: lambda_q_BM_IB       ! [cm] Decay length in IB BM (calculated)
@@ -120,10 +121,10 @@ module kit_blanket_model
 
   !  Fast neutron flux pre-exponential terms and decay lengths
 
-  real(kind(1.0D0)) :: phi_0_n_BU_IB = 5.12D14  ! [n/cm^2/sec] Pre-exp term in IB BU
-  real(kind(1.0D0)) :: phi_0_n_BU_OB = 5.655D14 ! [n/cm^2/sec] Pre-exp term in OB BU
-  real(kind(1.0D0)) :: lambda_n_BU_IB = 18.79D0 ! [cm] Decay length in IB BU
-  real(kind(1.0D0)) :: lambda_n_BU_OB = 19.19D0 ! [cm] Decay length in OB BU
+  real(kind(1.0D0)) :: phi_0_n_BZ_IB = 5.12D14  ! [n/cm^2/sec] Pre-exp term in IB BZ
+  real(kind(1.0D0)) :: phi_0_n_BZ_OB = 5.655D14 ! [n/cm^2/sec] Pre-exp term in OB BZ
+  real(kind(1.0D0)) :: lambda_n_BZ_IB = 18.79D0 ! [cm] Decay length in IB BZ
+  real(kind(1.0D0)) :: lambda_n_BZ_OB = 19.19D0 ! [cm] Decay length in OB BZ
   real(kind(1.0D0)) :: lambda_n_VV = 8.153D0    ! [cm] Decay length in VV
 
   !  [n/cm^2/sec] Reference fast neutron flux on VV inner side [Fish09]
@@ -169,27 +170,27 @@ module kit_blanket_model
 
   !  Inboard parameters
 
-  real(kind(1.0D0)), public :: t_BU_IB = 36.5D0     ! [cm] BU thickness
+  real(kind(1.0D0)), public :: t_BZ_IB = 36.5D0     ! [cm] BZ thickness
   real(kind(1.0D0)), public :: t_BM_IB = 17.0D0     ! [cm] BM thickness
   real(kind(1.0D0)), public :: t_BP_IB = 30.0D0     ! [cm] BP thickness
   real(kind(1.0D0)), public :: t_VV_IB = 35.0D0     ! [cm] VV thickness
   real(kind(1.0D0)), public :: alpha_BM_IB = 40.0D0  ! [%] Helium fraction in the IB BM
   real(kind(1.0D0)), public :: alpha_BP_IB = 65.95D0 ! [%] Helium fraction in the IB BP
-  real(kind(1.0D0)), public :: chi_Be_BU_IB = 69.2D0 ! [%] Beryllium vol. frac. in IB BU
-  real(kind(1.0D0)), public :: chi_breed_BU_IB = 15.4D0 ! [%] Breeder vol. frac. in IB BU
-  real(kind(1.0D0)), public :: chi_steels_BU_IB = 9.8D0 ! [%] Steels vol. frac. in IB BU
+  real(kind(1.0D0)), public :: chi_Be_BZ_IB = 69.2D0 ! [%] Beryllium vol. frac. in IB BZ
+  real(kind(1.0D0)), public :: chi_breed_BZ_IB = 15.4D0 ! [%] Breeder vol. frac. in IB BZ
+  real(kind(1.0D0)), public :: chi_steels_BZ_IB = 9.8D0 ! [%] Steels vol. frac. in IB BZ
 
   !  Outboard parameters
 
-  real(kind(1.0D0)), public :: t_BU_OB = 46.5D0     ! [cm] BU thickness
+  real(kind(1.0D0)), public :: t_BZ_OB = 46.5D0     ! [cm] BZ thickness
   real(kind(1.0D0)), public :: t_BM_OB = 27.0D0     ! [cm] BM thickness
   real(kind(1.0D0)), public :: t_BP_OB = 35.0D0     ! [cm] BP thickness
   real(kind(1.0D0)), public :: t_VV_OB = 65.0D0     ! [cm] VV thickness
   real(kind(1.0D0)), public :: alpha_BM_OB = 40.0D0  ! [%] Helium fraction in the OB BM
   real(kind(1.0D0)), public :: alpha_BP_OB = 67.13D0 ! [%] Helium fraction in the OB BP
-  real(kind(1.0D0)), public :: chi_Be_BU_OB = 69.2D0 ! [%] Beryllium vol. frac. in OB BU
-  real(kind(1.0D0)), public :: chi_breed_BU_OB = 15.4D0 ! [%] Breeder vol. frac. in OB BU
-  real(kind(1.0D0)), public :: chi_steels_BU_OB = 9.8D0 ! [%] Steels vol. frac. in OB BU
+  real(kind(1.0D0)), public :: chi_Be_BZ_OB = 69.2D0 ! [%] Beryllium vol. frac. in OB BZ
+  real(kind(1.0D0)), public :: chi_breed_BZ_OB = 15.4D0 ! [%] Breeder vol. frac. in OB BZ
+  real(kind(1.0D0)), public :: chi_steels_BZ_OB = 9.8D0 ! [%] Steels vol. frac. in OB BZ
 
   !  Model outputs
 
@@ -313,11 +314,11 @@ contains
 
     !  Perform the main calculations
 
-    call power_density(q_BU_IB_end,q_BM_IB_end,q_BP_IB_end, &
-         q_BU_OB_end,q_BM_OB_end,q_BP_OB_end,pnuctfi,pnuctfo)
+    call power_density(q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end, &
+         q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end,pnuctfi,pnuctfo)
 
-    call nuclear_power_production(q_BU_IB_end,q_BM_IB_end,q_BP_IB_end, &
-         q_BU_OB_end,q_BM_OB_end,q_BP_OB_end,P_th_tot,M_E,pnucsh)
+    call nuclear_power_production(q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end, &
+         q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end,P_th_tot,M_E,pnucsh)
 
     call tritium_breeding_ratio(tbratio,G_tot)
 
@@ -370,14 +371,14 @@ contains
     !  Radial coordinates in each inboard sub-assembly (cm)
     !  Element 1 is 'inner' edge (nearer the plasma), element 2 is 'outer' edge
 
-    x_BU_IB(1) = 0.0D0 ; x_BU_IB(2) = t_FW_IB + t_BU_IB
+    x_BZ_IB(1) = 0.0D0 ; x_BZ_IB(2) = t_FW_IB + t_BZ_IB
     x_BM_IB(1) = 0.0D0 ; x_BM_IB(2) = t_BM_IB
     x_BP_IB(1) = 0.0D0 ; x_BP_IB(2) = t_BP_IB
     x_VV_IB(1) = 0.0D0 ; x_VV_IB(2) = t_VV_IB
 
     !  Radial coordinates in each outboard sub-assembly (cm)
 
-    x_BU_OB(1) = 0.0D0 ; x_BU_OB(2) = t_FW_OB + t_BU_OB
+    x_BZ_OB(1) = 0.0D0 ; x_BZ_OB(2) = t_FW_OB + t_BZ_OB
     x_BM_OB(1) = 0.0D0 ; x_BM_OB(2) = t_BM_OB
     x_BP_OB(1) = 0.0D0 ; x_BP_OB(2) = t_BP_OB
     x_VV_OB(1) = 0.0D0 ; x_VV_OB(2) = t_VV_OB
@@ -386,8 +387,8 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine power_density(q_BU_IB_end,q_BM_IB_end,q_BP_IB_end, &
-       q_BU_OB_end,q_BM_OB_end,q_BP_OB_end,pnuctfi,pnuctfo)
+  subroutine power_density(q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end, &
+       q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end,pnuctfi,pnuctfo)
 
     !+ad_name  power_density
     !+ad_summ  Calculates the nuclear power density profiles
@@ -396,10 +397,10 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_auth  F Franza, KIT (original MATLAB implementation)
     !+ad_cont  None
-    !+ad_args  q_BU_IB_end : output real : power density at outer edge of IB BU (MW/m3)
+    !+ad_args  q_BZ_IB_end : output real : power density at outer edge of IB BZ (MW/m3)
     !+ad_args  q_BM_IB_end : output real : power density at outer edge of IB BM (MW/m3)
     !+ad_args  q_BP_IB_end : output real : power density at outer edge of IB BP (MW/m3)
-    !+ad_args  q_BU_OB_end : output real : power density at outer edge of OB BU (MW/m3)
+    !+ad_args  q_BZ_OB_end : output real : power density at outer edge of OB BZ (MW/m3)
     !+ad_args  q_BM_OB_end : output real : power density at outer edge of OB BM (MW/m3)
     !+ad_args  q_BP_OB_end : output real : power density at outer edge of OB BP (MW/m3)
     !+ad_args  pnuctfi     : output real : power density at outer edge of IB VV (MW/m3)
@@ -428,13 +429,13 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(out) :: q_BU_IB_end,q_BM_IB_end,q_BP_IB_end
-    real(kind(1.0D0)), intent(out) :: q_BU_OB_end,q_BM_OB_end,q_BP_OB_end
+    real(kind(1.0D0)), intent(out) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
+    real(kind(1.0D0)), intent(out) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
     real(kind(1.0D0)), intent(out) :: pnuctfi, pnuctfo
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(2) :: q_steels_BU_IB, q_steels_BU_OB
+    real(kind(1.0D0)), dimension(2) :: q_steels_BZ_IB, q_steels_BZ_OB
     real(kind(1.0D0)), dimension(2) :: q_BM_IB, q_BP_IB, q_VV_IB
     real(kind(1.0D0)), dimension(2) :: q_BM_OB, q_BP_OB, q_VV_OB
 
@@ -444,15 +445,15 @@ contains
 
     !  Inboard profiles
 
-    !  Power density profile in IB BU steels
+    !  Power density profile in IB BZ steels
 
-    q_steels_BU_IB(:) = NWL_av/NWL_av_PPCS * q_0_BU_steels_IB * &
-         exp(-x_BU_IB(:)/lambda_q_BU_steels_IB)
-    q_BU_IB_end = q_steels_BU_IB(2)
+    q_steels_BZ_IB(:) = NWL_av/NWL_av_PPCS * q_0_BZ_steels_IB * &
+         exp(-x_BZ_IB(:)/lambda_q_BZ_steels_IB)
+    q_BZ_IB_end = q_steels_BZ_IB(2)
 
     ! Power density profile in IB BM
 
-    q_BM_IB(:) = q_steels_BU_IB(2) * exp(-x_BM_IB(:)/lambda_q_BM_IB)
+    q_BM_IB(:) = q_steels_BZ_IB(2) * exp(-x_BM_IB(:)/lambda_q_BM_IB)
     q_BM_IB_end = q_BM_IB(2)
 
     !  Power density profile in IB BP
@@ -466,15 +467,15 @@ contains
 
     !  Outboard profiles
 
-    !  Power density profile in OB BU steels
+    !  Power density profile in OB BZ steels
 
-    q_steels_BU_OB(:) = NWL_av/NWL_av_PPCS * q_0_BU_steels_OB * &
-         exp(-x_BU_OB(:)/lambda_q_BU_steels_OB)
-    q_BU_OB_end = q_steels_BU_OB(2)
+    q_steels_BZ_OB(:) = NWL_av/NWL_av_PPCS * q_0_BZ_steels_OB * &
+         exp(-x_BZ_OB(:)/lambda_q_BZ_steels_OB)
+    q_BZ_OB_end = q_steels_BZ_OB(2)
 
     !  Power density profile in OB BM
 
-    q_BM_OB(:) = q_steels_BU_OB(2) * exp(-x_BM_OB(:)/lambda_q_BM_OB)
+    q_BM_OB(:) = q_steels_BZ_OB(2) * exp(-x_BM_OB(:)/lambda_q_BM_OB)
     q_BM_OB_end = q_BM_OB(2)
 
     !  Power density profile in OB BP
@@ -496,8 +497,8 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine nuclear_power_production(q_BU_IB_end,q_BM_IB_end,q_BP_IB_end, &
-       q_BU_OB_end,q_BM_OB_end,q_BP_OB_end,P_th_tot,M_E,pnucsh)
+  subroutine nuclear_power_production(q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end, &
+       q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end,P_th_tot,M_E,pnucsh)
 
     !+ad_name  nuclear_power_production
     !+ad_summ  Calculates nuclear power production and energy multiplication factor
@@ -506,10 +507,10 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_auth  F Franza, KIT (original MATLAB implementation)
     !+ad_cont  None
-    !+ad_args  q_BU_IB_end : input real : power density at outer edge of IB BU (MW/m3)
+    !+ad_args  q_BZ_IB_end : input real : power density at outer edge of IB BZ (MW/m3)
     !+ad_args  q_BM_IB_end : input real : power density at outer edge of IB BM (MW/m3)
     !+ad_args  q_BP_IB_end : input real : power density at outer edge of IB BP (MW/m3)
-    !+ad_args  q_BU_OB_end : input real : power density at outer edge of OB BU (MW/m3)
+    !+ad_args  q_BZ_OB_end : input real : power density at outer edge of OB BZ (MW/m3)
     !+ad_args  q_BM_OB_end : input real : power density at outer edge of OB BM (MW/m3)
     !+ad_args  q_BP_OB_end : input real : power density at outer edge of OB BP (MW/m3)
     !+ad_args  p_th_tot    : output real : total nuclear power in the blanket (MW)
@@ -519,7 +520,7 @@ contains
     !+ad_desc  blanket sub-assembly, assuming an exponential decay with distance through
     !+ad_desc  each region, with the decay indices dependent on the material fractions.
     !+ad_desc  These are summed to give the total nuclear power produced in the 'blanket'
-    !+ad_desc  (BU+BM+BP) and 'shield' regions, and the energy multiplication factor
+    !+ad_desc  (BZ+BM+BP) and 'shield' regions, and the energy multiplication factor
     !+ad_desc  in the blanket is calculated.
     !+ad_prob  None
     !+ad_call  None
@@ -540,18 +541,18 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: q_BU_IB_end,q_BM_IB_end,q_BP_IB_end
-    real(kind(1.0D0)), intent(in) :: q_BU_OB_end,q_BM_OB_end,q_BP_OB_end
+    real(kind(1.0D0)), intent(in) :: q_BZ_IB_end,q_BM_IB_end,q_BP_IB_end
+    real(kind(1.0D0)), intent(in) :: q_BZ_OB_end,q_BM_OB_end,q_BP_OB_end
     real(kind(1.0D0)), intent(out) :: P_th_tot, M_E, pnucsh
 
     !  Local variables
 
-    real(kind(1.0D0)) :: A_BU_breed_IB, A_BU_breed_OB, A_BU_Be_IB, A_BU_Be_OB
-    real(kind(1.0D0)) :: A_BU_steels_IB, A_BU_steels_OB
-    real(kind(1.0D0)) :: P_BU_breed_IB, P_BU_Be_IB, P_BU_steels_IB
-    real(kind(1.0D0)) :: P_BU_IB, P_BM_IB, P_BP_IB, P_VV_IB
-    real(kind(1.0D0)) :: P_BU_breed_OB, P_BU_Be_OB, P_BU_steels_OB
-    real(kind(1.0D0)) :: P_BU_OB, P_BM_OB, P_BP_OB, P_VV_OB
+    real(kind(1.0D0)) :: A_BZ_breed_IB, A_BZ_breed_OB, A_BZ_Be_IB, A_BZ_Be_OB
+    real(kind(1.0D0)) :: A_BZ_steels_IB, A_BZ_steels_OB
+    real(kind(1.0D0)) :: P_BZ_breed_IB, P_BZ_Be_IB, P_BZ_steels_IB
+    real(kind(1.0D0)) :: P_BZ_IB, P_BM_IB, P_BP_IB, P_VV_IB
+    real(kind(1.0D0)) :: P_BZ_breed_OB, P_BZ_Be_OB, P_BZ_steels_OB
+    real(kind(1.0D0)) :: P_BZ_OB, P_BM_OB, P_BP_OB, P_VV_OB
     real(kind(1.0D0)) :: P_tot_IB, P_tot_OB, P_n_FW
 
     real(kind(1.0D0)) :: nwl_ratio, nwl_IB_ratio_PPCS, nwl_OB_ratio_PPCS
@@ -562,53 +563,53 @@ contains
     nwl_IB_ratio_PPCS = NWL_av_IB_PPCS / NWL_max_IB_PPCS
     nwl_OB_ratio_PPCS = NWL_av_OB_PPCS / NWL_max_OB_PPCS
 
-    !  Cross-sectional areas in the breeder unit (cm2)
+    !  Cross-sectional areas in the breeder zone (cm2)
 
     !  Breeder (chi... = volumetric fraction as a percentage)
 
-    A_BU_breed_IB = A_bl_IB * 0.01D0*chi_breed_BU_IB
-    A_BU_breed_OB = A_bl_OB * 0.01D0*chi_breed_BU_OB
+    A_BZ_breed_IB = A_bl_IB * 0.01D0*chi_breed_BZ_IB
+    A_BZ_breed_OB = A_bl_OB * 0.01D0*chi_breed_BZ_OB
 
     !  Beryllium pebbles
 
-    A_BU_Be_IB = A_bl_IB * 0.01D0*chi_Be_BU_IB
-    A_BU_Be_OB = A_bl_OB * 0.01D0*chi_Be_BU_OB
+    A_BZ_Be_IB = A_bl_IB * 0.01D0*chi_Be_BZ_IB
+    A_BZ_Be_OB = A_bl_OB * 0.01D0*chi_Be_BZ_OB
 
-    !  Breeder Unit steels
+    !  Breeder Zone steels
 
-    A_BU_steels_IB = A_bl_IB * 0.01D0*chi_steels_BU_IB
-    A_BU_steels_OB = A_bl_OB * 0.01D0*chi_steels_BU_OB
+    A_BZ_steels_IB = A_bl_IB * 0.01D0*chi_steels_BZ_IB
+    A_BZ_steels_OB = A_bl_OB * 0.01D0*chi_steels_BZ_OB
 
     !  Inboard power terms (MW)
 
     !  Nuclear power in IB breeder pebbles
 
-    P_BU_breed_IB = 1.0D-6 * nwl_ratio * nwl_IB_ratio_PPCS * A_BU_breed_IB * &
-         lambda_q_BU_breed_IB * q_0_BU_breed_IB * &
-         ( exp(-t_FW_IB/lambda_q_BU_breed_IB) - &
-         exp(-(t_FW_IB+t_BU_IB)/lambda_q_BU_breed_IB) )
+    P_BZ_breed_IB = 1.0D-6 * nwl_ratio * nwl_IB_ratio_PPCS * A_BZ_breed_IB * &
+         lambda_q_BZ_breed_IB * q_0_BZ_breed_IB * &
+         ( exp(-t_FW_IB/lambda_q_BZ_breed_IB) - &
+         exp(-(t_FW_IB+t_BZ_IB)/lambda_q_BZ_breed_IB) )
 
     !  Nuclear power in IB Be pebbles     
 
-    P_BU_Be_IB = 1.0D-6 * nwl_ratio * nwl_IB_ratio_PPCS * A_BU_Be_IB * &
-         lambda_q_BU_Be_IB * q_0_BU_Be_IB * &
-         ( exp(-t_FW_IB/lambda_q_BU_Be_IB) - &
-         exp(-(t_FW_IB+t_BU_IB)/lambda_q_BU_Be_IB) )
+    P_BZ_Be_IB = 1.0D-6 * nwl_ratio * nwl_IB_ratio_PPCS * A_BZ_Be_IB * &
+         lambda_q_BZ_Be_IB * q_0_BZ_Be_IB * &
+         ( exp(-t_FW_IB/lambda_q_BZ_Be_IB) - &
+         exp(-(t_FW_IB+t_BZ_IB)/lambda_q_BZ_Be_IB) )
 
-    !  Nuclear power in IB BU steels
+    !  Nuclear power in IB BZ steels
 
-    P_BU_steels_IB = 1.0D-6 * nwl_ratio * nwl_IB_ratio_PPCS * A_BU_steels_IB * &
-         lambda_q_BU_steels_IB * q_0_BU_steels_IB * &
-         (1.0D0-exp(-(t_FW_IB+t_BU_IB)/lambda_q_BU_steels_IB))
+    P_BZ_steels_IB = 1.0D-6 * nwl_ratio * nwl_IB_ratio_PPCS * A_BZ_steels_IB * &
+         lambda_q_BZ_steels_IB * q_0_BZ_steels_IB * &
+         (1.0D0-exp(-(t_FW_IB+t_BZ_IB)/lambda_q_BZ_steels_IB))
 
-    !  Total nuclear power in IB BU
+    !  Total nuclear power in IB BZ
 
-    P_BU_IB = P_BU_breed_IB + P_BU_Be_IB + P_BU_steels_IB
+    P_BZ_IB = P_BZ_breed_IB + P_BZ_Be_IB + P_BZ_steels_IB
 
     !  Nuclear power in IB BM
 
     P_BM_IB = 1.0D-6 * nwl_IB_ratio_PPCS * A_bl_IB * &
-         lambda_q_BM_IB * q_BU_IB_end * &
+         lambda_q_BM_IB * q_BZ_IB_end * &
          (1.0D0-exp(-t_BM_IB/lambda_q_BM_IB))
 
     !  Nuclear power in IB BP
@@ -625,34 +626,34 @@ contains
 
     !  Outboard power terms (MW)
 
-    !  Nuclear power in OB BU breeder pebbles
+    !  Nuclear power in OB BZ breeder pebbles
 
-    P_BU_breed_OB = 1.0D-6 * nwl_ratio * nwl_OB_ratio_PPCS * A_BU_breed_OB * &
-         lambda_q_BU_breed_OB * q_0_BU_breed_OB * &
-         ( exp(-t_FW_OB/lambda_q_BU_breed_OB) - &
-         exp(-(t_FW_OB+t_BU_OB)/lambda_q_BU_breed_OB) )
+    P_BZ_breed_OB = 1.0D-6 * nwl_ratio * nwl_OB_ratio_PPCS * A_BZ_breed_OB * &
+         lambda_q_BZ_breed_OB * q_0_BZ_breed_OB * &
+         ( exp(-t_FW_OB/lambda_q_BZ_breed_OB) - &
+         exp(-(t_FW_OB+t_BZ_OB)/lambda_q_BZ_breed_OB) )
 
-    !  Nuclear power in OB BU Be pebbles
+    !  Nuclear power in OB BZ Be pebbles
 
-    P_BU_Be_OB = 1.0D-6 * nwl_ratio * nwl_OB_ratio_PPCS * A_BU_Be_OB * &
-         lambda_q_BU_Be_OB * q_0_BU_Be_OB * &
-         ( exp(-t_FW_OB/lambda_q_BU_Be_OB) - &
-         exp(-(t_FW_OB+t_BU_OB)/lambda_q_BU_Be_OB) )
+    P_BZ_Be_OB = 1.0D-6 * nwl_ratio * nwl_OB_ratio_PPCS * A_BZ_Be_OB * &
+         lambda_q_BZ_Be_OB * q_0_BZ_Be_OB * &
+         ( exp(-t_FW_OB/lambda_q_BZ_Be_OB) - &
+         exp(-(t_FW_OB+t_BZ_OB)/lambda_q_BZ_Be_OB) )
 
-    !  Nuclear power in OB BU steels
+    !  Nuclear power in OB BZ steels
 
-    P_BU_steels_OB = 1.0D-6 * nwl_ratio * nwl_OB_ratio_PPCS * A_BU_steels_OB * &
-         lambda_q_BU_steels_OB * q_0_BU_steels_OB * &
-         (1.0D0-exp(-(t_FW_OB+t_BU_OB)/lambda_q_BU_steels_OB))
+    P_BZ_steels_OB = 1.0D-6 * nwl_ratio * nwl_OB_ratio_PPCS * A_BZ_steels_OB * &
+         lambda_q_BZ_steels_OB * q_0_BZ_steels_OB * &
+         (1.0D0-exp(-(t_FW_OB+t_BZ_OB)/lambda_q_BZ_steels_OB))
 
-    !  Total nuclear power in OB BU
+    !  Total nuclear power in OB BZ
 
-    P_BU_OB = P_BU_breed_OB + P_BU_Be_OB + P_BU_steels_OB
+    P_BZ_OB = P_BZ_breed_OB + P_BZ_Be_OB + P_BZ_steels_OB
 
     !  Nuclear power in OB BM
 
     P_BM_OB = 1.0D-6 * nwl_OB_ratio_PPCS * A_bl_OB * &
-         lambda_q_BM_OB * q_BU_OB_end * &
+         lambda_q_BM_OB * q_BZ_OB_end * &
          (1.0D0-exp(-t_BM_OB/lambda_q_BM_OB))
 
     !  Nuclear power in OB BP
@@ -670,8 +671,8 @@ contains
     !  Total nuclear power in IB and OB regions (MW)
     !  Excludes contribution from shield/vacuum vessel
 
-    P_tot_IB = P_BU_IB + P_BM_IB + P_BP_IB
-    P_tot_OB = P_BU_OB + P_BM_OB + P_BP_OB
+    P_tot_IB = P_BZ_IB + P_BM_IB + P_BP_IB
+    P_tot_OB = P_BZ_OB + P_BM_OB + P_BP_OB
 
     !  Total nuclear power in the 'blanket' (MW)
 
@@ -741,10 +742,10 @@ contains
 
     tbr = TBR_PPCS * CF_bl/CF_bl_PPCS * &
          TBR_breed(e_Li, breeder)/TBR_breed(e_Li_PPCS, breeder) * &
-         ( 1.0D0 - exp( -(wib*t_BU_IB + wob*t_BU_OB) / &
-         (wib*lambda_q_BU_breed_IB + wob*lambda_q_BU_breed_OB)) ) / &
-         ( 1.0D0 - exp( -(wib_PPCS*t_BU_IB_PPCS + wob_PPCS*t_BU_OB_PPCS) / &
-         (wib_PPCS*lambda_q_BU_breed_IB + wob_PPCS*lambda_q_BU_breed_OB)) ) * &
+         ( 1.0D0 - exp( -(wib*t_BZ_IB + wob*t_BZ_OB) / &
+         (wib*lambda_q_BZ_breed_IB + wob*lambda_q_BZ_breed_OB)) ) / &
+         ( 1.0D0 - exp( -(wib_PPCS*t_BZ_IB_PPCS + wob_PPCS*t_BZ_OB_PPCS) / &
+         (wib_PPCS*lambda_q_BZ_breed_IB + wob_PPCS*lambda_q_BZ_breed_OB)) ) * &
          TBR_ports(n_ports_div, n_ports_H_CD_IB, n_ports_H_CD_OB, H_CD_ports)
 
     !  Total tritium production rate (grammes/day)
@@ -924,9 +925,9 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(2) :: phi_n_BU_IB, phi_n_BM_IB
+    real(kind(1.0D0)), dimension(2) :: phi_n_BZ_IB, phi_n_BM_IB
     real(kind(1.0D0)), dimension(2) :: phi_n_BP_IB, phi_n_VV_IB
-    real(kind(1.0D0)), dimension(2) :: phi_n_BU_OB, phi_n_BM_OB
+    real(kind(1.0D0)), dimension(2) :: phi_n_BZ_OB, phi_n_BM_OB
     real(kind(1.0D0)), dimension(2) :: phi_n_BP_OB, phi_n_VV_OB
     real(kind(1.0D0)) :: nwl_ratio
 
@@ -936,14 +937,14 @@ contains
 
     !  Inboard fast neutron flux profiles (n/cm2/second)
 
-    !  Fast neutron flux profile in IB BU
+    !  Fast neutron flux profile in IB BZ
 
-    phi_n_BU_IB(:) = nwl_ratio * phi_0_n_BU_IB * &
-         exp(-x_BU_IB(:)/lambda_n_BU_IB)
+    phi_n_BZ_IB(:) = nwl_ratio * phi_0_n_BZ_IB * &
+         exp(-x_BZ_IB(:)/lambda_n_BZ_IB)
 
     !  Fast neutron flux profile in IB BM
 
-    phi_n_BM_IB(:) = phi_n_BU_IB(2) * exp(-x_BM_IB(:)/lambda_q_BM_IB)
+    phi_n_BM_IB(:) = phi_n_BZ_IB(2) * exp(-x_BM_IB(:)/lambda_q_BM_IB)
 
     !  Fast neutron flux profile in IB BP
 
@@ -960,14 +961,14 @@ contains
 
     !  Outboard fast neutron flux profiles (n/cm2/second)
 
-    !  Fast neutron flux profile in OB BU
+    !  Fast neutron flux profile in OB BZ
 
-    phi_n_BU_OB(:) = nwl_ratio * phi_0_n_BU_OB * &
-         exp(-x_BU_OB(:)/lambda_n_BU_OB)
+    phi_n_BZ_OB(:) = nwl_ratio * phi_0_n_BZ_OB * &
+         exp(-x_BZ_OB(:)/lambda_n_BZ_OB)
 
     !  Fast neutron flux profile in OB BM
 
-    phi_n_BM_OB(:) = phi_n_BU_OB(2) * exp(-x_BM_OB(:)/lambda_q_BM_OB)
+    phi_n_BM_OB(:) = phi_n_BZ_OB(2) * exp(-x_BM_OB(:)/lambda_q_BM_OB)
 
     !  Fast neutron flux profile in OB BP
 
@@ -1802,13 +1803,13 @@ contains
     call ovarre(outfile,'Outboard shield thickness (m)','(shldoth)',shldoth)
     call ovarre(outfile,'Top shield thickness (m)','(shldtth)',shldtth)
     if (blktmodel > 0) then
-       call ovarre(outfile,'Inboard breeding unit thickness (m)','(blbuith)', blbuith)
+       call ovarre(outfile,'Inboard breeding zone thickness (m)','(blbuith)', blbuith)
        call ovarre(outfile,'Inboard box manifold thickness (m)','(blbmith)', blbmith)
        call ovarre(outfile,'Inboard back plate thickness (m)','(blbpith)', blbpith)
     end if
     call ovarre(outfile,'Inboard blanket thickness (m)','(blnkith)', blnkith)
     if (blktmodel > 0) then
-       call ovarre(outfile,'Outboard breeding unit thickness (m)','(blbuoth)', blbuoth)
+       call ovarre(outfile,'Outboard breeding zone thickness (m)','(blbuoth)', blbuoth)
        call ovarre(outfile,'Outboard box manifold thickness (m)','(blbmoth)', blbmoth)
        call ovarre(outfile,'Outboard back plate thickness (m)','(blbpoth)', blbpoth)
     end if
@@ -4957,27 +4958,27 @@ contains
 
     !  Inboard parameters
 
-    t_BU_IB = blbuith * 100.0D0          ! [cm] BU thickness
+    t_BZ_IB = blbuith * 100.0D0          ! [cm] BZ thickness
     t_BM_IB = blbmith * 100.0D0          ! [cm] BM thickness
     t_BP_IB = blbpith * 100.0D0          ! [cm] BP thickness
     t_VV_IB = (shldith+ddwi) * 100.0D0   ! [cm] VV thickness
     alpha_BM_IB = fblhebmi * 100.0D0     ! [%] Helium fraction in the IB BM
     alpha_BP_IB = fblhebpi * 100.0D0     ! [%] Helium fraction in the IB BP
-    chi_Be_BU_IB = fblbe * 100.0D0       ! [%] Beryllium vol. frac. in IB BU
-    chi_breed_BU_IB = fblbreed * 100.0D0 ! [%] Breeder vol. frac. in IB BU
-    chi_steels_BU_IB = fblss * 100.0D0   ! [%] Steels vol. frac. in IB BU
+    chi_Be_BZ_IB = fblbe * 100.0D0       ! [%] Beryllium vol. frac. in IB BZ
+    chi_breed_BZ_IB = fblbreed * 100.0D0 ! [%] Breeder vol. frac. in IB BZ
+    chi_steels_BZ_IB = fblss * 100.0D0   ! [%] Steels vol. frac. in IB BZ
 
     !  Outboard parameters
 
-    t_BU_OB = blbuoth * 100.0D0          ! [cm] BU thickness
+    t_BZ_OB = blbuoth * 100.0D0          ! [cm] BZ thickness
     t_BM_OB = blbmoth * 100.0D0          ! [cm] BM thickness
     t_BP_OB = blbpoth * 100.0D0          ! [cm] BP thickness
     t_VV_OB = (shldoth+ddwi) * 100.0D0   ! [cm] VV thickness
     alpha_BM_OB = fblhebmo * 100.0D0     ! [%] Helium fraction in the OB BM
     alpha_BP_OB = fblhebpo * 100.0D0     ! [%] Helium fraction in the OB BP
-    chi_Be_BU_OB = fblbe * 100.0D0       ! [%] Beryllium vol. frac. in OB BU
-    chi_breed_BU_OB = fblbreed * 100.0D0 ! [%] Breeder vol. frac. in OB BU
-    chi_steels_BU_OB = fblss * 100.0D0   ! [%] Steels vol. frac. in OB BU
+    chi_Be_BZ_OB = fblbe * 100.0D0       ! [%] Beryllium vol. frac. in OB BZ
+    chi_breed_BZ_OB = fblbreed * 100.0D0 ! [%] Breeder vol. frac. in OB BZ
+    chi_steels_BZ_OB = fblss * 100.0D0   ! [%] Steels vol. frac. in OB BZ
 
     call kit_blanket
 

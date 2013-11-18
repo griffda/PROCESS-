@@ -347,6 +347,7 @@ contains
     !+ad_hist  30/09/13 PJK Added PSEPRMAX, FPSEPR
     !+ad_hist  08/10/13 PJK Reassigned ISUMATTF=2; added FHTS
     !+ad_hist  07/11/13 PJK Removed obsolete switch MAGNT
+    !+ad_hist  18/11/13 PJK Raised TFTORT upper limit
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1276,7 +1277,7 @@ contains
           call parse_real_variable('TFTMP', tftmp, 0.01D0, 10.0D0, &
                'Peak TF coil He coolant temp. (K)')
        case ('TFTORT')
-          call parse_real_variable('TFTORT', tftort, 0.1D0, 2.0D0, &
+          call parse_real_variable('TFTORT', tftort, 0.1D0, 4.0D0, &
                'TF coil toroidal thickness (m)')
        case ('THICNDUT')
           call parse_real_variable('THICNDUT', thicndut, 0.0D0, 0.1D0, &

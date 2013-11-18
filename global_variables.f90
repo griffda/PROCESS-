@@ -828,6 +828,7 @@ module fwbs_variables
   !+ad_hist  16/05/13 PJK Changed default value of fwbsshape
   !+ad_hist  20/05/13 PJK Added KIT PPCS model variables
   !+ad_hist  18/06/13 PJK Changed cryomass description
+  !+ad_hist  14/11/13 PJK Changed 'breeding unit' to 'breeding zone'
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -863,9 +864,9 @@ module fwbs_variables
   !                         (calculated if blktmodel>0)
   real(kind(1.0D0)) :: emult = 1.27D0
   !+ad_vars  fblbe /0.6/ : beryllium fraction of blanket by volume
-  !+ad_varc                (if blktmodel>0, Be fraction of breeding unit)
+  !+ad_varc                (if blktmodel>0, Be fraction of breeding zone)
   real(kind(1.0D0)) :: fblbe = 0.6D0
-  !+ad_vars  fblbreed /0.154/ : breeder fraction of blanket breeding unit by volume
+  !+ad_vars  fblbreed /0.154/ : breeder fraction of blanket breeding zone by volume
   !+ad_varc                     (blktmodel>0)
   real(kind(1.0D0)) :: fblbreed = 0.154D0
   !+ad_vars  fblhebmi /0.40/ : helium fraction of inboard blanket box manifold by volume
@@ -890,7 +891,7 @@ module fwbs_variables
   !+ad_varc                   (blktmodel=0, lblnkt=0 or 1, smstr=2)
   real(kind(1.0D0)) :: fbllipb = 0.68D0
   !+ad_vars  fblss /0.07/ : stainless steel fraction of blanket by volume
-  !+ad_varc                 (if blktmodel>0, steel fraction of breeding unit)
+  !+ad_varc                 (if blktmodel>0, steel fraction of breeding zone)
   real(kind(1.0D0)) :: fblss = 0.07D0
   !+ad_vars  fblvd /0.0/ : vanadium fraction of blanket by volume
   !+ad_varc                (blktmodel=0)
@@ -2135,11 +2136,11 @@ module build_variables
   !+ad_vars  blbpoth /0.35/ : outboard blanket base plate thickness (m)
   !+ad_varc                    (blktmodel>0)
   real(kind(1.0D0)) :: blbpoth = 0.35D0
-  !+ad_vars  blbuith /0.365/ : inboard blanket breeding unit thickness (m)
+  !+ad_vars  blbuith /0.365/ : inboard blanket breeding zone thickness (m)
   !+ad_varc                    (blktmodel>0)
   !+ad_varc                    (iteration variable 90)
   real(kind(1.0D0)) :: blbuith = 0.365D0
-  !+ad_vars  blbuoth /0.465/ : outboard blanket breeding unit thickness (m)
+  !+ad_vars  blbuoth /0.465/ : outboard blanket breeding zone thickness (m)
   !+ad_varc                    (blktmodel>0)
   !+ad_varc                    (iteration variable 91)
   real(kind(1.0D0)) :: blbuoth = 0.465D0
