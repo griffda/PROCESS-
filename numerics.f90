@@ -33,6 +33,7 @@ module numerics
   !+ad_hist  25/09/13 PJK Changed eqn.20 description
   !+ad_hist  30/09/13 PJK New constraint eqn.56 added; new iteration variable
   !+ad_hisc               97 added
+  !+ad_hist  18/11/13 PJK Changed boundl(25: fpnetel) to 0.001
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -629,7 +630,7 @@ module numerics
        0.001D0, &  !  22
        0.100D0, &  !  23
        1.000D4, &  !  24
-       1.000D0, &  !  25
+       0.001D0, &  !  25
        0.001D0, &  !  26
        0.001D0, &  !  27
        0.100D0, &  !  28

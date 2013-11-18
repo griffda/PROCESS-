@@ -1350,3 +1350,4 @@ end subroutine output
 ! SVN 200: Removed obscure upper limit on divertor null-to-strike distance;
 !          Changed 'breeding unit' to 'breeding zone' in KIT blanket model;
 !          Raised tftort upper limit
+! SVN 201: Changed boundl(25: fpnetel) to 0.001 from 1.0
