@@ -120,7 +120,7 @@ object = \
 # Default = FUN (Fusion Unix Network)
 # Alternatives: FUN, JAC, GFORT
 ARCH = FUN
-DEBUG = NO
+DEBUG = YES
 
 ###### Fusion Unix Network - Intel Fortran
 

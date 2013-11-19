@@ -149,6 +149,7 @@ contains
     !+ad_hist  15/08/13 PJK Modified arguments for new chamber surface area
     !+ad_hisc               and volume calculations
     !+ad_hist  14/10/13 PJK Added lap counter to help in pathological cases
+    !+ad_hist  19/11/13 PJK Moved l1,l2,l3 calculation out of loop
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -284,6 +285,11 @@ contains
     !  = 1 if problem is identified in output, but run continues
     !  = 0 otherwise
 
+    l1 = thshldo + thtf  !  Length of passage from divertor to ducts (m)
+    l2 = thshldo + 4.0D0 !  Length of ducts from divertor passage to elbow (m)
+    l3 = 2.0D0           !  Length of ducts from elbow to hi-vac pumps (m)
+    ltot = l1 + l2 + l3
+
     do i = 1,4
 
        sss = nduct / &
@@ -296,11 +302,6 @@ contains
        pumpn2 = 1.01D0 * s(i) / (sp(i)*nduct)
        pumpn = max(pumpn, pumpn1, pumpn2)
        ceff(i) = 1.0D0 / ( nduct/s(i) - 1.0D0/(sp(i)*pumpn) )
-
-       l1 = thshldo + thtf  !  Length of passage from divertor to ducts (m)
-       l2 = thshldo + 4.0D0 !  Length of ducts from divertor passage to elbow (m)
-       l3 = 2.0D0           !  Length of ducts from elbow to hi-vac pumps (m)
-       ltot = l1 + l2 + l3
 
        !  Newton's method solution for duct diameter
 
