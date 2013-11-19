@@ -1926,6 +1926,7 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
+    !+ad_hist  19/11/13 PJK Fixed problem with array bounds if ncls(1)=1
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2013,8 +2014,8 @@ contains
     do i = 1,ngrp
        xpfpl = 0.0D0
        ncoils = ncoils + ncls(i)
-       rp = rpf(ncoils-1)
-       zp = zpf(ncoils-1)
+       rp = rpf(ncoils)  !  previously (ncoils-1) for reasons unclear
+       zp = zpf(ncoils)  !  which caused problems if ncls(1) = 1
        call bfield(ngc2,nc,rc,zc,cc,xc,rp,zp,br,bz,psi)
        do ii = 1,nplas
           xpfpl = xpfpl + xc(ii)

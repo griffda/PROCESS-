@@ -1353,3 +1353,4 @@ end subroutine output
 ! SVN 201: Changed boundl(25: fpnetel) to 0.001 from 1.0
 ! SVN 202: Changed some other unusual boundl, boundu values
 ! SVN 203: Fix in vacuum.f90 to remove runtime error problem
+! SVN 204: Fix in induct routine to prevent problems if ncls(1)=1
