@@ -282,6 +282,7 @@ contains
     !+ad_hist  18/10/12 PJK Added pfcoil_module
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  30/10/12 PJK Added build_variables
+    !+ad_hist  26/11/13 PJK Removed obsolete argument to bfield
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -459,7 +460,7 @@ contains
           rp = rrpf(i)
           zp = zzpf(i)
 
-          call bfield(nrfppf,nc,rc,zc,cc,xc,rp,zp,br,bz,psi)
+          call bfield(nc,rc,zc,cc,xc,rp,zp,br,bz,psi)
 
           do k = 1,nrfppf
              if (k < i)  then
@@ -1002,6 +1003,7 @@ contains
     !+ad_call  06/03/96 PJK Initial version
     !+ad_hist  09/05/12 PJK Initial F90 version
     !+ad_hist  18/10/12 PJK Added pfcoil_module
+    !+ad_hist  26/11/13 PJK Removed obsolete argument to bfield
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc           Scoping Phase Report, January 1987
@@ -1039,7 +1041,7 @@ contains
     cc(1) = cptrfp(15)*nturns(15)
     cc(2) = cptrfp(16)*nturns(16)
 
-    call bfield(2,2,rc,zc,cc,xc,rmajor,0.0D0,br,bz,psi)
+    call bfield(2,rc,zc,cc,xc,rmajor,0.0D0,br,bz,psi)
 
     !  Scale EF coil current per turn (proportional to field)
 

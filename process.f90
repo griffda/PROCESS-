@@ -1354,3 +1354,5 @@ end subroutine output
 ! SVN 202: Changed some other unusual boundl, boundu values
 ! SVN 203: Fix in vacuum.f90 to remove runtime error problem
 ! SVN 204: Fix in induct routine to prevent problems if ncls(1)=1
+! SVN 205: Improved OH coil self inductance calculation, and OH coil to
+!          plasma mutual inductance

@@ -84,7 +84,10 @@ contains
     !+ad_desc  This subroutine performs the calculations for the PF and
     !+ad_desc  OH coils, to determine their size, location, current waveforms,
     !+ad_desc  stresses etc.
-    !+ad_prob  None
+    !+ad_prob  On the very first call, the inductance matrix sxlg has not
+    !+ad_prob  previously been calculated by routine induct, so could in theory
+    !+ad_prob  contain any values... This is currently dealt with by setting
+    !+ad_prob  the matrix to unity during the first call to prevent problems.
     !+ad_call  efc
     !+ad_call  ohcalc
     !+ad_call  peakb
@@ -95,11 +98,13 @@ contains
     !+ad_hist  11/10/12 PJK Removed work1 argument from efc
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
-    !+ad_host  18/12/12 PJK/RK Added single-null coding
+    !+ad_hist  18/12/12 PJK/RK Added single-null coding
     !+ad_hist  08/04/13 PJK Comment change
     !+ad_hist  15/04/13 PJK Modified PF coil case area for superconducting coils
     !+ad_hist  16/04/13 PJK Replaced sigpfalw by sigpfcalw in above calculation
     !+ad_hist  17/04/13 PJK Removed cohbof calculation
+    !+ad_hist  26/11/13 PJK Added fix for first lap inductance matrix values;
+    !+ad_hisc               new (but commented-out) CS flux swing requirement calc.
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -130,6 +135,8 @@ contains
     real(kind(1.0D0)), dimension(lrow1) :: bfix,bvec
     real(kind(1.0D0)), dimension(lrow1,lcol1) :: gmat,umat,vmat
     real(kind(1.0D0)), dimension(2) :: signn
+
+    logical :: first_call = .true.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -450,6 +457,15 @@ contains
       
     !  Flux swing from vertical field
 
+    !  If this is the first visit to the routine the inductance matrix
+    !  sxlg has not yet been calculated, so we set it to unity to avoid
+    !  strange behaviour...
+
+    if (first_call) then
+       sxlg(:,:) = 1.0D0
+       first_call = .false.
+    end if
+
     pfflux = 0.0D0
     nocoil = 0
     do ccount = 1, ngrp
@@ -457,30 +473,30 @@ contains
           nocoil = nocoil + 1
           pfflux = pfflux + (ccls(ccount) * sxlg(nocoil,ncirt) &
                / turns(nocoil))
-          !write(*,*) nocoil,pfflux,ccls(ccount),sxlg(nocoil,ncirt),turns(nocoil)
        end do
     end do
-    if (pfflux /= pfflux) then  !  NaN trap...
-       pfflux = 0.0D0
-    end if
 
     !  Flux swing required from CS coil
 
     csflux = -(vsres + vsind) - pfflux 
 
     if (iohcl == 1) then
+
        !  Required current change in CS coil
+
+       !  Proposed new calculation...
+       !dics = csflux / sxlg(nohc,ncirt)
+       !  BUT... sxlg(nohc,ncirt) is around 2000 times ddics below...
+
        ddics = 4.0D-7 * pi*pi * ( &
             (bore*bore) + (ohcth*ohcth)/6.0D0 + (ohcth*bore)/2.0D0 ) &
             / (hmax*ohhghf*2.0D0)
-       dics = csflux/ddics
-       !  write (*,*) bzin(1), pfflux, csflux, ddics, dics
+       dics = csflux / ddics
+
     else
+       dics = 0.0D0
        write(*,*) 'In routine PFCOIL'
        write(*,*) 'OH coil not present -- check V-s calcs!'
-    end if
-    if (dics /= dics) then  !  NaN trap...
-       dics = 0.0D0
     end if
       
     fcohbof = ((-curstot * fcohbop) + dics)/curstot
@@ -711,7 +727,8 @@ contains
     !+ad_hist  01/02/96 PJK Initial version
     !+ad_hist  09/05/12 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_host  16/10/12 PJK Added constants
+    !+ad_hist  16/10/12 PJK Added constants
+    !+ad_hist  25/11/13 PJK Simplified (R,Z) calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -733,6 +750,16 @@ contains
     !  Height of OH coil
 
     hohc = hmax * ohhghf
+
+    !  Z coordinates of coil edges
+
+    zh(nohc) = hohc
+    zl(nohc) = -zh(nohc)
+
+    !  (R,Z) coordinates of coil centre
+
+    rpf(nohc) = rohc
+    zpf(nohc) = 0.0D0
 
     !  Radius of outer edge
 
@@ -781,16 +808,6 @@ contains
 
     bpf(nohc) = max(bmaxoh,abs(bmaxoh0))
     bpf2(nohc) = max(bohco,abs(bzo))
-
-    !  Z coordinates of coil edges
-
-    zh(nohc) = hohc
-    zl(nohc) = -zh(nohc)
-
-    !  (R,Z) coordinates of coil centre
-
-    rpf(nohc) = 0.5D0 * (rb(nohc)+ra(nohc))
-    zpf(nohc) = 0.5D0 * (zl(nohc)+zh(nohc))
 
     !  Current in OH coil at BOP and EOF
 
@@ -1027,6 +1044,7 @@ contains
       !+ad_call  bfield
       !+ad_hist  19/09/11 PJK Initial F90 version
       !+ad_hist  20/09/11 PJK Removed dble call
+      !+ad_hist  26/11/13 PJK Removed obsolete argument to bfield
       !+ad_stat  Okay
       !+ad_docs  None
       !
@@ -1065,7 +1083,7 @@ contains
                zc(k) = zcls(j,k)
                cc(k) = 1.0D0
             end do
-            call bfield(nclsmx,nc,rc,zc,cc,xc,rpts(i),zpts(i),brw,bzw,psw)
+            call bfield(nc,rc,zc,cc,xc,rpts(i),zpts(i),brw,bzw,psw)
             gmat(i,j) = brw
             gmat(i+npts,j) = bzw
          end do
@@ -1299,6 +1317,7 @@ contains
       !+ad_call  bfield
       !+ad_hist  19/09/11 PJK Initial F90 version
       !+ad_hist  11/10/12 PJK Changed work1 argument to local array
+      !+ad_hist  26/11/13 PJK Removed obsolete argument to bfield
       !+ad_stat  Okay
       !+ad_docs  None
       !
@@ -1329,7 +1348,7 @@ contains
       if (nfix <= 0) return
 
       do i = 1,npts
-         call bfield(nfixmx,nfix,rfix,zfix,cfix,work1,rpts(i),zpts(i),brw,bzw,psw)
+         call bfield(nfix,rfix,zfix,cfix,work1,rpts(i),zpts(i),brw,bzw,psw)
          bfix(i) = brw
          bfix(npts + i) = bzw
       end do
@@ -1340,22 +1359,21 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine bfield(ncmax, nc, rc, zc, cc, xc, rp, zp, br, bz, psi)
+  subroutine bfield(nc, rc, zc, cc, xc, rp, zp, br, bz, psi)
 
     !+ad_name  bfield
     !+ad_summ  Calculate the field at a point due to currents in a number
-    !+ad_summ  of circular conductor loops.
+    !+ad_summ  of circular poloidal conductor loops.
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_auth  D Strickler, ORNL
     !+ad_auth  J Galambos, ORNL
     !+ad_cont  N/A
-    !+ad_args  ncmax : input integer : maximum number of conductor loops
-    !+ad_args  nc : input integer : actual number of loops
-    !+ad_args  rc(ncmax) : input real array : R coordinates of loops (m)
-    !+ad_args  zc(ncmax) : input real array : Z coordinates of loops (m)
-    !+ad_args  cc(ncmax) : input real array : Currents in loops (A)
-    !+ad_args  xc(ncmax) : output real array : Mutual inductances (H)
+    !+ad_args  nc : input integer : number of loops
+    !+ad_args  rc(nc) : input real array : R coordinates of loops (m)
+    !+ad_args  zc(nc) : input real array : Z coordinates of loops (m)
+    !+ad_args  cc(nc) : input real array : Currents in loops (A)
+    !+ad_args  xc(nc) : output real array : Mutual inductances (H)
     !+ad_args  rp, zp : input real : coordinates of point of interest (m)
     !+ad_args  br : output real : radial field component at (rp,zp) (T)
     !+ad_args  bz : output real : vertical field component at (rp,zp) (T)
@@ -1363,6 +1381,8 @@ contains
     !+ad_desc  This routine calculates the magnetic field components and
     !+ad_desc  the poloidal flux at an (R,Z) point, given the locations
     !+ad_desc  and currents of a set of conductor loops.
+    !+ad_desc  <P>The mutual inductances between the loops and a poloidal
+    !+ad_desc  filament at the (R,Z) point of interest is also found.
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  19/09/11 PJK Initial F90 version
@@ -1376,10 +1396,10 @@ contains
 
     !  Arguments
 
-    integer, intent(in) :: nc,ncmax
+    integer, intent(in) :: nc
     real(kind(1.0D0)), intent(in) :: rp, zp
-    real(kind(1.0D0)), dimension(ncmax), intent(in) :: rc, zc, cc
-    real(kind(1.0D0)), dimension(ncmax), intent(out) :: xc
+    real(kind(1.0D0)), dimension(nc), intent(in) :: rc, zc, cc
+    real(kind(1.0D0)), dimension(nc), intent(out) :: xc
     real(kind(1.0D0)), intent(out) :: br, bz, psi
 
     !  Local variables
@@ -1389,6 +1409,8 @@ contains
     real(kind(1.0D0)) :: zs,dr,d,s,t,a,xk,xe,dz,sd,brx,bzx
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Elliptic integral coefficients
 
     a0 = 1.38629436112D0
     a1 = 0.09666344259D0
@@ -1477,6 +1499,7 @@ contains
     !+ad_call  bfield
     !+ad_hist  09/05/12 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
+    !+ad_hist  26/11/13 PJK Removed obsolete argument to bfield
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1587,8 +1610,8 @@ contains
        cfxf(kk) = plascur
     end if
 
-    call bfield(nfixmx,kk,rfxf,zfxf,cfxf,xind,ra(i),zpf(i),bri,bzi,psi)
-    call bfield(nfixmx,kk,rfxf,zfxf,cfxf,xind,rb(i),zpf(i),bro,bzo,psi)
+    call bfield(kk,rfxf,zfxf,cfxf,xind,ra(i),zpf(i),bri,bzi,psi)
+    call bfield(kk,rfxf,zfxf,cfxf,xind,rb(i),zpf(i),bro,bzo,psi)
 
     !  Peak field at OH coil is dealt with in BFMAX
 
@@ -1927,6 +1950,9 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  19/11/13 PJK Fixed problem with array bounds if ncls(1)=1
+    !+ad_hist  26/11/13 PJK Improved OH coil self inductance, and OH-plasma
+    !+ad_hisc               mutual inductance calculations;
+    !+ad_hisc               Removed obsolete argument to bfield calls
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1940,13 +1966,15 @@ contains
 
     !  Local variables
 
-    integer, parameter :: noh   = 8 !  Number of segments the OH coil is split into
+    integer, parameter :: nohmax = 50 !  Maximum no. of segments for the OH coil
     integer, parameter :: nplas = 1 !  Number of filaments describing the plasma
 
-    real(kind(1.0D0)), dimension(noh) :: roh,zoh,rplasma,zplasma
-    real(kind(1.0D0)), dimension(ngc2) :: rc,zc,xc,cc
-    real(kind(1.0D0)) :: br,bz,delzoh,psi,rl,rp,xohpf,xohpl,xpfpl,zp
-    integer :: i,ig,ii,ij,j,jj,k,nc,ncoilj,ncoils,nef
+    real(kind(1.0D0)), allocatable, dimension(:) :: roh,zoh
+    real(kind(1.0D0)), dimension(nplas) :: rplasma,zplasma
+    real(kind(1.0D0)), dimension(ngc2+nohmax) :: rc,zc,xc,cc,xcin,xcout
+    real(kind(1.0D0)) :: a,b,c,br,bz,deltar,delzoh,psi,r,reqv,rl,rp,r2_16a2
+    real(kind(1.0D0)) :: xohpf,xohpl,xpfpl,zp
+    integer :: i,ig,ii,ij,j,jj,k,nc,ncoilj,ncoils,nef,noh
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1962,39 +1990,60 @@ contains
     sxlg(:,:) = 0.0D0
 
     !  Break OH coil into noh segments
+    !
+    !  Choose noh so that the radial thickness of the coil is not thinner
+    !  than each segment is tall, i.e. the segments are pancake-like,
+    !  for the benefit of the mutual inductance calculations later
+
+    noh = int( ceiling( 2.0D0*zh(nohc) / (rb(nohc)-ra(nohc)) ) )
+    noh = min(noh,nohmax)
+
+    allocate(roh(noh), zoh(noh))
 
     if (iohcl /= 0) then
-       delzoh = zh(nohc) / (noh/2)
 
+       roh(:) = rohc
+
+       delzoh = 2.0D0 * zh(nohc) / noh  !  zh(nohc) is the half-height of the coil
        do i = 1,noh
-          if (itart == 1) then
-             roh(i) = bore + bcylth + tfcth + gapoh + 0.5D0*ohcth
-          else
-             roh(i) = bore + 0.5D0*ohcth
-          end if
-          zoh(i) = zh(nohc) - delzoh*(0.5D0 + (i-1) )
+          zoh(i) = zh(nohc) - delzoh*(0.5D0+i-1)
        end do
+
     end if
 
     rplasma(1) = rmajor  !  assumes nplas==1
     zplasma(1) = 0.0D0
 
     !  OH coil / plasma mutual inductance
+    !
+    !  Improved calculation: Each OH segment is now split into two filaments,
+    !  of radius reqv+deltar and reqv-deltar, respectively. The mutual inductance
+    !  of the segment with a plasma circuit is the mean of that calculated
+    !  using the two equivalent filaments.
+    !  Formulas and tables for the calculation of mutual and self-inductance
+    !  [Revised], Rosa and Grover, Scientific papers of the Bureau of Standards,
+    !  No. 169, 3rd ed., 1916. page 33
 
+    nc = nplas
     do i = 1,nplas
        rc(i) = rplasma(i)
        zc(i) = zplasma(i)
     end do
 
     if (iohcl /= 0) then
-       nc = nplas
        xohpl = 0.0D0
-
        do i = 1,noh
           rp = roh(i)
           zp = zoh(i)
-          call bfield(ngc2,nc,rc,zc,cc,xc,rp,zp,br,bz,psi)
+
+          reqv = rp*(1.0D0 + delzoh**2 / (24.0D0*rp**2))
+          deltar = sqrt((ohcth**2 - delzoh**2)/12)
+
+          call bfield(nc,rc,zc,cc,xcin, reqv-deltar,zp,br,bz,psi)
+          call bfield(nc,rc,zc,cc,xcout,reqv+deltar,zp,br,bz,psi)
+
           do ii = 1,nplas
+             xc(ii) = 0.5D0*(xcin(ii) + xcout(ii))
              xohpl = xohpl + xc(ii)
           end do
        end do
@@ -2014,9 +2063,9 @@ contains
     do i = 1,ngrp
        xpfpl = 0.0D0
        ncoils = ncoils + ncls(i)
-       rp = rpf(ncoils)  !  previously (ncoils-1) for reasons unclear
-       zp = zpf(ncoils)  !  which caused problems if ncls(1) = 1
-       call bfield(ngc2,nc,rc,zc,cc,xc,rp,zp,br,bz,psi)
+       rp = rpf(ncoils)
+       zp = zpf(ncoils)
+       call bfield(nc,rc,zc,cc,xc,rp,zp,br,bz,psi)
        do ii = 1,nplas
           xpfpl = xpfpl + xc(ii)
        end do
@@ -2030,6 +2079,20 @@ contains
     if (iohcl /= 0) then
 
        !  OH coil self inductance
+       !  Equation 86, p. 316 of  Formulas and tables for the calculation
+       !  of mutual and self-inductance [Revised], Rosa and Grover,
+       !  Scientific papers of the Bureau of Standards, No. 169, 3rd ed., 1916
+
+       a = rohc            !  mean radius of coil
+       b = 2.0D0*zh(nohc)  !  length of coil
+       c = rb(nohc) - ra(nohc)  !  radial winding thickness
+       r = 0.2235D0*(b + c)  !  approx geometric mean distance of cross-section (Grover)
+       r2_16a2 = r*r / (16.0D0*a*a)
+
+       sxlg(nohc,nohc) = rmu0 * a * turns(nohc)**2 * &
+            (log(8.0D0*a/r)*(1.0D0 + 3.0D0*r2_16a2) - (2.0D0 + r2_16a2))
+
+       !  OH coil / PF coil mutual inductances
 
        nc = noh
        do i = 1,noh
@@ -2037,18 +2100,13 @@ contains
           zc(i) = zoh(i)
        end do
 
-       sxlg(nohc,nohc) = turns(nohc)**2 * rmu0/3.0D0 * &
-            (rb(nohc)**3 - ra(nohc)**3) / (rb(nohc)**2 - ra(nohc)**2)
-
-       !  OH coil / PF coil mutual inductances
-
        ncoils = 0
        do i = 1,ngrp
           xohpf = 0.0D0
           ncoils = ncoils + ncls(i)
           rp = rpf(ncoils)
           zp = zpf(ncoils)
-          call bfield(ngc2,nc,rc,zc,cc,xc,rp,zp,br,bz,psi)
+          call bfield(nc,rc,zc,cc,xc,rp,zp,br,bz,psi)
           do ii = 1,noh
              xohpf = xohpf + xc(ii)
           end do
@@ -2082,7 +2140,7 @@ contains
        end do
        rp = rpf(i)
        zp = zpf(i)
-       call bfield(ngc2,nc,rc,zc,cc,xc,rp,zp,br,bz,psi)
+       call bfield(nc,rc,zc,cc,xc,rp,zp,br,bz,psi)
        do k = 1,nef
           if (k < i)  then
              sxlg(i,k) = xc(k) * turns(k) * turns(i)
@@ -2095,6 +2153,8 @@ contains
           end if
        end do
     end do
+
+    deallocate(roh,zoh)
 
     !  Output section
 
