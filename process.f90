@@ -1356,3 +1356,7 @@ end subroutine output
 ! SVN 204: Fix in induct routine to prevent problems if ncls(1)=1
 ! SVN 205: Improved OH coil self inductance calculation, and OH coil to
 !          plasma mutual inductance
+! SVN 206: New output taup/taueff;
+!          Erroneous decimal points present within input lines for integer variables
+!          are now discarded with a warning message;
+!          Added information about scanning variable to output file

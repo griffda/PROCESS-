@@ -59,9 +59,9 @@ module scan_module
 
   public
 
-  !+ad_vars  ipnscns : maximum number of scan points
+  !+ad_vars  ipnscns /50/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 50
-  !+ad_vars  ipnscnv : number of available scan variables
+  !+ad_vars  ipnscnv /26/ FIX : number of available scan variables
   integer, parameter :: ipnscnv = 26
 
   !+ad_vars  isweep /0/ : number of loops to perform
@@ -114,6 +114,9 @@ contains
     !+ad_desc  This routine calls the optimisation routine VMCON
     !+ad_desc  a number of times, by performing a sweep over a range of
     !+ad_desc  values of a particular variable.
+    !+ad_desc  <P>A number of output variable values are written to the
+    !+ad_desc  <CODE>PLOT.DAT</CODE> file at each scan point, for
+    !+ad_desc  plotting or other post-processing purposes.
     !+ad_prob  None
     !+ad_call  doopt
     !+ad_call  final
@@ -129,6 +132,8 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/01/13 PJK Clarified some output labels
     !+ad_hist  27/06/13 PJK Modified beta coefficient label
+    !+ad_hist  26/11/13 PJK Rationalised code structure; added scanning
+    !+ad_hisc               variable information to output banner
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -140,14 +145,16 @@ contains
 
     !  Local variables
 
-    character(len=25) :: xlabel,tlabel
+    character(len=25) :: xlabel,vlabel
+    character(len=48) :: tlabel
 
-    real(kind(1.0D0)), dimension(ipnscns) :: asp,bet,betl,blim,bq,bs, &
-         btor,btt,ccst,cdt,ce,cec,cef,ceo,crc,curd,d20,eb,epbp,fcl,hfio, &
-         hfip,hld,ifa,ip,lq,ocd,pbf,pcp,pfp,pg,pht,pinj,piwp,pmp,pn,powf, &
-         qlm,rcl,rec1,rmaj,sq,str,t10,tfp,tmx,vcl,wall,wpf,wtf
+    integer, parameter :: noutvars = 49
 
-    integer :: ifail,i
+    character(len=25), dimension(noutvars), save :: plabel
+    real(kind(1.0D0)), dimension(noutvars,ipnscns) :: outvar
+
+    integer :: ifail,i,ivar
+    logical :: first_call = .TRUE.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -167,79 +174,129 @@ contains
        stop
     end if
 
-    do i = 1,isweep
+    !  Set up labels for plotting output
 
-       call oblnkl(nout)
-       call ostars(nout,72)
-       write(nout,10) i,isweep
-10     format(' ***** Scan point ',i2,' of ',i2,' *****')
-       call ostars(nout,72)
+    if (first_call) then
+       plabel( 1) = 'Ifail                    '
+       plabel( 2) = 'Sqsumsq                  '
+       plabel( 3) = 'Electric cost (mil/kwh)  '
+       plabel( 4) = 'Capital cost (mil/kwh)   '
+       plabel( 5) = 'Fuel cost (mil/kwh)      '
+       plabel( 6) = 'Operations cost (mil/kwh)'
+       plabel( 7) = 'Capital cost (mil)       '
+       plabel( 8) = 'Core costs (millions)    '
+       plabel( 9) = 'Direct cost (billions)   '
+       plabel(10) = 'Major Radius (m)         '
+       plabel(11) = 'Aspect Ratio             '
+       plabel(12) = 'Plasma Current (MA)      '
+       plabel(13) = 'B Toroidal Axis (T)      '
+       plabel(14) = 'B total on axis (T)      '
+       plabel(15) = 'Safety Factor            '
+       plabel(16) = 'qlim (zero if ishape=0)  '
+       plabel(17) = 'Beta                     '
+       plabel(18) = 'Beta Limit               '
+       plabel(19) = 'Epsilon Beta Poloidal    '
+       plabel(20) = 'Average Temp x10 (KeV)   '
+       plabel(21) = 'Average Dens (10^20/m^3) '
+       plabel(22) = 'H-fact Iter Power        '
+       plabel(23) = 'H-fact Iter Offset       '
+       plabel(24) = 'Fusion Power (MW)        '
+       plabel(25) = 'nb Fusion Power (MW)     '
+       plabel(26) = 'Wall Load (MW/m^2)       '
+       plabel(27) = 'Injection Power (MW)     '
+       plabel(28) = 'Inject Pwr Wall Plug (MW)'
+       plabel(29) = 'Heating Power (MW)       '
+       plabel(30) = 'Current Drive (MW)       '
+       plabel(31) = 'Big Q                    '
+       plabel(32) = 'Bootstrap Fraction       '
+       plabel(33) = 'Neutral Beam Energy (MeV)'
+       plabel(34) = 'Divertor Heat (MW/m^2)   '
+       plabel(35) = 'TF coil Power (MW)       '
+       plabel(36) = 'TF coil weight (kg)      '
+       plabel(37) = 'TF stress (MPa)          '
+       plabel(38) = 'J TF inboard leg (MA/m^2)'
+       plabel(39) = 'Centrepost max T (TART)  '
+       plabel(40) = 'Res TF inbrd leg Pwr (MW)'
+       plabel(41) = 'Coolant Fraction Ctr.    '
+       plabel(42) = 'C/P coolant radius (m)   '
+       plabel(43) = 'C/P coolant velocity(m/s)'
+       plabel(44) = 'C/P pump power (MW)      '
+       plabel(45) = 'PF coil Power (MW)       '
+       plabel(46) = 'PF coil weight (kg)      '
+       plabel(47) = 'Gross Elect Pwr (MW)     '
+       plabel(48) = 'Net electric Pwr (MW)    '
+       plabel(49) = 'Recirculating Fraction   '
+
+       first_call = .false.
+    end if
+
+    do i = 1,isweep
 
        select case (nsweep)
 
        case (1)
           aspect = sweep(i)
-          xlabel = 'Aspect Ratio'
+          vlabel = 'aspect = ' ; xlabel = 'Aspect ratio'
        case (2)
           hldivlim = sweep(i)
-          xlabel = 'Divertor Ht Limit MW/m2'
+          vlabel = 'hldivlim = ' ; xlabel = 'Div heat limit (MW/m2)'
        case (3)
           pnetelin = sweep(i)
-          xlabel = 'Net Elec pwr MW'
+          vlabel = 'pnetelin = ' ; xlabel = 'Net electric power (MW)'
        case (4)
           hfact = sweep(i)
-          xlabel = 'Confinement hfact'
+          vlabel = 'hfact = ' ; xlabel = 'Confinement H factor'
        case (5)
           oacdcp = sweep(i)
-          xlabel = 'j TF inboard leg MA/m2'
+          vlabel = 'oacdcp = ' ; xlabel = 'TF inboard leg J (MA/m2)'
        case (6)
           walalw = sweep(i)
-          xlabel = 'All. wall load MW/m2'
+          vlabel = 'walalw = ' ; xlabel = 'Allow. wall load (MW/m2)'
        case (7)
           beamfus0 = sweep(i)
-          xlabel = 'Beam back. multiplier'
+          vlabel = 'beamfus0 = ' ; xlabel = 'Beam bkgrd multiplier'
        case (8)
           fqval = sweep(i)
-          xlabel = '1/Big Q'
+          vlabel = 'fqval = ' ; xlabel = 'Big Q f-value'
        case (9)
           te = sweep(i)
-          xlabel = 'Temperature'
+          vlabel = 'te = ' ; xlabel = 'Electron temperature (keV)'
        case (10)
           boundu(15) = sweep(i)
-          xlabel = 'Volt-sec upper bound'
+          vlabel = 'boundu(15) = ' ; xlabel = 'Volt-second upper bound'
        case (11)
           dnbeta = sweep(i)
-          xlabel = 'Beta coefficient'
+          vlabel = 'dnbeta = ' ; xlabel = 'Beta coefficient'
        case (12)
           bscfmax = sweep(i)
-          xlabel = 'Bootstrap Fraction'
+          vlabel = 'bscfmax = ' ; xlabel = 'Bootstrap fraction'
        case (13)
           boundu(10) = sweep(i)
-          xlabel = 'H factor upper bound'
+          vlabel = 'boundu(10) = ' ; xlabel = 'H factor upper bound'
        case (14)
           fiooic = sweep(i)
-          xlabel = 'Iop / Icrit f-value'
+          vlabel = 'fiooic = ' ; xlabel = 'TFC Iop / Icrit f-value'
        case (15)
           fjprot = sweep(i)
-          xlabel = 'TFC J limit f-value'
+          vlabel = 'fjprot = ' ; xlabel = 'TFC Jprot limit f-value'
        case (16)
           rmajor = sweep(i)
-          xlabel = 'Plasma major radius'
+          vlabel = 'rmajor = ' ; xlabel = 'Plasma major radius (m)'
        case (17)
           bmxlim = sweep(i)
-          xlabel = 'Max toroidal field'
+          vlabel = 'bmxlim = ' ; xlabel = 'Max toroidal field (T)'
        case (18)
           gammax = sweep(i)
-          xlabel = 'Maximum CD gamma'
+          vlabel = 'gammax = ' ; xlabel = 'Maximum CD gamma'
        case (19)
           boundl(16) = sweep(i)
-          xlabel = 'OHC thickness lower bound'
+          vlabel = 'boundl(16) = ' ; xlabel = 'OHC thickness lower bound'
        case (20)
           tbrnmn = sweep(i)
-          xlabel = 'Minimum burn time'
+          vlabel = 'tbrnmn = ' ; xlabel = 'Minimum burn time (s)'
        case (21)
           sigpfalw = sweep(i)
-          xlabel = 'Allowable PF coil stress'
+          vlabel = 'sigpfalw = ' ; xlabel = 'Allowable PF coil stress'
        case (22)
           if (iavail == 1) then
              write(*,*) 'Error in routine SCAN:'
@@ -248,19 +305,19 @@ contains
              stop
           end if
           cfactr = sweep(i)
-          xlabel = 'Plant availability factor'
+          vlabel = 'cfactr = ' ; xlabel = 'Plant availability factor'
        case (23)
           boundu(72) = sweep(i)
-          xlabel = 'Ip/Irod upper bound'
+          vlabel = 'boundu(72) = ' ; xlabel = 'Ip/Irod upper bound'
        case (24)
           powfmax = sweep(i)
-          xlabel = 'Fusion Power limit'
+          vlabel = 'powfmax = ' ; xlabel = 'Fusion power limit (MW)'
        case (25)
           kappa = sweep(i)
-          xlabel = 'Elongation'
+          vlabel = 'kappa = ' ; xlabel = 'Plasma elongation'
        case (26)
           triang = sweep(i)
-          xlabel = 'Triangularity'
+          vlabel = 'triang = ' ; xlabel = 'Plasma triangularity'
 
        case default
           write(*,*) 'Error in routine SCAN:'
@@ -270,181 +327,87 @@ contains
 
        end select
 
+       !  Write banner to output file
+
+       call oblnkl(nout)
+       call ostars(nout,72)
+       write(nout,10) i,isweep,trim(xlabel),trim(vlabel),sweep(i)
+10     format(' ***** Scan point ',i2,' of ',i2, &
+            ': ',a,', ',a,e12.4e2,' *****')
+       call ostars(nout,72)
+
+       !  Call the optimization routine VMCON at this scan point
+
        call doopt(ifail)
        call final(ifail)
 
-       !  Store values for output
+       !  Store values for PLOT.DAT output
 
-       ifa(i)  = real(ifail)
-       sq(i)   = sqsumsq
-       ce(i)   = coe
-       cec(i)  = coecap
-       cef(i)  = coefuelt
-       ceo(i)  = coeoam
-       ccst(i) = capcost
-       crc(i)  = c221 + c222
-       cdt(i)  = cdirt / 1.0D3
-       rmaj(i) = rmajor
-       asp(i)  = aspect
-       ip(i)   = 1.0D-6 * plascur
-       btor(i) = bt
-       btt(i)  = btot
-       lq(i)   = q
-       qlm(i)  = qlim
-       bet(i)  = beta
-       blim(i) = betalim
-       epbp(i) = betap / aspect
-       t10(i)  = te/10.0D0 * pcoef
-       d20(i)  = dene/1.0D20
-       hfip(i) = hfac(6)
-       hfio(i) = hfac(7)
-       powf(i) = powfmw
-       pbf(i)  = palpnb * 5.0D0
-       wall(i) = wallmw
-       pinj(i) = 1.0D-6 * (pinji + pinje)
-       piwp(i) = pinjwp
-       pht(i)  = pheat * 1.0D-6
-       curd(i) = 1.0D-6 * (pinji + pinje - pheat)
-       bq(i)   = bigq
-       bs(i)   = bootipf
-       eb(i)   = enbeam/1.0D3
-       hld(i)  = hldiv
-       tfp(i)  = tfcmw
-       wtf(i)  = whttf
-       str(i)  = sigrad + sigtan
-       ocd(i)  = oacdcp/1.0D6
-       tmx(i)  = tcpmax
-       pcp(i)  = tfcpmw
-       fcl(i)  = fcoolcp
-       rcl(i)  = rcool
-       vcl(i)  = vcool
-       pmp(i)  = ppump/1.0D6
-       pfp(i)  = 1.0D-3 * srcktpm
-       wpf(i)  = whtpf
-       pg(i)   = pgrossmw
-       pn(i)   = pnetelmw
+       outvar( 1,i) = dble(ifail)
+       outvar( 2,i) = sqsumsq
+       outvar( 3,i) = coe
+       outvar( 4,i) = coecap
+       outvar( 5,i) = coefuelt
+       outvar( 6,i) = coeoam
+       outvar( 7,i) = capcost
+       outvar( 8,i) = c221 + c222
+       outvar( 9,i) = cdirt / 1.0D3
+       outvar(10,i) = rmajor
+       outvar(11,i) = aspect
+       outvar(12,i) = 1.0D-6 * plascur
+       outvar(13,i) = bt
+       outvar(14,i) = btot
+       outvar(15,i) = q
+       outvar(16,i) = qlim
+       outvar(17,i) = beta
+       outvar(18,i) = betalim
+       outvar(19,i) = betap / aspect
+       outvar(20,i) = te/10.0D0 * pcoef
+       outvar(21,i) = dene/1.0D20
+       outvar(22,i) = hfac(6)
+       outvar(23,i) = hfac(7)
+       outvar(24,i) = powfmw
+       outvar(25,i) = palpnb * 5.0D0
+       outvar(26,i) = wallmw
+       outvar(27,i) = 1.0D-6 * (pinji + pinje)
+       outvar(28,i) = pinjwp
+       outvar(29,i) = pheat * 1.0D-6
+       outvar(30,i) = 1.0D-6 * (pinji + pinje - pheat)
+       outvar(31,i) = bigq
+       outvar(32,i) = bootipf
+       outvar(33,i) = enbeam/1.0D3
+       outvar(34,i) = hldiv
+       outvar(35,i) = tfcmw
+       outvar(36,i) = whttf
+       outvar(37,i) = sigrad + sigtan
+       outvar(38,i) = oacdcp/1.0D6
+       outvar(39,i) = tcpmax
+       outvar(40,i) = tfcpmw
+       outvar(41,i) = fcoolcp
+       outvar(42,i) = rcool
+       outvar(43,i) = vcool
+       outvar(44,i) = ppump/1.0D6
+       outvar(45,i) = 1.0D-3 * srcktpm
+       outvar(46,i) = whtpf
+       outvar(47,i) = pgrossmw
+       outvar(48,i) = pnetelmw
        if (ireactor == 1) then
-          rec1(i) = (pgrossmw-pnetelmw) / pgrossmw
+          outvar(49,i) = (pgrossmw-pnetelmw) / pgrossmw
        else
-          rec1(i) = 0.0D0
+          outvar(49,i) = 0.0D0
        end if
+
+    end do  !  End of scanning loop
+
+    !  Finally, write data to PLOT.DAT
+
+    write(nplot,'(i8)') isweep
+    write(nplot,'(a48)') tlabel
+    write(nplot,'(a25,20e11.4)') xlabel,(sweep(i),i=1,isweep)
+
+    do ivar = 1,noutvars
+       write(nplot,'(a25,20e11.4)') plabel(ivar),(outvar(ivar,i),i=1,isweep)
     end do
-
-    write(nplot,900) isweep
-    write(nplot,901) tlabel
-
-    !+**PJK 20/10/92 Why does this section supersede one above?
-
-    if (nsweep == 8) then
-       xlabel = 'Big Q'
-       do i = 1,isweep
-          sweep(i) = 1.0D0/sweep(i) 
-       end do
-    end if
-
-    write(nplot,902) xlabel,(sweep(i),i=1,isweep)
-    write(nplot,903) (ifa(i),i=1,isweep)
-    write(nplot,904) (sq(i),i=1,isweep)
-    write(nplot,905) (ce(i),i=1,isweep)
-    write(nplot,906) (cec(i),i=1,isweep)
-    write(nplot,907) (cef(i),i=1,isweep)
-    write(nplot,908) (ceo(i),i=1,isweep)
-    write(nplot,909) (ccst(i),i=1,isweep)
-    write(nplot,910) (crc(i),i=1,isweep)
-    write(nplot,911) (cdt(i),i=1,isweep)
-    write(nplot,912) (rmaj(i),i=1,isweep)
-    write(nplot,913) (asp(i),i=1,isweep)
-    write(nplot,914) (ip(i),i=1,isweep)
-    write(nplot,915) (btor(i),i=1,isweep)
-    write(nplot,916) (btt(i),i=1,isweep)
-    write(nplot,917) (lq(i),i=1,isweep)
-    write(nplot,918) (qlm(i),i=1,isweep)
-    write(nplot,919) (bet(i),i=1,isweep)
-    write(nplot,920) (blim(i),i=1,isweep)
-    write(nplot,921) (epbp(i),i=1,isweep)
-    write(nplot,922) (t10(i),i=1,isweep)
-    write(nplot,923) (d20(i),i=1,isweep)
-    write(nplot,924) (hfip(i),i=1,isweep)
-    write(nplot,925) (hfio(i),i=1,isweep)
-    write(nplot,926) (powf(i),i=1,isweep)
-    write(nplot,927) (pbf(i),i=1,isweep)
-    write(nplot,928) (wall(i),i=1,isweep)
-    write(nplot,929) (pinj(i),i=1,isweep)
-    write(nplot,930) (piwp(i),i=1,isweep)
-    write(nplot,931) (pht(i),i=1,isweep)
-    write(nplot,932) (curd(i),i=1,isweep)
-    write(nplot,933) (bq(i),i=1,isweep)
-    write(nplot,934) (bs(i),i=1,isweep)
-    write(nplot,935) (eb(i),i=1,isweep)
-    write(nplot,936) (hld(i),i=1,isweep)
-    write(nplot,937) (tfp(i),i=1,isweep)
-    write(nplot,938) (wtf(i),i=1,isweep)
-    write(nplot,939) (str(i),i=1,isweep)
-    write(nplot,940) (ocd(i),i=1,isweep)
-    write(nplot,941) (tmx(i),i=1,isweep)
-    write(nplot,942) (pcp(i),i=1,isweep)
-    write(nplot,943) (fcl(i),i=1,isweep)
-    write(nplot,944) (rcl(i),i=1,isweep)
-    write(nplot,945) (vcl(i),i=1,isweep)
-    write(nplot,946) (pmp(i),i=1,isweep)
-    write(nplot,947) (pfp(i),i=1,isweep)
-    write(nplot,948) (wpf(i),i=1,isweep)
-    write(nplot,949) (pg(i),i=1,isweep)
-    write(nplot,950) (pn(i),i=1,isweep)
-    write(nplot,951) (rec1(i),i=1,isweep)
-
-900 format(i8)
-901 format(a25)
-902 format(a25, 20e11.4)
-903 format('Ifail                    ', 20e11.4)
-904 format('Sqsumsq                  ', 20e11.4)
-905 format('Electric cost (mil/kwh)  ', 20e11.4)
-906 format('Capital cost (mil/kwh)   ', 20e11.4)
-907 format('Fuel cost (mil/kwh)      ', 20e11.4)
-908 format('Operations cost (mil/kwh)', 20e11.4)
-909 format('Capital cost (mil)       ', 20e11.4)
-910 format('Core costs (millions)    ', 20e11.4)
-911 format('Direct cost (billions)   ', 20e11.4)
-912 format('Major Radius (m)         ', 20e11.4)
-913 format('Aspect Ratio             ', 20e11.4)
-914 format('Plasma Current (MA)      ', 20e11.4)
-915 format('B Toroidal Axis (T)      ', 20e11.4)
-916 format('B total on axis (T)      ', 20e11.4)
-917 format('Safety Factor            ', 20e11.4)
-918 format('qlim (zero if ishape=0)  ', 20e11.4)
-919 format('Beta                     ', 20e11.4)
-920 format('Beta Limit               ', 20e11.4)
-921 format('Epsilon Beta Poloidal    ', 20e11.4)
-922 format('Average Temp x10 (KeV)   ', 20e11.4)
-923 format('Average Dens (10^20/m^3) ', 20e11.4)
-924 format('H-fact Iter Power        ', 20e11.4)
-925 format('H-fact Iter Offset       ', 20e11.4)
-926 format('Fusion Power (MW)        ', 20e11.4)
-927 format('nb Fusion Power (MW)     ', 20e11.4)
-928 format('Wall Load (MW/m^2)       ', 20e11.4)
-929 format('Injection Power (MW)     ', 20e11.4)
-930 format('Inject Pwr Wall Plug (MW)', 20e11.4)
-931 format('Heating Power (MW)       ', 20e11.4)
-932 format('Current Drive (MW)       ', 20e11.4)
-933 format('Big Q                    ', 20e11.4)
-934 format('Bootstrap Fraction       ', 20e11.4)
-935 format('Neutral Beam Energy (MeV)', 20e11.4)
-936 format('Divertor Heat (MW/m^2)   ', 20e11.4)
-937 format('TF coil Power (MW)       ', 20e11.4)
-938 format('TF coil weight (kg)      ', 20e11.4)
-939 format('TF stress (MPa)          ', 20e11.4)
-940 format('J TF inboard leg (MA/m^2)', 20e11.4)
-941 format('Centrepost max T (TART)  ', 20e11.4)
-942 format('Res TF inbrd leg Pwr (MW)', 20e11.4)
-943 format('Coolant Fraction Ctr.    ', 20e11.4)
-944 format('C/P coolant radius (m)   ', 20e11.4)
-945 format('C/P coolant velocity(m/s)', 20e11.4)
-946 format('C/P pump power (MW)      ', 20e11.4)
-947 format('PF coil Power (MW)       ', 20e11.4)
-948 format('PF coil weight (kg)      ', 20e11.4)
-949 format('Gross Elect Pwr (MW)     ', 20e11.4)
-950 format('Net electric Pwr (MW)    ', 20e11.4)
-951 format('Recirculating Fraction   ', 20e11.4)
 
   end subroutine scan
 

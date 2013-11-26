@@ -3122,6 +3122,8 @@ contains
     !+ad_call  string_to_int
     !+ad_hist  05/01/04 PJK Initial F90 version
     !+ad_hist  14/01/13 PJK Used maxlen for character array size
+    !+ad_hist  26/11/13 PJK Erroneous decimal points in input line are
+    !+ad_hisc               now discarded with a warning message
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -3206,7 +3208,24 @@ contains
     ! *** Put rest of line into varval (makes it easier to parse)
 
     varval = line(iptr:)
-    varlen = index(varval,',') - 1
+
+    !  Discard any erroneous decimal points
+
+    varlen = index(varval,'.') - 1
+    if (varlen > 0) then
+       write(*,*) 'Integer value expected in following input line...'
+       write(*,*) ' '
+       write(*,*) '   ',line(1:50),'...'
+       write(*,*) ' '
+       write(*,*) 'The erroneous decimal point and subsequent digits have been'
+       write(*,*) 'discarded to leave only the integer part.'
+       write(*,*) 'PROCESS should continue okay, but please correct the input file!'
+       write(*,*) ' '
+       write(*,*) ' '
+       write(*,*) ' '
+    end if
+
+    if (varlen <= 0) varlen = index(varval,',') - 1
     if (varlen <= 0) varlen = index(varval,' ') - 1
     if (varlen <= 0) varlen = iptr
 

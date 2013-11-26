@@ -3929,6 +3929,7 @@ contains
     !+ad_hist  02/10/13 PJK Changed pcharge output description
     !+ad_hist  14/11/13 PJK Corrected thermal energy outputs by 3/2
     !+ad_hist  14/11/13 PJK Changed kappa95 output description
+    !+ad_hist  26/11/13 PJK Added taup/taueff ratio to output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4193,6 +4194,7 @@ contains
     call ovarre(outfile,'n-tau (s/m3)','(dntau)',dntau)
     call ovarre(outfile,'Transport loss power (MW)','(powerht)',powerht)
     call ovarrf(outfile,'Particle confinement time (s)','(taup)',taup)
+    call ovarrf(outfile,'Particle/energy confinement time ratio',' ',taup/taueff)
 
     if (istell == 0) then
        call osubhd(outfile,'Plasma Volt-second Requirements :')
