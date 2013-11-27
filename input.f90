@@ -348,6 +348,7 @@ contains
     !+ad_hist  08/10/13 PJK Reassigned ISUMATTF=2; added FHTS
     !+ad_hist  07/11/13 PJK Removed obsolete switch MAGNT
     !+ad_hist  18/11/13 PJK Raised TFTORT upper limit
+    !+ad_hist  26/11/13 PJK Lowered RALPNE lower limit
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -636,7 +637,7 @@ contains
           call parse_real_variable('Q0', q0, 0.01D0, 20.0D0, &
                'Safety factor on axis')
        case ('RALPNE')
-          call parse_real_variable('RALPNE', ralpne, 0.001D0, 1.0D0, &
+          call parse_real_variable('RALPNE', ralpne, 1.0D-12, 1.0D0, &
                'Thermal alpha density / electron density')
        case ('RECYLE')
           call parse_real_variable('RECYLE', recyle, 0.0D0, 1.0D0, &

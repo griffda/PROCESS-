@@ -729,6 +729,7 @@ contains
     !+ad_hist  12/06/13 PJK taup now global
     !+ad_hist  10/09/13 PJK Modified calls to PALPH, PHYAUX
     !+ad_hist  11/09/13 PJK Removed idhe3, ftr, iiter usage
+    !+ad_hist  27/11/13 PJK Added theat to argument list of vscalc
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -907,7 +908,7 @@ contains
     !  Calculate volt-second requirements (not done!)
 
     !call vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
-    !      plascur,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
+    !      plascur,theat,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
 
     !  Calculate auxiliary physics related information
     !  for the rest of the code

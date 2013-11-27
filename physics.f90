@@ -162,6 +162,7 @@ contains
     !+ad_hist  12/06/13 PJK TAUP now global
     !+ad_hist  10/09/13 PJK Added FUSIONRATE,ALPHARATE,PROTONRATE to PALPH arguments
     !+ad_hist  11/09/13 PJK Removed idhe3, ftr, iiter usage
+    !+ad_hist  27/11/13 PJK Added THEAT to VSCALC arguments
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -384,7 +385,7 @@ contains
     !  Calculate volt-second requirements
 
     call vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
-         plascur,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
+         plascur,theat,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
 
     !  Calculate auxiliary physics related information
     !  for the rest of the code
@@ -2279,7 +2280,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine vscalc(csawth,eps,facoh,gamma,kappa,rmajor,rplas, &
-       plascur,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
+       plascur,theat,tburn,phiint,rli,rlp,vsbrn,vsind,vsres,vsstt)
 
     !+ad_name  vscalc
     !+ad_summ  Volt-second requirements
@@ -2295,10 +2296,11 @@ contains
     !+ad_args  rli    : input real :  plasma normalised inductivity
     !+ad_args  rmajor : input real :  plasma major radius (m)
     !+ad_args  rplas  : input real :  plasma resistance (ohm)
+    !+ad_args  theat  : input real :  heating time (s)
     !+ad_args  tburn  : input real :  burn time (s)
     !+ad_args  phiint : output real : internal plasma volt-seconds (Wb)
     !+ad_args  rlp    : output real : plasma inductance (H)
-    !+ad_args  vsbrn  : output real : volt-seconds needed during burn (Wb)
+    !+ad_args  vsbrn  : output real : volt-seconds needed during flat-top (heat+burn) (Wb)
     !+ad_args  vsind  : output real : internal and external plasma inductance V-s (Wb)
     !+ad_args  vsres  : output real : resistive losses in start-up volt-seconds (Wb)
     !+ad_args  vsstt  : output real : total volt-seconds needed (Wb)
@@ -2310,6 +2312,7 @@ contains
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  16/10/12 PJK Removed rmu0 from argument list
     !+ad_hist  11/06/13 PJK Removed 1.25 enhancement in rlp formula
+    !+ad_hist  27/11/13 PJK Added theat to tburn in vsbrn calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2320,7 +2323,7 @@ contains
     !  Arguments
 
     real(kind(1.0D0)), intent(in) :: csawth, eps, facoh, gamma, kappa, &
-         plascur, rli, rmajor, rplas, tburn
+         plascur, rli, rmajor, rplas, tburn, theat
     real(kind(1.0D0)), intent(out) :: phiint, rlp, vsbrn, vsind, vsres, vsstt
 
     !  Local variables
@@ -2355,18 +2358,17 @@ contains
     vsind = rlp * plascur
     vsstt = vsres + vsind
 
-    !  Loop voltage during burn
-
-    vburn = plascur*rplas * facoh
-
+    !  Loop voltage during flat-top
     !  Include enhancement factor in flattop V-s requirement
     !  to account for MHD sawtooth effects.
+
+    vburn = plascur * rplas * facoh * csawth
 
     !  N.B. tburn on first iteration will not be correct
     !  if the pulsed reactor option is used, but the value
     !  will be correct on subsequent calls.
 
-    vsbrn = csawth * vburn*tburn
+    vsbrn = vburn*(theat + tburn)
     vsstt = vsstt + vsbrn
 
   end subroutine vscalc

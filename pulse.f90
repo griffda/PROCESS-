@@ -1259,6 +1259,7 @@ contains
     !+ad_hist  18/10/12 PJK Added pfcoil_variables
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  17/12/12 PJK Modified burn volt-seconds calculation (RK)
+    !+ad_hist  27/11/13 PJK Deducted theat from tburn
     !+ad_stat  Okay
     !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0012
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1287,18 +1288,18 @@ contains
 
        vssoft = vsres + vsind
 
-       !  Total volt-seconds available during burn
+       !  Total volt-seconds available during flat-top (heat + burn)
        !  (Previously calculated as (abs(vstot) - vssoft) )
 
        vsmax = abs(vsbn)
 
-       !  Loop voltage during burn (including MHD sawtooth enhancement)
+       !  Loop voltage during flat-top (including MHD sawtooth enhancement)
 
        vburn = plascur * rplas * facoh * csawth
 
        !  Burn time (s)
 
-       tburn = vsmax/vburn
+       tburn = vsmax/vburn - theat
 
     else
 

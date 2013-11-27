@@ -1360,3 +1360,5 @@ end subroutine output
 !          Erroneous decimal points present within input lines for integer variables
 !          are now discarded with a warning message;
 !          Added information about scanning variable to output file
+! SVN 207: Lowered minimum input value for ralpne to 1.0D-12;
+!          Added theat effects to flux consumption calculations

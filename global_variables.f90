@@ -101,6 +101,7 @@ module physics_variables
   !+ad_hist  10/09/13 PJK Added alpharate, fusionrate, protonrate
   !+ad_hist  11/09/13 PJK Removed ftr, idhe3, iiter; changed ealpha to ealphadt
   !+ad_hist  10/10/13 PJK Modified prad comment
+  !+ad_hist  27/11/13 PJK Modified vsbrn description
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -541,7 +542,7 @@ module physics_variables
   real(kind(1.0D0)) :: triang95 = 0.0D0
   !+ad_vars  vol : plasma volume (m3)
   real(kind(1.0D0)) :: vol = 0.0D0
-  !+ad_vars  vsbrn : V-s needed during burn (Wb)
+  !+ad_vars  vsbrn : V-s needed during flat-top (heat + burn times) (Wb)
   real(kind(1.0D0)) :: vsbrn = 0.0D0
   !+ad_vars  vshift : plasma/device midplane vertical shift - single null
   real(kind(1.0D0)) :: vshift = 0.0D0
