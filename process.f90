@@ -1363,3 +1363,7 @@ end subroutine output
 ! SVN 207: Lowered minimum input value for ralpne to 1.0D-12;
 !          Added theat effects to flux consumption calculations
 ! SVN 208: Clarified usage of in-line comments in input file
+! SVN 209: Added ohmic power to bigq denominator;
+!          Modified poloidal field calculation for conventional tokamaks;
+!          Moved pfrmax, pfmmax calculations for tokamaks into PF coil module;
+!          Added Psep/R to output variables in PLOT.DAT

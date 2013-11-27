@@ -105,6 +105,7 @@ contains
     !+ad_hist  17/04/13 PJK Removed cohbof calculation
     !+ad_hist  26/11/13 PJK Added fix for first lap inductance matrix values;
     !+ad_hisc               new (but commented-out) CS flux swing requirement calc.
+    !+ad_hist  27/11/13 PJK Moved pfrmax, pfmmax calculations from buildings module
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -540,6 +541,8 @@ contains
     !  Calculate PF coil geometry, current and number of turns
 
     i = 0
+    pfrmax = 0.0D0
+
     do ii = 1,ngrp
        do ij = 1,ncls(ii)
           i = i + 1
@@ -594,14 +597,19 @@ contains
 
           turns(i) = abs( (ric(i)*1.0D6)/cptdin(i) )
 
+          !  Outside radius of largest PF coil (m)
+
+          pfrmax = max(pfrmax, rb(i))
+
        end do
     end do
 
     !  Calculate peak field, allowable current density, resistive
     !  power losses and volumes and weights for each PF coil
 
-    powpfres = 0.0D0
     i = 0
+    powpfres = 0.0D0
+    pfmmax = 0.0D0
 
     do ii = 1,ngrp
        iii = ii
@@ -664,6 +672,11 @@ contains
           !  Weight of steel
 
           wts(i) = areaspf * 2.0D0*pi*rpf(i) * denstl
+
+          !  Mass of heaviest PF coil (tonnes)
+
+          pfmmax = max(pfmmax, (1.0D-3*(wtc(i)+wts(i))) )
+
        end do
     end do
 

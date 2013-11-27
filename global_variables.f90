@@ -587,6 +587,7 @@ module current_drive_variables
   !+ad_hist  08/01/13 PJK Modified irfcd comments
   !+ad_hist  14/01/13 PJK Corrected some more comments; removed echpwr0
   !+ad_hist  25/09/13 PJK Added rtanbeam, rtanmax, nbshield
+  !+ad_hist  27/11/13 PJK Modified bigq description
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -598,7 +599,7 @@ module current_drive_variables
 
   !+ad_vars  beamwd /0.31/ : beam width (m)
   real(kind(1.0D0)) :: beamwd = 0.31D0
-  !+ad_vars  bigq : P_fusion / P_injection
+  !+ad_vars  bigq : P_fusion / (P_injection + P_ohmic)
   real(kind(1.0D0)) :: bigq = 0.0D0
   !+ad_vars  bootipf : bootstrap current fraction
   real(kind(1.0D0)) :: bootipf = 0.0D0
@@ -1093,6 +1094,7 @@ module pfcoil_variables
   !+ad_hist  15/04/13 PJK Added sigpfcf
   !+ad_hist  16/04/13 PJK Added sigpfcalw
   !+ad_hist  17/04/13 PJK Removed cohbof; changed fcohbof initial value
+  !+ad_hist  27/11/13 PJK Moved pfrmax, pfmmax from RFP module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1179,6 +1181,10 @@ module pfcoil_variables
   real(kind(1.0D0)) :: ohhghf = 0.71D0
   !+ad_vars  pfclres /2.5D-8/ : PF coil resistivity if ipfres=1 (Ohm-m)
   real(kind(1.0D0)) :: pfclres = 2.5D-8
+  !+ad_vars  pfmmax : mass of heaviest PF coil (tonnes)
+  real(kind(1.0D0)) :: pfmmax = 0.0D0
+  !+ad_vars  pfrmax : radius of largest PF coil (m)
+  real(kind(1.0D0)) :: pfrmax = 0.0D0
   !+ad_vars  powohres : OH coil resistive power during flattop (W)
   real(kind(1.0D0)) :: powohres = 0.0D0
   !+ad_vars  powpfres : total PF coil resistive losses during flattop (W)
@@ -2198,7 +2204,7 @@ module build_variables
   real(kind(1.0D0)) :: gapomin = 0.21D0
   !+ad_vars  gapsto : gap between outboard vacuum vessel and TF coil (m)
   real(kind(1.0D0)) :: gapsto = 0.0D0
-  !+ad_vars  hmax : maximum (half-)height of TF coil (m)
+  !+ad_vars  hmax : maximum (half-)height of TF coil (inside edge) (m)
   real(kind(1.0D0)) :: hmax = 0.0D0
   !+ad_vars  hpfdif : difference in distance from midplane of upper and lower
   !+ad_varc           portions of TF legs (non-zero for single-null devices) (m)
@@ -2931,6 +2937,7 @@ module rfp_variables
   !+ad_call  None
   !+ad_hist  31/10/12 PJK Initial version of module
   !+ad_hist  17/10/13 PJK Moved tftort to TF coil module
+  !+ad_hist  27/11/13 PJK Moved pfrmax, pfmmax to PF coil module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2956,10 +2963,6 @@ module rfp_variables
   integer :: irfp = 0
   !+ad_vars  nturns(nrfppf) : number of turns of each RFP PF coil
   real(kind(1.0D0)), dimension(nrfppf) :: nturns = 0.0D0
-  !+ad_vars  pfmmax : mass of heaviest PF coil (tonnes)
-  real(kind(1.0D0)) :: pfmmax = 0.0D0
-  !+ad_vars  pfrmax : radius of largest PF coil (m)
-  real(kind(1.0D0)) :: pfrmax = 0.0D0
   !+ad_vars  resrfp(nrfppf) : resistance of each RFP PF coil (ohms)
   real(kind(1.0D0)), dimension(nrfppf) :: resrfp = 0.0D0
   !+ad_vars  rfpf : RFP reversal parameter F

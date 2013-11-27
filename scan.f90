@@ -134,6 +134,7 @@ contains
     !+ad_hist  27/06/13 PJK Modified beta coefficient label
     !+ad_hist  26/11/13 PJK Rationalised code structure; added scanning
     !+ad_hisc               variable information to output banner
+    !+ad_hist  27/11/13 PJK Added Psep/R to list of output variables
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -148,7 +149,7 @@ contains
     character(len=25) :: xlabel,vlabel
     character(len=48) :: tlabel
 
-    integer, parameter :: noutvars = 49
+    integer, parameter :: noutvars = 50
 
     character(len=25), dimension(noutvars), save :: plabel
     real(kind(1.0D0)), dimension(noutvars,ipnscns) :: outvar
@@ -226,6 +227,7 @@ contains
        plabel(47) = 'Gross Elect Pwr (MW)     '
        plabel(48) = 'Net electric Pwr (MW)    '
        plabel(49) = 'Recirculating Fraction   '
+       plabel(50) = 'Psep / R                 '
 
        first_call = .false.
     end if
@@ -396,6 +398,7 @@ contains
        else
           outvar(49,i) = 0.0D0
        end if
+       outvar(50,i) = pdivt/rmajor
 
     end do  !  End of scanning loop
 

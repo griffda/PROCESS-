@@ -77,6 +77,7 @@ contains
     !+ad_hist  23/01/13 PJK Added comment about ignited plasma
     !+ad_hist  11/09/13 PJK Corrected error in NBI calls; ftr replaced by ftritbm
     !+ad_hist  25/09/13 PJK Added nbshield, rtanbeam, rtanmax outputs
+    !+ad_hist  27/11/13 PJK Added ohmic power to bigq denominator
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -210,12 +211,12 @@ contains
 
        end select
 
-       !  Ratio of fusion to injection power
+       !  Ratio of fusion to input (injection+ohmic) power
 
-       if (abs(pinje+pinji) < 1.0D-6) then
+       if (abs(pinje + pinji + (1.0D6*pohmpv*vol)) < 1.0D-6) then
           bigq = 1.0D18
        else
-          bigq = 1.0D6 * powfmw / (pinje+pinji)
+          bigq = 1.0D6 * powfmw / (pinje + pinji + 1.0D6*pohmpv*vol)
        end if
 
        !  Normalised current drive efficiency

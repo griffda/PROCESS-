@@ -922,6 +922,7 @@ contains
     !+ad_hist  23/01/13 PJK Added comment about ignited plasma
     !+ad_hist  11/09/13 PJK Changed ftr to ftritbm
     !+ad_hist  25/09/13 PJK Added nbshield, rtanbeam, rtanmax outputs
+    !+ad_hist  27/11/13 PJK Added ohmic power to bigq denominator
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -990,12 +991,12 @@ contains
           cnbeam = 0.0D0
        end if
 
-       !  Ratio of fusion to injection power
+       !  Ratio of fusion to input (injection+ohmic) power
 
-       if ((pinje+pinji) == 0.0D0) then
+       if (abs(pinje + pinji + (1.0D6*pohmpv*vol)) < 1.0D-6) then
           bigq = 1.0D18
        else
-          bigq = 1.0D6*powfmw / (pinje+pinji)
+          bigq = 1.0D6 * powfmw / (pinje + pinji + 1.0D6*pohmpv*vol)
        end if
 
     end if

@@ -21,7 +21,6 @@ module buildings_module
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
-  !+ad_call  rfp_variables
   !+ad_call  stellarator_variables
   !+ad_call  structure_variables
   !+ad_call  tfcoil_variables
@@ -43,7 +42,6 @@ module buildings_module
   use pfcoil_variables
   use physics_variables
   use process_output
-  use rfp_variables
   use stellarator_variables
   use structure_variables
   use tfcoil_variables
@@ -86,6 +84,8 @@ contains
     !+ad_hist  10/04/13 PJK Modified shield height definition
     !+ad_hist  27/06/13 PJK Used rdewex directly in all cases in call to bldgs
     !+ad_hist  11/09/13 PJK Removed idhe3 from bldgs call
+    !+ad_hist  27/11/13 PJK Moved tokamak pfrmax, pfmmax calculations into
+    !+ad_hisc               PF coil module
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -103,18 +103,6 @@ contains
     integer :: i
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Find maximum PF coil radius and mass (tonnes)
-    !  (already calculated for RFPs)
-
-    if (irfp == 0) then
-       pfrmax = 0.0D0
-       pfmmax = 0.0D0
-       do i=1,ncirt
-          pfrmax = max(pfrmax,rb(i) )
-          pfmmax = max(pfmmax, (1.0D-3*(wtc(i)+wts(i))) )
-       end do
-    end if
 
     tfmtn = 1.0D-3 * whttf/tfno  !  mass per TF coil, tonnes
     tfro = rtot + 0.5D0*tfthko

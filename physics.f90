@@ -163,6 +163,7 @@ contains
     !+ad_hist  10/09/13 PJK Added FUSIONRATE,ALPHARATE,PROTONRATE to PALPH arguments
     !+ad_hist  11/09/13 PJK Removed idhe3, ftr, iiter usage
     !+ad_hist  27/11/13 PJK Added THEAT to VSCALC arguments
+    !+ad_hist  27/11/13 PJK Added PPERIM to CULCUR arguments
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -211,7 +212,7 @@ contains
 
     !  Calculate plasma current
 
-    call culcur(alphaj,alphap,bt,eps,icurr,kappa,kappa95,p0,q, &
+    call culcur(alphaj,alphap,bt,eps,icurr,kappa,kappa95,p0,pperim,q, &
          rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
 
     if (icurr == 2) then
@@ -468,8 +469,8 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine culcur(alphaj,alphap,bt,eps,icurr,kappa,kappa95,p0,qpsi, &
-       rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
+  subroutine culcur(alphaj,alphap,bt,eps,icurr,kappa,kappa95,p0,pperim, &
+       qpsi,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
 
     !+ad_name  culcur
     !+ad_summ  Routine to calculate the plasma current
@@ -492,6 +493,7 @@ contains
     !+ad_args  kappa    : input real :  plasma elongation
     !+ad_args  kappa95  : input real :  plasma elongation at 95% surface
     !+ad_args  p0       : input real :  central plasma pressure (Pa)
+    !+ad_args  pperim   : input real :  plasma perimeter length (m)
     !+ad_args  qpsi     : input real :  plasma edge safety factor (= q-bar for icurr=2)
     !+ad_args  rmajor   : input real :  major radius (m)
     !+ad_args  rminor   : input real :  minor radius (m)
@@ -512,6 +514,7 @@ contains
     !+ad_hist  29/01/96 PJK Added icurr=2 TART option
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  22/11/12 PJK Added stop statement in error block
+    !+ad_hist  27/11/13 PJK Added new arguments to bpol
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
@@ -525,7 +528,7 @@ contains
 
     integer, intent(in) :: icurr
     real(kind(1.0D0)), intent(in) :: alphaj, alphap, bt, eps, kappa, &
-         kappa95, p0, qpsi, rmajor, rminor, sf, triang, triang95
+         kappa95, p0, pperim, qpsi, rmajor, rminor, sf, triang, triang95
     real(kind(1.0D0)), intent(out) :: bp, qstar, plascur
 
     !  Local variables
@@ -594,7 +597,7 @@ contains
 
     !  Calculate the poloidal field
 
-    bp = bpol(qpsi,asp,bt,kappa,triang)
+    bp = bpol(itart,plascur,qpsi,asp,bt,kappa,triang,pperim)
 
   contains
 
@@ -785,24 +788,30 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function bpol(qbar,aspect,bt,kappa,delta)
+  function bpol(itart,ip,qbar,aspect,bt,kappa,delta,perim)
 
     !+ad_name  bpol
     !+ad_summ  Function to calculate poloidal field
     !+ad_type  Function returning real
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
+    !+ad_args  itart  : input integer : Switch for tight aspect ratio tokamaks
+    !+ad_args  ip     : input real :  plasma current (A)
     !+ad_args  qbar   : input real :  edge q-bar
     !+ad_args  aspect : input real :  plasma aspect ratio
     !+ad_args  bt     : input real :  toroidal field on axis (T)
     !+ad_args  kappa  : input real :  plasma elongation
     !+ad_args  delta  : input real :  plasma triangularity
-    !+ad_desc  This function calculates the poloidal field in T,
-    !+ad_desc  using a scaling from M Peng's notes, 24 February 1989.
+    !+ad_args  perim  : input real :  plasma perimeter (m)
+    !+ad_desc  This function calculates the poloidal field in Tesla,
+    !+ad_desc  using a simple calculation using Stoke's Law for conventional
+    !+ad_desc  tokamaks, or for TARTs, a scaling from M Peng's notes,
+    !+ad_desc  24 February 1989.
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  10/11/11 PJK Initial F90 version
+    !+ad_hist  27/11/13 PJK Added conventional aspect ratio coding
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -814,7 +823,8 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: aspect,bt,delta,kappa,qbar
+    integer, intent(in) :: itart
+    real(kind(1.0D0)), intent(in) :: aspect,bt,delta,ip,kappa,perim,qbar
 
     !  Local variables
 
@@ -822,40 +832,50 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    eps = 1.0D0/aspect
+    if (itart == 0) then
 
-    c1 = kappa**2/(1.0D0+delta) + delta
-    c2 = kappa**2/(1.0D0-delta) - delta
+       !  Stoke's Law
 
-    d1 = (kappa/(1.0D0+delta))**2 + 1.0D0
-    d2 = (kappa/(1.0D0-delta))**2 + 1.0D0
+       bpol = rmu0 * ip / perim
 
-    if (aspect < c1) then
-       y1 = sqrt( (c1*eps - 1.0D0)/(1.0D0+eps) ) * (1.0D0 + delta)/kappa
-    else
-       y1 = sqrt( (1.0D0 - c1*eps)/(1.0D0+eps) ) * (1.0D0 + delta)/kappa
+    else  !  Original coding, only really suitable for TARTs
+
+       eps = 1.0D0/aspect
+
+       c1 = kappa**2/(1.0D0+delta) + delta
+       c2 = kappa**2/(1.0D0-delta) - delta
+
+       d1 = (kappa/(1.0D0+delta))**2 + 1.0D0
+       d2 = (kappa/(1.0D0-delta))**2 + 1.0D0
+
+       if (aspect < c1) then
+          y1 = sqrt( (c1*eps - 1.0D0)/(1.0D0+eps) ) * (1.0D0 + delta)/kappa
+       else
+          y1 = sqrt( (1.0D0 - c1*eps)/(1.0D0+eps) ) * (1.0D0 + delta)/kappa
+       end if
+       y2 = sqrt( (c2*eps+1.0D0)/(1.0D0-eps) ) * (1.0D0-delta)/kappa
+
+       h2 = (1.0D0 + (c2-1.0D0)*eps/2.0D0) / &
+            sqrt( (1.0D0-eps)*(c2*eps+1.0D0) )
+       f2 = (d2*(1.0D0-delta)*eps) / ( (1.0D0-eps)*(c2*eps+1.0D0) )
+       g = eps*kappa / (1.0D0 - eps*delta)
+       ff2 = f2 * (g + 2.0D0*h2*atan(y2) )
+
+       if (aspect < c1) then
+          h1 = (1.0D0 + (1.0D0-c1)*eps/2.0D0) / &
+               sqrt( (1.0D0+eps)*(c1*eps-1.0D0) )
+          f1 = (d1*(1.0D0+delta)*eps) / ( (1.0D0+eps)*(c1*eps-1.0D0) )
+          ff1 = f1*(g - h1*log( (1.0D0+y1)/(1.0D0-y1) ) )
+       else
+          h1 = (1.0D0 + (1.0D0-c1)*eps/2.0D0) / &
+               sqrt( (1.0D0+eps)*(1.0D0-c1*eps) )
+          f1 = -(d1*(1.0D0+delta)*eps) / ( (1.0D0+eps)*(c1*eps-1.0D0) )
+          ff1 = f1*( -g + 2.0D0*h1*atan(y1) )
+       end if
+
+       bpol = bt * (ff1 + ff2) / (2.0D0 * pi * qbar)
+
     end if
-    y2 = sqrt( (c2*eps+1.0D0)/(1.0D0-eps) ) * (1.0D0-delta)/kappa
-
-    h2 = (1.0D0 + (c2-1.0D0)*eps/2.0D0) / &
-         sqrt( (1.0D0-eps)*(c2*eps+1.0D0) )
-    f2 = (d2*(1.0D0-delta)*eps) / ( (1.0D0-eps)*(c2*eps+1.0D0) )
-    g = eps*kappa / (1.0D0 - eps*delta)
-    ff2 = f2 * (g + 2.0D0*h2*atan(y2) )
-
-    if (aspect < c1) then
-       h1 = (1.0D0 + (1.0D0-c1)*eps/2.0D0) / &
-            sqrt( (1.0D0+eps)*(c1*eps-1.0D0) )
-       f1 = (d1*(1.0D0+delta)*eps) / ( (1.0D0+eps)*(c1*eps-1.0D0) )
-       ff1 = f1*(g - h1*log( (1.0D0+y1)/(1.0D0-y1) ) )
-    else
-       h1 = (1.0D0 + (1.0D0-c1)*eps/2.0D0) / &
-            sqrt( (1.0D0+eps)*(1.0D0-c1*eps) )
-       f1 = -(d1*(1.0D0+delta)*eps) / ( (1.0D0+eps)*(c1*eps-1.0D0) )
-       ff1 = f1*( -g + 2.0D0*h1*atan(y1) )
-    end if
-
-    bpol = bt * (ff1 + ff2) / (2.0D0 * pi * qbar)
 
   end function bpol
 
