@@ -4160,6 +4160,7 @@ contains
     !+ad_call  None
     !+ad_hist  03/10/12 PJK Initial version
     !+ad_hist  16/09/13 PJK Added 'Please check...' line
+    !+ad_hist  27/11/13 PJK Added more advice if the output file is unhelpful
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -4175,8 +4176,16 @@ contains
     write(*,*)
     write(*,*) 'Please check the output file for further information.'
     write(*,*)
+    write(*,*) 'If this does not contain a helpful error message, check'
+    write(*,*) 'the lines of the input file following the last one copied'
+    write(*,*) 'to the output file - there is likely to be a mistake'
+    write(*,*) 'in the formatting somewhere...'
+    write(*,*)
+    write(*,*) 'Note that in-line comments are usually okay, but be very'
+    write(*,*) 'careful with the use of commas (best avoided altogether...)'
+    write(*,*)
 
-    stop 1
+    stop
 
   end subroutine report_error
 

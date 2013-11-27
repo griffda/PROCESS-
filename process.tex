@@ -3037,7 +3037,7 @@ The following rules must be obeyed when writing an input file:
 
 \item Other spaces within a line, and trailing spaces, are ignored.
 
-\item Commas are not necessary between variables.
+\item Commas are not necessary between variables (but see below).
 
 \item Data can extend over more than one line.
 
@@ -3062,6 +3062,10 @@ The following rules must be obeyed when writing an input file:
   performed, and should be updated before every single run of the code, as it
   is very easy to lose track of what is being attempted.
 
+\item In-line comments are \textit{usually}\/ ignored, but there can be
+  problems if one contains a comma (\texttt{,}). If this is the case, there
+  must also be a comma after the variable's value and before the comment.
+
 \end{enumerate}
 
 It is useful to divide the input file into sections, using suitable comment
@@ -3077,7 +3081,7 @@ $\!\!$\texttt{boundl(1) = 2.5,} \\
 $\!\!$\texttt{BOUNDU(10) = 3.,} \\
 $\!\!$\texttt{BOUNDU(45) = 1,} \\
 $\!\!$\texttt{* Another comment... Note that real values can be entered as if} \\
-$\!\!$\texttt{* they were integers, but NOT vice versa.} \\
+$\!\!$\texttt{* they were integers, and vice versa (but it's not recommended...)} \\
 $\!\!$\texttt{epsfcn = 10.e-4,} \\
 $\!\!$\texttt{Ftol = 1.D-4,} \\
 $\!\!$\texttt{* The next line sets the first five elements of array icc:} \\
@@ -3087,8 +3091,9 @@ $\!\!$\texttt{ixc =   10, 12, 3, 36, 48,} \\
 $\!\!$\hspace{15mm}\texttt{1, 2, 6, 13, 16,} \\
 $\!\!$\texttt{IOPTIMZ = 1,} \\
 $\!\!$\texttt{maxcal = 200} \\
-$\!\!$\texttt{NEQNS = 5,} \\
-$\!\!$\texttt{NVAR = 10,} \\
+$\!\!$\texttt{ nsweep = 7} \\
+$\!\!$\texttt{NEQNS = 5,    This is an in-line comment} \\
+$\!\!$\texttt{NVAR = 10,    Another, but successfully containing a comma!} \\
 \end{tabular}
 \end{center}
 
@@ -3102,7 +3107,8 @@ $\!\!$\texttt{A line of `random' characters like this will clearly wreak havoc} 
 $\!\!$\texttt{eps fcn = 10.e-4, ftol = 1.D-4} \\
 $\!\!$\texttt{epsvmc = 1.0 e-4} \\
 $\!\!$\texttt{ICC =   2  10  11  24  31} \\
-$\!\!$\texttt{IOPTIMZ = 1.0, } \\
+$\!\!$\texttt{IOPTIMZ = 1.0,  This will in fact be okay - but is not recommended} \\
+$\!\!$\texttt{NEQNS = 5    An in-line comment on a line with only one comma (,) character} \\
 \end{tabular}
 \end{center}
 

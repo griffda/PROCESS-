@@ -1362,3 +1362,4 @@ end subroutine output
 !          Added information about scanning variable to output file
 ! SVN 207: Lowered minimum input value for ralpne to 1.0D-12;
 !          Added theat effects to flux consumption calculations
+! SVN 208: Clarified usage of in-line comments in input file
