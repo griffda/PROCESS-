@@ -103,6 +103,7 @@ module physics_variables
   !+ad_hist  10/10/13 PJK Modified prad comment
   !+ad_hist  27/11/13 PJK Modified vsbrn description
   !+ad_hist  28/11/13 PJK Added pdd, pdhe3, pdt
+  !+ad_hist  28/11/13 PJK Added iprofile
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -200,7 +201,8 @@ module physics_variables
   real(kind(1.0D0)) :: afuel = 0.0D0
   !+ad_vars  aion : average mass of all ions (amu)
   real(kind(1.0D0)) :: aion = 0.0D0
-  !+ad_vars  alphaj /1.0/ : current profile index
+  !+ad_vars  alphaj /1.0/ : current profile index;
+  !+ad_varc                 calculated from q0, q if iprofile=1
   real(kind(1.0D0)) :: alphaj = 1.0D0
   !+ad_vars  alphan /0.5/ : density profile index
   real(kind(1.0D0)) :: alphan = 0.5D0
@@ -259,7 +261,8 @@ module physics_variables
   real(kind(1.0D0)) :: dnbeam = 0.0D0
   !+ad_vars  dnbeam2 : hot beam ion density from calculation (/m3)
   real(kind(1.0D0)) :: dnbeam2 = 0.0D0
-  !+ad_vars  dnbeta /3.5/ : (Troyon-like) coefficient for beta scaling
+  !+ad_vars  dnbeta /3.5/ : (Troyon-like) coefficient for beta scaling;
+  !+ad_varc                 calculated as (4.0*rli) if iprofile=1
   real(kind(1.0D0)) :: dnbeta = 3.5D0
   !+ad_vars  dnelimt : density limit (/m3)
   real(kind(1.0D0)) :: dnelimt = 0.0D0
@@ -380,6 +383,10 @@ module physics_variables
   real(kind(1.0D0)) :: impfe = 1.0D0
   !+ad_vars  impo /1.0/ : oxygen impurity multiplier
   real(kind(1.0D0)) :: impo = 1.0D0
+  !+ad_vars  iprofile /0/ : switch for current profile consistency:<UL>
+  !+ad_varc             <LI> = 0 use input values for alphaj, rli, dnbeta;
+  !+ad_varc             <LI> = 1 make these consistent with input q, q0 values </UL>
+  integer :: iprofile = 0
   !+ad_vars  isc /34 (=IPB98(y,2))/ switch for energy confinement time scaling law
   !+ad_varc          (see description in tauscl)
   integer :: isc = 34
@@ -488,7 +495,8 @@ module physics_variables
   real(kind(1.0D0)) :: ralpne = 0.10D0
   !+ad_vars  recyle /0.7/ : alpha fraction recycled to main plasma
   real(kind(1.0D0)) :: recyle = 0.7D0
-  !+ad_vars  rli /0.65/ : normalised inductivity, energy definition
+  !+ad_vars  rli /0.65/ : plasma normalised internal inductance;
+  !+ad_varc               calculated from alphaj if iprofile=1
   real(kind(1.0D0)) :: rli = 0.65D0
   !+ad_vars  rlp : plasma inductance (H)
   real(kind(1.0D0)) :: rlp = 0.0D0

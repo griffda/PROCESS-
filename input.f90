@@ -350,6 +350,7 @@ contains
     !+ad_hist  07/11/13 PJK Removed obsolete switch MAGNT
     !+ad_hist  18/11/13 PJK Raised TFTORT upper limit
     !+ad_hist  26/11/13 PJK Lowered RALPNE lower limit
+    !+ad_hist  28/11/13 PJK Added IPROFILE
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -609,6 +610,9 @@ contains
        case ('IMPO')
           call parse_real_variable('IMPO', impo, 0.0D0, 10.0D0, &
                'Oxygen impurity multiplier')
+       case ('IPROFILE')
+          call parse_int_variable('IPROFILE', iprofile, 0, 1, &
+               'Switch for current profile consistency ')
        case ('IRES')
           write(outfile,*) 'IRES is now obsolete -'
           write(outfile,*) 'please remove it from the input file'

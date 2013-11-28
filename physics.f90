@@ -165,8 +165,12 @@ contains
     !+ad_hist  27/11/13 PJK Added THEAT to VSCALC arguments
     !+ad_hist  27/11/13 PJK Added PPERIM to CULCUR arguments
     !+ad_hist  28/11/13 PJK Added PDTPV, PDHE3PV, PDDPV to PALPH arguments
+    !+ad_hist  28/11/13 PJK Added current profile consistency option;
+    !+ad_hist               Added IPROFILE, Q0, RLI to CULCUR arguments
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
+    !+ad_docc  DEMO Tokamak' Document, March 2012, EFDA Report
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -213,8 +217,8 @@ contains
 
     !  Calculate plasma current
 
-    call culcur(alphaj,alphap,bt,eps,icurr,kappa,kappa95,p0,pperim,q, &
-         rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
+    call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
+         pperim,q0,q,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
 
     if (icurr == 2) then
        q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
@@ -408,6 +412,13 @@ contains
        dnbeta = 2.7D0 * (1.0D0 + 5.0D0*eps**3.5D0)
     end if
 
+    !  Relation between beta limit and plasma internal inductance
+    !  Hartmann and Zohm
+
+    if (iprofile == 1) then
+       dnbeta = 4.0D0 * rli
+    end if
+
     call culblm(bt,dnbeta,plascur,rminor,betalim)
 
   end subroutine physics
@@ -476,8 +487,8 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine culcur(alphaj,alphap,bt,eps,icurr,kappa,kappa95,p0,pperim, &
-       qpsi,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
+  subroutine culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95, &
+       p0,pperim,q0,qpsi,rli,rmajor,rminor,sf,triang,triang95,bp,qstar,plascur)
 
     !+ad_name  culcur
     !+ad_summ  Routine to calculate the plasma current
@@ -485,11 +496,11 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  conhas
     !+ad_cont  plasc
-    !+ad_args  alphaj   : input real :  current profile index
+    !+ad_args  alphaj   : input/output real : current profile index
     !+ad_args  alphap   : input real :  pressure profile index
     !+ad_args  bt       : input real :  toroidal field on axis (T)
     !+ad_args  eps      : input real :  inverse aspect ratio
-    !+ad_args  icurr    : input integer :  current scaling model to use
+    !+ad_args  icurr    : input integer : current scaling model to use
     !+ad_argc                           1 = Peng analytic fit
     !+ad_argc                           2 = Peng divertor scaling (TART)
     !+ad_argc                           3 = simple ITER scaling
@@ -497,11 +508,16 @@ contains
     !+ad_argc                           5 = Todd empirical scaling I
     !+ad_argc                           6 = Todd empirical scaling II
     !+ad_argc                           7 = Connor-Hastie model
+    !+ad_args  iprofile : input integer : switch for current profile consistency
+    !+ad_argc                           0 = use input alphaj, rli
+    !+ad_argc                           1 = make these consistent with q, q0
     !+ad_args  kappa    : input real :  plasma elongation
     !+ad_args  kappa95  : input real :  plasma elongation at 95% surface
     !+ad_args  p0       : input real :  central plasma pressure (Pa)
     !+ad_args  pperim   : input real :  plasma perimeter length (m)
+    !+ad_args  q0       : input real :  plasma safety factor on axis
     !+ad_args  qpsi     : input real :  plasma edge safety factor (= q-bar for icurr=2)
+    !+ad_args  rli      : input/output real : plasma normalised internal inductance
     !+ad_args  rmajor   : input real :  major radius (m)
     !+ad_args  rminor   : input real :  minor radius (m)
     !+ad_args  sf       : input real :  shape factor for icurr=1 (=A/pi in documentation)
@@ -512,7 +528,8 @@ contains
     !+ad_args  plascur  : output real : plasma current (A)
     !+ad_desc  This routine performs the calculation of the
     !+ad_desc  plasma current, with a choice of formula for the edge
-    !+ad_desc  safety factor.
+    !+ad_desc  safety factor. It will also make the current profile parameters
+    !+ad_desc  consistent with the q-profile if required.
     !+ad_prob  None
     !+ad_call  bpol
     !+ad_call  conhas
@@ -522,10 +539,13 @@ contains
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  22/11/12 PJK Added stop statement in error block
     !+ad_hist  27/11/13 PJK Added new arguments to bpol
+    !+ad_hist  28/11/13 PJK Added current profile consistency if iprofile=1
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
     !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
+    !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
+    !+ad_docc  DEMO Tokamak' Document, March 2012, EFDA Report
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -533,9 +553,10 @@ contains
 
     !  Arguments
 
-    integer, intent(in) :: icurr
-    real(kind(1.0D0)), intent(in) :: alphaj, alphap, bt, eps, kappa, &
-         kappa95, p0, pperim, qpsi, rmajor, rminor, sf, triang, triang95
+    integer, intent(in) :: icurr, iprofile
+    real(kind(1.0D0)), intent(inout) :: alphaj, rli
+    real(kind(1.0D0)), intent(in) :: alphap, bt, eps, kappa, &
+         kappa95, p0, pperim, q0, qpsi, rmajor, rminor, sf, triang, triang95
     real(kind(1.0D0)), intent(out) :: bp, qstar, plascur
 
     !  Local variables
@@ -576,6 +597,9 @@ contains
        if (icurr == 6) fq = fq * (1.0D0 + ( abs(kappa95-1.2D0) )**3)
 
     case (7)  !  Connor-Hastie asymptotically-correct expression
+
+       !  N.B. If iprofile=1, alphaj will be wrong during the first call (only)
+
        call conhas(alphaj,alphap,bt,triang,eps,kappa,p0,fq)
 
     case default
@@ -592,7 +616,7 @@ contains
        curhat = 5.0D6 * rminor**2 / (rmajor*qpsi) * fq
     end if
 
-    !  Calculate the equivalent edge safety factor
+    !  Calculate the equivalent edge safety factor (= qcyl)
 
     qstar = 5.0D6 * rminor**2 / (rmajor*curhat) * 0.5D0 * &
          (1.0D0 + kappa95**2 * &
@@ -605,6 +629,14 @@ contains
     !  Calculate the poloidal field
 
     bp = bpol(itart,plascur,qpsi,asp,bt,kappa,triang,pperim)
+
+    !  Ensure current profile consistency, if required
+    !  This is as described in Hartmann and Zohm only if icurr = 4 as well...
+
+    if (iprofile == 1) then
+       alphaj = qstar/q0 - 1.0D0
+       rli = log(1.65D0 + 0.89D0*alphaj)  !  Tokamaks 3rd Edition, Wesson
+    end if
 
   contains
 
@@ -3941,6 +3973,7 @@ contains
     !+ad_call  ocmmnt
     !+ad_call  oheadr
     !+ad_call  osubhd
+    !+ad_call  ovarin
     !+ad_call  ovarre
     !+ad_call  ovarrf
     !+ad_hist  17/09/97 PJK Upgrade to higher standard of coding. Added
@@ -3969,6 +4002,8 @@ contains
     !+ad_hist  14/11/13 PJK Corrected thermal energy outputs by 3/2
     !+ad_hist  14/11/13 PJK Changed kappa95 output description
     !+ad_hist  26/11/13 PJK Added taup/taueff ratio to output
+    !+ad_hist  28/11/13 PJK Added fuel-ion pair fusion power contributions to output
+    !+ad_hist  28/11/13 PJK Added icurr, iprofile information to output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4031,6 +4066,19 @@ contains
     call ovarre(outfile,'Plasma volume (m3)','(vol)',vol)
 
     call osubhd(outfile,'Current and Field :')
+
+    if ((istell == 0).and.(irfp == 0)) then
+       if (iprofile == 0) then
+          call ocmmnt(outfile, &
+               'Consistency between q0,q,alphaj,rli,dnbeta is not enforced')
+       else
+          call ocmmnt(outfile, &
+               'Consistency between q0,q,alphaj,rli,dnbeta is enforced')
+       end if
+       call oblnkl(outfile)
+       call ovarin(outfile,'Plasma current scaling law used','(icurr)',icurr)
+    end if
+
     if (istell == 0) then
        call ovarrf(outfile,'Plasma current (MA)','(plascur/1D6)',plascur/1.0D6)
        call ovarrf(outfile,'Current density profile factor','(alphaj)',alphaj)
@@ -4054,7 +4102,7 @@ contains
     if (istell == 0) then
        call ovarrf(outfile,'Safety factor on axis','(q0)',q0)
        call ovarrf(outfile,'Edge safety factor','(q)',q)
-       call ovarrf(outfile,'Cylindrical safety factor','(qstar)',qstar)
+       call ovarrf(outfile,'Cylindrical safety factor (qcyl)','(qstar)',qstar)
 
        if (ishape == 1) then
           call ovarrf(outfile,'Lower limit for edge safety factor', &
@@ -4164,9 +4212,9 @@ contains
 
     call osubhd(outfile,'Fusion Power :')
     call ovarre(outfile,'Total fusion power (MW)','(powfmw)',powfmw)
-    call ovarre(outfile,'    D-T fusion power (MW)','(pdt)',pdt)
-    call ovarre(outfile,'  D-He3 fusion power (MW)','(pdhe3)',pdhe3)
-    call ovarre(outfile,'    D-D fusion power (MW)','(pdd)',pdd)
+    call ovarre(outfile,' =    D-T fusion power (MW)','(pdt)',pdt)
+    call ovarre(outfile,'  +   D-D fusion power (MW)','(pdd)',pdd)
+    call ovarre(outfile,'  + D-He3 fusion power (MW)','(pdhe3)',pdhe3)
     call ovarre(outfile,'Alpha power: total (MW)','(alpmw)',alpmw)
     call ovarre(outfile,'Alpha power: beam-plasma (MW)','(palpnb)',palpnb)
     call ovarre(outfile,'Neutron power (MW)','(pneut*vol)',pneut*vol)

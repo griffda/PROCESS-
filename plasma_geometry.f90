@@ -70,9 +70,12 @@ contains
     !+ad_hist  10/06/13 PJK New ISHAPE=2 elongation scaling; sf2 replaced by
     !+ad_hisc               global variable pperim
     !+ad_hist  14/11/13 PJK Unified kappa95 estimate to Hartmann suggestion
+    !+ad_hist  28/11/13 PJK Updated references
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK14, pp.41-43
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
+    !+ad_docc  DEMO Tokamak' Document, March 2012, EFDA Report
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -106,7 +109,7 @@ contains
     end if
 
     !  Rough estimate of 95% values
-    !  Tobias Hartmann suggestion for kappa95 (close to previous estimate
+    !  Hartmann and Zohm suggestion for kappa95 (close to previous estimate
     !  of (kappa - 0.04) / 1.1 over a large kappa range)
 
     kappa95 = kappa / 1.12D0

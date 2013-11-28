@@ -1231,7 +1231,8 @@ volume- and line-averages are used throughout the code along with the profile
 indices $\alpha$, in the various physics models, many of which are fits to
 theory-based or empirical scalings. Thus, the plasma model in \process\/ may
 be described as ``$\frac{1}{2}$-D''.  The relevant profile index variables are
-\texttt{alphan}, \texttt{alphat} and \texttt{alphaj}, respectively.
+\texttt{alphan}, \texttt{alphat} and \texttt{alphaj}, respectively (see
+Section~\ref{sec:current_profile}).
 
 \subsubsection{Beta limits}
 
@@ -1242,13 +1243,14 @@ The plasma beta limit~\cite{IPDG,172} is given by
 \end{equation}
 where $B_0$ is the axial vacuum toroidal field, and $\beta$ is defined with
 respect to the total equilibrium $\mathbf{B}$-field~\cite{172}. The beta
-coefficient $g$ is set using input parameter \texttt{dnbeta}. To apply the
-beta limit, constraint equation no.\ 24 should be turned on with iteration
-variable no.\ 36 (\texttt{fbetatry}). The limit can be applied to either the
-total plasma beta, in which case switch \texttt{iculbl} should be set to 0,
-to only the thermal component of the plasma beta, in which case
-\texttt{iculbl} should be set to 1, or to the thermal plus neutral beam
-components, in which case \texttt{iculbl} should be set to 2.
+coefficient $g$ is set using input parameter \texttt{dnbeta} (but see
+Section~\ref{sec:current_profile}). To apply the beta limit, constraint
+equation no.\ 24 should be turned on with iteration variable no.\ 36
+(\texttt{fbetatry}). The limit can be applied to either the total plasma beta,
+in which case switch \texttt{iculbl} should be set to 0, to only the thermal
+component of the plasma beta, in which case \texttt{iculbl} should be set to
+1, or to the thermal plus neutral beam components, in which case
+\texttt{iculbl} should be set to 2.
 
 \subsubsection*{Aspect ratio scaling of beta $g$ coefficient}
 
@@ -1292,11 +1294,25 @@ relevant value, as follows:-
 \item [\texttt{icurr = 1} :] Peng analytic fit
 \item [\texttt{icurr = 2} :] Peng double null divertor scaling (TART)
 \item [\texttt{icurr = 3} :] Simple ITER scaling
-\item [\texttt{icurr = 4} :] Revised ITER scaling
+\item [\texttt{icurr = 4} :] Revised ITER scaling~\cite{Uckan88}
 \item [\texttt{icurr = 5} :] Todd empirical scaling, I
 \item [\texttt{icurr = 6} :] Todd empirical scaling, II
 \item [\texttt{icurr = 7} :] Connor-Hastie model
 \end{description}
+
+\subsubsection{Plasma current profile consistency}
+\label{sec:current_profile}
+
+Self-consistency between the plasma current profile
+parameters~\cite{DEMOPhysicsGuidelines} can be enforced by setting switch
+\texttt{iprofile} to 1. This ensures that the current profile peaking factor
+\texttt{alphaj} is consistent with the input values for the safety factor on
+axis and at the plasma edge (\texttt{q0} and \texttt{q}, respectively), the
+plasma internal inductance $l_i$ is consistent with this \texttt{alphaj}, and
+the beta $g$ coefficient \texttt{dnbeta} scales with $\l_i$.
+
+It is recommended that current scaling law \texttt{icurr = 4} is used if
+\texttt{iprofile = 1}.
 
 \subsubsection{Confinement time scaling laws}
 
@@ -3847,6 +3863,16 @@ CCFE internal note T\&M/PKNIGHT/PROCESS/009, May 2013
 H.-S.\ Bosch and G.\ M.\ Hale,
 \textit{``Improved Formulas for Fusion Cross-sections and Thermal Reactivities''},
 Nuclear Fusion \textbf{32} (1992) 611
+
+\bibitem{Uckan88}
+N.\ A.\ Uckan,
+Fusion Technology \textbf{14} (1988) 299
+
+\bibitem{DEMOPhysicsGuidelines}
+T.\ Hartmann and H.\ Zohm,
+\textit{``Towards a `Physics Design Guidelines for a DEMO Tokamak'
+  Document''},
+EFDA Report, March 2012 (Activity\_3\_Physics\_Design\_Guidelines\_2L8QVN\_v1\_0(1).pdf)
 
 \bibitem{IPDG}
 N.\ A.\ Uckan and ITER Physics Group,
