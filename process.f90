@@ -401,6 +401,7 @@ subroutine eqslv(ifail)
   !+ad_hisc               modules
   !+ad_hist  31/01/13 PJK Added warning about high residuals if the convergence
   !+ad_hisc               is suspicious
+  !+ad_hist  28/11/13 PJK Modified format line 40 for longer lablxc length
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -507,7 +508,7 @@ subroutine eqslv(ifail)
   do inn = 1,neqns
      xcs(inn) = xcm(inn)*scafc(inn)
      write(nout,40) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn),resdl(inn)
-40   format(t2,i4,t8,a8,t19,1pe12.4,1pe12.4,1pe12.4)
+40   format(t2,i4,t8,a9,t19,1pe12.4,1pe12.4,1pe12.4)
   end do
 
   call osubhd(nout, &
@@ -815,6 +816,7 @@ subroutine doopt(ifail)
   !+ad_hist  31/01/13 PJK Added warning about high residuals if the convergence
   !+ad_hisc               is suspicious
   !+ad_hist  04/07/13 PJK Modified wording for variables at/beyond their bounds
+  !+ad_hist  28/11/13 PJK Modified format lines for longer lablxc length
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -959,9 +961,9 @@ subroutine doopt(ifail)
      end if
   end do
 
-40 format(t4,'Variable ',i3,' (',a8, &
+40 format(t4,'Variable ',i3,' (',a9, &
         ',',1pe12.4,') is at or below its lower bound:',1pe12.4)
-50 format(t4,'Variable ',i3,' (',a8, &
+50 format(t4,'Variable ',i3,' (',a9, &
         ',',1pe12.4,') is at or above its upper bound:',1pe12.4)
 
   !  Print out information on numerics
@@ -984,7 +986,7 @@ subroutine doopt(ifail)
      write(nout,100) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
           vlam(neqns+inn), vlam(neqns+1+inn+nvrbl)
   end do
-100 format(t2,i4,t8,a8,t19,4(1pe12.4))
+100 format(t2,i4,t8,a9,t19,4(1pe12.4))
 
   call osubhd(nout, &
        'The following constraint residues should be close to zero :')
@@ -1369,3 +1371,4 @@ end subroutine output
 !          Added Psep/R to output variables in PLOT.DAT
 ! SVN 210: Modified TF outboard leg calculation for resistive coils
 ! SVN 211: New scanning variable 27: tbrmin
+! SVN 212: New iteration variable 98: li6enrich

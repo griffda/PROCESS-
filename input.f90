@@ -230,6 +230,7 @@ contains
     !+ad_hist  28/06/94 PJK Improved layout
     !+ad_hist  03/10/12 PJK Initial F90 version
     !+ad_hist  08/10/12 PJK Changed routine name from edit1 to run_summary
+    !+ad_hist  28/11/13 PJK Modified format statement for longer lablxc
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -258,7 +259,7 @@ contains
      call oblnkl(nout)
 
      write(nout,20) (ii,ixc(ii),lablxc(ixc(ii)),ii=1,nvar)
- 20  format(t1,i3,t10,i3,t18,a8)
+ 20  format(t1,i3,t10,i3,t18,a9)
 
      call oblnkl(nout)
      call ocmmnt(nout, & 

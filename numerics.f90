@@ -35,6 +35,7 @@ module numerics
   !+ad_hisc               97 added
   !+ad_hist  18/11/13 PJK Changed boundl(25: fpnetel) to 0.001
   !+ad_hist  18/11/13 PJK Changed various boundl, boundu values
+  !+ad_hist  28/11/13 PJK New iteration variable 98: li6enrich
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -46,8 +47,8 @@ module numerics
 
   public
 
-  !+ad_vars  ipnvars /97/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 97
+  !+ad_vars  ipnvars /98/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 98
   !+ad_vars  ipeqns /56/ FIX : number of constraint equations available
   integer, parameter :: ipeqns  = 56
   !+ad_vars  ipnfoms /14/ FIX : number of available figures of merit
@@ -241,7 +242,8 @@ module numerics
        0,  &  !  94
        0,  &  !  95
        0,  &  !  96
-       0   &  !  97
+       0,  &  !  97
+       0   &  !  98
        /)
 
   !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
@@ -396,201 +398,203 @@ module numerics
 
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
-  character(len=8), dimension(ipnvars) :: lablxc = (/ &
+  character(len=9), dimension(ipnvars) :: lablxc = (/ &
        !+ad_varc  <LI> ( 1) * aspect
-       'aspect  ', &
+       'aspect   ', &
        !+ad_varc  <LI> ( 2) * bt
-       'bt      ', &
+       'bt       ', &
        !+ad_varc  <LI> ( 3) * rmajor
-       'rmajor  ', &
+       'rmajor   ', &
        !+ad_varc  <LI> ( 4) * te
-       'te      ', &
+       'te       ', &
        !+ad_varc  <LI> ( 5) * beta
-       'beta    ', &
+       'beta     ', &
        !+ad_varc  <LI> ( 6) * dene
-       'dene    ', &
+       'dene     ', &
        !+ad_varc  <LI> ( 7) * rnbeam
-       'rnbeam  ', &
+       'rnbeam   ', &
        !+ad_varc  <LI> ( 8) fbeta (f-value for equation 6)
-       'fbeta   ', &
+       'fbeta    ', &
        !+ad_varc  <LI> ( 9) fdene (f-value for equation 5)
-       'fdene   ', &
+       'fdene    ', &
        !+ad_varc  <LI> (10) * hfact
-       'hfact   ', &
+       'hfact    ', &
        !+ad_varc  <LI> (11) pheat
-       'pheat   ', &
+       'pheat    ', &
        !+ad_varc  <LI> (12) * oacdcp
-       'oacdcp  ', &
+       'oacdcp   ', &
        !+ad_varc  <LI> (13) * tfcth
-       'tfcth   ', &
+       'tfcth    ', &
        !+ad_varc  <LI> (14) fwalld (f-value for equation 8)
-       'fwalld  ', &
+       'fwalld   ', &
        !+ad_varc  <LI> (15) fvs (f-value for equation 12)
-       'fvs     ', &
+       'fvs      ', &
        !+ad_varc  <LI> (16) * ohcth
-       'ohcth   ', &
+       'ohcth    ', &
        !+ad_varc  <LI> (17) tdwell
-       'tdwell  ', &
+       'tdwell   ', &
        !+ad_varc  <LI> (18) q
-       'q       ', &
+       'q        ', &
        !+ad_varc  <LI> (19) * enbeam
-       'enbeam  ', &
+       'enbeam   ', &
        !+ad_varc  <LI> (20) tcpav
-       'tcpav   ', &
+       'tcpav    ', &
        !+ad_varc  <LI> (21) ftburn (f-value for equation 13)
-       'ftburn  ', &
+       'ftburn   ', &
        !+ad_varc  <LI> (22) tbrnmn
-       'tbrnmn  ', &
+       'tbrnmn   ', &
        !+ad_varc  <LI> (23) fcoolcp
-       'fcoolcp ', &
+       'fcoolcp  ', &
        !+ad_varc  <LI> (24) cdtfleg
-       'cdtfleg ', &
+       'cdtfleg  ', &
        !+ad_varc  <LI> (25) fpnetel (f-value for equation 16)
-       'fpnetel ', &
+       'fpnetel  ', &
        !+ad_varc  <LI> (26) ffuspow (f-value for equation 9)
-       'ffuspow ', &
+       'ffuspow  ', &
        !+ad_varc  <LI> (27) fhldiv (f-value for equation 18)
-       'fhldiv  ', &
+       'fhldiv   ', &
        !+ad_varc  <LI> (28) UNUSED
-       'UNUSED  ', &
+       'UNUSED   ', &
        !+ad_varc  <LI> (29) * bore
-       'bore    ', &
+       'bore     ', &
        !+ad_varc  <LI> (30) fmva (f-value for equation 19)
-       'fmva    ', &
+       'fmva     ', &
        !+ad_varc  <LI> (31) gapomin
-       'gapomin ', &
+       'gapomin  ', &
        !+ad_varc  <LI> (32) frminor (f-value for equation 21)
-       'frminor ', &
+       'frminor  ', &
        !+ad_varc  <LI> (33) fportsz (f-value for equation 20)
-       'fportsz ', &
+       'fportsz  ', &
        !+ad_varc  <LI> (34) fdivcol (f-value for equation 22)
-       'fdivcol ', &
+       'fdivcol  ', &
        !+ad_varc  <LI> (35) fpeakb (f-value for equation 25)
-       'fpeakb  ', &
+       'fpeakb   ', &
        !+ad_varc  <LI> (36) * fbetatry (f-value for equation 24)
-       'fbetatry', &
+       'fbetatry ', &
        !+ad_varc  <LI> (37) coheof
-       'coheof  ', &
+       'coheof   ', &
        !+ad_varc  <LI> (38) fjohc (f-value for equation 26)
-       'fjohc   ', &
+       'fjohc    ', &
        !+ad_varc  <LI> (39) fjohc0 (f-value for equation 27)
-       'fjohc0  ', &
+       'fjohc0   ', &
        !+ad_varc  <LI> (40) fgamcd (f-value for equation 37)
-       'fgamcd  ', &
+       'fgamcd   ', &
        !+ad_varc  <LI> (41) fcohbop
-       'fcohbop ', &
+       'fcohbop  ', &
        !+ad_varc  <LI> (42) gapoh
-       'gapoh   ', &
+       'gapoh    ', &
        !+ad_varc  <LI> (43) cfe0
-       'cfe0    ', &
+       'cfe0     ', &
        !+ad_varc  <LI> (44) fvsbrnni
-       'fvsbrnni', &
+       'fvsbrnni ', &
        !+ad_varc  <LI> (45) fqval (f-value for equation 28)
-       'fqval   ', &
+       'fqval    ', &
        !+ad_varc  <LI> (46) fpinj (f-value for equation 30)
-       'fpinj   ', &
+       'fpinj    ', &
        !+ad_varc  <LI> (47) feffcd
-       'feffcd  ', &
+       'feffcd   ', &
        !+ad_varc  <LI> (48) * fstrcase (f-value for equation 31)
-       'fstrcase', &
+       'fstrcase ', &
        !+ad_varc  <LI> (49) * fstrcond (f-value for equation 32)
-       'fstrcond', &
+       'fstrcond ', &
        !+ad_varc  <LI> (50) * fiooic (f-value for equation 33)
-       'fiooic  ', &
+       'fiooic   ', &
        !+ad_varc  <LI> (51) * fvdump (f-value for equation 34)
-       'fvdump  ', &
+       'fvdump   ', &
        !+ad_varc  <LI> (52) vdalw
-       'vdalw   ', &
+       'vdalw    ', &
        !+ad_varc  <LI> (53) * fjprot (f-value for equation 35)
-       'fjprot  ', &
+       'fjprot   ', &
        !+ad_varc  <LI> (54) * ftmargtf (f-value for equation 36)
-       'ftmargtf', &
+       'ftmargtf ', &
        !+ad_varc  <LI> (55) tmargmin
-       'tmargmin', &
+       'tmargmin ', &
        !+ad_varc  <LI> (56) * tdmptf
-       'tdmptf  ', &
+       'tdmptf   ', &
        !+ad_varc  <LI> (57) * thkcas
-       'thkcas  ', &
+       'thkcas   ', &
        !+ad_varc  <LI> (58) * thwcndut
-       'thwcndut', &
+       'thwcndut ', &
        !+ad_varc  <LI> (59) * fcutfsu
-       'fcutfsu ', &
+       'fcutfsu  ', &
        !+ad_varc  <LI> (60) * cpttf
-       'cpttf   ', &
+       'cpttf    ', &
        !+ad_varc  <LI> (61) gapds
-       'gapds   ', &
+       'gapds    ', &
        !+ad_varc  <LI> (62) fdtmp (f-value for equation 38)
-       'fdtmp   ', &
+       'fdtmp    ', &
        !+ad_varc  <LI> (63) ftpeak (f-value for equation 39)
-       'ftpeak  ', &
+       'ftpeak   ', &
        !+ad_varc  <LI> (64) fauxmn (f-value for equation 40)
-       'fauxmn  ', &
+       'fauxmn   ', &
        !+ad_varc  <LI> (65) tohs
-       'tohs    ', &
+       'tohs     ', &
        !+ad_varc  <LI> (66) ftohs (f-value for equation 41)
-       'ftohs   ', &
+       'ftohs    ', &
        !+ad_varc  <LI> (67) ftcycl (f-value for equation 42)
-       'ftcycl  ', &
+       'ftcycl   ', &
        !+ad_varc  <LI> (68) fptemp (f-value for equation 44)
-       'fptemp  ', &
+       'fptemp   ', &
        !+ad_varc  <LI> (69) rcool
-       'rcool   ', &
+       'rcool    ', &
        !+ad_varc  <LI> (70) vcool
-       'vcool   ', &
+       'vcool    ', &
        !+ad_varc  <LI> (71) fq (f-value for equation 45)
-       'fq      ', &
+       'fq       ', &
        !+ad_varc  <LI> (72) fipir (f-value for equation 46)
-       'fipir   ', &
+       'fipir    ', &
        !+ad_varc  <LI> (73) scrapli
-       'scrapli ', &
+       'scrapli  ', &
        !+ad_varc  <LI> (74) scraplo
-       'scraplo ', &
+       'scraplo  ', &
        !+ad_varc  <LI> (75) tfootfi
-       'tfootfi ', &
+       'tfootfi  ', &
        !+ad_varc  <LI> (76) frfptf (f-value for equation 47)
-       'frfptf  ', &
+       'frfptf   ', &
        !+ad_varc  <LI> (77) tftort
-       'tftort  ', &
+       'tftort   ', &
        !+ad_varc  <LI> (78) rfpth
-       'rfpth   ', &
+       'rfpth    ', &
        !+ad_varc  <LI> (79) fbetap (f-value for equation 48)
-       'fbetap  ', &
+       'fbetap   ', &
        !+ad_varc  <LI> (80) frfpf (f-value for equation 49)
-       'frfpf   ', &
+       'frfpf    ', &
        !+ad_varc  <LI> (81) edrive
-       'edrive  ', &
+       'edrive   ', &
        !+ad_varc  <LI> (82) drveff
-       'drveff  ', &
+       'drveff   ', &
        !+ad_varc  <LI> (83) tgain
-       'tgain   ', &
+       'tgain    ', &
        !+ad_varc  <LI> (84) chrad
-       'chrad   ', &
+       'chrad    ', &
        !+ad_varc  <LI> (85) pdrive
-       'pdrive  ', &
+       'pdrive   ', &
        !+ad_varc  <LI> (86) frrmax (f-value for equation 50)
-       'frrmax  ', &
+       'frrmax   ', &
        !+ad_varc  <LI> (87) helecmw
-       'helecmw ', &
+       'helecmw  ', &
        !+ad_varc  <LI> (88) hthermmw
-       'hthermmw', &
+       'hthermmw ', &
        !+ad_varc  <LI> (89) ftbr (f-value for equation 52)
-       'ftbr    ', &
+       'ftbr     ', &
        !+ad_varc  <LI> (90) blbuith
-       'blbuith ', &
+       'blbuith  ', &
        !+ad_varc  <LI> (91) blbuoth
-       'blbuoth ', &
+       'blbuoth  ', &
        !+ad_varc  <LI> (92) fflutf (f-value for equation 53)
-       'fflutf  ', &
+       'fflutf   ', &
        !+ad_varc  <LI> (93) shldith
-       'shldith ', &
+       'shldith  ', &
        !+ad_varc  <LI> (94) shldoth
-       'shldoth ', &
+       'shldoth  ', &
        !+ad_varc  <LI> (95) fptfnuc (f-value for equation 54)
-       'fptfnuc ', &
+       'fptfnuc  ', &
        !+ad_varc  <LI> (96) fvvhe (f-value for equation 55)
-       'fvvhe   ', &
-       !+ad_varc  <LI> (97) fpsepr (f-value for equation 56)</UL>
-       'fpsepr  '  &
+       'fvvhe    ', &
+       !+ad_varc  <LI> (97) fpsepr (f-value for equation 56)
+       'fpsepr   ', &
+       !+ad_varc  <LI> (98) li6enrich </UL>
+       'li6enrich'  &
        /)
 
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
@@ -703,7 +707,8 @@ module numerics
        0.001D0, &  !  94
        0.001D0, &  !  95
        0.001D0, &  !  96
-       0.001D0  &  !  97
+       0.001D0, &  !  97
+       0.001D0  &  !  98
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -805,7 +810,8 @@ module numerics
        10.00D0, &  !  94
        1.000D0, &  !  95
        1.000D0, &  !  96
-       1.000D0  &  !  97
+       1.000D0, &  !  97
+       100.0D0  &  !  98
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0
