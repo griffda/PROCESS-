@@ -1367,3 +1367,4 @@ end subroutine output
 !          Modified poloidal field calculation for conventional tokamaks;
 !          Moved pfrmax, pfmmax calculations for tokamaks into PF coil module;
 !          Added Psep/R to output variables in PLOT.DAT
+! SVN 210: Modified TF outboard leg calculation for resistive coils

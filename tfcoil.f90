@@ -215,6 +215,7 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
+    !+ad_hist  28/11/13 PJK Modified ltfleg calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -251,9 +252,10 @@ contains
        arealeg = ritfc/(tfno * cdtfleg)
        extra = sqrt(arealeg)
 
-       !  Length (N.B. This assumes rectangular shaped coils, not D-shaped)
+       !  Length of leg centre-line (N.B. this assumes rectangular shaped
+       !  coils, not D-shaped)
 
-       ltfleg = 2.0D0* (hmax + extra) + (2.0D0*(rtot - rbmax) + extra )
+       ltfleg = 2.0D0*hmax + extra + 2.0D0*(rtot - rbmax)
 
        !  Volume
 
