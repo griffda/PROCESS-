@@ -730,6 +730,7 @@ contains
     !+ad_hist  10/09/13 PJK Modified calls to PALPH, PHYAUX
     !+ad_hist  11/09/13 PJK Removed idhe3, ftr, iiter usage
     !+ad_hist  27/11/13 PJK Added theat to argument list of vscalc
+    !+ad_hist  28/11/13 PJK Added pdtpv, pdhe3pv, pddpv to PALPH arguments
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -743,8 +744,8 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: alphap,betat,bphi,fusrat,n0e,n0i,pht,pinj,p0, &
-         sbar,sigvdt,t0e,t0i,zimp,zion
+    real(kind(1.0D0)) :: alphap,betat,bphi,fusrat,n0e,n0i,pddpv,pdtpv,pdhe3pv, &
+         pht,pinj,p0,sbar,sigvdt,t0e,t0i,zimp,zion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -843,11 +844,15 @@ contains
 
     if (irfcd /= 0) call cudriv(nout,0)
 
-    !  Calculate fusion power
+    !  Calculate fusion power + components
 
     call palph(alphan,alphat,deni,fdeut,fhe3,ftrit, &
          pcoef,ti,palp,pcharge,pneut,sigvdt, &
-         fusionrate,alpharate,protonrate)
+         fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
+
+    pdt = pdtpv * vol
+    pdhe3 = pdhe3pv * vol
+    pdd = pddpv * vol
 
     !  Calculate neutral beam slowing down effects
     !  If ignited, then ignore beam fusion effects
@@ -859,6 +864,8 @@ contains
        fusionrate = fusionrate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
        alpharate = alpharate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
     end if
+
+    pdt = pdt + 5.0D0*palpnb
 
     call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
          ifalphap,pcharge,pcoef,pneut,te,ti,vol,alpmw,betaft, &

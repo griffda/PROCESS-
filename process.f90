@@ -1372,3 +1372,4 @@ end subroutine output
 ! SVN 210: Modified TF outboard leg calculation for resistive coils
 ! SVN 211: New scanning variable 27: tbrmin
 ! SVN 212: New iteration variable 98: li6enrich
+! SVN 213: Fusion power for each fuel ion pair now output separately

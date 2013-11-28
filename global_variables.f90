@@ -102,6 +102,7 @@ module physics_variables
   !+ad_hist  11/09/13 PJK Removed ftr, idhe3, iiter; changed ealpha to ealphadt
   !+ad_hist  10/10/13 PJK Modified prad comment
   !+ad_hist  27/11/13 PJK Modified vsbrn description
+  !+ad_hist  28/11/13 PJK Added pdd, pdhe3, pdt
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -420,8 +421,14 @@ module physics_variables
   real(kind(1.0D0)) :: pcharge = 0.0D0
   !+ad_vars  pcoef : profile factor (= n-weighted T / average T)
   real(kind(1.0D0)) :: pcoef = 0.0D0
+  !+ad_vars  pdd : deuterium-deuterium fusion power (MW)
+  real(kind(1.0D0)) :: pdd = 0.0D0
+  !+ad_vars  pdhe3 : deuterium-helium3 fusion power (MW)
+  real(kind(1.0D0)) :: pdhe3 = 0.0D0
   !+ad_vars  pdivt : power to divertor (MW)
   real(kind(1.0D0)) :: pdivt = 0.0D0
+  !+ad_vars  pdt : deuterium-tritium fusion power (MW)
+  real(kind(1.0D0)) :: pdt = 0.0D0
   !+ad_vars  pfuscmw : charged particle fusion power (MW)
   real(kind(1.0D0)) :: pfuscmw = 0.0D0
   !+ad_vars  phiint : internal plasma V-s

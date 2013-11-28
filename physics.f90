@@ -164,6 +164,7 @@ contains
     !+ad_hist  11/09/13 PJK Removed idhe3, ftr, iiter usage
     !+ad_hist  27/11/13 PJK Added THEAT to VSCALC arguments
     !+ad_hist  27/11/13 PJK Added PPERIM to CULCUR arguments
+    !+ad_hist  28/11/13 PJK Added PDTPV, PDHE3PV, PDDPV to PALPH arguments
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -175,8 +176,8 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: alphap,betat,betpth,fusrat,n0e,n0i,pht,pinj,p0, &
-         sbar,sigvdt,t0e,t0i,zimp,zion
+    real(kind(1.0D0)) :: alphap,betat,betpth,fusrat,n0e,n0i,pddpv,pdtpv,pdhe3pv, &
+         pht,pinj,p0,sbar,sigvdt,t0e,t0i,zimp,zion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -312,11 +313,15 @@ contains
 
     if (irfcd /= 0) call cudriv(nout,0)
 
-    !  Calculate fusion power
+    !  Calculate fusion power + components
 
     call palph(alphan,alphat,deni,fdeut,fhe3,ftrit, &
          pcoef,ti,palp,pcharge,pneut,sigvdt, &
-         fusionrate,alpharate,protonrate)
+         fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
+
+    pdt = pdtpv * vol
+    pdhe3 = pdhe3pv * vol
+    pdd = pddpv * vol
 
     !  Calculate neutral beam slowing down effects
     !  If ignited, then ignore beam fusion effects
@@ -328,6 +333,8 @@ contains
        fusionrate = fusionrate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
        alpharate = alpharate + 1.0D6*palpnb / (1.0D3*ealphadt*echarge) / vol
     end if
+
+    pdt = pdt + 5.0D0*palpnb
 
     call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
          ifalphap,pcharge,pcoef,pneut,te,ti,vol,alpmw,betaft, &
@@ -1290,7 +1297,8 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine palph(alphan,alphat,deni,fdeut,fhe3,ftrit,pcoef,ti, &
-       palp,pcharge,pneut,sigvdt,fusionrate,alpharate,protonrate)
+       palp,pcharge,pneut,sigvdt,fusionrate,alpharate,protonrate, &
+       pdtpv,pdhe3pv,pddpv)
 
     !+ad_name  palph
     !+ad_summ  (Initial part of) fusion power and fast alpha pressure calculations
@@ -1312,6 +1320,9 @@ contains
     !+ad_args  fusionrate  : output real : fusion reaction rate (reactions/m3/s)
     !+ad_args  alpharate  : output real : alpha particle production rate (/m3/s)
     !+ad_args  protonrate  : output real : proton production rate (/m3/s)
+    !+ad_args  pdtpv   : output real : D-T fusion power (MW/m3)
+    !+ad_args  pdhe3pv : output real : D-He3 fusion power (MW/m3)
+    !+ad_args  pddpv   : output real : D-D fusion power (MW/m3)
     !+ad_desc  This subroutine numerically integrates over plasma cross-section to
     !+ad_desc  find the fusion power and fast alpha pressure.
     !+ad_prob  None
@@ -1323,6 +1334,7 @@ contains
     !+ad_hist  16/10/12 PJK Removed pi from argument list
     !+ad_hist  10/09/13 PJK Added fusion, alpha and proton rate calculations
     !+ad_hist  11/09/13 PJK Removed idhe3, ftr, ealpha, iiter usage
+    !+ad_hist  28/11/13 PJK Added powers for each fuel-pair to output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1335,7 +1347,7 @@ contains
     real(kind(1.0D0)), intent(in) :: alphan, alphat, deni, fdeut, &
          fhe3, ftrit, pcoef, ti
     real(kind(1.0D0)), intent(out) :: palp, pcharge, pneut, sigvdt, &
-         fusionrate, alpharate, protonrate
+         fusionrate, alpharate, protonrate, pdtpv, pdhe3pv, pddpv
 
     !  Local variables
 
@@ -1368,6 +1380,7 @@ contains
     fusionrate = 0.0D0
     alpharate = 0.0D0
     protonrate = 0.0D0
+    pddpv = 0.0D0
 
     do ireaction = 1,4
 
@@ -1389,6 +1402,7 @@ contains
           frate = fpow/etot  !  reactions/m3/second
           arate = frate
           prate = 0.0D0
+          pdtpv = fpow
 
        case (DHE3)  !  D + 3He --> 4He + p reaction
 
@@ -1400,6 +1414,7 @@ contains
           frate = fpow/etot  !  reactions/m3/second
           arate = frate
           prate = frate
+          pdhe3pv = fpow
 
        case (DD1)  !  D + D --> 3He + n reaction (branching ratio = 0.5)
 
@@ -1411,6 +1426,7 @@ contains
           frate = fpow/etot  !  reactions/m3/second
           arate = 0.0D0
           prate = frate
+          pddpv = pddpv + fpow
 
        case (DD2)  !  D + D --> T + p reaction (branching ratio = 0.5)
 
@@ -1422,6 +1438,7 @@ contains
           frate = fpow/etot  !  reactions/m3/second
           arate = 0.0D0
           prate = frate
+          pddpv = pddpv + fpow
 
        end select
 
@@ -4146,7 +4163,10 @@ contains
     if (fhe3 > 1.0D-3) call ovarrf(outfile,'3-Helium fuel fraction','(fhe3)',fhe3)
 
     call osubhd(outfile,'Fusion Power :')
-    call ovarre(outfile,'Fusion power (MW)','(powfmw)',powfmw)
+    call ovarre(outfile,'Total fusion power (MW)','(powfmw)',powfmw)
+    call ovarre(outfile,'    D-T fusion power (MW)','(pdt)',pdt)
+    call ovarre(outfile,'  D-He3 fusion power (MW)','(pdhe3)',pdhe3)
+    call ovarre(outfile,'    D-D fusion power (MW)','(pdd)',pdd)
     call ovarre(outfile,'Alpha power: total (MW)','(alpmw)',alpmw)
     call ovarre(outfile,'Alpha power: beam-plasma (MW)','(palpnb)',palpnb)
     call ovarre(outfile,'Neutron power (MW)','(pneut*vol)',pneut*vol)
