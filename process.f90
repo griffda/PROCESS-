@@ -926,7 +926,7 @@ subroutine doopt(ifail)
   !  Check which variables are at bounds
 
   iflag = 0
-  do ii = 1,nvrbl
+  do ii = 1,nvar
      xminn = 1.01D0*bondl(ii)
      xmaxx = 0.99D0*bondu(ii)
 
@@ -981,10 +981,10 @@ subroutine doopt(ifail)
 
   call oblnkl(nout)
 
-  do inn = 1,nvrbl
+  do inn = 1,nvar
      xcs(inn) = xcm(inn)*scafc(inn)
      write(nout,100) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
-          vlam(neqns+inn), vlam(neqns+1+inn+nvrbl)
+          vlam(neqns+inn), vlam(neqns+1+inn+nvar)
   end do
 100 format(t2,i4,t8,a9,t19,4(1pe12.4))
 
@@ -1377,3 +1377,4 @@ end subroutine output
 ! SVN 215: Modified LSA usage in first wall costs;
 !          Added argument to constraints to give the option of evaluating only a single
 !          chosen constraint equation rather than all of them
+! SVN 216: Fixed error with previous version; nvrbl --> nvar
