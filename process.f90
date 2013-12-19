@@ -1378,3 +1378,4 @@ end subroutine output
 !          Added argument to constraints to give the option of evaluating only a single
 !          chosen constraint equation rather than all of them
 ! SVN 216: Fixed error with previous version; nvrbl --> nvar
+! SVN 217: Typo fix in manual
