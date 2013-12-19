@@ -1080,6 +1080,8 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  03/12/13 PJK Removed old comment about ucfwps; multiplied
+    !+ad_hisc               all terms by cmlsa, not just the ucfwps term
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1107,11 +1109,9 @@ contains
     cmlsa(3) = 0.8750D0
     cmlsa(4) = 1.0000D0
 
-    !+**PJK 17/12/93 Why isn't ucfwps multiplied by fwarea?
-    !  N.B. much higher unit cost than other components
     if (ife /= 1) then
-       c2211 = 1.0D-6 * (ucfwa+ucfws) * fwarea + 1.0D-6*ucfwps * &
-            cmlsa(lsa)
+       c2211 = 1.0D-6 * cmlsa(lsa) * ((ucfwa+ucfws)*fwarea + ucfwps)
+            
     else
        c2211 = 1.0D-6 * cmlsa(lsa) * ( &
             ucblss   * (fwmatm(1,1)+fwmatm(2,1)+fwmatm(3,1)) + &

@@ -78,6 +78,7 @@ contains
     !+ad_call  constraints
     !+ad_hist  27/07/11 PJK Initial F90 version
     !+ad_hist  06/11/12 PJK Renamed routine con1 to constraints
+    !+ad_hist  17/12/13 PJK Added new argument to constraints call
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -102,7 +103,7 @@ contains
     ncon = neqns
 
     call caller(xc,nvars)
-    call constraints(ncon,rc)
+    call constraints(ncon,rc,-1)
 
     !  Set iflag < 0 if program is to be terminated here.
 
@@ -139,6 +140,7 @@ contains
     !+ad_hist  08/10/12 PJK Initial F90 version
     !+ad_hist  06/11/12 PJK Renamed routine con1 to constraints
     !+ad_hist  17/01/13 PJK Corrected ifail to be input/output
+    !+ad_hist  17/12/13 PJK Added new argument to constraints call
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -170,7 +172,7 @@ contains
 
     !  Evaluate constraint equations
 
-    call constraints(m,conf)
+    call constraints(m,conf,-1)
 
     !  To stop the program, set ifail < 0 here.
 
@@ -210,6 +212,7 @@ contains
     !+ad_hist  08/10/12 PJK Initial F90 version
     !+ad_hist  06/11/12 PJK Renamed routine con1 to constraints
     !+ad_hist  17/01/13 PJK Corrected ifail to be input/output
+    !+ad_hist  17/12/13 PJK Added new argument to constraints call
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -248,13 +251,13 @@ contains
 
        call caller(xfor,n)
        call funfom(ffor)
-       call constraints(m,cfor)
+       call constraints(m,cfor,-1)
 
        !  Evaluate at (x-dx)
 
        call caller(xbac,n)
        call funfom(fbac)
-       call constraints(m,cbac)
+       call constraints(m,cbac,-1)
 
        !  Calculate finite difference gradients
 

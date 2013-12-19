@@ -36,6 +36,7 @@ module numerics
   !+ad_hist  18/11/13 PJK Changed boundl(25: fpnetel) to 0.001
   !+ad_hist  18/11/13 PJK Changed various boundl, boundu values
   !+ad_hist  28/11/13 PJK New iteration variable 98: li6enrich
+  !+ad_hist  17/12/13 PJK Added 'not recommended' comment for ioptimz=0
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -60,7 +61,7 @@ module numerics
 
   !+ad_vars  ioptimz /1/ : code operation switch:<UL>
   !+ad_varc           <LI> < 0 for no optimisation, HYBRD only;
-  !+ad_varc           <LI> = 0 for HYBRD and VMCON;
+  !+ad_varc           <LI> = 0 for HYBRD and VMCON (not recommended);
   !+ad_varc           <LI> > 0 for optimisation, VMCON only</UL>
   integer :: ioptimz = 1
   !+ad_vars  maxcal /200/ : maximum number of VMCON iterations
@@ -78,7 +79,6 @@ module numerics
   integer :: nineqns = 0
   !+ad_vars  nvar /25/ : number of iteration (independent) variables
   integer :: nvar    = 25
-  integer :: nvrbl   = 0
 
   !+ad_vars  icc(ipeqns) /2,10,11,24,31,32,33,34,35,36,1,7,14,16/ :
   !+ad_varc                array defining which constraint equations to activate
@@ -1046,7 +1046,6 @@ contains
        xv(ii) = xcm(ii)
     end do
 
-    nvrbl = nvar
     call vmcon(fcnvmc1,fcnvmc2,mode,n,m,meq,xv,f,fgrd,conf,cnorm, &
          lcnorm,b,lb,xtol,maxcal,ifail,nfev2,vlam,glag,vmu,cm,glaga, &
          gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &

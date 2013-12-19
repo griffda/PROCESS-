@@ -1,7 +1,7 @@
 !  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-subroutine constraints(m,cc)
+subroutine constraints(m,cc,ieqn)
 
   !+ad_name  constraints
   !+ad_summ  Routine that formulates the constraint equations
@@ -10,6 +10,10 @@ subroutine constraints(m,cc)
   !+ad_cont  N/A
   !+ad_args  m : input integer : Number of constraint equations
   !+ad_args  cc(m) : output real array : Residual error in equation i
+  !+ad_args  ieqn : input integer : Switch for constraint equations to evaluate;
+  !+ad_argc                         if <CODE>ieqn</CODE> is negative, formulate all
+  !+ad_argc                         the constraint equations, otherwise
+  !+ad_argc                         formulate only the <CODE>ieqn</CODE>th equation
   !+ad_desc  This routine formulates the constraint equations.
   !+ad_desc  The code attempts to make cc(i) = 0 for all i=1 to m equations.
   !+ad_desc  All relevant consistency equations should be active in order
@@ -74,6 +78,8 @@ subroutine constraints(m,cc)
   !+ad_hisc               neutral beam tangency radius limit
   !+ad_hist  30/09/13 PJK Added new eqn 56
   !+ad_hist  10/10/13 PJK Made multiplier in beta equation explicit
+  !+ad_hist  17/12/13 PJK Added ieqn argument to optionally only evaluate
+  !+ad_hisc               one of the constraint equations
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -103,15 +109,25 @@ subroutine constraints(m,cc)
 
   integer, intent(in) :: m
   real(kind(1.0D0)), dimension(m), intent(out) :: cc
+  integer, intent(in) :: ieqn
 
   !  Local variables
 
-  integer :: i
+  integer :: i,i1,i2
   real(kind(1.0D0)) :: cratmx, tcycle, totmva, acoil
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  do i = 1,m
+  !  If ieqn is positive, only evaluate the 'ieqn'th constraint residue,
+  !  otherwise evaluate all m constraint residues
+
+  if (ieqn > 0) then
+     i1 = ieqn ; i2 = ieqn
+  else
+     i1 = 1 ; i2 = m
+  end if
+
+  do i = i1,i2
 
      select case (icc(i))
 

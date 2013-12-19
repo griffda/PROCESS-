@@ -2308,6 +2308,7 @@ module cost_variables
   !+ad_hist  16/04/13 PJK Changed ucsc dimensions
   !+ad_hist  18/06/13 PJK Changed uccryo from cryostat to vacuum vessel
   !+ad_hist  15/08/13 PJK Changed cdrlife description
+  !+ad_hist  03/12/13 PJK Changed ucfwps units from $/m2 to $
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2513,7 +2514,7 @@ module cost_variables
   real(kind(1.0D0)) :: ucfuel = 3.45D0
   !+ad_vars  ucfwa /6.0D4/ FIX : first wall armour cost ($/m2)
   real(kind(1.0D0)) :: ucfwa = 6.0D4
-  !+ad_vars  ucfwps /1.0D7/ FIX : first wall passive stabiliser cost ($/m2)
+  !+ad_vars  ucfwps /1.0D7/ FIX : first wall passive stabiliser cost ($)
   real(kind(1.0D0)) :: ucfwps = 1.0D7
   !+ad_vars  ucfws /5.3D4/ FIX : first wall structure cost ($/m2)
   real(kind(1.0D0)) :: ucfws = 5.3D4

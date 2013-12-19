@@ -126,7 +126,7 @@ DEBUG = YES
 
 FORTRAN_FUN = ifort
 FFLAGS_FUN = -cpp 
-LFLAGS_FUN = 
+LFLAGS_FUN = ${LDFLAGS}
 LIBS_FUN   = 
 ifeq (${DEBUG},YES)
 	FFLAGS_FUN = -cpp -g -check bounds -check pointers -check uninit -traceback

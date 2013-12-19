@@ -1374,3 +1374,6 @@ end subroutine output
 ! SVN 212: New iteration variable 98: li6enrich
 ! SVN 213: Fusion power for each fuel ion pair now output separately
 ! SVN 214: Current profile consistency option (iprofile=1) introduced
+! SVN 215: Modified LSA usage in first wall costs;
+!          Added argument to constraints to give the option of evaluating only a single
+!          chosen constraint equation rather than all of them

@@ -351,6 +351,7 @@ contains
     !+ad_hist  18/11/13 PJK Raised TFTORT upper limit
     !+ad_hist  26/11/13 PJK Lowered RALPNE lower limit
     !+ad_hist  28/11/13 PJK Added IPROFILE
+    !+ad_hist  17/12/13 PJK Changed IOPTIMZ description
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -458,7 +459,7 @@ contains
                'Constraint equation', icode)
        case ('IOPTIMZ')
           call parse_int_variable('IOPTIMZ', ioptimz, -1, 1, &
-               'Switch for HYBRID/VMCON')
+               'Switch for solver method')
        case ('IXC')
           call parse_int_array('IXC', ixc, isub1, ipnvars, &
                'Iteration variable', icode)

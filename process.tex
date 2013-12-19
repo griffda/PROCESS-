@@ -3270,8 +3270,9 @@ Switch \texttt{ioptimz} must be set to \texttt{0} or \texttt{1} for
 optimisation mode. If \texttt{ioptimz = 0}, a non-optimisation pass is
 performed first, to provide a (hopefully) feasible set of initial conditions;
 if \texttt{ioptimz = 1}, this is skipped and the code runs in optimisation
-mode from the start. It is usually recommended to use \texttt{ioptimiz = 0}
-for optimisation runs.
+mode from the start. However, it is recommended to use \texttt{ioptimiz = 1}
+for optimisation runs, as using the HYBRID step before a VMCON iteration tends
+to cause \process\/ to fail to converge more often.
 
 As before, the user must decide which constraint equations and iteration
 variables to activate. Again, the choice depends largely on the information
