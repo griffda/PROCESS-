@@ -37,6 +37,7 @@ module numerics
   !+ad_hist  18/11/13 PJK Changed various boundl, boundu values
   !+ad_hist  28/11/13 PJK New iteration variable 98: li6enrich
   !+ad_hist  17/12/13 PJK Added 'not recommended' comment for ioptimz=0
+  !+ad_hist  19/12/13 PJK Changed epsfcn description
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -599,7 +600,7 @@ module numerics
 
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
   real(kind(1.0D0)) :: sqsumsq = 0.0D0
-  !+ad_vars  epsfcn /1.0D-3/ : finite difference step length for HYBRD derivatives
+  !+ad_vars  epsfcn /1.0D-3/ : finite difference step length for HYBRD/VMCON derivatives
   real(kind(1.0D0)) :: epsfcn = 1.0D-3
   !+ad_vars  epsvmc /1.0D-3/ : error tolerance for VMCON
   real(kind(1.0D0)) :: epsvmc = 1.0D-3

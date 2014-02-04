@@ -352,6 +352,7 @@ contains
     !+ad_hist  26/11/13 PJK Lowered RALPNE lower limit
     !+ad_hist  28/11/13 PJK Added IPROFILE
     !+ad_hist  17/12/13 PJK Changed IOPTIMZ description
+    !+ad_hist  19/12/13 PJK Changed EPSFCN description
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -444,7 +445,7 @@ contains
                'Iteration variable upper bound', icode)
        case ('EPSFCN')
           call parse_real_variable('EPSFCN', epsfcn, 0.0D0, 1.0D0, &
-               'HYBRID derivative step length')
+               'HYBRID/VMCON derivative step length')
        case ('EPSVMC')
           call parse_real_variable('EPSVMC', epsvmc, 0.0D0, 1.0D0, &
                'VMCON error tolerance')
