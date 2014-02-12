@@ -307,6 +307,7 @@ contains
     !+ad_hist  08/10/12 PJK Initial F90 version
     !+ad_hist  17/12/12 PJK Added new figure of merit 14
     !+ad_hist  25/06/13 PJK Added kind() to sgn assignment
+    !+ad_hist  12/02/14 PJK Added new figure of merit 15
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -378,6 +379,9 @@ contains
 
     case (14)  !  pulse length
        fc = sgn * tburn / 2.0D4
+
+    case (15)  !  plant availability factor (N.B. requires iavail = 1)
+       fc = sgn * cfactr
 
     case default
        write(*,*) 'Error in routine FUNFOM :'

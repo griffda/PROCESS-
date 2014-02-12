@@ -63,7 +63,7 @@ Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 %  add iprimhtp, iprimnloss
 %  show buildings calculations
 %  update stellarator description (wait for coil model implementation)
-%  
+%  iavail usage
 %  
 %  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -828,6 +828,7 @@ $\pm 11$        & injection power \\
 $\pm 12$        & hydrogen plant capital cost \\
 $\pm 13$        & hydrogen production rate \\
 $\pm 14$        & pulse length \\
+$\pm 15$        & plant availability factor (N.B.\ requires \texttt{iavail=1}) \\
 \hline
 \end{tabular}
 \end{center}
@@ -890,12 +891,14 @@ $18$ & \texttt{gammax}     & maximum current drive gamma \\
 $19$ & \texttt{boundl(16)} & lower bound on OH coil thickness \texttt{ohcth} \\
 $20$ & \texttt{tbrnmn}     & minimum burn time (pulsed operation machine) \\
 $21$ & \texttt{sigpfalw}   & allowable stress in the PF coils \\
-$22$ & \texttt{cfactr}     & plant availability factor \\ 
+$22$ & \texttt{cfactr}     & plant availability factor (N.B.\ requires
+\texttt{iavail=0}) \\
 $23$ & \texttt{boundu(72)} & upper bound on f-value \texttt{fipir} \\
 $24$ & \texttt{powfmax}    & maximum fusion power \\
 $25$ & \texttt{kappa}      & plasma elongation \\
 $26$ & \texttt{triang}     & plasma triangularity \\
 $27$ & \texttt{tbrmin}     & minimum tritium breeding ratio (\texttt{blktmodel=1}) \\
+$28$ & \texttt{bt}         & toroidal field on axis \\
 \hline
 \end{tabular}
 \end{center}

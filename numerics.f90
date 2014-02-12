@@ -38,6 +38,7 @@ module numerics
   !+ad_hist  28/11/13 PJK New iteration variable 98: li6enrich
   !+ad_hist  17/12/13 PJK Added 'not recommended' comment for ioptimz=0
   !+ad_hist  19/12/13 PJK Changed epsfcn description
+  !+ad_hist  12/02/14 PJK New figure of merit 15 added
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -53,8 +54,8 @@ module numerics
   integer, parameter :: ipnvars = 98
   !+ad_vars  ipeqns /56/ FIX : number of constraint equations available
   integer, parameter :: ipeqns  = 56
-  !+ad_vars  ipnfoms /14/ FIX : number of available figures of merit
-  integer, parameter :: ipnfoms = 14
+  !+ad_vars  ipnfoms /15/ FIX : number of available figures of merit
+  integer, parameter :: ipnfoms = 15
 
   integer, parameter :: ipvlam  = ipeqns+2*ipnvars+1
   integer, parameter :: iptnt   = (ipeqns*(3*ipeqns+13))/2
@@ -394,8 +395,11 @@ module numerics
        'H plant capital cost. ', &
        !+ad_varc  <LI> (13) hydrogen production rate
        'H production rate.    ', &
-       !+ad_varc  <LI> (14) pulse length</UL>
-       'pulse length.         ' /)
+       !+ad_varc  <LI> (14) pulse length
+       'pulse length.         ', &
+       !+ad_varc  <LI> (15) plant availability factor (N.B. requires
+       !+ad_varc            iavail=1 to be set) </UL>
+       'plant availability.   ' /)
 
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>

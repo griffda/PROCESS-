@@ -1383,3 +1383,4 @@ end subroutine output
 ! SVN 219: Improved initialisation by calling 'caller' twice at the start of a run
 !          and modifying some initial estimates for quantities. Added unit testing
 !          code for VMCON
+! SVN 220: New figure of merit cfactr; new scanning variable bt

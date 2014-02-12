@@ -38,6 +38,7 @@ module scan_module
   !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_hist  28/11/13 PJK Added scan variable 27: tbrmin
+  !+ad_hist  12/02/14 PJK Added scan variable 28: bt
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -62,8 +63,8 @@ module scan_module
 
   !+ad_vars  ipnscns /50/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 50
-  !+ad_vars  ipnscnv /27/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 27
+  !+ad_vars  ipnscnv /28/ FIX : number of available scan variables
+  integer, parameter :: ipnscnv = 28
 
   !+ad_vars  isweep /0/ : number of loops to perform
   integer :: isweep = 0
@@ -89,12 +90,13 @@ module scan_module
   !+ad_varc          <LI> 19 boundl(16: ohcth)
   !+ad_varc          <LI> 20 tbrnmn
   !+ad_varc          <LI> 21 sigpfalw
-  !+ad_varc          <LI> 22 cfactr
+  !+ad_varc          <LI> 22 cfactr (N.B. requires iavail=0)
   !+ad_varc          <LI> 23 boundu(72: fipir)
   !+ad_varc          <LI> 24 powfmax
   !+ad_varc          <LI> 25 kappa
   !+ad_varc          <LI> 26 triang
-  !+ad_varc          <LI> 27 tbrmin (for blktmodel > 0 only)</UL>
+  !+ad_varc          <LI> 27 tbrmin (for blktmodel > 0 only)
+  !+ad_varc          <LI> 28 bt</UL>
   integer :: nsweep = 1
 
   !+ad_vars  sweep(ipnscns) : Actual values to use in scan
@@ -138,6 +140,7 @@ contains
     !+ad_hisc               variable information to output banner
     !+ad_hist  27/11/13 PJK Added Psep/R to list of output variables
     !+ad_hist  28/11/13 PJK Added scan variable 27: tbrmin
+    !+ad_hist  12/02/14 PJK Added scan variable 28: bt
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -326,6 +329,9 @@ contains
        case (27)
           tbrmin = sweep(i)
           vlabel = 'tbrmin = ' ; xlabel = 'Min tritium breed. ratio'
+       case (28)
+          bt = sweep(i)
+          vlabel = 'bt = ' ; xlabel = 'Tor. field on axis (T)'
 
        case default
           write(*,*) 'Error in routine SCAN:'
