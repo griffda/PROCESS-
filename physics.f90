@@ -1038,6 +1038,7 @@ contains
     !+ad_hist  10/09/13 PJK Clarified DENI calculation for D-He3;
     !+ad_hist               modified dnprot calculation
     !+ad_hist  11/09/13 PJK Removed idhe3, ftr usage
+    !+ad_hist  12/02/14 PJK Modified initial dnprot approximation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  F/MI/PJK/LOGBOOK11, p.38 for D-He3 deni calculation
@@ -1085,7 +1086,7 @@ contains
     !  production rates are evaluated later in the calling sequence
 
     if (alpharate < 1.0D-6) then  !  not calculated yet...
-       dnprot = dnalp
+       dnprot = dnalp * (fhe3 + 1.0D-3) !  rough estimate
     else
        dnprot = dnalp * protonrate/alpharate
     end if

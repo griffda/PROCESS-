@@ -106,6 +106,7 @@ contains
     !+ad_hist  26/11/13 PJK Added fix for first lap inductance matrix values;
     !+ad_hisc               new (but commented-out) CS flux swing requirement calc.
     !+ad_hist  27/11/13 PJK Moved pfrmax, pfmmax calculations from buildings module
+    !+ad_hist  12/02/14 PJK Added turns array to first lap fix
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -459,11 +460,12 @@ contains
     !  Flux swing from vertical field
 
     !  If this is the first visit to the routine the inductance matrix
-    !  sxlg has not yet been calculated, so we set it to unity to avoid
-    !  strange behaviour...
+    !  sxlg and the turns array have not yet been calculated, so we set
+    !  them to (very) approximate values to avoid strange behaviour...
 
     if (first_call) then
        sxlg(:,:) = 1.0D0
+       turns(:) = 100.0D0
        first_call = .false.
     end if
 

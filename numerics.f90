@@ -988,7 +988,7 @@ contains
     !+ad_call  vmcon
     !+ad_hist  02/10/96 PJK Initial upgraded version
     !+ad_hist  08/10/12 PJK Initial F90 version
-    !+ad_hist  10/10/12 Added arguments fcnvmc1, fcnvmc2
+    !+ad_hist  10/10/12 PJK Added arguments fcnvmc1, fcnvmc2
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !

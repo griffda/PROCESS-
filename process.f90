@@ -1380,3 +1380,6 @@ end subroutine output
 ! SVN 216: Fixed error with previous version; nvrbl --> nvar
 ! SVN 217: Typo fix in manual
 ! SVN 218: Changed epsfcn description
+! SVN 219: Improved initialisation by calling 'caller' twice at the start of a run
+!          and modifying some initial estimates for quantities. Added unit testing
+!          code for VMCON

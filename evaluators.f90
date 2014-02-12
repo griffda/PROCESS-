@@ -141,6 +141,7 @@ contains
     !+ad_hist  06/11/12 PJK Renamed routine con1 to constraints
     !+ad_hist  17/01/13 PJK Corrected ifail to be input/output
     !+ad_hist  17/12/13 PJK Added new argument to constraints call
+    !+ad_hist  06/02/14 PJK Added second call to caller to aid initialisation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -159,12 +160,22 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: fbac,ffor
+    logical :: first_call = .true.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Evaluate machine parameters at xv
 
     call caller(xv,n)
+
+    !  To ensure that, at the start of a run, all physics/engineering
+    !  variables are fully initialised with consistent values, we perform
+    !  a second evaluation call here
+
+    if (first_call) then
+       call caller(xv,n)
+       first_call = .false.
+    end if
 
     !  Evaluate figure of merit (objective function)
 
