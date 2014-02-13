@@ -278,7 +278,7 @@ contains
      call oblnkl(nout)
 
      write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns)
- 40  format(t1,i3,t10,i3,t18,a34)
+ 40  format(t1,i3,t10,i3,t18,a33)
 #endif
 
   end subroutine run_summary

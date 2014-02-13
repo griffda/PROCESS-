@@ -45,7 +45,8 @@ program process
   !+ad_hist  09/10/12 PJK Modified to use scan_module
   !+ad_hist  10/10/12 PJK Modified to use numerics module
   !+ad_hist  06/11/12 PJK Renamed this source file from aamain.f90 to process.f90.
-  !+ad_hisc               Transferred routine inform from aachange.f90
+  !+ad_hisc               Transferred routine inform from aachange.f90 
+  !+ad_hist  13/02/14 PJK Added mfile close statement
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  Box file F/RS/CIRE5523/PWF (up to 15/01/96)
@@ -89,8 +90,9 @@ program process
   call oheadr(iotty,'End of PROCESS Output')
 
   close(unit=nin)
-  close(unit=nplot)
   close(unit=nout)
+  close(unit=nplot)
+  close(unit=mfile)
 
 end program process
 
@@ -125,6 +127,7 @@ subroutine init
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  09/10/12 PJK Modified to use new numerics module
   !+ad_hist  15/10/12 PJK Added global_variables module
+  !+ad_hist  13/02/14 PJK Added mfile open statement
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -150,8 +153,9 @@ subroutine init
   !  Open the three input/output external files
 
   open(unit=nin,file='IN.DAT',status='old')
-  open(unit=nplot,file='PLOT.DAT',status='unknown')
   open(unit=nout,file='OUT.DAT',status='unknown')
+  open(unit=nplot,file='PLOT.DAT',status='unknown')
+  open(unit=mfile,file='MFILE.DAT',status='unknown')
 
   !  Print code banner + run details
 
@@ -516,7 +520,7 @@ subroutine eqslv(ifail)
 
   do inn = 1,neqns
      write(nout,60) inn,lablcc(icc(inn)),rcm(inn)
-60   format(t2,i4,t8,a34,t45,1pe12.4)
+60   format(t2,i4,t8,a33,t45,1pe12.4)
   end do
 
 end subroutine eqslv
@@ -994,7 +998,7 @@ subroutine doopt(ifail)
   do inn = 1,neqns
      write(nout,120) inn,lablcc(icc(inn)),rcm(inn),vlam(inn)
   end do
-120 format(t2,i4,t8,a34,t45,1pe12.4,1pe12.4)
+120 format(t2,i4,t8,a33,t45,1pe12.4,1pe12.4)
 
 end subroutine doopt
 
@@ -1387,3 +1391,5 @@ end subroutine output
 ! SVN 221: Constraint (limit) equations made uniform in style
 ! SVN 222: Minor mods to prevent gfortran compilation errors. Also added tratio usage
 !          to calculate ti from te for stellarators
+! SVN 223: Added new output channel mfile (MFILE.DAT) to write out machine-readable
+!          data. Also changed space characters in PLOT.DAT to underscores.

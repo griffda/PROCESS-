@@ -141,6 +141,7 @@ contains
     !+ad_hist  27/11/13 PJK Added Psep/R to list of output variables
     !+ad_hist  28/11/13 PJK Added scan variable 27: tbrmin
     !+ad_hist  12/02/14 PJK Added scan variable 28: bt
+    !+ad_hist  13/02/14 PJK Replaced spaces with underscores in xlabel, plabel
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -184,56 +185,56 @@ contains
     !  Set up labels for plotting output
 
     if (first_call) then
-       plabel( 1) = 'Ifail                    '
-       plabel( 2) = 'Sqsumsq                  '
-       plabel( 3) = 'Electric cost (mil/kwh)  '
-       plabel( 4) = 'Capital cost (mil/kwh)   '
-       plabel( 5) = 'Fuel cost (mil/kwh)      '
-       plabel( 6) = 'Operations cost (mil/kwh)'
-       plabel( 7) = 'Capital cost (mil)       '
-       plabel( 8) = 'Core costs (millions)    '
-       plabel( 9) = 'Direct cost (billions)   '
-       plabel(10) = 'Major Radius (m)         '
-       plabel(11) = 'Aspect Ratio             '
-       plabel(12) = 'Plasma Current (MA)      '
-       plabel(13) = 'B Toroidal Axis (T)      '
-       plabel(14) = 'B total on axis (T)      '
-       plabel(15) = 'Safety Factor            '
-       plabel(16) = 'qlim (zero if ishape=0)  '
-       plabel(17) = 'Beta                     '
-       plabel(18) = 'Beta Limit               '
-       plabel(19) = 'Epsilon Beta Poloidal    '
-       plabel(20) = 'Average Temp x10 (KeV)   '
-       plabel(21) = 'Average Dens (10^20/m^3) '
-       plabel(22) = 'H-fact Iter Power        '
-       plabel(23) = 'H-fact Iter Offset       '
-       plabel(24) = 'Fusion Power (MW)        '
-       plabel(25) = 'nb Fusion Power (MW)     '
-       plabel(26) = 'Wall Load (MW/m^2)       '
-       plabel(27) = 'Injection Power (MW)     '
-       plabel(28) = 'Inject Pwr Wall Plug (MW)'
-       plabel(29) = 'Heating Power (MW)       '
-       plabel(30) = 'Current Drive (MW)       '
-       plabel(31) = 'Big Q                    '
-       plabel(32) = 'Bootstrap Fraction       '
-       plabel(33) = 'Neutral Beam Energy (MeV)'
-       plabel(34) = 'Divertor Heat (MW/m^2)   '
-       plabel(35) = 'TF coil Power (MW)       '
-       plabel(36) = 'TF coil weight (kg)      '
-       plabel(37) = 'TF stress (MPa)          '
-       plabel(38) = 'J TF inboard leg (MA/m^2)'
-       plabel(39) = 'Centrepost max T (TART)  '
-       plabel(40) = 'Res TF inbrd leg Pwr (MW)'
-       plabel(41) = 'Coolant Fraction Ctr.    '
-       plabel(42) = 'C/P coolant radius (m)   '
-       plabel(43) = 'C/P coolant velocity(m/s)'
-       plabel(44) = 'C/P pump power (MW)      '
-       plabel(45) = 'PF coil Power (MW)       '
-       plabel(46) = 'PF coil weight (kg)      '
-       plabel(47) = 'Gross Elect Pwr (MW)     '
-       plabel(48) = 'Net electric Pwr (MW)    '
-       plabel(49) = 'Recirculating Fraction   '
-       plabel(50) = 'Psep / R                 '
+       plabel( 1) = 'Ifail____________________'
+       plabel( 2) = 'Sqsumsq__________________'
+       plabel( 3) = 'Electric_cost_(mil/kwh)__'
+       plabel( 4) = 'Capital_cost_(mil/kwh)___'
+       plabel( 5) = 'Fuel_cost_(mil/kwh)______'
+       plabel( 6) = 'Operations_cost_(mil/kwh)'
+       plabel( 7) = 'Capital_cost_(mil)_______'
+       plabel( 8) = 'Core_costs_(millions)____'
+       plabel( 9) = 'Direct_cost_(billions)___'
+       plabel(10) = 'Major_Radius_(m)_________'
+       plabel(11) = 'Aspect_Ratio_____________'
+       plabel(12) = 'Plasma_Current_(MA)______'
+       plabel(13) = 'B_Toroidal_Axis_(T)______'
+       plabel(14) = 'B_total_on_axis_(T)______'
+       plabel(15) = 'Safety_Factor____________'
+       plabel(16) = 'qlim_(zero_if_ishape=0)__'
+       plabel(17) = 'Beta_____________________'
+       plabel(18) = 'Beta_Limit_______________'
+       plabel(19) = 'Epsilon_Beta_Poloidal____'
+       plabel(20) = 'Average_Temp_x10_(KeV)___'
+       plabel(21) = 'Average_Dens_(10^20/m^3)_'
+       plabel(22) = 'H-fact_Iter_Power________'
+       plabel(23) = 'H-fact_Iter_Offset_______'
+       plabel(24) = 'Fusion_Power_(MW)________'
+       plabel(25) = 'nb_Fusion_Power_(MW)_____'
+       plabel(26) = 'Wall_Load_(MW/m^2)_______'
+       plabel(27) = 'Injection_Power_(MW)_____'
+       plabel(28) = 'Inject_Pwr_Wall_Plug_(MW)'
+       plabel(29) = 'Heating_Power_(MW)_______'
+       plabel(30) = 'Current_Drive_(MW)_______'
+       plabel(31) = 'Big_Q____________________'
+       plabel(32) = 'Bootstrap_Fraction_______'
+       plabel(33) = 'Neutral_Beam_Energy_(MeV)'
+       plabel(34) = 'Divertor_Heat_(MW/m^2)___'
+       plabel(35) = 'TF_coil_Power_(MW)_______'
+       plabel(36) = 'TF_coil_weight_(kg)______'
+       plabel(37) = 'TF_stress_(MPa)__________'
+       plabel(38) = 'J_TF_inboard_leg_(MA/m^2)'
+       plabel(39) = 'Centrepost_max_T_(TART)__'
+       plabel(40) = 'Res_TF_inbrd_leg_Pwr_(MW)'
+       plabel(41) = 'Coolant_Fraction_Ctr.____'
+       plabel(42) = 'C/P_coolant_radius_(m)___'
+       plabel(43) = 'C/P_coolant_velocity(m/s)'
+       plabel(44) = 'C/P_pump_power_(MW)______'
+       plabel(45) = 'PF_coil_Power_(MW)_______'
+       plabel(46) = 'PF_coil_weight_(kg)______'
+       plabel(47) = 'Gross_Elect_Pwr_(MW)_____'
+       plabel(48) = 'Net_electric_Pwr_(MW)____'
+       plabel(49) = 'Recirculating_Fraction___'
+       plabel(50) = 'Psep/R___________________'
 
        first_call = .false.
     end if
@@ -244,67 +245,67 @@ contains
 
        case (1)
           aspect = sweep(i)
-          vlabel = 'aspect = ' ; xlabel = 'Aspect ratio'
+          vlabel = 'aspect = ' ; xlabel = 'Aspect_ratio'
        case (2)
           hldivlim = sweep(i)
-          vlabel = 'hldivlim = ' ; xlabel = 'Div heat limit (MW/m2)'
+          vlabel = 'hldivlim = ' ; xlabel = 'Div_heat_limit_(MW/m2)'
        case (3)
           pnetelin = sweep(i)
-          vlabel = 'pnetelin = ' ; xlabel = 'Net electric power (MW)'
+          vlabel = 'pnetelin = ' ; xlabel = 'Net_electric_power_(MW)'
        case (4)
           hfact = sweep(i)
-          vlabel = 'hfact = ' ; xlabel = 'Confinement H factor'
+          vlabel = 'hfact = ' ; xlabel = 'Confinement_H_factor'
        case (5)
           oacdcp = sweep(i)
-          vlabel = 'oacdcp = ' ; xlabel = 'TF inboard leg J (MA/m2)'
+          vlabel = 'oacdcp = ' ; xlabel = 'TF_inboard_leg_J_(MA/m2)'
        case (6)
           walalw = sweep(i)
-          vlabel = 'walalw = ' ; xlabel = 'Allow. wall load (MW/m2)'
+          vlabel = 'walalw = ' ; xlabel = 'Allow._wall_load_(MW/m2)'
        case (7)
           beamfus0 = sweep(i)
-          vlabel = 'beamfus0 = ' ; xlabel = 'Beam bkgrd multiplier'
+          vlabel = 'beamfus0 = ' ; xlabel = 'Beam_bkgrd_multiplier'
        case (8)
           fqval = sweep(i)
-          vlabel = 'fqval = ' ; xlabel = 'Big Q f-value'
+          vlabel = 'fqval = ' ; xlabel = 'Big_Q_f-value'
        case (9)
           te = sweep(i)
-          vlabel = 'te = ' ; xlabel = 'Electron temperature (keV)'
+          vlabel = 'te = ' ; xlabel = 'Electron_temperature_(keV)'
        case (10)
           boundu(15) = sweep(i)
-          vlabel = 'boundu(15) = ' ; xlabel = 'Volt-second upper bound'
+          vlabel = 'boundu(15) = ' ; xlabel = 'Volt-second_upper_bound'
        case (11)
           dnbeta = sweep(i)
-          vlabel = 'dnbeta = ' ; xlabel = 'Beta coefficient'
+          vlabel = 'dnbeta = ' ; xlabel = 'Beta_coefficient'
        case (12)
           bscfmax = sweep(i)
-          vlabel = 'bscfmax = ' ; xlabel = 'Bootstrap fraction'
+          vlabel = 'bscfmax = ' ; xlabel = 'Bootstrap_fraction'
        case (13)
           boundu(10) = sweep(i)
-          vlabel = 'boundu(10) = ' ; xlabel = 'H factor upper bound'
+          vlabel = 'boundu(10) = ' ; xlabel = 'H_factor_upper_bound'
        case (14)
           fiooic = sweep(i)
-          vlabel = 'fiooic = ' ; xlabel = 'TFC Iop / Icrit f-value'
+          vlabel = 'fiooic = ' ; xlabel = 'TFC_Iop_/_Icrit_f-value'
        case (15)
           fjprot = sweep(i)
-          vlabel = 'fjprot = ' ; xlabel = 'TFC Jprot limit f-value'
+          vlabel = 'fjprot = ' ; xlabel = 'TFC_Jprot_limit_f-value'
        case (16)
           rmajor = sweep(i)
-          vlabel = 'rmajor = ' ; xlabel = 'Plasma major radius (m)'
+          vlabel = 'rmajor = ' ; xlabel = 'Plasma_major_radius_(m)'
        case (17)
           bmxlim = sweep(i)
-          vlabel = 'bmxlim = ' ; xlabel = 'Max toroidal field (T)'
+          vlabel = 'bmxlim = ' ; xlabel = 'Max_toroidal_field_(T)'
        case (18)
           gammax = sweep(i)
-          vlabel = 'gammax = ' ; xlabel = 'Maximum CD gamma'
+          vlabel = 'gammax = ' ; xlabel = 'Maximum_CD_gamma'
        case (19)
           boundl(16) = sweep(i)
-          vlabel = 'boundl(16) = ' ; xlabel = 'OHC thickness lower bound'
+          vlabel = 'boundl(16) = ' ; xlabel = 'OHC_thickness_lower_bound'
        case (20)
           tbrnmn = sweep(i)
-          vlabel = 'tbrnmn = ' ; xlabel = 'Minimum burn time (s)'
+          vlabel = 'tbrnmn = ' ; xlabel = 'Minimum_burn_time_(s)'
        case (21)
           sigpfalw = sweep(i)
-          vlabel = 'sigpfalw = ' ; xlabel = 'Allowable PF coil stress'
+          vlabel = 'sigpfalw = ' ; xlabel = 'Allowable_PF_coil_stress'
        case (22)
           if (iavail == 1) then
              write(*,*) 'Error in routine SCAN:'
@@ -313,25 +314,25 @@ contains
              stop
           end if
           cfactr = sweep(i)
-          vlabel = 'cfactr = ' ; xlabel = 'Plant availability factor'
+          vlabel = 'cfactr = ' ; xlabel = 'Plant_availability_factor'
        case (23)
           boundu(72) = sweep(i)
-          vlabel = 'boundu(72) = ' ; xlabel = 'Ip/Irod upper bound'
+          vlabel = 'boundu(72) = ' ; xlabel = 'Ip/Irod_upper_bound'
        case (24)
           powfmax = sweep(i)
-          vlabel = 'powfmax = ' ; xlabel = 'Fusion power limit (MW)'
+          vlabel = 'powfmax = ' ; xlabel = 'Fusion_power_limit_(MW)'
        case (25)
           kappa = sweep(i)
-          vlabel = 'kappa = ' ; xlabel = 'Plasma elongation'
+          vlabel = 'kappa = ' ; xlabel = 'Plasma_elongation'
        case (26)
           triang = sweep(i)
-          vlabel = 'triang = ' ; xlabel = 'Plasma triangularity'
+          vlabel = 'triang = ' ; xlabel = 'Plasma_triangularity'
        case (27)
           tbrmin = sweep(i)
-          vlabel = 'tbrmin = ' ; xlabel = 'Min tritium breed. ratio'
+          vlabel = 'tbrmin = ' ; xlabel = 'Min_tritium_breed._ratio'
        case (28)
           bt = sweep(i)
-          vlabel = 'bt = ' ; xlabel = 'Tor. field on axis (T)'
+          vlabel = 'bt = ' ; xlabel = 'Tor._field_on_axis_(T)'
 
        case default
           write(*,*) 'Error in routine SCAN:'

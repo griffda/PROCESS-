@@ -19,6 +19,7 @@ module process_output
   !+ad_cont  ovarin
   !+ad_cont  ovarre
   !+ad_cont  ovarrf
+  !+ad_cont  underscore
   !+ad_args  N/A
   !+ad_desc  This module contains a number of routines that allow the
   !+ad_desc  program to write output to a file unit in a uniform style.
@@ -26,6 +27,7 @@ module process_output
   !+ad_call  None
   !+ad_hist  09/10/12 PJK Initial version of module
   !+ad_hist  29/11/12 PJK Added shared variable autodoc comments
+  !+ad_hist  13/02/14 PJK Added mfile for machine-readable output file unit
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -35,9 +37,10 @@ module process_output
 
   public
 
-  integer, parameter :: nout = 12  !  Output file unit identifier
-  integer, parameter :: nplot = 11 !  Plot data file unit identifier
   integer, parameter :: iotty = 6  !  Standard output unit identifier
+  integer, parameter :: nout = 11  !  Output file unit identifier
+  integer, parameter :: nplot = 12 !  Plot data file unit identifier
+  integer, parameter :: mfile = 13 !  Machine-optimised output file unit
 
   !  Switches for turning on/off output sections
   !  1 = on, 0 = off
@@ -429,8 +432,9 @@ contains
     !+ad_desc  double precision variable in F format (e.g.
     !+ad_desc  <CODE>-12345.000</CODE>).
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  underscore
     !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_hist  13/02/14 PJK Added output to mfile, with underscores replacing spaces
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -461,6 +465,10 @@ contains
     write(file,10) dum42, dum13, value
 10  format(1x,a,t45,a,t60,f10.3)
 
+    call underscore(dum42)
+    call underscore(dum13)
+    write(mfile,10) dum42, dum13, value
+
   end subroutine ovarrf
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -481,8 +489,9 @@ contains
     !+ad_desc  double precision variable in E format (e.g.
     !+ad_desc  <CODE>-1.234E+04</CODE>).
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  underscore
     !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_hist  13/02/14 PJK Added output to mfile, with underscores replacing spaces
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -513,6 +522,10 @@ contains
     write(file,10) dum42, dum13, value
 10  format(1x,a,t45,a,t60,1pe10.3)
 
+    call underscore(dum42)
+    call underscore(dum13)
+    write(mfile,10) dum42, dum13, value
+
   end subroutine ovarre
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -531,8 +544,9 @@ contains
     !+ad_desc  This routine writes out the description, name and value of an
     !+ad_desc  integer variable.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  underscore
     !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_hist  13/02/14 PJK Added output to mfile, with underscores replacing spaces
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -562,6 +576,10 @@ contains
 
     write(file,10) dum42, dum13, value
 10  format(1x,a,t45,a,t60,i10)
+
+    call underscore(dum42)
+    call underscore(dum13)
+    write(mfile,10) dum42, dum13, value
 
   end subroutine ovarin
 
@@ -664,5 +682,46 @@ contains
 10  format(1x,a,t42,f10.3,t58,f10.3)
 
   end subroutine obuild
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine underscore(string)
+
+    !+ad_name  underscore
+    !+ad_summ  Routine that converts spaces in a string to underscores
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  string : input/output string : character string of interest
+    !+ad_desc  This routine converts any space characters in the string
+    !+ad_desc  to underscore characters.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  13/02/14 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    character(len=*), intent(inout) :: string
+
+    !  Local variables
+
+    integer :: loop, i
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    i = index(string, ' ')
+    if (i > 0) then
+       do loop = i, len(string)
+          if (string(loop:loop) == ' ') string(loop:loop) = '_'
+       end do
+    end if
+
+  end subroutine underscore
 
 end module process_output
