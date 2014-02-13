@@ -1385,3 +1385,5 @@ end subroutine output
 !          code for VMCON
 ! SVN 220: New figure of merit cfactr; new scanning variable bt
 ! SVN 221: Constraint (limit) equations made uniform in style
+! SVN 222: Minor mods to prevent gfortran compilation errors. Also added tratio usage
+!          to calculate ti from te for stellarators

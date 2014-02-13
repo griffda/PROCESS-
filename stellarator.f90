@@ -761,6 +761,7 @@ contains
     !+ad_hist  10/09/13 PJK Modified calls to PALPH, PHYAUX
     !+ad_hist  11/09/13 PJK Removed idhe3, ftr, iiter usage
     !+ad_hist  28/11/13 PJK Added pdtpv, pdhe3pv, pddpv to palph arguments
+    !+ad_hist  13/02/14 PJK Added tratio usage to calculate ti from te
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -783,6 +784,10 @@ contains
          ignite,impc,impfe,impo,ralpne,rnbeam,te,zeff,abeam, &
          afuel,aion,deni,dlamee,dlamie,dnalp,dnbeam,dnitot,dnla, &
          dnprot,dnz,falpe,falpi,pcoef,rncne,rnone,rnfene,zeffai,zion,zfear)
+
+    !  Ion temperature (input value used directly if tratio=0.0)
+
+    if (tratio > 0.0D0) ti = tratio * te
 
     ten = te * pcoef
     tin = ti * pcoef

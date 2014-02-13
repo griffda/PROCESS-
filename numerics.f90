@@ -39,6 +39,8 @@ module numerics
   !+ad_hist  17/12/13 PJK Added 'not recommended' comment for ioptimz=0
   !+ad_hist  19/12/13 PJK Changed epsfcn description
   !+ad_hist  12/02/14 PJK New figure of merit 15 added
+  !+ad_hist  13/02/14 PJK Expanded lablcc(56) to all 33 characters to
+  !+ad_hisc               prevent gfortran error message
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -250,7 +252,7 @@ module numerics
 
   !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
   !+ad_varc                   (starred ones are turned on by default):<UL>
-  character(len=34), dimension(ipeqns) :: lablcc = (/ &
+  character(len=33), dimension(ipeqns) :: lablcc = (/ &
        !+ad_varc  <LI> ( 1) * Beta (consistency equation)
        'Beta consistency                 ', &
        !+ad_varc  <LI> ( 2) * Global power balance (consistency equation)
@@ -363,7 +365,7 @@ module numerics
        !+ad_varc  <LI> (55) Vacuum vessel helium concentration limit
        'Vessel helium concentration limit', &
        !+ad_varc  <LI> (56) Pseparatrix/Rmajor limit</UL>
-       'Psep / R limit'  &
+       'Psep / R limit                   '  &
        /)
 
   !+ad_vars  lablmm(ipnfoms) : labels describing figures of merit:<UL>

@@ -149,7 +149,7 @@ FFLAGS_GFORT = -cpp
 LFLAGS_GFORT = 
 LIBS_GFORT   = 
 ifeq (${DEBUG},YES)
-	FFLAGS_GFORT = -cpp -g -fcheck=all -fbacktrace
+	FFLAGS_GFORT = -cpp -g -fbounds-check -fbacktrace
 endif
 
 ################### End of Custom Section #####################
