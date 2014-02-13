@@ -1384,3 +1384,4 @@ end subroutine output
 !          and modifying some initial estimates for quantities. Added unit testing
 !          code for VMCON
 ! SVN 220: New figure of merit cfactr; new scanning variable bt
+! SVN 221: Constraint (limit) equations made uniform in style

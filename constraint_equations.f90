@@ -80,6 +80,7 @@ subroutine constraints(m,cc,ieqn)
   !+ad_hist  10/10/13 PJK Made multiplier in beta equation explicit
   !+ad_hist  17/12/13 PJK Added ieqn argument to optionally only evaluate
   !+ad_hisc               one of the constraint equations
+  !+ad_hist  13/02/14 PJK Made limit equations uniform in style
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -169,14 +170,14 @@ subroutine constraints(m,cc,ieqn)
      case (5)  !  Equation for density limit
 
         if (idensl == 7) then  !  Apply Greenwald limit to line-averaged density
-           cc(i) = 1.0D0 - dnla/(fdene*dnelimt)
+           cc(i) = 1.0D0 - fdene * dnelimt/dnla
         else
-           cc(i) = 1.0D0 - dene/(fdene*dnelimt)
+           cc(i) = 1.0D0 - fdene * dnelimt/dene
         end if
 
      case (6)  !  Equation for epsilon beta-poloidal limit
 
-        cc(i) = 1.0D0 - eps*betap/(fbeta*epbetmax)
+        cc(i) = 1.0D0 - fbeta * epbetmax/(eps*betap)
 
      case (7)  !  Equation for hot beam ion density
                !  This is a consistency equation (NBI).
@@ -192,11 +193,11 @@ subroutine constraints(m,cc,ieqn)
 
      case (8)  !  Equation for neutron wall load limit
 
-        cc(i) = 1.0D0 - wallmw/(fwalld*walalw)
+        cc(i) = 1.0D0 - fwalld * walalw/wallmw
 
      case (9)  !  Equation for fusion power limit
 
-        cc(i) = 1.0D0 - ffuspow * powfmax / powfmw
+        cc(i) = 1.0D0 - ffuspow * powfmax/powfmw
 
      case (10)  !  Equation for field at TF coil
                 !  This is a consistency equation.
@@ -216,7 +217,7 @@ subroutine constraints(m,cc,ieqn)
 
         cc(i) = 1.0D0 - ftburn * tburn/tbrnmn
 
-     case (14)  !  Equation for beam energy
+     case (14)  !  Equation for beam energy consistency
 
         cc(i) = 1.0D0 - taubeam/tbeamin
 
@@ -244,7 +245,7 @@ subroutine constraints(m,cc,ieqn)
 
      case (20)  !  Equation for neutral beam tangency radius limit
 
-        cc(i) = 1.0D0 - rtanbeam/(fportsz * rtanmax)
+        cc(i) = 1.0D0 - fportsz * rtanmax/rtanbeam
 
      case (21)  !  Equation for minimum minor radius
 
@@ -269,21 +270,21 @@ subroutine constraints(m,cc,ieqn)
            !  Include all beta components
            !  Relevant for both tokamaks and stellarators
 
-           cc(i) = 1.0D0 - beta / (fbetatry*betalim)
+           cc(i) = 1.0D0 - fbetatry * betalim/beta
 
         else if (iculbl == 1) then
 
            !  Here, the beta limit applies to only the thermal
            !  component, not the fast alpha or neutral beam parts
 
-           cc(i) = 1.0D0 - (beta-betaft-betanb) / (fbetatry*betalim)
+           cc(i) = 1.0D0 - fbetatry * betalim/(beta-betaft-betanb)
 
         else if (iculbl == 2) then
 
            !  Beta limit applies to thermal + neutral beam
            !  components of the total beta, i.e. excludes alphas
 
-           cc(i) = 1.0D0 - (beta-betaft) / (fbetatry*betalim)
+           cc(i) = 1.0D0 - fbetatry * betalim/(beta-betaft)
 
         else
            write(*,*) 'Error in routine CONSTRAINTS:'
@@ -294,11 +295,11 @@ subroutine constraints(m,cc,ieqn)
 
      case (25)  !  Equation for peak toroidal field limit
 
-        cc(i) = 1.0D0 - bmaxtf/(fpeakb*bmxlim)
+        cc(i) = 1.0D0 - fpeakb * bmxlim/bmaxtf
 
      case (26)  !  Equation for J-OHC at EOF
 
-        cc(i) = 1.0D0 - fjohc*rjohc/coheof
+        cc(i) = 1.0D0 - fjohc * rjohc/coheof
 
      case (27)  !  Equation for J-OHC at BOP
 
@@ -307,7 +308,7 @@ subroutine constraints(m,cc,ieqn)
      case (28)  !  Equation for Big Q
 
         if (ignite == 0) then
-           cc(i) = 1.0D0 - fqval * powfmw / (1.0D-6 * (pinji+pinje))
+           cc(i) = 1.0D0 - fqval * powfmw / (1.0D-6*(pinji+pinje))
         else
            write(*,*) 'Error in routine CONSTRAINTS:'
            write(*,*) 'Do not use constraint 28 if IGNITE=1.'
@@ -413,7 +414,7 @@ subroutine constraints(m,cc,ieqn)
         end if
         cc(i) = 1.0D0 - fptemp * ptempalw / tcpmax
 
-     case (45)  !  Equation for edge safety factor limit (TART)
+     case (45)  !  Equation for minimum edge safety factor limit (TART)
 
         if (itart == 0) then
            write(*,*) 'Error in routine EQNS:'
@@ -421,7 +422,7 @@ subroutine constraints(m,cc,ieqn)
            write(*,*) 'PROCESS stopping.'
            stop
         end if
-        cc(i) = 1.0D0 - fq*q/qlim
+        cc(i) = 1.0D0 - fq * q/qlim
 
      case (46)  !  Equation for Ip/Irod limit (TART)
                 !  This is a q-edge type limit for certain aspect ratios
@@ -446,16 +447,15 @@ subroutine constraints(m,cc,ieqn)
            write(*,*) 'PROCESS stopping.'
            stop
         end if
-        cc(i) = 1.0D0 - frfptf*(2.0D0*(rbmax-tfcth)*tan(pi/tfno)) &
-             / tftort
+        cc(i) = 1.0D0 - frfptf * (2.0D0*(rbmax-tfcth)*tan(pi/tfno))/tftort
 
      case (48)  !  Equation for poloidal beta limit
 
-        cc(i) = 1.0D0 - fbetap*betpmx/betap
+        cc(i) = 1.0D0 - fbetap * betpmx/betap
 
      case (49)  !  Equation to ensure RFP reversal parameter F is negative
 
-        cc(i) = 1.0D0 + frfpf*rfpf/0.001D0
+        cc(i) = 1.0D0 + frfpf * rfpf/0.001D0
 
      case (50)  !  Equation for maximum IFE repetition rate (reprat)
                 !  Relevant only to inertial fusion energy devices
@@ -466,7 +466,7 @@ subroutine constraints(m,cc,ieqn)
            write(*,*) 'PROCESS stopping.'
            stop
         end if
-        cc(i) = 1.0D0 - frrmax*rrmax/reprat
+        cc(i) = 1.0D0 - frrmax * rrmax/reprat
 
      case (51)  !  Equation to enforce startup flux = available startup flux
 

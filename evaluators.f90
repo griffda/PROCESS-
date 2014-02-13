@@ -308,6 +308,7 @@ contains
     !+ad_hist  17/12/12 PJK Added new figure of merit 14
     !+ad_hist  25/06/13 PJK Added kind() to sgn assignment
     !+ad_hist  12/02/14 PJK Added new figure of merit 15
+    !+ad_hist  13/02/14 PJK Added trap if iavail /= 1 with fig of merit 15
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -381,6 +382,13 @@ contains
        fc = sgn * tburn / 2.0D4
 
     case (15)  !  plant availability factor (N.B. requires iavail = 1)
+       if (iavail /= 1) then
+          write(*,*) 'Error in routine FUNFOM :'
+          write(*,*) 'Switch iavail must be 1 if'
+          write(*,*) 'cfactr is to be the figure of merit.'
+          write(*,*) 'PROCESS stopping.'
+          stop
+       end if
        fc = sgn * cfactr
 
     case default
