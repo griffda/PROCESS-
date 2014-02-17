@@ -27,6 +27,7 @@ module kit_blanket_model
   !+ad_call  None
   !+ad_hist  06/06/13 PJK Initial release for comments
   !+ad_hist  14/11/13 PJK Global replacement of BU by BZ (Unit --> Zone)
+  !+ad_hist  17/02/14 PJK Used np instead of 2 for array dimensions
   !+ad_stat  Okay
   !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
   !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
@@ -47,12 +48,14 @@ module kit_blanket_model
   !  BM = Box Manifold
   !  BP = Back Plates
   !  VV = Vacuum Vessel (includes low-temperature shield)
-  !  Element 1 = 'inner' edge, element 2 = 'outer' edge
+  !  Element 1 = 'inner' edge, element np(=2) = 'outer' edge
   !
   !  IB = inboard, OB = outboard
 
-  real(kind(1.0D0)), dimension(2) :: x_BZ_IB, x_BM_IB, x_BP_IB, x_VV_IB
-  real(kind(1.0D0)), dimension(2) :: x_BZ_OB, x_BM_OB, x_BP_OB, x_VV_OB
+  integer, parameter :: np = 2 
+
+  real(kind(1.0D0)), dimension(np) :: x_BZ_IB, x_BM_IB, x_BP_IB, x_VV_IB
+  real(kind(1.0D0)), dimension(np) :: x_BZ_OB, x_BM_OB, x_BP_OB, x_VV_OB
 
   !  Values shared between subroutines in this module
 
@@ -65,7 +68,6 @@ module kit_blanket_model
   real(kind(1.0D0)), parameter :: E_n = 14.1D0    ! [MeV] Average neutron energy
   real(kind(1.0D0)), parameter :: PA_T = 3.0D0    ! [g/mol] Tritium atomic weight
   real(kind(1.0D0)), parameter :: N_Av = 6.02D23  ! [at/mol] Avogadro number
-  integer, parameter :: K_tau = 31536000          ! [sec/yr] Number of seconds per year
 
   !  Constants and fixed coefficients used in the model
   !  Based on Helium-Cooled Pebble Beds (HCPB) configuration
@@ -369,19 +371,19 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Radial coordinates in each inboard sub-assembly (cm)
-    !  Element 1 is 'inner' edge (nearer the plasma), element 2 is 'outer' edge
+    !  Element 1 is 'inner' edge (nearer the plasma), element np (=2) is 'outer' edge
 
-    x_BZ_IB(1) = 0.0D0 ; x_BZ_IB(2) = t_FW_IB + t_BZ_IB
-    x_BM_IB(1) = 0.0D0 ; x_BM_IB(2) = t_BM_IB
-    x_BP_IB(1) = 0.0D0 ; x_BP_IB(2) = t_BP_IB
-    x_VV_IB(1) = 0.0D0 ; x_VV_IB(2) = t_VV_IB
+    x_BZ_IB(1) = 0.0D0 ; x_BZ_IB(np) = t_FW_IB + t_BZ_IB
+    x_BM_IB(1) = 0.0D0 ; x_BM_IB(np) = t_BM_IB
+    x_BP_IB(1) = 0.0D0 ; x_BP_IB(np) = t_BP_IB
+    x_VV_IB(1) = 0.0D0 ; x_VV_IB(np) = t_VV_IB
 
     !  Radial coordinates in each outboard sub-assembly (cm)
 
-    x_BZ_OB(1) = 0.0D0 ; x_BZ_OB(2) = t_FW_OB + t_BZ_OB
-    x_BM_OB(1) = 0.0D0 ; x_BM_OB(2) = t_BM_OB
-    x_BP_OB(1) = 0.0D0 ; x_BP_OB(2) = t_BP_OB
-    x_VV_OB(1) = 0.0D0 ; x_VV_OB(2) = t_VV_OB
+    x_BZ_OB(1) = 0.0D0 ; x_BZ_OB(np) = t_FW_OB + t_BZ_OB
+    x_BM_OB(1) = 0.0D0 ; x_BM_OB(np) = t_BM_OB
+    x_BP_OB(1) = 0.0D0 ; x_BP_OB(np) = t_BP_OB
+    x_VV_OB(1) = 0.0D0 ; x_VV_OB(np) = t_VV_OB
 
   end subroutine radial_coordinates
 
@@ -435,9 +437,9 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(2) :: q_steels_BZ_IB, q_steels_BZ_OB
-    real(kind(1.0D0)), dimension(2) :: q_BM_IB, q_BP_IB, q_VV_IB
-    real(kind(1.0D0)), dimension(2) :: q_BM_OB, q_BP_OB, q_VV_OB
+    real(kind(1.0D0)), dimension(np) :: q_steels_BZ_IB, q_steels_BZ_OB
+    real(kind(1.0D0)), dimension(np) :: q_BM_IB, q_BP_IB, q_VV_IB
+    real(kind(1.0D0)), dimension(np) :: q_BM_OB, q_BP_OB, q_VV_OB
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -449,21 +451,21 @@ contains
 
     q_steels_BZ_IB(:) = NWL_av/NWL_av_PPCS * q_0_BZ_steels_IB * &
          exp(-x_BZ_IB(:)/lambda_q_BZ_steels_IB)
-    q_BZ_IB_end = q_steels_BZ_IB(2)
+    q_BZ_IB_end = q_steels_BZ_IB(np)
 
     ! Power density profile in IB BM
 
-    q_BM_IB(:) = q_steels_BZ_IB(2) * exp(-x_BM_IB(:)/lambda_q_BM_IB)
-    q_BM_IB_end = q_BM_IB(2)
+    q_BM_IB(:) = q_steels_BZ_IB(np) * exp(-x_BM_IB(:)/lambda_q_BM_IB)
+    q_BM_IB_end = q_BM_IB(np)
 
     !  Power density profile in IB BP
 
-    q_BP_IB(:) = q_BM_IB(2) * exp(-x_BP_IB(:)/lambda_q_BP_IB)
-    q_BP_IB_end = q_BP_IB(2)
+    q_BP_IB(:) = q_BM_IB(np) * exp(-x_BP_IB(:)/lambda_q_BP_IB)
+    q_BP_IB_end = q_BP_IB(np)
 
     !  Power density profile in IB VV
 
-    q_VV_IB(:) = q_BP_IB(2) * exp(-x_VV_IB(:)/lambda_q_VV)
+    q_VV_IB(:) = q_BP_IB(np) * exp(-x_VV_IB(:)/lambda_q_VV)
 
     !  Outboard profiles
 
@@ -471,27 +473,27 @@ contains
 
     q_steels_BZ_OB(:) = NWL_av/NWL_av_PPCS * q_0_BZ_steels_OB * &
          exp(-x_BZ_OB(:)/lambda_q_BZ_steels_OB)
-    q_BZ_OB_end = q_steels_BZ_OB(2)
+    q_BZ_OB_end = q_steels_BZ_OB(np)
 
     !  Power density profile in OB BM
 
-    q_BM_OB(:) = q_steels_BZ_OB(2) * exp(-x_BM_OB(:)/lambda_q_BM_OB)
-    q_BM_OB_end = q_BM_OB(2)
+    q_BM_OB(:) = q_steels_BZ_OB(np) * exp(-x_BM_OB(:)/lambda_q_BM_OB)
+    q_BM_OB_end = q_BM_OB(np)
 
     !  Power density profile in OB BP
 
-    q_BP_OB(:) = q_BM_OB(2) * exp(-x_BP_OB(:)/lambda_q_BP_OB)
-    q_BP_OB_end = q_BP_OB(2)
+    q_BP_OB(:) = q_BM_OB(np) * exp(-x_BP_OB(:)/lambda_q_BP_OB)
+    q_BP_OB_end = q_BP_OB(np)
 
     !  Power density profile in OB VV
 
-    q_VV_OB(:) = q_BP_OB(2) * exp(-x_VV_OB(:)/lambda_q_VV)
+    q_VV_OB(:) = q_BP_OB(np) * exp(-x_VV_OB(:)/lambda_q_VV)
 
     !  Nuclear heating on TF coil winding pack is assumed to be equal to
     !  the value at the outer edge of the VV (neglecting the steel TF coil case
 
-    pnuctfi = q_VV_IB(2)
-    pnuctfo = q_VV_OB(2)
+    pnuctfi = q_VV_IB(np)
+    pnuctfo = q_VV_OB(np)
 
   end subroutine power_density
 
@@ -925,10 +927,11 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(2) :: phi_n_BZ_IB, phi_n_BM_IB
-    real(kind(1.0D0)), dimension(2) :: phi_n_BP_IB, phi_n_VV_IB
-    real(kind(1.0D0)), dimension(2) :: phi_n_BZ_OB, phi_n_BM_OB
-    real(kind(1.0D0)), dimension(2) :: phi_n_BP_OB, phi_n_VV_OB
+    integer, parameter :: K_tau = 31536000  ! [sec/yr] Number of seconds per year
+    real(kind(1.0D0)), dimension(np) :: phi_n_BZ_IB, phi_n_BM_IB
+    real(kind(1.0D0)), dimension(np) :: phi_n_BP_IB, phi_n_VV_IB
+    real(kind(1.0D0)), dimension(np) :: phi_n_BZ_OB, phi_n_BM_OB
+    real(kind(1.0D0)), dimension(np) :: phi_n_BP_OB, phi_n_VV_OB
     real(kind(1.0D0)) :: nwl_ratio
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -944,20 +947,20 @@ contains
 
     !  Fast neutron flux profile in IB BM
 
-    phi_n_BM_IB(:) = phi_n_BZ_IB(2) * exp(-x_BM_IB(:)/lambda_q_BM_IB)
+    phi_n_BM_IB(:) = phi_n_BZ_IB(np) * exp(-x_BM_IB(:)/lambda_q_BM_IB)
 
     !  Fast neutron flux profile in IB BP
 
-    phi_n_BP_IB(:) = phi_n_BM_IB(2) * exp(-x_BP_IB(:)/lambda_q_BP_IB)
+    phi_n_BP_IB(:) = phi_n_BM_IB(np) * exp(-x_BP_IB(:)/lambda_q_BP_IB)
 
     !  Fast neutron flux profile in IB VV
 
-    phi_n_VV_IB(:) = phi_n_BP_IB(2) * exp(-x_VV_IB(:)/lambda_n_VV)
+    phi_n_VV_IB(:) = phi_n_BP_IB(np) * exp(-x_VV_IB(:)/lambda_n_VV)
     phi_n_vv_IB_start = phi_n_VV_IB(1)
 
     !  Fast neutron lifetime fluence at IB TF coil (n/cm2)
 
-    phi_n_IB_TFC = phi_n_VV_IB(2) * t_plant * K_tau
+    phi_n_IB_TFC = phi_n_VV_IB(np) * t_plant * K_tau
 
     !  Outboard fast neutron flux profiles (n/cm2/second)
 
@@ -968,20 +971,20 @@ contains
 
     !  Fast neutron flux profile in OB BM
 
-    phi_n_BM_OB(:) = phi_n_BZ_OB(2) * exp(-x_BM_OB(:)/lambda_q_BM_OB)
+    phi_n_BM_OB(:) = phi_n_BZ_OB(np) * exp(-x_BM_OB(:)/lambda_q_BM_OB)
 
     !  Fast neutron flux profile in OB BP
 
-    phi_n_BP_OB(:) = phi_n_BM_OB(2) * exp(-x_BP_OB(:)/lambda_q_BP_OB)
+    phi_n_BP_OB(:) = phi_n_BM_OB(np) * exp(-x_BP_OB(:)/lambda_q_BP_OB)
 
     !  Fast neutron flux profile in OB VV
 
-    phi_n_VV_OB(:) = phi_n_BP_OB(2) * exp(-x_VV_OB(:)/lambda_n_VV)
+    phi_n_VV_OB(:) = phi_n_BP_OB(np) * exp(-x_VV_OB(:)/lambda_n_VV)
     phi_n_vv_OB_start = phi_n_VV_OB(1)
 
     !  Fast neutron lifetime fluence at OB TF coil (n/cm2)
 
-    phi_n_OB_TFC = phi_n_VV_OB(2) * t_plant * K_tau
+    phi_n_OB_TFC = phi_n_VV_OB(np) * t_plant * K_tau
 
   end subroutine fast_neutron_fluence
 
@@ -1030,8 +1033,8 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(2) :: Gamma_He_IB, Gamma_He_OB
-    real(kind(1.0D0)), dimension(2) :: C_He_IB, C_He_OB
+    real(kind(1.0D0)), dimension(np) :: Gamma_He_IB, Gamma_He_OB
+    real(kind(1.0D0)), dimension(np) :: C_He_IB, C_He_OB
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1050,8 +1053,8 @@ contains
 
     !  Minimum concentrations occur furthest from the plasma
 
-    vvhemini = C_He_IB(2)
-    vvhemino = C_He_OB(2)
+    vvhemini = C_He_IB(np)
+    vvhemino = C_He_OB(np)
 
     !  Maximum concentrations occur nearest the plasma
 

@@ -406,6 +406,7 @@ subroutine eqslv(ifail)
   !+ad_hist  31/01/13 PJK Added warning about high residuals if the convergence
   !+ad_hisc               is suspicious
   !+ad_hist  28/11/13 PJK Modified format line 40 for longer lablxc length
+  !+ad_hist  13/02/14 PJK Output ifail even if a feasible solution found
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -464,6 +465,8 @@ subroutine eqslv(ifail)
      call oblnkl(iotty)
   else
      call ocmmnt(nout,'and found a feasible set of parameters.')
+     call oblnkl(nout)
+     call ovarin(nout,'HYBRD error flag','(ifail)',ifail)
      call oblnkl(nout)
      call oheadr(iotty,'PROCESS found a feasible solution')
   end if
@@ -821,6 +824,7 @@ subroutine doopt(ifail)
   !+ad_hisc               is suspicious
   !+ad_hist  04/07/13 PJK Modified wording for variables at/beyond their bounds
   !+ad_hist  28/11/13 PJK Modified format lines for longer lablxc length
+  !+ad_hist  13/02/14 PJK Output ifail even if a feasible solution found
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -874,6 +878,8 @@ subroutine doopt(ifail)
      call oblnkl(iotty)
   else
      call ocmmnt(nout,'and found a feasible set of parameters.')
+     call oblnkl(nout)
+     call ovarin(nout,'VMCON error flag','(ifail)',ifail)
      call oheadr(iotty,'PROCESS found a feasible solution')
   end if
 
@@ -1393,3 +1399,4 @@ end subroutine output
 !          to calculate ti from te for stellarators
 ! SVN 223: Added new output channel mfile (MFILE.DAT) to write out machine-readable
 !          data. Also changed space characters in PLOT.DAT to underscores.
+! SVN 224: VMCON ifail flag now written to output under all circumstances
