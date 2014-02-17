@@ -64,7 +64,7 @@ Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 %  show buildings calculations
 %  update stellarator description (wait for coil model implementation)
 %  iavail usage
-%  
+%  python utilities
 %  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -175,8 +175,9 @@ describes how to run the program from scratch, and provides a number of hints
 and suggestions for the user to bear in mind to help the code find a feasible
 machine. Chapter~\ref{chap:modify} shows how to modify the code in specific
 ways, for example how to add extra constraints and variables to the code. A
-useful set of code management utilities is introduced in
-Chapter~\ref{chap:utilities}. Finally, the Appendices give example input files
+useful set of utility programs is introduced in Chapter~\ref{chap:utilities},
+and some code management tools are described in
+Chapter~\ref{chap:codetools}. Finally, the Appendices give example input files
 for \process\/ in non-optimisation and optimisation modes, and lists of
 references that provide information about the code status, its location, and
 other details relating to the implementation of \process\/ to date.
@@ -3741,8 +3742,60 @@ they provide:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\mychapter{Code Management Utilities}
+\mychapter{Utility Programs}
 \label{chap:utilities}
+
+[DRAFT]
+
+A number of useful programs are available that can be used to extract data
+automatically from the \process\ output and plot the results. These programs
+are introduced here; further information can be obtained from the Fusion Wiki
+and/or the CCFE K: drive.
+
+\section{plot\_proc}
+
+\subsubsection*{Author: Richard Kemp, CCFE}
+
+\section{plot\_sweep}
+
+\subsubsection*{Author: Richard Kemp, CCFE}
+
+\section{proc\_func.py}
+
+\subsubsection*{Author: Richard Kemp, CCFE}
+
+\section{PROCESS\_dicts.py}
+
+\subsubsection*{Author: Hanni Lux, CCFE}
+
+This python module contains three
+dictionaries of the \process\ iteration variables. Please note that this list
+has been created manually and all changes need to be kept up to date manually.
+
+\begin{description}
+
+\item{\texttt{dict\_ixc\_simple}} - maps the string number of the iteration
+  variable with its fortran identifier string
+
+\item{\texttt{dict\_ixc\_full}} - maps the string number of the iteration
+  variable to a dictionary that contains the fortran identifier string under
+  'name', the default lower variable bound (float) under 'lb' and the default
+  upper variable bound (float) under 'ub'. 
+
+\item{\texttt{dict\_ixc\_bounds}} - maps the fortran identifier string of each
+  iteration variable to a dictionary that contains the default lower variable
+  bound (float) under 'lb' and the default upper variable bound (float) under
+  'ub'.
+
+\item{\texttt{NON\_F\_VALUES}} - list of fortran identifier strings of
+  iteration variables that start with an f, but are not f-values.
+
+\end{description}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\mychapter{Code Management Tools}
+\label{chap:codetools}
 
 \section{Makefile}
 \label{sec:makefile}
@@ -3763,7 +3816,7 @@ and revealing discussions during his work on \process:
 John D.\ Galambos, Paul C.\ Shipe and Y-K.\ Martin Peng of Oak Ridge
 National Laboratory, USA;
 \item[---]
-Roger Hancox, Neill Taylor, Robin Forrest and Ian Cook, all formerly of
+Ian Cook, Robin Forrest, Winston Han, Roger Hancox and Panos Karditsas, all formerly of
 Fusion Physics Department, UKAEA Fusion;
 \item[---]
 John Hicks, formerly of Engineering Department, UKAEA Fusion;
@@ -3773,8 +3826,8 @@ Fusion;
 \item[---]
 Tim Hender of CCFE, and all the co-authors of reference~\cite{172};
 \item[---]
-David Ward, Richard Kemp, Michael Kovari and Winston Han, all of CCFE, and the
-members of the \process\/ User Group throughout Europe.
+David Ward, Richard Kemp, Michael Kovari, Hanni Lux and James Morris, all of
+CCFE, and the members of the \process\/ User Group throughout Europe.
 \end{itemize}
 
 This work was funded by the RCUK Energy Programme under grant EP/I501045 and
@@ -3902,7 +3955,6 @@ ITER-TN-PH-8-4,
 \bibitem{WilsonBS}
 H.\ R.\ Wilson,
 Nuclear Fusion \textbf{32} (1992) 257
-
 
 \bibitem{FISPACT}
 N.\ P.\ Taylor, R.\ A.\ Forrest, P.\ J.\ Knight and L.\ J.\ Baker,

@@ -165,6 +165,7 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  22/11/12 PJK Typo fix in comment
     !+ad_hist  18/06/13 PJK Changed cryostat to vacuum vessel for c2223
+    !+ad_hist  17/02/14 PJK Output format modifications
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -228,67 +229,67 @@ contains
 
     !  Output section
 
-    call oheadr(outfile,'Detailed Costings (M$)')
+    call oheadr(outfile,'Detailed Costings')
     call ovarre(outfile,'Acc.22 multiplier for Nth of a kind','(fkind)', &
          fkind)
     call ovarin(outfile,'Level of Safety Assurance','(lsa)',lsa)
     call oblnkl(outfile)
-    call ocosts(outfile,'211','Site improvements, facilities and land',c211)
-    call ocosts(outfile,'212','Reactor building',c212)
-    call ocosts(outfile,'213','Turbine building',c213)
-    call ocosts(outfile,'2141','Reactor maintenance building',c2141)
-    call ocosts(outfile,'2142','Warm shop',c2142)
-    call ocosts(outfile,'215','Tritium building',c215)
-    call ocosts(outfile,'216','Electrical equipment building',c216)
-    call ocosts(outfile,'2171','Additional buildings',c2171)
-    call ocosts(outfile,'2172','Control room buildings',c2172)
-    call ocosts(outfile,'2173','Shop and warehouses',c2173)
-    call ocosts(outfile,'2174','Cryogenic building',c2174)
+    call ocosts(outfile,'211','Site improvements, facilities, land (M$)',c211)
+    call ocosts(outfile,'212','Reactor building cost (M$)',c212)
+    call ocosts(outfile,'213','Turbine building cost (M$)',c213)
+    call ocosts(outfile,'2141','Reactor maintenance building cost (M$)',c2141)
+    call ocosts(outfile,'2142','Warm shop cost (M$)',c2142)
+    call ocosts(outfile,'215','Tritium building cost (M$)',c215)
+    call ocosts(outfile,'216','Electrical equipment building cost (M$)',c216)
+    call ocosts(outfile,'2171','Additional buildings cost (M$)',c2171)
+    call ocosts(outfile,'2172','Control room buildings cost (M$)',c2172)
+    call ocosts(outfile,'2173','Shop and warehouses cost (M$)',c2173)
+    call ocosts(outfile,'2174','Cryogenic building cost (M$)',c2174)
     call oblnkl(outfile)
-    call ocosts(outfile,'21','Total account 21 cost',c21)
+    call ocosts(outfile,'21','Total account 21 cost (M$)',c21)
 
     call oshead(outfile,'Reactor Systems')
-    call ocosts(outfile,'2211','First wall',c2211)
+    call ocosts(outfile,'2211','First wall cost (M$)',c2211)
 
     if (ife /= 1) then
        if (lblnkt == 1) then
 
           if (smstr == 1) then
-             call ocosts(outfile,'22121','Blanket beryllium',c22121)
-             call ocosts(outfile,'22122','Blanket lithium oxide',c22122)
-             call ocosts(outfile,'22123','Blanket stainless steel', &
+             call ocosts(outfile,'22121','Blanket beryllium cost (M$)',c22121)
+             call ocosts(outfile,'22122','Blanket lithium oxide cost (M$)',c22122)
+             call ocosts(outfile,'22123','Blanket stainless steel cost (M$)', &
                   c22123)
-             call ocosts(outfile,'22124','Blanket vanadium',c22124)
+             call ocosts(outfile,'22124','Blanket vanadium cost (M$)',c22124)
           else
-             call ocosts(outfile,'22121','Blanket lithium-lead',c22121)
-             call ocosts(outfile,'22122','Blanket lithium',c22122)
-             call ocosts(outfile,'22123','Blanket stainless steel', &
+             call ocosts(outfile,'22121','Blanket lithium-lead cost (M$)',c22121)
+             call ocosts(outfile,'22122','Blanket lithium cost (M$)',c22122)
+             call ocosts(outfile,'22123','Blanket stainless steel cost (M$)', &
                   c22123)
-             call ocosts(outfile,'22124','Blanket vanadium',c22124)
+             call ocosts(outfile,'22124','Blanket vanadium cost (M$)',c22124)
           end if
 
        else
-          call ocosts(outfile,'22121','Blanket beryllium',c22121)
-          call ocosts(outfile,'22122','Blanket breeder material',c22122)
-          call ocosts(outfile,'22123','Blanket stainless steel',c22123)
-          call ocosts(outfile,'22124','Blanket vanadium',c22124)
+          call ocosts(outfile,'22121','Blanket beryllium cost (M$)',c22121)
+          call ocosts(outfile,'22122','Blanket breeder material cost (M$)',c22122)
+          call ocosts(outfile,'22123','Blanket stainless steel cost (M$)',c22123)
+          call ocosts(outfile,'22124','Blanket vanadium cost (M$)',c22124)
        end if
     else  !  IFE
-       call ocosts(outfile,'22121','Blanket beryllium',c22121)
-       call ocosts(outfile,'22122','Blanket lithium oxide',c22122)
-       call ocosts(outfile,'22123','Blanket stainless steel',c22123)
-       call ocosts(outfile,'22124','Blanket vanadium',c22124)
-       call ocosts(outfile,'22125','Blanket carbon cloth',c22125)
-       call ocosts(outfile,'22126','Blanket concrete',c22126)
-       call ocosts(outfile,'22127','Blanket FLiBe',c22127)
+       call ocosts(outfile,'22121','Blanket beryllium cost (M$)',c22121)
+       call ocosts(outfile,'22122','Blanket lithium oxide cost (M$)',c22122)
+       call ocosts(outfile,'22123','Blanket stainless steel cost (M$)',c22123)
+       call ocosts(outfile,'22124','Blanket vanadium cost (M$)',c22124)
+       call ocosts(outfile,'22125','Blanket carbon cloth cost (M$)',c22125)
+       call ocosts(outfile,'22126','Blanket concrete cost (M$)',c22126)
+       call ocosts(outfile,'22127','Blanket FLiBe cost (M$)',c22127)
     end if
 
-    call ocosts(outfile,'2212','Blanket total',c2212)
-    call ocosts(outfile,'22131','Bulk shield',c22131)
-    call ocosts(outfile,'22132','Penetration shielding',c22132)
-    call ocosts(outfile,'2213','Total shield',c2213)
-    call ocosts(outfile,'2214','Total support structure',c2214)
-    call ocosts(outfile,'2215','Divertor',c2215)
+    call ocosts(outfile,'2212','Blanket total cost (M$)',c2212)
+    call ocosts(outfile,'22131','Bulk shield cost (M$)',c22131)
+    call ocosts(outfile,'22132','Penetration shielding cost (M$)',c22132)
+    call ocosts(outfile,'2213','Total shield cost (M$)',c2213)
+    call ocosts(outfile,'2214','Total support structure cost (M$)',c2214)
+    call ocosts(outfile,'2215','Divertor cost (M$)',c2215)
     if (ifueltyp == 1) then
        call oblnkl(outfile)
        write(outfile,20)
@@ -298,7 +299,7 @@ contains
     end if
 
     call oblnkl(outfile)
-    call ocosts(outfile,'221','Total account 221 cost',c221)
+    call ocosts(outfile,'221','Total account 221 cost (M$)',c221)
 
     if (ife /= 1) then
 
@@ -306,28 +307,28 @@ contains
 
        if (itfsup == 0) then  !  Resistive TF coils
           if (itart == 1) then
-             call ocosts(outfile,'22211','Centrepost costs',c22211)
+             call ocosts(outfile,'22211','Centrepost costs (M$)',c22211)
           else
-             call ocosts(outfile,'22211','Inboard leg costs',c22211)
+             call ocosts(outfile,'22211','Inboard leg cost (M$)',c22211)
           end if
-          call ocosts(outfile,'22212','Outboard leg costs',c22212)
-          call ocosts(outfile,'2221','TF magnet assemblies',c2221)
+          call ocosts(outfile,'22212','Outboard leg cost (M$)',c22212)
+          call ocosts(outfile,'2221','TF magnet assemblies cost (M$)',c2221)
        else  !  Superconducting TF coils
-          call ocosts(outfile,'22211','TF coil conductor',c22211)
-          call ocosts(outfile,'22212','TF coil winding',c22212)
-          call ocosts(outfile,'22213','TF coil case',c22213)
-          call ocosts(outfile,'22214','TF intercoil structure',c22214)
-          call ocosts(outfile,'22215','TF coil gravity support structure', &
+          call ocosts(outfile,'22211','TF coil conductor cost (M$)',c22211)
+          call ocosts(outfile,'22212','TF coil winding cost (M$)',c22212)
+          call ocosts(outfile,'22213','TF coil case cost (M$)',c22213)
+          call ocosts(outfile,'22214','TF intercoil structure cost (M$)',c22214)
+          call ocosts(outfile,'22215','TF coil gravity support structure (M$)', &
                c22215)
-          call ocosts(outfile,'2221','TF magnet assemblies',c2221)
+          call ocosts(outfile,'2221','TF magnet assemblies cost (M$)',c2221)
        end if
 
-       call ocosts(outfile,'22221','PF coil conductor',c22221)
-       call ocosts(outfile,'22222','PF coil winding',c22222)
-       call ocosts(outfile,'22223','PF coil case',c22223)
-       call ocosts(outfile,'22224','PF coil support structure',c22224)
-       call ocosts(outfile,'2222','PF magnet assemblies',c2222)
-       call ocosts(outfile,'2223','Vacuum vessel assembly',c2223)
+       call ocosts(outfile,'22221','PF coil conductor cost (M$)',c22221)
+       call ocosts(outfile,'22222','PF coil winding cost (M$)',c22222)
+       call ocosts(outfile,'22223','PF coil case cost (M$)',c22223)
+       call ocosts(outfile,'22224','PF coil support structure cost (M$)',c22224)
+       call ocosts(outfile,'2222','PF magnet assemblies cost (M$)',c2222)
+       call ocosts(outfile,'2223','Vacuum vessel assembly cost (M$)',c2223)
 
        if ((itart == 1).and.(ifueltyp == 1)) then
           call oblnkl(outfile)
@@ -338,133 +339,133 @@ contains
        end if
 
        call oblnkl(outfile)
-       call ocosts(outfile,'222','Total account 222 cost',c222)
+       call ocosts(outfile,'222','Total account 222 cost (M$)',c222)
 
     end if
 
     call oshead(outfile,'Power Injection')
 
     if (ife == 1) then
-       call ocosts(outfile,'2231','IFE driver system',c2231)
+       call ocosts(outfile,'2231','IFE driver system cost (M$)',c2231)
     else
-       call ocosts(outfile,'2231','ECH system',c2231)
-       call ocosts(outfile,'2232','Lower hybrid system',c2232)
-       call ocosts(outfile,'2233','Neutral beam system',c2233)
+       call ocosts(outfile,'2231','ECH system cost (M$)',c2231)
+       call ocosts(outfile,'2232','Lower hybrid system cost (M$)',c2232)
+       call ocosts(outfile,'2233','Neutral beam system cost (M$)',c2233)
        if (irfp == 1) then
-          call ocosts(outfile,'2234','Oscillating field system',c2234)
+          call ocosts(outfile,'2234','Oscillating field system cost (M$)',c2234)
        end if
     end if
 
     call oblnkl(outfile)
-    call ocosts(outfile,'223','Total account 223 cost',c223)
+    call ocosts(outfile,'223','Total account 223 cost (M$)',c223)
 
     call oshead(outfile,'Vacuum Systems')
-    call ocosts(outfile,'2241','High vacuum pumps',c2241)
-    call ocosts(outfile,'2242','Backing pumps',c2242)
-    call ocosts(outfile,'2243','Vacuum duct',c2243)
-    call ocosts(outfile,'2244','Valves',c2244)
-    call ocosts(outfile,'2245','Duct shielding',c2245)
-    call ocosts(outfile,'2246','Instrumentation',c2246)
+    call ocosts(outfile,'2241','High vacuum pumps cost (M$)',c2241)
+    call ocosts(outfile,'2242','Backing pumps cost (M$)',c2242)
+    call ocosts(outfile,'2243','Vacuum duct cost (M$)',c2243)
+    call ocosts(outfile,'2244','Valves cost (M$)',c2244)
+    call ocosts(outfile,'2245','Duct shielding cost (M$)',c2245)
+    call ocosts(outfile,'2246','Instrumentation cost (M$)',c2246)
     call oblnkl(outfile)
-    call ocosts(outfile,'224','Total account 224 cost',c224)
+    call ocosts(outfile,'224','Total account 224 cost (M$)',c224)
 
     if (ife /= 1) then
 
        call oshead(outfile,'Power Conditioning')
-       call ocosts(outfile,'22511','TF coil power supplies',c22511)
-       call ocosts(outfile,'22512','TF coil breakers',c22512)
-       call ocosts(outfile,'22513','TF coil dump resistors',c22513)
-       call ocosts(outfile,'22514','TF coil instrumentation and control', &
+       call ocosts(outfile,'22511','TF coil power supplies cost (M$)',c22511)
+       call ocosts(outfile,'22512','TF coil breakers cost (M$)',c22512)
+       call ocosts(outfile,'22513','TF coil dump resistors cost (M$)',c22513)
+       call ocosts(outfile,'22514','TF coil instrumentation and control (M$)', &
             c22514)
-       call ocosts(outfile,'22515','TF coil bussing',c22515)
-       call ocosts(outfile,'2251','Total, TF coil power',c2251)
-       call ocosts(outfile,'22521','PF coil power supplies',c22521)
-       call ocosts(outfile,'22522','PF coil instrumentation and control', &
+       call ocosts(outfile,'22515','TF coil bussing cost (M$)',c22515)
+       call ocosts(outfile,'2251','Total, TF coil power costs (M$)',c2251)
+       call ocosts(outfile,'22521','PF coil power supplies cost (M$)',c22521)
+       call ocosts(outfile,'22522','PF coil instrumentation and control (M$)', &
             c22522)
-       call ocosts(outfile,'22523','PF coil bussing',c22523)
-       call ocosts(outfile,'22524','PF coil burn power supplies',c22524)
-       call ocosts(outfile,'22525','PF coil breakers',c22525)
-       call ocosts(outfile,'22526','PF coil dump resistors',c22526)
-       call ocosts(outfile,'22527','PF coil ac breakers',c22527)
-       call ocosts(outfile,'2252','Total, PF coil power',c2252)
-       call ocosts(outfile,'2253','Total, energy storage',c2253)
+       call ocosts(outfile,'22523','PF coil bussing cost (M$)',c22523)
+       call ocosts(outfile,'22524','PF coil burn power supplies cost (M$)',c22524)
+       call ocosts(outfile,'22525','PF coil breakers cost (M$)',c22525)
+       call ocosts(outfile,'22526','PF coil dump resistors cost (M$)',c22526)
+       call ocosts(outfile,'22527','PF coil ac breakers cost (M$)',c22527)
+       call ocosts(outfile,'2252','Total, PF coil power costs (M$)',c2252)
+       call ocosts(outfile,'2253','Total, energy storage cost (M$)',c2253)
        call oblnkl(outfile)
-       call ocosts(outfile,'225','Total account 225 cost',c225)
+       call ocosts(outfile,'225','Total account 225 cost (M$)',c225)
 
     end if
 
     call oshead(outfile,'Heat Transport System')
-    call ocosts(outfile,'cpp','Pumps and piping system',cpp)
-    call ocosts(outfile,'chx','Primary heat exchanger',chx)
-    call ocosts(outfile,'2261','Total, reactor cooling system',c2261)
-    call ocosts(outfile,'cppa','Pumps, piping',cppa)
-    call ocosts(outfile,'chxa','Heat exchanger',chxa)
-    call ocosts(outfile,'2262','Total, auxiliary cooling system',c2262)
-    call ocosts(outfile,'2263','Total, cryogenic system',c2263)
+    call ocosts(outfile,'cpp','Pumps and piping system cost (M$)',cpp)
+    call ocosts(outfile,'chx','Primary heat exchanger cost (M$)',chx)
+    call ocosts(outfile,'2261','Total, reactor cooling system cost (M$)',c2261)
+    call ocosts(outfile,'cppa','Pumps, piping cost (M$)',cppa)
+    call ocosts(outfile,'chxa','Heat exchanger cost (M$)',chxa)
+    call ocosts(outfile,'2262','Total, auxiliary cooling system cost (M$)',c2262)
+    call ocosts(outfile,'2263','Total, cryogenic system cost (M$)',c2263)
     call oblnkl(outfile)
-    call ocosts(outfile,'226','Total account 226 cost',c226)
+    call ocosts(outfile,'226','Total account 226 cost (M$)',c226)
 
     call oshead(outfile,'Fuel Handling System')
-    call ocosts(outfile,'2271','Fuelling system',c2271)
-    call ocosts(outfile,'2272','Fuel processing and purification',c2272)
-    call ocosts(outfile,'2273','Atmospheric recovery systems',c2273)
-    call ocosts(outfile,'2274','Nuclear building ventilation',c2274)
+    call ocosts(outfile,'2271','Fuelling system cost (M$)',c2271)
+    call ocosts(outfile,'2272','Fuel processing and purification cost (M$)',c2272)
+    call ocosts(outfile,'2273','Atmospheric recovery systems cost (M$)',c2273)
+    call ocosts(outfile,'2274','Nuclear building ventilation cost (M$)',c2274)
     call oblnkl(outfile)
-    call ocosts(outfile,'227','Total account 227 cost',c227)
+    call ocosts(outfile,'227','Total account 227 cost (M$)',c227)
 
     call oshead(outfile,'Instrumentation and Control')
-    call ocosts(outfile,'228','Instrumentation and control',c228)
+    call ocosts(outfile,'228','Instrumentation and control cost (M$)',c228)
 
     call oshead(outfile,'Maintenance Equipment')
-    call ocosts(outfile,'229','Maintenance equipment',c229)
+    call ocosts(outfile,'229','Maintenance equipment cost (M$)',c229)
 
     call oshead(outfile,'Total Account 22 Cost')
-    call ocosts(outfile,'22','Total account 22 cost',c22)
+    call ocosts(outfile,'22','Total account 22 cost (M$)',c22)
 
     call oshead(outfile,'Turbine Plant Equipment')
-    call ocosts(outfile,'23','Turbine plant equipment',c23)
+    call ocosts(outfile,'23','Turbine plant equipment cost (M$)',c23)
 
     call oshead(outfile,'Electric Plant Equipment')
-    call ocosts(outfile,'241','Switchyard equipment',c241)
-    call ocosts(outfile,'242','Transformers',c242)
-    call ocosts(outfile,'243','Low voltage equipment',c243)
-    call ocosts(outfile,'244','Diesel backup equipment',c244)
-    call ocosts(outfile,'245','Auxiliary facilities',c245)
+    call ocosts(outfile,'241','Switchyard equipment cost (M$)',c241)
+    call ocosts(outfile,'242','Transformers cost (M$)',c242)
+    call ocosts(outfile,'243','Low voltage equipment cost (M$)',c243)
+    call ocosts(outfile,'244','Diesel backup equipment cost (M$)',c244)
+    call ocosts(outfile,'245','Auxiliary facilities cost (M$)',c245)
     call oblnkl(outfile)
-    call ocosts(outfile,'24','Total account 24 cost',c24)
+    call ocosts(outfile,'24','Total account 24 cost (M$)',c24)
 
     call oshead(outfile,'Miscellaneous Plant Equipment')
-    call ocosts(outfile,'25','Miscellaneous plant equipment',c25)
+    call ocosts(outfile,'25','Miscellaneous plant equipment cost (M$)',c25)
 
     call oshead(outfile,'Heat Rejection System')
-    call ocosts(outfile,'26','Heat rejection system',c26)
+    call ocosts(outfile,'26','Heat rejection system cost (M$)',c26)
 
     if (ihplant /= 0) then
        call oshead(outfile,'Hydrogen Production')
-       call ocosts(outfile,' ','Hydrogen production plant',chplant)
+       call ocosts(outfile,' ','Hydrogen production plant cost (M$)',chplant)
     end if
 
     call oshead(outfile,'Plant Direct Cost')
-    call ocosts(outfile,'2','Plant direct cost',cdirt)
+    call ocosts(outfile,'cdirt','Plant direct cost (M$)',cdirt)
 
     call oshead(outfile,'Reactor Core Cost')
-    call ocosts(outfile,'2','Reactor core cost',crctcore)
+    call ocosts(outfile,'crctcore','Reactor core cost (M$)',crctcore)
 
     call oshead(outfile,'Indirect Cost')
-    call ocosts(outfile,'c9','Indirect cost',cindrt)
+    call ocosts(outfile,'c9','Indirect cost (M$)',cindrt)
 
     call oshead(outfile,'Total Contingency')
-    call ocosts(outfile,'ccont','Total contingency',ccont)
+    call ocosts(outfile,'ccont','Total contingency (M$)',ccont)
 
     call oshead(outfile,'Constructed Cost')
-    call ocosts(outfile,'concost','Constructed cost',concost)
+    call ocosts(outfile,'concost','Constructed cost (M$)',concost)
 
     if (ireactor == 1) then
        call oshead(outfile,'Interest during Construction')
-       call ocosts(outfile,' ','Interest during construction',moneyint)
+       call ocosts(outfile,'moneyint','Interest during construction (M$)',moneyint)
 
        call oshead(outfile,'Total Capital Investment')
-       call ocosts(outfile,'capcost','Total capital investment',capcost)
+       call ocosts(outfile,'capcost','Total capital investment (M$)',capcost)
     end if
 
   end subroutine costs
@@ -486,14 +487,15 @@ contains
     !+ad_desc  millidollars/kWh, while other costs are in megadollars.
     !+ad_desc  All values are based on 1990 dollars.
     !+ad_prob  None
-    !+ad_call  ocosts
     !+ad_call  oheadr
     !+ad_call  oshead
     !+ad_call  osubhd
+    !+ad_call  ovarrf
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  11/09/13 PJK Modified annfuel cost calculation
+    !+ad_hist  17/02/14 PJK Modified output format for some quantities
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -751,24 +753,25 @@ contains
     cirpowfr = (pgrossmw - pnetelmw) / pgrossmw
 
     call oheadr(outfile,'Power Reactor Costs')
-    call ocosts(outfile,' ','Net electric power (MW)',pnetelmw)
-    call ocosts(outfile,' ','Gross electric power (MW)',pgrossmw)
-    call ocosts(outfile,' ','High grade thermal power (MW)',pthermmw)
-    call ocosts(outfile,' ', &
-         'Balance-of-plant recirc. power fraction',fgrosbop)
-    call ocosts(outfile,' ','Total recirculating power fraction', &
+
+    call ovarrf(outfile,'Net electric power (MW)','(pnetelmw)',pnetelmw)
+    call ovarrf(outfile,'Gross electric power (MW)','(pgrossmw)',pgrossmw)
+    call ovarrf(outfile,'High grade thermal power (MW)','(pthermmw)',pthermmw)
+    call ovarrf(outfile, &
+         'Balance-of-plant recirc. power fraction','(fgrosbop)',fgrosbop)
+    call ovarrf(outfile,'Total recirculating power fraction','(cirpowfr)', &
          cirpowfr)
-    call ocosts(outfile,' ','First wall / blanket life (years)', &
+    call ovarrf(outfile,'First wall / blanket life (years)','(fwbllife)', &
          fwbllife)
 
     if (ife /= 1) then
-       call ocosts(outfile,' ','Divertor life (years)',divlife)
+       call ovarrf(outfile,'Divertor life (years)','(divlife)',divlife)
        if (itart == 1) then
-          call ocosts(outfile,' ','Centrepost life (years)',cplife)
+          call ovarrf(outfile,'Centrepost life (years)','(cplife)',cplife)
        end if
     end if
 
-    call ocosts(outfile,' ','Cost of electricity (m$/kWh)',coe)
+    call ovarrf(outfile,'Cost of electricity (m$/kWh)','(coe)',coe)
 
     call osubhd(outfile,'Power Generation Costs :')
 
@@ -802,23 +805,27 @@ contains
 
     if (ifueltyp == 1) then
        call oshead(outfile,'Replaceable Components Direct Capital Cost')
-       call ocosts(outfile,' ','First wall',fwallcst)
-       call ocosts(outfile,' ','Blanket',blkcst)
+       call ovarrf(outfile,'First wall direct capital cost (M$)', &
+            '(fwallcst)',fwallcst)
+       call ovarrf(outfile,'Blanket direct capital cost (M$)', &
+            '(blkcst)',blkcst)
 
        if (ife /= 1) then
-          call ocosts(outfile,' ','Divertor',divcst)
+          call ovarrf(outfile,'Divertor direct capital cost (M$)', &
+               '(divcst)',divcst)
           if (itart == 1) then
-             call ocosts(outfile,' ','Centrepost',cpstcst)
+             call ovarrf(outfile,'Centrepost direct capital cost (M$)', &
+                  '(cpstcst)',cpstcst)
           end if
-          call ocosts(outfile,' ','Plasma heating/CD system', &
-               cdcost*fcdfuel/(1.0D0-fcdfuel))
-          call ocosts(outfile,' ','Fraction of CD cost --> fuel cost', &
-               fcdfuel)
+          call ovarrf(outfile,'Plasma heating/CD system cap cost (M$)', &
+               '',cdcost*fcdfuel/(1.0D0-fcdfuel))
+          call ovarrf(outfile,'Fraction of CD cost --> fuel cost', &
+               '(fcdfuel)',fcdfuel)
        else
-          call ocosts(outfile,' ','IFE driver system', &
-               cdcost*fcdfuel/(1.0D0-fcdfuel))
-          call ocosts(outfile,' ', &
-               'Fraction of driver cost --> fuel cost',fcdfuel)
+          call ovarrf(outfile,'IFE driver system direct cap cost (M$)', &
+               '',cdcost*fcdfuel/(1.0D0-fcdfuel))
+          call ovarrf(outfile,'Fraction of driver cost --> fuel cost', &
+               '(fcdfuel)',fcdfuel)
        end if
     end if
 

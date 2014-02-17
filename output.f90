@@ -435,6 +435,7 @@ contains
     !+ad_call  underscore
     !+ad_hist  20/09/11 PJK Initial F90 version
     !+ad_hist  13/02/14 PJK Added output to mfile, with underscores replacing spaces
+    !+ad_hist  17/02/14 PJK Ensured mfile output is not replicated if file=mfile
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -462,12 +463,15 @@ contains
     dum42 = descr
     dum13 = varnam
 
-    write(file,10) dum42, dum13, value
-10  format(1x,a,t45,a,t60,f10.3)
+    if (file /= mfile) then
+       write(file,10) dum42, dum13, value
+    end if
 
     call underscore(dum42)
     call underscore(dum13)
     write(mfile,10) dum42, dum13, value
+
+10  format(1x,a,t45,a,t60,f10.3)
 
   end subroutine ovarrf
 
@@ -492,6 +496,7 @@ contains
     !+ad_call  underscore
     !+ad_hist  20/09/11 PJK Initial F90 version
     !+ad_hist  13/02/14 PJK Added output to mfile, with underscores replacing spaces
+    !+ad_hist  17/02/14 PJK Ensured mfile output is not replicated if file=mfile
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -519,12 +524,15 @@ contains
     dum42 = descr
     dum13 = varnam
 
-    write(file,10) dum42, dum13, value
-10  format(1x,a,t45,a,t60,1pe10.3)
+    if (file /= mfile) then
+       write(file,10) dum42, dum13, value
+    end if
 
     call underscore(dum42)
     call underscore(dum13)
     write(mfile,10) dum42, dum13, value
+
+10  format(1x,a,t45,a,t60,1pe10.3)
 
   end subroutine ovarre
 
@@ -547,6 +555,7 @@ contains
     !+ad_call  underscore
     !+ad_hist  20/09/11 PJK Initial F90 version
     !+ad_hist  13/02/14 PJK Added output to mfile, with underscores replacing spaces
+    !+ad_hist  17/02/14 PJK Ensured mfile output is not replicated if file=mfile
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -574,12 +583,15 @@ contains
     dum42 = descr
     dum13 = varnam
 
-    write(file,10) dum42, dum13, value
-10  format(1x,a,t45,a,t60,i10)
+    if (file /= mfile) then
+       write(file,10) dum42, dum13, value
+    end if
 
     call underscore(dum42)
     call underscore(dum13)
     write(mfile,10) dum42, dum13, value
+
+10  format(1x,a,t45,a,t60,i10)
 
   end subroutine ovarin
 
@@ -617,7 +629,7 @@ contains
 
     !  Local variables
 
-    character(len=8)  :: dum08
+    character(len=10)  :: dum10
     character(len=42) :: dum42
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -626,11 +638,13 @@ contains
     !  This counters problems that would occur if the two original strings
     !  were the wrong length.
 
-    dum08 = ccode
+    dum10 = ccode
     dum42 = descr
 
-    write(file,10) dum08, dum42, value
-10  format(1x,a,t10,a,t60,f10.2)
+    write(file,10) dum10, dum42, value
+10  format(1x,a,t12,a,t60,f10.2)
+
+    call ovarrf(mfile,descr,ccode,value)
 
   end subroutine ocosts
 

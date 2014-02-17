@@ -125,6 +125,7 @@ contains
     !+ad_call  doopt
     !+ad_call  final
     !+ad_call  oblnkl
+    !+ad_call  ovarin
     !+ad_call  ostars
     !+ad_hist  03/10/96 PJK Initial upgraded version
     !+ad_hist  01/04/98 PJK Added POWFMAX to list of scanning variables
@@ -161,7 +162,7 @@ contains
     character(len=25), dimension(noutvars), save :: plabel
     real(kind(1.0D0)), dimension(noutvars,ipnscns) :: outvar
 
-    integer :: ifail,i,ivar
+    integer :: ifail,iscan,ivar
     logical :: first_call = .TRUE.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -236,75 +237,78 @@ contains
        plabel(49) = 'Recirculating_Fraction___'
        plabel(50) = 'Psep/R___________________'
 
+       call ovarin(mfile,'Number of scan points','(isweep)',isweep)
+       call ovarin(mfile,'Scanning variable number','(nsweep)',nsweep)
+
        first_call = .false.
     end if
 
-    do i = 1,isweep
+    do iscan = 1,isweep
 
        select case (nsweep)
 
-       case (1)
-          aspect = sweep(i)
+       case (1) 
+          aspect = sweep(iscan)
           vlabel = 'aspect = ' ; xlabel = 'Aspect_ratio'
        case (2)
-          hldivlim = sweep(i)
+          hldivlim = sweep(iscan)
           vlabel = 'hldivlim = ' ; xlabel = 'Div_heat_limit_(MW/m2)'
        case (3)
-          pnetelin = sweep(i)
+          pnetelin = sweep(iscan)
           vlabel = 'pnetelin = ' ; xlabel = 'Net_electric_power_(MW)'
        case (4)
-          hfact = sweep(i)
+          hfact = sweep(iscan)
           vlabel = 'hfact = ' ; xlabel = 'Confinement_H_factor'
        case (5)
-          oacdcp = sweep(i)
+          oacdcp = sweep(iscan)
           vlabel = 'oacdcp = ' ; xlabel = 'TF_inboard_leg_J_(MA/m2)'
        case (6)
-          walalw = sweep(i)
+          walalw = sweep(iscan)
           vlabel = 'walalw = ' ; xlabel = 'Allow._wall_load_(MW/m2)'
        case (7)
-          beamfus0 = sweep(i)
+          beamfus0 = sweep(iscan)
           vlabel = 'beamfus0 = ' ; xlabel = 'Beam_bkgrd_multiplier'
        case (8)
-          fqval = sweep(i)
+          fqval = sweep(iscan)
           vlabel = 'fqval = ' ; xlabel = 'Big_Q_f-value'
        case (9)
-          te = sweep(i)
+          te = sweep(iscan)
           vlabel = 'te = ' ; xlabel = 'Electron_temperature_(keV)'
        case (10)
-          boundu(15) = sweep(i)
+          boundu(15) = sweep(iscan)
           vlabel = 'boundu(15) = ' ; xlabel = 'Volt-second_upper_bound'
        case (11)
-          dnbeta = sweep(i)
+          dnbeta = sweep(iscan)
           vlabel = 'dnbeta = ' ; xlabel = 'Beta_coefficient'
        case (12)
-          bscfmax = sweep(i)
+          bscfmax = sweep(iscan)
           vlabel = 'bscfmax = ' ; xlabel = 'Bootstrap_fraction'
        case (13)
-          boundu(10) = sweep(i)
+          boundu(10) = sweep(iscan)
           vlabel = 'boundu(10) = ' ; xlabel = 'H_factor_upper_bound'
        case (14)
-          fiooic = sweep(i)
+          fiooic = sweep(iscan)
           vlabel = 'fiooic = ' ; xlabel = 'TFC_Iop_/_Icrit_f-value'
        case (15)
-          fjprot = sweep(i)
+          fjprot = sweep(iscan)
           vlabel = 'fjprot = ' ; xlabel = 'TFC_Jprot_limit_f-value'
        case (16)
-          rmajor = sweep(i)
+          rmajor = sweep(iscan)
           vlabel = 'rmajor = ' ; xlabel = 'Plasma_major_radius_(m)'
        case (17)
-          bmxlim = sweep(i)
+          bmxlim = sweep(iscan)
           vlabel = 'bmxlim = ' ; xlabel = 'Max_toroidal_field_(T)'
        case (18)
-          gammax = sweep(i)
+          gammax = sweep(iscan)
           vlabel = 'gammax = ' ; xlabel = 'Maximum_CD_gamma'
        case (19)
-          boundl(16) = sweep(i)
+          boundl(16) = sweep(iscan)
           vlabel = 'boundl(16) = ' ; xlabel = 'OHC_thickness_lower_bound'
        case (20)
-          tbrnmn = sweep(i)
+          tbrnmn = sweep(iscan)
           vlabel = 'tbrnmn = ' ; xlabel = 'Minimum_burn_time_(s)'
        case (21)
-          sigpfalw = sweep(i)
+          sigpfalw = sweep(iscan)
           vlabel = 'sigpfalw = ' ; xlabel = 'Allowable_PF_coil_stress'
        case (22)
           if (iavail == 1) then
@@ -313,25 +317,25 @@ contains
              write(*,*) 'PROCESS stopping.'
              stop
           end if
-          cfactr = sweep(i)
+          cfactr = sweep(iscan)
           vlabel = 'cfactr = ' ; xlabel = 'Plant_availability_factor'
        case (23)
-          boundu(72) = sweep(i)
+          boundu(72) = sweep(iscan)
           vlabel = 'boundu(72) = ' ; xlabel = 'Ip/Irod_upper_bound'
        case (24)
-          powfmax = sweep(i)
+          powfmax = sweep(iscan)
           vlabel = 'powfmax = ' ; xlabel = 'Fusion_power_limit_(MW)'
        case (25)
-          kappa = sweep(i)
+          kappa = sweep(iscan)
           vlabel = 'kappa = ' ; xlabel = 'Plasma_elongation'
        case (26)
-          triang = sweep(i)
+          triang = sweep(iscan)
           vlabel = 'triang = ' ; xlabel = 'Plasma_triangularity'
        case (27)
-          tbrmin = sweep(i)
+          tbrmin = sweep(iscan)
           vlabel = 'tbrmin = ' ; xlabel = 'Min_tritium_breed._ratio'
        case (28)
-          bt = sweep(i)
+          bt = sweep(iscan)
           vlabel = 'bt = ' ; xlabel = 'Tor._field_on_axis_(T)'
 
        case default
@@ -346,10 +350,15 @@ contains
 
        call oblnkl(nout)
        call ostars(nout,72)
-       write(nout,10) i,isweep,trim(xlabel),trim(vlabel),sweep(i)
+       write(nout,10) iscan,isweep,trim(xlabel),trim(vlabel),sweep(iscan)
 10     format(' ***** Scan point ',i2,' of ',i2, &
             ': ',a,', ',a,e12.4e2,' *****')
        call ostars(nout,72)
+
+       !  Write additional information to mfile
+
+       call oblnkl(mfile)
+       call ovarin(mfile,'Scan point number','(iscan)',iscan)
 
        !  Call the optimization routine VMCON at this scan point
 
@@ -358,60 +367,60 @@ contains
 
        !  Store values for PLOT.DAT output
 
-       outvar( 1,i) = dble(ifail)
-       outvar( 2,i) = sqsumsq
-       outvar( 3,i) = coe
-       outvar( 4,i) = coecap
-       outvar( 5,i) = coefuelt
-       outvar( 6,i) = coeoam
-       outvar( 7,i) = capcost
-       outvar( 8,i) = c221 + c222
-       outvar( 9,i) = cdirt / 1.0D3
-       outvar(10,i) = rmajor
-       outvar(11,i) = aspect
-       outvar(12,i) = 1.0D-6 * plascur
-       outvar(13,i) = bt
-       outvar(14,i) = btot
-       outvar(15,i) = q
-       outvar(16,i) = qlim
-       outvar(17,i) = beta
-       outvar(18,i) = betalim
-       outvar(19,i) = betap / aspect
-       outvar(20,i) = te/10.0D0 * pcoef
-       outvar(21,i) = dene/1.0D20
-       outvar(22,i) = hfac(6)
-       outvar(23,i) = hfac(7)
-       outvar(24,i) = powfmw
-       outvar(25,i) = palpnb * 5.0D0
-       outvar(26,i) = wallmw
-       outvar(27,i) = 1.0D-6 * (pinji + pinje)
-       outvar(28,i) = pinjwp
-       outvar(29,i) = pheat * 1.0D-6
-       outvar(30,i) = 1.0D-6 * (pinji + pinje - pheat)
-       outvar(31,i) = bigq
-       outvar(32,i) = bootipf
-       outvar(33,i) = enbeam/1.0D3
-       outvar(34,i) = hldiv
-       outvar(35,i) = tfcmw
-       outvar(36,i) = whttf
-       outvar(37,i) = sigrad + sigtan
-       outvar(38,i) = oacdcp/1.0D6
-       outvar(39,i) = tcpmax
-       outvar(40,i) = tfcpmw
-       outvar(41,i) = fcoolcp
-       outvar(42,i) = rcool
-       outvar(43,i) = vcool
-       outvar(44,i) = ppump/1.0D6
-       outvar(45,i) = 1.0D-3 * srcktpm
-       outvar(46,i) = whtpf
-       outvar(47,i) = pgrossmw
-       outvar(48,i) = pnetelmw
+       outvar( 1,iscan) = dble(ifail)
+       outvar( 2,iscan) = sqsumsq
+       outvar( 3,iscan) = coe
+       outvar( 4,iscan) = coecap
+       outvar( 5,iscan) = coefuelt
+       outvar( 6,iscan) = coeoam
+       outvar( 7,iscan) = capcost
+       outvar( 8,iscan) = c221 + c222
+       outvar( 9,iscan) = cdirt / 1.0D3
+       outvar(10,iscan) = rmajor
+       outvar(11,iscan) = aspect
+       outvar(12,iscan) = 1.0D-6 * plascur
+       outvar(13,iscan) = bt
+       outvar(14,iscan) = btot
+       outvar(15,iscan) = q
+       outvar(16,iscan) = qlim
+       outvar(17,iscan) = beta
+       outvar(18,iscan) = betalim
+       outvar(19,iscan) = betap / aspect
+       outvar(20,iscan) = te/10.0D0 * pcoef
+       outvar(21,iscan) = dene/1.0D20
+       outvar(22,iscan) = hfac(6)
+       outvar(23,iscan) = hfac(7)
+       outvar(24,iscan) = powfmw
+       outvar(25,iscan) = palpnb * 5.0D0
+       outvar(26,iscan) = wallmw
+       outvar(27,iscan) = 1.0D-6 * (pinji + pinje)
+       outvar(28,iscan) = pinjwp
+       outvar(29,iscan) = pheat * 1.0D-6
+       outvar(30,iscan) = 1.0D-6 * (pinji + pinje - pheat)
+       outvar(31,iscan) = bigq
+       outvar(32,iscan) = bootipf
+       outvar(33,iscan) = enbeam/1.0D3
+       outvar(34,iscan) = hldiv
+       outvar(35,iscan) = tfcmw
+       outvar(36,iscan) = whttf
+       outvar(37,iscan) = sigrad + sigtan
+       outvar(38,iscan) = oacdcp/1.0D6
+       outvar(39,iscan) = tcpmax
+       outvar(40,iscan) = tfcpmw
+       outvar(41,iscan) = fcoolcp
+       outvar(42,iscan) = rcool
+       outvar(43,iscan) = vcool
+       outvar(44,iscan) = ppump/1.0D6
+       outvar(45,iscan) = 1.0D-3 * srcktpm
+       outvar(46,iscan) = whtpf
+       outvar(47,iscan) = pgrossmw
+       outvar(48,iscan) = pnetelmw
        if (ireactor == 1) then
-          outvar(49,i) = (pgrossmw-pnetelmw) / pgrossmw
+          outvar(49,iscan) = (pgrossmw-pnetelmw) / pgrossmw
        else
-          outvar(49,i) = 0.0D0
+          outvar(49,iscan) = 0.0D0
        end if
-       outvar(50,i) = pdivt/rmajor
+       outvar(50,iscan) = pdivt/rmajor
 
     end do  !  End of scanning loop
 
@@ -419,10 +428,11 @@ contains
 
     write(nplot,'(i8)') isweep
     write(nplot,'(a48)') tlabel
-    write(nplot,'(a25,20e11.4)') xlabel,(sweep(i),i=1,isweep)
+    write(nplot,'(a25,20e11.4)') xlabel,(sweep(iscan),iscan=1,isweep)
 
     do ivar = 1,noutvars
-       write(nplot,'(a25,20e11.4)') plabel(ivar),(outvar(ivar,i),i=1,isweep)
+       write(nplot,'(a25,20e11.4)') plabel(ivar), &
+            (outvar(ivar,iscan), iscan=1,isweep)
     end do
 
   end subroutine scan

@@ -1401,3 +1401,5 @@ end subroutine output
 !          data. Also changed space characters in PLOT.DAT to underscores.
 ! SVN 224: VMCON ifail flag now written to output under all circumstances
 ! SVN 225: Updated rkemp's python utilities
+! SVN 226: Added hlux's PROCESS_dicts.py utility;
+!          Modified code output for costs and machine build, particularly to MFILE.DAT

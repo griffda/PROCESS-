@@ -245,8 +245,7 @@ clean:
 otherfiles = Makefile vardes.html \
              *.tex *.ps *.eps process.pdf \
              autodoc.f90 adheader.src adfooter.src \
-             utilities/plot_proc utilities/plot_proc2.pro \
-             utilities/plot_sweep.py utilities/proc_func.py
+             utilities/*
 
 tar:
 	rm -f process.tar process.tar.gz
@@ -256,7 +255,7 @@ tar:
 # Make a tar archive of the source, input and output files
 # from the latest run in the current directory
 
-iofiles = IN.DAT OUT.DAT device.dat
+iofiles = IN.DAT OUT.DAT PLOT.DAT MFILE.DAT device.dat
 
 archive:
 	rm -f process_run.tar process_run.tar.gz
