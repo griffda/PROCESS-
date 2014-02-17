@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+# note: seems to be broken under python 2.6.6 on fuslw1XX machines...!
 
 import sys
 from pylab import *
@@ -46,7 +47,16 @@ def main():
         except IOError as e: pass
 
     f = open(infile, 'r')
-
+    
+# identify whether or not we are dealing with pre-revision 180 PROCESS output
+    betna = find_val_three(f, 'Normalised beta', 58, 20)
+    if betna != None:
+    # we are in old format
+        proc_form = 0
+    else:
+        proc_form = 1
+#    print proc_form
+    
 # gather build data    
     dat, otherdat = get_build(f)
     rmajor = find_val_one(f, 'rmajor')
@@ -54,7 +64,7 @@ def main():
     triang = find_val_one(f, 'triang95')
     kappa = find_val_one(f, 'kappa95')
     snull = otherdat[-1]
-
+    
 # get coil information
     coils, cnames = get_coils(f)
     ncoils = len(cnames) - 1
@@ -90,9 +100,9 @@ def main():
 # plot cryostat upper
         temparr = ()
         for i in range(2):
-            radx = (otherdat[19-i] + otherdat[5+i])/2.
-            rminx = (otherdat[19-i] - otherdat[5+i])/2.
-            kapx = otherdat[22+i]/rminx
+            radx = (otherdat[19-i-proc_form] + otherdat[5+i+proc_form])/2.
+            rminx = (otherdat[19-i-proc_form] - otherdat[5+i+proc_form])/2.
+            kapx = otherdat[22+i+proc_form]/rminx
             (rs, zs) = plotdh(radx, rminx, triang, kapx)
 	    temparr = temparr + ((rs, zs))
 	for i in range(1):
@@ -114,15 +124,18 @@ def main():
 # plot cryostat, shield, lower
         temparr = ()
         for i in range(2):
-            radx = (otherdat[19-i] + otherdat[5+i])/2.
-            rminx = (otherdat[19-i] - otherdat[5+i])/2.
-            kapx = otherdat[34-i]/rminx
+            radx = (otherdat[19-i-proc_form] + otherdat[5+i+proc_form])/2.
+            rminx = (otherdat[19-i-proc_form] - otherdat[5+i+proc_form])/2.
+            kapx = otherdat[35-i-proc_form]/rminx
             (rs, zs) = plotdh(radx, rminx, triang, kapx)
 	    temparr = temparr + ((rs, zs))
+#	    print otherdat[19-i-proc_form], otherdat[5+i+proc_form]
+#	    print otherdat[35-i-proc_form]	    
 	for i in range(1):
 	    rs = np.concatenate([temparr[0+2*i], temparr[2+2*i][::-1]])
 	    zs = np.concatenate([temparr[1+2*i], temparr[3+2*i][::-1]])
-	    fill(rs, zs, color=fillcols[i+1])	    
+	    fill(rs, zs, color=fillcols[i+1])
+#	    fill(rs, zs, color='red')
 	temparr = ()  
         for i in range(2):
             radx = (otherdat[17-i] + otherdat[7+i])/2.
@@ -140,7 +153,7 @@ def main():
     else:
 # double-null vertical build
 # cryostat and gap
-        plotthick(otherdat[5], otherdat[19], dat[6], dat[19], otherdat[27], dat[27], triang, fillcols[1])
+        plotthick(otherdat[5+proc_form], otherdat[19-proc_form], dat[6+proc_form], dat[19-proc_form], otherdat[27-proc_form], dat[27-proc_form], triang, fillcols[1])
 # shield
         plotthick(otherdat[7], otherdat[17], dat[8], dat[17], otherdat[25], dat[25], triang, fillcols[2])
 # blanket, first wall, and divertor chunk
@@ -296,6 +309,6 @@ def main():
         savefig(outfile, orientation='landscape')
     else:
         show()
-    
+	
 if __name__ == "__main__":
     main()

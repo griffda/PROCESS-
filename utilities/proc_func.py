@@ -61,8 +61,8 @@ def plot_plas_arcs(r0, a, delta, kappa, snull):
     x2 = (2.*r0*(delta-1.) - a*(delta**2 + kappa**2 -1.))/(2.*(delta-1.))
     r1 = 0.5 * sqrt((a**2 * ((delta+1.)**2 + kappa**2)**2)/((delta+1.)**2))
     r2 = 0.5 * sqrt((a**2 * ((delta-1.)**2 + kappa**2)**2)/((delta-1.)**2))
-    #print 'plasma arcs: x1, r1, x2, r2'
-    #print x1, r1, x2, r2
+    print 'plasma arcs: x1, r1, x2, r2'
+    print x1, r1, x2, r2
     theta1 = arcsin((kappa*a)/r1)
     theta2 = arcsin((kappa*a)/r2)
     inang = 1./r1
@@ -151,7 +151,7 @@ def get_coils(f):
         line = f.readline()
         coilnames.append(line[0:10].replace(' ','')[-1])
 	dats.append(line[10:].split())
-    print coilnames
+#    print coilnames
     if coilnames[-2] == "H":
         coilnames[-2] = "OH"
     dat = dats
@@ -370,8 +370,8 @@ def gather_info(f, tf_type):
     else:
         bett = float(find_val_three(f, 'Normalised thermal beta', 58, 20))
 	betn = float(find_val_three(f, 'Normalised total beta', 58, 20))
-    data.append(['2', 'beta_nt', r'$\beta_N$, thermal', str(round(bett,3)), r'% MA m$^{-1}$ T$^{-1}$'])
-    data.append(['2', 'beta_n', r'$\beta_N$, total', str(round(betn,3)), r'% MA m$^{-1}$ T$^{-1}$'])
+    data.append(['2', 'beta_nt', r'$\beta_N$, thermal', str(round(bett,3)), r'% m T MA$^{-1}$'])
+    data.append(['2', 'beta_n', r'$\beta_N$, total', str(round(betn,3)), r'% m T MA$^{-1}$'])
     betapt = float(find_val_three(f, 'Thermal poloidal beta', 58, 20))
     data.append(['2', 'beta_pt', r'$\beta_P$, thermal', str(round(betapt,3)), ''])
     data.append(['2', 'betap', r'$\beta_P$, total', str(find_val_one(f, 'betap')), ''])
@@ -432,8 +432,20 @@ def gather_info(f, tf_type):
     data.append(['4', 'plrad*vol', 'Line radiation', str(find_val_one(f, 'plrad*vol')), 'MW'])
     data.append(['4', 'pnucblkt', 'Nuclear heating in blanket', str(find_val_one(f, 'pnucblkt')), 'MW'])
     data.append(['4', 'pnucshld', 'Nuclear heating in shield', str(find_val_one(f, 'pnucshld')), 'MW'])
-    data.append(['4', 'pdivt', 'Power to divertor', str(find_val_one(f, 'pdivt')), 'MW'])
-    data.append(['4', 'hldiv', 'Divertor peak heat flux', str(find_val_one(f, 'hldiv')), r'MW m$^{-2}$'])
+    data.append(['4', 'pdivt', 'Psep / Pdiv', str(find_val_one(f, 'pdivt')), 'MW'])
+#    pdivt = find_val_one(f, 'pdivt')
+#    rmaj = find_val_one(f, 'rmajor')
+#    pdivr = pdivt/rmaj
+#    data.append(['4', 'hldiv', 'Divertor peak heat flux', str(find_val_one(f, 'hldiv')), r'MW m$^{-2}$'])
+# H-mode threshold, Martin (2008), assuming M=2.5 (D-T)
+    dnla = find_val_one(f,'dnla')/1.e20
+    bt = find_val_one(f,'bt')
+    surf = find_val_one(f,'sarea')
+    pthresh = 0.0488 * dnla**0.717 * bt**0.803 * surf**0.941 * 0.8
+    err = 0.057**2 + (0.035*np.log(dnla))**2 + (0.032*np.log(bt))**2 + (0.019*np.log(surf))**2
+    err = np.sqrt(err) * pthresh
+    data.append(['4', 'pthresh', 'H-mode threshold (M=2.5)', '%.3f' % pthresh + r' $\pm$ ' + '%.3f' % err, 'MW'])
+#    data.append(['4', 'hldiv', r'$P_{\mathrm{div}}/R_0$', '%.3f' % (pdivr), r'MW m$^{-1}$'])
     data.append(['4', 'FWlife', 'FW/blanket life', str(float(find_val_three(f, 'First wall / blanket life', 60, 13))), 'years'])
     data.append(['4', 'Divlife', 'Divertor life', find_val_three(f, 'Divertor life ', 60, 13), 'years'])
     data.append(['4', 'HGtherm', 'Thermal power', find_val_three(f, 'High grade thermal power', 60, 13), 'MW'])
@@ -472,13 +484,13 @@ def gather_info(f, tf_type):
 # data.append(['5', 'fshine', 'NB shine-through', str(find_val_one(f,'fshine')), ''])
     data.append(['5', 'powerht', 'Assumed heating power', str(find_val_one(f,'powerht')), 'MW'])
 # H-mode threshold, Martin (2008), assuming M=2.5 (D-T)
-    dnla = find_val_one(f,'dnla')/1.e20
-    bt = find_val_one(f,'bt')
-    surf = find_val_one(f,'sarea')
-    pthresh = 0.0488 * dnla**0.717 * bt**0.803 * surf**0.941 * 0.8
-    err = 0.057**2 + (0.035*np.log(dnla))**2 + (0.032*np.log(bt))**2 + (0.019*np.log(surf))**2
-    err = np.sqrt(err) * pthresh
-    data.append(['5', 'pthresh', 'H-mode threshold (M=2.5)', '%.3f' % pthresh + r' $\pm$ ' + '%.3f' % err, 'MW'])
+#    dnla = find_val_one(f,'dnla')/1.e20
+#    bt = find_val_one(f,'bt')
+#    surf = find_val_one(f,'sarea')
+#    pthresh = 0.0488 * dnla**0.717 * bt**0.803 * surf**0.941 * 0.8
+#    err = 0.057**2 + (0.035*np.log(dnla))**2 + (0.032*np.log(bt))**2 + (0.019*np.log(surf))**2
+#    err = np.sqrt(err) * pthresh
+#    data.append(['5', 'pthresh', 'H-mode threshold (M=2.5)', '%.3f' % pthresh + r' $\pm$ ' + '%.3f' % err, 'MW'])
 # additional divertor calculations
 # divertor width assuming hldiv = average heat load and r = R0
 #    hldiv = find_val_one(f,'hldiv')
