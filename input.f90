@@ -353,6 +353,7 @@ contains
     !+ad_hist  28/11/13 PJK Added IPROFILE
     !+ad_hist  17/12/13 PJK Changed IOPTIMZ description
     !+ad_hist  19/12/13 PJK Changed EPSFCN description
+    !+ad_hist  19/02/14 PJK Added IPEDESTAL and other related quantities
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -612,6 +613,9 @@ contains
        case ('IMPO')
           call parse_real_variable('IMPO', impo, 0.0D0, 10.0D0, &
                'Oxygen impurity multiplier')
+       case ('IPEDESTAL')
+          call parse_int_variable('IPEDESTAL', ipedestal, 0, 1, &
+               'Switch for plasma profile type')
        case ('IPROFILE')
           call parse_int_variable('IPROFILE', iprofile, 0, 1, &
                'Switch for current profile consistency ')
@@ -637,6 +641,12 @@ contains
        case ('KAPPA')
           call parse_real_variable('KAPPA', kappa, 0.99D0, 5.0D0, &
                'Plasma separatrix elongation')
+       case ('NEPED')
+          call parse_real_variable('NEPED', neped, 0.0D0, 1.0D21, &
+               'Electron density pedestal height (/m3)')
+       case ('NESEP')
+          call parse_real_variable('NESEP', nesep, 0.0D0, 1.0D21, &
+               'Electron density at separatrix (/m3)')
        case ('Q')
           call parse_real_variable('Q', q, 0.01D0, 50.0D0, &
                'Edge safety factor')
@@ -652,6 +662,12 @@ contains
        case ('RFPTH')
           call parse_real_variable('RFPTH', rfpth, 0.01D0, 1.8D0, &
                'RFP pinch parameter, theta')
+       case ('RHOPEDN')
+          call parse_real_variable('RHOPEDN', rhopedn, 0.01D0, 1.0D0, &
+               'Density pedestal r/a')
+       case ('RHOPEDT')
+          call parse_real_variable('RHOPEDT', rhopedt, 0.01D0, 1.0D0, &
+               'Temperature pedestal r/a')
        case ('RLI')
           call parse_real_variable('RLI', rli, 0.0D0, 10.0D0, &
                'Normalised inductivity')
@@ -667,9 +683,18 @@ contains
        case ('SSYNC')
           call parse_real_variable('SSYNC', ssync, 0.0D0, 1.0D0, &
                'Synchrotron wall reflectivity factor')
+       case ('TBETA')
+          call parse_real_variable('TBETA', tbeta, 0.0D0, 4.0D0, &
+               'Temperature profile index beta')
        case ('TE')
           call parse_real_variable('TE', te, 2.0D0, 150.0D0, &
                'Electron temperature (keV)')
+       case ('TEPED')
+          call parse_real_variable('TEPED', teped, 0.0D0, 20.0D0, &
+               'Electron temperature pedestal height (keV)')
+       case ('TESEP')
+          call parse_real_variable('TESEP', tesep, 0.0D0, 20.0D0, &
+               'Electron temperature at separatrix (keV)')
        case ('TI')
           call parse_real_variable('TI', ti, 5.0D0, 50.0D0, &
                'Ion temperature (keV)')

@@ -72,44 +72,64 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function gamfun(xxx)
+  recursive real(kind(1.0D0)) function gamfun(x) result(gamma)
 
     !+ad_name  gamfun
-    !+ad_summ  Calculates the gamma function for xxx > 1
+    !+ad_summ  Calculates the gamma function for arbitrary real x
     !+ad_type  Function returning real
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_args  xxx : input real : gamma function argument
+    !+ad_args  x : input real : gamma function argument
     !+ad_desc  This routine evaluates the gamma function, using an
     !+ad_desc  asymptotic expansion based on Stirling's approximation.
-    !+ad_prob  None
+    !+ad_prob  Beware, gamma(x) is (correctly) infinite if x is zero or
+    !+ad_prob  a negative whole number.
     !+ad_call  None
     !+ad_hist  28/07/11 PJK Initial F90 version
+    !+ad_hist  18/02/14 PJK Extended range of argument to all real x
     !+ad_stat  Okay
     !+ad_docs  http://en.wikipedia.org/wiki/Gamma_function
+    !+ad_docs  T&amp;M/PKNIGHT/LOGBOOK24, p.5
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
-    real(kind(1.0D0)) :: gamfun
-
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: xxx
+    real(kind(1.0D0)), intent(in) :: x
 
     !  Local variables
 
-    real(kind(1.0D0)) :: sqtwopi,sum
+    real(kind(1.0D0)), parameter :: sqtwopi = 2.5066282746310005D0
+    real(kind(1.0D0)), parameter :: c1 = 8.3333333333333333D-2  !  1/12
+    real(kind(1.0D0)), parameter :: c2 = 3.4722222222222222D-3  !  1/288
+    real(kind(1.0D0)), parameter :: c3 = 2.6813271604938272D-3  !  139/51840
+    real(kind(1.0D0)), parameter :: c4 = 2.2947209362139918D-4  !  571/2488320
+    real(kind(1.0D0)) :: summ, denom
+    integer :: i,n
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    sqtwopi = 2.5066282D0
+    if (x > 1.0D0) then
 
-    sum = 1.0D0 + 0.083333333333D0/xxx + 3.472222222D-3/xxx**2 &
-         - 2.6813271D-3/xxx**3 - 2.2947209D-4/xxx**4
+       summ = 1.0D0 + c1/x + c2/x**2 - c3/x**3 - c4/x**4
+       gamma = exp(-x) * x**(x-0.5D0) * sqtwopi * summ
 
-    gamfun = exp(-xxx) * xxx**(xxx-0.5D0) * sqtwopi * sum
+    else
+
+       !  Use recurrence formula to shift the argument to >1
+       !  gamma(x) = gamma(x+n) / (x*(x+1)*(x+2)*...*(x+n-1))
+       !  where n is chosen to make x+n > 1
+
+       n = int(-x) + 2
+       denom = x
+       do i = 1,n-1
+          denom = denom*(x+i)
+       end do
+       gamma = gamfun(x+n)/denom
+
+    end if
 
   end function gamfun
 

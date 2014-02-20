@@ -762,6 +762,8 @@ contains
     !+ad_hist  11/09/13 PJK Removed idhe3, ftr, iiter usage
     !+ad_hist  28/11/13 PJK Added pdtpv, pdhe3pv, pddpv to palph arguments
     !+ad_hist  13/02/14 PJK Added tratio usage to calculate ti from te
+    !+ad_hist  19/02/14 PJK Added plasma_profiles call and made other
+    !+ad_hisc               necessary changes
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -780,17 +782,14 @@ contains
 
     !  Calculate plasma composition
 
-    call betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3,ftritbm, &
-         ignite,impc,impfe,impo,ralpne,rnbeam,te,zeff,abeam, &
-         afuel,aion,deni,dlamee,dlamie,dnalp,dnbeam,dnitot,dnla, &
-         dnprot,dnz,falpe,falpi,pcoef,rncne,rnone,rnfene,zeffai,zion,zfear)
+    call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impfe,impo, &
+         ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
+         dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
+         zion,zfear)
 
-    !  Ion temperature (input value used directly if tratio=0.0)
+    !  Calculate density and temperature profile quantities
 
-    if (tratio > 0.0D0) ti = tratio * te
-
-    ten = te * pcoef
-    tin = ti * pcoef
+    call plasma_profiles
 
     q95 = q
 
@@ -812,9 +811,8 @@ contains
 
     !  Calculate fusion power
 
-    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit, &
-         pcoef,ti,palp,pcharge,pneut,sigvdt, &
-         fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
+    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palp,pcharge,pneut, &
+         sigvdt,fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
 
     pdt = pdtpv * vol
     pdhe3 = pdhe3pv * vol
@@ -834,7 +832,7 @@ contains
     pdt = pdt + 5.0D0*palpnb
 
     call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
-         ifalphap,pcharge,pcoef,pneut,te,ti,vol,alpmw,betaft, &
+         ifalphap,pcharge,pneut,ten,tin,vol,alpmw,betaft, &
          palp,palpi,palpe,pfuscmw,powfmw)
 
     !  Neutron wall load

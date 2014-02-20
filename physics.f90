@@ -34,6 +34,7 @@ module physics_module
   !+ad_cont  culbst
   !+ad_cont  outplas
   !+ad_cont  outtim
+  !+ad_cont  plasma_profiles
   !+ad_args  N/A
   !+ad_desc  This module contains all the primary plasma physics routines
   !+ad_desc  for a tokamak device.
@@ -69,6 +70,7 @@ module physics_module
   !+ad_hist  23/01/13 PJK Added stellarator_variables
   !+ad_hist  10/06/13 PJK Added tfcoil_variables
   !+ad_hist  12/09/13 PJK Removed svfdt,svfdt_orig,fpower,ffus; added bosch_hale
+  !+ad_hist  19/02/14 PJK Added plasma_profiles
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -94,7 +96,7 @@ module physics_module
 
   private
   public :: beamfus,betcom,bpol,fhfac,igmarcal,outplas,outtim, &
-       palph,palph2,pcond,phyaux,physics,pohm,radpwr,rether
+       palph,palph2,pcond,phyaux,physics,plasma_profiles,pohm,radpwr,rether
 
   !  Local variables
 
@@ -129,6 +131,7 @@ contains
     !+ad_call  palph2
     !+ad_call  pcond
     !+ad_call  phyaux
+    !+ad_call  plasma_profiles
     !+ad_call  pohm
     !+ad_call  pthresh
     !+ad_call  radpwr
@@ -167,6 +170,7 @@ contains
     !+ad_hist  28/11/13 PJK Added PDTPV, PDHE3PV, PDDPV to PALPH arguments
     !+ad_hist  28/11/13 PJK Added current profile consistency option;
     !+ad_hist               Added IPROFILE, Q0, RLI to CULCUR arguments
+    !+ad_hist  19/02/14 PJK Added pedestal profile model
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -180,40 +184,21 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: alphap,betat,betpth,fusrat,n0e,n0i,pddpv,pdtpv,pdhe3pv, &
-         pht,pinj,p0,sbar,sigvdt,t0e,t0i,zimp,zion
+    real(kind(1.0D0)) :: betat,betpth,fusrat,pddpv,pdtpv,pdhe3pv, &
+         pht,pinj,sbar,sigvdt,zimp,zion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Calculate plasma composition
 
-    call betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3,ftritbm, &
-         ignite,impc,impfe,impo,ralpne,rnbeam,te,zeff,abeam, &
-         afuel,aion,deni,dlamee,dlamie,dnalp,dnbeam,dnitot,dnla, &
-         dnprot,dnz,falpe,falpi,pcoef,rncne,rnone,rnfene,zeffai,zion,zfear)
+    call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impfe,impo, &
+         ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
+         dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
+         zion,zfear)
 
-    !  Ion temperature (input value used directly if tratio=0.0)
+    !  Calculate density and temperature profile quantities
 
-    if (tratio > 0.0D0) ti = tratio * te
-
-    !  Density-weighted temperatures
-
-    ten = te * pcoef
-    tin = ti * pcoef
-
-    !  Central values for temperature (keV), density (m**-3) and
-    !  pressure (Pa). From ideal gas law : p = nkT
-
-    t0e = te * (1.0D0+alphat)
-    t0i = ti * (1.0D0+alphat)
-    n0e =   dene * (1.0D0+alphan)
-    n0i = dnitot * (1.0D0+alphan)
-    p0 = (n0e*t0e + n0i*t0i) * 1.0D3 * echarge
-
-    !  Pressure profile index
-    !  From ideal gas law : p = nkT
-
-    alphap = alphan + alphat
+    call plasma_profiles
 
     !  Calculate plasma current
 
@@ -319,9 +304,8 @@ contains
 
     !  Calculate fusion power + components
 
-    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit, &
-         pcoef,ti,palp,pcharge,pneut,sigvdt, &
-         fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
+    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palp,pcharge,pneut, &
+         sigvdt,fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
 
     pdt = pdtpv * vol
     pdhe3 = pdhe3pv * vol
@@ -341,7 +325,7 @@ contains
     pdt = pdt + 5.0D0*palpnb
 
     call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
-         ifalphap,pcharge,pcoef,pneut,te,ti,vol,alpmw,betaft, &
+         ifalphap,pcharge,pneut,ten,tin,vol,alpmw,betaft, &
          palp,palpi,palpe,pfuscmw,powfmw)
 
     !  Neutron wall load
@@ -972,19 +956,482 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3, &
-       ftritbm,ignite,impc,impfe,impo,ralpne,rnbeam,te,zeff, &
-       abeam,afuel,aion,deni,dlamee,dlamie,dnalp,dnbeam,dnitot, &
-       dnla,dnprot,dnz,falpe,falpi,pcoef,rncne,rnone,rnfene,zeffai, &
-       zion,zfear)
+  subroutine plasma_profiles
+
+    !+ad_name  plasma_profiles
+    !+ad_summ  Calculates density and temperature profile quantities
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  sumup3
+    !+ad_args  None
+    !+ad_desc  This subroutine determines the various plasma component
+    !+ad_desc  fractional makeups.
+    !+ad_prob  None
+    !+ad_call  gamfun
+    !+ad_call  ncore
+    !+ad_call  nprofile
+    !+ad_call  sumup3
+    !+ad_call  tcore
+    !+ad_call  tprofile
+    !+ad_hist  19/02/14 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  T&amp;M/PKNIGHT/LOGBOOK24, pp.4-6
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    !  Local variables
+
+    integer, parameter :: nrho = 501  !  N.B. sumup3 routine assumes odd nrho
+    integer :: irho
+    real(kind(1.0D0)) :: drho, rho, integ1, integ2, dens, temp
+    real(kind(1.0D0)), dimension(nrho) :: arg1, arg2, arg3
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Volume-averaged ion temperature
+    !  (input value used directly if tratio=0.0)
+
+    if (tratio > 0.0D0) ti = tratio * te
+
+    if (ipedestal == 0) then
+
+       !  Reset pedestal values to agree with original parabolic profiles
+
+       rhopedt = 1.0D0 ; rhopedn = 1.0D0
+       teped = 0.0D0 ; tesep = 0.0D0
+       neped = 0.0D0 ; nesep = 0.0D0
+       tbeta = 2.0D0
+
+       !  Profile factor; ratio of density-weighted to volume-averaged
+       !  temperature
+
+       pcoef = (1.0D0 + alphan)*(1.0D0 + alphat)/(1.0D0+alphan+alphat)
+
+       !  Line averaged electron density (IPDG89)
+       !  0.5*gamfun(0.5) = 0.5*sqrt(pi) = 0.886227
+
+       dnla = dene*(1.0D0+alphan) * 0.886227D0 * gamfun(alphan+1.0D0) / &
+            gamfun(alphan+1.5D0)
+
+       !  Density-weighted temperatures
+
+       ten = te * pcoef
+       tin = ti * pcoef
+
+       !  Central values for temperature (keV) and density (m**-3)
+
+       te0 = te * (1.0D0+alphat)
+       ti0 = ti * (1.0D0+alphat)
+
+       ne0 =   dene * (1.0D0+alphan)
+       ni0 = dnitot * (1.0D0+alphan)
+
+    else
+
+       !  The following reproduces the above results within sensible
+       !  tolerances if rhopedt = rhopedn = 1.0, teped = tesep = neped
+       !  = nesep = 0.0, and tbeta = 2.0
+
+       !  Central values for temperature (keV) and density (m**-3)
+
+       te0 = tcore(rhopedt,teped,tesep,te,alphat,tbeta)
+       ti0 = ti/te * te0
+
+       ne0 = ncore(rhopedn,neped,nesep,dene,alphan)
+       ni0 = dnitot/dene * ne0
+
+       !  Perform integrations to calculate ratio of density-weighted
+       !  to volume-averaged temperature, etc.
+       !  Density-weighted temperature = integral(n.T dV) / integral(n dV)
+       !  which is approximately equal to the ratio
+       !  integral(rho.n(rho).T(rho) drho) / integral(rho.n(rho) drho)
+
+       drho = 1.0D0/(nrho-1)
+       do irho = 1,nrho
+          rho = (irho-1.0D0)/(nrho-1)
+          dens = nprofile(rho,rhopedn,ne0,neped,nesep,alphan)
+          temp = tprofile(rho,rhopedt,te0,teped,tesep,alphat,tbeta)
+          arg1(irho) = rho*dens*temp
+          arg2(irho) = rho*dens
+          arg3(irho) = dens
+       end do
+       call sumup3(drho,arg1,integ1,nrho)
+       call sumup3(drho,arg2,integ2,nrho)
+
+       !  Density-weighted temperatures
+
+       ten = integ1/integ2
+       tin = ti/te * ten
+
+       !  Profile factor; ratio of density-weighted to volume-averaged
+       !  temperature
+
+       pcoef = ten / te
+
+       !  Line-averaged electron density
+       !  = integral(n(rho).drho)
+
+       call sumup3(drho,arg3,dnla,nrho)
+
+       !  Scrape-off density / volume averaged density
+       !  (Input value is used if ipedestal = 0)
+
+       prn1 = max(0.01D0, nesep/dene)  !  preventing division by zero later
+
+    end if
+
+    !  Central pressure (Pa), from ideal gas law : p = nkT
+
+    p0 = (ne0*te0 + ni0*ti0) * 1.0D3 * echarge
+
+    !  Pressure profile index (N.B. no pedestal effects included here)
+    !  Final term is new - see T&M/PKNIGHT/LOGBOOK24, p.7.
+    !  This ensures <p> = <n><T> where <...> denotes volume-averages
+
+    alphap = alphan + alphat + alphan*alphat
+
+  contains
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    subroutine sumup3(dx,y,integral,n)
+
+      !+ad_name  sumup3
+      !+ad_summ  Routine to integrate a 1-D array of y values using the
+      !+ad_summ  Extended Simpson's Rule, assuming equally-spaced x values
+      !+ad_type  Subroutine
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_cont  N/A
+      !+ad_args  dx : input real : (constant) spacing between adjacent x values
+      !+ad_args  y(1:n) : input real array : y values to be integrated
+      !+ad_args  integral : output real : calculated integral
+      !+ad_args  n : input integer : length of array y
+      !+ad_desc  This routine uses Simpson's Rule to integrate an array y.
+      !+ad_prob  None
+      !+ad_call  None
+      !+ad_hist  28/06/06 PJK Initial version
+      !+ad_hist  19/02/14 PJK (Possibly temporary) Inclusion into PROCESS,
+      !+ad_hisc               cut-down to only allow odd n
+      !+ad_stat  Okay
+      !+ad_docs  None
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      implicit none
+
+      !  Arguments
+
+      integer, intent(in) :: n
+      real(kind(1.0D0)), intent(in) :: dx
+      real(kind(1.0D0)), intent(in), dimension(n) :: y
+      real(kind(1.0D0)), intent(out) :: integral
+
+      !  Local variables
+
+      integer :: ix
+      real(kind(1.0D0)) :: sum1
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      if (mod(n,2) == 0) then
+         write(*,*) 'Error in routine SUMUP3:'
+         write(*,*) 'This version assumes an odd number of tabulated points'
+         write(*,*) 'PROCESS stopping'
+         stop
+      end if
+
+      sum1 = y(1)
+      do ix = 2,n-3,2
+         sum1 = sum1 + 4.0D0*y(ix) + 2.0D0*y(ix+1)
+      end do
+      integral = dx/3.0D0*(sum1 + 4.0D0*y(n-1) + y(n))
+
+    end subroutine sumup3
+
+  end subroutine plasma_profiles
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  function tcore(rhopedt, tped, tsep, tav, alphat, tbeta)
+
+    !+ad_name  tcore
+    !+ad_summ  Central temperature for a pedestal profile
+    !+ad_type  Function returning real
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
+    !+ad_auth  H Lux, CCFE, Culham Science Centre
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  rhopedt : input real : normalised minor radius pedestal position
+    !+ad_args  tped : input real : pedestal temperature (keV)
+    !+ad_args  tsep : input real : separatrix temperature (keV)
+    !+ad_args  tav : input real : volume average temperature (keV)
+    !+ad_args  alphat : input real : temperature peaking parameter
+    !+ad_args  tbeta : input real : second temperature exponent
+    !+ad_desc  This routine calculates the core temperature (keV)
+    !+ad_desc  of a pedestalised profile.
+    !+ad_prob  None
+    !+ad_call  gamfun
+    !+ad_hist  07/10/13 RK  First draft of routine
+    !+ad_hist  19/12/13 HL  Separate function
+    !+ad_hist  19/02/14 PJK Minor modifications to use gamfun
+    !+ad_stat  Okay
+    !+ad_docs  J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: tcore
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: rhopedt, tped, tsep, tav, alphat, tbeta
+
+    !  Local variables
+
+    real(kind(1.0D0)), parameter :: numacc = 1.0D-7
+    real(kind(1.0D0)) :: a,gamfac
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  For integer values of alphat, the limit of
+    !  gamfun(-alphat)*sin(pi*alphat) needs to be calculated directly
+
+    if (abs(alphat-nint(alphat)) <= numacc) then
+       a = real(nint(alphat), kind(1.0D0))
+       gamfac = 3.0D0/gamfun(a) * pi * gamfun(1.0D0 + alphat + 2.0D0/tbeta)
+    else
+       gamfac = ( (rhopedt - 1.0D0) * &
+            (tped + 2.0D0*tped*rhopedt + tsep*(2.0D0+rhopedt)) &
+            - 3.0D0*gamfun(-alphat)*gamfun(1.0D0 + alphat + 2.0D0/tbeta) ) &
+            * sin(pi*alphat)
+    end if
+
+    !  Calculate core temperature
+
+    tcore = tped + 1.0D0/(3.0D0*pi*gamfun(1.0D0 + 2.0D0/tbeta))   &
+         * (1.0D0/rhopedt**2) * (tav - tped*rhopedt**2) * gamfac
+
+  end function tcore
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function tprofile(rho, rhopedt, t0, tped, tsep, alphat, tbeta)
+
+    !+ad_name  tprofile
+    !+ad_summ  Implementation of HELIOS-type temperature pedestal profile
+    !+ad_type  Function returning real
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
+    !+ad_auth  H Lux, CCFE, Culham Science Centre
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  rho     : input real : normalised minor radius
+    !+ad_args  rhopedt : input real : normalised minor radius pedestal position
+    !+ad_args  t0      : input real : central temperature (keV)
+    !+ad_args  tped    : input real : pedestal temperature (keV)
+    !+ad_args  tsep    : input real : separatrix temperature (keV)
+    !+ad_args  alphat  : input real : temperature peaking parameter
+    !+ad_args  tbeta   : input real : second temperature exponent
+    !+ad_args  trho    : output real : T(rho) (keV)
+    !+ad_desc  This routine calculates the temperature at a normalised minor 
+    !+ad_desc  radius position rho for a pedestalised profile.
+    !+ad_desc  <P>If <CODE>ipedestal = 0</CODE> the original parabolic
+    !+ad_desc  profile form is used instead.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  07/10/13 RK  First draft of routine
+    !+ad_hist  12/12/13 HL  Separate n and T profiles, minor changes
+    !+ad_hist  19/02/14 PJK Transferred into PROCESS as a function
+    !+ad_stat  Okay
+    !+ad_docs  J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: tprofile
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: rho, rhopedt, t0, tped, tsep, alphat, tbeta
+
+    !  Local variables
+
+    real(kind(1.0D0)), parameter :: numacc = 1.0D-7
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (ipedestal == 0) then
+       tprofile = t0 * (1.0D0 - rho**2)**alphat
+       return
+    end if
+
+    !  Input checks
+
+    if ((abs(rhopedt-1.0D0) <=  numacc) .and. ((tped-tsep) >= numacc)) then
+       write(*,*) 'Warning in TPROFILE:'
+       write(*,*) 'tped sets the value of the temperature profile'
+       write(*,*) 'at the separatrix!'
+    end if
+
+    if (tped < tsep) then
+       write(*,*) 'Warning in TPROFILE:'
+       write(*,*) 'The temperature at the separatrix is higher than at'
+       write(*,*) 'the pedestal!'
+    end if
+
+    if (t0 < tped) then
+       write(*,*) 'Warning in TPROFILE:'
+       write(*,*) 'The temperature at the pedestal is higher than at the core!'
+    end if
+
+    if (rho <= rhopedt) then
+       tprofile = tped + (t0 - tped) * (1.0D0 - (rho/rhopedT)**tbeta)**alphat
+    else
+       tprofile = tsep + (tped - tsep) * (1.0D0 - rho)/(1.0D0 - rhopedt)
+    end if
+
+  end function tprofile
+  
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  function ncore(rhopedn, nped, nsep, nav, alphan)
+    
+    !+ad_name  ncore
+    !+ad_summ  Central density of a pedestal profile
+    !+ad_type  Function returning real
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
+    !+ad_auth  H Lux, CCFE, Culham Science Centre
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  rhopedn : input real : normalised minor radius pedestal position
+    !+ad_args  nped : input real : pedestal density (/m3)
+    !+ad_args  nsep : input real : separatrix density (/m3)
+    !+ad_args  nav : input real : volume average density (/m3)
+    !+ad_args  alphan : input real : density peaking parameter
+    !+ad_desc  This routine calculates the central density
+    !+ad_desc  of a pedestalised profile.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  07/10/13 RK  First draft of routine
+    !+ad_hist  19/12/13 HL  Separate function
+    !+ad_hist  19/02/14 PJK First version within PROCESS
+    !+ad_stat  Okay
+    !+ad_docs  J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: ncore
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: rhopedn, nped, nsep, nav, alphan
+ 
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ncore = 1.0D0 / (3.0D0*rhopedn**2) * ( &
+         3.0D0*nav*(1.0D0 + alphan) &
+         + nsep*(1.0D0 + alphan)*(-2.0D0 + rhopedn + rhopedn**2) &
+         - nped*( (1.0D0 + alphan)*(1.0D0 + rhopedn) + &
+         (alphan - 2.0D0)*rhopedn**2 ) )
+
+  end function ncore
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  function nprofile(rho, rhopedn, n0, nped, nsep, alphan)
+    
+    !+ad_name  nprofile
+    !+ad_summ  Implementation of HELIOS-type density pedestal profile
+    !+ad_type  Function returning real
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
+    !+ad_auth  H Lux, CCFE, Culham Science Centre
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  rho     : input real : normalised minor radius
+    !+ad_args  rhopedn : input real : normalised minor radius pedestal position
+    !+ad_args  n0      : input real : central density (/m3)
+    !+ad_args  nped    : input real : pedestal density (/m3)
+    !+ad_args  nsep    : input real : separatrix density (/m3)
+    !+ad_args  alphan  : input real : density peaking parameter
+    !+ad_desc  This routine calculates the density at a normalised minor
+    !+ad_desc  radius position rho for a pedestalised profile.
+    !+ad_desc  <P>If <CODE>ipedestal = 0</CODE> the original parabolic
+    !+ad_desc  profile form is used instead.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  07/10/13 RK  First draft of routine
+    !+ad_hist  12/12/13 HL  Separate n and T profiles, minor changes
+    !+ad_hist  20/02/14 PJK Transferred into PROCESS as a function
+    !+ad_stat  Okay
+    !+ad_docs  J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: nprofile
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: rho, rhopedn, n0,  nped, nsep, alphan
+
+    !  Local variables
+
+    real(kind(1.0D0)), parameter :: numacc = 1.0D-7
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (ipedestal == 0) then
+       nprofile = n0 * (1.0D0 - rho**2)**alphan
+       return
+    end if
+
+    !  Input checks
+
+    if ((abs(rhopedn-1.0D0) <=  numacc) .and. ((nped-nsep) >= numacc)) then
+       write(*,*) 'Warning in NPROFILE:'
+       write(*,*) 'nped sets the value of the density profile'
+       write(*,*) 'at the separatrix!'
+    end if
+
+    if (nped < nsep) then
+       write(*,*) 'Warning in NPROFILE:'
+       write(*,*) 'Warning: The density at the separatrix is higher than at'
+       write(*,*) 'the pedestal!'
+    end if
+ 
+   if (n0 < nped) then
+       write(*,*) 'Warning in NPROFILE:'
+       write(*,*) 'The density at the pedestal is higher than at the core!'
+    end if
+
+    if (rho <= rhopedn) then
+       nprofile = nped + (n0 - nped) * (1.0D0 - (rho/rhopedn)**2)**alphan
+    else
+       nprofile = nsep + (nped - nsep) * (1.0D0 - rho)/(1.0D0 - rhopedn)
+    end if
+
+  end function nprofile
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc, &
+       impfe,impo,ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee, &
+       dlamie,dnalp,dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone, &
+       rnfene,zeffai,zion,zfear)
 
     !+ad_name  betcom
     !+ad_summ  Calculates various plasma component fractional makeups
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_args  alphan : input real :  density profile index
-    !+ad_args  alphat : input real :  temperature profile index
     !+ad_args  cfe0   : input real :  additional iron impurity fraction
     !+ad_args  dene   : input real :  electron density (/m3)
     !+ad_args  fdeut  : input real :  deuterium fraction of fuel
@@ -1008,12 +1455,10 @@ contains
     !+ad_args  dnalp  : output real : alpha ash density (/m3)
     !+ad_args  dnbeam : output real : hot beam ion density (/m3)
     !+ad_args  dnitot : output real : total ion density (/m3)
-    !+ad_args  dnla   : output real : line-averaged electron density (/m3)
     !+ad_args  dnprot : output real : proton ash density (/m3)
     !+ad_args  dnz    : output real : high Z ion density (/m3)
     !+ad_args  falpe  : output real : fraction of alpha energy to electrons
     !+ad_args  falpi  : output real : fraction of alpha energy to ions
-    !+ad_args  pcoef  : output real : profile factor (= n-weighted T / average T)
     !+ad_args  rncne  : output real : carbon density / electron density
     !+ad_args  rnfene : output real : iron density / electron density
     !+ad_args  rnone  : output real : oxygen density / electron density
@@ -1023,7 +1468,7 @@ contains
     !+ad_desc  This subroutine determines the various plasma component
     !+ad_desc  fractional makeups.
     !+ad_prob  None
-    !+ad_call  gamfun
+    !+ad_call  None
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  06/12/95 PJK Added D-He3 calculations
     !+ad_hist  01/04/98 PJK Added calculation of line-averaged density
@@ -1039,6 +1484,7 @@ contains
     !+ad_hist               modified dnprot calculation
     !+ad_hist  11/09/13 PJK Removed idhe3, ftr usage
     !+ad_hist  12/02/14 PJK Modified initial dnprot approximation
+    !+ad_hist  19/02/14 PJK Moved PCOEF and DNLA calculations elsewhere
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  F/MI/PJK/LOGBOOK11, p.38 for D-He3 deni calculation
@@ -1052,27 +1498,18 @@ contains
     !  Arguments
 
     integer, intent(in) :: ignite, zfear
-    real(kind(1.0D0)), intent(in) :: alphan, alphat, cfe0, dene, fdeut, &
-         ftrit, fhe3, ftritbm, impc, impfe, impo, ralpne, rnbeam, te
+    real(kind(1.0D0)), intent(in) :: cfe0, dene, fdeut, ftrit, fhe3, &
+         ftritbm, impc, impfe, impo, ralpne, rnbeam, te
     real(kind(1.0D0)), intent(out) :: abeam, afuel, aion, deni, dlamee, &
-         dlamie, dnalp, dnbeam, dnitot, dnla, dnprot, dnz, falpe, falpi, &
-         pcoef, rncne, rnfene, rnone, zeff, zeffai, zion
+         dlamie, dnalp, dnbeam, dnitot, dnprot, dnz, falpe, falpi, &
+         rncne, rnfene, rnone, zeff, zeffai, zion
 
     !  Local variables
 
-    real(kind(1.0D0)) :: fc, f_highz, fo, m_highz, znfuel, z_highz
+    real(kind(1.0D0)) :: fc, f_highz, fo, m_highz, pc, znfuel, z_highz
+    integer :: first_call = 1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Profile factor; ratio of density-weighted to volume-averaged temperature
-
-    pcoef = (1.0D0 + alphan)*(1.0D0 + alphat)/(1.0D0+alphan+alphat)
-
-    !  Line averaged electron density (IPDG89)
-    !  0.5*gamfun(0.5) = 0.5*sqrt(pi) = 0.886227
-
-    dnla = dene*(1.0D0+alphan) * 0.886227D0 * gamfun(alphan+1.0D0) / &
-         gamfun(alphan+1.5D0)
 
     !  Ion density components
     !  ======================
@@ -1164,7 +1601,17 @@ contains
     !  (used with electron and ion power balance equations only)
     !  No consideration of pcharge here...
 
-    falpe = 0.88155D0 * exp(-te*pcoef/67.4036D0)
+    !  pcoef now calculated in plasma_profiles, after the very first
+    !  call of betcom; use old parabolic profile estimate in this case 
+
+    if (first_call == 1) then
+       pc = (1.0D0 + alphan)*(1.0D0 + alphat)/(1.0D0+alphan+alphat)
+       first_call = 0
+    else
+       pc = pcoef
+    end if
+
+    falpe = 0.88155D0 * exp(-te*pc/67.4036D0)
     falpi = 1.0D0 - falpe
 
     !  Average atomic masses
@@ -1329,7 +1776,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine palph(alphan,alphat,deni,fdeut,fhe3,ftrit,pcoef,ti, &
+  subroutine palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti, &
        palp,pcharge,pneut,sigvdt,fusionrate,alpharate,protonrate, &
        pdtpv,pdhe3pv,pddpv)
 
@@ -1344,20 +1791,19 @@ contains
     !+ad_args  fdeut   : input real :  deuterium fuel fraction
     !+ad_args  fhe3    : input real :  helium-3 fuel fraction
     !+ad_args  ftrit   : input real :  tritium fuel fraction
-    !+ad_args  pcoef   : input real :  profile factor (= n-weighted T / average T)
     !+ad_args  ti      : input real :  ion temperature (keV)
     !+ad_args  palp    : output real : alpha particle fusion power (MW/m3)
     !+ad_args  pcharge : output real : other charged particle fusion power (MW/m3)
     !+ad_args  pneut   : output real : neutron fusion power (MW/m3)
     !+ad_args  sigvdt  : output real : profile averaged <sigma v DT> (m3/s)
-    !+ad_args  fusionrate  : output real : fusion reaction rate (reactions/m3/s)
+    !+ad_args  fusionrate : output real : fusion reaction rate (reactions/m3/s)
     !+ad_args  alpharate  : output real : alpha particle production rate (/m3/s)
-    !+ad_args  protonrate  : output real : proton production rate (/m3/s)
+    !+ad_args  protonrate : output real : proton production rate (/m3/s)
     !+ad_args  pdtpv   : output real : D-T fusion power (MW/m3)
     !+ad_args  pdhe3pv : output real : D-He3 fusion power (MW/m3)
     !+ad_args  pddpv   : output real : D-D fusion power (MW/m3)
     !+ad_desc  This subroutine numerically integrates over plasma cross-section to
-    !+ad_desc  find the fusion power and fast alpha pressure.
+    !+ad_desc  find the core plasma fusion power.
     !+ad_prob  None
     !+ad_call  fint
     !+ad_call  quanc8
@@ -1368,8 +1814,9 @@ contains
     !+ad_hist  10/09/13 PJK Added fusion, alpha and proton rate calculations
     !+ad_hist  11/09/13 PJK Removed idhe3, ftr, ealpha, iiter usage
     !+ad_hist  28/11/13 PJK Added powers for each fuel-pair to output
+    !+ad_hist  20/02/14 PJK Modified calculation to deal with pedestal profiles
     !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  T&amp;M/PKNIGHT/LOGBOOK24, p.6
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1378,7 +1825,7 @@ contains
     !  Arguments
 
     real(kind(1.0D0)), intent(in) :: alphan, alphat, deni, fdeut, &
-         fhe3, ftrit, pcoef, ti
+         fhe3, ftrit, ti
     real(kind(1.0D0)), intent(out) :: palp, pcharge, pneut, sigvdt, &
          fusionrate, alpharate, protonrate, pdtpv, pdhe3pv, pddpv
 
@@ -1387,8 +1834,7 @@ contains
     integer, parameter :: DT=1, DHE3=2, DD1=3, DD2=4
     integer :: ireaction,nofun
     real(kind(1.0D0)) :: alow,arate,bhigh,epsq8,errest,etot,flag, &
-         fpow,frate,ft,rint,svdt,tn,pa,pc,pn,prate,sigmav
-    real(kind(1.0D0)) :: alphatd,alphand,tidum
+         fpow,frate,ft,rint,tn,pa,pc,pn,prate,sigmav
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1397,12 +1843,6 @@ contains
     alow = 0.0D0
     bhigh = 0.999D0
     epsq8 = 1.0D-9
-
-    !  Initialise shared quantities
-
-    tidum = ti
-    alphatd = alphat
-    alphand = alphan
 
     !  Find fusion power
     !  Integrate over plasma profiles to obtain fusion reaction rate
@@ -1418,9 +1858,10 @@ contains
     do ireaction = 1,4
 
        !  Fusion reaction rate (m3/s) is calculated in fint for each ireaction
+       !  sigmav is the volume-averaged fusion reaction rate (m3/s)
+       !  = integral(2 rho sigv(rho).ni(rho)^2 drho) / (deni**2)
 
-       call quanc8(fint,alow,bhigh,epsq8,epsq8,rint,errest,nofun,flag)
-       sigmav = 2.0D0 * (1.0D0 + alphan)**2 * rint
+       call quanc8(fint,alow,bhigh,epsq8,epsq8,sigmav,errest,nofun,flag)
        if (ireaction == DT) sigvdt = sigmav
 
        select case (ireaction)
@@ -1488,25 +1929,29 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    function fint(xy)
+    function fint(rho)
 
       !+ad_name  fint
-      !+ad_summ  Integrand for alpha power integration
+      !+ad_summ  Integrand for fusion power integration
       !+ad_type  Function returning real
       !+ad_auth  P J Knight, CCFE, Culham Science Centre
       !+ad_cont  N/A
-      !+ad_args  xy : input real :  Abscissa of the integration, = normalised
-      !+ad_argc                     plasma minor radius (0.0 <= xy < 1.0)
-      !+ad_desc  This function evaluates the integrand for the alpha power
-      !+ad_desc  integration, performed using routine <A HREF="quanc8.html">QUANC8</A>
+      !+ad_args  rho : input real :  Abscissa of the integration, = normalised
+      !+ad_argc                      plasma minor radius (0.0 <= rho < 1.0)
+      !+ad_desc  This function evaluates the integrand for the fusion power
+      !+ad_desc  integration, performed using routine
+      !+ad_desc  <A HREF="quanc8.html">QUANC8</A>
       !+ad_desc  in routine <A HREF="palph.html">PALPH</A>.
       !+ad_desc  The fusion reaction assumed is controlled by flag
       !+ad_desc  <CODE>ireaction</CODE> set in <CODE>PALPH</CODE>.
       !+ad_prob  None
       !+ad_call  bosch_hale
+      !+ad_call  nprofile
+      !+ad_call  tprofile
       !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
       !+ad_hist  09/11/11 PJK Initial F90 version
       !+ad_hist  11/09/13 PJK Used bosch_hale instead of svfdt
+      !+ad_hist  20/02/14 PJK Modified to deal with generalised profiles
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
@@ -1518,25 +1963,31 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: xy
+      real(kind(1.0D0)), intent(in) :: rho
 
       !  Local variables
 
-      real(kind(1.0D0)) :: dxy, sigv, tiofr
+      real(kind(1.0D0)) :: nprof, nprofsq, sigv, tiofr
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      !  Local temperature (keV) at r/a = xy
+      !  Local ion temperature (keV) at r/a = rho
 
-      tiofr = tidum*(1.0D0+alphatd)*(1.0D0-(xy**2))**alphatd
+      tiofr = ti/te * tprofile(rho,rhopedt,te0,teped,tesep,alphat,tbeta)
 
       !  Fusion reaction rate (m3/s)
 
       sigv = bosch_hale(tiofr,ireaction)
 
-      dxy = (1.0D0-(xy**2))**alphand
+      !  Integrand for the volume averaged fusion reaction rate sigmav:
+      !  sigmav = integral(2 rho (sigv(rho) ni(rho)^2) drho),
+      !  divided by the square of the volume-averaged ion density
+      !  to retain the dimensions m3/s (this is multiplied back in later)
 
-      fint = xy*(dxy**2)*sigv
+      nprof = 1.0D0/dene * nprofile(rho,rhopedn,ne0,neped,nesep,alphan)
+      nprofsq = nprof*nprof
+
+      fint = 2.0D0 * rho * sigv * nprofsq
 
     end function fint
 
@@ -1545,7 +1996,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
-       ifalphap,pcharge,pcoef,pneut,te,ti,vol,alpmw,betaft,palp,palpi, &
+       ifalphap,pcharge,pneut,ten,tin,vol,alpmw,betaft,palp,palpi, &
        palpe,pfuscmw,powfmw)
 
     !+ad_name  palph2
@@ -1564,10 +2015,9 @@ contains
     !+ad_args  ifalphap : input integer :  switch for fast alpha pressure method
     !+ad_args  palpnb   : input real :  alpha power from hot neutral beam ions (MW)
     !+ad_args  pcharge  : input real :  other charged particle fusion power (MW/m3)
-    !+ad_args  pcoef    : input real :  profile factor (= n-weighted T / average T)
     !+ad_args  pneut    : input/output real neutron fusion power (MW/m3)
-    !+ad_args  te       : input real :  electron temperature (keV)
-    !+ad_args  ti       : input real :  ion temperature (keV)
+    !+ad_args  ten      : input real :  density-weighted electron temperature (keV)
+    !+ad_args  tin      : input real :  density-weighted ion temperature (keV)
     !+ad_args  vol      : input real :  plasma volume (m3)
     !+ad_args  alpmw    : output real : alpha power (MW)
     !+ad_args  betaft   : output real : fast alpha beta component
@@ -1587,8 +2037,12 @@ contains
     !+ad_hist  11/09/13 PJK Removed obsolete argument ftr
     !+ad_hist  12/09/13 PJK Fixed betaft calculation when fdeut=1
     !+ad_hist  10/10/13 PJK Made multiplier in betath equation explicit
+    !+ad_hist  19/02/14 PJK Removed obsolete argument pcoef;
+    !+ad_hisc               changed te,ti to ten,tin
     !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
+    !+ad_docs  D J Ward, UKAEA Fusion: F/PL/PJK/PROCESS/CODE/050
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1598,7 +2052,7 @@ contains
 
     integer, intent(in) :: ifalphap
     real(kind(1.0D0)), intent(in) :: bp, bt, dene, deni, dnitot, falpe, &
-         falpi, palpnb, pcharge, pcoef, te, ti, vol
+         falpi, palpnb, pcharge, ten, tin, vol
     real(kind(1.0D0)), intent(inout) :: palp, pneut
     real(kind(1.0D0)), intent(out) :: alpmw, betaft, palpe, palpi, &
          pfuscmw, powfmw
@@ -1640,17 +2094,17 @@ contains
 
     if (fdeut < 1.0D0) then
 
-       betath = 2.0D3*rmu0*echarge * pcoef * (dene*te + dnitot*ti)/(bt**2 + bp**2)
+       betath = 2.0D3*rmu0*echarge * (dene*ten + dnitot*tin)/(bt**2 + bp**2)
 
        if (ifalphap == 0) then
-          !  N Uckan fast alpha scaling
+          !  IPDG89 fast alpha scaling
           fact = min( 0.30D0, &
-               0.29D0*(deni/dene)**2 * ( pcoef*(te+ti)/20.0D0 - 0.37D0) )
+               0.29D0*(deni/dene)**2 * ( (ten+tin)/20.0D0 - 0.37D0) )
        else
-          !  Modified scaling, D J Ward, April 2006
+          !  Modified scaling, D J Ward
           fact = min( 0.30D0, &
                0.26D0*(deni/dene)**2 * &
-               sqrt( max(0.0D0, (pcoef*(te+ti)/20.0D0 - 0.65D0)) ) )
+               sqrt( max(0.0D0, ((ten+tin)/20.0D0 - 0.65D0)) ) )
        end if
 
        fact = max(fact,0.0D0)
@@ -2555,13 +3009,13 @@ contains
     !+ad_args  pie    : output real : ion/electron equilibration power (MW/m3)
     !+ad_desc  This routine calculates the equilibration power between the
     !+ad_desc  ions and electrons.
-    !+ad_prob  None
+    !+ad_prob  No account is taken of pedestal profiles.
     !+ad_call  None
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  03/07/13 PJK Changed zeffai description
     !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  Unknown origin
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2625,15 +3079,18 @@ contains
     !+ad_args  psync  : output real : synchrotron radiation power/volume (MW/m3)
     !+ad_desc  This routine finds the radiation power in MW/m3.
     !+ad_desc  The Bremsstrahlung and synchrotron powers are included.
-    !+ad_prob  None
+    !+ad_prob  No account is taken of pedestal profiles.
     !+ad_call  None
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  21/07/11 RK  Implemented Albajar for P_sync
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  17/12/12 PJK Added ZFEAR coding for high-Z impurities
     !+ad_hist  07/11/13 PJK Modified prad description
+    !+ad_hist  20/02/14 PJK (Partially) Modified synchrotron calculation for
+    !+ad_hisc               pedestal profiles
     !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
     !+ad_docs  Albajar, Nuclear Fusion 41 (2001) 665
     !+ad_docs  Fidone, Giruzzi, Granata, Nuclear Fusion 41 (2001) 1755
     !
@@ -2652,7 +3109,7 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: den20,fbc,fbhe,fbo,pbremdt,pbremz,pc,phe, &
-         phighz,po,radexp,t10,vr,xfact,kfun,gfun,pao,de2o,teo,dum, &
+         phighz,po,radexp,t10,vr,xfact,kfun,gfun,pao,de2o,dum, &
          tbet,rpow,kap
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2661,12 +3118,16 @@ contains
     fbc = 0.52D0
     fbo = 0.52D0
 
-    radexp = (1.0D0 + alphan)**1.5D0 * sqrt(1.0D0 + alphan + alphat) / &
-         (1.0D0 + 2.0D0*alphan + 0.5D0*alphat)
     den20 = dene/1.0D20
     t10 = ten/10.0D0
 
-    !  D-T Bremsstrahlung
+    !  D-T Bremsstrahlung (IPDG89)
+    !  Coefficient 0.016*radexp is C_B in IPDG89, with Zeff set to 1 for D-T
+    !  Note that the formula in IPDG89 should use ni/1.0E20 * ne/1.0E20,
+    !  not just (n20)^2 (the code below is correct)
+
+    radexp = (1.0D0 + alphan)**1.5D0 * sqrt(1.0D0 + alphan + alphat) / &
+         (1.0D0 + 2.0D0*alphan + 0.5D0*alphat)
 
     pbremdt = 1.6D-2 * radexp * den20**2 * (deni/dene) * sqrt(t10)
 
@@ -2708,14 +3169,16 @@ contains
 
     kap = vol / (2.0D0 * pi**2 * rmajor * rminor**2)
 
-    de2o = (1.0D0+alphan) * den20
-    teo = ten * (1.0D0 + alphan + alphat)/(1.0D0+alphan)
+    !  No account is taken of pedestal profiles here, other than use of
+    !  the correct ne0 and te0...
+
+    de2o = 1.0D-20*ne0
     pao = 6.04D3 * (rminor*de2o)/bt
     gfun = 0.93D0 * ( 1.0D0 + 0.85D0*exp(-0.82D0 * rmajor/rminor) )
     kfun = (alphan + 3.87D0*alphat + 1.46D0)**(-0.79D0)
     kfun = kfun * (1.98D0+alphat)**1.36D0 * tbet**2.14D0
     kfun = kfun*(tbet**1.53D0 + 1.87D0*alphat - 0.16D0)**(-1.33D0)
-    dum = (1.0D0+0.12D0*(teo/(pao**0.41D0))*(1.0D0-ssync)**0.41D0)
+    dum = (1.0D0+0.12D0*(te0/(pao**0.41D0))*(1.0D0-ssync)**0.41D0)
 
     !  Very high T modification, from Fidone
 
@@ -2723,7 +3186,7 @@ contains
 
     psync = 3.84D-8 * (1.0D0-ssync)**rpow * rmajor * rminor**1.38D0
     psync = psync * kap**0.79D0 * bt**2.62D0 * de2o**0.38D0
-    psync = psync * teo *(16.0D0+teo)**2.61D0 * dum * gfun * kfun
+    psync = psync * te0 *(16.0D0+te0)**2.61D0 * dum * gfun * kfun
 
     !  psync should be per unit volume; Albajar gives it as total
 
@@ -2759,7 +3222,7 @@ contains
     !+ad_desc  This routine finds the ohmic heating power per unit volume.
     !+ad_desc  The expression is a good fit for alphan = 0.5, alphat = 1.0,
     !+ad_desc  alphaj = 1.5, aspect = 2.5 -- 4.
-    !+ad_prob  None
+    !+ad_prob  Therefore, no account is taken of pedestal profiles.
     !+ad_call  None
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  25/07/11 PJK Correction to facoh coding
@@ -3625,6 +4088,8 @@ contains
     !+ad_call  quanc8
     !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  10/11/11 PJK Initial F90 version
+    !+ad_hist  20/02/14 PJK Removed unnecessary use of shared variables;
+    !+ad_hist               Corrected error in peak electron beta
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -3639,9 +4104,6 @@ contains
     real(kind(1.0D0)), intent(in) :: alphan,alphat,betat,bt,dene,plascur, &
          q0,q95,rmajor,rminor,ten,zeff
 
-    real(kind(1.0D0)) :: alphanz,alphatz,betaz,btz,denez,plascurz,qaxis, &
-         qpsi,rmajorz,rminorz,tez,zeffz
-
     !  Local variables
 
     integer :: nofun
@@ -3649,25 +4111,17 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Initialise shared variables
+    !  Calculate peak electron beta, using density-weighted temperature
 
-    alphanz = alphan
-    alphatz = alphat
-    betaz   = betat
-    btz     = bt
-    denez   = dene
-    plascurz = plascur/1.0D6
-    qaxis   = q0
-    qpsi    = q95
-    rmajorz = rmajor
-    rminorz = rminor
-    tez     = ten
-    zeffz   = zeff
+    !  Original version had error in central pressure calculation:
+    !  dene*ten*(1 + alphan + alphat) should have been
+    !  dene*ten*(1 + alphan + alphat + alphan*alphat)
+    !  See T&M/PKNIGHT/LOGBOOK24, p.7
 
-    !  Calculate peak electron beta
+    !betae0 = dene * ten * 1.0D3*echarge / ( bt**2 /(2.0D0*rmu0) ) * &
+    !     (1.0D0+alphan+alphat)
 
-    betae0 = denez * tez * 1.0D3*echarge / ( btz**2 /(2.0D0*rmu0) ) * &
-         (1.0D0+alphanz+alphatz)
+    betae0 = ne0 * te0*pcoef * 1.0D3*echarge / ( bt**2 /(2.0D0*rmu0) )
 
     !  Call integration routine
 
@@ -3676,8 +4130,8 @@ contains
 
     !  Calculate bootstrap current and fraction
 
-    aibs = 2.5D0 * betae0 * rmajor * btz * qpsi * ainteg
-    fibs = aibs / plascurz
+    aibs = 2.5D0 * betae0 * rmajor * bt * q95 * ainteg
+    fibs = 1.0D6 * aibs / plascur
 
     fnewbs = fibs
 
@@ -3695,10 +4149,11 @@ contains
       !+ad_args  y : input real : abscissa of integration, = normalised minor radius
       !+ad_desc  This function calculates the integrand function for the
       !+ad_desc  Nevins et al bootstrap current scaling, 4/11/90.
-      !+ad_prob  None
+      !+ad_prob  No account is taken of pedestal profiles.
       !+ad_call  None
       !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
       !+ad_hist  10/11/11 PJK Initial F90 version
+      !+ad_hist  20/02/14 PJK Removed unnecessary use of shared variables
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
@@ -3727,26 +4182,26 @@ contains
 
       !  Compute average electron beta
 
-      betae = denez*tez*1.0D3*echarge/(btz**2/(2.0D0*rmu0))
+      betae = dene*ten*1.0D3*echarge/(bt**2/(2.0D0*rmu0))
 
-      del = rminorz*sqrt(y)/rmajorz
+      del = rminor*sqrt(y)/rmajor
       x = (1.46D0*sqrt(del) + 2.4D0*del)/(1.0D0 - del)**1.5D0
-      z = zeffz
+      z = zeff
       d = 1.414D0*z + z*z + x*(0.754D0 + 2.657D0*z + 2.0D0*z*z) &
            + x*x*(0.348D0 + 1.243D0*z + z*z)
       al2 = -x*(0.884D0 + 2.074D0*z)/d
-      a2 = alphatz*(1.0D0-y)**(alphanz+alphatz-1.0D0)
-      alphai = -1.172D0/(1.0D0+ 0.462D0*x)
-      a1 = (alphanz+alphatz)*(1.0D0-y)**(alphanz+alphatz-1.0D0)
+      a2 = alphat*(1.0D0-y)**(alphan+alphat-1.0D0)
+      alphai = -1.172D0/(1.0D0 + 0.462D0*x)
+      a1 = (alphan+alphat)*(1.0D0-y)**(alphan+alphat-1.0D0)
       al1 = x*(0.754D0+2.21D0*z+z*z+x*(0.348D0+1.243D0*z+z*z))/d
 
       !  q-profile
 
-      q = qaxis + (qpsi-qaxis)*(c1*y + c2*y*y + c3*y**3)/(c1+c2+c3)
+      q = q0 + (q95-q0)*(c1*y + c2*y*y + c3*y**3)/(c1+c2+c3)
 
-      pratio = (betaz - betae) / betae
+      pratio = (betat - betae) / betae
 
-      bsinteg = (q/qpsi)*(al1*(a1 + pratio*(a1+alphai*a2) ) + al2*a2 )
+      bsinteg = (q/q95)*(al1*(a1 + pratio*(a1+alphai*a2) ) + al2*a2 )
 
     end function bsinteg
 
@@ -3774,12 +4229,13 @@ contains
     !+ad_args  itart   : input integer :  switch denoting tight aspect ratio option
     !+ad_desc  This function calculates the bootstrap current fraction
     !+ad_desc  using the numerically fitted algorithm written by Howard Wilson.
-    !+ad_prob  None
+    !+ad_prob  No account is taken of pedestal profiles.
     !+ad_call  None
     !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  14/05/96 PJK Modified to use THERMAL poloidal beta, and
     !+ad_hisc               added diamagnetic term at tight aspect ratio
     !+ad_hist  10/11/11 PJK Initial F90 version
+    !+ad_hist  20/02/14 PJK alphap now calculated elsewhere
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
     !+ad_docs  H. R. Wilson, Nuclear Fusion <B>32</B> (1992) 257
@@ -3804,44 +4260,6 @@ contains
          saj,seps1,sss,termj,termp,termt,term1,term2,z
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Convert density profile index to pressure profile index.
-    !  From ideal gas law : p = nkT
-
-    alphap = alphan + alphat
-
-    !  Check for illegal argument values
-
-    if (alphaj <= 0.0D0) then
-       write(*,*) 'Error in routine CULBST:'
-       write(*,*) 'Illegal value for alphaj, = ',alphaj
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
-    if (alphap <= 0.0D0) then
-       write(*,*) 'Error in routine CULBST:'
-       write(*,*) 'Illegal value for alphap, = ',alphap
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
-    if (alphat <= 0.0D0) then
-       write(*,*) 'Error in routine CULBST:'
-       write(*,*) 'Illegal value for alphat, = ',alphat
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
-    if (qpsi <= 0.0D0) then
-       write(*,*) 'Error in routine CULBST:'
-       write(*,*) 'Illegal value for qpsi, = ',qpsi
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
-    if (q0 <= 0.0D0) then
-       write(*,*) 'Error in routine CULBST:'
-       write(*,*) 'Illegal value for q0, = ',q0
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
 
     !  alphap, alphat and alphaj are indices relevant to profiles of
     !  the form
@@ -4005,6 +4423,7 @@ contains
     !+ad_hist  26/11/13 PJK Added taup/taueff ratio to output
     !+ad_hist  28/11/13 PJK Added fuel-ion pair fusion power contributions to output
     !+ad_hist  28/11/13 PJK Added icurr, iprofile information to output
+    !+ad_hist  20/02/14 PJK Added pedestal profile quantities
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4142,7 +4561,6 @@ contains
 
     if (istell == 0) then
        call ovarrf(outfile,'Beta g coefficient','(dnbeta)',dnbeta)
-       !call ovarrf(outfile,'Normalised beta',' ',fbetatry*dnbeta)
        call ovarrf(outfile,'Normalised thermal beta',' ',1.0D8*betath*rminor*bt/plascur)
        call ovarrf(outfile,'Normalised total beta',' ',1.0D8*beta*rminor*bt/plascur)
     end if
@@ -4192,8 +4610,17 @@ contains
 
     call ovarrf(outfile,'Effective charge','(zeff)',zeff)
     call ovarrf(outfile,'Mass weighted effective charge','(zeffai)',zeffai)
+
+    call ovarin(outfile,'Plasma profile model','(ipedestal)',ipedestal)
     call ovarrf(outfile,'Density profile factor','(alphan)',alphan)
+    call ovarrf(outfile,'Density pedestal r/a location','(rhopedn)',rhopedn)
+    call ovarre(outfile,'Electron density pedestal height (/m3)','(neped)',neped)
+    call ovarre(outfile,'Electron density at separatrix (/m3)','(nesep)',nesep)
     call ovarrf(outfile,'Temperature profile factor','(alphat)',alphat)
+    call ovarrf(outfile,'Temperature profile beta factor','(tbeta)',tbeta)
+    call ovarrf(outfile,'Temperature pedestal r/a location','(rhopedt)',rhopedt)
+    call ovarrf(outfile,'Electron temp. pedestal height (keV)','(teped)',teped)
+    call ovarrf(outfile,'Electron temp. at separatrix (keV)','(tesep)',tesep)
 
     if (istell == 0) then
        call osubhd(outfile,'Density Limit using different models :')

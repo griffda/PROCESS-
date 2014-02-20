@@ -704,6 +704,7 @@ contains
     !+ad_call  palph2
     !+ad_call  pcond
     !+ad_call  phyaux
+    !+ad_call  plasma_profiles
     !+ad_call  pohm
     !+ad_call  radpwr
     !+ad_call  rether
@@ -731,6 +732,8 @@ contains
     !+ad_hist  11/09/13 PJK Removed idhe3, ftr, iiter usage
     !+ad_hist  27/11/13 PJK Added theat to argument list of vscalc
     !+ad_hist  28/11/13 PJK Added pdtpv, pdhe3pv, pddpv to PALPH arguments
+    !+ad_hist  19/02/14 PJK Added plasma_profiles call and made other
+    !+ad_hisc               necessary changes
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -744,34 +747,21 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: alphap,betat,bphi,fusrat,n0e,n0i,pddpv,pdtpv,pdhe3pv, &
-         pht,pinj,p0,sbar,sigvdt,t0e,t0i,zimp,zion
+    real(kind(1.0D0)) :: betat,bphi,fusrat,pddpv,pdtpv,pdhe3pv, &
+         pht,pinj,sbar,sigvdt,zimp,zion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Calculate plasma composition
 
-    call betcom(alphan,alphat,cfe0,dene,fdeut,ftrit,fhe3,ftritbm, &
-         ignite,impc,impfe,impo,ralpne,rnbeam,te,zeff,abeam, &
-         afuel,aion,deni,dlamee,dlamie,dnalp,dnbeam,dnitot,dnla, &
-         dnprot,dnz,falpe,falpi,pcoef,rncne,rnone,rnfene,zeffai,zion,zfear)
+    call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impfe,impo, &
+         ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
+         dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
+         zion,zfear)
 
-    ten = te * pcoef
-    tin = ti * pcoef
+    !  Calculate density and temperature profile quantities
 
-    !  Central values for temperature (keV), density (m**-3) and
-    !  pressure (Pa). From ideal gas law : p = nkT
-
-    t0e = te * (1.0D0+alphat)
-    t0i = ti * (1.0D0+alphat)
-    n0e = dene * (1.0D0+alphan)
-    n0i = dnitot * (1.0D0+alphan)
-    p0 = (n0e*t0e + n0i*t0i) * 1.6022D-16
-
-    !  Pressure profile index
-    !  From ideal gas law : p = nkT
-
-    alphap = alphan + alphat
+    call plasma_profiles
 
     !  Calculate reversal parameter F from F-theta curve
 
@@ -846,9 +836,8 @@ contains
 
     !  Calculate fusion power + components
 
-    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit, &
-         pcoef,ti,palp,pcharge,pneut,sigvdt, &
-         fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
+    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palp,pcharge,pneut, &
+         sigvdt,fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
 
     pdt = pdtpv * vol
     pdhe3 = pdhe3pv * vol
@@ -868,7 +857,7 @@ contains
     pdt = pdt + 5.0D0*palpnb
 
     call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
-         ifalphap,pcharge,pcoef,pneut,te,ti,vol,alpmw,betaft, &
+         ifalphap,pcharge,pneut,ten,tin,vol,alpmw,betaft, &
          palp,palpi,palpe,pfuscmw,powfmw)
 
     !  Neutron wall load

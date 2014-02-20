@@ -206,6 +206,8 @@ module physics_variables
   real(kind(1.0D0)) :: alphaj = 1.0D0
   !+ad_vars  alphan /0.5/ : density profile index
   real(kind(1.0D0)) :: alphan = 0.5D0
+  !+ad_vars  alphap : pressure profile index
+  real(kind(1.0D0)) :: alphap = 0.0D0
   !+ad_vars  alpharate : alpha particle production rate (particles/m3/sec)
   real(kind(1.0D0)) :: alpharate = 0.0D0
   !+ad_vars  alphat /1.0/ : temperature profile index
@@ -383,6 +385,10 @@ module physics_variables
   real(kind(1.0D0)) :: impfe = 1.0D0
   !+ad_vars  impo /1.0/ : oxygen impurity multiplier
   real(kind(1.0D0)) :: impo = 1.0D0
+  !+ad_vars  ipedestal /0/ : switch for pedestal profiles:<UL>
+  !+ad_varc             <LI> = 0 use original parabolic profiles;
+  !+ad_varc             <LI> = 1 use pedestal profiles </UL>
+  integer :: ipedestal = 0
   !+ad_vars  iprofile /0/ : switch for current profile consistency:<UL>
   !+ad_varc             <LI> = 0 use input values for alphaj, rli, dnbeta;
   !+ad_varc             <LI> = 1 make these consistent with input q, q0 values </UL>
@@ -414,6 +420,16 @@ module physics_variables
   real(kind(1.0D0)) :: kappa95 = 0.0D0
   !+ad_vars  kappaa : plasma elongation calculated as xarea/(pi.a2)
   real(kind(1.0D0)) :: kappaa = 0.0D0
+  !+ad_vars  ne0 : central electron density (/m3)
+  real(kind(1.0D0)) :: ne0 = 0.0D0
+  !+ad_vars  neped /0.0/ : electron density of pedestal (/m3) (ipedestal=1)
+  real(kind(1.0D0)) :: neped = 0.0D0
+  !+ad_vars  nesep /0.0/ : electron density at separatrix (/m3) (ipedestal=1)
+  real(kind(1.0D0)) :: nesep = 0.0D0
+  !+ad_vars  ni0 : central ion density (/m3)
+  real(kind(1.0D0)) :: ni0 = 0.0D0
+  !+ad_vars  p0 : central total plasma pressure (Pa)
+  real(kind(1.0D0)) :: p0 = 0.0D0
   !+ad_vars  palp : alpha power per volume (MW/m3)
   real(kind(1.0D0)) :: palp = 0.0D0
   !+ad_vars  palpe : alpha power per volume to electrons (MW/m3)
@@ -495,6 +511,10 @@ module physics_variables
   real(kind(1.0D0)) :: ralpne = 0.10D0
   !+ad_vars  recyle /0.7/ : alpha fraction recycled to main plasma
   real(kind(1.0D0)) :: recyle = 0.7D0
+  !+ad_vars  rhopedn /1.0/ : r/a of density pedestal (ipedestal=1)
+  real(kind(1.0D0)) :: rhopedn = 1.0D0
+  !+ad_vars  rhopedt /1.0/ : r/a of temperature pedestal (ipedestal=1)
+  real(kind(1.0D0)) :: rhopedt = 1.0D0
   !+ad_vars  rli /0.65/ : plasma normalised internal inductance;
   !+ad_varc               calculated from alphaj if iprofile=1
   real(kind(1.0D0)) :: rli = 0.65D0
@@ -538,14 +558,24 @@ module physics_variables
   real(kind(1.0D0)) :: tauei = 0.0D0
   !+ad_vars  taup : particle confinement time (sec)
   real(kind(1.0D0)) :: taup = 0.0D0
+  !+ad_vars  tbeta /2.0/ : temperature profile index beta  (ipedestal=1)
+  real(kind(1.0D0)) :: tbeta = 2.0D0
   !+ad_vars  te : /15.0/ : volume averaged electron temperature (keV)
   !+ad_varc                (iteration variable 4)
   real(kind(1.0D0)) :: te = 15.0D0
+  !+ad_vars  te0 : central electron temperature (keV)
+  real(kind(1.0D0)) :: te0 = 0.0D0
   !+ad_vars  ten : density weighted average electron temperature (keV)
   real(kind(1.0D0)) :: ten = 0.0D0
+  !+ad_vars  teped /0.0/ : electron temperature of pedestal (keV) (ipedestal=1)
+  real(kind(1.0D0)) :: teped = 0.0D0
+  !+ad_vars  tesep /0.0/ : electron temperature at separatrix (keV) (ipedestal=1)
+  real(kind(1.0D0)) :: tesep = 0.0D0
   !+ad_vars  ti /8.33/ : volume averaged ion temperature (keV);
   !+ad_varc              N.B. calculated from te if tratio > 0.0
   real(kind(1.0D0)) :: ti = 8.33D0
+  !+ad_vars  ti0 : central ion temperature (keV)
+  real(kind(1.0D0)) :: ti0 = 0.0D0
   !+ad_vars  tin : density weighted average ion temperature (keV)
   real(kind(1.0D0)) :: tin = 0.0D0
   !+ad_vars  tratio /1.0/ : ion temperature / electron temperature;
@@ -791,7 +821,8 @@ module divertor_variables
   real(kind(1.0D0)) :: plsepo = 1.5D0
   !+ad_vars  ppdivr : peak heat load at plate (with radiation) (MW/m2)
   real(kind(1.0D0)) :: ppdivr = 0.0D0
-  !+ad_vars  prn1 /0.285/ : n-scrape-off / n-average plasma
+  !+ad_vars  prn1 /0.285/ : n-scrape-off / n-average plasma;
+  !+ad_varc                 (input for ipedestal=0, = nesep/dene if ipedestal=1)
   real(kind(1.0D0)) :: prn1 = 0.285D0
   !+ad_vars  ptpdiv : peak temperature at the plate (eV)
   real(kind(1.0D0)) :: ptpdiv = 0.0D0
