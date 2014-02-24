@@ -1406,3 +1406,4 @@ end subroutine output
 ! SVN 227: Draft implementation of pedestal profiles (use ipedestal=1)
 ! SVN 228: Fixed alphap problem in culbst
 ! SVN 229: Corrected misunderstanding about pressure profiles introduced at SVN 227
+! SVN 230: Removed echoing of long lines in the input file to standard output

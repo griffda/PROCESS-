@@ -354,6 +354,7 @@ contains
     !+ad_hist  17/12/13 PJK Changed IOPTIMZ description
     !+ad_hist  19/12/13 PJK Changed EPSFCN description
     !+ad_hist  19/02/14 PJK Added IPEDESTAL and other related quantities
+    !+ad_hist  24/02/14 PJK Removed echoing of long input lines to output
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -403,8 +404,6 @@ contains
 
        line = adjustl(line)  !  rotate any leading blanks to the end
        linelen = len_trim(line)
-
-       if (linelen > 80) write(*,*) line
 
 20     continue
 
