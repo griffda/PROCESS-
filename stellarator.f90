@@ -62,6 +62,7 @@ module stellarator_module
   !+ad_hist  06/11/12 PJK Added availability_module
   !+ad_hist  06/11/12 PJK Added plasma_geometry_module
   !+ad_hist  14/08/13 PJK Added cost_variables, kit_blanket_model
+  !+ad_hist  24/02/14 PJK Added profiles_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -89,6 +90,7 @@ module stellarator_module
   use plasma_geometry_module
   use power_module
   use process_output
+  use profiles_module
   use rfp_variables
   use sctfcoil_module
   use stellarator_variables
@@ -933,6 +935,7 @@ contains
     !+ad_hist  11/09/13 PJK Changed ftr to ftritbm
     !+ad_hist  25/09/13 PJK Added nbshield, rtanbeam, rtanmax outputs
     !+ad_hist  27/11/13 PJK Added ohmic power to bigq denominator
+    !+ad_hist  24/02/14 PJK Modified arguments to CULNBI
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -975,10 +978,7 @@ contains
           !  drive efficiency as this is irrelevant for stellarators. We are
           !  only really interested in fpion, fshine and taubeam.
 
-          call culnbi( &
-               abeam,alphan,alphat,aspect,dene,deni,dlamie,dnla,enbeam, &
-               eps,feffcd,frbeam,ftritbm,ralpne,rmajor,rminor,rncne,rnfene, &
-               rnone,te,ten,zeff,zeffai,effnbss,fpion,fshine,taubeam)
+          call culnbi(effnbss,fpion,fshine)
 
           pnbeam = pheat
           pinji = pnbeam * fpion

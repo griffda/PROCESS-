@@ -1407,3 +1407,7 @@ end subroutine output
 ! SVN 228: Fixed alphap problem in culbst
 ! SVN 229: Corrected misunderstanding about pressure profiles introduced at SVN 227
 ! SVN 230: Removed echoing of long lines in the input file to standard output
+! SVN 231: Added use of general plasma profiles into current drive module.
+!          Rationalised (simplified) argument lists for current drive routines.
+!          Moved plasma profile routines into new source file and module to prevent
+!          circular compilation issues.

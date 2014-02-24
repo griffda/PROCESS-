@@ -31,12 +31,14 @@ module rfp_module
   !+ad_call  physics_variables
   !+ad_call  process_input
   !+ad_call  process_output
+  !+ad_call  profiles_module
   !+ad_call  pulse_variables
   !+ad_call  rfp_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_hist  05/11/12 PJK Initial version of module
   !+ad_hist  05/11/12 PJK Added pulse_variables
+  !+ad_hist  24/02/14 PJK Added profiles_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -54,6 +56,7 @@ module rfp_module
   use pfcoil_variables
   use physics_module
   use physics_variables
+  use profiles_module
   use process_input, only : check_range_real
   use process_output
   use pulse_variables

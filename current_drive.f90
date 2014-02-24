@@ -25,6 +25,7 @@ module current_drive_module
   !+ad_call  current_drive_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
+  !+ad_call  profiles_module
   !+ad_hist  17/10/12 PJK Initial version of module
   !+ad_hist  31/10/12 PJK Changed public/private lists
   !+ad_stat  Okay
@@ -34,6 +35,7 @@ module current_drive_module
 
   use constants
   use current_drive_variables
+  use profiles_module
   use physics_variables
   use process_output
 
@@ -133,27 +135,19 @@ contains
 
        case (5)  !  ITER Neutral Beam current drive
 
-          call iternb(abeam,alphan,alphat,aspect,dene,deni,dlamie, &
-               enbeam,eps,feffcd,frbeam,ftritbm,ralpne,rmajor,rncne, &
-               rnfene,rnone,te,ten,zeff,zeffai,effnbss,fpion, &
-               fshine,taubeam)
+          call iternb(effnbss,fpion,fshine)
 
        case (6)  !  Culham Lower Hybrid current drive model
 
-          call cullhy(alphan,alphat,bt,dene,feffcd,rmajor,rminor, &
-               te,zeff,effrfss)
+          call cullhy(effrfss)
 
        case (7)  !  Culham ECCD model
 
-          call culecd(alphan,alphat,dene,feffcd,rmajor,rminor, &
-               te,zeff,effrfss)
+          call culecd(effrfss)
 
        case (8)  !  Culham Neutral Beam model
 
-          call culnbi(abeam,alphan,alphat,aspect,dene,deni,dlamie, &
-               dnla,enbeam,eps,feffcd,frbeam,ftritbm,ralpne,rmajor, &
-               rminor,rncne,rnfene,rnone,te,ten,zeff,zeffai, &
-               effnbss,fpion,fshine,taubeam)
+          call culnbi(effnbss,fpion,fshine)
 
        case (9)  !  (trivial) RFP OFCD model
 
@@ -343,40 +337,16 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine iternb(abeam,alphan,alphat,aspect,dene,deni,dlamie,enbeam, &
-       eps,feffcd,frbeam,ftritbm,ralpne,rmajor,rncne,rnfene,rnone,te,ten, &
-       zeff,zeffai,effnbss,fpion,fshine,taubeam)
+  subroutine iternb(effnbss,fpion,fshine)
 
     !+ad_name  iternb
     !+ad_summ  Routine to calculate ITER Neutral Beam current drive parameters
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  etanb
-    !+ad_args  abeam   : input real : beam ion mass (amu)
-    !+ad_args  alphan  : input real : density profile factor
-    !+ad_args  alphat  : input real : temperature profile factor
-    !+ad_args  aspect  : input real : aspect ratio
-    !+ad_args  dene    : input real : volume averaged electron density (m**-3)
-    !+ad_args  deni    : input real : fuel ion density (m**-3)
-    !+ad_args  dlamie  : input real : ion-electron coulomb logarithm
-    !+ad_args  enbeam  : input real : neutral beam energy (keV)
-    !+ad_args  eps     : input real : inverse aspect ratio
-    !+ad_args  feffcd  : input real : current drive efficiency fudge factor
-    !+ad_args  frbeam  : input real : R_tangent / R_major for neutral beam injection
-    !+ad_args  ftritbm : input real : tritium fraction of D-T ions in beam
-    !+ad_args  ralpne  : input real : thermal alpha density / electron density
-    !+ad_args  rmajor  : input real : plasma major radius (m)
-    !+ad_args  rncne   : input real : beam carbon density / electron density
-    !+ad_args  rnfene  : input real : beam iron density / electron density
-    !+ad_args  rnone   : input real : beam oxygen density / electron density
-    !+ad_args  te      : input real : volume averaged electron temperature (keV)
-    !+ad_args  ten     : input real : density weighted average electron temp. (keV)
-    !+ad_args  zeff    : input real : plasma effective charge
-    !+ad_args  zeffai  : input real : mass weighted plasma effective charge
     !+ad_args  effnbss : output real : neutral beam current drive efficiency (A/W)
     !+ad_args  fpion   : output real : fraction of NB power given to ions
     !+ad_args  fshine  : output real : shine-through fraction of beam
-    !+ad_args  taubeam : output real : no of NB expon. decay lengths to plasma centre
     !+ad_desc  This routine calculates the current drive parameters for a
     !+ad_desc  neutral beam system, based on the 1990 ITER model.
     !+ad_prob  None
@@ -387,6 +357,7 @@ contains
     !+ad_hist  22/08/12 PJK Initial F90 version
     !+ad_hist  19/06/13 PJK Corrected dpath calculation
     !+ad_hist  03/07/13 PJK Changed zeffai description
+    !+ad_hist  24/02/14 PJK Rationalised arguments
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
@@ -398,11 +369,7 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: abeam,alphan,alphat,aspect, &
-         dene,deni,dlamie,enbeam,eps,feffcd,frbeam,ftritbm,ralpne, &
-         rmajor,rncne,rnfene,rnone,te,ten,zeff,zeffai
-
-    real(kind(1.0D0)), intent(out) :: effnbss,fpion,fshine,taubeam
+    real(kind(1.0D0)), intent(out) :: effnbss,fpion,fshine
 
     !  Local variables
 
@@ -473,7 +440,7 @@ contains
       !+ad_args  zeff    : input real : plasma effective charge
       !+ad_desc  This routine calculates the current drive efficiency of
       !+ad_desc  a neutral beam system, based on the 1990 ITER model.
-      !+ad_prob  None
+      !+ad_prob  No account is taken of pedestal profiles.
       !+ad_call  None
       !+ad_hist  15/06/92 PJK Initial upgraded version
       !+ad_hist  22/08/12 PJK Initial F90 version
@@ -503,10 +470,7 @@ contains
       zbeam = 1.0D0
       bbd = 1.0D0
 
-      !  N.B. changing the following to 1.0D-20 * dene
-      !  causes the code output to change subtly...
-
-      dene20 = dene/1.0D20
+      dene20 = 1.0D-20*dene
 
       !  Ratio of E_beam/E_crit
 
@@ -759,8 +723,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine cullhy(alphan,alphat,bt,dene,feffcd,rmajor,rminor,te,zeff, &
-       effrfss)
+  subroutine cullhy(effrfss)
 
     !+ad_name  cullhy
     !+ad_summ  Routine to calculate Lower Hybrid current drive efficiency
@@ -768,22 +731,17 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  lhrad
     !+ad_cont  lheval
-    !+ad_args  alphan  : input real : density profile factor
-    !+ad_args  alphat  : input real : temperature profile factor
-    !+ad_args  bt      : input real : toroidal field on axis (T)
-    !+ad_args  dene    : input real : volume averaged electron density (m**-3)
-    !+ad_args  feffcd  : input real : current drive efficiency fudge factor
-    !+ad_args  rmajor  : input real : plasma major radius (m)
-    !+ad_args  rminor  : input real : plasma minor radius (m)
-    !+ad_args  te      : input real : volume averaged electron temperature (keV)
-    !+ad_args  zeff    : input real : plasma effective charge
     !+ad_args  effrfss : output real : lower hybrid current drive efficiency (A/W)
     !+ad_desc  This routine calculates the current drive parameters for a
     !+ad_desc  lower hybrid system, based on the AEA FUS 172 model.
     !+ad_prob  None
     !+ad_call  lhrad
+    !+ad_call  nprofile
+    !+ad_call  tprofile
     !+ad_hist  15/06/92 PJK Initial upgraded version
     !+ad_hist  22/08/12 PJK Initial F90 version
+    !+ad_hist  24/02/14 PJK Local density and temperature calculated using
+    !+ad_hisc               relevant profile model; rationalised arguments
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -794,28 +752,24 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: alphan,alphat,bt,dene,feffcd,rmajor, &
-         rminor,te,zeff
     real(kind(1.0D0)), intent(out) :: effrfss
 
     !  Local variables
 
-    real(kind(1.0D0)) :: blocal,dene19,dlocal,epslh,frac,gamlh,nplacc,rpenet, &
+    real(kind(1.0D0)) :: blocal,dlocal,epslh,frac,gamlh,nplacc,rpenet, &
          rratio,term01,term02,term03,term04,tlocal,x
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    dene19 = dene / 1.0D19
-
     !  Calculate the penetration radius of the LH waves
 
-    call lhrad(alphan,alphat,bt,dene19,rmajor,rminor,te,rratio)
+    call lhrad(rratio)
     rpenet = rratio*rminor
 
     !  Local density, temperature, toroidal field at this minor radius
 
-    dlocal = dene19*(1.0D0+alphan)*(1.0D0-rratio**2)**alphan
-    tlocal = te*(1.0D0+alphat)*(1.0D0-rratio**2)**alphat
+    dlocal = 1.0D-19 * nprofile(rratio,rhopedn,ne0,neped,nesep,alphan)
+    tlocal = tprofile(rratio,rhopedt,te0,teped,tesep,alphat,tbeta)
     blocal = bt*rmajor/(rmajor-rpenet)  !  Calculated on inboard side
 
     !  Parallel refractive index needed for plasma access
@@ -854,20 +808,13 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    subroutine lhrad(alphan,alphat,bt,dene19,rmajor,rminor,te,rratio)
+    subroutine lhrad(rratio)
 
       !+ad_name  lhrad
       !+ad_summ  Routine to calculate Lower Hybrid wave absorption radius
       !+ad_type  Subroutine
       !+ad_auth  P J Knight, CCFE, Culham Science Centre
       !+ad_cont  None
-      !+ad_args  alphan  : input real : density profile factor
-      !+ad_args  alphat  : input real : temperature profile factor
-      !+ad_args  bt      : input real : toroidal field on axis (T)
-      !+ad_args  dene19  : input real : volume averaged electron density (10**19 m**-3)
-      !+ad_args  rmajor  : input real : plasma major radius (m)
-      !+ad_args  rminor  : input real : plasma minor radius (m)
-      !+ad_args  te      : input real : volume averaged electron temperature (keV)
       !+ad_args  rratio  : output real : minor radius of penetration / rminor
       !+ad_desc  This routine determines numerically the minor radius at which the
       !+ad_desc  damping of Lower Hybrid waves occurs, using a Newton-Raphson method.
@@ -875,6 +822,7 @@ contains
       !+ad_call  lheval
       !+ad_hist  15/06/92 PJK Initial upgraded version
       !+ad_hist  18/09/12 PJK Initial F90 version
+      !+ad_hist  24/02/14 PJK Rationalised argument list
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -885,25 +833,19 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: alphan,alphat,bt,dene19,rmajor,rminor,te
       real(kind(1.0D0)), intent(out) :: rratio
 
       !  Local variables
 
-      real(kind(1.0D0)) :: den0,dgdr,drfind,g0,g1,g2,rat0,rat1,r1,r2,t0
+      real(kind(1.0D0)) :: dgdr,drfind,g0,g1,g2,rat0,rat1,r1,r2
       integer :: lapno
       integer, parameter :: maxlap = 100
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      !  Central density and temperature
-
-      den0 = dene19 * (1.0D0+alphan)
-      t0 = te * (1.0D0+alphat)
-
       !  Correction to refractive index (kept within valid bounds)
 
-      drfind = min(0.7D0, max(0.1D0,12.5D0/t0))
+      drfind = min(0.7D0, max(0.1D0,12.5D0/te0))
 
       !  Use Newton-Raphson method to establish the correct minor radius
       !  ratio. g is calculated as a function of r / r_minor, where g is
@@ -925,9 +867,9 @@ contains
 
          !  Evaluate g at rat0, r1, r2
 
-         call lheval(alphan,alphat,bt,den0,drfind,rmajor,rminor,rat0,t0,g0)
-         call lheval(alphan,alphat,bt,den0,drfind,rmajor,rminor,r1,  t0,g1)
-         call lheval(alphan,alphat,bt,den0,drfind,rmajor,rminor,r2,  t0,g2)
+         call lheval(drfind,rat0,g0)
+         call lheval(drfind,r1,g1)
+         call lheval(drfind,r2,g2)
 
          !  Calculate gradient of g with respect to minor radius ratio
 
@@ -970,8 +912,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    subroutine lheval(alphan,alphat,bt,den0,drfind,rmajor,rminor,rratio,t0, &
-         ediff)
+    subroutine lheval(drfind,rratio,ediff)
 
       !+ad_name  lheval
       !+ad_summ  Routine to evaluate the difference between electron energy
@@ -979,15 +920,8 @@ contains
       !+ad_type  Subroutine
       !+ad_auth  P J Knight, CCFE, Culham Science Centre
       !+ad_cont  None
-      !+ad_args  alphan  : input real : density profile factor
-      !+ad_args  alphat  : input real : temperature profile factor
-      !+ad_args  bt      : input real : toroidal field on axis (T)
-      !+ad_args  den0    : input real : central electron density (10**19 m**-3)
       !+ad_args  drfind  : input real : correction to parallel refractive index
-      !+ad_args  rmajor  : input real : plasma major radius (m)
-      !+ad_args  rminor  : input real : plasma minor radius (m)
       !+ad_args  rratio  : input real : guess for radius of penetration / rminor
-      !+ad_args  t0      : input real : central electron temperature (keV)
       !+ad_args  ediff   : output real : difference between the E values (keV)
       !+ad_desc  This routine evaluates the difference between the values calculated
       !+ad_desc  from the two equations for the electron energy E, given in
@@ -995,9 +929,12 @@ contains
       !+ad_desc  wave absorption radius via a Newton-Raphson method, in calling
       !+ad_desc  routine <A HREF="lhrad.html">lhrad</A>.
       !+ad_prob  None
-      !+ad_call  None
+      !+ad_call  nprofile
+      !+ad_call  tprofile
       !+ad_hist  15/06/92 PJK Initial upgraded version
       !+ad_hist  18/09/12 PJK Initial F90 version
+      !+ad_hist  24/02/14 PJK Rationalised argument list, and called profile
+      !+ad_hisc               routines to calculate local quantities
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1008,8 +945,7 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: alphan,alphat,bt,den0,drfind,rmajor,rminor, &
-           rratio,t0
+      real(kind(1.0D0)), intent(in) :: drfind,rratio
       real(kind(1.0D0)), intent(out) :: ediff
 
       !  Local variables
@@ -1020,11 +956,11 @@ contains
 
       !  Local electron density
 
-      dlocal = den0 * (1.0D0-rratio**2)**alphan
+      dlocal = 1.0D-19 * nprofile(rratio,rhopedn,ne0,neped,nesep,alphan)
 
       !  Local electron temperature
 
-      tlocal = t0 * (1.0D0-rratio**2)**alphat
+      tlocal = tprofile(rratio,rhopedt,te0,teped,tesep,alphat,tbeta)
 
       !  Local toroidal field (evaluated at the inboard region of the flux surface)
 
@@ -1057,7 +993,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine culecd(alphan,alphat,dene,feffcd,rmajor,rminor,te,zeff,effrfss)
+  subroutine culecd(effrfss)
 
     !+ad_name  culecd
     !+ad_summ  Routine to calculate Electron Cyclotron current drive efficiency
@@ -1066,21 +1002,17 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  eccdef
     !+ad_cont  legend
-    !+ad_args  alphan  : input real : density profile factor
-    !+ad_args  alphat  : input real : temperature profile factor
-    !+ad_args  dene    : input real : volume averaged electron density (m**-3)
-    !+ad_args  feffcd  : input real : current drive efficiency fudge factor
-    !+ad_args  rmajor  : input real : plasma major radius (m)
-    !+ad_args  rminor  : input real : plasma minor radius (m)
-    !+ad_args  te      : input real : volume averaged electron temperature (keV)
-    !+ad_args  zeff    : input real : plasma effective charge
     !+ad_args  effrfss : output real : electron cyclotron current drive efficiency (A/W)
     !+ad_desc  This routine calculates the current drive parameters for a
     !+ad_desc  electron cyclotron system, based on the AEA FUS 172 model.
     !+ad_prob  None
     !+ad_call  eccdef
+    !+ad_call  nprofile
+    !+ad_call  tprofile
     !+ad_hist  16/06/92 PJK Initial upgraded version
     !+ad_hist  18/09/12 PJK Initial F90 version
+    !+ad_hist  24/02/14 PJK Rationalised argument list, and called profile
+    !+ad_hisc               routines to calculate local quantities
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1091,29 +1023,30 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: alphan,alphat,dene,feffcd,rmajor,rminor,te,zeff
     real(kind(1.0D0)), intent(out) :: effrfss
 
     !  Local variables
 
     real(kind(1.0D0)) :: cosang,coulog,dlocal,ecgam,ecgam1,ecgam2,ecgam3,ecgam4, &
-         epsloc,tlocal,zlocal
+         epsloc,rrr,tlocal,zlocal
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Local plasma parameters : take r = a/3
 
+    rrr = 1.0D0/3.0D0
+
     !  Temperature
 
-    tlocal = te * (1.0D0+alphat) * (1.0D0-0.333D0**2)**alphat
+    tlocal = tprofile(rrr,rhopedt,te0,teped,tesep,alphat,tbeta)
 
     !  Density (10**20 m**-3)
 
-    dlocal = dene*1.0D-20 * (1.0D0+alphan) * (1.0D0-0.333D0**2)**alphan
+    dlocal = 1.0D-20 * nprofile(rrr,rhopedn,ne0,neped,nesep,alphan)
 
     !  Inverse aspect ratio
 
-    epsloc = 0.333D0 * rminor/rmajor
+    epsloc = rrr * rminor/rmajor
 
     !  Effective charge (use average value)
 
@@ -1347,42 +1280,16 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine culnbi(abeam,alphan,alphat,aspect,dene,deni,dlamie,dnla, &
-       enbeam,eps,feffcd,frbeam,ftritbm,ralpne,rmajor,rminor,rncne,rnfene, &
-       rnone,te,ten,zeff,zeffai,effnbss,fpion,fshine,taubeam)
+  subroutine culnbi(effnbss,fpion,fshine)
 
     !+ad_name  culnbi
     !+ad_summ  Routine to calculate Neutral Beam current drive parameters
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  etanb2
-    !+ad_args  abeam   : input real : beam ion mass (amu)
-    !+ad_args  alphan  : input real : density profile factor
-    !+ad_args  alphat  : input real : temperature profile factor
-    !+ad_args  aspect  : input real : aspect ratio
-    !+ad_args  dene    : input real : volume averaged electron density (m**-3)
-    !+ad_args  deni    : input real : fuel ion density (m**-3)
-    !+ad_args  dlamie  : input real : ion-electron coulomb logarithm
-    !+ad_args  dnla    : input real : line averaged electron density (m**-3)
-    !+ad_args  enbeam  : input real : neutral beam energy (keV)
-    !+ad_args  eps     : input real : inverse aspect ratio
-    !+ad_args  feffcd  : input real : current drive efficiency fudge factor
-    !+ad_args  frbeam  : input real : R_tangent / R_major for neutral beam injection
-    !+ad_args  ftritbm : input real : tritium fraction of D-T ions in beam
-    !+ad_args  ralpne  : input real : thermal alpha density / electron density
-    !+ad_args  rmajor  : input real : plasma major radius (m)
-    !+ad_args  rminor  : input real : plasma minor radius (m)
-    !+ad_args  rncne   : input real : beam carbon density / electron density
-    !+ad_args  rnfene  : input real : beam iron density / electron density
-    !+ad_args  rnone   : input real : beam oxygen density / electron density
-    !+ad_args  te      : input real : volume averaged electron temperature (keV)
-    !+ad_args  ten     : input real : density weighted average electron temp. (keV)
-    !+ad_args  zeff    : input real : plasma effective charge
-    !+ad_args  zeffai  : input real : mass weighted plasma effective charge
     !+ad_args  effnbss : output real : neutral beam current drive efficiency (A/W)
     !+ad_args  fpion   : output real : fraction of NB power given to ions
     !+ad_args  fshine  : output real : shine-through fraction of beam
-    !+ad_args  taubeam : output real : no of NB expon. decay lengths to plasma centre
     !+ad_desc  This routine calculates Neutral Beam current drive parameters
     !+ad_desc  using the corrections outlined in AEA FUS 172 to the ITER method.
     !+ad_desc  <P>The result cannot be guaranteed for devices with aspect ratios far
@@ -1405,11 +1312,7 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: abeam,alphan,alphat,aspect,dene,deni, &
-         dlamie,dnla,enbeam,eps,feffcd,frbeam,ftritbm,ralpne,rmajor,rminor,rncne, &
-         rnfene,rnone,te,ten,zeff,zeffai
-
-    real(kind(1.0D0)), intent(out) :: effnbss,fpion,fshine,taubeam
+    real(kind(1.0D0)), intent(out) :: effnbss,fpion,fshine
 
     !  Local variables
 
@@ -1489,7 +1392,7 @@ contains
       !+ad_desc  a neutral beam system, based on the 1990 ITER model,
       !+ad_desc  plus correction terms outlined in Culham Report AEA FUS 172.
       !+ad_desc  <P>The formulae are from AEA FUS 172, unless denoted by IPDG89.
-      !+ad_prob  None
+      !+ad_prob  No account is taken of pedestal profiles.
       !+ad_call  None
       !+ad_hist  17/06/92 PJK Initial upgraded version
       !+ad_hist  18/09/12 PJK Initial F90 version

@@ -54,7 +54,6 @@ source = \
  evaluators.f90 \
  fispact.f90 \
  fwbs.f90 \
- plasma_geometry.f90 \
  global_variables.f90 \
  ife.f90 \
  initial.f90 \
@@ -67,16 +66,18 @@ source = \
  pfcoil.f90 \
  physics.f90 \
  plant_power.f90 \
+ plasma_geometry.f90 \
+ plasma_profile.f90 \
  process.f90 \
  pulse.f90 \
  rfp.f90 \
  safety.f90 \
  scan.f90 \
+ sctfcoil.f90 \
  startup.f90 \
  stellarator.f90 \
  structure.f90 \
  tfcoil.f90 \
- sctfcoil.f90 \
  vacuum.f90 
 
 object = \
@@ -91,7 +92,6 @@ object = \
  fispact.o \
  fwbs.o \
  global_variables.o \
- plasma_geometry.o \
  ife.o \
  initial.o \
  input.o \
@@ -103,16 +103,18 @@ object = \
  pfcoil.o \
  physics.o \
  plant_power.o \
+ plasma_geometry.o \
+ plasma_profiles.o \
  process.o \
  pulse.o \
  rfp.o \
  safety.o \
  scan.o \
+ sctfcoil.o \
  startup.o \
  stellarator.o \
  structure.o \
  tfcoil.o \
- sctfcoil.o \
  vacuum.o 
 
 ###### Architecture specifics #######
@@ -188,12 +190,11 @@ caller.o: availability.o buildings.o costs.o current_drive.o divertor.o fwbs.o \
   stellarator.o tfcoil.o vacuum.o
 constraint_equations.o: global_variables.o numerics.o
 costs.o: global_variables.o output.o
-current_drive.o: global_variables.o output.o
+current_drive.o: global_variables.o output.o plasma_profiles.o
 divertor.o: global_variables.o output.o
 evaluators.o: global_variables.o numerics.o
 fispact.o: global_variables.o
 fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o
-plasma_geometry.o: global_variables.o
 ife.o: availability.o costs.o global_variables.o output.o
 initial.o: global_variables.o output.o scan.o stellarator.o
 input.o: global_variables.o numerics.o output.o scan.o
@@ -203,22 +204,24 @@ maths_library.o:
 numerics.o: maths_library.o
 output.o:
 pfcoil.o: global_variables.o maths_library.o output.o
-physics.o: current_drive.o global_variables.o maths_library.o output.o
+physics.o: current_drive.o global_variables.o maths_library.o output.o plasma_profiles.o
 plant_power.o: fwbs.o global_variables.o output.o
+plasma_geometry.o: global_variables.o
+plasma_profiles.o: global_variables.o maths_library.o
 process.o: availability.o buildings.o costs.o current_drive.o divertor.o evaluators.o \
   fwbs.o global_variables.o ife.o input.o machine_build.o numerics.o output.o pfcoil.o \
   physics.o plant_power.o pulse.o rfp.o scan.o sctfcoil.o startup.o stellarator.o \
   structure.o tfcoil.o vacuum.o
 pulse.o: global_variables.o maths_library.o output.o physics.o
 rfp.o: current_drive.o input.o global_variables.o machine_build.o output.o pfcoil.o \
-  physics.o
+  plasma_profiles.o physics.o
 safety.o: global_variables.o output.o
 scan.o: global_variables.o numerics.o output.o
 sctfcoil.o: global_variables.o maths_library.o output.o
 startup.o: global_variables.o maths_library.o output.o physics.o
 stellarator.o: availability.o buildings.o costs.o current_drive.o divertor.o fwbs.o \
   global_variables.o maths_library.o numerics.o output.o physics.o plant_power.o \
-  plasma_geometry.o scan.o sctfcoil.o structure.o vacuum.o
+  plasma_geometry.o plasma_profiles.o scan.o sctfcoil.o structure.o vacuum.o
 structure.o: global_variables.o output.o
 tfcoil.o: global_variables.o machine_build.o output.o sctfcoil.o
 vacuum.o: global_variables.o output.o
