@@ -1411,3 +1411,4 @@ end subroutine output
 !          Rationalised (simplified) argument lists for current drive routines.
 !          Moved plasma profile routines into new source file and module to prevent
 !          circular compilation issues.
+! SVN 232: Fixed Id problem in plasma_profiles.f90
