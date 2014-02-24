@@ -1404,3 +1404,4 @@ end subroutine output
 ! SVN 226: Added hlux's PROCESS_dicts.py utility;
 !          Modified code output for costs and machine build, particularly to MFILE.DAT
 ! SVN 227: Draft implementation of pedestal profiles (use ipedestal=1)
+! SVN 228: Fixed alphap problem in culbst

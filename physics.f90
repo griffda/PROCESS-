@@ -171,6 +171,7 @@ contains
     !+ad_hist  28/11/13 PJK Added current profile consistency option;
     !+ad_hist               Added IPROFILE, Q0, RLI to CULCUR arguments
     !+ad_hist  19/02/14 PJK Added pedestal profile model
+    !+ad_hist  24/02/14 PJK Modified CULBST arguments
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -269,7 +270,7 @@ contains
        else if (ibss == 3) then
           !  Uses thermal poloidal beta, not total
           betpth = (beta-betaft-betanb) * ( btot/bp )**2
-          bootipf = culbst(alphaj,alphan,alphat,beta,betpth,q0,q95, &
+          bootipf = culbst(alphaj,alphap,alphat,beta,betpth,q0,q95, &
                rmajor,rminor,itart)
 
        else
@@ -4209,7 +4210,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function culbst(alphaj,alphan,alphat,beta,betpth,q0,qpsi, &
+  function culbst(alphaj,alphap,alphat,beta,betpth,q0,qpsi, &
        rmajor,rminor,itart)
 
     !+ad_name  culbst
@@ -4218,7 +4219,7 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  alphaj  : input real :  current profile index
-    !+ad_args  alphan  : input real :  density profile index
+    !+ad_args  alphap  : input real :  pressure profile index
     !+ad_args  alphat  : input real :  temperature profile index
     !+ad_args  beta    : input real :  total beta
     !+ad_args  betpth  : input real :  thermal component of poloidal beta
@@ -4236,6 +4237,7 @@ contains
     !+ad_hisc               added diamagnetic term at tight aspect ratio
     !+ad_hist  10/11/11 PJK Initial F90 version
     !+ad_hist  20/02/14 PJK alphap now calculated elsewhere
+    !+ad_hist  24/02/14 PJK Swapped alphan for alphap in argument list
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
     !+ad_docs  H. R. Wilson, Nuclear Fusion <B>32</B> (1992) 257
@@ -4249,14 +4251,14 @@ contains
     !  Arguments
 
     integer, intent(in) :: itart
-    real(kind(1.0D0)), intent(in) :: alphaj,alphan,alphat,beta,betpth, &
+    real(kind(1.0D0)), intent(in) :: alphaj,alphap,alphat,beta,betpth, &
          q0,qpsi,rmajor,rminor
 
     !  Local variables
 
     integer :: i
     real(kind(1.0D0)), dimension(12) :: a, b
-    real(kind(1.0D0)) :: aj,alfpnw,alftnw,alphap,eps1,r1,r2, &
+    real(kind(1.0D0)) :: aj,alfpnw,alftnw,eps1,r1,r2, &
          saj,seps1,sss,termj,termp,termt,term1,term2,z
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
