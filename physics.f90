@@ -975,8 +975,9 @@ contains
     !+ad_call  tcore
     !+ad_call  tprofile
     !+ad_hist  19/02/14 PJK Initial version
+    !+ad_hist  24/02/14 PJK Corrected alphap
     !+ad_stat  Okay
-    !+ad_docs  T&amp;M/PKNIGHT/LOGBOOK24, pp.4-6
+    !+ad_docs  T&amp;M/PKNIGHT/LOGBOOK24, pp.4-7
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1090,10 +1091,11 @@ contains
     p0 = (ne0*te0 + ni0*ti0) * 1.0D3 * echarge
 
     !  Pressure profile index (N.B. no pedestal effects included here)
-    !  Final term is new - see T&M/PKNIGHT/LOGBOOK24, p.7.
-    !  This ensures <p> = <n><T> where <...> denotes volume-averages
+    !  N.B. p0 is NOT equal to <p> * (1 + alphap), but p(rho) = n(rho)*T(rho)
+    !  and <p> = <n>.T_n where <...> denotes volume-averages and T_n is the
+    !  density-weighted temperature
 
-    alphap = alphan + alphat + alphan*alphat
+    alphap = alphan + alphat
 
   contains
 
@@ -1603,7 +1605,7 @@ contains
     !  No consideration of pcharge here...
 
     !  pcoef now calculated in plasma_profiles, after the very first
-    !  call of betcom; use old parabolic profile estimate in this case 
+    !  call of betcom; use old parabolic profile estimate in this case
 
     if (first_call == 1) then
        pc = (1.0D0 + alphan)*(1.0D0 + alphat)/(1.0D0+alphan+alphat)
@@ -4091,6 +4093,8 @@ contains
     !+ad_hist  10/11/11 PJK Initial F90 version
     !+ad_hist  20/02/14 PJK Removed unnecessary use of shared variables;
     !+ad_hist               Corrected error in peak electron beta
+    !+ad_hist  24/02/14 PJK Re-corrected peak electron beta (version prior to
+    !+ad_hisc               previous change was correct after all!)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4112,17 +4116,9 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Calculate peak electron beta, using density-weighted temperature
+    !  Calculate peak electron beta
 
-    !  Original version had error in central pressure calculation:
-    !  dene*ten*(1 + alphan + alphat) should have been
-    !  dene*ten*(1 + alphan + alphat + alphan*alphat)
-    !  See T&M/PKNIGHT/LOGBOOK24, p.7
-
-    !betae0 = dene * ten * 1.0D3*echarge / ( bt**2 /(2.0D0*rmu0) ) * &
-    !     (1.0D0+alphan+alphat)
-
-    betae0 = ne0 * te0*pcoef * 1.0D3*echarge / ( bt**2 /(2.0D0*rmu0) )
+    betae0 = ne0 * te0 * 1.0D3*echarge / ( bt**2 /(2.0D0*rmu0) )
 
     !  Call integration routine
 

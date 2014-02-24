@@ -1405,3 +1405,4 @@ end subroutine output
 !          Modified code output for costs and machine build, particularly to MFILE.DAT
 ! SVN 227: Draft implementation of pedestal profiles (use ipedestal=1)
 ! SVN 228: Fixed alphap problem in culbst
+! SVN 229: Corrected misunderstanding about pressure profiles introduced at SVN 227
