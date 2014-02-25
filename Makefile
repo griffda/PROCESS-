@@ -67,7 +67,7 @@ source = \
  physics.f90 \
  plant_power.f90 \
  plasma_geometry.f90 \
- plasma_profile.f90 \
+ plasma_profiles.f90 \
  process.f90 \
  pulse.f90 \
  rfp.f90 \

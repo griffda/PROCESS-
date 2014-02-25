@@ -262,6 +262,8 @@ contains
     !+ad_hist  07/10/13 RK  First draft of routine
     !+ad_hist  19/12/13 HL  Separate function
     !+ad_hist  19/02/14 PJK Minor modifications to use gamfun
+    !+ad_hist  25/02/14 PJK Fixed error in calculating factorial using gamfun
+    !+ad_hisc               (gamma(a) = factorial(a-1))
     !+ad_stat  Okay
     !+ad_docs  J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
     !
@@ -287,7 +289,7 @@ contains
 
     if (abs(alphat-nint(alphat)) <= numacc) then
        a = real(nint(alphat), kind(1.0D0))
-       gamfac = 3.0D0/gamfun(a) * pi * gamfun(1.0D0 + alphat + 2.0D0/tbeta)
+       gamfac = 3.0D0/gamfun(a+1.0D0) * pi * gamfun(1.0D0 + alphat + 2.0D0/tbeta)
     else
        gamfac = ( (rhopedt - 1.0D0) * &
             (tped + 2.0D0*tped*rhopedt + tsep*(2.0D0+rhopedt)) &
