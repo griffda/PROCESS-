@@ -1415,3 +1415,5 @@ end subroutine output
 ! SVN 233: Fixed error in tcore calculation
 ! SVN 234: Added verbose switch, plus diagnostic output in maths_library.f90;
 !          VMCON line search now exits and restarts if conditions appear unfavourable
+! SVN 235: Typo fix in maths_library.f90;
+!          Added mkovari's write_constraints.py utility

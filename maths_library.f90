@@ -2210,7 +2210,7 @@ contains
 
        if (sum <= tol) then
           if (verbose == 1) then
-             write(*,*) 'Convergence parameter < convergence criterion (epsvmv)'
+             write(*,*) 'Convergence parameter < convergence criterion (epsvmc)'
           end if
           return
        end if
