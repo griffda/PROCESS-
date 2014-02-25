@@ -677,6 +677,7 @@ contains
     !+ad_hist  08/04/13 MDK Recalculated the geometry, and expressed in terms of
     !+ad_hist               tangency radius
     !+ad_hist  07/11/13 PJK Modified TF coil toroidal half-width calculation
+    !+ad_hist  25/02/14 PJK Added error trap for narrow gaps
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code
     !
@@ -726,14 +727,29 @@ contains
     phi = theta - asin(a/e)
 
     g = sqrt( e*e + f*f - 2.0D0*e*f*cos(phi) )  !  cosine rule
-    h = sqrt( g*g - c*c )
 
-    alpha = atan(h/c)
-    eps = asin(e*sin(phi)/g) - alpha  !  from sine rule
+    if (g > c) then
 
-    !  Maximum tangency radius for centreline of beam (m)
+       h = sqrt( g*g - c*c )
 
-    rtanmax = f*cos(eps) - 0.5D0*c
+       alpha = atan(h/c)
+       eps = asin(e*sin(phi)/g) - alpha  !  from sine rule
+
+       !  Maximum tangency radius for centreline of beam (m)
+
+       rtanmax = f*cos(eps) - 0.5D0*c
+
+    else  !  coil separation is too narrow for beam...
+
+       write(*,*) 'Warning in routine PORTSZ:'
+       write(*,*) 'Maximum beam tangency radius set to zero temporarily.'
+       write(*,*) 'If no solution is found, set realistic limits on tftort'      
+       write(*,*) '(TF coil toroidal thickness (m), iteration variable 77)'
+       write(*,*) 'or reduce beam width (beamwd)'
+
+       rtanmax = 0.0D0
+
+    end if
 
   end subroutine portsz
 

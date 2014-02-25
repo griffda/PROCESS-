@@ -1968,6 +1968,8 @@ contains
     !+ad_hist  26/11/13 PJK Improved OH coil self inductance, and OH-plasma
     !+ad_hisc               mutual inductance calculations;
     !+ad_hisc               Removed obsolete argument to bfield calls
+    !+ad_hist  25/02/14 PJK Raised nohmax, and added warning message
+    !+ad_hisc               if noh is too large
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1981,7 +1983,7 @@ contains
 
     !  Local variables
 
-    integer, parameter :: nohmax = 50 !  Maximum no. of segments for the OH coil
+    integer, parameter :: nohmax = 200 !  Maximum no. of segments for the OH coil
     integer, parameter :: nplas = 1 !  Number of filaments describing the plasma
 
     real(kind(1.0D0)), allocatable, dimension(:) :: roh,zoh
@@ -2011,6 +2013,17 @@ contains
     !  for the benefit of the mutual inductance calculations later
 
     noh = int( ceiling( 2.0D0*zh(nohc) / (rb(nohc)-ra(nohc)) ) )
+
+    if (noh > nohmax) then
+       write(*,*) 'Warning in routine INDUCT:'
+       write(*,*) 'Maximum no. of segments for the OH coil is not sufficient.'
+       write(*,*) 'This will cause a square root of a negative number;'
+       write(*,*) 'Please increase the lower bound for ohcth.'
+       write(*,*) 'OH coil thickness (m) (iteration variable 16) (ohcth)=',ohcth
+       write(*,*) 'Number of segments required (noh)=',noh
+       write(*,*) 'Maximum no. of segments permitted=',nohmax 
+    end if
+
     noh = min(noh,nohmax)
 
     allocate(roh(noh), zoh(noh))
@@ -2047,12 +2060,20 @@ contains
 
     if (iohcl /= 0) then
        xohpl = 0.0D0
+       if (ohcth >= delzoh) then
+          deltar = sqrt((ohcth**2 - delzoh**2)/12.0D0)
+       else
+          write(*,*) 'Error in routine INDUCT:'
+          write(*,*) 'Negative square root imminent - '
+          write(*,*) 'Please raise ohcth or its upper limit'
+          write(*,*) 'PROCESS stopping.'
+          stop
+       end if
        do i = 1,noh
           rp = roh(i)
           zp = zoh(i)
 
           reqv = rp*(1.0D0 + delzoh**2 / (24.0D0*rp**2))
-          deltar = sqrt((ohcth**2 - delzoh**2)/12)
 
           call bfield(nc,rc,zc,cc,xcin, reqv-deltar,zp,br,bz,psi)
           call bfield(nc,rc,zc,cc,xcout,reqv+deltar,zp,br,bz,psi)

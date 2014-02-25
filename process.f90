@@ -1417,3 +1417,6 @@ end subroutine output
 !          VMCON line search now exits and restarts if conditions appear unfavourable
 ! SVN 235: Typo fix in maths_library.f90;
 !          Added mkovari's write_constraints.py utility
+! SVN 236: Minor additions to User Guide;
+!          Trapped problem with port size calculation if coil spacing is too narrow;
+!          Trapped probable negative square root argument if OH coil is very wide

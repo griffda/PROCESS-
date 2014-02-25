@@ -65,6 +65,7 @@ Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 %  update stellarator description (wait for coil model implementation)
 %  iavail usage
 %  python utilities
+%  pedestal profiles
 %  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -3373,6 +3374,9 @@ information, telling the user where the problem occurs, and also suggest a
 possible solution. These messages are out of necessity brief, and so cannot
 promise to lead to a more successful outcome.
 
+For expert users, there is the option to turn on extra debugging output; to do
+this, set \texttt{verbose = 1} in the input file.
+
 \subsection{Optimisation problems}
 
 On reflection it is perhaps surprising that \process\/ ever does manage to
@@ -3460,6 +3464,10 @@ Similarly, the order in which the constraint equations and iteration variables
 are stored in the \texttt{icc} and \texttt{ixc} arrays can make the difference
 between a feasible and unfeasible result. This seemingly illogical behaviour
 is, sadly, typical of the way in which the code works.
+
+Another technique in such situations may be to change the finite difference
+step length \texttt{epsfcn}, as this might subtly change the path taken in the
+approach towards a solution.
 
 \Red{\textit{Note added 17/01/2013}}: It has been found that, during
 optimisation runs, the iteration variable indicated by the final specified
@@ -3789,6 +3797,32 @@ has been created manually and all changes need to be kept up to date manually.
 
 \item{\texttt{NON\_F\_VALUES}} - list of fortran identifier strings of
   iteration variables that start with an f, but are not f-values.
+
+\end{description}
+
+\section{write\_constraints.py}
+
+\subsubsection*{Author: Michael Kovari, CCFE}
+
+This python script modifies the \process\ input file \texttt{IN.DAT} to
+include the constraints marked \texttt{"Y"} in a configuration file called
+\texttt{constraints.prn} (an example file may be obtained from the author). It
+also automatically includes the required iteration variable for each
+constraint, and any additional iteration variables selected.
+
+The script also creates blank upper and lower bound equations --- these need
+to be completed or deleted.
+
+All files used are in the working directory. The original \texttt{IN.DAT} is
+renamed \texttt{OLD.IN.DAT}.
+
+\begin{description}
+
+\item{\textbf{Input files:}}
+\texttt{IN.DAT}, \texttt{constraints.prn}
+                                
+\item{\textbf{Output files:}}
+\texttt{IN.DAT}, \texttt{OLD.IN.DAT}
 
 \end{description}
 
