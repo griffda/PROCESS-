@@ -435,6 +435,12 @@ contains
 
        variable: select case (varnam(1:varlen))
 
+          !  General settings
+
+       case ('VERBOSE')
+          call parse_int_variable('VERBOSE', verbose, 0, 1, &
+               'Switch for diagnostic output')
+
           !  Numerical solver settings
 
        case ('BOUNDL')

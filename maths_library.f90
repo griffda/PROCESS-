@@ -55,12 +55,15 @@ module maths_library
   !+ad_desc  were derived from a number of different numerical libraries
   !+ad_desc  including BLAS, MINPAC and the Harwell subroutine library.
   !+ad_prob  None
-  !+ad_call  None
+  !+ad_call  global_variables
   !+ad_hist  10/10/12 PJK Initial version of module
+  !+ad_hist  25/02/14 PJK Added global_variables
   !+ad_stat  Okay
   !+ad_docs  http://en.wikipedia.org/wiki/Gamma_function
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use global_variables, only: verbose
 
   implicit none
 
@@ -582,6 +585,7 @@ contains
     !+ad_call  sgefa
     !+ad_hist  --/06/79 Linpack algorithm version
     !+ad_hist  15/11/11 PJK Initial F90 version
+    !+ad_hist  25/02/14 PJK Added diagnostic output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -612,6 +616,11 @@ contains
        info = 1
     else
        info = 2
+       if (verbose == 1) then
+          call sgedi(h,ih,n,ipvt,det,10)  !  Calculate determinant only
+          write(*,*) 'Determinant = det(1) * 10.0**det(2)',det
+          write(*,*) 'H matrix is singular in subroutine hinv'
+       end if
     end if
 
   end subroutine hinv
@@ -812,6 +821,7 @@ contains
     !+ad_call  sscal
     !+ad_hist  14/08/78 CM  Linpack version
     !+ad_hist  15/11/11 PJK Initial F90 version
+    !+ad_hist  25/02/14 PJK Added diagnostic output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -832,6 +842,14 @@ contains
     real(kind(1.0D0)) :: t
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (verbose == 1) then
+       do j = 1,n
+          if (all(a(j,:) == 0.0D0)) then
+             write(*,*) 'Line ',j,' in matrix a in subroutine sgefa is all zero'
+          end if
+       end do
+    end if
 
     info = 0
     nm1 = n - 1
@@ -876,13 +894,22 @@ contains
 
           else
              info = k
+             if (verbose == 1) then
+                write(*,*) 'a(l,k) = 0.0D0 in subroutine sgefa'
+                write(*,*) 'info=k=',info
+             end if
           end if
        end do
 
     end if
 
     ipvt(n) = n
-    if (a(n,n) == 0.0D0) info = n
+    if (a(n,n) == 0.0D0) then
+       info = n
+       if (verbose == 1) then
+          write(*,*) 'Error: a(n,n) == 0.0D0 in subroutine sgefa'
+       end if
+    end if
 
   end subroutine sgefa
 
@@ -1822,6 +1849,7 @@ contains
     !+ad_auth  R L Crane, K E Hillstrom, M Minkoff, Argonne National Lab
     !+ad_auth  J Galambos, FEDC/ORNL
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  M D Kovari, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  fcnvmc1 : external subroutine : routine to calculate the
     !+ad_argc    objective and constraint functions
@@ -1926,6 +1954,8 @@ contains
     !+ad_hist  21/05/91 JG  Modified for separate fcnvmc1, fcnvmc2 functions
     !+ad_hist  09/10/12 PJK Initial F90 version
     !+ad_hist  06/11/12 PJK Added recursive attribute, for startup routine
+    !+ad_hist  25/02/14 MDK Added an escape from the line search to help ensure
+    !+ad_hisc               convergence
     !+ad_stat  Okay
     !+ad_docs  ANL-80-64: Solution of the General Nonlinear Programming Problem
     !+ad_docc  with Subroutine VMCON, Roger L Crane, Kenneth E Hillstrom and
@@ -2172,9 +2202,18 @@ contains
           sum = sum + abs(vlam(k)*temp)
        end do
 
+       if (verbose == 1) then
+          write(*,*) 'VMCON optimiser convergence parameter = ',sum
+       end if
+
        !  Exit if convergence criterion is satisfied
 
-       if (sum <= tol) return
+       if (sum <= tol) then
+          if (verbose == 1) then
+             write(*,*) 'Convergence parameter < convergence criterion (epsvmv)'
+          end if
+          return
+       end if
 
        !  Set sum to the weighted sum of infeasibilities
        !  Set fls to the line search objective function
@@ -2237,6 +2276,16 @@ contains
              !  Exit line search if function difference is small
 
              if (aux <= (cp1*dflsa)) exit line_search
+
+             !  Escape from the line search if the line search function is increasing
+             !  Outer loop is forced to repeat
+
+             if (aux > 0.0D0) then
+                if (verbose == 1) then
+                   write(*,*) 'VMCON optimiser line search attempt failed - retrying...'
+                end if
+                exit line_search
+             end if
 
              !  Exit if the line search requires ten or more function
              !  evaluations
@@ -2478,6 +2527,8 @@ contains
     !  Modified to pass ILOWER,IUPPER, BNDL,BNDU in through argument list
     !  instead of through COMMON, J. Galambos, (5/21/91)
 
+    !  25/02/14 PJK Diagnostic output added
+
     IMPLICIT NONE
 
     INTEGER n,m,meq,lcnorm,lb,info,ldel,lh,mact,lwa,liwa
@@ -2593,13 +2644,24 @@ contains
     call harwqp(np1,mtotal,b,lb,gm,cnorm,lcnorm,cm,bdl,bdu,delta, &
          mact,meq,h,lh,iwa,wa,iwa(4*(n+1)+m+1),mode,info)
 
-    if (info  /=  1) goto 130
+    if (info /= 1) then
+       if (verbose == 1) then
+          write(*,*) 'A singular matrix was detected in HINV: info /= 1'
+       end if
+       goto 130
+    end if
 
     !  Check whether the required feasibility conditions hold
     !  If delta(np1) is sufficiently small there is no feasible
     !  solution
 
-    if (delta(np1) <= cdm6) goto 120
+    if (delta(np1) <= cdm6) then
+       if (verbose == 1) then
+          write(*,*) 'QPSUB: delta(np1) is too small: no feasible solution'
+          write(*,*) 'delta(np1)=',delta(np1),' np1=',np1
+       end if
+       goto 120
+    end if
 
     !  Check whether active constraints are bounds
 
@@ -2607,12 +2669,27 @@ contains
        if (iwa(j) > npp) goto 110
        if (iwa(j) == npp) goto 101
        if (iwa(j) > np1) goto 105
-       if (iwa(j) == np1) goto 130
-       if (ilower(iwa(j)) == 0) goto 130
+       if (iwa(j) == np1) then
+          if (verbose == 1) write(*,*) 'QPSUB: iwa(j) == np1',' j=',j,' iwa(j)=',iwa(j)
+          goto 130
+       end if
+       if (ilower(iwa(j)) == 0) then
+          if (verbose == 1) then
+             write(*,*) 'QPSUB: An artificial constraint is active:'
+             write(*,*) 'ilower(iwa(j)) == 0',' j=',j,' iwa(j)=',iwa(j)
+          end if
+          goto 130
+       end if
        goto 110
 105    continue
        inx = iwa(j) - np1
-       if (iupper(inx) == 0) goto 130
+       if (iupper(inx) == 0) then
+          if (verbose == 1) then
+             write(*,*) 'QPSUB: An artificial constraint is active:'
+             write(*,*) 'iupper(inx) == 0',' inx=',inx
+          end if
+          goto 130
+       end if
        goto 110
 101    continue
 
@@ -2629,7 +2706,13 @@ contains
     !  A second call to harwqp found blu(np1) to still be inactive
     !  thus an error exit is made
 
-    if (iflag >= 0) goto 120
+    if (iflag >= 0) then
+       if (verbose == 1) then
+          write(*,*) 'QPSUB: A second call to HARWQP found blu(np1) to still be inactive:'
+          write(*,*) 'iflag = ',iflag
+       end if
+       goto 120
+    end if
 
     !  Reduce bdu(np1) and retry harwqp
 
@@ -2678,6 +2761,8 @@ contains
     !+**PJK 02/11/92 code of the routine itself. The program runs without
     !+**PJK 02/11/92 error but beware of future modifications.
 
+    !  25/02/14 PJK Diagnostic output added
+
     IMPLICIT NONE
 
     INTEGER n,m,ia,ic,k,ke,ih,mode,info
@@ -2689,6 +2774,7 @@ contains
          h(ih,*),wa(*)
     real(kind(1.0D0)) alpha, cac, cc, chc, ghc, y, z, zz
     real(kind(1.0D0)) r0
+    real(kind(1.0D0)), dimension(2) :: det
 
     LOGICAL retest,passiv,postiv
 
@@ -3158,6 +3244,17 @@ contains
     do i = 1,m
        lt(nn+i) = 1
     end do
+
+    !  MDK Check for singular matrix
+    !  h matrix is unchanged if determinant only (job=10) is requested.    
+
+    if (verbose == 1) then
+       call sgedi(h,ih,n,iwa,det,10)
+       if (det(1) == 0.0D0) then
+          write(*,*) 'HARWQP: Determinant=0 at checkpoint 1'
+       end if
+    end if
+
     call hinv(h,ih,n,iwa,info)
     if (info  /=  1) goto 1000
 

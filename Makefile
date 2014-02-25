@@ -195,12 +195,13 @@ divertor.o: global_variables.o output.o
 evaluators.o: global_variables.o numerics.o
 fispact.o: global_variables.o
 fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o
+global_variables.o:
 ife.o: availability.o costs.o global_variables.o output.o
 initial.o: global_variables.o output.o scan.o stellarator.o
 input.o: global_variables.o numerics.o output.o scan.o
 iteration_variables.o: global_variables.o numerics.o
 machine_build.o: global_variables.o output.o
-maths_library.o: 
+maths_library.o: global_variables.o
 numerics.o: maths_library.o
 output.o:
 pfcoil.o: global_variables.o maths_library.o output.o

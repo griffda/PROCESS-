@@ -1413,3 +1413,5 @@ end subroutine output
 !          circular compilation issues.
 ! SVN 232: Fixed Id problem in plasma_profiles.f90
 ! SVN 233: Fixed error in tcore calculation
+! SVN 234: Added verbose switch, plus diagnostic output in maths_library.f90;
+!          VMCON line search now exits and restarts if conditions appear unfavourable

@@ -26,6 +26,11 @@ module global_variables
   !+ad_vars  icase : description of plant plant model being used
   character(len=48) :: icase = 'PROCESS standard D-T tokamak model'
 
+  !+ad_vars  verbose /0/ : switch for turning on/off diagnostic messages:<UL>
+  !+ad_varc            <LI> = 0 turn off diagnostics
+  !+ad_varc            <LI> = 1 turn on diagnostics</UL>
+  integer :: verbose = 0
+
 end module global_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
