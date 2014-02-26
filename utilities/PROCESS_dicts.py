@@ -8,6 +8,7 @@ extraction tool.
 Author: Hanni Lux (Hanni.Lux@ccfe.ac.uk)
 
 Date: 18 Nov. 2013 - up to date at PROCESS version 202
+Update: 26/02/2014 - up to date at PROCESS version 238
 
 """
 
@@ -15,7 +16,7 @@ from collections import defaultdict
 
 
 #dictionary of all iteration variables
-dict_ixc_simple = {'1':'aspect', '2':'bt', '3':'rmajor', '4':'te', '5':'beta', '6':'dene', '7':'rnbeam', '8':'fbeta', '9':'fdene', '10':'hfact', '11':'pheat', '12':'oacdcp', '13':'tfcth', '14':'fwalld', '15':'fvs', '16':'ohcth', '17':'tdwell', '18':'q', '19':'enbeam', '20':'tcpav', '21':'ftburn', '22':'tbrnmn', '23':'fcoolcp', '24':'cdtfleg', '25':'fpnetel', '26':'ffuspow', '27':'fhldiv', '29':'bore', '30':'fmva', '31':'gapomin', '32':'frminor', '33':'fportsz', '34':'fdivcol', '35': 'fpeakb', '36':'fbetatry', '37':'coheof', '38':'fjohc', '39':'fjohc0', '40':'fgamcd', '41':'fcohbop', '42':'gapoh', '43':'cfe0', '44':'fvsbrnni', '45':'fqval', '46':'fpinj', '47':'feffcd', '48':'fstrcase', '49':'fstrcond', '50':'fiooic', '51':'fvdump', '52':'vdalw', '53':'fjprot', '54':'ftmargtf', '55':'tmargmin', '56':'tdmptf', '57':'thkcas', '58':'thwcndut', '59':'fcutfsu', '60':'cpttf', '61':'gapds', '62':'fdtmp','63':'ftpeak', '64':'fauxmn', '65':'tohs', '66':'ftohs', '67':'ftcycl', '68':'fptemp', '69':'rcool','70':'vcool', '71':'fq', '72':'fipir', '73':'scrapli', '74':'scraplo', '75':'tfootfi', '76':'frfptf', '77':'tftort', '78':'rfpth', '79':'fbetap', '80':'frfpf', '81':'edrive', '82':'drveff', '83':'tgain', '84':'chrad', '85':'pdrive', '86':'frrmax', '87':'helecmw', '88':'hthermmw', '89':'ftbr', '90':'blbuith', '91':'blbuoth', '92':'fflutf', '93':'shldith', '94':'shldoth', '95':'fptfnuc', '96':'fvvhe'}
+dict_ixc_simple = {'1':'aspect', '2':'bt', '3':'rmajor', '4':'te', '5':'beta', '6':'dene', '7':'rnbeam', '8':'fbeta', '9':'fdene', '10':'hfact', '11':'pheat', '12':'oacdcp', '13':'tfcth', '14':'fwalld', '15':'fvs', '16':'ohcth', '17':'tdwell', '18':'q', '19':'enbeam', '20':'tcpav', '21':'ftburn', '22':'tbrnmn', '23':'fcoolcp', '24':'cdtfleg', '25':'fpnetel', '26':'ffuspow', '27':'fhldiv', '29':'bore', '30':'fmva', '31':'gapomin', '32':'frminor', '33':'fportsz', '34':'fdivcol', '35': 'fpeakb', '36':'fbetatry', '37':'coheof', '38':'fjohc', '39':'fjohc0', '40':'fgamcd', '41':'fcohbop', '42':'gapoh', '43':'cfe0', '44':'fvsbrnni', '45':'fqval', '46':'fpinj', '47':'feffcd', '48':'fstrcase', '49':'fstrcond', '50':'fiooic', '51':'fvdump', '52':'vdalw', '53':'fjprot', '54':'ftmargtf', '55':'tmargmin', '56':'tdmptf', '57':'thkcas', '58':'thwcndut', '59':'fcutfsu', '60':'cpttf', '61':'gapds', '62':'fdtmp','63':'ftpeak', '64':'fauxmn', '65':'tohs', '66':'ftohs', '67':'ftcycl', '68':'fptemp', '69':'rcool','70':'vcool', '71':'fq', '72':'fipir', '73':'scrapli', '74':'scraplo', '75':'tfootfi', '76':'frfptf', '77':'tftort', '78':'rfpth', '79':'fbetap', '80':'frfpf', '81':'edrive', '82':'drveff', '83':'tgain', '84':'chrad', '85':'pdrive', '86':'frrmax', '87':'helecmw', '88':'hthermmw', '89':'ftbr', '90':'blbuith', '91':'blbuoth', '92':'fflutf', '93':'shldith', '94':'shldoth', '95':'fptfnuc', '96':'fvvhe', '97':'fpsepr', '98': 'li6enrich', '99':'ftftort', '100':'ftfthko'}
 
 
 
@@ -117,6 +118,10 @@ dict_ixc_full[ '93'] = { 'name':'shldith',  'lb':0.001, 'ub':10.}
 dict_ixc_full[ '94'] = { 'name':'shldoth',  'lb':0.001, 'ub':10.} 
 dict_ixc_full[ '95'] = { 'name':'fptfnuc',  'lb':0.001, 'ub':1.} 
 dict_ixc_full[ '96'] = { 'name':'fvvhe',    'lb':0.001, 'ub':1.}
+dict_ixc_full[ '97'] = { 'name':'fpsepr',   'lb':0.001, 'ub':1.} 
+dict_ixc_full[ '98'] = { 'name':'li6enrich','lb':0.001, 'ub':100.}
+dict_ixc_full[ '99'] = { 'name':'ftftort',  'lb':0.001, 'ub':1.} 
+dict_ixc_full[ '100']= { 'name':'ftfthko',  'lb':0.001, 'ub':1.}
 
 
 
@@ -218,7 +223,23 @@ dict_ixc_bounds['shldith']  = { 'lb':0.001, 'ub':10.}   #93
 dict_ixc_bounds['shldoth']  = { 'lb':0.001, 'ub':10.}   #94
 dict_ixc_bounds['fptfnuc']  = { 'lb':0.001, 'ub':1.}    #95
 dict_ixc_bounds['fvvhe']    = { 'lb':0.001, 'ub':1.}    #96
+dict_ixc_bounds['fpsepr']   = { 'lb':0.001, 'ub':1.}    #97
+dict_ixc_bounds['li6enrich']= { 'lb':0.001, 'ub':100.}  #98
+dict_ixc_bounds['ftftort']  = { 'lb':0.001, 'ub':1.}    #99
+dict_ixc_bounds['ftfthko']  = { 'lb':0.001, 'ub':1.}    #100
 
 
 #parameters that start with f, but are not f-values
 NON_F_VALUES = ['fcohbop','fvsbrnni','feffcd','fcutfsu']
+
+
+
+#dict mapping nsweep to ixc no, if applicable
+dict_nsweep2ixc = {'1':'1', '4':'10', '5':'12', '8':'45', '9':'4', '14':'50', '15':'53', '16':'3', '20':'22'}
+
+#dict mapping ixc no to nsweep, if applicable
+dict_ixc2nsweep = {'1':'1', '10':'4', '12':'5', '45':'8', '4':'9', '50':'14', '53':'15', '3':'16', '22':'20'}
+
+
+#dict mapping PLOT.DAT labels to short names
+dict_PLOTDATlabels = {'Safety_Factor':r'$q$', 'Epsilon_Beta_Poloidal':r'$\epsilon_{\beta_{Pol}}$', 'PF_coil_Power_(MW)':r'$P_{PF}$(MW)', 'C/P_coolant_velocity(m/s)':r'$V_{C/P cool.}$(m/s)', 'Neutral_Beam_Energy_(MeV)':'NB Energy(MeV)', 'Direct_cost_(billions)':'Direct cost(billions)', 'qlim_(zero_if_ishape=0)':r'$q_{lim}$', 'Major_Radius_(m)':r'$R$(m)', 'Average_Dens_(10^20/m^3)':r'$<n>(10^{20}/m^3)$', 'J_TF_inboard_leg_(MA/m^2)':r'$J_{TF}$ inboard leg$(MA/m^2)$', 'Gross_Elect_Pwr_(MW)':'Gross Elect Pwr(MW)', 'PF_coil_weight_(kg)':r'$M_{PFcoil}$(kg)', 'Operations_cost_(mil/kwh)':'Op. cost(mil/kwh)', 'Wall_Load_(MW/m^2)':r'Wall Load$(MW/m^2)$', 'TF_coil_weight_(kg)':r'$M_{TF coil}$(kg)', 'B_Toroidal_Axis_(T)':r'$B_{Tor}(axis)$(T)', 'H-fact_Iter_Offset':'H-fact Iter Offset', 'Beta':r'$\beta$', 'C/P_pump_power_(MW)':r'$P_{C/P pump}$(MW)', 'Net_electric_Pwr_(MW)':r'$P_{Net electr.}$(MW)', 'Res_TF_inbrd_leg_Pwr_(MW)':'Res TF inbrd leg Pwr(MW)', 'Aspect_Ratio':r'$R/a$', 'Injection_Power_(MW)':r'$P_{inj}$(MW)', 'Capital_cost_(mil/kwh)':'Cap. cost(mil/kwh)', 'Heating_Power_(MW)':r'$P_{heat}$(MW)', 'H-fact_Iter_Power':'H-fact Iter Power', 'Core_costs_(millions)':'Core costs(millions)', 'Divertor_Heat_(MW/m^2)':r'$P_{Div}/A(MW/m^2)$', 'B_total_on_axis_(T)':r'$B_{tot}(axis)$(T)', 'Fuel_cost_(mil/kwh)':'Fuel cost(mil/kwh)', 'Recirculating_Fraction':r'$f_{recirc}$', 'Current_Drive_(MW)':r'$P_{CD}$(MW)', 'C/P_coolant_radius_(m)':r'$r_{C/P cool.}$(m)', 'Fusion_Power_(MW)':r'$P_{fus}$(MW)', 'Sqsumsq':r'$\sqrt{\sum_i c_i^2}$', 'Average_Temp_x10_(KeV)':r'$10<T>$(keV)', 'Coolant_Fraction_Ctr.':r'$f_{Cool.}$(Ctr.)', 'Inject_Pwr_Wall_Plug_(MW)':r'$P_{Inj,WallPlug}$(MW)', 'Centrepost_max_T_(TART)':r'$T_{max}(Centrepost)$(TART)', 'Bootstrap_Fraction':r'$I_B/I$', 'Ifail':'ifail', 'Plasma_Current_(MA)':r'$I_P$(MA)', 'Beta_Limit':r'$\beta_{lim}$', 'TF_stress_(MPa)':r'Stress$_{TF}$(MPa)', 'nb_Fusion_Power_(MW)':r'$P_{fus,nb}$(MW)', 'Capital_cost_(mil)':'Cap. cost(mil)', 'TF_coil_Power_(MW)': r'$P_{TF}(MW)$', 'Electric_cost_(mil/kwh)':'El. cost(mil/kwh)', 'Big_Q': r'$Q$' }

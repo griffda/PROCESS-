@@ -1378,7 +1378,7 @@ contains
     !  Initialise local quantities
 
     alow = 0.0D0
-    bhigh = 0.999D0
+    bhigh = 0.999D0  !  N.B. setting this to 1.0 causes NaNs to occur
     epsq8 = 1.0D-9
 
     !  Find fusion power
