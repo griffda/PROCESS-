@@ -240,7 +240,7 @@ clean:
 	rm -f process.exe *.o *.mod
 	rm -f *~
 	rm -f autodoc
-	rm -f *.aux *.log process.dvi process.toc
+	rm -f *.aux *.log process.dvi process.toc process.lof process.lot
 
 # Make a tar distribution of the source and other critical files
 # from the current directory

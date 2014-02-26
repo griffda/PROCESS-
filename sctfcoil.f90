@@ -80,6 +80,7 @@ contains
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  18/12/12 PJK/RK Modified vertical bore for single-null cases
     !+ad_hist  06/11/13 PJK Modified coil case mass and leg area calculations
+    !+ad_hist  26/02/14 PJK Changed comment in the case of too small tftort
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -349,7 +350,8 @@ contains
        write(*,*) '  TF outboard length toroidal thickness, tftort = ',tftort
        write(*,*) '                Winding pack + insulation width = ', &
             wwp1 + 2.0D0*tinstf
-       write(*,*) 'Consider raising tftort in input file...'
+       write(*,*) 'Consider turning on constraint 57 with variables 99, 77,'
+       write(*,*) 'or raising tftort in input file...'
     end if
 
     !  TF Coil areas and masses

@@ -2706,6 +2706,7 @@ module constraint_variables
   !+ad_hist  25/09/13 PJK Changed fportsz description
   !+ad_hist  30/09/13 PJK Added pseprmax, fpsepr
   !+ad_hist  28/10/13 PJK Corrected fdene comment
+  !+ad_hist  26/02/14 PJK Added ftftort, ftfthko
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2830,6 +2831,12 @@ module constraint_variables
   !+ad_vars  ftcycl /1.0/ : f-value for cycle time
   !+ad_varc                 (constraint equation 42, iteration variable 67)
   real(kind(1.0D0)) :: ftcycl = 1.0D0
+  !+ad_vars  ftfthko /1.0/ : f-value for TF coil outer leg radial thickness lower limit
+  !+ad_varc                  (constraint equation 58, iteration variable 100)
+  real(kind(1.0D0)) :: ftfthko = 1.0D0
+  !+ad_vars  ftftort /1.0/ : f-value for TF coil outer leg toroidal width lower limit
+  !+ad_varc                  (constraint equation 57, iteration variable 99)
+  real(kind(1.0D0)) :: ftftort = 1.0D0
   !+ad_vars  ftmargtf /1.0/ : f-value for TF coil temperature margin
   !+ad_varc                   (constraint equation 36, iteration variable 54)
   real(kind(1.0D0)) :: ftmargtf = 1.0D0

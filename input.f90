@@ -357,6 +357,7 @@ contains
     !+ad_hist  24/02/14 PJK Removed echoing of long input lines to output
     !+ad_hist  26/02/14 PJK Changed references to non-optimising solver
     !+ad_hisc               from hybrid to hybrd
+    !+ad_hist  26/02/14 PJK Added FTFTORT, FTFTHKO, FJOHC
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -756,6 +757,9 @@ contains
        case ('FIPIR')
           call parse_real_variable('FIPIR', fipir, 0.001D0, 10.0D0, &
                'F-value for Ip/Irod')
+       case ('FJOHC')
+          call parse_real_variable('FJOHC', fjohc, 0.001D0, 10.0D0, &
+               'F-value for OH coil current at EOF')
        case ('FJOHC0')
           call parse_real_variable('FJOHC0', fjohc0, 0.001D0, 10.0D0, &
                'F-value for OH coil current at BOP')
@@ -832,6 +836,12 @@ contains
        case ('FTCYCL')
           call parse_real_variable('FTCYCL', ftcycl, 0.001D0, 10.0D0, &
                'F-value for cycle time')
+       case ('FTFTHKO')
+          call parse_real_variable('FTFTHKO', ftfthko, 0.001D0, 1.0D0, &
+               'F-value for minimum TF coil leg rad width')
+       case ('FTFTORT')
+          call parse_real_variable('FTFTORT', ftftort, 0.001D0, 1.0D0, &
+               'F-value for minimum TF coil leg tor width')
        case ('FTMARGTF')
           call parse_real_variable('FTMARGTF', ftmargtf, 0.001D0, 10.0D0, &
                'F-value for TF coil temp. margin')

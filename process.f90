@@ -1423,3 +1423,4 @@ end subroutine output
 ! SVN 237: Used HYBRD throughout instead of HYBRID;
 !          Added new argument niter to VMCON;
 !          Added lists of figures and tables to User Guide
+! SVN 238: Added constraints 57, 58, and iteration variables 99, 100

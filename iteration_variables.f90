@@ -52,6 +52,7 @@ subroutine loadxc
   !+ad_hist  30/09/13 PJK Added fpsepr (97)
   !+ad_hist  17/10/13 PJK Modified logic for cdtfleg usage
   !+ad_hist  28/11/13 PJK Added li6enrich (98)
+  !+ad_hist  26/02/14 PJK Added ftftort (99) and ftfthko (100)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -233,6 +234,8 @@ subroutine loadxc
      case (96) ; xcm(i) = fvvhe
      case (97) ; xcm(i) = fpsepr
      case (98) ; xcm(i) = li6enrich
+     case (99) ; xcm(i) = ftftort
+     case (100) ; xcm(i) = ftfthko
 
      case default
         write(*,*) 'Error in routine LOADXC :'
@@ -327,6 +330,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  19/06/13 PJK fjtfc (var.28) is obsolete - added error trap
   !+ad_hist  30/09/13 PJK Added fpsepr (97)
   !+ad_hist  28/11/13 PJK Added li6enrich (98)
+  !+ad_hist  26/02/14 PJK Added ftftort (99) and ftfthko (100)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -464,6 +468,8 @@ subroutine convxc(xc,nn)
      case (96) ; fvvhe     = xc(i)/scale(i)
      case (97) ; fpsepr    = xc(i)/scale(i)
      case (98) ; li6enrich = xc(i)/scale(i)
+     case (99) ; ftftort   = xc(i)/scale(i)
+     case (100) ; ftfthko  = xc(i)/scale(i)
 
      case default
         write(*,*) 'Error in routine CONVXC :'

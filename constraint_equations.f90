@@ -81,6 +81,7 @@ subroutine constraints(m,cc,ieqn)
   !+ad_hist  17/12/13 PJK Added ieqn argument to optionally only evaluate
   !+ad_hisc               one of the constraint equations
   !+ad_hist  13/02/14 PJK Made limit equations uniform in style
+  !+ad_hist  26/02/14 PJK Added new eqns 57, 58
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -363,7 +364,7 @@ subroutine constraints(m,cc,ieqn)
      case (39)  !  Equation to limit temperature in first wall
 
         if (tpeak == 0.0D0) then
-           write(*,*) 'Error in routine EQNS:'
+           write(*,*) 'Error in routine CONSTRAINTS:'
            write(*,*) 'tpeak = 0, indicating that the pulsed'
            write(*,*) 'reactor option is not turned on.'
            write(*,*) 'Do not use constraint 39 if lpulse=0.'
@@ -383,7 +384,7 @@ subroutine constraints(m,cc,ieqn)
      case (42)  !  Equation to limit minimum cycle time
 
         if (tcycmn == 0.0D0) then
-           write(*,*) 'Error in routine EQNS:'
+           write(*,*) 'Error in routine CONSTRAINTS:'
            write(*,*) 'tcycmn = 0, indicating that the pulsed'
            write(*,*) 'reactor option is not turned on.'
            write(*,*) 'Do not use constraint 42 if lpulse=0.'
@@ -397,7 +398,7 @@ subroutine constraints(m,cc,ieqn)
                 !  This is a consistency equation (TART).
 
         if (itart == 0) then
-           write(*,*) 'Error in routine EQNS:'
+           write(*,*) 'Error in routine CONSTRAINTS:'
            write(*,*) 'Do not use constraint 43 if itart=0.'
            write(*,*) 'PROCESS stopping.'
            stop
@@ -407,7 +408,7 @@ subroutine constraints(m,cc,ieqn)
      case (44)  !  Equation for peak centerpost temperature limit
 
         if (itart == 0) then
-           write(*,*) 'Error in routine EQNS:'
+           write(*,*) 'Error in routine CONSTRAINTS:'
            write(*,*) 'Do not use constraint 44 if itart=0.'
            write(*,*) 'PROCESS stopping.'
            stop
@@ -417,7 +418,7 @@ subroutine constraints(m,cc,ieqn)
      case (45)  !  Equation for minimum edge safety factor limit (TART)
 
         if (itart == 0) then
-           write(*,*) 'Error in routine EQNS:'
+           write(*,*) 'Error in routine CONSTRAINTS:'
            write(*,*) 'Do not use constraint 45 if itart=0.'
            write(*,*) 'PROCESS stopping.'
            stop
@@ -428,7 +429,7 @@ subroutine constraints(m,cc,ieqn)
                 !  This is a q-edge type limit for certain aspect ratios
 
         if (itart == 0) then
-           write(*,*) 'Error in routine EQNS:'
+           write(*,*) 'Error in routine CONSTRAINTS:'
            write(*,*) 'Do not use constraint 46 if itart=0.'
            write(*,*) 'PROCESS stopping.'
            stop
@@ -442,7 +443,7 @@ subroutine constraints(m,cc,ieqn)
                 !  Relevant only to reversed field pinch or stellarator devices
 
         if ((irfp == 0).and.(istell == 0)) then
-           write(*,*) 'Error in routine EQNS:'
+           write(*,*) 'Error in routine CONSTRAINTS:'
            write(*,*) 'Do not use constraint 47 if irfp=0 and istell=0.'
            write(*,*) 'PROCESS stopping.'
            stop
@@ -461,7 +462,7 @@ subroutine constraints(m,cc,ieqn)
                 !  Relevant only to inertial fusion energy devices
 
         if (ife == 0) then
-           write(*,*) 'Error in routine EQNS:'
+           write(*,*) 'Error in routine CONSTRAINTS:'
            write(*,*) 'Do not use constraint 50 if ife=0.'
            write(*,*) 'PROCESS stopping.'
            stop
@@ -491,6 +492,14 @@ subroutine constraints(m,cc,ieqn)
      case (56)  !  Equation for power through separatrix / major radius limit
 
         cc(i) = 1.0D0 - fpsepr * pseprmax / (pdivt/rmajor)
+
+     case (57)  !  Equation for minimum TF coil outer leg toroidal thickness (tftort)
+
+        cc(i) = 1.0D0 - ftftort * tftort/(wwp1 + 2.0D0*tinstf + 2.0D0*casths)
+
+     case (58)  !  Equation for minimum TF coil outer leg radial thickness (tfthko)
+
+        cc(i) = 1.0D0 - ftfthko * tfthko/(thkwp + 2.0D0*tinstf)
 
      case default
 
