@@ -77,12 +77,16 @@ module numerics
   integer :: ncalls  = 0
   !+ad_vars  neqns /14/ : number of equations root solver must satisfy
   integer :: neqns   = 14
+  !+ad_vars  nfev1 : number of calls to FCNHYB (HYBRD function caller) made
   integer :: nfev1   = 0
+  !+ad_vars  nfev2 : number of calls to FCNVMC1 (VMCON function caller) made
   integer :: nfev2   = 0
   !+ad_vars  nineqns : number of inequalities VMCON must satisfy (keep at zero)
   integer :: nineqns = 0
   !+ad_vars  nvar /25/ : number of iteration (independent) variables
   integer :: nvar    = 25
+  !+ad_vars  nviter : number of VMCON iterations performed
+  integer :: nviter = 0
 
   !+ad_vars  icc(ipeqns) /2,10,11,24,31,32,33,34,35,36,1,7,14,16/ :
   !+ad_varc                array defining which constraint equations to activate
@@ -839,7 +843,7 @@ contains
        wa,lwa,resdl,nfev)
 
     !+ad_name  eqsolv
-    !+ad_summ  Find the non-optimising HYBRID solution to the problem
+    !+ad_summ  Find the non-optimising HYBRD solution to the problem
     !+ad_type  Subroutine
     !+ad_auth  Argonne National Laboratory. Minpack Project. March 1980.
     !+ad_auth  Burton S. Garbow, Kenneth E. Hillstrom, Jorge J. More
@@ -995,6 +999,7 @@ contains
     !+ad_hist  02/10/96 PJK Initial upgraded version
     !+ad_hist  08/10/12 PJK Initial F90 version
     !+ad_hist  10/10/12 PJK Added arguments fcnvmc1, fcnvmc2
+    !+ad_hist  26/02/14 PJK Added nviter argument to vmcon call
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1054,7 +1059,7 @@ contains
     end do
 
     call vmcon(fcnvmc1,fcnvmc2,mode,n,m,meq,xv,f,fgrd,conf,cnorm, &
-         lcnorm,b,lb,xtol,maxcal,ifail,nfev2,vlam,glag,vmu,cm,glaga, &
+         lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
          gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
          liwa,ilower,iupper,bndl,bndu)
 

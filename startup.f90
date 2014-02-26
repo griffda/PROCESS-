@@ -113,6 +113,7 @@ contains
     !+ad_hisc               Routine now calls VMCON instead of local version VMCON1.
     !+ad_hist  11/04/13 PJK Removed ires if-statement
     !+ad_hist  11/09/13 PJK Changed ftr to ftrit; N.B. D-T reaction is assumed.
+    !+ad_hist  26/02/14 PJK New argument niter added to vmcon call
     !+ad_stat  Not currently used
     !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -128,7 +129,7 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: aa,bb,cc,dd,ne20,te10,ti10,fd,fdt,rrplas,objf,tol
-    integer :: meq,maxfev,info,nfev,mode,s
+    integer :: meq,maxfev,info,nfev,niter,mode,s
 
     integer, parameter :: n = 2
     integer, parameter :: m = 2
@@ -236,7 +237,7 @@ contains
        bndu(2) = 50.0D0
 
        call vmcon(start1,start2,mode,n,m,meq,x,objf,fgrd,conf, &
-            cnorm,lcnorm,b,lb,tol,maxfev,info,nfev,vlam1,glag,vmu, &
+            cnorm,lcnorm,b,lb,tol,maxfev,info,nfev,niter,vlam1,glag,vmu, &
             cm,glaga,gamma1,eta,xa,bdelta,delta,ldel,gm,bdl,bdu, &
             h,lh,wa,lwa,iwa,liwa,ilower,iupper,bndl,bndu)
 

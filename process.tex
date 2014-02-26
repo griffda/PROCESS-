@@ -51,6 +51,10 @@ Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 
 \tableofcontents
 
+\listoffigures
+
+\listoftables
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % To do list:
 %  (apart from bringing it in line with the F90 code, of course...)
@@ -211,7 +215,7 @@ now discussed.
 \subsection{Non-optimisation mode}
 
 The first of the two equation solvers present in \process\/ is the
-non-optimisation package HYBRID~\cite{hybrid_anl,hybrid}. Formally, HYBRID
+non-optimisation package HYBRD~\cite{hybrd_anl,hybrd}. Formally, HYBRD
 finds a zero of a system of $N$ non-linear functions in $N$ variables. This
 means simply that $N$ variables (power plant parameters) are iterated by
 \process\/ in such a way as to solve a set of $N$ equations (physics or
@@ -219,9 +223,9 @@ engineering laws), i.e.\ a set of self-consistent power plant parameters is
 found. This is useful for performing benchmark comparisons, when the device
 size is kept fixed, and one only wishes to find calculated stresses, beta
 values, fusion powers, etc. A flow diagram of \process\/ in non-optimisation
-mode is shown in Figure~\ref{fig:flow_hybrid}.
+mode is shown in Figure~\ref{fig:flow_hybrd}.
 
-% Flow diagram for HYBRID run
+% Flow diagram for HYBRD run
 
 \setlength{\unitlength}{1mm}
 
@@ -283,14 +287,15 @@ mode is shown in Figure~\ref{fig:flow_hybrid}.
 \end{picture}
 
 \end{center}
-\caption[FLOW_HYB] {\label{fig:flow_hybrid}
+\caption[Flow diagram of \process\/ in non-optimisation mode]
+{\label{fig:flow_hybrd}
   \textit{Flow diagram of \process\/ in non-optimisation mode.}
 }
 \end{figure}
 
 \subsection{Optimisation mode}
 
-The HYBRID equation solver will naturally find only one of perhaps several
+The HYBRD equation solver will naturally find only one of perhaps several
 possible machines that may satisfy the prescribed problem. To choose one
 machine in preference to the others it is necessary to define a \textit{figure
 of merit}, and the selection process then simply involves finding the
@@ -299,7 +304,7 @@ equation solver within \process, VMCON~\cite{vmcon}, performs this
 optimisation, and therefore finds the ``best'' machine that satisfies all the
 given constraints.
 
-An important advantage that VMCON has over HYBRID is its ability to limit the
+An important advantage that VMCON has over HYBRD is its ability to limit the
 ranges of the variables it uses. This prevents the code from attempting to
 find machines that are physically unattainable, and ensures that operating
 limits are not violated. An example of VMCON's application is to find the
@@ -393,7 +398,8 @@ in optimisation mode is shown in Figure~\ref{fig:flow_vmcon}.
 \end{picture}
 
 \end{center}
-\caption[FLOW_VMC] {\label{fig:flow_vmcon}
+\caption[Flow diagram of \process\/ in optimisation mode]
+{\label{fig:flow_vmcon}
   \textit{Flow diagram of \process\/ in optimisation mode.}
 }
 \end{figure}
@@ -483,7 +489,7 @@ equal:
 g(x,y,z,\ldots) & = & h(x,y,z,\ldots) \\
 c_i & = & 1 - \frac{g}{h}
 \end{eqnarray*}
-The equation solvers VMCON and HYBRID need the constraint equations $c_i$ to be
+The equation solvers VMCON and HYBRD need the constraint equations $c_i$ to be
 given in the form shown, since they adjust the iteration variables so as to
 obtain $c_i = 0$, thereby ensuring that $g = h$.
 
@@ -534,7 +540,7 @@ benchmarked to find a solution.
 It is for this reason that all the constraint equations used in \process\/ are
 formulated as equalities, despite the fact that equation solver VMCON can
 solve for inequalities as well. The use of f-values precludes this need, and
-allows the non-optimising equation solver HYBRID to use the same constraint
+allows the non-optimising equation solver HYBRD to use the same constraint
 equations.
 
 % Table summarising constraint equations
@@ -607,7 +613,8 @@ J_{\mbox{\scriptsize protection}}$ limit (SCTF)               & L    & \textbf{5
 \hline
 \end{tabular}
 \end{center}
-\caption[TABLE_EQNS] {\label{tab:eqns}
+\caption[List of constraint equations]
+{\label{tab:eqns}
   \textit{Summary of the constraint equations present in \process. Consistency
     equations are marked C, limit equations are marked L\@. Some
     (non-exhaustive) iteration variable numbers (see Tables~\ref{tab:itvars1}
@@ -627,7 +634,7 @@ parameters --- see above) remain fixed at their initial value. Successive
 calls are made to the physics and engineering routines, with slightly
 different values for the iteration variables on each call, and the equation
 solver determines the effect on the output due to these small changes to the
-input (see Figures~\ref{fig:flow_hybrid} and \ref{fig:flow_vmcon}). The
+input (see Figures~\ref{fig:flow_hybrd} and \ref{fig:flow_vmcon}). The
 \texttt{nvar} iteration variables that the user chooses for a given run are
 activated by including the variable numbers in the first \texttt{nvar}
 elements of array \texttt{ixc}. Tables~\ref{tab:itvars1} and~\ref{tab:itvars2}
@@ -717,7 +724,8 @@ no. & variable name     & description                                   & eqn & 
 \hline
 \end{tabular}
 \end{center}
-\caption[TABLE_VARS1] {\label{tab:itvars1}
+\caption[List of iteration variables 1 to 50]
+{\label{tab:itvars1}
   \textit{Iteration variables 1 to 50 present in \process. The f-values correspond to the
     given constraint equations (see Table~\ref{tab:eqns}). The other iteration
     variables are shown in Table~\ref{tab:itvars2}.}
@@ -784,7 +792,8 @@ no. & variable name     & description                                           
 \hline
 \end{tabular}
 \end{center}
-\caption[TABLE_VARS2] {\label{tab:itvars2}
+\caption[List of iteration variables 51 to 98]
+{\label{tab:itvars2}
   \textit{Iteration variables 51 to 98 present in \process. The f-values correspond to the
     given constraint equations (see Table~\ref{tab:eqns}). The other iteration
     variables are shown in Table~\ref{tab:itvars1}.}
@@ -834,7 +843,8 @@ $\pm 15$        & plant availability factor (N.B.\ requires \texttt{iavail=1}) \
 \hline
 \end{tabular}
 \end{center}
-\caption[TABLE_FOMS] {\label{tab:foms}
+\caption[List of figures of merit]
+{\label{tab:foms}
   \textit{Summary of the available figures of merit in \process. If the figure
     of merit is to be minimised, \texttt{minmax} should be positive, and if a maximised
     figure of merit is desired, \texttt{minmax} should be negative.}
@@ -904,7 +914,8 @@ $28$ & \texttt{bt}         & toroidal field on axis \\
 \hline
 \end{tabular}
 \end{center}
-\caption[TABLE_SCANS] {\label{tab:scans}
+\caption[List of scanning variables]
+{\label{tab:scans}
   \textit{Summary of the scanning variables available in \process.}
 }
 \end{table}
@@ -941,17 +952,18 @@ summarises the numerics source file contents.
 source file   & description \\ \hline
 \texttt{caller.f90} & calls physics and engineering routines \\
 \texttt{constraint\_equations.f90} & defines the constraint equations \\
-\texttt{evaluators.f90} & function evaluators for HYBRID and VMCON packages \\
+\texttt{evaluators.f90} & function evaluators for HYBRD and VMCON packages \\
 \texttt{iteration\_variables.f90} & adjusts values of iteration variables \\
 \texttt{maths\_library.f90} & miscellaneous `black-box' maths routines,
-including HYBRID and VMCON \\
+including HYBRD and VMCON \\
 \texttt{numerics.f90} & numerics array definitions, and calling routines for
-HYBRID and VMCON packages \\
+HYBRD and VMCON packages \\
 \texttt{scan.f90} & performs a parameter scan \\
 \hline
 \end{tabular}
 \end{center}
-\caption[TABLE_NUM] {\label{tab:numerics}
+\caption[Summary of numerics modules]
+{\label{tab:numerics}
   \textit{Summary of the numerics modules in \process.}
 }
 \end{table}
@@ -981,7 +993,8 @@ source file   & description \\ \hline
 \hline
 \end{tabular}
 \end{center}
-\caption[TABLE_PHY] {\label{tab:physics}
+\caption[Summary of physics modules]
+{\label{tab:physics}
   \textit{Summary of the physics modules in \process.}
 }
 \end{table}
@@ -1015,7 +1028,8 @@ source file     & description \\ \hline
 \hline
 \end{tabular}
 \end{center}
-\caption[TABLE_ENG] {\label{tab:engineering}
+\caption[Summary of engineering modules]
+{\label{tab:engineering}
   \textit{Summary of the engineering modules in \process.}
 }
 \end{table}
@@ -1048,7 +1062,8 @@ source file     & description \\ \hline
 \hline
 \end{tabular}
 \end{center}
-\caption[TABLE_OTHER] {\label{tab:other_modules}
+\caption[Summary of other modules]
+{\label{tab:other_modules}
   \textit{Summary of the remaining modules in \process.}
 }
 \end{table}
@@ -1104,7 +1119,8 @@ or \texttt{2} for ellipses.
 
 \begin{figure}[tbph]
 \epsfig{file=build_d.eps,width=170mm}
-\caption[build] {\label{fig:build_d} \textit{Schematic diagram of the fusion
+\caption[Machine build for D-shaped major components]
+{\label{fig:build_d} \textit{Schematic diagram of the fusion
     power core of a typical tokamak power plant modelled by \process, showing
     the relative positions of the components. A double null plasma is assumed
     (\texttt{snull=0}) --- compare Figure~\ref{fig:buildsnd}, and the first
@@ -1119,7 +1135,8 @@ or \texttt{2} for ellipses.
 
 \begin{figure}[tbph]
 \epsfig{file=build_e.eps,width=170mm}
-\caption[build] {\label{fig:build_e} \textit{Schematic diagram of the fusion
+\caption[Machine build for elliptical-shaped major components]
+{\label{fig:build_e} \textit{Schematic diagram of the fusion
     power core of a typical tokamak power plant modelled by \process. The
     first wall, blanket, shield and vacuum vessel cross-sectional shapes are
     each assumed to be defined by two ellipses (chosen by setting switch
@@ -1134,7 +1151,8 @@ Section~\ref{sec:itvars}) to help in the optimisation process.
 
 \begin{figure}[tbph]
 \epsfig{file=build_e_snd.eps,height=200mm}
-\caption[build] {\label{fig:buildsnd}
+\caption[Machine build for a single-null device]
+{\label{fig:buildsnd}
   \textit{Schematic diagram of the fusion power core of a typical tokamak
     power plant modelled by \process, showing the relative positions of the
     components. A single null plasma is assumed (\texttt{snull=1}) --- compare
@@ -1385,7 +1403,8 @@ Berchtesgaden, 1997 \\
 \end{tabular}
 \normalsize
 \end{center}
-\caption[TABLE_TAU] {\label{tab:scaling_laws}
+\caption[List of available energy confinement scaling laws]
+{\label{tab:scaling_laws}
   \textit{Summary of the energy confinement time scaling laws in \process.}
 }
 \end{table}
@@ -1454,7 +1473,8 @@ Journal of Physics: \\
 \end{tabular}
 \end{center}
 \normalsize
-\caption[TABLE_LHPOWER] {\label{tab:power_thresholds}
+\caption[List of available L-H power threshold scalings]
+{\label{tab:power_thresholds}
   \textit{Summary of the L-H power threshold scalings implemented in \process.}
 }
 \end{table}
@@ -1789,7 +1809,8 @@ lithium         &     ---       &     ---       & \texttt{fblli}   \\
 coolant         & \texttt{vfblkt}  & \texttt{vfblkt}  & \texttt{vfblkt}  \\ \hline
 \end{tabular}
 \end{center}
-\caption[TABLE_BKT] {\label{tab:blanket}
+\caption[Summary of blanket material scenarios]
+{\label{tab:blanket}
   \textit{Summary of the materials comprising the blanket in the various scenarios
     available (\texttt{blktmodel=0} only). The fractions given are all
     available to be modified, and should of course add up to 1.0 for any given
@@ -1827,13 +1848,16 @@ coils.
 
 \begin{figure}[tbph]
 \epsfig{file=tokamak_tfcoil.eps,width=160mm}
-\caption[CICC] {\label{fig:CICC} \textit{Schematic diagram of the
-    cross-section of the inboard leg of a superconducting TF coil, showing the
-    CICC (Conductor In Cable Conduit) construction. The winding pack contains
-    many turns of cable conduit. The cable space contains the superconducting
-    filaments, and circulating liquid helium coolant. The variables shown in
-    \Red{red} may be changed by the user, and those in italics may be chosen
-    as iteration variables.}  }
+\caption[Schematic diagram of the cross-section of a superconducting TF coil
+inner leg]
+{\label{fig:CICC}
+  \textit{Schematic diagram of the cross-section of the inboard leg of a
+    superconducting TF coil, showing the CICC (Conductor In Cable Conduit)
+    construction. The winding pack contains many turns of cable conduit. The
+    cable space contains the superconducting filaments, and circulating liquid
+    helium coolant. The variables shown in \Red{red} may be changed by the
+    user, and those in italics may be chosen as iteration variables.}
+}
 \end{figure}
 
 Each TF coil is defined in the $(R,Z)$ plane by four circular arcs of
@@ -1961,7 +1985,8 @@ Figure~\ref{fig:current_vs_time}.
 
 \begin{figure}[tbph]
 \epsfig{file=current_vs_time.eps,width=170mm}
-\caption[IvsT] {\label{fig:current_vs_time}
+\caption[Coil and plasma current waveforms]
+{\label{fig:current_vs_time}
   \textit{Plot showing schematically the current waveforms for the plasma, a
     typical PF coil, and the OH coil.}
 }
@@ -2105,7 +2130,8 @@ be set using input parameter \texttt{nbshield}.
 
 \begin{figure}[tbph]
 \epsfig{file=portsize.eps,width=160mm}
-\caption[portsize] {\label{fig:portsize}
+\caption[Schematic diagram of the neutral beam access geometry]
+{\label{fig:portsize}
   \textit{Top-down schematic view of the neutral beam access geometry. The beam
     with the maximum possible tangency radius is shown here.}
 }
@@ -2149,7 +2175,8 @@ mechanisms used by the code.
 \centerline{\epsfig{file=PWR.ps,width=160mm,height=160mm,
 bbllx=0mm,bburx=200mm,bblly=0mm,bbury=200mm,clip=}}
 \vspace{-12mm}
-\caption[PWRCONV] {\label{fig:pwrconv}
+\caption[Power conversion mechanisms within \process]
+{\label{fig:pwrconv}
   \textit{Schematic diagram showing the power conversion mechanisms used in
     \process \cite[Note 0166]{PWF}.}
 }
@@ -2266,7 +2293,8 @@ summarises the switch values relevant to each aspect ratio regime.
     \hline
 \end{tabular}
 \end{center}
-\caption[TART_SWITCHES] {\label{tab:tart}
+\caption[\process\/ switches for tight aspect ratio machines]
+{\label{tab:tart}
   \textit{Summary of the switch values in PROCESS that relate to
     conventional aspect ratio and tight aspect ratio machines.}
 }
@@ -2402,7 +2430,8 @@ variable \\ \hline
 \hline
 \end{tabular}
 \end{center}
-\caption[H_SWITCHES] {\label{tab:hplant}
+\caption[Variables used in the hydrogen plant model]
+{\label{tab:hplant}
   \textit{Summary of the variables in PROCESS that relate to
     the different hydrogen plant processes.}
 }
@@ -2566,7 +2595,8 @@ possible using constraint equation no.\ 47 with iteration variable no.\ 76
 
 \begin{figure}[tbph]
 \epsfig{file=stellarator_coil.eps,width=160mm}
-\caption[tosh] {\label{fig:stell1} \textit{Schematic diagram of the
+\caption[Stellarator coil cross-section]
+{\label{fig:stell1} \textit{Schematic diagram of the
     cross-section of the inboard leg of a superconducting stellarator coil,
     showing the CICC (Conductor In Cable Conduit) construction. The winding
     pack contains many turns of cable conduit. The cable space contains the
@@ -2590,7 +2620,8 @@ approximation to the true case (see Figure~\ref{fig:stell2}).
 
 \begin{figure}[tbph]
 \epsfig{file=stellarator_coilset.eps,width=160mm}
-\caption[tosh]{\label{fig:stell2}
+\caption[Old picture of stellarator coil set]
+{\label{fig:stell2}
     \textit{Comparison between (a) the Wendelstein VII-X coil set and (b) the
     PROCESS stellarator coil set. The inboard sections of the PROCESS coils
     are plotted with circular symbols for clarity.}
@@ -2969,7 +3000,8 @@ switch      & relevant output section    \\ \hline
 \texttt{sect21} & times                      \\ \hline
 \end{tabular}
 \end{center}
-\caption[TABLE_OSECT] {\label{tab:osections}
+\caption[List of switches controlling the output to file]
+{\label{tab:osections}
   \textit{Summary of the switches in \process\/ that control the format of the output
     file. If a switch has a value \texttt{0}, the relevant output section
     does not appear in the output file. If its value is \texttt{1}, the
@@ -3276,7 +3308,7 @@ optimisation mode. If \texttt{ioptimz = 0}, a non-optimisation pass is
 performed first, to provide a (hopefully) feasible set of initial conditions;
 if \texttt{ioptimz = 1}, this is skipped and the code runs in optimisation
 mode from the start. However, it is recommended to use \texttt{ioptimz = 1}
-for optimisation runs, as using the HYBRID step before a VMCON iteration tends
+for optimisation runs, as using the HYBRD step before a VMCON iteration tends
 to cause \process\/ to fail to converge more often.
 
 As before, the user must decide which constraint equations and iteration
@@ -3412,7 +3444,7 @@ The former implies a successful outcome, although it is always worth checking
 that the estimate of the constraints (\texttt{sqsumsq}) is small ($\sim
 10^{-3}$ or less); the code will issue a warning if the run seems feasible but
 the value of \texttt{sqsumsq} exceeds $10^{-2}$. If this occurs, reducing the
-value of the HYBRID tolerance \texttt{ftol} or VMCON tolerance \texttt{epsvmc}
+value of the HYBRD tolerance \texttt{ftol} or VMCON tolerance \texttt{epsvmc}
 (as appropriate) should indicate whether the result is valid or not; the
 output can usually be trusted if (1) the constraint residues\footnote{The
   constraint residues are the final values of $c_i$ in the constraint
@@ -3926,13 +3958,13 @@ UCLA Report UCLA-PPG-1100, January 1987
 \textit{``The TITAN Reversed Field Pinch Fusion Reactor Study, Final Report''},
 UCLA Report UCLA-PPG-1200, 1990
 
-\bibitem{hybrid_anl}
+\bibitem{hybrd_anl}
 J.\ J.\ More, B.\ S.\ Garbow and E.\ Hillstrom,
 \textit{``User Guide for MINPAC-1''},
 Argonne National Laboratory Report ANL-80-74
 (1980)
 
-\bibitem{hybrid}
+\bibitem{hybrd}
 M.\ J.\ D.\ Powell,
 \textit{``A Hybrid Method for Non-linear Algebraic Equations''},
 Numerical Methods for Non-linear Algebraic Equations, ed.\ P.\ Rabinowitz,

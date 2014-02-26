@@ -355,6 +355,8 @@ contains
     !+ad_hist  19/12/13 PJK Changed EPSFCN description
     !+ad_hist  19/02/14 PJK Added IPEDESTAL and other related quantities
     !+ad_hist  24/02/14 PJK Removed echoing of long input lines to output
+    !+ad_hist  26/02/14 PJK Changed references to non-optimising solver
+    !+ad_hisc               from hybrid to hybrd
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -451,16 +453,16 @@ contains
                'Iteration variable upper bound', icode)
        case ('EPSFCN')
           call parse_real_variable('EPSFCN', epsfcn, 0.0D0, 1.0D0, &
-               'HYBRID/VMCON derivative step length')
+               'HYBRD/VMCON derivative step length')
        case ('EPSVMC')
           call parse_real_variable('EPSVMC', epsvmc, 0.0D0, 1.0D0, &
                'VMCON error tolerance')
        case ('FACTOR')
           call parse_real_variable('FACTOR', factor, 0.0D0, 10.0D0, &
-               'HYBRID initial step size')
+               'HYBRD initial step size')
        case ('FTOL')
           call parse_real_variable('FTOL', ftol, 0.0D0, 1.0D0, &
-               'HYBRID tolerance')
+               'HYBRD tolerance')
        case ('ICC')
           call parse_int_array('ICC', icc, isub1, ipeqns, &
                'Constraint equation', icode)

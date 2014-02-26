@@ -1055,12 +1055,12 @@ subroutine final(ifail)
 
   call output(nout)
 
-  if (nfev1 == 1) then ! (unlikely that nfev2 is also 1...)
-     write(iotty,10) nfev1,nfev2,ncalls
-  else if (nfev2 == 1) then ! (unlikely that nfev1 is also 1...)
-     write(iotty,20) nfev1,nfev2,ncalls
+  if (nfev1 == 1) then ! (unlikely that nviter is also 1...)
+     write(iotty,10) nfev1,nviter,ncalls
+  else if (nviter == 1) then ! (unlikely that nfev1 is also 1...)
+     write(iotty,20) nfev1,nviter,ncalls
   else
-     write(iotty,30) nfev1,nfev2,ncalls
+     write(iotty,30) nfev1,nviter,ncalls
   end if
 
 10 format( &
@@ -1420,3 +1420,6 @@ end subroutine output
 ! SVN 236: Minor additions to User Guide;
 !          Trapped problem with port size calculation if coil spacing is too narrow;
 !          Trapped probable negative square root argument if OH coil is very wide
+! SVN 237: Used HYBRD throughout instead of HYBRID;
+!          Added new argument niter to VMCON;
+!          Added lists of figures and tables to User Guide

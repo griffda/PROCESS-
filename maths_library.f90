@@ -1837,7 +1837,7 @@ contains
 
   recursive subroutine vmcon( &
        fcnvmc1,fcnvmc2,mode,n,m,meq,x,objf,fgrd,conf,cnorm,lcnorm, &
-       b,lb,tol,maxfev,info,nfev,vlam,glag,vmu,cm,glaga,gamma,eta, &
+       b,lb,tol,maxfev,info,nfev,niter,vlam,glag,vmu,cm,glaga,gamma,eta, &
        xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa,liwa,ilower, &
        iupper,bndl,bndu)
 
@@ -1897,6 +1897,7 @@ contains
     !+ad_argc               an artificial bound or failed due to a singular
     !+ad_argc               matrix
     !+ad_args  nfev : output integer : number of calls to FCNVMC1
+    !+ad_args  niter : output integer : number of iterations
     !+ad_args  vlam(m+2n+1) : output real array : Lagrange multipliers at output X.
     !+ad_argc    The Lagrange multipliers provide the sensitivity of the objective
     !+ad_argc    function to changes in the constraint functions.
@@ -1956,6 +1957,7 @@ contains
     !+ad_hist  06/11/12 PJK Added recursive attribute, for startup routine
     !+ad_hist  25/02/14 MDK Added an escape from the line search to help ensure
     !+ad_hisc               convergence
+    !+ad_hist  26/02/14 PJK Added new output argument niter
     !+ad_stat  Okay
     !+ad_docs  ANL-80-64: Solution of the General Nonlinear Programming Problem
     !+ad_docc  with Subroutine VMCON, Roger L Crane, Kenneth E Hillstrom and
@@ -1968,7 +1970,7 @@ contains
     !  Arguments
 
     integer, intent(in) :: mode,n,m,meq,lcnorm,lb,maxfev,ldel,lh,lwa,liwa
-    integer, intent(out) :: info,nfev
+    integer, intent(out) :: info,nfev,niter
 
     integer, dimension(liwa), intent(out) :: iwa
     integer, dimension(n), intent(in) :: ilower,iupper
@@ -2068,11 +2070,11 @@ contains
     !  Set initial values of some variables
     !  nfev is the number of calls of fcnvmc1
     !  nsix is the length of an array
-    !  nqp is the number of quadratic subproblems
+    !  nqp is the number of quadratic subproblems (= number of iterations)
 
     nfev = 1
     nsix = 6*np1
-    nqp = 0
+    nqp = 0 ; niter = 0
 
     !  Calculate the initial functions and gradients
 
@@ -2090,6 +2092,7 @@ contains
        !  Increment the quadratic subproblem counter
 
        nqp = nqp + 1
+       niter = nqp
 
        !  Set the linear term of the quadratic problem objective function
        !  to the negative gradient of objf
@@ -5665,7 +5668,7 @@ program test
   write(*,*)
 
   call vmcon(objfn,dobjfn,mode,n,m,meq,xv,objf,fgrd,conf,cnorm, &
-       lcnorm,b,lb,xtol,maxcal,ifail,nfev2,vlam,glag,vmu,cm,glaga, &
+       lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
        gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
        liwa,ilower,iupper,bndl,bndu)
 
