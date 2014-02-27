@@ -6,7 +6,7 @@
 !  2) Uncomment #define line below
 !  3) Re-compile using pre-processor:
 !     ifort -cpp -c maths_library.f90
-!     ifort -o vmcon_test maths_library.o numerics.o
+!     ifort -o vmcon_test maths_library.o numerics.o global_variables.o
 !
 !  Don't forget to comment the line below again afterwards!!!
 
@@ -5283,7 +5283,7 @@ contains
        !  VMCON documentation ANL-80-64
 
        nvar = 2
-       neqns = 2
+       neqns = 1
        nineqns = 1
        x(1) = 2.0D0 ; x(2) = 2.0D0
 
@@ -5315,7 +5315,7 @@ contains
        !  VMCON documentation ANL-80-64
 
        nvar = 2
-       neqns = 2
+       neqns = 0
        nineqns = 2
        x(1) = 2.0D0 ; x(2) = 2.0D0
 
@@ -5350,7 +5350,7 @@ contains
        !  VMCON documentation ANL-80-64
 
        nvar = 2
-       neqns = 2
+       neqns = 1
        nineqns = 1
        x(1) = 2.0D0 ; x(2) = 2.0D0
 
@@ -5650,8 +5650,8 @@ program test
   epsvmc = 1.0D-8
 
   n = nvar
-  m = neqns
-  meq = neqns-nineqns
+  m = neqns+nineqns
+  meq = neqns
   xtol = epsvmc
   mode = 0
   lb = ippn1

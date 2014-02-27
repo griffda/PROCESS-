@@ -428,10 +428,6 @@ subroutine eqslv(ifail)
   real(kind(1.0D0)), dimension(iptnt) :: wa
   integer :: inn,nprint,nx
 
-  !  External routines
-
-!  external :: fcnhyb
-
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  If no HYBRD (non-optimisation) runs are required, exit routine
@@ -825,6 +821,7 @@ subroutine doopt(ifail)
   !+ad_hist  04/07/13 PJK Modified wording for variables at/beyond their bounds
   !+ad_hist  28/11/13 PJK Modified format lines for longer lablxc length
   !+ad_hist  13/02/14 PJK Output ifail even if a feasible solution found
+  !+ad_hist  27/02/14 PJK Added nineqns usage
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -858,7 +855,7 @@ subroutine doopt(ifail)
   call optimiz(fcnvmc1,fcnvmc2,ifail,f)
 
   !  Check on accuracy of solution by summing the
-  !  squares of the residuals
+  !  squares of the residuals of the equality constraints
 
   summ = 0.0D0
   do ii = 1,neqns
@@ -994,7 +991,7 @@ subroutine doopt(ifail)
   do inn = 1,nvar
      xcs(inn) = xcm(inn)*scafc(inn)
      write(nout,100) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
-          vlam(neqns+inn), vlam(neqns+1+inn+nvar)
+          vlam(neqns+nineqns+inn), vlam(neqns+nineqns+1+inn+nvar)
   end do
 100 format(t2,i4,t8,a9,t19,4(1pe12.4))
 
@@ -1425,3 +1422,4 @@ end subroutine output
 !          Added lists of figures and tables to User Guide
 ! SVN 238: Added constraints 57, 58, and iteration variables 99, 100
 ! SVN 239: Updated PROCESS_dicts.py
+! SVN 240: Modified code to allow usage of inequality constraints in the future

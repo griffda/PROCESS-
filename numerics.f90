@@ -43,6 +43,7 @@ module numerics
   !+ad_hisc               prevent gfortran error message
   !+ad_hist  26/02/14 PJK New constraint eqns 57,58 added; new iteration
   !+ad_hisc               variables 99 (ftftort) and 100 (ftfthko) added
+  !+ad_hist  27/02/14 PJK Modified nineqns comment
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -83,7 +84,7 @@ module numerics
   integer :: nfev1   = 0
   !+ad_vars  nfev2 : number of calls to FCNVMC1 (VMCON function caller) made
   integer :: nfev2   = 0
-  !+ad_vars  nineqns : number of inequalities VMCON must satisfy (keep at zero)
+  !+ad_vars  nineqns /0/ : number of inequalities VMCON must satisfy
   integer :: nineqns = 0
   !+ad_vars  nvar /25/ : number of iteration (independent) variables
   integer :: nvar    = 25
@@ -1018,6 +1019,7 @@ contains
     !+ad_hist  08/10/12 PJK Initial F90 version
     !+ad_hist  10/10/12 PJK Added arguments fcnvmc1, fcnvmc2
     !+ad_hist  26/02/14 PJK Added nviter argument to vmcon call
+    !+ad_hist  27/02/14 PJK Corrected usage of m, meq in case of inequalities
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1057,8 +1059,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     n = nvar
-    m = neqns
-    meq = neqns-nineqns
+    m = neqns + nineqns
+    meq = neqns
     xtol = epsvmc
     mode = 0
     lb = ippn1

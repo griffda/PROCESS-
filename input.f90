@@ -231,6 +231,7 @@ contains
     !+ad_hist  03/10/12 PJK Initial F90 version
     !+ad_hist  08/10/12 PJK Changed routine name from edit1 to run_summary
     !+ad_hist  28/11/13 PJK Modified format statement for longer lablxc
+    !+ad_hist  27/02/14 PJK Introduced use of nineqns
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -277,7 +278,7 @@ contains
 
      call oblnkl(nout)
 
-     write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns)
+     write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
  40  format(t1,i3,t10,i3,t18,a33)
 #endif
 
@@ -358,6 +359,7 @@ contains
     !+ad_hist  26/02/14 PJK Changed references to non-optimising solver
     !+ad_hisc               from hybrid to hybrd
     !+ad_hist  26/02/14 PJK Added FTFTORT, FTFTHKO, FJOHC
+    !+ad_hist  27/02/14 PJK Added NINEQNS
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -481,7 +483,10 @@ contains
                'Switch for figure of merit')
       case ('NEQNS')
           call parse_int_variable('NEQNS', neqns, 1, ipeqns, &
-               'No of constraint equations')
+               'No of equality constraints')
+      case ('NINEQNS')
+          call parse_int_variable('NINEQNS', nineqns, 1, ipeqns, &
+               'No of inequality constraints')
        case ('NVAR')
           call parse_int_variable('NVAR', nvar, 1, ipnvars, &
                'No of independent variables')
