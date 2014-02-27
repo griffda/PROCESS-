@@ -821,7 +821,7 @@ subroutine doopt(ifail)
   !+ad_hist  04/07/13 PJK Modified wording for variables at/beyond their bounds
   !+ad_hist  28/11/13 PJK Modified format lines for longer lablxc length
   !+ad_hist  13/02/14 PJK Output ifail even if a feasible solution found
-  !+ad_hist  27/02/14 PJK Added nineqns usage
+  !+ad_hist  27/02/14 PJK Added nineqns usage; minor output modifications
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -996,11 +996,21 @@ subroutine doopt(ifail)
 100 format(t2,i4,t8,a9,t19,4(1pe12.4))
 
   call osubhd(nout, &
-       'The following constraint residues should be close to zero :')
+       'The following equality constraint residues should be close to zero :')
 
   do inn = 1,neqns
      write(nout,120) inn,lablcc(icc(inn)),rcm(inn),vlam(inn)
   end do
+
+  if (nineqns > 0) then
+     call osubhd(nout, &
+          'The following inequality constraint residues should be positive :')
+
+     do inn = neqns+1,neqns+nineqns
+        write(nout,120) inn,lablcc(icc(inn)),rcm(inn),vlam(inn)
+     end do
+  end if
+
 120 format(t2,i4,t8,a33,t45,1pe12.4,1pe12.4)
 
 end subroutine doopt
@@ -1423,3 +1433,4 @@ end subroutine output
 ! SVN 238: Added constraints 57, 58, and iteration variables 99, 100
 ! SVN 239: Updated PROCESS_dicts.py
 ! SVN 240: Modified code to allow usage of inequality constraints in the future
+! SVN 241: Minor output modifications

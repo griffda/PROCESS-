@@ -87,15 +87,15 @@ subroutine loadxc
 
      select case (ixc(i))
 
-     case (1)  ; xcm(i)  = aspect
-     case (2)  ; xcm(i)  = bt
-     case (3)  ; xcm(i)  = rmajor
-     case (4)  ; xcm(i)  = te
-     case (5)  ; xcm(i)  = beta
-     case (6)  ; xcm(i)  = dene
-     case (7)  ; xcm(i)  = rnbeam
-     case (8)  ; xcm(i)  = fbeta
-     case (9)  ; xcm(i)  = fdene
+     case (1)  ; xcm(i) = aspect
+     case (2)  ; xcm(i) = bt
+     case (3)  ; xcm(i) = rmajor
+     case (4)  ; xcm(i) = te
+     case (5)  ; xcm(i) = beta
+     case (6)  ; xcm(i) = dene
+     case (7)  ; xcm(i) = rnbeam
+     case (8)  ; xcm(i) = fbeta
+     case (9)  ; xcm(i) = fdene
      case (10) ; xcm(i) = hfact
      case (11) ; xcm(i) = pheat
      case (12) ; xcm(i) = oacdcp
