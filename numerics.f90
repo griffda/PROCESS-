@@ -44,6 +44,7 @@ module numerics
   !+ad_hist  26/02/14 PJK New constraint eqns 57,58 added; new iteration
   !+ad_hisc               variables 99 (ftftort) and 100 (ftfthko) added
   !+ad_hist  27/02/14 PJK Modified nineqns comment
+  !+ad_hist  05.03/14 PJK Clarified lablcc descriptions
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -272,111 +273,111 @@ module numerics
        'Ion power balance                ', &
        !+ad_varc  <LI> ( 4) Electron power balance
        'Electron power balance           ', &
-       !+ad_varc  <LI> ( 5) Density limit
-       'Density limit                    ', &
-       !+ad_varc  <LI> ( 6) Epsilon * beta poloidal limit
-       'Epsilon * beta poloidal limit    ', &
+       !+ad_varc  <LI> ( 5) Density upper limit
+       'Density upper limit              ', &
+       !+ad_varc  <LI> ( 6) Epsilon * beta poloidal upper limit
+       'Epsilon * beta-pol upper limit   ', &
        !+ad_varc  <LI> ( 7) * Beam ion density (NBI) (consistency equation)
        'Beam ion density consistency     ', &
-       !+ad_varc  <LI> ( 8) Neutron wall load limit
-       'Neutron wall load limit          ', &
-       !+ad_varc  <LI> ( 9) Fusion power limit
-       'Fusion power limit               ', &
+       !+ad_varc  <LI> ( 8) Neutron wall load upper limit
+       'Neutron wall load upper limit    ', &
+       !+ad_varc  <LI> ( 9) Fusion power upper limit
+       'Fusion power upper limit         ', &
        !+ad_varc  <LI> (10) * Toroidal field 1/R (consistency equation)
        'Toroidal field 1/R consistency   ', &
        !+ad_varc  <LI> (11) * Radial build (consistency equation)
        'Radial build consistency         ', &
-       !+ad_varc  <LI> (12) Volt second limit
-       'Volt second limit                ', &
-       !+ad_varc  <LI> (13) Burn time limit (PULSE)
-       'Burn time limit                  ', &
-       !+ad_varc  <LI> (14) * Energy of neutral beam (NBI)
-       'Energy of neutral beam           ', &
+       !+ad_varc  <LI> (12) Volt second lower limit
+       'Volt second lower limit          ', &
+       !+ad_varc  <LI> (13) Burn time lower limit (PULSE)
+       'Burn time lower limit            ', &
+       !+ad_varc  <LI> (14) * Energy of neutral beam (NBI) (consistency equation)
+       'Neutral beam energy consistency  ', &
        !+ad_varc  <LI> (15) Burn time (PULSE) (consistency equation)
        'Burn time consistency            ', &
-       !+ad_varc  <LI> (16) * Net electric power limit
-       'Net electric power limit         ', &
-       !+ad_varc  <LI> (17) Stellarator build (STELL) (consistency equation)
-       'Stellarator build consistency    ', &
-       !+ad_varc  <LI> (18) Divertor heat load limit
-       'Divertor heat load limit         ', &
-       !+ad_varc  <LI> (19) MVA limit
-       'MVA limit                        ', &
-       !+ad_varc  <LI> (20) Neutral beam tangency radius limit (NBI)
-       'Beam tangency radius limit       ', &
-       !+ad_varc  <LI> (21) Plasma minor radius limit
-       'Plasma minor radius limit        ', &
-       !+ad_varc  <LI> (22) Divertor collisionality limit
-       'Divertor collisionality limit    ', &
+       !+ad_varc  <LI> (16) * Net electric power lower limit
+       'Net electric power lower limit   ', &
+       !+ad_varc  <LI> (17) UNUSED
+       'UNUSED                           ', &
+       !+ad_varc  <LI> (18) Divertor heat load upper limit
+       'Divertor heat load upper limit   ', &
+       !+ad_varc  <LI> (19) MVA upper limit
+       'MVA upper limit                  ', &
+       !+ad_varc  <LI> (20) Neutral beam tangency radius upper limit (NBI)
+       'Beam tangency radius upper limit ', &
+       !+ad_varc  <LI> (21) Plasma minor radius lower limit
+       'Plasma minor radius lower limit  ', &
+       !+ad_varc  <LI> (22) Divertor collisionality upper limit
+       'Divertor collisionality upper lim', &
        !+ad_varc  <LI> (23) UNUSED
        'UNUSED                           ', &
-       !+ad_varc  <LI> (24) * Beta limit
-       'Beta limit                       ', &
-       !+ad_varc  <LI> (25) Peak toroidal field limit
-       'Peak toroidal field limit        ', &
-       !+ad_varc  <LI> (26) OH coil EOF current density limit
+       !+ad_varc  <LI> (24) * Beta upper limit
+       'Beta upper limit                 ', &
+       !+ad_varc  <LI> (25) Peak toroidal field upper limit
+       'Peak toroidal field upper limit  ', &
+       !+ad_varc  <LI> (26) OH coil EOF current density upper limit
        'OH coil EOF current density limit', &
-       !+ad_varc  <LI> (27) OH coil BOP current density limit
+       !+ad_varc  <LI> (27) OH coil BOP current density upper limit
        'OH coil BOP current density limit', &
-       !+ad_varc  <LI> (28) Energy multiplication Q limit
-       'Energy multiplication Q limit    ', &
-       !+ad_varc  <LI> (29) Inboard radial build constraint
-       'Inboard radial build constraint  ', &
-       !+ad_varc  <LI> (30) Allowable injection power
-       'Allowable injection power        ', &
-       !+ad_varc  <LI> (31) * TF coil case stress limit (SCTF)
-       'TF coil case stress limit        ', &
-       !+ad_varc  <LI> (32) * TF coil conduit stress limit (SCTF)
-       'TF coil conduit stress limit     ', &
+       !+ad_varc  <LI> (28) Energy multiplication Q lower limit
+       'Energy multiplication Q lower lim', &
+       !+ad_varc  <LI> (29) Inboard radial build consistency
+       'Inboard radial build consistency ', &
+       !+ad_varc  <LI> (30) Injection power upper limit
+       'Injection power upper limit      ', &
+       !+ad_varc  <LI> (31) * TF coil case stress upper limit (SCTF)
+       'TF coil case stress upper limit  ', &
+       !+ad_varc  <LI> (32) * TF coil conduit stress upper limit (SCTF)
+       'TF coil conduit stress upper lim ', &
        !+ad_varc  <LI> (33) * I_op / I_critical (TF coil) (SCTF)
        'I_op / I_critical (TF coil)      ', &
-       !+ad_varc  <LI> (34) * Dump voltage limit (SCTF)
-       'Dump voltage limit               ', &
-       !+ad_varc  <LI> (35) * J_winding pack/J_protection limit (SCTF)
+       !+ad_varc  <LI> (34) * Dump voltage upper limit (SCTF)
+       'Dump voltage upper limit         ', &
+       !+ad_varc  <LI> (35) * J_winding pack/J_protection upper limit (SCTF)
        'J_winding pack/J_protection limit', &
-       !+ad_varc  <LI> (36) * TF coil temperature margin limit (SCTF)
-       'TF coil temperature margin limit ', &
-       !+ad_varc  <LI> (37) Current drive gamma limit
+       !+ad_varc  <LI> (36) * TF coil temperature margin lower limit (SCTF)
+       'TF coil temp. margin lower limit ', &
+       !+ad_varc  <LI> (37) Current drive gamma upper limit
        'Current drive gamma limit        ', &
-       !+ad_varc  <LI> (38) 1st wall coolant temp rise limit (PULSE)
+       !+ad_varc  <LI> (38) First wall coolant temperature rise upper limit (PULSE)
        '1st wall coolant temp rise limit ', &
-       !+ad_varc  <LI> (39) First wall peak temperature limit (PULSE)
+       !+ad_varc  <LI> (39) First wall peak temperature upper limit (PULSE)
        'First wall peak temperature limit', &
-       !+ad_varc  <LI> (40) Start-up injection power limit (PULSE)
-       'Start-up injection power limit   ', &
-       !+ad_varc  <LI> (41) Plasma current ramp-up time limit (PULSE)
-       'Plasma current ramp-up time limit', &
-       !+ad_varc  <LI> (42) Cycle time limit (PULSE)
-       'Cycle time limit                 ', &
+       !+ad_varc  <LI> (40) Start-up injection power lower limit (PULSE)
+       'Start-up inj. power lower limit  ', &
+       !+ad_varc  <LI> (41) Plasma current ramp-up time lower limit (PULSE)
+       'Plasma curr. ramp time lower lim ', &
+       !+ad_varc  <LI> (42) Cycle time lower limit (PULSE)
+       'Cycle time lower limit           ', &
        !+ad_varc  <LI> (43) Average centrepost temperature
        !+ad_varc            (TART) (consistency equation)
        'Average centrepost temperature   ', &
-       !+ad_varc  <LI> (44) Peak centrepost temperature limit (TART)
-       'Peak centrepost temperature limit', &
-       !+ad_varc  <LI> (45) Edge safety factor limit (TART)
-       'Edge safety factor limit         ', &
-       !+ad_varc  <LI> (46) Ip/Irod limit (TART)
-       'Ip/Irod limit                    ', &
-       !+ad_varc  <LI> (47) TF coil toroidal thickness limit (RFP, STELL)
-       'TF coil toroidal thickness limit ', &
-       !+ad_varc  <LI> (48) Poloidal beta limit
-       'Poloidal beta limit              ', &
+       !+ad_varc  <LI> (44) Peak centrepost temperature upper limit (TART)
+       'Peak centrepost temp. upper limit', &
+       !+ad_varc  <LI> (45) Edge safety factor lower limit (TART)
+       'Edge safety factor lower limit   ', &
+       !+ad_varc  <LI> (46) Ip/Irod upper limit (TART)
+       'Ip/Irod upper limit              ', &
+       !+ad_varc  <LI> (47) TF coil toroidal thickness upper limit (RFP)
+       'TF coil tor. thickness upper lim ', &
+       !+ad_varc  <LI> (48) Poloidal beta upper limit
+       'Poloidal beta upper limit        ', &
        !+ad_varc  <LI> (49) RFP reversal parameter &lt; 0 (RFP)
        'RFP reversal parameter < 0       ', &
-       !+ad_varc  <LI> (50) IFE repetition rate limit (IFE)
-       'IFE repetition rate limit        ', &
+       !+ad_varc  <LI> (50) IFE repetition rate upper limit (IFE)
+       'IFE repetition rate upper limit  ', &
        !+ad_varc  <LI> (51) Startup volt-seconds consistency (PULSE)
        'Startup volt-seconds consistency ', &
-       !+ad_varc  <LI> (52) Minimum tritium breeding ratio limit
-       'Tritium breeding ratio limit     ', &
-       !+ad_varc  <LI> (53) Neutron fluence on TF coil limit
+       !+ad_varc  <LI> (52) Tritium breeding ratio lower limit
+       'Tritium breeding ratio lower lim ', &
+       !+ad_varc  <LI> (53) Neutron fluence on TF coil upper limit
        'Neutron fluence on TF coil limit ', &
-       !+ad_varc  <LI> (54) Peak TF coil nuclear heating limit
+       !+ad_varc  <LI> (54) Peak TF coil nuclear heating upper limit
        'Peak TF coil nucl. heating limit ', &
-       !+ad_varc  <LI> (55) Vacuum vessel helium concentration limit
+       !+ad_varc  <LI> (55) Vacuum vessel helium concentration upper limit
        'Vessel helium concentration limit', &
-       !+ad_varc  <LI> (56) Pseparatrix/Rmajor limit
-       'Psep / R limit                   ', &
+       !+ad_varc  <LI> (56) Pseparatrix/Rmajor upper limit
+       'Psep / R upper limit             ', &
        !+ad_varc  <LI> (57) TF coil leg toroidal thickness lower limit
        'TF coil leg tor width lower limit', &
        !+ad_varc  <LI> (58) TF coil leg radial thickness lower limit</UL>

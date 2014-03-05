@@ -24,6 +24,7 @@ subroutine loadxc
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  rfp_variables
+  !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_call  pulse_variables
@@ -53,6 +54,8 @@ subroutine loadxc
   !+ad_hist  17/10/13 PJK Modified logic for cdtfleg usage
   !+ad_hist  28/11/13 PJK Added li6enrich (98)
   !+ad_hist  26/02/14 PJK Added ftftort (99) and ftfthko (100)
+  !+ad_hist  05/03/14 PJK Added warnings for usage of some iteration variables if
+  !+ad_hisc               istell=1
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -70,6 +73,7 @@ subroutine loadxc
   use physics_variables
   use pulse_variables
   use rfp_variables
+  use stellarator_variables
   use tfcoil_variables
   use times_variables
 
@@ -100,6 +104,14 @@ subroutine loadxc
      case (11) ; xcm(i) = pheat
      case (12) ; xcm(i) = oacdcp
      case (13) ; xcm(i) = tfcth
+        if (istell == 1) then
+           write(*,*) 'Error in routine LOADXC:'
+           write(*,*) 'TFCTH should not be used as an iteration'
+           write(*,*) 'variable if ISTELL=1, as it is'
+           write(*,*) 'calculated elsewhere.'
+           write(*,*) 'PROCESS stopping.'
+           stop
+        end if
      case (14) ; xcm(i) = fwalld
      case (15) ; xcm(i) = fvs
      case (16) ; xcm(i) = ohcth
@@ -114,7 +126,7 @@ subroutine loadxc
         if ((itfsup == 1).or.(irfp == 1)) then
            write(*,*) 'Error in routine LOADXC:'
            write(*,*) 'CDTFLEG should not be used as an iteration'
-           write(*,*) 'variable if ITFSUP = 1 or IRFP = 1.'
+           write(*,*) 'variable if ITFSUP=1 or IRFP=1.'
            write(*,*) 'PROCESS stopping.'
            stop
         end if
@@ -154,10 +166,10 @@ subroutine loadxc
      case (55) ; xcm(i) = tmargmin
      case (56) ; xcm(i) = tdmptf
      case (57) ; xcm(i) = thkcas
-        if (itfmod /= 1) then
+        if ((itfmod /= 1).or.(istell == 1)) then
            write(*,*) 'Error in routine LOADXC:'
            write(*,*) 'THKCAS cannot be used as an iteration'
-           write(*,*) 'variable if ITFMOD .ne. 1, as it is'
+           write(*,*) 'variable if ITFMOD .ne. 1 or ISTELL=1, as it is'
            write(*,*) 'calculated elsewhere.'
            write(*,*) 'PROCESS stopping.'
            stop
@@ -165,10 +177,10 @@ subroutine loadxc
      case (58) ; xcm(i) = thwcndut
      case (59) ; xcm(i) = fcutfsu
      case (60) ; xcm(i) = cpttf
-        if ((irfp == 0).and.(itfsup == 0)) then
+        if ((istell == 1).or.((irfp == 0).and.(itfsup == 0))) then
            write(*,*) 'Error in routine LOADXC:'
            write(*,*) 'CPTTF cannot be used as an iteration'
-           write(*,*) 'variable if ITFSUP = 0, as it is'
+           write(*,*) 'variable if ITFSUP=0 or ISTELL=1, as it is'
            write(*,*) 'calculated elsewhere.'
            write(*,*) 'PROCESS stopping.'
            stop
@@ -198,6 +210,14 @@ subroutine loadxc
      case (75) ; xcm(i) = tfootfi
      case (76) ; xcm(i) = frfptf
      case (77) ; xcm(i) = tftort
+        if (istell == 1) then
+           write(*,*) 'Error in routine LOADXC:'
+           write(*,*) 'TFTORT should not be used as an iteration'
+           write(*,*) 'variable if ISTELL=1, as it is'
+           write(*,*) 'calculated elsewhere.'
+           write(*,*) 'PROCESS stopping.'
+           stop
+        end if
      case (78) ; xcm(i) = rfpth
      case (79) ; xcm(i) = fbetap
      case (80) ; xcm(i) = frfpf

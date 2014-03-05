@@ -8,7 +8,6 @@ module profiles_module
   !+ad_type  Module
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  plasma_profiles
-  !+ad_cont  sumup3
   !+ad_cont  tcore
   !+ad_cont  tprofile
   !+ad_cont  ncore
@@ -22,6 +21,7 @@ module profiles_module
   !+ad_call  physics_variables
   !+ad_call  maths_library
   !+ad_hist  24/02/14 PJK Initial version
+  !+ad_hist  04/03/14 PJK Moved sumup3 into maths_library.f90
   !+ad_stat  Okay
   !+ad_docs  T&amp;M/PKNIGHT/LOGBOOK24, pp.4-7
   !
@@ -32,7 +32,7 @@ module profiles_module
   use maths_library
   use physics_variables
 
-  private :: sumup3
+  private
   public :: plasma_profiles, ncore, nprofile, tcore, tprofile
 
 contains
@@ -70,7 +70,7 @@ contains
 
     !  Local variables
 
-    integer, parameter :: nrho = 501  !  N.B. sumup3 routine assumes odd nrho
+    integer, parameter :: nrho = 501
     integer :: irho
     real(kind(1.0D0)) :: drho, rho, integ1, integ2, dens, temp
     real(kind(1.0D0)), dimension(nrho) :: arg1, arg2, arg3
@@ -181,62 +181,6 @@ contains
     alphap = alphan + alphat
 
   end subroutine plasma_profiles
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine sumup3(dx,y,integral,n)
-
-    !+ad_name  sumup3
-    !+ad_summ  Routine to integrate a 1-D array of y values using the
-    !+ad_summ  Extended Simpson's Rule, assuming equally-spaced x values
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  dx : input real : (constant) spacing between adjacent x values
-    !+ad_args  y(1:n) : input real array : y values to be integrated
-    !+ad_args  integral : output real : calculated integral
-    !+ad_args  n : input integer : length of array y
-    !+ad_desc  This routine uses Simpson's Rule to integrate an array y.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  28/06/06 PJK Initial version
-    !+ad_hist  19/02/14 PJK (Possibly temporary) Inclusion into PROCESS,
-    !+ad_hisc               cut-down to only allow odd n
-    !+ad_stat  Okay
-    !+ad_docs  None
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    integer, intent(in) :: n
-    real(kind(1.0D0)), intent(in) :: dx
-    real(kind(1.0D0)), intent(in), dimension(n) :: y
-    real(kind(1.0D0)), intent(out) :: integral
-
-    !  Local variables
-
-    integer :: ix
-    real(kind(1.0D0)) :: sum1
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    if (mod(n,2) == 0) then
-       write(*,*) 'Error in routine SUMUP3:'
-       write(*,*) 'This version assumes an odd number of tabulated points'
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
-
-    sum1 = y(1)
-    do ix = 2,n-3,2
-       sum1 = sum1 + 4.0D0*y(ix) + 2.0D0*y(ix+1)
-    end do
-    integral = dx/3.0D0*(sum1 + 4.0D0*y(n-1) + y(n))
-
-  end subroutine sumup3
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   

@@ -360,6 +360,7 @@ contains
     !+ad_hisc               from hybrid to hybrd
     !+ad_hist  26/02/14 PJK Added FTFTORT, FTFTHKO, FJOHC
     !+ad_hist  27/02/14 PJK Added NINEQNS
+    !+ad_hist  03/03/14 PJK Changed lower bound of TRATIO to 0.0
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -712,7 +713,7 @@ contains
           call parse_real_variable('TI', ti, 5.0D0, 50.0D0, &
                'Ion temperature (keV)')
        case ('TRATIO')
-          call parse_real_variable('TRATIO', tratio, 0.01D0, 2.0D0, &
+          call parse_real_variable('TRATIO', tratio, 0.0D0, 2.0D0, &
                'Ion / electron temperature ratio')
        case ('TRIANG')
           call parse_real_variable('TRIANG', triang, 0.0D0, 1.0D0, &
@@ -2165,6 +2166,9 @@ contains
        case ('F_W')
           call parse_real_variable('F_W', f_w, 0.1D0, 1.0D0, &
                'Island size fraction factor')
+       case ('FDIVWET')
+          call parse_real_variable('FDIVWET', fdivwet, 0.01D0, 1.0D0, &
+               'Wetted area fraction of divertor plates')
        case ('FLPITCH')
           call parse_real_variable('FLPITCH', flpitch, 1.0D-4, 1.0D-2, &
                'Field line pitch (rad)')

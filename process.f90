@@ -1434,3 +1434,9 @@ end subroutine output
 ! SVN 239: Updated PROCESS_dicts.py
 ! SVN 240: Modified code to allow usage of inequality constraints in the future
 ! SVN 241: Minor output modifications
+! SVN 242: Incorporated the new stellarator coil model;
+!          Updated the stellarator description in the User Guide;
+!          Moved a few maths utility routines into maths_library.f90;
+!          Fixed problem with fusion reaction rate if temperature = zero;
+!          Modified a few comments and added central profile values to output;
+!          Corrected D-D reaction rates

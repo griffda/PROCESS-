@@ -23,7 +23,7 @@
 #    (see the list of available architectures below)
 #
 #  Turn on full debugging using 'make ARCH=... DEBUG=YES'
-#    (works for some but not all architectures)
+#    (currently this is turned on by default)
 #
 #  Type 'make clean' to clean up the directory to allow a full recompilation
 #
@@ -232,7 +232,7 @@ process.exe: $(object)
 
 ### Utilities #################
 
-.PHONY: clean tar archive doc
+.PHONY: clean tar archive doc manual html
 
 # Clean up directory, to force full recompilation
 

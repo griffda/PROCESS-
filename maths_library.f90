@@ -20,8 +20,10 @@ module maths_library
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  dogleg
   !+ad_cont  dotpmc
+  !+ad_cont  ellipke
   !+ad_cont  enorm
   !+ad_cont  fdjac1
+  !+ad_cont  find_y_nonuniform_x
   !+ad_cont  gamfun
   !+ad_cont  harwfp
   !+ad_cont  harwqp
@@ -43,7 +45,10 @@ module maths_library
   !+ad_cont  spmpar
   !+ad_cont  sscal
   !+ad_cont  sswap
+  !+ad_cont  sumup2
+  !+ad_cont  sumup3
   !+ad_cont  svd
+  !+ad_cont  tril
   !+ad_cont  vmcon
   !+ad_cont  zeroin
   !+ad_args  N/A
@@ -58,6 +63,8 @@ module maths_library
   !+ad_call  global_variables
   !+ad_hist  10/10/12 PJK Initial version of module
   !+ad_hist  25/02/14 PJK Added global_variables
+  !+ad_hist  04/03/14 PJK Added sumup2, sumup3, tril, ellipke,
+  !+ad_hisc               find_y_nonuniform_x
   !+ad_stat  Okay
   !+ad_docs  http://en.wikipedia.org/wiki/Gamma_function
   !
@@ -69,9 +76,339 @@ module maths_library
 
   private
 
-  public :: gamfun,hybrd,linesolv,qpsub,quanc8,svd,vmcon,zeroin
+  public :: ellipke,find_y_nonuniform_x,gamfun,hybrd,linesolv,qpsub, &
+       quanc8,sumup3,svd,tril,vmcon,zeroin
 
 contains
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function find_y_nonuniform_x(x0,x,y,n)
+
+    !+ad_name  find_y_nonuniform_x
+    !+ad_summ  Routine to find y0 such that y0 = y(x0) given a set of
+    !+ad_summ  values x(1:n), y(1:n)
+    !+ad_type  Function returning a real
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  x0 : input real : x value at which we want to find y
+    !+ad_args  x(1:n) : input real array : monotonically de/increasing x values
+    !+ad_args  y(1:n) : input real array : y values at each x
+    !+ad_args  n : input integer : size of array
+    !+ad_desc  This routine performs a simple linear interpolation method
+    !+ad_desc  to find the y value at x = x0. If x0 lies outside the
+    !+ad_desc  range [x(1),x(n)], the y value at the nearest 'end' of the data
+    !+ad_desc  is returned.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  31/03/08 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: find_y_nonuniform_x
+
+    !  Arguments
+
+    integer, intent(in) :: n
+    real(kind(1.0D0)), intent(in) :: x0
+    real(kind(1.0D0)), dimension(n), intent(in) :: x
+    real(kind(1.0D0)), dimension(n), intent(in) :: y
+
+    !  Local variables
+
+    integer :: i,j
+    real(kind(1.0D0)) :: dx, ddx
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Step through arrays until x crosses the value of interest
+
+    j = 0
+    rough_search: do i = 1,n-1
+
+       if (((x(i)-x0)*(x(i+1)-x0)) <= 0.0D0) then
+          j = i
+          exit rough_search
+       end if
+
+    end do rough_search
+
+    if (j /= 0) then
+
+       !  Simply do a linear interpolation between the two grid points
+       !  spanning the point of interest
+
+       find_y_nonuniform_x = y(j) + (y(j+1)-y(j))*(x0-x(j))/(x(j+1)-x(j))
+
+    else  !  No points found, so return the 'nearest' y value
+
+       if (x(n) > x(1)) then  !  values are monotonically increasing
+          if (x0 > x(n)) then
+             find_y_nonuniform_x = y(n)
+          else
+             find_y_nonuniform_x = y(1)
+          end if
+
+       else  !  values are monotonically decreasing
+          if (x0 < x(n)) then
+             find_y_nonuniform_x = y(n)
+          else
+             find_y_nonuniform_x = y(1)
+          end if
+
+       end if
+
+    end if
+
+  end function find_y_nonuniform_x
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine sumup2(dx,y,inty,n)
+
+    !+ad_name  sumup2
+    !+ad_summ  Routine to integrate a 1-D array of y values, using a process
+    !+ad_summ  similar to Simpson's Rule, and assuming equally-spaced x values.
+    !+ad_summ  It returns the integral at all tabulated points.
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  dx : input real : (constant) spacing between adjacent x values
+    !+ad_args  y(1:n) : input real array : y values to be integrated
+    !+ad_args  inty(1:n) : input/output real array : calculated integral
+    !+ad_argc    (see below)
+    !+ad_args  n : input integer : length of arrays y and inty
+    !+ad_desc  This routine uses a process similar to (but not quite the same
+    !+ad_desc  as) Simpson's Rule to integrate an array y,
+    !+ad_desc  returning the integral up to point i in array element inty(i).
+    !+ad_desc  Note that the first element of inty is not calculated, and must
+    !+ad_desc  be set to the required value on entry. Usually, but not always,
+    !+ad_desc  this value will be zero.
+    !+ad_prob  This routine does a very reasonable job; however, routine
+    !+ad_prob  <A HREF="sumup3.html">sumup3</A> is more accurate if only the
+    !+ad_prob  total integral over the given range is required.
+    !+ad_call  None
+    !+ad_hist  12/04/02 PJK Initial version
+    !+ad_hist  24/02/2009 PJK Added third as parameter
+    !+ad_stat  Okay
+    !+ad_docs  The original source for this algorithm is not known...
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: n
+    real(kind(1.0D0)), intent(in) :: dx
+    real(kind(1.0D0)), intent(in), dimension(n) :: y
+    real(kind(1.0D0)), intent(inout), dimension(n) :: inty
+
+    !  Local variables
+
+    integer :: ix
+    real(kind(1.0D0)), parameter :: third = 1.0D0/3.0D0
+    real(kind(1.0D0)) :: thirddx
+    real(kind(1.0D0)), allocatable, dimension(:) :: yhalf
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    allocate (yhalf(2:n))
+
+    thirddx = third*dx
+
+    do ix = 2,n-1
+       yhalf(ix) = y(ix)-0.25D0*(y(ix+1)-y(ix-1))
+    end do
+    yhalf(n) = y(n-1)+0.25D0*(y(n)-y(n-2))
+
+    do ix = 2,n
+       inty(ix) = inty(ix-1) + thirddx*(y(ix)+yhalf(ix)+y(ix-1))
+    end do
+
+    deallocate (yhalf)
+
+  end subroutine sumup2
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine sumup3(dx,y,integral,n)
+
+    !+ad_name  sumup3
+    !+ad_summ  Routine to integrate a 1-D array of y values using the
+    !+ad_summ  Extended Simpson's Rule, assuming equally-spaced x values
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  dx : input real : (constant) spacing between adjacent x values
+    !+ad_args  y(1:n) : input real array : y values to be integrated
+    !+ad_args  integral : output real : calculated integral
+    !+ad_args  n : input integer : length of array y
+    !+ad_desc  This routine uses Simpson's Rule to integrate an array y.
+    !+ad_desc  If n is even, routine <CODE>sumup2</CODE> is called to
+    !+ad_desc  perform the calculation.
+    !+ad_desc  <P>Note: unlike sumup1 and sumup2, this routine returns only
+    !+ad_desc  the complete integral, not the intermediate values as well.
+    !+ad_prob  None
+    !+ad_call  sumup2
+    !+ad_hist  28/06/06 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: n
+    real(kind(1.0D0)), intent(in) :: dx
+    real(kind(1.0D0)), intent(in), dimension(n) :: y
+    real(kind(1.0D0)), intent(out) :: integral
+
+    !  Local variables
+
+    integer :: ix
+    real(kind(1.0D0)) :: sum1
+    real(kind(1.0D0)), allocatable, dimension(:) :: inty
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (mod(n,2) == 0) then
+
+       !  Use sumup2 if the number of tabulated points is even
+
+       allocate (inty(n))
+
+       inty(1) = 0.0D0
+       call sumup2(dx,y,inty,n)
+       integral = inty(n)
+
+       deallocate (inty)
+
+    else
+
+       sum1 = y(1)
+       do ix = 2,n-3,2
+          sum1 = sum1 + 4.0D0*y(ix) + 2.0D0*y(ix+1)
+       end do
+       integral = dx/3.0D0*(sum1 + 4.0D0*y(n-1) + y(n))
+
+    end if
+
+  end subroutine sumup3
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine tril(a,n,alower)
+
+    !+ad_name  tril
+    !+ad_summ  Routine to extract the lower triangular part of a square matrix
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  a(n,n) : input real array : input matrix
+    !+ad_args  n      : input integer : number of rows and columns in A
+    !+ad_args  a(n,n) : output real array : lower triangular part of A
+    !+ad_desc  This routine extracts the lower triangular part of a square matrix,
+    !+ad_desc  excluding the diagonal, into a new square matrix. The remainder
+    !+ad_desc  of this matrix contains zeroes on exit.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  03/03/14 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: n
+    real(kind(1.0D0)), dimension(n,n), intent(in) :: a
+    real(kind(1.0D0)), dimension(n,n), intent(out) :: alower
+
+    !  Local variables
+
+    integer :: row,col
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    alower = 0.0D0
+    do col = 1,n-1
+       do row = col+1,n
+          alower(row,col) = a(row,col)
+       end do
+    end do
+
+  end subroutine tril
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine ellipke(sqk,kk,ek)
+
+    !+ad_name  ellipke
+    !+ad_summ  Routine that calculates the complete elliptic integral
+    !+ad_summ  of the first and second kinds
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  None
+    !+ad_args  sqk : input real : square of the elliptic modulus
+    !+ad_args  kk  : output real : complete elliptic integral of the first kind
+    !+ad_args  ek  : output real : complete elliptic integral of the second kind
+    !+ad_desc  This routine calculates the complete elliptic integral
+    !+ad_desc  of the first and second kinds.
+    !+ad_desc  <P>The method used is that described in the reference, and
+    !+ad_desc  the code is taken from the Culham maglib library routine FN02A.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  03/03/14 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  Approximations for Digital Computers, C. Hastings,
+    !+ad_docc  Princeton University Press, 1955
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: sqk
+    real(kind(1.0D0)), intent(out) :: kk,ek
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: a,b,d,e
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    d = 1.0D0 - sqk
+    e = log(d)
+
+    !  Evaluate series for integral of first kind
+
+    a = (((0.014511962D0*d + 0.037425637D0)*d + 0.035900924D0)*d &
+         + 0.096663443D0)*d + 1.386294361D0
+    b = (((0.004417870D0*d + 0.033283553D0)*d + 0.06880249D0)*d &
+         + 0.12498594D0)*d + 0.5D0
+
+    kk = a - b*e
+
+    !  Evaluate series for integral of second kind
+
+    a = (((0.017365065D0*d + 0.047573835D0)*d + 0.06260601D0)*d &
+         + 0.44325141D0)*d + 1.0D0
+    b = (((0.005264496D0*d + 0.040696975D0)*d + 0.09200180D0)*d &
+         + 0.24998368D0)*d
+
+    ek = a - b*e
+
+  end subroutine ellipke
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

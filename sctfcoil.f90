@@ -1704,9 +1704,12 @@ contains
       !+ad_desc  is a first-generation high temperature superconductor; it still needs
       !+ad_desc  to be operated below about 10K, but remains superconducting at much
       !+ad_desc  higher fields at that temperature than Nb3Sn etc.
+      !+ad_desc  The model's range of validity is T &lt; 20K, adjusted field
+      !+ad_desc  b &lt; 104 T, B &gt; 6 T.
       !+ad_prob  None
       !+ad_call  None
       !+ad_hist  08/10/13 PJK Initial version
+      !+ad_hist  05/03/14 PJK Added comment about range of validity
       !+ad_stat  Okay
       !+ad_docs  A transformative superconducting magnet technology for fields well
       !+ad_docc  above 30 T using isotropic round wire multifilament

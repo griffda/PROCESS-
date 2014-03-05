@@ -8,7 +8,7 @@ subroutine constraints(m,cc,ieqn)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  m : input integer : Number of constraint equations
+  !+ad_args  m : input integer : Number of constraint equations to solve
   !+ad_args  cc(m) : output real array : Residual error in equation i
   !+ad_args  ieqn : input integer : Switch for constraint equations to evaluate;
   !+ad_argc                         if <CODE>ieqn</CODE> is negative, formulate all
@@ -82,6 +82,7 @@ subroutine constraints(m,cc,ieqn)
   !+ad_hisc               one of the constraint equations
   !+ad_hist  13/02/14 PJK Made limit equations uniform in style
   !+ad_hist  26/02/14 PJK Added new eqns 57, 58
+  !+ad_hist  05/03/14 PJK Removed redundant eqn 17
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -129,18 +130,20 @@ subroutine constraints(m,cc,ieqn)
      i1 = 1 ; i2 = m
   end if
 
+  !  Consistency (equality) constraints should converge to zero.
+
   do i = i1,i2
 
      select case (icc(i))
 
      case (1)  !  Relationship between beta, temperature (keV) and density
-               !  This is a consistency equation.
+               !  This is a consistency equation
 
         cc(i) = 1.0D0 - (betaft + betanb + 2.0D3*rmu0*echarge &
              * (dene*ten + dnitot*tin)/btot**2 )/beta
 
      case (2)  !  Global plasma power balance equation
-               !  This is a consistency equation.
+               !  This is a consistency equation
 
         if (ignite == 0) then
            cc(i) = 1.0D0 - (ptre+ptri+prad)/( falpha*palp &
@@ -151,6 +154,7 @@ subroutine constraints(m,cc,ieqn)
         end if
 
      case (3)  !  Global power balance equation for ions
+               !  This is a consistency equation
 
         if (ignite == 0) then
            cc(i) = 1.0D0 - (ptri+pie)/ &
@@ -160,6 +164,7 @@ subroutine constraints(m,cc,ieqn)
         end if
 
      case (4)  !  Global power balance equation for electrons
+               !  This is a consistency equation
 
         if (ignite == 0) then
            cc(i) = 1.0D0 - (ptre+prad)/ &
@@ -168,7 +173,7 @@ subroutine constraints(m,cc,ieqn)
            cc(i) = 1.0D0 - (ptre+prad)/( (falpha*palpe)+pie )
         end if
 
-     case (5)  !  Equation for density limit
+     case (5)  !  Equation for density upper limit
 
         if (idensl == 7) then  !  Apply Greenwald limit to line-averaged density
            cc(i) = 1.0D0 - fdene * dnelimt/dnla
@@ -176,12 +181,12 @@ subroutine constraints(m,cc,ieqn)
            cc(i) = 1.0D0 - fdene * dnelimt/dene
         end if
 
-     case (6)  !  Equation for epsilon beta-poloidal limit
+     case (6)  !  Equation for epsilon beta-poloidal upper limit
 
         cc(i) = 1.0D0 - fbeta * epbetmax/(eps*betap)
 
      case (7)  !  Equation for hot beam ion density
-               !  This is a consistency equation (NBI).
+               !  This is a consistency equation (NBI)
 
         if (ignite == 0) then
            cc(i) = 1.0D0 - dnbeam2/dnbeam
@@ -192,67 +197,74 @@ subroutine constraints(m,cc,ieqn)
            stop
         end if
 
-     case (8)  !  Equation for neutron wall load limit
+     case (8)  !  Equation for neutron wall load upper limit
 
         cc(i) = 1.0D0 - fwalld * walalw/wallmw
 
-     case (9)  !  Equation for fusion power limit
+     case (9)  !  Equation for fusion power upper limit
 
         cc(i) = 1.0D0 - ffuspow * powfmax/powfmw
 
      case (10)  !  Equation for field at TF coil
-                !  This is a consistency equation.
+                !  This is a consistency equation
+                !  (do not use for stellarators)
 
         cc(i) = 1.0D0 - (rmajor*bt)/(rbmax*bmaxtf)
 
      case (11)  !  Equation for radial build
-                !  This is a consistency equation.
+                !  This is a consistency equation
 
         cc(i) = 1.0D0 - rbld/rmajor
 
-     case (12)  !  Equation for volt-second capability
+     case (12)  !  Equation for volt-second capability lower limit
 
+        !  vsstt (required) is positive; vstot (available) is negative
         cc(i) = 1.0D0 + fvs * vstot/vsstt
 
-     case (13)  !  Equation to limit minimum burn time
+     case (13)  !  Equation for burn time lower limit
 
         cc(i) = 1.0D0 - ftburn * tburn/tbrnmn
 
      case (14)  !  Equation for beam energy consistency
+                !  This is a consistency equation
 
         cc(i) = 1.0D0 - taubeam/tbeamin
 
      case (15)  !  Equation for burn time consistency
+                !  This is a consistency equation
 
         cc(i) = 1.0D0 - tburn0/tburn
 
-     case (16)  !  Equation for net electric power
+     case (16)  !  Equation for net electric power lower limit
 
         cc(i) = 1.0D0 - fpnetel * pnetelmw / pnetelin
 
      case (17)  !  Equation for stellarator radial build consistency
+        !  This equation is redundant... not relevant for 2013 stellarator model
 
-        acoil = hmax + 0.5D0*tfcth
-        cc(i) = 1.0D0 - acoil / (2.6D0*rminor)
+        write(*,*) 'Constraint equation 17 is redundant -'
+        write(*,*) 'please do not use it.'
+        write(*,*) 'PROCESS stopping'
+        stop
 
-     case (18)  !  Equation for divertor heat load
+     case (18)  !  Equation for divertor heat load upper limit
 
         cc(i) = 1.0D0 - fhldiv * hldivlim/hldiv
 
-     case (19)  !  Equation for MVA limit
+     case (19)  !  Equation for MVA upper limit
 
         totmva = tfcpmw + tflegmw
         cc(i) = 1.0D0 - fmva * mvalim/totmva
 
-     case (20)  !  Equation for neutral beam tangency radius limit
+     case (20)  !  Equation for neutral beam tangency radius upper limit
 
         cc(i) = 1.0D0 - fportsz * rtanmax/rtanbeam
 
-     case (21)  !  Equation for minimum minor radius
+     case (21)  !  Equation for minor radius lower limit
 
         cc(i) = 1.0D0 - frminor * rminor/aplasmin
 
-     case (22)  !  Equation for divertor collisionality
+     case (22)  !  Equation for divertor collision/connection length ratio upper limit
 
         cc(i) = 1.0D0 - fdivcol * rlenmax / rlclolcn
 
@@ -264,7 +276,7 @@ subroutine constraints(m,cc,ieqn)
         write(*,*) 'PROCESS stopping'
         stop
 
-     case (24)  !  Equation for beta limit
+     case (24)  !  Equation for beta upper limit
 
         if ((iculbl == 0).or.(istell /= 0)) then
 
@@ -294,19 +306,22 @@ subroutine constraints(m,cc,ieqn)
            stop
         end if
 
-     case (25)  !  Equation for peak toroidal field limit
+     case (25)  !  Equation for peak toroidal field upper limit
 
         cc(i) = 1.0D0 - fpeakb * bmxlim/bmaxtf
 
-     case (26)  !  Equation for J-OHC at EOF
+     case (26)  !  Equation for OH coil current density upper limit at EOF
 
         cc(i) = 1.0D0 - fjohc * rjohc/coheof
 
-     case (27)  !  Equation for J-OHC at BOP
+     case (27)  !  Equation for OH coil current density upper limit at BOP
 
         cc(i) = 1.0D0 - fjohc0 * rjohc0/cohbop
 
-     case (28)  !  Equation for Big Q
+     case (28)  !  Equation for big Q lower limit
+
+        !  Q = fusion power / (injected+ohmic) power, >= 1/fqval
+        !  Here, the small ohmic power contribution is neglected
 
         if (ignite == 0) then
            cc(i) = 1.0D0 - fqval * powfmw / (1.0D-6*(pinji+pinje))
@@ -318,50 +333,49 @@ subroutine constraints(m,cc,ieqn)
         end if
 
      case (29)  !  Equation for inboard major radius
+                !  This is a consistency equation
 
         cc(i) = 1.0D0 - (rmajor - rminor) / rinboard
 
-     case (30)  !  Equation to limit injection power
+     case (30)  !  Equation for injection power upper limit
 
-        !  Inverted from usual form to prevent problems
-        !  with zero injected power
+        !  Usual form is inverted to prevent problems when injection power is zero
 
         cc(i) = 1.0D0 - (pinji + pinje) / (fpinj * 1.0D6 * pinjalw)
 
-     case (31)  !  Equation to limit TFC case stress (SCTF)
+     case (31)  !  Equation for TF coil case stress upper limit (SCTF)
 
         cc(i) = 1.0D0 - fstrcase * alstrtf/strtf2
 
-     case (32)  !  Equation to limit TFC conduit stress (SCTF)
+     case (32)  !  Equation for TF coil conduit stress upper limit (SCTF)
 
         cc(i) = 1.0D0 - fstrcond * alstrtf/strtf1
 
-     case (33)  !  Equation to limit iop/icrit (SCTF)
+     case (33)  !  Equation for TF coil operating/critical J upper limit (SCTF)
 
         cc(i) = 1.0D0 - fiooic * jwdgcrt/jwptf
 
-     case (34)  !  Equation to limit dump voltage (SCTF)
+     case (34)  !  Equation for TF coil dump voltage upper limit (SCTF)
 
         cc(i) = 1.0D0 - fvdump * vdalw/vtfskv
 
-     case (35)  !  Equation to limit J_wp/J_prot (SCTF)
+     case (35)  !  Equation for TF coil J_wp/J_prot upper limit (SCTF)
 
         cc(i) = 1.0D0 - fjprot * jwdgpro/jwptf
 
-     case (36)  !  Equation to limit temp margin (SCTF)
+     case (36)  !  Equation for TF coil s/c temperature margin lower limit (SCTF)
 
         cc(i) = 1.0D0 - ftmargtf * tmargtf/tmargmin
 
-     case (37)  !  Equation to limit current drive gamma
+     case (37)  !  Equation for current drive gamma upper limit
 
         cc(i) = 1.0D0 - fgamcd * gammax/gamcd
 
-     case (38)  !  Equation to limit coolant temperature rise
-                !  in first wall
+     case (38)  !  Equation for first wall coolant temperature rise upper limit
 
         cc(i) = 1.0D0 - fdtmp * dtmpmx/tmprse
 
-     case (39)  !  Equation to limit temperature in first wall
+     case (39)  !  Equation for first wall temperature upper limit
 
         if (tpeak == 0.0D0) then
            write(*,*) 'Error in routine CONSTRAINTS:'
@@ -373,15 +387,15 @@ subroutine constraints(m,cc,ieqn)
         end if
         cc(i) = 1.0D0 - ftpeak * tpkmax/tpeak
 
-     case (40)  !  Equation to limit minimum auxiliary power
+     case (40)  !  Equation for auxiliary power lower limit
 
         cc(i) = 1.0D0 - fauxmn * 1.0D-6 * (pinje+pinji)/auxmin
 
-     case (41)  !  Equation to limit minimum plasma current ramp-up time
+     case (41)  !  Equation for plasma current ramp-up time lower limit
 
         cc(i) = 1.0D0 - ftohs * tohs/tohsmn
 
-     case (42)  !  Equation to limit minimum cycle time
+     case (42)  !  Equation for cycle time lower limit
 
         if (tcycmn == 0.0D0) then
            write(*,*) 'Error in routine CONSTRAINTS:'
@@ -394,8 +408,8 @@ subroutine constraints(m,cc,ieqn)
         tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
         cc(i) = 1.0D0 - ftcycl * tcycle/tcycmn
 
-     case (43)  !  Equation for average centerpost temperature
-                !  This is a consistency equation (TART).
+     case (43)  !  Equation for average centrepost temperature
+                !  This is a consistency equation (TART)
 
         if (itart == 0) then
            write(*,*) 'Error in routine CONSTRAINTS:'
@@ -405,7 +419,7 @@ subroutine constraints(m,cc,ieqn)
         end if
         cc(i) = 1.0D0 - tcpav/tcpav2
 
-     case (44)  !  Equation for peak centerpost temperature limit
+     case (44)  !  Equation for centrepost temperature upper limit (TART)
 
         if (itart == 0) then
            write(*,*) 'Error in routine CONSTRAINTS:'
@@ -415,7 +429,7 @@ subroutine constraints(m,cc,ieqn)
         end if
         cc(i) = 1.0D0 - fptemp * ptempalw / tcpmax
 
-     case (45)  !  Equation for minimum edge safety factor limit (TART)
+     case (45)  !  Equation for edge safety factor lower limit (TART)
 
         if (itart == 0) then
            write(*,*) 'Error in routine CONSTRAINTS:'
@@ -425,7 +439,7 @@ subroutine constraints(m,cc,ieqn)
         end if
         cc(i) = 1.0D0 - fq * q/qlim
 
-     case (46)  !  Equation for Ip/Irod limit (TART)
+     case (46)  !  Equation for Ip/Irod upper limit (TART)
                 !  This is a q-edge type limit for certain aspect ratios
 
         if (itart == 0) then
@@ -439,18 +453,18 @@ subroutine constraints(m,cc,ieqn)
         cratmx = 1.0D0 + 4.91D0*(eps-0.62D0)
         cc(i) = 1.0D0 - fipir * cratmx * ritfc/plascur
 
-     case (47)  !  Equation for maximum TF coil toroidal thickness (tftort)
-                !  Relevant only to reversed field pinch or stellarator devices
+     case (47)  !  Equation for TF coil toroidal thickness upper limit
+                !  Relevant only to reversed field pinch devices
 
-        if ((irfp == 0).and.(istell == 0)) then
+        if (irfp == 0) then
            write(*,*) 'Error in routine CONSTRAINTS:'
-           write(*,*) 'Do not use constraint 47 if irfp=0 and istell=0.'
+           write(*,*) 'Do not use constraint 47 if irfp=0.'
            write(*,*) 'PROCESS stopping.'
            stop
         end if
         cc(i) = 1.0D0 - frfptf * (2.0D0*(rbmax-tfcth)*tan(pi/tfno))/tftort
 
-     case (48)  !  Equation for poloidal beta limit
+     case (48)  !  Equation for poloidal beta upper limit
 
         cc(i) = 1.0D0 - fbetap * betpmx/betap
 
@@ -458,7 +472,7 @@ subroutine constraints(m,cc,ieqn)
 
         cc(i) = 1.0D0 + frfpf * rfpf/0.001D0
 
-     case (50)  !  Equation for maximum IFE repetition rate (reprat)
+     case (50)  !  Equation for IFE repetition rate upper limit
                 !  Relevant only to inertial fusion energy devices
 
         if (ife == 0) then
@@ -470,34 +484,35 @@ subroutine constraints(m,cc,ieqn)
         cc(i) = 1.0D0 - frrmax * rrmax/reprat
 
      case (51)  !  Equation to enforce startup flux = available startup flux
+                !  This is a consistency equation
 
         cc(i) = 1.0D0 - (vsres+vsind) / vssu
 
-     case (52)  !  Equation to limit minimum tritium breeding ratio
+     case (52)  !  Equation for tritium breeding ratio lower limit
 
         cc(i) = 1.0D0 - ftbr * tbr/tbrmin
 
-     case (53)  !  Equation for fast neutron fluence on TF coil limit
+     case (53)  !  Equation for fast neutron fluence on TF coil upper limit
 
         cc(i) = 1.0D0 - fflutf * nflutfmax/nflutf
 
-     case (54)  !  Equation for peak TF coil nuclear heating limit
+     case (54)  !  Equation for peak TF coil nuclear heating upper limit
 
         cc(i) = 1.0D0 - fptfnuc * ptfnucmax/ptfnucpm3
 
-     case (55)  !  Equation for final helium concentration in vacuum vessel limit
+     case (55)  !  Equation for helium concentration in vacuum vessel upper limit
 
         cc(i) = 1.0D0 - fvvhe * vvhealw/vvhemax
 
-     case (56)  !  Equation for power through separatrix / major radius limit
+     case (56)  !  Equation for power through separatrix / major radius upper limit
 
         cc(i) = 1.0D0 - fpsepr * pseprmax / (pdivt/rmajor)
 
-     case (57)  !  Equation for minimum TF coil outer leg toroidal thickness (tftort)
+     case (57)  !  Equation for TF coil outer leg toroidal thickness lower limit
 
         cc(i) = 1.0D0 - ftftort * tftort/(wwp1 + 2.0D0*tinstf + 2.0D0*casths)
 
-     case (58)  !  Equation for minimum TF coil outer leg radial thickness (tfthko)
+     case (58)  !  Equation for TF coil outer leg radial thickness lower limit
 
         cc(i) = 1.0D0 - ftfthko * tfthko/(thkwp + 2.0D0*tinstf)
 

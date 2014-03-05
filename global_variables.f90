@@ -1401,8 +1401,10 @@ module tfcoil_variables
   !+ad_vars  casfact /4.0/ : TF coil case outboard/inboard area ratio
   real(kind(1.0D0)) :: casfact = 4.0D0
   !+ad_vars  casthi /0.05/ : inboard TF coil case inner (plasma side) thickness (m)
+  !+ad_varc                  (calculated for stellarators)
   real(kind(1.0D0)) :: casthi = 0.05D0
   !+ad_vars  casths /0.07/ : inboard TF coil sidewall case thickness (m)
+  !+ad_varc                  (calculated for stellarators)
   real(kind(1.0D0)) :: casths = 0.07D0
   !+ad_vars  cdtfleg /1.0D6/ : TF leg overall current density (A/m2)
   !+ad_varc                    (resistive coils only) (iteration variable 24)
@@ -1412,6 +1414,7 @@ module tfcoil_variables
   !+ad_vars  cph2o /4180.0/ FIX : specific heat of water (J/kg/K)
   real(kind(1.0D0)) :: cph2o = 4180.0D0
   !+ad_vars  cpttf /3.79D4/ : TF coil current per turn (A)
+  !+ad_varc                  (calculated for stellarators)
   !+ad_varc                  (iteration variable 60)
   real(kind(1.0D0)) :: cpttf = 3.79D4
   !+ad_vars  csutf /1.4D9/ : ultimate strength of case (Pa)
@@ -1463,7 +1466,8 @@ module tfcoil_variables
   !+ad_vars  isumattf /1/ : switch for superconductor material in TF coils:<UL>
   !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
   !+ad_varc                     ITER parameters;
-  !+ad_varc            <LI> = 2 Bi-2212 high temperature superconductor;
+  !+ad_varc            <LI> = 2 Bi-2212 high temperature superconductor (range of
+  !+ad_varc                     validity T < 20K, adjusted field b < 104 T, B > 6 T);
   !+ad_varc            <LI> = 3 NbTi;
   !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters</UL>
   integer :: isumattf = 1
@@ -1597,13 +1601,15 @@ module tfcoil_variables
   !+ad_vars  tftmp /4.5/ : peak TF coil He coolant temperature (K)
   real(kind(1.0D0)) :: tftmp = 4.5D0
   !+ad_vars  tftort /0.33/ : TF coil toroidal thickness (m)
-  !+ad_varc                  (RFP - inboard and outboard; tokamak - outboard leg only)
+  !+ad_varc                  (RFP - inboard and outboard; tokamak - outboard leg only;
+  !+ad_varc                  calculated for stellarators)
   !+ad_varc                  (iteration variable 77)
   real(kind(1.0D0)) :: tftort = 0.33D0
   !+ad_vars  thicndut /8.0D-4/ : conduit insulation thickness (m)
   real(kind(1.0D0)) :: thicndut = 8.0D-4
   !+ad_vars  thkcas /0.3/ : external case thickness for superconductor (m)
   !+ad_varc                 (iteration variable 57)
+  !+ad_varc                 (calculated for stellarators)
   real(kind(1.0D0)) :: thkcas = 0.3D0
   !+ad_vars  thkwp : radial thickness of winding pack (m)
   real(kind(1.0D0)) :: thkwp = 0.0D0
@@ -1611,6 +1617,7 @@ module tfcoil_variables
   !+ad_varc                      (iteration variable 58)
   real(kind(1.0D0)) :: thwcndut = 3.0D-3
   !+ad_vars  tinstf /0.01/ : ground wall insulation thickness (m)
+  !+ad_varc                  (calculated for stellarators)
   real(kind(1.0D0)) :: tinstf = 0.01D0
   !+ad_vars  tmargmin /2.5/ : minimum allowable temperature margin (K)
   !+ad_varc                   (iteration variable 55)
@@ -2306,6 +2313,7 @@ module build_variables
   !+ad_varc                   calculated if blktmodel > 0
   real(kind(1.0D0)) :: shldtth = 0.6D0
   !+ad_vars  tfcth /0.9/ : inboard TF coil thickness, (centrepost for ST) (m)
+  !+ad_varc                (calculated for stellarators)
   !+ad_varc                (iteration variable 13)
   real(kind(1.0D0)) :: tfcth = 0.9D0
   !+ad_vars  tfootfi /1.8/ : TF coil outboard leg / inboard leg thickness ratio
@@ -2921,15 +2929,19 @@ module stellarator_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  stellarator model.
-  !+ad_desc  It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>stella.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  31/10/12 PJK Initial version of module
   !+ad_hist  23/01/13 PJK Added iotabar
   !+ad_hist  14/08/13 PJK/FW Added stellarator divertor variables
+  !+ad_hist  05/03/14 PJK Added fdivwet and port size variables
   !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !+ad_docs  Stellarator Plasma Geometry Model for the Systems
+  !+ad_docc  Code PROCESS, F. Warmer, 19/06/2013
+  !+ad_docs  Stellarator Divertor Model for the Systems
+  !+ad_docc  Code PROCESS, F. Warmer, 21/06/2013
+  !+ad_docs  Stellarator Coil Model for the Systems
+  !+ad_docc  Code PROCESS, F. Warmer and F. Schauer, 07/10/2013
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2945,8 +2957,16 @@ module stellarator_variables
   real(kind(1.0D0)) :: f_rad = 0.85D0
   !+ad_vars  f_w /0.5/ : island size fraction factor
   real(kind(1.0D0)) :: f_w = 0.5D0
+  !+ad_vars  fdivwet /0.3333/ : wetted fraction of the divertor area
+  real(kind(1.0D0)) :: fdivwet = 0.33333333333333333333333333333D0
   !+ad_vars  flpitch /0.001/ : field line pitch (rad)
   real(kind(1.0D0)) :: flpitch = 1.0D-3
+  !+ad_vars  hportamax : maximum available area for horizontal ports (m2)
+  real(kind(1.0D0)) :: hportamax = 0.0D0
+  !+ad_vars  hportpmax : maximum available poloidal extent for horizontal ports (m)
+  real(kind(1.0D0)) :: hportpmax = 0.0D0
+  !+ad_vars  hporttmax : maximum available toroidal extent for horizontal ports (m)
+  real(kind(1.0D0)) :: hporttmax = 0.0D0
   !+ad_vars  iotabar /1.0/ : rotational transform (reciprocal of tokamak q)
   !+ad_varc                  for stellarator confinement time scaling laws
   real(kind(1.0D0)) :: iotabar = 1.0D0
@@ -2974,6 +2994,12 @@ module stellarator_variables
   !+ad_vars  vmec_zmn_file /vmec_Zmn.dat/ : file containing plasma boundary Z(m,n)
   !+ad_varc                                 Fourier components
   character(len=48) :: vmec_zmn_file = 'vmec_Zmn.dat'
+  !+ad_vars  vportamax : maximum available area for vertical ports (m2)
+  real(kind(1.0D0)) :: vportamax = 0.0D0
+  !+ad_vars  vportpmax : maximum available poloidal extent for vertical ports (m)
+  real(kind(1.0D0)) :: vportpmax = 0.0D0
+  !+ad_vars  vporttmax : maximum available toroidal extent for vertical ports (m)
+  real(kind(1.0D0)) :: vporttmax = 0.0D0
 
 end module stellarator_variables
 

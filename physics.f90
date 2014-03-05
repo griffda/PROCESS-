@@ -1352,6 +1352,8 @@ contains
     !+ad_hist  11/09/13 PJK Removed idhe3, ftr, ealpha, iiter usage
     !+ad_hist  28/11/13 PJK Added powers for each fuel-pair to output
     !+ad_hist  20/02/14 PJK Modified calculation to deal with pedestal profiles
+    !+ad_hist  04/03/14 PJK Changed fusion power upper integration bound to 1.0;
+    !+ad_hisc               corrected D-D reaction rates (MK/TNT)
     !+ad_stat  Okay
     !+ad_docs  T&amp;M/PKNIGHT/LOGBOOK24, p.6
     !
@@ -1378,7 +1380,7 @@ contains
     !  Initialise local quantities
 
     alow = 0.0D0
-    bhigh = 0.999D0  !  N.B. setting this to 1.0 causes NaNs to occur
+    bhigh = 1.0D0
     epsq8 = 1.0D-9
 
     !  Find fusion power
@@ -1427,10 +1429,11 @@ contains
           prate = frate
           pdhe3pv = fpow
 
-       case (DD1)  !  D + D --> 3He + n reaction (branching ratio = 0.5)
+       case (DD1)  !  D + D --> 3He + n reaction
+          !  The 0.5 branching ratio is assumed to be included in sigmav
 
           etot = 3.27D0 * echarge  !  MJ
-          fpow = 0.5D0 * sigmav * etot * 0.25D0*fdeut*fdeut * deni*deni  !  MW/m3
+          fpow = 1.0D0 * sigmav * etot * 0.5D0*fdeut*fdeut * deni*deni  !  MW/m3
           pa = 0.0D0
           pc = 0.25D0 * fpow
           pn = 0.75D0 * fpow
@@ -1439,10 +1442,11 @@ contains
           prate = frate
           pddpv = pddpv + fpow
 
-       case (DD2)  !  D + D --> T + p reaction (branching ratio = 0.5)
+       case (DD2)  !  D + D --> T + p reaction
+          !  The 0.5 branching ratio is assumed to be included in sigmav
 
           etot = 4.03D0 * echarge  !  MJ
-          fpow = 0.5D0 * sigmav * etot * 0.25D0*fdeut*fdeut * deni*deni  !  MW/m3
+          fpow = 1.0D0 * sigmav * etot * 0.5D0*fdeut*fdeut * deni*deni  !  MW/m3
           pa = 0.0D0
           pc = fpow
           pn = 0.0D0
@@ -1677,6 +1681,7 @@ contains
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  11/09/13 PJK Initial version
+    !+ad_hist  04/03/14 PJK Prevent division by zero problem if t=0
     !+ad_stat  Okay
     !+ad_docs  Bosch and Hale, Nuclear Fusion 32 (1992) 611-631
     !
@@ -1699,6 +1704,11 @@ contains
     real(kind(1.0D0)), dimension(4,7) :: cc
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (t == 0.0D0) then
+       bosch_hale = 0.0D0
+       return
+    end if
 
     !  Gamov constant, BG
 
@@ -3956,6 +3966,7 @@ contains
     !+ad_hist  28/11/13 PJK Added fuel-ion pair fusion power contributions to output
     !+ad_hist  28/11/13 PJK Added icurr, iprofile information to output
     !+ad_hist  20/02/14 PJK Added pedestal profile quantities
+    !+ad_hist  05/03/14 PJK Added on-axis values
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4118,9 +4129,12 @@ contains
 
     call osubhd(outfile,'Temperature and Density (volume averaged) :')
     call ovarrf(outfile,'Electron temperature (keV)','(te)',te)
+    call ovarrf(outfile,'Electron temperature on axis (keV)','(te0)',te0)
     call ovarrf(outfile,'Ion temperature (keV)','(ti)',ti)
+    call ovarrf(outfile,'Ion temperature on axis (keV)','(ti0)',ti0)
     call ovarrf(outfile,'Electron temp., density weighted (keV)','(ten)',ten)
     call ovarre(outfile,'Electron density (/m3)','(dene)',dene)
+    call ovarre(outfile,'Electron density on axis (/m3)','(ne0)',ne0)
     call ovarre(outfile,'Line-averaged electron density (/m3)','(dnla)',dnla)
     call ovarre(outfile,'Ion density (/m3)','(dnitot)',dnitot)
     call ovarre(outfile,'Fuel density (/m3)','(deni)',deni)

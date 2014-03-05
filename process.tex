@@ -39,7 +39,7 @@
 \begin{center}
 \Huge A User Guide\\ to the \\ PROCESS Systems Code\\
 ~\\ \LARGE P.\ J.\ Knight\\
-~\\ \Large EURATOM/CCFE Fusion Association\\
+~\\ \Large Culham Centre for Fusion Energy\\
 Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 \end{center}
 
@@ -58,18 +58,28 @@ Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % To do list:
 %  (apart from bringing it in line with the F90 code, of course...)
-%  Makefile options
 %  Improve power flow figure
-%  autodoc
 %  scaling law references into table
-%  IFE model
+%  IFE model; expand details about build, materials
 %  check and expand references
 %  add iprimhtp, iprimnloss
 %  show buildings calculations
-%  update stellarator description (wait for coil model implementation)
+%  update stellarator description
 %  iavail usage
 %  python utilities
 %  pedestal profiles
+%  tratio
+%  ishape=2
+%  density limit refs
+%  radiation power
+%  check PF coil location
+%  tburn consistency
+%  add descriptions of other switches
+%  
+%  
+%  
+%  
+%  
 %  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -93,46 +103,46 @@ the amount of auxiliary power required?
 Questions such as these are extremely difficult to answer, since the large
 number of parameters involved are highly dependent on one another.
 Fortunately, computer programs have been written to address these issues, and
-\process\/ is one of them.
+\process\ is one of them.
 
 Suppose that an outline power plant design calls for a machine with a given
 size and shape, which will produce a certain net electric power.  There may be
 a vast number of different conceptual machines that satisfy the problem as
-stated so far, and \process\/ can be used in ``non-optimisation'' mode to find
+stated so far, and \process\ can be used in ``non-optimisation'' mode to find
 one of these whose physics and engineering parameters are
-self-consistent. However, the machine found by \process\/ in this manner may
+self-consistent. However, the machine found by \process\ in this manner may
 not be possible to build in practice --- the coils may be overstressed, for
 instance, or the plasma pressure may exceed the maximum possible
-value. \process\/ contains a large number of constraints to prevent the code
+value. \process\ contains a large number of constraints to prevent the code
 from finding a machine with such problems, and running the code in so-called
 ``optimisation'' mode forces these constraints to be met. The number of
 possible conceptual machines is thus considerably reduced, and optimisation of
 the parameters with respect to (say) the cost of electricity will reduce this
 number to a minimum (possibly one).
 
-Formally then, \process\/ is a systems code that calculates in a
+Formally then, \process\ is a systems code that calculates in a
 self-consistent manner the parameters of a fusion power plant with a specified
 performance, ensuring that its operating limits are not violated, and with the
 option to optimise a given function of these parameters.
 
-It would not be fair to call \process\/ a fusion power plant design code, as
-this implies that a great deal of complexity would need to be present in each
-and every model describing one of the component systems. Such complexity is,
-however, incompatible with the code's iterative approach to solving the
-optimisation problem, since this requires repeated evaluation of the same
-(large number of) expressions. This is not to say that the models employed by
-the code are oversimplified --- in general they represent good numerical
-estimates of present theoretical understanding, or are fits to experimental
-data. \process\/ provides a useful overall description of how a conceptual and
-feasible power plant may look.
+It would not be fair to call \process\ a fusion power plant \textit{design}\/
+code, as this implies that a great deal of complexity would need to be present
+in each and every model describing one of the component systems. Such
+complexity is, however, incompatible with the code's iterative approach to
+solving the optimisation problem, since this requires repeated evaluation of
+the same (large number of) expressions. This is not to say that the models
+employed by the code are oversimplified --- in general they represent good
+numerical estimates of present theoretical understanding, or are fits to
+experimental data. \process\ provides a useful overall description of how a
+conceptual and feasible power plant may look.
 
 \section{History}
 
-\process\/ is derived from several earlier systems codes, but is largely based
+\process\ is derived from several earlier systems codes, but is largely based
 on the TETRA (Tokamak Engineering Test Reactor Analysis) code~\cite{tetra} and
 its descendant STORAC (Spherical TOrus Reactor Analysis Code)~\cite{storac},
 which includes routines relevant to the tight aspect ratio class of
-tokamaks. These codes, and much of the original version of \process\/ itself,
+tokamaks. These codes, and much of the original version of \process\ itself,
 were written by personnel at Oak Ridge National Laboratory in Tennessee, USA,
 with contributions from a number of other laboratories in the USA\@. In
 addition, many of the mathematical routines have been taken from a number of
@@ -155,7 +165,7 @@ modern software practices, and the whole program was upgraded to
 Fortran~90/95. At the same time a number of useful code management utilities
 were added.
 
-As with all active research codes, \process\/ will continue to be developed
+As with all active research codes, \process\ will continue to be developed
 into the future. This User Guide is updated in parallel with the Fortran
 source code itself to ensure that the documentation remains consistent with
 the latest version of the code. It is to be hoped that it will be of
@@ -183,9 +193,9 @@ ways, for example how to add extra constraints and variables to the code. A
 useful set of utility programs is introduced in Chapter~\ref{chap:utilities},
 and some code management tools are described in
 Chapter~\ref{chap:codetools}. Finally, the Appendices give example input files
-for \process\/ in non-optimisation and optimisation modes, and lists of
+for \process\ in non-optimisation and optimisation modes, and lists of
 references that provide information about the code status, its location, and
-other details relating to the implementation of \process\/ to date.
+other details relating to the implementation of \process\ to date.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -198,31 +208,31 @@ iterate a number of free parameters (the so-called \textit{iteration
   variables} --- see Section~\ref{sec:itvars}) in a controlled way so as to
 find a self-consistent set of device parameters that satisfy all of the
 system's \textit{constraint equations} --- see
-Section~\ref{sec:constraints}. \process\/ is organised in a standard equation
+Section~\ref{sec:constraints}. \process\ is organised in a standard equation
 solver format to enable this task to be performed efficiently. The physics and
 engineering routines together serve as a \textit{function evaluator},
 providing the information used in the solution of the constraints. The
-numerical modules present in \process\/ perform the iteration required, and
+numerical modules present in \process\ perform the iteration required, and
 also incorporate the option to maximise or minimise a given \textit{figure of
   merit} -- see Section~\ref{sec:foms}.
 
 \section{Equation Solvers}
 
-\process\/ contains two non-linear equation solver packages, which reflect the
+\process\ contains two non-linear equation solver packages, which reflect the
 two major modes of operation available. Each of these has its own uses, as is
 now discussed.
 
 \subsection{Non-optimisation mode}
 
-The first of the two equation solvers present in \process\/ is the
+The first of the two equation solvers present in \process\ is the
 non-optimisation package HYBRD~\cite{hybrd_anl,hybrd}. Formally, HYBRD
 finds a zero of a system of $N$ non-linear functions in $N$ variables. This
 means simply that $N$ variables (power plant parameters) are iterated by
-\process\/ in such a way as to solve a set of $N$ equations (physics or
+\process\ in such a way as to solve a set of $N$ equations (physics or
 engineering laws), i.e.\ a set of self-consistent power plant parameters is
 found. This is useful for performing benchmark comparisons, when the device
 size is kept fixed, and one only wishes to find calculated stresses, beta
-values, fusion powers, etc. A flow diagram of \process\/ in non-optimisation
+values, fusion powers, etc. A flow diagram of \process\ in non-optimisation
 mode is shown in Figure~\ref{fig:flow_hybrd}.
 
 % Flow diagram for HYBRD run
@@ -287,9 +297,9 @@ mode is shown in Figure~\ref{fig:flow_hybrd}.
 \end{picture}
 
 \end{center}
-\caption[Flow diagram of \process\/ in non-optimisation mode]
+\caption[Flow diagram of \process\ in non-optimisation mode]
 {\label{fig:flow_hybrd}
-  \textit{Flow diagram of \process\/ in non-optimisation mode.}
+  \textit{Flow diagram of \process\ in non-optimisation mode.}
 }
 \end{figure}
 
@@ -311,7 +321,7 @@ limits are not violated. An example of VMCON's application is to find the
 device providing the minimum cost of electricity which also satisfies the
 physics and engineering constraints. There is in theory no upper limit to the
 number of variables that VMCON can use to optimise the machine, so a very
-large region of parameter space can be searched. A flow diagram of \process\/
+large region of parameter space can be searched. A flow diagram of \process\
 in optimisation mode is shown in Figure~\ref{fig:flow_vmcon}.
 
 % Flow diagram for VMCON run
@@ -398,9 +408,9 @@ in optimisation mode is shown in Figure~\ref{fig:flow_vmcon}.
 \end{picture}
 
 \end{center}
-\caption[Flow diagram of \process\/ in optimisation mode]
+\caption[Flow diagram of \process\ in optimisation mode]
 {\label{fig:flow_vmcon}
-  \textit{Flow diagram of \process\/ in optimisation mode.}
+  \textit{Flow diagram of \process\ in optimisation mode.}
 }
 \end{figure}
 
@@ -455,14 +465,14 @@ the variables they describe.
 Input parameters make up a large proportion of the variables listed in the
 variable descriptor file. They comprise all those variables that, once set in
 the initialisation routine or redefined in the input file, do not change
-throughout a \process\/ run. In fact, only those variables defined as iteration
+throughout a \process\ run. In fact, only those variables defined as iteration
 variables (Section~\ref{sec:itvars}) can change during the course of a run.
 
 \section{Constraint Equations}
 \label{sec:constraints}
 
 Any computer program naturally contains myriads of equations. The built-in
-equation solvers within \process\/ act on a special class, known as
+equation solvers within \process\ act on a special class, known as
 \textit{constraint equations}, all of which are formulated in routine
 \texttt{CONSTRAINTS} in source file
 \texttt{constraint\_equations.f90}. Table~\ref{tab:eqns} summarises the
@@ -476,7 +486,7 @@ equation numbers in the first \texttt{neqns} elements of array \texttt{icc}.
 \subsection{Consistency equations}
 
 Consistency equations are usually \textit{equalities}\/ that ensure that the
-machine produced by \process\/ is self-consistent. This means, therefore, that many
+machine produced by \process\ is self-consistent. This means, therefore, that many
 of these constraint equations should \textit{always}\/ be used, namely
 equations~1, 2, 10 and 11 (see Table~\ref{tab:eqns}).  Equation~7 should also
 be activated if neutral beam injection is used and equation~15 should be used
@@ -537,7 +547,7 @@ used to provide information about how calculated values compare with limiting
 values, without having to change the characteristics of the device being
 benchmarked to find a solution.
 
-It is for this reason that all the constraint equations used in \process\/ are
+It is for this reason that all the constraint equations used in \process\ are
 formulated as equalities, despite the fact that equation solver VMCON can
 solve for inequalities as well. The use of f-values precludes this need, and
 allows the non-optimising equation solver HYBRD to use the same constraint
@@ -550,68 +560,68 @@ equations.
 \begin{center}
 
 \begin{tabular}{||c|l|c|l||} \hline
-\texttt{icc} &                                            &      & corresponding \\
-no. & description                                         & type & \texttt{ixc} variables \\ \hline
-1   & plasma beta consistency                             & C    & \textbf{5} \\
-2   & global power balance                                & C    & \textbf{10},1,2,3,4,6,11 \\
-3   & ion power balance                                   & C    & \textbf{10},1,2,3,4,6,11 \\
-4   & electron power balance                              & C    & \textbf{10},1,2,3,4,6,11 \\
-5   & density limit                                       & L    & \textbf{9},1,2,3,4,5,6 \\
-6   & epsilon-beta poloidal limit                         & L    & \textbf{8},1,2,3,4,6 \\
-7   & beam ion density (NBI)                              & C    & \textbf{7} \\
-8   & neutron wall load limit                             & L    & \textbf{14},1,2,3,4,6 \\
-9   & fusion power limit                                  & L    & \textbf{26},1,2,3,4,6 \\
-10  & toroidal field 1/R consistency                      & C    & \textbf{12},1,2,3,13 \\
-11  & radial build consistency                            & C    & \textbf{3},1,13,16,29,42,61 \\
-12  & volt second limit                                   & L    & \textbf{15},1,2,3 \\
-13  & burn time limit (PULSE)                             & L    & \textbf{21},1,16,17,22,29,42,44,61 \\
-14  & beam energy (NBI)                                   & C    & \textbf{19},1,2,3,6 \\
-15  & burn time (PULSE) (N.B. not usually necessary)      & C    & \textbf{41},44 \\
-16  & net electric power limit                            & L    & \textbf{25},1,2,3 \\
-17  & stellarator radial build (STELLARATOR)              & C    & \textbf{61} \\
-18  & divertor heat load limit                            & L    & \textbf{27} \\
-19  & MVA limit                                           & L    & \textbf{30} \\
-20  & neutral beam tangency radius limit (NBI)            & L    & \textbf{33},31,3,13 \\
-21  & minor radius limit                                  & L    & \textbf{32} \\
-22  & divertor collisionality limit                       & L    & \textbf{34},43 \\
-23  & UNUSED                                              &      & \\
-24  & Beta limit (also beta limit in stellarators)        & L    & \textbf{36},1,2,3,4,6,18 \\
-25  & peak toroidal field limit                           & L    & \textbf{35},3,13,29 \\
-26  & OH coil current density at End of Flat-top limit    & L    & \textbf{38},37,41,12 \\
-27  & OH coil current density at Beginning of Pulse limit & L    & \textbf{39},37,41,12 \\
-28  & energy multiplication $Q$ limit                     & L    & \textbf{45},47,40 \\
-29  & inboard radial build = specified value              & C    & \textbf{3},1,13,16,29,42,61 \\
-30  & injection power limit                               & L    & \textbf{46},47,11 \\
-31  & TF coil case stress limit (SCTF)                    & L    & \textbf{48},56,57,58,59,60,24 \\
-32  & TF coil conduit stress limit (SCTF)                 & L    & \textbf{49},56,57,58,59,60,24 \\
+\texttt{icc} &                                                  &      & corresponding \\
+no. & description                                               & type & \texttt{ixc} variables \\ \hline
+1   & plasma beta consistency                                   & C    & \textbf{5} \\
+2   & global power balance                                      & C    & \textbf{10},1,2,3,4,6,11 \\
+3   & ion power balance                                         & C    & \textbf{10},1,2,3,4,6,11 \\
+4   & electron power balance                                    & C    & \textbf{10},1,2,3,4,6,11 \\
+5   & density upper limit                                       & L    & \textbf{9},1,2,3,4,5,6 \\
+6   & epsilon-beta poloidal upper limit                         & L    & \textbf{8},1,2,3,4,6 \\
+7   & beam ion density (NBI)                                    & C    & \textbf{7} \\
+8   & neutron wall load upper limit                             & L    & \textbf{14},1,2,3,4,6 \\
+9   & fusion power upper limit                                  & L    & \textbf{26},1,2,3,4,6 \\
+10  & toroidal field 1/R consistency                            & C    & \textbf{12},1,2,3,13 \\
+11  & radial build consistency                                  & C    & \textbf{3},1,13,16,29,42,61 \\
+12  & volt second capability lower limit                        & L    & \textbf{15},1,2,3 \\
+13  & burn time lower limit (PULSE)                             & L    & \textbf{21},1,16,17,22,29,42,44,61 \\
+14  & beam energy (NBI)                                         & C    & \textbf{19},1,2,3,6 \\
+15  & burn time (PULSE) (N.B. not usually necessary)            & C    & \textbf{41},44 \\
+16  & net electric power lower limit                            & L    & \textbf{25},1,2,3 \\
+17  & UNUSED                                                    &      & \\
+18  & divertor heat load upper limit                            & L    & \textbf{27} \\
+19  & MVA upper limit                                           & L    & \textbf{30} \\
+20  & neutral beam tangency radius upper limit (NBI)            & L    & \textbf{33},31,3,13 \\
+21  & minor radius lower limit                                  & L    & \textbf{32} \\
+22  & divertor collisionality upper limit                       & L    & \textbf{34},43 \\
+23  & UNUSED                                                    &      & \\
+24  & Beta upper limit (also beta limit in stellarators)        & L    & \textbf{36},1,2,3,4,6,18 \\
+25  & peak toroidal field upper limit                           & L    & \textbf{35},3,13,29 \\
+26  & OH coil current density at End of Flat-top upper limit    & L    & \textbf{38},37,41,12 \\
+27  & OH coil current density at Beginning of Pulse upper limit & L    & \textbf{39},37,41,12 \\
+28  & energy multiplication $Q$ lower limit                     & L    & \textbf{45},47,40 \\
+29  & inboard radial build = specified value                    & C    & \textbf{3},1,13,16,29,42,61 \\
+30  & injection power upper limit                               & L    & \textbf{46},47,11 \\
+31  & TF coil case stress upper limit (SCTF)                    & L    & \textbf{48},56,57,58,59,60,24 \\
+32  & TF coil conduit stress upper limit (SCTF)                 & L    & \textbf{49},56,57,58,59,60,24 \\
 33  & TF coil $I_{\mbox{\scriptsize operational}}/
-I_{\mbox{\scriptsize critical}}$ limit (SCTF)                 & L    & \textbf{50},56,57,58,59,60,24 \\
-34  & TF coil dump voltage limit (SCTF)                   & L    & \textbf{51},52,56,57,58,59,60,24 \\
+I_{\mbox{\scriptsize critical}}$ upper limit (SCTF)                    & L    & \textbf{50},56,57,58,59,60,24 \\
+34  & TF coil dump voltage upper limit (SCTF)                   & L    & \textbf{51},52,56,57,58,59,60,24 \\
 35  & TF coil $J_{\mbox{\scriptsize winding pack}}/
-J_{\mbox{\scriptsize protection}}$ limit (SCTF)               & L    & \textbf{53},56,57,58,59,60,24 \\
-36  & TF coil temperature margin limit (SCTF)             & L    & \textbf{54},55,56,57,58,59,60,24 \\
-37  & current drive gamma limit                           & L    & \textbf{40},47 \\
-38  & first wall coolant temperature rise limit (PULSE)   & L    & \textbf{62} \\
-39  & first wall peak temperature limit (PULSE)           & L    & \textbf{63} \\
-40  & minimum injection power for ignition limit (PULSE)  & L    & \textbf{64} \\
-41  & OH coil current ramp-up time limit (PULSE)          & L    & \textbf{66},65 \\
-42  & cycle time limit (PULSE)                            & L    & \textbf{67},65,17 \\
-43  & average centrepost temperature (TART)               & C    & \textbf{69},70,13 \\
-44  & peak centrepost temperature limit (TART)            & L    & \textbf{68},69,70 \\
-45  & edge safety factor limit    (TART)                  & L    & \textbf{71},1,2,3 \\
-46  & Ip/Irod limit               (TART)                  & L    & \textbf{72},2,60 \\
-47  & TF coil toroidal thickness  (RFP, STELLARATOR)      & L    & \textbf{76},77,13,3 \\
-48  & poloidal beta limit                                 & L    & \textbf{79},2,3,18 \\
-49  & reversal parameter $< 0$ (RFP)                      & L    & \textbf{80},78,3,1 \\
-50  & IFE repetition rate limit (IFE)                     & L    & \textbf{86} \\
-51  & startup volt-seconds consistency (PULSE)            & C    & \textbf{16},29,3,1 \\
-52  & minimum tritium breeding ratio limit                & L    & \textbf{89},90,91 \\
-53  & peak neutron fluence on TF coil limit               & L    & \textbf{92},93,94 \\
-54  & peak TF coil nuclear heating limit                  & L    & \textbf{95},93,94 \\
-55  & final He concentration in vacuum vessel limit       & L    & \textbf{96},93,94 \\
-56  & $P_{\mbox{\scriptsize separatrix}}/R_{\mbox{\scriptsize major}}$ limit & L    & \textbf{97},1,3 \\
-57  & TF coil outer leg toroidal thickness limit (SCTF)   & L    & \textbf{99},77 \\
-58  & TF coil outer leg radial thickness limit (SCTF)     & L    & \textbf{100},75,13 \\
+J_{\mbox{\scriptsize protection}}$ upper limit (SCTF)                   & L    & \textbf{53},56,57,58,59,60,24 \\
+36  & TF coil temperature margin lower limit (SCTF)             & L    & \textbf{54},55,56,57,58,59,60,24 \\
+37  & current drive gamma upper limit                           & L    & \textbf{40},47 \\
+38  & first wall coolant temperature rise upper limit (PULSE)   & L    & \textbf{62} \\
+39  & first wall peak temperature upper limit (PULSE)           & L    & \textbf{63} \\
+40  & injection power lower limit (PULSE)                       & L    & \textbf{64} \\
+41  & OH coil current ramp-up time lower limit (PULSE)          & L    & \textbf{66},65 \\
+42  & cycle time lower limit (PULSE)                            & L    & \textbf{67},65,17 \\
+43  & average centrepost temperature (TART)                     & C    & \textbf{69},70,13 \\
+44  & peak centrepost temperature upper limit (TART)            & L    & \textbf{68},69,70 \\
+45  & edge safety factor lower limit    (TART)                  & L    & \textbf{71},1,2,3 \\
+46  & Ip/Irod upper limit               (TART)                  & L    & \textbf{72},2,60 \\
+47  & TF coil toroidal thickness upper limit (RFP)              & L    & \textbf{76},77,13,3 \\
+48  & poloidal beta upper limit                                 & L    & \textbf{79},2,3,18 \\
+49  & reversal parameter $< 0$ (RFP)                            & L    & \textbf{80},78,3,1 \\
+50  & IFE repetition rate upper limit (IFE)                     & L    & \textbf{86} \\
+51  & startup volt-seconds consistency (PULSE)                  & C    & \textbf{16},29,3,1 \\
+52  & tritium breeding ratio lower limit                        & L    & \textbf{89},90,91 \\
+53  & peak neutron fluence on TF coil upper limit               & L    & \textbf{92},93,94 \\
+54  & peak TF coil nuclear heating upper limit                  & L    & \textbf{95},93,94 \\
+55  & final He concentration in vacuum vessel upper limit       & L    & \textbf{96},93,94 \\
+56  & $P_{\mbox{\scriptsize separatrix}}/R_{\mbox{\scriptsize major}}$ upper limit & L    & \textbf{97},1,3 \\
+57  & TF coil outer leg toroidal thickness lower limit (SCTF)   & L    & \textbf{99},77 \\
+58  & TF coil outer leg radial thickness limit lower (SCTF)     & L    & \textbf{100},75,13 \\
 \hline
 \end{tabular}
 \end{center}
@@ -809,7 +819,7 @@ no. & variable name     & description                                           
 \section{Figures of Merit}
 \label{sec:foms}
 
-In optimisation mode, \process\/ finds the self-consistent set of iteration
+In optimisation mode, \process\ finds the self-consistent set of iteration
 variable values that maximises or minimises a certain function of them, known
 as the \textit{figure of merit}. Several possible figures of merit are
 available, all of which are formulated in routine \texttt{FUNFOM} in source
@@ -858,7 +868,7 @@ $\pm 15$        & plant availability factor (N.B.\ requires \texttt{iavail=1}) \
 \section{Scanning Variables}
 \label{sec:scans}
 
-One of a number of variables can be scanned during the course of a \process\/
+One of a number of variables can be scanned during the course of a \process\
 run.  This option provides a method of determining the sensitivity of the
 results to different input assumptions. The user specifies which variable is
 to be scanned (see Table~\ref{tab:scans}) and its required value at each point
@@ -869,8 +879,9 @@ array \texttt{sweep}.
 Runs involving scans of this kind can only be performed in optimisation mode.
 The results from the previous scan point are used as the input to the next
 scan point. Routine \texttt{SCAN} in source file \texttt{scan.f90} stores many
-of the output quantities in a separate output file (\texttt{PLOT.DAT}) for use
-with a plotting program.
+of the output quantities in a separate output file called \texttt{PLOT.DAT},
+which can be read by the utility program \texttt{plot\_sweep} to produce
+graphical output (see Chapter~\ref{chap:utilities}).
 
 Scanning of derived quantities requires use of the appropriate constraint
 equations. For instance, if the net electric power is scanned, constraint
@@ -933,11 +944,11 @@ issues in terms of numerous expressions and relationships. In effect these
 define the machine so that the numerical solver within the code can then get
 to work adjusting the parameters in its search for a self-consistent solution.
 
-It is essential for a program of the size and complexity of \process\/ to be
+It is essential for a program of the size and complexity of \process\ to be
 modular to a high degree, in order to simplify the tasks of understanding and
 maintaining the code. The use of Fortran~90/95 modules provides a natural and
 convenient way for this to be done. The following sections describe briefly
-the modules into which \process\/ is divided.
+the modules into which \process\ is divided.
 
 \subsection{Numerics modules}
 \label{sec:numerics_modules}
@@ -991,6 +1002,7 @@ source file   & description \\ \hline
 \texttt{ife.f90} & inertial fusion energy physics/engineering \\
 \texttt{physics.f90} & tokamak plasma and fusion calculations \\
 \texttt{plasma\_geometry.f90} & plasma geometry algorithms \\
+\texttt{plasma\_profiles.f90} & plasma density and temperature profile calculations \\
 \texttt{rfp.f90} & reversed field pinch physics/engineering \\
 \texttt{startup.f90} & plasma start-up auxiliary power requirements \\
 \texttt{stellarator.f90 } & stellarator-relevant physics/engineering \\
@@ -1089,7 +1101,7 @@ how to set switches, etc., are explained fully in Chapter~\ref{chap:overview}.
 
 \section{Tokamak Power Plant}
 
-The default (and most detailed) power plant model in \process\/ is based on the
+The default (and most detailed) power plant model in \process\ is based on the
 tokamak magnetic-confinement fusion concept. This section describes the models
 relevant to such a plant in some detail, starting with the plasma at the
 centre of the fusion power core, and moving outwards to the external
@@ -1175,7 +1187,8 @@ Arguably, the most important component of the machine is the plasma itself. By
 default, this is assumed to have an up-down symmetric, double null
 configuration (although this can be changed if desired --- see
 Section~\ref{sec:divertor}), with elongation and triangularity specified by
-the user. A great number of physics models are coded within \process\/ to
+%!%!%! N.B. ishape=2
+the user. A great number of physics models are coded within \process\ to
 describe the behaviour of the plasma parameters such as its current,
 temperature, density, pressure, confinement etc., and also the various limits
 that define the stable operating domain.
@@ -1193,7 +1206,7 @@ remain within the plasma and thermalise (slow down) due to collisions, thus
 heating the plasma. The remaining 80\% is carried away by the neutrons, which
 deposit their energy within the blanket and shield.
 
-\process\/ can also model D-$^3$He power plants, which utilise the following primary
+\process\ can also model D-$^3$He power plants, which utilise the following primary
 fusion reaction:
 \begin{equation}
 \mathrm{D + \mbox{$^3$He}} \Longrightarrow \mathrm{^{4}He + p + 18.3 \,MeV}
@@ -1236,11 +1249,12 @@ n_D & = & \mathtt{fdeut} \, n_{\mbox{\scriptsize fuel}} \\
 n_T & = & \mathtt{ftrit} \, n_{\mbox{\scriptsize fuel}} \\
 n_{\mathrm{^{3}He}} & = & \mathtt{fhe3} \, n_{\mbox{\scriptsize fuel}}
 \end{eqnarray*}
-\process\/ checks that \texttt{fdeut + ftrit + fhe3 = 1.0}, and stops with an
+\process\ checks that \texttt{fdeut + ftrit + fhe3 = 1.0}, and stops with an
 error message otherwise.
 
 \subsubsection{Plasma profiles}
 
+%!%!%!
 All the plasma profiles are assumed to be parabolic, i.e.\ they are of the
 form
 \begin{eqnarray}
@@ -1256,7 +1270,7 @@ volume-averaged values $\langle n \rangle = n_0 / (1+\alpha_n)$, and
 line-averaged values $\bar{n} = n_0 / (1+\alpha_n)^{\frac{1}{2}}$, etc.  These
 volume- and line-averages are used throughout the code along with the profile
 indices $\alpha$, in the various physics models, many of which are fits to
-theory-based or empirical scalings. Thus, the plasma model in \process\/ may
+theory-based or empirical scalings. Thus, the plasma model in \process\ may
 be described as ``$\frac{1}{2}$-D''.  The relevant profile index variables are
 \texttt{alphan}, \texttt{alphat} and \texttt{alphaj}, respectively (see
 Section~\ref{sec:current_profile}).
@@ -1299,7 +1313,7 @@ calculated in routine \texttt{CULDLM}, which is called by \texttt{PHYSICS}.
 To enforce any of these limits, turn on constraint equation no.~5 with
 iteration variable no.~9 (\texttt{fdene}).  In addition, switch
 \texttt{idensl} must be set to the relevant value, as follows:-
-\begin{description}
+\begin{description} %!%!%! find refs
 \item [\texttt{idensl = 1} :] ASDEX model
 \item [\texttt{idensl = 2} :] Borrass model for ITER, I
 \item [\texttt{idensl = 3} :] Borrass model for ITER, II
@@ -1342,6 +1356,7 @@ It is recommended that current scaling law \texttt{icurr = 4} is used if
 \texttt{iprofile = 1}.
 
 \subsubsection{Confinement time scaling laws}
+\label{sec:taue}
 
 Many energy confinement time scaling laws are present within \process, for
 tokamaks, RFPs or stellarators. These are calculated in routine
@@ -1447,7 +1462,7 @@ Transitions from a standard confinement mode (L-mode) to an improved
 confinement regime (H-mode), called L-H transitions, are observed in most
 tokamaks. A range of scaling laws are available that provide estimates of the
 auxiliary power required to initiate these transitions, via extrapolations
-from present-day devices. \process\/ calculates these power threshold values
+from present-day devices. \process\ calculates these power threshold values
 for the scaling laws listed in Table~\ref{tab:power_thresholds}, in
 routine~\texttt{PTHRESH}.
 
@@ -1498,16 +1513,17 @@ possible for the plasma resistance to be wrongly calculated as negative if
 \subsubsection*{Inverse quadrature in $\tau_E$ scaling laws}
 
 Switch \texttt{iinvqd} determines whether the energy confinement time scaling
-laws due to Kaye-Goldston (\texttt{isc = 5}) and Goldston (\texttt{isc = 9})
-should include an inverse quadrature scaling with the Neo-Alcator result
-(\texttt{isc = 1}). A value \texttt{iinvqd = 1} includes this scaling.
+laws (see Section~\ref{sec:taue}) due to Kaye-Goldston (\texttt{isc = 5}) and
+Goldston (\texttt{isc = 9}) should include an inverse quadrature scaling with
+the Neo-Alcator result (\texttt{isc = 1}). A value \texttt{iinvqd = 1}
+includes this scaling.
 
 \subsubsection*{Scrape-off layer}
 
 The region directly outside the last closed flux surface of the core plasma is
 known as the scrape-off layer, and contains no structural material.  Plasma
 entering this region is not confined and is removed by the
-divertor. \process\/ treats the scrape-off layer merely as a gap. Switch
+divertor. \process\ treats the scrape-off layer merely as a gap. Switch
 \texttt{iscrp} determines whether the scrape-off widths should be calculated
 as 10\% of the plasma minor radius (\texttt{iscrp = 0}), or set equal to the
 input values \texttt{scrapli} and \texttt{scraplo} (\texttt{iscrp = 1}).
@@ -1518,7 +1534,7 @@ The assumed high-Z impurity affecting the plasma composition and radiation
 power calculations can be switched between argon (\texttt{zfear = 1}) and iron
 (\texttt{zfear = 0}); the latter is the default option.
 
-[Add section on radiation power, etc.]
+%!%!%! [Add section on radiation power, etc.]
 
 \subsection{First wall}
 
@@ -1544,7 +1560,7 @@ unit area) should be calculated using the plasma surface area (\texttt{iwalld
 
 The divertor provides a means of removing plasma reaching the scrape-off layer
 and heavy ions that are ejected from the first wall.  By default, two
-divertors are assumed in the \process\/ tokamak, placed symmetrically above
+divertors are assumed in the \process\ tokamak, placed symmetrically above
 and below the plasma. The principal outputs from the code are the divertor
 heat load, used to determine its lifetime, and its peak temperature. The
 divertor is cooled either by gaseous helium or by pressurised water.
@@ -1870,7 +1886,7 @@ inner leg]
 
 Each TF coil is defined in the $(R,Z)$ plane by four circular arcs of
 different radius, which create a D-shaped profile. Because of the finite
-number of TF coils used in a tokamak (typically around 20), the toroidal field
+number of TF coils used in a tokamak (typically around 16), the toroidal field
 has a ripple introduced into it, the amplitude of which can be limited to a
 few percent by the code by adjusting the outboard gap thickness (labelled
 \texttt{gapsto} in Figures~\ref{fig:build_d} and~\ref{fig:build_e}).
@@ -1889,16 +1905,24 @@ used:
 \begin{description}
 \item [\texttt{isumattf = 1} :] Nb$_3$Sn superconductor, ITER critical surface
   parameterization~\cite{iter_nb3sn}, standard critical values
-\item [\texttt{isumattf = 2} :] (not used)
+\item [\texttt{isumattf = 2} :] Bi-2212 high temperature superconductor %!%!%! ref
 \item [\texttt{isumattf = 3} :] NbTi superconductor
 \item [\texttt{isumattf = 4} :] Nb$_3$Sn superconductor, ITER critical surface
   parameterization~\cite{iter_nb3sn}, user-defined critical parameters
 \end{description}
 The fraction of copper present in the superconducting filaments is given by
-the value of variable \texttt{fcutfsu} (iteration variable no.\ 59). For
-\texttt{isumattf = 4}, important superconductor properties may be input by the
-user as follows: the upper critical field at zero temperature and strain is
-set using input parameter \texttt{bcritsc}, and the critical temperature at
+the value of variable \texttt{fcutfsu} (iteration variable no.\ 59).
+
+For \texttt{isumattf = 2}, a technology adjustment factor \texttt{fhts} may be
+used to modify the critical current density fit for the Bi-2212
+superconductor, to describe the level of technology assumed (i.e.\ to account
+for stress, fatigue, radiation, AC losses, joints or manufacturing variations.
+The default value for \texttt{fhts} is 0.5, while a value of 1.0 would be very
+optimistic.
+
+For \texttt{isumattf = 4}, important superconductor properties may be input by
+the user as follows: the upper critical field at zero temperature and strain
+is set using input parameter \texttt{bcritsc}, and the critical temperature at
 zero field and strain is set using input parameter \texttt{tcritsc}.
 
 \subsubsection{Stress model}
@@ -1927,10 +1951,6 @@ equation no.\ 33 should be turned on with iteration variable no.\ 50
 (\texttt{fiooic}). To ensure that $J$ does not exceed the current density
 protection limit, constraint equation no.\ 35 should be turned on with
 iteration variable no.\ 53 (\texttt{fjprot}).
-
-(A similar constraint on the TF coil current density exists if resistive coils
-are being used (\texttt{itfsup = 0}). In this case, constraint equation no.\ 23
-should be turned on with iteration variable no.\ 28 (\texttt{fjtfc}).)
 
 \subsection{Poloidal field coils}
 \label{sec:pfcoils}
@@ -1963,7 +1983,7 @@ the PF coils accurately.
 The three possible values of \texttt{ipfloc(j)} correspond to the following PF
 coil positions:
 
-\begin{description}
+\begin{description} %!%!%! check this
 
 \item [\texttt{ipfloc(j) = 1} :]  PF coils are placed above the OH coil (one
 group only);
@@ -2029,7 +2049,7 @@ The ohmic heating (OH) coil is a PF coil used primarily during start-up (but
 also during the burn phase) to create and maintain the plasma current by
 inductive means. Swinging (changing) the current through the OH coil causes a
 change in the flux linked to the plasma region, inducing a current in
-it. \process\/ calculates the amount of flux required to produce the plasma
+it. \process\ calculates the amount of flux required to produce the plasma
 current, and also the amount actually available. The code measures the
 magnetic flux in units of Volt-seconds ($=$ Webers). The OH coil is sometimes
 referred to as the central solenoid, and can be either resistive or
@@ -2089,7 +2109,7 @@ poses problems due to the fact that fatigue failures may result, and there
 would also be a need for thermal storage to maintain a level supply between
 pulses. However, the plasma current can also be produced and maintained
 (partially or wholly) using non-inductive means which, in principle, removes
-this restriction. \process\/ contains a number of auxiliary current drive
+this restriction. \process\ contains a number of auxiliary current drive
 schemes, including various RF methods (Lower Hybrid, Electron Cyclotron, and
 Ion Cyclotron (Fast Wave) current drives) and also Neutral Beam current drive
 systems. The code calculates the efficiency and the resulting power
@@ -2177,7 +2197,7 @@ by the cryogenic system.
 
 \subsection{Power conversion and heat dissipation systems}
 
-The \process\/ power plant takes into account all the systems required to
+The \process\ power plant takes into account all the systems required to
 perform the necessary conversion of fusion power to electricity, from the
 coolant systems in the plant components to the heat exchangers and turbines.
 Figure~\ref{fig:pwrconv} shows schematically the overall power transfer
@@ -2203,7 +2223,7 @@ The internal vacuum vessel provides a toroidal evacuated chamber containing the
 plasma, first wall, blanket and shield, and the space between this item and
 the external cylindrical cryostat encloses those components that need to
 operate at liquid helium temperatures. These include any superconducting (TF
-or PF) coils, the inter-coil structure and the bucking cylinder. \process\/
+or PF) coils, the inter-coil structure and the bucking cylinder. \process\
 calculates the cryogenic power load and the resulting heat exchanger
 requirements.
 
@@ -2212,7 +2232,7 @@ operations the chamber must be evacuated to remove outgassed impurities from
 the structure. Secondly, the chamber must be re-evacuated between burn
 operations. Thirdly, helium ash must be removed to prevent it from diluting
 the fuel. Finally, deuterium and tritium is removed on a steady state
-basis. \process\/ calculates the parameters of a vacuum system that satisfy
+basis. \process\ calculates the parameters of a vacuum system that satisfy
 all four requirements, with the option of either turbo pumps or cryo pumps
 being used.
 
@@ -2222,13 +2242,13 @@ cryopump (\texttt{ntype = 1}) is used in the vacuum system.
 \subsection{Buildings}
 
 The volume and ground area of all the various buildings on a power plant site
-are included in the \process\/ calculations for the benefit of the costing
-algorithms.
+are included in the \process\ calculations for the benefit of the costing
+algorithms. %!%!%! expand
 
 \section{Tight Aspect Ratio Tokamak Model}
 \label{sec:tart}
 
-\process\/ has the ability to perform studies on tokamaks in the low aspect ratio
+\process\ has the ability to perform studies on tokamaks in the low aspect ratio
 regime (major radius $\leq 2 \times$ minor radius). The physics and
 engineering issues~\cite{tart} associated with these machines are somewhat
 different from those of conventional aspect ratio, and this is reflected by
@@ -2268,8 +2288,8 @@ the following special models~\cite{storac} in \process.
   \end{itemize}
 
 \item A gaseous divertor model is used, and a simple divertor heat load
-  calculation is employed, rather than the ITER-CDA like divertor assumed for
-  conventional aspect ratio tokamaks.
+  calculation is employed, rather than the more complex divertor model assumed
+  for conventional aspect ratio tokamaks.
 
 \item A simple PF coil current scaling algorithm is available for use with the
   TART option.
@@ -2279,7 +2299,7 @@ the following special models~\cite{storac} in \process.
   whether the input values for the plasma elongation (\texttt{kappa}) and
   triangularity (\texttt{triang}) should be used (\texttt{ishape = 0}), or
   whether they should be scaled with the plasma aspect ratio (\texttt{ishape =
-    1}). The latter case should only be used with a TART machine.
+    1}). The latter case should only be used with a TART machine. %!%!%! ishape=2
 
 \item Among the physics models that differ from those relevant to conventional
   aspect ratio machines are (i) the bootstrap current fraction, (ii) the
@@ -2305,7 +2325,7 @@ summarises the switch values relevant to each aspect ratio regime.
     \hline
 \end{tabular}
 \end{center}
-\caption[\process\/ switches for tight aspect ratio machines]
+\caption[\process\ switches for tight aspect ratio machines]
 {\label{tab:tart}
   \textit{Summary of the switch values in PROCESS that relate to
     conventional aspect ratio and tight aspect ratio machines.}
@@ -2317,7 +2337,7 @@ summarises the switch values relevant to each aspect ratio regime.
 
 If the plasma current is not to be driven by purely non-inductive means, it is
 necessary to operate the plant in a pulsed manner as the current swing in the
-OH/PF coils cannot be continued indefinitely. \process\/ can perform a number of
+OH/PF coils cannot be continued indefinitely. \process\ can perform a number of
 calculations relevant to a pulsed power plant, as detailed below.
 
 Switch \texttt{lpulse} determines whether the power plant is assumed to be
@@ -2381,7 +2401,7 @@ prevented from being too high, as governed by the requirement to maintain
 plasma stability in $l_i$ - $q_\psi$ space (see Section~\ref{sec:tohs}).
 
 \subsection{Burn time}
-
+%!%!%! worry about tburn vs tburn0 consistency
 The length of the burn time is calculated from the surplus volt-seconds
 available from the OH/PF coil system during the plasma burn phase, after the
 flux required during the plasma start-up is taken into account. A minimum burn
@@ -2406,7 +2426,7 @@ steel block acts as the thermal storage medium.
 \section{Hydrogen Production Facility}
 
 Fusion power plants have been mooted as a means of producing hydrogen for use
-in fuel cells for cars, for instance. \process\/ includes options to enable
+in fuel cells for cars, for instance. \process\ includes options to enable
 the plant to produce hydrogen using a number of different processes.
 
 To include the production of hydrogen by the power plant, it is necessary to
@@ -2459,10 +2479,10 @@ The code has the ability to perform calculations based on the physics and
 engineering of a stellarator, which, although being a toroidal device, is
 radically different in a number of ways from a tokamak.
 
-The model is derived from two main sources; the physics is based on that
-assumed by the U.S.\ stellarator reactor study group~\cite{USSRSG}, and the
-coil set is scaled from the proposed Wendelstein VII-X design, a modular
-advanced stellarator with a 5-period Helias configuration~\cite{W7X}.
+The model is largely based on the Helias 5-B stellarator power plant
+design~\cite{helias5b} (Figure~\ref{fig:helias5b}) and related modelling that
+has been performed by IPP Greifswald~\cite{stell_geometry, stell_divertor,
+  stell_coil}.
 
 To activate the stellarator coding, it is necessary to create a file
 \texttt{device.dat}, containing the single character \texttt{1} in the first
@@ -2473,19 +2493,69 @@ the stellarator model is not used, and \texttt{istell} is set to
 \texttt{0}.
 
 The stellarator model is largely contained within source file
-\texttt{stellarator.f90}. The consistency equations relevant for tokamaks (see
-Section~\ref{sec:constraints}) should be used without modification, to ensure
-that the coil currents and the fields they produce are consistent with the
-plasma parameters. An additional consistency equation (\texttt{17}) should be
-used to ensure that the radial build is correct (see
-Section~\ref{sec:stbuild}).
+\texttt{stellarator.f90}. The following consistency equations (see
+Section~\ref{sec:constraints}) should be used without modification:
+
+\begin{description}
+\item [\texttt{1} :] plasma beta consistency
+\item [\texttt{2} :] global power balance
+\item [\texttt{11} :] radial build consistency
+\end{description}
+
+\begin{figure}[tbph]
+\centerline{\epsfig{file=helias5b.eps,width=160mm}}
+%bbllx=0mm,bburx=160mm,bblly=-0mm,bbury=160mm,clip=}}
+\caption[Helias 5-B Stellarator Power Plant Design]
+{\label{fig:helias5b}
+  \textit{Fusion power core of the Helias 5-B conceptual power plant design
+    (from F.\ Schauer et al., Fus.\ Eng.\ Design (2013) [in press])}
+}
+\end{figure}
 
 \subsection{Stellarator physics}
 
 Much of the physics is identical to that for tokamaks, including the plasma
-composition, fusion power considerations and energy conversion and transport
-within the plasma. However, some physics topics do differ between stellarators
-and tokamaks, as follows.
+composition and the fusion power calculations. However, some physics topics do
+differ between stellarators and tokamaks, as follows.
+
+\subsubsection{Plasma geometry}
+
+The plasma geometry model uses Fourier coefficients to represent the complex
+3-D plasma shape typical of stellarators. A VMEC~\cite{vmec} calculation must
+have been performed prior to running with \process. The overall size of the
+plasma is scaled correctly for the required (mean) major and minor radii for
+the machine being modelled~\cite{geiger}.
+
+It is necessary to provide three input files that define the plasma shape:
+
+\begin{enumerate}
+
+\item Set \texttt{vmec\_info\_file} in the input file to the name of a VMEC
+  output file with the following format (the numbers given are those for the
+  Helias 5-B plasma configuration); in practice only the effective major and
+  minor radius values (\texttt{R\_eff} and \texttt{a\_eff}, respectively) and
+  the number of field periods are used:
+
+\footnotesize
+\begin{verbatim}
+R_eff [m]   a_eff [m]   Aspect ratio   Plasma vol [m3]  LCFS surf area [m2]  field periods
+5.486576    0.4942638   11.10050       26.45749         133.4281             5.0
+\end{verbatim}
+\normalsize
+
+\item Set \texttt{vmec\_rmn\_file} in the input file to the name of a VMEC
+  output file containing the calculated plasma boundary $R(m,n)$ Fourier
+  components.
+
+\item Set \texttt{vmec\_zmn\_file} in the input file to the name of a VMEC
+  output file containing the calculated plasma boundary $Z(m,n)$ Fourier
+  components.
+
+\end{enumerate}
+
+This method enables a wide range of potential plasma geometries to be
+modelled, if required. The plasma volume, surface area and mean
+cross-sectional area are the outputs from the plasma geometry model.
 
 \subsubsection{Absense of plasma current}
 
@@ -2511,18 +2581,27 @@ no.\ 5 with iteration variable no.\ 9 (\texttt{fdene}).
 
 \subsubsection{$\tau_E$ scaling laws}
 
+%- a transport model which employs a predictive confinement time scaling
+%derived from 1-D neoclassical and 3-D turbulence simulations
+
 Five confinement time scaling laws relevant to stellarators are present
 within \process. The value of switch \texttt{isc} determines which of these is
 used in the plasma energy balance calculation.
 \begin{eqnarray}
-\tau_E\; (\mbox{Large Helical Device: \texttt{isc=21}})
-& = & 0.17 \, R_0^{0.75} \, a_p^2 \, n^{0.69} \, B_0^{0.84} \, P^{-0.58} \\
-\tau_E\; (\mbox{Gyro-reduced Bohm: \texttt{isc=22}})
- & = & 0.25 \, B_0^{0.8} \, n^{0.6} \, P^{-0.6} \, a_p^{2.4} \, R_0^{0.6} \\
-\tau_E\; (\mbox{Lackner-Gottardi: \texttt{isc=23}})
-& = & 0.17 \, R_0 \, a_p^2 \, n^{0.6} \, B_0^{0.8} \, P^{-0.6} \, \iota^{0.4}
+\tau_E\; (\mbox{Large Helical Device~\cite{LHD}: \texttt{isc=21}})
+& = & 0.17 \, R_0^{0.75} \, a_p^2 \, \bar{n}_{20}^{0.69} \, B_0^{0.84} \, P^{-0.58} \\
+\tau_E\; (\mbox{Gyro-reduced Bohm~\cite{Goldston}: \texttt{isc=22}})
+ & = & 0.25 \, B_0^{0.8} \, \bar{n}_{20}^{0.6} \, P^{-0.6} \, a_p^{2.4} \, R_0^{0.6} \\
+\tau_E\; (\mbox{Lackner-Gottardi~\cite{LacknerGottardi}: \texttt{isc=23}})
+& = & 0.17 \, R_0 \, a_p^2 \, \bar{n}_{20}^{0.6} \, B_0^{0.8} \, P^{-0.6} \, \iota^{0.4} \\
+\tau_E\; (\mbox{ISS95~\cite{Stroth}: \texttt{isc=37}})
+& = & 0.079 \, R_0^{0.65} \, a_p^{2.21} \, \bar{n}_{19}^{0.51} \, B_0^{0.83}
+\, P^{-0.59} \, \bar{\iota}^{0.4} \\
+\tau_E\; (\mbox{ISS04~\cite{Yamada}: \texttt{isc=38}})
+& = & 0.134 \, R_0^{0.64} \, a_p^{2.28} \, \bar{n}_{19}^{0.54} \, B_0^{0.84}
+\, P^{-0.61} \, \bar{\iota}^{0.41}
 \end{eqnarray}
-Here, $\bar{\iota}$ is the rotational transform, which is equal to the reciprocal
+Here, $\bar{\iota}$ is the rotational transform, which is equivalent to the reciprocal
 of the tokamak safety factor $q$.
 
 \subsubsection{Heating power options}
@@ -2540,146 +2619,104 @@ heating power (in Watts) to be applied to the plasma. This variable may be
 used as an iteration variable (no.\ 11). Switch \texttt{ignite} may be used if
 necessary --- see Section~\ref{sec:ignited}.
 
+\subsubsection{Divertor}
+
+Although the divertor has the same function in both stellarators and tokamaks,
+the envisaged concepts differ quite substantially. This is not only related to
+the different geometry and symmetries but also specifically to the magnetic
+configuration. While the inherent axisymmetry of a tokamak allows for
+poloidally-continuous single or double divertor configurations, the
+periodicity of helical advanced stellarators leads to multiple X-points with a
+corresponding chain of magnetic islands. This island structure may be
+exploited by carefully placing divertor plates along the stochastic field
+lines, naturally leading to a discontinuous divertor, with the individual
+plates being placed in a complex 3-D geometry; see Figure~\ref{fig:stelldiv}.
+
+\begin{figure}[tbph]
+\centerline{\epsfig{file=stelldiv.eps,width=160mm}}
+\caption[Stellarator island divertor configuration]
+{\label{fig:stelldiv}
+  \textit{A five-period Helias plasma with island divertor plates shown in red}
+}
+\end{figure}
+
+Rather than trying to describe the complex physics with a two-point scrape-off
+layer model as is used for tokamaks, the stellarator divertor
+model~\cite{stell_divertor} is based on fundamental principles which relate
+the power crossing the separatrix with an effective wetted area on the
+divertor plates allowing the code to estimate the heat load delivered to the
+divertor. A basic island divertor model is used which assumes diffusive
+cross-field transport and high radiation at the X-point,
+
+The radiated power fraction in the scrape-off layer is given by the input
+parameter \texttt{f\_rad}. This is in contrast to the method used for
+tokamaks, in which the radiated power fraction is a calculated quantity.
+
+A number of other input parameters may be used to modify the divertor model;
+see the variable descriptor file for more details.
+
 \subsection{Machine configuration}
 
-There are a large number of possible stellarator configurations. The one
-chosen for the \process\/ model is based on the \textbf{HELI}cal
-\textbf{A}dvanced \textbf{S}tellarator (Helias) concept, in which all the
-coils resemble distorted, non-planar TF coils --- no helical coils or
-tokamak-like PF coils are present.  This approach was chosen because at the
-time the model was introduced into the code the Helias was the most promising
-stellarator concept for a power plant, with a modular engineering design and
-optimised plasma, MHD and magnetic field properties~\cite{HSR}. Furthermore,
-this choice also enabled the coil engineering issues to be coded easily by
-simply modifying the existing \process\/ superconducting TF coil model. The
-coil geometry is scaled from the Wendelstein VII-X device, which is based on a
-five field-period Helias configuration.
+There are a large number of possible stellarator configurations. As stated
+earlier, the one chosen for the \process\ model is based on the
+\textbf{HELI}cal \textbf{A}dvanced \textbf{S}tellarator (Helias) concept, in
+which all the coils resemble distorted, non-planar TF coils --- no helical
+coils or tokamak-like PF coils are present.  The coil geometry is scaled from
+the Helias 5-B power plant design, which is based on a five field-period
+Helias configuration.
 
 \subsubsection{Machine build}
 \label{sec:stbuild}
 
-Since a stellarator is inherently non-axisymmetric, the build of the \process\/
-stellarator is defined in terms of the mean thicknesses of components. This
-allows the code to use the existing algorithms for the surface areas, volumes
-and masses of the plasma and the machine's structural materials, without
-introducing unacceptably large errors in the calculated values.
+Since a stellarator is inherently non-axisymmetric, the build of the \process\
+stellarator is defined in terms of the mean thicknesses of components.
 
-It is important that the relative size of the plasma and coils within the
-stellarator being modelled remains correct. For the Helias configuration used
-in \process\/ the average coil minor radius is 2.6 times the average plasma
-minor radius. This is enforced in the code by using constraint equation no.\
-17.
+The surface areas for the first wall, blanket and shield components are scaled
+linearly with their effective minor radius from the plasma surface area
+calculation (the area of a simple torus of circular cross-section is $4 \pi^2
+R a$, hence the linear scaling with $a$). The input parameter \texttt{fhole}
+may be used to specify the hole fraction, to adjust the surface area to
+take account of ports and divertors, for instance. The volumes of the first
+wall etc.\ are simply given by the product of their surface area and their
+mean thickness.
 
-Furthermore, the plasma aspect ratio and elongation should not be modified
-from their default values (12.5 and 2.0, respectively). The whole machine can,
-however, be scaled in size. The recommended build-related iteration variables
-are as follows:
-\begin{tabbing}
-\hspace{15mm}\= \texttt{3} : \texttt{rmajor} \\
-\> \texttt{13} : \texttt{tfcth} \\
-\> \texttt{29} : \texttt{bore} \\
-\> \texttt{31} : \texttt{gapomin} \\
-\> \texttt{61} : \texttt{gapds}
-\end{tabbing}
+In contrast to tokamaks, which in \process\ are assumed to have a cylindrical
+external cryostat completely surrounding the fusion power core, the
+stellarator model assumes that the external cryostat (labelled as the outer
+vessel in Figure~\ref{fig:helias5b}) is toroidal with a circular
+cross-section. Its cross-section is assumed to be centred at the mean plasma
+major radius.
+
 All items external to the fusion power core (buildings, turbines, power
 conversion systems, etc.) remain unchanged.
 
-\subsubsection{Modelling of stellarator coils}
+\subsubsection{Stellarator coils}
+
+The stellarator coil model~\cite{stell_coil, stell_coil2} combines scaling
+aspects based on the Helias 5-B design in combination with analytic inductance
+and field calculations.
+
+The fully three-dimensional shape of the coils is assumed to be fixed, but the
+sizes of the coils are scaled from the Helias 5-B values to the geometrical
+values for the machine being modelled using fundamental physics and
+engineering principles.
 
 The stellarator coils are assumed to be superconducting --- no resistive coil
-calculations are performed.  The overall calculations on the coils are largely
-unchanged, as the present superconducting routines still apply. However, the
-geometry of the coils is different from that for tokamak TF coils, so some
-modification has been necessary.
+calculations are performed.  The critical field at the superconductor is
+calculated using circular approximations for the coils in the inductance and
+field calculations, and the limit is enforced automatically. Available
+superconductors are Nb$_3$Sn (\texttt{isumattf = 1}) and NbTi
+(\texttt{isumattf = 3}).
 
-Firstly, the inboard legs do not form a continuous ring of material on the
-midplane --- adjacent coil cases do not touch. This causes the calculation of
-the inboard coil conductor area to change, and also the shape of the winding
-pack cross-section. This is assumed to be rectangular for the stellarator
-coils, rather than the complicated two-step cross-section assumed for tokamaks
-(see Figure~\ref{fig:stell1}).
-
-The radial thickness is set using \texttt{tfcth} as usual, but the toroidal
-thickness may also be set, using iteration variable no.\ 77
-(\texttt{tftort}). This is constrained to be no larger than is geometrically
-possible using constraint equation no.\ 47 with iteration variable no.\ 76
-(\texttt{frfptf}).
-
-\begin{figure}[tbph]
-\epsfig{file=stellarator_coil.eps,width=160mm}
-\caption[Stellarator coil cross-section]
-{\label{fig:stell1} \textit{Schematic diagram of the
-    cross-section of the inboard leg of a superconducting stellarator coil,
-    showing the CICC (Conductor In Cable Conduit) construction. The winding
-    pack contains many turns of cable conduit. The cable space contains the
-    superconducting filaments, and circulating liquid helium coolant. The
-    variables shown in \Red{red} may be changed by the user, and those in
-    italics may be chosen as iteration variables.}  }
-\end{figure}
-
-Secondly, the shape of the coils in the poloidal plane is not D-shaped, and
-varies from coil to coil. This has a number of implications, not least on the
-length (and hence total mass and cost) of the coil set. In order to model a
-set of realistically-shaped stellarator coils, geometry $(\theta,\phi)$ data
-were taken from the Wendelstein VII-X coil set design~\cite{W7X} and these are
-fitted onto the surface of a helically-modulated torus whose radii scale with
-the machine's desired radial build. The total length of the coils is then
-calculated. For simplicity, the poloidal cross-section of the torus onto which
-the coils are mapped is assumed to be elliptical, with the major axis of the
-ellipse rotating with toroidal angle. This is only a rough estimate of the
-true cross-sectional shape; however the resulting coil set is a fair
-approximation to the true case (see Figure~\ref{fig:stell2}).
-
-\begin{figure}[tbph]
-\epsfig{file=stellarator_coilset.eps,width=160mm}
-\caption[Old picture of stellarator coil set]
-{\label{fig:stell2}
-    \textit{Comparison between (a) the Wendelstein VII-X coil set and (b) the
-    PROCESS stellarator coil set. The inboard sections of the PROCESS coils
-    are plotted with circular symbols for clarity.}
-}
-\end{figure}
-
-In order to use the existing routines for calculating the stresses in the
-coils, it is necessary to describe the poloidal variation of the coil shape
-using four circular arcs. For the purpose of these calculations the coil shape
-is assumed to be elliptical.
-
-\subsubsection{Other systems}
-
-Many of the fusion power core systems are assumed to have the same
-characteristics as for a tokamak device, including the blanket, divertor,
-cryogenic and vacuum systems. Of these, only the calculations for the divertor
-are likely to be inaccurate, as in a large stellarator device the divertor is
-expected to be helical rather than axisymmetric as is the case in tokamaks.
-
-\subsection{Limitations in the model}
-
-As may be already clear, there are a number of simplifications in the
-stellarator model, none of which should be too serious. These may be
-summarised as follows:
-
-\begin{enumerate}
-
-\item The plasma geometry calculations are not consistent with the stellarator
-  situation in which the plasma cross-sectional shape varies with toroidal
-  angle. This has knock-on effects on parameters such as the first wall area
-  and the poloidal field $B_p$. Similarly, the density and temperature
-  profiles must be thought of as averages over toroidal angle in this
-  representation. Nevertheless, the use of mean thicknesses etc.\ is an
-  acceptable approximation.
-
-\item The cross-section of the coils in the poloidal plane is rather
-  inaccurately modelled using ellipses. This has implications on the
-  calculation of the coil masses and on the stresses on the coils. The
-  calculated stresses are especially likely to be inaccurate as the
-  stellarator coils are non-planar, so extra torque components will be
-  present.
-
-\item The divertor model has not been modified from the axisymmetric tokamak
-  case.
-
-\end{enumerate}
+The winding pack cross-section is rectangular for the stellarator coils,
+rather than the complicated two-step cross-section assumed for tokamaks. The
+coil thicknesses and most of the dimensions of the materials within the coil
+cross-section are outputs from the model, instead of being inputs as is the
+case for tokamaks; see the variable descriptor file for details. In addition,
+certain iteration variables (\texttt{tfcth}, no.\ 13; \texttt{thkcas}, no.\
+57; \texttt{cpttf}, no.\ 60 and \texttt{tftort}, no.\ 77) should not be turned
+on in the input file; the code will stop with an error message if this is
+attempted.
 
 \section{Reversed Field Pinch Model}
 
@@ -2690,7 +2727,7 @@ toroidal magnetic device is superficially similar in design to a tokamak (so
 therefore shares many of the same components), but the magnetic field
 configuration differs.
 
-The model used in \process\/ is largely based on the TITAN fusion power
+The model used in \process\ is largely based on the TITAN fusion power
 plant~\cite{titan1,titan2}. The following sections summarise its main
 features, where they differ from those for tokamaks.
 
@@ -2798,13 +2835,14 @@ resemblance to the typical tokamak toroidal divertor systems. The code uses
 the TITAN divertor lifetime of one year to enable the divertor costs to be
 reasonable, although the divertor surface area (and therefore the cost per
 divertor) is likely to be inaccurate.
+%!%!%! perhaps we could recalculate divsur properly for RFPs...
 
 \subsection{Code modifications}
 
 As with the stellarator model, the RFP model has been incorporated in such a
 way as to allow its simple removal again if required in the future. All new
 routines are confined to the dedicated source file \texttt{rfp.f90}. The
-tokamak-relevant consistency equations in \process\/ (see
+tokamak-relevant consistency equations in \process\ (see
 Section~\ref{sec:constraints}) are used without modification, to ensure that
 the coil currents and the fields they produce are consistent with the plasma
 parameters.
@@ -2812,7 +2850,7 @@ parameters.
 \section{Inertial Fusion Energy Model}
 \label{sec:ife}
 
-As well as magnetic confinement devices, \process\/ has the ability to model
+As well as magnetic confinement devices, \process\ has the ability to model
 inertial fusion plants, in which a laser or ion beam is used to ignite a
 target pellet containing the fusion fuel.
 
@@ -2837,7 +2875,7 @@ the builds of the given conceptual machines~\cite{ife_build}. In general, the
 build from the centre of the device (at the target ignition location) is in
 the order: chamber, first wall, gap, blanket, gap, shield, gap, building
 wall. The user specifies the thicknesses of these regions, and also the
-materials that are present and in what proportions. \Red{[expand]}
+materials that are present and in what proportions. \Red{[expand]} %!%!%!
 
 \begin{description}
 \item [\texttt{ifedrv = -1} :] Driver efficiency and target gain are input as
@@ -2906,7 +2944,7 @@ nuclide inventory will also be included as the need arises.
 
 \section{Cost Models}
 
-The cost accounting used by \process\/ combines methods~\cite{cost1} used in
+The cost accounting used by \process\ combines methods~\cite{cost1} used in
 the TETRA code~\cite{tetra} and the Generomak~\cite{generomak} scheme.  The
 costs are split into the standard accounting categories~\cite{cost2} generally
 used in the reporting of power plant costs. The best references for the
@@ -2975,6 +3013,8 @@ calculation is performed.
 
 \section{Other Switches and Models}
 
+%!%!%! verbose
+
 \subsection{Output control}
 
 Since the user may only be interested in a small proportion of the code's
@@ -3014,7 +3054,7 @@ switch      & relevant output section    \\ \hline
 \end{center}
 \caption[List of switches controlling the output to file]
 {\label{tab:osections}
-  \textit{Summary of the switches in \process\/ that control the format of the output
+  \textit{Summary of the switches in \process\ that control the format of the output
     file. If a switch has a value \texttt{0}, the relevant output section
     does not appear in the output file. If its value is \texttt{1}, the
     output section is included in the output file --- this is the default
@@ -3027,9 +3067,9 @@ switch      & relevant output section    \\ \hline
 This chapter has summarised the methods by which several of the models in the
 code can be activated. There are many others present, however, and it is
 suggested that the user refers to the variable descriptor file,
-\texttt{vardes.html}. As stated earlier, this contains details of all the
-parameters within the code that can be changed by the user, in order to
-customise the machine modelled by \process.
+\texttt{vardes.html}. As stated earlier in Section~\ref{sec:vardes}, this
+contains details of all the parameters within the code that can be changed by
+the user, in order to customise the machine modelled by \process.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -3038,10 +3078,10 @@ customise the machine modelled by \process.
 
 The intention of this chapter is to provide a comprehensive prescription for
 setting up and performing runs with the code.  Firstly, the input file's
-structure and format is described. The user is then taken through the process
-of setting up the code to model a new machine, and finally an attempt is made
-to indicate and solve the problems that the user will face whilst trying to
-achieve a feasible solution.
+structure and format is described. The user is then taken through the
+procedure for setting up the code to model a new machine, and finally an
+attempt is made to indicate and solve the problems that the user will face
+whilst trying to achieve a feasible solution.
 
 \section{The Input File}
 \label{sec:infile}
@@ -3052,6 +3092,7 @@ the numerics (constraint equations, iteration variables etc.) required to
 define the problem to be solved.
 
 \subsection{Tokamak, stellarator, RFP or IFE?}
+\label{sec:device}
 
 In addition to the main input file \texttt{IN.DAT}, a second input file
 \texttt{device.dat} is used to signal to the code whether a tokamak,
@@ -3179,10 +3220,21 @@ $\!\!$\texttt{NEQNS = 5    An in-line comment on a line with only one comma (,) 
 \end{tabular}
 \end{center}
 
+If the code encounters a problem reading the input file, it will stop immediately
+with a (hopefully) useful error message. It may be worth looking at the
+contents of the output file as well, to help narrow down on which line of the
+input file the problem might lie.
+
 \section{The Output File}
 
-The output from the code is sent to file \texttt{OUT.DAT} in the working
+The main output from the code is sent to file \texttt{OUT.DAT} in the working
 directory.
+
+A second file, \texttt{MFILE.DAT}, is also produced in the working directory.
+This file contains most of the same data as \texttt{OUT.DAT} but in a
+different format, and has been designed to be ``machine-readable'' by some of
+the utility programs described in Chapter~\ref{chap:utilities}, to allow
+simple post-processing and graphical output to be produced easily.
 
 \section{Running the Code}
 
@@ -3197,7 +3249,7 @@ occurring in the numerical input only.
 Non-optimisation mode is used to perform benchmark comparisons, whereby the
 machine size, output power etc.\ are known and one only wishes to find the
 calculated stresses, beta values and fusion powers, for example. When starting
-to model a new machine, \process\/ should always be run first in non-optimisation
+to model a new machine, \process\ should always be run first in non-optimisation
 mode, before any attempt is made to optimise the machine's parameters.
 
 The first thing to do is to add to the input file all the known details about
@@ -3264,7 +3316,7 @@ limit equations (\texttt{5} and \texttt{24}, respectively); the final values
 of the corresponding f-values will indicate if the limits are exceeded and by
 how much.
 
-On running \process\/ and (hopefully) achieving a feasible result, examination
+On running \process\ and (hopefully) achieving a feasible result, examination
 of the output may well show up discrepancies between some of the parameter
 values produced and their known values (if available). Remember that, of all
 the variables shown in the variable descriptor file with a default value, only
@@ -3278,7 +3330,7 @@ common of which are as follows:
   \texttt{q}: $I_p \propto 1/q$
 
 \item Fusion power; this scales roughly with the density profile factor
-  \texttt{alphan}
+  \texttt{alphan}.
 
 \item Build parameters; it may be necessary to change non-critical thicknesses
   to achieve the correct machine build.
@@ -3291,13 +3343,13 @@ the power conversion efficiency values being used --- refer to
 Figure~\ref{fig:pwrconv}.
 
 With luck, a few iterations of this process will produce an adequate benchmark
-case. A typical input file for use with \process\/ in non-optimisation mode is
+case. A typical input file for use with \process\ in non-optimisation mode is
 contained in Appendix~\ref{app:infile1}.
 
 \subsection{Optimisation mode}
 \label{sec:optim}
 
-Running \process\/ in optimisation mode requires few changes to be made to the
+Running \process\ in optimisation mode requires few changes to be made to the
 input file from the non-optimisation case. The main differences between
 optimisation mode and non-optimisation mode are:
 
@@ -3321,7 +3373,7 @@ performed first, to provide a (hopefully) feasible set of initial conditions;
 if \texttt{ioptimz = 1}, this is skipped and the code runs in optimisation
 mode from the start. However, it is recommended to use \texttt{ioptimz = 1}
 for optimisation runs, as using the HYBRD step before a VMCON iteration tends
-to cause \process\/ to fail to converge more often.
+to cause \process\ to fail to converge more often.
 
 As before, the user must decide which constraint equations and iteration
 variables to activate. Again, the choice depends largely on the information
@@ -3381,21 +3433,21 @@ The output from an optimisation run contains an indication as to which
 iteration variables lie at their limiting values. On the whole there is a
 greater chance of unfeasible solutions being found whilst in optimisation
 mode, and Section~\ref{sec:problems} will hopefully be of some use in this
-situation. A typical input file for use with \process\/ in optimisation mode
+situation. A typical input file for use with \process\ in optimisation mode
 is contained in Appendix~\ref{app:infile2}.
 
 \section{Problem Solving}
 \label{sec:problems}
 
-Experience has shown that the first few attempts at running \process\/ with a
+Experience has shown that the first few attempts at running \process\ with a
 new input file tends to produce unfeasible results --- that is, the code will
 not find a consistent set of machine parameters. The highly non-linear nature
-of the numerics of \process\/ is the reason for this difficulty, and it often
+of the numerics of \process\ is the reason for this difficulty, and it often
 requires a great deal of painstaking adjustment of the input file to overcome.
 
 \subsection{General problems}
 
-A code of the size and complexity of \process\/ contains myriads of equations
+A code of the size and complexity of \process\ contains myriads of equations
 and variables. Virtually everything depends indirectly on everything else
 because of the nature of the code structure, so perhaps it is not surprising
 that it is often difficult to achieve a successful outcome.
@@ -3423,14 +3475,14 @@ this, set \texttt{verbose = 1} in the input file.
 
 \subsection{Optimisation problems}
 
-On reflection it is perhaps surprising that \process\/ ever does manage to
+On reflection it is perhaps surprising that \process\ ever does manage to
 find the global minimum figure of merit value, since if there are
 \texttt{nvar} iteration variables active the search is over
 \texttt{nvar}-dimensional parameter space, in which there may be many shallow
 minima of approximately equal depth. Remember that \texttt{nvar} is usually of
 the order of twenty.
 
-The machine found by \process\/ may not, therefore, be the absolutely optimal
+The machine found by \process\ may not, therefore, be the absolutely optimal
 device. It is quite easy to have two or more solutions, with results only a
 few per cent different, but a long way apart in parameter space. The technique
 of ``stationary'' scans described in Section~\ref{sec:optim} above can often
@@ -3441,7 +3493,7 @@ scan within the same family of machines. The optimum machine found may
 otherwise suddenly jump to a new region of parameter space, causing the output
 variables to seem to vary unpredictably with the scanning variable.
 
-It should be noted that in general the machine produced by \process\/ will
+It should be noted that in general the machine produced by \process\ will
 always sit against one or more operation limits. If, during a scan, the limit
 being leant upon changes (i.e.\ if the machine jumps from leaning on the beta
 limit to leaning on the density limit) the output parameters may well become
@@ -3465,7 +3517,7 @@ output can usually be trusted if (1) the constraint residues\footnote{The
 the tolerance is reduced to about $10^{-8}$, and (2) the code indicates that a
 feasible solution is still found.
 
-An unfeasible result occurs if \process\/ cannot find a set of values for the
+An unfeasible result occurs if \process\ cannot find a set of values for the
 iteration variables which satisfies all the given constraints. In this case,
 the values of the constraint residues shown in the output give some indication
 of which constraint equations are not being satisfied --- those with the
@@ -3532,7 +3584,7 @@ keep starting the run at the same point. Ill-defined problems sometimes
 produce arithmetic errors, for obscure reasons.
 
 Though a great deal of work has been performed on the code to improve its
-standard, there can be no guarantee that \process\/ is entirely bug-free,
+standard, there can be no guarantee that \process\ is entirely bug-free,
 simply because of its large size. Rarely, then, it may be that an unfeasible
 result indicates that the code has encountered a programming error, although
 its precise location will be almost impossible to find by simply examining the
@@ -3557,7 +3609,7 @@ solve each constraint equation. For instance, a particular limit equation may
 be $A \leq B$, i.e.\ $A = fB$, where the f-value $f$ must lie between zero and
 one for the relation to be satisfied.  However, if none of the iteration
 variables have any effect on the values of $A$ and $B$, and $A$ happens to be
-\textit{greater}\/ than $B$, then \process\/ will clearly not be able to solve
+\textit{greater}\/ than $B$, then \process\ will clearly not be able to solve
 the constraint.
 
 The lower and upper bounds of the iteration variables are all available to be
@@ -3677,7 +3729,7 @@ code. These should be added to the code in the following way:
 \section{Constraint Equations}
 
 Constraint equations (see Section~\ref{sec:constraints}) are added to
-\process\/ in the following way:
+\process\ in the following way:
 
 \begin{enumerate}
 
@@ -3708,7 +3760,7 @@ variable may also need to be added to the code.
 
 \section{Figures of Merit}
 
-New figures of merit (see Section~\ref{sec:foms}) are added to \process\/ in
+New figures of merit (see Section~\ref{sec:foms}) are added to \process\ in
 the following way:
 
 \begin{enumerate}
@@ -3734,7 +3786,7 @@ Don't forget to add suitable correctly-formatted comment lines to
 
 \section{Scanning Variables}
 
-Scanning variables (see Section~\ref{sec:scans}) are added to \process\/ in
+Scanning variables (see Section~\ref{sec:scans}) are added to \process\ in
 the following way:
 
 \begin{enumerate}
@@ -3797,7 +3849,7 @@ they provide:
 \mychapter{Utility Programs}
 \label{chap:utilities}
 
-[DRAFT]
+[DRAFT] %!%!%!
 
 A number of useful programs are available that can be used to extract data
 automatically from the \process\ output and plot the results. These programs
@@ -3875,11 +3927,118 @@ renamed \texttt{OLD.IN.DAT}.
 \mychapter{Code Management Tools}
 \label{chap:codetools}
 
-\section{Makefile}
+This chapter will be of interest to people involved in the continuing
+maintenance of the \process\ source code. As stated elsewhere, the source code
+is maintained by CCFE, and resides in a \textit{Subversion}\
+repository on the CCFE servers.
+
+\section{The Makefile}
 \label{sec:makefile}
+
+In addition to its normal role for compilation, the makefile (named
+\texttt{Makefile}) includes a number of utility functions that perform tasks
+such as automatic generation of the code documentation, and the creation of a
+tar file containing the entire source code, its documentation files, and the
+input and output files. This has proved to be of great benefit in keeping all
+of the data from a given run together for archival purposes.
+
+\subsection{Compilation}
+
+Compilation is trivially performed using the makefile. Currently, the
+available options are (type the following on the command line):
+\begin{tabbing}
+123\=12345678901234567890\= \kill
+\> \texttt{make ARCH=FUN} \> CCFE Fusion Unix Network (Intel Fortran ifort compiler) \\
+\> \texttt{make ARCH=GFORT} \> GNU Fortran compiler (gfortran; N.B.\ only versions
+4.6.3 or above) \\
+\> \texttt{make ARCH=JAC} \> JET Analysis Cluster (pgf95 compiler)
+\end{tabbing}
+The Intel Fortran compiler is the default option, so typing simply
+\texttt{make} will have the same effect as typing \texttt{make ARCH=FUN}.
+
+The code is almost trivial to port to new architectures, by adding extra
+stanzas to the makefile as required.
+
+To force a full recompilation, type \texttt{make clean}. N.B.\ This will
+remove (without prompting) all ``backup'' files (\texttt{*\~}) as well as
+certain other files from the working directory.
+
+Extra run-time diagnostics (array-bound checking, etc.) is turned on by
+default at present; the code is sufficiently quick to run that the performance
+penalty is barely noticeable. However, this can be turned off (beware\ldots
+results can change!), by adding \texttt{DEBUG=NO} to the relevant command
+above, i.e.\ type \verb+make ARCH=... DEBUG=NO+.  N.B.\ there must be no
+spaces either side of the \texttt{=} characters in any of the above commands.
+
+\subsection{Archiving utilities}
+
+The makefile can be used in a number of ways to pack the various file sets
+together into a single compressed tar file, for ease of portability and
+archiving.
+
+\begin{itemize}
+
+\item \texttt{make tar}: Typing this command produces a file
+  \texttt{process.tar.gz} that contains all of the source files, utility
+  programs and documentation files necessary to run the program from scratch
+  on a new machine or in a new directory. (Note that the input files
+  \texttt{IN.DAT} and \texttt{device.dat} are not included.) This is useful
+  for transferring new copies of source files, etc.\ into an existing
+  directory already containing a previous \process\ run, as the pre-existing
+  customised input files will not be overwritten. To extract the individual
+  files again, copy the file to the destination working directory and type
+  \verb+tar zxvf process.tar.gz+
+
+\item \texttt{make archive}: Typing this command produces a file
+  \texttt{process\_run.tar.gz} containing the working directory's input and
+  output files (\texttt{IN.DAT}, \texttt{OUT.DAT}, \texttt{PLOT.DAT},
+  \texttt{MFILE.DAT} and \texttt{device.dat} (which must exist to avoid an
+  error message; see Section~\ref{sec:device}), together with all of the
+  source files, utility programs and documentation files. These files together
+  comprise the full set that define a given run, and so the file produced by
+  this command is suitable for long-term storage for archival purposes. To
+  extract the contents, type \verb+tar zxvf process_run.tar.gz+
+\end{itemize}
+
+Note that each of the above commands will overwrite the given named tar file
+if one already exists in the working directory.
+
+\subsection{Code documentation}
+
+The makefile can also be used to produce source code documentation, as
+described in the next section.
 
 \section{Automatic Documentation}
 \label{sec:autodoc}
+
+The \process\ source code is self-documenting to a degree, using an included
+parser program (\texttt{autodoc}) to generate html files for each subprogram
+from specially-formatted comment lines within the code. It is the
+responsibility of the programmer to keep the \texttt{autodoc} comments within
+the source code relevant, comprehensive and up-to-date! Use the examples in
+the code as a starting basis for new routines; the output section
+corresponding to the various \texttt{autodoc} tags should be
+self-explanatory. The following files are used:
+\begin{verbatim}
+   autodoc.f90
+   adheader.src
+   adfooter.src
+\end{verbatim}
+To create the ($\sim 380$) html files from the source code, type
+\verb+make html+.  Then, point your favourite web browser to the file
+\texttt{process.html} or \texttt{calling\_tree.html} in the working
+directory. The variable descriptor file \texttt{vardes.html} (see
+Section~\ref{sec:vardes}) is also produced at the same time (though it is best
+to modify the file manually afterwards to remove empty sections from it).
+
+In addition, a full \LaTeX\/ User Guide \texttt{process.tex} (this document!) is
+rigorously maintained to ensure its continuing strict agreement with the
+evolving source code. To create an Adobe PDF file \texttt{process.pdf} from
+\texttt{process.tex} (and the associated PostScript figures),
+type \verb+make manual+.
+
+Finally, to produce both the html files and the User Guide in one go, simply
+type \verb+make doc+.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -3905,7 +4064,7 @@ Fusion;
 Tim Hender of CCFE, and all the co-authors of reference~\cite{172};
 \item[---]
 David Ward, Richard Kemp, Michael Kovari, Hanni Lux and James Morris, all of
-CCFE, and the members of the \process\/ User Group throughout Europe.
+CCFE, and the members of the \process\ User Group throughout Europe.
 \end{itemize}
 
 This work was funded by the RCUK Energy Programme under grant EP/I501045 and
@@ -3925,50 +4084,8 @@ Oak Ridge Report ORNL/FEDC-87/7
 \bibitem{storac}
 J.\ D.\ Galambos,
 \textit{``STAR Code : Spherical Tokamak Analysis and Reactor Code''},
-Unpublished internal Oak Ridge document. A copy exists in the \process\/
+Unpublished internal Oak Ridge document. A copy exists in the \process\
 Project Work File~\cite{PWF}.
-
-\bibitem{PWF}
-N.\ P.\ Taylor (holder) and P.\ J. Knight,
-\textit{``\process\/ Reactor Systems Code''},
-AEA Fusion Project Work File, F/RS/CIRE5523/PWF
-(1992)
-
-\bibitem{iter_nb3sn}
-L.\ Bottura,
-\textit{``$J_c(B,T,\epsilon)$ Parameterizations for the ITER Nb$_3$Sn
-  Production"},
-ITER Document 2MMF7J (2008),
-\texttt{https://user.iter.org/?uid=2MMF7J\&action=get\_document}
-
-\bibitem{tart}
-Y-K.\ M.\ Peng and J.\ B.\ Hicks,
-\textit{``Engineering Feasibility of Tight Aspect Ratio Tokamak
-(Spherical Torus) Reactors''},
-AEA Fusion Report AEA FUS 64
-(1990)
-
-\bibitem{USSRSG}
-J.\ F.\ Lyon, K.\ Gulec, R.\ L.\ Miller and L.\ El-Guebaly:
-\textit{``Status of the U.S.\ Stellarator Reactor Study''},
-report communicated privately to T.\ Hender
-
-\bibitem{W7X}
-Wendelstein Project Group,
-\textit{``Wendelstein VII-X: Application for Preferential Support''},
-IPP-Euratom Association, August 1990
-
-\bibitem{HSR}
-G.\ Grieger et al., \textit{Fusion Technology}, \textbf{21} (1992) 1767
-
-\bibitem{titan1}
-\textit{``The TITAN Reversed Field Pinch Fusion Reactor Study, Scoping Phase
-Report''} ,
-UCLA Report UCLA-PPG-1100, January 1987
-
-\bibitem{titan2}
-\textit{``The TITAN Reversed Field Pinch Fusion Reactor Study, Final Report''},
-UCLA Report UCLA-PPG-1200, 1990
 
 \bibitem{hybrd_anl}
 J.\ J.\ More, B.\ S.\ Garbow and E.\ Hillstrom,
@@ -3999,16 +4116,6 @@ H.-S.\ Bosch and G.\ M.\ Hale,
 \textit{``Improved Formulas for Fusion Cross-sections and Thermal Reactivities''},
 Nuclear Fusion \textbf{32} (1992) 611
 
-\bibitem{Uckan88}
-N.\ A.\ Uckan,
-Fusion Technology \textbf{14} (1988) 299
-
-\bibitem{DEMOPhysicsGuidelines}
-T.\ Hartmann and H.\ Zohm,
-\textit{``Towards a `Physics Design Guidelines for a DEMO Tokamak'
-  Document''},
-EFDA Report, March 2012 (Activity\_3\_Physics\_Design\_Guidelines\_2L8QVN\_v1\_0(1).pdf)
-
 \bibitem{IPDG}
 N.\ A.\ Uckan and ITER Physics Group,
 \textit{``ITER Physics Design Guidelines: 1989''},
@@ -4023,6 +4130,16 @@ Morris, M.\ R.\ O'Brien, M.\ F.\ Turner and H.\ R.\ Wilson,
 AEA Fusion Report AEA FUS 172
 (1992)
 
+\bibitem{Uckan88}
+N.\ A.\ Uckan,
+Fusion Technology \textbf{14} (1988) 299
+
+\bibitem{DEMOPhysicsGuidelines}
+T.\ Hartmann and H.\ Zohm,
+\textit{``Towards a `Physics Design Guidelines for a DEMO Tokamak'
+  Document''},
+EFDA Report, March 2012 (Activity\_3\_Physics\_Design\_Guidelines\_2L8QVN\_v1\_0(1).pdf)
+
 \bibitem{Nevins}
 W.\ M.\ Nevins et al.,
 \textit{``Summary Report: ITER Specialists' Meeting on Heating and
@@ -4034,15 +4151,74 @@ ITER-TN-PH-8-4,
 H.\ R.\ Wilson,
 Nuclear Fusion \textbf{32} (1992) 257
 
-\bibitem{FISPACT}
-N.\ P.\ Taylor, R.\ A.\ Forrest, P.\ J.\ Knight and L.\ J.\ Baker,
-\textit{``Safety and Environmental Modelling in the PROCESS Code''},
-Strategic Studies Note 94/14
-(1994)
-
 \bibitem{Uckan}
 N.\ A.\ Uckan et al.,
 Fusion Technology \textbf{13} (1988) 411
+
+\bibitem{efda_blanket_model}
+A.\ Li~Puma, F.\ Franza and L.\ V.\ Boccaccini, \textit{``WP12-SYS01-T02 -
+  Model Improvements (Blanket Model)''},
+EFDA\_D\_2LKMCT, v1.0, EFDA Power Plant Physics \& Technology, February 2013
+
+\bibitem{Panos}
+P.\ J.\ Karditsas, \textit{``\process\ Code Development: simple blanket model ---
+neutron heat input''},
+Work File Note F/RS/CIRE5523/PWF/0142, November 1992
+
+\bibitem{iter_nb3sn}
+L.\ Bottura,
+\textit{``$J_c(B,T,\epsilon)$ Parameterizations for the ITER Nb$_3$Sn
+  Production"},
+ITER Document 2MMF7J (2008),
+\texttt{https://user.iter.org/?uid=2MMF7J\&action=get\_document}
+
+\bibitem{PWF}
+P.\ J.\ Knight,
+\textit{``\process\ Reactor Systems Code''},
+AEA Fusion Project Work File, F/RS/CIRE5523/PWF
+(1992)
+
+\bibitem{tart}
+Y-K.\ M.\ Peng and J.\ B.\ Hicks,
+\textit{``Engineering Feasibility of Tight Aspect Ratio Tokamak
+(Spherical Torus) Reactors''},
+AEA Fusion Report AEA FUS 64 (1990)
+
+\bibitem{ELECTROWATT}
+\textit{``Pulsed Fusion Reactor Study''},
+AEA Fusion Report AEA FUS 205
+(1992)
+
+\bibitem{helias5b}
+F.\ Schauer, K.\ Egorov and V.\ Bykov,
+\textit{``HELIAS 5-B magnet system structure and maintenance concept''},
+presented at SOFT 2012
+
+\bibitem{stell_geometry}
+F.\ Warmer,
+\textit{``Stellarator Plasma Geometry model for the systems code PROCESS''},
+IPP Greifswald, Germany, internal note, 19/06/2013
+
+\bibitem{stell_divertor}
+F.\ Warmer,
+\textit{``Stellarator Divertor model for the systems code PROCESS''},
+IPP Greifswald, Germany, internal note, 21/06/2013
+
+\bibitem{stell_coil}
+F.\ Warmer and F.\ Schauer,
+\textit{``Stellarator Coil model for the systems code PROCESS''},
+IPP Greifswald, Germany, internal note, 07/10/2013
+
+\bibitem{vmec}
+VMEC MHD force balance code for toroidal domains,
+\texttt{http://vmecwiki.pppl.wikispaces.net/VMEC}
+
+\bibitem{geiger}
+J.\ Geiger,
+\textit{``Darstellung von ineinandergeschachtelten toroidal geschlossenen
+  Fl\"{a}chen mit Fourierkoeffizienten''} \textit{``Representation of
+  nested, closed surfaces with Fourier coefficients''}
+IPP Greifswald, Germany, internal document, 06/07/2010
 
 \bibitem{Nuhrenberg}
 %%MHD-Theoretical Aspects of Stellarators
@@ -4052,6 +4228,36 @@ J.\ N\"{u}hrenberg et al., \textit{Plasma Physics and Controlled Fusion},
 \bibitem{LHD}
 S.\ Sudo, Y.\ Takeiri, H.\ Zushi et al., \textit{Nuclear Fusion}, \textbf{30} (1990)
 11
+
+\bibitem{Goldston}
+R.\ J.\ Goldston, H.\ Biglari, G.\ W.\ Hammett et al.,
+\textit{Bull.\ Am.\ Phys.\ Society}, \textbf{34} (1989) 1964
+
+\bibitem{LacknerGottardi}
+K.\ Lackner and N.\ A.\ O.\ Gottardi,
+\textit{Nuclear Fusion}, \textbf{30} (1990) 767
+
+\bibitem{Stroth}
+U.\ Stroth et al.,
+\textit{Nuclear Fusion}, \textbf{36} (1996) 1063
+
+\bibitem{Yamada}
+H.\ Yamada et al.,
+\textit{Nuclear Fusion}, \textbf{45} (2005) 1684
+
+\bibitem{stell_coil2}
+F.\ Warmer,
+\textit{``Stellarator Modular Coil model for the systems code PROCESS''},
+IPP Greifswald, Germany, internal note, 31/07/2013
+
+\bibitem{titan1}
+\textit{``The TITAN Reversed Field Pinch Fusion Reactor Study, Scoping Phase
+Report''} ,
+UCLA Report UCLA-PPG-1100, January 1987
+
+\bibitem{titan2}
+\textit{``The TITAN Reversed Field Pinch Fusion Reactor Study, Final Report''},
+UCLA Report UCLA-PPG-1200, 1990
 
 \bibitem{process_ife}
 P.\ J.\ Knight,
@@ -4112,20 +4318,10 @@ Bieri and Meier,
   Design''},
 Fusion Technology \textbf{21} (1992) 1557
 
-\bibitem{efda_blanket_model}
-A.\ Li~Puma, F.\ Franza and L.\ V.\ Boccaccini, \textit{``WP12-SYS01-T02 -
-  Model Improvements (Blanket Model)''},
-EFDA\_D\_2LKMCT, v1.0, EFDA Power Plant Physics \& Technology, February 2013
-
-\bibitem{Panos}
-P.\ J.\ Karditsas, \textit{``\process\/ Code Development: simple blanket model ---
-neutron heat input''},
-Work File Note F/RS/CIRE5523/PWF/0142, November 1992
-
-\bibitem{ELECTROWATT}
-\textit{``Pulsed Fusion Reactor Study''},
-AEA Fusion Report AEA FUS 205
-(1992)
+\bibitem{FISPACT}
+N.\ P.\ Taylor, R.\ A.\ Forrest, P.\ J.\ Knight and L.\ J.\ Baker,
+\textit{``Safety and Environmental Modelling in the PROCESS Code''},
+Strategic Studies Note 94/14 (1994)
 
 \bibitem{cost1}
 R.\ L.\ Reid and Y-K.\ M.\ Peng,
@@ -4142,8 +4338,7 @@ J.\ Sheffield et al.,
 \bibitem{cost2}
 S.\ Thompson,
 \textit{``Systems Code Cost Accounting''},
-memo FEDC-M-88-SE,-004
-(1988)
+memo FEDC-M-88-SE,-004 (1988)
 
 \bibitem{galambos}
 J.\ D.\ Galambos, L.\ J.\ Perkins, S.\ W.\ Haney and J.\ Mandrekas,
@@ -4167,7 +4362,7 @@ Subversion revision control system, \texttt{http://subversion.apache.org/}
 \myappendix{Non-optimisation Input File}
 \label{app:infile1}
 
-The following is a typical input file used to run \process\/ in
+The following is a typical input file used to run \process\ in
 non-optimisation mode. Comments in [\ldots] have been added to the right of
 each line.
 
@@ -4290,7 +4485,7 @@ UCCPCLB = 150                         [Unit cost of TF outer leg plate coils]
 \myappendix{Optimisation Input File}
 \label{app:infile2}
 
-The following is a typical input file used to run \process\/ in optimisation
+The following is a typical input file used to run \process\ in optimisation
 mode. Comments in [\ldots] have been added to the right of each line.
 
 \footnotesize
@@ -4420,7 +4615,7 @@ UCCPCLB = 150                         [Unit cost of TF outer leg plate coils]
 \myappendix{Source Code Documentation}
 \label{app:doc}
 
-The development of the \process\/ code since its shipment from Oak Ridge
+The development of the \process\ code since its shipment from Oak Ridge
 National Laboratory in April 1992 has been fully documented in the
 Project Work File~\cite{PWF}. Presented here is a list of Project Work
 File Notes as of \today\/ that address various issues related to the
