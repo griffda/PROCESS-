@@ -80,6 +80,7 @@ contains
     !+ad_hist  11/09/13 PJK Corrected error in NBI calls; ftr replaced by ftritbm
     !+ad_hist  25/09/13 PJK Added nbshield, rtanbeam, rtanmax outputs
     !+ad_hist  27/11/13 PJK Added ohmic power to bigq denominator
+    !+ad_hist  06/03/14 PJK Changed gamma units in output to 10^20 A/W-m2
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -216,17 +217,17 @@ contains
        !  Normalised current drive efficiency
 
        if (abs(plhybd) > 1.0D-8) then
-          gamrf = effrfss * (1.0D-20*dene * rmajor)
+          gamrf = effrfss * (dene20 * rmajor)
           gamcd = gamrf
        end if
 
        if (abs(pnbeam) > 1.0D-8) then
-          gamnb = effnbss * (1.0D-20*dene * rmajor)
+          gamnb = effnbss * (dene20 * rmajor)
           gamcd = gamnb
        end if
 
        if (abs(pofcd) > 1.0D-8) then
-          gamof = effofss * (1.0D-20*dene * rmajor)
+          gamof = effofss * (dene20 * rmajor)
           gamcd = gamof
        end if
 
@@ -302,13 +303,13 @@ contains
 
     if (abs(plhybd) > 1.0D-8) then
        call ovarre(outfile,'RF efficiency (A/W)','(effrfss)',effrfss)
-       call ovarre(outfile,'RF gamma (A/W-m2)','(gamrf)',gamrf)
+       call ovarre(outfile,'RF gamma (10^20 A/W-m2)','(gamrf)',gamrf)
        call ovarre(outfile,'Lower hybrid power (W)','(plhybd)',plhybd)
     end if
 
     if (abs(pnbeam) > 1.0D-8) then
        call ovarre(outfile,'Beam efficiency (A/W)','(effnbss)',effnbss)
-       call ovarre(outfile,'Beam gamma (A/W-m2)','(gamnb)',gamnb)
+       call ovarre(outfile,'Beam gamma (10^20 A/W-m2)','(gamnb)',gamnb)
        call ovarre(outfile,'Neutral beam power (W)','(pnbeam)',pnbeam)
        call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)
        call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam)
@@ -329,7 +330,7 @@ contains
 
     if (abs(pofcd) > 1.0D-8) then
        call ovarre(outfile,'OFCD efficiency (A/W)','(effofss)',effofss)
-       call ovarre(outfile,'OFCD gamma (A/W-m2)','(gamof)',gamof)
+       call ovarre(outfile,'OFCD gamma (10^20 A/W-m2)','(gamof)',gamof)
        call ovarre(outfile,'OFCD power (W)','(pofcd)',pofcd)
     end if
 

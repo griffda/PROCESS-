@@ -1574,10 +1574,10 @@ value of this switch into account, although not the plasma geometry at
 present.
 
 The Harrison-Kukushkin-Hotston divertor model~\cite{IPDG} developed for ITER
-is used (except for the case of tight aspect ratio tokamaks --- see
-later). This is appropriate for conventional aspect ratio machines, but care
-should be taken in inputting the divertor magnetics for this model, and
-projections far from the ITER CDA machine parameters are likely to be
+is used (except for the case of tight aspect ratio tokamaks or stellarators
+--- see later). This is appropriate for conventional aspect ratio machines,
+but care should be taken in inputting the divertor magnetics for this model,
+and projections far from the ITER CDA machine parameters are likely to be
 unreliable.
 
 The divertor calculations are carried out in routines \texttt{DIVCALL} and
@@ -1888,8 +1888,9 @@ Each TF coil is defined in the $(R,Z)$ plane by four circular arcs of
 different radius, which create a D-shaped profile. Because of the finite
 number of TF coils used in a tokamak (typically around 16), the toroidal field
 has a ripple introduced into it, the amplitude of which can be limited to a
-few percent by the code by adjusting the outboard gap thickness (labelled
-\texttt{gapsto} in Figures~\ref{fig:build_d} and~\ref{fig:build_e}).
+few percent (given by input parameter \texttt{ripmax}) by the code by
+adjusting the outboard gap thickness (labelled \texttt{gapsto} in
+Figures~\ref{fig:build_d} and~\ref{fig:build_e}).
 
 Among the TF coil parameters calculated by the code are the maximum allowable
 current density, the stresses on the structure, the energy stored and the
@@ -2479,7 +2480,7 @@ The code has the ability to perform calculations based on the physics and
 engineering of a stellarator, which, although being a toroidal device, is
 radically different in a number of ways from a tokamak.
 
-The model is largely based on the Helias 5-B stellarator power plant
+The model is largely based on W7-X and the HELIAS 5-B stellarator power plant
 design~\cite{helias5b} (Figure~\ref{fig:helias5b}) and related modelling that
 has been performed by IPP Greifswald~\cite{stell_geometry, stell_divertor,
   stell_coil}.
@@ -2504,11 +2505,10 @@ Section~\ref{sec:constraints}) should be used without modification:
 
 \begin{figure}[tbph]
 \centerline{\epsfig{file=helias5b.eps,width=160mm}}
-%bbllx=0mm,bburx=160mm,bblly=-0mm,bbury=160mm,clip=}}
-\caption[Helias 5-B Stellarator Power Plant Design]
+\caption[HELIAS 5-B Stellarator Power Plant Design]
 {\label{fig:helias5b}
-  \textit{Fusion power core of the Helias 5-B conceptual power plant design
-    (from F.\ Schauer et al., Fus.\ Eng.\ Design (2013) [in press])}
+  \textit{Fusion power core of the HELIAS 5-B conceptual power plant design
+    (from~\cite{helias5b})}
 }
 \end{figure}
 
@@ -2521,20 +2521,21 @@ differ between stellarators and tokamaks, as follows.
 \subsubsection{Plasma geometry}
 
 The plasma geometry model uses Fourier coefficients to represent the complex
-3-D plasma shape typical of stellarators. A VMEC~\cite{vmec} calculation must
-have been performed prior to running with \process. The overall size of the
-plasma is scaled correctly for the required (mean) major and minor radii for
-the machine being modelled~\cite{geiger}.
+3-D plasma shape typical of stellarators. A VMEC~\cite{vmec} calculation (or
+other equilibrium code that can provide the Fourier coefficients of the LCFS)
+must have been performed prior to running with \process. The overall size of
+the plasma is scaled correctly for the required (mean) major and minor radii
+for the machine being modelled~\cite{geiger}.
 
 It is necessary to provide three input files that define the plasma shape:
 
 \begin{enumerate}
 
-\item Set \texttt{vmec\_info\_file} in the input file to the name of a VMEC
-  output file with the following format (the numbers given are those for the
-  Helias 5-B plasma configuration); in practice only the effective major and
-  minor radius values (\texttt{R\_eff} and \texttt{a\_eff}, respectively) and
-  the number of field periods are used:
+\item Set \texttt{vmec\_info\_file} in the input file to the name of a file
+  with the following format (the numbers given are those for the W7-X high
+  mirror configuration); in practice only the effective major and minor radius
+  values (\texttt{R\_eff} and \texttt{a\_eff}, respectively) and the number of
+  field periods are used:
 
 \footnotesize
 \begin{verbatim}
@@ -2545,11 +2546,11 @@ R_eff [m]   a_eff [m]   Aspect ratio   Plasma vol [m3]  LCFS surf area [m2]  fie
 
 \item Set \texttt{vmec\_rmn\_file} in the input file to the name of a VMEC
   output file containing the calculated plasma boundary $R(m,n)$ Fourier
-  components.
+  coefficients, where $m = 0$ to 11 (rows) and $n = -12$ to 12 (columns).
 
 \item Set \texttt{vmec\_zmn\_file} in the input file to the name of a VMEC
   output file containing the calculated plasma boundary $Z(m,n)$ Fourier
-  components.
+  coefficients, where $m = 0$ to 11 (rows) and $n = -12$ to 12 (columns).
 
 \end{enumerate}
 
@@ -2559,7 +2560,8 @@ cross-sectional area are the outputs from the plasma geometry model.
 
 \subsubsection{Absense of plasma current}
 
-Stellarators have zero plasma current, so no current scalings are required.
+Stellarators try to achieve zero plasma current in order to allow safe
+divertor operation, so no current scalings are required.
 
 \subsubsection{Beta limit}
 
@@ -2636,7 +2638,8 @@ plates being placed in a complex 3-D geometry; see Figure~\ref{fig:stelldiv}.
 \centerline{\epsfig{file=stelldiv.eps,width=160mm}}
 \caption[Stellarator island divertor configuration]
 {\label{fig:stelldiv}
-  \textit{A five-period Helias plasma with island divertor plates shown in red}
+  \textit{A five-period HELIAS plasma (specifically W7-X) with island divertor
+    plates shown in red}
 }
 \end{figure}
 
@@ -2659,11 +2662,11 @@ see the variable descriptor file for more details.
 
 There are a large number of possible stellarator configurations. As stated
 earlier, the one chosen for the \process\ model is based on the
-\textbf{HELI}cal \textbf{A}dvanced \textbf{S}tellarator (Helias) concept, in
+\textbf{HELI}cal \textbf{A}dvanced \textbf{S}tellarator (HELIAS) concept, in
 which all the coils resemble distorted, non-planar TF coils --- no helical
 coils or tokamak-like PF coils are present.  The coil geometry is scaled from
-the Helias 5-B power plant design, which is based on a five field-period
-Helias configuration.
+the HELIAS 5-B power plant design, which is based on a five field-period
+HELIAS configuration.
 
 \subsubsection{Machine build}
 \label{sec:stbuild}
@@ -2693,11 +2696,11 @@ conversion systems, etc.) remain unchanged.
 \subsubsection{Stellarator coils}
 
 The stellarator coil model~\cite{stell_coil, stell_coil2} combines scaling
-aspects based on the Helias 5-B design in combination with analytic inductance
+aspects based on the HELIAS 5-B design in combination with analytic inductance
 and field calculations.
 
 The fully three-dimensional shape of the coils is assumed to be fixed, but the
-sizes of the coils are scaled from the Helias 5-B values to the geometrical
+sizes of the coils are scaled from the HELIAS 5-B values to the geometrical
 values for the machine being modelled using fundamental physics and
 engineering principles.
 
@@ -2715,8 +2718,8 @@ cross-section are outputs from the model, instead of being inputs as is the
 case for tokamaks; see the variable descriptor file for details. In addition,
 certain iteration variables (\texttt{tfcth}, no.\ 13; \texttt{thkcas}, no.\
 57; \texttt{cpttf}, no.\ 60 and \texttt{tftort}, no.\ 77) should not be turned
-on in the input file; the code will stop with an error message if this is
-attempted.
+on in the input file as they are calculated self-consistently; the code will
+stop with an error message if this is attempted.
 
 \section{Reversed Field Pinch Model}
 
@@ -3013,7 +3016,12 @@ calculation is performed.
 
 \section{Other Switches and Models}
 
-%!%!%! verbose
+\subsection{Diagnostic output}
+
+Switch \texttt{verbose} can be set to \texttt{1} in the input file to allow
+the code to write some additional diagnostic output to the screen. Currently,
+extra information about the progress of the optimiser is produced. This
+setting is likely to be of interest only to ``expert'' users.
 
 \subsection{Output control}
 
@@ -4192,7 +4200,7 @@ AEA Fusion Report AEA FUS 205
 \bibitem{helias5b}
 F.\ Schauer, K.\ Egorov and V.\ Bykov,
 \textit{``HELIAS 5-B magnet system structure and maintenance concept''},
-presented at SOFT 2012
+Fusion Engineering and Design \texttt{88} (2013) 1619--1622
 
 \bibitem{stell_geometry}
 F.\ Warmer,

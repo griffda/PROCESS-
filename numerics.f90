@@ -44,7 +44,8 @@ module numerics
   !+ad_hist  26/02/14 PJK New constraint eqns 57,58 added; new iteration
   !+ad_hisc               variables 99 (ftftort) and 100 (ftfthko) added
   !+ad_hist  27/02/14 PJK Modified nineqns comment
-  !+ad_hist  05.03/14 PJK Clarified lablcc descriptions
+  !+ad_hist  05/03/14 PJK Clarified lablcc descriptions
+  !+ad_hist  06/03/14 PJK Comment changes
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -79,13 +80,14 @@ module numerics
   integer :: minmax  = 6
   !+ad_vars  ncalls : number of function calls during solution
   integer :: ncalls  = 0
-  !+ad_vars  neqns /14/ : number of equations root solver must satisfy
+  !+ad_vars  neqns /14/ : number of equality constraints root solver must satisfy
   integer :: neqns   = 14
   !+ad_vars  nfev1 : number of calls to FCNHYB (HYBRD function caller) made
   integer :: nfev1   = 0
   !+ad_vars  nfev2 : number of calls to FCNVMC1 (VMCON function caller) made
   integer :: nfev2   = 0
-  !+ad_vars  nineqns /0/ : number of inequalities VMCON must satisfy
+  !+ad_vars  nineqns /0/ : number of inequality constraints VMCON must satisfy
+  !+ad_varc                (leave at zero for now)
   integer :: nineqns = 0
   !+ad_vars  nvar /25/ : number of iteration (independent) variables
   integer :: nvar    = 25

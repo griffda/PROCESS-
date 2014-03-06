@@ -86,8 +86,7 @@ module physics_variables
   !+ad_cont  N/A
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the plasma
-  !+ad_desc  physics. It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>phydat.h90</CODE>.
+  !+ad_desc  physics.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  15/10/12 PJK Initial version of module
@@ -474,7 +473,7 @@ module physics_variables
   !+ad_vars  powerht : heating power (= transport loss power) (MW) used in
   !+ad_varc            confinement time calculation
   real(kind(1.0D0)) :: powerht = 0.0D0
-  !+ad_vars  powfmw : fusion power, max (MW)
+  !+ad_vars  powfmw : fusion power (MW)
   real(kind(1.0D0)) :: powfmw = 0.0D0
   !+ad_vars  pperim : plasma poloidal perimeter (m)
   real(kind(1.0D0)) :: pperim = 0.0D0
@@ -629,8 +628,7 @@ module current_drive_variables
   !+ad_cont  N/A
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to tokamak
-  !+ad_desc  current drive systems. It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>cdriv.h90</CODE>.
+  !+ad_desc  current drive systems.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  16/10/12 PJK Initial version of module
@@ -638,6 +636,7 @@ module current_drive_variables
   !+ad_hist  14/01/13 PJK Corrected some more comments; removed echpwr0
   !+ad_hist  25/09/13 PJK Added rtanbeam, rtanmax, nbshield
   !+ad_hist  27/11/13 PJK Modified bigq description
+  !+ad_hist  06/03/14 PJK Modified gamcd units
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -680,7 +679,7 @@ module current_drive_variables
   real(kind(1.0D0)) :: frbeam = 1.05D0
   !+ad_vars  ftritbm /1.0D-6/ : fraction of beam that is tritium
   real(kind(1.0D0)) :: ftritbm = 1.0D-6
-  !+ad_vars  gamcd : normalised current drive efficiency (A/W-m2)
+  !+ad_vars  gamcd : normalised current drive efficiency (1.0E20 A/W-m2)
   real(kind(1.0D0)) :: gamcd = 0.0D0
   !+ad_vars  iefrf /5/ : switch for current drive efficiency model: <OL>
   !+ad_varc         <LI> Fenstermacher Lower Hybrid
@@ -742,8 +741,7 @@ module divertor_variables
   !+ad_cont  N/A
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to tokamak
-  !+ad_desc  divertor components. It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>divrt.h90</CODE>.
+  !+ad_desc  divertor components.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  17/10/12 PJK Initial version of module
@@ -869,9 +867,7 @@ module fwbs_variables
   !+ad_cont  N/A
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the first
-  !+ad_desc  wall, blanket and shield components. It is derived from
-  !+ad_desc  <CODE>include</CODE> files <CODE>fwblsh.h90</CODE> and
-  !+ad_desc  <CODE>blanket.h90</CODE>.
+  !+ad_desc  wall, blanket and shield components.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  18/10/12 PJK Initial version of module
@@ -1001,7 +997,8 @@ module fwbs_variables
   !+ad_vars  rdewex : external cryostat radius (m)
   real(kind(1.0D0)) :: rdewex = 0.0D0
   !+ad_vars  rpf2dewar /0.5/ : radial distance between outer edge of largest
-  !+ad_varc                    ipfloc=3 PF coil and external cryostat (m)
+  !+ad_varc                    ipfloc=3 PF coil (or stellarator modular coil)
+  !+ad_varc                    and external cryostat (m)
   real(kind(1.0D0)) :: rpf2dewar = 0.5D0
   !+ad_vars  tbr : tritium breeding ratio (blktmodel>0)
   real(kind(1.0D0)) :: tbr = 0.0D0
@@ -1137,8 +1134,6 @@ module pfcoil_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  poloidal field coil systems of a fusion power plant.
-  !+ad_desc  It is derived from <CODE>include</CODE> files
-  !+ad_desc  <CODE>pfcoil.h90</CODE> and <CODE>vltcom.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  18/10/12 PJK Initial version of module
@@ -1344,8 +1339,6 @@ module tfcoil_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  toroidal field coil systems of a fusion power plant.
-  !+ad_desc  It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>tfcoil.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  18/10/12 PJK Initial version of module
@@ -1707,8 +1700,6 @@ module structure_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  support structure of a fusion power plant.
-  !+ad_desc  It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>struccom.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  29/10/12 PJK Initial version of module
@@ -1748,8 +1739,6 @@ module vacuum_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  vacuum system of a fusion power plant.
-  !+ad_desc  It is derived from <CODE>include</CODE> files
-  !+ad_desc  <CODE>vaccom.h90</CODE> and <CODE>torsdat.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  29/10/12 PJK Initial version of module
@@ -1803,8 +1792,6 @@ module pf_power_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  PF coil power conversion system of a fusion power plant.
-  !+ad_desc  It is derived from <CODE>include</CODE> files
-  !+ad_desc  <CODE>pwrcom.h90</CODE> and <CODE>estocom.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  29/10/12 PJK Initial version of module
@@ -1855,8 +1842,6 @@ module heat_transport_variables
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  heat transport system of a fusion power plant, and
   !+ad_desc  also those for a hydrogen production plant.
-  !+ad_desc  It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>htpwr.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  30/10/12 PJK Initial version of module
@@ -1984,8 +1969,6 @@ module times_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  plasma pulse timings.
-  !+ad_desc  It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>times.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  30/10/12 PJK Initial version of module
@@ -2042,8 +2025,6 @@ module buildings_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  plant buildings.
-  !+ad_desc  It is derived from <CODE>include</CODE> files
-  !+ad_desc  <CODE>bldgcom.h90</CODE> and <CODE>bldgvol.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  30/10/12 PJK Initial version of module
@@ -2158,8 +2139,6 @@ module build_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  fusion power core's radial and vertical geometry (build).
-  !+ad_desc  It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>build.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  30/10/12 PJK Initial version of module
@@ -2344,8 +2323,6 @@ module cost_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  costing algorithms of a fusion power plant.
-  !+ad_desc  It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>cost.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  31/10/12 PJK Initial version of module
@@ -2704,8 +2681,6 @@ module constraint_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  constraint equations (f-values, limits, etc.).
-  !+ad_desc  It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>ineq.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  31/10/12 PJK Initial version of module
@@ -2951,7 +2926,7 @@ module stellarator_variables
 
   !+ad_vars  bmn /0.001/ : relative radial field perturbation
   real(kind(1.0D0)) :: bmn = 1.0D-3
-  !+ad_vars  f_asym /1.0/ : heat load peaking factor
+  !+ad_vars  f_asym /1.0/ : divertor heat load peaking factor
   real(kind(1.0D0)) :: f_asym = 1.0D0
   !+ad_vars  f_rad /0.85/ : radiated power fraction in SOL
   real(kind(1.0D0)) :: f_rad = 0.85D0
@@ -3016,8 +2991,6 @@ module rfp_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  reversed field pinch model.
-  !+ad_desc  It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>rfp.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  31/10/12 PJK Initial version of module
@@ -3075,8 +3048,6 @@ module ife_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  inertial fusion energy model.
-  !+ad_desc  It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>ife.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  05/11/12 PJK Initial version of module
@@ -3408,8 +3379,6 @@ module pulse_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  pulsed reactor model.
-  !+ad_desc  It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>pulse.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  05/11/12 PJK Initial version of module
@@ -3471,8 +3440,6 @@ module startup_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  plasma start-up model.
-  !+ad_desc  It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>start.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  05/11/12 PJK Initial version of module
@@ -3516,8 +3483,6 @@ module fispact_variables
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
   !+ad_desc  nuclear data (fispact) routines.
-  !+ad_desc  It is derived from <CODE>include</CODE> file
-  !+ad_desc  <CODE>fispact.h90</CODE>.
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  06/11/12 PJK Initial version of module
