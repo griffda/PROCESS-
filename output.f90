@@ -432,10 +432,11 @@ contains
     !+ad_desc  double precision variable in F format (e.g.
     !+ad_desc  <CODE>-12345.000</CODE>).
     !+ad_prob  None
-    !+ad_call  underscore
+    !+ad_call  ovarre
     !+ad_hist  20/09/11 PJK Initial F90 version
     !+ad_hist  13/02/14 PJK Added output to mfile, with underscores replacing spaces
     !+ad_hist  17/02/14 PJK Ensured mfile output is not replicated if file=mfile
+    !+ad_hist  06/03/14 PJK mfile output now sent to ovarre for 'E' format
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -467,11 +468,9 @@ contains
        write(file,10) dum42, dum13, value
     end if
 
-    call underscore(dum42)
-    call underscore(dum13)
-    write(mfile,10) dum42, dum13, value
-
 10  format(1x,a,t45,a,t60,f10.3)
+
+    call ovarre(mfile,descr,varnam,value)
 
   end subroutine ovarrf
 

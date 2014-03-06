@@ -368,7 +368,7 @@ contains
 
     pinj = 1.0D-6 * (pinje + pinji)/vol
     pdivt = vol * (palp + pcharge + pinj + pohmpv - prad - plrad)
-    pdivt = max(0.001D0, pdivt)
+    pdivt = max(0.001D0, pdivt)  !  unphysical, but prevents -ve sqrt argument
 
     call culdlm(bt,idensl,pdivt,plascur,prn1,qstar,q95, &
          rmajor,rminor,sarea,zeff,dlimit,dnelimt)
@@ -3967,6 +3967,8 @@ contains
     !+ad_hist  28/11/13 PJK Added icurr, iprofile information to output
     !+ad_hist  20/02/14 PJK Added pedestal profile quantities
     !+ad_hist  05/03/14 PJK Added on-axis values
+    !+ad_hist  06/03/14 PJK Added warning if pdivt=0.001;
+    !+ad_hisc               clarified ishape effects on kappa, triang
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4010,20 +4012,49 @@ contains
     call ovarrf(outfile,'Major radius (m)','(rmajor)',rmajor)
     call ovarrf(outfile,'Minor radius (m)','(rminor)',rminor)
     call ovarrf(outfile,'Aspect ratio','(aspect)',aspect)
+
     if (istell == 0) then
-       if (ishape == 2) then
+
+       select case (ishape)
+       case (0)
+          call ovarrf(outfile,'Elongation, X-point (input value used)', &
+               '(kappa)',kappa)
+       case (1)
+          call ovarrf(outfile,'Elongation, X-point (TART scaling)', &
+               '(kappa)',kappa)
+       case (2)
           call ovarrf(outfile,'Elongation, X-point (Zohm scaling)', &
                '(kappa)',kappa)
-       else
-          call ovarrf(outfile,'Elongation, X-point','(kappa)',kappa)
-       end if
+       case default
+          write(outfile,*) 'Error in routine OUTPLAS:'
+          write(outfile,*) 'Illegal value of ishape, = ',ishape
+          write(outfile,*) 'PROCESS stopping.'
+          stop
+       end select
+
        call ovarrf(outfile,'Elongation, 95% surface (kappa/1.12)', &
             '(kappa95)',kappa95)
        call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa)
-       call ovarrf(outfile,'Triangularity, X-point','(triang)',triang)
+
+       select case (ishape)
+       case (0,2)
+          call ovarrf(outfile,'Triangularity, X-point (input value used)', &
+               '(triang)',triang)
+       case (1)
+          call ovarrf(outfile,'Triangularity, X-point (TART scaling)', &
+               '(triang)',triang)
+       case default
+          write(outfile,*) 'Error in routine OUTPLAS:'
+          write(outfile,*) 'Illegal value of ishape, = ',ishape
+          write(outfile,*) 'PROCESS stopping.'
+          stop
+       end select
+
        call ovarrf(outfile,'Triangularity, 95% surface','(triang95)',triang95)
        call ovarrf(outfile,'Plasma poloidal perimeter (m)','(pperim)',pperim)
+
     end if
+
     call ovarrf(outfile,'Plasma cross-sectional area (m2)','(xarea)',xarea)
     call ovarre(outfile,'Plasma surface area (m2)','(sarea)',sarea)
     call ovarre(outfile,'Plasma volume (m3)','(vol)',vol)
@@ -4218,6 +4249,15 @@ contains
        call ocmmnt(outfile,'  (Injected power only used for start-up phase)')
     end if
     call ovarre(outfile,'Power to divertor (MW)','(pdivt)',pdivt)
+
+    if (pdivt <= 0.001D0) then
+       call oblnkl(outfile)
+       call ocmmnt(outfile,'  BEWARE: possible problem with high radiation power')
+       call ocmmnt(outfile,'          forcing pdivt to an unrealistic value;')
+       call ocmmnt(outfile,'          divertor calculations may be nonsense!')
+       call oblnkl(outfile)
+    end if
+
     call ovarre(outfile,'Psep / R ratio (MW/m)','',pdivt/rmajor)
 
     if (istell == 0) then

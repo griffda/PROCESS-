@@ -1441,3 +1441,7 @@ end subroutine output
 !          Modified a few comments and added central profile values to output;
 !          Corrected D-D reaction rates
 ! SVN 243: Minor comment changes; User Guide stellarator wording changes (F Warmer)
+! SVN 244: Output of floats to mfile now always in scientific 'E' format;
+!          Warning added if isumattf=2 range of validity is not upheld;
+!          Warning about pdivt = 0.001 added;
+!          Clarified ishape effects on kappa, triang

@@ -108,6 +108,7 @@ module physics_variables
   !+ad_hist  27/11/13 PJK Modified vsbrn description
   !+ad_hist  28/11/13 PJK Added pdd, pdhe3, pdt
   !+ad_hist  28/11/13 PJK Added iprofile
+  !+ad_hist  06/03/14 PJK Clarified effect of ishape on kappa, triang
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -418,7 +419,7 @@ module physics_variables
   !+ad_varc          <LI> = 1 use scaled plasma surface area;
   !+ad_varc          <LI> = 2 use first wall area directly</UL>
   integer :: iwalld = 1
-  !+ad_vars  kappa /2.218/ : plasma separatrix elongation
+  !+ad_vars  kappa /2.218/ : plasma separatrix elongation (calculated if ishape > 0)
   real(kind(1.0D0)) :: kappa = 2.218D0
   !+ad_vars  kappa95 : 95% plasma elongation
   real(kind(1.0D0)) :: kappa95 = 0.0D0
@@ -585,7 +586,7 @@ module physics_variables
   !+ad_vars  tratio /1.0/ : ion temperature / electron temperature;
   !+ad_varc                 used to calculate ti if tratio > 0.0
   real(kind(1.0D0)) :: tratio = 1.0D0
-  !+ad_vars  triang /0.6/ : plasma separatrix triangularity
+  !+ad_vars  triang /0.6/ : plasma separatrix triangularity (calculated if ishape=1)
   real(kind(1.0D0)) :: triang = 0.6D0
   !+ad_vars  triang95 : plasma triangularity at 95% surface
   real(kind(1.0D0)) :: triang95 = 0.0D0

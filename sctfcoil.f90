@@ -1710,6 +1710,7 @@ contains
       !+ad_call  None
       !+ad_hist  08/10/13 PJK Initial version
       !+ad_hist  05/03/14 PJK Added comment about range of validity
+      !+ad_hist  06/03/14 PJK Added warning if range of validity is violated
       !+ad_stat  Okay
       !+ad_docs  A transformative superconducting magnet technology for fields well
       !+ad_docc  above 30 T using isotropic round wire multifilament
@@ -1746,6 +1747,17 @@ contains
       tmarg = 1.0D0/0.168D0 * &
            log( log(1.175D9/(jstrand/fhts + 1.288D8)) / (0.02115*bmax) ) &
            + 4.2D0 - tsc
+
+      !  Check if ranges of validity have been violated
+
+      if ((tsc > 20.0D0).or.(bmax < 6.0D0).or.(b > 104.0D0)) then
+         write(*,*) 'Warning in routine BI2212:'
+         write(*,*) 'Range of validity of the HTS Bi-2212 model has been violated:'
+         write(*,*) '   S/C temperature (K) = ',tsc, ' (should be < 20 K)'
+         write(*,*) 'Field at conductor (T) = ',bmax, ' (should be > 6 T)'
+         write(*,*) '    Adjusted field (T) = ',b, ' (should be < 104 T)'
+         write(*,*) ' '
+      end if
 
     end subroutine bi2212
 
