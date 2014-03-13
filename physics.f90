@@ -529,6 +529,8 @@ contains
     !+ad_hist  28/11/13 PJK Added current profile consistency if iprofile=1
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
+    !+ad_docc  unpublished internal Oak Ridge document
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
     !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -564,7 +566,7 @@ contains
     case (1)  !  Peng analytical fit
        fq = (1.22D0-0.68D0*eps)/((1.0D0-eps*eps)**2) * sf**2
 
-    case (2)  !  Peng scaling for double null divertor; TARTs
+    case (2)  !  Peng scaling for double null divertor; TARTs [STAR Code]
        curhat = 1.0D6 * plasc(qpsi,asp,rminor,bt,kappa,triang)/bt
 
     case (3)  !  Simple ITER scaling (simply the cylindrical case)
@@ -634,6 +636,7 @@ contains
       !+ad_name  plasc
       !+ad_summ  Function to calculate plasma current (Peng scaling)
       !+ad_type  Function returning real
+      !+ad_auth  J Galambos, FEDC/ORNL
       !+ad_auth  P J Knight, CCFE, Culham Science Centre
       !+ad_cont  N/A
       !+ad_args  aspect : input real :  plasma aspect ratio
@@ -651,7 +654,8 @@ contains
       !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
       !+ad_hist  10/11/11 PJK Initial F90 version
       !+ad_stat  Okay
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
+      !+ad_docc  unpublished internal Oak Ridge document
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -819,6 +823,7 @@ contains
     !+ad_name  bpol
     !+ad_summ  Function to calculate poloidal field
     !+ad_type  Function returning real
+    !+ad_auth  J Galambos, FEDC/ORNL
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  itart  : input integer : Switch for tight aspect ratio tokamaks
@@ -839,7 +844,8 @@ contains
     !+ad_hist  10/11/11 PJK Initial F90 version
     !+ad_hist  27/11/13 PJK Added conventional aspect ratio coding
     !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
+    !+ad_docc  unpublished internal Oak Ridge document
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -864,7 +870,7 @@ contains
 
        bpol = rmu0 * ip / perim
 
-    else  !  Original coding, only really suitable for TARTs
+    else  !  Original coding, only suitable for TARTs [STAR Code]
 
        eps = 1.0D0/aspect
 

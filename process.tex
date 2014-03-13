@@ -2,6 +2,10 @@
 
 \documentclass[11pt,a4paper]{report}
 \usepackage{epsfig,colordvi,latexsym}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
 \pretolerance=10000
 \topmargin=0mm
 \headheight=0mm
@@ -67,9 +71,7 @@ Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 %  update stellarator description
 %  iavail usage
 %  python utilities
-%  pedestal profiles
 %  tratio
-%  ishape=2
 %  density limit refs
 %  radiation power
 %  check PF coil location
@@ -1186,12 +1188,59 @@ Section~\ref{sec:itvars}) to help in the optimisation process.
 Arguably, the most important component of the machine is the plasma itself. By
 default, this is assumed to have an up-down symmetric, double null
 configuration (although this can be changed if desired --- see
-Section~\ref{sec:divertor}), with elongation and triangularity specified by
-%!%!%! N.B. ishape=2
-the user. A great number of physics models are coded within \process\ to
-describe the behaviour of the plasma parameters such as its current,
-temperature, density, pressure, confinement etc., and also the various limits
-that define the stable operating domain.
+Section~\ref{sec:divertor}). A great number of physics models are coded within
+\process\ to describe the behaviour of the plasma parameters such as its
+current, temperature, density, pressure, confinement etc., and also the
+various limits that define the stable operating domain.
+
+\subsubsection{Plasma geometry}
+\label{sec:plasma_geometry}
+
+The plasma (geometric) major radius $R_0$ (\texttt{rmajor}) and aspect ratio
+$A$ (\texttt{aspect}) define the size of the plasma torus. The plasma minor
+radius $a$ (\texttt{rminor}) is calculated from these values. The shape of the
+plasma cross-section is given by its last closed flux surface (LCFS) elongation
+$\kappa$ (\texttt{kappa}) and triangularity $\delta$ (\texttt{triang}), which
+can be scaled automatically with the aspect ratio if required using switch
+\texttt{ishape}:
+
+\begin{itemize}
+
+\item If \texttt{ishape = 0}, the input values for \texttt{kappa} and
+  \texttt{triang} are used directly.
+
+\item If \texttt{ishape = 1}, the following scaling is used, which is suitable
+  for low aspect ratio machines ($\epsilon = 1/A$)~\cite{storac}:
+
+\begin{eqnarray}
+\kappa & = & 2.05 \, (1 + 0.44 \, \epsilon^{2.1}) \\
+\delta & = & 0.53 \, (1 + 0.77 \, \epsilon^3)
+\end{eqnarray}
+
+\item If \texttt{ishape = 2}, the Zohm ITER scaling~\cite{Zohm} is used to
+  calculate the elongation:
+\begin{equation}
+\kappa = \mathrm{minimum} \left( 2.0, \, \, 1.5 + \frac{0.5}{A-1} \right)
+\end{equation}
+while the input value of the triangularity is used unchanged.
+
+\end{itemize}
+
+The values for the plasma shaping parameters at the 95\% flux surface are
+calculated as follows~\cite{DEMOPhysicsGuidelines}:
+\begin{eqnarray}
+\kappa_{95} & = & \kappa / 1.12 \\
+\delta_{95} & = & \delta / 1.5
+\end{eqnarray}
+
+The plasma surface area, cross-sectional area and volume are calculated using
+formulations that approximate the LCFS as a revolution of two arcs which
+intersect the plasma X-points and the plasma midplane outer and inner
+radii. (This is a reasonable assumption for double-null diverted plasmas, but
+will be inaccurate for single-null plasmas, \texttt{snull = 1}.) Switch
+\texttt{igeom} determines whether an old method is used (\texttt{igeom = 0})
+or calculations based on a more recent derivation (\texttt{igeom =
+  1})~\cite{logbook14_41}.
 
 \subsubsection{Fusion reactions}
 
@@ -1237,8 +1286,8 @@ be produced for fuel.
 
 The contributions from all four of the above fusion reactions are included in
 the total fusion power production calculation. The fusion reaction rates are
-calculated using the parametrizations in~\cite{BoschHale}, integrated over the plasma
-profiles.
+calculated using the parametrizations in~\cite{BoschHale}, integrated over the
+plasma profiles (correctly, with or without pedestals).
 
 The fractional composition of the ``fuel'' ions (D, T and $^3$He) is
 controlled using the three variables \texttt{fdeut}, \texttt{ftrit} and
@@ -1254,26 +1303,90 @@ error message otherwise.
 
 \subsubsection{Plasma profiles}
 
-%!%!%!
-All the plasma profiles are assumed to be parabolic, i.e.\ they are of the
-form
+By default (switch \texttt{ipedestal = 0}), the plasma profiles are assumed to
+be parabolic, i.e.\ they are of the form
 \begin{eqnarray}
-\mbox{Density : } n(r) & = & n_0 \left( 1- \left(\frac{r}{a}\right)^2 \right)
-^{\alpha_n} \\
-\mbox{Temperature : } T(r) & = & T_0 \left( 1- \left(\frac{r}{a}\right)^2
-\right) ^{\alpha_T} \\
-\mbox{Current : } J(r) & = & J_0 \left( 1- \left(\frac{r}{a}\right)^2  \right)
-^{\alpha_J}
+\mbox{Density : } n(\rho) & = & n_0 \left( 1 - \rho^2 \right)^{\alpha_n} \\
+\mbox{Temperature : } T(\rho) & = & T_0 \left( 1 - \rho^2 \right)^{\alpha_T} \\
+\mbox{Current : } J(r) & = & J_0 \left( 1 - \rho^2 \right)^{\alpha_J}
 \end{eqnarray}
-where $r$ varies from 0 to $a$, the plasma minor radius. This gives
+where $\rho = r/a$, and $a$ is the plasma minor radius. This gives
 volume-averaged values $\langle n \rangle = n_0 / (1+\alpha_n)$, and
-line-averaged values $\bar{n} = n_0 / (1+\alpha_n)^{\frac{1}{2}}$, etc.  These
+line-averaged values $\bar{n} \sim n_0 / \sqrt{(1+\alpha_n)}$, etc.  These
 volume- and line-averages are used throughout the code along with the profile
 indices $\alpha$, in the various physics models, many of which are fits to
 theory-based or empirical scalings. Thus, the plasma model in \process\ may
 be described as ``$\frac{1}{2}$-D''.  The relevant profile index variables are
 \texttt{alphan}, \texttt{alphat} and \texttt{alphaj}, respectively (see
 Section~\ref{sec:current_profile}).
+
+If \texttt{ipedestal} is set to \texttt{1}, however, the density and
+temperature profiles may include a pedestal, using the forms specified
+in~\cite{helios}:
+\begin{equation}
+\mbox{density:} \qquad n(\rho) = \left\{ 
+\begin{aligned}
+  &n_{ped} + (n_0 - n_{ped}) \left( 1 -
+    \frac{\rho^2}{\rho_{ped,n}^2}\right)^{\alpha_n}
+  &\qquad 0 \leq \rho \leq \rho_{ped,n} \\
+  &n_{sep} + (n_{ped} - n_{sep})\left( \frac{1- \rho}{1-\rho_{ped,n}}\right)
+  &\qquad \rho_{ped,n} < \rho \leq 1
+\end{aligned}
+\right.
+\end{equation}
+
+\begin{equation}
+\mbox{temperature:} \qquad T(\rho) = \left\{ 
+\begin{aligned}
+  &T_{ped} + (T_0 - T_{ped}) \left( 1 - \frac{\rho^{\beta_T}}
+    {\rho_{ped,T}^{\beta_T}}\right)^{\alpha_T} &\qquad 0 \leq \rho \leq \rho_{ped,T} \\
+  &T_{sep} + (T_{ped} - T_{sep})\left( \frac{1- \rho}{1-\rho_{ped,T}}\right)
+  &\qquad \rho_{ped,T} < \rho \leq 1
+\end{aligned}
+\right.
+\end{equation}
+Subscripts $0$, $ped$ and $sep$, denote values at the centre ($\rho = 0$), the
+pedestal ($\rho = \rho_{ped}$) and the separatrix ($\rho=1$),
+respectively. The density and temperature peaking parameters $\alpha_n$ and
+$\alpha_T$ as well as the second exponent $\beta_T$ (input parameter
+\texttt{tbeta}, not to be confused with the plasma beta) in the temperature
+profile can be chosen by the user, as can the pedestal heights and the values
+at the separatrix (\texttt{neped, nesep} for the electron density, and
+\texttt{teped, tesep} for the electron temperature; the ion equivalents are
+scaled from the electron values by the ratio of the volume-averaged values).
+The density at the centre is given by
+\begin{eqnarray}
+  \nonumber
+  n_0 &= & \frac{1}{3\rho_{ped,n}^2} \left[3\langle n\rangle (1+\alpha_n)
+    + n_{sep} (1+\alpha_n) (-2 + \rho_{ped,n} + \rho_{ped,n}^2) \right.\\
+  && \left. - n_{ped}\left( (1 + \alpha_n)(1+ \rho_{ped,n}) + (\alpha_n -2)
+    \rho_{ped,n}^2 \right) \right]
+\end{eqnarray}
+where $\langle n \rangle$ is the volume-averaged density. The temperature at
+the centre is given by
+\begin{equation}
+  T_0 = T_{ped} + \frac{1}{3\pi \, \Gamma\left( 1 + \frac{2}{\beta_T} \right) }
+  \rho_{ped,T}^{-2}  \left( \langle T \rangle - T_{ped} \, \rho_{ped,T}^2 \right) \gamma
+\end{equation}
+with 
+\begin{equation}
+\gamma = \left\{ 
+\begin{aligned}
+  &\frac{3}{\alpha_T!} \pi \, \Gamma \left( 1+\alpha_T + 2/\beta_T \right)
+  &\qquad \textnormal{for integer } \alpha_T \\
+  &\left[ (\rho_{ped,T} -1) \left( T_{ped} + 2 \,
+      T_{ped}\,\rho_{ped,T} + T_{sep}(2+\rho_{ped}) \right) \right. & \\
+  &\left. - 3 \, \Gamma(-\alpha_T) \, \Gamma(1+\alpha_T+2/\beta_T) \right]
+  \, \sin(\pi \alpha_T)
+  &\qquad \textnormal{for non-integer } \alpha_T
+\end{aligned}
+\right.
+\end{equation}
+where $\Gamma$ is the gamma function.
+
+Note that both density and temperature can have different pedestal positions
+$\rho_{ped,n}$ (\texttt{rhopedn}) and $\rho_{ped,T}$ (\texttt{rhopedt}) in
+agreement with simulations.
 
 \subsubsection{Beta limits}
 
@@ -1333,7 +1446,7 @@ is called by \texttt{PHYSICS}.  Flag \texttt{icurr} must be set to the
 relevant value, as follows:-
 \begin{description}
 \item [\texttt{icurr = 1} :] Peng analytic fit
-\item [\texttt{icurr = 2} :] Peng double null divertor scaling (TART)
+\item [\texttt{icurr = 2} :] Peng double null divertor scaling (TART)~\cite{storac}
 \item [\texttt{icurr = 3} :] Simple ITER scaling
 \item [\texttt{icurr = 4} :] Revised ITER scaling~\cite{Uckan88}
 \item [\texttt{icurr = 5} :] Todd empirical scaling, I
@@ -1433,7 +1546,9 @@ Berchtesgaden, 1997 \\
 
 The fraction of the plasma current provided by the so-called bootstrap effect
 can be either input into the code directly, or calculated using one of three
-methods, as summarised here.
+methods, as summarised here. Note that, at present, these methods all assume
+fits to parabolic density and temperature profiles, and do not take into
+account the existence of pedestals (\texttt{ipedestal = 1}).
 
 \begin{itemize}
 
@@ -1553,7 +1668,9 @@ otherwise.
 
 Switch \texttt{iwalld} determines whether the neutron wall load (power per
 unit area) should be calculated using the plasma surface area (\texttt{iwalld
-  = 1}) or the first wall area (\texttt{iwalld = 2}) as the denominator.
+  = 1}) or the first wall area (\texttt{iwalld = 2}) as the denominator. In
+\Red{either} case, input parameter \texttt{ffwal} (default value \Red{0.92})
+can be used to scale the neutron power reaching the first wall.
 
 \subsection{Divertor}
 \label{sec:divertor}
@@ -2135,6 +2252,9 @@ is defined by the value of switch \texttt{iefrf}:-
 Section~\ref{sec:rfpcd})
 \end{description}
 
+(Note that, at present, the neutral beam models assume parabolic plasma
+profiles only.)
+
 It is sometimes useful to adjust artificially the current drive efficiency
 values produced by these routines. This can be achieved by setting the scaling
 coefficient \texttt{feffcd}. The wall plug to plasma efficiencies can also be
@@ -2282,7 +2402,7 @@ the following special models~\cite{storac} in \process.
     maximum value (\texttt{ptempalw}) using iteration variable no.\ 68
     (\texttt{fptemp}).
   \item Equation~45 can be used to force a lower limit to the edge safety
-    factor, using iteration variable no.\ 71 (\texttt{fq}).
+    factor $q_{lim}$ (see below), using iteration variable no.\ 71 (\texttt{fq}).
   \item Equation~46 can be used to apply an upper limit to the ratio of plasma
     current to TF coil (``rod'') current, using iteration variable no.\ 72
     (\texttt{fipir}).
@@ -2292,19 +2412,23 @@ the following special models~\cite{storac} in \process.
   calculation is employed, rather than the more complex divertor model assumed
   for conventional aspect ratio tokamaks.
 
-\item A simple PF coil current scaling algorithm is available for use with the
-  TART option.
+\item A simple PF coil current scaling algorithm is
+  available for use with the TART option.
 
 \item The plasma shaping terms (elongation and triangularity) can be
-  calculated directly given the aspect ratio. Switch \texttt{ishape} controls
-  whether the input values for the plasma elongation (\texttt{kappa}) and
-  triangularity (\texttt{triang}) should be used (\texttt{ishape = 0}), or
-  whether they should be scaled with the plasma aspect ratio (\texttt{ishape =
-    1}). The latter case should only be used with a TART machine. %!%!%! ishape=2
+  calculated directly given the aspect ratio, using \texttt{ishape = 1} (see
+  Section~\ref{sec:plasma_geometry}). This setting also scales the lower
+  limit~\cite{storac} for the edge safety factor, for use with constraint
+  equation no.\ 45:
+  \begin{equation}
+    q_{lim} = 3 \, (1 + 2.6*\epsilon^{2.8})
+  \end{equation}
+  where $\epsilon = a/R$. 
 
 \item Among the physics models that differ from those relevant to conventional
-  aspect ratio machines are (i) the bootstrap current fraction, (ii) the
-  beta limit, and (iii) the neutron heating of the centrepost.
+  aspect ratio machines are (i) the plasma poloidal field $B_{pol}$, (ii) the
+  bootstrap current fraction, (iii) the beta limit, and (iv) the neutron
+  heating of the centrepost~\cite{storac}.
 
 \end{enumerate}
 
@@ -2319,7 +2443,7 @@ summarises the switch values relevant to each aspect ratio regime.
   \begin{tabular}{||l|c|c||} \hline
     & conventional aspect ratio & tight aspect ratio \\
     switch & \texttt{itart = 0} & \texttt{itart = 1} \\ \hline
-    \texttt{ishape} & 0 & 0, 1 \\
+    \texttt{ishape} & 0, 2 & 0, 1 \\
     \texttt{ibss} (Section~\ref{sec:bootstrap}) & 1, 2, 3 & 2, 3 \\
     \texttt{icurr} (Section~\ref{sec:current_scaling}) & 1, 3, 4, 5, 6, 7 & 2 \\
     \texttt{itfsup} (Section~\ref{sec:tfcoil}) & 0, 1 & 0 \\
@@ -4119,10 +4243,29 @@ P.\ J.\ Knight,
 \textit{``Surface Area and Volume Calculations for Toroidal Shells''},
 CCFE internal note T\&M/PKNIGHT/PROCESS/009, May 2013
 
+\bibitem{Zohm}
+H.\ Zohm et al,
+\textit{``On the Physics Guidelines for a Tokamak DEMO''},
+FTP/3-3, Proc. IAEA Fusion Energy Conference, October 2012, San Diego
+
+\bibitem{DEMOPhysicsGuidelines}
+T.\ Hartmann and H.\ Zohm,
+\textit{``Towards a `Physics Design Guidelines for a DEMO Tokamak'
+  Document''},
+EFDA Report, March 2012 (Activity\_3\_Physics\_Design\_Guidelines\_2L8QVN\_v1\_0(1).pdf)
+
+\bibitem{logbook14_41}
+P.\ J.\ Knight, CCFE Logbook, F/MI/PJK/LOGBOOK14, pp.41--43
+
 \bibitem{BoschHale}
 H.-S.\ Bosch and G.\ M.\ Hale,
 \textit{``Improved Formulas for Fusion Cross-sections and Thermal Reactivities''},
 Nuclear Fusion \textbf{32} (1992) 611
+
+\bibitem{helios} 
+J.\ Johner,
+\textit{``Helios: A Zero-Dimensional Tool for Next Step and Reactor Studies''},
+Fusion Science and Technology \textbf{59} (2011) 308--349
 
 \bibitem{IPDG}
 N.\ A.\ Uckan and ITER Physics Group,
@@ -4141,12 +4284,6 @@ AEA Fusion Report AEA FUS 172
 \bibitem{Uckan88}
 N.\ A.\ Uckan,
 Fusion Technology \textbf{14} (1988) 299
-
-\bibitem{DEMOPhysicsGuidelines}
-T.\ Hartmann and H.\ Zohm,
-\textit{``Towards a `Physics Design Guidelines for a DEMO Tokamak'
-  Document''},
-EFDA Report, March 2012 (Activity\_3\_Physics\_Design\_Guidelines\_2L8QVN\_v1\_0(1).pdf)
 
 \bibitem{Nevins}
 W.\ M.\ Nevins et al.,

@@ -109,6 +109,7 @@ module physics_variables
   !+ad_hist  28/11/13 PJK Added pdd, pdhe3, pdt
   !+ad_hist  28/11/13 PJK Added iprofile
   !+ad_hist  06/03/14 PJK Clarified effect of ishape on kappa, triang
+  !+ad_hist  10/03/14 PJK Removed carea
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -243,8 +244,6 @@ module physics_variables
   real(kind(1.0D0)) :: btot = 0.0D0
   !+ad_vars  burnup : fractional plasma burnup
   real(kind(1.0D0)) :: burnup = 0.0D0
-  !+ad_vars  carea /1.0/ : multiplying factor times plasma surface area
-  real(kind(1.0D0)) :: carea = 1.0D0
   !+ad_vars  cfe0 /0.0/ : seeded high-Z impurity fraction (n_highZ / n_e)
   !+ad_varc               (iteration variable 43)
   real(kind(1.0D0)) :: cfe0 = 0.0D0

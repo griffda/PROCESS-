@@ -72,8 +72,12 @@ contains
     !+ad_hist  14/11/13 PJK Unified kappa95 estimate to Hartmann suggestion
     !+ad_hist  28/11/13 PJK Updated references
     !+ad_stat  Okay
+    !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
+    !+ad_docc  unpublished internal Oak Ridge document
     !+ad_docs  F/MI/PJK/LOGBOOK14, pp.41-43
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !+ad_docs  H. Zohm et al, On the Physics Guidelines for a Tokamak DEMO,
+    !+ad_docc  FTP/3-3, Proc. IAEA Fusion Energy Conference, October 2012, San Diego
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
     !+ad_docc  DEMO Tokamak' Document, March 2012, EFDA Report
     !
@@ -96,14 +100,16 @@ contains
 
     !  Calculate shaping terms, rather than use input values
 
-    if (ishape == 1) then  !  TART scaling
+    if (ishape == 1) then  !  TART scaling [STAR Code]
+
        kappa = 2.05D0 * (1.0D0 + 0.44D0 * eps**2.1D0)
        triang = 0.53D0 * (1.0D0 + 0.77D0 * eps**3)
        qlim = 3.0D0 * (1.0D0 + 2.6D0*eps**2.8D0)
-    else if (ishape == 2) then
-       !  Zohm et al, On the Physics Guidelines for a Tokamak DEMO,
-       !  FTP/3-3, Proc. IAEA Fusion Energy Conference, October 2012, San Diego
+
+    else if (ishape == 2) then  !  Zohm et al 
+
        kappa = min(2.0D0, 1.5D0 + 0.5D0/(aspect-1.0D0))
+
     else
        continue  !  use input values
     end if
@@ -158,7 +164,7 @@ contains
 
        vol = cvol * fvol(rmajor,rminor,kappa,triang)
 
-       call surfa(rminor,rmajor,kappa,triang,sa,so)
+       call surfa(rminor,rmajor,kappa,triang,sa,so)  !  [STAR Code]
        sareao = so
        sarea = sa
 
@@ -217,7 +223,8 @@ contains
       !+ad_hist  19/01/99 PJK Initial upgraded version
       !+ad_hist  14/11/11 PJK Initial F90 version
       !+ad_stat  Okay
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
+      !+ad_docc  unpublished internal Oak Ridge document
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

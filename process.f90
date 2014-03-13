@@ -1445,3 +1445,4 @@ end subroutine output
 !          Warning added if isumattf=2 range of validity is not upheld;
 !          Warning about pdivt = 0.001 added;
 !          Clarified ishape effects on kappa, triang
+! SVN 245: Added references to STAR Code formulae

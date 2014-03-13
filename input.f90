@@ -361,6 +361,7 @@ contains
     !+ad_hist  26/02/14 PJK Added FTFTORT, FTFTHKO, FJOHC
     !+ad_hist  27/02/14 PJK Added NINEQNS
     !+ad_hist  03/03/14 PJK Changed lower bound of TRATIO to 0.0
+    !+ad_hist  10/03/14 PJK Removed CAREA
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -518,9 +519,6 @@ contains
        case ('BT')
           call parse_real_variable('BT', bt, 0.0D0, 20.0D0, &
                'Toroidal field on axis (T)')
-       case ('CAREA')
-          call parse_real_variable('CAREA', carea, 0.01D0, 10.0D0, &
-               'Plasma surface area multiplier')
        case ('CFE0')
           call parse_real_variable('CFE0', cfe0, 0.0D0, 10.0D0, &
                'Additional Fe impurity fraction')
