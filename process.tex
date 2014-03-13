@@ -1365,19 +1365,19 @@ The density at the centre is given by
 where $\langle n \rangle$ is the volume-averaged density. The temperature at
 the centre is given by
 \begin{equation}
-  T_0 = T_{ped} + \frac{1}{3\pi \, \Gamma\left( 1 + \frac{2}{\beta_T} \right) }
-  \rho_{ped,T}^{-2}  \left( \langle T \rangle - T_{ped} \, \rho_{ped,T}^2 \right) \gamma
+T_0 = T_{ped} + \gamma \left[ T_{ped}\, \rho_{ped,T}^2 - \langle T \rangle +
+  \frac{1}{3}(1 - \rho_{ped,T}) \left[ \, (1 + 2\rho_{ped,T}) \, T_{ped} + ( 2 +
+    \rho_{ped,T}) \, T_{sep} \, \right] \right]
 \end{equation}
 with 
 \begin{equation}
 \gamma = \left\{ 
 \begin{aligned}
-  &\frac{3}{\alpha_T!} \pi \, \Gamma \left( 1+\alpha_T + 2/\beta_T \right)
+  &\frac{ -\Gamma(1+\alpha_T+2/\beta_T)}
+  {\rho_{ped,T}^2 \, \Gamma(1+\alpha_T) \, \Gamma((2+\beta_T)/\beta_T)}
   &\qquad \textnormal{for integer } \alpha_T \\
-  &\left[ (\rho_{ped,T} -1) \left( T_{ped} + 2 \,
-      T_{ped}\,\rho_{ped,T} + T_{sep}(2+\rho_{ped}) \right) \right. & \\
-  &\left. - 3 \, \Gamma(-\alpha_T) \, \Gamma(1+\alpha_T+2/\beta_T) \right]
-  \, \sin(\pi \alpha_T)
+  &\frac{\Gamma(-\alpha_T)\sin(\pi\alpha)\, \Gamma(1+\alpha_T+2/\beta_T)}
+  {\pi\rho_{ped,T}^2 \, \Gamma((2+\beta_T)/\beta_T)}
   &\qquad \textnormal{for non-integer } \alpha_T
 \end{aligned}
 \right.

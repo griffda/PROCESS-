@@ -208,6 +208,7 @@ contains
     !+ad_hist  19/02/14 PJK Minor modifications to use gamfun
     !+ad_hist  25/02/14 PJK Fixed error in calculating factorial using gamfun
     !+ad_hisc               (gamma(a) = factorial(a-1))
+    !+ad_hist  13/03/14 PJK Formula corrected by H Lux
     !+ad_stat  Okay
     !+ad_docs  J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
     !
@@ -224,27 +225,27 @@ contains
     !  Local variables
 
     real(kind(1.0D0)), parameter :: numacc = 1.0D-7
-    real(kind(1.0D0)) :: a,gamfac
+    real(kind(1.0D0)) :: gamfac
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  For integer values of alphat, the limit of
     !  gamfun(-alphat)*sin(pi*alphat) needs to be calculated directly
 
+    gamfac = gamfun(1.0D0 + alphat + 2.0D0/tbeta) / &
+         gamfun((2.0D0 + tbeta)/tbeta) / rhopedT**2
+
     if (abs(alphat-nint(alphat)) <= numacc) then
-       a = real(nint(alphat), kind(1.0D0))
-       gamfac = 3.0D0/gamfun(a+1.0D0) * pi * gamfun(1.0D0 + alphat + 2.0D0/tbeta)
+       gamfac = -gamfac / gamfun(1.0D0 + alphat)
     else
-       gamfac = ( (rhopedt - 1.0D0) * &
-            (tped + 2.0D0*tped*rhopedt + tsep*(2.0D0+rhopedt)) &
-            - 3.0D0*gamfun(-alphat)*gamfun(1.0D0 + alphat + 2.0D0/tbeta) ) &
-            * sin(pi*alphat)
+       gamfac = gamfac * gamfun(-alphat)*sin(pi*alphat)/pi
     end if
 
     !  Calculate core temperature
 
-    tcore = tped + 1.0D0/(3.0D0*pi*gamfun(1.0D0 + 2.0D0/tbeta))   &
-         * (1.0D0/rhopedt**2) * (tav - tped*rhopedt**2) * gamfac
+    tcore = tped + gamfac * ( tped*rhopedT**2 - tav + &
+         (1.0D0 - rhopedT)/3.0D0 * &
+         ( (1.0D0 + 2.0D0*rhopedT)*tped + (2.0D0 + rhopedT)*tsep ) )
 
   end function tcore
 

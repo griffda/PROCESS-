@@ -1446,3 +1446,4 @@ end subroutine output
 !          Warning about pdivt = 0.001 added;
 !          Clarified ishape effects on kappa, triang
 ! SVN 245: Added references to STAR Code formulae
+! SVN 246: Corrected tcore formula for pedestal profiles
