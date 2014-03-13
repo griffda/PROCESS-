@@ -391,6 +391,7 @@ subroutine eqslv(ifail)
   !+ad_call  eqsolv
   !+ad_call  fcnhyb
   !+ad_call  herror
+  !+ad_call  int_to_string3
   !+ad_call  loadxc
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
@@ -407,6 +408,7 @@ subroutine eqslv(ifail)
   !+ad_hisc               is suspicious
   !+ad_hist  28/11/13 PJK Modified format line 40 for longer lablxc length
   !+ad_hist  13/02/14 PJK Output ifail even if a feasible solution found
+  !+ad_hist  13/03/14 PJK Added numerical state information to mfile
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -511,16 +513,18 @@ subroutine eqslv(ifail)
   do inn = 1,neqns
      xcs(inn) = xcm(inn)*scafc(inn)
      write(nout,40) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn),resdl(inn)
-40   format(t2,i4,t8,a9,t19,1pe12.4,1pe12.4,1pe12.4)
+     call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
   end do
+40   format(t2,i4,t8,a9,t19,1pe12.4,1pe12.4,1pe12.4)
 
   call osubhd(nout, &
        'The following constraint residues should be close to zero :')
 
   do inn = 1,neqns
      write(nout,60) inn,lablcc(icc(inn)),rcm(inn)
-60   format(t2,i4,t8,a33,t45,1pe12.4)
+     call ovarre(mfile,lablcc(icc(inn)),'(constr'//int_to_string3(inn)//')',rcm(inn))
   end do
+60   format(t2,i4,t8,a33,t45,1pe12.4)
 
 end subroutine eqslv
 
@@ -802,6 +806,7 @@ subroutine doopt(ifail)
   !+ad_call  numerics
   !+ad_call  process_output
   !+ad_call  boundxc
+  !+ad_call  int_to_string3
   !+ad_call  loadxc
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
@@ -822,6 +827,7 @@ subroutine doopt(ifail)
   !+ad_hist  28/11/13 PJK Modified format lines for longer lablxc length
   !+ad_hist  13/02/14 PJK Output ifail even if a feasible solution found
   !+ad_hist  27/02/14 PJK Added nineqns usage; minor output modifications
+  !+ad_hist  13/03/14 PJK Added numerical state information to mfile
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -992,6 +998,7 @@ subroutine doopt(ifail)
      xcs(inn) = xcm(inn)*scafc(inn)
      write(nout,100) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
           vlam(neqns+nineqns+inn), vlam(neqns+nineqns+1+inn+nvar)
+     call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
   end do
 100 format(t2,i4,t8,a9,t19,4(1pe12.4))
 
@@ -1000,6 +1007,7 @@ subroutine doopt(ifail)
 
   do inn = 1,neqns
      write(nout,120) inn,lablcc(icc(inn)),rcm(inn),vlam(inn)
+     call ovarre(mfile,lablcc(icc(inn)),'(constr'//int_to_string3(inn)//')',rcm(inn))
   end do
 
   if (nineqns > 0) then
@@ -1008,6 +1016,7 @@ subroutine doopt(ifail)
 
      do inn = neqns+1,neqns+nineqns
         write(nout,120) inn,lablcc(icc(inn)),rcm(inn),vlam(inn)
+        call ovarre(mfile,lablcc(icc(inn)),'(constr'//int_to_string3(inn)//')',rcm(inn))
      end do
   end if
 
@@ -1447,3 +1456,4 @@ end subroutine output
 !          Clarified ishape effects on kappa, triang
 ! SVN 245: Added references to STAR Code formulae
 ! SVN 246: Corrected tcore formula for pedestal profiles
+! SVN 247: Added numerical state information to mfile

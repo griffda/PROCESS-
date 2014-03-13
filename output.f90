@@ -7,6 +7,9 @@ module process_output
   !+ad_summ  Module containing routines to produce a uniform output style
   !+ad_type  Module
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  int2char
+  !+ad_cont  int_to_string2
+  !+ad_cont  int_to_string3
   !+ad_cont  oblnkl
   !+ad_cont  obuild
   !+ad_cont  ocentr
@@ -28,6 +31,7 @@ module process_output
   !+ad_hist  09/10/12 PJK Initial version of module
   !+ad_hist  29/11/12 PJK Added shared variable autodoc comments
   !+ad_hist  13/02/14 PJK Added mfile for machine-readable output file unit
+  !+ad_hist  13/03/14 PJK Added int2char, int_string2, int_to_string3
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -736,5 +740,148 @@ contains
     end if
 
   end subroutine underscore
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function int2char(i)
+
+    !+ad_name  int2char
+    !+ad_summ  Converts a single-digit integer into a character string
+    !+ad_type  Function returning a single character string
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  i : input integer : must be between 0 and 9
+    !+ad_desc  This is a very simple routine that converts a single-digit
+    !+ad_desc  integer into a character string. If the integer is outside
+    !+ad_desc  the range 0 to 9 the program stops with an error.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  14/06/01 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    character(len=1) :: int2char
+
+    !  Arguments
+
+    integer, intent(in) :: i
+
+    !  Local variables
+
+    character(len=10) :: number = '0123456789'
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if ((i < 0).or.(i > 9)) then
+       write(*,*) 'INT2CHAR: illegal argument'
+       stop
+    end if
+
+    int2char = number(i+1:i+1)
+
+  end function int2char
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function int_to_string2(i)
+
+    !+ad_name  int_to_string2
+    !+ad_summ  Converts a positive integer into a two-digit character string
+    !+ad_type  Function returning a two-digit character string
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  i : input integer : must be between 0 and 99
+    !+ad_desc  This routine converts a positive integer into a two-digit
+    !+ad_desc  character string.
+    !+ad_desc  If the integer is negative, the routine stops with an error.
+    !+ad_desc  If the integer is greater than 99, the routine returns a
+    !+ad_desc  string containing its last two digits.
+    !+ad_prob  None
+    !+ad_call  int2char
+    !+ad_hist  13/03/14 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    character(len=2) :: int_to_string2
+
+    !  Arguments
+
+    integer, intent(in) :: i
+
+    !  Local variables
+
+    character(len=1) :: a0, a1
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (i < 0) then
+       write(*,*) 'INT_TO_STRING2: illegal argument'
+       stop
+    end if
+
+    a0 = int2char(mod(i,10))
+    a1 = int2char(mod(int(i/10),10))
+
+    int_to_string2 = a1//a0
+
+  end function int_to_string2
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function int_to_string3(i)
+
+    !+ad_name  int_to_string3
+    !+ad_summ  Converts a positive integer into a 3-digit character string
+    !+ad_type  Function returning a three-digit character string
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  i : input integer : must be between 0 and 99
+    !+ad_desc  This routine converts a positive integer into a three-digit
+    !+ad_desc  character string.
+    !+ad_desc  If the integer is negative, the routine stops with an error.
+    !+ad_desc  If the integer is greater than 999, the routine returns a
+    !+ad_desc  string containing its last three digits.
+    !+ad_prob  None
+    !+ad_call  int2char
+    !+ad_hist  13/03/14 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    character(len=3) :: int_to_string3
+
+    !  Arguments
+
+    integer, intent(in) :: i
+
+    !  Local variables
+
+    character(len=1) :: a0, a1, a2
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (i < 0) then
+       write(*,*) 'INT_TO_STRING3: illegal argument'
+       stop
+    end if
+
+    a0 = int2char(mod(i,10))
+    a1 = int2char(mod(int(i/10),10))
+    a2 = int2char(mod(int(i/100),100))
+
+    int_to_string3 = a2//a1//a0
+
+  end function int_to_string3
 
 end module process_output
