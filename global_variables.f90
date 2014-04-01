@@ -110,6 +110,7 @@ module physics_variables
   !+ad_hist  28/11/13 PJK Added iprofile
   !+ad_hist  06/03/14 PJK Clarified effect of ishape on kappa, triang
   !+ad_hist  10/03/14 PJK Removed carea
+  !+ad_hist  01/04/14 PJK Added ibss=4 option
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -331,9 +332,10 @@ module physics_variables
   !+ad_vars  hfact /2.0/ : H factor on energy confinement times (iteration variable 10)
   real(kind(1.0D0)) :: hfact = 2.0D0
   !+ad_vars  ibss /1/ : switch for bootstrap current scaling:<UL>
-  !+ad_varc        <LI> = 1 ITER bootstrap scaling (high R/a only);
-  !+ad_varc        <LI> = 2 for Nevins general scaling;
-  !+ad_varc        <LI> = 3 for Wilson numerical scaling</UL>
+  !+ad_varc        <LI> = 1 ITER 1989 bootstrap scaling (high R/a only);
+  !+ad_varc        <LI> = 2 for Nevins et al general scaling;
+  !+ad_varc        <LI> = 3 for Wilson et al numerical scaling;
+  !+ad_varc        <LI> = 4 for Sauter et al scaling</UL>
   integer :: ibss  = 1
   !+ad_vars  iculbl /0/ : switch for beta limit scaling:<UL>
   !+ad_varc          <LI> = 0 apply limit to total beta;
@@ -637,6 +639,7 @@ module current_drive_variables
   !+ad_hist  25/09/13 PJK Added rtanbeam, rtanmax, nbshield
   !+ad_hist  27/11/13 PJK Modified bigq description
   !+ad_hist  06/03/14 PJK Modified gamcd units
+  !+ad_hist  26/03/14 PJK Added extra boostrap current fraction variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -650,12 +653,20 @@ module current_drive_variables
   real(kind(1.0D0)) :: beamwd = 0.31D0
   !+ad_vars  bigq : P_fusion / (P_injection + P_ohmic)
   real(kind(1.0D0)) :: bigq = 0.0D0
-  !+ad_vars  bootipf : bootstrap current fraction
+  !+ad_vars  bootipf : bootstrap current fraction (enforced)
   real(kind(1.0D0)) :: bootipf = 0.0D0
   !+ad_vars  bscfmax /0.9/ : max fraction of plasma current from bootstrap;
   !+ad_varc                  if bscfmax < 0, bootstrap fraction = abs(bscfmax)
   real(kind(1.0D0)) :: bscfmax = 0.9D0
-  !+ad_vars  cboot /1.0/ : bootstrap current fraction multiplier
+  !+ad_vars  bscf_iter89 : bootstrap current fraction, ITER 1989 model
+  real(kind(1.0D0)) :: bscf_iter89 = 0.0D0
+  !+ad_vars  bscf_nevins : bootstrap current fraction, Nevins et al model
+  real(kind(1.0D0)) :: bscf_nevins = 0.0D0
+  !+ad_vars  bscf_sauter : bootstrap current fraction, Sauter et al model
+  real(kind(1.0D0)) :: bscf_sauter = 0.0D0
+  !+ad_vars  bscf_wilson : bootstrap current fraction, Wilson et al model
+  real(kind(1.0D0)) :: bscf_wilson = 0.0D0
+  !+ad_vars  cboot /1.0/ : bootstrap current fraction multiplier (ibss=1)
   real(kind(1.0D0)) :: cboot = 1.0D0
   !+ad_vars  cnbeam : neutral beam current (A)
   real(kind(1.0D0)) :: cnbeam = 0.0D0

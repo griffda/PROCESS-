@@ -1183,7 +1183,8 @@ contains
     if (verbose == 1) then
        do j = 1,n
           if (all(a(j,:) == 0.0D0)) then
-             write(*,*) 'Line ',j,' in matrix a in subroutine sgefa is all zero'
+             write(*,*) 'Line ',j, &
+                  ' in matrix a in subroutine sgefa is all zero'
           end if
        end do
     end if
@@ -2550,7 +2551,8 @@ contains
 
        if (sum <= tol) then
           if (verbose == 1) then
-             write(*,*) 'Convergence parameter < convergence criterion (epsvmc)'
+             write(*,*) 'Convergence parameter < '// &
+                  'convergence criterion (epsvmc)'
           end if
           return
        end if
@@ -2622,7 +2624,8 @@ contains
 
              if (aux > 0.0D0) then
                 if (verbose == 1) then
-                   write(*,*) 'VMCON optimiser line search attempt failed - retrying...'
+                   write(*,*) 'VMCON optimiser line search attempt '// &
+                        'failed - retrying...'
                 end if
                 exit line_search
              end if
@@ -2997,7 +3000,8 @@ contains
 
     if (delta(np1) <= cdm6) then
        if (verbose == 1) then
-          write(*,*) 'QPSUB: delta(np1) is too small: no feasible solution'
+          write(*,*) &
+               'QPSUB: delta(np1) is too small: no feasible solution'
           write(*,*) 'delta(np1)=',delta(np1),' np1=',np1
        end if
        goto 120
@@ -3010,7 +3014,8 @@ contains
        if (iwa(j) == npp) goto 101
        if (iwa(j) > np1) goto 105
        if (iwa(j) == np1) then
-          if (verbose == 1) write(*,*) 'QPSUB: iwa(j) == np1',' j=',j,' iwa(j)=',iwa(j)
+          if (verbose == 1) write(*,*) &
+               'QPSUB: iwa(j) == np1',' j=',j,' iwa(j)=',iwa(j)
           goto 130
        end if
        if (ilower(iwa(j)) == 0) then
@@ -3048,7 +3053,8 @@ contains
 
     if (iflag >= 0) then
        if (verbose == 1) then
-          write(*,*) 'QPSUB: A second call to HARWQP found blu(np1) to still be inactive:'
+          write(*,*) 'QPSUB: A second call to HARWQP '// &
+               'found blu(np1) to still be inactive:'
           write(*,*) 'iflag = ',iflag
        end if
        goto 120

@@ -1457,3 +1457,4 @@ end subroutine output
 ! SVN 245: Added references to STAR Code formulae
 ! SVN 246: Corrected tcore formula for pedestal profiles
 ! SVN 247: Added numerical state information to mfile
+! SVN 248: Added Sauter et al bootstrap current fraction model

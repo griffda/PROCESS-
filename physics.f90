@@ -8,32 +8,33 @@ module physics_module
   !+ad_type  Module
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  physics
-  !+ad_cont  bootst
-  !+ad_cont  culcur
+  !+ad_cont  beamcalc
+  !+ad_cont  beamfus
+  !+ad_cont  betcom
+  !+ad_cont  bootstrap_fraction_iter89
+  !+ad_cont  bootstrap_fraction_nevins
+  !+ad_cont  bootstrap_fraction_sauter
+  !+ad_cont  bootstrap_fraction_wilson
+  !+ad_cont  bosch_hale
   !+ad_cont  bpol
   !+ad_cont  culblm
-  !+ad_cont  betcom
+  !+ad_cont  culcur
   !+ad_cont  culdlm
-  !+ad_cont  palph
-  !+ad_cont  palph2
-  !+ad_cont  bosch_hale
-  !+ad_cont  pcond
-  !+ad_cont  vscalc
-  !+ad_cont  phyaux
-  !+ad_cont  rether
-  !+ad_cont  radpwr
-  !+ad_cont  pohm
-  !+ad_cont  pthresh
-  !+ad_cont  igmarcal
   !+ad_cont  fhfac
   !+ad_cont  fhz
-  !+ad_cont  beamfus
-  !+ad_cont  beamcalc
   !+ad_cont  fsv
-  !+ad_cont  fnewbs
-  !+ad_cont  culbst
+  !+ad_cont  igmarcal
   !+ad_cont  outplas
   !+ad_cont  outtim
+  !+ad_cont  palph
+  !+ad_cont  palph2
+  !+ad_cont  pcond
+  !+ad_cont  phyaux
+  !+ad_cont  pohm
+  !+ad_cont  pthresh
+  !+ad_cont  radpwr
+  !+ad_cont  rether
+  !+ad_cont  vscalc
   !+ad_args  N/A
   !+ad_desc  This module contains all the primary plasma physics routines
   !+ad_desc  for a tokamak device.
@@ -72,6 +73,7 @@ module physics_module
   !+ad_hist  12/09/13 PJK Removed svfdt,svfdt_orig,fpower,ffus; added bosch_hale
   !+ad_hist  19/02/14 PJK Added plasma_profiles
   !+ad_hist  24/02/14 PJK Moved plasma_profiles etc into new profiles_module
+  !+ad_hist  26/03/14 PJK Renamed bootstrap fraction routines; added Sauter model
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -122,13 +124,14 @@ contains
     !+ad_prob  None
     !+ad_call  beamfus
     !+ad_call  betcom
-    !+ad_call  bootst
+    !+ad_call  bootstrap_fraction_iter89
+    !+ad_call  bootstrap_fraction_nevins
+    !+ad_call  bootstrap_fraction_sauter
+    !+ad_call  bootstrap_fraction_wilson
     !+ad_call  cudriv
     !+ad_call  culblm
-    !+ad_call  culbst
     !+ad_call  culcur
     !+ad_call  culdlm
-    !+ad_call  fnewbs
     !+ad_call  palph
     !+ad_call  palph2
     !+ad_call  pcond
@@ -174,6 +177,8 @@ contains
     !+ad_hist               Added IPROFILE, Q0, RLI to CULCUR arguments
     !+ad_hist  19/02/14 PJK Added pedestal profile model
     !+ad_hist  24/02/14 PJK Modified CULBST arguments
+    !+ad_hist  26/03/14 PJK Converted BOOTST to a function;
+    !+ad_hisc               introduced Sauter et al bootstrap model
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -253,28 +258,33 @@ contains
     tpulse = tohs + theat + tburn + tqnch
     tdown  = tramp + tohs + tqnch + tdwell
 
-    !  Calculate bootstrap current fraction
+    !  Calculate bootstrap current fraction using various models
+
+    bscf_iter89 = bootstrap_fraction_iter89(aspect,beta,btot,cboot,plascur, &
+         q95,q0,rmajor,vol)
+
+    betat = beta * btot**2 / bt**2
+    bscf_nevins = bootstrap_fraction_nevins(alphan,alphat,betat,bt,dene, &
+         plascur,q95,q0,rmajor,rminor,ten,zeff)
+
+    !  Wilson scaling uses thermal poloidal beta, not total
+    betpth = (beta-betaft-betanb) * ( btot/bp )**2
+    bscf_wilson = bootstrap_fraction_wilson(alphaj,alphap,alphat,beta,betpth, &
+         q0,q95,rmajor,rminor,itart)
+
+    bscf_sauter = bootstrap_fraction_sauter()
 
     if (bscfmax < 0.0D0) then
-
        bootipf = abs(bscfmax)
-
     else
        if (ibss == 1) then
-          call bootst(aspect,beta,btot,cboot,plascur,q95,q0,rmajor, &
-               vol,bootipf)
-
+          bootipf = bscf_iter89
        else if (ibss == 2) then
-          betat = beta * btot**2 / bt**2
-          bootipf = fnewbs(alphan,alphat,betat,bt,dene,plascur,q95, &
-               q0,rmajor,rminor,ten,zeff)
-
+          bootipf = bscf_nevins
        else if (ibss == 3) then
-          !  Uses thermal poloidal beta, not total
-          betpth = (beta-betaft-betanb) * ( btot/bp )**2
-          bootipf = culbst(alphaj,alphap,alphat,beta,betpth,q0,q95, &
-               rmajor,rminor,itart)
-
+          bootipf = bscf_wilson
+       else if (ibss == 4) then
+          bootipf = bscf_sauter
        else
           write(*,*) 'Error in routine PHYSICS:'
           write(*,*) 'Illegal value of IBSS, = ',ibss
@@ -412,13 +422,12 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine bootst(aspect,beta,bt,cboot,plascur,q,q0,rmajor,vol, &
-       bootipf)
+  function bootstrap_fraction_iter89(aspect,beta,bt,cboot,plascur,q,q0,rmajor,vol)
 
-    !+ad_name  bootst
+    !+ad_name  bootstrap_fraction_iter89
     !+ad_summ  Original ITER calculation of bootstrap-driven fraction
     !+ad_summ  of the plasma current.
-    !+ad_type  Subroutine
+    !+ad_type  Function returning real
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  aspect  : input real : plasma aspect ratio
@@ -430,7 +439,6 @@ contains
     !+ad_args  q0      : input real : central safety factor
     !+ad_args  rmajor  : input real : plasma major radius (m)
     !+ad_args  vol     : input real : plasma volume (m3)
-    !+ad_args  bootipf : output real : bootstrap current fraction
     !+ad_desc  This routine performs the original ITER calculation of the
     !+ad_desc  plasma current bootstrap fraction.
     !+ad_prob  None
@@ -439,6 +447,7 @@ contains
     !+ad_hist  23/05/06 PJK Prevented negative square roots from being attempted
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  16/10/12 PJK Removed pi from argument list
+    !+ad_hist  26/03/14 PJK Converted to a function; renamed from BOOTST
     !+ad_stat  Okay
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
     !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
@@ -447,15 +456,16 @@ contains
 
     implicit none
 
+    real(kind(1.0D0)) :: bootstrap_fraction_iter89
+
     !  Arguments
 
     real(kind(1.0D0)), intent(in) :: aspect, beta, bt, cboot, &
          plascur, q, q0, rmajor, vol
-    real(kind(1.0D0)), intent(out) :: bootipf
 
     !  Local variables
 
-    real(kind(1.0D0)) :: betapbs, bpbs, cbs, xbs
+    real(kind(1.0D0)) :: betapbs, bpbs, cbs, xbs, bootipf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -470,7 +480,796 @@ contains
        bootipf = cbs * ( betapbs/sqrt(aspect) )**1.3D0
     end if
 
-  end subroutine bootst
+    bootstrap_fraction_iter89 = bootipf
+
+  end function bootstrap_fraction_iter89
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function bootstrap_fraction_nevins(alphan,alphat,betat,bt,dene,plascur, &
+       q95,q0,rmajor,rminor,ten,zeff)
+
+    !+ad_name  bootstrap_fraction_nevins
+    !+ad_summ  Bootstrap current fraction from Nevins et al scaling
+    !+ad_type  Function returning real
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  bsinteg
+    !+ad_args  alphan : input real :  density profile index
+    !+ad_args  alphat : input real :  temperature profile index
+    !+ad_args  betat  : input real :  total plasma beta (with respect to the toroidal
+    !+ad_argc                         field)
+    !+ad_args  bt     : input real :  toroidal field on axis (T)
+    !+ad_args  dene   : input real :  electron density (/m3)
+    !+ad_args  plascur: input real :  plasma current (A)
+    !+ad_args  q0     : input real :  central safety factor
+    !+ad_args  q95    : input real :  safety factor at 95% surface
+    !+ad_args  rmajor : input real :  plasma major radius (m)
+    !+ad_args  rminor : input real :  plasma minor radius (m)
+    !+ad_args  ten    : input real :  density weighted average plasma temperature (keV)
+    !+ad_args  zeff   : input real :  plasma effective charge
+    !+ad_desc  This function calculates the bootstrap current fraction,
+    !+ad_desc  using the Nevins et al method, 4/11/90.
+    !+ad_prob  None
+    !+ad_call  bsinteg
+    !+ad_call  quanc8
+    !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
+    !+ad_hist  10/11/11 PJK Initial F90 version
+    !+ad_hist  20/02/14 PJK Removed unnecessary use of shared variables;
+    !+ad_hist               Corrected error in peak electron beta
+    !+ad_hist  24/02/14 PJK Re-corrected peak electron beta (version prior to
+    !+ad_hisc               previous change was correct after all!)
+    !+ad_hist  26/03/14 PJK Renamed from FNEWBS
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: bootstrap_fraction_nevins
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: alphan,alphat,betat,bt,dene,plascur, &
+         q0,q95,rmajor,rminor,ten,zeff
+
+    !  Local variables
+
+    integer :: nofun
+    real(kind(1.0D0)) :: aibs,ainteg,betae0,dum1,fibs,flag
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Calculate peak electron beta
+
+    betae0 = ne0 * te0 * 1.0D3*echarge / ( bt**2 /(2.0D0*rmu0) )
+
+    !  Call integration routine
+
+    call quanc8(bsinteg,0.0D0,0.999D0,0.001D0,0.001D0,ainteg,dum1, &
+         nofun,flag)
+
+    !  Calculate bootstrap current and fraction
+
+    aibs = 2.5D0 * betae0 * rmajor * bt * q95 * ainteg
+    fibs = 1.0D6 * aibs / plascur
+
+    bootstrap_fraction_nevins = fibs
+
+  contains
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    function bsinteg(y)
+
+      !+ad_name  bsinteg
+      !+ad_summ  Integrand function for Nevins et al bootstrap current scaling
+      !+ad_type  Function returning real
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_cont  N/A
+      !+ad_args  y : input real : abscissa of integration, = normalised minor radius
+      !+ad_desc  This function calculates the integrand function for the
+      !+ad_desc  Nevins et al bootstrap current scaling, 4/11/90.
+      !+ad_prob  No account is taken of pedestal profiles.
+      !+ad_call  None
+      !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
+      !+ad_hist  10/11/11 PJK Initial F90 version
+      !+ad_hist  20/02/14 PJK Removed unnecessary use of shared variables
+      !+ad_stat  Okay
+      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      implicit none
+
+      real(kind(1.0D0)) :: bsinteg
+
+      !  Arguments
+
+      real(kind(1.0D0)), intent(in) :: y
+
+      !  Local variables
+
+      real(kind(1.0D0)) :: alphai,al1,al2,a1,a2,betae,c1,c2,c3, &
+           d,del,pratio,q,x,z
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      !  Constants for fit to q-profile
+
+      c1 = 1.0D0
+      c2 = 1.0D0
+      c3 = 1.0D0
+
+      !  Compute average electron beta
+
+      betae = dene*ten*1.0D3*echarge/(bt**2/(2.0D0*rmu0))
+
+      del = rminor*sqrt(y)/rmajor
+      x = (1.46D0*sqrt(del) + 2.4D0*del)/(1.0D0 - del)**1.5D0
+      z = zeff
+      d = 1.414D0*z + z*z + x*(0.754D0 + 2.657D0*z + 2.0D0*z*z) &
+           + x*x*(0.348D0 + 1.243D0*z + z*z)
+      al2 = -x*(0.884D0 + 2.074D0*z)/d
+      a2 = alphat*(1.0D0-y)**(alphan+alphat-1.0D0)
+      alphai = -1.172D0/(1.0D0 + 0.462D0*x)
+      a1 = (alphan+alphat)*(1.0D0-y)**(alphan+alphat-1.0D0)
+      al1 = x*(0.754D0+2.21D0*z+z*z+x*(0.348D0+1.243D0*z+z*z))/d
+
+      !  q-profile
+
+      q = q0 + (q95-q0)*(c1*y + c2*y*y + c3*y**3)/(c1+c2+c3)
+
+      pratio = (betat - betae) / betae
+
+      bsinteg = (q/q95)*(al1*(a1 + pratio*(a1+alphai*a2) ) + al2*a2 )
+
+    end function bsinteg
+
+  end function bootstrap_fraction_nevins
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function bootstrap_fraction_wilson(alphaj,alphap,alphat,beta,betpth, &
+       q0,qpsi,rmajor,rminor,itart)
+
+    !+ad_name  bootstrap_fraction_wilson
+    !+ad_summ  Bootstrap current fraction from Wilson et al scaling
+    !+ad_type  Function returning real
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  alphaj  : input real :  current profile index
+    !+ad_args  alphap  : input real :  pressure profile index
+    !+ad_args  alphat  : input real :  temperature profile index
+    !+ad_args  beta    : input real :  total beta
+    !+ad_args  betpth  : input real :  thermal component of poloidal beta
+    !+ad_args  q0      : input real :  safety factor on axis
+    !+ad_args  qpsi    : input real :  edge safety factor
+    !+ad_args  rmajor  : input real :  major radius (m)
+    !+ad_args  rminor  : input real :  minor radius (m)
+    !+ad_args  itart   : input integer :  switch denoting tight aspect ratio option
+    !+ad_desc  This function calculates the bootstrap current fraction
+    !+ad_desc  using the numerically fitted algorithm written by Howard Wilson.
+    !+ad_prob  No account is taken of pedestal profiles.
+    !+ad_call  None
+    !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
+    !+ad_hist  14/05/96 PJK Modified to use THERMAL poloidal beta, and
+    !+ad_hisc               added diamagnetic term at tight aspect ratio
+    !+ad_hist  10/11/11 PJK Initial F90 version
+    !+ad_hist  20/02/14 PJK alphap now calculated elsewhere
+    !+ad_hist  24/02/14 PJK Swapped alphan for alphap in argument list
+    !+ad_hist  26/03/14 PJK Renamed from CULBST
+    !+ad_stat  Okay
+    !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
+    !+ad_docs  H. R. Wilson, Nuclear Fusion <B>32</B> (1992) 257
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: bootstrap_fraction_wilson
+
+    !  Arguments
+
+    integer, intent(in) :: itart
+    real(kind(1.0D0)), intent(in) :: alphaj,alphap,alphat,beta,betpth, &
+         q0,qpsi,rmajor,rminor
+
+    !  Local variables
+
+    integer :: i
+    real(kind(1.0D0)), dimension(12) :: a, b
+    real(kind(1.0D0)) :: aj,alfpnw,alftnw,eps1,r1,r2, &
+         saj,seps1,sss,termj,termp,termt,term1,term2,z
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  alphap, alphat and alphaj are indices relevant to profiles of
+    !  the form
+    !             p = p0.(1-(r/a)**2)**alphap, etc.
+    !  
+    !  Convert these indices to those relevant to profiles of the form
+    !             p = p0.psi**alfpnw, etc.
+
+    term1 = log(0.5D0)
+    term2 = log(q0/qpsi)
+
+    termp = 1.0D0-0.5D0**(1.0D0/alphap)
+    termt = 1.0D0-0.5D0**(1.0D0/alphat)
+    termj = 1.0D0-0.5D0**(1.0D0/alphaj)
+
+    alfpnw = term1/log( log( (q0+(qpsi-q0)*termp)/qpsi )/term2)
+    alftnw = term1/log( log( (q0+(qpsi-q0)*termt)/qpsi )/term2)
+    aj     = term1/log( log( (q0+(qpsi-q0)*termj)/qpsi )/term2)
+
+    !  Crude check for NaN errors...
+
+    if (aj /= aj) then
+       write(*,*) 'Error in routine BOOTSTRAP_FRACTION_WILSON:'
+       write(*,*) 'Illegal value for aj, = ',aj
+       write(*,*) 'PROCESS stopping.'
+       stop
+    end if
+    if (alfpnw /= alfpnw) then
+       write(*,*) 'Error in routine BOOTSTRAP_FRACTION_WILSON:'
+       write(*,*) 'Illegal value for alfpnw, = ',alfpnw
+       write(*,*) 'PROCESS stopping.'
+       stop
+    end if
+    if (alftnw /= alftnw) then
+       write(*,*) 'Error in routine BOOTSTRAP_FRACTION_WILSON:'
+       write(*,*) 'Illegal value for alftnw, = ',alftnw
+       write(*,*) 'PROCESS stopping.'
+       stop
+    end if
+
+    if (aj <= 0.0D0) then
+       write(*,*) 'Error in routine BOOTSTRAP_FRACTION_WILSON:'
+       write(*,*) 'Illegal value for aj, = ',aj
+       write(*,*) 'PROCESS stopping.'
+       stop
+    end if
+
+    !  Ratio of ionic charge to electron charge
+
+    z = 1.0D0
+
+    !  Inverse aspect ratio: r2 = maximum plasma radius, r1 = minimum
+
+    r2 = rmajor+rminor
+    r1 = rmajor-rminor
+    eps1 = (r2-r1)/(r2+r1)
+
+    !  Coefficients fitted using least squares techniques
+
+    saj = sqrt(aj)
+
+    a(1)  =    1.41D0*(1.0D0-0.28D0*saj)*(1.0D0+0.12D0/z)
+    a(2)  =    0.36D0*(1.0D0-0.59D0*saj)*(1.0D0+0.8D0/z)
+    a(3)  =   -0.27D0*(1.0D0-0.47D0*saj)*(1.0D0+3.0D0/z)
+    a(4)  =  0.0053D0*(1.0D0+5.0D0/z)
+    a(5)  =   -0.93D0*(1.0D0-0.34D0*saj)*(1.0D0+0.15D0/z)
+    a(6)  =   -0.26D0*(1.0D0-0.57D0*saj)*(1.0D0-0.27D0*z)
+    a(7)  =   0.064D0*(1.0D0-0.6D0*aj+0.15D0*aj*aj)*(1.0D0+7.6D0/z)
+    a(8)  = -0.0011D0*(1.0D0+9.0D0/z)
+    a(9)  =   -0.33D0*(1.0D0-aj+0.33D0*aj*aj)
+    a(10) =   -0.26D0*(1.0D0-0.87D0/saj-0.16D0*aj)
+    a(11) =   -0.14D0*(1.0D0-1.14D0/saj-0.45D0*saj)
+    a(12) = -0.0069D0
+
+    seps1 = sqrt(eps1)
+
+    b(1)  = 1.0D0
+    b(2)  = alfpnw
+    b(3)  = alftnw
+    b(4)  = alfpnw*alftnw
+    b(5)  = seps1
+    b(6)  = alfpnw*seps1
+    b(7)  = alftnw*seps1
+    b(8)  = alfpnw*alftnw*seps1
+    b(9)  = eps1
+    b(10) = alfpnw*eps1
+    b(11) = alftnw*eps1
+    b(12) = alfpnw*alftnw*eps1
+
+    sss = 0.0D0
+    do i = 1,12
+       sss = sss + a(i)*b(i)
+    end do
+
+    !  Empirical bootstrap current fraction
+
+    bootstrap_fraction_wilson = seps1 * betpth * sss
+
+    !  Diamagnetic contribution to the bootstrap fraction
+    !  at tight aspect ratio.
+    !  Tim Hender fit
+
+    if (itart == 1) then
+       bootstrap_fraction_wilson = bootstrap_fraction_wilson + beta/2.8D0
+    end if
+
+  end function bootstrap_fraction_wilson
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function bootstrap_fraction_sauter()
+
+    !+ad_name  bootstrap_fraction_sauter
+    !+ad_summ  Bootstrap current fraction from Sauter et al scaling
+    !+ad_type  Function returning real
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  beta_poloidal_local
+    !+ad_cont  nues
+    !+ad_cont  nuee
+    !+ad_cont  coulg
+    !+ad_cont  nuis
+    !+ad_cont  nui
+    !+ad_cont  dcsa
+    !+ad_cont  hcsa
+    !+ad_cont  xcsa
+    !+ad_cont  tpf
+    !+ad_args  None
+    !+ad_desc  This function calculates the bootstrap current fraction
+    !+ad_desc  using the Sauter, Angioni and Lin-Liu scaling.
+    !+ad_desc  The code was extracted from the ASTRA code, and was 
+    !+ad_desc  supplied by Emiliano Fable, IPP Garching
+    !+ad_desc  (private communication).
+    !+ad_prob  None
+    !+ad_call  nprofile
+    !+ad_call  tprofile
+    !+ad_call  dcsa
+    !+ad_call  hcsa
+    !+ad_call  xcsa
+    !+ad_hist  26/03/14 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu,
+    !+ad_docc    Physics of Plasmas <B>6</B> (1999) 2834
+    !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu, (ERRATA)
+    !+ad_docc    Physics of Plasmas <B>9</B> (2002) 5140
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: bootstrap_fraction_sauter
+
+    !  Arguments
+
+    !  Local variables
+
+    integer, parameter :: nr = 200
+    integer :: ir
+    real(kind(1.0D0)) :: da,drho,iboot,jboot,roa
+    real(kind(1.0D0)) :: dlogne_drho,dlogte_drho,dlogti_drho
+    real(kind(1.0D0)), dimension(nr) :: amain,mu,ne,ni,rho,sqeps,tempe,tempi,zef,zmain
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Populate profile arrays
+
+    do ir = 1,nr
+       roa = dble(ir)/nr
+       rho(ir) = sqrt(xarea/pi) * roa !  local circularised minor radius (m)
+       sqeps(ir) = sqrt(roa * rminor/rmajor)
+
+       ne(ir) = 1.0D-19 * nprofile(roa,rhopedn,ne0,neped,nesep,alphan)
+       ni(ir) = dnitot/dene * ne(ir)
+       tempe(ir) = tprofile(roa,rhopedt,te0,teped,tesep,alphat,tbeta)
+       tempi(ir) = ti/te * tempe(ir)
+
+       zef(ir) = zeff  !  Flat Zeff profile assumed
+
+       !  mu = 1/safety factor
+       !  Parabolic q profile assumed
+
+       mu(ir) = 1.0D0 / (q0 + (q-q0)*roa**2)
+       amain(ir) = afuel  !  fuel ion mass
+       zmain(ir) = 1.0D0 + fhe3  !  sum(Zi.ni)/sum(ni) over fuel ions i
+    end do
+
+    !  Ensure that density and temperature values are not zero at edge
+
+    if (ne(nr) == 0.0D0) then
+       ne(nr) = 1.0D-4*ne(nr-1)
+       ni(nr) = 1.0D-4*ni(nr-1)
+    end if
+
+    if (tempe(nr) == 0.0D0) then
+       tempe(nr) = 1.0D-4*tempe(nr-1)
+       tempi(nr) = 1.0D-4*tempi(nr-1)
+    end if
+
+    !  Calculate total bootstrap current (MA) by summing along profiles
+
+    iboot = 0.0D0
+    do ir = 1,nr
+
+       if (ir == nr) then
+          jboot = 0.0D0
+          da = 0.0D0
+       else
+          drho = rho(ir+1) - rho(ir)
+          da = 2.0D0*pi*rho(ir)*drho  !  area of annulus
+
+          dlogte_drho = (log(tempe(ir+1)) - log(tempe(ir))) / drho
+          dlogti_drho = (log(tempi(ir+1)) - log(tempi(ir))) / drho
+          dlogne_drho = (log(ne(ir+1)) - log(ne(ir))) / drho
+
+          !  The factor of 0.5 below arises because in ASTRA the logarithms
+          !  are coded as (e.g.):  (Te(j+1)-Te(j))/(Te(j+1)+Te(j)), which
+          !  actually corresponds to grad(log(Te))/2. So the factors dcsa etc.
+          !  are a factor two larger than one might otherwise expect.
+
+          jboot = 0.5D0 * ( dcsa(ir,nr) * dlogne_drho &
+               + hcsa(ir,nr) * dlogte_drho &
+               + xcsa(ir,nr) * dlogti_drho )
+          jboot = -bt/(0.2D0*pi*rmajor) * rho(ir)*mu(ir) * jboot  !  MA/m2
+       end if
+
+       iboot = iboot + da*jboot  !  MA
+
+    end do
+
+    bootstrap_fraction_sauter = 1.0D6 * iboot/plascur
+
+  contains
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    function beta_poloidal_local(j,nr)
+
+      !+ad_name  beta_poloidal_local
+      !+ad_summ  Local beta poloidal calculation
+      !+ad_type  Function returning real
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_cont  None
+      !+ad_args  j
+      !+ad_args  nr
+      !+ad_desc  This function calculates the local beta poloidal.
+      !+ad_desc  The code was extracted from the ASTRA code, and was 
+      !+ad_desc  supplied by Emiliano Fable, IPP Garching
+      !+ad_desc  (private communication).
+      !+ad_desc  <P>beta poloidal = 4*pi*ne*Te/Bpo**2
+      !+ad_prob  PJK: I do not understand why it should be 4*pi*... instead
+      !+ad_prob  of 8*pi*... Presumably it is because of a strange ASTRA
+      !+ad_prob  method similar to that noted above in the calculation of jboot.
+      !+ad_call  None
+      !+ad_hist  26/03/14 PJK Initial version
+      !+ad_stat  Okay
+      !+ad_docs  Pereverzev, 25.04.89
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      implicit none
+
+      real(kind(1.0D0)) :: beta_poloidal_local
+
+      !  Arguments
+
+      integer, intent(in) :: j, nr
+
+      !  Local variables
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      if (j /= nr)	then
+         beta_poloidal_local = 1.6D-4*pi * (ne(j+1)+ne(j)) * (tempe(j+1)+tempe(j))
+      else
+         beta_poloidal_local = 6.4D-4*pi * ne(j)*tempe(j)
+      end if
+
+      beta_poloidal_local = beta_poloidal_local * &
+           ( rmajor/(bt*rho(j)*abs(mu(j)+1.0D-4)) )**2
+
+    end function beta_poloidal_local
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    function nues(j)
+
+      ! NUES []:	Relative frequency of electron collisions
+      !	NU*=Nuei*q*Rt/eps#1.5/Vte
+      !	Electron-ion collision frequency NUEI=NUEE*1.4*ZEF is used
+      !			(Yushmanov 30-APR-87)
+
+      implicit none
+
+      real(kind(1.0D0)) :: nues
+
+      integer, intent(in) :: j
+
+      nues = nuee(j) * 1.4D0*zef(j)*rmajor / &
+           abs(mu(j)*(sqeps(j)**3)*sqrt(tempe(j))*1.875D7)
+
+    end function nues
+
+    function nuee(j)
+
+      ! nuee [1/s]:	Frequency of electron-electron collisions
+      !	NUEE=4*SQRT(3.14)/3*Ne*e#4*lambd/SQRT(Me)/Te#1.5
+      !		(Yushmanov 25-APR-87, updated by Pereverzev 9-NOV-94)
+
+      implicit none
+
+      real(kind(1.0D0)) :: nuee
+
+      integer, intent(in) :: j
+
+      nuee = 670.0D0 * coulg(j) * ne(j) / ( tempe(j)*sqrt(tempe(j)) )
+
+    end function nuee
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    function coulg(j)
+
+      ! COULG [d/l] Coulomb logarithm
+      !				valid for e-e collisions (T_e > 0.01 keV)
+      !				and   for e-i collisions (T_e > 0.01*Zeff^2)
+      !			due to Ordonez and Molina
+      !			Phys. Plasmas 1 (8), August 1994
+      !			Rev. Mod. Phys., V.48, Part 1 (1976) 275.
+      !		(Alexander 09-05-94)
+
+      implicit none
+
+      real(kind(1.0D0)) :: coulg
+
+      integer, intent(in) :: j
+
+      coulg = 15.9D0 - 0.5D0*log(ne(j)) + log(tempe(j))
+
+    end function coulg
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    function nuis(j)
+
+      ! NUIS []:	Relative frequency of ion collisions
+      !	NU*=Nui*q*Rt/eps#1.5/Vti
+      !	Full ion collision frequency NUI is used
+      !			(Yushmanov 30-APR-87)
+
+      implicit none
+
+      real(kind(1.0D0)) :: nuis
+
+      integer, intent(in) :: j
+
+      nuis = 3.2D-6 * nui(j)*rmajor / ( abs(mu(j)+1.0D-4) * &
+           sqeps(j)**3 * sqrt(tempi(j)/amain(j)) )
+
+    end function nuis
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    function nui(j)
+
+      ! NUI [1/s]:	Full frequency of ion collisions
+      !	Coulomb logarithm 15 is used
+
+      real(kind(1.0D0)) :: nui
+
+      integer, intent(in) :: j
+
+      nui = zmain(j)**4 * ni(j) * 322.0D0 / ( tempi(j)*sqrt(tempi(j)*amain(j)) )
+
+    end function nui
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    function dcsa(j,nr)
+      ! DCSA []:		Bootstrap current density
+      !			Jbs = HCSA*d(ln(Te))/drho + DCSA*d(ln(Ne))/drho + XCSA*d(ln(Ti))/drho
+      !                       Sauter, Angioni, Lin-Liu
+      !			Physics of Plasmas, 6, 2834 (1999)
+      !			(Angioni 29-MAY-2002)
+      !
+      ! DCSA $\equiv \mathcal{L}_{31}$, Eq.14a
+
+      implicit none
+
+      real(kind(1.0D0)) :: dcsa
+
+      !  Arguments
+
+      integer, intent(in) :: j,nr
+
+      !  Local variables
+
+      real(kind(1.0D0)) :: zz,zft,zdf
+
+      if (j == 1) then
+         dcsa = 0.0D0
+      else
+         zz = zef(j)
+         zft = tpf(j)
+         zdf = 1.0D0 + (1.0D0 - 0.1D0*zft)*sqrt(nues(j))
+         zdf = zdf + 0.5D0*(1.0D0-zft)*nues(j)/zz
+         zft = zft/zdf  !  $f^{31}_{teff}(\nu_{e*})$, Eq.14b
+         dcsa = (1.0D0 + 1.4D0/(zz+1.0D0))*zft - 1.9D0/(zz+1.0D0)*zft*zft
+         dcsa = dcsa + (0.3D0*zft*zft + 0.2D0*zft*zft*zft)*zft / (zz+1.0D0)
+         dcsa = dcsa*beta_poloidal_local(j,nr) * (1.0D0+tempi(j)/(zz*tempe(j)))
+      end if
+
+    end function dcsa
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    function hcsa(j,nr)
+      ! HCSA []:		Bootstrap current density
+      !			Jbs = HCSA*d(ln(Te))/drho + DCSA*d(ln(Ne))/drho + XCSA*d(ln(Ti))/drho
+      !                       Sauter, Angioni, Lin-Liu
+      !			Physics of Plasmas, 6, 2834 (1999)
+      !			(Angioni 29-MAY-2002)
+      !
+      ! HCSA $\equiv ?$
+
+      implicit none
+
+      real(kind(1.0D0)) :: hcsa
+
+      !  Arguments
+
+      integer, intent(in) :: j,nr
+
+      !  Local variables
+
+      real(kind(1.0D0)) :: zz,zft,zdf,zfte,zfte2,zfte3,zfte4
+      real(kind(1.0D0)) :: zfti,zfti2,zfti3,zfti4,hcee,hcei
+
+      if (j == 1) then
+         hcsa = 0.0D0
+      else
+         zz = zef(j)
+         zft = tpf(j)
+         zdf = 1.0D0 + 0.26D0*(1.0D0-zft)*sqrt(nues(j))
+         zdf = zdf + 0.18D0*(1.0D0-0.37D0*zft)*nues(j)/sqrt(zz)
+         zfte = zft/zdf  !  $f^{32\_ee}_{teff}(\nu_{e*})$, Eq.15d
+         zfte2 = zfte*zfte
+         zfte3 = zfte*zfte2
+         zfte4 = zfte2*zfte2
+
+         zdf = 1.0D0 + (1.0D0 + 0.6D0*zft)*sqrt(nues(j))
+         zdf = zdf + 0.85D0*(1.0D0 - 0.37D0*zft)*nues(j)*(1.0D0+zz)
+         zfti = zft/zdf  !  $f^{32\_ei}_{teff}(\nu_{e*})$, Eq.15e
+         zfti2 = zfti*zfti
+         zfti3 = zfti*zfti2
+         zfti4 = zfti2*zfti2
+
+         hcee = (0.05D0 + 0.62D0*zz) / zz / (1.0D0 + 0.44D0*zz) * (zfte-zfte4)
+         hcee = hcee + (zfte2 - zfte4 - 1.2D0*(zfte3-zfte4)) / (1.0D0 + 0.22D0*zz)
+         hcee = hcee + 1.2D0/(1.0D0 + 0.5D0*zz)*zfte4  !  $F_{32\_ee}(X)$, Eq.15b
+
+         hcei = -(0.56D0 + 1.93D0*zz) / zz / (1.0D0 + 0.44*zz) * (zfti-zfti4)
+         hcei = hcei + 4.95D0/(1.0D0 + 2.48D0*zz) * &
+              (zfti2 - zfti4 - 0.55D0*(zfti3-zfti4))
+         hcei = hcei - 1.2D0/(1.0D0 + 0.5D0*zz)*zfti4  !  $F_{32\_ei}(Y)$, Eq.15c
+
+         hcsa = beta_poloidal_local(j,nr)*(hcee + hcei) + dcsa(j,nr) &
+              / (1.0D0 + tempi(j)/(zz*tempe(j)))
+      end if
+
+    end function hcsa
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    function xcsa(j,nr)
+
+      ! XCSA []:		Bootstrap current density
+      !			Jbs = HCSA*d(ln(Te))/drho + DCSA*d(ln(Ne))/drho + XCSA*d(ln(Ti))/drho
+      !                       Sauter, Angioni, Lin-Liu
+      !			Physics of Plasmas, 6, 2834 (1999)
+      !			(Angioni 29-MAY-2002)
+
+      implicit none
+
+      real(kind(1.0D0)) :: xcsa
+
+      !  Arguments
+
+      integer, intent(in) :: j,nr
+
+      !  Local variables
+
+      real(kind(1.0D0)) :: zz,zft,zdf,a0,alp,a1,zfte
+
+      if (j == 1) then
+         xcsa = 0.0D0
+      else
+         zz = zef(j)
+         zft = tpf(j)
+         zdf = 1.0D0 + (1.0D0 - 0.1D0*zft)*sqrt(nues(j))
+         zdf = zdf + 0.5D0*(1.0D0 - 0.5D0*zft)*nues(j)/zz
+         zfte = zft/zdf  !  $f^{34}_{teff}(\nu_{e*})$, Eq.16b
+
+         xcsa = (1.0D0 + 1.4D0/(zz+1.0D0))*zfte - 1.9D0/(zz+1.0D0)*zfte*zfte
+         xcsa = xcsa + (0.3D0*zfte*zfte + 0.2D0*zfte*zfte*zfte)*zfte &
+              / (zz+1.0D0)  !  Eq.16a
+
+         a0 = -1.17D0*(1.0D0-zft)
+         a0 = a0 / (1.0D0 - 0.22D0*zft - 0.19D0*zft*zft)  !  $\alpha_0$, Eq.17a
+
+         alp = (a0 + 0.25D0*(1.0D0 - zft*zft)*sqrt(nuis(j))) / &
+              (1.0D0 + 0.5*sqrt(nuis(j)))
+         a1 = nuis(j)*nuis(j) * zft**6
+         alp = (alp + 0.315D0*a1) / (1.0D0 + 0.15D0*a1)  !  $\alpha(\nu_{i*})$, Eq.17b
+
+         xcsa = beta_poloidal_local(j,nr) * (xcsa*alp)*tempi(j)/zz/tempe(j)
+         xcsa = xcsa + dcsa(j,nr) / (1.0D0 + zz*tempe(j)/tempi(j))
+      end if
+
+    end function xcsa
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    function tpf(j)
+
+      !  Trapped particle fraction
+
+      implicit none
+
+      real(kind(1.0D0)) :: tpf
+
+      !  Arguments
+
+      integer, intent(in) :: j
+
+      !  Local variables
+
+      integer, parameter :: ASTRA=1, SAUTER2002=2, SAUTER2013=3
+
+      real(kind(1.0D0)) :: eps,epseff,g,h,s,zz
+
+      integer :: fit = ASTRA
+
+      s = sqeps(j)
+      eps = s*s
+
+      select case (fit)
+
+      case (ASTRA)
+
+         !  ASTRA method, from Emiliano Fable, private communication
+         !  (Excluding h term which dominates for inverse aspect ratios < 0.5,
+         !  taking the trapped particle fraction to 1)
+
+         zz = 1.0D0 - eps
+
+         g = 1.0D0 - zz*sqrt(zz) / (1.0D0 + 1.46D0*s)
+
+         !  Advised by Emiliano to ignore ASTRA's h below
+         !
+         !h = 0.209D0 * (sqrt(tempi(j)*amain(j))/zmain(j)*mu(j)*rmajor*bt)**0.3333D0
+         !tpf = min(1.0D0, max(g, h))
+
+         tpf = g
+
+      case (SAUTER2002)
+
+         !  Equation 4 of O Sauter et al, Plasma Phys. Contr. Fusion 44 (2002) 1999
+         !  Similar to, but not quite identical to g above
+
+         tpf = 1.0D0 - (1.0D0-eps)**2 / (1.0D0 + 1.46D0*s) / sqrt(1.0D0 - eps*eps)
+
+      case (SAUTER2013)
+
+         !  Sauter (2013)
+         !  http://infoscience.epfl.ch/record/187521/files/lrp_012013.pdf
+         !
+         !  Includes correction for triangularity
+
+         epseff = 0.67D0*(1.0D0 - 1.4D0*triang*abs(triang)) * eps
+
+         tpf = 1.0D0 - sqrt( (1.0D0-eps)/(1.0D0+eps) ) * &
+              (1.0D0 - epseff) / (1.0D0 + 2.0D0*sqrt(epseff))
+
+      end select
+
+    end function tpf
+
+  end function bootstrap_fraction_sauter
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3613,318 +4412,6 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function fnewbs(alphan,alphat,betat,bt,dene,plascur,q95,q0,rmajor, &
-       rminor,ten,zeff)
-
-    !+ad_name  fnewbs
-    !+ad_summ  Bootstrap current fraction from Nevins et al scaling
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  bsinteg
-    !+ad_args  alphan : input real :  density profile index
-    !+ad_args  alphat : input real :  temperature profile index
-    !+ad_args  betat  : input real :  total plasma beta (with respect to the toroidal
-    !+ad_argc                         field)
-    !+ad_args  bt     : input real :  toroidal field on axis (T)
-    !+ad_args  dene   : input real :  electron density (/m3)
-    !+ad_args  plascur: input real :  plasma current (A)
-    !+ad_args  q0     : input real :  central safety factor
-    !+ad_args  q95    : input real :  safety factor at 95% surface
-    !+ad_args  rmajor : input real :  plasma major radius (m)
-    !+ad_args  rminor : input real :  plasma minor radius (m)
-    !+ad_args  ten    : input real :  density weighted average plasma temperature (keV)
-    !+ad_args  zeff   : input real :  plasma effective charge
-    !+ad_desc  This function calculates the bootstrap current fraction,
-    !+ad_desc  using the Nevins et al method, 4/11/90.
-    !+ad_prob  None
-    !+ad_call  bsinteg
-    !+ad_call  quanc8
-    !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  10/11/11 PJK Initial F90 version
-    !+ad_hist  20/02/14 PJK Removed unnecessary use of shared variables;
-    !+ad_hist               Corrected error in peak electron beta
-    !+ad_hist  24/02/14 PJK Re-corrected peak electron beta (version prior to
-    !+ad_hisc               previous change was correct after all!)
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    real(kind(1.0D0)) :: fnewbs
-
-    !  Arguments
-
-    real(kind(1.0D0)), intent(in) :: alphan,alphat,betat,bt,dene,plascur, &
-         q0,q95,rmajor,rminor,ten,zeff
-
-    !  Local variables
-
-    integer :: nofun
-    real(kind(1.0D0)) :: aibs,ainteg,betae0,dum1,fibs,flag
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Calculate peak electron beta
-
-    betae0 = ne0 * te0 * 1.0D3*echarge / ( bt**2 /(2.0D0*rmu0) )
-
-    !  Call integration routine
-
-    call quanc8(bsinteg,0.0D0,0.999D0,0.001D0,0.001D0,ainteg,dum1, &
-         nofun,flag)
-
-    !  Calculate bootstrap current and fraction
-
-    aibs = 2.5D0 * betae0 * rmajor * bt * q95 * ainteg
-    fibs = 1.0D6 * aibs / plascur
-
-    fnewbs = fibs
-
-  contains
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    function bsinteg(y)
-
-      !+ad_name  bsinteg
-      !+ad_summ  Integrand function for Nevins et al bootstrap current scaling
-      !+ad_type  Function returning real
-      !+ad_auth  P J Knight, CCFE, Culham Science Centre
-      !+ad_cont  N/A
-      !+ad_args  y : input real : abscissa of integration, = normalised minor radius
-      !+ad_desc  This function calculates the integrand function for the
-      !+ad_desc  Nevins et al bootstrap current scaling, 4/11/90.
-      !+ad_prob  No account is taken of pedestal profiles.
-      !+ad_call  None
-      !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
-      !+ad_hist  10/11/11 PJK Initial F90 version
-      !+ad_hist  20/02/14 PJK Removed unnecessary use of shared variables
-      !+ad_stat  Okay
-      !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-      !
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      implicit none
-
-      real(kind(1.0D0)) :: bsinteg
-
-      !  Arguments
-
-      real(kind(1.0D0)), intent(in) :: y
-
-      !  Local variables
-
-      real(kind(1.0D0)) :: alphai,al1,al2,a1,a2,betae,c1,c2,c3, &
-           d,del,pratio,q,x,z
-
-      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      !  Constants for fit to q-profile
-
-      c1 = 1.0D0
-      c2 = 1.0D0
-      c3 = 1.0D0
-
-      !  Compute average electron beta
-
-      betae = dene*ten*1.0D3*echarge/(bt**2/(2.0D0*rmu0))
-
-      del = rminor*sqrt(y)/rmajor
-      x = (1.46D0*sqrt(del) + 2.4D0*del)/(1.0D0 - del)**1.5D0
-      z = zeff
-      d = 1.414D0*z + z*z + x*(0.754D0 + 2.657D0*z + 2.0D0*z*z) &
-           + x*x*(0.348D0 + 1.243D0*z + z*z)
-      al2 = -x*(0.884D0 + 2.074D0*z)/d
-      a2 = alphat*(1.0D0-y)**(alphan+alphat-1.0D0)
-      alphai = -1.172D0/(1.0D0 + 0.462D0*x)
-      a1 = (alphan+alphat)*(1.0D0-y)**(alphan+alphat-1.0D0)
-      al1 = x*(0.754D0+2.21D0*z+z*z+x*(0.348D0+1.243D0*z+z*z))/d
-
-      !  q-profile
-
-      q = q0 + (q95-q0)*(c1*y + c2*y*y + c3*y**3)/(c1+c2+c3)
-
-      pratio = (betat - betae) / betae
-
-      bsinteg = (q/q95)*(al1*(a1 + pratio*(a1+alphai*a2) ) + al2*a2 )
-
-    end function bsinteg
-
-  end function fnewbs
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  function culbst(alphaj,alphap,alphat,beta,betpth,q0,qpsi, &
-       rmajor,rminor,itart)
-
-    !+ad_name  culbst
-    !+ad_summ  Bootstrap current fraction from Wilson et al scaling
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  alphaj  : input real :  current profile index
-    !+ad_args  alphap  : input real :  pressure profile index
-    !+ad_args  alphat  : input real :  temperature profile index
-    !+ad_args  beta    : input real :  total beta
-    !+ad_args  betpth  : input real :  thermal component of poloidal beta
-    !+ad_args  q0      : input real :  safety factor on axis
-    !+ad_args  qpsi    : input real :  edge safety factor
-    !+ad_args  rmajor  : input real :  major radius (m)
-    !+ad_args  rminor  : input real :  minor radius (m)
-    !+ad_args  itart   : input integer :  switch denoting tight aspect ratio option
-    !+ad_desc  This function calculates the bootstrap current fraction
-    !+ad_desc  using the numerically fitted algorithm written by Howard Wilson.
-    !+ad_prob  No account is taken of pedestal profiles.
-    !+ad_call  None
-    !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  14/05/96 PJK Modified to use THERMAL poloidal beta, and
-    !+ad_hisc               added diamagnetic term at tight aspect ratio
-    !+ad_hist  10/11/11 PJK Initial F90 version
-    !+ad_hist  20/02/14 PJK alphap now calculated elsewhere
-    !+ad_hist  24/02/14 PJK Swapped alphan for alphap in argument list
-    !+ad_stat  Okay
-    !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
-    !+ad_docs  H. R. Wilson, Nuclear Fusion <B>32</B> (1992) 257
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    real(kind(1.0D0)) :: culbst
-
-    !  Arguments
-
-    integer, intent(in) :: itart
-    real(kind(1.0D0)), intent(in) :: alphaj,alphap,alphat,beta,betpth, &
-         q0,qpsi,rmajor,rminor
-
-    !  Local variables
-
-    integer :: i
-    real(kind(1.0D0)), dimension(12) :: a, b
-    real(kind(1.0D0)) :: aj,alfpnw,alftnw,eps1,r1,r2, &
-         saj,seps1,sss,termj,termp,termt,term1,term2,z
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  alphap, alphat and alphaj are indices relevant to profiles of
-    !  the form
-    !             p = p0.(1-(r/a)**2)**alphap, etc.
-    !  
-    !  Convert these indices to those relevant to profiles of the form
-    !             p = p0.psi**alfpnw, etc.
-
-    term1 = log(0.5D0)
-    term2 = log(q0/qpsi)
-
-    termp = 1.0D0-0.5D0**(1.0D0/alphap)
-    termt = 1.0D0-0.5D0**(1.0D0/alphat)
-    termj = 1.0D0-0.5D0**(1.0D0/alphaj)
-
-    alfpnw = term1/log( log( (q0+(qpsi-q0)*termp)/qpsi )/term2)
-    alftnw = term1/log( log( (q0+(qpsi-q0)*termt)/qpsi )/term2)
-    aj     = term1/log( log( (q0+(qpsi-q0)*termj)/qpsi )/term2)
-
-    !  Crude check for NaN errors...
-
-    if (aj /= aj) then
-       write(*,*) 'Error in routine CULBST:'
-       write(*,*) 'Illegal value for aj, = ',aj
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
-    if (alfpnw /= alfpnw) then
-       write(*,*) 'Error in routine CULBST:'
-       write(*,*) 'Illegal value for alfpnw, = ',alfpnw
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
-    if (alftnw /= alftnw) then
-       write(*,*) 'Error in routine CULBST:'
-       write(*,*) 'Illegal value for alftnw, = ',alftnw
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
-
-    if (aj <= 0.0D0) then
-       write(*,*) 'Error in routine CULBST:'
-       write(*,*) 'Illegal value for aj, = ',aj
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
-
-    !  Ratio of ionic charge to electron charge
-
-    z = 1.0D0
-
-    !  Inverse aspect ratio: r2 = maximum plasma radius, r1 = minimum
-
-    r2 = rmajor+rminor
-    r1 = rmajor-rminor
-    eps1 = (r2-r1)/(r2+r1)
-
-    if (eps1 <= 0.0D0) then
-       write(*,*) 'Error in routine CULBST:'
-       write(*,*) 'Illegal value for eps1, = ',eps1
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
-
-    !  Coefficients fitted using least squares techniques
-
-    saj = sqrt(aj)
-
-    a(1)  =    1.41D0*(1.0D0-0.28D0*saj)*(1.0D0+0.12D0/z)
-    a(2)  =    0.36D0*(1.0D0-0.59D0*saj)*(1.0D0+0.8D0/z)
-    a(3)  =   -0.27D0*(1.0D0-0.47D0*saj)*(1.0D0+3.0D0/z)
-    a(4)  =  0.0053D0*(1.0D0+5.0D0/z)
-    a(5)  =   -0.93D0*(1.0D0-0.34D0*saj)*(1.0D0+0.15D0/z)
-    a(6)  =   -0.26D0*(1.0D0-0.57D0*saj)*(1.0D0-0.27D0*z)
-    a(7)  =   0.064D0*(1.0D0-0.6D0*aj+0.15D0*aj*aj)*(1.0D0+7.6D0/z)
-    a(8)  = -0.0011D0*(1.0D0+9.0D0/z)
-    a(9)  =   -0.33D0*(1.0D0-aj+0.33D0*aj*aj)
-    a(10) =   -0.26D0*(1.0D0-0.87D0/saj-0.16D0*aj)
-    a(11) =   -0.14D0*(1.0D0-1.14D0/saj-0.45D0*saj)
-    a(12) = -0.0069D0
-
-    seps1 = sqrt(eps1)
-
-    b(1)  = 1.0D0
-    b(2)  = alfpnw
-    b(3)  = alftnw
-    b(4)  = alfpnw*alftnw
-    b(5)  = seps1
-    b(6)  = alfpnw*seps1
-    b(7)  = alftnw*seps1
-    b(8)  = alfpnw*alftnw*seps1
-    b(9)  = eps1
-    b(10) = alfpnw*eps1
-    b(11) = alftnw*eps1
-    b(12) = alfpnw*alftnw*eps1
-
-    sss = 0.0D0
-    do i = 1,12
-       sss = sss + a(i)*b(i)
-    end do
-
-    !  Empirical bootstrap current fraction
-
-    culbst = seps1 * betpth * sss
-
-    !  Diamagnetic contribution to the bootstrap fraction
-    !  at tight aspect ratio.
-    !  Tim Hender fit
-
-    if (itart == 1) then
-       culbst = culbst + beta/2.8D0
-    end if
-
-  end function culbst
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   subroutine outplas(outfile)
 
     !+ad_name  outplas
@@ -3975,6 +4462,7 @@ contains
     !+ad_hist  05/03/14 PJK Added on-axis values
     !+ad_hist  06/03/14 PJK Added warning if pdivt=0.001;
     !+ad_hisc               clarified ishape effects on kappa, triang
+    !+ad_hist  26/03/14 PJK Added all bootstrap current estimations
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4184,7 +4672,7 @@ contains
 
     call ovarre(outfile,'Carbon impurity concentration (%)','(rncne*100)',rncne*100)
     call ovarre(outfile,'Oxygen impurity concentration (%)','(rnone*100)',rnone*100)
-    
+
     if (zfear == 1) then
        call ovarre(outfile,'Argon impurity concentration (%)','(cfe0*100)',cfe0*100)
     else
@@ -4313,7 +4801,29 @@ contains
        call ovarrf(outfile,'Ejima coefficient','(gamma)',gamma)
        call ovarre(outfile,'Start-up resistive (Wb)','(vsres)',vsres)
        call ovarre(outfile,'Flat-top resistive (Wb)','(vsbrn)',vsbrn)
-       call ovarrf(outfile,'Bootstrap fraction','(bootipf)',bootipf)
+
+       call ovarrf(outfile,'Bootstrap fraction (ITER 1989)', &
+            '(bscf_iter89)',bscf_iter89)
+       call ovarrf(outfile,'Bootstrap fraction (Nevins et al)', &
+            '(bscf_nevins)',bscf_nevins)
+       call ovarrf(outfile,'Bootstrap fraction (Wilson et al)', &
+            '(bscf_wilson)',bscf_wilson)
+       call ovarrf(outfile,'Bootstrap fraction (Sauter et al)', &
+            '(bscf_sauter)',bscf_sauter)
+
+       if (bscfmax < 0.0D0) then
+          call ocmmnt(outfile,'  (User-specified bootstrap current fraction used)')
+       else if (ibss == 1) then
+          call ocmmnt(outfile,'  (ITER 1989 bootstrap current fraction model used)')
+       else if (ibss == 2) then
+          call ocmmnt(outfile,'  (Nevins et al bootstrap current fraction model used)')
+       else if (ibss == 3) then
+          call ocmmnt(outfile,'  (Wilson et al bootstrap current fraction model used)')
+       else if (ibss == 4) then
+          call ocmmnt(outfile,'  (Sauter et al bootstrap current fraction model used)')
+       end if
+       call ovarrf(outfile,'Bootstrap fraction (enforced)','(bootipf)',bootipf)
+
        call ovarrf(outfile,'Auxiliary current drive fraction','(faccd)',faccd)
        call ovarre(outfile,'Loop voltage during burn (V)','(vburn)', &
             plascur*rplas*facoh)

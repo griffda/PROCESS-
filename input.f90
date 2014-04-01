@@ -362,6 +362,7 @@ contains
     !+ad_hist  27/02/14 PJK Added NINEQNS
     !+ad_hist  03/03/14 PJK Changed lower bound of TRATIO to 0.0
     !+ad_hist  10/03/14 PJK Removed CAREA
+    !+ad_hist  26/03/14 PJK Changed upper bound of IBSS to 4
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -576,7 +577,7 @@ contains
           call parse_real_variable('HFACT', hfact, 0.01D0, 10.0D0, &
                'Energy confinement time H factor')
        case ('IBSS')
-          call parse_int_variable('IBSS', ibss, 1, 3, &
+          call parse_int_variable('IBSS', ibss, 1, 4, &
                'Switch for bootstrap scaling')
        case ('ICULBL')
           call parse_int_variable('ICULBL', iculbl, 0, 2, &
