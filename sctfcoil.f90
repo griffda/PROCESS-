@@ -1139,6 +1139,7 @@ contains
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  11/04/13 PJK Clarified some output labels
     !+ad_hist  07/11/13 PJK Removed obsolete switch magnt; modified layout
+    !+ad_hist  02/04/14 PJK Added TF coil geometry to mfile
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1154,6 +1155,7 @@ contains
 
     integer :: i
     real(kind(1.0D0)) :: ap
+    character(len=1) :: intstring
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1209,6 +1211,13 @@ contains
 
     do i = 1,5
        write(outfile,20) i,xarc(i),yarc(i)
+
+       intstring = int2char(i)
+       call ovarre(mfile,'TF coil arc point '//intstring//' R (m)', &
+            '(xarc('//intstring//'))',xarc(i))
+       call ovarre(mfile,'TF coil arc point '//intstring//' Z (m)', &
+            '(yarc('//intstring//'))',yarc(i))
+
     end do
 20  format(i4,t10,f10.3,t25,f10.3)
 
@@ -1218,6 +1227,13 @@ contains
 
     do i = 1,4
        write(outfile,20) i,xctfc(i),yctfc(i)
+
+       intstring = int2char(i)
+       call ovarre(mfile,'TF coil arc '//intstring//' centre R (m)', &
+            '(xctfc('//intstring//'))',xctfc(i))
+       call ovarre(mfile,'TF coil arc '//intstring//' centre Z (m)', &
+            '(yctfc('//intstring//'))',yctfc(i))
+
     end do
 
     call osubhd(outfile,'Conductor Information :')

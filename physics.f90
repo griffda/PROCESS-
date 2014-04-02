@@ -812,7 +812,7 @@ contains
     !+ad_args  None
     !+ad_desc  This function calculates the bootstrap current fraction
     !+ad_desc  using the Sauter, Angioni and Lin-Liu scaling.
-    !+ad_desc  The code was extracted from the ASTRA code, and was 
+    !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
     !+ad_desc  supplied by Emiliano Fable, IPP Garching
     !+ad_desc  (private communication).
     !+ad_prob  None
@@ -924,10 +924,10 @@ contains
       !+ad_type  Function returning real
       !+ad_auth  P J Knight, CCFE, Culham Science Centre
       !+ad_cont  None
-      !+ad_args  j
-      !+ad_args  nr
+      !+ad_args  j  : input integer : radial element index in range 1 to nr
+      !+ad_args  nr : input integer : maximum value of j
       !+ad_desc  This function calculates the local beta poloidal.
-      !+ad_desc  The code was extracted from the ASTRA code, and was 
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
       !+ad_desc  supplied by Emiliano Fable, IPP Garching
       !+ad_desc  (private communication).
       !+ad_desc  <P>beta poloidal = 4*pi*ne*Te/Bpo**2
@@ -937,7 +937,7 @@ contains
       !+ad_call  None
       !+ad_hist  26/03/14 PJK Initial version
       !+ad_stat  Okay
-      !+ad_docs  Pereverzev, 25.04.89
+      !+ad_docs  Pereverzev, 25th April 1989 (?)
       !
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -968,33 +968,80 @@ contains
 
     function nues(j)
 
-      ! NUES []:	Relative frequency of electron collisions
-      !	NU*=Nuei*q*Rt/eps#1.5/Vte
-      !	Electron-ion collision frequency NUEI=NUEE*1.4*ZEF is used
-      !			(Yushmanov 30-APR-87)
+      !+ad_name  nues
+      !+ad_summ  Relative frequency of electron collisions
+      !+ad_type  Function returning real
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_cont  None
+      !+ad_args  j  : input integer : radial element index in range 1 to nr
+      !+ad_desc  This function calculates the relative frequency of electron
+      !+ad_desc  collisions: <I>NU* = Nuei*q*Rt/eps**1.5/Vte</I>
+      !+ad_desc  The electron-ion collision frequency NUEI=NUEE*1.4*ZEF is
+      !+ad_desc  used.
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  supplied by Emiliano Fable, IPP Garching
+      !+ad_desc  (private communication).
+      !+ad_prob  None
+      !+ad_call  nuee
+      !+ad_hist  26/03/14 PJK Initial version
+      !+ad_stat  Okay
+      !+ad_docs  Yushmanov, 30th April 1987 (?)
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       implicit none
 
       real(kind(1.0D0)) :: nues
 
+      !  Arguments
+
       integer, intent(in) :: j
+
+      !  Local variables
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       nues = nuee(j) * 1.4D0*zef(j)*rmajor / &
            abs(mu(j)*(sqeps(j)**3)*sqrt(tempe(j))*1.875D7)
 
     end function nues
 
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     function nuee(j)
 
-      ! nuee [1/s]:	Frequency of electron-electron collisions
-      !	NUEE=4*SQRT(3.14)/3*Ne*e#4*lambd/SQRT(Me)/Te#1.5
-      !		(Yushmanov 25-APR-87, updated by Pereverzev 9-NOV-94)
+      !+ad_name  nuee
+      !+ad_summ  Frequency of electron-electron collisions
+      !+ad_type  Function returning real
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_cont  None
+      !+ad_args  j  : input integer : radial element index in range 1 to nr
+      !+ad_desc  This function calculates the frequency of electron-electron
+      !+ad_desc  collisions (Hz): <I>NUEE = 4*SQRT(pi)/3*Ne*e**4*lambd/
+      !+ad_desc  SQRT(Me)/Te**1.5</I>
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  supplied by Emiliano Fable, IPP Garching
+      !+ad_desc  (private communication).
+      !+ad_prob  None
+      !+ad_call  coulg
+      !+ad_hist  26/03/14 PJK Initial version
+      !+ad_stat  Okay
+      !+ad_docs  Yushmanov, 25th April 1987 (?),
+      !+ad_docc  updated by Pereverzev, 9th November 1994 (?)
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       implicit none
 
       real(kind(1.0D0)) :: nuee
 
+      !  Arguments
+
       integer, intent(in) :: j
+
+      !  Local variables
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       nuee = 670.0D0 * coulg(j) * ne(j) / ( tempe(j)*sqrt(tempe(j)) )
 
@@ -1004,19 +1051,38 @@ contains
 
     function coulg(j)
 
-      ! COULG [d/l] Coulomb logarithm
-      !				valid for e-e collisions (T_e > 0.01 keV)
-      !				and   for e-i collisions (T_e > 0.01*Zeff^2)
-      !			due to Ordonez and Molina
-      !			Phys. Plasmas 1 (8), August 1994
-      !			Rev. Mod. Phys., V.48, Part 1 (1976) 275.
-      !		(Alexander 09-05-94)
+      !+ad_name  coulg
+      !+ad_summ  Coulomb logarithm
+      !+ad_type  Function returning real
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_cont  None
+      !+ad_args  j  : input integer : radial element index in range 1 to nr
+      !+ad_desc  This function calculates the Coulomb logarithm, valid
+      !+ad_desc  for e-e collisions (T_e > 0.01 keV), and for
+      !+ad_desc  e-i collisions (T_e > 0.01*Zeff^2) (Alexander, 9/5/1994).
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  supplied by Emiliano Fable, IPP Garching
+      !+ad_desc  (private communication).
+      !+ad_prob  None
+      !+ad_call  coulg
+      !+ad_hist  26/03/14 PJK Initial version
+      !+ad_stat  Okay
+      !+ad_docs  C. A. Ordonez and M. I. Molina, Phys. Plasmas <B>1</B> (1994) 2515
+      !+ad_docs  Rev. Mod. Phys., V.48, Part 1 (1976) 275
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       implicit none
 
       real(kind(1.0D0)) :: coulg
 
+      !  Arguments
+
       integer, intent(in) :: j
+
+      !  Local variables
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       coulg = 15.9D0 - 0.5D0*log(ne(j)) + log(tempe(j))
 
@@ -1026,16 +1092,37 @@ contains
 
     function nuis(j)
 
-      ! NUIS []:	Relative frequency of ion collisions
-      !	NU*=Nui*q*Rt/eps#1.5/Vti
-      !	Full ion collision frequency NUI is used
-      !			(Yushmanov 30-APR-87)
+      !+ad_name  nuis
+      !+ad_summ  Relative frequency of ion collisions
+      !+ad_type  Function returning real
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_cont  None
+      !+ad_args  j  : input integer : radial element index in range 1 to nr
+      !+ad_desc  This function calculates the relative frequency of ion
+      !+ad_desc  collisions: <I>NU* = Nui*q*Rt/eps**1.5/Vti</I>
+      !+ad_desc  The full ion collision frequency NUI is used.
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  supplied by Emiliano Fable, IPP Garching
+      !+ad_desc  (private communication).
+      !+ad_prob  None
+      !+ad_call  nui
+      !+ad_hist  26/03/14 PJK Initial version
+      !+ad_stat  Okay
+      !+ad_docs  Yushmanov, 30th April 1987 (?)
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       implicit none
 
       real(kind(1.0D0)) :: nuis
 
+      !  Arguments
+
       integer, intent(in) :: j
+
+      !  Local variables
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       nuis = 3.2D-6 * nui(j)*rmajor / ( abs(mu(j)+1.0D-4) * &
            sqeps(j)**3 * sqrt(tempi(j)/amain(j)) )
@@ -1046,12 +1133,36 @@ contains
 
     function nui(j)
 
-      ! NUI [1/s]:	Full frequency of ion collisions
-      !	Coulomb logarithm 15 is used
+      !+ad_name  nui
+      !+ad_summ  Full frequency of ion collisions
+      !+ad_type  Function returning real
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_cont  None
+      !+ad_args  j  : input integer : radial element index in range 1 to nr
+      !+ad_desc  This function calculates the full frequency of ion
+      !+ad_desc  collisions (Hz).
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  supplied by Emiliano Fable, IPP Garching
+      !+ad_desc  (private communication).
+      !+ad_prob  None
+      !+ad_call  None
+      !+ad_hist  26/03/14 PJK Initial version
+      !+ad_stat  Okay
+      !+ad_docs  None
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       real(kind(1.0D0)) :: nui
 
+      !  Arguments
+
       integer, intent(in) :: j
+
+      !  Local variables
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      !	Coulomb logarithm = 15 is used
 
       nui = zmain(j)**4 * ni(j) * 322.0D0 / ( tempi(j)*sqrt(tempi(j)*amain(j)) )
 
@@ -1060,13 +1171,34 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     function dcsa(j,nr)
-      ! DCSA []:		Bootstrap current density
-      !			Jbs = HCSA*d(ln(Te))/drho + DCSA*d(ln(Ne))/drho + XCSA*d(ln(Ti))/drho
-      !                       Sauter, Angioni, Lin-Liu
-      !			Physics of Plasmas, 6, 2834 (1999)
-      !			(Angioni 29-MAY-2002)
+
+      !+ad_name  dcsa
+      !+ad_summ  Grad(ln(ne)) coefficient in the Sauter bootstrap scaling
+      !+ad_type  Function returning real
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_cont  None
+      !+ad_args  j  : input integer : radial element index in range 1 to nr
+      !+ad_args  nr : input integer : maximum value of j
+      !+ad_desc  This function calculates the coefficient scaling grad(ln(ne))
+      !+ad_desc  in the Sauter bootstrap current scaling.
+      !+ad_desc  Code by Angioni, 29th May 2002.
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  supplied by Emiliano Fable, IPP Garching
+      !+ad_desc  (private communication).
+      !+ad_prob  None
+      !+ad_call  beta_poloidal_local
+      !+ad_call  nues
+      !+ad_call  tpf
+      !+ad_hist  26/03/14 PJK Initial version
+      !+ad_stat  Okay
+      !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu,
+      !+ad_docc    Physics of Plasmas <B>6</B> (1999) 2834
+      !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu, (ERRATA)
+      !+ad_docc    Physics of Plasmas <B>9</B> (2002) 5140
       !
-      ! DCSA $\equiv \mathcal{L}_{31}$, Eq.14a
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      !  DCSA $\equiv \mathcal{L}_{31}$, Eq.14a, Sauter et al, 1999
 
       implicit none
 
@@ -1079,6 +1211,8 @@ contains
       !  Local variables
 
       real(kind(1.0D0)) :: zz,zft,zdf
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       if (j == 1) then
          dcsa = 0.0D0
@@ -1098,13 +1232,35 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     function hcsa(j,nr)
-      ! HCSA []:		Bootstrap current density
-      !			Jbs = HCSA*d(ln(Te))/drho + DCSA*d(ln(Ne))/drho + XCSA*d(ln(Ti))/drho
-      !                       Sauter, Angioni, Lin-Liu
-      !			Physics of Plasmas, 6, 2834 (1999)
-      !			(Angioni 29-MAY-2002)
+
+      !+ad_name  hcsa
+      !+ad_summ  Grad(ln(Te)) coefficient in the Sauter bootstrap scaling
+      !+ad_type  Function returning real
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_cont  None
+      !+ad_args  j  : input integer : radial element index in range 1 to nr
+      !+ad_args  nr : input integer : maximum value of j
+      !+ad_desc  This function calculates the coefficient scaling grad(ln(Te))
+      !+ad_desc  in the Sauter bootstrap current scaling.
+      !+ad_desc  Code by Angioni, 29th May 2002.
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  supplied by Emiliano Fable, IPP Garching
+      !+ad_desc  (private communication).
+      !+ad_prob  None
+      !+ad_call  beta_poloidal_local
+      !+ad_call  dcsa
+      !+ad_call  nues
+      !+ad_call  tpf
+      !+ad_hist  26/03/14 PJK Initial version
+      !+ad_stat  Okay
+      !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu,
+      !+ad_docc    Physics of Plasmas <B>6</B> (1999) 2834
+      !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu, (ERRATA)
+      !+ad_docc    Physics of Plasmas <B>9</B> (2002) 5140
       !
-      ! HCSA $\equiv ?$
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      !  HCSA $\equiv ?$, Sauter et al, 1999
 
       implicit none
 
@@ -1118,6 +1274,8 @@ contains
 
       real(kind(1.0D0)) :: zz,zft,zdf,zfte,zfte2,zfte3,zfte4
       real(kind(1.0D0)) :: zfti,zfti2,zfti3,zfti4,hcee,hcei
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       if (j == 1) then
          hcsa = 0.0D0
@@ -1157,11 +1315,33 @@ contains
 
     function xcsa(j,nr)
 
-      ! XCSA []:		Bootstrap current density
-      !			Jbs = HCSA*d(ln(Te))/drho + DCSA*d(ln(Ne))/drho + XCSA*d(ln(Ti))/drho
-      !                       Sauter, Angioni, Lin-Liu
-      !			Physics of Plasmas, 6, 2834 (1999)
-      !			(Angioni 29-MAY-2002)
+      !+ad_name  xcsa
+      !+ad_summ  Grad(ln(Ti)) coefficient in the Sauter bootstrap scaling
+      !+ad_type  Function returning real
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_cont  None
+      !+ad_args  j  : input integer : radial element index in range 1 to nr
+      !+ad_args  nr : input integer : maximum value of j
+      !+ad_desc  This function calculates the coefficient scaling grad(ln(Ti))
+      !+ad_desc  in the Sauter bootstrap current scaling.
+      !+ad_desc  Code by Angioni, 29th May 2002.
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  supplied by Emiliano Fable, IPP Garching
+      !+ad_desc  (private communication).
+      !+ad_prob  None
+      !+ad_call  beta_poloidal_local
+      !+ad_call  dcsa
+      !+ad_call  nues
+      !+ad_call  nuis
+      !+ad_call  tpf
+      !+ad_hist  26/03/14 PJK Initial version
+      !+ad_stat  Okay
+      !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu,
+      !+ad_docc    Physics of Plasmas <B>6</B> (1999) 2834
+      !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu, (ERRATA)
+      !+ad_docc    Physics of Plasmas <B>9</B> (2002) 5140
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       implicit none
 
@@ -1174,6 +1354,8 @@ contains
       !  Local variables
 
       real(kind(1.0D0)) :: zz,zft,zdf,a0,alp,a1,zfte
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       if (j == 1) then
          xcsa = 0.0D0
@@ -1206,7 +1388,28 @@ contains
 
     function tpf(j)
 
-      !  Trapped particle fraction
+      !+ad_name  tpf
+      !+ad_summ  Trapped particle fraction
+      !+ad_type  Function returning real
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_cont  None
+      !+ad_args  j  : input integer : radial element index in range 1 to nr
+      !+ad_desc  This function calculates the trapped particle fraction at
+      !+ad_desc  a given radius.
+      !+ad_desc  <P>A number of different fits are provided, but the one
+      !+ad_desc  to be used is hardwired prior to run-time.
+      !+ad_desc  <P>The ASTRA fit was supplied by Emiliano Fable, IPP Garching
+      !+ad_desc  (private communication).
+      !+ad_prob  The ASTRA and Sauter 2002 fits are almost identical, and it
+      !+ad_prob  is unclear which (if either) is better.
+      !+ad_call  None
+      !+ad_hist  26/03/14 PJK Initial version
+      !+ad_stat  Okay
+      !+ad_docs  O. Sauter et al, Plasma Phys. Contr. Fusion <B>44</B> (2002) 1999
+      !+ad_docs  O. Sauter, 2013:
+      !+ad_docc    http://infoscience.epfl.ch/record/187521/files/lrp_012013.pdf
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
       implicit none
 
@@ -1224,6 +1427,8 @@ contains
 
       integer :: fit = ASTRA
 
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
       s = sqeps(j)
       eps = s*s
 
@@ -1233,7 +1438,7 @@ contains
 
          !  ASTRA method, from Emiliano Fable, private communication
          !  (Excluding h term which dominates for inverse aspect ratios < 0.5,
-         !  taking the trapped particle fraction to 1)
+         !  and tends to take the trapped particle fraction to 1)
 
          zz = 1.0D0 - eps
 
@@ -1248,16 +1453,13 @@ contains
 
       case (SAUTER2002)
 
-         !  Equation 4 of O Sauter et al, Plasma Phys. Contr. Fusion 44 (2002) 1999
+         !  Equation 4 of Sauter 2002
          !  Similar to, but not quite identical to g above
 
          tpf = 1.0D0 - (1.0D0-eps)**2 / (1.0D0 + 1.46D0*s) / sqrt(1.0D0 - eps*eps)
 
       case (SAUTER2013)
 
-         !  Sauter (2013)
-         !  http://infoscience.epfl.ch/record/187521/files/lrp_012013.pdf
-         !
          !  Includes correction for triangularity
 
          epseff = 0.67D0*(1.0D0 - 1.4D0*triang*abs(triang)) * eps
@@ -4463,6 +4665,7 @@ contains
     !+ad_hist  06/03/14 PJK Added warning if pdivt=0.001;
     !+ad_hisc               clarified ishape effects on kappa, triang
     !+ad_hist  26/03/14 PJK Added all bootstrap current estimations
+    !+ad_hist  02/04/14 PJK Added confinement scaling law name to mfile
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4784,6 +4987,8 @@ contains
 
     write(outfile,10) tauscl(isc)
 10  format(' Confinement scaling law',T45,A24)
+
+    write(mfile,*) '"Confinement scaling law: ',tauscl(isc),'"'
 
     call ovarrf(outfile,'Confinement H factor','(hfact)',hfact)
     call ovarrf(outfile,'Global energy confinement time (s)','(taueff)',taueff)

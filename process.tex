@@ -1545,10 +1545,11 @@ Berchtesgaden, 1997 \\
 \label{sec:bootstrap}
 
 The fraction of the plasma current provided by the so-called bootstrap effect
-can be either input into the code directly, or calculated using one of three
-methods, as summarised here. Note that, at present, these methods all assume
-fits to parabolic density and temperature profiles, and do not take into
-account the existence of pedestals (\texttt{ipedestal = 1}).
+can be either input into the code directly, or calculated using one of four
+methods, as summarised here. Note that methods \texttt{ibss = 1} to~\texttt{3}
+use fits to parabolic density and temperature profiles, and do not take into
+account the existence of pedestals (\texttt{ipedestal = 1}), whereas the
+Sauter et al.\ scaling (\texttt{ibss = 4}) allows general profiles to be used.
 
 \begin{itemize}
 
@@ -1568,6 +1569,10 @@ account the existence of pedestals (\texttt{ipedestal = 1}).
   scaling method, valid for all aspect ratios, set \texttt{ibss = 3}, and
   \texttt{bscfmax} to the maximum required bootstrap current fraction ($\leq
   1$).
+
+\item Sauter, Angioni and Lin-Liu scaling~\cite{SauterBS, SauterBS_errata}:
+  Set \texttt{ibss = 4}, and \texttt{bscfmax} to the maximum required
+  bootstrap current fraction ($\leq 1$).
 
 \end{itemize}
 
@@ -4295,6 +4300,14 @@ ITER-TN-PH-8-4,
 \bibitem{WilsonBS}
 H.\ R.\ Wilson,
 Nuclear Fusion \textbf{32} (1992) 257
+
+\bibitem{SauterBS}
+O.\ Sauter, C.\ Angioni and Y.\ R.\ Lin-Liu,
+Physics of Plasmas \textbf{6} (1999) 2834
+
+\bibitem{SauterBS_errata}
+O.\ Sauter, C.\ Angioni and Y.\ R.\ Lin-Liu,
+Physics of Plasmas \textbf{9} (2002) 5140
 
 \bibitem{Uckan}
 N.\ A.\ Uckan et al.,

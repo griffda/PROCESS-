@@ -201,10 +201,12 @@ subroutine codever(outfile)
   !+ad_call  oblnkl
   !+ad_call  ocentr
   !+ad_call  ostars
+  !+ad_call  ovarin
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  17/11/97 PJK Changed file names to *.DAT
   !+ad_hist  08/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
+  !+ad_hist  02/04/14 PJK Added output to mfile
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -221,7 +223,9 @@ subroutine codever(outfile)
   !  Local variables
 
   integer, parameter :: width = 72
+  integer :: version
   character(len=width), dimension(0:10) :: progid
+  character(len=5) :: vstring
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -247,6 +251,20 @@ subroutine codever(outfile)
   write(outfile,*) progid(4)
   write(outfile,*) progid(5)
   write(outfile,*) progid(6)
+
+  if (outfile == nout) then
+
+     !  The following should work up to version 99999, but beware of
+     !  possible future changes to the progid(2) layout
+     !  Relies on an internal read statement
+
+     vstring = progid(2)(25:29)
+     read(vstring,'(i5)') version
+     call ovarin(mfile,'PROCESS version number','',version)
+
+     write(mfile,*) '"'//progid(3)//'"'  !  Date/time
+     write(mfile,*) '"'//progid(4)//'"'  !  User
+  end if
 
   call oblnkl(outfile)
   call ostars(outfile,width)
@@ -1458,3 +1476,5 @@ end subroutine output
 ! SVN 246: Corrected tcore formula for pedestal profiles
 ! SVN 247: Added numerical state information to mfile
 ! SVN 248: Added Sauter et al bootstrap current fraction model
+! SVN 249: Tidied up comments in Sauter et al model; added ibss=4 to User Guide;
+!          Added run-time info, PF coil and TF coil geometry to mfile

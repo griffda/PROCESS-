@@ -111,6 +111,7 @@ module physics_variables
   !+ad_hist  06/03/14 PJK Clarified effect of ishape on kappa, triang
   !+ad_hist  10/03/14 PJK Removed carea
   !+ad_hist  01/04/14 PJK Added ibss=4 option
+  !+ad_hist  02/04/14 PJK Added iprofile=1 recommendation to use icurr=4
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -397,7 +398,8 @@ module physics_variables
   integer :: ipedestal = 0
   !+ad_vars  iprofile /0/ : switch for current profile consistency:<UL>
   !+ad_varc             <LI> = 0 use input values for alphaj, rli, dnbeta;
-  !+ad_varc             <LI> = 1 make these consistent with input q, q0 values </UL>
+  !+ad_varc             <LI> = 1 make these consistent with input q, q0 values
+  !+ad_varc                      (recommendation: use icurr=4 with this option) </UL>
   integer :: iprofile = 0
   !+ad_vars  isc /34 (=IPB98(y,2))/ switch for energy confinement time scaling law
   !+ad_varc          (see description in tauscl)

@@ -2225,6 +2225,7 @@ contains
     !+ad_args  outfile : input integer : output file unit
     !+ad_desc  This routine writes the PF coil information to the output file.
     !+ad_prob  None
+    !+ad_call  int_to_string2
     !+ad_call  oblnkl
     !+ad_call  ocmmnt
     !+ad_call  oheadr
@@ -2233,6 +2234,7 @@ contains
     !+ad_hist  09/05/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/10/12 PJK Added physics_variables
+    !+ad_hist  02/04/14 PJK Added coil geometry to mfile
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2247,6 +2249,7 @@ contains
     !  Local variables
 
     integer :: k,nef
+    character(len=2) :: intstring
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2310,12 +2313,36 @@ contains
          turns(k),k=1,nef)
 20  format('  PF',i1,t10,5f12.2)
 
+    do k = 1,nef
+       intstring = int_to_string2(k)
+       call ovarre(mfile,'PF coil '//intstring//' radius (m)', &
+            '(rpf('//intstring//'))',rpf(k))
+       call ovarre(mfile,'PF coil '//intstring//' vertical position (m)', &
+            '(zpf('//intstring//'))',zpf(k))
+       call ovarre(mfile,'PF coil '//intstring//' radial thickness (m)', &
+            '(pfdr'//intstring//')',(rb(k)-ra(k)))
+       call ovarre(mfile,'PF coil '//intstring//' vertical thickness (m)', &
+            '(pfdz'//intstring//')',(zh(k)-zl(k)))
+       call ovarre(mfile,'PF coil '//intstring//' turns', &
+            '(turns('//intstring//'))',turns(k))
+    end do
+
     !  OH coil, if present
 
     if (iohcl.ne.0) then
        write(outfile,30) rpf(nohc),zpf(nohc),(rb(nohc)-ra(nohc)), &
             abs(zh(nohc)-zl(nohc)),turns(nohc)
 30     format('  OH',t10,5f12.2)
+       call ovarre(mfile,'OH coil radius (m)', &
+            '(rpf(nohc))',rpf(nohc))
+       call ovarre(mfile,'OH coil vertical position (m)', &
+            '(zpf(nohc))',zpf(nohc))
+       call ovarre(mfile,'OH coil radial thickness (m)', &
+            '(ohdr)',(rb(nohc)-ra(nohc)))
+       call ovarre(mfile,'OH coil vertical thickness (m)', &
+            '(ohdz)',(zh(nohc)-zl(nohc)))
+       call ovarre(mfile,'OH coil turns', &
+            '(turns(nohc))',turns(nohc))
     end if
 
     !  Plasma
