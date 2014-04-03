@@ -2235,6 +2235,7 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  02/04/14 PJK Added coil geometry to mfile
+    !+ad_hist  03/04/14 PJK Added coil currents and fields to mfile
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2325,6 +2326,10 @@ contains
             '(pfdz'//intstring//')',(zh(k)-zl(k)))
        call ovarre(mfile,'PF coil '//intstring//' turns', &
             '(turns('//intstring//'))',turns(k))
+       call ovarre(mfile,'PF coil '//intstring//' current (MA)', &
+            '(ric('//intstring//'))',ric(k))
+       call ovarre(mfile,'PF coil '//intstring//' field (T)', &
+            '(bpf('//intstring//'))',bpf(k))
     end do
 
     !  OH coil, if present
@@ -2343,6 +2348,10 @@ contains
             '(ohdz)',(zh(nohc)-zl(nohc)))
        call ovarre(mfile,'OH coil turns', &
             '(turns(nohc))',turns(nohc))
+       call ovarre(mfile,'OH coil current (MA)', &
+            '(ric(nohc))',ric(nohc))
+       call ovarre(mfile,'OH coil field (T)', &
+            '(bpf(nohc))',bpf(nohc))
     end if
 
     !  Plasma

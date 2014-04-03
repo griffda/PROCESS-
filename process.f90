@@ -202,11 +202,13 @@ subroutine codever(outfile)
   !+ad_call  ocentr
   !+ad_call  ostars
   !+ad_call  ovarin
+  !+ad_call  ovarst
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  17/11/97 PJK Changed file names to *.DAT
   !+ad_hist  08/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  02/04/14 PJK Added output to mfile
+  !+ad_hist  03/04/14 PJK Used ovarst to write character string output to mfile
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -226,6 +228,11 @@ subroutine codever(outfile)
   integer :: version
   character(len=width), dimension(0:10) :: progid
   character(len=5) :: vstring
+  character(len=8) :: date
+  character(len=10) :: time
+  character(len=12) :: dstring
+  character(len=7) :: tstring
+  character(len=10) :: ustring
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -254,16 +261,30 @@ subroutine codever(outfile)
 
   if (outfile == nout) then
 
-     !  The following should work up to version 99999, but beware of
-     !  possible future changes to the progid(2) layout
+     !  Beware of possible future changes to the progid(...) layouts
+
+     !  The following should work up to version 99999
      !  Relies on an internal read statement
 
      vstring = progid(2)(25:29)
      read(vstring,'(i5)') version
-     call ovarin(mfile,'PROCESS version number','',version)
+     call ovarin(mfile,'PROCESS version number','(procver)',version)
 
-     write(mfile,*) '"'//progid(3)//'"'  !  Date/time
-     write(mfile,*) '"'//progid(4)//'"'  !  User
+     call date_and_time(date=date, time=time)
+
+     !  Date output in the form "DD/MM/YYYY" (including quotes)
+
+     dstring = '"'//date(7:8)//'/'//date(5:6)//'/'//date(1:4)//'"'
+     call ovarst(mfile,'Date of run','(date)',dstring)
+
+     !  Time output in the form "hh:mm" (including quotes)
+
+     tstring = '"'//time(1:2)//':'//time(3:4)//'"'
+     call ovarst(mfile,'Time of run','(time)',tstring)
+
+     ustring = '"'//trim(progid(4)(13:20))//'"'
+     call ovarst(mfile,'User','(username)',ustring)
+
   end if
 
   call oblnkl(outfile)
@@ -1478,3 +1499,6 @@ end subroutine output
 ! SVN 248: Added Sauter et al bootstrap current fraction model
 ! SVN 249: Tidied up comments in Sauter et al model; added ibss=4 to User Guide;
 !          Added run-time info, PF coil and TF coil geometry to mfile
+! SVN 250: Tidied up string output to MFILE.DAT;
+!          Added new description of optimisation algorithm to User Guide
+!          (N.B. LaTeX not working properly due to problem with flow diagram)

@@ -4632,6 +4632,7 @@ contains
     !+ad_call  ovarin
     !+ad_call  ovarre
     !+ad_call  ovarrf
+    !+ad_call  ovarst
     !+ad_hist  17/09/97 PJK Upgrade to higher standard of coding. Added
     !+ad_hisc               Greenwald density limit
     !+ad_hist  17/11/97 PJK Added additional beta diagnostics
@@ -4666,6 +4667,7 @@ contains
     !+ad_hisc               clarified ishape effects on kappa, triang
     !+ad_hist  26/03/14 PJK Added all bootstrap current estimations
     !+ad_hist  02/04/14 PJK Added confinement scaling law name to mfile
+    !+ad_hist  03/04/14 PJK Used ovarst to write out confinement scaling law name
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4680,6 +4682,7 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: betath
+    character(len=30) :: tauelaw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4988,7 +4991,12 @@ contains
     write(outfile,10) tauscl(isc)
 10  format(' Confinement scaling law',T45,A24)
 
-    write(mfile,*) '"Confinement scaling law: ',tauscl(isc),'"'
+    if (index(tauscl(isc),'(') /= 0) then
+       tauelaw = '"'//trim(tauscl(isc)(1:index(tauscl(isc),'(',.true.)-1))//'"'
+    else
+       tauelaw = '"'//trim(tauscl(isc))//'"'
+    end if
+    call ovarst(mfile,'Confinement scaling law','(tauelaw)',trim(tauelaw))
 
     call ovarrf(outfile,'Confinement H factor','(hfact)',hfact)
     call ovarrf(outfile,'Global energy confinement time (s)','(taueff)',taueff)

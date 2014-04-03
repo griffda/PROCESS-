@@ -22,6 +22,7 @@ module process_output
   !+ad_cont  ovarin
   !+ad_cont  ovarre
   !+ad_cont  ovarrf
+  !+ad_cont  ovarst
   !+ad_cont  underscore
   !+ad_args  N/A
   !+ad_desc  This module contains a number of routines that allow the
@@ -597,6 +598,62 @@ contains
 10  format(1x,a,t45,a,t60,i10)
 
   end subroutine ovarin
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine ovarst(file,descr,varnam,value)
+
+    !+ad_name  ovarst
+    !+ad_summ  Routine to print out the details of a character variable
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  file : input integer : Fortran output unit identifier
+    !+ad_args  descr : input character string : Description of the variable
+    !+ad_args  varnam : input character string : Name of the variable
+    !+ad_args  value : input character string : Value of the variable
+    !+ad_desc  This routine writes out the description, name and value of a
+    !+ad_desc  character string variable.
+    !+ad_prob  None
+    !+ad_call  underscore
+    !+ad_hist  03/04/14 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: file
+    character(len=*), intent(in) :: descr, varnam, value
+
+    !  Local variables
+
+    character(len=42) :: dum42
+    character(len=13) :: dum13
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Replace descr and varnam with dummy strings of the correct length.
+    !  This counters problems that would occur if the two original strings
+    !  were the wrong length.
+
+    dum42 = descr
+    dum13 = varnam
+
+    if (file /= mfile) then
+       write(file,10) dum42, dum13, value
+    end if
+
+    call underscore(dum42)
+    call underscore(dum13)
+    write(mfile,10) dum42, dum13, value
+
+10  format(1x,a,t45,a,t60,a)
+
+  end subroutine ovarst
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
