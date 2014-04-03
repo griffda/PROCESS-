@@ -1502,3 +1502,4 @@ end subroutine output
 ! SVN 250: Tidied up string output to MFILE.DAT;
 !          Added new description of optimisation algorithm to User Guide
 !          (N.B. LaTeX not working properly due to problem with flow diagram)
+! SVN 251: Corrected problem with User Guide

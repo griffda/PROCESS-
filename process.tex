@@ -336,10 +336,10 @@ which a series of subproblems is solved that constitute a local quadratic
 expansion of the Lagrangian (c.f. section \ref{sec:QSP}). The solution of the
 quadratic subproblem is the direction of a line search along which a one
 dimensional optimisation is performed (c.f. section
-\ref{sec:linesearch}). This line search has been introduced by Powell to
-assure convergence from bad starting parameters. Within \process\/ we have
-modified the line search of the original \vmcon\/ routine to assure
-convergence, even for slightly inconsistent input functions.
+\ref{sec:linesearch}). This line search was introduced by Powell to assure
+convergence from bad starting parameters. Within \process\/ we have modified
+the line search of the original \vmcon\/ routine to assure convergence, even
+for slightly inconsistent input functions.
 
 The algorithm uses a quasi-Newtonian approach which only requires continuous
 first derivatives of these functions. While the first derivatives are
@@ -441,92 +441,6 @@ diagram of \process\/ in optimisation mode is shown in Figure
   \textbf{Update this Figure! Is this really consistent with the method used in VMCON?}
 }
 \end{figure}
-
-\subsection{Limit equations}
-\label{sec:slack}
-
-The limit equations are usually \textit{inequalities}\/ that ensure that
-various physics or engineering limits are not exceeded. 
-
-% OLD
-
-% Each of these equations has an associated \textit{f-value}, which allow
-% them to be coded as equalities. The f-values are used as follows.
-
-% In optimisation mode, all iteration variables have prescribed lower and
-% upper bounds. In general, limit equations have the form
-
-% \[ \mbox{\textit{calculated quantity}} = f \times \mbox{\textit{maximum
-%     allowable value}} \]
-
-% where $f$ is the f-value. If $f$ has a lower bound of zero and an upper
-% bound of one, then the limit equation does indeed constrain the calculated
-% quantity to lie between zero and its maximum allowable value, as required.
-
-%As with the consistency equations, the general form of the limit equations is
-%\[ c_i = 1 - f.\frac{h_{\mbox{\scriptsize max}}}{h} \] where
-% $h_{\mbox{\scriptsize max}}$ is the maximum allowed value of the quantity
-% $h$.
-
-% Sometimes, the limit equation and f-value are used to ensure that quantity
-% $h$ is \textit{larger}\/ than its \textit{minimum}\/ value
-% $h_{\mbox{\scriptsize min}}$. In this case, $0 \leq f \leq 1$ (as before),
-% but the equation takes the form \[ c_i = 1 - f.\frac{h}{h_{\mbox{\scriptsize
-%       min}}} \]
-
-% By fixing the f-value (i.e.\ not including it in the \texttt{ixc} array),
-% the limit equations can be used as equality constraints. For example, to set
-% the net electric power to a certain value, the following should be carried
-% out:
-%\begin{enumerate}
-%\item Activate constraint equation 16 by including it in the first
-%  \texttt{neqns} elements of array \texttt{icc}
-%\item Set \texttt{fpnetel = 1.0D0}
-%\item Ensure that \texttt{fpnetel} (iteration variable no.\ 25) \textit{DOES
-%    NOT}\/ appear in array \texttt{ixc}
-%\item Set \texttt{pnetelin} to the required net electric power.
-%\end{enumerate}
-
-%Limit equations are not restricted to optimisation mode. In non-optimisation
-% mode, the iteration variables are not bounded, but the f-values can still be
-% used to provide information about how calculated values compare with
-% limiting values, without having to change the characteristics of the device
-% being benchmarked to find a solution.
-
-% It is for this reason that all the constraint equations used in \process\
-% are formulated as equalities, despite the fact that equation solver VMCON
-% can solve for inequalities as well. The use of f-values precludes this need,
-% and allows the non-optimising equation solver HYBRD to use the same
-% constraint equations.
-
-It is common practice to replace inequality constraints with equality
-constraints introducing so called slack variables $s$ \cite[e.g.]{Avriel2003},
-i.e.
-\begin{equation}
-c(\vec{x}) \geq 0 
-\end{equation}
-can be rewritten as 
-\begin{equation}
-c(\vec{x}) - s = 0 \textnormal{ with } s \geq 0.
-\end{equation}
-These slack variables then allow for easy distinction between 
-\begin{itemize}
-\item a {\it binding} or {\it active} constraint $s=0$,
-\item a {\it non-binding} or {\it non-active} constraint $s>0$,
-\item and an {\it infeasible} point $s<0$.
-\end{itemize}
-
-Note that as long as $s$ is an iteration variable this formulation is
-equivalent to solving the inequality constraints. This prescription has been
-used for all inequality constraints within \process\/ to both allow
-inequalities to be turn into equality constraints and for consistency with the
-non-optimisation solver.
-
-XXX Influence on performance? 
-
-XXX include test results from new version.
-
-XXX Comment on reduction of iteration variables and NVAR $>$ NEQNS. 
 
 \subsection{Scans}
 
@@ -662,10 +576,43 @@ values, without having to change the characteristics of the device being
 benchmarked to find a solution.
 
 It is for this reason that all the constraint equations used in \process\ are
-formulated as equalities, despite the fact that equation solver VMCON can
+formulated as equalities, despite the fact that equation solver \vmcon\ can
 solve for inequalities as well. The use of f-values precludes this need, and
 allows the non-optimising equation solver HYBRD to use the same constraint
 equations.
+
+% NEW
+\label{sec:slack}
+% It is common practice to replace inequality constraints with equality
+% constraints introducing so called slack variables $s$ \cite[e.g.]{Avriel2003},
+% i.e.
+% \begin{equation}
+% c(\vec{x}) \geq 0 
+% \end{equation}
+% can be rewritten as 
+% \begin{equation}
+% c(\vec{x}) - s = 0 \textnormal{ with } s \geq 0.
+% \end{equation}
+% These slack variables then allow for easy distinction between 
+% \begin{itemize}
+% \item a {\it binding} or {\it active} constraint $s=0$,
+% \item a {\it non-binding} or {\it non-active} constraint $s>0$,
+% \item and an {\it infeasible} point $s<0$.
+% \end{itemize}
+
+% Note that as long as $s$ is an iteration variable this formulation is
+% equivalent to solving the inequality constraints. This prescription has been
+% used for all inequality constraints within \process\/ to both allow
+% inequalities to be turn into equality constraints and for consistency with the
+% non-optimisation solver.
+
+% XXX Influence on performance? 
+
+% XXX include test results from new version.
+
+% XXX Comment on reduction of iteration variables and NVAR $>$ NEQNS. 
+
+
 
 % Table summarising constraint equations
 
@@ -4819,14 +4766,16 @@ rearranged analogously to fit the form described in eq. \ref{eq:NPP3}.
 \section{The Lagrange Method}
 \label{sec:Lagrange}
 
-\begin{figure}
-\includegraphics[width=\textwidth]{lagrange_multipliers.png} 
-\caption{Illustration of Lagrange Multiplier Method (credit Wikipedia) showing
-  two contour lines of the objective function $f(x,y) = d_i$ (dark blue dashed
-  lines) and the nonlinear constraint $g(x,y)=c$ (red solid line) as well as
-  their gradients (blue and red arrows) at various positions including the
-  constrained optimum (light blue and orange arrows).}
-\label{fig:LagrangeMultipliers}
+\begin{figure}[tbph]
+\epsfig{file=lagrange_multipliers.eps,width=\textwidth}
+\caption[Illustration of Lagrange multiplier method]
+{\label{fig:LagrangeMultipliers} \textit{Illustration of Lagrange Multiplier
+    Method (credit Wikipedia) showing two contour lines of the objective
+    function $f(x,y) = d_i$ (dark blue dashed lines) and the nonlinear
+    constraint $g(x,y)=c$ (red solid line) as well as their gradients (blue
+    and red arrows) at various positions including the constrained optimum
+    (light blue and orange arrows).}
+}
 \end{figure}
 
 The general nonlinear programming problem can be solved mathematically using
@@ -4980,11 +4929,12 @@ dimensional feasible subspace \cite{Luenberger2008}.
   \mybackground{p7}{p5}{p6}{p8}{Line search}
   
 \end{tikzpicture}
-\caption{This is the flow chart of the \vmcon\/ optimisation solver. The
-  criteria for and the interpretation of the successful (\ifail\/ = 1) and
-  unsuccessful (\ifail\/ $\neq$ 1) return parameters are described in Table
-  \ref{tab:ifail}. }
+\caption[Flowchart of the \vmcon\ optimisation solver] { \textit{This is the
+    flow chart of the \vmcon\/ optimisation solver. The criteria for and the
+    interpretation of the successful (\ifail\/ = 1) and unsuccessful (\ifail\/
+    $\neq$ 1) return parameters are described in Table \ref{tab:ifail}. }
 \label{fig:vmconflow}
+}
 \end{centering}
 \end{figure}
 
