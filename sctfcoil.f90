@@ -1133,6 +1133,7 @@ contains
     !+ad_call  ocmmnt
     !+ad_call  oheadr
     !+ad_call  osubhd
+    !+ad_call  ovarin
     !+ad_call  ovarre
     !+ad_hist  14/05/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
@@ -1140,6 +1141,7 @@ contains
     !+ad_hist  11/04/13 PJK Clarified some output labels
     !+ad_hist  07/11/13 PJK Removed obsolete switch magnt; modified layout
     !+ad_hist  02/04/14 PJK Added TF coil geometry to mfile
+    !+ad_hist  03/04/14 PJK Added superconductor type to mfile
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1163,6 +1165,20 @@ contains
 
     call oheadr(outfile,'TF Coils')
     call ocmmnt(outfile,'Superconducting TF coils')
+
+    call ovarin(outfile,'TF coil superconductor material','(isumattf)',isumattf)
+
+    select case (isumattf)
+    case (1)
+       call ocmmnt(outfile,'  (ITER Nb3Sn critical surface model)')
+    case (2)
+       call ocmmnt(outfile,'  (Bi-2212 high temperature superconductor)')
+    case (3)
+       call ocmmnt(outfile,'  (NbTi)')
+    case (4)
+       call ocmmnt(outfile, &
+            '  (ITER Nb3Sn critical surface model, user-defined parameters)')
+    end select
 
     call osubhd(outfile,'Wedged TF Coils, with two-step winding')
 
