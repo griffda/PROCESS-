@@ -1504,3 +1504,5 @@ end subroutine output
 !          (N.B. LaTeX not working properly due to problem with flow diagram)
 ! SVN 251: Corrected problem with User Guide
 ! SVN 252: Added isumattf to mfile
+! SVN 253: Added full list of python utilities to repository, plus a new write-up in the
+!          User Guide
