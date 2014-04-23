@@ -81,6 +81,7 @@ contains
     !+ad_hist  18/12/12 PJK/RK Modified vertical bore for single-null cases
     !+ad_hist  06/11/13 PJK Modified coil case mass and leg area calculations
     !+ad_hist  26/02/14 PJK Changed comment in the case of too small tftort
+    !+ad_hist  23/04/14 PJK Modified TF coil leg length calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -189,8 +190,11 @@ contains
     !  Coil inside perimeter
 
     tfleng = 0.0D0
-    do i = 1,4
+    do i = 1,2
        tfleng = tfleng + 2.0D0*(radctf(i) + 0.5D0*tfcth) * dthet(i)
+    end do
+    do i = 3,4
+       tfleng = tfleng + 2.0D0*(radctf(i) + 0.5D0*tfthko) * dthet(i)
     end do
 
     !  Case thicknesses (inboard leg)

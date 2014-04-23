@@ -1507,3 +1507,4 @@ end subroutine output
 ! SVN 253: Added full list of python utilities to repository, plus a new write-up in the
 !          User Guide
 ! SVN 254: Minor changes to write_constraints.py
+! SVN 255: Modified tfleng calculation to use tfthko on outboard side
