@@ -1506,3 +1506,4 @@ end subroutine output
 ! SVN 252: Added isumattf to mfile
 ! SVN 253: Added full list of python utilities to repository, plus a new write-up in the
 !          User Guide
+! SVN 254: Minor changes to write_constraints.py

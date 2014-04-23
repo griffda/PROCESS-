@@ -1,15 +1,21 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 """
-	Modifies the PROCESS input file IN.DAT to include the constraints marked "Y" in constraints.prn. 
-	Also automatically includes the required iteration variable for each constraint, and additional iteration variables selected.
-	Blank upper and lower bound equations are also created - these need to be completed or deleted.
+	Modifies the PROCESS input file IN.DAT to include the constraints marked
+        "Y" in write_constraints.conf. 
+
+	Also automatically includes the required iteration variable for each
+        constraint, and additional iteration variables selected.
+
+	Blank upper and lower bound equations are also created - these need
+        to be completed or deleted.
+
 	Original IN.DAT is renamed OLD.IN.DAT
 
    Michael Kovari 23/10/13, revised 21/2/14
    
 	Input files:
-		IN.DAT, constraints.prn in the working directory
+		IN.DAT, write_constraints.conf in the working directory
 		
 	Output files:
 		All of them in the working directory   
@@ -18,8 +24,9 @@
 		
     Execution procedure:
 		Make sure this file has execution permission
-		Save this file either in the current directory or in your bin directory or wherever you have a path.
-		Execute from the Linux command line: WriteConstraints.py	
+		Save this file either in the current directory or in your bin
+                directory or wherever you have a path.
+		Execute from the Linux command line: write_constraints.py	
 """
 
 import sys, os
@@ -28,11 +35,11 @@ from subprocess import call
 import string
 	
 def readConstraints():
-	#Reads the constraints defined using "Y" in first column of constraint.prn and saves them to 
-	#the array constraints.
+	# Reads the constraints defined using "Y" in first column of
+        # write_constraints.conf and saves them to the array constraints.
 	i=0
 	j=0
-	for line in fileinput.input("constraints.prn"):
+	for line in fileinput.input("write_constraints.conf"):
 		line=line.lower()
 		if line[0]=="y":	
 			if "icc" in line:
