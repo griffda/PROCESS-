@@ -112,6 +112,7 @@ module physics_variables
   !+ad_hist  10/03/14 PJK Removed carea
   !+ad_hist  01/04/14 PJK Added ibss=4 option
   !+ad_hist  02/04/14 PJK Added iprofile=1 recommendation to use icurr=4
+  !+ad_hist  23/04/14 PJK Added bvert
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -246,6 +247,8 @@ module physics_variables
   real(kind(1.0D0)) :: btot = 0.0D0
   !+ad_vars  burnup : fractional plasma burnup
   real(kind(1.0D0)) :: burnup = 0.0D0
+  !+ad_vars  bvert : vertical field at plasma (T)
+  real(kind(1.0D0)) :: bvert = 0.0D0
   !+ad_vars  cfe0 /0.0/ : seeded high-Z impurity fraction (n_highZ / n_e)
   !+ad_varc               (iteration variable 43)
   real(kind(1.0D0)) :: cfe0 = 0.0D0

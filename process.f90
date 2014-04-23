@@ -1508,3 +1508,4 @@ end subroutine output
 !          User Guide
 ! SVN 254: Minor changes to write_constraints.py
 ! SVN 255: Modified tfleng calculation to use tfthko on outboard side
+! SVN 256: Added vertical field calculation

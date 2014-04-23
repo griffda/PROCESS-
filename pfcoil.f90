@@ -107,6 +107,7 @@ contains
     !+ad_hisc               new (but commented-out) CS flux swing requirement calc.
     !+ad_hist  27/11/13 PJK Moved pfrmax, pfmmax calculations from buildings module
     !+ad_hist  12/02/14 PJK Added turns array to first lap fix
+    !+ad_hist  23/04/14 PJK Added bvert assignment
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -372,6 +373,11 @@ contains
 
        end do
 
+       !  Vertical field (T)
+
+       bvert = -1.0D-7 * plascur/rmajor * &
+            (log(8.0D0*aspect) + betap + (rli/2.0D0) - 1.5D0)
+
     else
 
        !  Conventional aspect ratio scaling
@@ -445,6 +451,8 @@ contains
 
        bzin(1) = -1.0D-7 * plascur/rmajor * &
             (log(8.0D0*aspect) + betap + (rli/2.0D0) - 1.5D0)
+
+       bvert = bzin(1)
 
        call efc(ngrpmx,nclsmx,nptsmx,nfixmx,lrow1,lcol1,npts0, &
             rpts,zpts,brin,bzin,nfxf0,rfxf,zfxf,cfxf,ngrp0,ncls0, &

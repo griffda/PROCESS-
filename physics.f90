@@ -4668,6 +4668,7 @@ contains
     !+ad_hist  26/03/14 PJK Added all bootstrap current estimations
     !+ad_hist  02/04/14 PJK Added confinement scaling law name to mfile
     !+ad_hist  03/04/14 PJK Used ovarst to write out confinement scaling law name
+    !+ad_hist  23/04/14 PJK Added bvert
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4777,6 +4778,7 @@ contains
        call ovarrf(outfile,'Plasma current (MA)','(plascur/1D6)',plascur/1.0D6)
        call ovarrf(outfile,'Current density profile factor','(alphaj)',alphaj)
        call ovarrf(outfile,'Plasma internal inductance, li','(rli)',rli)
+       call ovarrf(outfile,'Vertical field at plasma (T)','(bvert)',bvert)
     end if
 
     if (irfp == 0) then
