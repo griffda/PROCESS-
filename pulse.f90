@@ -167,6 +167,7 @@ contains
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  31/10/12 PJK Added constraint_variables
     !+ad_hist  15/04/13 PJK Changed approximation for first wall nuclear heating
+    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_stat  Okay
     !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -242,262 +243,176 @@ contains
 
     if (lpulse /= 1) return
 
-    if (iprint /= 1) then
+    !  We will assume that 2*bfw is the average of the inboard and
+    !  outboard first wall thicknesses (fwith and fwoth respectively).
 
-       !  We will assume that 2*bfw is the average of the inboard and
-       !  outboard first wall thicknesses (fwith and fwoth respectively).
+    bfw = (fwith+fwoth)/4.0D0
+    boa = bfw/afw
 
-       bfw = (fwith+fwoth)/4.0D0
-       boa = bfw/afw
+    !  Poisson's ratio
 
-       !  Poisson's ratio
+    poissn = 0.27D0
 
-       poissn = 0.27D0
+    !  Start of iteration of bfw - code returns to here
+    !  if bfw has been altered to lie within constraints
 
-       !  Start of iteration of bfw - code returns to here
-       !  if bfw has been altered to lie within constraints
+    n = 0
+    bfw_iteration: do ; n = n+1
 
-       n = 0
-       bfw_iteration: do ; n = n+1
+       if (n > 100) then
+          write(*,*) 'Warning in routine THRMAL:'
+          write(*,*) 'Optimisation has failed within 100 iterations.'
+          write(*,*) 'Possible NaN problems...'
+          write(*,*) 'PROCESS continuing.'
+          !return
+          exit bfw_iteration
+       end if
 
-          if (n > 100) then
-             write(*,*) 'Warning in routine THRMAL:'
-             write(*,*) 'Optimisation has failed within 100 iterations.'
-             write(*,*) 'Possible NaN problems...'
-             write(*,*) 'PROCESS continuing.'
-             !return
-             exit bfw_iteration
+       !  Check to see if inner radius is greater than outer radius
+
+       if (afw >= bfw) then
+          write(*,*) 'Error in routine PULSE:'
+          write(*,*) 'afw >= bfw'
+          write(*,*) 'PROCESS stopping.'
+          stop
+       end if
+
+       !  First wall lifetime in seconds
+
+       fwlifs = 3.1536D7*fwlife
+
+       !  First wall properties
+
+       !  Heating power due to neutron deposition (W)
+       !  The previous method assumed that the neutrons lost via fhole
+       !  actually stop in the first wall, so are not lost at all...
+       !fwndep = (pneut*vol)*fhole*1.0D6
+
+       !  New method based on that for nuclear heating in the blanket
+       !  in fwbs.f90. A neutron decay length of 0.075m is assumed, and
+       !  the TART centrepost term is ignored.
+
+       decay = 0.075D0 / (1.0D0 - afw*afw/(bfw*bfw))  !  a2/b2 = coolant fraction
+
+       fwndep = (1.0D6*pneut*vol) * (1.0D0-fhole) * &
+            ( 1.0D0 - exp( -(2.0D0*bfw)/decay) )
+
+       !  Assume that the first wall volume is equal to its surface area
+       !  multiplied by the external diameter of the hollow cylindrical
+       !  tubes that make up the first wall.
+
+       fwvol = fwarea*(2.0D0*bfw)
+
+       !  Heat fluxes
+       !  -----------
+       !  qppp represents the heat generation in the first wall due to
+       !  the neutron flux deposited in the material.
+       !  qpp represents the heat flux incident on the first wall
+       !  surface from the charge particle and electromagnetic radiation
+       !  flux.
+
+       qppp = fwndep/fwvol
+
+       qpp = (palp+pcharge)*vol*1.0D6 / fwarea
+
+       !  Heat transfer coefficient
+       !  -------------------------
+       !  The coolant is water and the heat transfer coefficient is 
+       !  calculated on the inboard side of the first wall.
+       !  specific heat capacity: 4190 (J/K/kg)
+       !  mass density: 720 (kg/m**3)
+       !  coolant velocity limit: 5 (m/s)
+       !  fluid viscosity: 1.61D-4 (kg/m/s)
+       !  viscosity at wall temperature: 1.39D-4 (kg/m/s)
+       !  thermal conductivity: 0.69 (W/m/K)
+       !  If the velocity limit is exceeded then the coolant velocity
+       !  is set to the velocity limit and the temperature rise is
+       !  calculated based upon this fixed velocity.
+       !
+       !  A toroidal length of 3 metres is assumed rather than
+       !  the whole toroidal circumference as we were
+       !  experiencing very high coolant temperature rises.
+       !  This method is okay as it can be envisaged that the
+       !  toroidal parts of the coolant pipes occur in 3 metre
+       !  sections around the torus, instead of one long
+       !  toroidal pipe.
+
+       torlen = 3.0D0
+       masflx = torlen*(qppp*(bfw**2-afw**2) + 2.0D0*qpp*bfw) &
+            /afw**2 /4190.0D0 /tmprse
+       vel = masflx/720.0D0
+
+       if (vel >= 5.0D0) then
+          vel = 5.0D0
+          masflx = vel*720.0D0
+          tmprse = torlen*(qppp*(bfw**2-afw**2) + 2.0D0*qpp*bfw) &
+               /afw**2 /4190.0D0 /masflx
+       end if
+
+       hcoeff = 0.023D0*(0.69D0/2.0D0/afw)*(masflx*2.0D0*afw &
+            /1.61D-4)**0.8D0 * (1.61D-4*4190.0D0/0.69D0)**0.4D0 &
+            *(1.61D-4/1.39D-4)**0.14D0
+
+       !  Average temperature
+       !  -------------------
+       !  There is a problem here because the expression for the
+       !  average temperature in the first wall contains a term
+       !  which involves the thermal conductivity which is in itself
+       !  temperature dependent. How do we resolve this problem?
+       !  Firstly we define a temperature range where the lower
+       !  bound is defined to be the temperature on the inner
+       !  wall (in contact with the coolant) and therefore
+       !  equal to the bulk coolant temperature, and the
+       !  upper bound is taken to be 800 degrees Celsius.
+       !  Next we iterate over this range so that at each 
+       !  step the average temperature can be calculated together 
+       !  with the difference between the average temperature and 
+       !  the iterated temperature. The average temperature
+       !  at which this difference is minimised is taken 
+       !  as the correct average temperature in the first wall.
+
+       mindif = 1.0D30
+
+       do k = 1,51
+
+          temp = bctmp + (800.0D0-bctmp) * dble(k-1)/50.0D0
+          tfwav = bfw/tk(temp)*(qpp/pi + qppp*bfw/2.0D0)*(bfw**2/ &
+               (bfw**2-afw**2)*log(bfw/afw)-0.5D0) &
+               - qppp/4.0D0/tk(temp)*((bfw**2-afw**2)/2.0D0) &
+               + (pi*(bfw**2-afw**2)*qppp + 2.0D0*bfw*qpp)/ &
+               (2.0D0*pi*afw*hcoeff) + bctmp
+          tmpdif = abs(tfwav-temp)
+
+          if (tmpdif <= mindif) then
+             mindif = tmpdif
+             tav = tfwav
+             tmprop = temp
           end if
 
-          !  Check to see if inner radius is greater than outer radius
+       end do
 
-          if (afw >= bfw) then
-             write(*,*) 'Error in routine PULSE:'
-             write(*,*) 'afw >= bfw'
-             write(*,*) 'PROCESS stopping.'
-             stop
-          end if
+       !  Average thermal strain (integrated from 20 Celsius to 'tav')
 
-          !  First wall lifetime in seconds
+       eptbar = 10.28D-6/1.093D0 * (tav**(1.093D0) - 20.0D0**(1.093D0))
 
-          fwlifs = 3.1536D7*fwlife
+       !  Limits on the first wall thickness
+       !  ----------------------------------
+       !  The upper limit on the first wall thickness is
+       !  derived from the swelling limit which for stainless
+       !  steel limits the temperature to 500 Celsius. This
+       !  temperature limit is equivalent to limiting the neutron
+       !  fluence to 5 MW yrs/m**2. The fluence is the product
+       !  of the neutron wall loading (qppp*fwvol/fwarea) and
+       !  the wall lifetime. This fluence limit is a conservative
+       !  one, with the upper bound on the fluence set by the value
+       !  10 MW-yr/m2
+       !+**PJK 13/02/97 abktflnc should replace the fixed value 10 MW-yr/m2
 
-          !  First wall properties
+       flnce = qppp*fwvol/fwarea * fwlife/1.0D6
 
-          !  Heating power due to neutron deposition (W)
-          !  The previous method assumed that the neutrons lost via fhole
-          !  actually stop in the first wall, so are not lost at all...
-          !fwndep = (pneut*vol)*fhole*1.0D6
-
-          !  New method based on that for nuclear heating in the blanket
-          !  in fwbs.f90. A neutron decay length of 0.075m is assumed, and
-          !  the TART centrepost term is ignored.
-
-          decay = 0.075D0 / (1.0D0 - afw*afw/(bfw*bfw))  !  a2/b2 = coolant fraction
-
-          fwndep = (1.0D6*pneut*vol) * (1.0D0-fhole) * &
-               ( 1.0D0 - exp( -(2.0D0*bfw)/decay) )
-
-          !  Assume that the first wall volume is equal to its surface area
-          !  multiplied by the external diameter of the hollow cylindrical
-          !  tubes that make up the first wall.
-
-          fwvol = fwarea*(2.0D0*bfw)
-
-          !  Heat fluxes
-          !  -----------
-          !  qppp represents the heat generation in the first wall due to
-          !  the neutron flux deposited in the material.
-          !  qpp represents the heat flux incident on the first wall
-          !  surface from the charge particle and electromagnetic radiation
-          !  flux.
-
-          qppp = fwndep/fwvol
-
-          qpp = (palp+pcharge)*vol*1.0D6 / fwarea
-
-          !  Heat transfer coefficient
-          !  -------------------------
-          !  The coolant is water and the heat transfer coefficient is 
-          !  calculated on the inboard side of the first wall.
-          !  specific heat capacity: 4190 (J/K/kg)
-          !  mass density: 720 (kg/m**3)
-          !  coolant velocity limit: 5 (m/s)
-          !  fluid viscosity: 1.61D-4 (kg/m/s)
-          !  viscosity at wall temperature: 1.39D-4 (kg/m/s)
-          !  thermal conductivity: 0.69 (W/m/K)
-          !  If the velocity limit is exceeded then the coolant velocity
-          !  is set to the velocity limit and the temperature rise is
-          !  calculated based upon this fixed velocity.
-          !
-          !  A toroidal length of 3 metres is assumed rather than
-          !  the whole toroidal circumference as we were
-          !  experiencing very high coolant temperature rises.
-          !  This method is okay as it can be envisaged that the
-          !  toroidal parts of the coolant pipes occur in 3 metre
-          !  sections around the torus, instead of one long
-          !  toroidal pipe.
-
-          torlen = 3.0D0
-          masflx = torlen*(qppp*(bfw**2-afw**2) + 2.0D0*qpp*bfw) &
-               /afw**2 /4190.0D0 /tmprse
-          vel = masflx/720.0D0
-
-          if (vel >= 5.0D0) then
-             vel = 5.0D0
-             masflx = vel*720.0D0
-             tmprse = torlen*(qppp*(bfw**2-afw**2) + 2.0D0*qpp*bfw) &
-                  /afw**2 /4190.0D0 /masflx
-          end if
-
-          hcoeff = 0.023D0*(0.69D0/2.0D0/afw)*(masflx*2.0D0*afw &
-               /1.61D-4)**0.8D0 * (1.61D-4*4190.0D0/0.69D0)**0.4D0 &
-               *(1.61D-4/1.39D-4)**0.14D0
-
-          !  Average temperature
-          !  -------------------
-          !  There is a problem here because the expression for the
-          !  average temperature in the first wall contains a term
-          !  which involves the thermal conductivity which is in itself
-          !  temperature dependent. How do we resolve this problem?
-          !  Firstly we define a temperature range where the lower
-          !  bound is defined to be the temperature on the inner
-          !  wall (in contact with the coolant) and therefore
-          !  equal to the bulk coolant temperature, and the
-          !  upper bound is taken to be 800 degrees Celsius.
-          !  Next we iterate over this range so that at each 
-          !  step the average temperature can be calculated together 
-          !  with the difference between the average temperature and 
-          !  the iterated temperature. The average temperature
-          !  at which this difference is minimised is taken 
-          !  as the correct average temperature in the first wall.
-
-          mindif = 1.0D30
-
-          do k = 1,51
-
-             temp = bctmp + (800.0D0-bctmp) * dble(k-1)/50.0D0
-             tfwav = bfw/tk(temp)*(qpp/pi + qppp*bfw/2.0D0)*(bfw**2/ &
-                  (bfw**2-afw**2)*log(bfw/afw)-0.5D0) &
-                  - qppp/4.0D0/tk(temp)*((bfw**2-afw**2)/2.0D0) &
-                  + (pi*(bfw**2-afw**2)*qppp + 2.0D0*bfw*qpp)/ &
-                  (2.0D0*pi*afw*hcoeff) + bctmp
-             tmpdif = abs(tfwav-temp)
-
-             if (tmpdif <= mindif) then
-                mindif = tmpdif
-                tav = tfwav
-                tmprop = temp
-             end if
-
-          end do
-
-          !  Average thermal strain (integrated from 20 Celsius to 'tav')
-
-          eptbar = 10.28D-6/1.093D0 * (tav**(1.093D0) - 20.0D0**(1.093D0))
-
-          !  Limits on the first wall thickness
-          !  ----------------------------------
-          !  The upper limit on the first wall thickness is
-          !  derived from the swelling limit which for stainless
-          !  steel limits the temperature to 500 Celsius. This
-          !  temperature limit is equivalent to limiting the neutron
-          !  fluence to 5 MW yrs/m**2. The fluence is the product
-          !  of the neutron wall loading (qppp*fwvol/fwarea) and
-          !  the wall lifetime. This fluence limit is a conservative
-          !  one, with the upper bound on the fluence set by the value
-          !  10 MW-yr/m2
-          !+**PJK 13/02/97 abktflnc should replace the fixed value 10 MW-yr/m2
-
-          flnce = qppp*fwvol/fwarea * fwlife/1.0D6
-
-          tmax = -1.0D30
-
-          do k = 1,11
-
-             rad = afw + (bfw-afw)*(dble(k-1)/10.0D0)
-
-             call costrm(0.0D0,rad,qpp,hcoeff,tmprop,tmthet)
-
-             !  Peak temperature occurs at (r,theta) = (rad,0)
-
-             tpeak = bfw/tk(tmprop) * (qpp/pi + qppp*bfw/2.0D0) &
-                  * log(rad/afw) - qppp/4.0D0/tk(tmprop)*(rad**2-afw**2) &
-                  + (pi*(bfw**2-afw**2)*qppp + 2.0D0*bfw*qpp) / &
-                  (2.0D0*pi*afw*hcoeff) + bctmp + tmthet
-
-             if ((tpeak > 500.0D0).or.(flnce > 10.0D0)) then
-                !  Swelling limit exceeded
-
-                fwlife = 10.0D0*1.0D6*fwarea/qppp/fwvol
-                fwlifs = 3.1536D+7*fwlife
-
-                !  fboa is chosen such that fboa**100 * (bfw/afw) = 1.001,
-                !  i.e. after 100 iterations bfw is still just larger than afw.
-
-                fboa = (1.001D0/boa)**0.01D0
-
-                bfw = bfw*fboa
-                if ((bfw/afw) <= 1.001D0) then
-                   write(*,*) 'Warning in routine THRMAL:'
-                   write(*,*) 'Swelling limit exceeded, and'
-                   write(*,*) 'optimisation is failing to find a'
-                   write(*,*) 'suitable first wall thickness...'
-                   write(*,*) 'PROCESS continuing.'
-                   exit bfw_iteration
-                else
-                   cycle bfw_iteration
-                end if
-             end if
-
-             !  Find maximum temperature
-
-             tmax = max(tpeak,tmax)
-
-          end do
-
-          tpeak = tmax
-
-          !  The lower limit on the first wall thickness is
-          !  derived from the constraint that the first wall
-          !  must possess the ability to withstand the internal
-          !  coolant pressure. The limit is written as
-          !  hmin = p*(afw+bfw)/2/Smt
-
-          sgpthn = (coolp*(afw+bfw)/2.0D0)/(bfw-afw)
-
-          if (sgpthn <= smt(tpeak,fwlifs)) then
-             exit bfw_iteration
-          else
-             !  First wall too thin
-             !  Keep afw fixed and alter bfw so that the lower limit
-             !  is satisfied
-
-             bfw = afw * (smt(tpeak,fwlifs) + coolp/2.0D0) / &
-                  (smt(tpeak,fwlifs) - coolp/2.0D0)
-          end if
-
-       end do bfw_iteration
-
-       !  Reset inboard and outboard first wall thicknesses
-
-       fwith = 2.0D0*bfw
-       fwoth = 2.0D0*bfw
-
-       !  First wall coolant fraction
-
-       fwclfr = (afw/bfw)**2
-
-       min01 = 0.0D0
-       min02 = 0.0D0
-       min03 = 0.0D0
-
-       !  Iterate from the inner first wall radius to the outer
-       !  first wall radius
+       tmax = -1.0D30
 
        do k = 1,11
-
-          !  Peak temperature at this radius
 
           rad = afw + (bfw-afw)*(dble(k-1)/10.0D0)
 
@@ -505,160 +420,244 @@ contains
 
           !  Peak temperature occurs at (r,theta) = (rad,0)
 
-          tpeakr = bfw/tk(tmprop) * (qpp/pi + qppp*bfw/2.0D0) &
-               *log(rad/afw) - qppp/4.0D0/tk(tmprop) * (rad**2-afw**2) &
-               + (pi*(bfw**2 - afw**2)*qppp + 2.0D0*bfw*qpp) &
-               / (2.0D0*pi*afw*hcoeff) + bctmp + tmthet
+          tpeak = bfw/tk(tmprop) * (qpp/pi + qppp*bfw/2.0D0) &
+               * log(rad/afw) - qppp/4.0D0/tk(tmprop)*(rad**2-afw**2) &
+               + (pi*(bfw**2-afw**2)*qppp + 2.0D0*bfw*qpp) / &
+               (2.0D0*pi*afw*hcoeff) + bctmp + tmthet
 
-          !  Pressure, or mechanical stresses
+          if ((tpeak > 500.0D0).or.(flnce > 10.0D0)) then
+             !  Swelling limit exceeded
 
-          sigpr = -coolp*(afw**2/(bfw**2-afw**2))*(bfw**2/rad**2 - 1.0D0)
-          sigpth = coolp*(afw**2/(bfw**2-afw**2))*(bfw**2/rad**2 + 1.0D0)
-          sigpz =  coolp*(afw**2/(bfw**2-afw**2))
+             fwlife = 10.0D0*1.0D6*fwarea/qppp/fwvol
+             fwlifs = 3.1536D+7*fwlife
 
-          !  Equivalent mechanical stress
+             !  fboa is chosen such that fboa**100 * (bfw/afw) = 1.001,
+             !  i.e. after 100 iterations bfw is still just larger than afw.
 
-          sigpm = sqrt(0.5D0*((sigpr-sigpth)**2 + (sigpr-sigpz)**2 &
-               + (sigpth-sigpz)**2))
+             fboa = (1.001D0/boa)**0.01D0
 
-          !  Thermal stresses
-          !  ----------------
+             bfw = bfw*fboa
+             if ((bfw/afw) <= 1.001D0) then
+                write(*,*) 'Warning in routine THRMAL:'
+                write(*,*) 'Swelling limit exceeded, and'
+                write(*,*) 'optimisation is failing to find a'
+                write(*,*) 'suitable first wall thickness...'
+                write(*,*) 'PROCESS continuing.'
+                exit bfw_iteration
+             else
+                cycle bfw_iteration
+             end if
+          end if
 
-          !  Thermal stress components from surface heat flux (i.e. qpp)
+          !  Find maximum temperature
 
-          sigtrs = alpha(tmprop)*eyung(tmprop)/2.0D0/(1.0D0-poissn) &
-               * ( rad/(afw**2 + bfw**2)*(1.0D0 - afw**2/rad**2) &
-               * (1.0D0 - bfw**2/rad**2)*cc(1) * cos(0.0D0) &
-               + qpp*bfw/pi/tk(tmprop)/rad**2*(bfw**2*((rad**2 - afw**2) &
-               / (bfw**2 - afw**2))*log(bfw/afw) - rad**2*log(rad/afw)) )
-          sgtths = alpha(tmprop)*eyung(tmprop)/2.0D0/(1.0D0-poissn) &
-               * ( rad/(afw**2 + bfw**2)*(3.0D0-(afw**2 + bfw**2)/rad**2 &
-               - (afw**2*bfw**2)/rad**4) * cc(1)*cos(0.0D0) &
-               + qpp*bfw/pi/tk(tmprop)/rad**2*(bfw**2*((rad**2 + afw**2) &
-               / (bfw**2 - afw**2))*log(bfw/afw) - rad**2 &
-               - rad**2*log(rad/afw)) )
-          sgtshs = alpha(tmprop)*eyung(tmprop)/2.0D0/(1.0D0-poissn) &
-               * ( rad/(afw**2 + bfw**2)*(1.0D0 - afw**2/rad**2) &
-               * (1.0D0 - bfw**2/rad**2)*cc(1) * sin(0.0D0) )
-
-          !  Thermal stress components from internal heat flux (i.e. qppp)
-
-          sigtri = alpha(tmprop)*eyung(tmprop)*qppp/4.0D0/tk(tmprop) / &
-               (1.0D0-poissn)/rad**2 * ( &
-               (rad**2 - afw**2)/(bfw**2 - afw**2) &
-               * bfw**4*log(bfw/afw) - (bfw**2 + afw**2)*rad**2/4.0D0 &
-               + afw**2*bfw**2/4.0D0 - bfw**2*rad**2*log(rad/afw) &
-               + rad**4/4.0D0 )
-          sgtthi = alpha(tmprop)*eyung(tmprop)*qppp/4.0D0/tk(tmprop) / &
-               (1.0D0-poissn)/rad**2 * ( &
-               (rad**2 + afw**2)/(bfw**2 - afw**2) &
-               * bfw**4*log(bfw/afw) - (5.0D0*bfw**2 + afw**2) &
-               * rad**2/4.0D0 - afw**2*bfw**2/4.0D0 + 3.0d0*rad**4/4.0D0 &
-               - bfw**2*rad**2*log(rad/afw) )
-
-          !  Total thermal stresses
-
-          sigtr = sigtrs + sigtri
-          sigtth = sgtths + sgtthi
-
-          !  Axial stresses, three different models are used:
-          !  (1) total axial restraint and no bending
-          !  (2) no axial restraints and no bending
-          !  (3) no axial restraints and bending
-
-          sigtz(1) = poissn*(sigtr + sigtth) &
-               - eyung(tmprop)*(eptbar + alpha(tav)*(tpeakr-tav))
-          sigtz(2) = poissn*(sigtr + sigtth) &
-               - eyung(tmprop)*(alpha(tav)*(tpeakr-tav))
-          sigtz(3) = sigtz(2) + eyung(tmprop)*rad*cos(0.0D0)*alpha(tav) &
-               * (2.0D0*cc(1)/(afw**2 + bfw**2) + dd(1))
-
-          !  Strains
-
-          eptr(1) = 1.0D0/eyung(tmprop) * ( sigtr + sigpr &
-               - poissn*(sigtth + sigpth + sigtz(1) + sigpz) )
-          eptth(1) = 1.0D0/eyung(tmprop) * ( sigtth + sigpth &
-               - poissn*(sigtr + sigpr + sigtz(1) + sigpz) )
-          eptz(1) = 1.0D0/eyung(tmprop) * ( sigtz(1) + sigpz &
-               - poissn*(sigtr + sigpr + sigtth + sigpth) )
-          eptr(2) = 1.0D0/eyung(tmprop) * ( sigtr + sigpr &
-               - poissn*(sigtth + sigpth + sigtz(2) + sigpz) )
-          eptth(2) = 1.0D0/eyung(tmprop) * ( sigtth + sigpth &
-               - poissn*(sigtr + sigpr + sigtz(2) + sigpz) )
-          eptz(2) = 1.0D0/eyung(tmprop) * ( sigtz(2) + sigpz &
-               - poissn*(sigtr + sigpr + sigtth + sigpth) )
-          eptr(3) = 1.0D0/eyung(tmprop) * ( sigtr + sigpr &
-               - poissn*(sigtth + sigpth + sigtz(3) + sigpz) )
-          eptth(3) = 1.0D0/eyung(tmprop) * ( sigtth + sigpth &
-               - poissn*(sigtr + sigpr + sigtz(3) + sigpz) )
-          eptz(3) = 1.0D0/eyung(tmprop) * ( sigtz(3) + sigpz &
-               - poissn*(sigtr + sigpr + sigtth + sigpth) )
-
-          !  For the time being I will take the temperature during rejuvenation
-          !  to be T(a,0) during burn and assume the accompanying strains are 
-          !  mechanical in origin
-
-          eptrc = 1.0D0/eyung(tmprop) * (sigpr - poissn*(sigpth + sigpz))
-          eptthc = 1.0D0/eyung(tmprop) * (sigpth - poissn*(sigpr + sigpz))
-          eptzc = 1.0D0/eyung(tmprop) * (sigpz - poissn*(sigpth + sigpr))
-
-          !  Calculate strain ranges
-
-          delr(1) = eptr(1) - eptrc
-          delr(2) = eptr(2) - eptrc
-          delr(3) = eptr(3) - eptrc
-          delth(1) = eptth(1) - eptthc
-          delth(2) = eptth(2) - eptthc
-          delth(3) = eptth(3) - eptthc
-          delz(1) = eptz(1) - eptzc
-          delz(2) = eptz(2) - eptzc
-          delz(3) = eptz(3) - eptzc
-
-          !  Calculate Von Mises equivalent strain range
-
-          equiv(1) = 1.0D0/3.0D0 * sqrt( 2.0D0*((delr(1) - delth(1))**2 &
-               + (delth(1) - delz(1))**2 + (delz(1) - delr(1))**2) )
-          equiv(2) = 1.0D0/3.0D0 * sqrt( 2.0D0*((delr(2) - delth(2))**2 &
-               + (delth(2) - delz(2))**2 + (delz(2) - delr(2))**2) )
-          equiv(3) = 1.0D0/3.0D0 * sqrt( 2.0D0*((delr(3) - delth(3))**2 &
-               + (delth(3) - delz(3))**2 + (delz(3) - delr(3))**2) )
-
-          !  Find allowable cycles
-
-          call cycles(equiv,tpeakr,ncyc)
-
-          !  Calculate minimum allowable cycle lengths
-
-          mincyc(1) = fwlife / dble(ncyc(1))
-          mincyc(2) = fwlife / dble(ncyc(2))
-          mincyc(3) = fwlife / dble(ncyc(3))
-
-          !  Overall minimum allowable cycle length for each model
-          !  (we use the highest value to set correctly the limit on tcycle)
-
-          min01 = max(min01, mincyc(1))
-          min02 = max(min02, mincyc(2))
-          min03 = max(min03, mincyc(3))
+          tmax = max(tpeak,tmax)
 
        end do
 
-       !  Evaluate minimum cycle time using chosen model
+       tpeak = tmax
 
-       if (itcycl == 1) then
-          tcycmn = min01
-       else if (itcycl == 2) then
-          tcycmn = min02
+       !  The lower limit on the first wall thickness is
+       !  derived from the constraint that the first wall
+       !  must possess the ability to withstand the internal
+       !  coolant pressure. The limit is written as
+       !  hmin = p*(afw+bfw)/2/Smt
+
+       sgpthn = (coolp*(afw+bfw)/2.0D0)/(bfw-afw)
+
+       if (sgpthn <= smt(tpeak,fwlifs)) then
+          exit bfw_iteration
        else
-          tcycmn = min03
+          !  First wall too thin
+          !  Keep afw fixed and alter bfw so that the lower limit
+          !  is satisfied
+
+          bfw = afw * (smt(tpeak,fwlifs) + coolp/2.0D0) / &
+               (smt(tpeak,fwlifs) - coolp/2.0D0)
        end if
 
-       !  Convert from years to seconds
+    end do bfw_iteration
 
-       tcycmn = tcycmn * 3.1536D7
+    !  Reset inboard and outboard first wall thicknesses
 
+    fwith = 2.0D0*bfw
+    fwoth = 2.0D0*bfw
+
+    !  First wall coolant fraction
+
+    fwclfr = (afw/bfw)**2
+
+    min01 = 0.0D0
+    min02 = 0.0D0
+    min03 = 0.0D0
+
+    !  Iterate from the inner first wall radius to the outer
+    !  first wall radius
+
+    do k = 1,11
+
+       !  Peak temperature at this radius
+
+       rad = afw + (bfw-afw)*(dble(k-1)/10.0D0)
+
+       call costrm(0.0D0,rad,qpp,hcoeff,tmprop,tmthet)
+
+       !  Peak temperature occurs at (r,theta) = (rad,0)
+
+       tpeakr = bfw/tk(tmprop) * (qpp/pi + qppp*bfw/2.0D0) &
+            *log(rad/afw) - qppp/4.0D0/tk(tmprop) * (rad**2-afw**2) &
+            + (pi*(bfw**2 - afw**2)*qppp + 2.0D0*bfw*qpp) &
+            / (2.0D0*pi*afw*hcoeff) + bctmp + tmthet
+
+       !  Pressure, or mechanical stresses
+
+       sigpr = -coolp*(afw**2/(bfw**2-afw**2))*(bfw**2/rad**2 - 1.0D0)
+       sigpth = coolp*(afw**2/(bfw**2-afw**2))*(bfw**2/rad**2 + 1.0D0)
+       sigpz =  coolp*(afw**2/(bfw**2-afw**2))
+
+       !  Equivalent mechanical stress
+
+       sigpm = sqrt(0.5D0*((sigpr-sigpth)**2 + (sigpr-sigpz)**2 &
+            + (sigpth-sigpz)**2))
+
+       !  Thermal stresses
+       !  ----------------
+
+       !  Thermal stress components from surface heat flux (i.e. qpp)
+
+       sigtrs = alpha(tmprop)*eyung(tmprop)/2.0D0/(1.0D0-poissn) &
+            * ( rad/(afw**2 + bfw**2)*(1.0D0 - afw**2/rad**2) &
+            * (1.0D0 - bfw**2/rad**2)*cc(1) * cos(0.0D0) &
+            + qpp*bfw/pi/tk(tmprop)/rad**2*(bfw**2*((rad**2 - afw**2) &
+            / (bfw**2 - afw**2))*log(bfw/afw) - rad**2*log(rad/afw)) )
+       sgtths = alpha(tmprop)*eyung(tmprop)/2.0D0/(1.0D0-poissn) &
+            * ( rad/(afw**2 + bfw**2)*(3.0D0-(afw**2 + bfw**2)/rad**2 &
+            - (afw**2*bfw**2)/rad**4) * cc(1)*cos(0.0D0) &
+            + qpp*bfw/pi/tk(tmprop)/rad**2*(bfw**2*((rad**2 + afw**2) &
+            / (bfw**2 - afw**2))*log(bfw/afw) - rad**2 &
+            - rad**2*log(rad/afw)) )
+       sgtshs = alpha(tmprop)*eyung(tmprop)/2.0D0/(1.0D0-poissn) &
+            * ( rad/(afw**2 + bfw**2)*(1.0D0 - afw**2/rad**2) &
+            * (1.0D0 - bfw**2/rad**2)*cc(1) * sin(0.0D0) )
+
+       !  Thermal stress components from internal heat flux (i.e. qppp)
+
+       sigtri = alpha(tmprop)*eyung(tmprop)*qppp/4.0D0/tk(tmprop) / &
+            (1.0D0-poissn)/rad**2 * ( &
+            (rad**2 - afw**2)/(bfw**2 - afw**2) &
+            * bfw**4*log(bfw/afw) - (bfw**2 + afw**2)*rad**2/4.0D0 &
+            + afw**2*bfw**2/4.0D0 - bfw**2*rad**2*log(rad/afw) &
+            + rad**4/4.0D0 )
+       sgtthi = alpha(tmprop)*eyung(tmprop)*qppp/4.0D0/tk(tmprop) / &
+            (1.0D0-poissn)/rad**2 * ( &
+            (rad**2 + afw**2)/(bfw**2 - afw**2) &
+            * bfw**4*log(bfw/afw) - (5.0D0*bfw**2 + afw**2) &
+            * rad**2/4.0D0 - afw**2*bfw**2/4.0D0 + 3.0d0*rad**4/4.0D0 &
+            - bfw**2*rad**2*log(rad/afw) )
+
+       !  Total thermal stresses
+
+       sigtr = sigtrs + sigtri
+       sigtth = sgtths + sgtthi
+
+       !  Axial stresses, three different models are used:
+       !  (1) total axial restraint and no bending
+       !  (2) no axial restraints and no bending
+       !  (3) no axial restraints and bending
+
+       sigtz(1) = poissn*(sigtr + sigtth) &
+            - eyung(tmprop)*(eptbar + alpha(tav)*(tpeakr-tav))
+       sigtz(2) = poissn*(sigtr + sigtth) &
+            - eyung(tmprop)*(alpha(tav)*(tpeakr-tav))
+       sigtz(3) = sigtz(2) + eyung(tmprop)*rad*cos(0.0D0)*alpha(tav) &
+            * (2.0D0*cc(1)/(afw**2 + bfw**2) + dd(1))
+
+       !  Strains
+
+       eptr(1) = 1.0D0/eyung(tmprop) * ( sigtr + sigpr &
+            - poissn*(sigtth + sigpth + sigtz(1) + sigpz) )
+       eptth(1) = 1.0D0/eyung(tmprop) * ( sigtth + sigpth &
+            - poissn*(sigtr + sigpr + sigtz(1) + sigpz) )
+       eptz(1) = 1.0D0/eyung(tmprop) * ( sigtz(1) + sigpz &
+            - poissn*(sigtr + sigpr + sigtth + sigpth) )
+       eptr(2) = 1.0D0/eyung(tmprop) * ( sigtr + sigpr &
+            - poissn*(sigtth + sigpth + sigtz(2) + sigpz) )
+       eptth(2) = 1.0D0/eyung(tmprop) * ( sigtth + sigpth &
+            - poissn*(sigtr + sigpr + sigtz(2) + sigpz) )
+       eptz(2) = 1.0D0/eyung(tmprop) * ( sigtz(2) + sigpz &
+            - poissn*(sigtr + sigpr + sigtth + sigpth) )
+       eptr(3) = 1.0D0/eyung(tmprop) * ( sigtr + sigpr &
+            - poissn*(sigtth + sigpth + sigtz(3) + sigpz) )
+       eptth(3) = 1.0D0/eyung(tmprop) * ( sigtth + sigpth &
+            - poissn*(sigtr + sigpr + sigtz(3) + sigpz) )
+       eptz(3) = 1.0D0/eyung(tmprop) * ( sigtz(3) + sigpz &
+            - poissn*(sigtr + sigpr + sigtth + sigpth) )
+
+       !  For the time being I will take the temperature during rejuvenation
+       !  to be T(a,0) during burn and assume the accompanying strains are 
+       !  mechanical in origin
+
+       eptrc = 1.0D0/eyung(tmprop) * (sigpr - poissn*(sigpth + sigpz))
+       eptthc = 1.0D0/eyung(tmprop) * (sigpth - poissn*(sigpr + sigpz))
+       eptzc = 1.0D0/eyung(tmprop) * (sigpz - poissn*(sigpth + sigpr))
+
+       !  Calculate strain ranges
+
+       delr(1) = eptr(1) - eptrc
+       delr(2) = eptr(2) - eptrc
+       delr(3) = eptr(3) - eptrc
+       delth(1) = eptth(1) - eptthc
+       delth(2) = eptth(2) - eptthc
+       delth(3) = eptth(3) - eptthc
+       delz(1) = eptz(1) - eptzc
+       delz(2) = eptz(2) - eptzc
+       delz(3) = eptz(3) - eptzc
+
+       !  Calculate Von Mises equivalent strain range
+
+       equiv(1) = 1.0D0/3.0D0 * sqrt( 2.0D0*((delr(1) - delth(1))**2 &
+            + (delth(1) - delz(1))**2 + (delz(1) - delr(1))**2) )
+       equiv(2) = 1.0D0/3.0D0 * sqrt( 2.0D0*((delr(2) - delth(2))**2 &
+            + (delth(2) - delz(2))**2 + (delz(2) - delr(2))**2) )
+       equiv(3) = 1.0D0/3.0D0 * sqrt( 2.0D0*((delr(3) - delth(3))**2 &
+            + (delth(3) - delz(3))**2 + (delz(3) - delr(3))**2) )
+
+       !  Find allowable cycles
+
+       call cycles(equiv,tpeakr,ncyc)
+
+       !  Calculate minimum allowable cycle lengths
+
+       mincyc(1) = fwlife / dble(ncyc(1))
+       mincyc(2) = fwlife / dble(ncyc(2))
+       mincyc(3) = fwlife / dble(ncyc(3))
+
+       !  Overall minimum allowable cycle length for each model
+       !  (we use the highest value to set correctly the limit on tcycle)
+
+       min01 = max(min01, mincyc(1))
+       min02 = max(min02, mincyc(2))
+       min03 = max(min03, mincyc(3))
+
+    end do
+
+    !  Evaluate minimum cycle time using chosen model
+
+    if (itcycl == 1) then
+       tcycmn = min01
+    else if (itcycl == 2) then
+       tcycmn = min02
     else
+       tcycmn = min03
+    end if
 
-       !  Written output
+    !  Convert from years to seconds
+
+    tcycmn = tcycmn * 3.1536D7
+
+    !  Written output
+
+    if (iprint == 1) then
 
        call oheadr(outfile,'Pulsed Reactor')
 
@@ -1153,6 +1152,7 @@ contains
     !+ad_hist  04/02/13 PJK Comment change
     !+ad_hist  11/06/13 PJK Modified ipdot and tohsmn equations
     !+ad_hist  27/06/13 PJK Modified output heading
+    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_stat  Okay
     !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0013
     !+ad_docs  Work File Note F/PL/PJK/PROCESS/CODE/050
@@ -1174,56 +1174,56 @@ contains
 
     if (lpulse /= 1) return
 
-    if (iprint /= 1) then
+    !  Current/turn in OH coil at beginning of pulse (A/turn)
 
-       !  Current/turn in OH coil at beginning of pulse (A/turn)
+    ioht1 = cpt(nohc,2)
 
-       ioht1 = cpt(nohc,2)
+    !  Current/turn in OH coil at start of flat-top (A/turn)
 
-       !  Current/turn in OH coil at start of flat-top (A/turn)
+    ioht2 = cpt(nohc,3)
 
-       ioht2 = cpt(nohc,3)
+    !  OH coil resistance (ohms)
 
-       !  OH coil resistance (ohms)
-
-       if (ipfres == 0) then
-          r = 0.0D0
-       else
-          r = powohres/( 1.0D6*ric(nohc) )**2
-       end if
-
-       !  OH coil bus resistance (ohms) (assumed to include power supply)
-       !  Bus parameters taken from routine PFPWR.
-
-       pfbusl = 8.0D0 * rmajor + 140.0D0
-       albusa = abs(cptdin(nohc))/100.0D0
-
-       rho = 1.5D0 * 2.62D-4 * pfbusl/albusa
-
-       !  OH coil power source emf (volts)
-
-       v = vpfskv * 1.0D3
-
-       !  Mutual inductance between OH coil and plasma (H)
-
-       m = sxlg(nohc,ncirt)
-
-       !  Self inductance of OH coil (H)
-
-       loh = sxlg(nohc,nohc)
-
-       !  Maximum rate of change of plasma current (A/s)
-       !  - now a function of the plasma current itself (previously just 0.5D6)
-
-       ipdot = 0.0455D0*plascur
-
-       !  Minimum plasma current ramp-up time (s)
-       !  - corrected (bus resistance is not a function of turns)
-
-       tohsmn = loh*(ioht2 - ioht1) / &
-            (ioht2*(r*turns(nohc) + rho) - v + m*ipdot)
-
+    if (ipfres == 0) then
+       r = 0.0D0
     else
+       r = powohres/( 1.0D6*ric(nohc) )**2
+    end if
+
+    !  OH coil bus resistance (ohms) (assumed to include power supply)
+    !  Bus parameters taken from routine PFPWR.
+
+    pfbusl = 8.0D0 * rmajor + 140.0D0
+    albusa = abs(cptdin(nohc))/100.0D0
+
+    rho = 1.5D0 * 2.62D-4 * pfbusl/albusa
+
+    !  OH coil power source emf (volts)
+
+    v = vpfskv * 1.0D3
+
+    !  Mutual inductance between OH coil and plasma (H)
+
+    m = sxlg(nohc,ncirt)
+
+    !  Self inductance of OH coil (H)
+
+    loh = sxlg(nohc,nohc)
+
+    !  Maximum rate of change of plasma current (A/s)
+    !  - now a function of the plasma current itself (previously just 0.5D6)
+
+    ipdot = 0.0455D0*plascur
+
+    !  Minimum plasma current ramp-up time (s)
+    !  - corrected (bus resistance is not a function of turns)
+
+    tohsmn = loh*(ioht2 - ioht1) / &
+         (ioht2*(r*turns(nohc) + rho) - v + m*ipdot)
+
+    !  Output section
+
+    if (iprint == 1) then
 
        call osubhd(outfile,'OH coil considerations:')
        call ovarre(outfile,'Minimum plasma current ramp-up time (s)', &
@@ -1260,6 +1260,7 @@ contains
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  17/12/12 PJK Modified burn volt-seconds calculation (RK)
     !+ad_hist  27/11/13 PJK Deducted theat from tburn
+    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_stat  Okay
     !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0012
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1281,27 +1282,27 @@ contains
 
     if (lpulse /= 1) return
 
-    if (iprint /= 1) then
+    !  Volt-seconds required to produce plasma current during start-up
+    !  (i.e. up to start of flat top)
 
-       !  Volt-seconds required to produce plasma current during start-up
-       !  (i.e. up to start of flat top)
+    vssoft = vsres + vsind
 
-       vssoft = vsres + vsind
+    !  Total volt-seconds available during flat-top (heat + burn)
+    !  (Previously calculated as (abs(vstot) - vssoft) )
 
-       !  Total volt-seconds available during flat-top (heat + burn)
-       !  (Previously calculated as (abs(vstot) - vssoft) )
+    vsmax = abs(vsbn)
 
-       vsmax = abs(vsbn)
+    !  Loop voltage during flat-top (including MHD sawtooth enhancement)
 
-       !  Loop voltage during flat-top (including MHD sawtooth enhancement)
+    vburn = plascur * rplas * facoh * csawth
 
-       vburn = plascur * rplas * facoh * csawth
+    !  Burn time (s)
 
-       !  Burn time (s)
+    tburn = vsmax/vburn - theat
 
-       tburn = vsmax/vburn - theat
+    !  Output section
 
-    else
+    if (iprint == 1) then
 
        call osubhd(outfile,'Volt-second considerations:')
 

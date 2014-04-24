@@ -1249,6 +1249,7 @@ contains
     !+ad_hist  25/06/13 PJK Removed hecan output if blktmodel > 0
     !+ad_hist  16/08/13 PJK Removed obsolete stellarator clause (this routine
     !+ad_hisc               is no longer used for stellarators)
+    !+ad_hist  24/04/14 PJK Changed bktlife output statement to avoid confusion
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1888,7 +1889,7 @@ contains
        call ovarre(outfile,'Minimum final He conc. in OB VV (appm)','(vvhemino)',vvhemino)
        call ovarre(outfile,'Maximum final He conc. in IB VV (appm)','(vvhemaxi)',vvhemaxi)
        call ovarre(outfile,'Maximum final He conc. in OB VV (appm)','(vvhemaxo)',vvhemaxo)
-       call ovarre(outfile,'Blanket lifetime (full power years)','(bktlife)',bktlife)
+       call ovarre(outfile,'Blanket lifetime (full power years)','(t_bl_fpy)',bktlife)
        call ovarre(outfile,'Blanket lifetime (calendar years)','(t_bl_y)',t_bl_y)
     end if
 
@@ -4992,7 +4993,7 @@ contains
     emult = M_E
     tbr = tbratio
     tritprate = G_tot
-    bktlife = t_bl_fpy
+    bktlife = t_bl_fpy  !  This is later adjusted for availability in routine AVAIL
 
     !  Peak fast neutron fluence on TF coils (neutrons/m2)
 

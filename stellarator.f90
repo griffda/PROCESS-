@@ -1,4 +1,4 @@
- !  $Id::                                                                $
+!  $Id::                                                                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module helias5b_coil_parameters
@@ -539,7 +539,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     if (first_call) then
-    
+
        !  VMEC information file
 
        open(unit=1,file=vmec_info_file,status='old')
@@ -597,7 +597,7 @@ contains
 
     do n = -n_max,n_max
        do m = 0,m_max
-       
+
           if (m == 0) then
              Rmn(m,n) = SR*Rmn(m,n)
              Zmn(m,n) = SR*Zmn(m,n)
@@ -765,6 +765,7 @@ contains
     !+ad_hist  25/09/13 PJK Removed port size output
     !+ad_hist  07/11/13 PJK Corrected blanket/shield thicknesses if blktmodel > 0
     !+ad_hist  03/03/14 PJK tfootfi no longer used to calculate tfthko
+    !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -782,62 +783,58 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (iprint /= 1) then
+    !  Calculate total blanket thicknesses if blktmodel > 0
 
-       !  Calculate total blanket thicknesses if blktmodel > 0
-
-       if (blktmodel > 0) then
-          blnkith = blbuith + blbmith + blbpith
-          blnkoth = blbuoth + blbmoth + blbpoth
-          blnktth = 0.5D0*(blnkith+blnkoth)
-          shldtth = 0.5D0*(shldith+shldoth)
-       end if
-
-       !  Radial build to centre of plasma (should be equal to rmajor)
-
-       rbld = bore + ohcth + gapoh + bcylth + tfcth + gapds + &
-            ddwi + shldith + blnkith + fwith + scrapli + rminor
-
-       !  Radius to inner edge of inboard shield
-
-       rsldi = rmajor - rminor - scrapli - fwith - blnkith - shldith
-
-       !  Radius to outer edge of outboard shield
-
-       rsldo = rmajor + rminor + scraplo + fwoth + blnkoth + shldoth
-
-       !  Thickness of outboard TF coil legs
-
-       tfthko = tfcth 
-
-       !  Radius to centre of outboard TF coil legs
-
-       gapsto = gapomin
-       rtot = rsldo + ddwi + gapsto + 0.5D0*tfthko
-
-       !  Height to inside edge of TF coil
-       !  Roughly equal to average of (inboard build from TF coil to plasma
-       !  centre) and (outboard build from plasma centre to TF coil)
-
-       hmax = 0.5D0 * ( &
-            (gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor) + &
-            (rminor+scraplo+fwoth+blnkoth+shldoth+ddwi+gapsto) )
-
-       !  Outer divertor strike point radius, set equal to major radius
-
-       rstrko = rmajor
-
-       !  First wall area: scales with minor radius
-       !  (c.f. area ~ 2.pi.R * 2.pi.a)
-
-       !  Old method
-       !fwarea = 4.0D0*pi**2*sf*rmajor*(rminor+(scrapli+scraplo)/2.0D0) &
-       !     * 0.875D0
-
-       awall = rminor + 0.5D0*(scrapli + scraplo)
-       fwarea = sarea * awall/rminor
-
+    if (blktmodel > 0) then
+       blnkith = blbuith + blbmith + blbpith
+       blnkoth = blbuoth + blbmoth + blbpoth
+       blnktth = 0.5D0*(blnkith+blnkoth)
+       shldtth = 0.5D0*(shldith+shldoth)
     end if
+
+    !  Radial build to centre of plasma (should be equal to rmajor)
+
+    rbld = bore + ohcth + gapoh + bcylth + tfcth + gapds + &
+         ddwi + shldith + blnkith + fwith + scrapli + rminor
+
+    !  Radius to inner edge of inboard shield
+
+    rsldi = rmajor - rminor - scrapli - fwith - blnkith - shldith
+
+    !  Radius to outer edge of outboard shield
+
+    rsldo = rmajor + rminor + scraplo + fwoth + blnkoth + shldoth
+
+    !  Thickness of outboard TF coil legs
+
+    tfthko = tfcth 
+
+    !  Radius to centre of outboard TF coil legs
+
+    gapsto = gapomin
+    rtot = rsldo + ddwi + gapsto + 0.5D0*tfthko
+
+    !  Height to inside edge of TF coil
+    !  Roughly equal to average of (inboard build from TF coil to plasma
+    !  centre) and (outboard build from plasma centre to TF coil)
+
+    hmax = 0.5D0 * ( &
+         (gapds+ddwi+shldith+blnkith+fwith+scrapli+rminor) + &
+         (rminor+scraplo+fwoth+blnkoth+shldoth+ddwi+gapsto) )
+
+    !  Outer divertor strike point radius, set equal to major radius
+
+    rstrko = rmajor
+
+    !  First wall area: scales with minor radius
+    !  (c.f. area ~ 2.pi.R * 2.pi.a)
+
+    !  Old method
+    !fwarea = 4.0D0*pi**2*sf*rmajor*(rminor+(scrapli+scraplo)/2.0D0) &
+    !     * 0.875D0
+
+    awall = rminor + 0.5D0*(scrapli + scraplo)
+    fwarea = sarea * awall/rminor
 
     if ((iprint == 0).or.(sect06 == 0)) return
 
@@ -1065,7 +1062,7 @@ contains
     !  (in contrast to tokamak calculation)
 
     plrad = f_rad*powht/vol
-    
+
     !  Power to divertor, = (1-f_rad)*Psol
 
     pdivt = powht - plrad*vol
@@ -1130,6 +1127,7 @@ contains
     !+ad_hist  25/09/13 PJK Added nbshield, rtanbeam, rtanmax outputs
     !+ad_hist  27/11/13 PJK Added ohmic power to bigq denominator
     !+ad_hist  24/02/14 PJK Modified arguments to CULNBI
+    !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1148,61 +1146,57 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (iprint /= 1) then
+    !  Assign heating power to the desired mechanism
 
-       !  Assign heating power to the desired mechanism
+    select case (isthtr)
 
-       select case (isthtr)
+    case (1)  !  Electron cyclotron resonance heating
 
-       case (1)  !  Electron cyclotron resonance heating
+       echpwr = pheat
+       pinji = 0.0D0
+       pinje = echpwr
 
-          echpwr = pheat
-          pinji = 0.0D0
-          pinje = echpwr
+    case (2)  !  Lower Hybrid heating
 
-       case (2)  !  Lower Hybrid heating
+       plhybd = pheat
+       pinji = 0.0D0
+       pinje = plhybd
 
-          plhybd = pheat
-          pinji = 0.0D0
-          pinje = plhybd
+    case (3)  !  Neutral beam injection heating
 
-       case (3)  !  Neutral beam injection heating
+       !  Use routine described in AEA FUS 172, but discard the current
+       !  drive efficiency as this is irrelevant for stellarators. We are
+       !  only really interested in fpion, fshine and taubeam.
 
-          !  Use routine described in AEA FUS 172, but discard the current
-          !  drive efficiency as this is irrelevant for stellarators. We are
-          !  only really interested in fpion, fshine and taubeam.
+       call culnbi(effnbss,fpion,fshine)
 
-          call culnbi(effnbss,fpion,fshine)
+       pnbeam = pheat
+       pinji = pnbeam * fpion
+       pinje = pnbeam * (1.0D0-fpion)
 
-          pnbeam = pheat
-          pinji = pnbeam * fpion
-          pinje = pnbeam * (1.0D0-fpion)
+    case default
 
-       case default
+       write(*,*) 'Error in routine STHEAT:'
+       write(*,*) 'Illegal value for switch ISTHTR, = ',isthtr
+       write(*,*) 'PROCESS stopping.'
+       stop
 
-          write(*,*) 'Error in routine STHEAT:'
-          write(*,*) 'Illegal value for switch ISTHTR, = ',isthtr
-          write(*,*) 'PROCESS stopping.'
-          stop
+    end select
 
-       end select
+    !  Calculate neutral beam current
 
-       !  Calculate neutral beam current
+    if (abs(pnbeam) > 1.0D-8) then
+       cnbeam = 1.0D-3 * pnbeam / enbeam
+    else
+       cnbeam = 0.0D0
+    end if
 
-       if (abs(pnbeam) > 1.0D-8) then
-          cnbeam = 1.0D-3 * pnbeam / enbeam
-       else
-          cnbeam = 0.0D0
-       end if
+    !  Ratio of fusion to input (injection+ohmic) power
 
-       !  Ratio of fusion to input (injection+ohmic) power
-
-       if (abs(pinje + pinji + (1.0D6*pohmpv*vol)) < 1.0D-6) then
-          bigq = 1.0D18
-       else
-          bigq = 1.0D6 * powfmw / (pinje + pinji + 1.0D6*pohmpv*vol)
-       end if
-
+    if (abs(pinje + pinji + (1.0D6*pohmpv*vol)) < 1.0D-6) then
+       bigq = 1.0D18
+    else
+       bigq = 1.0D6 * powfmw / (pinje + pinji + 1.0D6*pohmpv*vol)
     end if
 
     if ((iprint == 0).or.(sect04 == 0)) return
@@ -2342,7 +2336,7 @@ contains
   end subroutine stdiv
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   subroutine stcoil(outfile,iprint)
 
     !+ad_name  stcoil
@@ -3604,4 +3598,3 @@ contains
   end subroutine stcoil_output
 
 end module stellarator_module
-

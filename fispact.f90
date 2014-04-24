@@ -37,6 +37,7 @@
 !                     Added coding for results for several decay periods
 !  18/11/97 PJK 1.220 Added COMMON block OPSYS. Removed NOUT argument
 !  10/10/12 PJK Hardwired IVMS to zero
+!  24/04/14 PJK Ensured calculation proceeds whether or not iprint==1
 !
 !--Arguments
 !  IPRINT : (INPUT)  Flag to turn on/off (1/0) output to file
@@ -97,8 +98,6 @@
 
 !+**PJK 17/11/97
       IVMS1 = IVMS
-
-      if (iprint.eq.1) goto 160
 
 ! *** Calculate elemental compositions of blanket/first wall materials
 

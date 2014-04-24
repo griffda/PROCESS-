@@ -114,6 +114,7 @@ contains
     !+ad_hist  11/04/13 PJK Removed ires if-statement
     !+ad_hist  11/09/13 PJK Changed ftr to ftrit; N.B. D-T reaction is assumed.
     !+ad_hist  26/02/14 PJK New argument niter added to vmcon call
+    !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
     !+ad_stat  Not currently used
     !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -155,97 +156,97 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (iprint /= 1) then
+    !  Define normalised temperature and densities
 
-       !  Define normalised temperature and densities
+    ne20 = dene/1.0D20
+    te10 = te/10.0D0
+    ti10 = ti/10.0D0
 
-       ne20 = dene/1.0D20
-       te10 = te/10.0D0
-       ti10 = ti/10.0D0
+    aa = 0.24D0*(1.0D0 + (deni/dene + ralpne + rncne + rnone + rnfene)*ti/te)
 
-       aa = 0.24D0*(1.0D0 + (deni/dene + ralpne + rncne + rnone + rnfene)*ti/te)
+    if ((ti10 > 0.4D0).and.(ti10 <= 1.0D0)) then
+       s = 3
+    else if ((ti10 > 1.0D0).and.(ti10 <= 2.0D0)) then
+       s = 2
 
-       if ((ti10 > 0.4D0).and.(ti10 <= 1.0D0)) then
-          s = 3
-       else if ((ti10 > 1.0D0).and.(ti10 <= 2.0D0)) then
-          s = 2
+       !  Outside the above ranges of ti10, the value of s is not known
+       !  (by PJK), so s is set according to whether ti10 is above
+       !  or below unity...
 
-          !  Outside the above ranges of ti10, the value of s is not known
-          !  (by PJK), so s is set according to whether ti10 is above
-          !  or below unity...
-
-       else if (ti10 <= 1.0D0) then
-          s = 3
-       else
-          s = 2
-       end if
-
-       fd = 1.0D0 - ftrit
-       fdt = deni/dene
-
-       !  Alpha power multiplier
-
-       bb = 0.155D0 * (4.0D0*fd*(1.0D0 - fd)*fdt**2) * &
-            (1.0D0 + alphan + alphat)**s / &
-            ((1.0D0 + alphan)**(s-2) * (1.0D0 + 2.0D0*alphan + dble(s)*alphat))
-
-       !  Radiation power multiplier
-
-       cc = 1.68D-2 * ( sqrt((1.0D0 + alphan)**3) &
-            * sqrt(1.0D0 + alphan + alphat) / &
-            (1.0D0 + 2.0D0*alphan + 0.5D0*alphat) )*zeff
-
-       !  Ohmic power multiplier
-       !  If the ohmic power density calculated in subroutine POHM is
-       !  changed in the future then the constant DD must be changed 
-       !  accordingly.
-
-       !  The following lines come directly from the formulae within
-       !  routine POHM, but with t10 replaced by pcoef
-
-       rrplas = 2.15D-9*zeff*rmajor/(kappa*rminor**2*pcoef**1.5D0)
-       rrplas = rrplas*rpfac
-
-       dd = (facoh*plascur)**2 * rrplas * 1.0D-6/vol
-
-       !  Multiply coefficients by plasma volume
-
-       aa = aa*vol
-       bb = bb*vol
-       cc = cc*vol
-       dd = dd*vol
-
-       !  Initial values for the density and temperature
-
-       x(1) = ne20
-       x(2) = te10
-
-       !  Initialise variables for VMCON
-
-       meq = 1
-       mode = 0
-       tol = 1.0D-3
-       maxfev = 100
-
-       ilower(1) = 1
-       ilower(2) = 1
-       iupper(1) = 1
-       iupper(2) = 1
-       bndl(1) = 0.1D0
-       bndl(2) = 0.5D0
-       bndu(1) = 100.0D0
-       bndu(2) = 50.0D0
-
-       call vmcon(start1,start2,mode,n,m,meq,x,objf,fgrd,conf, &
-            cnorm,lcnorm,b,lb,tol,maxfev,info,nfev,niter,vlam1,glag,vmu, &
-            cm,glaga,gamma1,eta,xa,bdelta,delta,ldel,gm,bdl,bdu, &
-            h,lh,wa,lwa,iwa,liwa,ilower,iupper,bndl,bndu)
-
-       auxmin = objf
-       nign = x(1)*1.0D20
-       tign = x(2)*10.0D0
-
+    else if (ti10 <= 1.0D0) then
+       s = 3
     else
+       s = 2
+    end if
+
+    fd = 1.0D0 - ftrit
+    fdt = deni/dene
+
+    !  Alpha power multiplier
+
+    bb = 0.155D0 * (4.0D0*fd*(1.0D0 - fd)*fdt**2) * &
+         (1.0D0 + alphan + alphat)**s / &
+         ((1.0D0 + alphan)**(s-2) * (1.0D0 + 2.0D0*alphan + dble(s)*alphat))
+
+    !  Radiation power multiplier
+
+    cc = 1.68D-2 * ( sqrt((1.0D0 + alphan)**3) &
+         * sqrt(1.0D0 + alphan + alphat) / &
+         (1.0D0 + 2.0D0*alphan + 0.5D0*alphat) )*zeff
+
+    !  Ohmic power multiplier
+    !  If the ohmic power density calculated in subroutine POHM is
+    !  changed in the future then the constant DD must be changed 
+    !  accordingly.
+
+    !  The following lines come directly from the formulae within
+    !  routine POHM, but with t10 replaced by pcoef
+
+    rrplas = 2.15D-9*zeff*rmajor/(kappa*rminor**2*pcoef**1.5D0)
+    rrplas = rrplas*rpfac
+
+    dd = (facoh*plascur)**2 * rrplas * 1.0D-6/vol
+
+    !  Multiply coefficients by plasma volume
+
+    aa = aa*vol
+    bb = bb*vol
+    cc = cc*vol
+    dd = dd*vol
+
+    !  Initial values for the density and temperature
+
+    x(1) = ne20
+    x(2) = te10
+
+    !  Initialise variables for VMCON
+
+    meq = 1
+    mode = 0
+    tol = 1.0D-3
+    maxfev = 100
+
+    ilower(1) = 1
+    ilower(2) = 1
+    iupper(1) = 1
+    iupper(2) = 1
+    bndl(1) = 0.1D0
+    bndl(2) = 0.5D0
+    bndu(1) = 100.0D0
+    bndu(2) = 50.0D0
+
+    call vmcon(start1,start2,mode,n,m,meq,x,objf,fgrd,conf, &
+         cnorm,lcnorm,b,lb,tol,maxfev,info,nfev,niter,vlam1,glag,vmu, &
+         cm,glaga,gamma1,eta,xa,bdelta,delta,ldel,gm,bdl,bdu, &
+         h,lh,wa,lwa,iwa,liwa,ilower,iupper,bndl,bndu)
+
+    auxmin = objf
+    nign = x(1)*1.0D20
+    tign = x(2)*10.0D0
+
+    !  Output Section
+
+    if (iprint == 1) then
 
        call oheadr(outfile,'Start-up')
 

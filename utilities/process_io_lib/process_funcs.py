@@ -8,8 +8,7 @@ Date: March 2013 - initial released version
 """
 
 from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,\
-    DICT_IXC_DEFAULT, NON_F_VALUES
-from process_dicts_dev import IFAIL_SUCCESS
+    DICT_IXC_DEFAULT, NON_F_VALUES, IFAIL_SUCCESS
 from process_io_lib.in_dat import INDATNew, INVariable
 from process_io_lib.mfile import MFile
 from numpy.random import uniform

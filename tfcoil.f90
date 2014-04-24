@@ -216,6 +216,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  28/11/13 PJK Modified ltfleg calculation
+    !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -232,92 +233,88 @@ contains
     real(kind(1.0D0)) :: extra,ltfleg,rmid,rtop,tdump,ztop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    if (itart == 0) then
+       !  Calculate number of turns per leg
+       turnstf = ritfc / (tfno * cpttf)
+    else
+       !  Calculate current per turn instead
+       !  (N.B. cannot set CPTTF as an iteration variable for TARTs)
+       turnstf = 1.0D0
+       cpttf = ritfc/(turnstf*tfno)
+    end if
 
-    if (iprint == 0) then
+    !  Outboard leg information (per leg)
 
-       if (itart == 0) then
-          !  Calculate number of turns per leg
-          turnstf = ritfc / (tfno * cpttf)
-       else
-          !  Calculate current per turn instead
-          !  (N.B. cannot set CPTTF as an iteration variable for TARTs)
-          turnstf = 1.0D0
-          cpttf = ritfc/(turnstf*tfno)
-       end if
+    !  Cross-sectional area (N.B. does not use tfthko*tftort...)
 
-       !  Outboard leg information (per leg)
+    arealeg = ritfc/(tfno * cdtfleg)
+    extra = sqrt(arealeg)
 
-       !  Cross-sectional area (N.B. does not use tfthko*tftort...)
+    !  Length of leg centre-line (N.B. this assumes rectangular shaped
+    !  coils, not D-shaped)
 
-       arealeg = ritfc/(tfno * cdtfleg)
-       extra = sqrt(arealeg)
+    ltfleg = 2.0D0*hmax + extra + 2.0D0*(rtot - rbmax)
 
-       !  Length of leg centre-line (N.B. this assumes rectangular shaped
-       !  coils, not D-shaped)
+    !  Volume
 
-       ltfleg = 2.0D0*hmax + extra + 2.0D0*(rtot - rbmax)
+    voltfleg = ltfleg * arealeg
 
-       !  Volume
+    !  Resistance
 
-       voltfleg = ltfleg * arealeg
+    rhotfleg = ltfleg * tflegres/arealeg
 
-       !  Resistance
+    !  Total weight (of all legs), assuming copper
 
-       rhotfleg = ltfleg * tflegres/arealeg
+    whttflgs = voltfleg * tfno * (1.0D0 - vftf) * 8900.0D0
 
-       !  Total weight (of all legs), assuming copper
+    !  Inboard leg information (all legs)
 
-       whttflgs = voltfleg * tfno * (1.0D0 - vftf) * 8900.0D0
+    !  Resistivity (0.92 factor for glidcop C15175)
 
-       !  Inboard leg information (all legs)
+    rhocp = 1.0D-8 * (1.72D0 + 0.0039D0*tcpav) / 0.92D0
 
-       !  Resistivity (0.92 factor for glidcop C15175)
+    if (itart == 0) then
 
-       rhocp = 1.0D-8 * (1.72D0 + 0.0039D0*tcpav) / 0.92D0
+       volcp = 2.0D0 * tfareain * hmax  !  volume
 
-       if (itart == 0) then
+       !  Resistive power losses
 
-          volcp = 2.0D0 * tfareain * hmax  !  volume
+       prescp = rhocp * ( ritfc/(tfareain*(1.0D0-fcoolcp)) )**2 &
+            * volcp * (1.0D0-fcoolcp)
 
-          !  Resistive power losses
+    else  !  Tight Aspect Ratio Tokamak
 
-          prescp = rhocp * ( ritfc/(tfareain*(1.0D0-fcoolcp)) )**2 &
-               * volcp * (1.0D0-fcoolcp)
+       !  Radii and vertical height from midplane
 
-       else  !  Tight Aspect Ratio Tokamak
+       rtop = (rmajor - rminor*triang - fwith - 3.0D0*scrapli) + drtop
+       rmid = tfcth + bcylth
+       rtop = max(rtop, (rmid*1.01D0))
+       ztop = (rminor * kappa) + dztop
 
-          !  Radii and vertical height from midplane
+       !  Resistivity enhancement factor
 
-          rtop = (rmajor - rminor*triang - fwith - 3.0D0*scrapli) + drtop
-          rmid = tfcth + bcylth
-          rtop = max(rtop, (rmid*1.01D0))
-          ztop = (rminor * kappa) + dztop
+       rhocp = rhocp * frhocp
 
-          !  Resistivity enhancement factor
+       !  Volume and resistive power losses of TART centrepost
 
-          rhocp = rhocp * frhocp
-
-          !  Volume and resistive power losses of TART centrepost
-
-          call cpost(rtop,ztop,rmid,hmax,ritfc,rhocp,fcoolcp,volcp,prescp)
-
-       end if
-
-       !  Weight of conductor, assuming copper
-
-       whtcp = volcp * 8900.0D0 * (1.0D0-fcoolcp)
-
-       !  Total weight of TF coils
-
-       whttf = whtcp + whttflgs
-
-       !  Stress information (radial, tangential, vertical)
-
-       sigrad = 1.0D-6 * bmaxtf**2 * (5.0D0 + 0.34D0)/(8.0D0*rmu0*(1.0D0-fcoolcp))
-       sigtan = sigrad
-       sigver = 0.0D0
+       call cpost(rtop,ztop,rmid,hmax,ritfc,rhocp,fcoolcp,volcp,prescp)
 
     end if
+
+    !  Weight of conductor, assuming copper
+
+    whtcp = volcp * 8900.0D0 * (1.0D0-fcoolcp)
+
+    !  Total weight of TF coils
+
+    whttf = whtcp + whttflgs
+
+    !  Stress information (radial, tangential, vertical)
+
+    sigrad = 1.0D-6 * bmaxtf**2 * (5.0D0 + 0.34D0)/(8.0D0*rmu0*(1.0D0-fcoolcp))
+    sigtan = sigrad
+    sigver = 0.0D0
 
     if ((iprint == 0).or.(sect07 == 0)) return
 

@@ -39,7 +39,7 @@ def readVars():
 		if "value       change    multiplier  multiplier" in line:
 			bandera=1
 			i=0
-		elif "The following constraint residues should be close to zero" in line:
+		elif ("residues should be close to zero" in line):
 			bandera=0
 		elif (bandera==1 and len(line)>10):
 			tabla_valores[i]=line[-47:-37]

@@ -1511,3 +1511,8 @@ end subroutine output
 ! SVN 256: Added vertical field calculation
 ! SVN 257: Correction to ensure final solution vector is consistent with results
 !          in the rest of the output
+! SVN 258: Ensured that all quantities are re-calculated, regardless of the iprint
+!          value at each call. This exposed a problem in availability.f90 in which
+!          cfactr was not being taken into account in the lifetime values written
+!          to the output file.
+!          Also uploaded latest write_new_in_dat.py, process_funcs.py

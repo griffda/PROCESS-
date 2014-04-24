@@ -49,8 +49,7 @@ contains
     !+ad_cont  xsecta
     !+ad_cont  xsurf
     !+ad_cont  xvol
-    !+ad_args  nout : input integer : Fortran output unit identifier
-    !+ad_args  iprint : input integer : Switch to write output to file (1=yes)
+    !+ad_args  None
     !+ad_desc  This subroutine calculates the plasma geometry parameters.
     !+ad_prob  None
     !+ad_call  fvol

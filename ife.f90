@@ -289,6 +289,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  30/10/12 PJK Added build_variables
+    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, pp.68,85
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -309,77 +310,73 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (iprint /= 1) then
+    !  Repetition rate
 
-       !  Repetition rate
+    reprat = pdrive / edrive
 
-       reprat = pdrive / edrive
+    !  Driver calculations
 
-       !  Driver calculations
+    select case (ifedrv)
 
-       select case (ifedrv)
+    case (-1)
+       !  Target gain and driver efficiency dependencies on
+       !  driver energy are input
 
-       case (-1)
-          !  Target gain and driver efficiency dependencies on
-          !  driver energy are input
+       call driver(edrive,gainve,etave,gain,etadrv)
 
-          call driver(edrive,gainve,etave,gain,etadrv)
+    case (0)  !  Target gain and driver efficiency are input
 
-       case (0)  !  Target gain and driver efficiency are input
+       gain = tgain
+       etadrv = drveff
 
-          gain = tgain
-          etadrv = drveff
+    case (1)  !  Laser driver based on SOMBRERO design
 
-       case (1)  !  Laser driver based on SOMBRERO design
+       call lasdrv(edrive,gain,etadrv)
 
-          call lasdrv(edrive,gain,etadrv)
+    case (2)  !  Heavy-ion beam driver based on OSIRIS design
 
-       case (2)  !  Heavy-ion beam driver based on OSIRIS design
+       aaion = 131.0D0
+       bmax = 10.0D0
+       dpp = 1.25D-3
+       dtheta = 1.3D-4
+       emitt = 1.0D-5
+       etai = 0.8D0
+       lf = 5.0D0
+       nbeams = 12
+       qion = 1.0D0
+       sigma = 8.0D0
+       sigma0 = 80.0D0
+       tauf = 1.0D-7
+       theta = 30.0D-3
+       vi = 3.0D6
 
-          aaion = 131.0D0
-          bmax = 10.0D0
-          dpp = 1.25D-3
-          dtheta = 1.3D-4
-          emitt = 1.0D-5
-          etai = 0.8D0
-          lf = 5.0D0
-          nbeams = 12
-          qion = 1.0D0
-          sigma = 8.0D0
-          sigma0 = 80.0D0
-          tauf = 1.0D-7
-          theta = 30.0D-3
-          vi = 3.0D6
+       call iondrv(aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf, &
+            nbeams,qion,reprat,sigma,sigma0,tauf,theta,vi,gain,etadrv)
 
-          call iondrv(aaion,bmax,dpp,dtheta,edrive,emitt,etai,lf, &
-               nbeams,qion,reprat,sigma,sigma0,tauf,theta,vi,gain,etadrv)
+    case default
+       write(outfile,*) 'Error in routine IFEPHY:'
+       write(outfile,*) 'Illegal value for IFEDRV, = ',ifedrv
+       write(outfile,*) 'PROCESS stopping.'
+       stop
 
-       case default
-          write(outfile,*) 'Error in routine IFEPHY:'
-          write(outfile,*) 'Illegal value for IFEDRV, = ',ifedrv
-          write(outfile,*) 'PROCESS stopping.'
-          stop
+    end select
 
-       end select
+    !  Fusion power (MW)
 
-       !  Fusion power (MW)
+    powfmw = 1.0D-6 * pdrive * gain
 
-       powfmw = 1.0D-6 * pdrive * gain
+    !  Wall load (assume total fusion power applies)
 
-       !  Wall load (assume total fusion power applies)
+    if (ifetyp == 1) then
 
-       if (ifetyp == 1) then
+       !  OSIRIS-type build: First wall subtends a solid angle of 2 pi * SANG
 
-          !  OSIRIS-type build: First wall subtends a solid angle of 2 pi * SANG
+       phi = 0.5D0*pi + atan(zl1/r1)
+       sang = 1.0D0 - cos(phi)
+       wallmw = powfmw * 0.5D0*sang / fwarea
 
-          phi = 0.5D0*pi + atan(zl1/r1)
-          sang = 1.0D0 - cos(phi)
-          wallmw = powfmw * 0.5D0*sang / fwarea
-
-       else
-          wallmw = powfmw / fwarea
-       end if
-
+    else
+       wallmw = powfmw / fwarea
     end if
 
     if ((iprint == 0).or.(sect03 == 0)) return
@@ -1118,6 +1115,7 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  30/10/12 PJK Added build_variables
+    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.52
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1134,20 +1132,16 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (iprint /= 1) then
-
-       select case (ifetyp)
-       case (1)  !  OSIRIS-type device
-          call osibld
-       case (2)  !  SOMBRERO-type device
-          call sombld
-       case (3)  !  HYLIFE-II-type device
-          call hylbld
-       case default  !  Generic device
-          call genbld
-       end select
-
-    end if
+    select case (ifetyp)
+    case (1)  !  OSIRIS-type device
+       call osibld
+    case (2)  !  SOMBRERO-type device
+       call sombld
+    case (3)  !  HYLIFE-II-type device
+       call hylbld
+    case default  !  Generic device
+       call genbld
+    end select
 
     if ((iprint == 0).or.(sect06 == 0)) return
 
@@ -1859,6 +1853,7 @@ contains
     !+ad_hist  18/10/12 PJK Added fwbs_variables
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  31/10/12 PJK Added cost_variables
+    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.86
     !+ad_docs  Moir et al., Fusion Technology, vol.25 (1994) p.5
@@ -1880,106 +1875,102 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (iprint /= 1) then
+    !  Material densities
+    !  0 = void
+    !  1 = steel
+    !  2 = carbon
+    !  3 = FLiBe (inferred from Moir et al)
+    !  4 = Li2O
+    !  5 = concrete
+    !  6 = helium (at typical coolant temperatures)
+    !  7 = xenon (taken as ten times the normal tabulated value)
 
-       !  Material densities
-       !  0 = void
-       !  1 = steel
-       !  2 = carbon
-       !  3 = FLiBe (inferred from Moir et al)
-       !  4 = Li2O
-       !  5 = concrete
-       !  6 = helium (at typical coolant temperatures)
-       !  7 = xenon (taken as ten times the normal tabulated value)
+    matden(0) = 0.0D0
+    matden(1) = denstl
+    matden(2) = 2300.0D0
+    matden(3) = 2020.0D0
+    matden(4) = 2010.0D0
+    matden(5) = 2400.0D0
+    matden(6) = 1.517D0
+    matden(7) = 55.0D0
 
-       matden(0) = 0.0D0
-       matden(1) = denstl
-       matden(2) = 2300.0D0
-       matden(3) = 2020.0D0
-       matden(4) = 2010.0D0
-       matden(5) = 2400.0D0
-       matden(6) = 1.517D0
-       matden(7) = 55.0D0
+    !  Material masses
 
-       !  Material masses
-
-       do i = 0,maxmat
-          den = matden(i)
-          chmatm(i) = chmatv(i) * den
-          do j = 1,3
-             fwmatm(j,i) = fwmatv(j,i) * den
-             v1matm(j,i) = v1matv(j,i) * den
-             blmatm(j,i) = blmatv(j,i) * den
-             v2matm(j,i) = v2matv(j,i) * den
-             shmatm(j,i) = shmatv(j,i) * den
-             v3matm(j,i) = v3matv(j,i) * den
-          end do
-       end do
-
-       !  Total masses of components (excluding coolant)
-
-       fwmass = 0.0D0
-       whtblkt = 0.0D0
-       whtshld = 0.0D0
-       do i = 1,5
-          do j = 1,3
-             fwmass = fwmass + fwmatm(j,i)
-             whtblkt = whtblkt + blmatm(j,i)
-             whtshld = whtshld + shmatm(j,i)
-          end do
-       end do
-
-       !  Other masses
-
-       whtblbe = 0.0D0
-       whtblvd = 0.0D0
-       whtblss = 0.0D0
-       wtblli2o = 0.0D0
+    do i = 0,maxmat
+       den = matden(i)
+       chmatm(i) = chmatv(i) * den
        do j = 1,3
-          whtblss = whtblss + blmatm(j,1)
-          wtblli2o = wtblli2o + blmatm(j,4)
+          fwmatm(j,i) = fwmatv(j,i) * den
+          v1matm(j,i) = v1matv(j,i) * den
+          blmatm(j,i) = blmatv(j,i) * den
+          v2matm(j,i) = v2matv(j,i) * den
+          shmatm(j,i) = shmatv(j,i) * den
+          v3matm(j,i) = v3matv(j,i) * den
        end do
+    end do
 
-       !  Total mass of FLiBe
+    !  Total masses of components (excluding coolant)
 
-       mflibe = chmatm(3)
+    fwmass = 0.0D0
+    whtblkt = 0.0D0
+    whtshld = 0.0D0
+    do i = 1,5
        do j = 1,3
-          mflibe = mflibe + fwmatm(j,3) + v1matm(j,3) + blmatm(j,3) + &
-               v2matm(j,3) + shmatm(j,3) + v3matm(j,3)
+          fwmass = fwmass + fwmatm(j,i)
+          whtblkt = whtblkt + blmatm(j,i)
+          whtshld = whtshld + shmatm(j,i)
        end do
+    end do
 
-       !  A fraction FBREED of the total breeder inventory is outside the
-       !  core region, i.e. is in the rest of the heat transport system
+    !  Other masses
 
-       if ((fbreed < 0.0D0).or.(fbreed > 0.999D0)) then
-          write(outfile,*) 'Error in routine IFEFBS:'
-          write(outfile,*) 'FBREED = ',fbreed
-          write(outfile,*) 'PROCESS stopping.'
-          stop
-       end if
+    whtblbe = 0.0D0
+    whtblvd = 0.0D0
+    whtblss = 0.0D0
+    wtblli2o = 0.0D0
+    do j = 1,3
+       whtblss = whtblss + blmatm(j,1)
+       wtblli2o = wtblli2o + blmatm(j,4)
+    end do
 
-       !  Following assumes that use of FLiBe and Li2O are
-       !  mutually exclusive
+    !  Total mass of FLiBe
 
-       mflibe = mflibe / (1.0D0 - fbreed)
-       wtblli2o = wtblli2o / (1.0D0 - fbreed)
+    mflibe = chmatm(3)
+    do j = 1,3
+       mflibe = mflibe + fwmatm(j,3) + v1matm(j,3) + blmatm(j,3) + &
+            v2matm(j,3) + shmatm(j,3) + v3matm(j,3)
+    end do
 
-       !  Blanket and first wall lifetimes (HYLIFE-II: = plant life)
+    !  A fraction FBREED of the total breeder inventory is outside the
+    !  core region, i.e. is in the rest of the heat transport system
 
-       if (ifetyp == 3) THEN
-          life = tlife
-       else
-          life = min( tlife, abktflnc/(wallmw*cfactr) )
-       end if
-
-       bktlife = life
-       fwlife = life
-
-       !  Cryostat mass (=zero)
-
-       cryomass = 0.0D0
-
+    if ((fbreed < 0.0D0).or.(fbreed > 0.999D0)) then
+       write(outfile,*) 'Error in routine IFEFBS:'
+       write(outfile,*) 'FBREED = ',fbreed
+       write(outfile,*) 'PROCESS stopping.'
+       stop
     end if
+
+    !  Following assumes that use of FLiBe and Li2O are
+    !  mutually exclusive
+
+    mflibe = mflibe / (1.0D0 - fbreed)
+    wtblli2o = wtblli2o / (1.0D0 - fbreed)
+
+    !  Blanket and first wall lifetimes (HYLIFE-II: = plant life)
+
+    if (ifetyp == 3) THEN
+       life = tlife
+    else
+       life = min( tlife, abktflnc/(wallmw*cfactr) )
+    end if
+
+    bktlife = life
+    fwlife = life
+
+    !  Cryostat mass (=zero)
+
+    cryomass = 0.0D0
 
     if ((iprint == 0).or.(sect12 == 0)) return
 
@@ -2111,6 +2102,7 @@ contains
     !+ad_hist  05/02/13 PJK Clarified MGF output
     !+ad_hist  27/03/13 PJK MGF power removed; irrelevant for IFE
     !+ad_hist  17/04/13 PJK Removed 0.05*pacpmw contribution to fcsht
+    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.68
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2129,32 +2121,28 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (iprint /= 1) then
+    !  Facility base load, MW (loads not dependent on floor area)
 
-       !  Facility base load, MW (loads not dependent on floor area)
+    basemw = baseel * 1.0D-6
 
-       basemw = baseel * 1.0D-6
+    !  Power needed per floor area, MW/m2
 
-       !  Power needed per floor area, MW/m2
+    pmwpm2 = pwpm2 * 1.0D-6
 
-       pmwpm2 = pwpm2 * 1.0D-6
+    !  Total pulsed power system load, MW
 
-       !  Total pulsed power system load, MW
+    pacpmw = crypmw + vachtmw + tdspmw + tfacmw + &
+         (htpmw*reprat/6.0D0) + trithtmw + pinjwp + basemw + &
+         (efloor*pmwpm2)
 
-       pacpmw = crypmw + vachtmw + tdspmw + tfacmw + &
-            (htpmw*reprat/6.0D0) + trithtmw + pinjwp + basemw + &
-            (efloor*pmwpm2)
+    !  Total baseline power to facility loads, MW
 
-       !  Total baseline power to facility loads, MW
+    fcsht  = basemw + (efloor*pmwpm2)
 
-       fcsht  = basemw + (efloor*pmwpm2)
+    !  Estimate of the total low voltage power, MW
 
-       !  Estimate of the total low voltage power, MW
-
-       tlvpmw = fcsht + trithtmw + (htpmw*reprat/6.0D0) + vachtmw + &
-            0.5D0*crypmw + tfacmw
-
-    end if
+    tlvpmw = fcsht + trithtmw + (htpmw*reprat/6.0D0) + vachtmw + &
+         0.5D0*crypmw + tfacmw
 
     if ((iprint == 0).or.(sect17 == 0)) return
 
@@ -2216,6 +2204,7 @@ contains
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  31/10/12 PJK Added cost_variables
     !+ad_hist  17/04/13 PJK Corrected ctht
+    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.67
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2234,51 +2223,47 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (iprint /= 1) then
+    !  Facility heat removal (fcsht calculated in IFEACP)
 
-       !  Facility heat removal (fcsht calculated in IFEACP)
+    facht = fcsht
 
-       facht = fcsht
+    !  Total secondary heat
 
-       !  Total secondary heat
+    psecht = pinjht + pnucloss + facht + vachtmw + trithtmw + &
+         tdspmw + tfacmw + crypmw + htpmw
 
-       psecht = pinjht + pnucloss + facht + vachtmw + trithtmw + &
-            tdspmw + tfacmw + crypmw + htpmw
+    !  Total plant heat removal
 
-       !  Total plant heat removal
+    ctht = pthermmw + psecht
 
-       ctht = pthermmw + psecht
+    !  Number of intermediate heat exchangers
 
-       !  Number of intermediate heat exchangers
+    rnihx = max(2.0D0, (ctht/50.0D0 + 0.8D0) )
 
-       rnihx = max(2.0D0, (ctht/50.0D0 + 0.8D0) )
+    !  Calculate powers relevant to a power-producing plant
 
-       !  Calculate powers relevant to a power-producing plant
+    if (ireactor == 1) then
 
-       if (ireactor == 1) then
+       !  Gross electric power
 
-          !  Gross electric power
+       pgrossmw = pthermmw * etath
 
-          pgrossmw = pthermmw * etath
+       !  Balance of plant recirculating power fraction
 
-          !  Balance of plant recirculating power fraction
+       fgrosbop = min( 0.5D0, ( fauxbop/(pgrossmw/1000.0D0)**0.6D0) )
 
-          fgrosbop = min( 0.5D0, ( fauxbop/(pgrossmw/1000.0D0)**0.6D0) )
+       !  Total recirculating power
 
-          !  Total recirculating power
+       precir = (fgrosbop*pgrossmw) + pacpmw
 
-          precir = (fgrosbop*pgrossmw) + pacpmw
+       !  Net electric power
 
-          !  Net electric power
+       pnetelmw = pgrossmw - precir
 
-          pnetelmw = pgrossmw - precir
+       !  Scaling to prevent negative pnetelmw
 
-          !  Scaling to prevent negative pnetelmw
-
-          if ( (pnetelmw < 1.0D0).and.(ipnet == 0) ) then
-             pnetelmw = 1.0D0 / ( 1.0D0 + abs(pnetelmw-1.0D0))
-          end if
-
+       if ( (pnetelmw < 1.0D0).and.(ipnet == 0) ) then
+          pnetelmw = 1.0D0 / ( 1.0D0 + abs(pnetelmw-1.0D0))
        end if
 
     end if
@@ -2402,6 +2387,7 @@ contains
     !+ad_hist  18/10/12 PJK Added fwbs_variables
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  30/10/12 PJK Added buildings_variables
+    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.87
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2422,124 +2408,120 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (iprint /= 1) then
+    !  Reactor building
+    !  ================
 
-       !  Reactor building
-       !  ================
+    !  Total internal height
 
-       !  Total internal height
+    hrbi = zl7 + zu7
 
-       hrbi = zl7 + zu7
+    !  Distance from centre of device to wall
 
-       !  Distance from centre of device to wall
+    wrbi = r7
 
-       wrbi = r7
+    !  Internal volume (square floor)
 
-       !  Internal volume (square floor)
+    vrci = (2.0D0 * wrbi)**2 * hrbi
 
-       vrci = (2.0D0 * wrbi)**2 * hrbi
+    !  External dimensions
+    !  RBWT = wall thickness
+    !  RBRT = roof thickness
+    !  FNDT = foundation thickness
 
-       !  External dimensions
-       !  RBWT = wall thickness
-       !  RBRT = roof thickness
-       !  FNDT = foundation thickness
+    rbw = 2.0D0 * (r7 + rbwt)
+    rbl = rbw
+    rbh = hrbi + rbrt + fndt
 
-       rbw = 2.0D0 * (r7 + rbwt)
-       rbl = rbw
-       rbh = hrbi + rbrt + fndt
+    !  External volume
 
-       !  External volume
+    rbv = rbw * rbl * rbh
 
-       rbv = rbw * rbl * rbh
+    !  Maintenance building
+    !  ====================
 
-       !  Maintenance building
-       !  ====================
+    !  The reactor maintenance building includes the hot cells, the
+    !  decontamination chamber, the transfer corridors, and the waste
+    !  treatment building.  The dimensions of these areas are scaled
+    !  from a reference (tokamak) design based on the shield sector size.
 
-       !  The reactor maintenance building includes the hot cells, the
-       !  decontamination chamber, the transfer corridors, and the waste
-       !  treatment building.  The dimensions of these areas are scaled
-       !  from a reference (tokamak) design based on the shield sector size.
+    !  Shield height
 
-       !  Shield height
+    shh = zl6 + zu6
 
-       shh = zl6 + zu6
+    !  Transport corridor size
 
-       !  Transport corridor size
+    tcw = r6 + 4.0D0*trcl
+    tcl = 5.0D0*tcw + 2.0D0*hcwt
 
-       tcw = r6 + 4.0D0*trcl
-       tcl = 5.0D0*tcw + 2.0D0*hcwt
+    !  Decontamination cell size
 
-       !  Decontamination cell size
+    dcw = 2.0D0*tcw + 1.0D0
+    dcl = 2.0D0*tcw + 1.0D0
 
-       dcw = 2.0D0*tcw + 1.0D0
-       dcl = 2.0D0*tcw + 1.0D0
+    !  Hot cell size
 
-       !  Hot cell size
+    hcw = r6 + 3.0D0*hccl + 2.0D0
+    hcl = 3.0D0*r6 + 4.0D0*hccl + tcw
 
-       hcw = r6 + 3.0D0*hccl + 2.0D0
-       hcl = 3.0D0*r6 + 4.0D0*hccl + tcw
+    !  Radioactive waste treatment
 
-       !  Radioactive waste treatment
+    rww = dcw
+    rwl = hcl-dcl-hcwt
 
-       rww = dcw
-       rwl = hcl-dcl-hcwt
+    !  Maintenance building dimensions
 
-       !  Maintenance building dimensions
+    rmbw = hcw + dcw + 3.0D0*hcwt
+    rmbl = hcl + 2.0D0*hcwt
 
-       rmbw = hcw + dcw + 3.0D0*hcwt
-       rmbl = hcl + 2.0D0*hcwt
+    !  Height
 
-       !  Height
-
-       if (wgt2 > 1.0D0) then
-          wgts = wgt2
-       else
-          wgts = whtshld
-       end if
-       cran = 9.41D-6*wgts + 5.1D0
-       rmbh = 10.0D0 + (zl6+zu6) + trcl + cran + 5.1D0 + stcl + fndt
-       tch = shh + stcl + fndt
-
-       !  Volume
-
-       fac2 = 2.8D0
-       rmbv = fac2*rmbw*rmbl*rmbh + tcw*tcl*tch
-
-       !  Warm shop and hot cell gallery
-
-       wsa = (rmbw+7.0D0)*20.0D0 + rmbl*7.0D0
-       fac3 = 1.9D0
-       wsv = fac3 * wsa*rmbh
-
-       !  Cryogenic building volume
-
-       cryv = 55.0D0 * sqrt(helpow)
-
-       !  Electrical building volume
-       !  (set equal to power injection (i.e. driver) building volume)
-
-       elev = pibv
-
-       !  Calculate effective floor area for ac power module
-
-       efloor = (rbv+rmbv+wsv+triv+elev+conv+cryv+admv+shov)/6.0D0
-
-       !  Convert local into global variables
-
-       admvol = admv
-       convol = conv
-       elevol = elev
-       rbvol  = rbv
-       rmbvol = rmbv
-       shovol = shov
-       volrci = vrci
-       wsvol  = wsv
-
-       !  Total volume of nuclear buildings
-
-       volnucb = ( vrci + rmbv + wsv + triv + cryv )
-
+    if (wgt2 > 1.0D0) then
+       wgts = wgt2
+    else
+       wgts = whtshld
     end if
+    cran = 9.41D-6*wgts + 5.1D0
+    rmbh = 10.0D0 + (zl6+zu6) + trcl + cran + 5.1D0 + stcl + fndt
+    tch = shh + stcl + fndt
+
+    !  Volume
+
+    fac2 = 2.8D0
+    rmbv = fac2*rmbw*rmbl*rmbh + tcw*tcl*tch
+
+    !  Warm shop and hot cell gallery
+
+    wsa = (rmbw+7.0D0)*20.0D0 + rmbl*7.0D0
+    fac3 = 1.9D0
+    wsv = fac3 * wsa*rmbh
+
+    !  Cryogenic building volume
+
+    cryv = 55.0D0 * sqrt(helpow)
+
+    !  Electrical building volume
+    !  (set equal to power injection (i.e. driver) building volume)
+
+    elev = pibv
+
+    !  Calculate effective floor area for ac power module
+
+    efloor = (rbv+rmbv+wsv+triv+elev+conv+cryv+admv+shov)/6.0D0
+
+    !  Convert local into global variables
+
+    admvol = admv
+    convol = conv
+    elevol = elev
+    rbvol  = rbv
+    rmbvol = rmbv
+    shovol = shov
+    volrci = vrci
+    wsvol  = wsv
+
+    !  Total volume of nuclear buildings
+
+    volnucb = ( vrci + rmbv + wsv + triv + cryv )
 
     if ((iprint == 0).or.(sect16 == 0)) return
 

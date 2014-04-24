@@ -450,6 +450,7 @@ contains
     !+ad_hist  29/10/12 PJK Added pf_power_variables
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  04/02/13 PJK Comment change
+    !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -477,171 +478,165 @@ contains
     cktr(:) = 0.0D0
     pfcr(:) = 0.0D0
 
-    if (iprint == 0) then
+    !  Bus length
 
-       !  Bus length
+    pfbusl = 8.0D0 * rmajor + 140.0D0
 
-       pfbusl = 8.0D0 * rmajor + 140.0D0
+    !  Find power requirements for PF coils at tim(ktim)
 
-       !  Find power requirements for PF coils at tim(ktim)
+    !  PF coil resistive power requirements
+    !  Bussing losses assume aluminium bussing with 100 A/cm**2
 
-       !  PF coil resistive power requirements
-       !  Bussing losses assume aluminium bussing with 100 A/cm**2
+    ic = 0
+    ngrpt = ngrp
+    if (iohcl /= 0) ngrpt = ngrpt + 1
 
-       ic = 0
-       ngrpt = ngrp
-       if (iohcl /= 0) ngrpt = ngrpt + 1
+    srcktpm = 0.0D0
+    pfbuspwr = 0.0D0
 
-       srcktpm = 0.0D0
-       pfbuspwr = 0.0D0
+    do ig = 1,ngrpt
+       ic = ic + ncls(ig)
 
-       do ig = 1,ngrpt
-          ic = ic + ncls(ig)
+       !  Section area of aluminium bussing for circuit (cm**2)
+       !  cptdin : max current per turn of coil (A)
 
-          !  Section area of aluminium bussing for circuit (cm**2)
-          !  cptdin : max current per turn of coil (A)
+       albusa(ig) = abs(cptdin(ic)) / 100.0D0  
 
-          albusa(ig) = abs(cptdin(ic)) / 100.0D0  
+       !  Resistance of bussing for circuit (ohm)
+       !  Include 50% enhancement for welds, joints etc, (G. Gorker, ORNL)
+       !  pfbusl : bus length for each PF circuit (m)
 
-          !  Resistance of bussing for circuit (ohm)
-          !  Include 50% enhancement for welds, joints etc, (G. Gorker, ORNL)
-          !  pfbusl : bus length for each PF circuit (m)
+       pfbusr(ig) = 1.5D0 * 2.62D-4 * pfbusl/albusa(ig)
 
-          pfbusr(ig) = 1.5D0 * 2.62D-4 * pfbusl/albusa(ig)
+       !  Total PF coil resistance (during burn)
+       !  ric : maximum current in coil (A)
 
-          !  Total PF coil resistance (during burn)
-          !  ric : maximum current in coil (A)
+       pfcr(ig) = pfclres * 2.0D0 * pi * rpf(ic) * abs(rjconpf(ic) / &
+            ( (1.0D0-vf(ic))*1.0D6*ric(ic)) ) * turns(ic)**2 * ncls(ig)
 
-          pfcr(ig) = pfclres * 2.0D0 * pi * rpf(ic) * abs(rjconpf(ic) / &
-               ( (1.0D0-vf(ic))*1.0D6*ric(ic)) ) * turns(ic)**2 * ncls(ig)
+       cktr(ig) = pfcr(ig) + pfbusr(ig)  !  total resistance of circuit (ohms)
+       cptburn = cptdin(ic) * curpfb(ic)/ric(ic)
+       rcktvm(ig) = abs(cptburn)*cktr(ig)  !  peak resistive voltage (V)
+       rcktpm(ig) = 1.0D-6*rcktvm(ig)*abs(cptburn)  !  peak resistive power (MW)
 
-          cktr(ig) = pfcr(ig) + pfbusr(ig)  !  total resistance of circuit (ohms)
-          cptburn = cptdin(ic) * curpfb(ic)/ric(ic)
-          rcktvm(ig) = abs(cptburn)*cktr(ig)  !  peak resistive voltage (V)
-          rcktpm(ig) = 1.0D-6*rcktvm(ig)*abs(cptburn)  !  peak resistive power (MW)
+       !  Compute the sum of resistive power in the PF circuits, kW
 
-          !  Compute the sum of resistive power in the PF circuits, kW
+       pfbuspwr = pfbuspwr + 1.0D-3 * pfbusr(ig) * cptburn**2
+       srcktpm = srcktpm + 1.0D3*rcktpm(ig)
+    end do
 
-          pfbuspwr = pfbuspwr + 1.0D-3 * pfbusr(ig) * cptburn**2
-          srcktpm = srcktpm + 1.0D3*rcktpm(ig)
-       end do
+    !  Inductive MVA requirements, and stored energy
 
-       !  Inductive MVA requirements, and stored energy
+    delktim = tohs
 
-       delktim = tohs
+    !  PF system (including OH solenoid) inductive MVA requirements
+    !  cpt(i,j) : current per turn of coil i at (end) time period j (A)
 
-       !  PF system (including OH solenoid) inductive MVA requirements
-       !  cpt(i,j) : current per turn of coil i at (end) time period j (A)
+    powpfi = 0.0D0
+    powpfr = 0.0D0
+    powpfr2 = 0.0D0
+    ensxpf = 0.0D0
 
-       powpfi = 0.0D0
-       powpfr = 0.0D0
-       powpfr2 = 0.0D0
-       ensxpf = 0.0D0
+    !  ncirt : total number of PF coils (including OH coil and plasma)
+    !          plasma is #ncirt, and OH coil is #(ncirt-1)
+    !  sxlg(i,j) : mutual inductance between coil i and j
 
-       !  ncirt : total number of PF coils (including OH coil and plasma)
-       !          plasma is #ncirt, and OH coil is #(ncirt-1)
-       !  sxlg(i,j) : mutual inductance between coil i and j
+    do i = 1, ncirt
+       powpfii(i) = 0.0D0
+       vpfi(i) = 0.0D0
+    end do
 
-       do i = 1, ncirt
-          powpfii(i) = 0.0D0
-          vpfi(i) = 0.0D0
-       end do
+    jpf = 0
+    do jjpf = 1,ngrpt
+       do jjpf2 = 1,ncls(jjpf)
+          jpf = jpf + 1
+          engx = 0.0D0
+          do ipf = 1,ncirt
 
-       jpf = 0
-       do jjpf = 1,ngrpt
-          do jjpf2 = 1,ncls(jjpf)
-             jpf = jpf + 1
-             engx = 0.0D0
-             do ipf = 1,ncirt
+             !  Voltage in circuit jpf due to change in current from
+             !  circuit ipf
 
-                !  Voltage in circuit jpf due to change in current from
-                !  circuit ipf
+             vpfij = sxlg(jpf,ipf) * (cpt(ipf,3)-cpt(ipf,2))/delktim
 
-                vpfij = sxlg(jpf,ipf) * (cpt(ipf,3)-cpt(ipf,2))/delktim
+             !  Voltage in circuit jpf at time, tim(3), due to changes
+             !  in coil currents
 
-                !  Voltage in circuit jpf at time, tim(3), due to changes
-                !  in coil currents
+             vpfi(jpf) = vpfi(jpf) + vpfij
 
-                vpfi(jpf) = vpfi(jpf) + vpfij
+             !  MVA in circuit jpf at time, tim(3) due to changes
+             !  in current
 
-                !  MVA in circuit jpf at time, tim(3) due to changes
-                !  in current
-
-                powpfii(jpf) = powpfii(jpf) + vpfij*cpt(jpf,3)/1.d6
-                engx = engx + sxlg(jpf,ipf)*cpt(ipf,5)
-
-             end do
-
-             !  Compute inductive energy of each PF coil circuit at time
-             !  tim(5)
-
-             engxpc = 0.5D0 * engx * cpt(jpf,5)
-             ensxpf = ensxpf + engxpc
-
-             !  Resistive power in circuits at times tim(3) and tim(5)
-             !  respectively (MW)
-
-             powpfr = powpfr + turns(jpf) * cpt(jpf,3) * cktr(jjpf)/1.0D6
-             powpfr2 = powpfr2 +turns(jpf)* cpt(jpf,5) * cktr(jjpf)/1.0D6
-             powpfi = powpfi + powpfii(jpf)
+             powpfii(jpf) = powpfii(jpf) + vpfij*cpt(jpf,3)/1.d6
+             engx = engx + sxlg(jpf,ipf)*cpt(ipf,5)
 
           end do
-       end do
 
-       !  Compute the maximum stored energy and the maximum dissipative
-       !  energy in all the PF circuits over the entire cycle time, MJ
+          !  Compute inductive energy of each PF coil circuit at time
+          !  tim(5)
 
-       ensxpfm = 1.0D-6 * ensxpf
+          engxpc = 0.5D0 * engx * cpt(jpf,5)
+          ensxpf = ensxpf + engxpc
 
-       !  Maximum total MVA requirements
+          !  Resistive power in circuits at times tim(3) and tim(5)
+          !  respectively (MW)
 
-       peakmva =  max( (powpfr + powpfi), powpfr2)
-
-       vpfskv = 20.0D0
-       pfckts = (ncirt-2) + 6.0D0
-       spfbusl = pfbusl*pfckts
-       acptmax = 0.0D0
-       spsmva = 0.0D0
-
-       do jpf = 1,ncirt-1
-
-          !  Power supply MVA for each PF circuit
-
-          psmva(jpf) = 1.0D-6 * abs (vpfi(jpf)*cptdin(jpf) )
-
-          !  Sum of the power supply MVA of the PF circuits
-
-          spsmva = spsmva + psmva(jpf)
-
-          !  Average of the maximum currents in the PF circuits, kA
-
-          acptmax = acptmax + 1.0D-3 * abs(cptdin(jpf))/pfckts
+          powpfr = powpfr + turns(jpf) * cpt(jpf,3) * cktr(jjpf)/1.0D6
+          powpfr2 = powpfr2 +turns(jpf)* cpt(jpf,5) * cktr(jjpf)/1.0D6
+          powpfi = powpfi + powpfii(jpf)
 
        end do
+    end do
 
-    else
+    !  Compute the maximum stored energy and the maximum dissipative
+    !  energy in all the PF circuits over the entire cycle time, MJ
 
-       !  Output Section
+    ensxpfm = 1.0D-6 * ensxpf
 
-       if (sect13 == 0) return
+    !  Maximum total MVA requirements
 
-       call oheadr(outfile,'PF Coil Power Conversion')
-       call ovarre(outfile,'Number of PF coil circuits','(pfckts)',pfckts)
-       call ovarre(outfile,'Total power supply MVA for PF circuits', &
-            '(spsmva)',spsmva)
-       call ovarre(outfile,'Av. max curr/turn of PF coil circuits (kA)', &
-            '(acptmax)',acptmax)
-       call ovarre(outfile,'Total PF coil circuit bus length (m)', &
-            '(spfbusl)',spfbusl)
-       call ovarre(outfile,'Total PF coil bus resistive power (kW)', &
-            '(pfbuspwr)',pfbuspwr)
-       call ovarre(outfile,'Total PF coil resistive power (kW)', &
-            '(srcktpm)',srcktpm)
-       call ovarre(outfile,'Maximum PF coil voltage (kV)','(vpfskv)',vpfskv)
-       call ovarre(outfile,'Max stored energy in PF coil circuits (MJ)', &
-            '(ensxpfm)',ensxpfm)
+    peakmva =  max( (powpfr + powpfi), powpfr2)
 
-    end if
+    vpfskv = 20.0D0
+    pfckts = (ncirt-2) + 6.0D0
+    spfbusl = pfbusl*pfckts
+    acptmax = 0.0D0
+    spsmva = 0.0D0
+
+    do jpf = 1,ncirt-1
+
+       !  Power supply MVA for each PF circuit
+
+       psmva(jpf) = 1.0D-6 * abs (vpfi(jpf)*cptdin(jpf) )
+
+       !  Sum of the power supply MVA of the PF circuits
+
+       spsmva = spsmva + psmva(jpf)
+
+       !  Average of the maximum currents in the PF circuits, kA
+
+       acptmax = acptmax + 1.0D-3 * abs(cptdin(jpf))/pfckts
+
+    end do
+
+    !  Output Section
+
+    if ((iprint == 0).or.(sect13 == 0)) return
+
+    call oheadr(outfile,'PF Coil Power Conversion')
+    call ovarre(outfile,'Number of PF coil circuits','(pfckts)',pfckts)
+    call ovarre(outfile,'Total power supply MVA for PF circuits', &
+         '(spsmva)',spsmva)
+    call ovarre(outfile,'Av. max curr/turn of PF coil circuits (kA)', &
+         '(acptmax)',acptmax)
+    call ovarre(outfile,'Total PF coil circuit bus length (m)', &
+         '(spfbusl)',spfbusl)
+    call ovarre(outfile,'Total PF coil bus resistive power (kW)', &
+         '(pfbuspwr)',pfbuspwr)
+    call ovarre(outfile,'Total PF coil resistive power (kW)', &
+         '(srcktpm)',srcktpm)
+    call ovarre(outfile,'Maximum PF coil voltage (kV)','(vpfskv)',vpfskv)
+    call ovarre(outfile,'Max stored energy in PF coil circuits (MJ)', &
+         '(ensxpfm)',ensxpfm)
 
   end subroutine pfpwr
 

@@ -286,6 +286,7 @@ contains
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  26/11/13 PJK Removed obsolete argument to bfield
+    !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -311,175 +312,171 @@ contains
     !  The OH coils are the first 14 PF coils
     !  The superconducting EF coils are PF coils 15 and 16
 
-    if (iprint == 0) then
+    !  Number of turns in each coil
 
-       !  Number of turns in each coil
+    nturns(1) = 10.0D0
+    nturns(2) = 28.0D0
+    nturns(3) = 10.0D0
+    nturns(4) = 30.0D0
+    nturns(5) = 30.0D0
+    nturns(6) = 52.0D0
+    nturns(7) = 26.0D0
 
-       nturns(1) = 10.0D0
-       nturns(2) = 28.0D0
-       nturns(3) = 10.0D0
-       nturns(4) = 30.0D0
-       nturns(5) = 30.0D0
-       nturns(6) = 52.0D0
-       nturns(7) = 26.0D0
+    nturns(15) = 88.0D0
+    nturns(16) = 88.0D0
 
-       nturns(15) = 88.0D0
-       nturns(16) = 88.0D0
+    !  Coil cross-sectional dimensions
 
-       !  Coil cross-sectional dimensions
+    drpf(1) = 0.20D0 ; dzpf(1) = 0.30D0
+    drpf(2) = 0.40D0 ; dzpf(2) = 0.42D0
+    drpf(3) = 0.30D0 ; dzpf(3) = 0.20D0
+    drpf(4) = 0.30D0 ; dzpf(4) = 0.60D0
+    drpf(5) = 0.60D0 ; dzpf(5) = 0.30D0
+    drpf(6) = 0.40D0 ; dzpf(6) = 0.78D0
+    drpf(7) = 0.40D0 ; dzpf(7) = 0.39D0
 
-       drpf(1) = 0.20D0 ; dzpf(1) = 0.30D0
-       drpf(2) = 0.40D0 ; dzpf(2) = 0.42D0
-       drpf(3) = 0.30D0 ; dzpf(3) = 0.20D0
-       drpf(4) = 0.30D0 ; dzpf(4) = 0.60D0
-       drpf(5) = 0.60D0 ; dzpf(5) = 0.30D0
-       drpf(6) = 0.40D0 ; dzpf(6) = 0.78D0
-       drpf(7) = 0.40D0 ; dzpf(7) = 0.39D0
+    drpf(15) = 0.70D0 ; dzpf(15) = 0.70D0
+    drpf(16) = 0.70D0 ; dzpf(16) = 0.70D0
 
-       drpf(15) = 0.70D0 ; dzpf(15) = 0.70D0
-       drpf(16) = 0.70D0 ; dzpf(16) = 0.70D0
+    !  Offset locations from plasma major radius normalised to the
+    !  TF coil external radius (1.125m for TITAN-II)
 
-       !  Offset locations from plasma major radius normalised to the
-       !  TF coil external radius (1.125m for TITAN-II)
+    drr(1) =  1.8667D0 ; dzz(1) = 1.0667D0
+    drr(2) =  0.1867D0 ; dzz(2) = 2.1422D0
+    drr(3) = -0.5422D0 ; dzz(3) = 2.1333D0
+    drr(4) = -1.0578D0 ; dzz(4) = 1.4667D0
+    drr(5) = -1.4667D0 ; dzz(5) = 1.2711D0
+    drr(6) = -1.5556D0 ; dzz(6) = 0.7200D0
+    drr(7) = -1.5556D0 ; dzz(7) = 0.1867D0
 
-       drr(1) =  1.8667D0 ; dzz(1) = 1.0667D0
-       drr(2) =  0.1867D0 ; dzz(2) = 2.1422D0
-       drr(3) = -0.5422D0 ; dzz(3) = 2.1333D0
-       drr(4) = -1.0578D0 ; dzz(4) = 1.4667D0
-       drr(5) = -1.4667D0 ; dzz(5) = 1.2711D0
-       drr(6) = -1.5556D0 ; dzz(6) = 0.7200D0
-       drr(7) = -1.5556D0 ; dzz(7) = 0.1867D0
+    drr(15) = 2.3111D0 ; dzz(15) =  2.2133D0
+    drr(16) = 2.3111D0 ; dzz(16) = -2.2133D0
 
-       drr(15) = 2.3111D0 ; dzz(15) =  2.2133D0
-       drr(16) = 2.3111D0 ; dzz(16) = -2.2133D0
+    do i = 8,14
+       drr(i) =  drr(i-7)
+       dzz(i) = -dzz(i-7)
+       nturns(i) = nturns(i-7)
+       drpf(i) = drpf(i-7)
+       dzpf(i) = dzpf(i-7)
+    end do
 
-       do i = 8,14
-          drr(i) =  drr(i-7)
-          dzz(i) = -dzz(i-7)
-          nturns(i) = nturns(i-7)
-          drpf(i) = drpf(i-7)
-          dzpf(i) = dzpf(i-7)
-       end do
+    !  Scaled coil locations (largest coil radius is stored in pfrmax)
 
-       !  Scaled coil locations (largest coil radius is stored in pfrmax)
+    pfrmax = 0.0D0
+    do i = 1,nrfppf
+       rrpf(i) = rmajor + (hmax+tfcth)*drr(i)
+       zzpf(i) =          (hmax+tfcth)*dzz(i)
+       pfrmax = max(pfrmax, (rrpf(i)+0.5D0*drpf(i)) )
+    end do
 
-       pfrmax = 0.0D0
-       do i = 1,nrfppf
-          rrpf(i) = rmajor + (hmax+tfcth)*drr(i)
-          zzpf(i) =          (hmax+tfcth)*dzz(i)
-          pfrmax = max(pfrmax, (rrpf(i)+0.5D0*drpf(i)) )
-       end do
+    !  Current per turn in OH coils
+    !  TITAN-I has 75 kA/turn for a plasma current of 17.8 MA
 
-       !  Current per turn in OH coils
-       !  TITAN-I has 75 kA/turn for a plasma current of 17.8 MA
+    do i = 1,14
+       cptrfp(i) = 7.5D4/17.8D6 * plascur
+    end do
 
-       do i = 1,14
-          cptrfp(i) = 7.5D4/17.8D6 * plascur
-       end do
+    !  Current per turn in EF coils
+    !  TITAN-I has -109.32 kA/turn for a plasma current of 17.8 MA
 
-       !  Current per turn in EF coils
-       !  TITAN-I has -109.32 kA/turn for a plasma current of 17.8 MA
+    cptrfp(15) = -1.0932D5/17.8D6 * plascur
+    cptrfp(16) = -1.0932D5/17.8D6 * plascur
 
-       cptrfp(15) = -1.0932D5/17.8D6 * plascur
-       cptrfp(16) = -1.0932D5/17.8D6 * plascur
+    !  Scale correctly to obtain correct vertical field at plasma
 
-       !  Scale correctly to obtain correct vertical field at plasma
+    call efcurr(plascur,rmajor,rminor,betap,rli,nrfppf,rrpf,zzpf, &
+         nturns,cptrfp)
 
-       call efcurr(plascur,rmajor,rminor,betap,rli,nrfppf,rrpf,zzpf, &
-            nturns,cptrfp)
+    !  Total currents and current densities (ignoring void fractions)
 
-       !  Total currents and current densities (ignoring void fractions)
+    do i = 1,nrfppf
+       curpf(i) =  cptrfp(i) * nturns(i)
+       curdpf(i) = curpf(i)/(drpf(i)*dzpf(i))
+    end do
 
-       do i = 1,nrfppf
-          curpf(i) =  cptrfp(i) * nturns(i)
-          curdpf(i) = curpf(i)/(drpf(i)*dzpf(i))
-       end do
+    !  Resistances and resistive power losses
+    !  (EF coils 15 and 16 are superconducting)
 
-       !  Resistances and resistive power losses
-       !  (EF coils 15 and 16 are superconducting)
+    powpfres = 0.0D0
+    do i = 1,14
+       resrfp(i) = pfclres * 2.0D0 * pi * rrpf(i) * (nturns(i)**2) / &
+            (drpf(i)*dzpf(i)*(1.0D0-vf(i)))
+       powpfres = powpfres + (curpf(i)/nturns(i))**2 * resrfp(i)
+    end do
+    resrfp(15) = 0.0D0
+    resrfp(16) = 0.0D0
 
-       powpfres = 0.0D0
-       do i = 1,14
-          resrfp(i) = pfclres * 2.0D0 * pi * rrpf(i) * (nturns(i)**2) / &
-               (drpf(i)*dzpf(i)*(1.0D0-vf(i)))
-          powpfres = powpfres + (curpf(i)/nturns(i))**2 * resrfp(i)
-       end do
-       resrfp(15) = 0.0D0
-       resrfp(16) = 0.0D0
+    !  Masses (highest individual coil mass (tonnes) is stored in pfmmax)
 
-       !  Masses (highest individual coil mass (tonnes) is stored in pfmmax)
+    pfmmax = 0.0D0
+    whtpf = 0.0D0
+    do i = 1,nrfppf
+       if (i <= 14) then
+          dens = dcopper
+       else
+          dens = dcond(isumatpf)
+       end if
+       cmass = 2.0D0*pi*rrpf(i)*drpf(i)*dzpf(i)*dens*(1.0D0-vf(i))
+       pfmmax = max(pfmmax, 1.0D-3*cmass)
+       whtpf = whtpf + cmass
+    end do
 
-       pfmmax = 0.0D0
-       whtpf = 0.0D0
-       do i = 1,nrfppf
-          if (i <= 14) then
-             dens = dcopper
+    !  Peak fields at coils; bri etc. never calculated...
+    !  (Also, should be in an i loop!)
+    !bpf(i) = sqrt(bri**2 + bzi**2)
+    !bpf2(i) = sqrt(bro**2 + bzo**2)
+
+    !  Assume 500 MPa stress limit, 2/3 of the force is supported
+    !  in the outer (steel) case
+
+    forcepf = 0.0D0  !  Never set otherwise; should be JxB force
+    areaspf = 0.666D0 * forcepf / 5.0D8
+
+    whtpfs = areaspf * 2.0D0*pi*rrpf(15) * denstl
+
+    !  Assume that the additional steel shielding the superconductors
+    !  has the same cross-sectional area as the coils themselves
+
+    whtpfs = whtpfs + 2.0D0*pi*rrpf(15)*drpf(15)*dzpf(15)*denstl
+
+    !  Double the steel mass, as there are two coils
+
+    whtpfs = 2.0D0*whtpfs
+
+    !  Mutual inductances
+
+    sqrpi = sqrt(pi)
+    nc = nrfppf-1
+    do i = 1,nrfppf
+
+       do j = 1,nrfppf-1
+          if (j >= i) then
+             jj = j+1
           else
-             dens = dcond(isumatpf)
+             jj = j
           end if
-          cmass = 2.0D0*pi*rrpf(i)*drpf(i)*dzpf(i)*dens*(1.0D0-vf(i))
-          pfmmax = max(pfmmax, 1.0D-3*cmass)
-          whtpf = whtpf + cmass
+          rc(j) = rrpf(jj)
+          zc(j) = zzpf(jj)
        end do
 
-       !  Peak fields at coils; bri etc. never calculated...
-       !  (Also, should be in an i loop!)
-       !bpf(i) = sqrt(bri**2 + bzi**2)
-       !bpf2(i) = sqrt(bro**2 + bzo**2)
+       rp = rrpf(i)
+       zp = zzpf(i)
 
-       !  Assume 500 MPa stress limit, 2/3 of the force is supported
-       !  in the outer (steel) case
+       call bfield(nc,rc,zc,cc,xc,rp,zp,br,bz,psi)
 
-       forcepf = 0.0D0  !  Never set otherwise; should be JxB force
-       areaspf = 0.666D0 * forcepf / 5.0D8
-
-       whtpfs = areaspf * 2.0D0*pi*rrpf(15) * denstl
-
-       !  Assume that the additional steel shielding the superconductors
-       !  has the same cross-sectional area as the coils themselves
-
-       whtpfs = whtpfs + 2.0D0*pi*rrpf(15)*drpf(15)*dzpf(15)*denstl
-
-       !  Double the steel mass, as there are two coils
-
-       whtpfs = 2.0D0*whtpfs
-
-       !  Mutual inductances
-
-       sqrpi = sqrt(pi)
-       nc = nrfppf-1
-       do i = 1,nrfppf
-
-          do j = 1,nrfppf-1
-             if (j >= i) then
-                jj = j+1
-             else
-                jj = j
-             end if
-             rc(j) = rrpf(jj)
-             zc(j) = zzpf(jj)
-          end do
-
-          rp = rrpf(i)
-          zp = zzpf(i)
-
-          call bfield(nc,rc,zc,cc,xc,rp,zp,br,bz,psi)
-
-          do k = 1,nrfppf
-             if (k < i)  then
-                sxlg(i,k) = xc(k) * nturns(k) * nturns(i)
-             else if (k == i)  then
-                rl = dzpf(k)/sqrpi
-                sxlg(k,k) = rmu0 * nturns(k)**2 * rrpf(k) * &
-                     (log(8.0D0*rrpf(k)/rl) - 1.75D0)
-             else
-                sxlg(i,k) = xc(k-1) * nturns(k) * nturns(i)
-             end if
-          end do
-
+       do k = 1,nrfppf
+          if (k < i)  then
+             sxlg(i,k) = xc(k) * nturns(k) * nturns(i)
+          else if (k == i)  then
+             rl = dzpf(k)/sqrpi
+             sxlg(k,k) = rmu0 * nturns(k)**2 * rrpf(k) * &
+                  (log(8.0D0*rrpf(k)/rl) - 1.75D0)
+          else
+             sxlg(i,k) = xc(k-1) * nturns(k) * nturns(i)
+          end if
        end do
 
-    end if
+    end do
 
     if ((iprint == 0).or.(sect08 == 0)) return
 
@@ -531,6 +528,7 @@ contains
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  30/10/12 PJK Added build_variables
+    !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -558,110 +556,106 @@ contains
     cktr(:) = 0.0D0
     vpfi(:) = 0.0D0
 
-    if (iprint == 0) then
+    !  Bus length
 
-       !  Bus length
+    pfbusl = 8.0D0 * rmajor + 140.0D0
 
-       pfbusl = 8.0D0 * rmajor + 140.0D0
+    !  PF coil resistive power requirements
+    !  Bussing losses assume aluminium bussing with 100 A/cm**2
 
-       !  PF coil resistive power requirements
-       !  Bussing losses assume aluminium bussing with 100 A/cm**2
+    srcktpm = 0.0D0
+    pfbuspwr = 0.0D0
 
-       srcktpm = 0.0D0
-       pfbuspwr = 0.0D0
+    do ic = 1,nrfppf
 
-       do ic = 1,nrfppf
+       !  Cross-sectional area of bus
 
-          !  Cross-sectional area of bus
+       albusa(ic) = abs(cptrfp(ic)) / 100.0D0
 
-          albusa(ic) = abs(cptrfp(ic)) / 100.0D0
+       !  Include 50% enhancement for welds,joints etc, (G. Gorker)
 
-          !  Include 50% enhancement for welds,joints etc, (G. Gorker)
+       pfbusr(ic) = 1.5D0 * 2.62D-4 * pfbusl / albusa(ic)
 
-          pfbusr(ic) = 1.5D0 * 2.62D-4 * pfbusl / albusa(ic)
+       !  Total PF coil circuit resistance
 
-          !  Total PF coil circuit resistance
+       cktr(ic) = resrfp(ic) + pfbusr(ic)
+       rcktvm(ic) = abs(cptrfp(ic))*cktr(ic)
+       rcktpm(ic) = 1.0D-6*rcktvm(ic)*abs(cptrfp(ic))
 
-          cktr(ic) = resrfp(ic) + pfbusr(ic)
-          rcktvm(ic) = abs(cptrfp(ic))*cktr(ic)
-          rcktpm(ic) = 1.0D-6*rcktvm(ic)*abs(cptrfp(ic))
+       !  Compute the sum of resistive power in the PF circuits, kW
 
-          !  Compute the sum of resistive power in the PF circuits, kW
+       pfbuspwr = pfbuspwr + 1.0D-3 * pfbusr(ic) * cptrfp(ic)**2
+       srcktpm = srcktpm + 1.0D3*rcktpm(ic)
+    end do
 
-          pfbuspwr = pfbuspwr + 1.0D-3 * pfbusr(ic) * cptrfp(ic)**2
-          srcktpm = srcktpm + 1.0D3*rcktpm(ic)
+    !  Inductive MVA requirements, and stored energy
+
+    delktim = tohs
+
+    !  PF system inductive MVA requirements
+    !  OH coils are assumed to swing symmetrically about zero in
+    !  a period tohs.
+    !  EF coils swing from zero to maximum current in the same time.
+
+    powpfi = 0.0D0
+    powpfr = 0.0D0
+    powpfr2 = 0.0D0
+    ensxpf = 0.0D0
+
+    do jpf = 1,nrfppf
+       engx = 0.0D0
+       do ipf = 1,nrfppf
+          if (ipf < 15) then
+             di = 2.0D0 * cptrfp(ipf)
+          else
+             di = cptrfp(ipf)
+          end if
+          vpfij = sxlg(jpf,ipf) * abs(di)/delktim
+          vpfi(jpf) = vpfi(jpf) + vpfij
+          powpfii(jpf) = powpfii(jpf) + 1.0D-6*vpfij*abs(cptrfp(jpf))
+          engx = engx + sxlg(jpf,ipf)*abs(cptrfp(ipf))
        end do
 
-       !  Inductive MVA requirements, and stored energy
+       !  Compute inductive energy of each PF coil circuit
 
-       delktim = tohs
+       engxpc  = 0.5D0 * engx * abs(cptrfp(jpf))
+       ensxpf = ensxpf + engxpc
+       powpfr = powpfr + 1.0D-6*nturns(jpf)*abs(cptrfp(jpf))*cktr(jpf)
+       powpfr2 = powpfr2 + 1.0D-6*nturns(jpf)*abs(cptrfp(jpf))*cktr(jpf)
+       powpfi = powpfi + powpfii(jpf)
 
-       !  PF system inductive MVA requirements
-       !  OH coils are assumed to swing symmetrically about zero in
-       !  a period tohs.
-       !  EF coils swing from zero to maximum current in the same time.
+    end do
 
-       powpfi = 0.0D0
-       powpfr = 0.0D0
-       powpfr2 = 0.0D0
-       ensxpf = 0.0D0
+    !  Compute the maximum stored energy and the maximum dissipative
+    !  energy in all the PF circuits over the entire cycle time, MJ
 
-       do jpf = 1,nrfppf
-          engx = 0.0D0
-          do ipf = 1,nrfppf
-             if (ipf < 15) then
-                di = 2.0D0 * cptrfp(ipf)
-             else
-                di = cptrfp(ipf)
-             end if
-             vpfij = sxlg(jpf,ipf) * abs(di)/delktim
-             vpfi(jpf) = vpfi(jpf) + vpfij
-             powpfii(jpf) = powpfii(jpf) + 1.0D-6*vpfij*abs(cptrfp(jpf))
-             engx = engx + sxlg(jpf,ipf)*abs(cptrfp(ipf))
-          end do
+    ensxpfm = 1.0D-6 * ensxpf
 
-          !  Compute inductive energy of each PF coil circuit
+    !  Check for peak MVA requirements
 
-          engxpc  = 0.5D0 * engx * abs(cptrfp(jpf))
-          ensxpf = ensxpf + engxpc
-          powpfr = powpfr + 1.0D-6*nturns(jpf)*abs(cptrfp(jpf))*cktr(jpf)
-          powpfr2 = powpfr2 + 1.0D-6*nturns(jpf)*abs(cptrfp(jpf))*cktr(jpf)
-          powpfi = powpfi + powpfii(jpf)
+    peakmva = max( (powpfr + powpfi), powpfr2)
 
-       end do
+    vpfskv = 20.0D0
+    pfckts = dble(nrfppf) + 6.0D0
+    spfbusl = pfbusl*pfckts
+    acptmax = 0.0D0
+    spsmva = 0.0D0
 
-       !  Compute the maximum stored energy and the maximum dissipative
-       !  energy in all the PF circuits over the entire cycle time, MJ
+    do jpf = 1,nrfppf
 
-       ensxpfm = 1.0D-6 * ensxpf
+       !  Compute the power supply MVA for each PF circuit
 
-       !  Check for peak MVA requirements
+       psmva(jpf) = 1.0D-6 * abs(vpfi(jpf)*cptrfp(jpf))
 
-       peakmva = max( (powpfr + powpfi), powpfr2)
+       !  Compute the sum of the power supply MVA of the PF circuits
 
-       vpfskv = 20.0D0
-       pfckts = dble(nrfppf) + 6.0D0
-       spfbusl = pfbusl*pfckts
-       acptmax = 0.0D0
-       spsmva = 0.0D0
+       spsmva = spsmva + psmva(jpf)
 
-       do jpf = 1,nrfppf
+       !  Compute the average of the maximum currents in the PF circuits, kA
 
-          !  Compute the power supply MVA for each PF circuit
+       acptmax = acptmax + 1.0D-3 * abs(cptrfp(jpf))/pfckts
 
-          psmva(jpf) = 1.0D-6 * abs(vpfi(jpf)*cptrfp(jpf))
-
-          !  Compute the sum of the power supply MVA of the PF circuits
-
-          spsmva = spsmva + psmva(jpf)
-
-          !  Compute the average of the maximum currents in the PF circuits, kA
-
-          acptmax = acptmax + 1.0D-3 * abs(cptrfp(jpf))/pfckts
-
-       end do
-
-    end if
+    end do
 
     !  Output Section
 
