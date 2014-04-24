@@ -24,7 +24,7 @@ program process
   !+ad_desc  Culham Report AEA FUS 172 (1992). The standard of the Fortran has
   !+ad_desc  been thoroughly upgraded since that time, and a number of additional
   !+ad_desc  models have been added.
-  !+ad_desc  <P>During 2012, PROCESS has been upgraded from FORTRAN 77 to Fortran 95,
+  !+ad_desc  <P>During 2012, PROCESS was upgraded from FORTRAN 77 to Fortran 95,
   !+ad_desc  to facilitate the restructuring of the code into proper modules
   !+ad_desc  (with all the benefits that modern software practices bring), and to
   !+ad_desc  aid the inclusion of more advanced physics and engineering models under
@@ -1509,3 +1509,5 @@ end subroutine output
 ! SVN 254: Minor changes to write_constraints.py
 ! SVN 255: Modified tfleng calculation to use tfthko on outboard side
 ! SVN 256: Added vertical field calculation
+! SVN 257: Correction to ensure final solution vector is consistent with results
+!          in the rest of the output

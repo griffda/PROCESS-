@@ -224,6 +224,7 @@ contains
     !+ad_hist  06/11/12 PJK Renamed routine con1 to constraints
     !+ad_hist  17/01/13 PJK Corrected ifail to be input/output
     !+ad_hist  17/12/13 PJK Added new argument to constraints call
+    !+ad_hist  24/04/14 PJK Corrected problem with final evaluation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -279,6 +280,15 @@ contains
        end do
 
     end do
+
+    !  Additional evaluation call to ensure that final result is consistent
+    !  with the correct iteration variable values.
+    !  If this is not done, the value of the nth (i.e. final) iteration
+    !  variable in the solution vector is inconsistent with its value
+    !  shown elsewhere in the output file, which is a factor (1-epsfcn)
+    !  smaller (i.e. its xbac value above).
+
+    call caller(xv,n)
 
     !  To stop the program, set ifail < 0 here.
 

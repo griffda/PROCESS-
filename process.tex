@@ -3767,18 +3767,6 @@ Another technique in such situations may be to change the finite difference
 step length \texttt{epsfcn}, as this might subtly change the path taken in the
 approach towards a solution.
 
-\Red{\textit{Note added 17/01/2013}}: It has been found that, during
-optimisation runs, the iteration variable indicated by the final specified
-element in array \texttt{ixc} (i.e.\ \texttt{ixc(nvar)}) does not finish the
-run with consistent values in the output file (its value is roughly 0.1\% less
-than the correct value). The reason is partly understood, but difficult to
-correct in the source code. A quick fix is to increment \texttt{nvar} by one,
-and add another iteration variable to the \texttt{end}\/ of \texttt{ixc} which
-will have no effect on the convergence; for instance, use an f-value for a
-constraint equation which has not been turned on. Then it will be this
-redundant variable which will have an inconsistency, but this is of no
-consequence.
-
 Unfeasible cases often produce unrealistic machines, so one should not believe
 the output values from these runs. Unfortunately, the stationary scan method
 sometimes, though not always, fails to help these cases, since it will tend to
