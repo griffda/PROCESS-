@@ -1369,6 +1369,7 @@ module tfcoil_variables
   !+ad_hist  06/11/13 PJK Modified various comments; removed obsolete switch magnt
   !+ad_hist  01/05/14 PJK Changed TF coil stress model limits to recent ITER values;
   !+ad_hisc               added stress_model etc.; corrected arc array lengths
+  !+ad_hist  01/05/14 PJK Lowered ripmax default value from 5.0 to 1.0
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -1546,8 +1547,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: rhocp = 0.0D0
   !+ad_vars  rhotfleg : TF coil leg resistance (Ohm)
   real(kind(1.0D0)) :: rhotfleg = 0.0D0
-  !+ad_vars  ripmax /5.0/ : maximum peak/average ripple at plasma edge (%)
-  real(kind(1.0D0)) :: ripmax = 5.0D0
+  !+ad_vars  ripmax /1.0/ : maximum peak/average ripple at plasma edge (%)
+  real(kind(1.0D0)) :: ripmax = 1.0D0
   !+ad_vars  ripple : peak/average ripple at plasma edge (%)
   real(kind(1.0D0)) :: ripple = 0.0D0
   !+ad_vars  ritfc : total (summed) current in TF coils (A)

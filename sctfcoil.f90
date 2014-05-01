@@ -1431,6 +1431,7 @@ contains
     call ovarre(outfile,'Total current (MA)','(ritfc/1.D6)',1.0D-6*ritfc)
     call ovarre(outfile,'Peak field (Amperes Law,T)','(bmaxtf)',bmaxtf)
     call ovarre(outfile,'Peak field (with ripple,T)','(bmaxtfrp)',bmaxtfrp)
+    call ovarre(outfile,'Maximum peak/ave ripple at plasma edge (%)','(ripmax)',ripmax)
     call ovarre(outfile,'Stored energy per coil (GJ)','(estotf)',estotf)
     call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf)
     call ovarre(outfile,'Vertical separating force per coil (N)','(vforce)',vforce)
