@@ -405,14 +405,17 @@ contains
 
     !  Calculate beta limit
 
-    if (gtscale /= 0) then
-       dnbeta = 2.7D0 * (1.0D0 + 5.0D0*eps**3.5D0)
-    end if
+    if (iprofile == 0) then
 
-    !  Relation between beta limit and plasma internal inductance
-    !  Hartmann and Zohm
+       if (gtscale == 1) then
+          dnbeta = 2.7D0 * (1.0D0 + 5.0D0*eps**3.5D0)
+          !... otherwise use input value for dnbeta
+       end if
 
-    if (iprofile == 1) then
+    else
+       !  Relation between beta limit and plasma internal inductance
+       !  Hartmann and Zohm
+
        dnbeta = 4.0D0 * rli
     end if
 

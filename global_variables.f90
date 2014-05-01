@@ -113,6 +113,7 @@ module physics_variables
   !+ad_hist  01/04/14 PJK Added ibss=4 option
   !+ad_hist  02/04/14 PJK Added iprofile=1 recommendation to use icurr=4
   !+ad_hist  23/04/14 PJK Added bvert
+  !+ad_hist  01/05/14 PJK Changed dnbeta, gtscale comments
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -274,6 +275,7 @@ module physics_variables
   real(kind(1.0D0)) :: dnbeam2 = 0.0D0
   !+ad_vars  dnbeta /3.5/ : (Troyon-like) coefficient for beta scaling;
   !+ad_varc                 calculated as (4.0*rli) if iprofile=1
+  !+ad_varc                 (see also gtscale option)
   real(kind(1.0D0)) :: dnbeta = 3.5D0
   !+ad_vars  dnelimt : density limit (/m3)
   real(kind(1.0D0)) :: dnelimt = 0.0D0
@@ -327,9 +329,9 @@ module physics_variables
   real(kind(1.0D0)) :: gamma = 0.4D0
   !+ad_vars  gammaft : ratio of (fast alpha + neutral beam beta) to thermal beta
   real(kind(1.0D0)) :: gammaft = 0.0D0
-  !+ad_vars  gtscale /0/ : switch for a/R scaling of dnbeta:<UL>
+  !+ad_vars  gtscale /0/ : switch for a/R scaling of dnbeta (iprofile=0 only):<UL>
   !+ad_varc          <LI>  = 0 do not scale dnbeta with eps; 
-  !+ad_varc          <LI>  otherwise scale dnbeta with eps  </UL>
+  !+ad_varc          <LI>  = 1 scale dnbeta with eps</UL>
   integer :: gtscale = 0
   !+ad_vars  hfac(ipnlaws) : H factors for an ignited plasma for each scaling law
   real(kind(1.0D0)), dimension(ipnlaws) :: hfac = 0.0D0
@@ -400,7 +402,8 @@ module physics_variables
   !+ad_varc             <LI> = 1 use pedestal profiles </UL>
   integer :: ipedestal = 0
   !+ad_vars  iprofile /0/ : switch for current profile consistency:<UL>
-  !+ad_varc             <LI> = 0 use input values for alphaj, rli, dnbeta;
+  !+ad_varc             <LI> = 0 use input values for alphaj, rli, dnbeta
+  !+ad_varc                      (but see gtscale option);
   !+ad_varc             <LI> = 1 make these consistent with input q, q0 values
   !+ad_varc                      (recommendation: use icurr=4 with this option) </UL>
   integer :: iprofile = 0

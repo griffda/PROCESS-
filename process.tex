@@ -4382,18 +4382,23 @@ changes in values from a sweep compared to the first point in the sweep.
  \mfile
                                 
 \item{\textbf{Output:}}
-\texttt{PLOT.DAT.eps} (default or as specified by user)
+\texttt{sweep\_fig.pdf} (default or as specified by user)
 \end{description}
-
-\paragraph{Configuration Options:}
 
 Optional arguments are:
 \begin{quote}
 \begin{verbatim}
-# creates PLOT.DAT.eps with R0, IP, beta
-python plot_mfile_sweep.py -g 11 13 18 
+# creates sweep_fig.pdf with R0, te, aspect (same variable names as in MFILE.DAT)
+python plot_mfile_sweep.py -p rmajor te aspect
 # creates demo1.png with Te, n
-python plot_mfile_sweep.py -o demo1.png 21 22
+python plot_mfile_sweep.py -o demo1.png -p te dene
+# creates a sweep_fig.pdf with R0, aspect with a different MFILE.DAT
+python plot_mfile_sweep.py -f diff_mfile.dat -p rmajor aspect
+# Show plot to screen instead of saving with R0 and aspect
+python plot_mfile_sweep.py -p rmajor aspect --show
+
+Use -h or --help for help
+
 \end{verbatim}
 \end{quote}
 
