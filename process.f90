@@ -1520,3 +1520,4 @@ end subroutine output
 !          Corrected one line in scan.f90;
 !          Added new two-layer TF coil stress model (stress_model=1) (draft only);
 !          Small change in definition of rbmax for superconducting tokamak TF coils
+! SVN 260: Brought process_dicts.py up to date with current code

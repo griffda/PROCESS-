@@ -13,6 +13,7 @@ Update: 26/02/2014 - up to date at PROCESS version 238
 Update: 26/03/2014 - JM added variable types and default parameters for mfile
                      PLOT.DAT routine.
 Update: 09/04/2014 - HL added IFAIL_SUCCESS
+Update: 01/05/2014 - PJK up to date at PROCESS version 260
 
 """
 
@@ -904,11 +905,11 @@ NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu']
 
 #dict mapping nsweep to ixc no, if applicable
 DICT_NSWEEP2IXC = {'1':'1', '4':'10', '5':'12', '8':'45', '9':'4',
-                   '14':'50', '15':'53', '16':'3', '20':'22'}
+                   '14':'50', '15':'53', '16':'3', '20':'22', '28':'2'}
 
 #dict mapping ixc no to nsweep, if applicable
 DICT_IXC2NSWEEP = {'1':'1', '10':'4', '12':'5', '45':'8', '4':'9',
-                   '50':'14', '53':'15', '3':'16', '22':'20'}
+                   '50':'14', '53':'15', '3':'16', '22':'20', '2':'28'}
 
 # PROCESS TF Coil types
 DICT_TF_TYPE = {1: "ITER Nb3Sn", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn"}
