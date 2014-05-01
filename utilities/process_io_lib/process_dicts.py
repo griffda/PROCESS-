@@ -14,6 +14,7 @@ Update: 26/03/2014 - JM added variable types and default parameters for mfile
                      PLOT.DAT routine.
 Update: 09/04/2014 - HL added IFAIL_SUCCESS
 Update: 01/05/2014 - PJK up to date at PROCESS version 260
+Update: 01/05/2014 - PJK up to date at PROCESS version 263
 
 """
 
@@ -927,7 +928,10 @@ DICT_OPTIMISATION_VARS = {1: 'Plasma major radius',
                           9: 'divertor heat load',
                           10: 'toroidal field on axis',
                           11: 'injection power',
-                          14: 'pulse length'}
+                          12: 'hydrogen production capital cost',
+                          13: 'hydrogen production rate',
+                          14: 'pulse length',
+                          15: 'plant availability factor'}
 
 
 DICT_IXC_DEFAULT = {'aspect': 3.5, 'bt': 6.0, 'rmajor': 7.0, 'te': 15.0,

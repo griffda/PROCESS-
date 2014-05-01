@@ -648,6 +648,7 @@ module current_drive_variables
   !+ad_hist  27/11/13 PJK Modified bigq description
   !+ad_hist  06/03/14 PJK Modified gamcd units
   !+ad_hist  26/03/14 PJK Added extra boostrap current fraction variables
+  !+ad_hist  01/05/14 PJK Changed bigq description
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -659,7 +660,7 @@ module current_drive_variables
 
   !+ad_vars  beamwd /0.31/ : beam width (m)
   real(kind(1.0D0)) :: beamwd = 0.31D0
-  !+ad_vars  bigq : P_fusion / (P_injection + P_ohmic)
+  !+ad_vars  bigq : Fusion gain; P_fusion / (P_injection + P_ohmic)
   real(kind(1.0D0)) :: bigq = 0.0D0
   !+ad_vars  bootipf : bootstrap current fraction (enforced)
   real(kind(1.0D0)) :: bootipf = 0.0D0

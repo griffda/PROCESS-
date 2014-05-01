@@ -83,6 +83,7 @@ subroutine constraints(m,cc,ieqn)
   !+ad_hist  13/02/14 PJK Made limit equations uniform in style
   !+ad_hist  26/02/14 PJK Added new eqns 57, 58
   !+ad_hist  05/03/14 PJK Removed redundant eqn 17
+  !+ad_hist  01/05/14 PJK Changed eqn 28 description
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -318,7 +319,7 @@ subroutine constraints(m,cc,ieqn)
 
         cc(i) = 1.0D0 - fjohc0 * rjohc0/cohbop
 
-     case (28)  !  Equation for big Q lower limit
+     case (28)  !  Equation for fusion gain (big Q) lower limit
 
         !  Q = fusion power / (injected+ohmic) power, >= 1/fqval
         !  Here, the small ohmic power contribution is neglected

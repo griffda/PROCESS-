@@ -1128,6 +1128,7 @@ contains
     !+ad_hist  27/11/13 PJK Added ohmic power to bigq denominator
     !+ad_hist  24/02/14 PJK Modified arguments to CULNBI
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
+    !+ad_hist  01/05/14 PJK Changed bigq description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1226,7 +1227,7 @@ contains
 
     call ovarre(outfile,'Auxiliary power supplied to plasma (W)', &
          '(pheat)',pheat)
-    call ovarre(outfile,'Energy multiplication factor Q','(bigq)',bigq)
+    call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq)
 
     if (abs(pnbeam) > 1.0D-8) then
        call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)

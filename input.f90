@@ -364,6 +364,7 @@ contains
     !+ad_hist  10/03/14 PJK Removed CAREA
     !+ad_hist  26/03/14 PJK Changed upper bound of IBSS to 4
     !+ad_hist  28/04/14 PJK Added PRP, STRESS_MODEL
+    !+ad_hist  01/05/14 PJK Changed FQVAL description
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -817,7 +818,7 @@ contains
                'F-value for edge safety factor')
        case ('FQVAL')
           call parse_real_variable('FQVAL', fqval, 0.001D0, 10.0D0, &
-               'F-value for energy multiplication Q')
+               'F-value for fusion gain Q')
        case ('FRFPF')
           call parse_real_variable('FRFPF', frfpf, 0.001D0, 10.0D0, &
                'F-value for RFP reversal parameter')

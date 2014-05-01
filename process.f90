@@ -1523,3 +1523,4 @@ end subroutine output
 ! SVN 260: Brought process_dicts.py up to date with current code
 ! SVN 261: Changed ripmax default value to 1.0 percent
 ! SVN 262: Clarified logic for gtscale, iprofile interaction
+! SVN 263: Clarified energy multiplication vs fusion gain wording

@@ -81,6 +81,7 @@ contains
     !+ad_hist  25/09/13 PJK Added nbshield, rtanbeam, rtanmax outputs
     !+ad_hist  27/11/13 PJK Added ohmic power to bigq denominator
     !+ad_hist  06/03/14 PJK Changed gamma units in output to 10^20 A/W-m2
+    !+ad_hist  01/05/14 PJK Changed bigq description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -287,7 +288,7 @@ contains
          '(pinje+pinji)',pinje+pinji)
     call ovarre(outfile,'CD power used for plasma heating only (W)', &
          '(pheat)',pheat)
-    call ovarre(outfile,'Energy multiplication factor Q','(bigq)',bigq)
+    call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq)
 
     call osubhd(outfile,'Fractions of current drive :')
     call ovarrf(outfile,'Bootstrap fraction','(bootipf)',bootipf)

@@ -47,6 +47,7 @@ module numerics
   !+ad_hist  05/03/14 PJK Clarified lablcc descriptions
   !+ad_hist  06/03/14 PJK Comment changes
   !+ad_hist  30/04/14 PJK New iteration variable 101 (prp)
+  !+ad_hist  01/05/14 PJK Relabelled lablcc(28), lablmm(5)
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -323,8 +324,8 @@ module numerics
        'OH coil EOF current density limit', &
        !+ad_varc  <LI> (27) OH coil BOP current density upper limit
        'OH coil BOP current density limit', &
-       !+ad_varc  <LI> (28) Energy multiplication Q lower limit
-       'Energy multiplication Q lower lim', &
+       !+ad_varc  <LI> (28) Fusion gain Q lower limit
+       'Fusion gain Q lower limit', &
        !+ad_varc  <LI> (29) Inboard radial build consistency
        'Inboard radial build consistency ', &
        !+ad_varc  <LI> (30) Injection power upper limit
@@ -398,8 +399,8 @@ module numerics
        'neutron wall load.    ', &
        !+ad_varc  <LI> ( 4) P_tf + P_pf
        'P_tf + P_pf.          ', &
-       !+ad_varc  <LI> ( 5) energy multiplication
-       'energy multiplication.', &
+       !+ad_varc  <LI> ( 5) fusion gain Q
+       'fusion gain.          ', &
        !+ad_varc  <LI> ( 6) cost of electricity
        'cost of electricity.  ', &
        !+ad_varc  <LI> ( 7) capital cost (direct cost if ireactor=0,
