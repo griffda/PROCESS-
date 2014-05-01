@@ -3446,6 +3446,25 @@ are necessary to change the code's mode of operation --- usually the physics
 and engineering variables, etc.\ remain unchanged, with the major differences
 occurring in the numerical input only.
 
+\subsection{Environment set-up}
+\label{sec:run_environment}
+
+Under normal circumstances, the code is only available for execution from the
+CCFE Fusion Unix Network, on which you must have an account.
+
+To set up your environment to be able to run the code and the associated
+Python utilities (see Chapter~\ref{chap:utilities}), add the following lines
+to your \texttt{.bashrc} file:
+\begin{quote}
+\begin{verbatim}
+module use /home/pknight/modules
+module swap python
+module load process
+\end{verbatim}
+\end{quote}
+After re-logging in, execute \process\ by simply typing \texttt{process} on
+the command line.
+
 \subsection{Non-optimisation mode}
 
 Non-optimisation mode is used to perform benchmark comparisons, whereby the
@@ -3854,6 +3873,9 @@ following way:
   double precision) and integer variables are treated differently, as are
   scalar quantities and arrays.
 
+\item Modify \texttt{process\_dicts.py} and \texttt{write\_constraints.conf}
+  accordingly.
+
 \end{enumerate}
 
 \section{Iteration Variables}
@@ -3880,6 +3902,9 @@ same way as input parameters, with the following additions:
 \item Add the variable to routines \texttt{LOADXC} and \texttt{CONVXC} in
   source file \texttt{iteration\_variables.f90}, mimicking the way that the
   existing iteration variables are coded.
+
+\item Modify \texttt{process\_dicts.py} and \texttt{write\_constraints.conf}
+  accordingly.
 
 \end{enumerate}
 
@@ -3969,6 +3994,8 @@ the following way:
   variables used in the new equation are contained in the modules specified
   via \texttt{use} statements present at the start of this file.
 
+\item Modify \texttt{process\_dicts.py} accordingly.
+
 \end{enumerate}
 
 Don't forget to add suitable correctly-formatted comment lines to
@@ -3995,6 +4022,8 @@ the following way:
 \item Ensure that the scanning variable used in the assignment is contained in
   one of the modules specified via \texttt{use} statements present at the
   start of this routine.
+
+\item Modify \texttt{process\_dicts.py} if necessary.
 
 \end{enumerate}
 
@@ -4054,11 +4083,8 @@ All executables are using Python library functions either from the publicly
 available \texttt{numpy}, \texttt{scipy} and \texttt{matplotlib} libraries or
 the \process\ Python libraries documented in Section~\ref{sec:py_lib}. To use
 the \process\ Python libraries you need to make sure their directory is in
-your Python path. This can be done by adding the following line to your
-\texttt{.bashrc} file:
-\begin{quote}
-\texttt{export PYTHONPATH=\$PYTHONPATH:\url{~pknight/process/bin/utilities}}
-\end{quote}
+your Python path. Use the commands given in Section~\ref{sec:run_environment} to
+do this.
 
 All Python code has been written for Python 3 and adheres to the PEP8 standard.
 
@@ -4091,8 +4117,7 @@ the config file in the \process\ directory.
 This program modifies a given \indat\ file such that all iteration variables
 are given by their values in \outdat. The final values of the iteration
 variables in \outdat\ are set in a block at the end of \indat. Any other
-definitions of these variables are commented out. This tool does not yet use
-the dedicated \process\ Python libraries.
+definitions of these variables are commented out.
 
 \begin{description}
 \item{\textbf{Input:}}
@@ -4341,9 +4366,34 @@ Optional arguments are:
 \begin{quote}
 \begin{verbatim}
 # creates PLOT.DAT.eps with R0, IP, beta
-python plot_proc.py -g 11 13 18 
+python plot_sweep.py -g 11 13 18 
 # creates demo1.png with Te, n
-python plot_proc.py -o demo1.png 21 22
+python plot_sweep.py -o demo1.png 21 22
+\end{verbatim}
+\end{quote}
+
+\subsection{plot\_mfile\_sweep.py}
+
+This utility plots normalised values from \mfile\ and allows comparisons of
+changes in values from a sweep compared to the first point in the sweep.
+
+\begin{description}
+\item{\textbf{Input:}}
+ \mfile
+                                
+\item{\textbf{Output:}}
+\texttt{PLOT.DAT.eps} (default or as specified by user)
+\end{description}
+
+\paragraph{Configuration Options:}
+
+Optional arguments are:
+\begin{quote}
+\begin{verbatim}
+# creates PLOT.DAT.eps with R0, IP, beta
+python plot_mfile_sweep.py -g 11 13 18 
+# creates demo1.png with Te, n
+python plot_mfile_sweep.py -o demo1.png 21 22
 \end{verbatim}
 \end{quote}
 

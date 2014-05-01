@@ -1367,8 +1367,10 @@ module tfcoil_variables
   !+ad_hist  08/10/13 PJK Reassigned isumattf=2; added fhts
   !+ad_hist  17/10/13 PJK Modified cdtfleg comment; imported tftort from RFP module
   !+ad_hist  06/11/13 PJK Modified various comments; removed obsolete switch magnt
-  !+ad_stat  Okay
+  !+ad_hist  01/05/14 PJK Changed TF coil stress model limits to recent ITER values;
+  !+ad_hisc               added stress_model etc.; corrected arc array lengths
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
+  !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1390,6 +1392,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: alstrtf = 0.0D0
   !+ad_vars  arealeg : outboard TF leg area (m2)
   real(kind(1.0D0)) :: arealeg = 0.0D0
+  !+ad_vars  arp : TF coil radial plate area (m2)
+  real(kind(1.0D0)) :: arp = 0.0D0
   !+ad_vars  aspcstf /1.0/ : TF conductor cable aspect ratio (radial/toroidal)
   real(kind(1.0D0)) :: aspcstf = 1.0D0
   !+ad_vars  aswp : winding pack structure area (m2)
@@ -1426,10 +1430,12 @@ module tfcoil_variables
   !+ad_varc                  (calculated for stellarators)
   !+ad_varc                  (iteration variable 60)
   real(kind(1.0D0)) :: cpttf = 3.79D4
-  !+ad_vars  csutf /1.4D9/ : ultimate strength of case (Pa)
-  real(kind(1.0D0)) :: csutf = 1.4D9
-  !+ad_vars  csytf /8.25D8/ : yield strength of case (Pa)
-  real(kind(1.0D0)) :: csytf = 8.25D8
+  !+ad_vars  csutf /1.32D9/ : ultimate strength of case (Pa)
+  !+ad_varc                   (default value from DDD11-2 v2 2 (2009))
+  real(kind(1.0D0)) :: csutf = 1.32D9
+  !+ad_vars  csytf /1.0005D9/ : yield strength of case (Pa)
+  !+ad_varc                     (default value from DDD11-2 v2 2 (2009))
+  real(kind(1.0D0)) :: csytf = 1.0005D9
   !+ad_vars  dcase /8000.0/ : density of coil case (kg/m3)
   real(kind(1.0D0)) :: dcase = 8000.0D0
   !+ad_vars  dcond(4) /9000.0/ : density of superconductor (kg/m3)
@@ -1448,14 +1454,20 @@ module tfcoil_variables
   real(kind(1.0D0)) :: estotf = 0.0D0
   !+ad_vars  etapump /0.8/ : centrepost coolant pump efficiency
   real(kind(1.0D0)) :: etapump = 0.8D0
-  !+ad_vars  eyins /1.5D10/ : insulator Young's modulus (Pa)
-  real(kind(1.0D0)) :: eyins = 1.5D10
+  !+ad_vars  eyins /2.0D10/ : insulator Young's modulus (Pa)
+  !+ad_varc                   (default value from DDD11-2 v2 2 (2009))
+  real(kind(1.0D0)) :: eyins = 2.0D10
   !+ad_vars  eyoung(5) : work array used in stress calculation (Pa)
   real(kind(1.0D0)), dimension(5) :: eyoung = 0.0D0
-  !+ad_vars  eystl /2.0D11/ : steel case Young's modulus (Pa)
-  real(kind(1.0D0)) :: eystl = 2.0D11
+  !+ad_vars  eyrp : TF coil radial plate Young's modulus (Pa)
+  real(kind(1.0D0)) :: eyrp = 0.0D0
+  !+ad_vars  eystl /2.05D11/ : steel case Young's modulus (Pa)
+  !+ad_varc                    (default value from DDD11-2 v2 2 (2009))
+  real(kind(1.0D0)) :: eystl = 2.05D11
   !+ad_vars  eywp /6.6D8/ : winding pack Young's modulus (Pa)
   real(kind(1.0D0)) :: eywp = 6.6D8
+  !+ad_vars  eyzwp : winding pack vertical Young's modulus (Pa) (stress_model=1)
+  real(kind(1.0D0)) :: eyzwp = 0.0D0
   !+ad_vars  farc4tf /0.7/ : factor to size height of point 4 on TF coil
   real(kind(1.0D0)) :: farc4tf = 0.7D0
   !+ad_vars  fcoolcp /0.3/ : coolant fraction of TF coil inboard legs
@@ -1516,6 +1528,10 @@ module tfcoil_variables
   real(kind(1.0D0)) :: ppump = 0.0D0
   !+ad_vars  prescp : resistive power in the centrepost (W)
   real(kind(1.0D0)) :: prescp = 0.0D0
+  !+ad_vars  prp /0.05/ : thickness of TF coil radial plate as a fraction
+  !+ad_varc               of the thickness of a turn without the radial plate
+  !+ad_varc               (iteration variable 101)
+  real(kind(1.0D0)) :: prp = 0.05D0
   !+ad_vars  ptempalw /200.0/ : maximum peak centrepost temperature (C)
   !+ad_varc                     (constraint equation 44)
   real(kind(1.0D0)) :: ptempalw = 200.0D0
@@ -1554,6 +1570,10 @@ module tfcoil_variables
   real(kind(1.0D0)) :: sigver  = 0.0D0
   !+ad_vars  sigvert : vertical tensile stress in TF coil (Pa)
   real(kind(1.0D0)) :: sigvert = 0.0D0
+  !+ad_vars  stress_model /0/ : TF coil stress model to choose:<UL>
+  !+ad_varc                     <LI> = 0 Myall 5-layer model
+  !+ad_varc                     <LI> = 1 CCFE two-layer model</UL>
+  integer :: stress_model = 0
   !+ad_vars  strncon /-0.005/ : strain in superconductor material
   real(kind(1.0D0)) :: strncon = -0.005D0
   !+ad_vars  strtf1 : Von Mises stress in TF cable conduit (Pa)
@@ -1616,7 +1636,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tftort = 0.33D0
   !+ad_vars  thicndut /8.0D-4/ : conduit insulation thickness (m)
   real(kind(1.0D0)) :: thicndut = 8.0D-4
-  !+ad_vars  thkcas /0.3/ : external case thickness for superconductor (m)
+  !+ad_vars  thkcas /0.3/ : inboard TF coil case outer (non-plasma side) thickness (m)
   !+ad_varc                 (iteration variable 57)
   !+ad_varc                 (calculated for stellarators)
   real(kind(1.0D0)) :: thkcas = 0.3D0
@@ -1637,6 +1657,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tmaxpro = 150.0D0
   !+ad_vars  tmpcry /4.5/ : cryostat temperature for superconductor analysis (K)
   real(kind(1.0D0)) :: tmpcry = 4.5D0
+  !+ad_vars  trp : TF coil radial plate thickness (m)
+  real(kind(1.0D0)) :: trp = 0.0D0
   !+ad_vars  turnstf : number of turns per TF coil
   real(kind(1.0D0)) :: turnstf = 0.0D0
   !+ad_vars  vcool /20.0/ : max centrepost coolant flow speed at midplane (m/s)
@@ -1674,6 +1696,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: whttf = 0.0D0
   !+ad_vars  whttflgs : mass of the TF coil legs (kg)
   real(kind(1.0D0)) :: whttflgs = 0.0D0
+  !+ad_vars  windstrain : vertical strain in winding pack (m) (stress_model=1)
+  real(kind(1.0D0)) :: windstrain = 0.0D0
   !+ad_vars  wpvf /0.0/ : inter-turn void fraction of winding pack
   real(kind(1.0D0)) :: wpvf = 0.0D0
   !+ad_vars  wtbc : bucking cylinder mass (kg)
@@ -1684,22 +1708,22 @@ module tfcoil_variables
   real(kind(1.0D0)) :: wwp2 = 0.0D0
 
   !+ad_vars  <P><B>Superconducting TF coil shape parameters</B> (see also farc4tf);
-  !+ad_varc  <BR>the TF inner surface top half is approximated by circular arcs.
+  !+ad_varc  <BR>the TF inner surface top half is approximated by four circular arcs.
   !+ad_varc  Arc 1 goes through points 1 and 2 on the inner surface. Arc 2
-  !+ad_varc  goes through points 2-3, etc.<P>
+  !+ad_varc  goes through points 2 and 3, etc.<P>
 
-  !+ad_vars  dthet(5) : angle of arc i (rad)
-  real(kind(1.0D0)), dimension(5) :: dthet = 0.0D0
-  !+ad_vars  radctf(5) : radius of arc i (m)
-  real(kind(1.0D0)), dimension(5) :: radctf = 0.0D0
+  !+ad_vars  dthet(4) : angle of arc i (rad)
+  real(kind(1.0D0)), dimension(4) :: dthet = 0.0D0
+  !+ad_vars  radctf(4) : radius of arc i (m)
+  real(kind(1.0D0)), dimension(4) :: radctf = 0.0D0
   !+ad_vars  xarc(5) : x location of arc point i on surface (m)
   real(kind(1.0D0)), dimension(5) :: xarc = 0.0D0
-  !+ad_vars  xctfc(5) : x location of arc centre i (m)
-  real(kind(1.0D0)), dimension(5) :: xctfc = 0.0D0
+  !+ad_vars  xctfc(4) : x location of arc centre i (m)
+  real(kind(1.0D0)), dimension(4) :: xctfc = 0.0D0
   !+ad_vars  yarc(5) : y location of arc point i on surface (m)
   real(kind(1.0D0)), dimension(5) :: yarc = 0.0D0
-  !+ad_vars  yctfc(5) : y location of arc centre i (m)
-  real(kind(1.0D0)), dimension(5) :: yctfc = 0.0D0
+  !+ad_vars  yctfc(4) : y location of arc centre i (m)
+  real(kind(1.0D0)), dimension(4) :: yctfc = 0.0D0
 
 end module tfcoil_variables
 

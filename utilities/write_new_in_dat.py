@@ -1,112 +1,95 @@
 #! /usr/bin/python
 """
 
-	Modifies the PROCESS input file IN.DAT so all the iteration variables are given their values from the output file OUT.DAT. 
+  Modifies the PROCESS input file IN.DAT so all the iteration variables are
+  given their values from the output file OUT.DAT.
 
-   Michael Kovari 9/8/13, based on code by J C Rivas, 16/7/2013
-   
-	Input files:
-		IN.DAT, OUT.DAT in the working directory
-		
-	Output files:
-		All of them in the working directory   
-		IN.DAT
-		OLD.IN.DAT
-		
-   Execution procedure:
-   	Make sure this file has execution permission
-   	Save this file either in the current directory or in your bin directory or wherever you have a path.
-   	Execute from the command line: WriteNEW.IN.DAT.py
-   	
-   Algorithm:
-		The final values of the iteration variables in OUT.DAT are set in a block at the end of IN.DAT.
-		Any other definitions of these variables are commented out.
-		Original IN.DAT is renamed OLD.IN.DAT
-		
+  James Morris 30/04/2014 based on code by Michael Kovari 9/8/13 and
+  J C Rivas, 16/7/2013
+
+  Notes:
+     + JM 30/04/2014: Initial version using new libraries
+     + JM 30/04/2014: Added command line arguments
+
 """
 
-import sys, os
-import fileinput
-from subprocess import call
-import string
-	
-"""Reads the final values of the iteration variables in OUT.DAT and saves them to 
-	arrays tabla_valores and tabla_vars. """
-def readVars():
-	bandera=0
-	i=0
-	for line in fileinput.input("OUT.DAT",inplace=1):
-		if "value       change    multiplier  multiplier" in line:
-			bandera=1
-			i=0
-		elif ("residues should be close to zero" in line):
-			bandera=0
-		elif (bandera==1 and len(line)>10):
-			tabla_valores[i]=line[-47:-37]
-			tabla_vars[i]=line[-60:-47]
-			tabla_vars[i]=tabla_vars[i].replace(' ','')
-			i=i+1 
-		sys.stdout.write(line)
-	"""The previous line seems to be needed to rewrite the line in OUT.DAT."""
-	print "%d iteration variables found  \n " %(i)
-	print "The first iteration found is %s=%s  \n " %(tabla_vars[0],tabla_valores[0])	
-	print "The last iteration found is %s=%s  \n " %(tabla_vars[i-1],tabla_valores[i-1])
-	
-"""Reads through file, looking for strings in the array searchExp.
-	When it finds one, it places two asterisks at the beginning of the line"""
-def replaceall(file,searchExp):
-	LinesReplaced=0
-	for line in fileinput.input(file,inplace=1):
-		if "$END" in line:
-			line=""
-		i=0
-		for it in searchExp:
-			if it!='0':
-				if line[:1]!="*":
-					encontrado=find_substring(searchExp[i].lower(),line.lower())
-					if (encontrado==True) :
-						"""line=replaceExp[i]"""
-						line="*" + line
-						LinesReplaced=LinesReplaced+1
-			i=i+1	
-		sys.stdout.write(line)	
-		
-""" find substring only whole word """
-def find_substring(needle, haystack):
-	puntuacion = [" ", ",", ";", ".", ":","="]
-	index = haystack.find(needle)
-	if index == -1:
-		return False
-	L = index + len(needle)
-	if L < len(haystack) and haystack[L] not in puntuacion:
-		return False
-	return True
-    	
+import argparse
+import process_io_lib.mfile as mf
+import process_io_lib.in_dat as in_dat
 
 
-"""Main program
-----------------------------------------"""
-""" Initialise arrays for names and values of the previous solution in OUT.DAT file, to be fed back to the IN.DAT file"""
-tabla_vars=["0" for i in range(100)]
-tabla_valores=["0" for i in range(100)]
-tabla_frases=["0" for k in range(100)]
+def get_iteration_variables(filename="MFILE.DAT", scan=-1):
+    """Function to get a list of the iteration variables and their values from
+    MFILE.DAT
 
-os.system("cp IN.DAT OLD.IN.DAT ")
+    Args:
+      filename --> name of MFILE.DAT to read
+      scan --> scan number to use
 
-"""Reads the final values of the iteration variables in OUT.DAT and saves them to arrays """
-readVars()	
+    Returns:
+      iteration_vars --> dictionary of iteration variables in MFILE and their
+                         values.
+
+    """
+    mfile_data = mf.MFile(filename)
+    iteration_vars = {}
+
+    for value in mfile_data.data.keys():
+        if "itvar" in value:
+            variable_name = mfile_data.data[value].var_description
+            variable_value = mfile_data.data[value].get_scan(scan)
+            iteration_vars[variable_name] = variable_value
+
+    return iteration_vars
 
 
-"""Comments out the relevant lines in IN.DAT """
-replaceall("IN.DAT",tabla_vars)	
-"""Adds a new block at the end of IN.DAT"""
-k=0
-g=open("IN.DAT",'a')
-for it in tabla_vars:
-	if it != "0":
-		NewLine = tabla_vars[k]+" = "+tabla_valores[k]+",\n"
-		g.write(NewLine)	
-		k=k+1
-print "%d Modified lines created, \n " %(k)
-g.write("$END")
-g.close()
+def replace_iteration_variables(iteration_vars, in_data):
+    """Function to replace the iteration variables in IN.DAT if the variable
+    is not defined in IN.DAT it will add the variable to the end of the file.
+
+    Args:
+      iteration_vars --> dictionary of iteration variables from MFILE.DAT and
+                         their values
+      in_data --> IN.DAT data object.
+
+    """
+
+    for value in iteration_vars.keys():
+        if value in in_data.variables.keys():
+            in_data.data[value].value = iteration_vars[value]
+            in_data.variables[value].value = iteration_vars[value]
+        else:
+            var = in_dat.INVariable(value, iteration_vars[value])
+            in_data.add_variable(var)
+
+    return in_data
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description="Creates a new IN.DAT using "
+                                                 "iteration variable values "
+                                                 "from OUT.DAT.")
+
+    parser.add_argument('-f', metavar='f', type=str, default="MFILE.DAT",
+                        help='File to read as MFILE.DAT (default="MFILE.DAT")')
+
+    parser.add_argument('-i', metavar='i', type=str, default="IN.DAT",
+                        help='File to read as IN.DAT (default="IN.DAT")')
+
+    parser.add_argument('-o', metavar='o', type=str, default="new_IN.DAT",
+                        help='File to write as new IN.DAT '
+                             '(default="new_IN.DAT")')
+
+    args = parser.parse_args()
+
+    # Get iteration variables from MFILE.DAT
+    it_vars = get_iteration_variables(args.f)
+
+    # Read IN.DAT
+    in_dat_data = in_dat.INDATNew(args.i)
+
+    # Amend the values for the iteration variables
+    in_dat_data = replace_iteration_variables(it_vars, in_dat_data)
+
+    # Write a new IN.DAT
+    in_dat_data.write_in_dat(filename=args.o)

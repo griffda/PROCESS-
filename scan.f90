@@ -144,6 +144,7 @@ contains
     !+ad_hist  12/02/14 PJK Added scan variable 28: bt
     !+ad_hist  13/02/14 PJK Replaced spaces with underscores in xlabel, plabel
     !+ad_hist  20/02/14 PJK Replaced te*pcoef with ten; changed plabel(20)
+    !+ad_hist  30/04/14 PJK Fixed plabel(20)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -207,7 +208,7 @@ contains
        plabel(17) = 'Beta_____________________'
        plabel(18) = 'Beta_Limit_______________'
        plabel(19) = 'Epsilon_Beta_Poloidal____'
-       plabel(20) = 'Dens.weight Te_(10keV)___'
+       plabel(20) = 'Dens.weight_Te_(10keV)___'
        plabel(21) = 'Average_Dens_(10^20/m^3)_'
        plabel(22) = 'H-fact_Iter_Power________'
        plabel(23) = 'H-fact_Iter_Offset_______'

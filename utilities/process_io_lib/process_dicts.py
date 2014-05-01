@@ -73,6 +73,7 @@ DICT_VAR_TYPE['iohcl'] = 'int_variable'
 DICT_VAR_TYPE['isumattf'] = 'int_variable'
 DICT_VAR_TYPE['itfmod'] = 'int_variable'
 DICT_VAR_TYPE['itfsup'] = 'int_variable'
+DICT_VAR_TYPE['stress_model'] = 'int_variable'
 DICT_VAR_TYPE['ipfres'] = 'int_variable'
 DICT_VAR_TYPE['isumatpf'] = 'int_variable'
 DICT_VAR_TYPE['nfxfh'] = 'int_variable'
@@ -175,6 +176,7 @@ DICT_VAR_TYPE['impo'] = 'real_variable'
 DICT_VAR_TYPE['kappa'] = 'real_variable'
 DICT_VAR_TYPE['neped'] = 'real_variable'
 DICT_VAR_TYPE['nesep'] = 'real_variable'
+DICT_VAR_TYPE['prp'] = 'real_variable'
 DICT_VAR_TYPE['q'] = 'real_variable'
 DICT_VAR_TYPE['q0'] = 'real_variable'
 DICT_VAR_TYPE['ralpne'] = 'real_variable'
@@ -679,7 +681,8 @@ DICT_IXC_SIMPLE = {'1':'aspect', '2':'bt', '3':'rmajor', '4':'te', '5':'beta',
                    '87':'helecmw', '88':'hthermmw', '89':'ftbr', '90':'blbuith',
                    '91':'blbuoth', '92':'fflutf', '93':'shldith',
                    '94':'shldoth', '95':'fptfnuc', '96':'fvvhe', '97':'fpsepr',
-                   '98': 'li6enrich', '99':'ftftort', '100':'ftfthko'}
+                   '98': 'li6enrich', '99':'ftftort', '100':'ftfthko',
+                   '101': 'prp'}
 
 
 
@@ -785,6 +788,7 @@ DICT_IXC_FULL[ '97'] = {'name':'fpsepr',   'lb':0.001, 'ub':1.}
 DICT_IXC_FULL[ '98'] = {'name':'li6enrich','lb':0.001, 'ub':100.}
 DICT_IXC_FULL[ '99'] = {'name':'ftftort',  'lb':0.001, 'ub':1.}
 DICT_IXC_FULL['100'] = {'name':'ftfthko',  'lb':0.001, 'ub':1.}
+DICT_IXC_FULL['101'] = {'name':'prp',      'lb':1e-6,  'ub':1.}
 
 
 
@@ -890,6 +894,7 @@ DICT_IXC_BOUNDS['fpsepr']   = {'lb':0.001, 'ub':1.}   #97
 DICT_IXC_BOUNDS['li6enrich']= {'lb':0.001, 'ub':100.} #98
 DICT_IXC_BOUNDS['ftftort']  = {'lb':0.001, 'ub':1.}   #99
 DICT_IXC_BOUNDS['ftfthko']  = {'lb':0.001, 'ub':1.}   #100
+DICT_IXC_BOUNDS['prp']      = {'lb':1e-6,  'ub':1.}   #101
 
 
 #parameters that start with f, but are not f-values
@@ -953,4 +958,4 @@ DICT_IXC_DEFAULT = {'aspect': 3.5, 'bt': 6.0, 'rmajor': 7.0, 'te': 15.0,
                     'blbuith': 0.365, 'blbuoth': 0.465, 'fflutf': 1.0,
                     'shldith': 0.69, 'shldoth': 1.05, 'fptfnuc': 1.0,
                     'fvvhe': 1.0, 'fpsepr': 1.0, 'li6enrich': 30.0,
-                    'ftftort': 1.0, 'ftfthko': 1.0}
+                    'ftftort': 1.0, 'ftfthko': 1.0, 'prp': 0.05}

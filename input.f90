@@ -363,6 +363,7 @@ contains
     !+ad_hist  03/03/14 PJK Changed lower bound of TRATIO to 0.0
     !+ad_hist  10/03/14 PJK Removed CAREA
     !+ad_hist  26/03/14 PJK Changed upper bound of IBSS to 4
+    !+ad_hist  28/04/14 PJK Added PRP, STRESS_MODEL
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1298,6 +1299,9 @@ contains
        case ('POISSON')
           call parse_real_variable('POISSON', poisson, 0.0D0, 1.0D0, &
                'Poissons ratio for TF stress calc.')
+       case ('PRP')
+          call parse_real_variable('PRP', prp, 0.0D0, 1.0D0, &
+               'Fractional radial plate thickness')
        case ('PTEMPALW')
           call parse_real_variable('PTEMPALW', ptempalw, 50.0D0, 300.0D0, &
                'Maximum peak centrepost temp. (C)')
@@ -1322,6 +1326,9 @@ contains
        case ('TDMPTF')
           call parse_real_variable('TDMPTF', tdmptf, 0.1D0, 100.0D0, &
                'Dump time for TF coil (s)')
+       case ('STRESS_MODEL')
+          call parse_int_variable('STRESS_MODEL', stress_model, 0, 1, &
+               'Switch for TF coil stress model')
        case ('TFLEGRES')
           call parse_real_variable('TFLEGRES', tflegres, 1.0D-10, 1.0D-5, &
                'TF coil leg resistivity (ohm-m)')

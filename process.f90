@@ -1516,3 +1516,7 @@ end subroutine output
 !          cfactr was not being taken into account in the lifetime values written
 !          to the output file.
 !          Also uploaded latest write_new_in_dat.py, process_funcs.py
+! SVN 259: Updated write_new_in_dat.py, and added plot_mfile_sweep.py;
+!          Corrected one line in scan.f90;
+!          Added new two-layer TF coil stress model (stress_model=1) (draft only);
+!          Small change in definition of rbmax for superconducting tokamak TF coils

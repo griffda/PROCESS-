@@ -56,6 +56,7 @@ subroutine loadxc
   !+ad_hist  26/02/14 PJK Added ftftort (99) and ftfthko (100)
   !+ad_hist  05/03/14 PJK Added warnings for usage of some iteration variables if
   !+ad_hisc               istell=1
+  !+ad_hist  30/04/14 PJK Added prp (101)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -256,6 +257,7 @@ subroutine loadxc
      case (98) ; xcm(i) = li6enrich
      case (99) ; xcm(i) = ftftort
      case (100) ; xcm(i) = ftfthko
+     case (101) ; xcm(i) = prp
 
      case default
         write(*,*) 'Error in routine LOADXC :'
@@ -351,6 +353,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  30/09/13 PJK Added fpsepr (97)
   !+ad_hist  28/11/13 PJK Added li6enrich (98)
   !+ad_hist  26/02/14 PJK Added ftftort (99) and ftfthko (100)
+  !+ad_hist  30/04/14 PJK Added prp (101)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -490,6 +493,7 @@ subroutine convxc(xc,nn)
      case (98) ; li6enrich = xc(i)/scale(i)
      case (99) ; ftftort   = xc(i)/scale(i)
      case (100) ; ftfthko  = xc(i)/scale(i)
+     case (101) ; prp      = xc(i)/scale(i)
 
      case default
         write(*,*) 'Error in routine CONVXC :'

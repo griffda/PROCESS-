@@ -108,6 +108,7 @@ contains
     !+ad_hist  27/11/13 PJK Moved pfrmax, pfmmax calculations from buildings module
     !+ad_hist  12/02/14 PJK Added turns array to first lap fix
     !+ad_hist  23/04/14 PJK Added bvert assignment
+    !+ad_hist  01/05/14 PJK Removed redundant xctfc(5) terms
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -242,7 +243,7 @@ contains
 
     signn(1) =  1.0D0
     signn(2) = -1.0D0
-    rclsnorm = rtot + tfthko/2.0D0 + routr - xctfc(5)
+    rclsnorm = rtot + tfthko/2.0D0 + routr
 
     !  N.B. Problems here if k=ncls(group) is greater than 2.
 
@@ -290,7 +291,7 @@ contains
              zcls(j,k) = rminor * zref(j) * signn(k)
              !  Changed to follow TF coil curve
              !  rcls(j,k) = rtot + 0.5D0*tfthko + routr
-             rcls(j,k) = sqrt(rclsnorm**2 - zcls(j,k)**2) + xctfc(5)
+             rcls(j,k) = sqrt(rclsnorm**2 - zcls(j,k)**2)
           end do
 
        else

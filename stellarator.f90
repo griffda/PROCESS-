@@ -2378,6 +2378,7 @@ contains
     !+ad_hisc               limited by space available
     !+ad_hist  04/03/14 PJK/FW Routine completely rewritten; now based on
     !+ad_hisc               Felix Warmer's MATLAB code
+    !+ad_hist  01/05/14 PJK Added rbmax comment
     !+ad_stat  Okay
     !+ad_docs  The Stellarator Coil model for the Systems code PROCESS,
     !+ad_docc  F. Warmer, F. Schauer, IPP Greifswald, October 2013
@@ -2700,6 +2701,7 @@ contains
     ritfc = tfno * I * 1.0D6      ! [A] Total current in ALL coils
     oacdcp = ritfc/tfareain       ! [A / m^2] overall current density
     rbmax = rcoil                 ! [m] radius of peak field occurrence, average
+                                  !     N.B. different to tokamak SCTF calculation
     hmax = 0.5D0*h_max - tfcth    ! [m] maximum half-height of coil
     tfboreh = D_coil              ! [m] estimated horizontal coil bore
     borev = 2.0D0*hmax            ! [m] estimated vertical coil bore

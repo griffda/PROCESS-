@@ -85,7 +85,7 @@ contains
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_desc  This subroutine calculates various parameters for the TF coil set
     !+ad_desc  of a reversed field pinch machine. The coils are assumed to be
-    !+ad_desc  circular.
+    !+ad_desc  circular and of constant cross-section.
     !+ad_prob  None
     !+ad_call  oheadr
     !+ad_call  osubhd
@@ -100,6 +100,7 @@ contains
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  30/10/12 PJK Added build_module
     !+ad_hist  05/11/12 PJK Added rfp_variables
+    !+ad_hist  01/05/14 PJK Added some clarifying comments
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -139,6 +140,9 @@ contains
     ritfc = oacdcp * tfareain
 
     !  Peak toroidal field and radius of its occurrence
+    !  N.B. different to tokamak superconducting TF coil assumption
+    !  in which rbmax is the radius of the outer edge of the conductor,
+    !  not the whole coil
 
     rbmax = rin
     bmaxtf = 2.0D-7 * ritfc / rbmax
