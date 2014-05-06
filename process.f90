@@ -357,7 +357,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &
-       '$Revision:: 263   $ $Date:: 2014-05-01 #$'
+       'Revision :: 263b   Date  :: 2014-05-06'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1524,3 +1524,4 @@ end subroutine output
 ! SVN 261: Changed ripmax default value to 1.0 percent
 ! SVN 262: Clarified logic for gtscale, iprofile interaction
 ! SVN 263: Clarified energy multiplication vs fusion gain wording
+! GIT 263b: Changed SVN keywords to be updated manually
