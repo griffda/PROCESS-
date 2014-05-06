@@ -1374,6 +1374,7 @@ module tfcoil_variables
   !+ad_hist  01/05/14 PJK Changed TF coil stress model limits to recent ITER values;
   !+ad_hisc               added stress_model etc.; corrected arc array lengths
   !+ad_hist  01/05/14 PJK Lowered ripmax default value from 5.0 to 1.0
+  !+ad_hist  06/05/14 PJK Removed wpvf
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !

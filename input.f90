@@ -365,6 +365,7 @@ contains
     !+ad_hist  26/03/14 PJK Changed upper bound of IBSS to 4
     !+ad_hist  28/04/14 PJK Added PRP, STRESS_MODEL
     !+ad_hist  01/05/14 PJK Changed FQVAL description
+    !+ad_hist  06/05/14 PJK Removed WPVF
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993

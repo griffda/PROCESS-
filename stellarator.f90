@@ -2380,6 +2380,7 @@ contains
     !+ad_hist  04/03/14 PJK/FW Routine completely rewritten; now based on
     !+ad_hisc               Felix Warmer's MATLAB code
     !+ad_hist  01/05/14 PJK Added rbmax comment
+    !+ad_hist  06/05/14 PJK Removed wpvf completely
     !+ad_stat  Okay
     !+ad_docs  The Stellarator Coil model for the Systems code PROCESS,
     !+ad_docc  F. Warmer, F. Schauer, IPP Greifswald, October 2013
@@ -2678,8 +2679,6 @@ contains
     acasetf = (tfcth*tftort)-awpc    ! [m^2] Cross-sectional area of surrounding case
 
     if (isumattf == 3) tftmp = T_u  ! [K] Helium coolant temperature for NbTi
-
-    !wpvf = 0.0D0  !  not used explicitly
 
     !  Single turn outputs according to PROCESS variables
 

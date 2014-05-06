@@ -358,7 +358,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '264    Date  :: 2014-05-06'
+       '265    Date  :: 2014-05-06'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1527,3 +1527,4 @@ end subroutine output
 ! SVN 263: Clarified energy multiplication vs fusion gain wording
 ! GIT 263b: Changed SVN keywords to be updated manually
 ! GIT 264: Fixed progver format problem
+! GIT 265: Removed wpvf usage
