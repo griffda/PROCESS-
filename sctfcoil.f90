@@ -86,7 +86,7 @@ contains
     !+ad_hist  23/04/14 PJK Modified TF coil leg length calculation
     !+ad_hist  28/04/14 PJK/JM Corrected awpc calculation; added coding for
     !+ad_hisc               radial plates
-    !+ad_hisc  06/05/14 JM  Remove wpvf from the current density calculation
+    !+ad_hisc  06/05/14 JM  Remove WPVF from the current density calculation
     !+ad_hisc               and from the output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
