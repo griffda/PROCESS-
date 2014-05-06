@@ -1,4 +1,4 @@
-!  $Id::                                                                $
+!  $Id:: input.f90 263 2014-05-01 14:26:48Z pknight                     $
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !  Uncomment #define line below to perform unit testing

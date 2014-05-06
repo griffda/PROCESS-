@@ -1,4 +1,4 @@
-!  $Id::                                                                $
+!  $Id:: constraint_equations.f90 263 2014-05-01 14:26:48Z pknight      $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine constraints(m,cc,ieqn)

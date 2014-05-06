@@ -1,6 +1,6 @@
-!  $Id::                                                                $
+!  $Id:: fispact.f90 258 2014-04-24 12:28:55Z pknight                   $
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!  Module         : $Id$
+!  Module         : $Id: fispact.f90 258 2014-04-24 12:28:55Z pknight $
 !  Module name    : $RCSfile: fispact.f,v $
 !  Version no.    : $Revision: 1.9 $
 !  Creation date  : $Date: 1997/11/19 09:29:42 $

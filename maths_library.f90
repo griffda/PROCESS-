@@ -1,4 +1,4 @@
-!  $Id::                                                                $
+!  $Id:: maths_library.f90 248 2014-04-01 09:15:00Z pknight             $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !  To perform standalone tests of vmcon:
