@@ -2679,7 +2679,7 @@ contains
 
     if (isumattf == 3) tftmp = T_u  ! [K] Helium coolant temperature for NbTi
 
-    wpvf = 0.0D0  !  not used explicitly
+    !wpvf = 0.0D0  !  not used explicitly
 
     !  Single turn outputs according to PROCESS variables
 
@@ -3568,7 +3568,6 @@ contains
     call ovarre(outfile,'Structure fraction of winding pack','(aswp/ap)',aswp/ap)
     call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap)
     call ovarre(outfile,'Helium fraction of winding pack','(avwp/ap)',avwp/ap)
-    call ovarre(outfile,'Inter-turn void fraction','(wpvf)',wpvf)
     call ovarre(outfile,'Winding radial thickness (m)','(thkwp)',thkwp)
     call ovarre(outfile,'Winding toroidal thickness (m)','(wwp1)',wwp1)
     call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)

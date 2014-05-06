@@ -1372,9 +1372,6 @@ contains
        case ('VFTF')
           call parse_real_variable('VFTF', vftf, 0.0D0, 1.0D0, &
                'Coolant fraction of TF coil leg')
-       case ('WPVF')
-          call parse_real_variable('WPVF', wpvf, 0.0D0, 1.0D0, &
-               'Void fraction of TF coil winding pack')
  
           !  PF coil settings
 

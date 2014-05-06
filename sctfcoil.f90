@@ -86,6 +86,8 @@ contains
     !+ad_hist  23/04/14 PJK Modified TF coil leg length calculation
     !+ad_hist  28/04/14 PJK/JM Corrected awpc calculation; added coding for
     !+ad_hisc               radial plates
+    !+ad_hisc  06/05/14 JM  Remove wpvf from the current density calculation
+    !+ad_hisc               and from the output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -263,9 +265,8 @@ contains
     end if
 
     !  Winding pack current density (forced to be positive)
-    !  (takes into account the winding pack void fraction wpvf)
 
-    jwptf = max(1.0D0, ritfc/(tfno*awptf*(1.0D0-wpvf)) )
+    jwptf = max(1.0D0, ritfc/(tfno*awptf))
 
     !  Superconducting cable information
     !  (number of turns not required to be an integer here for numerics)
@@ -1498,7 +1499,6 @@ contains
     call ovarre(outfile,'Structure fraction of winding pack','(aswp/ap)',aswp/ap)
     call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap)
     call ovarre(outfile,'Helium fraction of winding pack','(avwp/ap)',avwp/ap)
-    call ovarre(outfile,'Inter-turn void fraction','(wpvf)',wpvf)
     call ovarre(outfile,'Winding radial thickness (m)','(thkwp)',thkwp)
     call ovarre(outfile,'Winding width 1 (m)','(wwp1)',wwp1)
     call ovarre(outfile,'Winding width 2 (m)','(wwp2)',wwp2)

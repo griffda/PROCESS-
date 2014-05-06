@@ -1703,8 +1703,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: whttflgs = 0.0D0
   !+ad_vars  windstrain : vertical strain in winding pack (m) (stress_model=1)
   real(kind(1.0D0)) :: windstrain = 0.0D0
-  !+ad_vars  wpvf /0.0/ : inter-turn void fraction of winding pack
-  real(kind(1.0D0)) :: wpvf = 0.0D0
   !+ad_vars  wtbc : bucking cylinder mass (kg)
   real(kind(1.0D0)) :: wtbc = 0.0D0
   !+ad_vars  wwp1 : width of first step of winding pack (m)
