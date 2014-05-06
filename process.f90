@@ -1,4 +1,3 @@
-!  $Id:: process.f90 263 2014-05-01 14:26:48Z pknight                   $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 program process
@@ -209,6 +208,7 @@ subroutine codever(outfile)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  02/04/14 PJK Added output to mfile
   !+ad_hist  03/04/14 PJK Used ovarst to write character string output to mfile
+  !+ad_hist  06/05/14 PJK Modified version print-out
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -266,7 +266,7 @@ subroutine codever(outfile)
      !  The following should work up to version 99999
      !  Relies on an internal read statement
 
-     vstring = progid(2)(25:29)
+     vstring = progid(2)(13:17)
      read(vstring,'(i5)') version
      call ovarin(mfile,'PROCESS version number','(procver)',version)
 
@@ -342,6 +342,7 @@ subroutine inform(progid)
   !+ad_hist  22/05/07 PJK PROCESS 3029
   !+ad_hist  21/08/12 PJK Initial F90 version
   !+ad_hist  23/01/13 PJK Changed progver to update automatically with SVN
+  !+ad_hist  06/05/14 PJK progver must now be changed manually (SVN --> git)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -356,8 +357,8 @@ subroutine inform(progid)
   !  Local variables
 
   character(len=10) :: progname
-  character(len=*), parameter :: progver = &
-       'Revision :: 263b   Date  :: 2014-05-06'
+  character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
+       '264    Date  :: 2014-05-06'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1525,3 +1526,4 @@ end subroutine output
 ! SVN 262: Clarified logic for gtscale, iprofile interaction
 ! SVN 263: Clarified energy multiplication vs fusion gain wording
 ! GIT 263b: Changed SVN keywords to be updated manually
+! GIT 264: Fixed progver format problem
