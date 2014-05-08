@@ -2733,6 +2733,7 @@ module constraint_variables
   !+ad_hist  30/09/13 PJK Added pseprmax, fpsepr
   !+ad_hist  28/10/13 PJK Corrected fdene comment
   !+ad_hist  26/02/14 PJK Added ftftort, ftfthko
+  !+ad_hist  08/05/14 PJK Added bigqmin
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2748,6 +2749,9 @@ module constraint_variables
   !+ad_vars  betpmx /0.19/ : maximum poloidal beta
   !+ad_varc                  (constraint equation 48)
   real(kind(1.0D0)) :: betpmx = 0.19D0
+  !+ad_vars  bigqmin /10.0/ : minimum fusion gain Q
+  !+ad_varc                  (constraint equation 28)
+  real(kind(1.0D0)) :: bigqmin = 10.0D0
   !+ad_vars  bmxlim /12.0/ : maximum toroidal field (T)
   !+ad_varc                  (constraint equation 25)
   real(kind(1.0D0)) :: bmxlim = 12.0D0

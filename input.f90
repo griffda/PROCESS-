@@ -368,6 +368,7 @@ contains
     !+ad_hist  06/05/14 PJK Removed WPVF
     !+ad_hist  08/05/14 PJK Changed PRP definition; removed ITFMOD;
     !+ad_hisc               replaced STRESS_MODEL with TFC_MODEL
+    !+ad_hist  08/05/14 PJK Added BIGQMIN
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -734,6 +735,9 @@ contains
        case ('BETPMX')
           call parse_real_variable('BETPMX', betpmx, 0.01D0, 2.0D0, &
                'Maximum poloidal beta')
+       case ('BIGQMIN')
+          call parse_real_variable('BIGQMIN', bigqmin, 0.01D0, 100.0D0, &
+               'Minimum fusion gain Q')
        case ('BMXLIM')
           call parse_real_variable('BMXLIM', bmxlim, 0.1D0, 50.0D0, &
                'Maximum toroidal field (T)')

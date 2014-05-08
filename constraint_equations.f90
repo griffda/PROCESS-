@@ -84,6 +84,7 @@ subroutine constraints(m,cc,ieqn)
   !+ad_hist  26/02/14 PJK Added new eqns 57, 58
   !+ad_hist  05/03/14 PJK Removed redundant eqn 17
   !+ad_hist  01/05/14 PJK Changed eqn 28 description
+  !+ad_hist  08/05/14 PJK Modified eqn 28
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -321,11 +322,10 @@ subroutine constraints(m,cc,ieqn)
 
      case (28)  !  Equation for fusion gain (big Q) lower limit
 
-        !  Q = fusion power / (injected+ohmic) power, >= 1/fqval
-        !  Here, the small ohmic power contribution is neglected
+        !  Q = fusion power / (injected+ohmic) power, >= bigqmin
 
         if (ignite == 0) then
-           cc(i) = 1.0D0 - fqval * powfmw / (1.0D-6*(pinji+pinje))
+           cc(i) = 1.0D0 - fqval * bigq/bigqmin
         else
            write(*,*) 'Error in routine CONSTRAINTS:'
            write(*,*) 'Do not use constraint 28 if IGNITE=1.'

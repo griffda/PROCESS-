@@ -358,7 +358,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '267    Date  :: 2014-05-08'
+       '268    Date  :: 2014-05-08'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1530,3 +1530,4 @@ end subroutine output
 ! GIT 265: Removed wpvf usage
 ! GIT 266: New draft of stress model; replaced itfmod and stress_model with tfc_model
 ! GIT 267: Updated TF coil picture and description in User Guide
+! GIT 268: Modified constraint 28 by adding new input parameter bigqmin

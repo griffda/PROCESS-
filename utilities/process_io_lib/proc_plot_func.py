@@ -667,8 +667,8 @@ def plot_geometry_info(axis, mfile_data, scan):
             ("aspect", "A", ""),
             ("kappa95", "$\kappa_{95}$", ""),
             ("triang95", "$\delta_{95}$", ""),
-            ("sarea", "Surface area", "$m^2$"),
-            ("vol", "Plasma volume", "$m^3$"),
+            ("sarea", "Surface area", "m$^2$"),
+            ("vol", "Plasma volume", "m$^3$"),
             ("tfno", "No. of TF coils", ""),
             (in_blanket_thk, "i/b blkt/shld", "m"),
             (out_blanket_thk, "o/b blkt/shld", "m"),
@@ -716,12 +716,12 @@ def plot_physics_info(axis, mfile_data, scan):
             ("bt", "Vacuum $B_T$ as $R_0$", "T"),
             ("q", "$q_{edge}$", ""),
             ("Normalised thermal beta", r"$\beta_N$, thermal",
-             "% m T $MA^{-1}$"),
-            ("Normalised total beta", r"$\beta_N$, total", "% m T $MA^{-1}$"),
+             "% m T MA$^{-1}$"),
+            ("Normalised total beta", r"$\beta_N$, total", "% m T MA$^{-1}$"),
             ("Thermal poloidal beta", r"$\beta_P$, thermal", ""),
             ("betap", r"$\beta_P$, total", ""),
             ("te", "$<t_e>$", "keV"),
-            ("dene", "$<n_e>$", "m^{-3}"),
+            ("dene", "$<n_e>$", "m$^{-3}$"),
             (nong, "$<n_{\mathrm{e,vol}}>/n_G$", ""),
             ("alphat", "$T_{e0}/<T_e>$", ""),
             ("alphan", "$n_{e0}/<n_{\mathrm{e, vol}}>$", ""),
@@ -771,11 +771,13 @@ def plot_magnetics_info(axis, mfile_data, scan):
 
     tburn = mfile_data.data["tburn"].get_scan(scan)/3600.0
     tftype = proc_dict.DICT_TF_TYPE[mfile_data.data["isumattf"].get_scan(scan)]
+    vssoft = mfile_data.data["vsres"].get_scan(scan) + \
+             mfile_data.data["vsind"].get_scan(scan)
 
     data = [(pf_info[0][0], pf_info[0][1], "MA"),
             (pf_info[1][0], pf_info[1][1], "MA"),
             (pf_info[2][0], pf_info[2][1], "MA"),
-            ("vssoft", "Startup flux swing", "Wb"),
+            (vssoft, "Startup flux swing", "Wb"),
             ("abs(vstot)", "Available flux swing", "Wb"),
             (tburn, "Burn time", "hrs"),
             ("", "", ""),
