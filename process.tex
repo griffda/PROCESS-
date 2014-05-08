@@ -878,7 +878,7 @@ no. & variable name     & description                                           
 98  & \texttt{li6enrich}& lithium-6 enrichment percentage (\texttt{blktmodel=1})  &     & \texttt{0.001D0} & \texttt{100.0D0} \\
 99  & \texttt{ftftort}  & f-value for TF coil toroidal thickness lower limit eqn  & 57  & \texttt{0.001D0} & \texttt{1.000D0} \\
 100 & \texttt{ftfthko}  & f-value for TF coil radial thickness lower limit eqn    & 58  & \texttt{0.001D0} & \texttt{1.000D0} \\
-101 & \texttt{prp}      & AWAITING DESCRIPTION...                                 &     & \texttt{1.00D-6} & \texttt{1.000D0} \\
+101 & \texttt{prp}      & ratio of TF coil radial plate area to winding pack area &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
 \hline
 \end{tabular}
 \end{center}
@@ -2127,9 +2127,15 @@ zero field and strain is set using input parameter \texttt{tcritsc}.
 
 \subsubsection{Stress model}
 
-Switch \texttt{itfmod} controls whether a simple stress model (\texttt{itfmod
-  = 0}) or more complex stress model (\texttt{itfmod = 1}) should be used. To
-enforce the stress limits calculated using either of these models, constraint
+Switch \texttt{tfc\_model} controls whether a simple stress model
+(\texttt{tfc\_model = 0}) or more complex stress model (\texttt{tfc\_model =
+  1} or \texttt{2}) should be used.
+
+If \texttt{tfc\_model = 1}, a five-layer stress model developed in 1987 at
+ORNL by Myall~\cite{Myall} is used. If \texttt{tfc\_model = 2}, a two-layer
+stress model~\cite{Morris_tfc} developed by CCFE is used.
+
+To enforce the stress limits calculated using any of these models, constraint
 equation no.\ 31 (case stress) and/or constraint equation no.\ 32 (conduit
 stress) should be turned on with iteration variables no.\ 48
 (\texttt{fstrcase}) and/or no.\ 49 (\texttt{fstrcond}), respectively. The
@@ -5236,6 +5242,16 @@ L.\ Bottura,
   Production"},
 ITER Document 2MMF7J (2008),
 \texttt{https://user.iter.org/?uid=2MMF7J\&action=get\_document}
+
+\bibitem{Myall}
+J.\ Myall,
+ORNL internal note, 28th August 1987; scanned copy available in
+\texttt{Myall\_1987\_TF\_stress\_calc.pdf}
+
+\bibitem{Morris_tfc}
+J.\ Morris,
+\textit{``PROCESS Superconducting Toroidal Field Coil Model''},
+CCFE internal note, 1st May 2014
 
 \bibitem{PWF}
 P.\ J.\ Knight,

@@ -226,6 +226,7 @@ subroutine check
   !+ad_hist  10/06/13 PJK Removed enforcement of ishape=0 for non-TART tokamaks
   !+ad_hist  11/09/13 PJK Added check for fuel ion fractions; removed idhe3 setting;
   !+ad_hisc               removed iiter usage
+  !+ad_hist  08/05/14 PJK Replaced itfmod with tfc_model
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -379,7 +380,7 @@ subroutine check
      iohcl    = 0
      ipfres   = 1
      isumatpf = 3
-     itfmod   = 0
+     tfc_model = 0
      itfsup   = 0
      ohcth    = 0.0D0
      pfclres  = 1.7D-8
@@ -406,7 +407,7 @@ subroutine check
   !  Ensure that if TF coils are non-superconducting,
   !  only simple stress calculations are performed
 
-  if (itfsup == 0) itfmod = 0
+  if (itfsup == 0) tfc_model = 0
 
   !  PF coil resistivity is zero if superconducting
 

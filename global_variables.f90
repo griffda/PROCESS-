@@ -1375,6 +1375,8 @@ module tfcoil_variables
   !+ad_hisc               added stress_model etc.; corrected arc array lengths
   !+ad_hist  01/05/14 PJK Lowered ripmax default value from 5.0 to 1.0
   !+ad_hist  06/05/14 PJK Removed wpvf
+  !+ad_hist  07/05/14 PJK Changed prp and trp definitions; removed rnltf;
+  !+ad_hisc               replaced itfmod and stress_model with tfc_model
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -1401,6 +1403,7 @@ module tfcoil_variables
   !+ad_vars  arp : TF coil radial plate area (m2)
   real(kind(1.0D0)) :: arp = 0.0D0
   !+ad_vars  aspcstf /1.0/ : TF conductor cable aspect ratio (radial/toroidal)
+  !+ad_varc                  (not used)
   real(kind(1.0D0)) :: aspcstf = 1.0D0
   !+ad_vars  aswp : winding pack structure area (m2)
   real(kind(1.0D0)) :: aswp = 0.0D0
@@ -1472,7 +1475,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: eystl = 2.05D11
   !+ad_vars  eywp /6.6D8/ : winding pack Young's modulus (Pa)
   real(kind(1.0D0)) :: eywp = 6.6D8
-  !+ad_vars  eyzwp : winding pack vertical Young's modulus (Pa) (stress_model=1)
+  !+ad_vars  eyzwp : winding pack vertical Young's modulus (Pa) (tfc_model=2)
   real(kind(1.0D0)) :: eyzwp = 0.0D0
   !+ad_vars  farc4tf /0.7/ : factor to size height of point 4 on TF coil
   real(kind(1.0D0)) :: farc4tf = 0.7D0
@@ -1498,10 +1501,6 @@ module tfcoil_variables
   !+ad_varc            <LI> = 3 NbTi;
   !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters</UL>
   integer :: isumattf = 1
-  !+ad_vars  itfmod /1/ : switch for TF coil magnet model:<UL>
-  !+ad_varc          <LI> = 0 use simple model;
-  !+ad_varc          <LI> = 1 use complex stress/superconductor models</UL>
-  integer :: itfmod = 1
   !+ad_vars  itfsup /1/ : switch for TF coil conductor model:<UL>
   !+ad_varc          <LI> = 0 conventional copper;
   !+ad_varc          <LI> = 1 superconductor</UL>
@@ -1534,10 +1533,11 @@ module tfcoil_variables
   real(kind(1.0D0)) :: ppump = 0.0D0
   !+ad_vars  prescp : resistive power in the centrepost (W)
   real(kind(1.0D0)) :: prescp = 0.0D0
-  !+ad_vars  prp /0.05/ : thickness of TF coil radial plate as a fraction
-  !+ad_varc               of the thickness of a turn without the radial plate
-  !+ad_varc               (iteration variable 101)
-  real(kind(1.0D0)) :: prp = 0.05D0
+  !+ad_vars  prp /0.0025/ : ratio of the cross-sectional area of the radial plates
+  !+ad_varc                 + inter-turn steel caps to the whole winding pack's
+  !+ad_varc                 cross-sectional area
+  !+ad_varc                 (iteration variable 101)
+  real(kind(1.0D0)) :: prp = 0.0025D0
   !+ad_vars  ptempalw /200.0/ : maximum peak centrepost temperature (C)
   !+ad_varc                     (constraint equation 44)
   real(kind(1.0D0)) :: ptempalw = 200.0D0
@@ -1558,8 +1558,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: ripple = 0.0D0
   !+ad_vars  ritfc : total (summed) current in TF coils (A)
   real(kind(1.0D0)) :: ritfc = 0.0D0
-  !+ad_vars  rnltf : number of TF turns/pancake (radial direction)
-  real(kind(1.0D0)) :: rnltf = 0.0D0
   !+ad_vars  sigrad : radial TF coil stress (MPa)
   real(kind(1.0D0)) :: sigrad = 0.0D0
   !+ad_vars  sigrcon : radial stress in the cable conduit (Pa)
@@ -1576,10 +1574,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: sigver  = 0.0D0
   !+ad_vars  sigvert : vertical tensile stress in TF coil (Pa)
   real(kind(1.0D0)) :: sigvert = 0.0D0
-  !+ad_vars  stress_model /0/ : TF coil stress model to choose:<UL>
-  !+ad_varc                     <LI> = 0 Myall 5-layer model
-  !+ad_varc                     <LI> = 1 CCFE two-layer model</UL>
-  integer :: stress_model = 0
   !+ad_vars  strncon /-0.005/ : strain in superconductor material
   real(kind(1.0D0)) :: strncon = -0.005D0
   !+ad_vars  strtf1 : Von Mises stress in TF cable conduit (Pa)
@@ -1611,6 +1605,11 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfbusmas = 0.0D0
   !+ad_vars  tfckw :  available DC power for charging the TF coils (kW)
   real(kind(1.0D0)) :: tfckw = 0.0D0
+  !+ad_vars  tfc_model /1/ : switch for TF coil magnet stress model:<UL>
+  !+ad_varc                  <LI> = 0 simple model (solid copper coil)
+  !+ad_varc                  <LI> = 1 Myall 5-layer stress model; superconductor
+  !+ad_varc                  <LI> = 2 CCFE two-layer stress model; superconductor</UL>
+  integer :: tfc_model = 1
   !+ad_vars  tfcmw : peak power per TF power supply (MW)
   real(kind(1.0D0)) :: tfcmw = 0.0D0
   !+ad_vars  tfcpmw : peak resistive TF coil inboard leg power (MW)
@@ -1663,7 +1662,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tmaxpro = 150.0D0
   !+ad_vars  tmpcry /4.5/ : cryostat temperature for superconductor analysis (K)
   real(kind(1.0D0)) :: tmpcry = 4.5D0
-  !+ad_vars  trp : TF coil radial plate thickness (m)
+  !+ad_vars  trp : TF coil radial plate and inter-turn steel cap half-thickness (m)
   real(kind(1.0D0)) :: trp = 0.0D0
   !+ad_vars  turnstf : number of turns per TF coil
   real(kind(1.0D0)) :: turnstf = 0.0D0
@@ -1702,7 +1701,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: whttf = 0.0D0
   !+ad_vars  whttflgs : mass of the TF coil legs (kg)
   real(kind(1.0D0)) :: whttflgs = 0.0D0
-  !+ad_vars  windstrain : vertical strain in winding pack (m) (stress_model=1)
+  !+ad_vars  windstrain : vertical strain in winding pack (m) (tfc_model=2)
   real(kind(1.0D0)) :: windstrain = 0.0D0
   !+ad_vars  wtbc : bucking cylinder mass (kg)
   real(kind(1.0D0)) :: wtbc = 0.0D0

@@ -48,6 +48,7 @@ module numerics
   !+ad_hist  06/03/14 PJK Comment changes
   !+ad_hist  30/04/14 PJK New iteration variable 101 (prp)
   !+ad_hist  01/05/14 PJK Relabelled lablcc(28), lablmm(5)
+  !+ad_hist  08/05/14 PJK Changed boundu(101) (prp upper limit)
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -851,7 +852,7 @@ module numerics
        100.0D0, &  !  98
        1.000D0, &  !  99
        1.000D0, &  !  100
-       1.000D0  &  !  101
+       0.010D0  &  !  101
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

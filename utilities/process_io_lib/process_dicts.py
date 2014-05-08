@@ -15,6 +15,7 @@ Update: 26/03/2014 - JM added variable types and default parameters for mfile
 Update: 09/04/2014 - HL added IFAIL_SUCCESS
 Update: 01/05/2014 - PJK up to date at PROCESS version 260
 Update: 01/05/2014 - PJK up to date at PROCESS version 263
+Update: 08/05/2014 - PJK up to date at PROCESS version 266
 
 """
 
@@ -23,8 +24,6 @@ from collections import defaultdict
 
 #ifail value of a successful process run
 IFAIL_SUCCESS = 1
-
-
 
 # default values for making a plot file from MFILE.DAT
 PARAMETER_DEFAULTS = ["rmajor", "aspect", "rminor", "bt", "powfmw", "pnetelmw",
@@ -73,9 +72,8 @@ DICT_VAR_TYPE['irfcd'] = 'int_variable'
 DICT_VAR_TYPE['divdum'] = 'int_variable'
 DICT_VAR_TYPE['iohcl'] = 'int_variable'
 DICT_VAR_TYPE['isumattf'] = 'int_variable'
-DICT_VAR_TYPE['itfmod'] = 'int_variable'
 DICT_VAR_TYPE['itfsup'] = 'int_variable'
-DICT_VAR_TYPE['stress_model'] = 'int_variable'
+DICT_VAR_TYPE['tfc_model'] = 'int_variable'
 DICT_VAR_TYPE['ipfres'] = 'int_variable'
 DICT_VAR_TYPE['isumatpf'] = 'int_variable'
 DICT_VAR_TYPE['nfxfh'] = 'int_variable'
@@ -392,7 +390,6 @@ DICT_VAR_TYPE['tmpcry'] = 'real_variable'
 DICT_VAR_TYPE['vcool'] = 'real_variable'
 DICT_VAR_TYPE['vdalw'] = 'real_variable'
 DICT_VAR_TYPE['vftf'] = 'real_variable'
-DICT_VAR_TYPE['wpvf'] = 'real_variable'
 DICT_VAR_TYPE['ac1oh'] = 'real_variable'
 DICT_VAR_TYPE['acsoh'] = 'real_variable'
 DICT_VAR_TYPE['alfapf'] = 'real_variable'
@@ -790,7 +787,7 @@ DICT_IXC_FULL[ '97'] = {'name':'fpsepr',   'lb':0.001, 'ub':1.}
 DICT_IXC_FULL[ '98'] = {'name':'li6enrich','lb':0.001, 'ub':100.}
 DICT_IXC_FULL[ '99'] = {'name':'ftftort',  'lb':0.001, 'ub':1.}
 DICT_IXC_FULL['100'] = {'name':'ftfthko',  'lb':0.001, 'ub':1.}
-DICT_IXC_FULL['101'] = {'name':'prp',      'lb':1e-6,  'ub':1.}
+DICT_IXC_FULL['101'] = {'name':'prp',      'lb':1e-6,  'ub':0.01}
 
 
 
@@ -896,13 +893,11 @@ DICT_IXC_BOUNDS['fpsepr']   = {'lb':0.001, 'ub':1.}   #97
 DICT_IXC_BOUNDS['li6enrich']= {'lb':0.001, 'ub':100.} #98
 DICT_IXC_BOUNDS['ftftort']  = {'lb':0.001, 'ub':1.}   #99
 DICT_IXC_BOUNDS['ftfthko']  = {'lb':0.001, 'ub':1.}   #100
-DICT_IXC_BOUNDS['prp']      = {'lb':1e-6,  'ub':1.}   #101
+DICT_IXC_BOUNDS['prp']      = {'lb':1e-6,  'ub':0.01}   #101
 
 
 #parameters that start with f, but are not f-values
 NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu']
-
-
 
 #dict mapping nsweep to ixc no, if applicable
 DICT_NSWEEP2IXC = {'1':'1', '4':'10', '5':'12', '8':'45', '9':'4',
@@ -914,7 +909,6 @@ DICT_IXC2NSWEEP = {'1':'1', '10':'4', '12':'5', '45':'8', '4':'9',
 
 # PROCESS TF Coil types
 DICT_TF_TYPE = {1: "ITER Nb3Sn", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn"}
-
 
 # Optimisation variable dictionary
 DICT_OPTIMISATION_VARS = {1: 'Plasma major radius',
@@ -963,4 +957,4 @@ DICT_IXC_DEFAULT = {'aspect': 3.5, 'bt': 6.0, 'rmajor': 7.0, 'te': 15.0,
                     'blbuith': 0.365, 'blbuoth': 0.465, 'fflutf': 1.0,
                     'shldith': 0.69, 'shldoth': 1.05, 'fptfnuc': 1.0,
                     'fvvhe': 1.0, 'fpsepr': 1.0, 'li6enrich': 30.0,
-                    'ftftort': 1.0, 'ftfthko': 1.0, 'prp': 0.05}
+                    'ftftort': 1.0, 'ftfthko': 1.0, 'prp': 0.0025}

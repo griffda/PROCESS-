@@ -57,6 +57,7 @@ subroutine loadxc
   !+ad_hist  05/03/14 PJK Added warnings for usage of some iteration variables if
   !+ad_hisc               istell=1
   !+ad_hist  30/04/14 PJK Added prp (101)
+  !+ad_hist  08/05/14 PJK Replaced itfmod with tfc_model
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -167,10 +168,10 @@ subroutine loadxc
      case (55) ; xcm(i) = tmargmin
      case (56) ; xcm(i) = tdmptf
      case (57) ; xcm(i) = thkcas
-        if ((itfmod /= 1).or.(istell == 1)) then
+        if ((tfc_model == 0).or.(istell == 1)) then
            write(*,*) 'Error in routine LOADXC:'
            write(*,*) 'THKCAS cannot be used as an iteration'
-           write(*,*) 'variable if ITFMOD .ne. 1 or ISTELL=1, as it is'
+           write(*,*) 'variable if TFC_MODEL=0 or ISTELL=1, as it is'
            write(*,*) 'calculated elsewhere.'
            write(*,*) 'PROCESS stopping.'
            stop

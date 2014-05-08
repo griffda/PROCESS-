@@ -366,6 +366,8 @@ contains
     !+ad_hist  28/04/14 PJK Added PRP, STRESS_MODEL
     !+ad_hist  01/05/14 PJK Changed FQVAL description
     !+ad_hist  06/05/14 PJK Removed WPVF
+    !+ad_hist  08/05/14 PJK Changed PRP definition; removed ITFMOD;
+    !+ad_hisc               replaced STRESS_MODEL with TFC_MODEL
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1279,8 +1281,10 @@ contains
              write(outfile,*) 'please check validity!'
           end if
        case ('ITFMOD')
-          call parse_int_variable('ITFMOD', itfmod, 0, 1, &
-               'Switch for TF magnet model')
+          write(outfile,*) 'ITFMOD is now obsolete -'
+          write(outfile,*) 'please remove it from the input file'
+          write(outfile,*) 'and replace it with TFC_MODEL'
+          obsolete_var = .true.
        case ('ITFSUP')
           call parse_int_variable('ITFSUP', itfsup, 0, 1, &
                'Switch for TF coil type')
@@ -1302,8 +1306,8 @@ contains
           call parse_real_variable('POISSON', poisson, 0.0D0, 1.0D0, &
                'Poissons ratio for TF stress calc.')
        case ('PRP')
-          call parse_real_variable('PRP', prp, 0.0D0, 1.0D0, &
-               'Fractional radial plate thickness')
+          call parse_real_variable('PRP', prp, 0.0D0, 0.1D0, &
+               'Radial plate area / winding pack area')
        case ('PTEMPALW')
           call parse_real_variable('PTEMPALW', ptempalw, 50.0D0, 300.0D0, &
                'Maximum peak centrepost temp. (C)')
@@ -1328,9 +1332,9 @@ contains
        case ('TDMPTF')
           call parse_real_variable('TDMPTF', tdmptf, 0.1D0, 100.0D0, &
                'Dump time for TF coil (s)')
-       case ('STRESS_MODEL')
-          call parse_int_variable('STRESS_MODEL', stress_model, 0, 1, &
-               'Switch for TF coil stress model')
+       case ('TFC_MODEL')
+          call parse_int_variable('TFC_MODEL', tfc_model, 0, 2, &
+               'Switch for TF coil model')
        case ('TFLEGRES')
           call parse_real_variable('TFLEGRES', tflegres, 1.0D-10, 1.0D-5, &
                'TF coil leg resistivity (ohm-m)')
