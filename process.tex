@@ -37,9 +37,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-05-06
+2014-05-08
 \hfill
-Revision:: 263b
+Revision:: 267
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2060,14 +2060,26 @@ superconducting. Switch \texttt{itfsup} should be set to \texttt{1} for
 superconducting coils, or \texttt{0} for purely copper coils. In the
 superconductor model, the \textit{CICC}\/ (Conductor In Cable Conduit)
 structure shown in Figure~\ref{fig:CICC} is assumed, and the coils are cooled
-using a liquid helium cryogenic system. The outboard leg of the TF coil in
-this case is assumed to be the same width in the toroidal direction as the
-outside edge of the inboard leg. To ensure that the coil dimensions of the
-outboard leg are consistent with the radial and toroidal thicknesses of the
-winding pack and the other constituents of the coil shown in the figure, turn
-on constraint equations no.~57 and~58 with iteration variables no.\ 75
-(\texttt{tfootfi}), 77 (\texttt{tftort}), 99 (\texttt{ftftort}) and 100
-(\texttt{ftfthko}).
+using a liquid helium cryogenic system.
+
+The steel radial plates shown in the Figure help in the winding process and
+also provide extra support against tangential stresses. Grooves are machined
+into the radial plates which act as a guide for the cable. Each winding pack
+turn slots into a radial plate and is covered by a steel cap. Each turn is
+assigned half the thickness (along each edge) of its surrounding radial plates
+and steel caps in the calculation of the cross-sectional areas. Iteration
+variable no.\ 101 (\texttt{prp}) is the ratio of the total radial plate plus
+steel cap cross-sectional area within the winding pack to the total winding
+pack cross-sectional area; from this, the half-thickness \texttt{trp} is
+calculated.
+
+The outboard leg of the TF coil is assumed to be the same width in the
+toroidal direction as the outside edge of the inboard leg. To ensure that the
+coil dimensions of the outboard leg are consistent with the radial and
+toroidal thicknesses of the winding pack and the other constituents of the
+coil shown in the figure, turn on constraint equations no.~57 and~58 with
+iteration variables no.\ 75 (\texttt{tfootfi}), 77 (\texttt{tftort}), 99
+(\texttt{ftftort}) and 100 (\texttt{ftfthko}).
 
 \begin{figure}[tbph]
 \epsfig{file=tokamak_tfcoil.eps,width=160mm}
@@ -2128,7 +2140,7 @@ zero field and strain is set using input parameter \texttt{tcritsc}.
 \subsubsection{Stress model}
 
 Switch \texttt{tfc\_model} controls whether a simple stress model
-(\texttt{tfc\_model = 0}) or more complex stress model (\texttt{tfc\_model =
+(\texttt{tfc\_model = 0}) or a more complex stress model (\texttt{tfc\_model =
   1} or \texttt{2}) should be used.
 
 If \texttt{tfc\_model = 1}, a five-layer stress model developed in 1987 at
@@ -2147,9 +2159,9 @@ stress limit can be adjusted using input parameters \texttt{csutf} and
 The current in the TF coils must be sufficient to produce the required
 toroidal field at the centre of the plasma. The field falls off at a rate
 $1/R$, with the peak value occurring at the outer edge of the inboard portion
-of the TF coil ($R_{\mbox{\scriptsize max TF}} = \mathtt{rbmax}$). The maximum
-TF coil current depends on the field it produces and the allowable current
-density.
+of the TF coil winding pack ($R_{\mbox{\scriptsize max TF}} =
+\mathtt{rbmax}$). The maximum TF coil current depends on the field it produces
+and the allowable current density.
 
 Two limits can be applied to the current density $J$ in the (superconducting)
 TF coils. To ensure that $J$ does not exceed the critical value, constraint
