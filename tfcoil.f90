@@ -76,6 +76,7 @@ contains
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  09/04/13 PJK Changed local variables routr to rout, rinr to rin
     !+ad_hist  18/06/13 PJK Clarified ritfc output description
+    !+ad_hist  08/05/14 PJK Changed ripmax description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -174,7 +175,7 @@ contains
        call ovarre(outfile,'TF coil current (summed over all coils) (A)','(ritfc)',ritfc)
        call ovarre(outfile,'Peak field at the TF coils (T)','(bmaxtf)',bmaxtf)
        call ovarre(outfile,'Ripple at plasma edge (%)','(ripple)',ripple)
-       call ovarre(outfile,'Allowable ripple (%)','(ripmax)',ripmax)
+       call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
        call ovarre(outfile,'Number of TF coil legs','(tfno)',tfno)
 
        call osubhd(outfile,'Energy and Forces :')

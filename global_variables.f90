@@ -570,7 +570,7 @@ module physics_variables
   real(kind(1.0D0)) :: taueff = 0.0D0
   !+ad_vars  tauei : ion energy confinement time (sec)
   real(kind(1.0D0)) :: tauei = 0.0D0
-  !+ad_vars  taup : particle confinement time (sec)
+  !+ad_vars  taup : alpha particle confinement time (sec)
   real(kind(1.0D0)) :: taup = 0.0D0
   !+ad_vars  tbeta /2.0/ : temperature profile index beta  (ipedestal=1)
   real(kind(1.0D0)) :: tbeta = 2.0D0
@@ -1377,6 +1377,7 @@ module tfcoil_variables
   !+ad_hist  06/05/14 PJK Removed wpvf
   !+ad_hist  07/05/14 PJK Changed prp and trp definitions; removed rnltf;
   !+ad_hisc               replaced itfmod and stress_model with tfc_model
+  !+ad_hist  08/05/14 PJK Changed ripmax description
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -1552,7 +1553,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: rhocp = 0.0D0
   !+ad_vars  rhotfleg : TF coil leg resistance (Ohm)
   real(kind(1.0D0)) :: rhotfleg = 0.0D0
-  !+ad_vars  ripmax /1.0/ : maximum peak/average ripple at plasma edge (%)
+  !+ad_vars  ripmax /1.0/ : maximum allowable ripple amplitude at plasma edge (%)
   real(kind(1.0D0)) :: ripmax = 1.0D0
   !+ad_vars  ripple : peak/average ripple at plasma edge (%)
   real(kind(1.0D0)) :: ripple = 0.0D0

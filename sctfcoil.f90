@@ -1434,6 +1434,7 @@ contains
     !+ad_hist  03/04/14 PJK Added superconductor type to mfile
     !+ad_hist  30/04/14 PJK Added output for two-layer stress model
     !+ad_hist  08/05/14 PJK Redefined trp; replaced stress_model with tfc_model
+    !+ad_hist  08/05/14 PJK Changed ripmax description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -1498,7 +1499,7 @@ contains
     call ovarre(outfile,'Total current (MA)','(ritfc/1.D6)',1.0D-6*ritfc)
     call ovarre(outfile,'Peak field (Amperes Law,T)','(bmaxtf)',bmaxtf)
     call ovarre(outfile,'Peak field (with ripple,T)','(bmaxtfrp)',bmaxtfrp)
-    call ovarre(outfile,'Maximum peak/ave ripple at plasma edge (%)','(ripmax)',ripmax)
+    call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
     call ovarre(outfile,'Stored energy per coil (GJ)','(estotf)',estotf)
     call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf)
     call ovarre(outfile,'Vertical separating force per coil (N)','(vforce)',vforce)

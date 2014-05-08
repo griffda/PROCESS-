@@ -101,6 +101,7 @@ contains
     !+ad_hist  30/10/12 PJK Added build_module
     !+ad_hist  05/11/12 PJK Added rfp_variables
     !+ad_hist  01/05/14 PJK Added some clarifying comments
+    !+ad_hist  08/05/14 PJK Changed ripmax description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -241,7 +242,7 @@ contains
     call ovarre(outfile,'TF coil current density (A/m2)','(oacdcp)',oacdcp)
     call ovarre(outfile,'Peak field at the TF coils (T)','(bmaxtf)',bmaxtf)
     call ovarre(outfile,'Ripple at plasma edge (%)','(ripple)',ripple)
-    call ovarre(outfile,'Allowable ripple (%)','(ripmax)',ripmax)
+    call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
     call ovarre(outfile,'Number of TF coil legs','(tfno)',tfno)
 
     call osubhd(outfile,'Energy and Forces :')
@@ -735,6 +736,7 @@ contains
     !+ad_hist  28/11/13 PJK Added pdtpv, pdhe3pv, pddpv to PALPH arguments
     !+ad_hist  19/02/14 PJK Added plasma_profiles call and made other
     !+ad_hisc               necessary changes
+    !+ad_hist  08/05/14 PJK Modified call to PHYAUX
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -912,7 +914,7 @@ contains
 
     sbar = 1.0D0
 
-    call phyaux(aspect,dene,deni,fusionrate,plascur,sbar,dnalp, &
+    call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
          dnprot,taueff,burnup,vol,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !  Poloidal beta limit is set by input parameter betpmx

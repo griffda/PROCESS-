@@ -179,6 +179,7 @@ contains
     !+ad_hist  24/02/14 PJK Modified CULBST arguments
     !+ad_hist  26/03/14 PJK Converted BOOTST to a function;
     !+ad_hisc               introduced Sauter et al bootstrap model
+    !+ad_hist  08/05/14 PJK Modified PHYAUX arguments
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -400,7 +401,7 @@ contains
     !  for the rest of the code
 
     sbar = 1.0D0
-    call phyaux(aspect,dene,deni,fusionrate,plascur,sbar,dnalp, &
+    call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
          dnprot,taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !  Calculate beta limit
@@ -3456,7 +3457,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine phyaux(aspect,dene,deni,fusionrate,plascur,sbar,dnalp, &
+  subroutine phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
        dnprot,taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !+ad_name  phyaux
@@ -3470,6 +3471,7 @@ contains
     !+ad_args  dnalp  : input real :  alpha ash density (/m3)
     !+ad_args  dnprot : input real :  proton ash density (/m3)
     !+ad_args  fusionrate : input real :  fusion reaction rate (/m3/s)
+    !+ad_args  alpharate  : input real :  alpha particle production rate (/m3/s)
     !+ad_args  plascur: input real :  plasma current (A)
     !+ad_args  sbar   : input real :  exponent for aspect ratio (normally 1)
     !+ad_args  taueff : input real :  global energy confinement time (s)
@@ -3491,6 +3493,7 @@ contains
     !+ad_hist  12/06/13 PJK Changed rndfuel, qfuel units from Amps
     !+ad_hist  10/09/13 PJK Modified fusion reaction rate calculation
     !+ad_hist  11/09/13 PJK Modified burnup calculation + comments
+    !+ad_hist  08/05/14 PJK Modified taup calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -3501,7 +3504,7 @@ contains
     !  Arguments
 
     real(kind(1.0D0)), intent(in) :: aspect, dene, deni, dnalp, dnprot, &
-         fusionrate, plascur, sbar, taueff, vol
+         fusionrate, alpharate, plascur, sbar, taueff, vol
     real(kind(1.0D0)), intent(out) :: burnup, dntau, figmer, fusrat, &
          qfuel, rndfuel, taup
 
@@ -3518,9 +3521,13 @@ contains
     fusrat = fusionrate*vol
 
     !  Alpha particle confinement time (s)
-    !  Number of alphas / fusion reaction rate
+    !  Number of alphas / alpha production rate
 
-    taup = dnalp*vol/fusrat
+    if (alpharate /= 0.0D0) then
+       taup = dnalp / alpharate
+    else  !  only likely if DD is only active fusion reaction
+       taup = 0.0D0
+    end if
 
     !  Fractional burnup
 
@@ -5009,7 +5016,7 @@ contains
     call ovarrf(outfile,'Electron energy confinement time (s)','(tauee)',tauee)
     call ovarre(outfile,'n-tau (s/m3)','(dntau)',dntau)
     call ovarre(outfile,'Transport loss power (MW)','(powerht)',powerht)
-    call ovarrf(outfile,'Particle confinement time (s)','(taup)',taup)
+    call ovarrf(outfile,'Alpha particle confinement time (s)','(taup)',taup)
     call ovarrf(outfile,'Particle/energy confinement time ratio',' ',taup/taueff)
 
     if (istell == 0) then

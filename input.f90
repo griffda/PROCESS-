@@ -1320,7 +1320,7 @@ contains
                'Centrepost coolant channel radius')
        case ('RIPMAX')
           call parse_real_variable('RIPMAX', ripmax, 0.1D0, 100.0D0, &
-               'Max peak/ave ripple at plasma edge (%)')
+               'Max allowed ripple ampl. at plasma edge (%)')
        case ('STRNCON')
           call parse_real_variable('STRNCON', strncon, -0.02D0, 0.02D0, &
                'Strain in superconductor material')

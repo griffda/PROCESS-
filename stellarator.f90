@@ -957,6 +957,7 @@ contains
     !+ad_hist  13/02/14 PJK Added tratio usage to calculate ti from te
     !+ad_hist  19/02/14 PJK Added plasma_profiles call and made other
     !+ad_hisc               necessary changes
+    !+ad_hist  08/05/14 PJK Modified call to PHYAUX
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1085,7 +1086,7 @@ contains
     !  for the rest of the code
 
     sbar = 1.0D0
-    call phyaux(aspect,dene,deni,fusionrate,plascur,sbar,dnalp, &
+    call phyaux(aspect,dene,deni,fusionrate,alpharate,plascur,sbar,dnalp, &
          dnprot,taueff,vol,burnup,dntau,figmer,fusrat,qfuel,rndfuel,taup)
 
     !  Calculate beta limit
