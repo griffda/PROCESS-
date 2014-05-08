@@ -111,10 +111,6 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Cross-sectional area of outboard leg
-
-    arealeg = tfthko*tftort
-
     !  Determine layout of the inboard midplane TF coil leg
 
     !  Radius of centre of inboard TF coil leg
@@ -137,6 +133,16 @@ contains
 
     thtcoil = pi/tfno
     tant = tan(thtcoil)
+
+    !  TF coil width in toroidal direction
+    ! PJK 08/05/14 Uncomment the following line to calculate tftort
+    ! rather than use it as an input quantity
+    !tftort = 2.0D0 * rcoil*sin(thtcoil)
+
+    !  Cross-sectional area of outboard leg
+    !assumed same width as inboard leg
+
+    arealeg = tfthko*tftort
 
     !  Circle/trapezoid distance
 
@@ -370,8 +376,8 @@ contains
 
     if ( (tftort < (wwp1 + 2.0D0*tinstf)).and.(iprint == 1) ) then
        write(*,*) 'Warning in routine SCTFCOIL:'
-       write(*,*) '  TF outboard length toroidal thickness, tftort = ',tftort
-       write(*,*) '                Winding pack + insulation width = ', &
+       write(*,*) '  TF outboard leg toroidal thickness, tftort = ',tftort
+       write(*,*) '             Winding pack + insulation width = ', &
             wwp1 + 2.0D0*tinstf
        write(*,*) 'Consider raising tftort in input file,'
        write(*,*) 'or setting it as an iteration variable (77)'

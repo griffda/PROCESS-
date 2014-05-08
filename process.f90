@@ -358,7 +358,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '269    Date  :: 2014-05-08'
+       '270    Date  :: 2014-05-08'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1533,3 +1533,4 @@ end subroutine output
 ! GIT 268: Modified constraint 28 by adding new input parameter bigqmin
 ! GIT 269: Changed ripmax description; changed taup calculation to use alpharate
 !          instead of fusionrate
+! GIT 270: Tidied up comments in tfcpwr

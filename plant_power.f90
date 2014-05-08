@@ -276,6 +276,7 @@ contains
       !+ad_hist  16/10/12 PJK Added constants
       !+ad_hist  08/04/13 PJK Comment changes; xpower units changed from MW to MVA
       !+ad_hist  15/04/13 PJK Comment changes
+      !+ad_hist  08/05/14 PJK Tidied up comments
       !+ad_stat  Okay
       !+ad_docs  None
       !
@@ -308,57 +309,167 @@ contains
 
       if (rptfc == 0.0D0) then
          tchghr = 4.0D0  !  charge time of the coils, hours
-         nsptfc = 1.0D0  !  1.0 = superconducting, 0.0 = resistive
+         nsptfc = 1.0D0  !  superconducting (1.0 = superconducting, 0.0 = resistive)
       else
-         tchghr = 0.16667D0
-         nsptfc = 0.0D0
+         tchghr = 0.16667D0 !  charge time of the coils, hours
+         nsptfc = 0.0D0  !  resistive (1.0 = superconducting, 0.0 = resistive)
       end if
 
-      tfacpd = 0.0D0
-      ettfc = ntfc*ettfmj  !  stored energy of all TF coils, MJ
-      ltfth = 2.0D0*ettfc/itfka**2  !  inductance of all TF coils, Henries
+      !  Total steady state TF coil AC power demand (summed later)
 
-      ntfbkr = ntfc/ncpbkr  !  number of circuit breakers
-      lptfcs = ltfth/ntfc  !  inductance per TF coil, Henries
-      albusa = itfka/djmka  !  aluminium bus section area, sq cm
-      tfbusl = 8.0D0*pi*rmajor + &  !  total TF system bus length, m
+      tfacpd = 0.0D0
+
+      !  Stored energy of all TF coils, MJ
+
+      ettfc = ntfc*ettfmj
+
+      !  Inductance of all TF coils, Henries
+
+      ltfth = 2.0D0*ettfc/itfka**2
+
+      !  Number of circuit breakers
+
+      ntfbkr = ntfc/ncpbkr
+
+      !  Inductance per TF coil, Henries
+
+      lptfcs = ltfth/ntfc
+
+      !  Aluminium bus section area, sq cm
+
+      albusa = itfka/djmka
+
+      !  Total TF system bus length, m
+
+      tfbusl = 8.0D0*pi*rmajor + &
            (1.0D0+ntfbkr)*(12.0D0*rmajor+80.0D0) + &
            0.2D0*itfka*sqrt(ntfc*rptfc*1000.0D0)
+
+      !  Aluminium bus weight, tonnes
+
       albuswt = 2.7D0*albusa*tfbusl/1.0D4
-      rtfbus = 2.62D-4*tfbusl/albusa  !  total resistance of TF bus, ohms
-      vtfbus = 1000.0D0*itfka*rtfbus  !  total voltage drop across TF bus, volts
-      rcoils = ntfc*rptfc  !  total resistance of the TF coils, ohms
+
+      !  Total resistance of TF bus, ohms
+
+      rtfbus = 2.62D-4*tfbusl/albusa
+
+      !  Total voltage drop across TF bus, volts
+
+      vtfbus = 1000.0D0*itfka*rtfbus
+
+      !  Total resistance of the TF coils, ohms
+
+      rcoils = ntfc*rptfc
+
+      !  Total impedance, ohms
+
       ztotal = rtfbus+rcoils+ltfth/(3600.0D0*tchghr)
-      tfcv = 1000.0D0*itfka*ztotal  !  charging voltage for the TF coils, volts
-      ntfpm = (itfka * (1.0D0 + nsptfc) )/5.0D0  !  number of TF power modules
-      tfpmv = rtfps*tfcv/(1.0D0+nsptfc)  !  TF coil power module voltage, volts
+
+      !  Charging voltage for the TF coils, volts
+
+      tfcv = 1000.0D0*itfka*ztotal
+
+      !  Number of TF power modules
+
+      ntfpm = (itfka * (1.0D0 + nsptfc) )/5.0D0
+
+      !  TF coil power module voltage, volts
+
+      tfpmv = rtfps*tfcv/(1.0D0+nsptfc)
+
+      !  TF coil power supply voltage, volts
+
       tfpsv = rtfps*tfcv
-      tfpska = rtfps*itfka  !  power supply current, kA
-      tfpmka = rtfps*itfka/(ntfpm/(1.0D0+nsptfc))  !  TF power module current, kA
-      tfpmkw = tfpmv*tfpmka  !  TF power module power, kW
-      tfckw = tfpmkw*ntfpm  !  available DC power for charging the TF coils, kW
-      tfackw = tfckw/0.9D0  !  peak AC power needed to charge coils, kW
-      r1dump = nsptfc*vtfskv*ncpbkr/itfka  !  resistance of dump resistor, ohms
-      ttfsec = lptfcs*ncpbkr/(r1dump*nsptfc+rptfc*(1.0D0-nsptfc))  !  time constant, s
-      ndumpr = ntfbkr*4.0D0  !  number of dump resistors
-      r1ppmw = nsptfc*r1dump*(itfka/2.0D0)**2  !  peak power to a dump resistor
-      !  during quench, MW
-      r1emj = nsptfc*ettfc/(ndumpr+0.0001D0)  !  energy to dump resistor during quench, MJ
+
+      !  Power supply current, kA
+
+      tfpska = rtfps*itfka
+
+      !  TF power module current, kA
+
+      tfpmka = rtfps*itfka/(ntfpm/(1.0D0+nsptfc))
+
+      !  TF power module power, kW
+
+      tfpmkw = tfpmv*tfpmka
+
+      !  Available DC power for charging the TF coils, kW
+
+      tfckw = tfpmkw*ntfpm
+
+      !  Peak AC power needed to charge coils, kW
+
+      tfackw = tfckw/0.9D0
+
+      !  Resistance of dump resistor, ohms
+
+      r1dump = nsptfc*vtfskv*ncpbkr/itfka
+
+      !  Time constant, s
+
+      ttfsec = lptfcs*ncpbkr/(r1dump*nsptfc+rptfc*(1.0D0-nsptfc))
+
+      !  Number of dump resistors
+
+      ndumpr = ntfbkr*4.0D0
+
+      !  Peak power to a dump resistor during quench, MW
+
+      r1ppmw = nsptfc*r1dump*(itfka/2.0D0)**2
+
+      !  Energy to dump resistor during quench, MJ
+
+      r1emj = nsptfc*ettfc/(ndumpr+0.0001D0)
+
+      !  Total TF coil peak resistive power demand, MVA
+
       rpower = (ntfc*rptfc+rtfbus)*itfka**2
-      xpower = ltfth/(3600.0D0*tchghr)*itfka**2  !  total TF coil peak inductive
-      !  power demand, MVA
+
+      !  Total TF coil peak inductive power demand, MVA
+
+      xpower = ltfth/(3600.0D0*tchghr)*itfka**2
+
+      !  Building space:
+
+      !  Power modules floor space, m2
 
       part1 = fspc1*ntfpm*tfpmkw**0.667D0
-      part2 = fspc2*ntfbkr*(vtfskv*itfka)**0.667D0
-      part3 = fspc3*(tfackw/(2.4D0*nsptfc+13.8D0*(1.0D0-nsptfc)))**0.667D0
-      tfcfsp = part1 + part2 + part3
-      drarea = 0.5D0*ndumpr*(1.0D0+r1emj)**0.667D0
-      tfcbv = 6.0D0*tfcfsp
-      xpwrmw = xpower/0.9D0
-      tfacpd = tfacpd+rpower/0.9D0
 
-      tftsp = tfcfsp  !  total TF coil power conversion building floor area, m2
-      tftbv = tfcbv   !  total TF coil power conversion building volume, m3
+      !  Circuit breakers floor space, m2
+
+      part2 = fspc2*ntfbkr*(vtfskv*itfka)**0.667D0
+
+      !  Load centres floor space, m2
+
+      part3 = fspc3*(tfackw/(2.4D0*nsptfc+13.8D0*(1.0D0-nsptfc)))**0.667D0
+
+      !  Power conversion building floor area, m2
+
+      tfcfsp = part1 + part2 + part3
+
+      !  Dump resistor floor area, m2
+
+      drarea = 0.5D0*ndumpr*(1.0D0+r1emj)**0.667D0
+
+      !  Total TF coil power conversion building volume, m3
+
+      tfcbv = 6.0D0*tfcfsp
+
+      !  TF coil AC inductive power demand, MW
+
+      xpwrmw = xpower/0.9D0
+
+      !  Total steady state AC power demand, MW
+
+      tfacpd = tfacpd + rpower/0.9D0
+
+      !  Total TF coil power conversion building floor area, m2
+
+      tftsp = tfcfsp
+
+      !  Total TF coil power conversion building volume, m3
+
+      tftbv = tfcbv
 
       !  Output section
 
