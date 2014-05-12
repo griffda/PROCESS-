@@ -1378,6 +1378,7 @@ module tfcoil_variables
   !+ad_hist  07/05/14 PJK Changed prp and trp definitions; removed rnltf;
   !+ad_hisc               replaced itfmod and stress_model with tfc_model
   !+ad_hist  08/05/14 PJK Changed ripmax description
+  !+ad_hist  12/05/14 PJK Added insstrain
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -1494,6 +1495,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: fhts = 0.5D0
   !+ad_vars  frhocp /1.0/ : centrepost resistivity enhancement factor
   real(kind(1.0D0)) :: frhocp = 1.0D0
+  !+ad_vars  insstrain : radial strain in insulator (tfc_model=2)
+  real(kind(1.0D0)) :: insstrain = 0.0D0
   !+ad_vars  isumattf /1/ : switch for superconductor material in TF coils:<UL>
   !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
   !+ad_varc                     ITER parameters;
@@ -1702,7 +1705,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: whttf = 0.0D0
   !+ad_vars  whttflgs : mass of the TF coil legs (kg)
   real(kind(1.0D0)) :: whttflgs = 0.0D0
-  !+ad_vars  windstrain : vertical strain in winding pack (m) (tfc_model=2)
+  !+ad_vars  windstrain : vertical strain in winding pack (tfc_model=2)
   real(kind(1.0D0)) :: windstrain = 0.0D0
   !+ad_vars  wtbc : bucking cylinder mass (kg)
   real(kind(1.0D0)) :: wtbc = 0.0D0

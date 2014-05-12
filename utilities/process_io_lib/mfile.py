@@ -7,12 +7,15 @@
   James Morris
   CCFE
 
+  Consistent with GIT release 271
+
   Notes:
     + 12/03/2014: Initial version
     + 12/03/2014: Added MFILE variable class
     + 12/03/2014: Added MFILE class for containing all info from file.
     + 12/03/2014: Added ability to read MFILE.DAT into class
     + 12/03/2014: Added ability write MFILE.DAT from class
+    + 12/05/2014: Fixed mfile issue with strings in MFILE.DAT with no scans
 
 """
 
@@ -159,6 +162,7 @@ class MFile(object):
 
             var_name = temp_line[1].split("__")[0]. \
                                     strip("()")
+
             if var_name == "_" * len(var_name):
                 var_name = temp_line[0].split("__")[0]. \
                     replace("_", " ")
@@ -175,8 +179,12 @@ class MFile(object):
                 MFileVariable(var_name, var_des)
 
             # Add scan 0 data to MFileVariable class
-            self.data[var_name]. \
-                set_scan(0, float(temp_line[2]))
+            if is_number(temp_line[2]):
+                self.data[var_name]. \
+                    set_scan(0, float(temp_line[2]))
+            else:
+                self.data[var_name]. \
+                    set_scan(0, temp_line[2])
 
     def get_data(self, scan):
         """
@@ -460,3 +468,13 @@ def write_mplot_conf(filename="make_plot_dat.conf"):
     for item in process_dicts.PARAMETER_DEFAULTS:
         conf_file.write(item + "\n")
     conf_file.close()
+
+def is_number(val):
+    """Check MFILE data entry"""
+    try:
+        float(val)
+        return True
+    except ValueError:
+        pass
+
+    return False

@@ -9,6 +9,7 @@ module sctfcoil_module
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_auth  J Morris, CCFE, Culham Science Centre
   !+ad_cont  coilshap
+  !+ad_cont  edoeeff
   !+ad_cont  eyngeff
   !+ad_cont  eyngzwp
   !+ad_cont  myall_stress
@@ -474,6 +475,7 @@ contains
     !+ad_desc  This subroutine sets up the stress calculations for the
     !+ad_desc  TF coil set.
     !+ad_prob  None
+    !+ad_call  edoeeff
     !+ad_call  eyngeff
     !+ad_call  eyngzwp
     !+ad_call  sctfjalw
@@ -487,6 +489,7 @@ contains
     !+ad_hist  30/04/14 PJK/JM Added new stress model option
     !+ad_hist  08/05/14 PJK Replaced itfmod, stress_model with tfc_model;
     !+ad_hisc               split stress calls into two routines
+    !+ad_hist  12/05/14 PJK Added insulator strain calculation
     !+ad_stat  Okay
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
@@ -629,6 +632,13 @@ contains
     if (tfc_model == 2) then
        eyzwp = eyngzwp(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
        windstrain = sigvert / eyzwp
+    end if
+
+    !  Radial strain in insulator
+
+    if (tfc_model == 2) then
+       insstrain = sigrtf(2) / eyins * &
+            edoeeff(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
     end if
 
   end subroutine stresscl
@@ -1065,6 +1075,65 @@ contains
     end if
 
   end function eyngeff
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function edoeeff(estl,eins,ewp,erp,trp,tins,teff,tstl,tcs)
+
+    !+ad_name  edoeeff
+    !+ad_summ  Returns ratio of E_d to E_eff in Morris
+    !+ad_type  Function returning real
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  estl : input real : Young's modulus of steel (Pa)
+    !+ad_args  eins : input real : Young's modulus of insulator (Pa)
+    !+ad_args  ewp  : input real : Young's modulus of windings (Pa)
+    !+ad_args  erp  : input real : Young's modulus of radial plates (Pa)
+    !+ad_args  trp  : input real : half-thickness of radial plates (m)
+    !+ad_args  tins : input real : insulator wrap thickness (m)
+    !+ad_args  teff : input real : dimension of total cable with insulator (m)
+    !+ad_args  tstl : input real : thickness of steel conduit (m)
+    !+ad_args  tcs  : input real : dimension of cable space area inside conduit (m)
+    !+ad_desc  This routine calculates the ratio of E_d to the effective Young's
+    !+ad_desc  modulus, given in Morris, Section III.4. This is used to calculate
+    !+ad_desc  the strain in the insulator.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  12/05/14 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: edoeeff
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: estl,eins,ewp,erp,trp,tins,teff,tstl,tcs
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: ed,ttot,eeff
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Total thickness of a turn with radial plates
+
+    ttot = tcs + 2.0D0*(trp + tins + tstl)
+
+    !  Code copied from eyngeff routine
+    !  See Figure 8 and Section III.4, Morris
+
+    ed = ttot / (2.0D0*trp/erp + 2.0D0*tins/eins + (tcs+2.0D0*tstl)/estl)
+
+    eeff = 1.0D0/ttot * ( 2.0D0*trp*erp + 2.0D0*tstl*ed )
+
+    edoeeff = ed/eeff
+
+  end function edoeeff
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1613,8 +1682,10 @@ contains
     if (tfc_model == 2) then
        call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', &
             eyzwp)
-       call ovarre(outfile,'Vertical strain on winding pack (Pa)','(windstrain)', &
+       call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', &
             windstrain)
+       call ovarre(outfile,'Radial strain on insulator','(insstrain)', &
+            insstrain)
     end if
 
   end subroutine outtf
