@@ -16,6 +16,7 @@ Update: 09/04/2014 - HL added IFAIL_SUCCESS
 Update: 01/05/2014 - PJK up to date at PROCESS version 260
 Update: 01/05/2014 - PJK up to date at PROCESS version 263
 Update: 08/05/2014 - PJK up to date at PROCESS version 266
+Update: 14/05/2014 - PJK up to date at PROCESS version 272
 
 """
 
@@ -58,6 +59,7 @@ DICT_VAR_TYPE['ifispact'] = 'int_variable'
 DICT_VAR_TYPE['igeom'] = 'int_variable'
 DICT_VAR_TYPE['ignite'] = 'int_variable'
 DICT_VAR_TYPE['iinvqd'] = 'int_variable'
+DICT_VAR_TYPE['imprad_model'] = 'int_variable'
 DICT_VAR_TYPE['ipedestal'] = 'int_variable'
 DICT_VAR_TYPE['iprofile'] = 'int_variable'
 DICT_VAR_TYPE['isc'] = 'int_variable'
@@ -155,6 +157,7 @@ DICT_VAR_TYPE['beta'] = 'real_variable'
 DICT_VAR_TYPE['betbm0'] = 'real_variable'
 DICT_VAR_TYPE['bt'] = 'real_variable'
 DICT_VAR_TYPE['cfe0'] = 'real_variable'
+DICT_VAR_TYPE['coreradius'] = 'real_variable'
 DICT_VAR_TYPE['csawth'] = 'real_variable'
 DICT_VAR_TYPE['cvol'] = 'real_variable'
 DICT_VAR_TYPE['dene'] = 'real_variable'
@@ -653,6 +656,7 @@ DICT_VAR_TYPE['shmatf'] = 'real_array'
 DICT_VAR_TYPE['v1matf'] = 'real_array'
 DICT_VAR_TYPE['v2matf'] = 'real_array'
 DICT_VAR_TYPE['v3matf'] = 'real_array'
+DICT_VAR_TYPE['fimp'] = 'real_array'
 
 
 #dictionary of all iteration variables

@@ -1,4 +1,3 @@
-!  $Id:: stellarator.f90 263 2014-05-01 14:26:48Z pknight               $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module helias5b_coil_parameters
@@ -237,6 +236,7 @@ module stellarator_module
   !+ad_call  fwbs_module
   !+ad_call  fwbs_variables
   !+ad_call  global_variables
+  !+ad_call  impurity_radiation_module
   !+ad_call  kit_blanket_model
   !+ad_call  maths_library
   !+ad_call  numerics
@@ -259,6 +259,7 @@ module stellarator_module
   !+ad_hist  06/11/12 PJK Added plasma_geometry_module
   !+ad_hist  14/08/13 PJK Added cost_variables, kit_blanket_model
   !+ad_hist  24/02/14 PJK Added profiles_module
+  !+ad_hist  14/05/14 PJK Added impurity_radiation_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -277,6 +278,7 @@ module stellarator_module
   use fwbs_module
   use fwbs_variables
   use global_variables
+  use impurity_radiation_module
   use kit_blanket_model
   use maths_library
   use numerics
@@ -958,6 +960,8 @@ contains
     !+ad_hist  19/02/14 PJK Added plasma_profiles call and made other
     !+ad_hisc               necessary changes
     !+ad_hist  08/05/14 PJK Modified call to PHYAUX
+    !+ad_hist  14/05/14 PJK Added call to plasma_composition and new
+    !+ad_hisc               impurity radiation calculations
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -976,10 +980,14 @@ contains
 
     !  Calculate plasma composition
 
-    call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impfe,impo, &
-         ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
-         dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
-         zion,zfear)
+    if (imprad_model == 0) then
+       call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impfe,impo, &
+            ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
+            dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
+            zion,zfear)
+    else
+       call plasma_composition
+    end if
 
     !  Calculate density and temperature profile quantities
 
@@ -1044,9 +1052,7 @@ contains
     !  Calculate radiation power
     !  N.B. plrad is recalculated below
 
-    call radpwr(alphan,alphat,aspect,bt,dene,deni,fbfe,kappa95,rmajor, &
-         rminor,ralpne,rncne,rnone,rnfene,ssync,ten,vol,pbrem,plrad, &
-         prad,psync,zfear)
+    call radpwr(imprad_model,pbrem,plrad,psync,prad,pcorerad)
 
     !  Limit for minimum radiation power
 

@@ -1,4 +1,3 @@
-!  $Id:: initial.f90 185 2013-09-11 15:36:05Z pknight                   $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine initial
@@ -227,6 +226,7 @@ subroutine check
   !+ad_hist  11/09/13 PJK Added check for fuel ion fractions; removed idhe3 setting;
   !+ad_hisc               removed iiter usage
   !+ad_hist  08/05/14 PJK Replaced itfmod with tfc_model
+  !+ad_hist  13/05/14 PJK Added impurity fraction initialisations
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -238,6 +238,7 @@ subroutine check
   use fwbs_variables
   use global_variables
   use heat_transport_variables
+  use impurity_radiation_module
   use ife_variables
   use pfcoil_variables
   use physics_variables
@@ -250,7 +251,7 @@ subroutine check
 
   !  Local variables
 
-  integer :: i,j,k
+  integer :: i,j,k,imp
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -267,6 +268,14 @@ subroutine check
      triv = 0.0D0
      ifispact = 0
      trithtmw = 0.0D0
+  end if
+
+  !  Impurity fractions
+
+  if (imprad_model == 1) then
+     do imp = 1,nimp
+        impurity_arr(imp)%frac = fimp(imp)
+     end do
   end if
 
   !  Tight aspect ratio options 

@@ -1,5 +1,4 @@
-!  $Id:: input.f90 263 2014-05-01 14:26:48Z pknight                     $
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !  Uncomment #define line below to perform unit testing
 !  Compile using pre-processor, e.g. ifort -cpp input.f90
@@ -88,6 +87,7 @@ module process_input
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  ife_variables
+  !+ad_call  impurity_radiation_module
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
@@ -125,6 +125,7 @@ module process_input
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_hist  14/01/13 PJK Changed (maximum) line length from 200 to maxlen
+  !+ad_hist  13/05/14 PJK Added impurity_radiation_module
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -140,6 +141,7 @@ module process_input
   use fwbs_variables
   use heat_transport_variables
   use ife_variables
+  use impurity_radiation_module
   use numerics
   use pfcoil_variables
   use physics_variables
@@ -369,6 +371,7 @@ contains
     !+ad_hist  08/05/14 PJK Changed PRP definition; removed ITFMOD;
     !+ad_hisc               replaced STRESS_MODEL with TFC_MODEL
     !+ad_hist  08/05/14 PJK Added BIGQMIN
+    !+ad_hist  13/05/14 PJK Added IMPRAD_MODEL, FIMP, CORERADIUS
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -529,6 +532,9 @@ contains
        case ('CFE0')
           call parse_real_variable('CFE0', cfe0, 0.0D0, 10.0D0, &
                'Additional Fe impurity fraction')
+       case ('CORERADIUS')
+          call parse_real_variable('CORERADIUS', coreradius, 0.0D0, 1.0D0, &
+               'Normalised core radius')
        case ('CSAWTH')
           call parse_real_variable('CSAWTH', csawth, 0.0D0, 10.0D0, &
                'Coefficient for sawteeth effects')
@@ -559,6 +565,9 @@ contains
        case ('FHE3')
           call parse_real_variable('FHE3', fhe3, 0.0D0, 1.0D0, &
                'Helium-3 fuel fraction')
+       case ('FIMP')
+          call parse_real_array('FIMP', fimp, isub1, nimp, &
+               'Impurity density fraction', icode)
        case ('FRADMIN')
           call parse_real_variable('FRADMIN', fradmin, 0.0D0, 1.0D0, &
                'F-value for minimum radiation power')
@@ -632,6 +641,9 @@ contains
        case ('IMPO')
           call parse_real_variable('IMPO', impo, 0.0D0, 10.0D0, &
                'Oxygen impurity multiplier')
+       case ('IMPRAD_MODEL')
+          call parse_int_variable('IMPRAD_MODEL', imprad_model, 0, 1, &
+               'Switch for impurity radiation model')
        case ('IPEDESTAL')
           call parse_int_variable('IPEDESTAL', ipedestal, 0, 1, &
                'Switch for plasma profile type')

@@ -1,4 +1,3 @@
-!  $Id:: physics.f90 262 2014-05-01 13:39:02Z pknight                   $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module physics_module
@@ -30,6 +29,7 @@ module physics_module
   !+ad_cont  palph2
   !+ad_cont  pcond
   !+ad_cont  phyaux
+  !+ad_cont  plasma_composition
   !+ad_cont  pohm
   !+ad_cont  pthresh
   !+ad_cont  radpwr
@@ -45,6 +45,7 @@ module physics_module
   !+ad_call  current_drive_module
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  impurity_radiation_module
   !+ad_call  maths_library
   !+ad_call  physics_variables
   !+ad_call  profiles_module
@@ -74,6 +75,7 @@ module physics_module
   !+ad_hist  19/02/14 PJK Added plasma_profiles
   !+ad_hist  24/02/14 PJK Moved plasma_profiles etc into new profiles_module
   !+ad_hist  26/03/14 PJK Renamed bootstrap fraction routines; added Sauter model
+  !+ad_hist  13/05/14 PJK Added plasma_composition routine, impurity_radiation_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -85,6 +87,7 @@ module physics_module
   use current_drive_module
   use current_drive_variables
   use divertor_variables
+  use impurity_radiation_module
   use maths_library
   use physics_variables
   use profiles_module
@@ -100,7 +103,8 @@ module physics_module
 
   private
   public :: beamfus,betcom,bpol,fhfac,igmarcal,outplas,outtim, &
-       palph,palph2,pcond,phyaux,physics,pohm,radpwr,rether
+       palph,palph2,pcond,phyaux,physics,plasma_composition, &
+       pohm,radpwr,rether
 
   !  Local variables
 
@@ -136,6 +140,7 @@ contains
     !+ad_call  palph2
     !+ad_call  pcond
     !+ad_call  phyaux
+    !+ad_call  plasma_composition
     !+ad_call  plasma_profiles
     !+ad_call  pohm
     !+ad_call  pthresh
@@ -180,6 +185,8 @@ contains
     !+ad_hist  26/03/14 PJK Converted BOOTST to a function;
     !+ad_hisc               introduced Sauter et al bootstrap model
     !+ad_hist  08/05/14 PJK Modified PHYAUX arguments
+    !+ad_hist  14/05/14 PJK Added call to plasma_composition and new
+    !+ad_hisc               impurity radiation calculations
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -200,10 +207,14 @@ contains
 
     !  Calculate plasma composition
 
-    call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impfe,impo, &
-         ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
-         dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
-         zion,zfear)
+    if (imprad_model == 0) then
+       call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impfe,impo, &
+            ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
+            dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
+            zion,zfear)
+    else
+       call plasma_composition
+    end if
 
     !  Calculate density and temperature profile quantities
 
@@ -356,11 +367,10 @@ contains
 
     !  Calculate radiation power
 
-    call radpwr(alphan,alphat,aspect,bt,dene,deni,fbfe,kappa95,rmajor, &
-         rminor,ralpne,rncne,rnone,rnfene,ssync,ten,vol,pbrem,plrad, &
-         prad,psync,zfear)
+    call radpwr(imprad_model,pbrem,plrad,psync,prad,pcorerad)
 
     !  Limit for minimum radiation power
+    !+PJK Shouldn't this be put into a constraint equation instead?
 
     pht = 1.0D-6 * (pinji + pinje) + alpmw + pcharge*vol
     pbrem = max( (fradmin*pht/vol), pbrem)
@@ -1475,6 +1485,82 @@ contains
 
     end function tpf
 
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    subroutine fast_alpha_bs()
+
+      !  BSALP (local per index J) is in MA/m^2
+
+      !  Required... before we can use this routine:
+      !  fast alpha pressure profile
+      !  poloidal flux profile vs local minor radius  (and grad(psi))
+      !  Shafranov shift vs local minor radius
+
+      !  all lengths in meters,
+      !  temperatures in keV where j is the radial index,
+      !  IPOL is R*Bphi / (R0*Bphi0)  (i.e. the normalized poloidal current integral)
+      !  PFAST is the alpha pressure
+      !  TE is the electron temperature
+      !  SHIF is the Shafranov shift (defined with respect to the geom. major radius)
+      !  AMETR is the minor radius
+      !  RTOR = R0
+      !  ZEF = Z effective
+      !  FP = PSI (magnetic flux, poloidal) defined such that
+      !    B_pol = grad(PSI) / (2*PI*R)
+
+      ! ZBIRTH = 1.
+
+      ! !MeV already included in PFAST ,convert PFAST from keV*1e19 to J
+      ! ZDPDPSI = 3./2.*1.60218*1.e3* &
+      !      (PFAST(J)-PFAST(J-1))/((FP(J)-FP(J-1))/GP2)
+      ! ZSB=(0.027*ZEF(J-1)*(TE(J-1)/20.)**(3./2.))**(1./3.)
+      ! ZSB1=(0.027*ZEF(J)*(TE(J)/20.)**(3./2.))**(1./3.)
+      ! ZSC=(5./3.)**(1./3.)*ZSB
+      ! ZSC1=(5./3.)**(1./3.)*ZSB1
+      ! ZDSC3DPSI = 3./2.*1.60218*1.e3*PFAST(J)* &
+      !      (ZSC1**3.-ZSC**3.)/((FP(J)-FP(J-1))/GP2)
+      ! ZEPS=AMETR(J)/RTOR
+      ! ZFP=1.-1.46*(1.+0.67/ZEF(J))*ZEPS**0.5+ 0.46*(1.+2.1/ZEF(J))*ZEPS
+
+      ! ZDR0DR=(SHIF(J)-SHIF(J-1))/(AMETR(J)-AMETR(J-1))
+
+      ! ZY=(1.-ZDR0DR/ZEPS*(1.-(1.-ZEPS**2.)**0.5)) &
+      !      /(1.+ZEPS*ZDR0DR/2.)/(1.-ZEPS**2.)**.5
+
+      ! ZA11=-ZSB**(3./2.)*(0.12+2.24*ZSB**(3./2.)-0.9*ZSB**3.) &
+      !      /(0.7+18.4*ZSB**(3./2.)+ &
+      !      23.5*ZSB**3.+101.*ZSB**(9./2.))*ZY
+
+      ! ZA12=-2./3.*(0.5+0.8*ZSC**(3./2.)+0.4*ZSC**3.) &
+      !      /(1.+2.3*ZSC**(3./2.)+4.*ZSC**3.)
+
+      ! ZA21=(7.e-4+0.02*ZSB**(3./2.)+0.4*ZSB**3.)/ &
+      !      (0.01-0.61*ZSB**(3./2.)+ &
+      !      24.8*ZSB**3.-53.4*ZSB**(9./2.)+118.*ZSB**6.)*ZY
+
+      ! ZA22=2./3.*(0.1+3.25*ZSC**(3./2.)-1.1*ZSC**3.)/ &
+      !      (1.e-3+0.6*ZSC**(3./2.)+ &
+      !      8.6*ZSC**3.+3.1*ZSC**(9./2.)+15.1*ZSC**6.)
+
+      ! ZB1=(0.155+3.9*ZSB**(3./2.)-3.1*ZSB**3.+0.3*ZSB**6.) &
+      !      /(0.1+3.*ZSB**(3./2.)-2.1*ZSB**3.)*ZY
+
+      ! ZB2=(1.3-0.5*ZSB**(3./2.)+5.9*ZSB**3.)/ &
+      !      (1.-0.34*ZSB**(3./2.)+4.9*ZSB**3.)*ZY
+
+      ! ZA1 = -ZA11+(2.*ZA11+(2.*ZB1-3.)*ZA12)*ZEPS**.5 &
+      !      -(ZA11+2.*(ZB1-1.)*ZA12)*ZEPS
+
+      ! ZA2 = -ZA21+(2.*ZA21+(2.*ZB2-3.)*ZA22)*ZEPS**.5 &
+      !      -(ZA21+2.*(ZB2-1.)*ZA22)*ZEPS
+
+      ! !bootstrap current by alphas
+      ! BSALP=-ZEPS**.5*(1.-2./ZEF(J)*ZFP)*IPOL(J)* &
+      !      RTOR*ZBIRTH*(ZA1*ZDPDPSI+ZA2*ZDSC3DPSI)
+      ! BSALP=BSALP/1.e6
+
+    end subroutine fast_alpha_bs
+
   end function bootstrap_fraction_sauter
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2184,6 +2270,189 @@ contains
          ) / dene
 
   end subroutine betcom
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine plasma_composition
+
+    !+ad_name  plasma_composition
+    !+ad_summ  Calculates various plasma component fractional makeups
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This subroutine determines the various plasma component
+    !+ad_desc  fractional makeups. It is the replacement for the original
+    !+ad_desc  routine <CODE>betcom</CODE>, and is used in conjunction with
+    !+ad_desc  the new impurity radiation model
+    !+ad_prob  None
+    !+ad_call  element2index
+    !+ad_hist  13/05/14 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: znimp, pc, znfuel
+    integer :: imp
+    integer :: first_call = 1
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Ion density components
+    !  ======================
+
+    !  Alpha ash portion
+
+    dnalp = dene * ralpne
+
+    !  Proton ash portion
+    !  This calculation will be wrong on the first call as the particle
+    !  production rates are evaluated later in the calling sequence
+
+    if (alpharate < 1.0D-6) then  !  not calculated yet...
+       dnprot = dnalp * (fhe3 + 1.0D-3) !  rough estimate
+    else
+       dnprot = dnalp * protonrate/alpharate
+    end if
+
+    !  Beam hot ion component
+    !  If ignited, prevent beam fusion effects
+
+    if (ignite == 0) then
+       dnbeam = dene * rnbeam
+    else
+       dnbeam = 0.0D0
+    end if
+
+    !  Sum of Zi.ni for all impurity ions (those with charge > helium)
+
+    znimp = 0.0D0
+    do imp = 1,nimp
+       if (impurity_arr(imp)%Z > 2) then
+          znimp = znimp + impurity_arr(imp)%Z*(impurity_arr(imp)%frac * dene)
+       end if
+    end do
+
+    !  Fuel portion - conserve charge neutrality
+    !  znfuel is the sum of Zi.ni for the three fuel ions
+
+    znfuel = dene - 2.0D0*dnalp - dnprot - dnbeam - znimp
+
+    !  Fuel ion density, deni
+    !  For D-T-He3 mix, deni = nD + nT + nHe3, while znfuel = nD + nT + 2*nHe3
+    !  So deni = znfuel - nHe3 = znfuel - fhe3*deni
+
+    deni = znfuel/(1.0D0+fhe3)
+
+    !  Ensure that deni is never negative or zero
+
+    if (deni < 1.0D0) then
+       write(*,*) 'Warning in PLASMA_COMPOSITION:'
+       write(*,*) 'Fuel ion density is zero or negative...'
+       deni = max(deni,1.0D0)
+    end if
+
+    !  Set hydrogen and helium impurity fractions for
+    !  radiation calculations
+
+    impurity_arr(element2index('H_'))%frac = &
+         (dnprot + (fdeut+ftrit)*deni + dnbeam)/dene
+
+    impurity_arr(element2index('He'))%frac = fhe3*deni/dene + ralpne
+
+    !  Total impurity density
+
+    dnz = 0.0D0
+    do imp = 1,nimp
+       if (impurity_arr(imp)%Z > 2) then
+          dnz = dnz + impurity_arr(imp)%frac*dene
+       end if
+    end do
+
+    !  Total ion density
+
+    dnitot = deni + dnalp + dnprot + dnbeam + dnz
+
+    !  Set some (obsolescent) impurity fraction variables
+    !  for the benefit of other routines
+
+    rncne = impurity_arr(element2index('C_'))%frac
+    rnone = impurity_arr(element2index('O_'))%frac
+    if (zfear == 0) then
+       rnfene = impurity_arr(element2index('Fe'))%frac
+    else
+       rnfene = impurity_arr(element2index('Ar'))%frac
+    end if
+
+    !  Effective charge
+    !  Calculation should be sum(ni.Zi^2) / sum(ni.Zi),
+    !  but ne = sum(ni.Zi) through quasineutrality
+
+    zeff = 0.0D0
+    do imp = 1,nimp
+       zeff = zeff + impurity_arr(imp)%frac * (impurity_arr(imp)%Z)**2
+    end do
+
+    !  Define coulomb logarithm
+    !  (collisions: ion-electron, electron-electron)
+
+    dlamee = 31.0D0 - (log(dene)/2.0D0) + log(te*1000.0D0)
+    dlamie = 31.3D0 - (log(dene)/2.0D0) + log(te*1000.0D0)
+
+    !  Fraction of alpha energy to ions and electrons
+    !  From Max Fenstermacher
+    !  (used with electron and ion power balance equations only)
+    !  No consideration of pcharge here...
+
+    !  pcoef now calculated in plasma_profiles, after the very first
+    !  call of plasma_composition; use old parabolic profile estimate
+    !  in this case
+
+    if (first_call == 1) then
+       pc = (1.0D0 + alphan)*(1.0D0 + alphat)/(1.0D0+alphan+alphat)
+       first_call = 0
+    else
+       pc = pcoef
+    end if
+
+    falpe = 0.88155D0 * exp(-te*pc/67.4036D0)
+    falpi = 1.0D0 - falpe
+
+    !  Average atomic masses
+
+    afuel = 2.0D0*fdeut + 3.0D0*ftrit + 3.0D0*fhe3
+    abeam = 2.0D0*(1.0D0-ftritbm) + 3.0D0*ftritbm
+
+    !  Density weighted mass
+
+    aion = afuel*deni + 4.0D0*dnalp + dnprot + abeam*dnbeam
+    do imp = 1,nimp
+       if (impurity_arr(imp)%Z > 2) then
+          aion = aion + dene*impurity_arr(imp)%frac*impurity_arr(imp)%amass
+       end if
+    end do
+    aion = aion/dnitot
+
+    !  Mass weighted plasma effective charge
+
+    zeffai = ( fdeut*deni/2.0D0 + ftrit*deni/3.0D0 + 4.0D0*fhe3*deni/3.0D0 + &
+         dnalp + dnprot + (1.0D0-ftritbm)*dnbeam/2.0D0 + ftritbm*dnbeam/3.0D0 &
+         ) / dene
+    do imp = 1,nimp
+       if (impurity_arr(imp)%Z > 2) then
+          zeffai = zeffai + impurity_arr(imp)%frac &
+               * (impurity_arr(imp)%Z)**2 / impurity_arr(imp)%amass
+       end if
+    end do
+
+  end subroutine plasma_composition
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3608,55 +3877,26 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine radpwr(alphan,alphat,aspect,bt,dene,deni,fbfe,kappa95, &
-       rmajor,rminor,ralpne,rncne,rnone,rnfene,ssync,ten,vol, &
-       pbrem,plrad,prad,psync,zfear)
+  subroutine radpwr(imprad_model,pbrem,plrad,psync,prad,pcorerad)
 
     !+ad_name  radpwr
-    !+ad_summ  Radiation power calculation
+    !+ad_summ  Radiation power interface routine
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  R Kemp, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_args  alphan : input real :  density profile index
-    !+ad_args  alphat : input real :  temperature profile index
-    !+ad_args  aspect : input real :  plasma aspect ratio
-    !+ad_args  bt     : input real :  toroidal field on axis (T)
-    !+ad_args  dene   : input real :  electron density (/m3)
-    !+ad_args  deni   : input real :  fuel ion density (/m3)
-    !+ad_args  fbfe   : input real :  fraction of high-Z radiation to bremsstrahlung
-    !+ad_args  kappa95: input real :  plasma elongation at 95% surface
-    !+ad_args  ralpne : input real :  thermal alpha density / electron density
-    !+ad_args  rmajor : input real :  plasma major radius (m)
-    !+ad_args  rminor : input real :  plasma minor radius (m)
-    !+ad_args  rncne  : input real :  carbon density / electron density
-    !+ad_args  rnfene : input real :  iron density / electron density
-    !+ad_args  rnone  : input real :  oxygen density / electron density
-    !+ad_args  ssync  : input real :  synchrotron wall reflectivity factor
-    !+ad_args  ten    : input real :  density weighted average electron temperature (keV)
-    !+ad_args  vol    : input real :  plasma volume (m3)
-    !+ad_args  zfear  : input integer :  high-Z impurity switch; 0=iron, 1=argon
+    !+ad_args  imprad_model : input integer : switch to choose model
     !+ad_args  pbrem  : output real : bremsstrahlung radiation power/volume (MW/m3)
     !+ad_args  plrad  : output real : edge line radiation power/volume (MW/m3)
-    !+ad_args  prad   : output real : total radiation power/volume from within
-    !+ad_argc                         separatrix (MW/m3)
     !+ad_args  psync  : output real : synchrotron radiation power/volume (MW/m3)
-    !+ad_desc  This routine finds the radiation power in MW/m3.
-    !+ad_desc  The Bremsstrahlung and synchrotron powers are included.
-    !+ad_prob  No account is taken of pedestal profiles.
-    !+ad_call  None
-    !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
-    !+ad_hist  21/07/11 RK  Implemented Albajar for P_sync
-    !+ad_hist  09/11/11 PJK Initial F90 version
-    !+ad_hist  17/12/12 PJK Added ZFEAR coding for high-Z impurities
-    !+ad_hist  07/11/13 PJK Modified prad description
-    !+ad_hist  20/02/14 PJK (Partially) Modified synchrotron calculation for
-    !+ad_hisc               pedestal profiles
+    !+ad_args  pcorerad  : output real : total core radiation power/volume (MW/m3)
+    !+ad_desc  This routine finds the radiation powers in MW/m3 by calling
+    !+ad_desc  relevant routines.
+    !+ad_call  pbrems_ipdg89
+    !+ad_call  psync_albajar_fidone
+    !+ad_call  imprad
+    !+ad_hist  14/05/14 PJK Redefined routine as a caller to the actual calculations
     !+ad_stat  Okay
-    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
-    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
-    !+ad_docs  Albajar, Nuclear Fusion 41 (2001) 665
-    !+ad_docs  Fidone, Giruzzi, Granata, Nuclear Fusion 41 (2001) 1755
+    !+ad_docs  None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3664,17 +3904,71 @@ contains
 
     !  Arguments
 
-    integer, intent(in) :: zfear
-    real(kind(1.0D0)), intent(in) :: alphan, alphat, aspect, bt, &
-         dene, deni, fbfe, kappa95, ralpne, rmajor, rminor, rncne, &
-         rnfene, rnone, ssync, ten, vol
-    real(kind(1.0D0)), intent(out) :: pbrem, plrad, prad, psync
+    integer, intent(in) :: imprad_model
+    real(kind(1.0D0)), intent(out) :: pbrem, plrad, psync, prad, pcorerad
+
+    !  Local variables
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Bremsstrahlung and line radiation
+
+    if (imprad_model == 0) then
+       call pbrems_ipdg89(pbrem, plrad)
+       pcorerad = pbrem + plrad
+    else if (imprad_model == 1) then
+       call imprad(pbrem, plrad, pcorerad)
+    else
+       write(*,*) 'Error in routine RADPWR:'
+       write(*,*) 'Illegal value for imprad_model = ',imprad_model
+       write(*,*) 'PROCESS stopping.'
+       stop
+    end if
+
+    !  Synchrotron radiation
+
+    call psync_albajar_fidone(psync)
+
+    !  Total continuum radiation power
+
+    prad = pbrem + psync
+
+  end subroutine radpwr
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine pbrems_ipdg89(pbrem,plrad)
+
+    !+ad_name  pbrems_ipdg89
+    !+ad_summ  Bremsstrahlung and line radiation power calculation
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  pbrem  : output real : bremsstrahlung radiation power/volume (MW/m3)
+    !+ad_args  plrad  : output real : edge line radiation power/volume (MW/m3)
+    !+ad_desc  This routine finds the Bremsstrahlung and line radiation powers
+    !+ad_desc  in MW/m3, using the IPDG89 formulation.
+    !+ad_prob  No account is taken of pedestal profiles.
+    !+ad_call  None
+    !+ad_hist  14/05/14 PJK Moved Bremsstrahlung calculation here from original
+    !+ad_hisc               <CODE>radpwr</CODE> routine
+    !+ad_stat  Okay
+    !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
+    !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(out) :: pbrem, plrad
 
     !  Local variables
 
     real(kind(1.0D0)) :: den20,fbc,fbhe,fbo,pbremdt,pbremz,pc,phe, &
-         phighz,po,radexp,t10,vr,xfact,kfun,gfun,pao,de2o,dum, &
-         tbet,rpow,kap
+         phighz,po,radexp,t10,vr,xfact
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3715,12 +4009,42 @@ contains
     plrad = (1.0D0-fbhe)*phe + (1.0D0-fbc)*pc + (1.0D0-fbo)*po + &
          (1.0D0-fbfe)*phighz
 
-    !  Synchrotron power
+  end subroutine pbrems_ipdg89
 
-    !  Original code:
-    !  xfact = 5.7D0/(aspect*sqrt(t10))
-    !  psync = 1.3D-4*(bt*t10)**2.5D0 * (1.0D0+xfact)**0.5D0 &
-    !          * (den20/rminor)**0.5D0 * (1.0D0-ssync)**0.5D0
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine psync_albajar_fidone(psync)
+
+    !+ad_name  psync_albajar_fidone
+    !+ad_summ  Synchrotron radiation power calculation
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  psync  : output real : synchrotron radiation power/volume (MW/m3)
+    !+ad_desc  This routine finds the synchrotron radiation power in MW/m3,
+    !+ad_desc  using the method of Albajar and Fidone.
+    !+ad_prob  No account is taken of pedestal profiles.
+    !+ad_call  None
+    !+ad_hist  14/05/14 PJK Moved synchrotron calculation here from original
+    !+ad_hisc               <CODE>radpwr</CODE> routine
+    !+ad_stat  Okay
+    !+ad_docs  Albajar, Nuclear Fusion 41 (2001) 665
+    !+ad_docs  Fidone, Giruzzi, Granata, Nuclear Fusion 41 (2001) 1755
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(out) :: psync
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: de2o,dum,gfun,kap,kfun,pao,rpow,tbet
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  tbet is betaT in Albajar, not to be confused with plasma beta
 
@@ -3756,11 +4080,95 @@ contains
 
     psync = psync/vol      
 
-    !  Total continuum radiation power
+  end subroutine psync_albajar_fidone
 
-    prad = pbrem + psync
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  end subroutine radpwr
+  subroutine imprad(radb, radl, radcore)
+
+    !+ad_name  imprad
+    !+ad_summ  Total impurity line radiation and bremsstrahlung
+    !+ad_type  Subroutine
+    !+ad_auth  H Lux, CCFE, Culham Science Centre
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  radb    : output real : bremsstrahlung only (MW/m3)
+    !+ad_args  radl    : output real : line radiation only (MW/m3)
+    !+ad_args  radcore : output real : total radiation from the core (MW/m3)
+    !+ad_desc  This routine calculates the total radiation losses from 
+    !+ad_desc  impurity line radiation and bremsstrahlung for all elements
+    !+ad_desc  for a given temperature and density profile.
+    !+ad_desc  <P>Bremsstrahlung equation from Johner
+    !+ad_desc  <P>L(z) data (coronal equilibrium) from Marco Sertoli, ASDEX-U,
+    !+ad_desc  ref. Kallenbach et al.
+    !+ad_prob  None
+    !+ad_call  Tprofile
+    !+ad_call  nprofile
+    !+ad_call  impradprofile
+    !+ad_hist  17/12/13 HL  First draft of routine, based on code by R Kemp
+    !+ad_hist  09/05/14 HL  Using new data structure
+    !+ad_hist  14/05/14 PJK First PROCESS implementation
+    !+ad_stat  Okay
+    !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
+    !+ad_docs  Sertoli, private communication
+    !+ad_docs  Kallenbach et al., Plasma Phys. Control. Fus. 55 (2013) 124041
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(out) :: radb, radl, radcore
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: radtot
+    real(kind(1.0D0)) :: rho, drho, trho,  nrho
+    real(kind(1.0D0)) :: pimp, pbrem, pline
+    integer :: i, imp, npts = 1000
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    npts = 1000
+    drho = 1.0D0/real(npts,kind(1.0D0))
+
+    radtot = 0.0D0
+    radcore = 0.0D0
+    radb = 0.0D0
+    radl = 0.0D0
+
+    !  Numerical integration using the midpoint rule
+    !  Consider using the maths_library integrator in the future...
+    !    quanc8(fun,0.0D0,1.0D0,abserr,relerr,result,errest,nofun,flag)
+
+    do i = 0, npts-1
+
+       rho = (0.5D0 + i)/npts
+       trho = tprofile(rho, rhopedt, te0, teped, tesep, alphat, tbeta)
+       nrho = nprofile(rho, rhopedn, ne0, neped, nesep, alphan)
+
+       do imp = 1, size(impurity_arr)
+
+          if (impurity_arr(imp)%frac > 1.0D-30) then
+
+             call impradprofile(impurity_arr(imp), nrho, trho, pimp, pbrem, pline)
+
+             radtot = radtot + pimp*rho
+             if (rho <= coreradius) radcore = radcore + pimp*rho
+             radb = radb + pbrem*rho
+             radl = radl + pline*rho
+          end if
+
+       end do
+    end do
+
+    !  Radiation powers in MW/m3
+
+    radtot  = 2.0D-6 * drho * radtot
+    radcore = 2.0D-6 * drho * radcore
+    radb    = 2.0D-6 * drho * radb
+    radl    = 2.0D-6 * drho * radl
+
+  end subroutine imprad
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4635,6 +5043,7 @@ contains
     !+ad_desc  This routine writes the plasma physics information
     !+ad_desc  to a file, in a tidy format.
     !+ad_prob  None
+    !+ad_call  int_to_string2
     !+ad_call  oblnkl
     !+ad_call  ocmmnt
     !+ad_call  oheadr
@@ -4679,6 +5088,7 @@ contains
     !+ad_hist  02/04/14 PJK Added confinement scaling law name to mfile
     !+ad_hist  03/04/14 PJK Used ovarst to write out confinement scaling law name
     !+ad_hist  23/04/14 PJK Added bvert
+    !+ad_hist  14/05/14 PJK Added impurity concentration info
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4693,7 +5103,9 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: betath
+    integer :: imp
     character(len=30) :: tauelaw
+    character(len=30) :: str1,str2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4888,14 +5300,27 @@ contains
     call ovarre(outfile,'Hot beam density (/m3)','(dnbeam)',dnbeam)
     call ovarre(outfile,'Density limit (enforced) (/m3)','(dnelimt)',dnelimt)
 
-    call ovarre(outfile,'Carbon impurity concentration (%)','(rncne*100)',rncne*100)
-    call ovarre(outfile,'Oxygen impurity concentration (%)','(rnone*100)',rnone*100)
+    call ovarin(outfile,'Plasma impurity model','(imprad_model)',imprad_model)
+    if (imprad_model == 0) then
+       call ocmmnt(outfile,'Original model; ITER 1989 Bremsstrahlung calculation')
+       call ovarre(outfile,'Carbon impurity concentration (%)','(rncne*100)',rncne*100)
+       call ovarre(outfile,'Oxygen impurity concentration (%)','(rnone*100)',rnone*100)
 
-    if (zfear == 1) then
-       call ovarre(outfile,'Argon impurity concentration (%)','(cfe0*100)',cfe0*100)
+       if (zfear == 1) then
+          call ovarre(outfile,'Argon impurity concentration (%)','(cfe0*100)',cfe0*100)
+       else
+          call ovarre(outfile,'Iron impurity concentration (%)','(cfe0*100)',cfe0*100)
+       end if
     else
-       call ovarre(outfile,'Iron impurity concentration (%)','(cfe0*100)',cfe0*100)
+       call osubhd(outfile,'New generalised impurity model')
+       call ocmmnt(outfile,'Plasma ion densities / electron density:')
+       do imp = 1,nimp
+          str1 = impurity_arr(imp)%label // ' concentration'
+          str2 = 'fimp('//int_to_string2(imp)//')'
+          call ovarre(outfile,str1,str2,impurity_arr(imp)%frac)
+       end do
     end if
+    call oblnkl(outfile)
 
     call ovarrf(outfile,'Effective charge','(zeff)',zeff)
     call ovarrf(outfile,'Mass weighted effective charge','(zeffai)',zeffai)
@@ -4951,6 +5376,13 @@ contains
     call ovarrf(outfile,'Synchrotron reflection factor','(ssync)',ssync)
     call ovarre(outfile,'Scrape-off line radiation power (MW)','(plrad*vol)', &
          plrad*vol)
+    if (imprad_model == 1) then
+       call ovarre(outfile,"Normalised minor radius defining 'core'", &
+            '(coreradius)',coreradius)
+       call ovarre(outfile,'Core radiation power (MW)', &
+            '(pcorerad*vol)',pcorerad*vol)
+    end if
+
     call ovarre(outfile,'Ion transport (MW)','(ptri*vol))',ptri*vol)
     call ovarre(outfile,'Electron transport (MW)','(ptre*vol)',ptre*vol)
     call ovarre(outfile,'Injection power to ions (MW)','(pinji/1.d6)', &

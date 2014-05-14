@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  $Id:: Makefile 242 2014-03-05 16:53:00Z pknight                      $
+#  GIT Revision 272
 #
 #  P J Knight
 #
@@ -56,6 +56,7 @@ source = \
  fwbs.f90 \
  global_variables.f90 \
  ife.f90 \
+ impurity_radiation.f90 \
  initial.f90 \
  input.f90 \
  iteration_variables.f90 \
@@ -93,6 +94,7 @@ object = \
  fwbs.o \
  global_variables.o \
  ife.o \
+ impurity_radiation.o \
  initial.o \
  input.o \
  iteration_variables.o \
@@ -197,6 +199,7 @@ fispact.o: global_variables.o
 fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o
 global_variables.o:
 ife.o: availability.o costs.o global_variables.o output.o
+impurity_radiation.o: global_variables.o
 initial.o: global_variables.o output.o scan.o stellarator.o
 input.o: global_variables.o numerics.o output.o scan.o
 iteration_variables.o: global_variables.o numerics.o
@@ -205,14 +208,15 @@ maths_library.o: global_variables.o
 numerics.o: maths_library.o
 output.o:
 pfcoil.o: global_variables.o maths_library.o output.o
-physics.o: current_drive.o global_variables.o maths_library.o output.o plasma_profiles.o
+physics.o: current_drive.o global_variables.o impurity_radiation.o maths_library.o \
+  output.o plasma_profiles.o
 plant_power.o: fwbs.o global_variables.o output.o
 plasma_geometry.o: global_variables.o
 plasma_profiles.o: global_variables.o maths_library.o
 process.o: availability.o buildings.o costs.o current_drive.o divertor.o evaluators.o \
-  fwbs.o global_variables.o ife.o input.o machine_build.o numerics.o output.o pfcoil.o \
-  physics.o plant_power.o pulse.o rfp.o scan.o sctfcoil.o startup.o stellarator.o \
-  structure.o tfcoil.o vacuum.o
+  fwbs.o global_variables.o ife.o impurity_radiation.o input.o machine_build.o \
+  numerics.o output.o pfcoil.o physics.o plant_power.o pulse.o rfp.o scan.o \
+  sctfcoil.o startup.o stellarator.o structure.o tfcoil.o vacuum.o
 pulse.o: global_variables.o maths_library.o output.o physics.o
 rfp.o: current_drive.o input.o global_variables.o machine_build.o output.o pfcoil.o \
   plasma_profiles.o physics.o

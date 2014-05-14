@@ -110,6 +110,7 @@ subroutine init
   !+ad_desc  the input file, and checks the run parameters for consistency.
   !+ad_prob  None
   !+ad_call  global_variables
+  !+ad_call  impurity_radiation_module
   !+ad_call  numerics
   !+ad_call  process_input
   !+ad_call  process_output
@@ -127,15 +128,17 @@ subroutine init
   !+ad_hist  09/10/12 PJK Modified to use new numerics module
   !+ad_hist  15/10/12 PJK Added global_variables module
   !+ad_hist  13/02/14 PJK Added mfile open statement
+  !+ad_hist  13/05/14 PJK Added impurity radiation model initialisation
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use global_variables
+  use impurity_radiation_module
+  use numerics
   use process_input
   use process_output
-  use numerics
 
   implicit none
 
@@ -164,6 +167,10 @@ subroutine init
   !  Input any desired new initial values
 
   call input
+
+  !  Initialise impurity radiation data
+
+  if (imprad_model == 1) call initialise_imprad
 
   !  Check input data for errors/ambiguities
 
@@ -358,7 +365,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '270    Date  :: 2014-05-08'
+       '272    Date  :: 2014-05-14'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1534,3 +1541,5 @@ end subroutine output
 ! GIT 269: Changed ripmax description; changed taup calculation to use alpharate
 !          instead of fusionrate
 ! GIT 270: Tidied up comments in tfcpwr
+! GIT 271: Added radial strain in insulator
+! GIT 272: Initial draft of new impurity radiation model

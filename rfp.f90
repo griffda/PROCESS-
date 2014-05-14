@@ -1,4 +1,3 @@
-!  $Id:: rfp.f90 259 2014-05-01 12:05:37Z pknight                       $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module rfp_module
@@ -24,6 +23,7 @@ module rfp_module
   !+ad_call  current_drive_variables
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
+  !+ad_call  impurity_radiation_module
   !+ad_call  pf_power_variables
   !+ad_call  pfcoil_module
   !+ad_call  pfcoil_variables
@@ -39,6 +39,7 @@ module rfp_module
   !+ad_hist  05/11/12 PJK Initial version of module
   !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_hist  24/02/14 PJK Added profiles_module
+  !+ad_hist  14/05/14 PJK Added impurity_radiation_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -51,6 +52,7 @@ module rfp_module
   use current_drive_variables
   use fwbs_variables
   use heat_transport_variables
+  use impurity_radiation_module
   use pf_power_variables
   use pfcoil_module
   use pfcoil_variables
@@ -737,6 +739,8 @@ contains
     !+ad_hist  19/02/14 PJK Added plasma_profiles call and made other
     !+ad_hisc               necessary changes
     !+ad_hist  08/05/14 PJK Modified call to PHYAUX
+    !+ad_hist  14/05/14 PJK Added call to plasma_composition,
+    !+ad_hisc               and modified RADPWR call
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -757,10 +761,14 @@ contains
 
     !  Calculate plasma composition
 
-    call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impfe,impo, &
-         ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
-         dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
-         zion,zfear)
+    if (imprad_model == 0) then
+       call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impfe,impo, &
+            ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
+            dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
+            zion,zfear)
+    else
+       call plasma_composition
+    end if
 
     !  Calculate density and temperature profile quantities
 
@@ -873,9 +881,7 @@ contains
 
     !  Calculate radiation power
 
-    call radpwr(alphan,alphat,aspect,bt,dene,deni,fbfe,kappa95,rmajor, &
-         rminor,ralpne,rncne,rnone,rnfene,ssync,ten,vol,pbrem,plrad, &
-         prad,psync,zfear)
+    call radpwr(imprad_model,pbrem,plrad,psync,prad,pcorerad)
 
     !  Limit for minimum radiation power
 

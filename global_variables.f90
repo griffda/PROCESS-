@@ -1,4 +1,3 @@
-!  $Id:: global_variables.f90 263 2014-05-01 14:26:48Z pknight          $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module global_variables
@@ -114,6 +113,8 @@ module physics_variables
   !+ad_hist  02/04/14 PJK Added iprofile=1 recommendation to use icurr=4
   !+ad_hist  23/04/14 PJK Added bvert
   !+ad_hist  01/05/14 PJK Changed dnbeta, gtscale comments
+  !+ad_hist  14/05/14 PJK Modified impc, impo, cfe0, zfear comments;
+  !+ad_hisc               added pcorerad
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -251,7 +252,7 @@ module physics_variables
   !+ad_vars  bvert : vertical field at plasma (T)
   real(kind(1.0D0)) :: bvert = 0.0D0
   !+ad_vars  cfe0 /0.0/ : seeded high-Z impurity fraction (n_highZ / n_e)
-  !+ad_varc               (iteration variable 43)
+  !+ad_varc               (imprad_model=0 only) (iteration variable 43)
   real(kind(1.0D0)) :: cfe0 = 0.0D0
   !+ad_vars  csawth /1.0/ : coeff. for sawteeth effects on burn V-s requirement
   real(kind(1.0D0)) :: csawth = 1.0D0
@@ -306,6 +307,7 @@ module physics_variables
   !+ad_vars  falpi : fraction of alpha power to ions
   real(kind(1.0D0)) :: falpi = 0.0D0
   !+ad_vars  fbfe /0.35/ : fraction of high-Z radiation to Bremsstrahlung
+  !+ad_varc                (imprad_model=0 only)
   real(kind(1.0D0)) :: fbfe = 0.35D0
   !+ad_vars  fdeut /0.5/ : deuterium fuel fraction
   real(kind(1.0D0)) :: fdeut = 0.5D0
@@ -391,11 +393,11 @@ module physics_variables
   !+ad_varc          <LI> = 0 inverse quadrature not used;
   !+ad_varc          <LI> = 1 inverse quadrature used</UL>
   integer :: iinvqd = 1
-  !+ad_vars  impc /1.0/ : carbon impurity multiplier
+  !+ad_vars  impc /1.0/ : carbon impurity multiplier (imprad_model=0 only)
   real(kind(1.0D0)) :: impc = 1.0D0
   !+ad_vars  impfe /1.0/ : iron impurity multiplier (OBSOLETE)
   real(kind(1.0D0)) :: impfe = 1.0D0
-  !+ad_vars  impo /1.0/ : oxygen impurity multiplier
+  !+ad_vars  impo /1.0/ : oxygen impurity multiplier (imprad_model=0 only)
   real(kind(1.0D0)) :: impo = 1.0D0
   !+ad_vars  ipedestal /0/ : switch for pedestal profiles:<UL>
   !+ad_varc             <LI> = 0 use original parabolic profiles;
@@ -458,6 +460,8 @@ module physics_variables
   real(kind(1.0D0)) :: pcharge = 0.0D0
   !+ad_vars  pcoef : profile factor (= n-weighted T / average T)
   real(kind(1.0D0)) :: pcoef = 0.0D0
+  !+ad_vars  pcorerad : total core radiation power (MW/m3)
+  real(kind(1.0D0)) :: pcorerad = 0.0D0
   !+ad_vars  pdd : deuterium-deuterium fusion power (MW)
   real(kind(1.0D0)) :: pdd = 0.0D0
   !+ad_vars  pdhe3 : deuterium-helium3 fusion power (MW)
@@ -622,6 +626,7 @@ module physics_variables
   !+ad_vars  zeffai : mass weighted plasma effective charge
   real(kind(1.0D0)) :: zeffai = 0.0D0
   !+ad_vars  zfear /0/ : high-Z impurity switch; 0=iron, 1=argon
+  !+ad_varc              (if imprad_model=1, only used in neutral beam stopping calc.)
   integer :: zfear = 0
 
 end module physics_variables
