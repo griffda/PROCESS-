@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 
@@ -10,6 +10,7 @@
   Notes:
     + 30/04/2014: Initial version created
 
+  Compatible with PROCESS version ???
 """
 
 import argparse

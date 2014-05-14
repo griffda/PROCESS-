@@ -7,8 +7,6 @@
   James Morris
   CCFE
 
-  Consistent with GIT release 271
-
   Notes:
     + 12/03/2014: Initial version
     + 12/03/2014: Added MFILE variable class
@@ -16,6 +14,8 @@
     + 12/03/2014: Added ability to read MFILE.DAT into class
     + 12/03/2014: Added ability write MFILE.DAT from class
     + 12/05/2014: Fixed mfile issue with strings in MFILE.DAT with no scans
+
+  Compatible with PROCESS version 271
 
 """
 

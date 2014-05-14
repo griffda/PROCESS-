@@ -8,6 +8,8 @@ Date : April 2014
 
 Output: Index.txt
 
+Compatible with PROCESS version 272
+
 """
 
 import argparse

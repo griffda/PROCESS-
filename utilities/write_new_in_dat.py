@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/env python3
 """
 
   Modifies the PROCESS input file IN.DAT so all the iteration variables are
@@ -10,6 +10,8 @@
   Notes:
      + JM 30/04/2014: Initial version using new libraries
      + JM 30/04/2014: Added command line arguments
+
+  Compatible with PROCESS version ???
 
 """
 

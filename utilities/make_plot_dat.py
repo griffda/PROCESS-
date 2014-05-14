@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 
@@ -10,6 +10,8 @@
   Notes:
     + 20/02/2014: Initial version created
     + 12/03/2014: Updated to put into PyCharm
+
+  Compatible with PROCESS version 272
 
 """
 

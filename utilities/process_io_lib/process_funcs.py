@@ -5,6 +5,7 @@ Author: Hanni Lux (Hanni.Lux@ccfe.ac.uk)
 
 Date: March 2013 - initial released version
 
+Compatible with PROCESS version ???
 """
 
 from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,\

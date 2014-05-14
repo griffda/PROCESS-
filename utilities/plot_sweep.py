@@ -1,4 +1,8 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
+
+"""
+   Compatible with PROCESS version ???
+"""
 
 import sys
 from pylab import *

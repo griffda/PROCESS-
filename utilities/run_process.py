@@ -21,6 +21,7 @@ MFILE.DAT   -  PROCESS output
 process.log - logfile of PROCESS output to stdout
 README.txt  - contains comments from config file
 
+Compatible with PROCESS version ???
 """
 
 #######################

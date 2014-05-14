@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 	Modifies the PROCESS input file IN.DAT to include the constraints marked
@@ -27,6 +27,8 @@
 		Save this file either in the current directory or in your bin
                 directory or wherever you have a path.
 		Execute from the Linux command line: write_constraints.py	
+
+    Compatible with PROCESS version ???
 """
 
 import sys, os

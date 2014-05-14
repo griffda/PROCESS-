@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/env python3
 """
 
 	Executes a  2D parametric study with PROCESS code
@@ -17,12 +17,17 @@
    					0: no error
    					1: solution not found
    					2: increase in precision recommended
-   					3,4,5: the previous codes+3, the previous message and additionally there was a change in the EDGEVARS vector
+   					3,4,5: the previous codes+3,
+                                           the previous message and additionally
+                                           there was a change in the EDGEVARS vector
    					
-   	EDGETABLE.DAT, Marks the iteration variables with 2 if they are at their upper bound, 1 at the lower or 0 at no bound
-   	MATRICES.DAT, Solution matrices for each output variable
-   	EDGEVARS.DAT, For each iteration, the names of variables which are at their bound value, and the bound (upper or lower)
-   	/DATA directory: OUT.DAT and PLOT.DAT from each iteration are stored in this directory if the flag DATA is activated in CONFIG.DAT 
+   	EDGETABLE.DAT, Marks the iteration variables with 2 if they are at their
+                       upper bound, 1 at the lower or 0 at no bound
+   	MATRICES.DAT,  Solution matrices for each output variable
+   	EDGEVARS.DAT,  For each iteration, the names of variables which are at
+                       their bound value, and the bound (upper or lower)
+   	/DATA directory: OUT.DAT and PLOT.DAT from each iteration are stored
+                       in this directory if the flag DATA is activated in CONFIG.DAT 
    	
    Execution procedure:
    	cd to the file's path
@@ -30,9 +35,13 @@
    	execute from the command line: ./2DScan.py
    	
    Algorithm:
-		For each iteration, this script changes the IN.DAT file with the data in CONFIG.DAT, and calls PROCESS code  
-		The data in OUT.DAT from the previous iteration is fed back to IN.DAT so PROCESS code starts the calculations from the previous solution
-		
+		For each iteration, this script changes the IN.DAT file with the
+                data in CONFIG.DAT, and calls PROCESS code  
+		The data in OUT.DAT from the previous iteration is fed back to
+                IN.DAT so PROCESS code starts the calculations from the
+                previous solution
+
+   Compatible with PROCESS version ???
 """
 
 import sys, os
@@ -105,7 +114,8 @@ tabla=[[0 for j in range(Vars2)] for i in range(Vars1)]
 tabla2=[[0 for j in range(Vars2)] for i in range(Vars1)]
 """ 2D array for error values"""
 tabla_error=[[0 for j in range(Vars2)] for i in range(Vars1)]
-""" 1D vectors for names and values of the previous solution in OUT.DAT file, to be fed back to the IN.DAT file"""
+""" 1D vectors for names and values of the previous solution in OUT.DAT file,
+    to be fed back to the IN.DAT file"""
 tabla_vars=["0" for i in range(100)]
 tabla_valores=["0" for i in range(100)]
 

@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 """
 
   PROCESS plot_proc using process_io_lib functions and MFILE.DAT
@@ -7,6 +7,7 @@
   13/04/2014
   CCFE
 
+  Compatible with PROCESS version ???
 """
 
 import argparse

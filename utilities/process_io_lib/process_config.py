@@ -6,6 +6,8 @@ Interfaces for Configuration values for programs
 - RunPROCESS.py
 - TestPROCESS.py
 
+Compatible with PROCESS version ???
+
 """
 
 import os

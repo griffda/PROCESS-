@@ -17,6 +17,8 @@
                      variable functions to classes
     + JM 26/03/2014: Tested Git integration
 
+  Compatible with PROCESS version ???
+
 """
 
 from process_io_lib.process_dicts import DICT_VAR_TYPE as VAR_TYPE

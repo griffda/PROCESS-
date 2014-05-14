@@ -7,6 +7,8 @@
 
   CCFE
 
+  Compatible with PROCESS version ???
+
 """
 
 import math
