@@ -814,6 +814,7 @@ contains
     !+ad_type  Function returning real
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  beta_poloidal_local
+    !+ad_cont  beta_poloidal_local_total
     !+ad_cont  nues
     !+ad_cont  nuee
     !+ad_cont  coulg
@@ -836,6 +837,7 @@ contains
     !+ad_call  hcsa
     !+ad_call  xcsa
     !+ad_hist  26/03/14 PJK Initial version
+    !+ad_hist  15/05/14 PJK Corrections made as per Fable's e-mail, 15/05/2014
     !+ad_stat  Okay
     !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu,
     !+ad_docc    Physics of Plasmas <B>6</B> (1999) 2834
@@ -977,6 +979,59 @@ contains
            ( rmajor/(bt*rho(j)*abs(mu(j)+1.0D-4)) )**2
 
     end function beta_poloidal_local
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    function beta_poloidal_local_total(j,nr)
+
+      !+ad_name  beta_poloidal_local_total
+      !+ad_summ  Local beta poloidal calculation, including ion pressure
+      !+ad_type  Function returning real
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_cont  None
+      !+ad_args  j  : input integer : radial element index in range 1 to nr
+      !+ad_args  nr : input integer : maximum value of j
+      !+ad_desc  This function calculates the local total beta poloidal.
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  supplied by Emiliano Fable, IPP Garching
+      !+ad_desc  (private communication).
+      !+ad_desc  <P>beta poloidal = 4*pi*(ne*Te+ni*Ti)/Bpo**2
+      !+ad_desc  where ni is the sum of all ion densities (thermal)
+      !+ad_prob  PJK: I do not understand why it should be 4*pi*... instead
+      !+ad_prob  of 8*pi*... Presumably it is because of a strange ASTRA
+      !+ad_prob  method similar to that noted above in the calculation of jboot.
+      !+ad_call  None
+      !+ad_hist  15/05/14 PJK New routine, which includes the ion pressure contribution
+      !+ad_stat  Okay
+      !+ad_docs  Pereverzev, 25th April 1989 (?)
+      !+ad_docs  E Fable, private communication, 15th May 2014
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      implicit none
+
+      real(kind(1.0D0)) :: beta_poloidal_local_total
+
+      !  Arguments
+
+      integer, intent(in) :: j, nr
+
+      !  Local variables
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      if (j /= nr)	then
+         beta_poloidal_local_total = 1.6D-4*pi * ( &
+              ( (ne(j+1)+ne(j)) * (tempe(j+1)+tempe(j)) ) + &
+              ( (ni(j+1)+ni(j)) * (tempi(j+1)+tempi(j)) ) )
+      else
+         beta_poloidal_local_total = 6.4D-4*pi * (ne(j)*tempe(j) + ni(j)*tempi(j))
+      end if
+
+      beta_poloidal_local_total = beta_poloidal_local_total * &
+           ( rmajor/(bt*rho(j)*abs(mu(j)+1.0D-4)) )**2
+
+    end function beta_poloidal_local_total
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1200,10 +1255,11 @@ contains
       !+ad_desc  supplied by Emiliano Fable, IPP Garching
       !+ad_desc  (private communication).
       !+ad_prob  None
-      !+ad_call  beta_poloidal_local
+      !+ad_call  beta_poloidal_local_total
       !+ad_call  nues
       !+ad_call  tpf
       !+ad_hist  26/03/14 PJK Initial version
+      !+ad_hist  15/05/14 PJK Corrections made as per Fable's e-mail
       !+ad_stat  Okay
       !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu,
       !+ad_docc    Physics of Plasmas <B>6</B> (1999) 2834
@@ -1238,7 +1294,10 @@ contains
          zft = zft/zdf  !  $f^{31}_{teff}(\nu_{e*})$, Eq.14b
          dcsa = (1.0D0 + 1.4D0/(zz+1.0D0))*zft - 1.9D0/(zz+1.0D0)*zft*zft
          dcsa = dcsa + (0.3D0*zft*zft + 0.2D0*zft*zft*zft)*zft / (zz+1.0D0)
-         dcsa = dcsa*beta_poloidal_local(j,nr) * (1.0D0+tempi(j)/(zz*tempe(j)))
+
+         !  Corrections suggested by Fable, 15/05/2015
+         !dcsa = dcsa*beta_poloidal_local(j,nr) * (1.0D0+tempi(j)/(zz*tempe(j)))
+         dcsa = dcsa*beta_poloidal_local_total(j,nr)
       end if
 
     end function dcsa
@@ -1262,10 +1321,12 @@ contains
       !+ad_desc  (private communication).
       !+ad_prob  None
       !+ad_call  beta_poloidal_local
+      !+ad_call  beta_poloidal_local_total
       !+ad_call  dcsa
       !+ad_call  nues
       !+ad_call  tpf
       !+ad_hist  26/03/14 PJK Initial version
+      !+ad_hist  15/05/14 PJK Corrections made as per Fable's e-mail
       !+ad_stat  Okay
       !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu,
       !+ad_docc    Physics of Plasmas <B>6</B> (1999) 2834
@@ -1319,8 +1380,11 @@ contains
               (zfti2 - zfti4 - 0.55D0*(zfti3-zfti4))
          hcei = hcei - 1.2D0/(1.0D0 + 0.5D0*zz)*zfti4  !  $F_{32\_ei}(Y)$, Eq.15c
 
+         !  Corrections suggested by Fable, 15/05/2015
+         !hcsa = beta_poloidal_local(j,nr)*(hcee + hcei) + dcsa(j,nr) &
+         !     / (1.0D0 + tempi(j)/(zz*tempe(j)))
          hcsa = beta_poloidal_local(j,nr)*(hcee + hcei) + dcsa(j,nr) &
-              / (1.0D0 + tempi(j)/(zz*tempe(j)))
+              * beta_poloidal_local(j,nr)/beta_poloidal_local_total(j,nr)
       end if
 
     end function hcsa
@@ -1349,6 +1413,7 @@ contains
       !+ad_call  nuis
       !+ad_call  tpf
       !+ad_hist  26/03/14 PJK Initial version
+      !+ad_hist  15/05/14 PJK Corrections made as per Fable's e-mail
       !+ad_stat  Okay
       !+ad_docs  O. Sauter, C. Angioni and Y. R. Lin-Liu,
       !+ad_docc    Physics of Plasmas <B>6</B> (1999) 2834
@@ -1392,8 +1457,14 @@ contains
          a1 = nuis(j)*nuis(j) * zft**6
          alp = (alp + 0.315D0*a1) / (1.0D0 + 0.15D0*a1)  !  $\alpha(\nu_{i*})$, Eq.17b
 
-         xcsa = beta_poloidal_local(j,nr) * (xcsa*alp)*tempi(j)/zz/tempe(j)
-         xcsa = xcsa + dcsa(j,nr) / (1.0D0 + zz*tempe(j)/tempi(j))
+         !  Corrections suggested by Fable, 15/05/2015
+         !xcsa = beta_poloidal_local(j,nr) * (xcsa*alp)*tempi(j)/zz/tempe(j)
+         !xcsa = xcsa + dcsa(j,nr) / (1.0D0 + zz*tempe(j)/tempi(j))
+
+         xcsa = (beta_poloidal_local_total(j,nr)-beta_poloidal_local(j,nr)) &
+              * (xcsa*alp)
+         xcsa = xcsa + dcsa(j,nr) * &
+              (1.0D0 - beta_poloidal_local(j,nr)/beta_poloidal_local_total(j,nr))
       end if
 
     end function xcsa
