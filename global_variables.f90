@@ -115,6 +115,7 @@ module physics_variables
   !+ad_hist  01/05/14 PJK Changed dnbeta, gtscale comments
   !+ad_hist  14/05/14 PJK Modified impc, impo, cfe0, zfear comments;
   !+ad_hisc               added pcorerad
+  !+ad_hist  15/05/14 PJK Changed ffwal comment
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -312,7 +313,7 @@ module physics_variables
   !+ad_vars  fdeut /0.5/ : deuterium fuel fraction
   real(kind(1.0D0)) :: fdeut = 0.5D0
   !+ad_vars  ffwal /0.92/ : factor to convert plasma surface area to first wall
-  !+ad_varc                 area in neutron wall load calculation
+  !+ad_varc                 area in neutron wall load calculation (iwalld=1)
   real(kind(1.0D0)) :: ffwal = 0.92D0
   !+ad_vars  fhe3 /0.0/ : helium-3 fuel fraction
   real(kind(1.0D0)) :: fhe3 = 0.0D0

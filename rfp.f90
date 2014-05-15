@@ -741,6 +741,7 @@ contains
     !+ad_hist  08/05/14 PJK Modified call to PHYAUX
     !+ad_hist  14/05/14 PJK Added call to plasma_composition,
     !+ad_hisc               and modified RADPWR call
+    !+ad_hist  15/05/14 PJK Changed iwalld logic
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -873,7 +874,11 @@ contains
 
     !  Neutron wall load
 
-    wallmw = ffwal * (pneut*vol) / sarea
+    if (iwalld == 1) then
+       wallmw = ffwal * (pneut*vol) / sarea
+    else
+       wallmw = (pneut*vol) / fwarea
+    end if
 
     !  Calculate ion/electron equilibration power
 

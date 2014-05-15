@@ -962,6 +962,7 @@ contains
     !+ad_hist  08/05/14 PJK Modified call to PHYAUX
     !+ad_hist  14/05/14 PJK Added call to plasma_composition and new
     !+ad_hisc               impurity radiation calculations
+    !+ad_hist  15/05/14 PJK Removed ffwal from iwalld=2 calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1042,7 +1043,7 @@ contains
     if (iwalld == 1) then
        wallmw = ffwal * (pneut*vol) / sarea
     else
-       wallmw = ffwal * (pneut*vol) / fwarea
+       wallmw = (pneut*vol) / fwarea
     end if
 
     !  Calculate ion/electron equilibration power

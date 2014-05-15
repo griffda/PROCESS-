@@ -366,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '276    Date  :: 2014-05-15'
+       '277    Date  :: 2014-05-15'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1548,3 +1548,5 @@ end subroutine output
 ! GIT 274: Made corrections to Sauter bootstrap fraction formulae as suggested by Fable
 ! GIT 275: Minor corrections to python utilities; added hyperlinks to User Guide
 ! GIT 276: Increased length of output lines
+! GIT 277: Added vstot to output; removed ffwal from iwalld=2 calculation
+

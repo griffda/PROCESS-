@@ -2449,9 +2449,11 @@ contains
     !+ad_call  oheadr
     !+ad_call  oshead
     !+ad_call  osubhd
+    !+ad_call  ovarre
     !+ad_hist  01/08/11 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  18/12/12 PJK/RK Modified for new PF coil current calculations
+    !+ad_hist  15/05/14 PJK Added vstot to output
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2480,6 +2482,9 @@ contains
          t2,'OH coil  :',t13,3(f10.2,5x)/ &
          t15,8('-'),t30,8('-'),t45,8('-')/ &
          t2,'Total :   ',t13,3(f10.2,5x) )
+
+    call oblnkl(outfile)
+    call ovarre(outfile,'Total volt-second consumption by coils (Wb)','(vstot)',vstot)
 
     call osubhd(outfile, &
          'Summary of volt-second consumption by circuit (Wb) :')
