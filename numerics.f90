@@ -326,7 +326,7 @@ module numerics
        !+ad_varc  <LI> (27) OH coil BOP current density upper limit
        'OH coil BOP current density limit', &
        !+ad_varc  <LI> (28) Fusion gain Q lower limit
-       'Fusion gain Q lower limit', &
+       'Fusion gain Q lower limit        ', &
        !+ad_varc  <LI> (29) Inboard radial build consistency
        'Inboard radial build consistency ', &
        !+ad_varc  <LI> (30) Injection power upper limit

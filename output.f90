@@ -110,8 +110,9 @@ contains
     !+ad_desc  It cannot cope with a zero-length string; routine
     !+ad_desc  <A HREF="ostars.html"><CODE>ostars</CODE></A> should be used instead.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  ostars
     !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_hist  15/05/14 PJK Increased max output width to 110 characters
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -127,26 +128,24 @@ contains
     !  Local variables
 
     integer :: lh, nstars, nstars2
-    integer, parameter :: maxwd = 100
-    character(len=maxwd) :: stars
+    integer, parameter :: maxwidth = 110
+    character(len=maxwidth) :: stars
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    stars = repeat('*',maxwd)
+    stars = repeat('*',maxwidth)
 
     lh = len(string)
 
-    if (width > maxwd) then
-       write(*,*) 'Error in routine OCENTR :'
-       write(*,*) 'Maximum width = ',maxwd
-       write(*,*) 'Requested width = ',width
-       write(*,*) 'PROCESS stopping.'
-       stop
+    if (lh == 0) then
+       call ostars(file,width)
+       return
     end if
 
-    if (lh == 0) then
+    if (width > maxwidth) then
        write(*,*) 'Error in routine OCENTR :'
-       write(*,*) 'A zero-length string is not permitted.'
+       write(*,*) 'Maximum width = ',maxwidth
+       write(*,*) 'Requested width = ',width
        write(*,*) 'PROCESS stopping.'
        stop
     end if
@@ -169,7 +168,7 @@ contains
 
     !  Write the whole line
 
-    write(file,*) stars(1:nstars),' ',string,' ',stars(1:nstars2)
+    write(file,'(t2,a)') stars(1:nstars)//' '//string//' '//stars(1:nstars2)
 
   end subroutine ocentr
 
@@ -188,6 +187,7 @@ contains
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_hist  15/05/14 PJK Increased max output width to 110 characters
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -201,14 +201,14 @@ contains
 
     !  Local variables
 
-    integer, parameter :: maxwd = 100
-    character(len=maxwd) :: stars
+    integer, parameter :: maxwidth = 110
+    character(len=maxwidth) :: stars
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    stars = repeat('*',maxwd)
+    stars = repeat('*',maxwidth)
 
-    write(file,'(t2,a)') stars(1:min(width,maxwd))
+    write(file,'(1x,a)') stars(1:min(width,maxwidth))
 
   end subroutine ostars
 
@@ -230,6 +230,7 @@ contains
     !+ad_call  oblnkl
     !+ad_call  ocentr
     !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_hist  15/05/14 PJK Increased output width to 110 characters
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -244,7 +245,7 @@ contains
 
     !  Local variables
 
-    integer, parameter :: width = 72
+    integer, parameter :: width = 110
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -272,6 +273,7 @@ contains
     !+ad_call  oblnkl
     !+ad_call  ocentr
     !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_hist  15/05/14 PJK Increased output width to 80 characters
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -286,7 +288,7 @@ contains
 
     !  Local variables
 
-    integer, parameter :: width = 50
+    integer, parameter :: width = 80
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -379,6 +381,7 @@ contains
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_hist  15/05/14 PJK Increased output width to 110 characters
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -393,7 +396,7 @@ contains
 
     !  Local variables
 
-    integer, parameter :: width = 72
+    integer, parameter :: maxwidth = 110
     integer :: lh
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -407,10 +410,10 @@ contains
        stop
     end if
 
-    if (lh >= width) then
+    if (lh >= maxwidth) then
        write(*,*) 'Error in routine OCMMNT :'
        write(*,*) string
-       write(*,*) 'This is too long to fit into ',width,' columns.'
+       write(*,*) 'This is too long to fit into ',maxwidth,' columns.'
        write(*,*) 'PROCESS stopping.'
        stop
     end if
@@ -442,6 +445,7 @@ contains
     !+ad_hist  13/02/14 PJK Added output to mfile, with underscores replacing spaces
     !+ad_hist  17/02/14 PJK Ensured mfile output is not replicated if file=mfile
     !+ad_hist  06/03/14 PJK mfile output now sent to ovarre for 'E' format
+    !+ad_hist  15/05/14 PJK Longer line length
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -457,8 +461,8 @@ contains
 
     !  Local variables
 
-    character(len=42) :: dum42
-    character(len=13) :: dum13
+    character(len=72) :: dum72
+    character(len=20) :: dum20
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -466,14 +470,14 @@ contains
     !  This counters problems that would occur if the two original strings
     !  were the wrong length.
 
-    dum42 = descr
-    dum13 = varnam
+    dum72 = descr
+    dum20 = varnam
 
     if (file /= mfile) then
-       write(file,10) dum42, dum13, value
+       write(file,10) dum72, dum20, value
     end if
 
-10  format(1x,a,t45,a,t60,f10.3)
+10  format(1x,a,t75,a,t100,f10.3)
 
     call ovarre(mfile,descr,varnam,value)
 
@@ -501,6 +505,7 @@ contains
     !+ad_hist  20/09/11 PJK Initial F90 version
     !+ad_hist  13/02/14 PJK Added output to mfile, with underscores replacing spaces
     !+ad_hist  17/02/14 PJK Ensured mfile output is not replicated if file=mfile
+    !+ad_hist  15/05/14 PJK Longer line length
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -516,8 +521,8 @@ contains
 
     !  Local variables
 
-    character(len=42) :: dum42
-    character(len=13) :: dum13
+    character(len=72) :: dum72
+    character(len=20) :: dum20
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -525,18 +530,18 @@ contains
     !  This counters problems that would occur if the two original strings
     !  were the wrong length.
 
-    dum42 = descr
-    dum13 = varnam
+    dum72 = descr
+    dum20 = varnam
 
     if (file /= mfile) then
-       write(file,10) dum42, dum13, value
+       write(file,10) dum72, dum20, value
     end if
 
-    call underscore(dum42)
-    call underscore(dum13)
-    write(mfile,10) dum42, dum13, value
+    call underscore(dum72)
+    call underscore(dum20)
+    write(mfile,10) dum72, dum20, value
 
-10  format(1x,a,t45,a,t60,1pe10.3)
+10  format(1x,a,t75,a,t100,1pe10.3)
 
   end subroutine ovarre
 
@@ -560,6 +565,7 @@ contains
     !+ad_hist  20/09/11 PJK Initial F90 version
     !+ad_hist  13/02/14 PJK Added output to mfile, with underscores replacing spaces
     !+ad_hist  17/02/14 PJK Ensured mfile output is not replicated if file=mfile
+    !+ad_hist  15/05/14 PJK Longer line length
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -575,8 +581,8 @@ contains
 
     !  Local variables
 
-    character(len=42) :: dum42
-    character(len=13) :: dum13
+    character(len=72) :: dum72
+    character(len=20) :: dum20
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -584,18 +590,18 @@ contains
     !  This counters problems that would occur if the two original strings
     !  were the wrong length.
 
-    dum42 = descr
-    dum13 = varnam
+    dum72 = descr
+    dum20 = varnam
 
     if (file /= mfile) then
-       write(file,10) dum42, dum13, value
+       write(file,10) dum72, dum20, value
     end if
 
-    call underscore(dum42)
-    call underscore(dum13)
-    write(mfile,10) dum42, dum13, value
+    call underscore(dum72)
+    call underscore(dum20)
+    write(mfile,10) dum72, dum20, value
 
-10  format(1x,a,t45,a,t60,i10)
+10  format(1x,a,t75,a,t100,i10)
 
   end subroutine ovarin
 
@@ -617,6 +623,7 @@ contains
     !+ad_prob  None
     !+ad_call  underscore
     !+ad_hist  03/04/14 PJK Initial version
+    !+ad_hist  15/05/14 PJK Longer line length
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -631,8 +638,8 @@ contains
 
     !  Local variables
 
-    character(len=42) :: dum42
-    character(len=13) :: dum13
+    character(len=72) :: dum72
+    character(len=20) :: dum20
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -640,18 +647,18 @@ contains
     !  This counters problems that would occur if the two original strings
     !  were the wrong length.
 
-    dum42 = descr
-    dum13 = varnam
+    dum72 = descr
+    dum20 = varnam
 
     if (file /= mfile) then
-       write(file,10) dum42, dum13, value
+       write(file,10) dum72, dum20, value
     end if
 
-    call underscore(dum42)
-    call underscore(dum13)
-    write(mfile,10) dum42, dum13, value
+    call underscore(dum72)
+    call underscore(dum20)
+    write(mfile,10) dum72, dum20, value
 
-10  format(1x,a,t45,a,t60,a)
+10  format(1x,a,t75,a,t100,a)
 
   end subroutine ovarst
 
@@ -674,6 +681,7 @@ contains
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  20/09/11 PJK Initial F90 version
+    !+ad_hist  15/05/14 PJK Longer line length
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -689,8 +697,8 @@ contains
 
     !  Local variables
 
-    character(len=10)  :: dum10
-    character(len=42) :: dum42
+    character(len=20) :: dum20
+    character(len=72) :: dum72
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -698,11 +706,11 @@ contains
     !  This counters problems that would occur if the two original strings
     !  were the wrong length.
 
-    dum10 = ccode
-    dum42 = descr
+    dum20 = ccode
+    dum72 = descr
 
-    write(file,10) dum10, dum42, value
-10  format(1x,a,t12,a,t60,f10.2)
+    write(file,10) dum20, dum72, value
+10  format(1x,a,t22,a,t100,f10.2)
 
     call ovarrf(mfile,descr,ccode,value)
 

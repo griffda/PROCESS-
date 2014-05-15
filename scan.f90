@@ -145,6 +145,7 @@ contains
     !+ad_hist  13/02/14 PJK Replaced spaces with underscores in xlabel, plabel
     !+ad_hist  20/02/14 PJK Replaced te*pcoef with ten; changed plabel(20)
     !+ad_hist  30/04/14 PJK Fixed plabel(20)
+    !+ad_hist  15/05/14 PJK Increased output width to 110 characters
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -160,6 +161,7 @@ contains
     character(len=48) :: tlabel
 
     integer, parameter :: noutvars = 50
+    integer, parameter :: width = 110
 
     character(len=25), dimension(noutvars), save :: plabel
     real(kind(1.0D0)), dimension(noutvars,ipnscns) :: outvar
@@ -354,11 +356,11 @@ contains
        !  Write banner to output file
 
        call oblnkl(nout)
-       call ostars(nout,72)
+       call ostars(nout,width)
        write(nout,10) iscan,isweep,trim(xlabel),trim(vlabel),sweep(iscan)
 10     format(' ***** Scan point ',i2,' of ',i2, &
             ': ',a,', ',a,e12.4e2,' *****')
-       call ostars(nout,72)
+       call ostars(nout,width)
 
        !  Write additional information to mfile
 

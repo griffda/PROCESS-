@@ -2377,6 +2377,7 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  18/10/12 PJK Added fwbs_variables
+    !+ad_hist  15/05/14 PJK Increased output width to 110 characters
     !+ad_stat  Okay
     !+ad_docs  Blanket and Energy Conversion Model for Fusion Reactors,
     !+ad_docc  Dr. P.J. Karditsas, AEA Technology, Theoretical and Strategic Studies
@@ -2411,6 +2412,8 @@ contains
     real(kind(1.0D0)), dimension(0:10) :: dh,h,hg,hsat,m,mb,p,s,sg,t, &
          tsat,vsat,wp,wt
     integer :: i,np,npi,npo,nr,nri,nro,nt,nti,nto
+
+    integer, parameter :: width = 110
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2567,7 +2570,7 @@ contains
     if (iprint == 1) then
 
        call oblnkl(outfile)
-       call ocentr(outfile,'Blanket Input Data',72)
+       call ocentr(outfile,'Blanket Input Data',width)
        call oblnkl(outfile)
 
        call ovarrf(outfile,'fusion power (MW)','(xqfusion)',xqfus(1))
@@ -2741,7 +2744,7 @@ contains
     if (iprint == 1) then
 
        call oblnkl(outfile)
-       call ocentr(outfile,'Blanket Output Data',72)
+       call ocentr(outfile,'Blanket Output Data',width)
        call oblnkl(outfile)
        call ovarrf(outfile,'Max Blanket temp (C)','(tb)',tb-273.15D0)
        call ovarrf(outfile,'Coolant outlet temp (C)','(tfo)',tfo-273.15D0)
@@ -2769,7 +2772,7 @@ contains
        call ovarrf(outfile,'Average heat (MW/m**3)','(xqav)',xqav)
 
        call oblnkl(outfile)
-       call ocentr(outfile,'Steam Input Data',72)
+       call ocentr(outfile,'Steam Input Data',width)
        call oblnkl(outfile)
 
        call ovarrf(outfile,'High inlet pressure (MPa)','(ph)',ph)
@@ -3347,7 +3350,7 @@ contains
     if (iprint == 1) then
 
        call oblnkl(outfile)
-       call ocentr(outfile,'Thermal Cycle Data',72)
+       call ocentr(outfile,'Thermal Cycle Data',width)
        call oblnkl(outfile)
 
        do i = 0,nipfwh+nlpfwh+2
@@ -3368,7 +3371,7 @@ contains
           call oblnkl(outfile)
        end do
 
-       call ocentr(outfile,'Steam Output Data',72)
+       call ocentr(outfile,'Steam Output Data',width)
        call oblnkl(outfile)
 
        call ovarrf(outfile,'SG inlet enthalpy (kJ/kg)','(hsi)',hsi)

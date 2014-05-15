@@ -216,6 +216,7 @@ subroutine codever(outfile)
   !+ad_hist  02/04/14 PJK Added output to mfile
   !+ad_hist  03/04/14 PJK Used ovarst to write character string output to mfile
   !+ad_hist  06/05/14 PJK Modified version print-out
+  !+ad_hist  15/05/14 PJK Increased output width to 110 characters
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -231,9 +232,9 @@ subroutine codever(outfile)
 
   !  Local variables
 
-  integer, parameter :: width = 72
+  integer, parameter :: width = 110
   integer :: version
-  character(len=width), dimension(0:10) :: progid
+  character(len=72), dimension(0:10) :: progid
   character(len=5) :: vstring
   character(len=8) :: date
   character(len=10) :: time
@@ -365,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '274    Date  :: 2014-05-15'
+       '276    Date  :: 2014-05-15'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1545,3 +1546,5 @@ end subroutine output
 ! GIT 272: Initial draft of new impurity radiation model
 ! GIT 273: Modified python utility headers
 ! GIT 274: Made corrections to Sauter bootstrap fraction formulae as suggested by Fable
+! GIT 275: Minor corrections to python utilities; added hyperlinks to User Guide
+! GIT 276: Increased length of output lines

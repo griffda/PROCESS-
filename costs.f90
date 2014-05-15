@@ -496,6 +496,7 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  11/09/13 PJK Modified annfuel cost calculation
     !+ad_hist  17/02/14 PJK Modified output format for some quantities
+    !+ad_hist  15/05/14 PJK Longer output line lengths
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -789,19 +790,19 @@ contains
          anntot,coe
 
 200 format( &
-         t35,'Annual Costs, M$       COE, m$/kWh'// &
-         1x,'Capital Investment                ',f10.2,10x,f10.2/ &
-         1x,'Operation & Maintenance           ',f10.2,10x,f10.2/ &
-         1x,'Decommissioning Fund              ',f10.2,10x,f10.2/ &
+         t76,'Annual Costs, M$       COE, m$/kWh'// &
+         1x,'Capital Investment',t80,f10.2,10x,f10.2/ &
+         1x,'Operation & Maintenance',t80,f10.2,10x,f10.2/ &
+         1x,'Decommissioning Fund',t80,f10.2,10x,f10.2/ &
          1x,'Fuel Charge Breakdown'// &
-         5x,'Blanket & first wall    ',f10.2,10x,f10.2/ &
-         5x,'Divertors               ',f10.2,10x,f10.2/ &
-         5x,'Centrepost (TART only)  ',f10.2,10x,f10.2/ &
-         5x,'Auxiliary Heating       ',f10.2,10x,f10.2/ &
-         5x,'Actual Fuel             ',f10.2,10x,f10.2/ &
-         5x,'Waste Disposal          ',f10.2,10x,f10.2/ &
-         1x,'Total Fuel Cost                   ',f10.2,10x,f10.2// &
-         1x,'Total Cost                        ',f10.2,10x,f10.2 )
+         5x,'Blanket & first wall',t72,f10.2,10x,f10.2/ &
+         5x,'Divertors',t72,f10.2,10x,f10.2/ &
+         5x,'Centrepost (TART only)',t72,f10.2,10x,f10.2/ &
+         5x,'Auxiliary Heating',t72,f10.2,10x,f10.2/ &
+         5x,'Actual Fuel',t72,f10.2,10x,f10.2/ &
+         5x,'Waste Disposal',t72,f10.2,10x,f10.2/ &
+         1x,'Total Fuel Cost',t80,f10.2,10x,f10.2// &
+         1x,'Total Cost',t80,f10.2,10x,f10.2 )
 
     if (ifueltyp == 1) then
        call oshead(outfile,'Replaceable Components Direct Capital Cost')
