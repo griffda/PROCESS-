@@ -714,7 +714,7 @@ def plot_physics_info(axis, mfile_data, scan):
     dnz = mfile_data.data["dnz"].get_scan(scan) / \
         mfile_data.data["dene"].get_scan(scan)
 
-    data = [("plascur/1D6", "$I_p$", "A"),
+    data = [("plascur/1D6", "$I_p$", "MA"),
             ("bt", "Vacuum $B_T$ as $R_0$", "T"),
             ("q", "$q_{edge}$", ""),
             ("Normalised thermal beta", r"$\beta_N$, thermal",

@@ -28,7 +28,9 @@
                 directory or wherever you have a path.
 		Execute from the Linux command line: write_constraints.py	
 
-    Compatible with PROCESS version ???
+    PJK 15/05/2014: Updated to python3 using 2to3 tool
+
+    Compatible with PROCESS version 274
 """
 
 import sys, os
@@ -53,10 +55,10 @@ def readConstraints():
 				IterationVariable[j]=line[index+4:index+6]
 				description[j]=line[index+7:index+100]
 				j=j+1
-	print "%d constraints found  \n " %(i)
-	print "The first constraint found is %2s  \n " %(constraint[0])	
-	print "The last constraint found is %2s  \n " %(constraint[i-1])
-	print "%d iteration variables found  \n " %(j)
+	print("%d constraints found  \n " %(i))
+	print("The first constraint found is %2s  \n " %(constraint[0]))	
+	print("The last constraint found is %2s  \n " %(constraint[i-1]))
+	print("%d iteration variables found  \n " %(j))
 	return i, j
 	
 def tidy(file):

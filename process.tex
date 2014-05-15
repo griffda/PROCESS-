@@ -9,6 +9,7 @@
 \usepackage{color}
 \usepackage{tikz}  %  for VMCON flowchart in Appendix
 \usepackage{url}
+\usepackage{hyperref}
 \usepackage{framed}
 
 \pretolerance=10000
@@ -37,9 +38,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-05-08
+2014-05-15
 \hfill
-Revision:: 268
+Revision:: 275
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -4104,7 +4105,7 @@ A number of Python utilities for \process\ are available which allow the user
 to perform a number of useful actions, for instance to modify the
 input file \indat, run \process\ until a feasible solution is found, or to
 extract and plot data from the \process\ output. All utilities are available
-from \url{~pknight/process/bin/utilities}.
+from \texttt{~pknight/process/bin/utilities}.
 
 For \process\ \textit{users}, only the Python executables described in
 Section~\ref{sec:py_exec} are relevant. For anyone interested in modifying the
@@ -4156,7 +4157,7 @@ definitions of these variables are commented out.
 \indat, \outdat\ 
                                 
 \item{\textbf{Output:}}
-\indat\ (new \indat), \texttt{OLD.IN.DAT} (the original \indat)
+\texttt{new\_IN.DAT}
 \end{description}
 
 \subsection{write\_constraints.py}
@@ -4435,6 +4436,8 @@ Use -h or --help for help
 \end{quote}
 
 \subsection{2D\_scan.py}
+
+\Red{N.B.\ This utility is currently not working --- please do not try to use it.}
 
 Runs a two-dimensional scan of \process\ variables. This code does not yet use
 the new \process\ Python libraries.
@@ -5446,7 +5449,8 @@ Economic Aspects of Magnetic Fusion Energy''},
 \textit{Fusion Technology}, \textbf{13} (1988) 7
 
 \bibitem{svn}
-Subversion revision control system, \texttt{http://subversion.apache.org/}
+\href{http://subversion.apache.org/}{Subversion revision control system}
+\url{http://subversion.apache.org/}
 
 \bibitem{Schittkowski1980}
 K.\ Schittkowski,

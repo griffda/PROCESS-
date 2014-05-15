@@ -42,6 +42,9 @@
                 previous solution
 
    Compatible with PROCESS version ???
+
+   CODE CURRENTLY NOT WORKING AS SEVERAL DIRECTORIES ARE HARDWIRED INCORRECTLY
+
 """
 
 import sys, os
@@ -55,7 +58,7 @@ data=False
 lista_inp=[]
 lista_outp=[]
 flag_input=False
-for line in fileinput.input("CONFIG.DAT"):
+for line in fileinput.input("2D_scan.conf"):
 	if "*" in line:
 		""" * is a comment """
 	elif "N1" in line:
@@ -119,16 +122,16 @@ tabla_error=[[0 for j in range(Vars2)] for i in range(Vars1)]
 tabla_vars=["0" for i in range(100)]
 tabla_valores=["0" for i in range(100)]
 
-print "AXIS 1"
-print "Variable: %s" %(lista_inp[0])
-print valores1
-print "AXIS 2"
-print "Variable: %s" %(lista_inp[1])
-print valores2
-print "Output Variables:"
-print lista_outp
-print "Working directory: %s" %(DIR)
-raw_input("Press <ENTER> to continue")
+print("AXIS 1")
+print("Variable: %s" %(lista_inp[0]))
+print(valores1)
+print("AXIS 2")
+print("Variable: %s" %(lista_inp[1]))
+print(valores2)
+print("Output Variables:")
+print(lista_outp)
+print("Working directory: %s" %(DIR))
+input("Press <ENTER> to continue")
 
 """ key words to find in error analysis"""
 lista_err=["and found a feasible set of parameters.", "but could not find a feasible set of parameters.", "WARNING: Constraint residues are HIGH; consider re-running" ]
@@ -280,7 +283,7 @@ g.write("\n")
 for it1 in valores1:
 	j=0
 	for it2 in valores2:
-		print "i:%d, j:%d \n " %(i,j)
+		print("i:%d, j:%d \n " %(i,j))
 
 		lista_cambio[0]=lista_inp[0]+" = %f,\n" % (it1)
 		lista_cambio[1]=lista_inp[1]+" = %f,\n" % (it2)
@@ -298,19 +301,19 @@ for it1 in valores1:
 		
 		""" the previous solution is introduced in the next IN.DAT"""
 		readVars()
-		print "i:%d, j:%d \n " %(i,j)
+		print("i:%d, j:%d \n " %(i,j))
 		tabla_frases=["0" for k in range(100)]
 		k=0
 		for it in tabla_vars:
 			if it != "0":
 				tabla_frases[k]= tabla_vars[k]+" = "+tabla_valores[k]+",\n"
 				k=k+1
-		print "i:%d, j:%d \n " %(i,j)
+		print("i:%d, j:%d \n " %(i,j))
 
 		replaceall("../2013_demos/IN.DAT",tabla_vars,tabla_frases)
 		
 		
-		print "i:%d, j:%d \n " %(i,j)
+		print("i:%d, j:%d \n " %(i,j))
 		""" read the matrices values """
 		for line in fileinput.input("PLOT.DAT",inplace=1):
 			if lista_outp[0] in line:

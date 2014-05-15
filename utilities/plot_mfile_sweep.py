@@ -10,7 +10,7 @@
   Notes:
     + 30/04/2014: Initial version created
 
-  Compatible with PROCESS version ???
+  Compatible with PROCESS version 274
 """
 
 import argparse

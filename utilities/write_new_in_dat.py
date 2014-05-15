@@ -11,7 +11,7 @@
      + JM 30/04/2014: Initial version using new libraries
      + JM 30/04/2014: Added command line arguments
 
-  Compatible with PROCESS version ???
+  Compatible with PROCESS version 274
 
 """
 

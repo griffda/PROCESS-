@@ -11,7 +11,7 @@
     + 20/02/2014: Initial version created
     + 12/03/2014: Updated to put into PyCharm
 
-  Compatible with PROCESS version 272
+  Compatible with PROCESS version 274
 
 """
 
