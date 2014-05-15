@@ -365,7 +365,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '273    Date  :: 2014-05-15'
+       '274    Date  :: 2014-05-15'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1543,4 +1543,5 @@ end subroutine output
 ! GIT 270: Tidied up comments in tfcpwr
 ! GIT 271: Added radial strain in insulator
 ! GIT 272: Initial draft of new impurity radiation model
-! GIT 273: Made corrections to Sauter bootstrap fraction formulae as suggested by Fable
+! GIT 273: Modified python utility headers
+! GIT 274: Made corrections to Sauter bootstrap fraction formulae as suggested by Fable
