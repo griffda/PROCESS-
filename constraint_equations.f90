@@ -85,6 +85,7 @@ subroutine constraints(m,cc,ieqn)
   !+ad_hist  05/03/14 PJK Removed redundant eqn 17
   !+ad_hist  01/05/14 PJK Changed eqn 28 description
   !+ad_hist  08/05/14 PJK Modified eqn 28
+  !+ad_hist  19/05/14 PJK Removed redundant eqn 15
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -233,9 +234,12 @@ subroutine constraints(m,cc,ieqn)
         cc(i) = 1.0D0 - taubeam/tbeamin
 
      case (15)  !  Equation for burn time consistency
-                !  This is a consistency equation
+        !  This equation is redundant... thought to be un-necessary
 
-        cc(i) = 1.0D0 - tburn0/tburn
+        write(*,*) 'Constraint equation 15 is redundant -'
+        write(*,*) 'please do not use it.'
+        write(*,*) 'PROCESS stopping'
+        stop
 
      case (16)  !  Equation for net electric power lower limit
 

@@ -49,6 +49,7 @@ module numerics
   !+ad_hist  30/04/14 PJK New iteration variable 101 (prp)
   !+ad_hist  01/05/14 PJK Relabelled lablcc(28), lablmm(5)
   !+ad_hist  08/05/14 PJK Changed boundu(101) (prp upper limit)
+  !+ad_hist  19/05/14 PJK Relabelled lablcc(15)
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -299,8 +300,8 @@ module numerics
        'Burn time lower limit            ', &
        !+ad_varc  <LI> (14) * Energy of neutral beam (NBI) (consistency equation)
        'Neutral beam energy consistency  ', &
-       !+ad_varc  <LI> (15) Burn time (PULSE) (consistency equation)
-       'Burn time consistency            ', &
+       !+ad_varc  <LI> (15) UNUSED
+       'UNUSED                           ', &
        !+ad_varc  <LI> (16) * Net electric power lower limit
        'Net electric power lower limit   ', &
        !+ad_varc  <LI> (17) UNUSED

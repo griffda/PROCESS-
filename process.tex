@@ -38,9 +38,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-05-15
+2014-05-19
 \hfill
-Revision:: 275
+Revision:: 278
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -97,7 +97,6 @@ Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 %  density limit refs
 %  radiation power
 %  check PF coil location
-%  tburn consistency
 %  add descriptions of other switches
 %  
 %  
@@ -529,12 +528,11 @@ equation numbers in the first \texttt{neqns} elements of array \texttt{icc}.
 \subsection{Consistency equations}
 
 Consistency equations are usually \textit{equalities}\/ that ensure that the
-machine produced by \process\ is self-consistent. This means, therefore, that many
-of these constraint equations should \textit{always}\/ be used, namely
+machine produced by \process\ is self-consistent. This means, therefore, that
+many of these constraint equations should \textit{always}\/ be used, namely
 equations~1, 2, 10 and 11 (see Table~\ref{tab:eqns}).  Equation~7 should also
-be activated if neutral beam injection is used and equation~15 should be used
-if a pulsed machine (\texttt{lpulse = 1}) is being modelled.  The other
-consistency equations can be activated if required.
+be activated if neutral beam injection is used.  The other consistency
+equations can be activated if required.
 
 A typical consistency equation ensures that two functions $g$ and $h$ are
 equal:
@@ -652,7 +650,7 @@ no. & description                                               & type & \texttt
 12  & volt second capability lower limit                        & L    & \textbf{15},1,2,3 \\
 13  & burn time lower limit (PULSE)                             & L    & \textbf{21},1,16,17,22,29,42,44,61 \\
 14  & beam energy (NBI)                                         & C    & \textbf{19},1,2,3,6 \\
-15  & burn time (PULSE) (N.B. not usually necessary)            & C    & \textbf{41},44 \\
+15  & UNUSED                                                    &      & \\
 16  & net electric power lower limit                            & L    & \textbf{25},1,2,3 \\
 17  & UNUSED                                                    &      & \\
 18  & divertor heat load upper limit                            & L    & \textbf{27} \\
@@ -2629,7 +2627,7 @@ prevented from being too high, as governed by the requirement to maintain
 plasma stability in $l_i$ - $q_\psi$ space (see Section~\ref{sec:tohs}).
 
 \subsection{Burn time}
-%!%!%! worry about tburn vs tburn0 consistency
+
 The length of the burn time is calculated from the surplus volt-seconds
 available from the OH/PF coil system during the plasma burn phase, after the
 flux required during the plasma start-up is taken into account. A minimum burn

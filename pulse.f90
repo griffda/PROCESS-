@@ -1261,6 +1261,7 @@ contains
     !+ad_hist  17/12/12 PJK Modified burn volt-seconds calculation (RK)
     !+ad_hist  27/11/13 PJK Deducted theat from tburn
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
+    !+ad_hist  19/05/14 PJK Added warning if tburn is negative
     !+ad_stat  Okay
     !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0012
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1275,8 +1276,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: vburn
-    real(kind(1.0D0)), save :: vsmax,vssoft
+    real(kind(1.0D0)) :: tb,vburn,vsmax,vssoft
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1298,7 +1298,14 @@ contains
 
     !  Burn time (s)
 
-    tburn = vsmax/vburn - theat
+    tb = vsmax/vburn - theat
+    if (tb < 0.0D0) then
+       write(*,*) 'Warning in routine BURN:'
+       write(*,*) 'Negative burn time available: ',tb
+       write(*,*) 'Reduce theat or increase PF coil V-s capability'
+       write(*,*) 'tburn set to zero...'
+    end if
+    tburn = max(0.0D0, tb)
 
     !  Output section
 

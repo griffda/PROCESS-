@@ -258,9 +258,8 @@ contains
     end if
 
     !  Reset second tburn value (tburn0).
-    !  Use of consistency eqn.15 will ensure that the code
-    !  uses a consistent value for the burn time throughout,
-    !  for the pulsed reactor case.
+    !  This is used to ensure that the burn time is used consistently;
+    !  see convergence loop in fcnvmc1, evaluators.f90
 
     tburn0 = tburn
 

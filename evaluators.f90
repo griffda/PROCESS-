@@ -20,9 +20,11 @@ module function_evaluator
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  heat_transport_variables
+  !+ad_call  ife_variables
   !+ad_call  numerics
   !+ad_call  physics_variables
   !+ad_call  pf_power_variables
+  !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_hist  10/10/12 PJK Initial version of module
@@ -34,6 +36,7 @@ module function_evaluator
   !+ad_hist  30/10/12 PJK Added heat_transport_variables
   !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_hist  17/12/12 PJK Added times_variables
+  !+ad_hist  19/05/14 PJK Added ife_variables, stellarator_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -43,9 +46,11 @@ module function_evaluator
   use current_drive_variables
   use divertor_variables
   use heat_transport_variables
+  use ife_variables
   use numerics
   use physics_variables
   use pf_power_variables
+  use stellarator_variables
   use tfcoil_variables
   use times_variables
 
@@ -142,6 +147,7 @@ contains
     !+ad_hist  17/01/13 PJK Corrected ifail to be input/output
     !+ad_hist  17/12/13 PJK Added new argument to constraints call
     !+ad_hist  06/02/14 PJK Added second call to caller to aid initialisation
+    !+ad_hist  19/05/14 PJK Added tburn consistency check
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -161,6 +167,7 @@ contains
 
     real(kind(1.0D0)) :: fbac,ffor
     logical :: first_call = .true.
+    integer :: loop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -175,6 +182,18 @@ contains
     if (first_call) then
        call caller(xv,n)
        first_call = .false.
+    end if
+
+    !  Convergence loop to ensure burn time consistency
+
+    if ((istell /= 1).and.(ife /= 1)) then
+       loop = 0
+       do while ( (loop < 10).and. &
+            (abs((tburn-tburn0)/max(tburn,0.01D0)) > 0.001D0) )
+          loop = loop+1
+          call caller(xv,n)
+          write(*,*) 'Internal tburn consistency check: ',tburn,tburn0
+       end do
     end if
 
     !  Evaluate figure of merit (objective function)

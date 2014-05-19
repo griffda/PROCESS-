@@ -2037,7 +2037,7 @@ module times_variables
 
   !+ad_vars  tburn /227.9/ : burn time (s) (calculated if lpulse=1)
   real(kind(1.0D0)) :: tburn = 227.9D0
-  !+ad_vars  tburn0 : burn time (s) - used in consistency equation 15
+  !+ad_vars  tburn0 : burn time (s) - used for internal consistency
   real(kind(1.0D0)) :: tburn0 = 0.0D0
   !+ad_vars  tdown : down time (s)
   real(kind(1.0D0)) :: tdown = 0.0D0
