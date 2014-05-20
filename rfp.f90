@@ -742,6 +742,7 @@ contains
     !+ad_hist  14/05/14 PJK Added call to plasma_composition,
     !+ad_hisc               and modified RADPWR call
     !+ad_hist  15/05/14 PJK Changed iwalld logic
+    !+ad_hist  20/05/14 PJK Cleaned up radiation power usage
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -756,7 +757,7 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: betat,bphi,fusrat,pddpv,pdtpv,pdhe3pv, &
-         pht,pinj,sbar,sigvdt,zimp,zion
+         pinj,sbar,sigvdt,zimp,zion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -886,24 +887,24 @@ contains
 
     !  Calculate radiation power
 
-    call radpwr(imprad_model,pbrem,plrad,psync,prad,pcorerad)
-
-    !  Limit for minimum radiation power
-
-    pht = 1.0D-6*(pinji + pinje) + alpmw + pcharge*vol
-    pbrem = max( (fradmin*pht/vol), pbrem)
-    prad = pbrem + psync
+    call radpwr(imprad_model,pbrem,pline,psync,pcorerad,pedgerad,prad)
 
     !  Calculate ohmic power
 
     call pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
          pohmpv,rpfac,rplas)
 
-    !  Density limit (arbitrary large number for now...)
+    !  Power to the divertor
 
     pinj = 1.0D-6 * (pinje + pinji)/vol
-    pdivt = vol * (palp + pcharge + pinj + pohmpv - prad - plrad)
+    pdivt = vol * (palp + pcharge + pinj + pohmpv - prad)
+
+    !  The following line is unphysical, but prevents -ve sqrt argument
+    !  Should be obsolete if constraint eqn 17 is turned on
+
     pdivt = max(0.001D0, pdivt)
+
+    !  Density limit (arbitrary large number for now...)
 
     dnelimt = 1.0D23
 
@@ -912,7 +913,7 @@ contains
 
     call pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
          iinvqd,isc,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-         plascur,pohmpv,prad,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
+         plascur,pohmpv,pcorerad,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
          xarea,zeff,ptre,ptri,tauee,tauei,taueff,powerht)
 
     !  Calculate volt-second requirements (not done!)

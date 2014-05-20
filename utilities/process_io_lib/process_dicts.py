@@ -17,6 +17,7 @@ Update: 01/05/2014 - PJK up to date at PROCESS version 260
 Update: 01/05/2014 - PJK up to date at PROCESS version 263
 Update: 08/05/2014 - PJK up to date at PROCESS version 266
 Update: 14/05/2014 - PJK up to date at PROCESS version 272
+Update: 20/05/2014 - PJK up to date at PROCESS version 279
 
 """
 
@@ -62,6 +63,7 @@ DICT_VAR_TYPE['iinvqd'] = 'int_variable'
 DICT_VAR_TYPE['imprad_model'] = 'int_variable'
 DICT_VAR_TYPE['ipedestal'] = 'int_variable'
 DICT_VAR_TYPE['iprofile'] = 'int_variable'
+DICT_VAR_TYPE['iradloss'] = 'int_variable'
 DICT_VAR_TYPE['isc'] = 'int_variable'
 DICT_VAR_TYPE['iscrp'] = 'int_variable'
 DICT_VAR_TYPE['ishape'] = 'int_variable'
@@ -168,7 +170,7 @@ DICT_VAR_TYPE['fbfe'] = 'real_variable'
 DICT_VAR_TYPE['fdeut'] = 'real_variable'
 DICT_VAR_TYPE['ffwal'] = 'real_variable'
 DICT_VAR_TYPE['fhe3'] = 'real_variable'
-DICT_VAR_TYPE['fradmin'] = 'real_variable'
+DICT_VAR_TYPE['fradpwr'] = 'real_variable'
 DICT_VAR_TYPE['ftrit'] = 'real_variable'
 DICT_VAR_TYPE['fvsbrnni'] = 'real_variable'
 DICT_VAR_TYPE['gamma'] = 'real_variable'
@@ -666,10 +668,11 @@ DICT_IXC_SIMPLE = {'1':'aspect', '2':'bt', '3':'rmajor', '4':'te', '5':'beta',
                    '14':'fwalld', '15':'fvs', '16':'ohcth', '17':'tdwell',
                    '18':'q', '19':'enbeam', '20':'tcpav', '21':'ftburn',
                    '22':'tbrnmn', '23':'fcoolcp', '24':'cdtfleg',
-                   '25':'fpnetel', '26':'ffuspow', '27':'fhldiv', '29':'bore',
-                   '30':'fmva', '31':'gapomin', '32':'frminor', '33':'fportsz',
-                   '34':'fdivcol', '35': 'fpeakb', '36':'fbetatry',
-                   '37':'coheof', '38':'fjohc', '39':'fjohc0', '40':'fgamcd',
+                   '25':'fpnetel', '26':'ffuspow', '27':'fhldiv', '28':'fradpwr',
+                   '29':'bore', '30':'fmva', '31':'gapomin',
+                   '32':'frminor', '33':'fportsz', '34':'fdivcol',
+                   '35': 'fpeakb', '36':'fbetatry', '37':'coheof',
+                   '38':'fjohc', '39':'fjohc0', '40':'fgamcd',
                    '41':'fcohbop', '42':'gapoh', '43':'cfe0', '44':'fvsbrnni',
                    '45':'fqval', '46':'fpinj', '47':'feffcd', '48':'fstrcase',
                    '49':'fstrcond', '50':'fiooic', '51':'fvdump', '52':'vdalw',
@@ -720,6 +723,7 @@ DICT_IXC_FULL[ '24'] = {'name':'cdtfleg',  'lb':1e4,   'ub':1e8}
 DICT_IXC_FULL[ '25'] = {'name':'fpnetel',  'lb':0.001, 'ub':1.}
 DICT_IXC_FULL[ '26'] = {'name':'ffuspow',  'lb':0.001, 'ub':1.}
 DICT_IXC_FULL[ '27'] = {'name':'fhldiv',   'lb':0.001, 'ub':1.}
+DICT_IXC_FULL[ '28'] = {'name':'fradpwr',  'lb':0.001, 'ub':1.}
 DICT_IXC_FULL[ '29'] = {'name':'bore',     'lb':0.1,   'ub':10.}
 DICT_IXC_FULL[ '30'] = {'name':'fmva',     'lb':0.01,  'ub':1.}
 DICT_IXC_FULL[ '31'] = {'name':'gapomin',  'lb':0.001, 'ub':10.}
@@ -826,6 +830,7 @@ DICT_IXC_BOUNDS['cdtfleg']  = {'lb':1e4,   'ub':1e8}  #24
 DICT_IXC_BOUNDS['fpnetel']  = {'lb':0.001, 'ub':1.}   #25
 DICT_IXC_BOUNDS['ffuspow']  = {'lb':0.001, 'ub':1.}   #26
 DICT_IXC_BOUNDS['fhldiv']   = {'lb':0.001, 'ub':1.}   #27
+DICT_IXC_BOUNDS['fradpwr']  = {'lb':0.001, 'ub':1.}   #28
 DICT_IXC_BOUNDS['bore']     = {'lb':0.1,   'ub':10.}  #29
 DICT_IXC_BOUNDS['fmva']     = {'lb':0.01,  'ub':1.}   #30
 DICT_IXC_BOUNDS['gapomin']  = {'lb':0.001, 'ub':10.}  #31
@@ -940,8 +945,8 @@ DICT_IXC_DEFAULT = {'aspect': 3.5, 'bt': 6.0, 'rmajor': 7.0, 'te': 15.0,
                     'ohcth': 0.63, 'tdwell': 100.0, 'q': 3.0, 'enbeam': 1.0e3,
                     'tcpav': 100.0, 'ftburn': 1.0, 'tbrnmn': 1.0,
                     'fcoolcp': 0.3, 'cdtfleg': 1.0e6, 'fpnetel': 1.0,
-                    'ffuspow': 1.0, 'fhldiv': 1.0, 'bore': 1.42, 'fmva': 1.0,
-                    'gapomin': 0.21, 'frminor': 1.0, 'fportsz': 1.0,
+                    'ffuspow': 1.0, 'fhldiv': 1.0, 'fradpwr': 1.0, 'bore': 1.42,
+                    'fmva': 1.0, 'gapomin': 0.21, 'frminor': 1.0, 'fportsz': 1.0,
                     'fdivcol': 1.0, 'fpeakb': 1.0, 'fbetatry': 1.0,
                     'coheof': 1.85e7, 'fjohc': 1.0, 'fjohc0': 1.0,
                     'fgamcd': 1.0, 'fcohbop': 0.9, 'gapoh': 0.08, 'cfe0': 0.0,

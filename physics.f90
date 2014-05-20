@@ -188,6 +188,7 @@ contains
     !+ad_hist  14/05/14 PJK Added call to plasma_composition and new
     !+ad_hisc               impurity radiation calculations
     !+ad_hist  15/05/14 PJK Removed ffwal from iwalld=2 calculation
+    !+ad_hist  19/05/14 PJK Clarified pcorerad vs pbrem; plrad --> pedgerad
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -367,14 +368,7 @@ contains
 
     !  Calculate radiation power
 
-    call radpwr(imprad_model,pbrem,plrad,psync,prad,pcorerad)
-
-    !  Limit for minimum radiation power
-    !+PJK Shouldn't this be put into a constraint equation instead?
-
-    pht = 1.0D-6 * (pinji + pinje) + alpmw + pcharge*vol
-    pbrem = max( (fradmin*pht/vol), pbrem)
-    prad = pbrem + psync
+    call radpwr(imprad_model,pbrem,pline,psync,pcorerad,pedgerad,prad)
 
     !  Calculate ohmic power
 
@@ -385,11 +379,18 @@ contains
 
     call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
 
-    !  Density limit
+    !  Power to the divertor
+    !+PJK Should falpha be used to multiply palp here?
 
     pinj = 1.0D-6 * (pinje + pinji)/vol
-    pdivt = vol * (palp + pcharge + pinj + pohmpv - prad - plrad)
-    pdivt = max(0.001D0, pdivt)  !  unphysical, but prevents -ve sqrt argument
+    pdivt = vol * (palp + pcharge + pinj + pohmpv - prad)
+
+    !  The following line is unphysical, but prevents -ve sqrt argument
+    !  Should be obsolete if constraint eqn 17 is turned on
+
+    pdivt = max(0.001D0, pdivt)
+
+    !  Density limit
 
     call culdlm(bt,idensl,pdivt,plascur,prn1,qstar,q95, &
          rmajor,rminor,sarea,zeff,dlimit,dnelimt)
@@ -399,7 +400,7 @@ contains
 
     call pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
          iinvqd,isc,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-         plascur,pohmpv,prad,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
+         plascur,pohmpv,pcorerad,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
          xarea,zeff,ptre,ptri,tauee,tauei,taueff,powerht)
 
     !  Calculate volt-second requirements
@@ -3126,7 +3127,7 @@ contains
 
   subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
        iinvqd,isc,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-       plascur,pohmpv,prad,rmajor,rminor,te,ten,tin,q,qstar,vol, &
+       plascur,pohmpv,pcorerad,rmajor,rminor,te,ten,tin,q,qstar,vol, &
        xarea,zeff,ptre,ptri,tauee,tauei,taueff,powerht)
 
     !+ad_name  pcond
@@ -3155,7 +3156,7 @@ contains
     !+ad_args  pinji  : input real :  auxiliary power to ions (W)
     !+ad_args  plascur: input real :  plasma current (A)
     !+ad_args  pohmpv : input real :  ohmic heating per unit volume (MW/m**3)
-    !+ad_args  prad   : input real :  total radiation power from within separatrix (MW/m3)
+    !+ad_args  pcorerad : input real :  total core radiation power (MW/m3)
     !+ad_args  q      : input real :  edge safety factor (tokamaks), or
     !+ad_argc                         rotational transform iotabar (stellarators)
     !+ad_args  qstar  : input real :  equivalent cylindrical edge safety factor
@@ -3192,6 +3193,9 @@ contains
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  23/01/13 PJK Added stellarator scaling laws 37,38
     !+ad_hist  07/11/13 PJK Modified prad description
+    !+ad_hist  20/05/14 PJK Changed prad argument to pcorerad;
+    !+ad_hisc               introduced iradloss switch;
+    !+ad_hisc               added falpha multiplier to alpmw term
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  N. A. Uckan and ITER Physics Group,
@@ -3207,7 +3211,7 @@ contains
     integer, intent(in) :: iinvqd, isc, ignite
     real(kind(1.0D0)), intent(in) :: afuel, alpmw, aspect, bt, dene, &
          dnitot, dnla, eps, hfact, kappa, kappa95, pcharge, pinje, &
-         pinji, plascur, pohmpv, prad, q, qstar, rmajor, rminor, te, &
+         pinji, plascur, pohmpv, pcorerad, q, qstar, rmajor, rminor, te, &
          ten, tin, vol, xarea, zeff
     real(kind(1.0D0)), intent(out) :: kappaa, powerht, ptre, ptri, &
          tauee, taueff, tauei
@@ -3235,17 +3239,18 @@ contains
     tauei = 0.375D0*rminor**2/chii*str2
 
     !  Calculate heating power (MW)
-    !  If necessary, assume that the device is ignited, so exclude
-    !  auxiliary power injected
 
-    if (ignite == 0) then
-       powerht = alpmw + pcharge*vol + (pinje+pinji)/1.0D6 &
-            + pohmpv*vol - prad*vol
-    else
-       powerht = alpmw + pcharge*vol + pohmpv*vol - prad*vol
-    end if
+    powerht = falpha*alpmw + pcharge*vol + pohmpv*vol
 
-    !  Ensure heating power is positive
+    !  If the device is not ignited, add the injected auxiliary power
+
+    if (ignite == 0) powerht = powerht + (pinje+pinji)/1.0D6
+
+    !  Include the radiation as a loss term if requested
+
+    if (iradloss == 1) powerht = powerht - pcorerad*vol
+
+    !  Ensure heating power is positive (shouldn't be necessary)
 
     powerht = max(powerht,1.0D-3)
 
@@ -3948,7 +3953,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine radpwr(imprad_model,pbrem,plrad,psync,prad,pcorerad)
+  subroutine radpwr(imprad_model,pbrem,pline,psync,pcorerad,pedgerad,prad)
 
     !+ad_name  radpwr
     !+ad_summ  Radiation power interface routine
@@ -3956,16 +3961,19 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  imprad_model : input integer : switch to choose model
-    !+ad_args  pbrem  : output real : bremsstrahlung radiation power/volume (MW/m3)
-    !+ad_args  plrad  : output real : edge line radiation power/volume (MW/m3)
-    !+ad_args  psync  : output real : synchrotron radiation power/volume (MW/m3)
-    !+ad_args  pcorerad  : output real : total core radiation power/volume (MW/m3)
+    !+ad_args  pbrem    : output real : bremsstrahlung radiation power/volume (MW/m3)
+    !+ad_args  pline    : output real : line radiation power/volume (MW/m3)
+    !+ad_args  psync    : output real : synchrotron radiation power/volume (MW/m3)
+    !+ad_args  pcorerad : output real : total core radiation power/volume (MW/m3)
+    !+ad_args  pedgerad : output real : edge (non-core) radiation power/volume (MW/m3)
+    !+ad_args  prad     : output real : total radiation power/volume (MW/m3)
     !+ad_desc  This routine finds the radiation powers in MW/m3 by calling
     !+ad_desc  relevant routines.
-    !+ad_call  pbrems_ipdg89
+    !+ad_call  prad_ipdg89
     !+ad_call  psync_albajar_fidone
     !+ad_call  imprad
     !+ad_hist  14/05/14 PJK Redefined routine as a caller to the actual calculations
+    !+ad_hist  20/05/14 PJK Clarified core radiation vs bremsstrahlung
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -3976,19 +3984,23 @@ contains
     !  Arguments
 
     integer, intent(in) :: imprad_model
-    real(kind(1.0D0)), intent(out) :: pbrem, plrad, psync, prad, pcorerad
+    real(kind(1.0D0)), intent(out) :: pbrem, pedgerad, psync, prad, pcorerad
 
     !  Local variables
+
+    real(kind(1.0D0)) :: pimpcore, pimptot, pline
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Bremsstrahlung and line radiation
 
     if (imprad_model == 0) then
-       call pbrems_ipdg89(pbrem, plrad)
-       pcorerad = pbrem + plrad
+       call prad_ipdg89(pimpcore, pedgerad)
+       pimptot = pimpcore + pedgerad
+       pbrem = 0.0D0 ; pline = 0.0D0  !  therefore, not useful...
     else if (imprad_model == 1) then
-       call imprad(pbrem, plrad, pcorerad)
+       call imprad(pbrem, pline, pimpcore, pimptot)
+       pedgerad = pimptot - pimpcore
     else
        write(*,*) 'Error in routine RADPWR:'
        write(*,*) 'Illegal value for imprad_model = ',imprad_model
@@ -3996,34 +4008,40 @@ contains
        stop
     end if
 
-    !  Synchrotron radiation
+    !  Synchrotron radiation power/volume; assumed to be from core only
 
     call psync_albajar_fidone(psync)
 
-    !  Total continuum radiation power
+    !  Total core radiation power/volume
 
-    prad = pbrem + psync
+    pcorerad = pimpcore + psync
+
+    !  Total radiation power/volume
+
+    prad = pimptot + psync  !  = pcorerad + pedgerad
 
   end subroutine radpwr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine pbrems_ipdg89(pbrem,plrad)
+  subroutine prad_ipdg89(pcorerad,pedgerad)
 
-    !+ad_name  pbrems_ipdg89
+    !+ad_name  prad_ipdg89
     !+ad_summ  Bremsstrahlung and line radiation power calculation
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_auth  R Kemp, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_args  pbrem  : output real : bremsstrahlung radiation power/volume (MW/m3)
-    !+ad_args  plrad  : output real : edge line radiation power/volume (MW/m3)
-    !+ad_desc  This routine finds the Bremsstrahlung and line radiation powers
-    !+ad_desc  in MW/m3, using the IPDG89 formulation.
+    !+ad_args  pcorerad : output real : core radiation power/volume (MW/m3)
+    !+ad_args  pedgerad : output real : edge line radiation power/volume (MW/m3)
+    !+ad_desc  This routine finds the D-T and impurity bremsstrahlung and line
+    !+ad_desc  radiation powers in MW/m3, using the IPDG89 formulation.
     !+ad_prob  No account is taken of pedestal profiles.
     !+ad_call  None
-    !+ad_hist  14/05/14 PJK Moved Bremsstrahlung calculation here from original
+    !+ad_hist  14/05/14 PJK Moved bremsstrahlung calculation here from original
     !+ad_hisc               <CODE>radpwr</CODE> routine
+    !+ad_hist  19/05/14 PJK Renamed arguments
+    !+ad_hist  20/05/14 PJK Renamed routine from pbrems_ipdg89
     !+ad_stat  Okay
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
     !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
@@ -4034,7 +4052,7 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(out) :: pbrem, plrad
+    real(kind(1.0D0)), intent(out) :: pcorerad, pedgerad
 
     !  Local variables
 
@@ -4050,7 +4068,7 @@ contains
     den20 = dene/1.0D20
     t10 = ten/10.0D0
 
-    !  D-T Bremsstrahlung (IPDG89)
+    !  D-T bremsstrahlung (IPDG89)
     !  Coefficient 0.016*radexp is C_B in IPDG89, with Zeff set to 1 for D-T
     !  Note that the formula in IPDG89 should use ni/1.0E20 * ne/1.0E20,
     !  not just (n20)^2 (the code below is correct)
@@ -4060,7 +4078,7 @@ contains
 
     pbremdt = 1.6D-2 * radexp * den20**2 * (deni/dene) * sqrt(t10)
 
-    !  High Z Bremsstrahlung
+    !  High Z bremsstrahlung
 
     vr = rmajor * (rminor*(1.0D0 + kappa95)/2.0D0)**2 / (58.652D0*vol)
     phe = 65.8D0 * ralpne * (dene/7.0D19)**1.5D0 * vr
@@ -4073,14 +4091,17 @@ contains
     end if
     pbremz = fbhe*phe + fbc*pc + fbo*po + fbfe*phighz
 
-    pbrem = pbremz + pbremdt
+    !  Total core radiation power (this is a more accurate description than
+    !  simply the bremsstrahlung power)
 
-    !  Line radiation
+    pcorerad = pbremz + pbremdt
 
-    plrad = (1.0D0-fbhe)*phe + (1.0D0-fbc)*pc + (1.0D0-fbo)*po + &
+    !  Edge line radiation
+
+    pedgerad = (1.0D0-fbhe)*phe + (1.0D0-fbc)*pc + (1.0D0-fbo)*po + &
          (1.0D0-fbfe)*phighz
 
-  end subroutine pbrems_ipdg89
+  end subroutine prad_ipdg89
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4155,7 +4176,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine imprad(radb, radl, radcore)
+  subroutine imprad(radb, radl, radcore, radtot)
 
     !+ad_name  imprad
     !+ad_summ  Total impurity line radiation and bremsstrahlung
@@ -4165,7 +4186,8 @@ contains
     !+ad_cont  N/A
     !+ad_args  radb    : output real : bremsstrahlung only (MW/m3)
     !+ad_args  radl    : output real : line radiation only (MW/m3)
-    !+ad_args  radcore : output real : total radiation from the core (MW/m3)
+    !+ad_args  radcore : output real : total impurity radiation from core (MW/m3)
+    !+ad_args  radtot  : output real : total impurity radiation (MW/m3)
     !+ad_desc  This routine calculates the total radiation losses from 
     !+ad_desc  impurity line radiation and bremsstrahlung for all elements
     !+ad_desc  for a given temperature and density profile.
@@ -4176,9 +4198,11 @@ contains
     !+ad_call  Tprofile
     !+ad_call  nprofile
     !+ad_call  impradprofile
+    !+ad_call  fradcore
     !+ad_hist  17/12/13 HL  First draft of routine, based on code by R Kemp
     !+ad_hist  09/05/14 HL  Using new data structure
     !+ad_hist  14/05/14 PJK First PROCESS implementation
+    !+ad_hist  19/05/14 PJK Added call to fradcore; radtot now an output arg
     !+ad_stat  Okay
     !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
     !+ad_docs  Sertoli, private communication
@@ -4188,18 +4212,17 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(out) :: radb, radl, radcore
+    real(kind(1.0D0)), intent(out) :: radb, radl, radcore, radtot
 
     !  Local variables
 
-    real(kind(1.0D0)) :: radtot
     real(kind(1.0D0)) :: rho, drho, trho,  nrho
     real(kind(1.0D0)) :: pimp, pbrem, pline
-    integer :: i, imp, npts = 1000
+    integer :: i, imp, npts
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    npts = 1000
+    npts = 200  !  originally 1000; no significant difference found
     drho = 1.0D0/real(npts,kind(1.0D0))
 
     radtot = 0.0D0
@@ -4223,8 +4246,8 @@ contains
 
              call impradprofile(impurity_arr(imp), nrho, trho, pimp, pbrem, pline)
 
-             radtot = radtot + pimp*rho
-             if (rho <= coreradius) radcore = radcore + pimp*rho
+             radtot  = radtot  + pimp*rho
+             radcore = radcore + pimp*rho * fradcore(rho,coreradius)
              radb = radb + pbrem*rho
              radl = radl + pline*rho
           end if
@@ -4436,6 +4459,7 @@ contains
     !+ad_hist  10/11/11 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/10/12 PJK Added physics_variables
+    !+ad_hist  20/05/14 PJK Changed prad to pcorerad
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4478,7 +4502,7 @@ contains
     do iisc = 1,ipnlaws
        call pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,d2, &
             iinvqd,iisc,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-            plascur,pohmpv,prad,rmajor,rminor,te,ten,tin,q,qstar,vol, &
+            plascur,pohmpv,pcorerad,rmajor,rminor,te,ten,tin,q,qstar,vol, &
             xarea,zeff,ptrez,ptriz,taueez,taueiz,taueffz,powerhtz)
        hfac(iisc) = fhfac(iisc)
 
@@ -4559,6 +4583,8 @@ contains
     !+ad_hist  16/07/01 PJK Modified PCOND arguments
     !+ad_hist  10/11/11 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
+    !+ad_hist  20/05/14 PJK Changed prad to pcorerad; introduced iradloss;
+    !+ad_hisc               Added falpha multiplier to palp term
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4580,7 +4606,7 @@ contains
 
     call pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hhh, &
          iinvqd,iscz,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-         plascur,pohmpv,prad,rmajor,rminor,te,ten,tin,q,qstar,vol, &
+         plascur,pohmpv,pcorerad,rmajor,rminor,te,ten,tin,q,qstar,vol, &
          xarea,zeff,ptrez,ptriz,taueezz,taueiz,taueffz,powerhtz)
 
     if (iscz < 3) then  !  only laws 1 and 2 are affected???
@@ -4589,15 +4615,17 @@ contains
     end if
 
     !  At power balance, fhz is zero.
+
+    fhz = ptrez + ptriz - falpha*palp - pcharge - pohmpv
+
     !  Take into account whether injected power is included in tau_e
     !  calculation (i.e. whether device is ignited)
 
-    if (ignite == 0) then
-       fhz = ptrez + ptriz + prad - palp - pcharge &
-            - 1.0D-6*(pinje+pinji)/vol - pohmpv
-    else
-       fhz = ptrez + ptriz + prad - palp - pcharge - pohmpv
-    end if
+    if (ignite == 0) fhz = fhz - 1.0D-6*(pinje+pinji)/vol
+
+    !  Include the radiation power if requested
+
+    if (iradloss == 1) fhz = fhz + pcorerad
 
   end function fhz
 
@@ -5440,19 +5468,25 @@ contains
 
     call osubhd(outfile,'Plasma Power Balance :')
     call ovarre(outfile,'Ohmic heating power (MW)','(pohmpv*vol)',pohmpv*vol)
-    call ovarre(outfile,'Bremsstrahlung radiation power (MW)','(pbrem*vol)', &
-         pbrem*vol)
+    if (imprad_model == 1) then
+       call ovarre(outfile,'Bremsstrahlung radiation power (MW)','(pbrem*vol)', &
+            pbrem*vol)
+       call ovarre(outfile,'Line radiation power (MW)','(pline*vol)', &
+            pline*vol)
+    end if
     call ovarre(outfile,'Synchrotron radiation power (MW)','(psync*vol)', &
          psync*vol)
     call ovarrf(outfile,'Synchrotron reflection factor','(ssync)',ssync)
-    call ovarre(outfile,'Scrape-off line radiation power (MW)','(plrad*vol)', &
-         plrad*vol)
     if (imprad_model == 1) then
        call ovarre(outfile,"Normalised minor radius defining 'core'", &
             '(coreradius)',coreradius)
-       call ovarre(outfile,'Core radiation power (MW)', &
-            '(pcorerad*vol)',pcorerad*vol)
     end if
+    call ovarre(outfile,'Total core radiation power (MW)', &
+         '(pcorerad*vol)',pcorerad*vol)
+    call ovarre(outfile,'Edge radiation power (MW)','(pedgerad*vol)', &
+         pedgerad*vol)
+    call ovarre(outfile,'Total radiation power (MW)','(prad*vol)', &
+         prad*vol)
 
     call ovarre(outfile,'Ion transport (MW)','(ptri*vol))',ptri*vol)
     call ovarre(outfile,'Electron transport (MW)','(ptre*vol)',ptre*vol)

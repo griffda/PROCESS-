@@ -86,6 +86,8 @@ subroutine constraints(m,cc,ieqn)
   !+ad_hist  01/05/14 PJK Changed eqn 28 description
   !+ad_hist  08/05/14 PJK Modified eqn 28
   !+ad_hist  19/05/14 PJK Removed redundant eqn 15
+  !+ad_hist  19/05/14 PJK Added new eqn 17; modified eqns 2,4 to use
+  !+ad_hisc               pcorerad instead of prad; added iradloss
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -120,7 +122,7 @@ subroutine constraints(m,cc,ieqn)
   !  Local variables
 
   integer :: i,i1,i2
-  real(kind(1.0D0)) :: cratmx, tcycle, totmva, acoil
+  real(kind(1.0D0)) :: cratmx, tcycle, totmva, acoil, pradmax
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -148,12 +150,25 @@ subroutine constraints(m,cc,ieqn)
      case (2)  !  Global plasma power balance equation
                !  This is a consistency equation
 
-        if (ignite == 0) then
-           cc(i) = 1.0D0 - (ptre+ptri+prad)/( falpha*palp &
-                + pcharge + pohmpv + 1.0D-6*(pinji+pinje)/vol )
-        else
-           cc(i) = 1.0D0 - (ptre+ptri+prad)/ &
-                (falpha*palp + pcharge + pohmpv)
+        if (iradloss == 1) then  !  include pcorerad
+
+           if (ignite == 0) then
+              cc(i) = 1.0D0 - (ptre+ptri+pcorerad)/( falpha*palp &
+                   + pcharge + pohmpv + 1.0D-6*(pinji+pinje)/vol )
+           else
+              cc(i) = 1.0D0 - (ptre+ptri+pcorerad)/ &
+                   (falpha*palp + pcharge + pohmpv)
+           end if
+
+        else  !  exclude pcorerad
+
+           if (ignite == 0) then
+              cc(i) = 1.0D0 - (ptre+ptri)/( falpha*palp &
+                   + pcharge + pohmpv + 1.0D-6*(pinji+pinje)/vol )
+           else
+              cc(i) = 1.0D0 - (ptre+ptri)/(falpha*palp + pcharge + pohmpv)
+           end if
+
         end if
 
      case (3)  !  Global power balance equation for ions
@@ -161,7 +176,7 @@ subroutine constraints(m,cc,ieqn)
 
         if (ignite == 0) then
            cc(i) = 1.0D0 - (ptri+pie)/ &
-                ( falpha*palpi + 1.0D-6*pinji/vol )
+                (falpha*palpi + 1.0D-6*pinji/vol)
         else
            cc(i) = 1.0D0 - (ptri+pie)/(falpha*palpi)
         end if
@@ -169,11 +184,23 @@ subroutine constraints(m,cc,ieqn)
      case (4)  !  Global power balance equation for electrons
                !  This is a consistency equation
 
-        if (ignite == 0) then
-           cc(i) = 1.0D0 - (ptre+prad)/ &
-                ( (falpha*palpe)+pie + 1.0D-6*pinje/vol )
-        else
-           cc(i) = 1.0D0 - (ptre+prad)/( (falpha*palpe)+pie )
+        if (iradloss == 1) then  !  include pcorerad
+
+           if (ignite == 0) then
+              cc(i) = 1.0D0 - (ptre+pcorerad)/ &
+                   ( (falpha*palpe)+pie + 1.0D-6*pinje/vol )
+           else
+              cc(i) = 1.0D0 - (ptre+pcorerad)/( (falpha*palpe)+pie )
+           end if
+
+        else  !  exclude pcorerad
+
+           if (ignite == 0) then
+              cc(i) = 1.0D0 - ptre / ( (falpha*palpe)+pie + 1.0D-6*pinje/vol )
+           else
+              cc(i) = 1.0D0 - ptre / ( (falpha*palpe)+pie )
+           end if
+
         end if
 
      case (5)  !  Equation for density upper limit
@@ -245,13 +272,11 @@ subroutine constraints(m,cc,ieqn)
 
         cc(i) = 1.0D0 - fpnetel * pnetelmw / pnetelin
 
-     case (17)  !  Equation for stellarator radial build consistency
-        !  This equation is redundant... not relevant for 2013 stellarator model
+     case (17)  !  Equation for radiation power upper limit
+        !  pradmax is the maximum possible power/vol that can be radiated
 
-        write(*,*) 'Constraint equation 17 is redundant -'
-        write(*,*) 'please do not use it.'
-        write(*,*) 'PROCESS stopping'
-        stop
+        pradmax = 1.0D-6*(pinji + pinje)/vol + alpmw/vol + pcharge + pohmpv
+        cc(i) = 1.0D0 - fradpwr * pradmax / prad
 
      case (18)  !  Equation for divertor heat load upper limit
 

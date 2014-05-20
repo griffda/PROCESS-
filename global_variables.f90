@@ -116,6 +116,8 @@ module physics_variables
   !+ad_hist  14/05/14 PJK Modified impc, impo, cfe0, zfear comments;
   !+ad_hisc               added pcorerad
   !+ad_hist  15/05/14 PJK Changed ffwal comment
+  !+ad_hist  19/05/14 PJK Changed plrad to pedgerad; removed fradmin;
+  !+ad_hist               added iradloss
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -319,8 +321,6 @@ module physics_variables
   real(kind(1.0D0)) :: fhe3 = 0.0D0
   !+ad_vars  figmer : physics figure of merit (= plascur*aspect**sbar)
   real(kind(1.0D0)) :: figmer = 0.0D0
-  !+ad_vars  fradmin /0.0/ : minimum ratio of radiation to heating power
-  real(kind(1.0D0)) :: fradmin = 0.0D0
   !+ad_vars  ftrit /0.5/ : tritium fuel fraction
   real(kind(1.0D0)) :: ftrit = 0.5D0
   !+ad_vars  fusionrate : fusion reaction rate (reactions/m3/sec)
@@ -410,6 +410,12 @@ module physics_variables
   !+ad_varc             <LI> = 1 make these consistent with input q, q0 values
   !+ad_varc                      (recommendation: use icurr=4 with this option) </UL>
   integer :: iprofile = 0
+  !+ad_vars  iradloss /1/ : switch for radiation loss term usage in power balance:<UL>
+  !+ad_varc             <LI> = 0 use non-radiation-corrected loss power in
+  !+ad_varc                      confinement scaling and power balance
+  !+ad_varc             <LI> = 1 use radiation-corrected loss power in
+  !+ad_varc                      confinement scaling and power balance</UL>
+  integer :: iradloss = 1
   !+ad_vars  isc /34 (=IPB98(y,2))/ switch for energy confinement time scaling law
   !+ad_varc          (see description in tauscl)
   integer :: isc = 34
@@ -455,13 +461,14 @@ module physics_variables
   real(kind(1.0D0)) :: palpi = 0.0D0
   !+ad_vars  palpnb : alpha power from hot neutral beam ions (MW)
   real(kind(1.0D0)) :: palpnb = 0.0D0
-  !+ad_vars  pbrem : bremstrahhlung power per volume (MW/m3)
+  !+ad_vars  pbrem : bremsstrahlung power per volume (MW/m3)
+  !+ad_varc          (calculated only if imprad_model=1)
   real(kind(1.0D0)) :: pbrem = 0.0D0
   !+ad_vars  pcharge : non-alpha charged particle fusion power (MW/m3)
   real(kind(1.0D0)) :: pcharge = 0.0D0
   !+ad_vars  pcoef : profile factor (= n-weighted T / average T)
   real(kind(1.0D0)) :: pcoef = 0.0D0
-  !+ad_vars  pcorerad : total core radiation power (MW/m3)
+  !+ad_vars  pcorerad : total core radiation power per volume (MW/m3)
   real(kind(1.0D0)) :: pcorerad = 0.0D0
   !+ad_vars  pdd : deuterium-deuterium fusion power (MW)
   real(kind(1.0D0)) :: pdd = 0.0D0
@@ -471,6 +478,8 @@ module physics_variables
   real(kind(1.0D0)) :: pdivt = 0.0D0
   !+ad_vars  pdt : deuterium-tritium fusion power (MW)
   real(kind(1.0D0)) :: pdt = 0.0D0
+  !+ad_vars  pedgerad : edge radiation power per volume (MW/m3)
+  real(kind(1.0D0)) :: pedgerad = 0.0D0
   !+ad_vars  pfuscmw : charged particle fusion power (MW)
   real(kind(1.0D0)) :: pfuscmw = 0.0D0
   !+ad_vars  phiint : internal plasma V-s
@@ -479,8 +488,9 @@ module physics_variables
   real(kind(1.0D0)) :: pie = 0.0D0
   !+ad_vars  plascur : plasma current (A)
   real(kind(1.0D0)) :: plascur = 0.0D0
-  !+ad_vars  plrad : edge line radiation power per volume (MW/m3)
-  real(kind(1.0D0)) :: plrad = 0.0D0
+  !+ad_vars  pline : line radiation power per volume (MW/m3)
+  !+ad_varc          (calculated only if imprad_model=1)
+  real(kind(1.0D0)) :: pline = 0.0D0
   !+ad_vars  pneut : neutron fusion power per volume (MW/m3)
   real(kind(1.0D0)) :: pneut = 0.0D0
   !+ad_vars  pohmpv : ohmic heating per volume (MW/m3)
@@ -492,11 +502,11 @@ module physics_variables
   real(kind(1.0D0)) :: powfmw = 0.0D0
   !+ad_vars  pperim : plasma poloidal perimeter (m)
   real(kind(1.0D0)) :: pperim = 0.0D0
-  !+ad_vars  prad : total radiation power from inside separatrix (MW/m3)
+  !+ad_vars  prad : total radiation power per volume (MW/m3)
   real(kind(1.0D0)) :: prad = 0.0D0
   !+ad_vars  protonrate : proton production rate (particles/m3/sec)
   real(kind(1.0D0)) :: protonrate = 0.0D0
-  !+ad_vars  psync : synchrotron radiation power (MW/m3)
+  !+ad_vars  psync : synchrotron radiation power per volume (MW/m3)
   real(kind(1.0D0)) :: psync = 0.0D0
   !+ad_vars  pthrmw(8) : L-H power threshold (MW): <OL>
   !+ad_varc         <LI> ITER 1996 nominal
@@ -2744,6 +2754,7 @@ module constraint_variables
   !+ad_hist  28/10/13 PJK Corrected fdene comment
   !+ad_hist  26/02/14 PJK Added ftftort, ftfthko
   !+ad_hist  08/05/14 PJK Added bigqmin
+  !+ad_hist  19/05/14 PJK Added fradpwr
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2847,6 +2858,9 @@ module constraint_variables
   !+ad_vars  fqval /1.0/ : f-value for Q
   !+ad_varc                (constraint equation 28, iteration variable 45)
   real(kind(1.0D0)) :: fqval = 1.0D0
+  !+ad_vars  fradpwr /1.0/ : f-value for core radiation power limit
+  !+ad_varc                  (constraint equation 17, iteration variable 28)
+  real(kind(1.0D0)) :: fradpwr = 1.0D0
   !+ad_vars  frfpf /1.0/ : f-value for RFP reversal parameter
   !+ad_varc                (constraint equation 49, iteration variable 80)
   real(kind(1.0D0)) :: frfpf = 1.0D0

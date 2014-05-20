@@ -58,6 +58,7 @@ subroutine loadxc
   !+ad_hisc               istell=1
   !+ad_hist  30/04/14 PJK Added prp (101)
   !+ad_hist  08/05/14 PJK Replaced itfmod with tfc_model
+  !+ad_hist  19/05/14 PJK Reassigned (28) to fradpwr
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -135,10 +136,7 @@ subroutine loadxc
      case (25) ; xcm(i) = fpnetel
      case (26) ; xcm(i) = ffuspow
      case (27) ; xcm(i) = fhldiv
-     case (28) ;
-        write(*,*) 'Iteration variable 28 is currently not in use...'
-        write(*,*) 'PROCESS stopping.'
-        stop
+     case (28) ; xcm(i) = fradpwr
      case (29) ; xcm(i) = bore
      case (30) ; xcm(i) = fmva
      case (31) ; xcm(i) = gapomin
@@ -355,6 +353,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  28/11/13 PJK Added li6enrich (98)
   !+ad_hist  26/02/14 PJK Added ftftort (99) and ftfthko (100)
   !+ad_hist  30/04/14 PJK Added prp (101)
+  !+ad_hist  19/05/14 PJK Reassigned (28) to fradpwr
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -418,10 +417,7 @@ subroutine convxc(xc,nn)
      case (25) ; fpnetel   = xc(i)/scale(i)
      case (26) ; ffuspow   = xc(i)/scale(i)
      case (27) ; fhldiv    = xc(i)/scale(i)
-     case (28) ; 
-        write(*,*) 'Iteration variable 28 is currently not in use...'
-        write(*,*) 'PROCESS stopping.'
-        stop
+     case (28) ; fradpwr   = xc(i)/scale(i)
      case (29) ; bore      = xc(i)/scale(i)
      case (30) ; fmva      = xc(i)/scale(i)
      case (31) ; gapomin   = xc(i)/scale(i)

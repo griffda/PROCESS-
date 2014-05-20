@@ -1262,6 +1262,7 @@ contains
     !+ad_hist  27/11/13 PJK Deducted theat from tburn
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_hist  19/05/14 PJK Added warning if tburn is negative
+    !+ad_hist  19/05/14 PJK Changed abs(vsbn) to -vsbn; added error line
     !+ad_stat  Okay
     !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0012
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1290,7 +1291,7 @@ contains
     !  Total volt-seconds available during flat-top (heat + burn)
     !  (Previously calculated as (abs(vstot) - vssoft) )
 
-    vsmax = abs(vsbn)
+    vsmax = -vsbn  !  vsbn is (or should be...) negative
 
     !  Loop voltage during flat-top (including MHD sawtooth enhancement)
 
@@ -1320,6 +1321,11 @@ contains
        call ovarre(outfile,'Available volt-seconds during burn (Wb)', &
             '(vsmax)',vsmax)
        call ovarre(outfile,'Burn time (s)','(tburn)',tburn)
+
+       if (tb <= 0.0D0) then
+          call ocmmnt(outfile, &
+               '   Error... burn time is zero; insufficient volt-seconds!')
+       end if
 
     end if
 

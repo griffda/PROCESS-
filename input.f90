@@ -372,6 +372,7 @@ contains
     !+ad_hisc               replaced STRESS_MODEL with TFC_MODEL
     !+ad_hist  08/05/14 PJK Added BIGQMIN
     !+ad_hist  13/05/14 PJK Added IMPRAD_MODEL, FIMP, CORERADIUS
+    !+ad_hist  20/05/14 PJK Removed FRADMIN, added FRADPWR, IRADLOSS
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -569,8 +570,9 @@ contains
           call parse_real_array('FIMP', fimp, isub1, nimp, &
                'Impurity density fraction', icode)
        case ('FRADMIN')
-          call parse_real_variable('FRADMIN', fradmin, 0.0D0, 1.0D0, &
-               'F-value for minimum radiation power')
+          write(outfile,*) 'FRADMIN is now obsolete -'
+          write(outfile,*) 'please remove it from the input file.'
+          obsolete_var = .true.
        case ('FTR')
           write(outfile,*) 'FTR is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
@@ -649,7 +651,10 @@ contains
                'Switch for plasma profile type')
        case ('IPROFILE')
           call parse_int_variable('IPROFILE', iprofile, 0, 1, &
-               'Switch for current profile consistency ')
+               'Switch for current profile consistency')
+       case ('IRADLOSS')
+          call parse_int_variable('IRADLOSS', iradloss, 0, 1, &
+               'Switch for radiation loss term inclusion in pwr balance')
        case ('IRES')
           write(outfile,*) 'IRES is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
@@ -768,6 +773,9 @@ contains
        case ('FBETATRY')
           call parse_real_variable('FBETATRY', fbetatry, 0.001D0, 10.0D0, &
                'F-value for beta limit')
+       case ('FRADPWR')
+          call parse_real_variable('FRADPWR', fradpwr, 0.0D0, 1.0D0, &
+               'F-value for radiation power limit')
        case ('FDENE')
           call parse_real_variable('FDENE', fdene, 0.001D0, 10.0D0, &
                'F-value for density limit')

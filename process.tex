@@ -38,9 +38,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-05-19
+2014-05-20
 \hfill
-Revision:: 278
+Revision:: 279
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -84,18 +84,15 @@ Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % To do list:
 %  (apart from bringing it in line with the F90 code, of course...)
-%  Improve power flow figure
+%  Improve power flow figures
 %  scaling law references into table
 %  IFE model; expand details about build, materials
 %  check and expand references
 %  add iprimhtp, iprimnloss
 %  show buildings calculations
-%  update stellarator description
 %  iavail usage
-%  python utilities
 %  tratio
 %  density limit refs
-%  radiation power
 %  check PF coil location
 %  add descriptions of other switches
 %  
@@ -652,7 +649,7 @@ no. & description                                               & type & \texttt
 14  & beam energy (NBI)                                         & C    & \textbf{19},1,2,3,6 \\
 15  & UNUSED                                                    &      & \\
 16  & net electric power lower limit                            & L    & \textbf{25},1,2,3 \\
-17  & UNUSED                                                    &      & \\
+17  & radiation power upper limit                               & L    & \textbf{28} \\
 18  & divertor heat load upper limit                            & L    & \textbf{27} \\
 19  & MVA upper limit                                           & L    & \textbf{30} \\
 20  & neutral beam tangency radius upper limit (NBI)            & L    & \textbf{33},31,3,13 \\
@@ -784,7 +781,7 @@ no. & variable name     & description                                   & eqn & 
 25  & \texttt{fpnetel}  & f-value for net electric power limit equation & 16  & \texttt{0.001D0} & \texttt{1.000D0} \\
 26  & \texttt{ffuspow}  & f-value for fusion power limit equation       & 9   & \texttt{0.001D0} & \texttt{1.000D0} \\
 27  & \texttt{fhldiv}   & f-value for divertor heat load limit equation & 18  & \texttt{0.001D0} & \texttt{1.000D0} \\
-28  &                   & UNUSED                                        &     & \texttt{0.100D0} & \texttt{1.000D0} \\
+28  & \texttt{fradpwr}  & f-value for radiation power limit equation    & 17  & \texttt{0.001D0} & \texttt{1.000D0} \\
 29  & \texttt{bore}     & machine bore                                  &     & \texttt{0.100D0} & \texttt{10.00D0} \\
 30  & \texttt{fmva}     & f-value for MVA limit equation                & 19  & \texttt{0.010D0} & \texttt{1.000D0} \\
 31  & \texttt{gapomin}  & minimum gap between outboard vacuum vessel and TF coil &     & \texttt{0.001D0} & \texttt{10.00D0} \\
@@ -1075,6 +1072,7 @@ source file   & description \\ \hline
 \texttt{divertor.f90} & divertor model calculations\\
 \texttt{fispact.f90} & nuclide inventory/activation calculations \\
 \texttt{ife.f90} & inertial fusion energy physics/engineering \\
+\texttt{impurity\_radiation.f90} & radiation power calculations \\
 \texttt{physics.f90} & tokamak plasma and fusion calculations \\
 \texttt{plasma\_geometry.f90} & plasma geometry algorithms \\
 \texttt{plasma\_profiles.f90} & plasma density and temperature profile calculations \\
@@ -1316,6 +1314,7 @@ or calculations based on a more recent derivation (\texttt{igeom =
   1})~\cite{logbook14_41}.
 
 \subsubsection{Fusion reactions}
+\label{sec:fusion_reactions}
 
 The most likely fusion reaction to be utilised in a power plant is the
 deuterium-tritium reaction:
@@ -1510,6 +1509,63 @@ iteration variable no.~9 (\texttt{fdene}).  In addition, switch
 \item [\texttt{idensl = 6} :] Hugill-Murakami $M.q$ model
 \item [\texttt{idensl = 7} :] Greenwald model
 \end{description}
+
+\subsubsection{Impurities and radiation}
+\label{sec:radiation}
+
+The impurity radiation model in \process\/ can be chosen using the switch
+\texttt{imprad\_model}, where \texttt{imprad\_model = 0} gives the original
+ITER 1989 model~\cite{kovari_physics}, and \texttt{imprad\_model = 1} uses the
+new impurity profile model~\cite{hanni_radiation}.
+
+If \texttt{imprad\_model = 0}, the impurity species and fractions are chosen using input
+parameters \texttt{impc}, \texttt{impo}, \texttt{fbfe}, \texttt{cfe0} and
+\texttt{zfear}; see the variable descriptor file for more details.
+
+If \texttt{imprad\_model = 1}, the impurity number density fractions relative
+to the electron density are set using input array \texttt{fimp(1 to nimp)},
+where \texttt{nimp = 14} is the number of impurity species in the radiation
+model. The available impurities are as follows:
+\begin{enumerate}
+\item Hydrogen (fraction calculated by code)
+\item Helium (fraction calculated by code)
+\item Beryllium
+\item Carbon
+\item Nitrogen
+\item Oxygen
+\item Neon
+\item Silicon
+\item Argon
+\item Iron
+\item Nickel
+\item Krypton
+\item Xenon
+\item Tungsten
+\end{enumerate}
+As stated above, the number density fractions for hydrogen (all isotopes) and
+helium need not be set, as they are calculated by the code to ensure that
+plasma quasi-neutrality is maintained, and taking into account the fuel ratios
+\texttt{fdeut}, \texttt{ftrit} and \texttt{fhe3} (see
+Section~\ref{sec:fusion_reactions}), and the alpha particle fraction
+\texttt{ralpne} which may be input by the user.
+
+The synchrotron radiation power~\cite{albajar, fidone} is assumed to originate
+from the plasma core. The wall reflection factor \texttt{ssync} may be set by
+the user.
+
+By changing the input parameter \texttt{coreradius}, the user may set the
+normalised radius defining the core region (\texttt{imprad\_model = 1}
+only). Only the impurity and synchrotron radiation from the core region
+affects the confinement scaling (but see \texttt{iradloss} below), while the
+power flowing into the divertor is assumed to exclude all radiation power.
+
+\Red{Add radiation power flow diagram as on p.26, logbook24}
+
+\Red{New overall power flow diagram should elucidate this...}
+
+Switch \texttt{iradloss} may be used to include (\texttt{iradloss = 1},
+default) or exclude (\texttt{iradloss = 0}) the core radiation power from the
+transport power used in the confinement time and power balance calculations.
 
 \subsubsection{Plasma current scaling laws}
 \label{sec:current_scaling}
@@ -5213,6 +5269,24 @@ Morris, M.\ R.\ O'Brien, M.\ F.\ Turner and H.\ R.\ Wilson,
 \textit{``Physics Assessment for the European Reactor Study''},
 AEA Fusion Report AEA FUS 172
 (1992)
+
+\bibitem{kovari_physics}
+M.\ Kovari et al.,
+\textit{``PROCESS: a systems code for fusion power plants - Part 1: Physics''},
+in preparation (2014)
+
+\bibitem{hanni_radiation}
+H.\ Lux et al.,
+\textit{``Impurity radiation in DEMO''},
+in preparation (2014)
+
+\bibitem{albajar}
+Albajar,
+Nuclear Fusion \textbf{41} (2001) 665
+
+\bibitem{fidone}
+Fidone, Giruzzi and Granata,
+Nuclear Fusion \textbf{41} (2001) 1755
 
 \bibitem{Uckan88}
 N.\ A.\ Uckan,

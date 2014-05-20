@@ -16,6 +16,7 @@ module impurity_radiation_module
   !+ad_cont  impradprofile
   !+ad_cont  pbremden
   !+ad_cont  pimpden
+  !+ad_cont  fradcore
   !+ad_args  N/A
   !+ad_desc  This module contains routines for calculating the
   !+ad_desc  bremsstrahlung and line radiation of impurities
@@ -40,7 +41,7 @@ module impurity_radiation_module
   implicit none
 
   private
-  public :: initialise_imprad, impradprofile, z2index, element2index
+  public :: initialise_imprad, impradprofile, z2index, element2index, fradcore
   public :: imp_dat
 
   !+ad_vars  nimp /14/ FIX : number of ion species in impurity radiation model
@@ -87,7 +88,7 @@ module impurity_radiation_module
 
   !+ad_vars  imprad_model /0/ : switch for impurity radiation model:<UL>
   !+ad_varc               <LI>  = 0 original ITER 1989 model
-  !+ad_varc               <LI>  = 1 new model</UL>
+  !+ad_varc               <LI>  = 1 impurity profile model</UL>
   integer, public :: imprad_model = 0
 
   !  Declare impurity data type
@@ -341,6 +342,7 @@ contains
     !+ad_call  None
     !+ad_hist  01/05/14 HL  First draft of routine
     !+ad_hist  07/05/14 HL  Added skiprows
+    !+ad_hist  19/05/14 PJK Modified error handling
     !+ad_stat  Okay
     !+ad_docs  N/A
     !
@@ -382,9 +384,12 @@ contains
 
     open(unit=unit, file=filename, status='old', action='read', iostat=iostat)
 
-    if (iostat /= 0 ) then
-       write(*,*) 'Error: There was a problem opening the file ', filename
-       call exit()
+    if (iostat /= 0) then
+       write(*,*) 'Error in routine IMPORT_IMPDATA:'
+       write(*,*) 'Problem opening the file ',filename
+       write(*,*) 'Status flag = ',iostat
+       write(*,*) 'PROCESS stopping.'
+       stop
     end if
 
     !  Skip first lines (comments)
@@ -392,18 +397,25 @@ contains
     do i = 1, local_skip
        read(unit,*,iostat=iostat) buffer
        if (iostat > 0) then 
-          write(*,*) 'There is a problem with reading the file', filename
-          call exit()
+          write(*,*) 'Error in routine IMPORT_IMPDATA:'
+          write(*,*) 'Problem reading the file ',filename
+          write(*,*) 'Status flag = ',iostat
+          write(*,*) 'PROCESS stopping.'
+          stop
        end if
     end do
 
     do i = 1, nlines
        read(unit=unit, fmt=local_fmt, iostat=iostat) in1, in2
        if (iostat > 0) then 
-          write(*,*) 'There is a problem with reading the file', filename
-          call exit()
+          write(*,*) 'Error in routine IMPORT_IMPDATA:'
+          write(*,*) 'Problem reading the file ',filename
+          write(*,*) 'Status flag = ',iostat
+          write(*,*) 'Line number = ',i
+          write(*,*) 'PROCESS stopping.'
+          stop
        else if (iostat < 0) then
-          exit ! EOF
+          exit  !  EOF
        else
           col1(i) = in1 
           col2(i) = in2 
@@ -645,6 +657,7 @@ contains
     !+ad_hist  09/05/14 HL  First draft of routine
     !+ad_hist  14/05/14 PJK Initial PROCESS version; added treatment of out-of-range
     !+ad_hisc               temperature values
+    !+ad_hist  19/05/14 PJK Added hydrogen isotopes' line radiation contribution
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -665,13 +678,6 @@ contains
     real(kind(1.0D0)) :: xi, yi, c, lz
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Line radiation for hydrogen isotopes is excluded
-
-    if (imp_element%Z == 1) then
-       pimpden = 0.0D0
-       return
-    end if
 
     !  Interpolate tabulated data
 
@@ -711,5 +717,52 @@ contains
     pimpden = imp_element%frac * ne * ne * lz
 
   end function pimpden
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  function fradcore(rho,coreradius)
+
+    !+ad_name  fradcore
+    !+ad_summ  Function to calculate core radiation fraction 
+    !+ad_type  Function returning real
+    !+ad_auth  R Kemp, CCFE, Culham Science Centre
+    !+ad_auth  H Lux, CCFE, Culham Science Centre
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  rho        : input real : normalised minor radius
+    !+ad_args  coreradius : input real : normalised core radius
+    !+ad_desc  This function calculates the core radiation fraction
+    !+ad_desc  at normalised minor radius <CODE>rho</CODE> given a fixed
+    !+ad_desc  core radius
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  08/10/13 RK  Initial draft
+    !+ad_hist  16/12/13 HL  Added coreradius as optional input
+    !+ad_hist  19/05/14 PJK First PROCESS implementation
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    real(kind(1.0D0)) :: fradcore
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: rho
+    real(kind(1.0D0)), intent(in) :: coreradius
+
+    !  Local variables
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (rho < coreradius) then
+       fradcore = 1.0D0
+    else
+       fradcore = 0.0D0
+    end if
+
+  end function fradcore
 
 end module impurity_radiation_module

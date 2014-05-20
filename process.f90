@@ -366,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '278    Date  :: 2014-05-19'
+       '279    Date  :: 2014-05-20'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1551,3 +1551,5 @@ end subroutine output
 ! GIT 277: Added vstot to output; removed ffwal from iwalld=2 calculation
 ! GIT 278: Removed tburn consistency equation, and replaced it with an internal loop;
 !          ensured tburn is not negative (warning given if insufficient volt-seconds)
+! GIT 279: Clarified core radiation usage; new radiation power constraint eqn;
+!          introduced iradloss switch; corrected falpha usage (at least partially)

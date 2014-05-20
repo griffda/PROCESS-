@@ -963,6 +963,7 @@ contains
     !+ad_hist  14/05/14 PJK Added call to plasma_composition and new
     !+ad_hisc               impurity radiation calculations
     !+ad_hist  15/05/14 PJK Removed ffwal from iwalld=2 calculation
+    !+ad_hist  20/05/14 PJK Cleaned up radiation power usage
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -975,7 +976,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: fusrat,pddpv,pdtpv,pdhe3pv,pht,powht,sbar,sigvdt,zion
+    real(kind(1.0D0)) :: fusrat,pddpv,pdtpv,pdhe3pv,powht,sbar,sigvdt,zion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1051,29 +1052,28 @@ contains
     call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,pie)
 
     !  Calculate radiation power
-    !  N.B. plrad is recalculated below
+    !  N.B. pedgerad is recalculated below
 
-    call radpwr(imprad_model,pbrem,plrad,psync,prad,pcorerad)
-
-    !  Limit for minimum radiation power
-
-    pht = 1.0D-6 * (pinji + pinje) + alpmw + pcharge*vol
-    pbrem = max( (fradmin*pht/vol), pbrem)
-    prad = pbrem + psync
+    call radpwr(imprad_model,pbrem,pline,psync,pcorerad,pedgerad,prad)
 
     !  Heating power to plasma (= Psol in divertor model)
 
     powht = alpmw + pcharge*vol + (pinje+pinji)*1.0D-6 + pohmpv*vol &
-         - prad*vol
+         - pcorerad*vol
 
     !  Line radiation power/volume is obtained via input parameter f_rad
     !  (in contrast to tokamak calculation)
 
-    plrad = f_rad*powht/vol
+    pedgerad = f_rad*powht/vol
 
     !  Power to divertor, = (1-f_rad)*Psol
 
-    pdivt = powht - plrad*vol
+    pdivt = powht - pedgerad*vol
+
+    !  The following line is unphysical, but prevents -ve sqrt argument
+    !  Should be obsolete if constraint eqn 17 is turned on (but beware -
+    !  this may not be quite correct for stellarators)
+
     pdivt = max(0.001D0, pdivt)
 
     !  Calculate density limit
@@ -1086,7 +1086,7 @@ contains
 
     call pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
          iinvqd,isc,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-         plascur,pohmpv,prad,rmajor,rminor,te,ten,tin,iotabar,qstar,vol, &
+         plascur,pohmpv,pcorerad,rmajor,rminor,te,ten,tin,iotabar,qstar,vol, &
          xarea,zeff,ptre,ptri,tauee,tauei,taueff,powerht)
 
     !  Calculate auxiliary physics related information
@@ -1971,6 +1971,7 @@ contains
     !+ad_hist  16/10/12 PJK Added current_drive_variables
     !+ad_hist  23/01/13 PJK Added two more scaling laws; changed PCOND argument
     !+ad_hisc               q95 to iotabar
+    !+ad_hist  20/05/14 PJK Changed prad to pcorerad
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2026,8 +2027,8 @@ contains
 
        call pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,d2, &
             iinvqd,i,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-            plascur,pohmpv,prad,rmajor,rminor,te,ten,tin,iotabar,qstar,vol, &
-            xarea,zeff,ptrez,ptriz,taueez,taueiz,taueffz,powerhtz)
+            plascur,pohmpv,pcorerad,rmajor,rminor,te,ten,tin,iotabar,qstar, &
+            vol,xarea,zeff,ptrez,ptriz,taueez,taueiz,taueffz,powerhtz)
 
        hfac(iisc) = fhfac(i)
        write(outfile,30) tauscl(istlaw(iisc)),taueez,hfac(iisc)

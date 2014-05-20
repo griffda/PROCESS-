@@ -50,6 +50,7 @@ module numerics
   !+ad_hist  01/05/14 PJK Relabelled lablcc(28), lablmm(5)
   !+ad_hist  08/05/14 PJK Changed boundu(101) (prp upper limit)
   !+ad_hist  19/05/14 PJK Relabelled lablcc(15)
+  !+ad_hist  19/05/14 PJK Reassigned lablcc(17), lablxc(28: fradpwr)
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -304,8 +305,8 @@ module numerics
        'UNUSED                           ', &
        !+ad_varc  <LI> (16) * Net electric power lower limit
        'Net electric power lower limit   ', &
-       !+ad_varc  <LI> (17) UNUSED
-       'UNUSED                           ', &
+       !+ad_varc  <LI> (17) Radiation power upper limit
+       'Radiation power upper limit      ', &
        !+ad_varc  <LI> (18) Divertor heat load upper limit
        'Divertor heat load upper limit   ', &
        !+ad_varc  <LI> (19) MVA upper limit
@@ -483,8 +484,8 @@ module numerics
        'ffuspow  ', &
        !+ad_varc  <LI> (27) fhldiv (f-value for equation 18)
        'fhldiv   ', &
-       !+ad_varc  <LI> (28) UNUSED
-       'UNUSED   ', &
+       !+ad_varc  <LI> (28) fradpwr (f-value for equation 17)
+       'fradpwr  ', &
        !+ad_varc  <LI> (29) * bore
        'bore     ', &
        !+ad_varc  <LI> (30) fmva (f-value for equation 19)
@@ -674,7 +675,7 @@ module numerics
        0.001D0, &  !  25
        0.001D0, &  !  26
        0.001D0, &  !  27
-       0.100D0, &  !  28
+       0.001D0, &  !  28
        0.100D0, &  !  29
        0.010D0, &  !  30
        0.001D0, &  !  31
