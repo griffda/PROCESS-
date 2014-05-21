@@ -366,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '279    Date  :: 2014-05-20'
+       '280    Date  :: 2014-05-21'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1553,3 +1553,4 @@ end subroutine output
 !          ensured tburn is not negative (warning given if insufficient volt-seconds)
 ! GIT 279: Clarified core radiation usage; new radiation power constraint eqn;
 !          introduced iradloss switch; corrected falpha usage (at least partially)
+! GIT 280: Added warning if impurity temperature is below tabulated values

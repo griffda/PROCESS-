@@ -89,6 +89,8 @@ module impurity_radiation_module
   !+ad_vars  imprad_model /0/ : switch for impurity radiation model:<UL>
   !+ad_varc               <LI>  = 0 original ITER 1989 model
   !+ad_varc               <LI>  = 1 impurity profile model</UL>
+  !+ad_varc  (Whichever model is used, it is recommended to turn on
+  !+ad_varc  constraint eqn.17 with iteration variable 28: fradpwr.)
   integer, public :: imprad_model = 0
 
   !  Declare impurity data type
@@ -658,6 +660,7 @@ contains
     !+ad_hist  14/05/14 PJK Initial PROCESS version; added treatment of out-of-range
     !+ad_hisc               temperature values
     !+ad_hist  19/05/14 PJK Added hydrogen isotopes' line radiation contribution
+    !+ad_hist  21/05/14 PJK Added warning message if te is below tabulated values
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -676,6 +679,7 @@ contains
 
     integer :: i
     real(kind(1.0D0)) :: xi, yi, c, lz
+    logical :: toolow = .false.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -688,6 +692,13 @@ contains
     if (te <= imp_element%Temp_keV(1)) then
 
        lz = imp_element%Lz_Wm3(1)
+
+       if (.not.toolow) then  !  Only print warning once during a run
+          toolow = .true.
+          write(*,*) 'Warning in routine PIMPDEN:'
+          write(*,*) 'Impurity radiation model is inaccurate at temperatures'
+          write(*,*) 'at or below ',te,' keV...'
+       end if
 
     else if (te >= imp_element%Temp_keV(imp_element%len_tab)) then
 

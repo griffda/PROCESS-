@@ -38,9 +38,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-05-20
+2014-05-21
 \hfill
-Revision:: 279
+Revision:: 280
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1562,6 +1562,12 @@ power flowing into the divertor is assumed to exclude all radiation power.
 \Red{Add radiation power flow diagram as on p.26, logbook24}
 
 \Red{New overall power flow diagram should elucidate this...}
+
+Constraint equation no.~17 with iteration variable no.~28 (\texttt{fradpwr})
+ensures that the calculated total radiation power does not exceed the total
+power available that can be converted to radiation (i.e.\ the sum of the fusion
+alpha power, other charged particle fusion power, auxiliary injected power and
+the ohmic power). This constraint should always be turned on.
 
 Switch \texttt{iradloss} may be used to include (\texttt{iradloss = 1},
 default) or exclude (\texttt{iradloss = 0}) the core radiation power from the
