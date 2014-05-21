@@ -117,7 +117,8 @@ module physics_variables
   !+ad_hisc               added pcorerad
   !+ad_hist  15/05/14 PJK Changed ffwal comment
   !+ad_hist  19/05/14 PJK Changed plrad to pedgerad; removed fradmin;
-  !+ad_hist               added iradloss
+  !+ad_hisc               added iradloss
+  !+ad_hist  21/05/14 PJK Changed ignite wording
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -385,10 +386,11 @@ module physics_variables
   integer :: igeom = 0
   !+ad_vars  ignite /0/ : switch for ignition assumption:<UL>
   !+ad_varc          <LI> = 0 do not assume plasma ignition;
-  !+ad_varc          <LI> = 1 assume ignited (but include aux power in costs).
-  !+ad_varc               Obviously, ignite must be zero if current drive
-  !+ad_varc               is required. Note that whole code is not quite
-  !+ad_varc               consistent yet...</UL>
+  !+ad_varc          <LI> = 1 assume ignited (but include aux power in costs)</UL>
+  !+ad_varc       Obviously, ignite must be zero if current drive is required.
+  !+ad_varc       If ignite=1, any auxiliary power is assumed to be used only
+  !+ad_varc       during plasma start-up, and is excluded from all steady-state
+  !+ad_varc       power balance calculations.
   integer :: ignite = 0
   !+ad_vars  iinvqd /1/ : switch for inverse quadrature in tauee laws:<UL>
   !+ad_varc          <LI> = 0 inverse quadrature not used;

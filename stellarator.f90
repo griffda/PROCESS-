@@ -964,6 +964,7 @@ contains
     !+ad_hisc               impurity radiation calculations
     !+ad_hist  15/05/14 PJK Removed ffwal from iwalld=2 calculation
     !+ad_hist  20/05/14 PJK Cleaned up radiation power usage
+    !+ad_hist  21/05/14 PJK Added ignite clause to powht calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1058,8 +1059,8 @@ contains
 
     !  Heating power to plasma (= Psol in divertor model)
 
-    powht = alpmw + pcharge*vol + (pinje+pinji)*1.0D-6 + pohmpv*vol &
-         - pcorerad*vol
+    powht = alpmw + pcharge*vol + pohmpv*vol - pcorerad*vol
+    if (ignite == 0) powht = powht + (pinje+pinji)*1.0D-6
 
     !  Line radiation power/volume is obtained via input parameter f_rad
     !  (in contrast to tokamak calculation)

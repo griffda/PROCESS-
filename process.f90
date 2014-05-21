@@ -366,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '280    Date  :: 2014-05-21'
+       '281    Date  :: 2014-05-21'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1554,3 +1554,6 @@ end subroutine output
 ! GIT 279: Clarified core radiation usage; new radiation power constraint eqn;
 !          introduced iradloss switch; corrected falpha usage (at least partially)
 ! GIT 280: Added warning if impurity temperature is below tabulated values
+! GIT 281: Added several clauses for ignite switch to ensure injected power is
+!          treated as zero for steady state power balance calculations. The usage
+!          of ignite is now thought to be fully consistent throughout the code.

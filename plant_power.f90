@@ -782,6 +782,7 @@ contains
     !+ad_hist  05/02/13 PJK Clarified MGF output
     !+ad_hist  27/03/13 PJK MGF power only included if iscenr /= 2
     !+ad_hist  17/04/13 PJK Removed 0.05*pacpmw contribution to fcsht
+    !+ad_hist  21/05/14 PJK Added ignite comment
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -810,7 +811,7 @@ contains
 
     !  Power to plasma heating supplies, MW
 
-    pheatmw = pinjwp
+    pheatmw = pinjwp  !  Should be zero if ignite==1
 
     !  Power to cryogenic comp. motors, MW
 
@@ -904,6 +905,7 @@ contains
     !+ad_hist  17/04/13 PJK Changed priheat to pthermmw in rnphx calculation
     !+ad_hist  17/04/13 PJK Added iprimnloss switch for pnucloss contribution
     !+ad_hisc               to primary heating
+    !+ad_hist  21/05/14 PJK Added ignite clauses
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -921,7 +923,11 @@ contains
     !  pthermmw is the high grade thermal power
     !  priheat is the total thermal power removed from fusion core
 
-    pfwdiv = pfuscmw + 1.0D-6 * (pinje + pinji)
+    if (ignite == 0) then
+       pfwdiv = pfuscmw + 1.0D-6 * (pinje + pinji)
+    else
+       pfwdiv = pfuscmw
+    end if
     pthermmw = pnucblkt + pnucshld + (1.0D0-ffwlg)*pfwdiv
     priheat = pnucblkt + pnucshld + pfwdiv
 
@@ -952,12 +958,20 @@ contains
 
     !  Wall plug injection power
 
-    pinjwp = 1.0D-6 * (echpwr/etaech + plhybd/etalh + pnbeam/etanbi + &
-         pofcd/etaof)
+    if (ignite == 0) then
+       pinjwp = 1.0D-6 * (echpwr/etaech + plhybd/etalh + pnbeam/etanbi + &
+            pofcd/etaof)
+    else
+       pinjwp = 0.0D0
+    end if
 
     !  Waste injection power 
 
-    pinjht = pinjwp - 1.0D-6*(pinji + pinje)
+    if (ignite == 0) then
+       pinjht = pinjwp - 1.0D-6*(pinji + pinje)
+    else
+       pinjht = 0.0D0
+    end if
 
     !  Cryogenic power
 

@@ -743,6 +743,7 @@ contains
     !+ad_hisc               and modified RADPWR call
     !+ad_hist  15/05/14 PJK Changed iwalld logic
     !+ad_hist  20/05/14 PJK Cleaned up radiation power usage
+    !+ad_hist  21/05/14 PJK Added ignite clause to pinj calculation
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -896,7 +897,11 @@ contains
 
     !  Power to the divertor
 
-    pinj = 1.0D-6 * (pinje + pinji)/vol
+    if (ignite == 0) then
+       pinj = 1.0D-6 * (pinje + pinji)/vol
+    else
+       pinj = 0.0D0
+    end if
     pdivt = vol * (palp + pcharge + pinj + pohmpv - prad)
 
     !  The following line is unphysical, but prevents -ve sqrt argument

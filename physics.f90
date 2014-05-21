@@ -189,6 +189,7 @@ contains
     !+ad_hisc               impurity radiation calculations
     !+ad_hist  15/05/14 PJK Removed ffwal from iwalld=2 calculation
     !+ad_hist  19/05/14 PJK Clarified pcorerad vs pbrem; plrad --> pedgerad
+    !+ad_hist  21/05/14 PJK Added ignite clause to pinj calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -382,7 +383,11 @@ contains
     !  Power to the divertor
     !+PJK Should falpha be used to multiply palp here?
 
-    pinj = 1.0D-6 * (pinje + pinji)/vol
+    if (ignite == 0) then
+       pinj = 1.0D-6 * (pinje + pinji)/vol
+    else
+       pinj = 0.0D0
+    end if
     pdivt = vol * (palp + pcharge + pinj + pohmpv - prad)
 
     !  The following line is unphysical, but prevents -ve sqrt argument
@@ -5188,6 +5193,7 @@ contains
     !+ad_hist  03/04/14 PJK Used ovarst to write out confinement scaling law name
     !+ad_hist  23/04/14 PJK Added bvert
     !+ad_hist  14/05/14 PJK Added impurity concentration info
+    !+ad_hist  21/05/14 PJK Added ignite
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5497,6 +5503,8 @@ contains
     if (ignite == 1) then
        call ocmmnt(outfile,'  (Injected power only used for start-up phase)')
     end if
+    call ovarin(outfile,'Ignited plasma switch (0=not ignited, 1=ignited)', &
+         '(ignite)',ignite)
     call ovarre(outfile,'Power to divertor (MW)','(pdivt)',pdivt)
 
     if (pdivt <= 0.001D0) then
