@@ -82,6 +82,7 @@ contains
     !+ad_hist  27/11/13 PJK Added ohmic power to bigq denominator
     !+ad_hist  06/03/14 PJK Changed gamma units in output to 10^20 A/W-m2
     !+ad_hist  01/05/14 PJK Changed bigq description
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -163,41 +164,41 @@ contains
 
        end select
 
-       !  Compute current drive powers (Watts)
+       !  Compute current drive powers (MW)
 
        select case (iefrf)
 
        case (1,2,4,6)  !  LHCD or ICCD
 
-          plhybd = faccd * plascur / effrfss + pheat
-          pinji = 0.0D0
-          pinje = plhybd
+          plhybd = 1.0D-6 * faccd * plascur / effrfss + pheat
+          pinjimw = 0.0D0
+          pinjemw = plhybd
 
        case (3,7)  !  ECCD
 
-          echpwr = faccd * plascur / effrfss + pheat
-          pinji = 0.0D0
-          pinje = echpwr
+          echpwr = 1.0D-6 * faccd * plascur / effrfss + pheat
+          pinjimw = 0.0D0
+          pinjemw = echpwr
 
        case (5,8)  !  NBCD
 
-          pnbeam = faccd * plascur / effnbss + pheat
-          pinji = pnbeam * fpion
-          pinje = pnbeam * (1.0D0-fpion)
+          pnbeam = 1.0D-6 * faccd * plascur / effnbss + pheat
+          pinjimw = pnbeam * fpion
+          pinjemw = pnbeam * (1.0D0-fpion)
 
           !  Calculate neutral beam current
 
           if (abs(pnbeam) > 1.0D-8) then
-             cnbeam = 1.0D-3 * pnbeam / enbeam
+             cnbeam = 1.0D-3 * (pnbeam*1.0D6) / enbeam
           else
              cnbeam = 0.0D0
           end if
 
        case (9)  !  OFCD
 
-          pofcd = faccd * plascur / effofss + pheat
-          pinji = 0.0D0
-          pinje = pofcd
+          pofcd = 1.0D-6 * faccd * plascur / effofss + pheat
+          pinjimw = 0.0D0
+          pinjemw = pofcd
 
        case default
           write(*,*) 'Error in routine CUDRIV:'
@@ -207,12 +208,16 @@ contains
 
        end select
 
+       !  Total injected power
+
+       pinjmw = pinjemw + pinjimw
+
        !  Ratio of fusion to input (injection+ohmic) power
 
-       if (abs(pinje + pinji + (1.0D6*pohmpv*vol)) < 1.0D-6) then
+       if (abs(pinjmw + pohmmw) < 1.0D-6) then
           bigq = 1.0D18
        else
-          bigq = 1.0D6 * powfmw / (pinje + pinji + 1.0D6*pohmpv*vol)
+          bigq = powfmw / (pinjmw + pohmmw)
        end if
 
        !  Normalised current drive efficiency
@@ -284,9 +289,9 @@ contains
     end if
 
     call ovarin(outfile,'Current drive efficiency model','(iefrf)',iefrf)
-    call ovarre(outfile,'Steady state power requirement (W)', &
-         '(pinje+pinji)',pinje+pinji)
-    call ovarre(outfile,'CD power used for plasma heating only (W)', &
+    call ovarre(outfile,'Steady state power requirement (MW)', &
+         '(pinjmw)',pinjmw)
+    call ovarre(outfile,'CD power used for plasma heating only (MW)', &
          '(pheat)',pheat)
     call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq)
 
@@ -305,13 +310,13 @@ contains
     if (abs(plhybd) > 1.0D-8) then
        call ovarre(outfile,'RF efficiency (A/W)','(effrfss)',effrfss)
        call ovarre(outfile,'RF gamma (10^20 A/W-m2)','(gamrf)',gamrf)
-       call ovarre(outfile,'Lower hybrid power (W)','(plhybd)',plhybd)
+       call ovarre(outfile,'Lower hybrid power (MW)','(plhybd)',plhybd)
     end if
 
     if (abs(pnbeam) > 1.0D-8) then
        call ovarre(outfile,'Beam efficiency (A/W)','(effnbss)',effnbss)
        call ovarre(outfile,'Beam gamma (10^20 A/W-m2)','(gamnb)',gamnb)
-       call ovarre(outfile,'Neutral beam power (W)','(pnbeam)',pnbeam)
+       call ovarre(outfile,'Neutral beam power (MW)','(pnbeam)',pnbeam)
        call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)
        call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam)
        call ovarre(outfile,'Fraction of beam energy to ions','(fpion)',fpion)
@@ -326,13 +331,13 @@ contains
     end if
 
     if (abs(echpwr) > 1.0D-8) then
-       call ovarre(outfile,'Electron cyclotron power (W)','(echpwr)',echpwr)
+       call ovarre(outfile,'Electron cyclotron power (MW)','(echpwr)',echpwr)
     end if
 
     if (abs(pofcd) > 1.0D-8) then
        call ovarre(outfile,'OFCD efficiency (A/W)','(effofss)',effofss)
        call ovarre(outfile,'OFCD gamma (10^20 A/W-m2)','(gamof)',gamof)
-       call ovarre(outfile,'OFCD power (W)','(pofcd)',pofcd)
+       call ovarre(outfile,'OFCD power (MW)','(pofcd)',pofcd)
     end if
 
   end subroutine cudriv
@@ -1566,9 +1571,9 @@ contains
     !  enbeam,  neutral beam energy, keV
     !  etanbi,  neutral beam wall plug to injector efficiency
 
-    !  pwpnb,   neutral beam wall plug power, W
+    !  pwpnb,   neutral beam wall plug power, MW
 
-    pwpnb = enbeam * cnbeam * 1.0D3/etanbi
+    pwpnb = 1.0D-6 * enbeam * cnbeam * 1.0D3/etanbi
 
     if ((iprint == 0).or.(sect18 == 0)) return
 
@@ -1578,7 +1583,7 @@ contains
     call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)
     call ovarre(outfile,'Neutral beam wall plug efficiency','(etanbi)', &
          etanbi)
-    call ovarre(outfile,'Neutral beam wall plug power (W)','(pwpnb)', &
+    call ovarre(outfile,'Neutral beam wall plug power (MW)','(pwpnb)', &
          pwpnb)
 
   end subroutine nbeam
@@ -1622,16 +1627,16 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  ECH heating power (Watts)
+    !  ECH wall plug power (MW)
 
     echwpow = echpwr / etaech
 
     if ((iprint == 0).or.(sect19 == 0)) return
 
     call oheadr(outfile,'Electron Cyclotron Heating')
-    call ovarre(outfile,'ECH power (W)','(echpwr)',echpwr)
+    call ovarre(outfile,'ECH power (MW)','(echpwr)',echpwr)
     call ovarre(outfile,'ECH wall plug efficiency','(etaech)',etaech)
-    call ovarre(outfile,'ECH wall plug power (W)','(echwpow)',echwpow)
+    call ovarre(outfile,'ECH wall plug power (MW)','(echwpow)',echwpow)
 
   end subroutine ech
 
@@ -1671,9 +1676,9 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  etalh,   Lower Hybrid wall plug to plasma efficiency
-    !  plhybd,  Lower Hybrid injection power, W 
+    !  plhybd,  Lower Hybrid injection power, MW
 
-    !  Lower Hybrid wall plug power, W
+    !  Lower Hybrid wall plug power, MW
 
     pwplh = plhybd / etalh
 
@@ -1681,8 +1686,8 @@ contains
 
     call oheadr(outfile,'Lower Hybrid Heating')
     call ovarre(outfile,'Lower hybrid wall plug efficiency','(etalh)',etalh)
-    call ovarre(outfile,'Lower hybrid injection power (W)','(plhybd)',plhybd)
-    call ovarre(outfile,'Lower hybrid wall plug power (W)','(pwplh)',pwplh)
+    call ovarre(outfile,'Lower hybrid injection power (MW)','(plhybd)',plhybd)
+    call ovarre(outfile,'Lower hybrid wall plug power (MW)','(pwplh)',pwplh)
 
   end subroutine lwhymod
 

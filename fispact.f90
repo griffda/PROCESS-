@@ -38,6 +38,7 @@
 !  18/11/97 PJK 1.220 Added COMMON block OPSYS. Removed NOUT argument
 !  10/10/12 PJK Hardwired IVMS to zero
 !  24/04/14 PJK Ensured calculation proceeds whether or not iprint==1
+!  22/05/14 PJK Name changes to power quantities
 !
 !--Arguments
 !  IPRINT : (INPUT)  Flag to turn on/off (1/0) output to file
@@ -129,7 +130,7 @@
 ! *** to holes or the centrepost. Each has energy 14.06 MeV
 
       nneut = REAL( &
-           (pneut*vol-pnucloss-pnuccp)*1.0D6/(14.06D6*1.6022D-19) )
+           (pneutmw-pnucloss-pnuccp)*1.0D6/(14.06D6*1.6022D-19) )
 
 ! *** Inboard blanket ***********************
 

@@ -965,6 +965,7 @@ contains
     !+ad_hist  15/05/14 PJK Removed ffwal from iwalld=2 calculation
     !+ad_hist  20/05/14 PJK Cleaned up radiation power usage
     !+ad_hist  21/05/14 PJK Added ignite clause to powht calculation
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1016,7 +1017,7 @@ contains
 
     !  Calculate fusion power
 
-    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palp,pcharge,pneut, &
+    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palppv,pchargepv,pneutpv, &
          sigvdt,fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
 
     pdt = pdtpv * vol
@@ -1037,39 +1038,41 @@ contains
     pdt = pdt + 5.0D0*palpnb
 
     call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
-         ifalphap,pcharge,pneut,ten,tin,vol,alpmw,betaft, &
-         palp,palpi,palpe,pfuscmw,powfmw)
+         ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,betaft, &
+         palppv,palpipv,palpepv,pfuscmw,powfmw)
 
     !  Neutron wall load
 
     if (iwalld == 1) then
-       wallmw = ffwal * (pneut*vol) / sarea
+       wallmw = ffwal * pneutmw / sarea
     else
-       wallmw = (pneut*vol) / fwarea
+       wallmw = pneutmw / fwarea
     end if
 
     !  Calculate ion/electron equilibration power
 
-    call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,pie)
+    call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
 
     !  Calculate radiation power
-    !  N.B. pedgerad is recalculated below
+    !  N.B. pedgeradpv is recalculated below
 
-    call radpwr(imprad_model,pbrem,pline,psync,pcorerad,pedgerad,prad)
+    call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
+         pcoreradpv,pedgeradpv,pradpv)
 
     !  Heating power to plasma (= Psol in divertor model)
+    !  Ohmic power is zero in a stellarator
 
-    powht = alpmw + pcharge*vol + pohmpv*vol - pcorerad*vol
-    if (ignite == 0) powht = powht + (pinje+pinji)*1.0D-6
+    powht = palpmw + pchargepv*vol + pohmmw - pcoreradpv*vol
+    if (ignite == 0) powht = powht + pinjmw
 
     !  Line radiation power/volume is obtained via input parameter f_rad
     !  (in contrast to tokamak calculation)
 
-    pedgerad = f_rad*powht/vol
+    pedgeradpv = f_rad*powht/vol
 
     !  Power to divertor, = (1-f_rad)*Psol
 
-    pdivt = powht - pedgerad*vol
+    pdivt = powht - pedgeradpv*vol
 
     !  The following line is unphysical, but prevents -ve sqrt argument
     !  Should be obsolete if constraint eqn 17 is turned on (but beware -
@@ -1085,10 +1088,10 @@ contains
     !  chosen scaling law
     !  N.B. iotabar replaces tokamak q95 in argument list
 
-    call pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
-         iinvqd,isc,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-         plascur,pohmpv,pcorerad,rmajor,rminor,te,ten,tin,iotabar,qstar,vol, &
-         xarea,zeff,ptre,ptri,tauee,tauei,taueff,powerht)
+    call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
+         iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargepv,pinjmw, &
+         plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,iotabar,qstar,vol, &
+         xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
 
     !  Calculate auxiliary physics related information
     !  for the rest of the code
@@ -1163,14 +1166,14 @@ contains
     case (1)  !  Electron cyclotron resonance heating
 
        echpwr = pheat
-       pinji = 0.0D0
-       pinje = echpwr
+       pinjimw = 0.0D0
+       pinjemw = echpwr
 
     case (2)  !  Lower Hybrid heating
 
        plhybd = pheat
-       pinji = 0.0D0
-       pinje = plhybd
+       pinjimw = 0.0D0
+       pinjemw = plhybd
 
     case (3)  !  Neutral beam injection heating
 
@@ -1181,8 +1184,8 @@ contains
        call culnbi(effnbss,fpion,fshine)
 
        pnbeam = pheat
-       pinji = pnbeam * fpion
-       pinje = pnbeam * (1.0D0-fpion)
+       pinjimw = pnbeam * fpion
+       pinjemw = pnbeam * (1.0D0-fpion)
 
     case default
 
@@ -1193,20 +1196,24 @@ contains
 
     end select
 
+    !  Total injected power
+
+    pinjmw = pinjemw + pinjimw
+
     !  Calculate neutral beam current
 
     if (abs(pnbeam) > 1.0D-8) then
-       cnbeam = 1.0D-3 * pnbeam / enbeam
+       cnbeam = 1.0D-3 * (pnbeam*1.0D6) / enbeam
     else
        cnbeam = 0.0D0
     end if
 
     !  Ratio of fusion to input (injection+ohmic) power
 
-    if (abs(pinje + pinji + (1.0D6*pohmpv*vol)) < 1.0D-6) then
+    if (abs(pinjmw + pohmmw) < 1.0D-6) then
        bigq = 1.0D18
     else
-       bigq = 1.0D6 * powfmw / (pinje + pinji + 1.0D6*pohmpv*vol)
+       bigq = powfmw / (pinjmw + pohmmw)
     end if
 
     if ((iprint == 0).or.(sect04 == 0)) return
@@ -1234,7 +1241,7 @@ contains
     end if
     call oblnkl(outfile)
 
-    call ovarre(outfile,'Auxiliary power supplied to plasma (W)', &
+    call ovarre(outfile,'Auxiliary power supplied to plasma (MW)', &
          '(pheat)',pheat)
     call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq)
 
@@ -1320,7 +1327,7 @@ contains
     integer, parameter :: ishmat = 1  !  stainless steel coil casing is assumed
 
     real(kind(1.0D0)) :: adewex,coilhtmx,decaybl,dpacop,dshieq,dshoeq, &
-         fpsdt,fpydt,hecan,htheci,pheci,pheco,pneut1,pneut2,ptfi,ptfiwp, &
+         fpsdt,fpydt,hecan,htheci,pheci,pheco,pneut2,ptfi,ptfiwp, &
          ptfo,ptfowp,r1,r2,raddose,volshldi,volshldo,wpthk
 
     logical :: first_call = .true.
@@ -1357,13 +1364,9 @@ contains
     volshldo = shareaob * shldoth
     volshld = volshldi + volshldo
 
-    !  Neutron power from plasma
-
-    pneut1 = pneut*vol
-
     !  Neutron power lost through divertor gap in first wall
 
-    pnucloss = pneut1 * fhole
+    pnucloss = pneutmw * fhole
 
     !  Blanket neutronics calculations
 
@@ -1413,7 +1416,7 @@ contains
 
        !  Energy-multiplied neutron power
 
-       pneut2 = (pneut1 - pnucloss - pnuccp) * emult
+       pneut2 = (pneutmw - pnucloss - pnuccp) * emult
 
        !  Nuclear heating in the blanket
 
@@ -1973,6 +1976,7 @@ contains
     !+ad_hist  23/01/13 PJK Added two more scaling laws; changed PCOND argument
     !+ad_hisc               q95 to iotabar
     !+ad_hist  20/05/14 PJK Changed prad to pcorerad
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2026,10 +2030,11 @@ contains
     do iisc = 1,nstlaw
        i = istlaw(iisc)
 
-       call pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,d2, &
-            iinvqd,i,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-            plascur,pohmpv,pcorerad,rmajor,rminor,te,ten,tin,iotabar,qstar, &
-            vol,xarea,zeff,ptrez,ptriz,taueez,taueiz,taueffz,powerhtz)
+       call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,d2, &
+            iinvqd,i,ignite,kappa,kappa95,kappaa,pchargepv,pinjmw, &
+            plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin, &
+            iotabar,qstar,vol,xarea,zeff,ptrez,ptriz,taueez,taueiz, &
+            taueffz,powerhtz)
 
        hfac(iisc) = fhfac(i)
        write(outfile,30) tauscl(istlaw(iisc)),taueez,hfac(iisc)

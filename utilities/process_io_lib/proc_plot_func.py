@@ -841,9 +841,9 @@ def plot_power_info(axis, mfile_data, scan):
                        mfile_data.data["powfmw"].get_scan(scan))
 
     data = [("wallmw", "Av. neutron wall load", "MW m$^{-2}$"),
-            ("pbrem*vol", "Bremsstrahlung radiation", "MW"),
-            ("psync*vol", "Synchrotron radiation", "MW"),
-            ("plrad*vol", "Line radiation", "MW"),
+            ("pbrempv*vol", "Bremsstrahlung radiation", "MW"),
+            ("psyncpv*vol", "Synchrotron radiation", "MW"),
+            ("plinepv*vol", "Line radiation", "MW"),
             ("pnucblkt", "Nuclear heating in blanket", "MW"),
             ("pnucshld", "Nuclear heating in shield", "MW"),
             ("pdivt", "Psep / Pdiv", "MW"),
@@ -883,7 +883,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
     axis.set_autoscaley_on(False)
     axis.set_autoscalex_on(False)
 
-    pinjie = mfile_data.data["pinje+pinji"].get_scan(scan)/1e6
+    pinjie = mfile_data.data["pinjmw"].get_scan(scan)
 
     pdivt = mfile_data.data["pdivt"].get_scan(scan)
     pdivr = pdivt / mfile_data.data["rmajor"].get_scan(scan)
@@ -899,8 +899,8 @@ def plot_current_drive_info(axis, mfile_data, scan):
     flh = pdivt/pthresh
 
     powerht = mfile_data.data["powerht"].get_scan(scan)
-    psync = mfile_data.data["psync*vol"].get_scan(scan)
-    pbrem = mfile_data.data["pbrem*vol"].get_scan(scan)
+    psync = mfile_data.data["psyncpv*vol"].get_scan(scan)
+    pbrem = mfile_data.data["pbrempv*vol"].get_scan(scan)
     hfact = mfile_data.data["hfact"].get_scan(scan)
     hstar = hfact * (powerht/(powerht+psync+pbrem))**0.31
 

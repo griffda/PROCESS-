@@ -168,6 +168,7 @@ contains
     !+ad_hist  31/10/12 PJK Added constraint_variables
     !+ad_hist  15/04/13 PJK Changed approximation for first wall nuclear heating
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Okay
     !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -286,7 +287,7 @@ contains
        !  Heating power due to neutron deposition (W)
        !  The previous method assumed that the neutrons lost via fhole
        !  actually stop in the first wall, so are not lost at all...
-       !fwndep = (pneut*vol)*fhole*1.0D6
+       !fwndep = pneutmw*fhole*1.0D6
 
        !  New method based on that for nuclear heating in the blanket
        !  in fwbs.f90. A neutron decay length of 0.075m is assumed, and
@@ -294,7 +295,7 @@ contains
 
        decay = 0.075D0 / (1.0D0 - afw*afw/(bfw*bfw))  !  a2/b2 = coolant fraction
 
-       fwndep = (1.0D6*pneut*vol) * (1.0D0-fhole) * &
+       fwndep = (1.0D6*pneutmw) * (1.0D0-fhole) * &
             ( 1.0D0 - exp( -(2.0D0*bfw)/decay) )
 
        !  Assume that the first wall volume is equal to its surface area
@@ -313,7 +314,7 @@ contains
 
        qppp = fwndep/fwvol
 
-       qpp = (palp+pcharge)*vol*1.0D6 / fwarea
+       qpp = (palppv+pchargepv)*vol*1.0D6 / fwarea
 
        !  Heat transfer coefficient
        !  -------------------------

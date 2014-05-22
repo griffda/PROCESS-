@@ -68,7 +68,7 @@ contains
     !+ad_desc  <PRE>
     !+ad_desc                              ptaue   qtaue                   rtaue
     !+ad_desc                          ____      __
-    !+ad_desc  taue =  gtaue + ftaue   dene      te     ( <Paux>  +  alpmw )
+    !+ad_desc  taue =  gtaue + ftaue   dene      te     ( <Paux>  +  palpmw )
     !+ad_desc        ____     __
     !+ad_desc  where DENE and TE are the electron density (10**20 m**-3) and
     !+ad_desc  electron temperature (10 keV) respectively.
@@ -115,6 +115,7 @@ contains
     !+ad_hist  11/09/13 PJK Changed ftr to ftrit; N.B. D-T reaction is assumed.
     !+ad_hist  26/02/14 PJK New argument niter added to vmcon call
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Not currently used
     !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -417,6 +418,7 @@ contains
       !+ad_hist  15/10/12 PJK Added physics_variables
       !+ad_hist  16/10/12 PJK Added physics_module
       !+ad_hist  16/10/12 PJK Added current_drive_variables
+      !+ad_hist  22/05/14 PJK Name changes to power quantities
       !+ad_stat  Okay
       !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -453,7 +455,7 @@ contains
 
       !  Total injection power (MW)
 
-      paux = (pinje + pinji)*1.0D-6
+      paux = pinjmw
 
       !  Reset density and temperature to pre-call values
 

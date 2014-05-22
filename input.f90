@@ -373,6 +373,7 @@ contains
     !+ad_hist  08/05/14 PJK Added BIGQMIN
     !+ad_hist  13/05/14 PJK Added IMPRAD_MODEL, FIMP, CORERADIUS
     !+ad_hist  20/05/14 PJK Removed FRADMIN, added FRADPWR, IRADLOSS
+    !+ad_hist  22/05/14 PJK PHEAT units changed to MW
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -979,8 +980,8 @@ contains
           call parse_real_variable('NBSHIELD', nbshield, 0.01D0, 0.5D0, &
                'Wall thickness of neutral beam duct (m)')
        case ('PHEAT')
-          call parse_real_variable('PHEAT', pheat, 0.0D0, 1.0D9, &
-               'Heating power not used for C.D. (W)')
+          call parse_real_variable('PHEAT', pheat, 0.0D0, 1.0D3, &
+               'Heating power not used for C.D. (MW)')
        case ('PINJALW')
           call parse_real_variable('PINJALW', pinjalw, 0.0D0, 1.0D3, &
                'Maximum allowed injection power (MW)')

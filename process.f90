@@ -366,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '281    Date  :: 2014-05-21'
+       '282    Date  :: 2014-05-22'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1557,3 +1557,4 @@ end subroutine output
 ! GIT 281: Added several clauses for ignite switch to ensure injected power is
 !          treated as zero for steady state power balance calculations. The usage
 !          of ignite is now thought to be fully consistent throughout the code.
+! GIT 282: Changed names (and in some cases, units) of several power-related variables

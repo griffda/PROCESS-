@@ -119,6 +119,7 @@ module physics_variables
   !+ad_hist  19/05/14 PJK Changed plrad to pedgerad; removed fradmin;
   !+ad_hisc               added iradloss
   !+ad_hist  21/05/14 PJK Changed ignite wording
+  !+ad_hist  22/05/14 PJK Name changes to power quantities
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -227,8 +228,6 @@ module physics_variables
   real(kind(1.0D0)) :: alpharate = 0.0D0
   !+ad_vars  alphat /1.0/ : temperature profile index
   real(kind(1.0D0)) :: alphat = 1.0D0
-  !+ad_vars  alpmw : alpha power (MW)
-  real(kind(1.0D0)) :: alpmw = 0.0D0
   !+ad_vars  aspect /3.5/ : aspect ratio (iteration variable 1)
   real(kind(1.0D0)) :: aspect = 3.5D0
   !+ad_vars  beamfus0 /1.0/ : multiplier for beam-background fusion calculation
@@ -455,23 +454,25 @@ module physics_variables
   real(kind(1.0D0)) :: ni0 = 0.0D0
   !+ad_vars  p0 : central total plasma pressure (Pa)
   real(kind(1.0D0)) :: p0 = 0.0D0
-  !+ad_vars  palp : alpha power per volume (MW/m3)
-  real(kind(1.0D0)) :: palp = 0.0D0
-  !+ad_vars  palpe : alpha power per volume to electrons (MW/m3)
-  real(kind(1.0D0)) :: palpe = 0.0D0
-  !+ad_vars  palpi : alpha power per volume to ions (MW/m3)
-  real(kind(1.0D0)) :: palpi = 0.0D0
+  !+ad_vars  palppv : alpha power per volume (MW/m3)
+  real(kind(1.0D0)) :: palppv = 0.0D0
+  !+ad_vars  palpepv : alpha power per volume to electrons (MW/m3)
+  real(kind(1.0D0)) :: palpepv = 0.0D0
+  !+ad_vars  palpipv : alpha power per volume to ions (MW/m3)
+  real(kind(1.0D0)) :: palpipv = 0.0D0
+  !+ad_vars  palpmw : alpha power (MW)
+  real(kind(1.0D0)) :: palpmw = 0.0D0
   !+ad_vars  palpnb : alpha power from hot neutral beam ions (MW)
   real(kind(1.0D0)) :: palpnb = 0.0D0
-  !+ad_vars  pbrem : bremsstrahlung power per volume (MW/m3)
-  !+ad_varc          (calculated only if imprad_model=1)
-  real(kind(1.0D0)) :: pbrem = 0.0D0
-  !+ad_vars  pcharge : non-alpha charged particle fusion power (MW/m3)
-  real(kind(1.0D0)) :: pcharge = 0.0D0
+  !+ad_vars  pbrempv : bremsstrahlung power per volume (MW/m3)
+  !+ad_varc            (calculated only if imprad_model=1)
+  real(kind(1.0D0)) :: pbrempv = 0.0D0
+  !+ad_vars  pchargepv : non-alpha charged particle fusion power per volume (MW/m3)
+  real(kind(1.0D0)) :: pchargepv = 0.0D0
   !+ad_vars  pcoef : profile factor (= n-weighted T / average T)
   real(kind(1.0D0)) :: pcoef = 0.0D0
-  !+ad_vars  pcorerad : total core radiation power per volume (MW/m3)
-  real(kind(1.0D0)) :: pcorerad = 0.0D0
+  !+ad_vars  pcoreradpv : total core radiation power per volume (MW/m3)
+  real(kind(1.0D0)) :: pcoreradpv = 0.0D0
   !+ad_vars  pdd : deuterium-deuterium fusion power (MW)
   real(kind(1.0D0)) :: pdd = 0.0D0
   !+ad_vars  pdhe3 : deuterium-helium3 fusion power (MW)
@@ -480,22 +481,26 @@ module physics_variables
   real(kind(1.0D0)) :: pdivt = 0.0D0
   !+ad_vars  pdt : deuterium-tritium fusion power (MW)
   real(kind(1.0D0)) :: pdt = 0.0D0
-  !+ad_vars  pedgerad : edge radiation power per volume (MW/m3)
-  real(kind(1.0D0)) :: pedgerad = 0.0D0
+  !+ad_vars  pedgeradpv : edge radiation power per volume (MW/m3)
+  real(kind(1.0D0)) :: pedgeradpv = 0.0D0
   !+ad_vars  pfuscmw : charged particle fusion power (MW)
   real(kind(1.0D0)) :: pfuscmw = 0.0D0
   !+ad_vars  phiint : internal plasma V-s
   real(kind(1.0D0)) :: phiint = 0.0D0
-  !+ad_vars  pie : ion/electron equilibration power (MW/m3)
-  real(kind(1.0D0)) :: pie = 0.0D0
+  !+ad_vars  piepv : ion/electron equilibration power per volume (MW/m3)
+  real(kind(1.0D0)) :: piepv = 0.0D0
   !+ad_vars  plascur : plasma current (A)
   real(kind(1.0D0)) :: plascur = 0.0D0
-  !+ad_vars  pline : line radiation power per volume (MW/m3)
-  !+ad_varc          (calculated only if imprad_model=1)
-  real(kind(1.0D0)) :: pline = 0.0D0
-  !+ad_vars  pneut : neutron fusion power per volume (MW/m3)
-  real(kind(1.0D0)) :: pneut = 0.0D0
-  !+ad_vars  pohmpv : ohmic heating per volume (MW/m3)
+  !+ad_vars  plinepv : line radiation power per volume (MW/m3)
+  !+ad_varc            (calculated only if imprad_model=1)
+  real(kind(1.0D0)) :: plinepv = 0.0D0
+  !+ad_vars  pneutmw : neutron fusion power (MW)
+  real(kind(1.0D0)) :: pneutmw = 0.0D0
+  !+ad_vars  pneutpv : neutron fusion power per volume (MW/m3)
+  real(kind(1.0D0)) :: pneutpv = 0.0D0
+  !+ad_vars  pohmmw : ohmic heating power (MW)
+  real(kind(1.0D0)) :: pohmmw = 0.0D0
+  !+ad_vars  pohmpv : ohmic heating power per volume (MW/m3)
   real(kind(1.0D0)) :: pohmpv = 0.0D0
   !+ad_vars  powerht : heating power (= transport loss power) (MW) used in
   !+ad_varc            confinement time calculation
@@ -504,12 +509,12 @@ module physics_variables
   real(kind(1.0D0)) :: powfmw = 0.0D0
   !+ad_vars  pperim : plasma poloidal perimeter (m)
   real(kind(1.0D0)) :: pperim = 0.0D0
-  !+ad_vars  prad : total radiation power per volume (MW/m3)
-  real(kind(1.0D0)) :: prad = 0.0D0
+  !+ad_vars  pradpv : total radiation power per volume (MW/m3)
+  real(kind(1.0D0)) :: pradpv = 0.0D0
   !+ad_vars  protonrate : proton production rate (particles/m3/sec)
   real(kind(1.0D0)) :: protonrate = 0.0D0
-  !+ad_vars  psync : synchrotron radiation power per volume (MW/m3)
-  real(kind(1.0D0)) :: psync = 0.0D0
+  !+ad_vars  psyncpv : synchrotron radiation power per volume (MW/m3)
+  real(kind(1.0D0)) :: psyncpv = 0.0D0
   !+ad_vars  pthrmw(8) : L-H power threshold (MW): <OL>
   !+ad_varc         <LI> ITER 1996 nominal
   !+ad_varc         <LI> ITER 1996 upper bound
@@ -520,10 +525,10 @@ module physics_variables
   !+ad_varc         <LI> 2008 Martin scaling: 95% upper bound
   !+ad_varc         <LI> 2008 Martin scaling: 95% lower bound</OL>
   real(kind(1.0D0)), dimension(8) :: pthrmw = 0.0D0
-  !+ad_vars  ptre : electron transport power (MW/m3)
-  real(kind(1.0D0)) :: ptre = 0.0D0
-  !+ad_vars  ptri : ion transport power (MW/m3)
-  real(kind(1.0D0)) :: ptri = 0.0D0
+  !+ad_vars  ptrepv : electron transport power per volume (MW/m3)
+  real(kind(1.0D0)) :: ptrepv = 0.0D0
+  !+ad_vars  ptripv : ion transport power (MW/m3)
+  real(kind(1.0D0)) :: ptripv = 0.0D0
   !+ad_vars  q /3.0/ : safety factor at plasma edge (q-"psi") (iteration variable 18):
   !+ad_varc            icurr = 2, q = mean safety factor qbar for divertors;
   !+ad_varc            icurr = 3,4, q = safety factor at 95% surface
@@ -697,9 +702,9 @@ module current_drive_variables
   real(kind(1.0D0)) :: cboot = 1.0D0
   !+ad_vars  cnbeam : neutral beam current (A)
   real(kind(1.0D0)) :: cnbeam = 0.0D0
-  !+ad_vars  echpwr : ECH power (W)
+  !+ad_vars  echpwr : ECH power (MW)
   real(kind(1.0D0)) :: echpwr = 0.0D0
-  !+ad_vars  echwpow : ECH wall plug power (W)
+  !+ad_vars  echwpow : ECH wall plug power (MW)
   real(kind(1.0D0)) :: echwpow = 0.0D0
   !+ad_vars  enbeam /1.0D3/ : neutral beam energy (keV) (iteration variable 19)
   real(kind(1.0D0)) :: enbeam = 1.0D3
@@ -736,25 +741,27 @@ module current_drive_variables
   integer :: irfcd = 1
   !+ad_vars  nbshield /0.1/ : neutral beam duct shielding thickness (m)
   real(kind(1.0D0)) :: nbshield = 0.1D0
-  !+ad_vars  pheat /0.0/ : heating power not used for current drive (W)
+  !+ad_vars  pheat /0.0/ : heating power not used for current drive (MW)
   !+ad_varc                (iteration variable 11)
   real(kind(1.0D0)) :: pheat = 0.0D0
   !+ad_vars  pinjalw /25.0/ : Maximum allowable value for injected power (MW)
   !+ad_varc                   (constraint equation 30)
   real(kind(1.0D0)) :: pinjalw = 25.0D0
-  !+ad_vars  pinje : auxiliary power to electrons (W)
-  real(kind(1.0D0)) :: pinje = 0.0D0
-  !+ad_vars  pinji : auxiliary power to ions (W)
-  real(kind(1.0D0)) :: pinji = 0.0D0
-  !+ad_vars  plhybd : lower hybrid injection power (W)
+  !+ad_vars  pinjemw : auxiliary power to electrons (MW)
+  real(kind(1.0D0)) :: pinjemw = 0.0D0
+  !+ad_vars  pinjimw : auxiliary power to ions (MW)
+  real(kind(1.0D0)) :: pinjimw = 0.0D0
+  !+ad_vars  pinjmw : total auxiliary power (MW)
+  real(kind(1.0D0)) :: pinjmw = 0.0D0
+  !+ad_vars  plhybd : lower hybrid injection power (MW)
   real(kind(1.0D0)) :: plhybd = 0.0D0
-  !+ad_vars  pnbeam : neutral beam injection power (W)
+  !+ad_vars  pnbeam : neutral beam injection power (MW)
   real(kind(1.0D0)) :: pnbeam = 0.0D0
-  !+ad_vars  pofcd : OFCD injection power (W)
+  !+ad_vars  pofcd : OFCD injection power (MW)
   real(kind(1.0D0)) :: pofcd = 0.0D0
-  !+ad_vars  pwplh : lower hybrid wall plug power (W)
+  !+ad_vars  pwplh : lower hybrid wall plug power (MW)
   real(kind(1.0D0)) :: pwplh = 0.0D0
-  !+ad_vars  pwpnb : neutral beam wall plug power (W)
+  !+ad_vars  pwpnb : neutral beam wall plug power (MW)
   real(kind(1.0D0)) :: pwpnb = 0.0D0
   !+ad_vars  rtanbeam : neutral beam centreline tangency radius (m)
   real(kind(1.0D0)) :: rtanbeam = 0.0D0

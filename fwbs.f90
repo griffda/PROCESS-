@@ -1250,6 +1250,7 @@ contains
     !+ad_hist  16/08/13 PJK Removed obsolete stellarator clause (this routine
     !+ad_hisc               is no longer used for stellarators)
     !+ad_hist  24/04/14 PJK Changed bktlife output statement to avoid confusion
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1271,7 +1272,7 @@ contains
 
     real(kind(1.0D0)) :: coilhtmx,decaybl,dpacop,dshieq,dshoeq,elong, &
          fpsdt,fpydt,frachit,hbot,hblnkt,hecan,hshld,htop,htheci,hvv, &
-         pheci,pheco,pneut1,pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2,r3, &
+         pheci,pheco,pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2,r3, &
          raddose,v1,v2,volshldi,volshldo,wpthk,zdewex
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1425,13 +1426,9 @@ contains
 
     end if
 
-    !  Neutron power from plasma
-
-    pneut1 = pneut*vol
-
     !  Neutron power lost through divertor gap in first wall
 
-    pnucloss = pneut1 * fhole
+    pnucloss = pneutmw * fhole
 
     !  Blanket neutronics calculations
 
@@ -1484,14 +1481,14 @@ contains
        if (itart == 1) then
           frachit = hmax / sqrt(hmax**2 + (rmajor-tfcth)**2 ) * &
                atan(tfcth/(rmajor-tfcth) )/pi
-          pnuccp = pneut1 * frachit * (1.0D0 - exp(-2.0D0*tfcth/0.08D0))
+          pnuccp = pneutmw * frachit * (1.0D0 - exp(-2.0D0*tfcth/0.08D0))
        else
           pnuccp = 0.0D0
        end if
 
        !  Energy-multiplied neutron power
 
-       pneut2 = (pneut1 - pnucloss - pnuccp) * emult
+       pneut2 = (pneutmw - pnucloss - pnuccp) * emult
 
        !  Nuclear heating in the blanket
 
@@ -4895,6 +4892,7 @@ contains
     !+ad_prob  None
     !+ad_call  kit_blanket
     !+ad_hist  06/06/13 PJK Initial release
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Okay
     !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
     !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
@@ -4919,7 +4917,7 @@ contains
     A_bl_OB = blareaob * 1.0D4  ! [cm^2] OB blanket area
     A_VV_IB = shareaib * 1.0D4  ! [cm^2] IB shield/VV area
     A_VV_OB = shareaob * 1.0D4  ! [cm^2] OB shield/VV area
-    P_n = pneut*vol             ! [MW] Fusion neutron power
+    P_n = pneutmw               ! [MW] Fusion neutron power
     NWL_av = wallmw             ! [MW/m^2] Average neutron wall load
     f_peak = wallpf             ! [--] NWL peaking factor
     t_FW_IB = fwith * 100.0D0   ! [cm] IB first wall thickness

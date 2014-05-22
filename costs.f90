@@ -1,4 +1,3 @@
-!  $Id:: costs.f90 226 2014-02-17 16:05:30Z pknight                     $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module costs_module
@@ -1944,6 +1943,7 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  22/05/14 PJK Powers now in MW instead of W
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1977,29 +1977,29 @@ contains
 
        !  Account 223.1 : ECH
 
-       c2231 = 1.0D-6 * ucech * echpwr**exprf
+       c2231 = 1.0D-6 * ucech * (1.0D6*echpwr)**exprf
        if (ifueltyp == 1) c2231 = (1.0D0-fcdfuel) * c2231
        c2231 = fkind * c2231
 
        !  Account 223.2 : Lower Hybrid or ICH
 
        if (iefrf /= 2) then
-          c2232 = 1.0D-6 * uclh * plhybd**exprf
+          c2232 = 1.0D-6 * uclh * (1.0D6*plhybd)**exprf
        else
-          c2232 = 1.0D-6 * ucich * plhybd**exprf
+          c2232 = 1.0D-6 * ucich * (1.0D6*plhybd)**exprf
        end if
        if (ifueltyp == 1) c2232 = (1.0D0-fcdfuel) * c2232
        c2232 = fkind * c2232
 
        !  Account 223.3 : Neutral Beam
 
-       c2233 = 1.0D-6 * ucnbi * pnbeam**exprf
+       c2233 = 1.0D-6 * ucnbi * (1.0D6*pnbeam)**exprf
        if (ifueltyp == 1) c2233 = (1.0D0-fcdfuel) * c2233
        c2233 = fkind * c2233
 
        !  Account 223.4 : Oscillating Field (RFP)
 
-       c2234 = 1.0D-6 * ucof * pofcd**exprf
+       c2234 = 1.0D-6 * ucof * (1.0D6*pofcd)**exprf
        if (ifueltyp == 1) c2234 = (1.0D0-fcdfuel) * c2234
        c2234 = fkind * c2234
 

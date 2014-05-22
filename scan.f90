@@ -146,6 +146,7 @@ contains
     !+ad_hist  20/02/14 PJK Replaced te*pcoef with ten; changed plabel(20)
     !+ad_hist  30/04/14 PJK Fixed plabel(20)
     !+ad_hist  15/05/14 PJK Increased output width to 110 characters
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -400,10 +401,10 @@ contains
        outvar(24,iscan) = powfmw
        outvar(25,iscan) = palpnb * 5.0D0
        outvar(26,iscan) = wallmw
-       outvar(27,iscan) = 1.0D-6 * (pinji + pinje)
+       outvar(27,iscan) = pinjmw
        outvar(28,iscan) = pinjwp
-       outvar(29,iscan) = pheat * 1.0D-6
-       outvar(30,iscan) = 1.0D-6 * (pinji + pinje - pheat)
+       outvar(29,iscan) = pheat
+       outvar(30,iscan) = pinjmw - pheat
        outvar(31,iscan) = bigq
        outvar(32,iscan) = bootipf
        outvar(33,iscan) = enbeam/1.0D3

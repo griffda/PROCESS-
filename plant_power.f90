@@ -783,6 +783,7 @@ contains
     !+ad_hist  27/03/13 PJK MGF power only included if iscenr /= 2
     !+ad_hist  17/04/13 PJK Removed 0.05*pacpmw contribution to fcsht
     !+ad_hist  21/05/14 PJK Added ignite comment
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -796,7 +797,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: basemw,bdvmw,crymw,pheatmw,pkwpm2,ppfmw,ptfmw
+    real(kind(1.0D0)) :: basemw,bdvmw,crymw,pheatingmw,pkwpm2,ppfmw,ptfmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -811,7 +812,7 @@ contains
 
     !  Power to plasma heating supplies, MW
 
-    pheatmw = pinjwp  !  Should be zero if ignite==1
+    pheatingmw = pinjwp  !  Should be zero if ignite==1
 
     !  Power to cryogenic comp. motors, MW
 
@@ -832,7 +833,7 @@ contains
     !  Total pulsed power system load, MW
 
     pacpmw = ppfmw + bdvmw + ptfmw + crymw + vachtmw + &
-         htpmw + trithtmw + pheatmw + basemw + efloor*pkwpm2/1000.0D0
+         htpmw + trithtmw + pheatingmw + basemw + efloor*pkwpm2/1000.0D0
 
     !  Add contribution from motor-generator flywheels if these are part of
     !  the energy storage system
@@ -864,8 +865,8 @@ contains
     call ovarre(outfile,'PF coil power supplies (MW)','(ppfmw)',ppfmw)
     call ovarre(outfile,'Power/floor area (kW/m2)','(pkwpm2)',pkwpm2)
     call ovarre(outfile,'TF coil power supplies (MW)','(ptfmw)',ptfmw)
-    call ovarre(outfile,'Plasma heating supplies (MW)','(pheatmw)', &
-         pheatmw)
+    call ovarre(outfile,'Plasma heating supplies (MW)','(pheatingmw)', &
+         pheatingmw)
     call ovarre(outfile,'Tritium processing (MW)','(trithtmw)',trithtmw)
     call ovarre(outfile,'Vacuum pump motors (MW)','(vachtmw)',vachtmw)
 
@@ -906,6 +907,7 @@ contains
     !+ad_hist  17/04/13 PJK Added iprimnloss switch for pnucloss contribution
     !+ad_hisc               to primary heating
     !+ad_hist  21/05/14 PJK Added ignite clauses
+    !+ad_hist  22/05/14 PJK Name changes to power quantities; added pohmmw to pfwdiv
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -924,9 +926,9 @@ contains
     !  priheat is the total thermal power removed from fusion core
 
     if (ignite == 0) then
-       pfwdiv = pfuscmw + 1.0D-6 * (pinje + pinji)
+       pfwdiv = pfuscmw + pohmmw + pinjmw
     else
-       pfwdiv = pfuscmw
+       pfwdiv = pfuscmw + pohmmw
     end if
     pthermmw = pnucblkt + pnucshld + (1.0D0-ffwlg)*pfwdiv
     priheat = pnucblkt + pnucshld + pfwdiv
@@ -959,8 +961,7 @@ contains
     !  Wall plug injection power
 
     if (ignite == 0) then
-       pinjwp = 1.0D-6 * (echpwr/etaech + plhybd/etalh + pnbeam/etanbi + &
-            pofcd/etaof)
+       pinjwp = echpwr/etaech + plhybd/etalh + pnbeam/etanbi + pofcd/etaof
     else
        pinjwp = 0.0D0
     end if
@@ -968,7 +969,7 @@ contains
     !  Waste injection power 
 
     if (ignite == 0) then
-       pinjht = pinjwp - 1.0D-6*(pinji + pinje)
+       pinjht = pinjwp - pinjmw
     else
        pinjht = 0.0D0
     end if

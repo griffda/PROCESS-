@@ -1,4 +1,3 @@
-!  $Id:: constraint_equations.f90 263 2014-05-01 14:26:48Z pknight      $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine constraints(m,cc,ieqn)
@@ -88,6 +87,7 @@ subroutine constraints(m,cc,ieqn)
   !+ad_hist  19/05/14 PJK Removed redundant eqn 15
   !+ad_hist  19/05/14 PJK Added new eqn 17; modified eqns 2,4 to use
   !+ad_hisc               pcorerad instead of prad; added iradloss
+  !+ad_hist  22/05/14 PJK Name changes to power quantities
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -122,7 +122,7 @@ subroutine constraints(m,cc,ieqn)
   !  Local variables
 
   integer :: i,i1,i2
-  real(kind(1.0D0)) :: cratmx, tcycle, totmva, acoil, pradmax
+  real(kind(1.0D0)) :: cratmx, tcycle, totmva, acoil, pradmaxpv
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -150,23 +150,24 @@ subroutine constraints(m,cc,ieqn)
      case (2)  !  Global plasma power balance equation
                !  This is a consistency equation
 
-        if (iradloss == 1) then  !  include pcorerad
+        if (iradloss == 1) then  !  include pcoreradpv
 
            if (ignite == 0) then
-              cc(i) = 1.0D0 - (ptre+ptri+pcorerad)/( falpha*palp &
-                   + pcharge + pohmpv + 1.0D-6*(pinji+pinje)/vol )
+              cc(i) = 1.0D0 - (ptrepv + ptripv + pcoreradpv) / &
+                   (falpha*palppv + pchargepv + pohmpv + pinjmw/vol)
            else
-              cc(i) = 1.0D0 - (ptre+ptri+pcorerad)/ &
-                   (falpha*palp + pcharge + pohmpv)
+              cc(i) = 1.0D0 - (ptrepv + ptripv + pcoreradpv) / &
+                   (falpha*palppv + pchargepv + pohmpv)
            end if
 
-        else  !  exclude pcorerad
+        else  !  exclude pcoreradpv
 
            if (ignite == 0) then
-              cc(i) = 1.0D0 - (ptre+ptri)/( falpha*palp &
-                   + pcharge + pohmpv + 1.0D-6*(pinji+pinje)/vol )
+              cc(i) = 1.0D0 - (ptrepv + ptripv) / &
+                   (falpha*palppv + pchargepv + pohmpv + pinjmw/vol)
            else
-              cc(i) = 1.0D0 - (ptre+ptri)/(falpha*palp + pcharge + pohmpv)
+              cc(i) = 1.0D0 - (ptrepv + ptripv) / &
+                   (falpha*palppv + pchargepv + pohmpv)
            end if
 
         end if
@@ -175,30 +176,31 @@ subroutine constraints(m,cc,ieqn)
                !  This is a consistency equation
 
         if (ignite == 0) then
-           cc(i) = 1.0D0 - (ptri+pie)/ &
-                (falpha*palpi + 1.0D-6*pinji/vol)
+           cc(i) = 1.0D0 - (ptripv + piepv) / &
+                (falpha*palpipv + pinjimw/vol)
         else
-           cc(i) = 1.0D0 - (ptri+pie)/(falpha*palpi)
+           cc(i) = 1.0D0 - (ptripv+piepv) / (falpha*palpipv)
         end if
 
      case (4)  !  Global power balance equation for electrons
                !  This is a consistency equation
 
-        if (iradloss == 1) then  !  include pcorerad
+        if (iradloss == 1) then  !  include pcoreradpv
 
            if (ignite == 0) then
-              cc(i) = 1.0D0 - (ptre+pcorerad)/ &
-                   ( (falpha*palpe)+pie + 1.0D-6*pinje/vol )
+              cc(i) = 1.0D0 - (ptrepv + pcoreradpv) / &
+                   (falpha*palpepv + piepv + pinjemw/vol)
            else
-              cc(i) = 1.0D0 - (ptre+pcorerad)/( (falpha*palpe)+pie )
+              cc(i) = 1.0D0 - (ptrepv + pcoreradpv) / &
+                   (falpha*palpepv + piepv)
            end if
 
-        else  !  exclude pcorerad
+        else  !  exclude pcoreradpv
 
            if (ignite == 0) then
-              cc(i) = 1.0D0 - ptre / ( (falpha*palpe)+pie + 1.0D-6*pinje/vol )
+              cc(i) = 1.0D0 - ptrepv / (falpha*palpepv + piepv + pinjemw/vol)
            else
-              cc(i) = 1.0D0 - ptre / ( (falpha*palpe)+pie )
+              cc(i) = 1.0D0 - ptrepv / (falpha*palpepv + piepv)
            end if
 
         end if
@@ -273,10 +275,10 @@ subroutine constraints(m,cc,ieqn)
         cc(i) = 1.0D0 - fpnetel * pnetelmw / pnetelin
 
      case (17)  !  Equation for radiation power upper limit
-        !  pradmax is the maximum possible power/vol that can be radiated
+        !  pradmaxpv is the maximum possible power/vol that can be radiated
 
-        pradmax = 1.0D-6*(pinji + pinje)/vol + alpmw/vol + pcharge + pohmpv
-        cc(i) = 1.0D0 - fradpwr * pradmax / prad
+        pradmaxpv = pinjmw/vol + palppv + pchargepv + pohmpv
+        cc(i) = 1.0D0 - fradpwr * pradmaxpv / pradpv
 
      case (18)  !  Equation for divertor heat load upper limit
 
@@ -371,7 +373,7 @@ subroutine constraints(m,cc,ieqn)
 
         !  Usual form is inverted to prevent problems when injection power is zero
 
-        cc(i) = 1.0D0 - (pinji + pinje) / (fpinj * 1.0D6 * pinjalw)
+        cc(i) = 1.0D0 - pinjmw / (fpinj * pinjalw)
 
      case (31)  !  Equation for TF coil case stress upper limit (SCTF)
 
@@ -419,7 +421,7 @@ subroutine constraints(m,cc,ieqn)
 
      case (40)  !  Equation for auxiliary power lower limit
 
-        cc(i) = 1.0D0 - fauxmn * 1.0D-6 * (pinje+pinji)/auxmin
+        cc(i) = 1.0D0 - fauxmn * pinjmw/auxmin
 
      case (41)  !  Equation for plasma current ramp-up time lower limit
 
@@ -585,8 +587,8 @@ subroutine constraints(m,cc,ieqn)
         case (30)
            write(*,*) 'fpinj = ', fpinj
            write(*,*) 'pinjalw = ', pinjalw
-           write(*,*) 'pinji = ', pinji
-           write(*,*) 'pinje = ', pinje
+           write(*,*) 'pinjimw = ', pinjimw
+           write(*,*) 'pinjemw = ', pinjemw
  
         end select
 

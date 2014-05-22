@@ -744,6 +744,7 @@ contains
     !+ad_hist  15/05/14 PJK Changed iwalld logic
     !+ad_hist  20/05/14 PJK Cleaned up radiation power usage
     !+ad_hist  21/05/14 PJK Added ignite clause to pinj calculation
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -850,7 +851,7 @@ contains
 
     !  Calculate fusion power + components
 
-    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palp,pcharge,pneut, &
+    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palppv,pchargepv,pneutpv, &
          sigvdt,fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
 
     pdt = pdtpv * vol
@@ -871,38 +872,39 @@ contains
     pdt = pdt + 5.0D0*palpnb
 
     call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
-         ifalphap,pcharge,pneut,ten,tin,vol,alpmw,betaft, &
-         palp,palpi,palpe,pfuscmw,powfmw)
+         ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,betaft, &
+         palppv,palpipv,palpepv,pfuscmw,powfmw)
 
     !  Neutron wall load
 
     if (iwalld == 1) then
-       wallmw = ffwal * (pneut*vol) / sarea
+       wallmw = ffwal * pneutmw / sarea
     else
-       wallmw = (pneut*vol) / fwarea
+       wallmw = pneutmw / fwarea
     end if
 
     !  Calculate ion/electron equilibration power
 
-    call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,pie)
+    call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
 
     !  Calculate radiation power
 
-    call radpwr(imprad_model,pbrem,pline,psync,pcorerad,pedgerad,prad)
+    call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
+         pcoreradpv,pedgeradpv,pradpv)
 
     !  Calculate ohmic power
 
     call pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
-         pohmpv,rpfac,rplas)
+         pohmpv,pohmmw,rpfac,rplas)
 
     !  Power to the divertor
 
     if (ignite == 0) then
-       pinj = 1.0D-6 * (pinje + pinji)/vol
+       pinj = pinjmw/vol
     else
        pinj = 0.0D0
     end if
-    pdivt = vol * (palp + pcharge + pinj + pohmpv - prad)
+    pdivt = vol * (palppv + pchargepv + pinj + pohmpv - pradpv)
 
     !  The following line is unphysical, but prevents -ve sqrt argument
     !  Should be obsolete if constraint eqn 17 is turned on
@@ -916,10 +918,10 @@ contains
     !  Calculate transport losses and energy confinement time using the
     !  chosen scaling law
 
-    call pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
-         iinvqd,isc,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-         plascur,pohmpv,pcorerad,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
-         xarea,zeff,ptre,ptri,tauee,tauei,taueff,powerht)
+    call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
+         iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargepv,pinjmw, &
+         plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
+         xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
 
     !  Calculate volt-second requirements (not done!)
 

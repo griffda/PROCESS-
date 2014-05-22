@@ -338,6 +338,7 @@ contains
     !+ad_hist  25/06/13 PJK Added kind() to sgn assignment
     !+ad_hist  12/02/14 PJK Added new figure of merit 15
     !+ad_hist  13/02/14 PJK Added trap if iavail /= 1 with fig of merit 15
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -368,7 +369,7 @@ contains
        fc = sgn * 0.2D0 * rmajor
 
     case (2)  !  fusion power / input power
-       fc = sgn * powfmw/( (pinji+pinje)/1.0D6 + tfcpmw + ppump/1.0D6)
+       fc = sgn * powfmw / (pinjmw + tfcpmw + ppump/1.0D6)
 
     case (3)  !  neutron wall load
        fc = sgn * wallmw
@@ -377,7 +378,7 @@ contains
        fc = sgn * (tfcmw + 1.0D-3*srcktpm)/10.0D0
 
     case (5)  !  fusion power / injection power
-       fc = sgn * powfmw / ( (pinji+pinje)/1.0D6 )
+       fc = sgn * powfmw / pinjmw
 
     case (6)  !  cost of electricity
        fc = sgn * coe/100.0D0
@@ -399,7 +400,7 @@ contains
        fc = sgn * bt
 
     case (11)  !  injection power
-       fc = sgn * (pinje+pinji) / 1.0D6
+       fc = sgn * pinjmw
 
     case (12)  !  hydrogen production capital cost
        fc = sgn * chplant / 1.0D2

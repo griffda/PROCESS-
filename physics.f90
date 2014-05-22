@@ -190,6 +190,7 @@ contains
     !+ad_hist  15/05/14 PJK Removed ffwal from iwalld=2 calculation
     !+ad_hist  19/05/14 PJK Clarified pcorerad vs pbrem; plrad --> pedgerad
     !+ad_hist  21/05/14 PJK Added ignite clause to pinj calculation
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -331,7 +332,7 @@ contains
 
     !  Calculate fusion power + components
 
-    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palp,pcharge,pneut, &
+    call palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti,palppv,pchargepv,pneutpv, &
          sigvdt,fusionrate,alpharate,protonrate,pdtpv,pdhe3pv,pddpv)
 
     pdt = pdtpv * vol
@@ -352,43 +353,44 @@ contains
     pdt = pdt + 5.0D0*palpnb
 
     call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
-         ifalphap,pcharge,pneut,ten,tin,vol,alpmw,betaft, &
-         palp,palpi,palpe,pfuscmw,powfmw)
+         ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,betaft, &
+         palppv,palpipv,palpepv,pfuscmw,powfmw)
 
     !  Neutron wall load
 
     if (iwalld == 1) then
-       wallmw = ffwal * (pneut*vol) / sarea
+       wallmw = ffwal * pneutmw / sarea
     else
-       wallmw = (pneut*vol) / fwarea
+       wallmw = pneutmw / fwarea
     end if
 
     !  Calculate ion/electron equilibration power
 
-    call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,pie)
+    call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
 
     !  Calculate radiation power
 
-    call radpwr(imprad_model,pbrem,pline,psync,pcorerad,pedgerad,prad)
+    call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
+         pcoreradpv,pedgeradpv,pradpv)
 
     !  Calculate ohmic power
 
     call pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
-         pohmpv,rpfac,rplas)
+         pohmpv,pohmmw,rpfac,rplas)
 
     !  Calculate L- to H-mode power threshold
 
     call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
 
     !  Power to the divertor
-    !+PJK Should falpha be used to multiply palp here?
+    !+PJK Should falpha be used to multiply palppv here?
 
     if (ignite == 0) then
-       pinj = 1.0D-6 * (pinje + pinji)/vol
+       pinj = pinjmw/vol
     else
        pinj = 0.0D0
     end if
-    pdivt = vol * (palp + pcharge + pinj + pohmpv - prad)
+    pdivt = vol * (palppv + pchargepv + pinj + pohmpv - pradpv)
 
     !  The following line is unphysical, but prevents -ve sqrt argument
     !  Should be obsolete if constraint eqn 17 is turned on
@@ -403,10 +405,10 @@ contains
     !  Calculate transport losses and energy confinement time using the
     !  chosen scaling law
 
-    call pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
-         iinvqd,isc,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-         plascur,pohmpv,pcorerad,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
-         xarea,zeff,ptre,ptri,tauee,tauei,taueff,powerht)
+    call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
+         iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargepv,pinjmw, &
+         plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
+         xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
 
     !  Calculate volt-second requirements
 
@@ -2310,7 +2312,7 @@ contains
     !  Fraction of alpha energy to ions and electrons
     !  From Max Fenstermacher
     !  (used with electron and ion power balance equations only)
-    !  No consideration of pcharge here...
+    !  No consideration of pchargepv here...
 
     !  pcoef now calculated in plasma_profiles, after the very first
     !  call of betcom; use old parabolic profile estimate in this case
@@ -2486,7 +2488,7 @@ contains
     !  Fraction of alpha energy to ions and electrons
     !  From Max Fenstermacher
     !  (used with electron and ion power balance equations only)
-    !  No consideration of pcharge here...
+    !  No consideration of pchargepv here...
 
     !  pcoef now calculated in plasma_profiles, after the very first
     !  call of plasma_composition; use old parabolic profile estimate
@@ -2671,7 +2673,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine palph(alphan,alphat,deni,fdeut,fhe3,ftrit,ti, &
-       palp,pcharge,pneut,sigvdt,fusionrate,alpharate,protonrate, &
+       palppv,pchargepv,pneutpv,sigvdt,fusionrate,alpharate,protonrate, &
        pdtpv,pdhe3pv,pddpv)
 
     !+ad_name  palph
@@ -2679,23 +2681,23 @@ contains
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  fint
-    !+ad_args  alphan  : input real :  density profile index
-    !+ad_args  alphat  : input real :  temperature profile index
-    !+ad_args  deni    : input real :  fuel ion density (/m3)
-    !+ad_args  fdeut   : input real :  deuterium fuel fraction
-    !+ad_args  fhe3    : input real :  helium-3 fuel fraction
-    !+ad_args  ftrit   : input real :  tritium fuel fraction
-    !+ad_args  ti      : input real :  ion temperature (keV)
-    !+ad_args  palp    : output real : alpha particle fusion power (MW/m3)
-    !+ad_args  pcharge : output real : other charged particle fusion power (MW/m3)
-    !+ad_args  pneut   : output real : neutron fusion power (MW/m3)
-    !+ad_args  sigvdt  : output real : profile averaged <sigma v DT> (m3/s)
+    !+ad_args  alphan     : input real :  density profile index
+    !+ad_args  alphat     : input real :  temperature profile index
+    !+ad_args  deni       : input real :  fuel ion density (/m3)
+    !+ad_args  fdeut      : input real :  deuterium fuel fraction
+    !+ad_args  fhe3       : input real :  helium-3 fuel fraction
+    !+ad_args  ftrit      : input real :  tritium fuel fraction
+    !+ad_args  ti         : input real :  ion temperature (keV)
+    !+ad_args  palppv     : output real : alpha particle fusion power per volume (MW/m3)
+    !+ad_args  pchargepv  : output real : other charged particle fusion power per volume (MW/m3)
+    !+ad_args  pneutpv    : output real : neutron fusion power per volume (MW/m3)
+    !+ad_args  sigvdt     : output real : profile averaged <sigma v DT> (m3/s)
     !+ad_args  fusionrate : output real : fusion reaction rate (reactions/m3/s)
     !+ad_args  alpharate  : output real : alpha particle production rate (/m3/s)
     !+ad_args  protonrate : output real : proton production rate (/m3/s)
-    !+ad_args  pdtpv   : output real : D-T fusion power (MW/m3)
-    !+ad_args  pdhe3pv : output real : D-He3 fusion power (MW/m3)
-    !+ad_args  pddpv   : output real : D-D fusion power (MW/m3)
+    !+ad_args  pdtpv      : output real : D-T fusion power (MW/m3)
+    !+ad_args  pdhe3pv    : output real : D-He3 fusion power (MW/m3)
+    !+ad_args  pddpv      : output real : D-D fusion power (MW/m3)
     !+ad_desc  This subroutine numerically integrates over plasma cross-section to
     !+ad_desc  find the core plasma fusion power.
     !+ad_prob  None
@@ -2722,7 +2724,7 @@ contains
 
     real(kind(1.0D0)), intent(in) :: alphan, alphat, deni, fdeut, &
          fhe3, ftrit, ti
-    real(kind(1.0D0)), intent(out) :: palp, pcharge, pneut, sigvdt, &
+    real(kind(1.0D0)), intent(out) :: palppv, pchargepv, pneutpv, sigvdt, &
          fusionrate, alpharate, protonrate, pdtpv, pdhe3pv, pddpv
 
     !  Local variables
@@ -2743,9 +2745,9 @@ contains
     !  Find fusion power
     !  Integrate over plasma profiles to obtain fusion reaction rate
 
-    palp = 0.0D0
-    pcharge = 0.0D0
-    pneut = 0.0D0
+    palppv = 0.0D0
+    pchargepv = 0.0D0
+    pneutpv = 0.0D0
     fusionrate = 0.0D0
     alpharate = 0.0D0
     protonrate = 0.0D0
@@ -2814,9 +2816,9 @@ contains
 
        end select
 
-       palp = palp + pa
-       pcharge = pcharge + pc
-       pneut = pneut + pn
+       palppv = palppv + pa
+       pchargepv = pchargepv + pc
+       pneutpv = pneutpv + pn
        fusionrate = fusionrate + frate
        alpharate = alpharate + arate
        protonrate = protonrate + prate
@@ -2894,8 +2896,8 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
-       ifalphap,pcharge,pneut,ten,tin,vol,alpmw,betaft,palp,palpi, &
-       palpe,pfuscmw,powfmw)
+       ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,betaft, &
+       palppv,palpipv,palpepv,pfuscmw,powfmw)
 
     !+ad_name  palph2
     !+ad_summ  (Concluding part of) fusion power and fast alpha pressure
@@ -2912,16 +2914,17 @@ contains
     !+ad_args  falpi    : input real :  fraction of alpha energy to ions
     !+ad_args  ifalphap : input integer :  switch for fast alpha pressure method
     !+ad_args  palpnb   : input real :  alpha power from hot neutral beam ions (MW)
-    !+ad_args  pcharge  : input real :  other charged particle fusion power (MW/m3)
-    !+ad_args  pneut    : input/output real neutron fusion power (MW/m3)
+    !+ad_args  pchargepv : input real : other charged particle fusion power per volume (MW/m3)
+    !+ad_args  pneutpv  : input/output real : neutron fusion power per volume (MW/m3)
     !+ad_args  ten      : input real :  density-weighted electron temperature (keV)
     !+ad_args  tin      : input real :  density-weighted ion temperature (keV)
     !+ad_args  vol      : input real :  plasma volume (m3)
-    !+ad_args  alpmw    : output real : alpha power (MW)
+    !+ad_args  palpmw   : output real : alpha power (MW)
+    !+ad_args  pneutmw  : output real : neutron fusion power (MW)
     !+ad_args  betaft   : output real : fast alpha beta component
-    !+ad_args  palp     : input/output real : alpha power per volume (MW/m3)
-    !+ad_args  palpe    : output real : alpha power per volume to electrons (MW/m3)
-    !+ad_args  palpi    : output real : alpha power per volume to ions (MW/m3)
+    !+ad_args  palppv   : input/output real : alpha power per volume (MW/m3)
+    !+ad_args  palpepv  : output real : alpha power per volume to electrons (MW/m3)
+    !+ad_args  palpipv  : output real : alpha power per volume to ions (MW/m3)
     !+ad_args  pfuscmw  : output real : charged particle fusion power (MW)
     !+ad_args  powfmw   : output real : fusion power (MW)
     !+ad_desc  This subroutine completes the calculation of the fusion power
@@ -2937,6 +2940,7 @@ contains
     !+ad_hist  10/10/13 PJK Made multiplier in betath equation explicit
     !+ad_hist  19/02/14 PJK Removed obsolete argument pcoef;
     !+ad_hisc               changed te,ti to ten,tin
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Okay
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
     !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
@@ -2950,10 +2954,10 @@ contains
 
     integer, intent(in) :: ifalphap
     real(kind(1.0D0)), intent(in) :: bp, bt, dene, deni, dnitot, falpe, &
-         falpi, palpnb, pcharge, ten, tin, vol
-    real(kind(1.0D0)), intent(inout) :: palp, pneut
-    real(kind(1.0D0)), intent(out) :: alpmw, betaft, palpe, palpi, &
-         pfuscmw, powfmw
+         falpi, palpnb, pchargepv, ten, tin, vol
+    real(kind(1.0D0)), intent(inout) :: palppv, pneutpv
+    real(kind(1.0D0)), intent(out) :: palpmw, pneutmw, betaft, palpepv, &
+         palpipv, pfuscmw, powfmw
 
     !  Local variables
 
@@ -2963,30 +2967,34 @@ contains
 
     !  Add neutral beam alpha power / volume
 
-    palp = palp + palpnb/vol
+    palppv = palppv + palpnb/vol
 
     !  Add extra neutron power
 
-    pneut = pneut + 4.0D0*palpnb/vol
+    pneutpv = pneutpv + 4.0D0*palpnb/vol
 
     !  Total alpha power
 
-    alpmw = palp*vol
+    palpmw = palppv*vol
+
+    !  Total neutron power
+
+    pneutmw = pneutpv*vol
 
     !  Total fusion power
 
-    powfmw = alpmw + (pneut + pcharge)*vol
+    powfmw = palpmw + (pneutpv + pchargepv)*vol
 
     !  Charged particle fusion power
 
-    pfuscmw = alpmw + pcharge*vol
+    pfuscmw = palpmw + pchargepv*vol
 
     !  Power to electrons and ions (used with electron and ion power balance
     !  equations only)
-    !  No consideration of pcharge here...
+    !  No consideration of pchargepv here...
 
-    palpi = palp*falpi
-    palpe = palp*falpe
+    palpipv = palppv*falpi
+    palpepv = palppv*falpe
 
     !  Determine average fast alpha density
 
@@ -3006,10 +3014,10 @@ contains
        end if
 
        fact = max(fact,0.0D0)
-       fact2 = palp/(palp-(palpnb/vol))
+       fact2 = palppv/(palppv-(palpnb/vol))
        betaft = betath * fact*fact2
 
-    else  !  negligible alpha production, palp = palpnb = 0
+    else  !  negligible alpha production, palppv = palpnb = 0
        betaft = 0.0D0
     end if
 
@@ -3130,10 +3138,10 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
-       iinvqd,isc,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-       plascur,pohmpv,pcorerad,rmajor,rminor,te,ten,tin,q,qstar,vol, &
-       xarea,zeff,ptre,ptri,tauee,tauei,taueff,powerht)
+  subroutine pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
+       iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargepv,pinjmw,&
+       plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
+       xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
 
     !+ad_name  pcond
     !+ad_summ  Routine to calculate the confinement times and
@@ -3141,44 +3149,43 @@ contains
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_args  afuel  : input real :  average mass of fuel (amu)
-    !+ad_args  alpmw  : input real :  alpha particle power (MW)
-    !+ad_args  aspect : input real :  aspect ratio
-    !+ad_args  bt     : input real :  toroidal field on axis (T)
-    !+ad_args  dene   : input real :  volume averaged electron density (m**-3)
-    !+ad_args  dnitot : input real :  total ion density (m**-3)
-    !+ad_args  dnla   : input real :  line-averaged electron density (m**-3)
-    !+ad_args  eps    : input real :  inverse aspect ratio
-    !+ad_args  hfact  : input real :  H factor on energy confinement scalings
-    !+ad_args  iinvqd : input integer :  switch for inverse quadrature
-    !+ad_args  isc    : input integer :  switch for energy confinement scaling to use
-    !+ad_args  ignite : input integer :  switch for ignited calculation
-    !+ad_args  kappa  : input real :  plasma elongation
-    !+ad_args  kappa95: input real :  plasma elongation at 95% surface
-    !+ad_args  kappaa:  output real : plasma elongation calculated using area ratio
-    !+ad_args  pcharge: input real :  non-alpha charged particle fusion power (MW/m3)
-    !+ad_args  pinje  : input real :  auxiliary power to electrons (W)
-    !+ad_args  pinji  : input real :  auxiliary power to ions (W)
-    !+ad_args  plascur: input real :  plasma current (A)
-    !+ad_args  pohmpv : input real :  ohmic heating per unit volume (MW/m**3)
-    !+ad_args  pcorerad : input real :  total core radiation power (MW/m3)
-    !+ad_args  q      : input real :  edge safety factor (tokamaks), or
-    !+ad_argc                         rotational transform iotabar (stellarators)
-    !+ad_args  qstar  : input real :  equivalent cylindrical edge safety factor
-    !+ad_args  rmajor : input real :  plasma major radius (m)
-    !+ad_args  rminor : input real :  plasma minor radius (m)
-    !+ad_args  te     : input real :  average electron temperature (keV)
-    !+ad_args  ten    : input real :  density weighted average electron temp. (keV)
-    !+ad_args  tin    : input real :  density weighted average ion temperature (keV)
-    !+ad_args  vol    : input real :  plasma volume (m**3)
-    !+ad_args  xarea  : input real :  plasma cross-sectional area (m**2)
-    !+ad_args  zeff   : input real :  plasma effective charge
-    !+ad_args  ptre   : output real : electron transport power (MW/m**3)
-    !+ad_args  ptri   : output real : ion transport power (MW/m**3)
-    !+ad_args  tauee  : output real : electron energy confinement time (s)
-    !+ad_args  taueff : output real : global energy confinement time (s)
-    !+ad_args  tauei  : output real : ion energy confinement time (s)
-    !+ad_args  powerht: output real : heating power (MW) assumed in calculation
+    !+ad_args  afuel     : input real :  average mass of fuel (amu)
+    !+ad_args  palpmw    : input real :  alpha particle power (MW)
+    !+ad_args  aspect    : input real :  aspect ratio
+    !+ad_args  bt        : input real :  toroidal field on axis (T)
+    !+ad_args  dene      : input real :  volume averaged electron density (/m3)
+    !+ad_args  dnitot    : input real :  total ion density (/m3)
+    !+ad_args  dnla      : input real :  line-averaged electron density (/m3)
+    !+ad_args  eps       : input real :  inverse aspect ratio
+    !+ad_args  hfact     : input real :  H factor on energy confinement scalings
+    !+ad_args  iinvqd    : input integer :  switch for inverse quadrature
+    !+ad_args  isc       : input integer :  switch for energy confinement scaling to use
+    !+ad_args  ignite    : input integer :  switch for ignited calculation
+    !+ad_args  kappa     : input real :  plasma elongation
+    !+ad_args  kappa95   : input real :  plasma elongation at 95% surface
+    !+ad_args  kappaa    : output real : plasma elongation calculated using area ratio
+    !+ad_args  pchargepv : input real :  non-alpha charged particle fusion power (MW/m3)
+    !+ad_args  pinjmw    : input real :  auxiliary power to ions and electrons (MW)
+    !+ad_args  plascur   : input real :  plasma current (A)
+    !+ad_args  pohmpv    : input real :  ohmic heating per unit volume (MW/m3)
+    !+ad_args  pcoreradpv: input real :  total core radiation power (MW/m3)
+    !+ad_args  q         : input real :  edge safety factor (tokamaks), or
+    !+ad_argc                            rotational transform iotabar (stellarators)
+    !+ad_args  qstar     : input real :  equivalent cylindrical edge safety factor
+    !+ad_args  rmajor    : input real :  plasma major radius (m)
+    !+ad_args  rminor    : input real :  plasma minor radius (m)
+    !+ad_args  te        : input real :  average electron temperature (keV)
+    !+ad_args  ten       : input real :  density weighted average electron temp. (keV)
+    !+ad_args  tin       : input real :  density weighted average ion temperature (keV)
+    !+ad_args  vol       : input real :  plasma volume (m3)
+    !+ad_args  xarea     : input real :  plasma cross-sectional area (m2)
+    !+ad_args  zeff      : input real :  plasma effective charge
+    !+ad_args  ptrepv    : output real : electron transport power (MW/m3)
+    !+ad_args  ptripv    : output real : ion transport power (MW/m3)
+    !+ad_args  tauee     : output real : electron energy confinement time (s)
+    !+ad_args  taueff    : output real : global energy confinement time (s)
+    !+ad_args  tauei     : output real : ion energy confinement time (s)
+    !+ad_args  powerht   : output real : heating power (MW) assumed in calculation
     !+ad_desc  This subroutine calculates the energy confinement time
     !+ad_desc  using one of a large number of scaling laws, and the
     !+ad_desc  transport power loss terms.
@@ -3201,6 +3208,7 @@ contains
     !+ad_hist  20/05/14 PJK Changed prad argument to pcorerad;
     !+ad_hisc               introduced iradloss switch;
     !+ad_hisc               added falpha multiplier to alpmw term
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  N. A. Uckan and ITER Physics Group,
@@ -3214,11 +3222,11 @@ contains
     !  Arguments
 
     integer, intent(in) :: iinvqd, isc, ignite
-    real(kind(1.0D0)), intent(in) :: afuel, alpmw, aspect, bt, dene, &
-         dnitot, dnla, eps, hfact, kappa, kappa95, pcharge, pinje, &
-         pinji, plascur, pohmpv, pcorerad, q, qstar, rmajor, rminor, te, &
+    real(kind(1.0D0)), intent(in) :: afuel, palpmw, aspect, bt, dene, &
+         dnitot, dnla, eps, hfact, kappa, kappa95, pchargepv, pinjmw, &
+         plascur, pohmpv, pcoreradpv, q, qstar, rmajor, rminor, te, &
          ten, tin, vol, xarea, zeff
-    real(kind(1.0D0)), intent(out) :: kappaa, powerht, ptre, ptri, &
+    real(kind(1.0D0)), intent(out) :: kappaa, powerht, ptrepv, ptripv, &
          tauee, taueff, tauei
 
     !  Local variables
@@ -3245,15 +3253,15 @@ contains
 
     !  Calculate heating power (MW)
 
-    powerht = falpha*alpmw + pcharge*vol + pohmpv*vol
+    powerht = falpha*palpmw + pchargepv*vol + pohmmw
 
     !  If the device is not ignited, add the injected auxiliary power
 
-    if (ignite == 0) powerht = powerht + (pinje+pinji)/1.0D6
+    if (ignite == 0) powerht = powerht + pinjmw
 
     !  Include the radiation as a loss term if requested
 
-    if (iradloss == 1) powerht = powerht - pcorerad*vol
+    if (iradloss == 1) powerht = powerht - pcoreradpv*vol
 
     !  Ensure heating power is positive (shouldn't be necessary)
 
@@ -3693,10 +3701,10 @@ contains
 
     !  Calculation of the transport power loss terms
     !  Transport losses in Watts/m3 are 3/2 * n.e.T / tau , with T in eV
-    !  (here, tin and ten are in keV, and ptre and ptri are in MW/m3)
+    !  (here, tin and ten are in keV, and ptrepv and ptripv are in MW/m3)
 
-    ptri = 2.403D-22 * dnitot*tin/tauei
-    ptre = 2.403D-22 * dene*ten/tauee
+    ptripv = 2.403D-22 * dnitot*tin/tauei
+    ptrepv = 2.403D-22 * dene*ten/tauee
 
     ratio = dnitot/dene * tin/ten
 
@@ -3905,7 +3913,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine rether(alphan,alphat,dene,dlamie,te,ti,zeffai,pie)
+  subroutine rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
 
     !+ad_name  rether
     !+ad_summ  Routine to find the equilibration power between the
@@ -3920,7 +3928,7 @@ contains
     !+ad_args  te     : input real :  electron temperature (keV)
     !+ad_args  ti     : input real :  ion temperature (keV)
     !+ad_args  zeffai : input real :  mass weighted plasma effective charge
-    !+ad_args  pie    : output real : ion/electron equilibration power (MW/m3)
+    !+ad_args  piepv  : output real : ion/electron equilibration power (MW/m3)
     !+ad_desc  This routine calculates the equilibration power between the
     !+ad_desc  ions and electrons.
     !+ad_prob  No account is taken of pedestal profiles.
@@ -3939,7 +3947,7 @@ contains
 
     real(kind(1.0D0)), intent(in) :: alphan, alphat, dene, dlamie, &
          te, ti, zeffai
-    real(kind(1.0D0)), intent(out) :: pie
+    real(kind(1.0D0)), intent(out) :: piepv
 
     !  Local variables
 
@@ -3952,13 +3960,13 @@ contains
 
     conie = 2.42165D-41 * dlamie * dene**2 * zeffai * profie
 
-    pie = conie*(ti-te)/(te**1.5D0)
+    piepv = conie*(ti-te)/(te**1.5D0)
 
   end subroutine rether
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine radpwr(imprad_model,pbrem,pline,psync,pcorerad,pedgerad,prad)
+  subroutine radpwr(imprad_model,pbrempv,plinepv,psyncpv,pcoreradpv,pedgeradpv,pradpv)
 
     !+ad_name  radpwr
     !+ad_summ  Radiation power interface routine
@@ -3966,12 +3974,12 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  imprad_model : input integer : switch to choose model
-    !+ad_args  pbrem    : output real : bremsstrahlung radiation power/volume (MW/m3)
-    !+ad_args  pline    : output real : line radiation power/volume (MW/m3)
-    !+ad_args  psync    : output real : synchrotron radiation power/volume (MW/m3)
-    !+ad_args  pcorerad : output real : total core radiation power/volume (MW/m3)
-    !+ad_args  pedgerad : output real : edge (non-core) radiation power/volume (MW/m3)
-    !+ad_args  prad     : output real : total radiation power/volume (MW/m3)
+    !+ad_args  pbrempv    : output real : bremsstrahlung radiation power/volume (MW/m3)
+    !+ad_args  plinepv    : output real : line radiation power/volume (MW/m3)
+    !+ad_args  psyncpv    : output real : synchrotron radiation power/volume (MW/m3)
+    !+ad_args  pcoreradpv : output real : total core radiation power/volume (MW/m3)
+    !+ad_args  pedgeradpv : output real : edge (non-core) radiation power/volume (MW/m3)
+    !+ad_args  pradpv     : output real : total radiation power/volume (MW/m3)
     !+ad_desc  This routine finds the radiation powers in MW/m3 by calling
     !+ad_desc  relevant routines.
     !+ad_call  prad_ipdg89
@@ -3989,23 +3997,24 @@ contains
     !  Arguments
 
     integer, intent(in) :: imprad_model
-    real(kind(1.0D0)), intent(out) :: pbrem, pedgerad, psync, prad, pcorerad
+    real(kind(1.0D0)), intent(out) :: pbrempv,plinepv,psyncpv,pcoreradpv, &
+         pedgeradpv,pradpv
 
     !  Local variables
 
-    real(kind(1.0D0)) :: pimpcore, pimptot, pline
+    real(kind(1.0D0)) :: pimpcore, pimptot
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Bremsstrahlung and line radiation
 
     if (imprad_model == 0) then
-       call prad_ipdg89(pimpcore, pedgerad)
-       pimptot = pimpcore + pedgerad
-       pbrem = 0.0D0 ; pline = 0.0D0  !  therefore, not useful...
+       call prad_ipdg89(pimpcore, pedgeradpv)
+       pimptot = pimpcore + pedgeradpv
+       pbrempv = 0.0D0 ; plinepv = 0.0D0  !  therefore, not useful...
     else if (imprad_model == 1) then
-       call imprad(pbrem, pline, pimpcore, pimptot)
-       pedgerad = pimptot - pimpcore
+       call imprad(pbrempv, plinepv, pimpcore, pimptot)
+       pedgeradpv = pimptot - pimpcore
     else
        write(*,*) 'Error in routine RADPWR:'
        write(*,*) 'Illegal value for imprad_model = ',imprad_model
@@ -4015,21 +4024,21 @@ contains
 
     !  Synchrotron radiation power/volume; assumed to be from core only
 
-    call psync_albajar_fidone(psync)
+    call psync_albajar_fidone(psyncpv)
 
     !  Total core radiation power/volume
 
-    pcorerad = pimpcore + psync
+    pcoreradpv = pimpcore + psyncpv
 
     !  Total radiation power/volume
 
-    prad = pimptot + psync  !  = pcorerad + pedgerad
+    pradpv = pimptot + psyncpv  !  = pcoreradpv + pedgeradpv
 
   end subroutine radpwr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine prad_ipdg89(pcorerad,pedgerad)
+  subroutine prad_ipdg89(pcoreradpv,pedgeradpv)
 
     !+ad_name  prad_ipdg89
     !+ad_summ  Bremsstrahlung and line radiation power calculation
@@ -4037,8 +4046,8 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_auth  R Kemp, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_args  pcorerad : output real : core radiation power/volume (MW/m3)
-    !+ad_args  pedgerad : output real : edge line radiation power/volume (MW/m3)
+    !+ad_args  pcoreradpv : output real : core radiation power/volume (MW/m3)
+    !+ad_args  pedgeradpv : output real : edge line radiation power/volume (MW/m3)
     !+ad_desc  This routine finds the D-T and impurity bremsstrahlung and line
     !+ad_desc  radiation powers in MW/m3, using the IPDG89 formulation.
     !+ad_prob  No account is taken of pedestal profiles.
@@ -4057,7 +4066,7 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(out) :: pcorerad, pedgerad
+    real(kind(1.0D0)), intent(out) :: pcoreradpv, pedgeradpv
 
     !  Local variables
 
@@ -4099,18 +4108,18 @@ contains
     !  Total core radiation power (this is a more accurate description than
     !  simply the bremsstrahlung power)
 
-    pcorerad = pbremz + pbremdt
+    pcoreradpv = pbremz + pbremdt
 
     !  Edge line radiation
 
-    pedgerad = (1.0D0-fbhe)*phe + (1.0D0-fbc)*pc + (1.0D0-fbo)*po + &
+    pedgeradpv = (1.0D0-fbhe)*phe + (1.0D0-fbc)*pc + (1.0D0-fbo)*po + &
          (1.0D0-fbfe)*phighz
 
   end subroutine prad_ipdg89
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine psync_albajar_fidone(psync)
+  subroutine psync_albajar_fidone(psyncpv)
 
     !+ad_name  psync_albajar_fidone
     !+ad_summ  Synchrotron radiation power calculation
@@ -4118,7 +4127,7 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_auth  R Kemp, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_args  psync  : output real : synchrotron radiation power/volume (MW/m3)
+    !+ad_args  psyncpv  : output real : synchrotron radiation power/volume (MW/m3)
     !+ad_desc  This routine finds the synchrotron radiation power in MW/m3,
     !+ad_desc  using the method of Albajar and Fidone.
     !+ad_prob  No account is taken of pedestal profiles.
@@ -4135,11 +4144,11 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(out) :: psync
+    real(kind(1.0D0)), intent(out) :: psyncpv
 
     !  Local variables
 
-    real(kind(1.0D0)) :: de2o,dum,gfun,kap,kfun,pao,rpow,tbet
+    real(kind(1.0D0)) :: de2o,dum,gfun,kap,kfun,pao,psync,rpow,tbet
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -4173,9 +4182,9 @@ contains
     psync = psync * kap**0.79D0 * bt**2.62D0 * de2o**0.38D0
     psync = psync * te0 *(16.0D0+te0)**2.61D0 * dum * gfun * kfun
 
-    !  psync should be per unit volume; Albajar gives it as total
+    !  psyncpv should be per unit volume; Albajar gives it as total
 
-    psync = psync/vol      
+    psyncpv = psync/vol      
 
   end subroutine psync_albajar_fidone
 
@@ -4272,7 +4281,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine pohm(facoh,kappa,plascur,rmajor,rminor,ten,vol, &
-       zeff,pohmpv,rpfac,rplas)
+       zeff,pohmpv,pohmmw,rpfac,rplas)
 
     !+ad_name  pohm
     !+ad_summ  Ohmic power calculation
@@ -4288,6 +4297,7 @@ contains
     !+ad_args  vol    : input real :  plasma volume (m3)
     !+ad_args  zeff   : input real :  plasma effective charge
     !+ad_args  pohmpv : output real : ohmic heating power per unit volume (MW/m3)
+    !+ad_args  pohmmw : output real : ohmic heating power (MW)
     !+ad_args  rpfac  : output real : neoclassical resistivity enhancement factor
     !+ad_args  rplas  : output real : plasma resistance (ohm)
     !+ad_desc  This routine finds the ohmic heating power per unit volume.
@@ -4312,7 +4322,7 @@ contains
 
     real(kind(1.0D0)), intent(in) :: facoh, kappa, plascur, rmajor, &
          rminor, ten, vol, zeff
-    real(kind(1.0D0)), intent(out) :: pohmpv, rpfac, rplas
+    real(kind(1.0D0)), intent(out) :: pohmpv, pohmmw, rpfac, rplas
 
     !  Local variables
 
@@ -4348,6 +4358,10 @@ contains
     !  Corrected from: pohmpv = (facoh*plascur)**2 * ...
 
     pohmpv = facoh * plascur**2 * rplas * 1.0D-6/vol
+
+    !  Total ohmic heating power
+
+    pohmmw = pohmpv*vol
 
   end subroutine pohm
 
@@ -4505,9 +4519,9 @@ contains
     !  Calculate power balances for all scaling laws assuming H = 2
 
     do iisc = 1,ipnlaws
-       call pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,d2, &
-            iinvqd,iisc,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-            plascur,pohmpv,pcorerad,rmajor,rminor,te,ten,tin,q,qstar,vol, &
+       call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,d2, &
+            iinvqd,iisc,ignite,kappa,kappa95,kappaa,pchargepv,pinjmw, &
+            plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
             xarea,zeff,ptrez,ptriz,taueez,taueiz,taueffz,powerhtz)
        hfac(iisc) = fhfac(iisc)
 
@@ -4590,6 +4604,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  20/05/14 PJK Changed prad to pcorerad; introduced iradloss;
     !+ad_hisc               Added falpha multiplier to palp term
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4609,9 +4624,9 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    call pcond(afuel,alpmw,aspect,bt,dnitot,dene,dnla,eps,hhh, &
-         iinvqd,iscz,ignite,kappa,kappa95,kappaa,pcharge,pinje,pinji, &
-         plascur,pohmpv,pcorerad,rmajor,rminor,te,ten,tin,q,qstar,vol, &
+    call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hhh, &
+         iinvqd,iscz,ignite,kappa,kappa95,kappaa,pchargepv,pinjmw, &
+         plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
          xarea,zeff,ptrez,ptriz,taueezz,taueiz,taueffz,powerhtz)
 
     if (iscz < 3) then  !  only laws 1 and 2 are affected???
@@ -4621,16 +4636,16 @@ contains
 
     !  At power balance, fhz is zero.
 
-    fhz = ptrez + ptriz - falpha*palp - pcharge - pohmpv
+    fhz = ptrez + ptriz - falpha*palppv - pchargepv - pohmpv
 
     !  Take into account whether injected power is included in tau_e
     !  calculation (i.e. whether device is ignited)
 
-    if (ignite == 0) fhz = fhz - 1.0D-6*(pinje+pinji)/vol
+    if (ignite == 0) fhz = fhz - pinjmw/vol
 
     !  Include the radiation power if requested
 
-    if (iradloss == 1) fhz = fhz + pcorerad
+    if (iradloss == 1) fhz = fhz + pcoreradpv
 
   end function fhz
 
@@ -5194,6 +5209,7 @@ contains
     !+ad_hist  23/04/14 PJK Added bvert
     !+ad_hist  14/05/14 PJK Added impurity concentration info
     !+ad_hist  21/05/14 PJK Added ignite
+    !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5462,44 +5478,42 @@ contains
     call ovarre(outfile,' =    D-T fusion power (MW)','(pdt)',pdt)
     call ovarre(outfile,'  +   D-D fusion power (MW)','(pdd)',pdd)
     call ovarre(outfile,'  + D-He3 fusion power (MW)','(pdhe3)',pdhe3)
-    call ovarre(outfile,'Alpha power: total (MW)','(alpmw)',alpmw)
+    call ovarre(outfile,'Alpha power: total (MW)','(palpmw)',palpmw)
     call ovarre(outfile,'Alpha power: beam-plasma (MW)','(palpnb)',palpnb)
-    call ovarre(outfile,'Neutron power (MW)','(pneut*vol)',pneut*vol)
-    call ovarre(outfile,'Charged particle power (excl. alphas) (MW)', &
-         '(pcharge*vol)',pcharge*vol)
+    call ovarre(outfile,'Neutron power (MW)','(pneutmw)',pneutmw)
+    call ovarre(outfile,'Charged particle power (excluding alphas) (MW)', &
+         '(pchargepv*vol)',pchargepv*vol)
 
     call ovarrf(outfile,'Neutron wall load (MW/m2)','(wallmw)',wallmw)
     call ovarrf(outfile,'Fraction of power to electrons','(falpe)',falpe)
     call ovarrf(outfile,'Fraction of power to ions','(falpi)',falpi)
 
     call osubhd(outfile,'Plasma Power Balance :')
-    call ovarre(outfile,'Ohmic heating power (MW)','(pohmpv*vol)',pohmpv*vol)
+    call ovarre(outfile,'Ohmic heating power (MW)','(pohmmw)',pohmmw)
     if (imprad_model == 1) then
-       call ovarre(outfile,'Bremsstrahlung radiation power (MW)','(pbrem*vol)', &
-            pbrem*vol)
-       call ovarre(outfile,'Line radiation power (MW)','(pline*vol)', &
-            pline*vol)
+       call ovarre(outfile,'Bremsstrahlung radiation power (MW)','(pbrempv*vol)', &
+            pbrempv*vol)
+       call ovarre(outfile,'Line radiation power (MW)','(plinepv*vol)', &
+            plinepv*vol)
     end if
-    call ovarre(outfile,'Synchrotron radiation power (MW)','(psync*vol)', &
-         psync*vol)
+    call ovarre(outfile,'Synchrotron radiation power (MW)','(psyncpv*vol)', &
+         psyncpv*vol)
     call ovarrf(outfile,'Synchrotron reflection factor','(ssync)',ssync)
     if (imprad_model == 1) then
        call ovarre(outfile,"Normalised minor radius defining 'core'", &
             '(coreradius)',coreradius)
     end if
     call ovarre(outfile,'Total core radiation power (MW)', &
-         '(pcorerad*vol)',pcorerad*vol)
-    call ovarre(outfile,'Edge radiation power (MW)','(pedgerad*vol)', &
-         pedgerad*vol)
-    call ovarre(outfile,'Total radiation power (MW)','(prad*vol)', &
-         prad*vol)
+         '(pcoreradpv*vol)',pcoreradpv*vol)
+    call ovarre(outfile,'Edge radiation power (MW)','(pedgeradpv*vol)', &
+         pedgeradpv*vol)
+    call ovarre(outfile,'Total radiation power (MW)','(pradpv*vol)', &
+         pradpv*vol)
 
-    call ovarre(outfile,'Ion transport (MW)','(ptri*vol))',ptri*vol)
-    call ovarre(outfile,'Electron transport (MW)','(ptre*vol)',ptre*vol)
-    call ovarre(outfile,'Injection power to ions (MW)','(pinji/1.d6)', &
-         pinji/1.0D6)
-    call ovarre(outfile,'Injection power to electrons (MW)','(pinje/1.d6)', &
-         pinje/1.0D6)
+    call ovarre(outfile,'Ion transport (MW)','(ptripv*vol))',ptripv*vol)
+    call ovarre(outfile,'Electron transport (MW)','(ptrepv*vol)',ptrepv*vol)
+    call ovarre(outfile,'Injection power to ions (MW)','(pinjimw)',pinjimw)
+    call ovarre(outfile,'Injection power to electrons (MW)','(pinjemw)',pinjemw)
     if (ignite == 1) then
        call ocmmnt(outfile,'  (Injected power only used for start-up phase)')
     end if
