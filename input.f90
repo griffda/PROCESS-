@@ -374,6 +374,7 @@ contains
     !+ad_hist  13/05/14 PJK Added IMPRAD_MODEL, FIMP, CORERADIUS
     !+ad_hist  20/05/14 PJK Removed FRADMIN, added FRADPWR, IRADLOSS
     !+ad_hist  22/05/14 PJK PHEAT units changed to MW
+    !+ad_hist  02/06/14 PJK Added IMPVAR, FIMPVAR
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -570,6 +571,9 @@ contains
        case ('FIMP')
           call parse_real_array('FIMP', fimp, isub1, nimp, &
                'Impurity density fraction', icode)
+       case ('FIMPVAR')
+          call parse_real_variable('FIMPVAR', fimpvar, 1.0D-6, 1.0D-2, &
+               'Impurity fraction to be varied')
        case ('FRADMIN')
           write(outfile,*) 'FRADMIN is now obsolete -'
           write(outfile,*) 'please remove it from the input file.'
@@ -647,6 +651,9 @@ contains
        case ('IMPRAD_MODEL')
           call parse_int_variable('IMPRAD_MODEL', imprad_model, 0, 1, &
                'Switch for impurity radiation model')
+       case ('IMPVAR')
+          call parse_int_variable('IMPVAR', impvar, 3, nimp, &
+               'Index for impurity fraction iteration variable')
        case ('IPEDESTAL')
           call parse_int_variable('IPEDESTAL', ipedestal, 0, 1, &
                'Switch for plasma profile type')

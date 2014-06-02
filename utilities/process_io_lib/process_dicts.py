@@ -18,7 +18,7 @@ Update: 01/05/2014 - PJK up to date at PROCESS version 263
 Update: 08/05/2014 - PJK up to date at PROCESS version 266
 Update: 14/05/2014 - PJK up to date at PROCESS version 272
 Update: 20/05/2014 - PJK up to date at PROCESS version 279
-
+Update: 20/05/2014 - PJK up to date at PROCESS version 283
 """
 
 from collections import defaultdict
@@ -61,6 +61,7 @@ DICT_VAR_TYPE['igeom'] = 'int_variable'
 DICT_VAR_TYPE['ignite'] = 'int_variable'
 DICT_VAR_TYPE['iinvqd'] = 'int_variable'
 DICT_VAR_TYPE['imprad_model'] = 'int_variable'
+DICT_VAR_TYPE['impvar'] = 'int_variable'
 DICT_VAR_TYPE['ipedestal'] = 'int_variable'
 DICT_VAR_TYPE['iprofile'] = 'int_variable'
 DICT_VAR_TYPE['iradloss'] = 'int_variable'
@@ -689,7 +690,7 @@ DICT_IXC_SIMPLE = {'1':'aspect', '2':'bt', '3':'rmajor', '4':'te', '5':'beta',
                    '91':'blbuoth', '92':'fflutf', '93':'shldith',
                    '94':'shldoth', '95':'fptfnuc', '96':'fvvhe', '97':'fpsepr',
                    '98': 'li6enrich', '99':'ftftort', '100':'ftfthko',
-                   '101': 'prp'}
+                   '101': 'prp', '102': 'fimpvar'}
 
 
 
@@ -797,6 +798,7 @@ DICT_IXC_FULL[ '98'] = {'name':'li6enrich','lb':0.001, 'ub':100.}
 DICT_IXC_FULL[ '99'] = {'name':'ftftort',  'lb':0.001, 'ub':1.}
 DICT_IXC_FULL['100'] = {'name':'ftfthko',  'lb':0.001, 'ub':1.}
 DICT_IXC_FULL['101'] = {'name':'prp',      'lb':1e-6,  'ub':0.01}
+DICT_IXC_FULL['102'] = {'name':'fimpvar',  'lb':1e-6,  'ub':0.01}
 
 
 
@@ -903,7 +905,8 @@ DICT_IXC_BOUNDS['fpsepr']   = {'lb':0.001, 'ub':1.}   #97
 DICT_IXC_BOUNDS['li6enrich']= {'lb':0.001, 'ub':100.} #98
 DICT_IXC_BOUNDS['ftftort']  = {'lb':0.001, 'ub':1.}   #99
 DICT_IXC_BOUNDS['ftfthko']  = {'lb':0.001, 'ub':1.}   #100
-DICT_IXC_BOUNDS['prp']      = {'lb':1e-6,  'ub':0.01}   #101
+DICT_IXC_BOUNDS['prp']      = {'lb':1e-6,  'ub':0.01} #101
+DICT_IXC_BOUNDS['fimpvar']  = {'lb':1e-6,  'ub':0.01} #102
 
 
 #parameters that start with f, but are not f-values
@@ -967,4 +970,5 @@ DICT_IXC_DEFAULT = {'aspect': 3.5, 'bt': 6.0, 'rmajor': 7.0, 'te': 15.0,
                     'blbuith': 0.365, 'blbuoth': 0.465, 'fflutf': 1.0,
                     'shldith': 0.69, 'shldoth': 1.05, 'fptfnuc': 1.0,
                     'fvvhe': 1.0, 'fpsepr': 1.0, 'li6enrich': 30.0,
-                    'ftftort': 1.0, 'ftfthko': 1.0, 'prp': 0.0025}
+                    'ftftort': 1.0, 'ftfthko': 1.0, 'prp': 0.0025,
+                    'fimpvar': 1.0e-3}

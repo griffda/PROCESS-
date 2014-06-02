@@ -20,6 +20,7 @@ subroutine loadxc
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  ife_variables
+  !+ad_call  impurity_radiation_module
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
@@ -59,6 +60,7 @@ subroutine loadxc
   !+ad_hist  30/04/14 PJK Added prp (101)
   !+ad_hist  08/05/14 PJK Replaced itfmod with tfc_model
   !+ad_hist  19/05/14 PJK Reassigned (28) to fradpwr
+  !+ad_hist  02/06/14 PJK Added fimpvar (102)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -71,6 +73,7 @@ subroutine loadxc
   use fwbs_variables
   use heat_transport_variables
   use ife_variables
+  use impurity_radiation_module
   use numerics
   use pfcoil_variables
   use physics_variables
@@ -257,6 +260,7 @@ subroutine loadxc
      case (99) ; xcm(i) = ftftort
      case (100) ; xcm(i) = ftfthko
      case (101) ; xcm(i) = prp
+     case (102) ; xcm(i) = impurity_arr(impvar)%frac
 
      case default
         write(*,*) 'Error in routine LOADXC :'
@@ -322,6 +326,7 @@ subroutine convxc(xc,nn)
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  ife_variables
+  !+ad_call  impurity_radiation_module
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
@@ -354,6 +359,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  26/02/14 PJK Added ftftort (99) and ftfthko (100)
   !+ad_hist  30/04/14 PJK Added prp (101)
   !+ad_hist  19/05/14 PJK Reassigned (28) to fradpwr
+  !+ad_hist  02/06/14 PJK Added fimpvar (102); special treatment required
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -366,6 +372,7 @@ subroutine convxc(xc,nn)
   use fwbs_variables
   use heat_transport_variables
   use ife_variables
+  use impurity_radiation_module
   use numerics
   use pfcoil_variables
   use physics_variables
@@ -491,6 +498,9 @@ subroutine convxc(xc,nn)
      case (99) ; ftftort   = xc(i)/scale(i)
      case (100) ; ftfthko  = xc(i)/scale(i)
      case (101) ; prp      = xc(i)/scale(i)
+     case (102)
+        fimpvar = xc(i)/scale(i)
+        impurity_arr(impvar)%frac = fimpvar
 
      case default
         write(*,*) 'Error in routine CONVXC :'

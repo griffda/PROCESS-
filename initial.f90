@@ -227,6 +227,7 @@ subroutine check
   !+ad_hisc               removed iiter usage
   !+ad_hist  08/05/14 PJK Replaced itfmod with tfc_model
   !+ad_hist  13/05/14 PJK Added impurity fraction initialisations
+  !+ad_hist  02/06/14 PJK Added fimpvar usage
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -240,6 +241,7 @@ subroutine check
   use heat_transport_variables
   use impurity_radiation_module
   use ife_variables
+  use numerics
   use pfcoil_variables
   use physics_variables
   use process_output
@@ -276,6 +278,12 @@ subroutine check
      do imp = 1,nimp
         impurity_arr(imp)%frac = fimp(imp)
      end do
+  end if
+
+  !  Set relevant impurity fraction if iteration variable 102 is turned on
+
+  if ( any(ixc == 102) ) then
+     impurity_arr(impvar)%frac = fimpvar
   end if
 
   !  Tight aspect ratio options 

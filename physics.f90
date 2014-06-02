@@ -5210,6 +5210,7 @@ contains
     !+ad_hist  14/05/14 PJK Added impurity concentration info
     !+ad_hist  21/05/14 PJK Added ignite
     !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  02/06/14 PJK Added fimpvar
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5441,6 +5442,7 @@ contains
           call ovarre(outfile,str1,str2,impurity_arr(imp)%frac)
        end do
     end if
+    call ovarre(outfile,'Impurity fraction (for iteration variable use)','(fimpvar)',fimpvar)
     call oblnkl(outfile)
 
     call ovarrf(outfile,'Effective charge','(zeff)',zeff)

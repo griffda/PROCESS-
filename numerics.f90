@@ -51,6 +51,7 @@ module numerics
   !+ad_hist  08/05/14 PJK Changed boundu(101) (prp upper limit)
   !+ad_hist  19/05/14 PJK Relabelled lablcc(15)
   !+ad_hist  19/05/14 PJK Reassigned lablcc(17), lablxc(28: fradpwr)
+  !+ad_hist  02/06/14 PJK New iteration variable 102 (fimpvar)
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -62,8 +63,8 @@ module numerics
 
   public
 
-  !+ad_vars  ipnvars /101/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 101
+  !+ad_vars  ipnvars /102/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 102
   !+ad_vars  ipeqns /58/ FIX : number of constraint equations available
   integer, parameter :: ipeqns  = 58
   !+ad_vars  ipnfoms /15/ FIX : number of available figures of merit
@@ -267,7 +268,8 @@ module numerics
        0,  &  !  98
        0,  &  !  99
        0,  &  !  100
-       0   &  !  101
+       0,  &  !  101
+       0   &  !  102
        /)
 
   !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
@@ -630,8 +632,10 @@ module numerics
        'ftftort  ', &
        !+ad_varc  <LI> (100) ftfthko (f-value for equation 58)
        'ftfthko  ', &
-       !+ad_varc  <LI> (101) prp</UL>
-       'prp      '  &
+       !+ad_varc  <LI> (101) prp
+       'prp      ', &
+       !+ad_varc  <LI> (102) fimpvar</UL>
+       'fimpvar  '  &
        /)
 
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
@@ -748,7 +752,8 @@ module numerics
        0.001D0, &  !  98
        0.001D0, &  !  99
        0.001D0, &  !  100
-       1.00D-6  &  !  101
+       1.00D-6, &  !  101
+       1.00D-6  &  !  102
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -854,7 +859,8 @@ module numerics
        100.0D0, &  !  98
        1.000D0, &  !  99
        1.000D0, &  !  100
-       0.010D0  &  !  101
+       0.010D0, &  !  101
+       0.010D0  &  !  102
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

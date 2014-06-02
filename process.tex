@@ -38,9 +38,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-05-21
+2014-06-02
 \hfill
-Revision:: 280
+Revision:: 283
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -875,12 +875,13 @@ no. & variable name     & description                                           
 99  & \texttt{ftftort}  & f-value for TF coil toroidal thickness lower limit eqn  & 57  & \texttt{0.001D0} & \texttt{1.000D0} \\
 100 & \texttt{ftfthko}  & f-value for TF coil radial thickness lower limit eqn    & 58  & \texttt{0.001D0} & \texttt{1.000D0} \\
 101 & \texttt{prp}      & ratio of TF coil radial plate area to winding pack area &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
+101 & \texttt{fimpvar}  & impurity fraction of element \texttt{impvar}            &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
 \hline
 \end{tabular}
 \end{center}
-\caption[List of iteration variables 51 to 101]
+\caption[List of iteration variables 51 to 102]
 {\label{tab:itvars2}
-  \textit{Iteration variables 51 to 101 present in \process. The f-values correspond to the
+  \textit{Iteration variables 51 to 102 present in \process. The f-values correspond to the
     given constraint equations (see Table~\ref{tab:eqns}). The other iteration
     variables are shown in Table~\ref{tab:itvars1}.}
 }
@@ -1548,6 +1549,13 @@ plasma quasi-neutrality is maintained, and taking into account the fuel ratios
 \texttt{fdeut}, \texttt{ftrit} and \texttt{fhe3} (see
 Section~\ref{sec:fusion_reactions}), and the alpha particle fraction
 \texttt{ralpne} which may be input by the user.
+
+The impurity fraction of one of the elements listed in array \texttt{fimp} may
+be used as an iteration variable (although it will only have any effect if
+\texttt{imprad\_model = 1}). The element to use is specified using input
+parameter \texttt{impvar}, which may be set to a value between 3 and
+\texttt{nimp}, and the initial estimate to use for the element's impurity
+fraction must be set using iteration variable no.\ 102 (\texttt{fimpvar}).
 
 The synchrotron radiation power~\cite{albajar, fidone} is assumed to originate
 from the plasma core. The wall reflection factor \texttt{ssync} may be set by

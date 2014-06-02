@@ -28,6 +28,7 @@ module impurity_radiation_module
   !+ad_call  profiles_module
   !+ad_hist  13/12/13 HL Initial version of module
   !+ad_hist  13/05/14 PJK Initial PROCESS implementation
+  !+ad_hist  02/06/14 PJK Added impvar, fimpvar
   !+ad_stat  Okay
   !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
   !+ad_docs  Sertoli, private communication
@@ -52,11 +53,12 @@ module impurity_radiation_module
 
   !+ad_vars  fimp(nimp) /1.0,0.0,.../ : impurity number density fractions relative
   !+ad_varc                             to electron density
+  !+ad_varc                             (iteration variable 102 is fimp(impvar))
   real(kind(1.0D0)), public, dimension(nimp) :: fimp = &
        (/ 1.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
        0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
   !+ad_vars  imp_label(nimp) /.../ FIX : impurity ion species:<UL>
-  character(len=2), dimension(nimp) :: imp_label = (/ &
+  character(len=2), public, dimension(nimp) :: imp_label = (/ &
   !+ad_varc  <LI> ( 1)  Hydrogen  (fraction calculated by code)
        'H_', &
   !+ad_varc  <LI> ( 2)  Helium    (fraction calculated by code)
@@ -86,12 +88,20 @@ module impurity_radiation_module
   !+ad_varc  <LI> (14)  Tungsten</UL>
        'W_'/)
 
+  !+ad_vars  fimpvar /1.0D-3/ : impurity fraction to be used as fimp(impvar)
+  !+ad_varc                     (iteration variable 102)
+  real(kind(1.0D0)), public :: fimpvar = 1.0D-3
+
   !+ad_vars  imprad_model /0/ : switch for impurity radiation model:<UL>
   !+ad_varc               <LI>  = 0 original ITER 1989 model
   !+ad_varc               <LI>  = 1 impurity profile model</UL>
   !+ad_varc  (Whichever model is used, it is recommended to turn on
   !+ad_varc  constraint eqn.17 with iteration variable 28: fradpwr.)
   integer, public :: imprad_model = 0
+
+  !+ad_vars  impvar /10 (iron)/ : fimp element value to be varied if iteration
+  !+ad_varc                       variable number 102 is turned on
+  integer, public :: impvar = 10
 
   !  Declare impurity data type
 
