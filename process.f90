@@ -1,4 +1,4 @@
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 program process
 
@@ -366,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '283    Date  :: 2014-06-02'
+       '284    Date  :: 2014-06-03'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1559,3 +1559,4 @@ end subroutine output
 !          of ignite is now thought to be fully consistent throughout the code.
 ! GIT 282: Changed names (and in some cases, units) of several power-related variables
 ! GIT 283: Added iteration variable 102, fimpvar
+! GIT 284: Changed a few more power-related variable names

@@ -120,6 +120,7 @@ module physics_variables
   !+ad_hisc               added iradloss
   !+ad_hist  21/05/14 PJK Changed ignite wording
   !+ad_hist  22/05/14 PJK Name changes to power quantities
+  !+ad_hist  03/06/14 PJK Added pchargemw
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -467,6 +468,8 @@ module physics_variables
   !+ad_vars  pbrempv : bremsstrahlung power per volume (MW/m3)
   !+ad_varc            (calculated only if imprad_model=1)
   real(kind(1.0D0)) :: pbrempv = 0.0D0
+  !+ad_vars  pchargemw : non-alpha charged particle fusion power (MW)
+  real(kind(1.0D0)) :: pchargemw = 0.0D0
   !+ad_vars  pchargepv : non-alpha charged particle fusion power per volume (MW/m3)
   real(kind(1.0D0)) :: pchargepv = 0.0D0
   !+ad_vars  pcoef : profile factor (= n-weighted T / average T)
@@ -1917,10 +1920,12 @@ module heat_transport_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  30/10/12 PJK Initial version of module
-  !+ad_hist  27/03/13 PJK Comment change to FMGDMW
-  !+ad_hist  11/04/13 PJK Comment change to TFACPD
-  !+ad_hist  17/04/13 PJK Comment change to FCSHT, PRIHEAT
-  !+ad_hist  17/04/13 PJK Added IPRIMNLOSS
+  !+ad_hist  27/03/13 PJK Comment change to fmgdmw
+  !+ad_hist  11/04/13 PJK Comment change to tfacpd
+  !+ad_hist  17/04/13 PJK Comment change to fcsht, priheat
+  !+ad_hist  17/04/13 PJK Added iprimnloss
+  !+ad_hist  03/06/14 PJK Added precircmw; changed psecht to psechtmw,
+  !+ad_hisc               facht to fachtmw
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1947,8 +1952,8 @@ module heat_transport_variables
   !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency
   !+ad_varc                 if lblnkt=0, otherwise calculated
   real(kind(1.0D0)) :: etath = 0.35D0
-  !+ad_vars  facht : facility heat removal (MW)
-  real(kind(1.0D0)) :: facht = 0.0D0
+  !+ad_vars  fachtmw : facility heat removal (MW)
+  real(kind(1.0D0)) :: fachtmw = 0.0D0
   !+ad_vars  fauxbop /0.06/ : fraction of gross electric power to balance-of-plant
   real(kind(1.0D0)) :: fauxbop = 0.06D0
   !+ad_vars  fcsht : total baseline power required at all times (MW)
@@ -2004,10 +2009,12 @@ module heat_transport_variables
   real(kind(1.0D0)) :: pinjwp = 0.0D0
   !+ad_vars  pnetelmw : net electric power (MW)
   real(kind(1.0D0)) :: pnetelmw = 0.0D0
+  !+ad_vars  precircmw : recirculating electric power (MW)
+  real(kind(1.0D0)) :: precircmw = 0.0D0
   !+ad_vars  priheat : total thermal power removed from fusion core (MW)
   real(kind(1.0D0)) :: priheat = 0.0D0
-  !+ad_vars  psecht : secondary (low-grade) heat (MW)
-  real(kind(1.0D0)) :: psecht = 0.0D0
+  !+ad_vars  psechtmw : secondary (low-grade) heat (MW)
+  real(kind(1.0D0)) :: psechtmw = 0.0D0
   !+ad_vars  pthermmw : primary (high-grade) heat (useful for electric production) (MW)
   real(kind(1.0D0)) :: pthermmw = 0.0D0
   !+ad_vars  pwpm2 /150.0/ : base AC power requirement (W/m2)

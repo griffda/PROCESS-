@@ -2472,6 +2472,7 @@ contains
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  23/05/13 PJK Added blktmodel comment about coolant inconsistency
+    !+ad_hist  03/06/14 PJK Changed facht to fachtmw
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2520,7 +2521,7 @@ contains
 
     cppa = 1.0D-6 * ucahts * ( (1.0D6*pinjht)**exphts + &
          (1.0D6*crypmw)**exphts + (1.0D6*vachtmw)**exphts + &
-         (1.0D6*trithtmw)**exphts + (1.0D6*facht)**exphts )
+         (1.0D6*trithtmw)**exphts + (1.0D6*fachtmw)**exphts )
 
     if (ife == 1) cppa = cppa + 1.0D-6 * ucahts * ( &
          (1.0D6*tdspmw)**exphts + (1.0D6*tfacmw)**exphts )

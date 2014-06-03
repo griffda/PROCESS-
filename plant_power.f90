@@ -1026,6 +1026,8 @@ contains
     !+ad_hist  17/04/13 PJK Added iprimnloss switch for pnucloss contribution
     !+ad_hisc               to secondary heating
     !+ad_hist  11/06/13 PJK Added output section on recirculating power
+    !+ad_hist  03/06/14 PJK Changed precir to precircmw and made global;
+    !+ad_hisc               changed psecht to psechtmw, facht to fachtmw
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1039,7 +1041,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: ppumpmw,precir
+    real(kind(1.0D0)) :: ppumpmw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1049,7 +1051,7 @@ contains
 
     !  Facility heat removal (fcsht calculated in ACPOW)
 
-    facht = fcsht
+    fachtmw = fcsht
 
     !  Hydrogen plant powers
 
@@ -1073,17 +1075,17 @@ contains
 
     !  Total secondary heat
 
-    psecht = pinjht + facht + vachtmw + trithtmw + &
+    psechtmw = pinjht + fachtmw + vachtmw + trithtmw + &
          tfcmw + crypmw + ppumpmw + helecmw + hthermmw + ffwlg*pfwdiv
 
     !  Add optional additional powers to secondary heat if requested
 
-    if (iprimhtp == 0) psecht = psecht + htpmw
-    if (iprimnloss == 0) psecht = psecht + pnucloss
+    if (iprimhtp == 0) psechtmw = psechtmw + htpmw
+    if (iprimnloss == 0) psechtmw = psechtmw + pnucloss
 
     !  Total plant heat removal
 
-    ctht = pthermmw + psecht
+    ctht = pthermmw + psechtmw
 
     !  Number of intermediate heat exchangers
 
@@ -1113,12 +1115,12 @@ contains
 
        !  Total recirculating power
 
-       precir = fgrosbop*pgrossmw + pinjwp + tfcmw + crypmw + &
-            ppumpmw + htpmw + helecmw + facht + vachtmw + trithtmw
+       precircmw = fgrosbop*pgrossmw + pinjwp + tfcmw + crypmw + &
+            ppumpmw + htpmw + helecmw + fachtmw + vachtmw + trithtmw
 
        !  Net electric power
 
-       pnetelmw = pgrossmw - precir
+       pnetelmw = pgrossmw - precircmw
 
        !  Scaling to prevent negative pnetelmw
 
@@ -1144,7 +1146,7 @@ contains
     call ovarre(outfile,'Centrepost coolant pump power (MW)','(ppumpmw)' &
          ,ppumpmw)
     call ovarre(outfile,'Primary (high-grade) heat (MW)','(pthermmw)',pthermmw)
-    call ovarre(outfile,'Secondary (low-grade) heat (MW)','(psecht)',psecht)
+    call ovarre(outfile,'Secondary (low-grade) heat (MW)','(psechtmw)',psechtmw)
     call oblnkl(outfile)
     call ovarre(outfile,'Heat removal from F.W./divertor (MW)', &
          '(pfwdiv)',pfwdiv)
@@ -1174,8 +1176,8 @@ contains
 
     call ovarre(outfile,'Total cryogenic load (MW)','(helpow/1.D6)', &
          helpow/1.0D6)
-    call ovarre(outfile,'Heat removal from facilities (MW)','(facht)', &
-         facht)
+    call ovarre(outfile,'Heat removal from facilities (MW)','(fachtmw)', &
+         fachtmw)
     call ovarrf(outfile,'Number of primary heat exchangers','(rnphx)', &
          rnphx)
     call ovarrf(outfile,'Number of intermediate heat exchangers', &
@@ -1194,8 +1196,8 @@ contains
          ffwlg)
 
     call osubhd(outfile,'Recirculating power :')
-    call ovarre(outfile,'Total recirculating power (MW)','(precir)', &
-         precir)
+    call ovarre(outfile,'Total recirculating power (MW)','(precircmw)', &
+         precircmw)
     call ovarre(outfile,'Balance of plant recirculating power (MW)',' ', &
          fgrosbop*pgrossmw)
     call ovarre(outfile,'H/CD injected power (MW)','(pinjwp)',pinjwp)
@@ -1206,7 +1208,6 @@ contains
     call ovarre(outfile,'Heat transport pump power (MW)','(htpmw)',htpmw)
     if (ihplant /= 0) call ovarre(outfile,'Hydrogen production electrical power (MW)', &
          '(helecmw)',helecmw)
-    call ovarre(outfile,'Facility heat removal power (MW)','(facht)',facht)
     call ovarre(outfile,'Vacuum pump power (MW)','(vachtmw)',vachtmw)
     call ovarre(outfile,'Tritium processing power (MW)','(trithtmw)',trithtmw)
 

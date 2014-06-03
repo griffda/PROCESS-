@@ -353,7 +353,7 @@ contains
     pdt = pdt + 5.0D0*palpnb
 
     call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
-         ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,betaft, &
+         ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,pchargemw,betaft, &
          palppv,palpipv,palpepv,pfuscmw,powfmw)
 
     !  Neutron wall load
@@ -383,14 +383,14 @@ contains
     call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
 
     !  Power to the divertor
-    !+PJK Should falpha be used to multiply palppv here?
+    !+PJK Should falpha be used to multiply palpmw here?
 
     if (ignite == 0) then
-       pinj = pinjmw/vol
+       pinj = pinjmw
     else
        pinj = 0.0D0
     end if
-    pdivt = vol * (palppv + pchargepv + pinj + pohmpv - pradpv)
+    pdivt = palpmw + pchargemw + pinj + pohmmw - vol*pradpv
 
     !  The following line is unphysical, but prevents -ve sqrt argument
     !  Should be obsolete if constraint eqn 17 is turned on
@@ -406,7 +406,7 @@ contains
     !  chosen scaling law
 
     call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
-         iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargepv,pinjmw, &
+         iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
          plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
          xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
 
@@ -2689,7 +2689,7 @@ contains
     !+ad_args  ftrit      : input real :  tritium fuel fraction
     !+ad_args  ti         : input real :  ion temperature (keV)
     !+ad_args  palppv     : output real : alpha particle fusion power per volume (MW/m3)
-    !+ad_args  pchargepv  : output real : other charged particle fusion power per volume (MW/m3)
+    !+ad_args  pchargepv  : output real : other charged particle fusion power/volume (MW/m3)
     !+ad_args  pneutpv    : output real : neutron fusion power per volume (MW/m3)
     !+ad_args  sigvdt     : output real : profile averaged <sigma v DT> (m3/s)
     !+ad_args  fusionrate : output real : fusion reaction rate (reactions/m3/s)
@@ -2896,8 +2896,8 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
-       ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,betaft, &
-       palppv,palpipv,palpepv,pfuscmw,powfmw)
+       ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,pchargemw, &
+       betaft,palppv,palpipv,palpepv,pfuscmw,powfmw)
 
     !+ad_name  palph2
     !+ad_summ  (Concluding part of) fusion power and fast alpha pressure
@@ -2914,13 +2914,14 @@ contains
     !+ad_args  falpi    : input real :  fraction of alpha energy to ions
     !+ad_args  ifalphap : input integer :  switch for fast alpha pressure method
     !+ad_args  palpnb   : input real :  alpha power from hot neutral beam ions (MW)
-    !+ad_args  pchargepv : input real : other charged particle fusion power per volume (MW/m3)
+    !+ad_args  pchargepv : input real : other charged particle fusion power/volume (MW/m3)
     !+ad_args  pneutpv  : input/output real : neutron fusion power per volume (MW/m3)
     !+ad_args  ten      : input real :  density-weighted electron temperature (keV)
     !+ad_args  tin      : input real :  density-weighted ion temperature (keV)
     !+ad_args  vol      : input real :  plasma volume (m3)
     !+ad_args  palpmw   : output real : alpha power (MW)
     !+ad_args  pneutmw  : output real : neutron fusion power (MW)
+    !+ad_args  pchargemw : output real : other charged particle fusion power (MW)
     !+ad_args  betaft   : output real : fast alpha beta component
     !+ad_args  palppv   : input/output real : alpha power per volume (MW/m3)
     !+ad_args  palpepv  : output real : alpha power per volume to electrons (MW/m3)
@@ -2941,6 +2942,7 @@ contains
     !+ad_hist  19/02/14 PJK Removed obsolete argument pcoef;
     !+ad_hisc               changed te,ti to ten,tin
     !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  03/06/14 PJK Added pchargemw output
     !+ad_stat  Okay
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
     !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
@@ -2956,7 +2958,7 @@ contains
     real(kind(1.0D0)), intent(in) :: bp, bt, dene, deni, dnitot, falpe, &
          falpi, palpnb, pchargepv, ten, tin, vol
     real(kind(1.0D0)), intent(inout) :: palppv, pneutpv
-    real(kind(1.0D0)), intent(out) :: palpmw, pneutmw, betaft, palpepv, &
+    real(kind(1.0D0)), intent(out) :: palpmw, pneutmw, pchargemw, betaft, palpepv, &
          palpipv, pfuscmw, powfmw
 
     !  Local variables
@@ -2977,17 +2979,21 @@ contains
 
     palpmw = palppv*vol
 
+    !  Total non-alpha charged particle power
+
+    pchargemw = pchargepv*vol
+
     !  Total neutron power
 
     pneutmw = pneutpv*vol
 
     !  Total fusion power
 
-    powfmw = palpmw + (pneutpv + pchargepv)*vol
+    powfmw = palpmw + pneutmw + pchargemw
 
     !  Charged particle fusion power
 
-    pfuscmw = palpmw + pchargepv*vol
+    pfuscmw = palpmw + pchargemw
 
     !  Power to electrons and ions (used with electron and ion power balance
     !  equations only)
@@ -3139,7 +3145,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
-       iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargepv,pinjmw,&
+       iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw,&
        plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
        xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
 
@@ -3164,7 +3170,7 @@ contains
     !+ad_args  kappa     : input real :  plasma elongation
     !+ad_args  kappa95   : input real :  plasma elongation at 95% surface
     !+ad_args  kappaa    : output real : plasma elongation calculated using area ratio
-    !+ad_args  pchargepv : input real :  non-alpha charged particle fusion power (MW/m3)
+    !+ad_args  pchargemw : input real :  non-alpha charged particle fusion power (MW)
     !+ad_args  pinjmw    : input real :  auxiliary power to ions and electrons (MW)
     !+ad_args  plascur   : input real :  plasma current (A)
     !+ad_args  pohmpv    : input real :  ohmic heating per unit volume (MW/m3)
@@ -3209,6 +3215,7 @@ contains
     !+ad_hisc               introduced iradloss switch;
     !+ad_hisc               added falpha multiplier to alpmw term
     !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  03/06/14 PJK Changed pchargepv usage to pchargemw
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  N. A. Uckan and ITER Physics Group,
@@ -3223,7 +3230,7 @@ contains
 
     integer, intent(in) :: iinvqd, isc, ignite
     real(kind(1.0D0)), intent(in) :: afuel, palpmw, aspect, bt, dene, &
-         dnitot, dnla, eps, hfact, kappa, kappa95, pchargepv, pinjmw, &
+         dnitot, dnla, eps, hfact, kappa, kappa95, pchargemw, pinjmw, &
          plascur, pohmpv, pcoreradpv, q, qstar, rmajor, rminor, te, &
          ten, tin, vol, xarea, zeff
     real(kind(1.0D0)), intent(out) :: kappaa, powerht, ptrepv, ptripv, &
@@ -3253,7 +3260,7 @@ contains
 
     !  Calculate heating power (MW)
 
-    powerht = falpha*palpmw + pchargepv*vol + pohmmw
+    powerht = falpha*palpmw + pchargemw + pohmmw
 
     !  If the device is not ignited, add the injected auxiliary power
 
@@ -4520,7 +4527,7 @@ contains
 
     do iisc = 1,ipnlaws
        call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,d2, &
-            iinvqd,iisc,ignite,kappa,kappa95,kappaa,pchargepv,pinjmw, &
+            iinvqd,iisc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
             plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
             xarea,zeff,ptrez,ptriz,taueez,taueiz,taueffz,powerhtz)
        hfac(iisc) = fhfac(iisc)
@@ -4625,7 +4632,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hhh, &
-         iinvqd,iscz,ignite,kappa,kappa95,kappaa,pchargepv,pinjmw, &
+         iinvqd,iscz,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
          plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
          xarea,zeff,ptrez,ptriz,taueezz,taueiz,taueffz,powerhtz)
 
@@ -5484,7 +5491,7 @@ contains
     call ovarre(outfile,'Alpha power: beam-plasma (MW)','(palpnb)',palpnb)
     call ovarre(outfile,'Neutron power (MW)','(pneutmw)',pneutmw)
     call ovarre(outfile,'Charged particle power (excluding alphas) (MW)', &
-         '(pchargepv*vol)',pchargepv*vol)
+         '(pchargemw)',pchargemw)
 
     call ovarrf(outfile,'Neutron wall load (MW/m2)','(wallmw)',wallmw)
     call ovarrf(outfile,'Fraction of power to electrons','(falpe)',falpe)

@@ -745,6 +745,7 @@ contains
     !+ad_hist  20/05/14 PJK Cleaned up radiation power usage
     !+ad_hist  21/05/14 PJK Added ignite clause to pinj calculation
     !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  03/06/14 PJK Introduced pchargemw
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -872,8 +873,8 @@ contains
     pdt = pdt + 5.0D0*palpnb
 
     call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
-         ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,betaft, &
-         palppv,palpipv,palpepv,pfuscmw,powfmw)
+         ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,pchargemw, &
+         betaft,palppv,palpipv,palpepv,pfuscmw,powfmw)
 
     !  Neutron wall load
 
@@ -900,11 +901,11 @@ contains
     !  Power to the divertor
 
     if (ignite == 0) then
-       pinj = pinjmw/vol
+       pinj = pinjmw
     else
        pinj = 0.0D0
     end if
-    pdivt = vol * (palppv + pchargepv + pinj + pohmpv - pradpv)
+    pdivt = palpmw + pchargemw + pinj + pohmmw - vol*pradpv
 
     !  The following line is unphysical, but prevents -ve sqrt argument
     !  Should be obsolete if constraint eqn 17 is turned on
@@ -919,7 +920,7 @@ contains
     !  chosen scaling law
 
     call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
-         iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargepv,pinjmw, &
+         iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
          plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
          xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
 

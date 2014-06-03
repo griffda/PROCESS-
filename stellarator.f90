@@ -966,6 +966,7 @@ contains
     !+ad_hist  20/05/14 PJK Cleaned up radiation power usage
     !+ad_hist  21/05/14 PJK Added ignite clause to powht calculation
     !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  03/06/14 PJK Introduced pchargemw
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1038,8 +1039,8 @@ contains
     pdt = pdt + 5.0D0*palpnb
 
     call palph2(bt,bp,dene,deni,dnitot,falpe,falpi,palpnb, &
-         ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,betaft, &
-         palppv,palpipv,palpepv,pfuscmw,powfmw)
+         ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,pchargemw, &
+         betaft,palppv,palpipv,palpepv,pfuscmw,powfmw)
 
     !  Neutron wall load
 
@@ -1062,7 +1063,7 @@ contains
     !  Heating power to plasma (= Psol in divertor model)
     !  Ohmic power is zero in a stellarator
 
-    powht = palpmw + pchargepv*vol + pohmmw - pcoreradpv*vol
+    powht = palpmw + pchargemw + pohmmw - pcoreradpv*vol
     if (ignite == 0) powht = powht + pinjmw
 
     !  Line radiation power/volume is obtained via input parameter f_rad
@@ -1089,7 +1090,7 @@ contains
     !  N.B. iotabar replaces tokamak q95 in argument list
 
     call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,hfact, &
-         iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargepv,pinjmw, &
+         iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
          plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,iotabar,qstar,vol, &
          xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
 
@@ -2031,7 +2032,7 @@ contains
        i = istlaw(iisc)
 
        call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,d2, &
-            iinvqd,i,ignite,kappa,kappa95,kappaa,pchargepv,pinjmw, &
+            iinvqd,i,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
             plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin, &
             iotabar,qstar,vol,xarea,zeff,ptrez,ptriz,taueez,taueiz, &
             taueffz,powerhtz)

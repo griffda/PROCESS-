@@ -2205,6 +2205,8 @@ contains
     !+ad_hist  31/10/12 PJK Added cost_variables
     !+ad_hist  17/04/13 PJK Corrected ctht
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
+    !+ad_hist  03/06/14 PJK precir renamed precircmw and made global;
+    !+ad_hisc               changed psecht to psechtmw, facht to fachtmw
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.67
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2219,22 +2221,20 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: precir
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Facility heat removal (fcsht calculated in IFEACP)
 
-    facht = fcsht
+    fachtmw = fcsht
 
     !  Total secondary heat
 
-    psecht = pinjht + pnucloss + facht + vachtmw + trithtmw + &
+    psechtmw = pinjht + pnucloss + fachtmw + vachtmw + trithtmw + &
          tdspmw + tfacmw + crypmw + htpmw
 
     !  Total plant heat removal
 
-    ctht = pthermmw + psecht
+    ctht = pthermmw + psechtmw
 
     !  Number of intermediate heat exchangers
 
@@ -2254,11 +2254,11 @@ contains
 
        !  Total recirculating power
 
-       precir = (fgrosbop*pgrossmw) + pacpmw
+       precircmw = (fgrosbop*pgrossmw) + pacpmw
 
        !  Net electric power
 
-       pnetelmw = pgrossmw - precir
+       pnetelmw = pgrossmw - precircmw
 
        !  Scaling to prevent negative pnetelmw
 
@@ -2284,7 +2284,7 @@ contains
     call ovarre(outfile,'Blanket nuclear heating (MW)','(pnucblkt)', &
          pnucblkt)
     call ovarre(outfile,'Primary heat (MW)','(pthermmw)',pthermmw)
-    call ovarre(outfile,'Secondary heat (MW)','(psecht)',psecht)
+    call ovarre(outfile,'Secondary heat (MW)','(psechtmw)',psechtmw)
     call oblnkl(outfile)
     call ovarre(outfile,'Heat removal from driver power (MW)', &
          '(pinjht)',pinjht)
@@ -2298,8 +2298,8 @@ contains
          '(tdspmw)',tdspmw)
     call ovarre(outfile,'Heat removal from tritium plant (MW)', &
          '(trithtmw)',trithtmw)
-    call ovarre(outfile,'Heat removal from facilities (MW)','(facht)' &
-         ,facht)
+    call ovarre(outfile,'Heat removal from facilities (MW)','(fachtmw)' &
+         ,fachtmw)
     call ovarrf(outfile,'Number of primary heat exchangers','(rnphx)' &
          ,rnphx)
     call ovarrf(outfile,'Number of intermediate heat exchangers', &
