@@ -1,4 +1,3 @@
-!  $Id:: scan.f90 259 2014-05-01 12:05:37Z pknight                      $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module scan_module
@@ -18,6 +17,7 @@ module scan_module
   !+ad_call  divertor_variables
   !+ad_call  global_variables
   !+ad_call  heat_transport_variables
+  !+ad_call  impurity_radiation_module
   !+ad_call  numerics
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
@@ -39,6 +39,7 @@ module scan_module
   !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_hist  28/11/13 PJK Added scan variable 27: tbrmin
   !+ad_hist  12/02/14 PJK Added scan variable 28: bt
+  !+ad_hist  04/06/14 PJK Added scan variable 29: coreradius
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -50,6 +51,7 @@ module scan_module
   use divertor_variables
   use global_variables
   use heat_transport_variables
+  use impurity_radiation_module
   use numerics
   use pfcoil_variables
   use physics_variables
@@ -63,8 +65,8 @@ module scan_module
 
   !+ad_vars  ipnscns /50/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 50
-  !+ad_vars  ipnscnv /28/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 28
+  !+ad_vars  ipnscnv /29/ FIX : number of available scan variables
+  integer, parameter :: ipnscnv = 29
 
   !+ad_vars  isweep /0/ : number of loops to perform
   integer :: isweep = 0
@@ -96,7 +98,8 @@ module scan_module
   !+ad_varc          <LI> 25 kappa
   !+ad_varc          <LI> 26 triang
   !+ad_varc          <LI> 27 tbrmin (for blktmodel > 0 only)
-  !+ad_varc          <LI> 28 bt</UL>
+  !+ad_varc          <LI> 28 bt
+  !+ad_varc          <LI> 29 coreradius</UL>
   integer :: nsweep = 1
 
   !+ad_vars  sweep(ipnscns) : Actual values to use in scan
@@ -147,6 +150,7 @@ contains
     !+ad_hist  30/04/14 PJK Fixed plabel(20)
     !+ad_hist  15/05/14 PJK Increased output width to 110 characters
     !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  04/06/14 PJK Added scan variable 29: coreradius
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -345,6 +349,9 @@ contains
        case (28)
           bt = sweep(iscan)
           vlabel = 'bt = ' ; xlabel = 'Tor._field_on_axis_(T)'
+       case (29)
+          coreradius = sweep(iscan)
+          vlabel = 'coreradius = ' ; xlabel = 'Core_radius'
 
        case default
           write(*,*) 'Error in routine SCAN:'
