@@ -38,9 +38,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-06-04
+2014-06-12
 \hfill
-Revision:: 285
+Revision:: 287
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -84,11 +84,9 @@ Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % To do list:
 %  (apart from bringing it in line with the F90 code, of course...)
-%  Improve power flow figures
 %  scaling law references into table
 %  IFE model; expand details about build, materials
 %  check and expand references
-%  add iprimhtp, iprimnloss
 %  show buildings calculations
 %  iavail usage
 %  tratio
@@ -1322,7 +1320,7 @@ The most likely fusion reaction to be utilised in a power plant is the
 deuterium-tritium reaction:
 \begin{equation}
 \mathrm{D + T} \Longrightarrow \mathrm{^{4}He + n + 17.6 \,MeV}
-\label{eq:d-t}
+\label{eqn:d-t}
 \end{equation}
 20\% of the energy produced is given to the alpha particles ($^4$He), which
 remain within the plasma and thermalise (slow down) due to collisions, thus
@@ -1333,7 +1331,7 @@ deposit their energy within the blanket and shield.
 fusion reaction:
 \begin{equation}
 \mathrm{D + \mbox{$^3$He}} \Longrightarrow \mathrm{^{4}He + p + 18.3 \,MeV}
-\label{eq:dhe3}
+\label{eqn:dhe3}
 \end{equation}
 The fusion reaction rate is significantly different to that for D-T fusion,
 and the power flow from the plasma is modified since charged particles are
@@ -1467,7 +1465,7 @@ agreement with simulations.
 The plasma beta limit~\cite{IPDG,172} is given by
 \begin{equation}
 \langle \beta \rangle < g \, \frac{I(\mbox{MA})}{a(\mbox{m}) \, B_0(\mbox{T})}
-\label{eq:troyon}
+\label{eqn:troyon}
 \end{equation}
 where $B_0$ is the axial vacuum toroidal field, and $\beta$ is defined with
 respect to the total equilibrium $\mathbf{B}$-field~\cite{172}. The beta
@@ -1578,9 +1576,10 @@ power available that can be converted to radiation (i.e.\ the sum of the fusion
 alpha power, other charged particle fusion power, auxiliary injected power and
 the ohmic power). This constraint should always be turned on.
 
-Switch \texttt{iradloss} may be used to include (\texttt{iradloss = 1},
-default) or exclude (\texttt{iradloss = 0}) the core radiation power from the
-transport power used in the confinement time and power balance calculations.
+Switch \texttt{iradloss} may be used to exclude (\texttt{iradloss = 1},
+default) or include (\texttt{iradloss = 0}) the core radiation power in the
+transport power used in the confinement time and power balance calculations
+(see Section~\ref{sec:corepower}).
 
 \subsubsection{Plasma current scaling laws}
 \label{sec:current_scaling}
@@ -1609,7 +1608,7 @@ parameters~\cite{DEMOPhysicsGuidelines} can be enforced by setting switch
 \texttt{alphaj} is consistent with the input values for the safety factor on
 axis and at the plasma edge (\texttt{q0} and \texttt{q}, respectively), the
 plasma internal inductance $l_i$ is consistent with this \texttt{alphaj}, and
-the beta $g$ coefficient \texttt{dnbeta} scales with $\l_i$.
+the beta $g$ coefficient \texttt{dnbeta} scales with $l_i$.
 
 It is recommended that current scaling law \texttt{icurr = 4} is used if
 \texttt{iprofile = 1}. Switch \texttt{gtscale} is over-ridden if
@@ -1618,11 +1617,24 @@ It is recommended that current scaling law \texttt{icurr = 4} is used if
 \subsubsection{Confinement time scaling laws}
 \label{sec:taue}
 
+The particle transport loss power in Watts/m$^3$ from the plasma is defined as
+\begin{equation}
+P_{\mbox{\scriptsize loss}} = \frac{W}{\tau_E}
+\label{eqn:ploss}
+\end{equation}
+where the plasma stored energy per unit volume $W$ is given by
+\[
+W = \frac{3}{2} \,n \, e \, T
+\]
+with particle number density $n$ in m$^{-3}$ and particle temperature $T$ in
+eV. \process\ assumes that the electron and ion energy confinement times
+$\tau_E$ are equal.
+
 Many energy confinement time scaling laws are present within \process, for
 tokamaks, RFPs or stellarators. These are calculated in routine
 \texttt{PCOND}. The value of \texttt{isc} determines which of the scalings is
-used in the plasma energy balance calculation.  Table~\ref{tab:scaling_laws}
-summarises the available scaling laws.
+used in the plasma energy balance calculation (Section~\ref{sec:corepower}).
+Table~\ref{tab:scaling_laws} summarises the available scaling laws.
 
 % Table summarising confinement time scaling laws in PROCESS.
 \begin{table}[tbph]
@@ -1687,6 +1699,45 @@ Berchtesgaden, 1997 \\
   \textit{Summary of the energy confinement time scaling laws in \process.}
 }
 \end{table}
+
+\subsubsection{Plasma core power balance}
+\label{sec:corepower}
+
+Figure~\ref{fig:powerflow1} shows schematically the flow of power within the
+plasma as calculated by the code. (Figures~\ref{fig:powerflow2} and
+\ref{fig:powerflow3} show the power transfer mechanisms for the remainder of
+the power plant.)
+
+\begin{figure}[tbph]
+\epsfig{file=powerflow1.eps,width=170mm}
+\caption[Power balance within the core plasma] {\label{fig:powerflow1}
+  \textit{Schematic diagram of the flow of power within the plasma
+    core. Variable names are given in [\ldots]. Refer to
+  Figure~\ref{fig:powerflow2} for the onward flow of power from the three
+  red-bordered boxes, while the source of the power in the blue box is
+  indicated in Figure~\ref{fig:powerflow3}.} }
+\end{figure}
+
+The primary sources of power are the fusion reactions themselves, ohmic power
+due to resistive heating within the plasma, and any auxiliary power provided
+for heating and current drive (see Section~\ref{sec:hcd}). The power carried
+by the fusion-generated neutrons is lost from the plasma, but is deposited in
+the surrounding material (see Section~\ref{sec:powerflow}). A fraction
+\texttt{falpha} of the alpha particle power is assumed to stay within the
+plasma core to contribute to the plasma power balance. The sum of this core
+alpha power, any power carried by non-alpha charged particles, the ohmic power
+and any injected power, is converted into charged particle transport power
+($P_{\mbox{\scriptsize loss}}$ in Equation~\ref{eqn:ploss}) plus core
+radiation power (see Section~\ref{sec:radiation}), as shown in
+Figure~\ref{fig:powerflow1}. (Note that, if switch \texttt{iradloss} is set to
+zero, the above summed input power is converted into charged particle
+transport power only, and the core radiation power may be assumed to originate
+from the transport power; i.e.\ the core radiation power is treated the same
+as the edge radiation power in Figure~\ref{fig:powerflow1} instead of having
+an arrow leading directly to it from the core plasma power balance.)
+
+The core power balance calculation is turned on using constraint equation
+no.\ 2 (which should therefore always be used).
 
 \subsubsection{Bootstrap current scalings}
 \label{sec:bootstrap}
@@ -1795,14 +1846,6 @@ divertor. \process\ treats the scrape-off layer merely as a gap. Switch
 as 10\% of the plasma minor radius (\texttt{iscrp = 0}), or set equal to the
 input values \texttt{scrapli} and \texttt{scraplo} (\texttt{iscrp = 1}).
 
-\subsubsection*{High-Z impurities}
-
-The assumed high-Z impurity affecting the plasma composition and radiation
-power calculations can be switched between argon (\texttt{zfear = 1}) and iron
-(\texttt{zfear = 0}); the latter is the default option.
-
-%!%!%! [Add section on radiation power, etc.]
-
 \subsection{First wall}
 
 The first wall acts as a physical barrier protecting the rest of the machine
@@ -1821,7 +1864,7 @@ otherwise.
 Switch \texttt{iwalld} determines whether the neutron wall load (power per
 unit area) should be calculated using the plasma surface area (\texttt{iwalld
   = 1}) or the first wall area (\texttt{iwalld = 2}) as the denominator. In
-\Red{either} case, input parameter \texttt{ffwal} (default value \Red{0.92})
+the former case, input parameter \texttt{ffwal} (default value 0.92)
 can be used to scale the neutron power reaching the first wall.
 
 \subsection{Divertor}
@@ -1947,7 +1990,7 @@ A few other input parameters are useful for tuning purposes, as follows:
 \item \texttt{fhole} is the `hole' area fraction of the first wall and blanket
   that neutrons leaving the plasma see, due to the presence of the divertor,
   for instance. That is, \texttt{1-fhole} is the first wall area coverage
-  factor.
+  factor. \Red{(N.B.\ see Section~\ref{sec:powerflow}.)}
 
 \item \texttt{fvolsi} and \texttt{fvolso} are the area (and volume) coverage
   factors for the inboard and outboard shields, respectively.
@@ -2388,6 +2431,7 @@ equation no.\ 26 should be turned on with iteration variable no.\ 38
 (\texttt{fjohc}).
 
 \subsection{Auxiliary power systems: heating and current drive}
+\label{sec:hcd}
 
 \subsubsection{Current Drive}
 
@@ -2466,14 +2510,14 @@ be set using input parameter \texttt{nbshield}.
 Switch \texttt{ignite} can be used to denote whether the plasma is ignited,
 i.e.\ fully self-sustaining without the need for any injected auxiliary power
 during the burn. If \texttt{ignite = 1}, the calculated injected power does
-not contribute to the plasma power balance, although the cost of the auxiliary
-power system is taken into account (the system is then assumed to be required
-to provide heating etc.\ during the plasma start-up phase only --- use
-\texttt{pheat} to indicate the power requirement). If \texttt{ignite = 0}, the
-plasma is not ignited, and the auxiliary power is taken into account in the
-plasma power balance during the burn phase. Also, constraint equation no.\ 28
-can be turned on to enforce the fusion gain $Q$ to be at least
-\texttt{bigqmin}.
+not contribute to the plasma power balance (Section~\ref{sec:corepower}),
+although the cost of the auxiliary power system is taken into account (the
+system is then assumed to be required to provide heating etc.\ during the
+plasma start-up phase only --- use \texttt{pheat} to indicate the power
+requirement). If \texttt{ignite = 0}, the plasma is not ignited, and the
+auxiliary power is taken into account in the plasma power balance during the
+burn phase. Also, constraint equation no.\ 28 can be turned on to enforce the
+fusion gain $Q$ to be at least \texttt{bigqmin}.
 
 \subsection{Structural components}
 
@@ -2487,28 +2531,6 @@ calculated.
 The bucking cylinder provides some strength to the inboard TF coil
 structure. If the TF coils are superconducting, the bucking cylinder is cooled
 by the cryogenic system.
-
-\subsection{Power conversion and heat dissipation systems}
-
-The \process\ power plant takes into account all the systems required to
-perform the necessary conversion of fusion power to electricity, from the
-coolant systems in the plant components to the heat exchangers and turbines.
-Figure~\ref{fig:pwrconv} shows schematically the overall power transfer
-mechanisms used by the code.
-
-\begin{figure}[tbph]
-\centerline{\epsfig{file=PWR.ps,width=160mm,height=160mm,
-bbllx=0mm,bburx=200mm,bblly=0mm,bbury=200mm,clip=}}
-\vspace{-12mm}
-\caption[Power conversion mechanisms within \process]
-{\label{fig:pwrconv}
-  \textit{Schematic diagram showing the power conversion mechanisms used in
-    \process \cite[Note 0166]{PWF}.}
-}
-\end{figure}
-
-Many of the power conversion efficiencies shown in Figure~\ref{fig:pwrconv}
-can be adjusted by the user.
 
 \subsection{Cryostat and vacuum system}
 
@@ -2531,6 +2553,165 @@ being used.
 
 Switch \texttt{ntype} controls whether a turbopump (\texttt{ntype = 0}) or a
 cryopump (\texttt{ntype = 1}) is used in the vacuum system.
+
+\subsection{Power conversion and heat dissipation systems}
+\label{sec:powerflow}
+
+The \process\ power plant takes into account all the systems required to
+perform the necessary conversion of fusion power to electricity, from the
+coolant systems in the plant components to the heat exchangers and turbines.
+%Figure~\ref{fig:pwrconv} shows schematically the overall power transfer
+%mechanisms used by the code.
+%
+%\begin{figure}[tbph]
+%\centerline{\epsfig{file=PWR.ps,width=160mm,height=160mm,
+%bbllx=0mm,bburx=200mm,bblly=0mm,bbury=200mm,clip=}}
+%\vspace{-12mm}
+%\caption[Power conversion mechanisms within \process]
+%{\label{fig:pwrconv}
+%  \textit{Schematic diagram showing the power conversion mechanisms used in
+%    \process \cite[Note 0166]{PWF}.}
+%}
+%\end{figure}
+%
+%Many of the power conversion efficiencies shown in Figure~\ref{fig:pwrconv}
+%can be adjusted by the user.
+
+Figures~\ref{fig:powerflow2} and \ref{fig:powerflow3} show schematically the
+overall power transfer mechanisms within the power plant outside of the plasma
+(the power flow \textit{within}\/ the plasma is shown in
+Figure~\ref{fig:powerflow1}).
+
+(Note that these figures and the following description assume that switch
+\texttt{ipowerflow} is set to 1; its default value is currently
+zero, as the new power flow model is in draft form.)
+
+\begin{figure}[tbph]
+\epsfig{file=powerflow2.eps,width=170mm}
+\caption[Power flow within the fusion power plant core]
+{\label{fig:powerflow2} \textit{Schematic diagram of the flow of power from
+    the plasma to the thermal power deposited within the divertor, first wall,
+    blanket and shield. Variable names are given in [\ldots]. The three
+    red-bordered contributions are passed from Figure~\ref{fig:powerflow1},
+    while the blue box comes from Figure~\ref{fig:powerflow3}.} }
+\end{figure}
+
+Figure~\ref{fig:powerflow2} shows how the power contributions originating from
+the plasma are converted to thermal power in the first wall, blanket, shield
+and divertor.
+
+The radiation and neutron power contributions are distributed according to the
+following area fractions of a theoretical first wall with 100\% coverage,
+which may be set as input parameters: \texttt{fdiv} (divertor area fraction),
+\texttt{fhcd} (heating / current drive / diagnostics apparatus), and
+\texttt{fhole} (any other gaps). The remaining fraction
+(\texttt{1-fdiv-fhcd-fhole}) is the area fraction of the actual first wall.
+
+\subsubsection{Divertor}
+
+All of the charged particle transport power leaving the plasma is assumed to
+be absorbed in the divertor, along with a proportion \texttt{fdiv} of the
+radiation power and the neutron power. The power necessary to drive the
+divertor coolant pumps $P$ (= \texttt{htpmw\_div} in
+Figure~\ref{fig:powerflow2}) is assumed to be a fraction $f$ (= input
+parameter \texttt{fpumpdiv}) of the total thermal power absorbed by the
+divertor, which includes the coolant pump power itself:
+\begin{eqnarray*}
+P & = & f . (\mathtt{pdivt} + \mathtt{praddiv} + \mathtt{pnucdiv} + P) \\
+\Longrightarrow P & = & \frac{f}{1-f} . (\mathtt{pdivt} + \mathtt{praddiv} +
+\mathtt{pnucdiv})
+\end{eqnarray*}
+The efficiency of the divertor coolant pump is given by input parameter
+\texttt{etahtpdiv}.
+
+Switch \texttt{iprimdiv} may be used to specify whether the thermal power
+deposited in the divertor becomes primary (high-grade) thermal power
+(\texttt{iprimdiv = 1}) or secondary (low-grade) thermal power (see
+Figure~\ref{fig:powerflow3}).
+
+\subsubsection{First wall}
+
+All of the remaining radiation power (i.e.\ the fraction not incident upon the
+divertor or lost through holes or the heating / current drive apparatus) is
+assumed to be absorbed by the first wall. The same fraction of the neutron
+power is assumed to pass into the first wall. Of this neutron power, a
+fraction $(1-e^{\lambda/d})$ is assumed to be absorbed in the first wall
+(of thickness $d$), given by the neutron decay length $\lambda$ in the first wall
+(input parameter \texttt{declfw}).
+
+As for the divertor, the first wall coolant pump power is a fraction
+\texttt{fpumpfw} of the total thermal power absorbed by the first wall, and
+the efficiency of the first wall coolant pump is \texttt{etahtpfw}.
+
+\subsubsection{Blanket}
+
+A fraction (\texttt{1 - exp(declblkt/blnkoth)}) of the neutron power incident
+on the blanket is assumed to be absorbed in the blanket, where input parameter
+\texttt{declblkt} is the neutron decay length in the blanket. This absorbed
+neutron power is multiplied by the energy multiplication factor \texttt{emult}
+to calculate its contribution to the thermal power within the blanket.
+
+As for the other components, the blanket coolant pump power is a fraction
+\texttt{fpumpblkt} of the total thermal power absorbed by the blanket, and
+the efficiency of the blanket coolant pump is \texttt{etahtpblkt}.
+
+\subsubsection{Shield}
+
+A fraction (\texttt{1 - exp(declshld/shldoth)}) of the neutron power incident
+on the shield is assumed to be absorbed in the shield, where input parameter
+\texttt{declshld} is the neutron decay length in the shield.
+
+As for the other components, the shield coolant pump power is a fraction
+\texttt{fpumpshld} of the total thermal power absorbed by the shield, and
+the efficiency of the shield coolant pump is \texttt{etahtpshld}.
+
+Switch \texttt{iprimshld} may be used to specify whether the thermal power
+deposited in the shield becomes primary (high-grade) thermal power
+(\texttt{iprimshld = 1}) or secondary (low-grade) thermal power (see
+Figure~\ref{fig:powerflow3}).
+
+The remaining neutron power after passing through the shield is assumed to be
+absorbed in the TF coils as quantity \texttt{ptfnuc}. This power contributes
+to the total cryogenic power requirements of the machine.
+
+\subsubsection{Power conversion outside of the fusion power core}
+
+Figure~\ref{fig:powerflow3} summarises the power conversion mechanisms outside
+of the fusion power core.
+
+\begin{figure}[tbph]
+\epsfig{file=powerflow3.eps,width=170mm}
+\caption[Power flow outside the fusion power plant core]
+{\label{fig:powerflow3} \textit{Schematic diagram of the flow of power beyond
+    the fusion power core, showing the origin of the primary and secondary
+    thermal power and the electrical power balance within the plant. Variable
+    names are given in [\ldots]. The input power contributions in green boxes
+    originate in Figure~\ref{fig:powerflow2}. }  }
+\end{figure}
+
+The primary (high-grade, i.e.\ useable) thermal power comprises the thermal
+power contributions from the first wall and blanket, and possibly also those
+from the divertor and shield, depending on the values of the switches
+\texttt{iprimdiv} and \texttt{iprimshld} as described in the previous
+sections. The primary thermal power (less any thermal power required to
+produce hydrogen in a hydrogen production plant --- see
+Section~\ref{sec:hplant}) is used to produce steam to turn the turbines, thus
+generating the plant's gross electrical power, with an efficiency given by
+input parameter \texttt{etath}. The power lost via the turbines' inefficiency
+escapes from the plant to the environment.
+
+The electrical power required to operate the power plant itself is the
+so-called recirculating electric power. Any surplus is exported to the
+electricity grid as net electric power.
+
+The recirculating power comprises the electrical power required to run all of
+the associated electrical systems surrounding the fusion power core, plus the
+on-site building services, offices, etc., as shown in
+Figure~\ref{fig:powerflow3}. Of these, the cryogenic plant power includes the
+power required to cool the TF coils from the neutron power absorbed by the
+coils, the PF coils (as defined by the ratio of the total PF coil stored
+energy to the fusion power pulse time \texttt{tpulse}), and other `cold'
+components.
 
 \subsection{Buildings}
 
@@ -2721,6 +2902,7 @@ times of up to 300~seconds. Finally, if \texttt{istore = 3}, a large stainless
 steel block acts as the thermal storage medium.
 
 \section{Hydrogen Production Facility}
+\label{sec:hplant}
 
 Fusion power plants have been mooted as a means of producing hydrogen for use
 in fuel cells for cars, for instance. \process\ includes options to enable
@@ -3663,7 +3845,7 @@ common of which are as follows:
 It may still be difficult, if not impossible, to reconcile the fusion power
 and the net electric power with the required values. This may well be due to
 the power conversion efficiency values being used --- refer to
-Figure~\ref{fig:pwrconv}.
+Figure~\ref{fig:powerflow3}.
 
 With luck, a few iterations of this process will produce an adequate benchmark
 case. A typical input file for use with \process\ in non-optimisation mode is
@@ -5700,11 +5882,11 @@ Broyden-Fletcher-Goldfarb-Shanno update (\ref{sec:BFGS}). Section
 Mathematically the {\it general nonlinear programming problem} or {\it
   nonlinear constrained optimisation problem} is defined as
 \begin{subequations}
-\label{eq:NPP}
+\label{eqn:NPP}
 \begin{align}
 \textnormal{minimise } f(\vec{x}), & \\
 \textnormal{subject to } c_i(\vec{x}) &= 0, & i&=1,\dots,k,\\
-\label{eq:NPP3}
+\label{eqn:NPP3}
 \textnormal{and } c_i(\vec{x}) &\geq 0, & i&=k+1,\dots,m,
 \end{align}
 \end{subequations}
@@ -5720,7 +5902,7 @@ optimise the objective function $f(\vec{x})$. Note that any maximisation
 problem can be written as a minimisation by using $f'(\vec{x}) = - f(\vec{x})$
 and that any equality constraint $c(\vec{x}) = a$ can be rewritten as
 $c'(\vec{x}) = c(\vec{x}) - a = 0$. Any inequality constraint can therefore be
-rearranged analogously to fit the form described in eq. \ref{eq:NPP3}.
+rearranged analogously to fit the form described in eq. \ref{eqn:NPP3}.
 
 \section{The Lagrange Method}
 \label{sec:Lagrange}
@@ -5752,7 +5934,7 @@ lines of $f(x,y) =d$, this is equivalent to saying that the gradient of the
 objective function at that point is parallel to the gradient of the
 constraints
 \begin{equation}
-\label{eq:lagrangeequality}
+\label{eqn:lagrangeequality}
 \nabla f(x,y) = - \lambda \nabla c(x,y),
 \end{equation}
 where the factor $\lambda$ is necessary as only the direction, but not the
@@ -5761,7 +5943,7 @@ illustrated in Figure \ref{fig:LagrangeMultipliers}.
 
 When expanding the method to several equality and inequality constraints we
 can make use of the {\it Lagrange function}. For the nonlinear programming
-problem described by \ref{eq:NPP} it is given by
+problem described by \ref{eqn:NPP} it is given by
 \begin{equation}
 L(\vec{x},\vec{\lambda}) = f(\vec{x}) - \sum_{i=1}^{m} \lambda_i c_i(\vec{x}),
 \end{equation}
@@ -5772,13 +5954,13 @@ the Karush-Kuhn-Tucker (KKT) conditions,
 \begin{subequations}
 \begin{align}
 \nabla_x L(\vec{x}^*,\vec{\lambda}^*)  &= \nabla_x f(\vec{x}^*) - \sum_{i=1}^{m} \lambda_i \nabla_x c_i(\vec{x}^*) = 0,&&\\
-\label{eq:compl}
+\label{eqn:compl}
 \lambda^*_i c_i(\vec{x}^*)       &= 0,                                             &i&=1,\dots,m,\\
 c_i(\vec{x}^*)                   &= 0,                                             &i&=1,\dots,k,\\
 \lambda^*_i                &\geq 0,                                          &i&=k+1,\dots,m,\\
 c_i(\vec{x}^*)                   &\geq 0,                                         &i&=k+1,\dots,m.
 \end{align}
-\label{eq:KKT}
+\label{eqn:KKT}
 \end{subequations}
 Please note that by construction the Lagrange multipliers $\lambda_i^*$
 fulfilling the KKT conditions are describing the derivative of the objective
@@ -5914,7 +6096,7 @@ dimensional feasible subspace \cite{Luenberger2008}.
   \hline
   \colorbox{green!20}{ 1 } &\vmcon: Normal return & \vmcon\/ has found a
   solution that fulfills the necessary conditions within the specified error
-  tolerances (c.f. eq. \ref{eq:vmcon_errtol}). & Test whether the solution is
+  tolerances (c.f. eq. \ref{eqn:vmcon_errtol}). & Test whether the solution is
   a global solution by using different starting parameters.\\
   \hline
   \colorbox{red!20}{ 2 } & Too many function calls & During the line search
@@ -5966,11 +6148,11 @@ SQP method originally suggested by Powell\footnote{This should not be confused
   with Powell's algorithm \cite{Powell1964} which solves a multidimensional
   unconstrained minimisation problem without derivatives.}~\cite{Powell1978}
 based on work by Han \cite{Han1975}.  As stated before \vmcon\/ is designed to
-converge on a solution of the {\it necessary} KKT conditions \ref{eq:KKT}, but
+converge on a solution of the {\it necessary} KKT conditions \ref{eqn:KKT}, but
 does not check the {\it sufficient} conditions. Its convergence criterion is
 therefore given by
 \begin{equation}
-\label{eq:vmcon_errtol}
+\label{eqn:vmcon_errtol}
 \left| \nabla_x f(\vec{x}^{j-1})^T \cdot \vec{\delta}^{j} \right| +
 \sum^m_{i=1}\left| \lambda^j_i c_i(\vec{x}^{j-1}) \right| < \texttt{epsvmc}
 \end{equation} %Yes, the j and j-1 are correct!
@@ -5979,7 +6161,7 @@ the vector in direction of the next line search (c.f. section
 \ref{sec:linesearch}) and $j$ is the counter of the sequential quadratic
 programming iteration. Hence, the first part estimates the predicted
 improvement due to the next line search and the second part measures the error
-in the complimentary condition \ref{eq:compl} of the KKT conditions.
+in the complimentary condition \ref{eqn:compl} of the KKT conditions.
 
 Figure \ref{fig:vmconflow} describes the flow chart of the \vmcon\/ routine,
 while the various values of the return parameter \ifail\/\footnote{Note,
@@ -6128,7 +6310,7 @@ This has been added as experience have shown that \vmcon\/ typically does not
 converge in these situations, but if it is forced to caculate a new search
 direction in this way, it sometimes successfully finishes. Note, that this
 cannot force \vmcon\/ to converge on any false solutions, as it only exits
-positively when the convergence criterion \ref{eq:vmcon_errtol} is fulfilled.
+positively when the convergence criterion \ref{eqn:vmcon_errtol} is fulfilled.
 
 Typically, the line search already converges after one iteration and,
 therefore, $\alpha = 1$. Hence, the \vmcon\/ line search has an upper limit of

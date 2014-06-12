@@ -191,6 +191,7 @@ contains
     !+ad_hist  19/05/14 PJK Clarified pcorerad vs pbrem; plrad --> pedgerad
     !+ad_hist  21/05/14 PJK Added ignite clause to pinj calculation
     !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  03/06/14 PJK Modifications for new power flow model
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -361,6 +362,7 @@ contains
     if (iwalld == 1) then
        wallmw = ffwal * pneutmw / sarea
     else
+!+PJK should this include fhole etc?
        wallmw = pneutmw / fwarea
     end if
 
@@ -373,6 +375,10 @@ contains
     call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
          pcoreradpv,pedgeradpv,pradpv)
 
+    pcoreradmw = pcoreradpv*vol
+    pedgeradmw = pedgeradpv*vol
+    pradmw = pradpv*vol
+
     !  Calculate ohmic power
 
     call pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
@@ -382,7 +388,8 @@ contains
 
     call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
 
-    !  Power to the divertor
+    !  Power transported to the divertor by charged particles,
+    !  i.e. excludes neutrons and radiation
     !+PJK Should falpha be used to multiply palpmw here?
 
     if (ignite == 0) then
@@ -390,7 +397,7 @@ contains
     else
        pinj = 0.0D0
     end if
-    pdivt = palpmw + pchargemw + pinj + pohmmw - vol*pradpv
+    pdivt = palpmw + pchargemw + pinj + pohmmw - pradmw
 
     !  The following line is unphysical, but prevents -ve sqrt argument
     !  Should be obsolete if constraint eqn 17 is turned on
@@ -409,6 +416,9 @@ contains
          iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
          plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
          xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
+
+    ptremw = ptrepv*vol
+    ptrimw = ptripv*vol
 
     !  Calculate volt-second requirements
 
@@ -2545,7 +2555,8 @@ contains
     !+ad_cont  N/A
     !+ad_args  bt       : input real :  toroidal field on axis (T)
     !+ad_args  idensl   : input/output integer : switch denoting which formula to enforce
-    !+ad_args  pdivt    : input real :  power flowing to the edge plasma (MW)
+    !+ad_args  pdivt    : input real :  power flowing to the edge plasma via 
+    !+ad_argc                           charged particles (MW)
     !+ad_args  plascur  : input real :  plasma current (A)
     !+ad_args  prn1     : input real :  edge density / average plasma density
     !+ad_args  qcyl     : input real :  equivalent cylindrical safety factor (qstar)
@@ -2599,6 +2610,7 @@ contains
     dlimit(:) = 0.0D0
 
     !  Power per unit area crossing the plasma edge
+    !  (excludes radiation and neutrons)
 
     qperp = pdivt/sarea
 
@@ -2995,8 +3007,8 @@ contains
 
     pfuscmw = palpmw + pchargemw
 
-    !  Power to electrons and ions (used with electron and ion power balance
-    !  equations only)
+    !  Alpha power to electrons and ions (used with electron
+    !  and ion power balance equations only)
     !  No consideration of pchargepv here...
 
     palpipv = palppv*falpi
@@ -5218,6 +5230,7 @@ contains
     !+ad_hist  21/05/14 PJK Added ignite
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  02/06/14 PJK Added fimpvar
+    !+ad_hist  05/06/14 PJK Rearranged power balance output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5490,15 +5503,11 @@ contains
     call ovarre(outfile,'Alpha power: total (MW)','(palpmw)',palpmw)
     call ovarre(outfile,'Alpha power: beam-plasma (MW)','(palpnb)',palpnb)
     call ovarre(outfile,'Neutron power (MW)','(pneutmw)',pneutmw)
+    call ovarrf(outfile,'Neutron wall load (MW/m2)','(wallmw)',wallmw)
     call ovarre(outfile,'Charged particle power (excluding alphas) (MW)', &
          '(pchargemw)',pchargemw)
 
-    call ovarrf(outfile,'Neutron wall load (MW/m2)','(wallmw)',wallmw)
-    call ovarrf(outfile,'Fraction of power to electrons','(falpe)',falpe)
-    call ovarrf(outfile,'Fraction of power to ions','(falpi)',falpi)
-
-    call osubhd(outfile,'Plasma Power Balance :')
-    call ovarre(outfile,'Ohmic heating power (MW)','(pohmmw)',pohmmw)
+    call osubhd(outfile,'Radiation Power :')
     if (imprad_model == 1) then
        call ovarre(outfile,'Bremsstrahlung radiation power (MW)','(pbrempv*vol)', &
             pbrempv*vol)
@@ -5513,14 +5522,74 @@ contains
             '(coreradius)',coreradius)
     end if
     call ovarre(outfile,'Total core radiation power (MW)', &
-         '(pcoreradpv*vol)',pcoreradpv*vol)
-    call ovarre(outfile,'Edge radiation power (MW)','(pedgeradpv*vol)', &
-         pedgeradpv*vol)
-    call ovarre(outfile,'Total radiation power (MW)','(pradpv*vol)', &
-         pradpv*vol)
+         '(pcoreradmw)',pcoreradmw)
+    call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', &
+         pedgeradmw)
+    call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw)
 
-    call ovarre(outfile,'Ion transport (MW)','(ptripv*vol))',ptripv*vol)
-    call ovarre(outfile,'Electron transport (MW)','(ptrepv*vol)',ptrepv*vol)
+    call osubhd(outfile,'Core Plasma Power Balance :')
+
+    call ovarin(outfile,'Switch for radiation loss term usage in power balance','(iradloss)',iradloss)
+    if (iradloss == 1) then
+       call osubhd(outfile,'Confinement scaling and power balance uses'// &
+            ' radiation-corrected loss power')
+    else
+       call osubhd(outfile,'Confinement scaling and power balance uses'// &
+            ' loss power not corrected for radiation')
+    end if
+
+    write(outfile,10) palpmw*falpha,ptremw
+10  format(t12,'Alpha power deposited in core (MW)', &
+         t48,f8.2, &
+         t62,'Power transported by electrons (MW)', &
+         t99,f8.2)
+
+    write(outfile,20) pchargemw,ptrimw
+20  format(t2,'Non-alpha charged particle fusion power (MW)', &
+         t48,f8.2, &
+         t67,'Power transported by ions (MW)', &
+         t99,f8.2)
+
+    if (iradloss == 1) then
+       write(outfile,30) pohmmw,pcoreradmw
+30     format(t30,'Ohmic power (MW)', &
+            t48,f8.2, &
+            t72,'Core radiation power (MW)', &
+            t99,f8.2)
+    else
+       write(outfile,40) pohmmw
+40     format(t30,'Ohmic power (MW)', &
+         t48,f8.2)
+    end if
+
+    write(outfile,50) pinjemw
+50  format(t13,'Injection power to electrons (MW)', &
+         t48,f8.2)
+
+    write(outfile,60) pinjimw
+60  format(t18,'Injection power to ions (MW)', &
+         t48,f8.2)
+
+!    call oblnkl(outfile)
+    write(outfile,'(t10,a)') repeat('-',97)
+
+    if (iradloss == 1) then
+       write(outfile,70) palpmw*falpha + pchargemw + pohmmw + pinjemw + pinjimw, &
+            ptremw + ptrimw + pcoreradmw
+    else
+       write(outfile,70) palpmw*falpha + pchargemw + pohmmw + pinjemw + pinjimw, &
+            (ptrepv + ptripv) * vol
+    end if
+
+70  format(t35,'Totals (MW)',t48,f8.2,t99,f8.2)
+
+    call oblnkl(outfile)
+    call ovarre(outfile,'Ohmic heating power (MW)','(pohmmw)',pohmmw)
+    call ovarrf(outfile,'Fraction of alpha power deposited in plasma','(falpha)',falpha)
+    call ovarrf(outfile,'Fraction of alpha power to electrons','(falpe)',falpe)
+    call ovarrf(outfile,'Fraction of alpha power to ions','(falpi)',falpi)
+    call ovarre(outfile,'Ion transport (MW)','(ptrimw)',ptrimw)
+    call ovarre(outfile,'Electron transport (MW)','(ptremw)',ptremw)
     call ovarre(outfile,'Injection power to ions (MW)','(pinjimw)',pinjimw)
     call ovarre(outfile,'Injection power to electrons (MW)','(pinjemw)',pinjemw)
     if (ignite == 1) then
@@ -5528,7 +5597,25 @@ contains
     end if
     call ovarin(outfile,'Ignited plasma switch (0=not ignited, 1=ignited)', &
          '(ignite)',ignite)
-    call ovarre(outfile,'Power to divertor (MW)','(pdivt)',pdivt)
+
+    call osubhd(outfile,'Charged Particle Power on Divertor :')
+
+    write(outfile,80) palpmw*(1.0D0-falpha)
+80  format(t14,'Alpha power escaping from core (MW)',t51,f8.2)
+    write(outfile,90) ptremw
+90  format(t14,'Power transported by electrons (MW)',t51,f8.2)
+    write(outfile,100) ptrimw
+100 format(t19,'Power transported by ions (MW)',t51,f8.2)
+    write(outfile,110) -pedgeradmw
+110 format(t2,'Particle power converted to edge radiation (MW)',t50,f9.2)
+
+!    call oblnkl(outfile)
+    write(outfile,'(t10,a)') repeat('-',49)
+    write(outfile,120) palpmw*(1.0D0-falpha) + ptremw + ptrimw - pedgeradmw
+120 format(t39,'Total (MW)',t51,f8.2)
+
+    call oblnkl(outfile)
+    call ovarre(outfile,'Power to divertor via charged particles (MW)','(pdivt)',pdivt)
 
     if (pdivt <= 0.001D0) then
        call oblnkl(outfile)
@@ -5538,7 +5625,7 @@ contains
        call oblnkl(outfile)
     end if
 
-    call ovarre(outfile,'Psep / R ratio (MW/m)','',pdivt/rmajor)
+    call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivt/rmajor)',pdivt/rmajor)
 
     if (istell == 0) then
        call osubhd(outfile,'H-mode Power Threshold Scalings :')
@@ -5568,8 +5655,8 @@ contains
        call oblnkl(outfile)
     end if
 
-    write(outfile,10) tauscl(isc)
-10  format(' Confinement scaling law',T45,A24)
+    write(outfile,200) tauscl(isc)
+200 format(' Confinement scaling law',T45,A24)
 
     if (index(tauscl(isc),'(') /= 0) then
        tauelaw = '"'//trim(tauscl(isc)(1:index(tauscl(isc),'(',.true.)-1))//'"'

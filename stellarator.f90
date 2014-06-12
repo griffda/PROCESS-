@@ -966,7 +966,7 @@ contains
     !+ad_hist  20/05/14 PJK Cleaned up radiation power usage
     !+ad_hist  21/05/14 PJK Added ignite clause to powht calculation
     !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  03/06/14 PJK Introduced pchargemw
+    !+ad_hist  11/06/14 PJK Introduced pchargemw, ptremw, ptrimw
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1060,20 +1060,24 @@ contains
     call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
          pcoreradpv,pedgeradpv,pradpv)
 
+    pcoreradmw = pcoreradpv*vol
+    pradmw = pradpv*vol
+
     !  Heating power to plasma (= Psol in divertor model)
     !  Ohmic power is zero in a stellarator
 
-    powht = palpmw + pchargemw + pohmmw - pcoreradpv*vol
+    powht = palpmw + pchargemw + pohmmw - pcoreradmw
     if (ignite == 0) powht = powht + pinjmw
 
     !  Line radiation power/volume is obtained via input parameter f_rad
     !  (in contrast to tokamak calculation)
 
     pedgeradpv = f_rad*powht/vol
+    pedgeradmw = pedgeradpv*vol
 
     !  Power to divertor, = (1-f_rad)*Psol
 
-    pdivt = powht - pedgeradpv*vol
+    pdivt = powht - pedgeradmw
 
     !  The following line is unphysical, but prevents -ve sqrt argument
     !  Should be obsolete if constraint eqn 17 is turned on (but beware -
@@ -1093,6 +1097,9 @@ contains
          iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
          plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,iotabar,qstar,vol, &
          xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
+
+    ptremw = ptrepv*vol
+    ptrimw = ptripv*vol
 
     !  Calculate auxiliary physics related information
     !  for the rest of the code
@@ -1342,7 +1349,8 @@ contains
 
     !  Blanket volume; assume that its surface area is scaled directly from the
     !  plasma surface area.
-    !  Uses fhole to take account of gaps due to ports etc.
+    !  Uses fhole (only, in contrast to tokamaks using ipowerflow=1) to take
+    !  account of gaps due to ports etc.
 
     r1 = rminor + 0.5D0*(scrapli+fwith + scraplo+fwoth)
     blarea = sarea * r1/rminor * (1.0D0-fhole)
@@ -1365,7 +1373,7 @@ contains
     volshldo = shareaob * shldoth
     volshld = volshldi + volshldo
 
-    !  Neutron power lost through divertor gap in first wall
+    !  Neutron power lost through holes in first wall
 
     pnucloss = pneutmw * fhole
 

@@ -1,4 +1,3 @@
-!  $Id:: machine_build.f90 244 2014-03-06 15:51:17Z pknight             $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module build_module
@@ -24,6 +23,7 @@ module build_module
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  fwbs_variables
+  !+ad_call  heat_transport_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  rfp_variables
@@ -41,6 +41,7 @@ module build_module
   use current_drive_variables
   use divertor_variables
   use fwbs_variables
+  use heat_transport_variables
   use physics_variables
   use process_output
   use rfp_variables
@@ -93,6 +94,7 @@ contains
     !+ad_hist  25/09/13 PJK Removed port size output
     !+ad_hist  17/02/14 PJK Additional output information to mfile
     !+ad_hist  06/03/14 PJK Changed mfile output to 'E' format
+    !+ad_hist  03/06/14 PJK Modified fhole etc. usage
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -183,12 +185,6 @@ contains
 
        call dshellarea(r1,r2,hfw,fwareaib,fwareaob,fwarea)
 
-       !  Apply area coverage factor - uses fhole
-
-       fwareaib = (1.0D0-fhole) * fwareaib
-       fwareaob = (1.0D0-fhole) * fwareaob
-       fwarea = fwareaib + fwareaob
-
     else  !  Cross-section is assumed to be defined by two ellipses
 
        !  Major radius to centre of inboard and outboard ellipses
@@ -208,11 +204,30 @@ contains
 
        call eshellarea(r1,r2,r3,hfw,fwareaib,fwareaob,fwarea)
 
-       !  Apply area coverage factor - uses fhole
+    end if
+
+    !  Apply area coverage factor
+
+    if (ipowerflow == 0) then
 
        fwareaib = (1.0D0-fhole) * fwareaib
        fwareaob = (1.0D0-fhole) * fwareaob
        fwarea = fwareaib + fwareaob
+
+    else
+       !  New power flow method uses different area fraction assumptions
+       !  for the first wall
+
+       fwareaob = fwarea*(1.0D0-fhole-fdiv-fhcd) - fwareaib
+       fwarea = fwareaib + fwareaob
+
+       if (fwareaob <= 0.0D0) then
+          write(*,*) 'Error in routine RADIALB:'
+          write(*,*) 'fhole+fdiv+fhcd is too high, = ',fhole+fdiv+fhcd
+          write(*,*) 'Reduce this sum to get a credible outboard wall area'
+          write(*,*) 'PROCESS stopping.'
+          stop
+       end if
 
     end if
 

@@ -1552,6 +1552,7 @@ contains
     !+ad_call  oheadr
     !+ad_call  ovarre
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
+    !+ad_hist  05/06/14 PJK Removed cnbeam, enbeam from output
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1579,8 +1580,6 @@ contains
 
     call oheadr(outfile,'Neutral Beams')
 
-    call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam)
-    call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)
     call ovarre(outfile,'Neutral beam wall plug efficiency','(etanbi)', &
          etanbi)
     call ovarre(outfile,'Neutral beam wall plug power (MW)','(pwpnb)', &

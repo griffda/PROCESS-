@@ -496,6 +496,7 @@ contains
     !+ad_hist  11/09/13 PJK Modified annfuel cost calculation
     !+ad_hist  17/02/14 PJK Modified output format for some quantities
     !+ad_hist  15/05/14 PJK Longer output line lengths
+    !+ad_hist  05/06/14 PJK Moved some power outputs to plant_power.f90
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -510,7 +511,7 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: anncap,anncdr,anncp,anndecom,anndiv,annfuel, &
-         annfuelt,annfwbl,annoam,annoam1,anntot,annwst,cirpowfr,coecdr, &
+         annfuelt,annfwbl,annoam,annoam1,anntot,annwst,coecdr, &
          coecp,coedecom,coediv,coefuel,coefwbl,coewst,crfcdr,crfcp, &
          crfdiv,crffwbl,fefcdr,fefcp,fefdiv,feffwbl,fwbllife,kwhpy
 
@@ -748,19 +749,8 @@ contains
 
     !  Output section
 
-    !  Recirculating power fraction
-
-    cirpowfr = (pgrossmw - pnetelmw) / pgrossmw
-
     call oheadr(outfile,'Power Reactor Costs')
 
-    call ovarrf(outfile,'Net electric power (MW)','(pnetelmw)',pnetelmw)
-    call ovarrf(outfile,'Gross electric power (MW)','(pgrossmw)',pgrossmw)
-    call ovarrf(outfile,'High grade thermal power (MW)','(pthermmw)',pthermmw)
-    call ovarrf(outfile, &
-         'Balance-of-plant recirc. power fraction','(fgrosbop)',fgrosbop)
-    call ovarrf(outfile,'Total recirculating power fraction','(cirpowfr)', &
-         cirpowfr)
     call ovarrf(outfile,'First wall / blanket life (years)','(fwbllife)', &
          fwbllife)
 

@@ -366,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '286    Date  :: 2014-06-12'
+       '287    Date  :: 2014-06-12'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1562,3 +1562,4 @@ end subroutine output
 ! GIT 284: Changed a few more power-related variable names
 ! GIT 285: Added new scan variable coreradius
 ! GIT 286: Corrections to tfc_model=2
+! GIT 287: New power flow model

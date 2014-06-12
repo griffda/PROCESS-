@@ -1251,6 +1251,7 @@ contains
     !+ad_hisc               is no longer used for stellarators)
     !+ad_hist  24/04/14 PJK Changed bktlife output statement to avoid confusion
     !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  03/06/14 PJK Modified fhole etc. usage
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1273,7 +1274,10 @@ contains
     real(kind(1.0D0)) :: coilhtmx,decaybl,dpacop,dshieq,dshoeq,elong, &
          fpsdt,fpydt,frachit,hbot,hblnkt,hecan,hshld,htop,htheci,hvv, &
          pheci,pheco,pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2,r3, &
-         raddose,v1,v2,volshldi,volshldo,wpthk,zdewex
+         raddose,v1,v2,volshldi,volshldo,wpthk,zdewex,coolvol
+
+    real(kind(1.0D0)) :: pnucfwbs,pnucbs,pnucs
+    real(kind(1.0D0)) :: fwthick,decayfw,decaysh
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1281,7 +1285,8 @@ contains
 
     !  N.B. The blanket is not well-defined at top and bottom of the device,
     !  i.e. whether or not it actually extends into the divertor region
-    !  is not clear (it is assumed to do so for the volume calculation)...
+    !  is not clear (it is assumed to do so for the volume calculation
+    !  if ipowerflow=0, but not if ipowerflow=1)...
 
     !  Internal half-height of blanket
     !  (average of above- and below-midplane parts)
@@ -1325,16 +1330,6 @@ contains
        call dshellvol(r1,r2,hblnkt,blnkith,blnkoth,blnktth, &
             volblkti,volblkto,volblkt)
 
-       !  Apply area (and volume) coverage factor - uses fhole
-
-       blareaib = (1.0D0-fhole) * blareaib
-       blareaob = (1.0D0-fhole) * blareaob
-       blarea = blareaib + blareaob
-
-       volblkti = (1.0D0-fhole) * volblkti
-       volblkto = (1.0D0-fhole) * volblkto
-       volblkt = volblkti + volblkto
-
        !  Major radius to outer edge of inboard shield
 
        r1 = rsldi + shldith
@@ -1352,16 +1347,6 @@ contains
 
        call dshellvol(r1,r2,hshld,shldith,shldoth,shldtth, &
             volshldi,volshldo,volshld)
-
-       !  Apply area (and volume) coverage factors
-
-       shareaib = fvolsi*shareaib
-       shareaob = fvolso*shareaob
-       sharea = shareaib + shareaob
-
-       volshldi = fvolsi*volshldi
-       volshldo = fvolso*volshldo
-       volshld = volshldi + volshldo
 
     else  !  Cross-sections are assumed to be defined by two ellipses
 
@@ -1387,16 +1372,6 @@ contains
        call eshellvol(r1,r2,r3,hblnkt,blnkith,blnkoth,blnktth, &
             volblkti,volblkto,volblkt)
 
-       !  Apply area (and volume) coverage factor - uses fhole
-
-       blareaib = (1.0D0-fhole) * blareaib
-       blareaob = (1.0D0-fhole) * blareaob
-       blarea = blareaib + blareaob
-
-       volblkti = (1.0D0-fhole) * volblkti
-       volblkto = (1.0D0-fhole) * volblkto
-       volblkt = volblkti + volblkto
-
        !  Distance between r1 and outer edge of inboard shield
 
        r2 = r1 - (rsldi + shldith)
@@ -1414,19 +1389,41 @@ contains
        call eshellvol(r1,r2,r3,hshld,shldith,shldoth,shldtth, &
             volshldi,volshldo,volshld)
 
-       !  Apply area (and volume) coverage factors
+    end if
 
-       shareaib = fvolsi*shareaib
-       shareaob = fvolso*shareaob
-       sharea = shareaib + shareaob
+    !  Apply area (and volume) coverage factors
 
-       volshldi = fvolsi*volshldi
-       volshldo = fvolso*volshldo
-       volshld = volshldi + volshldo
+    if (ipowerflow == 0) then
+
+       blareaib = (1.0D0-fhole) * blareaib
+       blareaob = (1.0D0-fhole) * blareaob
+       blarea = blareaib + blareaob
+
+       volblkti = (1.0D0-fhole) * volblkti
+       volblkto = (1.0D0-fhole) * volblkto
+       volblkt = volblkti + volblkto
+
+    else
+       !  New power flow method uses different area fraction assumptions
+       !  for the blanket
+
+       blareaob = blarea*(1.0D0-fhole-fdiv-fhcd) - blareaib
+       blarea = blareaib + blareaob
+
+       volblkto = volblkt*(1.0D0-fhole-fdiv-fhcd) - volblkti
+       volblkt = volblkti + volblkto
 
     end if
 
-    !  Neutron power lost through divertor gap in first wall
+    shareaib = fvolsi*shareaib
+    shareaob = fvolso*shareaob
+    sharea = shareaib + shareaob
+
+    volshldi = fvolsi*volshldi
+    volshldo = fvolso*volshldo
+    volshld = volshldi + volshldo
+
+    !  Neutron power lost through holes in first wall
 
     pnucloss = pneutmw * fhole
 
@@ -1438,7 +1435,7 @@ contains
 
        fpydt = cfactr * tlife
 
-    else
+    else if (ipowerflow == 0) then
 
        !  TF coil nuclear heating parameters
 
@@ -1595,6 +1592,205 @@ contains
           dpacop = 0.0D0
        end if
 
+    else  !  ipowerflow == 1
+
+       !  TART centrepost nuclear heating. Estimate fraction hitting from a
+       !  point source at the plasma centre, and assume average path length
+       !  of 2*tfcth, and e-fold decay length of 0.08m (copper water mixture).
+
+       if (itart == 1) then
+          frachit = hmax / sqrt(hmax**2 + (rmajor-tfcth)**2 ) * &
+               atan(tfcth/(rmajor-tfcth) )/pi
+          pnuccp = pneutmw * frachit * (1.0D0 - exp(-2.0D0*tfcth/0.08D0))
+       else
+          pnuccp = 0.0D0
+       end if
+
+       !  Neutron power incident on divertor
+
+       pnucdiv = pneutmw * fdiv
+
+       !  Neutron power incident on HCD apparatus
+
+       pnuchcd = pneutmw * fhcd
+
+       !  Neutron power deposited in first wall, blanket and shield
+
+       pnucfwbs = pneutmw - pnucdiv - pnucloss - pnuccp - pnuchcd
+
+       !  Neutron power deposited in first wall
+
+       fwthick = 0.5D0*(fwith+fwoth)
+       decayfw = declfw / (1.0D0-fwclfr)
+       pnucfw = pnucfwbs * (1.0D0 - exp(-fwthick/decayfw))
+
+       !  Neutron power reaching blanket and shield
+
+       pnucbs = pnucfwbs - pnucfw
+
+       !  Neutron power deposited in the blanket
+
+       if (lblnkt == 1) then
+          if (smstr == 1) then  !  solid blanket
+             decaybl = declblkt / (1.0D0 - vfblkt - fblli2o - fblbe)
+          else  !  liquid blanket
+             decaybl = declblkt / (1.0D0 - vfblkt - fbllipb - fblli)
+          end if
+       else  !  original blanket model - solid blanket
+          decaybl = declblkt / (1.0D0 - vfblkt - fblli2o - fblbe)
+       end if
+
+       pnucblkt = pnucbs * (1.0D0 - exp(-blnkoth/decaybl))
+
+       !  Neutron power reaching shield
+
+       pnucs = pnucbs - pnucblkt
+
+       !  Neutron power deposited in the shield
+
+       decaysh = declshld / (1.0D0 - vfshld)
+       pnucshld = pnucs * (1.0D0 - exp(-shldoth/decaysh))
+
+       !  Full power DT operation years for replacement of TF Coil
+       !  (or Plant Life)
+
+       fpydt = cfactr * tlife
+       fpsdt = fpydt * 3.154D7
+
+       !  Superconducting TF coil shielding calculations
+       !  The 'He can' previously referred to is actually the steel case on the
+       !  plasma-facing side of the TF coil.
+
+       if (itfsup == 1) then
+
+          !  N.B. The vacuum vessel appears to be ignored
+
+          !+PJK  First draft: replace all previous code with the following...
+
+          dshieq = 0.0D0
+          dshoeq = 0.0D0
+          hecan = 0.0D0
+          wpthk = 0.0D0
+          coilhtmx = 0.0D0
+          ptfiwp = 0.0D0
+          ptfowp = 0.0D0
+          htheci = 0.0D0
+          pheci = 0.0D0
+          pheco = 0.0D0
+          ptfi = 0.0D0
+          ptfo = 0.0D0
+          raddose = 0.0D0
+          nflutf = 0.0D0
+          dpacop = 0.0D0
+
+          ptfnuc = pnucs - pnucshld
+
+          ! !  old coding follows...
+          ! fact(1) = 8.0D0
+          ! fact(2) = 8.0D0
+          ! fact(3) = 6.0D0
+          ! fact(4) = 4.0D0
+          ! fact(5) = 4.0D0
+
+          ! coef(1,1) = 10.3D0
+          ! coef(2,1) = 11.6D0
+          ! coef(3,1) = 7.08D5
+          ! coef(4,1) = 2.19D18
+          ! coef(5,1) = 3.33D-7
+          ! coef(1,2) = 8.32D0
+          ! coef(2,2) = 10.6D0
+          ! coef(3,2) = 7.16D5
+          ! coef(4,2) = 2.39D18
+          ! coef(5,2) = 3.84D-7
+
+          ! decay(1,1) = 10.05D0
+          ! decay(2,1) = 17.61D0
+          ! decay(3,1) = 13.82D0
+          ! decay(4,1) = 13.24D0
+          ! decay(5,1) = 14.31D0
+          ! decay(6,1) = 13.26D0
+          ! decay(7,1) = 13.25D0
+          ! decay(1,2) = 10.02D0
+          ! decay(2,2) = 3.33D0
+          ! decay(3,2) = 15.45D0
+          ! decay(4,2) = 14.47D0
+          ! decay(5,2) = 15.87D0
+          ! decay(6,2) = 15.25D0
+          ! decay(7,2) = 17.25D0
+
+          ! dshieq = shldith + fwith + blnkith
+          ! dshoeq = shldoth + fwoth + blnkoth
+
+          ! !  Case thickness on plasma-facing side of TF coil
+
+          ! !hecan = 0.5D0*thkcas  !  Old calculation, assumes 1/2 average thickness
+          ! hecan = casthi
+
+          ! !  Winding pack radial thickness, including groundwall insulation
+
+          ! !wpthk = tfcth - 1.5D0 * thkcas  !  Old calculation
+          ! wpthk = thkwp + 2.0D0*tinstf
+
+          ! !  Nuclear heating rate in inboard TF coil (MW/m**3)
+
+          ! coilhtmx = fact(1) * wallmw * coef(1,ishmat) * &
+          !      exp(-decay(6,ishmat) * (dshieq + hecan))
+
+          ! !  Total nuclear heating (MW)
+
+          ! ptfiwp = coilhtmx * tfsai * &
+          !      (1.0D0-exp(-decay(1,ishmat)*wpthk)) / decay(1,ishmat)
+          ! ptfowp = fact(1) * wallmw * coef(1,ishmat) * &
+          !      exp(-decay(6,ishmat) * (dshoeq + hecan)) * tfsao * &
+          !      (1.0D0 - exp(-decay(1,ishmat)*wpthk)) / decay(1,ishmat)
+
+          ! !  Nuclear heating in plasma-side TF coil case (MW)
+
+          ! htheci = fact(2) * wallmw * coef(2,ishmat) * &
+          !      exp(-decay(7,ishmat) * dshieq)
+          ! pheci = htheci * tfsai * (1.0D0-exp(-decay(2,ishmat)*hecan))/ &
+          !      decay(2,ishmat)
+          ! pheco = fact(2) * wallmw * coef(2,ishmat) * &
+          !      exp(-decay(7,ishmat) * dshoeq) * tfsao * &
+          !      (1.0D0-exp(-decay(2,ishmat)*hecan))/decay(2,ishmat)
+          ! ptfi = ptfiwp + pheci
+          ! ptfo = ptfowp + pheco
+          ! ptfnuc = ptfi + ptfo
+
+          ! !  Insulator dose (rad)
+
+          ! raddose = coef(3,ishmat) * fpsdt * fact(3) * wallmw * &
+          !      exp(-decay(3,ishmat) * (dshieq+hecan))
+
+          ! !  Maximum neutron fluence in superconductor (n/m**2)
+
+          ! nflutf = fpsdt * fact(4) * wallmw * coef(4,ishmat) * &
+          !      exp(-decay(4,ishmat) * (dshieq+hecan))
+
+          ! !  Atomic displacement in copper stabilizer
+
+          ! dpacop = fpsdt * fact(5) * wallmw * coef(5,ishmat) * &
+          !      exp(-decay(5,ishmat) * (dshieq + hecan) )
+
+       else  !  Resistive TF coils
+          dshieq = 0.0D0
+          dshoeq = 0.0D0
+          hecan = 0.0D0
+          wpthk = 0.0D0
+          coilhtmx = 0.0D0
+          ptfiwp = 0.0D0
+          ptfowp = 0.0D0
+          htheci = 0.0D0
+          pheci = 0.0D0
+          pheco = 0.0D0
+          ptfi = 0.0D0
+          ptfo = 0.0D0
+          ptfnuc = 0.0D0
+          raddose = 0.0D0
+          nflutf = 0.0D0
+          dpacop = 0.0D0
+       end if
+
     end if ! blktmodel = 0
 
     !  Divertor mass
@@ -1606,7 +1802,7 @@ contains
     !  Start adding components of the coolant mass:
     !  Divertor coolant volume (m3)
 
-    coolmass = divsur * divclfr * divplt  !  volume
+    coolvol = divsur * divclfr * divplt
 
     !  Blanket mass, excluding coolant
 
@@ -1665,13 +1861,13 @@ contains
     !  when blktmodel > 0
 
     if (blktmodel == 0) then
-       coolmass = coolmass + volblkt*vfblkt  !  volume
+       coolvol = coolvol + volblkt*vfblkt
     end if
 
     !  Penetration shield (set = internal shield)
 
     wpenshld = whtshld
-    coolmass = coolmass + volshld*vfshld  !  volume
+    coolvol = coolvol + volshld*vfshld
 
     !  First wall mass
     !  (first wall area is calculated elsewhere)
@@ -1680,16 +1876,16 @@ contains
 
     !  Surface areas adjacent to plasma
 
-    coolmass = coolmass + fwarea * (fwith+fwoth)/2.0D0 * fwclfr  !  volume
+    coolvol = coolvol + fwarea * (fwith+fwoth)/2.0D0 * fwclfr
 
     !  Mass of coolant = volume * density at typical coolant
     !  temperatures and pressures
     !  N.B. for blktmodel > 0, mass of helium coolant in blanket is ignored...
 
     if ((blktmodel > 0).or.(costr == 2)) then  !  pressurised water coolant
-       coolmass = coolmass*806.719D0
+       coolmass = coolvol*806.719D0
     else  !  gaseous helium coolant
-       coolmass = coolmass*1.517D0
+       coolmass = coolvol*1.517D0
     end if
 
     !  External cryostat radius (m)
@@ -4893,6 +5089,7 @@ contains
     !+ad_call  kit_blanket
     !+ad_hist  06/06/13 PJK Initial release
     !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  03/06/14 PJK Changed fhole usage for ipowerflow=1
     !+ad_stat  Okay
     !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
     !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
@@ -4923,7 +5120,11 @@ contains
     t_FW_IB = fwith * 100.0D0   ! [cm] IB first wall thickness
     t_FW_OB = fwoth * 100.0D0   ! [cm] OB first wall thickness
     !  f_FW = 0.99D0            ! [--] Frac. FW area for junctions, etc.
-    CF_bl = (1.0D0-fhole) * 100.0D0 ! [%] Blanket coverage factor
+    if (ipowerflow == 0) then
+       CF_bl = (1.0D0-fhole) * 100.0D0 ! [%] Blanket coverage factor
+    else
+       CF_bl = (1.0D0-fhole-fhcd-fdiv) * 100.0D0 ! [%] Blanket coverage factor
+    end if
     n_ports_div = npdiv         ! [ports] Number of divertor ports
     n_ports_H_CD_IB = nphcdin   ! [ports] Number of IB H&CD ports
     n_ports_H_CD_OB = nphcdout  ! [ports] Number of OB H&CD ports

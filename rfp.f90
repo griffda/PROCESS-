@@ -745,7 +745,7 @@ contains
     !+ad_hist  20/05/14 PJK Cleaned up radiation power usage
     !+ad_hist  21/05/14 PJK Added ignite clause to pinj calculation
     !+ad_hist  22/05/14 PJK Name changes to power quantities
-    !+ad_hist  03/06/14 PJK Introduced pchargemw
+    !+ad_hist  11/06/14 PJK Introduced pchargemw, ptremv, ptrimw
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -893,19 +893,24 @@ contains
     call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
          pcoreradpv,pedgeradpv,pradpv)
 
+    pcoreradmw = pcoreradpv*vol
+    pedgeradmw = pedgeradpv*vol
+    pradmw = pradpv*vol
+
     !  Calculate ohmic power
 
     call pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
          pohmpv,pohmmw,rpfac,rplas)
 
-    !  Power to the divertor
+    !  Power transported to the divertor by charged particles,
+    !  i.e. excludes neutrons and radiation
 
     if (ignite == 0) then
        pinj = pinjmw
     else
        pinj = 0.0D0
     end if
-    pdivt = palpmw + pchargemw + pinj + pohmmw - vol*pradpv
+    pdivt = palpmw + pchargemw + pinj + pohmmw - pradmw
 
     !  The following line is unphysical, but prevents -ve sqrt argument
     !  Should be obsolete if constraint eqn 17 is turned on
@@ -923,6 +928,9 @@ contains
          iinvqd,isc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
          plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q95,qstar,vol, &
          xarea,zeff,ptrepv,ptripv,tauee,tauei,taueff,powerht)
+
+    ptremw = ptrepv*vol
+    ptrimw = ptripv*vol
 
     !  Calculate volt-second requirements (not done!)
 

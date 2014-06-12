@@ -375,6 +375,7 @@ contains
     !+ad_hist  20/05/14 PJK Removed FRADMIN, added FRADPWR, IRADLOSS
     !+ad_hist  22/05/14 PJK PHEAT units changed to MW
     !+ad_hist  02/06/14 PJK Added IMPVAR, FIMPVAR
+    !+ad_hist  03/06/14 PJK Added new power flow variables
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1539,6 +1540,15 @@ contains
        case ('COSTR')
           call parse_int_variable('COSTR', costr, 1, 2, &
                'Switch for blanket coolant material')
+       case ('DECLBLKT')
+          call parse_real_variable('DECLBLKT', declblkt, 0.01D0, 0.2D0, &
+               'Neutron decay length in blanket')
+       case ('DECLFW')
+          call parse_real_variable('DECLFW', declfw, 0.01D0, 0.2D0, &
+               'Neutron decay length in first wall')
+       case ('DECLSHLD')
+          call parse_real_variable('DECLSHLD', declshld, 0.01D0, 0.2D0, &
+               'Neutron decay length in blanket')
        case ('DENSTL')
           call parse_real_variable('DENSTL', denstl, 5.0D3, 1.0D4, &
                'Density of steel (kg/m3)')
@@ -1596,9 +1606,15 @@ contains
        case ('FBLVD')
           call parse_real_variable('FBLVD', fblvd, 0.0D0, 1.0D0, &
                'Vanadium fraction of blanket')
+       case ('FDIV')
+          call parse_real_variable('FDIV', fdiv, 0.0D0, 1.0D0, &
+               'Divertor area fraction')
+       case ('FHCD')
+          call parse_real_variable('FHCD', fhcd, 0.0D0, 1.0D0, &
+               'HCD + diagnostics area fraction')
        case ('FHOLE')
           call parse_real_variable('FHOLE', fhole, 0.0D0, 1.0D0, &
-               'Hole frac of FW/blanket (to neutrons)')
+               'Hole area fraction')
        case ('FKBLKT')
           call parse_real_variable('FKBLKT', fkblkt, 0.2D0, 5.0D0, &
                'Blanket elongation / plasma elongation')
@@ -1709,6 +1725,18 @@ contains
        case ('BASEEL')
           call parse_real_variable('BASEEL', baseel, 1.0D6, 1.0D10, &
                'Base plant electric load (W)')
+       case ('ETAHTPBLKT')
+          call parse_real_variable('ETAHTPBLKT', etahtpblkt, 0.1D0, 1.0D0, &
+               'Blanket pump electrical efficiency')
+       case ('ETAHTPDIV')
+          call parse_real_variable('ETAHTPDIV', etahtpdiv, 0.1D0, 1.0D0, &
+               'Divertor pump electrical efficiency')
+       case ('ETAHTPFW')
+          call parse_real_variable('ETAHTPFW', etahtpfw, 0.1D0, 1.0D0, &
+               'First wall pump electrical efficiency')
+       case ('ETAHTPSHLD')
+          call parse_real_variable('ETAHTPSHLD', etahtpshld, 0.1D0, 1.0D0, &
+               'Shield pump electrical efficiency')
        case ('ETATH')
           call parse_real_variable('ETATH', etath, 0.0D0, 1.0D0, &
                'Thermal-electric conversion efficiency')
@@ -1721,15 +1749,36 @@ contains
        case ('FMGDMW')
           call parse_real_variable('FMGDMW', fmgdmw, 0.0D0, 100.0D0, &
                'Power to MGF units (MW)')
+       case ('FPUMPBLKT')
+          call parse_real_variable('FPUMPBLKT', fpumpblkt, 0.0D0, 0.2D0, &
+               'Blanket pumping/thermal power ratio')
+       case ('FPUMPDIV')
+          call parse_real_variable('FPUMPDIV', fpumpdiv, 0.0D0, 0.2D0, &
+               'Divertor pumping/thermal power ratio')
+       case ('FPUMPFW')
+          call parse_real_variable('FPUMPFW', fpumpfw, 0.0D0, 0.2D0, &
+               'First wall pumping/thermal power ratio')
+       case ('FPUMPSHLD')
+          call parse_real_variable('FPUMPSHLD', fpumpshld, 0.0D0, 0.2D0, &
+               'Shield pumping/thermal power ratio')
        case ('HTPMW')
           call parse_real_variable('HTPMW', htpmw, 0.0D0, 500.0D0, &
                'Heat transport system pump power')
+       case ('IPOWERFLOW')
+          call parse_int_variable('IPOWERFLOW', ipowerflow, 0, 1, &
+               'Switch for power flow model')
+       case ('IPRIMDIV')
+          call parse_int_variable('IPRIMDIV', iprimdiv, 0, 1, &
+               'Switch for divertor thermal power destiny')
        case ('IPRIMHTP')
           call parse_int_variable('IPRIMHTP', iprimhtp, 0, 1, &
                'Switch for heat transport pump power destiny')
        case ('IPRIMNLOSS')
           call parse_int_variable('IPRIMNLOSS', iprimnloss, 0, 1, &
                'Switch for lost neutron power destiny')
+       case ('IPRIMSHLD')
+          call parse_int_variable('IPRIMSHLD', iprimshld, 0, 1, &
+               'Switch for shield thermal power destiny')
        case ('PWPM2')
           call parse_real_variable('PWPM2', pwpm2, 0.0D0, 1.0D3, &
                'Base AC power requirement (W/m2)')
