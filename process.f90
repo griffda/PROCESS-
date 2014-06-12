@@ -366,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '285    Date  :: 2014-06-04'
+       '286    Date  :: 2014-06-12'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1303,6 +1303,9 @@ subroutine output(outfile)
   !call startup(outfile,1)  !  commented-out for speed reasons
   call igmarcal(outfile)
   call cudriv(outfile,1)
+  call nbeam(outfile,1)
+  call ech(outfile,1)
+  call lwhymod(outfile,1)
   call pulse(outfile,1)
   call outtim(outfile)
   call divcall(outfile,1)
@@ -1351,9 +1354,6 @@ subroutine output(outfile)
   call bldgcall(outfile,1)
   call acpow(outfile,1)
   call power2(outfile,1)
-  call nbeam(outfile,1)
-  call ech(outfile,1)
-  call lwhymod(outfile,1)
 
 end subroutine output
 
@@ -1561,3 +1561,4 @@ end subroutine output
 ! GIT 283: Added iteration variable 102, fimpvar
 ! GIT 284: Changed a few more power-related variable names
 ! GIT 285: Added new scan variable coreradius
+! GIT 286: Corrections to tfc_model=2

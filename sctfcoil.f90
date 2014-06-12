@@ -490,6 +490,7 @@ contains
     !+ad_hist  08/05/14 PJK Replaced itfmod, stress_model with tfc_model;
     !+ad_hisc               split stress calls into two routines
     !+ad_hist  12/05/14 PJK Added insulator strain calculation
+    !+ad_hist  12/06/14 PJK Corrections to strtf1, radtf(2) for tfc_model=2
     !+ad_stat  Okay
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
@@ -567,7 +568,7 @@ contains
        !  while the second layer is the winding pack itself
 
        radtf(1) = rtfcin - 0.5D0*tfcth
-       radtf(2) = radtf(1) + thkcas
+       radtf(2) = rbmax - thkwp
        radtf(3) = rbmax
 
        eyoung(1) = eystl
@@ -623,7 +624,7 @@ contains
        strtf2 = sigvm(sigrtf(5), sigttf(5), sigvert, 0.0D0,0.0D0,0.0D0)
 
     else if (tfc_model == 2) then
-       strtf1 = sigvm(sigrtf(2), sigttf(2), sigvert, 0.0D0,0.0D0,0.0D0)
+       strtf1 = sigvm(sigrcon, sigtcon, sigvert, 0.0D0,0.0D0,0.0D0)
        strtf2 = sigvm(sigrtf(1), sigttf(1), sigvert, 0.0D0,0.0D0,0.0D0)
     end if
 
@@ -902,6 +903,7 @@ contains
     !+ad_desc  layer is the winding pack itself.
     !+ad_call  linesolv
     !+ad_hist  08/05/14 PJK/JM Initial version
+    !+ad_hist  12/06/14 PJK Corrections to sigr(2), sigt(2)
     !+ad_stat  Okay
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
@@ -984,13 +986,13 @@ contains
 
     !  Winding pack
 
-    sigr(2) = k2 * ( (1.0D0+nu)*c(3) - (1.0D0-nu)*c(3)/(rad(2)*rad(2)) &
+    sigr(2) = k2 * ( (1.0D0+nu)*c(3) - ((1.0D0-nu)*c(4))/(rad(2)*rad(2)) &
          + 0.125D0*(3.0D0 + nu)*alpha*rad(2)*rad(2) &
-         - 0.5D0*beta*(nu + (1.0D0+nu)*log(rad(2))) )
+         + 0.5D0*beta*(1.0D0 + (1.0D0+nu)*log(rad(2))) )
 
-    sigt(2) = k2 * ( (1.0D0+nu)*c(4) + (1.0D0-nu)*c(4)/(rad(2)*rad(2)) &
+    sigt(2) = k2 * ( (1.0D0+nu)*c(3) + (1.0D0-nu)*c(4)/(rad(2)*rad(2)) &
          + 0.125D0*(1.0D0+3.0D0*nu)*alpha*rad(2)*rad(2) &
-         - 0.5D0*beta*(1.0D0 + (1.0D0+nu)*log(rad(2))) )
+         + 0.5D0*beta*(nu + (1.0D0+nu)*log(rad(2))) )
 
     !  Deflection at inside edge of TF coil (m)
 
