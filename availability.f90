@@ -196,7 +196,7 @@ contains
 
     call oheadr(outfile,'Plant Availability')
     if (blktmodel == 0) then
-       call ovarre(outfile,'Allowable blanket neut. fluence (MW-yr/m2)', &
+       call ovarre(outfile,'Allowable blanket neutron fluence (MW-yr/m2)', &
             '(abktflnc)',abktflnc)
     end if
     call ovarre(outfile,'Allowable divertor heat fluence (MW-yr/m2)', &

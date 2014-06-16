@@ -497,6 +497,7 @@ contains
     !+ad_hist  17/02/14 PJK Modified output format for some quantities
     !+ad_hist  15/05/14 PJK Longer output line lengths
     !+ad_hist  05/06/14 PJK Moved some power outputs to plant_power.f90
+    !+ad_hist  16/06/14 PJK Removed duplicate outputs
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -755,9 +756,9 @@ contains
          fwbllife)
 
     if (ife /= 1) then
-       call ovarrf(outfile,'Divertor life (years)','(divlife)',divlife)
+       call ovarrf(outfile,'Divertor life (years)','(divlife.)',divlife)
        if (itart == 1) then
-          call ovarrf(outfile,'Centrepost life (years)','(cplife)',cplife)
+          call ovarrf(outfile,'Centrepost life (years)','(cplife.)',cplife)
        end if
     end if
 

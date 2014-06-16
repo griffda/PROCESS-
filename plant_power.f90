@@ -1,4 +1,3 @@
-!  $Id:: plant_power.f90 258 2014-04-24 12:28:55Z pknight               $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module power_module
@@ -180,7 +179,7 @@ contains
     call ovarre(outfile,'Bus mass (kg)','(tfbusmas)',tfbusmas)
     call ovarre(outfile,'Maximum impedance (ohm)','(ztot)',ztot)
     call ovarre(outfile,'Peak voltage per coil (kV)','(vtfkv)',vtfkv)
-    call ovarre(outfile,'Peak power (MW)','(tfcmw)',tfcmw)
+    call ovarre(outfile,'Peak power (MW)','(tfcmw..)',tfcmw)
     call ovarre(outfile,'TF coil inboard leg resistive power (MW)', &
          '(tfcpmw)',tfcpmw)
     call ovarre(outfile,'TF coil outboard leg resistive power (MW)', &
@@ -865,18 +864,17 @@ contains
     call ovarre(outfile,'Facility base load (MW)','(basemw)',basemw)
     call ovarre(outfile,'Divertor coil power supplies (MW)','(bdvmw)',bdvmw)
     call ovarre(outfile,'Cryogenic comp motors (MW)','(crymw)',crymw)
-    call ovarre(outfile,'Total floor space (m2)','(efloor)',efloor)
     call ovarre(outfile,'MGF (motor-generator flywheel) units (MW)', &
          '(fmgdmw)',fmgdmw)
     call ovarre(outfile,'Heat transport system pump motors (MW)', &
-         '(htpmw)',htpmw)
+         '(htpmw..)',htpmw)
     call ovarre(outfile,'PF coil power supplies (MW)','(ppfmw)',ppfmw)
     call ovarre(outfile,'Power/floor area (kW/m2)','(pkwpm2)',pkwpm2)
     call ovarre(outfile,'TF coil power supplies (MW)','(ptfmw)',ptfmw)
     call ovarre(outfile,'Plasma heating supplies (MW)','(pheatingmw)', &
          pheatingmw)
-    call ovarre(outfile,'Tritium processing (MW)','(trithtmw)',trithtmw)
-    call ovarre(outfile,'Vacuum pump motors (MW)','(vachtmw)',vachtmw)
+    call ovarre(outfile,'Tritium processing (MW)','(trithtmw..)',trithtmw)
+    call ovarre(outfile,'Vacuum pump motors (MW)','(vachtmw..)',vachtmw)
 
     call oblnkl(outfile)
 
@@ -1132,6 +1130,7 @@ contains
     !+ad_hisc               to secondary heating
     !+ad_hist  11/06/13 PJK Added output section on recirculating power
     !+ad_hist  04/06/14 PJK New power flow model added
+    !+ad_hist  16/06/14 PJK Modified various labels to prevent duplicate outputs
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1145,7 +1144,6 @@ contains
 
     !  Local variables
 
-    !real(kind(1.0D0)) :: ppumpmw, pcoresystems
     real(kind(1.0D0)) :: cirpowfr, primsum, secsum
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1261,7 +1259,7 @@ contains
 
        call ovarin(outfile,'Plant power flow model','(ipowerflow)',ipowerflow)
 
-       call ovarre(outfile,'Fusion power (MW)','(powfmw)',powfmw)
+       call ovarre(outfile,'Total fusion power (MW)','(powfmw.)',powfmw)
        call ovarre(outfile,'Charged fusion power (MW)','(pfuscmw)',pfuscmw)
        call ovarre(outfile,'Neutron power escaping via holes (MW)', &
             '(pnucloss)',pnucloss)
@@ -1277,8 +1275,8 @@ contains
        call ovarre(outfile,'Heat removal from F.W./divertor (MW)', &
             '(pfwdiv)',pfwdiv)
        call ovarre(outfile,'Heat removal from blankets (MW)', &
-            '(pnucblkt)',pnucblkt)
-       call ovarre(outfile,'Heat removal from shield (MW)','(pnucshld)', &
+            '(pnucblkt*emult)',pnucblkt*emult)
+       call ovarre(outfile,'Heat removal from shield (MW)','(pnucshld.)', &
             pnucshld)
        call ovarre(outfile,'Heat removal from injection power (MW)', &
             '(pinjht)',pinjht)
@@ -1329,15 +1327,15 @@ contains
        call ovarrf(outfile,'Total recirculating power fraction','(cirpowfr)', &
             cirpowfr)
        call ovarre(outfile,'H/CD injected power (MW)','(pinjwp)',pinjwp)
-       call ovarre(outfile,'TF coil resistive power (MW)','(tfcmw)',tfcmw)
-       call ovarre(outfile,'Cryogenic plant power (MW)','(crypmw)',crypmw)
+       call ovarre(outfile,'TF coil resistive power (MW)','(tfcmw.)',tfcmw)
+       call ovarre(outfile,'Cryogenic plant power (MW)','(crypmw.)',crypmw)
        if (itart == 1) call ovarre(outfile,'TF coolant pump power (MW)', &
             '(ppumpmw)',ppumpmw)
        call ovarre(outfile,'Heat transport pump power (MW)','(htpmw)',htpmw)
        if (ihplant /= 0) call ovarre(outfile,'Hydrogen production electrical power (MW)', &
             '(helecmw)',helecmw)
-       call ovarre(outfile,'Vacuum pump power (MW)','(vachtmw)',vachtmw)
-       call ovarre(outfile,'Tritium processing power (MW)','(trithtmw)',trithtmw)
+       call ovarre(outfile,'Vacuum pump power (MW)','(vachtmw.)',vachtmw)
+       call ovarre(outfile,'Tritium processing power (MW)','(trithtmw.)',trithtmw)
 
     else
 
@@ -1517,8 +1515,8 @@ contains
 
        call osubhd(outfile,'Reactor Powers :')
 
-       call ovarre(outfile,'Thermal power lost to tertiary cooling system (i.e. environment) (MW)','((1-etath)*pthermmw)', &
-            pthermmw-pgrossmw)
+       call ovarre(outfile,'Thermal power lost to tertiary cooling system (i.e. environment) (MW)', &
+            '((1-etath)*pthermmw)', pthermmw-pgrossmw)
        call ovarre(outfile,'Gross electric power (MW)','(pgrossmw)', &
             pgrossmw)
 

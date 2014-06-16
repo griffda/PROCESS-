@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 272
+#  GIT Revision 290
 #
 #  P J Knight
 #
@@ -244,7 +244,8 @@ clean:
 	rm -f process.exe *.o *.mod
 	rm -f *~
 	rm -f autodoc
-	rm -f *.aux *.log process.dvi process.toc process.lof process.lot
+	rm -f *.aux *.log process.dvi process.toc process.lof process.lot process.pdf
+	rm -f *.html
 
 # Make a tar distribution of the source and other critical files
 # from the current directory

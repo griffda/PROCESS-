@@ -507,7 +507,7 @@ subroutine eqslv(ifail)
      call ovarin(nout,'HYBRD error flag','(ifail)',ifail)
 
      call oheadr(iotty,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
-     call ovarin(iotty,'HYBRD error flag','(ifail)',ifail)
+     call ovarin(iotty,'HYBRD error flag (ifail)','',ifail)
      call oblnkl(iotty)
   else
      call ocmmnt(nout,'and found a feasible set of parameters.')
@@ -925,7 +925,7 @@ subroutine doopt(ifail)
      call ocmmnt(nout,'but could not find a feasible set of parameters.')
 
      call oheadr(iotty,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
-     call ovarin(iotty,'VMCON error flag','(ifail)',ifail)
+     call ovarin(iotty,'VMCON error flag (ifail)','',ifail)
      call oblnkl(iotty)
   else
      call ocmmnt(nout,'and found a feasible set of parameters.')
@@ -1565,4 +1565,5 @@ end subroutine output
 ! GIT 287: New power flow model
 ! GIT 288: Correction to process_dicts.py
 ! GIT 289: Raised input upper limit on fimpvar; updated python library files
-! GIT 290: Minor fix to mfile.py
+! GIT 290: Minor fix to mfile.py; removed duplicate outputs from mfile; 'make clean' now
+!          deletes all html files and the User Guide pdf file

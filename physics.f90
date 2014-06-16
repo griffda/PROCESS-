@@ -5231,6 +5231,7 @@ contains
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  02/06/14 PJK Added fimpvar
     !+ad_hist  05/06/14 PJK Rearranged power balance output
+    !+ad_hist  16/06/14 PJK Removed duplicate outputs
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5347,8 +5348,6 @@ contains
 
     if (irfp == 0) then
        call ovarrf(outfile,'Vacuum toroidal field at R (T)','(bt)',bt)
-       call ovarrf(outfile,'Maximum toroidal field at TF coils (T)', &
-            '(bmaxtf)',bmaxtf)
        call ovarrf(outfile,'Average poloidal field (T)','(bp)',bp)
     else
        call ovarrf(outfile,'Toroidal field at plasma edge (T)','(-bt)',-bt)
@@ -5503,7 +5502,6 @@ contains
     call ovarre(outfile,'Alpha power: total (MW)','(palpmw)',palpmw)
     call ovarre(outfile,'Alpha power: beam-plasma (MW)','(palpnb)',palpnb)
     call ovarre(outfile,'Neutron power (MW)','(pneutmw)',pneutmw)
-    call ovarrf(outfile,'Neutron wall load (MW/m2)','(wallmw)',wallmw)
     call ovarre(outfile,'Charged particle power (excluding alphas) (MW)', &
          '(pchargemw)',pchargemw)
 
@@ -5702,16 +5700,15 @@ contains
        else if (ibss == 4) then
           call ocmmnt(outfile,'  (Sauter et al bootstrap current fraction model used)')
        end if
-       call ovarrf(outfile,'Bootstrap fraction (enforced)','(bootipf)',bootipf)
+       call ovarrf(outfile,'Bootstrap fraction (enforced)','(bootipf.)',bootipf)
 
-       call ovarrf(outfile,'Auxiliary current drive fraction','(faccd)',faccd)
+       call ovarrf(outfile,'Auxiliary current drive fraction','(faccd.)',faccd)
        call ovarre(outfile,'Loop voltage during burn (V)','(vburn)', &
             plascur*rplas*facoh)
        call ovarre(outfile,'Plasma resistance (ohm)','(rplas)',rplas)
        call ovarre(outfile,'Plasma inductance (H)','(rlp)',rlp)
        call ovarrf(outfile,'Sawteeth coefficient','(csawth)',csawth)
     end if
-    call ovarre(outfile,'Burn time (s)','(tburn)',tburn)
 
     call osubhd(outfile,'Auxiliary Information :')
     call ovarre(outfile,'Fuelling rate (nucleus-pairs/s)','(qfuel)',qfuel)

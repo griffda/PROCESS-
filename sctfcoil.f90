@@ -1,4 +1,3 @@
-!  $Id:: sctfcoil.f90 261 2014-05-01 13:03:44Z pknight                  $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module sctfcoil_module
@@ -1512,6 +1511,7 @@ contains
     !+ad_hist  30/04/14 PJK Added output for two-layer stress model
     !+ad_hist  08/05/14 PJK Redefined trp; replaced stress_model with tfc_model
     !+ad_hist  08/05/14 PJK Changed ripmax description
+    !+ad_hist  16/06/14 PJK Removed duplicate outputs
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -1567,8 +1567,8 @@ contains
     call ovarre(outfile,'Number of TF coils','(tfno)',tfno)
     call ovarre(outfile,'Cross-sectional area per coil (m2)','(tfarea/tfno)', &
          tfareain/tfno)
-    call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)
-    call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko)',tfthko)
+    call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth.)',tfcth)
+    call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko.)',tfthko)
     call ovarre(outfile,'Inboard leg outboard half-width (m)','(tficrn)',tficrn)
     call ovarre(outfile,'Inboard leg inboard half-width (m)','(tfocrn)',tfocrn)
     call ovarre(outfile,'Outboard leg toroidal thickness (m)','(tftort)',tftort)
@@ -1822,6 +1822,7 @@ contains
       !+ad_hist  16/04/13 PJK Removed jcrit_model, jcritsc arguments;
       !+ad_hisc               redefined isumat usage; modified itersc arguments
       !+ad_hist  07/10/13 PJK Added Bi-2212 option; removed ifail
+      !+ad_hist  16/06/14 PJK Removed duplicate outputs
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
@@ -1962,7 +1963,7 @@ contains
       call oblnkl(outfile)
       call ovarre(outfile,'Peak field at conductor (T)','(bmax)',bmax)
       call ovarre(outfile,'Helium temperature at peak field (K)','(thelium)',thelium)
-      call ovarre(outfile,'Helium fraction inside cable space','(fhe)',fhe)
+      call ovarre(outfile,'Helium fraction inside cable space','',fhe)
       call ovarre(outfile,'Copper fraction of conductor','(fcu)',fcu)
 
       call osubhd(outfile,'Critical Current Information :')

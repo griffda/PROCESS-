@@ -150,6 +150,7 @@ contains
     !+ad_hisc               and volume calculations
     !+ad_hist  14/10/13 PJK Added lap counter to help in pathological cases
     !+ad_hist  19/11/13 PJK Moved l1,l2,l3 calculation out of loop
+    !+ad_hist  16/06/14 PJK Removed duplicate outputs
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -421,7 +422,7 @@ contains
     call ovarre(outfile,'Chamber pressure after burn (Pa)','(pend)',pend)
     call ovarre(outfile,'Chamber pressure before burn (Pa)','(pstart)', &
          pstart)
-    call ovarre(outfile,'Dwell time between burns (s)','(tdwell)',tdwell)
+    call ovarre(outfile,'Dwell time between burns (s)','(tdwell.)',tdwell)
     call ovarre(outfile,'Required D-T pump speed (m3/s)','(s(2))',s(2))
     call ovarre(outfile,'D-T pump speed provided (m3/s)','(snet(2))',snet(2))
 

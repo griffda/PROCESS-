@@ -1252,6 +1252,7 @@ contains
     !+ad_hist  24/04/14 PJK Changed bktlife output statement to avoid confusion
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  03/06/14 PJK Modified fhole etc. usage
+    !+ad_hist  16/06/14 PJK Reworded pnucblkt output; removed duplicate outputs
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1996,22 +1997,16 @@ contains
     end if
     call ovarre(outfile,'DT full power TF coil operation (yrs)', &
          '(fpydt)',fpydt)
-    call ovarre(outfile,'Inboard shield thickness (m)','(shldith)',shldith)
-    call ovarre(outfile,'Outboard shield thickness (m)','(shldoth)',shldoth)
-    call ovarre(outfile,'Top shield thickness (m)','(shldtth)',shldtth)
     if (blktmodel > 0) then
        call ovarre(outfile,'Inboard breeding zone thickness (m)','(blbuith)', blbuith)
        call ovarre(outfile,'Inboard box manifold thickness (m)','(blbmith)', blbmith)
        call ovarre(outfile,'Inboard back plate thickness (m)','(blbpith)', blbpith)
     end if
-    call ovarre(outfile,'Inboard blanket thickness (m)','(blnkith)', blnkith)
     if (blktmodel > 0) then
        call ovarre(outfile,'Outboard breeding zone thickness (m)','(blbuoth)', blbuoth)
        call ovarre(outfile,'Outboard box manifold thickness (m)','(blbmoth)', blbmoth)
        call ovarre(outfile,'Outboard back plate thickness (m)','(blbpoth)', blbpoth)
     end if
-    call ovarre(outfile,'Outboard blanket thickness (m)','(blnkoth)', blnkoth)
-    call ovarre(outfile,'Top blanket thickness (m)','(blnktth)',blnktth)
     if (blktmodel == 0) &
          call ovarre(outfile,'Inboard side TF coil case thickness (m)', &
          '(hecan)',hecan)
@@ -2040,11 +2035,13 @@ contains
 
     if (blktmodel == 0) then
        call osubhd(outfile,'Nuclear heating :')
-       call ovarre(outfile,'Blanket heating (MW)','(pnucblkt)',pnucblkt)
+       call ovarre(outfile,'Blanket heating (prior to energy multiplication) (MW)', &
+            '(pnucblkt)',pnucblkt)
        call ovarre(outfile,'Shield heating (MW)','(pnucshld)',pnucshld)
     else
        call osubhd(outfile,'Blanket neutronics :')
-       call ovarre(outfile,'Blanket heating (MW)','(pnucblkt)',pnucblkt)
+       call ovarre(outfile,'Blanket heating (prior to energy multiplication) (MW)', &
+            '(pnucblkt)',pnucblkt)
        call ovarre(outfile,'Shield heating (MW)','(pnucshld)',pnucshld)
        call ovarre(outfile,'Energy multiplication in blanket','(emult)',emult)
        call ovarin(outfile,'Number of divertor ports assumed','(npdiv)',npdiv)

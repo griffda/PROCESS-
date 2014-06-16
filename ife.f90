@@ -2273,7 +2273,6 @@ contains
     !  Output section
 
     call oheadr(outfile,'Power / Heat Transport')
-    call ovarre(outfile,'Fusion power (MW)','(powfmw)',powfmw)
     call ovarre(outfile,'Fusion power escaping via holes (MW)', &
          '(pnucloss)',pnucloss)
     call ovarre(outfile,'Power multiplication factor','(emult)',emult)
