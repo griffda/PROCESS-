@@ -366,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '290    Date  :: 2014-06-16'
+       '291    Date  :: 2014-06-16'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1565,5 +1565,6 @@ end subroutine output
 ! GIT 287: New power flow model
 ! GIT 288: Correction to process_dicts.py
 ! GIT 289: Raised input upper limit on fimpvar; updated python library files
-! GIT 290: Minor fix to mfile.py; removed duplicate outputs from mfile; 'make clean' now
-!          deletes all html files and the User Guide pdf file
+! GIT 290: Minor fix to mfile.py
+! GIT 291: Removed duplicate outputs from mfile; 'make clean' now deletes all html files
+!          and the User Guide pdf file
