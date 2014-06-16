@@ -23,8 +23,8 @@ RADIAL_BUILD = ["bore", "ohcth", "gapoh", "bcylth", "tfcth", "gapds",
                 "shldoth", "ddwo", "gapsto", "tfthko"]
 
 VERTICAL_BUILD = ["tfcth", "vgap2", "ddwi", "shldtth", "blnktth",
-                  "Top first wall vertical thickness (m)",
-                  "Top scrape-off vertical thickness (m)",
+                  "top first wall vertical thickness (m)",
+                  "top scrape-off vertical thickness (m)",
                   "rminor*kappa", "midplane", "rminor*kappa",
                   "vgap", "divfix", "shldtth", "ddwi", "vgap2", "tfcth"]
 
@@ -332,7 +332,7 @@ def plot_shield_snull(axis, mfile_data, scan):
     fwith = mfile_data.data["fwith"].get_scan(scan)
     fwoth = mfile_data.data["fwoth"].get_scan(scan)
     blnktth = mfile_data.data["blnktth"].get_scan(scan)
-    tfwvt = mfile_data.data["Top first wall vertical thickness (m)"].\
+    tfwvt = mfile_data.data["top first wall vertical thickness (m)"].\
         get_scan(scan)
     c_shldith = cumulative_radial_build("shldith", mfile_data, scan)
     c_blnkoth = cumulative_radial_build("blnkoth", mfile_data, scan)
@@ -677,12 +677,14 @@ def plot_geometry_info(axis, mfile_data, scan):
             ("powfmw", "Fusion power", "MW"),
             ("", "", ""),
             ("#User Info", "", ""),
-            ("!" + mfile_data.process_version, "PROCESS Version", ""),
-            ("!" + mfile_data.date, "Date:", ""),
-            ("!" + mfile_data.time, "Time:", ""),
-            ("!" + mfile_data.user, "User:", ""),
+            ("!" + str(mfile_data.data["procver"].get_scan(scan)),
+             "PROCESS Version", ""),
+            ("!" + mfile_data.data["date"].get_scan(scan), "Date:", ""),
+            ("!" + mfile_data.data["time"].get_scan(scan), "Time:", ""),
+            ("!" + mfile_data.data["username"].get_scan(scan), "User:", ""),
             ("!" + proc_dict.DICT_OPTIMISATION_VARS
-             [int(mfile_data.scan_variable)], "Optimising:", "")]
+             [int(mfile_data.data["nsweep"].get_scan(scan))],
+             "Optimising:", "")]
 
     plot_info(axis, data, mfile_data, scan)
 
@@ -714,13 +716,13 @@ def plot_physics_info(axis, mfile_data, scan):
     dnz = mfile_data.data["dnz"].get_scan(scan) / \
         mfile_data.data["dene"].get_scan(scan)
 
-    data = [("plascur/1D6", "$I_p$", "MA"),
+    data = [("plascur/1d6", "$I_p$", "MA"),
             ("bt", "Vacuum $B_T$ as $R_0$", "T"),
             ("q", "$q_{edge}$", ""),
-            ("Normalised thermal beta", r"$\beta_N$, thermal",
+            ("normalised thermal beta", r"$\beta_N$, thermal",
              "% m T MA$^{-1}$"),
-            ("Normalised total beta", r"$\beta_N$, total", "% m T MA$^{-1}$"),
-            ("Thermal poloidal beta", r"$\beta_P$, thermal", ""),
+            ("normalised total beta", r"$\beta_N$, total", "% m T MA$^{-1}$"),
+            ("thermal poloidal beta", r"$\beta_P$, thermal", ""),
             ("betap", r"$\beta_P$, total", ""),
             ("te", "$<t_e>$", "keV"),
             ("dene", "$<n_e>$", "m$^{-3}$"),

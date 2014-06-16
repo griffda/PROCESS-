@@ -20,6 +20,7 @@ Update: 14/05/2014 - PJK up to date at PROCESS version 272
 Update: 20/05/2014 - PJK up to date at PROCESS version 279
 Update: 02/06/2014 - PJK up to date at PROCESS version 283
 Update: 04/06/2014 - PJK up to date at PROCESS version 285
+Update: 16/06/2014 - PJK up to date at PROCESS version 288
 """
 
 from collections import defaultdict

@@ -14,12 +14,17 @@
     + 12/03/2014: Added ability to read MFILE.DAT into class
     + 12/03/2014: Added ability write MFILE.DAT from class
     + 12/05/2014: Fixed mfile issue with strings in MFILE.DAT with no scans
+    + 16/05/2014: Cleaned up MFileVariable
+    + 19/05/2014: Cleaned up MFile and put some functions outside class.
+    + 12/06/2014: Fixed error handling for "variable not in MFILE" errors
 
-  Compatible with PROCESS version 271
+  Compatible with PROCESS version 286
 
 """
 
-from process_io_lib import process_dicts
+import process_dicts
+import logging
+LOG = logging.getLogger("mfile")
 
 
 class MFileVariable(object):
@@ -35,20 +40,14 @@ class MFileVariable(object):
           var_description --> variable description/long name
 
         The class contains the following:
-            __str__     --> overridden __str__ to give custom output
             set_scan    --> function to set a scan number to a given value
             get_scan    --> function to retrieve a given scan
             get_scans   --> function to retrieve all scans.
         """
         self.var_name = var_name
         self.var_description = var_description
-
-    def __str__(self):
-        keys = self.__dict__.keys()
-        return """Variable: %s\nVariable Description: """\
-            """%s\nValues: %s""" % \
-            (self.var_name, self.var_description, str([self.__dict__[item]
-            for item in keys if "scan" in item]))
+        LOG.debug("Initialising variable '%s': %s" % (self.var_name,
+                                                      self.var_description))
 
     def set_scan(self, scan_number, scan_value):
         """ Sets the class attribute self.scan# where # is scan number
@@ -59,27 +58,26 @@ class MFileVariable(object):
 
         """
         setattr(self, "scan%d" % scan_number, scan_value)
+        LOG.debug("Scan %d for variable '%s' == %s" %
+                  (scan_number, self.var_name, str(scan_value)))
 
-    def get_scan(self, scan):
+    def get_scan(self, scan_number):
         """Returns the value of a specific scan. For scan = -1 the last scan is
         given.
 
         Arguments:
-          scan --> scan number to return [-1 = last scan]
+          scan_number --> scan number to return [-1 = last scan]
 
         Returns:
           [single scan requested]
         """
-        if scan == -1:
-            keys = [key for key in self.__dict__.keys() if "scan" in key]
-            keys.sort()
-            num = len(keys)-1
-            return self.__dict__[keys[num]]
+
+        scan_keys = [key for key in self.__dict__.keys() if "scan" in key]
+        scan_keys.sort()
+        if scan_number == -1:
+            return self.__dict__[scan_keys[-1]]
         else:
-            keys = [item for item in self.__dict__.keys() if "scan%d" % scan
-                    in item]
-            keys.sort()
-            return self.__dict__[keys[scan-1]]
+            return self.__dict__[scan_keys[scan_number-1]]
 
     def get_scans(self):
         """Returns a list of scan values in order of scan number
@@ -88,340 +86,301 @@ class MFileVariable(object):
           [List of all scans for variable]
 
         """
-        temp_keys = [int(item[4:]) for item in self.__dict__.keys()
-                     if "scan" in item]
-        temp_keys.sort()
-        keys = ["scan"+str(item) for item in temp_keys]
-        return [self.__dict__[key] for key in keys]
+
+        scan_numbers = list()
+        for key in self.__dict__.keys():
+            if "scan" in key:
+                scan_number = "".join([num for num in key if num.isdigit()])
+                scan_numbers.append(scan_number)
+        scan_numbers.sort()
+        scan_keys = ["scan"+item for item in scan_numbers]
+        return [self.__dict__[key] for key in scan_keys]
+
+    def get_number_of_scans(self):
+        """Function to return the number of scans in the variable class"""
+        key_list = [key for key in self.__dict__.keys() if "scan" in key]
+        return len(key_list)
+
+
+class MFileErrorClass(object):
+    """ Error class for handling missing data from MFILE
+    """
+    def __init__(self, item):
+        self.item = item
+        self.get_scan = self.get_error
+        self.get_scans = self.get_error
+        self.set_scan = self.get_error
+        self.get_number_of_scans = self.get_error
+
+    def get_error(self, *args, **kwargs):
+        LOG.error("Key '%s' not in MFILE. KeyError! Check MFILE" % self.item)
+
+
+class MFileDataDictionary(object):
+    """ Class object to act as a dictionary for the data.
+    """
+    def __init__(self):
+        pass
+
+    def __getitem__(self, item):
+        try:
+            return self.__dict__[item]
+        except KeyError:
+            return MFileErrorClass(item)
+
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+
+    def keys(self):
+        return self.__dict__.keys()
 
 
 class MFile(object):
     def __init__(self, filename="MFILE.DAT"):
-        """
-        Class object to store all data from a single MFILE.DAT file.
+        """Class object to store the MFile Objects"""
 
-        Arguments:
-        filename --> filename to read in; default value is MFILE.DAT. (file
-        must be in MFILE.DAT format)
-
-        The class contains the following:
-          get_data        --> Retrieves data from the MFILE for a given scan
-          search_keys     --> Search the variable names
-          search_des      -->
-          make_plot_dat   -->
-          __str__         -->
-          get_num_scans   -->
-
-        """
+        LOG.info("Creating MFile class for file '%s'" % filename)
         self.filename = filename
-        self.data = {}  # Empty dictionary to contain the self.filename data
+        self.data = MFileDataDictionary()
+        self.mfile_lines = list()
+        LOG.info("Opening file '%s'" % self.filename)
+        self.open_mfile()
+        LOG.info("Parsing file '%s'" % self.filename)
+        self.parse_mfile()
 
-        # Open file self.filename which is in MFILE.DAT format
+    def open_mfile(self):
+        """Function to open MFILE.DAT"""
         mfile = open(self.filename, "r")
-
-        # Read lines from self.filename
         self.mfile_lines = mfile.readlines()
 
-        # initialise number of scans and scan variables
-        self.number_of_scans = 0
-        self.scan_variable = 0
-        self.process_version = ""
-        self.date = ""
-        self.time = ""
-        self.user = ""
+    def parse_mfile(self):
+        """Function to parse MFILE.DAT"""
 
-        # Get the number of scans and the scanning variable first
-        for temp_line in self.mfile_lines:
-            if "Number_of_scan_points" in temp_line:
-                self.number_of_scans = int(temp_line.split(" ")[-1].
-                                           strip("\n"))
-            if "(nsweep)" in temp_line:
-                self.scan_variable = temp_line.split(" ")[-1].strip("\n")
-            if "(procver)" in temp_line:
-                self.process_version = temp_line.split(" ")[-1].strip("\n")
-            if "(date)" in temp_line:
-                self.date = temp_line.split(" ")[-1].strip("\n")
-            if "(time)" in temp_line:
-                self.time = temp_line.split(" ")[-1].strip("\n")
-            if "(username)" in temp_line:
-                self.user = temp_line.rstrip().split(" ")[-1]
+        for line in self.mfile_lines:
+            c_line = clean_line(line)
+            if c_line != [""]:
+                self.add_line(c_line)
 
-        # Check to see if file contained no scans
-        if self.number_of_scans == 0:
-            self.get_no_scan_data()
+    def add_line(self, line):
+        """Function to read the line from MFILE and add to the appropriate
+        class or create a new class if it is the first instance of it.
+        """
+        var_des = line[0]
+        var_name = sort_brackets(line[1])
+        var_value = sort_value(line[2])
+        self.add_to_mfile_variable(var_des, var_name, var_value)
+
+    def add_to_mfile_variable(self, des, name, value):
+        """Function to add value to MFile class for that name/description
+        """
+        if name == "":
+            var_key = des.lower().replace("_", " ")
         else:
-            # For each scan get the data from self.filename
-            for scan in range(self.number_of_scans):
-                self.get_data(scan+1)
+            var_key = name.lower().replace("_", " ")
 
-    def get_no_scan_data(self):
-        """Function to get file data if there is no scan
-        """
-        for line in self.mfile_lines:
-            temp_line = [tl for tl in line.split(" ") if tl != ""]
-
-            var_name = temp_line[1].split("__")[0]. \
-                                    strip("()")
-
-            if var_name == "_" * len(var_name):
-                var_name = temp_line[0].split("__")[0]. \
-                    replace("_", " ")
-            var_des = temp_line[0].split("__")[0]. \
-                replace("_", " ").strip(" ")
-
-            # pthrmw variable requires a fudge as it is
-            # in the form pthrmw(num).
-            if "pthrmw" in var_name:
-                var_name += ")"
-
-            # Create instance of MFileVariable class.
-            self.data[var_name] = \
-                MFileVariable(var_name, var_des)
-
-            # Add scan 0 data to MFileVariable class
-            if is_number(temp_line[2]):
-                self.data[var_name]. \
-                    set_scan(0, float(temp_line[2]))
-            else:
-                self.data[var_name]. \
-                    set_scan(0, temp_line[2])
-
-    def get_data(self, scan):
-        """
-        Reads the MFILE.DAT data for a single scan (scan number = argument
-        'scan') into the dictionary 'self.data'.
-
-        If it is the first scan get_data will create a new instance of the
-        MFileVariable class and add the scan data. Otherwise it will add the
-        following scans to the already existing MFileVariable class instance.
-
-        Arguments:
-          scan --> the scan number to read from self.filename
-
-        """
-        # Trigger for when the scan starts in self.filename
-        start_read = False
-
-         # Trigger for when the scan ends in self.filename
-        stop_read = False
-
-        for line in self.mfile_lines:
-            # Create temporary line with empty values removed.
-            temp_line = [tl for tl in line.split(" ") if tl != ""]
-
-            # If line doesn't contain only a newline character.
-            if temp_line != ["\n"]:
-                if not stop_read:
-                    if not start_read:
-                        # Determines when the requested scan has started
-                        if "iscan" in temp_line[1]:
-                            if int(temp_line[-1].strip("\n")) == scan:
-                                start_read = True
-                    else:
-                        # Determines when the requested scan has ended
-                        if "iscan" in temp_line[1]:
-                            if int(temp_line[-1].strip("\n")) != scan:
-                                stop_read = True
-                        else:
-                            # Line formatting to get the variable name
-                            # and the variable value.
-                            var_name = temp_line[1].split("__")[0]. \
-                                replace("_", "").replace("\n", "")
-
-                            if var_name != "":
-                                if var_name[-1] == ")":
-                                    var_name = var_name[:-1]
-                                if var_name[0] == "(":
-                                    var_name = var_name[1:]
-
-                            if var_name == "_" * len(var_name):
-                                var_name = temp_line[0].split("__")[0]. \
-                                    replace("_", " ")
-                            var_des = temp_line[0].split("__")[0]. \
-                                replace("_", " ").strip(" ")
+        if var_key in self.data.__dict__.keys():
+            scan_num = self.data[var_key].get_number_of_scans()
+            self.data[var_key].set_scan(scan_num+1, value)
+        else:
+            var = MFileVariable(name, des)
+            self.data[var_key] = var
+            self.data[var_key].set_scan(1, value)
 
 
-                            # On first scan in self.filename create
-                            # instance of MFileVariable class.
-                            if scan == 1:
-                                self.data[var_name] = \
-                                    MFileVariable(var_name, var_des)
+def sort_value(val):
+    """Function to sort out value line in MFILE"""
+    if '"' in val:
+        return str(val.strip('"'))
+    else:
+        return float(val)
 
-                            # Add scan data to MFileVariable class
-                            self.data[var_name]. \
-                                set_scan(scan, eval(temp_line[2]))
 
-    def search_keys(self, variable):
-        """Searches the dictionary keys for matches to the variable name
-        'variable' in arguments.
+def sort_brackets(var):
+    """Function to sort bracket madness on variable name
+    """
+    if var != "":
+        tmp_name = var.lstrip("(").split(")")
+        if len(tmp_name) > 2:
+            return tmp_name[0] + ")"
+        else:
+            return tmp_name[0]
+    else:
+        return ""
 
-        Puts everything into lower case before searching.
 
-        Argument:
-          variable --> variable name to search for
+def clean_line(line):
+    """Cleans an MFILE line into the three parts we care about"""
+    cleaned_line = [item.strip("_ \n") for item in line.split(" ")
+                    if item != ""]
+    return cleaned_line
 
-        Returns:
-          matches --> List of matches to the searched for variable
 
-        """
-        matches = []
-        for key in self.data.keys():
-            if variable.lower() in key.lower():
-                matches.append(key)
-        return matches
+def search_keys(dictionary, variable):
+    """Searches the dictionary keys for matches to the variable name
+    'variable' in arguments.
 
-    def search_des(self, description):
-        """Searches the dictionary descriptions for matches to the description
-        'description' from the arguments.
+    Puts everything into lower case before searching.
 
-        Puts everything into lower case before searching.
+    Argument:
+      dictionary --> dictionary to search in
+      variable --> variable name to search for
 
-        Argument:
-          variable --> variable name to search for
+    Returns:
+      matches --> List of matches to the searched for variable
 
-        Returns:
-          matches --> List of matches to the searched for description
+    """
+    matches = []
+    for key in dictionary.keys():
+        if variable.lower() in key.lower():
+            matches.append(key)
+    return matches
 
-        """
-        descriptions = [self.data[key].var_descript.lower()
-                        for key in self.data.keys()]
-        matches = []
-        for item in descriptions:
-            if description.lower() in item.lower():
-                matches.append(item)
-        return matches
 
-    def make_plot_dat(self, custom_keys, filename="make_plot_dat.out",
-                      file_format="row"):
-        """Make a make_plot_dat.out file for this MFILE.
+def search_des(dictionary, description):
+    """Searches the dictionary descriptions for matches to the description
+    'description' from the arguments.
 
-        The output format can be changed with the file_format argument.
+    Puts everything into lower case before searching.
 
-        file_format = "row" looks like:
+    Argument:
+      dictionary --> dictionary to search in
+      variable --> variable name to search for
 
-            parameter 1     val1    val2    val3    ...
-            parameter 2     val1    val2    val3    ...
+    Returns:
+      matches --> List of matches to the searched for description
+
+    """
+    descriptions = [dictionary[key].var_descript.lower()
+                    for key in dictionary.data.keys()]
+    matches = []
+    for item in descriptions:
+        if description.lower() in item.lower():
+            matches.append(item)
+    return matches
+
+
+def make_plot_dat(mfile_data, custom_keys, filename="make_plot_dat.out",
+                  file_format="row"):
+    """Make a make_plot_dat.out file for this MFILE.
+
+    The output format can be changed with the file_format argument.
+
+    file_format = "row" looks like:
+
+      parameter 1     val1    val2    val3    ...
+      parameter 2     val1    val2    val3    ...
             ...
 
-        file_format = "column" looks like:
+    file_format = "column" looks like:
 
-            parameter1  parameter2  parameter3  ...
-            val1        val2        val3        ...
-            val2        val2        val3        ...
-            ...
+      parameter1  parameter2  parameter3  ...
+      val1        val2        val3        ...
+      val2        val2        val3        ...
+      ...
 
-        The default name for the output file is make_plot_dat.out; this can
-        be overwritten using the filename argument. custom_keys is a list of
-        variables to output to the make_plot_dat.out.
+    The default name for the output file is make_plot_dat.out; this can
+    be overwritten using the filename argument. custom_keys is a list of
+    variables to output to the make_plot_dat.out.
 
-        Arguments:
-          custom_keys --> list of parameters to output
-          filename --> output filename
-          file_format --> 'row' or 'column' make_plot_dat.out
+    Arguments:
+      mfile_data --> MFILE object
+      custom_keys --> list of parameters to output
+      filename --> output filename
+      file_format --> 'row' or 'column' make_plot_dat.out
 
-        """
+    """
 
-        plot_dat = open(filename, "w")
+    plot_dat = open(filename, "w")
 
-        # The first two lines contain the scanning variable and the number of
-        # scans. These lines are preceded by a # symbol for ease of excluding.
-        plot_dat.write("# Scanning Variable: %s" %
-                       self.scan_variable + "\n")
-        plot_dat.write("# Number of scans: %d" %
-                       self.number_of_scans + "\n")
-        plot_dat.close()
+    # The first two lines contain the scanning variable and the number of
+    # scans. These lines are preceded by a # symbol for ease of excluding.
+    plot_dat.write("# Scanning Variable: %s" %
+                   process_dicts.DICT_SWEEP_VARS
+                   [mfile_data.data["nsweep"].get_scan(-1)] + "\n")
+    plot_dat.write("# Number of scans: %d" %
+                   int(mfile_data.data["isweep"].get_scan(-1)) + "\n")
+    plot_dat.close()
 
-        # The order of searching is set so that the output variables are always
-        # in the same order. i.e. searching custom_keys first as it is a list.
-        keys = self.data.keys()
+    # The order of searching is set so that the output variables are always
+    # in the same order. i.e. searching custom_keys first as it is a list.
+    keys = mfile_data.data.keys()
 
-        # Row format
-        if file_format == "row":
-            for key in custom_keys:
-                if key in keys:
-                    # Get the scan values for the row
-                    values = ""
-                    for item in self.data[key].get_scans():
-                        values += "%.4e" % item + " "
-                    values += "\n"
+    # Row format
+    if file_format == "row":
+        write_row_mplot_dat(filename, custom_keys, mfile_data)
+    elif file_format == "column":
+        write_column_mplot_dat(filename, custom_keys, mfile_data)
+    else:
+        # If file_format not recognised print error
+        print("# Error >> Format %s not recognised. Use row or column" %
+              file_format)
 
-                    # Create the file line [name, description, val1, val2, ...]
-                    # Entries are justified to give the impression of fixed
-                    # width columns
-                    line = self.data[key].var_description.\
-                        replace(" ", "_").ljust(45)\
-                        + " " + key.ljust(25) + " " + values
+    for ckey in custom_keys:
+        if ckey not in keys:
+            # For each item in the custom_keys list that isn't in the file
+            # print out an error.
+            print(" # Error >> Key: '%s' was NOT found in MFILE.DAT!" %
+                  ckey)
+            print(" \t\t (So is NOT in make_plot_dat.out!)")
 
-                    # Write row to file.
-                    plot_dat = open(filename, "a")
-                    plot_dat.write(line)
-                    plot_dat.close()
 
-        # Column format
-        elif file_format == "column":
-            var_descriptions = ""
-            var_names = ""
-            num_scans = self.number_of_scans
-            val_keys = []
+def write_row_mplot_dat(filename, custom_keys, mfile_data):
+    """Function to make a PLOT.DAT using MFILE in row format"""
 
-            for key in custom_keys:
-                if key in keys:
-                    var_descriptions += self.data[key].var_description.\
-                        replace(" ", "_").ljust(45) + " "
-                    var_names += key.ljust(10) + " "
-                    val_keys.append(key)
+    mfile_keys = mfile_data.data.keys()
 
-            # Write row to file
+    for key in custom_keys:
+        if key in mfile_keys:
+            # Get the scan values for the row
+            values = ""
+            for item in mfile_data.data[key].get_scans():
+                values += "%.4e" % item + " "
+            values += "\n"
+
+            # Create the file line [name, description, val1, val2, ...]
+            # Entries are justified to give the impression of fixed
+            # width columns
+            line = mfile_data.data[key].var_description.\
+                replace(" ", "_").ljust(45)\
+                + " " + key.ljust(25) + " " + values
+
+            # Write row to file.
             plot_dat = open(filename, "a")
-            plot_dat.write(var_names+"\n")
+            plot_dat.write(line)
             plot_dat.close()
 
-            # Write rows of values. One row for each scan.
-            for num in range(num_scans):
-                values = ""
-                for vkey in val_keys:
-                    values += "%.4e " % self.data[vkey].\
-                        get_scan(num+1)[0]
-                values += "\n"
-                plot_dat = open(filename, "a")
-                plot_dat.write(values)
-                plot_dat.close()
-        else:
-            # If file_format not recognised print error
-            print("# Error >> Format %s not recognised. Use row or column" %
-                  file_format)
 
-        for ckey in custom_keys:
-            if ckey not in keys:
-                # For each item in the custom_keys list that isn't in the file
-                # print out an error.
-                print(" # Error >> Key: '%s' was NOT found in MFILE.DAT!" %
-                      ckey)
-                print(" \t\t (So is NOT in make_plot_dat.out!)")
+def write_column_mplot_dat(filename, custom_keys, mfile_data):
+    """Function to make a PLOT.DAT using MFILE in column format"""
 
-    def __str__(self):
-        """ Prints intro information about the MFILE data
+    var_descriptions = ""
+    var_names = ""
+    num_scans = int(mfile_data.data["isweep"].get_scan(-1))
+    val_keys = []
+    mfile_keys = mfile_data.data.keys()
 
-        Overrides the __str__ function for the class.
+    for key in custom_keys:
+        if key in mfile_keys:
+            var_descriptions += mfile_data.data[key].var_description.\
+                replace(" ", "_").ljust(45) + " "
+            var_names += key.ljust(10) + " "
+            val_keys.append(key)
 
-        Arguments:
-          f_name --> file name
-          n_scans --> number of scans
-          scan_var --> scanning variable
+    # Write row to file
+    plot_dat = open(filename, "a")
+    plot_dat.write(var_names+"\n")
+    plot_dat.close()
 
-        Returns:
-          The str 'info'
-
-        """
-        info = "="*40 + "\n" + "File: %s" % self.filename + "\n" + \
-            "Number of scans: %d" % self.number_of_scans + "\n" +\
-            "Scan variable: %s" % self.scan_variable + "\n" + \
-            "="*40
-        return info
-
-    def get_num_scans(self):
-        """Returns the number of scans in the file"""
-        return self.number_of_scans
+    # Write rows of values. One row for each scan.
+    for num in range(num_scans):
+        values = ""
+        for vkey in val_keys:
+            values += "%.4e " % mfile_data.data[vkey].\
+                get_scan(num+1)
+        values += "\n"
+        plot_dat = open(filename, "a")
+        plot_dat.write(values)
+        plot_dat.close()
 
 
 def read_mplot_conf(filename="make_plot_dat.conf"):
@@ -469,6 +428,7 @@ def write_mplot_conf(filename="make_plot_dat.conf"):
         conf_file.write(item + "\n")
     conf_file.close()
 
+
 def is_number(val):
     """Check MFILE data entry"""
     try:
@@ -478,3 +438,18 @@ def is_number(val):
         pass
 
     return False
+
+
+#def test():
+#    """Testing"""
+#    from process_funcs import setup_logging
+#    setup_logging(default_path="logging.json")
+#    m = MFile("../../STORRISI_MFILE.DAT")
+#    print(m.data["rmajor"].get_scans())
+#    print(m.data["procver"].get_scans())
+#    print(m.data["isweep"].get_scans())
+#    print(m.data["ttfsec"].get_scans())
+#    print(m.data["nsweepa"].get_scan(-1))
+
+#if __name__ == "__main__":
+#    test()

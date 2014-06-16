@@ -376,6 +376,7 @@ contains
     !+ad_hist  22/05/14 PJK PHEAT units changed to MW
     !+ad_hist  02/06/14 PJK Added IMPVAR, FIMPVAR
     !+ad_hist  03/06/14 PJK Added new power flow variables
+    !+ad_hist  16/06/14 PJK Raised FIMPVAR upper limit
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -573,7 +574,7 @@ contains
           call parse_real_array('FIMP', fimp, isub1, nimp, &
                'Impurity density fraction', icode)
        case ('FIMPVAR')
-          call parse_real_variable('FIMPVAR', fimpvar, 1.0D-6, 1.0D-2, &
+          call parse_real_variable('FIMPVAR', fimpvar, 1.0D-6, 0.5D0, &
                'Impurity fraction to be varied')
        case ('FRADMIN')
           write(outfile,*) 'FRADMIN is now obsolete -'
