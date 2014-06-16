@@ -40,6 +40,7 @@ module scan_module
   !+ad_hist  28/11/13 PJK Added scan variable 27: tbrmin
   !+ad_hist  12/02/14 PJK Added scan variable 28: bt
   !+ad_hist  04/06/14 PJK Added scan variable 29: coreradius
+  !+ad_hist  16/06/14 PJK Added scan variable 30: fimpvar
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -65,8 +66,8 @@ module scan_module
 
   !+ad_vars  ipnscns /50/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 50
-  !+ad_vars  ipnscnv /29/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 29
+  !+ad_vars  ipnscnv /30/ FIX : number of available scan variables
+  integer, parameter :: ipnscnv = 30
 
   !+ad_vars  isweep /0/ : number of loops to perform
   integer :: isweep = 0
@@ -99,7 +100,8 @@ module scan_module
   !+ad_varc          <LI> 26 triang
   !+ad_varc          <LI> 27 tbrmin (for blktmodel > 0 only)
   !+ad_varc          <LI> 28 bt
-  !+ad_varc          <LI> 29 coreradius</UL>
+  !+ad_varc          <LI> 29 coreradius
+  !+ad_varc          <LI> 30 fimpvar</UL>
   integer :: nsweep = 1
 
   !+ad_vars  sweep(ipnscns) : Actual values to use in scan
@@ -151,6 +153,7 @@ contains
     !+ad_hist  15/05/14 PJK Increased output width to 110 characters
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  04/06/14 PJK Added scan variable 29: coreradius
+    !+ad_hist  16/06/14 PJK Added scan variable 30: fimpvar
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -352,6 +355,10 @@ contains
        case (29)
           coreradius = sweep(iscan)
           vlabel = 'coreradius = ' ; xlabel = 'Core_radius'
+       case (30)
+          fimpvar = sweep(iscan)
+          impurity_arr(impvar)%frac = fimpvar
+          vlabel = 'fimpvar = ' ; xlabel = 'Impurity_fraction'
 
        case default
           write(*,*) 'Error in routine SCAN:'
