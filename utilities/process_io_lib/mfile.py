@@ -17,12 +17,13 @@
     + 16/05/2014: Cleaned up MFileVariable
     + 19/05/2014: Cleaned up MFile and put some functions outside class.
     + 12/06/2014: Fixed error handling for "variable not in MFILE" errors
+    + 16/06/2014: Fixed library path error; fix in get_scans
 
   Compatible with PROCESS version 286
 
 """
 
-import process_dicts
+import process_io_lib.process_dicts
 import logging
 LOG = logging.getLogger("mfile")
 
@@ -91,9 +92,10 @@ class MFileVariable(object):
         for key in self.__dict__.keys():
             if "scan" in key:
                 scan_number = "".join([num for num in key if num.isdigit()])
-                scan_numbers.append(scan_number)
+                scan_numbers.append(int(scan_number))
+
         scan_numbers.sort()
-        scan_keys = ["scan"+item for item in scan_numbers]
+        scan_keys = ["scan"+str(item) for item in scan_numbers]
         return [self.__dict__[key] for key in scan_keys]
 
     def get_number_of_scans(self):
