@@ -377,6 +377,7 @@ contains
     !+ad_hist  02/06/14 PJK Added IMPVAR, FIMPVAR
     !+ad_hist  03/06/14 PJK Added new power flow variables
     !+ad_hist  16/06/14 PJK Raised FIMPVAR upper limit
+    !+ad_hist  17/06/14 PJK Added IMPDIR
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -644,6 +645,9 @@ contains
        case ('IMPC')
           call parse_real_variable('IMPC', impc, 0.0D0, 10.0D0, &
                'Carbon impurity multiplier')
+       case ('IMPDIR')
+          call parse_string_variable('IMPDIR', impdir, &
+               'Directory containing impurity radiation data files')
        case ('IMPFE')
           call parse_real_variable('IMPFE', impfe, 0.0D0, 2.0D0, &
                'Iron impurity multiplier')

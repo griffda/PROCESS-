@@ -366,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '293    Date  :: 2014-06-17'
+       '294    Date  :: 2014-06-17'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1570,3 +1570,4 @@ end subroutine output
 !          and the User Guide pdf file
 ! GIT 292: Added fimpvar as scan variable 30
 ! GIT 293: Fixed small errors/inconsistencies in new power flow model
+! GIT 294: Added impdir to allow impurity radiation datafile directory to be specified

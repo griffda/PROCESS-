@@ -683,7 +683,7 @@ def plot_geometry_info(axis, mfile_data, scan):
             ("!" + mfile_data.data["time"].get_scan(scan), "Time:", ""),
             ("!" + mfile_data.data["username"].get_scan(scan), "User:", ""),
             ("!" + proc_dict.DICT_OPTIMISATION_VARS
-             [int(mfile_data.data["nsweep"].get_scan(scan))],
+             [abs(int(mfile_data.data["minmax"].get_scan(scan)))],
              "Optimising:", "")]
 
     plot_info(axis, data, mfile_data, scan)
@@ -782,7 +782,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
             (pf_info[1][0], pf_info[1][1], "MA"),
             (pf_info[2][0], pf_info[2][1], "MA"),
             (vssoft, "Startup flux swing", "Wb"),
-            ("abs(vstot)", "Available flux swing", "Wb"),
+            ("vstot", "Available flux swing", "Wb"),
             (tburn, "Burn time", "hrs"),
             ("", "", ""),
             ("#TF coil type is %s" % tftype, "", ""),
@@ -850,7 +850,7 @@ def plot_power_info(axis, mfile_data, scan):
             ("pnucshld", "Nuclear heating in shield", "MW"),
             ("pdivt", "Psep / Pdiv", "MW"),
             (pthresh, "H-mode threshold (M=2.5)", "$\pm$%.3f MW" % err),
-            ("fwlife", "FW/Blanket life", "years"),
+            ("fwbllife", "FW/Blanket life", "years"),
             ("divlife", "Divertor life", "years"),
             ("pthermmw", "Thermal Power", "MW"),
             (gross_eff, "Gross cycle efficiency", "%"),

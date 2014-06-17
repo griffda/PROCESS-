@@ -29,6 +29,7 @@ module impurity_radiation_module
   !+ad_hist  13/12/13 HL Initial version of module
   !+ad_hist  13/05/14 PJK Initial PROCESS implementation
   !+ad_hist  02/06/14 PJK Added impvar, fimpvar
+  !+ad_hist  17/06/14 PJK Added impdir
   !+ad_stat  Okay
   !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
   !+ad_docs  Sertoli, private communication
@@ -91,6 +92,10 @@ module impurity_radiation_module
   !+ad_vars  fimpvar /1.0D-3/ : impurity fraction to be used as fimp(impvar)
   !+ad_varc                     (iteration variable 102)
   real(kind(1.0D0)), public :: fimpvar = 1.0D-3
+
+  !+ad_vars  impdir /'/home/pknight/process/bin/impuritydata'/ : Directory containing
+  !+ad_varc           impurity radiation data files
+  character(len=60), public :: impdir = '/home/pknight/process/bin/impuritydata/'
 
   !+ad_vars  imprad_model /0/ : switch for impurity radiation model:<UL>
   !+ad_varc               <LI>  = 0 original ITER 1989 model
@@ -255,7 +260,8 @@ contains
     !+ad_call  import_impdata
     !+ad_hist  09/05/14 HL  First draft of the routine
     !+ad_hist  14/05/14 PJK Initial PROCESS version
-    !+ad_hist  Okay  
+    !+ad_hist  17/06/14 PJK Added impdir usage
+    !+ad_stat  Okay
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -276,7 +282,8 @@ contains
     !  Local variables
 
     integer :: status, i
-    character(len=128) :: filename
+    character(len=12) :: filename
+    character(len=72) :: fullpath
     logical :: iexist
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -308,12 +315,19 @@ contains
     end if
 
     !  Read tabulated data in from file, assuming it exists
+    !  Add trailing / to impdir if necessary
 
-    filename = 'impuritydata/' // Label // 'Lzdata.dat'
+    filename = label // 'Lzdata.dat'
 
-    inquire(file=trim(filename),exist=iexist)
+    if (index(impdir,'/',.true.) == len(trim(impdir))) then
+       fullpath = trim(impdir)//trim(filename)
+    else
+       fullpath = trim(impdir)//'/'//trim(filename)
+    end if
+
+    inquire(file=trim(fullpath), exist=iexist)
     if (iexist) then
-       call import_impdata(filename, len_tab, &
+       call import_impdata(trim(fullpath), len_tab, &
             impurity_arr(no)%Temp_keV, impurity_arr(no)%Lz_Wm3)
     else
        write(*,*) 'Warning in routine INIT_IMP_ELEMENT:'
@@ -364,7 +378,7 @@ contains
 
     !  Arguments
 
-    character(len=128), intent(in) :: filename
+    character(len=72), intent(in) :: filename
     integer, intent(in) :: nlines
     real(kind(1.0D0)), dimension(nlines), intent(out) :: col1, col2
     integer, optional, intent(in) :: skiprows
@@ -394,7 +408,7 @@ contains
        local_fmt = '(2F10.2)'
     end if
 
-    open(unit=unit, file=filename, status='old', action='read', iostat=iostat)
+    open(unit=unit, file=trim(filename), status='old', action='read', iostat=iostat)
 
     if (iostat /= 0) then
        write(*,*) 'Error in routine IMPORT_IMPDATA:'
