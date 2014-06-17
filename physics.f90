@@ -3228,6 +3228,7 @@ contains
     !+ad_hisc               added falpha multiplier to alpmw term
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  03/06/14 PJK Changed pchargepv usage to pchargemw
+    !+ad_hist  17/06/14 PJK Added scaling law 39
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  N. A. Uckan and ITER Physics Group,
@@ -3600,7 +3601,7 @@ contains
        qtaue = 0.0D0
        rtaue = -0.66D0
 
-    case (28)  !  ITER-96P L-mode scaling
+    case (28)  !  ITER-96P (= ITER-97L) L-mode scaling
        !  S.M.Kaye and the ITER Confinement Database Working Group,
        !  Nuclear Fusion 37 (1997) 1303
        !  N.B. tau_th formula used
@@ -3640,6 +3641,7 @@ contains
        rtaue = -0.66D0
 
     case (32)  !  IPB98(y), ELMy H-mode scaling
+       !  Nuclear Fusion 39 (1999) 2175
        tauee = hfact * 0.0365D0 * pcur**0.97D0 * bt**0.08D0 * &
             dnla19**0.41D0 * powerht**(-0.63D0) * rmajor**1.93D0 * &
             kappa**0.67D0 * aspect**(-0.23D0) * afuel**0.2D0
@@ -3649,6 +3651,7 @@ contains
        rtaue = -0.63D0
 
     case (33)  !  IPB98(y,1), ELMy H-mode scaling
+       !  Nuclear Fusion 39 (1999) 2175
        tauee = hfact * 0.0503D0 * pcur**0.91D0 * bt**0.15D0 * &
             dnla19**0.44D0 * powerht**(-0.65D0) * rmajor**2.05D0 * &
             kappaa**0.72D0 * aspect**(-0.57D0) * afuel**0.13D0
@@ -3658,6 +3661,7 @@ contains
        rtaue = -0.65D0
 
     case (34)  !  IPB98(y,2), ELMy H-mode scaling
+       !  Nuclear Fusion 39 (1999) 2175
        tauee = hfact * 0.0562D0 * pcur**0.93D0 * bt**0.15D0 * &
             dnla19**0.41D0 * powerht**(-0.69D0) * rmajor**1.97D0 * &
             kappaa**0.78D0 * aspect**(-0.58D0) * afuel**0.19D0
@@ -3667,6 +3671,7 @@ contains
        rtaue = -0.69D0
 
     case (35)  !  IPB98(y,3), ELMy H-mode scaling
+       !  Nuclear Fusion 39 (1999) 2175
        tauee = hfact * 0.0564D0 * pcur**0.88D0 * bt**0.07D0 * &
             dnla19**0.40D0 * powerht**(-0.69D0) * rmajor**2.15D0 * &
             kappaa**0.78D0 * aspect**(-0.64D0) * afuel**0.20D0
@@ -3676,6 +3681,7 @@ contains
        rtaue = -0.69D0
 
     case (36)  !  IPB98(y,4), ELMy H-mode scaling
+       !  Nuclear Fusion 39 (1999) 2175
        tauee = hfact * 0.0587D0 * pcur**0.85D0 * bt**0.29D0 * &
             dnla19**0.39D0 * powerht**(-0.70D0) * rmajor**2.08D0 * &
             kappaa**0.76D0 * aspect**(-0.69D0) * afuel**0.17D0
@@ -3705,6 +3711,17 @@ contains
        ptaue = 0.54D0
        qtaue = 0.0D0
        rtaue = -0.61D0
+
+    case (39)  !  DS03 beta-independent H-mode scaling
+       !  T. C. Luce, C. C. Petty and J. G. Cordey,
+       !  Plasma Phys. Control. Fusion 50 (2008) 043001, eqn.4.13, p.67
+       tauee = hfact * 0.028D0 * pcur**0.83D0 * bt**0.07D0 * &
+            dnla19**0.49D0 * powerht**(-0.55D0) * rmajor**2.11D0 * &
+            kappa95**0.75D0 * aspect**(-0.3D0) * afuel**0.14D0
+       gtaue = 0.0D0
+       ptaue = 0.49D0
+       qtaue = 0.0D0
+       rtaue = -0.55D0
 
     case default
        write(*,*) 'Error in routine PCOND:'

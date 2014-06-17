@@ -121,6 +121,7 @@ module physics_variables
   !+ad_hist  21/05/14 PJK Changed ignite wording
   !+ad_hist  22/05/14 PJK Name changes to power quantities
   !+ad_hist  11/06/14 PJK Added pchargemw, ptremw, ptrimw
+  !+ad_hist  17/06/14 PJK Added scaling law 39
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -130,8 +131,8 @@ module physics_variables
 
   public
 
-  !+ad_vars  ipnlaws /38/ FIX : number of energy confinement time scaling laws
-  integer, parameter :: ipnlaws = 38
+  !+ad_vars  ipnlaws /39/ FIX : number of energy confinement time scaling laws
+  integer, parameter :: ipnlaws = 39
 
   !+ad_vars  tauscl(ipnlaws) : labels describing energy confinement scaling laws:<UL>
   character(len=24), dimension(ipnlaws) :: tauscl = (/ &
@@ -189,7 +190,7 @@ module physics_variables
        'ITER H-97P ELM-free  (H)', &
   !+ad_varc  <LI> (27)  ITER H-97P ELMy (H-mode)
        'ITER H-97P ELMy      (H)', &
-  !+ad_varc  <LI> (28)  ITER-96P (L-mode)
+  !+ad_varc  <LI> (28)  ITER-96P (=ITER-97L) (L-mode)
        'ITER-96P             (L)', &
   !+ad_varc  <LI> (29)  Valovic modified ELMy (H-mode)
        'Valovic modified ELMy(H)', &
@@ -209,8 +210,10 @@ module physics_variables
        'IPB98(y,4)           (H)', &
   !+ad_varc  <LI> (37)  ISS95 (stellarator)
        'ISS95            (stell)', &
-  !+ad_varc  <LI> (38)  ISS04 (stellarator)</UL>
-       'ISS04            (stell)' /)
+  !+ad_varc  <LI> (38)  ISS04 (stellarator)
+       'ISS04            (stell)', &
+  !+ad_varc  <LI> (39)  DS03 (H-mode)</UL>
+       'DS03                 (H)' /)
 
   !+ad_vars  abeam : beam ion mass (amu)
   real(kind(1.0D0)) :: abeam = 0.0D0
