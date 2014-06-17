@@ -21,6 +21,7 @@ Update: 20/05/2014 - PJK up to date at PROCESS version 279
 Update: 02/06/2014 - PJK up to date at PROCESS version 283
 Update: 04/06/2014 - PJK up to date at PROCESS version 285
 Update: 16/06/2014 - PJK up to date at PROCESS version 288
+Update: 16/06/2014 - PJK: r293
 """
 
 from collections import defaultdict
@@ -930,11 +931,13 @@ NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu']
 
 #dict mapping nsweep to ixc no, if applicable
 DICT_NSWEEP2IXC = {'1':'1', '4':'10', '5':'12', '8':'45', '9':'4',
-                   '14':'50', '15':'53', '16':'3', '20':'22', '28':'2'}
+                   '14':'50', '15':'53', '16':'3', '20':'22', '28':'2',
+                   '30':'102'}
 
 #dict mapping ixc no to nsweep, if applicable
 DICT_IXC2NSWEEP = {'1':'1', '10':'4', '12':'5', '45':'8', '4':'9',
-                   '50':'14', '53':'15', '3':'16', '22':'20', '2':'28'}
+                   '50':'14', '53':'15', '3':'16', '22':'20', '2':'28',
+                   '102':'30'}
 
 # PROCESS TF Coil types
 DICT_TF_TYPE = {1: "ITER Nb3Sn", 2: "Bi-2212", 3: "NbTi", 4: "Nb3Sn"}

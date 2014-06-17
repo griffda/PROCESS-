@@ -1954,6 +1954,7 @@ module heat_transport_variables
   !+ad_hist  17/04/13 PJK Comment change to fcsht, priheat
   !+ad_hist  17/04/13 PJK Added iprimnloss
   !+ad_hist  04/06/14 PJK Added/modified various quantities for new power flow method
+  !+ad_hist  17/06/14 PJK Comment change to pfwdiv, ctht
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1967,7 +1968,7 @@ module heat_transport_variables
   real(kind(1.0D0)) :: baseel = 5.0D6
   !+ad_vars  crypmw : cryogenic plant power (MW)
   real(kind(1.0D0)) :: crypmw = 0.0D0
-  !+ad_vars  ctht : total plant heat removal (MW)
+  !+ad_vars  ctht : total plant heat removal (primary + secondary) (MW)
   real(kind(1.0D0)) :: ctht = 0.0D0
   !+ad_vars  etahhten /1.35/ : efficiency of H production for ihplant=2
   real(kind(1.0D0)) :: etahhten = 1.35D0
@@ -2076,7 +2077,7 @@ module heat_transport_variables
   real(kind(1.0D0)) :: pacpmw = 0.0D0
   !+ad_vars  peakmva : peak MVA requirement
   real(kind(1.0D0)) :: peakmva = 0.0D0
-  !+ad_vars  pfwdiv : heat removal from first wall/divertor (MW) (ipowerflow=0)
+  !+ad_vars  pfwdiv : heat removal from first wall/divertor (MW)
   real(kind(1.0D0)) :: pfwdiv = 0.0D0
   !+ad_vars  pgrossmw : gross electric power (MW)
   real(kind(1.0D0)) :: pgrossmw = 0.0D0

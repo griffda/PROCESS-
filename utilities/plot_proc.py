@@ -8,11 +8,12 @@
   CCFE
 
   Compatible with PROCESS version ???
+  Latest update 17/06/2014 PJK
 """
 
 import argparse
 import process_io_lib.mfile as mf
-import process_io_lib.proc_plot_func as plot_func
+import process_io_lib.plot_proc_func as plot_func
 import matplotlib.pyplot as plt
 
 

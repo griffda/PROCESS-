@@ -2464,6 +2464,7 @@ contains
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  23/05/13 PJK Added blktmodel comment about coolant inconsistency
     !+ad_hist  03/06/14 PJK Changed facht to fachtmw
+    !+ad_hist  17/06/14 PJK Changed priheat to pthermmw in chx calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2501,7 +2502,7 @@ contains
 
     !  Primary heat exchangers
 
-    chx = 1.0D-6 * ucphx * rnphx * (1.0D6*priheat/rnphx)**exphts
+    chx = 1.0D-6 * ucphx * rnphx * (1.0D6*pthermmw/rnphx)**exphts
     chx = fkind * chx * cmlsa(lsa)
 
     c2261 = chx + cpp

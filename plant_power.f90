@@ -84,7 +84,7 @@ contains
     !+ad_cont  tfpwcall
     !+ad_cont  tfcpwr
     !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+    !+ad_args  iprint : input integer : switch for writing to output (1=yes)
     !+ad_desc  This routine calculates the power conversion requirements for
     !+ad_desc  resistive TF coils, or calls <CODE>tfpwcall</CODE> if the TF
     !+ad_desc  coils are superconducting.
@@ -196,15 +196,16 @@ contains
     subroutine tfpwcall(outfile,iprint)
 
       !+ad_name  tfpwcall
-      !+ad_summ  Calls the TF coil power conversion routine for superconducting coils
+      !+ad_summ  Calls the TF coil power conversion routine for
+      !+ad_summ  superconducting coils
       !+ad_type  Subroutine
       !+ad_auth  P J Knight, CCFE, Culham Science Centre
       !+ad_auth  P C Shipe, ORNL
       !+ad_cont  N/A
       !+ad_args  outfile : input integer : output file unit
-      !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-      !+ad_desc  This routine calls routine <CODE>tfcpwr</CODE> to calculate the power
-      !+ad_desc  conversion requirements for superconducting TF coils.
+      !+ad_args  iprint : input integer : switch for writing to output (1=yes)
+      !+ad_desc  This routine calls routine <CODE>tfcpwr</CODE> to calculate
+      !+ad_desc  the power conversion requirements for superconducting TF coils.
       !+ad_prob  None
       !+ad_call  tfcpwr
       !+ad_hist  01/08/11 PJK Initial F90 version
@@ -254,20 +255,22 @@ contains
       !+ad_auth  P C Shipe, ORNL
       !+ad_cont  N/A
       !+ad_args  outfile : input integer : output file unit
-      !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+      !+ad_args  iprint : input integer : switch for writing to output (1=yes)
       !+ad_args  ntfc : input real : number of TF coils
       !+ad_args  ettfmj : input real : total stored energy of one TF coils, MJ
       !+ad_args  itfka : input real : design current for the TF coils, kA
       !+ad_args  rptfc : input real : resistance of a TF coil, ohms
-      !+ad_args  vtfskv : input real : allowable voltage across a TF coil during
-      !+ad_argc                        quench, kV
+      !+ad_args  vtfskv : input real : allowable voltage across a TF coil
+      !+ad_argc                        during quench, kV
       !+ad_args  rmajor : input real : plasma major radius, m
-      !+ad_args  tfckw : output real : available DC power for charging the TF coils, kW
-      !+ad_args  tfbusl : output real : total bus length of the TF coil system, m
+      !+ad_args  tfckw : output real : available DC power for charging the
+      !+ad_argc                        TF coils, kW
+      !+ad_args  tfbusl : output real : total bus length of the TF coil
+      !+ad_argc                         system, m
       !+ad_args  drarea : output real : approx. area needed for the energy dump
       !+ad_argc                         resistors, m2
-      !+ad_args  tfcbv : output real : approx. vol needed for the TF coil power supplies
-      !+ad_argc                        and DC circuit breakers, m3
+      !+ad_args  tfcbv : output real : approx. vol needed for the TF coil power
+      !+ad_argc                        supplies and DC circuit breakers, m3
       !+ad_args  tfacpd : output real : steady state TF coil AC power demand, MW
       !+ad_desc  This routine calculates the TF power conversion system
       !+ad_desc  parameters:  floor space, power supplies, bussing,
@@ -549,7 +552,7 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+    !+ad_args  iprint : input integer : switch for writing to output (1=yes)
     !+ad_desc  This routine calculates the MVA, power and energy requirements
     !+ad_desc  for the PF coil systems.  Units are MW and MVA for power terms.
     !+ad_desc  The routine checks at the beginning of the flattop for the
@@ -769,7 +772,7 @@ contains
     !+ad_auth  P C Shipe, ORNL
     !+ad_cont  N/A
     !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+    !+ad_args  iprint : input integer : switch for writing to output (1=yes)
     !+ad_desc  The routine was drastically shortened on 23/01/90 (ORNL) from the
     !+ad_desc  original TETRA routine to provide only the total power needs for
     !+ad_desc  the plant. Included in STORAC in January 1992 by P.C. Shipe.
@@ -913,8 +916,10 @@ contains
     !+ad_hist  17/04/13 PJK Added iprimnloss switch for pnucloss contribution
     !+ad_hisc               to primary heating
     !+ad_hist  21/05/14 PJK Added ignite clauses
-    !+ad_hist  22/05/14 PJK Name changes to power quantities; added pohmmw to pfwdiv
+    !+ad_hist  22/05/14 PJK Name changes to power quantities; added pohmmw
+    !+ad_hisc               to pfwdiv
     !+ad_hist  04/06/14 PJK New power flow model added
+    !+ad_hist  17/06/14 PJK Corrections to pfwdiv, priheat
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -930,15 +935,19 @@ contains
 
     if (ipowerflow == 0) then
 
-       !  Primary nuclear heating
-       !  pthermmw is the high grade thermal power
-       !  priheat is the total thermal power removed from fusion core
+       !  (non-neutron) Power reaching first wall and divertor
 
        if (ignite == 0) then
           pfwdiv = pfuscmw + pohmmw + pinjmw
        else
           pfwdiv = pfuscmw + pohmmw
        end if
+
+       !  Primary nuclear heating
+       !  pthermmw is the high grade thermal power
+       !  priheat is the total thermal power removed from fusion core
+       !  (but this is no longer used elsewhere in code)
+
        pthermmw = pnucblkt + pnucshld + (1.0D0-ffwlg)*pfwdiv
        priheat = pnucblkt + pnucshld + pfwdiv
 
@@ -975,6 +984,8 @@ contains
        pradfw = pradmw - praddiv - pradloss - pradhcd
 
        !  First wall pumping power
+       !  If blktmodel = 1, pnucfw is zero, as the first wall is combined
+       !  with the blanket
 
        htpmw_fw = fpumpfw/(1.0D0-fpumpfw) * (pnucfw + pradfw)
 
@@ -1024,12 +1035,17 @@ contains
 
        pthermdiv = pdivt + pnucdiv + praddiv + htpmw_div
 
-       !  Primary (high-grade) thermal power, available for electricity generation
-       !  Switches iprimshld, iprimdiv are 1 or 0, depending on user choice as to
-       !  whether the corresponding thermal power component is to contribute to
-       !  the primary or secondary heat
+       !  Heat removal from first wall and divertor
 
-       pthermmw = pthermfw + pthermblkt + iprimshld*pthermshld + iprimdiv*pthermdiv
+       pfwdiv = pthermfw + pthermdiv
+
+       !  Primary (high-grade) thermal power, available for electricity
+       !  generation.  Switches iprimshld, iprimdiv are 1 or 0, depending
+       !  on user choice as to whether the corresponding thermal power
+       !  component is to contribute to the primary or secondary heat
+
+       pthermmw = pthermfw + pthermblkt + iprimshld*pthermshld &
+            + iprimdiv*pthermdiv
 
        !  Secondary thermal power deposited in divertor
 
@@ -1053,8 +1069,8 @@ contains
 
     rnphx = max(2.0D0, (pthermmw/400.0D0 + 0.8D0) )
 
-    !  For the Rankine cycle employed by the thermodynamic (1993) blanket model,
-    !  the number of primary heat exchangers is two
+    !  For the Rankine cycle employed by the thermodynamic (1993) blanket
+    !  model, the number of primary heat exchangers is two
 
     if (lblnkt == 1) rnphx = 2.0D0
 
@@ -1102,7 +1118,7 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+    !+ad_args  iprint : input integer : switch for writing to output (1=yes)
     !+ad_desc  This routine calculates the rest of the heat transport
     !+ad_desc  and plant power balance constituents, not already calculated in
     !+ad_desc  <A HREF="acpow.html">ACPOW</A> or <A HREF="power1.html">POWER1</A>.
@@ -1131,6 +1147,7 @@ contains
     !+ad_hist  11/06/13 PJK Added output section on recirculating power
     !+ad_hist  04/06/14 PJK New power flow model added
     !+ad_hist  16/06/14 PJK Modified various labels to prevent duplicate outputs
+    !+ad_hist  17/06/14 PJK Removed blktmodel from ipowerflow if-statement
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1255,7 +1272,7 @@ contains
 
     call oheadr(outfile,'Plant Power / Heat Transport Balance')
 
-    if ((ipowerflow == 0).or.(blktmodel == 1)) then
+    if (ipowerflow == 0) then
 
        call ovarin(outfile,'Plant power flow model','(ipowerflow)',ipowerflow)
 
@@ -1269,8 +1286,10 @@ contains
        call ovarre(outfile,'TF coil resistive power (MW)','(tfcmw)',tfcmw)
        call ovarre(outfile,'Centrepost coolant pump power (MW)','(ppumpmw)' &
             ,ppumpmw)
-       call ovarre(outfile,'Primary (high-grade) heat (MW)','(pthermmw)',pthermmw)
-       call ovarre(outfile,'Secondary (low-grade) heat (MW)','(psechtmw)',psechtmw)
+       call ovarre(outfile,'Primary (high-grade) heat (MW)', &
+            '(pthermmw)',pthermmw)
+       call ovarre(outfile,'Secondary (low-grade) heat (MW)', &
+            '(psechtmw)',psechtmw)
        call oblnkl(outfile)
        call ovarre(outfile,'Heat removal from F.W./divertor (MW)', &
             '(pfwdiv)',pfwdiv)
@@ -1288,9 +1307,11 @@ contains
             '(trithtmw)',trithtmw)
 
        if (ihplant /= 0) then
-          call ovarre(outfile,'Electrical power used for hydrogen production (MW)', &
+          call ovarre(outfile, &
+               'Electrical power used for hydrogen production (MW)', &
                '(helecmw)',helecmw)
-          call ovarre(outfile,'Thermal power used for hydrogen production (MW)', &
+          call ovarre(outfile, &
+               'Thermal power used for hydrogen production (MW)', &
                '(hthermmw)',hthermmw)
           call ovarre(outfile,'Hydrogen production rate (MW)', &
                '(hpower)',hpower)
@@ -1332,10 +1353,12 @@ contains
        if (itart == 1) call ovarre(outfile,'TF coolant pump power (MW)', &
             '(ppumpmw)',ppumpmw)
        call ovarre(outfile,'Heat transport pump power (MW)','(htpmw)',htpmw)
-       if (ihplant /= 0) call ovarre(outfile,'Hydrogen production electrical power (MW)', &
+       if (ihplant /= 0) call ovarre(outfile, &
+            'Hydrogen production electrical power (MW)', &
             '(helecmw)',helecmw)
        call ovarre(outfile,'Vacuum pump power (MW)','(vachtmw.)',vachtmw)
-       call ovarre(outfile,'Tritium processing power (MW)','(trithtmw.)',trithtmw)
+       call ovarre(outfile,'Tritium processing power (MW)', &
+            '(trithtmw.)',trithtmw)
 
     else
 
@@ -1345,36 +1368,72 @@ contains
 
        call osubhd(outfile,'Assumptions :')
 
-       call ovarre(outfile,'Neutron power multiplication in blanket','(emult)',emult)
-       call ovarre(outfile,'Divertor area fraction of whole toroid surface','(fdiv)',fdiv)
-       call ovarre(outfile,'H/CD apparatus + diagnostics area fraction','(fhcd)',fhcd)
+       call ovarre(outfile,'Neutron power multiplication in blanket', &
+            '(emult)',emult)
+       call ovarre(outfile, &
+            'Divertor area fraction of whole toroid surface','(fdiv)',fdiv)
+       call ovarre(outfile,'H/CD apparatus + diagnostics area fraction', &
+            '(fhcd)',fhcd)
        call ovarre(outfile,'Area fraction of other holes','(fhole)',fhole)
-       call ovarre(outfile,'First wall area fraction ','(1-fdiv-fhcd-fhole)',1.0D0-fdiv-fhcd-fhole)
-       call ovarre(outfile,'Neutron decay length in first wall structure (m)','(declfw)',declfw)
-       call ovarre(outfile,'Neutron decay length in blanket structure (m)','(declblkt)',declblkt)
-       call ovarre(outfile,'Neutron decay length in shield structure (m)','(declshld)',declshld)
-       call ovarre(outfile,'Coolant pump power / thermal power ratio in first wall','(fpumpfw)',fpumpfw)
-       call ovarre(outfile,'Coolant pump power / thermal power ratio in blanket','(fpumpblkt)',fpumpblkt)
-       call ovarre(outfile,'Coolant pump power / thermal power ratio in shield','(fpumpshld)',fpumpshld)
-       call ovarre(outfile,'Coolant pump power / thermal power ratio in divertor','(fpumpdiv)',fpumpdiv)
-       call ovarre(outfile,'Electrical efficiency of first wall coolant pumps','(etahtpfw)',etahtpfw)
-       call ovarre(outfile,'Electrical efficiency of blanket coolant pumps','(etahtpblkt)',etahtpblkt)
-       call ovarre(outfile,'Electrical efficiency of shield coolant pumps','(etahtpshld)',etahtpshld)
-       call ovarre(outfile,'Electrical efficiency of divertor coolant pumps','(etahtpdiv)',etahtpdiv)
-       call ovarin(outfile,'Switch for destination of divertor thermal power (1=primary)','(iprimdiv)',iprimdiv)
-       call ovarin(outfile,'Switch for destination of shield thermal power (1=primary)','(iprimshld)',iprimshld)
+       call ovarre(outfile,'First wall area fraction ', &
+            '(1-fdiv-fhcd-fhole)',1.0D0-fdiv-fhcd-fhole)
+       if (blktmodel == 0) then
+          call ovarre(outfile, &
+               'Neutron decay length in first wall structure (m)', &
+               '(declfw)',declfw)
+          call ovarre(outfile, &
+               'Neutron decay length in blanket structure (m)', &
+               '(declblkt)',declblkt)
+          call ovarre(outfile, &
+               'Neutron decay length in shield structure (m)', &
+               '(declshld)',declshld)
+       end if
+       call ovarre(outfile, &
+            'Coolant pump power / thermal power ratio in first wall', &
+            '(fpumpfw)',fpumpfw)
+       call ovarre(outfile, &
+            'Coolant pump power / thermal power ratio in blanket', &
+            '(fpumpblkt)',fpumpblkt)
+       call ovarre(outfile, &
+            'Coolant pump power / thermal power ratio in shield', &
+            '(fpumpshld)',fpumpshld)
+       call ovarre(outfile, &
+            'Coolant pump power / thermal power ratio in divertor', &
+            '(fpumpdiv)',fpumpdiv)
+       call ovarre(outfile, &
+            'Electrical efficiency of first wall coolant pumps', &
+            '(etahtpfw)',etahtpfw)
+       call ovarre(outfile, &
+            'Electrical efficiency of blanket coolant pumps', &
+            '(etahtpblkt)',etahtpblkt)
+       call ovarre(outfile, &
+            'Electrical efficiency of shield coolant pumps', &
+            '(etahtpshld)',etahtpshld)
+       call ovarre(outfile, &
+            'Electrical efficiency of divertor coolant pumps', &
+            '(etahtpdiv)',etahtpdiv)
+       call ovarin(outfile, &
+            'Switch for destination of divertor thermal power (1=primary)', &
+            '(iprimdiv)',iprimdiv)
+       call ovarin(outfile, &
+            'Switch for destination of shield thermal power (1=primary)', &
+            '(iprimshld)',iprimshld)
        if (ireactor == 1) then
-          call ovarrf(outfile,'Thermal to electric conversion efficiency of turbines','(etath)', &
-               etath)
-          call ovarre(outfile,'(Input) Balance of plant recirculating power fraction', &
+          call ovarrf(outfile, &
+               'Thermal to electric conversion efficiency of turbines', &
+               '(etath)',etath)
+          call ovarre(outfile, &
+               '(Input) Balance of plant recirculating power fraction', &
                '(fauxbop)',fauxbop)
        end if
 
        primsum = 0.0D0 ; secsum = 0.0D0
 
        call oblnkl(outfile)
-       write(outfile,'(t45,a)') 'Primary (high-grade)   Secondary (low-grade)    Total'
-       write(outfile,'(t46,a)') 'thermal power (MW)     thermal power (MW)      (MW)'
+       write(outfile,'(t45,a)') &
+            'Primary (high-grade)   Secondary (low-grade)    Total'
+       write(outfile,'(t46,a)') &
+            'thermal power (MW)     thermal power (MW)      (MW)'
 
        write(outfile,'(t10,a)') 'First wall:'
        write(outfile,10) pnucfw, 0.0D0, pnucfw
@@ -1399,10 +1458,12 @@ contains
        call oblnkl(outfile)
 
        write(outfile,'(t10,a)') 'Shield:'
-       write(outfile,10) pnucshld*iprimshld, pnucshld*(1-iprimshld), pnucshld
+       write(outfile,10) pnucshld*iprimshld, pnucshld*(1-iprimshld), &
+            pnucshld
        write(outfile,20) 0.0D0, 0.0D0, 0.0D0
        write(outfile,30) 0.0D0, 0.0D0, 0.0D0
-       write(outfile,40) htpmw_shld*iprimshld, htpmw_shld*(1-iprimshld), htpmw_shld
+       write(outfile,40) htpmw_shld*iprimshld, htpmw_shld*(1-iprimshld), &
+            htpmw_shld
 
        primsum = primsum + pnucshld*iprimshld + htpmw_shld*iprimshld
        secsum = secsum + pnucshld*(1-iprimshld) + htpmw_shld*(1-iprimshld)
@@ -1413,11 +1474,13 @@ contains
        write(outfile,10) pnucdiv*iprimdiv, pnucdiv*(1-iprimdiv), pnucdiv
        write(outfile,20) pdivt*iprimdiv, pdivt*(1-iprimdiv), pdivt
        write(outfile,30) praddiv*iprimdiv, praddiv*(1-iprimdiv), praddiv
-       write(outfile,40) htpmw_div*iprimdiv, htpmw_div*(1-iprimdiv), htpmw_div
+       write(outfile,40) htpmw_div*iprimdiv, htpmw_div*(1-iprimdiv), &
+            htpmw_div
 
-       primsum = primsum + pnucdiv*iprimdiv + pdivt*iprimdiv + praddiv*iprimdiv + htpmw_div*iprimdiv
-       secsum = secsum + pnucdiv*(1-iprimdiv) + pdivt*(1-iprimdiv) + praddiv*(1-iprimdiv) &
-            + htpmw_div*(1-iprimdiv)
+       primsum = primsum + pnucdiv*iprimdiv + pdivt*iprimdiv &
+            + praddiv*iprimdiv + htpmw_div*iprimdiv
+       secsum = secsum + pnucdiv*(1-iprimdiv) + pdivt*(1-iprimdiv) &
+            + praddiv*(1-iprimdiv) + htpmw_div*(1-iprimdiv)
 
        if (itart == 1) then
           call oblnkl(outfile)
@@ -1467,23 +1530,27 @@ contains
 50     format(t34,'Totals',t50,f8.2,t70,f8.2,t90,f8.2)
 
        call oblnkl(outfile)
-       call ovarre(outfile,'Primary (high-grade) thermal power (MW)','(pthermmw)',pthermmw)
+       call ovarre(outfile, &
+            'Primary (high-grade) thermal power (MW)','(pthermmw)',pthermmw)
 
        call osubhd(outfile,'Other secondary thermal power constituents :')
 
        call ovarre(outfile,'Heat removal from cryogenic plant (MW)', &
             '(crypmw)',crypmw)
-       call ovarre(outfile,'Heat removal from facilities (MW)','(fachtmw)', &
-            fachtmw)
+       call ovarre(outfile,'Heat removal from facilities (MW)', &
+            '(fachtmw)',fachtmw)
 
        if (ihplant /= 0) then
-          call ovarre(outfile,'Electrical power used for hydrogen production (MW)', &
+          call ovarre(outfile, &
+               'Electrical power used for hydrogen production (MW)', &
                '(helecmw)',helecmw)
-          call ovarre(outfile,'Thermal power used for hydrogen production (MW)', &
+          call ovarre(outfile, &
+               'Thermal power used for hydrogen production (MW)', &
                '(hthermmw)',hthermmw)
        end if
 
-       call ovarre(outfile,'Coolant pumping efficiency losses (MW)','(htpsecmw)',htpsecmw)
+       call ovarre(outfile,'Coolant pumping efficiency losses (MW)', &
+            '(htpsecmw)',htpsecmw)
        call ovarre(outfile,'Heat removal from injection power (MW)', &
             '(pinjht)',pinjht)
        call ovarre(outfile,'Heat removal from tritium plant (MW)', &
@@ -1493,7 +1560,9 @@ contains
        call ovarre(outfile,'TF coil resistive power (MW)','(tfcmw)',tfcmw)
 
        call oblnkl(outfile)
-       call ovarre(outfile,'Total secondary (low-grade) thermal power (MW)','(psechtmw)',psechtmw)
+       call ovarre(outfile, &
+            'Total secondary (low-grade) thermal power (MW)', &
+            '(psechtmw)',psechtmw)
 
        call oblnkl(outfile)
        call ovarre(outfile,'Total cryogenic load (MW)','(helpow/1.D6)', &
@@ -1515,23 +1584,32 @@ contains
 
        call osubhd(outfile,'Reactor Powers :')
 
-       call ovarre(outfile,'Thermal power lost to tertiary cooling system (i.e. environment) (MW)', &
+       call ovarre(outfile, &
+            'Thermal power lost to tertiary cooling system'// &
+            ' (i.e. environment) (MW)', &
             '((1-etath)*pthermmw)', pthermmw-pgrossmw)
        call ovarre(outfile,'Gross electric power (MW)','(pgrossmw)', &
             pgrossmw)
 
        call osubhd(outfile,'Recirculating Power :')
 
-       call ovarre(outfile,'Heating / current drive injected power (MW)','(pinjwp)',pinjwp)
-       call ovarre(outfile,'Heat transport pump power (MW)','(htpmw)',htpmw)
-       call ovarre(outfile,'Other core systems electrical power (MW)','(pcoresystems)',pcoresystems)
-       call ovarre(outfile,'(Scaled) Balance of plant recirculating power fraction', &
+       call ovarre(outfile,'Heating / current drive injected power (MW)', &
+            '(pinjwp)',pinjwp)
+       call ovarre(outfile,'Heat transport pump power (MW)', &
+            '(htpmw)',htpmw)
+       call ovarre(outfile,'Other core systems electrical power (MW)', &
+            '(pcoresystems)',pcoresystems)
+       call ovarre(outfile, &
+            '(Scaled) Balance of plant recirculating power fraction', &
             '(fgrosbop)',fgrosbop)
-       call ovarre(outfile,'Balance of plant recirculating power (MW)','(fgrosbop*pgrossmw)', &
+       call ovarre(outfile,'Balance of plant recirculating power (MW)', &
+            '(fgrosbop*pgrossmw)', &
             fgrosbop*pgrossmw)
-       call ovarrf(outfile,'Total recirculating power fraction','(cirpowfr)', &
+       call ovarrf(outfile,'Total recirculating power fraction', &
+            '(cirpowfr)', &
             cirpowfr)
-       call ovarre(outfile,'Total recirculating electric power (MW)','(precircmw)', &
+       call ovarre(outfile,'Total recirculating electric power (MW)', &
+            '(precircmw)', &
             precircmw)
 
        call oblnkl(outfile)
