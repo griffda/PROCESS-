@@ -366,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '295    Date  :: 2014-06-17'
+       '296    Date  :: 2014-06-18'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1572,3 +1572,4 @@ end subroutine output
 ! GIT 293: Fixed small errors/inconsistencies in new power flow model
 ! GIT 294: Added impdir to allow impurity radiation datafile directory to be specified
 ! GIT 295: New confinement time scaling law DS03 (no.39)
+! GIT 296: New ripple amplitude calculation

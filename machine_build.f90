@@ -10,6 +10,7 @@ module build_module
   !+ad_cont  vbuild
   !+ad_cont  divgeom
   !+ad_cont  rippl
+  !+ad_cont  ripple_amplitude
   !+ad_cont  portsz
   !+ad_cont  dshellarea
   !+ad_cont  eshellarea
@@ -76,7 +77,7 @@ contains
     !+ad_call  osubhd
     !+ad_call  ovarin
     !+ad_call  ovarre
-    !+ad_call  rippl
+    !+ad_call  ripple_amplitude
     !+ad_hist  26/07/11 PJK Initial F90 version
     !+ad_hist  24/09/12 PJK Swapped argument order
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
@@ -95,6 +96,7 @@ contains
     !+ad_hist  17/02/14 PJK Additional output information to mfile
     !+ad_hist  06/03/14 PJK Changed mfile output to 'E' format
     !+ad_hist  03/06/14 PJK Modified fhole etc. usage
+    !+ad_hist  18/06/14 PJK New ripple amplitude model
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -109,6 +111,7 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: a1,a2,hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild
+    integer :: ripflag = 0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -144,7 +147,8 @@ contains
 
     !  Check ripple
 
-    call rippl(ripmax,rmajor,rminor,rtot,tfno,ripple,rtotl)
+    !call rippl(ripmax,rmajor,rminor,rtot,tfno,ripple,rtotl)
+    call ripple_amplitude(ripple,ripmax,rtot,rtotl,ripflag)
 
     !  If the ripple is too large then move the outboard TF coil leg
 
@@ -236,6 +240,14 @@ contains
     !  Print out device build
 
     call oheadr(outfile,'Radial Build')
+
+    if (ripflag == 1) then
+       call ocmmnt(outfile, &
+            '(Ripple result may not be accurate, as the fit was outside')
+       call ocmmnt(outfile, &
+            ' its range of applicability.)')
+       call oblnkl(outfile)
+    end if
 
     write(outfile,10)
 10  format(t43,'Thickness (m)',t60,'Radius (m)')
@@ -670,6 +682,81 @@ contains
     end if
 
   end subroutine rippl
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine ripple_amplitude(ripple,ripmax,rtot,rtotmin,flag)
+
+    !+ad_name  ripple_amplitude
+    !+ad_summ  TF ripple calculation
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  ripmax : input real  : maximum allowed ripple at plasma edge (%)
+    !+ad_args  ripple : output real : actual ripple at plasma edge (%)
+    !+ad_args  rtot   : input real  : radius to the centre of the outboard
+    !+ad_argc                         TF coil leg (m)
+    !+ad_args  rtotmin : output real : radius to the centre of the outboard
+    !+ad_argc                          TF coil leg which would produce
+    !+ad_argc                          a ripple of amplitude ripmax (m)
+    !+ad_args  flag : output integer : on exit, =1 if the fitted
+    !+ad_argc                          range of applicability is exceeded
+    !+ad_desc  This routine calculates the toroidal field ripple amplitude
+    !+ad_desc  at the midplane outboard plasma edge. The fitted coefficients
+    !+ad_desc  were produced from MATLAB runs by M. Kovari using the CCFE
+    !+ad_desc  MAGINT code to model the coils and fields.
+    !+ad_desc  <P>The minimum radius of the centre of the TF coil legs
+    !+ad_desc  to produce the maximum allowed ripple is also calculated.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  18/06/14 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  M. Kovari, internal communication, June 2014
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(out) :: flag
+    real(kind(1.0D0)), intent(in) :: ripmax,rtot
+    real(kind(1.0D0)), intent(out) :: ripple,rtotmin
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: w, x, c1, c2, n
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    n = real(tfno, kind(1.0D0))
+
+    !  TF coil winding pack width
+
+    if (wwp1 == 0.0D0) then  !  not yet calculated
+       w = tfthko - 2.0D0*(casths + tinstf)  !  rough estimate of wwp1
+       x = w*n/rmajor
+    else
+       x = wwp1*n/rmajor
+    end if
+
+    c1 = 0.875D0 - 0.0557D0*x
+    c2 = 1.617D0 + 0.0832D0*x
+
+    !  Calculated ripple for coil at rtot (%)
+
+    ripple = 100.0D0 * c1*( (rmajor+rminor)/rtot )**(n-c2)
+
+    !  Calculated rtot to produce a ripple of amplitude ripmax 
+
+    rtotmin = (rmajor+rminor) / &
+         ( (0.01D0*ripmax/c1)**(1.0D0/(n-c2)) )
+
+    flag = 0
+    if ((x < 0.737D0).or.(x > 2.95D0)) flag = 1
+    if ((tfno < 16).or.(tfno > 20)) flag = 1
+
+  end subroutine ripple_amplitude
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
