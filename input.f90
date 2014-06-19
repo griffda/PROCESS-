@@ -378,6 +378,7 @@ contains
     !+ad_hist  03/06/14 PJK Added new power flow variables
     !+ad_hist  16/06/14 PJK Raised FIMPVAR upper limit
     !+ad_hist  17/06/14 PJK Added IMPDIR
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -2165,69 +2166,13 @@ contains
 
           !  Output file options settings
 
-       case ('SECT01')
-          call parse_int_variable('SECT01', sect01, 0, 1, &
-               'Switch for power reactor output section')
-       case ('SECT02')
-          call parse_int_variable('SECT02', sect02, 0, 1, &
-               'Switch for detailed costings output section')
-       case ('SECT03')
-          call parse_int_variable('SECT03', sect03, 0, 1, &
-               'Switch for plasma output section')
-       case ('SECT04')
-          call parse_int_variable('SECT04', sect04, 0, 1, &
-               'Switch for current drive output section')
-       case ('SECT05')
-          call parse_int_variable('SECT05', sect05, 0, 1, &
-               'Switch for divertor output section')
-       case ('SECT06')
-          call parse_int_variable('SECT06', sect06, 0, 1, &
-               'Switch for machine build output section')
-       case ('SECT07')
-          call parse_int_variable('SECT07', sect07, 0, 1, &
-               'Switch for TF coils output section')
-       case ('SECT08')
-          call parse_int_variable('SECT08', sect08, 0, 1, &
-               'Switch for PF coils output section')
-       case ('SECT09')
-          call parse_int_variable('SECT09', sect09, 0, 1, &
-               'Switch for volt-seconds output section')
-       case ('SECT10')
-          call parse_int_variable('SECT10', sect10, 0, 1, &
-               'Switch for support structure output section')
-       case ('SECT11')
-          call parse_int_variable('SECT11', sect11, 0, 1, &
-               'Switch for PF coil inductances output section')
-       case ('SECT12')
-          call parse_int_variable('SECT12', sect12, 0, 1, &
-               'Switch for shield/blanket output section')
-       case ('SECT13')
-          call parse_int_variable('SECT13', sect13, 0, 1, &
-               'Switch for power conversion output section')
-       case ('SECT14')
-          call parse_int_variable('SECT14', sect14, 0, 1, &
-               'Switch for heat transport output section')
-       case ('SECT15')
-          call parse_int_variable('SECT15', sect15, 0, 1, &
-               'Switch for vacuum system output section')
-       case ('SECT16')
-          call parse_int_variable('SECT16', sect16, 0, 1, &
-               'Switch for plant buildings output section')
-       case ('SECT17')
-          call parse_int_variable('SECT17', sect17, 0, 1, &
-               'Switch for AC power output section')
-       case ('SECT18')
-          call parse_int_variable('SECT18', sect18, 0, 1, &
-               'Switch for neutral beams output section')
-       case ('SECT19')
-          call parse_int_variable('SECT19', sect19, 0, 1, &
-               'Switch for ECH output section')
-       case ('SECT20')
-          call parse_int_variable('SECT20', sect20, 0, 1, &
-               'Switch for lower hybrid output section')
-       case ('SECT21')
-          call parse_int_variable('SECT21', sect21, 0, 1, &
-               'Switch for time output section')
+       case ('SECT01', 'SECT02', 'SECT03', 'SECT04', 'SECT05', &
+            'SECT06', 'SECT07', 'SECT08', 'SECT09', 'SECT10', &
+            'SECT11', 'SECT12', 'SECT13', 'SECT14', 'SECT15', &
+            'SECT16', 'SECT17', 'SECT18', 'SECT19', 'SECT20', &
+            'SECT21')
+          write(outfile,*) 'SECT flags are now ignored -'
+          write(outfile,*) 'please remove them from the input file'
 
           !  Vacuum system settings
 

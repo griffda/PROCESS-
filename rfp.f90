@@ -104,6 +104,7 @@ contains
     !+ad_hist  05/11/12 PJK Added rfp_variables
     !+ad_hist  01/05/14 PJK Added some clarifying comments
     !+ad_hist  08/05/14 PJK Changed ripmax description
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -235,7 +236,7 @@ contains
 
     call portsz
 
-    if ((iprint == 0).or.(sect07 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 
@@ -485,7 +486,7 @@ contains
 
     end do
 
-    if ((iprint == 0).or.(sect08 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 
@@ -536,6 +537,7 @@ contains
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -666,7 +668,7 @@ contains
 
     !  Output Section
 
-    if ((iprint == 0).or.(sect13 == 0)) return
+    if (iprint == 0) return
 
     call oheadr(outfile,'PF Coil Power Conversion')
     call ovarre(outfile,'Number of PF coil circuits','(pfckts)',pfckts)

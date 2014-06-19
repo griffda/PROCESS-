@@ -1,4 +1,3 @@
-!  $Id:: ife.f90 258 2014-04-24 12:28:55Z pknight                       $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module ife_module
@@ -290,6 +289,7 @@ contains
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, pp.68,85
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -379,7 +379,7 @@ contains
        wallmw = powfmw / fwarea
     end if
 
-    if ((iprint == 0).or.(sect03 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 
@@ -1116,6 +1116,7 @@ contains
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.52
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1143,7 +1144,7 @@ contains
        call genbld
     end select
 
-    if ((iprint == 0).or.(sect06 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 
@@ -1854,6 +1855,7 @@ contains
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  31/10/12 PJK Added cost_variables
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.86
     !+ad_docs  Moir et al., Fusion Technology, vol.25 (1994) p.5
@@ -1972,7 +1974,7 @@ contains
 
     cryomass = 0.0D0
 
-    if ((iprint == 0).or.(sect12 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 
@@ -2103,6 +2105,7 @@ contains
     !+ad_hist  27/03/13 PJK MGF power removed; irrelevant for IFE
     !+ad_hist  17/04/13 PJK Removed 0.05*pacpmw contribution to fcsht
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.68
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2144,7 +2147,7 @@ contains
     tlvpmw = fcsht + trithtmw + (htpmw*reprat/6.0D0) + vachtmw + &
          0.5D0*crypmw + tfacmw
 
-    if ((iprint == 0).or.(sect17 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 
@@ -2207,6 +2210,7 @@ contains
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_hist  03/06/14 PJK precir renamed precircmw and made global;
     !+ad_hisc               changed psecht to psechtmw, facht to fachtmw
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.67
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2268,7 +2272,7 @@ contains
 
     end if
 
-    if ((iprint == 0).or.(sect14 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 
@@ -2387,6 +2391,7 @@ contains
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  30/10/12 PJK Added buildings_variables
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.87
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2522,7 +2527,7 @@ contains
 
     volnucb = ( vrci + rmbv + wsv + triv + cryv )
 
-    if ((iprint == 0).or.(sect16 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 

@@ -1512,6 +1512,7 @@ contains
     !+ad_hist  08/05/14 PJK Redefined trp; replaced stress_model with tfc_model
     !+ad_hist  08/05/14 PJK Changed ripmax description
     !+ad_hist  16/06/14 PJK Removed duplicate outputs
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -1531,8 +1532,6 @@ contains
     character(len=1) :: intstring
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    if (sect07 == 0) return
 
     call oheadr(outfile,'TF Coils')
     call ocmmnt(outfile,'Superconducting TF coils')
@@ -1823,6 +1822,7 @@ contains
       !+ad_hisc               redefined isumat usage; modified itersc arguments
       !+ad_hist  07/10/13 PJK Added Bi-2212 option; removed ifail
       !+ad_hist  16/06/14 PJK Removed duplicate outputs
+      !+ad_hist  19/06/14 PJK Removed sect?? flags
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
@@ -1940,7 +1940,7 @@ contains
 
       call protect(iop,tfes,acs,aturn,tdump,fcond,fcu,thelium,tmax,jwdgpro,vd)
 
-      if ((iprint == 0).or.(sect07 == 0)) return
+      if (iprint == 0) return
 
       call oheadr(outfile,'Superconducting TF Coils')
 

@@ -82,6 +82,7 @@ contains
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  19/06/14 PJK Imported code from obsolete routines
     !+ad_hisc               nbeam, ech, lwhymod
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -261,7 +262,7 @@ contains
 
     !  Output section
 
-    if ((iprint /= 1).or.(sect04 == 0)) return
+    if (iprint == 0) return
 
     call oheadr(outfile,'Current Drive System')
 

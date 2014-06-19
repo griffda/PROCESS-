@@ -138,6 +138,7 @@ contains
     !+ad_hist  28/07/11 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  09/04/13 PJK Comment changes
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -204,7 +205,7 @@ contains
 
     !  Output section
 
-    if ((iprint == 0).or.(sect10 == 0)) return
+    if (iprint == 0) return
 
     call oheadr(outfile,'Support Structure')
     call ovarre(outfile,'Outer PF coil fence mass (kg)', &

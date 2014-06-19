@@ -151,6 +151,7 @@ contains
     !+ad_hist  14/10/13 PJK Added lap counter to help in pathological cases
     !+ad_hist  19/11/13 PJK Moved l1,l2,l3 calculation out of loop
     !+ad_hist  16/06/14 PJK Removed duplicate outputs
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -403,7 +404,7 @@ contains
 
     dimax = d(imax)
 
-    if ((iprint == 0).or.(sect15 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 

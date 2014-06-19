@@ -97,6 +97,7 @@ contains
     !+ad_hist  06/03/14 PJK Changed mfile output to 'E' format
     !+ad_hist  03/06/14 PJK Modified fhole etc. usage
     !+ad_hist  18/06/14 PJK New ripple amplitude model
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -235,7 +236,7 @@ contains
 
     end if
 
-    if ((iprint == 0).or.(sect06 == 0)) return
+    if (iprint == 0) return
 
     !  Print out device build
 

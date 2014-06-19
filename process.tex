@@ -38,9 +38,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-06-17
+2014-06-19
 \hfill
-Revision:: 295
+Revision:: 298
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -3503,53 +3503,6 @@ the code to write some additional diagnostic output to the screen. Currently,
 extra information about the progress of the optimiser is produced. This
 setting is likely to be of interest only to ``expert'' users.
 
-\subsection{Output control}
-
-Since the user may only be interested in a small proportion of the code's
-output, a set of switches exists that controls whether a given section of the
-output file is produced.  Table~\ref{tab:osections} indicates how these
-switches affect the output.
-
-% Table summarising output section controllers
-
-\begin{table}[tbph]
-\begin{center}
-
-\begin{tabular}{||l|l||} \hline
-switch      & relevant output section    \\ \hline
-\texttt{sect01} & power plant costs          \\
-\texttt{sect02} & detailed costings          \\
-\texttt{sect03} & plasma                     \\
-\texttt{sect04} & current drive system       \\
-\texttt{sect05} & divertor                   \\
-\texttt{sect06} & machine build              \\
-\texttt{sect07} & TF coils                   \\
-\texttt{sect08} & PF coils                   \\
-\texttt{sect09} & volt second consumption    \\
-\texttt{sect10} & support structure          \\
-\texttt{sect11} & PF coil inductances        \\
-\texttt{sect12} & shield / blanket           \\
-\texttt{sect13} & power conversion           \\
-\texttt{sect14} & heat transport             \\
-\texttt{sect15} & vacuum system              \\
-\texttt{sect16} & plant buildings            \\
-\texttt{sect17} & AC power                   \\
-\texttt{sect18} & neutral beams              \\
-\texttt{sect19} & electron cyclotron heating \\
-\texttt{sect20} & Lower Hybrid heating       \\ 
-\texttt{sect21} & times                      \\ \hline
-\end{tabular}
-\end{center}
-\caption[List of switches controlling the output to file]
-{\label{tab:osections}
-  \textit{Summary of the switches in \process\ that control the format of the output
-    file. If a switch has a value \texttt{0}, the relevant output section
-    does not appear in the output file. If its value is \texttt{1}, the
-    output section is included in the output file --- this is the default
-    setting for all the switches.}
-}
-\end{table}
-
 \subsection{Code parameters affecting other models}
 
 This chapter has summarised the methods by which several of the models in the
@@ -6135,7 +6088,7 @@ dimensional feasible subspace \cite{Luenberger2008}.
   \hline
 \end{tabular}
 \end{center}
-\caption{Summmary of the description and  meaning of the \vmcon\/ return
+\caption{Summary of the description and  meaning of the \vmcon\/ return
   parameters \ifail\/. }
 \label{tab:ifail}
 \normalsize

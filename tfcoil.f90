@@ -77,6 +77,7 @@ contains
     !+ad_hist  09/04/13 PJK Changed local variables routr to rout, rinr to rin
     !+ad_hist  18/06/13 PJK Clarified ritfc output description
     !+ad_hist  08/05/14 PJK Changed ripmax description
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -165,7 +166,7 @@ contains
 
     call portsz
 
-    if ((iprint == 0).or.(sect07 == 0)) return
+    if (iprint == 0) return
 
     !  Output section (resistive TF coils only)
 
@@ -218,6 +219,7 @@ contains
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  28/11/13 PJK Modified ltfleg calculation
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -317,7 +319,7 @@ contains
     sigtan = sigrad
     sigver = 0.0D0
 
-    if ((iprint == 0).or.(sect07 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 
@@ -361,6 +363,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  18/10/12 PJK Added fwbs_variables
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -467,7 +470,7 @@ contains
     psat = pcrt * exp(0.01D0/(tclmxs + 273.0D0) * (374.0D0 - tclmxs) * sum )
     presin = psat + dpres
 
-    if ((iprint == 0).or.(sect07 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 

@@ -1,4 +1,3 @@
-!  $Id:: fwbs.f90 258 2014-04-24 12:28:55Z pknight                      $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module kit_blanket_model
@@ -1253,6 +1252,7 @@ contains
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  03/06/14 PJK Modified fhole etc. usage
     !+ad_hist  16/06/14 PJK Reworded pnucblkt output; removed duplicate outputs
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1986,7 +1986,7 @@ contains
 
     dewmkg = (vdewin + vdewex) * denstl
 
-    if ((iprint == 0).or.(sect12 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 

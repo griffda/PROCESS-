@@ -33,6 +33,7 @@ module process_output
   !+ad_hist  29/11/12 PJK Added shared variable autodoc comments
   !+ad_hist  13/02/14 PJK Added mfile for machine-readable output file unit
   !+ad_hist  13/03/14 PJK Added int2char, int_string2, int_to_string3
+  !+ad_hist  19/06/14 PJK Removed all sect?? switches
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -46,51 +47,6 @@ module process_output
   integer, parameter :: nout = 11  !  Output file unit identifier
   integer, parameter :: nplot = 12 !  Plot data file unit identifier
   integer, parameter :: mfile = 13 !  Machine-optimised output file unit
-
-  !  Switches for turning on/off output sections
-  !  1 = on, 0 = off
-  !+ad_vars  sect01 /1/ : Turn on/off output for power reactor costs
-  integer :: sect01 = 1
-  !+ad_vars  sect02 /1/ : Turn on/off output for detailed costings
-  integer :: sect02 = 1
-  !+ad_vars  sect03 /1/ : Turn on/off output for plasma
-  integer :: sect03 = 1
-  !+ad_vars  sect04 /1/ : Turn on/off output for current drive system
-  integer :: sect04 = 1
-  !+ad_vars  sect05 /1/ : Turn on/off output for divertor
-  integer :: sect05 = 1
-  !+ad_vars  sect06 /1/ : Turn on/off output for machine build
-  integer :: sect06 = 1
-  !+ad_vars  sect07 /1/ : Turn on/off output for TF coils
-  integer :: sect07 = 1
-  !+ad_vars  sect08 /1/ : Turn on/off output for PF coils
-  integer :: sect08 = 1
-  !+ad_vars  sect09 /1/ : Turn on/off output for volt second consumption
-  integer :: sect09 = 1
-  !+ad_vars  sect10 /1/ : Turn on/off output for support structure
-  integer :: sect10 = 1
-  !+ad_vars  sect11 /1/ : Turn on/off output for PF coil inductances
-  integer :: sect11 = 1
-  !+ad_vars  sect12 /1/ : Turn on/off output for shield / blanket
-  integer :: sect12 = 1
-  !+ad_vars  sect13 /1/ : Turn on/off output for power conversion
-  integer :: sect13 = 1
-  !+ad_vars  sect14 /1/ : Turn on/off output for power / heat transport
-  integer :: sect14 = 1
-  !+ad_vars  sect15 /1/ : Turn on/off output for vacuum system
-  integer :: sect15 = 1
-  !+ad_vars  sect16 /1/ : Turn on/off output for plant buildings system
-  integer :: sect16 = 1
-  !+ad_vars  sect17 /1/ : Turn on/off output for AC power
-  integer :: sect17 = 1
-  !+ad_vars  sect18 /1/ : Turn on/off output for neutral beams
-  integer :: sect18 = 1
-  !+ad_vars  sect19 /1/ : Turn on/off output for electron cyclotron heating
-  integer :: sect19 = 1
-  !+ad_vars  sect20 /1/ : Turn on/off output for lower hybrid heating
-  integer :: sect20 = 1
-  !+ad_vars  sect21 /1/ : Turn on/off output for times
-  integer :: sect21 = 1
 
 contains
 

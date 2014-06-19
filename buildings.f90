@@ -171,6 +171,7 @@ contains
     !+ad_hist  11/04/13 PJK Comment change
     !+ad_hist  18/06/13 PJK Added back extra tfh term to hrbi
     !+ad_hist  11/09/13 PJK Removed obsolete argument idhe3
+    !+ad_hist  19/06/14 PJK Removed sect?? output flag usage
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -338,7 +339,7 @@ contains
 
     !  Output section
 
-    if ((iprint == 0).or.(sect16 == 0)) return
+    if (iprint == 0) return
 
     call oheadr(outfile,'Plant Buildings System')
     call ovarre(outfile,'Internal volume of reactor building (m3)', &

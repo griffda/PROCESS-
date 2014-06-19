@@ -1,4 +1,3 @@
-!  $Id:: divertor.f90 200 2013-11-18 09:19:18Z pknight                  $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module divertor_module
@@ -80,6 +79,7 @@ contains
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  17/10/12 PJK Added divertor_variables
     !+ad_hist  14/11/13 PJK Removed upper limit on plsep
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -187,7 +187,7 @@ contains
 
     rlclolcn = 1.44D-3 * tsep**2 / (delne*15.0D0*tconl)
 
-    if ((iprint == 0).or.(sect05 == 0)) return
+    if (iprint == 0) return
 
     call oheadr(outfile,'Divertor')
     call ocmmnt(outfile,'Harrison (ITER) Model')
@@ -695,6 +695,7 @@ contains
     !+ad_hist  08/05/12 PJK Initial F90 version; Moved TART model into new routine
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  16/10/12 PJK Added constants; removed argument pi
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 64: Figure 2
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -752,7 +753,7 @@ contains
 
     hldiv = pdivt/areadv
 
-    if ((iprint == 0).or.(sect05 == 0)) return
+    if (iprint == 0) return
 
     call osubhd(outfile,'Divertor Heat Load')
     call ocmmnt(outfile,'Assume an expanded divertor with a gaseous target')

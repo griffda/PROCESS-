@@ -416,6 +416,7 @@ contains
     !+ad_hist  23/01/13 PJK Turned off some output sections
     !+ad_hist  12/08/13 PJK/FW Changed kappa values to 1.0
     !+ad_hist  11/09/13 PJK Removed idhe3 setting
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -475,14 +476,6 @@ contains
     !  Coil quantities
 
     tfno = 50.0D0
-
-    !  Output sections
-
-    sect05 = 0
-    sect08 = 0
-    sect09 = 0
-    sect11 = 0
-    sect21 = 0
 
   end subroutine stinit
 
@@ -768,6 +761,7 @@ contains
     !+ad_hist  07/11/13 PJK Corrected blanket/shield thicknesses if blktmodel > 0
     !+ad_hist  03/03/14 PJK tfootfi no longer used to calculate tfthko
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -838,7 +832,7 @@ contains
     awall = rminor + 0.5D0*(scrapli + scraplo)
     fwarea = sarea * awall/rminor
 
-    if ((iprint == 0).or.(sect06 == 0)) return
+    if (iprint == 0) return
 
     !  Print out device build
 
@@ -1149,6 +1143,7 @@ contains
     !+ad_hist  24/02/14 PJK Modified arguments to CULNBI
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
     !+ad_hist  01/05/14 PJK Changed bigq description
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1224,7 +1219,7 @@ contains
        bigq = powfmw / (pinjmw + pohmmw)
     end if
 
-    if ((iprint == 0).or.(sect04 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 
@@ -1315,6 +1310,7 @@ contains
     !+ad_hist  14/08/13 PJK/FW First full replacement for FWBS
     !+ad_hist  07/11/13 PJK Added fwareaib/ob calculations
     !+ad_hist  03/03/14 PJK Moved divertor surface area calculation into STDIV
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1659,7 +1655,7 @@ contains
 
     dewmkg = (vdewin + vdewex) * denstl
 
-    if ((iprint == 0).or.(sect12 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 
@@ -1986,6 +1982,7 @@ contains
     !+ad_hisc               q95 to iotabar
     !+ad_hist  20/05/14 PJK Changed prad to pcorerad
     !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2006,8 +2003,6 @@ contains
     integer, dimension(nstlaw) :: istlaw
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    if (sect03 == 0) return
 
     call osubhd(outfile,'Confinement times, and required H-factors :')
 
@@ -2176,6 +2171,7 @@ contains
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  03/03/14 PJK Calculations simplified and brought
     !+ad_hisc               inside this routine
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2208,7 +2204,7 @@ contains
 
     !  Output section
 
-    if ((iprint == 0).or.(sect10 == 0)) return
+    if (iprint == 0) return
 
     call oheadr(outfile,'Support Structure')
     call ovarre(outfile,'Intercoil support structure mass (kg)', &
@@ -2239,6 +2235,7 @@ contains
     !+ad_hist  14/08/13 PJK/FW Initial version
     !+ad_hist  03/03/14 PJK Divertor plate width calculated by assuming
     !+ad_hisc               wetted area is a fraction fdivwet of total plate area
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  Stellarator Divertor Model for the Systems
     !+ad_docc  Code PROCESS, F. Warmer, 21/06/2013
@@ -2330,7 +2327,7 @@ contains
     hldiv = q_div
     divsur = darea
 
-    if ((iprint == 0).or.(sect05 == 0)) return
+    if (iprint == 0) return
 
     call oheadr(outfile,'Divertor')
 
@@ -3525,6 +3522,7 @@ contains
     !+ad_call  osubhd
     !+ad_call  ovarre
     !+ad_hist  03/03/14 PJK Initial version, based on outtf
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -3542,8 +3540,6 @@ contains
     real(kind(1.0D0)) :: ap
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    if (sect07 == 0) return
 
     call oheadr(outfile,'Modular Coils')
 

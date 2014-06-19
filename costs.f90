@@ -165,6 +165,7 @@ contains
     !+ad_hist  22/11/12 PJK Typo fix in comment
     !+ad_hist  18/06/13 PJK Changed cryostat to vacuum vessel for c2223
     !+ad_hist  17/02/14 PJK Output format modifications
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -224,7 +225,7 @@ contains
 
     if ((ireactor == 1).and.(ipnet == 0)) call coelc(outfile,iprint)
 
-    if ((iprint == 0).or.(sect02 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 
@@ -498,6 +499,7 @@ contains
     !+ad_hist  15/05/14 PJK Longer output line lengths
     !+ad_hist  05/06/14 PJK Moved some power outputs to plant_power.f90
     !+ad_hist  16/06/14 PJK Removed duplicate outputs
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -746,7 +748,7 @@ contains
 
     coe = coecap + coefuelt + coeoam + coedecom
 
-    if ((iprint == 0).or.(sect01 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 

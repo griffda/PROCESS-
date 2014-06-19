@@ -96,6 +96,7 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -170,7 +171,7 @@ contains
 
     !  Output section
 
-    if ((iprint == 0).or.(sect13 == 0)) return
+    if (iprint == 0) return
 
     call oheadr(outfile,'TF Coil Power Conversion')
     call ovarre(outfile,'Bus resistance (ohm)','(rhobus)',rhobus)
@@ -287,6 +288,7 @@ contains
       !+ad_hist  08/04/13 PJK Comment changes; xpower units changed from MW to MVA
       !+ad_hist  15/04/13 PJK Comment changes
       !+ad_hist  08/05/14 PJK Tidied up comments
+      !+ad_hist  19/06/14 PJK Removed sect?? flags
       !+ad_stat  Okay
       !+ad_docs  None
       !
@@ -483,7 +485,7 @@ contains
 
       !  Output section
 
-      if ((iprint == 0).or.(sect13 == 0)) return
+      if (iprint == 0) return
 
       call oheadr(outfile,'Superconducting TF Coil Power Conversion')
 
@@ -572,6 +574,7 @@ contains
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  04/02/13 PJK Comment change
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -741,7 +744,7 @@ contains
 
     !  Output Section
 
-    if ((iprint == 0).or.(sect13 == 0)) return
+    if (iprint == 0) return
 
     call oheadr(outfile,'PF Coil Power Conversion')
     call ovarre(outfile,'Number of PF coil circuits','(pfckts)',pfckts)
@@ -794,6 +797,7 @@ contains
     !+ad_hist  17/04/13 PJK Removed 0.05*pacpmw contribution to fcsht
     !+ad_hist  21/05/14 PJK Added ignite comment
     !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -858,7 +862,7 @@ contains
 
     tlvpmw = fcsht + trithtmw + htpmw + vachtmw + 0.5D0*(crymw+ppfmw)
 
-    if ((iprint == 0).or.(sect17 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 
@@ -1149,6 +1153,7 @@ contains
     !+ad_hist  04/06/14 PJK New power flow model added
     !+ad_hist  16/06/14 PJK Modified various labels to prevent duplicate outputs
     !+ad_hist  17/06/14 PJK Removed blktmodel from ipowerflow if-statement
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1267,7 +1272,7 @@ contains
 
     end if
 
-    if ((iprint == 0).or.(sect14 == 0)) return
+    if (iprint == 0) return
 
     !  Output section
 

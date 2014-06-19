@@ -1979,6 +1979,7 @@ contains
     !+ad_hisc               Removed obsolete argument to bfield calls
     !+ad_hist  25/02/14 PJK Raised nohmax, and added warning message
     !+ad_hisc               if noh is too large
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2203,7 +2204,7 @@ contains
 
     !  Output section
 
-    if ((iprint == 0).or.(sect11 == 0)) return
+    if (iprint == 0) return
 
     call oheadr(outfile,'PF Coil Inductances')
     call ocmmnt(outfile,'Inductance matrix (Henries-turns**2) :')
@@ -2245,6 +2246,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  02/04/14 PJK Added coil geometry to mfile
     !+ad_hist  03/04/14 PJK Added coil currents and fields to mfile
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2262,8 +2264,6 @@ contains
     character(len=2) :: intstring
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    if (sect08 == 0) return
 
     call oheadr(outfile,'PF Coils')
 
@@ -2454,6 +2454,7 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  18/12/12 PJK/RK Modified for new PF coil current calculations
     !+ad_hist  15/05/14 PJK Added vstot to output
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2470,8 +2471,6 @@ contains
     integer :: jj,k
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    if (sect09 == 0) return
 
     call oheadr(outfile,'Volt Second Consumption')
 

@@ -366,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '297    Date  :: 2014-06-19'
+       '298    Date  :: 2014-06-19'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1569,3 +1569,6 @@ end subroutine output
 ! GIT 295: New confinement time scaling law DS03 (no.39)
 ! GIT 296: New ripple amplitude calculation
 ! GIT 297: Simplified current drive calculations
+! GIT 298: Removed output section controlling flags sect?? (they were never used anyway,
+!          and now it is important that all sections are output otherwise the mfile
+!          will be incomplete)

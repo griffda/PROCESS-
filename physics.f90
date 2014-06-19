@@ -4515,6 +4515,7 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  20/05/14 PJK Changed prad to pcorerad
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4534,12 +4535,6 @@ contains
          taueez, taueezz, taueffz, taueiz
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Only produce output if required
-
-    if (sect03 == 0) return
-
-    !  Start output
 
     call osubhd(outfile,'Confinement times, and required H-factors :')
 
@@ -5249,6 +5244,7 @@ contains
     !+ad_hist  02/06/14 PJK Added fimpvar
     !+ad_hist  05/06/14 PJK Rearranged power balance output
     !+ad_hist  16/06/14 PJK Removed duplicate outputs
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5268,8 +5264,6 @@ contains
     character(len=30) :: str1,str2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    if (sect03 == 0) return
 
     call oheadr(outfile,'Plasma')
 
@@ -5754,6 +5748,7 @@ contains
     !+ad_hist  20/09/11 PJK Initial F90 version
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  27/06/13 PJK Relabelled tohs
+    !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5770,8 +5765,6 @@ contains
     real(kind(1.0D0)) :: tcycle
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    if (sect21 == 0) return
 
     tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
 
