@@ -920,6 +920,7 @@ contains
     !+ad_hisc               to pfwdiv
     !+ad_hist  04/06/14 PJK New power flow model added
     !+ad_hist  17/06/14 PJK Corrections to pfwdiv, priheat
+    !+ad_hist  19/06/14 PJK Simplified pinjwp calculation
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1079,7 +1080,7 @@ contains
     !  Wall plug injection power
 
     if (ignite == 0) then
-       pinjwp = echpwr/etaech + plhybd/etalh + pnbeam/etanbi + pofcd/etaof
+       pinjwp = pinjmw / etacd
     else
        pinjwp = 0.0D0
     end if
@@ -1347,7 +1348,7 @@ contains
             fgrosbop*pgrossmw)
        call ovarrf(outfile,'Total recirculating power fraction','(cirpowfr)', &
             cirpowfr)
-       call ovarre(outfile,'H/CD injected power (MW)','(pinjwp)',pinjwp)
+       call ovarre(outfile,'H/CD injected power (MW)','(pinjwp.)',pinjwp)
        call ovarre(outfile,'TF coil resistive power (MW)','(tfcmw.)',tfcmw)
        call ovarre(outfile,'Cryogenic plant power (MW)','(crypmw.)',crypmw)
        if (itart == 1) call ovarre(outfile,'TF coolant pump power (MW)', &

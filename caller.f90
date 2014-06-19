@@ -46,15 +46,12 @@ subroutine caller(xc,nvars)
   !+ad_call  convxc
   !+ad_call  costs
   !+ad_call  divcall
-  !+ad_call  ech
   !+ad_call  fispac
   !+ad_call  fwbs
   !+ad_call  geomty
   !+ad_call  ifecll
   !+ad_call  induct
   !+ad_call  loca
-  !+ad_call  lwhymod
-  !+ad_call  nbeam
   !+ad_call  pfcoil
   !+ad_call  pfpwr
   !+ad_call  physics
@@ -111,6 +108,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  06/11/12 PJK Added startup_module
   !+ad_hist  06/11/12 PJK Added availability_module
   !+ad_hist  06/11/12 PJK Added plasma_geometry_module
+  !+ad_hist  19/06/14 PJK Removed obsolete calls to nbeam, ech, lwhymod
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -191,10 +189,6 @@ subroutine caller(xc,nvars)
   end if
 
   !call startup(nout,0)  !  commented-out for speed reasons
-
-  call ech(nout,0)
-  call lwhymod(nout,0)
-  call nbeam(nout,0) 
 
   if (irfp == 0) then
      call tfcoil(nout,0)

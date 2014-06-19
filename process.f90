@@ -366,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '296    Date  :: 2014-06-18'
+       '297    Date  :: 2014-06-19'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1185,15 +1185,12 @@ subroutine output(outfile)
   !+ad_call  costs
   !+ad_call  cudriv
   !+ad_call  divcall
-  !+ad_call  ech
   !+ad_call  fispac
   !+ad_call  fwbs
   !+ad_call  ifeout
   !+ad_call  igmarcal
   !+ad_call  induct
   !+ad_call  loca
-  !+ad_call  lwhymod
-  !+ad_call  nbeam
   !+ad_call  outpf
   !+ad_call  outplas
   !+ad_call  outtim
@@ -1244,6 +1241,7 @@ subroutine output(outfile)
   !+ad_hist  05/11/12 PJK Added pulse_module
   !+ad_hist  06/11/12 PJK Added startup_module
   !+ad_hist  06/11/12 PJK Added availability_module
+  !+ad_hist  19/06/14 PJK Removed obsolete calls to nbeam, ech, lwhymod
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1303,9 +1301,6 @@ subroutine output(outfile)
   !call startup(outfile,1)  !  commented-out for speed reasons
   call igmarcal(outfile)
   call cudriv(outfile,1)
-  call nbeam(outfile,1)
-  call ech(outfile,1)
-  call lwhymod(outfile,1)
   call pulse(outfile,1)
   call outtim(outfile)
   call divcall(outfile,1)
@@ -1573,3 +1568,4 @@ end subroutine output
 ! GIT 294: Added impdir to allow impurity radiation datafile directory to be specified
 ! GIT 295: New confinement time scaling law DS03 (no.39)
 ! GIT 296: New ripple amplitude calculation
+! GIT 297: Simplified current drive calculations

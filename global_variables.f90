@@ -688,6 +688,7 @@ module current_drive_variables
   !+ad_hist  06/03/14 PJK Modified gamcd units
   !+ad_hist  26/03/14 PJK Added extra boostrap current fraction variables
   !+ad_hist  01/05/14 PJK Changed bigq description
+  !+ad_hist  19/06/14 PJK Added effcd, etacd
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -722,15 +723,19 @@ module current_drive_variables
   real(kind(1.0D0)) :: echpwr = 0.0D0
   !+ad_vars  echwpow : ECH wall plug power (MW)
   real(kind(1.0D0)) :: echwpow = 0.0D0
+  !+ad_vars  effcd : current drive efficiency (A/W)
+  real(kind(1.0D0)) :: effcd = 0.0D0
   !+ad_vars  enbeam /1.0D3/ : neutral beam energy (keV) (iteration variable 19)
   real(kind(1.0D0)) :: enbeam = 1.0D3
+  !+ad_vars  etacd : auxiliary power wall plug to injector efficiency
+  real(kind(1.0D0)) :: etacd = 0.0D0
   !+ad_vars  etaech /0.5/ : ECH wall plug to injector efficiency
   real(kind(1.0D0)) :: etaech = 0.5D0
   !+ad_vars  etalh /0.5/ : lower hybrid wall plug to injector efficiency
   real(kind(1.0D0)) :: etalh = 0.5D0
   !+ad_vars  etanbi /0.5/ : neutral beam wall plug to injector efficiency
   real(kind(1.0D0)) :: etanbi = 0.5D0
-  !+ad_vars  etaof /0.5/ : OFCD wall plug to injector efficiency
+  !+ad_vars  etaof /0.5/ : oscillating field wall plug to injector efficiency
   real(kind(1.0D0)) :: etaof = 0.5D0
   !+ad_vars  feffcd /1.0/ : current drive efficiency fudge factor (iteration variable 47)
   real(kind(1.0D0)) :: feffcd = 1.0D0
@@ -773,7 +778,7 @@ module current_drive_variables
   real(kind(1.0D0)) :: plhybd = 0.0D0
   !+ad_vars  pnbeam : neutral beam injection power (MW)
   real(kind(1.0D0)) :: pnbeam = 0.0D0
-  !+ad_vars  pofcd : OFCD injection power (MW)
+  !+ad_vars  pofcd : oscillating field CD injection power (MW)
   real(kind(1.0D0)) :: pofcd = 0.0D0
   !+ad_vars  pwplh : lower hybrid wall plug power (MW)
   real(kind(1.0D0)) :: pwplh = 0.0D0

@@ -1,4 +1,3 @@
-!  $Id:: current_drive.f90 263 2014-05-01 14:26:48Z pknight             $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module current_drive_module
@@ -14,9 +13,6 @@ module current_drive_module
   !+ad_cont  cullhy
   !+ad_cont  culecd
   !+ad_cont  culnbi
-  !+ad_cont  nbeam
-  !+ad_cont  ech
-  !+ad_cont  lwhymod
   !+ad_args  N/A
   !+ad_desc  This module contains routines relevant for calculating the
   !+ad_desc  current drive parameters for a fusion power plant.
@@ -28,6 +24,7 @@ module current_drive_module
   !+ad_call  profiles_module
   !+ad_hist  17/10/12 PJK Initial version of module
   !+ad_hist  31/10/12 PJK Changed public/private lists
+  !+ad_hist  19/06/14 PJK Removed obsolete routines nbeam, ech, lwhymod
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -42,7 +39,7 @@ module current_drive_module
   implicit none
 
   private
-  public :: cudriv, nbeam, ech, lwhymod, culnbi
+  public :: cudriv, culnbi
 
 contains
 
@@ -83,6 +80,8 @@ contains
     !+ad_hist  06/03/14 PJK Changed gamma units in output to 10^20 A/W-m2
     !+ad_hist  01/05/14 PJK Changed bigq description
     !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  19/06/14 PJK Imported code from obsolete routines
+    !+ad_hisc               nbeam, ech, lwhymod
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -119,15 +118,18 @@ contains
 
           effrfss = (0.36D0 * (1.0D0 + (te/25.0D0)**1.16D0)) / &
                (rmajor*dene20) * feffcd
+          effcd = effrfss
 
        case (2)  !  Ion-Cyclotron current drive
 
           effrfss = 0.63D0 * 0.1D0*ten / (2.0D0 + zeff) / &
                (rmajor*dene20) * feffcd
+          effcd = effrfss
 
        case (3)  !  Fenstermacher Electron Cyclotron Resonance model
 
           effrfss = 0.21D0 * ten/ (rmajor * dene20 * dlamee) * feffcd
+          effcd = effrfss
 
        case (4)  !  Ehst Lower Hybrid / Fast Wave current drive
 
@@ -135,26 +137,32 @@ contains
                (rmajor*dene20) * ( 32.0D0/(5.0D0+zeff) + 2.0D0 + &
                (12.0D0*(6.0D0+zeff))/(5.0D0+zeff)/(3.0D0+zeff) + &
                3.76D0/zeff) / 12.507D0 * feffcd
+          effcd = effrfss
 
        case (5)  !  ITER Neutral Beam current drive
 
           call iternb(effnbss,fpion,fshine)
+          effcd = effnbss
 
        case (6)  !  Culham Lower Hybrid current drive model
 
           call cullhy(effrfss)
+          effcd = effrfss
 
        case (7)  !  Culham ECCD model
 
           call culecd(effrfss)
+          effcd = effrfss
 
        case (8)  !  Culham Neutral Beam model
 
           call culnbi(effnbss,fpion,fshine)
+          effcd = effnbss
 
-       case (9)  !  (trivial) RFP OFCD model
+       case (9)  !  (trivial) RFP Oscillating Field CD model
 
           effofss = 0.8D0  !  TITAN figure: efficiency = 0.8 A/W
+          effcd = effofss
 
        case default
           write(*,*) 'Error in routine CUDRIV:'
@@ -164,15 +172,32 @@ contains
 
        end select
 
-       !  Compute current drive powers (MW)
+       !  Compute current drive wall plug and injected powers (MW),
+       !  and efficiencies
 
        select case (iefrf)
 
        case (1,2,4,6)  !  LHCD or ICCD
 
+          !  Injected power
+
           plhybd = 1.0D-6 * faccd * plascur / effrfss + pheat
           pinjimw = 0.0D0
           pinjemw = plhybd
+
+          !  Wall plug power
+
+          pwplh = plhybd / etalh
+
+          !  Wall plug to injector efficiency
+
+          etacd = etalh
+
+          !  Normalised current drive efficiency gamma
+
+          gamrf = effrfss * (dene20 * rmajor)
+          gamcd = gamrf
+
 
        case (3,7)  !  ECCD
 
@@ -180,25 +205,37 @@ contains
           pinjimw = 0.0D0
           pinjemw = echpwr
 
+          echwpow = echpwr / etaech
+          etacd = etaech
+
+          !  (gamma not calculated for ECCD)
+
        case (5,8)  !  NBCD
 
           pnbeam = 1.0D-6 * faccd * plascur / effnbss + pheat
           pinjimw = pnbeam * fpion
           pinjemw = pnbeam * (1.0D0-fpion)
 
-          !  Calculate neutral beam current
+          pwpnb = pnbeam/etanbi
+          etacd = etanbi
 
-          if (abs(pnbeam) > 1.0D-8) then
-             cnbeam = 1.0D-3 * (pnbeam*1.0D6) / enbeam
-          else
-             cnbeam = 0.0D0
-          end if
+          gamnb = effnbss * (dene20 * rmajor)
+          gamcd = gamnb
+
+          !  Neutral beam current (A)
+
+          cnbeam = 1.0D-3 * (pnbeam*1.0D6) / enbeam
 
        case (9)  !  OFCD
 
           pofcd = 1.0D-6 * faccd * plascur / effofss + pheat
           pinjimw = 0.0D0
           pinjemw = pofcd
+
+          etacd = etaof
+
+          gamof = effofss * (dene20 * rmajor)
+          gamcd = gamof
 
        case default
           write(*,*) 'Error in routine CUDRIV:'
@@ -218,23 +255,6 @@ contains
           bigq = 1.0D18
        else
           bigq = powfmw / (pinjmw + pohmmw)
-       end if
-
-       !  Normalised current drive efficiency
-
-       if (abs(plhybd) > 1.0D-8) then
-          gamrf = effrfss * (dene20 * rmajor)
-          gamcd = gamrf
-       end if
-
-       if (abs(pnbeam) > 1.0D-8) then
-          gamnb = effnbss * (dene20 * rmajor)
-          gamcd = gamnb
-       end if
-
-       if (abs(pofcd) > 1.0D-8) then
-          gamof = effofss * (dene20 * rmajor)
-          gamcd = gamof
        end if
 
     end if
@@ -291,9 +311,13 @@ contains
     call ovarin(outfile,'Current drive efficiency model','(iefrf)',iefrf)
     call ovarre(outfile,'Steady state power requirement (MW)', &
          '(pinjmw)',pinjmw)
-    call ovarre(outfile,'CD power used for plasma heating only (MW)', &
+    call ovarre(outfile,'Auxiliary power used for plasma heating only (MW)', &
          '(pheat)',pheat)
     call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq)
+    call ovarre(outfile,'Current drive efficiency (A/W)','(effcd)',effcd)
+    call ovarre(outfile,'Normalised current drive efficiency, gamma (10^20 A/W-m2)', &
+         '(gamcd)',gamcd)
+    call ovarre(outfile,'Wall plug to injector efficiency','(etacd)',etacd)
 
     call osubhd(outfile,'Fractions of current drive :')
     call ovarrf(outfile,'Bootstrap fraction','(bootipf)',bootipf)
@@ -310,13 +334,17 @@ contains
     if (abs(plhybd) > 1.0D-8) then
        call ovarre(outfile,'RF efficiency (A/W)','(effrfss)',effrfss)
        call ovarre(outfile,'RF gamma (10^20 A/W-m2)','(gamrf)',gamrf)
-       call ovarre(outfile,'Lower hybrid power (MW)','(plhybd)',plhybd)
+       call ovarre(outfile,'Lower hybrid injected power (MW)','(plhybd)',plhybd)
+       call ovarre(outfile,'Lower hybrid wall plug efficiency','(etalh)',etalh)
+       call ovarre(outfile,'Lower hybrid wall plug power (MW)','(pwplh)',pwplh)
     end if
 
     if (abs(pnbeam) > 1.0D-8) then
        call ovarre(outfile,'Beam efficiency (A/W)','(effnbss)',effnbss)
        call ovarre(outfile,'Beam gamma (10^20 A/W-m2)','(gamnb)',gamnb)
-       call ovarre(outfile,'Neutral beam power (MW)','(pnbeam)',pnbeam)
+       call ovarre(outfile,'Neutral beam injected power (MW)','(pnbeam)',pnbeam)
+       call ovarre(outfile,'Neutral beam wall plug efficiency','(etanbi)',etanbi)
+       call ovarre(outfile,'Neutral beam wall plug power (MW)','(pwpnb)',pwpnb)
        call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)
        call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam)
        call ovarre(outfile,'Fraction of beam energy to ions','(fpion)',fpion)
@@ -331,7 +359,9 @@ contains
     end if
 
     if (abs(echpwr) > 1.0D-8) then
-       call ovarre(outfile,'Electron cyclotron power (MW)','(echpwr)',echpwr)
+       call ovarre(outfile,'Electron cyclotron injected power (MW)','(echpwr)',echpwr)
+       call ovarre(outfile,'ECH wall plug efficiency','(etaech)',etaech)
+       call ovarre(outfile,'ECH wall plug power (MW)','(echwpow)',echwpow)
     end if
 
     if (abs(pofcd) > 1.0D-8) then
@@ -1530,164 +1560,5 @@ contains
     end function etanb2
 
   end subroutine culnbi
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine nbeam(outfile,iprint)
-
-    !+ad_name  nbeam
-    !+ad_summ  Neutral Beam power requirements
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  P C Shipe, ORNL
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine was amputated on 28/03/89 to provide only a
-    !+ad_desc  simplified dummy model of the wall plug power necessary
-    !+ad_desc  for the neutral beams.  It was included in PROCESS in
-    !+ad_desc  January 1992 by P. C. Shipe.
-    !+ad_desc  <P>The output from the routine is <CODE>pwpnb</CODE>.
-    !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  05/06/14 PJK Removed cnbeam, enbeam from output
-    !+ad_stat  Okay
-    !+ad_docs  None
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    integer, intent(in) :: outfile,iprint
-
-    !  Local variables
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  cnbeam,  neutral beam current, A
-    !  enbeam,  neutral beam energy, keV
-    !  etanbi,  neutral beam wall plug to injector efficiency
-
-    !  pwpnb,   neutral beam wall plug power, MW
-
-    pwpnb = 1.0D-6 * enbeam * cnbeam * 1.0D3/etanbi
-
-    if ((iprint == 0).or.(sect18 == 0)) return
-
-    call oheadr(outfile,'Neutral Beams')
-
-    call ovarre(outfile,'Neutral beam wall plug efficiency','(etanbi)', &
-         etanbi)
-    call ovarre(outfile,'Neutral beam wall plug power (MW)','(pwpnb)', &
-         pwpnb)
-
-  end subroutine nbeam
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine ech(outfile,iprint)
-
-    !+ad_name  ech
-    !+ad_summ  Electron Cyclotron Heating
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Galambos, ORNL
-    !+ad_auth  P C Shipe, ORNL
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine was added to TETRA on 8/9/88 by J Galambos
-    !+ad_desc  to replace Wagner's model and provide a simplified dummy
-    !+ad_desc  model of the wall plug power necessary for ech.  It was
-    !+ad_desc  included in PROCESS in January 1992 by P. C. Shipe.
-    !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_hist  14/09/01 PJK Initial version
-    !+ad_hist  23/03/11 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_stat  Okay
-    !+ad_docs  None
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    integer, intent(in) :: outfile
-    integer, intent(in) :: iprint
-
-    !  Local variables
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  ECH wall plug power (MW)
-
-    echwpow = echpwr / etaech
-
-    if ((iprint == 0).or.(sect19 == 0)) return
-
-    call oheadr(outfile,'Electron Cyclotron Heating')
-    call ovarre(outfile,'ECH power (MW)','(echpwr)',echpwr)
-    call ovarre(outfile,'ECH wall plug efficiency','(etaech)',etaech)
-    call ovarre(outfile,'ECH wall plug power (MW)','(echwpow)',echwpow)
-
-  end subroutine ech
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine lwhymod(outfile,iprint)
-
-    !+ad_name  lwhymod
-    !+ad_summ  Lower Hybrid module
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  P C Shipe, ORNL
-    !+ad_cont  N/A
-    !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
-    !+ad_desc  This routine is a simplified dummy model of the wall
-    !+ad_desc  plug power necessary for Lower Hybrid heating. It was included in
-    !+ad_desc  PROCESS in January 1992 by P. C . Shipe.
-    !+ad_prob  None
-    !+ad_call  oheadr
-    !+ad_call  ovarre
-    !+ad_hist  27/07/11 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_stat  Okay
-    !+ad_docs  None
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    integer, intent(in) :: outfile,iprint
-
-    !  Local variables
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  etalh,   Lower Hybrid wall plug to plasma efficiency
-    !  plhybd,  Lower Hybrid injection power, MW
-
-    !  Lower Hybrid wall plug power, MW
-
-    pwplh = plhybd / etalh
-
-    if ((iprint == 0).or.(sect20 == 0)) return
-
-    call oheadr(outfile,'Lower Hybrid Heating')
-    call ovarre(outfile,'Lower hybrid wall plug efficiency','(etalh)',etalh)
-    call ovarre(outfile,'Lower hybrid injection power (MW)','(plhybd)',plhybd)
-    call ovarre(outfile,'Lower hybrid wall plug power (MW)','(pwplh)',pwplh)
-
-  end subroutine lwhymod
 
 end module current_drive_module
