@@ -366,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '298    Date  :: 2014-06-19'
+       '299    Date  :: 2014-06-23'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1572,3 +1572,4 @@ end subroutine output
 ! GIT 298: Removed output section controlling flags sect?? (they were never used anyway,
 !          and now it is important that all sections are output otherwise the mfile
 !          will be incomplete)
+! GIT 299: Corrected wallmw units in output files

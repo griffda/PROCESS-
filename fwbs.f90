@@ -1253,6 +1253,7 @@ contains
     !+ad_hist  03/06/14 PJK Modified fhole etc. usage
     !+ad_hist  16/06/14 PJK Reworded pnucblkt output; removed duplicate outputs
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  23/06/14 PJK Corrected wallmw units
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1991,7 +1992,7 @@ contains
     !  Output section
 
     call oheadr(outfile,'Shield / Blanket')
-    call ovarre(outfile,'Average neutron wall load (MW)','(wallmw)', wallmw)
+    call ovarre(outfile,'Average neutron wall load (MW/m2)','(wallmw)', wallmw)
     if (blktmodel > 0) then
        call ovarre(outfile,'Neutron wall load peaking factor','(wallpf)', wallpf)
     end if

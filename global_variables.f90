@@ -649,7 +649,7 @@ module physics_variables
   real(kind(1.0D0)) :: vsres = 0.0D0
   !+ad_vars  vsstt : total V-s needed (Wb)
   real(kind(1.0D0)) :: vsstt = 0.0D0
-  !+ad_vars  wallmw : average neutron wall load, max (MW/m2)
+  !+ad_vars  wallmw : average neutron wall load (MW/m2)
   real(kind(1.0D0)) :: wallmw = 0.0D0
   !+ad_vars  wtgpd : mass of fuel used per day (g)
   real(kind(1.0D0)) :: wtgpd = 0.0D0
