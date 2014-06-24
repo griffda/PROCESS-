@@ -749,6 +749,8 @@ contains
     !+ad_hist  21/05/14 PJK Added ignite clause to pinj calculation
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  11/06/14 PJK Introduced pchargemw, ptremv, ptrimw
+    !+ad_hist  24/06/14 PJK Corrected neutron wall load to account for gaps
+    !+ad_hisc               in first wall
     !+ad_stat  Okay
     !+ad_docs  UCLA-PPG-1100 TITAN RFP Fusion Reactor Study,
     !+ad_docc                Scoping Phase Report, January 1987
@@ -884,7 +886,11 @@ contains
     if (iwalld == 1) then
        wallmw = ffwal * pneutmw / sarea
     else
-       wallmw = pneutmw / fwarea
+       if (ipowerflow == 0) then
+          wallmw = (1.0D0-fhole)*pneutmw / fwarea
+       else
+          wallmw = (1.0D0-fhole-fhcd-fdiv)*pneutmw / fwarea
+       end if
     end if
 
     !  Calculate ion/electron equilibration power

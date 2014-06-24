@@ -366,7 +366,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '301    Date  :: 2014-06-24'
+       '302    Date  :: 2014-06-24'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1576,3 +1576,4 @@ end subroutine output
 ! GIT 300: Removed references to bucking cylinder; updated in_dat.py library utility;
 !          Blanket top/bottom thickness now always calculated rather than input
 ! GIT 301: Update mfile.py, plot_proc_func.py
+! GIT 302: Corrected wallmw calculation to account for gaps in first wall

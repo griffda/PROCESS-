@@ -236,6 +236,7 @@ module stellarator_module
   !+ad_call  fwbs_module
   !+ad_call  fwbs_variables
   !+ad_call  global_variables
+  !+ad_call  heat_transport_variables
   !+ad_call  impurity_radiation_module
   !+ad_call  kit_blanket_model
   !+ad_call  maths_library
@@ -278,6 +279,7 @@ module stellarator_module
   use fwbs_module
   use fwbs_variables
   use global_variables
+  use heat_transport_variables
   use impurity_radiation_module
   use kit_blanket_model
   use maths_library
@@ -966,6 +968,8 @@ contains
     !+ad_hist  21/05/14 PJK Added ignite clause to powht calculation
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  11/06/14 PJK Introduced pchargemw, ptremw, ptrimw
+    !+ad_hist  24/06/14 PJK Corrected neutron wall load to account for gaps
+    !+ad_hisc               in first wall
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1046,7 +1050,11 @@ contains
     if (iwalld == 1) then
        wallmw = ffwal * pneutmw / sarea
     else
-       wallmw = pneutmw / fwarea
+       if (ipowerflow == 0) then
+          wallmw = (1.0D0-fhole)*pneutmw / fwarea
+       else
+          wallmw = (1.0D0-fhole-fhcd-fdiv)*pneutmw / fwarea
+       end if
     end if
 
     !  Calculate ion/electron equilibration power

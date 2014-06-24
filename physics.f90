@@ -45,6 +45,8 @@ module physics_module
   !+ad_call  current_drive_module
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  fwbs_variables
+  !+ad_call  heat_transport_variables
   !+ad_call  impurity_radiation_module
   !+ad_call  maths_library
   !+ad_call  physics_variables
@@ -87,6 +89,8 @@ module physics_module
   use current_drive_module
   use current_drive_variables
   use divertor_variables
+  use fwbs_variables
+  use heat_transport_variables
   use impurity_radiation_module
   use maths_library
   use physics_variables
@@ -192,6 +196,8 @@ contains
     !+ad_hist  21/05/14 PJK Added ignite clause to pinj calculation
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  03/06/14 PJK Modifications for new power flow model
+    !+ad_hist  24/06/14 PJK Corrected neutron wall load to account for gaps
+    !+ad_hisc               in first wall
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -362,8 +368,11 @@ contains
     if (iwalld == 1) then
        wallmw = ffwal * pneutmw / sarea
     else
-!+PJK should this include fhole etc?
-       wallmw = pneutmw / fwarea
+       if (ipowerflow == 0) then
+          wallmw = (1.0D0-fhole)*pneutmw / fwarea
+       else
+          wallmw = (1.0D0-fhole-fhcd-fdiv)*pneutmw / fwarea
+       end if
     end if
 
     !  Calculate ion/electron equilibration power
