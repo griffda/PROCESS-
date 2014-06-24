@@ -619,15 +619,20 @@ def plot_info(axis, data, mfile_data, scan):
                 axis.text(0.4, -i, "-->  " + str(value.replace('"', '')) +
                           " " + data[i][2], ha='left', va='center')
             else:
-                dat = mfile_data.data[data[i][0]].get_scan(scan)
-                if isinstance(dat, str):
-                    value = dat
+                if mfile_data.data[data[i][0]].exists:
+                    dat = mfile_data.data[data[i][0]].get_scan(scan)
+                    if isinstance(dat, str):
+                        value = dat
+                    else:
+                        value = "%.4g" % mfile_data.data[data[i][0]].get_scan(scan)
+                    if "alpha" in data[i][0]:
+                        value = str(float(value) + 1.0)
+                    axis.text(eqpos, -i, '= ' + value + ' ' + data[i][2],
+                        ha='left', va='center')
                 else:
-                    value = "%.4g" % mfile_data.data[data[i][0]].get_scan(scan)
-                if "alpha" in data[i][0]:
-                    value = str(float(value) + 1.0)
-                axis.text(eqpos, -i, '= ' + value + ' ' + data[i][2],
-                          ha='left', va='center')
+                    mfile_data.data[data[i][0]].get_scan(-1)
+                    axis.text(eqpos, -i, "=" + "ERROR! Var missing",
+                        ha='left', va='center')
         else:
             dat = data[i][0]
             if isinstance(dat, str):
@@ -843,9 +848,9 @@ def plot_power_info(axis, mfile_data, scan):
                        mfile_data.data["powfmw"].get_scan(scan))
 
     data = [("wallmw", "Av. neutron wall load", "MW m$^{-2}$"),
-            ("pbrempv*vol", "Bremsstrahlung radiation", "MW"),
+            ("pcoreradmw", "Core radiation", "MW"),
             ("psyncpv*vol", "Synchrotron radiation", "MW"),
-            ("plinepv*vol", "Line radiation", "MW"),
+            ("pedgeradmw", "Edge radiation", "MW"),
             ("pnucblkt", "Nuclear heating in blanket", "MW"),
             ("pnucshld", "Nuclear heating in shield", "MW"),
             ("pdivt", "Psep / Pdiv", "MW"),
@@ -902,7 +907,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
 
     powerht = mfile_data.data["powerht"].get_scan(scan)
     psync = mfile_data.data["psyncpv*vol"].get_scan(scan)
-    pbrem = mfile_data.data["pbrempv*vol"].get_scan(scan)
+    pbrem = mfile_data.data["pcoreradmw"].get_scan(scan)
     hfact = mfile_data.data["hfact"].get_scan(scan)
     hstar = hfact * (powerht/(powerht+psync+pbrem))**0.31
 

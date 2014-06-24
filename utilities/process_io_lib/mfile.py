@@ -103,6 +103,10 @@ class MFileVariable(object):
         key_list = [key for key in self.__dict__.keys() if "scan" in key]
         return len(key_list)
 
+    @property
+    def exists(self):
+        return True
+
 
 class MFileErrorClass(object):
     """ Error class for handling missing data from MFILE
@@ -116,6 +120,11 @@ class MFileErrorClass(object):
 
     def get_error(self, *args, **kwargs):
         LOG.error("Key '%s' not in MFILE. KeyError! Check MFILE" % self.item)
+        return 0
+
+    @property
+    def exists(self):
+        return False
 
 
 class MFileDataDictionary(object):
