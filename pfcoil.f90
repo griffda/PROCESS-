@@ -109,6 +109,7 @@ contains
     !+ad_hist  12/02/14 PJK Added turns array to first lap fix
     !+ad_hist  23/04/14 PJK Added bvert assignment
     !+ad_hist  01/05/14 PJK Removed redundant xctfc(5) terms
+    !+ad_hist  24/06/14 PJK Removed refs to bcylth
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -204,7 +205,7 @@ contains
     !  OH coil radius
 
     if (itart == 1) then
-       rohc = bore + bcylth + tfcth + gapoh + 0.5D0*ohcth
+       rohc = bore + tfcth + gapoh + 0.5D0*ohcth
     else
        rohc = bore + 0.5D0*ohcth
     end if

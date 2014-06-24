@@ -91,6 +91,8 @@ contains
     !+ad_hisc  06/05/14 JM  Remove WPVF from the current density calculation
     !+ad_hisc               and from the output
     !+ad_hist  08/05/14 PJK Introduced tfc_model as the controlling switch
+    !+ad_hist  24/06/14 PJK Removed obsolete dct variable and references to
+    !+ad_hisc               a bucking cylinder
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -106,7 +108,7 @@ contains
     !  Local variables
 
     integer :: i
-    real(kind(1.0D0)) :: awpc,awptf,bcylir,cplen,dct,leni,leno,leno0, &
+    real(kind(1.0D0)) :: awpc,awptf,bcylir,cplen,leni,leno,leno0, &
          radwp,rbcndut,rcoil,rcoilp,tant,thtcoil,wbtf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -116,9 +118,9 @@ contains
     !  Radius of centre of inboard TF coil leg
 
     if (itart == 1) then
-       rtfcin = bore + bcylth + 0.5D0*tfcth
+       rtfcin = bore + 0.5D0*tfcth
     else
-       rtfcin = bore + ohcth + gapoh + bcylth + 0.5D0*tfcth
+       rtfcin = bore + ohcth + gapoh + 0.5D0*tfcth
     end if
 
     !  Radius of outer edge of inboard leg
@@ -143,10 +145,6 @@ contains
     !assumed same width as inboard leg
 
     arealeg = tfthko*tftort
-
-    !  Circle/trapezoid distance
-
-    dct = 0.0D0
 
     !  Annular area of midplane containing TF coil inboard legs
 
@@ -225,7 +223,7 @@ contains
 
     !  Radial extent
 
-    thkwp = tfcth - dct - casthi - thkcas - 2.0D0*tinstf
+    thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf
 
     if (thkwp <= 0.0D0) then
        write(*,*) 'Error in routine SCTFCOIL:'
@@ -243,7 +241,7 @@ contains
 
     !  Radius of geometrical centre of winding pack
 
-    radwp = rcoil - dct - casthi - tinstf - 0.5D0*thkwp
+    radwp = rcoil - casthi - tinstf - 0.5D0*thkwp
 
     !  Thickness of winding pack section at R > radwp
 
@@ -427,10 +425,7 @@ contains
 
     whtcon = whtconsc + whtconcu + whtconsh
 
-    !  Bucking cylinder
-
-    bcylir = rcoilp - bcylth
-    wtbc = pi *( (bcylir+bcylth)**2 - bcylir**2) * hr1 * 2.0D0*7800.0D0
+    !  Total TF coil mass
 
     whttf = (whtcas+whtcon) * tfno
 

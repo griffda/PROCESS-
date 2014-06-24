@@ -40,6 +40,7 @@ class INVariable(object):
         self.value = value
         self.comment = comment
 
+
 class INModule(object):
     def __init__(self, name):
         """ IN.DAT module object
@@ -166,6 +167,7 @@ class INModule(object):
             print("Iteration variable %d not in the iteration variable"
                   "list." % variable_number)
 
+
 class INDATClassic(object):
     def __init__(self, filename="IN.DAT"):
         """ Class for reading and writing IN.DAT file with module headings
@@ -273,6 +275,51 @@ class INDATClassic(object):
         new_in_file.close()
 
 
+class INDATErrorClass(object):
+    """ Error class for handling missing data from INDAT
+    """
+    def __init__(self, item):
+        self.item = item
+
+    @property
+    def name(self):
+        self.get_error()
+
+    @property
+    def value(self):
+        self.get_error()
+
+    @property
+    def comment(self):
+        self.get_error()
+
+    def get_error(self, *args, **kwargs):
+        print("Key '%s' not in MFILE. KeyError! Check MFILE" % self.item)
+
+    @property
+    def exists(self):
+        return False
+
+
+class INDATDataDictionary(object):
+    """ Class object to act as a dictionary for the data.
+    """
+    def __init__(self):
+        pass
+
+    def __getitem__(self, item):
+        try:
+            return self.__dict__[item]
+        except KeyError:
+            return INDATErrorClass(item)
+
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value
+
+    def keys(self):
+        return self.__dict__.keys()
+
+
 class INDATNew(object):
     def __init__(self, filename="IN.DAT"):
         """ Class for reading and writing IN.DAT file with module headings
@@ -290,10 +337,10 @@ class INDATNew(object):
         self.number_of_lines = 0
 
         # Dictionary to variables only
-        self.variables = {}
+        self.variables = INDATDataDictionary()
 
         # Dictionary for data
-        self.data = {}
+        self.data = INDATDataDictionary()
 
         # List to remember the order of IN.DAT
         self.order = []
@@ -379,10 +426,13 @@ class INDATNew(object):
           variable_name --> name of variable to remove
 
         """
-        del self.variables[variable_name]
-        del self.data[variable_name]
-        self.order.remove(variable_name)
-        self.number_of_lines -= 1
+        if variable_name in self.data.keys():
+            del self.variables[variable_name]
+            del self.data[variable_name]
+            self.order.remove(variable_name)
+            self.number_of_lines -= 1
+        else:
+            print("Variable %d not in IN.DAT! Check code!" % variable_name)
         
     def add_constraint_eqn(self, equation_number):
         """Function to add a constraint number to the list of constraint
@@ -496,6 +546,11 @@ def variable_type(var_name, var_value):
     """
     var_name = var_name.lower()
     if "bound" in var_name.lower() or "zref" in var_name.lower():
+        val = fortran_python_scientific(var_value).replace(",", "")
+        return float(val)
+    elif "ixc(" in var_name.lower() or "icc(" in var_name.lower():
+        return int(var_value)
+    elif "fimp(" in var_name.lower():
         val = fortran_python_scientific(var_value).replace(",", "")
         return float(val)
     elif var_name not in VAR_TYPE:

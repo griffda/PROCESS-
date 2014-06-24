@@ -98,6 +98,8 @@ contains
     !+ad_hist  03/06/14 PJK Modified fhole etc. usage
     !+ad_hist  18/06/14 PJK New ripple amplitude model
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  24/06/14 PJK Removed bcylth;
+    !+ad_hisc               blnktth now always calculated
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -121,13 +123,16 @@ contains
     if (blktmodel > 0) then
        blnkith = blbuith + blbmith + blbpith
        blnkoth = blbuoth + blbmoth + blbpoth
-       blnktth = 0.5D0*(blnkith+blnkoth)
        shldtth = 0.5D0*(shldith+shldoth)
     end if
 
+    !  Top/bottom blanket thickness
+
+    blnktth = 0.5D0*(blnkith+blnkoth)
+
     !  Radial build to centre of plasma (should be equal to rmajor)
 
-    rbld = bore + ohcth + gapoh + bcylth + tfcth + gapds + ddwi + &
+    rbld = bore + ohcth + gapoh + tfcth + gapds + ddwi + &
          shldith + blnkith + fwith + scrapli + rminor
 
     !  Radius to inner edge of inboard shield
@@ -262,10 +267,6 @@ contains
 
     if (itart == 1) then
 
-       radius = radius + bcylth
-       call obuild(outfile,'Bucking cylinder',bcylth,radius)
-       call ovarre(mfile,'Bucking cylinder radial thickness (m)','(bcylth)',bcylth)
-
        radius = radius + tfcth
        call obuild(outfile,'TF coil inboard leg',tfcth,radius)
        call ovarre(mfile,'TF coil inboard leg radial thickness (m)','(tfcth)',tfcth)
@@ -287,10 +288,6 @@ contains
        radius = radius + gapoh
        call obuild(outfile,'Gap',gapoh,radius)
        call ovarre(mfile,'OH to bucking cylinder radial gap (m)','(gapoh)',gapoh)
-
-       radius = radius + bcylth
-       call obuild(outfile,'Bucking cylinder',bcylth,radius)
-       call ovarre(mfile,'Bucking cylinder radial thickness (m)','(bcylth)',bcylth)
 
        radius = radius + tfcth
        call obuild(outfile,'TF coil inboard leg',tfcth,radius)

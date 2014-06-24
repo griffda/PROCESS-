@@ -575,7 +575,7 @@ module physics_variables
   !+ad_vars  rmajor /7.0/ plasma major radius (m) (iteration variable 3)
   real(kind(1.0D0)) :: rmajor = 7.0D0
   !+ad_vars  rminor : plasma minor radius (m)
-  real(kind(1.0D0)) :: rminor = 2.0D0
+  real(kind(1.0D0)) :: rminor = 0.0D0
   !+ad_vars  rnbeam /0.005/ : hot beam density / n_e (iteration variable 7)
   real(kind(1.0D0)) :: rnbeam = 0.005D0
   !+ad_vars  rncne : n_carbon / n_e
@@ -1445,6 +1445,7 @@ module tfcoil_variables
   !+ad_hist  08/05/14 PJK Changed ripmax description
   !+ad_hist  12/05/14 PJK Added insstrain
   !+ad_hist  12/06/14 PJK Changed prp default value to 0.0
+  !+ad_hist  24/06/14 PJK Removed wtbc
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -1770,10 +1771,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: whttf = 0.0D0
   !+ad_vars  whttflgs : mass of the TF coil legs (kg)
   real(kind(1.0D0)) :: whttflgs = 0.0D0
-  !+ad_vars  windstrain : vertical strain in winding pack (tfc_model=2)
+  !+ad_vars  windstrain : longitudinal strain in winding pack (tfc_model=2)
   real(kind(1.0D0)) :: windstrain = 0.0D0
-  !+ad_vars  wtbc : bucking cylinder mass (kg)
-  real(kind(1.0D0)) :: wtbc = 0.0D0
   !+ad_vars  wwp1 : width of first step of winding pack (m)
   real(kind(1.0D0)) :: wwp1 = 0.0D0
   !+ad_vars  wwp2 : width of second step of winding pack (m)
@@ -2326,6 +2325,7 @@ module build_variables
   !+ad_hist  22/05/13 PJK Added blanket subcomponent thicknesses
   !+ad_hist  05/06/13 PJK Modified shldtth comment
   !+ad_hist  25/09/13 PJK Removed prtsz, prtszreq
+  !+ad_hist  24/06/14 PJK Removed bcylth
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2337,8 +2337,6 @@ module build_variables
 
   !+ad_vars  aplasmin /0.25/ : minimum minor radius (m)
   real(kind(1.0D0)) :: aplasmin = 0.25D0
-  !+ad_vars  bcylth /0.0/ : bucking cylinder thickness (m)
-  real(kind(1.0D0)) :: bcylth = 0.0D0
   !+ad_vars  blarea : blanket total surface area (m2)
   real(kind(1.0D0)) :: blarea = 0.0D0
   !+ad_vars  blareaib : inboard blanket surface area (m2)
@@ -2371,9 +2369,9 @@ module build_variables
   !+ad_vars  blnkoth /0.235/ : outboard blanket thickness (m);
   !+ad_varc                    calculated if blktmodel > 0
   real(kind(1.0D0)) :: blnkoth = 0.235D0
-  !+ad_vars  blnktth /0.175/ : top blanket thickness (m);
-  !+ad_varc                    calculated if blktmodel > 0
-  real(kind(1.0D0)) :: blnktth = 0.175D0
+  !+ad_vars  blnktth : top blanket thickness (m),
+  !+ad_varc            = mean of inboard and outboard blanket thicknesses
+  real(kind(1.0D0)) :: blnktth = 0.0D0
   !+ad_vars  bore /1.42/ : OH coil inboard radius (m)
   !+ad_varc                (iteration variable 29)
   real(kind(1.0D0)) :: bore = 1.42D0

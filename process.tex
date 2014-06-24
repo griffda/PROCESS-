@@ -38,9 +38,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-06-19
+2014-06-24
 \hfill
-Revision:: 298
+Revision:: 300
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -793,7 +793,7 @@ no. & variable name     & description                                   & eqn & 
 39  & \texttt{fjohc0}   & f-value for OH coil current at BOP limit equation & 27  & \texttt{0.001D0} & \texttt{1.000D0} \\
 40  & \texttt{fgamcd}   & f-value for current drive gamma limit equation & 37  & \texttt{0.001D0} & \texttt{1.000D0} \\
 41  & \texttt{fcohbop}  & OH coil current density ratio BOP/EOF         &     & \texttt{0.001D0} & \texttt{1.000D0} \\
-42  & \texttt{gapoh}    & gap between OH coil and bucking cylinder      &     & \texttt{0.001D0} & \texttt{10.00D0} \\
+42  & \texttt{gapoh}    & gap between OH coil and TF coil               &     & \texttt{0.001D0} & \texttt{10.00D0} \\
 43  & \texttt{cfe0}     & seeded high-Z impurity fraction               &     & \texttt{1.00D-6} & \texttt{3.00D-3} \\
 44  & \texttt{fvsbrnni} & fraction of volt seconds from non-inductive means &     & \texttt{0.001D0} & \texttt{1.000D0} \\
 45  & \texttt{fqval}    & f-value for fusion gain limit equation        & 28  & \texttt{0.001D0} & \texttt{1.000D0} \\
@@ -2528,21 +2528,14 @@ core systems against gravity and the magnetic forces that will be encountered
 during operation. The required structural masses and their costs are
 calculated.
 
-\subsubsection{Bucking cylinder}
-
-The bucking cylinder provides some strength to the inboard TF coil
-structure. If the TF coils are superconducting, the bucking cylinder is cooled
-by the cryogenic system.
-
 \subsection{Cryostat and vacuum system}
 
-The internal vacuum vessel provides a toroidal evacuated chamber containing the
-plasma, first wall, blanket and shield, and the space between this item and
-the external cylindrical cryostat encloses those components that need to
+The internal vacuum vessel provides a toroidal evacuated chamber containing
+the plasma, first wall, blanket and shield, and the space between this item
+and the external cylindrical cryostat encloses those components that need to
 operate at liquid helium temperatures. These include any superconducting (TF
-or PF) coils, the inter-coil structure and the bucking cylinder. \process\
-calculates the cryogenic power load and the resulting heat exchanger
-requirements.
+or PF) coils and the inter-coil structure. \process\ calculates the cryogenic
+power load and the resulting heat exchanger requirements.
 
 The vacuum system is used for four different processes. Firstly, before plasma
 operations the chamber must be evacuated to remove outgassed impurities from
@@ -2736,9 +2729,9 @@ the following special models~\cite{storac} in \process.
   different from that in a conventional tokamak. There is no inboard blanket
   (and possibly no inboard shield), and the inboard TF coil legs are replaced
   by a single centrepost. The radial build is altered so that, starting from
-  the centreline ($R = 0$), the component order is: bucking cylinder, TF coil,
-  gap, OH coil, vacuum vessel, and then continuing as in Figure~\ref{fig:build_d}
-  (a D-shaped cross-section is assumed for the first wall, blanket, shield and
+  the centreline ($R = 0$), the component order is: TF coil, gap, OH coil,
+  vacuum vessel, and then continuing as in Figure~\ref{fig:build_d} (a
+  D-shaped cross-section is assumed for the first wall, blanket, shield and
   vacuum vessel).
 
 \item Tight aspect ratio tokamaks have resistive TF coils that combine into a

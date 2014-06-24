@@ -24,7 +24,7 @@ module structure_module
   !+ad_call  tfcoil_variables
   !+ad_hist  29/10/12 PJK Initial version of module
   !+ad_hist  30/10/12 PJK Added build_variables
-   !+ad_stat  Okay
+  !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -65,6 +65,7 @@ contains
     !+ad_hist  18/10/12 PJK Added fwbs_variables
     !+ad_hist  18/10/12 PJK Added pfcoil_variables
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
+    !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -86,7 +87,7 @@ contains
 
     call struct(plascur,rmajor,rminor,kappa,bt,itfsup,ipfres,tfboreh, &
          hmax,whtshld,divmas,twhtpf,whttf,fwmass,whtblkt,coolmass, &
-         wtbc,dewmkg,outfile,iprint,fncmass,aintmass,clgsmass,coldmass, &
+         dewmkg,outfile,iprint,fncmass,aintmass,clgsmass,coldmass, &
          gsmass)
 
   end subroutine strucall
@@ -95,7 +96,7 @@ contains
 
   subroutine struct(ai,r0,a,akappa,b0,itfsup,ipfres,boreh,tfhmax, &
        shldmass,dvrtmass,pfmass,tfmass,fwmass,blmass,coolmass, &
-       wtbc,dewmass,outfile,iprint,fncmass,aintmass,clgsmass,coldmass, &
+       dewmass,outfile,iprint,fncmass,aintmass,clgsmass,coldmass, &
        gsm)
 
     !+ad_name  struct
@@ -122,7 +123,6 @@ contains
     !+ad_args  blmass : input real : blanket mass (kg)
     !+ad_args  fwmass : input real : first wall mass (kg)
     !+ad_args  coolmass : input real : total water coolant mass (kg)
-    !+ad_args  wtbc : input real : bucking cylinder mass (kg)
     !+ad_args  dewmass : input real : vacuum vessel + cryostat mass (kg)
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
@@ -139,6 +139,7 @@ contains
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  09/04/13 PJK Comment changes
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  24/06/14 PJK Removed wtbc argument
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -149,8 +150,7 @@ contains
     !  Arguments
 
     real(kind(1.0D0)), intent(in) :: ai,r0,a,akappa,b0,boreh,tfhmax, &
-         shldmass,dvrtmass,pfmass,tfmass,fwmass,blmass,coolmass, &
-         wtbc,dewmass
+         shldmass,dvrtmass,pfmass,tfmass,fwmass,blmass,coolmass,dewmass
     integer, intent(in) :: outfile,iprint,itfsup,ipfres
     real(kind(1.0D0)), intent(out) :: fncmass,aintmass,clgsmass,coldmass,gsm
 
@@ -171,12 +171,12 @@ contains
 
     !  Total mass of coils plus support plus vacuum vessel + cryostat
 
-    coilmass = tfmass + pfmass + aintmass + dewmass + wtbc
+    coilmass = tfmass + pfmass + aintmass + dewmass
 
     !  Total mass of cooled components
 
     coldmass = 0.0D0
-    if (itfsup == 1) coldmass = coldmass + tfmass + aintmass + dewmass + wtbc
+    if (itfsup == 1) coldmass = coldmass + tfmass + aintmass + dewmass
     if (ipfres /= 1) coldmass = coldmass + pfmass
 
     !  Coil gravity support mass

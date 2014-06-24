@@ -379,6 +379,7 @@ contains
     !+ad_hist  16/06/14 PJK Raised FIMPVAR upper limit
     !+ad_hist  17/06/14 PJK Added IMPDIR
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  24/06/14 PJK Removed BCYLTH, BLNKTTH
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1147,11 +1148,13 @@ contains
           call parse_real_variable('BLNKOTH', blnkoth, 0.0D0, 10.0D0, &
                'Outboard blanket thickness (m)')
        case ('BLNKTTH')
-          call parse_real_variable('BLNKTTH', blnktth, 0.0D0, 10.0D0, &
-               'Top blanket thickness (m)')
+          write(outfile,*) 'BLNKTTH is now always calculated rather than input -'
+          write(outfile,*) 'please remove it from the input file'
+          obsolete_var = .true.
        case ('BCYLTH')
-          call parse_real_variable('BCYLTH', bcylth, 0.0D0, 10.0D0, &
-               'Bucking cylinder thickness (m)')
+          write(outfile,*) 'BCYLTH is now obsolete -'
+          write(outfile,*) 'please remove it from the input file'
+          obsolete_var = .true.
        case ('BORE')
           call parse_real_variable('BORE', bore, 0.0D0, 20.0D0, &
                'Machine bore (m)')

@@ -78,6 +78,7 @@ contains
     !+ad_hist  18/06/13 PJK Clarified ritfc output description
     !+ad_hist  08/05/14 PJK Changed ripmax description
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  24/06/14 PJK Removed refs to bcylth
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -100,7 +101,7 @@ contains
        !  Radius of outer edge of inboard TF coil leg (m)
 
        if (itart == 1) then
-          rbmax = bcylth + tfcth
+          rbmax = tfcth
        else
           rbmax = rsldi - gapds - ddwi
        end if
@@ -220,6 +221,7 @@ contains
     !+ad_hist  28/11/13 PJK Modified ltfleg calculation
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  24/06/14 PJK Removed refs to bcylth
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -291,7 +293,7 @@ contains
        !  Radii and vertical height from midplane
 
        rtop = (rmajor - rminor*triang - fwith - 3.0D0*scrapli) + drtop
-       rmid = tfcth + bcylth
+       rmid = tfcth
        rtop = max(rtop, (rmid*1.01D0))
        ztop = (rminor * kappa) + dztop
 
@@ -364,6 +366,7 @@ contains
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  18/10/12 PJK Added fwbs_variables
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  24/06/14 PJK Removed refs to bcylth
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -393,8 +396,8 @@ contains
 
     !  Midplane radius and area
 
-    rmid = tfcth + bcylth
-    amid = pi * (rmid**2 - bcylth**2)
+    rmid = tfcth
+    amid = pi * rmid**2
 
     !  Average cross-sectional area
 

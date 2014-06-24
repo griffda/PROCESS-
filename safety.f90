@@ -181,6 +181,7 @@
     !+ad_hist  06/11/12 PJK Added fispact_variables
     !+ad_hist  09/04/13 PJK Comment changes
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
+    !+ad_hist  24/06/14 PJK Removed refs to bcylth
     !+ad_stat  This routine is untested in F90...
     !+ad_docs  F/MI/PJK/LOGBOOK12, pp.70,71,72,73
     !+ad_docs  Strategic Studies Note 96/30, January 1997
@@ -247,11 +248,11 @@
     if (itart == 0) then
        radpls(2) = radmin(2) + ohcth
        radmin(3) = radpls(2) + gapoh
-       radpls(3) = radmin(3) + bcylth
+       radpls(3) = radmin(3)
        radmin(4) = radpls(3)
        radpls(4) = radmin(4) + tfcth
     else
-       radpls(2) = radmin(2) + bcylth
+       radpls(2) = radmin(2)
        radmin(3) = radpls(2)
        radpls(3) = radmin(3) + tfcth
        radmin(4) = radpls(3) + gapoh

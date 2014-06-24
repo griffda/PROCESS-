@@ -228,6 +228,7 @@ subroutine check
   !+ad_hist  08/05/14 PJK Replaced itfmod with tfc_model
   !+ad_hist  13/05/14 PJK Added impurity fraction initialisations
   !+ad_hist  02/06/14 PJK Added fimpvar usage
+  !+ad_hist  24/06/14 PJK Removed refs to bcylth
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -388,7 +389,6 @@ subroutine check
         stop
      end if
 
-     bcylth   = 0.0D0
      ddwi     = 0.0D0
      kappa    = 1.0D0
      icase    = 'PROCESS reversed field pinch model'

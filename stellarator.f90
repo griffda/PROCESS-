@@ -417,6 +417,7 @@ contains
     !+ad_hist  12/08/13 PJK/FW Changed kappa values to 1.0
     !+ad_hist  11/09/13 PJK Removed idhe3 setting
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -448,7 +449,6 @@ contains
     iohcl = 0
     ohhghf = 0.0D0
     gapoh = 0.0D0
-    bcylth = 0.0D0
     tfootfi = 1.0D0
 
     !  Physics quantities
@@ -762,6 +762,8 @@ contains
     !+ad_hist  03/03/14 PJK tfootfi no longer used to calculate tfthko
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  24/06/14 PJK Removed refs to bcylth;
+    !+ad_hisc               blnktth now always calculated
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -784,13 +786,16 @@ contains
     if (blktmodel > 0) then
        blnkith = blbuith + blbmith + blbpith
        blnkoth = blbuoth + blbmoth + blbpoth
-       blnktth = 0.5D0*(blnkith+blnkoth)
        shldtth = 0.5D0*(shldith+shldoth)
     end if
 
+    !  Top/bottom blanket thickness
+
+    blnktth = 0.5D0*(blnkith+blnkoth)
+
     !  Radial build to centre of plasma (should be equal to rmajor)
 
-    rbld = bore + ohcth + gapoh + bcylth + tfcth + gapds + &
+    rbld = bore + ohcth + gapoh + tfcth + gapds + &
          ddwi + shldith + blnkith + fwith + scrapli + rminor
 
     !  Radius to inner edge of inboard shield
@@ -844,7 +849,7 @@ contains
     radius = 0.0D0
     call obuild(outfile,'Device centreline',0.0D0,radius)
 
-    drbild = bore + ohcth + gapoh + bcylth
+    drbild = bore + ohcth + gapoh
     radius = radius + drbild
     call obuild(outfile,'Machine bore',drbild,radius)
 
@@ -2403,6 +2408,7 @@ contains
     !+ad_hisc               Felix Warmer's MATLAB code
     !+ad_hist  01/05/14 PJK Added rbmax comment
     !+ad_hist  06/05/14 PJK Removed wpvf completely
+    !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
     !+ad_stat  Okay
     !+ad_docs  The Stellarator Coil model for the Systems code PROCESS,
     !+ad_docc  F. Warmer, F. Schauer, IPP Greifswald, October 2013
@@ -2808,10 +2814,6 @@ contains
     ! [kg] Total conductor mass
 
     whtcon = whtconsc + whtconcu + whtconsh
-
-    ! [kg] Bucking cylinder mass (assumed not to exist)
-
-    wtbc = 0.0D0
 
     ! [kg] Total coil mass
 
