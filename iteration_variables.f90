@@ -1,4 +1,3 @@
-!  $Id:: iteration_variables.f90 259 2014-05-01 12:05:37Z pknight       $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine loadxc
@@ -17,6 +16,7 @@ subroutine loadxc
   !+ad_call  constraint_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  ife_variables
@@ -29,6 +29,7 @@ subroutine loadxc
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
   !+ad_call  pulse_variables
+  !+ad_call  report_error
   !+ad_hist  22/10/92 PJK Removed original arguments (xc,nn)
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  09/10/12 PJK Initial F90 version
@@ -61,6 +62,7 @@ subroutine loadxc
   !+ad_hist  08/05/14 PJK Replaced itfmod with tfc_model
   !+ad_hist  19/05/14 PJK Reassigned (28) to fradpwr
   !+ad_hist  02/06/14 PJK Added fimpvar (102)
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -70,6 +72,7 @@ subroutine loadxc
   use constraint_variables
   use current_drive_variables
   use divertor_variables
+  use error_handling
   use fwbs_variables
   use heat_transport_variables
   use ife_variables
@@ -110,14 +113,7 @@ subroutine loadxc
      case (11) ; xcm(i) = pheat
      case (12) ; xcm(i) = oacdcp
      case (13) ; xcm(i) = tfcth
-        if (istell == 1) then
-           write(*,*) 'Error in routine LOADXC:'
-           write(*,*) 'TFCTH should not be used as an iteration'
-           write(*,*) 'variable if ISTELL=1, as it is'
-           write(*,*) 'calculated elsewhere.'
-           write(*,*) 'PROCESS stopping.'
-           stop
-        end if
+        if (istell == 1) call report_error(46)
      case (14) ; xcm(i) = fwalld
      case (15) ; xcm(i) = fvs
      case (16) ; xcm(i) = ohcth
@@ -129,13 +125,7 @@ subroutine loadxc
      case (22) ; xcm(i) = tbrnmn
      case (23) ; xcm(i) = fcoolcp
      case (24) ; xcm(i) = cdtfleg
-        if ((itfsup == 1).or.(irfp == 1)) then
-           write(*,*) 'Error in routine LOADXC:'
-           write(*,*) 'CDTFLEG should not be used as an iteration'
-           write(*,*) 'variable if ITFSUP=1 or IRFP=1.'
-           write(*,*) 'PROCESS stopping.'
-           stop
-        end if
+        if ((itfsup == 1).or.(irfp == 1)) call report_error(47)
      case (25) ; xcm(i) = fpnetel
      case (26) ; xcm(i) = ffuspow
      case (27) ; xcm(i) = fhldiv
@@ -169,38 +159,17 @@ subroutine loadxc
      case (55) ; xcm(i) = tmargmin
      case (56) ; xcm(i) = tdmptf
      case (57) ; xcm(i) = thkcas
-        if ((tfc_model == 0).or.(istell == 1)) then
-           write(*,*) 'Error in routine LOADXC:'
-           write(*,*) 'THKCAS cannot be used as an iteration'
-           write(*,*) 'variable if TFC_MODEL=0 or ISTELL=1, as it is'
-           write(*,*) 'calculated elsewhere.'
-           write(*,*) 'PROCESS stopping.'
-           stop
-        end if
+        if ((tfc_model == 0).or.(istell == 1)) call report_error(48)
      case (58) ; xcm(i) = thwcndut
      case (59) ; xcm(i) = fcutfsu
      case (60) ; xcm(i) = cpttf
-        if ((istell == 1).or.((irfp == 0).and.(itfsup == 0))) then
-           write(*,*) 'Error in routine LOADXC:'
-           write(*,*) 'CPTTF cannot be used as an iteration'
-           write(*,*) 'variable if ITFSUP=0 or ISTELL=1, as it is'
-           write(*,*) 'calculated elsewhere.'
-           write(*,*) 'PROCESS stopping.'
-           stop
-        end if
+        if ((istell == 1).or.((irfp == 0).and.(itfsup == 0))) call report_error(49)
      case (61) ; xcm(i) = gapds
      case (62) ; xcm(i) = fdtmp
      case (63) ; xcm(i) = ftpeak
      case (64) ; xcm(i) = fauxmn
      case (65) ; xcm(i) = tohs
-        if (lpulse /= 1) then
-           write(*,*) 'Error in routine LOADXC:'
-           write(*,*) 'TOHS cannot be used as an iteration'
-           write(*,*) 'variable if LPULSE .ne. 1, as it is'
-           write(*,*) 'calculated elsewhere.'
-           write(*,*) 'PROCESS stopping.'
-           stop
-        end if
+        if (lpulse /= 1) call report_error(50)
      case (66) ; xcm(i) = ftohs
      case (67) ; xcm(i) = ftcycl
      case (68) ; xcm(i) = fptemp
@@ -213,14 +182,7 @@ subroutine loadxc
      case (75) ; xcm(i) = tfootfi
      case (76) ; xcm(i) = frfptf
      case (77) ; xcm(i) = tftort
-        if (istell == 1) then
-           write(*,*) 'Error in routine LOADXC:'
-           write(*,*) 'TFTORT should not be used as an iteration'
-           write(*,*) 'variable if ISTELL=1, as it is'
-           write(*,*) 'calculated elsewhere.'
-           write(*,*) 'PROCESS stopping.'
-           stop
-        end if
+        if (istell == 1) call report_error(51)
      case (78) ; xcm(i) = rfpth
      case (79) ; xcm(i) = fbetap
      case (80) ; xcm(i) = frfpf
@@ -232,20 +194,11 @@ subroutine loadxc
      case (86) ; xcm(i) = frrmax
      case (87) ; xcm(i) = helecmw
         if ((ihplant < 1).or.(ihplant > 3)) then
-           write(*,*) 'Error in routine LOADXC :'
-           write(*,*) 'HELECMW cannot be used as an iteration'
-           write(*,*) 'variable if IHPLANT=',ihplant
-           write(*,*) 'PROCESS stopping.'
-           stop
+           idiags(1) = ihplant ; call report_error(52)
         end if
      case (88) ; xcm(i) = hthermmw
         if (ihplant < 4) then
-           write(*,*) 'Error in routine LOADXC :'
-           write(*,*) 'HTHERMMW cannot be used as an iteration'
-           write(*,*) 'variable if IHPLANT=',ihplant
-           write(*,*) 'as it is calculated elsewhere.'
-           write(*,*) 'PROCESS stopping.'
-           stop
+           idiags(1) = ihplant ; call report_error(53)
         end if
      case (89) ; xcm(i) = ftbr
      case (90) ; xcm(i) = blbuith
@@ -263,31 +216,24 @@ subroutine loadxc
      case (102) ; xcm(i) = impurity_arr(impvar)%frac
 
      case default
-        write(*,*) 'Error in routine LOADXC :'
-        write(*,*) 'Illegal variable number, = ',ixc(i)
-        write(*,*) 'PROCESS stopping.'
-        stop
+        idiags(1) = i ; idiags(2) = ixc(i)
+        call report_error(54)
 
      end select
 
      !  Check that no iteration variable is zero
 
      if (abs(xcm(i)) <= 1.0D-12) then
-        write(*,*) 'Error in routine LOADXC :'
-        write(*,*) 'Iteration variable ',ixc(i), &
-             '(',trim(lablxc(ixc(i))),') is zero.'
-        write(*,*) 'Change initial value or lower bound.'
-        write(*,*) 'PROCESS stopping.'
-        stop
+        idiags(1) = i ; idiags(2) = ixc(i)
+        write(*,*) 'Iteration variable ',ixc(i),'(',trim(lablxc(ixc(i))),') is zero.'
+        call report_error(55)
      end if
 
      !  Crude method of catching NaN errors
 
      if ( (abs(xcm(i)) > 9.99D99).or.(xcm(i) /= xcm(i)) ) then
-        write(*,*) 'Error in routine LOADXC :'
-        write(*,*) 'NaN error for iteration variable ',ixc(i)
-        write(*,*) 'PROCESS stopping.'
-        stop
+        idiags(1) = i ; idiags(2) = ixc(i) ; fdiags(1) = xcm(i)
+        call report_error(56)
      end if
 
   end do
@@ -323,6 +269,7 @@ subroutine convxc(xc,nn)
   !+ad_call  constraint_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  ife_variables
@@ -333,6 +280,7 @@ subroutine convxc(xc,nn)
   !+ad_call  rfp_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
+  !+ad_call  report_error
   !+ad_hist  14/11/11 PJK Changed NaN error check
   !+ad_hist  16/11/11 PJK Initial F90 version
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
@@ -360,6 +308,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  30/04/14 PJK Added prp (101)
   !+ad_hist  19/05/14 PJK Reassigned (28) to fradpwr
   !+ad_hist  02/06/14 PJK Added fimpvar (102); special treatment required
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -369,6 +318,7 @@ subroutine convxc(xc,nn)
   use constraint_variables
   use current_drive_variables
   use divertor_variables
+  use error_handling
   use fwbs_variables
   use heat_transport_variables
   use ife_variables
@@ -503,38 +453,28 @@ subroutine convxc(xc,nn)
         impurity_arr(impvar)%frac = fimpvar
 
      case default
-        write(*,*) 'Error in routine CONVXC :'
-        write(*,*) 'Illegal variable number, = ',ixc(i)
-        write(*,*) 'PROCESS stopping.'
-        stop
+        call report_error(57)
 
      end select
 
      !  Check that no iteration variable is zero
 
      if (abs(xc(i)) <= 1.0D-12) then
-        write(*,*) 'Error in routine CONVXC :'
-        write(*,*) 'Iteration variable ',ixc(i),' &
-             (',trim(lablxc(ixc(i))),') is zero.'
-        write(*,*) 'Change initial value or lower bound.'
-        write(*,*) 'PROCESS stopping.'
-        stop
+        idiags(1) = i ; idiags(2) = ixc(i)
+        write(*,*) 'Iteration variable ',ixc(i),'(',trim(lablxc(ixc(i))),') is zero.'
+        call report_error(58)
      end if
 
      !  Crude method of catching NaN errors
 
      if ((abs(xc(i)) > 9.99D99).or.(xc(i) /= xc(i))) then
-        write(*,*) 'Error in routine CONVXC :'
-        write(*,*) 'NaN error for iteration variable ',ixc(i)
-        write(*,*) 'PROCESS stopping.'
-        stop
+        idiags(1) = i ; idiags(2) = ixc(i) ; fdiags(1) = xc(i)
+        call report_error(59)
      end if
 
      if (scale(i) == 0.0D0) then
-        write(*,*) 'Error in routine CONVXC :'
-        write(*,*) 'scale(i) = 0 for iteration variable ',ixc(i)
-        write(*,*) 'PROCESS stopping.'
-        stop
+        idiags(1) = i ; idiags(2) = ixc(i)
+        call report_error(60)
      end if
 
   end do

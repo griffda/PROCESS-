@@ -16,10 +16,12 @@ module divertor_module
   !+ad_call  build_variables
   !+ad_call  constants
   !+ad_call  divertor_variables
+  !+ad_call  error_handling
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_hist  17/10/12 PJK Initial version of module
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -28,6 +30,7 @@ module divertor_module
   use build_variables
   use constants
   use divertor_variables
+  use error_handling
   use physics_variables
   use process_output
 
@@ -690,12 +693,14 @@ contains
     !+ad_call  ocmmnt
     !+ad_call  osubhd
     !+ad_call  ovarre
+    !+ad_call  report_error
     !+ad_hist  29/01/96 PJK Added TART gaseous divertor model
     !+ad_hist  14/05/96 PJK Improved calculation of TART divertor area
     !+ad_hist  08/05/12 PJK Initial F90 version; Moved TART model into new routine
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  16/10/12 PJK Added constants; removed argument pi
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 64: Figure 2
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -727,10 +732,7 @@ contains
     !  Angle of diagonal divertor plate from horizontal
 
     if (vgap <= 0.0D0) then
-       write(outfile,*) 'Error in routine DIVCALL:'
-       write(outfile,*) 'vgap = ',vgap
-       write(outfile,*) 'PROCESS stopping.'
-       STOP
+       fdiags(1) = vgap ; call report_error(22)
     end if
 
     theta = atan(vgap/(r2-r1))

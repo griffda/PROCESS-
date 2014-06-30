@@ -233,6 +233,7 @@ module stellarator_module
   !+ad_call  current_drive_variables
   !+ad_call  divertor_module
   !+ad_call  divertor_variables
+  !+ad_call  error_handling
   !+ad_call  fwbs_module
   !+ad_call  fwbs_variables
   !+ad_call  global_variables
@@ -261,6 +262,7 @@ module stellarator_module
   !+ad_hist  14/08/13 PJK Added cost_variables, kit_blanket_model
   !+ad_hist  24/02/14 PJK Added profiles_module
   !+ad_hist  14/05/14 PJK Added impurity_radiation_module
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -276,6 +278,7 @@ module stellarator_module
   use current_drive_variables
   use divertor_module
   use divertor_variables
+  use error_handling
   use fwbs_module
   use fwbs_variables
   use global_variables
@@ -1141,6 +1144,7 @@ contains
     !+ad_call  ocmmnt
     !+ad_call  oheadr
     !+ad_call  ovarre
+    !+ad_call  report_error
     !+ad_hist  29/06/94 PJK Initial version
     !+ad_hist  01/04/98 PJK Modified call to CULNBI
     !+ad_hist  20/09/12 PJK Initial F90 version
@@ -1157,6 +1161,7 @@ contains
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
     !+ad_hist  01/05/14 PJK Changed bigq description
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1205,10 +1210,7 @@ contains
 
     case default
 
-       write(*,*) 'Error in routine STHEAT:'
-       write(*,*) 'Illegal value for switch ISTHTR, = ',isthtr
-       write(*,*) 'PROCESS stopping.'
-       stop
+       idiags(1) = isthtr ; call report_error(107)
 
     end select
 
@@ -1245,11 +1247,6 @@ contains
        call ocmmnt(outfile,'Lower Hybrid Heating')
     case (3)
        call ocmmnt(outfile,'Neutral Beam Injection Heating')
-    case default
-       write(*,*) 'Error in routine STHEAT:'
-       write(*,*) 'Illegal value of ISTHTR, = ',isthtr
-       write(*,*) 'PROCESS stopping.'
-       stop
     end select
     if (ignite == 1) then
        call ocmmnt(outfile, &
@@ -1879,10 +1876,11 @@ contains
     !+ad_args  dlimit : output real : Maximum volume-averaged plasma density (/m3)
     !+ad_desc  This routine calculates the density limit for a stellarator.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  30/06/94 PJK Initial version
     !+ad_hist  24/09/12 PJK Initial F90 version
     !+ad_hist  03/03/14 PJK Generalised for any density profile type
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  S.Sudo, Y.Takeiri, H.Zushi et al., Scalings of Energy Confinement
     !+ad_docc  and Density Limit in Stellarator/Heliotron Devices, Nuclear Fusion
@@ -1907,14 +1905,10 @@ contains
     arg = powht*bt / (rmajor*rminor*rminor)
 
     if (arg <= 0.0D0) then
-       write(*,*) 'Error in routine STDLIM:'
-       write(*,*) 'NaN result (sqrt) will occur, arg = ',arg
-       write(*,*) ' powht = ',powht
-       write(*,*) '    bt = ',bt
-       write(*,*) 'rmajor = ',rmajor
-       write(*,*) 'rminor = ',rminor
-       write(*,*) 'PROCESS stopping.'
-       stop
+       fdiags(1) = arg ; fdiags(2) = powht
+       fdiags(3) = bt ; fdiags(4) = rmajor
+       fdiags(5) = rminor
+       call report_error(108)
     end if
 
     !  Maximum line-averaged electron density
@@ -2399,6 +2393,7 @@ contains
     !+ad_call  coil_energy
     !+ad_call  find_y_nonuniform_x
     !+ad_call  intersect
+    !+ad_call  report_error
     !+ad_call  scaling_calculations
     !+ad_call  stcoil_output
     !+ad_hist  20/07/94 PJK Initial version
@@ -2417,6 +2412,7 @@ contains
     !+ad_hist  01/05/14 PJK Added rbmax comment
     !+ad_hist  06/05/14 PJK Removed wpvf completely
     !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
+    !+ad_hist  26/06/14 PJK Added error_handling
     !+ad_stat  Okay
     !+ad_docs  The Stellarator Coil model for the Systems code PROCESS,
     !+ad_docc  F. Warmer, F. Schauer, IPP Greifswald, October 2013
@@ -2464,8 +2460,7 @@ contains
     else if (nbticool == 2) then
        T_u = 1.8
     else
-       write(*,*) 'nbticool out of range'
-       stop
+       idiags(1) = nbticool ; call report_error(109)
     end if
 
     ! As the Stellarator has a different toroidal symmetry compared to the
@@ -2535,9 +2530,7 @@ contains
     else if (isumattf == 3) then
        Bc = Bc2        
     else
-       write(*,*) 'Use isumattf = 1 or 3 with the stellarator model.'
-       write(*,*) 'PROCESS stopping.'
-       stop
+       idiags(1) = isumattf ; call report_error(110)
     end if
 
     if (maxval(B_max_k) > Bc) then
@@ -3397,8 +3390,10 @@ contains
       !+ad_desc  is found within the x ranges of the two curves.
       !+ad_prob  None
       !+ad_call  find_y_nonuniform_x
+      !+ad_call  report_error
       !+ad_hist  03/03/14 PJK Initial version; code will warn the user if there
       !+ad_hisc               is a problem, but not stop
+      !+ad_hist  26/06/14 PJK Added error handling
       !+ad_stat  Okay
       !+ad_docs  None
       !
@@ -3414,12 +3409,9 @@ contains
 
       real(kind(1.0D0)) :: dx,xmin,xmax,ymin,ymax
       real(kind(1.0D0)) :: y01,y02,y,yleft,yright,epsy
-      integer :: i, error, nmax = 100
-      character(len=30) :: error_message
+      integer :: i, nmax = 100
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-      error = 0
 
       !  Find overlapping x range
 
@@ -3427,8 +3419,9 @@ contains
       xmax = min(maxval(x1),maxval(x2))
 
       if (xmin >= xmax) then
-         error = 1
-         error_message = 'X ranges not overlapping'
+         fdiags(1) = minval(x1) ; fdiags(2) = minval(x2)
+         fdiags(3) = maxval(x1) ; fdiags(4) = maxval(x2)
+         call report_error(111)
       end if
 
       !  Ensure input guess for x is within this range
@@ -3482,33 +3475,24 @@ contains
          x = x - 2.0D0*dx*y/(yright-yleft)
 
          if (x < xmin) then
-            error = 2
-            error_message = &
-                 'X has dropped below Xmin; X has been set equal to Xmin...'
+            fdiags(1) = x ; fdiags(2) = xmin
+            call report_error(112)
             x = xmin
             exit converge
          end if
          if (x > xmax) then
-            error = 3
-            error_message = &
-                 'X has risen above Xmax; X has been set equal to Xmax...'
+            fdiags(1) = x ; fdiags(2) = xmax
+            call report_error(113)
             x = xmax
             exit converge
          end if
          if (i > nmax) then
-            error_message = 'Convergence too slow; X may be wrong...'
-            error = 4
+            idiags(1) = i ; idiags(2) = nmax
+            call report_error(114)
             exit converge
          end if
 
       end do converge
-
-      if (error /= 0) then
-         write(*,*) 'Warning in routine INTERSECT: ',error
-         write(*,*) error_message
-         write(*,*) 'PROCESS continuing...'
-         !stop
-      end if
 
     end subroutine intersect
 

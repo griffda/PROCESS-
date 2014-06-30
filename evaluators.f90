@@ -19,6 +19,7 @@ module function_evaluator
   !+ad_call  cost_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  error_handling
   !+ad_call  heat_transport_variables
   !+ad_call  ife_variables
   !+ad_call  numerics
@@ -37,6 +38,7 @@ module function_evaluator
   !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_hist  17/12/12 PJK Added times_variables
   !+ad_hist  19/05/14 PJK Added ife_variables, stellarator_variables
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -45,6 +47,7 @@ module function_evaluator
   use cost_variables
   use current_drive_variables
   use divertor_variables
+  use error_handling
   use heat_transport_variables
   use ife_variables
   use numerics
@@ -331,7 +334,7 @@ contains
     !+ad_desc  <P>Each equation for <CODE>fc<CODE> gives a value of the
     !+ad_desc  order of unity for the sake of the numerics.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  02/10/96 PJK Initial upgraded version
     !+ad_hist  08/10/12 PJK Initial F90 version
     !+ad_hist  17/12/12 PJK Added new figure of merit 14
@@ -339,6 +342,7 @@ contains
     !+ad_hist  12/02/14 PJK Added new figure of merit 15
     !+ad_hist  13/02/14 PJK Added trap if iavail /= 1 with fig of merit 15
     !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -412,30 +416,20 @@ contains
        fc = sgn * tburn / 2.0D4
 
     case (15)  !  plant availability factor (N.B. requires iavail = 1)
-       if (iavail /= 1) then
-          write(*,*) 'Error in routine FUNFOM :'
-          write(*,*) 'Switch iavail must be 1 if'
-          write(*,*) 'cfactr is to be the figure of merit.'
-          write(*,*) 'PROCESS stopping.'
-          stop
-       end if
+
+       if (iavail /= 1) call report_error(23)
+
        fc = sgn * cfactr
 
     case default
-       write(*,*) 'Error in routine FUNFOM :'
-       write(*,*) 'No such figure of merit, ',iab
-       write(*,*) 'PROCESS stopping.'
-       stop
+       idiags(1) = iab ; call report_error(24)
 
     end select
 
     !  Crude method of catching NaN errors
 
     if ((abs(fc) > 9.99D99).or.(fc /= fc)) then
-       write(*,*) 'Error in routine FUNFOM:'
-       write(*,*) 'NaN error in figure of merit calculation ',iab
-       write(*,*) 'PROCESS stopping.'
-       stop
+       idiags(1) = iab ; call report_error(25)
     end if
 
   end subroutine funfom

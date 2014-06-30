@@ -1,4 +1,3 @@
-!  $Id:: pulse.f90 258 2014-04-24 12:28:55Z pknight                     $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module pulse_module
@@ -19,6 +18,7 @@ module pulse_module
   !+ad_call  constants
   !+ad_call  constraint_variables
   !+ad_call  current_drive_variables
+  !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  pf_power_variables
   !+ad_call  pfcoil_variables
@@ -27,6 +27,7 @@ module pulse_module
   !+ad_call  pulse_variables
   !+ad_call  times_variables
   !+ad_hist  05/11/12 PJK Initial version of module
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -36,6 +37,7 @@ module pulse_module
   use constants
   use constraint_variables
   use current_drive_variables
+  use error_handling
   use fwbs_variables
   use pf_power_variables
   use pfcoil_variables
@@ -150,6 +152,7 @@ contains
     !+ad_call  oheadr
     !+ad_call  ovarre
     !+ad_call  ovarrf
+    !+ad_call  report_error
     !+ad_call  smt
     !+ad_call  tk
     !+ad_call  yield
@@ -169,6 +172,7 @@ contains
     !+ad_hist  15/04/13 PJK Changed approximation for first wall nuclear heating
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -261,10 +265,7 @@ contains
     bfw_iteration: do ; n = n+1
 
        if (n > 100) then
-          write(*,*) 'Warning in routine THRMAL:'
-          write(*,*) 'Optimisation has failed within 100 iterations.'
-          write(*,*) 'Possible NaN problems...'
-          write(*,*) 'PROCESS continuing.'
+          call report_error(88)
           !return
           exit bfw_iteration
        end if
@@ -272,10 +273,8 @@ contains
        !  Check to see if inner radius is greater than outer radius
 
        if (afw >= bfw) then
-          write(*,*) 'Error in routine PULSE:'
-          write(*,*) 'afw >= bfw'
-          write(*,*) 'PROCESS stopping.'
-          stop
+          fdiags(1) = afw ; fdiags(2) = bfw
+          call report_error(89)
        end if
 
        !  First wall lifetime in seconds
@@ -439,11 +438,8 @@ contains
 
              bfw = bfw*fboa
              if ((bfw/afw) <= 1.001D0) then
-                write(*,*) 'Warning in routine THRMAL:'
-                write(*,*) 'Swelling limit exceeded, and'
-                write(*,*) 'optimisation is failing to find a'
-                write(*,*) 'suitable first wall thickness...'
-                write(*,*) 'PROCESS continuing.'
+                fdiags(1) = afw ; fdiags(2) = bfw
+                call report_error(90)
                 exit bfw_iteration
              else
                 cycle bfw_iteration
@@ -949,9 +945,10 @@ contains
       !+ad_desc  This routine calculates the maximum stress intensity
       !+ad_desc  in the first wall, from fits via the ASME code.
       !+ad_prob  None
-      !+ad_call  None
+      !+ad_call  report_error
       !+ad_hist  25/11/93 PJK Incorporation into PROCESS
       !+ad_hist  01/10/12 PJK Initial F90 version
+      !+ad_hist  26/06/14 PJK Added error handling
       !+ad_stat  Okay
       !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -994,11 +991,7 @@ contains
       else if (x <= 600.0D0) then
          smt = smt500 + (x-500.0D0)/100.0D0*(smt600-smt500)
       else
-         write(*,*) 'Error in routine SMT:'
-         write(*,*) 'No reliable data for SMT stress for temperatures'
-         write(*,*) 'exceeding 600 degrees Celsius'
-         write(*,*) 'PROCESS stopping.'
-         stop
+         fdiags(1) = smt ; call report_error(91)
       end if
 
       smt = smt*1.0D6
@@ -1023,9 +1016,10 @@ contains
       !+ad_desc  design data for the first wall.
       !+ad_prob  Uncommenting the initial tpeak test causes code output
       !+ad_prob  to change inexplicably...
-      !+ad_call  None
+      !+ad_call  report_error
       !+ad_hist  25/11/93 PJK Incorporation into PROCESS
       !+ad_hist  01/10/12 PJK Initial F90 version
+      !+ad_hist  26/06/14 PJK Added error handling
       !+ad_stat  Okay
       !+ad_docs  Methods of first wall structural analysis ...,
       !+ad_docc  R.J. LeClaire, PFC/RR-84-9
@@ -1052,6 +1046,7 @@ contains
 
       !  Uncommenting this if-clause causes change to output!
       !if (tpeak > 649.0D0) then
+      !   fdiags(1) = tpeak ; call report_error(92)
       !   write(*,*) 'Error in routine CYCLES:'
       !   write(*,*) 'Fatigue data unreliable for T > 649 deg C'
       !   write(*,*) 'PROCESS stopping.'
@@ -1251,6 +1246,7 @@ contains
     !+ad_prob  None
     !+ad_call  osubhd
     !+ad_call  ovarre
+    !+ad_call  report_error
     !+ad_hist  25/11/93 PJK Incorporation into PROCESS
     !+ad_hist  25/05/06 PJK Corrected error in tohsmn calculation
     !+ad_hist  01/10/12 PJK Initial F90 version
@@ -1265,6 +1261,7 @@ contains
     !+ad_hist  19/05/14 PJK Added warning if tburn is negative
     !+ad_hist  19/05/14 PJK Changed abs(vsbn) to -vsbn; added error line
     !+ad_hist  16/06/14 PJK Removed duplicate outputs
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0012
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -1303,10 +1300,8 @@ contains
 
     tb = vsmax/vburn - theat
     if (tb < 0.0D0) then
-       write(*,*) 'Warning in routine BURN:'
-       write(*,*) 'Negative burn time available: ',tb
-       write(*,*) 'Reduce theat or increase PF coil V-s capability'
-       write(*,*) 'tburn set to zero...'
+       fdiags(1) = tb ; fdiags(2) = vsmax ; fdiags(3) = vburn ; fdiags(4) = theat
+       call report_error(93)
     end if
     tburn = max(0.0D0, tb)
 

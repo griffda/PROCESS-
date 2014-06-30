@@ -45,6 +45,7 @@ module physics_module
   !+ad_call  current_drive_module
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  impurity_radiation_module
@@ -78,6 +79,7 @@ module physics_module
   !+ad_hist  24/02/14 PJK Moved plasma_profiles etc into new profiles_module
   !+ad_hist  26/03/14 PJK Renamed bootstrap fraction routines; added Sauter model
   !+ad_hist  13/05/14 PJK Added plasma_composition routine, impurity_radiation_module
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -89,6 +91,7 @@ module physics_module
   use current_drive_module
   use current_drive_variables
   use divertor_variables
+  use error_handling
   use fwbs_variables
   use heat_transport_variables
   use impurity_radiation_module
@@ -149,6 +152,7 @@ contains
     !+ad_call  pohm
     !+ad_call  pthresh
     !+ad_call  radpwr
+    !+ad_call  report_error
     !+ad_call  rether
     !+ad_call  vscalc
     !+ad_hist  20/06/94 PJK Upgrade to higher standard of coding
@@ -198,6 +202,7 @@ contains
     !+ad_hist  03/06/14 PJK Modifications for new power flow model
     !+ad_hist  24/06/14 PJK Corrected neutron wall load to account for gaps
     !+ad_hisc               in first wall
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -308,10 +313,7 @@ contains
        else if (ibss == 4) then
           bootipf = bscf_sauter
        else
-          write(*,*) 'Error in routine PHYSICS:'
-          write(*,*) 'Illegal value of IBSS, = ',ibss
-          write(*,*) 'PROCESS stopping.'
-          stop
+          idiags(1) = ibss ; call report_error(75)
        end if
 
        bootipf = min(bootipf,bscfmax)
@@ -692,7 +694,7 @@ contains
     !+ad_desc  This function calculates the bootstrap current fraction
     !+ad_desc  using the numerically fitted algorithm written by Howard Wilson.
     !+ad_prob  No account is taken of pedestal profiles.
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  14/05/96 PJK Modified to use THERMAL poloidal beta, and
     !+ad_hisc               added diamagnetic term at tight aspect ratio
@@ -700,6 +702,7 @@ contains
     !+ad_hist  20/02/14 PJK alphap now calculated elsewhere
     !+ad_hist  24/02/14 PJK Swapped alphan for alphap in argument list
     !+ad_hist  26/03/14 PJK Renamed from CULBST
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
     !+ad_docs  H. R. Wilson, Nuclear Fusion <B>32</B> (1992) 257
@@ -743,32 +746,11 @@ contains
     alftnw = term1/log( log( (q0+(qpsi-q0)*termt)/qpsi )/term2)
     aj     = term1/log( log( (q0+(qpsi-q0)*termj)/qpsi )/term2)
 
-    !  Crude check for NaN errors...
+    !  Crude check for NaN errors or other illegal values...
 
-    if (aj /= aj) then
-       write(*,*) 'Error in routine BOOTSTRAP_FRACTION_WILSON:'
-       write(*,*) 'Illegal value for aj, = ',aj
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
-    if (alfpnw /= alfpnw) then
-       write(*,*) 'Error in routine BOOTSTRAP_FRACTION_WILSON:'
-       write(*,*) 'Illegal value for alfpnw, = ',alfpnw
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
-    if (alftnw /= alftnw) then
-       write(*,*) 'Error in routine BOOTSTRAP_FRACTION_WILSON:'
-       write(*,*) 'Illegal value for alftnw, = ',alftnw
-       write(*,*) 'PROCESS stopping.'
-       stop
-    end if
-
-    if (aj <= 0.0D0) then
-       write(*,*) 'Error in routine BOOTSTRAP_FRACTION_WILSON:'
-       write(*,*) 'Illegal value for aj, = ',aj
-       write(*,*) 'PROCESS stopping.'
-       stop
+    if ((aj /= aj).or.(alfpnw /= alfpnw).or.(alftnw /= alftnw).or.(aj <= 0.0D0)) then
+       fdiags(1) = aj ; fdiags(2) = alfpnw ; fdiags(3) = alftnw ; fdiags(4) = aj
+       call report_error(76)
     end if
 
     !  Ratio of ionic charge to electron charge
@@ -1710,12 +1692,14 @@ contains
     !+ad_call  bpol
     !+ad_call  conhas
     !+ad_call  plasc
+    !+ad_call  report_error
     !+ad_hist  20/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  29/01/96 PJK Added icurr=2 TART option
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  22/11/12 PJK Added stop statement in error block
     !+ad_hist  27/11/13 PJK Added new arguments to bpol
     !+ad_hist  28/11/13 PJK Added current profile consistency if iprofile=1
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
@@ -1781,10 +1765,7 @@ contains
        call conhas(alphaj,alphap,bt,triang,eps,kappa,p0,fq)
 
     case default
-       write(*,*) 'Error in routine CULCUR:'
-       write(*,*) 'Illegal value for ICURR, = ',icurr
-       write(*,*) 'PROCESS stopping.'
-       stop
+       idiags(1) = icurr ; call report_error(77)
 
     end select
 
@@ -2385,7 +2366,9 @@ contains
     !+ad_desc  the new impurity radiation model
     !+ad_prob  None
     !+ad_call  element2index
+    !+ad_call  report_error
     !+ad_hist  13/05/14 PJK Initial version
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2452,8 +2435,7 @@ contains
     !  Ensure that deni is never negative or zero
 
     if (deni < 1.0D0) then
-       write(*,*) 'Warning in PLASMA_COMPOSITION:'
-       write(*,*) 'Fuel ion density is zero or negative...'
+       fdiags(1) = deni ; call report_error(78)
        deni = max(deni,1.0D0)
     end if
 
@@ -2580,11 +2562,12 @@ contains
     !+ad_desc  This routine calculates several different formulae for the
     !+ad_desc  density limit, and enforces the one chosen by the user.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  17/09/97 PJK Added Greenwald limit (idensl=7)
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  16/10/12 PJK Removed pi from argument list
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2610,10 +2593,7 @@ contains
     !  Check for illegal values of IDENSL
 
     if ((idensl < 1).or.(idensl > 7)) then
-       write(*,*) 'Error in routine CULDLM:'
-       write(*,*) 'Illegal value for IDENSL, = ',idensl
-       write(*,*) 'PROCESS stopping.'
-       stop
+       idiags(1) = idensl ; call report_error(79)
     end if
 
     dlimit(:) = 0.0D0
@@ -2655,12 +2635,8 @@ contains
     denom = (zeff-1.0D0)*( 1.0D0-4.0D0/(3.0D0*qcyl) )
     if (denom <= 0.0D0) then
        if (idensl == 4) then
-          write(*,*) 'Warning in routine CULDLM:'
-          write(*,*) 'DENOM = ',denom,' i.e. qcyl < 4/3'
-          write(*,*) 'Floating point error will occur.'
-          write(*,*) 'DLIMIT(4) is artificially set to 0.0.'
-          write(*,*) 'Model 5 will be used as the density limit.'
-          write(*,*) 'PROCESS continuing.'
+          fdiags(1) = denom ; fdiags(2) = qcyl
+          call report_error(80)
           idensl = 5
        end if
        dlimit(4) = 0.0D0
@@ -3217,7 +3193,7 @@ contains
     !+ad_desc  using one of a large number of scaling laws, and the
     !+ad_desc  transport power loss terms.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  30/06/94 PJK Added stellarator scaling laws 20-23
     !+ad_hist  07/12/95 PJK Added pcharge to plasma input power
@@ -3238,6 +3214,7 @@ contains
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  03/06/14 PJK Changed pchargepv usage to pchargemw
     !+ad_hist  17/06/14 PJK Added scaling law 39
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  N. A. Uckan and ITER Physics Group,
@@ -3733,10 +3710,8 @@ contains
        rtaue = -0.55D0
 
     case default
-       write(*,*) 'Error in routine PCOND:'
-       write(*,*) 'Illegal value for ISC, = ',isc
-       write(*,*) 'PROCESS stopping.'
-       stop
+       idiags(1) = isc ; call report_error(81)
+
     end select
 
     !  Ion energy confinement time
@@ -4030,8 +4005,10 @@ contains
     !+ad_call  prad_ipdg89
     !+ad_call  psync_albajar_fidone
     !+ad_call  imprad
+    !+ad_call  report_error
     !+ad_hist  14/05/14 PJK Redefined routine as a caller to the actual calculations
     !+ad_hist  20/05/14 PJK Clarified core radiation vs bremsstrahlung
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -4061,10 +4038,7 @@ contains
        call imprad(pbrempv, plinepv, pimpcore, pimptot)
        pedgeradpv = pimptot - pimpcore
     else
-       write(*,*) 'Error in routine RADPWR:'
-       write(*,*) 'Illegal value for imprad_model = ',imprad_model
-       write(*,*) 'PROCESS stopping.'
-       stop
+       idiags(1) = imprad_model ; call report_error(82)
     end if
 
     !  Synchrotron radiation power/volume; assumed to be from core only
@@ -4349,11 +4323,12 @@ contains
     !+ad_desc  The expression is a good fit for alphan = 0.5, alphat = 1.0,
     !+ad_desc  alphaj = 1.5, aspect = 2.5 -- 4.
     !+ad_prob  Therefore, no account is taken of pedestal profiles.
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  25/07/11 PJK Correction to facoh coding
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  11/04/13 PJK Removed ires argument
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
@@ -4394,9 +4369,8 @@ contains
     !  (possible if aspect ratio is too high)
 
     if (rplas <= 0.0D0) then
-       write(*,*) 'Warning in routine POHM:'
-       write(*,*) 'Plasma resistance, rplas = ',rplas
-       write(*,*) 'PROCESS continuing...'
+       fdiags(1) = rplas ; fdiags(2) = aspect
+       call report_error(83)
     end if
 
     !  Ohmic heating power per unit volume
@@ -5016,8 +4990,10 @@ contains
       !+ad_prob  None
       !+ad_call  fsv
       !+ad_call  quanc8
+      !+ad_call  report_error
       !+ad_hist  22/06/94 PJK Upgrade to higher standard of coding
       !+ad_hist  10/11/11 PJK Initial F90 version
+      !+ad_hist  26/06/14 PJK Added error handling
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
@@ -5047,10 +5023,7 @@ contains
       else if (iabm == 3) then
          abm = atmt
       else
-         write(*,*) 'Error in routine SGVHOT:'
-         write(*,*) 'Illegal value for IABM, = ',iabm
-         write(*,*) 'PROCESS stopping.'
-         stop
+         idiags(1) = iabm ; call report_error(84)
       end if
 
       !  Initialise global variables
@@ -5211,6 +5184,7 @@ contains
     !+ad_call  ovarre
     !+ad_call  ovarrf
     !+ad_call  ovarst
+    !+ad_call  report_error
     !+ad_hist  17/09/97 PJK Upgrade to higher standard of coding. Added
     !+ad_hisc               Greenwald density limit
     !+ad_hist  17/11/97 PJK Added additional beta diagnostics
@@ -5254,6 +5228,7 @@ contains
     !+ad_hist  05/06/14 PJK Rearranged power balance output
     !+ad_hist  16/06/14 PJK Removed duplicate outputs
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5285,10 +5260,7 @@ contains
        case (2)
           call ocmmnt(outfile,'Plasma configuration = double null divertor')
        case default
-          write(outfile,*) 'Error in routine OUTPLAS:'
-          write(outfile,*) 'Illegal value of idivrt, = ',idivrt
-          write(outfile,*) 'PROCESS stopping.'
-          stop
+          idiags(1) = idivrt ; call report_error(85)
        end select
     else
        call ocmmnt(outfile,'Plasma configuration = stellarator')
@@ -5312,10 +5284,7 @@ contains
           call ovarrf(outfile,'Elongation, X-point (Zohm scaling)', &
                '(kappa)',kappa)
        case default
-          write(outfile,*) 'Error in routine OUTPLAS:'
-          write(outfile,*) 'Illegal value of ishape, = ',ishape
-          write(outfile,*) 'PROCESS stopping.'
-          stop
+          idiags(1) = ishape ; call report_error(86)
        end select
 
        call ovarrf(outfile,'Elongation, 95% surface (kappa/1.12)', &
@@ -5330,10 +5299,7 @@ contains
           call ovarrf(outfile,'Triangularity, X-point (TART scaling)', &
                '(triang)',triang)
        case default
-          write(outfile,*) 'Error in routine OUTPLAS:'
-          write(outfile,*) 'Illegal value of ishape, = ',ishape
-          write(outfile,*) 'PROCESS stopping.'
-          stop
+          idiags(1) = ishape ; call report_error(86)
        end select
 
        call ovarrf(outfile,'Triangularity, 95% surface','(triang95)',triang95)
@@ -5636,6 +5602,7 @@ contains
     call ovarre(outfile,'Power to divertor via charged particles (MW)','(pdivt)',pdivt)
 
     if (pdivt <= 0.001D0) then
+       fdiags(1) = pdivt ; call report_error(87)
        call oblnkl(outfile)
        call ocmmnt(outfile,'  BEWARE: possible problem with high radiation power')
        call ocmmnt(outfile,'          forcing pdivt to an unrealistic value;')

@@ -23,6 +23,7 @@ subroutine constraints(m,cc,ieqn)
   !+ad_call  constraint_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  ife_variables
@@ -31,6 +32,7 @@ subroutine constraints(m,cc,ieqn)
   !+ad_call  physics_variables
   !+ad_call  pf_power_variables
   !+ad_call  pulse_variables
+  !+ad_call  report_error
   !+ad_call  rfp_variables
   !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
@@ -88,6 +90,7 @@ subroutine constraints(m,cc,ieqn)
   !+ad_hist  19/05/14 PJK Added new eqn 17; modified eqns 2,4 to use
   !+ad_hisc               pcorerad instead of prad; added iradloss
   !+ad_hist  22/05/14 PJK Name changes to power quantities
+  !+ad_hist  26/06/14 PJK Added error handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -98,6 +101,7 @@ subroutine constraints(m,cc,ieqn)
   use constraint_variables
   use current_drive_variables
   use divertor_variables
+  use error_handling
   use fwbs_variables
   use heat_transport_variables
   use ife_variables
@@ -223,10 +227,7 @@ subroutine constraints(m,cc,ieqn)
         if (ignite == 0) then
            cc(i) = 1.0D0 - dnbeam2/dnbeam
         else
-           write(*,*) 'Error in routine CONSTRAINTS:'
-           write(*,*) 'Do not use constraint 7 if IGNITE=1.'
-           write(*,*) 'PROCESS stopping.'
-           stop
+           call report_error(1)
         end if
 
      case (8)  !  Equation for neutron wall load upper limit
@@ -265,10 +266,7 @@ subroutine constraints(m,cc,ieqn)
      case (15)  !  Equation for burn time consistency
         !  This equation is redundant... thought to be un-necessary
 
-        write(*,*) 'Constraint equation 15 is redundant -'
-        write(*,*) 'please do not use it.'
-        write(*,*) 'PROCESS stopping'
-        stop
+        call report_error(2)
 
      case (16)  !  Equation for net electric power lower limit
 
@@ -304,10 +302,7 @@ subroutine constraints(m,cc,ieqn)
      case (23)  !  Equation for allowable TF Coil current density
         !  This equation is redundant... pre-1992!
 
-        write(*,*) 'Constraint equation 23 is redundant -'
-        write(*,*) 'please use eqns.33 and/or 35 instead.'
-        write(*,*) 'PROCESS stopping'
-        stop
+        call report_error(3)
 
      case (24)  !  Equation for beta upper limit
 
@@ -325,18 +320,13 @@ subroutine constraints(m,cc,ieqn)
 
            cc(i) = 1.0D0 - fbetatry * betalim/(beta-betaft-betanb)
 
-        else if (iculbl == 2) then
+        else  !  iculbl == 2
 
            !  Beta limit applies to thermal + neutral beam
            !  components of the total beta, i.e. excludes alphas
 
            cc(i) = 1.0D0 - fbetatry * betalim/(beta-betaft)
 
-        else
-           write(*,*) 'Error in routine CONSTRAINTS:'
-           write(*,*) 'Illegal value for ICULBL, = ',iculbl
-           write(*,*) 'PROCESS stopping.'
-           stop
         end if
 
      case (25)  !  Equation for peak toroidal field upper limit
@@ -358,10 +348,7 @@ subroutine constraints(m,cc,ieqn)
         if (ignite == 0) then
            cc(i) = 1.0D0 - fqval * bigq/bigqmin
         else
-           write(*,*) 'Error in routine CONSTRAINTS:'
-           write(*,*) 'Do not use constraint 28 if IGNITE=1.'
-           write(*,*) 'PROCESS stopping.'
-           stop
+           call report_error(4)
         end if
 
      case (29)  !  Equation for inboard major radius
@@ -409,14 +396,8 @@ subroutine constraints(m,cc,ieqn)
 
      case (39)  !  Equation for first wall temperature upper limit
 
-        if (tpeak == 0.0D0) then
-           write(*,*) 'Error in routine CONSTRAINTS:'
-           write(*,*) 'tpeak = 0, indicating that the pulsed'
-           write(*,*) 'reactor option is not turned on.'
-           write(*,*) 'Do not use constraint 39 if lpulse=0.'
-           write(*,*) 'PROCESS stopping.'
-           stop
-        end if
+        if (tpeak == 0.0D0) call report_error(5)
+
         cc(i) = 1.0D0 - ftpeak * tpkmax/tpeak
 
      case (40)  !  Equation for auxiliary power lower limit
@@ -429,57 +410,34 @@ subroutine constraints(m,cc,ieqn)
 
      case (42)  !  Equation for cycle time lower limit
 
-        if (tcycmn == 0.0D0) then
-           write(*,*) 'Error in routine CONSTRAINTS:'
-           write(*,*) 'tcycmn = 0, indicating that the pulsed'
-           write(*,*) 'reactor option is not turned on.'
-           write(*,*) 'Do not use constraint 42 if lpulse=0.'
-           write(*,*) 'PROCESS stopping.'
-           stop
-        end if
+        if (tcycmn == 0.0D0) call report_error(6)
+
         tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
         cc(i) = 1.0D0 - ftcycl * tcycle/tcycmn
 
      case (43)  !  Equation for average centrepost temperature
                 !  This is a consistency equation (TART)
 
-        if (itart == 0) then
-           write(*,*) 'Error in routine CONSTRAINTS:'
-           write(*,*) 'Do not use constraint 43 if itart=0.'
-           write(*,*) 'PROCESS stopping.'
-           stop
-        end if
+        if (itart == 0) call report_error(7)
+
         cc(i) = 1.0D0 - tcpav/tcpav2
 
      case (44)  !  Equation for centrepost temperature upper limit (TART)
 
-        if (itart == 0) then
-           write(*,*) 'Error in routine CONSTRAINTS:'
-           write(*,*) 'Do not use constraint 44 if itart=0.'
-           write(*,*) 'PROCESS stopping.'
-           stop
-        end if
+        if (itart == 0) call report_error(8)
+
         cc(i) = 1.0D0 - fptemp * ptempalw / tcpmax
 
      case (45)  !  Equation for edge safety factor lower limit (TART)
 
-        if (itart == 0) then
-           write(*,*) 'Error in routine CONSTRAINTS:'
-           write(*,*) 'Do not use constraint 45 if itart=0.'
-           write(*,*) 'PROCESS stopping.'
-           stop
-        end if
+        if (itart == 0) call report_error(9)
+
         cc(i) = 1.0D0 - fq * q/qlim
 
      case (46)  !  Equation for Ip/Irod upper limit (TART)
                 !  This is a q-edge type limit for certain aspect ratios
 
-        if (itart == 0) then
-           write(*,*) 'Error in routine CONSTRAINTS:'
-           write(*,*) 'Do not use constraint 46 if itart=0.'
-           write(*,*) 'PROCESS stopping.'
-           stop
-        end if
+        if (itart == 0) call report_error(10)
 
         !  Maximum ratio of plasma current to centrepost current
         cratmx = 1.0D0 + 4.91D0*(eps-0.62D0)
@@ -488,12 +446,8 @@ subroutine constraints(m,cc,ieqn)
      case (47)  !  Equation for TF coil toroidal thickness upper limit
                 !  Relevant only to reversed field pinch devices
 
-        if (irfp == 0) then
-           write(*,*) 'Error in routine CONSTRAINTS:'
-           write(*,*) 'Do not use constraint 47 if irfp=0.'
-           write(*,*) 'PROCESS stopping.'
-           stop
-        end if
+        if (irfp == 0) call report_error(11)
+
         cc(i) = 1.0D0 - frfptf * (2.0D0*(rbmax-tfcth)*tan(pi/tfno))/tftort
 
      case (48)  !  Equation for poloidal beta upper limit
@@ -507,12 +461,8 @@ subroutine constraints(m,cc,ieqn)
      case (50)  !  Equation for IFE repetition rate upper limit
                 !  Relevant only to inertial fusion energy devices
 
-        if (ife == 0) then
-           write(*,*) 'Error in routine CONSTRAINTS:'
-           write(*,*) 'Do not use constraint 50 if ife=0.'
-           write(*,*) 'PROCESS stopping.'
-           stop
-        end if
+        if (ife == 0) call report_error(12)
+
         cc(i) = 1.0D0 - frrmax * rrmax/reprat
 
      case (51)  !  Equation to enforce startup flux = available startup flux
@@ -550,20 +500,14 @@ subroutine constraints(m,cc,ieqn)
 
      case default
 
-        write(*,*) 'Error in routine CONSTRAINTS:'
-        write(*,*) 'No such equation number as ',icc(i)
-        write(*,*) 'PROCESS stopping.'
-        stop
+        idiags(1) = icc(i)
+        call report_error(13)
 
      end select
 
      !  Crude method of catching NaN errors
 
      if ((abs(cc(i)) > 9.99D99).or.(cc(i) /= cc(i))) then
-        write(*,*) 'Error in routine CONSTRAINTS:'
-        write(*,*) 'NaN/infty error for constraint equation ',icc(i)
-        write(*,*) 'Value is ',cc(i)
-        write(*,*) ' '
 
         !  Add debugging lines as appropriate...
 
@@ -592,9 +536,9 @@ subroutine constraints(m,cc,ieqn)
  
         end select
 
-        write(*,*) ' '
-        write(*,*) 'PROCESS stopping.'
-        stop
+        idiags(1) = icc(i) ; fdiags(1) = cc(i)
+        call report_error(14)
+
      end if
 
   end do

@@ -1,4 +1,3 @@
-!  $Id:: pfcoil.f90 259 2014-05-01 12:05:37Z pknight                    $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module pfcoil_module
@@ -26,6 +25,7 @@ module pfcoil_module
   !+ad_prob  None
   !+ad_call  build_variables
   !+ad_call  constants
+  !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  maths_library
   !+ad_call  pfcoil_variables
@@ -38,6 +38,7 @@ module pfcoil_module
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  31/10/12 PJK Moved local common variables into module header
   !+ad_hist  15/04/13 PJK Added fwbs_variables
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -45,6 +46,7 @@ module pfcoil_module
 
   use build_variables
   use constants
+  use error_handling
   use fwbs_variables
   use maths_library
   use pfcoil_variables
@@ -92,6 +94,7 @@ contains
     !+ad_call  ohcalc
     !+ad_call  peakb
     !+ad_call  pfjalw
+    !+ad_call  report_error
     !+ad_call  waveform
     !+ad_hist  01/02/96 PJK Initial version
     !+ad_hist  09/05/12 PJK Initial F90 version
@@ -110,6 +113,7 @@ contains
     !+ad_hist  23/04/14 PJK Added bvert assignment
     !+ad_hist  01/05/14 PJK Removed redundant xctfc(5) terms
     !+ad_hist  24/06/14 PJK Removed refs to bcylth
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -153,11 +157,8 @@ contains
     !  and the number of PF circuits including the plasma (ncirt)
 
     if (ngrp > ngrpmx) then
-       write(*,*) 'Error in routine PFCOIL:'
-       write(*,*) 'ngrp is larger than ngrpmx = ',ngrpmx
-       write(*,*) 'Reduce the value of ngrp.'
-       write(*,*) 'PROCESS stopping.'
-       stop
+       idiags(1) = ngrp ; idiags(2) = ngrpmx
+       call report_error(64)
     end if
 
     !  Total the number of PF coils in all groups, and check that none
@@ -166,11 +167,8 @@ contains
     nohc = 0
     do i = 1,ngrp
        if (ncls(i) > nclsmx) then
-          write(*,*) 'Error in routine PFCOIL:'
-          write(*,*) 'PF coil group ',i,' contains ',ncls(i),' coils.'
-          write(*,*) 'Maximum number allowed is ',nclsmx
-          write(*,*) 'PROCESS stopping.'
-          stop
+          idiags(1) = i ; idiags(2) = ncls(i) ; idiags(3) = nclsmx
+          call report_error(65)
        end if
        nohc = nohc + ncls(i)
     end do
@@ -221,11 +219,8 @@ contains
        curstot = -hmax*ohhghf*ohcth*2.0D0*coheof
 
        if (nfxf > nfixmx) then
-          write(*,*) 'Error in routine PFCOIL:'
-          write(*,*) 'nfxf is larger than nfixmx. nfxf = ',nfxf
-          write(*,*) 'Reduce the value of nfxfh.'
-          write(*,*) 'PROCESS stopping.'
-          stop
+          idiags(1) = nfxf ; idiags(2) = nfixmx
+          call report_error(66)
        end if
 
        !  Symmetric up/down OH coil : Find (R,Z) and current of each filament
@@ -296,10 +291,8 @@ contains
           end do
 
        else
-          write(*,*) 'Error in routine PFCOIL :'
-          write(*,*) 'Illegal value of IPFLOC(',j,'), = ',ipfloc(j)
-          write(*,*) 'PROCESS stopping.'
-          stop
+          idiags(1) = j ; idiags(2) = ipfloc(j)
+          call report_error(67)
        end if
 
     end do
@@ -310,10 +303,8 @@ contains
 
        npts = 32  !  Number of test points across plasma midplane
        if (npts > nptsmx) then
-          write(*,*) 'Error in routine PFCOIL:'
-          write(*,*) 'npts is larger than nptsmx = ',nptsmx
-          write(*,*) 'PROCESS stopping.'
-          stop
+          idiags(1) = npts ; idiags(2) = nptsmx
+          call report_error(68)
        end if
 
        !  Position and B-field at each test point
@@ -348,11 +339,7 @@ contains
              !  PF coil is stacked on top of the OH coil
 
              ccls(i) = 0.0D0
-
-             write(*,*) 'Error in routine PFCOIL :'
-             write(*,*) 'IPFLOC(',i,') should not be one if ITART=1'
-             write(*,*) 'PROCESS stopping.'
-             stop
+             idiags(1) = i ; call report_error(69)
 
           else if (ipfloc(i) == 2) then
 
@@ -367,10 +354,8 @@ contains
              ccls(i) = -0.4D0 * plascur
 
           else
-             write(*,*) 'Error in routine PFCOIL :'
-             write(*,*) 'Illegal value of IPFLOC(',i,'), = ',ipfloc(i)
-             write(*,*) 'PROCESS stopping.'
-             stop
+             idiags(1) = i ; idiags(2) = ipfloc(i)
+             call report_error(70)
           end if
 
        end do
@@ -429,11 +414,10 @@ contains
              pcls0(ngrp0) = i
 	    
           else
-             write(*,*) 'Error in routine PFCOIL :'
-             write(*,*) 'Illegal value of IPFLOC(',i,'), = ',ipfloc(i)
-             write(*,*) 'PROCESS stopping.'
-             stop
+             idiags(1) = i ; idiags(2) = ipfloc(i)
+             call report_error(70)
           end if
+
        end do
 
        do ccount = 1, ngrp0
@@ -508,8 +492,7 @@ contains
 
     else
        dics = 0.0D0
-       write(*,*) 'In routine PFCOIL'
-       write(*,*) 'OH coil not present -- check V-s calcs!'
+       call report_error(71)
     end if
       
     fcohbof = ((-curstot * fcohbop) + dics)/curstot
@@ -1522,9 +1505,11 @@ contains
     !+ad_desc  and the plasma.
     !+ad_prob  None
     !+ad_call  bfield
+    !+ad_call  report_error
     !+ad_hist  09/05/12 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  26/11/13 PJK Removed obsolete argument to bfield
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1558,11 +1543,7 @@ contains
        else if (abs(curpfb(i)-ric(i)) < 1.0D-12) then
           it = 5
        else
-          write(*,*) 'Error in routine PEAKB :'
-          write(*,*) 'Illegal value of it, = ',it
-          write(*,*) 'Possible rounding error - change program logic...'
-          write(*,*) 'PROCESS stopping.'
-          stop
+          idiags(1) = it ; call report_error(72)
        end if
 
        if (iohcl == 0) then
@@ -1968,6 +1949,7 @@ contains
     !+ad_call  oblnkl
     !+ad_call  ocmmnt
     !+ad_call  oheadr
+    !+ad_call  report_error
     !+ad_hist  01/08/11 PJK Initial F90 version
     !+ad_hist  20/09/11 PJK Removed dble calls
     !+ad_hist  24/09/12 PJK Swapped argument order
@@ -1981,6 +1963,7 @@ contains
     !+ad_hist  25/02/14 PJK Raised nohmax, and added warning message
     !+ad_hisc               if noh is too large
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2026,13 +2009,9 @@ contains
     noh = int( ceiling( 2.0D0*zh(nohc) / (rb(nohc)-ra(nohc)) ) )
 
     if (noh > nohmax) then
-       write(*,*) 'Warning in routine INDUCT:'
-       write(*,*) 'Maximum no. of segments for the OH coil is not sufficient.'
-       write(*,*) 'This will cause a square root of a negative number;'
-       write(*,*) 'Please increase the lower bound for ohcth.'
-       write(*,*) 'OH coil thickness (m) (iteration variable 16) (ohcth)=',ohcth
-       write(*,*) 'Number of segments required (noh)=',noh
-       write(*,*) 'Maximum no. of segments permitted=',nohmax 
+       idiags(1) = noh ; idiags(2) = nohmax
+       fdiags(1) = ohcth
+       call report_error(73)
     end if
 
     noh = min(noh,nohmax)
@@ -2074,11 +2053,8 @@ contains
        if (ohcth >= delzoh) then
           deltar = sqrt((ohcth**2 - delzoh**2)/12.0D0)
        else
-          write(*,*) 'Error in routine INDUCT:'
-          write(*,*) 'Negative square root imminent - '
-          write(*,*) 'Please raise ohcth or its upper limit'
-          write(*,*) 'PROCESS stopping.'
-          stop
+          fdiags(1) = ohcth ; fdiags(2) = delzoh
+          call report_error(74)
        end if
        do i = 1,noh
           rp = roh(i)

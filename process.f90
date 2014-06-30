@@ -30,6 +30,7 @@ program process
   !+ad_desc  development as part of a number of EFDA-sponsored collaborations.
   !+ad_prob  None
   !+ad_call  numerics
+  !+ad_call  error_handling
   !+ad_call  process_input
   !+ad_call  process_output
   !+ad_call  scan_module
@@ -38,6 +39,7 @@ program process
   !+ad_call  init
   !+ad_call  oheadr
   !+ad_call  scan
+  !+ad_call  show_errors
   !+ad_hist  03/10/96 PJK Upgrade of main program unit
   !+ad_hist  08/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
@@ -54,6 +56,7 @@ program process
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use error_handling
   use process_input
   use process_output
   use scan_module
@@ -85,6 +88,8 @@ program process
      call final(ifail)
   end if
 
+  call show_errors
+
   call oheadr(nout,'End of PROCESS Output')
   call oheadr(iotty,'End of PROCESS Output')
 
@@ -109,6 +114,7 @@ subroutine init
   !+ad_desc  the default values for the global variables, reads in data from
   !+ad_desc  the input file, and checks the run parameters for consistency.
   !+ad_prob  None
+  !+ad_call  error_handling
   !+ad_call  global_variables
   !+ad_call  impurity_radiation_module
   !+ad_call  numerics
@@ -117,6 +123,7 @@ subroutine init
   !+ad_call  check
   !+ad_call  codever
   !+ad_call  initial
+  !+ad_call  initialise_error_list
   !+ad_call  input
   !+ad_call  oblnkl
   !+ad_call  ocmmnt
@@ -129,11 +136,13 @@ subroutine init
   !+ad_hist  15/10/12 PJK Added global_variables module
   !+ad_hist  13/02/14 PJK Added mfile open statement
   !+ad_hist  13/05/14 PJK Added impurity radiation model initialisation
+  !+ad_hist  25/06/14 PJK Introduced call to initialise error handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use error_handling
   use global_variables
   use impurity_radiation_module
   use numerics
@@ -147,6 +156,10 @@ subroutine init
   !  Local variables
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !  Initialise error handling
+
+  call initialise_error_list
 
   !  Initialise the program variables
 
@@ -366,7 +379,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '302    Date  :: 2014-06-24'
+       '303    Date  :: 2014-06-30'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1577,3 +1590,5 @@ end subroutine output
 !          Blanket top/bottom thickness now always calculated rather than input
 ! GIT 301: Update mfile.py, plot_proc_func.py
 ! GIT 302: Corrected wallmw calculation to account for gaps in first wall
+! GIT 303: Preliminary modifications to fispact.f90 for its possible resurrection;
+!          Draft implementation of error handling module

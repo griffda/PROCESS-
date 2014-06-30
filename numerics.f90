@@ -52,6 +52,7 @@ module numerics
   !+ad_hist  19/05/14 PJK Relabelled lablcc(15)
   !+ad_hist  19/05/14 PJK Reassigned lablcc(17), lablxc(28: fradpwr)
   !+ad_hist  02/06/14 PJK New iteration variable 102 (fimpvar)
+  !+ad_hist  30/06/14 PJK Changed boundl(11), boundu(11)
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -662,7 +663,7 @@ module numerics
        0.001D0, &  !  8 
        0.001D0, &  !  9 
        0.100D0, &  !  10
-       1.000D6, &  !  11
+       1.00D-3, &  !  11
        1.000D5, &  !  12
        0.100D0, &  !  13
        0.001D0, &  !  14
@@ -769,7 +770,7 @@ module numerics
        1.000D0, &  !  8 
        1.000D0, &  !  9 
        3.000D0, &  !  10
-       1.000D9, &  !  11
+       1.000D3, &  !  11
        1.500D8, &  !  12
        5.000D0, &  !  13
        1.000D0, &  !  14

@@ -1,12 +1,11 @@
-!  $Id:: fispact.f90 258 2014-04-24 12:28:55Z pknight                   $
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!  Module         : $Id: fispact.f90 258 2014-04-24 12:28:55Z pknight $
-!  Module name    : $RCSfile: fispact.f,v $
-!  Version no.    : $Revision: 1.9 $
-!  Creation date  : $Date: 1997/11/19 09:29:42 $
-!  Creation time  : 
-!  SCCS file      :
-!  %P%
+!
+!  If the contents of this file are to be used (by commenting out the RETURN
+!  statement near line 99) it is necessary to compile the file using
+!    ifort -c -convert big_endian fispact.f90
+!  before compiling the rest of the code.
+!  This needs to be done until the files in subdirectory fispact/ are
+!  rewritten as formatted rather than binary files.
+!
 !----------------------------------------------------------------------
       SUBROUTINE FISPAC(IPRINT)
 !CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -39,6 +38,7 @@
 !  10/10/12 PJK Hardwired IVMS to zero
 !  24/04/14 PJK Ensured calculation proceeds whether or not iprint==1
 !  22/05/14 PJK Name changes to power quantities
+!  25/06/14 PJK Added use process_output
 !
 !--Arguments
 !  IPRINT : (INPUT)  Flag to turn on/off (1/0) output to file
@@ -53,6 +53,7 @@
         use fispact_variables
         use fwbs_variables
         use physics_variables
+        use process_output
         use pulse_variables
 
 !  Arguments
@@ -91,7 +92,7 @@
       INTEGER iwtype,j
 
 !  External routines
-      EXTERNAL BBIE,ELCOMP,FISPRO,OCMMNT,OHEADR,OSUBHD,OVARRE
+      EXTERNAL BBIE,ELCOMP,FISPRO
 
 !--End of preamble--CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 

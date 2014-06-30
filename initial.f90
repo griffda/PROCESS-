@@ -190,6 +190,7 @@ subroutine check
   !+ad_call  build_variables
   !+ad_call  buildings_variables
   !+ad_call  current_drive_variables
+  !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  global_variables
   !+ad_call  heat_transport_variables
@@ -201,6 +202,7 @@ subroutine check
   !+ad_call  pulse_variables
   !+ad_call  rfp_variables
   !+ad_call  tfcoil_variables
+  !+ad_call  report_error
   !+ad_hist  08/10/96 PJK Initial upgraded version
   !+ad_hist  23/01/97 PJK Moved resetting of trithtmw from POWER
   !+ad_hist  14/03/97 PJK Added coding relevant to IFE device
@@ -229,6 +231,7 @@ subroutine check
   !+ad_hist  13/05/14 PJK Added impurity fraction initialisations
   !+ad_hist  02/06/14 PJK Added fimpvar usage
   !+ad_hist  24/06/14 PJK Removed refs to bcylth
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -237,6 +240,7 @@ subroutine check
   use build_variables
   use buildings_variables
   use current_drive_variables
+  use error_handling
   use fwbs_variables
   use global_variables
   use heat_transport_variables
@@ -261,10 +265,8 @@ subroutine check
   !  Fuel ion fractions must add up to 1.0
 
   if (abs(1.0D0 - fdeut - ftrit - fhe3) > 1.0D-6) then
-     write(nout,*) 'Fuel ion fractions do not sum to 1.0'
-     write(nout,*) 'Check fdeut, ftrit, fhe3 values.'
-     write(nout,*) 'PROCESS stopping.'
-     stop
+     fdiags(1) = fdeut; fdiags(2) = ftrit ; fdiags(3) = fhe3
+     call report_error(36)
   end if
 
   if (ftrit < 1.0D-3) then  !  tritium fraction is negligible
@@ -299,11 +301,7 @@ subroutine check
      ddwi   = 0.0D0
 
      if (icurr /= 2) then
-        write(iotty,*) 'Warning in routine CHECK:'
-        write(iotty,*) 'Normal current scaling for TARTs, ICURR=2,'
-        write(iotty,*) 'is not being used.'
-        write(iotty,*) 'PROCESS continuing...'
-        write(iotty,*) ' '
+        idiags(1) = icurr ; call report_error(37)
      end if
      iohcl  = 0
      ipfloc(1) = 2
@@ -311,26 +309,12 @@ subroutine check
      ipfloc(3) = 3
      itfsup = 0
 
-     if (ibss == 1) then
-        write(nout,*) 'ibss=1 is not a valid option for a TART device'
-        write(nout,*) 'PROCESS stopping.'
-        stop
-     end if
-
-     if (snull == 1) then
-        write(nout,*) 'snull=1 is not a valid option for a TART device.'
-        write(nout,*) 'PROCESS stopping.'
-        stop
-     end if
+     if (ibss == 1) call report_error(38)
+     if (snull == 1) call report_error(39)
 
   else
 
-     if (icurr == 2) then
-        write(nout,*) &
-             'icurr=2 is not a valid option for a non-TART device'
-        write(nout,*) 'PROCESS stopping.'
-        stop
-     end if
+     if (icurr == 2) call report_error(40)
 
      if (snull == 0) then
         idivrt = 2
@@ -343,10 +327,8 @@ subroutine check
      j = 0 ; k = 0
      do i = 1, ngrp
         if ((ipfloc(i) /= 2).and.(ncls(i) /= 2)) then
-           write(nout,*) &
-                'ncls(i) .ne. 2 is not a valid option except for (ipfloc = 2)'
-           write(nout,*) 'PROCESS stopping.'
-           stop
+           idiags(1) = i ; idiags(2) = ncls(i)
+           call report_error(41)
         end if
 
         if (ipfloc(i) == 2) then
@@ -355,27 +337,9 @@ subroutine check
         end if
      end do
 
-     if (k == 1) then
-        write(nout,*) &
-             'Only 1 divertor coil (ipfloc = 2) is not a valid configuration.'
-        write(nout,*) 'PROCESS stopping.'
-        stop
-     end if
-
-     if (k > 2) then
-        write(nout,*) &
-             'More than 2 divertor coils (ipfloc = 2) is not a valid configuration.'
-        write(nout,*) 'PROCESS stopping.'
-        stop
-     end if
-
-     if ((snull == 1).and.(j < 2)) then
-        write(nout,*) &
-             'Use 2 individual divertor coils (ipfloc = 2, 2; ncls = 1, 1)'
-        write(nout,*) 'for single null (snull = 1).'
-        write(nout,*) 'PROCESS stopping.'
-        stop
-     end if
+     if (k == 1) call report_error(42)
+     if (k > 2) call report_error(43)
+     if ((snull == 1).and.(j < 2)) call report_error(44)
 
   end if
 
@@ -383,11 +347,7 @@ subroutine check
 
   if (irfp == 1) then
 
-     if (itart == 1) then
-        write(nout,*) 'itart=1 is not a valid option for the RFP model'
-        write(nout,*) 'PROCESS stopping.'
-        stop
-     end if
+     if (itart == 1) call report_error(45)
 
      ddwi     = 0.0D0
      kappa    = 1.0D0

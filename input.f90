@@ -27,7 +27,7 @@ module process_input
   !+ad_cont  parse_real_array
   !+ad_cont  parse_real_variable
   !+ad_cont  parse_string_variable
-  !+ad_cont  report_error
+  !+ad_cont  report_input_error
   !+ad_cont  string_to_int
   !+ad_cont  string_to_real
   !+ad_cont  upper_case
@@ -84,6 +84,7 @@ module process_input
   !+ad_call  cost_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  ife_variables
@@ -126,6 +127,7 @@ module process_input
   !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_hist  14/01/13 PJK Changed (maximum) line length from 200 to maxlen
   !+ad_hist  13/05/14 PJK Added impurity_radiation_module
+  !+ad_hist  30/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -138,6 +140,7 @@ module process_input
   use cost_variables
   use current_drive_variables
   use divertor_variables
+  use error_handling
   use fwbs_variables
   use heat_transport_variables
   use ife_variables
@@ -318,7 +321,7 @@ contains
     !+ad_call  parse_real_array
     !+ad_call  parse_real_variable
     !+ad_call  parse_string_variable
-    !+ad_call  report_error
+    !+ad_call  report_input_error
     !+ad_hist  05/01/04 PJK Initial F90 version (CENTORI)
     !+ad_hist  03/10/12 PJK CENTORI version converted for PROCESS
     !+ad_hist  10/10/12 PJK Removed IVMS
@@ -453,7 +456,7 @@ contains
           error_code = lineno
           error_routine = 'PARSE_INPUT_FILE'
           error_message = 'Error whilst reading variable name'
-          call report_error
+          call report_input_error
        end if
 
        !  Read the associated data
@@ -2452,7 +2455,7 @@ contains
           error_routine = 'PARSE_INPUT_FILE'
           error_message = &
                'Unknown variable in input file: '//varnam(1:varlen)
-          call report_error
+          call report_input_error
 
        end select variable
 
@@ -2464,7 +2467,7 @@ contains
           error_routine = 'PARSE_INPUT_FILE'
           error_message = &
                'Obsolete variable specified - see output file for details'
-          call report_error
+          call report_input_error
        end if
 
        !  If we have just read in an array, a different loop-back is needed
@@ -2499,7 +2502,7 @@ contains
     !+ad_prob  None
     !+ad_call  get_value_real
     !+ad_call  check_range_real
-    !+ad_call  report_error
+    !+ad_call  report_input_error
     !+ad_hist  13/04/11 PJK Initial version
     !+ad_stat  Okay
     !+ad_docs  None
@@ -2527,7 +2530,7 @@ contains
        error_code = lineno
        error_routine = 'PARSE_REAL_VARIABLE'
        error_message = 'Unexpected subscript found'
-       call report_error
+       call report_input_error
     end if
 
     !  Obtain the new value for the variable
@@ -2538,7 +2541,7 @@ contains
        error_code = icode
        error_routine = 'PARSE_REAL_VARIABLE'
        error_message = 'Error whilst reading input file'
-       call report_error
+       call report_input_error
     end if
 
     !  Check variable lies within range
@@ -2573,7 +2576,7 @@ contains
     !+ad_prob  None
     !+ad_call  get_value_int
     !+ad_call  check_range_int
-    !+ad_call  report_error
+    !+ad_call  report_input_error
     !+ad_hist  13/04/11 PJK Initial version
     !+ad_stat  Okay
     !+ad_docs  None
@@ -2601,7 +2604,7 @@ contains
        error_code = lineno
        error_routine = 'PARSE_INT_VARIABLE'
        error_message = 'Unexpected subscript found'
-       call report_error
+       call report_input_error
     end if
 
     !  Obtain the new value for the variable
@@ -2612,7 +2615,7 @@ contains
        error_code = icode
        error_routine = 'PARSE_INT_VARIABLE'
        error_message = 'Error whilst reading input file'
-       call report_error
+       call report_input_error
     end if
 
     !  Check variable lies within range
@@ -2642,7 +2645,7 @@ contains
     !+ad_desc  for a string variable, extracting the value from the line.
     !+ad_prob  None
     !+ad_call  get_substring
-    !+ad_call  report_error
+    !+ad_call  report_input_error
     !+ad_hist  13/04/11 PJK Initial version
     !+ad_hist  14/01/13 PJK Used maxlen for character array size
     !+ad_stat  Okay
@@ -2670,7 +2673,7 @@ contains
        error_code = lineno
        error_routine = 'PARSE_STRING_VARIABLE'
        error_message = 'Unexpected subscript found'
-       call report_error
+       call report_input_error
     end if
 
     !  Obtain the new value for the variable
@@ -2681,7 +2684,7 @@ contains
        error_code = icode
        error_routine = 'PARSE_STRING_VARIABLE'
        error_message = 'Error whilst reading input file'
-       call report_error
+       call report_input_error
     end if
 
     if ((report_changes == 1).and.(trim(varval) /= trim(oldval))) then
@@ -2714,7 +2717,7 @@ contains
     !+ad_desc  <P>N.B. No array bounds or value range checking is performed.
     !+ad_prob  None
     !+ad_call  get_value_real
-    !+ad_call  report_error
+    !+ad_call  report_input_error
     !+ad_hist  03/10/12 PJK Initial version
     !+ad_hist  25/09/13 PJK Slight output formatting change
     !+ad_stat  Okay
@@ -2749,7 +2752,7 @@ contains
           error_code = icode
           error_routine = 'PARSE_REAL_ARRAY'
           error_message = 'GET_VALUE_REAL returns with icode = '
-          call report_error
+          call report_input_error
        end if
 
        varval(isub1) = val
@@ -2807,7 +2810,7 @@ contains
     !+ad_desc  <P>N.B. No array bounds or value range checking is performed.
     !+ad_prob  None
     !+ad_call  get_value_int
-    !+ad_call  report_error
+    !+ad_call  report_input_error
     !+ad_hist  03/10/12 PJK Initial version
     !+ad_hist  25/06/13 PJK Modified format statement to help gfortran compilation
     !+ad_hist  25/09/13 PJK Slight output formatting change
@@ -2843,7 +2846,7 @@ contains
           error_code = icode
           error_routine = 'PARSE_INT_ARRAY'
           error_message = 'GET_VALUE_INT returns with icode = '
-          call report_error
+          call report_input_error
        end if
 
        varval(isub1) = val
@@ -4082,7 +4085,7 @@ contains
     !+ad_desc  the range predetermined by the user, and reports an error
     !+ad_desc  and stops if it doesn't.
     !+ad_prob  None
-    !+ad_call  report_error
+    !+ad_call  report_input_error
     !+ad_hist  05/01/04 PJK Initial F90 version
     !+ad_hist  13/04/11 PJK Improved error handling
     !+ad_hist  04/10/12 PJK Allowed min_value = max_value
@@ -4107,7 +4110,7 @@ contains
        error_code = lineno
        error_routine = 'CHECK_RANGE_INT'
        error_message = 'Illegal min_value vs max_value'
-       call report_error
+       call report_input_error
     end if
 
     if ((varval < min_value).or.(varval > max_value)) then
@@ -4118,7 +4121,7 @@ contains
        error_code = lineno
        error_routine = 'CHECK_RANGE_INT'
        error_message = 'Variable range error'
-       call report_error
+       call report_input_error
     end if
 
   end subroutine check_range_int
@@ -4141,7 +4144,7 @@ contains
     !+ad_desc  the range predetermined by the user, and reports an error
     !+ad_desc  and stops if it doesn't.
     !+ad_prob  None
-    !+ad_call  report_error
+    !+ad_call  report_input_error
     !+ad_hist  05/01/04 PJK Initial F90 version
     !+ad_hist  13/04/11 PJK Improved error handling
     !+ad_hist  04/10/12 PJK Allowed min_value = max_value
@@ -4166,7 +4169,7 @@ contains
        error_code = lineno
        error_routine = 'CHECK_RANGE_REAL'
        error_message = 'Illegal min_value vs max_value'
-       call report_error
+       call report_input_error
     end if
 
     if ((varval < min_value).or.(varval > max_value)) then
@@ -4177,7 +4180,7 @@ contains
        error_code = lineno
        error_routine = 'CHECK_RANGE_REAL'
        error_message = 'Variable range error'
-       call report_error
+       call report_input_error
     end if
 
   end subroutine check_range_real
@@ -4246,9 +4249,9 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine report_error
+  subroutine report_input_error
 
-    !+ad_name  report_error
+    !+ad_name  report_input_error
     !+ad_summ  Reports an error and stops the program
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
@@ -4258,10 +4261,12 @@ contains
     !+ad_desc  it reports the value of <CODE>error_code</CODE> and the
     !+ad_desc  user-supplied error message, and stops the program.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  03/10/12 PJK Initial version
     !+ad_hist  16/09/13 PJK Added 'Please check...' line
     !+ad_hist  27/11/13 PJK Added more advice if the output file is unhelpful
+    !+ad_hist  26/06/14 PJK Changed routine name to prevent clash with
+    !+ad_hisc               global error handling routine
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -4286,9 +4291,10 @@ contains
     write(*,*) 'careful with the use of commas (best avoided altogether...)'
     write(*,*)
 
-    stop
+    idiags(1) = error_code
+    call report_error(130)
 
-  end subroutine report_error
+  end subroutine report_input_error
 
 end module process_input
 

@@ -23,6 +23,7 @@ module build_module
   !+ad_call  constants
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  physics_variables
@@ -32,6 +33,7 @@ module build_module
   !+ad_hist  30/10/12 PJK Initial version of module
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  09/05/13 PJK Added dshellarea, eshellarea
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -41,6 +43,7 @@ module build_module
   use constants
   use current_drive_variables
   use divertor_variables
+  use error_handling
   use fwbs_variables
   use heat_transport_variables
   use physics_variables
@@ -77,6 +80,7 @@ contains
     !+ad_call  osubhd
     !+ad_call  ovarin
     !+ad_call  ovarre
+    !+ad_call  report_error
     !+ad_call  ripple_amplitude
     !+ad_hist  26/07/11 PJK Initial F90 version
     !+ad_hist  24/09/12 PJK Swapped argument order
@@ -100,6 +104,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  24/06/14 PJK Removed bcylth;
     !+ad_hisc               blnktth now always calculated
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -232,11 +237,8 @@ contains
        fwarea = fwareaib + fwareaob
 
        if (fwareaob <= 0.0D0) then
-          write(*,*) 'Error in routine RADIALB:'
-          write(*,*) 'fhole+fdiv+fhcd is too high, = ',fhole+fdiv+fhcd
-          write(*,*) 'Reduce this sum to get a credible outboard wall area'
-          write(*,*) 'PROCESS stopping.'
-          stop
+          fdiags(1) = fhole ; fdiags(2) = fdiv ; fdiags(3) = fhcd
+          call report_error(61)
        end if
 
     end if
@@ -248,6 +250,7 @@ contains
     call oheadr(outfile,'Radial Build')
 
     if (ripflag == 1) then
+       call report_error(62)
        call ocmmnt(outfile, &
             '(Ripple result may not be accurate, as the fit was outside')
        call ocmmnt(outfile, &
@@ -773,6 +776,7 @@ contains
     !+ad_desc  <UL> <P><LI>rtanbeam : Beam tangency radius (m)
     !+ad_desc       <P><LI>rtanmax : Maximum possible tangency radius (m) </UL>
     !+ad_prob  None
+    !+ad_call  report_error
     !+ad_hist  27/07/11 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
@@ -782,6 +786,7 @@ contains
     !+ad_hist               tangency radius
     !+ad_hist  07/11/13 PJK Modified TF coil toroidal half-width calculation
     !+ad_hist  25/02/14 PJK Added error trap for narrow gaps
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code
     !
@@ -845,11 +850,8 @@ contains
 
     else  !  coil separation is too narrow for beam...
 
-       write(*,*) 'Warning in routine PORTSZ:'
-       write(*,*) 'Maximum beam tangency radius set to zero temporarily.'
-       write(*,*) 'If no solution is found, set realistic limits on tftort'      
-       write(*,*) '(TF coil toroidal thickness (m), iteration variable 77)'
-       write(*,*) 'or reduce beam width (beamwd)'
+       fdiags(1) = g ; fdiags(2) = c
+       call report_error(63)
 
        rtanmax = 0.0D0
 

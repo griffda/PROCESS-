@@ -15,6 +15,7 @@ module scan_module
   !+ad_call  cost_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  error_handling
   !+ad_call  global_variables
   !+ad_call  heat_transport_variables
   !+ad_call  impurity_radiation_module
@@ -41,6 +42,7 @@ module scan_module
   !+ad_hist  12/02/14 PJK Added scan variable 28: bt
   !+ad_hist  04/06/14 PJK Added scan variable 29: coreradius
   !+ad_hist  16/06/14 PJK Added scan variable 30: fimpvar
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -50,6 +52,7 @@ module scan_module
   use cost_variables
   use current_drive_variables
   use divertor_variables
+  use error_handling
   use global_variables
   use heat_transport_variables
   use impurity_radiation_module
@@ -132,6 +135,7 @@ contains
     !+ad_call  oblnkl
     !+ad_call  ovarin
     !+ad_call  ostars
+    !+ad_call  report_error
     !+ad_hist  03/10/96 PJK Initial upgraded version
     !+ad_hist  01/04/98 PJK Added POWFMAX to list of scanning variables
     !+ad_hist  23/06/98 PJK Added KAPPA and TRIANG to list of scanning vars
@@ -154,6 +158,7 @@ contains
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  04/06/14 PJK Added scan variable 29: coreradius
     !+ad_hist  16/06/14 PJK Added scan variable 30: fimpvar
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -188,11 +193,8 @@ contains
     end if
 
     if (isweep > ipnscns) then
-       write(*,*) 'Error in routine SCAN:'
-       write(*,*) 'Illegal value of isweep, = ',isweep
-       write(*,*) 'Maximum = ',ipnscns
-       write(*,*) 'PROCESS stopping.'
-       stop
+       idiags(1) = isweep ; idiags(2) = ipnscns
+       call report_error(94)
     end if
 
     !  Set up labels for plotting output
@@ -326,12 +328,7 @@ contains
           sigpfalw = sweep(iscan)
           vlabel = 'sigpfalw = ' ; xlabel = 'Allowable_PF_coil_stress'
        case (22)
-          if (iavail == 1) then
-             write(*,*) 'Error in routine SCAN:'
-             write(*,*) 'Do not scan CFACTR if IAVAIL=1'
-             write(*,*) 'PROCESS stopping.'
-             stop
-          end if
+          if (iavail == 1) call report_error(95)
           cfactr = sweep(iscan)
           vlabel = 'cfactr = ' ; xlabel = 'Plant_availability_factor'
        case (23)
@@ -361,10 +358,7 @@ contains
           vlabel = 'fimpvar = ' ; xlabel = 'Impurity_fraction'
 
        case default
-          write(*,*) 'Error in routine SCAN:'
-          write(*,*) 'Illegal scan variable number, nsweep = ',nsweep
-          write(*,*) 'PROCESS stopping.'
-          stop
+          idiags(1) = nsweep ; call report_error(96)
 
        end select
 

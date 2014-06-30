@@ -23,10 +23,11 @@ module kit_blanket_model
   !+ad_desc  based on the Helium-Cooled Pebble Bed (HCPB) blanket concept
   !+ad_desc  of the PPCS Model B design.
   !+ad_prob  None
-  !+ad_call  None
+  !+ad_call  error_handling
   !+ad_hist  06/06/13 PJK Initial release for comments
   !+ad_hist  14/11/13 PJK Global replacement of BU by BZ (Unit --> Zone)
   !+ad_hist  17/02/14 PJK Used np instead of 2 for array dimensions
+  !+ad_hist  30/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
   !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
@@ -34,6 +35,8 @@ module kit_blanket_model
   !+ad_docc  EFDA IDM reference EFDA_D_2LKMCT, v1.0 (Appendix 2)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use error_handling
 
   implicit none
 
@@ -775,8 +778,9 @@ contains
       !+ad_desc  ratio on the ceramic breeder in use and the lithium-6 enrichment of
       !+ad_desc  the breeder.
       !+ad_prob  None
-      !+ad_call  None
+      !+ad_call  report_error
       !+ad_hist  06/06/13 PJK Initial release
+      !+ad_hist  30/06/14 PJK Added error handling
       !+ad_stat  Okay
       !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
       !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
@@ -811,9 +815,7 @@ contains
          TBR_breed = 0.1640D0*log(e_Li) + 0.4325D0
 
       else
-         write(*,*) 'Unknown tritium breeder specified...'
-         write(*,*) 'Program stopping.'
-         stop
+         call report_error(128)
       end if
 
     end function TBR_breed

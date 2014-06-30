@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 290
+#  GIT Revision 303
 #
 #  P J Knight
 #
@@ -51,6 +51,7 @@ source = \
  costs.f90 \
  current_drive.f90 \
  divertor.f90 \
+ error_handling.f90 \
  evaluators.f90 \
  fispact.f90 \
  fwbs.f90 \
@@ -89,6 +90,7 @@ object = \
  costs.o \
  current_drive.o \
  divertor.o \
+ error_handling.o \
  evaluators.o \
  fispact.o \
  fwbs.o \
@@ -190,46 +192,47 @@ caller.o: availability.o buildings.o costs.o current_drive.o divertor.o fwbs.o \
   global_variables.o ife.o machine_build.o numerics.o output.o pfcoil.o physics.o \
   plant_power.o plasma_geometry.o pulse.o rfp.o sctfcoil.o startup.o structure.o \
   stellarator.o tfcoil.o vacuum.o
-constraint_equations.o: global_variables.o numerics.o
-costs.o: global_variables.o output.o
-current_drive.o: global_variables.o output.o plasma_profiles.o
-divertor.o: global_variables.o output.o
-evaluators.o: global_variables.o numerics.o
+constraint_equations.o: error_handling.o global_variables.o numerics.o
+costs.o: error_handling.o global_variables.o output.o
+current_drive.o: error_handling.o global_variables.o output.o plasma_profiles.o
+divertor.o: error_handling.o global_variables.o output.o
+error_handling.o: output.o
+evaluators.o: error_handling.o global_variables.o numerics.o
 fispact.o: global_variables.o
 fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o
 global_variables.o:
-ife.o: availability.o costs.o global_variables.o output.o
-impurity_radiation.o: global_variables.o
-initial.o: global_variables.o output.o scan.o stellarator.o
-input.o: global_variables.o numerics.o output.o scan.o
-iteration_variables.o: global_variables.o numerics.o
-machine_build.o: global_variables.o output.o
+ife.o: availability.o costs.o error_handling.o global_variables.o output.o
+impurity_radiation.o: error_handling.o global_variables.o
+initial.o: error_handling.o global_variables.o output.o scan.o stellarator.o
+input.o: error_handling.o global_variables.o numerics.o output.o scan.o
+iteration_variables.o: error_handling.o global_variables.o numerics.o
+machine_build.o: error_handling.o global_variables.o output.o
 maths_library.o: global_variables.o
 numerics.o: maths_library.o
 output.o:
-pfcoil.o: global_variables.o maths_library.o output.o
-physics.o: current_drive.o global_variables.o impurity_radiation.o maths_library.o \
-  output.o plasma_profiles.o
+pfcoil.o: error_handling.o global_variables.o maths_library.o output.o
+physics.o: current_drive.o error_handling.o global_variables.o impurity_radiation.o \
+  maths_library.o output.o plasma_profiles.o
 plant_power.o: fwbs.o global_variables.o output.o
 plasma_geometry.o: global_variables.o
 plasma_profiles.o: global_variables.o maths_library.o
-process.o: availability.o buildings.o costs.o current_drive.o divertor.o evaluators.o \
-  fwbs.o global_variables.o ife.o impurity_radiation.o input.o machine_build.o \
+process.o: availability.o buildings.o costs.o current_drive.o divertor.o error_handling.o \
+  evaluators.o fwbs.o global_variables.o ife.o impurity_radiation.o input.o machine_build.o \
   numerics.o output.o pfcoil.o physics.o plant_power.o pulse.o rfp.o scan.o \
   sctfcoil.o startup.o stellarator.o structure.o tfcoil.o vacuum.o
-pulse.o: global_variables.o maths_library.o output.o physics.o
+pulse.o: error_handling.o global_variables.o maths_library.o output.o physics.o
 rfp.o: current_drive.o input.o global_variables.o machine_build.o output.o pfcoil.o \
   plasma_profiles.o physics.o
 safety.o: global_variables.o output.o
-scan.o: global_variables.o numerics.o output.o
-sctfcoil.o: global_variables.o maths_library.o output.o
+scan.o: error_handling.o global_variables.o numerics.o output.o
+sctfcoil.o: error_handling.o global_variables.o maths_library.o output.o
 startup.o: global_variables.o maths_library.o output.o physics.o
-stellarator.o: availability.o buildings.o costs.o current_drive.o divertor.o fwbs.o \
-  global_variables.o maths_library.o numerics.o output.o physics.o plant_power.o \
+stellarator.o: availability.o buildings.o costs.o current_drive.o divertor.o error_handling.o \
+  fwbs.o global_variables.o maths_library.o numerics.o output.o physics.o plant_power.o \
   plasma_geometry.o plasma_profiles.o scan.o sctfcoil.o structure.o vacuum.o
 structure.o: global_variables.o output.o
-tfcoil.o: global_variables.o machine_build.o output.o sctfcoil.o
-vacuum.o: global_variables.o output.o
+tfcoil.o: error_handling.o global_variables.o machine_build.o output.o sctfcoil.o
+vacuum.o: error_handling.o global_variables.o output.o
 
 process.exe: $(object)
 	$(FORTRAN) $(LFLAGS) -o $@ $(object) $(LIBS)

@@ -1,4 +1,3 @@
-!  $Id:: tfcoil.f90 258 2014-04-24 12:28:55Z pknight                    $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module tfcoil_module
@@ -18,6 +17,7 @@ module tfcoil_module
   !+ad_call  build_module
   !+ad_call  build_variables
   !+ad_call  constants
+  !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
@@ -27,6 +27,7 @@ module tfcoil_module
   !+ad_hist  29/10/12 PJK Added sctfcoil_module
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  30/10/12 PJK Added build_module
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -35,6 +36,7 @@ module tfcoil_module
   use build_module
   use build_variables
   use constants
+  use error_handling
   use fwbs_variables
   use physics_variables
   use process_output
@@ -532,10 +534,11 @@ contains
     !+ad_desc  plasma. Above/below the plasma, the centrepost is cylindrical.
     !+ad_desc  The shape of the taper is assumed to be an arc of a circle.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  21/10/96 PJK Initial version
     !+ad_hist  08/05/12 PJK Initial F90 version
     !+ad_hist  16/10/12 PJK Added constants; removed argument pi
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, pp.33,34
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -560,52 +563,33 @@ contains
     !  Error traps
 
     if (rtop <= 0.0D0) then
-       write(*,*) 'Error in routine CPOST:'
-       write(*,*) 'RTOP = ',rtop
-       write(*,*) 'PROCESS stopping.'
-       stop
+       fdiags(1) = rtop ; call report_error(115)
     end if
 
     if (ztop <= 0.0D0) then
-       write(*,*) 'Error in routine CPOST:'
-       write(*,*) 'ZTOP = ',ztop
-       write(*,*) 'PROCESS stopping.'
-       stop
+       fdiags(1) = ztop ; call report_error(116)
     end if
 
     if (rmid <= 0.0D0) then
-       write(*,*) 'Error in routine CPOST:'
-       write(*,*) 'RMID = ',rmid
-       write(*,*) 'PROCESS stopping.'
-       stop
+       fdiags(1) = rmid ; call report_error(117)
     end if
 
     if (hmax <= 0.0D0) then
-       write(*,*) 'Error in routine CPOST:'
-       write(*,*) 'HMAX = ',hmax
-       write(*,*) 'PROCESS stopping.'
-       stop
+       fdiags(1) = hmax ; call report_error(118)
     end if
 
     if ((fcool < 0.0D0).or.(fcool > 1.0D0)) then
-       write(*,*) 'Error in routine CPOST:'
-       write(*,*) 'FCOOL = ',fcool
-       write(*,*) 'PROCESS stopping.'
-       stop
+       fdiags(1) = fcool ; call report_error(119)
     end if
 
     if (rtop < rmid) then
-       write(*,*) 'Error in routine CPOST:'
-       write(*,*) 'RTOP < RMID...', rtop, rmid
-       write(*,*) 'PROCESS stopping.'
-       stop
+       fdiags(1) = rtop ; fdiags(2) = rmid
+       call report_error(120)
     end if
 
     if (hmax < ztop) then
-       write(*,*) 'Error in routine CPOST:'
-       write(*,*) 'HMAX < ZTOP...', hmax, ztop
-       write(*,*) 'PROCESS stopping.'
-       stop
+       fdiags(1) = hmax ; fdiags(2) = ztop
+       call report_error(121)
     end if
 
     !  Trivial solutions
@@ -613,9 +597,7 @@ contains
     if (fcool == 1.0D0) then
        volume = 0.0D0
        respow = 0.0D0
-       write(*,*) 'Warning from routine CPOST:'
-       write(*,*) 'Silly answers from CPOST because FCOOL=1.0...'
-       write(*,*) 'PROCESS continuing'
+       call report_error(122)
        return
     end if
 
@@ -650,10 +632,9 @@ contains
        r = rc - sqrt( (rc-rmid)**2 - z*z )
 
        if (r <= 0.0D0) then
-          write(*,*) 'Error in routine CPOST:'
-          write(*,*) 'R(Z) = ',r
-          write(*,*) 'PROCESS stopping.'
-          stop
+          fdiags(1) = r ; fdiags(2) = rc
+          fdiags(3) = rmid ; fdiags(4) = z
+          call report_error(123)
        end if
 
        !  Cross-sectional area at Z

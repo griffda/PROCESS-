@@ -38,9 +38,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-06-24
+2014-06-30
 \hfill
-Revision:: 300
+Revision:: 303
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -762,7 +762,7 @@ no. & variable name     & description                                   & eqn & 
 8   & \texttt{fbeta}    & f-value for $\epsilon.\beta_p$ limit equation & 6   & \texttt{0.001D0} & \texttt{1.000D0} \\
 9   & \texttt{fdene}    & f-value for density limit equation            & 5   & \texttt{0.001D0} & \texttt{1.000D0} \\
 10  & \texttt{hfact}    & confinement time $H$-factor                   &     & \texttt{0.100D0} & \texttt{3.000D0} \\
-11  & \texttt{pheat}    & heating power not used for current drive      &     & \texttt{1.000D6} & \texttt{1.000D9} \\
+11  & \texttt{pheat}    & heating power not used for current drive      &     & \texttt{0.001D0} & \texttt{1.000D3} \\
 12  & \texttt{oacdcp}   & overall current density in TF coil inboard leg&     & \texttt{1.000D5} & \texttt{1.500D8} \\
 13  & \texttt{tfcth}    & TF coil inboard leg thickness                 &     & \texttt{0.100D0} & \texttt{5.000D0} \\
 14  & \texttt{fwalld}   & f-value for wall load limit equation          & 8   & \texttt{0.001D0} & \texttt{1.000D0} \\
@@ -1144,6 +1144,7 @@ Table~\ref{tab:other_modules} summarises these modules.
 
 \begin{tabular}{||l||l||} \hline
 source file     & description \\ \hline
+\texttt{error\_handling.f90} & centralised error handling module \\
 \texttt{global\_variables.f90} & defines and initialises most shared variables \\
 \texttt{initial.f90} & checks self-consistency of input variables and switches \\
 \texttt{input.f90} & reads in user-defined settings from input file \\

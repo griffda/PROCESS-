@@ -27,6 +27,7 @@ module sctfcoil_module
   !+ad_prob  None
   !+ad_call  build_variables
   !+ad_call  constants
+  !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  maths_library
   !+ad_call  physics_variables
@@ -34,6 +35,7 @@ module sctfcoil_module
   !+ad_call  tfcoil_variables
   !+ad_hist  29/10/12 PJK Initial version of module
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
   !
@@ -41,6 +43,7 @@ module sctfcoil_module
 
   use build_variables
   use constants
+  use error_handling
   use fwbs_variables
   use maths_library
   use physics_variables
@@ -72,9 +75,10 @@ contains
     !+ad_desc  <P>It is a variant from the original FEDC/Tokamak systems code.
     !+ad_prob  None
     !+ad_call  coilshap
-    !+ad_call  tfcind
-    !+ad_call  stresscl
     !+ad_call  outtf
+    !+ad_call  report_error
+    !+ad_call  stresscl
+    !+ad_call  tfcind
     !+ad_hist  04/11/92 PJK Initial version
     !+ad_hist  25/07/11 PJK Simplified outboard leg cross-section
     !+ad_hist  10/05/12 PJK Initial F90 version
@@ -93,6 +97,7 @@ contains
     !+ad_hist  08/05/14 PJK Introduced tfc_model as the controlling switch
     !+ad_hist  24/06/14 PJK Removed obsolete dct variable and references to
     !+ad_hisc               a bucking cylinder
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -154,6 +159,8 @@ contains
 
     ritfc = oacdcp * tfareain
     if (ritfc < 0.0D0) then
+       fdiags(1) = ritfc ; fdiags(2) = oacdcp ; fdiags(3) = tfareain
+       call report_error(97)
        write(*,*) 'Error in routine SCTFCOIL:'
        write(*,*) 'TF coil current is negative, ritfc = ',ritfc
        write(*,*) '   Overall current density, oacdcp = ',oacdcp
@@ -226,6 +233,10 @@ contains
     thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf
 
     if (thkwp <= 0.0D0) then
+       fdiags(1) = thkwp ; fdiags(2) = tfcth
+       fdiags(3) = thkcas ; fdiags(4) = casthi
+       fdiags(5) = casths ; fdiags(6) = tinstf
+       call report_error(98)
        write(*,*) 'Error in routine SCTFCOIL:'
        write(*,*) 'Negative winding pack thickness:        thkwp (m) =',thkwp
        write(*,*) 'Inboard TF coil thickness is too small: tfcth (m) =',tfcth
@@ -235,8 +246,6 @@ contains
        write(*,*) 'thkcas=',thkcas,' casthi=',casthi
        write(*,*) 'casths=',casths,' tinstf=',tinstf
        write(*,*) ' '
-       !write(*,*) 'PROCESS stopping.'
-       !goto 20
     end if
 
     !  Radius of geometrical centre of winding pack
@@ -265,14 +274,14 @@ contains
     acasetf = (tfareain/tfno) - awpc
 
     if ((awptf <= 0.0D0).or.(awpc <= 0.0D0).or.(acasetf <= 0.0D0)) then
+       fdiags(1) = awptf ; fdiags(2) = awpc ; fdiags(3) = acasetf
+       call report_error(99)
        write(*,*) 'Error in routine SCTFCOIL:'
        write(*,*) 'Winding pack cross-section problem'
        write(*,*) 'awptf = ',awptf
        write(*,*) 'awpc = ',awpc
        write(*,*) 'acasetf = ',acasetf
        write(*,*) ' '
-       !write(*,*) 'PROCESS stopping.'
-       !goto 20
     end if
 
     !  Winding pack current density (forced to be positive)
@@ -306,13 +315,14 @@ contains
     leni = leno0 - 2.0D0*(thwcndut + thicndut)
 
     if (leni <= 0.0D0) then
+       fdiags(1) = leni ; fdiags(2) = leno0
+       fdiags(3) = thwcndut ; fdiags(4) = thicndut
+       call report_error(100)
        write(*,*) 'Error in routine SCTFCOIL:'
        write(*,*) 'Cable space dimension, leni = ',leni
        write(*,*) 'Reduce conduit case or insulation thicknesses,'
        write(*,*) 'or increase cpttf value or lower bound.'
        write(*,*) ' '
-       !write(*,*) 'PROCESS stopping.'
-       !goto 20
     end if
 
     !  Cross-sectional area of cable space per turn
@@ -321,11 +331,15 @@ contains
 
     if (acstf <= 0.0D0) then
        if (leni < 0.0D0) then
+          fdiags(1) = acstf ; fdiags(2) = leni
+          call report_error(101)
           write(*,*) 'Warning in routine SCTFCOIL:'
           write(*,*) '    Cable space area, acstf = ',acstf
           write(*,*) 'Cable space dimension, leni = ',leni
           write(*,*) ' '
        else
+          fdiags(1) = acstf ; fdiags(2) = leni
+          call report_error(102)
           write(*,*) 'Warning in routine SCTFCOIL:'
           write(*,*) '    Cable space area, acstf = ',acstf
           write(*,*) 'Cable space dimension, leni = ',leni
@@ -373,6 +387,8 @@ contains
     !  is likely to be the same width as at the inboard side
 
     if ( (tftort < (wwp1 + 2.0D0*tinstf)).and.(iprint == 1) ) then
+       fdiags(1) = tftort ; fdiags(2) = wwp1 + 2.0D0*tinstf
+       call report_error(103)
        write(*,*) 'Warning in routine SCTFCOIL:'
        write(*,*) '  TF outboard leg toroidal thickness, tftort = ',tftort
        write(*,*) '             Winding pack + insulation width = ', &
@@ -472,6 +488,7 @@ contains
     !+ad_call  edoeeff
     !+ad_call  eyngeff
     !+ad_call  eyngzwp
+    !+ad_call  report_error
     !+ad_call  sctfjalw
     !+ad_call  sigvm
     !+ad_call  myall_stress
@@ -485,6 +502,7 @@ contains
     !+ad_hisc               split stress calls into two routines
     !+ad_hist  12/05/14 PJK Added insulator strain calculation
     !+ad_hist  12/06/14 PJK Corrections to strtf1, radtf(2) for tfc_model=2
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
@@ -578,10 +596,7 @@ contains
             sigrtf(1:2),sigttf(1:2),deflect)
 
     else  !  should never get here
-       write(*,*) 'Error in routine STRESSCL:'
-       write(*,*) 'Model not accounted for; tfc_model = ',tfc_model
-       write(*,*) 'PROCESS stopping.'
-       stop
+       idiags(1) = tfc_model ; call report_error(104)
     end if
 
     !  Convert to conduit + case
@@ -1807,6 +1822,7 @@ contains
       !+ad_call  osubhd
       !+ad_call  ovarre
       !+ad_call  protect
+      !+ad_call  report_error
       !+ad_hist  06/07/99 PJK Added new generic superconductor options
       !+ad_hist  26/07/11 PJK Corrected denominator in JC calculation;
       !+ad_hisc               Added option to use new Jcrit model for binary Nb3Sn
@@ -1818,6 +1834,7 @@ contains
       !+ad_hist  07/10/13 PJK Added Bi-2212 option; removed ifail
       !+ad_hist  16/06/14 PJK Removed duplicate outputs
       !+ad_hist  19/06/14 PJK Removed sect?? flags
+      !+ad_hist  26/06/14 PJK Added error handling
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
@@ -1865,11 +1882,7 @@ contains
          tc0m = tcritsc
 
       case default  !  Error condition
-         write(*,*) 'Error in routine SUPERCON:'
-         write(*,*) 'Illegal value for isumattf, = ',isumattf
-         write(*,*) ' '
-         write(*,*) 'PROCESS stopping.'
-         stop
+         idiags(1) = isumattf ; call report_error(105)
 
       end select
 
@@ -2126,10 +2139,11 @@ contains
       !+ad_desc  The model's range of validity is T &lt; 20K, adjusted field
       !+ad_desc  b &lt; 104 T, B &gt; 6 T.
       !+ad_prob  None
-      !+ad_call  None
+      !+ad_call  report_error
       !+ad_hist  08/10/13 PJK Initial version
       !+ad_hist  05/03/14 PJK Added comment about range of validity
       !+ad_hist  06/03/14 PJK Added warning if range of validity is violated
+      !+ad_hist  26/06/14 PJK Added error handling
       !+ad_stat  Okay
       !+ad_docs  A transformative superconducting magnet technology for fields well
       !+ad_docc  above 30 T using isotropic round wire multifilament
@@ -2170,6 +2184,8 @@ contains
       !  Check if ranges of validity have been violated
 
       if ((tsc > 20.0D0).or.(bmax < 6.0D0).or.(b > 104.0D0)) then
+         fdiags(1) = tsc ; fdiags(2) = bmax ; fdiags(3) = b
+         call report_error(106)
          write(*,*) 'Warning in routine BI2212:'
          write(*,*) 'Range of validity of the HTS Bi-2212 model has been violated:'
          write(*,*) '   S/C temperature (K) = ',tsc, ' (should be < 20 K)'

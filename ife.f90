@@ -31,6 +31,7 @@ module ife_module
   !+ad_call  constants
   !+ad_call  cost_variables
   !+ad_call  costs_module
+  !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  ife_variables
@@ -42,6 +43,7 @@ module ife_module
   !+ad_hist  05/11/12 PJK Initial version of module
   !+ad_hist  05/11/12 PJK Added pulse_variables
   !+ad_hist  06/11/12 PJK Added availability_module
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -53,6 +55,7 @@ module ife_module
   use constants
   use cost_variables
   use costs_module
+  use error_handling
   use fwbs_variables
   use heat_transport_variables
   use ife_variables
@@ -282,6 +285,7 @@ contains
     !+ad_call  ocmmnt
     !+ad_call  oheadr
     !+ad_call  ovarre
+    !+ad_call  report_error
     !+ad_hist  21/03/97 PJK Initial version
     !+ad_hist  24/09/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
@@ -290,6 +294,7 @@ contains
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  30/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, pp.68,85
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -354,10 +359,8 @@ contains
             nbeams,qion,reprat,sigma,sigma0,tauf,theta,vi,gain,etadrv)
 
     case default
-       write(outfile,*) 'Error in routine IFEPHY:'
-       write(outfile,*) 'Illegal value for IFEDRV, = ',ifedrv
-       write(outfile,*) 'PROCESS stopping.'
-       stop
+       idiags(1) = ifedrv
+       call report_error(127)
 
     end select
 
@@ -1847,6 +1850,7 @@ contains
     !+ad_prob  None
     !+ad_call  oheadr
     !+ad_call  ovarre
+    !+ad_call  report_error
     !+ad_hist  21/03/97 PJK Initial version
     !+ad_hist  24/09/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
@@ -1856,6 +1860,7 @@ contains
     !+ad_hist  31/10/12 PJK Added cost_variables
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  26/06/14 PJK Added error_handling
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.86
     !+ad_docs  Moir et al., Fusion Technology, vol.25 (1994) p.5
@@ -1947,10 +1952,7 @@ contains
     !  core region, i.e. is in the rest of the heat transport system
 
     if ((fbreed < 0.0D0).or.(fbreed > 0.999D0)) then
-       write(outfile,*) 'Error in routine IFEFBS:'
-       write(outfile,*) 'FBREED = ',fbreed
-       write(outfile,*) 'PROCESS stopping.'
-       stop
+       fdiags(1) = fbreed ; call report_error(26)
     end if
 
     !  Following assumes that use of FLiBe and Li2O are

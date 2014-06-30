@@ -25,11 +25,13 @@ module impurity_radiation_module
   !+ad_desc  species there is also an upper temperature limit of T &lt; 40 keV.
   !+ad_prob  None
   !+ad_call  constants
+  !+ad_call  error_handling
   !+ad_call  profiles_module
   !+ad_hist  13/12/13 HL Initial version of module
   !+ad_hist  13/05/14 PJK Initial PROCESS implementation
   !+ad_hist  02/06/14 PJK Added impvar, fimpvar
   !+ad_hist  17/06/14 PJK Added impdir
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
   !+ad_docs  Sertoli, private communication
@@ -38,6 +40,7 @@ module impurity_radiation_module
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use constants
+  use error_handling
   use profiles_module
 
   implicit none
@@ -258,9 +261,11 @@ contains
     !+ad_desc  <P>The Lz versus temperature data are read in from file.
     !+ad_prob  None
     !+ad_call  import_impdata
+    !+ad_call  report_error
     !+ad_hist  09/05/14 HL  First draft of the routine
     !+ad_hist  14/05/14 PJK Initial PROCESS version
     !+ad_hist  17/06/14 PJK Added impdir usage
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -291,10 +296,8 @@ contains
     if (error == 1) return
 
     if (no > size(impurity_arr)) then
-       write(*,*) 'Error in routine INIT_IMP_ELEMENT:'
-       write(*,*) 'You are trying to access an out of range array element'
-       write(*,*) 'PROCESS stopping.'
-       stop
+       idiags(1) = no ; idiags(2) = size(impurity_arr)
+       call report_error(27)
     end if
     
     impurity_arr(no)%label   = label
@@ -308,10 +311,7 @@ contains
          impurity_arr(no)%Lz_Wm3(len_tab), &
          stat=status)
     if (status /= 0) then
-       write(*,*) 'Error in routine INIT_IMP_ELEMENT:'
-       write(*,*) 'Allocation problem...'
-       write(*,*) 'PROCESS stopping.'
-       stop
+       idiags(1) = status ; call report_error(28)
     end if
 
     !  Read tabulated data in from file, assuming it exists
@@ -330,9 +330,7 @@ contains
        call import_impdata(trim(fullpath), len_tab, &
             impurity_arr(no)%Temp_keV, impurity_arr(no)%Lz_Wm3)
     else
-       write(*,*) 'Warning in routine INIT_IMP_ELEMENT:'
-       write(*,*) 'Impurity datafiles are missing...'
-       write(*,*) 'Switching to original impurity model.'
+       call report_error(29)
        imprad_model = 0
        error = 1
        return
@@ -365,10 +363,11 @@ contains
     !+ad_desc  This routine reads in the data of a two column file and
     !+ad_desc  returns it. The first two rows are skipped by default.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  01/05/14 HL  First draft of routine
     !+ad_hist  07/05/14 HL  Added skiprows
     !+ad_hist  19/05/14 PJK Modified error handling
+    !+ad_hist  26/06/14 PJK Added (proper) error handling
     !+ad_stat  Okay
     !+ad_docs  N/A
     !
@@ -411,35 +410,23 @@ contains
     open(unit=unit, file=trim(filename), status='old', action='read', iostat=iostat)
 
     if (iostat /= 0) then
-       write(*,*) 'Error in routine IMPORT_IMPDATA:'
-       write(*,*) 'Problem opening the file ',filename
-       write(*,*) 'Status flag = ',iostat
-       write(*,*) 'PROCESS stopping.'
-       stop
+       idiags(1) = iostat ; call report_error(30)
     end if
 
     !  Skip first lines (comments)
 
     do i = 1, local_skip
        read(unit,*,iostat=iostat) buffer
-       if (iostat > 0) then 
-          write(*,*) 'Error in routine IMPORT_IMPDATA:'
-          write(*,*) 'Problem reading the file ',filename
-          write(*,*) 'Status flag = ',iostat
-          write(*,*) 'PROCESS stopping.'
-          stop
+       if (iostat > 0) then
+          idiags(1) = iostat ; call report_error(31)
        end if
     end do
 
     do i = 1, nlines
        read(unit=unit, fmt=local_fmt, iostat=iostat) in1, in2
        if (iostat > 0) then 
-          write(*,*) 'Error in routine IMPORT_IMPDATA:'
-          write(*,*) 'Problem reading the file ',filename
-          write(*,*) 'Status flag = ',iostat
-          write(*,*) 'Line number = ',i
-          write(*,*) 'PROCESS stopping.'
-          stop
+          idiags(1) = iostat ; idiags(2) = i
+          call report_error(32)
        else if (iostat < 0) then
           exit  !  EOF
        else
@@ -465,9 +452,10 @@ contains
     !+ad_desc  This function returns the index of the element
     !+ad_desc  in the impurity array with the corresponding nuclear charge Z.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  17/12/13 HL  First draft of routine
     !+ad_hist  09/05/14 HL  Using new data structure
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -496,10 +484,7 @@ contains
 
     !  Should only get here if there is a problem
 
-    write(*,*) 'Error in routine Z2INDEX:'
-    write(*,*) 'Element with charge ', zimp , 'is not in impurity_arr!'
-    write(*,*) 'PROCESS stopping.'
-    stop
+    idiags(1) = zimp ; call report_error(33)
 
   end function z2index
 
@@ -517,8 +502,9 @@ contains
     !+ad_desc  This function returns the index of the element
     !+ad_desc  in the impurity array with the corresponding name.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  14/05/14 PJK Initial version
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -547,10 +533,7 @@ contains
 
     !  Should only get here if there is a problem
 
-    write(*,*) 'Error in routine ELEMENT2INDEX:'
-    write(*,*) 'Element with label '//element_label//' is not in impurity_arr!'
-    write(*,*) 'PROCESS stopping.'
-    stop
+    call report_error(34)
 
   end function element2index
 
@@ -679,12 +662,13 @@ contains
     !+ad_prob  If the requested temperature for the calculation is outside
     !+ad_prob  of the tabulated range of the fit, the nearest temperature
     !+ad_prob  point's data is used.
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  09/05/14 HL  First draft of routine
     !+ad_hist  14/05/14 PJK Initial PROCESS version; added treatment of out-of-range
     !+ad_hisc               temperature values
     !+ad_hist  19/05/14 PJK Added hydrogen isotopes' line radiation contribution
     !+ad_hist  21/05/14 PJK Added warning message if te is below tabulated values
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -719,9 +703,7 @@ contains
 
        if (.not.toolow) then  !  Only print warning once during a run
           toolow = .true.
-          write(*,*) 'Warning in routine PIMPDEN:'
-          write(*,*) 'Impurity radiation model is inaccurate at temperatures'
-          write(*,*) 'at or below ',te,' keV...'
+          fdiags(1) = te ; call report_error(35)
        end if
 
     else if (te >= imp_element%Temp_keV(imp_element%len_tab)) then

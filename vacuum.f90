@@ -1,4 +1,3 @@
-!  $Id:: vacuum.f90 203 2013-11-19 10:27:19Z pknight                    $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module vacuum_module
@@ -15,6 +14,7 @@ module vacuum_module
   !+ad_prob  None
   !+ad_call  build_variables
   !+ad_call  constants
+  !+ad_call  error_handling
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  tfcoil_variables
@@ -23,6 +23,7 @@ module vacuum_module
   !+ad_hist  29/10/12 PJK Initial version of module
   !+ad_hist  30/10/12 PJK Added times_variables
   !+ad_hist  30/10/12 PJK Added build_variables
+  !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -30,6 +31,7 @@ module vacuum_module
 
   use build_variables
   use constants
+  use error_handling
   use physics_variables
   use process_output
   use tfcoil_variables
@@ -143,6 +145,7 @@ contains
     !+ad_call  osubhd
     !+ad_call  ovarin
     !+ad_call  ovarre
+    !+ad_call  report_error
     !+ad_hist  20/09/11 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  16/10/12 PJK Added constants
@@ -152,6 +155,7 @@ contains
     !+ad_hist  19/11/13 PJK Moved l1,l2,l3 calculation out of loop
     !+ad_hist  16/06/14 PJK Removed duplicate outputs
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -336,11 +340,8 @@ contains
 
              lap = lap + 1
              if (lap > 99) then
-                write(*,*) 'Problem in routine VACUUM:'
-                write(*,*) "Newton's Method is not converging..."
-                write(*,*) 'Check fusion power is not negative perhaps'
-                write(*,*) 'due to iteration variable te < 0.'
-                write(*,*) 'powfmw,te = ',powfmw,te
+                fdiags(1) = powfmw ; fdiags(2) = te
+                call report_error(124)
                 exit inner
              end if
           end do inner

@@ -22,6 +22,7 @@ Update: 02/06/2014 - PJK up to date at PROCESS version 283
 Update: 04/06/2014 - PJK up to date at PROCESS version 285
 Update: 16/06/2014 - PJK up to date at PROCESS version 288
 Update: 16/06/2014 - PJK: r293
+Update: 30/06/2014 - PJK: r303
 """
 
 from collections import defaultdict
@@ -726,7 +727,7 @@ DICT_IXC_FULL[  '7'] = {'name':'rnbeam',   'lb':1e-6,  'ub':1.}
 DICT_IXC_FULL[  '8'] = {'name':'fbeta',    'lb':0.001, 'ub':1.}
 DICT_IXC_FULL[  '9'] = {'name':'fdene',    'lb':0.001, 'ub':1.}
 DICT_IXC_FULL[ '10'] = {'name':'hfact',    'lb':0.1,   'ub':3.}
-DICT_IXC_FULL[ '11'] = {'name':'pheat',    'lb':1e6,   'ub':1e9}
+DICT_IXC_FULL[ '11'] = {'name':'pheat',    'lb':0.001, 'ub':1e3}
 DICT_IXC_FULL[ '12'] = {'name':'oacdcp',   'lb':1e5,   'ub':1.5e8}
 DICT_IXC_FULL[ '13'] = {'name':'tfcth',    'lb':0.1,   'ub':5.}
 DICT_IXC_FULL[ '14'] = {'name':'fwalld',   'lb':0.001, 'ub':1.}
@@ -832,7 +833,7 @@ DICT_IXC_BOUNDS['rnbeam']   = {'lb':1e-6,  'ub':1.}   #7
 DICT_IXC_BOUNDS['fbeta']    = {'lb':0.001, 'ub':1.}   #8
 DICT_IXC_BOUNDS['fdene']    = {'lb':0.001, 'ub':1.}   #9
 DICT_IXC_BOUNDS['hfact']    = {'lb':0.1,   'ub':3.}   #10
-DICT_IXC_BOUNDS['pheat']    = {'lb':1e6,   'ub':1e9}  #11
+DICT_IXC_BOUNDS['pheat']    = {'lb':0.001, 'ub':1e3}  #11
 DICT_IXC_BOUNDS['oacdcp']   = {'lb':1e5,   'ub':1.5e8}#12
 DICT_IXC_BOUNDS['tfcth']    = {'lb':0.1,   'ub':5.}   #13
 DICT_IXC_BOUNDS['fwalld']   = {'lb':0.001, 'ub':1.}   #14

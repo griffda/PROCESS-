@@ -47,6 +47,7 @@ module costs_module
   !+ad_call  cost_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
+  !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
   !+ad_call  ife_variables
@@ -79,6 +80,7 @@ module costs_module
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added ife_variables
   !+ad_hist  05/11/12 PJK Added pulse_variables
+  !+ad_hist  30/06/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -90,6 +92,7 @@ module costs_module
   use cost_variables
   use current_drive_variables
   use divertor_variables
+  use error_handling
   use fwbs_variables
   use heat_transport_variables
   use ife_variables
@@ -2321,9 +2324,10 @@ contains
     !+ad_args  None
     !+ad_desc  This routine evaluates the Account 225.3 (energy storage) costs.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  30/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2420,10 +2424,8 @@ contains
                (shcss * dtstor)
 
        case default
-          write(*,*) 'Error in routine ACC2253 :'
-          write(*,*) 'Illegal value of istore, = ',istore
-          write(*,*) 'PROCESS stopping.'
-          stop
+          idiags(1) = istore
+          call report_error(125)
 
        end select
 

@@ -19,12 +19,14 @@ module current_drive_module
   !+ad_prob  None
   !+ad_call  constants
   !+ad_call  current_drive_variables
+  !+ad_call  error_handling
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  profiles_module
   !+ad_hist  17/10/12 PJK Initial version of module
   !+ad_hist  31/10/12 PJK Changed public/private lists
   !+ad_hist  19/06/14 PJK Removed obsolete routines nbeam, ech, lwhymod
+  !+ad_hist  26/06/14 PJK Added error handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -32,6 +34,7 @@ module current_drive_module
 
   use constants
   use current_drive_variables
+  use error_handling
   use profiles_module
   use physics_variables
   use process_output
@@ -69,6 +72,7 @@ contains
     !+ad_call  ovarin
     !+ad_call  ovarre
     !+ad_call  ovarrf
+    !+ad_call  report_error
     !+ad_hist  22/08/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  15/10/12 PJK Added physics_variables
@@ -83,6 +87,7 @@ contains
     !+ad_hist  19/06/14 PJK Imported code from obsolete routines
     !+ad_hisc               nbeam, ech, lwhymod
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  30/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -166,10 +171,8 @@ contains
           effcd = effofss
 
        case default
-          write(*,*) 'Error in routine CUDRIV:'
-          write(*,*) 'Illegal value of IEFRF, = ',iefrf
-          write(*,*) 'PROCESS stopping.'
-          stop
+          idiags(1) = iefrf
+          call report_error(126)
 
        end select
 
@@ -238,12 +241,6 @@ contains
           gamof = effofss * (dene20 * rmajor)
           gamcd = gamof
 
-       case default
-          write(*,*) 'Error in routine CUDRIV:'
-          write(*,*) 'Illegal value of IEFRF, = ',iefrf
-          write(*,*) 'PROCESS stopping.'
-          stop
-
        end select
 
        !  Total injected power
@@ -288,12 +285,6 @@ contains
 
     case (9)
        call ocmmnt(outfile,'Oscillating Field Current Drive')
-
-    case default
-       write(*,*) 'Error in routine CUDRIV:'
-       write(*,*) 'Illegal value of IEFRF, = ',iefrf
-       write(*,*) 'PROCESS stopping.'
-       stop
 
     end select
 
@@ -390,12 +381,14 @@ contains
     !+ad_prob  None
     !+ad_call  cfnbi
     !+ad_call  etanb
+    !+ad_call  report_error
     !+ad_call  sigbeam
     !+ad_hist  15/06/92 PJK Initial upgraded version
     !+ad_hist  22/08/12 PJK Initial F90 version
     !+ad_hist  19/06/13 PJK Corrected dpath calculation
     !+ad_hist  03/07/13 PJK Changed zeffai description
     !+ad_hist  24/02/14 PJK Rationalised arguments
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
@@ -418,11 +411,8 @@ contains
     !  Check argument sanity
 
     if ((1.0D0+eps) < frbeam) then
-       write(*,*) 'Error in routine ITERNB:'
-       write(*,*) 'Imminent negative square root argument... ', eps, frbeam
-       write(*,*) 'NBI will miss plasma completely!'
-       write(*,*) 'PROCESS stopping.'
-       stop
+       fdiags(1) = eps ; fdiags(2) = frbeam
+       call report_error(15)
     end if
 
     !  Calculate beam path length to centre
@@ -779,11 +769,13 @@ contains
     !+ad_prob  None
     !+ad_call  lhrad
     !+ad_call  nprofile
+    !+ad_call  report_error
     !+ad_call  tprofile
     !+ad_hist  15/06/92 PJK Initial upgraded version
     !+ad_hist  22/08/12 PJK Initial F90 version
     !+ad_hist  24/02/14 PJK Local density and temperature calculated using
     !+ad_hisc               relevant profile model; rationalised arguments
+    !+ad_hist  30/06/14 PJK Added error_handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -833,11 +825,8 @@ contains
     term04 = 3.5D0*epslh**0.77D0 + x
 
     if (term03 > term04) then
-       write(*,*) 'Error in CULLHY :'
-       write(*,*) 'Normalised LH efficiency < 0'
-       write(*,*) 'Use a different value of IEFRF.'
-       write(*,*) 'PROCESS stopping.'
-       stop
+       fdiags(1) = term03 ; fdiags(2) = term04
+       call report_error(129)
     end if
 
     gamlh = term01 * term02 * (1.0D0 - term03/term04)
@@ -862,9 +851,11 @@ contains
       !+ad_desc  damping of Lower Hybrid waves occurs, using a Newton-Raphson method.
       !+ad_prob  None
       !+ad_call  lheval
+      !+ad_call  report_error
       !+ad_hist  15/06/92 PJK Initial upgraded version
       !+ad_hist  18/09/12 PJK Initial F90 version
       !+ad_hist  24/02/14 PJK Rationalised argument list
+      !+ad_hist  26/06/14 PJK Added error handling
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -929,10 +920,7 @@ contains
          !  Check the number of laps for convergence
 
          if (lapno >= maxlap) then
-            write(*,*) 'Problem in routine LHRAD:'
-            write(*,*) 'LH penetration radius not found ' &
-                 ,'after ',lapno,' iterations.'
-            write(*,*) 'A value of 0.8 * rminor will be used.'
+            idiags(1) = lapno ; call report_error(16)
             rat0 = 0.8D0
             exit
          end if
@@ -1148,9 +1136,11 @@ contains
       !+ad_desc  R the major radius in metres, and P the absorbed power in MWatts.
       !+ad_prob  None
       !+ad_call  legend
+      !+ad_call  report_error
       !+ad_hist  16/08/91 MOB Initial version
       !+ad_hist  16/06/92 PJK Initial upgraded version
       !+ad_hist  18/09/12 PJK Initial F90 version
+      !+ad_hist  26/06/14 PJK Added error handling
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1208,12 +1198,7 @@ contains
       ecgam = -7.8D0 * facm * sqrt((1.0D0+epsloc)/(1.0D0-epsloc)) / coulog &
            * (h*fp - 0.5D0*y*f*hp)
 
-      if (ecgam < 0.0D0) then
-         write(*,*) 'Error in routine ECCDEF:'
-         write(*,*) 'Negative normalised current drive efficiency.'
-         write(*,*) 'PROCESS stopping.'
-         stop
-      end if
+      if (ecgam < 0.0D0) call report_error(17)
 
     end subroutine eccdef
 
@@ -1246,10 +1231,11 @@ contains
       !+ad_desc  <CODE>gam2</CODE> are the Gamma functions of arguments
       !+ad_desc  <CODE>0.5*(1+alpha)</CODE> and <CODE>0.5*(2+alpha)</CODE> respectively.
       !+ad_prob  None
-      !+ad_call  None
+      !+ad_call  report_error
       !+ad_hist  16/08/91 MOB Initial version
       !+ad_hist  16/06/92 PJK Initial upgraded version
       !+ad_hist  18/09/12 PJK Initial F90 version
+      !+ad_hist  26/06/14 PJK Added error handling
       !+ad_stat  Okay
       !+ad_docs  Abramowitz and Stegun, equation 8.12.1
       !
@@ -1272,10 +1258,7 @@ contains
       !  Check for invalid argument
 
       if (abs(arg) > (1.0D0+1.0D-10)) then
-         write(*,*) 'Error in routine LEGEND:'
-         write(*,*) 'Invalid argument ARG, = ',arg
-         write(*,*) 'PROCESS stopping.'
-         stop
+         fdiags(1) = arg ; call report_error(18)
       end if
 
       arg2 = min(arg, (1.0D0-1.0D-10))
@@ -1311,10 +1294,7 @@ contains
 
       !  Code will only get this far if convergence has failed
 
-      write(*,*) 'Error in routine LEGEND:'
-      write(*,*) 'Solution has not converged.'
-      write(*,*) 'PROCESS stopping.'
-      stop
+      call report_error(19)
 
     end subroutine legend
 
@@ -1339,11 +1319,13 @@ contains
     !+ad_prob  None
     !+ad_call  cfnbi
     !+ad_call  etanb2
+    !+ad_call  report_error
     !+ad_call  sigbeam
     !+ad_hist  17/06/92 PJK Initial upgraded version
     !+ad_hist  18/09/12 PJK Initial F90 version
     !+ad_hist  19/06/13 PJK Corrected dpath calculation
     !+ad_hist  03/07/13 PJK Changed zeffai description
+    !+ad_hist  26/06/14 PJK Added error handling
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1365,11 +1347,8 @@ contains
     !  Check argument sanity
 
     if ((1.0D0+eps) < frbeam) then
-       write(*,*) 'Error in routine CULNBI:'
-       write(*,*) 'Imminent negative square root argument... ', eps, frbeam
-       write(*,*) 'NBI will miss plasma completely!'
-       write(*,*) 'PROCESS stopping.'
-       stop
+       fdiags(1) = eps ; fdiags(2) = frbeam
+       call report_error(20)
     end if
 
     !  Calculate beam path length to centre
@@ -1435,10 +1414,11 @@ contains
       !+ad_desc  plus correction terms outlined in Culham Report AEA FUS 172.
       !+ad_desc  <P>The formulae are from AEA FUS 172, unless denoted by IPDG89.
       !+ad_prob  No account is taken of pedestal profiles.
-      !+ad_call  None
+      !+ad_call  report_error
       !+ad_hist  17/06/92 PJK Initial upgraded version
       !+ad_hist  18/09/12 PJK Initial F90 version
       !+ad_hist  10/10/12 PJK Changed enorm to ebnorm
+      !+ad_hist  26/06/14 PJK Added error handling
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1529,10 +1509,8 @@ contains
       eps1 = rminor/r
 
       if ((1.0D0+eps1) < frbeam) then
-         write(*,*) 'Error in routine ETANB2:'
-         write(*,*) 'Imminent negative square root argument... ', eps1, frbeam
-         write(*,*) 'PROCESS stopping.'
-         stop
+         fdiags(1) = eps1 ; fdiags(2) = frbeam
+         call report_error(21)
       end if
 
       d = rmajor * sqrt( (1.0D0+eps1)**2 - frbeam**2)
