@@ -1,0 +1,353 @@
+"""
+
+  Program to output an MCNP compatible file from MFILE.DAT
+
+  James Morris
+
+  13/06.2014
+
+  Notes:
+    + 13/06/2014 Original version created.
+    + 01/07/2014 Added option for CTF
+
+"""
+
+import argparse
+from process_io_lib.mfile import MFile
+
+
+RADIAL_BUILD = ["bore", "ohcth", "gapoh", "tfcth", "gapds",
+                "ddwi", "shldith", "blnkith", "fwith", "scrapli",
+                "rminor", "scraplo", "fwoth", "blnkoth", "shldoth",
+                "gapsto", "tfthko"]
+
+
+class ProcessEllipse(object):
+    """A class to store ellipse data
+    """
+    def __init__(self, x, y, z):
+        self.x = x
+        self.y = y
+        self.z = z
+        return
+
+
+class ProcessCylinder(object):
+    """A class to store ellipse data
+    """
+    def __init__(self, dx, dy):
+        self.dx = dx
+        self.dy = dy
+        return
+
+
+class ProcessPlane(object):
+    """A class to store ellipse data
+    """
+    def __init__(self, dx, dy):
+        self.dx = dx
+        self.dy = dy
+        return
+
+
+def main(cl_args):
+    """  Main function for converting MFILE data into MCNP format
+
+    Arguments:
+      cl_args --> command line arguments
+
+    """
+
+    mfile_data = MFile(cl_args.f)
+    shapes = dict()
+
+    if cl_args.ctf:
+        populate_ctf_ellipse_data(shapes, mfile_data)
+    else:
+        populate_tok_ellipse_data(shapes, mfile_data)
+
+    write_shapes_to_file(shapes, cl_args.o)
+
+
+def get_xyz(mfile_obj):
+    """Function to get x,y,z data for all ellipses
+    """
+    x = mfile_obj.data["rmajor"].get_scan(-1) - \
+        mfile_obj.data["rminor"].get_scan(-1) * \
+        mfile_obj.data["triang95"].get_scan(-1)
+    y = 0.0
+    z = 0.0
+    return x, y, z
+
+
+def populate_ctf_ellipse_data(shape_objs, mf_data):
+    """Function to populate the ellipse objects with data for CTF case
+    """
+
+    r_major = mf_data.data["rmajor"].get_scan(-1)
+    r_minor = mf_data.data["rminor"].get_scan(-1)
+    kappa_95 = mf_data.data["kappa95"].get_scan(-1)
+    delta_95 = mf_data.data["triang95"].get_scan(-1)
+    h_plasma = kappa_95*r_minor
+    t_tf = mf_data.data["tfcth"].get_scan(-1)
+    t_scrape_o = mf_data.data["scraplo"].get_scan(-1)
+    t_fw_i = mf_data.data["fwith"].get_scan(-1)
+    t_fw_o = mf_data.data["fwoth"].get_scan(-1)
+    t_shield_i = mf_data.data["shldith"].get_scan(-1)
+    t_shield_o = mf_data.data["shldoth"].get_scan(-1)
+    t_blanket_o = mf_data.data["blnkoth"].get_scan(-1)
+    r_c = r_major - (r_minor*delta_95)
+
+    # TF centre column
+    thickness_tf = t_tf
+    height_tf = h_plasma + t_scrape_o + t_fw_o + t_blanket_o + t_shield_o
+    shape_objs["c1"] = ProcessCylinder(thickness_tf, height_tf)
+
+    # Inboard shield
+    thickness_shield = t_shield_i
+    height_shield = h_plasma + t_scrape_o + t_fw_o + t_blanket_o + t_shield_o
+    shape_objs["c2"] = ProcessCylinder(thickness_shield + thickness_tf,
+                                       height_shield)
+
+    # Inboard first wall
+    thickness_fw = t_fw_i
+    height_fw = h_plasma + t_scrape_o + t_fw_o + t_blanket_o + t_shield_o
+    shape_objs["c3"] = ProcessCylinder(thickness_fw + thickness_tf +
+                                       thickness_shield, height_fw)
+
+    # Upper shield mid-section
+    vertical_thickness_shield_u = t_shield_o
+    horizontal_thickness_shield_u = r_c - (t_tf + t_shield_i + t_fw_i)
+    z_upper_shield_u = h_plasma + t_scrape_o + t_fw_o + t_blanket_o + \
+        t_shield_o
+    z_lower_shield_u = h_plasma + t_scrape_o + t_fw_o + t_blanket_o
+    r_inner_shield_u = t_tf + t_shield_i + t_fw_i
+    r_outer_shield_u = t_tf + t_shield_i + t_fw_i + \
+        horizontal_thickness_shield_u
+    shape_objs["p1"] = ProcessPlane(r_outer_shield_u, z_lower_shield_u)
+
+    # Upper blanket mid-section
+    vertical_thickness_blanket_u = t_blanket_o
+    horizontal_thickness_blanket_u = r_c - (t_tf + t_shield_i + t_fw_i)
+    z_upper_blanket_u = h_plasma + t_scrape_o + t_fw_o + t_blanket_o
+    z_lower_blanket_u = h_plasma + t_scrape_o + t_fw_o
+    r_inner_blanket_u = t_tf + t_shield_i + t_fw_i
+    r_outer_blanket_u = t_tf + t_shield_i + t_fw_i + \
+        horizontal_thickness_shield_u
+    shape_objs["p2"] = ProcessPlane(r_outer_blanket_u, z_lower_blanket_u)
+
+    # Upper first wall mid-section
+    vertical_thickness_fw_u = t_fw_o
+    horizontal_thickness_fw_u = r_c - (t_tf + t_shield_i + t_fw_i)
+    z_upper_fw_u = h_plasma + t_scrape_o + t_fw_o
+    z_lower_fw_u = h_plasma + t_scrape_o
+    r_inner_fw_u = t_tf + t_shield_i + t_fw_i
+    r_outer_fw_u = t_tf + t_shield_i + t_fw_i + \
+        horizontal_thickness_shield_u
+    shape_objs["p3"] = ProcessPlane(r_outer_fw_u, z_lower_fw_u)
+
+    # Lower first wall mid-section
+    vertical_thickness_fw_l = t_fw_o
+    horizontal_thickness_fw_l = r_c - (t_tf + t_shield_i + t_fw_i)
+    z_upper_fw_l = -h_plasma - t_scrape_o
+    z_lower_fw_l = -h_plasma - t_scrape_o - t_fw_o
+    r_inner_fw_l = t_tf + t_shield_i + t_fw_i
+    r_outer_fw_l = t_tf + t_shield_i + t_fw_i + \
+        horizontal_thickness_shield_u
+    shape_objs["p4"] = ProcessPlane(r_outer_fw_l, z_lower_fw_l)
+
+    # Lower blanket mid-section
+    vertical_thickness_fw_l = t_blanket_o
+    horizontal_thickness_fw_l = r_c - (t_tf + t_shield_i + t_fw_i)
+    z_upper_blanket_l = -h_plasma - t_scrape_o - t_fw_o
+    z_lower_blanket_l = -h_plasma - t_scrape_o - t_fw_o - t_blanket_o
+    r_inner_blanket_l = t_tf + t_shield_i + t_fw_i
+    r_outer_blanket_l = t_tf + t_shield_i + t_fw_i + \
+        horizontal_thickness_shield_u
+    shape_objs["p5"] = ProcessPlane(r_outer_blanket_l, z_lower_blanket_l)
+
+    # Lower shield mid-section
+    vertical_thickness_fw_l = t_shield_o
+    horizontal_thickness_fw_l = r_c - (t_tf + t_shield_i + t_fw_i)
+    z_upper_shield_l = -h_plasma - t_scrape_o - t_fw_o - t_blanket_o
+    z_lower_shield_l = -h_plasma - t_scrape_o - t_fw_o - t_blanket_o \
+        - t_shield_o
+    r_inner_shield_l = t_tf + t_shield_i + t_fw_i
+    r_outer_shield_l = t_tf + t_shield_i + t_fw_i + \
+        horizontal_thickness_shield_u
+    shape_objs["p4"] = ProcessPlane(r_outer_shield_l, z_lower_shield_l)
+
+    # Ellipse info
+    x, y, z = get_xyz(mf_data)
+
+    # Ellipse 1: outboard first wall inner edge
+    shape_objs["e1"] = ProcessEllipse(x, y, z)
+    shape_objs["e1"].a = (r_major - r_c) + r_minor + t_scrape_o
+    shape_objs["e1"].b = h_plasma + t_scrape_o
+    shape_objs["e1"].c = r_c
+
+    # Ellipse 2: outboard blanket inner edge
+    shape_objs["e2"] = ProcessEllipse(x, y, z)
+    shape_objs["e2"].a = (r_major - r_c) + r_minor + t_scrape_o + t_fw_o
+    shape_objs["e2"].b = h_plasma + t_scrape_o + t_fw_o
+    shape_objs["e2"].c = r_c
+
+    # Ellipse 3: outboard shield inner edge
+    shape_objs["e3"] = ProcessEllipse(x, y, z)
+    shape_objs["e3"].a = (r_major - r_c) + r_minor + t_scrape_o + t_fw_o + \
+        t_blanket_o
+    shape_objs["e3"].b = h_plasma + t_scrape_o + t_fw_o + t_blanket_o
+    shape_objs["e3"].c = r_c
+
+    # Ellipse 4: outboard shield outer edge
+    shape_objs["e4"] = ProcessEllipse(x, y, z)
+    shape_objs["e4"].a = (r_major - r_c) + r_minor + t_scrape_o + t_fw_o + \
+        t_blanket_o + t_shield_o
+    shape_objs["e4"].b = h_plasma + t_scrape_o + t_fw_o + t_blanket_o + \
+        t_shield_o
+    shape_objs["e4"].c = r_c
+
+    return shape_objs
+
+
+def populate_tok_ellipse_data(shape_objs, mf_data):
+    """Function to populate the ellipse objects with data for CTF case
+    """
+
+    r_major = mf_data.data["rmajor"].get_scan(-1)
+    r_minor = mf_data.data["rminor"].get_scan(-1)
+    kappa_95 = mf_data.data["kappa95"].get_scan(-1)
+    delta_95 = mf_data.data["triang95"].get_scan(-1)
+    h_plasma = kappa_95*r_minor
+    t_tf = mf_data.data["tfcth"].get_scan(-1)
+    t_scrape_i = mf_data.data["scrapli"].get_scan(-1)
+    t_scrape_o = mf_data.data["scraplo"].get_scan(-1)
+    t_fw_i = mf_data.data["fwith"].get_scan(-1)
+    t_fw_o = mf_data.data["fwoth"].get_scan(-1)
+    t_shield_i = mf_data.data["shldith"].get_scan(-1)
+    t_shield_o = mf_data.data["shldoth"].get_scan(-1)
+    t_blanket_i = mf_data.data["blnkith"].get_scan(-1)
+    t_blanket_o = mf_data.data["blnkoth"].get_scan(-1)
+    r_c = r_major - (r_minor*delta_95)
+
+    # Ellipse info
+    x, y, z = get_xyz(mf_data)
+
+    # Ellipse 1: inboard shield outer edge
+    shape_objs["e1"] = ProcessEllipse(x, y, z)
+    shape_objs["e1"].a = r_minor - (r_major - r_c) + t_scrape_i + t_fw_i + \
+        t_blanket_i + t_shield_i
+    shape_objs["e1"].b = h_plasma + t_scrape_o + t_fw_i + t_blanket_i + \
+        t_shield_i
+    shape_objs["e1"].c = r_c
+
+    # Ellipse 2: inboard blanket outer edge
+    shape_objs["e2"] = ProcessEllipse(x, y, z)
+    shape_objs["e2"].a = r_minor - (r_major - r_c) + t_scrape_i + t_fw_i + \
+        t_blanket_i
+    shape_objs["e2"].b = h_plasma + t_scrape_i + t_fw_i + t_blanket_i
+    shape_objs["e2"].c = r_c
+
+    # Ellipse 3: inboard first wall outer edge
+    shape_objs["e3"] = ProcessEllipse(x, y, z)
+    shape_objs["e3"].a = r_minor - (r_major - r_c) + t_scrape_i + t_fw_i + \
+        t_blanket_o
+    shape_objs["e3"].b = h_plasma + t_scrape_i + t_fw_i
+    shape_objs["e3"].c = r_c
+
+    # Ellipse 4: inboard first wall inner edge
+    shape_objs["e4"] = ProcessEllipse(x, y, z)
+    shape_objs["e4"].a = r_minor - (r_major - r_c) + t_scrape_i
+    shape_objs["e4"].b = h_plasma + t_scrape_i
+    shape_objs["e4"].c = r_c
+
+    # Ellipse 5: outboard first wall inner edge
+    shape_objs["e5"] = ProcessEllipse(x, y, z)
+    shape_objs["e5"].a = (r_major - r_c) + r_minor + t_scrape_o
+    shape_objs["e5"].b = h_plasma + t_scrape_o
+    shape_objs["e5"].c = r_c
+
+    # Ellipse 6: outboard blanket inner edge
+    shape_objs["e6"] = ProcessEllipse(x, y, z)
+    shape_objs["e6"].a = (r_major - r_c) + r_minor + t_scrape_o + t_fw_o
+    shape_objs["e6"].b = h_plasma + t_scrape_o + t_fw_o
+    shape_objs["e6"].c = r_c
+
+    # Ellipse 7: outboard shield inner edge
+    shape_objs["e7"] = ProcessEllipse(x, y, z)
+    shape_objs["e7"].a = (r_major - r_c) + r_minor + t_scrape_o + t_fw_o + \
+        t_blanket_o
+    shape_objs["e7"].b = h_plasma + t_scrape_o + t_fw_o + t_blanket_o
+    shape_objs["e7"].c = r_c
+
+    # Ellipse 8: outboard shield outer edge
+    shape_objs["e8"] = ProcessEllipse(x, y, z)
+    shape_objs["e8"].a = (r_major - r_c) + r_minor + t_scrape_o + t_fw_o + \
+        t_blanket_o + t_shield_o
+    shape_objs["e8"].b = h_plasma + t_scrape_o + t_fw_o + t_blanket_o + \
+        t_shield_o
+    shape_objs["e8"].c = r_c
+
+    return shape_objs
+
+
+def write_shapes_to_file(shape_data, filename):
+    """Function to write the ellipse data to a MCNP file.
+    """
+    output_file = open(filename, "w")
+    n = len(shape_data)
+    output_file.write("TZ x y z a b c\n")
+    for shape in shape_data:
+        if "e" in shape:
+            dat = shape_data[shape]
+            x = dat.x
+            y = dat.y
+            z = dat.z
+            a = dat.a
+            b = dat.b
+            c = dat.c
+            line = "TZ %.3f %.3f %.3f %.3f %.3f %.3f\n" % (x, y, z, a, b, c)
+            output_file.write(line)
+    output_file.write("\n")
+
+    output_file.write("CZ x y\n")
+    for shape in shape_data:
+        if "c" in shape:
+            dat = shape_data[shape]
+            dx = dat.dx
+            dy = dat.dy
+            line = "CZ %.3f %.3f\n" % (dx, dy)
+            output_file.write(line)
+    output_file.write("\n")
+
+    output_file.write("PZ x y\n")
+    for shape in shape_data:
+        if "p" in shape:
+            dat = shape_data[shape]
+            dx = dat.dx
+            dy = dat.dy
+            line = "PZ %.3f %.3f\n" % (dx, dy)
+            output_file.write(line)
+
+    output_file.close()
+
+if __name__ == "__main__":
+
+    # Setup command line arguments
+    parser = argparse.ArgumentParser(description='Process MFILE.DAT into '
+                                     'PROCESS_CTF.MCNP file.')
+
+    parser.add_argument('-f', metavar='f', type=str,
+                        default="MFILE.DAT",
+                        help='File to read as MFILE.DAT')
+
+    parser.add_argument('-o', metavar='o', type=str,
+                        default="PROCESS.MCNP",
+                        help='File to write as PROCESS_CTF.MCNP')
+
+    parser.add_argument("--ctf", help="True/False flag for CTF",
+                        action="store_true")
+
+    args = parser.parse_args()
+
+    main(args)
