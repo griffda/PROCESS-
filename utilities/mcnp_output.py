@@ -356,7 +356,7 @@ if __name__ == "__main__":
 
     # Setup command line arguments
     parser = argparse.ArgumentParser(description='Process MFILE.DAT into '
-                                     'PROCESS_CTF.MCNP file.')
+                                     'PROCESS.MCNP file.')
 
     parser.add_argument('-f', metavar='f', type=str,
                         default="MFILE.DAT",
@@ -364,7 +364,7 @@ if __name__ == "__main__":
 
     parser.add_argument('-o', metavar='o', type=str,
                         default="PROCESS.MCNP",
-                        help='File to write as PROCESS_CTF.MCNP')
+                        help='File to write as PROCESS.MCNP')
 
     parser.add_argument("--ctf", help="True/False flag for CTF",
                         action="store_true")
