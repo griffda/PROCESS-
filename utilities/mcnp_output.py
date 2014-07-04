@@ -319,7 +319,6 @@ def write_shapes_to_file(shape_data, filename):
     output_file.write("TZ x y z a b c\n")
     for shape in shape_data:
         if "e" in shape:
-            print(shape)
             dat = shape_data[shape]
             x = dat.x
             y = dat.y
@@ -334,7 +333,6 @@ def write_shapes_to_file(shape_data, filename):
     output_file.write("CZ x\n")
     for shape in shape_data:
         if "c" in shape:
-            print(shape)
             dat = shape_data[shape]
             dx = dat.dx
             line = "CZ %.3f\n" % dx
@@ -344,7 +342,6 @@ def write_shapes_to_file(shape_data, filename):
     output_file.write("PZ y\n")
     for shape in shape_data:
         if "p" in shape:
-            print(shape)
             dat = shape_data[shape]
             dy = dat.dy
             line = "PZ %.3f\n" % dy
