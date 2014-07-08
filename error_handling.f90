@@ -49,6 +49,9 @@ module error_handling
   integer, parameter :: ERROR_WARN = 2
   integer, parameter :: ERROR_SEVERE = 3
 
+  !+ad_vars  error_id : identifier for final message encountered
+  integer :: error_id = 0
+
   !  Overall status
 
   !+ad_vars  error_status : overall status flag for a run; on exit:<UL>
@@ -643,14 +646,19 @@ contains
 
     ptr => error_head
 
-    if (.not.associated(ptr)) return
+    if (.not.associated(ptr)) then
+       call ovarin(nout,'Final error identifier','(error_id)',error_id)
+       return
+    end if
 
     write(*,*) 'ID  LEVEL  MESSAGE'
 
     output: do
        if (.not.associated(ptr)) exit output
 
-       write(*,'(i3,t7,i3,t13,a80)') ptr%id,ptr%data%level,ptr%data%message
+       error_id = ptr%id
+       write(nout,'(i3,t7,i3,t13,a80)') ptr%id,ptr%data%level,ptr%data%message
+       write(*,   '(i3,t7,i3,t13,a80)') ptr%id,ptr%data%level,ptr%data%message
 
        if (any(ptr%data%idiags /= INT_DEFAULT)) then
           write(*,'(8i14)') ptr%data%idiags
@@ -661,6 +669,8 @@ contains
 
        ptr => ptr%ptr
     end do output
+
+    call ovarin(nout,'Final error identifier','(error_id)',error_id)
 
     write(*,*) ' '
 

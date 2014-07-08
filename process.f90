@@ -379,7 +379,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '303    Date  :: 2014-06-30'
+       '304    Date  :: 2014-07-08'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1592,3 +1592,6 @@ end subroutine output
 ! GIT 302: Corrected wallmw calculation to account for gaps in first wall
 ! GIT 303: Preliminary modifications to fispact.f90 for its possible resurrection;
 !          Draft implementation of error handling module
+! GIT 304: Added a tolerance level for the constraint residuals to the VMCON
+!          convergence criteria;
+!          Added a possible remedy to help with VMCON ifail=5 results

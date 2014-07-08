@@ -1,4 +1,3 @@
-!  $Id:: numerics.f90 263 2014-05-01 14:26:48Z pknight                  $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module numerics
@@ -14,6 +13,7 @@ module numerics
   !+ad_desc  This module contains the primary numerics variables and the
   !+ad_desc  calling routines for the two equation solvers in the code.
   !+ad_prob  None
+  !+ad_call  global_variables
   !+ad_call  maths_library
   !+ad_hist  10/10/12 PJK Initial version of module
   !+ad_hist  15/10/12 PJK Modified comment lines, and added default array values
@@ -53,11 +53,13 @@ module numerics
   !+ad_hist  19/05/14 PJK Reassigned lablcc(17), lablxc(28: fradpwr)
   !+ad_hist  02/06/14 PJK New iteration variable 102 (fimpvar)
   !+ad_hist  30/06/14 PJK Changed boundl(11), boundu(11)
+  !+ad_hist  08/07/14 PJK Added verbose from global_variables
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use global_variables, only: verbose
   use maths_library
 
   implicit none
@@ -1040,6 +1042,7 @@ contains
     !+ad_hist  10/10/12 PJK Added arguments fcnvmc1, fcnvmc2
     !+ad_hist  26/02/14 PJK Added nviter argument to vmcon call
     !+ad_hist  27/02/14 PJK Corrected usage of m, meq in case of inequalities
+    !+ad_hist  08/07/14 PJK Added attempt to fix problems if VMCON exits with ifail=5
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1064,6 +1067,8 @@ contains
     integer, dimension(ipliwa) :: iwa
     integer, dimension(ipnvars) :: ilower,iupper
 
+    real(kind(1.0D0)), parameter :: zero = 0.0D0
+    real(kind(1.0D0)), parameter :: bfactor = 2.0D0
     real(kind(1.0D0)) :: xtol
     real(kind(1.0D0)), dimension(ipnvars) :: bdelta,bndl,bndu,etav,fgrd, &
          gammv,glag,glaga,xa,xv
@@ -1102,6 +1107,28 @@ contains
          lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
          gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
          liwa,ilower,iupper,bndl,bndu)
+
+    !  If VMCON has exited with error code 5 try another run using a multiple of 
+    !  the identity matrix as input for the Hessian b(n,n).
+    !  Only do this if VMCON has not iterated (nviter=1).
+
+    if ((ifail == 5).and.(nviter < 2)) then
+       mode = 1
+       b(:,:) = zero
+       do ii = 1, n
+          b(ii,ii) = bfactor
+          xv(ii) = xcm(ii)	 !  Re-initialise iteration values
+       end do
+       if (verbose == 1) then
+          write(*,*) 'VMCON error code = 5.  Rerunning VMCON using a new'  
+          write(*,*) 'initial estimate of the second derivative matrix.'
+       end if
+
+       call vmcon(fcnvmc1,fcnvmc2,mode,n,m,meq,xv,f,fgrd,conf,cnorm, &
+            lcnorm,b,lb,xtol,maxcal,ifail,nfev2,nviter,vlam,glag,vmu,cm,glaga, &
+            gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
+            liwa,ilower,iupper,bndl,bndu)
+    end if
 
     do ii = 1,n
        xcm(ii) = xv(ii)

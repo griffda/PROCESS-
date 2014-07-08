@@ -1,4 +1,3 @@
-!  $Id:: maths_library.f90 248 2014-04-01 09:15:00Z pknight             $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !  To perform standalone tests of vmcon:
@@ -2296,6 +2295,8 @@ contains
     !+ad_hist  25/02/14 MDK Added an escape from the line search to help ensure
     !+ad_hisc               convergence
     !+ad_hist  26/02/14 PJK Added new output argument niter
+    !+ad_hist  08/07/14 PJK/MDK Added a test of the residuals to the convergence
+    !+ad_hisc               criteria
     !+ad_stat  Okay
     !+ad_docs  ANL-80-64: Solution of the General Nonlinear Programming Problem
     !+ad_docc  with Subroutine VMCON, Roger L Crane, Kenneth E Hillstrom and
@@ -2334,6 +2335,7 @@ contains
 
     real(kind(1.0D0)) :: alpha,aux,auxa,calpha,dbd,dflsa,dg, &
          fls,flsa,spgdel,sum,temp,thcomp,theta
+    real(kind(1.0D0)) :: summ, sqsumsq, sqsumsq_tol
     real(kind(1.0D0)), parameter :: zero = 0.0D0
     real(kind(1.0D0)), parameter :: cp1 = 0.1D0
     real(kind(1.0D0)), parameter :: cp2 = 0.2D0
@@ -2543,16 +2545,29 @@ contains
           sum = sum + abs(vlam(k)*temp)
        end do
 
+       !  Check convergence of constraint residuals
+
+       summ = 0.0D0
+       do i = 1,m
+          summ = summ + conf(i)*conf(i)
+       end do
+       sqsumsq = sqrt(summ)
+
        if (verbose == 1) then
-          write(*,*) 'VMCON optimiser convergence parameter = ',sum
+          write(*,'(a,es13.5,a,es13.5)') &
+               'Constraint residuals (sqsumsq) = ',sqsumsq, &
+               ' Convergence parameter = ',sum
        end if
 
-       !  Exit if convergence criterion is satisfied
+       !  Exit if both convergence criteria are satisfied
+       !  (the original criterion, plus constraint residuals below the tolerance level)
+       !  Temporarily set the two tolerances equal (should perhaps be an input parameter)
 
-       if (sum <= tol) then
+       sqsumsq_tol = tol
+       if ((sum <= tol).and.(sqsumsq < sqsumsq_tol)) then
           if (verbose == 1) then
-             write(*,*) 'Convergence parameter < '// &
-                  'convergence criterion (epsvmc)'
+             write(*,*) 'Convergence parameter < convergence criterion (epsvmc)'
+             write(*,*) 'Root of sum of squares of residuals < tolerance (sqsumsq_tol)'
           end if
           return
        end if
