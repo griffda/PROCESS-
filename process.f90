@@ -379,7 +379,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '305a   Date  :: 2014-07-09'
+       '306    Date  :: 2014-07-09'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -904,6 +904,7 @@ subroutine doopt(ifail)
   !+ad_hist  27/02/14 PJK Added nineqns usage; minor output modifications
   !+ad_hist  13/03/14 PJK Added numerical state information to mfile
   !+ad_hist  09/07/14 PJK Added error reporting
+  !+ad_hist  09/07/14 PJK Added range-normalised iteration variable values to mfile
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -922,7 +923,7 @@ subroutine doopt(ifail)
 
   !  Local variables
 
-  real(kind(1.0D0)) :: summ,xcval,xmaxx,xminn,f
+  real(kind(1.0D0)) :: summ,xcval,xmaxx,xminn,f,xnorm
   integer :: ii,inn,iflag
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1086,6 +1087,19 @@ subroutine doopt(ifail)
      write(nout,100) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
           vlam(neqns+nineqns+inn), vlam(neqns+nineqns+1+inn+nvar)
      call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
+
+     !  'Range-normalised' iteration variable values:
+     !  0.0 (at lower bound) to 1.0 (at upper bound)
+
+     if (bondl(inn) == bondu(inn)) then
+        xnorm = 1.0D0
+     else
+        xnorm = (xcm(inn) - bondl(inn)) / (bondu(inn) - bondl(inn))
+        xnorm = max(xnorm, 0.0D0)
+        xnorm = min(xnorm, 1.0D0)
+     end if
+     call ovarre(mfile,trim(lablxc(ixc(inn)))//' (range normalised)', &
+          '(nitvar'//int_to_string3(inn)//')',xnorm)
   end do
 100 format(t2,i4,t8,a9,t19,4(1pe12.4))
 
@@ -1631,3 +1645,4 @@ end subroutine output
 !          Added a possible remedy to help with VMCON ifail=5 results
 ! GIT 305: Error handling now reports only during output steps, not during intermediate
 !          iterations
+! GIT 306: Range-normalised iteration variable values added to mfile
