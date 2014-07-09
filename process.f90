@@ -379,7 +379,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '305    Date  :: 2014-07-09'
+       '305a   Date  :: 2014-07-09'
   character(len=72), dimension(10) :: id
 
   !  External routines
