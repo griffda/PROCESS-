@@ -29,6 +29,7 @@ module error_handling
   !+ad_prob  None
   !+ad_call  process_output
   !+ad_hist  25/06/14 PJK Initial version
+  !+ad_hist  09/07/14 PJK Added errors_on switch
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -39,8 +40,15 @@ module error_handling
   implicit none
 
   private
-  public :: error_status, idiags, fdiags
+  public :: errors_on, error_status, idiags, fdiags
   public :: initialise_error_list, report_error, show_errors
+
+  !  Switch to turn error handling on
+  !  Error reporting is turned off, until either a severe error is found, or
+  !  during an output step.  Warnings during intermediate iteration steps
+  !  may be premature and might clear themselves at the final converged point.
+
+  logical :: errors_on = .false.
 
   !  Levels of severity
 
@@ -94,7 +102,7 @@ module error_handling
 
   !  List of messages
 
-  integer, parameter :: n_errortypes = 130
+  integer, parameter :: n_errortypes = 135
   type(error), dimension(n_errortypes) :: error_type
 
 contains
@@ -115,6 +123,7 @@ contains
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  25/06/14 PJK Initial version
+    !+ad_hist  09/07/14 PJK Added errors 131-135
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -524,6 +533,21 @@ contains
     error_type(130)%level = ERROR_SEVERE
     error_type(130)%message = &
          'REPORT_INPUT_ERROR: Error detected in input file - see OUT.DAT for more details'
+    error_type(131)%level = ERROR_WARN
+    error_type(131)%message = &
+         'EQSLV: Non-optimisation solver HYBRD returns with ifail /= 1'
+    error_type(132)%level = ERROR_WARN
+    error_type(132)%message = &
+         'DOOPT: Optimisation solver VMCON returns with ifail /= 1'
+    error_type(133)%level = ERROR_WARN
+    error_type(133)%message = &
+         'EQSLV: High final HYBRD constraint residues'
+    error_type(134)%level = ERROR_WARN
+    error_type(134)%message = &
+         'DOOPT: High final VMCON constraint residues'
+    error_type(135)%level = ERROR_INFO
+    error_type(135)%message = &
+         'OUTPF: CS coil not using maximum current density: further optimisation possible'
     !error_type()%level = ERROR_SEVERE
     !error_type()%message = &
     !     ''
@@ -573,6 +597,19 @@ contains
     !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Turn on error handling if a severe error has been encountered
+
+    if (error_type(error_id)%level == ERROR_SEVERE) errors_on = .true.
+
+    !  Error handling is only turned on during an output step, not during
+    !  intermediate iteration steps
+
+    if (.not.errors_on) then
+       idiags = INT_DEFAULT
+       fdiags = FLT_DEFAULT
+       return
+    end if
 
     if (.not.associated(error_head)) then
        allocate(error_head)
@@ -638,7 +675,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     call oheadr(iotty,'Program Error Report')
-    call ovarin(iotty,'PROCESS error status flag','(error_status...)',error_status)
+    write(iotty,'(a,i1)') 'PROCESS error status flag (error_status) = ',error_status
     call oblnkl(iotty)
 
     call oheadr(nout,'Program Error Report')
@@ -661,18 +698,25 @@ contains
        write(*,   '(i3,t7,i3,t13,a80)') ptr%id,ptr%data%level,ptr%data%message
 
        if (any(ptr%data%idiags /= INT_DEFAULT)) then
-          write(*,'(8i14)') ptr%data%idiags
+          write(*,*) 'Integer diagnostic values for this error:'
+          do i = 1,8
+             if (ptr%data%idiags(i) /= INT_DEFAULT) &
+                  write(*,'(i4,a,i14)') i,') ',ptr%data%idiags(i)
+          end do
        end if
        if (any(ptr%data%fdiags /= FLT_DEFAULT)) then
-          write(*,'(8(1pe14.5))') ptr%data%fdiags
+          write(*,*) 'Floating point diagnostic values for this error:'
+          do i = 1,8
+             if (ptr%data%fdiags(i) /= FLT_DEFAULT) &
+                  write(*,'(i4,a,1pe14.5)') i,') ',ptr%data%fdiags(i)
+          end do
        end if
+       write(*,*) ' '
 
        ptr => ptr%ptr
     end do output
 
     call ovarin(nout,'Final error identifier','(error_id)',error_id)
-
-    write(*,*) ' '
 
   end subroutine show_errors
 

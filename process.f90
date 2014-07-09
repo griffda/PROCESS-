@@ -379,7 +379,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '304    Date  :: 2014-07-08'
+       '305    Date  :: 2014-07-09'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -460,6 +460,7 @@ subroutine eqslv(ifail)
   !+ad_call  osubhd
   !+ad_call  ovarin
   !+ad_call  ovarre
+  !+ad_call  report_error
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  08/10/12 PJK Initial F90 version
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
@@ -470,6 +471,7 @@ subroutine eqslv(ifail)
   !+ad_hist  28/11/13 PJK Modified format line 40 for longer lablxc length
   !+ad_hist  13/02/14 PJK Output ifail even if a feasible solution found
   !+ad_hist  13/03/14 PJK Added numerical state information to mfile
+  !+ad_hist  09/07/14 PJK Turned on error reporting
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -508,6 +510,10 @@ subroutine eqslv(ifail)
   call eqsolv(fcnhyb,neqns,xcm,rcm,ftol,epsfcn,factor,nprint,ifail, &
        wa,iptnt,resdl,nfev1)
 
+  !  Turn on error reporting
+
+  errors_on = .true.
+
   !  Print out information on solution
 
   call oheadr(nout,'Numerics')
@@ -522,6 +528,9 @@ subroutine eqslv(ifail)
      call oheadr(iotty,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
      call ovarin(iotty,'HYBRD error flag (ifail)','',ifail)
      call oblnkl(iotty)
+
+     idiags(1) = ifail ; call report_error(131)
+
   else
      call ocmmnt(nout,'and found a feasible set of parameters.')
      call oblnkl(nout)
@@ -558,6 +567,9 @@ subroutine eqslv(ifail)
         call ocmmnt(iotty,'   with lower values of FTOL to confirm convergence...')
         call ocmmnt(iotty,'   (should be able to get down to about 1.0E-8 okay)')
         call oblnkl(iotty)
+
+        fdiags(1) = sqsumsq ; call report_error(133)
+
      end if
   end if
 
@@ -863,6 +875,7 @@ subroutine doopt(ifail)
   !+ad_args  ifail   : output integer : error flag
   !+ad_desc  This routine calls the optimising equation solver.
   !+ad_prob  None
+  !+ad_call  error_handling
   !+ad_call  function_evaluator
   !+ad_call  numerics
   !+ad_call  process_output
@@ -876,6 +889,7 @@ subroutine doopt(ifail)
   !+ad_call  osubhd
   !+ad_call  ovarin
   !+ad_call  ovarre
+  !+ad_call  report_error
   !+ad_call  verror
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  08/10/12 PJK Initial F90 version
@@ -889,14 +903,16 @@ subroutine doopt(ifail)
   !+ad_hist  13/02/14 PJK Output ifail even if a feasible solution found
   !+ad_hist  27/02/14 PJK Added nineqns usage; minor output modifications
   !+ad_hist  13/03/14 PJK Added numerical state information to mfile
+  !+ad_hist  09/07/14 PJK Added error reporting
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use process_output
-  use numerics
+  use error_handling
   use function_evaluator
+  use numerics
+  use process_output
 
   implicit none
 
@@ -930,6 +946,10 @@ subroutine doopt(ifail)
   end do
   sqsumsq = sqrt(summ)
 
+  !  Turn on error reporting
+
+  errors_on = .true.
+
   !  Print out information on solution
 
   call oheadr(nout,'Numerics')
@@ -940,6 +960,9 @@ subroutine doopt(ifail)
      call oheadr(iotty,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
      call ovarin(iotty,'VMCON error flag (ifail)','',ifail)
      call oblnkl(iotty)
+
+     idiags(1) = ifail ; call report_error(132)
+
   else
      call ocmmnt(nout,'and found a feasible set of parameters.')
      call oblnkl(nout)
@@ -967,6 +990,9 @@ subroutine doopt(ifail)
         call ocmmnt(iotty,'   with lower values of EPSVMC to confirm convergence...')
         call ocmmnt(iotty,'   (should be able to get down to about 1.0E-8 okay)')
         call oblnkl(iotty)
+
+        fdiags(1) = sqsumsq ; call report_error(134)
+
      end if
   end if
 
@@ -1255,6 +1281,7 @@ subroutine output(outfile)
   !+ad_hist  06/11/12 PJK Added startup_module
   !+ad_hist  06/11/12 PJK Added availability_module
   !+ad_hist  19/06/14 PJK Removed obsolete calls to nbeam, ech, lwhymod
+  !+ad_hist  09/07/14 PJK Turned on error handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1266,6 +1293,7 @@ subroutine output(outfile)
   use costs_module
   use current_drive_module
   use divertor_module
+  use error_handling
   use fwbs_module
   use ife_module
   use ife_variables
@@ -1293,6 +1321,12 @@ subroutine output(outfile)
   !  Local variables
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !  Turn on error reporting
+  !  (warnings etc. encountered in previous iterations may have cleared themselves
+  !  during the solution process)
+
+  errors_on = .true.
 
   !  Call stellarator output routine instead if relevant
 
@@ -1595,3 +1629,5 @@ end subroutine output
 ! GIT 304: Added a tolerance level for the constraint residuals to the VMCON
 !          convergence criteria;
 !          Added a possible remedy to help with VMCON ifail=5 results
+! GIT 305: Error handling now reports only during output steps, not during intermediate
+!          iterations
