@@ -1,3 +1,16 @@
+#!/usr/bin/env python
+
+"""Get all configurable PROCESS variables."""
+
+__author__ = "James Edwards"
+__copyright__ = "Copyright 2014, CCFE"
+__credits__ ["James Edwards"]
+__license__ "*shrug*"
+__version__ = "-1"
+__maintainer__ = "James Edwards"
+__email__ = "James.Edwards@ccfe.ac.uk"
+__status__ = "Development"
+
 import os
 
 GLOBAL_VARS_FILE = os.path.join(os.getcwd(), os.pardir, "global_variables.f90")
