@@ -61,7 +61,7 @@ class INModule(object):
         # Dictionary for variables only
         self.variables = {}
 
-        # List to remember the order in IN.DAT
+        # List to remember the order inl IN.DAT
         self.order = []
 
     def add_variable(self, var):
@@ -592,9 +592,3 @@ def fortran_python_scientific(var_value):
       var_value --> variable value as type string!
     """
     return var_value.replace("D", "e").replace("d", "e")
-
-if __name__ == '__main__':
-    I = INDATNew(filename="/home/morrisj/"
-                          "Dropbox/programs/process_utilities/"
-                          "PROCESS_Python_Library/test_input_files/"
-                          "Michael_ARIES_nocomments.IN.DAT")

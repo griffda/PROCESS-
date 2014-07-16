@@ -1,0 +1,31 @@
+{
+    "_description": "Configuration file for running PROCESS with a modified IN.DAT",
+    "_author": "James Edwards",
+    "_datetime": [2014, 07, 16, 16, 14, 24.000],
+
+    "config": {
+        "readme": "Test run for new output format!",
+        "IN.DAT_path": "demo1a_10_sep_13.IN.DAT",
+        "working_directory": "Run10",
+        "process_bin_directory": "~pknight/process/bin",
+        "iteration_settings": {
+            "number_of_iterations": 5,
+            "iteration_multiplier": 1.5,
+            "store_iteration_step_data": true,
+            "add_iteration_variables": [99, 77],
+            "remove_iteration_variables": []
+            },
+        "constraint_settings": {
+            "add_equations": [57],
+            "remove_equations": []
+            },
+        "pseudorandom_seed": 2,
+        "allowed_unfeasilbe_points": 1,
+        "customised_variables": {
+            "IOPTIMZ": 1,
+            "EPSVMC": 1e-3,
+            "TFTORT": 1.9
+        },
+        "remove_variables": ["IITER"]
+    }
+}
