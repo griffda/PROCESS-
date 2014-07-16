@@ -30,7 +30,7 @@ def get_stripped_lines(filename):
 			yield line.strip()
 
 def extract_all_vars(filename):
-		
+	"""Return dict of variable:description from variables file."""
 	variables = {}
 	for line in get_stripped_lines(filename):
 		if line.startswith("!+ad_vars"):
