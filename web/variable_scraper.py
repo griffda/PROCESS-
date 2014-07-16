@@ -4,8 +4,8 @@
 
 __author__ = "James Edwards"
 __copyright__ = "Copyright 2014, CCFE"
-__credits__ ["James Edwards"]
-__license__ "*shrug*"
+__credits__ = ["James Edwards"]
+__license__ = "*shrug*"
 __version__ = "-1"
 __maintainer__ = "James Edwards"
 __email__ = "James.Edwards@ccfe.ac.uk"
@@ -16,27 +16,23 @@ import os
 GLOBAL_VARS_FILE = os.path.join(os.getcwd(), os.pardir, "global_variables.f90")
 
 def extract_var_desc(line):
+	"""Return a tuple containing variable name, description."""
 	#print("PROCESSING:", line)
 	chunks = line.split(":")
 	var_name = chunks[0].split()[1]
 	description = chunks[1]
 	return var_name, description
 
-def get_lines(filename):
+def get_stripped_lines(filename):
+	"""Generator to extract all lines from filename (without spaces)."""
 	with open(filename) as fh:
-		lines = fh.readlines()
-		linegen = (line.strip() for line in lines)
-	return linegen
+		for line in fh:
+			yield line.strip()
 
 def extract_all_vars(filename):
-	lines = None
-	try:
-		lines = get_lines(filename)
-	except IOError:
-		print("Le fail...")
 		
 	variables = {}
-	for line in lines:
+	for line in get_stripped_lines(filename):
 		if line.startswith("!+ad_vars"):
 			try:
 				variable_name, description = extract_var_desc(line)
@@ -46,4 +42,4 @@ def extract_all_vars(filename):
 	return variables
 
 if __name__ == "__main__":
-	extract_all_vars(GLOBAL_VARS_FILE)
+	print(extract_all_vars(GLOBAL_VARS_FILE).keys())
