@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 303
+#  GIT Revision 307
 #
 #  P J Knight
 #
@@ -255,7 +255,7 @@ clean:
 # (excludes input files IN.DAT, device.dat)
 
 otherfiles = Makefile vardes.html \
-             *.tex *.ps *.eps process.pdf \
+             *.tex *.eps process.pdf \
              autodoc.f90 adheader.src adfooter.src \
              utilities/*
 

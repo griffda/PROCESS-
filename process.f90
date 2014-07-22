@@ -379,7 +379,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '306    Date  :: 2014-07-09'
+       '307    Date  :: 2014-07-22'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1646,3 +1646,4 @@ end subroutine output
 ! GIT 305: Error handling now reports only during output steps, not during intermediate
 !          iterations
 ! GIT 306: Range-normalised iteration variable values added to mfile
+! GIT 307: Raised maximum number of scan points to 200
