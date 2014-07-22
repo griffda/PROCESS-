@@ -193,7 +193,7 @@ def no_unfeasible_mfile(wdir='.'):
     m_file = MFile(filename=wdir+"/MFILE.DAT")
 
     #no scans
-    if m_file.data['isweep'].get_scan(-1) == 0:
+    if not m_file.data['isweep'].exists == 0:
 
         if m_file.data['ifail'].get_scan(0) == IFAIL_SUCCESS:
             return 0
@@ -275,7 +275,7 @@ def get_solution_from_mfile(neqns, nvars, wdir='.'):
     m_file = MFile(filename=wdir+"/MFILE.DAT")
 
 
-    if m_file.data['isweep'].get_scan(-1) == 0:
+    if not m_file.data['isweep'].exists():
         ind = 0  # only one run, no scan
     else:
         ind = -1 # last scan point

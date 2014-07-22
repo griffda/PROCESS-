@@ -379,7 +379,7 @@ subroutine inform(progid)
 
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '307    Date  :: 2014-07-22'
+       '308    Date  :: 2014-07-22'
   character(len=72), dimension(10) :: id
 
   !  External routines
@@ -1647,3 +1647,4 @@ end subroutine output
 !          iterations
 ! GIT 306: Range-normalised iteration variable values added to mfile
 ! GIT 307: Raised maximum number of scan points to 200
+! GIT 308: Updated process_funcs.py
