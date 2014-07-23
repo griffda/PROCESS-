@@ -423,6 +423,7 @@ contains
     !+ad_hist  11/09/13 PJK Removed idhe3 setting
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
+    !+ad_hist  23/07/14 PJK Changed icase description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -446,7 +447,7 @@ contains
     boundu(3) = 30.0D0
     boundu(29) = 20.0D0
 
-    icase = 'PROCESS stellarator model'
+    icase = 'Stellarator model'
 
     !  Build quantities
 

@@ -13,7 +13,6 @@ module process_input
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  check_range_int
   !+ad_cont  check_range_real
-  !+ad_cont  run_summary
   !+ad_cont  get_subscript
   !+ad_cont  get_substring
   !+ad_cont  get_substring_trim
@@ -128,6 +127,7 @@ module process_input
   !+ad_hist  14/01/13 PJK Changed (maximum) line length from 200 to maxlen
   !+ad_hist  13/05/14 PJK Added impurity_radiation_module
   !+ad_hist  30/06/14 PJK Added error_handling
+  !+ad_hist  22/07/14 PJK Moved run_summary into process.f90
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -161,7 +161,7 @@ module process_input
   implicit none
 
   private
-  public :: input, run_summary, check_range_int, check_range_real
+  public :: input, check_range_int, check_range_real
   integer, public, parameter :: nin = 10
 
 #ifdef unit_test
@@ -214,80 +214,6 @@ contains
     call parse_input_file(nin,nout,show_changes)
 
   end subroutine input
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine run_summary
-
-    !+ad_name  run_summary
-    !+ad_summ  Routine to print out the active iteration variables and
-    !+ad_summ  constraint equations for the run
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine prints out the active iteration variables and
-    !+ad_desc  constraint equations for the run.
-    !+ad_desc  <P>This used to be an ENTRY point into routine INPUT.
-    !+ad_prob  This routine ought to be elsewhere in the code.
-    !+ad_call  oblnkl
-    !+ad_call  ocmmnt
-    !+ad_hist  28/06/94 PJK Improved layout
-    !+ad_hist  03/10/12 PJK Initial F90 version
-    !+ad_hist  08/10/12 PJK Changed routine name from edit1 to run_summary
-    !+ad_hist  28/11/13 PJK Modified format statement for longer lablxc
-    !+ad_hist  27/02/14 PJK Introduced use of nineqns
-    !+ad_stat  Okay
-    !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
-    !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    !  Local variables
-
-    integer :: ii
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-#ifndef unit_test
-     call oblnkl(nout)
-     call ocmmnt(nout,'The following variables will be adjusted by')
-     call ocmmnt(nout,'the code during the iteration process :')
-     call oblnkl(nout)
-
-     write(nout,10)
- 10  format(t10,'ixc',t18,'label')
-
-     call oblnkl(nout)
-
-     write(nout,20) (ii,ixc(ii),lablxc(ixc(ii)),ii=1,nvar)
- 20  format(t1,i3,t10,i3,t18,a9)
-
-     call oblnkl(nout)
-     call ocmmnt(nout, & 
-          'The following constraint equations have been imposed,')
-     if (ioptimz == -1) then
-        call ocmmnt(nout, & 
-             'but limits will not be enforced by the code :')
-     else
-        call ocmmnt(nout,'and will be enforced by the code :')
-     end if
-     call oblnkl(nout)
-
-     write(nout,30)
- 30  format(t10,'icc',t25,'label')
-
-     call oblnkl(nout)
-
-     write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
- 40  format(t1,i3,t10,i3,t18,a33)
-#endif
-
-  end subroutine run_summary
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -383,6 +309,7 @@ contains
     !+ad_hist  17/06/14 PJK Added IMPDIR
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  24/06/14 PJK Removed BCYLTH, BLNKTTH
+    !+ad_hist  22/07/14 PJK Added RUNTITLE
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -465,6 +392,9 @@ contains
 
           !  General settings
 
+       case ('RUNTITLE')
+          call parse_string_variable('RUNTITLE', runtitle, &
+               'Title of run')
        case ('VERBOSE')
           call parse_int_variable('VERBOSE', verbose, 0, 1, &
                'Switch for diagnostic output')

@@ -117,16 +117,12 @@ subroutine init
   !+ad_call  error_handling
   !+ad_call  global_variables
   !+ad_call  impurity_radiation_module
-  !+ad_call  numerics
   !+ad_call  process_input
   !+ad_call  process_output
   !+ad_call  check
-  !+ad_call  codever
   !+ad_call  initial
   !+ad_call  initialise_error_list
   !+ad_call  input
-  !+ad_call  oblnkl
-  !+ad_call  ocmmnt
   !+ad_call  run_summary
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  17/11/97 PJK Changed file names to *.DAT
@@ -137,15 +133,14 @@ subroutine init
   !+ad_hist  13/02/14 PJK Added mfile open statement
   !+ad_hist  13/05/14 PJK Added impurity radiation model initialisation
   !+ad_hist  25/06/14 PJK Introduced call to initialise error handling
+  !+ad_hist  22/07/14 PJK Rearranged calls to print output headers
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use error_handling
-  use global_variables
   use impurity_radiation_module
-  use numerics
   use process_input
   use process_output
 
@@ -172,11 +167,6 @@ subroutine init
   open(unit=nplot,file='PLOT.DAT',status='unknown')
   open(unit=mfile,file='MFILE.DAT',status='unknown')
 
-  !  Print code banner + run details
-
-  call codever(nout)
-  call codever(iotty)
-
   !  Input any desired new initial values
 
   call input
@@ -189,130 +179,11 @@ subroutine init
 
   call check
 
-  !  Print code version
-
-  call oblnkl(nout)
-  call ocmmnt(nout,icase)
-  call ocmmnt(iotty,icase)
-  call oblnkl(iotty)
-
   !  Write to the output file certain relevant details about this run
 
   call run_summary
 
 end subroutine init
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine codever(outfile)
-
-  !+ad_name  codever
-  !+ad_summ  Prints out the code version and other run-specific information
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  outfile   : input integer : output file unit
-  !+ad_desc  This routine prints out the code version and various other
-  !+ad_desc  run-specific details.
-  !+ad_prob  None
-  !+ad_call  process_output
-  !+ad_call  inform
-  !+ad_call  oblnkl
-  !+ad_call  ocentr
-  !+ad_call  ostars
-  !+ad_call  ovarin
-  !+ad_call  ovarst
-  !+ad_hist  03/10/96 PJK Initial upgraded version
-  !+ad_hist  17/11/97 PJK Changed file names to *.DAT
-  !+ad_hist  08/10/12 PJK Initial F90 version
-  !+ad_hist  09/10/12 PJK Modified to use new process_output module
-  !+ad_hist  02/04/14 PJK Added output to mfile
-  !+ad_hist  03/04/14 PJK Used ovarst to write character string output to mfile
-  !+ad_hist  06/05/14 PJK Modified version print-out
-  !+ad_hist  15/05/14 PJK Increased output width to 110 characters
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use process_output
-
-  implicit none
-
-  !  Arguments
-
-  integer, intent(in) :: outfile
-
-  !  Local variables
-
-  integer, parameter :: width = 110
-  integer :: version
-  character(len=72), dimension(0:10) :: progid
-  character(len=5) :: vstring
-  character(len=8) :: date
-  character(len=10) :: time
-  character(len=12) :: dstring
-  character(len=7) :: tstring
-  character(len=10) :: ustring
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !  Write out banner
-
-  call oblnkl(outfile)
-  call ostars(outfile,width)
-  call ocentr(outfile,'PROCESS',width)
-  call ocentr(outfile,'Power Reactor Optimisation Code',width)
-  call ocentr(outfile,'for Environmental and Safety Studies',width)
-  call ostars(outfile,width)
-  call oblnkl(outfile)
-
-  !  Obtain details of this run
-
-  call inform(progid)
-
-  !  Write out details
-
-  write(outfile,*) progid(1)
-  write(outfile,*) progid(2)
-  write(outfile,*) progid(3)
-  write(outfile,*) progid(4)
-  write(outfile,*) progid(5)
-  write(outfile,*) progid(6)
-
-  if (outfile == nout) then
-
-     !  Beware of possible future changes to the progid(...) layouts
-
-     !  The following should work up to version 99999
-     !  Relies on an internal read statement
-
-     vstring = progid(2)(13:17)
-     read(vstring,'(i5)') version
-     call ovarin(mfile,'PROCESS version number','(procver)',version)
-
-     call date_and_time(date=date, time=time)
-
-     !  Date output in the form "DD/MM/YYYY" (including quotes)
-
-     dstring = '"'//date(7:8)//'/'//date(5:6)//'/'//date(1:4)//'"'
-     call ovarst(mfile,'Date of run','(date)',dstring)
-
-     !  Time output in the form "hh:mm" (including quotes)
-
-     tstring = '"'//time(1:2)//':'//time(3:4)//'"'
-     call ovarst(mfile,'Time of run','(time)',tstring)
-
-     ustring = '"'//trim(progid(4)(13:20))//'"'
-     call ovarst(mfile,'User','(username)',ustring)
-
-  end if
-
-  call oblnkl(outfile)
-  call ostars(outfile,width)
-  call oblnkl(outfile)
-
-end subroutine codever
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -364,6 +235,7 @@ subroutine inform(progid)
   !+ad_hist  21/08/12 PJK Initial F90 version
   !+ad_hist  23/01/13 PJK Changed progver to update automatically with SVN
   !+ad_hist  06/05/14 PJK progver must now be changed manually (SVN --> git)
+  !+ad_hist  23/07/14 PJK Modified system calls
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -377,10 +249,13 @@ subroutine inform(progid)
 
   !  Local variables
 
+  character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '308    Date  :: 2014-07-22'
+       '309    Release Date :: 2014-07-23'
   character(len=72), dimension(10) :: id
+  integer :: unit
+  logical :: unit_available
 
   !  External routines
 
@@ -388,34 +263,45 @@ subroutine inform(progid)
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !  Program name and version number
+  !  Program name
 
   progname = 'PROCESS'
 
   !  Create temporary data file
 
-  call system('/bin/rm -f PROGID.DAT' // char(0))
-  call system('/bin/touch PROGID.DAT' // char(0))
+  call system('/bin/rm -f '// tempfile // char(0))
+  call system('/bin/touch '// tempfile // char(0))
 
   !  Write information to data file
 
-  call system('/bin/date >> PROGID.DAT' // char(0))
-  call system('/usr/bin/whoami >> PROGID.DAT' // char(0))
-  call system('/bin/hostname >> PROGID.DAT' // char(0))
-  call system('/bin/pwd >> PROGID.DAT' // char(0))
+  call system('/bin/date >> ' // tempfile // char(0))
+  call system('/usr/bin/whoami >> ' // tempfile // char(0))
+  call system("/usr/bin/finger `/usr/bin/whoami` " // &
+       "| /usr/bin/head -1 | /usr/bin/cut -f 4 " // &
+       "| /usr/bin/cut -f 2-3 -d ' ' >> " // tempfile // char(0))
+  call system('/bin/hostname >> ' // tempfile // char(0))
+  call system('/bin/pwd >> ' // tempfile // char(0))
 
   !  Read back information into ID array
 
-  open(unit=1,file='PROGID.DAT',status='old')
-  read(1,'(A)') id(1)
-  read(1,'(A)') id(2)
-  read(1,'(A)') id(3)
-  read(1,'(A)') id(4)
-  close(unit=1)
+  unit = 20
+  unit_available = .false.
+  do while (.not.unit_available)
+     inquire(unit, exist=unit_available)
+     unit = unit+1
+  end do
+
+  open(unit,file=tempfile,status='old')
+  read(unit,'(A)') id(1)
+  read(unit,'(A)') id(2)
+  read(unit,'(A)') id(3)
+  read(unit,'(A)') id(4)
+  read(unit,'(A)') id(5)
+  close(unit)
 
   !  Delete temporary data file
 
-  call system('/bin/rm -f PROGID.DAT' // char(0))
+  call system('/bin/rm -f ' // tempfile // char(0))
 
   !  Annotate information and store in PROGID character array
   !  for use in other program units via the routine argument
@@ -423,16 +309,184 @@ subroutine inform(progid)
   progid(1) = '  Program : ' // progname
   progid(2) = '  Version : ' // progver
   progid(3) = 'Date/time : ' // id(1)
-  progid(4) = '     User : ' // id(2)
-  progid(5) = ' Computer : ' // id(3)
-  progid(6) = 'Directory : ' // id(4)
+  progid(4) = '     User : ' // trim(id(2)) // ' (' // trim(id(3)) // ')'
+  progid(5) = ' Computer : ' // id(4)
+  progid(6) = 'Directory : ' // id(5)
 
   !  Summarise most useful data, and store in progid(0)
 
-  progid(0) = trim(progname) // ' ' // trim(progver) // &
-       ' : Run at ' // trim(id(1))
+  progid(0) = trim(progname) // ' ' // trim(progver(:7)) // &
+       ' : Run on ' // trim(id(1)) // ' by ' // trim(id(3))
 
 end subroutine inform
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine run_summary
+
+  !+ad_name  run_summary
+  !+ad_summ  Routine to print out a summary header
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  None
+  !+ad_desc  This routine prints out a header summarising the program
+  !+ad_desc  execution details, plus a list of the active iteration
+  !+ad_desc  variables and constraint equations for the run.
+  !+ad_prob  None
+  !+ad_call  global_variables
+  !+ad_call  numerics
+  !+ad_call  process_output
+  !+ad_call  inform
+  !+ad_call  oblnkl
+  !+ad_call  ocentr
+  !+ad_call  ocmmnt
+  !+ad_call  ostars
+  !+ad_call  osubhd
+  !+ad_call  ovarin
+  !+ad_call  ovarst
+  !+ad_hist  28/06/94 PJK Improved layout
+  !+ad_hist  03/10/12 PJK Initial F90 version
+  !+ad_hist  08/10/12 PJK Changed routine name from edit1 to run_summary
+  !+ad_hist  28/11/13 PJK Modified format statement for longer lablxc
+  !+ad_hist  27/02/14 PJK Introduced use of nineqns
+  !+ad_hist  22/07/14 PJK Moved routine from input.f90, and rearranged layout,
+  !+ad_hisc               incorporating old routine codever
+  !+ad_stat  Okay
+  !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
+  !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use global_variables
+  use numerics
+  use process_output
+
+  implicit none
+
+  !  Arguments
+
+  !  Local variables
+
+  integer, parameter :: width = 110
+  integer :: lap, ii, outfile
+  character(len=72), dimension(0:10) :: progid
+  character(len=5) :: vstring
+  character(len=8) :: date
+  character(len=10) :: time
+  character(len=12) :: dstring
+  character(len=7) :: tstring
+  character(len=10) :: ustring
+  integer :: version
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !  Obtain execution details for this run
+
+  call inform(progid)
+
+  !  Print code banner + run details to screen and output file
+  
+  do lap = 1,2
+     if (lap == 1) then
+        outfile = iotty
+     else
+        outfile = nout
+     end if
+
+     call oblnkl(outfile)
+
+     call ostars(outfile, width)
+     call ocentr(outfile,'PROCESS', width)
+     call ocentr(outfile,'Power Reactor Optimisation Code', width)
+     call ocentr(outfile,'for Environmental and Safety Studies', width)
+     call ostars(outfile, width)
+
+     call oblnkl(outfile)
+
+     !  Run execution details
+
+     call ocmmnt(outfile, progid(1))  !  program name
+     call ocmmnt(outfile, progid(2))  !  version
+     call ocmmnt(outfile, progid(3))  !  date/time
+     call ocmmnt(outfile, progid(4))  !  user
+     call ocmmnt(outfile, progid(5))  !  computer
+     call ocmmnt(outfile, progid(6))  !  directory
+
+     !  Print code version and run description
+
+     call oblnkl(outfile)
+     call ostars(outfile, width)
+     call oblnkl(outfile)
+     call ocmmnt(outfile, progid(0))
+     call ocmmnt(outfile, 'Reactor concept design: '// trim(icase) // ', (c) CCFE')
+     call osubhd(outfile, runtitle)
+  end do
+
+  call ocmmnt(nout,'(Please include this header in any models, ' // &
+       'presentations and papers based on these results)')
+  call oblnkl(nout)
+  call ostars(nout, width)
+
+  !  Beware of possible future changes to the progid(...) layouts
+
+  !  The following should work up to version 99999
+  !  Relies on an internal read statement
+
+  vstring = progid(2)(13:17)
+  read(vstring,'(i5)') version
+  call ovarin(mfile,'PROCESS version number','(procver)',version)
+
+  call date_and_time(date=date, time=time)
+
+  !  Date output in the form "DD/MM/YYYY" (including quotes)
+
+  dstring = '"'//date(7:8)//'/'//date(5:6)//'/'//date(1:4)//'"'
+  call ovarst(mfile,'Date of run','(date)',dstring)
+
+  !  Time output in the form "hh:mm" (including quotes)
+
+  tstring = '"'//time(1:2)//':'//time(3:4)//'"'
+  call ovarst(mfile,'Time of run','(time)',tstring)
+
+  ustring = '"'//trim(progid(4)(13:20))//'"'
+  call ovarst(mfile,'User','(username)',ustring)
+
+#ifndef unit_test
+  call oblnkl(nout)
+  call ocmmnt(nout,'The following variables will be adjusted by')
+  call ocmmnt(nout,'the code during the iteration process :')
+  call oblnkl(nout)
+
+  write(nout,10)
+10 format(t10,'ixc',t18,'label')
+
+  call oblnkl(nout)
+
+  write(nout,20) (ii,ixc(ii),lablxc(ixc(ii)),ii=1,nvar)
+20 format(t1,i3,t10,i3,t18,a9)
+
+  call oblnkl(nout)
+  call ocmmnt(nout, & 
+       'The following constraint equations have been imposed,')
+  if (ioptimz == -1) then
+     call ocmmnt(nout, & 
+          'but limits will not be enforced by the code :')
+  else
+     call ocmmnt(nout,'and will be enforced by the code :')
+  end if
+  call oblnkl(nout)
+
+  write(nout,30)
+30 format(t10,'icc',t25,'label')
+
+  call oblnkl(nout)
+
+  write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
+40 format(t1,i3,t10,i3,t18,a33)
+#endif
+
+end subroutine run_summary
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1648,3 +1702,4 @@ end subroutine output
 ! GIT 306: Range-normalised iteration variable values added to mfile
 ! GIT 307: Raised maximum number of scan points to 200
 ! GIT 308: Updated process_funcs.py
+! GIT 309: Modified output banner and run description handling

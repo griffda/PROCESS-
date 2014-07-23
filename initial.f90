@@ -232,6 +232,7 @@ subroutine check
   !+ad_hist  02/06/14 PJK Added fimpvar usage
   !+ad_hist  24/06/14 PJK Removed refs to bcylth
   !+ad_hist  26/06/14 PJK Added error_handling
+  !+ad_hist  23/07/14 PJK Modified icase descriptions
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -293,7 +294,7 @@ subroutine check
 
   if (itart == 1) then
 
-     icase  = 'PROCESS tight aspect ratio tokamak model'
+     icase  = 'Tight aspect ratio tokamak model'
 
      bore   = 0.0D0
      gapoh  = 0.0D0
@@ -351,7 +352,7 @@ subroutine check
 
      ddwi     = 0.0D0
      kappa    = 1.0D0
-     icase    = 'PROCESS reversed field pinch model'
+     icase    = 'Reversed field pinch model'
      iefrf    = 9
      ifispact = 0
      iohcl    = 0
@@ -369,14 +370,14 @@ subroutine check
   !  Inertial Fusion Energy model
 
   if (ife == 1) then
-     icase    = 'PROCESS inertial fusion energy model'
+     icase    = 'Inertial Fusion Energy model'
      lpulse   = 0
   end if
 
   !  Pulsed power plant model
 
   if (lpulse == 1) then
-     icase = 'PROCESS pulsed tokamak model'
+     icase = 'Pulsed tokamak model'
   else
      esbldgm3 = 0.0D0
   end if
