@@ -557,6 +557,7 @@ def variable_type(var_name, var_value):
         print("Variable: %s" % var_name)
         print("variable not in variable type list. Please check the "
               "process_dicts file! Variable type left as string")
+        var_value = var_value.replace(",", "")
         return var_value
 
     if VAR_TYPE[var_name] == 'int_variable':
