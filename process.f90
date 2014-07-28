@@ -252,7 +252,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '311    Release Date :: 2014-07-28'
+       '312    Release Date :: 2014-07-28'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1734,3 +1734,4 @@ end subroutine output
 ! GIT 309: Modified output banner and run description handling
 ! GIT 310: Constraint residues summary now output in physical units
 ! GIT 311: Updated in_dat.py
+! GIT 312: Added fix for negative ion density occurrences at low electron density

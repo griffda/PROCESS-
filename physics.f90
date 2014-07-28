@@ -2198,6 +2198,8 @@ contains
     !+ad_hist  11/09/13 PJK Removed idhe3, ftr usage
     !+ad_hist  12/02/14 PJK Modified initial dnprot approximation
     !+ad_hist  19/02/14 PJK Moved PCOEF and DNLA calculations elsewhere
+    !+ad_hist  28/07/14 PJK Added fix for problems due to carbon impurity
+    !+ad_hisc               scaling at low electron density
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  F/MI/PJK/LOGBOOK11, p.38 for D-He3 deni calculation
@@ -2253,6 +2255,10 @@ contains
     !  Carbon portion (IPDG89)
 
     fc = impc * (0.009D0 + 0.006D0 * (7.0D19/dene)**2.6D0)
+
+    !  The following should prevent problems at low electron density
+    !  dene with ion density deni becoming negative
+    fc = min(fc, 0.05D0)
     rncne = fc
 
     !  Oxygen portion (IPDG89)
