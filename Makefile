@@ -216,10 +216,11 @@ physics.o: current_drive.o error_handling.o global_variables.o impurity_radiatio
 plant_power.o: fwbs.o global_variables.o output.o
 plasma_geometry.o: global_variables.o
 plasma_profiles.o: global_variables.o maths_library.o
-process.o: availability.o buildings.o costs.o current_drive.o divertor.o error_handling.o \
-  evaluators.o fwbs.o global_variables.o ife.o impurity_radiation.o input.o machine_build.o \
-  numerics.o output.o pfcoil.o physics.o plant_power.o pulse.o rfp.o scan.o \
-  sctfcoil.o startup.o stellarator.o structure.o tfcoil.o vacuum.o
+process.o: availability.o buildings.o constraint_equations.o costs.o current_drive.o \
+  divertor.o error_handling.o evaluators.o fwbs.o global_variables.o ife.o \
+  impurity_radiation.o input.o machine_build.o numerics.o output.o pfcoil.o physics.o \
+  plant_power.o pulse.o rfp.o scan.o sctfcoil.o startup.o stellarator.o structure.o \
+  tfcoil.o vacuum.o
 pulse.o: error_handling.o global_variables.o maths_library.o output.o physics.o
 rfp.o: current_drive.o input.o global_variables.o machine_build.o output.o pfcoil.o \
   plasma_profiles.o physics.o

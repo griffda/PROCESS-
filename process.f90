@@ -252,7 +252,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '309    Release Date :: 2014-07-23'
+       '310    Release Date :: 2014-07-28'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -500,9 +500,11 @@ subroutine eqslv(ifail)
   !+ad_args  ifail   : output integer : error flag
   !+ad_desc  This routine calls the non-optimising equation solver.
   !+ad_prob  None
+  !+ad_call  constraints
   !+ad_call  function_evaluator
   !+ad_call  numerics
   !+ad_call  process_output
+  !+ad_call  constraint_eqns
   !+ad_call  eqsolv
   !+ad_call  fcnhyb
   !+ad_call  herror
@@ -526,11 +528,14 @@ subroutine eqslv(ifail)
   !+ad_hist  13/02/14 PJK Output ifail even if a feasible solution found
   !+ad_hist  13/03/14 PJK Added numerical state information to mfile
   !+ad_hist  09/07/14 PJK Turned on error reporting
+  !+ad_hist  28/07/14 PJK Added constraint_eqns call to evaluate residues
+  !+ad_hisc               in physical units
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constraints
   use process_output
   use numerics
   use function_evaluator
@@ -543,9 +548,12 @@ subroutine eqslv(ifail)
 
   !  Local variables
 
+  integer :: inn,nprint,nx
   real(kind(1.0D0)) :: sumsq
   real(kind(1.0D0)), dimension(iptnt) :: wa
-  integer :: inn,nprint,nx
+  real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
+  character(len=1), dimension(ipeqns) :: sym
+  character(len=10), dimension(ipeqns) :: lab
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -629,29 +637,35 @@ subroutine eqslv(ifail)
 
   call osubhd(nout,'The solution vector is comprised as follows :')
 
-  write(nout,20)
-20 format(t5,'i',t23,'final',t33,'fractional',t46,'residue')
+  write(nout,10)
+10 format(t5,'i',t23,'final',t33,'fractional',t46,'residue')
 
-  write(nout,30)
-30 format(t23,'value',t35,'change')
+  write(nout,20)
+20 format(t23,'value',t35,'change')
 
   call oblnkl(nout)
 
   do inn = 1,neqns
      xcs(inn) = xcm(inn)*scafc(inn)
-     write(nout,40) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn),resdl(inn)
+     write(nout,30) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn),resdl(inn)
      call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
   end do
-40   format(t2,i4,t8,a9,t19,1pe12.4,1pe12.4,1pe12.4)
+30 format(t2,i4,t8,a9,t19,1pe12.4,1pe12.4,1pe12.4)
 
   call osubhd(nout, &
        'The following constraint residues should be close to zero :')
 
+  call constraint_eqns(neqns,con1,-1,con2,err,sym,lab)
+  write(nout,40)
+40 format(t48,'physical',t73,'constraint',t100,'normalised')
+  write(nout,50)
+50 format(t47,'constraint',t74,'residue',t101,'residue')
+  call oblnkl(nout)
   do inn = 1,neqns
-     write(nout,60) inn,lablcc(icc(inn)),rcm(inn)
-     call ovarre(mfile,lablcc(icc(inn)),'(constr'//int_to_string3(inn)//')',rcm(inn))
+     write(nout,60) inn,lablcc(icc(inn)),sym(inn),con2(inn), &
+          lab(inn),err(inn),lab(inn),con1(inn)
   end do
-60   format(t2,i4,t8,a33,t45,1pe12.4)
+60 format(t2,i4,t8,a33,t46,a1,t47,1pe12.4,t60,a10,t71,1pe12.4,t84,a10,t98,1pe12.4)
 
 end subroutine eqslv
 
@@ -929,11 +943,13 @@ subroutine doopt(ifail)
   !+ad_args  ifail   : output integer : error flag
   !+ad_desc  This routine calls the optimising equation solver.
   !+ad_prob  None
+  !+ad_call  constraints
   !+ad_call  error_handling
   !+ad_call  function_evaluator
   !+ad_call  numerics
   !+ad_call  process_output
   !+ad_call  boundxc
+  !+ad_call  constraint_eqns
   !+ad_call  int_to_string3
   !+ad_call  loadxc
   !+ad_call  oblnkl
@@ -959,11 +975,14 @@ subroutine doopt(ifail)
   !+ad_hist  13/03/14 PJK Added numerical state information to mfile
   !+ad_hist  09/07/14 PJK Added error reporting
   !+ad_hist  09/07/14 PJK Added range-normalised iteration variable values to mfile
+  !+ad_hist  28/07/14 PJK Added constraint_eqns call to evaluate residues
+  !+ad_hisc               in physical units
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constraints
   use error_handling
   use function_evaluator
   use numerics
@@ -977,8 +996,11 @@ subroutine doopt(ifail)
 
   !  Local variables
 
-  real(kind(1.0D0)) :: summ,xcval,xmaxx,xminn,f,xnorm
   integer :: ii,inn,iflag
+  real(kind(1.0D0)) :: summ,xcval,xmaxx,xminn,f,xnorm
+  real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
+  character(len=1), dimension(ipeqns) :: sym
+  character(len=10), dimension(ipeqns) :: lab
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1069,12 +1091,12 @@ subroutine doopt(ifail)
   end if
 
   if (minmax > 0) then
-     write(nout,20) lablmm(abs(minmax))
+     write(nout,10) lablmm(abs(minmax))
   else
-     write(nout,30) lablmm(abs(minmax))
+     write(nout,20) lablmm(abs(minmax))
   end if
-20 format(' to minimise the ',a22)
-30 format(' to maximise the ',a22)
+10 format(' to minimise the ',a22)
+20 format(' to maximise the ',a22)
 
   call oblnkl(nout)
 
@@ -1097,7 +1119,7 @@ subroutine doopt(ifail)
            iflag = 1
         end if
         xcval = xcm(ii)*scafc(ii)
-        write(nout,40) ii,lablxc(ixc(ii)),xcval,bondl(ii)*scafc(ii)
+        write(nout,30) ii,lablxc(ixc(ii)),xcval,bondl(ii)*scafc(ii)
      end if
 
      if (xcm(ii) > xmaxx) then
@@ -1112,33 +1134,33 @@ subroutine doopt(ifail)
            iflag = 1
         end if
         xcval = xcm(ii)*scafc(ii)
-        write(nout,50) ii,lablxc(ixc(ii)),xcval,bondu(ii)*scafc(ii)
+        write(nout,40) ii,lablxc(ixc(ii)),xcval,bondu(ii)*scafc(ii)
      end if
   end do
 
-40 format(t4,'Variable ',i3,' (',a9, &
+30 format(t4,'Variable ',i3,' (',a9, &
         ',',1pe12.4,') is at or below its lower bound:',1pe12.4)
-50 format(t4,'Variable ',i3,' (',a9, &
+40 format(t4,'Variable ',i3,' (',a9, &
         ',',1pe12.4,') is at or above its upper bound:',1pe12.4)
 
   !  Print out information on numerics
 
   call osubhd(nout,'The solution vector is comprised as follows :')
+  write(nout,50)
+50 format(t47,'lower',t59,'upper')
+
+  write(nout,60)
+60 format(t23,'final',t33,'fractional',t46,'Lagrange',t58,'Lagrange')
+
   write(nout,70)
-70 format(t47,'lower',t59,'upper')
-
-  write(nout,80)
-80 format(t23,'final',t33,'fractional',t46,'Lagrange',t58,'Lagrange')
-
-  write(nout,90)
-90 format(t5,'i',t23,'value',t35,'change',t45,'multiplier', &
+70 format(t5,'i',t23,'value',t35,'change',t45,'multiplier', &
         t57,'multiplier')
 
   call oblnkl(nout)
 
   do inn = 1,nvar
      xcs(inn) = xcm(inn)*scafc(inn)
-     write(nout,100) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
+     write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
           vlam(neqns+nineqns+inn), vlam(neqns+nineqns+1+inn+nvar)
      call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
 
@@ -1155,15 +1177,22 @@ subroutine doopt(ifail)
      call ovarre(mfile,trim(lablxc(ixc(inn)))//' (range normalised)', &
           '(nitvar'//int_to_string3(inn)//')',xnorm)
   end do
-100 format(t2,i4,t8,a9,t19,4(1pe12.4))
+80 format(t2,i4,t8,a9,t19,4(1pe12.4))
 
   call osubhd(nout, &
        'The following equality constraint residues should be close to zero :')
 
+  call constraint_eqns(neqns,con1,-1,con2,err,sym,lab)
+  write(nout,90)
+90 format(t48,'physical',t73,'constraint',t100,'normalised')
+  write(nout,100)
+100 format(t47,'constraint',t74,'residue',t101,'residue')
+  call oblnkl(nout)
   do inn = 1,neqns
-     write(nout,120) inn,lablcc(icc(inn)),rcm(inn),vlam(inn)
-     call ovarre(mfile,lablcc(icc(inn)),'(constr'//int_to_string3(inn)//')',rcm(inn))
+     write(nout,110) inn,lablcc(icc(inn)),sym(inn),con2(inn), &
+          lab(inn),err(inn),lab(inn),con1(inn)
   end do
+110 format(t2,i4,t8,a33,t46,a1,t47,1pe12.4,t60,a10,t71,1pe12.4,t84,a10,t98,1pe12.4)
 
   if (nineqns > 0) then
      call osubhd(nout, &
@@ -1703,3 +1732,4 @@ end subroutine output
 ! GIT 307: Raised maximum number of scan points to 200
 ! GIT 308: Updated process_funcs.py
 ! GIT 309: Modified output banner and run description handling
+! GIT 310: Constraint residues summary now output in physical units

@@ -1,4 +1,3 @@
-!  $Id:: evaluators.f90 257 2014-04-24 08:34:03Z pknight                $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module function_evaluator
@@ -16,6 +15,7 @@ module function_evaluator
   !+ad_desc  This module contains the function evaluators required
   !+ad_desc  by the two equation solvers in the code.
   !+ad_prob  None
+  !+ad_call  constraints
   !+ad_call  cost_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
@@ -39,11 +39,13 @@ module function_evaluator
   !+ad_hist  17/12/12 PJK Added times_variables
   !+ad_hist  19/05/14 PJK Added ife_variables, stellarator_variables
   !+ad_hist  26/06/14 PJK Added error_handling
+  !+ad_hist  28/07/14 PJK Added constraints
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constraints
   use cost_variables
   use current_drive_variables
   use divertor_variables
@@ -83,10 +85,11 @@ contains
     !+ad_desc  <A HREF="eqsolv.html">EQSOLV</A> (q.v.).
     !+ad_prob  None
     !+ad_call  caller
-    !+ad_call  constraints
+    !+ad_call  constraint_eqns
     !+ad_hist  27/07/11 PJK Initial F90 version
     !+ad_hist  06/11/12 PJK Renamed routine con1 to constraints
     !+ad_hist  17/12/13 PJK Added new argument to constraints call
+    !+ad_hist  28/07/14 PJK Modified constraints call
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -111,7 +114,7 @@ contains
     ncon = neqns
 
     call caller(xc,nvars)
-    call constraints(ncon,rc,-1)
+    call constraint_eqns(ncon,rc,-1)
 
     !  Set iflag < 0 if program is to be terminated here.
 
@@ -142,7 +145,7 @@ contains
     !+ad_desc  constraints in <CODE>conf</CODE>.
     !+ad_prob  None
     !+ad_call  caller
-    !+ad_call  constraints
+    !+ad_call  constraint_eqns
     !+ad_call  funfom
     !+ad_hist  02/10/96 PJK Initial upgraded version
     !+ad_hist  08/10/12 PJK Initial F90 version
@@ -151,6 +154,7 @@ contains
     !+ad_hist  17/12/13 PJK Added new argument to constraints call
     !+ad_hist  06/02/14 PJK Added second call to caller to aid initialisation
     !+ad_hist  19/05/14 PJK Added tburn consistency check
+    !+ad_hist  28/07/14 PJK Modified constraints call
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -205,7 +209,7 @@ contains
 
     !  Evaluate constraint equations
 
-    call constraints(m,conf,-1)
+    call constraint_eqns(m,conf,-1)
 
     !  To stop the program, set ifail < 0 here.
 
@@ -239,7 +243,7 @@ contains
     !+ad_desc  or normals are returned as the columns of <CODE>cnorm</CODE>.
     !+ad_prob  None
     !+ad_call  caller
-    !+ad_call  constraints
+    !+ad_call  constraint_eqns
     !+ad_call  funfom
     !+ad_hist  02/10/96 PJK Initial upgraded version
     !+ad_hist  08/10/12 PJK Initial F90 version
@@ -247,6 +251,7 @@ contains
     !+ad_hist  17/01/13 PJK Corrected ifail to be input/output
     !+ad_hist  17/12/13 PJK Added new argument to constraints call
     !+ad_hist  24/04/14 PJK Corrected problem with final evaluation
+    !+ad_hist  28/07/14 PJK Modified constraints call
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -285,13 +290,13 @@ contains
 
        call caller(xfor,n)
        call funfom(ffor)
-       call constraints(m,cfor,-1)
+       call constraint_eqns(m,cfor,-1)
 
        !  Evaluate at (x-dx)
 
        call caller(xbac,n)
        call funfom(fbac)
-       call constraints(m,cbac,-1)
+       call constraint_eqns(m,cbac,-1)
 
        !  Calculate finite difference gradients
 
