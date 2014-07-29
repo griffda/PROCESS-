@@ -2181,7 +2181,7 @@ contains
     !+ad_desc  This subroutine determines the various plasma component
     !+ad_desc  fractional makeups.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  06/12/95 PJK Added D-He3 calculations
     !+ad_hist  01/04/98 PJK Added calculation of line-averaged density
@@ -2258,7 +2258,12 @@ contains
 
     !  The following should prevent problems at low electron density
     !  dene with ion density deni becoming negative
-    fc = min(fc, 0.05D0)
+
+    if (fc > 0.05D0) then
+       fc = 0.05D0
+       call report_error(136)
+    end if
+
     rncne = fc
 
     !  Oxygen portion (IPDG89)

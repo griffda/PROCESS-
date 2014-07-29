@@ -102,7 +102,7 @@ module error_handling
 
   !  List of messages
 
-  integer, parameter :: n_errortypes = 135
+  integer, parameter :: n_errortypes = 136
   type(error), dimension(n_errortypes) :: error_type
 
 contains
@@ -124,6 +124,7 @@ contains
     !+ad_call  None
     !+ad_hist  25/06/14 PJK Initial version
     !+ad_hist  09/07/14 PJK Added errors 131-135
+    !+ad_hist  29/07/14 PJK Added error 136
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -548,6 +549,9 @@ contains
     error_type(135)%level = ERROR_INFO
     error_type(135)%message = &
          'OUTPF: CS coil not using maximum current density: further optimisation possible'
+    error_type(136)%level = ERROR_WARN
+    error_type(136)%message = &
+         'BETCOM: Low density... carbon impurity fraction forced to be no more than 0.05'
     !error_type()%level = ERROR_SEVERE
     !error_type()%message = &
     !     ''
