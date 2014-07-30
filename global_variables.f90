@@ -1451,6 +1451,7 @@ module tfcoil_variables
   !+ad_hist  12/06/14 PJK Changed prp default value to 0.0
   !+ad_hist  24/06/14 PJK Removed wtbc
   !+ad_hist  30/07/14 PJK Changed tftort comment
+  !+ad_hist  30/07/14 PJK Renamed borev to tfborev
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -1490,8 +1491,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: bmaxtf = 0.0D0
   !+ad_vars  bmaxtfrp : peak field at conductor with ripple (T)
   real(kind(1.0D0)) :: bmaxtfrp = 0.0D0
-  !+ad_vars  borev : vertical inner bore of TF coil (m)
-  real(kind(1.0D0)) :: borev = 0.0D0
   !+ad_vars  casestr : case strain
   real(kind(1.0D0)) :: casestr = 0.0D0
   !+ad_vars  casfact /4.0/ : TF coil case outboard/inboard area ratio
@@ -1674,6 +1673,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfareain = 0.0D0
   !+ad_vars  tfboreh : TF coil horizontal bore (m)
   real(kind(1.0D0)) :: tfboreh = 0.0D0
+  !+ad_vars  tfborev : vertical inner bore of TF coil (m)
+  real(kind(1.0D0)) :: tfborev = 0.0D0
   !+ad_vars  tfbusl : TF coil bus length (m)
   real(kind(1.0D0)) :: tfbusl = 0.0D0
   !+ad_vars  tfbusmas : TF coil bus mass (kg)
@@ -2475,7 +2476,8 @@ module build_variables
   !+ad_varc                (calculated for stellarators)
   !+ad_varc                (iteration variable 13)
   real(kind(1.0D0)) :: tfcth = 0.9D0
-  !+ad_vars  tfootfi /1.8/ : TF coil outboard leg / inboard leg thickness ratio
+  !+ad_vars  tfootfi /1.8/ : TF coil outboard leg / inboard leg radial thickness
+  !+ad_varc                  ratio (itfsup=0 only)
   !+ad_varc                  (iteration variable 75)
   real(kind(1.0D0)) :: tfootfi = 1.8D0
   !+ad_vars  tfthko : outboard TF coil thickness (m)

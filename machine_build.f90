@@ -105,6 +105,7 @@ contains
     !+ad_hist  24/06/14 PJK Removed bcylth;
     !+ad_hisc               blnktth now always calculated
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  30/07/14 PJK Modified tfthko calculation
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -120,6 +121,7 @@ contains
 
     real(kind(1.0D0)) :: a1,a2,hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild
     integer :: ripflag = 0
+    integer :: first_call = 1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -149,8 +151,13 @@ contains
     rsldo = rmajor + rminor + scraplo + fwoth + blnkoth + shldoth
 
     !  Thickness of outboard TF coil legs
+    !  For superconducting TF coils, this is done consistently in sctfcoil after
+    !  the first call to this routine
 
-    tfthko = tfootfi*tfcth 
+    if ((itfsup == 0).or.(first_call == 1)) then
+       tfthko = tfootfi*tfcth
+       first_call = 0
+    end if
 
     !  Radius to centre of outboard TF coil legs
 

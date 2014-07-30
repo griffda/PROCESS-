@@ -82,6 +82,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  24/06/14 PJK Removed refs to bcylth
     !+ad_hist  30/07/14 PJK Added tftort calculation
+    !+ad_hist  30/07/14 PJK Changed estotf output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -188,7 +189,7 @@ contains
        call ovarre(outfile,'Number of TF coil legs','(tfno)',tfno)
 
        call osubhd(outfile,'Energy and Forces :')
-       call ovarre(outfile,'Stored energy per coil (GJ)','(estotf)',estotf)
+       call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotf*tfno)',estotf*tfno)
        call ovarre(outfile,'Vertical force on inboard leg (N)','(vforce)',vforce)
        call ovarre(outfile,'Centering force on inboard leg (N/m)','(cforce)',cforce)
        call ovarre(outfile,'Radial stress (Pa)','(sigrad)',sigrad)

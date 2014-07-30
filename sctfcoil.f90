@@ -99,6 +99,7 @@ contains
     !+ad_hisc               a bucking cylinder
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  30/07/14 PJK Calculate tftort instead of using input value
+    !+ad_hist  30/07/14 PJK Renamed borev to tfborev; changed tfthko calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -146,11 +147,6 @@ contains
 
     tftort = 2.0D0 * rcoil*sin(thtcoil)
 
-    !  Cross-sectional area of outboard leg,
-    !  assumed to be same width as inboard leg
-
-    arealeg = tfthko*tftort
-
     !  Annular area of midplane containing TF coil inboard legs
 
     tfareain = pi * (rcoil**2 - rcoilp**2) 
@@ -186,11 +182,6 @@ contains
     vforce = 0.5D0 * bt * rmajor * 0.5D0*ritfc * &
          log(rtot/rtfcin) / tfno
 
-    !  Horizontal and vertical bores
-
-    tfboreh = rtot - rtfcin - 0.5D0*(tfthko + tfcth)
-    borev = (hpfu - tfcth) + hmax
-
     !  The rest of this routine deals with superconducting coils.
 
     !  Define coil shape
@@ -204,16 +195,6 @@ contains
     !  Find TF coil energy (GJ)
 
     estotf = 1.0D-9 *  0.5D0*tfind / tfno * ritfc**2
-
-    !  Coil inside perimeter
-
-    tfleng = 0.0D0
-    do i = 1,2
-       tfleng = tfleng + 2.0D0*(radctf(i) + 0.5D0*tfcth) * dthet(i)
-    end do
-    do i = 3,4
-       tfleng = tfleng + 2.0D0*(radctf(i) + 0.5D0*tfthko) * dthet(i)
-    end do
 
     !  Case thicknesses (inboard leg)
 
@@ -283,6 +264,14 @@ contains
        write(*,*) 'acasetf = ',acasetf
        write(*,*) ' '
     end if
+
+    !  Area of outboard leg, taking into account extra case area
+
+    arealeg = acasetf*casfact + awpc
+
+    !  Outboard leg radial thickness; the legs are rectangular in cross-section
+
+    tfthko = arealeg / tftort
 
     !  Winding pack current density (forced to be positive)
 
@@ -397,6 +386,21 @@ contains
        write(*,*) 'and (e.g.) 13 & 29 to force the coil to be wide enough.'
     end if
 
+    !  Coil perimeter along its cross-sectional centre
+
+    tfleng = 0.0D0
+    do i = 1,2
+       tfleng = tfleng + 2.0D0*(radctf(i) + 0.5D0*tfcth) * dthet(i)
+    end do
+    do i = 3,4
+       tfleng = tfleng + 2.0D0*(radctf(i) + 0.5D0*tfthko) * dthet(i)
+    end do
+
+    !  TF coil horizontal and vertical bores
+
+    tfboreh = rtot - rtfcin - 0.5D0*(tfthko + tfcth)
+    tfborev = (hpfu - tfcth) + hmax
+
     !  TF Coil areas and masses
 
     !  Surface areas (for cryo system)
@@ -414,8 +418,8 @@ contains
     cplen = 2.0D0*(radctf(1) + 0.5D0*tfcth) * dthet(1)
 
     !  The outboard to inboard case area ratio is casfact
-    !  The 1.4 factor is a scaling factor to fit to the ITER-FDR value
-    !  of 450 tonnes; see CCFE note T&M/PKNIGHT/PROCESS/022
+    !  The 1.4 factor is used as a scaling factor to fit
+    !  to the ITER-FDR value of 450 tonnes; see CCFE note T&M/PKNIGHT/PROCESS/022
 
     whtcas = 1.4D0 * dcase * acasetf * ( cplen + (tfleng-cplen)*casfact )
 
@@ -1521,6 +1525,7 @@ contains
     !+ad_hist  08/05/14 PJK Changed ripmax description
     !+ad_hist  16/06/14 PJK Removed duplicate outputs
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  30/07/14 PJK Renamed borev to tfborev; changed estotf output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -1584,7 +1589,7 @@ contains
     call ovarre(outfile,'Peak field (Amperes Law,T)','(bmaxtf)',bmaxtf)
     call ovarre(outfile,'Peak field (with ripple,T)','(bmaxtfrp)',bmaxtfrp)
     call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
-    call ovarre(outfile,'Stored energy per coil (GJ)','(estotf)',estotf)
+    call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotf*tfno)',estotf*tfno)
     call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf)
     call ovarre(outfile,'Vertical separating force per coil (N)','(vforce)',vforce)
     call ovarre(outfile,'Centering force per coil (N/m)','(cforce)',cforce)
@@ -1593,8 +1598,8 @@ contains
     call ovarre(outfile,'Inboard leg centre radius (m)','(rtfcin)',rtfcin)
     call ovarre(outfile,'Outboard leg centre radius (m)','(rtot)',rtot)
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax)
-    call ovarre(outfile,'Clear bore (m)','(tfboreh)',tfboreh)
-    call ovarre(outfile,'Clear vertical bore (m)','(borev)',borev)
+    call ovarre(outfile,'Clear horizontal bore (m)','(tfboreh)',tfboreh)
+    call ovarre(outfile,'Clear vertical bore (m)','(tfborev)',tfborev)
 
     call oblnkl(outfile)
     call ocmmnt(outfile,'TF coil inner surface shape is approximated')

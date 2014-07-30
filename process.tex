@@ -1,5 +1,3 @@
-%  $Id:: process.tex 263 2014-05-01 14:26:48Z pknight                   $
-
 \documentclass[11pt,a4paper]{report}
 \usepackage{epsfig,colordvi,latexsym}
 \usepackage{amsmath}
@@ -38,9 +36,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-06-30
+2014-07-30
 \hfill
-Revision:: 303
+Revision:: 315
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -689,8 +687,8 @@ J_{\mbox{\scriptsize protection}}$ upper limit (SCTF)                   & L    &
 54  & peak TF coil nuclear heating upper limit                  & L    & \textbf{95},93,94 \\
 55  & final He concentration in vacuum vessel upper limit       & L    & \textbf{96},93,94 \\
 56  & $P_{\mbox{\scriptsize separatrix}}/R_{\mbox{\scriptsize major}}$ upper limit & L    & \textbf{97},1,3 \\
-57  & TF coil outer leg toroidal thickness lower limit (SCTF)   & L    & \textbf{99},77 \\
-58  & TF coil outer leg radial thickness limit lower (SCTF)     & L    & \textbf{100},75,13 \\
+57  & TF coil outer leg toroidal thickness lower limit (SCTF)   & L    & \textbf{99},29,13  \\
+58  & TF coil outer leg radial thickness limit lower (SCTF)     & L    & \textbf{100},13 \\
 \hline
 \end{tabular}
 \end{center}
@@ -847,7 +845,7 @@ no. & variable name     & description                                           
 74  & \texttt{scraplo}  & outboard scrape-off layer thickness                     &     & \texttt{0.001D0} & \texttt{10.00D0} \\
 75  & \texttt{tfootfi}  & ratio of TF coil outboard/inboard leg thickness         &     & \texttt{0.200D0} & \texttt{5.000D0} \\
 76  & \texttt{frfptf}   & f-value for TF coil toroidal thickness limit equation   & 47  & \texttt{0.001D0} & \texttt{1.000D0} \\
-77  & \texttt{tftort}   & TF coil toroidal thickness                              &     & \texttt{0.050D0} & \texttt{4.000D0} \\
+77  & \texttt{tftort}   & TF coil toroidal thickness (use for RFPs only)          &     & \texttt{0.050D0} & \texttt{4.000D0} \\
 78  & \texttt{rfpth}    & RFP pinch parameter, $\Theta$                           &     & \texttt{0.010D0} & \texttt{1.800D0} \\
 79  & \texttt{fbetap}   & f-value for poloidal beta limit equation                & 48  & \texttt{0.001D0} & \texttt{1.000D0} \\
 80  & \texttt{frfpf}    & f-value for RFP reversal parameter limit equation       & 49  & \texttt{0.001D0} & \texttt{1.000D0} \\
@@ -2190,12 +2188,18 @@ pack cross-sectional area; from this, the half-thickness \texttt{trp} is
 calculated.
 
 The outboard leg of the TF coil is assumed to be the same width in the
-toroidal direction as the outside edge of the inboard leg. To ensure that the
-coil dimensions of the outboard leg are consistent with the radial and
-toroidal thicknesses of the winding pack and the other constituents of the
-coil shown in the figure, turn on constraint equations no.~57 and~58 with
-iteration variables no.\ 75 (\texttt{tfootfi}), 77 (\texttt{tftort}), 99
-(\texttt{ftftort}) and 100 (\texttt{ftfthko}).
+toroidal direction as the outside edge of the inboard leg. In the radial
+direction, for resistive TF coils the input parameter \texttt{tfootfi} gives
+the ratio of the outboard leg thickness to the inboard leg thickness
+\texttt{tfcth}; for superconducting coils the outboard thickness is calculated
+taking into account input parameter \texttt{casfact}, the cross-sectional area
+ratio of the outboard to inboard steel cases.
+
+To ensure that the coil dimensions of the outboard leg are consistent with the
+radial and toroidal thicknesses of the winding pack and the other constituents
+of the coil shown in the figure, turn on constraint equations no.~57 and~58
+with iteration variables no.\ 99 (\texttt{ftftort}) and 100
+(\texttt{ftfthko}).
 
 \begin{figure}[tbph]
 \epsfig{file=tokamak_tfcoil.eps,width=160mm}
