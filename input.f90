@@ -310,6 +310,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  24/06/14 PJK Removed BCYLTH, BLNKTTH
     !+ad_hist  22/07/14 PJK Added RUNTITLE
+    !+ad_hist  30/07/14 PJK Changed TFTORT comment
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -513,13 +514,21 @@ contains
           call parse_real_variable('FIMPVAR', fimpvar, 1.0D-6, 0.5D0, &
                'Impurity fraction to be varied')
        case ('FRADMIN')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'FRADMIN is now obsolete -'
           write(outfile,*) 'please remove it from the input file.'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('FTR')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'FTR is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
           write(outfile,*) '(use FTRIT instead).'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('FTRIT')
           call parse_real_variable('FTRIT', ftrit, 0.0D0, 1.0D0, &
@@ -543,9 +552,13 @@ contains
           call parse_int_variable('ICULBL', iculbl, 0, 2, &
                'Switch for beta limit scaling')
        case ('ICULDL')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'ICULDL is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
           write(outfile,*) '(use IDENSL=3 for equivalent model to ICULDL=0).'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('ICURR')
           call parse_int_variable('ICURR', icurr, 1, 7, &
@@ -554,9 +567,13 @@ contains
           call parse_int_variable('IDENSL', idensl, 1, 7, &
                'Switch for enforced density limit')
        case ('IDHE3')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'IDHE3 is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
           write(outfile,*) '(use fhe3 to adjust 3He fuel fraction).'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('IFALPHAP')
           call parse_int_variable('IFALPHAP', ifalphap, 0, 1, &
@@ -574,8 +591,12 @@ contains
           call parse_int_variable('IINVQD', iinvqd, 0, 1, &
                'Switch for inverse quadrature')
        case ('IITER')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'IITER is now obsolete -'
           write(outfile,*) 'please remove it from the input file.'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('IMPC')
           call parse_real_variable('IMPC', impc, 0.0D0, 10.0D0, &
@@ -605,8 +626,12 @@ contains
           call parse_int_variable('IRADLOSS', iradloss, 0, 1, &
                'Switch for radiation loss term inclusion in pwr balance')
        case ('IRES')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'IRES is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('ISC')
           call parse_int_variable('ISC', isc, 1, ipnlaws, &
@@ -747,8 +772,12 @@ contains
           call parse_real_variable('FJOHC0', fjohc0, 0.001D0, 10.0D0, &
                'F-value for OH coil current at BOP')
        case ('FJTFC')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'FJTFC is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('FHLDIV')
           call parse_real_variable('FHLDIV', fhldiv, 0.001D0, 10.0D0, &
@@ -1081,12 +1110,20 @@ contains
           call parse_real_variable('BLNKOTH', blnkoth, 0.0D0, 10.0D0, &
                'Outboard blanket thickness (m)')
        case ('BLNKTTH')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'BLNKTTH is now always calculated rather than input -'
           write(outfile,*) 'please remove it from the input file'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('BCYLTH')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'BCYLTH is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('BORE')
           call parse_real_variable('BORE', bore, 0.0D0, 20.0D0, &
@@ -1251,14 +1288,22 @@ contains
           call parse_int_variable('ISUMATTF', isumattf, 1, 4, &
                'TF coil superconductor material')
           if (isumattf == 2) then
+             write(outfile,*) ' '
+             write(outfile,*) '**********'
              write(outfile,*) 'Warning if you are using an old input file:'
              write(outfile,*) 'ISUMATTF=2 usage has changed -'
              write(outfile,*) 'please check validity!'
+             write(outfile,*) '**********'
+             write(outfile,*) ' '
           end if
        case ('ITFMOD')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'ITFMOD is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
           write(outfile,*) 'and replace it with TFC_MODEL'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('ITFSUP')
           call parse_int_variable('ITFSUP', itfsup, 0, 1, &
@@ -1267,12 +1312,20 @@ contains
           call parse_real_variable('JBUS', jbus, 1.0D4, 1.0D8, &
                'TF coil bus current density (A/m2)')
        case ('JCRIT_MODEL')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'JCRIT_MODEL is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('JCRITSC')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'JCRITSC is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('OACDCP')
           call parse_real_variable('OACDCP', oacdcp, 1.0D4, 1.0D9, &
@@ -1320,8 +1373,17 @@ contains
           call parse_real_variable('TFTMP', tftmp, 0.01D0, 10.0D0, &
                'Peak TF coil He coolant temp. (K)')
        case ('TFTORT')
+          if (irfp == 0) then
+             write(outfile,*) ' '
+             write(outfile,*) '**********'
+             write(outfile,*) 'TFTORT is now obsolete for tokamaks and stellarators -'
+             write(outfile,*) 'please remove it from the input file.'
+             write(outfile,*) '**********'
+             write(outfile,*) ' '
+             obsolete_var = .true.
+          end if
           call parse_real_variable('TFTORT', tftort, 0.1D0, 4.0D0, &
-               'TF coil toroidal thickness (m)')
+               'RFP TF coil toroidal thickness (m)')
        case ('THICNDUT')
           call parse_real_variable('THICNDUT', thicndut, 0.0D0, 0.1D0, &
                'Conduit insulation thickness (m)')
@@ -1371,8 +1433,12 @@ contains
           call parse_real_array('CPTDIN', cptdin, isub1, ngc2, &
                'Current per turn for PF coil', icode)
        case ('FCOHBOF')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'FCOHBOF is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('FCOHBOP')
           call parse_real_variable('FCOHBOP', fcohbop, 0.0D0, 1.0D0, &
@@ -1561,16 +1627,28 @@ contains
           call parse_real_variable('FKBLKT', fkblkt, 0.2D0, 5.0D0, &
                'Blanket elongation / plasma elongation')
        case ('FVOLBI')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'FVOLBI is now obsolete - (use FHOLE)'
           write(outfile,*) 'please remove it from the input file'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('FVOLBO')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'FVOLBO is now obsolete - (use FHOLE)'
           write(outfile,*) 'please remove it from the input file'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('FVOLCRY')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'FVOLCRY is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
           obsolete_var = .true.
        case ('FVOLDW')
           call parse_real_variable('FVOLDW', fvoldw, 0.0D0, 10.0D0, &
@@ -2107,8 +2185,12 @@ contains
             'SECT11', 'SECT12', 'SECT13', 'SECT14', 'SECT15', &
             'SECT16', 'SECT17', 'SECT18', 'SECT19', 'SECT20', &
             'SECT21')
+          write(outfile,*) ' '
+          write(outfile,*) '**********'
           write(outfile,*) 'SECT flags are now ignored -'
           write(outfile,*) 'please remove them from the input file'
+          write(outfile,*) '**********'
+          write(outfile,*) ' '
 
           !  Vacuum system settings
 

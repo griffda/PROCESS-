@@ -1450,6 +1450,7 @@ module tfcoil_variables
   !+ad_hist  12/05/14 PJK Added insstrain
   !+ad_hist  12/06/14 PJK Changed prp default value to 0.0
   !+ad_hist  24/06/14 PJK Removed wtbc
+  !+ad_hist  30/07/14 PJK Changed tftort comment
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -1708,10 +1709,10 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfsao = 0.0D0
   !+ad_vars  tftmp /4.5/ : peak TF coil He coolant temperature (K)
   real(kind(1.0D0)) :: tftmp = 4.5D0
-  !+ad_vars  tftort /0.33/ : TF coil toroidal thickness (m)
-  !+ad_varc                  (RFP - inboard and outboard; tokamak - outboard leg only;
-  !+ad_varc                  calculated for stellarators)
-  !+ad_varc                  (iteration variable 77)
+  !+ad_vars  tftort : TF coil toroidal thickness (m)
+  !+ad_varc           (calculated for tokamaks and stellarators;
+  !+ad_varc           RFPs - input value, default=0.33, is used)
+  !+ad_varc           (iteration variable 77) (RFP only)
   real(kind(1.0D0)) :: tftort = 0.33D0
   !+ad_vars  thicndut /8.0D-4/ : conduit insulation thickness (m)
   real(kind(1.0D0)) :: thicndut = 8.0D-4

@@ -125,6 +125,7 @@ contains
     !+ad_hist  25/06/14 PJK Initial version
     !+ad_hist  09/07/14 PJK Added errors 131-135
     !+ad_hist  29/07/14 PJK Added error 136
+    !+ad_hist  30/07/14 PJK Modified 51, 63, 103
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -296,7 +297,7 @@ contains
          'LOADXC: Do not use tohs as an iteration variable if lpulse /= 1'
     error_type(51)%level = ERROR_SEVERE
     error_type(51)%message = &
-         'LOADXC: Do not use tftort as an iteration variable if istell=1'
+         'LOADXC: Do not use tftort as an iteration variable if irfp=0'
     error_type(52)%level = ERROR_SEVERE
     error_type(52)%message = &
          'LOADXC: Do not use helecmw as an iteration variable if ihplant is not 1,2 or 3'
@@ -332,7 +333,7 @@ contains
          'RADIALB: Ripple result may be inaccurate, as the fit has been extrapolated'
     error_type(63)%level = ERROR_WARN
     error_type(63)%message = &
-         'PORTSZ: Max beam tangency radius set =0 temporarily; change tftort or beamwd'
+         'PORTSZ: Max beam tangency radius set =0 temporarily; change beamwd'
     error_type(64)%level = ERROR_SEVERE
     error_type(64)%message = &
          'PFCOIL: ngrp is larger than ngrpmx'
@@ -452,7 +453,7 @@ contains
          'SCTFCOIL: Cable space area problem; artificially set rounded corner radius to 0'
     error_type(103)%level = ERROR_WARN
     error_type(103)%message = &
-         'SCTFCOIL: Inconsistent TF outboard leg toroidal thickness; raise tftort'
+         'SCTFCOIL: Inconsistent TF leg toroidal thickness; raise tftort via constraint 57'
     error_type(104)%level = ERROR_SEVERE
     error_type(104)%message = &
          'STRESSCL: Illegal value for tfc_model'

@@ -81,6 +81,7 @@ contains
     !+ad_hist  08/05/14 PJK Changed ripmax description
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  24/06/14 PJK Removed refs to bcylth
+    !+ad_hist  30/07/14 PJK Added tftort calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -107,6 +108,10 @@ contains
        else
           rbmax = rsldi - gapds - ddwi
        end if
+
+       !  Toroidal thickness of TF coil (m)
+
+       tftort = 2.0D0 * rbmax*sin(pi/tfno)
 
        !  Radius of inner edge of inboard TF coil leg (m)
 

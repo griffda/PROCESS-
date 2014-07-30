@@ -98,6 +98,7 @@ contains
     !+ad_hist  24/06/14 PJK Removed obsolete dct variable and references to
     !+ad_hisc               a bucking cylinder
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  30/07/14 PJK Calculate tftort instead of using input value
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -142,12 +143,11 @@ contains
     tant = tan(thtcoil)
 
     !  TF coil width in toroidal direction
-    ! PJK 08/05/14 Uncomment the following line to calculate tftort
-    ! rather than use it as an input quantity
-    !tftort = 2.0D0 * rcoil*sin(thtcoil)
 
-    !  Cross-sectional area of outboard leg
-    !assumed same width as inboard leg
+    tftort = 2.0D0 * rcoil*sin(thtcoil)
+
+    !  Cross-sectional area of outboard leg,
+    !  assumed to be same width as inboard leg
 
     arealeg = tfthko*tftort
 
@@ -384,19 +384,17 @@ contains
 
     !  Check of outboard leg toroidal thickness, tftort
     !  Must be thicker than the width of the winding pack etc., which
-    !  is likely to be the same width as at the inboard side
+    !  is assumed be the same width as at the inboard side
 
-    if ( (tftort < (wwp1 + 2.0D0*tinstf)).and.(iprint == 1) ) then
-       fdiags(1) = tftort ; fdiags(2) = wwp1 + 2.0D0*tinstf
+    if ( (tftort < (wwp1 + 2.0D0*(tinstf+casths))).and.(iprint == 1) ) then
+       fdiags(1) = tftort ; fdiags(2) = wwp1 + 2.0D0*(tinstf+casths)
        call report_error(103)
        write(*,*) 'Warning in routine SCTFCOIL:'
        write(*,*) '  TF outboard leg toroidal thickness, tftort = ',tftort
-       write(*,*) '             Winding pack + insulation width = ', &
-            wwp1 + 2.0D0*tinstf
-       write(*,*) 'Consider raising tftort in input file,'
-       write(*,*) 'or setting it as an iteration variable (77)'
-       write(*,*) 'and turning on constraint 57 and iteration variable 99'
-       write(*,*) 'to force the coil to be wide enough.'
+       write(*,*) '      Winding pack + insulation + case width = ', &
+            wwp1 + 2.0D0*(tinstf+casths)
+       write(*,*) 'Turn on constraint 57 and iteration variables 99'
+       write(*,*) 'and (e.g.) 13 & 29 to force the coil to be wide enough.'
     end if
 
     !  TF Coil areas and masses
