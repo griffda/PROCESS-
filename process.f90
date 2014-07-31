@@ -252,7 +252,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '315    Release Date :: 2014-07-30'
+       '316    Release Date :: 2014-07-31'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1740,3 +1740,4 @@ end subroutine output
 ! GIT 314: TF coil toroidal thickness tftort now calculated instead of input for
 !          tokamaks
 ! GIT 315: Changed TF coil outboard radial thickness calculation
+! GIT 316: tfthko now equal to tfcth for tokamaks; improved TF coil conductor mass calculations

@@ -126,6 +126,7 @@ contains
     !+ad_hist  09/07/14 PJK Added errors 131-135
     !+ad_hist  29/07/14 PJK Added error 136
     !+ad_hist  30/07/14 PJK Modified 51, 63, 103
+    !+ad_hist  31/07/14 PJK Modified 103 (now obsolete)
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -453,7 +454,7 @@ contains
          'SCTFCOIL: Cable space area problem; artificially set rounded corner radius to 0'
     error_type(103)%level = ERROR_WARN
     error_type(103)%message = &
-         'SCTFCOIL: Inconsistent TF leg toroidal thickness; raise tftort via constraint 57'
+         'SCTFCOIL: Inconsistent TF leg toroidal thickness; should never happen!'
     error_type(104)%level = ERROR_SEVERE
     error_type(104)%message = &
          'STRESSCL: Illegal value for tfc_model'

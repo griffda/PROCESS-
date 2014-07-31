@@ -106,6 +106,7 @@ contains
     !+ad_hisc               blnktth now always calculated
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  30/07/14 PJK Modified tfthko calculation
+    !+ad_hist  31/07/14 PJK Re-modified tfthko calculation
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -121,7 +122,6 @@ contains
 
     real(kind(1.0D0)) :: a1,a2,hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild
     integer :: ripflag = 0
-    integer :: first_call = 1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -151,12 +151,11 @@ contains
     rsldo = rmajor + rminor + scraplo + fwoth + blnkoth + shldoth
 
     !  Thickness of outboard TF coil legs
-    !  For superconducting TF coils, this is done consistently in sctfcoil after
-    !  the first call to this routine
 
-    if ((itfsup == 0).or.(first_call == 1)) then
+    if (itfsup == 0) then
        tfthko = tfootfi*tfcth
-       first_call = 0
+    else
+       tfthko = tfcth
     end if
 
     !  Radius to centre of outboard TF coil legs
@@ -718,6 +717,7 @@ contains
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  18/06/14 PJK Initial version
+    !+ad_hist  31/07/14 PJK Correction: tfthko to tftort
     !+ad_stat  Okay
     !+ad_docs  M. Kovari, internal communication, June 2014
     !
@@ -742,7 +742,7 @@ contains
     !  TF coil winding pack width
 
     if (wwp1 == 0.0D0) then  !  not yet calculated
-       w = tfthko - 2.0D0*(casths + tinstf)  !  rough estimate of wwp1
+       w = tftort - 2.0D0*(casths + tinstf)  !  rough estimate of wwp1
        x = w*n/rmajor
     else
        x = wwp1*n/rmajor

@@ -3521,6 +3521,7 @@ contains
     !+ad_hist  03/03/14 PJK Initial version, based on outtf
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  30/07/14 PJK Renamed borev to tfborev
+    !+ad_hist  31/07/14 PJK Removed aspcstf
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -3575,7 +3576,6 @@ contains
     call ovarre(outfile,'Cable space coolant fraction','(vftf)',vftf)
     call ovarre(outfile,'Conduit case thickness (m)','(thwcndut)',thwcndut)
     call ovarre(outfile,'Cable insulation thickness (m)','(thicndut)',thicndut)
-    call ovarre(outfile,'Cable radial/toroidal aspect ratio','(aspcstf)',aspcstf)
 
     ap = acond + aswp + aiwp + avwp
 

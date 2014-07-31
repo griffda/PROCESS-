@@ -311,6 +311,7 @@ contains
     !+ad_hist  24/06/14 PJK Removed BCYLTH, BLNKTTH
     !+ad_hist  22/07/14 PJK Added RUNTITLE
     !+ad_hist  30/07/14 PJK Changed TFTORT comment
+    !+ad_hist  31/07/14 PJK Added DCONDINS; removed ASPCSTF
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1215,9 +1216,6 @@ contains
 
           !  TF coil settings
 
-       case ('ASPCSTF')
-          call parse_real_variable('ASPCSTF', aspcstf, 0.1D0, 10.0D0, &
-               'TF conductor cable aspect ratio')
        case ('BCRITSC')
           call parse_real_variable('BCRITSC', bcritsc, 10.0D0, 50.0D0, &
                'Critical field for superconductor')
@@ -1248,6 +1246,9 @@ contains
        case ('DCOND')
           call parse_real_array('DCOND', dcond, isub1, 4, &
                'TF/PF coil superconductor density (kg/m3)', icode)
+       case ('DCONDINS')
+          call parse_real_variable('DCONDINS', dcondins, 5.0D2, 1.0D4, &
+               'Density of TF coil insulation (kg/m3)')
        case ('DCOPPER')
           call parse_real_variable('DCOPPER', dcopper, 8.0D3, 1.0D4, &
                'Density of copper (kg/m3)')

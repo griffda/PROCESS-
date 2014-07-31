@@ -54,6 +54,8 @@ module numerics
   !+ad_hist  02/06/14 PJK New iteration variable 102 (fimpvar)
   !+ad_hist  30/06/14 PJK Changed boundl(11), boundu(11)
   !+ad_hist  08/07/14 PJK Added verbose from global_variables
+  !+ad_hist  31/07/14 PJK Labelled constraints 57 and 58 as obsolete,
+  !+ad_hisc               also iteration variables 99, 100
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -391,9 +393,9 @@ module numerics
        'Vessel helium concentration limit', &
        !+ad_varc  <LI> (56) Pseparatrix/Rmajor upper limit
        'Psep / R upper limit             ', &
-       !+ad_varc  <LI> (57) TF coil leg toroidal thickness lower limit
+       !+ad_varc  <LI> (57) TF coil leg toroidal thickness lower limit (OBSOLETE)
        'TF coil leg tor width lower limit', &
-       !+ad_varc  <LI> (58) TF coil leg radial thickness lower limit</UL>
+       !+ad_varc  <LI> (58) TF coil leg radial thickness lower limit (OBSOLETE)</UL>
        'TF coil leg rad width lower limit'  &
        /)
 
@@ -631,9 +633,9 @@ module numerics
        'fpsepr   ', &
        !+ad_varc  <LI> (98) li6enrich
        'li6enrich', &
-       !+ad_varc  <LI> (99) ftftort (f-value for equation 57)
+       !+ad_varc  <LI> (99) ftftort (f-value for equation 57) (OBSOLETE)
        'ftftort  ', &
-       !+ad_varc  <LI> (100) ftfthko (f-value for equation 58)
+       !+ad_varc  <LI> (100) ftfthko (f-value for equation 58) (OBSOLETE)
        'ftfthko  ', &
        !+ad_varc  <LI> (101) prp
        'prp      ', &

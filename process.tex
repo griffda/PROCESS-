@@ -687,8 +687,8 @@ J_{\mbox{\scriptsize protection}}$ upper limit (SCTF)                   & L    &
 54  & peak TF coil nuclear heating upper limit                  & L    & \textbf{95},93,94 \\
 55  & final He concentration in vacuum vessel upper limit       & L    & \textbf{96},93,94 \\
 56  & $P_{\mbox{\scriptsize separatrix}}/R_{\mbox{\scriptsize major}}$ upper limit & L    & \textbf{97},1,3 \\
-57  & TF coil outer leg toroidal thickness lower limit (SCTF)   & L    & \textbf{99},29,13  \\
-58  & TF coil outer leg radial thickness limit lower (SCTF)     & L    & \textbf{100},13 \\
+57  & (OBSOLETE) TF coil outer leg toroidal thickness lower limit (SCTF)   & L    & \textbf{99},29,13  \\
+58  & (OBSOLETE) TF coil outer leg radial thickness limit lower (SCTF)     & L    & \textbf{100},13 \\
 \hline
 \end{tabular}
 \end{center}
@@ -868,8 +868,8 @@ no. & variable name     & description                                           
 97  & \texttt{fpsepr}   & f-value for $P_{\mbox{\scriptsize separatrix}}/R_{\mbox{\scriptsize major}}$ limit equation & 56
   & \texttt{0.001D0} & \texttt{1.000D0} \\
 98  & \texttt{li6enrich}& lithium-6 enrichment percentage (\texttt{blktmodel=1})  &     & \texttt{0.001D0} & \texttt{100.0D0} \\
-99  & \texttt{ftftort}  & f-value for TF coil toroidal thickness lower limit eqn  & 57  & \texttt{0.001D0} & \texttt{1.000D0} \\
-100 & \texttt{ftfthko}  & f-value for TF coil radial thickness lower limit eqn    & 58  & \texttt{0.001D0} & \texttt{1.000D0} \\
+99  & \texttt{ftftort}  & (OBSOLETE) f-value for TF coil toroidal thickness lower limit eqn  & 57  & \texttt{0.001D0} & \texttt{1.000D0} \\
+100 & \texttt{ftfthko}  & (OBSOLETE) f-value for TF coil radial thickness lower limit eqn    & 58  & \texttt{0.001D0} & \texttt{1.000D0} \\
 101 & \texttt{prp}      & ratio of TF coil radial plate area to winding pack area &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
 102 & \texttt{fimpvar}  & impurity fraction of element \texttt{impvar}            &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
 \hline
@@ -2191,15 +2191,8 @@ The outboard leg of the TF coil is assumed to be the same width in the
 toroidal direction as the outside edge of the inboard leg. In the radial
 direction, for resistive TF coils the input parameter \texttt{tfootfi} gives
 the ratio of the outboard leg thickness to the inboard leg thickness
-\texttt{tfcth}; for superconducting coils the outboard thickness is calculated
-taking into account input parameter \texttt{casfact}, the cross-sectional area
-ratio of the outboard to inboard steel cases.
-
-To ensure that the coil dimensions of the outboard leg are consistent with the
-radial and toroidal thicknesses of the winding pack and the other constituents
-of the coil shown in the figure, turn on constraint equations no.~57 and~58
-with iteration variables no.\ 99 (\texttt{ftftort}) and 100
-(\texttt{ftfthko}).
+\texttt{tfcth}; for superconducting coils the outboard thickness is set equal
+to the inboard thickness.
 
 \begin{figure}[tbph]
 \epsfig{file=tokamak_tfcoil.eps,width=160mm}

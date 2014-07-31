@@ -1452,6 +1452,8 @@ module tfcoil_variables
   !+ad_hist  24/06/14 PJK Removed wtbc
   !+ad_hist  30/07/14 PJK Changed tftort comment
   !+ad_hist  30/07/14 PJK Renamed borev to tfborev
+  !+ad_hist  31/07/14 PJK Added acasetfo, dcondins, whtconin, whtgw, whtrp;
+  !+ad_hisc               removed aspcstf
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -1461,8 +1463,10 @@ module tfcoil_variables
 
   public
 
-  !+ad_vars  acasetf : total external case area (inboard) (m2)
+  !+ad_vars  acasetf : external case area per coil (inboard leg) (m2)
   real(kind(1.0D0)) :: acasetf = 0.0D0
+  !+ad_vars  acasetfo : external case area per coil (outboard leg) (m2)
+  real(kind(1.0D0)) :: acasetfo = 0.0D0
   !+ad_vars  acndttf : area of the cable conduit (m2)
   real(kind(1.0D0)) :: acndttf = 0.0D0
   !+ad_vars  acond : conductor area (winding pack) (m2)
@@ -1477,9 +1481,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: arealeg = 0.0D0
   !+ad_vars  arp : TF coil radial plate area (m2)
   real(kind(1.0D0)) :: arp = 0.0D0
-  !+ad_vars  aspcstf /1.0/ : TF conductor cable aspect ratio (radial/toroidal)
-  !+ad_varc                  (not used)
-  real(kind(1.0D0)) :: aspcstf = 1.0D0
   !+ad_vars  aswp : winding pack structure area (m2)
   real(kind(1.0D0)) :: aswp = 0.0D0
   !+ad_vars  avwp : winding pack void (He coolant) area (m2)
@@ -1522,6 +1523,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: dcase = 8000.0D0
   !+ad_vars  dcond(4) /9000.0/ : density of superconductor (kg/m3)
   real(kind(1.0D0)), dimension(4) :: dcond = 9000.0D0
+  !+ad_vars  dcondins /1800.0/ : density of conduit + ground-wall insulation (kg/m3)
+  real(kind(1.0D0)) :: dcondins = 1800.0D0
   !+ad_vars  dcopper /8900.0/ : density of copper (kg/m3)
   real(kind(1.0D0)) :: dcopper = 8900.0D0
   !+ad_vars  deflect : TF coil deflection at full field (m)
@@ -1767,12 +1770,18 @@ module tfcoil_variables
   real(kind(1.0D0)) :: whtcon = 0.0D0
   !+ad_vars  whtconcu : copper mass in TF coil conductor cable (kg/coil)
   real(kind(1.0D0)) :: whtconcu = 0.0D0
+  !+ad_vars  whtconin : conduit insulation mass in TF coil conductor cable (kg/coil)
+  real(kind(1.0D0)) :: whtconin = 0.0D0
   !+ad_vars  whtconsc : superconductor mass in TF coil conductor cable (kg/coil)
   real(kind(1.0D0)) :: whtconsc = 0.0D0
   !+ad_vars  whtconsh : steel conduit mass in TF coil conductor cable (kg/coil)
   real(kind(1.0D0)) :: whtconsh = 0.0D0
   !+ad_vars  whtcp : mass of TF coil inboard legs (kg)
   real(kind(1.0D0)) :: whtcp = 0.0D0
+  !+ad_vars  whtgw : mass of ground-wall insulation layer per coil (kg/coil)
+  real(kind(1.0D0)) :: whtgw = 0.0D0
+  !+ad_vars  whtrp : mass of steel radial plates + caps per coil (kg/coil)
+  real(kind(1.0D0)) :: whtrp = 0.0D0
   !+ad_vars  whttf : total mass of the TF coils (kg)
   real(kind(1.0D0)) :: whttf = 0.0D0
   !+ad_vars  whttflgs : mass of the TF coil legs (kg)
