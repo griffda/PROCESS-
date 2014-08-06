@@ -8,14 +8,33 @@ mechanisms for their tool.
 import json
 import logging
 
+# temporary
 api_logger = logging.getLogger("process_api")
 
 
 class ConfigurationParser(object):
     
-    """Abstract parser class. Must be subclassed to be used."""
+    """Abstract parser class. Must be subclassed to be used.
     
-    pass
+    The parser should always put read-in data in the data property.
+    """
+    
+    def __init__(self):
+        self._data = None
+        
+    @property
+    def data(self):
+        return self._data
+        
+    @x.setter
+    def data(self, value):
+        """Validate the configuration is provided in a specific format."""
+        assert isinstance(value, dict)
+        self._data = value
+    
+    @x.deleter
+    def data(self):
+        del self._data
 
 
 class JsonConfigParser(object):
@@ -41,7 +60,19 @@ class Config(object):
         parser = JsonConfigParser(config_file)
         self.config_data = parser.data
         
-    def 
+    def _decomposed_value_of(self, config_param, *remaining):
+        if not remaining:
+            try:
+                yield self.config_data[config_param]
+            except KeyError:
+                raise
+        else:
+            yield self.value_of(remaining[0], *remaining[1:])
+    
+    def value_of(self, config_param):
+        config_path = config_param.split
+        self._decomposed_value_of(config_path[0], config_path[1:])
+        
     
     
     
