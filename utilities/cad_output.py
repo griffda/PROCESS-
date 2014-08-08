@@ -389,15 +389,13 @@ def write_tf_coils(data, output_file):
 
     # TF coil toroidal thickness
 
-    # Inboard
-    tf_toroidal_thickness_inboard = 2.0*scipy.pi/data.tfno
-    line_1 = "TF coil toroidal thickness inboard = %.3f m\n" % \
-             tf_toroidal_thickness_inboard
-
     # Outboard
     tf_toroidal_thickness_outboard = data.tftort
-    line_2 = "TF coil toroidal thickness outboard = %.3f m\n" % \
+    line_1 = "TF coil toroidal thickness outboard = %.3f m\n" % \
              tf_toroidal_thickness_outboard
+
+    # Number of TF coils
+    line_2 = "Number of TF coils = %d \n" % int(data.tfno)
 
     # Write data to file
     output_file.write(line_1)
