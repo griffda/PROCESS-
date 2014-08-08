@@ -29,12 +29,17 @@ class ConfigurationParser(object):
     @x.setter
     def data(self, value):
         """Validate the configuration is provided in a specific format."""
-        assert isinstance(value, dict)
+        self.validate(value)
         self._data = value
     
     @x.deleter
     def data(self):
         del self._data
+        
+    def validate(self, value):
+        if not isinstance(value, dict):
+            raise ValueError("Configuration data must be specified as a "
+                             "dictionary")
 
 
 class JsonConfigParser(object):
@@ -47,7 +52,8 @@ class JsonConfigParser(object):
             with open(filename) as fh:
                 self.data = json.load(fh)
         except FileNotFoundError:
-            api_logger.error("Cannot find configuration file {}".format(filename))
+            api_logger.error("Cannot find configuration file "
+                             "{}".format(filename))
             pass
 
 
@@ -59,21 +65,39 @@ class Config(object):
         self.config_file = config_file
         parser = JsonConfigParser(config_file)
         self.config_data = parser.data
+    
+    def _search_config_for(config, *keys):
+        """Recursively search a dictionary for keys."""
+        try:
+            search_key = keys[0]
+            value = config[search_key]
+        except IndexError:
+            raise
+        except KeyError:
+            raise
         
-    def _decomposed_value_of(self, config_param, *remaining):
-        if not remaining:
-            try:
-                yield self.config_data[config_param]
-            except KeyError:
-                raise
+        if isinstance(config, dict) and len(keys) > 1:
+            return self._search_config_for(value, *keys[1:])
+        elif not isinstance(value, dict) and len(keys) > 1:
+            raise KeyError("{} cannot be found in "
+                           "{}".format(search_key, value))
         else:
-            yield self.value_of(remaining[0], *remaining[1:])
+            return value
     
-    def value_of(self, config_param):
-        config_path = config_param.split
-        self._decomposed_value_of(config_path[0], config_path[1:])
+    def get(self, *config_keys):
+        """
+        Return configured value corresponding to config_keys if possible.
         
-    
-    
-    
-    
+        For nested configs, sequential items in config_keys can be used.
+        For example, if the configuration is:
+        {"a": "b", "c": {1: "hello", 2: {"x": "alpha", "z": "beta"}}}
+        you can access the value of "z" by calling get("c", 2, "z").
+        
+        """
+        
+        try:
+            self._search_config_for(self.config_data, *config_keys)
+        except KeyError:
+            api_logger.exception("Cannot find value for {} in "
+                                 "configuration".format(config_keys))
+        
