@@ -16,8 +16,9 @@
     + JM 23/03/2014: Added remove/add constraint equation and iteration
                      variable functions to classes
     + JM 26/03/2014: Tested Git integration
+    + PJK 19/08/2014: Added __delitem__ method to INDATDataDictionary class
 
-  Compatible with PROCESS version ???
+  Compatible with PROCESS version 317
 
 """
 
@@ -318,6 +319,9 @@ class INDATDataDictionary(object):
 
     def keys(self):
         return self.__dict__.keys()
+
+    def __delitem__(self, key):
+        del self.__dict__[key]
 
 
 class INDATNew(object):

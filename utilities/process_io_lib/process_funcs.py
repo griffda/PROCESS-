@@ -5,7 +5,11 @@ Author: Hanni Lux (Hanni.Lux@ccfe.ac.uk)
 
 Date: March 2013 - initial released version
 
-Compatible with PROCESS version ???
+Notes: 
+13/08/2014 HL updated functions to work with new error_status flag
+
+
+Compatible with PROCESS version 316 
 """
 
 from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,\
@@ -111,7 +115,10 @@ def  get_variable_range(itervars, factor, wdir='.'):
             lbs += [max(value/factor, DICT_IXC_BOUNDS[varname]['lb'])]
             ubs += [min(value*factor, DICT_IXC_BOUNDS[varname]['ub'])]
 
-        assert lbs[-1] < ubs[-1]
+        if lbs[-1] > ubs[-1]:
+            print('Error: Iteration variable %s has BOUNDL=%f > BOUNDU=%f\n Update process_dicts or input file!' %(varname, lbs[-1], ubs[-1]))
+            exit()
+        #assert lbs[-1] < ubs[-1]
 
     return lbs, ubs
 
@@ -123,6 +130,7 @@ def check_logfile(logfile='process.log'):
     Checks the log file of the PROCESS output.
     Stops, if an error occured that needs to be
     fixed before rerunning.
+    XXX should be deprecated!! XXX
     """
 
     outlogfile = open(logfile, 'r')
@@ -133,38 +141,56 @@ def check_logfile(logfile='process.log'):
                    file for more information.')
             exit()
 
-########################################
 
-def process_stopped(logfile='process.log'):
+def check_input_error(wdir='.'):
 
     """
-    Checks the process logfile whether it has
+    Checks, if an input error has occurred.
+    Stops as a consequence.
+    """
+
+    m_file = MFile(filename=wdir+"/MFILE.DAT")
+    error_id = m_file.data['error id'].get_scan(-1)
+
+    if error_id == 130:
+        print('Error in input file. Please check OUT.DAT \
+for more information.')
+        exit()
+
+
+########################################
+
+def process_stopped(wdir='.'):
+
+    """
+    Checks the process Mfile whether it has
     prematurely stopped.
     """
 
-    outlogfile = open(logfile, 'r')
+    m_file = MFile(filename=wdir+"/MFILE.DAT")
+    error_status = m_file.data['error status'].get_scan(-1)
 
-    for line in outlogfile:
-        if 'PROCESS stopping.' in line:
-            return True
+    if error_status >= 3:
+        return True
+
     return False
 
 ########################################
 
-def process_warnings(logfile='process.log'):
+def process_warnings(wdir='.'):
 
     """
-    Checks the process logfile whether any
+    Checks the process Mfile whether any
     warnings have occurred.
     """
 
-    outlogfile = open(logfile, 'r')
+    m_file = MFile(filename=wdir+"/MFILE.DAT")
+    error_status = m_file.data['error status'].get_scan(-1)
 
-    for line in outlogfile:
-        if 'warning' in line.lower():
-            return True
+    if error_status >= 2:
+        return True
+
     return False
-
 
 
 ############################################
@@ -193,7 +219,7 @@ def no_unfeasible_mfile(wdir='.'):
     m_file = MFile(filename=wdir+"/MFILE.DAT")
 
     #no scans
-    if not m_file.data['isweep'].exists == 0:
+    if not m_file.data['isweep'].exists:
 
         if m_file.data['ifail'].get_scan(0) == IFAIL_SUCCESS:
             return 0
@@ -213,6 +239,7 @@ def no_unfeasible_outdat(wdir='.'):
     """
     returns the number of unfeasible points
     in a scan in OUT.DAT
+    XXX Should be deprecated! XXX
     """
 
     no_unfeasible = 0
@@ -245,7 +272,7 @@ def vary_iteration_variables(itervars, lbs, ubs):
         new_value = uniform(lbnd, ubnd)
         new_values += [new_value]
 
-        if varname in in_dat.variables:
+        if varname in in_dat.variables.keys():
             in_dat.variables[varname].value = new_value
 
         else:
@@ -316,6 +343,7 @@ def get_solution_from_outdat(neqns, nvars):
 
     If the run was a scan, the values of the last scan point
     will be returned.
+    XXX should be deprecated XXX
     """
 
     flag_solution_vector = False

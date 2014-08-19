@@ -10,8 +10,9 @@
   Notes:
      + JM 30/04/2014: Initial version using new libraries
      + JM 30/04/2014: Added command line arguments
+     + PJK 19/08/2014: Corrected -- if "itvar" in value: -- line
 
-  Compatible with PROCESS version 274
+  Compatible with PROCESS version 317
 
 """
 
@@ -37,7 +38,7 @@ def get_iteration_variables(filename="MFILE.DAT", scan=-1):
     iteration_vars = {}
 
     for value in mfile_data.data.keys():
-        if "itvar" in value:
+        if "itvar" in value and "nitvar" not in value:
             variable_name = mfile_data.data[value].var_description
             variable_value = mfile_data.data[value].get_scan(scan)
             iteration_vars[variable_name] = variable_value

@@ -21,7 +21,12 @@ MFILE.DAT   -  PROCESS output
 process.log - logfile of PROCESS output to stdout
 README.txt  - contains comments from config file
 
-Compatible with PROCESS version 274
+Notes:
+11/08/2014 HL added error_status2readme
+13/08/2014 HL removed no_unfeasible_outdat - should become deprecated
+13/08/2014 HL replaced check_logfile with check_input_error
+
+Compatible with PROCESS version 316
 """
 
 #######################
@@ -30,10 +35,9 @@ Compatible with PROCESS version 274
 import argparse
 from process_io_lib.process_config import RunProcessConfig
 from process_io_lib.process_funcs import get_neqns_itervars,\
-    update_ixc_bounds, get_variable_range, check_logfile,\
+    update_ixc_bounds, get_variable_range, check_input_error,\
     process_stopped, mfile_exists, no_unfeasible_mfile,\
-    no_unfeasible_outdat, vary_iteration_variables,\
-    process_warnings
+    vary_iteration_variables, process_warnings
 
 
 ############################################################
@@ -52,6 +56,7 @@ ARGS = PARSER.parse_args()
 #main program
 
 
+
 CONFIG = RunProcessConfig(ARGS.configfile)
 CONFIG.setup()
 
@@ -65,19 +70,17 @@ LBS, UBS = get_variable_range(ITERVARS, CONFIG.factor)
 #TODO add diff ixc summary part
 
 
+
 for i in range(CONFIG.niter):
 
     print(i, end=' ')
     CONFIG.run_process()
 
-    check_logfile()
+    check_input_error()
 
     if not process_stopped():
 
-        if mfile_exists():
-            no_unfeasible = no_unfeasible_mfile()
-        else:
-            no_unfeasible = no_unfeasible_outdat()
+        no_unfeasible = no_unfeasible_mfile()
 
         if no_unfeasible <= CONFIG.no_allowed_unfeasible:
             if no_unfeasible > 0:
@@ -86,7 +89,6 @@ for i in range(CONFIG.niter):
             if process_warnings():
                 print('\nThere were warnings in the final\
  PROCESS run. Please check the log file!\n')
-
             break
         else:
             print('WARNING: %i non feasible point(s) in sweep!\
@@ -97,3 +99,4 @@ for i in range(CONFIG.niter):
     vary_iteration_variables(ITERVARS, LBS, UBS)
 
 
+CONFIG.error_status2readme()
