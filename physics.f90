@@ -5240,6 +5240,7 @@ contains
     !+ad_hist  16/06/14 PJK Removed duplicate outputs
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  19/08/14 PJK Added dnla / Greenwald ratio
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5429,6 +5430,11 @@ contains
     call ovarre(outfile,'Electron density (/m3)','(dene)',dene)
     call ovarre(outfile,'Electron density on axis (/m3)','(ne0)',ne0)
     call ovarre(outfile,'Line-averaged electron density (/m3)','(dnla)',dnla)
+    if (istell == 0) then
+       call ovarre(outfile,'Line-averaged electron density / Greenwald density', &
+            '(dnla_gw)',dnla/dlimit(7))
+    end if
+
     call ovarre(outfile,'Ion density (/m3)','(dnitot)',dnitot)
     call ovarre(outfile,'Fuel density (/m3)','(deni)',deni)
     call ovarre(outfile,'High Z impurity density (/m3)','(dnz)',dnz)

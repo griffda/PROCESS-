@@ -313,6 +313,7 @@ contains
     !+ad_hist  30/07/14 PJK Changed TFTORT comment
     !+ad_hist  31/07/14 PJK Added DCONDINS; removed ASPCSTF
     !+ad_hist  19/08/14 PJK Removed RECYLE, IMPFE
+    !+ad_hist  19/08/14 PJK Removed CASFACT
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1214,9 +1215,6 @@ contains
        case ('BCRITSC')
           call parse_real_variable('BCRITSC', bcritsc, 10.0D0, 50.0D0, &
                'Critical field for superconductor')
-       case ('CASFACT')
-          call parse_real_variable('CASFACT', casfact, 0.1D0, 10.0D0, &
-               'TF coil case thickness factor')
        case ('CASTHI')
           call parse_real_variable('CASTHI', casthi, 0.0D0, 1.0D0, &
                'TF coil case inner thickness (m)')

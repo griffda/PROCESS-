@@ -419,9 +419,9 @@ module physics_variables
   !+ad_varc                      (recommendation: use icurr=4 with this option) </UL>
   integer :: iprofile = 0
   !+ad_vars  iradloss /1/ : switch for radiation loss term usage in power balance:<UL>
-  !+ad_varc             <LI> = 0 use non-radiation-corrected loss power in
+  !+ad_varc             <LI> = 0 use non-radiation-adjusted loss power in
   !+ad_varc                      confinement scaling and power balance
-  !+ad_varc             <LI> = 1 use radiation-corrected loss power in
+  !+ad_varc             <LI> = 1 use radiation-adjusted loss power in
   !+ad_varc                      confinement scaling and power balance</UL>
   integer :: iradloss = 1
   !+ad_vars  isc /34 (=IPB98(y,2))/ switch for energy confinement time scaling law
@@ -1451,6 +1451,7 @@ module tfcoil_variables
   !+ad_hist  30/07/14 PJK Renamed borev to tfborev
   !+ad_hist  31/07/14 PJK Added acasetfo, dcondins, whtconin, whtgw, whtrp;
   !+ad_hisc               removed aspcstf
+  !+ad_hist  19/08/14 PJK Removed casfact
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -1491,8 +1492,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: bmaxtfrp = 0.0D0
   !+ad_vars  casestr : case strain
   real(kind(1.0D0)) :: casestr = 0.0D0
-  !+ad_vars  casfact /4.0/ : TF coil case outboard/inboard area ratio
-  real(kind(1.0D0)) :: casfact = 4.0D0
   !+ad_vars  casthi /0.05/ : inboard TF coil case inner (plasma side) thickness (m)
   !+ad_varc                  (calculated for stellarators)
   real(kind(1.0D0)) :: casthi = 0.05D0
@@ -1518,7 +1517,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: csytf = 1.0005D9
   !+ad_vars  dcase /8000.0/ : density of coil case (kg/m3)
   real(kind(1.0D0)) :: dcase = 8000.0D0
-  !+ad_vars  dcond(4) /9000.0/ : density of superconductor type given by isumattf (kg/m3)
+  !+ad_vars  dcond(4) /9000.0/ : density of superconductor type given by isumattf or isumatpf (kg/m3)
   real(kind(1.0D0)), dimension(4) :: dcond = 9000.0D0
   !+ad_vars  dcondins /1800.0/ : density of conduit + ground-wall insulation (kg/m3)
   real(kind(1.0D0)) :: dcondins = 1800.0D0

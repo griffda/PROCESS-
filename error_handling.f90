@@ -102,7 +102,7 @@ module error_handling
 
   !  List of messages
 
-  integer, parameter :: n_errortypes = 136
+  integer, parameter :: n_errortypes = 138
   type(error), dimension(n_errortypes) :: error_type
 
 contains
@@ -127,6 +127,7 @@ contains
     !+ad_hist  29/07/14 PJK Added error 136
     !+ad_hist  30/07/14 PJK Modified 51, 63, 103
     !+ad_hist  31/07/14 PJK Modified 103 (now obsolete)
+    !+ad_hist  19/08/14 PJK Added errors 137, 138
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -554,6 +555,12 @@ contains
     error_type(136)%level = ERROR_WARN
     error_type(136)%message = &
          'BETCOM: Low density... carbon impurity fraction forced to be no more than 0.05'
+    error_type(137)%level = ERROR_SEVERE
+    error_type(137)%message = &
+         'CHECK: Insufficient iteration variables to solve the problem! NVAR < NEQNS'
+    error_type(138)%level = ERROR_WARN
+    error_type(138)%message = &
+         'CHECK: Beware; ion power balance may not be correct with new radiation model'
     !error_type()%level = ERROR_SEVERE
     !error_type()%message = &
     !     ''

@@ -233,6 +233,7 @@ subroutine check
   !+ad_hist  24/06/14 PJK Removed refs to bcylth
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  23/07/14 PJK Modified icase descriptions
+  !+ad_hist  19/08/14 PJK Added trap for nvar < neqns
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -263,6 +264,15 @@ subroutine check
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  errors_on = .true.
+
+  !  Check that there are sufficient iteration variables
+
+  if (nvar < neqns) then
+     idiags(1) = nvar ; idiags(2) = neqns
+     call report_error(137)
+  end if
+
   !  Fuel ion fractions must add up to 1.0
 
   if (abs(1.0D0 - fdeut - ftrit - fhe3) > 1.0D-6) then
@@ -288,6 +298,12 @@ subroutine check
 
   if ( any(ixc == 102) ) then
      impurity_arr(impvar)%frac = fimpvar
+  end if
+
+  !  Warn if ion power balance equation is being used with the new radiation model
+
+  if ((imprad_model == 1).and.(any(icc == 3))) then
+     call report_error(138)
   end if
 
   !  Tight aspect ratio options 
@@ -409,5 +425,7 @@ subroutine check
   !  in the thermodynamic blanket model...
 
   if (blktmodel > 0) costr = 2
+
+  errors_on = .false.
 
 end subroutine check

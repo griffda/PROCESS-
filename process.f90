@@ -252,7 +252,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '318    Release Date :: 2014-08-19'
+       '319    Release Date :: 2014-08-19'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -530,6 +530,7 @@ subroutine eqslv(ifail)
   !+ad_hist  09/07/14 PJK Turned on error reporting
   !+ad_hist  28/07/14 PJK Added constraint_eqns call to evaluate residues
   !+ad_hisc               in physical units
+  !+ad_hist  19/08/14 PJK Added neqns, normalised residues to output
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -585,6 +586,7 @@ subroutine eqslv(ifail)
   if (ifail /= 1) then
      call ocmmnt(nout,'but could not find a feasible set of parameters.')
      call oblnkl(nout)
+     call ovarin(nout,'Number of iteration variables and constraints','(neqns)',neqns)
      call ovarin(nout,'HYBRD error flag','(ifail)',ifail)
 
      call oheadr(iotty,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
@@ -664,6 +666,8 @@ subroutine eqslv(ifail)
   do inn = 1,neqns
      write(nout,60) inn,lablcc(icc(inn)),sym(inn),con2(inn), &
           lab(inn),err(inn),lab(inn),con1(inn)
+     call ovarre(mfile,lablcc(icc(inn))//' normalised residue', &
+          '(normres'//int_to_string3(inn)//')',con1(inn))
   end do
 60 format(t2,i4,t8,a33,t46,a1,t47,1pe12.4,t60,a10,t71,1pe12.4,t84,a10,t98,1pe12.4)
 
@@ -977,6 +981,7 @@ subroutine doopt(ifail)
   !+ad_hist  09/07/14 PJK Added range-normalised iteration variable values to mfile
   !+ad_hist  28/07/14 PJK Added constraint_eqns call to evaluate residues
   !+ad_hisc               in physical units
+  !+ad_hist  19/08/14 PJK Added nvar, neqns to output, constraint residues to mfile
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1073,6 +1078,8 @@ subroutine doopt(ifail)
      end if
   end if
 
+  call ovarin(nout,'Number of iteration variables','(nvar)',nvar)
+  call ovarin(nout,'Number of constraints','(neqns)',neqns)
   call ovarin(nout,'Optimisation switch','(ioptimz)',ioptimz)
   call ovarin(nout,'Figure of merit switch','(minmax)',minmax)
   if (ifail /= 1) then
@@ -1191,6 +1198,8 @@ subroutine doopt(ifail)
   do inn = 1,neqns
      write(nout,110) inn,lablcc(icc(inn)),sym(inn),con2(inn), &
           lab(inn),err(inn),lab(inn),con1(inn)
+     call ovarre(mfile,lablcc(icc(inn))//' normalised residue', &
+          '(normres'//int_to_string3(inn)//')',con1(inn))
   end do
 110 format(t2,i4,t8,a33,t46,a1,t47,1pe12.4,t60,a10,t71,1pe12.4,t84,a10,t98,1pe12.4)
 
@@ -1744,3 +1753,4 @@ end subroutine output
 ! GIT 317: Updated run_process.py, process_config.py, process_funcs.py, process_dicts.py,
 !          write_new_in_dat.py, in_dat.py
 ! GIT 318: Removed obsolete variables, other minor tidy-ups
+! GIT 319: Removed casfact; added some variables to output files; trapped nvar < neqns
