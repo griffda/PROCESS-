@@ -252,7 +252,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '317    Release Date :: 2014-08-19'
+       '318    Release Date :: 2014-08-19'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1743,3 +1743,4 @@ end subroutine output
 ! GIT 316: tfthko now equal to tfcth for tokamaks; improved TF coil conductor mass calculations
 ! GIT 317: Updated run_process.py, process_config.py, process_funcs.py, process_dicts.py,
 !          write_new_in_dat.py, in_dat.py
+! GIT 318: Removed obsolete variables, other minor tidy-ups

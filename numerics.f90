@@ -645,13 +645,13 @@ module numerics
 
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
   real(kind(1.0D0)) :: sqsumsq = 0.0D0
-  !+ad_vars  epsfcn /1.0D-3/ : finite difference step length for HYBRD/VMCON derivatives
+  !+ad_vars  epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON derivatives
   real(kind(1.0D0)) :: epsfcn = 1.0D-3
-  !+ad_vars  epsvmc /1.0D-3/ : error tolerance for VMCON
+  !+ad_vars  epsvmc /1.0e-3/ : error tolerance for VMCON
   real(kind(1.0D0)) :: epsvmc = 1.0D-3
   !+ad_vars  factor /0.1/ : used in HYBRD for first step size
   real(kind(1.0D0)) :: factor = 0.1D0
-  !+ad_vars  ftol /1.0D-4/ : error tolerance for HYBRD
+  !+ad_vars  ftol /1.0e-4/ : error tolerance for HYBRD
   real(kind(1.0D0)) :: ftol = 1.0D-4
 
   !+ad_vars  boundl(ipnvars) : lower bounds used on ixc variables during

@@ -13,9 +13,9 @@
 *****    Peter Knight
 *****
 *****  Date :
-*****    18/06/2014
+*****    18/08/2014
 *****
-*****  PROCESS r296 - tested okay
+*****  PROCESS r317 - tested okay
 *****
 *****  Features :
 *****    Aspect ratio = 4.0
@@ -79,6 +79,8 @@
 *****    None
 *****
 *************************************************************************
+
+RUNTITLE = DEMO 1 standard test case
 
 $INPT1
 NEQNS = 17,
@@ -227,7 +229,6 @@ tfcth=1.42E+00
 gapoh=5.0000E-02
 BORE    = 2.5868,
 OHCTH   = 1.0441,
-BCYLTH  = 0.00,
 IOHCL = 1,
 DDWI    = 0.35,
 GAPDS   = 0.05,
@@ -242,7 +243,6 @@ SHLDOTH = 0.76,
 GAPOMIN = 0.10,
 TFOOTFI = 1.20,
 VGAPTF  = 1.60,
-BLNKTTH = 0.775
 SHLDTTH = 0.80,
 VGAP2   = 0.25,
 DDWEX   = 0.15,

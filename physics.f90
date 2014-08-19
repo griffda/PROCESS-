@@ -203,6 +203,7 @@ contains
     !+ad_hist  24/06/14 PJK Corrected neutron wall load to account for gaps
     !+ad_hisc               in first wall
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  19/08/14 PJK Removed impfe usage
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -224,7 +225,7 @@ contains
     !  Calculate plasma composition
 
     if (imprad_model == 0) then
-       call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impfe,impo, &
+       call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impo, &
             ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
             dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
             zion,zfear)
@@ -2136,7 +2137,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc, &
-       impfe,impo,ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee, &
+       impo,ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee, &
        dlamie,dnalp,dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone, &
        rnfene,zeffai,zion,zfear)
 
@@ -2153,7 +2154,6 @@ contains
     !+ad_args  ftritbm: input real :  tritium fraction of beam
     !+ad_args  ignite : input integer :  switch for ignited calculation
     !+ad_args  impc   : input real :  carbon impurity multiplier
-    !+ad_args  impfe  : input real :  iron impurity multiplier
     !+ad_args  impo   : input real :  oxygen impurity multiplier
     !+ad_args  ralpne : input real :  thermal alpha density / electron density
     !+ad_args  rnbeam : input real :  hot beam density / electron density
@@ -2200,6 +2200,7 @@ contains
     !+ad_hist  19/02/14 PJK Moved PCOEF and DNLA calculations elsewhere
     !+ad_hist  28/07/14 PJK Added fix for problems due to carbon impurity
     !+ad_hisc               scaling at low electron density
+    !+ad_hist  19/08/14 PJK Removed IMPFE argument
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  F/MI/PJK/LOGBOOK11, p.38 for D-He3 deni calculation
@@ -2214,7 +2215,7 @@ contains
 
     integer, intent(in) :: ignite, zfear
     real(kind(1.0D0)), intent(in) :: cfe0, dene, fdeut, ftrit, fhe3, &
-         ftritbm, impc, impfe, impo, ralpne, rnbeam, te
+         ftritbm, impc, impo, ralpne, rnbeam, te
     real(kind(1.0D0)), intent(out) :: abeam, afuel, aion, deni, dlamee, &
          dlamie, dnalp, dnbeam, dnitot, dnprot, dnz, falpe, falpi, &
          rncne, rnfene, rnone, zeff, zeffai, zion
@@ -2273,7 +2274,6 @@ contains
 
     !  High-Z portion (formerly assumed to be iron)
 
-    !ffe = impfe * (0.0005D0 * (7.0D19/dene)**2.3D0 + cfe0)  !  IPDG89
     f_highz = cfe0
     rnfene = f_highz
 

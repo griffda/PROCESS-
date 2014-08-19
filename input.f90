@@ -312,6 +312,7 @@ contains
     !+ad_hist  22/07/14 PJK Added RUNTITLE
     !+ad_hist  30/07/14 PJK Changed TFTORT comment
     !+ad_hist  31/07/14 PJK Added DCONDINS; removed ASPCSTF
+    !+ad_hist  19/08/14 PJK Removed RECYLE, IMPFE
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -605,9 +606,6 @@ contains
        case ('IMPDIR')
           call parse_string_variable('IMPDIR', impdir, &
                'Directory containing impurity radiation data files')
-       case ('IMPFE')
-          call parse_real_variable('IMPFE', impfe, 0.0D0, 2.0D0, &
-               'Iron impurity multiplier')
        case ('IMPO')
           call parse_real_variable('IMPO', impo, 0.0D0, 10.0D0, &
                'Oxygen impurity multiplier')
@@ -667,9 +665,6 @@ contains
        case ('RALPNE')
           call parse_real_variable('RALPNE', ralpne, 1.0D-12, 1.0D0, &
                'Thermal alpha density / electron density')
-       case ('RECYLE')
-          call parse_real_variable('RECYLE', recyle, 0.0D0, 1.0D0, &
-               'Alpha recycle to main plasma')
        case ('RFPTH')
           call parse_real_variable('RFPTH', rfpth, 0.01D0, 1.8D0, &
                'RFP pinch parameter, theta')
@@ -1167,7 +1162,7 @@ contains
                'Outboard first wall thickness (m)')
        case ('GAPOH')
           call parse_real_variable('GAPOH', gapoh, 0.0D0, 10.0D0, &
-               'Gap between OHC and bucking cylinder (m)')
+               'Gap between OHC and TF coil (m)')
        case ('GAPDS')
           call parse_real_variable('GAPDS', gapds, 0.0D0, 10.0D0, &
                'Gap between inboard vacuum vessel and shield (m)')

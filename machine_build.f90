@@ -296,7 +296,7 @@ contains
 
        radius = radius + gapoh
        call obuild(outfile,'Gap',gapoh,radius)
-       call ovarre(mfile,'OH to bucking cylinder radial gap (m)','(gapoh)',gapoh)
+       call ovarre(mfile,'OH to TF coil radial gap (m)','(gapoh)',gapoh)
 
        radius = radius + tfcth
        call obuild(outfile,'TF coil inboard leg',tfcth,radius)
