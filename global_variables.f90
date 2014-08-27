@@ -946,6 +946,7 @@ module fwbs_variables
   !+ad_hist  18/06/13 PJK Changed cryomass description
   !+ad_hist  14/11/13 PJK Changed 'breeding unit' to 'breeding zone'
   !+ad_hist  03/06/14 PJK Added new power flow variables
+  !+ad_hist  21/08/14 PJK Added new thermodynamic blanket model variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -969,6 +970,8 @@ module fwbs_variables
   !+ad_vars  coolmass : Mass of water coolant (in shield, blanket,
   !+ad_varc             first wall, divertor) (kg)
   real(kind(1.0D0)) :: coolmass = 0.0D0
+  !+ad_vars  coolp /15.5e6/ : first wall coolant pressure (Pa)
+  real(kind(1.0D0)) :: coolp = 15.5D6
   !+ad_vars  cryomass : vacuum vessel mass (kg)
   real(kind(1.0D0)) :: cryomass = 0.0D0
   !+ad_vars  declblkt /0.075/ : neutron decay length of blanket structural material (m)
@@ -1042,6 +1045,8 @@ module fwbs_variables
   !+ad_varc                  <LI> = 1 D-shaped (cylinder inboard + ellipse outboard);
   !+ad_varc                  <LI> = 2 defined by two ellipses</UL>
   integer :: fwbsshape = 2
+  !+ad_vars  fwlife : first wall lifetime (y)
+  real(kind(1.0D0)) :: fwlife = 0.0D0
   !+ad_vars  fwmass : first wall mass (kg)
   real(kind(1.0D0)) :: fwmass = 0.0D0
   !+ad_vars  hcdportsize /1/ : size of heating/current drive ports (blktmodel>0):<UL>
@@ -1088,6 +1093,8 @@ module fwbs_variables
   real(kind(1.0D0)) :: rpf2dewar = 0.5D0
   !+ad_vars  tbr : tritium breeding ratio (blktmodel>0)
   real(kind(1.0D0)) :: tbr = 0.0D0
+  !+ad_vars  tpeak : peak first wall temperature (C)
+  real(kind(1.0D0)) :: tpeak = 0.0D0
   !+ad_vars  tritprate : tritium production rate (g/day) (blktmodel>0)
   real(kind(1.0D0)) :: tritprate = 0.0D0
   !+ad_vars  vdewex : external cryostat volume (m3)
@@ -1137,7 +1144,53 @@ module fwbs_variables
   !+ad_vars  wtshldo : mass of outboard shield (kg)
   real(kind(1.0D0)) :: wtshldo = 0.0D0
 
-  !+ad_vars  <P><B>The following are used in the full thermodynamic blanket model
+  !+ad_vars  <P><B>The following are used in the new thermodynamic blanket model
+  !+ad_varc  (blbop=1):</B><P>
+
+  !+ad_vars  blbop /0/ : Switch for blanket thermodynamic model (supersedes lblnkt):<UL>
+  !+ad_varc         <LI> = 0 simple model;
+  !+ad_varc         <LI> = 1 detailed thermodyamics and balance-of-plant model</UL>
+  integer :: blbop = 0
+  !+ad_vars  coolwh /1/ : Switch for coolant choice:<UL>
+  !+ad_varc         <LI> = 1 water;
+  !+ad_varc         <LI> = 2 helium</UL>
+  integer :: coolwh = 1
+  !+ad_vars  afwi /0.008/ : inner radius of inboard first wall/blanket coolant channels (m)
+  real(kind(1.0D0)) :: afwi = 0.008D0
+  !+ad_vars  afwo /0.008/ : inner radius of outboard first wall/blanket coolant channels (m)
+  real(kind(1.0D0)) :: afwo = 0.008D0
+  !+ad_vars  inlet_temp /558.0/ : inlet temperature of coolant for blanket and first wall (K)
+  real(kind(1.0D0)) :: inlet_temp = 558.0D0
+  !+ad_vars  outlet_temp /598.0/ : outlet temperature of coolant for blanket and first wall (K)
+  !+ad_varc     - input if coolwh=2 (helium), calculated if coolwh=1 (water)
+  real(kind(1.0D0)) :: outlet_temp = 598.0D0
+  !+ad_vars  nblktmodpo /8/ : number of outboard blanket modules in poloidal direction
+  integer :: nblktmodpo = 8
+  !+ad_vars  nblktmodpi /7/ : number of inboard blanket modules in poloidal direction
+  integer :: nblktmodpi = 7
+  !+ad_vars  nblktmodto /48/ : number of outboard blanket modules in toroidal direction
+  integer :: nblktmodto = 48
+  !+ad_vars  nblktmodti /32/ : number of inboard blanket modules in toroidal direction
+  integer :: nblktmodti = 32
+  !+ad_vars  tfwmatmax /823.0/ : maximum temperature of first wall material (K)
+  real(kind(1.0D0)) :: tfwmatmax = 823.0D0
+  !+ad_vars  etaiso /0.85/ : isentropic efficiency of first wall and blanket coolant pumps
+  real(kind(1.0D0)) :: etaiso = 0.85D0
+  !+ad_vars  thermal_cycle /1/ : Switch for power conversion cycle:<UL>
+  !+ad_varc                 <LI> = 0 use input efficiency;
+  !+ad_varc                 <LI> = 1 superheated steam Rankine cycle;
+  !+ad_varc                 <LI> = 2 supercritical CO2 cycle</UL>
+  integer :: thermal_cycle = 1
+  !+ad_vars  fwerlim /0.005/ : erosion thickness allowance for first wall (m)
+  real(kind(1.0D0)) :: fwerlim = 0.005D0
+  !+ad_vars  blkttype /1/ : Switch for blanket type, determining breeder materials
+  !+ad_varc                 for neutron deposition:<UL>
+  !+ad_varc            <LI> = 1 WCLL;
+  !+ad_varc            <LI> = 2 HCLL;
+  !+ad_varc            <LI> = 3 HCPB</UL>
+  integer :: blkttype = 1
+
+  !+ad_vars  <P><B>The following are used in the (old) full thermodynamic blanket model
   !+ad_varc  (lblnkt=1):</B><P>
 
   !+ad_vars  astr /2/ : Switch for blanket cooling channel geometry (lblnkt=1):<UL>
@@ -1973,6 +2026,8 @@ module heat_transport_variables
   !+ad_hist  17/04/13 PJK Added iprimnloss
   !+ad_hist  04/06/14 PJK Added/modified various quantities for new power flow method
   !+ad_hist  17/06/14 PJK Comment change to pfwdiv, ctht
+  !+ad_hist  21/08/14 PJK Added etathdiv
+  !+ad_hist  27/08/14 PJK Replaced etahtp* with just etahtp
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1996,21 +2051,15 @@ module heat_transport_variables
   real(kind(1.0D0)) :: etahlte = 0.75D0
   !+ad_vars  etahth /0.5/ : efficiency of H production for ihplant=4
   real(kind(1.0D0)) :: etahth = 0.5D0
-  !+ad_vars  etahtpblkt /0.82/ : electrical efficiency of blanket coolant pumps
-  !+ad_varc                      (default assumes helium coolant) (ipowerflow=1)
-  real(kind(1.0D0)) :: etahtpblkt = 0.82D0
-  !+ad_vars  etahtpdiv /0.9/ : electrical efficiency of divertor coolant pumps
-  !+ad_varc                    (default assumes water coolant) (ipowerflow=1)
-  real(kind(1.0D0)) :: etahtpdiv = 0.9D0
-  !+ad_vars  etahtpfw /0.82/ : electrical efficiency of first wall coolant pumps
-  !+ad_varc                    (default assumes helium coolant) (ipowerflow=1)
-  real(kind(1.0D0)) :: etahtpfw = 0.82D0
-  !+ad_vars  etahtpshld /0.9/ : electrical efficiency of shield coolant pumps
-  !+ad_varc                     (default assumes water coolant) (ipowerflow=1)
-  real(kind(1.0D0)) :: etahtpshld = 0.9D0
+  !+ad_vars  etahtp /0.95/ : electrical efficiency of coolant pumps
+  !+ad_varc                  (ipowerflow=1)
+  real(kind(1.0D0)) :: etahtp = 0.95D0
   !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency
   !+ad_varc                 if lblnkt=0, otherwise calculated
   real(kind(1.0D0)) :: etath = 0.35D0
+  !+ad_vars  etathdiv /0.0/ : thermal to electric conversion efficiency for divertor
+  !+ad_varc                   if iprimdiv = 0 (ipowerflow=1)
+  real(kind(1.0D0)) :: etathdiv = 0.0D0
   !+ad_vars  fachtmw : facility heat removal (MW)
   real(kind(1.0D0)) :: fachtmw = 0.0D0
   !+ad_vars  fauxbop /0.06/ : fraction of gross electric power to balance-of-plant
@@ -3577,6 +3626,7 @@ module pulse_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  05/11/12 PJK Initial version of module
+  !+ad_hist  21/08/14 PJK Moved some variables into fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Notes in F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -3594,13 +3644,9 @@ module pulse_variables
   !+ad_vars  bfw : outer radius of each first wall structural tube (m)
   !+ad_varc        (0.5 * average of fwith and fwoth)
   real(kind(1.0D0)) :: bfw = 0.0D0
-  !+ad_vars  coolp /15.5e6/ : first wall coolant pressure (Pa)
-  real(kind(1.0D0)) :: coolp = 15.5D6
   !+ad_vars  dtstor /300.0/ : maximum allowable temperature change in stainless
   !+ad_varc                   steel thermal storage block (K) (istore=3)
   real(kind(1.0D0)) :: dtstor = 300.0D0
-  !+ad_vars  fwlife : first wall lifetime (y)
-  real(kind(1.0D0)) :: fwlife = 0.0D0
   !+ad_vars  istore /1/ : switch for thermal storage method:<UL>
   !+ad_varc          <LI> = 1 option 1 of Electrowatt report, AEA FUS 205;
   !+ad_varc          <LI> = 2 option 2 of Electrowatt report, AEA FUS 205;
@@ -3617,8 +3663,6 @@ module pulse_variables
   integer :: lpulse = 0
   !+ad_vars  tmprse /40.0/ : first wall coolant temperature rise (C)
   real(kind(1.0D0)) :: tmprse = 40.0D0
-  !+ad_vars  tpeak : peak first wall temperature (C)
-  real(kind(1.0D0)) :: tpeak = 0.0D0
 
 end module pulse_variables
 

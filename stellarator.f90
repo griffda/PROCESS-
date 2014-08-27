@@ -1310,7 +1310,7 @@ contains
     !+ad_desc  which scale the surface area of the components from that
     !+ad_desc  of the plasma.
     !+ad_prob  None
-    !+ad_call  blanket
+    !+ad_call  blanket_panos
     !+ad_call  blanket_neutronics
     !+ad_call  oheadr
     !+ad_call  osubhd
@@ -1597,7 +1597,7 @@ contains
     !  (supersedes above calculations of blanket mass and volume)
 
     if (lblnkt == 1) then
-       call blanket(1,outfile,iprint)
+       call blanket_panos(1,outfile,iprint)
 
        !  Different (!) approximation for inboard/outboard
        !  blanket volumes: assume cylinders of equal heights

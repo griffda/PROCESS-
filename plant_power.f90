@@ -65,9 +65,9 @@ module power_module
 
   !  Local variables
 
-  real(kind(1.0D0)) :: htpmw_fw,htpmw_blkt,htpmw_shld,htpmw_div
+!  real(kind(1.0D0)) :: htpmw_fw,htpmw_blkt,htpmw_shld,htpmw_div
   real(kind(1.0D0)) :: htpmwe_fw,htpmwe_blkt,htpmwe_shld,htpmwe_div
-  real(kind(1.0D0)) :: praddiv, pradfw, pradhcd, pradloss
+!  real(kind(1.0D0)) :: praddiv, pradfw, pradhcd, pradloss
   real(kind(1.0D0)) :: pthermdiv, pthermfw, pthermblkt, pthermshld
   real(kind(1.0D0)) :: ppumpmw, pcoresystems
 
@@ -925,6 +925,7 @@ contains
     !+ad_hist  04/06/14 PJK New power flow model added
     !+ad_hist  17/06/14 PJK Corrections to pfwdiv, priheat
     !+ad_hist  19/06/14 PJK Simplified pinjwp calculation
+    !+ad_hist  21/08/14 PJK Revised new power flow model
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -935,6 +936,8 @@ contains
     !  Arguments
 
     !  Local variables
+
+    real(kind(1.0D0)) :: tturb
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -972,48 +975,55 @@ contains
 
     else
 
-       !  Radiation power incident on divertor
+!       !  Radiation power incident on divertor
+!
+!       praddiv = pradmw * fdiv
+!
+!       !  Radiation power incident on HCD apparatus
+!
+!       pradhcd = pradmw * fhcd
+!
+!       !  Radiation power lost through holes
+!
+!       pradloss = pradmw * fhole
+!
+!       !  Radiation power incident on first wall
+!
+!       pradfw = pradmw - praddiv - pradloss - pradhcd
+!
+!       !  First wall pumping power
+!       !  If blktmodel = 1, pnucfw is zero, as the first wall is combined
+!       !  with the blanket
+!
+!  htpmw_* now calculated in fwbs.f90
+!       htpmw_fw = fpumpfw/(1.0D0-fpumpfw) * (pnucfw + pradfw)
+!
+!       !  Blanket pumping power
+!       !  Nuclear energy multiplication is included
+!
+!       htpmw_blkt = fpumpblkt/(1.0D0-fpumpblkt) * (pnucblkt*emult)
+!
+!       !  Shield pumping power
+!
+!       htpmw_shld = fpumpshld/(1.0D0-fpumpshld) * pnucshld
+!
+!       !  Divertor pumping power
+!
+!       htpmw_div = fpumpdiv/(1.0D0-fpumpdiv) * (pdivt + pnucdiv + praddiv)
 
-       praddiv = pradmw * fdiv
+       !------------------------------------------------------------------------------------
+       !- Collate pumping powers
+       !------------------------------------------------------------------------------------
 
-       !  Radiation power incident on HCD apparatus
+       !  Account for pump electrical inefficiencies
+       !  The coolant pumps are not assumed to be 100% efficient so the electric
+       !  power to run them is greater than the power deposited in the coolant.  
+       !  The difference should be lost as secondary heat.
 
-       pradhcd = pradmw * fhcd
-
-       !  Radiation power lost through holes
-
-       pradloss = pradmw * fhole
-
-       !  Radiation power incident on first wall
-
-       pradfw = pradmw - praddiv - pradloss - pradhcd
-
-       !  First wall pumping power
-       !  If blktmodel = 1, pnucfw is zero, as the first wall is combined
-       !  with the blanket
-
-       htpmw_fw = fpumpfw/(1.0D0-fpumpfw) * (pnucfw + pradfw)
-
-       !  Blanket pumping power
-       !  Nuclear energy multiplication is included
-
-       htpmw_blkt = fpumpblkt/(1.0D0-fpumpblkt) * (pnucblkt*emult)
-
-       !  Shield pumping power
-
-       htpmw_shld = fpumpshld/(1.0D0-fpumpshld) * pnucshld
-
-       !  Divertor pumping power
-
-       htpmw_div = fpumpdiv/(1.0D0-fpumpdiv) * (pdivt + pnucdiv + praddiv)
-
-       !  Electrical power consumption by pumps, taking into 
-       !  account efficiency ratios
-
-       htpmwe_fw   = htpmw_fw   / etahtpfw
-       htpmwe_blkt = htpmw_blkt / etahtpblkt
-       htpmwe_shld = htpmw_shld / etahtpshld
-       htpmwe_div  = htpmw_div  / etahtpdiv
+       htpmwe_fw = htpmw_fw / etahtp
+       htpmwe_blkt = htpmw_blkt / etahtp
+       htpmwe_shld = htpmw_shld / etahtp
+       htpmwe_div = htpmw_div / etahtp
 
        !  Total heat transport system input electrical power
 
@@ -1037,12 +1047,133 @@ contains
        pthermshld = pnucshld + htpmw_shld
 
        !  Total thermal power deposited in divertor coolant
+       !  = (conduction to divertor, less radiation) + (neutron and radiation power)
+       !  using pdivt as calculated in physics.f90
 
-       pthermdiv = pdivt + pnucdiv + praddiv + htpmw_div
+       pthermdiv = pdivt + (pnucdiv + praddiv) + htpmw_div
 
        !  Heat removal from first wall and divertor
-
+!+PJK still used?
        pfwdiv = pthermfw + pthermdiv
+
+       !------------------------------------------------------------------------------------
+       !- Thermal efficiency module
+       ! Calculate the thermal efficiency of the power conversion cycle.  This gives the
+       ! gross power of the plant i.e. the primary coolant pumping power is not subtracte
+       ! at this point; however, the pumping of the secondary coolant is accounted for.
+       ! If blbop = 0, a set efficiency for the chosen blanket design is used, taken from
+       ! cycle modelling studies.  If blbop = 1, the outlet temperature from the first wall
+       ! and breeder zone is used to calculate an efficiency, using a simple relationship
+       ! between etath and outlet_temp again obtained from previous studies.
+       !------------------------------------------------------------------------------------
+
+       if (ipowerflow == 1) then
+
+          if (blbop == 0) then
+
+             if (blkttype == 1) then
+
+                !  WCLL, efficiency taken from WP13-DAS08-T02, EFDA_D_2M97B7
+                etath = 0.3311D0
+                !  This efficiency assumed the divertor heat is used in the 
+                !  main cycle, therefore set iprimdiv = 1
+                iprimdiv = 1
+
+             else if (blkttype == 2) then
+
+                !  HCLL, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
+                !  Feedheat & reheat cycle assumed, different efficiencies for
+                !  utilisation of divertor heat
+
+                if (iprimdiv == 1) then
+                   etath = 0.397D0
+                else
+                   etath = 0.436D0
+                end if
+
+             else  !  if (blkttype == 3) then
+
+                !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
+                !  Feedheat & reheat cycle assumed, different efficiencies for
+                !  utilisation of divertor heat
+
+                if (iprimdiv == 1) then
+                   etath = 0.397D0
+                else
+                   etath = 0.436D0
+                end if
+
+             end if
+
+          else  !  if blbop = 1
+
+             if (thermal_cycle == 0) then  !  user input used, etath not changed
+                continue
+
+             else if (thermal_cycle == 1) then  !  steam Rankine cycle to be used
+
+                if (coolwh == 1) then
+
+                   !  If coolant is pressurised water, the steam cycle is assumed to use
+                   !  saturated steam i.e. no superheating.  The turbine inlet temperature
+                   !  is assumed to be 45 degrees below the primary coolant outlet 
+                   !  temperature, as is common for PWR steam generators.
+
+                   !  Saturated steam Rankine cycle correlation, from C. Harrington,
+                   !  K:\Power Plant Physics and Technology \ PROCESS \ blanket_model
+                   !    \ New Power Module Harrington \ Cycle correlations \ Cycle correlations.xls
+
+                   tturb = outlet_temp - 45.0D0
+                   etath = -2.265D0 + 0.932D0*log(tturb + 49.999D0)
+
+                   ! These efficiencies assumed the divertor heat is used in the 
+                   ! main cycle, therefore set iprimdiv = 1
+
+                   iprimdiv = 1
+
+                else  !  if coolwh = 2
+
+                   !  If coolant is helium, the steam cycle is assumed to be superheated
+                   !  and a different correlation is used. The turbine inlet temperature 
+                   !  is assumed to be 20 degrees below the primary coolant outlet 
+                   !  temperature, as was stated as practical in EFDA_D_2LLNBX.
+
+                   !  Superheated steam Rankine cycle correlation, from C. Harrington (as above)
+
+                   tturb = outlet_temp - 20.0D0
+                   etath = -0.89D0 + 0.442D0*log(tturb + 49.088D0)
+
+                   !  These efficiencies assumed the divertor heat is used in the 
+                   !  main cycle, therefore set iprimdiv = 1
+
+                   iprimdiv = 1
+
+                end if
+
+             else !  if thermal_cycle = 2; Supercritical CO2 cycle to be used
+
+                !  The same temperature/efficiency correlation is used regardless of 
+                !  primary coolant choice.  The turbine inlet temperature is assumed to 
+                !  be 20 degrees below the primary coolant outlet temperature.
+                !  s-CO2 can in theory be used for both helium and water primary coolants
+                !  so no differentiation is made, but for water the efficiency will be 
+                !  very low and the correlation will reflect this.
+
+                !  Supercritical CO2 cycle correlation, from C. Harrington (as above)
+
+                tturb = outlet_temp - 20.0D0
+                etath = -1.873D0 + 0.804D0*log(tturb - 124.061D0)
+
+                !  These efficiencies assumed the divertor heat is used in the 
+                !  main cycle, therefore set iprimdiv = 1
+
+                iprimdiv = 1
+
+             end if
+
+          end if  !  blbop
+
+       end if  !  ipowerflow
 
        !  Primary (high-grade) thermal power, available for electricity
        !  generation.  Switches iprimshld, iprimdiv are 1 or 0, depending
@@ -1074,10 +1205,10 @@ contains
 
     rnphx = max(2.0D0, (pthermmw/400.0D0 + 0.8D0) )
 
-    !  For the Rankine cycle employed by the thermodynamic (1993) blanket
-    !  model, the number of primary heat exchangers is two
-
-    if (lblnkt == 1) rnphx = 2.0D0
+!    !  For the Rankine cycle employed by the thermodynamic (1993) blanket
+!    !  model, the number of primary heat exchangers is two
+!
+!    if (lblnkt == 1) rnphx = 2.0D0
 
     !  Secondary heat (some of it... rest calculated in POWER2)
 
@@ -1128,7 +1259,7 @@ contains
     !+ad_desc  and plant power balance constituents, not already calculated in
     !+ad_desc  <A HREF="acpow.html">ACPOW</A> or <A HREF="power1.html">POWER1</A>.
     !+ad_prob  None
-    !+ad_call  blanket
+    !+ad_call  blanket_panos
     !+ad_call  oblnkl
     !+ad_call  oheadr
     !+ad_call  osubhd
@@ -1154,6 +1285,7 @@ contains
     !+ad_hist  16/06/14 PJK Modified various labels to prevent duplicate outputs
     !+ad_hist  17/06/14 PJK Removed blktmodel from ipowerflow if-statement
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  27/08/14 PJK Modifications for new power flow model
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1230,11 +1362,11 @@ contains
 
     rnihx = max(2.0D0, (ctht/50.0D0 + 0.8D0) )
 
-    !  For the Rankine cycle employed by the thermodynamic (1993) blanket model,
-    !  the number of intermediate heat exchangers is set to equal the number
-    !  of feed water heater pumps
-
-    if (lblnkt == 1) rnihx = real(nipfwh+nlpfwh, kind(1.0D0))
+!    !  For the Rankine cycle employed by the thermodynamic (1993) blanket model,
+!    !  the number of intermediate heat exchangers is set to equal the number
+!    !  of feed water heater pumps
+!
+!    if (lblnkt == 1) rnihx = real(nipfwh+nlpfwh, kind(1.0D0))
 
     !  Calculate powers relevant to a power-producing plant
 
@@ -1242,11 +1374,12 @@ contains
 
        !  Gross electric power
 
-       if (lblnkt == 1) then
-          call blanket(2,outfile,iprint)
-       else
-          pgrossmw = (pthermmw-hthermmw) * etath
-       end if
+       !if (lblnkt == 1) then
+       !   call blanket_panos(2,outfile,iprint)
+       !else
+!+PJK pgrossdiv, etathdiv???
+       pgrossmw = (pthermmw-hthermmw) * etath
+       !end if
 
        !  Balance of plant recirculating power
 
@@ -1407,17 +1540,8 @@ contains
             'Coolant pump power / thermal power ratio in divertor', &
             '(fpumpdiv)',fpumpdiv)
        call ovarre(outfile, &
-            'Electrical efficiency of first wall coolant pumps', &
-            '(etahtpfw)',etahtpfw)
-       call ovarre(outfile, &
-            'Electrical efficiency of blanket coolant pumps', &
-            '(etahtpblkt)',etahtpblkt)
-       call ovarre(outfile, &
-            'Electrical efficiency of shield coolant pumps', &
-            '(etahtpshld)',etahtpshld)
-       call ovarre(outfile, &
-            'Electrical efficiency of divertor coolant pumps', &
-            '(etahtpdiv)',etahtpdiv)
+            'Electrical efficiency of heat transport coolant pumps', &
+            '(etahtp)',etahtp)
        call ovarin(outfile, &
             'Switch for destination of divertor thermal power (1=primary)', &
             '(iprimdiv)',iprimdiv)

@@ -314,6 +314,7 @@ contains
     !+ad_hist  31/07/14 PJK Added DCONDINS; removed ASPCSTF
     !+ad_hist  19/08/14 PJK Removed RECYLE, IMPFE
     !+ad_hist  19/08/14 PJK Removed CASFACT
+    !+ad_hist  27/08/14 PJK Added new power flow variables
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1526,7 +1527,53 @@ contains
                'Temperature rise in first wall coolant (C)')
 
           !  First wall, blanket, shield settings
-
+!+PJK new thermodynamic model variables
+       case ('BLBOP')
+          call parse_int_variable('BLBOP', blbop, 0, 1, &
+               'Switch for blanket thermodynamic model')
+       case ('COOLWH')
+          call parse_int_variable('COOLWH', coolwh, 1, 2, &
+               'Switch for coolant type')
+       case ('AFWI')
+          call parse_real_variable('AFWI', afwi, 1.0D-3, 0.05D0, &
+               'I/B fw/blkt coolant channel inner radius (m)')
+       case ('AFWO')
+          call parse_real_variable('AFWO', afwo, 1.0D-3, 0.05D0, &
+               'O/B fw/blkt coolant channel inner radius (m)')
+       case ('INLET_TEMP')
+          call parse_real_variable('INLET_TEMP', inlet_temp, 500.0D0, 600.0D0, &
+               'Coolant inlet temperature (K)')
+       case ('OUTLET_TEMP')
+          call parse_real_variable('OUTLET_TEMP', outlet_temp, 550.0D0, 700.0D0, &
+               'Coolant outlet temperature (K)')
+       case ('NBLKTMODPO')
+          call parse_int_variable('NBLKTMODPO', nblktmodpo, 1, 16, &
+               'No of o/b blanket modules in poloidal direction')
+       case ('NBLKTMODPI')
+          call parse_int_variable('NBLKTMODPI', nblktmodpi, 1, 16, &
+               'No of i/b blanket modules in poloidal direction')
+       case ('NBLKTMODTO')
+          call parse_int_variable('NBLKTMODTO', nblktmodto, 8, 96, &
+               'No of o/b blanket modules in toroidal direction')
+       case ('NBLKTMODTI')
+          call parse_int_variable('NBLKTMODTI', nblktmodti, 8, 96, &
+               'No of i/b blanket modules in toroidal direction')
+       case ('TFWMATMAX')
+          call parse_real_variable('TFWMATMAX', tfwmatmax, 700.0D0, 1000.0D0, &
+               'Max temperature of first wall material (K)')
+       case ('ETAISO')
+          call parse_real_variable('ETAISO', etaiso, 0.1D0, 1.0D0, &
+               'Isentropic efficiency of coolant pumps')
+       case ('THERMAL_CYCLE')
+          call parse_int_variable('THERMAL_CYCLE', thermal_cycle, 0, 2, &
+               'Switch for power conversion cycle')
+       case ('FWERLIM')
+          call parse_real_variable('FWERLIM', fwerlim, 0.0D0, 0.01D0, &
+               'First wall erosion thickness allowance (m)')
+       case ('BLKTTYPE')
+          call parse_int_variable('BLKTTYPE', blkttype, 1, 3, &
+               'Switch for blanket type')
+!-PJK
        case ('ASTR')
           call parse_int_variable('ASTR', astr, 1, 2, &
                'Switch for cooling channel geometry')
@@ -1739,18 +1786,9 @@ contains
        case ('BASEEL')
           call parse_real_variable('BASEEL', baseel, 1.0D6, 1.0D10, &
                'Base plant electric load (W)')
-       case ('ETAHTPBLKT')
-          call parse_real_variable('ETAHTPBLKT', etahtpblkt, 0.1D0, 1.0D0, &
-               'Blanket pump electrical efficiency')
-       case ('ETAHTPDIV')
-          call parse_real_variable('ETAHTPDIV', etahtpdiv, 0.1D0, 1.0D0, &
-               'Divertor pump electrical efficiency')
-       case ('ETAHTPFW')
-          call parse_real_variable('ETAHTPFW', etahtpfw, 0.1D0, 1.0D0, &
-               'First wall pump electrical efficiency')
-       case ('ETAHTPSHLD')
-          call parse_real_variable('ETAHTPSHLD', etahtpshld, 0.1D0, 1.0D0, &
-               'Shield pump electrical efficiency')
+       case ('ETAHTP')
+          call parse_real_variable('ETAHTP', etahtp, 0.1D0, 1.0D0, &
+               'Coolant pump electrical efficiency')
        case ('ETATH')
           call parse_real_variable('ETATH', etath, 0.0D0, 1.0D0, &
                'Thermal-electric conversion efficiency')
