@@ -23,6 +23,7 @@ Update: 04/06/2014 - PJK up to date at PROCESS version 285
 Update: 16/06/2014 - PJK up to date at PROCESS version 288
 Update: 16/06/2014 - PJK: r293
 Update: 30/06/2014 - PJK: r303
+Update: 28/08/2014 - PJK: dev_charrington_bop branch
 """
 
 from collections import defaultdict
@@ -48,9 +49,12 @@ DICT_VAR_TYPE = dict()
 
 #  int_variables
 DICT_VAR_TYPE['astr'] = 'int_variable'
+DICT_VAR_TYPE['blbop'] = 'int_variable'
 DICT_VAR_TYPE['blktmodel'] = 'int_variable'
+DICT_VAR_TYPE['blkttype'] = 'int_variable'
 DICT_VAR_TYPE['breedmat'] = 'int_variable'
 DICT_VAR_TYPE['bstr'] = 'int_variable'
+DICT_VAR_TYPE['coolwh'] = 'int_variable'
 DICT_VAR_TYPE['costr'] = 'int_variable'
 DICT_VAR_TYPE['divdum'] = 'int_variable'
 DICT_VAR_TYPE['estr'] = 'int_variable'
@@ -108,6 +112,10 @@ DICT_VAR_TYPE['m_res'] = 'int_variable'
 DICT_VAR_TYPE['maxcal'] = 'int_variable'
 DICT_VAR_TYPE['minmax'] = 'int_variable'
 DICT_VAR_TYPE['n_res'] = 'int_variable'
+DICT_VAR_TYPE['nblktmodpi'] = 'int_variable'
+DICT_VAR_TYPE['nblktmodpo'] = 'int_variable'
+DICT_VAR_TYPE['nblktmodti'] = 'int_variable'
+DICT_VAR_TYPE['nblktmodto'] = 'int_variable'
 DICT_VAR_TYPE['neqns'] = 'int_variable'
 DICT_VAR_TYPE['nfxfh'] = 'int_variable'
 DICT_VAR_TYPE['ngrp'] = 'int_variable'
@@ -144,6 +152,7 @@ DICT_VAR_TYPE['sect21'] = 'int_variable'
 DICT_VAR_TYPE['smstr'] = 'int_variable'
 DICT_VAR_TYPE['snull'] = 'int_variable'
 DICT_VAR_TYPE['tfc_model'] = 'int_variable'
+DICT_VAR_TYPE['thermal_cycle'] = 'int_variable'
 DICT_VAR_TYPE['verbose'] = 'int_variable'
 DICT_VAR_TYPE['zfear'] = 'int_variable'
 
@@ -160,6 +169,8 @@ DICT_VAR_TYPE['acsoh'] = 'real_variable'
 DICT_VAR_TYPE['adivflnc'] = 'real_variable'
 DICT_VAR_TYPE['admv'] = 'real_variable'
 DICT_VAR_TYPE['afw'] = 'real_variable'
+DICT_VAR_TYPE['afwi'] = 'real_variable'
+DICT_VAR_TYPE['afwo'] = 'real_variable'
 DICT_VAR_TYPE['alfapf'] = 'real_variable'
 DICT_VAR_TYPE['alphaj'] = 'real_variable'
 DICT_VAR_TYPE['alphan'] = 'real_variable'
@@ -276,11 +287,9 @@ DICT_VAR_TYPE['etahhtex'] = 'real_variable'
 DICT_VAR_TYPE['etahlte'] = 'real_variable'
 DICT_VAR_TYPE['etahp'] = 'real_variable'
 DICT_VAR_TYPE['etahth'] = 'real_variable'
-DICT_VAR_TYPE['etahtpblkt'] = 'real_variable'
-DICT_VAR_TYPE['etahtpdiv'] = 'real_variable'
-DICT_VAR_TYPE['etahtpfw'] = 'real_variable'
-DICT_VAR_TYPE['etahtpshld'] = 'real_variable'
+DICT_VAR_TYPE['etahtp'] = 'real_variable'
 DICT_VAR_TYPE['etainp'] = 'real_variable'
+DICT_VAR_TYPE['etaiso'] = 'real_variable'
 DICT_VAR_TYPE['etalh'] = 'real_variable'
 DICT_VAR_TYPE['etalp'] = 'real_variable'
 DICT_VAR_TYPE['etanbi'] = 'real_variable'
@@ -412,6 +421,7 @@ DICT_VAR_TYPE['fwclfr'] = 'real_variable'
 DICT_VAR_TYPE['fwdr'] = 'real_variable'
 DICT_VAR_TYPE['fwdzl'] = 'real_variable'
 DICT_VAR_TYPE['fwdzu'] = 'real_variable'
+DICT_VAR_TYPE['fwerlim'] = 'real_variable'
 DICT_VAR_TYPE['fwith'] = 'real_variable'
 DICT_VAR_TYPE['fwoth'] = 'real_variable'
 DICT_VAR_TYPE['gamma'] = 'real_variable'
@@ -429,6 +439,7 @@ DICT_VAR_TYPE['htpmw'] = 'real_variable'
 DICT_VAR_TYPE['impc'] = 'real_variable'
 DICT_VAR_TYPE['impfe'] = 'real_variable'
 DICT_VAR_TYPE['impo'] = 'real_variable'
+DICT_VAR_TYPE['inlet_temp'] = 'real_variable'
 DICT_VAR_TYPE['iotabar'] = 'real_variable'
 DICT_VAR_TYPE['jbus'] = 'real_variable'
 DICT_VAR_TYPE['kappa'] = 'real_variable'
@@ -445,6 +456,7 @@ DICT_VAR_TYPE['oacdcp'] = 'real_variable'
 DICT_VAR_TYPE['ohcth'] = 'real_variable'
 DICT_VAR_TYPE['ohhghf'] = 'real_variable'
 DICT_VAR_TYPE['omegan'] = 'real_variable'
+DICT_VAR_TYPE['outlet_temp'] = 'real_variable'
 DICT_VAR_TYPE['pbase'] = 'real_variable'
 DICT_VAR_TYPE['pc'] = 'real_variable'
 DICT_VAR_TYPE['pdrive'] = 'real_variable'
@@ -541,6 +553,7 @@ DICT_VAR_TYPE['tfno'] = 'real_variable'
 DICT_VAR_TYPE['tfootfi'] = 'real_variable'
 DICT_VAR_TYPE['tftmp'] = 'real_variable'
 DICT_VAR_TYPE['tftort'] = 'real_variable'
+DICT_VAR_TYPE['tfwmatmax'] = 'real_variable'
 DICT_VAR_TYPE['tgain'] = 'real_variable'
 DICT_VAR_TYPE['theat'] = 'real_variable'
 DICT_VAR_TYPE['thicndut'] = 'real_variable'
@@ -711,8 +724,6 @@ DICT_IXC_SIMPLE = {'1':'aspect', '2':'bt', '3':'rmajor', '4':'te', '5':'beta',
                    '94':'shldoth', '95':'fptfnuc', '96':'fvvhe', '97':'fpsepr',
                    '98': 'li6enrich', '99':'ftftort', '100':'ftfthko',
                    '101': 'prp', '102': 'fimpvar'}
-
-
 
 #dictionary of dictionaries
 DICT_IXC_FULL = defaultdict(dict)
@@ -925,7 +936,6 @@ DICT_IXC_BOUNDS['ftftort']  = {'lb':0.001, 'ub':1.}   #99
 DICT_IXC_BOUNDS['ftfthko']  = {'lb':0.001, 'ub':1.}   #100
 DICT_IXC_BOUNDS['prp']      = {'lb':1e-6,  'ub':0.01} #101
 DICT_IXC_BOUNDS['fimpvar']  = {'lb':1e-6,  'ub':0.01} #102
-
 
 #parameters that start with f, but are not f-values
 NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu','fimpvar']

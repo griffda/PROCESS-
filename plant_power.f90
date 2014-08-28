@@ -926,6 +926,7 @@ contains
     !+ad_hist  17/06/14 PJK Corrections to pfwdiv, priheat
     !+ad_hist  19/06/14 PJK Simplified pinjwp calculation
     !+ad_hist  21/08/14 PJK Revised new power flow model
+    !+ad_hist  28/08/14 PJK Corrections to etath fitted formulae
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -974,42 +975,6 @@ contains
        end if
 
     else
-
-!       !  Radiation power incident on divertor
-!
-!       praddiv = pradmw * fdiv
-!
-!       !  Radiation power incident on HCD apparatus
-!
-!       pradhcd = pradmw * fhcd
-!
-!       !  Radiation power lost through holes
-!
-!       pradloss = pradmw * fhole
-!
-!       !  Radiation power incident on first wall
-!
-!       pradfw = pradmw - praddiv - pradloss - pradhcd
-!
-!       !  First wall pumping power
-!       !  If blktmodel = 1, pnucfw is zero, as the first wall is combined
-!       !  with the blanket
-!
-!  htpmw_* now calculated in fwbs.f90
-!       htpmw_fw = fpumpfw/(1.0D0-fpumpfw) * (pnucfw + pradfw)
-!
-!       !  Blanket pumping power
-!       !  Nuclear energy multiplication is included
-!
-!       htpmw_blkt = fpumpblkt/(1.0D0-fpumpblkt) * (pnucblkt*emult)
-!
-!       !  Shield pumping power
-!
-!       htpmw_shld = fpumpshld/(1.0D0-fpumpshld) * pnucshld
-!
-!       !  Divertor pumping power
-!
-!       htpmw_div = fpumpdiv/(1.0D0-fpumpdiv) * (pdivt + pnucdiv + praddiv)
 
        !------------------------------------------------------------------------------------
        !- Collate pumping powers
@@ -1124,7 +1089,7 @@ contains
                    !    \ New Power Module Harrington \ Cycle correlations \ Cycle correlations.xls
 
                    tturb = outlet_temp - 45.0D0
-                   etath = -2.265D0 + 0.932D0*log(tturb + 49.999D0)
+                   etath = -2.265D0 + 0.932D0*log10(tturb + 49.999D0)
 
                    ! These efficiencies assumed the divertor heat is used in the 
                    ! main cycle, therefore set iprimdiv = 1
@@ -1141,7 +1106,7 @@ contains
                    !  Superheated steam Rankine cycle correlation, from C. Harrington (as above)
 
                    tturb = outlet_temp - 20.0D0
-                   etath = -0.89D0 + 0.442D0*log(tturb + 49.088D0)
+                   etath = -0.89D0 + 0.442D0*log10(tturb + 49.088D0)
 
                    !  These efficiencies assumed the divertor heat is used in the 
                    !  main cycle, therefore set iprimdiv = 1
@@ -1162,7 +1127,7 @@ contains
                 !  Supercritical CO2 cycle correlation, from C. Harrington (as above)
 
                 tturb = outlet_temp - 20.0D0
-                etath = -1.873D0 + 0.804D0*log(tturb - 124.061D0)
+                etath = -1.873D0 + 0.804D0*log10(tturb - 124.061D0)
 
                 !  These efficiencies assumed the divertor heat is used in the 
                 !  main cycle, therefore set iprimdiv = 1
