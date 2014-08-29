@@ -316,6 +316,9 @@ class INDATDataDictionary(object):
     def __setitem__(self, key, value):
         self.__dict__[key] = value
 
+    def __delitem__(self, key):
+        del self.__dict__[key]
+
     def keys(self):
         return self.__dict__.keys()
 

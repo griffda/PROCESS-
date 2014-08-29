@@ -4632,59 +4632,69 @@ Use -h or --help for help
 \end{verbatim}
 \end{quote}
 
-\subsection{2D\_scan.py}
 
-\Red{N.B.\ This utility is currently not working --- please do not try to use it.}
+\subsection{diagnose\_process.py}
 
-Runs a two-dimensional scan of \process\ variables. This code does not yet use
-the new \process\ Python libraries.
+This utility aids the user to interpret (unsucessful) \process\/ runs, unless \process\/ has terminated prematurely. It takes an existing \mfile\ and plots the normalised iteration variables i.e. the iteration variable values normalised to their bounds such that 0 indicates an iteration variable at its lower bound and 1 and iteration variable at its upper bound. Furthermore, it shows the normalised constrained residuals 
 
 \begin{description}
 \item{\textbf{Input:}}
- \texttt{2D\_scan.conf}, \indat\
+ \mfile
+                                
+\item{\textbf{Output:}}
+Displays plots on screen, still need to be saved by the user! (Remember to use -Y or -X, if sshing into a remote machine!)
+\end{description}
+
+
+Optional arguments are:
+\begin{quote}
+\begin{verbatim}
+# allows to specify another location/name for the MFILE
+python -f MFILE.DAT
+
+Use -h or --help for help
+
+\end{verbatim}
+\end{quote}
+
+
+\subsection{N-Dimensional Scanner Utility}
+
+This suite of Python utilities allows the user to conduct systematic, multi-dimensional parameter studies with \process. It systematically varies a set of N user defined parameters within predefined bounds. The final results can be evaluated using the corresponding visualisation tool and/or saved in standard NetCDF format for further analysis.
+
+The suite contains the following executables
+\begin{itemize}
+\item \texttt{ndscan.py} - executes the Nd-scan as specified in the configuration file.
+\item \texttt{make\_netcdf.py} - creates a NetCDF output file from a previous Nd-scan run.
+\item \texttt{ndscan\_and\_package.py} - both executes the Nd-scan and creates the NetCDF output file.
+\item \texttt{ndscan\_visualisation.py} - visualises the NetCDF output.
+\end{itemize}
+
+
+\begin{description}
+\item{\textbf{Input:}}
+ \texttt{ndscan.conf}, \indat\, \texttt{run\_process.conf} (optional)
                                 
 \item{\textbf{Output:}} All the standard PROCESS output files,
-  \texttt{ERROR.DAT} (Error matrix for all iterations), \texttt{EDGETABLE.DAT}
-  (Marks if variables at bounds), \texttt{MATRICES.DAT} (Solution for each
-  variable), \texttt{EDGEVARS.DAT} (Names of variables at bounds)
+plus XXX
 \end{description}
 
 \paragraph{Configuration Options:}
 
-The configuration file \texttt{2D\_scan.conf} has the following style
+The configuration file \texttt{ndscan.conf} uses the JSON format and has the following style
 \begin{framed}
 \begin{verbatim}
-* This is a comment
-
-* No evaluations of the first variable
-N1= 10
-* lower bound of first variable
-LB1= 1
-* upper bound of first variable
-UB1= 3
-* name of first variable
-NAME1= abktflnc
-
-* No evaluations of the second variable
-N2= 15
-* lower bound of the second variable
-LB2= 3
-* upper bound of the second variable
-UB2= 8
-* name of the second variable
-NAME2= bktlife
-
-* Output variables as given by their variable description
-OUT_VARS
-Major Radius
-Pdivt
-/OUT_VARS
-
-* Directory path to IN.DAT
-PATH=/DIR2INDAT
-* Boolean flag to store OUT.DAT and PLOT.DAT for each run
-* in the Data/ subdir
-DATA=0
+{
+     ``Axes'':[
+          {
+               ``Varname'':''x'',
+               ``Lowerbound'':1.0,
+               ``Upperbound'':2.0,
+               ``Steps'':5
+          }
+	     ],
+     ``RanBefore'':false
+}
 \end{verbatim}
 \end{framed}
 
@@ -5173,6 +5183,18 @@ For all of the functions below the arguments are:
 
 \item{\verb|plot_geometry_info(axis, mfile_data, scan)|} Function to plot the
   geometry info block
+
+\end{description}
+
+\subsection{diagnose\_funcs.py}
+
+A collection of functions used by \texttt{diagnose\_process.py}.
+
+\begin{description}
+
+\item{\verb|plot_normalised_ixc(mfilename='MFILE.DAT')|} Plots the normalised values of the iteration variables of a given \mfile.
+
+\item{\verb|plot_normalised_icc_res(mfilename='MFILE.DAT')|} Plots the normalised values of the costraint residuals of a given \mfile.
 
 \end{description}
 

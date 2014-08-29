@@ -928,7 +928,7 @@ DICT_IXC_BOUNDS['fimpvar']  = {'lb':1e-6,  'ub':0.01} #102
 
 
 #parameters that start with f, but are not f-values
-NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu']
+NON_F_VALUES = ['fcohbop', 'fvsbrnni', 'feffcd', 'fcutfsu','fimpvar']
 
 #dict mapping nsweep to ixc no, if applicable
 DICT_NSWEEP2IXC = {'1':'1', '4':'10', '5':'12', '8':'45', '9':'4',
