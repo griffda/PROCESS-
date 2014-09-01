@@ -102,7 +102,7 @@ module error_handling
 
   !  List of messages
 
-  integer, parameter :: n_errortypes = 138
+  integer, parameter :: n_errortypes = 140
   type(error), dimension(n_errortypes) :: error_type
 
 contains
@@ -128,6 +128,7 @@ contains
     !+ad_hist  30/07/14 PJK Modified 51, 63, 103
     !+ad_hist  31/07/14 PJK Modified 103 (now obsolete)
     !+ad_hist  19/08/14 PJK Added errors 137, 138
+    !+ad_hist  01/09/14 PJK Added errors 139, 140
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -561,6 +562,12 @@ contains
     error_type(138)%level = ERROR_WARN
     error_type(138)%message = &
          'CHECK: Beware; ion power balance may not be correct with new radiation model'
+    error_type(139)%level = ERROR_SEVERE
+    error_type(139)%message = &
+         'CHECK: Fewer than NVAR elements of IXC have been specified'
+    error_type(140)%level = ERROR_SEVERE
+    error_type(140)%message = &
+         'CHECK: Fewer than NEQNS+NINEQNS elements of ICC have been specified'
     !error_type()%level = ERROR_SEVERE
     !error_type()%message = &
     !     ''

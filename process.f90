@@ -252,7 +252,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '319    Release Date :: 2014-08-19'
+       '320    Release Date :: 2014-09-01'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1754,3 +1754,5 @@ end subroutine output
 !          write_new_in_dat.py, in_dat.py
 ! GIT 318: Removed obsolete variables, other minor tidy-ups
 ! GIT 319: Removed casfact; added some variables to output files; trapped nvar < neqns
+! GIT 320: Set fshine to zero if it is negligible; updated process_funcs.py;
+!          trapped insufficient numbers of specified ixc, icc elements

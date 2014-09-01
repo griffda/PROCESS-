@@ -234,6 +234,7 @@ subroutine check
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  23/07/14 PJK Modified icase descriptions
   !+ad_hist  19/08/14 PJK Added trap for nvar < neqns
+  !+ad_hist  01/09/14 PJK Added trap for insufficient specification of ixc, icc
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -271,6 +272,18 @@ subroutine check
   if (nvar < neqns) then
      idiags(1) = nvar ; idiags(2) = neqns
      call report_error(137)
+  end if
+
+  !  Check that sufficient elements of ixc and icc have been specified
+
+  if ( any(ixc(1:nvar) == 0) ) then
+     idiags(1) = nvar
+     call report_error(139)
+  end if
+
+  if ( any(icc(1:neqns+nineqns) == 0) ) then
+     idiags(1) = neqns ; idiags(2) = nineqns
+     call report_error(140)
   end if
 
   !  Fuel ion fractions must add up to 1.0
