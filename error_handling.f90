@@ -129,6 +129,7 @@ contains
     !+ad_hist  31/07/14 PJK Modified 103 (now obsolete)
     !+ad_hist  19/08/14 PJK Added errors 137, 138
     !+ad_hist  01/09/14 PJK Added errors 139, 140
+    !+ad_hist  01/09/14 PJK Changed wording of 135
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -552,7 +553,7 @@ contains
          'DOOPT: High final VMCON constraint residues'
     error_type(135)%level = ERROR_INFO
     error_type(135)%message = &
-         'OUTPF: CS coil not using maximum current density: further optimisation possible'
+         'OUTPF: CS not using max current density: further optimisation may be possible'
     error_type(136)%level = ERROR_WARN
     error_type(136)%message = &
          'BETCOM: Low density... carbon impurity fraction forced to be no more than 0.05'

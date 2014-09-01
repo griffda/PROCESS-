@@ -127,6 +127,7 @@ module physics_variables
   !+ad_hist  11/06/14 PJK Added pchargemw, ptremw, ptrimw
   !+ad_hist  17/06/14 PJK Added scaling law 39
   !+ad_hist  19/08/14 PJK Removed recyle, impfe
+  !+ad_hist  01/09/14 PJK Minor comment changes
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -424,7 +425,7 @@ module physics_variables
   !+ad_varc             <LI> = 1 use radiation-adjusted loss power in
   !+ad_varc                      confinement scaling and power balance</UL>
   integer :: iradloss = 1
-  !+ad_vars  isc /34 (=IPB98(y,2))/ switch for energy confinement time scaling law
+  !+ad_vars  isc /34 (=IPB98(y,2))/ : switch for energy confinement time scaling law
   !+ad_varc          (see description in tauscl)
   integer :: isc = 34
   !+ad_vars  iscrp /1/ : switch for scrapeoff width:<UL>
@@ -573,7 +574,7 @@ module physics_variables
   real(kind(1.0D0)) :: rli = 0.65D0
   !+ad_vars  rlp : plasma inductance (H)
   real(kind(1.0D0)) :: rlp = 0.0D0
-  !+ad_vars  rmajor /7.0/ plasma major radius (m) (iteration variable 3)
+  !+ad_vars  rmajor /7.0/ : plasma major radius (m) (iteration variable 3)
   real(kind(1.0D0)) :: rmajor = 7.0D0
   !+ad_vars  rminor : plasma minor radius (m)
   real(kind(1.0D0)) :: rminor = 0.0D0
@@ -613,7 +614,7 @@ module physics_variables
   real(kind(1.0D0)) :: taup = 0.0D0
   !+ad_vars  tbeta /2.0/ : temperature profile index beta  (ipedestal=1)
   real(kind(1.0D0)) :: tbeta = 2.0D0
-  !+ad_vars  te : /15.0/ : volume averaged electron temperature (keV)
+  !+ad_vars  te /15.0/ : volume averaged electron temperature (keV)
   !+ad_varc                (iteration variable 4)
   real(kind(1.0D0)) :: te = 15.0D0
   !+ad_vars  te0 : central electron temperature (keV)

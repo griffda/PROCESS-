@@ -36,9 +36,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-07-31
+2014-09-01
 \hfill
-Revision:: 316
+Revision:: 321
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1171,6 +1171,10 @@ models, and indicates their location and interaction within the code, together
 with the relevant switch settings and required parameter values. The concepts
 used (iteration variables, constraint equations, etc.), and instructions on
 how to set switches, etc., are explained fully in Chapter~\ref{chap:overview}.
+
+\textbf{Disclaimer: Users are discouraged from using non-default or older
+models, as they are likely to be less well tested than the default models and
+should therefore be treated with caution.}
 
 \section{Tokamak Power Plant}
 
@@ -4626,6 +4630,36 @@ python plot_mfile_sweep.py -o demo1.png -p te dene
 python plot_mfile_sweep.py -f diff_mfile.dat -p rmajor aspect
 # Show plot to screen instead of saving with R0 and aspect
 python plot_mfile_sweep.py -p rmajor aspect --show
+
+Use -h or --help for help
+
+\end{verbatim}
+\end{quote}
+
+\subsection{diagnose\_process.py}
+
+This utility aids the user to interpret (unsuccessful) \process\/ runs, unless
+\process\/ has terminated prematurely. It takes an existing \mfile\ and plots
+the normalised iteration variables, i.e.\ the iteration variable values
+normalised to their bounds such that 0 indicates an iteration variable at its
+lower bound and 1 an iteration variable at its upper bound. Furthermore, it
+shows the normalised constraint residuals.
+
+\begin{description}
+\item{\textbf{Input:}}
+ \mfile
+                                
+\item{\textbf{Output:}}
+  Displays plots on screen, still need to be saved by the user! (Remember to
+  use -Y or -X, if \texttt{ssh}ing into a remote machine!)
+
+\end{description}
+
+Optional arguments are:
+\begin{quote}
+\begin{verbatim}
+# allows to specify another location/name for the MFILE
+python diagnose_process.py -f MFILE.DAT
 
 Use -h or --help for help
 

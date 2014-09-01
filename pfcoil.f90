@@ -2227,6 +2227,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  09/07/14 PJK Added info message if OH coil current density is
     !+ad_hist               not reaching its upper limit
+    !+ad_hist  01/09/14 PJK Changed .or. to .and. for the info message test
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2270,7 +2271,7 @@ contains
        call ovarre(outfile,'Allowable stress at BOP (MPa)', &
             '(sigpfalw)',sigpfalw)
 
-       if ( (abs(coheof) < 0.99D0*abs(rjohc)).or. &
+       if ( (abs(coheof) < 0.99D0*abs(rjohc)).and. &
             (abs(cohbop) < 0.99D0*abs(rjohc0)) ) then
           call report_error(135)
        end if
