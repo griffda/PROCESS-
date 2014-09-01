@@ -2,6 +2,7 @@
  "version":  [ "PROCESS revision 322" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
+ "n_errortypes": 140,
  "errors": [
   { "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
