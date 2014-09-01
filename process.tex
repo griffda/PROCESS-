@@ -38,7 +38,7 @@
 \newcommand{\version}{
 2014-09-01
 \hfill
-Revision:: 321
+Revision:: 322
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1143,6 +1143,7 @@ Table~\ref{tab:other_modules} summarises these modules.
 \begin{tabular}{||l||l||} \hline
 source file     & description \\ \hline
 \texttt{error\_handling.f90} & centralised error handling module \\
+\texttt{fson\_library.f90} & library used to read in data from JSON-format files \\
 \texttt{global\_variables.f90} & defines and initialises most shared variables \\
 \texttt{initial.f90} & checks self-consistency of input variables and switches \\
 \texttt{input.f90} & reads in user-defined settings from input file \\
@@ -3899,6 +3900,44 @@ new input file tends to produce unfeasible results --- that is, the code will
 not find a consistent set of machine parameters. The highly non-linear nature
 of the numerics of \process\ is the reason for this difficulty, and it often
 requires a great deal of painstaking adjustment of the input file to overcome.
+
+\subsection{Error handling}
+\label{sec:errors}
+
+In general, errors detected during a run are handled in a consistent manner,
+with the code producing (hopefully) useful diagnostic messages to help the
+user understand what has happened.
+
+There are three levels of ``error'' that may occur:
+\begin{description}
+
+\item{Level 1:} An \textit{informational}\/ message is produced under certain
+  conditions, for example if the code has modified the user's input choice for
+  some reason.
+
+\item{Level 2:} A \textit{warning}\/ message is produced if a non-fatal situation has
+  occurred that may result in an output case that is inaccurate or
+  unreliable in some way.
+
+\item{Level 3:} An \textit{error}\/ message will occur if a severe or fatal
+  error has occurred and the program cannot continue.
+
+\end{description}
+
+These messages are printed on the screen during the course of a run, and those
+still active at the final (feasible or unfeasible) solution point are also
+written to the end of the output file (messages encountered during the
+iteration process are not copied to the output file, as the convergence to a
+valid solution might resolve some of the warnings produced earlier in the
+solution process).
+
+The \texttt{error\_status} variable returns the highest severity level that
+has been encountered (or zero if no abnormal conditions have been found); if a
+severe error (level 3) is flagged at any point the program is terminated
+immediately. The final message number encountered during a run is returned via
+output variable \texttt{error\_id}. In addition, with certain messages, a
+number of diagnostic values may also be given; these can be used to provide
+extra diagnostic information if the source code is available.
 
 \subsection{General problems}
 

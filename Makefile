@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 307
+#  GIT Revision 322
 #
 #  P J Knight
 #
@@ -54,6 +54,7 @@ source = \
  error_handling.f90 \
  evaluators.f90 \
  fispact.f90 \
+ fson_library.f90 \
  fwbs.f90 \
  global_variables.f90 \
  ife.f90 \
@@ -93,6 +94,7 @@ object = \
  error_handling.o \
  evaluators.o \
  fispact.o \
+ fson_library.o \
  fwbs.o \
  global_variables.o \
  ife.o \
@@ -196,9 +198,10 @@ constraint_equations.o: error_handling.o global_variables.o numerics.o
 costs.o: error_handling.o global_variables.o output.o
 current_drive.o: error_handling.o global_variables.o output.o plasma_profiles.o
 divertor.o: error_handling.o global_variables.o output.o
-error_handling.o: output.o
+error_handling.o: output.o fson_library.o
 evaluators.o: error_handling.o global_variables.o numerics.o
 fispact.o: global_variables.o
+fson_library.o: 
 fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o
 global_variables.o:
 ife.o: availability.o costs.o error_handling.o global_variables.o output.o
