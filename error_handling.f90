@@ -136,6 +136,7 @@ contains
     !+ad_hist  01/09/14 PJK Added errors 139, 140
     !+ad_hist  01/09/14 PJK Changed wording of 135
     !+ad_hist  01/09/14 PJK Now uses JSON format to read in error list
+    !+ad_hist  01/09/14 PJK Changed path to json file
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -156,8 +157,8 @@ contains
     !  Parse the json file
     !  (Need to consider a better way to specify the file location...)
 
-    filename = '/home/pknight/process/bin/utilities/errorlist.json'
-    !filename = 'errorlist.json'  !  for testing purposes...
+    !filename = '/home/pknight/process/branches/develop/utilities/errorlist.json'
+    filename = 'utilities/errorlist.json'  !  for testing purposes only...
 
     errorfile => fson_parse(trim(filename))
 

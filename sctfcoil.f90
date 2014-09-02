@@ -76,6 +76,7 @@ contains
     !+ad_prob  None
     !+ad_call  coilshap
     !+ad_call  outtf
+    !+ad_call  peak_tf_with_ripple
     !+ad_call  report_error
     !+ad_call  stresscl
     !+ad_call  tfcind
@@ -102,6 +103,7 @@ contains
     !+ad_hist  30/07/14 PJK Renamed borev to tfborev; changed tfthko calculation
     !+ad_hist  31/07/14 PJK tfthko is now set to tfcth elsewhere; added extra
     !+ad_hisc               mass calculations
+    !+ad_hist  02/09/14 PJK New peak field with ripple calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -116,7 +118,7 @@ contains
 
     !  Local variables
 
-    integer :: i
+    integer :: i,peaktfflag
     real(kind(1.0D0)) :: awpc,awptf,bcylir,cplen,leni,leno,leno0, &
          radwp,rbcndut,rcoil,rcoilp,tant,thtcoil,wbtf
 
@@ -168,15 +170,11 @@ contains
        ritfc = abs(ritfc)  !  changed from 1.0D0
     end if
 
-    !  Peak toroidal field and radius of its occurrence,
+    !  Peak toroidal field (assuming axisymmetry) and radius of its occurrence,
     !  assumed to be at the outer edge of the winding pack
 
     rbmax = rcoil - casthi
     bmaxtf = 2.0D-7 * ritfc / rbmax
-
-    !  Peak field including ripple (assumed 9%)
-
-    bmaxtfrp = bmaxtf * 1.09D0
 
     !  Calculation of forces : centering and vertical
 
@@ -445,11 +443,15 @@ contains
 
     whttf = (whtcas + whtcon + whtrp + whtgw) * tfno
 
+    !  Peak field including ripple
+
+    call peak_tf_with_ripple(tfno,wwp1,thkwp,radwp,bmaxtf,bmaxtfrp,peaktfflag)
+
     !  Do stress calculations
 
     call stresscl
 
-    if (iprint == 1) call outtf(outfile)
+    if (iprint == 1) call outtf(outfile, peaktfflag)
 
     return
 
@@ -469,6 +471,116 @@ contains
     stop
 
   end subroutine sctfcoil
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine peak_tf_with_ripple(tfno,wwp1,thkwp,tfin,bmaxtf,bmaxtfrp,flag)
+
+    !+ad_name  peak_tf_with_ripple
+    !+ad_summ  Peak toroidal field calculation, incuding ripple effects
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  tfno : input real : number of TF coils
+    !+ad_args  wwp1 : input real : width of plasma-facing face of winding pack (m)
+    !+ad_args  thkwp : input real : radial thickness of winding pack (m)
+    !+ad_args  tfin : input real : major radius of centre of winding pack (m)
+    !+ad_args  bmaxtf : input real : nominal (axisymmetric) peak toroidal field (T)
+    !+ad_args  bmaxtfrp : output real : peak toroidal field including ripple (T)
+    !+ad_args  flag : output integer : flag warning of applicability problems
+    !+ad_desc  This subroutine calculates the peak toroidal field at the
+    !+ad_desc  outboard edge of the inboard TF coil winding pack, including
+    !+ad_desc  the effects of ripple.
+    !+ad_desc  <P>For 16, 18 or 20 coils, the calculation uses fitting formulae
+    !+ad_desc  derived by M. Kovari using MAGINT calculations on coil sets based
+    !+ad_desc  on a DEMO1 case.
+    !+ad_desc  <P>For other numbers of coils, the original estimate using a 9%
+    !+ad_desc  increase due to ripple from the axisymmetric calculation is used.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  02/09/14 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  M. Kovari, Toroidal Field Coils - Maximum Field and Ripple -
+    !+ad_docc  Parametric Calculation, July 2014
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    real(kind(1.0D0)), intent(in) :: tfno,wwp1,thkwp,tfin,bmaxtf
+    real(kind(1.0D0)), intent(out) :: bmaxtfrp
+    integer, intent(out) :: flag
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: t,wmax,y,z
+    real(kind(1.0D0)), dimension(4) :: a
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    flag = 0
+
+    !  Set fitting coefficients for different numbers of TF coils
+
+    select case (nint(tfno))
+
+    case (16)
+       a(1) =  0.32715D0
+       a(2) =  1.9715D0
+       a(3) = -1.2326D0
+       a(4) =  1.1419D0
+
+    case (18)
+       a(1) =  0.3705D0
+       a(2) =  1.9517D0
+       a(3) = -1.414D0
+       a(4) =  1.0661D0
+
+    case (20)
+       a(1) =  0.30288D0
+       a(2) =  2.0272D0
+       a(3) = -1.1348D0
+       a(4) =  1.0913D0
+
+    case default
+
+       !  Original calculation - no fits were performed
+
+       bmaxtfrp = 1.09D0 * bmaxtf
+       return
+
+    end select
+
+    !  Maximum winding pack width before adjacent packs touch
+    !  (ignoring the external case and ground wall thicknesses)
+
+    wmax = 2.0D0 * (tfin - 0.5D0*thkwp) * tan(pi/tfno)
+
+    !  Dimensionless winding pack width
+
+    t = wwp1/wmax
+    if ((t < 0.3D0).or.(t > 1.1D0)) then
+       write(*,*) 'PEAK_TF_WITH_RIPPLE: fitting problem; t = ',t
+       flag = 1
+    end if
+
+    !  Dimensionless winding pack radial thickness
+
+    z = thkwp/wmax
+    if ((z < 0.26D0).or.(z > 0.7D0)) then
+       write(*,*) 'PEAK_TF_WITH_RIPPLE: fitting problem; z = ',z
+       flag = 2
+    end if
+
+    !  Ratio of peak field with ripple to nominal axisymmetric peak field
+
+    y = a(1) + a(2)*exp(-t) + a(3)*z + a(4)*z*t
+
+    bmaxtfrp = y * bmaxtf
+
+  end subroutine peak_tf_with_ripple
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1494,7 +1606,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine outtf(outfile)
+  subroutine outtf(outfile, peaktfflag)
 
     !+ad_name  outtf
     !+ad_summ  Writes superconducting TF coil output to file
@@ -1502,6 +1614,7 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  outfile : input integer : output file unit
+    !+ad_args  peaktfflag : input integer : warning flag from peak TF calculation
     !+ad_desc  This routine writes the superconducting TF coil results
     !+ad_desc  to the output file.
     !+ad_prob  None
@@ -1511,6 +1624,7 @@ contains
     !+ad_call  osubhd
     !+ad_call  ovarin
     !+ad_call  ovarre
+    !+ad_call  report_error
     !+ad_hist  14/05/12 PJK Initial F90 version
     !+ad_hist  09/10/12 PJK Modified to use new process_output module
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
@@ -1525,6 +1639,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  30/07/14 PJK Renamed borev to tfborev; changed estotf output
     !+ad_hist  31/07/14 PJK Added acasetfo and several masses
+    !+ad_hist  02/09/14 PJK Added peaktfflag usage
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -1535,7 +1650,7 @@ contains
 
     !  Arguments
 
-    integer, intent(in) :: outfile
+    integer, intent(in) :: outfile, peaktfflag
 
     !  Local variables
 
@@ -1593,6 +1708,16 @@ contains
     call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/tfno)',whttf/tfno)
     call ovarre(outfile,'Vertical separating force per coil (N)','(vforce)',vforce)
     call ovarre(outfile,'Centering force per coil (N/m)','(cforce)',cforce)
+
+    !  Report any applicability issues with peak field with ripple calculation
+
+    if (peaktfflag == 1) then
+       call report_error(144)
+    else if (peaktfflag == 2) then
+       call report_error(145)
+    else
+       continue
+    end if
 
     call osubhd(outfile,'Coil Geometry :')
     call ovarre(outfile,'Inboard leg centre radius (m)','(rtfcin)',rtfcin)

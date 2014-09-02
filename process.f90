@@ -252,7 +252,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '322    Release Date :: 2014-09-01'
+       '323    Release Date :: 2014-09-02'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1758,3 +1758,4 @@ end subroutine output
 !          trapped insufficient numbers of specified ixc, icc elements
 ! GIT 321: Added diagnose_process.py utility + funcs; minor wording changes elsewhere.
 ! GIT 322: Error list now read in from a JSON file
+! GIT 323: New peak TF with ripple calculation; modified ripple calculation applicability range
