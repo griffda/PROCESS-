@@ -26,6 +26,7 @@ module build_module
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
+  !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
   !+ad_call  process_output
   !+ad_call  rfp_variables
@@ -34,6 +35,7 @@ module build_module
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  09/05/13 PJK Added dshellarea, eshellarea
   !+ad_hist  26/06/14 PJK Added error_handling
+  !+ad_hist  19/08/14 PJK Added pfcoil_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -46,6 +48,7 @@ module build_module
   use error_handling
   use fwbs_variables
   use heat_transport_variables
+  use pfcoil_variables
   use physics_variables
   use process_output
   use rfp_variables
@@ -105,6 +108,9 @@ contains
     !+ad_hist  24/06/14 PJK Removed bcylth;
     !+ad_hisc               blnktth now always calculated
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  30/07/14 PJK Modified tfthko calculation
+    !+ad_hist  31/07/14 PJK Re-modified tfthko calculation
+    !+ad_hist  19/08/14 PJK Added ddwex, ohhghf to mfile
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -150,7 +156,11 @@ contains
 
     !  Thickness of outboard TF coil legs
 
-    tfthko = tfootfi*tfcth 
+    if (itfsup == 0) then
+       tfthko = tfootfi*tfcth
+    else
+       tfthko = tfcth
+    end if
 
     !  Radius to centre of outboard TF coil legs
 
@@ -290,7 +300,7 @@ contains
 
        radius = radius + gapoh
        call obuild(outfile,'Gap',gapoh,radius)
-       call ovarre(mfile,'OH to bucking cylinder radial gap (m)','(gapoh)',gapoh)
+       call ovarre(mfile,'OH to TF coil radial gap (m)','(gapoh)',gapoh)
 
        radius = radius + tfcth
        call obuild(outfile,'TF coil inboard leg',tfcth,radius)
@@ -464,6 +474,12 @@ contains
        call obuild(nout,'TF coil',tfcth,vbuild)
 	
     end if
+
+    !  Other build quantities
+
+    call ovarre(mfile,'External cryostat thickness (m)','(ddwex)',ddwex)
+    call ovarre(mfile,'Ratio of OH coil height to TF coil internal height', &
+         '(ohhghf)',ohhghf)
 
   end subroutine radialb
 
@@ -711,6 +727,7 @@ contains
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  18/06/14 PJK Initial version
+    !+ad_hist  31/07/14 PJK Correction: tfthko to tftort
     !+ad_stat  Okay
     !+ad_docs  M. Kovari, internal communication, June 2014
     !
@@ -735,7 +752,7 @@ contains
     !  TF coil winding pack width
 
     if (wwp1 == 0.0D0) then  !  not yet calculated
-       w = tfthko - 2.0D0*(casths + tinstf)  !  rough estimate of wwp1
+       w = tftort - 2.0D0*(casths + tinstf)  !  rough estimate of wwp1
        x = w*n/rmajor
     else
        x = wwp1*n/rmajor

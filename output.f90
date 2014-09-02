@@ -338,6 +338,7 @@ contains
     !+ad_call  None
     !+ad_hist  20/09/11 PJK Initial F90 version
     !+ad_hist  15/05/14 PJK Increased output width to 110 characters
+    !+ad_hist  23/07/14 PJK Trimmed off trailing spaces
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -374,7 +375,7 @@ contains
        stop
     end if
 
-    write(file,'(t2,a)') string
+    write(file,'(t2,a)') trim(string)
 
   end subroutine ocmmnt
 

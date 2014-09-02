@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 303
+#  GIT Revision 322
 #
 #  P J Knight
 #
@@ -54,6 +54,7 @@ source = \
  error_handling.f90 \
  evaluators.f90 \
  fispact.f90 \
+ fson_library.f90 \
  fwbs.f90 \
  global_variables.f90 \
  ife.f90 \
@@ -93,6 +94,7 @@ object = \
  error_handling.o \
  evaluators.o \
  fispact.o \
+ fson_library.o \
  fwbs.o \
  global_variables.o \
  ife.o \
@@ -196,9 +198,10 @@ constraint_equations.o: error_handling.o global_variables.o numerics.o
 costs.o: error_handling.o global_variables.o output.o
 current_drive.o: error_handling.o global_variables.o output.o plasma_profiles.o
 divertor.o: error_handling.o global_variables.o output.o
-error_handling.o: output.o
+error_handling.o: output.o fson_library.o
 evaluators.o: error_handling.o global_variables.o numerics.o
 fispact.o: global_variables.o
+fson_library.o: 
 fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o
 global_variables.o:
 ife.o: availability.o costs.o error_handling.o global_variables.o output.o
@@ -216,10 +219,11 @@ physics.o: current_drive.o error_handling.o global_variables.o impurity_radiatio
 plant_power.o: fwbs.o global_variables.o output.o
 plasma_geometry.o: global_variables.o
 plasma_profiles.o: global_variables.o maths_library.o
-process.o: availability.o buildings.o costs.o current_drive.o divertor.o error_handling.o \
-  evaluators.o fwbs.o global_variables.o ife.o impurity_radiation.o input.o machine_build.o \
-  numerics.o output.o pfcoil.o physics.o plant_power.o pulse.o rfp.o scan.o \
-  sctfcoil.o startup.o stellarator.o structure.o tfcoil.o vacuum.o
+process.o: availability.o buildings.o constraint_equations.o costs.o current_drive.o \
+  divertor.o error_handling.o evaluators.o fwbs.o global_variables.o ife.o \
+  impurity_radiation.o input.o machine_build.o numerics.o output.o pfcoil.o physics.o \
+  plant_power.o pulse.o rfp.o scan.o sctfcoil.o startup.o stellarator.o structure.o \
+  tfcoil.o vacuum.o
 pulse.o: error_handling.o global_variables.o maths_library.o output.o physics.o
 rfp.o: current_drive.o input.o global_variables.o machine_build.o output.o pfcoil.o \
   plasma_profiles.o physics.o
@@ -255,7 +259,7 @@ clean:
 # (excludes input files IN.DAT, device.dat)
 
 otherfiles = Makefile vardes.html \
-             *.tex *.ps *.eps process.pdf \
+             *.tex *.eps process.pdf \
              autodoc.f90 adheader.src adfooter.src \
              utilities/*
 

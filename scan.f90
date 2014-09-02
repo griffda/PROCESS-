@@ -43,6 +43,7 @@ module scan_module
   !+ad_hist  04/06/14 PJK Added scan variable 29: coreradius
   !+ad_hist  16/06/14 PJK Added scan variable 30: fimpvar
   !+ad_hist  26/06/14 PJK Added error_handling
+  !+ad_hist  22/07/14 PJK Raised ipnscns from 50 to 200
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -67,8 +68,8 @@ module scan_module
 
   public
 
-  !+ad_vars  ipnscns /50/ FIX : maximum number of scan points
-  integer, parameter :: ipnscns = 50
+  !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
+  integer, parameter :: ipnscns = 200
   !+ad_vars  ipnscnv /30/ FIX : number of available scan variables
   integer, parameter :: ipnscnv = 30
 

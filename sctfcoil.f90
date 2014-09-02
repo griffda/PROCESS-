@@ -98,6 +98,10 @@ contains
     !+ad_hist  24/06/14 PJK Removed obsolete dct variable and references to
     !+ad_hisc               a bucking cylinder
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  30/07/14 PJK Calculate tftort instead of using input value
+    !+ad_hist  30/07/14 PJK Renamed borev to tfborev; changed tfthko calculation
+    !+ad_hist  31/07/14 PJK tfthko is now set to tfcth elsewhere; added extra
+    !+ad_hisc               mass calculations
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -142,14 +146,8 @@ contains
     tant = tan(thtcoil)
 
     !  TF coil width in toroidal direction
-    ! PJK 08/05/14 Uncomment the following line to calculate tftort
-    ! rather than use it as an input quantity
-    !tftort = 2.0D0 * rcoil*sin(thtcoil)
 
-    !  Cross-sectional area of outboard leg
-    !assumed same width as inboard leg
-
-    arealeg = tfthko*tftort
+    tftort = 2.0D0 * rcoil*sin(thtcoil)
 
     !  Annular area of midplane containing TF coil inboard legs
 
@@ -186,11 +184,6 @@ contains
     vforce = 0.5D0 * bt * rmajor * 0.5D0*ritfc * &
          log(rtot/rtfcin) / tfno
 
-    !  Horizontal and vertical bores
-
-    tfboreh = rtot - rtfcin - 0.5D0*(tfthko + tfcth)
-    borev = (hpfu - tfcth) + hmax
-
     !  The rest of this routine deals with superconducting coils.
 
     !  Define coil shape
@@ -204,16 +197,6 @@ contains
     !  Find TF coil energy (GJ)
 
     estotf = 1.0D-9 *  0.5D0*tfind / tfno * ritfc**2
-
-    !  Coil inside perimeter
-
-    tfleng = 0.0D0
-    do i = 1,2
-       tfleng = tfleng + 2.0D0*(radctf(i) + 0.5D0*tfcth) * dthet(i)
-    end do
-    do i = 3,4
-       tfleng = tfleng + 2.0D0*(radctf(i) + 0.5D0*tfthko) * dthet(i)
-    end do
 
     !  Case thicknesses (inboard leg)
 
@@ -264,7 +247,8 @@ contains
 
     awptf = (0.5D0*thkwp)*(wwp1 + wwp2)
 
-    !  Total cross-sectional area of winding pack, including insulation
+    !  Total cross-sectional area of winding pack,
+    !  including the surrounding ground-wall insulation layer
 
     awpc = 0.5D0*thkwp*(wwp2 + 2.0D0*tinstf) + &
          (0.5D0*thkwp + 2.0D0*tinstf)*(wwp1 + 2.0D0*tinstf)
@@ -283,6 +267,14 @@ contains
        write(*,*) 'acasetf = ',acasetf
        write(*,*) ' '
     end if
+
+    !  Area of rectangular cross-section outboard leg
+
+    arealeg = tftort * tfthko
+
+    !  Cross-sectional area of surrounding case, outboard leg
+
+    acasetfo = arealeg - awpc
 
     !  Winding pack current density (forced to be positive)
 
@@ -382,22 +374,18 @@ contains
 
     aswp = turnstf*acndttf + arp
 
-    !  Check of outboard leg toroidal thickness, tftort
-    !  Must be thicker than the width of the winding pack etc., which
-    !  is likely to be the same width as at the inboard side
+    !  Coil perimeter along its cross-sectional centre
+    !  N.B. tfthko = tfcth is set in radialb routine for superconducting coils
 
-    if ( (tftort < (wwp1 + 2.0D0*tinstf)).and.(iprint == 1) ) then
-       fdiags(1) = tftort ; fdiags(2) = wwp1 + 2.0D0*tinstf
-       call report_error(103)
-       write(*,*) 'Warning in routine SCTFCOIL:'
-       write(*,*) '  TF outboard leg toroidal thickness, tftort = ',tftort
-       write(*,*) '             Winding pack + insulation width = ', &
-            wwp1 + 2.0D0*tinstf
-       write(*,*) 'Consider raising tftort in input file,'
-       write(*,*) 'or setting it as an iteration variable (77)'
-       write(*,*) 'and turning on constraint 57 and iteration variable 99'
-       write(*,*) 'to force the coil to be wide enough.'
-    end if
+    tfleng = 0.0D0
+    do i = 1,4
+       tfleng = tfleng + 2.0D0*(radctf(i) + 0.5D0*tfcth) * dthet(i)
+    end do
+
+    !  TF coil horizontal and vertical bores
+
+    tfboreh = rtot - rtfcin - tfcth  !  tfcth = 0.5D0*(tfthko + tfcth)
+    tfborev = (hpfu - tfcth) + hmax
 
     !  TF Coil areas and masses
 
@@ -415,11 +403,19 @@ contains
 
     cplen = 2.0D0*(radctf(1) + 0.5D0*tfcth) * dthet(1)
 
-    !  The outboard to inboard case area ratio is casfact
-    !  The 1.4 factor is a scaling factor to fit to the ITER-FDR value
-    !  of 450 tonnes; see CCFE note T&M/PKNIGHT/PROCESS/022
+    !  The 2.2 factor is used as a scaling factor to fit
+    !  to the ITER-FDR value of 450 tonnes; see CCFE note T&M/PKNIGHT/PROCESS/026
 
-    whtcas = 1.4D0 * dcase * acasetf * ( cplen + (tfleng-cplen)*casfact )
+    whtcas = 2.2D0 * dcase * (cplen * acasetf + (tfleng-cplen) * acasetfo)
+
+    !  Mass of radial plates + caps
+
+    whtrp = tfleng * arp * denstl
+
+    !  Mass of ground-wall insulation (assumed to be same density/material as
+    !  conduit insulation)
+
+    whtgw = tfleng * (awpc-awptf) * dcondins
 
     !  Masses of conductor constituents:
 
@@ -437,13 +433,17 @@ contains
 
     whtconsh = tfleng * turnstf * acndttf * denstl
 
+    !  Conduit insulation (aiwp already contains turnstf)
+
+    whtconin = tfleng * aiwp * dcondins
+
     !  Total conductor mass
 
-    whtcon = whtconsc + whtconcu + whtconsh
+    whtcon = whtconsc + whtconcu + whtconsh + whtconin
 
-    !  Total TF coil mass
+    !  Total TF coil mass (all coils)
 
-    whttf = (whtcas+whtcon) * tfno
+    whttf = (whtcas + whtcon + whtrp + whtgw) * tfno
 
     !  Do stress calculations
 
@@ -1523,6 +1523,8 @@ contains
     !+ad_hist  08/05/14 PJK Changed ripmax description
     !+ad_hist  16/06/14 PJK Removed duplicate outputs
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  30/07/14 PJK Renamed borev to tfborev; changed estotf output
+    !+ad_hist  31/07/14 PJK Added acasetfo and several masses
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -1586,8 +1588,9 @@ contains
     call ovarre(outfile,'Peak field (Amperes Law,T)','(bmaxtf)',bmaxtf)
     call ovarre(outfile,'Peak field (with ripple,T)','(bmaxtfrp)',bmaxtfrp)
     call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
-    call ovarre(outfile,'Stored energy per coil (GJ)','(estotf)',estotf)
+    call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotf*tfno)',estotf*tfno)
     call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf)
+    call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/tfno)',whttf/tfno)
     call ovarre(outfile,'Vertical separating force per coil (N)','(vforce)',vforce)
     call ovarre(outfile,'Centering force per coil (N/m)','(cforce)',cforce)
 
@@ -1595,8 +1598,8 @@ contains
     call ovarre(outfile,'Inboard leg centre radius (m)','(rtfcin)',rtfcin)
     call ovarre(outfile,'Outboard leg centre radius (m)','(rtot)',rtot)
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax)
-    call ovarre(outfile,'Clear bore (m)','(tfboreh)',tfboreh)
-    call ovarre(outfile,'Clear vertical bore (m)','(borev)',borev)
+    call ovarre(outfile,'Clear horizontal bore (m)','(tfboreh)',tfboreh)
+    call ovarre(outfile,'Clear vertical bore (m)','(tfborev)',tfborev)
 
     call oblnkl(outfile)
     call ocmmnt(outfile,'TF coil inner surface shape is approximated')
@@ -1637,12 +1640,12 @@ contains
     call ovarre(outfile,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc)
     call ovarre(outfile,'Copper mass per coil (kg)','(whtconcu)',whtconcu)
     call ovarre(outfile,'Steel conduit mass per coil (kg)','(whtconsh)',whtconsh)
+    call ovarre(outfile,'Conduit insulation mass per coil (kg)','(whtconin)',whtconin)
     call ovarre(outfile,'Total conductor cable mass per coil (kg)','(whtcon)',whtcon)
     call ovarre(outfile,'Cable conductor + void area (m2)','(acstf)',acstf)
     call ovarre(outfile,'Cable space coolant fraction','(vftf)',vftf)
     call ovarre(outfile,'Conduit case thickness (m)','(thwcndut)',thwcndut)
-    call ovarre(outfile,'Cable insulation thickness (m)','(thicndut)',thicndut)
-    call ovarre(outfile,'Cable radial/toroidal aspect ratio','(aspcstf)',aspcstf)
+    call ovarre(outfile,'Conduit insulation thickness (m)','(thicndut)',thicndut)
 
     ap = acond + aswp + aiwp + avwp
 
@@ -1656,7 +1659,9 @@ contains
     call ovarre(outfile,'Winding width 1 (m)','(wwp1)',wwp1)
     call ovarre(outfile,'Winding width 2 (m)','(wwp2)',wwp2)
     call ovarre(outfile,'Radial plate thickness (m)','(2*trp)',2.0D0*trp)
+    call ovarre(outfile,'Mass of radial plates + caps per coil (kg)','(whtrp)',whtrp)
     call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
+    call ovarre(outfile,'Ground wall mass per coil (kg)','(whtgw)',whtgw)
     call ovarre(outfile,'Number of turns per TF coil','(turnstf)',turnstf)
     call ovarre(outfile,'Current per turn (A)','(cpttf)',cpttf)
 
@@ -1666,8 +1671,7 @@ contains
     call ovarre(outfile,'Inboard leg case inboard thickness (m)','(thkcas)',thkcas)
     call ovarre(outfile,'Inboard leg case toroidal thickness (m)','(casths)',casths)
     call ovarre(outfile,'Inboard leg case area per coil (m2)','(acasetf)',acasetf)
-    call ovarre(outfile,'Outboard leg case area per coil (m2)', &
-         '(...*casfact)',acasetf*casfact)
+    call ovarre(outfile,'Outboard leg case area per coil (m2)','(acasetfo)',acasetfo)
     call ovarre(outfile,'External case mass per coil (kg)','(whtcas)',whtcas)
 
     if (tfc_model == 1) then

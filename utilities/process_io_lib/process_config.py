@@ -6,7 +6,10 @@ Interfaces for Configuration values for programs
 - RunPROCESS.py
 - TestPROCESS.py
 
-Compatible with PROCESS version ???
+Notes:
+11/08/2014 added error_status2readme
+
+Compatible with PROCESS version 316
 
 """
 
@@ -16,6 +19,8 @@ import json
 from time import sleep
 from numpy.random import seed
 from process_io_lib.in_dat import INDATNew, INVariable
+from process_io_lib.process_funcs import mfile_exists
+from process_io_lib.mfile import MFile
 
 
 def print_config(config_instance):
@@ -183,6 +188,24 @@ class ProcessConfigOLD(object):
             readme.write(self.comment)
             readme.close()
 
+
+    def error_status2readme(self, directory='.'):
+
+        """ appends PROCESS outcome to README.txt """
+
+        if mfile_exists():
+            if self.comment != '':
+                readme = open(directory+'/README.txt', 'a')
+            else:
+                readme = open(directory+'/README.txt', 'w')
+
+            m_file = MFile(filename=directory+"/MFILE.DAT")
+            error_status = "Error status: %i  Error ID: %i\n" %(m_file.data['error status'].get_scan(-1), m_file.data['error id'].get_scan(-1))
+            readme.write(error_status)
+            readme.close()
+
+
+
     def modify_in_dat(self):
 
         """ modifies the original IN.DAT file """
@@ -201,7 +224,6 @@ class ProcessConfigOLD(object):
         self.create_readme()
 
         self.modify_in_dat()
-
         #check_in_dat()
 
         seed(self.u_seed)
@@ -391,25 +413,25 @@ class TestProcessConfig(ProcessConfig):
 
         #by convention all variablenames are lower case
         if self.ioptimz != 'None':
-            if 'ioptimz' in in_dat.variables:
+            if 'ioptimz' in in_dat.variables.keys():
                 in_dat.variables['ioptimz'].value = self.ioptimz
             else:
                 in_dat.variables['ioptimz'] = INVariable('ioptimz',
                                                          self.ioptimz)
         if self.epsvmc != 'None':
-            if 'epsvmc' in in_dat.variables:
+            if 'epsvmc' in in_dat.variables.keys():
                 in_dat.variables['epsvmc'].value = self.epsvmc
             else:
                 in_dat.variables['epsvmc'] = INVariable('epsvmc', self.epsvmc)
 
         if self.epsfcn != 'None':
-            if 'epsfcn' in in_dat.variables:
+            if 'epsfcn' in in_dat.variables.keys():
                 in_dat.variables['epsfcn'].value = self.epsfcn
             else:
                 in_dat.variables['epsfcn'] = INVariable('epsfcn', self.epsfcn)
 
         if self.minmax != 'None':
-            if 'minmax' in in_dat.variables:
+            if 'minmax' in in_dat.variables.keys():
                 in_dat.variables['minmax'].value = self.minmax
             else:
                 in_dat.variables['minmax'] = INVariable('minmax', self.minmax)
@@ -598,11 +620,9 @@ class RunProcessConfig(ProcessConfig):
         """ modifies IN.DAT using the configuration parameters"""
 
         self.modify_vars()
-
         self.modify_ixc()
-
         self.modify_icc()
-
+        
 
     def modify_vars(self):
 
@@ -612,13 +632,15 @@ class RunProcessConfig(ProcessConfig):
 
         #add and modify variables
         for key in self.dictvar.keys():
+  
             key = key.lower()
-            if key in in_dat.variables:
+ 
+            if key in in_dat.variables.keys():
                 in_dat.variables[key].value = self.dictvar[key]
             else:
                 in_dat.add_variable(INVariable(key, self.dictvar[key]))
                 #in_dat.variables[key] = INVariable(key, self.dictvar[key])
-
+  
         #delete variables
         for key in self.del_var:
             key = key.lower()

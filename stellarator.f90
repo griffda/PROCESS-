@@ -423,6 +423,7 @@ contains
     !+ad_hist  11/09/13 PJK Removed idhe3 setting
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
+    !+ad_hist  23/07/14 PJK Changed icase description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -446,7 +447,7 @@ contains
     boundu(3) = 30.0D0
     boundu(29) = 20.0D0
 
-    icase = 'PROCESS stellarator model'
+    icase = 'Stellarator model'
 
     !  Build quantities
 
@@ -973,6 +974,7 @@ contains
     !+ad_hist  11/06/14 PJK Introduced pchargemw, ptremw, ptrimw
     !+ad_hist  24/06/14 PJK Corrected neutron wall load to account for gaps
     !+ad_hisc               in first wall
+    !+ad_hist  19/08/14 PJK Removed impfe usage
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -992,7 +994,7 @@ contains
     !  Calculate plasma composition
 
     if (imprad_model == 0) then
-       call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impfe,impo, &
+       call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impo, &
             ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
             dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
             zion,zfear)
@@ -2413,6 +2415,7 @@ contains
     !+ad_hist  06/05/14 PJK Removed wpvf completely
     !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
     !+ad_hist  26/06/14 PJK Added error_handling
+    !+ad_hist  30/07/14 PJK Renamed borev to tfborev
     !+ad_stat  Okay
     !+ad_docs  The Stellarator Coil model for the Systems code PROCESS,
     !+ad_docc  F. Warmer, F. Schauer, IPP Greifswald, October 2013
@@ -2733,7 +2736,7 @@ contains
                                   !     N.B. different to tokamak SCTF calculation
     hmax = 0.5D0*h_max - tfcth    ! [m] maximum half-height of coil
     tfboreh = D_coil              ! [m] estimated horizontal coil bore
-    borev = 2.0D0*hmax            ! [m] estimated vertical coil bore
+    tfborev = 2.0D0*hmax          ! [m] estimated vertical coil bore
     tfleng = U                    ! [m] estimated average length of a coil
 
     estotf = W_mag/tfno           ! [GJ] magnetic energy per coil
@@ -3518,6 +3521,8 @@ contains
     !+ad_call  ovarre
     !+ad_hist  03/03/14 PJK Initial version, based on outtf
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  30/07/14 PJK Renamed borev to tfborev
+    !+ad_hist  31/07/14 PJK Removed aspcstf
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -3560,8 +3565,8 @@ contains
     call ovarre(outfile,'Inboard leg centre radius (m)','(rtfcin)',rtfcin)
     call ovarre(outfile,'Outboard leg centre radius (m)','(rtot)',rtot)
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax)
-    call ovarre(outfile,'Clear bore (m)','(tfboreh)',tfboreh)
-    call ovarre(outfile,'Clear vertical bore (m)','(borev)',borev)
+    call ovarre(outfile,'Clear horizontal bore (m)','(tfboreh)',tfboreh)
+    call ovarre(outfile,'Clear vertical bore (m)','(tfborev)',tfborev)
 
     call osubhd(outfile,'Conductor Information :')
     call ovarre(outfile,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc)
@@ -3572,7 +3577,6 @@ contains
     call ovarre(outfile,'Cable space coolant fraction','(vftf)',vftf)
     call ovarre(outfile,'Conduit case thickness (m)','(thwcndut)',thwcndut)
     call ovarre(outfile,'Cable insulation thickness (m)','(thicndut)',thicndut)
-    call ovarre(outfile,'Cable radial/toroidal aspect ratio','(aspcstf)',aspcstf)
 
     ap = acond + aswp + aiwp + avwp
 

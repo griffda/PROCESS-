@@ -203,6 +203,7 @@ contains
     !+ad_hist  24/06/14 PJK Corrected neutron wall load to account for gaps
     !+ad_hisc               in first wall
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  19/08/14 PJK Removed impfe usage
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -224,7 +225,7 @@ contains
     !  Calculate plasma composition
 
     if (imprad_model == 0) then
-       call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impfe,impo, &
+       call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impo, &
             ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
             dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
             zion,zfear)
@@ -2136,7 +2137,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc, &
-       impfe,impo,ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee, &
+       impo,ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee, &
        dlamie,dnalp,dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone, &
        rnfene,zeffai,zion,zfear)
 
@@ -2153,7 +2154,6 @@ contains
     !+ad_args  ftritbm: input real :  tritium fraction of beam
     !+ad_args  ignite : input integer :  switch for ignited calculation
     !+ad_args  impc   : input real :  carbon impurity multiplier
-    !+ad_args  impfe  : input real :  iron impurity multiplier
     !+ad_args  impo   : input real :  oxygen impurity multiplier
     !+ad_args  ralpne : input real :  thermal alpha density / electron density
     !+ad_args  rnbeam : input real :  hot beam density / electron density
@@ -2181,7 +2181,7 @@ contains
     !+ad_desc  This subroutine determines the various plasma component
     !+ad_desc  fractional makeups.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  21/06/94 PJK Upgrade to higher standard of coding
     !+ad_hist  06/12/95 PJK Added D-He3 calculations
     !+ad_hist  01/04/98 PJK Added calculation of line-averaged density
@@ -2198,6 +2198,9 @@ contains
     !+ad_hist  11/09/13 PJK Removed idhe3, ftr usage
     !+ad_hist  12/02/14 PJK Modified initial dnprot approximation
     !+ad_hist  19/02/14 PJK Moved PCOEF and DNLA calculations elsewhere
+    !+ad_hist  28/07/14 PJK Added fix for problems due to carbon impurity
+    !+ad_hisc               scaling at low electron density
+    !+ad_hist  19/08/14 PJK Removed IMPFE argument
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  F/MI/PJK/LOGBOOK11, p.38 for D-He3 deni calculation
@@ -2212,7 +2215,7 @@ contains
 
     integer, intent(in) :: ignite, zfear
     real(kind(1.0D0)), intent(in) :: cfe0, dene, fdeut, ftrit, fhe3, &
-         ftritbm, impc, impfe, impo, ralpne, rnbeam, te
+         ftritbm, impc, impo, ralpne, rnbeam, te
     real(kind(1.0D0)), intent(out) :: abeam, afuel, aion, deni, dlamee, &
          dlamie, dnalp, dnbeam, dnitot, dnprot, dnz, falpe, falpi, &
          rncne, rnfene, rnone, zeff, zeffai, zion
@@ -2253,6 +2256,15 @@ contains
     !  Carbon portion (IPDG89)
 
     fc = impc * (0.009D0 + 0.006D0 * (7.0D19/dene)**2.6D0)
+
+    !  The following should prevent problems at low electron density
+    !  dene with ion density deni becoming negative
+
+    if (fc > 0.05D0) then
+       fc = 0.05D0
+       call report_error(136)
+    end if
+
     rncne = fc
 
     !  Oxygen portion (IPDG89)
@@ -2262,7 +2274,6 @@ contains
 
     !  High-Z portion (formerly assumed to be iron)
 
-    !ffe = impfe * (0.0005D0 * (7.0D19/dene)**2.3D0 + cfe0)  !  IPDG89
     f_highz = cfe0
     rnfene = f_highz
 
@@ -5229,6 +5240,7 @@ contains
     !+ad_hist  16/06/14 PJK Removed duplicate outputs
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  19/08/14 PJK Added dnla / Greenwald ratio
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5418,6 +5430,11 @@ contains
     call ovarre(outfile,'Electron density (/m3)','(dene)',dene)
     call ovarre(outfile,'Electron density on axis (/m3)','(ne0)',ne0)
     call ovarre(outfile,'Line-averaged electron density (/m3)','(dnla)',dnla)
+    if (istell == 0) then
+       call ovarre(outfile,'Line-averaged electron density / Greenwald density', &
+            '(dnla_gw)',dnla/dlimit(7))
+    end if
+
     call ovarre(outfile,'Ion density (/m3)','(dnitot)',dnitot)
     call ovarre(outfile,'Fuel density (/m3)','(deni)',deni)
     call ovarre(outfile,'High Z impurity density (/m3)','(dnz)',dnz)

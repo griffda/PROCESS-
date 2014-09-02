@@ -232,6 +232,9 @@ subroutine check
   !+ad_hist  02/06/14 PJK Added fimpvar usage
   !+ad_hist  24/06/14 PJK Removed refs to bcylth
   !+ad_hist  26/06/14 PJK Added error_handling
+  !+ad_hist  23/07/14 PJK Modified icase descriptions
+  !+ad_hist  19/08/14 PJK Added trap for nvar < neqns
+  !+ad_hist  01/09/14 PJK Added trap for insufficient specification of ixc, icc
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -262,6 +265,27 @@ subroutine check
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  errors_on = .true.
+
+  !  Check that there are sufficient iteration variables
+
+  if (nvar < neqns) then
+     idiags(1) = nvar ; idiags(2) = neqns
+     call report_error(137)
+  end if
+
+  !  Check that sufficient elements of ixc and icc have been specified
+
+  if ( any(ixc(1:nvar) == 0) ) then
+     idiags(1) = nvar
+     call report_error(139)
+  end if
+
+  if ( any(icc(1:neqns+nineqns) == 0) ) then
+     idiags(1) = neqns ; idiags(2) = nineqns
+     call report_error(140)
+  end if
+
   !  Fuel ion fractions must add up to 1.0
 
   if (abs(1.0D0 - fdeut - ftrit - fhe3) > 1.0D-6) then
@@ -289,11 +313,17 @@ subroutine check
      impurity_arr(impvar)%frac = fimpvar
   end if
 
+  !  Warn if ion power balance equation is being used with the new radiation model
+
+  if ((imprad_model == 1).and.(any(icc == 3))) then
+     call report_error(138)
+  end if
+
   !  Tight aspect ratio options 
 
   if (itart == 1) then
 
-     icase  = 'PROCESS tight aspect ratio tokamak model'
+     icase  = 'Tight aspect ratio tokamak model'
 
      bore   = 0.0D0
      gapoh  = 0.0D0
@@ -351,7 +381,7 @@ subroutine check
 
      ddwi     = 0.0D0
      kappa    = 1.0D0
-     icase    = 'PROCESS reversed field pinch model'
+     icase    = 'Reversed field pinch model'
      iefrf    = 9
      ifispact = 0
      iohcl    = 0
@@ -369,14 +399,14 @@ subroutine check
   !  Inertial Fusion Energy model
 
   if (ife == 1) then
-     icase    = 'PROCESS inertial fusion energy model'
+     icase    = 'Inertial Fusion Energy model'
      lpulse   = 0
   end if
 
   !  Pulsed power plant model
 
   if (lpulse == 1) then
-     icase = 'PROCESS pulsed tokamak model'
+     icase = 'Pulsed tokamak model'
   else
      esbldgm3 = 0.0D0
   end if
@@ -408,5 +438,7 @@ subroutine check
   !  in the thermodynamic blanket model...
 
   if (blktmodel > 0) costr = 2
+
+  errors_on = .false.
 
 end subroutine check

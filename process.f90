@@ -117,16 +117,12 @@ subroutine init
   !+ad_call  error_handling
   !+ad_call  global_variables
   !+ad_call  impurity_radiation_module
-  !+ad_call  numerics
   !+ad_call  process_input
   !+ad_call  process_output
   !+ad_call  check
-  !+ad_call  codever
   !+ad_call  initial
   !+ad_call  initialise_error_list
   !+ad_call  input
-  !+ad_call  oblnkl
-  !+ad_call  ocmmnt
   !+ad_call  run_summary
   !+ad_hist  03/10/96 PJK Initial upgraded version
   !+ad_hist  17/11/97 PJK Changed file names to *.DAT
@@ -137,15 +133,14 @@ subroutine init
   !+ad_hist  13/02/14 PJK Added mfile open statement
   !+ad_hist  13/05/14 PJK Added impurity radiation model initialisation
   !+ad_hist  25/06/14 PJK Introduced call to initialise error handling
+  !+ad_hist  22/07/14 PJK Rearranged calls to print output headers
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use error_handling
-  use global_variables
   use impurity_radiation_module
-  use numerics
   use process_input
   use process_output
 
@@ -172,11 +167,6 @@ subroutine init
   open(unit=nplot,file='PLOT.DAT',status='unknown')
   open(unit=mfile,file='MFILE.DAT',status='unknown')
 
-  !  Print code banner + run details
-
-  call codever(nout)
-  call codever(iotty)
-
   !  Input any desired new initial values
 
   call input
@@ -189,130 +179,11 @@ subroutine init
 
   call check
 
-  !  Print code version
-
-  call oblnkl(nout)
-  call ocmmnt(nout,icase)
-  call ocmmnt(iotty,icase)
-  call oblnkl(iotty)
-
   !  Write to the output file certain relevant details about this run
 
   call run_summary
 
 end subroutine init
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-subroutine codever(outfile)
-
-  !+ad_name  codever
-  !+ad_summ  Prints out the code version and other run-specific information
-  !+ad_type  Subroutine
-  !+ad_auth  P J Knight, CCFE, Culham Science Centre
-  !+ad_cont  N/A
-  !+ad_args  outfile   : input integer : output file unit
-  !+ad_desc  This routine prints out the code version and various other
-  !+ad_desc  run-specific details.
-  !+ad_prob  None
-  !+ad_call  process_output
-  !+ad_call  inform
-  !+ad_call  oblnkl
-  !+ad_call  ocentr
-  !+ad_call  ostars
-  !+ad_call  ovarin
-  !+ad_call  ovarst
-  !+ad_hist  03/10/96 PJK Initial upgraded version
-  !+ad_hist  17/11/97 PJK Changed file names to *.DAT
-  !+ad_hist  08/10/12 PJK Initial F90 version
-  !+ad_hist  09/10/12 PJK Modified to use new process_output module
-  !+ad_hist  02/04/14 PJK Added output to mfile
-  !+ad_hist  03/04/14 PJK Used ovarst to write character string output to mfile
-  !+ad_hist  06/05/14 PJK Modified version print-out
-  !+ad_hist  15/05/14 PJK Increased output width to 110 characters
-  !+ad_stat  Okay
-  !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  use process_output
-
-  implicit none
-
-  !  Arguments
-
-  integer, intent(in) :: outfile
-
-  !  Local variables
-
-  integer, parameter :: width = 110
-  integer :: version
-  character(len=72), dimension(0:10) :: progid
-  character(len=5) :: vstring
-  character(len=8) :: date
-  character(len=10) :: time
-  character(len=12) :: dstring
-  character(len=7) :: tstring
-  character(len=10) :: ustring
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  !  Write out banner
-
-  call oblnkl(outfile)
-  call ostars(outfile,width)
-  call ocentr(outfile,'PROCESS',width)
-  call ocentr(outfile,'Power Reactor Optimisation Code',width)
-  call ocentr(outfile,'for Environmental and Safety Studies',width)
-  call ostars(outfile,width)
-  call oblnkl(outfile)
-
-  !  Obtain details of this run
-
-  call inform(progid)
-
-  !  Write out details
-
-  write(outfile,*) progid(1)
-  write(outfile,*) progid(2)
-  write(outfile,*) progid(3)
-  write(outfile,*) progid(4)
-  write(outfile,*) progid(5)
-  write(outfile,*) progid(6)
-
-  if (outfile == nout) then
-
-     !  Beware of possible future changes to the progid(...) layouts
-
-     !  The following should work up to version 99999
-     !  Relies on an internal read statement
-
-     vstring = progid(2)(13:17)
-     read(vstring,'(i5)') version
-     call ovarin(mfile,'PROCESS version number','(procver)',version)
-
-     call date_and_time(date=date, time=time)
-
-     !  Date output in the form "DD/MM/YYYY" (including quotes)
-
-     dstring = '"'//date(7:8)//'/'//date(5:6)//'/'//date(1:4)//'"'
-     call ovarst(mfile,'Date of run','(date)',dstring)
-
-     !  Time output in the form "hh:mm" (including quotes)
-
-     tstring = '"'//time(1:2)//':'//time(3:4)//'"'
-     call ovarst(mfile,'Time of run','(time)',tstring)
-
-     ustring = '"'//trim(progid(4)(13:20))//'"'
-     call ovarst(mfile,'User','(username)',ustring)
-
-  end if
-
-  call oblnkl(outfile)
-  call ostars(outfile,width)
-  call oblnkl(outfile)
-
-end subroutine codever
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -364,6 +235,7 @@ subroutine inform(progid)
   !+ad_hist  21/08/12 PJK Initial F90 version
   !+ad_hist  23/01/13 PJK Changed progver to update automatically with SVN
   !+ad_hist  06/05/14 PJK progver must now be changed manually (SVN --> git)
+  !+ad_hist  23/07/14 PJK Modified system calls
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -377,10 +249,13 @@ subroutine inform(progid)
 
   !  Local variables
 
+  character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '306    Date  :: 2014-07-09'
+       '322    Release Date :: 2014-09-01'
   character(len=72), dimension(10) :: id
+  integer :: unit
+  logical :: unit_available
 
   !  External routines
 
@@ -388,34 +263,45 @@ subroutine inform(progid)
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !  Program name and version number
+  !  Program name
 
   progname = 'PROCESS'
 
   !  Create temporary data file
 
-  call system('/bin/rm -f PROGID.DAT' // char(0))
-  call system('/bin/touch PROGID.DAT' // char(0))
+  call system('/bin/rm -f '// tempfile // char(0))
+  call system('/bin/touch '// tempfile // char(0))
 
   !  Write information to data file
 
-  call system('/bin/date >> PROGID.DAT' // char(0))
-  call system('/usr/bin/whoami >> PROGID.DAT' // char(0))
-  call system('/bin/hostname >> PROGID.DAT' // char(0))
-  call system('/bin/pwd >> PROGID.DAT' // char(0))
+  call system('/bin/date >> ' // tempfile // char(0))
+  call system('/usr/bin/whoami >> ' // tempfile // char(0))
+  call system("/usr/bin/finger `/usr/bin/whoami` " // &
+       "| /usr/bin/head -1 | /usr/bin/cut -f 4 " // &
+       "| /usr/bin/cut -f 2-3 -d ' ' >> " // tempfile // char(0))
+  call system('/bin/hostname >> ' // tempfile // char(0))
+  call system('/bin/pwd >> ' // tempfile // char(0))
 
   !  Read back information into ID array
 
-  open(unit=1,file='PROGID.DAT',status='old')
-  read(1,'(A)') id(1)
-  read(1,'(A)') id(2)
-  read(1,'(A)') id(3)
-  read(1,'(A)') id(4)
-  close(unit=1)
+  unit = 20
+  unit_available = .false.
+  do while (.not.unit_available)
+     inquire(unit, exist=unit_available)
+     unit = unit+1
+  end do
+
+  open(unit,file=tempfile,status='old')
+  read(unit,'(A)') id(1)
+  read(unit,'(A)') id(2)
+  read(unit,'(A)') id(3)
+  read(unit,'(A)') id(4)
+  read(unit,'(A)') id(5)
+  close(unit)
 
   !  Delete temporary data file
 
-  call system('/bin/rm -f PROGID.DAT' // char(0))
+  call system('/bin/rm -f ' // tempfile // char(0))
 
   !  Annotate information and store in PROGID character array
   !  for use in other program units via the routine argument
@@ -423,16 +309,184 @@ subroutine inform(progid)
   progid(1) = '  Program : ' // progname
   progid(2) = '  Version : ' // progver
   progid(3) = 'Date/time : ' // id(1)
-  progid(4) = '     User : ' // id(2)
-  progid(5) = ' Computer : ' // id(3)
-  progid(6) = 'Directory : ' // id(4)
+  progid(4) = '     User : ' // trim(id(2)) // ' (' // trim(id(3)) // ')'
+  progid(5) = ' Computer : ' // id(4)
+  progid(6) = 'Directory : ' // id(5)
 
   !  Summarise most useful data, and store in progid(0)
 
-  progid(0) = trim(progname) // ' ' // trim(progver) // &
-       ' : Run at ' // trim(id(1))
+  progid(0) = trim(progname) // ' ' // trim(progver(:7)) // &
+       ' : Run on ' // trim(id(1)) // ' by ' // trim(id(3))
 
 end subroutine inform
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+subroutine run_summary
+
+  !+ad_name  run_summary
+  !+ad_summ  Routine to print out a summary header
+  !+ad_type  Subroutine
+  !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  None
+  !+ad_desc  This routine prints out a header summarising the program
+  !+ad_desc  execution details, plus a list of the active iteration
+  !+ad_desc  variables and constraint equations for the run.
+  !+ad_prob  None
+  !+ad_call  global_variables
+  !+ad_call  numerics
+  !+ad_call  process_output
+  !+ad_call  inform
+  !+ad_call  oblnkl
+  !+ad_call  ocentr
+  !+ad_call  ocmmnt
+  !+ad_call  ostars
+  !+ad_call  osubhd
+  !+ad_call  ovarin
+  !+ad_call  ovarst
+  !+ad_hist  28/06/94 PJK Improved layout
+  !+ad_hist  03/10/12 PJK Initial F90 version
+  !+ad_hist  08/10/12 PJK Changed routine name from edit1 to run_summary
+  !+ad_hist  28/11/13 PJK Modified format statement for longer lablxc
+  !+ad_hist  27/02/14 PJK Introduced use of nineqns
+  !+ad_hist  22/07/14 PJK Moved routine from input.f90, and rearranged layout,
+  !+ad_hisc               incorporating old routine codever
+  !+ad_stat  Okay
+  !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
+  !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  use global_variables
+  use numerics
+  use process_output
+
+  implicit none
+
+  !  Arguments
+
+  !  Local variables
+
+  integer, parameter :: width = 110
+  integer :: lap, ii, outfile
+  character(len=72), dimension(0:10) :: progid
+  character(len=5) :: vstring
+  character(len=8) :: date
+  character(len=10) :: time
+  character(len=12) :: dstring
+  character(len=7) :: tstring
+  character(len=10) :: ustring
+  integer :: version
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  !  Obtain execution details for this run
+
+  call inform(progid)
+
+  !  Print code banner + run details to screen and output file
+  
+  do lap = 1,2
+     if (lap == 1) then
+        outfile = iotty
+     else
+        outfile = nout
+     end if
+
+     call oblnkl(outfile)
+
+     call ostars(outfile, width)
+     call ocentr(outfile,'PROCESS', width)
+     call ocentr(outfile,'Power Reactor Optimisation Code', width)
+     call ocentr(outfile,'for Environmental and Safety Studies', width)
+     call ostars(outfile, width)
+
+     call oblnkl(outfile)
+
+     !  Run execution details
+
+     call ocmmnt(outfile, progid(1))  !  program name
+     call ocmmnt(outfile, progid(2))  !  version
+     call ocmmnt(outfile, progid(3))  !  date/time
+     call ocmmnt(outfile, progid(4))  !  user
+     call ocmmnt(outfile, progid(5))  !  computer
+     call ocmmnt(outfile, progid(6))  !  directory
+
+     !  Print code version and run description
+
+     call oblnkl(outfile)
+     call ostars(outfile, width)
+     call oblnkl(outfile)
+     call ocmmnt(outfile, progid(0))
+     call ocmmnt(outfile, 'Reactor concept design: '// trim(icase) // ', (c) CCFE')
+     call osubhd(outfile, runtitle)
+  end do
+
+  call ocmmnt(nout,'(Please include this header in any models, ' // &
+       'presentations and papers based on these results)')
+  call oblnkl(nout)
+  call ostars(nout, width)
+
+  !  Beware of possible future changes to the progid(...) layouts
+
+  !  The following should work up to version 99999
+  !  Relies on an internal read statement
+
+  vstring = progid(2)(13:17)
+  read(vstring,'(i5)') version
+  call ovarin(mfile,'PROCESS version number','(procver)',version)
+
+  call date_and_time(date=date, time=time)
+
+  !  Date output in the form "DD/MM/YYYY" (including quotes)
+
+  dstring = '"'//date(7:8)//'/'//date(5:6)//'/'//date(1:4)//'"'
+  call ovarst(mfile,'Date of run','(date)',dstring)
+
+  !  Time output in the form "hh:mm" (including quotes)
+
+  tstring = '"'//time(1:2)//':'//time(3:4)//'"'
+  call ovarst(mfile,'Time of run','(time)',tstring)
+
+  ustring = '"'//trim(progid(4)(13:20))//'"'
+  call ovarst(mfile,'User','(username)',ustring)
+
+#ifndef unit_test
+  call oblnkl(nout)
+  call ocmmnt(nout,'The following variables will be adjusted by')
+  call ocmmnt(nout,'the code during the iteration process :')
+  call oblnkl(nout)
+
+  write(nout,10)
+10 format(t10,'ixc',t18,'label')
+
+  call oblnkl(nout)
+
+  write(nout,20) (ii,ixc(ii),lablxc(ixc(ii)),ii=1,nvar)
+20 format(t1,i3,t10,i3,t18,a9)
+
+  call oblnkl(nout)
+  call ocmmnt(nout, & 
+       'The following constraint equations have been imposed,')
+  if (ioptimz == -1) then
+     call ocmmnt(nout, & 
+          'but limits will not be enforced by the code :')
+  else
+     call ocmmnt(nout,'and will be enforced by the code :')
+  end if
+  call oblnkl(nout)
+
+  write(nout,30)
+30 format(t10,'icc',t25,'label')
+
+  call oblnkl(nout)
+
+  write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
+40 format(t1,i3,t10,i3,t18,a33)
+#endif
+
+end subroutine run_summary
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -446,9 +500,11 @@ subroutine eqslv(ifail)
   !+ad_args  ifail   : output integer : error flag
   !+ad_desc  This routine calls the non-optimising equation solver.
   !+ad_prob  None
+  !+ad_call  constraints
   !+ad_call  function_evaluator
   !+ad_call  numerics
   !+ad_call  process_output
+  !+ad_call  constraint_eqns
   !+ad_call  eqsolv
   !+ad_call  fcnhyb
   !+ad_call  herror
@@ -472,11 +528,15 @@ subroutine eqslv(ifail)
   !+ad_hist  13/02/14 PJK Output ifail even if a feasible solution found
   !+ad_hist  13/03/14 PJK Added numerical state information to mfile
   !+ad_hist  09/07/14 PJK Turned on error reporting
+  !+ad_hist  28/07/14 PJK Added constraint_eqns call to evaluate residues
+  !+ad_hisc               in physical units
+  !+ad_hist  19/08/14 PJK Added neqns, normalised residues to output
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constraints
   use process_output
   use numerics
   use function_evaluator
@@ -489,9 +549,12 @@ subroutine eqslv(ifail)
 
   !  Local variables
 
+  integer :: inn,nprint,nx
   real(kind(1.0D0)) :: sumsq
   real(kind(1.0D0)), dimension(iptnt) :: wa
-  integer :: inn,nprint,nx
+  real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
+  character(len=1), dimension(ipeqns) :: sym
+  character(len=10), dimension(ipeqns) :: lab
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -523,6 +586,7 @@ subroutine eqslv(ifail)
   if (ifail /= 1) then
      call ocmmnt(nout,'but could not find a feasible set of parameters.')
      call oblnkl(nout)
+     call ovarin(nout,'Number of iteration variables and constraints','(neqns)',neqns)
      call ovarin(nout,'HYBRD error flag','(ifail)',ifail)
 
      call oheadr(iotty,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
@@ -575,29 +639,37 @@ subroutine eqslv(ifail)
 
   call osubhd(nout,'The solution vector is comprised as follows :')
 
-  write(nout,20)
-20 format(t5,'i',t23,'final',t33,'fractional',t46,'residue')
+  write(nout,10)
+10 format(t5,'i',t23,'final',t33,'fractional',t46,'residue')
 
-  write(nout,30)
-30 format(t23,'value',t35,'change')
+  write(nout,20)
+20 format(t23,'value',t35,'change')
 
   call oblnkl(nout)
 
   do inn = 1,neqns
      xcs(inn) = xcm(inn)*scafc(inn)
-     write(nout,40) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn),resdl(inn)
+     write(nout,30) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn),resdl(inn)
      call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
   end do
-40   format(t2,i4,t8,a9,t19,1pe12.4,1pe12.4,1pe12.4)
+30 format(t2,i4,t8,a9,t19,1pe12.4,1pe12.4,1pe12.4)
 
   call osubhd(nout, &
        'The following constraint residues should be close to zero :')
 
+  call constraint_eqns(neqns,con1,-1,con2,err,sym,lab)
+  write(nout,40)
+40 format(t48,'physical',t73,'constraint',t100,'normalised')
+  write(nout,50)
+50 format(t47,'constraint',t74,'residue',t101,'residue')
+  call oblnkl(nout)
   do inn = 1,neqns
-     write(nout,60) inn,lablcc(icc(inn)),rcm(inn)
-     call ovarre(mfile,lablcc(icc(inn)),'(constr'//int_to_string3(inn)//')',rcm(inn))
+     write(nout,60) inn,lablcc(icc(inn)),sym(inn),con2(inn), &
+          lab(inn),err(inn),lab(inn),con1(inn)
+     call ovarre(mfile,lablcc(icc(inn))//' normalised residue', &
+          '(normres'//int_to_string3(inn)//')',con1(inn))
   end do
-60   format(t2,i4,t8,a33,t45,1pe12.4)
+60 format(t2,i4,t8,a33,t46,a1,t47,1pe12.4,t60,a10,t71,1pe12.4,t84,a10,t98,1pe12.4)
 
 end subroutine eqslv
 
@@ -875,11 +947,13 @@ subroutine doopt(ifail)
   !+ad_args  ifail   : output integer : error flag
   !+ad_desc  This routine calls the optimising equation solver.
   !+ad_prob  None
+  !+ad_call  constraints
   !+ad_call  error_handling
   !+ad_call  function_evaluator
   !+ad_call  numerics
   !+ad_call  process_output
   !+ad_call  boundxc
+  !+ad_call  constraint_eqns
   !+ad_call  int_to_string3
   !+ad_call  loadxc
   !+ad_call  oblnkl
@@ -905,11 +979,15 @@ subroutine doopt(ifail)
   !+ad_hist  13/03/14 PJK Added numerical state information to mfile
   !+ad_hist  09/07/14 PJK Added error reporting
   !+ad_hist  09/07/14 PJK Added range-normalised iteration variable values to mfile
+  !+ad_hist  28/07/14 PJK Added constraint_eqns call to evaluate residues
+  !+ad_hisc               in physical units
+  !+ad_hist  19/08/14 PJK Added nvar, neqns to output, constraint residues to mfile
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constraints
   use error_handling
   use function_evaluator
   use numerics
@@ -923,8 +1001,11 @@ subroutine doopt(ifail)
 
   !  Local variables
 
-  real(kind(1.0D0)) :: summ,xcval,xmaxx,xminn,f,xnorm
   integer :: ii,inn,iflag
+  real(kind(1.0D0)) :: summ,xcval,xmaxx,xminn,f,xnorm
+  real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
+  character(len=1), dimension(ipeqns) :: sym
+  character(len=10), dimension(ipeqns) :: lab
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -997,6 +1078,8 @@ subroutine doopt(ifail)
      end if
   end if
 
+  call ovarin(nout,'Number of iteration variables','(nvar)',nvar)
+  call ovarin(nout,'Number of constraints','(neqns)',neqns)
   call ovarin(nout,'Optimisation switch','(ioptimz)',ioptimz)
   call ovarin(nout,'Figure of merit switch','(minmax)',minmax)
   if (ifail /= 1) then
@@ -1015,12 +1098,12 @@ subroutine doopt(ifail)
   end if
 
   if (minmax > 0) then
-     write(nout,20) lablmm(abs(minmax))
+     write(nout,10) lablmm(abs(minmax))
   else
-     write(nout,30) lablmm(abs(minmax))
+     write(nout,20) lablmm(abs(minmax))
   end if
-20 format(' to minimise the ',a22)
-30 format(' to maximise the ',a22)
+10 format(' to minimise the ',a22)
+20 format(' to maximise the ',a22)
 
   call oblnkl(nout)
 
@@ -1043,7 +1126,7 @@ subroutine doopt(ifail)
            iflag = 1
         end if
         xcval = xcm(ii)*scafc(ii)
-        write(nout,40) ii,lablxc(ixc(ii)),xcval,bondl(ii)*scafc(ii)
+        write(nout,30) ii,lablxc(ixc(ii)),xcval,bondl(ii)*scafc(ii)
      end if
 
      if (xcm(ii) > xmaxx) then
@@ -1058,33 +1141,33 @@ subroutine doopt(ifail)
            iflag = 1
         end if
         xcval = xcm(ii)*scafc(ii)
-        write(nout,50) ii,lablxc(ixc(ii)),xcval,bondu(ii)*scafc(ii)
+        write(nout,40) ii,lablxc(ixc(ii)),xcval,bondu(ii)*scafc(ii)
      end if
   end do
 
-40 format(t4,'Variable ',i3,' (',a9, &
+30 format(t4,'Variable ',i3,' (',a9, &
         ',',1pe12.4,') is at or below its lower bound:',1pe12.4)
-50 format(t4,'Variable ',i3,' (',a9, &
+40 format(t4,'Variable ',i3,' (',a9, &
         ',',1pe12.4,') is at or above its upper bound:',1pe12.4)
 
   !  Print out information on numerics
 
   call osubhd(nout,'The solution vector is comprised as follows :')
+  write(nout,50)
+50 format(t47,'lower',t59,'upper')
+
+  write(nout,60)
+60 format(t23,'final',t33,'fractional',t46,'Lagrange',t58,'Lagrange')
+
   write(nout,70)
-70 format(t47,'lower',t59,'upper')
-
-  write(nout,80)
-80 format(t23,'final',t33,'fractional',t46,'Lagrange',t58,'Lagrange')
-
-  write(nout,90)
-90 format(t5,'i',t23,'value',t35,'change',t45,'multiplier', &
+70 format(t5,'i',t23,'value',t35,'change',t45,'multiplier', &
         t57,'multiplier')
 
   call oblnkl(nout)
 
   do inn = 1,nvar
      xcs(inn) = xcm(inn)*scafc(inn)
-     write(nout,100) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
+     write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
           vlam(neqns+nineqns+inn), vlam(neqns+nineqns+1+inn+nvar)
      call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
 
@@ -1101,15 +1184,24 @@ subroutine doopt(ifail)
      call ovarre(mfile,trim(lablxc(ixc(inn)))//' (range normalised)', &
           '(nitvar'//int_to_string3(inn)//')',xnorm)
   end do
-100 format(t2,i4,t8,a9,t19,4(1pe12.4))
+80 format(t2,i4,t8,a9,t19,4(1pe12.4))
 
   call osubhd(nout, &
        'The following equality constraint residues should be close to zero :')
 
+  call constraint_eqns(neqns,con1,-1,con2,err,sym,lab)
+  write(nout,90)
+90 format(t48,'physical',t73,'constraint',t100,'normalised')
+  write(nout,100)
+100 format(t47,'constraint',t74,'residue',t101,'residue')
+  call oblnkl(nout)
   do inn = 1,neqns
-     write(nout,120) inn,lablcc(icc(inn)),rcm(inn),vlam(inn)
-     call ovarre(mfile,lablcc(icc(inn)),'(constr'//int_to_string3(inn)//')',rcm(inn))
+     write(nout,110) inn,lablcc(icc(inn)),sym(inn),con2(inn), &
+          lab(inn),err(inn),lab(inn),con1(inn)
+     call ovarre(mfile,lablcc(icc(inn))//' normalised residue', &
+          '(normres'//int_to_string3(inn)//')',con1(inn))
   end do
+110 format(t2,i4,t8,a33,t46,a1,t47,1pe12.4,t60,a10,t71,1pe12.4,t84,a10,t98,1pe12.4)
 
   if (nineqns > 0) then
      call osubhd(nout, &
@@ -1646,3 +1738,23 @@ end subroutine output
 ! GIT 305: Error handling now reports only during output steps, not during intermediate
 !          iterations
 ! GIT 306: Range-normalised iteration variable values added to mfile
+! GIT 307: Raised maximum number of scan points to 200
+! GIT 308: Updated process_funcs.py
+! GIT 309: Modified output banner and run description handling
+! GIT 310: Constraint residues summary now output in physical units
+! GIT 311: Updated in_dat.py
+! GIT 312: Added fix for negative ion density occurrences at low electron density
+! GIT 313: Corrected neutron power deposition in first wall for pulsed plants using
+!          ipowerflow=1. Uncommented error trap in routine cycles.
+! GIT 314: TF coil toroidal thickness tftort now calculated instead of input for
+!          tokamaks
+! GIT 315: Changed TF coil outboard radial thickness calculation
+! GIT 316: tfthko now equal to tfcth for tokamaks; improved TF coil conductor mass calculations
+! GIT 317: Updated run_process.py, process_config.py, process_funcs.py, process_dicts.py,
+!          write_new_in_dat.py, in_dat.py
+! GIT 318: Removed obsolete variables, other minor tidy-ups
+! GIT 319: Removed casfact; added some variables to output files; trapped nvar < neqns
+! GIT 320: Set fshine to zero if it is negligible; updated process_funcs.py;
+!          trapped insufficient numbers of specified ixc, icc elements
+! GIT 321: Added diagnose_process.py utility + funcs; minor wording changes elsewhere.
+! GIT 322: Error list now read in from a JSON file

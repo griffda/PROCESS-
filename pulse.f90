@@ -20,6 +20,7 @@ module pulse_module
   !+ad_call  current_drive_variables
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
+  !+ad_call  heat_transport_variables
   !+ad_call  pf_power_variables
   !+ad_call  pfcoil_variables
   !+ad_call  physics_variables
@@ -28,6 +29,7 @@ module pulse_module
   !+ad_call  times_variables
   !+ad_hist  05/11/12 PJK Initial version of module
   !+ad_hist  26/06/14 PJK Added error_handling
+  !+ad_hist  29/07/14 PJK Added heat_transport_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -39,6 +41,7 @@ module pulse_module
   use current_drive_variables
   use error_handling
   use fwbs_variables
+  use heat_transport_variables
   use pf_power_variables
   use pfcoil_variables
   use physics_variables
@@ -173,6 +176,7 @@ contains
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  29/07/14 PJK Modified neutron power deposition for ipowerflow=1
     !+ad_stat  Okay
     !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -289,13 +293,18 @@ contains
        !fwndep = pneutmw*fhole*1.0D6
 
        !  New method based on that for nuclear heating in the blanket
-       !  in fwbs.f90. A neutron decay length of 0.075m is assumed, and
+       !  in fwbs.f90. A neutron decay length of 0.075m (or declfw) is assumed, and
        !  the TART centrepost term is ignored.
 
-       decay = 0.075D0 / (1.0D0 - afw*afw/(bfw*bfw))  !  a2/b2 = coolant fraction
-!+PJK to do...
-       fwndep = (1.0D6*pneutmw) * (1.0D0-fhole) * &
-            ( 1.0D0 - exp( -(2.0D0*bfw)/decay) )
+       if (ipowerflow == 0) then
+          decay = 0.075D0 / (1.0D0 - afw*afw/(bfw*bfw))  !  a2/b2 = coolant fraction
+          fwndep = (1.0D6*pneutmw) * (1.0D0-fhole) * &
+               ( 1.0D0 - exp( -(2.0D0*bfw)/decay) )
+       else
+          decay = declfw / (1.0D0 - afw*afw/(bfw*bfw))  !  a2/b2 = coolant fraction
+          fwndep = (1.0D6*pneutmw) * (1.0D0-fhole-fdiv-fhcd) * &
+               ( 1.0D0 - exp( -(2.0D0*bfw)/decay) )
+       end if
 
        !  Assume that the first wall volume is equal to its surface area
        !  multiplied by the external diameter of the hollow cylindrical
@@ -1014,12 +1023,14 @@ contains
       !+ad_desc  This routine calculates the number of allowable cycles
       !+ad_desc  for a pulsed reactor from a fit of the ASME fatigue
       !+ad_desc  design data for the first wall.
-      !+ad_prob  Uncommenting the initial tpeak test causes code output
-      !+ad_prob  to change inexplicably...
+      !+ad_prob  None, but we have had problems in the past in which
+      !+ad_proc  uncommenting the initial tpeak test causes code output
+      !+ad_prob  to change inexplicably. Seems to be resolved now (29/07/14).
       !+ad_call  report_error
       !+ad_hist  25/11/93 PJK Incorporation into PROCESS
       !+ad_hist  01/10/12 PJK Initial F90 version
       !+ad_hist  26/06/14 PJK Added error handling
+      !+ad_hist  29/07/14 PJK Uncommented initial tpeak test
       !+ad_stat  Okay
       !+ad_docs  Methods of first wall structural analysis ...,
       !+ad_docc  R.J. LeClaire, PFC/RR-84-9
@@ -1044,14 +1055,9 @@ contains
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      !  Uncommenting this if-clause causes change to output!
-      !if (tpeak > 649.0D0) then
-      !   fdiags(1) = tpeak ; call report_error(92)
-      !   write(*,*) 'Error in routine CYCLES:'
-      !   write(*,*) 'Fatigue data unreliable for T > 649 deg C'
-      !   write(*,*) 'PROCESS stopping.'
-      !   stop
-      !end if
+      if (tpeak > 649.0D0) then
+         fdiags(1) = tpeak ; call report_error(92)
+      end if
 
       !  logstr  : logarithm of equivalent strain
       !  lgnXXX  : logarithm of number of cycles at XXX Celsius

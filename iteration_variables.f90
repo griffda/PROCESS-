@@ -63,6 +63,7 @@ subroutine loadxc
   !+ad_hist  19/05/14 PJK Reassigned (28) to fradpwr
   !+ad_hist  02/06/14 PJK Added fimpvar (102)
   !+ad_hist  26/06/14 PJK Added error_handling
+  !+ad_hist  30/07/14 PJK Changed tftort clause
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -182,7 +183,7 @@ subroutine loadxc
      case (75) ; xcm(i) = tfootfi
      case (76) ; xcm(i) = frfptf
      case (77) ; xcm(i) = tftort
-        if (istell == 1) call report_error(51)
+        if (irfp == 0) call report_error(51)
      case (78) ; xcm(i) = rfpth
      case (79) ; xcm(i) = fbetap
      case (80) ; xcm(i) = frfpf
