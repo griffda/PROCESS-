@@ -29,20 +29,21 @@ class ConfigurationParser(object):
     @x.setter
     def data(self, value):
         """Validate the configuration is provided in a specific format."""
-        self.validate(value)
+        self.data_validate(value)
         self._data = value
     
     @x.deleter
     def data(self):
         del self._data
         
-    def validate(self, value):
+    def data_validate(self, value):
+        """Check that value corresponds to a specific data format."""
         if not isinstance(value, dict):
             raise ValueError("Configuration data must be specified as a "
                              "dictionary")
 
 
-class JsonConfigParser(object):
+class JsonConfigParser(ConfigurationParser):
 
     """JSON configuration parser."""    
     
@@ -67,13 +68,15 @@ class Config(object):
         self.config_data = parser.data
     
     def _search_config_for(config, *keys):
-        """Recursively search a dictionary for keys."""
+        """Recursively search config (a dict) for keys."""
         try:
             search_key = keys[0]
             value = config[search_key]
         except IndexError:
             raise
         except KeyError:
+            raise
+        except TypeError:
             raise
         
         if isinstance(config, dict) and len(keys) > 1:

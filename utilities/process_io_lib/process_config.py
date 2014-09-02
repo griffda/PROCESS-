@@ -18,6 +18,9 @@ abspath = os.path.abspath
 import json
 from time import sleep
 from numpy.random import seed
+
+from configuration import Config
+
 from process_io_lib.in_dat import INDATNew, INVariable
 from process_io_lib.process_funcs import mfile_exists
 from process_io_lib.mfile import MFile
@@ -25,6 +28,51 @@ from process_io_lib.mfile import MFile
 
 def print_config(config_instance):
     print(config_instance.get_current_state())
+
+
+class RunProcessConfig(Config):
+    
+    """The run_process tool configuration."""
+    
+    def __init__(self, config_file):
+        """Setup PROCESS configuration before execution."""
+        super().__init__(self, config_file)
+        self.filename = None
+        self.working_directory = abspath(".")
+#        self.setup_working_directory()
+#        self.create_readme()
+#        self.modify_in_dat()
+        seed(self.get("pseudorandom_seed"))
+    
+    def setup_working_directory(self):
+        """Prepare working directory with required input & output files."""
+        config = self._config["config"]
+        self.working_directory = abspath(config["working_directory"])
+        try:
+            os.mkdir(self.working_directory)
+        except IOError:
+            raise
+        
+        # Get the original IN.DAT for this run
+        original_in_dat = config["IN.DAT_path"]
+        try:
+            shutil.copy2(abspath(original_in_dat),
+                         os.path.join(self.working_directory, "IN.DAT"))
+        except IOError:
+            raise
+        # Store a copy of this configuration for this run
+        try:
+            shutil.copy2(abspath(self.config_file_path),
+                         self.working_directory)
+        except IOError:
+            raise
+        
+        # TODO: Why are all of these being removed?
+        os.chdir(self.working_directory)
+        for file_ in ["OUT.DAT", "MFILE.DAT", "PLOT.DAT", "*.txt", "*.out",
+                      "*.log", "*.pdf", "*.eps"]:
+            for f in glob(file_):
+                os.remove(f)
 
 class ProcessConfig(object):
     
