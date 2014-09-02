@@ -1,1 +1,4 @@
 .spyderproject
+*.html
+*.mod
+*.o
