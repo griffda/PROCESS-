@@ -252,7 +252,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '323    Release Date :: 2014-09-02'
+       '324    Release Date :: 2014-09-03'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1759,3 +1759,4 @@ end subroutine output
 ! GIT 321: Added diagnose_process.py utility + funcs; minor wording changes elsewhere.
 ! GIT 322: Error list now read in from a JSON file
 ! GIT 323: New peak TF with ripple calculation; modified ripple calculation applicability range
+! GIT 324: New scaling for PF coil to cryostat lid clearance

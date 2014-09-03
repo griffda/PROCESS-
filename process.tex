@@ -36,9 +36,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-09-01
+2014-09-03
 \hfill
-Revision:: 322
+Revision:: 324
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2540,6 +2540,13 @@ operate at liquid helium temperatures. These include any superconducting (TF
 or PF) coils and the inter-coil structure. \process\ calculates the cryogenic
 power load and the resulting heat exchanger requirements.
 
+The vertical distance \textit{h}\/ between the uppermost PF coil and the
+external cryostat lid may be adjusted by changing the value of input parameter
+\texttt{clhsf}; a scaling based on ITER is used:
+\begin{equation}
+h = \mathtt{clhsf} \, \left( \frac{2 \times \mathtt{rdewex}}{28.440} \right)
+\end{equation}
+
 The vacuum system is used for four different processes. Firstly, before plasma
 operations the chamber must be evacuated to remove outgassed impurities from
 the structure. Secondly, the chamber must be re-evacuated between burn
@@ -3694,9 +3701,13 @@ to your \texttt{.bashrc} file:
 \begin{verbatim}
 module use /home/pknight/modules
 module swap python
-module load process
+module load process_master
 \end{verbatim}
 \end{quote}
+(If you want to use (with care!) the latest draft version of the code instead
+of the latest verified release version, replace \texttt{module load
+  process\_master} with \texttt{module load process\_develop} above.)
+
 After re-logging in, execute \process\ by simply typing \texttt{process} on
 the command line.
 

@@ -23,6 +23,7 @@ Update: 04/06/2014 - PJK up to date at PROCESS version 285
 Update: 16/06/2014 - PJK up to date at PROCESS version 288
 Update: 16/06/2014 - PJK: r293
 Update: 30/06/2014 - PJK: r303
+Update: 03/09/2014 - PJK: r324
 """
 
 from collections import defaultdict
@@ -222,6 +223,7 @@ DICT_VAR_TYPE['chrad'] = 'real_variable'
 DICT_VAR_TYPE['cland'] = 'real_variable'
 DICT_VAR_TYPE['clh1'] = 'real_variable'
 DICT_VAR_TYPE['clh2'] = 'real_variable'
+DICT_VAR_TYPE['clhsf'] = 'real_variable'
 DICT_VAR_TYPE['coheof'] = 'real_variable'
 DICT_VAR_TYPE['conv'] = 'real_variable'
 DICT_VAR_TYPE['coolp'] = 'real_variable'
