@@ -615,7 +615,7 @@ module physics_variables
   !+ad_vars  tbeta /2.0/ : temperature profile index beta  (ipedestal=1)
   real(kind(1.0D0)) :: tbeta = 2.0D0
   !+ad_vars  te /15.0/ : volume averaged electron temperature (keV)
-  !+ad_varc                (iteration variable 4)
+  !+ad_varc              (iteration variable 4)
   real(kind(1.0D0)) :: te = 15.0D0
   !+ad_vars  te0 : central electron temperature (keV)
   real(kind(1.0D0)) :: te0 = 0.0D0

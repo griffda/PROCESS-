@@ -27,11 +27,13 @@ module impurity_radiation_module
   !+ad_call  constants
   !+ad_call  error_handling
   !+ad_call  profiles_module
-  !+ad_hist  13/12/13 HL Initial version of module
+  !+ad_hist  13/12/13 HL  Initial version of module
   !+ad_hist  13/05/14 PJK Initial PROCESS implementation
   !+ad_hist  02/06/14 PJK Added impvar, fimpvar
   !+ad_hist  17/06/14 PJK Added impdir
   !+ad_hist  26/06/14 PJK Added error_handling
+  !+ad_hist  03/09/14 HL  Added average atomic charge values to data;
+  !+ad_hisc               changed directory containing datafiles
   !+ad_stat  Okay
   !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
   !+ad_docs  Sertoli, private communication
@@ -96,9 +98,10 @@ module impurity_radiation_module
   !+ad_varc                     (iteration variable 102)
   real(kind(1.0D0)), public :: fimpvar = 1.0D-3
 
-  !+ad_vars  impdir /'/home/pknight/process/bin/impuritydata'/ : Directory containing
-  !+ad_varc           impurity radiation data files
-  character(len=60), public :: impdir = '/home/pknight/process/bin/impuritydata/'
+  !+ad_vars  impdir /'/home/pknight/process/branches/develop/impuritydata'/ :
+  !+ad_varc           Directory containing impurity radiation data files
+  character(len=60), public :: impdir = &
+       '/home/pknight/process/branches/develop/impuritydata/'
 
   !+ad_vars  imprad_model /0/ : switch for impurity radiation model:<UL>
   !+ad_varc               <LI>  = 0 original ITER 1989 model
@@ -124,6 +127,8 @@ module impurity_radiation_module
      real(kind(1.0D0)), allocatable, dimension(:) :: Temp_keV
      !  Table of corresponding Lz values
      real(kind(1.0D0)), allocatable, dimension(:) :: Lz_Wm3
+     !  Table of corresponding average atomic charge values
+     real(kind(1.0D0)), allocatable, dimension(:) :: Zav
      
   end type imp_dat
 
@@ -167,7 +172,7 @@ contains
 
     errorflag = 0
 
-    table_length = 200  !  Number of temperature and Lz values in data file
+    table_length = 100  !  Number of temperature and Lz values in data file
     tmult = 1.0D0   !  Conversion from temperatures in data file to keV
     lzmult = 1.0D0  !  Conversion from Lz values in data file to W/m3
 
@@ -288,7 +293,7 @@ contains
 
     integer :: status, i
     character(len=12) :: filename
-    character(len=72) :: fullpath
+    character(len=128) :: fullpath
     logical :: iexist
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -309,6 +314,7 @@ contains
     allocate( &
          impurity_arr(no)%Temp_keV(len_tab), &
          impurity_arr(no)%Lz_Wm3(len_tab), &
+         impurity_arr(no)%Zav(len_tab), &
          stat=status)
     if (status /= 0) then
        idiags(1) = status ; call report_error(28)
@@ -327,8 +333,8 @@ contains
 
     inquire(file=trim(fullpath), exist=iexist)
     if (iexist) then
-       call import_impdata(trim(fullpath), len_tab, &
-            impurity_arr(no)%Temp_keV, impurity_arr(no)%Lz_Wm3)
+       call import_impdata(fullpath, len_tab, &
+            impurity_arr(no)%Temp_keV, impurity_arr(no)%Lz_Wm3, impurity_arr(no)%Zav)
     else
        call report_error(29)
        imprad_model = 0
@@ -347,7 +353,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine import_impdata(filename, nlines, col1, col2, skiprows, fmt)
+  subroutine import_impdata(filename, nlines, col1, col2, col3, skiprows, fmt)
     
     !+ad_name  import_impdata
     !+ad_summ  Reads two columns of data from file
@@ -358,6 +364,7 @@ contains
     !+ad_args  nlines   : input integer           : no. of lines to be read
     !+ad_args  col1(nlines) : output real array   : data in column1 
     !+ad_args  col2(nlines) : output real array   : data in column2
+    !+ad_args  col3(nlines) : output real array   : data in column3
     !+ad_args  skiprows : optional input integer  : no. of initial rows to skip
     !+ad_args  fmt      : optional input char(len=128) : data format
     !+ad_desc  This routine reads in the data of a two column file and
@@ -368,6 +375,7 @@ contains
     !+ad_hist  07/05/14 HL  Added skiprows
     !+ad_hist  19/05/14 PJK Modified error handling
     !+ad_hist  26/06/14 PJK Added (proper) error handling
+    !+ad_hist  03/09/14 HL  Added third column of data
     !+ad_stat  Okay
     !+ad_docs  N/A
     !
@@ -377,9 +385,9 @@ contains
 
     !  Arguments
 
-    character(len=72), intent(in) :: filename
+    character(len=128), intent(in) :: filename
     integer, intent(in) :: nlines
-    real(kind(1.0D0)), dimension(nlines), intent(out) :: col1, col2
+    real(kind(1.0D0)), dimension(nlines), intent(out) :: col1, col2, col3
     integer, optional, intent(in) :: skiprows
     character(len=128), optional, intent(in) :: fmt
 
@@ -388,7 +396,7 @@ contains
     integer :: iostat, i, local_skip
     integer, parameter :: unit = 18
     character(len=25) :: buffer
-    real(kind(1.0D0)) :: in1, in2
+    real(kind(1.0D0)) :: in1, in2, in3
     character(len=128) :: local_fmt
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -404,7 +412,7 @@ contains
     if (present(fmt)) then
        local_fmt = fmt
     else 
-       local_fmt = '(2F10.2)'
+       local_fmt = '(3F10.2)'
     end if
 
     open(unit=unit, file=trim(filename), status='old', action='read', iostat=iostat)
@@ -423,7 +431,7 @@ contains
     end do
 
     do i = 1, nlines
-       read(unit=unit, fmt=local_fmt, iostat=iostat) in1, in2
+       read(unit=unit, fmt=local_fmt, iostat=iostat) in1, in2, in3
        if (iostat > 0) then 
           idiags(1) = iostat ; idiags(2) = i
           call report_error(32)
@@ -432,6 +440,7 @@ contains
        else
           col1(i) = in1 
           col2(i) = in2 
+          col3(i) = in3
        end if
     end do
 
@@ -592,7 +601,7 @@ contains
 
     if (pimp >= pbrem) then
        pline = pimp - pbrem
-    else  !  shouldn't do this... model inconsistency has occurred
+    else  !  shouldn't do this... model inconsistency has occurred; okay at high T!
        pline = 0.0D0
        pimp = pbrem
     end if
@@ -707,7 +716,7 @@ contains
        end if
 
     else if (te >= imp_element%Temp_keV(imp_element%len_tab)) then
-
+       !  This is okay because Bremsstrahlung will dominate at higher temp.
        lz = imp_element%Lz_Wm3(imp_element%len_tab)
 
     else 
