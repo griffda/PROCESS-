@@ -172,6 +172,7 @@ contains
     !+ad_hist  18/06/13 PJK Added back extra tfh term to hrbi
     !+ad_hist  11/09/13 PJK Removed obsolete argument idhe3
     !+ad_hist  19/06/14 PJK Removed sect?? output flag usage
+    !+ad_hist  03/09/14 PJK Changed clh1 comment
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -238,9 +239,7 @@ contains
     crcl = 9.41D-6*wt + 5.1D0
 
     !  Building height
-    !  clh1 : (minimum) clearance from TF coil to cryostat top, m
-    !         Slight inconsistency, as elsewhere this clearance may have been
-    !         extended to ensure the PF coils lie within the cryostat.
+    !  clh1 : clearance from TF coil to cryostat top, m
     !  clh2 : clearance beneath TF coil to foundation, including basement, m
     !  stcl : clearance above crane to roof, m
     !  Additional tfh allows TF coil to be lifted right out

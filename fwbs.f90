@@ -1262,6 +1262,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  23/06/14 PJK Corrected wallmw units
     !+ad_hist  21/08/14 PJK Initial draft incorporation of new thermodynamic model
+    !+ad_hist  03/09/14 PJK Changed PF coil to cryostat top vertical clearance
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  C5.M15 Milestone Report: Development and Implementation of Improved
@@ -1284,7 +1285,7 @@ contains
     integer, parameter :: ishmat = 1  !  stainless steel coil casing is assumed
 !+PJK sort out obsolete local variables
     real(kind(1.0D0)) :: coilhtmx,decaybl,dpacop,dshieq,dshoeq,elong, &
-         fpsdt,fpydt,frachit,hbot,hblnkt,hecan,hshld,htop,htheci,hvv, &
+         fpsdt,fpydt,frachit,hbot,hblnkt,hcryopf,hecan,hshld,htop,htheci,hvv, &
          pheci,pheco,pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2,r3, &
          raddose,v1,v2,volshldi,volshldo,wpthk,zdewex,coolvol
 
@@ -2182,14 +2183,22 @@ contains
        rdewex = maxval(rb) + rpf2dewar
     end if
 
-    !  Check that uppermost PF coils lie within cryostat
-    !  clh1 = (minimum) vertical clearance between TF coil and cryostat
+    !  Clearance between uppermost PF coil and cryostat lid
+    !  Scaling from ITER by M. Kovari
+
+    hcryopf = clhsf * (2.0D0*rdewex)/28.440D0
+
+    !  Half-height of cryostat
 
     if (irfp /= 1) then
-       zdewex = max(maxval(zh), hmax + tfcth + clh1)
+       zdewex = maxval(zh) + hcryopf
     else
-       zdewex = max(maxval(zzpf + 0.5D0*dzpf), hmax + tfcth + clh1)
+       zdewex = maxval(zzpf + 0.5D0*dzpf) + hcryopf
     end if
+
+    !  Vertical clearance between TF coil and cryostat
+
+    clh1 = zdewex - (hmax + tfcth)
 
     !  External cryostat volume
 

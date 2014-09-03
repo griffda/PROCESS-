@@ -1126,6 +1126,9 @@ contains
        case ('BORE')
           call parse_real_variable('BORE', bore, 0.0D0, 20.0D0, &
                'Machine bore (m)')
+       case ('CLHSF')
+          call parse_real_variable('CLHSF', clhsf, 2.0D0, 10.0D0, &
+               'Cryostat lid height scaling factor (m)')
        case ('DDWEX')
           call parse_real_variable('DDWEX', ddwex, 0.0D0, 10.0D0, &
                'External cryostat thickness (m)')

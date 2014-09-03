@@ -424,7 +424,7 @@ module physics_variables
   !+ad_varc             <LI> = 1 use radiation-adjusted loss power in
   !+ad_varc                      confinement scaling and power balance</UL>
   integer :: iradloss = 1
-  !+ad_vars  isc /34 (=IPB98(y,2))/ switch for energy confinement time scaling law
+  !+ad_vars  isc /34 (=IPB98(y,2))/ : switch for energy confinement time scaling law
   !+ad_varc          (see description in tauscl)
   integer :: isc = 34
   !+ad_vars  iscrp /1/ : switch for scrapeoff width:<UL>
@@ -573,7 +573,7 @@ module physics_variables
   real(kind(1.0D0)) :: rli = 0.65D0
   !+ad_vars  rlp : plasma inductance (H)
   real(kind(1.0D0)) :: rlp = 0.0D0
-  !+ad_vars  rmajor /7.0/ plasma major radius (m) (iteration variable 3)
+  !+ad_vars  rmajor /7.0/ : plasma major radius (m) (iteration variable 3)
   real(kind(1.0D0)) :: rmajor = 7.0D0
   !+ad_vars  rminor : plasma minor radius (m)
   real(kind(1.0D0)) :: rminor = 0.0D0
@@ -2269,6 +2269,7 @@ module buildings_variables
   !+ad_hist  09/04/13 PJK Changed clh1 default from 8.0 to 2.5
   !+ad_hist  09/04/13 PJK Added building volume multipliers rbvfac, mbvfac, wsvfac
   !+ad_hist  11/04/13 PJK Comment change to esbldgm3
+  !+ad_hist  03/09/14 PJK Comment change to clh1
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2283,6 +2284,7 @@ module buildings_variables
   !+ad_vars  admvol : volume of administration buildings (m3)
   real(kind(1.0D0)) :: admvol = 0.0D0
   !+ad_vars  clh1 /2.5/ : minimum vertical clearance from TF coil to cryostat (m)
+  !+ad_varc               (calculated for tokamaks, RFPs)
   real(kind(1.0D0)) :: clh1 = 2.5D0
   !+ad_vars  clh2 /15.0/ : clearance beneath TF coil to foundation
   !+ad_varc                (including basement) (m)
@@ -2387,6 +2389,7 @@ module build_variables
   !+ad_hist  05/06/13 PJK Modified shldtth comment
   !+ad_hist  25/09/13 PJK Removed prtsz, prtszreq
   !+ad_hist  24/06/14 PJK Removed bcylth
+  !+ad_hist  03/09/14 PJK Added clhsf
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2436,6 +2439,8 @@ module build_variables
   !+ad_vars  bore /1.42/ : OH coil inboard radius (m)
   !+ad_varc                (iteration variable 29)
   real(kind(1.0D0)) :: bore = 1.42D0
+  !+ad_vars  clhsf /4.268/ : cryostat lid height scaling factor (tokamaks, RFPs)
+  real(kind(1.0D0)) :: clhsf = 4.268D0
   !+ad_vars  ddwex /0.07/ : external cryostat thickness (m)
   real(kind(1.0D0)) :: ddwex = 0.07D0
   !+ad_vars  ddwi /0.07/ : vacuum vessel thickness (TF coil / shield) (m)
