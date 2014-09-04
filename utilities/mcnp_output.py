@@ -63,6 +63,14 @@ class ProcessTFArcs(object):
         return
 
 
+class InfoHolder(object):
+    """A Class to store information"""
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+        return
+
+
 def main(cl_args):
     """  Main function for converting MFILE data into MCNP format
 
@@ -240,6 +248,32 @@ def populate_ctf_ellipse_data(shape_objs, mf_data):
         t_shield_o
     shape_objs["e4"].c = r_c
 
+    # Extra information
+    # TF coil inner leg thickness
+    name = "TF Coil inner leg thickness (m)"
+    value = t_tf
+    shape_objs["i1"] = InfoHolder(name, value)
+
+    # TF coil inner leg thickness
+    name = "TF Coil outer leg thickness (m)"
+    value = mf_data.data["tfthko"].get_scan(-1)
+    shape_objs["i2"] = InfoHolder(name, value)
+
+    # TF coil inner plasma facing case thickness
+    name = "TF Coil inner leg plasma facing case thickness (m)"
+    value = mf_data.data["casthi"].get_scan(-1)
+    shape_objs["i3"] = InfoHolder(name, value)
+
+    # TF coil inner case thickness
+    name = "TF Coil inner case thickness (m)"
+    value = mf_data.data["thkcas"].get_scan(-1)
+    shape_objs["i4"] = InfoHolder(name, value)
+
+    # TF coil winding pack thickness
+    name = "TF Coil winding pack thickness (m)"
+    value = mf_data.data["thkwp"].get_scan(-1)
+    shape_objs["i5"] = InfoHolder(name, value)
+
     return shape_objs
 
 
@@ -358,6 +392,32 @@ def populate_tok_ellipse_data(shape_objs, mf_data):
     y_2 = mf_data.data["yarc(5)"].get_scan(-1)
     shape_objs["a4"] = ProcessTFArcs(c_x, c_y, x_1, y_1, x_2, y_2)
 
+    # Extra information
+    # TF coil inner leg thickness
+    name = "TF Coil inner leg thickness (m)"
+    value = t_tf
+    shape_objs["i1"] = InfoHolder(name, value)
+
+    # TF coil inner leg thickness
+    name = "TF Coil outer leg thickness (m)"
+    value = mf_data.data["tfthko"].get_scan(-1)
+    shape_objs["i2"] = InfoHolder(name, value)
+
+    # TF coil inner plasma facing case thickness
+    name = "TF Coil inner leg plasma facing case thickness (m)"
+    value = mf_data.data["casthi"].get_scan(-1)
+    shape_objs["i3"] = InfoHolder(name, value)
+
+    # TF coil inner case thickness
+    name = "TF Coil inner case thickness (m)"
+    value = mf_data.data["thkcas"].get_scan(-1)
+    shape_objs["i4"] = InfoHolder(name, value)
+
+    # TF coil winding pack thickness
+    name = "TF Coil winding pack thickness (m)"
+    value = mf_data.data["thkwp"].get_scan(-1)
+    shape_objs["i5"] = InfoHolder(name, value)
+
     return shape_objs
 
 
@@ -410,6 +470,16 @@ def write_shapes_to_file(shape_data, filename):
             y_2 = dat.y_2
             line = "AZ %.3f %.3f %.3f %.3f %.3f %.3f\n" % (c_x, c_y, x_1, y_1,
                                                       x_2, y_2)
+            output_file.write(line)
+    output_file.write("\n")
+
+    output_file.write("Info y\n")
+    for shape in shape_data:
+        if "i" in shape:
+            dat = shape_data[shape]
+            name = dat.name
+            value = dat.value
+            line = "%s \t=\t %.3f\n" % (name, value)
             output_file.write(line)
 
     output_file.close()
