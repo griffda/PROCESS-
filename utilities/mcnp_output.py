@@ -50,6 +50,19 @@ class ProcessPlane(object):
         return
 
 
+class ProcessTFArcs(object):
+    """A class to store TF arc data
+    """
+    def __init__(self, c_x, c_y, x_1, y_1, x_2, y_2):
+        self.c_x = c_x
+        self.c_y = c_y
+        self.x_1 = x_1
+        self.y_1 = y_1
+        self.x_2 = x_2
+        self.y_2 = y_2
+        return
+
+
 def main(cl_args):
     """  Main function for converting MFILE data into MCNP format
 
@@ -308,6 +321,43 @@ def populate_tok_ellipse_data(shape_objs, mf_data):
         t_shield_o
     shape_objs["e8"].c = r_c
 
+
+    # TF arc 1
+    c_x = mf_data.data["xctfc(1)"].get_scan(-1)
+    c_y = mf_data.data["yctfc(1)"].get_scan(-1)
+    x_1 = mf_data.data["xarc(1)"].get_scan(-1)
+    y_1 = mf_data.data["yarc(1)"].get_scan(-1)
+    x_2 = mf_data.data["xarc(2)"].get_scan(-1)
+    y_2 = mf_data.data["yarc(2)"].get_scan(-1)
+    shape_objs["a1"] = ProcessTFArcs(c_x, c_y, x_1, y_1, x_2, y_2)
+
+    # TF arc 2
+    c_x = mf_data.data["xctfc(2)"].get_scan(-1)
+    c_y = mf_data.data["yctfc(2)"].get_scan(-1)
+    x_1 = mf_data.data["xarc(2)"].get_scan(-1)
+    y_1 = mf_data.data["yarc(2)"].get_scan(-1)
+    x_2 = mf_data.data["xarc(3)"].get_scan(-1)
+    y_2 = mf_data.data["yarc(3)"].get_scan(-1)
+    shape_objs["a2"] = ProcessTFArcs(c_x, c_y, x_1, y_1, x_2, y_2)
+
+    # TF arc 3
+    c_x = mf_data.data["xctfc(3)"].get_scan(-1)
+    c_y = mf_data.data["yctfc(3)"].get_scan(-1)
+    x_1 = mf_data.data["xarc(3)"].get_scan(-1)
+    y_1 = mf_data.data["yarc(3)"].get_scan(-1)
+    x_2 = mf_data.data["xarc(4)"].get_scan(-1)
+    y_2 = mf_data.data["yarc(4)"].get_scan(-1)
+    shape_objs["a3"] = ProcessTFArcs(c_x, c_y, x_1, y_1, x_2, y_2)
+
+    # TF arc 4
+    c_x = mf_data.data["xctfc(4)"].get_scan(-1)
+    c_y = mf_data.data["yctfc(4)"].get_scan(-1)
+    x_1 = mf_data.data["xarc(4)"].get_scan(-1)
+    y_1 = mf_data.data["yarc(4)"].get_scan(-1)
+    x_2 = mf_data.data["xarc(5)"].get_scan(-1)
+    y_2 = mf_data.data["yarc(5)"].get_scan(-1)
+    shape_objs["a4"] = ProcessTFArcs(c_x, c_y, x_1, y_1, x_2, y_2)
+
     return shape_objs
 
 
@@ -345,6 +395,21 @@ def write_shapes_to_file(shape_data, filename):
             dat = shape_data[shape]
             dy = dat.dy
             line = "PZ %.3f\n" % dy
+            output_file.write(line)
+    output_file.write("\n")
+
+    output_file.write("AZ c_x c_y x_1 y_1 x_2 y_2\n")
+    for shape in shape_data:
+        if "a" in shape:
+            dat = shape_data[shape]
+            c_x = dat.c_x
+            c_y = dat.c_y
+            x_1 = dat.x_1
+            y_1 = dat.y_1
+            x_2 = dat.x_2
+            y_2 = dat.y_2
+            line = "AZ %.3f %.3f %.3f %.3f %.3f %.3f\n" % (c_x, c_y, x_1, y_1,
+                                                      x_2, y_2)
             output_file.write(line)
 
     output_file.close()
