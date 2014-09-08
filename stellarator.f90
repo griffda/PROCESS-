@@ -1438,15 +1438,15 @@ contains
 
        !  Nuclear heating in the blanket
 
-       if (lblnkt == 1) then
-          if (smstr == 1) then  !  solid blanket
-             decaybl = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
-          else  !  liquid blanket
-             decaybl = 0.075D0 / (1.0D0 - vfblkt - fbllipb - fblli)
-          end if
-       else  !  original blanket model - solid blanket
-          decaybl = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
-       end if
+       !if (lblnkt == 1) then
+       !   if (smstr == 1) then  !  solid blanket
+       !      decaybl = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
+       !   else  !  liquid blanket
+       !      decaybl = 0.075D0 / (1.0D0 - vfblkt - fbllipb - fblli)
+       !   end if
+       !else  !  original blanket model - solid blanket
+       decaybl = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
+       !end if
 
        pnucblkt = pneut2 * (1.0D0 - exp(-blnkoth/decaybl) )
 
@@ -1596,18 +1596,18 @@ contains
     !  Thermodynamic blanket model
     !  (supersedes above calculations of blanket mass and volume)
 
-    if (lblnkt == 1) then
-       call blanket_panos(1,outfile,iprint)
-
-       !  Different (!) approximation for inboard/outboard
-       !  blanket volumes: assume cylinders of equal heights
-
-       r1 = rsldi + shldith + 0.5D0*blnkith
-       r2 = rsldo - shldoth - 0.5D0*blnkoth
-       volblkti = volblkt * (r1*blnkith)/((r1*blnkith)+(r2*blnkoth))
-       volblkto = volblkt * (r2*blnkoth)/((r1*blnkith)+(r2*blnkoth))
-
-    end if
+    !if (lblnkt == 1) then
+    !   call blanket_panos(1,outfile,iprint)
+    !
+    !   !  Different (!) approximation for inboard/outboard
+    !   !  blanket volumes: assume cylinders of equal heights
+    !
+    !   r1 = rsldi + shldith + 0.5D0*blnkith
+    !   r2 = rsldo - shldoth - 0.5D0*blnkoth
+    !   volblkti = volblkt * (r1*blnkith)/((r1*blnkith)+(r2*blnkoth))
+    !   volblkto = volblkt * (r2*blnkoth)/((r1*blnkith)+(r2*blnkoth))
+    !
+    !end if
 
     !  Blanket coolant is assumed to be helium for the models used
     !  when blktmodel > 0
@@ -1764,19 +1764,20 @@ contains
 
     call osubhd(outfile,'Blanket / shield volumes and weights :')
 
-    if (lblnkt == 1) then
-       if (smstr == 1) then
-          write(outfile,600) volblkti, volblkto, volblkt,  &
-               whtblkt, vfblkt, fblbe, whtblbe, fblli2o, wtblli2o,  &
-               fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
-               volshld, whtshld, vfshld, wpenshld
-       else
-          write(outfile,601) volblkti, volblkto, volblkt,  &
-               whtblkt, vfblkt, fbllipb, wtbllipb, fblli, whtblli,  &
-               fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
-               volshld, whtshld, vfshld, wpenshld
-       end if
-    else if (blktmodel == 0) then
+    !if (lblnkt == 1) then
+    !   if (smstr == 1) then
+    !      write(outfile,600) volblkti, volblkto, volblkt,  &
+    !           whtblkt, vfblkt, fblbe, whtblbe, fblli2o, wtblli2o,  &
+    !           fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
+    !           volshld, whtshld, vfshld, wpenshld
+    !   else
+    !      write(outfile,601) volblkti, volblkto, volblkt,  &
+    !           whtblkt, vfblkt, fbllipb, wtbllipb, fblli, whtblli,  &
+    !           fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
+    !           volshld, whtshld, vfshld, wpenshld
+    !   end if
+    !else if (blktmodel == 0) then
+    if (blktmodel == 0) then
        write(outfile,600) volblkti, volblkto, volblkt, whtblkt, vfblkt, &
             fblbe, whtblbe, fblli2o, wtblli2o, fblss, whtblss, fblvd, &
             whtblvd, volshldi, volshldo, volshld, whtshld, vfshld, &

@@ -160,6 +160,7 @@
     !+ad_call  constants
     !+ad_call  fispact_variables
     !+ad_call  fwbs_variables
+    !+ad_call  heat_transport_variables
     !+ad_call  pfcoil_variables
     !+ad_call  physics_variables
     !+ad_call  process_output
@@ -182,6 +183,7 @@
     !+ad_hist  09/04/13 PJK Comment changes
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
     !+ad_hist  24/06/14 PJK Removed refs to bcylth
+    !+ad_hist  08/09/14 PJK Simplistic changes for ipowerflow=1 model
     !+ad_stat  This routine is untested in F90...
     !+ad_docs  F/MI/PJK/LOGBOOK12, pp.70,71,72,73
     !+ad_docs  Strategic Studies Note 96/30, January 1997
@@ -193,6 +195,7 @@
     use constants
     use fispact_variables
     use fwbs_variables
+    use heat_transport_variables
     use pfcoil_variables
     use physics_variables
     use process_output
@@ -408,7 +411,8 @@
 
     !  Inboard blanket
 
-    if (lblnkt /= 1) then  !  Old blanket model
+    !if (lblnkt /= 1) then  !  Old blanket model
+    if (ipowerflow == 0) then
 
        matfrc(7,1) = fblss * fmsbl
        matfrc(7,2) = fblss * (1.0D0-fmsbl)
@@ -419,7 +423,8 @@
 
     else  !  New blanket model
 
-       if (smstr == 1) then
+       !if (smstr == 1) then
+       if (blkttype == 3) then
 
           !  Li2O/Be solid blanket
 

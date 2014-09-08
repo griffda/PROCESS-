@@ -1039,7 +1039,7 @@ module fwbs_variables
   !+ad_vars  fvolso /0.64/ : area coverage factor for outboard shield volume
   real(kind(1.0D0)) :: fvolso = 0.64D0
   !+ad_vars  fwclfr /0.15/ : first wall coolant fraction
-  !+ad_varc                  (calculated if lpulse=1)
+  !+ad_varc                  (calculated if lpulse=1 or ipowerflow=1)
   real(kind(1.0D0)) :: fwclfr = 0.15D0
   !+ad_vars  fwbsshape /2/ : first wall, blanket, shield and vacuum vessel shape:<UL>
   !+ad_varc                  <LI> = 1 D-shaped (cylinder inboard + ellipse outboard);
@@ -1119,17 +1119,17 @@ module fwbs_variables
   real(kind(1.0D0)) :: vvhemax = 0.0D0
   !+ad_vars  wallpf /1.21/ : neutron wall load peaking factor (blktmodel>0)
   real(kind(1.0D0)) :: wallpf = 1.21D0
-  !+ad_vars  whtblbe : mass of blanket - Be part (kg)
+  !+ad_vars  whtblbe : mass of blanket - beryllium part (kg)
   real(kind(1.0D0)) :: whtblbe = 0.0D0
   !+ad_vars  whtblbreed : mass of blanket - breeder part (kg) (blktmodel>0)
   real(kind(1.0D0)) :: whtblbreed = 0.0D0
   !+ad_vars  whtblkt : mass of blanket (kg)
   real(kind(1.0D0)) :: whtblkt = 0.0D0
-  !+ad_vars  whtblli : mass of blanket - Li part (kg)
+  !+ad_vars  whtblli : mass of blanket - lithium part (kg)
   real(kind(1.0D0)) :: whtblli = 0.0D0
   !+ad_vars  whtblss : mass of blanket - stainless steel part (kg)
   real(kind(1.0D0)) :: whtblss = 0.0D0
-  !+ad_vars  whtblvd : mass of blanket - Vanadium part (kg)
+  !+ad_vars  whtblvd : mass of blanket - vanadium part (kg)
   real(kind(1.0D0)) :: whtblvd = 0.0D0
   !+ad_vars  whtshld : mass of shield (kg)
   real(kind(1.0D0)) :: whtshld = 0.0D0
@@ -1151,10 +1151,10 @@ module fwbs_variables
   !+ad_varc         <LI> = 0 simple model;
   !+ad_varc         <LI> = 1 detailed thermodyamics and balance-of-plant model</UL>
   integer :: blbop = 0
-  !+ad_vars  coolwh /1/ : Switch for coolant choice:<UL>
-  !+ad_varc         <LI> = 1 water;
-  !+ad_varc         <LI> = 2 helium</UL>
-  integer :: coolwh = 1
+  !+ad_vars  coolwh /2/ : Switch for coolant choice:<UL>
+  !+ad_varc         <LI> = 1 helium;
+  !+ad_varc         <LI> = 2 pressurized water</UL>
+  integer :: coolwh = 2
   !+ad_vars  afwi /0.008/ : inner radius of inboard first wall/blanket coolant channels (m)
   real(kind(1.0D0)) :: afwi = 0.008D0
   !+ad_vars  afwo /0.008/ : inner radius of outboard first wall/blanket coolant channels (m)
@@ -1162,7 +1162,7 @@ module fwbs_variables
   !+ad_vars  inlet_temp /558.0/ : inlet temperature of coolant for blanket and first wall (K) (blbop=1)
   real(kind(1.0D0)) :: inlet_temp = 558.0D0
   !+ad_vars  outlet_temp /598.0/ : outlet temperature of coolant for blanket and first wall (K) (blbop=1);
-  !+ad_varc                        input if coolwh=2 (helium), calculated if coolwh=1 (water)
+  !+ad_varc                        input if coolwh=1 (helium), calculated if coolwh=2 (water)
   real(kind(1.0D0)) :: outlet_temp = 598.0D0
   !+ad_vars  nblktmodpo /8/ : number of outboard blanket modules in poloidal direction (blbop=1)
   integer :: nblktmodpo = 8
@@ -2796,7 +2796,7 @@ module cost_variables
   !+ad_vars  uchth /700.0/ : cost of H production (thermo-chemical) ($/kW Hydrogen)
   real(kind(1.0D0)) :: uchth = 700.0D0
   !+ad_vars  uchts(2) /15.3,19.1/ : cost of heat transport system equipment
-  !+ad_varc                         per loop ($/W); dependent on coolant type
+  !+ad_varc                         per loop ($/W); dependent on coolant type (coolwh)
   real(kind(1.0D0)), dimension(2) :: uchts = (/15.3D0, 19.1D0/)
   !+ad_vars  uciac /1.5e8/ : cost of instrumentation, control & diagnostics ($/W)
   real(kind(1.0D0)) :: uciac = 1.5D8
@@ -2875,8 +2875,8 @@ module cost_variables
   real(kind(1.0D0)) :: uctpmp = 1.105D5
   !+ad_vars  uctr /370.0/ FIX : cost of tritium building ($/m3)
   real(kind(1.0D0)) :: uctr = 370.0D0
-  !+ad_vars  ucturb(2) /230.0e6,245.0e6/: cost of turbine plant equipment ($)
-  !+ad_varc                               (dependent on coolant type)
+  !+ad_vars  ucturb(2) /230.0e6, 245.0e6/: cost of turbine plant equipment ($)
+  !+ad_varc                               (dependent on coolant type coolwh)
   real(kind(1.0D0)), dimension(2) :: ucturb = (/230.0D6, 245.0D6/)
   !+ad_vars  ucvalv /3.9e5/ FIX : vacuum system valve cost ($)
   real(kind(1.0D0)) :: ucvalv = 3.9D5

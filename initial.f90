@@ -234,6 +234,7 @@ subroutine check
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  23/07/14 PJK Modified icase descriptions
   !+ad_hist  19/08/14 PJK Added trap for nvar < neqns
+  !+ad_hist  08/09/14 PJK Changed costr to coolwh
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -419,12 +420,10 @@ subroutine check
   !  Although the blanket is by definition helium-cooled in this case,
   !  the shield etc. are assumed to be water-cooled, and since water is
   !  heavier (and the unit cost of pumping it is higher), the calculation
-  !  for coolmass is better done with costr=2 if blktmodel > 0 to give
+  !  for coolmass is better done with coolwh=2 if blktmodel > 0 to give
   !  slightly pessimistic results.
-  !  However, this also means that if lblnkt=1 the wrong coolant will be assumed
-  !  in the thermodynamic blanket model...
 
-  if (blktmodel > 0) costr = 2
+  if (blktmodel > 0) coolwh = 2
 
   errors_on = .false.
 

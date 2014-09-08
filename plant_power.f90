@@ -1077,7 +1077,7 @@ contains
 
              else if (thermal_cycle == 1) then  !  steam Rankine cycle to be used
 
-                if (coolwh == 1) then
+                if (coolwh == 2) then
 
                    !  If coolant is pressurised water, the steam cycle is assumed to use
                    !  saturated steam i.e. no superheating.  The turbine inlet temperature
@@ -1096,7 +1096,7 @@ contains
 
                    iprimdiv = 1
 
-                else  !  if coolwh = 2
+                else  !  if coolwh = 1
 
                    !  If coolant is helium, the steam cycle is assumed to be superheated
                    !  and a different correlation is used. The turbine inlet temperature 

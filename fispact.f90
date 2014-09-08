@@ -150,17 +150,18 @@
 ! *** Mean zone neutron flux spectrum
 
       call bbie(210,x,fbbie)
-      do 10 j = 1,100
+      do j = 1,100
          wspect(j) = REAL(fbbie(j))
- 10   continue
+      end do
 
 ! *** Elemental composition (same for both inboard and
 ! *** outboard blankets)
 
-      if (lblnkt.ne.1) then
+      if (ipowerflow == 0) then
+
 !        *** Old blanket model
-         if (costr.eq.1) then
-            do 20 j = 1,83
+         if (coolwh.eq.1) then
+            do j = 1,83
                welemp(j) = 100.0 * REAL( &
                     fblss*(1.0D0-fmsbl)*ecss(j) + &
                     fblss*fmsbl*ecms(j) + &
@@ -168,9 +169,9 @@
                     fblli2o*ecli2o(j) + &
                     fblbe*ecbe(j) + &
                     vfblkt*eche(j) )
- 20         continue
+            end do
          else
-            do 30 j = 1,83
+            do j = 1,83
                welemp(j) = 100.0 * REAL( &
                     fblss*(1.0D0-fmsbl)*ecss(j) + &
                     fblss*fmsbl*ecms(j) + &
@@ -178,14 +179,18 @@
                     fblli2o*ecli2o(j) + &
                     fblbe*ecbe(j) + &
                     vfblkt*ech2o(j) )
- 30         continue
+            end do
          end if
+
       else
+
 !        *** New blanket model
-         if (smstr.eq.1) then
+
+         if (blkttype == 3) then
+
 !           *** Li2O/Be solid blanket
-            if (costr.eq.1) then
-               do 40 j = 1,83
+            if (coolwh.eq.1) then
+               do j = 1,83
                   welemp(j) = 100.0 * REAL( &
                        fblss*(1.0D0-fmsbl)*ecss(j) + &
                        fblss*fmsbl*ecms(j) + &
@@ -193,9 +198,9 @@
                        fblli2o*ecli2o(j) + &
                        fblbe*ecbe(j) + &
                        vfblkt*eche(j) )
- 40            continue
+               end do
             else
-               do 50 j = 1,83
+               do j = 1,83
                   welemp(j) = 100.0 * REAL( &
                        fblss*(1.0D0-fmsbl)*ecss(j) + &
                        fblss*fmsbl*ecms(j) + &
@@ -203,12 +208,14 @@
                        fblli2o*ecli2o(j) + &
                        fblbe*ecbe(j) + &
                        vfblkt*ech2o(j) )
- 50            continue
+               end do
             end if
+
          else
+
 !           *** LiPb/Li liquid blanket
-            if (costr.eq.1) then
-               do 60 j = 1,83
+            if (coolwh.eq.1) then
+               do j = 1,83
                   welemp(j) = 100.0 * REAL( &
                        fblss*(1.0D0-fmsbl)*ecss(j) + &
                        fblss*fmsbl*ecms(j) + &
@@ -216,9 +223,9 @@
                        fbllipb*eclipb(j) + &
                        fblli*ecli(j) + &
                        vfblkt*eche(j) )
- 60            continue
+               end do
             else
-               do 70 j = 1,83
+               do j = 1,83
                   welemp(j) = 100.0 * REAL( &
                        fblss*(1.0D0-fmsbl)*ecss(j) + &
                        fblss*fmsbl*ecms(j) + &
@@ -226,7 +233,7 @@
                        fbllipb*eclipb(j) + &
                        fblli*ecli(j) + &
                        vfblkt*ech2o(j) )
- 70            continue
+               end do
             end if
          end if
       end if
@@ -235,9 +242,9 @@
 
       wtime = REAL(bktlife) * 3.15576E7
 
-! *** Coolant density (costr=1 : gaseous helium, costr=2 : steam/water)
+! *** Coolant density (coolwh=1 : gaseous helium, coolwh=2 : steam/water)
 
-      if (costr.eq.1) then
+      if (coolwh.eq.1) then
          dencol = 1.517D0
       else
          dencol = 806.719D0
@@ -252,8 +259,11 @@
 !+**PJK 19/02/97 Include energy multiplication, and an e-folding
 !+**PJK 19/02/97 factor for attenuation through half the blanket
 
-      if (lblnkt.eq.1) then
-         if (smstr.eq.1) then
+      if (ipowerflow == 1) then
+
+         !  Strictly, this is not correct for ipowerflow=1, but currently
+         !  I have simply replaced the old usage of lblnkt, smstr etc.
+         if (blkttype == 3) then
             dklen = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
          else
             dklen = 0.075D0 / (1.0D0 - vfblkt - fbllipb - fblli)
@@ -421,7 +431,7 @@
 ! *** Elemental composition
 
       do 120 j = 1,83
-         if (costr.eq.1) then
+         if (coolwh.eq.1) then
             welemp(j) = 100.0 * REAL( &
                  (1.0D0-fwclfr) * ((1.0D0-fmsfw)*ecss(j)+fmsfw*ecms(j)) &
                  + fwclfr*eche(j) )
