@@ -14,11 +14,10 @@ from fs.memoryfs import MemoryFS as MemFS
 from fs.osfs import OSFS
 import fs.utils as fsutils
 
-class VirtualFS(object):
+class Access(object):
     
     """
-    A virtual filesystem-like access class, used to execute software within
-    an in-memory virtual filesystem.
+    
     """
     
     def __init__(self, binary_path, data_path=None):
@@ -28,7 +27,7 @@ class VirtualFS(object):
         self._data_path = data_path
         self.physical_fs = OSFS("~/")
         self.scratch_fs = MemFS()
-        
+    
     def _setup_virtual_working_dir(self):
         """Initialise self.scratch_fs virtual filesystem for the binary."""
         fsutils.copyfile(self.physical_fs, binary_path, self.scratch_fs,
@@ -36,8 +35,8 @@ class VirtualFS(object):
         if self._data_path:
             fsutils.copydir((self.physical_fs, self._data_path),
                             (self.scratch_fs, self._data_path))
-        
     
     def execute(self):
         """TODO: how?"""
         pass
+    
