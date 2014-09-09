@@ -9,7 +9,7 @@
   Notes:
     + 13/06/2014 Original version created.
     + 01/07/2014 Added option for CTF
-
+    + 09/09/2014 Added extra TF coil information
 """
 
 import argparse
