@@ -1,4 +1,3 @@
-!  $Id:: output.f90 250 2014-04-03 09:12:09Z pknight                    $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module process_output
@@ -34,6 +33,7 @@ module process_output
   !+ad_hist  13/02/14 PJK Added mfile for machine-readable output file unit
   !+ad_hist  13/03/14 PJK Added int2char, int_string2, int_to_string3
   !+ad_hist  19/06/14 PJK Removed all sect?? switches
+  !+ad_hist  10/09/14 PJK Added vfile for diagnostic output
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -47,6 +47,7 @@ module process_output
   integer, parameter :: nout = 11  !  Output file unit identifier
   integer, parameter :: nplot = 12 !  Plot data file unit identifier
   integer, parameter :: mfile = 13 !  Machine-optimised output file unit
+  integer, parameter :: vfile = 14 !  Verbose diagnostics file
 
 contains
 

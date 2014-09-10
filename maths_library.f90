@@ -2233,6 +2233,7 @@ contains
     !+ad_argc    INFO = 6 : quadratic programming technique was restricted by
     !+ad_argc               an artificial bound or failed due to a singular
     !+ad_argc               matrix
+    !+ad_argc    INFO = 7 : line search has been aborted
     !+ad_args  nfev : output integer : number of calls to FCNVMC1
     !+ad_args  niter : output integer : number of iterations
     !+ad_args  vlam(m+2n+1) : output real array : Lagrange multipliers at output X.
@@ -2297,6 +2298,7 @@ contains
     !+ad_hist  26/02/14 PJK Added new output argument niter
     !+ad_hist  08/07/14 PJK/MDK Added a test of the residuals to the convergence
     !+ad_hisc               criteria
+    !+ad_hist  10/09/14 PJK/MDK Added new info=7 value
     !+ad_stat  Okay
     !+ad_docs  ANL-80-64: Solution of the General Nonlinear Programming Problem
     !+ad_docc  with Subroutine VMCON, Roger L Crane, Kenneth E Hillstrom and
@@ -2637,11 +2639,13 @@ contains
              !  Escape from the line search if the line search function is increasing
              !  Outer loop is forced to repeat
 
+             info = 1  !  reset on each iteration
              if (aux > 0.0D0) then
                 if (verbose == 1) then
                    write(*,*) 'VMCON optimiser line search attempt '// &
                         'failed - retrying...'
                 end if
+                info = 7
                 exit line_search
              end if
 

@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 322
+#  GIT Revision 327
 #
 #  P J Knight
 #
@@ -199,7 +199,7 @@ costs.o: error_handling.o global_variables.o output.o
 current_drive.o: error_handling.o global_variables.o output.o plasma_profiles.o
 divertor.o: error_handling.o global_variables.o output.o
 error_handling.o: output.o fson_library.o
-evaluators.o: error_handling.o global_variables.o numerics.o
+evaluators.o: error_handling.o global_variables.o numerics.o output.o
 fispact.o: global_variables.o
 fson_library.o: 
 fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o
