@@ -252,7 +252,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '325    Release Date :: 2014-09-03'
+       '326    Release Date :: 2014-09-10'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1761,3 +1761,4 @@ end subroutine output
 ! GIT 323: New peak TF with ripple calculation; modified ripple calculation applicability range
 ! GIT 324: New scaling for PF coil to cryostat lid clearance
 ! GIT 325: Updated impurity radiation datafiles
+! GIT 326: Added additional power balance outputs
