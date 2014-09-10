@@ -31,6 +31,7 @@ program process
   !+ad_prob  None
   !+ad_call  numerics
   !+ad_call  error_handling
+  !+ad_call  global_variables
   !+ad_call  process_input
   !+ad_call  process_output
   !+ad_call  scan_module
@@ -48,6 +49,7 @@ program process
   !+ad_hist  06/11/12 PJK Renamed this source file from aamain.f90 to process.f90.
   !+ad_hisc               Transferred routine inform from aachange.f90 
   !+ad_hist  13/02/14 PJK Added mfile close statement
+  !+ad_hist  10/09/14 PJK Added vfile close statement
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  Box file F/RS/CIRE5523/PWF (up to 15/01/96)
@@ -57,6 +59,7 @@ program process
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use error_handling
+  use global_variables
   use process_input
   use process_output
   use scan_module
@@ -97,6 +100,7 @@ program process
   close(unit=nout)
   close(unit=nplot)
   close(unit=mfile)
+  if (verbose == 1) close(unit=vfile)
 
 end program process
 
@@ -117,6 +121,7 @@ subroutine init
   !+ad_call  error_handling
   !+ad_call  global_variables
   !+ad_call  impurity_radiation_module
+  !+ad_call  numerics
   !+ad_call  process_input
   !+ad_call  process_output
   !+ad_call  check
@@ -134,13 +139,16 @@ subroutine init
   !+ad_hist  13/05/14 PJK Added impurity radiation model initialisation
   !+ad_hist  25/06/14 PJK Introduced call to initialise error handling
   !+ad_hist  22/07/14 PJK Rearranged calls to print output headers
+  !+ad_hist  10/09/14 PJK Added vfile open statement
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use error_handling
+  use global_variables, only: verbose
   use impurity_radiation_module
+  use numerics
   use process_input
   use process_output
 
@@ -149,6 +157,8 @@ subroutine init
   !  Arguments
 
   !  Local variables
+
+  integer :: i
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -182,6 +192,18 @@ subroutine init
   !  Write to the output file certain relevant details about this run
 
   call run_summary
+
+  !  Open verbose diagnostics file
+
+  if (verbose == 1) then
+     open(unit=vfile,file='VFILE.DAT',status='unknown')  
+     write(vfile,'(a80)') 'nviter = number of VMCON iterations.'
+     write(vfile,'(a80)') '(1-mod(ifail,7))=1 indicates that there has '// &
+          'been an escape from a failed line search.'
+     write(vfile,'(a80)') 'odd/even is a convenient plotting bit.'
+     write(vfile,'(100a13)') 'nviter','escape', 'odd/even', 'te','coe','rmajor', &
+          'powfmw','bt','tburn','sqsumsq', (lablxc(ixc(i)),i=1,nvar)
+  end if
 
 end subroutine init
 
@@ -252,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '326    Release Date :: 2014-09-10'
+       '327    Release Date :: 2014-09-10'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1238,6 +1260,7 @@ subroutine final(ifail)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_hist  23/01/13 PJK Changed format for single iteration outputs
+  !+ad_hist  10/09/14 PJK Removed output lines if a given solver is unused
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1264,23 +1287,47 @@ subroutine final(ifail)
 
   call output(nout)
 
-  if (nfev1 == 1) then ! (unlikely that nviter is also 1...)
-     write(iotty,10) nfev1,nviter,ncalls
+  if (nfev1 == 0) then  !  no HYBRD call
+     if (nviter == 1) then
+        write(iotty,10) nviter,ncalls
+     else
+        write(iotty,20) nviter,ncalls
+     end if
+  else if (nviter == 0) then  !  no VMCON call
+     if (nfev1 == 1) then
+        write(iotty,30) nfev1,ncalls
+     else
+        write(iotty,40) nfev1,ncalls
+     end if
+  else if (nfev1 == 1) then ! (unlikely that nviter is also 1...)
+     write(iotty,50) nfev1,nviter,ncalls
   else if (nviter == 1) then ! (unlikely that nfev1 is also 1...)
-     write(iotty,20) nfev1,nviter,ncalls
+     write(iotty,60) nfev1,nviter,ncalls
   else
-     write(iotty,30) nfev1,nviter,ncalls
+     write(iotty,70) nfev1,nviter,ncalls
   end if
 
 10 format( &
+       t2,'The optimisation required ',i5,' iteration',/, &
+       t2,'There were ',i6,' function calls')
+20 format( &
+       t2,'The optimisation required ',i5,' iterations',/, &
+       t2,'There were ',i6,' function calls')
+30 format( &
+       t2,'The HYBRD point required ',i5,' iteration',/, &
+       t2,'There were ',i6,' function calls')
+40 format( &
+       t2,'The HYBRD point required ',i5,' iterations',/, &
+       t2,'There were ',i6,' function calls')
+50 format( &
        t2,'The HYBRD point required ',i5,' iteration',/, &
        t2,'The optimisation required ',i5,' iterations',/, &
        t2,'There were ',i6,' function calls')
-20 format( &
+60 format( &
        t2,'The HYBRD point required ',i5,' iterations',/, &
        t2,'The optimisation required ',i5,' iteration',/, &
        t2,'There were ',i6,' function calls')
-30 format( &
+70 format( &
        t2,'The HYBRD point required ',i5,' iterations',/, &
        t2,'The optimisation required ',i5,' iterations',/, &
        t2,'There were ',i6,' function calls')
@@ -1762,3 +1809,4 @@ end subroutine output
 ! GIT 324: New scaling for PF coil to cryostat lid clearance
 ! GIT 325: Updated impurity radiation datafiles
 ! GIT 326: Added additional power balance outputs
+! GIT 327: Added verbose output to VFILE.DAT
