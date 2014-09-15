@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 327
+#  GIT Revision 328
 #
 #  P J Knight
 #
@@ -218,7 +218,7 @@ physics.o: current_drive.o error_handling.o global_variables.o impurity_radiatio
   maths_library.o output.o plasma_profiles.o
 plant_power.o: fwbs.o global_variables.o output.o
 plasma_geometry.o: global_variables.o
-plasma_profiles.o: global_variables.o maths_library.o
+plasma_profiles.o: error_handling.o global_variables.o maths_library.o
 process.o: availability.o buildings.o constraint_equations.o costs.o current_drive.o \
   divertor.o error_handling.o evaluators.o fwbs.o global_variables.o ife.o \
   impurity_radiation.o input.o machine_build.o numerics.o output.o pfcoil.o physics.o \

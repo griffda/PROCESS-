@@ -235,6 +235,7 @@ subroutine check
   !+ad_hist  23/07/14 PJK Modified icase descriptions
   !+ad_hist  19/08/14 PJK Added trap for nvar < neqns
   !+ad_hist  01/09/14 PJK Added trap for insufficient specification of ixc, icc
+  !+ad_hist  15/09/14 PJK Added plasma pedestal consistency checks
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -317,6 +318,72 @@ subroutine check
 
   if ((imprad_model == 1).and.(any(icc == 3))) then
      call report_error(138)
+  end if
+
+  !  Plasma profile consistency checks
+
+  if (ipedestal == 1) then
+
+     !  Temperature checks
+
+     if (teped < tesep) then
+        fdiags(1) = teped ; fdiags(2) = tesep
+        call report_error(146)
+     end if
+
+     if ((abs(rhopedt-1.0D0) <= 1.0D-7).and.((teped-tesep) >= 1.0D-7)) then
+        fdiags(1) = rhopedt ; fdiags(2) = teped ; fdiags(3) = tesep
+        call report_error(147)
+     end if
+
+     !  Core temperature should always be calculated (later) as being
+     !  higher than the pedestal temperature, if and only if the
+     !  volume-averaged temperature never drops below the pedestal
+     !  temperature. Prevent this by adjusting te, and its lower bound
+     !  (which will only have an effect if this is an optimisation run)
+
+     if (te <= teped) then
+        fdiags(1) = te ; fdiags(2) = teped
+        te = teped*1.001D0
+        call report_error(149)
+     end if
+
+     if ((ioptimz >= 0).and.(any(ixc == 4)).and.(boundl(4) < teped*1.001D0)) then
+        call report_error(150)
+        boundl(4) = teped*1.001D0
+        boundu(4) = max(boundu(4), boundl(4))
+     end if
+
+     !  Density checks
+
+     if (neped < nesep) then
+        fdiags(1) = neped ; fdiags(2) = nesep
+        call report_error(151)
+     end if
+
+     if ((abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7)) then
+        fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
+        call report_error(152)
+     end if
+
+     !  Core density should always be calculated (later) as being
+     !  higher than the pedestal density, if and only if the
+     !  volume-averaged density never drops below the pedestal
+     !  density. Prevent this by adjusting dene, and its lower bound
+     !  (which will only have an effect if this is an optimisation run)
+
+     if (dene <= neped) then
+        fdiags(1) = dene ; fdiags(2) = neped
+        dene = neped*1.001D0
+        call report_error(154)
+     end if
+
+     if ((ioptimz >= 0).and.(any(ixc == 6)).and.(boundl(6) < neped*1.001D0)) then
+        call report_error(155)
+        boundl(6) = neped*1.001D0
+        boundu(6) = max(boundu(6), boundl(6))
+     end if
+
   end if
 
   !  Tight aspect ratio options 
