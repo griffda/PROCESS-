@@ -2416,6 +2416,7 @@ contains
     !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
     !+ad_hist  26/06/14 PJK Added error_handling
     !+ad_hist  30/07/14 PJK Renamed borev to tfborev
+    !+ad_hist  16/09/14 PJK Added tfcryoarea
     !+ad_stat  Okay
     !+ad_docs  The Stellarator Coil model for the Systems code PROCESS,
     !+ad_docc  F. Warmer, F. Schauer, IPP Greifswald, October 2013
@@ -2795,6 +2796,10 @@ contains
     ! [m^2] Total surface area of coil side facing plasma: outboard region
 
     tfsao = tfsai  !  depends, how 'inboard' and 'outboard' are defined
+
+    ! [m^2] Total surface area of toroidal shells covering coils
+
+    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(rtfcin+rtot)
 
     !  Masses of conductor constituents
 

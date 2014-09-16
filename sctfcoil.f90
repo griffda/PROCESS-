@@ -388,12 +388,21 @@ contains
     !  TF Coil areas and masses
 
     !  Surface areas (for cryo system)
+    !  tfsai, tfsao are retained for the (obsolescent) TF coil nuclear heating calculation
 
     wbtf = rcoil*sin(thtcoil) - rcoilp*tant
     tfocrn = rcoilp * tant
     tficrn = tfocrn + wbtf
     tfsai = 4.0D0 * tfno * tficrn * hr1
     tfsao = 2.0D0 * tfno * tficrn * (tfleng - 2.0D0*hr1)
+
+    !  Total surface area of two toroidal shells covering the TF coils
+    !  (inside and outside surfaces)
+    !  = 2 * centroid coil length * 2 pi R, where R is average of i/b and o/b centres
+    !  (This will possibly be used to replace 2*tfsai in the calculation of qss
+    !  in subroutine cryo - not done at present.)
+
+    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(rtfcin+rtot)
 
     !  Mass of case
 
@@ -1706,7 +1715,7 @@ contains
     call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotf*tfno)',estotf*tfno)
     call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf)
     call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/tfno)',whttf/tfno)
-    call ovarre(outfile,'Vertical separating force per coil (N)','(vforce)',vforce)
+    call ovarre(outfile,'Vertical separating force per leg (N)','(vforce)',vforce)
     call ovarre(outfile,'Centering force per coil (N/m)','(cforce)',cforce)
 
     !  Report any applicability issues with peak field with ripple calculation

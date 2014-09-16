@@ -1453,6 +1453,7 @@ module tfcoil_variables
   !+ad_hist  31/07/14 PJK Added acasetfo, dcondins, whtconin, whtgw, whtrp;
   !+ad_hisc               removed aspcstf
   !+ad_hist  19/08/14 PJK Removed casfact
+  !+ad_hist  16/09/14 PJK Added tfcryoarea
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -1690,6 +1691,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfcmw = 0.0D0
   !+ad_vars  tfcpmw : peak resistive TF coil inboard leg power (MW)
   real(kind(1.0D0)) :: tfcpmw = 0.0D0
+  !+ad_vars  tfcryoarea : surface area of toroidal shells covering TF coils (m2)
+  real(kind(1.0D0)) :: tfcryoarea = 0.0D0
   !+ad_vars  tficrn : TF coil half-width - inner bore (m)
   real(kind(1.0D0)) :: tficrn = 0.0D0
   !+ad_vars  tfind : TF coil inductance (H)
