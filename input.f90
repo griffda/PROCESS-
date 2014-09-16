@@ -314,6 +314,7 @@ contains
     !+ad_hist  31/07/14 PJK Added DCONDINS; removed ASPCSTF
     !+ad_hist  19/08/14 PJK Removed RECYLE, IMPFE
     !+ad_hist  19/08/14 PJK Removed CASFACT
+    !+ad_hist  16/09/14 PJK Changed TFC_MODEL range
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1358,7 +1359,7 @@ contains
           call parse_real_variable('TDMPTF', tdmptf, 0.1D0, 100.0D0, &
                'Dump time for TF coil (s)')
        case ('TFC_MODEL')
-          call parse_int_variable('TFC_MODEL', tfc_model, 0, 2, &
+          call parse_int_variable('TFC_MODEL', tfc_model, 0, 1, &
                'Switch for TF coil model')
        case ('TFLEGRES')
           call parse_real_variable('TFLEGRES', tflegres, 1.0D-10, 1.0D-5, &

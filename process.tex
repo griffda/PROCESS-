@@ -36,9 +36,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-09-10
+2014-09-16
 \hfill
-Revision:: 327
+Revision:: 330
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2258,16 +2258,14 @@ zero field and strain is set using input parameter \texttt{tcritsc}.
 \subsubsection{Stress model}
 
 Switch \texttt{tfc\_model} controls whether a simple stress model
-(\texttt{tfc\_model = 0}) or a more complex stress model (\texttt{tfc\_model =
-  1} or \texttt{2}) should be used.
+(\texttt{tfc\_model = 0}, suitable for soild copper TF coils) or a more
+complex stress model (\texttt{tfc\_model = 1}) should be used. If
+\texttt{tfc\_model = 1}, a two-layer stress model~\cite{Morris_tfc} developed
+by CCFE is used.
 
-If \texttt{tfc\_model = 1}, a five-layer stress model developed in 1987 at
-ORNL by Myall~\cite{Myall} is used. If \texttt{tfc\_model = 2}, a two-layer
-stress model~\cite{Morris_tfc} developed by CCFE is used.
-
-To enforce the stress limits calculated using any of these models, constraint
-equation no.\ 31 (case stress) and/or constraint equation no.\ 32 (conduit
-stress) should be turned on with iteration variables no.\ 48
+To enforce the stress limits calculated using either of these models,
+constraint equation no.\ 31 (case stress) and/or constraint equation no.\ 32
+(conduit stress) should be turned on with iteration variables no.\ 48
 (\texttt{fstrcase}) and/or no.\ 49 (\texttt{fstrcond}), respectively. The
 stress limit can be adjusted using input parameters \texttt{csutf} and
 \texttt{csytf}.

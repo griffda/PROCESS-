@@ -1454,6 +1454,8 @@ module tfcoil_variables
   !+ad_hisc               removed aspcstf
   !+ad_hist  19/08/14 PJK Removed casfact
   !+ad_hist  16/09/14 PJK Added tfcryoarea
+  !+ad_hist  16/09/14 PJK Modified array sizes in TF coil stress calculations;
+  !+ad_hisc               changed tfc_model switch values
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -1540,8 +1542,8 @@ module tfcoil_variables
   !+ad_vars  eyins /2.0e10/ : insulator Young's modulus (Pa)
   !+ad_varc                   (default value from DDD11-2 v2 2 (2009))
   real(kind(1.0D0)) :: eyins = 2.0D10
-  !+ad_vars  eyoung(5) : work array used in stress calculation (Pa)
-  real(kind(1.0D0)), dimension(5) :: eyoung = 0.0D0
+  !+ad_vars  eyoung(2) : work array used in stress calculation (Pa)
+  real(kind(1.0D0)), dimension(2) :: eyoung = 0.0D0
   !+ad_vars  eyrp : TF coil radial plate Young's modulus (Pa)
   real(kind(1.0D0)) :: eyrp = 0.0D0
   !+ad_vars  eystl /2.05e11/ : steel case Young's modulus (Pa)
@@ -1549,7 +1551,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: eystl = 2.05D11
   !+ad_vars  eywp /6.6e8/ : winding pack Young's modulus (Pa)
   real(kind(1.0D0)) :: eywp = 6.6D8
-  !+ad_vars  eyzwp : winding pack vertical Young's modulus (Pa) (tfc_model=2)
+  !+ad_vars  eyzwp : winding pack vertical Young's modulus (Pa) (tfc_model=1)
   real(kind(1.0D0)) :: eyzwp = 0.0D0
   !+ad_vars  farc4tf /0.7/ : factor to size height of point 4 on TF coil
   real(kind(1.0D0)) :: farc4tf = 0.7D0
@@ -1567,7 +1569,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: fhts = 0.5D0
   !+ad_vars  frhocp /1.0/ : centrepost resistivity enhancement factor
   real(kind(1.0D0)) :: frhocp = 1.0D0
-  !+ad_vars  insstrain : radial strain in insulator (tfc_model=2)
+  !+ad_vars  insstrain : radial strain in insulator (tfc_model=1)
   real(kind(1.0D0)) :: insstrain = 0.0D0
   !+ad_vars  isumattf /1/ : switch for superconductor material in TF coils:<UL>
   !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
@@ -1583,8 +1585,8 @@ module tfcoil_variables
   integer :: itfsup = 1
   !+ad_vars  jbus /1.25e6/ : bussing current density (A/m2)
   real(kind(1.0D0)) :: jbus = 1.25D6
-  !+ad_vars  jeff(5) : work array used in stress calculation (A/m2)
-  real(kind(1.0D0)), dimension(5) :: jeff = 0.0D0
+  !+ad_vars  jeff(2) : work array used in stress calculation (A/m2)
+  real(kind(1.0D0)), dimension(2) :: jeff = 0.0D0
   !+ad_vars  jwdgcrt : critical current density for winding pack (A/m2)
   real(kind(1.0D0)) :: jwdgcrt = 0.0D0
   !+ad_vars  jwdgpro : allowable TF coil winding pack current density,
@@ -1616,8 +1618,8 @@ module tfcoil_variables
   !+ad_vars  ptempalw /200.0/ : maximum peak centrepost temperature (C)
   !+ad_varc                     (constraint equation 44)
   real(kind(1.0D0)) :: ptempalw = 200.0D0
-  !+ad_vars  radtf(6) : work array used in stress calculation (m)
-  real(kind(1.0D0)), dimension(6) :: radtf = 0.0D0
+  !+ad_vars  radtf(3) : work array used in stress calculation (m)
+  real(kind(1.0D0)), dimension(3) :: radtf = 0.0D0
   !+ad_vars  rbmax : radius of maximum TF B-field (m)
   real(kind(1.0D0)) :: rbmax = 0.0D0
   !+ad_vars  rcool /0.005/ : average radius of coolant channel (m)
@@ -1637,14 +1639,14 @@ module tfcoil_variables
   real(kind(1.0D0)) :: sigrad = 0.0D0
   !+ad_vars  sigrcon : radial stress in the cable conduit (Pa)
   real(kind(1.0D0)) :: sigrcon = 0.0D0
-  !+ad_vars  sigrtf(5) : radial stress in TF coil regions (Pa)
-  real(kind(1.0D0)), dimension(5) :: sigrtf = 0.0D0
+  !+ad_vars  sigrtf(2) : radial stress in TF coil regions (Pa)
+  real(kind(1.0D0)), dimension(2) :: sigrtf = 0.0D0
   !+ad_vars  sigtan : transverse TF coil stress (MPa)
   real(kind(1.0D0)) :: sigtan = 0.0D0
   !+ad_vars  sigtcon : tangential stress in the cable conduit (Pa)
   real(kind(1.0D0)) :: sigtcon = 0.0D0
-  !+ad_vars  sigttf(5) : tangential stress in TF coil regions (Pa)
-  real(kind(1.0D0)), dimension(5) :: sigttf = 0.0D0
+  !+ad_vars  sigttf(2) : tangential stress in TF coil regions (Pa)
+  real(kind(1.0D0)), dimension(2) :: sigttf = 0.0D0
   !+ad_vars  sigver : vertical TF coil stress (MPa)
   real(kind(1.0D0)) :: sigver  = 0.0D0
   !+ad_vars  sigvert : vertical tensile stress in TF coil (Pa)
@@ -1684,8 +1686,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfckw = 0.0D0
   !+ad_vars  tfc_model /1/ : switch for TF coil magnet stress model:<UL>
   !+ad_varc                  <LI> = 0 simple model (solid copper coil)
-  !+ad_varc                  <LI> = 1 Myall 5-layer stress model; superconductor
-  !+ad_varc                  <LI> = 2 CCFE two-layer stress model; superconductor</UL>
+  !+ad_varc                  <LI> = 1 CCFE two-layer stress model; superconductor</UL>
   integer :: tfc_model = 1
   !+ad_vars  tfcmw : peak power per TF power supply (MW)
   real(kind(1.0D0)) :: tfcmw = 0.0D0
@@ -1786,7 +1787,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: whttf = 0.0D0
   !+ad_vars  whttflgs : mass of the TF coil legs (kg)
   real(kind(1.0D0)) :: whttflgs = 0.0D0
-  !+ad_vars  windstrain : longitudinal strain in winding pack (tfc_model=2)
+  !+ad_vars  windstrain : longitudinal strain in winding pack (tfc_model=1)
   real(kind(1.0D0)) :: windstrain = 0.0D0
   !+ad_vars  wwp1 : width of first step of winding pack (m)
   real(kind(1.0D0)) :: wwp1 = 0.0D0

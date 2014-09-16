@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '329    Release Date :: 2014-09-16'
+       '330    Release Date :: 2014-09-16'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1812,3 +1812,4 @@ end subroutine output
 ! GIT 327: Added verbose output to VFILE.DAT
 ! GIT 328: Added error traps to pedestal profile routines
 ! GIT 329: Added tfcryoarea in advance of a change to the steady state cryogenic load calculation
+! GIT 330: Removed Myall TF coil stress model; tfc_model switch usage changed

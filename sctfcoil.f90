@@ -11,7 +11,6 @@ module sctfcoil_module
   !+ad_cont  edoeeff
   !+ad_cont  eyngeff
   !+ad_cont  eyngzwp
-  !+ad_cont  myall_stress
   !+ad_cont  outtf
   !+ad_cont  sctfcoil
   !+ad_cont  sctfjalw
@@ -36,6 +35,7 @@ module sctfcoil_module
   !+ad_hist  29/10/12 PJK Initial version of module
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  26/06/14 PJK Added error_handling
+  !+ad_hist  16/09/14 PJK Removed myall_stress routine
   !+ad_stat  Okay
   !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
   !
@@ -612,7 +612,6 @@ contains
     !+ad_call  report_error
     !+ad_call  sctfjalw
     !+ad_call  sigvm
-    !+ad_call  myall_stress
     !+ad_call  two_layer_stress
     !+ad_hist  10/05/12 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
@@ -624,6 +623,7 @@ contains
     !+ad_hist  12/05/14 PJK Added insulator strain calculation
     !+ad_hist  12/06/14 PJK Corrections to strtf1, radtf(2) for tfc_model=2
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  16/09/14 PJK Removed myall_stress routine; changed tfc_model usage
     !+ad_stat  Okay
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
@@ -636,7 +636,7 @@ contains
     !  Local variables
 
     integer :: i
-    real(kind(1.0D0)) :: dummyv,seff,svmxz,svmyz,tcbs,fac
+    real(kind(1.0D0)) :: seff,tcbs,fac
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -666,73 +666,32 @@ contains
        tcbs = 0.0D0
     end if
 
-    if (tfc_model == 1) then
-       !  Myall 5-layer model
-       !  Layers are labelled from outboard to inboard
-       !  Layers 1,2,3 are the winding pack, layers 4,5 are the inboard steel casing
-       !  (although the 5th layer is of zero thickness)
+    !  CCFE two-layer model
+    !  Layers are labelled from inboard to outboard
+    !  The first layer is the steel casing inboard of the winding pack,
+    !  while the second layer is the winding pack itself
 
-       radtf(1) = rbmax
+    radtf(1) = rtfcin - 0.5D0*tfcth
+    radtf(2) = rbmax - thkwp
+    radtf(3) = rbmax
 
-       do i = 1,3
-          eyoung(i) = eyngeff(tfc_model,eystl,eyins,eywp,eyrp,trp,thicndut,seff, &
-               thwcndut,tcbs)
-          radtf(i+1) = radtf(i) - thkwp/3.0D0
-          dummyv = max(0.001D0, (1.0D0 - casths*tfno/(pi*radtf(i)) ) )
-          jeff(i) = jwptf * dummyv
-       end do
+    eyoung(1) = eystl
+    eyoung(2) = eyngeff(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
 
-       !  Outer ring section (actually inner ring...)
+    jeff(1) = 0.0D0
+    jeff(2) = jwptf
 
-       do i = 4,5
-          radtf(i+1) = rtfcin - 0.5D0*tfcth
-          eyoung(i) = eystl
-          jeff(i) = 0.0D0
-       end do
+    !  Call stress routine
 
-       !  Call Myall stress routine
-
-       call myall_stress(poisson,radtf,eyoung,jeff,sigrtf,sigttf,deflect)
-
-    else if (tfc_model == 2) then
-       !  CCFE two-layer model
-       !  Layers are labelled from inboard to outboard
-       !  The first layer is the steel casing inboard of the winding pack,
-       !  while the second layer is the winding pack itself
-
-       radtf(1) = rtfcin - 0.5D0*tfcth
-       radtf(2) = rbmax - thkwp
-       radtf(3) = rbmax
-
-       eyoung(1) = eystl
-       eyoung(2) = eyngeff(tfc_model,eystl,eyins,eywp,eyrp,trp,thicndut,seff, &
-            thwcndut,tcbs)
-
-       jeff(1) = 0.0D0
-       jeff(2) = jwptf
-
-       !  Call stress routine
-
-       call two_layer_stress(poisson,radtf(1:3),eyoung(1:2),jeff(1:2), &
-            sigrtf(1:2),sigttf(1:2),deflect)
-
-    else  !  should never get here
-       idiags(1) = tfc_model ; call report_error(104)
-    end if
+    call two_layer_stress(poisson,radtf,eyoung,jeff,sigrtf,sigttf,deflect)
 
     !  Convert to conduit + case
 
     fac = eystl*eyins*seff / &
          (eyins*(seff-2.0D0*thicndut) + 2.0D0*thicndut*eystl)
 
-    if (tfc_model == 1) then
-       sigrcon = sigrtf(3)/eyoung(3) * fac
-       sigtcon = sigttf(3)/eyoung(3) * fac
-    else if (tfc_model == 2) then
-       sigrcon = sigrtf(2)/eyoung(2) * fac
-       sigtcon = sigttf(2)/eyoung(2) * fac
-    end if
-
+    sigrcon = sigrtf(2)/eyoung(2) * fac
+    sigtcon = sigttf(2)/eyoung(2) * fac
     sigvert = vforce / (acasetf + acndttf*turnstf + arp)
 
     !  Find case strain
@@ -741,271 +700,20 @@ contains
 
     !  Find Von-Mises stresses
 
-    if (tfc_model == 1) then
-
-       !  Conduit walls (take worst case of 2 walls)
-
-       svmxz = sigvm(sigrcon, 0.0D0, sigvert, 0.0D0,0.0D0,0.0D0)
-       svmyz = sigvm(0.0D0, sigtcon, sigvert, 0.0D0,0.0D0,0.0D0)
-       strtf1 = max(svmxz,svmyz)
-
-       !  Case
-
-       strtf2 = sigvm(sigrtf(5), sigttf(5), sigvert, 0.0D0,0.0D0,0.0D0)
-
-    else if (tfc_model == 2) then
-       strtf1 = sigvm(sigrcon, sigtcon, sigvert, 0.0D0,0.0D0,0.0D0)
-       strtf2 = sigvm(sigrtf(1), sigttf(1), sigvert, 0.0D0,0.0D0,0.0D0)
-    end if
+    strtf1 = sigvm(sigrcon, sigtcon, sigvert, 0.0D0,0.0D0,0.0D0)
+    strtf2 = sigvm(sigrtf(1), sigttf(1), sigvert, 0.0D0,0.0D0,0.0D0)
 
     !  Young's modulus and strain in vertical direction on winding pack
 
-    if (tfc_model == 2) then
-       eyzwp = eyngzwp(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
-       windstrain = sigvert / eyzwp
-    end if
+    eyzwp = eyngzwp(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
+    windstrain = sigvert / eyzwp
 
     !  Radial strain in insulator
 
-    if (tfc_model == 2) then
-       insstrain = sigrtf(2) / eyins * &
-            edoeeff(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
-    end if
+    insstrain = sigrtf(2) / eyins * &
+         edoeeff(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
 
   end subroutine stresscl
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine myall_stress(nu,rad,ey,j,sigr,sigt,deflect)
-
-    !+ad_name  myall_stress
-    !+ad_summ  Calculates the stresses in a superconductor TF coil
-    !+ad_summ  inboard leg at the midplane
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Galambos, FEDC/ORNL
-    !+ad_cont  N/A
-    !+ad_args  nu      : input real : Poisson's ratio (assumed constant over entire coil)
-    !+ad_args  rad(6)  : input real array : Radius points of regions (m)
-    !+ad_argc                 (region i is bounded by rad(i) and rad(i+1) )
-    !+ad_args  ey(5)   : input real array : Effective Young's modulus of region i (Pa)
-    !+ad_args  j(5)    : input real array : Effective current density of region i (A/m2)
-    !+ad_args  sigr(5) : output real array : Radial stress in region i (Pa)
-    !+ad_args  sigt(5) : output real array : Tangential stress in region i (Pa)
-    !+ad_args  deflect : output real : Deflection at point rad(6) (m)
-    !+ad_desc  This routine calculates the stresses in a superconductor TF coil
-    !+ad_desc  inboard leg at midplane.
-    !+ad_desc  <P>The analysis of J. Myall (Aug. 1987) is followed (obtained from
-    !+ad_desc  J. Miller of LLNL 5/91).
-    !+ad_desc  This model allows 5 regions in the coil, so graded conductors
-    !+ad_desc  are possible. Regions 1-3 are the winding pack regions (going
-    !+ad_desc  from high to low field), and regions 4-5 are the solid steel ring
-    !+ad_desc  and intermittent steel ring regions, respectively.
-    !+ad_desc  A conventional nongraded ring can be modelled by inputting the
-    !+ad_desc  same values of ey and j for regions 1-3, and regions 4-5.
-    !+ad_prob  This routine is very sensitive to code changes.
-    !+ad_prob  Simple (correct) reordering of assignment statements or changing
-    !+ad_prob  <CODE>else if (i == 3) then</CODE> to simply <CODE>else</CODE>
-    !+ad_prob  causes the output values to change.
-    !+ad_call  linesolv
-    !+ad_hist  09/05/91 JG  Initial version
-    !+ad_hist  10/05/12 PJK Initial F90 version;
-    !+ad_hisc               Converted from integer function to subroutine
-    !+ad_hist  16/10/12 PJK Added constants
-    !+ad_hist  30/04/14 PJK/JM Added two-layer model
-    !+ad_hist  07/05/14 PJK Corrections from comparison with JM's python test code
-    !+ad_hist  08/05/14 PJK Changed routine name from <CODE>tfstress</CODE>;
-    !+ad_hisc               moved CCFE model into new routine
-    !+ad_stat  Okay
-    !+ad_docs  Myall_1987_TF_stress_calc.pdf; scanned copy of Myall's original notes
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    real(kind(1.0D0)), intent(in) :: nu
-    real(kind(1.0D0)), dimension(6), intent(in) :: rad
-    real(kind(1.0D0)), dimension(5), intent(in) :: ey, j
-    real(kind(1.0D0)), dimension(5), intent(out) :: sigr, sigt
-    real(kind(1.0D0)), intent(out) :: deflect
-
-    !  Local variables
-
-    integer :: i, ii, ia
-    real(kind(1.0D0)) :: b03,b05,b07,k2,k3,kk1,kk2,l4,l5,m6,m7, &
-         n8,n9,nufac,p1,p2,p3,q2,q3,q4,q5,r4,r5,r6,r7,s6,s7,s8,s9, &
-         t10,t8,t9
-    real(kind(1.0D0)), dimension(10,10) :: a
-    real(kind(1.0D0)), dimension(10) :: b, c
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Set up LHS matrix A elements (Myall notation)
-
-    nufac = (1.0D0 - nu)/(1.0D0 + nu)
-    t10 = -nufac / rad(6)**2
-    n9 = -ey(5) / ey(4)
-    n8 = -1.0D0
-    s9 = -nufac / rad(5)**2
-    s8 = 1.0D0 / rad(5)**2
-    t9 = n9 * s9
-    t8 = -s8
-    m7 = -ey(4) / ey(3)
-    m6 = -1.0D0
-    r7 = -nufac / rad(4)**2
-    r6 = 1.0D0 / rad(4)**2
-    s7 = m7*r7
-    s6 = -r6
-    l5 = -ey(3) / ey(2)
-    l4 = -1.0D0
-    q5 = -nufac / rad(3)**2
-    q4 = 1.0D0 / rad(3)**2
-    r5 = l5 * q5
-    r4 = -q4
-    k3 = -ey(2) / ey(1)
-    k2 = -1.0D0
-    p3 = -nufac / rad(2)**2
-    p2 = 1.0D0 / rad(2)**2
-    q3 = k3 * p3
-    q2 = -p2
-    p1 = -nufac / rad(1)**2
-
-    !  RHS vector b :
-
-    b(10) = 0.0D0
-    b(9) = 0.0D0
-    b(8) = 0.0D0
-
-    b07 = rmu0 * (1.0D0-nu**2) * j(3)**2 * rad(4)**2/(16.0D0 * ey(3))
-    b(7) = b07 * (4.0D0 * log(rad(4)) + nufac )
-
-    b(6) = b07 * (4.0D0 * log(rad(4)) - 1.0D0)
-
-    b05 = rmu0 * (1.0D0-nu**2) * j(2)**2 * rad(3)**2/(16.0D0 * ey(2))
-    b(5) = b05 * ( (1.0D0 - j(3)/j(2) + j(3)/j(2)* &
-         (rad(4)/rad(3))**2 - (j(3)/j(2))**2* &
-         (rad(4)/rad(3))**2 ) * ( 4.0D0*log(rad(3)) &
-         + 4.0D0/(1.0D0+nu) ) - &
-         ( 1.0D0-( j(3)/j(2) )**2 ) * (3.0D0+nu)/(1.0D0+nu) )
-
-    b(4) = b05 * ( ( 1.0D0 - j(3)/j(2) + j(3)/j(2) * &
-         (rad(4)/rad(3))**2 - (j(3)/j(2))**2 * &
-         (rad(4)/rad(3))**2*ey(2)/ey(3) )*4.0D0*log(rad(3)) - &
-         ( 1.0D0 - (j(3)/j(2))**2*ey(2)/ey(3) ) )
-
-    b03 = rmu0 * (1.0D0 - nu**2) * j(1)**2 * rad(2)**2/ (16.0D0*ey(1) )
-    b(3) = b03 * ( ( 1.0D0 - j(2)/j(1) + (j(2)/j(1) - &
-         j(3)/j(1) ) * (rad(3)/rad(2))**2 + j(3)/j(1) * &
-         (rad(4)/rad(2))**2 - (j(2)/j(1))**2 * (rad(3)/rad(2))**2 &
-         + j(3)/j(1)*j(2)/j(1)*(rad(3)/rad(2))**2 - &
-         j(2)/j(1)*j(3)/j(1)*(rad(4)/rad(2))**2 ) * &
-         ( 4.0D0*log(rad(2)) + 4.0D0/(1.0D0+nu) ) &
-         - (1.0D0 - (j(2)/j(1) )**2 ) * (3.0D0 + nu)/(1.0D0 + nu) )
-
-    b(2) = b03 * ( ( 1.0D0 - j(2)/j(1) + ( j(2)/j(1) - j(3)/j(1) ) * &
-         (rad(3)/rad(2))**2 + j(3)/j(1)*( rad(4)/rad(2) )**2 - &
-         ey(1)/ey(2)*( j(2)/j(1) )**2 * ( rad(3)/rad(2) )**2  + &
-         ey(1)/ey(2) * j(2)/j(1)* j(3)/j(1) * (rad(3)/rad(2) )**2 &
-         - ey(1)/ey(2) * j(2)/j(1) * j(3)/j(1) *(rad(4)/rad(2) )**2 ) &
-         * 4.0D0*log(rad(2)) - ( 1.0D0-ey(1)/ey(2)*(j(2)/j(1))**2 ) )
-
-    b(1) = b03 * ( ( 1.0D0 - j(2)/j(1) + ( j(2)/j(1) - j(3)/j(1) ) * &
-         (rad(3)/rad(2))**2 + j(3)/j(1) * (rad(4)/rad(2) )**2 ) &
-         * (4.0D0*log(rad(1)) + 4.0D0/(1.0D0+nu) ) - &
-         (3.0D0+nu)/(1.0D0+nu) * ( rad(1) / rad(2) )**2 )
-
-    !  LHS matrix A :
-
-    a(:,:) = 0.0D0
-
-    a(1,1) = 1.0D0
-    a(1,6) = p1
-    a(2,1) = 1.0D0
-    a(2,2) = k2
-    a(2,6) = p2
-    a(2,7) = q2
-    a(3,1) = 1.0D0
-    a(3,2) = k3
-    a(3,6) = p3
-    a(3,7) = q3
-    a(4,2) = 1.0D0
-    a(4,3) = l4
-    a(4,7) = q4
-    a(4,8) = r4
-    a(5,2) = 1.0D0
-    a(5,3) = l5
-    a(5,7) = q5
-    a(5,8) = r5
-    a(6,3) = 1.0D0
-    a(6,4) = m6
-    a(6,8) = r6
-    a(6,9) = s6
-    a(7,3) = 1.0D0
-    a(7,4) = m7
-    a(7,8) = r7
-    a(7,9) = s7
-    a(8,4) = 1.0D0
-    a(8,5) = n8
-    a(8,9) = s8
-    a(8,10) = t8
-    a(9,4) = 1.0D0
-    a(9,5) = n9
-    a(9,9) = s9
-    a(9,10) = t9
-    a(10,5) = 1.0D0
-    a(10,10) = t10
-
-    !  Find solution vector c:  A times c = b
-
-    ia = 10 ; call linesolv(a,ia,b,c)
-
-    !  Find stresses in winding pack region
-
-    do i = 1,3
-
-       if (i == 1) then
-          kk2 = rmu0 * (1.0D0 - nu**2) * j(i) / (2.0D0 * ey(i) ) * &
-               ( (j(1) - j(2) )*(rad(2))**2 + (j(2) - j(3)) * &
-               (rad(3))**2 + j(3)*(rad(4))**2 )
-       else if (i == 2) then
-          kk2 = rmu0 * (1.0D0 - nu**2) * j(i) / (2.0D0 * ey(i) ) * &
-               ( (j(2) - j(3)) * (rad(3))**2 + j(3)*(rad(4))**2 )
-       else if (i == 3) then  !  Truncating after the 'else' causes results to change!
-          kk2 = rmu0 * (1.0D0 - nu**2) * j(i) / (2.0D0 * ey(i) ) * &
-               j(3)*(rad(4))**2
-       end if
-
-       kk1 = rmu0 * (1.0D0 - nu**2) * j(i)**2 / (2.0D0 * ey(i))
-
-       sigt(i) = ey(i) / (1.0D0 - nu**2) * ( (1.0D0+nu) * c(i) + &
-            (1.0D0-nu) * c(5+i)/(rad(i+1))**2 + &
-            (1.0D0+3.0D0*nu)/8.0D0*kk1*rad(i+1)**2 &
-            - (1.0D0+nu)/2.0D0*kk2*log(rad(i+1)) - nu*kk2/2.0D0 )
-
-       sigr(i) = ey(i) / (1.0D0 - nu**2) * ( (1.0D0+nu) * c(i) - &
-            (1.0D0-nu) * c(5+i)/(rad(i+1))**2 + &
-            (3.0D0+nu)/8.0D0*kk1*(rad(i+1))**2 &
-            - (1.0D0+nu)/2.0D0*kk2*log(rad(i+1)) - kk2/2.0D0 )
-
-    end do
-
-    !  Stress in rings
-    !  In practice, sigr(4) and sigr(5) are always close to zero...
-
-    do i = 4,5
-       sigr(i) = ey(i) / (1.0D0 - nu**2) * ( (1.0D0+nu)*c(i) - &
-            (1.0D0-nu) * c(5+i)/(rad(i+1))**2 )
-       sigt(i) = ey(i) / (1.0D0 - nu**2) * ( (1.0D0+nu)*c(i) + &
-            (1.0D0-nu) * c(5+i)/(rad(i+1))**2 )
-    end do
-
-    !  Deflection
-
-    deflect = c(5) * rad(6) + c(10)/rad(6)
-
-  end subroutine myall_stress
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1132,7 +840,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function eyngeff(model,estl,eins,ewp,erp,trp,tins,teff,tstl,tcs)
+  function eyngeff(estl,eins,ewp,erp,trp,tins,teff,tstl,tcs)
 
     !+ad_name  eyngeff
     !+ad_summ  Finds the effective Young's modulus of the TF coil winding pack
@@ -1141,7 +849,6 @@ contains
     !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_auth  J Galambos, FEDC/ORNL
     !+ad_cont  N/A
-    !+ad_args  model : input integer : stress model; 1 = original, 2 = two-layer
     !+ad_args  estl : input real : Young's modulus of steel (Pa)
     !+ad_args  eins : input real : Young's modulus of insulator (Pa)
     !+ad_args  ewp  : input real : Young's modulus of windings (Pa)
@@ -1153,8 +860,6 @@ contains
     !+ad_args  tcs  : input real : dimension of cable space area inside conduit (m)
     !+ad_desc  This routine calculates the effective Young's modulus (Pa)
     !+ad_desc  of the TF coil in the winding pack section.
-    !+ad_desc  <P>Model 1 was programmed by J. Galambos from a Lotus spreadsheet
-    !+ad_desc  by J. Miller.
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  09/05/91 JG  Initial version
@@ -1162,6 +867,7 @@ contains
     !+ad_hist  30/04/14 PJK/JM Modifications for two-layer stress model
     !+ad_hist  07/05/14 PJK Changed trp comment; modified new model so that
     !+ad_hisc               only conduit and radial plate regions contribute
+    !+ad_hist  16/09/14 PJK Removed model switch and old (Galambos/Myall) calculation
     !+ad_stat  Okay
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
@@ -1173,38 +879,23 @@ contains
 
     !  Arguments
 
-    integer, intent(in) :: model
     real(kind(1.0D0)), intent(in) :: estl,eins,ewp,erp,trp,tins,teff,tstl,tcs
 
     !  Local variables
 
-    real(kind(1.0D0)) :: ed,tcond,ttot
+    real(kind(1.0D0)) :: ed,ttot
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if (model == 1) then
+    !  Total thickness of a turn with radial plates
 
-       !  Thickness of cable area + conduit
+    ttot = tcs + 2.0D0*(trp + tins + tstl)
 
-       tcond = teff - 2.0D0 * tins
+    !  See Figure 8 and Section III.4, Morris
 
-       eyngeff = 2.0D0*eins*tins/teff + &
-            2.0D0*eins*estl*tstl / (eins*tcond + 2.0D0*tins*estl) + &
-            estl*eins*ewp*tcs / (estl*eins*tcs + 2.0D0*tins*eins*estl + &
-            2.0D0*tins*estl*ewp)
-    else
+    ed = ttot / (2.0D0*trp/erp + 2.0D0*tins/eins + (tcs+2.0D0*tstl)/estl)
 
-       !  Total thickness of a turn with radial plates
-
-       ttot = tcs + 2.0D0*(trp + tins + tstl)
-
-       !  See Figure 8 and Section III.4, Morris
-
-       ed = ttot / (2.0D0*trp/erp + 2.0D0*tins/eins + (tcs+2.0D0*tstl)/estl)
-
-       eyngeff = 1.0D0/ttot * ( 2.0D0*trp*erp + 2.0D0*tstl*ed )
-
-    end if
+    eyngeff = 1.0D0/ttot * ( 2.0D0*trp*erp + 2.0D0*tstl*ed )
 
   end function eyngeff
 
@@ -1808,9 +1499,9 @@ contains
     call ovarre(outfile,'Outboard leg case area per coil (m2)','(acasetfo)',acasetfo)
     call ovarre(outfile,'External case mass per coil (kg)','(whtcas)',whtcas)
 
-    if (tfc_model == 1) then
-       call osubhd(outfile,'TF Coil Stresses (Myall 5-layer model) :')
-    else if (tfc_model == 2) then
+    if (tfc_model == 0) then
+       call osubhd(outfile,'TF Coil Stresses (solid copper coil model) :')
+    else
        call osubhd(outfile,'TF Coil Stresses (CCFE two-layer model) :')
     end if
     call ovarin(outfile,'TF coil model','(tfc_model)',tfc_model)
@@ -1819,16 +1510,13 @@ contains
     call ovarre(outfile,'Conduit tangential stress (Pa)','(sigtcon)',sigtcon)
     call ovarre(outfile,'Conduit Von Mises combination stress (Pa)','(strtf1)',strtf1)
     if (tfc_model == 1) then
-       call ovarre(outfile,'Case radial stress (Pa)','(sigrtf(5))',sigrtf(5))
-       call ovarre(outfile,'Case tangential stress (Pa)','(sigttf(5))',sigttf(5))
-    else if (tfc_model == 2) then
        call ovarre(outfile,'Case radial stress (Pa)','(sigrtf(1))',sigrtf(1))
        call ovarre(outfile,'Case tangential stress (Pa)','(sigttf(1))',sigttf(1))
     end if
     call ovarre(outfile,'Case Von Mises combination stress (Pa)','(strtf2)',strtf2)
     call ovarre(outfile,'Allowable stress (Pa)','(alstrtf)',alstrtf)
     call ovarre(outfile,'Deflection at midplane (m)','(deflect)',deflect)
-    if (tfc_model == 2) then
+    if (tfc_model == 1) then
        call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', &
             eyzwp)
        call ovarre(outfile,'Vertical strain on winding pack','(windstrain)', &
