@@ -56,6 +56,7 @@ module numerics
   !+ad_hist  08/07/14 PJK Added verbose from global_variables
   !+ad_hist  31/07/14 PJK Labelled constraints 57 and 58 as obsolete,
   !+ad_hisc               also iteration variables 99, 100
+  !+ad_hist  17/09/14 PJK Changed default values
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -80,49 +81,49 @@ module numerics
   integer, parameter :: ipvp1   = ipnvars+1
 
   !+ad_vars  ioptimz /1/ : code operation switch:<UL>
-  !+ad_varc           <LI> < 0 for no optimisation, HYBRD only;
-  !+ad_varc           <LI> = 0 for HYBRD and VMCON (not recommended);
-  !+ad_varc           <LI> > 0 for optimisation, VMCON only</UL>
+  !+ad_varc           <LI> = -1 for no optimisation, HYBRD only;
+  !+ad_varc           <LI> = 0  for HYBRD and VMCON (not recommended);
+  !+ad_varc           <LI> = 1  for optimisation, VMCON only</UL>
   integer :: ioptimz = 1
   !+ad_vars  maxcal /200/ : maximum number of VMCON iterations
-  integer :: maxcal  = 200
-  !+ad_vars  minmax /6/ : switch for figure-of-merit (see lablmm for descriptions)
+  integer :: maxcal = 200
+  !+ad_vars  minmax /7/ : switch for figure-of-merit (see lablmm for descriptions)
   !+ad_varc               negative => maximise, positive => minimise
-  integer :: minmax  = 6
+  integer :: minmax = 7
   !+ad_vars  ncalls : number of function calls during solution
-  integer :: ncalls  = 0
-  !+ad_vars  neqns /14/ : number of equality constraints root solver must satisfy
-  integer :: neqns   = 14
+  integer :: ncalls = 0
+  !+ad_vars  neqns /14/ : number of equality constraints to be satisfied
+  integer :: neqns = 14
   !+ad_vars  nfev1 : number of calls to FCNHYB (HYBRD function caller) made
-  integer :: nfev1   = 0
+  integer :: nfev1 = 0
   !+ad_vars  nfev2 : number of calls to FCNVMC1 (VMCON function caller) made
-  integer :: nfev2   = 0
+  integer :: nfev2 = 0
   !+ad_vars  nineqns /0/ : number of inequality constraints VMCON must satisfy
   !+ad_varc                (leave at zero for now)
   integer :: nineqns = 0
-  !+ad_vars  nvar /25/ : number of iteration (independent) variables
-  integer :: nvar    = 25
+  !+ad_vars  nvar /16/ : number of iteration variables to use
+  integer :: nvar = 16
   !+ad_vars  nviter : number of VMCON iterations performed
   integer :: nviter = 0
 
-  !+ad_vars  icc(ipeqns) /2,10,11,24,31,32,33,34,35,36,1,7,14,16/ :
-  !+ad_varc                array defining which constraint equations to activate
-  !+ad_varc                (see lablcc for descriptions)
+  !+ad_vars  icc(ipeqns) /1,2,5,7,9,10,11,14,17,24,27,33,35,36/ :
+  !+ad_varc           array defining which constraint equations to activate
+  !+ad_varc           (see lablcc for descriptions)
   integer, dimension(ipeqns) :: icc = (/ &
-       2,  &  !  1
-       10, &  !  2
-       11, &  !  3
-       24, &  !  4
-       31, &  !  5
-       32, &  !  6
-       33, &  !  7
-       34, &  !  8
-       35, &  !  9
-       36, &  !  10
-       1,  &  !  11
-       7,  &  !  12
-       14, &  !  13
-       16, &  !  14
+       1,  &  !  1
+       2,  &  !  2
+       5,  &  !  3
+       7,  &  !  4
+       9,  &  !  5
+       10, &  !  6
+       11, &  !  7
+       14, &  !  8
+       17, &  !  9
+       24, &  !  10
+       27, &  !  11
+       33, &  !  12
+       35, &  !  13
+       36, &  !  14
        0,  &  !  15
        0,  &  !  16
        0,  &  !  17
@@ -169,35 +170,35 @@ module numerics
        0   &  !  58
        /)
 
-  !+ad_vars  ixc(ipnvars) /10,12,3,36,48,49,50,51,53,54,5,7,19,1,2,6,13,16,29,56,57,58,59,60,4/ :
-  !+ad_varc                 array defining which iteration variables to activate
-  !+ad_varc                 (see lablxc for descriptions)
+  !+ad_vars  ixc(ipnvars) /4,5,6,7,10,12,13,19,28,29,36,39,50,53,54,61/ :
+  !+ad_varc               array defining which iteration variables to activate
+  !+ad_varc               (see lablxc for descriptions)
   integer, dimension(ipnvars) :: ixc = (/ &
-       10, &  !  1
-       12, &  !  2
-       3,  &  !  3
-       36, &  !  4
-       48, &  !  5
-       49, &  !  6
-       50, &  !  7
-       51, &  !  8
-       53, &  !  9
-       54, &  !  10
-       5,  &  !  11
-       7,  &  !  12
-       19, &  !  13
-       1,  &  !  14
-       2,  &  !  15
-       6,  &  !  16
-       13, &  !  17
-       16, &  !  18
-       29, &  !  19
-       56, &  !  20
-       57, &  !  21
-       58, &  !  22
-       59, &  !  23
-       60, &  !  24
-       4,  &  !  25
+       4,  &  !  1
+       5,  &  !  2
+       6,  &  !  3
+       7,  &  !  4
+       10, &  !  5
+       12, &  !  6
+       13, &  !  7
+       19, &  !  8
+       28, &  !  9
+       29, &  !  10
+       36, &  !  11
+       39, &  !  12
+       50, &  !  13
+       53, &  !  14
+       54, &  !  15
+       61, &  !  16
+       0,  &  !  17
+       0,  &  !  18
+       0,  &  !  19
+       0,  &  !  20
+       0,  &  !  21
+       0,  &  !  22
+       0,  &  !  23
+       0,  &  !  24
+       0,  &  !  25
        0,  &  !  26
        0,  &  !  27
        0,  &  !  28
@@ -288,15 +289,15 @@ module numerics
        'Ion power balance                ', &
        !+ad_varc  <LI> ( 4) Electron power balance
        'Electron power balance           ', &
-       !+ad_varc  <LI> ( 5) Density upper limit
+       !+ad_varc  <LI> ( 5) * Density upper limit
        'Density upper limit              ', &
-       !+ad_varc  <LI> ( 6) Epsilon * beta poloidal upper limit
-       'Epsilon * beta-pol upper limit   ', &
+       !+ad_varc  <LI> ( 6) (Epsilon x beta poloidal) upper limit
+       '(Epsilon x beta-pol) upper limit ', &
        !+ad_varc  <LI> ( 7) * Beam ion density (NBI) (consistency equation)
        'Beam ion density consistency     ', &
        !+ad_varc  <LI> ( 8) Neutron wall load upper limit
        'Neutron wall load upper limit    ', &
-       !+ad_varc  <LI> ( 9) Fusion power upper limit
+       !+ad_varc  <LI> ( 9) * Fusion power upper limit
        'Fusion power upper limit         ', &
        !+ad_varc  <LI> (10) * Toroidal field 1/R (consistency equation)
        'Toroidal field 1/R consistency   ', &
@@ -310,9 +311,9 @@ module numerics
        'Neutral beam energy consistency  ', &
        !+ad_varc  <LI> (15) UNUSED
        'UNUSED                           ', &
-       !+ad_varc  <LI> (16) * Net electric power lower limit
+       !+ad_varc  <LI> (16) Net electric power lower limit
        'Net electric power lower limit   ', &
-       !+ad_varc  <LI> (17) Radiation power upper limit
+       !+ad_varc  <LI> (17) * Radiation power upper limit
        'Radiation power upper limit      ', &
        !+ad_varc  <LI> (18) Divertor heat load upper limit
        'Divertor heat load upper limit   ', &
@@ -332,7 +333,7 @@ module numerics
        'Peak toroidal field upper limit  ', &
        !+ad_varc  <LI> (26) OH coil EOF current density upper limit
        'OH coil EOF current density limit', &
-       !+ad_varc  <LI> (27) OH coil BOP current density upper limit
+       !+ad_varc  <LI> (27) * OH coil BOP current density upper limit
        'OH coil BOP current density limit', &
        !+ad_varc  <LI> (28) Fusion gain Q lower limit
        'Fusion gain Q lower limit        ', &
@@ -340,13 +341,13 @@ module numerics
        'Inboard radial build consistency ', &
        !+ad_varc  <LI> (30) Injection power upper limit
        'Injection power upper limit      ', &
-       !+ad_varc  <LI> (31) * TF coil case stress upper limit (SCTF)
+       !+ad_varc  <LI> (31) TF coil case stress upper limit (SCTF)
        'TF coil case stress upper limit  ', &
-       !+ad_varc  <LI> (32) * TF coil conduit stress upper limit (SCTF)
+       !+ad_varc  <LI> (32) TF coil conduit stress upper limit (SCTF)
        'TF coil conduit stress upper lim ', &
        !+ad_varc  <LI> (33) * I_op / I_critical (TF coil) (SCTF)
        'I_op / I_critical (TF coil)      ', &
-       !+ad_varc  <LI> (34) * Dump voltage upper limit (SCTF)
+       !+ad_varc  <LI> (34) Dump voltage upper limit (SCTF)
        'Dump voltage upper limit         ', &
        !+ad_varc  <LI> (35) * J_winding pack/J_protection upper limit (SCTF)
        'J_winding pack/J_protection limit', &
@@ -437,11 +438,11 @@ module numerics
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
   character(len=9), dimension(ipnvars) :: lablxc = (/ &
-       !+ad_varc  <LI> ( 1) * aspect
+       !+ad_varc  <LI> ( 1) aspect
        'aspect   ', &
-       !+ad_varc  <LI> ( 2) * bt
+       !+ad_varc  <LI> ( 2) bt
        'bt       ', &
-       !+ad_varc  <LI> ( 3) * rmajor
+       !+ad_varc  <LI> ( 3) rmajor
        'rmajor   ', &
        !+ad_varc  <LI> ( 4) * te
        'te       ', &
@@ -467,13 +468,13 @@ module numerics
        'fwalld   ', &
        !+ad_varc  <LI> (15) fvs (f-value for equation 12)
        'fvs      ', &
-       !+ad_varc  <LI> (16) * ohcth
+       !+ad_varc  <LI> (16) ohcth
        'ohcth    ', &
        !+ad_varc  <LI> (17) tdwell
        'tdwell   ', &
        !+ad_varc  <LI> (18) q
        'q        ', &
-       !+ad_varc  <LI> (19) * enbeam
+       !+ad_varc  <LI> (19) enbeam
        'enbeam   ', &
        !+ad_varc  <LI> (20) tcpav
        'tcpav    ', &
@@ -491,7 +492,7 @@ module numerics
        'ffuspow  ', &
        !+ad_varc  <LI> (27) fhldiv (f-value for equation 18)
        'fhldiv   ', &
-       !+ad_varc  <LI> (28) fradpwr (f-value for equation 17)
+       !+ad_varc  <LI> (28) * fradpwr (f-value for equation 17)
        'fradpwr  ', &
        !+ad_varc  <LI> (29) * bore
        'bore     ', &
@@ -513,7 +514,7 @@ module numerics
        'coheof   ', &
        !+ad_varc  <LI> (38) fjohc (f-value for equation 26)
        'fjohc    ', &
-       !+ad_varc  <LI> (39) fjohc0 (f-value for equation 27)
+       !+ad_varc  <LI> (39) * fjohc0 (f-value for equation 27)
        'fjohc0   ', &
        !+ad_varc  <LI> (40) fgamcd (f-value for equation 37)
        'fgamcd   ', &
@@ -531,13 +532,13 @@ module numerics
        'fpinj    ', &
        !+ad_varc  <LI> (47) feffcd
        'feffcd   ', &
-       !+ad_varc  <LI> (48) * fstrcase (f-value for equation 31)
+       !+ad_varc  <LI> (48) fstrcase (f-value for equation 31)
        'fstrcase ', &
-       !+ad_varc  <LI> (49) * fstrcond (f-value for equation 32)
+       !+ad_varc  <LI> (49) fstrcond (f-value for equation 32)
        'fstrcond ', &
        !+ad_varc  <LI> (50) * fiooic (f-value for equation 33)
        'fiooic   ', &
-       !+ad_varc  <LI> (51) * fvdump (f-value for equation 34)
+       !+ad_varc  <LI> (51) fvdump (f-value for equation 34)
        'fvdump   ', &
        !+ad_varc  <LI> (52) vdalw
        'vdalw    ', &
@@ -547,17 +548,17 @@ module numerics
        'ftmargtf ', &
        !+ad_varc  <LI> (55) tmargmin
        'tmargmin ', &
-       !+ad_varc  <LI> (56) * tdmptf
+       !+ad_varc  <LI> (56) tdmptf
        'tdmptf   ', &
-       !+ad_varc  <LI> (57) * thkcas
+       !+ad_varc  <LI> (57) thkcas
        'thkcas   ', &
-       !+ad_varc  <LI> (58) * thwcndut
+       !+ad_varc  <LI> (58) thwcndut
        'thwcndut ', &
-       !+ad_varc  <LI> (59) * fcutfsu
+       !+ad_varc  <LI> (59) fcutfsu
        'fcutfsu  ', &
-       !+ad_varc  <LI> (60) * cpttf
+       !+ad_varc  <LI> (60) cpttf
        'cpttf    ', &
-       !+ad_varc  <LI> (61) gapds
+       !+ad_varc  <LI> (61) * gapds
        'gapds    ', &
        !+ad_varc  <LI> (62) fdtmp (f-value for equation 38)
        'fdtmp    ', &
@@ -647,8 +648,8 @@ module numerics
   real(kind(1.0D0)) :: sqsumsq = 0.0D0
   !+ad_vars  epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON derivatives
   real(kind(1.0D0)) :: epsfcn = 1.0D-3
-  !+ad_vars  epsvmc /1.0e-3/ : error tolerance for VMCON
-  real(kind(1.0D0)) :: epsvmc = 1.0D-3
+  !+ad_vars  epsvmc /1.0e-6/ : error tolerance for VMCON
+  real(kind(1.0D0)) :: epsvmc = 1.0D-6
   !+ad_vars  factor /0.1/ : used in HYBRD for first step size
   real(kind(1.0D0)) :: factor = 0.1D0
   !+ad_vars  ftol /1.0e-4/ : error tolerance for HYBRD
@@ -669,7 +670,7 @@ module numerics
        0.100D0, &  !  10
        1.00D-3, &  !  11
        1.000D5, &  !  12
-       0.100D0, &  !  13
+       1.000D0, &  !  13
        0.001D0, &  !  14
        0.001D0, &  !  15
        0.001D0, &  !  16

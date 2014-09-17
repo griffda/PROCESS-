@@ -34,6 +34,7 @@ module impurity_radiation_module
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  03/09/14 HL  Added average atomic charge values to data;
   !+ad_hisc               changed directory containing datafiles
+  !+ad_hist  17/09/14 PJK Changed default values
   !+ad_stat  Okay
   !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
   !+ad_docs  Sertoli, private communication
@@ -57,19 +58,19 @@ module impurity_radiation_module
   !+ad_vars  coreradius /0.9/ : normalised radius defining the 'core' region
   real(kind(1.0D0)), public :: coreradius = 0.9D0
 
-  !+ad_vars  fimp(nimp) /1.0,0.0,.../ : impurity number density fractions relative
-  !+ad_varc                             to electron density
-  !+ad_varc                             (iteration variable 102 is fimp(impvar))
+  !+ad_vars  fimp(nimp) /1.0,0.1,0.02,0.0,0.0,0.0,0.0,0.0,0.0016,0.0,0.0,0.0,0.0,0.0/ :
+  !+ad_varc         impurity number density fractions relative to electron density
+  !+ad_varc         (iteration variable 102 is fimp(impvar))
   real(kind(1.0D0)), public, dimension(nimp) :: fimp = &
-       (/ 1.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
-       0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
+       (/ 1.0D0, 0.1D0, 0.02D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
+       0.0D0, 0.0016D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
   !+ad_vars  imp_label(nimp) /.../ FIX : impurity ion species:<UL>
   character(len=2), public, dimension(nimp) :: imp_label = (/ &
   !+ad_varc  <LI> ( 1)  Hydrogen  (fraction calculated by code)
        'H_', &
   !+ad_varc  <LI> ( 2)  Helium    (fraction calculated by code)
        'He', &
-  !+ad_varc  <LI> ( 3)  Beryllium
+  !+ad_varc  <LI> ( 3)  Beryllium (default fraction 2%)
        'Be', &
   !+ad_varc  <LI> ( 4)  Carbon
        'C_', &
@@ -81,7 +82,7 @@ module impurity_radiation_module
        'Ne', &
   !+ad_varc  <LI> ( 8)  Silicon
        'Si', &
-  !+ad_varc  <LI> ( 9)  Argon
+  !+ad_varc  <LI> ( 9)  Argon (default fraction 0.16%)
        'Ar', &
   !+ad_varc  <LI> (10)  Iron
        'Fe', &
@@ -103,12 +104,12 @@ module impurity_radiation_module
   character(len=60), public :: impdir = &
        '/home/pknight/process/branches/develop/impuritydata/'
 
-  !+ad_vars  imprad_model /0/ : switch for impurity radiation model:<UL>
+  !+ad_vars  imprad_model /1/ : switch for impurity radiation model:<UL>
   !+ad_varc               <LI>  = 0 original ITER 1989 model
   !+ad_varc               <LI>  = 1 impurity profile model</UL>
   !+ad_varc  (Whichever model is used, it is recommended to turn on
   !+ad_varc  constraint eqn.17 with iteration variable 28: fradpwr.)
-  integer, public :: imprad_model = 0
+  integer, public :: imprad_model = 1
 
   !+ad_vars  impvar /10 (iron)/ : fimp element value to be varied if iteration
   !+ad_varc                       variable number 102 is turned on

@@ -731,7 +731,7 @@ DICT_IXC_FULL[  '9'] = {'name':'fdene',    'lb':0.001, 'ub':1.}
 DICT_IXC_FULL[ '10'] = {'name':'hfact',    'lb':0.1,   'ub':3.}
 DICT_IXC_FULL[ '11'] = {'name':'pheat',    'lb':0.001, 'ub':1e3}
 DICT_IXC_FULL[ '12'] = {'name':'oacdcp',   'lb':1e5,   'ub':1.5e8}
-DICT_IXC_FULL[ '13'] = {'name':'tfcth',    'lb':0.1,   'ub':5.}
+DICT_IXC_FULL[ '13'] = {'name':'tfcth',    'lb':1.,    'ub':5.}
 DICT_IXC_FULL[ '14'] = {'name':'fwalld',   'lb':0.001, 'ub':1.}
 DICT_IXC_FULL[ '15'] = {'name':'fvs',      'lb':0.001, 'ub':1.}
 DICT_IXC_FULL[ '16'] = {'name':'ohcth',    'lb':0.001, 'ub':1e2}
@@ -837,7 +837,7 @@ DICT_IXC_BOUNDS['fdene']    = {'lb':0.001, 'ub':1.}   #9
 DICT_IXC_BOUNDS['hfact']    = {'lb':0.1,   'ub':3.}   #10
 DICT_IXC_BOUNDS['pheat']    = {'lb':0.001, 'ub':1e3}  #11
 DICT_IXC_BOUNDS['oacdcp']   = {'lb':1e5,   'ub':1.5e8}#12
-DICT_IXC_BOUNDS['tfcth']    = {'lb':0.1,   'ub':5.}   #13
+DICT_IXC_BOUNDS['tfcth']    = {'lb':1.,    'ub':5.}   #13
 DICT_IXC_BOUNDS['fwalld']   = {'lb':0.001, 'ub':1.}   #14
 DICT_IXC_BOUNDS['fvs']      = {'lb':0.001, 'ub':1.}   #15
 DICT_IXC_BOUNDS['ohcth']    = {'lb':0.001, 'ub':1e2}  #16
@@ -963,15 +963,15 @@ DICT_OPTIMISATION_VARS = {1: 'Plasma major radius',
                           15: 'plant availability factor'}
 
 
-DICT_IXC_DEFAULT = {'aspect': 3.5, 'bt': 6.0, 'rmajor': 7.0, 'te': 15.0,
-                    'beta': 0.042, 'dene': 1.5e20, 'rnbeam': 0.005,
-                    'fbeta': 1.0, 'fdene': 1.0, 'hfact': 2.0, 'pheat': 0.0,
-                    'oacdcp': 1.4e7, 'tfcth': 0.9, 'fwalld': 1.0, 'fvs': 1.0,
-                    'ohcth': 0.63, 'tdwell': 100.0, 'q': 3.0, 'enbeam': 1.0e3,
+DICT_IXC_DEFAULT = {'aspect': 2.907, 'bt': 5.68, 'rmajor': 8.14, 'te': 12.9,
+                    'beta': 0.042, 'dene': 9.8e19, 'rnbeam': 0.005,
+                    'fbeta': 1.0, 'fdene': 1.0, 'hfact': 1.0, 'pheat': 0.0,
+                    'oacdcp': 1.4e7, 'tfcth': 1.173, 'fwalld': 1.0, 'fvs': 1.0,
+                    'ohcth': 0.811, 'tdwell': 100.0, 'q': 3.0, 'enbeam': 1.0e3,
                     'tcpav': 100.0, 'ftburn': 1.0, 'tbrnmn': 1.0,
                     'fcoolcp': 0.3, 'cdtfleg': 1.0e6, 'fpnetel': 1.0,
                     'ffuspow': 1.0, 'fhldiv': 1.0, 'fradpwr': 1.0, 'bore': 1.42,
-                    'fmva': 1.0, 'gapomin': 0.21, 'frminor': 1.0, 'fportsz': 1.0,
+                    'fmva': 1.0, 'gapomin': 0.234, 'frminor': 1.0, 'fportsz': 1.0,
                     'fdivcol': 1.0, 'fpeakb': 1.0, 'fbetatry': 1.0,
                     'coheof': 1.85e7, 'fjohc': 1.0, 'fjohc0': 1.0,
                     'fgamcd': 1.0, 'fcohbop': 0.9, 'gapoh': 0.08, 'cfe0': 0.0,
@@ -980,11 +980,11 @@ DICT_IXC_DEFAULT = {'aspect': 3.5, 'bt': 6.0, 'rmajor': 7.0, 'te': 15.0,
                     'fvdump': 1.0, 'vdalw': 20.0, 'fjprot': 1.0,
                     'ftmargtf': 1.0, 'tmargmin': 2.5, 'tdmptf': 10.0,
                     'thkcas': 0.3, 'thwcndut': 3.0e-3, 'fcutfsu': 0.69,
-                    'cpttf': 3.79e4, 'gapds': 0.0, 'fdtmp': 1.0, 'ftpeak': 1.0,
+                    'cpttf': 3.79e4, 'gapds': 0.155, 'fdtmp': 1.0, 'ftpeak': 1.0,
                     'fauxmn': 1.0, 'tohs': 30.0, 'ftohs': 1.0, 'ftcycl': 1.0,
                     'fptemp': 1.0, 'rcool': 0.005, 'vcool': 20.0, 'fq': 1.0,
                     'fipir': 1.0, 'scrapli': 0.14, 'scraplo': 0.15,
-                    'tfootfi': 1.8, 'frfptf': 1.0, 'tftort': 0.33, 'rfpth': 1.5,
+                    'tfootfi': 1.19, 'frfptf': 1.0, 'tftort': 0.33, 'rfpth': 1.5,
                     'fbetap': 1.0, 'frfpf': 1.0, 'edrive': 154.3,
                     'drveff': 0.28, 'tgain': 85.0, 'chrad': 6.5,
                     'pdrive': 23.0e6, 'frrmax': 1.0,
