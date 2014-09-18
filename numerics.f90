@@ -57,6 +57,7 @@ module numerics
   !+ad_hist  31/07/14 PJK Labelled constraints 57 and 58 as obsolete,
   !+ad_hisc               also iteration variables 99, 100
   !+ad_hist  17/09/14 PJK Changed default values
+  !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -87,9 +88,45 @@ module numerics
   integer :: ioptimz = 1
   !+ad_vars  maxcal /200/ : maximum number of VMCON iterations
   integer :: maxcal = 200
+
   !+ad_vars  minmax /7/ : switch for figure-of-merit (see lablmm for descriptions)
   !+ad_varc               negative => maximise, positive => minimise
   integer :: minmax = 7
+  !+ad_vars  lablmm(ipnfoms) : labels describing figures of merit:<UL>
+  character(len=22), dimension(ipnfoms) :: lablmm = (/ &
+       !+ad_varc  <LI> ( 1) major radius
+       'major radius.         ', &
+       !+ad_varc  <LI> ( 2) P_fus P_in-total
+       'P_fus P_in-total.     ', &
+       !+ad_varc  <LI> ( 3) neutron wall load
+       'neutron wall load.    ', &
+       !+ad_varc  <LI> ( 4) P_tf + P_pf
+       'P_tf + P_pf.          ', &
+       !+ad_varc  <LI> ( 5) fusion gain Q
+       'fusion gain.          ', &
+       !+ad_varc  <LI> ( 6) cost of electricity
+       'cost of electricity.  ', &
+       !+ad_varc  <LI> ( 7) capital cost (direct cost if ireactor=0,
+       !+ad_varc                          constructed cost otherwise)
+       'capital cost.         ', &
+       !+ad_varc  <LI> ( 8) aspect ratio
+       'aspect ratio.         ', &
+       !+ad_varc  <LI> ( 9) divertor heat load
+       'divertor heat load.   ', &
+       !+ad_varc  <LI> (10) toroidal field
+       'toroidal field.       ', &
+       !+ad_varc  <LI> (11) total injected power
+       'total injected power. ', &
+       !+ad_varc  <LI> (12) hydrogen plant capital cost
+       'H plant capital cost. ', &
+       !+ad_varc  <LI> (13) hydrogen production rate
+       'H production rate.    ', &
+       !+ad_varc  <LI> (14) pulse length
+       'pulse length.         ', &
+       !+ad_varc  <LI> (15) plant availability factor (N.B. requires
+       !+ad_varc            iavail=1 to be set) </UL>
+       'plant availability.   ' /)
+
   !+ad_vars  ncalls : number of function calls during solution
   integer :: ncalls = 0
   !+ad_vars  neqns /14/ : number of equality constraints to be satisfied
@@ -169,115 +206,6 @@ module numerics
        0,  &  !  57
        0   &  !  58
        /)
-
-  !+ad_vars  ixc(ipnvars) /4,5,6,7,10,12,13,19,28,29,36,39,50,53,54,61/ :
-  !+ad_varc               array defining which iteration variables to activate
-  !+ad_varc               (see lablxc for descriptions)
-  integer, dimension(ipnvars) :: ixc = (/ &
-       4,  &  !  1
-       5,  &  !  2
-       6,  &  !  3
-       7,  &  !  4
-       10, &  !  5
-       12, &  !  6
-       13, &  !  7
-       19, &  !  8
-       28, &  !  9
-       29, &  !  10
-       36, &  !  11
-       39, &  !  12
-       50, &  !  13
-       53, &  !  14
-       54, &  !  15
-       61, &  !  16
-       0,  &  !  17
-       0,  &  !  18
-       0,  &  !  19
-       0,  &  !  20
-       0,  &  !  21
-       0,  &  !  22
-       0,  &  !  23
-       0,  &  !  24
-       0,  &  !  25
-       0,  &  !  26
-       0,  &  !  27
-       0,  &  !  28
-       0,  &  !  29
-       0,  &  !  30
-       0,  &  !  31
-       0,  &  !  32
-       0,  &  !  33
-       0,  &  !  34
-       0,  &  !  35
-       0,  &  !  36
-       0,  &  !  37
-       0,  &  !  38
-       0,  &  !  39
-       0,  &  !  40
-       0,  &  !  41
-       0,  &  !  42
-       0,  &  !  43
-       0,  &  !  44
-       0,  &  !  45
-       0,  &  !  46
-       0,  &  !  47
-       0,  &  !  48
-       0,  &  !  49
-       0,  &  !  50
-       0,  &  !  51
-       0,  &  !  52
-       0,  &  !  53
-       0,  &  !  54
-       0,  &  !  55
-       0,  &  !  56
-       0,  &  !  57
-       0,  &  !  58
-       0,  &  !  59
-       0,  &  !  60
-       0,  &  !  61
-       0,  &  !  62
-       0,  &  !  63
-       0,  &  !  64
-       0,  &  !  65
-       0,  &  !  66
-       0,  &  !  67
-       0,  &  !  68
-       0,  &  !  69
-       0,  &  !  70
-       0,  &  !  71
-       0,  &  !  72
-       0,  &  !  73
-       0,  &  !  74
-       0,  &  !  75
-       0,  &  !  76
-       0,  &  !  77
-       0,  &  !  78
-       0,  &  !  79
-       0,  &  !  80
-       0,  &  !  81
-       0,  &  !  82
-       0,  &  !  83
-       0,  &  !  84
-       0,  &  !  85
-       0,  &  !  86
-       0,  &  !  87
-       0,  &  !  88
-       0,  &  !  89
-       0,  &  !  90
-       0,  &  !  91
-       0,  &  !  92
-       0,  &  !  93
-       0,  &  !  94
-       0,  &  !  95
-       0,  &  !  96
-       0,  &  !  97
-       0,  &  !  98
-       0,  &  !  99
-       0,  &  !  100
-       0,  &  !  101
-       0   &  !  102
-       /)
-
   !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
   !+ad_varc                   (starred ones are turned on by default):<UL>
   character(len=33), dimension(ipeqns) :: lablcc = (/ &
@@ -400,41 +328,113 @@ module numerics
        'TF coil leg rad width lower limit'  &
        /)
 
-  !+ad_vars  lablmm(ipnfoms) : labels describing figures of merit:<UL>
-  character(len=22), dimension(ipnfoms) :: lablmm = (/ &
-       !+ad_varc  <LI> ( 1) major radius
-       'major radius.         ', &
-       !+ad_varc  <LI> ( 2) P_fus P_in-total
-       'P_fus P_in-total.     ', &
-       !+ad_varc  <LI> ( 3) neutron wall load
-       'neutron wall load.    ', &
-       !+ad_varc  <LI> ( 4) P_tf + P_pf
-       'P_tf + P_pf.          ', &
-       !+ad_varc  <LI> ( 5) fusion gain Q
-       'fusion gain.          ', &
-       !+ad_varc  <LI> ( 6) cost of electricity
-       'cost of electricity.  ', &
-       !+ad_varc  <LI> ( 7) capital cost (direct cost if ireactor=0,
-       !+ad_varc                          constructed cost otherwise)
-       'capital cost.         ', &
-       !+ad_varc  <LI> ( 8) aspect ratio
-       'aspect ratio.         ', &
-       !+ad_varc  <LI> ( 9) divertor heat load
-       'divertor heat load.   ', &
-       !+ad_varc  <LI> (10) toroidal field
-       'toroidal field.       ', &
-       !+ad_varc  <LI> (11) total injected power
-       'total injected power. ', &
-       !+ad_varc  <LI> (12) hydrogen plant capital cost
-       'H plant capital cost. ', &
-       !+ad_varc  <LI> (13) hydrogen production rate
-       'H production rate.    ', &
-       !+ad_varc  <LI> (14) pulse length
-       'pulse length.         ', &
-       !+ad_varc  <LI> (15) plant availability factor (N.B. requires
-       !+ad_varc            iavail=1 to be set) </UL>
-       'plant availability.   ' /)
-
+  !+ad_vars  ixc(ipnvars) /4,5,6,7,10,12,13,19,28,29,36,39,50,53,54,61/ :
+  !+ad_varc               array defining which iteration variables to activate
+  !+ad_varc               (see lablxc for descriptions)
+  integer, dimension(ipnvars) :: ixc = (/ &
+       4,  &  !  1
+       5,  &  !  2
+       6,  &  !  3
+       7,  &  !  4
+       10, &  !  5
+       12, &  !  6
+       13, &  !  7
+       19, &  !  8
+       28, &  !  9
+       29, &  !  10
+       36, &  !  11
+       39, &  !  12
+       50, &  !  13
+       53, &  !  14
+       54, &  !  15
+       61, &  !  16
+       0,  &  !  17
+       0,  &  !  18
+       0,  &  !  19
+       0,  &  !  20
+       0,  &  !  21
+       0,  &  !  22
+       0,  &  !  23
+       0,  &  !  24
+       0,  &  !  25
+       0,  &  !  26
+       0,  &  !  27
+       0,  &  !  28
+       0,  &  !  29
+       0,  &  !  30
+       0,  &  !  31
+       0,  &  !  32
+       0,  &  !  33
+       0,  &  !  34
+       0,  &  !  35
+       0,  &  !  36
+       0,  &  !  37
+       0,  &  !  38
+       0,  &  !  39
+       0,  &  !  40
+       0,  &  !  41
+       0,  &  !  42
+       0,  &  !  43
+       0,  &  !  44
+       0,  &  !  45
+       0,  &  !  46
+       0,  &  !  47
+       0,  &  !  48
+       0,  &  !  49
+       0,  &  !  50
+       0,  &  !  51
+       0,  &  !  52
+       0,  &  !  53
+       0,  &  !  54
+       0,  &  !  55
+       0,  &  !  56
+       0,  &  !  57
+       0,  &  !  58
+       0,  &  !  59
+       0,  &  !  60
+       0,  &  !  61
+       0,  &  !  62
+       0,  &  !  63
+       0,  &  !  64
+       0,  &  !  65
+       0,  &  !  66
+       0,  &  !  67
+       0,  &  !  68
+       0,  &  !  69
+       0,  &  !  70
+       0,  &  !  71
+       0,  &  !  72
+       0,  &  !  73
+       0,  &  !  74
+       0,  &  !  75
+       0,  &  !  76
+       0,  &  !  77
+       0,  &  !  78
+       0,  &  !  79
+       0,  &  !  80
+       0,  &  !  81
+       0,  &  !  82
+       0,  &  !  83
+       0,  &  !  84
+       0,  &  !  85
+       0,  &  !  86
+       0,  &  !  87
+       0,  &  !  88
+       0,  &  !  89
+       0,  &  !  90
+       0,  &  !  91
+       0,  &  !  92
+       0,  &  !  93
+       0,  &  !  94
+       0,  &  !  95
+       0,  &  !  96
+       0,  &  !  97
+       0,  &  !  98
+       0,  &  !  99
+       0,  &  !  100
+       0,  &  !  101
+       0   &  !  102
+       /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
   character(len=9), dimension(ipnvars) :: lablxc = (/ &
@@ -474,7 +474,7 @@ module numerics
        'tdwell   ', &
        !+ad_varc  <LI> (18) q
        'q        ', &
-       !+ad_varc  <LI> (19) enbeam
+       !+ad_varc  <LI> (19) * enbeam
        'enbeam   ', &
        !+ad_varc  <LI> (20) tcpav
        'tcpav    ', &

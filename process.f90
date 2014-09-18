@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '330    Release Date :: 2014-09-17'
+       '330    Release Date :: 2014-09-18'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1814,3 +1814,4 @@ end subroutine output
 ! GIT 329: Added tfcryoarea in advance of a change to the steady state cryogenic load calculation
 ! GIT 330: Removed Myall TF coil stress model; tfc_model switch usage changed
 ! GIT (new_defaults branch): Changed default values to approximate ITER-FDR (ITER98) design
+! GIT (new_defaults branch): Updated/re-ordered variable descriptions

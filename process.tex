@@ -654,8 +654,8 @@ no. & description                                               & type & \texttt
 23  & UNUSED                                                    &      & \\
 24  & Beta upper limit (also beta limit in stellarators)        & L    & \textbf{36},1,2,3,4,6,18 \\
 25  & peak toroidal field upper limit                           & L    & \textbf{35},3,13,29 \\
-26  & OH coil current density at End of Flat-top upper limit    & L    & \textbf{38},37,41,12 \\
-27  & OH coil current density at Beginning of Pulse upper limit & L    & \textbf{39},37,41,12 \\
+26  & central solenoid current density at End of Flat-top upper limit    & L    & \textbf{38},37,41,12 \\
+27  & central solenoid current density at Beginning of Pulse upper limit & L    & \textbf{39},37,41,12 \\
 28  & fusion gain $Q$ lower limit                               & L    & \textbf{45},47,40 \\
 29  & inboard radial build = specified value                    & C    & \textbf{3},1,13,16,29,42,61 \\
 30  & injection power upper limit                               & L    & \textbf{46},47,11 \\
@@ -671,7 +671,7 @@ J_{\mbox{\scriptsize protection}}$ upper limit (SCTF)                   & L    &
 38  & first wall coolant temperature rise upper limit (PULSE)   & L    & \textbf{62} \\
 39  & first wall peak temperature upper limit (PULSE)           & L    & \textbf{63} \\
 40  & injection power lower limit (PULSE)                       & L    & \textbf{64} \\
-41  & OH coil current ramp-up time lower limit (PULSE)          & L    & \textbf{66},65 \\
+41  & central solenoid current ramp-up time lower limit (PULSE) & L    & \textbf{66},65 \\
 42  & cycle time lower limit (PULSE)                            & L    & \textbf{67},65,17 \\
 43  & average centrepost temperature (TART)                     & C    & \textbf{69},70,13 \\
 44  & peak centrepost temperature upper limit (TART)            & L    & \textbf{68},69,70 \\
@@ -765,7 +765,7 @@ no. & variable name     & description                                   & eqn & 
 13  & \texttt{tfcth}    & TF coil inboard leg thickness                 &     & \texttt{1.000D0} & \texttt{5.000D0} \\
 14  & \texttt{fwalld}   & f-value for wall load limit equation          & 8   & \texttt{0.001D0} & \texttt{1.000D0} \\
 15  & \texttt{fvs}      & f-value for volt second limit equation        & 12  & \texttt{0.001D0} & \texttt{1.000D0} \\
-16  & \texttt{ohcth}    & OH coil thickness                             &     & \texttt{0.001D0} & \texttt{1.000D2} \\
+16  & \texttt{ohcth}    & central solenoid thickness                    &     & \texttt{0.001D0} & \texttt{1.000D2} \\
 17  & \texttt{tdwell}   & dwell time                                    &     & \texttt{0.100D0} & \texttt{1.000D8} \\
 18  & \texttt{q}        & edge safety factor                            &     & \texttt{2.000D0} & \texttt{100.0D0} \\
 19  & \texttt{enbeam}   & neutral beam energy                           &     & \texttt{1.000D0} & \texttt{1.000D6} \\
@@ -786,14 +786,14 @@ no. & variable name     & description                                   & eqn & 
 34  & \texttt{fdivcol}  & f-value for divertor collisionality limit equation & 22  & \texttt{0.001D0} & \texttt{1.000D0} \\
 35  & \texttt{fpeakb}   & f-value for peak toroidal field limit equation & 25  & \texttt{0.001D0} & \texttt{1.000D0} \\
 36  & \texttt{fbetatry} & f-value for beta limit equation               & 24  & \texttt{0.001D0} & \texttt{1.000D0} \\
-37  & \texttt{coheof}   & OH coil current density at end of flat-top    &     & \texttt{1.000D5} & \texttt{1.000D8} \\
-38  & \texttt{fjohc}    & f-value for OH coil current at EOF limit equation & 26  & \texttt{0.010D0} & \texttt{1.000D0} \\
-39  & \texttt{fjohc0}   & f-value for OH coil current at BOP limit equation & 27  & \texttt{0.001D0} & \texttt{1.000D0} \\
+37  & \texttt{coheof}   & central solenoid current density at end of flat-top &     & \texttt{1.000D5} & \texttt{1.000D8} \\
+38  & \texttt{fjohc}    & f-value for central solenoid current at EOF limit equation & 26  & \texttt{0.010D0} & \texttt{1.000D0} \\
+39  & \texttt{fjohc0}   & f-value for central solenoid current at BOP limit equation & 27  & \texttt{0.001D0} & \texttt{1.000D0} \\
 40  & \texttt{fgamcd}   & f-value for current drive gamma limit equation & 37  & \texttt{0.001D0} & \texttt{1.000D0} \\
-41  & \texttt{fcohbop}  & OH coil current density ratio BOP/EOF         &     & \texttt{0.001D0} & \texttt{1.000D0} \\
-42  & \texttt{gapoh}    & gap between OH coil and TF coil               &     & \texttt{0.001D0} & \texttt{10.00D0} \\
+41  & \texttt{fcohbop}  & central solenoid current density ratio BOP/EOF &     & \texttt{0.001D0} & \texttt{1.000D0} \\
+42  & \texttt{gapoh}    & gap between central solenoid and TF coil      &     & \texttt{0.001D0} & \texttt{10.00D0} \\
 43  & \texttt{cfe0}     & seeded high-Z impurity fraction               &     & \texttt{1.00D-6} & \texttt{3.00D-3} \\
-44  & \texttt{fvsbrnni} & fraction of volt seconds from non-inductive means &     & \texttt{0.001D0} & \texttt{1.000D0} \\
+44  & \texttt{fvsbrnni} & fraction of plasma current produced by non-inductive means &     & \texttt{0.001D0} & \texttt{1.000D0} \\
 45  & \texttt{fqval}    & f-value for fusion gain limit equation        & 28  & \texttt{0.001D0} & \texttt{1.000D0} \\
 46  & \texttt{fpinj}    & f-value for injection power limit equation    & 30  & \texttt{0.001D0} & \texttt{1.000D0} \\
 47  & \texttt{feffcd}   & current drive efficiency multiplier           &     & \texttt{0.001D0} & \texttt{1.000D0} \\
@@ -833,16 +833,16 @@ no. & variable name     & description                                           
 62  & \texttt{fdtmp}    & f-value for 1st wall coolant temperature rise limit equation & 38  & \texttt{0.001D0} & \texttt{1.000D0} \\
 63  & \texttt{ftpeak}   & f-value for 1st wall peak temperature limit equation    & 39  & \texttt{0.001D0} & \texttt{1.000D0} \\
 64  & \texttt{fauxmn}   & f-value for minimum auxiliary power limit equation      & 40  & \texttt{0.001D0} & \texttt{1.000D0} \\
-65  & \texttt{tohs}     & OH coil current ramp-up time                            &     & \texttt{0.100D0} & \texttt{1.000D3} \\
-66  & \texttt{ftohs}    & f-value for OH coil current ramp-up time limit equation & 41  & \texttt{0.001D0} & \texttt{1.000D0} \\
+65  & \texttt{tohs}     & central solenoid current ramp-up time                   &     & \texttt{0.100D0} & \texttt{1.000D3} \\
+66  & \texttt{ftohs}    & f-value for central solenoid current ramp-up time limit equation & 41  & \texttt{0.001D0} & \texttt{1.000D0} \\
 67  & \texttt{ftcycl}   & f-value for minimum cycle time limit equation           & 42  & \texttt{0.001D0} & \texttt{1.000D0} \\
 68  & \texttt{fptemp}   & f-value for maximum centrepost temperature limit equation & 44  & \texttt{0.001D0} & \texttt{1.000D0} \\
 69  & \texttt{rcool}    & average radius of centrepost coolant channel            &     & \texttt{0.001D0} & \texttt{0.010D0} \\
 70  & \texttt{vcool}    & maximum centrepost coolant flow speed at midplane       &     & \texttt{1.000D0} & \texttt{1.000D2} \\
 71  & \texttt{fq}       & f-value for minimum edge safety factor limit equation   & 45  & \texttt{0.001D0} & \texttt{1.000D0} \\
 72  & \texttt{fipir}    & f-value for maximum $I_p/I_{rod}$ limit equation         & 46  & \texttt{0.001D0} & \texttt{1.000D0} \\
-73  & \texttt{scrapli}  & inboard scrape-off layer thickness                      &     & \texttt{0.001D0} & \texttt{10.00D0} \\
-74  & \texttt{scraplo}  & outboard scrape-off layer thickness                     &     & \texttt{0.001D0} & \texttt{10.00D0} \\
+73  & \texttt{scrapli}  & inboard gap between plasma and first wall               &     & \texttt{0.001D0} & \texttt{10.00D0} \\
+74  & \texttt{scraplo}  & outboard gap between plasma and first wall              &     & \texttt{0.001D0} & \texttt{10.00D0} \\
 75  & \texttt{tfootfi}  & ratio of TF coil outboard/inboard leg thickness         &     & \texttt{0.200D0} & \texttt{5.000D0} \\
 76  & \texttt{frfptf}   & f-value for TF coil toroidal thickness limit equation   & 47  & \texttt{0.001D0} & \texttt{1.000D0} \\
 77  & \texttt{tftort}   & TF coil toroidal thickness (use for RFPs only)          &     & \texttt{0.050D0} & \texttt{4.000D0} \\
@@ -984,7 +984,7 @@ $15$ & \texttt{fjprot}     & f-value for TF coil current protection limit eqn \\
 $16$ & \texttt{rmajor}     & plasma major radius \\
 $17$ & \texttt{bmxlim}     & maximum toroidal field \\
 $18$ & \texttt{gammax}     & maximum current drive gamma \\
-$19$ & \texttt{boundl(16)} & lower bound on OH coil thickness \texttt{ohcth} \\
+$19$ & \texttt{boundl(16)} & lower bound on central solenoid thickness \texttt{ohcth} \\
 $20$ & \texttt{tbrnmn}     & minimum burn time (pulsed operation machine) \\
 $21$ & \texttt{sigpfalw}   & allowable stress in the PF coils \\
 $22$ & \texttt{cfactr}     & plant availability factor (N.B.\ requires
@@ -1520,12 +1520,14 @@ iteration variable no.~9 (\texttt{fdene}).  In addition, switch
 
 The impurity radiation model in \process\/ can be chosen using the switch
 \texttt{imprad\_model}, where \texttt{imprad\_model = 0} gives the original
-ITER 1989 model~\cite{kovari_physics}, and \texttt{imprad\_model = 1} uses the
-new impurity profile model~\cite{hanni_radiation}.
+ITER 1989 model~\cite{kovari_physics}, and \texttt{imprad\_model = 1} uses a
+multi-impurity model which integrates the radiation contributions over an
+arbitrary choice of density and temperature profiles~\cite{hanni_radiation}.
 
-If \texttt{imprad\_model = 0}, the impurity species and fractions are chosen using input
-parameters \texttt{impc}, \texttt{impo}, \texttt{fbfe}, \texttt{cfe0} and
-\texttt{zfear}; see the variable descriptor file for more details.
+If \texttt{imprad\_model = 0}, the impurity species and fractions are chosen
+using input parameters \texttt{impc}, \texttt{impo}, \texttt{fbfe},
+\texttt{cfe0} and \texttt{zfear}; see the variable descriptor file for more
+details.
 
 If \texttt{imprad\_model = 1}, the impurity number density fractions relative
 to the electron density are set using input array \texttt{fimp(1 to nimp)},
@@ -1842,15 +1844,15 @@ Goldston (\texttt{isc = 9}) should include an inverse quadrature scaling with
 the Neo-Alcator result (\texttt{isc = 1}). A value \texttt{iinvqd = 1}
 includes this scaling.
 
-\subsubsection*{Scrape-off layer}
+\subsubsection*{Plasma / first wall gap}
 
 The region directly outside the last closed flux surface of the core plasma is
 known as the scrape-off layer, and contains no structural material.  Plasma
-entering this region is not confined and is removed by the
-divertor. \process\ treats the scrape-off layer merely as a gap. Switch
-\texttt{iscrp} determines whether the scrape-off widths should be calculated
-as 10\% of the plasma minor radius (\texttt{iscrp = 0}), or set equal to the
-input values \texttt{scrapli} and \texttt{scraplo} (\texttt{iscrp = 1}).
+entering this region is not confined and is removed by the divertor. \process\
+treats the scrape-off layer merely as a gap. Switch \texttt{iscrp} determines
+whether the inboard and outboard gaps should be calculated as 10\% of the
+plasma minor radius (\texttt{iscrp = 0}), or set equal to the input values
+\texttt{scrapli} and \texttt{scraplo} (\texttt{iscrp = 1}).
 
 \subsection{First wall}
 
@@ -2290,7 +2292,7 @@ iteration variable no.\ 53 (\texttt{fjprot}).
 \label{sec:pfcoils}
 
 The poloidal field (PF) coils are used initially to cancel the vertical field
-produced at the centre of the plasma by the OH coil (Section~\ref{sec:ohcoil})
+produced at the centre of the plasma by the central solenoid (Section~\ref{sec:ohcoil})
 during start-up, and then to maintain the plasma position and shape during the
 flat-top period.
 
@@ -2319,7 +2321,7 @@ coil positions:
 
 \begin{description} %!%!%! check this
 
-\item [\texttt{ipfloc(j) = 1} :]  PF coils are placed above the OH coil (one
+\item [\texttt{ipfloc(j) = 1} :]  PF coils are placed above the central solenoid (one
 group only);
 \begin{eqnarray*}
 R & = & \mathtt{rohc + rpf1} \\
@@ -2354,22 +2356,23 @@ Figure~\ref{fig:current_vs_time}.
 \caption[Coil and plasma current waveforms]
 {\label{fig:current_vs_time}
   \textit{Plot showing schematically the current waveforms for the plasma, a
-    typical PF coil, and the OH coil.}
+    typical PF coil, and the central solenoid.}
 }
 \end{figure}
 
 \subsubsection{PF coil resistance}
 
 The PF coils can be either resistive or superconducting. This is determined
-from the value of \texttt{ipfres}. If \texttt{ipfres = 0}, the PF and OH coils
-are assumed to be superconducting. If \texttt{ipfres = 1}, they are assumed to
-be resistive, with their resistivity given by the value of variable
-\texttt{pfclres}.
+from the value of \texttt{ipfres}. If \texttt{ipfres = 0}, the PF coils and
+the central solenoid are assumed to be superconducting. If \texttt{ipfres = 1},
+they are assumed to be resistive, with their resistivity given by the value of
+variable \texttt{pfclres}.
 
 \subsubsection{Superconducting materials}
 
 If \texttt{ipfres = 0}, switch \texttt{isumatpf} specifies which
-superconducting material is to be used for the PF and OH coils:
+superconducting material is to be used for the PF coils and the central
+solenoid:
 \begin{description}
 \item [\texttt{isumatpf = 1} :] binary Nb$_3$Sn superconductor
 \item [\texttt{isumatpf = 2} :] ternary Nb$_3$Sn superconductor
@@ -2381,28 +2384,27 @@ superconducting material is to be used for the PF and OH coils:
 
 The ohmic heating (OH) coil is a PF coil used primarily during start-up (but
 also during the burn phase) to create and maintain the plasma current by
-inductive means. Swinging (changing) the current through the OH coil causes a
-change in the flux linked to the plasma region, inducing a current in
+inductive means. Swinging (changing) the current through the central solenoid
+causes a change in the flux linked to the plasma region, inducing a current in
 it. \process\ calculates the amount of flux required to produce the plasma
 current, and also the amount actually available. The code measures the
-magnetic flux in units of Volt-seconds ($=$ Webers). The OH coil is sometimes
-referred to as the central solenoid, and can be either resistive or
-superconducting (controlled via switches \texttt{ipfres} and \texttt{isumatpf}
-as for the other PF coils).
+magnetic flux in units of Volt-seconds ($=$ Webers). The central solenoid can
+be either resistive or superconducting (controlled via switches
+\texttt{ipfres} and \texttt{isumatpf} as for the other PF coils).
 
-Switch \texttt{iohcl} controls whether an OH coil is present. A value of
-\texttt{1} denotes that this coil is present, and should be assigned a
+Switch \texttt{iohcl} controls whether a central solenoid is present. A value
+of \texttt{1} denotes that this coil is present, and should be assigned a
 non-zero thickness \texttt{ohcth}. A value of \texttt{iohcl = 0} denotes that
-no OH coil is present, in which case the thickness \texttt{ohcth} should be
-set to zero. No PF coils should be located at positions defined by
-\texttt{ipfloc(j) = 1} if no OH coil is present.
+no central solenoid is present, in which case the thickness \texttt{ohcth}
+should be set to zero. No PF coils should be located at positions defined by
+\texttt{ipfloc(j) = 1} if no central solenoid is present.
 
 \subsubsection{Plasma current ramp-up time}
 \label{sec:tohs}
 
 In the steady-state power plant scenario ($\mathtt{lpulse \not= 1}$ --- see
-Section~\ref{sec:pulsed}), the length of time taken for the OH coil current to
-reverse (which is equal to the plasma current ramp-up time --- see
+Section~\ref{sec:pulsed}), the length of time taken for the central solenoid
+current to reverse (which is equal to the plasma current ramp-up time --- see
 Figure~\ref{fig:current_vs_time}) is determined from the value of switch
 \texttt{tohsin}. If \texttt{tohsin = 0.0D0}, then the plasma current ramp-up
 time \texttt{tohs} in seconds is given by $\mathtt{tohs} = I_p / 0.5$, where
@@ -2423,8 +2425,8 @@ no.\ 66 (\texttt{ftohs}).
 
 \subsubsection{Current density limits}
 
-The current density in the OH coil can be limited at the beginning-of-pulse
-(BOP) and at the end-of-flat-top (EOF --- see
+The current density in the central solenoid can be limited at the
+beginning-of-pulse (BOP) and at the end-of-flat-top (EOF --- see
 Figure~\ref{fig:current_vs_time}). The limiting value is dependent on the
 maximum allowable stress in the coil as given by the value of
 \texttt{sigpfalw}. To limit the current density at the BOP, constraint
@@ -2439,22 +2441,22 @@ equation no.\ 26 should be turned on with iteration variable no.\ 38
 \subsubsection{Current Drive}
 
 The use of purely inductive current drive leads to pulsed plant operation
-because of the limited flux swing that can be achieved using the OH coil. This
-poses problems due to the fact that fatigue failures may result, and there
-would also be a need for thermal storage to maintain a level supply between
-pulses. However, the plasma current can also be produced and maintained
-(partially or wholly) using non-inductive means which, in principle, removes
-this restriction. \process\ contains a number of auxiliary current drive
-schemes, including various RF methods (Lower Hybrid, Electron Cyclotron, and
-Ion Cyclotron (Fast Wave) current drives) and also Neutral Beam current drive
-systems. The code calculates the efficiency and the resulting power
-requirements of the chosen system.
+because of the limited flux swing that can be achieved using the central
+solenoid. This poses problems due to the fact that fatigue failures may
+result, and there would also be a need for thermal storage to maintain a level
+supply between pulses. However, the plasma current can also be produced and
+maintained (partially or wholly) using non-inductive means which, in
+principle, removes this restriction. \process\ contains a number of auxiliary
+current drive schemes, including various RF methods (Lower Hybrid, Electron
+Cyclotron, and Ion Cyclotron (Fast Wave) current drives) and also Neutral Beam
+current drive systems. The code calculates the efficiency and the resulting
+power requirements of the chosen system.
 
-The fraction of the required flux swing (Volt-seconds) to be produced by
-non-inductive means, \texttt{fvsbrnni}, should be set, and flag \texttt{irfcd}
-should be set to \texttt{0} for purely inductive scenarios, or \texttt{1}
-otherwise. The current drive efficiency model to be used in this latter case
-is defined by the value of switch \texttt{iefrf}:-
+The fraction of the required plasma current to be produced by non-inductive
+means, \texttt{fvsbrnni}, should be set, and flag \texttt{irfcd} should be set
+to \texttt{0} for purely inductive scenarios, or \texttt{1} otherwise. The
+current drive efficiency model to be used in this latter case is defined by
+the value of switch \texttt{iefrf}:-
 
 \begin{description}
 \item [\texttt{iefrf = 1} :] Fenstermacher Lower Hybrid model
@@ -2737,9 +2739,9 @@ the following special models~\cite{storac} in \process.
   different from that in a conventional tokamak. There is no inboard blanket
   (and possibly no inboard shield), and the inboard TF coil legs are replaced
   by a single centrepost. The radial build is altered so that, starting from
-  the centreline ($R = 0$), the component order is: TF coil, gap, OH coil,
-  vacuum vessel, and then continuing as in Figure~\ref{fig:build_d} (a
-  D-shaped cross-section is assumed for the first wall, blanket, shield and
+  the centreline ($R = 0$), the component order is: TF coil, gap, central
+  solenoid, vacuum vessel, and then continuing as in Figure~\ref{fig:build_d}
+  (a D-shaped cross-section is assumed for the first wall, blanket, shield and
   vacuum vessel).
 
 \item Tight aspect ratio tokamaks have resistive TF coils that combine into a
@@ -3296,21 +3298,22 @@ no.\ 77 (\texttt{tftort}). This is constrained to be no larger than is
 geometrically possible using constraint equation no.\ 47 with iteration
 variable no.\ 76 (\texttt{frfptf}).
 
-\subsection{OH coils}
+\subsection{Ohmic heating coils}
 
-The TITAN-I OH coil locations, currents etc.\ are assumed. These comprise 14
-copper coils, with currents swinging from positive to negative during the
-plasma start-up period, and then decaying back to zero. To account for
-different plasma geometries and currents, the OH coil locations relative to
-the plasma centre scale with the TF coil radius and with the plasma major
-radius, and the current per turn scales linearly with the plasma current.
+The TITAN-I ohmic heating coil locations, currents etc.\ are assumed. These
+comprise 14 copper coils, with currents swinging from positive to negative
+during the plasma start-up period, and then decaying back to zero. To account
+for different plasma geometries and currents, the ohmic heating coil locations
+relative to the plasma centre scale with the TF coil radius and with the
+plasma major radius, and the current per turn scales linearly with the plasma
+current.
 
 \subsection{EF coils}
 
 The Equilibrium Field coils are based on the TITAN-I EF coils, which are two
 superconducting (NbTi) coils that provide the correct vertical field at the
 plasma centre. The coil locations scale with the plasma major radius and TF
-coil radius along with the OH coils.
+coil radius along with the ohmic heating coils.
 
 \subsection{Divertor}
 
@@ -6479,7 +6482,7 @@ PRN1=0.285                            [Density ratio]
 * Machine build
 
 BORE = 0.12,                          [Machine bore]
-OHCTH = 0.1,                          [OH coil thickness]
+OHCTH = 0.1,                          [central solenoid thickness]
 GAPOH = 0.08,                         [Inboard gap]
 TFCTH = 0.9,                          [Inboard TF coil leg thickness]
 DDWI = 0.07,                          [Vacuum vessel thickness]
@@ -6510,11 +6513,11 @@ RIPMAX = 5.,                          [Maximum TF ripple]
 NGRP = 3,                             [Three groups of PF coils]
 IPFLOC = 1,2,3,                       [Locations for each group]
 NCLS = 2,2,2,1,                       [Number of coils in each group]
-COHEOF = 1.85e7,                      [OH coil current at End Of Flat-top]
-FCOHBOP = 0.9,                        [OH coil current at Begin. Of Pulse / COHEOF]
+COHEOF = 1.85e7,                      [central solenoid current at End Of Flat-top]
+FCOHBOP = 0.9,                        [central solenoid current at Begin. Of Pulse / COHEOF]
 ROUTR = 1.5,                          [Radial position for group 3]
 ZREF(3) = 2.5,                        [Z position for group 3]
-OHHGHF = .71                          [Height ratio OH coil / TF coil]
+OHHGHF = .71                          [Height ratio central solenoid / TF coil]
 
 * Vacuum system parameters
 
@@ -6640,11 +6643,11 @@ RIPMAX = 5.,                          [Maximum TF ripple]
 NGRP = 3,                             [Three groups of PF coils]
 IPFLOC = 1,2,3,                       [Locations for each group]
 NCLS = 2,2,2,1,                       [Number of coils in each group]
-COHEOF = 1.85e7,                      [OH coil current at End Of Flat-top]
-FCOHBOP = 0.9,                        [OH coil current at Begin. Of Pulse / COHEOF]
+COHEOF = 1.85e7,                      [central solenoid current at End Of Flat-top]
+FCOHBOP = 0.9,                        [central solenoid current at Begin. Of Pulse / COHEOF]
 ROUTR = 1.5,                          [Radial position for group 3]
 ZREF(3) = 2.5,                        [Z position for group 3]
-OHHGHF = .71                          [Height ratio OH coil / TF coil]
+OHHGHF = .71                          [Height ratio central solenoid / TF coil]
 
 * Vacuum system parameters
 

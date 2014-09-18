@@ -73,7 +73,7 @@ module scan_module
   !+ad_vars  ipnscnv /30/ FIX : number of available scan variables
   integer, parameter :: ipnscnv = 30
 
-  !+ad_vars  isweep /0/ : number of loops to perform
+  !+ad_vars  isweep /0/ : number of scan points to calculate
   integer :: isweep = 0
   !+ad_vars  nsweep /1/ : switch denoting quantity to scan:<UL>
   !+ad_varc          <LI> 1  aspect
@@ -108,7 +108,7 @@ module scan_module
   !+ad_varc          <LI> 30 fimpvar</UL>
   integer :: nsweep = 1
 
-  !+ad_vars  sweep(ipnscns) : Actual values to use in scan
+  !+ad_vars  sweep(ipnscns) : actual values to use in scan
   real(kind(1.0D0)), dimension(ipnscns) :: sweep = 0.0D0
 
 contains
