@@ -24,6 +24,7 @@ Update: 16/06/2014 - PJK up to date at PROCESS version 288
 Update: 16/06/2014 - PJK: r293
 Update: 30/06/2014 - PJK: r303
 Update: 03/09/2014 - PJK: r324
+Update: 22/09/2014 - PJK: r331
 """
 
 from collections import defaultdict
@@ -173,7 +174,6 @@ DICT_VAR_TYPE['auxmin'] = 'real_variable'
 DICT_VAR_TYPE['baseel'] = 'real_variable'
 DICT_VAR_TYPE['bcritsc'] = 'real_variable'
 DICT_VAR_TYPE['bctmp'] = 'real_variable'
-DICT_VAR_TYPE['bcylth'] = 'real_variable'
 DICT_VAR_TYPE['beamfus0'] = 'real_variable'
 DICT_VAR_TYPE['beamwd'] = 'real_variable'
 DICT_VAR_TYPE['beta'] = 'real_variable'
