@@ -1228,6 +1228,7 @@ module pfcoil_variables
   !+ad_hist  16/04/13 PJK Added sigpfcalw
   !+ad_hist  17/04/13 PJK Removed cohbof; changed fcohbof initial value
   !+ad_hist  27/11/13 PJK Moved pfrmax, pfmmax from RFP module
+  !+ad_hist  22/09/14 PJK Attempted to clarify zref description
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1406,8 +1407,14 @@ module pfcoil_variables
   real(kind(1.0D0)), dimension(ngc2) :: zl = 0.0D0
   !+ad_vars  zpf(ngc2) : z (height) location of PF coil i (m)
   real(kind(1.0D0)), dimension(ngc2) :: zpf = 0.0D0
-  !+ad_vars  zref(ngrpmx) /../ : (height of coil group j) / minor radius,
-  !+ad_varc                      for groups with ipfloc = 3
+  !+ad_vars  zref(ngrpmx) /../ : PF coil vertical positioning adjuster:<UL>
+  !+ad_varc        <LI> - for groups j with ipfloc(j) = 1; zref(j) is ignored
+  !+ad_varc        <LI> - for groups j with ipfloc(j) = 2 AND itart=1 (only);
+  !+ad_varc               zref(j) is distance of centre of PF coil from inside
+  !+ad_varc               edge of TF coil (remember that PF coils for STs lie
+  !+ad_varc               within the TF coil)
+  !+ad_varc        <LI> - for groups j with ipfloc(j) = 3; zref(j) = ratio of
+  !+ad_varc               height of coil group j to plasma minor radius</UL>
   real(kind(1.0D0)), dimension(ngrpmx) :: zref = (/3.6D0, 1.2D0, 2.5D0, &
        1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
 

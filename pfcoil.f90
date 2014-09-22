@@ -114,6 +114,7 @@ contains
     !+ad_hist  01/05/14 PJK Removed redundant xctfc(5) terms
     !+ad_hist  24/06/14 PJK Removed refs to bcylth
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  22/09/14 PJK Renamed snswit to top_bottom
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -129,7 +130,7 @@ contains
     integer, parameter :: lcol1 = ngrpmx
 
     integer :: i,ii,iii,ij,it,j,k,ncl,nfxf0,ng2,ngrp0,nng,nocoil,npts,npts0
-    integer :: ccount, snswit
+    integer :: ccount, top_bottom
     integer, dimension(ngrpmx) :: pcls0
     integer, dimension(ngrpmx+2) :: ncls0
 
@@ -149,9 +150,9 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Single-null configuration switch
+    !  Toggle switch for ipfloc()=2 coils above/below midplane
 
-    snswit = 1
+    top_bottom = 1
 
     !  Set up the number of PF coils including the OH coil (nohc),
     !  and the number of PF circuits including the plasma (ncirt)
@@ -269,12 +270,12 @@ contains
                 zcls(j,k) = (hmax-zref(j)) * signn(k)
              else
                 !zcls(j,k) = (hmax + tfcth + 0.86D0) * signn(k)
-                if (snswit == 1) then
+                if (top_bottom == 1) then  !  this coil is above midplane
                    zcls(j,k) = hpfu + 0.86D0
-                   snswit = -1 * snswit
-                else
+                   top_bottom = -1 * top_bottom
+                else  !  this coil is below midplane
                    zcls(j,k) = -1.0D0 * (hpfu - 2.0D0*hpfdif + 0.86D0)
-                   snswit = -1 * snswit
+                   top_bottom = -1 * top_bottom
                 end if
              end if
           end do

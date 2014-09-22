@@ -190,7 +190,7 @@ contains
 
     hbot = rminor*kappa + vgap + divfix - blnktth - 0.5D0*(fwith+fwoth)
     if (idivrt == 2) then  !  (i.e. snull=0)
-        htop = hbot
+       htop = hbot
     else
        htop = rminor*kappa + 0.5D0*(scrapli+scraplo)
     end if
