@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '332    Release Date :: 2014-09-22'
+       '333    Release Date :: 2014-09-23'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1815,3 +1815,4 @@ end subroutine output
 ! GIT 330: Removed Myall TF coil stress model; tfc_model switch usage changed
 ! GIT 331: Updated plot_proc_func.py
 ! GIT 332: Attempted to clarify zref usage
+! GIT 333: Minor comment changes

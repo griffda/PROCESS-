@@ -1943,7 +1943,7 @@ module pf_power_variables
   real(kind(1.0D0)) :: acptmax = 0.0D0
   !+ad_vars  ensxpfm : maximum stored energy in the PF circuits (MJ)
   real(kind(1.0D0)) :: ensxpfm = 0.0D0
-  !+ad_vars  iscenr /2/ : Switch for energy storage option:<UL>
+  !+ad_vars  iscenr /2/ : Switch for PF coil energy storage option:<UL>
   !+ad_varc          <LI> = 1 all power from MGF (motor-generator flywheel) units;
   !+ad_varc          <LI> = 2 all pulsed power from line;
   !+ad_varc          <LI> = 3 PF power from MGF, heating from line</UL>

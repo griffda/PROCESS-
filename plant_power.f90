@@ -850,7 +850,7 @@ contains
          htpmw + trithtmw + pheatingmw + basemw + efloor*pkwpm2/1000.0D0
 
     !  Add contribution from motor-generator flywheels if these are part of
-    !  the energy storage system
+    !  the PF coil energy storage system
 
     if (iscenr /= 2) pacpmw = pacpmw + fmgdmw
 
