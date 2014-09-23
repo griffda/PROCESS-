@@ -1251,6 +1251,7 @@ module pfcoil_variables
   !+ad_hist  27/11/13 PJK Moved pfrmax, pfmmax from RFP module
   !+ad_hist  17/09/14 PJK Changed default values
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
+  !+ad_hist  22/09/14 PJK Attempted to clarify zref description
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1432,8 +1433,14 @@ module pfcoil_variables
   real(kind(1.0D0)), dimension(ngc2) :: zl = 0.0D0
   !+ad_vars  zpf(ngc2) : z (height) location of PF coil i (m)
   real(kind(1.0D0)), dimension(ngc2) :: zpf = 0.0D0
-  !+ad_vars  zref(ngrpmx) /../ : (height of coil group j) / minor radius,
-  !+ad_varc                      for groups with ipfloc = 3
+  !+ad_vars  zref(ngrpmx) /../ : PF coil vertical positioning adjuster:<UL>
+  !+ad_varc        <LI> - for groups j with ipfloc(j) = 1; zref(j) is ignored
+  !+ad_varc        <LI> - for groups j with ipfloc(j) = 2 AND itart=1 (only);
+  !+ad_varc               zref(j) is distance of centre of PF coil from inside
+  !+ad_varc               edge of TF coil (remember that PF coils for STs lie
+  !+ad_varc               within the TF coil)
+  !+ad_varc        <LI> - for groups j with ipfloc(j) = 3; zref(j) = ratio of
+  !+ad_varc               height of coil group j to plasma minor radius</UL>
   real(kind(1.0D0)), dimension(ngrpmx) :: zref = (/3.6D0, 1.2D0, 2.5D0, &
        1.0D0, 1.0D0, 1.0D0, 1.0D0, 1.0D0/)
 
@@ -1970,7 +1977,7 @@ module pf_power_variables
   real(kind(1.0D0)) :: acptmax = 0.0D0
   !+ad_vars  ensxpfm : maximum stored energy in the PF circuits (MJ)
   real(kind(1.0D0)) :: ensxpfm = 0.0D0
-  !+ad_vars  iscenr /2/ : Switch for energy storage option:<UL>
+  !+ad_vars  iscenr /2/ : Switch for PF coil energy storage option:<UL>
   !+ad_varc          <LI> = 1 all power from MGF (motor-generator flywheel) units;
   !+ad_varc          <LI> = 2 all pulsed power from line;
   !+ad_varc          <LI> = 3 PF power from MGF, heating from line</UL>

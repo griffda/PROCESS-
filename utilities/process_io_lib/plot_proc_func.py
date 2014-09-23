@@ -17,7 +17,7 @@ import scipy as sp
 import numpy as np
 import process_io_lib.process_dicts as proc_dict
 
-RADIAL_BUILD = ["bore", "ohcth", "gapoh", "bcylth", "tfcth", "gapds",
+RADIAL_BUILD = ["bore", "ohcth", "gapoh", "tfcth", "gapds",
                 "ddwi", "shldith", "blnkith", "fwith", "scrapli",
                 "rminori", "rminoro", "scraplo", "fwoth", "blnkoth",
                 "shldoth", "ddwo", "gapsto", "tfthko"]
@@ -516,8 +516,7 @@ def plot_tf_coils(axis, mfile_data, scan):
         mfile_data.data["tfthko"].get_scan(scan)
 
     out_x = ((in_x - cumulative_radial_build("tfcth", mfile_data, scan)) *
-             (out_width/in_width)) + \
-        cumulative_radial_build("bcylth", mfile_data, scan)
+             (out_width/in_width))
     extern = (vert_build[7]/vert_build[6])
     if vert_build[-1]:
         extern = (vert_build[0] - vert_build[15])/(vert_build[1] -
