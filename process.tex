@@ -4774,6 +4774,74 @@ DATA=0
 \end{verbatim}
 \end{framed}
 
+\subsection{a\_to\_b.py}
+
+Takes an initial \texttt{IN.DAT} and a target \texttt{IN.DAT} and runs
+\process\ repeatedly with the aim of walking the solution to the initial input
+file to a solution using the values of the variables in the target input file.
+After each step, the output values of the iteration variables are used as the
+input values for the next step.
+
+\begin{description}
+\item{\textbf{Input:}}
+\texttt{a\_to\_b.conf}
+
+\item{\textbf{Output}} 
+
+When the program finishes, the .DAT files from the last run of \process\ can
+be found in the specified working directory.
+
+If option keep\_output = True:
+\texttt{IN.DAT, OUT.DAT, MFILE.DAT} and logged process output
+of each step are stored. Files are prefaced with their step number
+eg. \texttt{003.IN.DAT} and copied to the specified output directory.
+
+\end{description}
+
+\paragraph{Configuration Options:}
+
+The configuration file \texttt{a\_to\_b.conf} has the following style:
+\begin{framed}
+\begin{verbatim}
+*Comment line
+
+*Working directory to store temporary files, default = wdir
+wdir = wdir
+
+*Switch to keep .DAT files for every step, default = True
+keep_output = True
+
+*Directory for output if keep_output = True, default = steps
+outdir = steps
+
+*IN.DAT file for A, default = A.DAT
+a_filename = A.DAT
+
+*IN.DAT file for B, default = B.DAT
+b_filename = B.DAT
+
+*Path to process binary
+*path_to_process = /home/pknight/process/bin/process
+path_to_process = /home/pknight/process/bin/process
+
+*Number of iterations of vary_iteration_variables to run, default = 20
+vary_niter = 20
+
+*Number of steps to go from A to B, default = 10
+nsteps = 10
+
+*Factor to vary iteration variables within, default = 1.2
+factor = 1.2
+
+*Gap between upper and lower bounds to narrow to, default = 1.001
+bound_gap = 1.001
+\end{verbatim}
+\end{framed}
+
+\subsection{create\_dicts.py}
+
+\Red{To do}
+
 \section{Libraries}
 \label{sec:py_lib}
 
@@ -5187,7 +5255,7 @@ A collection of dictionaries and lists used by various \process\ utilities.
   lower variable bound (float) under 'lb' and the default upper variable bound
   (float) under 'ub'.
 
-\item{\verb|DICT_IXC_BOUNDS|} Maps each iteration varialbe name to a
+\item{\verb|DICT_IXC_BOUNDS|} Maps each iteration variable name to a
   dictionary that contains the default lower variable bound (float) under 'lb'
   and the default upper variable bound (float) under 'ub'.
 
@@ -5209,6 +5277,12 @@ A collection of dictionaries and lists used by various \process\ utilities.
   default value.
 
 \end{description}
+
+\Red{Add new stuff used by GUI etc.}
+
+\subsection{a\_to\_b\_config.py}
+
+\Red{To do...}
 
 \subsection{proc\_plot\_func.py}
 

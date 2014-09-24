@@ -157,8 +157,8 @@ contains
     !  Parse the json file
     !  (Need to consider a better way to specify the file location...)
 
-    !filename = '/home/pknight/process/branches/develop/utilities/errorlist.json'
-    filename = 'utilities/errorlist.json'  !  for testing purposes only...
+    filename = '/home/pknight/process/branches/develop/utilities/errorlist.json'
+    !filename = 'utilities/errorlist.json'  !  for testing purposes only...
 
     errorfile => fson_parse(trim(filename))
 

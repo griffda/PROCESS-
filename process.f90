@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '334    Release Date :: 2014-09-23'
+       '335    Release Date :: 2014-09-24'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1819,3 +1819,4 @@ end subroutine output
 ! GIT 332: Attempted to clarify zref usage
 ! GIT 333: Minor comment changes
 ! GIT 334: Merged new_defaults branch into develop branch
+! GIT 335: Introduced a_to_b python utility
