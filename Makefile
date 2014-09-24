@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 328
+#  GIT Revision 336
 #
 #  P J Knight
 #
@@ -40,6 +40,9 @@
 #
 #  Type 'make archive' to produce an archive of the latest run in this directory
 #    (including input and output files); this produces a file called process_run.tar.gz
+#
+#  Type 'make dicts' to recreate the dictionaries file 'process_dicts.py'
+#  used by the Python utilities
 #
 ################# Start of Custom Section #####################
 
@@ -198,14 +201,14 @@ constraint_equations.o: error_handling.o global_variables.o numerics.o
 costs.o: error_handling.o global_variables.o output.o
 current_drive.o: error_handling.o global_variables.o output.o plasma_profiles.o
 divertor.o: error_handling.o global_variables.o output.o
-error_handling.o: output.o fson_library.o
+error_handling.o: output.o fson_library.o root.dir
 evaluators.o: error_handling.o global_variables.o numerics.o output.o
 fispact.o: global_variables.o
 fson_library.o: 
 fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o
 global_variables.o:
 ife.o: availability.o costs.o error_handling.o global_variables.o output.o
-impurity_radiation.o: error_handling.o global_variables.o
+impurity_radiation.o: error_handling.o global_variables.o root.dir
 initial.o: error_handling.o global_variables.o output.o scan.o stellarator.o
 input.o: error_handling.o global_variables.o numerics.o output.o scan.o
 iteration_variables.o: error_handling.o global_variables.o numerics.o
@@ -241,6 +244,9 @@ vacuum.o: error_handling.o global_variables.o output.o
 process.exe: $(object)
 	$(FORTRAN) $(LFLAGS) -o $@ $(object) $(LIBS)
 
+root.dir:
+	./setrootdir
+
 ### Utilities #################
 
 .PHONY: clean tar archive doc manual html
@@ -249,6 +255,7 @@ process.exe: $(object)
 
 clean:
 	rm -f process.exe *.o *.mod
+	rm -f root.dir
 	rm -f *~
 	rm -f autodoc
 	rm -f *.aux *.log process.dvi process.toc process.lof process.lot process.pdf
@@ -293,3 +300,9 @@ manual: process.tex
 	@ dvipdf process
 
 doc: html manual
+
+dicts: root.dir
+	@ mv utilities/process_io_lib/process_dicts.py utilities/process_io_lib/process_dicts.py_prev
+	@ echo 'Creating Python dictionaries... warnings are usually ignorable!'
+	utilities/create_dicts.py > utilities/process_io_lib/process_dicts.py
+	chmod 755 utilities/process_io_lib/process_dicts.py

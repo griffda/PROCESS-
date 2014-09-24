@@ -20,7 +20,7 @@ List of dictionaries:
     DICT_MODULE            : Ordered dictionary mapping module names to list
                              of associatied variables
 
-Automatically produced by create_dicts.py for PROCESS version 334
+Automatically produced by create_dicts.py for PROCESS version 335
 """
 
 from collections import defaultdict, OrderedDict
@@ -1536,7 +1536,7 @@ DICT_DEFAULT['ignite']         = 0
 DICT_DEFAULT['ihplant']        = 0
 DICT_DEFAULT['iinvqd']         = 1
 DICT_DEFAULT['impc']           = 1.0
-DICT_DEFAULT['impdir']         = '/home/pknight/process/branches/develop/impuritydata'
+DICT_DEFAULT['impdir']         = '/home/pknight/process/development/impuritydata'
 DICT_DEFAULT['impfe']          = 1.0
 DICT_DEFAULT['impo']           = 1.0
 DICT_DEFAULT['imprad_model']   = 1

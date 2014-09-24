@@ -36,6 +36,7 @@ module impurity_radiation_module
   !+ad_hisc               changed directory containing datafiles
   !+ad_hist  17/09/14 PJK Changed default values
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
+  !+ad_hist  24/09/14 PJK Path name now set automatically (via make)
   !+ad_stat  Okay
   !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
   !+ad_docs  Sertoli, private communication
@@ -107,10 +108,13 @@ module impurity_radiation_module
   !+ad_varc                     (iteration variable 102)
   real(kind(1.0D0)), public :: fimpvar = 1.0D-3
 
+    !  Obtain the root directory
+
+#include 'root.dir'
+
   !+ad_vars  impdir /'/home/pknight/process/branches/develop/impuritydata'/ :
   !+ad_varc           Directory containing impurity radiation data files
-  character(len=60), public :: impdir = &
-       '/home/pknight/process/branches/develop/impuritydata/'
+  character(len=60), public :: impdir = ROOTDIR//'/impuritydata/'
 
   !+ad_vars  impvar /10 (iron)/ : fimp element value to be varied if iteration
   !+ad_varc                       variable number 102 is turned on

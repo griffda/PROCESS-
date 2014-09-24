@@ -25,8 +25,10 @@ import copy
 from pprint import pformat
 from collections import defaultdict
 
+from rootdir import ROOTDIR
+
 #process source directory
-SOURCEDIR = "/home/pknight/process/development"
+SOURCEDIR = ROOTDIR
 
 #These two dictionaries are used to help DICT_DEFAULT. FIXEDVALS is a list of
 #integers that occur as constant array lengths in the fortran code eg.
@@ -37,7 +39,7 @@ SOURCEDIR = "/home/pknight/process/development"
 #DICT_DEFAULT. This is used for adding important variables to the dictionary that
 #the script fails to parse.
 FIXEDVALS = {"ngc2" : 18, "nimp" : 14}
-FIXEDDEFS = {"impdir" : "/home/pknight/process/branches/develop/impuritydata",
+FIXEDDEFS = {"impdir" : ROOTDIR+"/impuritydata",
              "imp_label" : ["H_", "He", "Be", "C_", "N_", "O_", "Ne", "Si", "Ar", "Fe", "Ni", "Kr", "Xe", "W_"],
              "sweep" : [0.0] * 200
             }

@@ -137,6 +137,7 @@ contains
     !+ad_hist  01/09/14 PJK Changed wording of 135
     !+ad_hist  01/09/14 PJK Now uses JSON format to read in error list
     !+ad_hist  01/09/14 PJK Changed path to json file
+    !+ad_hist  24/09/14 PJK Path name now set automatically (via make)
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -149,17 +150,18 @@ contains
     !  Local variables
 
     integer :: n_errortypes
-    character(len=80) :: filename
+    character(len=100) :: filename
     type(fson_value), pointer :: errorfile
+
+    !  Obtain the root directory
+
+#include 'root.dir'
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Parse the json file
-    !  (Need to consider a better way to specify the file location...)
 
-    filename = '/home/pknight/process/branches/develop/utilities/errorlist.json'
-    !filename = 'utilities/errorlist.json'  !  for testing purposes only...
-
+    filename = ROOTDIR//'/utilities/errorlist.json'
     errorfile => fson_parse(trim(filename))
 
     !  Allocate memory for error_type array contents
