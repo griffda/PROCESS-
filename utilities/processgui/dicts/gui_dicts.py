@@ -402,7 +402,7 @@ GUI_MODULE['Numerics'] = [
 	 ('float', 'ftol', 'Error tolerance for hybrd', 'Error tolerance for hybrd') ,
 	]
 GUI_MODULE['Pf Power'] = [
-	 ('int', 'iscenr', 'Switch for energy storage option:', 'Switch for energy storage option:\n= 1 all power from mgf (motor-generator flywheel) units;\n= 2 all pulsed power from line;\n= 3 pf power from mgf, heating from line\n(in fact, options 1 and 3 are not treated differently)') ,
+	 ('int', 'iscenr', 'Switch for pf coil energy storage option:', 'Switch for pf coil energy storage option:\n= 1 all power from mgf (motor-generator flywheel) units;\n= 2 all pulsed power from line;\n= 3 pf power from mgf, heating from line\n(in fact, options 1 and 3 are not treated differently)') ,
 	]
 GUI_MODULE['Pfcoil'] = [
 	 ('float', 'ac1oh', 'Central solenoid cable conduit area (m2)', 'Central solenoid cable conduit area (m2)') ,
@@ -430,7 +430,7 @@ GUI_MODULE['Pfcoil'] = [
 	 ('float', 'sigpfcf', 'Fraction of jxb hoop force supported by steel case', 'Fraction of jxb hoop force supported by steel case\nfor superconducting pf coils (ipfres=0)') ,
 	 ('array', 'vf', 'Void fraction of pf coil i', 'Void fraction of pf coil i') ,
 	 ('float', 'vfohc', 'Void fraction of (whole) central solenoid for coolant', 'Void fraction of (whole) central solenoid for coolant') ,
-	 ('array', 'zref', '(height of coil group j) / minor radius,', '(height of coil group j) / minor radius,\nfor groups with ipfloc = 3') ,
+	 ('array', 'zref', 'Pf coil vertical positioning adjuster:', 'Pf coil vertical positioning adjuster:\n- for groups j with ipfloc(j) = 1; zref(j) is ignored\n- for groups j with ipfloc(j) = 2 and itart=1 (only);\nzref(j) is distance of centre of pf coil from inside\nedge of tf coil (remember that pf coils for sts lie\nwithin the tf coil)\n- for groups j with ipfloc(j) = 3; zref(j) = ratio of\nheight of coil group j to plasma minor radius') ,
 	]
 GUI_MODULE['Physics'] = [
 	 ('float', 'alphaj', 'Current profile index;', 'Current profile index;\ncalculated from q0, q if iprofile=1') ,
