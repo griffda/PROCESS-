@@ -95,13 +95,14 @@ def grep(file, regexp, flags=re.U):
     return lines
 
 def grep_r(search_dir, regexp, flags=re.U, extension=""):
-    """Implements an in-python recursive grep. Returns the lines that
-       match as a list.
+    """Implements an in-python grep through every file in the given directory
+       No longer recursive. Returns the lines that match as a list.
        Args:
             search_dir --> Directory name
             regexp --> Regular expression to search for
             flags --> re flags to use in search. Default is re.U which has
                         no effect
+            extension --> only search through files with this suffix extension
        Returns:
             lines --> List of matching lines
     """
@@ -109,9 +110,7 @@ def grep_r(search_dir, regexp, flags=re.U, extension=""):
     lines = []
     for file in os.listdir(search_dir):
         path = search_dir + "/" + file
-        if os.path.isdir(path):
-            #if a directory, call grep_r recursively
-            lines += grep_r(path, regexp, flags, extension)
+        if os.path.isdir(path):  #  ignore subdirectories
             continue
         if not file.endswith(extension):
             continue
