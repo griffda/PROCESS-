@@ -60,8 +60,8 @@ the value selected. This will be placed after an asterix in the comment eg.
 idensl = 7       * Switch for density limit to enforce * greenwald limit
 
 If you want to convert an old IN.DAT file to this format without manually
-opening and saving the file in the GUI, running the newindat.py file will
-do this. Use as ./newindat.py OLD_IN.DAT > NEW_IN.DAT
+opening and saving the file in the GUI, running the newindat.py file in lib/
+will do this. Use as ./newindat.py OLD_IN.DAT NEW_IN.DAT
 
 
 --Python Dictionaries--

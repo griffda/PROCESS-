@@ -10,7 +10,7 @@
 
 """
 from process_io_lib.process_dicts import DICT_DEFAULT, DICT_MODULE,\
-                                    DICT_DESCRIPTIONS
+                                    DICT_DESCRIPTIONS, DICTIONARY_VERSION
 import copy
 import argparse
 
@@ -413,6 +413,11 @@ if __name__ == "__main__":
 
     PARSER = argparse.ArgumentParser(description=PROGDESC)
     PARSER.add_argument("inputfile", help="IN.DAT file to read from")
+    PARSER.add_argument("outputfile", help="IN.DAT file to read from")
     ARGS = PARSER.parse_args()
+
+    print("Using dictionary for PROCESS v." + str(DICTIONARY_VERSION))
     in_dat_obj = GuiInDat(ARGS.inputfile)
-    print(str(in_dat_obj))
+    file_handle = open(ARGS.outputfile, "w")
+    file_handle.write(str(in_dat_obj))
+    file_handle.close()
