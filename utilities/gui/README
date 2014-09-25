@@ -1,0 +1,90 @@
+PROCESS GUI README
+Tom Miller 09/14
+
+--Setup--
+Currently the only way to access the GUI is by running the
+development server locally.
+
+The is a script 'rungui.sh' that should automate this. Just
+type './rungui.sh' and the GUI should start. There will be
+a pause the first time while the server is started.
+
+If this doesn't work try the following:
+Run the line:
+export PYTHONPATH=$PYTHONPATH:'/home/tmiller/django/Django-1.7/build/lib/'
+or append it to the end of your .bashrc file and restart bash
+
+Start the server by typing
+python manage.py runserver
+in the top level directory of the project.
+
+The GUI should now be visible if you open a web browser (on the same
+machine only) and navigate to 127.0.0.1:8000
+
+
+--Using GUI--
+Currently you can upload two files. One file that is available for
+editing, and a reference file that can be used to compare variables
+between one file and another. Differences should be highlighted in 
+red. Both files start at default values when you first open the page.
+
+Each variable is listed with its current value, followed by the
+reference value and a short description. A longer description
+should appear if you hover over the short description.
+
+The Constraint Equations and Iteration Variables sections have
+checkboxes that can be used to add and remove equations and
+variables from icc and ixc. neqns and nvar are calculated automatically.
+
+Variables listed in more than one place in the GUI should automatically
+sync their values - editing the variable in one place should change
+the value in every place the variable appears.
+
+The two buttons 'Expand all' and 'Close all' open and close every module
+heading. This can be useful if you want to search for a variable name
+with Ctrl-f
+
+
+--IN.DAT format--
+The 'Save' button in the GUI should offer you the choice to open the file
+with a text editor or save the file. Your web browser might save
+the file in a 'Downloads' folder without prompting you. This can be changed
+in your web browser settings.
+
+The IN.DAT is produced with a similar layout to the GUI, with every variable
+listed in alphabetical order under module headings.
+
+Comments should appear next to each variable. In the
+case of an integer switch, the program will try and work out the meaning of
+the value selected. This will be placed after an asterix in the comment eg.
+idensl = 7       * Switch for density limit to enforce * greenwald limit
+
+If you want to convert an old IN.DAT file to this format without manually
+opening and saving the file in the GUI, running the newindat.py file will
+do this. Use as ./newindat.py OLD_IN.DAT > NEW_IN.DAT
+
+
+--Python Dictionaries--
+The python dictionaries and dictionary generators are in the dicts/ folder.
+There are two seperate dictionary files, each with its own script to recreate
+the file.
+
+process_dicts.py is made by the create_dicts.py script, and contains
+dictionaries that might be useful to any python utility, such as a dictionary
+of default values for each variable. See the file for a list of every
+dictionary. 
+create_dicts.py reads the FORTRAN source code to create the
+dictionaries. By default it looks in your current directory for the source
+files (such as input.f90). You can specify an alternative with the first
+argument. Run using
+./create_dicts.py [sourcedir] > process_dicts.py
+
+gui_dicts.py is made by the make_gui_dicts.py script, and contains dictionaries
+that are probably only useful for the GUI. See the file for a list.
+make_gui_dicts produces its dictionaries using dictionaries that already
+exist in process_dicts.py, so it doesn't need the location of the PROCESS 
+source code.
+Run using 
+./make_gui_dicts.py > gui_dicts.py
+
+

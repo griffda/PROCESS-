@@ -1,0 +1,205 @@
+{% load filters %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PROCESS GUI</title>
+<link rel="stylesheet" type="text/css" href="/static/jquery-ui.theme.css" />
+<script src="static/external/jquery/jquery.js"></script>
+<script src="static/jquery-ui.js"></script>
+<link rel="stylesheet" type="text/css" href="static/jquery-ui.min.css"/>
+
+<script src="static/process_gui.js"></script>
+
+<script>
+$(function() {
+    $( ".accordion" ).accordion({
+        collapsible: true,
+        animate: false,
+        active: false
+    });
+});
+
+$(document).ready( function() {
+    //checkbox readonly attribute still allows changing of value
+    //so need this line
+    $("input[type='checkbox'][readonly]").attr("onclick", "return false;");
+
+    //Syncs up textboxes on key up
+    sel = $("input[type!='file'][type!='submit'][readonly!='readonly']")
+    sel.attr("onkeyup", "syncval(this)")
+    //add initial highlighting
+    $.each(sel, function() {highlight(this)});
+
+    //Same for textarea
+    sel = $("textarea[readonly!='readonly']");
+    sel.attr("onkeyup", "syncval(this)")
+    $.each(sel, function() {highlight(this)}); 
+
+});
+
+</script>
+</head>
+
+<form action="" method="post" enctype="multipart/form-data">
+
+{% include "header.html" %}
+
+<body style="padding-top:70px">
+    {% csrf_token %}
+    <div style="width:900px; font-size:60%">
+
+        <!-- Meta section -->
+        <div class="accordion">
+            <h1>Meta</h1>
+            <div>
+                <table cellspacing="0" cellpadding="0">
+                    <colgroup>
+                        <col style="width:75px">
+                        <col>
+                    </colgroup>
+                    <tr>
+                        <td>Run Description</td> <td> <textarea rows="10" cols="80" name="Run_Description">{{inputvalues.Run_Description}}</textarea></td>
+                    </tr>  
+                </table>
+            </div>
+        </div>
+
+        <!-- Constraint section -->
+        <div class="accordion">
+            <h1>Constraint Equations</h1>
+            <div>
+            <table>
+                {% for num, desc in lablcc.items %}
+                <tr>
+                    <td>
+                        {{num}} {{desc}} 
+                    </td>
+                    <td>
+                        {% if num in inputvalues.icc %}
+                            <input type=checkbox name=constraint_{{num}} checked></input>
+                        {% else %}
+                            <input type=checkbox name=constraint_{{num}}></input>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if num in refvalues.icc %}
+                            <input type=checkbox name=ref_constraint_{{num}} checked readonly></input>
+                        {% else %}
+                            <input type=checkbox name=ref_constraint_{{num}} readonly></input>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            </div>
+        </div>
+
+        <!-- Iteration variable section -->
+        <div class="accordion">
+            <h1>Iteration Variables</h1>
+            <div>
+            <table>
+                <th></th>
+                <th>Name</th>
+                <th></th>
+                <th>Starting Value</th>
+                <th>Lower Bound </th>
+                <th>Upper Bound </th>
+
+                {% for num, tup in lablxc.items %}
+                {% with name=tup.0 shortdesc=tup.1 desc=tup.2 %}
+
+
+                <tr>
+                    <td>
+                        {{num}}
+                    </td>
+                    <td>
+                        {{name}}
+                    </td>
+                    <td>
+                        {% if num in inputvalues.ixc %}
+                            <input type=checkbox name=itervar_{{num}} checked></input>
+                        {% else %}
+                            <input type=checkbox name=itervar_{{num}}></input>
+                        {% endif %}
+                        <br>
+                        {% if num in refvalues.ixc %}
+                            <input type=checkbox name=ref_itervar_{{num}} checked readonly></input>
+                        {% else %}
+                            <input type=checkbox name=ref_itervar_{{varname}} readonly></input>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <input type="text" name={{name}} value="{{inputvalues|get_item:name}}"></input>
+                        <br>
+                        <input type="text" name=ref_{{name}} value="{{refvalues|get_item:name}}" readonly></input>
+                    </td>
+                    <td>
+                        {% with num|tolbname as lbname %}
+                            <input type="text" name={{lbname}} value="{{inputvalues|get_item:lbname}}"></input>
+                            <br>
+                            <input type="text" name=ref_{{lbname}} value="{{refvalues|get_item:lbname}}" readonly></input>
+                        {% endwith %}
+                    </td>
+                    <td>
+                        {% with num|toubname as ubname %}
+                            <input type="text" name={{ubname}} value="{{inputvalues|get_item:ubname}}"></input>
+                            <br>
+                            <input type="text" name=ref_{{ubname}} value="{{refvalues|get_item:ubname}}" readonly></input>
+                        {% endwith %}
+                    </td>
+                    <td> <a href="javascript:void(0)" title="{{desc}}"> {{shortdesc}} </a></td>
+                </tr>
+                <tr>
+                {% endwith %}
+                {% endfor %}
+            </table>
+            </div>
+        </div>
+
+        <!-- Main body loop -->
+        {% for key, li in moduledata.items %}
+        <div class="accordion">
+            <h1>{{key}}</h1>
+            <div>
+                <table cellspacing="0" cellpadding="0">
+                    <colgroup>
+                        <col style="width:75px">
+                        <col style="width:180px">
+                        <col style="width:180px">
+                        <col>
+                    </colgroup>
+                    <th> Name </th>
+                    <th> Value </th>
+                    <th> Reference Value </th>
+                    {% for ty, var, shortdesc, desc in li %}
+                    <tr>
+                        <td>{{var}}</td>
+                        {% if ty == "array" %}
+                            <td>
+                                <textarea name="{{var}}" height=3 cols="18" resize=none>{{inputvalues|get_item:var|to_str}}</textarea>
+                            </td>
+                            <td>
+                                <textarea name="ref_{{var}}" height=3 cols="18" resize=none readonly>{{refvalues|get_item:var|to_str}}</textarea>
+                            </td>
+                        {% else %}
+                            <td>
+                                <input type="text" name="{{var}}" value="{{inputvalues|get_item:var|to_str}}"></input>
+                            </td>
+                            <td>
+                                <input type="text" name="ref_{{var}}" value="{{refvalues|get_item:var|to_str}}" readonly></input>
+                            </td>
+                        {% endif %}
+                        <td> <a href="javascript:void(0)" title="{{desc}}"> {{shortdesc}} </a></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+
+</form>
