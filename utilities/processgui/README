@@ -63,28 +63,3 @@ If you want to convert an old IN.DAT file to this format without manually
 opening and saving the file in the GUI, running the newindat.py file in lib/
 will do this. Use as ./newindat.py OLD_IN.DAT NEW_IN.DAT
 
-
---Python Dictionaries--
-The python dictionaries and dictionary generators are in the dicts/ folder.
-There are two seperate dictionary files, each with its own script to recreate
-the file.
-
-process_dicts.py is made by the create_dicts.py script, and contains
-dictionaries that might be useful to any python utility, such as a dictionary
-of default values for each variable. See the file for a list of every
-dictionary. 
-create_dicts.py reads the FORTRAN source code to create the
-dictionaries. By default it looks in your current directory for the source
-files (such as input.f90). You can specify an alternative with the first
-argument. Run using
-./create_dicts.py [sourcedir] > process_dicts.py
-
-gui_dicts.py is made by the make_gui_dicts.py script, and contains dictionaries
-that are probably only useful for the GUI. See the file for a list.
-make_gui_dicts produces its dictionaries using dictionaries that already
-exist in process_dicts.py, so it doesn't need the location of the PROCESS 
-source code.
-Run using 
-./make_gui_dicts.py > gui_dicts.py
-
-
