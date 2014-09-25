@@ -14,7 +14,10 @@
    For a list of dictionaries this program currently produces, see the function
    print_header()
 
-   Tom Miller 08/14
+   Tom Miller, August-September 2014
+
+   P J Knight:
+   25/09/2014 Modified SOURCEDIR usage to use ROOTDIR
 
 """
 
@@ -22,6 +25,7 @@ import re
 import os
 import logging
 import copy
+import argparse
 from pprint import pformat
 from collections import defaultdict
 
@@ -36,11 +40,10 @@ SOURCEDIR = ROOTDIR
 #This allows the function interpret_array to expand arrays to the correct length
 
 #FIXEDDEFS are hard coded default values of variables that are inserted into
-#DICT_DEFAULT. This is used for adding important variables to the dictionary that
-#the script fails to parse.
+#DICT_DEFAULT. This is used for adding important variables to the dictionary
+#that the script fails to parse.
 FIXEDVALS = {"ngc2" : 18, "nimp" : 14}
 FIXEDDEFS = {"impdir" : ROOTDIR+"/impuritydata",
-             "imp_label" : ["H_", "He", "Be", "C_", "N_", "O_", "Ne", "Si", "Ar", "Fe", "Ni", "Kr", "Xe", "W_"],
              "sweep" : [0.0] * 200
             }
 
@@ -65,7 +68,7 @@ def to_type(string):
             #try an int conversion
             return int(string.strip())
     except ValueError:
-        match = re.match("\s*(\d+)", string)
+        match = re.match(r"\s*(\d+)", string)
         if match:
             #if the string starts with an integer return that
             return int(match.group(1))
@@ -91,7 +94,7 @@ def grep(file, regexp, flags=re.U):
             lines.append(line)
     return lines
 
-def grep_r(search_dir, regexp, flags=re.U):
+def grep_r(search_dir, regexp, flags=re.U, extension=""):
     """Implements an in-python recursive grep. Returns the lines that
        match as a list.
        Args:
@@ -108,7 +111,9 @@ def grep_r(search_dir, regexp, flags=re.U):
         path = search_dir + "/" + file
         if os.path.isdir(path):
             #if a directory, call grep_r recursively
-            lines += grep_r(path, regexp, flags)
+            lines += grep_r(path, regexp, flags, extension)
+            continue
+        if not file.endswith(extension):
             continue
         try:
             lines += grep(path, regexp, flags)
@@ -118,11 +123,20 @@ def grep_r(search_dir, regexp, flags=re.U):
     return lines
 
 def find(search_dir, regexp, flags=re.U):
+    """Searches through the search_dir to find files
+       that contain regexp. Returns matching files as a list
+       Args:
+            search_dir --> Path to directory to search
+            regexp --> regular expression to match to
+            flags --> regular expression flags to modify search
+       Returns:
+            files --> List of matching file paths
+
+    """
     files = []
     for file in os.listdir(search_dir):
         path = search_dir + "/" + file
         if os.path.isdir(path):
-            files += find(path, regexp, flags)
             continue
         try:
             text = open(path).readlines()
@@ -156,7 +170,7 @@ def slice_file(file, re1, re2):
             start = i
             break
     if start == None:
-        logging.warning("Could not match %s in file %s\n" % (re1, file))
+        logging.warning("Could not match %s in file %s\n", re1, file)
         return ""
     end = None
     for i in range(start, len(filetext)):
@@ -165,7 +179,8 @@ def slice_file(file, re1, re2):
             end = i
             break
     if end == None:
-        logging.warning("Could not match %s in file %s\n" % (re2, file))
+        logging.warning("Could not match %s in file %s\n", \
+                        re2, file)
         return ""
     #return slice
     return filetext[start:end+1]
@@ -206,7 +221,7 @@ def interpret_array(name, value):
     #if the substring between the brackets is a variable name rather than
     #an integer this will only work if the variable name appears in FIXEDVALS.
     #If it doesn't work, size will remain a string
-    match = re.search("\w+\((.*?)\)", name)
+    match = re.search(r"\w+\((.*?)\)", name)
     sizestr = match.group(1)
 
     if sizestr in FIXEDVALS:
@@ -216,8 +231,8 @@ def interpret_array(name, value):
 
     list_string = value.split(',')
     if isinstance(size, int) and len(list_string) > size:
-        logging.warning("length of %s is > than %i for %s in interpret_array\n"\
-                % (value, size, name))
+        logging.warning("length of %s is > than %i for %s in" + \
+                        " interpret_array\n", value, size, name)
         raise IndexError
 
     if list_string[-1] == ".." or list_string[-1] == "...":
@@ -237,9 +252,37 @@ def interpret_array(name, value):
 
     return ret
 
+def get_array_from_fortran(array_name):
+    """Attempts to find a value for array_name by looking for an assignment
+       statement in the fortran.
+       Args:
+            array_name: Name of array to find eg. boundl
+       Returns:
+            value: Default value of array_name
+
+    """
+    rexp = array_name + r" = \(/"
+    #find files that look like they have an assignment in
+    filelist = find(SOURCEDIR, rexp)
+    assert len(filelist) == 1
+    #slice the file between the parenthesis
+    arr = slice_file(filelist[0], rexp, r"/\)")
+
+    arr = [remove_comments(x) for x in arr]
+    #combine whole array onto one line
+    array_line = "".join(arr)
+    #regex that gets the string between the brackets
+    array_regex = rexp + r"(.*?)/\)"
+    val_string = re.search(array_regex, array_line).group(1)
+    #split the string and convert it to the correct type
+    value = [to_type(x) for x in val_string.split(",")]
+
+    list_type = type(value[0])
+    assert all(isinstance(y, list_type) for y in value)
+    return value
 
 
-def print_dict(di, name, comment="", lam=lambda x: x[0], ty = "dict()"):
+def print_dict(di, name, comment="", lam=lambda x: x[0], dict_type="dict()"):
     """Prints a dictionary to stdout, along with a comment. The sorting
        of the dictionary can be specified using a lambda function.
 
@@ -257,16 +300,17 @@ def print_dict(di, name, comment="", lam=lambda x: x[0], ty = "dict()"):
             lam --> Lambda function to control sorting. The lambda should
                     take as its argument a (key, value) tuple. The default
                     lambda will sort by the dictionary keys only.
-            ty --> A string that sets the type of the dictionary
+            dict_type --> A string that sets the type of the dictionary eg.
+                   'dict()' or 'defaultdict(list)'
     """
 
     if len(di) == 0:
         return
     print("\n#" + comment)
-    print(name + " = " + ty)
+    print(name + " = " + dict_type)
     for key, value in sorted(di.items(), key=lam):
         #repr will add quote marks around values and keys that are strings
-        if isinstance(value, dict): 
+        if isinstance(value, dict):
             valuestr = pformat(value)
         else:
             valuestr = repr(value)
@@ -292,7 +336,7 @@ def dict_ixc2nsweep():
     di = {}
     file = SOURCEDIR + "/scan.f90"
     #slice the file to get the switch statement relating to nsweep
-    lines = slice_file(file, "select case \(nsweep\)", "case default")
+    lines = slice_file(file, r"select case \(nsweep\)", r"case default")
 
     #remove extra lines that aren't case(#) or varname = sweep(iscan) lines
     modlines = []
@@ -309,12 +353,12 @@ def dict_ixc2nsweep():
 
     for i in range(len(modlines)):
         #get the number from the case statement
-        match = re.match("case\((\d+)\)", modlines[i])
+        match = re.match(r"case\((\d+)\)", modlines[i])
         if match:
             num = match.group(1)
             #if the case statement matched, get the variable name
             #from the next line
-            match_2 = re.match("(.*?)=sweep\(iscan\)", modlines[i+1])
+            match_2 = re.match(r"(.*?)=sweep\(iscan\)", modlines[i+1])
             if not match_2:
                 logging.warning("Error in dict_ixc2nsweep\n")
             else:
@@ -338,7 +382,7 @@ def dict_var_type():
            DICT_VAR_TYPE['beta'] = 'real_variable'
     """
     di = {}
-    regexp = "call parse_(real|int)_(array|variable)\("
+    regexp = r"call parse_(real|int)_(array|variable)\("
     lines = grep(SOURCEDIR + "/input.f90", regexp)
     for line in lines:
         args = line.split('(')[1]
@@ -371,7 +415,7 @@ def dict_ixc_full():
     di = {}
 
     #get slice of file from 'lablxc = (/' to '/)'
-    lxctext = slice_file(SOURCEDIR + "/numerics.f90", "lablxc = \(/", "/\)")
+    lxctext = slice_file(SOURCEDIR + "/numerics.f90", r"lablxc = \(/", r"/\)")
 
     regexp = r"""
                !\+ad_varc       #look for !+ad_varc
@@ -398,7 +442,8 @@ def dict_ixc_full():
 
 
     #get slice of file from 'boundu = (/' to '/)'
-    boundutext = slice_file(SOURCEDIR + "/numerics.f90", "boundu = \(/", "/\)")
+    boundutext = slice_file(SOURCEDIR + "/numerics.f90", \
+                                r"boundu = \(/", r"/\)")
     regexp = r"""
                 ([\d\.D-]+)     #fortran style floating point number contains
                                 #digits, '.', 'D' or '-' characters. Capture to
@@ -422,7 +467,8 @@ def dict_ixc_full():
             assert num == len(boundu)
 
     #get slice of file from 'boundl = (/' to '/)'
-    boundltext = slice_file(SOURCEDIR + "/numerics.f90", "boundl = \(/", "/\)")
+    boundltext = slice_file(SOURCEDIR + "/numerics.f90", \
+                            r"boundl = \(/", r"/\)")
     boundl = []
     #ignore first and last lines
     for line in boundltext[1:-1]:
@@ -472,7 +518,7 @@ def dict_default():
                 /(.*?)/         #capture whatever is between brackets
                                 #to group 3
               """
-    variables_lines = grep_r(SOURCEDIR, regexp, re.VERBOSE)
+    variables_lines = grep_r(SOURCEDIR, regexp, re.VERBOSE, ".f90")
     for line in variables_lines:
         if "FIX" in line:
             continue
@@ -482,30 +528,18 @@ def dict_default():
             value_string = match.group(3).strip()
             if not "(" in name:
                 #if the variable is not an array
-                if name in FIXEDDEFS:
-                    di[name] = FIXEDDEFS[name]
-                    continue
                 value = to_type(value_string)
                 di[name] = value
             else:
                 #the variable is an array
                 #remove the brackets from name to get the array name
                 array_name = name[:name.find("(")]
-                if array_name in FIXEDDEFS:
-                    di[array_name] = FIXEDDEFS[array_name]
-                    continue
                 try:
                     #try to get the value from between the / /
                     value = interpret_array(name, value_string)
-                except (IndexError, AttributeError, AssertionError, TypeError, ValueError):
-                    #if that doesn't work, try to parse the fortran
-                    rexp = array_name + " = \(/"
-                    filelist = find(SOURCEDIR, rexp)
-                    assert len(filelist) == 1
-                    arr = slice_file(filelist[0], rexp, "/\)")
-                    arr = [remove_comments(x) for x in arr]
-                    val_string = re.search(rexp + "(.*?)/\)", "".join(arr)).group(1)
-                    value = [to_type(x) for x in val_string.split(",")]
+                except (IndexError, AttributeError, \
+                        AssertionError, TypeError, ValueError):
+                    value = get_array_from_fortran(array_name)
 
                 di[array_name] = value
 
@@ -513,34 +547,37 @@ def dict_default():
             #anything that fails gets added to the warning list
             failedlines.append(line)
 
+
+    #get boundl and boundu from fortran
+    di["boundl"] = get_array_from_fortran("boundl")
+    di["boundu"] = get_array_from_fortran("boundu")
+
+    #add the fixed values
+    for name, value in FIXEDDEFS.items():
+        di[name] = value
+
+    #report the failed lines
     if len(failedlines) != 0:
         warn_string = "dict_default failed to parse:\n"
         for line in failedlines:
             warn_string += "%s\n" % line.strip()
         logging.warning(warn_string)
 
-    ixc_full = dict_ixc_full()
-    boundl = []
-    boundu = []
-    for key, value in sorted(ixc_full.items(), key=lambda x: int(x[0])):
-        boundl.append(value["lb"])
-        boundu.append(value["ub"])
-    di["boundl"] = boundl
-    di["boundu"] = boundu
-
-    regexp2 = "call parse_(real|int)_(array|variable)\((.*)"
+    #check dict_default against input lines in input.f90. Report differences
+    regexp2 = r"call parse_(real|int)_(array|variable)\((.*)"
     test = grep(SOURCEDIR + "/input.f90", regexp2)
     for line in test:
-        s = re.search(regexp2, line).group(3)
+        args = re.search(regexp2, line).group(3)
         try:
-            name = s.split(',')[1].strip()
+            name = args.split(',')[1].strip()
             if name not in di:
                 di[name] = None
-                logging.warning(" " + str(name) + " looks like an input variable" + \
-                " but could not find a default value. Setting default to None")
-        except:
+                logging.warning(" " + str(name) + " looks like an input " + \
+                "variable but cout not find a default value. Setting " + \
+                "default to None")
+        except IndexError:
             continue
-    
+
     dict_default.DICT_DEFAULT = di
     return di
 
@@ -560,7 +597,7 @@ def dict_input_bounds():
     """
     di = {}
     failedlines = []
-    regexp = 'call parse_(real|int)_variable\((.*)'
+    regexp = r"call parse_(real|int)_variable\((.*)"
     lines = grep(SOURCEDIR + "/input.f90", regexp)
 
     for line in lines:
@@ -587,13 +624,16 @@ def dict_input_bounds():
     return di
 
 def remove_tags(line):
+    """Removes some html tags that appear in autodoc comments
+
+    """
     line = line.replace("<LI>", "")
     line = line.replace("<UL>", "")
     line = line.replace("</UL>", "")
     line = line.replace("<OL>", "")
     line = line.replace("</OL>", "")
     return line
-    
+
 
 def dict_descriptions():
     """Returns a dictionary matching variable names to variable description.
@@ -609,14 +649,19 @@ def dict_descriptions():
     """
     di = {}
     failedlines = []
-    lines = grep_r(SOURCEDIR, "!\+ad_var(s|c)")
+    lines = grep_r(SOURCEDIR, r"!\+ad_var(s|c)", extension=".f90")
     #group lines by variable
     sep = "".join(lines).split("!+ad_vars")
-    for l in sep:
+    #sep is an array of multi line strings, one entry in array
+    #for each variable
+    #example entry: cfe0 /0.0/ : seeded ...
+    #               !+ad_varc    (imprad_model ...
+    for var_entry in sep:
         try:
-            firstline = remove_tags(l.split('\n')[0]).strip()
-            otherlines = l.split('\n')[1:]
-            ma = re.search("(\w+).*?:\s*(.*)", firstline.strip())
+            firstline = remove_tags(var_entry.split('\n')[0]).strip()
+            otherlines = var_entry.split('\n')[1:]
+            #name is before colon, description is after it
+            ma = re.search(r"(\w+).*?:\s*(.*)", firstline.strip())
             name = ma.group(1).lower()
             desc = ma.group(2)
             if otherlines:
@@ -624,14 +669,15 @@ def dict_descriptions():
                     line = remove_tags(line)
                     if line.strip() == "":
                         continue
-                    ma2 = re.match("\s*!\+ad_varc\s*(.*)\Z", line)
+
+                    #remove the !+ad_varc part and add it onto the desc
+                    ma2 = re.match(r"\s*!\+ad_varc\s*(.*)\Z", line)
                     desc += "\n" + ma2.group(1).strip()
-            if desc[0] == "\n":
-               desc = desc[1:] 
+            desc = desc.strip()
             di[name] = desc.capitalize()
-                   
+
         except (IndexError, AttributeError, AssertionError, TypeError):
-            failedlines.append(l)
+            failedlines.append(var_entry)
             continue
 
     #make manual changes
@@ -646,31 +692,32 @@ def dict_descriptions():
     tauscl = di["lablmm"].split('\n')[1:]
     di["minmax"] = "\n".join([minmax_desc] + tauscl)
 
+    #report problems
     if len(failedlines) != 0:
         warn_string = "dict_descriptions failed to parse:\n"
         for line in failedlines:
             warn_string += "%s\n" % line.strip()
         logging.warning(warn_string)
     return di
-    
+
 def dict_module():
-    """This function parses the fortran to return a dictionary that maps 
-       module names to lists of variables. 
+    """This function parses the fortran to return a dictionary that maps
+       module names to lists of variables.
 
     """
     module_dict = defaultdict(list)
     currentmodule = ""
-    lines = grep_r(SOURCEDIR, "^\s*!\+ad_(vars|name|type)")
+    lines = grep_r(SOURCEDIR, r"^\s*!\+ad_(vars|name|type)", extension=".f90")
     #an ad_vars line is a variable line
     #an ad_name line followed by a ad_type Module line indicates the start
     #of a new module
     i = 0
     while i < len(lines):
         try:
-            ma = re.match("^\s*!\+ad_(vars|name|type)\s*(\w+)", lines[i])
+            ma = re.match(r"^\s*!\+ad_(vars|name|type)\s*(\w+)", lines[i])
             #capture the text
             if ma.group(1) == "name":
-                if re.match("^\s*!\+ad_type\s*Module", lines[i+1]):
+                if re.match(r"^\s*!\+ad_type\s*Module", lines[i+1]):
                     #an ad_name line followed by an ad_type Module line means
                     #start a new module
                     modulename = ma.group(2).replace('_', ' ').title()
@@ -683,7 +730,7 @@ def dict_module():
                 #only want input variables
                 if varname in dict_default():
                     module_dict[currentmodule].append(varname)
-                        
+
         except (IndexError, AttributeError, AssertionError, TypeError):
             logging.warning(" dict_module: line failed: " + lines[i])
 
@@ -709,9 +756,12 @@ def print_header():
     """Prints the file header
     """
 
-    l = grep(SOURCEDIR + "/process.f90", "Release Date")
-    assert len(l) == 1
-    version_num = int(re.search("(\d+)\s*Release Date", l[0]).group(1))
+    #look for a line with 'Release Date'
+    rel_dat_list = grep(SOURCEDIR + "/process.f90", "Release Date")
+    assert len(rel_dat_list) == 1
+    dat_line = rel_dat_list[0]
+    #the version number is right before 'Release Date'
+    version_num = int(re.search(r"(\d+)\s*Release Date", dat_line).group(1))
 
     header = """\"\"\"
 This file contains python dictionaries for use by utility programs.
@@ -741,6 +791,8 @@ Automatically produced by create_dicts.py for PROCESS version %i
 from collections import defaultdict, OrderedDict
 """ % version_num
     print(header)
+    print("#Version number of process dictionaries created for")
+    print("DICTIONARY_VERSION = %i" % version_num)
 
 
 def print_hard_coded():
@@ -830,7 +882,8 @@ def print_ixc():
         ixc_bounds[value["name"]] = temp
 
     comment = "Dictionary mapping iteration variable name to bounds"
-    print_dict(ixc_bounds, "DICT_IXC_BOUNDS", comment, ty="defaultdict(dict)")
+    print_dict(ixc_bounds, "DICT_IXC_BOUNDS", comment, \
+                dict_type="defaultdict(dict)")
 
     ixc_default = {}
     default = dict_default()
@@ -840,7 +893,7 @@ def print_ixc():
             ixc_default[name] = default[name]
         else:
             logging.warning("print_dict_ixc could not find %s"\
-                            " in DICT_DEFAULT\n" % name)
+                            " in DICT_DEFAULT\n", name)
     comment = "Dictionary mapping iteration variable name to default value"
     print_dict(ixc_default, "DICT_IXC_DEFAULT", comment)
 
@@ -871,7 +924,8 @@ def print_input_bounds():
 
     input_bounds = dict_input_bounds()
     comment = "Dictionary of upper and lower bounds used when reading IN.DAT"
-    print_dict(input_bounds, "DICT_INPUT_BOUNDS", comment, ty="defaultdict(dict)")
+    print_dict(input_bounds, "DICT_INPUT_BOUNDS",\
+                comment, dict_type="defaultdict(dict)")
 
 def print_descriptions():
     """Prints:
@@ -887,7 +941,7 @@ def print_module():
     """
     module = dict_module()
     comment = "Dictionary mapping module name to list of variables"
-    print_dict(module, "DICT_MODULE", comment, ty="OrderedDict()")
+    print_dict(module, "DICT_MODULE", comment, dict_type="OrderedDict()")
 
 def print_all():
     """Prints every dictionary
@@ -905,4 +959,15 @@ def print_all():
 
 
 if __name__ == "__main__":
+    desc = "Creates a python dictionary file for use by utility programs. " + \
+           "Prints to stdout. Redirect to output file using '>'"
+    PARSER = argparse.ArgumentParser(description=desc)
+
+    #PARSER.add_argument("dir", help="PROCESS source directory", \
+    #                    nargs="?", default=".")
+
+    ARGS = PARSER.parse_args()
+
+    #SOURCEDIR = ARGS.dir
+
     print_all()

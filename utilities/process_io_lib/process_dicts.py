@@ -20,11 +20,13 @@ List of dictionaries:
     DICT_MODULE            : Ordered dictionary mapping module names to list
                              of associatied variables
 
-Automatically produced by create_dicts.py for PROCESS version 335
+Automatically produced by create_dicts.py for PROCESS version 336
 """
 
 from collections import defaultdict, OrderedDict
 
+#Version number of process dictionaries created for
+DICTIONARY_VERSION = 336
 
 #ifail value of a successful process run
 IFAIL_SUCCESS = 1
@@ -904,18 +906,18 @@ DICT_IXC_BOUNDS['vdalw']       = {'lb': 0.001, 'ub': 1000000.0}
 
 #Dictionary mapping iteration variable name to default value
 DICT_IXC_DEFAULT = dict()
-DICT_IXC_DEFAULT['aspect']     = 3.5
+DICT_IXC_DEFAULT['aspect']     = 2.907
 DICT_IXC_DEFAULT['beta']       = 0.042
 DICT_IXC_DEFAULT['blbuith']    = 0.365
 DICT_IXC_DEFAULT['blbuoth']    = 0.465
 DICT_IXC_DEFAULT['bore']       = 1.42
-DICT_IXC_DEFAULT['bt']         = 6.0
+DICT_IXC_DEFAULT['bt']         = 5.68
 DICT_IXC_DEFAULT['cdtfleg']    = 1000000.0
 DICT_IXC_DEFAULT['cfe0']       = 0.0
 DICT_IXC_DEFAULT['chrad']      = 6.5
 DICT_IXC_DEFAULT['coheof']     = 18500000.0
 DICT_IXC_DEFAULT['cpttf']      = 37900.0
-DICT_IXC_DEFAULT['dene']       = 1.5e+20
+DICT_IXC_DEFAULT['dene']       = 9.8e+19
 DICT_IXC_DEFAULT['drveff']     = 0.28
 DICT_IXC_DEFAULT['edrive']     = 5000000.0
 DICT_IXC_DEFAULT['enbeam']     = 1000.0
@@ -970,22 +972,22 @@ DICT_IXC_DEFAULT['fvs']        = 1.0
 DICT_IXC_DEFAULT['fvsbrnni']   = 1.0
 DICT_IXC_DEFAULT['fvvhe']      = 1.0
 DICT_IXC_DEFAULT['fwalld']     = 1.0
-DICT_IXC_DEFAULT['gapds']      = 0.0
+DICT_IXC_DEFAULT['gapds']      = 0.155
 DICT_IXC_DEFAULT['gapoh']      = 0.08
-DICT_IXC_DEFAULT['gapomin']    = 0.21
+DICT_IXC_DEFAULT['gapomin']    = 0.234
 DICT_IXC_DEFAULT['helecmw']    = 0.0
-DICT_IXC_DEFAULT['hfact']      = 2.0
+DICT_IXC_DEFAULT['hfact']      = 1.0
 DICT_IXC_DEFAULT['hthermmw']   = 0.0
 DICT_IXC_DEFAULT['li6enrich']  = 30.0
 DICT_IXC_DEFAULT['oacdcp']     = 14000000.0
-DICT_IXC_DEFAULT['ohcth']      = 0.63
+DICT_IXC_DEFAULT['ohcth']      = 0.811
 DICT_IXC_DEFAULT['pdrive']     = 23000000.0
 DICT_IXC_DEFAULT['pheat']      = 0.0
-DICT_IXC_DEFAULT['prp']        = 0.05
+DICT_IXC_DEFAULT['prp']        = 0.0
 DICT_IXC_DEFAULT['q']          = 3.0
 DICT_IXC_DEFAULT['rcool']      = 0.005
 DICT_IXC_DEFAULT['rfpth']      = 1.5
-DICT_IXC_DEFAULT['rmajor']     = 7.0
+DICT_IXC_DEFAULT['rmajor']     = 8.14
 DICT_IXC_DEFAULT['rnbeam']     = 0.005
 DICT_IXC_DEFAULT['scrapli']    = 0.14
 DICT_IXC_DEFAULT['scraplo']    = 0.15
@@ -996,9 +998,9 @@ DICT_IXC_DEFAULT['tcpav']      = 100.0
 DICT_IXC_DEFAULT['tdmptf']     = 10.0
 DICT_IXC_DEFAULT['tdwell']     = 100.0
 DICT_IXC_DEFAULT['te']         = 12.9
-DICT_IXC_DEFAULT['tfcth']      = 0.9
-DICT_IXC_DEFAULT['tfootfi']    = 1.8
-DICT_IXC_DEFAULT['tftort']     = 0.33
+DICT_IXC_DEFAULT['tfcth']      = 1.173
+DICT_IXC_DEFAULT['tfootfi']    = 1.19
+DICT_IXC_DEFAULT['tftort']     = None
 DICT_IXC_DEFAULT['tgain']      = 85.0
 DICT_IXC_DEFAULT['thkcas']     = 0.3
 DICT_IXC_DEFAULT['thwcndut']   = 0.003
@@ -1227,20 +1229,18 @@ DICT_DEFAULT['admv']           = 100000.0
 DICT_DEFAULT['afw']            = 0.005
 DICT_DEFAULT['alfapf']         = 5e-10
 DICT_DEFAULT['alphaj']         = 1.0
-DICT_DEFAULT['alphan']         = 0.5
-DICT_DEFAULT['alphat']         = 1.0
+DICT_DEFAULT['alphan']         = 0.25
+DICT_DEFAULT['alphat']         = 0.5
 DICT_DEFAULT['anginc']         = 0.262
 DICT_DEFAULT['aplasmin']       = 0.25
-DICT_DEFAULT['aspcstf']        = 1.0
-DICT_DEFAULT['aspect']         = 3.5
+DICT_DEFAULT['aspect']         = 2.907
 DICT_DEFAULT['astr']           = 2
 DICT_DEFAULT['auxmin']         = 0.1
 DICT_DEFAULT['baseel']         = 5000000.0
 DICT_DEFAULT['bcritsc']        = 24.0
 DICT_DEFAULT['bctmp']          = 320.0
-DICT_DEFAULT['bcylth']         = 0.0
 DICT_DEFAULT['beamfus0']       = 1.0
-DICT_DEFAULT['beamwd']         = 0.31
+DICT_DEFAULT['beamwd']         = 0.58
 DICT_DEFAULT['beta']           = 0.042
 DICT_DEFAULT['betbm0']         = 1.5
 DICT_DEFAULT['betpmx']         = 0.19
@@ -1258,7 +1258,6 @@ DICT_DEFAULT['blktmodel']      = 0
 DICT_DEFAULT['blmatf']         = None
 DICT_DEFAULT['blnkith']        = 0.115
 DICT_DEFAULT['blnkoth']        = 0.235
-DICT_DEFAULT['blnktth']        = 0.175
 DICT_DEFAULT['bmn']            = 0.001
 DICT_DEFAULT['bmxlim']         = 12.0
 DICT_DEFAULT['bore']           = 1.42
@@ -1268,15 +1267,13 @@ DICT_DEFAULT['bpsout']         = 0.6
 DICT_DEFAULT['breedmat']       = 1
 DICT_DEFAULT['bscfmax']        = 0.9
 DICT_DEFAULT['bstr']           = 1
-DICT_DEFAULT['bt']             = 6.0
+DICT_DEFAULT['bt']             = 5.68
 DICT_DEFAULT['c1div']          = 0.45
 DICT_DEFAULT['c2div']          = -7.0
 DICT_DEFAULT['c3div']          = 0.54
 DICT_DEFAULT['c4div']          = -3.6
 DICT_DEFAULT['c5div']          = 0.7
 DICT_DEFAULT['c6div']          = 0.0
-DICT_DEFAULT['carea']          = 1.0
-DICT_DEFAULT['casfact']        = 4.0
 DICT_DEFAULT['casthi']         = 0.05
 DICT_DEFAULT['casths']         = 0.07
 DICT_DEFAULT['cboot']          = 1.0
@@ -1309,8 +1306,8 @@ DICT_DEFAULT['cptdin']         = [40000.0, 40000.0, 40000.0, 40000.0, 40000.0, 4
 DICT_DEFAULT['cpttf']          = 37900.0
 DICT_DEFAULT['csawth']         = 1.0
 DICT_DEFAULT['csi']            = 16.0
-DICT_DEFAULT['csutf']          = 1400000000.0
-DICT_DEFAULT['csytf']          = 825000000.0
+DICT_DEFAULT['csutf']          = 1320000000.0
+DICT_DEFAULT['csytf']          = 1000500000.0
 DICT_DEFAULT['cturbb']         = 380.0
 DICT_DEFAULT['cvol']           = 1.0
 DICT_DEFAULT['dcase']          = 8000.0
@@ -1327,7 +1324,7 @@ DICT_DEFAULT['declfw']         = 0.075
 DICT_DEFAULT['declshld']       = 0.075
 DICT_DEFAULT['decomf']         = 0.1
 DICT_DEFAULT['delld']          = 1.0
-DICT_DEFAULT['dene']           = 1.5e+20
+DICT_DEFAULT['dene']           = 9.8e+19
 DICT_DEFAULT['denstl']         = 7800.0
 DICT_DEFAULT['dintrt']         = 0.0
 DICT_DEFAULT['divclfr']        = 0.3
@@ -1351,7 +1348,7 @@ DICT_DEFAULT['epsvmc']         = 1e-06
 DICT_DEFAULT['esbldgm3']       = 1000.0
 DICT_DEFAULT['estr']           = 1
 DICT_DEFAULT['etacp']          = 0.75
-DICT_DEFAULT['etaech']         = 0.5
+DICT_DEFAULT['etaech']         = 0.3
 DICT_DEFAULT['etafp']          = 0.75
 DICT_DEFAULT['etahhten']       = 1.35
 DICT_DEFAULT['etahhtex']       = 1.12
@@ -1363,21 +1360,21 @@ DICT_DEFAULT['etahtpdiv']      = 0.9
 DICT_DEFAULT['etahtpfw']       = 0.82
 DICT_DEFAULT['etahtpshld']     = 0.9
 DICT_DEFAULT['etainp']         = 0.85
-DICT_DEFAULT['etalh']          = 0.5
+DICT_DEFAULT['etalh']          = 0.3
 DICT_DEFAULT['etalp']          = 0.85
-DICT_DEFAULT['etanbi']         = 0.5
-DICT_DEFAULT['etaof']          = 0.5
+DICT_DEFAULT['etanbi']         = 0.3
+DICT_DEFAULT['etaof']          = 0.3
 DICT_DEFAULT['etapump']        = 0.8
 DICT_DEFAULT['etath']          = 0.35
 DICT_DEFAULT['etave']          = None
-DICT_DEFAULT['eyins']          = 15000000000.0
-DICT_DEFAULT['eystl']          = 200000000000.0
+DICT_DEFAULT['eyins']          = 20000000000.0
+DICT_DEFAULT['eystl']          = 205000000000.0
 DICT_DEFAULT['eywp']           = 660000000.0
 DICT_DEFAULT['f_asym']         = 1.0
 DICT_DEFAULT['f_rad']          = 0.85
 DICT_DEFAULT['f_w']            = 0.5
 DICT_DEFAULT['factor']         = 0.1
-DICT_DEFAULT['falpha']         = 1.0
+DICT_DEFAULT['falpha']         = 0.95
 DICT_DEFAULT['farc4tf']        = 0.7
 DICT_DEFAULT['fauxbop']        = 0.06
 DICT_DEFAULT['fauxmn']         = 1.0
@@ -1415,7 +1412,6 @@ DICT_DEFAULT['fdiva']          = 1.11
 DICT_DEFAULT['fdivcol']        = 1.0
 DICT_DEFAULT['fdivwet']        = 0.3333
 DICT_DEFAULT['fdtmp']          = 1.0
-DICT_DEFAULT['feastol']        = 1e-20
 DICT_DEFAULT['feffcd']         = 1.0
 DICT_DEFAULT['fflutf']         = 1.0
 DICT_DEFAULT['ffuspow']        = 1.0
@@ -1464,7 +1460,6 @@ DICT_DEFAULT['fpumpfw']        = 0.085
 DICT_DEFAULT['fpumpshld']      = 0.005
 DICT_DEFAULT['fq']             = 1.0
 DICT_DEFAULT['fqval']          = 1.0
-DICT_DEFAULT['fradmin']        = 0.0
 DICT_DEFAULT['fradpwr']        = 1.0
 DICT_DEFAULT['frbeam']         = 1.05
 DICT_DEFAULT['frfpf']          = 1.0
@@ -1486,7 +1481,6 @@ DICT_DEFAULT['ftol']           = 0.0001
 DICT_DEFAULT['ftpeak']         = 1.0
 DICT_DEFAULT['ftrit']          = 0.5
 DICT_DEFAULT['ftritbm']        = 1e-06
-DICT_DEFAULT['funcprec']       = 1e-20
 DICT_DEFAULT['fvdump']         = 1.0
 DICT_DEFAULT['fvoldw']         = 1.4
 DICT_DEFAULT['fvolsi']         = 0.64
@@ -1503,49 +1497,48 @@ DICT_DEFAULT['fwdzu']          = 0.01
 DICT_DEFAULT['fwith']          = 0.035
 DICT_DEFAULT['fwmatf']         = None
 DICT_DEFAULT['fwoth']          = 0.035
-DICT_DEFAULT['gainve']         = None
+DICT_DEFAULT['gainve']         = [60.0, 95.0, 115.0, 125.0, 133.0, 141.0, 152.0, 160.0, 165.0, 170.0]
 DICT_DEFAULT['gamma']          = 0.4
 DICT_DEFAULT['gammax']         = 2.0
-DICT_DEFAULT['gapds']          = 0.0
+DICT_DEFAULT['gapds']          = 0.155
 DICT_DEFAULT['gapoh']          = 0.08
-DICT_DEFAULT['gapomin']        = 0.21
+DICT_DEFAULT['gapomin']        = 0.234
 DICT_DEFAULT['gtscale']        = 0
 DICT_DEFAULT['hccl']           = 5.0
 DICT_DEFAULT['hcdportsize']    = 1
 DICT_DEFAULT['hcwt']           = 1.5
 DICT_DEFAULT['helecmw']        = 0.0
-DICT_DEFAULT['hfact']          = 2.0
+DICT_DEFAULT['hfact']          = 1.0
 DICT_DEFAULT['hldivlim']       = 5.0
 DICT_DEFAULT['hthermmw']       = 0.0
 DICT_DEFAULT['htpmw']          = 10.0
 DICT_DEFAULT['iavail']         = 0
-DICT_DEFAULT['ibss']           = 1
-DICT_DEFAULT['icc']            = None
+DICT_DEFAULT['ibss']           = 3
+DICT_DEFAULT['icc']            = [1, 2, 5, 7, 9, 10, 11, 14, 17, 24, 27, 33, 35, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 DICT_DEFAULT['iculbl']         = 0
 DICT_DEFAULT['icurr']          = 4
-DICT_DEFAULT['idensl']         = 3
+DICT_DEFAULT['idensl']         = 7
 DICT_DEFAULT['iefrf']          = 5
-DICT_DEFAULT['ifalphap']       = 0
+DICT_DEFAULT['ifalphap']       = 1
 DICT_DEFAULT['ife']            = 0
 DICT_DEFAULT['ifedrv']         = 2
 DICT_DEFAULT['ifetyp']         = 0
 DICT_DEFAULT['ifispact']       = 0
 DICT_DEFAULT['ifueltyp']       = 0
-DICT_DEFAULT['igeom']          = 0
+DICT_DEFAULT['igeom']          = 1
 DICT_DEFAULT['ignite']         = 0
 DICT_DEFAULT['ihplant']        = 0
 DICT_DEFAULT['iinvqd']         = 1
 DICT_DEFAULT['impc']           = 1.0
 DICT_DEFAULT['impdir']         = '/home/pknight/process/development/impuritydata'
-DICT_DEFAULT['impfe']          = 1.0
 DICT_DEFAULT['impo']           = 1.0
 DICT_DEFAULT['imprad_model']   = 1
 DICT_DEFAULT['impvar']         = 10
 DICT_DEFAULT['iohcl']          = 1
 DICT_DEFAULT['ioptimz']        = 1
 DICT_DEFAULT['iotabar']        = 1.0
-DICT_DEFAULT['ipedestal']      = 0
-DICT_DEFAULT['ipfloc']         = None
+DICT_DEFAULT['ipedestal']      = 1
+DICT_DEFAULT['ipfloc']         = [2, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 DICT_DEFAULT['ipfres']         = 0
 DICT_DEFAULT['ipnet']          = 0
 DICT_DEFAULT['ipowerflow']     = 1
@@ -1553,7 +1546,7 @@ DICT_DEFAULT['iprimdiv']       = 1
 DICT_DEFAULT['iprimhtp']       = 0
 DICT_DEFAULT['iprimnloss']     = 0
 DICT_DEFAULT['iprimshld']      = 1
-DICT_DEFAULT['iprofile']       = 0
+DICT_DEFAULT['iprofile']       = 1
 DICT_DEFAULT['iradloss']       = 1
 DICT_DEFAULT['ireactor']       = 1
 DICT_DEFAULT['irfcd']          = 1
@@ -1570,17 +1563,13 @@ DICT_DEFAULT['isumattf']       = 1
 DICT_DEFAULT['isweep']         = 0
 DICT_DEFAULT['itart']          = 0
 DICT_DEFAULT['itcycl']         = 1
-DICT_DEFAULT['itfmod']         = 1
 DICT_DEFAULT['itfsup']         = 1
 DICT_DEFAULT['iwalld']         = 1
-DICT_DEFAULT['ixc']            = None
+DICT_DEFAULT['ixc']            = [4, 5, 6, 7, 10, 12, 13, 19, 28, 29, 36, 39, 50, 53, 54, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 DICT_DEFAULT['jbus']           = 1250000.0
-DICT_DEFAULT['kappa']          = 2.218
+DICT_DEFAULT['kappa']          = 1.792
 DICT_DEFAULT['ksic']           = 0.8
-DICT_DEFAULT['lamuudiv']       = 2.0
-DICT_DEFAULT['lamuufw']        = 2.0
-DICT_DEFAULT['lamuumag']       = 0.5
-DICT_DEFAULT['lblnkt']         = 1
+DICT_DEFAULT['lblnkt']         = 0
 DICT_DEFAULT['li6enrich']      = 30.0
 DICT_DEFAULT['lpulse']         = 0
 DICT_DEFAULT['lsa']            = 4
@@ -1591,8 +1580,8 @@ DICT_DEFAULT['mcdriv']         = 1.0
 DICT_DEFAULT['minmax']         = 7
 DICT_DEFAULT['mvalim']         = 40.0
 DICT_DEFAULT['n_res']          = 5
-DICT_DEFAULT['nbshield']       = 0.1
-DICT_DEFAULT['ncls']           = None
+DICT_DEFAULT['nbshield']       = 0.5
+DICT_DEFAULT['ncls']           = [1, 1, 2, 0, 0, 0, 0, 0, 0, 0]
 DICT_DEFAULT['neped']          = 0.0
 DICT_DEFAULT['neqns']          = 14
 DICT_DEFAULT['nesep']          = 0.0
@@ -1609,7 +1598,7 @@ DICT_DEFAULT['nsweep']         = 1
 DICT_DEFAULT['ntype']          = 1
 DICT_DEFAULT['nvar']           = 16
 DICT_DEFAULT['oacdcp']         = 14000000.0
-DICT_DEFAULT['ohcth']          = 0.63
+DICT_DEFAULT['ohcth']          = 0.811
 DICT_DEFAULT['ohhghf']         = 0.71
 DICT_DEFAULT['omegan']         = 1.0
 DICT_DEFAULT['pbase']          = 2.6e-06
@@ -1622,15 +1611,15 @@ DICT_DEFAULT['pheat']          = 0.0
 DICT_DEFAULT['pibv']           = 20000.0
 DICT_DEFAULT['pifecr']         = 10.0
 DICT_DEFAULT['pin']            = 0.2
-DICT_DEFAULT['pinjalw']        = 25.0
+DICT_DEFAULT['pinjalw']        = 150.0
 DICT_DEFAULT['plsepo']         = 1.5
 DICT_DEFAULT['pnetelin']       = 1000.0
 DICT_DEFAULT['poisson']        = 0.3
-DICT_DEFAULT['powfmax']        = 1000.0
+DICT_DEFAULT['powfmax']        = 1500.0
 DICT_DEFAULT['pr']             = 1.0
 DICT_DEFAULT['prdiv']          = 0.36
 DICT_DEFAULT['prn1']           = 0.285
-DICT_DEFAULT['prp']            = 0.05
+DICT_DEFAULT['prp']            = 0.0
 DICT_DEFAULT['pseprmax']       = 25.0
 DICT_DEFAULT['ptargf']         = 2.0
 DICT_DEFAULT['ptempalw']       = 200.0
@@ -1645,16 +1634,15 @@ DICT_DEFAULT['rbrt']           = 1.0
 DICT_DEFAULT['rbvfac']         = 1.6
 DICT_DEFAULT['rbwt']           = 2.0
 DICT_DEFAULT['rcool']          = 0.005
-DICT_DEFAULT['recyle']         = 0.7
 DICT_DEFAULT['rfpth']          = 1.5
 DICT_DEFAULT['rhopedn']        = 1.0
 DICT_DEFAULT['rhopedt']        = 1.0
 DICT_DEFAULT['rinboard']       = 0.651
-DICT_DEFAULT['ripmax']         = 5.0
+DICT_DEFAULT['ripmax']         = 1.0
 DICT_DEFAULT['rjconpf']        = [30000000.0, 30000000.0, 30000000.0, 30000000.0, 30000000.0, 30000000.0, 30000000.0, 30000000.0, 30000000.0, 30000000.0, 30000000.0, 30000000.0, 30000000.0, 30000000.0, 30000000.0, 30000000.0, 30000000.0, 30000000.0]
 DICT_DEFAULT['rlenmax']        = 0.5
-DICT_DEFAULT['rli']            = 0.65
-DICT_DEFAULT['rmajor']         = 7.0
+DICT_DEFAULT['rli']            = 0.9
+DICT_DEFAULT['rmajor']         = 8.14
 DICT_DEFAULT['rnbeam']         = 0.005
 DICT_DEFAULT['routr']          = 1.5
 DICT_DEFAULT['row']            = 4.0
@@ -1667,27 +1655,6 @@ DICT_DEFAULT['rxcl']           = 4.0
 DICT_DEFAULT['sccufac']        = 0.0188
 DICT_DEFAULT['scrapli']        = 0.14
 DICT_DEFAULT['scraplo']        = 0.15
-DICT_DEFAULT['sect01']         = 1
-DICT_DEFAULT['sect02']         = 1
-DICT_DEFAULT['sect03']         = 1
-DICT_DEFAULT['sect04']         = 1
-DICT_DEFAULT['sect05']         = 1
-DICT_DEFAULT['sect06']         = 1
-DICT_DEFAULT['sect07']         = 1
-DICT_DEFAULT['sect08']         = 1
-DICT_DEFAULT['sect09']         = 1
-DICT_DEFAULT['sect10']         = 1
-DICT_DEFAULT['sect11']         = 1
-DICT_DEFAULT['sect12']         = 1
-DICT_DEFAULT['sect13']         = 1
-DICT_DEFAULT['sect14']         = 1
-DICT_DEFAULT['sect15']         = 1
-DICT_DEFAULT['sect16']         = 1
-DICT_DEFAULT['sect17']         = 1
-DICT_DEFAULT['sect18']         = 1
-DICT_DEFAULT['sect19']         = 1
-DICT_DEFAULT['sect20']         = 1
-DICT_DEFAULT['sect21']         = 1
 DICT_DEFAULT['sgeff']          = 1.0
 DICT_DEFAULT['shdr']           = 1.7
 DICT_DEFAULT['shdzl']          = 5.0
@@ -1703,20 +1670,19 @@ DICT_DEFAULT['sigpfalw']       = 335.0
 DICT_DEFAULT['sigpfcalw']      = 500.0
 DICT_DEFAULT['sigpfcf']        = 0.666
 DICT_DEFAULT['smstr']          = 1
-DICT_DEFAULT['snull']          = 0
+DICT_DEFAULT['snull']          = 1
 DICT_DEFAULT['sombdr']         = 2.7
 DICT_DEFAULT['somtdr']         = 2.7
-DICT_DEFAULT['ssync']          = 0.8
+DICT_DEFAULT['ssync']          = 0.6
 DICT_DEFAULT['stcl']           = 3.0
-DICT_DEFAULT['stress_model']   = 0
 DICT_DEFAULT['strncon']        = -0.005
-DICT_DEFAULT['sweep']          = None
+DICT_DEFAULT['sweep']          = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 DICT_DEFAULT['tbeamin']        = 3.0
 DICT_DEFAULT['tbeta']          = 2.0
 DICT_DEFAULT['tbktrepl']       = 0.5
 DICT_DEFAULT['tbrmin']         = 1.1
 DICT_DEFAULT['tbrnmn']         = 1.0
-DICT_DEFAULT['tburn']          = 227.9
+DICT_DEFAULT['tburn']          = 1000.0
 DICT_DEFAULT['tcomrepl']       = 0.5
 DICT_DEFAULT['tcoolin']        = 40.0
 DICT_DEFAULT['tcpav']          = 100.0
@@ -1731,18 +1697,18 @@ DICT_DEFAULT['tesep']          = 0.0
 DICT_DEFAULT['tfacpd']         = 0.0
 DICT_DEFAULT['tfc_model']      = 1
 DICT_DEFAULT['tfcbv']          = 20000.0
-DICT_DEFAULT['tfcth']          = 0.9
+DICT_DEFAULT['tfcth']          = 1.173
 DICT_DEFAULT['tflegres']       = 2.5e-08
 DICT_DEFAULT['tfno']           = 16.0
-DICT_DEFAULT['tfootfi']        = 1.8
+DICT_DEFAULT['tfootfi']        = 1.19
 DICT_DEFAULT['tftmp']          = 4.5
-DICT_DEFAULT['tftort']         = 0.33
+DICT_DEFAULT['tftort']         = None
 DICT_DEFAULT['tgain']          = 85.0
 DICT_DEFAULT['theat']          = 10.0
 DICT_DEFAULT['thicndut']       = 0.0008
 DICT_DEFAULT['thkcas']         = 0.3
 DICT_DEFAULT['thwcndut']       = 0.003
-DICT_DEFAULT['ti']             = 8.33
+DICT_DEFAULT['ti']             = 12.9
 DICT_DEFAULT['tinstf']         = 0.01
 DICT_DEFAULT['tlife']          = 30.0
 DICT_DEFAULT['tmargmin']       = 2.5
@@ -1757,7 +1723,7 @@ DICT_DEFAULT['tqnch']          = 15.0
 DICT_DEFAULT['tramp']          = 15.0
 DICT_DEFAULT['tratio']         = 1.0
 DICT_DEFAULT['trcl']           = 1.0
-DICT_DEFAULT['triang']         = 0.6
+DICT_DEFAULT['triang']         = 0.36
 DICT_DEFAULT['trithtmw']       = 15.0
 DICT_DEFAULT['triv']           = 40000.0
 DICT_DEFAULT['ucblbe']         = 260.0
@@ -1843,7 +1809,7 @@ DICT_DEFAULT['vdalw']          = 20.0
 DICT_DEFAULT['verbose']        = 0
 DICT_DEFAULT['vf']             = [0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
 DICT_DEFAULT['vfblkt']         = 0.25
-DICT_DEFAULT['vfohc']          = 0.4
+DICT_DEFAULT['vfohc']          = 0.2
 DICT_DEFAULT['vfshld']         = 0.25
 DICT_DEFAULT['vftf']           = 0.4
 DICT_DEFAULT['vgap2']          = 0.163
@@ -1856,7 +1822,6 @@ DICT_DEFAULT['walalw']         = 1.0
 DICT_DEFAULT['wallpf']         = 1.21
 DICT_DEFAULT['wgt']            = 500000.0
 DICT_DEFAULT['wgt2']           = 100000.0
-DICT_DEFAULT['wpvf']           = 0.0
 DICT_DEFAULT['wsvfac']         = 1.9
 DICT_DEFAULT['xdi']            = 2.0
 DICT_DEFAULT['xdo']            = 2.4
@@ -1868,7 +1833,7 @@ DICT_DEFAULT['xtfi']           = 200.0
 DICT_DEFAULT['xtfo']           = 300.0
 DICT_DEFAULT['zeffdiv']        = 1.0
 DICT_DEFAULT['zfear']          = 0
-DICT_DEFAULT['zref']           = None
+DICT_DEFAULT['zref']           = [3.6, 1.2, 2.5, 1.0, 1.0, 1.0, 1.0, 1.0]
 
 #Dictionary of upper and lower bounds used when reading IN.DAT
 DICT_INPUT_BOUNDS = defaultdict(dict)
@@ -2444,8 +2409,8 @@ DICT_INPUT_BOUNDS['zfear']     = {'lb': 0, 'ub': 1}
 DICT_DESCRIPTIONS = dict()
 DICT_DESCRIPTIONS['abeam']     = 'Beam ion mass (amu)'
 DICT_DESCRIPTIONS['abktflnc']  = 'Allowable first wall/blanket neutron\nfluence (mw-yr/m2) (blktmodel=0)'
-DICT_DESCRIPTIONS['ac1oh']     = 'Oh coil cable conduit area (m2)'
-DICT_DESCRIPTIONS['acasetf']   = 'Total external case area (inboard) (m2)'
+DICT_DESCRIPTIONS['ac1oh']     = 'Central solenoid cable conduit area (m2)'
+DICT_DESCRIPTIONS['acasetf']   = 'External case area per coil (inboard leg) (m2)'
 DICT_DESCRIPTIONS['acasetfo']  = 'External case area per coil (outboard leg) (m2)'
 DICT_DESCRIPTIONS['acndttf']   = 'Area of the cable conduit (m2)'
 DICT_DESCRIPTIONS['acond']     = 'Conductor area (winding pack) (m2)'
@@ -2461,19 +2426,17 @@ DICT_DESCRIPTIONS['afw']       = 'Inner radius of each first wall structural tub
 DICT_DESCRIPTIONS['aintmass']  = 'Intercoil structure mass (kg)'
 DICT_DESCRIPTIONS['aion']      = 'Average mass of all ions (amu)'
 DICT_DESCRIPTIONS['aiwp']      = 'Winding pack insulation area (m2)'
-DICT_DESCRIPTIONS['alfapf']    = 'Smoothing parameter used in bop pf coil\ncurrent calculation'
+DICT_DESCRIPTIONS['alfapf']    = 'Smoothing parameter used in pf coil\ncurrent calculation at the beginning of pulse (bop)'
 DICT_DESCRIPTIONS['alphaj']    = 'Current profile index;\ncalculated from q0, q if iprofile=1'
 DICT_DESCRIPTIONS['alphan']    = 'Density profile index'
 DICT_DESCRIPTIONS['alphap']    = 'Pressure profile index'
 DICT_DESCRIPTIONS['alpharate'] = 'Alpha particle production rate (particles/m3/sec)'
 DICT_DESCRIPTIONS['alphat']    = 'Temperature profile index'
-DICT_DESCRIPTIONS['alpmw']     = 'Alpha power (mw)'
 DICT_DESCRIPTIONS['alstrtf']   = 'Allowable stress in tf coil (pa)'
 DICT_DESCRIPTIONS['anginc']    = 'Angle of incidence of field line on plate (rad)'
 DICT_DESCRIPTIONS['aplasmin']  = 'Minimum minor radius (m)'
 DICT_DESCRIPTIONS['arealeg']   = 'Outboard tf leg area (m2)'
 DICT_DESCRIPTIONS['arp']       = 'Tf coil radial plate area (m2)'
-DICT_DESCRIPTIONS['aspcstf']   = 'Tf conductor cable aspect ratio (radial/toroidal)'
 DICT_DESCRIPTIONS['aspect']    = 'Aspect ratio (iteration variable 1)'
 DICT_DESCRIPTIONS['astr']      = 'Switch for blanket cooling channel geometry (lblnkt=1):\n= 1 circular cross section;\n= 2 annular cross section'
 DICT_DESCRIPTIONS['aswp']      = 'Winding pack structure area (m2)'
@@ -2482,9 +2445,8 @@ DICT_DESCRIPTIONS['avwp']      = 'Winding pack void (he coolant) area (m2)'
 DICT_DESCRIPTIONS['baseel']    = 'Base plant electric load (w)'
 DICT_DESCRIPTIONS['bcritsc']   = 'Upper critical field (t) for nb3sn superconductor\nat zero temperature and strain (isumattf=4, =bc20m)'
 DICT_DESCRIPTIONS['bctmp']     = 'First wall bulk coolant temperature (c)'
-DICT_DESCRIPTIONS['bcylth']    = 'Bucking cylinder thickness (m)'
 DICT_DESCRIPTIONS['beamfus0']  = 'Multiplier for beam-background fusion calculation'
-DICT_DESCRIPTIONS['beamwd']    = 'Beam width (m)'
+DICT_DESCRIPTIONS['beamwd']    = 'Width of neutral beam duct where it passes\nbetween the tf coils (m)\n(t inoue et al, design of neutral beam system for iter-feat,\n<a href="http://dx.doi.org/10.1016/s0920-3796(01)00339-8">\nfusion engineering and design, volumes 56-57, october 2001, pages 517-521</a>)'
 DICT_DESCRIPTIONS['beta']      = 'Total plasma beta (iteration variable 5)'
 DICT_DESCRIPTIONS['betaft']    = 'Fast alpha beta component'
 DICT_DESCRIPTIONS['betalim']   = 'Allowable beta'
@@ -2493,7 +2455,7 @@ DICT_DESCRIPTIONS['betap']     = 'Poloidal beta'
 DICT_DESCRIPTIONS['betbm0']    = 'Leading coefficient for nb beta fraction'
 DICT_DESCRIPTIONS['betpmx']    = 'Maximum poloidal beta\n(constraint equation 48)'
 DICT_DESCRIPTIONS['bfw']       = 'Outer radius of each first wall structural tube (m)\n(0.5 * average of fwith and fwoth)'
-DICT_DESCRIPTIONS['bigq']      = 'P_fusion / (p_injection + p_ohmic)'
+DICT_DESCRIPTIONS['bigq']      = 'Fusion gain; p_fusion / (p_injection + p_ohmic)'
 DICT_DESCRIPTIONS['bigqmin']   = 'Minimum fusion gain q\n(constraint equation 28)'
 DICT_DESCRIPTIONS['bktlife']   = 'Blanket lifetime (years)'
 DICT_DESCRIPTIONS['blarea']    = 'Blanket total surface area (m2)'
@@ -2514,28 +2476,27 @@ DICT_DESCRIPTIONS['blihkw']    = 'Inboard blanket total heat output (kw)'
 DICT_DESCRIPTIONS['bliizp']    = 'Inboard blanket integrated zone power / neutron'
 DICT_DESCRIPTIONS['blimzp']    = 'Inboard blanket mean zone power density / neutron'
 DICT_DESCRIPTIONS['blkcst']    = 'Blanket direct cost (m$)'
-DICT_DESCRIPTIONS['blktmodel'] = 'Switch for blanket model (but see <code>lblnkt</code>):\n= 0 original simple model;\n= 1 kit ppcs model, hcpb'
+DICT_DESCRIPTIONS['blktmodel'] = 'Switch for blanket/tritium breeding model\n(but see <code>lblnkt</code>):\n= 0 original simple model;\n= 1 kit model based on a helium-cooled pebble-bed\nblanket (hcpb) reference design'
 DICT_DESCRIPTIONS['blmatf']    = 'Maxmat) /.../ : ife blanket material fractions'
 DICT_DESCRIPTIONS['blmatm']    = 'Maxmat) : ife blanket material masses (kg)'
 DICT_DESCRIPTIONS['blmatv']    = 'Maxmat) : ife blanket material volumes (m3)'
 DICT_DESCRIPTIONS['blnkith']   = 'Inboard blanket thickness (m);\ncalculated if blktmodel > 0'
 DICT_DESCRIPTIONS['blnkoth']   = 'Outboard blanket thickness (m);\ncalculated if blktmodel > 0'
-DICT_DESCRIPTIONS['blnktth']   = 'Top blanket thickness (m);\ncalculated if blktmodel > 0'
+DICT_DESCRIPTIONS['blnktth']   = 'Top blanket thickness (m),\n= mean of inboard and outboard blanket thicknesses'
 DICT_DESCRIPTIONS['bloact']    = 'Outboard blanket total activity (bq)'
 DICT_DESCRIPTIONS['blogdr']    = 'Outboard blanket total gamma dose rate (sv/hr)'
 DICT_DESCRIPTIONS['blohkw']    = 'Outboard blanket total heat output (kw)'
 DICT_DESCRIPTIONS['bloizp']    = 'Outboard blanket integrated zone power / neutron'
 DICT_DESCRIPTIONS['blomzp']    = 'Outboard blanket mean zone power density / neutron'
 DICT_DESCRIPTIONS['blvol']     = 'Ife blanket volume (m3)'
-DICT_DESCRIPTIONS['bmaxoh']    = 'B-max in oh coil at eof (t)'
-DICT_DESCRIPTIONS['bmaxoh0']   = 'B-max in oh coil at bop (t)'
+DICT_DESCRIPTIONS['bmaxoh']    = 'Maximum field in central solenoid at end of flat-top (eof) (t)'
+DICT_DESCRIPTIONS['bmaxoh0']   = 'Maximum field in central solenoid at beginning of pulse (t)'
 DICT_DESCRIPTIONS['bmaxtf']    = 'Peak field at tf coil (t)'
 DICT_DESCRIPTIONS['bmaxtfrp']  = 'Peak field at conductor with ripple (t)'
 DICT_DESCRIPTIONS['bmn']       = 'Relative radial field perturbation'
-DICT_DESCRIPTIONS['bmxlim']    = 'Maximum toroidal field (t)\n(constraint equation 25)'
-DICT_DESCRIPTIONS['bootipf']   = 'Bootstrap current fraction'
-DICT_DESCRIPTIONS['bore']      = 'Oh coil inboard radius (m)\n(iteration variable 29)'
-DICT_DESCRIPTIONS['borev']     = 'Vertical inner bore of tf coil (m)'
+DICT_DESCRIPTIONS['bmxlim']    = 'Maximum peak toroidal field (t)\n(constraint equation 25)'
+DICT_DESCRIPTIONS['bootipf']   = 'Bootstrap current fraction (enforced; see ibss)'
+DICT_DESCRIPTIONS['bore']      = 'Central solenoid inboard radius (m)\n(iteration variable 29)'
 DICT_DESCRIPTIONS['boundl']    = 'Lower bounds used on ixc variables during\nvmcon optimisation runs'
 DICT_DESCRIPTIONS['boundu']    = 'Upper bounds used on ixc variables during\nvmcon optimisation runs'
 DICT_DESCRIPTIONS['bp']        = 'Poloidal field (t)'
@@ -2546,7 +2507,7 @@ DICT_DESCRIPTIONS['bscf_iter89'] = 'Bootstrap current fraction, iter 1989 model'
 DICT_DESCRIPTIONS['bscf_nevins'] = 'Bootstrap current fraction, nevins et al model'
 DICT_DESCRIPTIONS['bscf_sauter'] = 'Bootstrap current fraction, sauter et al model'
 DICT_DESCRIPTIONS['bscf_wilson'] = 'Bootstrap current fraction, wilson et al model'
-DICT_DESCRIPTIONS['bscfmax']   = 'Max fraction of plasma current from bootstrap;\nif bscfmax < 0, bootstrap fraction = abs(bscfmax)'
+DICT_DESCRIPTIONS['bscfmax']   = 'Maximum fraction of plasma current from bootstrap;\nif bscfmax < 0, bootstrap fraction = abs(bscfmax)'
 DICT_DESCRIPTIONS['bstr']      = 'Switch for blanket boundary condition (lblnkt=1):\n= 1 coolant outlet temperature fixed;\n= 2 maximum blanket temperature fixed'
 DICT_DESCRIPTIONS['bt']        = 'Toroidal field on axis (t) (iteration variable 2)'
 DICT_DESCRIPTIONS['btot']      = 'Total toroidal + poloidal field (t)'
@@ -2561,12 +2522,10 @@ DICT_DESCRIPTIONS['c4div']     = 'Fitting coefficient to adjust ptpdiv, ppdiv'
 DICT_DESCRIPTIONS['c5div']     = 'Fitting coefficient to adjust ptpdiv, ppdiv'
 DICT_DESCRIPTIONS['c6div']     = 'Fitting coefficient to adjust ptpdiv, ppdiv'
 DICT_DESCRIPTIONS['capcost']   = 'Total capital cost including interest (m$)'
-DICT_DESCRIPTIONS['carea']     = 'Multiplying factor times plasma surface area'
 DICT_DESCRIPTIONS['casestr']   = 'Case strain'
-DICT_DESCRIPTIONS['casfact']   = 'Tf coil case outboard/inboard area ratio'
 DICT_DESCRIPTIONS['casthi']    = 'Inboard tf coil case inner (plasma side) thickness (m)\n(calculated for stellarators)'
 DICT_DESCRIPTIONS['casths']    = 'Inboard tf coil sidewall case thickness (m)\n(calculated for stellarators)'
-DICT_DESCRIPTIONS['cboot']     = 'Bootstrap current fraction multiplier'
+DICT_DESCRIPTIONS['cboot']     = 'Bootstrap current fraction multiplier (ibss=1)'
 DICT_DESCRIPTIONS['cconfix']   = 'Fixed cost of superconducting cable ($/m)'
 DICT_DESCRIPTIONS['cconshpf']  = 'Cost of pf coil steel conduit/sheath ($/m)'
 DICT_DESCRIPTIONS['cconshtf']  = 'Cost of tf coil steel conduit/sheath ($/m)'
@@ -2578,7 +2537,7 @@ DICT_DESCRIPTIONS['cdriv2']    = 'Ife high energy heavy ion beam driver cost\nex
 DICT_DESCRIPTIONS['cdrlife']   = 'Lifetime of heating/current drive system (y)'
 DICT_DESCRIPTIONS['cdtfleg']   = 'Tf leg overall current density (a/m2)\n(resistive coils only) (iteration variable 24)'
 DICT_DESCRIPTIONS['cfactr']    = 'Plant capacity factor, availability;\ninput if iavail = 0'
-DICT_DESCRIPTIONS['cfe0']      = 'Seeded high-z impurity fraction (n_highz / n_e)\n(iteration variable 43)'
+DICT_DESCRIPTIONS['cfe0']      = 'Seeded high-z impurity fraction (n_highz / n_e)\n(imprad_model=0 only) (iteration variable 43)'
 DICT_DESCRIPTIONS['cfind']     = 'Indirect cost factor (func of lsa)'
 DICT_DESCRIPTIONS['cforce']    = 'Centering force on inboard leg (per coil) (n/m)'
 DICT_DESCRIPTIONS['chdzl']     = 'Vertical thickness of ife chamber below centre (m)'
@@ -2591,7 +2550,7 @@ DICT_DESCRIPTIONS['chrad']     = 'Radius of ife chamber (m)\n(iteration variable
 DICT_DESCRIPTIONS['chvol']     = 'Ife chamber volume (m3)'
 DICT_DESCRIPTIONS['cland']     = 'Cost of land (m$)'
 DICT_DESCRIPTIONS['clgsmass']  = 'Gravity support structure for tf coil, pf coil\nand intercoil support systems (kg)'
-DICT_DESCRIPTIONS['clh1']      = 'Minimum vertical clearance from tf coil to cryostat (m)'
+DICT_DESCRIPTIONS['clh1']      = 'Vertical clearance from tf coil to cryostat (m)\n(calculated for tokamaks, rfps)'
 DICT_DESCRIPTIONS['clh2']      = 'Clearance beneath tf coil to foundation\n(including basement) (m)'
 DICT_DESCRIPTIONS['clhsf']     = 'Cryostat lid height scaling factor (tokamaks, rfps)'
 DICT_DESCRIPTIONS['cnbeam']    = 'Neutral beam current (a)'
@@ -2599,8 +2558,8 @@ DICT_DESCRIPTIONS['coe']       = 'Cost of electricity (m$/kw-hr)'
 DICT_DESCRIPTIONS['coecap']    = 'Capital cost of electricity (m$/kw-hr)'
 DICT_DESCRIPTIONS['coefuelt']  = "'fuel' (including replaceable components) contribution to\ncost of electricity (m$/kw-hr)"
 DICT_DESCRIPTIONS['coeoam']    = 'Operation and maintenance contribution to\ncost of electricity (m$/kw-hr)'
-DICT_DESCRIPTIONS['cohbop']    = 'Oh coil overall current density at bop (a/m2)'
-DICT_DESCRIPTIONS['coheof']    = 'Oh coil overall current density at eof (a/m2)\n(iteration variable 37)'
+DICT_DESCRIPTIONS['cohbop']    = 'Central solenoid overall current density at beginning of pulse (a/m2)'
+DICT_DESCRIPTIONS['coheof']    = 'Central solenoid overall current density at end of flat-top (a/m2)\n(iteration variable 37)'
 DICT_DESCRIPTIONS['coldmass']  = 'Total mass of components at cryogenic temperatures (kg)'
 DICT_DESCRIPTIONS['concost']   = 'Plant construction cost (m$)'
 DICT_DESCRIPTIONS['conv']      = 'Control building volume (m3)'
@@ -2610,10 +2569,10 @@ DICT_DESCRIPTIONS['coolp']     = 'First wall coolant pressure (pa)'
 DICT_DESCRIPTIONS['coreradius'] = "Normalised radius defining the 'core' region"
 DICT_DESCRIPTIONS['costr']     = 'Switch for blanket coolant material (lblnkt=1):\n= 1 gaseous helium coolant;\n= 2 pressurized water coolant\n(costr=2 (sic) is forced if blktmodel > 0, as only the\nblanket is helium-cooled in this model)'
 DICT_DESCRIPTIONS['cowner']    = 'Owner cost factor'
-DICT_DESCRIPTIONS['cph2o']     = 'Specific heat of water (j/kg/k)'
+DICT_DESCRIPTIONS['cph2o']     = 'Specific heat capacity of water (j/kg/k)'
 DICT_DESCRIPTIONS['cplife']    = 'Lifetime of centrepost (y)'
-DICT_DESCRIPTIONS['cpstcst']   = 'Tart centrepost direct cost (m$)'
-DICT_DESCRIPTIONS['cpstflnc']  = 'Allowable tart centrepost neutron fluence (mw-yr/m2)'
+DICT_DESCRIPTIONS['cpstcst']   = 'St centrepost direct cost (m$)'
+DICT_DESCRIPTIONS['cpstflnc']  = 'Allowable st centrepost neutron fluence (mw-yr/m2)'
 DICT_DESCRIPTIONS['cpt']       = 'Current per turn in coil i at time j (a)'
 DICT_DESCRIPTIONS['cptdin']    = 'Current per turn input for pf coil i (a)'
 DICT_DESCRIPTIONS['cptrfp']    = 'Current per turn in each rfp pf coil (a/m2)'
@@ -2624,9 +2583,9 @@ DICT_DESCRIPTIONS['crypmw']    = 'Cryogenic plant power (mw)'
 DICT_DESCRIPTIONS['cryvol']    = 'Volume of cryoplant building (m3)'
 DICT_DESCRIPTIONS['csawth']    = 'Coeff. for sawteeth effects on burn v-s requirement'
 DICT_DESCRIPTIONS['csi']       = 'Allowance for site costs (m$)'
-DICT_DESCRIPTIONS['csutf']     = 'Ultimate strength of case (pa)'
-DICT_DESCRIPTIONS['csytf']     = 'Yield strength of case (pa)'
-DICT_DESCRIPTIONS['ctht']      = 'Total plant heat removal (mw)'
+DICT_DESCRIPTIONS['csutf']     = 'Ultimate strength of case (pa)\n(default value from ddd11-2 v2 2 (2009))'
+DICT_DESCRIPTIONS['csytf']     = 'Yield strength of case (pa)\n(default value from ddd11-2 v2 2 (2009))'
+DICT_DESCRIPTIONS['ctht']      = 'Total plant heat removal (primary + secondary) (mw)'
 DICT_DESCRIPTIONS['cturbb']    = 'Cost of turbine building (m$)'
 DICT_DESCRIPTIONS['curpfb']    = 'Work array'
 DICT_DESCRIPTIONS['curpff']    = 'Work array'
@@ -2636,7 +2595,7 @@ DICT_DESCRIPTIONS['dcase']     = 'Density of coil case (kg/m3)'
 DICT_DESCRIPTIONS['dcdrv0']    = 'Ife generic/laser driver cost gradient (m$/mj)'
 DICT_DESCRIPTIONS['dcdrv1']    = 'Hib driver cost gradient at low energy (m$/mj)'
 DICT_DESCRIPTIONS['dcdrv2']    = 'Hib driver cost gradient at high energy (m$/mj)'
-DICT_DESCRIPTIONS['dcond']     = 'Density of superconductor (kg/m3)'
+DICT_DESCRIPTIONS['dcond']     = 'Density of superconductor type given by isumattf or isumatpf (kg/m3)'
 DICT_DESCRIPTIONS['dcondins']  = 'Density of conduit + ground-wall insulation (kg/m3)'
 DICT_DESCRIPTIONS['dcopper']   = 'Density of copper (kg/m3)'
 DICT_DESCRIPTIONS['ddwex']     = 'External cryostat thickness (m)'
@@ -2673,7 +2632,7 @@ DICT_DESCRIPTIONS['dlscal']    = 'Vacuum system duct length scaling'
 DICT_DESCRIPTIONS['dnalp']     = 'Thermal alpha density (/m3)'
 DICT_DESCRIPTIONS['dnbeam']    = 'Hot beam ion density, variable (/m3)'
 DICT_DESCRIPTIONS['dnbeam2']   = 'Hot beam ion density from calculation (/m3)'
-DICT_DESCRIPTIONS['dnbeta']    = '(troyon-like) coefficient for beta scaling;\ncalculated as (4.0*rli) if iprofile=1'
+DICT_DESCRIPTIONS['dnbeta']    = '(troyon-like) coefficient for beta scaling;\ncalculated as (4.0*rli) if iprofile=1\n(see also gtscale option)'
 DICT_DESCRIPTIONS['dnelimt']   = 'Density limit (/m3)'
 DICT_DESCRIPTIONS['dnitot']    = 'Total ion density (/m3)'
 DICT_DESCRIPTIONS['dnla']      = 'Line averaged electron density (/m3)'
@@ -2691,8 +2650,8 @@ DICT_DESCRIPTIONS['dzpf']      = 'Vertical cross-section of each rfp pf coil (m)
 DICT_DESCRIPTIONS['dztop']     = 'Centrepost taper height adjustment (m)'
 DICT_DESCRIPTIONS['ealphadt']  = 'Alpha birth energy in d-t reaction (kev)'
 DICT_DESCRIPTIONS['echarge']   = 'Electron charge (c)'
-DICT_DESCRIPTIONS['echpwr']    = 'Ech power (w)'
-DICT_DESCRIPTIONS['echwpow']   = 'Ech wall plug power (w)'
+DICT_DESCRIPTIONS['echpwr']    = 'Ech power (mw)'
+DICT_DESCRIPTIONS['echwpow']   = 'Ech wall plug power (mw)'
 DICT_DESCRIPTIONS['edrive']    = 'Ife driver energy (j)\n(iteration variable 81)'
 DICT_DESCRIPTIONS['effcd']     = 'Current drive efficiency (a/w)'
 DICT_DESCRIPTIONS['efloor']    = 'Effective total floor space (m2)'
@@ -2700,7 +2659,7 @@ DICT_DESCRIPTIONS['elevol']    = 'Volume of electrical equipment building (m3)'
 DICT_DESCRIPTIONS['emult']     = 'Energy multiplication in blanket and shield'
 DICT_DESCRIPTIONS['enbeam']    = 'Neutral beam energy (kev) (iteration variable 19)'
 DICT_DESCRIPTIONS['ensxpfm']   = 'Maximum stored energy in the pf circuits (mj)'
-DICT_DESCRIPTIONS['epbetmax']  = 'Max (eps*beta_poloidal) for beta limit scaling 1'
+DICT_DESCRIPTIONS['epbetmax']  = 'Maximum (eps*beta_poloidal) for 2nd stability beta limit\n(constraint equation 6)'
 DICT_DESCRIPTIONS['eps']       = 'Inverse aspect ratio'
 DICT_DESCRIPTIONS['epsfcn']    = 'Finite difference step length for hybrd/vmcon derivatives'
 DICT_DESCRIPTIONS['epsvmc']    = 'Error tolerance for vmcon'
@@ -2727,26 +2686,25 @@ DICT_DESCRIPTIONS['etainp']    = 'Intermediate pressure turbine isentropic effic
 DICT_DESCRIPTIONS['etalh']     = 'Lower hybrid wall plug to injector efficiency'
 DICT_DESCRIPTIONS['etalp']     = 'Low pressure turbine isentropic efficiency'
 DICT_DESCRIPTIONS['etanbi']    = 'Neutral beam wall plug to injector efficiency'
-DICT_DESCRIPTIONS['etaof']     = 'Ofcd wall plug to injector efficiency'
+DICT_DESCRIPTIONS['etaof']     = 'Oscillating field wall plug to injector efficiency'
 DICT_DESCRIPTIONS['etapump']   = 'Centrepost coolant pump efficiency'
 DICT_DESCRIPTIONS['etath']     = 'Thermal to electric conversion efficiency\nif lblnkt=0, otherwise calculated'
 DICT_DESCRIPTIONS['etave']     = 'Ife driver efficiency vs driver energy (ifedrv=-1)'
-DICT_DESCRIPTIONS['eyins']     = "Insulator young's modulus (pa)"
+DICT_DESCRIPTIONS['eyins']     = "Insulator young's modulus (pa)\n(default value from ddd11-2 v2 2 (2009))"
 DICT_DESCRIPTIONS['eyoung']    = 'Work array used in stress calculation (pa)'
 DICT_DESCRIPTIONS['eyrp']      = "Tf coil radial plate young's modulus (pa)"
-DICT_DESCRIPTIONS['eystl']     = "Steel case young's modulus (pa)"
+DICT_DESCRIPTIONS['eystl']     = "Steel case young's modulus (pa)\n(default value from ddd11-2 v2 2 (2009))"
 DICT_DESCRIPTIONS['eywp']      = "Winding pack young's modulus (pa)"
-DICT_DESCRIPTIONS['eyzwp']     = "Winding pack vertical young's modulus (pa) (stress_model=1)"
+DICT_DESCRIPTIONS['eyzwp']     = "Winding pack vertical young's modulus (pa) (tfc_model=1)"
 DICT_DESCRIPTIONS['f_asym']    = 'Divertor heat load peaking factor'
 DICT_DESCRIPTIONS['f_rad']     = 'Radiated power fraction in sol'
 DICT_DESCRIPTIONS['f_w']       = 'Island size fraction factor'
-DICT_DESCRIPTIONS['faccd']     = 'Fraction of plasma current produced by aux. current drive'
-DICT_DESCRIPTIONS['facht']     = 'Facility heat removal (mw)'
+DICT_DESCRIPTIONS['faccd']     = 'Fraction of plasma current produced by auxiliary current drive'
 DICT_DESCRIPTIONS['fachtmw']   = 'Facility heat removal (mw)'
 DICT_DESCRIPTIONS['facoh']     = 'Fraction of plasma current produced inductively'
 DICT_DESCRIPTIONS['factor']    = 'Used in hybrd for first step size'
 DICT_DESCRIPTIONS['falpe']     = 'Fraction of alpha energy to electrons'
-DICT_DESCRIPTIONS['falpha']    = 'Fraction of alpha power deposited to plasma'
+DICT_DESCRIPTIONS['falpha']    = 'Fraction of alpha power deposited in plasma\n(physics of energetic ions, p.2489)'
 DICT_DESCRIPTIONS['falpi']     = 'Fraction of alpha power to ions'
 DICT_DESCRIPTIONS['farc4tf']   = 'Factor to size height of point 4 on tf coil'
 DICT_DESCRIPTIONS['fauxbop']   = 'Fraction of gross electric power to balance-of-plant'
@@ -2754,7 +2712,7 @@ DICT_DESCRIPTIONS['fauxmn']    = 'F-value for minimum auxiliary power\n(constrai
 DICT_DESCRIPTIONS['fbeta']     = 'F-value for epsilon beta-poloidal\n(constraint equation 6, iteration variable 8)'
 DICT_DESCRIPTIONS['fbetap']    = 'F-value for poloidal beta\n(constraint equation 48, iteration variable 79)'
 DICT_DESCRIPTIONS['fbetatry']  = 'F-value for beta limit\n(constraint equation 24, iteration variable 36)'
-DICT_DESCRIPTIONS['fbfe']      = 'Fraction of high-z radiation to bremsstrahlung'
+DICT_DESCRIPTIONS['fbfe']      = 'Fraction of high-z radiation to bremsstrahlung\n(imprad_model=0 only)'
 DICT_DESCRIPTIONS['fblbe']     = 'Beryllium fraction of blanket by volume\n(if blktmodel>0, be fraction of breeding zone)'
 DICT_DESCRIPTIONS['fblbreed']  = 'Breeder fraction of blanket breeding zone by volume\n(blktmodel>0)'
 DICT_DESCRIPTIONS['fblhebmi']  = 'Helium fraction of inboard blanket box manifold by volume\n(blktmodel>0)'
@@ -2771,13 +2729,13 @@ DICT_DESCRIPTIONS['fburn']     = 'Ife burn fraction (fraction of tritium fused/t
 DICT_DESCRIPTIONS['fcap0']     = 'Average cost of money for construction of plant\nassuming design/construction time of six years'
 DICT_DESCRIPTIONS['fcap0cp']   = 'Average cost of money for replaceable components\nassuming lead time for these of two years'
 DICT_DESCRIPTIONS['fcdfuel']   = 'Fraction of current drive cost treated as fuel\n(if ifueltyp = 1)'
-DICT_DESCRIPTIONS['fcohbof']   = 'Ratio of oh coil overall current density at bof / coheof'
-DICT_DESCRIPTIONS['fcohbop']   = '= cohbop / coheof (iteration variable 41)'
+DICT_DESCRIPTIONS['fcohbof']   = 'Ratio of central solenoid overall current density at\nbeginning of flat-top / end of flat-top'
+DICT_DESCRIPTIONS['fcohbop']   = 'Ratio of central solenoid overall current density at\nbeginning of pulse / end of flat-top\n(iteration variable 41)'
 DICT_DESCRIPTIONS['fcontng']   = 'Project contingency factor'
 DICT_DESCRIPTIONS['fcoolcp']   = 'Coolant fraction of tf coil inboard legs\n(iteration variable 23)'
 DICT_DESCRIPTIONS['fcr0']      = 'Fixed charge rate during construction'
 DICT_DESCRIPTIONS['fcsht']     = 'Total baseline power required at all times (mw)'
-DICT_DESCRIPTIONS['fcuoh']     = 'Copper fraction of conductor in oh coil cable'
+DICT_DESCRIPTIONS['fcuoh']     = 'Copper fraction of conductor in central solenoid cable'
 DICT_DESCRIPTIONS['fcutfsu']   = 'Copper fraction of cable conductor\n(iteration variable 59)'
 DICT_DESCRIPTIONS['fdene']     = 'F-value for density limit\n(constraint equation 5, iteration variable 9)'
 DICT_DESCRIPTIONS['fdeut']     = 'Deuterium fuel fraction'
@@ -2787,42 +2745,41 @@ DICT_DESCRIPTIONS['fdiva']     = 'Divertor area fudge factor (for iter, sept 199
 DICT_DESCRIPTIONS['fdivcol']   = 'F-value for divertor collisionality\n(constraint equation 22, iteration variable 34)'
 DICT_DESCRIPTIONS['fdivwet']   = 'Wetted fraction of the divertor area'
 DICT_DESCRIPTIONS['fdtmp']     = 'F-value for first wall coolant temperature rise\n(constraint equation 38, iteration variable 62)'
-DICT_DESCRIPTIONS['feastol']   = 'Nag e04ucf feasibility tolerance'
 DICT_DESCRIPTIONS['feffcd']    = 'Current drive efficiency fudge factor (iteration variable 47)'
 DICT_DESCRIPTIONS['fflutf']    = 'F-value for neutron fluence on tf coil\n(constraint equation 53, iteration variable 92)'
 DICT_DESCRIPTIONS['ffuspow']   = 'F-value for maximum fusion power\n(constraint equation 9, iteration variable 26)'
-DICT_DESCRIPTIONS['ffwal']     = 'Factor to convert plasma surface area to first wall\narea in neutron wall load calculation'
-DICT_DESCRIPTIONS['ffwlg']     = 'Fraction of first wall / divertor power to low grade heat'
+DICT_DESCRIPTIONS['ffwal']     = 'Factor to convert plasma surface area to first wall\narea in neutron wall load calculation (iwalld=1)'
+DICT_DESCRIPTIONS['ffwlg']     = 'Fraction of first wall / divertor power to low grade heat\n(ipowerflow=0)'
 DICT_DESCRIPTIONS['fgamcd']    = 'F-value for current drive gamma\n(constraint equation 37, iteration variable 40)'
 DICT_DESCRIPTIONS['fgamp']     = 'Sheath potential factor (not used)'
 DICT_DESCRIPTIONS['fgrosbop']  = 'Scaled fraction of gross power to balance-of-plant'
 DICT_DESCRIPTIONS['fhcd']      = 'Area fraction covered by heating/current drive\napparatus plus diagnostics (ipowerflow=1)'
 DICT_DESCRIPTIONS['fhe3']      = 'Helium-3 fuel fraction'
 DICT_DESCRIPTIONS['fhldiv']    = 'F-value for divertor heat load\n(constraint equation 18, iteration variable 27)'
-DICT_DESCRIPTIONS['fhole']     = 'Hole fraction of the first wall and blanket that\nneutrons see, due to presence of divertor;\n= (1 - first wall area coverage factor)'
+DICT_DESCRIPTIONS['fhole']     = 'Area fraction taken up by other holes'
 DICT_DESCRIPTIONS['fhout']     = 'Fraction of power to outboard divertor (for single null)'
 DICT_DESCRIPTIONS['fhts']      = 'Technology adjustment factor for critical current density fit\nfor isumattf=2 bi-2212 superconductor, to describe the level\nof technology assumed (i.e. to account for stress, fatigue,\nradiation, ac losses, joints or manufacturing variations;\n1.0 would be very optimistic)'
 DICT_DESCRIPTIONS['fififi']    = 'Coefficient for gamdiv'
-DICT_DESCRIPTIONS['figmer']    = 'Physics figure of merit (= plascur*aspect**sbar)'
+DICT_DESCRIPTIONS['figmer']    = 'Physics figure of merit (= plascur*aspect**sbar, where sbar=1)'
 DICT_DESCRIPTIONS['fimp']      = 'Impurity number density fractions relative to electron density\n(iteration variable 102 is fimp(impvar))'
 DICT_DESCRIPTIONS['fimpvar']   = 'Impurity fraction to be used as fimp(impvar)\n(iteration variable 102)'
 DICT_DESCRIPTIONS['fiooic']    = 'F-value for tf coil operating current / critical\ncurrent ratio\n(constraint equation 33, iteration variable 50)'
 DICT_DESCRIPTIONS['fipir']     = 'F-value for ip/irod limit\n(constraint equation 46, iteration variable 72)'
 DICT_DESCRIPTIONS['fispact']   = '(1) - at end of component life\n(2) - after 3 months cooling time\n(3) - 100 years after end of plant life'
-DICT_DESCRIPTIONS['fjohc']     = 'F-value for oh coil current at end-of-flattop\n(constraint equation 26, iteration variable 38)'
-DICT_DESCRIPTIONS['fjohc0']    = 'F-value for oh coil current at beginning of pulse\n(constraint equation 27, iteration variable 39)'
+DICT_DESCRIPTIONS['fjohc']     = 'F-value for central solenoid current at end-of-flattop\n(constraint equation 26, iteration variable 38)'
+DICT_DESCRIPTIONS['fjohc0']    = 'F-value for central solenoid current at beginning of pulse\n(constraint equation 27, iteration variable 39)'
 DICT_DESCRIPTIONS['fjprot']    = 'F-value for tf coil winding pack current density\n(constraint equation 35, iteration variable 53)'
 DICT_DESCRIPTIONS['fkblkt']    = 'Blanket elongation / plasma elongation'
 DICT_DESCRIPTIONS['fkind']     = 'Multiplier for nth of a kind costs'
 DICT_DESCRIPTIONS['flirad']    = 'Radius of flibe inlet (m) (ifetyp=3)'
 DICT_DESCRIPTIONS['flpitch']   = 'Field line pitch (rad)'
 DICT_DESCRIPTIONS['fmgdmw']    = 'Power to mgf (motor-generator flywheel) units (mw)\n(ignored if iscenr=2)'
-DICT_DESCRIPTIONS['fmsbc']     = 'Martensitic fraction of steel in bucking cylinder'
+DICT_DESCRIPTIONS['fmsbc']     = 'Martensitic fraction of steel in (non-existent!) bucking cylinder'
 DICT_DESCRIPTIONS['fmsbl']     = 'Martensitic fraction of steel in blanket'
 DICT_DESCRIPTIONS['fmsdwe']    = 'Martensitic fraction of steel in external cryostat'
 DICT_DESCRIPTIONS['fmsdwi']    = 'Martensitic fraction of steel in vacuum vessel'
 DICT_DESCRIPTIONS['fmsfw']     = 'Martensitic fraction of steel in first wall'
-DICT_DESCRIPTIONS['fmsoh']     = 'Martensitic fraction of steel in oh coil'
+DICT_DESCRIPTIONS['fmsoh']     = 'Martensitic fraction of steel in central solenoid'
 DICT_DESCRIPTIONS['fmssh']     = 'Martensitic fraction of steel in shield'
 DICT_DESCRIPTIONS['fmstf']     = 'Martensitic fraction of steel in tf coil'
 DICT_DESCRIPTIONS['fmva']      = 'F-value for maximum mva\n(constraint equation 19, iteration variable 30)'
@@ -2841,7 +2798,6 @@ DICT_DESCRIPTIONS['fpumpfw']   = 'Fraction of total first wall thermal power req
 DICT_DESCRIPTIONS['fpumpshld'] = 'Fraction of total shield thermal power required\nto drive the shield coolant pumps (default assumes\nwater coolant) (ipowerflow=1)'
 DICT_DESCRIPTIONS['fq']        = 'F-value for edge safety factor\n(constraint equation 45, iteration variable 71)'
 DICT_DESCRIPTIONS['fqval']     = 'F-value for q\n(constraint equation 28, iteration variable 45)'
-DICT_DESCRIPTIONS['fradmin']   = 'Minimum ratio of radiation to heating power'
 DICT_DESCRIPTIONS['fradpwr']   = 'F-value for core radiation power limit\n(constraint equation 17, iteration variable 28)'
 DICT_DESCRIPTIONS['frbeam']    = 'R_tangential / r_major for neutral beam injection'
 DICT_DESCRIPTIONS['frfpf']     = 'F-value for rfp reversal parameter\n(constraint equation 49, iteration variable 80)'
@@ -2864,14 +2820,13 @@ DICT_DESCRIPTIONS['ftol']      = 'Error tolerance for hybrd'
 DICT_DESCRIPTIONS['ftpeak']    = 'F-value for first wall peak temperature\n(constraint equation 39, iteration variable 63)'
 DICT_DESCRIPTIONS['ftrit']     = 'Tritium fuel fraction'
 DICT_DESCRIPTIONS['ftritbm']   = 'Fraction of beam that is tritium'
-DICT_DESCRIPTIONS['funcprec']  = 'Nag e04ucf function precision'
 DICT_DESCRIPTIONS['fusionrate'] = 'Fusion reaction rate (reactions/m3/sec)'
 DICT_DESCRIPTIONS['fvdump']    = 'F-value for dump voltage\n(constraint equation 34, iteration variable 51)'
 DICT_DESCRIPTIONS['fvoldw']    = 'Area coverage factor for vacuum vessel volume'
 DICT_DESCRIPTIONS['fvolsi']    = 'Area coverage factor for inboard shield volume'
 DICT_DESCRIPTIONS['fvolso']    = 'Area coverage factor for outboard shield volume'
 DICT_DESCRIPTIONS['fvs']       = 'F-value for flux-swing (v-s) requirement\n(constraint equation 12, iteration variable 15)'
-DICT_DESCRIPTIONS['fvsbrnni']  = 'Fraction of burn v-s from non-inductive means\n(iteration variable 44)'
+DICT_DESCRIPTIONS['fvsbrnni']  = 'Fraction of the plasma current produced by\nnon-inductive means (iteration variable 44)'
 DICT_DESCRIPTIONS['fvvhe']     = 'F-value for vacuum vessel he concentration limit\n(blktmodel>0)\n(constraint equation 55, iteration variable 96)'
 DICT_DESCRIPTIONS['fwallcst']  = 'First wall cost (m$)'
 DICT_DESCRIPTIONS['fwalld']    = 'F-value for minimum wall load\n(constraint equation 8, iteration variable 14)'
@@ -2909,18 +2864,18 @@ DICT_DESCRIPTIONS['gamma']     = 'Ejima coefficient for resistive startup v-s fo
 DICT_DESCRIPTIONS['gammaft']   = 'Ratio of (fast alpha + neutral beam beta) to thermal beta'
 DICT_DESCRIPTIONS['gammax']    = 'Maximum current drive gamma\n(constraint equation 37)'
 DICT_DESCRIPTIONS['gapds']     = 'Gap between inboard vacuum vessel and tf coil (m)\n(iteration variable 61)'
-DICT_DESCRIPTIONS['gapoh']     = 'Gap between oh coil and bucking cylinder\n(iteration variable 42)'
+DICT_DESCRIPTIONS['gapoh']     = 'Gap between central solenoid and tf coil\n(iteration variable 42)'
 DICT_DESCRIPTIONS['gapomin']   = 'Minimum gap between outboard vacuum vessel and tf coil (m)\n(iteration variable 31)'
 DICT_DESCRIPTIONS['gapsto']    = 'Gap between outboard vacuum vessel and tf coil (m)'
 DICT_DESCRIPTIONS['gsmass']    = 'Reactor core gravity support mass (kg)'
-DICT_DESCRIPTIONS['gtaue']     = 'Factor in energy confinement time formula'
-DICT_DESCRIPTIONS['gtscale']   = 'Switch for a/r scaling of dnbeta:\n= 0 do not scale dnbeta with eps;\notherwise scale dnbeta with eps'
+DICT_DESCRIPTIONS['gtaue']     = 'Offset term in energy confinement time scaling'
+DICT_DESCRIPTIONS['gtscale']   = 'Switch for a/r scaling of dnbeta (iprofile=0 only):\n= 0 do not scale dnbeta with eps;\n= 1 scale dnbeta with eps'
 DICT_DESCRIPTIONS['hccl']      = 'Clearance around components in hot cell (m)'
 DICT_DESCRIPTIONS['hcdportsize'] = "Size of heating/current drive ports (blktmodel>0):\n= 1 'small'\n= 2 'large'"
 DICT_DESCRIPTIONS['hcwt']      = 'Hot cell wall thickness (m)'
 DICT_DESCRIPTIONS['helecmw']   = 'Electrical power required for h production (mw)\n(iteration variable 87)'
 DICT_DESCRIPTIONS['helpow']    = 'Heat removal at cryogenic temperatures (w)'
-DICT_DESCRIPTIONS['hfac']      = 'H factors for an ignited plasma for each scaling law'
+DICT_DESCRIPTIONS['hfac']      = 'H factors for an ignited plasma for each energy confinement\ntime scaling law'
 DICT_DESCRIPTIONS['hfact']     = 'H factor on energy confinement times (iteration variable 10)'
 DICT_DESCRIPTIONS['hldiv']     = 'Divertor heat load (mw/m2)'
 DICT_DESCRIPTIONS['hldivlim']  = 'Heat load limit (mw/m2)'
@@ -2933,16 +2888,16 @@ DICT_DESCRIPTIONS['hporttmax'] = 'Maximum available toroidal extent for horizont
 DICT_DESCRIPTIONS['hpower']    = 'Hydrogen production (mw equivalent)'
 DICT_DESCRIPTIONS['hr1']       = 'Half-height of tf coil inboard leg straight section (m)'
 DICT_DESCRIPTIONS['hthermmw']  = 'Thermal power required for h production (mw)\n(iteration variable 88)\n(n.b. calculated for ihplant=1,2,3)'
-DICT_DESCRIPTIONS['htpmw']     = 'Heat transport system pump power (mw)'
+DICT_DESCRIPTIONS['htpmw']     = 'Heat transport system electrical pump power (mw)\n(calculated if ipowerflow=1)'
 DICT_DESCRIPTIONS['htpsecmw']  = 'Waste power lost from heat transport system (mw)\n(ipowerflow=1)'
 DICT_DESCRIPTIONS['hvolume']   = 'Hydrogen production (normal m3/second)'
 DICT_DESCRIPTIONS['iavail']    = 'Switch for plant availability model:\n= 0 use input value for cfactr;\n= 1 calculate cfactr using model'
-DICT_DESCRIPTIONS['ibss']      = 'Switch for bootstrap current scaling:\n= 1 iter bootstrap scaling (high r/a only);\n= 2 for nevins general scaling;\n= 3 for wilson numerical scaling'
-DICT_DESCRIPTIONS['icase']     = 'Description of plant plant model being used'
+DICT_DESCRIPTIONS['ibss']      = 'Switch for bootstrap current scaling:\n= 1 iter 1989 bootstrap scaling (high r/a only);\n= 2 for nevins et al general scaling;\n= 3 for wilson et al numerical scaling;\n= 4 for sauter et al scaling'
+DICT_DESCRIPTIONS['icase']     = 'Power plant type'
 DICT_DESCRIPTIONS['icc']       = 'Array defining which constraint equations to activate\n(see lablcc for descriptions)'
-DICT_DESCRIPTIONS['iculbl']    = 'Switch for beta limit scaling:\n= 0 apply limit to total beta;\n= 1 apply limit to thermal beta;\n= 2 apply limit to thermal + neutral beam beta'
-DICT_DESCRIPTIONS['icurr']     = 'Switch for plasma current scaling to use:\n= 1 peng analytic fit;\n= 2 peng double null divertor scaling (tart);\n= 3 simple iter scaling (k = 2.2, d = 0.6);\n= 4 later iter scaling, a la uckan;\n= 5 todd empirical scaling i;\n= 6 todd empirical scaling ii;\n= 7 connor-hastie model'
-DICT_DESCRIPTIONS['idensl']    = 'Switch for density limit to enforce:\n= 1 old asdex;\n= 2 borrass model for iter (i);\n= 3 borrass model for iter (ii);\n= 4 jet edge radiation;\n= 5 jet simplified;\n= 6 hugill-murakami mq limit;\n= 7 greenwald limit'
+DICT_DESCRIPTIONS['iculbl']    = 'Switch for beta limit scaling (constraint equation 24):\n= 0 apply limit to total beta;\n= 1 apply limit to thermal beta;\n= 2 apply limit to thermal + neutral beam beta'
+DICT_DESCRIPTIONS['icurr']     = 'Switch for plasma current scaling to use:\n= 1 peng analytic fit;\n= 2 peng double null divertor scaling (st);\n= 3 simple iter scaling (k = 2.2, d = 0.6);\n= 4 later iter scaling, a la uckan;\n= 5 todd empirical scaling i;\n= 6 todd empirical scaling ii;\n= 7 connor-hastie model'
+DICT_DESCRIPTIONS['idensl']    = 'Switch for density limit to enforce (constraint equation 5):\n= 1 old asdex;\n= 2 borrass model for iter (i);\n= 3 borrass model for iter (ii);\n= 4 jet edge radiation;\n= 5 jet simplified;\n= 6 hugill-murakami mq limit;\n= 7 greenwald limit'
 DICT_DESCRIPTIONS['idivrt']    = 'Number of divertors (calculated from snull)'
 DICT_DESCRIPTIONS['iefrf']     = 'Switch for current drive efficiency model:\nfenstermacher lower hybrid\nion cyclotron current drive\nfenstermacher ech\nehst lower hybrid\niter neutral beam\nnew culham lower hybrid model\nnew culham eccd model\nnew culham neutral beam model\nrfp oscillating field current drive'
 DICT_DESCRIPTIONS['ifalphap']  = 'Switch for fast alpha pressure calculation:\n= 0 iter physics rules (uckan) fit;\n= 1 modified fit (d. ward) - better at high temperature'
@@ -2951,24 +2906,23 @@ DICT_DESCRIPTIONS['ifedrv']    = 'Switch for type of ife driver:\n= -1 use gainv
 DICT_DESCRIPTIONS['ifetyp']    = 'Switch for type of ife device build:\n= 0 generic (cylindrical) build;\n= 1 osiris-like build;\n= 2 sombrero-like build;\n= 3 hylife-ii-like build'
 DICT_DESCRIPTIONS['ifispact']  = 'Switch for neutronics calculations:\n= 0 neutronics calculations turned off;\n= 1 neutronics calculations turned on'
 DICT_DESCRIPTIONS['ifueltyp']  = 'Switch:\n= 1 treat blanket divertor, first wall and\nfraction fcdfuel of cd equipment as fuel cost;\n= 0 treat these as capital cost'
-DICT_DESCRIPTIONS['igeom']     = 'Switch for plasma geometry calculation:\n= 0 original method;\n= 1 new method'
-DICT_DESCRIPTIONS['ignite']    = 'Switch for ignition assumption:\n= 0 do not assume plasma ignition;\n= 1 assume ignited (but include aux power in costs).\nobviously, ignite must be zero if current drive\nis required. note that whole code is not quite\nconsistent yet...'
+DICT_DESCRIPTIONS['igeom']     = 'Switch for plasma geometry calculation:\n= 0 original method (possibly based on peng st modelling);\n= 1 improved (and traceable) method'
+DICT_DESCRIPTIONS['ignite']    = 'Switch for ignition assumption:\n= 0 do not assume plasma ignition;\n= 1 assume ignited (but include auxiliary power in costs)\nobviously, ignite must be zero if current drive is required.\nif ignite=1, any auxiliary power is assumed to be used only\nduring plasma start-up, and is excluded from all steady-state\npower balance calculations.'
 DICT_DESCRIPTIONS['ihplant']   = 'Switch for hydrogen production plant:\n= 0 no hydrogen plant;\n= 1 low temperature electrolysis;\n= 2 high temperature electrolysis - endothermic;\n= 3 high temperature electrolysis - exothermic;\n= 4 thermo-chemical'
-DICT_DESCRIPTIONS['iinvqd']    = 'Switch for inverse quadrature in tauee laws:\n= 0 inverse quadrature not used;\n= 1 inverse quadrature used'
+DICT_DESCRIPTIONS['iinvqd']    = 'Switch for inverse quadrature in l-mode scaling laws 5 and 9:\n= 0 inverse quadrature not used;\n= 1 inverse quadrature with neo-alcator tau-e used'
 DICT_DESCRIPTIONS['imp_label'] = 'Impurity ion species names:\n( 1)  hydrogen  (fraction calculated by code)\n( 2)  helium    (fraction calculated by code)\n( 3)  beryllium (default fraction 2%)\n( 4)  carbon\n( 5)  nitrogen\n( 6)  oxygen\n( 7)  neon\n( 8)  silicon\n( 9)  argon (default fraction 0.16%)\n(10)  iron\n(11)  nickel\n(12)  krypton\n(13)  xenon\n(14)  tungsten'
-DICT_DESCRIPTIONS['impc']      = 'Carbon impurity multiplier'
+DICT_DESCRIPTIONS['impc']      = 'Carbon impurity multiplier (imprad_model=0 only)'
 DICT_DESCRIPTIONS['impdir']    = 'Directory containing impurity radiation data files'
-DICT_DESCRIPTIONS['impfe']     = 'Iron impurity multiplier (obsolete)'
-DICT_DESCRIPTIONS['impo']      = 'Oxygen impurity multiplier'
+DICT_DESCRIPTIONS['impo']      = 'Oxygen impurity multiplier (imprad_model=0 only)'
 DICT_DESCRIPTIONS['imprad_model'] = 'Switch for impurity radiation model:\n= 0 original iter 1989 model\n= 1 2014 multi-impurity, arbitrary profile model\n(whichever model is used, it is recommended to turn on\nconstraint eqn.17 with iteration variable 28: fradpwr.)'
 DICT_DESCRIPTIONS['impvar']    = 'Fimp element value to be varied if iteration\nvariable number 102 is turned on'
 DICT_DESCRIPTIONS['insstrain'] = 'Radial strain in insulator (tfc_model=1)'
-DICT_DESCRIPTIONS['iohcl']     = 'Switch for existence of oh coil:\n= 0 oh coil not present;\n= 1 oh coil exists'
+DICT_DESCRIPTIONS['iohcl']     = 'Switch for existence of central solenoid:\n= 0 central solenoid not present;\n= 1 central solenoid exists'
 DICT_DESCRIPTIONS['ioptimz']   = 'Code operation switch:\n= -1 for no optimisation, hybrd only;\n= 0  for hybrd and vmcon (not recommended);\n= 1  for optimisation, vmcon only'
 DICT_DESCRIPTIONS['iotabar']   = 'Rotational transform (reciprocal of tokamak q)\nfor stellarator confinement time scaling laws'
 DICT_DESCRIPTIONS['ipedestal'] = 'Switch for pedestal profiles:\n= 0 use original parabolic profiles;\n= 1 use pedestal profiles'
 DICT_DESCRIPTIONS['ipeqns']    = 'Number of constraint equations available'
-DICT_DESCRIPTIONS['ipfloc']    = 'Switch for locating scheme of pf coil group i:\n= 1 pf coil on top of oh coil;\n= 2 pf coil on top of tf coil;\n= 3 pf coil outside of tf coil'
+DICT_DESCRIPTIONS['ipfloc']    = 'Switch for locating scheme of pf coil group i:\n= 1 pf coil on top of central solenoid;\n= 2 pf coil on top of tf coil;\n= 3 pf coil outside of tf coil'
 DICT_DESCRIPTIONS['ipfres']    = 'Switch for pf coil type:\n= 0 superconducting pf coils;\n= 1 resistive pf coils'
 DICT_DESCRIPTIONS['ipnet']     = 'Switch for net electric power calculation:\n= 0 scale so that always > 0;\n= 1 let go < 0 (no c-o-e)'
 DICT_DESCRIPTIONS['ipnfoms']   = 'Number of available figures of merit'
@@ -2978,28 +2932,27 @@ DICT_DESCRIPTIONS['ipnscnv']   = 'Number of available scan variables'
 DICT_DESCRIPTIONS['ipnvars']   = 'Total number of variables available for iteration'
 DICT_DESCRIPTIONS['ipowerflow'] = 'Switch for power flow model:\n= 0 pre-2014 version;\n= 1 comprehensive 2014 model'
 DICT_DESCRIPTIONS['iprimdiv']  = 'Switch for divertor thermal power destiny:\n= 0 contributes to secondary heat;\n= 1 contributes to primary heat\n(ipowerflow=1)'
-DICT_DESCRIPTIONS['iprimhtp']  = 'Switch for heat transport pump power destiny:\n= 0 contributes to secondary heat;\n= 1 contributes to primary heat'
-DICT_DESCRIPTIONS['iprimnloss'] = 'Switch for lost neutron power through holes destiny:\n= 0 contributes to secondary heat;\n= 1 contributes to primary heat'
+DICT_DESCRIPTIONS['iprimhtp']  = 'Switch for heat transport pump power destiny:\n= 0 contributes to secondary heat;\n= 1 contributes to primary heat\n(ipowerflow=0)'
+DICT_DESCRIPTIONS['iprimnloss'] = 'Switch for lost neutron power through holes destiny:\n= 0 contributes to secondary heat;\n= 1 contributes to primary heat\n(ipowerflow=0)'
 DICT_DESCRIPTIONS['iprimshld'] = 'Switch for shield thermal power destiny:\n= 0 contributes to secondary heat;\n= 1 contributes to primary heat\n(ipowerflow=1)'
-DICT_DESCRIPTIONS['iprofile']  = 'Switch for current profile consistency:\n= 0 use input values for alphaj, rli, dnbeta;\n= 1 make these consistent with input q, q0 values'
+DICT_DESCRIPTIONS['iprofile']  = 'Switch for current profile consistency:\n= 0 use input values for alphaj, rli, dnbeta\n(but see gtscale option);\n= 1 make these consistent with input q, q0 values\n(recommendation: use icurr=4 with this option)'
 DICT_DESCRIPTIONS['iradloss']  = 'Switch for radiation loss term usage in power balance:\n= 0 use non-radiation-adjusted loss power in\nconfinement scaling and power balance\n= 1 use radiation-adjusted loss power in\nconfinement scaling and power balance'
 DICT_DESCRIPTIONS['ireactor']  = 'Switch for net electric power and cost of\nelectricity calculations:\n= 0 do not calculate mw(electric) or c-o-e;\n= 1 calculate mw(electric) and c-o-e'
 DICT_DESCRIPTIONS['irfcd']     = 'Switch for current drive calculation:\n= 0 turned off;\n= 1 turned on'
 DICT_DESCRIPTIONS['irfp']      = 'Switch for rfp option\n(set via <code>device.dat</code>):\n= 0 use tokamak, stellarator or ife model;\n= 1 use rfp model'
-DICT_DESCRIPTIONS['isc']       = 'Switch for energy confinement time scaling law\n( 1)  neo-alcator (ohmic)\n( 2)  mirnov (h-mode)\n( 3)  merezkhin-muhkovatov (l-mode)\n( 4)  shimomura (h-mode)\n( 5)  kaye-goldston (l-mode)\n( 6)  iter 89-p (l-mode)\n( 7)  iter 89-o (l-mode)\n( 8)  rebut-lallia (l-mode)\n( 9)  goldston (l-mode)\n(10)  t10 (l-mode)\n(11)  jaeri-88 (l-mode)\n(12)  kaye-big complex (l-mode)\n(13)  iter h90-p (h-mode)\n(14)  iter mix (l-mode)\n(15)  riedel (l-mode)\n(16)  christiansen (l-mode)\n(17)  lackner-gottardi (l-mode)\n(18)  neo-kaye (l-mode)\n(19)  riedel (h-mode)\n(20)  iter h90-p amended (h-mode)\n(21)  lhd (stellarator)\n(22)  gyro-reduced bohm (stellarator)\n(23)  lackner-gottardi (stellarator)\n(24)  iter-93h (h-mode)\n(25)  titan (rfp)\n(26)  iter h-97p elm-free (h-mode)\n(27)  iter h-97p elmy (h-mode)\n(28)  iter-96p (l-mode)\n(29)  valovic modified elmy (h-mode)\n(30)  kaye pppl april 98 (l-mode)\n(31)  iterh-pb98p(y) (h-mode)\n(32)  ipb98(y) (h-mode)\n(33)  ipb98(y,1) (h-mode)\n(34)  ipb98(y,2) (h-mode)\n(35)  ipb98(y,3) (h-mode)\n(36)  ipb98(y,4) (h-mode)\n(37)  iss95 (stellarator)\n(38)  iss04 (stellarator)'
-DICT_DESCRIPTIONS['iscenr']    = 'Switch for energy storage option:\n= 1 all power from mgf (motor-generator flywheel) units;\n= 2 all pulsed power from line;\n= 3 pf power from mgf, heating from line\n(in fact, options 1 and 3 are not treated differently)'
-DICT_DESCRIPTIONS['iscrp']     = 'Switch for scrapeoff width:\n= 0 use 10% of rminor;\n= 1 use input (scrapli and scraplo)'
-DICT_DESCRIPTIONS['ishape']    = 'Switch for plasma cross-sectional shape calculation:\n= 0 use input kappa, triang;\n= 1 scale qlim, kappa, triang (tart)\n= 2 set kappa to maximum stable value (zohm iter scaling);\ntriang input'
+DICT_DESCRIPTIONS['isc']       = 'Switch for energy confinement time scaling law\n( 1)  neo-alcator (ohmic)\n( 2)  mirnov (h-mode)\n( 3)  merezkhin-muhkovatov (l-mode)\n( 4)  shimomura (h-mode)\n( 5)  kaye-goldston (l-mode)\n( 6)  iter 89-p (l-mode)\n( 7)  iter 89-o (l-mode)\n( 8)  rebut-lallia (l-mode)\n( 9)  goldston (l-mode)\n(10)  t10 (l-mode)\n(11)  jaeri-88 (l-mode)\n(12)  kaye-big complex (l-mode)\n(13)  iter h90-p (h-mode)\n(14)  iter mix (l-mode)\n(15)  riedel (l-mode)\n(16)  christiansen (l-mode)\n(17)  lackner-gottardi (l-mode)\n(18)  neo-kaye (l-mode)\n(19)  riedel (h-mode)\n(20)  iter h90-p amended (h-mode)\n(21)  lhd (stellarator)\n(22)  gyro-reduced bohm (stellarator)\n(23)  lackner-gottardi (stellarator)\n(24)  iter-93h (h-mode)\n(25)  titan (rfp)\n(26)  iter h-97p elm-free (h-mode)\n(27)  iter h-97p elmy (h-mode)\n(28)  iter-96p (=iter-97l) (l-mode)\n(29)  valovic modified elmy (h-mode)\n(30)  kaye pppl april 98 (l-mode)\n(31)  iterh-pb98p(y) (h-mode)\n(32)  ipb98(y) (h-mode)\n(33)  ipb98(y,1) (h-mode)\n(34)  ipb98(y,2) (h-mode)\n(35)  ipb98(y,3) (h-mode)\n(36)  ipb98(y,4) (h-mode)\n(37)  iss95 (stellarator)\n(38)  iss04 (stellarator)\n(39)  ds03 (h-mode)'
+DICT_DESCRIPTIONS['iscenr']    = 'Switch for pf coil energy storage option:\n= 1 all power from mgf (motor-generator flywheel) units;\n= 2 all pulsed power from line;\n= 3 pf power from mgf, heating from line\n(in fact, options 1 and 3 are not treated differently)'
+DICT_DESCRIPTIONS['iscrp']     = 'Switch for plasma-first wall clearances:\n= 0 use 10% of rminor;\n= 1 use input (scrapli and scraplo)'
+DICT_DESCRIPTIONS['ishape']    = 'Switch for plasma cross-sectional shape calculation:\n= 0 use input kappa, triang;\n= 1 scale qlim, kappa, triang (st)\n= 2 set kappa to the natural elongation value (zohm iter scaling);\ntriang input'
 DICT_DESCRIPTIONS['istell']    = 'Switch for stellarator option\n(set via <code>device.dat</code>):\n= 0 use tokamak, rfp or ife model;\n= 1 use stellarator model'
 DICT_DESCRIPTIONS['isthtr']    = 'Switch for stellarator auxiliary heating method:\n= 1 electron cyclotron resonance heating;\n= 2 lower hybrid heating;\n= 3 neutral beam injection'
 DICT_DESCRIPTIONS['istore']    = 'Switch for thermal storage method:\n= 1 option 1 of electrowatt report, aea fus 205;\n= 2 option 2 of electrowatt report, aea fus 205;\n= 3 stainless steel block'
 DICT_DESCRIPTIONS['isumatpf']  = 'Switch for superconductor material in pf coils:\n= 1 binary nb3sn;\n= 2 ternary nb3sn;\n= 3 nbti'
 DICT_DESCRIPTIONS['isumattf']  = 'Switch for superconductor material in tf coils:\n= 1 iter nb3sn critical surface model with standard\niter parameters;\n= 2 bi-2212 high temperature superconductor (range of\nvalidity t < 20k, adjusted field b < 104 t, b > 6 t);\n= 3 nbti;\n= 4 iter nb3sn model with user-specified parameters'
-DICT_DESCRIPTIONS['isweep']    = 'Number of loops to perform'
-DICT_DESCRIPTIONS['itart']     = 'Switch for tight aspect ratio models:\n= 0 use conventional aspect ratio models;\n= 1 use tight aspect ratio models'
+DICT_DESCRIPTIONS['isweep']    = 'Number of scan points to calculate'
+DICT_DESCRIPTIONS['itart']     = 'Switch for spherical tokamak (st) models:\n= 0 use conventional aspect ratio models;\n= 1 use spherical tokamak models'
 DICT_DESCRIPTIONS['itcycl']    = 'Switch for first wall axial stress model:\n= 1 total axial constraint, no bending;\n= 2 no axial constraint, no bending;\n= 3 no axial constraint, bending'
-DICT_DESCRIPTIONS['itfmod']    = 'Switch for tf coil magnet model:\n= 0 use simple model;\n= 1 use complex stress/superconductor models'
-DICT_DESCRIPTIONS['itfsup']    = 'Switch for tf coil conductor model:\n= 0 conventional copper;\n= 1 superconductor'
+DICT_DESCRIPTIONS['itfsup']    = 'Switch for tf coil conductor model:\n= 0 copper;\n= 1 superconductor'
 DICT_DESCRIPTIONS['iwalld']    = 'Switch for neutron wall load calculation:\n= 1 use scaled plasma surface area;\n= 2 use first wall area directly'
 DICT_DESCRIPTIONS['ixc']       = 'Array defining which iteration variables to activate\n(see lablxc for descriptions)'
 DICT_DESCRIPTIONS['jbus']      = 'Bussing current density (a/m2)'
@@ -3017,9 +2970,6 @@ DICT_DESCRIPTIONS['lablcc']    = 'Labels describing constraint equations\n(starr
 DICT_DESCRIPTIONS['lablmm']    = 'Labels describing figures of merit:\n( 1) major radius\n( 2) p_fus p_in-total\n( 3) neutron wall load\n( 4) p_tf + p_pf\n( 5) fusion gain q\n( 6) cost of electricity\n( 7) capital cost (direct cost if ireactor=0,\nconstructed cost otherwise)\n( 8) aspect ratio\n( 9) divertor heat load\n(10) toroidal field\n(11) total injected power\n(12) hydrogen plant capital cost\n(13) hydrogen production rate\n(14) pulse length\n(15) plant availability factor (n.b. requires\niavail=1 to be set)'
 DICT_DESCRIPTIONS['lablxc']    = 'Labels describing iteration variables\n(starred ones are turned on by default):\n( 1) aspect\n( 2) bt\n( 3) rmajor\n( 4) * te\n( 5) * beta\n( 6) * dene\n( 7) * rnbeam\n( 8) fbeta (f-value for equation 6)\n( 9) fdene (f-value for equation 5)\n(10) * hfact\n(11) pheat\n(12) * oacdcp\n(13) * tfcth\n(14) fwalld (f-value for equation 8)\n(15) fvs (f-value for equation 12)\n(16) ohcth\n(17) tdwell\n(18) q\n(19) * enbeam\n(20) tcpav\n(21) ftburn (f-value for equation 13)\n(22) tbrnmn\n(23) fcoolcp\n(24) cdtfleg\n(25) fpnetel (f-value for equation 16)\n(26) ffuspow (f-value for equation 9)\n(27) fhldiv (f-value for equation 18)\n(28) * fradpwr (f-value for equation 17)\n(29) * bore\n(30) fmva (f-value for equation 19)\n(31) gapomin\n(32) frminor (f-value for equation 21)\n(33) fportsz (f-value for equation 20)\n(34) fdivcol (f-value for equation 22)\n(35) fpeakb (f-value for equation 25)\n(36) * fbetatry (f-value for equation 24)\n(37) coheof\n(38) fjohc (f-value for equation 26)\n(39) * fjohc0 (f-value for equation 27)\n(40) fgamcd (f-value for equation 37)\n(41) fcohbop\n(42) gapoh\n(43) cfe0\n(44) fvsbrnni\n(45) fqval (f-value for equation 28)\n(46) fpinj (f-value for equation 30)\n(47) feffcd\n(48) fstrcase (f-value for equation 31)\n(49) fstrcond (f-value for equation 32)\n(50) * fiooic (f-value for equation 33)\n(51) fvdump (f-value for equation 34)\n(52) vdalw\n(53) * fjprot (f-value for equation 35)\n(54) * ftmargtf (f-value for equation 36)\n(55) tmargmin\n(56) tdmptf\n(57) thkcas\n(58) thwcndut\n(59) fcutfsu\n(60) cpttf\n(61) * gapds\n(62) fdtmp (f-value for equation 38)\n(63) ftpeak (f-value for equation 39)\n(64) fauxmn (f-value for equation 40)\n(65) tohs\n(66) ftohs (f-value for equation 41)\n(67) ftcycl (f-value for equation 42)\n(68) fptemp (f-value for equation 44)\n(69) rcool\n(70) vcool\n(71) fq (f-value for equation 45)\n(72) fipir (f-value for equation 46)\n(73) scrapli\n(74) scraplo\n(75) tfootfi\n(76) frfptf (f-value for equation 47)\n(77) tftort\n(78) rfpth\n(79) fbetap (f-value for equation 48)\n(80) frfpf (f-value for equation 49)\n(81) edrive\n(82) drveff\n(83) tgain\n(84) chrad\n(85) pdrive\n(86) frrmax (f-value for equation 50)\n(87) helecmw\n(88) hthermmw\n(89) ftbr (f-value for equation 52)\n(90) blbuith\n(91) blbuoth\n(92) fflutf (f-value for equation 53)\n(93) shldith\n(94) shldoth\n(95) fptfnuc (f-value for equation 54)\n(96) fvvhe (f-value for equation 55)\n(97) fpsepr (f-value for equation 56)\n(98) li6enrich\n(99) ftftort (f-value for equation 57) (obsolete)\n(100) ftfthko (f-value for equation 58) (obsolete)\n(101) prp\n(102) fimpvar'
 DICT_DESCRIPTIONS['lamp']      = 'Power flow width (m)'
-DICT_DESCRIPTIONS['lamuudiv']  = 'Unplanned unavailability lambda for divertor'
-DICT_DESCRIPTIONS['lamuufw']   = 'Unplanned unavailability lambda for first wall'
-DICT_DESCRIPTIONS['lamuumag']  = 'Unplanned unavailability lambda for magnets'
 DICT_DESCRIPTIONS['lblnkt']    = 'Switch for blanket model:\n= 0 original model (but see <code>blktmodel</code>);\n= 1 full thermodynamic model'
 DICT_DESCRIPTIONS['li6enrich'] = 'Lithium-6 enrichment of breeding material (%)\n(blktmodel>0)'
 DICT_DESCRIPTIONS['lpulse']    = 'Switch for reactor model:\n= 0 continuous operation;\n= 1 pulsed operation'
@@ -3039,7 +2989,7 @@ DICT_DESCRIPTIONS['mvalim']    = 'Maximum mva limit\n(constraint equation 19)'
 DICT_DESCRIPTIONS['n_res']     = 'Toroidal resonance number'
 DICT_DESCRIPTIONS['nbshield']  = 'Neutral beam duct shielding thickness (m)'
 DICT_DESCRIPTIONS['ncalls']    = 'Number of function calls during solution'
-DICT_DESCRIPTIONS['ncirt']     = 'Number of pf coils (including oh coil and plasma)'
+DICT_DESCRIPTIONS['ncirt']     = 'Number of pf circuits (including central solenoid and plasma)'
 DICT_DESCRIPTIONS['ncls']      = 'Number of pf coils in group j'
 DICT_DESCRIPTIONS['nclsmx']    = 'Maximum number of pf coils in a given group'
 DICT_DESCRIPTIONS['ncool']     = 'Number of centrepost coolant tubes'
@@ -3052,7 +3002,7 @@ DICT_DESCRIPTIONS['nfev2']     = 'Number of calls to fcnvmc1 (vmcon function cal
 DICT_DESCRIPTIONS['nfixmx']    = 'Maximum number of fixed current pf coils'
 DICT_DESCRIPTIONS['nflutf']    = 'Peak fast neutron fluence on tf coil superconductor (n/m2)\n(blktmodel>0)'
 DICT_DESCRIPTIONS['nflutfmax'] = 'Max fast neutron fluence on tf coil (n/m2)\n(blktmodel>0)\n(constraint equation 53)'
-DICT_DESCRIPTIONS['nfxfh']     = 'Number of coils the top and bottom of the oh coil\nshould be broken into during scaling (5 - 10 is good)'
+DICT_DESCRIPTIONS['nfxfh']     = 'Number of coils the top and bottom of the central solenoid\nshould be broken into during scaling (5 - 10 is good)'
 DICT_DESCRIPTIONS['ngrp']      = 'Number of groups of pf coils.\nsymmetric coil pairs should all be in the same group'
 DICT_DESCRIPTIONS['ngrpmx']    = 'Maximum number of groups of pf coils'
 DICT_DESCRIPTIONS['ni0']       = 'Central ion density (/m3)'
@@ -3061,38 +3011,33 @@ DICT_DESCRIPTIONS['nimp']      = 'Number of ion species in impurity radiation mo
 DICT_DESCRIPTIONS['nineqns']   = 'Number of inequality constraints vmcon must satisfy\n(leave at zero for now)'
 DICT_DESCRIPTIONS['nipfwh']    = 'Number of intermediate pressure feed water heater pumps'
 DICT_DESCRIPTIONS['nlpfwh']    = 'Number of low pressure feed water heater pumps'
-DICT_DESCRIPTIONS['nohc']      = 'Number of pf coils (excluding the oh coil) + 1'
+DICT_DESCRIPTIONS['nohc']      = 'Number of pf coils (excluding the central solenoid) + 1'
 DICT_DESCRIPTIONS['npdiv']     = 'Number of divertor ports (blktmodel>0)'
 DICT_DESCRIPTIONS['nphcdin']   = 'Number of inboard ports for heating/current drive\n(blktmodel>0)'
 DICT_DESCRIPTIONS['nphcdout']  = 'Number of outboard ports for heating/current drive\n(blktmodel>0)'
 DICT_DESCRIPTIONS['nptsmx']    = 'Maximum number of points across the midplane of the\nplasma at which the field from the pf coils is fixed'
 DICT_DESCRIPTIONS['nrfppf']    = 'Number of rfp pf coils (final two are sc ef coils)'
-DICT_DESCRIPTIONS['nsweep']    = 'Switch denoting quantity to scan:\n1  aspect\n2  hldivlim\n3  pnetelin\n4  hfact\n5  oacdcp\n6  walalw\n7  beamfus0\n8  fqval\n9  te\n10 boundu(15: fvs)\n11 dnbeta\n12 bscfmax (use negative values only)\n13 boundu(10: hfact)\n14 fiooic\n15 fjprot\n16 rmajor\n17 bmxlim\n18 gammax\n19 boundl(16: ohcth)\n20 tbrnmn\n21 sigpfalw\n22 cfactr (n.b. requires iavail=0)\n23 boundu(72: fipir)\n24 powfmax\n25 kappa\n26 triang\n27 tbrmin (for blktmodel > 0 only)\n28 bt'
+DICT_DESCRIPTIONS['nsweep']    = 'Switch denoting quantity to scan:\n1  aspect\n2  hldivlim\n3  pnetelin\n4  hfact\n5  oacdcp\n6  walalw\n7  beamfus0\n8  fqval\n9  te\n10 boundu(15: fvs)\n11 dnbeta\n12 bscfmax (use negative values only)\n13 boundu(10: hfact)\n14 fiooic\n15 fjprot\n16 rmajor\n17 bmxlim\n18 gammax\n19 boundl(16: ohcth)\n20 tbrnmn\n21 sigpfalw\n22 cfactr (n.b. requires iavail=0)\n23 boundu(72: fipir)\n24 powfmax\n25 kappa\n26 triang\n27 tbrmin (for blktmodel > 0 only)\n28 bt\n29 coreradius\n30 fimpvar'
 DICT_DESCRIPTIONS['nturns']    = 'Number of turns of each rfp pf coil'
 DICT_DESCRIPTIONS['ntype']     = 'Switch for vacuum pump type:\n= 0 for turbomolecular pump (magnetic bearing)\nwith speed of 2.0 m3/s\n(1.95 for n2, 1.8 for he, 1.8 for dt);\n= 1 for compound cryopump with nominal speed of 10.0 m3/s\n(9.0 for n2, 5.0 for he and 25.0 for dt)'
 DICT_DESCRIPTIONS['nvar']      = 'Number of iteration variables to use'
 DICT_DESCRIPTIONS['nvduct']    = 'Number of ducts (torus to pumps)'
 DICT_DESCRIPTIONS['nviter']    = 'Number of vmcon iterations performed'
 DICT_DESCRIPTIONS['oacdcp']    = 'Overall current density in tf coil inboard legs (a/m2)\n(iteration variable 12)'
-DICT_DESCRIPTIONS['ohcth']     = 'Oh coil thickness (m)\n(iteration variable 16)'
-DICT_DESCRIPTIONS['ohhghf']    = 'Oh coil height / tf coil height'
+DICT_DESCRIPTIONS['ohcth']     = 'Central solenoid thickness (m)\n(iteration variable 16)'
+DICT_DESCRIPTIONS['ohhghf']    = 'Central solenoid height / tf coil internal height'
 DICT_DESCRIPTIONS['omegan']    = 'Pressure ratio (nt)_plasma / (nt)_scrape-off'
 DICT_DESCRIPTIONS['omlarg']    = 'Power spillage to private flux factor'
 DICT_DESCRIPTIONS['p0']        = 'Central total plasma pressure (pa)'
 DICT_DESCRIPTIONS['pacpmw']    = 'Total pulsed power system load (mw)'
-DICT_DESCRIPTIONS['palp']      = 'Alpha power per volume (mw/m3)'
-DICT_DESCRIPTIONS['palpe']     = 'Alpha power per volume to electrons (mw/m3)'
 DICT_DESCRIPTIONS['palpepv']   = 'Alpha power per volume to electrons (mw/m3)'
-DICT_DESCRIPTIONS['palpi']     = 'Alpha power per volume to ions (mw/m3)'
 DICT_DESCRIPTIONS['palpipv']   = 'Alpha power per volume to ions (mw/m3)'
 DICT_DESCRIPTIONS['palpmw']    = 'Alpha power (mw)'
 DICT_DESCRIPTIONS['palpnb']    = 'Alpha power from hot neutral beam ions (mw)'
 DICT_DESCRIPTIONS['palppv']    = 'Alpha power per volume (mw/m3)'
 DICT_DESCRIPTIONS['pbase']     = 'Base pressure (pa)'
-DICT_DESCRIPTIONS['pbrem']     = 'Bremstrahhlung power per volume (mw/m3)'
 DICT_DESCRIPTIONS['pbrempv']   = 'Bremsstrahlung power per volume (mw/m3)\n(calculated only if imprad_model=1)'
 DICT_DESCRIPTIONS['pc']        = 'Low pressure turbine outlet pressure (mpa)'
-DICT_DESCRIPTIONS['pcharge']   = 'Non-alpha charged particle fusion power (mw/m3)'
 DICT_DESCRIPTIONS['pchargemw'] = 'Non-alpha charged particle fusion power (mw)'
 DICT_DESCRIPTIONS['pchargepv'] = 'Non-alpha charged particle fusion power per volume (mw/m3)'
 DICT_DESCRIPTIONS['pcoef']     = 'Profile factor (= n-weighted t / average t)'
@@ -3108,61 +3053,55 @@ DICT_DESCRIPTIONS['pedgeradmw'] = 'Edge radiation power (mw)'
 DICT_DESCRIPTIONS['pedgeradpv'] = 'Edge radiation power per volume (mw/m3)'
 DICT_DESCRIPTIONS['pfbldgm3']  = 'Volume of pf coil power supply building (m3)'
 DICT_DESCRIPTIONS['pfckts']    = 'Number of pf coil circuits'
-DICT_DESCRIPTIONS['pfclres']   = 'Pf coil resistivity if ipfres=1 (ohm-m)'
+DICT_DESCRIPTIONS['pfclres']   = 'Pf coil resistivity (if ipfres=1) (ohm-m)'
 DICT_DESCRIPTIONS['pfmmax']    = 'Mass of heaviest pf coil (tonnes)'
 DICT_DESCRIPTIONS['pfrmax']    = 'Radius of largest pf coil (m)'
 DICT_DESCRIPTIONS['pfuscmw']   = 'Charged particle fusion power (mw)'
 DICT_DESCRIPTIONS['pfwdiv']    = 'Heat removal from first wall/divertor (mw)'
 DICT_DESCRIPTIONS['pgrossmw']  = 'Gross electric power (mw)'
 DICT_DESCRIPTIONS['ph']        = 'High pressure turbine inlet pressure (mpa)'
-DICT_DESCRIPTIONS['pheat']     = 'Heating power not used for current drive (w)\n(iteration variable 11)'
+DICT_DESCRIPTIONS['pheat']     = 'Heating power not used for current drive (mw)\n(iteration variable 11)'
 DICT_DESCRIPTIONS['phiint']    = 'Internal plasma v-s'
 DICT_DESCRIPTIONS['pi']        = 'Famous number'
 DICT_DESCRIPTIONS['pibv']      = 'Power injection building volume (m3)'
-DICT_DESCRIPTIONS['pie']       = 'Ion/electron equilibration power (mw/m3)'
 DICT_DESCRIPTIONS['piepv']     = 'Ion/electron equilibration power per volume (mw/m3)'
 DICT_DESCRIPTIONS['pifecr']    = 'Ife cryogenic power requirements (mw)'
 DICT_DESCRIPTIONS['pin']       = 'Low pressure turbine inlet pressure (mpa)'
 DICT_DESCRIPTIONS['pinjalw']   = 'Maximum allowable value for injected power (mw)\n(constraint equation 30)'
-DICT_DESCRIPTIONS['pinje']     = 'Auxiliary power to electrons (w)'
 DICT_DESCRIPTIONS['pinjemw']   = 'Auxiliary injected power to electrons (mw)'
 DICT_DESCRIPTIONS['pinjht']    = 'Heat removal from injection power (mw)'
-DICT_DESCRIPTIONS['pinji']     = 'Auxiliary power to ions (w)'
 DICT_DESCRIPTIONS['pinjimw']   = 'Auxiliary injected power to ions (mw)'
 DICT_DESCRIPTIONS['pinjmw']    = 'Total auxiliary injected power (mw)'
 DICT_DESCRIPTIONS['pinjwp']    = 'Injector wall plug power (mw)'
 DICT_DESCRIPTIONS['plascur']   = 'Plasma current (a)'
-DICT_DESCRIPTIONS['plhybd']    = 'Lower hybrid injection power (w)'
+DICT_DESCRIPTIONS['plhybd']    = 'Lower hybrid injection power (mw)'
 DICT_DESCRIPTIONS['plinepv']   = 'Line radiation power per volume (mw/m3)\n(calculated only if imprad_model=1)'
-DICT_DESCRIPTIONS['plrad']     = 'Edge line radiation power per volume (mw/m3)'
 DICT_DESCRIPTIONS['plsepo']    = 'Poloidal length, x-point to outboard strike point (m)'
-DICT_DESCRIPTIONS['pnbeam']    = 'Neutral beam injection power (w)'
+DICT_DESCRIPTIONS['pnbeam']    = 'Neutral beam injection power (mw)'
 DICT_DESCRIPTIONS['pnetelin']  = 'Required net electric power (mw)\n(constraint equation 16)'
 DICT_DESCRIPTIONS['pnetelmw']  = 'Net electric power (mw)'
-DICT_DESCRIPTIONS['pneut']     = 'Neutron fusion power per volume (mw/m3)'
 DICT_DESCRIPTIONS['pneutmw']   = 'Neutron fusion power (mw)'
 DICT_DESCRIPTIONS['pneutpv']   = 'Neutron fusion power per volume (mw/m3)'
 DICT_DESCRIPTIONS['pnucblkt']  = 'Nuclear heating in the blanket (mw)'
-DICT_DESCRIPTIONS['pnuccp']    = 'Nuclear heating in the centrepost (mw)'
+DICT_DESCRIPTIONS['pnuccp']    = 'Nuclear heating in the st centrepost (mw)'
 DICT_DESCRIPTIONS['pnucdiv']   = 'Nuclear heating in the divertor (mw)'
 DICT_DESCRIPTIONS['pnucfw']    = 'Nuclear heating in the first wall (mw)'
 DICT_DESCRIPTIONS['pnuchcd']   = 'Nuclear heating in the hcd apparatus and diagnostics (mw)'
 DICT_DESCRIPTIONS['pnucloss']  = 'Nuclear heating lost via holes (mw)'
 DICT_DESCRIPTIONS['pnucshld']  = 'Nuclear heating in the shield (mw)'
-DICT_DESCRIPTIONS['pofcd']     = 'Ofcd injection power (w)'
+DICT_DESCRIPTIONS['pofcd']     = 'Oscillating field cd injection power (mw)'
 DICT_DESCRIPTIONS['pohmmw']    = 'Ohmic heating power (mw)'
-DICT_DESCRIPTIONS['pohmpv']    = 'Ohmic heating per volume (mw/m3)'
-DICT_DESCRIPTIONS['poisson']   = "Poisson's ratio for tf stress calculation"
+DICT_DESCRIPTIONS['pohmpv']    = 'Ohmic heating power per volume (mw/m3)'
+DICT_DESCRIPTIONS['poisson']   = "Poisson's ratio for tf stress calculation\n(assumed constant over entire coil)"
 DICT_DESCRIPTIONS['powerht']   = 'Heating power (= transport loss power) (mw) used in\nconfinement time calculation'
 DICT_DESCRIPTIONS['powfmax']   = 'Maximum fusion power (mw)\n(constraint equation 9)'
 DICT_DESCRIPTIONS['powfmw']    = 'Fusion power (mw)'
-DICT_DESCRIPTIONS['powohres']  = 'Oh coil resistive power during flattop (w)'
+DICT_DESCRIPTIONS['powohres']  = 'Central solenoid resistive power during flattop (w)'
 DICT_DESCRIPTIONS['powpfres']  = 'Total pf coil resistive losses during flattop (w)'
 DICT_DESCRIPTIONS['ppdivr']    = 'Peak heat load at plate (with radiation) (mw/m2)'
 DICT_DESCRIPTIONS['pperim']    = 'Plasma poloidal perimeter (m)'
 DICT_DESCRIPTIONS['ppump']     = 'Centrepost coolant pump power (w)'
 DICT_DESCRIPTIONS['pr']        = 'Intermediate pressure turbine inlet pressure (mpa)'
-DICT_DESCRIPTIONS['prad']      = 'Total radiation power from inside separatrix (mw/m3)'
 DICT_DESCRIPTIONS['pradmw']    = 'Total radiation power (mw)'
 DICT_DESCRIPTIONS['pradpv']    = 'Total radiation power per volume (mw/m3)'
 DICT_DESCRIPTIONS['prdiv']     = 'Divertor chamber pressure during burn (pa)'
@@ -3171,18 +3110,16 @@ DICT_DESCRIPTIONS['prescp']    = 'Resistive power in the centrepost (w)'
 DICT_DESCRIPTIONS['priheat']   = 'Total thermal power removed from fusion core (mw)'
 DICT_DESCRIPTIONS['prn1']      = 'N-scrape-off / n-average plasma;\n(input for ipedestal=0, = nesep/dene if ipedestal=1)'
 DICT_DESCRIPTIONS['protonrate'] = 'Proton production rate (particles/m3/sec)'
-DICT_DESCRIPTIONS['prp']       = 'Thickness of tf coil radial plate as a fraction\nof the thickness of a turn without the radial plate\n(iteration variable 101)'
+DICT_DESCRIPTIONS['prp']       = "Ratio of the cross-sectional area of the radial plates\n+ inter-turn steel caps to the whole winding pack's\ncross-sectional area (iteration variable 101)"
 DICT_DESCRIPTIONS['psecdiv']   = 'Secondary (low-grade) heat lost in divertor (mw)\n(ipowerflow=1)'
 DICT_DESCRIPTIONS['psechcd']   = 'Secondary (low-grade) heat lost into hcd apparatus (mw)\n(ipowerflow=1)'
 DICT_DESCRIPTIONS['psechole']  = 'Secondary (low-grade) heat lost through holes (mw)\n(ipowerflow=1)'
-DICT_DESCRIPTIONS['psecht']    = 'Secondary (low-grade) heat (mw)'
 DICT_DESCRIPTIONS['psechtmw']  = 'Secondary (low-grade) heat (mw)'
 DICT_DESCRIPTIONS['psecshld']  = 'Secondary (low-grade) heat lost in shield (mw)\n(ipowerflow=1)'
 DICT_DESCRIPTIONS['pseprmax']  = 'Maximum ratio of power crossing the separatrix to\nplasma major radius (psep/r) (mw/m)\n(constraint equation 56)'
-DICT_DESCRIPTIONS['psync']     = 'Synchrotron radiation power (mw/m3)'
 DICT_DESCRIPTIONS['psyncpv']   = 'Synchrotron radiation power per volume (mw/m3)'
 DICT_DESCRIPTIONS['ptargf']    = 'Ife target factory power at 6 hz repetition rate (mw)'
-DICT_DESCRIPTIONS['ptaue']     = 'Exponent in energy confinement time formula'
+DICT_DESCRIPTIONS['ptaue']     = 'Exponent for density term in energy confinement time formula'
 DICT_DESCRIPTIONS['ptempalw']  = 'Maximum peak centrepost temperature (c)\n(constraint equation 44)'
 DICT_DESCRIPTIONS['ptfnuc']    = 'Nuclear heating in the tf coil (mw)'
 DICT_DESCRIPTIONS['ptfnucmax'] = 'Maximum nuclear heating in tf coil (mw/m3)\n(constraint equation 54)'
@@ -3190,22 +3127,20 @@ DICT_DESCRIPTIONS['ptfnucpm3'] = 'Nuclear heating in the tf coil (mw/m3) (blktmo
 DICT_DESCRIPTIONS['pthermmw']  = 'Primary (high-grade) heat (useful for electric production) (mw)'
 DICT_DESCRIPTIONS['pthrmw']    = 'L-h power threshold (mw):\niter 1996 nominal\niter 1996 upper bound\niter 1996 lower bound\niter 1997 excluding elongation\niter 1997 including elongation\n2008 martin scaling: nominal\n2008 martin scaling: 95% upper bound\n2008 martin scaling: 95% lower bound'
 DICT_DESCRIPTIONS['ptpdiv']    = 'Peak temperature at the plate (ev)'
-DICT_DESCRIPTIONS['ptre']      = 'Electron transport power (mw/m3)'
 DICT_DESCRIPTIONS['ptremw']    = 'Electron transport power (mw)'
 DICT_DESCRIPTIONS['ptrepv']    = 'Electron transport power per volume (mw/m3)'
-DICT_DESCRIPTIONS['ptri']      = 'Ion transport power (mw/m3)'
 DICT_DESCRIPTIONS['ptrimw']    = 'Ion transport power (mw)'
 DICT_DESCRIPTIONS['ptripv']    = 'Ion transport power per volume (mw/m3)'
-DICT_DESCRIPTIONS['pwplh']     = 'Lower hybrid wall plug power (w)'
-DICT_DESCRIPTIONS['pwpm2']     = 'Base ac power requirement (w/m2)'
-DICT_DESCRIPTIONS['pwpnb']     = 'Neutral beam wall plug power (w)'
+DICT_DESCRIPTIONS['pwplh']     = 'Lower hybrid wall plug power (mw)'
+DICT_DESCRIPTIONS['pwpm2']     = 'Base ac power requirement per unit floor area (w/m2)'
+DICT_DESCRIPTIONS['pwpnb']     = 'Neutral beam wall plug power (mw)'
 DICT_DESCRIPTIONS['q']         = 'Safety factor at plasma edge (q-"psi") (iteration variable 18):\nicurr = 2, q = mean safety factor qbar for divertors;\nicurr = 3,4, q = safety factor at 95% surface'
 DICT_DESCRIPTIONS['q0']        = 'Safety factor on axis'
 DICT_DESCRIPTIONS['q95']       = 'Safety factor at 95% surface'
 DICT_DESCRIPTIONS['qfuel']     = 'Plasma fuelling rate (nucleus-pairs/s)'
 DICT_DESCRIPTIONS['qlim']      = 'Lower limit for edge safety factor'
 DICT_DESCRIPTIONS['qstar']     = 'Cylindrical safety factor'
-DICT_DESCRIPTIONS['qtaue']     = 'Exponent in energy confinement time formula'
+DICT_DESCRIPTIONS['qtaue']     = 'Exponent for temperature term in energy confinement time formula'
 DICT_DESCRIPTIONS['r1']        = 'Ife device radial build (m)'
 DICT_DESCRIPTIONS['r2']        = 'Ife device radial build (m)'
 DICT_DESCRIPTIONS['r3']        = 'Ife device radial build (m)'
@@ -3229,7 +3164,6 @@ DICT_DESCRIPTIONS['rbwt']      = 'Reactor building wall thickness (m)'
 DICT_DESCRIPTIONS['rconl']     = 'Connection length ratio, outboard side'
 DICT_DESCRIPTIONS['rcool']     = 'Average radius of coolant channel (m)\n(iteration variable 69)'
 DICT_DESCRIPTIONS['rdewex']    = 'External cryostat radius (m)'
-DICT_DESCRIPTIONS['recyle']    = 'Alpha fraction recycled to main plasma'
 DICT_DESCRIPTIONS['reprat']    = 'Ife driver repetition rate (hz)'
 DICT_DESCRIPTIONS['resrfp']    = 'Resistance of each rfp pf coil (ohms)'
 DICT_DESCRIPTIONS['rfpf']      = 'Rfp reversal parameter f'
@@ -3240,12 +3174,12 @@ DICT_DESCRIPTIONS['rhopedt']   = 'R/a of temperature pedestal (ipedestal=1)'
 DICT_DESCRIPTIONS['rhotfleg']  = 'Tf coil leg resistance (ohm)'
 DICT_DESCRIPTIONS['ric']       = 'Peak current in coil i (ma-turns)'
 DICT_DESCRIPTIONS['rinboard']  = 'Plasma inboard radius (m)\n(consistency equation 29)'
-DICT_DESCRIPTIONS['ripmax']    = 'Maximum peak/average ripple at plasma edge (%)'
-DICT_DESCRIPTIONS['ripple']    = 'Peak/average ripple at plasma edge (%)'
+DICT_DESCRIPTIONS['ripmax']    = 'Maximum allowable toroidal field ripple amplitude\nat plasma edge (%)'
+DICT_DESCRIPTIONS['ripple']    = 'Peak/average toroidal field ripple at plasma edge (%)'
 DICT_DESCRIPTIONS['ritfc']     = 'Total (summed) current in tf coils (a)'
 DICT_DESCRIPTIONS['rjconpf']   = 'Average current density of pf coil i (a/m2)\nat time of peak current in that coil\n(calculated for ipfloc=1 coils)'
-DICT_DESCRIPTIONS['rjohc']     = 'Allowable oh coil current density at eof (a/m2)'
-DICT_DESCRIPTIONS['rjohc0']    = 'Allowable oh coil current density at bop (a/m2)'
+DICT_DESCRIPTIONS['rjohc']     = 'Allowable central solenoid current density at end of flat-top (a/m2)'
+DICT_DESCRIPTIONS['rjohc0']    = 'Allowable central solenoid current density at beginning of pulse (a/m2)'
 DICT_DESCRIPTIONS['rjpfalw']   = 'Allowable current density of pf coil i (a/m2)'
 DICT_DESCRIPTIONS['rlclolcn']  = 'Ratio of collision length / connection length'
 DICT_DESCRIPTIONS['rlenmax']   = 'Maximum value for length ratio (rlclolcn) (eqn.22)'
@@ -3260,15 +3194,14 @@ DICT_DESCRIPTIONS['rncne']     = 'N_carbon / n_e'
 DICT_DESCRIPTIONS['rndfuel']   = 'Fuel burnup rate (reactions/second)'
 DICT_DESCRIPTIONS['rnfene']    = 'N_highz / n_e'
 DICT_DESCRIPTIONS['rnihx']     = 'Number of intermediate heat exchangers'
-DICT_DESCRIPTIONS['rnltf']     = 'Number of tf turns/pancake (radial direction)'
 DICT_DESCRIPTIONS['rnone']     = 'N_oxygen / n_e'
 DICT_DESCRIPTIONS['rnphx']     = 'Number of primary heat exchangers'
-DICT_DESCRIPTIONS['rohc']      = 'Radius to the centre of the oh coil (m)'
+DICT_DESCRIPTIONS['rohc']      = 'Radius to the centre of the central solenoid (m)'
 DICT_DESCRIPTIONS['routr']     = 'Distance (m) from outboard tf coil leg to centre of\nipfloc=3 pf coils'
 DICT_DESCRIPTIONS['row']       = 'Clearance to building wall for crane operation (m)'
 DICT_DESCRIPTIONS['rpf']       = 'Radius of pf coil i (m)'
-DICT_DESCRIPTIONS['rpf1']      = 'Offset (m) of radial position of ipfloc=1 pf coils\nfrom being directly above the oh coil'
-DICT_DESCRIPTIONS['rpf2']      = 'Offset of radial position of ipfloc=2 pf coils\nfrom being at rmajor (offset = rpf2*triang*rminor)'
+DICT_DESCRIPTIONS['rpf1']      = 'Offset (m) of radial position of ipfloc=1 pf coils\nfrom being directly above the central solenoid'
+DICT_DESCRIPTIONS['rpf2']      = 'Offset (m) of radial position of ipfloc=2 pf coils\nfrom being at rmajor (offset = rpf2*triang*rminor)'
 DICT_DESCRIPTIONS['rpf2dewar'] = 'Radial distance between outer edge of largest\nipfloc=3 pf coil (or stellarator modular coil)\nand external cryostat (m)'
 DICT_DESCRIPTIONS['rpfac']     = 'Neo-classical correction factor to rplas'
 DICT_DESCRIPTIONS['rplas']     = 'Plasma resistance (ohm)'
@@ -3280,38 +3213,17 @@ DICT_DESCRIPTIONS['rsrd']      = 'Effective separatrix/divertor radius ratio'
 DICT_DESCRIPTIONS['rstrko']    = 'Outboard strike point radius (m)'
 DICT_DESCRIPTIONS['rtanbeam']  = 'Neutral beam centreline tangency radius (m)'
 DICT_DESCRIPTIONS['rtanmax']   = 'Maximum tangency radius for centreline of beam (m)'
-DICT_DESCRIPTIONS['rtaue']     = 'Exponent in energy confinement time formula'
+DICT_DESCRIPTIONS['rtaue']     = 'Exponent for power term in energy confinement time formula'
 DICT_DESCRIPTIONS['rtfcin']    = 'Radius of centre of inboard tf leg (m)'
 DICT_DESCRIPTIONS['rtot']      = 'Radius to the centre of the outboard tf coil leg (m)'
 DICT_DESCRIPTIONS['runtitle']  = 'Short descriptive title for the run'
 DICT_DESCRIPTIONS['rxcl']      = 'Clearance around reactor (m)'
 DICT_DESCRIPTIONS['sarea']     = 'Plasma surface area'
 DICT_DESCRIPTIONS['sareao']    = 'Outboard plasma surface area'
-DICT_DESCRIPTIONS['sccufac']   = 'Ratio of superconductor to copper in pf/oh coil\ncable at a magnetic field of 1t'
-DICT_DESCRIPTIONS['scrapli']   = 'Inboard scrapeoff length (m) (used if iscrp=1)\n(iteration variable 73)'
-DICT_DESCRIPTIONS['scraplo']   = 'Outboard scrapeoff length (m) (used if iscrp=1)\n(iteration variable 74)'
-DICT_DESCRIPTIONS['sect01']    = 'Turn on/off output for power reactor costs'
-DICT_DESCRIPTIONS['sect02']    = 'Turn on/off output for detailed costings'
-DICT_DESCRIPTIONS['sect03']    = 'Turn on/off output for plasma'
-DICT_DESCRIPTIONS['sect04']    = 'Turn on/off output for current drive system'
-DICT_DESCRIPTIONS['sect05']    = 'Turn on/off output for divertor'
-DICT_DESCRIPTIONS['sect06']    = 'Turn on/off output for machine build'
-DICT_DESCRIPTIONS['sect07']    = 'Turn on/off output for tf coils'
-DICT_DESCRIPTIONS['sect08']    = 'Turn on/off output for pf coils'
-DICT_DESCRIPTIONS['sect09']    = 'Turn on/off output for volt second consumption'
-DICT_DESCRIPTIONS['sect10']    = 'Turn on/off output for support structure'
-DICT_DESCRIPTIONS['sect11']    = 'Turn on/off output for pf coil inductances'
-DICT_DESCRIPTIONS['sect12']    = 'Turn on/off output for shield / blanket'
-DICT_DESCRIPTIONS['sect13']    = 'Turn on/off output for power conversion'
-DICT_DESCRIPTIONS['sect14']    = 'Turn on/off output for power / heat transport'
-DICT_DESCRIPTIONS['sect15']    = 'Turn on/off output for vacuum system'
-DICT_DESCRIPTIONS['sect16']    = 'Turn on/off output for plant buildings system'
-DICT_DESCRIPTIONS['sect17']    = 'Turn on/off output for ac power'
-DICT_DESCRIPTIONS['sect18']    = 'Turn on/off output for neutral beams'
-DICT_DESCRIPTIONS['sect19']    = 'Turn on/off output for electron cyclotron heating'
-DICT_DESCRIPTIONS['sect20']    = 'Turn on/off output for lower hybrid heating'
-DICT_DESCRIPTIONS['sect21']    = 'Turn on/off output for times'
-DICT_DESCRIPTIONS['sf']        = 'Shape factor'
+DICT_DESCRIPTIONS['sccufac']   = 'Ratio of superconductor to copper in pf coils/central solenoid\ncable at a magnetic field of 1t'
+DICT_DESCRIPTIONS['scrapli']   = 'Gap between plasma and first wall, inboard side (m)\n(used if iscrp=1) (iteration variable 73)'
+DICT_DESCRIPTIONS['scraplo']   = 'Gap between plasma and first wall, outboard side (m)\n(used if iscrp=1) (iteration variable 74)'
+DICT_DESCRIPTIONS['sf']        = 'Shape factor = plasma poloidal perimeter / (2.pi.rminor)'
 DICT_DESCRIPTIONS['sgeff']     = 'Steam generator effectiveness'
 DICT_DESCRIPTIONS['sharea']    = 'Shield total surface area (m2)'
 DICT_DESCRIPTIONS['shareaib']  = 'Inboard shield surface area (m2)'
@@ -3330,7 +3242,7 @@ DICT_DESCRIPTIONS['shmf']      = 'Fraction of shield mass per tf coil\nto be mov
 DICT_DESCRIPTIONS['shov']      = 'Shops and warehouse volume (m3)'
 DICT_DESCRIPTIONS['shovol']    = 'Volume of shops and buildings for plant auxiliaries (m3)'
 DICT_DESCRIPTIONS['shvol']     = 'Ife shield volume (m3)'
-DICT_DESCRIPTIONS['sigpfalw']  = 'Allowable stress in pf/oh coils (mpa)\nexcluding the steel coil case'
+DICT_DESCRIPTIONS['sigpfalw']  = 'Allowable stress in pf coils/central solenoid (mpa)\nexcluding the steel coil case'
 DICT_DESCRIPTIONS['sigpfcalw'] = 'Maximum permissible tensile stress (mpa) in\nsteel coil cases for superconducting pf coils\n(ipfres=0)'
 DICT_DESCRIPTIONS['sigpfcf']   = 'Fraction of jxb hoop force supported by steel case\nfor superconducting pf coils (ipfres=0)'
 DICT_DESCRIPTIONS['sigrad']    = 'Radial tf coil stress (mpa)'
@@ -3351,8 +3263,7 @@ DICT_DESCRIPTIONS['sqsumsq']   = 'Sqrt of the sum of the square of the constrain
 DICT_DESCRIPTIONS['srcktpm']   = 'Sum of resistive pf coil power (kw)'
 DICT_DESCRIPTIONS['ssync']     = 'Synchrotron wall reflectivity factor'
 DICT_DESCRIPTIONS['stcl']      = 'Clearance above crane to roof (m)'
-DICT_DESCRIPTIONS['stress_model'] = 'Tf coil stress model to choose:\n= 0 myall 5-layer model\n= 1 ccfe two-layer model'
-DICT_DESCRIPTIONS['strncon']   = 'Strain in superconductor material'
+DICT_DESCRIPTIONS['strncon']   = 'Strain in superconductor material\n(used in iter nb3sn critical surface model)'
 DICT_DESCRIPTIONS['strtf1']    = 'Von mises stress in tf cable conduit (pa)'
 DICT_DESCRIPTIONS['strtf2']    = 'Von mises stress in tf coil case (pa)'
 DICT_DESCRIPTIONS['sweep']     = 'Actual values to use in scan'
@@ -3361,8 +3272,8 @@ DICT_DESCRIPTIONS['taubeam']   = 'Neutral beam e-decay lengths to plasma centre'
 DICT_DESCRIPTIONS['tauee']     = 'Electron energy confinement time (sec)'
 DICT_DESCRIPTIONS['taueff']    = 'Global energy confinement time (sec)'
 DICT_DESCRIPTIONS['tauei']     = 'Ion energy confinement time (sec)'
-DICT_DESCRIPTIONS['taup']      = 'Particle confinement time (sec)'
-DICT_DESCRIPTIONS['tauscl']    = 'Labels describing energy confinement scaling laws:\n( 1)  neo-alcator (ohmic)\n( 2)  mirnov (h-mode)\n( 3)  merezkhin-muhkovatov (l-mode)\n( 4)  shimomura (h-mode)\n( 5)  kaye-goldston (l-mode)\n( 6)  iter 89-p (l-mode)\n( 7)  iter 89-o (l-mode)\n( 8)  rebut-lallia (l-mode)\n( 9)  goldston (l-mode)\n(10)  t10 (l-mode)\n(11)  jaeri-88 (l-mode)\n(12)  kaye-big complex (l-mode)\n(13)  iter h90-p (h-mode)\n(14)  iter mix (l-mode)\n(15)  riedel (l-mode)\n(16)  christiansen (l-mode)\n(17)  lackner-gottardi (l-mode)\n(18)  neo-kaye (l-mode)\n(19)  riedel (h-mode)\n(20)  iter h90-p amended (h-mode)\n(21)  lhd (stellarator)\n(22)  gyro-reduced bohm (stellarator)\n(23)  lackner-gottardi (stellarator)\n(24)  iter-93h (h-mode)\n(25)  titan (rfp)\n(26)  iter h-97p elm-free (h-mode)\n(27)  iter h-97p elmy (h-mode)\n(28)  iter-96p (l-mode)\n(29)  valovic modified elmy (h-mode)\n(30)  kaye pppl april 98 (l-mode)\n(31)  iterh-pb98p(y) (h-mode)\n(32)  ipb98(y) (h-mode)\n(33)  ipb98(y,1) (h-mode)\n(34)  ipb98(y,2) (h-mode)\n(35)  ipb98(y,3) (h-mode)\n(36)  ipb98(y,4) (h-mode)\n(37)  iss95 (stellarator)\n(38)  iss04 (stellarator)'
+DICT_DESCRIPTIONS['taup']      = 'Alpha particle confinement time (sec)'
+DICT_DESCRIPTIONS['tauscl']    = 'Labels describing energy confinement scaling laws:\n( 1)  neo-alcator (ohmic)\n( 2)  mirnov (h-mode)\n( 3)  merezkhin-muhkovatov (l-mode)\n( 4)  shimomura (h-mode)\n( 5)  kaye-goldston (l-mode)\n( 6)  iter 89-p (l-mode)\n( 7)  iter 89-o (l-mode)\n( 8)  rebut-lallia (l-mode)\n( 9)  goldston (l-mode)\n(10)  t10 (l-mode)\n(11)  jaeri-88 (l-mode)\n(12)  kaye-big complex (l-mode)\n(13)  iter h90-p (h-mode)\n(14)  iter mix (l-mode)\n(15)  riedel (l-mode)\n(16)  christiansen (l-mode)\n(17)  lackner-gottardi (l-mode)\n(18)  neo-kaye (l-mode)\n(19)  riedel (h-mode)\n(20)  iter h90-p amended (h-mode)\n(21)  lhd (stellarator)\n(22)  gyro-reduced bohm (stellarator)\n(23)  lackner-gottardi (stellarator)\n(24)  iter-93h (h-mode)\n(25)  titan (rfp)\n(26)  iter h-97p elm-free (h-mode)\n(27)  iter h-97p elmy (h-mode)\n(28)  iter-96p (=iter-97l) (l-mode)\n(29)  valovic modified elmy (h-mode)\n(30)  kaye pppl april 98 (l-mode)\n(31)  iterh-pb98p(y) (h-mode)\n(32)  ipb98(y) (h-mode)\n(33)  ipb98(y,1) (h-mode)\n(34)  ipb98(y,2) (h-mode)\n(35)  ipb98(y,3) (h-mode)\n(36)  ipb98(y,4) (h-mode)\n(37)  iss95 (stellarator)\n(38)  iss04 (stellarator)\n(39)  ds03 (h-mode)'
 DICT_DESCRIPTIONS['tbeamin']   = 'Permitted neutral beam e-decay lengths to plasma centre'
 DICT_DESCRIPTIONS['tbeta']     = 'Temperature profile index beta  (ipedestal=1)'
 DICT_DESCRIPTIONS['tbktrepl']  = 'Time taken to replace blanket (y)'
@@ -3370,7 +3281,7 @@ DICT_DESCRIPTIONS['tbr']       = 'Tritium breeding ratio (blktmodel>0)'
 DICT_DESCRIPTIONS['tbrmin']    = 'Minimum tritium breeding ratio (blktmodel>0)\n(constraint equation 52)'
 DICT_DESCRIPTIONS['tbrnmn']    = 'Minimum burn time (s)\n(constraint equation 13)'
 DICT_DESCRIPTIONS['tburn']     = 'Burn time (s) (calculated if lpulse=1)'
-DICT_DESCRIPTIONS['tburn0']    = 'Burn time (s) - used in consistency equation 15'
+DICT_DESCRIPTIONS['tburn0']    = 'Burn time (s) - used for internal consistency'
 DICT_DESCRIPTIONS['tcomrepl']  = 'Time taken to replace both blanket and divertor (y)'
 DICT_DESCRIPTIONS['tconl']     = 'Main plasma connection length (m)'
 DICT_DESCRIPTIONS['tcoolin']   = 'Centrepost coolant inlet temperature (c)'
@@ -3385,7 +3296,7 @@ DICT_DESCRIPTIONS['tdmptf']    = 'Dump time for tf coil (s)\n(iteration variable
 DICT_DESCRIPTIONS['tdown']     = 'Down time (s)'
 DICT_DESCRIPTIONS['tdspmw']    = 'Ife target delivery system power (mw)'
 DICT_DESCRIPTIONS['tdwell']    = 'Time between pulses in a pulsed reactor (s)\n(iteration variable 17)'
-DICT_DESCRIPTIONS['te']        = '/15.0/ : volume averaged electron temperature (kev)\n(iteration variable 4)'
+DICT_DESCRIPTIONS['te']        = 'Volume averaged electron temperature (kev)\n(iteration variable 4)'
 DICT_DESCRIPTIONS['te0']       = 'Central electron temperature (kev)'
 DICT_DESCRIPTIONS['ten']       = 'Density weighted average electron temperature (kev)'
 DICT_DESCRIPTIONS['teped']     = 'Electron temperature of pedestal (kev) (ipedestal=1)'
@@ -3411,16 +3322,16 @@ DICT_DESCRIPTIONS['tflegres']  = 'Resistivity of a tf coil leg (ohm-m)'
 DICT_DESCRIPTIONS['tfleng']    = 'Tf coil circumference (m)'
 DICT_DESCRIPTIONS['tfno']      = 'Number of tf coils (default = 50 for stellarators)'
 DICT_DESCRIPTIONS['tfocrn']    = 'Tf coil half-width - outer bore (m)'
-DICT_DESCRIPTIONS['tfootfi']   = 'Tf coil outboard leg / inboard leg thickness ratio\n(iteration variable 75)'
+DICT_DESCRIPTIONS['tfootfi']   = 'Tf coil outboard leg / inboard leg radial thickness\nratio (itfsup=0 only)\n(iteration variable 75)'
 DICT_DESCRIPTIONS['tfsai']     = 'Area of the inboard tf coil legs (m2)'
 DICT_DESCRIPTIONS['tfsao']     = 'Area of the outboard tf coil legs (m2)'
 DICT_DESCRIPTIONS['tfthko']    = 'Outboard tf coil thickness (m)'
-DICT_DESCRIPTIONS['tftmp']     = 'Peak tf coil he coolant temperature (k)'
-DICT_DESCRIPTIONS['tftort']    = 'Tf coil toroidal thickness (m)\n(rfp - inboard and outboard; tokamak - outboard leg only;\ncalculated for stellarators)\n(iteration variable 77)'
+DICT_DESCRIPTIONS['tftmp']     = 'Peak tf coil helium coolant temperature (k)'
+DICT_DESCRIPTIONS['tftort']    = 'Tf coil toroidal thickness (m)\n(calculated for tokamaks and stellarators;\nrfps - input value, default=0.33, is used)\n(iteration variable 77) (rfp only)'
 DICT_DESCRIPTIONS['tgain']     = 'Ife target gain (if ifedrv = 0)\n(iteration variable 83)'
 DICT_DESCRIPTIONS['theat']     = 'Heating time, after current ramp up (s)'
 DICT_DESCRIPTIONS['thicndut']  = 'Conduit insulation thickness (m)'
-DICT_DESCRIPTIONS['thkcas']    = 'External case thickness for superconductor (m)\n(iteration variable 57)\n(calculated for stellarators)'
+DICT_DESCRIPTIONS['thkcas']    = 'Inboard tf coil case outer (non-plasma side) thickness (m)\n(iteration variable 57)\n(calculated for stellarators)'
 DICT_DESCRIPTIONS['thkwp']     = 'Radial thickness of winding pack (m)'
 DICT_DESCRIPTIONS['thwcndut']  = 'Tf coil conduit case thickness (m)\n(iteration variable 58)'
 DICT_DESCRIPTIONS['ti']        = 'Volume averaged ion temperature (kev);\nn.b. calculated from te if tratio > 0.0'
@@ -3434,7 +3345,7 @@ DICT_DESCRIPTIONS['tlvpmw']    = 'Estimate of total low voltage power (mw)'
 DICT_DESCRIPTIONS['tmargmin']  = 'Minimum allowable temperature margin (k)\n(iteration variable 55)'
 DICT_DESCRIPTIONS['tmargtf']   = 'Tf coil temperature margin (k)'
 DICT_DESCRIPTIONS['tmaxpro']   = 'Maximum temp rise during a quench for protection (k)'
-DICT_DESCRIPTIONS['tmpcry']    = 'Cryostat temperature for superconductor analysis (k)'
+DICT_DESCRIPTIONS['tmpcry']    = 'Cryostat temperature for cryogenic plant power calculation (k)'
 DICT_DESCRIPTIONS['tmprse']    = 'First wall coolant temperature rise (c)'
 DICT_DESCRIPTIONS['tn']        = 'Neutral gas temperature in chamber (k)'
 DICT_DESCRIPTIONS['tohs']      = 'Plasma current ramp-up time for current initiation (s)\n(but calculated if lpulse=0)\n(iteration variable 65)'
@@ -3452,7 +3363,7 @@ DICT_DESCRIPTIONS['triang95']  = 'Plasma triangularity at 95% surface'
 DICT_DESCRIPTIONS['trithtmw']  = 'Power required for tritium processing (mw)'
 DICT_DESCRIPTIONS['tritprate'] = 'Tritium production rate (g/day) (blktmodel>0)'
 DICT_DESCRIPTIONS['triv']      = 'Volume of tritium, fuel handling and\nhealth physics buildings (m3)'
-DICT_DESCRIPTIONS['trp']       = 'Tf coil radial plate thickness (m)'
+DICT_DESCRIPTIONS['trp']       = 'Tf coil radial plate and inter-turn steel cap half-thickness (m)'
 DICT_DESCRIPTIONS['tsep']      = 'Temperature at the separatrix (ev)'
 DICT_DESCRIPTIONS['turns']     = 'Number of turns in pf coil i'
 DICT_DESCRIPTIONS['turnstf']   = 'Number of turns per tf coil'
@@ -3590,7 +3501,7 @@ DICT_DESCRIPTIONS['vdewin']    = 'Vacuum vessel volume (m3)'
 DICT_DESCRIPTIONS['verbose']   = 'Switch for turning on/off diagnostic messages:\n= 0 turn off diagnostics\n= 1 turn on diagnostics'
 DICT_DESCRIPTIONS['vf']        = 'Void fraction of pf coil i'
 DICT_DESCRIPTIONS['vfblkt']    = 'Coolant void fraction in blanket (blktmodel=0),\n(calculated if blktmodel > 0)'
-DICT_DESCRIPTIONS['vfohc']     = 'Oh coil void fraction for coolant'
+DICT_DESCRIPTIONS['vfohc']     = 'Void fraction of (whole) central solenoid for coolant'
 DICT_DESCRIPTIONS['vforce']    = 'Vertical separating force on inboard leg/coil (n)'
 DICT_DESCRIPTIONS['vfshld']    = 'Coolant void fraction in shield'
 DICT_DESCRIPTIONS['vftf']      = 'Coolant fraction of tf coil leg (itfsup=0)\nor of tf coil cable space (itfsup=1)'
@@ -3621,9 +3532,9 @@ DICT_DESCRIPTIONS['vsefsu']    = 'Flux swing from pf coils for startup (wb)'
 DICT_DESCRIPTIONS['vseft']     = 'Total flux swing from pf coils (wb)'
 DICT_DESCRIPTIONS['vshift']    = 'Plasma/device midplane vertical shift - single null'
 DICT_DESCRIPTIONS['vsind']     = 'Internal and external plasma inductance v-s (wb)'
-DICT_DESCRIPTIONS['vsoh']      = 'Total flux swing from the oh coil (wb)'
-DICT_DESCRIPTIONS['vsohbn']    = 'Oh coil flux swing for burn (wb)'
-DICT_DESCRIPTIONS['vsohsu']    = 'Oh coil flux swing for startup (wb)'
+DICT_DESCRIPTIONS['vsoh']      = 'Total flux swing from the central solenoid (wb)'
+DICT_DESCRIPTIONS['vsohbn']    = 'Central solenoid flux swing for burn (wb)'
+DICT_DESCRIPTIONS['vsohsu']    = 'Central solenoid flux swing for startup (wb)'
 DICT_DESCRIPTIONS['vsres']     = 'Resistive losses in startup v-s (wb)'
 DICT_DESCRIPTIONS['vsstt']     = 'Total v-s needed (wb)'
 DICT_DESCRIPTIONS['vssu']      = 'Total flux swing for startup (wb)'
@@ -3633,9 +3544,9 @@ DICT_DESCRIPTIONS['vtfskv']    = 'Voltage across a tf coil during quench (kv)'
 DICT_DESCRIPTIONS['vvhealw']   = 'Allowed maximum helium concentration in vacuum vessel\nat end of plant life (appm) (blktmodel>0)\n(constraint equation 55)'
 DICT_DESCRIPTIONS['vvhemax']   = 'Maximum helium concentration in vacuum vessel at end of\nplant life (appm) (blktmodel>0)'
 DICT_DESCRIPTIONS['walalw']    = 'Allowable wall-load (mw/m2)\n(constraint equation 8)'
-DICT_DESCRIPTIONS['wallmw']    = 'Average neutron wall load, max (mw/m2)'
+DICT_DESCRIPTIONS['wallmw']    = 'Average neutron wall load (mw/m2)'
 DICT_DESCRIPTIONS['wallpf']    = 'Neutron wall load peaking factor (blktmodel>0)'
-DICT_DESCRIPTIONS['waves']     = 'Used in current waveform of pf/oh coils'
+DICT_DESCRIPTIONS['waves']     = 'Used in current waveform of pf coils/central solenoid'
 DICT_DESCRIPTIONS['wgt']       = 'Reactor building crane capacity (kg)\n(calculated if 0 is input)'
 DICT_DESCRIPTIONS['wgt2']      = 'Hot cell crane capacity (kg)\n(calculated if 0 is input)'
 DICT_DESCRIPTIONS['whtblbe']   = 'Mass of blanket - be part (kg)'
@@ -3658,13 +3569,11 @@ DICT_DESCRIPTIONS['whtrp']     = 'Mass of steel radial plates + caps per coil (k
 DICT_DESCRIPTIONS['whtshld']   = 'Mass of shield (kg)'
 DICT_DESCRIPTIONS['whttf']     = 'Total mass of the tf coils (kg)'
 DICT_DESCRIPTIONS['whttflgs']  = 'Mass of the tf coil legs (kg)'
-DICT_DESCRIPTIONS['windstrain'] = 'Vertical strain in winding pack (m) (stress_model=1)'
+DICT_DESCRIPTIONS['windstrain'] = 'Longitudinal strain in winding pack (tfc_model=1)'
 DICT_DESCRIPTIONS['wpenshld']  = 'Mass of the penetration shield (kg)'
-DICT_DESCRIPTIONS['wpvf']      = 'Inter-turn void fraction of winding pack'
 DICT_DESCRIPTIONS['wrbi']      = 'Distance from centre of machine to building wall (m),\ni.e. reactor building half-width'
 DICT_DESCRIPTIONS['wsvfac']    = 'Warm shop building volume multiplication factor'
 DICT_DESCRIPTIONS['wsvol']     = 'Volume of warm shop building (m3)'
-DICT_DESCRIPTIONS['wtbc']      = 'Bucking cylinder mass (kg)'
 DICT_DESCRIPTIONS['wtblli2o']  = 'Mass of blanket - li_2o part (kg)'
 DICT_DESCRIPTIONS['wtbllipb']  = 'Mass of blanket - li-pb part (kg)'
 DICT_DESCRIPTIONS['wtc']       = 'Conductor mass for pf coil i (kg)'
@@ -3690,7 +3599,7 @@ DICT_DESCRIPTIONS['yctfc']     = 'Y location of arc centre i (m)'
 DICT_DESCRIPTIONS['zeff']      = 'Plasma effective charge'
 DICT_DESCRIPTIONS['zeffai']    = 'Mass weighted plasma effective charge'
 DICT_DESCRIPTIONS['zeffdiv']   = 'Zeff in the divertor region (if divdum /= 0)'
-DICT_DESCRIPTIONS['zfear']     = 'High-z impurity switch; 0=iron, 1=argon'
+DICT_DESCRIPTIONS['zfear']     = 'High-z impurity switch; 0=iron, 1=argon\n(if imprad_model=1, only used in neutral beam stopping calc.)'
 DICT_DESCRIPTIONS['zh']        = 'Upper point of pf coil i (m)'
 DICT_DESCRIPTIONS['zl']        = 'Lower point of pf coil i (m)'
 DICT_DESCRIPTIONS['zl1']       = 'Ife vertical build below centre (m)'
@@ -3701,7 +3610,7 @@ DICT_DESCRIPTIONS['zl5']       = 'Ife vertical build below centre (m)'
 DICT_DESCRIPTIONS['zl6']       = 'Ife vertical build below centre (m)'
 DICT_DESCRIPTIONS['zl7']       = 'Ife vertical build below centre (m)'
 DICT_DESCRIPTIONS['zpf']       = 'Z (height) location of pf coil i (m)'
-DICT_DESCRIPTIONS['zref']      = '(height of coil group j) / minor radius,\nfor groups with ipfloc = 3'
+DICT_DESCRIPTIONS['zref']      = 'Pf coil vertical positioning adjuster:\n- for groups j with ipfloc(j) = 1; zref(j) is ignored\n- for groups j with ipfloc(j) = 2 and itart=1 (only);\nzref(j) is distance of centre of pf coil from inside\nedge of tf coil (remember that pf coils for sts lie\nwithin the tf coil)\n- for groups j with ipfloc(j) = 3; zref(j) = ratio of\nheight of coil group j to plasma minor radius'
 DICT_DESCRIPTIONS['zu1']       = 'Ife vertical build above centre (m)'
 DICT_DESCRIPTIONS['zu2']       = 'Ife vertical build above centre (m)'
 DICT_DESCRIPTIONS['zu3']       = 'Ife vertical build above centre (m)'
@@ -3713,27 +3622,25 @@ DICT_DESCRIPTIONS['zzpf']      = 'Vertical position of each rfp pf coil (m)'
 
 #Dictionary mapping module name to list of variables
 DICT_MODULE = OrderedDict()
-DICT_MODULE['Build Variables'] = ['aplasmin', 'bcylth', 'blbmith', 'blbmoth', 'blbpith', 'blbpoth', 'blbuith', 'blbuoth', 'blnkith', 'blnkoth', 'blnktth', 'bore', 'ddwex', 'ddwi', 'fmsbc', 'fmsbl', 'fmsdwe', 'fmsdwi', 'fmsfw', 'fmsoh', 'fmssh', 'fmstf', 'fwith', 'fwoth', 'gapds', 'gapoh', 'gapomin', 'iohcl', 'ohcth', 'rinboard', 'scrapli', 'scraplo', 'shldith', 'shldoth', 'shldtth', 'tfcth', 'tfootfi', 'vgap2', 'vgaptf', 'aplasmin', 'bcylth', 'blbmith', 'blbmoth', 'blbpith', 'blbpoth', 'blbuith', 'blbuoth', 'blnkith', 'blnkoth', 'blnktth', 'bore', 'ddwex', 'ddwi', 'fmsbc', 'fmsbl', 'fmsdwe', 'fmsdwi', 'fmsfw', 'fmsoh', 'fmssh', 'fmstf', 'fwith', 'fwoth', 'gapds', 'gapoh', 'gapomin', 'iohcl', 'ohcth', 'rinboard', 'scrapli', 'scraplo', 'shldith', 'shldoth', 'shldtth', 'tfcth', 'tfootfi', 'vgap2', 'vgaptf', 'aplasmin', 'bcylth', 'blbmith', 'blbmoth', 'blbpith', 'blbpoth', 'blbuith', 'blbuoth', 'blnkith', 'blnkoth', 'blnktth', 'bore', 'ddwex', 'ddwi', 'fmsbc', 'fmsbl', 'fmsdwe', 'fmsdwi', 'fmsfw', 'fmsoh', 'fmssh', 'fmstf', 'fwith', 'fwoth', 'gapds', 'gapoh', 'gapomin', 'iohcl', 'ohcth', 'rinboard', 'scrapli', 'scraplo', 'shldith', 'shldoth', 'shldtth', 'tfcth', 'tfootfi', 'vgap2', 'vgaptf', 'aplasmin', 'bcylth', 'blbmith', 'blbmoth', 'blbpith', 'blbpoth', 'blbuith', 'blbuoth', 'blnkith', 'blnkoth', 'blnktth', 'bore', 'ddwex', 'ddwi', 'fmsbc', 'fmsbl', 'fmsdwe', 'fmsdwi', 'fmsfw', 'fmsoh', 'fmssh', 'fmstf', 'fwith', 'fwoth', 'gapds', 'gapoh', 'gapomin', 'iohcl', 'ohcth', 'rinboard', 'scrapli', 'scraplo', 'shldith', 'shldoth', 'shldtth', 'tfcth', 'tfootfi', 'vgap2', 'vgaptf', 'aplasmin', 'bcylth', 'blbmith', 'blbmoth', 'blbpith', 'blbpoth', 'blbuith', 'blbuoth', 'blnkith', 'blnkoth', 'blnktth', 'bore', 'ddwex', 'ddwi', 'fmsbc', 'fmsbl', 'fmsdwe', 'fmsdwi', 'fmsfw', 'fmsoh', 'fmssh', 'fmstf', 'fwith', 'fwoth', 'gapds', 'gapoh', 'gapomin', 'iohcl', 'ohcth', 'rinboard', 'scrapli', 'scraplo', 'shldith', 'shldoth', 'shldtth', 'tfcth', 'tfootfi', 'vgap2', 'vgaptf', 'aplasmin', 'bcylth', 'blbmith', 'blbmoth', 'blbpith', 'blbpoth', 'blbuith', 'blbuoth', 'blnkith', 'blnkoth', 'blnktth', 'bore', 'ddwex', 'ddwi', 'fmsbc', 'fmsbl', 'fmsdwe', 'fmsdwi', 'fmsfw', 'fmsoh', 'fmssh', 'fmstf', 'fwith', 'fwoth', 'gapds', 'gapoh', 'gapomin', 'iohcl', 'ohcth', 'rinboard', 'scrapli', 'scraplo', 'shldith', 'shldoth', 'shldtth', 'tfcth', 'tfootfi', 'vgap2', 'vgaptf', 'aplasmin', 'blbmith', 'blbmoth', 'blbpith', 'blbpoth', 'blbuith', 'blbuoth', 'blnkith', 'blnkoth', 'blnktth', 'bore', 'clhsf', 'ddwex', 'ddwi', 'fmsbc', 'fmsbl', 'fmsdwe', 'fmsdwi', 'fmsfw', 'fmsoh', 'fmssh', 'fmstf', 'fwith', 'fwoth', 'gapds', 'gapoh', 'gapomin', 'iohcl', 'ohcth', 'rinboard', 'scrapli', 'scraplo', 'shldith', 'shldoth', 'shldtth', 'tfcth', 'tfootfi', 'vgap2', 'vgaptf', 'aplasmin', 'bcylth', 'blbmith', 'blbmoth', 'blbpith', 'blbpoth', 'blbuith', 'blbuoth', 'blnkith', 'blnkoth', 'blnktth', 'bore', 'ddwex', 'ddwi', 'fmsbc', 'fmsbl', 'fmsdwe', 'fmsdwi', 'fmsfw', 'fmsoh', 'fmssh', 'fmstf', 'fwith', 'fwoth', 'gapds', 'gapoh', 'gapomin', 'iohcl', 'ohcth', 'rinboard', 'scrapli', 'scraplo', 'shldith', 'shldoth', 'shldtth', 'tfcth', 'tfootfi', 'vgap2', 'vgaptf', 'aplasmin', 'bcylth', 'blbmith', 'blbmoth', 'blbpith', 'blbpoth', 'blbuith', 'blbuoth', 'blnkith', 'blnkoth', 'blnktth', 'bore', 'ddwex', 'ddwi', 'fmsbc', 'fmsbl', 'fmsdwe', 'fmsdwi', 'fmsfw', 'fmsoh', 'fmssh', 'fmstf', 'fwith', 'fwoth', 'gapds', 'gapoh', 'gapomin', 'iohcl', 'ohcth', 'rinboard', 'scrapli', 'scraplo', 'shldith', 'shldoth', 'shldtth', 'tfcth', 'tfootfi', 'vgap2', 'vgaptf', 'aplasmin', 'bcylth', 'blbmith', 'blbmoth', 'blbpith', 'blbpoth', 'blbuith', 'blbuoth', 'blnkith', 'blnkoth', 'blnktth', 'bore', 'ddwex', 'ddwi', 'fmsbc', 'fmsbl', 'fmsdwe', 'fmsdwi', 'fmsfw', 'fmsoh', 'fmssh', 'fmstf', 'fwith', 'fwoth', 'gapds', 'gapoh', 'gapomin', 'iohcl', 'ohcth', 'rinboard', 'scrapli', 'scraplo', 'shldith', 'shldoth', 'shldtth', 'tfcth', 'tfootfi', 'vgap2', 'vgaptf']
-DICT_MODULE['Buildings Variables'] = ['admv', 'clh1', 'clh2', 'conv', 'esbldgm3', 'fndt', 'hccl', 'hcwt', 'mbvfac', 'pfbldgm3', 'pibv', 'rbrt', 'rbvfac', 'rbwt', 'row', 'rxcl', 'shmf', 'shov', 'stcl', 'tfcbv', 'trcl', 'triv', 'wgt', 'wgt2', 'wsvfac', 'admv', 'clh1', 'clh2', 'conv', 'esbldgm3', 'fndt', 'hccl', 'hcwt', 'mbvfac', 'pfbldgm3', 'pibv', 'rbrt', 'rbvfac', 'rbwt', 'row', 'rxcl', 'shmf', 'shov', 'stcl', 'tfcbv', 'trcl', 'triv', 'wgt', 'wgt2', 'wsvfac', 'admv', 'clh1', 'clh2', 'conv', 'esbldgm3', 'fndt', 'hccl', 'hcwt', 'mbvfac', 'pfbldgm3', 'pibv', 'rbrt', 'rbvfac', 'rbwt', 'row', 'rxcl', 'shmf', 'shov', 'stcl', 'tfcbv', 'trcl', 'triv', 'wgt', 'wgt2', 'wsvfac', 'admv', 'clh1', 'clh2', 'conv', 'esbldgm3', 'fndt', 'hccl', 'hcwt', 'mbvfac', 'pfbldgm3', 'pibv', 'rbrt', 'rbvfac', 'rbwt', 'row', 'rxcl', 'shmf', 'shov', 'stcl', 'tfcbv', 'trcl', 'triv', 'wgt', 'wgt2', 'wsvfac', 'admv', 'clh1', 'clh2', 'conv', 'esbldgm3', 'fndt', 'hccl', 'hcwt', 'mbvfac', 'pfbldgm3', 'pibv', 'rbrt', 'rbvfac', 'rbwt', 'row', 'rxcl', 'shmf', 'shov', 'stcl', 'tfcbv', 'trcl', 'triv', 'wgt', 'wgt2', 'wsvfac', 'admv', 'clh1', 'clh2', 'conv', 'esbldgm3', 'fndt', 'hccl', 'hcwt', 'mbvfac', 'pfbldgm3', 'pibv', 'rbrt', 'rbvfac', 'rbwt', 'row', 'rxcl', 'shmf', 'shov', 'stcl', 'tfcbv', 'trcl', 'triv', 'wgt', 'wgt2', 'wsvfac', 'admv', 'clh1', 'clh2', 'conv', 'esbldgm3', 'fndt', 'hccl', 'hcwt', 'mbvfac', 'pfbldgm3', 'pibv', 'rbrt', 'rbvfac', 'rbwt', 'row', 'rxcl', 'shmf', 'shov', 'stcl', 'tfcbv', 'trcl', 'triv', 'wgt', 'wgt2', 'wsvfac', 'admv', 'clh1', 'clh2', 'conv', 'esbldgm3', 'fndt', 'hccl', 'hcwt', 'mbvfac', 'pfbldgm3', 'pibv', 'rbrt', 'rbvfac', 'rbwt', 'row', 'rxcl', 'shmf', 'shov', 'stcl', 'tfcbv', 'trcl', 'triv', 'wgt', 'wgt2', 'wsvfac', 'admv', 'clh1', 'clh2', 'conv', 'esbldgm3', 'fndt', 'hccl', 'hcwt', 'mbvfac', 'pfbldgm3', 'pibv', 'rbrt', 'rbvfac', 'rbwt', 'row', 'rxcl', 'shmf', 'shov', 'stcl', 'tfcbv', 'trcl', 'triv', 'wgt', 'wgt2', 'wsvfac', 'admv', 'clh1', 'clh2', 'conv', 'esbldgm3', 'fndt', 'hccl', 'hcwt', 'mbvfac', 'pfbldgm3', 'pibv', 'rbrt', 'rbvfac', 'rbwt', 'row', 'rxcl', 'shmf', 'shov', 'stcl', 'tfcbv', 'trcl', 'triv', 'wgt', 'wgt2', 'wsvfac']
-DICT_MODULE['Constraint Variables'] = ['auxmin', 'betpmx', 'bmxlim', 'dtmpmx', 'fauxmn', 'fbeta', 'fbetap', 'fbetatry', 'fdene', 'fdivcol', 'fdtmp', 'fflutf', 'ffuspow', 'fgamcd', 'fhldiv', 'fiooic', 'fipir', 'fjohc', 'fjohc0', 'fjprot', 'fmva', 'fpeakb', 'fpinj', 'fpnetel', 'fportsz', 'fpsepr', 'fptemp', 'fptfnuc', 'fq', 'fqval', 'frfpf', 'frfptf', 'frminor', 'fstrcase', 'fstrcond', 'ftbr', 'ftburn', 'ftcycl', 'ftmargtf', 'ftohs', 'ftpeak', 'fvdump', 'fvs', 'fvvhe', 'fwalld', 'gammax', 'mvalim', 'nflutfmax', 'pnetelin', 'powfmax', 'pseprmax', 'ptfnucmax', 'tbrmin', 'tbrnmn', 'tpkmax', 'vvhealw', 'walalw', 'auxmin', 'betpmx', 'bmxlim', 'dtmpmx', 'fauxmn', 'fbeta', 'fbetap', 'fbetatry', 'fdene', 'fdivcol', 'fdtmp', 'fflutf', 'ffuspow', 'fgamcd', 'fhldiv', 'fiooic', 'fipir', 'fjohc', 'fjohc0', 'fjprot', 'fmva', 'fpeakb', 'fpinj', 'fpnetel', 'fportsz', 'fpsepr', 'fptemp', 'fptfnuc', 'fq', 'fqval', 'frfpf', 'frfptf', 'frminor', 'fstrcase', 'fstrcond', 'ftbr', 'ftburn', 'ftcycl', 'ftmargtf', 'ftohs', 'ftpeak', 'fvdump', 'fvs', 'fvvhe', 'fwalld', 'gammax', 'mvalim', 'nflutfmax', 'pnetelin', 'powfmax', 'pseprmax', 'ptfnucmax', 'tbrmin', 'tbrnmn', 'tpkmax', 'vvhealw', 'walalw', 'auxmin', 'betpmx', 'bmxlim', 'dtmpmx', 'fauxmn', 'fbeta', 'fbetap', 'fbetatry', 'fdene', 'fdivcol', 'fdtmp', 'fflutf', 'ffuspow', 'fgamcd', 'fhldiv', 'fiooic', 'fipir', 'fjohc', 'fjohc0', 'fjprot', 'fmva', 'fpeakb', 'fpinj', 'fpnetel', 'fportsz', 'fpsepr', 'fptemp', 'fptfnuc', 'fq', 'fqval', 'frfpf', 'frfptf', 'frminor', 'fstrcase', 'fstrcond', 'ftbr', 'ftburn', 'ftcycl', 'ftmargtf', 'ftohs', 'ftpeak', 'fvdump', 'fvs', 'fvvhe', 'fwalld', 'gammax', 'mvalim', 'nflutfmax', 'pnetelin', 'powfmax', 'pseprmax', 'ptfnucmax', 'tbrmin', 'tbrnmn', 'tpkmax', 'vvhealw', 'walalw', 'auxmin', 'betpmx', 'bmxlim', 'dtmpmx', 'fauxmn', 'fbeta', 'fbetap', 'fbetatry', 'fdene', 'fdivcol', 'fdtmp', 'fflutf', 'ffuspow', 'fgamcd', 'fhldiv', 'fiooic', 'fipir', 'fjohc', 'fjohc0', 'fjprot', 'fmva', 'fpeakb', 'fpinj', 'fpnetel', 'fportsz', 'fpsepr', 'fptemp', 'fptfnuc', 'fq', 'fqval', 'frfpf', 'frfptf', 'frminor', 'fstrcase', 'fstrcond', 'ftbr', 'ftburn', 'ftcycl', 'ftmargtf', 'ftohs', 'ftpeak', 'fvdump', 'fvs', 'fvvhe', 'fwalld', 'gammax', 'mvalim', 'nflutfmax', 'pnetelin', 'powfmax', 'pseprmax', 'ptfnucmax', 'tbrmin', 'tbrnmn', 'tpkmax', 'vvhealw', 'walalw', 'auxmin', 'betpmx', 'bmxlim', 'dtmpmx', 'fauxmn', 'fbeta', 'fbetap', 'fbetatry', 'fdene', 'fdivcol', 'fdtmp', 'fflutf', 'ffuspow', 'fgamcd', 'fhldiv', 'fiooic', 'fipir', 'fjohc', 'fjohc0', 'fjprot', 'fmva', 'fpeakb', 'fpinj', 'fpnetel', 'fportsz', 'fpsepr', 'fptemp', 'fptfnuc', 'fq', 'fqval', 'frfpf', 'frfptf', 'frminor', 'fstrcase', 'fstrcond', 'ftbr', 'ftburn', 'ftcycl', 'ftmargtf', 'ftohs', 'ftpeak', 'fvdump', 'fvs', 'fvvhe', 'fwalld', 'gammax', 'mvalim', 'nflutfmax', 'pnetelin', 'powfmax', 'pseprmax', 'ptfnucmax', 'tbrmin', 'tbrnmn', 'tpkmax', 'vvhealw', 'walalw', 'auxmin', 'betpmx', 'bmxlim', 'dtmpmx', 'fauxmn', 'fbeta', 'fbetap', 'fbetatry', 'fdene', 'fdivcol', 'fdtmp', 'fflutf', 'ffuspow', 'fgamcd', 'fhldiv', 'fiooic', 'fipir', 'fjohc', 'fjohc0', 'fjprot', 'fmva', 'fpeakb', 'fpinj', 'fpnetel', 'fportsz', 'fpsepr', 'fptemp', 'fptfnuc', 'fq', 'fqval', 'frfpf', 'frfptf', 'frminor', 'fstrcase', 'fstrcond', 'ftbr', 'ftburn', 'ftcycl', 'ftmargtf', 'ftohs', 'ftpeak', 'fvdump', 'fvs', 'fvvhe', 'fwalld', 'gammax', 'mvalim', 'nflutfmax', 'pnetelin', 'powfmax', 'pseprmax', 'ptfnucmax', 'tbrmin', 'tbrnmn', 'tpkmax', 'vvhealw', 'walalw', 'auxmin', 'betpmx', 'bigqmin', 'bmxlim', 'dtmpmx', 'fauxmn', 'fbeta', 'fbetap', 'fbetatry', 'fdene', 'fdivcol', 'fdtmp', 'fflutf', 'ffuspow', 'fgamcd', 'fhldiv', 'fiooic', 'fipir', 'fjohc', 'fjohc0', 'fjprot', 'fmva', 'fpeakb', 'fpinj', 'fpnetel', 'fportsz', 'fpsepr', 'fptemp', 'fptfnuc', 'fq', 'fqval', 'fradpwr', 'frfpf', 'frfptf', 'frminor', 'fstrcase', 'fstrcond', 'ftbr', 'ftburn', 'ftcycl', 'ftfthko', 'ftftort', 'ftmargtf', 'ftohs', 'ftpeak', 'fvdump', 'fvs', 'fvvhe', 'fwalld', 'gammax', 'mvalim', 'nflutfmax', 'pnetelin', 'powfmax', 'pseprmax', 'ptfnucmax', 'tbrmin', 'tbrnmn', 'tpkmax', 'vvhealw', 'walalw', 'auxmin', 'betpmx', 'bmxlim', 'dtmpmx', 'fauxmn', 'fbeta', 'fbetap', 'fbetatry', 'fdene', 'fdivcol', 'fdtmp', 'fflutf', 'ffuspow', 'fgamcd', 'fhldiv', 'fiooic', 'fipir', 'fjohc', 'fjohc0', 'fjprot', 'fmva', 'fpeakb', 'fpinj', 'fpnetel', 'fportsz', 'fpsepr', 'fptemp', 'fptfnuc', 'fq', 'fqval', 'frfpf', 'frfptf', 'frminor', 'fstrcase', 'fstrcond', 'ftbr', 'ftburn', 'ftcycl', 'ftfthko', 'ftftort', 'ftmargtf', 'ftohs', 'ftpeak', 'fvdump', 'fvs', 'fvvhe', 'fwalld', 'gammax', 'mvalim', 'nflutfmax', 'pnetelin', 'powfmax', 'pseprmax', 'ptfnucmax', 'tbrmin', 'tbrnmn', 'tpkmax', 'vvhealw', 'walalw', 'auxmin', 'betpmx', 'bmxlim', 'dtmpmx', 'fauxmn', 'fbeta', 'fbetap', 'fbetatry', 'fdene', 'fdivcol', 'fdtmp', 'fflutf', 'ffuspow', 'fgamcd', 'fhldiv', 'fiooic', 'fipir', 'fjohc', 'fjohc0', 'fjprot', 'fmva', 'fpeakb', 'fpinj', 'fpnetel', 'fportsz', 'fpsepr', 'fptemp', 'fptfnuc', 'fq', 'fqval', 'frfpf', 'frfptf', 'frminor', 'fstrcase', 'fstrcond', 'ftbr', 'ftburn', 'ftcycl', 'ftfthko', 'ftftort', 'ftmargtf', 'ftohs', 'ftpeak', 'fvdump', 'fvs', 'fvvhe', 'fwalld', 'gammax', 'mvalim', 'nflutfmax', 'pnetelin', 'powfmax', 'pseprmax', 'ptfnucmax', 'tbrmin', 'tbrnmn', 'tpkmax', 'vvhealw', 'walalw', 'auxmin', 'betpmx', 'bmxlim', 'dtmpmx', 'fauxmn', 'fbeta', 'fbetap', 'fbetatry', 'fdene', 'fdivcol', 'fdtmp', 'fflutf', 'ffuspow', 'fgamcd', 'fhldiv', 'fiooic', 'fipir', 'fjohc', 'fjohc0', 'fjprot', 'fmva', 'fpeakb', 'fpinj', 'fpnetel', 'fportsz', 'fpsepr', 'fptemp', 'fptfnuc', 'fq', 'fqval', 'frfpf', 'frfptf', 'frminor', 'fstrcase', 'fstrcond', 'ftbr', 'ftburn', 'ftcycl', 'ftfthko', 'ftftort', 'ftmargtf', 'ftohs', 'ftpeak', 'fvdump', 'fvs', 'fvvhe', 'fwalld', 'gammax', 'mvalim', 'nflutfmax', 'pnetelin', 'powfmax', 'pseprmax', 'ptfnucmax', 'tbrmin', 'tbrnmn', 'tpkmax', 'vvhealw', 'walalw']
-DICT_MODULE['Cost Variables']  = ['abktflnc', 'adivflnc', 'cconfix', 'cconshpf', 'cconshtf', 'cfactr', 'cfind', 'cland', 'cowner', 'cpstflnc', 'csi', 'cturbb', 'decomf', 'dintrt', 'dtlife', 'fcap0', 'fcap0cp', 'fcdfuel', 'fcontng', 'fcr0', 'fkind', 'iavail', 'ifueltyp', 'ipnet', 'ireactor', 'lsa', 'ratecdol', 'tbktrepl', 'tcomrepl', 'tdivrepl', 'tlife', 'ucblbe', 'ucblbreed', 'ucblli', 'ucblli2o', 'ucbllipb', 'ucblss', 'ucblvd', 'ucbus', 'uccase', 'uccpcl1', 'uccpclb', 'uccry', 'uccryo', 'uccu', 'ucdiv', 'ucech', 'ucf1', 'ucfnc', 'ucfuel', 'uche3', 'uchhten', 'uchhtex', 'uchlte', 'uchrs', 'uchth', 'uchts', 'uciac', 'ucich', 'ucihx', 'uclh', 'ucme', 'ucmisc', 'ucnbi', 'ucoam', 'ucof', 'ucpens', 'ucpfb', 'ucpfbk', 'ucpfbs', 'ucpfcb', 'ucpfdr1', 'ucpfic', 'ucpfps', 'ucrb', 'ucsc', 'ucshld', 'uctfbr', 'uctfbus', 'uctfps', 'uctfsw', 'ucturb', 'ucwindpf', 'ucwindtf', 'ucwst', 'uubop', 'uucd', 'uudiv', 'lamuudiv', 'uufuel', 'uufw', 'lamuufw', 'uumag', 'lamuumag', 'uuves', 'abktflnc', 'adivflnc', 'cconfix', 'cconshpf', 'cconshtf', 'cfactr', 'cfind', 'cland', 'cowner', 'cpstflnc', 'csi', 'cturbb', 'decomf', 'dintrt', 'dtlife', 'fcap0', 'fcap0cp', 'fcdfuel', 'fcontng', 'fcr0', 'fkind', 'iavail', 'ifueltyp', 'ipnet', 'ireactor', 'lsa', 'ratecdol', 'tbktrepl', 'tcomrepl', 'tdivrepl', 'tlife', 'ucblbe', 'ucblbreed', 'ucblli', 'ucblli2o', 'ucbllipb', 'ucblss', 'ucblvd', 'ucbus', 'uccase', 'uccpcl1', 'uccpclb', 'uccry', 'uccryo', 'uccu', 'ucdiv', 'ucech', 'ucf1', 'ucfnc', 'ucfuel', 'uche3', 'uchhten', 'uchhtex', 'uchlte', 'uchrs', 'uchth', 'uchts', 'uciac', 'ucich', 'ucihx', 'uclh', 'ucme', 'ucmisc', 'ucnbi', 'ucoam', 'ucof', 'ucpens', 'ucpfb', 'ucpfbk', 'ucpfbs', 'ucpfcb', 'ucpfdr1', 'ucpfic', 'ucpfps', 'ucrb', 'ucsc', 'ucshld', 'uctfbr', 'uctfbus', 'uctfps', 'uctfsw', 'ucturb', 'ucwindpf', 'ucwindtf', 'ucwst', 'uubop', 'uucd', 'uudiv', 'lamuudiv', 'uufuel', 'uufw', 'lamuufw', 'uumag', 'lamuumag', 'uuves', 'abktflnc', 'adivflnc', 'cconfix', 'cconshpf', 'cconshtf', 'cfactr', 'cfind', 'cland', 'cowner', 'cpstflnc', 'csi', 'cturbb', 'decomf', 'dintrt', 'dtlife', 'fcap0', 'fcap0cp', 'fcdfuel', 'fcontng', 'fcr0', 'fkind', 'iavail', 'ifueltyp', 'ipnet', 'ireactor', 'lsa', 'ratecdol', 'tbktrepl', 'tcomrepl', 'tdivrepl', 'tlife', 'ucblbe', 'ucblbreed', 'ucblli', 'ucblli2o', 'ucbllipb', 'ucblss', 'ucblvd', 'ucbus', 'uccase', 'uccpcl1', 'uccpclb', 'uccry', 'uccryo', 'uccu', 'ucdiv', 'ucech', 'ucf1', 'ucfnc', 'ucfuel', 'uche3', 'uchhten', 'uchhtex', 'uchlte', 'uchrs', 'uchth', 'uchts', 'uciac', 'ucich', 'ucihx', 'uclh', 'ucme', 'ucmisc', 'ucnbi', 'ucoam', 'ucof', 'ucpens', 'ucpfb', 'ucpfbk', 'ucpfbs', 'ucpfcb', 'ucpfdr1', 'ucpfic', 'ucpfps', 'ucrb', 'ucsc', 'ucshld', 'uctfbr', 'uctfbus', 'uctfps', 'uctfsw', 'ucturb', 'ucwindpf', 'ucwindtf', 'ucwst', 'uubop', 'uucd', 'uudiv', 'lamuudiv', 'uufuel', 'uufw', 'lamuufw', 'uumag', 'lamuumag', 'uuves', 'abktflnc', 'adivflnc', 'cconfix', 'cconshpf', 'cconshtf', 'cfactr', 'cfind', 'cland', 'cowner', 'cpstflnc', 'csi', 'cturbb', 'decomf', 'dintrt', 'dtlife', 'fcap0', 'fcap0cp', 'fcdfuel', 'fcontng', 'fcr0', 'fkind', 'iavail', 'ifueltyp', 'ipnet', 'ireactor', 'lsa', 'ratecdol', 'tbktrepl', 'tcomrepl', 'tdivrepl', 'tlife', 'ucblbe', 'ucblbreed', 'ucblli', 'ucblli2o', 'ucbllipb', 'ucblss', 'ucblvd', 'ucbus', 'uccase', 'uccpcl1', 'uccpclb', 'uccry', 'uccryo', 'uccu', 'ucdiv', 'ucech', 'ucf1', 'ucfnc', 'ucfuel', 'uche3', 'uchhten', 'uchhtex', 'uchlte', 'uchrs', 'uchth', 'uchts', 'uciac', 'ucich', 'ucihx', 'uclh', 'ucme', 'ucmisc', 'ucnbi', 'ucoam', 'ucof', 'ucpens', 'ucpfb', 'ucpfbk', 'ucpfbs', 'ucpfcb', 'ucpfdr1', 'ucpfic', 'ucpfps', 'ucrb', 'ucsc', 'ucshld', 'uctfbr', 'uctfbus', 'uctfps', 'uctfsw', 'ucturb', 'ucwindpf', 'ucwindtf', 'ucwst', 'uubop', 'uucd', 'uudiv', 'lamuudiv', 'uufuel', 'uufw', 'lamuufw', 'uumag', 'lamuumag', 'uuves', 'abktflnc', 'adivflnc', 'cconfix', 'cconshpf', 'cconshtf', 'cfactr', 'cfind', 'cland', 'cowner', 'cpstflnc', 'csi', 'cturbb', 'decomf', 'dintrt', 'dtlife', 'fcap0', 'fcap0cp', 'fcdfuel', 'fcontng', 'fcr0', 'fkind', 'iavail', 'ifueltyp', 'ipnet', 'ireactor', 'lsa', 'ratecdol', 'tbktrepl', 'tcomrepl', 'tdivrepl', 'tlife', 'ucblbe', 'ucblbreed', 'ucblli', 'ucblli2o', 'ucbllipb', 'ucblss', 'ucblvd', 'ucbus', 'uccase', 'uccpcl1', 'uccpclb', 'uccry', 'uccryo', 'uccu', 'ucdiv', 'ucech', 'ucf1', 'ucfnc', 'ucfuel', 'uche3', 'uchhten', 'uchhtex', 'uchlte', 'uchrs', 'uchth', 'uchts', 'uciac', 'ucich', 'ucihx', 'uclh', 'ucme', 'ucmisc', 'ucnbi', 'ucoam', 'ucof', 'ucpens', 'ucpfb', 'ucpfbk', 'ucpfbs', 'ucpfcb', 'ucpfdr1', 'ucpfic', 'ucpfps', 'ucrb', 'ucsc', 'ucshld', 'uctfbr', 'uctfbus', 'uctfps', 'uctfsw', 'ucturb', 'ucwindpf', 'ucwindtf', 'ucwst', 'uubop', 'uucd', 'uudiv', 'lamuudiv', 'uufuel', 'uufw', 'lamuufw', 'uumag', 'lamuumag', 'uuves', 'abktflnc', 'adivflnc', 'cconfix', 'cconshpf', 'cconshtf', 'cfactr', 'cfind', 'cland', 'cowner', 'cpstflnc', 'csi', 'cturbb', 'decomf', 'dintrt', 'dtlife', 'fcap0', 'fcap0cp', 'fcdfuel', 'fcontng', 'fcr0', 'fkind', 'iavail', 'ifueltyp', 'ipnet', 'ireactor', 'lsa', 'ratecdol', 'tbktrepl', 'tcomrepl', 'tdivrepl', 'tlife', 'ucblbe', 'ucblbreed', 'ucblli', 'ucblli2o', 'ucbllipb', 'ucblss', 'ucblvd', 'ucbus', 'uccase', 'uccpcl1', 'uccpclb', 'uccry', 'uccryo', 'uccu', 'ucdiv', 'ucech', 'ucf1', 'ucfnc', 'ucfuel', 'uche3', 'uchhten', 'uchhtex', 'uchlte', 'uchrs', 'uchth', 'uchts', 'uciac', 'ucich', 'ucihx', 'uclh', 'ucme', 'ucmisc', 'ucnbi', 'ucoam', 'ucof', 'ucpens', 'ucpfb', 'ucpfbk', 'ucpfbs', 'ucpfcb', 'ucpfdr1', 'ucpfic', 'ucpfps', 'ucrb', 'ucsc', 'ucshld', 'uctfbr', 'uctfbus', 'uctfps', 'uctfsw', 'ucturb', 'ucwindpf', 'ucwindtf', 'ucwst', 'uubop', 'uucd', 'uudiv', 'uufuel', 'uufw', 'uumag', 'uuves', 'abktflnc', 'adivflnc', 'cconfix', 'cconshpf', 'cconshtf', 'cfactr', 'cfind', 'cland', 'cowner', 'cpstflnc', 'csi', 'cturbb', 'decomf', 'dintrt', 'dtlife', 'fcap0', 'fcap0cp', 'fcdfuel', 'fcontng', 'fcr0', 'fkind', 'iavail', 'ifueltyp', 'ipnet', 'ireactor', 'lsa', 'ratecdol', 'tbktrepl', 'tcomrepl', 'tdivrepl', 'tlife', 'ucblbe', 'ucblbreed', 'ucblli', 'ucblli2o', 'ucbllipb', 'ucblss', 'ucblvd', 'ucbus', 'uccase', 'uccpcl1', 'uccpclb', 'uccry', 'uccryo', 'uccu', 'ucdiv', 'ucech', 'ucf1', 'ucfnc', 'ucfuel', 'uche3', 'uchhten', 'uchhtex', 'uchlte', 'uchrs', 'uchth', 'uchts', 'uciac', 'ucich', 'ucihx', 'uclh', 'ucme', 'ucmisc', 'ucnbi', 'ucoam', 'ucof', 'ucpens', 'ucpfb', 'ucpfbk', 'ucpfbs', 'ucpfcb', 'ucpfdr1', 'ucpfic', 'ucpfps', 'ucrb', 'ucsc', 'ucshld', 'uctfbr', 'uctfbus', 'uctfps', 'uctfsw', 'ucturb', 'ucwindpf', 'ucwindtf', 'ucwst', 'uubop', 'uucd', 'uudiv', 'uufuel', 'uufw', 'uumag', 'uuves', 'abktflnc', 'adivflnc', 'cconfix', 'cconshpf', 'cconshtf', 'cfactr', 'cfind', 'cland', 'cowner', 'cpstflnc', 'csi', 'cturbb', 'decomf', 'dintrt', 'dtlife', 'fcap0', 'fcap0cp', 'fcdfuel', 'fcontng', 'fcr0', 'fkind', 'iavail', 'ifueltyp', 'ipnet', 'ireactor', 'lsa', 'ratecdol', 'tbktrepl', 'tcomrepl', 'tdivrepl', 'tlife', 'ucblbe', 'ucblbreed', 'ucblli', 'ucblli2o', 'ucbllipb', 'ucblss', 'ucblvd', 'ucbus', 'uccase', 'uccpcl1', 'uccpclb', 'uccry', 'uccryo', 'uccu', 'ucdiv', 'ucech', 'ucf1', 'ucfnc', 'ucfuel', 'uche3', 'uchhten', 'uchhtex', 'uchlte', 'uchrs', 'uchth', 'uchts', 'uciac', 'ucich', 'ucihx', 'uclh', 'ucme', 'ucmisc', 'ucnbi', 'ucoam', 'ucof', 'ucpens', 'ucpfb', 'ucpfbk', 'ucpfbs', 'ucpfcb', 'ucpfdr1', 'ucpfic', 'ucpfps', 'ucrb', 'ucsc', 'ucshld', 'uctfbr', 'uctfbus', 'uctfps', 'uctfsw', 'ucturb', 'ucwindpf', 'ucwindtf', 'ucwst', 'uubop', 'uucd', 'uudiv', 'uufuel', 'uufw', 'uumag', 'uuves', 'abktflnc', 'adivflnc', 'cconfix', 'cconshpf', 'cconshtf', 'cfactr', 'cfind', 'cland', 'cowner', 'cpstflnc', 'csi', 'cturbb', 'decomf', 'dintrt', 'dtlife', 'fcap0', 'fcap0cp', 'fcdfuel', 'fcontng', 'fcr0', 'fkind', 'iavail', 'ifueltyp', 'ipnet', 'ireactor', 'lsa', 'ratecdol', 'tbktrepl', 'tcomrepl', 'tdivrepl', 'tlife', 'ucblbe', 'ucblbreed', 'ucblli', 'ucblli2o', 'ucbllipb', 'ucblss', 'ucblvd', 'ucbus', 'uccase', 'uccpcl1', 'uccpclb', 'uccry', 'uccryo', 'uccu', 'ucdiv', 'ucech', 'ucf1', 'ucfnc', 'ucfuel', 'uche3', 'uchhten', 'uchhtex', 'uchlte', 'uchrs', 'uchth', 'uchts', 'uciac', 'ucich', 'ucihx', 'uclh', 'ucme', 'ucmisc', 'ucnbi', 'ucoam', 'ucof', 'ucpens', 'ucpfb', 'ucpfbk', 'ucpfbs', 'ucpfcb', 'ucpfdr1', 'ucpfic', 'ucpfps', 'ucrb', 'ucsc', 'ucshld', 'uctfbr', 'uctfbus', 'uctfps', 'uctfsw', 'ucturb', 'ucwindpf', 'ucwindtf', 'ucwst', 'uubop', 'uucd', 'uudiv', 'uufuel', 'uufw', 'uumag', 'uuves', 'abktflnc', 'adivflnc', 'cconfix', 'cconshpf', 'cconshtf', 'cfactr', 'cfind', 'cland', 'cowner', 'cpstflnc', 'csi', 'cturbb', 'decomf', 'dintrt', 'dtlife', 'fcap0', 'fcap0cp', 'fcdfuel', 'fcontng', 'fcr0', 'fkind', 'iavail', 'ifueltyp', 'ipnet', 'ireactor', 'lsa', 'ratecdol', 'tbktrepl', 'tcomrepl', 'tdivrepl', 'tlife', 'ucblbe', 'ucblbreed', 'ucblli', 'ucblli2o', 'ucbllipb', 'ucblss', 'ucblvd', 'ucbus', 'uccase', 'uccpcl1', 'uccpclb', 'uccry', 'uccryo', 'uccu', 'ucdiv', 'ucech', 'ucf1', 'ucfnc', 'ucfuel', 'uche3', 'uchhten', 'uchhtex', 'uchlte', 'uchrs', 'uchth', 'uchts', 'uciac', 'ucich', 'ucihx', 'uclh', 'ucme', 'ucmisc', 'ucnbi', 'ucoam', 'ucof', 'ucpens', 'ucpfb', 'ucpfbk', 'ucpfbs', 'ucpfcb', 'ucpfdr1', 'ucpfic', 'ucpfps', 'ucrb', 'ucsc', 'ucshld', 'uctfbr', 'uctfbus', 'uctfps', 'uctfsw', 'ucturb', 'ucwindpf', 'ucwindtf', 'ucwst', 'uubop', 'uucd', 'uudiv', 'uufuel', 'uufw', 'uumag', 'uuves']
-DICT_MODULE['Current Drive Variables'] = ['beamwd', 'bscfmax', 'cboot', 'enbeam', 'etaech', 'etalh', 'etanbi', 'etaof', 'feffcd', 'frbeam', 'ftritbm', 'iefrf', 'irfcd', 'nbshield', 'pheat', 'pinjalw', 'tbeamin', 'beamwd', 'bscfmax', 'cboot', 'enbeam', 'etaech', 'etalh', 'etanbi', 'etaof', 'feffcd', 'frbeam', 'ftritbm', 'iefrf', 'irfcd', 'nbshield', 'pheat', 'pinjalw', 'tbeamin', 'beamwd', 'bscfmax', 'cboot', 'enbeam', 'etaech', 'etalh', 'etanbi', 'etaof', 'feffcd', 'frbeam', 'ftritbm', 'iefrf', 'irfcd', 'nbshield', 'pheat', 'pinjalw', 'tbeamin', 'beamwd', 'bscfmax', 'cboot', 'enbeam', 'etaech', 'etalh', 'etanbi', 'etaof', 'feffcd', 'frbeam', 'ftritbm', 'iefrf', 'irfcd', 'nbshield', 'pheat', 'pinjalw', 'tbeamin', 'beamwd', 'bscfmax', 'cboot', 'enbeam', 'etaech', 'etalh', 'etanbi', 'etaof', 'feffcd', 'frbeam', 'ftritbm', 'iefrf', 'irfcd', 'nbshield', 'pheat', 'pinjalw', 'tbeamin', 'beamwd', 'bscfmax', 'cboot', 'enbeam', 'etaech', 'etalh', 'etanbi', 'etaof', 'feffcd', 'frbeam', 'ftritbm', 'iefrf', 'irfcd', 'nbshield', 'pheat', 'pinjalw', 'tbeamin', 'beamwd', 'bscfmax', 'cboot', 'enbeam', 'etaech', 'etalh', 'etanbi', 'etaof', 'feffcd', 'frbeam', 'ftritbm', 'iefrf', 'irfcd', 'nbshield', 'pheat', 'pinjalw', 'tbeamin', 'beamwd', 'bscfmax', 'cboot', 'enbeam', 'etaech', 'etalh', 'etanbi', 'etaof', 'feffcd', 'frbeam', 'ftritbm', 'iefrf', 'irfcd', 'nbshield', 'pheat', 'pinjalw', 'tbeamin', 'beamwd', 'bscfmax', 'cboot', 'enbeam', 'etaech', 'etalh', 'etanbi', 'etaof', 'feffcd', 'frbeam', 'ftritbm', 'iefrf', 'irfcd', 'nbshield', 'pheat', 'pinjalw', 'tbeamin', 'beamwd', 'bscfmax', 'cboot', 'enbeam', 'etaech', 'etalh', 'etanbi', 'etaof', 'feffcd', 'frbeam', 'ftritbm', 'iefrf', 'irfcd', 'nbshield', 'pheat', 'pinjalw', 'tbeamin']
-DICT_MODULE['Divertor Variables'] = ['anginc', 'bpsout', 'c1div', 'c2div', 'c3div', 'c4div', 'c5div', 'c6div', 'delld', 'divclfr', 'divdens', 'divdum', 'divfix', 'divplt', 'fdfs', 'fdiva', 'fgamp', 'fififi', 'frrp', 'hldivlim', 'ksic', 'omegan', 'plsepo', 'prn1', 'rlenmax', 'tdiv', 'xparain', 'xpertin', 'zeffdiv', 'anginc', 'bpsout', 'c1div', 'c2div', 'c3div', 'c4div', 'c5div', 'c6div', 'delld', 'divclfr', 'divdens', 'divdum', 'divfix', 'divplt', 'fdfs', 'fdiva', 'fgamp', 'fififi', 'frrp', 'hldivlim', 'ksic', 'omegan', 'plsepo', 'prn1', 'rlenmax', 'tdiv', 'xparain', 'xpertin', 'zeffdiv', 'anginc', 'bpsout', 'c1div', 'c2div', 'c3div', 'c4div', 'c5div', 'c6div', 'delld', 'divclfr', 'divdens', 'divdum', 'divfix', 'divplt', 'fdfs', 'fdiva', 'fgamp', 'fififi', 'frrp', 'hldivlim', 'ksic', 'omegan', 'plsepo', 'prn1', 'rlenmax', 'tdiv', 'xparain', 'xpertin', 'zeffdiv', 'anginc', 'bpsout', 'c1div', 'c2div', 'c3div', 'c4div', 'c5div', 'c6div', 'delld', 'divclfr', 'divdens', 'divdum', 'divfix', 'divplt', 'fdfs', 'fdiva', 'fgamp', 'fififi', 'frrp', 'hldivlim', 'ksic', 'omegan', 'plsepo', 'prn1', 'rlenmax', 'tdiv', 'xparain', 'xpertin', 'zeffdiv', 'anginc', 'bpsout', 'c1div', 'c2div', 'c3div', 'c4div', 'c5div', 'c6div', 'delld', 'divclfr', 'divdens', 'divdum', 'divfix', 'divplt', 'fdfs', 'fdiva', 'fgamp', 'fififi', 'frrp', 'hldivlim', 'ksic', 'omegan', 'plsepo', 'prn1', 'rlenmax', 'tdiv', 'xparain', 'xpertin', 'zeffdiv', 'anginc', 'bpsout', 'c1div', 'c2div', 'c3div', 'c4div', 'c5div', 'c6div', 'delld', 'divclfr', 'divdens', 'divdum', 'divfix', 'divplt', 'fdfs', 'fdiva', 'fgamp', 'fififi', 'frrp', 'hldivlim', 'ksic', 'omegan', 'plsepo', 'prn1', 'rlenmax', 'tdiv', 'xparain', 'xpertin', 'zeffdiv', 'anginc', 'bpsout', 'c1div', 'c2div', 'c3div', 'c4div', 'c5div', 'c6div', 'delld', 'divclfr', 'divdens', 'divdum', 'divfix', 'divplt', 'fdfs', 'fdiva', 'fgamp', 'fififi', 'frrp', 'hldivlim', 'ksic', 'omegan', 'plsepo', 'prn1', 'rlenmax', 'tdiv', 'xparain', 'xpertin', 'zeffdiv', 'anginc', 'bpsout', 'c1div', 'c2div', 'c3div', 'c4div', 'c5div', 'c6div', 'delld', 'divclfr', 'divdens', 'divdum', 'divfix', 'divplt', 'fdfs', 'fdiva', 'fgamp', 'fififi', 'frrp', 'hldivlim', 'ksic', 'omegan', 'plsepo', 'prn1', 'rlenmax', 'tdiv', 'xparain', 'xpertin', 'zeffdiv', 'anginc', 'bpsout', 'c1div', 'c2div', 'c3div', 'c4div', 'c5div', 'c6div', 'delld', 'divclfr', 'divdens', 'divdum', 'divfix', 'divplt', 'fdfs', 'fdiva', 'fgamp', 'fififi', 'frrp', 'hldivlim', 'ksic', 'omegan', 'plsepo', 'prn1', 'rlenmax', 'tdiv', 'xparain', 'xpertin', 'zeffdiv', 'anginc', 'bpsout', 'c1div', 'c2div', 'c3div', 'c4div', 'c5div', 'c6div', 'delld', 'divclfr', 'divdens', 'divdum', 'divfix', 'divplt', 'fdfs', 'fdiva', 'fgamp', 'fififi', 'frrp', 'hldivlim', 'ksic', 'omegan', 'plsepo', 'prn1', 'rlenmax', 'tdiv', 'xparain', 'xpertin', 'zeffdiv']
-DICT_MODULE['Fwbs Variables']  = ['blktmodel', 'breedmat', 'denstl', 'emult', 'fblbe', 'fblbreed', 'fblhebmi', 'fblhebmo', 'fblhebpi', 'fblhebpo', 'fblli', 'fblli2o', 'fbllipb', 'fblss', 'fblvd', 'fhole', 'fvoldw', 'fvolsi', 'fvolso', 'fwclfr', 'fwbsshape', 'hcdportsize', 'li6enrich', 'npdiv', 'nphcdin', 'nphcdout', 'rpf2dewar', 'vfblkt', 'vfshld', 'wallpf', 'astr', 'bstr', 'costr', 'estr', 'etacp', 'etafp', 'etahp', 'etainp', 'etalp', 'fkblkt', 'lblnkt', 'nipfwh', 'nlpfwh', 'pc', 'ph', 'pin', 'pr', 'sgeff', 'smstr', 'xdi', 'xdo', 'xpf', 'xtb', 'xtfi', 'xtfo', 'blktmodel', 'breedmat', 'denstl', 'emult', 'fblbe', 'fblbreed', 'fblhebmi', 'fblhebmo', 'fblhebpi', 'fblhebpo', 'fblli', 'fblli2o', 'fbllipb', 'fblss', 'fblvd', 'fhole', 'fvoldw', 'fvolsi', 'fvolso', 'fwclfr', 'fwbsshape', 'hcdportsize', 'li6enrich', 'npdiv', 'nphcdin', 'nphcdout', 'rpf2dewar', 'vfblkt', 'vfshld', 'wallpf', 'astr', 'bstr', 'costr', 'estr', 'etacp', 'etafp', 'etahp', 'etainp', 'etalp', 'fkblkt', 'lblnkt', 'nipfwh', 'nlpfwh', 'pc', 'ph', 'pin', 'pr', 'sgeff', 'smstr', 'xdi', 'xdo', 'xpf', 'xtb', 'xtfi', 'xtfo', 'blktmodel', 'breedmat', 'denstl', 'emult', 'fblbe', 'fblbreed', 'fblhebmi', 'fblhebmo', 'fblhebpi', 'fblhebpo', 'fblli', 'fblli2o', 'fbllipb', 'fblss', 'fblvd', 'fhole', 'fvoldw', 'fvolsi', 'fvolso', 'fwclfr', 'fwbsshape', 'hcdportsize', 'li6enrich', 'npdiv', 'nphcdin', 'nphcdout', 'rpf2dewar', 'vfblkt', 'vfshld', 'wallpf', 'astr', 'bstr', 'costr', 'estr', 'etacp', 'etafp', 'etahp', 'etainp', 'etalp', 'fkblkt', 'lblnkt', 'nipfwh', 'nlpfwh', 'pc', 'ph', 'pin', 'pr', 'sgeff', 'smstr', 'xdi', 'xdo', 'xpf', 'xtb', 'xtfi', 'xtfo', 'blktmodel', 'breedmat', 'denstl', 'emult', 'fblbe', 'fblbreed', 'fblhebmi', 'fblhebmo', 'fblhebpi', 'fblhebpo', 'fblli', 'fblli2o', 'fbllipb', 'fblss', 'fblvd', 'fhole', 'fvoldw', 'fvolsi', 'fvolso', 'fwclfr', 'fwbsshape', 'hcdportsize', 'li6enrich', 'npdiv', 'nphcdin', 'nphcdout', 'rpf2dewar', 'vfblkt', 'vfshld', 'wallpf', 'astr', 'bstr', 'costr', 'estr', 'etacp', 'etafp', 'etahp', 'etainp', 'etalp', 'fkblkt', 'lblnkt', 'nipfwh', 'nlpfwh', 'pc', 'ph', 'pin', 'pr', 'sgeff', 'smstr', 'xdi', 'xdo', 'xpf', 'xtb', 'xtfi', 'xtfo', 'blktmodel', 'breedmat', 'denstl', 'emult', 'fblbe', 'fblbreed', 'fblhebmi', 'fblhebmo', 'fblhebpi', 'fblhebpo', 'fblli', 'fblli2o', 'fbllipb', 'fblss', 'fblvd', 'fhole', 'fvoldw', 'fvolsi', 'fvolso', 'fwclfr', 'fwbsshape', 'hcdportsize', 'li6enrich', 'npdiv', 'nphcdin', 'nphcdout', 'rpf2dewar', 'vfblkt', 'vfshld', 'wallpf', 'astr', 'bstr', 'costr', 'estr', 'etacp', 'etafp', 'etahp', 'etainp', 'etalp', 'fkblkt', 'lblnkt', 'nipfwh', 'nlpfwh', 'pc', 'ph', 'pin', 'pr', 'sgeff', 'smstr', 'xdi', 'xdo', 'xpf', 'xtb', 'xtfi', 'xtfo', 'blktmodel', 'breedmat', 'denstl', 'emult', 'fblbe', 'fblbreed', 'fblhebmi', 'fblhebmo', 'fblhebpi', 'fblhebpo', 'fblli', 'fblli2o', 'fbllipb', 'fblss', 'fblvd', 'fhole', 'fvoldw', 'fvolsi', 'fvolso', 'fwclfr', 'fwbsshape', 'hcdportsize', 'li6enrich', 'npdiv', 'nphcdin', 'nphcdout', 'rpf2dewar', 'vfblkt', 'vfshld', 'wallpf', 'astr', 'bstr', 'costr', 'estr', 'etacp', 'etafp', 'etahp', 'etainp', 'etalp', 'fkblkt', 'lblnkt', 'nipfwh', 'nlpfwh', 'pc', 'ph', 'pin', 'pr', 'sgeff', 'smstr', 'xdi', 'xdo', 'xpf', 'xtb', 'xtfi', 'xtfo', 'blktmodel', 'declblkt', 'declfw', 'declshld', 'denstl', 'emult', 'fblbe', 'fblli', 'fblli2o', 'fbllipb', 'fblss', 'fblvd', 'fdiv', 'fhcd', 'fhole', 'fvoldw', 'fvolsi', 'fvolso', 'fwclfr', 'fwbsshape', 'rpf2dewar', 'vfblkt', 'vfshld', 'breedmat', 'fblbreed', 'fblhebmi', 'fblhebmo', 'fblhebpi', 'fblhebpo', 'hcdportsize', 'li6enrich', 'npdiv', 'nphcdin', 'nphcdout', 'wallpf', 'astr', 'bstr', 'costr', 'estr', 'etacp', 'etafp', 'etahp', 'etainp', 'etalp', 'fkblkt', 'lblnkt', 'nipfwh', 'nlpfwh', 'pc', 'ph', 'pin', 'pr', 'sgeff', 'smstr', 'xdi', 'xdo', 'xpf', 'xtb', 'xtfi', 'xtfo', 'blktmodel', 'breedmat', 'denstl', 'emult', 'fblbe', 'fblbreed', 'fblhebmi', 'fblhebmo', 'fblhebpi', 'fblhebpo', 'fblli', 'fblli2o', 'fbllipb', 'fblss', 'fblvd', 'fhole', 'fvoldw', 'fvolsi', 'fvolso', 'fwclfr', 'fwbsshape', 'hcdportsize', 'li6enrich', 'npdiv', 'nphcdin', 'nphcdout', 'rpf2dewar', 'vfblkt', 'vfshld', 'wallpf', 'astr', 'bstr', 'costr', 'estr', 'etacp', 'etafp', 'etahp', 'etainp', 'etalp', 'fkblkt', 'lblnkt', 'nipfwh', 'nlpfwh', 'pc', 'ph', 'pin', 'pr', 'sgeff', 'smstr', 'xdi', 'xdo', 'xpf', 'xtb', 'xtfi', 'xtfo', 'blktmodel', 'breedmat', 'denstl', 'emult', 'fblbe', 'fblbreed', 'fblhebmi', 'fblhebmo', 'fblhebpi', 'fblhebpo', 'fblli', 'fblli2o', 'fbllipb', 'fblss', 'fblvd', 'fhole', 'fvoldw', 'fvolsi', 'fvolso', 'fwclfr', 'fwbsshape', 'hcdportsize', 'li6enrich', 'npdiv', 'nphcdin', 'nphcdout', 'rpf2dewar', 'vfblkt', 'vfshld', 'wallpf', 'astr', 'bstr', 'costr', 'estr', 'etacp', 'etafp', 'etahp', 'etainp', 'etalp', 'fkblkt', 'lblnkt', 'nipfwh', 'nlpfwh', 'pc', 'ph', 'pin', 'pr', 'sgeff', 'smstr', 'xdi', 'xdo', 'xpf', 'xtb', 'xtfi', 'xtfo', 'blktmodel', 'breedmat', 'denstl', 'emult', 'fblbe', 'fblbreed', 'fblhebmi', 'fblhebmo', 'fblhebpi', 'fblhebpo', 'fblli', 'fblli2o', 'fbllipb', 'fblss', 'fblvd', 'fhole', 'fvoldw', 'fvolsi', 'fvolso', 'fwclfr', 'fwbsshape', 'hcdportsize', 'li6enrich', 'npdiv', 'nphcdin', 'nphcdout', 'rpf2dewar', 'vfblkt', 'vfshld', 'wallpf', 'astr', 'bstr', 'costr', 'estr', 'etacp', 'etafp', 'etahp', 'etainp', 'etalp', 'fkblkt', 'lblnkt', 'nipfwh', 'nlpfwh', 'pc', 'ph', 'pin', 'pr', 'sgeff', 'smstr', 'xdi', 'xdo', 'xpf', 'xtb', 'xtfi', 'xtfo']
-DICT_MODULE['Global Variables'] = ['verbose', 'verbose', 'verbose', 'runtitle', 'verbose', 'verbose', 'verbose', 'verbose']
-DICT_MODULE['Heat Transport Variables'] = ['baseel', 'etahhten', 'etahhtex', 'etahlte', 'etahth', 'etath', 'fauxbop', 'ffwlg', 'fmgdmw', 'helecmw', 'hthermmw', 'htpmw', 'ihplant', 'iprimhtp', 'iprimnloss', 'pwpm2', 'tfacpd', 'trithtmw', 'vachtmw', 'baseel', 'etahhten', 'etahhtex', 'etahlte', 'etahth', 'etath', 'fauxbop', 'ffwlg', 'fmgdmw', 'helecmw', 'hthermmw', 'htpmw', 'ihplant', 'iprimhtp', 'iprimnloss', 'pwpm2', 'tfacpd', 'trithtmw', 'vachtmw', 'baseel', 'etahhten', 'etahhtex', 'etahlte', 'etahth', 'etath', 'fauxbop', 'ffwlg', 'fmgdmw', 'helecmw', 'hthermmw', 'htpmw', 'ihplant', 'iprimhtp', 'iprimnloss', 'pwpm2', 'tfacpd', 'trithtmw', 'vachtmw', 'baseel', 'etahhten', 'etahhtex', 'etahlte', 'etahth', 'etath', 'fauxbop', 'ffwlg', 'fmgdmw', 'helecmw', 'hthermmw', 'htpmw', 'ihplant', 'iprimhtp', 'iprimnloss', 'pwpm2', 'tfacpd', 'trithtmw', 'vachtmw', 'baseel', 'etahhten', 'etahhtex', 'etahlte', 'etahth', 'etath', 'fauxbop', 'ffwlg', 'fmgdmw', 'helecmw', 'hthermmw', 'htpmw', 'ihplant', 'iprimhtp', 'iprimnloss', 'pwpm2', 'tfacpd', 'trithtmw', 'vachtmw', 'baseel', 'etahhten', 'etahhtex', 'etahlte', 'etahth', 'etath', 'fauxbop', 'ffwlg', 'fmgdmw', 'helecmw', 'hthermmw', 'htpmw', 'ihplant', 'iprimhtp', 'iprimnloss', 'pwpm2', 'tfacpd', 'trithtmw', 'vachtmw', 'baseel', 'etath', 'fauxbop', 'ffwlg', 'fmgdmw', 'htpmw', 'ihplant', 'etahhten', 'etahhtex', 'etahlte', 'etahth', 'helecmw', 'hthermmw', 'ipowerflow', 'etahtpblkt', 'etahtpdiv', 'etahtpfw', 'etahtpshld', 'fpumpblkt', 'fpumpdiv', 'fpumpfw', 'fpumpshld', 'iprimdiv', 'iprimshld', 'iprimhtp', 'iprimnloss', 'pwpm2', 'tfacpd', 'trithtmw', 'vachtmw', 'baseel', 'etahhten', 'etahhtex', 'etahlte', 'etahth', 'etath', 'fauxbop', 'ffwlg', 'fmgdmw', 'helecmw', 'hthermmw', 'htpmw', 'ihplant', 'iprimhtp', 'iprimnloss', 'pwpm2', 'tfacpd', 'trithtmw', 'vachtmw', 'baseel', 'etahhten', 'etahhtex', 'etahlte', 'etahth', 'etath', 'fauxbop', 'ffwlg', 'fmgdmw', 'helecmw', 'hthermmw', 'htpmw', 'ihplant', 'iprimhtp', 'iprimnloss', 'pwpm2', 'tfacpd', 'trithtmw', 'vachtmw', 'baseel', 'etahhten', 'etahhtex', 'etahlte', 'etahth', 'etath', 'fauxbop', 'ffwlg', 'fmgdmw', 'helecmw', 'hthermmw', 'htpmw', 'ihplant', 'iprimhtp', 'iprimnloss', 'pwpm2', 'tfacpd', 'trithtmw', 'vachtmw']
-DICT_MODULE['Ife Variables']   = ['bldr', 'bldzl', 'bldzu', 'blmatf', 'cdriv0', 'cdriv1', 'cdriv2', 'chdzl', 'chdzu', 'chmatf', 'chrad', 'dcdrv0', 'dcdrv1', 'dcdrv2', 'drveff', 'edrive', 'etave', 'fbreed', 'fburn', 'flirad', 'frrmax', 'fwdr', 'fwdzl', 'fwdzu', 'fwmatf', 'gainve', 'ife', 'ifedrv', 'ifetyp', 'mcdriv', 'pdrive', 'pifecr', 'ptargf', 'rrmax', 'shdr', 'shdzl', 'shdzu', 'shmatf', 'sombdr', 'somtdr', 'tgain', 'uccarb', 'ucconc', 'ucflib', 'uctarg', 'v1dr', 'v1dzl', 'v1dzu', 'v1matf', 'v2dr', 'v2dzl', 'v2dzu', 'v2matf', 'v3dr', 'v3dzl', 'v3dzu', 'v3matf', 'bldr', 'bldzl', 'bldzu', 'blmatf', 'cdriv0', 'cdriv1', 'cdriv2', 'chdzl', 'chdzu', 'chmatf', 'chrad', 'dcdrv0', 'dcdrv1', 'dcdrv2', 'drveff', 'edrive', 'etave', 'fbreed', 'fburn', 'flirad', 'frrmax', 'fwdr', 'fwdzl', 'fwdzu', 'fwmatf', 'gainve', 'ife', 'ifedrv', 'ifetyp', 'mcdriv', 'pdrive', 'pifecr', 'ptargf', 'rrmax', 'shdr', 'shdzl', 'shdzu', 'shmatf', 'sombdr', 'somtdr', 'tgain', 'uccarb', 'ucconc', 'ucflib', 'uctarg', 'v1dr', 'v1dzl', 'v1dzu', 'v1matf', 'v2dr', 'v2dzl', 'v2dzu', 'v2matf', 'v3dr', 'v3dzl', 'v3dzu', 'v3matf', 'bldr', 'bldzl', 'bldzu', 'blmatf', 'cdriv0', 'cdriv1', 'cdriv2', 'chdzl', 'chdzu', 'chmatf', 'chrad', 'dcdrv0', 'dcdrv1', 'dcdrv2', 'drveff', 'edrive', 'etave', 'fbreed', 'fburn', 'flirad', 'frrmax', 'fwdr', 'fwdzl', 'fwdzu', 'fwmatf', 'gainve', 'ife', 'ifedrv', 'ifetyp', 'mcdriv', 'pdrive', 'pifecr', 'ptargf', 'rrmax', 'shdr', 'shdzl', 'shdzu', 'shmatf', 'sombdr', 'somtdr', 'tgain', 'uccarb', 'ucconc', 'ucflib', 'uctarg', 'v1dr', 'v1dzl', 'v1dzu', 'v1matf', 'v2dr', 'v2dzl', 'v2dzu', 'v2matf', 'v3dr', 'v3dzl', 'v3dzu', 'v3matf', 'bldr', 'bldzl', 'bldzu', 'blmatf', 'cdriv0', 'cdriv1', 'cdriv2', 'chdzl', 'chdzu', 'chmatf', 'chrad', 'dcdrv0', 'dcdrv1', 'dcdrv2', 'drveff', 'edrive', 'etave', 'fbreed', 'fburn', 'flirad', 'frrmax', 'fwdr', 'fwdzl', 'fwdzu', 'fwmatf', 'gainve', 'ife', 'ifedrv', 'ifetyp', 'mcdriv', 'pdrive', 'pifecr', 'ptargf', 'rrmax', 'shdr', 'shdzl', 'shdzu', 'shmatf', 'sombdr', 'somtdr', 'tgain', 'uccarb', 'ucconc', 'ucflib', 'uctarg', 'v1dr', 'v1dzl', 'v1dzu', 'v1matf', 'v2dr', 'v2dzl', 'v2dzu', 'v2matf', 'v3dr', 'v3dzl', 'v3dzu', 'v3matf', 'bldr', 'bldzl', 'bldzu', 'blmatf', 'cdriv0', 'cdriv1', 'cdriv2', 'chdzl', 'chdzu', 'chmatf', 'chrad', 'dcdrv0', 'dcdrv1', 'dcdrv2', 'drveff', 'edrive', 'etave', 'fbreed', 'fburn', 'flirad', 'frrmax', 'fwdr', 'fwdzl', 'fwdzu', 'fwmatf', 'gainve', 'ife', 'ifedrv', 'ifetyp', 'mcdriv', 'pdrive', 'pifecr', 'ptargf', 'rrmax', 'shdr', 'shdzl', 'shdzu', 'shmatf', 'sombdr', 'somtdr', 'tgain', 'uccarb', 'ucconc', 'ucflib', 'uctarg', 'v1dr', 'v1dzl', 'v1dzu', 'v1matf', 'v2dr', 'v2dzl', 'v2dzu', 'v2matf', 'v3dr', 'v3dzl', 'v3dzu', 'v3matf', 'bldr', 'bldzl', 'bldzu', 'blmatf', 'cdriv0', 'cdriv1', 'cdriv2', 'chdzl', 'chdzu', 'chmatf', 'chrad', 'dcdrv0', 'dcdrv1', 'dcdrv2', 'drveff', 'edrive', 'etave', 'fbreed', 'fburn', 'flirad', 'frrmax', 'fwdr', 'fwdzl', 'fwdzu', 'fwmatf', 'gainve', 'ife', 'ifedrv', 'ifetyp', 'mcdriv', 'pdrive', 'pifecr', 'ptargf', 'rrmax', 'shdr', 'shdzl', 'shdzu', 'shmatf', 'sombdr', 'somtdr', 'tgain', 'uccarb', 'ucconc', 'ucflib', 'uctarg', 'v1dr', 'v1dzl', 'v1dzu', 'v1matf', 'v2dr', 'v2dzl', 'v2dzu', 'v2matf', 'v3dr', 'v3dzl', 'v3dzu', 'v3matf', 'ife', 'bldr', 'bldzl', 'bldzu', 'blmatf', 'cdriv0', 'cdriv1', 'cdriv2', 'chdzl', 'chdzu', 'chmatf', 'chrad', 'dcdrv0', 'dcdrv1', 'dcdrv2', 'drveff', 'edrive', 'etave', 'fbreed', 'fburn', 'flirad', 'frrmax', 'fwdr', 'fwdzl', 'fwdzu', 'fwmatf', 'gainve', 'ifedrv', 'ifetyp', 'mcdriv', 'pdrive', 'pifecr', 'ptargf', 'rrmax', 'shdr', 'shdzl', 'shdzu', 'shmatf', 'sombdr', 'somtdr', 'tgain', 'uccarb', 'ucconc', 'ucflib', 'uctarg', 'v1dr', 'v1dzl', 'v1dzu', 'v1matf', 'v2dr', 'v2dzl', 'v2dzu', 'v2matf', 'v3dr', 'v3dzl', 'v3dzu', 'v3matf', 'bldr', 'bldzl', 'bldzu', 'blmatf', 'cdriv0', 'cdriv1', 'cdriv2', 'chdzl', 'chdzu', 'chmatf', 'chrad', 'dcdrv0', 'dcdrv1', 'dcdrv2', 'drveff', 'edrive', 'etave', 'fbreed', 'fburn', 'flirad', 'frrmax', 'fwdr', 'fwdzl', 'fwdzu', 'fwmatf', 'gainve', 'ife', 'ifedrv', 'ifetyp', 'mcdriv', 'pdrive', 'pifecr', 'ptargf', 'rrmax', 'shdr', 'shdzl', 'shdzu', 'shmatf', 'sombdr', 'somtdr', 'tgain', 'uccarb', 'ucconc', 'ucflib', 'uctarg', 'v1dr', 'v1dzl', 'v1dzu', 'v1matf', 'v2dr', 'v2dzl', 'v2dzu', 'v2matf', 'v3dr', 'v3dzl', 'v3dzu', 'v3matf', 'bldr', 'bldzl', 'bldzu', 'blmatf', 'cdriv0', 'cdriv1', 'cdriv2', 'chdzl', 'chdzu', 'chmatf', 'chrad', 'dcdrv0', 'dcdrv1', 'dcdrv2', 'drveff', 'edrive', 'etave', 'fbreed', 'fburn', 'flirad', 'frrmax', 'fwdr', 'fwdzl', 'fwdzu', 'fwmatf', 'gainve', 'ife', 'ifedrv', 'ifetyp', 'mcdriv', 'pdrive', 'pifecr', 'ptargf', 'rrmax', 'shdr', 'shdzl', 'shdzu', 'shmatf', 'sombdr', 'somtdr', 'tgain', 'uccarb', 'ucconc', 'ucflib', 'uctarg', 'v1dr', 'v1dzl', 'v1dzu', 'v1matf', 'v2dr', 'v2dzl', 'v2dzu', 'v2matf', 'v3dr', 'v3dzl', 'v3dzu', 'v3matf', 'bldr', 'bldzl', 'bldzu', 'blmatf', 'cdriv0', 'cdriv1', 'cdriv2', 'chdzl', 'chdzu', 'chmatf', 'chrad', 'dcdrv0', 'dcdrv1', 'dcdrv2', 'drveff', 'edrive', 'etave', 'fbreed', 'fburn', 'flirad', 'frrmax', 'fwdr', 'fwdzl', 'fwdzu', 'fwmatf', 'gainve', 'ife', 'ifedrv', 'ifetyp', 'mcdriv', 'pdrive', 'pifecr', 'ptargf', 'rrmax', 'shdr', 'shdzl', 'shdzu', 'shmatf', 'sombdr', 'somtdr', 'tgain', 'uccarb', 'ucconc', 'ucflib', 'uctarg', 'v1dr', 'v1dzl', 'v1dzu', 'v1matf', 'v2dr', 'v2dzl', 'v2dzu', 'v2matf', 'v3dr', 'v3dzl', 'v3dzu', 'v3matf']
+DICT_MODULE['Build Variables'] = ['aplasmin', 'blbmith', 'blbmoth', 'blbpith', 'blbpoth', 'blbuith', 'blbuoth', 'blnkith', 'blnkoth', 'bore', 'clhsf', 'ddwex', 'ddwi', 'fmsbc', 'fmsbl', 'fmsdwe', 'fmsdwi', 'fmsfw', 'fmsoh', 'fmssh', 'fmstf', 'fwith', 'fwoth', 'gapds', 'gapoh', 'gapomin', 'iohcl', 'ohcth', 'rinboard', 'scrapli', 'scraplo', 'shldith', 'shldoth', 'shldtth', 'tfcth', 'tfootfi', 'vgap2', 'vgaptf']
+DICT_MODULE['Buildings Variables'] = ['admv', 'clh1', 'clh2', 'conv', 'esbldgm3', 'fndt', 'hccl', 'hcwt', 'mbvfac', 'pfbldgm3', 'pibv', 'rbrt', 'rbvfac', 'rbwt', 'row', 'rxcl', 'shmf', 'shov', 'stcl', 'tfcbv', 'trcl', 'triv', 'wgt', 'wgt2', 'wsvfac']
+DICT_MODULE['Constraint Variables'] = ['auxmin', 'betpmx', 'bigqmin', 'bmxlim', 'dtmpmx', 'fauxmn', 'fbeta', 'fbetap', 'fbetatry', 'fdene', 'fdivcol', 'fdtmp', 'fflutf', 'ffuspow', 'fgamcd', 'fhldiv', 'fiooic', 'fipir', 'fjohc', 'fjohc0', 'fjprot', 'fmva', 'fpeakb', 'fpinj', 'fpnetel', 'fportsz', 'fpsepr', 'fptemp', 'fptfnuc', 'fq', 'fqval', 'fradpwr', 'frfpf', 'frfptf', 'frminor', 'fstrcase', 'fstrcond', 'ftbr', 'ftburn', 'ftcycl', 'ftfthko', 'ftftort', 'ftmargtf', 'ftohs', 'ftpeak', 'fvdump', 'fvs', 'fvvhe', 'fwalld', 'gammax', 'mvalim', 'nflutfmax', 'pnetelin', 'powfmax', 'pseprmax', 'ptfnucmax', 'tbrmin', 'tbrnmn', 'tpkmax', 'vvhealw', 'walalw']
+DICT_MODULE['Cost Variables']  = ['abktflnc', 'adivflnc', 'cconfix', 'cconshpf', 'cconshtf', 'cfactr', 'cfind', 'cland', 'cowner', 'cpstflnc', 'csi', 'cturbb', 'decomf', 'dintrt', 'dtlife', 'fcap0', 'fcap0cp', 'fcdfuel', 'fcontng', 'fcr0', 'fkind', 'iavail', 'ifueltyp', 'ipnet', 'ireactor', 'lsa', 'ratecdol', 'tbktrepl', 'tcomrepl', 'tdivrepl', 'tlife', 'ucblbe', 'ucblbreed', 'ucblli', 'ucblli2o', 'ucbllipb', 'ucblss', 'ucblvd', 'ucbus', 'uccase', 'uccpcl1', 'uccpclb', 'uccry', 'uccryo', 'uccu', 'ucdiv', 'ucech', 'ucf1', 'ucfnc', 'ucfuel', 'uche3', 'uchhten', 'uchhtex', 'uchlte', 'uchrs', 'uchth', 'uchts', 'uciac', 'ucich', 'ucihx', 'uclh', 'ucme', 'ucmisc', 'ucnbi', 'ucoam', 'ucof', 'ucpens', 'ucpfb', 'ucpfbk', 'ucpfbs', 'ucpfcb', 'ucpfdr1', 'ucpfic', 'ucpfps', 'ucrb', 'ucsc', 'ucshld', 'uctfbr', 'uctfbus', 'uctfps', 'uctfsw', 'ucturb', 'ucwindpf', 'ucwindtf', 'ucwst', 'uubop', 'uucd', 'uudiv', 'uufuel', 'uufw', 'uumag', 'uuves']
+DICT_MODULE['Current Drive Variables'] = ['beamwd', 'bscfmax', 'cboot', 'enbeam', 'etaech', 'etalh', 'etanbi', 'etaof', 'feffcd', 'frbeam', 'ftritbm', 'iefrf', 'irfcd', 'nbshield', 'pheat', 'pinjalw', 'tbeamin']
+DICT_MODULE['Divertor Variables'] = ['anginc', 'bpsout', 'c1div', 'c2div', 'c3div', 'c4div', 'c5div', 'c6div', 'delld', 'divclfr', 'divdens', 'divdum', 'divfix', 'divplt', 'fdfs', 'fdiva', 'fgamp', 'fififi', 'frrp', 'hldivlim', 'ksic', 'omegan', 'plsepo', 'prn1', 'rlenmax', 'tdiv', 'xparain', 'xpertin', 'zeffdiv']
+DICT_MODULE['Fwbs Variables']  = ['blktmodel', 'declblkt', 'declfw', 'declshld', 'denstl', 'emult', 'fblbe', 'fblli', 'fblli2o', 'fbllipb', 'fblss', 'fblvd', 'fdiv', 'fhcd', 'fhole', 'fvoldw', 'fvolsi', 'fvolso', 'fwclfr', 'fwbsshape', 'rpf2dewar', 'vfblkt', 'vfshld', 'breedmat', 'fblbreed', 'fblhebmi', 'fblhebmo', 'fblhebpi', 'fblhebpo', 'hcdportsize', 'li6enrich', 'npdiv', 'nphcdin', 'nphcdout', 'wallpf', 'astr', 'bstr', 'costr', 'estr', 'etacp', 'etafp', 'etahp', 'etainp', 'etalp', 'fkblkt', 'lblnkt', 'nipfwh', 'nlpfwh', 'pc', 'ph', 'pin', 'pr', 'sgeff', 'smstr', 'xdi', 'xdo', 'xpf', 'xtb', 'xtfi', 'xtfo']
+DICT_MODULE['Global Variables'] = ['runtitle', 'verbose']
+DICT_MODULE['Heat Transport Variables'] = ['baseel', 'etath', 'fauxbop', 'ffwlg', 'fmgdmw', 'htpmw', 'ihplant', 'etahhten', 'etahhtex', 'etahlte', 'etahth', 'helecmw', 'hthermmw', 'ipowerflow', 'etahtpblkt', 'etahtpdiv', 'etahtpfw', 'etahtpshld', 'fpumpblkt', 'fpumpdiv', 'fpumpfw', 'fpumpshld', 'iprimdiv', 'iprimshld', 'iprimhtp', 'iprimnloss', 'pwpm2', 'tfacpd', 'trithtmw', 'vachtmw']
+DICT_MODULE['Ife Variables']   = ['ife', 'bldr', 'bldzl', 'bldzu', 'blmatf', 'cdriv0', 'cdriv1', 'cdriv2', 'chdzl', 'chdzu', 'chmatf', 'chrad', 'dcdrv0', 'dcdrv1', 'dcdrv2', 'drveff', 'edrive', 'etave', 'fbreed', 'fburn', 'flirad', 'frrmax', 'fwdr', 'fwdzl', 'fwdzu', 'fwmatf', 'gainve', 'ifedrv', 'ifetyp', 'mcdriv', 'pdrive', 'pifecr', 'ptargf', 'rrmax', 'shdr', 'shdzl', 'shdzu', 'shmatf', 'sombdr', 'somtdr', 'tgain', 'uccarb', 'ucconc', 'ucflib', 'uctarg', 'v1dr', 'v1dzl', 'v1dzu', 'v1matf', 'v2dr', 'v2dzl', 'v2dzu', 'v2matf', 'v3dr', 'v3dzl', 'v3dzu', 'v3matf']
 DICT_MODULE['Impurity Radiation Module'] = ['imprad_model', 'coreradius', 'fimp', 'fimpvar', 'impdir', 'impvar']
-DICT_MODULE['Maths Library']   = ['beta', 'cfe0', 'beta', 'cfe0']
-DICT_MODULE['Numerics']        = ['ioptimz', 'maxcal', 'minmax', 'neqns', 'nineqns', 'nvar', 'icc', 'ixc', 'epsfcn', 'epsvmc', 'factor', 'ftol', 'boundl', 'boundu', 'ioptimz', 'maxcal', 'minmax', 'neqns', 'nineqns', 'nvar', 'icc', 'ixc', 'epsfcn', 'epsvmc', 'factor', 'ftol', 'boundl', 'boundu', 'ioptimz', 'maxcal', 'minmax', 'neqns', 'nineqns', 'nvar', 'icc', 'ixc', 'epsfcn', 'epsvmc', 'factor', 'ftol', 'boundl', 'boundu', 'ioptimz', 'maxcal', 'minmax', 'neqns', 'nineqns', 'nvar', 'icc', 'ixc', 'epsfcn', 'epsvmc', 'factor', 'ftol', 'boundl', 'boundu', 'feastol', 'funcprec', 'ioptimz', 'maxcal', 'minmax', 'neqns', 'nineqns', 'nvar', 'icc', 'ixc', 'epsfcn', 'epsvmc', 'factor', 'ftol', 'boundl', 'boundu', 'feastol', 'funcprec', 'ioptimz', 'maxcal', 'minmax', 'neqns', 'nineqns', 'nvar', 'icc', 'ixc', 'epsfcn', 'epsvmc', 'factor', 'ftol', 'boundl', 'boundu', 'feastol', 'funcprec', 'ioptimz', 'maxcal', 'minmax', 'neqns', 'nineqns', 'nvar', 'icc', 'ixc', 'epsfcn', 'epsvmc', 'factor', 'ftol', 'boundl', 'boundu', 'ioptimz', 'maxcal', 'minmax', 'neqns', 'nineqns', 'nvar', 'icc', 'ixc', 'epsfcn', 'epsvmc', 'factor', 'ftol', 'boundl', 'boundu', 'feastol', 'funcprec', 'ioptimz', 'maxcal', 'minmax', 'neqns', 'nineqns', 'nvar', 'icc', 'ixc', 'epsfcn', 'epsvmc', 'factor', 'ftol', 'boundl', 'boundu', 'feastol', 'funcprec', 'ioptimz', 'maxcal', 'minmax', 'neqns', 'nineqns', 'nvar', 'icc', 'ixc', 'epsfcn', 'epsvmc', 'factor', 'ftol', 'boundl', 'boundu', 'ioptimz', 'maxcal', 'minmax', 'neqns', 'nineqns', 'nvar', 'icc', 'ixc', 'epsfcn', 'epsvmc', 'factor', 'ftol', 'boundl', 'boundu', 'ioptimz', 'maxcal', 'minmax', 'neqns', 'nineqns', 'nvar', 'icc', 'ixc', 'epsfcn', 'epsvmc', 'factor', 'ftol', 'boundl', 'boundu']
-DICT_MODULE['Pf Power Variables'] = ['iscenr', 'iscenr', 'iscenr', 'iscenr', 'iscenr', 'iscenr', 'iscenr', 'iscenr', 'iscenr', 'iscenr']
-DICT_MODULE['Pfcoil Variables'] = ['ac1oh', 'acsoh', 'alfapf', 'coheof', 'cptdin', 'fcohbop', 'fcuoh', 'ipfloc', 'ipfres', 'isumatpf', 'ncls', 'nfxfh', 'ngrp', 'ohhghf', 'pfclres', 'rjconpf', 'routr', 'rpf1', 'rpf2', 'sccufac', 'sigpfalw', 'sigpfcalw', 'sigpfcf', 'vf', 'vfohc', 'zref', 'ac1oh', 'acsoh', 'alfapf', 'coheof', 'cptdin', 'fcohbop', 'fcuoh', 'ipfloc', 'ipfres', 'isumatpf', 'ncls', 'nfxfh', 'ngrp', 'ohhghf', 'pfclres', 'rjconpf', 'routr', 'rpf1', 'rpf2', 'sccufac', 'sigpfalw', 'sigpfcalw', 'sigpfcf', 'vf', 'vfohc', 'zref', 'ac1oh', 'acsoh', 'alfapf', 'coheof', 'cptdin', 'fcohbop', 'fcuoh', 'ipfloc', 'ipfres', 'isumatpf', 'ncls', 'nfxfh', 'ngrp', 'ohhghf', 'pfclres', 'rjconpf', 'routr', 'rpf1', 'rpf2', 'sccufac', 'sigpfalw', 'sigpfcalw', 'sigpfcf', 'vf', 'vfohc', 'zref', 'ac1oh', 'acsoh', 'alfapf', 'coheof', 'cptdin', 'fcohbop', 'fcuoh', 'ipfloc', 'ipfres', 'isumatpf', 'ncls', 'nfxfh', 'ngrp', 'ohhghf', 'pfclres', 'rjconpf', 'routr', 'rpf1', 'rpf2', 'sccufac', 'sigpfalw', 'sigpfcalw', 'sigpfcf', 'vf', 'vfohc', 'zref', 'ac1oh', 'acsoh', 'alfapf', 'coheof', 'cptdin', 'fcohbop', 'fcuoh', 'ipfloc', 'ipfres', 'isumatpf', 'ncls', 'nfxfh', 'ngrp', 'ohhghf', 'pfclres', 'rjconpf', 'routr', 'rpf1', 'rpf2', 'sccufac', 'sigpfalw', 'sigpfcalw', 'sigpfcf', 'vf', 'vfohc', 'zref', 'ac1oh', 'acsoh', 'alfapf', 'coheof', 'cptdin', 'fcohbop', 'fcuoh', 'ipfloc', 'ipfres', 'isumatpf', 'ncls', 'nfxfh', 'ngrp', 'ohhghf', 'pfclres', 'rjconpf', 'routr', 'rpf1', 'rpf2', 'sccufac', 'sigpfalw', 'sigpfcalw', 'sigpfcf', 'vf', 'vfohc', 'zref', 'ac1oh', 'acsoh', 'alfapf', 'coheof', 'cptdin', 'fcohbop', 'fcuoh', 'ipfloc', 'ipfres', 'isumatpf', 'ncls', 'nfxfh', 'ngrp', 'ohhghf', 'pfclres', 'rjconpf', 'routr', 'rpf1', 'rpf2', 'sccufac', 'sigpfalw', 'sigpfcalw', 'sigpfcf', 'vf', 'vfohc', 'zref', 'ac1oh', 'acsoh', 'alfapf', 'coheof', 'cptdin', 'fcohbop', 'fcuoh', 'ipfloc', 'ipfres', 'isumatpf', 'ncls', 'nfxfh', 'ngrp', 'ohhghf', 'pfclres', 'rjconpf', 'routr', 'rpf1', 'rpf2', 'sccufac', 'sigpfalw', 'sigpfcalw', 'sigpfcf', 'vf', 'vfohc', 'zref', 'ac1oh', 'acsoh', 'alfapf', 'coheof', 'cptdin', 'fcohbop', 'fcuoh', 'ipfloc', 'ipfres', 'isumatpf', 'ncls', 'nfxfh', 'ngrp', 'ohhghf', 'pfclres', 'rjconpf', 'routr', 'rpf1', 'rpf2', 'sccufac', 'sigpfalw', 'sigpfcalw', 'sigpfcf', 'vf', 'vfohc', 'zref', 'ac1oh', 'acsoh', 'alfapf', 'coheof', 'cptdin', 'fcohbop', 'fcuoh', 'ipfloc', 'ipfres', 'isumatpf', 'ncls', 'nfxfh', 'ngrp', 'ohhghf', 'pfclres', 'rjconpf', 'routr', 'rpf1', 'rpf2', 'sccufac', 'sigpfalw', 'sigpfcalw', 'sigpfcf', 'vf', 'vfohc', 'zref']
-DICT_MODULE['Physics Variables'] = ['alphaj', 'alphan', 'alphat', 'aspect', 'beamfus0', 'beta', 'betbm0', 'bt', 'carea', 'cfe0', 'csawth', 'cvol', 'dene', 'dnbeta', 'epbetmax', 'falpha', 'fbfe', 'fdeut', 'ffwal', 'fhe3', 'fradmin', 'ftrit', 'fvsbrnni', 'gamma', 'gtscale', 'hfact', 'ibss', 'iculbl', 'icurr', 'idensl', 'ifalphap', 'ifispact', 'igeom', 'ignite', 'iinvqd', 'impc', 'impfe', 'impo', 'ipedestal', 'iprofile', 'isc', 'iscrp', 'ishape', 'itart', 'iwalld', 'kappa', 'neped', 'nesep', 'q', 'q0', 'ralpne', 'recyle', 'rhopedn', 'rhopedt', 'rli', 'rmajor', 'rnbeam', 'snull', 'ssync', 'tbeta', 'te', 'teped', 'tesep', 'ti', 'tratio', 'triang', 'zfear', 'alphaj', 'alphan', 'alphat', 'aspect', 'beamfus0', 'beta', 'betbm0', 'bt', 'carea', 'cfe0', 'csawth', 'cvol', 'dene', 'dnbeta', 'epbetmax', 'falpha', 'fbfe', 'fdeut', 'ffwal', 'fhe3', 'fradmin', 'ftrit', 'fvsbrnni', 'gamma', 'gtscale', 'hfact', 'ibss', 'iculbl', 'icurr', 'idensl', 'ifalphap', 'ifispact', 'igeom', 'ignite', 'iinvqd', 'impc', 'impfe', 'impo', 'iprofile', 'isc', 'iscrp', 'ishape', 'itart', 'iwalld', 'kappa', 'q', 'q0', 'ralpne', 'recyle', 'rli', 'rmajor', 'rnbeam', 'snull', 'ssync', 'te', 'ti', 'tratio', 'triang', 'zfear', 'alphaj', 'alphan', 'alphat', 'aspect', 'beamfus0', 'beta', 'betbm0', 'bt', 'carea', 'cfe0', 'csawth', 'cvol', 'dene', 'dnbeta', 'epbetmax', 'falpha', 'fbfe', 'fdeut', 'ffwal', 'fhe3', 'fradmin', 'ftrit', 'fvsbrnni', 'gamma', 'gtscale', 'hfact', 'ibss', 'iculbl', 'icurr', 'idensl', 'ifalphap', 'ifispact', 'igeom', 'ignite', 'iinvqd', 'impc', 'impfe', 'impo', 'ipedestal', 'iprofile', 'isc', 'iscrp', 'ishape', 'itart', 'iwalld', 'kappa', 'neped', 'nesep', 'q', 'q0', 'ralpne', 'recyle', 'rhopedn', 'rhopedt', 'rli', 'rmajor', 'rnbeam', 'snull', 'ssync', 'tbeta', 'te', 'teped', 'tesep', 'ti', 'tratio', 'triang', 'zfear', 'alphaj', 'alphan', 'alphat', 'aspect', 'beamfus0', 'beta', 'betbm0', 'bt', 'carea', 'cfe0', 'csawth', 'cvol', 'dene', 'dnbeta', 'epbetmax', 'falpha', 'fbfe', 'fdeut', 'ffwal', 'fhe3', 'fradmin', 'ftrit', 'fvsbrnni', 'gamma', 'gtscale', 'hfact', 'ibss', 'iculbl', 'icurr', 'idensl', 'ifalphap', 'ifispact', 'igeom', 'ignite', 'iinvqd', 'impc', 'impfe', 'impo', 'iprofile', 'isc', 'iscrp', 'ishape', 'itart', 'iwalld', 'kappa', 'q', 'q0', 'ralpne', 'recyle', 'rli', 'rmajor', 'rnbeam', 'snull', 'ssync', 'te', 'ti', 'tratio', 'triang', 'zfear', 'alphaj', 'alphan', 'alphat', 'aspect', 'beamfus0', 'beta', 'betbm0', 'bt', 'carea', 'cfe0', 'csawth', 'cvol', 'dene', 'dnbeta', 'epbetmax', 'falpha', 'fbfe', 'fdeut', 'ffwal', 'fhe3', 'fradmin', 'ftrit', 'fvsbrnni', 'gamma', 'gtscale', 'hfact', 'ibss', 'iculbl', 'icurr', 'idensl', 'ifalphap', 'ifispact', 'igeom', 'ignite', 'iinvqd', 'impc', 'impfe', 'impo', 'iprofile', 'isc', 'iscrp', 'ishape', 'itart', 'iwalld', 'kappa', 'q', 'q0', 'ralpne', 'recyle', 'rli', 'rmajor', 'rnbeam', 'snull', 'ssync', 'te', 'ti', 'tratio', 'triang', 'zfear', 'alphaj', 'alphan', 'alphat', 'aspect', 'beamfus0', 'beta', 'betbm0', 'bt', 'carea', 'cfe0', 'csawth', 'cvol', 'dene', 'dnbeta', 'epbetmax', 'falpha', 'fbfe', 'fdeut', 'ffwal', 'fhe3', 'fradmin', 'ftrit', 'fvsbrnni', 'gamma', 'gtscale', 'hfact', 'ibss', 'iculbl', 'icurr', 'idensl', 'ifalphap', 'ifispact', 'igeom', 'ignite', 'iinvqd', 'impc', 'impfe', 'impo', 'ipedestal', 'iprofile', 'isc', 'iscrp', 'ishape', 'itart', 'iwalld', 'kappa', 'neped', 'nesep', 'q', 'q0', 'ralpne', 'recyle', 'rhopedn', 'rhopedt', 'rli', 'rmajor', 'rnbeam', 'snull', 'ssync', 'tbeta', 'te', 'teped', 'tesep', 'ti', 'tratio', 'triang', 'zfear', 'alphaj', 'alphan', 'alphat', 'aspect', 'beamfus0', 'beta', 'betbm0', 'bt', 'cfe0', 'csawth', 'cvol', 'dene', 'dnbeta', 'epbetmax', 'falpha', 'fbfe', 'fdeut', 'ffwal', 'fhe3', 'ftrit', 'fvsbrnni', 'gamma', 'gtscale', 'hfact', 'ibss', 'iculbl', 'icurr', 'idensl', 'ifalphap', 'ifispact', 'igeom', 'ignite', 'iinvqd', 'impc', 'impo', 'ipedestal', 'neped', 'nesep', 'rhopedn', 'rhopedt', 'tbeta', 'teped', 'tesep', 'iprofile', 'iradloss', 'isc', 'iscrp', 'ishape', 'itart', 'iwalld', 'kappa', 'q', 'q0', 'ralpne', 'rli', 'rmajor', 'rnbeam', 'snull', 'ssync', 'te', 'ti', 'tratio', 'triang', 'zfear', 'alphaj', 'alphan', 'alphat', 'aspect', 'beamfus0', 'beta', 'betbm0', 'bt', 'cfe0', 'csawth', 'cvol', 'dene', 'dnbeta', 'epbetmax', 'falpha', 'fbfe', 'fdeut', 'ffwal', 'fhe3', 'fradmin', 'ftrit', 'fvsbrnni', 'gamma', 'gtscale', 'hfact', 'ibss', 'iculbl', 'icurr', 'idensl', 'ifalphap', 'ifispact', 'igeom', 'ignite', 'iinvqd', 'impc', 'impfe', 'impo', 'ipedestal', 'iprofile', 'isc', 'iscrp', 'ishape', 'itart', 'iwalld', 'kappa', 'neped', 'nesep', 'q', 'q0', 'ralpne', 'recyle', 'rhopedn', 'rhopedt', 'rli', 'rmajor', 'rnbeam', 'snull', 'ssync', 'tbeta', 'te', 'teped', 'tesep', 'ti', 'tratio', 'triang', 'zfear', 'alphaj', 'alphan', 'alphat', 'aspect', 'beamfus0', 'beta', 'betbm0', 'bt', 'cfe0', 'csawth', 'cvol', 'dene', 'dnbeta', 'epbetmax', 'falpha', 'fbfe', 'fdeut', 'ffwal', 'fhe3', 'fradmin', 'ftrit', 'fvsbrnni', 'gamma', 'gtscale', 'hfact', 'ibss', 'iculbl', 'icurr', 'idensl', 'ifalphap', 'ifispact', 'igeom', 'ignite', 'iinvqd', 'impc', 'impfe', 'impo', 'ipedestal', 'iprofile', 'isc', 'iscrp', 'ishape', 'itart', 'iwalld', 'kappa', 'neped', 'nesep', 'q', 'q0', 'ralpne', 'recyle', 'rhopedn', 'rhopedt', 'rli', 'rmajor', 'rnbeam', 'snull', 'ssync', 'tbeta', 'te', 'teped', 'tesep', 'ti', 'tratio', 'triang', 'zfear', 'alphaj', 'alphan', 'alphat', 'aspect', 'beamfus0', 'beta', 'betbm0', 'bt', 'cfe0', 'csawth', 'cvol', 'dene', 'dnbeta', 'epbetmax', 'falpha', 'fbfe', 'fdeut', 'ffwal', 'fhe3', 'fradmin', 'ftrit', 'fvsbrnni', 'gamma', 'gtscale', 'hfact', 'ibss', 'iculbl', 'icurr', 'idensl', 'ifalphap', 'ifispact', 'igeom', 'ignite', 'iinvqd', 'impc', 'impfe', 'impo', 'ipedestal', 'iprofile', 'isc', 'iscrp', 'ishape', 'itart', 'iwalld', 'kappa', 'neped', 'nesep', 'q', 'q0', 'ralpne', 'recyle', 'rhopedn', 'rhopedt', 'rli', 'rmajor', 'rnbeam', 'snull', 'ssync', 'tbeta', 'te', 'teped', 'tesep', 'ti', 'tratio', 'triang', 'zfear']
-DICT_MODULE['Process Output']  = ['sect01', 'sect02', 'sect03', 'sect04', 'sect05', 'sect06', 'sect07', 'sect08', 'sect09', 'sect10', 'sect11', 'sect12', 'sect13', 'sect14', 'sect15', 'sect16', 'sect17', 'sect18', 'sect19', 'sect20', 'sect21', 'sect01', 'sect02', 'sect03', 'sect04', 'sect05', 'sect06', 'sect07', 'sect08', 'sect09', 'sect10', 'sect11', 'sect12', 'sect13', 'sect14', 'sect15', 'sect16', 'sect17', 'sect18', 'sect19', 'sect20', 'sect21', 'sect01', 'sect02', 'sect03', 'sect04', 'sect05', 'sect06', 'sect07', 'sect08', 'sect09', 'sect10', 'sect11', 'sect12', 'sect13', 'sect14', 'sect15', 'sect16', 'sect17', 'sect18', 'sect19', 'sect20', 'sect21', 'sect01', 'sect02', 'sect03', 'sect04', 'sect05', 'sect06', 'sect07', 'sect08', 'sect09', 'sect10', 'sect11', 'sect12', 'sect13', 'sect14', 'sect15', 'sect16', 'sect17', 'sect18', 'sect19', 'sect20', 'sect21', 'sect01', 'sect02', 'sect03', 'sect04', 'sect05', 'sect06', 'sect07', 'sect08', 'sect09', 'sect10', 'sect11', 'sect12', 'sect13', 'sect14', 'sect15', 'sect16', 'sect17', 'sect18', 'sect19', 'sect20', 'sect21', 'sect01', 'sect02', 'sect03', 'sect04', 'sect05', 'sect06', 'sect07', 'sect08', 'sect09', 'sect10', 'sect11', 'sect12', 'sect13', 'sect14', 'sect15', 'sect16', 'sect17', 'sect18', 'sect19', 'sect20', 'sect21']
-DICT_MODULE['Pulse Variables'] = ['afw', 'bctmp', 'coolp', 'dtstor', 'istore', 'itcycl', 'lpulse', 'tmprse', 'afw', 'bctmp', 'coolp', 'dtstor', 'istore', 'itcycl', 'lpulse', 'tmprse', 'afw', 'bctmp', 'coolp', 'dtstor', 'istore', 'itcycl', 'lpulse', 'tmprse', 'afw', 'bctmp', 'coolp', 'dtstor', 'istore', 'itcycl', 'lpulse', 'tmprse', 'afw', 'bctmp', 'coolp', 'dtstor', 'istore', 'itcycl', 'lpulse', 'tmprse', 'afw', 'bctmp', 'coolp', 'dtstor', 'istore', 'itcycl', 'lpulse', 'tmprse', 'afw', 'bctmp', 'coolp', 'dtstor', 'istore', 'itcycl', 'lpulse', 'tmprse', 'afw', 'bctmp', 'coolp', 'dtstor', 'istore', 'itcycl', 'lpulse', 'tmprse', 'afw', 'bctmp', 'coolp', 'dtstor', 'istore', 'itcycl', 'lpulse', 'tmprse', 'afw', 'bctmp', 'coolp', 'dtstor', 'istore', 'itcycl', 'lpulse', 'tmprse']
-DICT_MODULE['Rfp Variables']   = ['irfp', 'rfpth', 'irfp', 'rfpth', 'irfp', 'rfpth', 'irfp', 'rfpth', 'irfp', 'rfpth', 'irfp', 'rfpth', 'irfp', 'rfpth', 'irfp', 'rfpth', 'irfp', 'rfpth', 'irfp', 'rfpth']
-DICT_MODULE['Scan Module']     = ['isweep', 'nsweep', 'sweep', 'isweep', 'nsweep', 'sweep', 'isweep', 'nsweep', 'sweep', 'isweep', 'nsweep', 'sweep', 'isweep', 'nsweep', 'sweep', 'isweep', 'nsweep', 'sweep']
-DICT_MODULE['Stellarator Variables'] = ['bmn', 'f_asym', 'f_rad', 'f_w', 'flpitch', 'iotabar', 'istell', 'isthtr', 'm_res', 'n_res', 'shear', 'vmec_info_file', 'vmec_rmn_file', 'vmec_zmn_file', 'bmn', 'f_asym', 'f_rad', 'f_w', 'flpitch', 'iotabar', 'istell', 'isthtr', 'm_res', 'n_res', 'shear', 'vmec_info_file', 'vmec_rmn_file', 'vmec_zmn_file', 'bmn', 'f_asym', 'f_rad', 'f_w', 'flpitch', 'iotabar', 'istell', 'isthtr', 'm_res', 'n_res', 'shear', 'vmec_info_file', 'vmec_rmn_file', 'vmec_zmn_file', 'bmn', 'f_asym', 'f_rad', 'f_w', 'flpitch', 'iotabar', 'istell', 'isthtr', 'm_res', 'n_res', 'shear', 'vmec_info_file', 'vmec_rmn_file', 'vmec_zmn_file', 'bmn', 'f_asym', 'f_rad', 'f_w', 'flpitch', 'iotabar', 'istell', 'isthtr', 'm_res', 'n_res', 'shear', 'vmec_info_file', 'vmec_rmn_file', 'vmec_zmn_file', 'bmn', 'f_asym', 'f_rad', 'f_w', 'flpitch', 'iotabar', 'istell', 'isthtr', 'm_res', 'n_res', 'shear', 'vmec_info_file', 'vmec_rmn_file', 'vmec_zmn_file', 'istell', 'bmn', 'f_asym', 'f_rad', 'f_w', 'fdivwet', 'flpitch', 'iotabar', 'isthtr', 'm_res', 'n_res', 'shear', 'vmec_info_file', 'vmec_rmn_file', 'vmec_zmn_file', 'bmn', 'f_asym', 'f_rad', 'f_w', 'fdivwet', 'flpitch', 'iotabar', 'istell', 'isthtr', 'm_res', 'n_res', 'shear', 'vmec_info_file', 'vmec_rmn_file', 'vmec_zmn_file', 'bmn', 'f_asym', 'f_rad', 'f_w', 'fdivwet', 'flpitch', 'iotabar', 'istell', 'isthtr', 'm_res', 'n_res', 'shear', 'vmec_info_file', 'vmec_rmn_file', 'vmec_zmn_file', 'bmn', 'f_asym', 'f_rad', 'f_w', 'fdivwet', 'flpitch', 'iotabar', 'istell', 'isthtr', 'm_res', 'n_res', 'shear', 'vmec_info_file', 'vmec_rmn_file', 'vmec_zmn_file']
-DICT_MODULE['Tfcoil Variables'] = ['aspcstf', 'bcritsc', 'casfact', 'casthi', 'casths', 'cdtfleg', 'cpttf', 'csutf', 'csytf', 'dcase', 'dcond', 'dcopper', 'drtop', 'dztop', 'etapump', 'eyins', 'eystl', 'eywp', 'farc4tf', 'fcoolcp', 'fcutfsu', 'fhts', 'frhocp', 'isumattf', 'itfmod', 'itfsup', 'jbus', 'oacdcp', 'poisson', 'ptempalw', 'rcool', 'ripmax', 'strncon', 'tcoolin', 'tcpav', 'tcritsc', 'tdmptf', 'tflegres', 'tfno', 'tftmp', 'tftort', 'thicndut', 'thkcas', 'thwcndut', 'tinstf', 'tmargmin', 'tmaxpro', 'tmpcry', 'vcool', 'vdalw', 'vftf', 'wpvf', 'aspcstf', 'bcritsc', 'casfact', 'casthi', 'casths', 'cdtfleg', 'cpttf', 'csutf', 'csytf', 'dcase', 'dcond', 'dcopper', 'drtop', 'dztop', 'etapump', 'eyins', 'eystl', 'eywp', 'farc4tf', 'fcoolcp', 'fcutfsu', 'fhts', 'frhocp', 'isumattf', 'itfmod', 'itfsup', 'jbus', 'oacdcp', 'poisson', 'ptempalw', 'rcool', 'ripmax', 'strncon', 'tcoolin', 'tcpav', 'tcritsc', 'tdmptf', 'tflegres', 'tfno', 'tftmp', 'tftort', 'thicndut', 'thkcas', 'thwcndut', 'tinstf', 'tmargmin', 'tmaxpro', 'tmpcry', 'vcool', 'vdalw', 'vftf', 'wpvf', 'aspcstf', 'bcritsc', 'casfact', 'casthi', 'casths', 'cdtfleg', 'cpttf', 'csutf', 'csytf', 'dcase', 'dcond', 'dcopper', 'drtop', 'dztop', 'etapump', 'eyins', 'eystl', 'eywp', 'farc4tf', 'fcoolcp', 'fcutfsu', 'fhts', 'frhocp', 'isumattf', 'itfmod', 'itfsup', 'jbus', 'oacdcp', 'poisson', 'ptempalw', 'rcool', 'ripmax', 'strncon', 'tcoolin', 'tcpav', 'tcritsc', 'tdmptf', 'tflegres', 'tfno', 'tftmp', 'tftort', 'thicndut', 'thkcas', 'thwcndut', 'tinstf', 'tmargmin', 'tmaxpro', 'tmpcry', 'vcool', 'vdalw', 'vftf', 'wpvf', 'aspcstf', 'bcritsc', 'casfact', 'casthi', 'casths', 'cdtfleg', 'cpttf', 'csutf', 'csytf', 'dcase', 'dcond', 'dcopper', 'drtop', 'dztop', 'etapump', 'eyins', 'eystl', 'eywp', 'farc4tf', 'fcoolcp', 'fcutfsu', 'fhts', 'frhocp', 'isumattf', 'itfmod', 'itfsup', 'jbus', 'oacdcp', 'poisson', 'ptempalw', 'rcool', 'ripmax', 'strncon', 'tcoolin', 'tcpav', 'tcritsc', 'tdmptf', 'tflegres', 'tfno', 'tftmp', 'tftort', 'thicndut', 'thkcas', 'thwcndut', 'tinstf', 'tmargmin', 'tmaxpro', 'tmpcry', 'vcool', 'vdalw', 'vftf', 'wpvf', 'aspcstf', 'bcritsc', 'casfact', 'casthi', 'casths', 'cdtfleg', 'cpttf', 'csutf', 'csytf', 'dcase', 'dcond', 'dcopper', 'drtop', 'dztop', 'etapump', 'eyins', 'eystl', 'eywp', 'farc4tf', 'fcoolcp', 'fcutfsu', 'fhts', 'frhocp', 'isumattf', 'itfmod', 'itfsup', 'jbus', 'oacdcp', 'poisson', 'ptempalw', 'rcool', 'ripmax', 'strncon', 'tcoolin', 'tcpav', 'tcritsc', 'tdmptf', 'tflegres', 'tfno', 'tftmp', 'tftort', 'thicndut', 'thkcas', 'thwcndut', 'tinstf', 'tmargmin', 'tmaxpro', 'tmpcry', 'vcool', 'vdalw', 'vftf', 'wpvf', 'aspcstf', 'bcritsc', 'casfact', 'casthi', 'casths', 'cdtfleg', 'cpttf', 'csutf', 'csytf', 'dcase', 'dcond', 'dcopper', 'drtop', 'dztop', 'etapump', 'eyins', 'eystl', 'eywp', 'farc4tf', 'fcoolcp', 'fcutfsu', 'fhts', 'frhocp', 'isumattf', 'itfmod', 'itfsup', 'jbus', 'oacdcp', 'poisson', 'ptempalw', 'rcool', 'ripmax', 'strncon', 'tcoolin', 'tcpav', 'tcritsc', 'tdmptf', 'tflegres', 'tfno', 'tftmp', 'tftort', 'thicndut', 'thkcas', 'thwcndut', 'tinstf', 'tmargmin', 'tmaxpro', 'tmpcry', 'vcool', 'vdalw', 'vftf', 'wpvf', 'bcritsc', 'casthi', 'casths', 'cdtfleg', 'cpttf', 'csutf', 'csytf', 'dcase', 'dcond', 'dcondins', 'dcopper', 'eyins', 'eystl', 'eywp', 'farc4tf', 'fcutfsu', 'fhts', 'isumattf', 'itfsup', 'jbus', 'oacdcp', 'poisson', 'prp', 'ripmax', 'strncon', 'tcritsc', 'tdmptf', 'tfc_model', 'tflegres', 'tfno', 'tftmp', 'tftort', 'thicndut', 'thkcas', 'thwcndut', 'tinstf', 'tmargmin', 'tmaxpro', 'tmpcry', 'vdalw', 'vftf', 'drtop', 'dztop', 'etapump', 'fcoolcp', 'frhocp', 'ptempalw', 'rcool', 'tcoolin', 'tcpav', 'vcool', 'aspcstf', 'bcritsc', 'casfact', 'casthi', 'casths', 'cdtfleg', 'cpttf', 'csutf', 'csytf', 'dcase', 'dcond', 'dcopper', 'drtop', 'dztop', 'etapump', 'eyins', 'eystl', 'eywp', 'farc4tf', 'fcoolcp', 'fcutfsu', 'fhts', 'frhocp', 'isumattf', 'itfmod', 'itfsup', 'jbus', 'oacdcp', 'poisson', 'prp', 'ptempalw', 'rcool', 'ripmax', 'stress_model', 'strncon', 'tcoolin', 'tcpav', 'tcritsc', 'tdmptf', 'tflegres', 'tfno', 'tftmp', 'tftort', 'thicndut', 'thkcas', 'thwcndut', 'tinstf', 'tmargmin', 'tmaxpro', 'tmpcry', 'vcool', 'vdalw', 'vftf', 'wpvf', 'aspcstf', 'bcritsc', 'casfact', 'casthi', 'casths', 'cdtfleg', 'cpttf', 'csutf', 'csytf', 'dcase', 'dcond', 'dcopper', 'drtop', 'dztop', 'etapump', 'eyins', 'eystl', 'eywp', 'farc4tf', 'fcoolcp', 'fcutfsu', 'fhts', 'frhocp', 'isumattf', 'itfmod', 'itfsup', 'jbus', 'oacdcp', 'poisson', 'ptempalw', 'rcool', 'ripmax', 'strncon', 'tcoolin', 'tcpav', 'tcritsc', 'tdmptf', 'tflegres', 'tfno', 'tftmp', 'tftort', 'thicndut', 'thkcas', 'thwcndut', 'tinstf', 'tmargmin', 'tmaxpro', 'tmpcry', 'vcool', 'vdalw', 'vftf', 'wpvf', 'aspcstf', 'bcritsc', 'casfact', 'casthi', 'casths', 'cdtfleg', 'cpttf', 'csutf', 'csytf', 'dcase', 'dcond', 'dcopper', 'drtop', 'dztop', 'etapump', 'eyins', 'eystl', 'eywp', 'farc4tf', 'fcoolcp', 'fcutfsu', 'fhts', 'frhocp', 'isumattf', 'itfmod', 'itfsup', 'jbus', 'oacdcp', 'poisson', 'ptempalw', 'rcool', 'ripmax', 'strncon', 'tcoolin', 'tcpav', 'tcritsc', 'tdmptf', 'tflegres', 'tfno', 'tftmp', 'tftort', 'thicndut', 'thkcas', 'thwcndut', 'tinstf', 'tmargmin', 'tmaxpro', 'tmpcry', 'vcool', 'vdalw', 'vftf', 'wpvf']
-DICT_MODULE['Times Variables'] = ['tburn', 'tdwell', 'theat', 'tohs', 'tohsin', 'tqnch', 'tramp', 'tburn', 'tdwell', 'theat', 'tohs', 'tohsin', 'tqnch', 'tramp', 'tburn', 'tdwell', 'theat', 'tohs', 'tohsin', 'tqnch', 'tramp', 'tburn', 'tdwell', 'theat', 'tohs', 'tohsin', 'tqnch', 'tramp', 'tburn', 'tdwell', 'theat', 'tohs', 'tohsin', 'tqnch', 'tramp', 'tburn', 'tdwell', 'theat', 'tohs', 'tohsin', 'tqnch', 'tramp', 'tburn', 'tdwell', 'theat', 'tohs', 'tohsin', 'tqnch', 'tramp', 'tburn', 'tdwell', 'theat', 'tohs', 'tohsin', 'tqnch', 'tramp', 'tburn', 'tdwell', 'theat', 'tohs', 'tohsin', 'tqnch', 'tramp', 'tburn', 'tdwell', 'theat', 'tohs', 'tohsin', 'tqnch', 'tramp']
-DICT_MODULE['Vacuum Variables'] = ['ntype', 'pbase', 'prdiv', 'rat', 'tn', 'ntype', 'pbase', 'prdiv', 'rat', 'tn', 'ntype', 'pbase', 'prdiv', 'rat', 'tn', 'ntype', 'pbase', 'prdiv', 'rat', 'tn', 'ntype', 'pbase', 'prdiv', 'rat', 'tn', 'ntype', 'pbase', 'prdiv', 'rat', 'tn', 'ntype', 'pbase', 'prdiv', 'rat', 'tn', 'ntype', 'pbase', 'prdiv', 'rat', 'tn', 'ntype', 'pbase', 'prdiv', 'rat', 'tn', 'ntype', 'pbase', 'prdiv', 'rat', 'tn']
+DICT_MODULE['Numerics']        = ['ioptimz', 'maxcal', 'minmax', 'neqns', 'nineqns', 'nvar', 'icc', 'ixc', 'epsfcn', 'epsvmc', 'factor', 'ftol', 'boundl', 'boundu']
+DICT_MODULE['Pf Power Variables'] = ['iscenr']
+DICT_MODULE['Pfcoil Variables'] = ['ac1oh', 'acsoh', 'alfapf', 'coheof', 'cptdin', 'fcohbop', 'fcuoh', 'ipfloc', 'ipfres', 'isumatpf', 'ncls', 'nfxfh', 'ngrp', 'ohhghf', 'pfclres', 'rjconpf', 'routr', 'rpf1', 'rpf2', 'sccufac', 'sigpfalw', 'sigpfcalw', 'sigpfcf', 'vf', 'vfohc', 'zref']
+DICT_MODULE['Physics Variables'] = ['alphaj', 'alphan', 'alphat', 'aspect', 'beamfus0', 'beta', 'betbm0', 'bt', 'cfe0', 'csawth', 'cvol', 'dene', 'dnbeta', 'epbetmax', 'falpha', 'fbfe', 'fdeut', 'ffwal', 'fhe3', 'ftrit', 'fvsbrnni', 'gamma', 'gtscale', 'hfact', 'ibss', 'iculbl', 'icurr', 'idensl', 'ifalphap', 'ifispact', 'igeom', 'ignite', 'iinvqd', 'impc', 'impo', 'ipedestal', 'neped', 'nesep', 'rhopedn', 'rhopedt', 'tbeta', 'teped', 'tesep', 'iprofile', 'iradloss', 'isc', 'iscrp', 'ishape', 'itart', 'iwalld', 'kappa', 'q', 'q0', 'ralpne', 'rli', 'rmajor', 'rnbeam', 'snull', 'ssync', 'te', 'ti', 'tratio', 'triang', 'zfear']
+DICT_MODULE['Pulse Variables'] = ['afw', 'bctmp', 'coolp', 'dtstor', 'istore', 'itcycl', 'lpulse', 'tmprse']
+DICT_MODULE['Rfp Variables']   = ['irfp', 'rfpth']
+DICT_MODULE['Scan Module']     = ['isweep', 'nsweep', 'sweep']
+DICT_MODULE['Stellarator Variables'] = ['istell', 'bmn', 'f_asym', 'f_rad', 'f_w', 'fdivwet', 'flpitch', 'iotabar', 'isthtr', 'm_res', 'n_res', 'shear', 'vmec_info_file', 'vmec_rmn_file', 'vmec_zmn_file']
+DICT_MODULE['Tfcoil Variables'] = ['bcritsc', 'casthi', 'casths', 'cdtfleg', 'cpttf', 'csutf', 'csytf', 'dcase', 'dcond', 'dcondins', 'dcopper', 'eyins', 'eystl', 'eywp', 'farc4tf', 'fcutfsu', 'fhts', 'isumattf', 'itfsup', 'jbus', 'oacdcp', 'poisson', 'prp', 'ripmax', 'strncon', 'tcritsc', 'tdmptf', 'tfc_model', 'tflegres', 'tfno', 'tftmp', 'tftort', 'thicndut', 'thkcas', 'thwcndut', 'tinstf', 'tmargmin', 'tmaxpro', 'tmpcry', 'vdalw', 'vftf', 'drtop', 'dztop', 'etapump', 'fcoolcp', 'frhocp', 'ptempalw', 'rcool', 'tcoolin', 'tcpav', 'vcool']
+DICT_MODULE['Times Variables'] = ['tburn', 'tdwell', 'theat', 'tohs', 'tohsin', 'tqnch', 'tramp']
+DICT_MODULE['Vacuum Variables'] = ['ntype', 'pbase', 'prdiv', 'rat', 'tn']
