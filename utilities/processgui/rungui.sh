@@ -2,7 +2,7 @@
 
 #if django not in path
 if [[ $PYTHONPATH != *django* ]]; then
-    export PYTHONPATH=$PYTHONPATH:'/home/tmiller/django/Django-1.7/build/lib/'
+    export PYTHONPATH=$PYTHONPATH':/home/tmiller/django/Django-1.7/build/lib/'
 fi
 
 #need to run manage.py from it's containing directory
