@@ -5336,6 +5336,56 @@ For all of the functions below the arguments are:
 
 \end{description}
 
+\section{User Interface}
+\label{sec:user_interface}
+The user interface is still being developed, but currently allows for viewing
+and editing of \indat\ files in a web browser. It can be found in the
+utilities/processgui directory.
+
+\subsection{Launching}
+The interface uses Django for its web framework. Currently it can only be
+launched by running the Django development server locally. This is performed
+automatically if you launch the GUI by running the 'rungui.sh' script. For
+instructions on starting the server manually, see the \verb|README|
+\ file.
+
+\subsection{Editing variables}
+Every variable should be listed along with its current value, a 'reference'
+value and a short description. Hovering over the short description will
+provide a longer description. All values begin with the default value
+assigned by \process. 
+
+The reference values are used to compare differences between two files.
+Differences between the reference value and the current input value will be
+highlighted in red.
+
+The 'Meta' section allows editing of the run description, which will be placed
+at the top of the created \indat. Changes to the iteration variables and
+constraint equations that are enabled can be done using the checkboxes in the
+relevant section.
+
+\subsection{Opening and saving files}
+An input file and a reference file can be opened using the buttons at the top
+of the screen. The files opened must be compatible with the \process\ version
+number shown in the top right of the screen.
+
+The 'Save' button should produce a \indat\ file with a similar
+layout to the GUI. Variables whose values are set different from the
+\process\ default are listed under module headings, along with a comment
+describing the variable. For integer variables, a description of the value
+taken may also be included. The variables \texttt{neqns} and \texttt{nvar} are automatically
+calculated.
+
+\subsection{Searching}
+There is currently no search feature, but searching for a particular
+variable can be done using the browser's in-built search. Use the button
+in the top-right of the screen to expand every module heading and use Ctrl-f
+to search through the page.
+
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \mychapter{Code Management Tools}

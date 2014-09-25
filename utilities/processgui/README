@@ -9,12 +9,12 @@ The is a script 'rungui.sh' that should automate this. Just
 type './rungui.sh' and the GUI should start. There will be
 a pause the first time while the server is started.
 
-If this doesn't work try the following:
-Run the line:
+To launch the server manually:
+You need to add the django library to your PYTHONPATH. If you are working
+on the Fusion Unix Network, you can do this by running the line
 export PYTHONPATH=$PYTHONPATH:'/home/tmiller/django/Django-1.7/build/lib/'
-or append it to the end of your .bashrc file and restart bash
 
-Start the server by typing
+then start the server by typing
 python manage.py runserver
 in the top level directory of the project.
 
