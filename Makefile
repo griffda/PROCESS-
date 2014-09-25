@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 336
+#  GIT Revision 338
 #
 #  P J Knight
 #
@@ -249,7 +249,7 @@ root.dir:
 
 ### Utilities #################
 
-.PHONY: clean tar archive doc manual html
+.PHONY: clean tar archive doc manual html dicts
 
 # Clean up directory, to force full recompilation
 
@@ -265,10 +265,12 @@ clean:
 # from the current directory
 # (excludes input files IN.DAT, device.dat)
 
-otherfiles = Makefile vardes.html \
+otherfiles = Makefile setrootdir vardes.html \
              *.tex *.eps process.pdf \
              autodoc.f90 adheader.src adfooter.src \
-             utilities/*
+             impuritydata/* \
+             utilities/*.py utilities/*.conf utilities/*.json \
+             utilities/process_io_lib/*.py utilities/process_io_lib/*.json
 
 tar:
 	rm -f process.tar process.tar.gz

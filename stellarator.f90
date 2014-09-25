@@ -3195,6 +3195,7 @@ contains
       !+ad_call  sumup3
       !+ad_call  tril
       !+ad_hist  03/03/14 PJK Initial version
+      !+ad_hist  25/09/14 PJK Corrected do-loop argument
       !+ad_stat  Okay
       !+ad_docs  The Stellarator Coil model for the Systems code PROCESS,
       !+ad_docc  F. Warmer, F. Schauer, IPP Greifswald, October 2013
@@ -3257,7 +3258,7 @@ contains
       d_phi = 2.0D0*pi/(n-1)
       zaehler = 0  !  counter
 
-      do j = 1,nsp-1  !  loop over other (secondary) coils
+      do j = 1,nsp_int-1  !  loop over other (secondary) coils
 
          !  Toroidal angle of secondary coil relative to primary
 

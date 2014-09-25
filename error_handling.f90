@@ -138,6 +138,7 @@ contains
     !+ad_hist  01/09/14 PJK Now uses JSON format to read in error list
     !+ad_hist  01/09/14 PJK Changed path to json file
     !+ad_hist  24/09/14 PJK Path name now set automatically (via make)
+    !+ad_hist  25/09/14 PJK Corrected root.dir include syntax
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -155,7 +156,7 @@ contains
 
     !  Obtain the root directory
 
-#include 'root.dir'
+#include "root.dir"
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
