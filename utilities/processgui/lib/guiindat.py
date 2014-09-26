@@ -10,7 +10,8 @@
 
 """
 from process_io_lib.process_dicts import DICT_DEFAULT, DICT_MODULE,\
-                                    DICT_DESCRIPTIONS, DICTIONARY_VERSION
+                                    DICT_DESCRIPTIONS, DICTIONARY_VERSION, \
+                                    DICT_IXC_SIMPLE
 import copy
 import argparse
 
@@ -292,9 +293,13 @@ class GuiInDat(object):
             lbname = "boundl(" + str(iter_num) + ")"
             ret += make_line("ixc(" + str(num+1) + ")", iter_num, False)
             ret += " * "
-            #get the description from lablxc
-            ret += get_line_by_int(iter_num, DICT_DESCRIPTIONS["lablxc"])
+
+            #write a description
+            varname = DICT_IXC_SIMPLE[str(iter_num)]
+            ret += varname + " "
+            ret += get_comment(0.1, DICT_DESCRIPTIONS[varname])
             ret += LB
+
             #print the lower and upper bounds below
             ret += make_line(lbname, self[lbname], False) + LB
             ret += make_line(ubname, self[ubname], False) + LB
