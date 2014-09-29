@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '338    Release Date :: 2014-09-25'
+       '339    Release Date :: 2014-09-29'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1824,3 +1824,4 @@ end subroutine output
 ! GIT 337: Corrections to create_dicts.py
 ! GIT 338: Minor corrections arising from gfortran warnings/error reports; added
 !          impuritydata files to repository
+! GIT 339: Merged process_gui branch into develop branch

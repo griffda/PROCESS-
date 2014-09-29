@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 338
+#  GIT Revision 339
 #
 #  P J Knight
 #
@@ -270,7 +270,8 @@ otherfiles = Makefile setrootdir vardes.html \
              autodoc.f90 adheader.src adfooter.src \
              impuritydata/* \
              utilities/*.py utilities/*.conf utilities/*.json \
-             utilities/process_io_lib/*.py utilities/process_io_lib/*.json
+             utilities/process_io_lib/*.py utilities/process_io_lib/*.json \
+             utilities/processgui/*
 
 tar:
 	rm -f process.tar process.tar.gz
