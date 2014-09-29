@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '339    Release Date :: 2014-09-29'
+       '340    Release Date :: 2014-09-29'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1825,3 +1825,4 @@ end subroutine output
 ! GIT 338: Minor corrections arising from gfortran warnings/error reports; added
 !          impuritydata files to repository
 ! GIT 339: Merged process_gui branch into develop branch
+! GIT 340: Rearranged GUI directory contents; reworded parts of User Guide

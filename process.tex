@@ -38,7 +38,7 @@
 \newcommand{\version}{
 2014-09-29
 \hfill
-Revision: 339
+Revision: 340
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -157,8 +157,8 @@ conceptual and feasible power plant may look.
 \process\ is derived from several earlier systems codes, but is largely based
 on the TETRA (Tokamak Engineering Test Reactor Analysis) code~\cite{tetra} and
 its descendant STORAC (Spherical TOrus Reactor Analysis Code)~\cite{storac},
-which includes routines relevant to the tight aspect ratio class of
-tokamaks. These codes, and much of the original version of \process\ itself,
+which includes routines relevant to the spherical tokamak class of
+machines. These codes, and much of the original version of \process\ itself,
 were written by personnel at Oak Ridge National Laboratory in Tennessee, USA,
 with contributions from a number of other laboratories in the USA\@. In
 addition, many of the mathematical routines have been taken from a number of
@@ -443,10 +443,12 @@ diagram of \process\/ in optimisation mode is shown in Figure
 \end{picture}
 
 \end{center}
-\caption[Flow diagram of \process\ in optimisation mode] {\label{fig:flow_vmcon}
-  \textit{Flow diagram of \process\/ in optimisation mode.}
-  \textbf{Update this Figure! Is this really consistent with the method used in VMCON?}
-}
+\caption[Flow diagram of \process\ in optimisation mode]
+{\label{fig:flow_vmcon} \textit{Conceptual flow diagram of \process\/ in
+    optimisation mode. Please note that this is a simplistic interpretation of
+    the actual sequence of operations, to outline the difference between
+    non-optimisation and optimisation modes. For a more detailed (and
+    correct!) \vmcon\ flow diagram, please see Figure~\ref{fig:vmconflow}.}  }
 \end{figure}
 
 \subsection{Scans}
@@ -673,10 +675,10 @@ J_{\mbox{\scriptsize protection}}$ upper limit (SCTF)                   & L    &
 40  & injection power lower limit (PULSE)                       & L    & \textbf{64} \\
 41  & central solenoid current ramp-up time lower limit (PULSE) & L    & \textbf{66},65 \\
 42  & cycle time lower limit (PULSE)                            & L    & \textbf{67},65,17 \\
-43  & average centrepost temperature (TART)                     & C    & \textbf{69},70,13 \\
-44  & peak centrepost temperature upper limit (TART)            & L    & \textbf{68},69,70 \\
-45  & edge safety factor lower limit    (TART)                  & L    & \textbf{71},1,2,3 \\
-46  & Ip/Irod upper limit               (TART)                  & L    & \textbf{72},2,60 \\
+43  & average centrepost temperature (ST)                       & C    & \textbf{69},70,13 \\
+44  & peak centrepost temperature upper limit (ST)              & L    & \textbf{68},69,70 \\
+45  & edge safety factor lower limit    (ST)                    & L    & \textbf{71},1,2,3 \\
+46  & Ip/Irod upper limit               (ST)                    & L    & \textbf{72},2,60 \\
 47  & TF coil toroidal thickness upper limit (RFP)              & L    & \textbf{76},77,13,3 \\
 48  & poloidal beta upper limit                                 & L    & \textbf{79},2,3,18 \\
 49  & reversal parameter $< 0$ (RFP)                            & L    & \textbf{80},78,3,1 \\
@@ -1262,7 +1264,7 @@ Section~\ref{sec:itvars}) to help in the optimisation process.
 \subsection{Plasma physics models}
 
 Arguably, the most important component of the machine is the plasma itself. By
-default, this is assumed to have an up-down symmetric, double null
+default, this is assumed to have an up-down asymmetric, single null
 configuration (although this can be changed if desired --- see
 Section~\ref{sec:divertor}). A great number of physics models are coded within
 \process\ to describe the behaviour of the plasma parameters such as its
@@ -1328,9 +1330,9 @@ deuterium-tritium reaction:
 \label{eqn:d-t}
 \end{equation}
 20\% of the energy produced is given to the alpha particles ($^4$He), which
-remain within the plasma and thermalise (slow down) due to collisions, thus
-heating the plasma. The remaining 80\% is carried away by the neutrons, which
-deposit their energy within the blanket and shield.
+remain (\Red{but c.f.\ falpha}) within the plasma and thermalise (slow down)
+due to collisions, thus heating the plasma. The remaining 80\% is carried away
+by the neutrons, which deposit their energy within the blanket and shield.
 
 \process\ can also model D-$^3$He power plants, which utilise the following primary
 fusion reaction:
@@ -1380,8 +1382,8 @@ error message otherwise.
 
 \subsubsection{Plasma profiles}
 
-By default (switch \texttt{ipedestal = 0}), the plasma profiles are assumed to
-be parabolic, i.e.\ they are of the form
+By default \Red{NOT ANY MORE!} (switch \texttt{ipedestal = 0}), the plasma
+profiles are assumed to be parabolic, i.e.\ they are of the form
 \begin{eqnarray}
 \mbox{Density : } n(\rho) & = & n_0 \left( 1 - \rho^2 \right)^{\alpha_n} \\
 \mbox{Temperature : } T(\rho) & = & T_0 \left( 1 - \rho^2 \right)^{\alpha_T} \\
@@ -1598,7 +1600,7 @@ is called by \texttt{PHYSICS}.  Flag \texttt{icurr} must be set to the
 relevant value, as follows:-
 \begin{description}
 \item [\texttt{icurr = 1} :] Peng analytic fit
-\item [\texttt{icurr = 2} :] Peng double null divertor scaling (TART)~\cite{storac}
+\item [\texttt{icurr = 2} :] Peng double null divertor scaling (ST)~\cite{storac}
 \item [\texttt{icurr = 3} :] Simple ITER scaling
 \item [\texttt{icurr = 4} :] Revised ITER scaling~\cite{Uckan88}
 \item [\texttt{icurr = 5} :] Todd empirical scaling, I
@@ -1894,14 +1896,11 @@ value of this switch into account, although not the plasma geometry at
 present.
 
 The Harrison-Kukushkin-Hotston divertor model~\cite{IPDG} developed for ITER
-is used (except for the case of tight aspect ratio tokamaks or stellarators
---- see later). This is appropriate for conventional aspect ratio machines,
-but care should be taken in inputting the divertor magnetics for this model,
-and projections far from the ITER CDA machine parameters are likely to be
+is used (except for the case of spherical tokamaks or stellarators --- see
+later). This is appropriate for conventional aspect ratio machines, but care
+should be taken in inputting the divertor magnetics for this model, and
+projections far from the ITER CDA machine parameters are likely to be
 unreliable.
-
-The divertor calculations are carried out in routines \texttt{DIVCALL} and
-\texttt{DIVERT}.
 
 \subsection{Blanket}
 
@@ -2076,6 +2075,8 @@ The advanced blanket neutronics model provides the following outputs:
 
 \subsubsection{Full thermodynamic blanket model}
 \label{sec:blanket}
+
+\Red{Remove asap.}
 
 \textbf{N.B.\ it is recommended that this model is \textit{not}\ used in
   conjunction with the advanced blanket neutronics model (\texttt{blktmodel >
@@ -2260,7 +2261,7 @@ zero field and strain is set using input parameter \texttt{tcritsc}.
 \subsubsection{Stress model}
 
 Switch \texttt{tfc\_model} controls whether a simple stress model
-(\texttt{tfc\_model = 0}, suitable for soild copper TF coils) or a more
+(\texttt{tfc\_model = 0}, suitable for solid copper TF coils) or a more
 complex stress model (\texttt{tfc\_model = 1}) should be used. If
 \texttt{tfc\_model = 1}, a two-layer stress model~\cite{Morris_tfc} developed
 by CCFE is used.
@@ -2725,7 +2726,7 @@ The volume and ground area of all the various buildings on a power plant site
 are included in the \process\ calculations for the benefit of the costing
 algorithms. %!%!%! expand
 
-\section{Tight Aspect Ratio Tokamak Model}
+\section{Spherical Tokamak Model}
 \label{sec:tart}
 
 \process\ has the ability to perform studies on tokamaks in the low aspect ratio
@@ -2736,23 +2737,22 @@ the following special models~\cite{storac} in \process.
 
 \begin{enumerate}
 
-\item The inboard build of a tight aspect ratio tokamak (TART) is very
-  different from that in a conventional tokamak. There is no inboard blanket
-  (and possibly no inboard shield), and the inboard TF coil legs are replaced
-  by a single centrepost. The radial build is altered so that, starting from
-  the centreline ($R = 0$), the component order is: TF coil, gap, central
+\item The inboard build of a spherical tokamak (ST) is very different from
+  that in a conventional tokamak. There is no inboard blanket (and possibly no
+  inboard shield), and the inboard TF coil legs are replaced by a single
+  centrepost. The radial build is altered so that, starting from the
+  centreline ($R = 0$), the component order is: TF coil, gap, central
   solenoid, vacuum vessel, and then continuing as in Figure~\ref{fig:build_d}
   (a D-shaped cross-section is assumed for the first wall, blanket, shield and
   vacuum vessel).
 
-\item Tight aspect ratio tokamaks have resistive TF coils that combine into a
-  single centrepost at the centre of the machine. The centrepost is
-  constructed from copper (as are the outboard TF coil sections), and is
-  tapered lengthways so that it is narrowest at the midplane of the device.
-  Routine \texttt{CNTRPST} calculates various parameters relevant to the
-  centrepost, including the pump pressure, maximum temperature and pipe
-  radius, and these may be limited using constraint equations~43 to~46 if
-  required:
+\item Spherical tokamaks have resistive TF coils that combine into a single
+  centrepost at the centre of the machine. The centrepost is constructed from
+  copper (as are the outboard TF coil sections), and is tapered lengthways so
+  that it is narrowest at the midplane of the device.  Routine
+  \texttt{CNTRPST} calculates various parameters relevant to the centrepost,
+  including the pump pressure, maximum temperature and pipe radius, and these
+  may be limited using constraint equations~43 to~46 if required:
 
   \begin{itemize}
   \item Equation~43 is a consistency equation for the average centrepost
@@ -2771,8 +2771,8 @@ the following special models~\cite{storac} in \process.
   calculation is employed, rather than the more complex divertor model assumed
   for conventional aspect ratio tokamaks.
 
-\item A simple PF coil current scaling algorithm is
-  available for use with the TART option.
+\item A simple PF coil current scaling algorithm is available for use with the
+  ST option.
 
 \item The plasma shaping terms (elongation and triangularity) can be
   calculated directly given the aspect ratio, using \texttt{ishape = 1} (see
@@ -2791,16 +2791,16 @@ the following special models~\cite{storac} in \process.
 
 \end{enumerate}
 
-\subsection{Tight aspect ratio tokamak switches}
+\subsection{Spherical tokamak switches}
 
-Switch \texttt{itart} provides overall control of the TART switches within the
+Switch \texttt{itart} provides overall control of the ST switches within the
 code, and subroutine \texttt{CHECK} ensures that no conflicting values are
 inadvertently set by the user in the input file. Table~\ref{tab:tart}
 summarises the switch values relevant to each aspect ratio regime.
 \begin{table}[tbph]
 \begin{center}
   \begin{tabular}{||l|c|c||} \hline
-    & conventional aspect ratio & tight aspect ratio \\
+    & conventional aspect ratio & low aspect ratio \\
     switch & \texttt{itart = 0} & \texttt{itart = 1} \\ \hline
     \texttt{ishape} & 0, 2 & 0, 1 \\
     \texttt{ibss} (Section~\ref{sec:bootstrap}) & 1, 2, 3 & 2, 3 \\
@@ -2809,10 +2809,10 @@ summarises the switch values relevant to each aspect ratio regime.
     \hline
 \end{tabular}
 \end{center}
-\caption[\process\ switches for tight aspect ratio machines]
+\caption[\process\ switches for spherical tokamaks]
 {\label{tab:tart}
   \textit{Summary of the switch values in PROCESS that relate to
-    conventional aspect ratio and tight aspect ratio machines.}
+    conventional aspect ratio and low aspect ratio machines.}
 }
 \end{table}
 
@@ -3529,6 +3529,9 @@ procedure for setting up the code to model a new machine, and finally an
 attempt is made to indicate and solve the problems that the user will face
 whilst trying to achieve a feasible solution.
 
+\textbf{Please note:} There is now a prototype Graphical User Interface (GUI)
+for people to use to run \process; see Section~\ref{sec:gui} for details.
+
 \section{The Input File}
 \label{sec:infile}
 
@@ -3703,12 +3706,12 @@ to your \texttt{.bashrc} file:
 \begin{verbatim}
 module use /home/pknight/modules
 module swap python
-module load process_master
+module load process/master
 \end{verbatim}
 \end{quote}
-(If you want to use (with care!) the latest draft version of the code instead
-of the latest verified release version, replace \texttt{module load
-  process\_master} with \texttt{module load process\_develop} above.)
+(If you want to use --- with care! --- the latest draft version of the code
+instead of the latest verified release version, replace \texttt{module load
+  process/master} with \texttt{module load process/develop} above.)
 
 After re-logging in, execute \process\ by simply typing \texttt{process} on
 the command line.
@@ -4316,7 +4319,7 @@ the following way:
 \section{Submission of New Models}
 
 The \process\ source code is maintained by CCFE, and resides in a
-\textit{Subversion}~\cite{svn} repository on the CCFE servers. We welcome
+\textit{Git}~\cite{git} repository on the CCFE servers. We welcome
 contributions of alternative or improved models and algorithms.
 
 The Fortran~90/95 source code has a uniform visual style and structural
@@ -5337,17 +5340,17 @@ For all of the functions below the arguments are:
 \end{description}
 
 \section{User Interface}
-\label{sec:user_interface}
+\label{sec:gui}
 The user interface is still being developed, but currently allows for viewing
 and editing of \indat\ files in a web browser. It can be found in the
-utilities/processgui directory.
+\texttt{utilities/gui} directory.
 
 \subsection{Launching}
 The interface uses Django for its web framework. Currently it can only be
 launched by running the Django development server locally. This is performed
-automatically if you launch the GUI by running the 'rungui.sh' script. For
-instructions on starting the server manually, see the \verb|README|
-\ file.
+automatically if you launch the GUI by typing \verb+start_gui+ from the
+command line. For instructions on starting the server manually, see the
+\verb|README| file in the \texttt{utilities/gui} directory.
 
 \subsection{Editing variables}
 Every variable should be listed along with its current value, a 'reference'
@@ -5389,7 +5392,7 @@ to search through the page.
 
 This chapter will be of interest to people involved in the continuing
 maintenance of the \process\ source code. As stated elsewhere, the source code
-is maintained by CCFE, and resides in a \textit{Subversion}\
+is maintained by CCFE, and resides in a \textit{Git}\
 repository on the CCFE servers.
 
 \section{The Makefile}
@@ -5869,9 +5872,9 @@ J.\ P.\ Holdren et al.,
 Economic Aspects of Magnetic Fusion Energy''},
 \textit{Fusion Technology}, \textbf{13} (1988) 7
 
-\bibitem{svn}
-\href{http://subversion.apache.org/}{Subversion revision control system}
-\url{http://subversion.apache.org/}
+\bibitem{git}
+\href{http://git-scm.com/}{Git version control system}
+\url{http://git-scm.com/}
 
 \bibitem{Schittkowski1980}
 K.\ Schittkowski,
@@ -6844,7 +6847,7 @@ F/MI/PJK/PROCESS:-
 
 \begin{itemize}
 \item
-Tight Aspect Ratio Tokamak model: Note~001
+Spherical Tokamak model: Note~001
 
 \item
 Reversed Field Pinch model: Note~009
