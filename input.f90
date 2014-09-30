@@ -195,6 +195,7 @@ contains
     !+ad_prob  None
     !+ad_call  parse_input_file
     !+ad_hist  03/10/12 PJK Initial version
+    !+ad_hist  30/09/14 PJK Changed show_changes to 0
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -207,7 +208,7 @@ contains
 
     !  Local variables
 
-    integer :: show_changes = 1
+    integer :: show_changes = 0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
