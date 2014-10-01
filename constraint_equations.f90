@@ -146,6 +146,7 @@ contains
     !+ad_hist  28/07/14 PJK Subsumed routine into a module;
     !+ad_hisc               Added evaluation of residues etc. in physical
     !+ad_hisc               units
+    !+ad_hist  01/10/14 PJK Added new eqn 15
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -441,10 +442,19 @@ contains
              units(i) = ''
           end if
 
-       case (15)  !  Equation for burn time consistency
-          !  This equation is redundant... thought to be un-necessary
+       case (15)  !  Equation for L-H power threshold limit
 
-          call report_error(2)
+          cc(i) = 1.0D0 - flhthresh * plhthresh / pdivt
+          if (present(con)) then
+             con(i) = plhthresh * (1.0D0 - cc(i))
+             err(i) = pdivt * cc(i)
+             if (flhthresh > 1.0D0) then
+                symbol(i) = '>'
+             else
+                symbol(i) = '<'
+             end if
+             units(i) = 'MW'
+          end if
 
        case (16)  !  Equation for net electric power lower limit
 

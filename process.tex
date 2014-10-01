@@ -38,7 +38,7 @@
 \newcommand{\version}{
 2014-10-01
 \hfill
-Revision: 342
+Revision: 343
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -645,7 +645,7 @@ no. & description                                               & type & \texttt
 12  & volt second capability lower limit                        & L    & \textbf{15},1,2,3 \\
 13  & burn time lower limit (PULSE)                             & L    & \textbf{21},1,16,17,22,29,42,44,61 \\
 14  & beam energy (NBI)                                         & C    & \textbf{19},1,2,3,6 \\
-15  & UNUSED                                                    &      & \\
+15  & L-H power threshold limit                                 & L    & \textbf{103} \\
 16  & net electric power lower limit                            & L    & \textbf{25},1,2,3 \\
 17  & radiation power upper limit                               & L    & \textbf{28} \\
 18  & divertor heat load upper limit                            & L    & \textbf{27} \\
@@ -874,12 +874,13 @@ no. & variable name     & description                                           
 100 & \texttt{ftfthko}  & (OBSOLETE) f-value for TF coil radial thickness lower limit eqn    & 58  & \texttt{0.001D0} & \texttt{1.000D0} \\
 101 & \texttt{prp}      & ratio of TF coil radial plate area to winding pack area &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
 102 & \texttt{fimpvar}  & impurity fraction of element \texttt{impvar}            &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
+103 & \texttt{flhthresh}& f-value for L-H power threshold limit equation          & 15  & \texttt{1.00D0} & \texttt{1.000D6} \\
 \hline
 \end{tabular}
 \end{center}
-\caption[List of iteration variables 51 to 102]
+\caption[List of iteration variables 51 to 103]
 {\label{tab:itvars2}
-  \textit{Iteration variables 51 to 102 present in \process. The f-values correspond to the
+  \textit{Iteration variables 51 to 103 present in \process. The f-values correspond to the
     given constraint equations (see Table~\ref{tab:eqns}). The other iteration
     variables are shown in Table~\ref{tab:itvars1}.}
 }

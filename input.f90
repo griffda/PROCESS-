@@ -317,6 +317,7 @@ contains
     !+ad_hist  19/08/14 PJK Removed CASFACT
     !+ad_hist  16/09/14 PJK Changed TFC_MODEL range
     !+ad_hist  01/10/14 PJK Added KAPPA95, TRIANG95; changed ISHAPE range
+    !+ad_hist  01/10/14 PJK Added ILHTHRESH
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -604,6 +605,9 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
+       case ('ILHTHRESH')
+          call parse_int_variable('ILHTHRESH', ilhthresh, 1, 8, &
+               'Switch for L-H power threshold to enforce')
        case ('IMPC')
           call parse_real_variable('IMPC', impc, 0.0D0, 10.0D0, &
                'Carbon impurity multiplier')

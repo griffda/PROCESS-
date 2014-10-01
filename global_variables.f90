@@ -132,6 +132,7 @@ module physics_variables
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  01/10/14 PJK Added more ishape options
   !+ad_hist  01/10/14 PJK Modified q wording
+  !+ad_hist  01/10/14 PJK Added ilhthresh, plhthresh
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -554,7 +555,13 @@ module physics_variables
   real(kind(1.0D0)) :: protonrate = 0.0D0
   !+ad_vars  psyncpv : synchrotron radiation power per volume (MW/m3)
   real(kind(1.0D0)) :: psyncpv = 0.0D0
-  !+ad_vars  pthrmw(8) : L-H power threshold (MW): <OL>
+  !+ad_vars  ilhthresh /6/ : switch for L-H mode power threshold scaling to use
+  !+ad_varc                  (see pthrmw for list)
+  integer :: ilhthresh = 6
+  !+ad_vars  plhthresh : L-H mode power threshold (MW)
+  !+ad_varc              (chosen via ilhthresh, and enforced if constraint equation 15 is on)
+  real(kind(1.0D0)) :: plhthresh = 0.0D0
+  !+ad_vars  pthrmw(8) : L-H power threshold for various scalings (MW): <OL>
   !+ad_varc         <LI> ITER 1996 nominal
   !+ad_varc         <LI> ITER 1996 upper bound
   !+ad_varc         <LI> ITER 1996 lower bound
@@ -2814,7 +2821,7 @@ module cost_variables
   real(kind(1.0D0)) :: ucihx = 0.0D0
   !+ad_vars  ucint /35.0/ FIX : superconductor intercoil structure cost ($/kg)
   real(kind(1.0D0)) :: ucint = 35.0D0
-  !+ad_vars  uclh /3.3/ : LH system cost ($/W)
+  !+ad_vars  uclh /3.3/ : lower hybrid system cost ($/W)
   real(kind(1.0D0)) :: uclh = 3.3D0
   !+ad_vars  uclv /16.0/ FIX : low voltage system cost ($/kVA)
   real(kind(1.0D0)) :: uclv = 16.0D0
@@ -2943,6 +2950,7 @@ module constraint_variables
   !+ad_hist  08/05/14 PJK Added bigqmin
   !+ad_hist  19/05/14 PJK Added fradpwr
   !+ad_hist  17/09/14 PJK Changed default values
+  !+ad_hist  01/10/14 PJK Added flhthresh
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -3016,6 +3024,9 @@ module constraint_variables
   !+ad_vars  fjprot /1.0/ : f-value for TF coil winding pack current density
   !+ad_varc                 (constraint equation 35, iteration variable 53)
   real(kind(1.0D0)) :: fjprot = 1.0D0
+  !+ad_vars  flhthresh /1.0/ : f-value for L-H power threshold
+  !+ad_varc                    (constraint equation 15, iteration variable 103)
+  real(kind(1.0D0)) :: flhthresh = 1.0D0
   !+ad_vars  fmva /1.0/ : f-value for maximum MVA
   !+ad_varc               (constraint equation 19, iteration variable 30)
   real(kind(1.0D0)) :: fmva = 1.0D0

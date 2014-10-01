@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '342    Release Date :: 2014-10-01'
+       '343    Release Date :: 2014-10-01'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1828,3 +1828,4 @@ end subroutine output
 ! GIT 340: Rearranged GUI directory contents; reworded parts of User Guide
 ! GIT 341: September 2014 Master Release
 ! GIT 342: Added more ishape options
+! GIT 343: Added L-H power threshold constraint

@@ -80,6 +80,7 @@ module physics_module
   !+ad_hist  26/03/14 PJK Renamed bootstrap fraction routines; added Sauter model
   !+ad_hist  13/05/14 PJK Added plasma_composition routine, impurity_radiation_module
   !+ad_hist  26/06/14 PJK Added error_handling
+  !+ad_hist  01/10/14 PJK Added numerics
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -96,6 +97,7 @@ module physics_module
   use heat_transport_variables
   use impurity_radiation_module
   use maths_library
+  use numerics
   use physics_variables
   use profiles_module
   use process_output
@@ -204,6 +206,7 @@ contains
     !+ad_hisc               in first wall
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  19/08/14 PJK Removed impfe usage
+    !+ad_hist  01/10/14 PJK Added plhthresh
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -396,9 +399,13 @@ contains
     call pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
          pohmpv,pohmmw,rpfac,rplas)
 
-    !  Calculate L- to H-mode power threshold
+    !  Calculate L- to H-mode power threshold for different scalings
 
     call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
+
+    !  Enforced L-H power threshold value (if constraint 15 is turned on)
+
+    plhthresh = pthrmw(ilhthresh)
 
     !  Power transported to the divertor by charged particles,
     !  i.e. excludes neutrons and radiation
@@ -5243,6 +5250,7 @@ contains
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  19/08/14 PJK Added dnla / Greenwald ratio
     !+ad_hist  01/10/14 PJK Modified safety factor output statements
+    !+ad_hist  01/10/14 PJK Added plhthresh output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5647,6 +5655,11 @@ contains
             '(pthrmw(7))',pthrmw(7))
        call ovarre(outfile,'2008 Martin scaling: 95% lower bound (MW)', &
             '(pthrmw(8))',pthrmw(8))
+       if (any(icc == 15)) then
+          call oblnkl(outfile)
+          call ovarre(outfile,'Active L-H power threshold value (MW)', &
+               '(plhthresh))',plhthresh)
+       end if
     end if
 
     call osubhd(outfile,'Confinement :')

@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 342
+#  GIT Revision 343
 #
 #  P J Knight
 #
@@ -221,7 +221,7 @@ numerics.o: global_variables.o maths_library.o
 output.o:
 pfcoil.o: error_handling.o global_variables.o maths_library.o output.o
 physics.o: current_drive.o error_handling.o global_variables.o impurity_radiation.o \
-  maths_library.o output.o plasma_profiles.o
+  maths_library.o numerics.o output.o plasma_profiles.o
 plant_power.o: fwbs.o global_variables.o output.o
 plasma_geometry.o: global_variables.o
 plasma_profiles.o: error_handling.o global_variables.o maths_library.o
