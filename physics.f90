@@ -245,7 +245,7 @@ contains
     if (icurr == 2) then
        q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
     else
-       q95 = q
+       q95 = q  !  i.e. input (or iteration variable) value
     end if
 
     btot = sqrt(bt**2 + bp**2)
@@ -466,7 +466,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function bootstrap_fraction_iter89(aspect,beta,bt,cboot,plascur,q,q0,rmajor,vol)
+  function bootstrap_fraction_iter89(aspect,beta,bt,cboot,plascur,q95,q0,rmajor,vol)
 
     !+ad_name  bootstrap_fraction_iter89
     !+ad_summ  Original ITER calculation of bootstrap-driven fraction
@@ -479,7 +479,7 @@ contains
     !+ad_args  bt      : input real : toroidal field on axis (T)
     !+ad_args  cboot   : input real : bootstrap current fraction multiplier
     !+ad_args  plascur : input real : plasma current (A)
-    !+ad_args  q       : input real : safety factor at 95% surface
+    !+ad_args  q95     : input real : safety factor at 95% surface
     !+ad_args  q0      : input real : central safety factor
     !+ad_args  rmajor  : input real : plasma major radius (m)
     !+ad_args  vol     : input real : plasma volume (m3)
@@ -492,6 +492,7 @@ contains
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  16/10/12 PJK Removed pi from argument list
     !+ad_hist  26/03/14 PJK Converted to a function; renamed from BOOTST
+    !+ad_hist  01/10/14 PJK Renamed argument q to q95
     !+ad_stat  Okay
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
     !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
@@ -505,7 +506,7 @@ contains
     !  Arguments
 
     real(kind(1.0D0)), intent(in) :: aspect, beta, bt, cboot, &
-         plascur, q, q0, rmajor, vol
+         plascur, q95, q0, rmajor, vol
 
     !  Local variables
 
@@ -513,8 +514,8 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    xbs = min( 10.0D0, q/q0 )
-    cbs = cboot * (1.32D0 - 0.235D0*xbs + 0.0185D0*xbs**2 )
+    xbs = min(10.0D0, q95/q0)
+    cbs = cboot * (1.32D0 - 0.235D0*xbs + 0.0185D0*xbs**2)
     bpbs = rmu0*plascur/(2.0D0*pi*sqrt(vol/(2.0D0* pi**2 *rmajor)) )
     betapbs = beta*bt**2 / bpbs**2
 
@@ -5241,6 +5242,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  19/08/14 PJK Added dnla / Greenwald ratio
+    !+ad_hist  01/10/14 PJK Modified safety factor output statements
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5358,20 +5360,19 @@ contains
 
     if (istell == 0) then
        call ovarrf(outfile,'Safety factor on axis','(q0)',q0)
-       call ovarrf(outfile,'Edge safety factor','(q)',q)
+       call ovarrf(outfile,'Safety factor at 95% flux surface','(q95)',q95)
+       if (icurr == 2) then
+          call ovarrf(outfile,'Mean edge safety factor','(q)',q)
+       end if
+
        call ovarrf(outfile,'Cylindrical safety factor (qcyl)','(qstar)',qstar)
 
        if (ishape == 1) then
-          call ovarrf(outfile,'Lower limit for edge safety factor', &
+          call ovarrf(outfile,'Lower limit for edge safety factor q', &
                '(qlim)',qlim)
        end if
     else
        call ovarrf(outfile,'Rotational transform','(iotabar)',iotabar)
-    end if
-
-    if (icurr == 2) then
-       call ovarrf(outfile,'Safety factor at 95% flux','(q95)',q95)
-       call ocmmnt(outfile,'Mean safety factor, q-bar, used for q')
     end if
 
     call osubhd(outfile,'Beta Information :')

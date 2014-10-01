@@ -131,6 +131,7 @@ module physics_variables
   !+ad_hist  17/09/14 PJK Changed default values
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  01/10/14 PJK Added more ishape options
+  !+ad_hist  01/10/14 PJK Modified q wording
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -571,9 +572,9 @@ module physics_variables
   real(kind(1.0D0)) :: ptrimw = 0.0D0
   !+ad_vars  ptripv : ion transport power per volume (MW/m3)
   real(kind(1.0D0)) :: ptripv = 0.0D0
-  !+ad_vars  q /3.0/ : safety factor at plasma edge (q-psi) (iteration variable 18):
-  !+ad_varc            icurr = 2, q = mean safety factor qbar for divertors;
-  !+ad_varc            icurr = 3,4, q = safety factor at 95% surface
+  !+ad_vars  q /3.0/ : safety factor 'near' plasma edge (iteration variable 18):
+  !+ad_varc            equal to q95 (unless icurr = 2 (ST current scaling),
+  !+ad_varc            in which case q = mean edge safety factor qbar)
   real(kind(1.0D0)) :: q = 3.0D0
   !+ad_vars  q0 /1.0/ : safety factor on axis
   real(kind(1.0D0)) :: q0 = 1.0D0
