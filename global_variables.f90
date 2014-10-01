@@ -130,6 +130,7 @@ module physics_variables
   !+ad_hist  01/09/14 PJK Minor comment changes
   !+ad_hist  17/09/14 PJK Changed default values
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
+  !+ad_hist  01/10/14 PJK Added more ishape options
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -455,10 +456,13 @@ module physics_variables
   !+ad_varc         <LI> = 1 use input (scrapli and scraplo)</UL>
   integer :: iscrp = 1
   !+ad_vars  ishape /0/ : switch for plasma cross-sectional shape calculation:<UL>
-  !+ad_varc          <LI> = 0 use input kappa, triang;
-  !+ad_varc          <LI> = 1 scale qlim, kappa, triang (ST)
-  !+ad_varc          <LI> = 2 set kappa to the natural elongation value (Zohm ITER scaling);
-  !+ad_varc                   triang input</UL>
+  !+ad_varc          <LI> = 0 use input kappa, triang to calculate 95% values;
+  !+ad_varc          <LI> = 1 scale qlim, kappa, triang with aspect ratio (ST);
+  !+ad_varc          <LI> = 2 set kappa to the natural elongation value (Zohm ITER scaling),
+  !+ad_varc                   triang input;
+  !+ad_varc          <LI> = 3 set kappa to the natural elongation value (Zohm ITER scaling),
+  !+ad_varc                   triang95 input;
+  !+ad_varc          <LI> = 4 use input kappa95, triang95 to calculate separatrix values</UL>
   integer :: ishape = 0
   !+ad_vars  itart /0/ : switch for spherical tokamak (ST) models:<UL>
   !+ad_varc         <LI> = 0 use conventional aspect ratio models;
@@ -470,8 +474,8 @@ module physics_variables
   integer :: iwalld = 1
   !+ad_vars  kappa /1.792/ : plasma separatrix elongation (calculated if ishape > 0)
   real(kind(1.0D0)) :: kappa = 1.792D0
-  !+ad_vars  kappa95 : 95% plasma elongation
-  real(kind(1.0D0)) :: kappa95 = 0.0D0
+  !+ad_vars  kappa95 /1.6/ : plasma elongation at 95% surface (calculated if ishape < 4)
+  real(kind(1.0D0)) :: kappa95 = 1.6D0
   !+ad_vars  kappaa : plasma elongation calculated as xarea/(pi.a2)
   real(kind(1.0D0)) :: kappaa = 0.0D0
   !+ad_vars  ne0 : central electron density (/m3)
@@ -567,7 +571,7 @@ module physics_variables
   real(kind(1.0D0)) :: ptrimw = 0.0D0
   !+ad_vars  ptripv : ion transport power per volume (MW/m3)
   real(kind(1.0D0)) :: ptripv = 0.0D0
-  !+ad_vars  q /3.0/ : safety factor at plasma edge (q-"psi") (iteration variable 18):
+  !+ad_vars  q /3.0/ : safety factor at plasma edge (q-psi) (iteration variable 18):
   !+ad_varc            icurr = 2, q = mean safety factor qbar for divertors;
   !+ad_varc            icurr = 3,4, q = safety factor at 95% surface
   real(kind(1.0D0)) :: q = 3.0D0
@@ -643,10 +647,10 @@ module physics_variables
   !+ad_vars  tratio /1.0/ : ion temperature / electron temperature;
   !+ad_varc                 used to calculate ti if tratio > 0.0
   real(kind(1.0D0)) :: tratio = 1.0D0
-  !+ad_vars  triang /0.36/ : plasma separatrix triangularity (calculated if ishape=1)
+  !+ad_vars  triang /0.36/ : plasma separatrix triangularity (calculated if ishape=1, 3 or 4)
   real(kind(1.0D0)) :: triang = 0.36D0
-  !+ad_vars  triang95 : plasma triangularity at 95% surface
-  real(kind(1.0D0)) :: triang95 = 0.0D0
+  !+ad_vars  triang95 /0.24/ : plasma triangularity at 95% surface (calculated if ishape < 3)
+  real(kind(1.0D0)) :: triang95 = 0.24D0
   !+ad_vars  vol : plasma volume (m3)
   real(kind(1.0D0)) :: vol = 0.0D0
   !+ad_vars  vsbrn : V-s needed during flat-top (heat + burn times) (Wb)
@@ -713,7 +717,7 @@ module current_drive_variables
   !+ad_vars  beamwd /0.58/ : width of neutral beam duct where it passes
   !+ad_varc                  between the TF coils (m)
   !+ad_varc    (T Inoue et al, Design of neutral beam system for ITER-FEAT,
-  !+ad_varc     <A HREF="http://dx.doi.org/10.1016/S0920-3796(01)00339-8">
+  !+ad_varc     <A HREF=http://dx.doi.org/10.1016/S0920-3796(01)00339-8>
   !+ad_varc      Fusion Engineering and Design, Volumes 56-57, October 2001, Pages 517-521</A>)
   real(kind(1.0D0)) :: beamwd = 0.58D0
   !+ad_vars  bigq : Fusion gain; P_fusion / (P_injection + P_ohmic)

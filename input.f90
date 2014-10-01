@@ -316,6 +316,7 @@ contains
     !+ad_hist  19/08/14 PJK Removed RECYLE, IMPFE
     !+ad_hist  19/08/14 PJK Removed CASFACT
     !+ad_hist  16/09/14 PJK Changed TFC_MODEL range
+    !+ad_hist  01/10/14 PJK Added KAPPA95, TRIANG95; changed ISHAPE range
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -642,7 +643,7 @@ contains
           call parse_int_variable('ISCRP', iscrp, 0, 1, &
                'Switch for scrapeoff width')
        case ('ISHAPE')
-          call parse_int_variable('ISHAPE', ishape, 0, 2, &
+          call parse_int_variable('ISHAPE', ishape, 0, 4, &
                'Switch for plasma shape vs. aspect')
        case ('ITART')
           call parse_int_variable('ITART', itart, 0, 1, &
@@ -653,6 +654,9 @@ contains
        case ('KAPPA')
           call parse_real_variable('KAPPA', kappa, 0.99D0, 5.0D0, &
                'Plasma separatrix elongation')
+       case ('KAPPA95')
+          call parse_real_variable('KAPPA95', kappa95, 0.99D0, 5.0D0, &
+               'Plasma 95% elongation')
        case ('NEPED')
           call parse_real_variable('NEPED', neped, 0.0D0, 1.0D21, &
                'Electron density pedestal height (/m3)')
@@ -713,6 +717,9 @@ contains
        case ('TRIANG')
           call parse_real_variable('TRIANG', triang, 0.0D0, 1.0D0, &
                'Plasma separatrix triangularity')
+       case ('TRIANG95')
+          call parse_real_variable('TRIANG95', triang95, 0.0D0, 1.0D0, &
+               'Plasma 95% triangularity')
        case ('ZFEAR')
           call parse_int_variable('ZFEAR', zfear, 0, 1, &
                'Switch for high-Z inpurity')

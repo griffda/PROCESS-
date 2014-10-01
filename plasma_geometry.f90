@@ -70,6 +70,7 @@ contains
     !+ad_hisc               global variable pperim
     !+ad_hist  14/11/13 PJK Unified kappa95 estimate to Hartmann suggestion
     !+ad_hist  28/11/13 PJK Updated references
+    !+ad_hist  01/10/14 PJK Added new ishape options
     !+ad_stat  Okay
     !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
     !+ad_docc  unpublished internal Oak Ridge document
@@ -99,26 +100,47 @@ contains
 
     !  Calculate shaping terms, rather than use input values
 
-    if (ishape == 1) then  !  TART scaling [STAR Code]
+    select case (ishape)
+
+    case (0)  !  Use input kappa, triang values
+
+       !  Rough estimate of 95% values
+       !  Hartmann and Zohm suggestion for kappa95 (close to previous estimate
+       !  of (kappa - 0.04) / 1.1 over a large kappa range)
+
+       kappa95 = kappa / 1.12D0
+       triang95 = triang / 1.50D0
+
+    case (1)  !  ST scaling with aspect ratio [STAR Code]
+
+       qlim = 3.0D0 * (1.0D0 + 2.6D0*eps**2.8D0)
 
        kappa = 2.05D0 * (1.0D0 + 0.44D0 * eps**2.1D0)
        triang = 0.53D0 * (1.0D0 + 0.77D0 * eps**3)
-       qlim = 3.0D0 * (1.0D0 + 2.6D0*eps**2.8D0)
 
-    else if (ishape == 2) then  !  Zohm et al 
+       kappa95 = kappa / 1.12D0  !  Hartmann and Zohm
+       triang95 = triang / 1.50D0
+
+    case (2)  !  Zohm et al. ITER scaling for elongation, input triang
 
        kappa = min(2.0D0, 1.5D0 + 0.5D0/(aspect-1.0D0))
 
-    else
-       continue  !  use input values
-    end if
+       kappa95 = kappa / 1.12D0  !  Hartmann and Zohm
+       triang95 = triang / 1.50D0
 
-    !  Rough estimate of 95% values
-    !  Hartmann and Zohm suggestion for kappa95 (close to previous estimate
-    !  of (kappa - 0.04) / 1.1 over a large kappa range)
+    case (3)  !  Zohm et al. ITER scaling for elongation, input triang95
 
-    kappa95 = kappa / 1.12D0
-    triang95 = triang / 1.50D0
+       kappa = min(2.0D0, 1.5D0 + 0.5D0/(aspect-1.0D0))
+       triang = 1.5D0 * triang95
+
+       kappa95 = kappa / 1.12D0  !  Hartmann and Zohm
+
+    case (4)  !  Use input kappa95, triang95 values
+
+       kappa = 1.12D0 * kappa95  !  Hartmann and Zohm
+       triang = 1.5D0 * triang95
+
+    end select
 
     !  Scrape-off layer thicknesses
 

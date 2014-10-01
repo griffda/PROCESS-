@@ -36,9 +36,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-09-29
+2014-10-01
 \hfill
-Revision: 340
+Revision: 342
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1304,12 +1304,27 @@ while the input value of the triangularity is used unchanged.
 
 \end{itemize}
 
-The values for the plasma shaping parameters at the 95\% flux surface are
-calculated as follows~\cite{DEMOPhysicsGuidelines}:
+If \texttt{ishape = 0, 1} or \texttt{2}, the values for the plasma shaping
+parameters at the 95\% flux surface are calculated as
+follows~\cite{DEMOPhysicsGuidelines}:
 \begin{eqnarray}
-\kappa_{95} & = & \kappa / 1.12 \\
-\delta_{95} & = & \delta / 1.5
+\kappa_{95} & = & \kappa / 1.12 \label{eqn:k95} \\
+\delta_{95} & = & \delta / 1.5 \label{eqn:d95}
 \end{eqnarray}
+
+\begin{itemize}
+
+\item If \texttt{ishape = 3}, the Zohm ITER scaling~\cite{Zohm} is used to
+  calculate the elongation (as for \texttt{ishape = 2} above), but the
+  triangularity at the 95\% flux surface is input via variable
+  \texttt{triang95}, and the LCFS triangularity \texttt{triang} is calculated
+  from it, rather than the other way round.
+
+\item Finally, if \texttt{ishape = 4}, the 95\% flux surface values
+  \texttt{kappa95} and \texttt{triang95} are both used as inputs, and the LCFS
+  values are calculated from them by inverting Equations~\ref{eqn:k95} and~\ref{eqn:d95}.
+
+\end{itemize}
 
 The plasma surface area, cross-sectional area and volume are calculated using
 formulations that approximate the LCFS as a revolution of two arcs which

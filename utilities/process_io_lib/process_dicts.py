@@ -20,13 +20,13 @@ List of dictionaries:
     DICT_MODULE            : Ordered dictionary mapping module names to list
                              of associatied variables
 
-Automatically produced by create_dicts.py for PROCESS version 336
+Automatically produced by create_dicts.py for PROCESS version 342
 """
 
 from collections import defaultdict, OrderedDict
 
 #Version number of process dictionaries created for
-DICTIONARY_VERSION = 336
+DICTIONARY_VERSION = 342
 
 #ifail value of a successful process run
 IFAIL_SUCCESS = 1
@@ -431,6 +431,7 @@ DICT_VAR_TYPE['iwalld']        = 'int_variable'
 DICT_VAR_TYPE['ixc']           = 'int_array'
 DICT_VAR_TYPE['jbus']          = 'real_variable'
 DICT_VAR_TYPE['kappa']         = 'real_variable'
+DICT_VAR_TYPE['kappa95']       = 'real_variable'
 DICT_VAR_TYPE['ksic']          = 'real_variable'
 DICT_VAR_TYPE['lblnkt']        = 'int_variable'
 DICT_VAR_TYPE['li6enrich']     = 'real_variable'
@@ -586,6 +587,7 @@ DICT_VAR_TYPE['tramp']         = 'real_variable'
 DICT_VAR_TYPE['tratio']        = 'real_variable'
 DICT_VAR_TYPE['trcl']          = 'real_variable'
 DICT_VAR_TYPE['triang']        = 'real_variable'
+DICT_VAR_TYPE['triang95']      = 'real_variable'
 DICT_VAR_TYPE['trithtmw']      = 'real_variable'
 DICT_VAR_TYPE['triv']          = 'real_variable'
 DICT_VAR_TYPE['ucblbe']        = 'real_variable'
@@ -1568,6 +1570,7 @@ DICT_DEFAULT['iwalld']         = 1
 DICT_DEFAULT['ixc']            = [4, 5, 6, 7, 10, 12, 13, 19, 28, 29, 36, 39, 50, 53, 54, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 DICT_DEFAULT['jbus']           = 1250000.0
 DICT_DEFAULT['kappa']          = 1.792
+DICT_DEFAULT['kappa95']        = 1.6
 DICT_DEFAULT['ksic']           = 0.8
 DICT_DEFAULT['lblnkt']         = 0
 DICT_DEFAULT['li6enrich']      = 30.0
@@ -1724,6 +1727,7 @@ DICT_DEFAULT['tramp']          = 15.0
 DICT_DEFAULT['tratio']         = 1.0
 DICT_DEFAULT['trcl']           = 1.0
 DICT_DEFAULT['triang']         = 0.36
+DICT_DEFAULT['triang95']       = 0.24
 DICT_DEFAULT['trithtmw']       = 15.0
 DICT_DEFAULT['triv']           = 40000.0
 DICT_DEFAULT['ucblbe']         = 260.0
@@ -2152,7 +2156,7 @@ DICT_INPUT_BOUNDS['ireactor']  = {'lb': 0, 'ub': 1}
 DICT_INPUT_BOUNDS['irfcd']     = {'lb': 0, 'ub': 1}
 DICT_INPUT_BOUNDS['iscenr']    = {'lb': 1, 'ub': 3}
 DICT_INPUT_BOUNDS['iscrp']     = {'lb': 0, 'ub': 1}
-DICT_INPUT_BOUNDS['ishape']    = {'lb': 0, 'ub': 2}
+DICT_INPUT_BOUNDS['ishape']    = {'lb': 0, 'ub': 4}
 DICT_INPUT_BOUNDS['isthtr']    = {'lb': 1, 'ub': 3}
 DICT_INPUT_BOUNDS['istore']    = {'lb': 1, 'ub': 3}
 DICT_INPUT_BOUNDS['isumatpf']  = {'lb': 1, 'ub': 3}
@@ -2163,6 +2167,7 @@ DICT_INPUT_BOUNDS['itfsup']    = {'lb': 0, 'ub': 1}
 DICT_INPUT_BOUNDS['iwalld']    = {'lb': 1, 'ub': 2}
 DICT_INPUT_BOUNDS['jbus']      = {'lb': 10000.0, 'ub': 100000000.0}
 DICT_INPUT_BOUNDS['kappa']     = {'lb': 0.99, 'ub': 5.0}
+DICT_INPUT_BOUNDS['kappa95']   = {'lb': 0.99, 'ub': 5.0}
 DICT_INPUT_BOUNDS['ksic']      = {'lb': 0.0, 'ub': 2.0}
 DICT_INPUT_BOUNDS['lblnkt']    = {'lb': 0, 'ub': 1}
 DICT_INPUT_BOUNDS['li6enrich'] = {'lb': 0.0, 'ub': 100.0}
@@ -2307,6 +2312,7 @@ DICT_INPUT_BOUNDS['tramp']     = {'lb': 0.0, 'ub': 10000.0}
 DICT_INPUT_BOUNDS['tratio']    = {'lb': 0.0, 'ub': 2.0}
 DICT_INPUT_BOUNDS['trcl']      = {'lb': 0.0, 'ub': 10.0}
 DICT_INPUT_BOUNDS['triang']    = {'lb': 0.0, 'ub': 1.0}
+DICT_INPUT_BOUNDS['triang95']  = {'lb': 0.0, 'ub': 1.0}
 DICT_INPUT_BOUNDS['trithtmw']  = {'lb': 0.0, 'ub': 100.0}
 DICT_INPUT_BOUNDS['triv']      = {'lb': 10000.0, 'ub': 1000000.0}
 DICT_INPUT_BOUNDS['ucblbe']    = {'lb': 1.0, 'ub': 1000.0}
@@ -2446,7 +2452,7 @@ DICT_DESCRIPTIONS['baseel']    = 'Base plant electric load (w)'
 DICT_DESCRIPTIONS['bcritsc']   = 'Upper critical field (t) for nb3sn superconductor\nat zero temperature and strain (isumattf=4, =bc20m)'
 DICT_DESCRIPTIONS['bctmp']     = 'First wall bulk coolant temperature (c)'
 DICT_DESCRIPTIONS['beamfus0']  = 'Multiplier for beam-background fusion calculation'
-DICT_DESCRIPTIONS['beamwd']    = 'Width of neutral beam duct where it passes\nbetween the tf coils (m)\n(t inoue et al, design of neutral beam system for iter-feat,\n<a href="http://dx.doi.org/10.1016/s0920-3796(01)00339-8">\nfusion engineering and design, volumes 56-57, october 2001, pages 517-521</a>)'
+DICT_DESCRIPTIONS['beamwd']    = 'Width of neutral beam duct where it passes\nbetween the tf coils (m)\n(t inoue et al, design of neutral beam system for iter-feat,\n<a href=http://dx.doi.org/10.1016/s0920-3796(01)00339-8>\nfusion engineering and design, volumes 56-57, october 2001, pages 517-521</a>)'
 DICT_DESCRIPTIONS['beta']      = 'Total plasma beta (iteration variable 5)'
 DICT_DESCRIPTIONS['betaft']    = 'Fast alpha beta component'
 DICT_DESCRIPTIONS['betalim']   = 'Allowable beta'
@@ -2943,7 +2949,7 @@ DICT_DESCRIPTIONS['irfp']      = 'Switch for rfp option\n(set via <code>device.d
 DICT_DESCRIPTIONS['isc']       = 'Switch for energy confinement time scaling law\n( 1)  neo-alcator (ohmic)\n( 2)  mirnov (h-mode)\n( 3)  merezkhin-muhkovatov (l-mode)\n( 4)  shimomura (h-mode)\n( 5)  kaye-goldston (l-mode)\n( 6)  iter 89-p (l-mode)\n( 7)  iter 89-o (l-mode)\n( 8)  rebut-lallia (l-mode)\n( 9)  goldston (l-mode)\n(10)  t10 (l-mode)\n(11)  jaeri-88 (l-mode)\n(12)  kaye-big complex (l-mode)\n(13)  iter h90-p (h-mode)\n(14)  iter mix (l-mode)\n(15)  riedel (l-mode)\n(16)  christiansen (l-mode)\n(17)  lackner-gottardi (l-mode)\n(18)  neo-kaye (l-mode)\n(19)  riedel (h-mode)\n(20)  iter h90-p amended (h-mode)\n(21)  lhd (stellarator)\n(22)  gyro-reduced bohm (stellarator)\n(23)  lackner-gottardi (stellarator)\n(24)  iter-93h (h-mode)\n(25)  titan (rfp)\n(26)  iter h-97p elm-free (h-mode)\n(27)  iter h-97p elmy (h-mode)\n(28)  iter-96p (=iter-97l) (l-mode)\n(29)  valovic modified elmy (h-mode)\n(30)  kaye pppl april 98 (l-mode)\n(31)  iterh-pb98p(y) (h-mode)\n(32)  ipb98(y) (h-mode)\n(33)  ipb98(y,1) (h-mode)\n(34)  ipb98(y,2) (h-mode)\n(35)  ipb98(y,3) (h-mode)\n(36)  ipb98(y,4) (h-mode)\n(37)  iss95 (stellarator)\n(38)  iss04 (stellarator)\n(39)  ds03 (h-mode)'
 DICT_DESCRIPTIONS['iscenr']    = 'Switch for pf coil energy storage option:\n= 1 all power from mgf (motor-generator flywheel) units;\n= 2 all pulsed power from line;\n= 3 pf power from mgf, heating from line\n(in fact, options 1 and 3 are not treated differently)'
 DICT_DESCRIPTIONS['iscrp']     = 'Switch for plasma-first wall clearances:\n= 0 use 10% of rminor;\n= 1 use input (scrapli and scraplo)'
-DICT_DESCRIPTIONS['ishape']    = 'Switch for plasma cross-sectional shape calculation:\n= 0 use input kappa, triang;\n= 1 scale qlim, kappa, triang (st)\n= 2 set kappa to the natural elongation value (zohm iter scaling);\ntriang input'
+DICT_DESCRIPTIONS['ishape']    = 'Switch for plasma cross-sectional shape calculation:\n= 0 use input kappa, triang to calculate 95% values;\n= 1 scale qlim, kappa, triang with aspect ratio (st);\n= 2 set kappa to the natural elongation value (zohm iter scaling),\ntriang input;\n= 3 set kappa to the natural elongation value (zohm iter scaling),\ntriang95 input;\n= 4 use input kappa95, triang95 to calculate separatrix values'
 DICT_DESCRIPTIONS['istell']    = 'Switch for stellarator option\n(set via <code>device.dat</code>):\n= 0 use tokamak, rfp or ife model;\n= 1 use stellarator model'
 DICT_DESCRIPTIONS['isthtr']    = 'Switch for stellarator auxiliary heating method:\n= 1 electron cyclotron resonance heating;\n= 2 lower hybrid heating;\n= 3 neutral beam injection'
 DICT_DESCRIPTIONS['istore']    = 'Switch for thermal storage method:\n= 1 option 1 of electrowatt report, aea fus 205;\n= 2 option 2 of electrowatt report, aea fus 205;\n= 3 stainless steel block'
@@ -2961,7 +2967,7 @@ DICT_DESCRIPTIONS['jwdgcrt']   = 'Critical current density for winding pack (a/m
 DICT_DESCRIPTIONS['jwdgpro']   = 'Allowable tf coil winding pack current density,\nfor dump temperature rise protection (a/m2)'
 DICT_DESCRIPTIONS['jwptf']     = 'Winding pack current density (a/m2)'
 DICT_DESCRIPTIONS['kappa']     = 'Plasma separatrix elongation (calculated if ishape > 0)'
-DICT_DESCRIPTIONS['kappa95']   = '95% plasma elongation'
+DICT_DESCRIPTIONS['kappa95']   = 'Plasma elongation at 95% surface (calculated if ishape < 4)'
 DICT_DESCRIPTIONS['kappaa']    = 'Plasma elongation calculated as xarea/(pi.a2)'
 DICT_DESCRIPTIONS['kcp']       = 'Thermal conductivity of centrepost (w/m/k)'
 DICT_DESCRIPTIONS['kh2o']      = 'Thermal conductivity of water (w/m/k)'
@@ -3134,7 +3140,7 @@ DICT_DESCRIPTIONS['ptripv']    = 'Ion transport power per volume (mw/m3)'
 DICT_DESCRIPTIONS['pwplh']     = 'Lower hybrid wall plug power (mw)'
 DICT_DESCRIPTIONS['pwpm2']     = 'Base ac power requirement per unit floor area (w/m2)'
 DICT_DESCRIPTIONS['pwpnb']     = 'Neutral beam wall plug power (mw)'
-DICT_DESCRIPTIONS['q']         = 'Safety factor at plasma edge (q-"psi") (iteration variable 18):\nicurr = 2, q = mean safety factor qbar for divertors;\nicurr = 3,4, q = safety factor at 95% surface'
+DICT_DESCRIPTIONS['q']         = 'Safety factor at plasma edge (q-psi) (iteration variable 18):\nicurr = 2, q = mean safety factor qbar for divertors;\nicurr = 3,4, q = safety factor at 95% surface'
 DICT_DESCRIPTIONS['q0']        = 'Safety factor on axis'
 DICT_DESCRIPTIONS['q95']       = 'Safety factor at 95% surface'
 DICT_DESCRIPTIONS['qfuel']     = 'Plasma fuelling rate (nucleus-pairs/s)'
@@ -3358,8 +3364,8 @@ DICT_DESCRIPTIONS['tqnch']     = 'Shut down time for pf coils (s); if pulsed, = 
 DICT_DESCRIPTIONS['tramp']     = 'Initial pf coil charge time (s); if pulsed, = tohs'
 DICT_DESCRIPTIONS['tratio']    = 'Ion temperature / electron temperature;\nused to calculate ti if tratio > 0.0'
 DICT_DESCRIPTIONS['trcl']      = 'Transportation clearance between components (m)'
-DICT_DESCRIPTIONS['triang']    = 'Plasma separatrix triangularity (calculated if ishape=1)'
-DICT_DESCRIPTIONS['triang95']  = 'Plasma triangularity at 95% surface'
+DICT_DESCRIPTIONS['triang']    = 'Plasma separatrix triangularity (calculated if ishape=1, 3 or 4)'
+DICT_DESCRIPTIONS['triang95']  = 'Plasma triangularity at 95% surface (calculated if ishape < 3)'
 DICT_DESCRIPTIONS['trithtmw']  = 'Power required for tritium processing (mw)'
 DICT_DESCRIPTIONS['tritprate'] = 'Tritium production rate (g/day) (blktmodel>0)'
 DICT_DESCRIPTIONS['triv']      = 'Volume of tritium, fuel handling and\nhealth physics buildings (m3)'
@@ -3636,7 +3642,7 @@ DICT_MODULE['Impurity Radiation Module'] = ['imprad_model', 'coreradius', 'fimp'
 DICT_MODULE['Numerics']        = ['ioptimz', 'maxcal', 'minmax', 'neqns', 'nineqns', 'nvar', 'icc', 'ixc', 'epsfcn', 'epsvmc', 'factor', 'ftol', 'boundl', 'boundu']
 DICT_MODULE['Pf Power Variables'] = ['iscenr']
 DICT_MODULE['Pfcoil Variables'] = ['ac1oh', 'acsoh', 'alfapf', 'coheof', 'cptdin', 'fcohbop', 'fcuoh', 'ipfloc', 'ipfres', 'isumatpf', 'ncls', 'nfxfh', 'ngrp', 'ohhghf', 'pfclres', 'rjconpf', 'routr', 'rpf1', 'rpf2', 'sccufac', 'sigpfalw', 'sigpfcalw', 'sigpfcf', 'vf', 'vfohc', 'zref']
-DICT_MODULE['Physics Variables'] = ['alphaj', 'alphan', 'alphat', 'aspect', 'beamfus0', 'beta', 'betbm0', 'bt', 'cfe0', 'csawth', 'cvol', 'dene', 'dnbeta', 'epbetmax', 'falpha', 'fbfe', 'fdeut', 'ffwal', 'fhe3', 'ftrit', 'fvsbrnni', 'gamma', 'gtscale', 'hfact', 'ibss', 'iculbl', 'icurr', 'idensl', 'ifalphap', 'ifispact', 'igeom', 'ignite', 'iinvqd', 'impc', 'impo', 'ipedestal', 'neped', 'nesep', 'rhopedn', 'rhopedt', 'tbeta', 'teped', 'tesep', 'iprofile', 'iradloss', 'isc', 'iscrp', 'ishape', 'itart', 'iwalld', 'kappa', 'q', 'q0', 'ralpne', 'rli', 'rmajor', 'rnbeam', 'snull', 'ssync', 'te', 'ti', 'tratio', 'triang', 'zfear']
+DICT_MODULE['Physics Variables'] = ['alphaj', 'alphan', 'alphat', 'aspect', 'beamfus0', 'beta', 'betbm0', 'bt', 'cfe0', 'csawth', 'cvol', 'dene', 'dnbeta', 'epbetmax', 'falpha', 'fbfe', 'fdeut', 'ffwal', 'fhe3', 'ftrit', 'fvsbrnni', 'gamma', 'gtscale', 'hfact', 'ibss', 'iculbl', 'icurr', 'idensl', 'ifalphap', 'ifispact', 'igeom', 'ignite', 'iinvqd', 'impc', 'impo', 'ipedestal', 'neped', 'nesep', 'rhopedn', 'rhopedt', 'tbeta', 'teped', 'tesep', 'iprofile', 'iradloss', 'isc', 'iscrp', 'ishape', 'itart', 'iwalld', 'kappa', 'kappa95', 'q', 'q0', 'ralpne', 'rli', 'rmajor', 'rnbeam', 'snull', 'ssync', 'te', 'ti', 'tratio', 'triang', 'triang95', 'zfear']
 DICT_MODULE['Pulse Variables'] = ['afw', 'bctmp', 'coolp', 'dtstor', 'istore', 'itcycl', 'lpulse', 'tmprse']
 DICT_MODULE['Rfp Variables']   = ['irfp', 'rfpth']
 DICT_MODULE['Scan Module']     = ['isweep', 'nsweep', 'sweep']

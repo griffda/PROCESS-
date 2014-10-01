@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 341
+#  GIT Revision 342
 #
 #  P J Knight
 #
@@ -25,15 +25,18 @@
 #  Turn on full debugging using 'make ARCH=... DEBUG=YES'
 #    (currently this is turned on by default)
 #
-#  Type 'make clean' to clean up the directory to allow a full recompilation
+#  Type 'make clean' to clean up the directory to allow a full Fortran recompilation
+#
+#  Type 'make cleandoc' to remove all html files and the intermediate files used
+#    to build the PROCESS User Guide, so that they can be recreated using 'make doc'
 #
 #  Type 'make html' to produce web-compatible html files from the autodoc
 #    comments embedded in the source code
 #
-#  Type 'make manual' to produce dvi and pdf files from the PROCESS manual
+#  Type 'make manual' to produce dvi and pdf files from the PROCESS User Guide
 #    contained in the *.tex files and associated postscript pictures
 #
-#  Type 'make doc' to produce both html files and the PROCESS manual
+#  Type 'make doc' to produce both html files and the PROCESS User Guide
 #
 #  Type 'make tar' to produce a tar file containing all the source files
 #    and primary documentation files; the file will be called process.tar.gz
@@ -41,8 +44,8 @@
 #  Type 'make archive' to produce an archive of the latest run in this directory
 #    (including input and output files); this produces a file called process_run.tar.gz
 #
-#  Type 'make dicts' to recreate the dictionaries file 'process_dicts.py'
-#  used by the Python utilities
+#  Type 'make dicts' to recreate the dictionary file 'process_dicts.py'
+#    used by the Python utilities, and 'gui_dicts.py' used by the GUI.
 #
 ################# Start of Custom Section #####################
 
@@ -249,7 +252,7 @@ root.dir:
 
 ### Utilities #################
 
-.PHONY: clean tar archive doc manual html dicts
+.PHONY: clean cleandoc tar archive doc manual html dicts
 
 # Clean up directory, to force full recompilation
 
@@ -257,9 +260,11 @@ clean:
 	rm -f process.exe *.o *.mod
 	rm -f root.dir
 	rm -f *~
+
+cleandoc:
 	rm -f autodoc
 	rm -f *.aux *.log process.dvi process.toc process.lof process.lot process.pdf
-	rm -f *.html
+	cp -f vardes.html vardes.bak && rm -f *.html
 
 # Make a tar distribution of the source and other critical files
 # from the current directory
@@ -306,6 +311,12 @@ doc: html manual
 
 dicts: root.dir
 	@ mv utilities/process_io_lib/process_dicts.py utilities/process_io_lib/process_dicts.py_prev
+	@ echo ''
 	@ echo 'Creating Python dictionaries... warnings are usually ignorable!'
 	utilities/create_dicts.py > utilities/process_io_lib/process_dicts.py
-	chmod 755 utilities/process_io_lib/process_dicts.py
+	@chmod 755 utilities/process_io_lib/process_dicts.py
+	@ mv utilities/processgui/dicts/gui_dicts.py utilities/processgui/dicts/gui_dicts.py_prev
+	utilities/processgui/dicts/make_gui_dicts.py > utilities/processgui/dicts/gui_dicts.py
+	@ echo 'Dictionaries have been updated'
+	@ echo ''
+
