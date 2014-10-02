@@ -36,9 +36,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-10-01
+2014-10-02
 \hfill
-Revision: 343
+Revision: 344
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -653,7 +653,7 @@ no. & description                                               & type & \texttt
 20  & neutral beam tangency radius upper limit (NBI)            & L    & \textbf{33},31,3,13 \\
 21  & minor radius lower limit                                  & L    & \textbf{32} \\
 22  & divertor collisionality upper limit                       & L    & \textbf{34},43 \\
-23  & UNUSED                                                    &      & \\
+23  & conducting shell to plasma minor radius ratio upper limit & L    & \textbf{104},1,74 \\
 24  & Beta upper limit (also beta limit in stellarators)        & L    & \textbf{36},1,2,3,4,6,18 \\
 25  & peak toroidal field upper limit                           & L    & \textbf{35},3,13,29 \\
 26  & central solenoid current density at End of Flat-top upper limit    & L    & \textbf{38},37,41,12 \\
@@ -874,13 +874,14 @@ no. & variable name     & description                                           
 100 & \texttt{ftfthko}  & (OBSOLETE) f-value for TF coil radial thickness lower limit eqn    & 58  & \texttt{0.001D0} & \texttt{1.000D0} \\
 101 & \texttt{prp}      & ratio of TF coil radial plate area to winding pack area &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
 102 & \texttt{fimpvar}  & impurity fraction of element \texttt{impvar}            &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
-103 & \texttt{flhthresh}& f-value for L-H power threshold limit equation          & 15  & \texttt{1.00D0} & \texttt{1.000D6} \\
+103 & \texttt{flhthresh}& f-value for L-H power threshold limit equation          & 15  & \texttt{1.000D0} & \texttt{1.000D6} \\
+104 & \texttt{fcwr}     & f-value for conducting shell radius limit equation      & 23  & \texttt{0.001D0} & \texttt{1.000D0} \\
 \hline
 \end{tabular}
 \end{center}
-\caption[List of iteration variables 51 to 103]
+\caption[List of iteration variables 51 to 104]
 {\label{tab:itvars2}
-  \textit{Iteration variables 51 to 103 present in \process. The f-values correspond to the
+  \textit{Iteration variables 51 to 104 present in \process. The f-values correspond to the
     given constraint equations (see Table~\ref{tab:eqns}). The other iteration
     variables are shown in Table~\ref{tab:itvars1}.}
 }
@@ -1326,6 +1327,17 @@ follows~\cite{DEMOPhysicsGuidelines}:
   values are calculated from them by inverting Equations~\ref{eqn:k95} and~\ref{eqn:d95}.
 
 \end{itemize}
+
+A constraint relating to the plasma's vertical stability may be turned on if
+required. In principle, the inner surface of the outboard shield could be used
+as the location of a conducting shell which should mitigate the vertical
+displacement growth rate of plasmas with significant
+elongation~\cite{Sakamoto}. The maximum distance $r_{\mbox{\scriptsize shell,
+  max}}$ of this shell from the centre of the plasma may be set using input
+parameter \texttt{cwrmax}, such that $r_{\mbox{\scriptsize shell, max}} = $
+\texttt{cwrmax*rminor}. Constraint equation no.\ 23 should be turned on with
+iteration variable no.\ 104 (\texttt{fcwr}) to enforce this. (A scaling of
+\texttt{cwrmax} with elongation should be available shortly.)
 
 The plasma surface area, cross-sectional area and volume are calculated using
 formulations that approximate the LCFS as a revolution of two arcs which
@@ -5610,6 +5622,11 @@ T.\ Hartmann and H.\ Zohm,
 \textit{``Towards a `Physics Design Guidelines for a DEMO Tokamak'
   Document''},
 EFDA Report, March 2012 (Activity\_3\_Physics\_Design\_Guidelines\_2L8QVN\_v1\_0(1).pdf)
+
+\bibitem{Sakamoto}
+Y.\ Sakamoto,
+\textit{``Recent progress in vertical stability analysis in JA''},
+Task meeting EU-JA\#16, Fusion for Energy, Garching, 24--25 June 2014
 
 \bibitem{logbook14_41}
 P.\ J.\ Knight, CCFE Logbook, F/MI/PJK/LOGBOOK14, pp.41--43

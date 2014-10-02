@@ -59,6 +59,7 @@ module numerics
   !+ad_hist  17/09/14 PJK Changed default values
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  01/10/14 PJK Reassigned lablcc(15); new iteration variable 103
+  !+ad_hist  02/10/14 PJK Reassigned lablcc(23); new iteration variable 104
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -71,8 +72,8 @@ module numerics
 
   public
 
-  !+ad_vars  ipnvars /103/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 103
+  !+ad_vars  ipnvars /104/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 104
   !+ad_vars  ipeqns /58/ FIX : number of constraint equations available
   integer, parameter :: ipeqns  = 58
   !+ad_vars  ipnfoms /15/ FIX : number of available figures of merit
@@ -254,8 +255,8 @@ module numerics
        'Plasma minor radius lower limit  ', &
        !+ad_varc  <LI> (22) Divertor collisionality upper limit
        'Divertor collisionality upper lim', &
-       !+ad_varc  <LI> (23) UNUSED
-       'UNUSED                           ', &
+       !+ad_varc  <LI> (23) Conducting shell to plasma minor radius ratio upper limit
+       'Conducting shell radius upper lim', &
        !+ad_varc  <LI> (24) * Beta upper limit
        'Beta upper limit                 ', &
        !+ad_varc  <LI> (25) Peak toroidal field upper limit
@@ -435,7 +436,8 @@ module numerics
        0,  &  !  100
        0,  &  !  101
        0,  &  !  102
-       0   &  !  103
+       0,  &  !  103
+       0   &  !  104
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -644,8 +646,10 @@ module numerics
        'prp      ', &
        !+ad_varc  <LI> (102) fimpvar
        'fimpvar  ', &
-       !+ad_varc  <LI> (103) flhthresh</UL>
-       'flhthresh'  &
+       !+ad_varc  <LI> (103) flhthresh
+       'flhthresh', &
+       !+ad_varc  <LI> (104) fcwr</UL>
+       'fcwr     '  &
        /)
 
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
@@ -764,7 +768,8 @@ module numerics
        0.001D0, &  !  100
        1.00D-6, &  !  101
        1.00D-6, &  !  102
-       1.000D0  &  !  103
+       1.000D0, &  !  103
+       0.001D0  &  !  104
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -872,7 +877,8 @@ module numerics
        1.000D0, &  !  100
        0.010D0, &  !  101
        0.010D0, &  !  102
-       1.000D6  &  !  103
+       1.000D6, &  !  103
+       1.000D0  &  !  104
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

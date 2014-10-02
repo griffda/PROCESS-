@@ -147,6 +147,7 @@ contains
     !+ad_hisc               Added evaluation of residues etc. in physical
     !+ad_hisc               units
     !+ad_hist  01/10/14 PJK Added new eqn 15
+    !+ad_hist  02/10/14 PJK Added new eqn 23
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -167,7 +168,7 @@ contains
     !  Local variables
 
     integer :: i,i1,i2
-    real(kind(1.0D0)) :: cratmx, tcycle, totmva, acoil, pradmaxpv
+    real(kind(1.0D0)) :: cratmx, rcw, tcycle, totmva, acoil, pradmaxpv
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -529,10 +530,16 @@ contains
              units(i) = ''
           end if
 
-       case (23)  !  Equation for allowable TF Coil current density
-          !  This equation is redundant... pre-1992!
+       case (23)  !  Equation for conducting shell radius / rminor upper limit
 
-          call report_error(3)
+          rcw = rminor + scraplo + fwoth + blnkoth
+          cc(i) = 1.0D0 - fcwr * cwrmax*rminor / rcw
+          if (present(con)) then
+             con(i) = cwrmax*rminor * (1.0D0 - cc(i))
+             err(i) = rcw * cc(i)
+             symbol(i) = '<'
+             units(i) = 'm'
+          end if
 
        case (24)  !  Equation for beta upper limit
 

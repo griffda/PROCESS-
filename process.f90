@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '343    Release Date :: 2014-10-01'
+       '344    Release Date :: 2014-10-02'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1829,3 +1829,5 @@ end subroutine output
 ! GIT 341: September 2014 Master Release
 ! GIT 342: Added more ishape options
 ! GIT 343: Added L-H power threshold constraint
+! GIT 344: Fixed problem with create_dicts.py (need to remove *.f90*~ files before running);
+!          added conducting shell radius to rminor ratio constraint

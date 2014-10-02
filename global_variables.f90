@@ -133,6 +133,7 @@ module physics_variables
   !+ad_hist  01/10/14 PJK Added more ishape options
   !+ad_hist  01/10/14 PJK Modified q wording
   !+ad_hist  01/10/14 PJK Added ilhthresh, plhthresh
+  !+ad_hist  02/10/14 PJK Added cwrmax
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -195,6 +196,10 @@ module physics_variables
   real(kind(1.0D0)) :: csawth = 1.0D0
   !+ad_vars  cvol /1.0/ : multiplying factor times plasma volume (normally=1)
   real(kind(1.0D0)) :: cvol = 1.0D0
+  !+ad_vars  cwrmax /1.35/ : maximum ratio of conducting wall distance to
+  !+ad_varc                  plasma minor radius for vertical stability
+  !+ad_varc                  (constraint equation 23)
+  real(kind(1.0D0)) :: cwrmax = 1.35D0
   !+ad_vars  dene /9.8e19/ : electron density (/m3) (iteration variable 6)
   real(kind(1.0D0)) :: dene = 9.8D19
   !+ad_vars  deni : fuel ion density (/m3)
@@ -2951,6 +2956,7 @@ module constraint_variables
   !+ad_hist  19/05/14 PJK Added fradpwr
   !+ad_hist  17/09/14 PJK Changed default values
   !+ad_hist  01/10/14 PJK Added flhthresh
+  !+ad_hist  02/10/14 PJK Added fcwr
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2987,6 +2993,9 @@ module constraint_variables
   !+ad_vars  fbetatry /1.0/ : f-value for beta limit
   !+ad_varc                   (constraint equation 24, iteration variable 36)
   real(kind(1.0D0)) :: fbetatry = 1.0D0
+  !+ad_vars  fcwr /1.0/ : f-value for conducting wall radius / rminor limit
+  !+ad_varc               (constraint equation 23, iteration variable 104)
+  real(kind(1.0D0)) :: fcwr = 1.0D0
   !+ad_vars  fdene /1.0/ : f-value for density limit
   !+ad_varc                (constraint equation 5, iteration variable 9)
   real(kind(1.0D0)) :: fdene = 1.0D0
@@ -3036,7 +3045,7 @@ module constraint_variables
   !+ad_vars  fpinj /1.0/ : f-value for injection power
   !+ad_varc                (constraint equation 30, iteration variable 46)
   real(kind(1.0D0)) :: fpinj = 1.0D0
-  !+ad_vars  fpnetel /1.0/ : f value for net electric power
+  !+ad_vars  fpnetel /1.0/ : f-value for net electric power
   !+ad_varc                  (constraint equation 16, iteration variable 25)
   real(kind(1.0D0)) :: fpnetel = 1.0D0
   !+ad_vars  fportsz /1.0/ : f-value for neutral beam tangency radius limit
@@ -3048,7 +3057,7 @@ module constraint_variables
   !+ad_vars  fptemp /1.0/ : f-value for peak centrepost temperature
   !+ad_varc                 (constraint equation 44, iteration variable 68)
   real(kind(1.0D0)) :: fptemp = 1.0D0
-  !+ad_vars  fptfnuc /1.0/ : f value for maximum TF coil nuclear heating
+  !+ad_vars  fptfnuc /1.0/ : f-value for maximum TF coil nuclear heating
   !+ad_varc                  (constraint equation 54, iteration variable 95)
   real(kind(1.0D0)) :: fptfnuc = 1.0D0
   !+ad_vars  fq /1.0/ : f-value for edge safety factor

@@ -318,6 +318,7 @@ contains
     !+ad_hist  16/09/14 PJK Changed TFC_MODEL range
     !+ad_hist  01/10/14 PJK Added KAPPA95, TRIANG95; changed ISHAPE range
     !+ad_hist  01/10/14 PJK Added ILHTHRESH
+    !+ad_hist  02/10/14 PJK Added FLHTHRESH, FCWR, CWRMAX
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -490,6 +491,9 @@ contains
        case ('CVOL')
           call parse_real_variable('CVOL', cvol, 0.01D0, 10.0D0, &
                'Plasma volume multiplier')
+       case ('CWRMAX')
+          call parse_real_variable('CWRMAX', cwrmax, 1.0D0, 3.0D0, &
+               'Max conducting shell to rminor radius')
        case ('DENE')
           call parse_real_variable('DENE', dene, 1.0D18, 1.0D22, &
                'Electron density (/m3)')
@@ -757,9 +761,9 @@ contains
        case ('FBETATRY')
           call parse_real_variable('FBETATRY', fbetatry, 0.001D0, 10.0D0, &
                'F-value for beta limit')
-       case ('FRADPWR')
-          call parse_real_variable('FRADPWR', fradpwr, 0.0D0, 1.0D0, &
-               'F-value for radiation power limit')
+       case ('FCWR')
+          call parse_real_variable('FCWR', fcwr, 0.001D0, 10.0D0, &
+               'F-value for conducting wall radius')
        case ('FDENE')
           call parse_real_variable('FDENE', fdene, 0.001D0, 10.0D0, &
                'F-value for density limit')
@@ -804,6 +808,9 @@ contains
        case ('FJPROT')
           call parse_real_variable('FJPROT', fjprot, 0.001D0, 10.0D0, &
                'F-value for SCTF winding pack J')
+       case ('FLHTHRESH')
+          call parse_real_variable('FLHTHRESH', flhthresh, 0.001D0, 10.0D0, &
+               'F-value for L-H power threshold')
        case ('FMVA')
           call parse_real_variable('FMVA', fmva, 0.001D0, 10.0D0, &
                'F-value for maximum MVA')
@@ -834,6 +841,9 @@ contains
        case ('FQVAL')
           call parse_real_variable('FQVAL', fqval, 0.001D0, 10.0D0, &
                'F-value for fusion gain Q')
+       case ('FRADPWR')
+          call parse_real_variable('FRADPWR', fradpwr, 0.0D0, 1.0D0, &
+               'F-value for radiation power limit')
        case ('FRFPF')
           call parse_real_variable('FRFPF', frfpf, 0.001D0, 10.0D0, &
                'F-value for RFP reversal parameter')
