@@ -66,6 +66,7 @@ subroutine loadxc
   !+ad_hist  30/07/14 PJK Changed tftort clause
   !+ad_hist  01/10/14 PJK Added flhthresh (103)
   !+ad_hist  02/10/14 PJK Added fcwr (104)
+  !+ad_hist  06/10/14 PJK Added fnbshinef (105)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -219,6 +220,7 @@ subroutine loadxc
      case (102) ; xcm(i) = impurity_arr(impvar)%frac
      case (103) ; xcm(i) = flhthresh
      case (104) ; xcm(i) = fcwr
+     case (105) ; xcm(i) = fnbshinef
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -316,6 +318,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  01/10/14 PJK Added flhthresh (103)
   !+ad_hist  02/10/14 PJK Added fcwr (104)
+  !+ad_hist  06/10/14 PJK Added fnbshinef (105)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -460,6 +463,7 @@ subroutine convxc(xc,nn)
         impurity_arr(impvar)%frac = fimpvar
      case (103) ; flhthresh = xc(i)/scale(i)
      case (104) ; fcwr      = xc(i)/scale(i)
+     case (105) ; fnbshinef = xc(i)/scale(i)
 
      case default
         call report_error(57)

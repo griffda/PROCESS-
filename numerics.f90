@@ -60,6 +60,7 @@ module numerics
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  01/10/14 PJK Reassigned lablcc(15); new iteration variable 103
   !+ad_hist  02/10/14 PJK Reassigned lablcc(23); new iteration variable 104
+  !+ad_hist  06/10/14 PJK New iteration variable 105; new constraint 59
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -72,10 +73,10 @@ module numerics
 
   public
 
-  !+ad_vars  ipnvars /104/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 104
-  !+ad_vars  ipeqns /58/ FIX : number of constraint equations available
-  integer, parameter :: ipeqns  = 58
+  !+ad_vars  ipnvars /105/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 105
+  !+ad_vars  ipeqns /59/ FIX : number of constraint equations available
+  integer, parameter :: ipeqns  = 59
   !+ad_vars  ipnfoms /15/ FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 15
 
@@ -206,7 +207,8 @@ module numerics
        0,  &  !  55
        0,  &  !  56
        0,  &  !  57
-       0   &  !  58
+       0,  &  !  58
+       0   &  !  59
        /)
   !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -237,8 +239,8 @@ module numerics
        'Volt second lower limit          ', &
        !+ad_varc  <LI> (13) Burn time lower limit (PULSE)
        'Burn time lower limit            ', &
-       !+ad_varc  <LI> (14) * Energy of neutral beam (NBI) (consistency equation)
-       'Neutral beam energy consistency  ', &
+       !+ad_varc  <LI> (14) * Neutral beam decay lengths to plasma centre (NBI) (consistency equation)
+       'NBI decay lengths consistency    ', &
        !+ad_varc  <LI> (15) L-H power threshold limit
        'L-H power threshold limit        ', &
        !+ad_varc  <LI> (16) Net electric power lower limit
@@ -326,8 +328,10 @@ module numerics
        'Psep / R upper limit             ', &
        !+ad_varc  <LI> (57) TF coil leg toroidal thickness lower limit (OBSOLETE)
        'TF coil leg tor width lower limit', &
-       !+ad_varc  <LI> (58) TF coil leg radial thickness lower limit (OBSOLETE)</UL>
-       'TF coil leg rad width lower limit'  &
+       !+ad_varc  <LI> (58) TF coil leg radial thickness lower limit (OBSOLETE)
+       'TF coil leg rad width lower limit', &
+       !+ad_varc  <LI> (59) Neutral beam shine-through fraction upper limit (NBI)</UL>
+       'NB shine-through frac upper limit'  &
        /)
 
   !+ad_vars  ixc(ipnvars) /4,5,6,7,10,12,13,19,28,29,36,39,50,53,54,61/ :
@@ -437,7 +441,8 @@ module numerics
        0,  &  !  101
        0,  &  !  102
        0,  &  !  103
-       0   &  !  104
+       0,  &  !  104
+       0   &  !  105
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -648,8 +653,10 @@ module numerics
        'fimpvar  ', &
        !+ad_varc  <LI> (103) flhthresh
        'flhthresh', &
-       !+ad_varc  <LI> (104) fcwr</UL>
-       'fcwr     '  &
+       !+ad_varc  <LI> (104) fcwr
+       'fcwr     ', &
+       !+ad_varc  <LI> (104) fnbshine</UL>
+       'fnbshinef'  &
        /)
 
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
@@ -769,7 +776,8 @@ module numerics
        1.00D-6, &  !  101
        1.00D-6, &  !  102
        1.000D0, &  !  103
-       0.001D0  &  !  104
+       0.001D0, &  !  104
+       0.001D0  &  !  105
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -878,7 +886,8 @@ module numerics
        0.010D0, &  !  101
        0.010D0, &  !  102
        1.000D6, &  !  103
-       1.000D0  &  !  104
+       1.000D0, &  !  104
+       1.000D0  &  !  105
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

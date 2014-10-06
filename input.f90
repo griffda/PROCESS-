@@ -319,6 +319,7 @@ contains
     !+ad_hist  01/10/14 PJK Added KAPPA95, TRIANG95; changed ISHAPE range
     !+ad_hist  01/10/14 PJK Added ILHTHRESH
     !+ad_hist  02/10/14 PJK Added FLHTHRESH, FCWR, CWRMAX
+    !+ad_hist  06/10/14 PJK Added FNBSHINEF, NBSHINEFMAX
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -814,6 +815,9 @@ contains
        case ('FMVA')
           call parse_real_variable('FMVA', fmva, 0.001D0, 10.0D0, &
                'F-value for maximum MVA')
+       case ('FNBSHINEF')
+          call parse_real_variable('FNBSHINEF', fnbshinef, 0.001D0, 10.0D0, &
+               'F-value for maximum NBI shine-through fraction')
        case ('FPEAKB')
           call parse_real_variable('FPEAKB', fpeakb, 0.001D0, 10.0D0, &
                'F-value for max toroidal field')
@@ -901,6 +905,9 @@ contains
        case ('MVALIM')
           call parse_real_variable('MVALIM', mvalim, 0.0D0, 1000.0D0, &
                'Maximum MVA limit')
+       case ('NBSHINEFMAX')
+          call parse_real_variable('NBSHINEFMAX', nbshinefmax, 1.0D-20, 1.0D-1, &
+               'Maximum NB shine-through fraction')
        case ('NFLUTFMAX')
           call parse_real_variable('NFLUTFMAX', nflutfmax, 1.0D22, 1.0D24, &
                'Max fast neutron fluence on TF coil (n/m2)')

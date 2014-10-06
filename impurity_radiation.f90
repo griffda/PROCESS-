@@ -38,6 +38,7 @@ module impurity_radiation_module
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  24/09/14 PJK Path name now set automatically (via make)
   !+ad_hist  25/09/14 PJK Corrected root.dir include syntax
+  !+ad_hist  06/10/14 PJK Changed impvar default from 10 to 9
   !+ad_stat  Okay
   !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
   !+ad_docs  Sertoli, private communication
@@ -57,7 +58,7 @@ module impurity_radiation_module
 
   !+ad_vars  imprad_model /1/ : switch for impurity radiation model:<UL>
   !+ad_varc               <LI>  = 0 original ITER 1989 model
-  !+ad_varc               <LI>  = 1 2014 multi-impurity, arbitrary profile model </UL>
+  !+ad_varc               <LI>  = 1 2014 multi-impurity, pedestal profile model </UL>
   !+ad_varc  (Whichever model is used, it is recommended to turn on
   !+ad_varc  constraint eqn.17 with iteration variable 28: fradpwr.)
   integer, public :: imprad_model = 1
@@ -117,9 +118,9 @@ module impurity_radiation_module
   !+ad_varc           Directory containing impurity radiation data files
   character(len=60), public :: impdir = ROOTDIR//'/impuritydata/'
 
-  !+ad_vars  impvar /10 (iron)/ : fimp element value to be varied if iteration
+  !+ad_vars  impvar /9 (argon)/ : fimp element value to be varied if iteration
   !+ad_varc                       variable number 102 is turned on
-  integer, public :: impvar = 10
+  integer, public :: impvar = 9
 
   !  Declare impurity data type
 

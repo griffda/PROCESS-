@@ -88,6 +88,7 @@ contains
     !+ad_hisc               nbeam, ech, lwhymod
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  30/06/14 PJK Added error handling
+    !+ad_hist  06/10/14 PJK Use global nbshinef instead of local fshine
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -101,7 +102,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: dene20,effnbss,effofss,effrfss,fpion,fshine, &
+    real(kind(1.0D0)) :: dene20,effnbss,effofss,effrfss,fpion, &
          gamnb,gamof,gamrf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -147,7 +148,7 @@ contains
 
        case (5)  !  ITER Neutral Beam current drive
 
-          call iternb(effnbss,fpion,fshine)
+          call iternb(effnbss,fpion,nbshinef)
           effcd = effnbss
 
        case (6)  !  Culham Lower Hybrid current drive model
@@ -162,7 +163,7 @@ contains
 
        case (8)  !  Culham Neutral Beam model
 
-          call culnbi(effnbss,fpion,fshine)
+          call culnbi(effnbss,fpion,nbshinef)
           effcd = effnbss
 
        case (9)  !  (trivial) RFP Oscillating Field CD model
@@ -340,7 +341,7 @@ contains
        call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)
        call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam)
        call ovarre(outfile,'Fraction of beam energy to ions','(fpion)',fpion)
-       call ovarre(outfile,'Neutral beam shine-through fraction','(fshine)',fshine)
+       call ovarre(outfile,'Neutral beam shine-through fraction','(nbshinef)',nbshinef)
        call ovarre(outfile,'Beam duct shielding thickness (m)','(nbshield)',nbshield)
        call ovarre(outfile,'R injection tangent / R-major','(frbeam)',frbeam)
        call ovarre(outfile,'Beam centreline tangency radius (m)','(rtanbeam)', &
@@ -390,6 +391,7 @@ contains
     !+ad_hist  24/02/14 PJK Rationalised arguments
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  01/09/14 PJK Set fshine to zero if it is negligible
+    !+ad_hist  06/10/14 PJK Set fshine to 1.0e-20 if it is negligible
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
@@ -431,7 +433,7 @@ contains
     !  Shine-through fraction of beam
 
     fshine = exp(-2.0D0 * dpath*dene*sigstop)
-    if (fshine < 1.0D-20) fshine = 0.0D0
+    fshine = max(fshine, 1.0D-20)
 
     !  Deuterium and tritium beam densities
 
@@ -1328,7 +1330,7 @@ contains
     !+ad_hist  19/06/13 PJK Corrected dpath calculation
     !+ad_hist  03/07/13 PJK Changed zeffai description
     !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  01/09/14 PJK Set fshine to zero if it is negligible
+    !+ad_hist  01/09/14 PJK Set fshine to 1.0e-20 if it is negligible
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1369,7 +1371,7 @@ contains
     !  Shine-through fraction of beam
 
     fshine = exp(-2.0D0 * dpath*dnla*sigstop)
-    if (fshine < 1.0D-20) fshine = 0.0D0
+    fshine = max(fshine, 1.0D-20)
 
     !  Deuterium and tritium beam densities
 

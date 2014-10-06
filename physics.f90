@@ -5251,6 +5251,7 @@ contains
     !+ad_hist  19/08/14 PJK Added dnla / Greenwald ratio
     !+ad_hist  01/10/14 PJK Modified safety factor output statements
     !+ad_hist  01/10/14 PJK Added plhthresh output
+    !+ad_hist  06/10/14 PJK Modified plhthresh output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5655,9 +5656,17 @@ contains
             '(pthrmw(7))',pthrmw(7))
        call ovarre(outfile,'2008 Martin scaling: 95% lower bound (MW)', &
             '(pthrmw(8))',pthrmw(8))
+       call oblnkl(outfile)
        if (any(icc == 15)) then
-          call oblnkl(outfile)
+          call ovarin(outfile,'Switch for active L-H power threshold scaling', &
+               '(ilhthresh))',ilhthresh)
           call ovarre(outfile,'Active L-H power threshold value (MW)', &
+               '(plhthresh))',plhthresh)
+       else
+          call ovarin(outfile, &
+               'Switch for active L-H power threshold scaling (not enforced)', &
+               '(ilhthresh))',ilhthresh)
+          call ovarre(outfile,'(Inactive) L-H power threshold value (MW)', &
                '(plhthresh))',plhthresh)
        end if
     end if

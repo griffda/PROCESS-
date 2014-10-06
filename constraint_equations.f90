@@ -148,6 +148,7 @@ contains
     !+ad_hisc               units
     !+ad_hist  01/10/14 PJK Added new eqn 15
     !+ad_hist  02/10/14 PJK Added new eqn 23
+    !+ad_hist  06/10/14 PJK Added new eqn 59
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -432,7 +433,7 @@ contains
              units(i) = 'sec'
           end if
 
-       case (14)  !  Equation for beam energy consistency
+       case (14)  !  Equation to fix number of NBI decay lengths to plasma centre
           !  This is a consistency equation
 
           cc(i) = 1.0D0 - taubeam/tbeamin
@@ -956,6 +957,16 @@ contains
              err(i) = (thkwp + 2.0D0*tinstf) * cc(i)
              symbol(i) = '>'
              units(i) = 'm'
+          end if
+
+       case (59)  !  Equation for neutral beam shine-through fraction upper limit
+
+          cc(i) = 1.0D0 - fnbshinef * nbshinefmax / nbshinef
+          if (present(con)) then
+             con(i) = nbshinefmax * (1.0D0 - cc(i))
+             err(i) = nbshinef * cc(i)
+             symbol(i) = '<'
+             units(i) = ''
           end if
 
        case default

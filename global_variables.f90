@@ -718,6 +718,7 @@ module current_drive_variables
   !+ad_hist  19/06/14 PJK Added effcd, etacd
   !+ad_hist  17/09/14 PJK Changed default values
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
+  !+ad_hist  06/10/14 PJK Added nbshinef
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -793,6 +794,8 @@ module current_drive_variables
   !+ad_varc         <LI> = 0 turned off;
   !+ad_varc         <LI> = 1 turned on</UL>
   integer :: irfcd = 1
+  !+ad_vars  nbshinef : neutral beam shine-through fraction
+  real(kind(1.0D0)) :: nbshinef = 0.0D0
   !+ad_vars  nbshield /0.5/ : neutral beam duct shielding thickness (m)
   real(kind(1.0D0)) :: nbshield = 0.5D0
   !+ad_vars  pheat /0.0/ : heating power not used for current drive (MW)
@@ -2957,6 +2960,7 @@ module constraint_variables
   !+ad_hist  17/09/14 PJK Changed default values
   !+ad_hist  01/10/14 PJK Added flhthresh
   !+ad_hist  02/10/14 PJK Added fcwr
+  !+ad_hist  06/10/14 PJK Added fnbshinef, nbshinefmax
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -3039,6 +3043,9 @@ module constraint_variables
   !+ad_vars  fmva /1.0/ : f-value for maximum MVA
   !+ad_varc               (constraint equation 19, iteration variable 30)
   real(kind(1.0D0)) :: fmva = 1.0D0
+  !+ad_vars  fnbshinef /1.0/ : f-value for maximum neutral beam shine-through fraction
+  !+ad_varc                    (constraint equation 59, iteration variable 105)
+  real(kind(1.0D0)) :: fnbshinef = 1.0D0
   !+ad_vars  fpeakb /1.0/ : f-value for maximum toroidal field
   !+ad_varc                 (constraint equation 25, iteration variable 35)
   real(kind(1.0D0)) :: fpeakb = 1.0D0
@@ -3127,6 +3134,9 @@ module constraint_variables
   !+ad_vars  mvalim /40.0/ : maximum MVA limit
   !+ad_varc                  (constraint equation 19)
   real(kind(1.0D0)) :: mvalim = 40.0D0
+  !+ad_vars  nbshinefmax /1.0e-3/ : maximum neutral beam shine-through fraction
+  !+ad_varc                         (constraint equation 59)
+  real(kind(1.0D0)) :: nbshinefmax = 1.0D-3
   !+ad_vars  nflutfmax /1.0e23/ : max fast neutron fluence on TF coil (n/m2)
   !+ad_varc                      (blktmodel>0)
   !+ad_varc                      (constraint equation 53)

@@ -36,9 +36,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-10-02
+2014-10-06
 \hfill
-Revision: 344
+Revision: 345
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -644,7 +644,7 @@ no. & description                                               & type & \texttt
 11  & radial build consistency                                  & C    & \textbf{3},1,13,16,29,42,61 \\
 12  & volt second capability lower limit                        & L    & \textbf{15},1,2,3 \\
 13  & burn time lower limit (PULSE)                             & L    & \textbf{21},1,16,17,22,29,42,44,61 \\
-14  & beam energy (NBI)                                         & C    & \textbf{19},1,2,3,6 \\
+14  & neutral beam decay lengths = \texttt{tbeamin} consistency (NBI) & C    & \textbf{19},1,2,3,6 \\
 15  & L-H power threshold limit                                 & L    & \textbf{103} \\
 16  & net electric power lower limit                            & L    & \textbf{25},1,2,3 \\
 17  & radiation power upper limit                               & L    & \textbf{28} \\
@@ -683,6 +683,27 @@ J_{\mbox{\scriptsize protection}}$ upper limit (SCTF)                   & L    &
 48  & poloidal beta upper limit                                 & L    & \textbf{79},2,3,18 \\
 49  & reversal parameter $< 0$ (RFP)                            & L    & \textbf{80},78,3,1 \\
 50  & IFE repetition rate upper limit (IFE)                     & L    & \textbf{86} \\
+\hline
+\end{tabular}
+\end{center}
+\caption[List of constraint equations 1--50]
+{\label{tab:eqns}
+  \textit{Summary of the first 50 constraint equations present in \process. Consistency
+    equations are marked C, limit equations are marked L\@. Some
+    (non-exhaustive) iteration variable numbers (see Tables~\ref{tab:itvars1}
+    and~\ref{tab:itvars2}) that directly affect the associated constraint
+    equations are given, the one listed first being the most relevant.}
+}
+\normalsize
+\end{table}
+
+\begin{table}[tbph]
+\footnotesize
+\begin{center}
+
+\begin{tabular}{||c|l|c|l||} \hline
+\texttt{icc} &                                                  &      & corresponding \\
+no. & description                                               & type & \texttt{ixc} variables \\ \hline
 51  & startup volt-seconds consistency (PULSE)                  & C    & \textbf{16},29,3,1 \\
 52  & tritium breeding ratio lower limit                        & L    & \textbf{89},90,91 \\
 53  & peak neutron fluence on TF coil upper limit               & L    & \textbf{92},93,94 \\
@@ -690,13 +711,14 @@ J_{\mbox{\scriptsize protection}}$ upper limit (SCTF)                   & L    &
 55  & final He concentration in vacuum vessel upper limit       & L    & \textbf{96},93,94 \\
 56  & $P_{\mbox{\scriptsize separatrix}}/R_{\mbox{\scriptsize major}}$ upper limit & L    & \textbf{97},1,3 \\
 57  & (OBSOLETE) TF coil outer leg toroidal thickness lower limit (SCTF)   & L    & \textbf{99},29,13  \\
-58  & (OBSOLETE) TF coil outer leg radial thickness limit lower (SCTF)     & L    & \textbf{100},13 \\
+58  & (OBSOLETE) TF coil outer leg radial thickness lower limit (SCTF)     & L    & \textbf{100},13 \\
+59  & Neutral beam shine-through fraction upper limit (NBI)     & L    & \textbf{105},6,19,4 \\
 \hline
 \end{tabular}
 \end{center}
-\caption[List of constraint equations]
-{\label{tab:eqns}
-  \textit{Summary of the constraint equations present in \process. Consistency
+\caption[List of constraint equations 51 onwards]
+{\label{tab:eqns2}
+  \textit{Summary of constraint equations 51--59 present in \process. Consistency
     equations are marked C, limit equations are marked L\@. Some
     (non-exhaustive) iteration variable numbers (see Tables~\ref{tab:itvars1}
     and~\ref{tab:itvars2}) that directly affect the associated constraint
@@ -802,12 +824,17 @@ no. & variable name     & description                                   & eqn & 
 48  & \texttt{fstrcase} & f-value for TF coil case stress limit equation & 31  & \texttt{0.001D0} & \texttt{1.000D0} \\
 49  & \texttt{fstrcond} & f-value for TF coil conduit stress limit equation & 32  & \texttt{0.001D0} & \texttt{1.000D0} \\
 50  & \texttt{fiooic}   & f-value for TF coil operational current limit equation & 33  & \texttt{0.001D0} & \texttt{0.500D0} \\
+51  & \texttt{fvdump}   & f-value for TF coil dump voltage limit equation         & 34  & \texttt{0.001D0} & \texttt{1.000D0} \\
+52  & \texttt{vdalw}    & allowable TF coil dump voltage                          &     & \texttt{0.001D0} & \texttt{1.000D6} \\
+53  & \texttt{fjprot}   & f-value for TF coil current protection limit equation   & 35  & \texttt{0.001D0} & \texttt{1.000D0} \\
+54  & \texttt{ftmargtf} & f-value for TF coil temperature margin limit equation   & 36  & \texttt{0.001D0} & \texttt{1.000D0} \\
+55  & \texttt{tmargmin} & minimum allowable TF coil temperature margin            &     & \texttt{0.001D0} & \texttt{100.0D0} \\
 \hline
 \end{tabular}
 \end{center}
-\caption[List of iteration variables 1 to 50]
+\caption[List of iteration variables 1 to 55]
 {\label{tab:itvars1}
-  \textit{Iteration variables 1 to 50 present in \process. The f-values correspond to the
+  \textit{Iteration variables 1 to 55 present in \process. The f-values correspond to the
     given constraint equations (see Table~\ref{tab:eqns}). The other iteration
     variables are shown in Table~\ref{tab:itvars2}.}
 }
@@ -821,11 +848,6 @@ no. & variable name     & description                                   & eqn & 
 \begin{tabular}{||c|l|l|c|c|c||} \hline
 \texttt{ixc} &           &                                                         & \texttt{icc} & lower        & upper       \\
 no. & variable name     & description                                             & eqn & bound        & bound       \\ \hline
-51  & \texttt{fvdump}   & f-value for TF coil dump voltage limit equation         & 34  & \texttt{0.001D0} & \texttt{1.000D0} \\
-52  & \texttt{vdalw}    & allowable TF coil dump voltage                          &     & \texttt{0.001D0} & \texttt{1.000D6} \\
-53  & \texttt{fjprot}   & f-value for TF coil current protection limit equation   & 35  & \texttt{0.001D0} & \texttt{1.000D0} \\
-54  & \texttt{ftmargtf} & f-value for TF coil temperature margin limit equation   & 36  & \texttt{0.001D0} & \texttt{1.000D0} \\
-55  & \texttt{tmargmin} & minimum allowable TF coil temperature margin            &     & \texttt{0.001D0} & \texttt{100.0D0} \\
 56  & \texttt{tdmptf}   & dump time for TF coil                                   &     & \texttt{10.00D0} & \texttt{1.000D6} \\
 57  & \texttt{thkcas}   & TF coil external case thickness                         &     & \texttt{0.050D0} & \texttt{1.000D0} \\
 58  & \texttt{thwcndut} & TF coil conduit case thickness                          &     & \texttt{0.001D0} & \texttt{1.000D0} \\
@@ -876,12 +898,13 @@ no. & variable name     & description                                           
 102 & \texttt{fimpvar}  & impurity fraction of element \texttt{impvar}            &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
 103 & \texttt{flhthresh}& f-value for L-H power threshold limit equation          & 15  & \texttt{1.000D0} & \texttt{1.000D6} \\
 104 & \texttt{fcwr}     & f-value for conducting shell radius limit equation      & 23  & \texttt{0.001D0} & \texttt{1.000D0} \\
+105 & \texttt{fnbshinef}& f-value for NBI shine-through fraction limit equation   & 59  & \texttt{0.001D0} & \texttt{1.000D0} \\
 \hline
 \end{tabular}
 \end{center}
-\caption[List of iteration variables 51 to 104]
+\caption[List of iteration variables 56 to 105]
 {\label{tab:itvars2}
-  \textit{Iteration variables 51 to 104 present in \process. The f-values correspond to the
+  \textit{Iteration variables 56 to 105 present in \process. The f-values correspond to the
     given constraint equations (see Table~\ref{tab:eqns}). The other iteration
     variables are shown in Table~\ref{tab:itvars1}.}
 }
@@ -1822,6 +1845,16 @@ from present-day devices. \process\ calculates these power threshold values
 for the scaling laws listed in Table~\ref{tab:power_thresholds}, in
 routine~\texttt{PTHRESH}.
 
+To enforce one of these scalings, use input parameter \texttt{ilhthresh} to
+select the scaling to use, and turn on constraint equation no.\ 23 with
+iteration variable no.\ 104 (\texttt{flhthresh}). By default, this will ensure
+that the power reaching the divertor is at least equal to the threshold power
+calculated for the chosen scaling, which is a necessary condition for
+H-mode. However, for L-mode it might be appropriate to set \texttt{boundl(104)
+  = 0.001, boundu(104) = 1.0}, which will ensure that the power threshold does
+not exceed the calculated value, and therefore the machine cannot reach
+H-mode.
+
 % Table summarising L-H power threshold scalings
 
 \begin{table}[tbph]
@@ -2538,6 +2571,20 @@ be set using input parameter \texttt{nbshield}.
     with the maximum possible tangency radius is shown here.}
 }
 \end{figure}
+
+\subsubsection{Neutral beam shine-through}
+
+There are two constraint equations that can be used to limit the fraction of
+the neutral beam power that passes right through the plasma. Constraint
+equation no.\ 14 may be used to force the number of exponential decay lengths
+for the beam power to fall before it reaches the plasma centre, to be exactly
+that given by input parameter \texttt{tbeamin}. Alternatively, constraint
+equation no.\ 59 with iteration variable no.\ 105 (\texttt{fnbshinef}) may be
+used to ensure that the beam power fraction emerging from the plasma is no
+more than the value given by input parameter \texttt{nbshinefmax}.
+
+It is recommended that \textbf{only one} of these two constraint equations is
+used during a run.
 
 \subsubsection{Ignited plasma}
 \label{sec:ignited}
