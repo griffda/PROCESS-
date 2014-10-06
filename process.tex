@@ -2572,7 +2572,12 @@ be set using input parameter \texttt{nbshield}.
 }
 \end{figure}
 
-\subsubsection{Neutral beam shine-through}
+\subsubsection{Neutral beam losses}
+
+Input parameter \texttt{forbitloss} can be used to specify the fraction of the
+net injected neutral beam power that is lost between the beam particles'
+ionisation and thermalisation (i.e.\ the orbit loss fraction). The power lost
+is assumed to be absorbed by the first wall.
 
 There are two constraint equations that can be used to limit the fraction of
 the neutral beam power that passes right through the plasma. Constraint

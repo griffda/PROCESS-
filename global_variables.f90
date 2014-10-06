@@ -719,6 +719,7 @@ module current_drive_variables
   !+ad_hist  17/09/14 PJK Changed default values
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  06/10/14 PJK Added nbshinef
+  !+ad_hist  06/10/14 PJK Added forbitloss, porbitlossmw
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -773,6 +774,9 @@ module current_drive_variables
   real(kind(1.0D0)) :: etaof = 0.3D0
   !+ad_vars  feffcd /1.0/ : current drive efficiency fudge factor (iteration variable 47)
   real(kind(1.0D0)) :: feffcd = 1.0D0
+  !+ad_vars  forbitloss /0.0/ : fraction of neutral beam power lost after ionisation but
+  !+ad_varc                     before thermalisation (orbit loss fraction)
+  real(kind(1.0D0)) :: forbitloss = 0.0D0
   !+ad_vars  frbeam /1.05/ : R_tangential / R_major for neutral beam injection
   real(kind(1.0D0)) :: frbeam = 1.05D0
   !+ad_vars  ftritbm /1.0e-6/ : fraction of beam that is tritium
@@ -816,6 +820,9 @@ module current_drive_variables
   real(kind(1.0D0)) :: pnbeam = 0.0D0
   !+ad_vars  pofcd : oscillating field CD injection power (MW)
   real(kind(1.0D0)) :: pofcd = 0.0D0
+  !+ad_vars  porbitlossmw : neutral beam power lost after ionisation but before
+  !+ad_varc                 thermalisation (orbit loss power) (MW)
+  real(kind(1.0D0)) :: porbitlossmw = 0.0D0
   !+ad_vars  pwplh : lower hybrid wall plug power (MW)
   real(kind(1.0D0)) :: pwplh = 0.0D0
   !+ad_vars  pwpnb : neutral beam wall plug power (MW)

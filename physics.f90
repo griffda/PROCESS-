@@ -408,8 +408,8 @@ contains
     plhthresh = pthrmw(ilhthresh)
 
     !  Power transported to the divertor by charged particles,
-    !  i.e. excludes neutrons and radiation
-    !+PJK Should falpha be used to multiply palpmw here?
+    !  i.e. excludes neutrons and radiation, and also NBI orbit loss power,
+    !  which is assumed to be absorbed by the first wall
 
     if (ignite == 0) then
        pinj = pinjmw

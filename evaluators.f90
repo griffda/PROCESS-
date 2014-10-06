@@ -363,6 +363,7 @@ contains
     !+ad_hist  13/02/14 PJK Added trap if iavail /= 1 with fig of merit 15
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  06/10/14 PJK Added orbit loss power
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -393,7 +394,7 @@ contains
        fc = sgn * 0.2D0 * rmajor
 
     case (2)  !  fusion power / input power
-       fc = sgn * powfmw / (pinjmw + tfcpmw + ppump/1.0D6)
+       fc = sgn * powfmw / (pinjmw + porbitlossmw + tfcpmw + ppump/1.0D6)
 
     case (3)  !  neutron wall load
        fc = sgn * wallmw

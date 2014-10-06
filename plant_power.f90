@@ -925,6 +925,7 @@ contains
     !+ad_hist  04/06/14 PJK New power flow model added
     !+ad_hist  17/06/14 PJK Corrections to pfwdiv, priheat
     !+ad_hist  19/06/14 PJK Simplified pinjwp calculation
+    !+ad_hist  06/10/14 PJK Added orbit loss power to pfwdiv, pinjwp
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -943,7 +944,7 @@ contains
        !  (non-neutron) Power reaching first wall and divertor
 
        if (ignite == 0) then
-          pfwdiv = pfuscmw + pohmmw + pinjmw
+          pfwdiv = pfuscmw + pohmmw + pinjmw + porbitlossmw
        else
           pfwdiv = pfuscmw + pohmmw
        end if
@@ -1025,7 +1026,7 @@ contains
 
        !  Total thermal power deposited in first wall coolant
 
-       pthermfw = pnucfw + pradfw + htpmw_fw
+       pthermfw = pnucfw + pradfw + htpmw_fw + porbitlossmw
 
        !  Total thermal power deposited in blanket coolant
        !  Nuclear energy multiplication is included
@@ -1084,7 +1085,7 @@ contains
     !  Wall plug injection power
 
     if (ignite == 0) then
-       pinjwp = pinjmw / etacd
+       pinjwp = pinjmw/etacd + porbitlossmw
     else
        pinjwp = 0.0D0
     end if

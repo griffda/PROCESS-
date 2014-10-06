@@ -89,6 +89,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  30/06/14 PJK Added error handling
     !+ad_hist  06/10/14 PJK Use global nbshinef instead of local fshine
+    !+ad_hist  06/10/14 PJK Added use of forbitloss
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -103,7 +104,7 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: dene20,effnbss,effofss,effrfss,fpion, &
-         gamnb,gamof,gamrf
+         gamnb,gamof,gamrf,pnbitot
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -112,6 +113,8 @@ contains
     plhybd = 0.0D0
     pofcd  = 0.0D0
     cnbeam = 0.0D0
+
+    porbitlossmw = 0.0D0
 
     if (irfcd /= 0) then
 
@@ -217,11 +220,14 @@ contains
 
        case (5,8)  !  NBCD
 
-          pnbeam = 1.0D-6 * faccd * plascur / effnbss + pheat
+          pnbitot = 1.0D-6 * faccd * plascur / effnbss + pheat
+          porbitlossmw = forbitloss * pnbitot
+
+          pnbeam = pnbitot - porbitlossmw
           pinjimw = pnbeam * fpion
           pinjemw = pnbeam * (1.0D0-fpion)
 
-          pwpnb = pnbeam/etanbi
+          pwpnb = pnbitot/etanbi
           etacd = etanbi
 
           gamnb = effnbss * (dene20 * rmajor)
@@ -250,10 +256,10 @@ contains
 
        !  Ratio of fusion to input (injection+ohmic) power
 
-       if (abs(pinjmw + pohmmw) < 1.0D-6) then
+       if (abs(pinjmw + porbitlossmw + pohmmw) < 1.0D-6) then
           bigq = 1.0D18
        else
-          bigq = powfmw / (pinjmw + pohmmw)
+          bigq = powfmw / (pinjmw + porbitlossmw + pohmmw)
        end if
 
     end if
@@ -337,6 +343,8 @@ contains
        call ovarre(outfile,'Beam gamma (10^20 A/W-m2)','(gamnb)',gamnb)
        call ovarre(outfile,'Neutral beam injected power (MW)','(pnbeam)',pnbeam)
        call ovarre(outfile,'Neutral beam wall plug efficiency','(etanbi)',etanbi)
+       call ovarre(outfile,'Neutral beam orbit loss power (MW)','(porbitlossmw)', &
+            porbitlossmw)
        call ovarre(outfile,'Neutral beam wall plug power (MW)','(pwpnb)',pwpnb)
        call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)
        call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam)

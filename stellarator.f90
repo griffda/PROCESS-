@@ -1164,6 +1164,8 @@ contains
     !+ad_hist  01/05/14 PJK Changed bigq description
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  06/10/14 PJK Use global nbshinef instead of local fshine
+    !+ad_hisc               introduced porbitlossmw
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1178,7 +1180,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), save :: effnbss,fpion,fshine
+    real(kind(1.0D0)), save :: effnbss,fpion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1202,11 +1204,12 @@ contains
 
        !  Use routine described in AEA FUS 172, but discard the current
        !  drive efficiency as this is irrelevant for stellarators. We are
-       !  only really interested in fpion, fshine and taubeam.
+       !  only really interested in fpion, nbshinef and taubeam.
 
-       call culnbi(effnbss,fpion,fshine)
+       call culnbi(effnbss,fpion,nbshinef)
 
-       pnbeam = pheat
+       pnbeam = pheat * (1.0D0-forbitloss)
+       porbitlossmw = pheat * forbitloss
        pinjimw = pnbeam * fpion
        pinjemw = pnbeam * (1.0D0-fpion)
 
@@ -1230,10 +1233,10 @@ contains
 
     !  Ratio of fusion to input (injection+ohmic) power
 
-    if (abs(pinjmw + pohmmw) < 1.0D-6) then
+    if (abs(pinjmw + porbitlossmw + pohmmw) < 1.0D-6) then
        bigq = 1.0D18
     else
-       bigq = powfmw / (pinjmw + pohmmw)
+       bigq = powfmw / (pinjmw + porbitlossmw + pohmmw)
     end if
 
     if (iprint == 0) return
@@ -1265,8 +1268,10 @@ contains
        call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam)
        call ovarre(outfile,'Fraction of beam energy to ions','(fpion)', &
             fpion)
-       call ovarre(outfile,'Neutral beam shine-through','(fshine)', &
-            fshine)
+       call ovarre(outfile,'Neutral beam shine-through fraction','(nbshinef)', &
+            nbshinef)
+       call ovarre(outfile,'Neutral beam orbit loss power (MW)','(porbitlossmw)', &
+            porbitlossmw)
        call ovarre(outfile,'Beam duct shielding thickness (m)','(nbshield)',nbshield)
        call ovarre(outfile,'R injection tangent / R-major','(frbeam)', &
             frbeam)
