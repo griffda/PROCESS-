@@ -655,7 +655,7 @@ module numerics
        'flhthresh', &
        !+ad_varc  <LI> (104) fcwr
        'fcwr     ', &
-       !+ad_varc  <LI> (105) fnbshine</UL>
+       !+ad_varc  <LI> (105) fnbshinef</UL>
        'fnbshinef'  &
        /)
 
