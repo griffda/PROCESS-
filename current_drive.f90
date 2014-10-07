@@ -90,6 +90,7 @@ contains
     !+ad_hist  30/06/14 PJK Added error handling
     !+ad_hist  06/10/14 PJK Use global nbshinef instead of local fshine
     !+ad_hist  06/10/14 PJK Added use of forbitloss
+    !+ad_hist  06/10/14 PJK Made feffcd usage consistent for all CD methods
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -152,26 +153,30 @@ contains
        case (5)  !  ITER Neutral Beam current drive
 
           call iternb(effnbss,fpion,nbshinef)
+          effnbss = effnbss * feffcd
           effcd = effnbss
 
        case (6)  !  Culham Lower Hybrid current drive model
 
           call cullhy(effrfss)
+          effrfss = effrfss * feffcd
           effcd = effrfss
 
        case (7)  !  Culham ECCD model
 
           call culecd(effrfss)
+          effrfss = effrfss * feffcd
           effcd = effrfss
 
        case (8)  !  Culham Neutral Beam model
 
           call culnbi(effnbss,fpion,nbshinef)
+          effnbss = effnbss * feffcd
           effcd = effnbss
 
        case (9)  !  (trivial) RFP Oscillating Field CD model
 
-          effofss = 0.8D0  !  TITAN figure: efficiency = 0.8 A/W
+          effofss = 0.8D0 * feffcd !  TITAN figure: efficiency = 0.8 A/W
           effcd = effofss
 
        case default
@@ -400,6 +405,7 @@ contains
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  01/09/14 PJK Set fshine to zero if it is negligible
     !+ad_hist  06/10/14 PJK Set fshine to 1.0e-20 if it is negligible
+    !+ad_hist  06/10/14 PJK Moved feffcd usage to outside of this routine
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
@@ -454,7 +460,7 @@ contains
 
     !  Current drive efficiency
 
-    effnbss = frbeam * feffcd * &
+    effnbss = frbeam * &
          etanb(abeam,alphan,alphat,aspect,dene,enbeam,rmajor,ten,zeff)
 
   contains
@@ -480,10 +486,14 @@ contains
       !+ad_args  zeff    : input real : plasma effective charge
       !+ad_desc  This routine calculates the current drive efficiency of
       !+ad_desc  a neutral beam system, based on the 1990 ITER model.
-      !+ad_prob  No account is taken of pedestal profiles.
+      !+ad_prob  No account is taken of pedestal profiles, and the shine-through
+      !+ad_prob  power fraction is ignored. The improved version of this function,
+      !+ad_prob  <CODE>etanb2</CODE>, is more appropriate for non-ITER plasma sizes
+      !+ad_prob  and densities.
       !+ad_call  None
       !+ad_hist  15/06/92 PJK Initial upgraded version
       !+ad_hist  22/08/12 PJK Initial F90 version
+      !+ad_hist  07/10/14 PJK Added comments about etanb2
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
@@ -788,6 +798,7 @@ contains
     !+ad_hist  24/02/14 PJK Local density and temperature calculated using
     !+ad_hisc               relevant profile model; rationalised arguments
     !+ad_hist  30/06/14 PJK Added error_handling
+    !+ad_hist  06/10/14 PJK Moved feffcd usage to outside of this routine
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -845,7 +856,7 @@ contains
 
     !  Current drive efficiency (A/W)
 
-    effrfss = gamlh / ((0.1D0*dlocal)*rmajor) * feffcd
+    effrfss = gamlh / ((0.1D0*dlocal)*rmajor)
 
   contains
 
@@ -1055,6 +1066,7 @@ contains
     !+ad_hist  18/09/12 PJK Initial F90 version
     !+ad_hist  24/02/14 PJK Rationalised argument list, and called profile
     !+ad_hisc               routines to calculate local quantities
+    !+ad_hist  06/10/14 PJK Moved feffcd usage to outside of this routine
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1115,7 +1127,7 @@ contains
 
     !  Current drive efficiency (A/W)
 
-    effrfss = ecgam/(dlocal*rmajor) * feffcd
+    effrfss = ecgam/(dlocal*rmajor)
 
   contains
 
@@ -1339,6 +1351,7 @@ contains
     !+ad_hist  03/07/13 PJK Changed zeffai description
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  01/09/14 PJK Set fshine to 1.0e-20 if it is negligible
+    !+ad_hist  06/10/14 PJK Moved feffcd usage to outside of this routine
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1392,14 +1405,14 @@ contains
 
     !  Current drive efficiency
 
-    effnbss = etanb2(abeam,alphan,alphat,aspect,dene,dnla,enbeam,feffcd, &
+    effnbss = etanb2(abeam,alphan,alphat,aspect,dene,dnla,enbeam, &
          frbeam,fshine,rmajor,rminor,ten,zeff)
 
   contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    function etanb2(abeam,alphan,alphat,aspect,dene,dnla,enbeam,feffcd,frbeam, &
+    function etanb2(abeam,alphan,alphat,aspect,dene,dnla,enbeam,frbeam, &
          fshine,rmajor,rminor,ten,zeff)
 
       !+ad_name  etanb2
@@ -1416,7 +1429,6 @@ contains
       !+ad_args  dene    : input real : volume averaged electron density (m**-3)
       !+ad_args  dnla    : input real : line averaged electron density (m**-3)
       !+ad_args  enbeam  : input real : neutral beam energy (keV)
-      !+ad_args  feffcd  : input real : current drive efficiency fudge factor
       !+ad_args  frbeam  : input real : R_tangent / R_major for neutral beam injection
       !+ad_args  fshine  : input real : shine-through fraction of beam
       !+ad_args  rmajor  : input real : plasma major radius (m)
@@ -1428,11 +1440,15 @@ contains
       !+ad_desc  plus correction terms outlined in Culham Report AEA FUS 172.
       !+ad_desc  <P>The formulae are from AEA FUS 172, unless denoted by IPDG89.
       !+ad_prob  No account is taken of pedestal profiles.
+      !+ad_prob  Although it is taken account of here, fshine should be negligible
+      !+ad_prob  otherwise the transmitted NBI power is not accounted for in the
+      !+ad_prob  overall power balance.
       !+ad_call  report_error
       !+ad_hist  17/06/92 PJK Initial upgraded version
       !+ad_hist  18/09/12 PJK Initial F90 version
       !+ad_hist  10/10/12 PJK Changed enorm to ebnorm
       !+ad_hist  26/06/14 PJK Added error handling
+      !+ad_hist  07/10/14 PJK Moved feffcd usage to outside of this routine
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1448,7 +1464,7 @@ contains
       !  Arguments
 
       real(kind(1.0D0)), intent(in) :: abeam,alphan,alphat,aspect,dene,dnla, &
-           enbeam,feffcd,frbeam,fshine,rmajor,rminor,ten,zeff
+           enbeam,frbeam,fshine,rmajor,rminor,ten,zeff
 
       !  Local variables
 
@@ -1552,7 +1568,7 @@ contains
 
       !  Current drive efficiency (A/W)
 
-      etanb2 = gamnb / (dene20*rmajor) * feffcd
+      etanb2 = gamnb / (dene20*rmajor)
 
     end function etanb2
 

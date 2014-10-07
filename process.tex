@@ -36,9 +36,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-10-06
+2014-10-07
 \hfill
-Revision: 345
+Revision: 347
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2579,14 +2579,27 @@ net injected neutral beam power that is lost between the beam particles'
 ionisation and thermalisation (i.e.\ the orbit loss fraction). The power lost
 is assumed to be absorbed by the first wall.
 
-There are two constraint equations that can be used to limit the fraction of
-the neutral beam power that passes right through the plasma. Constraint
-equation no.\ 14 may be used to force the number of exponential decay lengths
-for the beam power to fall before it reaches the plasma centre, to be exactly
-that given by input parameter \texttt{tbeamin}. Alternatively, constraint
-equation no.\ 59 with iteration variable no.\ 105 (\texttt{fnbshinef}) may be
-used to ensure that the beam power fraction emerging from the plasma is no
-more than the value given by input parameter \texttt{nbshinefmax}.
+There are two constraint equations that can be used to control the beam
+penetration and deposition, as follows:
+
+\begin{itemize}
+
+\item It is necessary to use a beam energy that simultaneously gives adequate
+  penetration of the beam to the centre of the plasma and tolerable
+  shine-through of the beam on the wall after the beam has traversed the
+  plasma. The number of exponential decay lengths, $\tau$, for the beam power
+  to fall before it reaches the plasma centre should be in the region of $\sim
+  4$--6~\cite[Section 4.3.2]{172}. Constraint equation no.\ 14 may be used to
+  force $\tau$ to be equal to the value given by input parameter
+  \texttt{tbeamin}, and is therefore in effect a beam energy consistency
+  equation.
+
+\item Alternatively, constraint equation no.\ 59 with iteration variable no.\
+  105 (\texttt{fnbshinef}) may be used to ensure that the beam power fraction
+  emerging from the plasma is no more than the value given by input parameter
+  \texttt{nbshinefmax}.
+
+\end{itemize}
 
 It is recommended that \textbf{only one} of these two constraint equations is
 used during a run.
