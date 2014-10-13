@@ -1,0 +1,116 @@
+\mychapter{Code Management Tools}
+\label{chap:codetools}
+
+This chapter will be of interest to people involved in the continuing
+maintenance of the \process\ source code. As stated elsewhere, the source code
+is maintained by CCFE, and resides in a \textit{Git}\
+repository on the CCFE servers.
+
+\section{The Makefile}
+\label{sec:makefile}
+
+In addition to its normal role for compilation, the makefile (named
+\texttt{Makefile}) includes a number of utility functions that perform tasks
+such as automatic generation of the code documentation, and the creation of a
+tar file containing the entire source code, its documentation files, and the
+input and output files. This has proved to be of great benefit in keeping all
+of the data from a given run together for archival purposes.
+
+\subsection{Compilation}
+
+Compilation is trivially performed using the makefile. Currently, the
+available options are (type the following on the command line):
+\begin{tabbing}
+123\=12345678901234567890\= \kill
+\> \texttt{make ARCH=FUN} \> CCFE Fusion Unix Network (Intel Fortran ifort compiler) \\
+\> \texttt{make ARCH=GFORT} \> GNU Fortran compiler (gfortran; N.B.\ only versions
+4.6.3 or above) \\
+\> \texttt{make ARCH=JAC} \> JET Analysis Cluster (pgf95 compiler)
+\end{tabbing}
+The Intel Fortran compiler is the default option, so typing simply
+\texttt{make} will have the same effect as typing \texttt{make ARCH=FUN}.
+
+The code is almost trivial to port to new architectures, by adding extra
+stanzas to the makefile as required.
+
+To force a full recompilation, type \texttt{make clean}. N.B.\ This will
+remove (without prompting) all ``backup'' files (\texttt{*\~}) as well as
+certain other files from the working directory.
+
+Extra run-time diagnostics (array-bound checking, etc.) is turned on by
+default at present; the code is sufficiently quick to run that the performance
+penalty is barely noticeable. However, this can be turned off (beware\ldots
+results can change!), by adding \texttt{DEBUG=NO} to the relevant command
+above, i.e.\ type \verb+make ARCH=... DEBUG=NO+.  N.B.\ there must be no
+spaces either side of the \texttt{=} characters in any of the above commands.
+
+\subsection{Archiving utilities}
+
+The makefile can be used in a number of ways to pack the various file sets
+together into a single compressed tar file, for ease of portability and
+archiving.
+
+\begin{itemize}
+
+\item \texttt{make tar}: Typing this command produces a file
+  \texttt{process.tar.gz} that contains all of the source files, utility
+  programs and documentation files necessary to run the program from scratch
+  on a new machine or in a new directory. (Note that the input files \indat\
+  and \texttt{device.dat} are not included.) This is useful for transferring
+  new copies of source files, etc.\ into an existing directory already
+  containing a previous \process\ run, as the pre-existing customised input
+  files will not be overwritten. To extract the individual files again, copy
+  the file to the destination working directory and type
+  \verb+tar zxvf process.tar.gz+
+
+\item \texttt{make archive}: Typing this command produces a file
+  \texttt{process\_run.tar.gz} containing the working directory's input and
+  output files (\indat, \outdat, \plotdat, \mfile\ and \texttt{device.dat}
+  (which must exist to avoid an error message; see Section~\ref{sec:device}),
+  together with all of the source files, utility programs and documentation
+  files. These files together comprise the full set that define a given run,
+  and so the file produced by this command is suitable for long-term storage
+  for archival purposes. To extract the contents, type
+  \verb+tar zxvf process_run.tar.gz+
+\end{itemize}
+
+Note that each of the above commands will overwrite the given named tar file
+if one already exists in the working directory.
+
+\subsection{Code documentation}
+
+The makefile can also be used to produce source code documentation, as
+described in the next section.
+
+\section{Automatic Documentation}
+\label{sec:autodoc}
+
+The \process\ source code is self-documenting to a degree, using an included
+parser program (\texttt{autodoc}) to generate html files for each subprogram
+from specially-formatted comment lines within the code. It is the
+responsibility of the programmer to keep the \texttt{autodoc} comments within
+the source code relevant, comprehensive and up-to-date! Use the examples in
+the code as a starting basis for new routines; the output section
+corresponding to the various \texttt{autodoc} tags should be
+self-explanatory. The following files are used:
+\begin{verbatim}
+   autodoc.f90
+   adheader.src
+   adfooter.src
+\end{verbatim}
+To create the ($\sim 380$) html files from the source code, type
+\verb+make html+.  Then, point your favourite web browser to the file
+\texttt{process.html} or \texttt{calling\_tree.html} in the working
+directory. The variable descriptor file \texttt{vardes.html} (see
+Section~\ref{sec:vardes}) is also produced at the same time (though it is best
+to modify the file manually afterwards to remove empty sections from it).
+
+In addition, a full \LaTeX\/ User Guide \texttt{process.tex} (this document!) is
+rigorously maintained to ensure its continuing strict agreement with the
+evolving source code. To create an Adobe PDF file \texttt{process.pdf} from
+\texttt{process.tex} (and the associated PostScript figures),
+type \verb+make userguide+.
+
+Finally, to produce both the html files and the User Guide in one go, simply
+type \verb+make doc+.
+

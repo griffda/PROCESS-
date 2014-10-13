@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 344
+#  GIT Revision 349
 #
 #  P J Knight
 #
@@ -33,7 +33,7 @@
 #  Type 'make html' to produce web-compatible html files from the autodoc
 #    comments embedded in the source code
 #
-#  Type 'make manual' to produce dvi and pdf files from the PROCESS User Guide
+#  Type 'make userguide' to produce dvi and pdf files from the PROCESS User Guide
 #    contained in the *.tex files and associated postscript pictures
 #
 #  Type 'make doc' to produce both html files and the PROCESS User Guide
@@ -252,7 +252,7 @@ root.dir:
 
 ### Utilities #################
 
-.PHONY: clean cleandoc tar archive doc manual html dicts
+.PHONY: clean cleandoc tar archive doc userguide html dicts
 
 # Clean up directory, to force full recompilation
 
@@ -301,13 +301,13 @@ autodoc: autodoc.f90
 html: autodoc
 	@ cat $(source) | ./autodoc
 
-manual: process.tex
+userguide: process.tex
 	@ latex process
 	@ latex process # to make sure cross-references are included
 	@ latex process # to make doubly sure cross-references are included
 	@ dvipdf process
 
-doc: html manual
+doc: html userguide
 
 dicts: root.dir
 	@ mv utilities/process_io_lib/process_dicts.py utilities/process_io_lib/process_dicts.py_prev
