@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '347    Release Date :: 2014-10-07'
+       '348    Release Date :: 2014-10-13'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1834,3 +1834,6 @@ end subroutine output
 ! GIT 345: New NBI shine-through fraction constraint
 ! GIT 346: Added NBI orbit loss fraction
 ! GIT 347: Clarified NBI comments
+! GIT 348: Improved TF coil superconductor temperature margin calculation;
+!          modified reporting of errors pertaining to the input file;
+!          clarified comments and variable names in routine itersc

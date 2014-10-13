@@ -36,9 +36,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2014-10-07
+2014-10-13
 \hfill
-Revision: 347
+Revision: 348
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -823,7 +823,7 @@ no. & variable name     & description                                   & eqn & 
 47  & \texttt{feffcd}   & current drive efficiency multiplier           &     & \texttt{0.001D0} & \texttt{1.000D0} \\
 48  & \texttt{fstrcase} & f-value for TF coil case stress limit equation & 31  & \texttt{0.001D0} & \texttt{1.000D0} \\
 49  & \texttt{fstrcond} & f-value for TF coil conduit stress limit equation & 32  & \texttt{0.001D0} & \texttt{1.000D0} \\
-50  & \texttt{fiooic}   & f-value for TF coil operational current limit equation & 33  & \texttt{0.001D0} & \texttt{0.500D0} \\
+50  & \texttt{fiooic}   & f-value for TF coil operational current limit equation & 33  & \texttt{0.001D0} & \texttt{1.000D0} \\
 51  & \texttt{fvdump}   & f-value for TF coil dump voltage limit equation         & 34  & \texttt{0.001D0} & \texttt{1.000D0} \\
 52  & \texttt{vdalw}    & allowable TF coil dump voltage                          &     & \texttt{0.001D0} & \texttt{1.000D6} \\
 53  & \texttt{fjprot}   & f-value for TF coil current protection limit equation   & 35  & \texttt{0.001D0} & \texttt{1.000D0} \\
@@ -2310,14 +2310,53 @@ the value of variable \texttt{fcutfsu} (iteration variable no.\ 59).
 For \texttt{isumattf = 2}, a technology adjustment factor \texttt{fhts} may be
 used to modify the critical current density fit for the Bi-2212
 superconductor, to describe the level of technology assumed (i.e.\ to account
-for stress, fatigue, radiation, AC losses, joints or manufacturing variations.
-The default value for \texttt{fhts} is 0.5, while a value of 1.0 would be very
-optimistic.
+for stress, fatigue, radiation, AC losses, joints or manufacturing variations).
+The default value for \texttt{fhts} is 0.5 (a value of 1.0 would be very
+optimistic).
 
 For \texttt{isumattf = 4}, important superconductor properties may be input by
 the user as follows: the upper critical field at zero temperature and strain
 is set using input parameter \texttt{bcritsc}, and the critical temperature at
 zero field and strain is set using input parameter \texttt{tcritsc}.
+
+\subsubsection{Current density limits}
+
+The current in the TF coils must be sufficient to produce the required
+toroidal field at the centre of the plasma. In tokamaks, the field falls off
+at a rate $1/R$, with the peak value occurring at the outer edge of the
+inboard portion of the TF coil winding pack ($R_{\mbox{\scriptsize max TF}} =
+\mathtt{rbmax}$). The maximum TF coil current depends on the field it produces
+and the allowable current density.
+
+\newcommand{\jop}{$J_{\mbox{\scriptsize op}}$ }
+\newcommand{\jcrit}{$J_{\mbox{\scriptsize crit}}$}
+
+Three constraints are relevant to the operating current density \jop\ in the
+(superconducting) TF coils.
+
+\begin{itemize}
+
+\item To ensure that \jop\ does not exceed the critical value \jcrit, constraint
+  equation no.\ 33 should be turned on with iteration variable no.\ 50
+  (\texttt{fiooic}).
+
+\item To ensure that \jop\ does not exceed the current density protection limit,
+  constraint equation no.\ 35 should be turned on with iteration variable no.\
+  53 (\texttt{fjprot}).
+
+\item The critical current density \jcrit\ falls with the temperature of the
+  superconductor. The temperature margin $\Delta T$ is the difference between the
+  temperature at which \jcrit would be equal to \jop\ and the operating
+  temperature. The minimum allowed $\Delta T$ can be set using input parameter
+  \texttt{tmargmin} together with constraint equation no.\ 36 and iteration
+  variable no.\ 54 (\texttt{ftmargtf}).
+
+  Note that if the temperature margin is positive, \jop\ is guaranteed to be
+  lower than \jcrit, and so constraints~33 and~36 need not both be turned on
+  (in fact, it is recommended that only one of these two constraints is
+  activated in any given run).
+
+\end{itemize}
 
 \subsubsection{Stress model}
 
@@ -2333,22 +2372,6 @@ constraint equation no.\ 31 (case stress) and/or constraint equation no.\ 32
 (\texttt{fstrcase}) and/or no.\ 49 (\texttt{fstrcond}), respectively. The
 stress limit can be adjusted using input parameters \texttt{csutf} and
 \texttt{csytf}.
-
-\subsubsection{Current density limits}
-
-The current in the TF coils must be sufficient to produce the required
-toroidal field at the centre of the plasma. The field falls off at a rate
-$1/R$, with the peak value occurring at the outer edge of the inboard portion
-of the TF coil winding pack ($R_{\mbox{\scriptsize max TF}} =
-\mathtt{rbmax}$). The maximum TF coil current depends on the field it produces
-and the allowable current density.
-
-Two limits can be applied to the current density $J$ in the (superconducting)
-TF coils. To ensure that $J$ does not exceed the critical value, constraint
-equation no.\ 33 should be turned on with iteration variable no.\ 50
-(\texttt{fiooic}). To ensure that $J$ does not exceed the current density
-protection limit, constraint equation no.\ 35 should be turned on with
-iteration variable no.\ 53 (\texttt{fjprot}).
 
 \subsection{Poloidal field coils}
 \label{sec:pfcoils}

@@ -1625,8 +1625,8 @@ contains
       !+ad_args  tfes : input real : Energy stored in one TF coil (J)
       !+ad_args  thelium : input real : He temperature at peak field point (K)
       !+ad_args  tmax : input real : Max conductor temperature during quench (K)
-      !+ad_args  bcritsc : input real : Critical field (T) (isumat=4 only)
-      !+ad_args  tcritsc : input real : Critical temperature (K) (isumat=4 only)
+      !+ad_args  bcritsc : input real : Critical field at zero temperature and strain (T) (isumat=4 only)
+      !+ad_args  tcritsc : input real : Critical temperature at zero field and strain (K) (isumat=4 only)
       !+ad_args  iprint : input integer : Switch for printing (1 = yes, 0 = no)
       !+ad_args  outfile : input integer : Fortran output unit identifier
       !+ad_args  jwdgpro : output real : Winding pack current density from temperature 
@@ -1642,6 +1642,7 @@ contains
       !+ad_prob  None
       !+ad_call  bi2212
       !+ad_call  itersc
+      !+ad_call  jcrit_nbti
       !+ad_call  oblnkl
       !+ad_call  ocmmnt
       !+ad_call  oheadr
@@ -1661,6 +1662,8 @@ contains
       !+ad_hist  16/06/14 PJK Removed duplicate outputs
       !+ad_hist  19/06/14 PJK Removed sect?? flags
       !+ad_hist  26/06/14 PJK Added error handling
+      !+ad_hist  13/10/14 PJK Improved temperature margin calculation;
+      !+ad_hisc               added jcrit,bcrit,tcrit outputs to file
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
@@ -1677,8 +1680,9 @@ contains
 
       !  Local variables
 
-      real(kind(1.0D0)) :: bc20m,c0,fac1,fac2,fcond,icrit,iooic,jc, &
-           jstrand,jwdgop,tbar,tc0m,tc1
+      real(kind(1.0D0)) :: b,bc20m,bcrit,c0,delt,fcond,icrit,iooic, &
+           jcrit,jcrit0,jcritm,jcritp,jstrand,jtol,jwdgop,t,tc0m, &
+           tcrit,ttest,ttestm,ttestp
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1690,18 +1694,17 @@ contains
 
       select case (isumat)
 
-      case (1)  !  ITER Nb3Sn critical surface parametrization
-         bc20m = 32.97D0  !  previously 28.0D0 for old model
-         tc0m = 16.06D0   !  previously 18.0D0 for old model
-         !c0 = 1.315D10   !  obsolete
+      case (1)  !  ITER Nb3Sn critical surface parameterization
+         bc20m = 32.97D0
+         tc0m = 16.06D0
 
-      case (2)  !  Bi-2212 high temperature superconductor parametrization
+      case (2)  !  Bi-2212 high temperature superconductor parameterization
 	      continue  !  ...see below
 
       case (3)  !  NbTi data
          bc20m = 15.0D0
          tc0m = 9.3D0
-         c0 = 10.0D9
+         c0 = 1.0D10
 
       case (4)  !  As (1), but user-defined parameters
          bc20m = bcritsc
@@ -1718,34 +1721,32 @@ contains
 
       case (1,4)  !  ITER Nb3Sn critical surface model
 
-         call itersc(thelium,bmax,strain,bc20m,tc0m,jc,tc1)
+         call itersc(thelium,bmax,strain,bc20m,tc0m,jcrit,bcrit,tcrit)
 
       case (2)  !  Bi-2212 high temperature superconductor model
 
          !  Current density in a strand of Bi-2212 conductor
-         !  N.B. the parametrization for jc assumes a particular strand composition
-         !  that does not require a user-defined copper fraction, so this is
-         !  irrelevant in this model
+         !  N.B. the parameterization for jcrit assumes a particular strand
+         !  composition that does not require a user-defined copper fraction,
+         !  so this is irrelevant in this model
 
          jstrand = jwp * acs*(1.0D0-fhe)/aturn
 
-         call bi2212(bmax,jstrand,thelium,fhts,jc,tmarg)
+         call bi2212(bmax,jstrand,thelium,fhts,jcrit,tmarg)
+         tcrit = thelium + tmarg
 
       case (3)  !  NbTi model
 
-         tc1 = tc0m * (1.0D0 - bmax/bc20m)**0.59D0
-         tc1 = max(tc1, 0.001D0)
-         tbar = max((1.0D0 - thelium/tc1), 0.001D0)
-         jc = c0 * (1.0D0 - bmax/bc20m) * tbar
+         call jcrit_nbti(thelium,bmax,c0,bc20m,tc0m,jcrit,tcrit)
 
       end select
 
       !  Critical current
 
       if (isumat /= 2) then
-         icrit = jc * acs * (1.0D0 - fhe) * (1.0D0 - fcu)
+         icrit = jcrit * acs * (1.0D0 - fhe) * (1.0D0 - fcu)
       else
-         icrit = jc * acs * (1.0D0 - fhe)  !  see comment above
+         icrit = jcrit * acs * (1.0D0 - fhe)  !  see comment above
       end if
 
       !  Critical current density in winding pack
@@ -1763,9 +1764,37 @@ contains
       !  Temperature margin (already calculated in bi2212 for isumat=2)
 
       if (isumat /= 2) then
-         fac1 = max( 0.01D0, (1.0D0 - iooic) )
-         fac2 = max( 0.01D0, (tc1-thelium) )
-         tmarg = fac1 * fac2
+
+         !  Newton-Raphson method; start at requested minimum temperature margin
+
+         ttest = thelium + tmargmin
+         delt = 0.01D0
+         jtol = 1.0D4
+
+         !  Actual current density in strand, which should be equal to jcrit(thelium+tmarg)
+         !  when we have found the desired value of tmarg
+
+         jstrand = iooic * jcrit
+
+         solve_for_tmarg: do
+            ttestm = ttest - delt
+            ttestp = ttest + delt
+            select case (isumat)
+            case (1,4)
+               call itersc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+               call itersc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+               call itersc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+            case (3)
+               call jcrit_nbti(ttest ,bmax,c0,bc20m,tc0m,jcrit0,t)
+               call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
+               call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
+            end select
+            if (abs(jstrand-jcrit0) <= jtol) exit solve_for_tmarg
+            ttest = ttest - 2.0D0*delt*(jcrit0-jstrand)/(jcritp-jcritm)
+         end do solve_for_tmarg
+
+         tmarg = ttest - thelium
+
       end if
 
       !  Find the current density limited by the protection limit
@@ -1802,13 +1831,19 @@ contains
 
       call osubhd(outfile,'Critical Current Information :')
       if (isumat /= 2) then
-         call ovarre(outfile,'Critical field at zero temp., strain (T)', &
+         call ovarre(outfile,'Critical field at zero temperature and strain (T)', &
               '(bc20m)',bc20m)
-         call ovarre(outfile,'Critical temp. at zero field, strain (K)', &
+         call ovarre(outfile,'Critical temperature at zero field and strain (K)', &
               '(tc0m)',tc0m)
       end if
+      call ovarre(outfile,'Critical current density in strand (A/m2)','(jcrit)',jcrit)
+      if ((isumat == 1).or.(isumat == 4)) then
+         call ovarre(outfile,'Critical field (T)','(bcrit)',bcrit)
+      end if
+      call ovarre(outfile,'Critical temperature (K)','(tcrit)',tcrit)
+
       call ovarre(outfile,'Operating winding pack J (A/m2)','(jwdgop)',jwdgop)
-      call ovarre(outfile,'Critical winding pack curr. density (A/m2)', &
+      call ovarre(outfile,'Critical winding pack current density (A/m2)', &
            '(jwdgcrt)',jwdgcrt)
       call ovarre(outfile,'Critical current (A)','(icrit)',icrit)
       call ovarre(outfile,'Operating current / critical current','(iooic)', &
@@ -1827,7 +1862,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    subroutine itersc(thelium,bmax,strain,bctw,tco,jcrit,tcrit)
+    subroutine itersc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
 
       !+ad_name  itersc
       !+ad_summ  Implementation of ITER Nb3Sn critical surface implementation
@@ -1838,10 +1873,11 @@ contains
       !+ad_args  thelium : input real : Coolant/SC temperature (K)
       !+ad_args  bmax : input real : Magnetic field at conductor (T)
       !+ad_args  strain : input real : Strain in superconductor
-      !+ad_args  bctw : input real : Upper critical field (T) for superconductor
+      !+ad_args  bc20max : input real : Upper critical field (T) for superconductor
       !+ad_argc                      at zero temperature and strain
-      !+ad_args  tco : input real : Critical temperature (K) at zero field and strain
-      !+ad_args  jcrit : output real : Critical current density (A/m2)
+      !+ad_args  tc0max : input real : Critical temperature (K) at zero field and strain
+      !+ad_args  jcrit : output real : Critical current density in strand (A/m2)
+      !+ad_args  bcrit : output real : Critical field (T)
       !+ad_args  tcrit : output real : Critical temperature (K)
       !+ad_desc  This routine calculates the critical current density and
       !+ad_desc  temperature in the superconducting TF coils using the
@@ -1858,8 +1894,12 @@ contains
       !+ad_hisc               arguments
       !+ad_hist  16/04/13 PJK Converted bctw, tco to arguments instead of hardwired.
       !+ad_hisc               Corrected problems with jcrit and tcrit formulae
+      !+ad_hist  08/10/14 PJK Clarified variable names; added Bottura reference
       !+ad_stat  Okay
-      !+ad_docs  ITER Nb3Sn critical surface parametrization (2MMF7J) (2008),
+      !+ad_docs  $J_C(B,T,\epsilon)$ Parameterization for ITER Nb3Sn production,
+      !+ad_docc    L. Bottura, CERN-ITER Collaboration Report, Version 2, April 2nd 2008
+      !+ad_docc    (distributed by Arnaud Devred, ITER, 10th April 2008)
+      !+ad_docs  ITER Nb3Sn critical surface parameterization (2MMF7J) (2008),
       !+ad_docc    https://user.iter.org/?uid=2MMF7J&action=get_document
       !+ad_docs  ITER DDD 11-7: Magnets - conductors (2NBKXY) (2009),
       !+ad_docc    https://user.iter.org/?uid=2NBKXY&action=get_document
@@ -1870,68 +1910,79 @@ contains
 
       !  Arguments
 
-      real(kind(1.0D0)), intent(in) :: thelium, bmax, strain, bctw, tco
-      real(kind(1.0D0)), intent(out) :: jcrit, tcrit
+      real(kind(1.0D0)), intent(in) :: thelium, bmax, strain, bc20max, tc0max
+      real(kind(1.0D0)), intent(out) :: jcrit, bcrit, tcrit
 
       !  Local variables
 
-      real(kind(1.0D0)), parameter :: csc = 16500.0D6
-      real(kind(1.0D0)), parameter :: cp = 0.63D0
-      real(kind(1.0D0)), parameter :: cq = 2.1D0
-      real(kind(1.0D0)), parameter :: caone = 44.0D0
-      real(kind(1.0D0)), parameter :: catwo = 4.0D0
-      real(kind(1.0D0)), parameter :: etaoa = 0.00256D0
-      real(kind(1.0D0)), parameter :: etamax = -0.003253075D0
+      !  Parameters named in Bottura
+
+      real(kind(1.0D0)), parameter :: csc = 16500.0D6 !  scaling constant C
+      real(kind(1.0D0)), parameter :: p = 0.63D0      !  low field exponent p
+      real(kind(1.0D0)), parameter :: q = 2.1D0       !  high field exponent q
+      real(kind(1.0D0)), parameter :: ca1 = 44.0D0    !  strain fitting constant C_{a1}
+      real(kind(1.0D0)), parameter :: ca2 = 4.0D0     !  strain fitting constant C_{a2}
+      real(kind(1.0D0)), parameter :: eps0a = 0.00256D0  !  epsilon_{0,a}
+      real(kind(1.0D0)), parameter :: epsmax = -0.003253075D0  !  epsilon_{max} (not used)
+
       real(kind(1.0D0)), parameter :: diter = 0.82D0  !  ITER strand diameter (mm)
       real(kind(1.0D0)), parameter :: cuiter = 0.5D0  !  ITER strand copper fraction
 
-      real(kind(1.0D0)) :: tred, bcrit, bred, etash, tzero, bcro, &
-           tcro, bzero, strfun, jc1, jc2, jc3, scalefac
+      real(kind(1.0D0)) :: bred, epssh, t, bc20eps, &
+           tc0eps, bzero, strfun, jc1, jc2, jc3, scalefac
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      !  Strain function
+      !  $\epsilon_{sh}$
 
-      etash = (catwo*etaoa)/(sqrt(caone**2 - catwo**2))
-      strfun = sqrt(etash**2 + etaoa**2) - sqrt((strain-etash)**2 + etaoa**2)
-      strfun = strfun*caone - catwo*strain
-      strfun = 1.0D0 + (1.0D0/(1.0D0 - caone*etaoa))*strfun
+      epssh = (ca2*eps0a)/(sqrt(ca1**2 - ca2**2))
 
-      !  cros
+      !  Strain function $s(\epsilon)$
+      !  0.83 < s < 1.0, for -0.005 < strain < 0.005
 
-      bcro = (bctw*strfun)
-      tcro = tco * strfun**(1.0D0/3.0D0)
+      strfun = sqrt(epssh**2 + eps0a**2) - sqrt((strain-epssh)**2 + eps0a**2)
+      strfun = strfun*ca1 - ca2*strain
+      strfun = 1.0D0 + (1.0D0/(1.0D0 - ca1*eps0a))*strfun
 
-      !  tred and bred
+      !  $B^*_{C2} (0,\epsilon)$
 
-      tzero = thelium/tcro
-      bzero = bmax/bcro
-      bcrit = bcro * (1.0D0 - tzero**1.52D0)
-      bred = bmax/bcrit
+      bc20eps = bc20max*strfun
 
-      !  New correction to prevent NaNs
-      if (bzero < 1.0D0) then
-         tcrit = tcro * (1.0D0 - bzero)**(1.0D0/1.52D0)
-      else
-         tcrit = thelium * (1.0D0 - bzero)  !  ??? tcrit will be zero or negative!
-      end if
+      !  $T^*_C (0,\epsilon)$
 
-      tred = thelium/tcrit
+      tc0eps = tc0max * strfun**(1.0D0/3.0D0)
 
-      !  Enforce upper limits on tzero and bred
+      !  Reduced temperature, restricted to be < 1
+      !  Should remain < 1 for thelium < 0.94*tc0max (i.e. 15 kelvin for isumattf=1)
 
-      tzero = min(tzero, 0.9999D0)
-      bred = min(bred, 0.9999D0)
+      t = min(thelium/tc0eps, 0.9999D0)
+
+      !  Reduced magnetic field at zero temperature
+      !  Should remain < 1 for bmax < 0.83*bc20max (i.e. 27 tesla for isumattf=1)
+
+      bzero = min(bmax/bc20eps, 0.9999D0)
+
+      !  Critical temperature (K)
+
+      tcrit = tc0eps * (1.0D0 - bzero)**(1.0D0/1.52D0)  !  bzero must be < 1 to avoid NaNs
+
+      !  Critical field (T)
+
+      bcrit = bc20eps * (1.0D0 - t**1.52D0)
+
+      !  Reduced magnetic field, restricted to be < 1
+
+      bred = min(bmax/bcrit, 0.9999D0)
 
       !  Critical current density (A/m2)
-      !  ITER parametrization is for the current in a single strand,
+      !  ITER parameterization is for the current in a single strand,
       !  not per unit area, so scalefac converts to current density
 
       scalefac = pi * (0.5D0*diter)**2 * (1.0D0-cuiter)
 
       jc1 = (csc/bmax)*strfun
-      jc2 = (1.0D0-tzero**1.52D0)*(1.0D0-tzero**2)
-      jc3 = bred**cp * (1.0D0-bred)**cq
+      jc2 = (1.0D0-t**1.52D0) * (1.0D0-t**2)  !  t must be < 1 to avoid NaNs
+      jc3 = bred**p * (1.0D0-bred)**q  !  bred must be < 1 to avoid NaNs
 
       jcrit = jc1 * jc2 * jc3 / scalefac
 
@@ -1939,10 +1990,66 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    subroutine jcrit_nbti(thelium,bmax,c0,bc20max,tc0max,jcrit,tcrit)
+
+      !+ad_name  jcrit_nbti
+      !+ad_summ  Critical current density in a NbTi superconductor strand
+      !+ad_type  Subroutine
+      !+ad_auth  P J Knight, CCFE, Culham Science Centre
+      !+ad_cont  N/A
+      !+ad_args  thelium : input real : Coolant/SC temperature (K)
+      !+ad_args  bmax : input real : Magnetic field at conductor (T)
+      !+ad_args  c0   : input real : Scaling constant (A/m2)
+      !+ad_args  bc20max : input real : Upper critical field (T) for superconductor
+      !+ad_argc                      at zero temperature and strain
+      !+ad_args  tc0max : input real : Critical temperature (K) at zero field and strain
+      !+ad_args  jcrit : output real : Critical current density in strand (A/m2)
+      !+ad_args  tcrit : output real : Critical temperature (K)
+      !+ad_desc  This routine calculates the critical current density and
+      !+ad_desc  temperature in superconducting TF coils using NbTi
+      !+ad_desc  as the superconductor.
+      !+ad_prob  Results will be misleading unless bmax < bc20max, and
+      !+ad_prob  thelium is sufficiently low.
+      !+ad_call  None
+      !+ad_hist  09/10/14 PJK Initial version, taken from inline code in supercon
+      !+ad_stat  Okay
+      !+ad_docs  None
+      !
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      implicit none
+
+      !  Arguments
+
+      real(kind(1.0D0)), intent(in) :: thelium, bmax, c0, bc20max, tc0max
+      real(kind(1.0D0)), intent(out) :: jcrit, tcrit
+
+      !  Local variables
+
+      real(kind(1.0D0)) :: bratio, tbar
+
+      ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      bratio = min(bmax/bc20max, 0.9999D0)  !  avoids NaNs below
+
+      !  Critical temperature (K)
+
+      tcrit = tc0max * (1.0D0 - bratio)**0.59D0
+
+      tbar = max((1.0D0 - thelium/tcrit), 0.001D0)
+
+      !  Critical current density (A/m2)
+
+      jcrit = c0 * (1.0D0 - bratio) * tbar
+
+    end subroutine jcrit_nbti
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     subroutine bi2212(bmax,jstrand,tsc,fhts,jcrit,tmarg)
 
       !+ad_name  bi2212
-      !+ad_summ  Fitted parametrization to Bi-2212 superconductor properties
+      !+ad_summ  Fitted parameterization to Bi-2212 superconductor properties
       !+ad_type  Subroutine
       !+ad_auth  P J Knight, CCFE, Culham Science Centre
       !+ad_auth  M Kovari, CCFE, Culham Science Centre

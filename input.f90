@@ -4310,6 +4310,8 @@ contains
     !+ad_hist  27/11/13 PJK Added more advice if the output file is unhelpful
     !+ad_hist  26/06/14 PJK Changed routine name to prevent clash with
     !+ad_hisc               global error handling routine
+    !+ad_hist  08/10/14 PJK Swapped order of the message lines so that the
+    !+ad_hisc               error itself is more obvious without scrolling
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -4319,20 +4321,23 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    write(*,*)
     write(*,*) 'Error trapped...'
-    write(*,*) 'Routine ',trim(error_routine),': ',trim(error_message)
-    write(*,*) 'Error Code: ',error_code
     write(*,*)
     write(*,*) 'Please check the output file for further information.'
     write(*,*)
-    write(*,*) 'If this does not contain a helpful error message, check'
-    write(*,*) 'the lines of the input file following the last one copied'
-    write(*,*) 'to the output file - there is likely to be a mistake'
-    write(*,*) 'in the formatting somewhere...'
+    write(*,*) 'If this does not contain a helpful error message, check '// &
+         'the lines of the input'
+    write(*,*) 'file following the last one copied to the output file - ' // &
+         'there is likely to be'
+    write(*,*) 'a mistake in the formatting somewhere...'
     write(*,*)
-    write(*,*) 'Note that in-line comments are usually okay, but be very'
-    write(*,*) 'careful with the use of commas (best avoided altogether...)'
+    write(*,*) 'Note that in-line comments are usually okay, but be very ' // &
+         'careful with the use'
+    write(*,*) 'of commas (best avoided altogether...)'
     write(*,*)
+    write(*,*) 'Routine ',trim(error_routine),': ',trim(error_message)
+    write(*,*) 'Error Code: ',error_code
 
     idiags(1) = error_code
     call report_error(130)

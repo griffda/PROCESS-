@@ -61,6 +61,7 @@ module numerics
   !+ad_hist  01/10/14 PJK Reassigned lablcc(15); new iteration variable 103
   !+ad_hist  02/10/14 PJK Reassigned lablcc(23); new iteration variable 104
   !+ad_hist  06/10/14 PJK New iteration variable 105; new constraint 59
+  !+ad_hist  13/10/14 PJK Changed boundu(50: fiooic) from 0.5 to 1.0
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -832,7 +833,7 @@ module numerics
        1.000D0, &  !  47
        1.000D0, &  !  48
        1.000D0, &  !  49
-       0.500D0, &  !  50
+       1.000D0, &  !  50
        1.000D0, &  !  51
        1.000D6, &  !  52
        1.000D0, &  !  53
