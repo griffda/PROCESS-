@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '349    Release Date :: 2014-10-13'
+       '350    Release Date :: 2014-10-16'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1838,3 +1838,5 @@ end subroutine output
 !          modified reporting of errors pertaining to the input file;
 !          clarified comments and variable names in routine itersc
 ! GIT 349: Split User Guide over several .tex files
+! GIT 350: PF/CS superconductor calculations now use same routines as for TF coils;
+!          PF/CS coil case calculations clarified

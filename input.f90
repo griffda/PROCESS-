@@ -321,6 +321,7 @@ contains
     !+ad_hist  02/10/14 PJK Added FLHTHRESH, FCWR, CWRMAX
     !+ad_hist  06/10/14 PJK Added FNBSHINEF, NBSHINEFMAX
     !+ad_hist  06/10/14 PJK Added FORBITLOSS
+    !+ad_hist  16/10/14 PJK Added ISUMATOH,FCUPFSU
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1474,17 +1475,23 @@ contains
        case ('FCOHBOP')
           call parse_real_variable('FCOHBOP', fcohbop, 0.0D0, 1.0D0, &
                'OH coil J ratio : BOP/EOF')
-       case ('FCUOH')
-          call parse_real_variable('FCUOH', fcuoh, 0.0D0, 1.0D0, &
+       case ('FCUOHSU')
+          call parse_real_variable('FCUOHSU', fcuohsu, 0.0D0, 1.0D0, &
                'Cu frac of conductor in OH coil cable')
+       case ('FCUPFSU')
+          call parse_real_variable('FCUPFSU', fcupfsu, 0.0D0, 1.0D0, &
+               'Cu fraction of PF cable conductor')
        case ('IPFLOC')
           call parse_int_array('IPFLOC', ipfloc, isub1, ngc, &
                'PF coil location', icode)
        case ('IPFRES')
           call parse_int_variable('IPFRES', ipfres, 0, 1, &
                'Switch for supercond / resist PF coils')
+       case ('ISUMATOH')
+          call parse_int_variable('ISUMATOH', isumatoh, 1, 4, &
+               'OH coil superconductor material')
        case ('ISUMATPF')
-          call parse_int_variable('ISUMATPF', isumatpf, 1, 3, &
+          call parse_int_variable('ISUMATPF', isumatpf, 1, 4, &
                'PF coil superconductor material')
        case ('NCLS')
           call parse_int_array('NCLS', ncls, isub1, ngrpmx, &

@@ -182,6 +182,7 @@
     !+ad_hist  09/04/13 PJK Comment changes
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint
     !+ad_hist  24/06/14 PJK Removed refs to bcylth
+    !+ad_hist  16/10/14 PJK Replaced sccufac usage with fcuohsu
     !+ad_stat  This routine is untested in F90...
     !+ad_docs  F/MI/PJK/LOGBOOK12, pp.70,71,72,73
     !+ad_docs  Strategic Studies Note 96/30, January 1997
@@ -344,17 +345,17 @@
 
           !  Steel cross-sectional area
 
-          as = wts(nohc) / (2.0D0*pi*rpf(nohc) * 7800.0D0)
+          as = wts(nohc) / (2.0D0*pi*rpf(nohc) * denstl)
 
           matfrc(ioh,1) = as / (ac+av+as) * fmsoh
           matfrc(ioh,2) = as / (ac+av+as) * (1.0D0 - fmsoh)
           matfrc(ioh,5) = av / (ac+av+as)
-          matfrc(ioh,7) = ac / (ac+av+as) * (1.0D0-sccufac*bpf(nohc))
+          matfrc(ioh,7) = ac / (ac+av+as) * fcuohsu
 
-          if ((isumatpf == 1).or.(isumatpf == 2)) then
-             matfrc(ioh,12) = ac / (ac+av+as) * sccufac*bpf(nohc)
+          if (isumatoh /= 3) then  !  treat generic superconductors like Nb3Sn
+             matfrc(ioh,12) = ac / (ac+av+as) * (1.0D0 - fcuohsu)
           else
-             matfrc(ioh,13) = ac / (ac+av+as) * sccufac*bpf(nohc)
+             matfrc(ioh,13) = ac / (ac+av+as) * (1.0D0 - fcuohsu)
           end if
 
        end if

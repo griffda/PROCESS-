@@ -1279,6 +1279,7 @@ module pfcoil_variables
   !+ad_hist  17/09/14 PJK Changed default values
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  22/09/14 PJK Attempted to clarify zref description
+  !+ad_hist  16/10/14 PJK Added pfcaseth,isumatoh,fcupfsu,awpoh
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1308,6 +1309,8 @@ module pfcoil_variables
   !+ad_vars  alfapf /5.0e-10/ : smoothing parameter used in PF coil
   !+ad_varc                     current calculation at the beginning of pulse (BoP)
   real(kind(1.0D0)) :: alfapf = 5.0D-10
+  !+ad_vars  awpoh : central solenoid winding pack area (m2)
+  real(kind(1.0D0)) :: awpoh = 0.0D0
   !+ad_vars  bmaxoh : maximum field in central solenoid at end of flat-top (EoF) (T)
   real(kind(1.0D0)) :: bmaxoh = 0.0D0
   !+ad_vars  bmaxoh0 : maximum field in central solenoid at beginning of pulse (T)
@@ -1321,7 +1324,7 @@ module pfcoil_variables
   real(kind(1.0D0)) :: coheof = 1.85D7
   !+ad_vars  cpt(ngc2,6) : current per turn in coil i at time j (A)
   real(kind(1.0D0)), dimension(ngc2,6) :: cpt = 0.0D0
-  !+ad_vars  cptdin(ngc2) /4.0e4/: current per turn input for PF coil i (A)
+  !+ad_vars  cptdin(ngc2) /4.0e4/: peak current per turn input for PF coil i (A)
   real(kind(1.0D0)), dimension(ngc2) :: cptdin = 4.0D4
   !+ad_vars  curpfb(ngc2) : work array
   real(kind(1.0D0)), dimension(ngc2) :: curpfb = 0.0D0
@@ -1336,8 +1339,10 @@ module pfcoil_variables
   !+ad_varc                  beginning of pulse / end of flat-top
   !+ad_varc                  (iteration variable 41)
   real(kind(1.0D0)) :: fcohbop = 0.9D0
-  !+ad_vars  fcuoh /0.4/ : copper fraction of conductor in central solenoid cable
-  real(kind(1.0D0)) :: fcuoh = 0.4D0
+  !+ad_vars  fcuohsu /0.4/ : copper fraction of conductor in central solenoid cable
+  real(kind(1.0D0)) :: fcuohsu = 0.4D0
+  !+ad_vars  fcupfsu /0.69/ : copper fraction of cable conductor (PF coils)
+  real(kind(1.0D0)) :: fcupfsu = 0.69D0
   !+ad_vars  ipfloc(ngc) /2,2,3/ : switch for locating scheme of PF coil group i:<UL>
   !+ad_varc                   <LI> = 1 PF coil on top of central solenoid;
   !+ad_varc                   <LI> = 2 PF coil on top of TF coil;
@@ -1347,16 +1352,27 @@ module pfcoil_variables
   !+ad_varc          <LI> = 0 superconducting PF coils;
   !+ad_varc          <LI> = 1 resistive PF coils</UL>
   integer :: ipfres = 0
+  !+ad_vars  isumatoh /1/ : switch for superconductor material in central solenoid:<UL>
+  !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
+  !+ad_varc                     ITER parameters;
+  !+ad_varc            <LI> = 2 Bi-2212 high temperature superconductor (range of
+  !+ad_varc                     validity T < 20K, adjusted field b < 104 T, B > 6 T);
+  !+ad_varc            <LI> = 3 NbTi;
+  !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters</UL>
+  integer :: isumatoh = 1
   !+ad_vars  isumatpf /1/ : switch for superconductor material in PF coils:<UL>
-  !+ad_varc            <LI> = 1 binary Nb3Sn;
-  !+ad_varc            <LI> = 2 ternary Nb3Sn;
-  !+ad_varc            <LI> = 3 NbTi</UL>
+  !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
+  !+ad_varc                     ITER parameters;
+  !+ad_varc            <LI> = 2 Bi-2212 high temperature superconductor (range of
+  !+ad_varc                     validity T < 20K, adjusted field b < 104 T, B > 6 T);
+  !+ad_varc            <LI> = 3 NbTi;
+  !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters</UL>
   integer :: isumatpf = 1
   !+ad_vars  ncirt : number of PF circuits (including central solenoid and plasma)
   integer :: ncirt = 0
   !+ad_vars  ncls(ngrpmx+2) /1,1,2/ : number of PF coils in group j
   integer, dimension(ngrpmx+2) :: ncls = (/1,1,2,0,0,0,0,0,0,0/)
-  !+ad_vars  nfxfh /7/ : number of coils the top and bottom of the central solenoid
+  !+ad_vars  nfxfh /7/ : number of filaments the top and bottom of the central solenoid
   !+ad_varc              should be broken into during scaling (5 - 10 is good)
   integer :: nfxfh = 7
   !+ad_vars  ngrp /3/ : number of groups of PF coils.
@@ -1366,6 +1382,8 @@ module pfcoil_variables
   integer :: nohc = 0
   !+ad_vars  ohhghf /0.71/ : central solenoid height / TF coil internal height
   real(kind(1.0D0)) :: ohhghf = 0.71D0
+  !+ad_vars  pfcaseth(ngc2) : steel case thickness for PF coil i (m)
+  real(kind(1.0D0)), dimension(ngc2) :: pfcaseth = 0.0D0
   !+ad_vars  pfclres /2.5e-8/ : PF coil resistivity (if ipfres=1) (Ohm-m)
   real(kind(1.0D0)) :: pfclres = 2.5D-8
   !+ad_vars  pfmmax : mass of heaviest PF coil (tonnes)
@@ -1382,7 +1400,7 @@ module pfcoil_variables
   real(kind(1.0D0)), dimension(ngc2) :: rb = 0.0D0
   !+ad_vars  ric(ngc2) : peak current in coil i (MA-turns)
   real(kind(1.0D0)), dimension(ngc2) :: ric = 0.0D0
-  !+ad_vars  rjconpf(ngc2) /3.0e7/ : average current density of PF coil i (A/m2)
+  !+ad_vars  rjconpf(ngc2) /3.0e7/ : average winding pack current density of PF coil i (A/m2)
   !+ad_varc                          at time of peak current in that coil
   !+ad_varc                          (calculated for ipfloc=1 coils)
   real(kind(1.0D0)), dimension(ngc2) :: rjconpf = 3.0D7
@@ -1390,11 +1408,11 @@ module pfcoil_variables
   real(kind(1.0D0)) :: rjohc = 0.0D0
   !+ad_vars  rjohc0 : allowable central solenoid current density at beginning of pulse (A/m2)
   real(kind(1.0D0)) :: rjohc0 = 0.0D0
-  !+ad_vars  rjpfalw(ngc2) : allowable current density of PF coil i (A/m2)
+  !+ad_vars  rjpfalw(ngc2) : allowable winding pack current density of PF coil i (A/m2)
   real(kind(1.0D0)), dimension(ngc2) :: rjpfalw = 0.0D0
   !+ad_vars  rohc : radius to the centre of the central solenoid (m)
   real(kind(1.0D0)) :: rohc = 0.0D0
-  !+ad_vars  routr /1.5/ : distance (m) from outboard TF coil leg to centre of
+  !+ad_vars  routr /1.5/ : radial distance (m) from outboard TF coil leg to centre of
   !+ad_varc                ipfloc=3 PF coils
   real(kind(1.0D0)) :: routr = 1.5D0
   !+ad_vars  rpf(ngc2) : radius of PF coil i (m)
@@ -1405,16 +1423,16 @@ module pfcoil_variables
   !+ad_vars  rpf2 /-1.63/ : offset (m) of radial position of ipfloc=2 PF coils
   !+ad_varc                 from being at rmajor (offset = rpf2*triang*rminor)
   real(kind(1.0D0)) :: rpf2 = -1.63D0
-  !+ad_vars  sccufac /0.0188/ : ratio of superconductor to copper in PF coils/central solenoid
-  !+ad_varc                     cable at a magnetic field of 1T
+  !+ad_vars  sccufac /0.0188/ : ratio of superconductor to copper
+  !+ad_varc                     cable at a magnetic field of 1T (RFP coils only)
   real(kind(1.0D0)) :: sccufac = 0.0188D0
   !+ad_vars  sigpfalw /335.0/ : allowable stress in PF coils/central solenoid (MPa)
-  !+ad_varc                     excluding the steel coil case
-  real(kind(1.0D0)) :: sigpfcalw = 500.0D0
+  !+ad_varc                     excluding the steel coil case (OBSOLETE)
+  real(kind(1.0D0)) :: sigpfalw = 335.0D0
   !+ad_vars  sigpfcalw /500.0/ : maximum permissible tensile stress (MPa) in
   !+ad_varc                      steel coil cases for superconducting PF coils
   !+ad_varc                      (ipfres=0)
-  real(kind(1.0D0)) :: sigpfalw = 335.0D0
+  real(kind(1.0D0)) :: sigpfcalw = 500.0D0
   !+ad_vars  sigpfcf /0.666/ : fraction of JxB hoop force supported by steel case
   !+ad_varc                    for superconducting PF coils (ipfres=0)
   real(kind(1.0D0)) :: sigpfcf = 0.666D0
@@ -1422,9 +1440,9 @@ module pfcoil_variables
   real(kind(1.0D0)), dimension(ngc2,ngc2) :: sxlg = 0.0D0
   !+ad_vars  turns(ngc2) : number of turns in PF coil i
   real(kind(1.0D0)), dimension(ngc2) :: turns = 0.0D0
-  !+ad_vars  vf(ngc2) /0.3/ : void fraction of PF coil i
+  !+ad_vars  vf(ngc2) /0.3/ : winding pack void fraction of PF coil i for coolant
   real(kind(1.0D0)), dimension(ngc2) :: vf = 0.3D0
-  !+ad_vars  vfohc /0.2/ : void fraction of (whole) central solenoid for coolant
+  !+ad_vars  vfohc /0.2/ : winding pack void fraction of central solenoid for coolant
   real(kind(1.0D0)) :: vfohc = 0.2D0
   !+ad_vars  vsbn : total flux swing available for burn (Wb)
   real(kind(1.0D0)) :: vsbn = 0.0D0
@@ -1574,15 +1592,15 @@ module tfcoil_variables
   !+ad_varc                  (calculated for stellarators)
   !+ad_varc                  (iteration variable 60)
   real(kind(1.0D0)) :: cpttf = 3.79D4
-  !+ad_vars  csutf /1.32e9/ : ultimate strength of case (Pa)
+  !+ad_vars  csutf /1.32e9/ : ultimate strength of case (TF coils and CS coils) (Pa)
   !+ad_varc                   (default value from DDD11-2 v2 2 (2009))
   real(kind(1.0D0)) :: csutf = 1.32D9
-  !+ad_vars  csytf /1.0005e9/ : yield strength of case (Pa)
+  !+ad_vars  csytf /1.0005e9/ : yield strength of case (TF coils and CS coils) (Pa)
   !+ad_varc                     (default value from DDD11-2 v2 2 (2009))
   real(kind(1.0D0)) :: csytf = 1.0005D9
   !+ad_vars  dcase /8000.0/ : density of coil case (kg/m3)
   real(kind(1.0D0)) :: dcase = 8000.0D0
-  !+ad_vars  dcond(4) /9000.0/ : density of superconductor type given by isumattf or isumatpf (kg/m3)
+  !+ad_vars  dcond(4) /9000.0/ : density of superconductor type given by isumattf/isumatoh/isumatpf (kg/m3)
   real(kind(1.0D0)), dimension(4) :: dcond = 9000.0D0
   !+ad_vars  dcondins /1800.0/ : density of conduit + ground-wall insulation (kg/m3)
   real(kind(1.0D0)) :: dcondins = 1800.0D0
@@ -1610,11 +1628,11 @@ module tfcoil_variables
   real(kind(1.0D0)) :: eyzwp = 0.0D0
   !+ad_vars  farc4tf /0.7/ : factor to size height of point 4 on TF coil
   real(kind(1.0D0)) :: farc4tf = 0.7D0
-  !+ad_vars  fcutfsu /0.69/ : copper fraction of cable conductor
+  !+ad_vars  fcutfsu /0.69/ : copper fraction of cable conductor (TF coils)
   !+ad_varc                   (iteration variable 59)
   real(kind(1.0D0)) :: fcutfsu = 0.69D0
   !+ad_vars  fhts /0.5/ : technology adjustment factor for critical current density fit
-  !+ad_varc               for isumattf=2 Bi-2212 superconductor, to describe the level
+  !+ad_varc               for isumat..=2 Bi-2212 superconductor, to describe the level
   !+ad_varc               of technology assumed (i.e. to account for stress, fatigue,
   !+ad_varc               radiation, AC losses, joints or manufacturing variations;
   !+ad_varc               1.0 would be very optimistic)
@@ -1736,7 +1754,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tfsai = 0.0D0
   !+ad_vars  tfsao : area of the outboard TF coil legs (m2)
   real(kind(1.0D0)) :: tfsao = 0.0D0
-  !+ad_vars  tftmp /4.5/ : peak TF coil helium coolant temperature (K)
+  !+ad_vars  tftmp /4.5/ : peak helium coolant temperature in TF coils and PF coils (K)
   real(kind(1.0D0)) :: tftmp = 4.5D0
   !+ad_vars  tftort : TF coil toroidal thickness (m)
   !+ad_varc           (calculated for tokamaks and stellarators;

@@ -1104,6 +1104,7 @@ The following options are available within the superconducting TF coil model
 (\texttt{itfsup = 1}).
 
 \subsubsection{Superconducting materials}
+\label{sec:superconductors}
 
 Switch \texttt{isumattf} specifies which superconducting material is to be
 used:
@@ -1242,18 +1243,27 @@ Z & = & \pm(\mathtt{rminor*zref(j)})
 
 \end{description}
 
+The void fraction (for coolant) in each coil \texttt{i}'s winding pack is
+given by \texttt{vf(i)}.
+
 \subsubsection{PF coil currents}
 
-The PF coil currents are calculated in routine \texttt{EFC}, and vary as a
-function of time during the tokamak operation as indicated in
-Figure~\ref{fig:current_vs_time}.
+The peak current per turn, \texttt{cptdin(i)}, and the winding pack peak
+current density \texttt{rjconpf(i)} in each PF coil \texttt{i} are inputs. The
+PF coil currents vary as a function of time during the tokamak operation as
+indicated in Figure~\ref{fig:current_vs_time}. They contribute part of the
+flux swing necessary to maintain the plasma current (see
+Section~\ref{sec:ohcoil}).
 
 \begin{figure}[tbph]
 \epsfig{file=current_vs_time.eps,width=170mm}
 \caption[Coil and plasma current waveforms]
 {\label{fig:current_vs_time}
   \textit{Plot showing schematically the current waveforms for the plasma, a
-    typical PF coil, and the central solenoid.}
+    typical PF coil, and the central solenoid. Note that the currents in some
+    of the PF coils may be the opposite sign to that shown, and the central
+    solenoid current may remain positive during the $I_p$ ramp-up period,
+    although it will pass through zero during the burn phase.}
 }
 \end{figure}
 
@@ -1268,26 +1278,32 @@ variable \texttt{pfclres}.
 \subsubsection{Superconducting materials}
 
 If \texttt{ipfres = 0}, switch \texttt{isumatpf} specifies which
-superconducting material is to be used for the PF coils and the central
-solenoid:
-\begin{description}
-\item [\texttt{isumatpf = 1} :] binary Nb$_3$Sn superconductor
-\item [\texttt{isumatpf = 2} :] ternary Nb$_3$Sn superconductor
-\item [\texttt{isumatpf = 3} :] NbTi superconductor
-\end{description}
+superconducting material is to be used for the PF coils. The values for
+\texttt{isumatpf} are used in the same way as switch \texttt{isumattf} is for
+the TF coils (see Section~\ref{sec:superconductors}).
 
-\subsection{Ohmic heating coil}
+The fraction of copper present in the superconducting filaments is given by
+the value of variable \texttt{fcupfsu}.
+
+If the PF coils are superconducting, a steel case is assumed to surround the
+current-carrying winding pack to take the hoop stress. Its cross-sectional
+area is determined by the $J \times B$ hoop force on the coil divided by the
+allowable hoop stress, given by input parameter \texttt{sigpfcalw}. The input
+parameter \texttt{sigpfcf} provides a scale factor (default is 0.666) to
+adjust the hoop force if required, to indicate what proportion of the force is
+supported by the case.
+
+\subsection{Central solenoid}
 \label{sec:ohcoil}
 
-The ohmic heating (OH) coil is a PF coil used primarily during start-up (but
-also during the burn phase) to create and maintain the plasma current by
-inductive means. Swinging (changing) the current through the central solenoid
-causes a change in the flux linked to the plasma region, inducing a current in
-it. \process\ calculates the amount of flux required to produce the plasma
-current, and also the amount actually available. The code measures the
-magnetic flux in units of Volt-seconds ($=$ Webers). The central solenoid can
-be either resistive or superconducting (controlled via switches
-\texttt{ipfres} and \texttt{isumatpf} as for the other PF coils).
+Formerly known as the ohmic heating (OH) coil, the central solenoid is a PF
+coil used primarily during start-up (but also during the burn phase) to create
+and maintain the plasma current by inductive means. Swinging (changing) the
+current through the central solenoid causes a change in the flux linked to the
+plasma region, inducing a current in it. \process\ calculates the amount of
+flux required to produce the plasma current, and also the amount actually
+available. The code measures the magnetic flux in units of Volt-seconds ($=$
+Webers).
 
 Switch \texttt{iohcl} controls whether a central solenoid is present. A value
 of \texttt{1} denotes that this coil is present, and should be assigned a
@@ -1296,12 +1312,47 @@ no central solenoid is present, in which case the thickness \texttt{ohcth}
 should be set to zero. No PF coils should be located at positions defined by
 \texttt{ipfloc(j) = 1} if no central solenoid is present.
 
+The central solenoid can be either resistive or superconducting (controlled
+via switch \texttt{ipfres} as for the other PF coils), and if superconducting,
+switch \texttt{isumatoh} determines the superconducting material to use ---
+its value is used like \texttt{isumattf} and \texttt{isumatpf}. The fraction
+of copper present in the superconducting filaments is given by the value of
+variable \texttt{fcuohsu}.
+
+If the central solenoid is superconducting, a steel case is assumed to
+surround the current-carrying winding pack. Its cross-sectional area is
+determined by the $J \times B$ hoop force on the coil divided by the allowable
+hoop stress, calculated as the lower of the two quantities (2/3 *
+\texttt{csytf}) and (0.5 * \texttt{csutf}), where input parameter
+\texttt{csytf} is the yield strength of the case in Pascals, and
+\texttt{csutf} is the ultimate strength of the case in Pascals. (This is the
+same calculation as for the allowable stress in the TF coil cases.)
+
+\subsubsection{Current density inputs and limits}
+
+The (absolute value of the) central solenoid current density at the
+end-of-flat-top (`EOF'), \texttt{coheof} is specified by the user, and can be
+used as an iteration variable (no.\ 37). The current density at the
+beginning-of-pulse (`BOP' --- see Figure~\ref{fig:current_vs_time}) is
+specified as a (positive) fraction of \texttt{coheof} using \texttt{fcohbop}
+(iteration variable no.\ 41). The current density in the CS at all other times
+is calculated by taking account of the flux swing necessary to initiate and
+maintain the plasma current. The positive or negative sign of the current at
+each time is calculated automatically.
+
+The current density in the central solenoid can be limited at the
+beginning-of-pulse (`BOP') and at the EOF. To limit the current density at the
+BOP, constraint equation no.\ 27 should be turned on with iteration variable
+no.\ 39 (\texttt{fjohc0}). To limit the current density at the EOF, constraint
+equation no.\ 26 should be turned on with iteration variable no.\ 38
+(\texttt{fjohc}).
+
 \subsubsection{Plasma current ramp-up time}
 \label{sec:tohs}
 
 In the steady-state power plant scenario ($\mathtt{lpulse \not= 1}$ --- see
 Section~\ref{sec:pulsed}), the length of time taken for the central solenoid
-current to reverse (which is equal to the plasma current ramp-up time --- see
+current to (possibly) reverse (which is equal to the plasma current ramp-up time --- see
 Figure~\ref{fig:current_vs_time}) is determined from the value of switch
 \texttt{tohsin}. If \texttt{tohsin = 0.0D0}, then the plasma current ramp-up
 time \texttt{tohs} in seconds is given by $\mathtt{tohs} = I_p / 0.5$, where
@@ -1319,18 +1370,6 @@ current ramp rate during start-up is prevented from being too high, as
 governed by the requirement to maintain plasma stability in $l_i$-$q_\psi$
 space, constraint equation no.\ 41 should be turned on with iteration variable
 no.\ 66 (\texttt{ftohs}).
-
-\subsubsection{Current density limits}
-
-The current density in the central solenoid can be limited at the
-beginning-of-pulse (BOP) and at the end-of-flat-top (EOF --- see
-Figure~\ref{fig:current_vs_time}). The limiting value is dependent on the
-maximum allowable stress in the coil as given by the value of
-\texttt{sigpfalw}. To limit the current density at the BOP, constraint
-equation no.\ 27 should be turned on with iteration variable no.\ 39
-(\texttt{fjohc0}). To limit the current density at the EOF, constraint
-equation no.\ 26 should be turned on with iteration variable no.\ 38
-(\texttt{fjohc}).
 
 \subsection{Auxiliary power systems: heating and current drive}
 \label{sec:hcd}
