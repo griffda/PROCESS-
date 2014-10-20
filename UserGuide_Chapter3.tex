@@ -1319,14 +1319,16 @@ its value is used like \texttt{isumattf} and \texttt{isumatpf}. The fraction
 of copper present in the superconducting filaments is given by the value of
 variable \texttt{fcuohsu}.
 
-If the central solenoid is superconducting, a steel case is assumed to
-surround the current-carrying winding pack. Its cross-sectional area is
-determined by the $J \times B$ hoop force on the coil divided by the allowable
-hoop stress, calculated as the lower of the two quantities (2/3 *
-\texttt{csytf}) and (0.5 * \texttt{csutf}), where input parameter
-\texttt{csytf} is the yield strength of the case in Pascals, and
-\texttt{csutf} is the ultimate strength of the case in Pascals. (This is the
-same calculation as for the allowable stress in the TF coil cases.)
+If the central solenoid is superconducting, the coil contains steel for
+strength. The cross-sectional area of steel is determined by the $J \times B$
+hoop force on the coil divided by the allowable hoop stress, calculated as the
+lower of the two quantities (2/3 * \texttt{csytf}) and (0.5 * \texttt{csutf}),
+where input parameter \texttt{csytf} (Pa) is the yield strength of the steel,
+and \texttt{csutf} (Pa) is the ultimate strength of the steel. (This is the
+same calculation as for the allowable stress in the TF coil cases.) A steel
+thickness is given in the output, which would be the thickness of a
+steel case of the same cross-sectional area if it simply surrounded the
+conducting region.
 
 \subsubsection{Current density inputs and limits}
 
@@ -1340,12 +1342,11 @@ is calculated by taking account of the flux swing necessary to initiate and
 maintain the plasma current. The positive or negative sign of the current at
 each time is calculated automatically.
 
-The current density in the central solenoid can be limited at the
-beginning-of-pulse (`BOP') and at the EOF. To limit the current density at the
-BOP, constraint equation no.\ 27 should be turned on with iteration variable
-no.\ 39 (\texttt{fjohc0}). To limit the current density at the EOF, constraint
-equation no.\ 26 should be turned on with iteration variable no.\ 38
-(\texttt{fjohc}).
+The current density in the central solenoid can be limited at the BOP and at
+the EOF. To limit the current density at the BOP, constraint equation no.\ 27
+should be turned on with iteration variable no.\ 39 (\texttt{fjohc0}). To
+limit the current density at the EOF, constraint equation no.\ 26 should be
+turned on with iteration variable no.\ 38 (\texttt{fjohc}).
 
 \subsubsection{Plasma current ramp-up time}
 \label{sec:tohs}

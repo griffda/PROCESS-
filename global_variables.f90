@@ -1280,6 +1280,7 @@ module pfcoil_variables
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  22/09/14 PJK Attempted to clarify zref description
   !+ad_hist  16/10/14 PJK Added pfcaseth,isumatoh,fcupfsu,awpoh
+  !+ad_hist  20/10/14 PJK Added alstroh
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1309,6 +1310,8 @@ module pfcoil_variables
   !+ad_vars  alfapf /5.0e-10/ : smoothing parameter used in PF coil
   !+ad_varc                     current calculation at the beginning of pulse (BoP)
   real(kind(1.0D0)) :: alfapf = 5.0D-10
+  !+ad_vars  alstroh : allowable hoop stress in central solenoid (Pa)
+  real(kind(1.0D0)) :: alstroh = 0.0D0
   !+ad_vars  awpoh : central solenoid winding pack area (m2)
   real(kind(1.0D0)) :: awpoh = 0.0D0
   !+ad_vars  bmaxoh : maximum field in central solenoid at end of flat-top (EoF) (T)

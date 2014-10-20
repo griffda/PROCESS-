@@ -773,7 +773,7 @@ contains
 
     integer :: timepoint
 
-    real(kind(1.0D0)) :: alstroh,areaspf,areaoh,bmax,bmaxoh2, &
+    real(kind(1.0D0)) :: areaspf,areaoh,bmax,bmaxoh2, &
          bohci,bohco,bri,bro,bzi,bzo,drpdz,forcepf,hohc,jcritwp,sgn
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2349,7 +2349,7 @@ contains
 210 format(t3,i2,t9,20(1pe8.1))
 
     if (iohcl /= 0) write(outfile,230) (sxlg(ij,ncirt-1),ij=1,ncirt)
-230 format(' OH coil',t9,20(1pe8.1))
+230 format('  CS',t9,20(1pe8.1))
 
     write(outfile,240) (sxlg(ij,ncirt),ij=1,ncirt)
 240 format(' Plasma',t9,20(1pe8.1))
@@ -2385,6 +2385,7 @@ contains
     !+ad_hist               not reaching its upper limit
     !+ad_hist  01/09/14 PJK Changed .or. to .and. for the info message test
     !+ad_hist  15/10/14 PJK Added more outputs
+    !+ad_hist  20/10/14 PJK Minor changes to output wording
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2403,18 +2404,17 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    call oheadr(outfile,'PF Coils')
-
-    !  Print out OH coil stress
+    call oheadr(outfile,'Central Solenoid and PF Coils')
 
     if (iohcl == 0) then
-       call ocmmnt(outfile,'No OH coil included')
+       call ocmmnt(outfile,'No central solenoid included')
        call oblnkl(outfile)
     else
        if (ipfres == 0) then
-          call ocmmnt(outfile,'Superconducting OH coil')
+          call ocmmnt(outfile,'Superconducting central solenoid')
 
-          call ovarin(outfile,'OH coil superconductor material','(isumatoh)',isumatoh)
+          call ovarin(outfile,'Central solenoid superconductor material', &
+               '(isumatoh)',isumatoh)
 
           select case (isumatoh)
           case (1)
@@ -2428,23 +2428,26 @@ contains
                   '  (ITER Nb3Sn critical surface model, user-defined parameters)')
           end select
        else
-          call ocmmnt(outfile,'Resistive OH coil')
+          call ocmmnt(outfile,'Resistive central solenoid')
        end if
 
-       call osubhd(outfile,'OH Coil Stress Calculations :')
-       call ovarre(outfile,'Maximum field at End Of Flattop (T)', &
-            '(bmaxoh)',bmaxoh)
+       call osubhd(outfile,'Central Solenoid Current Density Limits :')
        call ovarre(outfile,'Maximum field at Beginning Of Pulse (T)', &
             '(bmaxoh0)',bmaxoh0)
-       call ovarre(outfile,'Allowable winding pack current density at EOF (A/m2)', &
-            '(rjohc)',rjohc)
-       call ovarre(outfile,'Actual winding pack current density at EOF (A/m2)', &
-            '(coheof)',coheof)
-       call ovarre(outfile,'Allowable winding pack current density at BOP (A/m2)', &
+       call ovarre(outfile,'Allowable current density at BOP (A/m2)', &
             '(rjohc0)',rjohc0)
-       call ovarre(outfile,'Actual winding pack current density at BOP (A/m2)', &
+       call ovarre(outfile,'Actual current density at BOP (A/m2)', &
             '(cohbop)',cohbop)
-       call ovarre(outfile,'OH coil winding pack area (m2)','(awpoh)',awpoh)
+       call ovarre(outfile,'Maximum field at End Of Flattop (T)', &
+            '(bmaxoh)',bmaxoh)
+       call ovarre(outfile,'Allowable current density at EOF (A/m2)', &
+            '(rjohc)',rjohc)
+       call ovarre(outfile,'Actual current density at EOF (A/m2)', &
+            '(coheof)',coheof)
+       call ovarre(outfile,'CS conductor cross-sectional area (m2)', &
+            '(awpoh)',awpoh)
+       call ovarre(outfile,'Allowable hoop stress in CS steel (Pa)', &
+            '(alstroh)',alstroh)
 !+PJK obsolete...
        !call ovarre(outfile,'Allowable stress at BOP (MPa)', &
        !     '(sigpfalw)',sigpfalw)
@@ -2483,7 +2486,7 @@ contains
        call ovarre(outfile,'PF coil resistive power (W)','(powpfres)', &
             powpfres)
        if (iohcl /= 0) then
-          call ovarre(outfile,'OH coil resistive power (W)','(powohres)', &
+          call ovarre(outfile,'Central solenoid resistive power (W)','(powohres)', &
                powohres)
        end if
     else
@@ -2499,11 +2502,11 @@ contains
     nef = nohc
     if (iohcl /= 0) nef = nef - 1
 
-    call osubhd(outfile, 'Geometry of PF coils, OH coil and plasma :')
+    call osubhd(outfile, 'Geometry of PF coils, central solenoid and plasma :')
 
     write(outfile,10)
 10  format(' coil',t17,'R(m)',t29,'Z(m)',t41,'dR(m)',t53,'dZ(m)', &
-         t65,'turns',t75,'case thickness(m)')
+         t65,'turns',t75,'steel thickness(m)')
     call oblnkl(outfile)
 
     !  PF coils
@@ -2535,20 +2538,20 @@ contains
     if (iohcl /= 0) then
        write(outfile,30) rpf(nohc),zpf(nohc),(rb(nohc)-ra(nohc)), &
             abs(zh(nohc)-zl(nohc)),turns(nohc),pfcaseth(nohc)
-30     format('  OH',t10,6f12.2)
-       call ovarre(mfile,'OH coil radius (m)', &
+30     format('  CS',t10,6f12.2)
+       call ovarre(mfile,'Central solenoid radius (m)', &
             '(rpf(nohc))',rpf(nohc))
-       call ovarre(mfile,'OH coil vertical position (m)', &
+       call ovarre(mfile,'Central solenoid vertical position (m)', &
             '(zpf(nohc))',zpf(nohc))
-       call ovarre(mfile,'OH coil radial thickness (m)', &
+       call ovarre(mfile,'Central solenoid radial thickness (m)', &
             '(ohdr)',(rb(nohc)-ra(nohc)))
-       call ovarre(mfile,'OH coil vertical thickness (m)', &
+       call ovarre(mfile,'Central solenoid vertical thickness (m)', &
             '(ohdz)',(zh(nohc)-zl(nohc)))
-       call ovarre(mfile,'OH coil turns', &
+       call ovarre(mfile,'Central solenoid turns', &
             '(turns(nohc))',turns(nohc))
-       call ovarre(mfile,'OH coil current (MA)', &
+       call ovarre(mfile,'Central solenoid current (MA)', &
             '(ric(nohc))',ric(nohc))
-       call ovarre(mfile,'OH coil field (T)', &
+       call ovarre(mfile,'Central solenoid field (T)', &
             '(bpf(nohc))',bpf(nohc))
     end if
 
@@ -2602,7 +2605,7 @@ contains
             (cohbop/rjpfalw(nohc)),wtc(nohc),wts(nohc), &
             bpf(nohc)
 
-100    format('  OH ',f8.2,2(1pe11.3),0p,f6.2,1pe10.3,1pe12.3,1pe13.3)
+100    format('  CS ',f8.2,2(1pe11.3),0p,f6.2,1pe10.3,1pe12.3,1pe13.3)
     end if
 
     !  Miscellaneous totals
@@ -2644,6 +2647,7 @@ contains
     !+ad_hist  18/12/12 PJK/RK Modified for new PF coil current calculations
     !+ad_hist  15/05/14 PJK Added vstot to output
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  20/10/14 PJK OH to CS
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2667,7 +2671,7 @@ contains
 10  format(t15,'volt-sec',t30,'volt-sec',t45,'volt-sec'/ &
          t15,  'start-up',t32,'burn',t46,'total'// &
          t2,'PF coils :',t13,3(f10.2,5x)/ &
-         t2,'OH coil  :',t13,3(f10.2,5x)/ &
+         t2,'CS coil  :',t13,3(f10.2,5x)/ &
          t15,8('-'),t30,8('-'),t45,8('-')/ &
          t2,'Total :   ',t13,3(f10.2,5x) )
 
@@ -2686,7 +2690,7 @@ contains
 30  format(t4,i3,t10,f10.3,5x,f10.3,5x,f10.3)
 
     write(outfile,40) vsdum(nohc,1),vsdum(nohc,2),vsdum(nohc,3)
-40  format(' OH coil',t10,f10.3,5x,f10.3,5x,f10.3)
+40  format(' CS coil',t10,f10.3,5x,f10.3,5x,f10.3)
 
     call oshead(outfile,'Waveforms')
     call ocmmnt(outfile,'Currents (Amps/coil) as a function of time :')

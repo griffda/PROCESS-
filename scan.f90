@@ -161,6 +161,7 @@ contains
     !+ad_hist  16/06/14 PJK Added scan variable 30: fimpvar
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  09/07/14 PJK Turned error reporting off after each output step
+    !+ad_hist  20/10/14 PJK OHC to CS
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -326,7 +327,7 @@ contains
           vlabel = 'gammax = ' ; xlabel = 'Maximum_CD_gamma'
        case (19)
           boundl(16) = sweep(iscan)
-          vlabel = 'boundl(16) = ' ; xlabel = 'OHC_thickness_lower_bound'
+          vlabel = 'boundl(16) = ' ; xlabel = 'CS_thickness_lower_bound'
        case (20)
           tbrnmn = sweep(iscan)
           vlabel = 'tbrnmn = ' ; xlabel = 'Minimum_burn_time_(s)'

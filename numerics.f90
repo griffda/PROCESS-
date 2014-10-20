@@ -62,6 +62,7 @@ module numerics
   !+ad_hist  02/10/14 PJK Reassigned lablcc(23); new iteration variable 104
   !+ad_hist  06/10/14 PJK New iteration variable 105; new constraint 59
   !+ad_hist  13/10/14 PJK Changed boundu(50: fiooic) from 0.5 to 1.0
+  !+ad_hist  20/10/14 PJK OH to CS
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -264,10 +265,10 @@ module numerics
        'Beta upper limit                 ', &
        !+ad_varc  <LI> (25) Peak toroidal field upper limit
        'Peak toroidal field upper limit  ', &
-       !+ad_varc  <LI> (26) OH coil EOF current density upper limit
-       'OH coil EOF current density limit', &
-       !+ad_varc  <LI> (27) * OH coil BOP current density upper limit
-       'OH coil BOP current density limit', &
+       !+ad_varc  <LI> (26) Central solenoid EOF current density upper limit
+       'CS coil EOF current density limit', &
+       !+ad_varc  <LI> (27) * Central solenoid BOP current density upper limit
+       'CS coil BOP current density limit', &
        !+ad_varc  <LI> (28) Fusion gain Q lower limit
        'Fusion gain Q lower limit        ', &
        !+ad_varc  <LI> (29) Inboard radial build consistency

@@ -112,6 +112,7 @@ contains
     !+ad_hist  31/07/14 PJK Re-modified tfthko calculation
     !+ad_hist  19/08/14 PJK Added ddwex, ohhghf to mfile
     !+ad_hist  02/09/14 PJK Modified ripflag handling
+    !+ad_hist  20/10/14 PJK Changed OH coil to central solenoid
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -298,21 +299,21 @@ contains
 
        radius = radius + gapoh
        call obuild(outfile,'Gap',gapoh,radius)
-       call ovarre(mfile,'TF to OH radial gap (m)','(gapoh)',gapoh)
+       call ovarre(mfile,'TF to CS radial gap (m)','(gapoh)',gapoh)
 
        radius = radius + ohcth
-       call obuild(outfile,'OH coil',ohcth,radius)
-       call ovarre(mfile,'OH coil radial thickness (m)','(ohcth)',ohcth)
+       call obuild(outfile,'Central solenoid',ohcth,radius)
+       call ovarre(mfile,'CS radial thickness (m)','(ohcth)',ohcth)
 
     else
 
        radius = radius + ohcth
-       call obuild(outfile,'OH coil',ohcth,radius)
-       call ovarre(mfile,'OH coil radial thickness (m)','(ohcth)',ohcth)
+       call obuild(outfile,'Central solenoid',ohcth,radius)
+       call ovarre(mfile,'CS radial thickness (m)','(ohcth)',ohcth)
 
        radius = radius + gapoh
        call obuild(outfile,'Gap',gapoh,radius)
-       call ovarre(mfile,'OH to TF coil radial gap (m)','(gapoh)',gapoh)
+       call ovarre(mfile,'CS to TF coil radial gap (m)','(gapoh)',gapoh)
 
        radius = radius + tfcth
        call obuild(outfile,'TF coil inboard leg',tfcth,radius)
@@ -490,7 +491,7 @@ contains
     !  Other build quantities
 
     call ovarre(mfile,'External cryostat thickness (m)','(ddwex)',ddwex)
-    call ovarre(mfile,'Ratio of OH coil height to TF coil internal height', &
+    call ovarre(mfile,'Ratio of Central solenoid height to TF coil internal height', &
          '(ohhghf)',ohhghf)
 
   end subroutine radialb
