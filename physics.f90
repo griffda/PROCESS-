@@ -4518,6 +4518,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  20/05/14 PJK Changed prad to pcorerad
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  20/10/14 PJK Output power balances for H=1 instead of H=2
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4532,27 +4533,27 @@ contains
     !  Local variables
 
     integer :: iisc
-    real(kind(1.0D0)), parameter :: d2 = 2.0D0
+    real(kind(1.0D0)), parameter :: d1 = 1.0D0
     real(kind(1.0D0)) :: powerhtz, ptrez, ptriz, &
          taueez, taueezz, taueffz, taueiz
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    call osubhd(outfile,'Confinement times, and required H-factors :')
+    call osubhd(outfile,'Energy confinement times, and required H-factors :')
 
     write(outfile,10)
 10  format(t5,'scaling law', t30,'confinement time (s)', &
          t55,'H-factor for')
 
     write(outfile,20)
-20  format(t34,'for H = 2',t54,'power balance')
+20  format(t34,'for H = 1',t54,'power balance')
 
     call oblnkl(outfile)
 
-    !  Calculate power balances for all scaling laws assuming H = 2
+    !  Calculate power balances for all scaling laws assuming H = 1
 
     do iisc = 1,ipnlaws
-       call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,d2, &
+       call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,d1, &
             iinvqd,iisc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
             plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
             xarea,zeff,ptrez,ptriz,taueez,taueiz,taueffz,powerhtz)

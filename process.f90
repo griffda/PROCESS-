@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '351    Release Date :: 2014-10-20'
+       '352    Release Date :: 2014-10-20'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1841,3 +1841,4 @@ end subroutine output
 ! GIT 350: PF/CS superconductor calculations now use same routines as for TF coils;
 !          PF/CS coil case calculations clarified
 ! GIT 351: OH coil changed to Central solenoid in output files
+! GIT 352: Confinement times for H=1 instead of H=2 now output
