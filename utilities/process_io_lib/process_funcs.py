@@ -5,11 +5,11 @@ Author: Hanni Lux (Hanni.Lux@ccfe.ac.uk)
 
 Date: March 2013 - initial released version
 
-Notes: 
+Notes:
 13/08/2014 HL updated functions to work with new error_status flag
+20/08/2014 HL fixed bug in get_variable_range
 
-
-Compatible with PROCESS version 316 
+Compatible with PROCESS version 319
 """
 
 from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,\
@@ -53,7 +53,7 @@ def update_ixc_bounds(wdir='.'):
     in_dat = INDATNew(wdir+'/IN.DAT')
 
     for key in in_dat.variables.keys():
-        if 'bound' in key:
+        if 'bound' in key.lower():
             var = key[key.find('(')+1:key.find(')')]
             name = DICT_IXC_SIMPLE[var]
 
@@ -112,11 +112,18 @@ def  get_variable_range(itervars, factor, wdir='.'):
             if value == 0.:
                 value = 1.
 
+            #assure value is within bounds!
+            if value < DICT_IXC_BOUNDS[varname]['lb']:
+                value = DICT_IXC_BOUNDS[varname]['lb']
+            elif value > DICT_IXC_BOUNDS[varname]['ub']:
+                value = DICT_IXC_BOUNDS[varname]['ub']
+
             lbs += [max(value/factor, DICT_IXC_BOUNDS[varname]['lb'])]
             ubs += [min(value*factor, DICT_IXC_BOUNDS[varname]['ub'])]
 
         if lbs[-1] > ubs[-1]:
-            print('Error: Iteration variable %s has BOUNDL=%f > BOUNDU=%f\n Update process_dicts or input file!' %(varname, lbs[-1], ubs[-1]))
+            print('Error: Iteration variable %s has BOUNDL=%f >\
+ BOUNDU=%f\n Update process_dicts or input file!' %(varname, lbs[-1], ubs[-1]))
             exit()
         #assert lbs[-1] < ubs[-1]
 

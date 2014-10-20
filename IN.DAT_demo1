@@ -13,9 +13,9 @@
 *****    Peter Knight
 *****
 *****  Date :
-*****    18/08/2014
+*****    17/09/2014
 *****
-*****  PROCESS r317 - tested okay
+*****  PROCESS new_defaults branch
 *****
 *****  Features :
 *****    Aspect ratio = 4.0
@@ -378,3 +378,17 @@ $END
 
 $OSECTS
 $END
+
+* Reset following quantities to previous (r330) defaults
+
+beamwd = 0.31
+falpha = 1.0
+igeom = 0
+ipedestal = 0
+iprofile = 0
+rli = 0.65
+imprad_model = 0
+ipowerflow = 0
+powfmax = 1000.0
+nbshield = 0.1
+vfohc = 0.4

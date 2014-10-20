@@ -195,6 +195,7 @@ contains
     !+ad_prob  None
     !+ad_call  parse_input_file
     !+ad_hist  03/10/12 PJK Initial version
+    !+ad_hist  30/09/14 PJK Changed show_changes to 0
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -207,7 +208,7 @@ contains
 
     !  Local variables
 
-    integer :: show_changes = 1
+    integer :: show_changes = 0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -315,6 +316,13 @@ contains
     !+ad_hist  19/08/14 PJK Removed RECYLE, IMPFE
     !+ad_hist  19/08/14 PJK Removed CASFACT
     !+ad_hist  27/08/14 PJK Added new power flow variables
+    !+ad_hist  16/09/14 PJK Changed TFC_MODEL range
+    !+ad_hist  01/10/14 PJK Added KAPPA95, TRIANG95; changed ISHAPE range
+    !+ad_hist  01/10/14 PJK Added ILHTHRESH
+    !+ad_hist  02/10/14 PJK Added FLHTHRESH, FCWR, CWRMAX
+    !+ad_hist  06/10/14 PJK Added FNBSHINEF, NBSHINEFMAX
+    !+ad_hist  06/10/14 PJK Added FORBITLOSS
+    !+ad_hist  16/10/14 PJK Added ISUMATOH,FCUPFSU
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -487,6 +495,9 @@ contains
        case ('CVOL')
           call parse_real_variable('CVOL', cvol, 0.01D0, 10.0D0, &
                'Plasma volume multiplier')
+       case ('CWRMAX')
+          call parse_real_variable('CWRMAX', cwrmax, 1.0D0, 3.0D0, &
+               'Max conducting shell to rminor radius')
        case ('DENE')
           call parse_real_variable('DENE', dene, 1.0D18, 1.0D22, &
                'Electron density (/m3)')
@@ -602,6 +613,9 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
+       case ('ILHTHRESH')
+          call parse_int_variable('ILHTHRESH', ilhthresh, 1, 8, &
+               'Switch for L-H power threshold to enforce')
        case ('IMPC')
           call parse_real_variable('IMPC', impc, 0.0D0, 10.0D0, &
                'Carbon impurity multiplier')
@@ -641,7 +655,7 @@ contains
           call parse_int_variable('ISCRP', iscrp, 0, 1, &
                'Switch for scrapeoff width')
        case ('ISHAPE')
-          call parse_int_variable('ISHAPE', ishape, 0, 2, &
+          call parse_int_variable('ISHAPE', ishape, 0, 4, &
                'Switch for plasma shape vs. aspect')
        case ('ITART')
           call parse_int_variable('ITART', itart, 0, 1, &
@@ -652,6 +666,9 @@ contains
        case ('KAPPA')
           call parse_real_variable('KAPPA', kappa, 0.99D0, 5.0D0, &
                'Plasma separatrix elongation')
+       case ('KAPPA95')
+          call parse_real_variable('KAPPA95', kappa95, 0.99D0, 5.0D0, &
+               'Plasma 95% elongation')
        case ('NEPED')
           call parse_real_variable('NEPED', neped, 0.0D0, 1.0D21, &
                'Electron density pedestal height (/m3)')
@@ -712,6 +729,9 @@ contains
        case ('TRIANG')
           call parse_real_variable('TRIANG', triang, 0.0D0, 1.0D0, &
                'Plasma separatrix triangularity')
+       case ('TRIANG95')
+          call parse_real_variable('TRIANG95', triang95, 0.0D0, 1.0D0, &
+               'Plasma 95% triangularity')
        case ('ZFEAR')
           call parse_int_variable('ZFEAR', zfear, 0, 1, &
                'Switch for high-Z inpurity')
@@ -745,9 +765,9 @@ contains
        case ('FBETATRY')
           call parse_real_variable('FBETATRY', fbetatry, 0.001D0, 10.0D0, &
                'F-value for beta limit')
-       case ('FRADPWR')
-          call parse_real_variable('FRADPWR', fradpwr, 0.0D0, 1.0D0, &
-               'F-value for radiation power limit')
+       case ('FCWR')
+          call parse_real_variable('FCWR', fcwr, 0.001D0, 10.0D0, &
+               'F-value for conducting wall radius')
        case ('FDENE')
           call parse_real_variable('FDENE', fdene, 0.001D0, 10.0D0, &
                'F-value for density limit')
@@ -792,9 +812,15 @@ contains
        case ('FJPROT')
           call parse_real_variable('FJPROT', fjprot, 0.001D0, 10.0D0, &
                'F-value for SCTF winding pack J')
+       case ('FLHTHRESH')
+          call parse_real_variable('FLHTHRESH', flhthresh, 0.001D0, 10.0D0, &
+               'F-value for L-H power threshold')
        case ('FMVA')
           call parse_real_variable('FMVA', fmva, 0.001D0, 10.0D0, &
                'F-value for maximum MVA')
+       case ('FNBSHINEF')
+          call parse_real_variable('FNBSHINEF', fnbshinef, 0.001D0, 10.0D0, &
+               'F-value for maximum NBI shine-through fraction')
        case ('FPEAKB')
           call parse_real_variable('FPEAKB', fpeakb, 0.001D0, 10.0D0, &
                'F-value for max toroidal field')
@@ -822,6 +848,9 @@ contains
        case ('FQVAL')
           call parse_real_variable('FQVAL', fqval, 0.001D0, 10.0D0, &
                'F-value for fusion gain Q')
+       case ('FRADPWR')
+          call parse_real_variable('FRADPWR', fradpwr, 0.0D0, 1.0D0, &
+               'F-value for radiation power limit')
        case ('FRFPF')
           call parse_real_variable('FRFPF', frfpf, 0.001D0, 10.0D0, &
                'F-value for RFP reversal parameter')
@@ -879,6 +908,9 @@ contains
        case ('MVALIM')
           call parse_real_variable('MVALIM', mvalim, 0.0D0, 1000.0D0, &
                'Maximum MVA limit')
+       case ('NBSHINEFMAX')
+          call parse_real_variable('NBSHINEFMAX', nbshinefmax, 1.0D-20, 1.0D-1, &
+               'Maximum NB shine-through fraction')
        case ('NFLUTFMAX')
           call parse_real_variable('NFLUTFMAX', nflutfmax, 1.0D22, 1.0D24, &
                'Max fast neutron fluence on TF coil (n/m2)')
@@ -939,6 +971,9 @@ contains
        case ('FEFFCD')
           call parse_real_variable('FEFFCD', feffcd, 0.0D0, 20.0D0, &
                'Current drive efficiency fiddle factor')
+       case ('FORBITLOSS')
+          call parse_real_variable('FORBITLOSS', forbitloss, 0.0D0, 1.0D0, &
+               'NBI power orbit loss fraction')
        case ('FRBEAM')
           call parse_real_variable('FRBEAM', frbeam, 0.5D0, 2.0D0, &
                'R_tan / R_major for NBI')
@@ -1359,7 +1394,7 @@ contains
           call parse_real_variable('TDMPTF', tdmptf, 0.1D0, 100.0D0, &
                'Dump time for TF coil (s)')
        case ('TFC_MODEL')
-          call parse_int_variable('TFC_MODEL', tfc_model, 0, 2, &
+          call parse_int_variable('TFC_MODEL', tfc_model, 0, 1, &
                'Switch for TF coil model')
        case ('TFLEGRES')
           call parse_real_variable('TFLEGRES', tflegres, 1.0D-10, 1.0D-5, &
@@ -1441,17 +1476,23 @@ contains
        case ('FCOHBOP')
           call parse_real_variable('FCOHBOP', fcohbop, 0.0D0, 1.0D0, &
                'OH coil J ratio : BOP/EOF')
-       case ('FCUOH')
-          call parse_real_variable('FCUOH', fcuoh, 0.0D0, 1.0D0, &
+       case ('FCUOHSU')
+          call parse_real_variable('FCUOHSU', fcuohsu, 0.0D0, 1.0D0, &
                'Cu frac of conductor in OH coil cable')
+       case ('FCUPFSU')
+          call parse_real_variable('FCUPFSU', fcupfsu, 0.0D0, 1.0D0, &
+               'Cu fraction of PF cable conductor')
        case ('IPFLOC')
           call parse_int_array('IPFLOC', ipfloc, isub1, ngc, &
                'PF coil location', icode)
        case ('IPFRES')
           call parse_int_variable('IPFRES', ipfres, 0, 1, &
                'Switch for supercond / resist PF coils')
+       case ('ISUMATOH')
+          call parse_int_variable('ISUMATOH', isumatoh, 1, 4, &
+               'OH coil superconductor material')
        case ('ISUMATPF')
-          call parse_int_variable('ISUMATPF', isumatpf, 1, 3, &
+          call parse_int_variable('ISUMATPF', isumatpf, 1, 4, &
                'PF coil superconductor material')
        case ('NCLS')
           call parse_int_array('NCLS', ncls, isub1, ngrpmx, &
@@ -4314,6 +4355,8 @@ contains
     !+ad_hist  27/11/13 PJK Added more advice if the output file is unhelpful
     !+ad_hist  26/06/14 PJK Changed routine name to prevent clash with
     !+ad_hisc               global error handling routine
+    !+ad_hist  08/10/14 PJK Swapped order of the message lines so that the
+    !+ad_hisc               error itself is more obvious without scrolling
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -4323,20 +4366,23 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    write(*,*)
     write(*,*) 'Error trapped...'
-    write(*,*) 'Routine ',trim(error_routine),': ',trim(error_message)
-    write(*,*) 'Error Code: ',error_code
     write(*,*)
     write(*,*) 'Please check the output file for further information.'
     write(*,*)
-    write(*,*) 'If this does not contain a helpful error message, check'
-    write(*,*) 'the lines of the input file following the last one copied'
-    write(*,*) 'to the output file - there is likely to be a mistake'
-    write(*,*) 'in the formatting somewhere...'
+    write(*,*) 'If this does not contain a helpful error message, check '// &
+         'the lines of the input'
+    write(*,*) 'file following the last one copied to the output file - ' // &
+         'there is likely to be'
+    write(*,*) 'a mistake in the formatting somewhere...'
     write(*,*)
-    write(*,*) 'Note that in-line comments are usually okay, but be very'
-    write(*,*) 'careful with the use of commas (best avoided altogether...)'
+    write(*,*) 'Note that in-line comments are usually okay, but be very ' // &
+         'careful with the use'
+    write(*,*) 'of commas (best avoided altogether...)'
     write(*,*)
+    write(*,*) 'Routine ',trim(error_routine),': ',trim(error_message)
+    write(*,*) 'Error Code: ',error_code
 
     idiags(1) = error_code
     call report_error(130)

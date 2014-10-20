@@ -1,0 +1,115 @@
+\mychapter{Introduction}
+\label{chap:intro}
+
+\section{Rationale}
+
+During the course of studies into a proposed fusion power plant, there may be
+times when questions of the following type arise:
+\begin{quote}
+Are the machine's physics and engineering parameters consistent with one
+another?
+
+Which machine of a given size and shape produces the cheapest electricity?
+
+What is the effect of a more optimistic limit on the maximum plasma density on
+the amount of auxiliary power required?
+\end{quote}
+
+Questions such as these are extremely difficult to answer, since the large
+number of parameters involved are highly dependent on one another.
+Fortunately, computer programs have been written to address these issues, and
+\process\ is one of them.
+
+Suppose that an outline power plant design calls for a machine with a given
+size and shape, which will produce a certain net electric power.  There may be
+a vast number of different conceptual machines that satisfy the problem as
+stated so far, and \process\ can be used in ``non-optimisation'' mode to find
+one of these whose physics and engineering parameters are
+self-consistent. However, the machine found by \process\ in this manner may
+not be possible to build in practice --- the coils may be overstressed, for
+instance, or the plasma pressure may exceed the maximum possible
+value. \process\ contains a large number of constraints to prevent the code
+from finding a machine with such problems, and running the code in so-called
+``optimisation'' mode forces these constraints to be met. The number of
+possible conceptual machines is thus considerably reduced, and optimisation of
+the parameters with respect to (say) the cost of electricity will reduce this
+number to a minimum (possibly one).
+
+Formally then, \process\ is a systems code that calculates in a
+self-consistent manner the parameters of a fusion power plant with a specified
+performance, ensuring that its operating limits are not violated, and with the
+option to optimise a given function of these parameters.
+
+It would not be fair to call \process\ a fusion power plant \textit{design}\/
+code, as this implies that a great deal of complexity would need to be present
+in each and every model describing one of the component systems. Such
+complexity is, however, incompatible with the code's iterative approach to
+solving the optimisation problem, since this requires repeated evaluation of
+the same (large number of) expressions. This is not to say that the models
+employed by the code are oversimplified --- in general they represent good
+numerical estimates of present theoretical understanding, or are fits to
+experimental data. \process\ provides a useful overall description of how a
+conceptual and feasible power plant may look.
+
+\section{History}
+
+\process\ is derived from several earlier systems codes, but is largely based
+on the TETRA (Tokamak Engineering Test Reactor Analysis) code~\cite{tetra} and
+its descendant STORAC (Spherical TOrus Reactor Analysis Code)~\cite{storac},
+which includes routines relevant to the spherical tokamak class of
+machines. These codes, and much of the original version of \process\ itself,
+were written by personnel at Oak Ridge National Laboratory in Tennessee, USA,
+with contributions from a number of other laboratories in the USA\@. In
+addition, many of the mathematical routines have been taken from a number of
+different well-established source libraries.
+
+Since the code is descended from such a wide range of sources, its structure
+was initially not ideal from the programmer's viewpoint.  Non-standard
+practices and inconsistent layout within the code led to difficulties in
+modifying, interpreting and indeed running the code. A great deal of effort
+was therefore expended at Culham on the code's arrival from ORNL in the early
+1990s to improve this situation, with the code being given a complete but
+careful upgrade, routine by routine. For many years this Fortran~77 code was
+used for systems code studies of various power plant scenarios, and was
+modified from time-to-time by the addition of new and/or improved models,
+including machines based on the stellerator, reversed field pinch and inertial
+confinement concepts.
+
+In 2012, the code structure was revised again to allow it to benefit from
+modern software practices, and the whole program was upgraded to
+Fortran~90/95. At the same time a number of useful code management utilities
+were added.
+
+As with all active research codes, \process\ will continue to be developed
+into the future. This User Guide is updated in parallel with the Fortran
+source code itself to ensure that the documentation remains consistent with
+the latest version of the code. It is to be hoped that it will be of
+assistance to all users of \process, whether they are planning to modify or
+run the code, or are simply trying to understand what the code aims to
+achieve.
+
+\section{Layout of the User Guide}
+
+The User Guide is divided into a small number of logically separate chapters,
+each one of which provides specific information on a given topic. It depends
+on the user's motive for referring to the guide as to which chapter will be
+the most useful, although hopefully the style and structure adopted will allow
+one to browse through without difficulty.
+
+Chapter~\ref{chap:overview} provides an overview of the program, and outlines
+the numerical and programming concepts involved. Chapter~\ref{chap:models}
+describes the physics, engineering and economic models that are used within
+the code, and lists the switches available allowing the user to customise the
+models' details to achieve the desired simulation. Chapter~\ref{chap:run}
+describes how to run the program from scratch, and provides a number of hints
+and suggestions for the user to bear in mind to help the code find a feasible
+machine. Chapter~\ref{chap:modify} shows how to modify the code in specific
+ways, for example how to add extra constraints and variables to the code. A
+useful set of utility programs is introduced in Chapter~\ref{chap:utilities},
+and some code management tools are described in
+Chapter~\ref{chap:codetools}. Finally, the Appendices give detailed
+information about the optimisation method, example input files for \process\
+in non-optimisation and optimisation modes, and lists of references that
+provide information about the code status, its location, and other details
+relating to the implementation of \process\ to date.
+

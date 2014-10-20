@@ -111,6 +111,8 @@ contains
     !+ad_hist  30/07/14 PJK Modified tfthko calculation
     !+ad_hist  31/07/14 PJK Re-modified tfthko calculation
     !+ad_hist  19/08/14 PJK Added ddwex, ohhghf to mfile
+    !+ad_hist  02/09/14 PJK Modified ripflag handling
+    !+ad_hist  20/10/14 PJK Changed OH coil to central solenoid
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -189,7 +191,7 @@ contains
 
     hbot = rminor*kappa + vgap + divfix - blnktth - 0.5D0*(fwith+fwoth)
     if (idivrt == 2) then  !  (i.e. snull=0)
-        htop = hbot
+       htop = hbot
     else
        htop = rminor*kappa + 0.5D0*(scrapli+scraplo)
     end if
@@ -259,13 +261,24 @@ contains
 
     call oheadr(outfile,'Radial Build')
 
-    if (ripflag == 1) then
-       call report_error(62)
+    if (ripflag /= 0) then
        call ocmmnt(outfile, &
             '(Ripple result may not be accurate, as the fit was outside')
        call ocmmnt(outfile, &
             ' its range of applicability.)')
        call oblnkl(outfile)
+       call report_error(62)
+
+       if (ripflag == 1) then
+          fdiags(1) = wwp1*tfno/rmajor
+          call report_error(141)
+       else if (ripflag == 2) then
+          idiags(1) = tfno
+          call report_error(142)
+       else
+          fdiags(1) = (rmajor+rminor)/rtot
+          call report_error(143)
+       end if
     end if
 
     write(outfile,10)
@@ -286,21 +299,21 @@ contains
 
        radius = radius + gapoh
        call obuild(outfile,'Gap',gapoh,radius)
-       call ovarre(mfile,'TF to OH radial gap (m)','(gapoh)',gapoh)
+       call ovarre(mfile,'TF to CS radial gap (m)','(gapoh)',gapoh)
 
        radius = radius + ohcth
-       call obuild(outfile,'OH coil',ohcth,radius)
-       call ovarre(mfile,'OH coil radial thickness (m)','(ohcth)',ohcth)
+       call obuild(outfile,'Central solenoid',ohcth,radius)
+       call ovarre(mfile,'CS radial thickness (m)','(ohcth)',ohcth)
 
     else
 
        radius = radius + ohcth
-       call obuild(outfile,'OH coil',ohcth,radius)
-       call ovarre(mfile,'OH coil radial thickness (m)','(ohcth)',ohcth)
+       call obuild(outfile,'Central solenoid',ohcth,radius)
+       call ovarre(mfile,'CS radial thickness (m)','(ohcth)',ohcth)
 
        radius = radius + gapoh
        call obuild(outfile,'Gap',gapoh,radius)
-       call ovarre(mfile,'OH to TF coil radial gap (m)','(gapoh)',gapoh)
+       call ovarre(mfile,'CS to TF coil radial gap (m)','(gapoh)',gapoh)
 
        radius = radius + tfcth
        call obuild(outfile,'TF coil inboard leg',tfcth,radius)
@@ -478,7 +491,7 @@ contains
     !  Other build quantities
 
     call ovarre(mfile,'External cryostat thickness (m)','(ddwex)',ddwex)
-    call ovarre(mfile,'Ratio of OH coil height to TF coil internal height', &
+    call ovarre(mfile,'Ratio of Central solenoid height to TF coil internal height', &
          '(ohhghf)',ohhghf)
 
   end subroutine radialb
@@ -728,8 +741,10 @@ contains
     !+ad_call  None
     !+ad_hist  18/06/14 PJK Initial version
     !+ad_hist  31/07/14 PJK Correction: tfthko to tftort
+    !+ad_hist  02/09/14 PJK Modified flag usage
     !+ad_stat  Okay
-    !+ad_docs  M. Kovari, internal communication, June 2014
+    !+ad_docs  M. Kovari, Toroidal Field Coils - Maximum Field and Ripple -
+    !+ad_docc  Parametric Calculation, July 2014
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -770,9 +785,13 @@ contains
     rtotmin = (rmajor+rminor) / &
          ( (0.01D0*ripmax/c1)**(1.0D0/(n-c2)) )
 
+    !  Notify via flag if a range of applicability is violated
+
     flag = 0
     if ((x < 0.737D0).or.(x > 2.95D0)) flag = 1
-    if ((tfno < 16).or.(tfno > 20)) flag = 1
+    if ((tfno < 16).or.(tfno > 20)) flag = 2
+    if ( ((rmajor+rminor)/rtot < 0.7D0).or. &
+         ((rmajor+rminor)/rtot > 0.8D0) ) flag = 3
 
   end subroutine ripple_amplitude
 

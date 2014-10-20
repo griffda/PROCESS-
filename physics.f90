@@ -80,6 +80,7 @@ module physics_module
   !+ad_hist  26/03/14 PJK Renamed bootstrap fraction routines; added Sauter model
   !+ad_hist  13/05/14 PJK Added plasma_composition routine, impurity_radiation_module
   !+ad_hist  26/06/14 PJK Added error_handling
+  !+ad_hist  01/10/14 PJK Added numerics
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -96,6 +97,7 @@ module physics_module
   use heat_transport_variables
   use impurity_radiation_module
   use maths_library
+  use numerics
   use physics_variables
   use profiles_module
   use process_output
@@ -204,6 +206,7 @@ contains
     !+ad_hisc               in first wall
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  19/08/14 PJK Removed impfe usage
+    !+ad_hist  01/10/14 PJK Added plhthresh
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -245,7 +248,7 @@ contains
     if (icurr == 2) then
        q95 = q * 1.3D0 * (1.0D0 - eps)**0.6D0
     else
-       q95 = q
+       q95 = q  !  i.e. input (or iteration variable) value
     end if
 
     btot = sqrt(bt**2 + bp**2)
@@ -396,13 +399,17 @@ contains
     call pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
          pohmpv,pohmmw,rpfac,rplas)
 
-    !  Calculate L- to H-mode power threshold
+    !  Calculate L- to H-mode power threshold for different scalings
 
     call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
 
+    !  Enforced L-H power threshold value (if constraint 15 is turned on)
+
+    plhthresh = pthrmw(ilhthresh)
+
     !  Power transported to the divertor by charged particles,
-    !  i.e. excludes neutrons and radiation
-    !+PJK Should falpha be used to multiply palpmw here?
+    !  i.e. excludes neutrons and radiation, and also NBI orbit loss power,
+    !  which is assumed to be absorbed by the first wall
 
     if (ignite == 0) then
        pinj = pinjmw
@@ -466,7 +473,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function bootstrap_fraction_iter89(aspect,beta,bt,cboot,plascur,q,q0,rmajor,vol)
+  function bootstrap_fraction_iter89(aspect,beta,bt,cboot,plascur,q95,q0,rmajor,vol)
 
     !+ad_name  bootstrap_fraction_iter89
     !+ad_summ  Original ITER calculation of bootstrap-driven fraction
@@ -479,7 +486,7 @@ contains
     !+ad_args  bt      : input real : toroidal field on axis (T)
     !+ad_args  cboot   : input real : bootstrap current fraction multiplier
     !+ad_args  plascur : input real : plasma current (A)
-    !+ad_args  q       : input real : safety factor at 95% surface
+    !+ad_args  q95     : input real : safety factor at 95% surface
     !+ad_args  q0      : input real : central safety factor
     !+ad_args  rmajor  : input real : plasma major radius (m)
     !+ad_args  vol     : input real : plasma volume (m3)
@@ -492,6 +499,7 @@ contains
     !+ad_hist  09/11/11 PJK Initial F90 version
     !+ad_hist  16/10/12 PJK Removed pi from argument list
     !+ad_hist  26/03/14 PJK Converted to a function; renamed from BOOTST
+    !+ad_hist  01/10/14 PJK Renamed argument q to q95
     !+ad_stat  Okay
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
     !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
@@ -505,7 +513,7 @@ contains
     !  Arguments
 
     real(kind(1.0D0)), intent(in) :: aspect, beta, bt, cboot, &
-         plascur, q, q0, rmajor, vol
+         plascur, q95, q0, rmajor, vol
 
     !  Local variables
 
@@ -513,8 +521,8 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    xbs = min( 10.0D0, q/q0 )
-    cbs = cboot * (1.32D0 - 0.235D0*xbs + 0.0185D0*xbs**2 )
+    xbs = min(10.0D0, q95/q0)
+    cbs = cboot * (1.32D0 - 0.235D0*xbs + 0.0185D0*xbs**2)
     bpbs = rmu0*plascur/(2.0D0*pi*sqrt(vol/(2.0D0* pi**2 *rmajor)) )
     betapbs = beta*bt**2 / bpbs**2
 
@@ -4510,6 +4518,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  20/05/14 PJK Changed prad to pcorerad
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  20/10/14 PJK Output power balances for H=1 instead of H=2
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4524,27 +4533,27 @@ contains
     !  Local variables
 
     integer :: iisc
-    real(kind(1.0D0)), parameter :: d2 = 2.0D0
+    real(kind(1.0D0)), parameter :: d1 = 1.0D0
     real(kind(1.0D0)) :: powerhtz, ptrez, ptriz, &
          taueez, taueezz, taueffz, taueiz
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    call osubhd(outfile,'Confinement times, and required H-factors :')
+    call osubhd(outfile,'Energy confinement times, and required H-factors :')
 
     write(outfile,10)
 10  format(t5,'scaling law', t30,'confinement time (s)', &
          t55,'H-factor for')
 
     write(outfile,20)
-20  format(t34,'for H = 2',t54,'power balance')
+20  format(t34,'for H = 1',t54,'power balance')
 
     call oblnkl(outfile)
 
-    !  Calculate power balances for all scaling laws assuming H = 2
+    !  Calculate power balances for all scaling laws assuming H = 1
 
     do iisc = 1,ipnlaws
-       call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,d2, &
+       call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,d1, &
             iinvqd,iisc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
             plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
             xarea,zeff,ptrez,ptriz,taueez,taueiz,taueffz,powerhtz)
@@ -5241,6 +5250,9 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  19/08/14 PJK Added dnla / Greenwald ratio
+    !+ad_hist  01/10/14 PJK Modified safety factor output statements
+    !+ad_hist  01/10/14 PJK Added plhthresh output
+    !+ad_hist  06/10/14 PJK Modified plhthresh output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5358,20 +5370,19 @@ contains
 
     if (istell == 0) then
        call ovarrf(outfile,'Safety factor on axis','(q0)',q0)
-       call ovarrf(outfile,'Edge safety factor','(q)',q)
+       call ovarrf(outfile,'Safety factor at 95% flux surface','(q95)',q95)
+       if (icurr == 2) then
+          call ovarrf(outfile,'Mean edge safety factor','(q)',q)
+       end if
+
        call ovarrf(outfile,'Cylindrical safety factor (qcyl)','(qstar)',qstar)
 
        if (ishape == 1) then
-          call ovarrf(outfile,'Lower limit for edge safety factor', &
+          call ovarrf(outfile,'Lower limit for edge safety factor q', &
                '(qlim)',qlim)
        end if
     else
        call ovarrf(outfile,'Rotational transform','(iotabar)',iotabar)
-    end if
-
-    if (icurr == 2) then
-       call ovarrf(outfile,'Safety factor at 95% flux','(q95)',q95)
-       call ocmmnt(outfile,'Mean safety factor, q-bar, used for q')
     end if
 
     call osubhd(outfile,'Beta Information :')
@@ -5646,6 +5657,19 @@ contains
             '(pthrmw(7))',pthrmw(7))
        call ovarre(outfile,'2008 Martin scaling: 95% lower bound (MW)', &
             '(pthrmw(8))',pthrmw(8))
+       call oblnkl(outfile)
+       if (any(icc == 15)) then
+          call ovarin(outfile,'Switch for active L-H power threshold scaling', &
+               '(ilhthresh))',ilhthresh)
+          call ovarre(outfile,'Active L-H power threshold value (MW)', &
+               '(plhthresh))',plhthresh)
+       else
+          call ovarin(outfile, &
+               'Switch for active L-H power threshold scaling (not enforced)', &
+               '(ilhthresh))',ilhthresh)
+          call ovarre(outfile,'(Inactive) L-H power threshold value (MW)', &
+               '(plhthresh))',plhthresh)
+       end if
     end if
 
     call osubhd(outfile,'Confinement :')

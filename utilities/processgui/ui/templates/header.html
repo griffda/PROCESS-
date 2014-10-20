@@ -1,0 +1,42 @@
+<link rel="stylesheet" type="text/css" href="static/header.css"/>
+<div id=myheader>
+    <table cellpadding=0 cellspacing=0>
+        <colgroup>
+            <col style="width:140px">
+            <col style="width:75px">
+            <col style="width:100px">
+            <col style="width:150px">
+            <col style="width:200px">
+        </colgroup>
+        <tr>
+            <td>
+                Open Input File 
+            </td>
+            <td>
+                <input type="file" name="inputfile" size=40 value="test" onchange="this.form.submit();">
+            </td>
+            <td>
+                <input type=submit name=submit_download value=Save></input>
+            </td>
+            <td>
+                <button type="button" onclick=showall()>Expand All</button>
+            </td>
+            <td>
+                Dictionary version: {{dictionaryversion}}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Open Reference File
+            </td>
+            <td>
+                <input type="file" name="reffile" size=40 title="Open Reference File" onchange="this.form.submit();">
+            </td>
+            <td>
+            </td>
+            <td>
+                <button type="button" onclick=hideall()>Close All</button>
+            </td>
+        </tr>
+    </table>
+</div>
