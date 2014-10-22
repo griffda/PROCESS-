@@ -928,6 +928,7 @@ contains
     !+ad_hist  21/08/14 PJK Revised new power flow model
     !+ad_hist  28/08/14 PJK Corrections to etath fitted formulae
     !+ad_hist  06/10/14 PJK Added orbit loss power to pfwdiv, pinjwp
+    !+ad_hist  22/10/14 PJK Corrected orbit loss power usage
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1019,13 +1020,14 @@ contains
        pthermdiv = pdivt + (pnucdiv + praddiv) + htpmw_div
 
        !  Heat removal from first wall and divertor
-!+PJK still used?
+       !  Only used in costs.f90
+
        pfwdiv = pthermfw + pthermdiv
 
        !------------------------------------------------------------------------------------
        !- Thermal efficiency module
        ! Calculate the thermal efficiency of the power conversion cycle.  This gives the
-       ! gross power of the plant i.e. the primary coolant pumping power is not subtracte
+       ! gross power of the plant i.e. the primary coolant pumping power is not subtracted
        ! at this point; however, the pumping of the secondary coolant is accounted for.
        ! If blbop = 0, a set efficiency for the chosen blanket design is used, taken from
        ! cycle modelling studies.  If blbop = 1, the outlet temperature from the first wall
@@ -1033,102 +1035,79 @@ contains
        ! between etath and outlet_temp again obtained from previous studies.
        !------------------------------------------------------------------------------------
 
-       if (ipowerflow == 1) then
+       if (blbop == 0) then
 
-          if (blbop == 0) then
+          if (blkttype == 1) then
 
-             if (blkttype == 1) then
+             !  WCLL, efficiency taken from WP13-DAS08-T02, EFDA_D_2M97B7
+             etath = 0.3311D0
+             !  This efficiency assumed the divertor heat is used in the 
+             !  main cycle, therefore set iprimdiv = 1
+             iprimdiv = 1
 
-                !  WCLL, efficiency taken from WP13-DAS08-T02, EFDA_D_2M97B7
-                etath = 0.3311D0
-                !  This efficiency assumed the divertor heat is used in the 
-                !  main cycle, therefore set iprimdiv = 1
-                iprimdiv = 1
+          else if (blkttype == 2) then
 
-             else if (blkttype == 2) then
+             !  HCLL, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
+             !  Feedheat & reheat cycle assumed, different efficiencies for
+             !  utilisation of divertor heat
 
-                !  HCLL, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
-                !  Feedheat & reheat cycle assumed, different efficiencies for
-                !  utilisation of divertor heat
-
-                if (iprimdiv == 1) then
-                   etath = 0.397D0
-                else
-                   etath = 0.436D0
-                end if
-
-             else  !  if (blkttype == 3) then
-
-                !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
-                !  Feedheat & reheat cycle assumed, different efficiencies for
-                !  utilisation of divertor heat
-
-                if (iprimdiv == 1) then
-                   etath = 0.397D0
-                else
-                   etath = 0.436D0
-                end if
-
+             if (iprimdiv == 1) then
+                etath = 0.397D0
+             else
+                etath = 0.436D0
              end if
 
-          else  !  if blbop = 1
+          else  !  if (blkttype == 3) then
 
-             if (thermal_cycle == 0) then  !  user input used, etath not changed
-                continue
+             !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
+             !  Feedheat & reheat cycle assumed, different efficiencies for
+             !  utilisation of divertor heat
 
-             else if (thermal_cycle == 1) then  !  steam Rankine cycle to be used
+             if (iprimdiv == 1) then
+                etath = 0.397D0
+             else
+                etath = 0.436D0
+             end if
 
-                if (coolwh == 2) then
+          end if
 
-                   !  If coolant is pressurised water, the steam cycle is assumed to use
-                   !  saturated steam i.e. no superheating.  The turbine inlet temperature
-                   !  is assumed to be 45 degrees below the primary coolant outlet 
-                   !  temperature, as is common for PWR steam generators.
+       else  !  if blbop = 1
 
-                   !  Saturated steam Rankine cycle correlation, from C. Harrington,
-                   !  K:\Power Plant Physics and Technology \ PROCESS \ blanket_model
-                   !    \ New Power Module Harrington \ Cycle correlations \ Cycle correlations.xls
+          if (thermal_cycle == 0) then  !  user input used, etath not changed
+             continue
 
-                   tturb = outlet_temp - 45.0D0
-                   etath = -2.265D0 + 0.932D0*log10(tturb + 49.999D0)
+          else if (thermal_cycle == 1) then  !  steam Rankine cycle to be used
 
-                   ! These efficiencies assumed the divertor heat is used in the 
-                   ! main cycle, therefore set iprimdiv = 1
+             if (coolwh == 2) then
 
-                   iprimdiv = 1
+                !  If coolant is pressurised water, the steam cycle is assumed to use
+                !  saturated steam i.e. no superheating.  The turbine inlet temperature
+                !  is assumed to be 45 degrees below the primary coolant outlet 
+                !  temperature, as is common for PWR steam generators.
 
-                else  !  if coolwh = 1
+                !  Saturated steam Rankine cycle correlation, from C. Harrington,
+                !  K:\Power Plant Physics and Technology \ PROCESS \ blanket_model
+                !    \ New Power Module Harrington \ Cycle correlations \ Cycle correlations.xls
 
-                   !  If coolant is helium, the steam cycle is assumed to be superheated
-                   !  and a different correlation is used. The turbine inlet temperature 
-                   !  is assumed to be 20 degrees below the primary coolant outlet 
-                   !  temperature, as was stated as practical in EFDA_D_2LLNBX.
+                tturb = outlet_temp - 45.0D0
+                etath = -2.265D0 + 0.932D0*log10(tturb + 49.999D0)
 
-                   !  Superheated steam Rankine cycle correlation, from C. Harrington (as above)
+                ! These efficiencies assumed the divertor heat is used in the 
+                ! main cycle, therefore set iprimdiv = 1
 
-                   tturb = outlet_temp - 20.0D0
-                   etath = -0.89D0 + 0.442D0*log10(tturb + 49.088D0)
+                iprimdiv = 1
 
-                   !  These efficiencies assumed the divertor heat is used in the 
-                   !  main cycle, therefore set iprimdiv = 1
+             else  !  if coolwh = 1
 
-                   iprimdiv = 1
+                !  If coolant is helium, the steam cycle is assumed to be superheated
+                !  and a different correlation is used. The turbine inlet temperature 
+                !  is assumed to be 20 degrees below the primary coolant outlet 
+                !  temperature, as was stated as practical in EFDA_D_2LLNBX.
 
-                end if
-
-             else !  if thermal_cycle = 2; Supercritical CO2 cycle to be used
-
-                !  The same temperature/efficiency correlation is used regardless of 
-                !  primary coolant choice.  The turbine inlet temperature is assumed to 
-                !  be 20 degrees below the primary coolant outlet temperature.
-                !  s-CO2 can in theory be used for both helium and water primary coolants
-                !  so no differentiation is made, but for water the efficiency will be 
-                !  very low and the correlation will reflect this.
-
-                !  Supercritical CO2 cycle correlation, from C. Harrington (as above)
+                !  Superheated steam Rankine cycle correlation, from C. Harrington (as above)
 
                 tturb = outlet_temp - 20.0D0
-                etath = -1.873D0 + 0.804D0*log10(tturb - 124.061D0)
+                etath = -0.89D0 + 0.442D0*log10(tturb + 49.088D0)
 
                 !  These efficiencies assumed the divertor heat is used in the 
                 !  main cycle, therefore set iprimdiv = 1
@@ -1137,9 +1116,28 @@ contains
 
              end if
 
-          end if  !  blbop
+          else !  if thermal_cycle = 2; Supercritical CO2 cycle to be used
 
-       end if  !  ipowerflow
+             !  The same temperature/efficiency correlation is used regardless of 
+             !  primary coolant choice.  The turbine inlet temperature is assumed to 
+             !  be 20 degrees below the primary coolant outlet temperature.
+             !  s-CO2 can in theory be used for both helium and water primary coolants
+             !  so no differentiation is made, but for water the efficiency will be 
+             !  very low and the correlation will reflect this.
+
+             !  Supercritical CO2 cycle correlation, from C. Harrington (as above)
+
+             tturb = outlet_temp - 20.0D0
+             etath = -1.873D0 + 0.804D0*log10(tturb - 124.061D0)
+
+             !  These efficiencies assumed the divertor heat is used in the 
+             !  main cycle, therefore set iprimdiv = 1
+
+             iprimdiv = 1
+
+          end if
+
+       end if  !  blbop
 
        !  Primary (high-grade) thermal power, available for electricity
        !  generation.  Switches iprimshld, iprimdiv are 1 or 0, depending
@@ -1157,31 +1155,22 @@ contains
 
        psecshld = pthermshld * (1-iprimshld)
 
-       !  Secondary thermal power lost through holes
-
-       psechole = pnucloss + pradloss
-
        !  Secondary thermal power lost to HCD apparatus and diagnostics
 
        psechcd = pnuchcd + pradhcd
 
-    end if
+    end if  !  ipowerflow
 
     !  Number of primary heat exchangers
 
     rnphx = max(2.0D0, (pthermmw/400.0D0 + 0.8D0) )
-
-!    !  For the Rankine cycle employed by the thermodynamic (1993) blanket
-!    !  model, the number of primary heat exchangers is two
-!
-!    if (lblnkt == 1) rnphx = 2.0D0
 
     !  Secondary heat (some of it... rest calculated in POWER2)
 
     !  Wall plug injection power
 
     if (ignite == 0) then
-       pinjwp = pinjmw/etacd + porbitlossmw
+       pinjwp = (pinjmw + porbitlossmw)/etacd
     else
        pinjwp = 0.0D0
     end if
@@ -1189,7 +1178,7 @@ contains
     !  Waste injection power 
 
     if (ignite == 0) then
-       pinjht = pinjwp - pinjmw
+       pinjht = pinjwp - pinjmw - porbitlossmw
     else
        pinjht = 0.0D0
     end if
@@ -1253,6 +1242,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  27/08/14 PJK Modifications for new power flow model
     !+ad_hist  10/09/14 PJK Added power balance outputs
+    !+ad_hist  22/10/14 PJK Minor mods to outputs
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1317,7 +1307,7 @@ contains
     else
 
        psechtmw = pcoresystems + pinjht + htpsecmw + hthermmw &
-            + psecdiv + psecshld + psechole + psechcd
+            + psecdiv + psecshld + psechcd
 
     end if
 
@@ -1329,24 +1319,13 @@ contains
 
     rnihx = max(2.0D0, (ctht/50.0D0 + 0.8D0) )
 
-!    !  For the Rankine cycle employed by the thermodynamic (1993) blanket model,
-!    !  the number of intermediate heat exchangers is set to equal the number
-!    !  of feed water heater pumps
-!
-!    if (lblnkt == 1) rnihx = real(nipfwh+nlpfwh, kind(1.0D0))
-
     !  Calculate powers relevant to a power-producing plant
 
     if (ireactor == 1) then
 
        !  Gross electric power
 
-       !if (lblnkt == 1) then
-       !   call blanket_panos(2,outfile,iprint)
-       !else
-!+PJK pgrossdiv, etathdiv???
        pgrossmw = (pthermmw-hthermmw) * etath
-       !end if
 
        !  Balance of plant recirculating power
 
@@ -1390,8 +1369,8 @@ contains
        call ovarre(outfile,'Injector wall plug power (MW)','(pinjwp)' &
             ,pinjwp)
        call ovarre(outfile,'TF coil resistive power (MW)','(tfcmw)',tfcmw)
-       call ovarre(outfile,'Centrepost coolant pump power (MW)','(ppumpmw)' &
-            ,ppumpmw)
+       call ovarre(outfile,'Centrepost coolant pump power (MW)', &
+            '(ppumpmw)',ppumpmw)
        call ovarre(outfile,'Primary (high-grade) heat (MW)', &
             '(pthermmw)',pthermmw)
        call ovarre(outfile,'Secondary (low-grade) heat (MW)', &
@@ -1427,8 +1406,8 @@ contains
 
        call ovarre(outfile,'Total cryogenic load (MW)','(helpow/1.D6)', &
             helpow/1.0D6)
-       call ovarre(outfile,'Heat removal from facilities (MW)','(fachtmw)', &
-            fachtmw)
+       call ovarre(outfile,'Heat removal from facilities (MW)', &
+            '(fachtmw)',fachtmw)
        call ovarrf(outfile,'Number of primary heat exchangers','(rnphx)', &
             rnphx)
        call ovarrf(outfile,'Number of intermediate heat exchangers', &
@@ -1443,16 +1422,16 @@ contains
        call ovarre(outfile,'Net electric power (MW)','(pnetelmw)',pnetelmw)
        call ovarre(outfile,'Balance of plant aux. power fraction', &
             '(fgrosbop)',fgrosbop)
-       call ovarre(outfile,'First wall low grade heat fraction','(ffwlg)', &
-            ffwlg)
+       call ovarre(outfile,'First wall low grade heat fraction', &
+            '(ffwlg)',ffwlg)
 
        call osubhd(outfile,'Recirculating Power :')
-       call ovarre(outfile,'Total recirculating power (MW)','(precircmw)', &
-            precircmw)
-       call ovarre(outfile,'Balance of plant recirculating power (MW)',' ', &
-            fgrosbop*pgrossmw)
-       call ovarrf(outfile,'Total recirculating power fraction','(cirpowfr)', &
-            cirpowfr)
+       call ovarre(outfile,'Total recirculating power (MW)', &
+            '(precircmw)',precircmw)
+       call ovarre(outfile,'Balance of plant recirculating power (MW)', &
+            ' ',fgrosbop*pgrossmw)
+       call ovarrf(outfile,'Total recirculating power fraction', &
+            '(cirpowfr)',cirpowfr)
        call ovarre(outfile,'H/CD injected power (MW)','(pinjwp.)',pinjwp)
        call ovarre(outfile,'TF coil resistive power (MW)','(tfcmw.)',tfcmw)
        call ovarre(outfile,'Cryogenic plant power (MW)','(crypmw.)',crypmw)
@@ -1485,37 +1464,51 @@ contains
             '(1-fdiv-fhcd-fhole)',1.0D0-fdiv-fhcd-fhole)
        if (blktmodel == 0) then
           call ovarre(outfile, &
-               'Neutron decay length in first wall structure (m)', &
+               'Neutron power decay length in first wall structure (m)', &
                '(declfw)',declfw)
           call ovarre(outfile, &
-               'Neutron decay length in blanket structure (m)', &
+               'Neutron power decay length in blanket structure (m)', &
                '(declblkt)',declblkt)
           call ovarre(outfile, &
-               'Neutron decay length in shield structure (m)', &
+               'Neutron power decay length in shield structure (m)', &
                '(declshld)',declshld)
        end if
+       if (blbop == 0) then
+          call ovarre(outfile, &
+               'Coolant pump power / non-pumping thermal power in first wall', &
+               '(fpumpfw)',fpumpfw)
+          call ovarre(outfile, &
+               'Coolant pump power / non-pumping thermal power in blanket', &
+               '(fpumpblkt)',fpumpblkt)
+       end if
        call ovarre(outfile, &
-            'Coolant pump power / thermal power ratio in first wall', &
-            '(fpumpfw)',fpumpfw)
-       call ovarre(outfile, &
-            'Coolant pump power / thermal power ratio in blanket', &
-            '(fpumpblkt)',fpumpblkt)
-       call ovarre(outfile, &
-            'Coolant pump power / thermal power ratio in shield', &
+            'Coolant pump power / non-pumping thermal power in shield', &
             '(fpumpshld)',fpumpshld)
        call ovarre(outfile, &
-            'Coolant pump power / thermal power ratio in divertor', &
+            'Coolant pump power / non-pumping thermal power in divertor', &
             '(fpumpdiv)',fpumpdiv)
        call ovarre(outfile, &
             'Electrical efficiency of heat transport coolant pumps', &
             '(etahtp)',etahtp)
        call ovarin(outfile, &
             'Switch for destination of divertor thermal power (1=primary)', &
-            '(iprimdiv)',iprimdiv)
+            '(iprimdiv)',iprimdiv)  !'
        call ovarin(outfile, &
             'Switch for destination of shield thermal power (1=primary)', &
             '(iprimshld)',iprimshld)
+
        if (ireactor == 1) then
+          if (blbop == 1) then
+             call ovarin(outfile,'Thermal cycle model','(thermal_cycle)', &
+                  thermal_cycle)
+             if (thermal_cycle == 0) then
+                call ocmmnt(outfile,'   (User-defined turbine efficiency)')
+             else if (thermal_cycle == 1) then
+                call ocmmnt(outfile,'   (Superheated steam Rankine cycle')
+             else
+                call ocmmnt(outfile,'   (Supercritical CO2 cycle)')
+             end if
+          end if
           call ovarrf(outfile, &
                'Thermal to electric conversion efficiency of turbines', &
                '(etath)',etath)
@@ -1623,7 +1616,8 @@ contains
 
        call oblnkl(outfile)
 
-       write(outfile,'(t10,a)') 'Losses to H/CD apparatus + diagnostics:'
+       write(outfile,'(t10,a)') &
+            'Losses to H/CD apparatus + diagnostics:'
        write(outfile,10) 0.0D0, pnuchcd, pnuchcd
        write(outfile,20) 0.0D0, 0.0D0, 0.0D0
        write(outfile,30) 0.0D0, pradhcd, pradhcd
@@ -1631,17 +1625,6 @@ contains
 
        primsum = primsum
        secsum = secsum + pnuchcd + pradhcd
-
-       call oblnkl(outfile)
-
-       write(outfile,'(t10,a)') 'Losses to other holes:'
-       write(outfile,10) 0.0D0, pnucloss, pnucloss
-       write(outfile,20) 0.0D0, 0.0D0, 0.0D0
-       write(outfile,30) 0.0D0, pradloss, pradloss
-       write(outfile,40) 0.0D0, 0.0D0, 0.0D0
-
-       primsum = primsum
-       secsum = secsum + pnucloss + pradloss
 
        call oblnkl(outfile)
 
@@ -1660,7 +1643,8 @@ contains
             'Total power leaving fusion power core (MW)','', &
             primsum + secsum + ptfnuc)
 
-       call osubhd(outfile,'Other secondary thermal power constituents :')
+       call osubhd(outfile, &
+            'Other secondary thermal power constituents :')
 
        call ovarre(outfile,'Heat removal from cryogenic plant (MW)', &
             '(crypmw)',crypmw)
@@ -1691,7 +1675,8 @@ contains
             'Total secondary (low-grade) thermal power (MW)', &
             '(psechtmw)',psechtmw)
        call ovarre(outfile, &
-            'Total primary (high-grade) thermal power (MW)','(pthermmw)',pthermmw)
+            'Total primary (high-grade) thermal power (MW)','(pthermmw)' &
+            ,pthermmw)
        call ovarre(outfile,'Total plant heat rejection (MW)','(ctht)',ctht)
 
 
@@ -1722,7 +1707,7 @@ contains
             '((1-etath)*pthermmw)', pthermmw-pgrossmw)
        call ovarre(outfile,'Gross electric power (MW)','(pgrossmw)', &
             pgrossmw)
-
+!'
        call oblnkl(outfile)
        call ovarre(outfile, &
             '(Scaled) Balance of plant recirculating power fraction', &
@@ -1744,7 +1729,8 @@ contains
             '(precircmw)',precircmw)
 
        call oblnkl(outfile)
-       call ovarre(outfile,'Net electric power (= gross - recirculating) (MW)', &
+       call ovarre(outfile, &
+            'Net electric power (= gross-recirculating) (MW)', &
             '(pnetelmw)',pnetelmw)
 
        call ovarrf(outfile,'Total recirculating power fraction', &
@@ -1777,7 +1763,8 @@ contains
        call ovarre(outfile,'Net fusion-to-electric efficiency (%)', &
             '(pnetelmw/powfmw)', 100.0D0*pnetelmw/powfmw)
 
-    end if
+    end if  !  ipowerflow
+
   end subroutine power2
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

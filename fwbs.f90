@@ -1136,6 +1136,7 @@ module fwbs_module
   !+ad_call  buildings_variables
   !+ad_call  constants
   !+ad_call  cost_variables
+  !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  error_handling
   !+ad_call  fwbs_variables
@@ -1162,6 +1163,7 @@ module fwbs_module
   !+ad_hist  22/05/13 PJK Added kit_blanket_model, build_module, times_variables
   !+ad_hist  14/08/13 PJK Made blanket_neutronics public
   !+ad_hist  04/09/14 PJK Added error_handling
+  !+ad_hist  22/10/14 PJK Added current_drive_variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1172,6 +1174,7 @@ module fwbs_module
   use buildings_variables
   use constants
   use cost_variables
+  use current_drive_variables
   use divertor_variables
   use error_handling
   use fwbs_variables
@@ -1189,7 +1192,6 @@ module fwbs_module
   implicit none
 
   private
-  !public :: fwbs, blanket_panos, blanket_neutronics
   public :: fwbs, blanket_neutronics
 
   !  Local variables
@@ -1198,7 +1200,7 @@ module fwbs_module
   real(kind(1.0D0)) :: tc,tol,tso
   real(kind(1.0D0)) :: hle,hli,hre,hri,sle,sli,sre,sri,tre
   integer :: ncc
-!+PJK (SOME OR ALL OF) THESE MUST BE MADE GLOBAL
+
   real(kind(1.0D0)), public :: praddiv, pradfw, pradhcd, pradloss
   real(kind(1.0D0)), public :: htpmw_fw,htpmw_blkt,htpmw_shld,htpmw_div
 
@@ -1267,6 +1269,7 @@ contains
     !+ad_hist  23/06/14 PJK Corrected wallmw units
     !+ad_hist  21/08/14 PJK Initial draft incorporation of new thermodynamic model
     !+ad_hist  03/09/14 PJK Changed PF coil to cryostat top vertical clearance
+    !+ad_hist  22/10/14 PJK Added porbitlossmw to htpmw_fw calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  C5.M15 Milestone Report: Development and Implementation of Improved
@@ -1287,22 +1290,21 @@ contains
     real(kind(1.0D0)), dimension(7,2) :: decay
 
     integer, parameter :: ishmat = 1  !  stainless steel coil casing is assumed
-!+PJK sort out obsolete local variables
-    real(kind(1.0D0)) :: coilhtmx,decaybl,dpacop,dshieq,dshoeq,elong, &
-         fpsdt,fpydt,frachit,hbot,hblnkt,hcryopf,hecan,hshld,htop,htheci,hvv, &
-         pheci,pheco,pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2,r3, &
-         raddose,v1,v2,volshldi,volshldo,wpthk,zdewex,coolvol
-
-    real(kind(1.0D0)) :: pnucfwbs
-    real(kind(1.0D0)) :: bldepti,bldepto,blwidti,blwidto,bllengi,bllengo, &
-         a,b,ptor,fwfllengi,fwfllengo,bzfllengi,bzfllengo, &
-         pnucfwbsi,pnucfwbso,bfwi,bfwo,vffwi,vffwo,decayfwi,decayfwo, &
-         psurffwi,psurffwo,pnucfwi,pnucfwo,pnucbsi,pnucbso,decaybzi,decaybzo, &
-         pnucbzi,pnucbzo,mffwi,npfwi,mffwpi,npfwo,mffwpo,cf,mfbzi,npbzi, &
-         mfbzpi,velbzi,rhof,htpmw_fwi,velfwi,htpmw_bzi,mffwo,mfbzo,npbzo, &
-         mfbzpo,velbzo,htpmw_fwo,velfwo,htpmw_bzo,tpeakfwi,tpeakfwo,pnucsi, &
-         pnucso,decayshldi,decayshldo,pnucshldi,pnucshldo,pnucrem
     integer :: no90fw,no180fw,no90bz,no180bz
+
+    real(kind(1.0D0)) :: a,b,bfwi,bfwo,bldepti,bldepto,bllengi,bllengo, &
+         blwidti,blwidto,bzfllengi,bzfllengo,cf,coilhtmx,coolvol, &
+         decaybl,decaybzi,decaybzo,decayfwi,decayfwo,decayshldi, &
+         decayshldo,dpacop,dshieq,dshoeq,fpsdt,fpydt,frachit,fwfllengi, &
+         fwfllengo,hblnkt,hbot,hcryopf,hecan,hshld,htheci,htop, &
+         htpmw_bzi,htpmw_bzo,htpmw_fwi,htpmw_fwo,hvv,mfbzi,mfbzo, &
+         mfbzpi,mfbzpo,mffwi,mffwo,mffwpi,mffwpo,npbzi,npbzo,npfwi, &
+         npfwo,pheci,pheco,pneut2,pnucbsi,pnucbso,pnucbzi,pnucbzo, &
+         pnucfwbs,pnucfwbsi,pnucfwbso,pnucfwi,pnucfwo,pnucrem,pnucshldi, &
+         pnucshldo,pnucsi,pnucso,psurffwi,psurffwo,ptfi,ptfiwp,ptfo, &
+         ptfowp,ptor,r1,r2,r3,raddose,rhof,tpeakfwi,tpeakfwo,v1,v2, &
+         velbzi,velbzo,velfwi,velfwo,vffwi,vffwo,volshldi,volshldo, &
+         wpthk,zdewex
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1545,7 +1547,7 @@ contains
        no90bz = 4
        no180bz = 1
 
-    end if
+    end if  !  ipowerflow
 
     shareaib = fvolsi*shareaib
     shareaob = fvolso*shareaob
@@ -1559,6 +1561,12 @@ contains
     !  shield)
 
     pnucloss = pneutmw * fhole
+
+    !  First wall full-power lifetime (years)
+    !  May be recalculated below if ipowerflow=1 and blbop=1,
+    !  and also by the availability model
+
+    fwlife = min( abktflnc/wallmw, tlife )
 
     !  Blanket neutronics calculations
 
@@ -1622,15 +1630,7 @@ contains
 
        !  Nuclear heating in the blanket
 
-       !if (lblnkt == 1) then
-       !   if (smstr == 1) then  !  solid blanket
-       !      decaybl = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
-       !   else  !  liquid blanket
-       !      decaybl = 0.075D0 / (1.0D0 - vfblkt - fbllipb - fblli)
-       !   end if
-       !else  !  original blanket model - solid blanket
        decaybl = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
-       !end if
 
        pnucblkt = pneut2 * (1.0D0 - exp(-blnkoth/decaybl) )
 
@@ -1782,7 +1782,7 @@ contains
 
        bfwi = 0.5D0*fwith
        bfwo = 0.5D0*fwoth
-!+PJK to do
+
        vffwi = afwi*afwi/(bfwi*bfwi)  !  inboard FW coolant void fraction
        vffwo = afwo*afwo/(bfwo*bfwo)  !  outboard FW coolant void fraction
 
@@ -1832,7 +1832,7 @@ contains
 
           !  First wall pumping power (MW)
 
-          htpmw_fw = fpumpfw * (pnucfwi + pnucfwo + psurffwi + psurffwo)
+          htpmw_fw = fpumpfw * (pnucfwi + pnucfwo + psurffwi + psurffwo + porbitlossmw)
 
           !  Blanket pumping power (MW)
 
@@ -1840,12 +1840,7 @@ contains
 
        else  !  blbop = 1
 
-          !  Detailed thermal hydraulic model for First wall and breeding zone
-          !  The first wall life is required later in the calculation
-          !  Assume a 5 year life time, though this may calculated elsewhere
-          !  in PROCESS
-!+PJK to do
-          fwlife = 5.0
+          !  Detailed thermal hydraulic model for first wall and breeding zone
 
           !  Start with inboard side
 
@@ -1919,9 +1914,10 @@ contains
           !  Repeat for outboard side
 
           !  Calculation of maximum first wall temperature
+          !  Include NBI orbit loss power as a component of the  outboard wall surface power
 
           call iterate_fw(afwo,bfwo,fwareaob,fwarea,decayfwo,fwlife,pnucfwbso, &
-               psurffwo,inlet_temp,outlet_temp,bllengo,coolp,fwerlim,pnucfwo, &
+               psurffwo+porbitlossmw,inlet_temp,outlet_temp,bllengo,coolp,fwerlim,pnucfwo, &
                tpeakfwo,cf,rhof,velfwo)
 
           !  Adjust first wall thickness if bfwo has been changed
@@ -1931,7 +1927,7 @@ contains
 
           !  Total mass flow rate to remove outboard first wall power (kg/s)
 
-          mffwo = 1.0D6*(pnucfwo + psurffwo) / (cf*(outlet_temp-inlet_temp))
+          mffwo = 1.0D6*(pnucfwo + psurffwo + porbitlossmw) / (cf*(outlet_temp-inlet_temp))
 
           !  Calculate total number of pipes from coolant fraction and 
           !  channel dimensions
@@ -2306,32 +2302,37 @@ contains
     if (iprint == 0) return
 
     !  Output section
-!+PJK Modify for new model
-    call oheadr(outfile,'Shield / Blanket')
+
+    call oheadr(outfile,'First Wall / Blanket / Shield')
     call ovarre(outfile,'Average neutron wall load (MW/m2)','(wallmw)', wallmw)
     if (blktmodel > 0) then
        call ovarre(outfile,'Neutron wall load peaking factor','(wallpf)', wallpf)
     end if
-    call ovarre(outfile,'DT full power TF coil operation (yrs)', &
+    call ovarre(outfile,'Full power D-T operation (years)', &
          '(fpydt)',fpydt)
+    call ovarre(outfile,'First wall full-power lifetime (years)', &
+         '(fwlife)',fwlife)
+
     if (blktmodel > 0) then
-       call ovarre(outfile,'Inboard breeding zone thickness (m)','(blbuith)', blbuith)
-       call ovarre(outfile,'Inboard box manifold thickness (m)','(blbmith)', blbmith)
-       call ovarre(outfile,'Inboard back plate thickness (m)','(blbpith)', blbpith)
+       call ovarre(outfile,'Inboard breeding zone thickness (m)', &
+            '(blbuith)', blbuith)
+       call ovarre(outfile,'Inboard box manifold thickness (m)', &
+            '(blbmith)', blbmith)
+       call ovarre(outfile,'Inboard back plate thickness (m)', &
+            '(blbpith)', blbpith)
+       call ovarre(outfile,'Outboard breeding zone thickness (m)', &
+            '(blbuoth)', blbuoth)
+       call ovarre(outfile,'Outboard box manifold thickness (m)', &
+            '(blbmoth)', blbmoth)
+       call ovarre(outfile,'Outboard back plate thickness (m)', &
+            '(blbpoth)', blbpoth)
     end if
-    if (blktmodel > 0) then
-       call ovarre(outfile,'Outboard breeding zone thickness (m)','(blbuoth)', blbuoth)
-       call ovarre(outfile,'Outboard box manifold thickness (m)','(blbmoth)', blbmoth)
-       call ovarre(outfile,'Outboard back plate thickness (m)','(blbpoth)', blbpoth)
-    end if
-    if (blktmodel == 0) &
-         call ovarre(outfile,'Inboard side TF coil case thickness (m)', &
-         '(hecan)',hecan)
 
     if (itart == 1) then
        call osubhd(outfile,'(Copper centrepost used)')
        call ovarre(outfile,'Centrepost heating (MW)','(pnuccp)',pnuccp)
-    else if (blktmodel == 0) then
+
+    else if ((ipowerflow == 0).and.(blktmodel == 0)) then
        call osubhd(outfile,'TF coil nuclear parameters :')
        call ovarre(outfile,'Peak magnet heating (MW/m3)','(coilhtmx)', &
             coilhtmx)
@@ -2339,8 +2340,8 @@ contains
             '(ptfiwp)',ptfiwp)
        call ovarre(outfile,'Outboard TF coil winding pack heating (MW)', &
             '(ptfowp)',ptfowp)
-       call ovarre(outfile,'Peak TF coil case heating (MW/m3)','(htheci)', &
-            htheci)
+       call ovarre(outfile,'Peak TF coil case heating (MW/m3)', &
+            '(htheci)',htheci)
        call ovarre(outfile,'Inboard coil case heating (MW)','(pheci)',pheci)
        call ovarre(outfile,'Outboard coil case heating (MW)','(pheco)',pheco)
        call ovarre(outfile,'Insulator dose (rad)','(raddose)',raddose)
@@ -2352,15 +2353,20 @@ contains
 
     if (blktmodel == 0) then
        call osubhd(outfile,'Nuclear heating :')
-       call ovarre(outfile,'Blanket heating (prior to energy multiplication) (MW)', &
+       call ovarre(outfile, &
+            'Blanket heating (prior to energy multiplication) (MW)', &
             '(pnucblkt)',pnucblkt)
-       call ovarre(outfile,'Shield heating (MW)','(pnucshld)',pnucshld)
+       call ovarre(outfile,'Shield nuclear heating (MW)', &
+            '(pnucshld)',pnucshld)
+       call ovarre(outfile,'TF coil nuclear heating (MW)', &
+            '(ptfnuc)',ptfnuc)
     else
        call osubhd(outfile,'Blanket neutronics :')
-       call ovarre(outfile,'Blanket heating (prior to energy multiplication) (MW)', &
+       call ovarre(outfile, &
+            'Blanket heating (prior to energy multiplication) (MW)', &
             '(pnucblkt)',pnucblkt)
        call ovarre(outfile,'Shield heating (MW)','(pnucshld)',pnucshld)
-       call ovarre(outfile,'Energy multiplication in blanket','(emult)',emult)
+       call ovarre(outfile,'Energy multiplication in blanket','(emult.)',emult)
        call ovarin(outfile,'Number of divertor ports assumed','(npdiv)',npdiv)
        call ovarin(outfile,'Number of inboard H/CD ports assumed', &
             '(nphcdin)',nphcdin)
@@ -2398,6 +2404,66 @@ contains
        call ovarre(outfile,'Maximum final He conc. in OB VV (appm)','(vvhemaxo)',vvhemaxo)
        call ovarre(outfile,'Blanket lifetime (full power years)','(t_bl_fpy)',bktlife)
        call ovarre(outfile,'Blanket lifetime (calendar years)','(t_bl_y)',t_bl_y)
+    end if
+
+    if ((ipowerflow == 1).and.(blktmodel == 0)) then
+       call oblnkl(outfile)
+       call ovarin(outfile, &
+            'First wall / blanket thermodynamic model','(blbop)',blbop)
+       if (blbop == 0) then
+          call ocmmnt(outfile,'   (Simple calculation)')
+       else
+          call ocmmnt(outfile, &
+               '   (Detailed thermal hydraulic calculation)')
+          call oblnkl(outfile)
+          call ovarin(outfile,'Blanket type','(blkttype)',blkttype)
+          if (blkttype == 1) then
+             call ocmmnt(outfile, &
+                  '   (Water-cooled liquid lithium (WCLL))')
+          else if (blkttype == 2) then
+             call ocmmnt(outfile, &
+                  '   (Helium-cooled liquid lithium (HCLL))')
+          else
+             call ocmmnt(outfile,'   (Helium-cooled pebble bed (HCPB))')
+          end if 
+          call ovarre(outfile,'First wall coolant pressure (Pa)', &
+               '(coolp)',coolp)
+          call ovarin(outfile,'Coolant fluid (1=helium, 2=water)', &
+               '(coolwh)',coolwh)
+          call ovarre(outfile, &
+               'Inner radius of inboard coolant channels (m)', &
+               '(afwi)',afwi)
+          call ovarre(outfile, &
+               'Outer radius of inboard coolant channels (m)', &
+               '(fwith/2)',bfwi)
+          call ovarre(outfile, &
+               'Inner radius of outboard coolant channels (m)', &
+               '(afwo)',afwo)
+          call ovarre(outfile, &
+               'Outer radius of outboard coolant channels (m)', &
+               '(fwoth/2)',bfwo)
+          call ovarre(outfile,'Inlet temperature of coolant (K)', &
+               '(inlet_temp)',inlet_temp)
+          call ovarre(outfile,'Outlet temperature of coolant (K)', &
+               '(outlet_temp)',outlet_temp)
+          call ovarre(outfile, &
+               'Erosion thickness allowance for first wall (m)', &
+               '(fwerlim)',fwerlim)
+          call ovarre(outfile, &
+               'Maximum temperature of first wall material (K)', &
+               '(tfwmatmax)',tfwmatmax)
+          call ovarin(outfile,'No of inboard blanket modules poloidally', &
+               '(nblktmodpi)',nblktmodpi)
+          call ovarin(outfile,'No of inboard blanket modules toroidally', &
+               '(nblktmodti)',nblktmodti)
+          call ovarin(outfile,'No of outboard blanket modules poloidally', &
+               '(nblktmodpo)',nblktmodpo)
+          call ovarin(outfile,'No of outboard blanket modules toroidally', &
+               '(nblktmodto)',nblktmodto)
+          call ovarre(outfile, &
+               'Isentropic efficiency of first wall / blanket coolant pumps', &
+               '(etaiso)',etaiso) !'
+       end if
     end if
 
     call osubhd(outfile,'Blanket / shield volumes and weights :')
@@ -2491,7 +2557,8 @@ contains
     call ovarre(outfile,'External cryostat radius (m)','(rdewex)',rdewex)
     call ovarre(outfile,'External cryostat half-height (m)','(zdewex)',zdewex)
     call ovarre(outfile,'External cryostat volume (m3)','(vdewex)',vdewex)
-    call ovarre(outfile,'Total cryostat + vacuum vessel mass (kg)','(dewmkg)',dewmkg)
+    call ovarre(outfile,'Total cryostat + vacuum vessel mass (kg)',&
+         '(dewmkg)',dewmkg)
     call ovarre(outfile,'Internal vacuum vessel volume (m3)','(vdewin)',vdewin)
     call ovarre(outfile,'Vacuum vessel mass (kg)','(cryomass)',cryomass)
     call ovarre(outfile,'Divertor area (m2)','(divsur)',divsur)
@@ -2686,7 +2753,7 @@ contains
     !+ad_argc                      (i.e. area of inboard wall or outboard wall)
     !+ad_args  fwarea : input real : total first wall area (m2)
     !+ad_args  decayfw : input real : decay length for neutron power deposition (m)
-    !+ad_args  fwlife : input/output real : first wall lifetime (years)
+    !+ad_args  fwlife : input/output real : first wall lifetime (full-power years)
     !+ad_args  pnuc_incident : input real : incident neutron power (MW)
     !+ad_args  prad_incident : input real : incident radiation power (MW)
     !+ad_args  inlet_temp : input real : coolant inlet temperature (K)
@@ -2754,7 +2821,7 @@ contains
     iteration: do ; it = it+1
 
        if (it > 100) then
-          call report_error(88)  !+PJK Change error message from THRMAL to ITERATE_FW
+          call report_error(88)
           exit iteration
        end if
 
@@ -2762,7 +2829,7 @@ contains
 
        if (afw >= bfw) then
           fdiags(1) = afw ; fdiags(2) = bfw
-          call report_error(89)  !+PJK Change error message from THRMAL to ITERATE_FW
+          call report_error(89)
        end if
 
        !  Neutron power deposited in first wall
@@ -2788,7 +2855,7 @@ contains
        !  surface from electromagnetic radiation flux (W/m2)
 
        qppp = 1.0D6 * pnuc_deposited / fwvol
-       qpp = 1.0D6 * prad_incident / area  !+PJK  N.B. DIFFERENT FROM PULSE.F90
+       qpp = 1.0D6 * prad_incident / area
 
        !  Coolant properties at average coolant temperature
        !  tb is not known at this point, but since we only need the cf output (which does not
@@ -2874,7 +2941,7 @@ contains
        !  limit; if this is exceeded the FW lifetime is reduced. The fluence
        !  is the product of the neutron wall loading (qppp*fwvol/fwarea) and
        !  the wall lifetime. This fluence limit is a conservative one, with
-!+PJK       !  the upper bound on the fluence set by the value 10 MW-yr/m2
+       !  the upper bound on the fluence set by the value abktflnc (MW-yr/m2)
 
        !  Fluence
 
@@ -2890,15 +2957,15 @@ contains
             (2.0D0*pi*afw*hcoeff) + outlet_temp + tmthet  !  in K
        tpeakfw_c = tpeakfw - 273.15D0
 
-!+PJK change flnce limiting value
-       if ((tpeakfw > tfwmatmax).or.(flnce > 10.0D0)) then
+       if ((tpeakfw > tfwmatmax).or.(flnce > abktflnc)) then
           !  Temperature or fluence limit exceeded; reduce first wall lifetime
 
-          fwlife = 10.0D0 * area/fwvol / (1.0D-6*qppp)
+          fwlife = abktflnc * area/fwvol / (1.0D-6*qppp)
           fwlifs = 3.1536D7*fwlife
 
           !  fboa is chosen such that fboa**100 * (bfw/afw) = 1.001,
-          !  i.e. after 100 iterations bfw is still just larger than afw.
+          !  i.e. after 100 iterations bfw is still just larger than afw
+          !  N.B. bfw may also have been modified via the stress test below...
 
           fboa = (1.001D0/boa)**0.01D0
 

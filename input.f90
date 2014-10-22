@@ -323,6 +323,7 @@ contains
     !+ad_hist  06/10/14 PJK Added FNBSHINEF, NBSHINEFMAX
     !+ad_hist  06/10/14 PJK Added FORBITLOSS
     !+ad_hist  16/10/14 PJK Added ISUMATOH,FCUPFSU
+    !+ad_hist  22/10/14 PJK Modified FORBITLOSS upper limit
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -972,7 +973,7 @@ contains
           call parse_real_variable('FEFFCD', feffcd, 0.0D0, 20.0D0, &
                'Current drive efficiency fiddle factor')
        case ('FORBITLOSS')
-          call parse_real_variable('FORBITLOSS', forbitloss, 0.0D0, 1.0D0, &
+          call parse_real_variable('FORBITLOSS', forbitloss, 0.0D0, 0.999D0, &
                'NBI power orbit loss fraction')
        case ('FRBEAM')
           call parse_real_variable('FRBEAM', frbeam, 0.5D0, 2.0D0, &

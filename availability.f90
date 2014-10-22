@@ -75,6 +75,8 @@ contains
     !+ad_hist  24/04/14 PJK Calculation proceeds irrespective of iprint,
     !+ad_hisc               thus correcting erroneous lifetimes shown
     !+ad_hisc               in the output file
+    !+ad_hist  22/10/14 PJK Modified blanket and first wall lifetime
+    !+ad_hisc               calculation; fwlife is calculated in fwbs now
     !+ad_stat  Okay
     !+ad_docs  F/PL/PJK/PROCESS/CODE/043
     !
@@ -101,18 +103,19 @@ contains
 
        !  First wall / blanket
 
-       if (blktmodel == 0) bktlife = min( abktflnc/wallmw, tlife )
-       fwlife = bktlife
+       if (blktmodel == 0) then
+          bktlife = min(fwlife, abktflnc/wallmw, tlife)
+       end if
 
        !  Divertor
 
-       divlife = min( adivflnc/hldiv, tlife )
+       divlife = min(adivflnc/hldiv, tlife)
        if (irfp == 1) divlife = 1.0D0
 
        !  Centrepost
 
        if (itart == 1) then
-          cplife = min( cpstflnc/wallmw, tlife )
+          cplife = min(cpstflnc/wallmw, tlife)
        end if
 
     end if
@@ -169,7 +172,6 @@ contains
 
        if (bktlife < tlife) then
           bktlife = min( bktlife/cfactr, tlife )
-          fwlife = bktlife
        end if
 
        !  Divertor

@@ -91,6 +91,7 @@ contains
     !+ad_hist  06/10/14 PJK Use global nbshinef instead of local fshine
     !+ad_hist  06/10/14 PJK Added use of forbitloss
     !+ad_hist  06/10/14 PJK Made feffcd usage consistent for all CD methods
+    !+ad_hist  22/10/14 PJK Corrected forbitloss usage
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -225,12 +226,17 @@ contains
 
        case (5,8)  !  NBCD
 
-          pnbitot = 1.0D-6 * faccd * plascur / effnbss + pheat
-          porbitlossmw = forbitloss * pnbitot
-
-          pnbeam = pnbitot - porbitlossmw
+          pnbeam = 1.0D-6 * faccd * plascur / effnbss + pheat
           pinjimw = pnbeam * fpion
           pinjemw = pnbeam * (1.0D0-fpion)
+
+          if (forbitloss /= 1.0D0) then  !  = 1.0 shouldn't occur...
+             pnbitot = pnbeam / (1.0D0-forbitloss)
+             porbitlossmw = forbitloss * pnbitot
+          else
+             pnbitot = 1.0D3 * pnbeam  !  ...but just in case
+             porbitlossmw = 0.999D0 * pnbitot
+          end if
 
           pwpnb = pnbitot/etanbi
           etacd = etanbi

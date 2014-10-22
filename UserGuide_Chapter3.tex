@@ -435,7 +435,8 @@ By changing the input parameter \texttt{coreradius}, the user may set the
 normalised radius defining the core region (\texttt{imprad\_model = 1}
 only). Only the impurity and synchrotron radiation from the core region
 affects the confinement scaling (but see \texttt{iradloss} below), while the
-power flowing into the divertor is assumed to exclude all radiation power.
+power flowing into the divertor is assumed to exclude all radiation power
+\Red{But c.f. fdiv}.
 
 \Red{Add radiation power flow diagram as on p.26, logbook24}
 
@@ -585,7 +586,7 @@ the power plant.)
 \caption[Power balance within the core plasma] {\label{fig:powerflow1}
   \textit{Schematic diagram of the flow of power within the plasma
     core. Variable names are given in [\ldots]. Refer to
-  Figure~\ref{fig:powerflow2} for the onward flow of power from the three
+  Figure~\ref{fig:powerflow2} for the onward flow of power from the four
   red-bordered boxes, while the source of the power in the blue box is
   indicated in Figure~\ref{fig:powerflow3}.} }
 \end{figure}
@@ -734,12 +735,7 @@ The first wall acts as a physical barrier protecting the rest of the machine
 from the hot plasma. Due to its hostile environment the first wall has only a
 short lifetime and therefore needs to be replaced regularly. Its stainless
 steel structure is cooled either by gaseous helium or by pressurised water, as
-chosen using switch \texttt{costr} -- see Section~\ref{sec:blanket}.
-
-The first wall coolant fraction is given by the value of \texttt{fwclfr},
-which is calculated if a pulsed power plant is being modelled (\texttt{lpulse
-  = 1} --- see Section~\ref{sec:pulsed}), and assumed to be the input value
-otherwise.
+chosen using switch \texttt{coolwh} -- see Section~\ref{sec:blanket}.
 
 \subsubsection*{Wall load calculation}
 
@@ -748,31 +744,6 @@ unit area) should be calculated using the plasma surface area (\texttt{iwalld
   = 1}) or the first wall area (\texttt{iwalld = 2}) as the denominator. In
 the former case, input parameter \texttt{ffwal} (default value 0.92)
 can be used to scale the neutron power reaching the first wall.
-
-\subsection{Divertor}
-\label{sec:divertor}
-
-The divertor provides a means of removing plasma reaching the scrape-off layer
-and heavy ions that are ejected from the first wall.  By default, two
-divertors are assumed in the \process\ tokamak, placed symmetrically above
-and below the plasma. The principal outputs from the code are the divertor
-heat load, used to determine its lifetime, and its peak temperature. The
-divertor is cooled either by gaseous helium or by pressurised water.
-
-Switch \texttt{snull} controls the overall plasma configuration. Setting
-\texttt{snull = 0} corresponds to an up-down symmetric, double null
-configuration (the default), while \texttt{snull = 1} assumes a single null
-plasma with the divertor at the bottom of the machine. The vertical build (see
-Figure~\ref{fig:buildsnd}) and PF coil current scaling algorithms take the
-value of this switch into account, although not the plasma geometry at
-present.
-
-The Harrison-Kukushkin-Hotston divertor model~\cite{IPDG} developed for ITER
-is used (except for the case of spherical tokamaks or stellarators --- see
-later). This is appropriate for conventional aspect ratio machines, but care
-should be taken in inputting the divertor magnetics for this model, and
-projections far from the ITER CDA machine parameters are likely to be
-unreliable.
 
 \subsection{Blanket}
 
@@ -787,6 +758,12 @@ destruction and creation. The blanket therefore contains beryllium to fulfil
 this purpose. As with the first wall, the blanket has a relatively short
 lifetime because of the high neutron fluence.
 
+(In reality, the blanket comprises the first wall plus the so-called breeding
+zone behind it; in \process, the region described as the `blanket' is just the
+breeding zone.)
+
+\Red{ipowerflow (See also Section~\ref{sec:powerflow}), blbop, thermal\_cycle, blkttype}
+
 \subsubsection{Blanket neutronics model}
 \label{sec:blanket_neutronics}
 
@@ -799,10 +776,10 @@ of the inboard and outboard blanket sections are specified via input
 parameters \texttt{blnkith} and \texttt{blnkoth}, respectively. The energy
 multiplication in the blanket (\texttt{emult}) is also an input
 parameter. Steel and vanadium may be used as structural materials within the
-blanket, which is cooled either by gaseous helium or by pressurised water. The
-nuclear heating of the TF coil superconductor is calculated assuming an
-exponential neutron attenuation through the blanket and shield materials,
-based on 1990 ITER data.
+blanket, which is cooled either by gaseous helium or by pressurised water
+\Red{...}. The nuclear heating of the TF coil superconductor is calculated
+assuming an exponential neutron attenuation through the blanket and shield
+materials, based on 1990 ITER data.
 
 The more advanced model (\texttt{blktmodel = 1}) allows the energy
 multiplication factor \texttt{emult}, the shielding requirements and tritium
@@ -1041,10 +1018,35 @@ pressurised water (\textbf{but see Section~\ref{sec:blanket_neutronics}}), as
 chosen using switch \texttt{costr} -- see Section~\ref{sec:blanket}, and as
 with the blanket the energy deposited in the coolant is used to produce
 electricity. The shield coolant fraction is stored in input parameter
-\texttt{vfshld}.
+\texttt{vfshld}. \Red{N.B. iprimshld}
 
 The inboard and outboard shield thicknesses (\texttt{shldith} and
 \texttt{shldoth}, respectively) may be used as iteration variables.
+
+\subsection{Divertor}
+\label{sec:divertor}
+
+The divertor provides a means of removing plasma reaching the scrape-off layer
+and heavy ions that are ejected from the first wall.  By default \Red{No...},
+two divertors are assumed in the \process\ tokamak, placed symmetrically above
+and below the plasma. The principal outputs from the code are the divertor
+heat load, used to determine its lifetime, and its peak temperature. The
+divertor is cooled either by gaseous helium or by pressurised water.
+
+Switch \texttt{snull} controls the overall plasma configuration. Setting
+\texttt{snull = 0} corresponds to an up-down symmetric, double null
+configuration, while \texttt{snull = 1} (the default) assumes a single null
+plasma with the divertor at the bottom of the machine. The vertical build (see
+Figure~\ref{fig:buildsnd}) and PF coil current scaling algorithms take the
+value of this switch into account, although not the plasma geometry at
+present.
+
+The Harrison-Kukushkin-Hotston divertor model~\cite{IPDG} developed for ITER
+is used (except for the case of spherical tokamaks or stellarators --- see
+later). This is appropriate for conventional aspect ratio machines, but care
+should be taken in inputting the divertor magnetics for this model, and
+projections far from the ITER CDA machine parameters are likely to be
+unreliable.
 
 \subsection{Toroidal field coils}
 \label{sec:tfcoil}
@@ -1259,7 +1261,7 @@ Section~\ref{sec:ohcoil}).
 \epsfig{file=current_vs_time.eps,width=170mm}
 \caption[Coil and plasma current waveforms]
 {\label{fig:current_vs_time}
-  \textit{Plot showing schematically the current waveforms for the plasma, a
+  \textit{\Red{Redo...} Plot showing schematically the current waveforms for the plasma, a
     typical PF coil, and the central solenoid. Note that the currents in some
     of the PF coils may be the opposite sign to that shown, and the central
     solenoid current may remain positive during the $I_p$ ramp-up period,
@@ -1534,22 +1536,6 @@ cryopump (\texttt{ntype = 1}) is used in the vacuum system.
 The \process\ power plant takes into account all the systems required to
 perform the necessary conversion of fusion power to electricity, from the
 coolant systems in the plant components to the heat exchangers and turbines.
-%Figure~\ref{fig:pwrconv} shows schematically the overall power transfer
-%mechanisms used by the code.
-%
-%\begin{figure}[tbph]
-%\centerline{\epsfig{file=PWR.ps,width=160mm,height=160mm,
-%bbllx=0mm,bburx=200mm,bblly=0mm,bbury=200mm,clip=}}
-%\vspace{-12mm}
-%\caption[Power conversion mechanisms within \process]
-%{\label{fig:pwrconv}
-%  \textit{Schematic diagram showing the power conversion mechanisms used in
-%    \process \cite[Note 0166]{PWF}.}
-%}
-%\end{figure}
-%
-%Many of the power conversion efficiencies shown in Figure~\ref{fig:pwrconv}
-%can be adjusted by the user.
 
 Figures~\ref{fig:powerflow2} and \ref{fig:powerflow3} show schematically the
 overall power transfer mechanisms within the power plant outside of the plasma
@@ -1565,7 +1551,7 @@ zero, as the new power flow model is in draft form.)
 \caption[Power flow within the fusion power plant core]
 {\label{fig:powerflow2} \textit{Schematic diagram of the flow of power from
     the plasma to the thermal power deposited within the divertor, first wall,
-    blanket and shield. Variable names are given in [\ldots]. The three
+    blanket and shield. Variable names are given in [\ldots]. The four
     red-bordered contributions are passed from Figure~\ref{fig:powerflow1},
     while the blue box comes from Figure~\ref{fig:powerflow3}.} }
 \end{figure}
@@ -1582,6 +1568,8 @@ which may be set as input parameters: \texttt{fdiv} (divertor area fraction),
 (\texttt{1-fdiv-fhcd-fhole}) is the area fraction of the actual first wall.
 
 \subsubsection{Divertor}
+
+\Red{Redo this and following sections...}
 
 All of the charged particle transport power leaving the plasma is assumed to
 be absorbed in the divertor, along with a proportion \texttt{fdiv} of the
@@ -1769,7 +1757,7 @@ summarises the switch values relevant to each aspect ratio regime.
   \begin{tabular}{||l|c|c||} \hline
     & conventional aspect ratio & low aspect ratio \\
     switch & \texttt{itart = 0} & \texttt{itart = 1} \\ \hline
-    \texttt{ishape} & 0, 2 & 0, 1 \\
+    \texttt{ishape} (Section~\ref{sec:plasma_geometry}) & 0, 2 & 0, 1 \\
     \texttt{ibss} (Section~\ref{sec:bootstrap}) & 1, 2, 3 & 2, 3 \\
     \texttt{icurr} (Section~\ref{sec:current_scaling}) & 1, 3, 4, 5, 6, 7 & 2 \\
     \texttt{itfsup} (Section~\ref{sec:tfcoil}) & 0, 1 & 0 \\
@@ -1796,7 +1784,7 @@ based on steady-state (\texttt{lpulse = 0}) or pulsed (\texttt{lpulse = 1})
 operation.
 
 \subsection{Thermal cycling package}
-
+\Red{Update...}
 This performs calculations on the first wall of the machine. Evaluation of the
 mechanical and thermal stresses on this component lead to a measure of the
 maximum number of cycles to which the first wall can be subjected, and hence

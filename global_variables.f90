@@ -1010,8 +1010,6 @@ module fwbs_variables
   !+ad_vars  coolmass : mass of water coolant (in shield, blanket,
   !+ad_varc             first wall, divertor) (kg)
   real(kind(1.0D0)) :: coolmass = 0.0D0
-  !+ad_vars  coolp /15.5e6/ : first wall coolant pressure (Pa) (blbop=1)
-  real(kind(1.0D0)) :: coolp = 15.5D6
   !+ad_vars  cryomass : vacuum vessel mass (kg)
   real(kind(1.0D0)) :: cryomass = 0.0D0
   !+ad_vars  declblkt /0.075/ : neutron power deposition decay length of blanket structural material (m)
@@ -1068,7 +1066,7 @@ module fwbs_variables
   !+ad_varc                  <LI> = 1 D-shaped (cylinder inboard + ellipse outboard);
   !+ad_varc                  <LI> = 2 defined by two ellipses</UL>
   integer :: fwbsshape = 2
-  !+ad_vars  fwlife : first wall lifetime (y)
+  !+ad_vars  fwlife : first wall full-power lifetime (y)
   real(kind(1.0D0)) :: fwlife = 0.0D0
   !+ad_vars  fwmass : first wall mass (kg)
   real(kind(1.0D0)) :: fwmass = 0.0D0
@@ -1143,8 +1141,10 @@ module fwbs_variables
 
   !+ad_vars  blbop /0/ : Switch for blanket thermodynamic model (supersedes lblnkt):<UL>
   !+ad_varc         <LI> = 0 simple model;
-  !+ad_varc         <LI> = 1 detailed thermodyamics and balance-of-plant model</UL>
+  !+ad_varc         <LI> = 1 detailed thermo-hydraulic and balance-of-plant model</UL>
   integer :: blbop = 0
+  !+ad_vars  coolp /15.5e6/ : first wall coolant pressure (Pa) (blbop=1)
+  real(kind(1.0D0)) :: coolp = 15.5D6
   !+ad_vars  coolwh /2/ : Switch for coolant choice:<UL>
   !+ad_varc         <LI> = 1 helium;
   !+ad_varc         <LI> = 2 pressurized water</UL>
@@ -2124,6 +2124,7 @@ module heat_transport_variables
   !+ad_hist  27/08/14 PJK Replaced etahtp* with just etahtp
   !+ad_hist  17/09/14 PJK Changed default values
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
+  !+ad_hist  22/10/14 PJK Removed psechole, etathdiv
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2153,10 +2154,6 @@ module heat_transport_variables
   !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency; input if ipowerflow=0
   !+ad_varc                 or if blbop=1 and thermal_cycle=0; otherwise calculated
   real(kind(1.0D0)) :: etath = 0.35D0
-  !+ad_vars  etathdiv /0.0/ : thermal to electric conversion efficiency for divertor
-!+PJK CHECK THIS...
-  !+ad_varc                   if iprimdiv = 0 (ipowerflow=1)
-  real(kind(1.0D0)) :: etathdiv = 0.0D0
   !+ad_vars  fachtmw : facility heat removal (MW)
   real(kind(1.0D0)) :: fachtmw = 0.0D0
   !+ad_vars  fauxbop /0.06/ : fraction of gross electric power to balance-of-plant
@@ -2264,9 +2261,6 @@ module heat_transport_variables
   !+ad_vars  psechcd : secondary (low-grade) heat lost into HCD apparatus (MW)
   !+ad_varc            (ipowerflow=1)
   real(kind(1.0D0)) :: psechcd = 0.0D0
-  !+ad_vars  psechole : secondary (low-grade) heat lost through holes (MW)
-  !+ad_varc             (ipowerflow=1)
-  real(kind(1.0D0)) :: psechole = 0.0D0
   !+ad_vars  psechtmw : secondary (low-grade) heat (MW)
   real(kind(1.0D0)) :: psechtmw = 0.0D0
   !+ad_vars  psecshld : secondary (low-grade) heat lost in shield (MW)

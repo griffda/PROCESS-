@@ -1,5 +1,5 @@
 {
- "version":  [ "PROCESS revision 350" ],
+ "version":  [ "PROCESS revision 353ish" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
  "n_errortypes": 156,
@@ -91,8 +91,8 @@
   { "level": 3, "message": "OUTPLAS: Illegal value of idivrt" },
   { "level": 3, "message": "OUTPLAS: Illegal value of ishape" },
   { "level": 2, "message": "OUTPLAS: Possible problem with high radiation power, forcing pdivt to odd values" },
-  { "level": 2, "message": "THRMAL: Optimisation has failed within 100 iterations; possible NaN problems" },
-  { "level": 3, "message": "THRMAL: Inner pipe radius afw >= outer pipe radius bfw" },
+  { "level": 2, "message": "ITERATE_FW: Optimisation has failed within 100 iterations; possible NaN problems" },
+  { "level": 3, "message": "ITERATE_FW: Inner pipe radius afw >= outer pipe radius bfw" },
   { "level": 2, "message": "THRMAL: Swelling limit exceeded; optimisation failing to find a FW thickness" },
   { "level": 3, "message": "SMT: No reliable data for SMT stress for temperatures > 600 degrees Celsius" },
   { "level": 3, "message": "CYCLES: Fatigue data unreliable for T > 649 degrees Celsius" },
