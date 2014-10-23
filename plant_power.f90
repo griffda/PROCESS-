@@ -926,6 +926,7 @@ contains
     !+ad_hist  17/06/14 PJK Corrections to pfwdiv, priheat
     !+ad_hist  19/06/14 PJK Simplified pinjwp calculation
     !+ad_hist  06/10/14 PJK Added orbit loss power to pfwdiv, pinjwp
+    !+ad_hist  22/10/14 PJK Corrected orbit loss power usage
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1085,7 +1086,7 @@ contains
     !  Wall plug injection power
 
     if (ignite == 0) then
-       pinjwp = pinjmw/etacd + porbitlossmw
+       pinjwp = (pinjmw + porbitlossmw)/etacd
     else
        pinjwp = 0.0D0
     end if
@@ -1093,7 +1094,7 @@ contains
     !  Waste injection power 
 
     if (ignite == 0) then
-       pinjht = pinjwp - pinjmw
+       pinjht = pinjwp - pinjmw - porbitlossmw
     else
        pinjht = 0.0D0
     end if
