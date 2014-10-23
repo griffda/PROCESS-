@@ -1329,6 +1329,7 @@ contains
     !+ad_hist  03/03/14 PJK Moved divertor surface area calculation into STDIV
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  23/06/14 PJK Corrected wallmw units
+    !+ad_hist  23/10/14 PJK costr --> coolwh
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1639,7 +1640,7 @@ contains
     !  temperatures and pressures
     !  N.B. for blktmodel > 0, mass of helium coolant in blanket is ignored...
 
-    if ((blktmodel > 0).or.(costr == 2)) then  !  pressurised water coolant
+    if ((blktmodel > 0).or.(coolwh == 2)) then  !  pressurised water coolant
        coolmass = coolmass*806.719D0
     else  !  gaseous helium coolant
        coolmass = coolmass*1.517D0

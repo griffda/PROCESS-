@@ -244,8 +244,8 @@ error message otherwise.
 
 \subsubsection{Plasma profiles}
 
-By default \Red{NOT ANY MORE!} (switch \texttt{ipedestal = 0}), the plasma
-profiles are assumed to be parabolic, i.e.\ they are of the form
+If switch \texttt{ipedestal = 0}), the plasma profiles are assumed to be
+parabolic, i.e.\ they are of the form
 \begin{eqnarray}
 \mbox{Density : } n(\rho) & = & n_0 \left( 1 - \rho^2 \right)^{\alpha_n} \\
 \mbox{Temperature : } T(\rho) & = & T_0 \left( 1 - \rho^2 \right)^{\alpha_T} \\
@@ -261,9 +261,9 @@ be described as ``$\frac{1}{2}$-D''.  The relevant profile index variables are
 \texttt{alphan}, \texttt{alphat} and \texttt{alphaj}, respectively (see
 Section~\ref{sec:current_profile}).
 
-If \texttt{ipedestal} is set to \texttt{1}, however, the density and
-temperature profiles may include a pedestal, using the forms specified
-in~\cite{helios}:
+If \texttt{ipedestal} is set to its default value of \texttt{1}, however, the
+density and temperature profiles may include a pedestal, using the forms
+specified in~\cite{helios}:
 \begin{equation}
 \mbox{density:} \qquad n(\rho) = \left\{ 
 \begin{aligned}
@@ -762,8 +762,24 @@ lifetime because of the high neutron fluence.
 zone behind it; in \process, the region described as the `blanket' is just the
 breeding zone.)
 
-\Red{ipowerflow (See also Section~\ref{sec:powerflow}), blbop, thermal\_cycle, blkttype}
+\Red{ipowerflow (See also Section~\ref{sec:powerflow}), blktcycle, blkttype}
 
+\subsubsection{Blanket model options}
+
+A number of switches may be used to choose between a range of models, as follows:
+%%%%
+\Red{
+Two options are given through the blbop switch: 
+
+Option 1. (blktcycle=0) a simplified routine calculates the respective powers deposited in the first wall, breeder zone, shield and divertor, and calculates the coolant pumping powers for these systems from a user specified fraction of the total heat depostied in the coolant. The thermal efficiency of the secondary cycle is determined from the choice of blanket and is a fixed value for the each of the three options (WCLL, HCLL, HCPB).
+
+Option 2. (blktcycle>0) The detailed routine takes user inputs for the coolant outlet temperature (which could become an iteration variable), the internal coolant channel diameter, and the segmentation of the blanket and calculates the maximum temperature in the first wall. If the first wall temperature is above user specified material limits, the outer diameter of the first wall pipes is reduced, up to a limit determined by the internal coolant pressure. The pumping power for the first wall and breeder zone is then calculated from thermal-hydraulic formulae, assuming these are separate coolant loops with the same inlet and outlet temperatures. Note that the pumping powers for the shield and divertor are still calculated using the simplified method. The secondary cycle thermal efficiency is calculated from the coolant outlet temperature using simple relations between temperature and efficiency from previous cycle modelling studies.
+
+An option is included to utilise the divertor heat in the main power conversion cycle, or to specify a separate efficiency for conversion of divertor heat to electricity (which could be zero if the divertor heat is not to be utilised).
+
+In terms of integration with the current blanket options in PROCESS, this is intended to replace the blktmodel = 0 option. The old detailed thermo-hydraulic and Rankine cycle model should be removed. lblnkt is effectively replaced by the blbop option, smstr is replaced by the blktchc option, and costr is replaced by coolwh.
+}
+%%%%
 \subsubsection{Blanket neutronics model}
 \label{sec:blanket_neutronics}
 
@@ -1261,7 +1277,7 @@ Section~\ref{sec:ohcoil}).
 \epsfig{file=current_vs_time.eps,width=170mm}
 \caption[Coil and plasma current waveforms]
 {\label{fig:current_vs_time}
-  \textit{\Red{Redo...} Plot showing schematically the current waveforms for the plasma, a
+  \textit{Plot showing schematically the current waveforms for the plasma, a
     typical PF coil, and the central solenoid. Note that the currents in some
     of the PF coils may be the opposite sign to that shown, and the central
     solenoid current may remain positive during the $I_p$ ramp-up period,

@@ -1137,13 +1137,16 @@ module fwbs_variables
   real(kind(1.0D0)) :: wtshldo = 0.0D0
 
   !+ad_vars  <P><B>The following are used in the new thermodynamic blanket model
-  !+ad_varc  (blbop=1):</B><P>
+  !+ad_varc  (blktcycle > 0):</B><P>
 
-  !+ad_vars  blbop /0/ : Switch for blanket thermodynamic model (supersedes lblnkt):<UL>
-  !+ad_varc         <LI> = 0 simple model;
-  !+ad_varc         <LI> = 1 detailed thermo-hydraulic and balance-of-plant model</UL>
-  integer :: blbop = 0
-  !+ad_vars  coolp /15.5e6/ : first wall coolant pressure (Pa) (blbop=1)
+  !+ad_vars  blktcycle /0/ : Switch for blanket thermodynamic model (supersedes lblnkt):<UL>
+  !+ad_varc             <LI> = 0 simple model;
+  !+ad_varc             <LI> > 0 detailed thermo-hydraulic and balance-of-plant model;
+  !+ad_vars             <UL><LI> = 1 use input thermal-electric efficiency (etath);
+  !+ad_varc                 <LI> = 2 superheated steam Rankine cycle;
+  !+ad_varc                 <LI> = 3 supercritical CO2 cycle</UL> </UL>
+  integer :: blktcycle = 0
+  !+ad_vars  coolp /15.5e6/ : first wall coolant pressure (Pa) (blktcycle>0)
   real(kind(1.0D0)) :: coolp = 15.5D6
   !+ad_vars  coolwh /2/ : Switch for coolant choice:<UL>
   !+ad_varc         <LI> = 1 helium;
@@ -1153,28 +1156,23 @@ module fwbs_variables
   real(kind(1.0D0)) :: afwi = 0.008D0
   !+ad_vars  afwo /0.008/ : inner radius of outboard first wall/blanket coolant channels (m)
   real(kind(1.0D0)) :: afwo = 0.008D0
-  !+ad_vars  inlet_temp /558.0/ : inlet temperature of coolant for blanket and first wall (K) (blbop=1)
+  !+ad_vars  inlet_temp /558.0/ : inlet temperature of coolant for blanket and first wall (K) (blktcycle>0)
   real(kind(1.0D0)) :: inlet_temp = 558.0D0
-  !+ad_vars  outlet_temp /598.0/ : outlet temperature of coolant for blanket and first wall (K) (blbop=1);
+  !+ad_vars  outlet_temp /598.0/ : outlet temperature of coolant for blanket and first wall (K) (blktcycle>0);
   !+ad_varc                        input if coolwh=1 (helium), calculated if coolwh=2 (water)
   real(kind(1.0D0)) :: outlet_temp = 598.0D0
-  !+ad_vars  nblktmodpo /8/ : number of outboard blanket modules in poloidal direction (blbop=1)
+  !+ad_vars  nblktmodpo /8/ : number of outboard blanket modules in poloidal direction (blktcycle>0)
   integer :: nblktmodpo = 8
-  !+ad_vars  nblktmodpi /7/ : number of inboard blanket modules in poloidal direction (blbop=1)
+  !+ad_vars  nblktmodpi /7/ : number of inboard blanket modules in poloidal direction (blktcycle>0)
   integer :: nblktmodpi = 7
-  !+ad_vars  nblktmodto /48/ : number of outboard blanket modules in toroidal direction (blbop=1)
+  !+ad_vars  nblktmodto /48/ : number of outboard blanket modules in toroidal direction (blktcycle>0)
   integer :: nblktmodto = 48
-  !+ad_vars  nblktmodti /32/ : number of inboard blanket modules in toroidal direction (blbop=1)
+  !+ad_vars  nblktmodti /32/ : number of inboard blanket modules in toroidal direction (blktcycle>0)
   integer :: nblktmodti = 32
-  !+ad_vars  tfwmatmax /823.0/ : maximum temperature of first wall material (K) (blbop=1)
+  !+ad_vars  tfwmatmax /823.0/ : maximum temperature of first wall material (K) (blktcycle>0)
   real(kind(1.0D0)) :: tfwmatmax = 823.0D0
-  !+ad_vars  etaiso /0.85/ : isentropic efficiency of first wall and blanket coolant pumps (blbop=1)
+  !+ad_vars  etaiso /0.85/ : isentropic efficiency of first wall and blanket coolant pumps (blktcycle>0)
   real(kind(1.0D0)) :: etaiso = 0.85D0
-  !+ad_vars  thermal_cycle /1/ : Switch for power conversion cycle (blbop=1):<UL>
-  !+ad_varc                 <LI> = 0 use input efficiency;
-  !+ad_varc                 <LI> = 1 superheated steam Rankine cycle;
-  !+ad_varc                 <LI> = 2 supercritical CO2 cycle</UL>
-  integer :: thermal_cycle = 1
   !+ad_vars  fwerlim /0.005/ : erosion thickness allowance for first wall (m)
   real(kind(1.0D0)) :: fwerlim = 0.005D0
   !+ad_vars  blkttype /1/ : Switch for blanket type, determining breeder materials
@@ -2152,7 +2150,7 @@ module heat_transport_variables
   !+ad_varc                  (ipowerflow=1)
   real(kind(1.0D0)) :: etahtp = 0.95D0
   !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency; input if ipowerflow=0
-  !+ad_varc                 or if blbop=1 and thermal_cycle=0; otherwise calculated
+  !+ad_varc                 or if blktcycle=1; otherwise calculated
   real(kind(1.0D0)) :: etath = 0.35D0
   !+ad_vars  fachtmw : facility heat removal (MW)
   real(kind(1.0D0)) :: fachtmw = 0.0D0
@@ -2170,7 +2168,7 @@ module heat_transport_variables
   real(kind(1.0D0)) :: fmgdmw = 0.0D0
   !+ad_vars  fpumpblkt /0.005/ : fraction of total blanket thermal power required
   !+ad_varc                      to drive the blanket coolant pumps (default assumes
-  !+ad_varc                      water coolant) (blbop=0, ipowerflow=1)
+  !+ad_varc                      water coolant) (blktcycle=0, ipowerflow=1)
   real(kind(1.0D0)) :: fpumpblkt = 0.005D0
   !+ad_vars  fpumpdiv /0.005/ : fraction of total divertor thermal power required
   !+ad_varc                     to drive the divertor coolant pumps (default assumes
@@ -2178,7 +2176,7 @@ module heat_transport_variables
   real(kind(1.0D0)) :: fpumpdiv = 0.005D0
   !+ad_vars  fpumpfw /0.005/ : fraction of total first wall thermal power required
   !+ad_varc                    to drive the FW coolant pumps (default assumes water
-  !+ad_varc                    coolant) (blbop=0, ipowerflow=1)
+  !+ad_varc                    coolant) (blktcycle=0, ipowerflow=1)
   real(kind(1.0D0)) :: fpumpfw = 0.005D0
   !+ad_vars  fpumpshld /0.005/ : fraction of total shield thermal power required
   !+ad_varc                      to drive the shield coolant pumps (default assumes

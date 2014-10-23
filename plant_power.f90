@@ -65,9 +65,7 @@ module power_module
 
   !  Local variables
 
-!  real(kind(1.0D0)) :: htpmw_fw,htpmw_blkt,htpmw_shld,htpmw_div
   real(kind(1.0D0)) :: htpmwe_fw,htpmwe_blkt,htpmwe_shld,htpmwe_div
-!  real(kind(1.0D0)) :: praddiv, pradfw, pradhcd, pradloss
   real(kind(1.0D0)) :: pthermdiv, pthermfw, pthermblkt, pthermshld
   real(kind(1.0D0)) :: ppumpmw, pcoresystems
 
@@ -907,6 +905,7 @@ contains
     !+ad_desc  and plant power balance constituents.
     !+ad_prob  None
     !+ad_call  cryo
+    !+ad_call  plant_thermal_efficiency
     !+ad_hist  01/08/11 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added current_drive_variables
@@ -939,8 +938,6 @@ contains
     !  Arguments
 
     !  Local variables
-
-    real(kind(1.0D0)) :: tturb
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1024,120 +1021,9 @@ contains
 
        pfwdiv = pthermfw + pthermdiv
 
-       !------------------------------------------------------------------------------------
-       !- Thermal efficiency module
-       ! Calculate the thermal efficiency of the power conversion cycle.  This gives the
-       ! gross power of the plant i.e. the primary coolant pumping power is not subtracted
-       ! at this point; however, the pumping of the secondary coolant is accounted for.
-       ! If blbop = 0, a set efficiency for the chosen blanket design is used, taken from
-       ! cycle modelling studies.  If blbop = 1, the outlet temperature from the first wall
-       ! and breeder zone is used to calculate an efficiency, using a simple relationship
-       ! between etath and outlet_temp again obtained from previous studies.
-       !------------------------------------------------------------------------------------
+       !  Thermal to electric efficiency
 
-       if (blbop == 0) then
-
-          if (blkttype == 1) then
-
-             !  WCLL, efficiency taken from WP13-DAS08-T02, EFDA_D_2M97B7
-             etath = 0.3311D0
-             !  This efficiency assumed the divertor heat is used in the 
-             !  main cycle, therefore set iprimdiv = 1
-             iprimdiv = 1
-
-          else if (blkttype == 2) then
-
-             !  HCLL, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
-             !  Feedheat & reheat cycle assumed, different efficiencies for
-             !  utilisation of divertor heat
-
-             if (iprimdiv == 1) then
-                etath = 0.397D0
-             else
-                etath = 0.436D0
-             end if
-
-          else  !  if (blkttype == 3) then
-
-             !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
-             !  Feedheat & reheat cycle assumed, different efficiencies for
-             !  utilisation of divertor heat
-
-             if (iprimdiv == 1) then
-                etath = 0.397D0
-             else
-                etath = 0.436D0
-             end if
-
-          end if
-
-       else  !  if blbop = 1
-
-          if (thermal_cycle == 0) then  !  user input used, etath not changed
-             continue
-
-          else if (thermal_cycle == 1) then  !  steam Rankine cycle to be used
-
-             if (coolwh == 2) then
-
-                !  If coolant is pressurised water, the steam cycle is assumed to use
-                !  saturated steam i.e. no superheating.  The turbine inlet temperature
-                !  is assumed to be 45 degrees below the primary coolant outlet 
-                !  temperature, as is common for PWR steam generators.
-
-                !  Saturated steam Rankine cycle correlation, from C. Harrington,
-                !  K:\Power Plant Physics and Technology \ PROCESS \ blanket_model
-                !    \ New Power Module Harrington \ Cycle correlations \ Cycle correlations.xls
-
-                tturb = outlet_temp - 45.0D0
-                etath = -2.265D0 + 0.932D0*log10(tturb + 49.999D0)
-
-                ! These efficiencies assumed the divertor heat is used in the 
-                ! main cycle, therefore set iprimdiv = 1
-
-                iprimdiv = 1
-
-             else  !  if coolwh = 1
-
-                !  If coolant is helium, the steam cycle is assumed to be superheated
-                !  and a different correlation is used. The turbine inlet temperature 
-                !  is assumed to be 20 degrees below the primary coolant outlet 
-                !  temperature, as was stated as practical in EFDA_D_2LLNBX.
-
-                !  Superheated steam Rankine cycle correlation, from C. Harrington (as above)
-
-                tturb = outlet_temp - 20.0D0
-                etath = -0.89D0 + 0.442D0*log10(tturb + 49.088D0)
-
-                !  These efficiencies assumed the divertor heat is used in the 
-                !  main cycle, therefore set iprimdiv = 1
-
-                iprimdiv = 1
-
-             end if
-
-          else !  if thermal_cycle = 2; Supercritical CO2 cycle to be used
-
-             !  The same temperature/efficiency correlation is used regardless of 
-             !  primary coolant choice.  The turbine inlet temperature is assumed to 
-             !  be 20 degrees below the primary coolant outlet temperature.
-             !  s-CO2 can in theory be used for both helium and water primary coolants
-             !  so no differentiation is made, but for water the efficiency will be 
-             !  very low and the correlation will reflect this.
-
-             !  Supercritical CO2 cycle correlation, from C. Harrington (as above)
-
-             tturb = outlet_temp - 20.0D0
-             etath = -1.873D0 + 0.804D0*log10(tturb - 124.061D0)
-
-             !  These efficiencies assumed the divertor heat is used in the 
-             !  main cycle, therefore set iprimdiv = 1
-
-             iprimdiv = 1
-
-          end if
-
-       end if  !  blbop
+       call plant_thermal_efficiency(blktcycle,blkttype,coolwh,outlet_temp,iprimdiv,etath)
 
        !  Primary (high-grade) thermal power, available for electricity
        !  generation.  Switches iprimshld, iprimdiv are 1 or 0, depending
@@ -1473,7 +1359,7 @@ contains
                'Neutron power decay length in shield structure (m)', &
                '(declshld)',declshld)
        end if
-       if (blbop == 0) then
+       if (blktcycle == 0) then
           call ovarre(outfile, &
                'Coolant pump power / non-pumping thermal power in first wall', &
                '(fpumpfw)',fpumpfw)
@@ -1498,16 +1384,18 @@ contains
             '(iprimshld)',iprimshld)
 
        if (ireactor == 1) then
-          if (blbop == 1) then
-             call ovarin(outfile,'Thermal cycle model','(thermal_cycle)', &
-                  thermal_cycle)
-             if (thermal_cycle == 0) then
-                call ocmmnt(outfile,'   (User-defined turbine efficiency)')
-             else if (thermal_cycle == 1) then
-                call ocmmnt(outfile,'   (Superheated steam Rankine cycle')
-             else
-                call ocmmnt(outfile,'   (Supercritical CO2 cycle)')
-             end if
+          if (blktcycle == 0) then
+             call osubhd(outfile,'Plant thermal efficiency model: '// &
+                  'turbine efficiency set according to blanket type')
+          else if (blktcycle == 1) then
+             call osubhd(outfile,'Plant thermal efficiency model: '// &
+                  'user-defined turbine efficiency')
+          else if (blktcycle == 2) then
+             call osubhd(outfile,'Plant thermal efficiency model: '// &
+                  'superheated steam Rankine cycle')
+          else
+             call osubhd(outfile,'Plant thermal efficiency model: '// &
+                  'supercritical CO2 cycle')
           end if
           call ovarrf(outfile, &
                'Thermal to electric conversion efficiency of turbines', &
@@ -1801,7 +1689,6 @@ contains
 
     implicit none
 
-
     !  Arguments
 
     integer, intent(in) :: itfsup,ipfres
@@ -1841,5 +1728,163 @@ contains
     helpow = max(0.0D0, (1.45D0 * (qss + qnuc + qac + qcl)) )
 
   end subroutine cryo
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine plant_thermal_efficiency(blktcycle,blkttype,coolwh,outlet_temp,iprimdiv,etath)
+
+    !+ad_name  plant_thermal_efficiency
+    !+ad_summ  Calculates the thermal efficiency of the power conversion cycle
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  C Harrington, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  blktcycle : input integer : switch for power conversion cycle;
+    !+ad_argc                              0 = simple model, 1 = use input etath, 2 = steam Rankine cycle,
+    !+ad_argc                              3 = supercritical CO2 cycle
+    !+ad_args  blkttype : input integer : switch for blanket type; 1=WCLL, 2=HCLL, 3=HCPB
+    !+ad_args  coolwh : input integer : coolant; 1 = helium, 2 = pressurized water
+    !+ad_args  outlet_temp : input real : coolant outlet temperature
+    !+ad_args  iprimdiv : input/output integer : destination for divertor thermal power;
+    !+ad_argc                                    1 = primary, 0 = secondary
+    !+ad_args  etath : input/output real : thermal to electric conversion efficiency
+    !+ad_desc  This routine calculates the thermal efficiency of the power conversion cycle.
+    !+ad_desc  This gives the gross power of the plant, i.e. the primary coolant pumping
+    !+ad_desc  power is not subtracted at this point; however, the pumping of the
+    !+ad_desc  secondary coolant is accounted for.
+    !+ad_desc  <P>If blktcycle = 0, a set efficiency for the chosen blanket design is used,
+    !+ad_desc  taken from cycle modelling studies.
+    !+ad_desc  <P>If blktcycle > 0, the outlet temperature from the first wall
+    !+ad_desc  and breeder zone is used to calculate an efficiency, using a simple relationship
+    !+ad_desc  between etath and outlet_temp again obtained from previous studies.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  23/10/14 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  C. Harrington, K:\Power Plant Physics and Technology \ PROCESS \ blanket_model
+    !+ad_docc  \ New Power Module Harrington \ Cycle correlations \ Cycle correlations.xls
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: blktcycle, blkttype, coolwh
+    real(kind(1.0D0)), intent(in) :: outlet_temp
+    integer, intent(inout) :: iprimdiv
+    real(kind(1.0D0)), intent(inout) :: etath
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: tturb
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    select case (blktcycle)
+
+    case (0)
+
+       if (blkttype == 1) then
+
+          !  WCLL, efficiency taken from WP13-DAS08-T02, EFDA_D_2M97B7
+
+          etath = 0.3311D0
+
+          !  This efficiency assumed the divertor heat is used in the 
+          !  main cycle, therefore set iprimdiv = 1
+
+          iprimdiv = 1
+
+       else if (blkttype == 2) then
+
+          !  HCLL, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
+          !  Feedheat & reheat cycle assumed, different efficiencies for
+          !  utilisation of divertor heat
+
+          if (iprimdiv == 1) then
+             etath = 0.397D0
+          else
+             etath = 0.436D0
+          end if
+
+       else  !  if (blkttype == 3) then
+
+          !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
+          !  Feedheat & reheat cycle assumed, different efficiencies for
+          !  utilisation of divertor heat
+
+          if (iprimdiv == 1) then
+             etath = 0.397D0
+          else
+             etath = 0.436D0
+          end if
+
+       end if
+
+    case (1)  !  User input used, etath not changed
+
+       return
+
+    case (2)  !  Steam Rankine cycle to be used
+
+       if (coolwh == 2) then
+
+          !  If coolant is pressurised water, the steam cycle is assumed to use
+          !  saturated steam i.e. no superheating.  The turbine inlet temperature
+          !  is assumed to be 45 degrees below the primary coolant outlet 
+          !  temperature, as is common for PWR steam generators.
+
+          !  Saturated steam Rankine cycle correlation, from C. Harrington
+
+          tturb = outlet_temp - 45.0D0
+          etath = -2.265D0 + 0.932D0*log10(tturb + 49.999D0)
+
+          ! These efficiencies assumed the divertor heat is used in the 
+          ! main cycle, therefore set iprimdiv = 1
+
+          iprimdiv = 1
+
+       else  !  if coolwh = 1
+
+          !  If coolant is helium, the steam cycle is assumed to be superheated
+          !  and a different correlation is used. The turbine inlet temperature 
+          !  is assumed to be 20 degrees below the primary coolant outlet 
+          !  temperature, as was stated as practical in EFDA_D_2LLNBX.
+
+          !  Superheated steam Rankine cycle correlation, from C. Harrington
+
+          tturb = outlet_temp - 20.0D0
+          etath = -0.89D0 + 0.442D0*log10(tturb + 49.088D0)
+
+          !  These efficiencies assumed the divertor heat is used in the 
+          !  main cycle, therefore set iprimdiv = 1
+
+          iprimdiv = 1
+
+       end if
+
+    case default  !  Supercritical CO2 cycle to be used
+
+       !  The same temperature/efficiency correlation is used regardless of 
+       !  primary coolant choice.  The turbine inlet temperature is assumed to 
+       !  be 20 degrees below the primary coolant outlet temperature.
+       !  s-CO2 can in theory be used for both helium and water primary coolants
+       !  so no differentiation is made, but for water the efficiency will be 
+       !  very low and the correlation will reflect this.
+
+       !  Supercritical CO2 cycle correlation, from C. Harrington
+
+       tturb = outlet_temp - 20.0D0
+       etath = -1.873D0 + 0.804D0*log10(tturb - 124.061D0)
+
+       !  These efficiencies assumed the divertor heat is used in the 
+       !  main cycle, therefore set iprimdiv = 1
+
+       iprimdiv = 1
+
+    end select
+
+  end subroutine plant_thermal_efficiency
 
 end module power_module

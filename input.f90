@@ -324,6 +324,7 @@ contains
     !+ad_hist  06/10/14 PJK Added FORBITLOSS
     !+ad_hist  16/10/14 PJK Added ISUMATOH,FCUPFSU
     !+ad_hist  22/10/14 PJK Modified FORBITLOSS upper limit
+    !+ad_hist  23/10/14 PJK Removed THERMAL_CYCLE; BLBOP --> BLKTCYCLE
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1572,9 +1573,9 @@ contains
                'Temperature rise in first wall coolant (C)')
 
           !  First wall, blanket, shield settings
-!+PJK new thermodynamic model variables
-       case ('BLBOP')
-          call parse_int_variable('BLBOP', blbop, 0, 1, &
+
+       case ('BLKTCYCLE')
+          call parse_int_variable('BLKTCYCLE', blktcycle, 0, 3, &
                'Switch for blanket thermodynamic model')
        case ('COOLWH')
           call parse_int_variable('COOLWH', coolwh, 1, 2, &
@@ -1609,16 +1610,13 @@ contains
        case ('ETAISO')
           call parse_real_variable('ETAISO', etaiso, 0.1D0, 1.0D0, &
                'Isentropic efficiency of coolant pumps')
-       case ('THERMAL_CYCLE')
-          call parse_int_variable('THERMAL_CYCLE', thermal_cycle, 0, 2, &
-               'Switch for power conversion cycle')
        case ('FWERLIM')
           call parse_real_variable('FWERLIM', fwerlim, 0.0D0, 0.01D0, &
                'First wall erosion thickness allowance (m)')
        case ('BLKTTYPE')
           call parse_int_variable('BLKTTYPE', blkttype, 1, 3, &
                'Switch for blanket type')
-!-PJK
+
        case ('ASTR')
           call parse_int_variable('ASTR', astr, 1, 2, &
                'Switch for cooling channel geometry')

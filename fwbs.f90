@@ -1563,10 +1563,10 @@ contains
     pnucloss = pneutmw * fhole
 
     !  First wall full-power lifetime (years)
-    !  May be recalculated below if ipowerflow=1 and blbop=1,
+    !  May be recalculated below if ipowerflow=1 and blktcycle>0,
     !  and also by the availability model
 
-    fwlife = min( abktflnc/wallmw, tlife )
+    fwlife = min(abktflnc/wallmw, tlife)
 
     !  Blanket neutronics calculations
 
@@ -1796,7 +1796,7 @@ contains
        psurffwi = pradfw * fwareaib/fwarea
        psurffwo = pradfw * fwareaob/fwarea
 
-       if (blbop == 0) then
+       if (blktcycle == 0) then
 
           !  Simple blanket model
           !  The power deposited in the first wall, breeder zone and shield is
@@ -1838,7 +1838,7 @@ contains
 
           htpmw_blkt = fpumpblkt * (pnucbzi*emult + pnucbzo*emult)
 
-       else  !  blbop = 1
+       else  !  blktcycle > 0
 
           !  Detailed thermal hydraulic model for first wall and breeding zone
 
@@ -1989,14 +1989,14 @@ contains
 
           tpeak = max(tpeakfwi, tpeakfwo) - 273.15D0  !  deg C
 
-       end if
+       end if  !  blktcycle
 
        pnucfw = pnucfwi + pnucfwo
        pnucblkt = pnucbzi + pnucbzo
 
        !  Calculation of shield and divertor powers
        !  Shield and divertor powers and pumping powers are calculated using the same 
-       !  simplified method as the first wall and breeder zone when blbop = 0. 
+       !  simplified method as the first wall and breeder zone when blktcycle = 0. 
        !  i.e. the pumping power is a fraction of the total thermal power deposited in the
        !  coolant.
 
@@ -2133,22 +2133,6 @@ contains
     end if
 
     whtshld = volshld * denstl * (1.0D0 - vfshld)
-
-    !  Thermodynamic blanket model
-    !  (supersedes above calculations of blanket mass and volume)
-
-    !if (lblnkt == 1) then
-    !   call blanket_panos(1,outfile,iprint)
-    !
-    !   !  Different (!) approximation for inboard/outboard
-    !   !  blanket volumes: assume cylinders of equal heights
-    !
-    !   r1 = rsldi + shldith + 0.5D0*blnkith
-    !   r2 = rsldo - shldoth - 0.5D0*blnkoth
-    !   volblkti = volblkt * (r1*blnkith)/((r1*blnkith)+(r2*blnkoth))
-    !   volblkto = volblkt * (r2*blnkoth)/((r1*blnkith)+(r2*blnkoth))
-    !
-    !end if
 
     !  Blanket coolant is assumed to be helium for the models used
     !  when blktmodel > 0
@@ -2409,8 +2393,8 @@ contains
     if ((ipowerflow == 1).and.(blktmodel == 0)) then
        call oblnkl(outfile)
        call ovarin(outfile, &
-            'First wall / blanket thermodynamic model','(blbop)',blbop)
-       if (blbop == 0) then
+            'First wall / blanket thermodynamic model','(blktcycle)',blktcycle)
+       if (blktcycle == 0) then
           call ocmmnt(outfile,'   (Simple calculation)')
        else
           call ocmmnt(outfile, &
@@ -2419,12 +2403,12 @@ contains
           call ovarin(outfile,'Blanket type','(blkttype)',blkttype)
           if (blkttype == 1) then
              call ocmmnt(outfile, &
-                  '   (Water-cooled liquid lithium (WCLL))')
+                  '   (Water-cooled liquid lithium: WCLL)')
           else if (blkttype == 2) then
              call ocmmnt(outfile, &
-                  '   (Helium-cooled liquid lithium (HCLL))')
+                  '   (Helium-cooled liquid lithium: HCLL)')
           else
-             call ocmmnt(outfile,'   (Helium-cooled pebble bed (HCPB))')
+             call ocmmnt(outfile,'   (Helium-cooled pebble bed: HCPB)')
           end if 
           call ovarre(outfile,'First wall coolant pressure (Pa)', &
                '(coolp)',coolp)
