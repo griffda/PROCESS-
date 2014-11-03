@@ -39,6 +39,7 @@ module availability_module
 
   private
   public :: avail
+  public :: avail_new
 
 contains
 
@@ -234,5 +235,127 @@ contains
          '(cfactr)',cfactr)
 
   end subroutine avail
+
+  subroutine avail_new(outfile,iprint)
+
+    !+ad_name  avail_new
+    !+ad_summ  Routine to calculate component lifetimes and the overall plant
+    !+ad_summ  availability
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  outfile : input integer : output file unit
+    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+    !+ad_desc  This routine calculates the component lifetimes and the overall
+    !+ad_desc  plant availability using an updated model linked to the 2014 EUROfusion
+    !+ad_desc  RAMI task
+    !+ad_prob  None
+    !+ad_call  oheadr
+    !+ad_call  ovarre
+    !+ad_hist  03/11/14 PJK Initial F90 version
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: outfile,iprint
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: lb, ld, td, num_rh_systems
+    real(kind(1.0D0)), save :: u_planned, u_unplanned
+    integer :: n
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Full power lifetimes (in years)
+    !  Most of these are already calculated for an IFE device
+
+    if (ife /= 1) then
+
+       !  First wall / blanket
+
+       if (blktmodel == 0) bktlife = min( abktflnc/wallmw, tlife )
+       fwlife = bktlife
+
+       !  Divertor
+
+       divlife = min( adivflnc/hldiv, tlife )
+       if (irfp == 1) divlife = 1.0D0
+
+       !  Centrepost
+
+       if (itart == 1) then
+          cplife = min( cpstflnc/wallmw, tlife )
+       end if
+
+    end if
+
+    !  Plant Availability
+
+    !  Calculate the blanket and divertor replacement times
+
+    !  Blanket replacement time
+    !  ( Calculated using scaling from 2014 EUROfusion RAMI report )
+    
+    !  num_rh_systems should be a gloabl variable with integer values 
+    !  ranging from 1-10
+    num_rh_systems = 4
+    
+    !  Mean time to repair blanket is same as replacing both blanket and divertor
+    mttr_blanket = 21 * num_rh_systems**(-0.9)
+
+    !  Mean time to repair divertor is 70% of time taken to replace blanket
+    !  this is taken from Oliver Crofts 2014 paper
+    mttr_divertor = 0.7*mttr_blanket
+
+    !  Which component has the shorter life?
+
+    if (divlife < bktlife) then
+       lifetime_shortest = divlife
+       lifetime_longest = bktlife
+       mttr_shortest = mttr_divertor
+    else
+       lifetime_shortest = bktlife
+       lifetime_longest = divlife
+       mttr_shortest = mttr_blanket
+    end if
+
+    !  Number of outages between each combined outage
+
+    n = int(lifetime_longest/lifetime_shortest) - 1
+
+    !  Planned unavailability
+    u_planned = (n*mttr_shortest + mttr_blanket) / &
+         ( (n+1)*lifetime_shortest + (n*mttr_shortest + mttr_blanket) )
+
+    !  Un-planned unavailability
+
+    !  Magnets
+    calc_u_unplanned_magnets()
+    
+  end subroutine avail_new
+
+  subroutine calc_u_unplanned_magnets(u_unplanned_magnets)
+
+    !+ad_name  calc_u_unplanned_magnets
+    !+ad_summ  Calculates the unplanned unavailability of the magnets using
+    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  None
+    !+ad_args  u_unplanned_magnets : output real : unplanned unavailability of magnets
+
+    implicit none
+
+    ! Arguments
+    real(kind(1.0D0)), intent(out) :: u_unplanned_magnets
+
+    
+
+  end subroutine calc_u_unplanned_magnets
+
 
 end module availability_module
