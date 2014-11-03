@@ -1892,9 +1892,6 @@ contains
        case ('FKIND')
           call parse_real_variable('FKIND', fkind, 0.5D0, 1.0D0, &
                'Multiplier for Nth of a kind costs')
-       case ('IAVAIL')
-          call parse_int_variable('IAVAIL', iavail, 0, 1, &
-               'Switch for plant availability model')
        case ('IFUELTYP')
           call parse_int_variable('IFUELTYP', ifueltyp, 0, 1, &
                'Switch for costing of 1st wall etc.')
@@ -1910,39 +1907,6 @@ contains
        case ('RATECDOL')
           call parse_real_variable('RATECDOL', ratecdol, 0.0D0, 0.5D0, &
                'Effective cost of money')
-       case ('TBKTREPL')
-          call parse_real_variable('TBKTREPL', tbktrepl, 0.01D0, 2.0D0, &
-               'Time needed to replace blanket (yr)')
-       case ('TCOMREPL')
-          call parse_real_variable('TCOMREPL', tcomrepl, 0.01D0, 2.0D0, &
-               'Time needed to replace blanket+divertor (yr)')
-       case ('TDIVREPL')
-          call parse_real_variable('TDIVREPL', tdivrepl, 0.01D0, 2.0D0, &
-               'Time needed to replace divertor (yr)')
-       case ('TLIFE')
-          call parse_real_variable('TLIFE', tlife, 1.0D0, 100.0D0, &
-               'Plant life (yr)')
-       case ('UUBOP')
-          call parse_real_variable('UUBOP', uubop, 0.005D0, 0.1D0, &
-               'Unplanned unavailability for BOP')
-       case ('UUCD')
-          call parse_real_variable('UUCD', uucd, 0.005D0, 0.1D0, &
-               'Unplanned unavailability for CD system')
-       case ('UUDIV')
-          call parse_real_variable('UUDIV', uudiv, 0.005D0, 0.1D0, &
-               'Unplanned unavailability for divertor')
-       case ('UUFUEL')
-          call parse_real_variable('UUFUEL', uufuel, 0.005D0, 0.1D0, &
-               'Unplanned unavailability for fuel system')
-       case ('UUFW')
-          call parse_real_variable('UUFW', uufw, 0.005D0, 0.1D0, &
-               'Unplanned unavailability for first wall')
-       case ('UUMAG')
-          call parse_real_variable('UUMAG', uumag, 0.005D0, 0.1D0, &
-               'Unplanned unavailability for magnets')
-       case ('UUVES')
-          call parse_real_variable('UUVES', uuves, 0.005D0, 0.1D0, &
-               'Unplanned unavailability for vessel')
 
           !  Unit cost settings
 
@@ -2120,6 +2084,50 @@ contains
        case ('UCWST')
           call parse_real_array('UCWST', ucwst, isub1, 4, &
                'cost of waste disposal (M$/yr)', icode)
+
+
+          !  Availability settings
+ 
+       case ('IAVAIL')
+          call parse_int_variable('IAVAIL', iavail, 0, 3, &
+               'Switch for plant availability model')
+       case ('NUM_RH_SYSTEMS')
+          call parse_int_variable('NUM_RH_SYSTEMS', num_rh_systems, 1, 10, &
+               'Number of remote handling systems (from 1-10)')
+       case ('TBKTREPL')
+          call parse_real_variable('TBKTREPL', tbktrepl, 0.01D0, 2.0D0, &
+               'Time needed to replace blanket (yr)')
+       case ('TCOMREPL')
+          call parse_real_variable('TCOMREPL', tcomrepl, 0.01D0, 2.0D0, &
+               'Time needed to replace blanket+divertor (yr)')
+       case ('TDIVREPL')
+          call parse_real_variable('TDIVREPL', tdivrepl, 0.01D0, 2.0D0, &
+               'Time needed to replace divertor (yr)')
+       case ('TLIFE')
+          call parse_real_variable('TLIFE', tlife, 1.0D0, 100.0D0, &
+               'Plant life (yr)')
+       case ('UUBOP')
+          call parse_real_variable('UUBOP', uubop, 0.005D0, 0.1D0, &
+               'Unplanned unavailability for BOP')
+       case ('UUCD')
+          call parse_real_variable('UUCD', uucd, 0.005D0, 0.1D0, &
+               'Unplanned unavailability for CD system')
+       case ('UUDIV')
+          call parse_real_variable('UUDIV', uudiv, 0.005D0, 0.1D0, &
+               'Unplanned unavailability for divertor')
+       case ('UUFUEL')
+          call parse_real_variable('UUFUEL', uufuel, 0.005D0, 0.1D0, &
+               'Unplanned unavailability for fuel system')
+       case ('UUFW')
+          call parse_real_variable('UUFW', uufw, 0.005D0, 0.1D0, &
+               'Unplanned unavailability for first wall')
+       case ('UUMAG')
+          call parse_real_variable('UUMAG', uumag, 0.005D0, 0.1D0, &
+               'Unplanned unavailability for magnets')
+       case ('UUVES')
+          call parse_real_variable('UUVES', uuves, 0.005D0, 0.1D0, &
+               'Unplanned unavailability for vessel')
+
 
           !  Sweep settings
 

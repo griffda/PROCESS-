@@ -1781,6 +1781,8 @@ module tfcoil_variables
   !+ad_vars  tmargmin /2.5/ : minimum allowable temperature margin (K)
   !+ad_varc                   (iteration variable 55)
   real(kind(1.0D0)) :: tmargmin = 2.5D0
+  !+ad_vars  temp_margin  : temperature margin (K)
+  real(kind(1.0D0)) :: temp_margin = 0.00D0
   !+ad_vars  tmargtf :  TF coil temperature margin (K)
   real(kind(1.0D0)) :: tmargtf = 0.0D0
   !+ad_vars  tmaxpro /150.0/ : maximum temp rise during a quench for protection (K)
@@ -2726,7 +2728,11 @@ module cost_variables
   !+ad_vars  iavail /0/ : switch for plant availability model:<UL>
   !+ad_varc          <LI> = 0 use input value for cfactr;
   !+ad_varc          <LI> = 1 calculate cfactr using model</UL>
+  !+ad_varc          <LI> = 2 calculate cfactr using new linear model</UL>
+  !+ad_varc          <LI> = 3 calculate cfactr using new non-linear model</UL>
   integer :: iavail= 0
+  !+ad_vars  num_rh_systems /4/ : Number of remote handling systems (1-10)
+  integer :: num_rh_systems = 4
   !+ad_vars  ifueltyp /0/ : switch:<UL>
   !+ad_varc            <LI> = 1 treat blanket divertor, first wall and
   !+ad_varc                     fraction fcdfuel of CD equipment as fuel cost;

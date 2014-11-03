@@ -141,6 +141,8 @@ subroutine caller(xc,nvars)
   use tfcoil_module
   use vacuum_module
 
+  use cost_variables
+
   implicit none
 
   !  Arguments
@@ -226,7 +228,13 @@ subroutine caller(xc,nvars)
   call bldgcall(nout,0)
   call acpow(nout,0)
   call power2(nout,0)
-  call avail(nout,0)
+
+  if (iavail > 1) then
+     call avail_new(nout,0)
+  else
+     call avail(nout,0)
+  end if
+
   call costs(nout,0)
 
   !+**PJK  if (ifispact.eq.1) then

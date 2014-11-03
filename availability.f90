@@ -34,6 +34,7 @@ module availability_module
   use process_output
   use pulse_variables
   use rfp_variables
+  use tfcoil_variables
 
   implicit none
 
@@ -265,7 +266,10 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: lb, ld, td, num_rh_systems
-    real(kind(1.0D0)), save :: u_planned, u_unplanned
+    real(kind(1.0D0)), save :: u_planned, u_unplanne
+    real(kind(1.0D0)) :: mttr_blanket, mttr_divertor, mttr_shortest
+    real(kind(1.0D0)) :: lifetime_shortest, lifetime_longest
+    real(kind(1.0D0)) :: u_unplanned_magnets, mag_temp_marg
     integer :: n
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -334,7 +338,7 @@ contains
     !  Un-planned unavailability
 
     !  Magnets
-    calc_u_unplanned_magnets()
+    call calc_u_unplanned_magnets(u_unplanned_magnets)
     
   end subroutine avail_new
 
@@ -350,11 +354,66 @@ contains
 
     implicit none
 
-    ! Arguments
+    !  Arguments
     real(kind(1.0D0)), intent(out) :: u_unplanned_magnets
 
-    
+    !  Local Variables
+    real(kind(1.0D0)) :: m, dy, dx, c, y_i
+    real(kind(1.0D0)) :: conf_level_magnets, mag_temp_marg_limit, mag_temp_marg, mag_main_time
+    real(kind(1.0D0)) :: mag_min_u_unplanned, start_of_risk
 
+    !  Magnet temperature margin limit (k)
+    mag_temp_marg_limit = tmargmin
+
+    !  Magnet temperature margin (K)
+    mag_temp_marg = temp_margin
+
+    !  Magnet maintenance time (years)
+    mag_main_time = 0.5
+
+    !  Minimum unplanned unavailability
+    mag_min_u_unplanned = mag_main_time / (tlife + mag_main_time)
+
+    !  If new linear model chosen
+    if (iavail == 2) then
+
+       !  confidence level for magnet system. WILL BE AN INPUT PARAMETER WITH
+       !  DEFAULT VALUE
+       conf_level_magnets = 0.95
+
+       !  point at which risk of unplanned unavailability increases
+       start_of_risk = mag_temp_marg_limit / conf_level_magnets
+       
+       !  Determine if temperature margin is in region with risk of 
+       !  unplanned unavailability
+       if (temp_margin >= start_of_risk) then
+
+         u_unplanned_magnets = mag_min_u_unplanned
+
+       else
+
+          ! gradient of line
+          dy = mag_min_u_unplanned - 1.0
+          dx = start_of_risk - tmargmin
+          m = dy/dx
+          c = 1.0 - m*tmargmin
+          u_unplanned_magnets = m*temp_margin + c 
+
+       end if
+     
+    !  If new non-linear model chosen
+    else
+       
+       !  confidence level for magnet system. WILL BE AN INPUT PARAMETER WITH
+       !  DEFAULT VALUE
+       conf_level_magnets = 0.95
+
+       
+
+       
+
+    end if
+    
   end subroutine calc_u_unplanned_magnets
 
 

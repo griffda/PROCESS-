@@ -1813,6 +1813,7 @@ contains
          end do solve_for_tmarg
 
          tmarg = ttest - thelium
+         temp_margin = tmarg
 
       end if
 
