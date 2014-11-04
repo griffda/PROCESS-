@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '353    Release Date :: 2014-10-23'
+       '354    Release Date :: 2014-11-04'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1843,3 +1843,4 @@ end subroutine output
 ! GIT 351: OH coil changed to Central solenoid in output files
 ! GIT 352: Confinement times for H=1 instead of H=2 now output
 ! GIT 353: Corrections to NBI orbit loss power handling; User Guide figure updates
+! GIT 354: Updated build diagrams in User Guide
