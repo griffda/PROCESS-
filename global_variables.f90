@@ -990,6 +990,7 @@ module fwbs_variables
   !+ad_hist  03/06/14 PJK Added new power flow variables
   !+ad_hist  21/08/14 PJK Added new thermodynamic blanket model variables
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
+  !+ad_hist  30/10/14 PJK Changed blkttype default from 1 to 3
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1175,12 +1176,12 @@ module fwbs_variables
   real(kind(1.0D0)) :: etaiso = 0.85D0
   !+ad_vars  fwerlim /0.005/ : erosion thickness allowance for first wall (m)
   real(kind(1.0D0)) :: fwerlim = 0.005D0
-  !+ad_vars  blkttype /1/ : Switch for blanket type, determining breeder materials
+  !+ad_vars  blkttype /3/ : Switch for blanket type, determining breeder materials
   !+ad_varc                 for neutron deposition:<UL>
   !+ad_varc            <LI> = 1 WCLL;
   !+ad_varc            <LI> = 2 HCLL;
   !+ad_varc            <LI> = 3 HCPB</UL>
-  integer :: blkttype = 1
+  integer :: blkttype = 3
 
   !+ad_vars  <P><B>The following are used only in the KIT HCPB blanket model
   !+ad_varc  (blktmodel=1):</B><P>

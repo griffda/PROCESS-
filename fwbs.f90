@@ -1270,6 +1270,7 @@ contains
     !+ad_hist  21/08/14 PJK Initial draft incorporation of new thermodynamic model
     !+ad_hist  03/09/14 PJK Changed PF coil to cryostat top vertical clearance
     !+ad_hist  22/10/14 PJK Added porbitlossmw to htpmw_fw calculation
+    !+ad_hist  03/11/14 PJK Clarified ipowerflow vs blkttype logic
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  C5.M15 Milestone Report: Development and Implementation of Improved
@@ -2085,20 +2086,14 @@ contains
     !  Blanket mass, excluding coolant
 
     if (blktmodel == 0) then
-       if (ipowerflow == 0) then  !  solid breeder assumed
-          whtblbe = volblkt * 1850.0D0  * fblbe
-          wtblli2o = volblkt * 2010.0D0  * fblli2o
+       if ((blkttype == 1).or.(blkttype == 2)) then  !  liquid breeder (WCLL or HCLL)
+          wtbllipb = volblkt * fbllipb * 9400.0D0
+          whtblli = volblkt * fblli * 534.0D0
+          whtblkt = wtbllipb + whtblli
+       else  !  solid breeder (HCPB); always for ipowerflow=0
+          wtblli2o = volblkt * fblli2o * 2010.0D0
+          whtblbe = volblkt * fblbe * 1850.0D0
           whtblkt = wtblli2o + whtblbe
-       else
-          if ((blkttype == 1).or.(blkttype == 2)) then  !  liquid breeder (WCLL or HCLL)
-             wtbllipb = volblkt * fbllipb * 9400.0D0
-             whtblli = volblkt * fblli * 534.0D0
-             whtblkt = wtbllipb + whtblli
-          else  !  solid breeder (HCPB)
-             wtblli2o = volblkt * fblli2o * 2010.0D0
-             whtblbe = volblkt * fblbe * 1850.0D0
-             whtblkt = wtblli2o + whtblbe
-          end if
        end if
        whtblss = volblkt * denstl * fblss
        whtblvd = volblkt * 5870.0D0  * fblvd
@@ -2134,8 +2129,11 @@ contains
 
     whtshld = volshld * denstl * (1.0D0 - vfshld)
 
-    !  Blanket coolant is assumed to be helium for the models used
-    !  when blktmodel > 0
+    !  When blktmodel > 0, although the blanket is by definition helium-cooled
+    !  in this case, the shield etc. are assumed to be water-cooled, and since
+    !  water is heavier the calculation for coolmass is better done with
+    !  coolwh=2 if blktmodel > 0; thus we can ignore the helium coolant mass
+    !  in the blanket.
 
     if (blktmodel == 0) then
        coolvol = coolvol + volblkt*vfblkt
@@ -2173,7 +2171,8 @@ contains
 
     !  Mass of coolant = volume * density at typical coolant
     !  temperatures and pressures
-    !  N.B. for blktmodel > 0, mass of helium coolant in blanket is ignored...
+    !  N.B. for blktmodel > 0, mass of *water* coolant in the non-blanket
+    !  structures is used (see comment above)
 
     if ((blktmodel > 0).or.(coolwh == 2)) then  !  pressurised water coolant
        coolmass = coolvol*806.719D0
@@ -2453,23 +2452,16 @@ contains
     call osubhd(outfile,'Blanket / shield volumes and weights :')
 
     if (blktmodel == 0) then
-       if (ipowerflow == 0) then
-          write(outfile,600) volblkti, volblkto, volblkt, whtblkt, vfblkt, &
-               fblbe, whtblbe, fblli2o, wtblli2o, fblss, whtblss, fblvd, &
-               whtblvd, volshldi, volshldo, volshld, whtshld, vfshld, &
-               wpenshld
-       else
-          if ((blkttype == 1).or.(blkttype == 2)) then
-             write(outfile,601) volblkti, volblkto, volblkt,  &
-                  whtblkt, vfblkt, fbllipb, wtbllipb, fblli, whtblli,  &
-                  fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
-                  volshld, whtshld, vfshld, wpenshld
-          else
-             write(outfile,600) volblkti, volblkto, volblkt,  &
-                  whtblkt, vfblkt, fblbe, whtblbe, fblli2o, wtblli2o,  &
-                  fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
-                  volshld, whtshld, vfshld, wpenshld
-          end if
+       if ((blkttype == 1).or.(blkttype == 2)) then
+          write(outfile,601) volblkti, volblkto, volblkt,  &
+               whtblkt, vfblkt, fbllipb, wtbllipb, fblli, whtblli,  &
+               fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
+               volshld, whtshld, vfshld, wpenshld
+       else  !  (also if ipowerflow=0)
+          write(outfile,600) volblkti, volblkto, volblkt,  &
+               whtblkt, vfblkt, fblbe, whtblbe, fblli2o, wtblli2o,  &
+               fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
+               volshld, whtshld, vfshld, wpenshld
        end if
     else
        write(outfile,602) volblkti, volblkto, volblkt, whtblkt, vfblkt, &

@@ -1330,6 +1330,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  23/06/14 PJK Corrected wallmw units
     !+ad_hist  23/10/14 PJK costr --> coolwh
+    !+ad_hist  29/10/14 PJK Added fwlife calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1391,6 +1392,12 @@ contains
     !  Neutron power lost through holes in first wall
 
     pnucloss = pneutmw * fhole
+
+    !  First wall full-power lifetime (years)
+    !  May be recalculated below if ipowerflow=1 and blktcycle>0,
+    !  and also by the availability model
+
+    fwlife = min(abktflnc/wallmw, tlife)
 
     !  Blanket neutronics calculations
 

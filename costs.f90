@@ -170,6 +170,7 @@ contains
     !+ad_hist  17/02/14 PJK Output format modifications
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  08/09/14 PJK Modified blanket costs for ipowerflow=1 model
+    !+ad_hist  03/11/14 PJK Clarified ipowerflow, blkttype logic
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -256,26 +257,15 @@ contains
     call ocosts(outfile,'2211','First wall cost (M$)',c2211)
 
     if (ife /= 1) then
-       if (ipowerflow == 0) then
+       if ((ipowerflow == 0).or.(blkttype == 3)) then
           call ocosts(outfile,'22121','Blanket beryllium cost (M$)',c22121)
           call ocosts(outfile,'22122','Blanket breeder material cost (M$)',c22122)
-          call ocosts(outfile,'22123','Blanket stainless steel cost (M$)',c22123)
-          call ocosts(outfile,'22124','Blanket vanadium cost (M$)',c22124)
        else
-          if ((blkttype == 1).or.(blkttype == 2)) then
-             call ocosts(outfile,'22121','Blanket lithium-lead cost (M$)',c22121)
-             call ocosts(outfile,'22122','Blanket lithium cost (M$)',c22122)
-             call ocosts(outfile,'22123','Blanket stainless steel cost (M$)', &
-                  c22123)
-             call ocosts(outfile,'22124','Blanket vanadium cost (M$)',c22124)
-          else
-             call ocosts(outfile,'22121','Blanket beryllium cost (M$)',c22121)
-             call ocosts(outfile,'22122','Blanket lithium oxide cost (M$)',c22122)
-             call ocosts(outfile,'22123','Blanket stainless steel cost (M$)', &
-                  c22123)
-             call ocosts(outfile,'22124','Blanket vanadium cost (M$)',c22124)
-          end if
+          call ocosts(outfile,'22121','Blanket lithium-lead cost (M$)',c22121)
+          call ocosts(outfile,'22122','Blanket lithium cost (M$)',c22122)
        end if
+       call ocosts(outfile,'22123','Blanket stainless steel cost (M$)',c22123)
+       call ocosts(outfile,'22124','Blanket vanadium cost (M$)',c22124)
     else  !  IFE
        call ocosts(outfile,'22121','Blanket beryllium cost (M$)',c22121)
        call ocosts(outfile,'22122','Blanket lithium oxide cost (M$)',c22122)

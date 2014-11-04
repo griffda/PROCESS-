@@ -238,6 +238,7 @@ subroutine check
   !+ad_hist  08/09/14 PJK Changed costr to coolwh
   !+ad_hist  15/09/14 PJK Added plasma pedestal consistency checks
   !+ad_hist  23/10/14 PJK ipowerflow=0 and blkttype=3 for KIT blanket model
+  !+ad_hist  29/10/14 PJK Ensured constraint 42 no longer used
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -480,6 +481,13 @@ subroutine check
      esbldgm3 = 0.0D0
   end if
 
+  !  Ensure minimum cycle time constraint is turned off
+  !  (not currently available, as routine thrmal has been commented out)
+
+  if ( any(icc == 42) ) then
+     call report_error(157)
+  end if
+
   !  Ensure that if TF coils are non-superconducting,
   !  only simple stress calculations are performed
 
@@ -509,6 +517,10 @@ subroutine check
      blkttype = 3  !  HCPB
      coolwh = 2
   end if
+
+  !  Solid breeder assumed if ipowerflow=0
+
+  if (ipowerflow == 0) blkttype = 3
 
   errors_on = .false.
 

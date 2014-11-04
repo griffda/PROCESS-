@@ -82,6 +82,7 @@ contains
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  05/11/12 PJK Added pulse_variables
     !+ad_hist  27/06/13 PJK Comment change
+    !+ad_hist  29/10/14 PJK Commented out call to thrmal
     !+ad_stat  Okay
     !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -100,7 +101,7 @@ contains
 
     !  Thermal cycling package
 
-    call thrmal(outfile,iprint)
+    !call thrmal(outfile,iprint)
 
     !  Evaluate minimum plasma current ramp-up time
 
@@ -1155,6 +1156,7 @@ contains
     !+ad_hist  11/06/13 PJK Modified ipdot and tohsmn equations
     !+ad_hist  27/06/13 PJK Modified output heading
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
+    !+ad_hist  29/10/14 PJK Label changed from OH to CS
     !+ad_stat  Okay
     !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0013
     !+ad_docs  Work File Note F/PL/PJK/PROCESS/CODE/050
@@ -1227,7 +1229,7 @@ contains
 
     if (iprint == 1) then
 
-       call osubhd(outfile,'OH coil considerations:')
+       call osubhd(outfile,'Central solenoid considerations:')
        call ovarre(outfile,'Minimum plasma current ramp-up time (s)', &
             '(tohsmn)',tohsmn)
 
