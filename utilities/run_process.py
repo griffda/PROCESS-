@@ -34,10 +34,9 @@ Compatible with PROCESS version 316
 
 import argparse
 from process_io_lib.process_config import RunProcessConfig
-from process_io_lib.process_funcs import get_neqns_itervars,\
-    update_ixc_bounds, get_variable_range, check_input_error,\
-    process_stopped, mfile_exists, no_unfeasible_mfile,\
-    vary_iteration_variables, process_warnings
+from process_io_lib.process_funcs import (get_neqns_itervars,
+    update_ixc_bounds, get_variable_range, check_input_error, process_stopped,
+    no_unfeasible_mfile, vary_iteration_variables, process_warnings)
 
 
 ############################################################

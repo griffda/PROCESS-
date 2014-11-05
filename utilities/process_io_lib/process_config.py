@@ -22,7 +22,6 @@ from numpy.random import seed
 from configuration import Config
 
 from process_io_lib.in_dat import INDATNew, INVariable
-from process_io_lib.process_funcs import mfile_exists
 from process_io_lib.mfile import MFile
 
 
@@ -136,6 +135,17 @@ class ProcessConfig(object):
             with open(os.path.join(self.working_directory, "README"), "w") as fh:
                 fh.write(readme_comment)
                 
+    def append_errors_to_readme(self, directory=os.getcwd()):
+        """Appends PROCESS outcome to README.txt"""
+        if os.path.isfile("MFILE.DAT"):
+            with open(os.path.join(directory, "README.txt"),
+                      "w" if self.comment == "" else "a") as readme_fh:
+                m_file = MFile(filename=os.path.join)
+                readme_fh.write("Error status: {}  Error ID: {}\n".format(
+                    m_file.data["error status"].get_scan(-1),
+                    m_file.data["error id"].get_scan(-1)))
+                
+                
     def modify_in_dat(self):
         """TODO: Modify original IN.DAT."""
         pass
@@ -241,7 +251,7 @@ class ProcessConfigOLD(object):
 
         """ appends PROCESS outcome to README.txt """
 
-        if mfile_exists():
+        if os.path.isfile("MFILE.DAT"):
             if self.comment != '':
                 readme = open(directory+'/README.txt', 'a')
             else:

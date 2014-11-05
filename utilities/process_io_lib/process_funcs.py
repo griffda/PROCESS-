@@ -12,8 +12,11 @@ Notes:
 Compatible with PROCESS version 319
 """
 
-from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,\
-    DICT_IXC_DEFAULT, NON_F_VALUES, IFAIL_SUCCESS
+import os
+from os.path import join as pjoin
+
+from process_io_lib.process_dicts import (DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,
+    DICT_IXC_DEFAULT, NON_F_VALUES, IFAIL_SUCCESS)
 from process_io_lib.in_dat import INDATNew, INVariable
 from process_io_lib.mfile import MFile
 from numpy.random import uniform
@@ -26,7 +29,7 @@ def get_neqns_itervars(wdir='.'):
     names of all iteration variables
     """
 
-    in_dat = INDATNew(wdir+'/IN.DAT')
+    in_dat = INDATNew(pjoin(wdir, "IN.DAT"))
 
     ixc_list = in_dat.variables['ixc'].value
 
@@ -50,7 +53,7 @@ def update_ixc_bounds(wdir='.'):
     from IN.DAT
     """
 
-    in_dat = INDATNew(wdir+'/IN.DAT')
+    in_dat = INDATNew(pjoin(wdir, "IN.DAT"))
 
     for key in in_dat.variables.keys():
         if 'bound' in key.lower():
@@ -86,7 +89,7 @@ def  get_variable_range(itervars, factor, wdir='.'):
 
     """
 
-    in_dat = INDATNew(wdir+'/IN.DAT')
+    in_dat = INDATNew(pjoin(wdir, "IN.DAT"))
 
     lbs = []
     ubs = []
@@ -156,7 +159,7 @@ def check_input_error(wdir='.'):
     Stops as a consequence.
     """
 
-    m_file = MFile(filename=wdir+"/MFILE.DAT")
+    m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
     error_id = m_file.data['error id'].get_scan(-1)
 
     if error_id == 130:
@@ -174,7 +177,7 @@ def process_stopped(wdir='.'):
     prematurely stopped.
     """
 
-    m_file = MFile(filename=wdir+"/MFILE.DAT")
+    m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
     error_status = m_file.data['error status'].get_scan(-1)
 
     if error_status >= 3:
@@ -191,27 +194,13 @@ def process_warnings(wdir='.'):
     warnings have occurred.
     """
 
-    m_file = MFile(filename=wdir+"/MFILE.DAT")
+    m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
     error_status = m_file.data['error status'].get_scan(-1)
 
     if error_status >= 2:
         return True
 
     return False
-
-
-############################################
-
-def mfile_exists():
-
-    """checks whether MFILE.DAT exists"""
-
-    try:
-        m_file = open('MFILE.DAT', 'r')
-        m_file.close()
-        return True
-    except FileNotFoundError:
-        return False
 
 
 ############################################
@@ -223,7 +212,7 @@ def no_unfeasible_mfile(wdir='.'):
     in a scan in MFILE.DAT
     """
 
-    m_file = MFile(filename=wdir+"/MFILE.DAT")
+    m_file = MFile(filename=pjoin(wdir, "MFILE.DAT")
 
     #no scans
     if not m_file.data['isweep'].exists:
@@ -250,10 +239,10 @@ def no_unfeasible_outdat(wdir='.'):
     """
 
     no_unfeasible = 0
-    outdat = open(wdir+'/OUT.DAT', 'r')
-    for line in outdat:
-        if 'UNFEASIBLE' in line:
-            no_unfeasible += 1
+    with open(pjoin(wdir, "OUT.DAT"), "r") as outdat_fh:
+        for line in outdat_fh:
+            if 'UNFEASIBLE' in line:
+                no_unfeasible += 1
 
     return no_unfeasible
 
@@ -306,7 +295,7 @@ def get_solution_from_mfile(neqns, nvars, wdir='.'):
     will be returned.
     """
 
-    m_file = MFile(filename=wdir+"/MFILE.DAT")
+    m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
 
 
     if not m_file.data['isweep'].exists():
