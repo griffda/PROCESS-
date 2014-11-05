@@ -25,6 +25,7 @@ module function_evaluator
   !+ad_call  numerics
   !+ad_call  physics_variables
   !+ad_call  pf_power_variables
+  !+ad_call  process_output
   !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
   !+ad_call  times_variables
@@ -55,6 +56,7 @@ module function_evaluator
   use numerics
   use physics_variables
   use pf_power_variables
+  use process_output
   use stellarator_variables
   use tfcoil_variables
   use times_variables
@@ -155,6 +157,7 @@ contains
     !+ad_hist  06/02/14 PJK Added second call to caller to aid initialisation
     !+ad_hist  19/05/14 PJK Added tburn consistency check
     !+ad_hist  28/07/14 PJK Modified constraints call
+    !+ad_hist  10/09/14 PJK Added vfile output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -172,9 +175,9 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: fbac,ffor
+    real(kind(1.0D0)) :: fbac,ffor,summ,sqsumconfsq
     logical :: first_call = .true.
-    integer :: loop
+    integer :: ii, loop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -214,6 +217,18 @@ contains
     !  To stop the program, set ifail < 0 here.
 
     ifail = 1 * ifail
+
+    !  Verbose diagnostics
+
+    if (verbose == 1) then
+       summ = 0.0D0
+       do ii = 1,m
+          summ = summ + conf(ii)*conf(ii)
+       end do
+       sqsumconfsq = sqrt(summ)
+       write(vfile,'(3i13,100es13.5)') nviter, (1-mod(ifail,7))-1, &
+            mod(nviter,2)-1,te,coe,rmajor,powfmw,bt,tburn,sqsumconfsq,xv
+    end if
 
   end subroutine fcnvmc1
 
@@ -348,6 +363,7 @@ contains
     !+ad_hist  13/02/14 PJK Added trap if iavail /= 1 with fig of merit 15
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  06/10/14 PJK Added orbit loss power
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -378,7 +394,7 @@ contains
        fc = sgn * 0.2D0 * rmajor
 
     case (2)  !  fusion power / input power
-       fc = sgn * powfmw / (pinjmw + tfcpmw + ppump/1.0D6)
+       fc = sgn * powfmw / (pinjmw + porbitlossmw + tfcpmw + ppump/1.0D6)
 
     case (3)  !  neutron wall load
        fc = sgn * wallmw

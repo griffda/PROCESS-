@@ -1,0 +1,222 @@
+\mychapter{Inclusion of New Models, Additional Variables and Equations}
+\label{chap:modify}
+
+It is often useful to add extra features to the code in order to model new
+situations. This chapter provides instructions on how to add various numerics
+related items to \process.
+
+Please remember to modify the relevant Table(s) in this User Guide if changes
+are made to the source code!
+
+\section{Input Parameters}
+
+Input parameters (see Section~\ref{sec:inpars}) are added to the code in the
+following way:
+
+\begin{enumerate}
+
+\item Choose the most relevant module (usually one of those in source file
+  \texttt{global\_variables.f90}). Keeping everything in alphabetical order,
+  add a declaration statement for the new variable, specifying a ``sensible''
+  default value, and a correctly formatted comment line to describe the
+  variable (copying the examples already present).
+
+\item Ensure that all the modules that use the new variable reference the
+  relevant module via the Fortran \texttt{use} statement.
+
+\item Add the parameter to routine \texttt{PARSE\_INPUT\_FILE} in source file
+  \texttt{input.f90} in a suitable place --- keep to alphabetical order. The
+  existing examples provide guidance on how to do this. Note that real (i.e.\
+  double precision) and integer variables are treated differently, as are
+  scalar quantities and arrays.
+
+\item Modify \texttt{process\_dicts.py} and \texttt{write\_constraints.conf}
+  accordingly.
+
+\end{enumerate}
+
+\section{Iteration Variables}
+
+New iteration variables (see Section~\ref{sec:itvars}) are added in the
+same way as input parameters, with the following additions:
+
+\begin{enumerate}
+
+\item Increment the parameter \texttt{ipnvars} in module \texttt{numerics} in
+  source file \texttt{numerics.f90} to accommodate the new iteration variable.
+
+\item Add an additional line to the initialisation of the array \texttt{ixc}
+  in module \texttt{numerics} in source file \texttt{numerics.f90}.
+
+\item Assign sensible values for the variable's bounds to the relevant
+  elements in arrays \texttt{boundl} and \texttt{boundu} in module
+  \texttt{numerics} in source file \texttt{numerics.f90}.
+
+\item Assign the relevant element of character array \texttt{lablxc} to the
+  name of the variable, in module \texttt{numerics} in source file
+  \texttt{numerics.f90}.
+
+\item Add the variable to routines \texttt{LOADXC} and \texttt{CONVXC} in
+  source file \texttt{iteration\_variables.f90}, mimicking the way that the
+  existing iteration variables are coded.
+
+\item Modify \texttt{process\_dicts.py} and \texttt{write\_constraints.conf}
+  accordingly.
+
+\end{enumerate}
+
+Don't forget to add suitable correctly-formatted comment lines to
+\texttt{numerics.f90} to document the above changes.
+
+If an existing input parameter is now required to be an iteration variable,
+then simply carry out the tasks mentioned here.
+
+It should be noted that iteration variables must not be reset elsewhere in the
+code. That is, they may only be assigned new values when originally
+initialised (in the relevant module, or in the input file if required), and in
+routine \texttt{CONVXC} where the iteration process itself is performed.
+Otherwise, the numerical procedure cannot adjust the value as it requires, and
+the program will fail.
+
+\section{Other Global Variables}
+
+This type of variable embraces all those present in the modules in
+\texttt{global\_variables.f90} (and some others elsewhere) which do not need
+to be given initial values or to be input, as they are calculated within the
+code. These should be added to the code in the following way:
+
+\begin{enumerate}
+
+\item Choose the most relevant module (usually one of those in source file
+  \texttt{global\_variables.f90}). Keeping everything in alphabetical order,
+  add a declaration statement for the new variable, specifying the initial
+  value \texttt{0.0D0}, and a correctly formatted comment line to describe the
+  variable (copying the examples already present).
+
+\item Ensure that all the modules that use the new variable reference the
+  relevant module via the Fortran \texttt{use} statement.
+
+\end{enumerate}
+
+\section{Constraint Equations}
+
+Constraint equations (see Section~\ref{sec:constraints}) are added to
+\process\ in the following way:
+
+\begin{enumerate}
+
+\item Increment the parameter \texttt{ipeqns} in module \texttt{numerics} in
+  source file \texttt{numerics.f90} to accommodate the new constraint.
+
+\item Add an additional line to the initialisation of the array \texttt{icc}
+  in module \texttt{numerics} in source file \texttt{numerics.f90}.
+
+\item Assign a description of the new constraint to the relevant element of
+  array \texttt{lablcc}, in module \texttt{numerics} in source file
+  \texttt{numerics.f90}.
+
+\item Add the constraint equation to routine \texttt{CONSTRAINTS} in source
+  file \texttt{constraint\_equations.f90}, ensuring that all the variables
+  used in the formula are contained in the modules specified via \texttt{use}
+  statements present at the start of this routine.  Use a similar formulation
+  to that used for the existing constraint equations, remembering that the
+  code will try to force \texttt{cc(i)} to be zero.
+
+\end{enumerate}
+
+Don't forget to add suitable correctly-formatted comment lines to
+\texttt{numerics.f90} to document the above changes.
+
+Remember that if a limit equation is being added, a new f-value iteration
+variable may also need to be added to the code.
+
+\section{Figures of Merit}
+
+New figures of merit (see Section~\ref{sec:foms}) are added to \process\ in
+the following way:
+
+\begin{enumerate}
+
+\item Increment the parameter \texttt{ipnfoms} in module \texttt{numerics} in
+  source file \texttt{numerics.f90} to accommodate the new figure of merit.
+
+\item Assign a description of the new figure of merit to the relevant element
+  of array \texttt{lablmm} in module \texttt{numerics} in source file
+  \texttt{numerics.f90}.
+
+\item Add the new figure of merit equation to routine \texttt{FUNFOM} in
+  source file \texttt{evaluators.f90}, following the method used in the
+  existing examples. The value of \texttt{fc} should be of order unity, so
+  select a reasonable scaling factor if necessary. Ensure that all the
+  variables used in the new equation are contained in the modules specified
+  via \texttt{use} statements present at the start of this file.
+
+\item Modify \texttt{process\_dicts.py} accordingly.
+
+\end{enumerate}
+
+Don't forget to add suitable correctly-formatted comment lines to
+\texttt{numerics.f90} to document the above changes.
+
+\section{Scanning Variables}
+
+Scanning variables (see Section~\ref{sec:scans}) are added to \process\ in
+the following way:
+
+\begin{enumerate}
+
+\item Increment the parameter \texttt{ipnscnv} in module \texttt{scan\_module}
+  in source file \texttt{scan.f90} to accommodate the new scanning variable.
+
+\item Add a short description of the new scanning variable to the
+  \texttt{nsweep} entry in source file \texttt{scan.f90}.
+
+\item Add a new assignment to the relevant part of routine \texttt{SCAN} in
+  source file \texttt{scan.f90}, following the examples already present,
+  including the inclusion of a short description of the new scanning variable
+  in variable \texttt{xlabel}.
+
+\item Ensure that the scanning variable used in the assignment is contained in
+  one of the modules specified via \texttt{use} statements present at the
+  start of this routine.
+
+\item Modify \texttt{process\_dicts.py} if necessary.
+
+\end{enumerate}
+
+\section{Submission of New Models}
+
+The \process\ source code is maintained by CCFE, and resides in a
+\textit{Git}~\cite{git} repository on the CCFE servers. We welcome
+contributions of alternative or improved models and algorithms.
+
+The Fortran~90/95 source code has a uniform visual style and structural
+layout. CCFE will transfer any contributed models into \process, in order for
+us to maintain its present coding standard. To simplify this task, we request
+that contributors provide the following information for any new models that
+they provide:
+
+\begin{itemize}
+
+\item A comprehensive description of the model; please provide a full list of
+  references.
+
+\item A list of all inputs and outputs: descriptions, default (input) values,
+  allowed ranges, units.
+
+\item If possible, please cross-reference any input/output variables to
+  existing global variables listed in the variable descriptor file (see
+  Section~\ref{sec:vardes}).
+
+\item A description of any new numerics requirements (input parameters,
+  iteration variables, constraint equations, figures of merit etc.).
+
+\item A definition of any pre-requisites.
+
+\item A description of any side-effects.
+
+\item Any available test data, code examples or test programs (in Fortran or
+  other language) would be useful.
+
+\end{itemize}
+

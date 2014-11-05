@@ -15,6 +15,7 @@ module pfcoil_module
   !+ad_cont  bfmax
   !+ad_cont  waveform
   !+ad_cont  pfjalw
+  !+ad_cont  superconpf
   !+ad_cont  vsec
   !+ad_cont  induct
   !+ad_cont  outpf
@@ -39,6 +40,7 @@ module pfcoil_module
   !+ad_hist  31/10/12 PJK Moved local common variables into module header
   !+ad_hist  15/04/13 PJK Added fwbs_variables
   !+ad_hist  26/06/14 PJK Added error_handling
+  !+ad_hist  16/10/14 PJK Added sctfcoil_module
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -52,6 +54,7 @@ module pfcoil_module
   use pfcoil_variables
   use physics_variables
   use process_output
+  use sctfcoil_module
   use tfcoil_variables
   use times_variables
 
@@ -93,8 +96,8 @@ contains
     !+ad_call  efc
     !+ad_call  ohcalc
     !+ad_call  peakb
-    !+ad_call  pfjalw
     !+ad_call  report_error
+    !+ad_call  superconpf
     !+ad_call  waveform
     !+ad_hist  01/02/96 PJK Initial version
     !+ad_hist  09/05/12 PJK Initial F90 version
@@ -114,6 +117,9 @@ contains
     !+ad_hist  01/05/14 PJK Removed redundant xctfc(5) terms
     !+ad_hist  24/06/14 PJK Removed refs to bcylth
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  22/09/14 PJK Renamed snswit to top_bottom
+    !+ad_hist  16/10/14 PJK New calculation for critical current density
+    !+ad_hisc               and steel case thickness
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -129,12 +135,12 @@ contains
     integer, parameter :: lcol1 = ngrpmx
 
     integer :: i,ii,iii,ij,it,j,k,ncl,nfxf0,ng2,ngrp0,nng,nocoil,npts,npts0
-    integer :: ccount, snswit
+    integer :: ccount, top_bottom
     integer, dimension(ngrpmx) :: pcls0
     integer, dimension(ngrpmx+2) :: ncls0
 
-    real(kind(1.0D0)) :: area,areaspf,bri,bro,bzi,bzo,curstot,drpt, &
-         dx,dz,forcepf,rclsnorm,respf,rll,rpt0,ssqef,volpf, &
+    real(kind(1.0D0)) :: area,areaspf,bmax,bri,bro,bzi,bzo,ioheof, &
+         drpdz,drpt,dx,dz,forcepf,rclsnorm,respf,rll,rpt0,ssqef,volpf, &
          pfflux,csflux,dics,ddics
     real(kind(1.0D0)), dimension(ngrpmx,nclsmx) :: rcls0,zcls0
     real(kind(1.0D0)), dimension(ngrpmx/2) :: ccls0
@@ -145,13 +151,15 @@ contains
     real(kind(1.0D0)), dimension(lrow1,lcol1) :: gmat,umat,vmat
     real(kind(1.0D0)), dimension(2) :: signn
 
+    real(kind(1.0D0)), dimension(ngc2) :: aturn
+
     logical :: first_call = .true.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Single-null configuration switch
+    !  Toggle switch for ipfloc()=2 coils above/below midplane
 
-    snswit = 1
+    top_bottom = 1
 
     !  Set up the number of PF coils including the OH coil (nohc),
     !  and the number of PF circuits including the plasma (ncirt)
@@ -184,7 +192,7 @@ contains
 
     ncirt = nohc + 1
 
-    !  Current in the OH coil at beginning of pulse
+    !  Overall current density in the OH coil at beginning of pulse
 
     cohbop = coheof * fcohbop
 
@@ -213,24 +221,24 @@ contains
 
     if (iohcl == 0) then
        nfxf = 0
-       curstot = 0.0D0
+       ioheof = 0.0D0
     else
        nfxf = 2*nfxfh
-       curstot = -hmax*ohhghf*ohcth*2.0D0*coheof
+       ioheof = -hmax*ohhghf*ohcth*2.0D0*coheof  !  total OH current at EOF
 
        if (nfxf > nfixmx) then
           idiags(1) = nfxf ; idiags(2) = nfixmx
           call report_error(66)
        end if
 
-       !  Symmetric up/down OH coil : Find (R,Z) and current of each filament
+       !  Symmetric up/down OH coil : Find (R,Z) and current of each filament at BOP
 
        do nng = 1,nfxfh
           rfxf(nng) = rohc
           rfxf(nng+nfxfh) = rfxf(nng)
           zfxf(nng) = hmax*ohhghf/nfxfh * (nng-0.5D0)
           zfxf(nng+nfxfh) = -zfxf(nng)
-          cfxf(nng) = -curstot/nfxf * fcohbop
+          cfxf(nng) = -ioheof/nfxf * fcohbop
           cfxf(nng+nfxfh) = cfxf(nng)
        end do
     end if
@@ -239,7 +247,7 @@ contains
 
     signn(1) =  1.0D0
     signn(2) = -1.0D0
-    rclsnorm = rtot + tfthko/2.0D0 + routr
+    rclsnorm = rtot + 0.5D0*tfthko + routr
 
     !  N.B. Problems here if k=ncls(group) is greater than 2.
 
@@ -269,12 +277,12 @@ contains
                 zcls(j,k) = (hmax-zref(j)) * signn(k)
              else
                 !zcls(j,k) = (hmax + tfcth + 0.86D0) * signn(k)
-                if (snswit == 1) then
+                if (top_bottom == 1) then  !  this coil is above midplane
                    zcls(j,k) = hpfu + 0.86D0
-                   snswit = -1 * snswit
-                else
+                   top_bottom = -1
+                else  !  this coil is below midplane
                    zcls(j,k) = -1.0D0 * (hpfu - 2.0D0*hpfdif + 0.86D0)
-                   snswit = -1 * snswit
+                   top_bottom = 1
                 end if
              end if
           end do
@@ -285,8 +293,7 @@ contains
 
           do k = 1,ncls(j)
              zcls(j,k) = rminor * zref(j) * signn(k)
-             !  Changed to follow TF coil curve
-             !  rcls(j,k) = rtot + 0.5D0*tfthko + routr
+             !  coil radius follows TF coil curve
              rcls(j,k) = sqrt(rclsnorm**2 - zcls(j,k)**2)
           end do
 
@@ -328,7 +335,7 @@ contains
 
     end if
 
-    !  Simple coil current scaling for TARTs (good only for A < about 1.8)
+    !  Simple coil current scaling for STs (good only for A < about 1.8)
 
     if (itart == 1) then
 
@@ -377,8 +384,6 @@ contains
              !  PF coil is stacked on top of the OH coil
              !  This coil is to balance OH coil flux and should not be involved
              !  in equilibrium calculation -- RK 07/12
-             !  This is a fixed current for this calculation
-             !  ccls(i) = 0.2D0 * plascur
 
              ccls(i) = 0.0D0
              nfxf0 = nfxf0 + ncls(i)
@@ -393,7 +398,6 @@ contains
 
              !  PF coil is on top of the TF coil; divertor coil
              !  This is a fixed current for this calculation -- RK 07/12
-             !  ccls(i) = 0.2D0 * plascur
 
              ccls(i) = plascur * 2.0D0 * &
                   ( 1.0D0 - (kappa * rminor)/abs(zcls(i,1)) )
@@ -412,7 +416,7 @@ contains
 
              ngrp0 = ngrp0 + 1
              pcls0(ngrp0) = i
-	    
+
           else
              idiags(1) = i ; idiags(2) = ipfloc(i)
              call report_error(70)
@@ -450,7 +454,7 @@ contains
        end do
 
     end if
-      
+
     !  Flux swing from vertical field
 
     !  If this is the first visit to the routine the inductance matrix
@@ -494,10 +498,10 @@ contains
        dics = 0.0D0
        call report_error(71)
     end if
-      
-    fcohbof = ((-curstot * fcohbop) + dics)/curstot
-    fcohbof = min(fcohbof,  1.0D0)
-    fcohbof = max(fcohbof, -1.0D0)
+
+    fcohbof = ((-ioheof * fcohbop) + dics)/ioheof
+    fcohbof = min(fcohbof,  1.0D0)  !  constrains abs(fcohbof) <= 1.0;
+    fcohbof = max(fcohbof, -1.0D0)  !  probably un-necessary
 
     !  Split groups of coils into one set containing ncl coils
 
@@ -522,18 +526,20 @@ contains
     end do
 
     !  Current in OH coil as a function of time
-    !  N.B. If the OH coil is not present then curstot is zero.
+    !  N.B. If the OH coil is not present then ioheof is zero.
 
-    curpfs(ncl+1) = -1.0D-6 * curstot * fcohbop
-    curpff(ncl+1) = 1.0D-6 * curstot * fcohbof
-    curpfb(ncl+1) = 1.0D-6 * curstot
+    curpfs(ncl+1) = -1.0D-6 * ioheof * fcohbop
+    curpff(ncl+1) = 1.0D-6 * ioheof * fcohbof
+    curpfb(ncl+1) = 1.0D-6 * ioheof
 
     !  Set up coil current waveforms, normalised to the peak current in
     !  each coil
 
-    call waveform
+    call waveform  !  returns ric(), waves()
 
     !  Calculate PF coil geometry, current and number of turns
+    !  Dimensions are those of the winding pack, and exclude
+    !  the steel supporting case
 
     i = 0
     pfrmax = 0.0D0
@@ -550,7 +556,13 @@ contains
              dz = 0.5D0 * (hmax*(1.0D0-ohhghf) + tfcth + 0.1D0)  !  ???
              area = 4.0D0 * dx * dz
 
-             !  Actual current density
+             !  Number of turns
+             !  CPTDIN(I) is the current per turn (input)
+
+             turns(i) = abs( (ric(i)*1.0D6)/cptdin(i) )
+             aturn(i) = area / turns(i)
+
+             !  Actual winding pack current density
 
              rjconpf(i) = 1.0D6*abs(ric(i))/area
 
@@ -574,6 +586,10 @@ contains
              !  routine INITIAL for these coils.
 
              area = abs(ric(i)*1.0D6/rjconpf(i))
+
+             turns(i) = abs( (ric(i)*1.0D6)/cptdin(i) )
+             aturn(i) = area / turns(i)
+
              dx = 0.5D0 * sqrt(area)  !  square cross-section
 
              ra(i) = rpf(i) - dx
@@ -586,11 +602,6 @@ contains
              if (zpf(i) < 0.0D0) zh(i) = zpf(i) - dx
 
           end if
-
-          !  Calculate number of turns
-          !  CPTDIN(I) is the current per turn, as defined in routine INITIAL.
-
-          turns(i) = abs( (ric(i)*1.0D6)/cptdin(i) )
 
           !  Outside radius of largest PF coil (m)
 
@@ -613,37 +624,40 @@ contains
 
           !  Peak field
 
-          if (ij == 1) call peakb(i,iii,it,bri,bro,bzi,bzo)
+          if (ij == 1) call peakb(i,iii,it,bri,bro,bzi,bzo)  !  returns bpf, bpf2
 
           !  Allowable current density
 
-          rjpfalw(i) = pfjalw(bpf(i),bpf2(i),ra(i),rb(i),sigpfalw)
+          !rjpfalw(i) = pfjalw(bpf(i),bpf2(i),ra(i),rb(i),sigpfalw)
+          bmax = max(abs(bpf(i)), abs(bpf2(i)))
+          call superconpf(aturn(i),bmax,vf(i),fcutfsu,rjconpf(i),isumatpf,fhts, &
+               strncon,tftmp,bcritsc,tcritsc,rjpfalw(i))
 
           !  Length of conductor
 
-          rll = 2.0D0*pi*rpf(i)
+          rll = 2.0D0*pi*rpf(i)*turns(i)
 
           !  Resistive coils
 
           if (ipfres == 1) then
-             area = abs(ric(i)*1.0D6/rjconpf(i))
 
              !  Coil resistance (vf is the void fraction)
 
-             respf = pfclres * rll / ( area * (1.0D0-vf(i)) )
+             respf = pfclres * rll / ( aturn(i) * (1.0D0-vf(i)) )
 
              !  Sum resistive power losses
 
-             powpfres = powpfres + respf * (1.0D6 * curpfb(i))**2
+             powpfres = powpfres + respf * (1.0D6 * curpfb(i)/turns(i))**2
+
           end if
 
-          !  Coil volume
+          !  Winding pack volume
 
-          volpf = abs(ric(i)*1.0D6/rjconpf(i)) * rll
+          volpf = aturn(i) * rll
 
-          !  Coil weight (vf is the void fraction, conductor density is 8990.0)
+          !  Conductor weight (vf is the void fraction)
 
-          wtc(i) = volpf * 8990.0D0 * (1.0D0-vf(i))
+          wtc(i) = volpf * dcond(isumatpf) * (1.0D0-vf(i))
 
           !  (J x B) force on coil
 
@@ -651,7 +665,7 @@ contains
 
           !  Stress ==> cross-sectional area of supporting steel to use
 
-          if (ipfres /= 1) then
+          if (ipfres == 0) then
 
              !  Superconducting coil
              !  Previous assumptions: 500 MPa stress limit with 2/3 of the force
@@ -660,11 +674,18 @@ contains
 
              areaspf = sigpfcf * forcepf / (sigpfcalw*1.0D6)
 
+             !  Assume a case of uniform thickness around coil cross-section
+             !  Thickness found via a simple quadratic equation
+
+             drpdz = rb(i) - ra(i) + abs(zh(i) - zl(i))  !  dr + dz
+             pfcaseth(i) = 0.25D0 * (-drpdz + sqrt(drpdz*drpdz + 4.0D0*areaspf))
+
           else
              areaspf = 0.0D0  !  Resistive coil - no steel needed
+             pfcaseth(i) = 0.0D0
           end if
 
-          !  Weight of steel
+          !  Weight of steel case
 
           wts(i) = areaspf * 2.0D0*pi*rpf(i) * denstl
 
@@ -731,12 +752,14 @@ contains
     !+ad_prob  None
     !+ad_call  bfmax
     !+ad_call  peakb
-    !+ad_call  pfjalw
+    !+ad_call  superconpf
     !+ad_hist  01/02/96 PJK Initial version
     !+ad_hist  09/05/12 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  16/10/12 PJK Added constants
     !+ad_hist  25/11/13 PJK Simplified (R,Z) calculation
+    !+ad_hist  16/10/14 PJK New calculation for critical current density
+    !+ad_hisc               and steel case area
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -748,14 +771,14 @@ contains
 
     !  Local variables
 
-    integer :: itt,nohc1
+    integer :: timepoint
 
-    real(kind(1.0D0)) :: areaspf,aroh,bmaxoh2,bohci,bohco,bri,bro, &
-         bzi,bzo,forcepf,hohc,sgn,volohc
+    real(kind(1.0D0)) :: areaspf,areaoh,bmax,bmaxoh2, &
+         bohci,bohco,bri,bro,bzi,bzo,drpdz,forcepf,hohc,jcritwp,sgn
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Height of OH coil
+    !  Half-height of OH coil
 
     hohc = hmax * ohhghf
 
@@ -777,18 +800,35 @@ contains
 
     ra(nohc) = rb(nohc) - ohcth
 
-    !  Cross-sectional area
+    !  Total cross-sectional area
 
-    aroh = 2.0D0 * hohc * ohcth
+    areaoh = 2.0D0 * hohc * ohcth
 
-    !  Peak field due to OH coil
+    !  Maximum current (MA-turns) in OH coil, at either BOP or EOF
+
+    if (cohbop > coheof) then
+       sgn = 1.0D0
+       ric(nohc) = sgn * 1.0D-6*cohbop*areaoh
+    else
+       sgn = -1.0D0
+       ric(nohc) = sgn * 1.0D-6*coheof*areaoh
+    end if
+
+    !  Number of turns
+
+    turns(nohc) = 1.0D6 * abs(ric(nohc))/cptdin(nohc)
+
+    !  Winding pack void fraction for coolant
+
+    vf(nohc) = vfohc
+
+    !  Peak field due to OH coil itself
 
     bmaxoh2 = bfmax(coheof,ra(nohc),rb(nohc),hohc)
 
     !  Peak field due to all other coils as well
 
-    nohc1 = nohc
-    itt = 5 ; call peakb(nohc1,99,itt,bri,bro,bzi,bzo)
+    timepoint = 5 ; call peakb(nohc,99,timepoint,bri,bro,bzi,bzo)
 
     !  Peak field at the End-Of-Flattop (EOF)
 
@@ -799,51 +839,18 @@ contains
 
     bohco = abs(bzo)
 
-    !  Allowable current density
-
-    rjohc = pfjalw(bohci,bohco,ra(nohc),rb(nohc),sigpfalw)
-
     !  Peak field at the Beginning-Of-Pulse (BOP) (see above)
 
     bmaxoh0 = bfmax(cohbop,ra(nohc),rb(nohc),hohc)
-    itt = 2 ; call peakb(nohc1,99,itt,bri,bro,bzi,bzo)
+    timepoint = 2 ; call peakb(nohc,99,timepoint,bri,bro,bzi,bzo)
     bmaxoh0 = sqrt( (bmaxoh0 + bzi)**2 )
-
-    rjpfalw(nohc) = pfjalw(bmaxoh0,abs(bzo),ra(nohc),rb(nohc),sigpfalw)
-    rjohc0 = rjpfalw(nohc)
 
     !  Maximum field values
 
     bpf(nohc) = max(bmaxoh,abs(bmaxoh0))
     bpf2(nohc) = max(bohco,abs(bzo))
 
-    !  Current in OH coil at BOP and EOF
-
-    if (cohbop > coheof) then
-       sgn = 1.0D0
-       ric(nohc) = sgn * 1.0D-6*cohbop*(zh(nohc)-zl(nohc))*ohcth
-    else
-       sgn = -1.0D0
-       ric(nohc) = sgn * 1.0D-6*coheof*(zh(nohc)-zl(nohc))*ohcth
-    end if
-
-    !  Volume of OH coil
-
-    volohc = (zh(nohc)-zl(nohc)) * pi * (rb(nohc)**2-ra(nohc)**2)
-
-    !  Number of turns
-
-    turns(nohc) = 1.0D6 * abs(ric(nohc))/cptdin(nohc)
-
-    !  Void fraction
-
-    vf(nohc) = vfohc
-
-    !  Weight of OH coil
-
-    wtc(nohc) = volohc * 8990.0D0 * (1.0D0-vfohc)
-
-    !  (J x B) force on OH coil
+    !  (J x B) hoop force on OH coil (N)
 
     forcepf = 0.5D6 * (bpf(nohc)+bpf2(nohc))*abs(ric(nohc))*rpf(nohc)
 
@@ -851,24 +858,64 @@ contains
 
     if (ipfres == 0) then
 
-       !  Superconducting coil : Assume 500 MPa stress limit, 2/3 of the
-       !  force is supported in the outer (steel) case
+       !  Superconducting coil
+       !  Allowable (hoop) stress (Pa); calculated as for the TF coils' alstrtf
 
-       areaspf = 0.666D0 * forcepf / 5.0D8
+       alstroh = min( (2.0D0*csytf/3.0D0), (0.5D0*csutf) )
+       areaspf = forcepf / alstroh
+
+       !  Assume a case of uniform thickness within overall coil cross-section
+       !  (c.f. non-CS PF coils)
+       !  Thickness found via a simple quadratic equation
+
+       drpdz = ohcth + 2.0D0*hohc  !  dr + dz
+       pfcaseth(nohc) = 0.25D0 * (drpdz - sqrt(drpdz*drpdz - 4.0D0*areaspf))
 
     else
        areaspf = 0.0D0  !  Resistive OH coil - no steel needed
+       pfcaseth(nohc) = 0.0D0
     end if
 
     !  Weight of steel
 
-    wts(nohc) = areaspf * 2.0D0*pi*rpf(nohc) * 7800.0D0
+    wts(nohc) = areaspf * 2.0D0*pi*rpf(nohc) * denstl
+
+    !  Winding pack cross-sectional area
+!+PJK need to fix to prevent awpoh becoming negative
+    awpoh = areaoh - areaspf
+
+    !  Weight of conductor in OH coil
+
+    wtc(nohc) = awpoh * (1.0D0-vfohc) * 2.0D0*pi*rpf(nohc) * dcond(isumatoh)
+
+    !  Allowable coil overall current density at EOF
+    !  Strain in superconducting strand is assumed to be zero, as it should
+    !  be possible to wind the coil to eliminate strain
+
+    !rjohc = pfjalw(bohci,bohco,ra(nohc),rb(nohc),sigpfalw)
+    bmax = max(abs(bohci), abs(bohco))
+    call superconpf(awpoh/turns(nohc),bmax,vf(nohc),fcuohsu, &
+         abs(ric(nohc))/awpoh,isumatoh,fhts, &
+         0.0D0,tftmp,bcritsc,tcritsc,jcritwp)
+
+    rjohc = jcritwp * awpoh/areaoh
+
+    !  Allowable coil overall current density at BOP
+
+    !rjpfalw(nohc) = pfjalw(bmaxoh0,abs(bzo),ra(nohc),rb(nohc),sigpfalw)
+    bmax = max(abs(bmaxoh0), abs(bzo))
+    call superconpf(awpoh/turns(nohc),bmax,vf(nohc),fcuohsu, &
+         abs(ric(nohc))/awpoh,isumatoh,fhts, &
+         0.0D0,tftmp,bcritsc,tcritsc,jcritwp)
+
+    rjpfalw(nohc) = jcritwp * awpoh/areaoh
+    rjohc0 = rjpfalw(nohc)
 
     !  Resistive power losses (non-superconducting coil)
 
     if (ipfres /= 0) then
        powohres = 2.0D0 * pi * rohc * pfclres / &
-            (aroh * (1.0D0-vfohc)) * (1.0D6*ric(nohc))**2
+            (areaoh * (1.0D0-vfohc)) * (1.0D6*ric(nohc))**2
        powpfres = powpfres + powohres
     end if
 
@@ -1815,7 +1862,7 @@ contains
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  09/05/12 PJK Initial F90 version
-    !+ad_stat  Okay
+    !+ad_stat  No longer used
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1849,6 +1896,115 @@ contains
          1.0D0 + 0.6D0/yy * zz )
 
   end function pfjalw
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine superconpf(aturn,bmax,fhe,fcu,jwp,isumat,fhts, &
+       strain,thelium,bcritsc,tcritsc,jcritwp)
+
+    !+ad_name  superconpf
+    !+ad_summ  Routine to calculate the PF coil superconductor properties
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  aturn : input real : Area per turn (i.e. entire jacketed cable) (m2)
+    !+ad_args  bmax : input real : Peak field at conductor (T)
+    !+ad_args  fhe : input real : Fraction of cable space that is for He cooling
+    !+ad_args  fcu : input real : Fraction of conductor that is copper
+    !+ad_args  jwp : input real : Actual winding pack current density (A/m2)
+    !+ad_args  isumat : input integer : Switch for conductor type:
+    !+ad_argc                           1 = ITER Nb3Sn, standard parameters,
+    !+ad_argc                           2 = Bi-2212 High Temperature Superconductor,
+    !+ad_argc                           3 = NbTi,
+    !+ad_argc                           4 = ITER Nb3Sn, user-defined parameters
+    !+ad_args  fhts    : input real : Adjustment factor (<= 1) to account for strain,
+    !+ad_argc                         radiation damage, fatigue or AC losses
+    !+ad_args  strain : input real : Strain on superconductor at operation conditions
+    !+ad_args  thelium : input real : He temperature at peak field point (K)
+    !+ad_args  bcritsc : input real : Critical field at zero temperature and strain (T) (isumat=4 only)
+    !+ad_args  tcritsc : input real : Critical temperature at zero field and strain (K) (isumat=4 only)
+    !+ad_args  jcritwp : output real : Critical winding pack current density (A/m2)
+    !+ad_desc  This routine calculates the superconductor critical winding pack
+    !+ad_desc  current density for the PF coils.
+    !+ad_desc  It is based on the TF coil version, <CODE>supercon</CODE>.
+    !+ad_prob  The conduit and insulation around each turn is neglected.
+    !+ad_call  bi2212
+    !+ad_call  itersc
+    !+ad_call  jcrit_nbti
+    !+ad_call  report_error
+    !+ad_hist  16/10/14 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    integer, intent(in) :: isumat
+    real(kind(1.0D0)), intent(in) :: aturn, bmax, fcu, fhe, fhts, &
+         jwp, strain, thelium, bcritsc, tcritsc
+    real(kind(1.0D0)), intent(out) :: jcritwp
+
+    !  Local variables
+
+    real(kind(1.0D0)) :: acs,bc20m,bcrit,c0,jcrit,jstrand,tc0m,tcrit,tmarg
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Conduit and insulation around each turn is neglected, i.e.
+    !  cable space area is set equal to the total area per turn
+
+    acs = aturn
+
+    !  Find critical current density in superconducting strand, jcrit
+
+    select case (isumat)
+
+    case (1)  !  ITER Nb3Sn critical surface parameterization
+       bc20m = 32.97D0
+       tc0m = 16.06D0
+       call itersc(thelium,bmax,strain,bc20m,tc0m,jcrit,bcrit,tcrit)
+
+    case (2)  !  Bi-2212 high temperature superconductor parameterization
+       !  Current density in a strand of Bi-2212 conductor
+       !  N.B. jcrit returned by bi2212 is the critical current density
+       !  in the strand, not just the superconducting portion.
+       !  The parameterization for jcrit assumes a particular strand
+       !  composition that does not require a user-defined copper fraction,
+       !  so this is irrelevant in this model
+
+       jstrand = jwp * acs*(1.0D0-fhe)/aturn
+
+       call bi2212(bmax,jstrand,thelium,fhts,jcrit,tmarg)
+       tcrit = thelium + tmarg
+
+    case (3)  !  NbTi data
+       bc20m = 15.0D0
+       tc0m = 9.3D0
+       c0 = 1.0D10
+       call jcrit_nbti(thelium,bmax,c0,bc20m,tc0m,jcrit,tcrit)
+
+    case (4)  !  As (1), but user-defined parameters
+       bc20m = bcritsc
+       tc0m = tcritsc
+       call itersc(thelium,bmax,strain,bc20m,tc0m,jcrit,bcrit,tcrit)
+
+    case default  !  Error condition
+       idiags(1) = isumat ; call report_error(156)
+
+    end select
+
+    !  Critical current density in winding pack
+
+    if (isumat /= 2) then
+       jcritwp = jcrit * (1.0D0 - fhe) * (1.0D0 - fcu) * acs/aturn
+    else
+       jcritwp = jcrit * (1.0D0 - fhe) * acs/aturn  !  see comment above
+    end if
+
+  end subroutine superconpf
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2193,7 +2349,7 @@ contains
 210 format(t3,i2,t9,20(1pe8.1))
 
     if (iohcl /= 0) write(outfile,230) (sxlg(ij,ncirt-1),ij=1,ncirt)
-230 format(' OH coil',t9,20(1pe8.1))
+230 format('  CS',t9,20(1pe8.1))
 
     write(outfile,240) (sxlg(ij,ncirt),ij=1,ncirt)
 240 format(' Plasma',t9,20(1pe8.1))
@@ -2228,6 +2384,8 @@ contains
     !+ad_hist  09/07/14 PJK Added info message if OH coil current density is
     !+ad_hist               not reaching its upper limit
     !+ad_hist  01/09/14 PJK Changed .or. to .and. for the info message test
+    !+ad_hist  15/10/14 PJK Added more outputs
+    !+ad_hist  20/10/14 PJK Minor changes to output wording
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2246,30 +2404,53 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    call oheadr(outfile,'PF Coils')
-
-    !  Print out OH coil stress
+    call oheadr(outfile,'Central Solenoid and PF Coils')
 
     if (iohcl == 0) then
-       call ocmmnt(outfile,'No OH coil included')
+       call ocmmnt(outfile,'No central solenoid included')
        call oblnkl(outfile)
     else
-       call ocmmnt(outfile,'OH Coil Stress Calculations :')
-       call oblnkl(outfile)
-       call ovarre(outfile,'Maximum field at End Of Flattop (T)', &
-            '(bmaxoh)',bmaxoh)
+       if (ipfres == 0) then
+          call ocmmnt(outfile,'Superconducting central solenoid')
+
+          call ovarin(outfile,'Central solenoid superconductor material', &
+               '(isumatoh)',isumatoh)
+
+          select case (isumatoh)
+          case (1)
+             call ocmmnt(outfile,'  (ITER Nb3Sn critical surface model)')
+          case (2)
+             call ocmmnt(outfile,'  (Bi-2212 high temperature superconductor)')
+          case (3)
+             call ocmmnt(outfile,'  (NbTi)')
+          case (4)
+             call ocmmnt(outfile, &
+                  '  (ITER Nb3Sn critical surface model, user-defined parameters)')
+          end select
+       else
+          call ocmmnt(outfile,'Resistive central solenoid')
+       end if
+
+       call osubhd(outfile,'Central Solenoid Current Density Limits :')
        call ovarre(outfile,'Maximum field at Beginning Of Pulse (T)', &
             '(bmaxoh0)',bmaxoh0)
-       call ovarre(outfile,'Allowable current density at EOF (A/m2)', &
-            '(rjohc)',rjohc)
-       call ovarre(outfile,'Actual current density at EOF (A/m2)', &
-            '(coheof)',coheof)
        call ovarre(outfile,'Allowable current density at BOP (A/m2)', &
             '(rjohc0)',rjohc0)
        call ovarre(outfile,'Actual current density at BOP (A/m2)', &
             '(cohbop)',cohbop)
-       call ovarre(outfile,'Allowable stress at BOP (MPa)', &
-            '(sigpfalw)',sigpfalw)
+       call ovarre(outfile,'Maximum field at End Of Flattop (T)', &
+            '(bmaxoh)',bmaxoh)
+       call ovarre(outfile,'Allowable current density at EOF (A/m2)', &
+            '(rjohc)',rjohc)
+       call ovarre(outfile,'Actual current density at EOF (A/m2)', &
+            '(coheof)',coheof)
+       call ovarre(outfile,'CS conductor cross-sectional area (m2)', &
+            '(awpoh)',awpoh)
+       call ovarre(outfile,'Allowable hoop stress in CS steel (Pa)', &
+            '(alstroh)',alstroh)
+!+PJK obsolete...
+       !call ovarre(outfile,'Allowable stress at BOP (MPa)', &
+       !     '(sigpfalw)',sigpfalw)
 
        if ( (abs(coheof) < 0.99D0*abs(rjohc)).and. &
             (abs(cohbop) < 0.99D0*abs(rjohc0)) ) then
@@ -2278,14 +2459,38 @@ contains
 
     end if
 
+    if (ipfres == 0) then
+       call oblnkl(outfile)
+       call ocmmnt(outfile,'Superconducting PF coils')
+
+       call ovarin(outfile,'PF coil superconductor material','(isumatpf)',isumatpf)
+
+       select case (isumatpf)
+       case (1)
+          call ocmmnt(outfile,'  (ITER Nb3Sn critical surface model)')
+       case (2)
+          call ocmmnt(outfile,'  (Bi-2212 high temperature superconductor)')
+       case (3)
+          call ocmmnt(outfile,'  (NbTi)')
+       case (4)
+          call ocmmnt(outfile, &
+               '  (ITER Nb3Sn critical surface model, user-defined parameters)')
+       end select
+    else
+       call oblnkl(outfile)
+       call ocmmnt(outfile,'Resistive PF coils')
+    end if
+
     if (ipfres /= 0) then
        call osubhd(outfile,'Resistive Power :')
        call ovarre(outfile,'PF coil resistive power (W)','(powpfres)', &
             powpfres)
-       call ovarre(outfile,'OH coil resistive power (W)','(powohres)', &
-            powohres)
+       if (iohcl /= 0) then
+          call ovarre(outfile,'Central solenoid resistive power (W)','(powohres)', &
+               powohres)
+       end if
     else
-       call osubhd(outfile,'Coil Case Stress :')
+       call osubhd(outfile,'PF Coil Case Stress :')
        call ovarre(outfile,'Maximum permissible tensile stress (MPa)', &
             '(sigpfcalw)',sigpfcalw)
        call ovarre(outfile,'JxB hoop force fraction supported by case', &
@@ -2297,18 +2502,18 @@ contains
     nef = nohc
     if (iohcl /= 0) nef = nef - 1
 
-    call osubhd(outfile, 'Geometry of PF coils, OH coil and plasma :')
+    call osubhd(outfile, 'Geometry of PF coils, central solenoid and plasma :')
 
     write(outfile,10)
 10  format(' coil',t17,'R(m)',t29,'Z(m)',t41,'dR(m)',t53,'dZ(m)', &
-         t65,'turns')
+         t65,'turns',t75,'steel thickness(m)')
     call oblnkl(outfile)
 
     !  PF coils
 
     write(outfile,20) (k,rpf(k),zpf(k),(rb(k)-ra(k)),abs(zh(k)-zl(k)), &
-         turns(k),k=1,nef)
-20  format('  PF',i1,t10,5f12.2)
+         turns(k),pfcaseth(k),k=1,nef)
+20  format('  PF',i1,t10,6f12.2)
 
     do k = 1,nef
        intstring = int_to_string2(k)
@@ -2330,23 +2535,23 @@ contains
 
     !  OH coil, if present
 
-    if (iohcl.ne.0) then
+    if (iohcl /= 0) then
        write(outfile,30) rpf(nohc),zpf(nohc),(rb(nohc)-ra(nohc)), &
-            abs(zh(nohc)-zl(nohc)),turns(nohc)
-30     format('  OH',t10,5f12.2)
-       call ovarre(mfile,'OH coil radius (m)', &
+            abs(zh(nohc)-zl(nohc)),turns(nohc),pfcaseth(nohc)
+30     format('  CS',t10,6f12.2)
+       call ovarre(mfile,'Central solenoid radius (m)', &
             '(rpf(nohc))',rpf(nohc))
-       call ovarre(mfile,'OH coil vertical position (m)', &
+       call ovarre(mfile,'Central solenoid vertical position (m)', &
             '(zpf(nohc))',zpf(nohc))
-       call ovarre(mfile,'OH coil radial thickness (m)', &
+       call ovarre(mfile,'Central solenoid radial thickness (m)', &
             '(ohdr)',(rb(nohc)-ra(nohc)))
-       call ovarre(mfile,'OH coil vertical thickness (m)', &
+       call ovarre(mfile,'Central solenoid vertical thickness (m)', &
             '(ohdz)',(zh(nohc)-zl(nohc)))
-       call ovarre(mfile,'OH coil turns', &
+       call ovarre(mfile,'Central solenoid turns', &
             '(turns(nohc))',turns(nohc))
-       call ovarre(mfile,'OH coil current (MA)', &
+       call ovarre(mfile,'Central solenoid current (MA)', &
             '(ric(nohc))',ric(nohc))
-       call ovarre(mfile,'OH coil field (T)', &
+       call ovarre(mfile,'Central solenoid field (T)', &
             '(bpf(nohc))',bpf(nohc))
     end if
 
@@ -2363,8 +2568,8 @@ contains
          t17,'allowed J', &
          t28,'actual J', &
          t39,'J', &
-         t43,'coil weight', &
-         t56,'steel weight', &
+         t43,'cond. mass', &
+         t56,'steel mass', &
          t71,'field')
 
     write(outfile,60)
@@ -2400,7 +2605,7 @@ contains
             (cohbop/rjpfalw(nohc)),wtc(nohc),wts(nohc), &
             bpf(nohc)
 
-100    format('  OH ',f8.2,2(1pe11.3),0p,f6.2,1pe10.3,1pe12.3,1pe13.3)
+100    format('  CS ',f8.2,2(1pe11.3),0p,f6.2,1pe10.3,1pe12.3,1pe13.3)
     end if
 
     !  Miscellaneous totals
@@ -2442,6 +2647,7 @@ contains
     !+ad_hist  18/12/12 PJK/RK Modified for new PF coil current calculations
     !+ad_hist  15/05/14 PJK Added vstot to output
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  20/10/14 PJK OH to CS
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2465,7 +2671,7 @@ contains
 10  format(t15,'volt-sec',t30,'volt-sec',t45,'volt-sec'/ &
          t15,  'start-up',t32,'burn',t46,'total'// &
          t2,'PF coils :',t13,3(f10.2,5x)/ &
-         t2,'OH coil  :',t13,3(f10.2,5x)/ &
+         t2,'CS coil  :',t13,3(f10.2,5x)/ &
          t15,8('-'),t30,8('-'),t45,8('-')/ &
          t2,'Total :   ',t13,3(f10.2,5x) )
 
@@ -2484,7 +2690,7 @@ contains
 30  format(t4,i3,t10,f10.3,5x,f10.3,5x,f10.3)
 
     write(outfile,40) vsdum(nohc,1),vsdum(nohc,2),vsdum(nohc,3)
-40  format(' OH coil',t10,f10.3,5x,f10.3,5x,f10.3)
+40  format(' CS coil',t10,f10.3,5x,f10.3,5x,f10.3)
 
     call oshead(outfile,'Waveforms')
     call ocmmnt(outfile,'Currents (Amps/coil) as a function of time :')

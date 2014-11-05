@@ -1,8 +1,8 @@
 {
- "version":  [ "PROCESS revision 322" ],
+ "version":  [ "PROCESS revision 350" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 140,
+ "n_errortypes": 156,
  "errors": [
   { "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -143,6 +143,22 @@
   { "level": 3, "message": "CHECK: Insufficient iteration variables to solve the problem! NVAR < NEQNS" },
   { "level": 2, "message": "CHECK: Beware; ion power balance may not be correct with new radiation model" },
   { "level": 3, "message": "CHECK: Fewer than NVAR elements of IXC have been specified" },
-  { "level": 3, "message": "CHECK: Fewer than NEQNS+NINEQNS elements of ICC have been specified" }
+  { "level": 3, "message": "CHECK: Fewer than NEQNS+NINEQNS elements of ICC have been specified" },
+  { "level": 1, "message": "RADIALB: (ripple calculation) Dimensionless coil width X out of fitted range" },
+  { "level": 1, "message": "RADIALB: (ripple calculation) No of TF coils not between 16 and 20 inclusive" },
+  { "level": 1, "message": "RADIALB: (ripple calculation) (R+a)/rtot out of fitted range" },
+  { "level": 1, "message": "OUTTF: (peak field calculation) Winding pack width out of fitted range" },
+  { "level": 1, "message": "OUTTF: (peak field calculation) Winding pack radial thickness out of fitted range" },
+  { "level": 3, "message": "CHECK: temperature pedestal is lower than separatrix temperature" },
+  { "level": 2, "message": "CHECK: temperature pedestal is at plasma edge, but teped differs from tesep" },
+  { "level": 2, "message": "TPROFILE: temperature pedestal is higher than core temperature" },
+  { "level": 2, "message": "CHECK: volume-averaged temperature has been forced to exceed input pedestal height" },
+  { "level": 2, "message": "CHECK: boundl(4) has been raised to ensure te > teped" },
+  { "level": 3, "message": "CHECK: density pedestal is lower than separatrix density" },
+  { "level": 2, "message": "CHECK: density pedestal is at plasma edge, but neped differs from nesep" },
+  { "level": 2, "message": "NPROFILE: density pedestal is higher than core density" },
+  { "level": 2, "message": "CHECK: volume-averaged density has been forced to exceed input pedestal height" },
+  { "level": 2, "message": "CHECK: boundl(6) has been raised to ensure dene > neped" },
+  { "level": 3, "message": "SUPERCONPF: Illegal value for isumatpf" }
  ]
 }

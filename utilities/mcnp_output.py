@@ -11,7 +11,7 @@
   Notes:
     + 13/06/2014 Original version created.
     + 01/07/2014 Added option for CTF
-
+    + 09/09/2014 Added extra TF coil information
 """
 
 import argparse
@@ -49,6 +49,27 @@ class ProcessPlane(object):
     def __init__(self, dx, dy):
         self.dx = dx
         self.dy = dy
+        return
+
+
+class ProcessTFArcs(object):
+    """A class to store TF arc data
+    """
+    def __init__(self, c_x, c_y, x_1, y_1, x_2, y_2):
+        self.c_x = c_x
+        self.c_y = c_y
+        self.x_1 = x_1
+        self.y_1 = y_1
+        self.x_2 = x_2
+        self.y_2 = y_2
+        return
+
+
+class InfoHolder(object):
+    """A Class to store information"""
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
         return
 
 
@@ -229,6 +250,32 @@ def populate_ctf_ellipse_data(shape_objs, mf_data):
         t_shield_o
     shape_objs["e4"].c = r_c
 
+    # Extra information
+    # TF coil inner leg thickness
+    name = "TF Coil inner leg thickness (m)"
+    value = t_tf
+    shape_objs["i1"] = InfoHolder(name, value)
+
+    # TF coil inner leg thickness
+    name = "TF Coil outer leg thickness (m)"
+    value = mf_data.data["tfthko"].get_scan(-1)
+    shape_objs["i2"] = InfoHolder(name, value)
+
+    # TF coil inner plasma facing case thickness
+    name = "TF Coil inner leg plasma facing case thickness (m)"
+    value = mf_data.data["casthi"].get_scan(-1)
+    shape_objs["i3"] = InfoHolder(name, value)
+
+    # TF coil inner case thickness
+    name = "TF Coil inner case thickness (m)"
+    value = mf_data.data["thkcas"].get_scan(-1)
+    shape_objs["i4"] = InfoHolder(name, value)
+
+    # TF coil winding pack thickness
+    name = "TF Coil winding pack thickness (m)"
+    value = mf_data.data["thkwp"].get_scan(-1)
+    shape_objs["i5"] = InfoHolder(name, value)
+
     return shape_objs
 
 
@@ -310,6 +357,68 @@ def populate_tok_ellipse_data(shape_objs, mf_data):
         t_shield_o
     shape_objs["e8"].c = r_c
 
+    # TF arc 1
+    c_x = mf_data.data["xctfc(1)"].get_scan(-1)
+    c_y = mf_data.data["yctfc(1)"].get_scan(-1)
+    x_1 = mf_data.data["xarc(1)"].get_scan(-1)
+    y_1 = mf_data.data["yarc(1)"].get_scan(-1)
+    x_2 = mf_data.data["xarc(2)"].get_scan(-1)
+    y_2 = mf_data.data["yarc(2)"].get_scan(-1)
+    shape_objs["a1"] = ProcessTFArcs(c_x, c_y, x_1, y_1, x_2, y_2)
+
+    # TF arc 2
+    c_x = mf_data.data["xctfc(2)"].get_scan(-1)
+    c_y = mf_data.data["yctfc(2)"].get_scan(-1)
+    x_1 = mf_data.data["xarc(2)"].get_scan(-1)
+    y_1 = mf_data.data["yarc(2)"].get_scan(-1)
+    x_2 = mf_data.data["xarc(3)"].get_scan(-1)
+    y_2 = mf_data.data["yarc(3)"].get_scan(-1)
+    shape_objs["a2"] = ProcessTFArcs(c_x, c_y, x_1, y_1, x_2, y_2)
+
+    # TF arc 3
+    c_x = mf_data.data["xctfc(3)"].get_scan(-1)
+    c_y = mf_data.data["yctfc(3)"].get_scan(-1)
+    x_1 = mf_data.data["xarc(3)"].get_scan(-1)
+    y_1 = mf_data.data["yarc(3)"].get_scan(-1)
+    x_2 = mf_data.data["xarc(4)"].get_scan(-1)
+    y_2 = mf_data.data["yarc(4)"].get_scan(-1)
+    shape_objs["a3"] = ProcessTFArcs(c_x, c_y, x_1, y_1, x_2, y_2)
+
+    # TF arc 4
+    c_x = mf_data.data["xctfc(4)"].get_scan(-1)
+    c_y = mf_data.data["yctfc(4)"].get_scan(-1)
+    x_1 = mf_data.data["xarc(4)"].get_scan(-1)
+    y_1 = mf_data.data["yarc(4)"].get_scan(-1)
+    x_2 = mf_data.data["xarc(5)"].get_scan(-1)
+    y_2 = mf_data.data["yarc(5)"].get_scan(-1)
+    shape_objs["a4"] = ProcessTFArcs(c_x, c_y, x_1, y_1, x_2, y_2)
+
+    # Extra information
+    # TF coil inner leg thickness
+    name = "TF Coil inner leg thickness (m)"
+    value = t_tf
+    shape_objs["i1"] = InfoHolder(name, value)
+
+    # TF coil inner leg thickness
+    name = "TF Coil outer leg thickness (m)"
+    value = mf_data.data["tfthko"].get_scan(-1)
+    shape_objs["i2"] = InfoHolder(name, value)
+
+    # TF coil inner plasma facing case thickness
+    name = "TF Coil inner leg plasma facing case thickness (m)"
+    value = mf_data.data["casthi"].get_scan(-1)
+    shape_objs["i3"] = InfoHolder(name, value)
+
+    # TF coil inner case thickness
+    name = "TF Coil inner case thickness (m)"
+    value = mf_data.data["thkcas"].get_scan(-1)
+    shape_objs["i4"] = InfoHolder(name, value)
+
+    # TF coil winding pack thickness
+    name = "TF Coil winding pack thickness (m)"
+    value = mf_data.data["thkwp"].get_scan(-1)
+    shape_objs["i5"] = InfoHolder(name, value)
+
     return shape_objs
 
 
@@ -347,6 +456,32 @@ def write_shapes_to_file(shape_data, filename):
             dat = shape_data[shape]
             dy = dat.dy
             line = "PZ %.3f\n" % dy
+            output_file.write(line)
+
+    output_file.write("\n")
+
+    output_file.write("AZ c_x c_y x_1 y_1 x_2 y_2\n")
+    for shape in shape_data:
+        if "a" in shape:
+            dat = shape_data[shape]
+            c_x = dat.c_x
+            c_y = dat.c_y
+            x_1 = dat.x_1
+            y_1 = dat.y_1
+            x_2 = dat.x_2
+            y_2 = dat.y_2
+            line = "AZ %.3f %.3f %.3f %.3f %.3f %.3f\n" % (c_x, c_y, x_1, y_1,
+                                                      x_2, y_2)
+            output_file.write(line)
+    output_file.write("\n")
+
+    output_file.write("Info y\n")
+    for shape in shape_data:
+        if "i" in shape:
+            dat = shape_data[shape]
+            name = dat.name
+            value = dat.value
+            line = "%s \t=\t %.3f\n" % (name, value)
             output_file.write(line)
 
     output_file.close()

@@ -1,4 +1,3 @@
-!  $Id:: plasma_profiles.f90 246 2014-03-13 09:39:07Z pknight           $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module profiles_module
@@ -18,10 +17,12 @@ module profiles_module
   !+ad_prob  None
   !+ad_call  constants
   !+ad_call  divertor_variables
+  !+ad_call  error_handling
   !+ad_call  physics_variables
   !+ad_call  maths_library
   !+ad_hist  24/02/14 PJK Initial version
   !+ad_hist  04/03/14 PJK Moved sumup3 into maths_library.f90
+  !+ad_hist  15/09/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  T&amp;M/PKNIGHT/LOGBOOK24, pp.4-7
   !
@@ -29,6 +30,7 @@ module profiles_module
 
   use constants
   use divertor_variables
+  use error_handling
   use maths_library
   use physics_variables
 
@@ -273,10 +275,11 @@ contains
     !+ad_desc  <P>If <CODE>ipedestal = 0</CODE> the original parabolic
     !+ad_desc  profile form is used instead.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  07/10/13 RK  First draft of routine
     !+ad_hist  12/12/13 HL  Separate n and T profiles, minor changes
     !+ad_hist  19/02/14 PJK Transferred into PROCESS as a function
+    !+ad_hist  15/09/14 PJK Added error reporting
     !+ad_stat  Okay
     !+ad_docs  J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
     !
@@ -292,8 +295,6 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: numacc = 1.0D-7
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     if (ipedestal == 0) then
@@ -301,23 +302,13 @@ contains
        return
     end if
 
-    !  Input checks
-
-    if ((abs(rhopedt-1.0D0) <=  numacc) .and. ((tped-tsep) >= numacc)) then
-       write(*,*) 'Warning in TPROFILE:'
-       write(*,*) 'tped sets the value of the temperature profile'
-       write(*,*) 'at the separatrix!'
-    end if
-
-    if (tped < tsep) then
-       write(*,*) 'Warning in TPROFILE:'
-       write(*,*) 'The temperature at the separatrix is higher than at'
-       write(*,*) 'the pedestal!'
-    end if
+    !  Error trap; shouldn't happen unless volume-averaged temperature has
+    !  been allowed to drop below tped. This may happen during a HYBRD case,
+    !  but should have been prevented for optimisation runs.
 
     if (t0 < tped) then
-       write(*,*) 'Warning in TPROFILE:'
-       write(*,*) 'The temperature at the pedestal is higher than at the core!'
+       fdiags(1) = tped ; fdiags(2) = t0
+       call report_error(148)
     end if
 
     if (rho <= rhopedt) then
@@ -396,10 +387,11 @@ contains
     !+ad_desc  <P>If <CODE>ipedestal = 0</CODE> the original parabolic
     !+ad_desc  profile form is used instead.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  07/10/13 RK  First draft of routine
     !+ad_hist  12/12/13 HL  Separate n and T profiles, minor changes
     !+ad_hist  20/02/14 PJK Transferred into PROCESS as a function
+    !+ad_hist  15/09/14 PJK Added error reporting
     !+ad_stat  Okay
     !+ad_docs  J.Johner, Fusion Science and Technology 59 (2011), pp 308-349
     !
@@ -415,8 +407,6 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), parameter :: numacc = 1.0D-7
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     if (ipedestal == 0) then
@@ -424,23 +414,15 @@ contains
        return
     end if
 
+    !  Error trap; shouldn't happen unless volume-averaged density has
+    !  been allowed to drop below nped. This may happen during a HYBRD case,
+    !  but should have been prevented for optimisation runs.
+
     !  Input checks
 
-    if ((abs(rhopedn-1.0D0) <=  numacc) .and. ((nped-nsep) >= numacc)) then
-       write(*,*) 'Warning in NPROFILE:'
-       write(*,*) 'nped sets the value of the density profile'
-       write(*,*) 'at the separatrix!'
-    end if
-
-    if (nped < nsep) then
-       write(*,*) 'Warning in NPROFILE:'
-       write(*,*) 'Warning: The density at the separatrix is higher than at'
-       write(*,*) 'the pedestal!'
-    end if
- 
-   if (n0 < nped) then
-       write(*,*) 'Warning in NPROFILE:'
-       write(*,*) 'The density at the pedestal is higher than at the core!'
+    if (n0 < nped) then
+       fdiags(1) = nped ; fdiags(2) = n0
+       call report_error(153)
     end if
 
     if (rho <= rhopedn) then
