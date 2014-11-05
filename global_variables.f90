@@ -991,6 +991,7 @@ module fwbs_variables
   !+ad_hist  21/08/14 PJK Added new thermodynamic blanket model variables
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  30/10/14 PJK Changed blkttype default from 1 to 3
+  !+ad_hist  05/11/14 PJK Added praddiv etc.
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1085,6 +1086,14 @@ module fwbs_variables
   real(kind(1.0D0)) :: pnucloss = 0.0D0
   !+ad_vars  pnucshld : nuclear heating in the shield (MW)
   real(kind(1.0D0)) :: pnucshld = 0.0D0
+  !+ad_vars  praddiv : radiation power incident on the divertor (MW)
+  real(kind(1.0D0)) :: praddiv = 0.0D0
+  !+ad_vars  pradfw : radiation power incident on the divertor (MW)
+  real(kind(1.0D0)) :: pradfw = 0.0D0
+  !+ad_vars  pradhcd : radiation power incident on the divertor (MW)
+  real(kind(1.0D0)) :: pradhcd = 0.0D0
+  !+ad_vars  pradloss : radiation power incident on the divertor (MW)
+  real(kind(1.0D0)) :: pradloss = 0.0D0
   !+ad_vars  ptfnuc : nuclear heating in the TF coil (MW)
   real(kind(1.0D0)) :: ptfnuc = 0.0D0
   !+ad_vars  ptfnucpm3 : nuclear heating in the TF coil (MW/m3) (blktmodel>0)
@@ -2124,6 +2133,7 @@ module heat_transport_variables
   !+ad_hist  17/09/14 PJK Changed default values
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  22/10/14 PJK Removed psechole, etathdiv
+  !+ad_hist  05/11/14 PJK Added htpmw_*
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2188,6 +2198,14 @@ module heat_transport_variables
   !+ad_vars  htpmw /10.0/ : heat transport system electrical pump power (MW)
   !+ad_varc                 (calculated if ipowerflow=1)
   real(kind(1.0D0)) :: htpmw = 10.0D0
+  !+ad_vars  htpmw_blkt : blanket pumping power (MW) (ipowerflow=1)
+  real(kind(1.0D0)) :: htpmw_blkt = 0.0D0
+  !+ad_vars  htpmw_div : divertor pumping power (MW) (ipowerflow=1)
+  real(kind(1.0D0)) :: htpmw_div = 0.0D0
+  !+ad_vars  htpmw_fw : first wall pumping power (MW) (ipowerflow=1)
+  real(kind(1.0D0)) :: htpmw_fw = 0.0D0
+  !+ad_vars  htpmw_shld : shield pumping power (MW) (ipowerflow=1)
+  real(kind(1.0D0)) :: htpmw_shld = 0.0D0
   !+ad_vars  htpsecmw : waste power lost from heat transport system (MW)
   !+ad_varc             (ipowerflow=1)
   real(kind(1.0D0)) :: htpsecmw = 0.0D0

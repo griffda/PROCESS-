@@ -513,7 +513,8 @@ subroutine check
   !  slightly pessimistic results.
 
   if (blktmodel > 0) then
-     ipowerflow = 0
+     !ipowerflow = 0
+     blktcycle = 0
      blkttype = 3  !  HCPB
      coolwh = 2
   end if

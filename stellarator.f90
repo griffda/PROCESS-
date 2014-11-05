@@ -1316,11 +1316,12 @@ contains
     !+ad_desc  of the plasma.
     !+ad_prob  None
     !+ad_call  blanket_panos
-    !+ad_call  blanket_neutronics
+    !+ad_call  blanket_neutronics_hcpb_kit
     !+ad_call  oheadr
     !+ad_call  osubhd
     !+ad_call  ovarin
     !+ad_call  ovarre
+    !+ad_call  sctfcoil_nuclear_heating_iter90
     !+ad_hist  01/07/94 PJK Initial version
     !+ad_hist  10/06/96 PJK Moved first wall area calculation into STBILD
     !+ad_hist  24/09/12 PJK Initial F90 version
@@ -1344,15 +1345,8 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(5) :: fact
-    real(kind(1.0D0)), dimension(5,2) :: coef
-    real(kind(1.0D0)), dimension(7,2) :: decay
-
-    integer, parameter :: ishmat = 1  !  stainless steel coil casing is assumed
-
-    real(kind(1.0D0)) :: adewex,coilhtmx,decaybl,dpacop,dshieq,dshoeq, &
-         fpsdt,fpydt,hecan,htheci,pheci,pheco,pneut2,ptfi,ptfiwp, &
-         ptfo,ptfowp,r1,r2,raddose,volshldi,volshldo,wpthk
+    real(kind(1.0D0)) :: adewex,coilhtmx,decaybl,dpacop,htheci, &
+         pheci,pheco,pneut2,ptfiwp,ptfowp,r1,r2,raddose,volshldi,volshldo
 
     logical :: first_call = .true.
 
@@ -1403,45 +1397,9 @@ contains
 
     if (blktmodel == 1) then
 
-       call blanket_neutronics
-
-       fpydt = cfactr * tlife
+       call blanket_neutronics_hcpb_kit
 
     else
-
-       !  TF coil nuclear heating parameters
-
-       fact(1) = 8.0D0
-       fact(2) = 8.0D0
-       fact(3) = 6.0D0
-       fact(4) = 4.0D0
-       fact(5) = 4.0D0
-
-       coef(1,1) = 10.3D0
-       coef(2,1) = 11.6D0
-       coef(3,1) = 7.08D5
-       coef(4,1) = 2.19D18
-       coef(5,1) = 3.33D-7
-       coef(1,2) = 8.32D0
-       coef(2,2) = 10.6D0
-       coef(3,2) = 7.16D5
-       coef(4,2) = 2.39D18
-       coef(5,2) = 3.84D-7
-
-       decay(1,1) = 10.05D0
-       decay(2,1) = 17.61D0
-       decay(3,1) = 13.82D0
-       decay(4,1) = 13.24D0
-       decay(5,1) = 14.31D0
-       decay(6,1) = 13.26D0
-       decay(7,1) = 13.25D0
-       decay(1,2) = 10.02D0
-       decay(2,2) = 3.33D0
-       decay(3,2) = 15.45D0
-       decay(4,2) = 14.47D0
-       decay(5,2) = 15.87D0
-       decay(6,2) = 15.25D0
-       decay(7,2) = 17.25D0
 
        pnuccp = 0.0D0
 
@@ -1467,90 +1425,10 @@ contains
 
        pnucshld = pneut2 - pnucblkt
 
-       !  Full power DT operation years for replacement of TF Coil
-       !  (or Plant Life)
-
-       fpydt = cfactr * tlife
-       fpsdt = fpydt * 3.154D7
-
        !  Superconducting TF coil shielding calculations
-       !  The 'He can' previously referred to is actually the steel case on the
-       !  plasma-facing side of the TF coil.
 
-       if (itfsup == 1) then
-
-          !  N.B. The vacuum vessel appears to be ignored
-
-          dshieq = shldith + fwith + blnkith
-          dshoeq = shldoth + fwoth + blnkoth
-
-          !  Case thickness on plasma-facing side of TF coil
-
-          hecan = casthi
-
-          !  Winding pack radial thickness, including groundwall insulation
-
-          wpthk = thkwp + 2.0D0*tinstf
-
-          !  Nuclear heating rate in inboard TF coil (MW/m**3)
-
-          coilhtmx = fact(1) * wallmw * coef(1,ishmat) * &
-               exp(-decay(6,ishmat) * (dshieq + hecan))
-
-          !  Total nuclear heating (MW)
-
-          ptfiwp = coilhtmx * tfsai * &
-               (1.0D0-exp(-decay(1,ishmat)*wpthk)) / decay(1,ishmat)
-          ptfowp = fact(1) * wallmw * coef(1,ishmat) * &
-               exp(-decay(6,ishmat) * (dshoeq + hecan)) * tfsao * &
-               (1.0D0 - exp(-decay(1,ishmat)*wpthk)) / decay(1,ishmat)
-
-          !  Nuclear heating in plasma-side TF coil case (MW)
-
-          htheci = fact(2) * wallmw * coef(2,ishmat) * &
-               exp(-decay(7,ishmat) * dshieq)
-          pheci = htheci * tfsai * (1.0D0-exp(-decay(2,ishmat)*hecan))/ &
-               decay(2,ishmat)
-          pheco = fact(2) * wallmw * coef(2,ishmat) * &
-               exp(-decay(7,ishmat) * dshoeq) * tfsao * &
-               (1.0D0-exp(-decay(2,ishmat)*hecan))/decay(2,ishmat)
-          ptfi = ptfiwp + pheci
-          ptfo = ptfowp + pheco
-          ptfnuc = ptfi + ptfo
-
-          !  Insulator dose (rad)
-
-          raddose = coef(3,ishmat) * fpsdt * fact(3) * wallmw * &
-               exp(-decay(3,ishmat) * (dshieq+hecan))
-
-          !  Maximum neutron fluence in superconductor (n/m**2)
-
-          nflutf = fpsdt * fact(4) * wallmw * coef(4,ishmat) * &
-               exp(-decay(4,ishmat) * (dshieq+hecan))
-
-          !  Atomic displacement in copper stabilizer
-
-          dpacop = fpsdt * fact(5) * wallmw * coef(5,ishmat) * &
-               exp(-decay(5,ishmat) * (dshieq + hecan) )
-
-       else  !  Resistive TF coils
-          dshieq = 0.0D0
-          dshoeq = 0.0D0
-          hecan = 0.0D0
-          wpthk = 0.0D0
-          coilhtmx = 0.0D0
-          ptfiwp = 0.0D0
-          ptfowp = 0.0D0
-          htheci = 0.0D0
-          pheci = 0.0D0
-          pheco = 0.0D0
-          ptfi = 0.0D0
-          ptfo = 0.0D0
-          ptfnuc = 0.0D0
-          raddose = 0.0D0
-          nflutf = 0.0D0
-          dpacop = 0.0D0
-       end if
+       call sctfcoil_nuclear_heating_iter90(coilhtmx,dpacop,htheci,nflutf, &
+            pheci,pheco,ptfiwp,ptfowp,raddose,ptfnuc)
 
     end if ! blktmodel = 0
 
@@ -1690,8 +1568,6 @@ contains
     if (blktmodel > 0) then
        call ovarre(outfile,'Neutron wall load peaking factor','(wallpf)', wallpf)
     end if
-    call ovarre(outfile,'DT full power TF coil operation (yrs)', &
-         '(fpydt)',fpydt)
     call ovarre(outfile,'Inboard shield thickness (m)','(shldith)',shldith)
     call ovarre(outfile,'Outboard shield thickness (m)','(shldoth)',shldoth)
     call ovarre(outfile,'Top shield thickness (m)','(shldtth)',shldtth)
@@ -1709,24 +1585,24 @@ contains
     call ovarre(outfile,'Outboard blanket thickness (m)','(blnkoth)', blnkoth)
     call ovarre(outfile,'Top blanket thickness (m)','(blnktth)',blnktth)
     if (blktmodel == 0) then
-       call ovarre(outfile,'Inboard side TF coil case thickness (m)', &
-            '(hecan)',hecan)
-       call osubhd(outfile,'TF coil nuclear parameters :')
-       call ovarre(outfile,'Peak magnet heating (MW/m3)','(coilhtmx)', &
-            coilhtmx)
-       call ovarre(outfile,'Inboard TF coil winding pack heating (MW)', &
-            '(ptfiwp)',ptfiwp)
-       call ovarre(outfile,'Outboard TF coil winding pack heating (MW)', &
-            '(ptfowp)',ptfowp)
-       call ovarre(outfile,'Peak TF coil case heating (MW/m3)','(htheci)', &
-            htheci)
-       call ovarre(outfile,'Inboard coil case heating (MW)','(pheci)',pheci)
-       call ovarre(outfile,'Outboard coil case heating (MW)','(pheco)',pheco)
-       call ovarre(outfile,'Insulator dose (rad)','(raddose)',raddose)
-       call ovarre(outfile,'Maximum neutron fluence (n/m2)','(nflutf)', &
-            nflutf)
-       call ovarre(outfile,'Copper stabiliser displacements/atom', &
-            '(dpacop)',dpacop)
+       if (ipowerflow == 0) then
+          call osubhd(outfile,'TF coil nuclear parameters :')
+          call ovarre(outfile,'Peak magnet heating (MW/m3)','(coilhtmx)', &
+               coilhtmx)
+          call ovarre(outfile,'Inboard TF coil winding pack heating (MW)', &
+               '(ptfiwp)',ptfiwp)
+          call ovarre(outfile,'Outboard TF coil winding pack heating (MW)', &
+               '(ptfowp)',ptfowp)
+          call ovarre(outfile,'Peak TF coil case heating (MW/m3)','(htheci)', &
+               htheci)
+          call ovarre(outfile,'Inboard coil case heating (MW)','(pheci)',pheci)
+          call ovarre(outfile,'Outboard coil case heating (MW)','(pheco)',pheco)
+          call ovarre(outfile,'Insulator dose (rad)','(raddose)',raddose)
+          call ovarre(outfile,'Maximum neutron fluence (n/m2)','(nflutf)', &
+               nflutf)
+          call ovarre(outfile,'Copper stabiliser displacements/atom', &
+               '(dpacop)',dpacop)
+       end if
 
        call osubhd(outfile,'Nuclear heating :')
        call ovarre(outfile,'Blanket heating (MW)','(pnucblkt)',pnucblkt)

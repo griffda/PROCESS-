@@ -928,6 +928,7 @@ contains
     !+ad_hist  28/08/14 PJK Corrections to etath fitted formulae
     !+ad_hist  06/10/14 PJK Added orbit loss power to pfwdiv, pinjwp
     !+ad_hist  22/10/14 PJK Corrected orbit loss power usage
+    !+ad_hist  04/11/14 PJK Corrected pnucblkt(*emult) usage
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1002,9 +1003,9 @@ contains
        pthermfw = pnucfw + pradfw + htpmw_fw + porbitlossmw
 
        !  Total thermal power deposited in blanket coolant
-       !  Nuclear energy multiplication is included
+       !  Nuclear energy multiplication is included in pnucblkt already
 
-       pthermblkt = pnucblkt*emult + htpmw_blkt
+       pthermblkt = pnucblkt + htpmw_blkt
 
        !  Total thermal power deposited in shield coolant
 
@@ -1129,6 +1130,7 @@ contains
     !+ad_hist  27/08/14 PJK Modifications for new power flow model
     !+ad_hist  10/09/14 PJK Added power balance outputs
     !+ad_hist  22/10/14 PJK Minor mods to outputs
+    !+ad_hist  04/11/14 PJK Corrected pnucblkt emult factor
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1265,7 +1267,7 @@ contains
        call ovarre(outfile,'Heat removal from F.W./divertor (MW)', &
             '(pfwdiv)',pfwdiv)
        call ovarre(outfile,'Heat removal from blankets (MW)', &
-            '(pnucblkt*emult)',pnucblkt*emult)
+            '(pnucblkt.)',pnucblkt)
        call ovarre(outfile,'Heat removal from shield (MW)','(pnucshld.)', &
             pnucshld)
        call ovarre(outfile,'Heat removal from injection power (MW)', &
@@ -1414,13 +1416,13 @@ contains
             '(pinjmw.)',pinjmw)
        call ovarre(outfile, &
             'Power from energy multiplication in blanket (MW)','', &
-            pnucblkt*(emult-1.0D0))
+            pnucblkt*(1.0D0 - 1.0D0/emult))
        call ovarre(outfile, &
             'Power deposited in coolant by pump (MW)','', &
             htpmw_fw + htpmw_blkt + htpmw_shld + htpmw_div)
        call ovarre(outfile, &
             'Total power entering fusion power core (MW)','', &
-            powfmw + pinjmw + pnucblkt*(emult-1.0D0) &
+            powfmw + pinjmw + pnucblkt*(1.0D0 - 1.0D0/emult) &
             + htpmw_fw + htpmw_blkt + htpmw_shld + htpmw_div)
 
        primsum = 0.0D0 ; secsum = 0.0D0
@@ -1443,12 +1445,12 @@ contains
        call oblnkl(outfile)
 
        write(outfile,'(t10,a)') 'Blanket:'
-       write(outfile,10) pnucblkt*emult, 0.0D0, pnucblkt*emult
+       write(outfile,10) pnucblkt, 0.0D0, pnucblkt
        write(outfile,20) 0.0D0, 0.0D0, 0.0D0
        write(outfile,30) 0.0D0, 0.0D0, 0.0D0
        write(outfile,40) htpmw_blkt, 0.0D0, htpmw_blkt
 
-       primsum = primsum + pnucblkt*emult + htpmw_blkt
+       primsum = primsum + pnucblkt + htpmw_blkt
        secsum = secsum
 
        call oblnkl(outfile)
@@ -1632,8 +1634,8 @@ contains
        call ovarre(outfile, 'Fusion power (MW)', '(powfmw..)',powfmw)
        call ovarre(outfile, &
             'Power from energy multiplication in blanket (MW)','', &
-            pnucblkt*(emult-1.0D0))
-       call ovarre(outfile,'Total (MW)','',powfmw + pnucblkt*(emult-1.0D0))
+            pnucblkt*(1.0D0 - 1.0D0/emult))
+       call ovarre(outfile,'Total (MW)','',powfmw + pnucblkt*(1.0D0 - 1.0D0/emult))
 
        call oblnkl(outfile)
        call ovarre(outfile,'Net electrical output (MW)', &
