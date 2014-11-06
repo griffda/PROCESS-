@@ -1197,7 +1197,7 @@ module fwbs_module
   implicit none
 
   private
-  public :: fwbs, blanket_neutronics_hcpb_kit, sctfcoil_nuclear_heating_iter90
+  public :: fwbs, blanket_neutronics_hcpb_kit, sctfcoil_nuclear_heating_iter90,tsat
 
 contains
 
