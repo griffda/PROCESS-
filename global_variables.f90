@@ -1281,6 +1281,7 @@ module pfcoil_variables
   !+ad_hist  22/09/14 PJK Attempted to clarify zref description
   !+ad_hist  16/10/14 PJK Added pfcaseth,isumatoh,fcupfsu,awpoh
   !+ad_hist  20/10/14 PJK Added alstroh
+  !+ad_hist  06/11/14 PJK Added areaoh,jstrandoh_bop,jstrandoh_eof,jscoh_bop,jscoh_eof
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1312,7 +1313,9 @@ module pfcoil_variables
   real(kind(1.0D0)) :: alfapf = 5.0D-10
   !+ad_vars  alstroh : allowable hoop stress in central solenoid (Pa)
   real(kind(1.0D0)) :: alstroh = 0.0D0
-  !+ad_vars  awpoh : central solenoid winding pack area (m2)
+  !+ad_vars  areaoh : central solenoid cross-sectional area (m2)
+  real(kind(1.0D0)) :: areaoh = 0.0D0
+  !+ad_vars  awpoh : central solenoid conductor+void area (m2)
   real(kind(1.0D0)) :: awpoh = 0.0D0
   !+ad_vars  bmaxoh : maximum field in central solenoid at end of flat-top (EoF) (T)
   real(kind(1.0D0)) :: bmaxoh = 0.0D0
@@ -1342,7 +1345,7 @@ module pfcoil_variables
   !+ad_varc                  beginning of pulse / end of flat-top
   !+ad_varc                  (iteration variable 41)
   real(kind(1.0D0)) :: fcohbop = 0.9D0
-  !+ad_vars  fcuohsu /0.4/ : copper fraction of conductor in central solenoid cable
+  !+ad_vars  fcuohsu /0.4/ : copper fraction of strand in central solenoid cable
   real(kind(1.0D0)) :: fcuohsu = 0.4D0
   !+ad_vars  fcupfsu /0.69/ : copper fraction of cable conductor (PF coils)
   real(kind(1.0D0)) :: fcupfsu = 0.69D0
@@ -1371,6 +1374,18 @@ module pfcoil_variables
   !+ad_varc            <LI> = 3 NbTi;
   !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters</UL>
   integer :: isumatpf = 1
+  !+ad_vars  jscoh_bop : central solenoid superconductor critical current density (A/m2)
+  !+ad_varc                  at beginning-of-pulse
+  real(kind(1.0D0)) :: jscoh_bop = 0.0D0
+  !+ad_vars  jscoh_eof : central solenoid superconductor critical current density (A/m2)
+  !+ad_varc                  at end-of-flattop
+  real(kind(1.0D0)) :: jscoh_eof = 0.0D0
+  !+ad_vars  jstrandoh_bop : central solenoid strand critical current density (A/m2)
+  !+ad_varc                  at beginning-of-pulse
+  real(kind(1.0D0)) :: jstrandoh_bop = 0.0D0
+  !+ad_vars  jstrandoh_eof : central solenoid strand critical current density (A/m2)
+  !+ad_varc                  at end-of-flattop
+  real(kind(1.0D0)) :: jstrandoh_eof = 0.0D0
   !+ad_vars  ncirt : number of PF circuits (including central solenoid and plasma)
   integer :: ncirt = 0
   !+ad_vars  ncls(ngrpmx+2) /1,1,2/ : number of PF coils in group j
@@ -1445,7 +1460,7 @@ module pfcoil_variables
   real(kind(1.0D0)), dimension(ngc2) :: turns = 0.0D0
   !+ad_vars  vf(ngc2) /0.3/ : winding pack void fraction of PF coil i for coolant
   real(kind(1.0D0)), dimension(ngc2) :: vf = 0.3D0
-  !+ad_vars  vfohc /0.2/ : winding pack void fraction of central solenoid for coolant
+  !+ad_vars  vfohc /0.2/ : void fraction of central solenoid for coolant
   real(kind(1.0D0)) :: vfohc = 0.2D0
   !+ad_vars  vsbn : total flux swing available for burn (Wb)
   real(kind(1.0D0)) :: vsbn = 0.0D0
@@ -1704,7 +1719,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: sigver  = 0.0D0
   !+ad_vars  sigvert : vertical tensile stress in TF coil (Pa)
   real(kind(1.0D0)) :: sigvert = 0.0D0
-  !+ad_vars  strncon /-0.005/ : strain in superconductor material
+  !+ad_vars  strncon /-0.005/ : strain in superconductor material (TF, PF and CS)
   !+ad_varc                     (used in ITER Nb3Sn critical surface model)
   real(kind(1.0D0)) :: strncon = -0.005D0
   !+ad_vars  strtf1 : Von Mises stress in TF cable conduit (Pa)

@@ -1668,7 +1668,9 @@ contains
       !+ad_hist  13/10/14 PJK Improved temperature margin calculation;
       !+ad_hisc               added jcrit,bcrit,tcrit outputs to file
       !+ad_hist  16/10/14 PJK Clarified jcrit outputs; added early exit from
-      !+ad_hist               tmargin loop if problems are occurring
+      !+ad_hisc               tmargin loop if problems are occurring
+      !+ad_hist  06/11/14 PJK Added local variable jcritstr; inverted
+      !+ad_hisc               areas in bi2212 jstrand input
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
@@ -1687,8 +1689,8 @@ contains
 
       integer :: lap
       real(kind(1.0D0)) :: b,bc20m,bcrit,c0,delt,fcond,icrit,iooic, &
-           jcrit,jcrit0,jcritm,jcritp,jstrand,jtol,jwdgop,t,tc0m, &
-           tcrit,ttest,ttestm,ttestp
+           jcritsc,jcrit0,jcritm,jcritp,jcritstr,jsc,jstrand,jtol,jwdgop, &
+           t,tc0m,tcrit,ttest,ttestm,ttestp
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1696,7 +1698,7 @@ contains
 
       fcond = 1.0D0 - fhe
 
-      !  Find critical current density
+      !  Find critical current density in superconducting strand, jcritstr
 
       select case (isumat)
 
@@ -1704,64 +1706,49 @@ contains
          bc20m = 32.97D0
          tc0m = 16.06D0
 
+         !  jcritsc returned by itersc is the critical current density in the
+         !  superconductor - not the whole strand, which contains copper
+
+         call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+         jcritstr = jcritsc * (1.0D0-fcu)
+
       case (2)  !  Bi-2212 high temperature superconductor parameterization
-	      continue  !  ...see below
+
+         !  Current density in a strand of Bi-2212 conductor
+         !  N.B. jcrit returned by bi2212 is the critical current density
+         !  in the strand, not just the superconducting portion.
+         !  The parameterization for jcritstr assumes a particular strand
+         !  composition that does not require a user-defined copper fraction,
+         !  so this is irrelevant in this model
+
+         !  Previously (wrongly) jstrand = jwp * acs*(1.0D0-fhe)/aturn
+         jstrand = jwp * aturn / (acs*(1.0D0-fhe))
+
+         call bi2212(bmax,jstrand,thelium,fhts,jcritstr,tmarg)
+         jcritsc = jcritstr / (1.0D0-fcu)
+         tcrit = thelium + tmarg
 
       case (3)  !  NbTi data
          bc20m = 15.0D0
          tc0m = 9.3D0
          c0 = 1.0D10
+         call jcrit_nbti(thelium,bmax,c0,bc20m,tc0m,jcritsc,tcrit)
+         jcritstr = jcritsc * (1.0D0-fcu)
 
       case (4)  !  As (1), but user-defined parameters
          bc20m = bcritsc
          tc0m = tcritsc
+         call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+         jcritstr = jcritsc * (1.0D0-fcu)
 
       case default  !  Error condition
          idiags(1) = isumat ; call report_error(105)
 
       end select
 
-      !  Calculate critical current density and temperature
-
-      select case (isumat)
-
-      case (1,4)  !  ITER Nb3Sn critical surface model
-
-         !  jcrit is the critical current density in the superconductor;
-         !  jcrit_strand = jcrit*(1-fcu)
-
-         call itersc(thelium,bmax,strain,bc20m,tc0m,jcrit,bcrit,tcrit)
-
-      case (2)  !  Bi-2212 high temperature superconductor model
-
-         !  Current density in a strand of Bi-2212 conductor
-         !  N.B. jcrit returned by bi2212 is the critical current density
-         !  in the strand, not just the superconducting portion.
-         !  The parameterization for jcrit assumes a particular strand
-         !  composition that does not require a user-defined copper fraction,
-         !  so this is irrelevant in this model
-
-         jstrand = jwp * acs*(1.0D0-fhe)/aturn
-
-         call bi2212(bmax,jstrand,thelium,fhts,jcrit,tmarg)
-         tcrit = thelium + tmarg
-
-      case (3)  !  NbTi model
-
-         !  jcrit is the critical current density in the superconductor;
-         !  jcrit_strand = jcrit*(1-fcu)
-
-         call jcrit_nbti(thelium,bmax,c0,bc20m,tc0m,jcrit,tcrit)
-
-      end select
-
       !  Critical current
 
-      if (isumat /= 2) then
-         icrit = jcrit * acs * (1.0D0 - fhe) * (1.0D0 - fcu)
-      else
-         icrit = jcrit * acs * (1.0D0 - fhe)  !  see comment above
-      end if
+      icrit = jcritstr * acs * (1.0D0-fhe)
 
       !  Critical current density in winding pack
 
@@ -1785,10 +1772,10 @@ contains
          delt = 0.01D0
          jtol = 1.0D4
 
-         !  Actual current density in strand, which should be equal to jcrit(thelium+tmarg)
+         !  Actual current density in superconductor, which should be equal to jcrit(thelium+tmarg)
          !  when we have found the desired value of tmarg
 
-         jstrand = iooic * jcrit
+         jsc = iooic * jcritsc
 
          lap = 0
          solve_for_tmarg: do ; lap = lap+1
@@ -1808,8 +1795,8 @@ contains
                call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
                call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
             end select
-            if (abs(jstrand-jcrit0) <= jtol) exit solve_for_tmarg
-            ttest = ttest - 2.0D0*delt*(jcrit0-jstrand)/(jcritp-jcritm)
+            if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
+            ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
          end do solve_for_tmarg
 
          tmarg = ttest - thelium
@@ -1847,6 +1834,7 @@ contains
       call ovarre(outfile,'Helium temperature at peak field (K)','(thelium)',thelium)
       call ovarre(outfile,'Helium fraction inside cable space','',fhe)
       call ovarre(outfile,'Copper fraction of conductor','(fcu)',fcu)
+      call ovarre(outfile,'Strain on superconductor','(strain)',strain)
 
       call osubhd(outfile,'Critical Current Information :')
       if (isumat /= 2) then
@@ -1855,7 +1843,8 @@ contains
          call ovarre(outfile,'Critical temperature at zero field and strain (K)', &
               '(tc0m)',tc0m)
       end if
-      call ovarre(outfile,'Critical current density in strand (A/m2)','(jcrit)',jcrit)
+      call ovarre(outfile,'Critical current density in superconductor (A/m2)','(jcritsc)',jcritsc)
+      call ovarre(outfile,'Critical current density in strand (A/m2)','(jcritstr)',jcritstr)
       if ((isumat == 1).or.(isumat == 4)) then
          call ovarre(outfile,'Critical field (T)','(bcrit)',bcrit)
       end if
