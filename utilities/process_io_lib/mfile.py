@@ -23,10 +23,10 @@
 
 """
 
-import process_io_lib.process_dicts
 import logging
 LOG = logging.getLogger("mfile")
 
+from . import process_dicts
 
 class MFileVariable(object):
     """Class for containing a single mfile variable """
@@ -47,8 +47,8 @@ class MFileVariable(object):
         """
         self.var_name = var_name
         self.var_description = var_description
-        LOG.debug("Initialising variable '%s': %s" % (self.var_name,
-                                                      self.var_description))
+        LOG.debug("Initialising variable '{}': {}".format(self.var_name,
+                                                          self.var_description))
 
     def set_scan(self, scan_number, scan_value):
         """ Sets the class attribute self.scan# where # is scan number
@@ -58,9 +58,8 @@ class MFileVariable(object):
           scan_value --> value of parameter for scan
 
         """
-        setattr(self, "scan%d" % scan_number, scan_value)
-        LOG.debug("Scan %d for variable '%s' == %s" %
-                  (scan_number, self.var_name, str(scan_value)))
+        setattr(self, "scan{}".format(scan_number), scan_value)
+        LOG.debug("Scan {} for variable '{}' == {}".format(scan_number, self.var_name, str(scan_value)))
 
     def get_scan(self, scan_number):
         """Returns the value of a specific scan. For scan = -1 the last scan is
@@ -119,7 +118,7 @@ class MFileErrorClass(object):
         self.get_number_of_scans = self.get_error
 
     def get_error(self, *args, **kwargs):
-        LOG.error("Key '%s' not in MFILE. KeyError! Check MFILE" % self.item)
+        LOG.error("Key '{}' not in MFILE. KeyError! Check MFILE".format(self.item))
         return 0
 
     @property
@@ -149,28 +148,24 @@ class MFileDataDictionary(object):
 class MFile(object):
     def __init__(self, filename="MFILE.DAT"):
         """Class object to store the MFile Objects"""
-
-        LOG.info("Creating MFile class for file '%s'" % filename)
+        LOG.info("Creating MFile class for file '{}'".format(filename))
         self.filename = filename
         self.data = MFileDataDictionary()
         self.mfile_lines = list()
-        LOG.info("Opening file '%s'" % self.filename)
+        LOG.info("Opening file '{}'".format(self.filename))
         self.open_mfile()
-        LOG.info("Parsing file '%s'" % self.filename)
+        LOG.info("Parsing file '{}'".format(self.filename))
         self.parse_mfile()
 
     def open_mfile(self):
         """Function to open MFILE.DAT"""
-        mfile = open(self.filename, "r")
-        self.mfile_lines = mfile.readlines()
+        with open(self.filename, "r") as mfile:
+            self.mfile_lines = mfile.readlines()
 
     def parse_mfile(self):
         """Function to parse MFILE.DAT"""
-
-        for line in self.mfile_lines:
-            c_line = clean_line(line)
-            if c_line != [""]:
-                self.add_line(c_line)
+        self.add_line(clean_line for clean_line in self.mfile_lines
+                      if clean_line != [""])
 
     def add_line(self, line):
         """Function to read the line from MFILE and add to the appropriate
@@ -323,15 +318,13 @@ def make_plot_dat(mfile_data, custom_keys, filename="make_plot_dat.out",
         write_column_mplot_dat(filename, custom_keys, mfile_data)
     else:
         # If file_format not recognised print error
-        print("# Error >> Format %s not recognised. Use row or column" %
-              file_format)
+        print("# Error >> Format {} not recognised. Use row or column".format(file_format))
 
     for ckey in custom_keys:
         if ckey not in keys:
             # For each item in the custom_keys list that isn't in the file
             # print out an error.
-            print(" # Error >> Key: '%s' was NOT found in MFILE.DAT!" %
-                  ckey)
+            print(" # Error >> Key: '{}' was NOT found in MFILE.DAT!".format(ckey))
             print(" \t\t (So is NOT in make_plot_dat.out!)")
 
 
@@ -345,7 +338,7 @@ def write_row_mplot_dat(filename, custom_keys, mfile_data):
             # Get the scan values for the row
             values = ""
             for item in mfile_data.data[key].get_scans():
-                values += "%.4e" % item + " "
+                values += "{:.4e}".format(item) + " "
             values += "\n"
 
             # Create the file line [name, description, val1, val2, ...]
@@ -379,15 +372,14 @@ def write_column_mplot_dat(filename, custom_keys, mfile_data):
 
     # Write row to file
     plot_dat = open(filename, "a")
-    plot_dat.write(var_names+"\n")
+    plot_dat.write(var_names + "\n")
     plot_dat.close()
 
     # Write rows of values. One row for each scan.
     for num in range(num_scans):
         values = ""
         for vkey in val_keys:
-            values += "%.4e " % mfile_data.data[vkey].\
-                get_scan(num+1)
+            values += "{:.4e} ".format(mfile_data.data[vkey].get_scan(num+1))
         values += "\n"
         plot_dat = open(filename, "a")
         plot_dat.write(values)
