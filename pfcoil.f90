@@ -626,12 +626,14 @@ contains
 
           if (ij == 1) call peakb(i,iii,it,bri,bro,bzi,bzo)  !  returns bpf, bpf2
 
-          !  Allowable current density
+          !  Allowable current density (for superconducting coils)
 
-          !rjpfalw(i) = pfjalw(bpf(i),bpf2(i),ra(i),rb(i),sigpfalw)
-          bmax = max(abs(bpf(i)), abs(bpf2(i)))
-          call superconpf(aturn(i),bmax,vf(i),fcupfsu,rjconpf(i),isumatpf,fhts, &
-               strncon,tftmp,bcritsc,tcritsc,rjpfalw(i),jstrand,jsc)
+          if (ipfres == 0) then
+             !rjpfalw(i) = pfjalw(bpf(i),bpf2(i),ra(i),rb(i),sigpfalw)
+             bmax = max(abs(bpf(i)), abs(bpf2(i)))
+             call superconpf(aturn(i),bmax,vf(i),fcupfsu,rjconpf(i),isumatpf,fhts, &
+                  strncon,tftmp,bcritsc,tcritsc,rjpfalw(i),jstrand,jsc)
+          end if
 
           !  Length of conductor
 
@@ -761,6 +763,7 @@ contains
     !+ad_hist  16/10/14 PJK New calculation for critical current density
     !+ad_hisc               and steel case area
     !+ad_hist  06/11/14 PJK Used strncon to specify strain in OH superconductor
+    !+ad_hist  10/11/14 PJK Clarified comments
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -823,33 +826,37 @@ contains
 
     vf(nohc) = vfohc
 
+    !  Peak field at the End-Of-Flattop (EOF)
+    !  Occurs at inner edge of coil; bmaxoh2 and bzi are of opposite sign at EOF
+
     !  Peak field due to OH coil itself
 
     bmaxoh2 = bfmax(coheof,ra(nohc),rb(nohc),hohc)
 
-    !  Peak field due to all other coils as well
+    !  Peak field due to other PF coils plus plasma
 
     timepoint = 5 ; call peakb(nohc,99,timepoint,bri,bro,bzi,bzo)
 
-    !  Peak field at the End-Of-Flattop (EOF)
-
-    bmaxoh = sqrt ( (-bmaxoh2+bzi)**2 )
+    bmaxoh = abs(bzi - bmaxoh2)
     bohci = bmaxoh
 
     !  Peak field on outboard side of OH coil
+    !  (self-field is assumed to be zero - long solenoid approximation)
 
     bohco = abs(bzo)
 
-    !  Peak field at the Beginning-Of-Pulse (BOP) (see above)
+    !  Peak field at the Beginning-Of-Pulse (BOP)
+    !  Occurs at inner edge of coil; bmaxoh0 and bzi are of same sign at BOP
 
     bmaxoh0 = bfmax(cohbop,ra(nohc),rb(nohc),hohc)
     timepoint = 2 ; call peakb(nohc,99,timepoint,bri,bro,bzi,bzo)
-    bmaxoh0 = sqrt( (bmaxoh0 + bzi)**2 )
+
+    bmaxoh0 = abs(bmaxoh0 + bzi)
 
     !  Maximum field values
 
-    bpf(nohc) = max(bmaxoh,abs(bmaxoh0))
-    bpf2(nohc) = max(bohco,abs(bzo))
+    bpf(nohc) = max(bmaxoh, abs(bmaxoh0))
+    bpf2(nohc) = max(bohco, abs(bzo))
 
     !  (J x B) hoop force on OH coil (N)
 
@@ -888,31 +895,35 @@ contains
 
     wtc(nohc) = awpoh * (1.0D0-vfohc) * 2.0D0*pi*rpf(nohc) * dcond(isumatoh)
 
-    !  Allowable coil overall current density at EOF
+    if (ipfres == 0) then
 
-    !rjohc = pfjalw(bohci,bohco,ra(nohc),rb(nohc),sigpfalw)
-    call superconpf(awpoh/turns(nohc),bmaxoh,vfohc,fcuohsu, &
-         abs(ric(nohc))/awpoh,isumatoh,fhts,strncon,tftmp, &
-         bcritsc,tcritsc,jcritwp,jstrandoh_eof,jscoh_eof)
+       !  Allowable coil overall current density at EOF
+       !  (superconducting coils only)
 
-    rjohc = jcritwp * awpoh/areaoh
+       !rjohc = pfjalw(bohci,bohco,ra(nohc),rb(nohc),sigpfalw)
+       call superconpf(awpoh/turns(nohc),bmaxoh,vfohc,fcuohsu, &
+            abs(ric(nohc))/awpoh,isumatoh,fhts,strncon,tftmp, &
+            bcritsc,tcritsc,jcritwp,jstrandoh_eof,jscoh_eof)
 
-    !  Allowable coil overall current density at BOP
+       rjohc = jcritwp * awpoh/areaoh
 
-    !rjpfalw(nohc) = pfjalw(bmaxoh0,abs(bzo),ra(nohc),rb(nohc),sigpfalw)
-    call superconpf(awpoh/turns(nohc),bmaxoh0,vfohc,fcuohsu, &
-         abs(ric(nohc))/awpoh,isumatoh,fhts,strncon,tftmp, &
-         bcritsc,tcritsc,jcritwp,jstrandoh_bop,jscoh_bop)
+       !  Allowable coil overall current density at BOP
 
-    rjpfalw(nohc) = jcritwp * awpoh/areaoh
-    rjohc0 = rjpfalw(nohc)
+       !rjpfalw(nohc) = pfjalw(bmaxoh0,abs(bzo),ra(nohc),rb(nohc),sigpfalw)
+       call superconpf(awpoh/turns(nohc),bmaxoh0,vfohc,fcuohsu, &
+            abs(ric(nohc))/awpoh,isumatoh,fhts,strncon,tftmp, &
+            bcritsc,tcritsc,jcritwp,jstrandoh_bop,jscoh_bop)
 
-    !  Resistive power losses (non-superconducting coil)
+       rjpfalw(nohc) = jcritwp * awpoh/areaoh
+       rjohc0 = rjpfalw(nohc)
 
-    if (ipfres /= 0) then
+    else
+       !  Resistive power losses (non-superconducting coil)
+
        powohres = 2.0D0 * pi * rohc * pfclres / &
             (areaoh * (1.0D0-vfohc)) * (1.0D6*ric(nohc))**2
        powpfres = powpfres + powohres
+
     end if
 
   end subroutine ohcalc
@@ -1438,7 +1449,7 @@ contains
     !+ad_call  None
     !+ad_hist  19/09/11 PJK Initial F90 version
     !+ad_hist  16/10/12 PJK Added constants
-    !+ad_stat  Okay
+    !+ad_stat  Okay; results agree with Culham MAGLIB routines
     !+ad_docs  None
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1573,7 +1584,12 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if ((iohcl /= 0).and.(i == nohc)) then  !  OH coil
+    !  OH coil contribution
+
+    if ((iohcl /= 0).and.(i == nohc)) then
+       !  Peak field is to be calculated at the OH coil itself,
+       !  so exclude its own contribution; its self field is
+       !  dealt with externally using routine BFMAX
        kk = 0
     else
 
@@ -1610,7 +1626,7 @@ contains
 
     end if
 
-    !  Loop over all coils
+    !  Non-OH coils' contributions
 
     jj = 0
     do iii = 1,ngrp
@@ -1651,7 +1667,8 @@ contains
        end do
     end do
 
-    !  Plasma effect
+    !  Plasma contribution
+
     if (it > 2) then
        kk = kk + 1
        rfxf(kk) = rmajor
@@ -1659,10 +1676,13 @@ contains
        cfxf(kk) = plascur
     end if
 
+    !  Calculate the field at the inner and outer edges
+    !  of the coil of interest
+
     call bfield(kk,rfxf,zfxf,cfxf,xind,ra(i),zpf(i),bri,bzi,psi)
     call bfield(kk,rfxf,zfxf,cfxf,xind,rb(i),zpf(i),bro,bzo,psi)
 
-    !  Peak field at OH coil is dealt with in BFMAX
+    !  bpf and bpf2 for the OH coil are calculated in OHCALC
 
     if ((iohcl /= 0).and.(i == nohc)) return
 
@@ -2393,6 +2413,7 @@ contains
     !+ad_hist  15/10/14 PJK Added more outputs
     !+ad_hist  20/10/14 PJK Minor changes to output wording
     !+ad_hist  06/11/14 PJK Added extra diagnostic outputs
+    !+ad_hist  10/11/14 PJK Removed critical current density output for resistive coils
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2438,52 +2459,51 @@ contains
           call ocmmnt(outfile,'Resistive central solenoid')
        end if
 
-       call osubhd(outfile,'Central Solenoid Current Density Limits :')
-       call ovarre(outfile,'Maximum field at Beginning Of Pulse (T)', &
-            '(bmaxoh0)',bmaxoh0)
-       call ovarre(outfile,'Critical superconductor current density at BOP (A/m2)', &
-            '(jscoh_bop)',jscoh_bop)
-       call ovarre(outfile,'Critical strand current density at BOP (A/m2)', &
-            '(jstrandoh_bop)',jstrandoh_bop)
-       call ovarre(outfile,'Allowable overall current density at BOP (A/m2)', &
-            '(rjohc0)',rjohc0)
-       call ovarre(outfile,'Actual overall current density at BOP (A/m2)', &
-            '(cohbop)',cohbop)
-       call oblnkl(outfile)
-       call ovarre(outfile,'Maximum field at End Of Flattop (T)', &
-            '(bmaxoh)',bmaxoh)
-       call ovarre(outfile,'Critical superconductor current density at EOF (A/m2)', &
-            '(jscoh_eof)',jscoh_eof)
-       call ovarre(outfile,'Critical strand current density at EOF (A/m2)', &
-            '(jstrandoh_eof)',jstrandoh_eof)
-       call ovarre(outfile,'Allowable overall current density at EOF (A/m2)', &
-            '(rjohc)',rjohc)
-       call ovarre(outfile,'Actual overall current density at EOF (A/m2)', &
-            '(coheof)',coheof)
-       call oblnkl(outfile)
-       call ovarre(outfile,'CS conductor+void cross-sectional area (m2)', &
-            '(awpoh)',awpoh)
-       call ovarre(outfile,'CS steel cross-sectional area (m2)', &
-            '(areaoh-awpoh)',areaoh-awpoh)
-       call ovarre(outfile,'CS steel area fraction', &
-            '',(areaoh-awpoh)/areaoh)
-       call ovarre(outfile,'Allowable hoop stress in CS steel (Pa)', &
-            '(alstroh)',alstroh)
-       call ovarre(outfile,'Strain on superconductor', &
-            '(strncon)',strncon)
-       call ovarre(outfile,'Copper fraction in strand', &
-            '(fcuohsu)',fcuohsu)
-       call ovarre(outfile,'Void (coolant) fraction in conductor', &
-            '(vfohc)',vfohc)
-       call ovarre(outfile,'Helium coolant temperature (K)', &
-            '(tftmp)',tftmp)
-!+PJK obsolete...
-       !call ovarre(outfile,'Allowable stress at BOP (MPa)', &
-       !     '(sigpfalw)',sigpfalw)
+       if (ipfres == 0) then
+          call osubhd(outfile,'Central Solenoid Current Density Limits :')
+          call ovarre(outfile,'Maximum field at Beginning Of Pulse (T)', &
+               '(bmaxoh0)',bmaxoh0)
+          call ovarre(outfile,'Critical superconductor current density at BOP (A/m2)', &
+               '(jscoh_bop)',jscoh_bop)
+          call ovarre(outfile,'Critical strand current density at BOP (A/m2)', &
+               '(jstrandoh_bop)',jstrandoh_bop)
+          call ovarre(outfile,'Allowable overall current density at BOP (A/m2)', &
+               '(rjohc0)',rjohc0)
+          call ovarre(outfile,'Actual overall current density at BOP (A/m2)', &
+               '(cohbop)',cohbop)
+          call oblnkl(outfile)
+          call ovarre(outfile,'Maximum field at End Of Flattop (T)', &
+               '(bmaxoh)',bmaxoh)
+          call ovarre(outfile,'Critical superconductor current density at EOF (A/m2)', &
+               '(jscoh_eof)',jscoh_eof)
+          call ovarre(outfile,'Critical strand current density at EOF (A/m2)', &
+               '(jstrandoh_eof)',jstrandoh_eof)
+          call ovarre(outfile,'Allowable overall current density at EOF (A/m2)', &
+               '(rjohc)',rjohc)
+          call ovarre(outfile,'Actual overall current density at EOF (A/m2)', &
+               '(coheof)',coheof)
+          call oblnkl(outfile)
+          call ovarre(outfile,'CS conductor+void cross-sectional area (m2)', &
+               '(awpoh)',awpoh)
+          call ovarre(outfile,'CS steel cross-sectional area (m2)', &
+               '(areaoh-awpoh)',areaoh-awpoh)
+          call ovarre(outfile,'CS steel area fraction', &
+               '',(areaoh-awpoh)/areaoh)
+          call ovarre(outfile,'Allowable hoop stress in CS steel (Pa)', &
+               '(alstroh)',alstroh)
+          call ovarre(outfile,'Strain on superconductor', &
+               '(strncon)',strncon)
+          call ovarre(outfile,'Copper fraction in strand', &
+               '(fcuohsu)',fcuohsu)
+          call ovarre(outfile,'Void (coolant) fraction in conductor', &
+               '(vfohc)',vfohc)
+          call ovarre(outfile,'Helium coolant temperature (K)', &
+               '(tftmp)',tftmp)
 
-       if ( (abs(coheof) < 0.99D0*abs(rjohc)).and. &
-            (abs(cohbop) < 0.99D0*abs(rjohc0)) ) then
-          call report_error(135)
+          if ( (abs(coheof) < 0.99D0*abs(rjohc)).and. &
+               (abs(cohbop) < 0.99D0*abs(rjohc0)) ) then
+             call report_error(135)
+          end if
        end if
 
     end if
@@ -2508,12 +2528,16 @@ contains
 
        call ovarre(outfile,'Copper fraction in conductor','(fcupfsu)',fcupfsu)
 
+       call osubhd(outfile,'PF Coil Case Stress :')
+       call ovarre(outfile,'Maximum permissible tensile stress (MPa)', &
+            '(sigpfcalw)',sigpfcalw)
+       call ovarre(outfile,'JxB hoop force fraction supported by case', &
+            '(sigpfcf)',sigpfcf)
+
     else
        call oblnkl(outfile)
        call ocmmnt(outfile,'Resistive PF coils')
-    end if
 
-    if (ipfres /= 0) then
        call osubhd(outfile,'Resistive Power :')
        call ovarre(outfile,'PF coil resistive power (W)','(powpfres)', &
             powpfres)
@@ -2521,12 +2545,7 @@ contains
           call ovarre(outfile,'Central solenoid resistive power (W)','(powohres)', &
                powohres)
        end if
-    else
-       call osubhd(outfile,'PF Coil Case Stress :')
-       call ovarre(outfile,'Maximum permissible tensile stress (MPa)', &
-            '(sigpfcalw)',sigpfcalw)
-       call ovarre(outfile,'JxB hoop force fraction supported by case', &
-            '(sigpfcf)',sigpfcf)
+
     end if
 
     !  nef is the number of coils excluding the OH coil
@@ -2619,8 +2638,13 @@ contains
     !  PF coils
 
     do k = 1,nef
-       write(outfile,90) k,ric(k),rjpfalw(k),rjconpf(k), &
-            (rjconpf(k)/rjpfalw(k)),wtc(k),wts(k),bpf(k)
+       if (ipfres == 0) then
+          write(outfile,90) k,ric(k),rjpfalw(k),rjconpf(k), &
+               (rjconpf(k)/rjpfalw(k)),wtc(k),wts(k),bpf(k)
+       else
+          write(outfile,90) k,ric(k),-1.0D0,rjconpf(k), &
+               1.0D0,wtc(k),wts(k),bpf(k)
+       end if
     end do
 
     !  The 0p syntax is needed here and on line 100
@@ -2632,13 +2656,17 @@ contains
     !  OH coil, if present
 
     if (iohcl /= 0) then
-
-       write(outfile,100) ric(nohc),rjpfalw(nohc),cohbop, &
-            (cohbop/rjpfalw(nohc)),wtc(nohc),wts(nohc), &
-            bpf(nohc)
+       if (ipfres == 0) then
+          write(outfile,100) ric(nohc),rjpfalw(nohc),cohbop, &
+               (cohbop/rjpfalw(nohc)),wtc(nohc),wts(nohc), &
+               bpf(nohc)
+       else
+          write(outfile,100) ric(nohc),-1.0D0,cohbop, &
+               1.0D0,wtc(nohc),wts(nohc),bpf(nohc)
+       end if
+    end if
 
 100    format('  CS ',f8.2,2(1pe11.3),0p,f6.2,1pe10.3,1pe12.3,1pe13.3)
-    end if
 
     !  Miscellaneous totals
 
