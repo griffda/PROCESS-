@@ -19,7 +19,7 @@ import json
 from time import sleep
 from numpy.random import seed
 
-#from configuration import Config
+from configuration import Config
 
 from process_io_lib.in_dat import INDATNew, INVariable
 from process_io_lib.mfile import MFile
@@ -27,6 +27,22 @@ from process_io_lib.mfile import MFile
 
 def print_config(config_instance):
     print(config_instance.get_current_state())
+
+
+
+class RunProcessConfigNew(Config):
+    
+    """Configuration for the execution of PROCESS."""
+    
+    def __init__(self, config_file="run_process.json"):
+        super().__init__(config_file)
+        
+    def setup_directory(self):
+        
+        os.makedirs(abspath(self.get("output_directory")))
+        
+        
+    
 
 
 #class RunProcessConfig(Config):
