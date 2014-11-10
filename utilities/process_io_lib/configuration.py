@@ -10,6 +10,10 @@ import logging
 
 # temporary
 api_logger = logging.getLogger("process_api")
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+api_logger.addHandler(ch)
+api_logger.setLevel(logging.DEBUG)
 
 
 class ConfigurationParser(object):
@@ -26,19 +30,20 @@ class ConfigurationParser(object):
     def data(self):
         return self._data
         
-    @x.setter
+    @data.setter
     def data(self, value):
         """Validate the configuration is provided in a specific format."""
         self.data_validate(value)
         self._data = value
     
-    @x.deleter
+    @data.deleter
     def data(self):
         del self._data
         
     def data_validate(self, value):
         """Check that value corresponds to a specific data format."""
-        if not isinstance(value, dict):
+        api_logger.info("type of value: {}".format(type(value)))
+        if not isinstance(value, dict) and value is not None:
             raise ValueError("Configuration data must be specified as a "
                              "dictionary")
 
@@ -51,7 +56,8 @@ class JsonConfigParser(ConfigurationParser):
         self.data = None
         try:
             with open(filename) as fh:
-                self.data = json.load(fh)
+                config_file_data = json.load(fh)
+                self.data = config_file_data
         except FileNotFoundError:
             api_logger.error("Cannot find configuration file "
                              "{}".format(filename))
@@ -60,14 +66,14 @@ class JsonConfigParser(ConfigurationParser):
 
 class Config(object):
     
-    """Generic configuration for PROCESS tools."""
+    """Generic configuration for PROCESS tools. Read-only."""
     
     def __init__(self, config_file, parser=JsonConfigParser):
         self.config_file = config_file
         parser = JsonConfigParser(config_file)
         self.config_data = parser.data
     
-    def _search_config_for(config, *keys):
+    def _search_config_for(self, config, *keys):
         """Recursively search config (a dict) for keys."""
         try:
             search_key = keys[0]
@@ -99,7 +105,7 @@ class Config(object):
         """
         
         try:
-            self._search_config_for(self.config_data, *config_keys)
+            return self._search_config_for(self.config_data, *config_keys)
         except KeyError:
             api_logger.exception("Cannot find value for {} in "
                                  "configuration".format(config_keys))

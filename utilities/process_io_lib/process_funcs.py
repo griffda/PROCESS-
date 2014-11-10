@@ -143,13 +143,13 @@ def check_logfile(logfile='process.log'):
     XXX should be deprecated!! XXX
     """
 
-    outlogfile = open(logfile, 'r')
-    errormessage = 'Please check the output file for further information.'
-    for line in outlogfile:
-        if errormessage in line:
-            print('An Error has occured. Please check the output \
-                   file for more information.')
-            exit()
+    with open(logfile, 'r') as outlogfile:
+        errormessage = 'Please check the output file for further information.'
+        for line in outlogfile:
+            if errormessage in line:
+                print('An Error has occured. Please check the output \
+                       file for more information.')
+                exit()
 
 
 def check_input_error(wdir='.'):
@@ -212,10 +212,10 @@ def no_unfeasible_mfile(wdir='.'):
     in a scan in MFILE.DAT
     """
 
-    m_file = MFile(filename=pjoin(wdir, "MFILE.DAT")
+    m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
 
     #no scans
-    if not m_file.data['isweep'].exists:
+    if not m_file.data['isweep'].exists():
 
         if m_file.data['ifail'].get_scan(0) == IFAIL_SUCCESS:
             return 0

@@ -22,6 +22,8 @@
 
 """
 
+from os.path import abspath
+
 from process_io_lib.process_dicts import DICT_VAR_TYPE as VAR_TYPE
 
 
@@ -199,56 +201,56 @@ class INDATClassic(object):
 
         """
         # Open IN.DAT (or self.filename) and read lines
-        in_dat = open(self.filename, "r")
-        in_dat_lines = in_dat.readlines()
-
-        # Clean the lines using self.clear_lines
-        clean_lines = clear_lines(in_dat_lines)
-
-        for line in clean_lines:
-
-            # If the module delimiter '$' present then make sure it is not the
-            # end of the module
-            if "$" in line:
-                if "END" not in line:
-                    module = line.strip("$ \n \r").replace(" ", "")
-                    self.order.append(module)
-                    self.module_data[module] = INModule(module)
-
-            # Keep empty lines. self.clear_lines already swapped multiple
-            # empty lines with a single empty line.
-            elif line == "":
-                self.module_data[module].add_line(line)
-
-            else:
-                # If line starts with a '*' then the line is commented out so
-                # will be added as a non-variable string line.
-                if line[0] == "*":
-                    self.module_data[module].add_line(line.strip("\n"))
-
+        with open(self.filename, "r") as in_dat:
+            in_dat_lines = in_dat.readlines()
+    
+            # Clean the lines using self.clear_lines
+            clean_lines = clear_lines(in_dat_lines)
+    
+            for line in clean_lines:
+    
+                # If the module delimiter '$' present then make sure it is not the
+                # end of the module
+                if "$" in line:
+                    if "END" not in line:
+                        module = line.strip("$ \n \r").replace(" ", "")
+                        self.order.append(module)
+                        self.module_data[module] = INModule(module)
+    
+                # Keep empty lines. self.clear_lines already swapped multiple
+                # empty lines with a single empty line.
+                elif line == "":
+                    self.module_data[module].add_line(line)
+    
                 else:
-
-                    # If there is a '*' elsewhere in the line then it is
-                    # assumed that there is an inline comment
-                    if "*" in line:
-                        var_comment = " *"+line.split("*")[-1].strip("\n")
-                        var_name = line.split("=")[0].replace(" ", "")
-                        var_value = line.split("=")[1].split("*")[0]
-                        var_value = variable_type(var_name, var_value)
-                        # Create variable class and add it to the module class
-                        var = INVariable(var_name, var_value,
-                                         comment=var_comment)
-                        self.module_data[module].add_variable(var)
-
+                    # If line starts with a '*' then the line is commented out so
+                    # will be added as a non-variable string line.
+                    if line[0] == "*":
+                        self.module_data[module].add_line(line.strip("\n"))
+    
                     else:
-                        # Finally if it is a regular variable line
-                        var_name = line.split("=")[0].replace(" ", "")
-                        var_value = line.split("=")[1].lstrip().rstrip()
-                        var_value = variable_type(var_name, var_value)
-                        # Create variable class and add it to the module
-                        # class
-                        var = INVariable(var_name, var_value)
-                        self.module_data[module].add_variable(var)
+    
+                        # If there is a '*' elsewhere in the line then it is
+                        # assumed that there is an inline comment
+                        if "*" in line:
+                            var_comment = " *"+line.split("*")[-1].strip("\n")
+                            var_name = line.split("=")[0].replace(" ", "")
+                            var_value = line.split("=")[1].split("*")[0]
+                            var_value = variable_type(var_name, var_value)
+                            # Create variable class and add it to the module class
+                            var = INVariable(var_name, var_value,
+                                             comment=var_comment)
+                            self.module_data[module].add_variable(var)
+    
+                        else:
+                            # Finally if it is a regular variable line
+                            var_name = line.split("=")[0].replace(" ", "")
+                            var_value = line.split("=")[1].lstrip().rstrip()
+                            var_value = variable_type(var_name, var_value)
+                            # Create variable class and add it to the module
+                            # class
+                            var = INVariable(var_name, var_value)
+                            self.module_data[module].add_variable(var)
 
     def write_in_dat(self, filename="new_IN.DAT"):
         """ Write a new IN.DAT (default name is new_IN.DAT)
@@ -259,21 +261,19 @@ class INDATClassic(object):
         """
 
         # Create new file
-        new_in_file = open(filename, "w")
-
-        # Use self.order to create new IN.DAT with same order as old IN.DAT
-        for item in self.order:
-            for line in self.module_data[item].order:
-                if str(line).isdigit():
-                    newline = self.module_data[item].store[line]
-                else:
-                    newline = self.module_data[item].variables[line].name + \
-                        " = " + \
-                        str(self.module_data[item].variables[line].value) + \
-                        "," + \
-                        self.module_data[item].variables[line].comment
-                new_in_file.write(newline+"\n")
-        new_in_file.close()
+        with open(filename, "w") as new_in_file:
+            # Use self.order to create new IN.DAT with same order as old IN.DAT
+            for item in self.order:
+                for line in self.module_data[item].order:
+                    if str(line).isdigit():
+                        newline = self.module_data[item].store[line]
+                    else:
+                        newline = self.module_data[item].variables[line].name + \
+                            " = " + \
+                            str(self.module_data[item].variables[line].value) + \
+                            "," + \
+                            self.module_data[item].variables[line].comment
+                    new_in_file.write(newline+"\n")
 
 
 class INDATErrorClass(object):
@@ -354,40 +354,41 @@ class INDATNew(object):
 
     def read_in_dat(self):
         """Read in data from IN.DAT"""
-        in_dat = open(self.filename, "r")
-        in_dat_lines = in_dat.readlines()
-        clean_lines = clear_lines(in_dat_lines)
-        for line in clean_lines:
-            if "$" in line:
-                pass
-            elif line == "":
-                self.data[self.number_of_lines] = line
-                self.order.append(self.number_of_lines)
-                self.number_of_lines += 1
-            else:
-                if line[0] == "*":
-                    self.data[self.number_of_lines] = line.strip("\n")
+        print("Attempting to open", abspath(self.filename))
+        with open(self.filename, "r") as in_dat:
+            in_dat_lines = in_dat.readlines()
+            clean_lines = clear_lines(in_dat_lines)
+            for line in clean_lines:
+                if "$" in line:
+                    pass
+                elif line == "":
+                    self.data[self.number_of_lines] = line
                     self.order.append(self.number_of_lines)
                     self.number_of_lines += 1
                 else:
-                    if "*" in line:
-                        var_comment = " *"+line.split("*")[-1].strip("\n")
-                        var_name = line.split("=")[0].rstrip().lower()
-                        var_value = line.split("=")[1].split("*")[0]
-                        var_value = variable_type(var_name, var_value)
-                        var = INVariable(var_name, var_value,
-                                         comment=var_comment)
-                        self.data[var_name.lower()] = var
-                        self.variables[var_name.lower()] = var
-                        self.order.append(var_name.lower())
+                    if line[0] == "*":
+                        self.data[self.number_of_lines] = line.strip("\n")
+                        self.order.append(self.number_of_lines)
+                        self.number_of_lines += 1
                     else:
-                        var_name = line.split("=")[0].rstrip().lower()
-                        var_value = line.split("=")[1].lstrip().rstrip()
-                        var_value = variable_type(var_name, var_value)
-                        var = INVariable(var_name, var_value)
-                        self.data[var_name.lower()] = var
-                        self.variables[var_name.lower()] = var
-                        self.order.append(var_name.lower())
+                        if "*" in line:
+                            var_comment = " *"+line.split("*")[-1].strip("\n")
+                            var_name = line.split("=")[0].rstrip().lower()
+                            var_value = line.split("=")[1].split("*")[0]
+                            var_value = variable_type(var_name, var_value)
+                            var = INVariable(var_name, var_value,
+                                             comment=var_comment)
+                            self.data[var_name.lower()] = var
+                            self.variables[var_name.lower()] = var
+                            self.order.append(var_name.lower())
+                        else:
+                            var_name = line.split("=")[0].rstrip().lower()
+                            var_value = line.split("=")[1].lstrip().rstrip()
+                            var_value = variable_type(var_name, var_value)
+                            var = INVariable(var_name, var_value)
+                            self.data[var_name.lower()] = var
+                            self.variables[var_name.lower()] = var
+                            self.order.append(var_name.lower())
 
     def write_in_dat(self, filename="new_IN.DAT"):
         """ Write a new IN.DAT
@@ -396,20 +397,19 @@ class INDATNew(object):
           filename --> filename to write new IN.DAT to
 
         """
-        new_in_file = open(filename, "w")
+        with open(filename, "w") as new_in_file:
 
-        # Use self.order to maintain same order as original IN.DAT
-        for item in self.order:
-            if str(item).isdigit():
-                newline = self.data[item]
-            else:
-                newline = self.variables[item].name + \
-                    " = " + \
-                    str(self.variables[item].value).replace("[", "").\
-                    replace("]", "") + "," + \
-                    self.variables[item].comment
-            new_in_file.write(newline+"\n")
-        new_in_file.close()
+            # Use self.order to maintain same order as original IN.DAT
+            for item in self.order:
+                if str(item).isdigit():
+                    newline = self.data[item]
+                else:
+                    newline = self.variables[item].name + \
+                        " = " + \
+                        str(self.variables[item].value).replace("[", "").\
+                        replace("]", "") + "," + \
+                        self.variables[item].comment
+                new_in_file.write(newline+"\n")
 
     def add_variable(self, var):
         """ Adds a variable from the IN.DAT class
