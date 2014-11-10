@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '352    Release Date :: 2014-10-20'
+       '356    Release Date :: 2014-11-10'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1842,3 +1842,7 @@ end subroutine output
 !          PF/CS coil case calculations clarified
 ! GIT 351: OH coil changed to Central solenoid in output files
 ! GIT 352: Confinement times for H=1 instead of H=2 now output
+! GIT 353: Corrections to NBI orbit loss power handling; User Guide figure updates
+! GIT 354: Updated build diagrams in User Guide
+! GIT 355: Minor modifications and extra outputs for superconductor current density calculations
+! GIT 356: Clarified some comments in PF coil field and current density calculations
