@@ -1348,6 +1348,18 @@ should be turned on with iteration variable no.\ 39 (\texttt{fjohc0}). To
 limit the current density at the EOF, constraint equation no.\ 26 should be
 turned on with iteration variable no.\ 38 (\texttt{fjohc}).
 
+As for the TF coils, the critical current density \jcrit\ falls with the
+temperature of the superconductor. The temperature margin $\Delta T$ is the
+difference between the temperature at which \jcrit would be equal to \jop\ and
+the operating temperature. The minimum allowed $\Delta T$ can be set using
+input parameter \texttt{tmargmin} together with constraint equation no.\ 60
+and iteration variable no.\ 106 (\texttt{ftmargoh}).
+
+Note that if the temperature margin is positive, \jop\ is guaranteed to be
+lower than \jcrit, and so constraints~26, 27 and~60 need not all be turned on
+(in fact, it is recommended that EITHER the latter constraint, OR the former
+two constraints, is/are activated in any given run).
+
 \subsubsection{Plasma current ramp-up time}
 \label{sec:tohs}
 

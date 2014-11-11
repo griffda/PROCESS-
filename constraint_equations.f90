@@ -149,6 +149,7 @@ contains
     !+ad_hist  01/10/14 PJK Added new eqn 15
     !+ad_hist  02/10/14 PJK Added new eqn 23
     !+ad_hist  06/10/14 PJK Added new eqn 59
+    !+ad_hist  11/11/14 PJK Added new eqn 60
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -967,6 +968,16 @@ contains
              err(i) = nbshinef * cc(i)
              symbol(i) = '<'
              units(i) = ''
+          end if
+
+       case (60)  !  Equation for OH coil s/c temperature margin lower limit (SCTF)
+
+          cc(i) = 1.0D0 - ftmargoh * tmargoh/tmargmin
+          if (present(con)) then
+             con(i) = tmargmin * (1.0D0 - cc(i))
+             err(i) = tmargmin * cc(i)
+             symbol(i) = '>'
+             units(i) = 'K'
           end if
 
        case default

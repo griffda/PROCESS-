@@ -1671,6 +1671,8 @@ contains
       !+ad_hisc               tmargin loop if problems are occurring
       !+ad_hist  06/11/14 PJK Added local variable jcritstr; inverted
       !+ad_hisc               areas in bi2212 jstrand input
+      !+ad_hist  11/11/14 PJK Shifted exit criteria for temperature margin
+      !+ad_hisc               iteration to reduce calculations
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
@@ -1780,7 +1782,8 @@ contains
          lap = 0
          solve_for_tmarg: do ; lap = lap+1
             if ((ttest <= 0.0D0).or.(lap > 100)) then
-               write(*,*) 'Temperature margin loop terminating: ttest = ',ttest
+               idiags(1) = lap ; fdiags(1) = ttest
+               call report_error(157)
                exit solve_for_tmarg
             end if
             ttestm = ttest - delt
@@ -1788,14 +1791,15 @@ contains
             select case (isumat)
             case (1,4)
                call itersc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+               if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
                call itersc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
                call itersc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
             case (3)
                call jcrit_nbti(ttest ,bmax,c0,bc20m,tc0m,jcrit0,t)
+               if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
                call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
                call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
             end select
-            if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
             ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
          end do solve_for_tmarg
 

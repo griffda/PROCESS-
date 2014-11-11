@@ -495,12 +495,13 @@ no. & description                                               & type & \texttt
 57  & (OBSOLETE) TF coil outer leg toroidal thickness lower limit (SCTF)   & L    & \textbf{99},29,13  \\
 58  & (OBSOLETE) TF coil outer leg radial thickness lower limit (SCTF)     & L    & \textbf{100},13 \\
 59  & Neutral beam shine-through fraction upper limit (NBI)     & L    & \textbf{105},6,19,4 \\
+60  & Central solenoid temperature margin lower limit (SCTF)    & L    & \textbf{106}, \\
 \hline
 \end{tabular}
 \end{center}
 \caption[List of constraint equations 51 onwards]
 {\label{tab:eqns2}
-  \textit{Summary of constraint equations 51--59 present in \process. Consistency
+  \textit{Summary of constraint equations 51--60 present in \process. Consistency
     equations are marked C, limit equations are marked L\@. Some
     (non-exhaustive) iteration variable numbers (see Tables~\ref{tab:itvars1}
     and~\ref{tab:itvars2}) that directly affect the associated constraint
@@ -610,7 +611,7 @@ no. & variable name     & description                                   & eqn & 
 52  & \texttt{vdalw}    & allowable TF coil dump voltage                          &     & \texttt{0.001D0} & \texttt{1.000D6} \\
 53  & \texttt{fjprot}   & f-value for TF coil current protection limit equation   & 35  & \texttt{0.001D0} & \texttt{1.000D0} \\
 54  & \texttt{ftmargtf} & f-value for TF coil temperature margin limit equation   & 36  & \texttt{0.001D0} & \texttt{1.000D0} \\
-55  & \texttt{tmargmin} & minimum allowable TF coil temperature margin            &     & \texttt{0.001D0} & \texttt{100.0D0} \\
+55  & \texttt{tmargmin} & minimum allowable TF/CS coil temperature margin          &     & \texttt{0.001D0} & \texttt{100.0D0} \\
 \hline
 \end{tabular}
 \end{center}
@@ -681,12 +682,13 @@ no. & variable name     & description                                           
 103 & \texttt{flhthresh}& f-value for L-H power threshold limit equation          & 15  & \texttt{1.000D0} & \texttt{1.000D6} \\
 104 & \texttt{fcwr}     & f-value for conducting shell radius limit equation      & 23  & \texttt{0.001D0} & \texttt{1.000D0} \\
 105 & \texttt{fnbshinef}& f-value for NBI shine-through fraction limit equation   & 59  & \texttt{0.001D0} & \texttt{1.000D0} \\
+106 & \texttt{ftmargoh} & f-value for CS coil temperature margin limit equation   & 60  & \texttt{0.001D0} & \texttt{1.000D0} \\
 \hline
 \end{tabular}
 \end{center}
-\caption[List of iteration variables 56 to 105]
+\caption[List of iteration variables 56 to 106]
 {\label{tab:itvars2}
-  \textit{Iteration variables 56 to 105 present in \process. The f-values correspond to the
+  \textit{Iteration variables 56 to 106 present in \process. The f-values correspond to the
     given constraint equations (see Table~\ref{tab:eqns}). The other iteration
     variables are shown in Table~\ref{tab:itvars1}.}
 }

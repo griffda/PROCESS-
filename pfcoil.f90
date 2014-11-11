@@ -141,7 +141,7 @@ contains
 
     real(kind(1.0D0)) :: area,areaspf,bmax,bri,bro,bzi,bzo,ioheof, &
          drpdz,drpt,dx,dz,forcepf,rclsnorm,respf,rll,rpt0,ssqef,volpf, &
-         pfflux,csflux,dics,ddics,jstrand,jsc
+         pfflux,csflux,dics,ddics,jstrand,jsc,tmarg
     real(kind(1.0D0)), dimension(ngrpmx,nclsmx) :: rcls0,zcls0
     real(kind(1.0D0)), dimension(ngrpmx/2) :: ccls0
     real(kind(1.0D0)), dimension(ngrpmx) :: sigma,work2
@@ -632,7 +632,7 @@ contains
              !rjpfalw(i) = pfjalw(bpf(i),bpf2(i),ra(i),rb(i),sigpfalw)
              bmax = max(abs(bpf(i)), abs(bpf2(i)))
              call superconpf(aturn(i),bmax,vf(i),fcupfsu,rjconpf(i),isumatpf,fhts, &
-                  strncon,tftmp,bcritsc,tcritsc,rjpfalw(i),jstrand,jsc)
+                  strncon,tftmp,bcritsc,tcritsc,rjpfalw(i),jstrand,jsc,tmarg)
           end if
 
           !  Length of conductor
@@ -778,7 +778,7 @@ contains
     integer :: timepoint
 
     real(kind(1.0D0)) :: areaspf,bmax,bmaxoh2, &
-         bohci,bohco,bri,bro,bzi,bzo,forcepf,hohc,jcritwp,sgn
+         bohci,bohco,bri,bro,bzi,bzo,forcepf,hohc,jcritwp,sgn,tmarg1,tmarg2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -903,7 +903,7 @@ contains
        !rjohc = pfjalw(bohci,bohco,ra(nohc),rb(nohc),sigpfalw)
        call superconpf(awpoh/turns(nohc),bmaxoh,vfohc,fcuohsu, &
             abs(ric(nohc))/awpoh,isumatoh,fhts,strncon,tftmp, &
-            bcritsc,tcritsc,jcritwp,jstrandoh_eof,jscoh_eof)
+            bcritsc,tcritsc,jcritwp,jstrandoh_eof,jscoh_eof,tmarg1)
 
        rjohc = jcritwp * awpoh/areaoh
 
@@ -912,10 +912,12 @@ contains
        !rjpfalw(nohc) = pfjalw(bmaxoh0,abs(bzo),ra(nohc),rb(nohc),sigpfalw)
        call superconpf(awpoh/turns(nohc),bmaxoh0,vfohc,fcuohsu, &
             abs(ric(nohc))/awpoh,isumatoh,fhts,strncon,tftmp, &
-            bcritsc,tcritsc,jcritwp,jstrandoh_bop,jscoh_bop)
+            bcritsc,tcritsc,jcritwp,jstrandoh_bop,jscoh_bop,tmarg2)
 
        rjpfalw(nohc) = jcritwp * awpoh/areaoh
        rjohc0 = rjpfalw(nohc)
+
+       tmargoh = min(tmarg1, tmarg2)
 
     else
        !  Resistive power losses (non-superconducting coil)
@@ -1916,7 +1918,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine superconpf(aturn,bmax,fhe,fcu,jwp,isumat,fhts, &
-       strain,thelium,bcritsc,tcritsc,jcritwp,jcritstr,jcritsc)
+       strain,thelium,bcritsc,tcritsc,jcritwp,jcritstr,jcritsc,tmarg)
 
     !+ad_name  superconpf
     !+ad_summ  Routine to calculate the PF coil superconductor properties
@@ -1942,8 +1944,9 @@ contains
     !+ad_args  jcritwp : output real : Critical winding pack current density (A/m2)
     !+ad_args  jcritstr : output real : Critical strand current density (A/m2)
     !+ad_args  jcritsc : output real : Critical superconductor current density (A/m2)
+    !+ad_args  tmarg : output real : Temperature margin (K)
     !+ad_desc  This routine calculates the superconductor critical winding pack
-    !+ad_desc  current density for the PF coils.
+    !+ad_desc  current density for the PF coils, plus the temperature margin.
     !+ad_desc  It is based on the TF coil version, <CODE>supercon</CODE>.
     !+ad_prob  The conduit and insulation around each turn is neglected.
     !+ad_call  bi2212
@@ -1953,6 +1956,7 @@ contains
     !+ad_hist  16/10/14 PJK Initial version
     !+ad_hist  06/11/14 PJK Added jcritstr and jcritsc outputs; inverted
     !+ad_hisc               areas in bi2212 jstrand input
+    !+ad_hist  11/11/14 PJK Added temperature margin calculation
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1965,11 +1969,13 @@ contains
     integer, intent(in) :: isumat
     real(kind(1.0D0)), intent(in) :: aturn, bmax, fcu, fhe, fhts, &
          jwp, strain, thelium, bcritsc, tcritsc
-    real(kind(1.0D0)), intent(out) :: jcritwp, jcritstr, jcritsc
+    real(kind(1.0D0)), intent(out) :: jcritwp, jcritstr, jcritsc, tmarg
 
     !  Local variables
 
-    real(kind(1.0D0)) :: acs,bc20m,bcrit,c0,jstrand,tc0m,tcrit,tmarg
+    integer :: lap
+    real(kind(1.0D0)) :: acs,b,bc20m,bcrit,c0,delt,jcrit0,jcritm, &
+         jcritp,jsc,jstrand,jtol,t,tc0m,tcrit,ttest,ttestm,ttestp
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2029,6 +2035,50 @@ contains
     !  Critical current density in winding pack
 
     jcritwp = jcritstr * (1.0D0-fhe) * acs/aturn
+
+    !  Temperature margin (already calculated in bi2212 for isumat=2)
+
+    if (isumat /= 2) then
+
+       !  Newton-Raphson method; start at requested minimum temperature margin
+
+       ttest = thelium + tmargmin
+       delt = 0.01D0
+       jtol = 1.0D4
+
+       !  Actual current density in superconductor, which should be equal to jcrit(thelium+tmarg)
+       !  when we have found the desired value of tmarg
+
+       jstrand = jwp * aturn / (acs*(1.0D0-fhe))
+       jsc = jstrand / (1.0D0-fcu)
+
+       lap = 0
+       solve_for_tmarg: do ; lap = lap+1
+          if ((ttest <= 0.0D0).or.(lap > 100)) then
+             idiags(1) = lap ; fdiags(1) = ttest
+             call report_error(158)
+             exit solve_for_tmarg
+          end if
+          ttestm = ttest - delt
+          ttestp = ttest + delt
+          select case (isumat)
+          case (1,4)
+             call itersc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+             if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
+             call itersc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+             call itersc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+          case (3)
+             call jcrit_nbti(ttest ,bmax,c0,bc20m,tc0m,jcrit0,t)
+             if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
+             call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
+             call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
+          end select
+          ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
+       end do solve_for_tmarg
+
+       tmarg = ttest - thelium
+
+    end if
 
   end subroutine superconpf
 
@@ -2502,6 +2552,8 @@ contains
                '(vfohc)',vfohc)
           call ovarre(outfile,'Helium coolant temperature (K)', &
                '(tftmp)',tftmp)
+          call ovarre(outfile,'CS temperature margin (K)', &
+               '(tmargoh)',tmargoh)
 
           if ( (abs(coheof) < 0.99D0*abs(rjohc)).and. &
                (abs(cohbop) < 0.99D0*abs(rjohc0)) ) then

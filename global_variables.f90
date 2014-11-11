@@ -1283,6 +1283,7 @@ module pfcoil_variables
   !+ad_hist  20/10/14 PJK Added alstroh
   !+ad_hist  06/11/14 PJK Added areaoh,jstrandoh_bop,jstrandoh_eof,jscoh_bop,jscoh_eof
   !+ad_hist  11/11/14 PJK Changed default values for fcuohsu, vfohc
+  !+ad_hist  11/11/14 PJK Added tmargoh
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1457,6 +1458,8 @@ module pfcoil_variables
   real(kind(1.0D0)) :: sigpfcf = 0.666D0
   !+ad_vars  sxlg(ngc2,ngc2) : mutual inductance matrix (H)
   real(kind(1.0D0)), dimension(ngc2,ngc2) :: sxlg = 0.0D0
+  !+ad_vars  tmargoh :  Central solenoid temperature margin (K)
+  real(kind(1.0D0)) :: tmargoh = 0.0D0
   !+ad_vars  turns(ngc2) : number of turns in PF coil i
   real(kind(1.0D0)), dimension(ngc2) :: turns = 0.0D0
   !+ad_vars  vf(ngc2) /0.3/ : winding pack void fraction of PF coil i for coolant
@@ -1794,7 +1797,7 @@ module tfcoil_variables
   !+ad_vars  tinstf /0.01/ : ground wall insulation thickness (m)
   !+ad_varc                  (calculated for stellarators)
   real(kind(1.0D0)) :: tinstf = 0.01D0
-  !+ad_vars  tmargmin /2.5/ : minimum allowable temperature margin (K)
+  !+ad_vars  tmargmin /2.5/ : minimum allowable temperature margin (CS and TF coils) (K)
   !+ad_varc                   (iteration variable 55)
   real(kind(1.0D0)) :: tmargmin = 2.5D0
   !+ad_vars  tmargtf :  TF coil temperature margin (K)
@@ -3005,6 +3008,7 @@ module constraint_variables
   !+ad_hist  01/10/14 PJK Added flhthresh
   !+ad_hist  02/10/14 PJK Added fcwr
   !+ad_hist  06/10/14 PJK Added fnbshinef, nbshinefmax
+  !+ad_hist  11/11/14 PJK Added ftmargoh
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -3150,6 +3154,9 @@ module constraint_variables
   !+ad_vars  ftftort /1.0/ : f-value for TF coil outer leg toroidal width lower limit
   !+ad_varc                  (constraint equation 57, iteration variable 99)
   real(kind(1.0D0)) :: ftftort = 1.0D0
+  !+ad_vars  ftmargoh /1.0/ : f-value for central solenoid temperature margin
+  !+ad_varc                   (constraint equation 60, iteration variable 106)
+  real(kind(1.0D0)) :: ftmargoh = 1.0D0
   !+ad_vars  ftmargtf /1.0/ : f-value for TF coil temperature margin
   !+ad_varc                   (constraint equation 36, iteration variable 54)
   real(kind(1.0D0)) :: ftmargtf = 1.0D0

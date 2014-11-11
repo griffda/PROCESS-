@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '358    Release Date :: 2014-11-11'
+       '359    Release Date :: 2014-11-11'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1848,3 +1848,4 @@ end subroutine output
 ! GIT 356: Clarified some comments in PF coil field and current density calculations
 ! GIT 357: Added aion as an output
 ! GIT 358: Changed default values for fcuohsu, vfohc
+! GIT 359: Added CS temperature margin calculation plus constraint
