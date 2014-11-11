@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '356    Release Date :: 2014-11-10'
+       '357    Release Date :: 2014-11-11'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1846,3 +1846,4 @@ end subroutine output
 ! GIT 354: Updated build diagrams in User Guide
 ! GIT 355: Minor modifications and extra outputs for superconductor current density calculations
 ! GIT 356: Clarified some comments in PF coil field and current density calculations
+! GIT 357: Added aion as an output

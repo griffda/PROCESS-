@@ -5253,6 +5253,7 @@ contains
     !+ad_hist  01/10/14 PJK Modified safety factor output statements
     !+ad_hist  01/10/14 PJK Added plhthresh output
     !+ad_hist  06/10/14 PJK Modified plhthresh output
+    !+ad_hist  11/11/14 PJK Added aion output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5475,6 +5476,7 @@ contains
           call ovarre(outfile,str1,str2,impurity_arr(imp)%frac)
        end do
     end if
+    call ovarre(outfile,'Average mass of all ions (amu)','(aion)',aion)
     call ovarre(outfile,'Impurity fraction (for iteration variable use)','(fimpvar)',fimpvar)
     call oblnkl(outfile)
 
