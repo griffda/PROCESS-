@@ -1282,6 +1282,7 @@ module pfcoil_variables
   !+ad_hist  16/10/14 PJK Added pfcaseth,isumatoh,fcupfsu,awpoh
   !+ad_hist  20/10/14 PJK Added alstroh
   !+ad_hist  06/11/14 PJK Added areaoh,jstrandoh_bop,jstrandoh_eof,jscoh_bop,jscoh_eof
+  !+ad_hist  11/11/14 PJK Changed default values for fcuohsu, vfohc
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1345,8 +1346,8 @@ module pfcoil_variables
   !+ad_varc                  beginning of pulse / end of flat-top
   !+ad_varc                  (iteration variable 41)
   real(kind(1.0D0)) :: fcohbop = 0.9D0
-  !+ad_vars  fcuohsu /0.4/ : copper fraction of strand in central solenoid cable
-  real(kind(1.0D0)) :: fcuohsu = 0.4D0
+  !+ad_vars  fcuohsu /0.7/ : copper fraction of strand in central solenoid cable
+  real(kind(1.0D0)) :: fcuohsu = 0.7D0
   !+ad_vars  fcupfsu /0.69/ : copper fraction of cable conductor (PF coils)
   real(kind(1.0D0)) :: fcupfsu = 0.69D0
   !+ad_vars  ipfloc(ngc) /2,2,3/ : switch for locating scheme of PF coil group i:<UL>
@@ -1460,8 +1461,8 @@ module pfcoil_variables
   real(kind(1.0D0)), dimension(ngc2) :: turns = 0.0D0
   !+ad_vars  vf(ngc2) /0.3/ : winding pack void fraction of PF coil i for coolant
   real(kind(1.0D0)), dimension(ngc2) :: vf = 0.3D0
-  !+ad_vars  vfohc /0.2/ : void fraction of central solenoid for coolant
-  real(kind(1.0D0)) :: vfohc = 0.2D0
+  !+ad_vars  vfohc /0.3/ : void fraction of central solenoid for coolant
+  real(kind(1.0D0)) :: vfohc = 0.3D0
   !+ad_vars  vsbn : total flux swing available for burn (Wb)
   real(kind(1.0D0)) :: vsbn = 0.0D0
   !+ad_vars  vsefbn : flux swing from PF coils for burn (Wb)

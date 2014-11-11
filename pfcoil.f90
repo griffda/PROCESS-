@@ -822,7 +822,7 @@ contains
 
     turns(nohc) = 1.0D6 * abs(ric(nohc))/cptdin(nohc)
 
-    !  Winding pack void fraction for coolant
+    !  Non-steel area void fraction for coolant
 
     vf(nohc) = vfohc
 
@@ -2414,6 +2414,7 @@ contains
     !+ad_hist  20/10/14 PJK Minor changes to output wording
     !+ad_hist  06/11/14 PJK Added extra diagnostic outputs
     !+ad_hist  10/11/14 PJK Removed critical current density output for resistive coils
+    !+ad_hist  11/11/14 PJK Added extra area outputs
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2455,11 +2456,7 @@ contains
              call ocmmnt(outfile, &
                   '  (ITER Nb3Sn critical surface model, user-defined parameters)')
           end select
-       else
-          call ocmmnt(outfile,'Resistive central solenoid')
-       end if
 
-       if (ipfres == 0) then
           call osubhd(outfile,'Central Solenoid Current Density Limits :')
           call ovarre(outfile,'Maximum field at Beginning Of Pulse (T)', &
                '(bmaxoh0)',bmaxoh0)
@@ -2483,8 +2480,14 @@ contains
           call ovarre(outfile,'Actual overall current density at EOF (A/m2)', &
                '(coheof)',coheof)
           call oblnkl(outfile)
+          call ovarre(outfile,'CS overall cross-sectional area (m2)', &
+               '(areaoh)',areaoh)
           call ovarre(outfile,'CS conductor+void cross-sectional area (m2)', &
                '(awpoh)',awpoh)
+          call ovarre(outfile,'   CS conductor cross-sectional area (m2)', &
+               '(awpoh*(1-vfohc))',awpoh*(1.0D0-vfohc))
+          call ovarre(outfile,'   CS void cross-sectional area (m2)', &
+               '(awpoh*vfohc)',awpoh*vfohc)
           call ovarre(outfile,'CS steel cross-sectional area (m2)', &
                '(areaoh-awpoh)',areaoh-awpoh)
           call ovarre(outfile,'CS steel area fraction', &
@@ -2504,6 +2507,9 @@ contains
                (abs(cohbop) < 0.99D0*abs(rjohc0)) ) then
              call report_error(135)
           end if
+
+       else
+          call ocmmnt(outfile,'Resistive central solenoid')
        end if
 
     end if
