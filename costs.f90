@@ -503,6 +503,7 @@ contains
     !+ad_hist  05/06/14 PJK Moved some power outputs to plant_power.f90
     !+ad_hist  16/06/14 PJK Removed duplicate outputs
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  12/11/14 PJK tburn factor incorporated into cost of electricity
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -525,7 +526,7 @@ contains
 
     !  Number of kWh generated each year
 
-    kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr
+    kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr * tburn/tcycle
 
     !  Costs due to reactor plant
     !  ==========================

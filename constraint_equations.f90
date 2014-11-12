@@ -150,6 +150,7 @@ contains
     !+ad_hist  02/10/14 PJK Added new eqn 23
     !+ad_hist  06/10/14 PJK Added new eqn 59
     !+ad_hist  11/11/14 PJK Added new eqn 60
+    !+ad_hist  12/11/14 PJK tcycle now a global variable
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -170,7 +171,7 @@ contains
     !  Local variables
 
     integer :: i,i1,i2
-    real(kind(1.0D0)) :: cratmx, rcw, tcycle, totmva, acoil, pradmaxpv
+    real(kind(1.0D0)) :: cratmx, rcw, totmva, acoil, pradmaxpv
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -772,7 +773,6 @@ contains
 
           if (tcycmn == 0.0D0) call report_error(6)
 
-          tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
           cc(i) = 1.0D0 - ftcycl * tcycle/tcycmn
           if (present(con)) then
              con(i) = tcycmn * (1.0D0 - cc(i))

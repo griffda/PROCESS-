@@ -2279,6 +2279,7 @@ module times_variables
   !+ad_hist  30/10/12 PJK Initial version of module
   !+ad_hist  27/06/13 PJK Relabelled tohs, tohsin
   !+ad_hist  17/09/14 PJK Changed default values
+  !+ad_hist  12/11/14 PJK Added tcycle; tdwell default changed from 100s to 1800s
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2292,11 +2293,13 @@ module times_variables
   real(kind(1.0D0)) :: tburn = 1000.0D0
   !+ad_vars  tburn0 : burn time (s) - used for internal consistency
   real(kind(1.0D0)) :: tburn0 = 0.0D0
+  !+ad_vars  tcycle : full cycle time (s)
+  real(kind(1.0D0)) :: tcycle = 0.0D0
   !+ad_vars  tdown : down time (s)
   real(kind(1.0D0)) :: tdown = 0.0D0
-  !+ad_vars  tdwell /100.0/ : time between pulses in a pulsed reactor (s)
+  !+ad_vars  tdwell /1800.0/ : time between pulses in a pulsed reactor (s)
   !+ad_varc                   (iteration variable 17)
-  real(kind(1.0D0)) :: tdwell = 100.0D0
+  real(kind(1.0D0)) :: tdwell = 1800.0D0
   !+ad_vars  theat /10.0/ : heating time, after current ramp up (s)
   real(kind(1.0D0)) :: theat = 10.0D0
   !+ad_vars  tim(6) : array of time points during plasma pulse (s)

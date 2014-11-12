@@ -289,6 +289,10 @@ contains
     tpulse = tohs + theat + tburn + tqnch
     tdown  = tramp + tohs + tqnch + tdwell
 
+    !  Total cycle time
+
+    tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
+
     !  Calculate bootstrap current fraction using various models
 
     bscf_iter89 = bootstrap_fraction_iter89(aspect,beta,btot,cboot,plascur, &
@@ -5768,6 +5772,7 @@ contains
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  27/06/13 PJK Relabelled tohs
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  12/11/14 PJK tcycle now a global variable
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5781,11 +5786,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: tcycle
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
 
     call oheadr(outfile,'Times')
 
