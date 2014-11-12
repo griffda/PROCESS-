@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '360    Release Date :: 2014-11-12'
+       '361    Release Date :: 2014-11-12'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1850,3 +1850,4 @@ end subroutine output
 ! GIT 358: Changed default values for fcuohsu, vfohc
 ! GIT 359: Added CS temperature margin calculation plus constraint
 ! GIT 360: Updated plot_proc_func.py
+! GIT 361: Added warnings if itersc variables are out of range
