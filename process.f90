@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '362    Release Date :: 2014-11-12'
+       '363    Release Date :: 2014-11-13'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1853,3 +1853,4 @@ end subroutine output
 ! GIT 361: Added warnings if itersc variables are out of range
 ! GIT 362: Changed tdwell default value;
 !          incorporated tburn/tcycle into cost of electricity calculation
+! GIT 363: Added fkzohm elongation adjustment multiplier

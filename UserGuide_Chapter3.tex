@@ -125,7 +125,6 @@ can be scaled automatically with the aspect ratio if required using switch
 
 \item If \texttt{ishape = 1}, the following scaling is used, which is suitable
   for low aspect ratio machines ($\epsilon = 1/A$)~\cite{storac}:
-
 \begin{eqnarray}
 \kappa & = & 2.05 \, (1 + 0.44 \, \epsilon^{2.1}) \\
 \delta & = & 0.53 \, (1 + 0.77 \, \epsilon^3)
@@ -134,9 +133,10 @@ can be scaled automatically with the aspect ratio if required using switch
 \item If \texttt{ishape = 2}, the Zohm ITER scaling~\cite{Zohm} is used to
   calculate the elongation:
 \begin{equation}
-\kappa = \mathrm{minimum} \left( 2.0, \, \, 1.5 + \frac{0.5}{A-1} \right)
+\kappa = F_{kz} \, \times \, \mathrm{minimum} \left( 2.0, \, \, 1.5 + \frac{0.5}{A-1} \right)
 \end{equation}
-while the input value of the triangularity is used unchanged.
+where input variable \texttt{fkzohm} $= F_{kz}$ may be used to adjust the
+scaling, while the input value of the triangularity is used unchanged.
 
 \end{itemize}
 

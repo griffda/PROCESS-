@@ -134,6 +134,7 @@ module physics_variables
   !+ad_hist  01/10/14 PJK Modified q wording
   !+ad_hist  01/10/14 PJK Added ilhthresh, plhthresh
   !+ad_hist  02/10/14 PJK Added cwrmax
+  !+ad_hist  13/11/14 PJK Added fkzohm
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -262,6 +263,8 @@ module physics_variables
   real(kind(1.0D0)) :: fhe3 = 0.0D0
   !+ad_vars  figmer : physics figure of merit (= plascur*aspect**sbar, where sbar=1)
   real(kind(1.0D0)) :: figmer = 0.0D0
+  !+ad_vars  fkzohm /1.0/ : Zohm elongation scaling adjustment factor (ishape=2, 3)
+  real(kind(1.0D0)) :: fkzohm = 1.0D0
   !+ad_vars  ftrit /0.5/ : tritium fuel fraction
   real(kind(1.0D0)) :: ftrit = 0.5D0
   !+ad_vars  fusionrate : fusion reaction rate (reactions/m3/sec)

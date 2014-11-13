@@ -5258,6 +5258,7 @@ contains
     !+ad_hist  01/10/14 PJK Added plhthresh output
     !+ad_hist  06/10/14 PJK Modified plhthresh output
     !+ad_hist  11/11/14 PJK Added aion output
+    !+ad_hist  13/11/14 PJK Modified elong, triang outputs with ishape
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5309,15 +5310,27 @@ contains
        case (1)
           call ovarrf(outfile,'Elongation, X-point (TART scaling)', &
                '(kappa)',kappa)
-       case (2)
+       case (2,3)
           call ovarrf(outfile,'Elongation, X-point (Zohm scaling)', &
+               '(kappa)',kappa)
+          call ovarrf(outfile,'Zohm scaling adjustment factor', &
+               '(fkzohm)',fkzohm)
+       case (4)
+          call ovarrf(outfile,'Elongation, X-point (calculated from kappa95)', &
                '(kappa)',kappa)
        case default
           idiags(1) = ishape ; call report_error(86)
        end select
 
-       call ovarrf(outfile,'Elongation, 95% surface (kappa/1.12)', &
-            '(kappa95)',kappa95)
+       select case (ishape)
+       case (4)
+          call ovarrf(outfile,'Elongation, 95% surface (input value used)', &
+               '(kappa95)',kappa95)
+       case default
+          call ovarrf(outfile,'Elongation, 95% surface (kappa/1.12)', &
+               '(kappa95)',kappa95)
+       end select
+
        call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa)
 
        select case (ishape)
@@ -5327,11 +5340,20 @@ contains
        case (1)
           call ovarrf(outfile,'Triangularity, X-point (TART scaling)', &
                '(triang)',triang)
-       case default
-          idiags(1) = ishape ; call report_error(86)
+       case (3,4)
+          call ovarrf(outfile,'Triangularity, X-point (calculated from triang95)', &
+               '(triang)',triang)
        end select
 
-       call ovarrf(outfile,'Triangularity, 95% surface','(triang95)',triang95)
+       select case (ishape)
+       case (3,4)
+          call ovarrf(outfile,'Triangularity, 95% surface (input value used)', &
+               '(triang95)',triang95)
+       case default
+          call ovarrf(outfile,'Triangularity, 95% surface (triang/1.5)', &
+               '(triang95)',triang95)
+       end select
+
        call ovarrf(outfile,'Plasma poloidal perimeter (m)','(pperim)',pperim)
 
     end if
