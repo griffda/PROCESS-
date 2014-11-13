@@ -135,6 +135,7 @@ module physics_variables
   !+ad_hist  01/10/14 PJK Added ilhthresh, plhthresh
   !+ad_hist  02/10/14 PJK Added cwrmax
   !+ad_hist  13/11/14 PJK Added fkzohm
+  !+ad_hist  13/11/14 PJK Modified iradloss usage
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -370,11 +371,11 @@ module physics_variables
   !+ad_varc             <LI> = 1 make these consistent with input q, q0 values
   !+ad_varc                      (recommendation: use icurr=4 with this option) </UL>
   integer :: iprofile = 1
-  !+ad_vars  iradloss /1/ : switch for radiation loss term usage in power balance:<UL>
-  !+ad_varc             <LI> = 0 use non-radiation-adjusted loss power in
-  !+ad_varc                      confinement scaling and power balance
-  !+ad_varc             <LI> = 1 use radiation-adjusted loss power in
-  !+ad_varc                      confinement scaling and power balance</UL>
+  !+ad_vars  iradloss /1/ : switch for radiation loss term usage in power balance (see User Guide):<UL>
+  !+ad_varc             <LI> = 0 total power lost is scaling power plus radiation
+  !+ad_varc             <LI> = 1 total power lost is scaling power plus core radiation only
+  !+ad_varc             <LI> = 2 total power lost is scaling power only, with no additional
+  !+ad_varc                      allowance for radiation. This is not recommended for power plant models.</UL>
   integer :: iradloss = 1
 
   !+ad_vars  isc /34 (=IPB98(y,2))/ : switch for energy confinement time scaling law

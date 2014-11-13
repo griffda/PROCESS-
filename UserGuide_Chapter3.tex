@@ -434,8 +434,9 @@ the user.
 By changing the input parameter \texttt{coreradius}, the user may set the
 normalised radius defining the core region (\texttt{imprad\_model = 1}
 only). Only the impurity and synchrotron radiation from the core region
-affects the confinement scaling (but see \texttt{iradloss} below), while the
-power flowing into the divertor is assumed to exclude all radiation power.
+affects the confinement scaling (but see the \texttt{iradloss} description in
+Section~\ref{sec:iradloss}), while the power flowing into the divertor is
+assumed to exclude all radiation power.
 
 \Red{Add radiation power flow diagram as on p.26, logbook24}
 
@@ -446,11 +447,6 @@ ensures that the calculated total radiation power does not exceed the total
 power available that can be converted to radiation (i.e.\ the sum of the fusion
 alpha power, other charged particle fusion power, auxiliary injected power and
 the ohmic power). This constraint should always be turned on.
-
-Switch \texttt{iradloss} may be used to exclude (\texttt{iradloss = 1},
-default) or include (\texttt{iradloss = 0}) the core radiation power in the
-transport power used in the confinement time and power balance calculations
-(see Section~\ref{sec:corepower}).
 
 \subsubsection{Plasma current scaling laws}
 \label{sec:current_scaling}
@@ -572,6 +568,47 @@ Berchtesgaden, 1997 \\
 }
 \end{table}
 
+\subsubsection*{Effect of radiation on energy confinement}
+\label{sec:iradloss}
+
+Published confinement scalings are all based on low radiation pulses. A power
+plant will certainly be a high radiation machine --- both in the core, due to
+bremsstrahlung and synchrotron radiation, and in the edge due to impurity
+seeding. The scaling data do not predict this radiation --- that needs to be
+done by the radiation model. However, if the transport is very ``stiff'', as
+predicted by some models, then the additional radiation causes an almost equal
+drop in power transported by ions and electrons, leaving the confinement
+nearly unchanged.
+
+To allow for these uncertainties, three options are available, using the
+switch \texttt{iradloss}. In each case, the quantity \texttt{pscaling} is
+derived directly from the energy confinement scaling (see above;
+\texttt{pscaling} is $P_{\mbox{\scriptsize loss}}$ in
+Equation~\ref{eqn:ploss}).
+
+\begin{description}
+
+\item{\texttt{iradloss = 0}:}  Total power lost is scaling power plus
+  radiation:
+\begin{verbatim}
+pscaling + pradpv = falpha*palppv + pchargepv + pohmpv + pinjmw/vol
+\end{verbatim}
+
+\item{\texttt{iradloss = 1}:}  Total power lost is scaling power plus core
+  radiation only:
+\begin{verbatim}
+pscaling + pcoreradpv = falpha*palppv + pchargepv + pohmpv + pinjmw/vol
+\end{verbatim}
+
+\item{\texttt{iradloss = 2}:}  Total power lost is scaling power only, with no
+  additional allowance for radiation. This is not recommended for power plant
+  models.
+\begin{verbatim}
+pscaling = falpha*palppv + pchargepv + pohmpv + pinjmw/vol
+\end{verbatim}
+
+\end{description}
+
 \subsubsection{Plasma core power balance}
 \label{sec:corepower}
 
@@ -583,11 +620,11 @@ the power plant.)
 \begin{figure}[tbph]
 \epsfig{file=powerflow1.eps,width=170mm}
 \caption[Power balance within the core plasma] {\label{fig:powerflow1}
-  \textit{Schematic diagram of the flow of power within the plasma
-    core. Variable names are given in [\ldots]. Refer to
-  Figure~\ref{fig:powerflow2} for the onward flow of power from the three
-  red-bordered boxes, while the source of the power in the blue box is
-  indicated in Figure~\ref{fig:powerflow3}.} }
+  \textit{Schematic diagram of the flow of power within the plasma core
+    (assuming switch \texttt{iradloss=1}). Variable names are given in
+    [\ldots]. Refer to Figure~\ref{fig:powerflow2} for the onward flow of
+    power from the three red-bordered boxes, while the source of the power in
+    the blue box is indicated in Figure~\ref{fig:powerflow3}.} }
 \end{figure}
 
 The primary sources of power are the fusion reactions themselves, ohmic power
@@ -601,12 +638,10 @@ alpha power, any power carried by non-alpha charged particles, the ohmic power
 and any injected power, is converted into charged particle transport power
 ($P_{\mbox{\scriptsize loss}}$ in Equation~\ref{eqn:ploss}) plus core
 radiation power (see Section~\ref{sec:radiation}), as shown in
-Figure~\ref{fig:powerflow1}. (Note that, if switch \texttt{iradloss} is set to
-zero, the above summed input power is converted into charged particle
-transport power only, and the core radiation power may be assumed to originate
-from the transport power; i.e.\ the core radiation power is treated the same
-as the edge radiation power in Figure~\ref{fig:powerflow1} instead of having
-an arrow leading directly to it from the core plasma power balance.)
+Figure~\ref{fig:powerflow1}. (This assumes \texttt{iradloss=1} --- see
+Section~\ref{sec:iradloss}; other values for \texttt{iradloss} are equivalent
+to subtle differences in the positioning of the arrows leaving the core plasma
+power balance circle in Figure~\ref{fig:powerflow1}.)
 
 The core power balance calculation is turned on using constraint equation
 no.\ 2 (which should therefore always be used).

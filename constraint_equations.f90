@@ -151,6 +151,7 @@ contains
     !+ad_hist  06/10/14 PJK Added new eqn 59
     !+ad_hist  11/11/14 PJK Added new eqn 60
     !+ad_hist  12/11/14 PJK tcycle now a global variable
+    !+ad_hist  13/11/14 PJK Changed iradloss usage in eqns 2 and 4
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -171,7 +172,8 @@ contains
     !  Local variables
 
     integer :: i,i1,i2
-    real(kind(1.0D0)) :: cratmx, rcw, totmva, acoil, pradmaxpv
+    real(kind(1.0D0)) :: acoil,cratmx,pdenom,pnumerator,pradmaxpv, &
+         pscaling,rcw,totmva
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -211,50 +213,28 @@ contains
        case (2)  !  Global plasma power balance equation
           !  This is a consistency equation
 
-          if (iradloss == 1) then  !  include pcoreradpv
+          pscaling = ptrepv + ptripv
 
-             if (ignite == 0) then
-                cc(i) = 1.0D0 - (ptrepv + ptripv + pcoreradpv) / &
-                     (falpha*palppv + pchargepv + pohmpv + pinjmw/vol)
-                if (present(con)) then
-                   con(i) = (falpha*palppv + pchargepv + pohmpv + pinjmw/vol) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palppv + pchargepv + pohmpv + pinjmw/vol) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             else
-                cc(i) = 1.0D0 - (ptrepv + ptripv + pcoreradpv) / &
-                     (falpha*palppv + pchargepv + pohmpv)
-                if (present(con)) then
-                   con(i) = (falpha*palppv + pchargepv + pohmpv) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palppv + pchargepv + pohmpv) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             end if
+          if (iradloss == 0) then  !  total power lost is scaling power plus radiation
+             pnumerator = pscaling + pradpv
+          else if (iradloss == 1) then  !  total power lost is scaling power plus core radiation only
+             pnumerator = pscaling + pcoreradpv
+          else  !  total power lost is scaling power only, with no additional allowance for radiation
+             pnumerator = pscaling
+          end if
 
-          else  !  exclude pcoreradpv
+          if (ignite == 0) then
+             pdenom = falpha*palppv + pchargepv + pohmpv + pinjmw/vol
+          else
+             pdenom = falpha*palppv + pchargepv + pohmpv
+          end if
 
-             if (ignite == 0) then
-                cc(i) = 1.0D0 - (ptrepv + ptripv) / &
-                     (falpha*palppv + pchargepv + pohmpv + pinjmw/vol)
-                if (present(con)) then
-                   con(i) = (falpha*palppv + pchargepv + pohmpv + pinjmw/vol) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palppv + pchargepv + pohmpv + pinjmw/vol) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             else
-                cc(i) = 1.0D0 - (ptrepv + ptripv) / &
-                     (falpha*palppv + pchargepv + pohmpv)
-                if (present(con)) then
-                   con(i) = (falpha*palppv + pchargepv + pohmpv) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palppv + pchargepv + pohmpv) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             end if
-
+          cc(i) = 1.0D0 - pnumerator / pdenom
+          if (present(con)) then
+             con(i) = pdenom * (1.0D0 - cc(i))
+             err(i) = pdenom * cc(i)
+             symbol(i) = '='
+             units(i) = 'MW/m3'
           end if
 
        case (3)  !  Global power balance equation for ions
@@ -282,48 +262,28 @@ contains
        case (4)  !  Global power balance equation for electrons
           !  This is a consistency equation
 
-          if (iradloss == 1) then  !  include pcoreradpv
+          pscaling = ptrepv
 
-             if (ignite == 0) then
-                cc(i) = 1.0D0 - (ptrepv + pcoreradpv) / &
-                     (falpha*palpepv + piepv + pinjemw/vol)
-                if (present(con)) then
-                   con(i) = (falpha*palpepv + piepv + pinjemw/vol) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palpepv + piepv + pinjemw/vol) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             else
-                cc(i) = 1.0D0 - (ptrepv + pcoreradpv) / &
-                     (falpha*palpepv + piepv)
-                if (present(con)) then
-                   con(i) = (falpha*palpepv + piepv) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palpepv + piepv) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             end if
+          if (iradloss == 0) then  !  total power lost is scaling power plus radiation
+             pnumerator = pscaling + pradpv
+          else if (iradloss == 1) then  !  total power lost is scaling power plus core radiation only
+             pnumerator = pscaling + pcoreradpv
+          else  !  total power lost is scaling power only, with no additional allowance for radiation
+             pnumerator = pscaling
+          end if
 
-          else  !  exclude pcoreradpv
+          if (ignite == 0) then
+             pdenom = falpha*palpepv + piepv + pinjemw/vol
+          else
+             pdenom = falpha*palpepv + piepv
+          end if
 
-             if (ignite == 0) then
-                cc(i) = 1.0D0 - ptrepv / (falpha*palpepv + piepv + pinjemw/vol)
-                if (present(con)) then
-                   con(i) = (falpha*palpepv + piepv + pinjemw/vol) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palpepv + piepv + pinjemw/vol) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             else
-                cc(i) = 1.0D0 - ptrepv / (falpha*palpepv + piepv)
-                if (present(con)) then
-                   con(i) = (falpha*palpepv + piepv) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palpepv + piepv) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             end if
-
+          cc(i) = 1.0D0 - pnumerator / pdenom
+          if (present(con)) then
+             con(i) = pdenom * (1.0D0 - cc(i))
+             err(i) = pdenom * cc(i)
+             symbol(i) = '='
+             units(i) = 'MW/m3'
           end if
 
        case (5)  !  Equation for density upper limit

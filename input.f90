@@ -324,6 +324,7 @@ contains
     !+ad_hist  16/10/14 PJK Added ISUMATOH,FCUPFSU
     !+ad_hist  22/10/14 PJK Modified FORBITLOSS upper limit
     !+ad_hist  13/11/14 PJK Added FKZOHM
+    !+ad_hist  13/11/14 PJK Modified IRADLOSS limit
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -642,7 +643,7 @@ contains
           call parse_int_variable('IPROFILE', iprofile, 0, 1, &
                'Switch for current profile consistency')
        case ('IRADLOSS')
-          call parse_int_variable('IRADLOSS', iradloss, 0, 1, &
+          call parse_int_variable('IRADLOSS', iradloss, 0, 2, &
                'Switch for radiation loss term inclusion in pwr balance')
        case ('IRES')
           write(outfile,*) ' '
