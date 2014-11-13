@@ -64,6 +64,7 @@ module numerics
   !+ad_hist  13/10/14 PJK Changed boundu(50: fiooic) from 0.5 to 1.0
   !+ad_hist  20/10/14 PJK OH to CS
   !+ad_hist  11/11/14 PJK New iteration variable 106; new constraint 60
+  !+ad_hist  13/11/14 PJK lablxc(106) corrected
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -664,7 +665,7 @@ module numerics
        'fcwr     ', &
        !+ad_varc  <LI> (105) fnbshinef (f-value for equation 59)
        'fnbshinef', &
-       !+ad_varc  <LI> (106) ftfmargoh (f-value for equation 60)</UL>
+       !+ad_varc  <LI> (106) ftmargoh (f-value for equation 60)</UL>
        'ftmargoh ' &
        /)
 
