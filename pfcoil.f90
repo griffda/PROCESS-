@@ -764,6 +764,7 @@ contains
     !+ad_hisc               and steel case area
     !+ad_hist  06/11/14 PJK Used strncon to specify strain in OH superconductor
     !+ad_hist  10/11/14 PJK Clarified comments
+    !+ad_hist  13/11/14 PJK Added fudge to ensure positive conductor area
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -777,8 +778,8 @@ contains
 
     integer :: timepoint
 
-    real(kind(1.0D0)) :: areaspf,bmax,bmaxoh2, &
-         bohci,bohco,bri,bro,bzi,bzo,forcepf,hohc,jcritwp,sgn,tmarg1,tmarg2
+    real(kind(1.0D0)) :: areaspf,bmax,bmaxoh2,bohci,bohco,bri,bro, &
+         bzi,bzo,da,forcepf,hohc,jcritwp,sgn,tmarg1,tmarg2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -888,8 +889,14 @@ contains
     wts(nohc) = areaspf * 2.0D0*pi*rpf(nohc) * denstl
 
     !  Non-steel cross-sectional area
-!+PJK need to fix to prevent awpoh becoming negative
+
     awpoh = areaoh - areaspf
+
+    !  Fudge to ensure awpoh is positive; result is continuous, smooth and
+    !  monotonically decreases
+
+    da = 0.0001D0  !  1 cm^2
+    if (awpoh < da) awpoh = da*da / (2.0D0*da - awpoh)
 
     !  Weight of conductor in OH coil
 

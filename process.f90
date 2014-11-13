@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '364    Release Date :: 2014-11-13'
+       '365    Release Date :: 2014-11-13'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1855,3 +1855,4 @@ end subroutine output
 !          incorporated tburn/tcycle into cost of electricity calculation
 ! GIT 363: Added fkzohm elongation adjustment multiplier
 ! GIT 364: Modified iradloss usage
+! GIT 365: Ensured that CS conductor area remains positive
