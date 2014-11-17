@@ -2774,6 +2774,10 @@ module cost_variables
   integer :: lsa = 4
   !+ad_vars  moneyint : interest portion of capital cost (M$)
   real(kind(1.0D0)) :: moneyint = 0.0D0
+  !+ad_vars  output_costs /1/ : switch for costs output:<UL>
+  !+ad_varc            <LI> = 0 do not write cost-related outputs to file;
+  !+ad_varc            <LI> = 1 write cost-related outputs to file</UL>
+  integer :: output_costs = 1
   !+ad_vars  ratecdol /0.0435/ : effective cost of money in constant dollars
   real(kind(1.0D0)) :: ratecdol = 0.0435D0
   !+ad_vars  tbktrepl /0.5/ : time taken to replace blanket (y)

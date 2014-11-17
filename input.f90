@@ -325,6 +325,7 @@ contains
     !+ad_hist  22/10/14 PJK Modified FORBITLOSS upper limit
     !+ad_hist  13/11/14 PJK Added FKZOHM
     !+ad_hist  13/11/14 PJK Modified IRADLOSS limit
+    !+ad_hist  17/11/14 PJK Added OUTPUT_COSTS
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1912,6 +1913,9 @@ contains
        case ('LSA')
           call parse_int_variable('LSA', lsa, 1, 4, &
                'Level of safety assurance')
+       case ('OUTPUT_COSTS')
+          call parse_int_variable('OUTPUT_COSTS', output_costs, 0, 1, &
+               'Switch for writing costs to file')
        case ('RATECDOL')
           call parse_real_variable('RATECDOL', ratecdol, 0.0D0, 0.5D0, &
                'Effective cost of money')
