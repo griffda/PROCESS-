@@ -9,7 +9,7 @@ Date: November 2013 (Initial version)
       March 2014 (Initial release version)
 
 - Input files -
-TestPROCESS.conf  in the same directory as this file
+test_process.conf  in the same directory as this file
 
 - Output files -
 (All of them in the working directory specified in the config file)
@@ -44,9 +44,9 @@ import argparse
 from process_io_lib.process_dicts import IFAIL_SUCCESS
 from process_io_lib.process_config import TestProcessConfig
 from process_io_lib.process_funcs import get_neqns_itervars,\
-    update_ixc_bounds, get_variable_range, check_logfile,\
-    mfile_exists, vary_iteration_variables, process_stopped,\
-    get_solution_from_outdat, get_solution_from_mfile,\
+    update_ixc_bounds, get_variable_range, check_input_error,\
+    vary_iteration_variables, process_stopped,\
+    get_solution_from_mfile,\
     process_warnings
 
 ############################################################
@@ -94,18 +94,14 @@ for i in range(CONFIG.niter):
 
     CONFIG.run_process()
 
-    check_logfile()
+    check_input_error()
 
     if process_stopped():
         ifail, objective_function, constraints, table_sol, table_res \
             = -1, '0', '0', ['0']*len(ITERVARS), ['0']*NEQNS
     else:
-        if  mfile_exists():
-            ifail, objective_function, constraints, table_sol, table_res \
-                = get_solution_from_mfile(NEQNS, len(ITERVARS))
-        else:
-            ifail, objective_function, constraints, table_sol, table_res \
-                = get_solution_from_outdat(NEQNS, len(ITERVARS))
+        ifail, objective_function, constraints, table_sol, table_res \
+            = get_solution_from_mfile(NEQNS, len(ITERVARS))
 
         if ifail == IFAIL_SUCCESS and process_warnings():
             WARNING_CNT += 1
