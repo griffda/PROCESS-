@@ -929,6 +929,7 @@ contains
     !+ad_hist  06/10/14 PJK Added orbit loss power to pfwdiv, pinjwp
     !+ad_hist  22/10/14 PJK Corrected orbit loss power usage
     !+ad_hist  04/11/14 PJK Corrected pnucblkt(*emult) usage
+    !+ad_hist  17.11.14 PJK Added palpfwmw to first wall thermal power
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1000,7 +1001,7 @@ contains
 
        !  Total thermal power deposited in first wall coolant
 
-       pthermfw = pnucfw + pradfw + htpmw_fw + porbitlossmw
+       pthermfw = pnucfw + pradfw + htpmw_fw + porbitlossmw + palpfwmw
 
        !  Total thermal power deposited in blanket coolant
        !  Nuclear energy multiplication is included in pnucblkt already
@@ -1131,6 +1132,7 @@ contains
     !+ad_hist  10/09/14 PJK Added power balance outputs
     !+ad_hist  22/10/14 PJK Minor mods to outputs
     !+ad_hist  04/11/14 PJK Corrected pnucblkt emult factor
+    !+ad_hist  17/11/14 PJK Added palpfwmw to first wall power balance
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1435,11 +1437,11 @@ contains
 
        write(outfile,'(t10,a)') 'First wall:'
        write(outfile,10) pnucfw, 0.0D0, pnucfw
-       write(outfile,20) 0.0D0, 0.0D0, 0.0D0
+       write(outfile,20) palpfwmw, 0.0D0, palpfwmw
        write(outfile,30) pradfw, 0.0D0, pradfw
        write(outfile,40) htpmw_fw, 0.0D0, htpmw_fw
 
-       primsum = primsum + pnucfw + pradfw + htpmw_fw
+       primsum = primsum + pnucfw + palpfwmw + pradfw + htpmw_fw
        secsum = secsum
 
        call oblnkl(outfile)

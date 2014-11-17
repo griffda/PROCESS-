@@ -997,6 +997,8 @@ contains
     !+ad_hist  24/06/14 PJK Corrected neutron wall load to account for gaps
     !+ad_hisc               in first wall
     !+ad_hist  19/08/14 PJK Removed impfe usage
+    !+ad_hist  17/11/14 PJK Recalculated radiation power totals; included
+    !+ad_hisc               falpha contributions
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1089,7 +1091,8 @@ contains
     call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
 
     !  Calculate radiation power
-    !  N.B. pedgeradpv is recalculated below
+    !  N.B. pedgeradpv is recalculated below - thus making the model
+    !  inconsistent with the tokamak version
 
     call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
          pcoreradpv,pedgeradpv,pradpv)
@@ -1100,14 +1103,19 @@ contains
     !  Heating power to plasma (= Psol in divertor model)
     !  Ohmic power is zero in a stellarator
 
-    powht = palpmw + pchargemw + pohmmw - pcoreradmw
+    powht = falpha*palpmw + pchargemw + pohmmw - pcoreradmw
     if (ignite == 0) powht = powht + pinjmw
 
-    !  Line radiation power/volume is obtained via input parameter f_rad
+    !  Edge radiation power/volume is obtained via input parameter f_rad
     !  (in contrast to tokamak calculation)
 
     pedgeradpv = f_rad*powht/vol
     pedgeradmw = pedgeradpv*vol
+
+    !  Reset radiation power totals
+
+    pradmw = pcoreradmw + pedgeradmw
+    pradpv = pradmw/vol
 
     !  Power to divertor, = (1-f_rad)*Psol
 
@@ -1118,6 +1126,10 @@ contains
     !  this may not be quite correct for stellarators)
 
     pdivt = max(0.001D0, pdivt)
+
+    !  Power transported to the first wall by escaped alpha particles
+
+    palpfwmw = palpmw * (1.0D0-falpha)
 
     !  Calculate density limit
 

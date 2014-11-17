@@ -134,6 +134,7 @@ module physics_variables
   !+ad_hist  01/10/14 PJK Modified q wording
   !+ad_hist  01/10/14 PJK Added ilhthresh, plhthresh
   !+ad_hist  02/10/14 PJK Added cwrmax
+  !+ad_hist  17/11/14 PJK Added palpfwmw
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -495,6 +496,8 @@ module physics_variables
   real(kind(1.0D0)) :: palppv = 0.0D0
   !+ad_vars  palpepv : alpha power per volume to electrons (MW/m3)
   real(kind(1.0D0)) :: palpepv = 0.0D0
+  !+ad_vars  palpfwmw : alpha power escaping plasma and reaching first wall (MW)
+  real(kind(1.0D0)) :: palpfwmw = 0.0D0
   !+ad_vars  palpipv : alpha power per volume to ions (MW/m3)
   real(kind(1.0D0)) :: palpipv = 0.0D0
   !+ad_vars  palpmw : alpha power (MW)

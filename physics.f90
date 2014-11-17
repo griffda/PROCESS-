@@ -416,12 +416,16 @@ contains
     else
        pinj = 0.0D0
     end if
-    pdivt = palpmw + pchargemw + pinj + pohmmw - pradmw
+    pdivt = falpha*palpmw + pchargemw + pinj + pohmmw - pradmw
 
     !  The following line is unphysical, but prevents -ve sqrt argument
     !  Should be obsolete if constraint eqn 17 is turned on
 
     pdivt = max(0.001D0, pdivt)
+
+    !  Power transported to the first wall by escaped alpha particles
+
+    palpfwmw = palpmw * (1.0D0-falpha)
 
     !  Density limit
 
@@ -2959,6 +2963,7 @@ contains
     !+ad_hisc               changed te,ti to ten,tin
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  03/06/14 PJK Added pchargemw output
+    !+ad_hist  17/11/14 PJK Added falpha dependencies
     !+ad_stat  Okay
     !+ad_docs  ITER Physics Design Guidelines: 1989 [IPDG89], N. A. Uckan et al,
     !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
@@ -3015,8 +3020,8 @@ contains
     !  and ion power balance equations only)
     !  No consideration of pchargepv here...
 
-    palpipv = palppv*falpi
-    palpepv = palppv*falpe
+    palpipv = falpha * palppv*falpi
+    palpepv = falpha * palppv*falpe
 
     !  Determine average fast alpha density
 
@@ -5253,6 +5258,7 @@ contains
     !+ad_hist  01/10/14 PJK Modified safety factor output statements
     !+ad_hist  01/10/14 PJK Added plhthresh output
     !+ad_hist  06/10/14 PJK Modified plhthresh output
+    !+ad_hist  17/11/14 PJK Modified output to account for falpha, palpfwmw
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5582,7 +5588,6 @@ contains
 60  format(t18,'Injection power to ions (MW)', &
          t48,f8.2)
 
-!    call oblnkl(outfile)
     write(outfile,'(t10,a)') repeat('-',97)
 
     if (iradloss == 1) then
@@ -5612,8 +5617,6 @@ contains
 
     call osubhd(outfile,'Charged Particle Power on Divertor :')
 
-    write(outfile,80) palpmw*(1.0D0-falpha)
-80  format(t14,'Alpha power escaping from core (MW)',t51,f8.2)
     write(outfile,90) ptremw
 90  format(t14,'Power transported by electrons (MW)',t51,f8.2)
     write(outfile,100) ptrimw
@@ -5621,9 +5624,8 @@ contains
     write(outfile,110) -pedgeradmw
 110 format(t2,'Particle power converted to edge radiation (MW)',t50,f9.2)
 
-!    call oblnkl(outfile)
     write(outfile,'(t10,a)') repeat('-',49)
-    write(outfile,120) palpmw*(1.0D0-falpha) + ptremw + ptrimw - pedgeradmw
+    write(outfile,120) ptremw + ptrimw - pedgeradmw
 120 format(t39,'Total (MW)',t51,f8.2)
 
     call oblnkl(outfile)
