@@ -125,7 +125,6 @@ can be scaled automatically with the aspect ratio if required using switch
 
 \item If \texttt{ishape = 1}, the following scaling is used, which is suitable
   for low aspect ratio machines ($\epsilon = 1/A$)~\cite{storac}:
-
 \begin{eqnarray}
 \kappa & = & 2.05 \, (1 + 0.44 \, \epsilon^{2.1}) \\
 \delta & = & 0.53 \, (1 + 0.77 \, \epsilon^3)
@@ -134,9 +133,10 @@ can be scaled automatically with the aspect ratio if required using switch
 \item If \texttt{ishape = 2}, the Zohm ITER scaling~\cite{Zohm} is used to
   calculate the elongation:
 \begin{equation}
-\kappa = \mathrm{minimum} \left( 2.0, \, \, 1.5 + \frac{0.5}{A-1} \right)
+\kappa = F_{kz} \, \times \, \mathrm{minimum} \left( 2.0, \, \, 1.5 + \frac{0.5}{A-1} \right)
 \end{equation}
-while the input value of the triangularity is used unchanged.
+where input variable \texttt{fkzohm} $= F_{kz}$ may be used to adjust the
+scaling, while the input value of the triangularity is used unchanged.
 
 \end{itemize}
 
@@ -434,9 +434,9 @@ the user.
 By changing the input parameter \texttt{coreradius}, the user may set the
 normalised radius defining the core region (\texttt{imprad\_model = 1}
 only). Only the impurity and synchrotron radiation from the core region
-affects the confinement scaling (but see \texttt{iradloss} below), while the
-power flowing into the divertor is assumed to exclude all radiation power
-\Red{But c.f. fdiv}.
+affects the confinement scaling (but see the \texttt{iradloss} description in
+Section~\ref{sec:iradloss}), while the power flowing into the divertor is
+assumed to exclude all radiation power.  \Red{But c.f. fdiv}.
 
 \Red{Add radiation power flow diagram as on p.26, logbook24}
 
@@ -447,11 +447,6 @@ ensures that the calculated total radiation power does not exceed the total
 power available that can be converted to radiation (i.e.\ the sum of the fusion
 alpha power, other charged particle fusion power, auxiliary injected power and
 the ohmic power). This constraint should always be turned on.
-
-Switch \texttt{iradloss} may be used to exclude (\texttt{iradloss = 1},
-default) or include (\texttt{iradloss = 0}) the core radiation power in the
-transport power used in the confinement time and power balance calculations
-(see Section~\ref{sec:corepower}).
 
 \subsubsection{Plasma current scaling laws}
 \label{sec:current_scaling}
@@ -573,6 +568,47 @@ Berchtesgaden, 1997 \\
 }
 \end{table}
 
+\subsubsection*{Effect of radiation on energy confinement}
+\label{sec:iradloss}
+
+Published confinement scalings are all based on low radiation pulses. A power
+plant will certainly be a high radiation machine --- both in the core, due to
+bremsstrahlung and synchrotron radiation, and in the edge due to impurity
+seeding. The scaling data do not predict this radiation --- that needs to be
+done by the radiation model. However, if the transport is very ``stiff'', as
+predicted by some models, then the additional radiation causes an almost equal
+drop in power transported by ions and electrons, leaving the confinement
+nearly unchanged.
+
+To allow for these uncertainties, three options are available, using the
+switch \texttt{iradloss}. In each case, the quantity \texttt{pscaling} is
+derived directly from the energy confinement scaling (see above;
+\texttt{pscaling} is $P_{\mbox{\scriptsize loss}}$ in
+Equation~\ref{eqn:ploss}).
+
+\begin{description}
+
+\item{\texttt{iradloss = 0}:}  Total power lost is scaling power plus
+  radiation:
+\begin{verbatim}
+pscaling + pradpv = falpha*palppv + pchargepv + pohmpv + pinjmw/vol
+\end{verbatim}
+
+\item{\texttt{iradloss = 1}:}  Total power lost is scaling power plus core
+  radiation only:
+\begin{verbatim}
+pscaling + pcoreradpv = falpha*palppv + pchargepv + pohmpv + pinjmw/vol
+\end{verbatim}
+
+\item{\texttt{iradloss = 2}:}  Total power lost is scaling power only, with no
+  additional allowance for radiation. This is not recommended for power plant
+  models.
+\begin{verbatim}
+pscaling = falpha*palppv + pchargepv + pohmpv + pinjmw/vol
+\end{verbatim}
+
+\end{description}
+
 \subsubsection{Plasma core power balance}
 \label{sec:corepower}
 
@@ -584,11 +620,11 @@ the power plant.)
 \begin{figure}[tbph]
 \epsfig{file=powerflow1.eps,width=170mm}
 \caption[Power balance within the core plasma] {\label{fig:powerflow1}
-  \textit{Schematic diagram of the flow of power within the plasma
-    core. Variable names are given in [\ldots]. Refer to
-  Figure~\ref{fig:powerflow2} for the onward flow of power from the four
-  red-bordered boxes, while the source of the power in the blue box is
-  indicated in Figure~\ref{fig:powerflow3}.} }
+  \textit{Schematic diagram of the flow of power within the plasma core
+    (assuming switch \texttt{iradloss=1}). Variable names are given in
+    [\ldots]. Refer to Figure~\ref{fig:powerflow2} for the onward flow of
+    power from the three red-bordered boxes, while the source of the power in
+    the blue box is indicated in Figure~\ref{fig:powerflow3}.} }
 \end{figure}
 
 The primary sources of power are the fusion reactions themselves, ohmic power
@@ -602,12 +638,10 @@ alpha power, any power carried by non-alpha charged particles, the ohmic power
 and any injected power, is converted into charged particle transport power
 ($P_{\mbox{\scriptsize loss}}$ in Equation~\ref{eqn:ploss}) plus core
 radiation power (see Section~\ref{sec:radiation}), as shown in
-Figure~\ref{fig:powerflow1}. (Note that, if switch \texttt{iradloss} is set to
-zero, the above summed input power is converted into charged particle
-transport power only, and the core radiation power may be assumed to originate
-from the transport power; i.e.\ the core radiation power is treated the same
-as the edge radiation power in Figure~\ref{fig:powerflow1} instead of having
-an arrow leading directly to it from the core plasma power balance.)
+Figure~\ref{fig:powerflow1}. (This assumes \texttt{iradloss=1} --- see
+Section~\ref{sec:iradloss}; other values for \texttt{iradloss} are equivalent
+to subtle differences in the positioning of the arrows leaving the core plasma
+power balance circle in Figure~\ref{fig:powerflow1}.)
 
 The core power balance calculation is turned on using constraint equation
 no.\ 2 (which should therefore always be used).
@@ -1365,6 +1399,18 @@ the EOF. To limit the current density at the BOP, constraint equation no.\ 27
 should be turned on with iteration variable no.\ 39 (\texttt{fjohc0}). To
 limit the current density at the EOF, constraint equation no.\ 26 should be
 turned on with iteration variable no.\ 38 (\texttt{fjohc}).
+
+As for the TF coils, the critical current density \jcrit\ falls with the
+temperature of the superconductor. The temperature margin $\Delta T$ is the
+difference between the temperature at which \jcrit would be equal to \jop\ and
+the operating temperature. The minimum allowed $\Delta T$ can be set using
+input parameter \texttt{tmargmin} together with constraint equation no.\ 60
+and iteration variable no.\ 106 (\texttt{ftmargoh}).
+
+Note that if the temperature margin is positive, \jop\ is guaranteed to be
+lower than \jcrit, and so constraints~26, 27 and~60 need not all be turned on
+(in fact, it is recommended that EITHER the latter constraint, OR the former
+two constraints, is/are activated in any given run).
 
 \subsubsection{Plasma current ramp-up time}
 \label{sec:tohs}

@@ -1671,6 +1671,8 @@ contains
       !+ad_hisc               tmargin loop if problems are occurring
       !+ad_hist  06/11/14 PJK Added local variable jcritstr; inverted
       !+ad_hisc               areas in bi2212 jstrand input
+      !+ad_hist  11/11/14 PJK Shifted exit criteria for temperature margin
+      !+ad_hisc               iteration to reduce calculations
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
@@ -1780,7 +1782,8 @@ contains
          lap = 0
          solve_for_tmarg: do ; lap = lap+1
             if ((ttest <= 0.0D0).or.(lap > 100)) then
-               write(*,*) 'Temperature margin loop terminating: ttest = ',ttest
+               idiags(1) = lap ; fdiags(1) = ttest
+               call report_error(157)
                exit solve_for_tmarg
             end if
             ttestm = ttest - delt
@@ -1788,14 +1791,15 @@ contains
             select case (isumat)
             case (1,4)
                call itersc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+               if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
                call itersc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
                call itersc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
             case (3)
                call jcrit_nbti(ttest ,bmax,c0,bc20m,tc0m,jcrit0,t)
+               if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
                call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
                call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
             end select
-            if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
             ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
          end do solve_for_tmarg
 
@@ -2007,7 +2011,7 @@ contains
     !+ad_desc  temperature in the superconducting TF coils using the
     !+ad_desc  ITER Nb3Sn critical surface model.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  21/07/11 RK  First draft of routine
     !+ad_hist  21/09/11 PJK Initial F90 version
     !+ad_hist  26/09/11 PJK Changed two exponents to double precision (which
@@ -2019,6 +2023,7 @@ contains
     !+ad_hist  16/04/13 PJK Converted bctw, tco to arguments instead of hardwired.
     !+ad_hisc               Corrected problems with jcrit and tcrit formulae
     !+ad_hist  08/10/14 PJK Clarified variable names; added Bottura reference
+    !+ad_hist  12/11/14 PJK Added warning messages if limits reached
     !+ad_stat  Okay
     !+ad_docs  $J_C(B,T,\epsilon)$ Parameterization for ITER Nb3Sn production,
     !+ad_docc    L. Bottura, CERN-ITER Collaboration Report, Version 2, April 2nd 2008
@@ -2079,11 +2084,19 @@ contains
     !  Reduced temperature, restricted to be < 1
     !  Should remain < 1 for thelium < 0.94*tc0max (i.e. 15 kelvin for isumattf=1)
 
+    if (thelium/tc0eps >= 1.0D0) then
+       fdiags(1) = thelium ; fdiags(2) = tc0eps
+       call report_error(159)
+    end if
     t = min(thelium/tc0eps, 0.9999D0)
 
     !  Reduced magnetic field at zero temperature
     !  Should remain < 1 for bmax < 0.83*bc20max (i.e. 27 tesla for isumattf=1)
 
+    if (bmax/bc20eps >= 1.0D0) then
+       fdiags(1) = bmax ; fdiags(2) = bc20eps
+       call report_error(160)
+    end if
     bzero = min(bmax/bc20eps, 0.9999D0)
 
     !  Critical temperature (K)
@@ -2096,6 +2109,10 @@ contains
 
     !  Reduced magnetic field, restricted to be < 1
 
+    if (bmax/bcrit >= 1.0D0) then
+       fdiags(1) = bmax ; fdiags(2) = bcrit
+       call report_error(161)
+    end if
     bred = min(bmax/bcrit, 0.9999D0)
 
     !  Critical current density in superconductor (A/m2)

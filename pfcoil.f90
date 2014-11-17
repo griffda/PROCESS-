@@ -120,6 +120,7 @@ contains
     !+ad_hist  22/09/14 PJK Renamed snswit to top_bottom
     !+ad_hist  16/10/14 PJK New calculation for critical current density
     !+ad_hisc               and steel case thickness
+    !+ad_hist  17/11/14 PJK Removed aturn argument from superconpf
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -141,7 +142,7 @@ contains
 
     real(kind(1.0D0)) :: area,areaspf,bmax,bri,bro,bzi,bzo,ioheof, &
          drpdz,drpt,dx,dz,forcepf,rclsnorm,respf,rll,rpt0,ssqef,volpf, &
-         pfflux,csflux,dics,ddics,jstrand,jsc
+         pfflux,csflux,dics,ddics,jstrand,jsc,tmarg
     real(kind(1.0D0)), dimension(ngrpmx,nclsmx) :: rcls0,zcls0
     real(kind(1.0D0)), dimension(ngrpmx/2) :: ccls0
     real(kind(1.0D0)), dimension(ngrpmx) :: sigma,work2
@@ -631,8 +632,8 @@ contains
           if (ipfres == 0) then
              !rjpfalw(i) = pfjalw(bpf(i),bpf2(i),ra(i),rb(i),sigpfalw)
              bmax = max(abs(bpf(i)), abs(bpf2(i)))
-             call superconpf(aturn(i),bmax,vf(i),fcupfsu,rjconpf(i),isumatpf,fhts, &
-                  strncon,tftmp,bcritsc,tcritsc,rjpfalw(i),jstrand,jsc)
+             call superconpf(bmax,vf(i),fcupfsu,rjconpf(i),isumatpf,fhts, &
+                  strncon,tftmp,bcritsc,tcritsc,rjpfalw(i),jstrand,jsc,tmarg)
           end if
 
           !  Length of conductor
@@ -764,6 +765,8 @@ contains
     !+ad_hisc               and steel case area
     !+ad_hist  06/11/14 PJK Used strncon to specify strain in OH superconductor
     !+ad_hist  10/11/14 PJK Clarified comments
+    !+ad_hist  13/11/14 PJK Added fudge to ensure positive conductor area
+    !+ad_hist  17/11/14 PJK Removed aturn argument from superconpf
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -777,8 +780,8 @@ contains
 
     integer :: timepoint
 
-    real(kind(1.0D0)) :: areaspf,bmax,bmaxoh2, &
-         bohci,bohco,bri,bro,bzi,bzo,forcepf,hohc,jcritwp,sgn
+    real(kind(1.0D0)) :: areaspf,bmax,bmaxoh2,bohci,bohco,bri,bro, &
+         bzi,bzo,da,forcepf,hohc,jcritwp,sgn,tmarg1,tmarg2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -822,7 +825,7 @@ contains
 
     turns(nohc) = 1.0D6 * abs(ric(nohc))/cptdin(nohc)
 
-    !  Winding pack void fraction for coolant
+    !  Non-steel area void fraction for coolant
 
     vf(nohc) = vfohc
 
@@ -888,8 +891,14 @@ contains
     wts(nohc) = areaspf * 2.0D0*pi*rpf(nohc) * denstl
 
     !  Non-steel cross-sectional area
-!+PJK need to fix to prevent awpoh becoming negative
+
     awpoh = areaoh - areaspf
+
+    !  Fudge to ensure awpoh is positive; result is continuous, smooth and
+    !  monotonically decreases
+
+    da = 0.0001D0  !  1 cm^2
+    if (awpoh < da) awpoh = da*da / (2.0D0*da - awpoh)
 
     !  Weight of conductor in OH coil
 
@@ -901,21 +910,23 @@ contains
        !  (superconducting coils only)
 
        !rjohc = pfjalw(bohci,bohco,ra(nohc),rb(nohc),sigpfalw)
-       call superconpf(awpoh/turns(nohc),bmaxoh,vfohc,fcuohsu, &
-            abs(ric(nohc))/awpoh,isumatoh,fhts,strncon,tftmp, &
-            bcritsc,tcritsc,jcritwp,jstrandoh_eof,jscoh_eof)
+       call superconpf(bmaxoh,vfohc,fcuohsu,abs(ric(nohc))/awpoh, &
+            isumatoh,fhts,strncon,tftmp,bcritsc,tcritsc,jcritwp, &
+            jstrandoh_eof,jscoh_eof,tmarg1)
 
        rjohc = jcritwp * awpoh/areaoh
 
        !  Allowable coil overall current density at BOP
 
        !rjpfalw(nohc) = pfjalw(bmaxoh0,abs(bzo),ra(nohc),rb(nohc),sigpfalw)
-       call superconpf(awpoh/turns(nohc),bmaxoh0,vfohc,fcuohsu, &
-            abs(ric(nohc))/awpoh,isumatoh,fhts,strncon,tftmp, &
-            bcritsc,tcritsc,jcritwp,jstrandoh_bop,jscoh_bop)
+       call superconpf(bmaxoh0,vfohc,fcuohsu,abs(ric(nohc))/awpoh, &
+            isumatoh,fhts,strncon,tftmp,bcritsc,tcritsc,jcritwp, &
+            jstrandoh_bop,jscoh_bop,tmarg2)
 
        rjpfalw(nohc) = jcritwp * awpoh/areaoh
        rjohc0 = rjpfalw(nohc)
+
+       tmargoh = min(tmarg1, tmarg2)
 
     else
        !  Resistive power losses (non-superconducting coil)
@@ -1915,15 +1926,14 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine superconpf(aturn,bmax,fhe,fcu,jwp,isumat,fhts, &
-       strain,thelium,bcritsc,tcritsc,jcritwp,jcritstr,jcritsc)
+  subroutine superconpf(bmax,fhe,fcu,jwp,isumat,fhts,strain,thelium, &
+       bcritsc,tcritsc,jcritwp,jcritstr,jcritsc,tmarg)
 
     !+ad_name  superconpf
     !+ad_summ  Routine to calculate the PF coil superconductor properties
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_args  aturn : input real : Area per turn (i.e. entire jacketed cable) (m2)
     !+ad_args  bmax : input real : Peak field at conductor (T)
     !+ad_args  fhe : input real : Fraction of cable space that is for He cooling
     !+ad_args  fcu : input real : Fraction of strand that is copper
@@ -1942,8 +1952,9 @@ contains
     !+ad_args  jcritwp : output real : Critical winding pack current density (A/m2)
     !+ad_args  jcritstr : output real : Critical strand current density (A/m2)
     !+ad_args  jcritsc : output real : Critical superconductor current density (A/m2)
+    !+ad_args  tmarg : output real : Temperature margin (K)
     !+ad_desc  This routine calculates the superconductor critical winding pack
-    !+ad_desc  current density for the PF coils.
+    !+ad_desc  current density for the PF coils, plus the temperature margin.
     !+ad_desc  It is based on the TF coil version, <CODE>supercon</CODE>.
     !+ad_prob  The conduit and insulation around each turn is neglected.
     !+ad_call  bi2212
@@ -1953,6 +1964,8 @@ contains
     !+ad_hist  16/10/14 PJK Initial version
     !+ad_hist  06/11/14 PJK Added jcritstr and jcritsc outputs; inverted
     !+ad_hisc               areas in bi2212 jstrand input
+    !+ad_hist  11/11/14 PJK Added temperature margin calculation
+    !+ad_hist  17/11/14 PJK Removed aturn argument
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1963,20 +1976,17 @@ contains
     !  Arguments
 
     integer, intent(in) :: isumat
-    real(kind(1.0D0)), intent(in) :: aturn, bmax, fcu, fhe, fhts, &
-         jwp, strain, thelium, bcritsc, tcritsc
-    real(kind(1.0D0)), intent(out) :: jcritwp, jcritstr, jcritsc
+    real(kind(1.0D0)), intent(in) :: bmax, fcu, fhe, fhts, jwp, &
+         strain, thelium, bcritsc, tcritsc
+    real(kind(1.0D0)), intent(out) :: jcritwp, jcritstr, jcritsc, tmarg
 
     !  Local variables
 
-    real(kind(1.0D0)) :: acs,bc20m,bcrit,c0,jstrand,tc0m,tcrit,tmarg
+    integer :: lap
+    real(kind(1.0D0)) :: b,bc20m,bcrit,c0,delt,jcrit0,jcritm, &
+         jcritp,jsc,jstrand,jtol,t,tc0m,tcrit,ttest,ttestm,ttestp
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Conduit and insulation around each turn is neglected, i.e.
-    !  cable space area is set equal to the total area per turn
-
-    acs = aturn
 
     !  Find critical current density in superconducting strand, jcritstr
 
@@ -2001,8 +2011,7 @@ contains
        !  composition that does not require a user-defined copper fraction,
        !  so this is irrelevant in this model
 
-       !  Previously (wrongly) jstrand = jwp * acs*(1.0D0-fhe)/aturn
-       jstrand = jwp * aturn / (acs*(1.0D0-fhe))
+       jstrand = jwp / (1.0D0-fhe)
 
        call bi2212(bmax,jstrand,thelium,fhts,jcritstr,tmarg)
        jcritsc = jcritstr / (1.0D0-fcu)
@@ -2028,7 +2037,51 @@ contains
 
     !  Critical current density in winding pack
 
-    jcritwp = jcritstr * (1.0D0-fhe) * acs/aturn
+    jcritwp = jcritstr * (1.0D0-fhe)
+
+    !  Temperature margin (already calculated in bi2212 for isumat=2)
+
+    if (isumat /= 2) then
+
+       !  Newton-Raphson method; start at requested minimum temperature margin
+
+       ttest = thelium + tmargmin
+       delt = 0.01D0
+       jtol = 1.0D4
+
+       !  Actual current density in superconductor, which should be equal to jcrit(thelium+tmarg)
+       !  when we have found the desired value of tmarg
+
+       jstrand = jwp / (1.0D0-fhe)
+       jsc = jstrand / (1.0D0-fcu)
+
+       lap = 0
+       solve_for_tmarg: do ; lap = lap+1
+          if ((ttest <= 0.0D0).or.(lap > 100)) then
+             idiags(1) = lap ; fdiags(1) = ttest
+             call report_error(158)
+             exit solve_for_tmarg
+          end if
+          ttestm = ttest - delt
+          ttestp = ttest + delt
+          select case (isumat)
+          case (1,4)
+             call itersc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+             if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
+             call itersc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+             call itersc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+          case (3)
+             call jcrit_nbti(ttest ,bmax,c0,bc20m,tc0m,jcrit0,t)
+             if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
+             call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
+             call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
+          end select
+          ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
+       end do solve_for_tmarg
+
+       tmarg = ttest - thelium
+
+    end if
 
   end subroutine superconpf
 
@@ -2414,6 +2467,7 @@ contains
     !+ad_hist  20/10/14 PJK Minor changes to output wording
     !+ad_hist  06/11/14 PJK Added extra diagnostic outputs
     !+ad_hist  10/11/14 PJK Removed critical current density output for resistive coils
+    !+ad_hist  11/11/14 PJK Added extra area outputs
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2455,11 +2509,7 @@ contains
              call ocmmnt(outfile, &
                   '  (ITER Nb3Sn critical surface model, user-defined parameters)')
           end select
-       else
-          call ocmmnt(outfile,'Resistive central solenoid')
-       end if
 
-       if (ipfres == 0) then
           call osubhd(outfile,'Central Solenoid Current Density Limits :')
           call ovarre(outfile,'Maximum field at Beginning Of Pulse (T)', &
                '(bmaxoh0)',bmaxoh0)
@@ -2483,8 +2533,14 @@ contains
           call ovarre(outfile,'Actual overall current density at EOF (A/m2)', &
                '(coheof)',coheof)
           call oblnkl(outfile)
+          call ovarre(outfile,'CS overall cross-sectional area (m2)', &
+               '(areaoh)',areaoh)
           call ovarre(outfile,'CS conductor+void cross-sectional area (m2)', &
                '(awpoh)',awpoh)
+          call ovarre(outfile,'   CS conductor cross-sectional area (m2)', &
+               '(awpoh*(1-vfohc))',awpoh*(1.0D0-vfohc))
+          call ovarre(outfile,'   CS void cross-sectional area (m2)', &
+               '(awpoh*vfohc)',awpoh*vfohc)
           call ovarre(outfile,'CS steel cross-sectional area (m2)', &
                '(areaoh-awpoh)',areaoh-awpoh)
           call ovarre(outfile,'CS steel area fraction', &
@@ -2499,11 +2555,16 @@ contains
                '(vfohc)',vfohc)
           call ovarre(outfile,'Helium coolant temperature (K)', &
                '(tftmp)',tftmp)
+          call ovarre(outfile,'CS temperature margin (K)', &
+               '(tmargoh)',tmargoh)
 
           if ( (abs(coheof) < 0.99D0*abs(rjohc)).and. &
                (abs(cohbop) < 0.99D0*abs(rjohc0)) ) then
              call report_error(135)
           end if
+
+       else
+          call ocmmnt(outfile,'Resistive central solenoid')
        end if
 
     end if

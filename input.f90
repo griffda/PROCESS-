@@ -325,6 +325,9 @@ contains
     !+ad_hist  16/10/14 PJK Added ISUMATOH,FCUPFSU
     !+ad_hist  22/10/14 PJK Modified FORBITLOSS upper limit
     !+ad_hist  23/10/14 PJK Removed THERMAL_CYCLE; BLBOP --> BLKTCYCLE
+    !+ad_hist  13/11/14 PJK Added FKZOHM
+    !+ad_hist  13/11/14 PJK Modified IRADLOSS limit
+    !+ad_hist  17/11/14 PJK Added OUTPUT_COSTS
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -530,6 +533,9 @@ contains
        case ('FIMPVAR')
           call parse_real_variable('FIMPVAR', fimpvar, 1.0D-6, 0.5D0, &
                'Impurity fraction to be varied')
+       case ('FKZOHM')
+          call parse_real_variable('FKZOHM', fkzohm, 0.5D0, 2.0D0, &
+               'Zohm elongation scaling multiplier')
        case ('FRADMIN')
           write(outfile,*) ' '
           write(outfile,*) '**********'
@@ -640,7 +646,7 @@ contains
           call parse_int_variable('IPROFILE', iprofile, 0, 1, &
                'Switch for current profile consistency')
        case ('IRADLOSS')
-          call parse_int_variable('IRADLOSS', iradloss, 0, 1, &
+          call parse_int_variable('IRADLOSS', iradloss, 0, 2, &
                'Switch for radiation loss term inclusion in pwr balance')
        case ('IRES')
           write(outfile,*) ' '
@@ -1943,6 +1949,9 @@ contains
        case ('LSA')
           call parse_int_variable('LSA', lsa, 1, 4, &
                'Level of safety assurance')
+       case ('OUTPUT_COSTS')
+          call parse_int_variable('OUTPUT_COSTS', output_costs, 0, 1, &
+               'Switch for writing costs to file')
        case ('RATECDOL')
           call parse_real_variable('RATECDOL', ratecdol, 0.0D0, 0.5D0, &
                'Effective cost of money')

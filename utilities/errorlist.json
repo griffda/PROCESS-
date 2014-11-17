@@ -1,8 +1,8 @@
 {
- "version":  [ "PROCESS revision 353ish" ],
+ "version":  [ "PROCESS revision 366" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 157,
+ "n_errortypes": 164,
  "errors": [
   { "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -160,6 +160,13 @@
   { "level": 2, "message": "CHECK: volume-averaged density has been forced to exceed input pedestal height" },
   { "level": 2, "message": "CHECK: boundl(6) has been raised to ensure dene > neped" },
   { "level": 3, "message": "SUPERCONPF: Illegal value for isumatpf" },
+  { "level": 2, "message": "SUPERCON: Temperature margin iteration exited prematurely" },
+  { "level": 2, "message": "SUPERCONPF: Temperature margin iteration exited prematurely" },
+  { "level": 2, "message": "ITERSC: Reduced temperature t artificially lowered" },
+  { "level": 2, "message": "ITERSC: Reduced field bzero artificially lowered" },
+  { "level": 2, "message": "ITERSC: Reduced field brad artificially lowered" },
+  { "level": 3, "message": "CHECK: Constraint no.3 is currently deprecated" },
+  { "level": 3, "message": "CHECK: Constraint no.4 is currently deprecated" },
   { "level": 3, "message": "CHECK: Minimum cycle time constraint 42 not available" }
  ]
 }

@@ -239,6 +239,7 @@ subroutine check
   !+ad_hist  15/09/14 PJK Added plasma pedestal consistency checks
   !+ad_hist  23/10/14 PJK ipowerflow=0 and blkttype=3 for KIT blanket model
   !+ad_hist  29/10/14 PJK Ensured constraint 42 no longer used
+  !+ad_hist  17/11/14 PJK Added trap for deprecated constraints 3,4
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -288,6 +289,16 @@ subroutine check
   if ( any(icc(1:neqns+nineqns) == 0) ) then
      idiags(1) = neqns ; idiags(2) = nineqns
      call report_error(140)
+  end if
+
+  !  Deprecate constraints 3 and 4
+
+  if ( any(icc(1:neqns+nineqns) == 3) ) then
+     call report_error(162)
+  end if
+
+  if ( any(icc(1:neqns+nineqns) == 4) ) then
+     call report_error(163)
   end if
 
   !  Fuel ion fractions must add up to 1.0
@@ -485,7 +496,7 @@ subroutine check
   !  (not currently available, as routine thrmal has been commented out)
 
   if ( any(icc == 42) ) then
-     call report_error(157)
+     call report_error(164)
   end if
 
   !  Ensure that if TF coils are non-superconducting,
