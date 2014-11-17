@@ -152,6 +152,7 @@ contains
     !+ad_hist  11/11/14 PJK Added new eqn 60
     !+ad_hist  12/11/14 PJK tcycle now a global variable
     !+ad_hist  13/11/14 PJK Changed iradloss usage in eqns 2 and 4
+    !+ad_hist  17/11/14 PJK Added 'not recommended' comments to constraints 3 and 4
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -240,6 +241,8 @@ contains
        case (3)  !  Global power balance equation for ions
           !  This is a consistency equation
 
+          !  N.B. This constraint is currently NOT RECOMMENDED for use.
+
           if (ignite == 0) then
              cc(i) = 1.0D0 - (ptripv + piepv) / &
                   (falpha*palpipv + pinjimw/vol)
@@ -261,6 +264,8 @@ contains
 
        case (4)  !  Global power balance equation for electrons
           !  This is a consistency equation
+
+          !  N.B. This constraint is currently NOT RECOMMENDED for use.
 
           pscaling = ptrepv
 
