@@ -328,15 +328,16 @@ various physics or engineering limits are not exceeded. Each of these
 equations has an associated \textit{f-value}, which allow them to be coded as
 equalities. The f-values are used as follows.
 
-In optimisation mode, all iteration variables have prescribed lower and upper
-bounds. In general, limit equations have the form
+In general, limit equations have the form
 
 \[ \mbox{\textit{calculated quantity}} = f \times \mbox{\textit{maximum allowable
 value}} \]
 
-where $f$ is the f-value. If $f$ has a lower bound of zero and an upper bound
-of one, then the limit equation does indeed constrain the calculated quantity
-to lie between zero and its maximum allowable value, as required.
+where $f$ is the f-value. In optimisation mode, all iteration variables have
+prescribed lower and upper bounds. If $f$ is chosen to be an iteration
+variable and is given a lower bound of zero and an upper bound of one, then
+the limit equation does indeed constrain the calculated quantity to lie
+between zero and its maximum allowable value, as required.
 
 As with the consistency equations, the general form of the limit equations is
 \[ c_i = 1 - f.\frac{h_{\mbox{\scriptsize max}}}{h} \]

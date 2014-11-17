@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '367    Release Date :: 2014-11-17'
+       '368    Release Date :: 2014-11-17'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1859,3 +1859,4 @@ end subroutine output
 ! GIT 366: Removed confusing acs/aturn comments in superconpf; disabled separate ion and electron
 !          power balance constraints
 ! GIT 367: Added output_costs switch to turn on/off costing information to file
+! GIT 368: Minor changes to User Guide
