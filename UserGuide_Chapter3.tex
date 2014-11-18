@@ -623,7 +623,7 @@ the power plant.)
   \textit{Schematic diagram of the flow of power within the plasma core
     (assuming switch \texttt{iradloss=1}). Variable names are given in
     [\ldots]. Refer to Figure~\ref{fig:powerflow2} for the onward flow of
-    power from the three red-bordered boxes, while the source of the power in
+    power from the five red-bordered boxes, while the source of the power in
     the blue box is indicated in Figure~\ref{fig:powerflow3}.} }
 \end{figure}
 
@@ -1581,22 +1581,6 @@ cryopump (\texttt{ntype = 1}) is used in the vacuum system.
 The \process\ power plant takes into account all the systems required to
 perform the necessary conversion of fusion power to electricity, from the
 coolant systems in the plant components to the heat exchangers and turbines.
-%Figure~\ref{fig:pwrconv} shows schematically the overall power transfer
-%mechanisms used by the code.
-%
-%\begin{figure}[tbph]
-%\centerline{\epsfig{file=PWR.ps,width=160mm,height=160mm,
-%bbllx=0mm,bburx=200mm,bblly=0mm,bbury=200mm,clip=}}
-%\vspace{-12mm}
-%\caption[Power conversion mechanisms within \process]
-%{\label{fig:pwrconv}
-%  \textit{Schematic diagram showing the power conversion mechanisms used in
-%    \process \cite[Note 0166]{PWF}.}
-%}
-%\end{figure}
-%
-%Many of the power conversion efficiencies shown in Figure~\ref{fig:pwrconv}
-%can be adjusted by the user.
 
 Figures~\ref{fig:powerflow2} and \ref{fig:powerflow3} show schematically the
 overall power transfer mechanisms within the power plant outside of the plasma
@@ -1612,7 +1596,7 @@ zero, as the new power flow model is in draft form.)
 \caption[Power flow within the fusion power plant core]
 {\label{fig:powerflow2} \textit{Schematic diagram of the flow of power from
     the plasma to the thermal power deposited within the divertor, first wall,
-    blanket and shield. Variable names are given in [\ldots]. The three
+    blanket and shield. Variable names are given in [\ldots]. The five
     red-bordered contributions are passed from Figure~\ref{fig:powerflow1},
     while the blue box comes from Figure~\ref{fig:powerflow3}.} }
 \end{figure}
@@ -1630,7 +1614,7 @@ which may be set as input parameters: \texttt{fdiv} (divertor area fraction),
 
 \subsubsection{Divertor}
 
-All of the charged particle transport power leaving the plasma is assumed to
+\Red{N.B. falpha} All of the charged particle transport power leaving the plasma is assumed to
 be absorbed in the divertor, along with a proportion \texttt{fdiv} of the
 radiation power and the neutron power. The power necessary to drive the
 divertor coolant pumps $P$ (= \texttt{htpmw\_div} in
