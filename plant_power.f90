@@ -1133,6 +1133,7 @@ contains
     !+ad_hist  22/10/14 PJK Minor mods to outputs
     !+ad_hist  04/11/14 PJK Corrected pnucblkt emult factor
     !+ad_hist  17/11/14 PJK Added palpfwmw to first wall power balance
+    !+ad_hist  18/11/14 PJK Corrected input power when ignite=1
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1146,7 +1147,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: cirpowfr, primsum, secsum
+    real(kind(1.0D0)) :: cirpowfr, primsum, pinj, secsum
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1414,8 +1415,15 @@ contains
        call ocmmnt(outfile, '----------------------------------')
 
        call ovarre(outfile, 'Fusion power (MW)', '(powfmw.)',powfmw)
-       call ovarre(outfile, 'Injected heating/current drive power (MW)', &
-            '(pinjmw.)',pinjmw)
+
+       if (ignite == 0) then
+          pinj = pinjmw
+          call ovarre(outfile, 'Injected heating/current drive power (MW)', &
+               '(pinjmw.)',pinjmw)
+       else
+          pinj = 0.0D0
+       end if
+
        call ovarre(outfile, &
             'Power from energy multiplication in blanket (MW)','', &
             pnucblkt*(1.0D0 - 1.0D0/emult))
@@ -1424,7 +1432,7 @@ contains
             htpmw_fw + htpmw_blkt + htpmw_shld + htpmw_div)
        call ovarre(outfile, &
             'Total power entering fusion power core (MW)','', &
-            powfmw + pinjmw + pnucblkt*(1.0D0 - 1.0D0/emult) &
+            powfmw + pinj + pnucblkt*(1.0D0 - 1.0D0/emult) &
             + htpmw_fw + htpmw_blkt + htpmw_shld + htpmw_div)
 
        primsum = 0.0D0 ; secsum = 0.0D0

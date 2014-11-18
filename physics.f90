@@ -5280,6 +5280,7 @@ contains
     !+ad_hist  13/11/14 PJK Modified elong, triang outputs with ishape
     !+ad_hist  13/11/14 PJK Modified iradloss usage
     !+ad_hist  17/11/14 PJK Modified output to account for falpha, palpfwmw
+    !+ad_hist  18/11/14 PJK Corrected power balance output if ignite=1
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5293,7 +5294,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: betath
+    real(kind(1.0D0)) :: betath,pinj
     integer :: imp
     character(len=30) :: tauelaw
     character(len=30) :: str1,str2
@@ -5620,24 +5621,29 @@ contains
          t48,f8.2)
     end if
 
-    write(outfile,50) pinjemw
+    if (ignite == 0) then
+       write(outfile,50) pinjemw
+       write(outfile,60) pinjimw
+       pinj = pinjemw + pinjimw
+    else
+       pinj = 0.0D0
+    end if
+
 50  format(t13,'Injection power to electrons (MW)', &
          t48,f8.2)
-
-    write(outfile,60) pinjimw
 60  format(t18,'Injection power to ions (MW)', &
          t48,f8.2)
 
     write(outfile,'(t10,a)') repeat('-',97)
 
     if (iradloss == 0) then
-       write(outfile,70) palpmw*falpha + pchargemw + pohmmw + pinjemw + pinjimw, &
+       write(outfile,70) palpmw*falpha + pchargemw + pohmmw + pinj, &
             ptremw + ptrimw + pradmw
     else if (iradloss == 1) then
-       write(outfile,70) palpmw*falpha + pchargemw + pohmmw + pinjemw + pinjimw, &
+       write(outfile,70) palpmw*falpha + pchargemw + pohmmw + pinj, &
             ptremw + ptrimw + pcoreradmw
     else
-       write(outfile,70) palpmw*falpha + pchargemw + pohmmw + pinjemw + pinjimw, &
+       write(outfile,70) palpmw*falpha + pchargemw + pohmmw + pinj, &
             (ptrepv + ptripv) * vol
     end if
 
