@@ -191,10 +191,11 @@ deuterium-tritium reaction:
 \mathrm{D + T} \Longrightarrow \mathrm{^{4}He + n + 17.6 \,MeV}
 \label{eqn:d-t}
 \end{equation}
-20\% of the energy produced is given to the alpha particles ($^4$He), which
-remain (\Red{but c.f.\ falpha}) within the plasma and thermalise (slow down)
-due to collisions, thus heating the plasma. The remaining 80\% is carried away
-by the neutrons, which deposit their energy within the blanket and shield.
+20\% of the energy produced is given to the alpha particles ($^4$He), a
+fraction of which remain (c.f.\ \texttt{falpha}, Section~{sec:corepower})
+within the plasma and thermalise (slow down) due to collisions, thus heating
+the plasma. The remaining 80\% is carried away by the neutrons, which deposit
+their energy within the blanket and shield.
 
 \process\ can also model D-$^3$He power plants, which utilise the following primary
 fusion reaction:
@@ -244,8 +245,8 @@ error message otherwise.
 
 \subsubsection{Plasma profiles}
 
-By default \Red{NOT ANY MORE!} (switch \texttt{ipedestal = 0}), the plasma
-profiles are assumed to be parabolic, i.e.\ they are of the form
+If switch \texttt{ipedestal = 0}, the plasma profiles are assumed to be
+parabolic, i.e.\ they are of the form
 \begin{eqnarray}
 \mbox{Density : } n(\rho) & = & n_0 \left( 1 - \rho^2 \right)^{\alpha_n} \\
 \mbox{Temperature : } T(\rho) & = & T_0 \left( 1 - \rho^2 \right)^{\alpha_T} \\
@@ -261,8 +262,8 @@ be described as ``$\frac{1}{2}$-D''.  The relevant profile index variables are
 \texttt{alphan}, \texttt{alphat} and \texttt{alphaj}, respectively (see
 Section~\ref{sec:current_profile}).
 
-If \texttt{ipedestal} is set to \texttt{1}, however, the density and
-temperature profiles may include a pedestal, using the forms specified
+However, by default, \texttt{ipedestal = 1} which allows the density and
+temperature profiles to include a pedestal, using the forms specified
 in~\cite{helios}:
 \begin{equation}
 \mbox{density:} \qquad n(\rho) = \left\{ 
@@ -362,6 +363,20 @@ the inverse aspect ratio, constraint equation no.\ 6 should be turned on with
 iteration variable no.\ 8 (\texttt{fbeta}). The limiting value of
 $\epsilon.\beta_p$ should be set using input parameter \texttt{epbetmax}.
 
+\subsubsection{Fast alpha pressure contribution}
+
+Switch \texttt{ifalphap} may be used to select the model used to calculate the
+pressure contribution from the fast alpha particles:
+\begin{eqnarray}
+\frac{\beta_{\alpha}}{\beta_{th}} & = & 0.29 \, \left( \langle T_{10} \rangle -
+  0.37 \right) \, \left( \frac{n_{DT}}{n_e} \right)^2
+\hspace{20mm} \mbox{\texttt{ifalphap = 0}~\cite{IPDG}} \\
+\frac{\beta_{\alpha}}{\beta_{th}} & = & 0.26 \, \left( \langle T_{10} \rangle -
+  0.65 \right)^{0.5} \, \left( \frac{n_{DT}}{n_e} \right)^2
+\hspace{16mm} \mbox{\texttt{ifalphap = 1} (default)~\cite{Ward_fastalpha2006}}
+\end{eqnarray}
+The latter model is a better estimate at higher temperatures.
+
 \subsubsection{Density limits}
 
 Several density limit models~\cite{172} are available in \process. These are
@@ -435,12 +450,17 @@ By changing the input parameter \texttt{coreradius}, the user may set the
 normalised radius defining the core region (\texttt{imprad\_model = 1}
 only). Only the impurity and synchrotron radiation from the core region
 affects the confinement scaling (but see the \texttt{iradloss} description in
-Section~\ref{sec:iradloss}), while the power flowing into the divertor is
-assumed to exclude all radiation power.
+Section~\ref{sec:iradloss}). Figure~\ref{fig:radiation} elucidates the
+radiation power contributions, while Figures~\ref{fig:powerflow1}
+and~\ref{fig:powerflow2} show how the radiation power propagates through the
+fusion power core.
 
-\Red{Add radiation power flow diagram as on p.26, logbook24}
-
-\Red{New overall power flow diagram should elucidate this...}
+\begin{figure}[tbph]
+\epsfig{file=radiation.eps,width=170mm}
+\caption[Radiation power contributions] {\label{fig:radiation}
+  \textit{Schematic diagram of the radiation power contributions and how they
+    are split between core and edge radiation, for \texttt{imprad\_model = 1}.} }
+\end{figure}
 
 Constraint equation no.~17 with iteration variable no.~28 (\texttt{fradpwr})
 ensures that the calculated total radiation power does not exceed the total
@@ -769,12 +789,7 @@ The first wall acts as a physical barrier protecting the rest of the machine
 from the hot plasma. Due to its hostile environment the first wall has only a
 short lifetime and therefore needs to be replaced regularly. Its stainless
 steel structure is cooled either by gaseous helium or by pressurised water, as
-chosen using switch \texttt{costr} -- see Section~\ref{sec:blanket}.
-
-The first wall coolant fraction is given by the value of \texttt{fwclfr},
-which is calculated if a pulsed power plant is being modelled (\texttt{lpulse
-  = 1} --- see Section~\ref{sec:pulsed}), and assumed to be the input value
-otherwise.
+chosen using switch \texttt{coolwh} -- see Section~\ref{sec:blanket}.
 
 \subsubsection*{Wall load calculation}
 
@@ -783,31 +798,6 @@ unit area) should be calculated using the plasma surface area (\texttt{iwalld
   = 1}) or the first wall area (\texttt{iwalld = 2}) as the denominator. In
 the former case, input parameter \texttt{ffwal} (default value 0.92)
 can be used to scale the neutron power reaching the first wall.
-
-\subsection{Divertor}
-\label{sec:divertor}
-
-The divertor provides a means of removing plasma reaching the scrape-off layer
-and heavy ions that are ejected from the first wall.  By default, two
-divertors are assumed in the \process\ tokamak, placed symmetrically above
-and below the plasma. The principal outputs from the code are the divertor
-heat load, used to determine its lifetime, and its peak temperature. The
-divertor is cooled either by gaseous helium or by pressurised water.
-
-Switch \texttt{snull} controls the overall plasma configuration. Setting
-\texttt{snull = 0} corresponds to an up-down symmetric, double null
-configuration (the default), while \texttt{snull = 1} assumes a single null
-plasma with the divertor at the bottom of the machine. The vertical build (see
-Figure~\ref{fig:buildsnd}) and PF coil current scaling algorithms take the
-value of this switch into account, although not the plasma geometry at
-present.
-
-The Harrison-Kukushkin-Hotston divertor model~\cite{IPDG} developed for ITER
-is used (except for the case of spherical tokamaks or stellarators --- see
-later). This is appropriate for conventional aspect ratio machines, but care
-should be taken in inputting the divertor magnetics for this model, and
-projections far from the ITER CDA machine parameters are likely to be
-unreliable.
 
 \subsection{Blanket}
 
@@ -822,6 +812,28 @@ destruction and creation. The blanket therefore contains beryllium to fulfil
 this purpose. As with the first wall, the blanket has a relatively short
 lifetime because of the high neutron fluence.
 
+(In reality, the blanket comprises the first wall plus the so-called breeding
+zone behind it; in \process, the region described as the `blanket' is just the
+breeding zone.)
+
+\Red{ipowerflow (See also Section~\ref{sec:powerflow}), blktcycle, blkttype}
+
+\subsubsection{Blanket model options}
+
+A number of switches may be used to choose between a range of models, as follows:
+%%%%
+\Red{Redo from here...}
+Two options are given through the blbop switch: 
+
+Option 1. (blktcycle=0) a simplified routine calculates the respective powers deposited in the first wall, breeder zone, shield and divertor, and calculates the coolant pumping powers for these systems from a user specified fraction of the total heat depostied in the coolant. The thermal efficiency of the secondary cycle is determined from the choice of blanket and is a fixed value for the each of the three options (WCLL, HCLL, HCPB).
+
+Option 2. (blktcycle>0) The detailed routine takes user inputs for the coolant outlet temperature (which could become an iteration variable), the internal coolant channel diameter, and the segmentation of the blanket and calculates the maximum temperature in the first wall. If the first wall temperature is above user specified material limits, the outer diameter of the first wall pipes is reduced, up to a limit determined by the internal coolant pressure. The pumping power for the first wall and breeder zone is then calculated from thermal-hydraulic formulae, assuming these are separate coolant loops with the same inlet and outlet temperatures. Note that the pumping powers for the shield and divertor are still calculated using the simplified method. The secondary cycle thermal efficiency is calculated from the coolant outlet temperature using simple relations between temperature and efficiency from previous cycle modelling studies.
+
+An option is included to utilise the divertor heat in the main power conversion cycle, or to specify a separate efficiency for conversion of divertor heat to electricity (which could be zero if the divertor heat is not to be utilised).
+
+In terms of integration with the current blanket options in PROCESS, this is intended to replace the blktmodel = 0 option. The old detailed thermo-hydraulic and Rankine cycle model should be removed. lblnkt is effectively replaced by the blbop option, smstr is replaced by the blktchc option, and costr is replaced by coolwh.
+\Red{...to here}
+%%%%
 \subsubsection{Blanket neutronics model}
 \label{sec:blanket_neutronics}
 
@@ -834,10 +846,10 @@ of the inboard and outboard blanket sections are specified via input
 parameters \texttt{blnkith} and \texttt{blnkoth}, respectively. The energy
 multiplication in the blanket (\texttt{emult}) is also an input
 parameter. Steel and vanadium may be used as structural materials within the
-blanket, which is cooled either by gaseous helium or by pressurised water. The
-nuclear heating of the TF coil superconductor is calculated assuming an
-exponential neutron attenuation through the blanket and shield materials,
-based on 1990 ITER data.
+blanket, which is cooled either by gaseous helium or by pressurised water
+\Red{...}. The nuclear heating of the TF coil superconductor is calculated
+assuming an exponential neutron attenuation through the blanket and shield
+materials, based on 1990 ITER data.
 
 The more advanced model (\texttt{blktmodel = 1}) allows the energy
 multiplication factor \texttt{emult}, the shielding requirements and tritium
@@ -904,7 +916,7 @@ A few other input parameters are useful for tuning purposes, as follows:
 \item \texttt{fhole} is the `hole' area fraction of the first wall and blanket
   that neutrons leaving the plasma see, due to the presence of the divertor,
   for instance. That is, \texttt{1-fhole} is the first wall area coverage
-  factor. \Red{(N.B.\ see Section~\ref{sec:powerflow}.)}
+  factor. (N.B.\ see Section~\ref{sec:powerflow}.)
 
 \item \texttt{fvolsi} and \texttt{fvolso} are the area (and volume) coverage
   factors for the inboard and outboard shields, respectively.
@@ -1031,7 +1043,7 @@ the blanket.
 
 \subsubsection{Blanket materials}
 \label{sec:blanket_materials}
-
+\Red{Modify from here...}
 Table~\ref{tab:blanket} summarises the possible options for the blanket
 materials. Switch \texttt{smstr} determines whether a solid blanket of
 Li$_2$O-Be (\texttt{smstr = 1}), or a liquid blanket of LiPb-Li (\texttt{smstr
@@ -1065,7 +1077,7 @@ coolant         & \texttt{vfblkt}  & \texttt{vfblkt}  & \texttt{vfblkt}  \\ \hli
     model. The type of coolant used is given by the value of switch \texttt{costr}.} 
 }
 \end{table}
-
+\Red{... to here}
 \subsection{Shield}
 
 The stainless steel shield reduces the neutron flux reaching the TF coils and
@@ -1073,13 +1085,37 @@ beyond. This minimises the radiological impact of the neutrons, and their
 heating of the TF coils which, if superconducting, need to remain at liquid
 helium temperatures. The shield is cooled either by gaseous helium or by
 pressurised water (\textbf{but see Section~\ref{sec:blanket_neutronics}}), as
-chosen using switch \texttt{costr} -- see Section~\ref{sec:blanket}, and as
+chosen using switch\Red{ \texttt{costr} }-- see Section~\ref{sec:blanket}, and as
 with the blanket the energy deposited in the coolant is used to produce
 electricity. The shield coolant fraction is stored in input parameter
-\texttt{vfshld}.
+\texttt{vfshld}. \Red{N.B. iprimshld}
 
 The inboard and outboard shield thicknesses (\texttt{shldith} and
 \texttt{shldoth}, respectively) may be used as iteration variables.
+
+\subsection{Divertor}
+\label{sec:divertor}
+
+The divertor provides a means of removing plasma reaching the scrape-off layer
+and heavy ions that are ejected from the first wall. The principal outputs
+from the code are the divertor heat load, used to determine its lifetime, and
+its peak temperature. The divertor is cooled either by gaseous helium or by
+pressurised water.
+
+Switch \texttt{snull} controls the overall plasma configuration. Setting
+\texttt{snull = 0} corresponds to an up-down symmetric, double null
+configuration, while \texttt{snull = 1} (the default) assumes a single null
+plasma with the divertor at the bottom of the machine. The vertical build (see
+Figure~\ref{fig:buildsnd}) and PF coil current scaling algorithms take the
+value of this switch into account, although not the plasma geometry at
+present.
+
+The Harrison-Kukushkin-Hotston divertor model~\cite{IPDG} developed for ITER
+is used (except for the case of spherical tokamaks or stellarators --- see
+later). This is appropriate for conventional aspect ratio machines, but care
+should be taken in inputting the divertor magnetics for this model, and
+projections far from the ITER CDA machine parameters are likely to be
+unreliable.
 
 \subsection{Toroidal field coils}
 \label{sec:tfcoil}
@@ -1614,10 +1650,12 @@ which may be set as input parameters: \texttt{fdiv} (divertor area fraction),
 
 \subsubsection{Divertor}
 
-\Red{N.B. falpha} All of the charged particle transport power leaving the plasma is assumed to
-be absorbed in the divertor, along with a proportion \texttt{fdiv} of the
-radiation power and the neutron power. The power necessary to drive the
-divertor coolant pumps $P$ (= \texttt{htpmw\_div} in
+\Red{Redo this and following sections...}
+
+\Red{N.B. falpha} All of the charged particle transport power leaving the
+plasma is assumed to be absorbed in the divertor, along with a proportion
+\texttt{fdiv} of the radiation power and the neutron power. The power
+necessary to drive the divertor coolant pumps $P$ (= \texttt{htpmw\_div} in
 Figure~\ref{fig:powerflow2}) is assumed to be a fraction $f$ (= input
 parameter \texttt{fpumpdiv}) of the total thermal power absorbed by the
 divertor, which includes the coolant pump power itself:
@@ -1800,7 +1838,7 @@ summarises the switch values relevant to each aspect ratio regime.
   \begin{tabular}{||l|c|c||} \hline
     & conventional aspect ratio & low aspect ratio \\
     switch & \texttt{itart = 0} & \texttt{itart = 1} \\ \hline
-    \texttt{ishape} & 0, 2 & 0, 1 \\
+    \texttt{ishape} (Section~\ref{sec:plasma_geometry}) & 0, 2 & 0, 1 \\
     \texttt{ibss} (Section~\ref{sec:bootstrap}) & 1, 2, 3 & 2, 3 \\
     \texttt{icurr} (Section~\ref{sec:current_scaling}) & 1, 3, 4, 5, 6, 7 & 2 \\
     \texttt{itfsup} (Section~\ref{sec:tfcoil}) & 0, 1 & 0 \\
@@ -1827,7 +1865,7 @@ based on steady-state (\texttt{lpulse = 0}) or pulsed (\texttt{lpulse = 1})
 operation.
 
 \subsection{Thermal cycling package}
-
+\Red{Update...}
 This performs calculations on the first wall of the machine. Evaluation of the
 mechanical and thermal stresses on this component lead to a measure of the
 maximum number of cycles to which the first wall can be subjected, and hence
@@ -2361,7 +2399,7 @@ the builds of the given conceptual machines~\cite{ife_build}. In general, the
 build from the centre of the device (at the target ignition location) is in
 the order: chamber, first wall, gap, blanket, gap, shield, gap, building
 wall. The user specifies the thicknesses of these regions, and also the
-materials that are present and in what proportions. \Red{[expand]} %!%!%!
+materials that are present and in what proportions.%%% \Red{[expand one day]} %%%
 
 \begin{description}
 \item [\texttt{ifedrv = -1} :] Driver efficiency and target gain are input as
@@ -2442,9 +2480,7 @@ values scale with (for example) power output, volume, component mass etc., and
 many are available to be changed via the input file. All costs and their
 algorithms correspond to 1990 dollars.
 
-\subsection{Cost options}
-
-\subsubsection{$N^{th}$ of a kind costs}
+\subsection{$N^{th}$ of a kind costs}
 
 The unit costs of the components of the fusion power core are relevant to
 ``first-of-a-kind'' items. That is to say, the items are assumed to be
@@ -2459,7 +2495,7 @@ $N^{th}$-of-a-kind device. In other systems studies of fusion power
 plants~\cite{galambos}, values for this multiplier have ranged from 0.5 to
 0.8.
 
-\subsubsection{Level of safety assurance}
+\subsection{Level of safety assurance}
 
 Many of the unit costs have four possible choices, relating to the level of
 safety assurance~\cite{lsa} flag \texttt{lsa}. A value \texttt{lsa = 1}
@@ -2468,7 +2504,7 @@ safe). Levels \texttt{2} and \texttt{3} lie between the two extremes, and
 level \texttt{4} corresponds to a present day fission reactor, with no safety
 credit.
 
-\subsubsection{Replaceable components}
+\subsection{Replaceable components}
 
 The first wall, blanket, divertor, centrepost (if present) and current drive
 system have relatively short lifetimes because of their hostile environment,
@@ -2480,14 +2516,48 @@ blanket, divertor and a fraction \texttt{fcdfuel} of the cost of the current
 drive system are treated as fuel costs. If \texttt{ifueltyp = 0}, these are
 treated as capital costs.
 
-\subsubsection{Cost of electricity calculations}
+\subsection{Plant availability}
+
+Switch \texttt{iavail} is used to control how the overall plant availability
+factor \texttt{cfactr} is calculated. If \texttt{iavail = 0}, the input value
+of \texttt{cfactr} is used. If \texttt{iavail = 1}, a plant availability model
+by N.~Taylor and D.~Ward~\cite{TaylorWard_avail1999} is used instead, in which
+\texttt{cfactr} is calculated taking into account the time taken to replace
+certain components of the fusion power core, and various unplanned
+unavailability fractions which may be set by the user, as summarised in
+Table~\ref{tab:availability}.
+\begin{table}[tbph]
+\begin{center}
+\begin{tabular}{||c|c||} \hline
+input parameter & description \\ \hline
+\texttt{tbktrepl}  & time needed to replace blanket (years) \\
+\texttt{tdivrepl} & time needed to replace divertor (years) \\
+\texttt{tcomrepl} & time needed to replace both blanket and divertor (years) \\
+\texttt{uubop} & unplanned unavailability of balance of plant \\
+\texttt{uucd} & unplanned unavailability of current drive system \\
+\texttt{uudiv} & unplanned unavailability of divertor \\
+\texttt{uufuel} & unplanned unavailability of fuelling system \\
+\texttt{uufw} & unplanned unavailability of first wall \\
+\texttt{uumag} & unplanned unavailability of magnets \\
+\texttt{uuves} & unplanned unavailability of vessel \\
+\hline
+\end{tabular}
+\end{center}
+\caption[Parameters used in the Taylor-Ward availability model]
+{\label{tab:availability}
+  \textit{Summary of the variables in PROCESS that relate to
+    the Taylor-Ward availability model (\texttt{iavail=1}).}
+}
+\end{table}
+
+\subsection{Cost of electricity calculations}
 
 Switch \texttt{ireactor} determines the type of cost of electricity
 calculation that is performed. If \texttt{ireactor = 0}, no cost of
 electricity calculation is performed. If \texttt{ireactor = 1}, then the cost
 of electricity is evaluated, with the value quoted in units of m\$/kWh.
 
-\subsubsection{Net electric power calculation}
+\subsection{Net electric power calculation}
 
 Related to the cost of electricity is the net electric power calculation
 performed in routine \texttt{POWER}. It is possible that the net electric

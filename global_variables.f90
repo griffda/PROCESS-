@@ -2649,6 +2649,7 @@ module cost_variables
   !+ad_hist  18/06/13 PJK Changed uccryo from cryostat to vacuum vessel
   !+ad_hist  15/08/13 PJK Changed cdrlife description
   !+ad_hist  03/12/13 PJK Changed ucfwps units from $/m2 to $
+  !+ad_hist  19/11/14 PJK Modified iavail wording
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2749,10 +2750,42 @@ module cost_variables
   real(kind(1.0D0)) :: fkind = 1.0D0
   !+ad_vars  fwallcst : first wall cost (M$)
   real(kind(1.0D0)) :: fwallcst = 0.0D0
+
   !+ad_vars  iavail /0/ : switch for plant availability model:<UL>
   !+ad_varc          <LI> = 0 use input value for cfactr;
-  !+ad_varc          <LI> = 1 calculate cfactr using model</UL>
+  !+ad_varc          <LI> = 1 calculate cfactr using Taylor and Ward 1999 model</UL>
   integer :: iavail= 0
+  !+ad_vars  tbktrepl /0.5/ : time taken to replace blanket (y)
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: tbktrepl = 0.5D0
+  !+ad_vars  tcomrepl /0.5/ : time taken to replace both blanket and divertor (y)
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: tcomrepl = 0.5D0
+  !+ad_vars  tdivrepl /0.25/ : time taken to replace divertor (y)
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: tdivrepl = 0.25D0
+  !+ad_vars  uubop /0.02/ : unplanned unavailability factor for balance of plant
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: uubop = 0.02D0
+  !+ad_vars  uucd /0.02/ : unplanned unavailability factor for current drive
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: uucd = 0.02D0
+  !+ad_vars  uudiv /0.04/ : unplanned unavailability factor for divertor
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: uudiv = 0.04D0
+  !+ad_vars  uufuel /0.02/ : unplanned unavailability factor for fuel system
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: uufuel = 0.02D0
+  !+ad_vars  uufw /0.04/ : unplanned unavailability factor for first wall
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: uufw = 0.04D0
+  !+ad_vars  uumag /0.02/ : unplanned unavailability factor for magnets
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: uumag = 0.02D0
+  !+ad_vars  uuves /0.04/ : unplanned unavailability factor for vessel
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: uuves = 0.04D0
+
   !+ad_vars  ifueltyp /0/ : switch:<UL>
   !+ad_varc            <LI> = 1 treat blanket divertor, first wall and
   !+ad_varc                     fraction fcdfuel of CD equipment as fuel cost;
@@ -2780,12 +2813,6 @@ module cost_variables
   integer :: output_costs = 1
   !+ad_vars  ratecdol /0.0435/ : effective cost of money in constant dollars
   real(kind(1.0D0)) :: ratecdol = 0.0435D0
-  !+ad_vars  tbktrepl /0.5/ : time taken to replace blanket (y)
-  real(kind(1.0D0)) :: tbktrepl = 0.5D0
-  !+ad_vars  tcomrepl /0.5/ : time taken to replace both blanket and divertor (y)
-  real(kind(1.0D0)) :: tcomrepl = 0.5D0
-  !+ad_vars  tdivrepl /0.25/ : time taken to replace divertor (y)
-  real(kind(1.0D0)) :: tdivrepl = 0.25D0
   !+ad_vars  tlife /30.0/ : plant life (years)
   real(kind(1.0D0)) :: tlife = 30.0D0
   !+ad_vars  ucad /180.0/ FIX : unit cost for administration buildings (M$/m3)
@@ -2974,20 +3001,6 @@ module cost_variables
   !+ad_vars  ucwst(4) /0.0,3.94,5.91,7.88/ : cost of waste disposal (M$/y/1200MW)
   real(kind(1.0D0)), dimension(4) :: ucwst = &
        (/0.0D0, 3.94D0, 5.91D0, 7.88D0/)
-  !+ad_vars  uubop /0.02/ : unplanned unavailability factor for balance of plant
-  real(kind(1.0D0)) :: uubop = 0.02D0
-  !+ad_vars  uucd /0.02/ : unplanned unavailability factor for current drive
-  real(kind(1.0D0)) :: uucd = 0.02D0
-  !+ad_vars  uudiv /0.04/ : unplanned unavailability factor for divertor
-  real(kind(1.0D0)) :: uudiv = 0.04D0
-  !+ad_vars  uufuel /0.02/ : unplanned unavailability factor for fuel system
-  real(kind(1.0D0)) :: uufuel = 0.02D0
-  !+ad_vars  uufw /0.04/ : unplanned unavailability factor for first wall
-  real(kind(1.0D0)) :: uufw = 0.04D0
-  !+ad_vars  uumag /0.02/ : unplanned unavailability factor for magnets
-  real(kind(1.0D0)) :: uumag = 0.02D0
-  !+ad_vars  uuves /0.04/ : unplanned unavailability factor for vessel
-  real(kind(1.0D0)) :: uuves = 0.04D0
 
 end module cost_variables
 
