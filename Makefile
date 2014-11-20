@@ -310,13 +310,15 @@ userguide: process.tex
 doc: html userguide
 
 dicts: root.dir
+	@ touch utilities/process_io_lib/process_dicts.py
 	@ mv utilities/process_io_lib/process_dicts.py utilities/process_io_lib/process_dicts.py_prev
 	@ echo ''
 	@ echo 'Creating Python dictionaries... warnings are usually ignorable!'
 	@ echo ''
 	@ rm -f *.f90*~
 	utilities/create_dicts.py > utilities/process_io_lib/process_dicts.py
-	@chmod 755 utilities/process_io_lib/process_dicts.py
+	@ chmod 755 utilities/process_io_lib/process_dicts.py
+	@ touch utilities/processgui/dicts/gui_dicts.py
 	@ mv utilities/processgui/dicts/gui_dicts.py utilities/processgui/dicts/gui_dicts.py_prev
 	utilities/processgui/dicts/make_gui_dicts.py > utilities/processgui/dicts/gui_dicts.py
 	@ echo ''

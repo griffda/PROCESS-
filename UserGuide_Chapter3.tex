@@ -117,7 +117,6 @@ plasma cross-section is given by its last closed flux surface (LCFS) elongation
 $\kappa$ (\texttt{kappa}) and triangularity $\delta$ (\texttt{triang}), which
 can be scaled automatically with the aspect ratio if required using switch
 \texttt{ishape}:
-
 \begin{itemize}
 
 \item If \texttt{ishape = 0}, the input values for \texttt{kappa} and
@@ -139,7 +138,6 @@ where input variable \texttt{fkzohm} $= F_{kz}$ may be used to adjust the
 scaling, while the input value of the triangularity is used unchanged.
 
 \end{itemize}
-
 If \texttt{ishape = 0, 1} or \texttt{2}, the values for the plasma shaping
 parameters at the 95\% flux surface are calculated as
 follows~\cite{DEMOPhysicsGuidelines}:
@@ -147,7 +145,6 @@ follows~\cite{DEMOPhysicsGuidelines}:
 \kappa_{95} & = & \kappa / 1.12 \label{eqn:k95} \\
 \delta_{95} & = & \delta / 1.5 \label{eqn:d95}
 \end{eqnarray}
-
 \begin{itemize}
 
 \item If \texttt{ishape = 3}, the Zohm ITER scaling~\cite{Zohm} is used to
@@ -605,7 +602,6 @@ switch \texttt{iradloss}. In each case, the quantity \texttt{pscaling} is
 derived directly from the energy confinement scaling (see above;
 \texttt{pscaling} is $P_{\mbox{\scriptsize loss}}$ in
 Equation~\ref{eqn:ploss}).
-
 \begin{description}
 
 \item{\texttt{iradloss = 0}:}  Total power lost is scaling power plus
@@ -675,7 +671,6 @@ methods, as summarised here. Note that methods \texttt{ibss = 1} to~\texttt{3}
 use fits to parabolic density and temperature profiles, and do not take into
 account the existence of pedestals (\texttt{ipedestal = 1}), whereas the
 Sauter et al.\ scaling (\texttt{ibss = 4}) allows general profiles to be used.
-
 \begin{itemize}
 
 \item Direct input: To input the bootstrap current fraction directly, set
@@ -789,7 +784,7 @@ The first wall acts as a physical barrier protecting the rest of the machine
 from the hot plasma. Due to its hostile environment the first wall has only a
 short lifetime and therefore needs to be replaced regularly. Its stainless
 steel structure is cooled either by gaseous helium or by pressurised water, as
-chosen using switch \texttt{coolwh} -- see Section~\ref{sec:blanket}.
+chosen using switch \texttt{coolwh} -- see Section~\ref{sec:blanket_switches}.
 
 \subsubsection*{Wall load calculation}
 
@@ -816,54 +811,121 @@ lifetime because of the high neutron fluence.
 zone behind it; in \process, the region described as the `blanket' is just the
 breeding zone.)
 
-\Red{ipowerflow (See also Section~\ref{sec:powerflow}), blktcycle, blkttype}
-
 \subsubsection{Blanket model options}
+\label{sec:blanket_switches}
 
 A number of switches may be used to choose between a range of models, as follows:
-%%%%
-\Red{Redo from here...}
-Two options are given through the blbop switch: 
+\begin{description}
 
-Option 1. (blktcycle=0) a simplified routine calculates the respective powers deposited in the first wall, breeder zone, shield and divertor, and calculates the coolant pumping powers for these systems from a user specified fraction of the total heat depostied in the coolant. The thermal efficiency of the secondary cycle is determined from the choice of blanket and is a fixed value for the each of the three options (WCLL, HCLL, HCPB).
+\item{\texttt{blktmodel}:} This switch determines whether a simple blanket
+  neutronics model or a more comprehensive treatment based on recent full
+  neutronics analyses for EFDA~\cite{efda_blanket_model} is used.
 
-Option 2. (blktcycle>0) The detailed routine takes user inputs for the coolant outlet temperature (which could become an iteration variable), the internal coolant channel diameter, and the segmentation of the blanket and calculates the maximum temperature in the first wall. If the first wall temperature is above user specified material limits, the outer diameter of the first wall pipes is reduced, up to a limit determined by the internal coolant pressure. The pumping power for the first wall and breeder zone is then calculated from thermal-hydraulic formulae, assuming these are separate coolant loops with the same inlet and outlet temperatures. Note that the pumping powers for the shield and divertor are still calculated using the simplified method. The secondary cycle thermal efficiency is calculated from the coolant outlet temperature using simple relations between temperature and efficiency from previous cycle modelling studies.
+  In the simple model (\texttt{blktmodel = 0}), the overall radial thicknesses
+  of the inboard and outboard blanket sections are specified via input
+  parameters \texttt{blnkith} and \texttt{blnkoth}, respectively. The energy
+  multiplication in the blanket (\texttt{emult}) is also an input
+  parameter. Steel and vanadium may be used as structural materials within the
+  blanket, which is cooled either by gaseous helium or by pressurised water
+  (see switch \texttt{blkttype} below). The nuclear heating of the TF coil
+  superconductor is calculated assuming an exponential neutron attenuation
+  through the blanket and shield materials, based on 1990 ITER data.
 
-An option is included to utilise the divertor heat in the main power conversion cycle, or to specify a separate efficiency for conversion of divertor heat to electricity (which could be zero if the divertor heat is not to be utilised).
+  The more advanced model (\texttt{blktmodel = 1}) allows the energy
+  multiplication factor \texttt{emult}, the shielding requirements and tritium
+  breeding ratio to be calculated self-consistently with the blanket and
+  shielding materials and sub-assembly thicknesses, and for constraints to be
+  applied to satisfy the engineering requirements. For further details of this
+  model, see Section~\ref{sec:blanket_neutronics}.
 
-In terms of integration with the current blanket options in PROCESS, this is intended to replace the blktmodel = 0 option. The old detailed thermo-hydraulic and Rankine cycle model should be removed. lblnkt is effectively replaced by the blbop option, smstr is replaced by the blktchc option, and costr is replaced by coolwh.
-\Red{...to here}
-%%%%
-\subsubsection{Blanket neutronics model}
+  Note that \texttt{blktmodel = 1} forces \texttt{blktcycle = 0} and
+  \texttt{blkttype = 3} (see below).
+
+\item{\texttt{blktcycle}:} This switch controls how the coolant pumping power
+  in the first wall and blanket is determined, and also how the calculation of
+  the plant's thermal to electric conversion efficiency (the secondary cycle
+  thermal efficiency) proceeds. See also Section~\ref{sec:powerflow}, which
+  describes the flow of power through the fusion power core.
+
+  If \texttt{blktcycle = 0}, a simplified model calculates the respective
+  powers deposited in the first wall, breeder zone, shield and divertor, and
+  calculates the coolant pumping powers for these systems from a user
+  specified fraction of the total heat deposited in the coolant. The thermal
+  efficiency of the secondary cycle is determined from the choice of blanket
+  type (see \texttt{blkttype} below) and is a fixed value for the each of the
+  three options (WCLL, HCLL, HCPB --- see Section~\ref{sec:etath}).
+
+  If \texttt{blktcycle $>$ 0}, a more detailed routine~\cite{Harrington_bop}
+  takes user inputs for the coolant outlet temperature (which may be used as
+  an iteration variable), the internal coolant channel diameter, and the
+  segmentation of the blanket and calculates the maximum temperature in the
+  first wall. If the first wall temperature is above user-specified material
+  limits, the outer diameter of the first wall pipes is reduced, up to a limit
+  determined by the internal coolant pressure. The pumping power for the first
+  wall and breeder zone is then calculated from thermal-hydraulic formulae,
+  assuming these are separate coolant loops with the same inlet and outlet
+  temperatures. Note that the pumping powers for the shield and divertor are
+  still calculated using the simplified method. The secondary cycle thermal
+  efficiency (\texttt{etath}) is calculated from the coolant outlet
+  temperature using simple relations between temperature and efficiency from
+  previous cycle modelling studies (see also Section~\ref{sec:etath}):
+  \begin{itemize}
+  \item If \texttt{blktcycle = 1}, the input value for \texttt{etath} is used.
+  \item If \texttt{blktcycle = 2}, a steam Rankine cycle is used to calculate
+    \texttt{etath}.
+  \item If \texttt{blktcycle = 3}, a supercritical CO$_2$ cycle is used to
+    calculate \texttt{etath}.
+  \end{itemize}
+
+\item{\texttt{blkttype}:} This switch allows the user to choose between
+  different blanket compositions. This determines the breeder materials (and
+  the overall plant thermal to electric thermal efficiency if
+  \texttt{blktcycle = 0}). Table~\ref{tab:blkttype} shows the various options
+  available.
+
+% Table summarising blanket materials
+
+\begin{table}[tbph]
+\begin{center}
+
+\begin{tabular}{||l||c||c||c||} \hline
+ & \texttt{blkttype = 1} & \texttt{blkttype = 2} & \texttt{blkttype = 3} \\
+ & WCLL & HCLL & HCPB \\ \hline
+Breeder material         & liquid LiPb-Li   & liquid LiPb-Li   & solid Li$_2$O-Be \\
+Coolant fluid            & water            & water            & helium           \\
+Coolant switch \texttt{coolwh} &  2         &   2              &  1$^*$           \\ \hline
+Li$_2$O fraction         & \texttt{fblli2o} & \texttt{fblli2o} &     ---          \\
+beryllium fraction       & \texttt{fblbe}   & \texttt{fblbe}   &     ---          \\
+LiPb fraction            &     ---          &     ---          & \texttt{fbllipb} \\
+lithium fraction         &     ---          &     ---          & \texttt{fblli}   \\
+coolant fraction         & \texttt{vfblkt}  & \texttt{vfblkt}  & \texttt{vfblkt}  \\
+stainless steel fraction & \texttt{fblss}   & \texttt{fblss}   & \texttt{fblss}   \\
+vanadium fraction        & \texttt{fblvd}   & \texttt{fblvd}   & \texttt{fblvd}   \\ \hline
+\end{tabular}
+\end{center}
+\caption[Summary of blanket material scenarios]
+{\label{tab:blkttype}
+  \textit{Summary of the materials comprising the blanket in the various scenarios
+    available assuming \texttt{blktmodel=0}. ( $^*$If \texttt{blktmodel=1} ---
+    see Section~\ref{sec:blanket_neutronics} --- \texttt{blkttype=3} is
+    assumed, but \texttt{coolwh=2} as the KIT model assumes that, other than
+    the first wall/blanket, the rest of the fusion power core is
+    water-cooled.) The fractions given are all available to be modified, and 
+    should of course add up to 1.0 for any given model.}
+}
+\end{table}
+
+\end{description}
+
+\subsubsection{KIT Blanket neutronics model}
 \label{sec:blanket_neutronics}
 
-Switch \texttt{blktmodel} determines whether a simple blanket neutronics model
-or a more comprehensive treatment based on recent full neutronics analyses for
-EFDA~\cite{efda_blanket_model} is used.
-
-In the simple model (\texttt{blktmodel = 0}), the overall radial thicknesses
-of the inboard and outboard blanket sections are specified via input
-parameters \texttt{blnkith} and \texttt{blnkoth}, respectively. The energy
-multiplication in the blanket (\texttt{emult}) is also an input
-parameter. Steel and vanadium may be used as structural materials within the
-blanket, which is cooled either by gaseous helium or by pressurised water
-\Red{...}. The nuclear heating of the TF coil superconductor is calculated
-assuming an exponential neutron attenuation through the blanket and shield
-materials, based on 1990 ITER data.
-
-The more advanced model (\texttt{blktmodel = 1}) allows the energy
-multiplication factor \texttt{emult}, the shielding requirements and tritium
-breeding ratio to be calculated self-consistently with the blanket and
-shielding materials and sub-assembly thicknesses, and for constraints to be
-applied to satisfy the engineering requirements. The rest of this section
-describes this model in more detail.
-
-The model is based on the Helium-Cooled Pebble Bed (HCPB) blanket concept
-developed by KIT (a second advanced model --- Helium-Cooled Lithium Lead, HCLL
---- will be implemented in due course). The blanket, shield and vacuum vessel
-are segmented radially into a number of sub-assemblies. Moving in the
-direction away from the plasma/first wall, these are:
-
+The model used if \texttt{blktmodel = 1} is based on the Helium-Cooled Pebble
+Bed (HCPB) blanket concept developed by KIT (a second advanced model ---
+Helium-Cooled Lithium Lead, HCLL --- will be implemented in due course). The
+blanket, shield and vacuum vessel are segmented radially into a number of
+sub-assemblies. Moving in the direction away from the plasma/first wall, these
+are:
 \begin{itemize}
 
 \item Breeding Zone (BZ) (which includes the first wall), with radial
@@ -901,16 +963,15 @@ quantities are \textit{calculated}\ from the sub-assembly values if
 
   \textit{N.B.\ The fact that water is assumed to be the coolant in the
     shield, whereas helium is the coolant in the blanket, leads to an
-    inconsistency when specifying the coolant type via switch \texttt{costr}
-    (see Section~\ref{sec:blanket}). At present we mitigate this by forcing
-    \texttt{costr=2} (making water the coolant), as in this case the coolant
-    mass and pumping costs are higher, giving the more pessimistic solution
-    with regards to costs.}
+    inconsistency when specifying the coolant type via switch \texttt{coolwh}
+    (see Section~\ref{sec:blanket_switches}). At present we mitigate this by
+    forcing \texttt{coolwh=2} (making water the coolant), as in this case the
+    coolant mass and pumping costs are higher, giving the more pessimistic
+    solution with regards to costs.}
 
 \end{itemize}
 
 A few other input parameters are useful for tuning purposes, as follows:
-
 \begin{itemize}
 
 \item \texttt{fhole} is the `hole' area fraction of the first wall and blanket
@@ -925,27 +986,23 @@ A few other input parameters are useful for tuning purposes, as follows:
   used in the item's mass calculation to account for ports, etc.
 
 \item \texttt{npdiv} is the number of divertor ports, used in the calculation
-  of the tritium breeding ratio (\texttt{blktmodel > 0} only).
+  of the tritium breeding ratio.
 
 \item \texttt{nphcdin} and \texttt{nphcdout} are the number of heating/current
   drive ports on the inboard and outboard sides, respectively, used in the
-  calculation of the tritium breeding ratio (\texttt{blktmodel > 0}
-  only). These may be either `small' (\texttt{hcdportsize = 1}) or `large'
-  (\texttt{hcdportsize = 2}).
+  calculation of the tritium breeding ratio. These may be either `small'
+  (\texttt{hcdportsize = 1}) or `large' (\texttt{hcdportsize = 2}).
 
 \item \texttt{wallpf} is the neutron wall load peaking factor (maximum/mean),
-  used in the calculation of the blanket lifetime (\texttt{blktmodel > 0}
-  only).
+  used in the calculation of the blanket lifetime.
 
-\item \texttt{ucblbreed} is the unit cost (\$/kg) of the breeder material
-  (\texttt{blktmodel > 0} only).
+\item \texttt{ucblbreed} is the unit cost (\$/kg) of the breeder material.
 
 \end{itemize}
 
 \subsubsection*{Model outputs and available constraints}
 
 The advanced blanket neutronics model provides the following outputs:
-
 \begin{itemize}
 
 \item The total nuclear power deposited in the blanket and shield,
@@ -992,103 +1049,75 @@ The advanced blanket neutronics model provides the following outputs:
 
 \end{itemize}
 
-\subsubsection{Full thermodynamic blanket model}
-\label{sec:blanket}
+% \subsubsection{Full thermodynamic blanket model}
+% \label{sec:blanket}
 
-\Red{Remove asap.}
+% \Red{Remove asap.}
 
-\textbf{N.B.\ it is recommended that this model is \textit{not}\ used in
-  conjunction with the advanced blanket neutronics model (\texttt{blktmodel >
-    0}).}
+% \textbf{N.B.\ it is recommended that this model is \textit{not}\ used in
+%   conjunction with the advanced blanket neutronics model (\texttt{blktmodel >
+%     0}).}
 
-Switch \texttt{lblnkt} determines whether the blanket is to be simulated using
-a full thermodynamic model~\cite{Panos} (\texttt{lblnkt = 1}), or simply
-assumed to be made up of relevant materials (see
-Section~\ref{sec:blanket_materials}) in user-defined proportions. The former
-model also performs a self-consistent calculation of the thermal-to-electric
-conversion efficiency, whereas the latter simply uses the input value
-\texttt{etath}.
+% Switch \texttt{lblnkt} determines whether the blanket is to be simulated using
+% a full thermodynamic model~\cite{Panos} (\texttt{lblnkt = 1}), or simply
+% assumed to be made up of relevant materials (see
+% Section~\ref{sec:blanket_materials}) in user-defined proportions. The former
+% model also performs a self-consistent calculation of the thermal-to-electric
+% conversion efficiency, whereas the latter simply uses the input value
+% \texttt{etath}.
 
-The following switches control the details of the full thermodynamic model of
-the blanket.
+% The following switches control the details of the full thermodynamic model of
+% the blanket.
 
-\begin{itemize}
+% \begin{itemize}
 
-\item \textbf{Cooling channel geometry:} The value of switch \texttt{astr}
-  determines whether the cooling channels have a circular cross-section
-  (\texttt{astr = 1}) or an annular cross-section (\texttt{astr = 2}). The
-  latter case is the default.
+% \item \textbf{Cooling channel geometry:} The value of switch \texttt{astr}
+%   determines whether the cooling channels have a circular cross-section
+%   (\texttt{astr = 1}) or an annular cross-section (\texttt{astr = 2}). The
+%   latter case is the default.
 
-\item \textbf{Cooling channel orientation:} The value of switch \texttt{estr}
-  determines whether the cooling channels lie in the radial direction
-  (\texttt{estr = 1}) or in the poloidal direction (\texttt{estr = 2}). The
-  former case is the default.
+% \item \textbf{Cooling channel orientation:} The value of switch \texttt{estr}
+%   determines whether the cooling channels lie in the radial direction
+%   (\texttt{estr = 1}) or in the poloidal direction (\texttt{estr = 2}). The
+%   former case is the default.
 
-\item \textbf{Coolant type:} The value of switch \texttt{costr} determines the
-  type of coolant used in the first wall, blanket and shield. If \texttt{costr
-    = 1}, the coolant is assumed to be gaseous helium. If \texttt{costr = 2},
-  the coolant is assumed to be pressurised water/steam, which is the
-  default. This switch is used whether or not the full blanket model is used,
-  i.e.\ is independent of the setting of switch \texttt{lblnkt}.
+% \item \textbf{Coolant type:} The value of switch \texttt{costr} determines the
+%   type of coolant used in the first wall, blanket and shield. If \texttt{costr
+%     = 1}, the coolant is assumed to be gaseous helium. If \texttt{costr = 2},
+%   the coolant is assumed to be pressurised water/steam, which is the
+%   default. This switch is used whether or not the full blanket model is used,
+%   i.e.\ is independent of the setting of switch \texttt{lblnkt}.
 
-\item \textbf{Boundary condition:} The value of switch \texttt{bstr}
-  determines whether the coolant output temperature is to be fixed
-  (\texttt{bstr = 1}) or whether the maximum blanket temperature is to be
-  fixed (\texttt{bstr = 2}). The former case is the default.  The desired
-  coolant output temperature for \texttt{bstr = 1} is set using input
-  parameter \texttt{xtfo}, and the required maximum blanket temperature is set
-  using input parameter \texttt{xtb}.
+% \item \textbf{Boundary condition:} The value of switch \texttt{bstr}
+%   determines whether the coolant output temperature is to be fixed
+%   (\texttt{bstr = 1}) or whether the maximum blanket temperature is to be
+%   fixed (\texttt{bstr = 2}). The former case is the default.  The desired
+%   coolant output temperature for \texttt{bstr = 1} is set using input
+%   parameter \texttt{xtfo}, and the required maximum blanket temperature is set
+%   using input parameter \texttt{xtb}.
 
-\end{itemize}
+% \end{itemize}
 
-\subsubsection{Blanket materials}
-\label{sec:blanket_materials}
-\Red{Modify from here...}
-Table~\ref{tab:blanket} summarises the possible options for the blanket
-materials. Switch \texttt{smstr} determines whether a solid blanket of
-Li$_2$O-Be (\texttt{smstr = 1}), or a liquid blanket of LiPb-Li (\texttt{smstr
-  = 2}) is used. The former is the default, and is the type assumed if
-$\mathtt{lblnkt \not= 1}$.
+%\subsubsection{Blanket materials}
+%\label{sec:blanket_materials}
+%\Red{Modify from here...}
+%Table~\ref{tab:blanket} summarises the possible options for the blanket
+%materials. Switch \texttt{smstr} determines whether a solid blanket of
+%Li$_2$O-Be (\texttt{smstr = 1}), or a liquid blanket of LiPb-Li (\texttt{smstr
+%  = 2}) is used. The former is the default, and is the type assumed if
+%$\mathtt{lblnkt \not= 1}$.
 
-% Table summarising blanket materials
-
-\begin{table}[tbph]
-\begin{center}
-
-\begin{tabular}{||l||c||c||c||} \hline
-material & $\mathtt{lblnkt \not= 1}$: & \multicolumn{2}{c||}{\texttt{lblnkt = 1}: full
-thermodynamic model} \\ \cline{3-4}
- & simple model & \texttt{smstr=1}: solid blanket & \texttt{smstr=2}: liquid blanket
-\\ \hline
-stainless steel & \texttt{fblss}   & \texttt{fblss}   & \texttt{fblss}   \\
-vanadium        & \texttt{fblvd}   & \texttt{fblvd}   & \texttt{fblvd}   \\
-Li$_2$O         & \texttt{fblli2o} & \texttt{fblli2o} &     ---       \\
-beryllium       & \texttt{fblbe}   & \texttt{fblbe}   &     ---       \\
-LiPb            &     ---       &     ---       & \texttt{fbllipb} \\
-lithium         &     ---       &     ---       & \texttt{fblli}   \\
-coolant         & \texttt{vfblkt}  & \texttt{vfblkt}  & \texttt{vfblkt}  \\ \hline
-\end{tabular}
-\end{center}
-\caption[Summary of blanket material scenarios]
-{\label{tab:blanket}
-  \textit{Summary of the materials comprising the blanket in the various scenarios
-    available (\texttt{blktmodel=0} only). The fractions given are all
-    available to be modified, and should of course add up to 1.0 for any given
-    model. The type of coolant used is given by the value of switch \texttt{costr}.} 
-}
-\end{table}
-\Red{... to here}
 \subsection{Shield}
 
 The stainless steel shield reduces the neutron flux reaching the TF coils and
 beyond. This minimises the radiological impact of the neutrons, and their
 heating of the TF coils which, if superconducting, need to remain at liquid
 helium temperatures. The shield is cooled either by gaseous helium or by
-pressurised water (\textbf{but see Section~\ref{sec:blanket_neutronics}}), as
-chosen using switch\Red{ \texttt{costr} }-- see Section~\ref{sec:blanket}, and as
-with the blanket the energy deposited in the coolant is used to produce
-electricity. The shield coolant fraction is stored in input parameter
-\texttt{vfshld}. \Red{N.B. iprimshld}
+pressurised water, as chosen using switch \texttt{coolwh} --- see
+Section~\ref{sec:blanket_switches}, and as with the blanket the energy
+deposited in the coolant may be used to produce electricity (see
+Section~\ref{sec:shldpower}). The shield coolant fraction is set via input
+parameter \texttt{vfshld}.
 
 The inboard and outboard shield thicknesses (\texttt{shldith} and
 \texttt{shldoth}, respectively) may be used as iteration variables.
@@ -1216,7 +1245,6 @@ and the allowable current density.
 
 Three constraints are relevant to the operating current density \jop\ in the
 (superconducting) TF coils.
-
 \begin{itemize}
 
 \item To ensure that \jop\ does not exceed the critical value \jcrit, constraint
@@ -1287,7 +1315,6 @@ the PF coils accurately.
 The three possible values of \texttt{ipfloc(j)} correspond to the following PF
 coil positions: (\Red{Redo taking into account snull and other recent changes
   e.g. rclsnorm})
-
 \begin{description} %!%!%! check this
 
 \item [\texttt{ipfloc(j) = 1} :]  PF coils are placed above the central solenoid (one
@@ -1477,7 +1504,6 @@ means, \texttt{fvsbrnni}, should be set, and flag \texttt{irfcd} should be set
 to \texttt{0} for purely inductive scenarios, or \texttt{1} otherwise. The
 current drive efficiency model to be used in this latter case is defined by
 the value of switch \texttt{iefrf}:-
-
 \begin{description}
 \item [\texttt{iefrf = 1} :] Fenstermacher Lower Hybrid model
 \item [\texttt{iefrf = 2} :] Ion cyclotron model~\cite{IPDG}
@@ -1538,7 +1564,6 @@ is assumed to be absorbed by the first wall.
 
 There are two constraint equations that can be used to control the beam
 penetration and deposition, as follows:
-
 \begin{itemize}
 
 \item It is necessary to use a beam energy that simultaneously gives adequate
@@ -1623,9 +1648,9 @@ overall power transfer mechanisms within the power plant outside of the plasma
 (the power flow \textit{within}\/ the plasma is shown in
 Figure~\ref{fig:powerflow1}).
 
-(Note that these figures and the following description assume that switch
+\Red{(Note that these figures and the following description assume that switch
 \texttt{ipowerflow} is set to 1; its default value is currently
-zero, as the new power flow model is in draft form.)
+zero, as the new power flow model is in draft form.)}
 
 \begin{figure}[tbph]
 \epsfig{file=powerflow2.eps,width=170mm}
@@ -1649,28 +1674,27 @@ which may be set as input parameters: \texttt{fdiv} (divertor area fraction),
 (\texttt{1-fdiv-fhcd-fhole}) is the area fraction of the actual first wall.
 
 \subsubsection{Divertor}
+\label{sec:divpower}
 
-\Red{Redo this and following sections...}
-
-\Red{N.B. falpha} All of the charged particle transport power leaving the
-plasma is assumed to be absorbed in the divertor, along with a proportion
-\texttt{fdiv} of the radiation power and the neutron power. The power
-necessary to drive the divertor coolant pumps $P$ (= \texttt{htpmw\_div} in
-Figure~\ref{fig:powerflow2}) is assumed to be a fraction $f$ (= input
-parameter \texttt{fpumpdiv}) of the total thermal power absorbed by the
-divertor, which includes the coolant pump power itself:
-\begin{eqnarray*}
-P & = & f . (\mathtt{pdivt} + \mathtt{praddiv} + \mathtt{pnucdiv} + P) \\
-\Longrightarrow P & = & \frac{f}{1-f} . (\mathtt{pdivt} + \mathtt{praddiv} +
-\mathtt{pnucdiv})
-\end{eqnarray*}
+All of the charged particle transport power leaving the plasma (excluding the
+\texttt{1-falpha} portion of the alpha power that escapes directly to the first
+wall --- Section~\ref{sec:corepower}) is assumed to be absorbed in the
+divertor, along with a proportion \texttt{fdiv} of the radiation power and the
+neutron power. The power necessary to drive the divertor coolant pumps,
+\texttt{htpmw\_div} in Figure~\ref{fig:powerflow2}, is assumed to be a
+fraction $f$ (= input parameter \texttt{fpumpdiv}) of the total thermal power
+absorbed by the divertor, excluding the coolant pump power itself:
+\begin{equation}
+\mathtt{htpmw\_div = fpumpdiv . (pdivt + praddiv + pnucdiv)}
+\end{equation}
 The efficiency of the divertor coolant pump is given by input parameter
-\texttt{etahtpdiv}.
+\texttt{etahtp}.
 
 Switch \texttt{iprimdiv} may be used to specify whether the thermal power
 deposited in the divertor becomes primary (high-grade) thermal power
 (\texttt{iprimdiv = 1}) or secondary (low-grade) thermal power (see
-Figure~\ref{fig:powerflow3}).
+Figure~\ref{fig:powerflow3}). (N.B.\ see also the caption for
+Table~\ref{tab:etath}.)
 
 \subsubsection{First wall}
 
@@ -1678,35 +1702,68 @@ All of the remaining radiation power (i.e.\ the fraction not incident upon the
 divertor or lost through holes or the heating / current drive apparatus) is
 assumed to be absorbed by the first wall. The same fraction of the neutron
 power is assumed to pass into the first wall. Of this neutron power, a
-fraction $(1-e^{\lambda/d})$ is assumed to be absorbed in the first wall
+fraction $(1-e^{d/\lambda})$ is assumed to be absorbed in the first wall
 (of thickness $d$), given by the neutron decay length $\lambda$ in the first wall
-(input parameter \texttt{declfw}).
+(input parameter \texttt{declfw}). In addition, the orbit loss fraction of the
+neutral beam power (if present), and the alpha power fraction lost directly
+from the plasma also contribute to the total thermal power absorbed by the first wall.
 
-As for the divertor, the first wall coolant pump power is a fraction
-\texttt{fpumpfw} of the total thermal power absorbed by the first wall, and
-the efficiency of the first wall coolant pump is \texttt{etahtpfw}.
+If switch \texttt{blktcycle = 0} (see Section~\ref{sec:blanket_switches}), the
+first wall coolant pump power is a fraction \texttt{fpumpfw} of the total
+(non-pumping) thermal power absorbed by the first wall.
+
+If switch \texttt{blktcycle > 0}, a detailed thermal hydraulic model for the
+first wall (and breeding zone) is used~\cite{Harrington_bop}, as outlined in
+Section~\ref{sec:blanket_switches}. A number of input parameters may be
+used to adjust the model, as follows:
+\begin{itemize}
+\item \texttt{coolp} is the first wall coolant pressure (Pa);
+\item \texttt{afwi, afwo} are the inner radii of the inboard and outboard
+  first wall/blanket coolant channels (m);
+\item \texttt{inlet\_temp} is the inlet temperature of the coolant for blanket and first wall (K);
+\item \texttt{outlet\_temp} is the outlet temperature of coolant for blanket
+  and first wall (K) (N.B.\ this is a calculated quantity if water is the coolant);
+\item \texttt{nblktmodpi, nblktmodpo} are the number of inboard and outboard
+  blanket modules in the poloidal direction;
+\item \texttt{nblktmodti, nblktmodto} are the number of inboard and outboard
+  blanket modules in the toroidal direction;
+\item \texttt{tfwmatmax} is the maximum temperature of the first wall material (K);
+\item \texttt{etaiso} is the isentropic efficiency of the first wall and blanket coolant pumps;
+\item \texttt{fwerlim} is the erosion thickness allowance for the first wall (m).
+\end{itemize}
+
+The efficiency of the first wall coolant pump is \texttt{etahtp}.
 
 \subsubsection{Blanket}
 
-A fraction (\texttt{1 - exp(declblkt/blnkoth)}) of the neutron power incident
-on the blanket is assumed to be absorbed in the blanket, where input parameter
-\texttt{declblkt} is the neutron decay length in the blanket. This absorbed
-neutron power is multiplied by the energy multiplication factor \texttt{emult}
-to calculate its contribution to the thermal power within the blanket.
+A fraction (\texttt{1 - exp(}$d$\texttt{/declblkt)}) of the neutron power
+incident on the blanket is assumed to be absorbed in the blanket, where input
+parameter \texttt{declblkt} is the neutron decay length in the blanket, and
+$d$ is the blanket thickness (the calculations are performed separately for
+the inboard and outboard regions, as is the case for the first wall and
+shield). This absorbed neutron power is multiplied by the energy
+multiplication factor \texttt{emult} to calculate its contribution to the
+thermal power within the blanket.
 
-As for the other components, the blanket coolant pump power is a fraction
-\texttt{fpumpblkt} of the total thermal power absorbed by the blanket, and
-the efficiency of the blanket coolant pump is \texttt{etahtpblkt}.
+If switch \texttt{blktcycle = 0}, the blanket coolant pump power is a fraction
+\texttt{fpumpblkt} of the non-pumping thermal power absorbed by the blanket.
+
+If switch \texttt{blktcycle > 0}, the detailed thermal-hydraulic model
+described above is used to calculate the blanket coolant pump power.
+
+The efficiency of the blanket coolant pump is again \texttt{etahtp}.
 
 \subsubsection{Shield}
+\label{sec:shldpower}
 
-A fraction (\texttt{1 - exp(declshld/shldoth)}) of the neutron power incident
-on the shield is assumed to be absorbed in the shield, where input parameter
-\texttt{declshld} is the neutron decay length in the shield.
+A fraction (\texttt{1 - exp(}$d$\texttt{/declshld)}) of the neutron power
+incident on the shield is assumed to be absorbed in the shield, where input
+parameter \texttt{declshld} is the neutron decay length in the shield, and
+$d$ is the shield thickness.
 
-As for the other components, the shield coolant pump power is a fraction
-\texttt{fpumpshld} of the total thermal power absorbed by the shield, and
-the efficiency of the shield coolant pump is \texttt{etahtpshld}.
+The shield coolant pump power is a fraction \texttt{fpumpshld} of the
+non-pumping thermal power absorbed by the shield, and the efficiency of the
+shield coolant pump is \texttt{etahtp}.
 
 Switch \texttt{iprimshld} may be used to specify whether the thermal power
 deposited in the shield becomes primary (high-grade) thermal power
@@ -1718,6 +1775,7 @@ absorbed in the TF coils as quantity \texttt{ptfnuc}. This power contributes
 to the total cryogenic power requirements of the machine.
 
 \subsubsection{Power conversion outside of the fusion power core}
+\label{sec:etath}
 
 Figure~\ref{fig:powerflow3} summarises the power conversion mechanisms outside
 of the fusion power core.
@@ -1740,8 +1798,61 @@ sections. The primary thermal power (less any thermal power required to
 produce hydrogen in a hydrogen production plant --- see
 Section~\ref{sec:hplant}) is used to produce steam to turn the turbines, thus
 generating the plant's gross electrical power, with an efficiency given by
-input parameter \texttt{etath}. The power lost via the turbines' inefficiency
+quantity \texttt{etath}. The power lost via the turbines' inefficiency
 escapes from the plant to the environment.
+
+If switch \texttt{blktcycle = 0} (see Section~\ref{sec:blanket_switches}), the
+thermal to electric conversion efficiency \texttt{etath} depends on the
+blanket type (as given by switch \texttt{blkttype}) and on whether the
+divertor heat is used as primary power (via switch \texttt{iprimdiv}; see
+Section~\ref{sec:divpower}). Table~\ref{tab:etath} summarises these options.
+
+% Table summarising the etath calculation
+
+\begin{table}[tbph]
+\begin{center}
+
+\begin{tabular}{||l||c||c||c||} \hline
+ & \texttt{blkttype = 1} & \texttt{blkttype = 2} & \texttt{blkttype = 3} \\
+ & WCLL & HCLL & HCPB \\ \hline
+Divertor heat $\longrightarrow$ primary power & 31.11\%  & 39.70\% & 39.70\% \\
+\texttt{iprimdiv = 1} & & & \\ \hline
+Divertor heat $\longrightarrow$ secondary power & --- & 43.60\% & 43.60\% \\
+\texttt{iprimdiv = 0} & & & \\ \hline
+\end{tabular}
+\end{center}
+\caption[Summary of plant thermal to electric conversion efficiency values]
+{\label{tab:etath}
+  \textit{Summary of the plant thermal to electric conversion efficiency
+    values, \texttt{etath}, for \texttt{blktcycle=0}. Note that the WCLL
+    modelling on which the figures are based assumed that the divertor heat
+    was used in the primary cycle, so switch \texttt{iprimdiv=1} is enforced
+    if \texttt{blktcycle=0} and \texttt{blkttype=1}.}
+}
+\end{table}
+
+If switch \texttt{blktcycle = 1}, the input value for the thermal to electric
+conversion efficiency \texttt{etath} is used.
+
+If switch \texttt{blktcycle = 2}, an equation for \texttt{etath} ($\eta$)
+assuming a steam Rankine cycle is used~\cite{Harrington_bop}:
+\begin{eqnarray}
+\eta & = & -2.265 + 0.932 \, \log(T + 49.999) \;\;\; \mbox{\small(water coolant;
+  saturated steam Rankine cycle)} \\
+\eta & = & -0.890 + 0.442 \, \log(T + 49.088) \;\;\; \mbox{\small(helium coolant;
+  superheated steam Rankine cycle)}
+\end{eqnarray}
+
+If switch \texttt{blktcycle = 3}, an equation for \texttt{etath} ($\eta$)
+assuming a supercritical CO$_2$ Brayton cycle is used~\cite{Harrington_bop}:
+\begin{equation}
+\eta = -1.873 + 0.804 \, \log(T + 124.061) \;\;\; \mbox{\small(water or
+  helium coolant}
+\end{equation}
+
+In the above three equations, $T$ is the temperature of the (secondary)
+coolant at the inlet to the turbine, assumed to be a fixed margin below the
+outlet temperature of the (primary) coolant.
 
 The electrical power required to operate the power plant itself is the
 so-called recirculating electric power. Any surplus is exported to the
@@ -1770,7 +1881,6 @@ regime (major radius $\leq 2 \times$ minor radius). The physics and
 engineering issues~\cite{tart} associated with these machines are somewhat
 different from those of conventional aspect ratio, and this is reflected by
 the following special models~\cite{storac} in \process.
-
 \begin{enumerate}
 
 \item The inboard build of a spherical tokamak (ST) is very different from
@@ -1789,7 +1899,6 @@ the following special models~\cite{storac} in \process.
   \texttt{CNTRPST} calculates various parameters relevant to the centrepost,
   including the pump pressure, maximum temperature and pipe radius, and these
   may be limited using constraint equations~43 to~46 if required:
-
   \begin{itemize}
   \item Equation~43 is a consistency equation for the average centrepost
     temperature.
@@ -1833,6 +1942,7 @@ Switch \texttt{itart} provides overall control of the ST switches within the
 code, and subroutine \texttt{CHECK} ensures that no conflicting values are
 inadvertently set by the user in the input file. Table~\ref{tab:tart}
 summarises the switch values relevant to each aspect ratio regime.
+
 \begin{table}[tbph]
 \begin{center}
   \begin{tabular}{||l|c|c||} \hline
@@ -1971,6 +2081,7 @@ required. Note that \texttt{hthermmw} must not be used as an iteration
 variable if $\mathtt{ihplant \not= 4}$, as it will be calculated from the
 required electrical power instead. Similarly, \texttt{helecmw} must not be
 used as an iteration variable if \texttt{ihplant = 4}.
+
 \begin{table}[tbph]
 \begin{center}
 \begin{tabular}{||c|c|c|c||} \hline
@@ -2016,7 +2127,6 @@ the stellarator model is not used, and \texttt{istell} is set to
 The stellarator model is largely contained within source file
 \texttt{stellarator.f90}. The following consistency equations (see
 Section~\ref{sec:constraints}) should be used without modification:
-
 \begin{description}
 \item [\texttt{1} :] plasma beta consistency
 \item [\texttt{2} :] global power balance
@@ -2048,7 +2158,6 @@ the plasma is scaled correctly for the required (mean) major and minor radii
 for the machine being modelled~\cite{geiger}.
 
 It is necessary to provide three input files that define the plasma shape:
-
 \begin{enumerate}
 
 \item Set \texttt{vmec\_info\_file} in the input file to the name of a file
@@ -2296,7 +2405,6 @@ toroidal field over the plasma cross-section. Given a value of the pinch
 parameter $\Theta$, the corresponding value of the reversal parameter $F$ may
 be read from the $F$-$\Theta$ plot, and from these the plasma current and the
 current in the TF coils may be obtained using
-
 \begin{eqnarray*}
   B_\theta (a) & = & \frac{\mu_0 I_p}{2\pi a} \\
   B_\phi (a)   & = & \frac{\mu_0 I_{TFC}}{2\pi R}
@@ -2400,7 +2508,6 @@ build from the centre of the device (at the target ignition location) is in
 the order: chamber, first wall, gap, blanket, gap, shield, gap, building
 wall. The user specifies the thicknesses of these regions, and also the
 materials that are present and in what proportions.%%% \Red{[expand one day]} %%%
-
 \begin{description}
 \item [\texttt{ifedrv = -1} :] Driver efficiency and target gain are input as
   functions of driver energy
