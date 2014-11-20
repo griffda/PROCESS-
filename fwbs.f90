@@ -1259,6 +1259,7 @@ contains
     !+ad_hist  03/09/14 PJK Changed PF coil to cryostat top vertical clearance
     !+ad_hist  22/10/14 PJK Added porbitlossmw to htpmw_fw calculation
     !+ad_hist  03/11/14 PJK Clarified ipowerflow vs blkttype logic
+    !+ad_hist  20/11/14 PJK Added palpfwmw contribution to first wall pumping power
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  C5.M15 Milestone Report: Development and Implementation of Improved
@@ -1298,8 +1299,8 @@ contains
     !  Input: fblss,fblvd,fdiv,fhcd,fhole,fpumpblkt,fpumpdiv,fpumpfw
     !  Input: fpumpshld,fwarea,fwareaib,fwareaob,fwbsshape,fwclfr
     !  Input: fwerlim,fwith,fwoth,hmax,idivrt,inlet_temp,ipowerflow,itart
-    !  Input: nblktmodpi,nblktmodpo,nblktmodti,nblktmodto,outlet_temp,pi
-    !  Input: pneutmw,porbitlossmw,pradmw,rmajor,rminor
+    !  Input: nblktmodpi,nblktmodpo,nblktmodti,nblktmodto,outlet_temp
+    !  Input: palpfwmw,pi,pneutmw,porbitlossmw,pradmw,rmajor,rminor
     !  Input: scrapli,scraplo,tfcth,tlife,triang,vfblkt,vfshld,wallmw
 
     !  Output: afwi,afwo,coolmass,densbreed,divmas,divsur,fwclfr,fwith
@@ -1343,7 +1344,7 @@ contains
           pradhcd = pradmw * fhcd
           pradfw = pradmw - praddiv - pradloss - pradhcd
 
-          htpmw_fw = fpumpfw * (pnucfw + pradfw + porbitlossmw)
+          htpmw_fw = fpumpfw * (pnucfw + pradfw + porbitlossmw + palpfwmw)
           htpmw_blkt = fpumpblkt * pnucblkt
           htpmw_shld = fpumpshld * pnucshld
           htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)
@@ -1481,7 +1482,8 @@ contains
 
              !  First wall pumping power (MW)
 
-             htpmw_fw = fpumpfw * (pnucfwi + pnucfwo + psurffwi + psurffwo + porbitlossmw)
+             htpmw_fw = fpumpfw * (pnucfwi + pnucfwo + psurffwi + psurffwo &
+                  + porbitlossmw + palpfwmw)
 
              !  Blanket pumping power (MW)
 
@@ -1599,10 +1601,12 @@ contains
              !  Start thermal hydraulic calculations with inboard side
 
              !  Calculation of maximum first wall temperature
+             !  Include a fraction of the escaped alpha power as
+             !  a component of the inboard wall surface power
 
              call iterate_fw(afwi,bfwi,fwareaib,fwarea,decayfwi,abktflnc,fwlife, &
-                  pnucfwbsi,psurffwi,inlet_temp,outlet_temp,bllengi,coolp, &
-                  fwerlim,pnucfwi,tpeakfwi,cf,rhof,velfwi)
+                  pnucfwbsi,(psurffwi+fwareaib/fwarea*palpfwmw),inlet_temp, &
+                  outlet_temp,bllengi,coolp,fwerlim,pnucfwi,tpeakfwi,cf,rhof,velfwi)
 
              !  Adjust first wall thickness if bfwi has been changed
 
@@ -1668,11 +1672,13 @@ contains
              !  Repeat thermal hydraulic calculations for outboard side
 
              !  Calculation of maximum first wall temperature
-             !  Include NBI orbit loss power as a component of the  outboard wall surface power
+             !  Include NBI orbit loss power and a fraction of the escaped alpha power as
+             !  components of the outboard wall surface power
 
              call iterate_fw(afwo,bfwo,fwareaob,fwarea,decayfwo,abktflnc,fwlife, &
-                  pnucfwbso,psurffwo+porbitlossmw,inlet_temp,outlet_temp,bllengo,coolp, &
-                  fwerlim,pnucfwo,tpeakfwo,cf,rhof,velfwo)
+                  pnucfwbso,(psurffwo+porbitlossmw+fwareaob/fwarea*palpfwmw), &
+                  inlet_temp,outlet_temp,bllengo,coolp,fwerlim,pnucfwo, &
+                  tpeakfwo,cf,rhof,velfwo)
 
              !  Adjust first wall thickness if bfwo has been changed
 

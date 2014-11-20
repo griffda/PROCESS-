@@ -929,7 +929,7 @@ contains
     !+ad_hist  06/10/14 PJK Added orbit loss power to pfwdiv, pinjwp
     !+ad_hist  22/10/14 PJK Corrected orbit loss power usage
     !+ad_hist  04/11/14 PJK Corrected pnucblkt(*emult) usage
-    !+ad_hist  17.11.14 PJK Added palpfwmw to first wall thermal power
+    !+ad_hist  17/11/14 PJK Added palpfwmw to first wall thermal power
     !+ad_stat  Okay
     !+ad_docs  None
     !
