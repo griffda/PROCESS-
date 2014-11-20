@@ -1,0 +1,24 @@
+{
+     ``Uncertainties'':[
+          {
+               ``Varname'':''flhthresh'',
+               ``Errortype'':''Gaussian'',
+               ``Mean'':1.0,
+               ``Std'':0.05
+          },          
+          {
+               ``Varname'':''rcore'',
+               ``Errortype'':''Uniform'',
+               ``Lowerbound'':0.6,
+               ``Upperbound'':0.9
+          },
+          {
+               ``Varname'':''Hfact'',
+               ``Errortype'':''Relative'',
+               ``Mean'':1.0,
+               ``Percentage'':10.
+          } 
+	     ],
+     ``OutputVars'':rmajor, dene, te, bt,
+     ``NSample'': 1000     
+}
