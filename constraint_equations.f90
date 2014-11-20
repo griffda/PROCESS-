@@ -54,6 +54,7 @@ module constraints
   use stellarator_variables
   use tfcoil_variables
   use times_variables
+  use cost_variables
 
   implicit none
 
@@ -966,6 +967,16 @@ contains
              con(i) = nbshinefmax * (1.0D0 - cc(i))
              err(i) = nbshinef * cc(i)
              symbol(i) = '<'
+             units(i) = ''
+          end if
+
+       case (60)  !  Equation for availability limit
+
+          cc(i) = 1.0D0 - favail * cfactr / avail_min
+          if (present(con)) then
+             con(i) = avail_min * (1.0D0 - cc(i))
+             err(i) = cfactr * cc(i)
+             symbol(i) = '>'
              units(i) = ''
           end if
 

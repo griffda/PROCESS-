@@ -5777,9 +5777,6 @@ contains
 
     integer, intent(in) :: outfile
 
-    !  Local variables
-
-    real(kind(1.0D0)) :: tcycle
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

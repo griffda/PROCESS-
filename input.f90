@@ -1,4 +1,4 @@
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !  Uncomment #define line below to perform unit testing
 !  Compile using pre-processor, e.g. ifort -cpp input.f90
@@ -2091,6 +2091,12 @@ contains
        case ('IAVAIL')
           call parse_int_variable('IAVAIL', iavail, 0, 3, &
                'Switch for plant availability model')
+       case ('AVAIL_MIN')
+          call parse_real_variable('AVAIL_MIN', avail_min, 0.0D0, 1.0D0, &
+               'Required minimum availability (constraint equation 60)')
+       case ('FAVAIL')
+          call parse_real_variable('FAVAIL', favail, 0.0D0, 1.0D0, &
+               'F-value for minimum availability (constraint equation 60)')
        case ('NUM_RH_SYSTEMS')
           call parse_int_variable('NUM_RH_SYSTEMS', num_rh_systems, 1, 10, &
                'Number of remote handling systems (from 1-10)')

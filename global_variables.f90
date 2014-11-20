@@ -643,6 +643,8 @@ module physics_variables
   real(kind(1.0D0)) :: tauei = 0.0D0
   !+ad_vars  taup : alpha particle confinement time (sec)
   real(kind(1.0D0)) :: taup = 0.0D0
+  !+ad_vars tcycle: Total cycle time for plant (sec)
+  real(kind(1.0D0)) :: tcycle = 0.0D0
   !+ad_vars  te /12.9/ : volume averaged electron temperature (keV)
   !+ad_varc              (iteration variable 4)
   real(kind(1.0D0)) :: te = 12.9D0
@@ -2277,9 +2279,9 @@ module times_variables
   real(kind(1.0D0)) :: tburn0 = 0.0D0
   !+ad_vars  tdown : down time (s)
   real(kind(1.0D0)) :: tdown = 0.0D0
-  !+ad_vars  tdwell /100.0/ : time between pulses in a pulsed reactor (s)
+  !+ad_vars  tdwell /180.0/ : time between pulses in a pulsed reactor (s)
   !+ad_varc                   (iteration variable 17)
-  real(kind(1.0D0)) :: tdwell = 100.0D0
+  real(kind(1.0D0)) :: tdwell = 1800.0D0
   !+ad_vars  theat /10.0/ : heating time, after current ramp up (s)
   real(kind(1.0D0)) :: theat = 10.0D0
   !+ad_vars  tim(6) : array of time points during plasma pulse (s)
@@ -2728,9 +2730,12 @@ module cost_variables
   !+ad_vars  iavail /0/ : switch for plant availability model:<UL>
   !+ad_varc          <LI> = 0 use input value for cfactr;
   !+ad_varc          <LI> = 1 calculate cfactr using model</UL>
-  !+ad_varc          <LI> = 2 calculate cfactr using new linear model</UL>
-  !+ad_varc          <LI> = 3 calculate cfactr using new non-linear model</UL>
+  !+ad_varc          <LI> = 2 calculate cfactr using new model</UL>
   integer :: iavail= 0
+  !+ad_vars  avail_min /0.75/ : Minimum availability (constraint equation 60)
+  real(kind(1.0D0)) :: avail_min = 0.75D0
+  !+ad_vars  favail /1.0/ : F-value for minimum availability (constraint equation 60)
+  real(kind(1.0D0)) :: favail = 1.0D0  
   !+ad_vars  num_rh_systems /4/ : Number of remote handling systems (1-10)
   integer :: num_rh_systems = 4
   !+ad_vars  ifueltyp /0/ : switch:<UL>

@@ -525,7 +525,7 @@ contains
 
     !  Number of kWh generated each year
 
-    kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr
+    kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr * (tburn/tcycle)
 
     !  Costs due to reactor plant
     !  ==========================

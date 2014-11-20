@@ -1372,6 +1372,7 @@ subroutine output(outfile)
   !+ad_call  vaccum_module
   !+ad_call  acpow
   !+ad_call  avail
+  !+ad_call  avail_new
   !+ad_call  bldgcall
   !+ad_call  cntrpst
   !+ad_call  costs
@@ -1444,6 +1445,7 @@ subroutine output(outfile)
   use build_module
   use buildings_module
   use costs_module
+  use cost_variables
   use current_drive_module
   use divertor_module
   use error_handling
@@ -1496,7 +1498,11 @@ subroutine output(outfile)
   end if
 
   call costs(outfile,1)
-  call avail(outfile,1)
+  if (iavail > 1) then
+     call avail_new(outfile, 1)
+  else 
+     call avail(outfile,1)
+  end if
   call outplas(outfile)
   !call startup(outfile,1)  !  commented-out for speed reasons
   call igmarcal(outfile)

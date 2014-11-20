@@ -35,6 +35,7 @@ module availability_module
   use pulse_variables
   use rfp_variables
   use tfcoil_variables
+  use vacuum_variables
 
   implicit none
 
@@ -261,18 +262,94 @@ contains
 
     !  Arguments
 
-    integer, intent(in) :: outfile,iprint
+    integer, intent(in) :: outfile, iprint
 
     !  Local variables
-
-    real(kind(1.0D0)) :: lb, ld, td, num_rh_systems
-    real(kind(1.0D0)), save :: u_planned, u_unplanne
-    real(kind(1.0D0)) :: mttr_blanket, mttr_divertor, mttr_shortest
-    real(kind(1.0D0)) :: lifetime_shortest, lifetime_longest
-    real(kind(1.0D0)) :: u_unplanned_magnets, mag_temp_marg
-    integer :: n
+    
+    real(kind(1.0D0)) :: u_planned
+    real(kind(1.0D0)) :: u_unplanned
+    real(kind(1.0D0)) :: u_unplanned_magnets
+    real(kind(1.0D0)) :: u_unplanned_divertor
+    real(kind(1.0D0)) :: u_unplanned_fwbs
+    real(kind(1.0D0)) :: u_unplanned_bop
+    real(kind(1.0D0)) :: u_unplanned_hcd
+    real(kind(1.0D0)) :: u_unplanned_vacuum
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Plant Availability
+
+    !  Planned unavailability
+    call calc_u_planned(outfile, iprint, u_planned)
+
+    !  Un-planned unavailability
+    !  Magnets
+    call calc_u_unplanned_magnets(outfile,iprint, u_unplanned_magnets)
+
+    !  Divertor
+    call calc_u_unplanned_divertor(outfile,iprint, u_unplanned_divertor)
+
+    !  First wall and blanket
+    call calc_u_unplanned_fwbs(outfile,iprint, u_unplanned_fwbs)
+
+    !  Balance of plant
+    call calc_u_unplanned_bop(outfile,iprint, u_unplanned_bop)
+
+    !  Heating and current drive
+    call calc_u_unplanned_hcd(outfile,iprint, u_unplanned_hcd)
+
+    !  Vacuum systems
+    call calc_u_unplanned_vacuum(outfile,iprint, u_unplanned_vacuum)
+
+    !  Total unplanned unavailability    
+    u_unplanned = min( 1.0, u_unplanned_magnets + &
+         u_unplanned_divertor + u_unplanned_fwbs + &
+         u_unplanned_bop + u_unplanned_hcd + u_unplanned_vacuum)  
+       
+    !  Total availability
+    cfactr = max(1 - (u_planned + u_unplanned + u_planned*u_unplanned), 0.0)
+
+    !  Modify lifetimes to take account of the availability
+    call modify_lifetimes()
+
+    ! Output
+    if (iprint /= 1) return
+
+    call ocmmnt(outfile,'Total unavailability:')
+    call oblnkl(outfile) 
+    call ovarre(outfile,'Total planned unavailability', &
+         '(u_planned)', u_planned)
+    call ovarre(outfile,'Total unplanned unavailability', &
+         '(u_unplanned)', u_unplanned)
+    call oblnkl(outfile)
+    call ovarre(outfile,'Total plant availability fraction', &
+         '(cfactr)',cfactr)
+   
+  end subroutine avail_new
+
+  subroutine calc_u_planned(outfile, iprint, u_planned)
+
+    !+ad_name  calc_u_unplanned_magnets
+    !+ad_summ  Calculates the planned availability of the plant
+    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  None
+    !+ad_args  outfile : input integer : output file unit
+    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+    !+ad_args  u_planned : output real : planned unavailability of plant
+
+    implicit none
+
+    !  Arguments
+    integer, intent(in) :: outfile, iprint
+    real(kind(1.0D0)), intent(out) :: u_planned
+
+    !  Local variables
+    real(kind(1.0D0)) :: lb, ld, td, num_rh_systems
+    real(kind(1.0D0)) :: mttr_blanket, mttr_divertor, mttr_shortest
+    real(kind(1.0D0)) :: lifetime_shortest, lifetime_longest
+    integer :: n
 
     !  Full power lifetimes (in years)
     !  Most of these are already calculated for an IFE device
@@ -297,8 +374,6 @@ contains
 
     end if
 
-    !  Plant Availability
-
     !  Calculate the blanket and divertor replacement times
 
     !  Blanket replacement time
@@ -309,7 +384,9 @@ contains
     num_rh_systems = 4
     
     !  Mean time to repair blanket is same as replacing both blanket and divertor
-    mttr_blanket = 21 * num_rh_systems**(-0.9)
+    !  +2.0 at the end is for the 1 month cooldown and pump down at either end
+    !  of the maintenance period
+    mttr_blanket = (21 * num_rh_systems**(-0.9) + 2.0D0) / 12.0D0
 
     !  Mean time to repair divertor is 70% of time taken to replace blanket
     !  this is taken from Oliver Crofts 2014 paper
@@ -335,14 +412,72 @@ contains
     u_planned = (n*mttr_shortest + mttr_blanket) / &
          ( (n+1)*lifetime_shortest + (n*mttr_shortest + mttr_blanket) )
 
-    !  Un-planned unavailability
+    if (iprint /= 1) return
 
-    !  Magnets
-    call calc_u_unplanned_magnets(u_unplanned_magnets)
-    
-  end subroutine avail_new
+    call oheadr(outfile,'Plant Availability (2014 Model)')
 
-  subroutine calc_u_unplanned_magnets(u_unplanned_magnets)
+    call ocmmnt(outfile,'Planned unavailability:')
+    call oblnkl(outfile)
+    call ovarre(outfile,'Allowable blanket neutron fluence (MW-yr/m2)', &
+         '(abktflnc)',abktflnc)
+    call ovarre(outfile,'Allowable divertor heat fluence (MW-yr/m2)', &
+         '(adivflnc)',adivflnc)
+    call ovarre(outfile,'First wall / blanket lifetime (years)', &
+         '(bktlife)',bktlife)
+    call ovarre(outfile,'Divertor lifetime (years)', &
+         '(divlife)',divlife)
+
+    call ovarre(outfile,'Number of remote handling systems', &
+         '(num_rh_systems)',num_rh_systems)
+    call ovarre(outfile,'Time needed to replace divertor (years)', &
+         '(mttr_divertor)',mttr_divertor)
+    call ovarre(outfile,'Time needed to replace blanket (years)', &
+         '(mttr_blanket)',mttr_blanket)
+    call ovarre(outfile,'Time needed to replace blkt + div (years)', &
+         '(mttr_blanket)',mttr_blanket)
+    call ovarre(outfile,'Total planned unavailability', &
+         '(uplanned)',u_planned)
+    call oblnkl(outfile)
+
+  end subroutine calc_u_planned
+
+  subroutine modify_lifetimes
+
+    !+ad_name  calc_u_unplanned_magnets
+    !+ad_summ  Calculates the planned availability of the plant
+    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  None
+
+    implicit none
+
+    if (ife /= 1) then
+
+       !  First wall / blanket
+
+       if (bktlife < tlife) then
+          bktlife = min( bktlife/cfactr, tlife )
+          fwlife = bktlife
+       end if
+
+       !  Divertor
+
+       if ((divlife < tlife).and.(irfp /= 1)) then
+          divlife = min( divlife/cfactr, tlife )
+       end if
+
+       !  Centrepost
+
+       if ((itart == 1).and.(cplife < tlife)) then
+          cplife = min( cplife/cfactr, tlife )
+       end if
+
+    end if
+
+  end subroutine modify_lifetimes
+
+  subroutine calc_u_unplanned_magnets(outfile, iprint, u_unplanned_magnets)
 
     !+ad_name  calc_u_unplanned_magnets
     !+ad_summ  Calculates the unplanned unavailability of the magnets using
@@ -350,17 +485,20 @@ contains
     !+ad_type  Subroutine
     !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  None
+    !+ad_args  outfile : input integer : output file unit
+    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_args  u_unplanned_magnets : output real : unplanned unavailability of magnets
 
     implicit none
 
     !  Arguments
+    integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_unplanned_magnets
 
     !  Local Variables
-    real(kind(1.0D0)) :: m, dy, dx, c, y_i
+    real(kind(1.0D0)) :: m, dy, dx, c, y_i, e, lam, u_diff, t_diff, u_diff_e
     real(kind(1.0D0)) :: conf_level_magnets, mag_temp_marg_limit, mag_temp_marg, mag_main_time
-    real(kind(1.0D0)) :: mag_min_u_unplanned, start_of_risk
+    real(kind(1.0D0)) :: mag_min_u_unplanned, start_of_risk, t_life
 
     !  Magnet temperature margin limit (k)
     mag_temp_marg_limit = tmargmin
@@ -374,47 +512,291 @@ contains
     !  Minimum unplanned unavailability
     mag_min_u_unplanned = mag_main_time / (tlife + mag_main_time)
 
-    !  If new linear model chosen
-    if (iavail == 2) then
+    !  confidence level for magnet system. WILL BE AN INPUT PARAMETER WITH
+    !  DEFAULT VALUE
+    conf_level_magnets = 0.95
+    
+    !  point at which risk of unplanned unavailability increases
+    start_of_risk = mag_temp_marg_limit / conf_level_magnets
 
-       !  confidence level for magnet system. WILL BE AN INPUT PARAMETER WITH
-       !  DEFAULT VALUE
-       conf_level_magnets = 0.95
+    !  Determine if temperature margin is in region with risk of 
+    !  unplanned unavailability
+    if (temp_margin >= start_of_risk) then
 
-       !  point at which risk of unplanned unavailability increases
-       start_of_risk = mag_temp_marg_limit / conf_level_magnets
-       
-       !  Determine if temperature margin is in region with risk of 
-       !  unplanned unavailability
-       if (temp_margin >= start_of_risk) then
+       u_unplanned_magnets = mag_min_u_unplanned
 
-         u_unplanned_magnets = mag_min_u_unplanned
-
-       else
-
-          ! gradient of line
-          dy = mag_min_u_unplanned - 1.0
-          dx = start_of_risk - tmargmin
-          m = dy/dx
-          c = 1.0 - m*tmargmin
-          u_unplanned_magnets = m*temp_margin + c 
-
-       end if
-     
-    !  If new non-linear model chosen
     else
-       
-       !  confidence level for magnet system. WILL BE AN INPUT PARAMETER WITH
-       !  DEFAULT VALUE
-       conf_level_magnets = 0.95
 
-       
-
-       
+       !  Linear decrease in expected lifetime when approaching the limit
+       !
+       t_life = max( 0.0, (tlife/(start_of_risk - tmargmin))*(temp_margin - tmargmin) )
+       u_unplanned_magnets = mag_main_time/(t_life + mag_main_time)
 
     end if
+
+    if (iprint /= 1) return
+
+    call ocmmnt(outfile,'Magnets:')
+    call oblnkl(outfile)
+    call ovarre(outfile,'Minimum temperature margin (K)', &
+         '(tmargmin)',tmargmin)
+    call ovarre(outfile,'Confidence level (%)', &
+         '(conf_level_magnets)',conf_level_magnets)
+    call ovarre(outfile,'Temperature Margin (K)', &
+         '(temp_margin)',temp_margin)
+    call ovarre(outfile,'Magnets unplanned unavailability', &
+         '(u_unplanned_magnets)',u_unplanned_magnets)
+    call oblnkl(outfile)
     
   end subroutine calc_u_unplanned_magnets
 
+  subroutine calc_u_unplanned_divertor(outfile, iprint, u_unplanned_divertor)
+
+    !+ad_name  calc_u_unplanned_divertor
+    !+ad_summ  Calculates the unplanned unavailability of the divertor "system"
+    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  None
+    !+ad_args  outfile : input integer : output file unit
+    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+    !+ad_args  u_unplanned_fwbs : output real : unplanned unavailability of divertor
+
+    implicit none
+
+    !  Arguments
+    integer, intent(in) :: outfile, iprint
+    real(kind(1.0D0)), intent(out) :: u_unplanned_divertor
+
+    !  Local Variables
+    real(kind(1.0D0)) :: div_cycle_limit, div_num_cycles, div_main_time, div_min_u_unplanned
+    real(kind(1.0D0)) :: conf_level_div, t_life
+
+    !  Divertor number of cycles limit
+    !  THIS WILL BE A INPUT PARAMETER FOR THE USER WITH DEFAULT VALUE OF 7000
+    div_cycle_limit = 20000.0
+
+    !  Number of cycles in divertor lifetime
+    div_num_cycles = (divlife*365.25*24*60*60)/tcycle
+
+    !  Divertor maintenance time (years)
+    !  For replacing a faulty divertor cassette you might as well replace the whole set
+    !  
+    div_main_time = 0.25
+
+    !  Minimum unplanned unavailability
+    div_min_u_unplanned = div_main_time / (tlife + div_main_time)
+
+    !  confidence level for divertor system cycles to failure (or design tolerance). 
+    !  WILL BE AN INPUT PARAMETER WITH DEFAULT VALUE
+    conf_level_div = 1.1
+    
+    !  Determine if the number of cycles is under the design criteria
+    if (div_num_cycles <= div_cycle_limit) then
+
+       u_unplanned_divertor = div_min_u_unplanned
+
+    else
+
+       ! Linear decrease in expected lifetime when approaching the limit
+       !
+       t_life = max( 0.0, tlife + (-tlife/ & 
+            (div_cycle_limit*conf_level_div - div_cycle_limit))* &
+            (div_num_cycles - div_cycle_limit) )
+
+       u_unplanned_divertor = div_main_time/(t_life + div_main_time)
+
+    end if
+
+    if (iprint /= 1) return
+
+    call ocmmnt(outfile,'Divertor:')
+    call oblnkl(outfile)
+    call ovarre(outfile,'Design criteria number of cycles', &
+         '(div_cycle_limit)',div_cycle_limit)
+    call ovarre(outfile,'Number of cycles', &
+         '(div_num_cycles)',div_num_cycles)
+    call ovarre(outfile,'Divertor unplanned unavailability', &
+         '(u_unplanned_divertor)',u_unplanned_divertor)
+    call oblnkl(outfile)
+
+  end subroutine calc_u_unplanned_divertor
+
+  subroutine calc_u_unplanned_fwbs(outfile, iprint, u_unplanned_fwbs)
+
+    !+ad_name  calc_u_unplanned_fwbs
+    !+ad_summ  Calculates the unplanned unavailability of the first wall and blanket "system"
+    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  None
+    !+ad_args  outfile : input integer : output file unit
+    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+    !+ad_args  u_unplanned_fwbs : output real : unplanned unavailability of first wall and blanket
+
+    implicit none
+
+    !  Arguments
+    integer, intent(in) :: outfile, iprint
+    real(kind(1.0D0)), intent(out) :: u_unplanned_fwbs
+
+    !  Local Variables
+    real(kind(1.0D0)) :: fwbs_cycle_limit, fwbs_num_cycles, fwbs_main_time, fwbs_min_u_unplanned
+    real(kind(1.0D0)) :: conf_level_fwbs, t_life
+
+    !  Divertor number of cycles limit
+    !  THIS WILL BE A INPUT PARAMETER FOR THE USER WITH DEFAULT VALUE OF 20000
+    fwbs_cycle_limit = 30000.0
+
+    !  Number of cycles in divertor lifetime
+    fwbs_num_cycles = (bktlife*365.25*24*60*60)/tcycle
+
+    !  Divertor maintenance time (years)
+    !  For replacing a faulty divertor cassette you might as well replace the whole set
+    !  
+    fwbs_main_time = 0.5
+
+    !  Minimum unplanned unavailability
+    fwbs_min_u_unplanned = fwbs_main_time / (tlife + fwbs_main_time)
+
+    !  confidence level for divertor system cycles to failure (or design tolerance). 
+    !  WILL BE AN INPUT PARAMETER WITH DEFAULT VALUE
+    conf_level_fwbs = 1.1
+    
+    !  Determine if the number of cycles is under the design criteria
+    if (fwbs_num_cycles <= fwbs_cycle_limit) then
+
+       u_unplanned_fwbs = fwbs_min_u_unplanned
+
+    else
+
+       !  Linear decrease in expected lifetime when approaching the limit
+       !
+       t_life = max( 0.0, tlife + (-tlife/ & 
+            (fwbs_cycle_limit*conf_level_fwbs - fwbs_cycle_limit))* &
+            (fwbs_num_cycles - fwbs_cycle_limit) )
+
+       u_unplanned_fwbs = fwbs_main_time/(t_life + fwbs_main_time)
+
+    end if   
+
+    if (iprint /= 1) return
+
+    call ocmmnt(outfile,'Blanket:')
+    call oblnkl(outfile)
+    call ovarre(outfile,'Design criteria number of cycles', &
+         '(fwbs_cycle_limit)',fwbs_cycle_limit)
+    call ovarre(outfile,'Number of cycles', &
+         '(fwbs_num_cycles)',fwbs_num_cycles)
+    call ovarre(outfile,'fwbs unplanned unavailability', &
+         '(u_unplanned_fwbs)',u_unplanned_fwbs)
+    call oblnkl(outfile)
+
+  end subroutine calc_u_unplanned_fwbs
+
+  subroutine calc_u_unplanned_bop(outfile, iprint, u_unplanned_bop)
+
+    !+ad_name  calc_u_unplanned_fwbs
+    !+ad_summ  Calculates the unplanned unavailability of the balance of plant
+    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  None
+    !+ad_args  outfile : input integer : output file unit
+    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+    !+ad_args  u_unplanned_bop : output real : unplanned unavailability of balance of plant
+
+    implicit none
+
+    !  Arguments
+    integer, intent(in) :: outfile, iprint
+    real(kind(1.0D0)), intent(out) :: u_unplanned_bop
+
+    u_unplanned_bop = 0.0D0
+
+  end subroutine calc_u_unplanned_bop
+
+  subroutine calc_u_unplanned_hcd(outfile, iprint, u_unplanned_hcd)
+
+    !+ad_name  calc_u_unplanned_fwbs
+    !+ad_summ  Calculates the unplanned unavailability of the heating and current drive system
+    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  None
+    !+ad_args  outfile : input integer : output file unit
+    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+    !+ad_args  u_unplanned_hcd : output real : unplanned unavailability of hcd
+
+    implicit none
+
+    !  Arguments
+    integer, intent(in) :: outfile, iprint
+    real(kind(1.0D0)), intent(out) :: u_unplanned_hcd
+
+    u_unplanned_hcd = 0.0D0
+
+  end subroutine calc_u_unplanned_hcd
+
+  subroutine calc_u_unplanned_vacuum(outfile, iprint, u_unplanned_vacuum)
+
+    !+ad_name  calc_u_unplanned_fwbs
+    !+ad_summ  Calculates the unplanned unavailability of the vacuum "system"
+    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  None
+    !+ad_args  outfile : input integer : output file unit
+    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+    !+ad_args  u_unplanned_vacuum : output real : unplanned unavailability of vacuum system
+
+    implicit none
+
+    !  Arguments
+    integer, intent(in) :: outfile, iprint
+    real(kind(1.0D0)), intent(out) :: u_unplanned_vacuum
+
+    ! Local variables
+    real(kind(1.0D0)) :: cryo_failure_rate, redundancy_percentage, num_redundancy_pumps
+    real(kind(1.0D0)) :: pump_failures, pump_maintenance_time
+
+    !  Cryopump failure rate per machine lifetime
+    !  From "Selected component failure rate values from fusion 
+    !  safety assessment tasks", Cadwallader (1994)
+    cryo_failure_rate = 2D-6 * 365.25 * 24 *tlife
+
+    !  Redundancy pumps 
+    !  Redundancy % will be a user input chosen from [0, 25, 50, 75, 100]
+    redundancy_percentage = 75.0
+    num_redundancy_pumps = (redundancy_percentage/100.0)*vpumpn
+  
+    !  Number of failures for all pumps
+    pump_failures = anint((vpumpn - num_redundancy_pumps)*cryo_failure_rate)
+
+    !  Pump replacement time (years)
+    !  Taken value ot be 2 months. Minimum time for in-vessel 
+    !  activities with normal RH equipment
+    pump_maintenance_time = 1.0D0/6.0D0
+ 
+    !  Total vacuum unplanned unavailability
+    u_unplanned_vacuum = (pump_maintenance_time*pump_failures)/(tlife)
+    
+    if (iprint /= 1) return
+
+    call ocmmnt(outfile,'Vacuum:')    
+    call oblnkl(outfile)
+    call ovarre(outfile,'Number of pumps', &
+         '(vpumpn)', vpumpn)
+    call ovarre(outfile,'Number of pump failures over lifetime', &
+         '(pump_failures)', pump_failures)
+    call ovarre(outfile,'Redundancy percentage', &
+         '(redundancy_percentage)', redundancy_percentage)
+    call ovarre(outfile,'Number of redundancy pumps', &
+         '(num_redundancy_pumps)', num_redundancy_pumps)
+    call ovarre(outfile,'Vacuum unplanned unavailability', &
+         '(u_unplanned_vacuum)', u_unplanned_vacuum)
+    call oblnkl(outfile)
+
+  end subroutine calc_u_unplanned_vacuum
 
 end module availability_module

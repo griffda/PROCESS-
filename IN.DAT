@@ -83,10 +83,10 @@
 RUNTITLE = DEMO 1 standard test case
 
 $INPT1
-NEQNS = 18,
+NEQNS = 17,
 NVAR = 29,
 ICC = 1,  2,  5,  8, 10, 11, 16, 24, 25,
-     26, 27, 30, 31, 32, 33, 34, 35, 36
+     26, 27, 30, 31, 32, 33, 34, 35
 IXC = 2,  4,  5,  6,  9, 10, 12, 14, 16, 18,
      29, 35, 36, 37, 38, 39, 41, 42, 44, 48,
      49, 50, 51, 53, 56, 57, 58, 59, 61
@@ -264,7 +264,7 @@ CASTHS = 0.05,
 CASTHI = 0.05,
 TINSTF = 0.01,
 VFTF = 0.1,
-TMARGMIN = 2.0,
+TMARGMIN = 1.0,
 *WPVF = 0.45,
 *jcrit_model = 1,
 $END
@@ -340,6 +340,7 @@ ADIVFLNC = 20.0,
 ABKTFLNC = 15,
 CFACTR   = 0.75,
 tlife = 40,
+tdivrepl=0.35,
 $END
 
 $UCSTINP
