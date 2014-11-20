@@ -14,7 +14,7 @@ Compatible with PROCESS version 316
 """
 
 import os, shutil, glob
-abspath = os.path.abspath
+from os.path import abspath, join as pjoin
 import json
 from time import sleep
 from numpy.random import seed
@@ -36,14 +36,27 @@ class RunProcessConfigNew(Config):
     
     def __init__(self, config_file="run_process.json"):
         super().__init__(config_file)
+        self.working_directory = abspath(self.get("output_directory"))
         
     def setup_directory(self):
-        
-        os.makedirs(abspath(self.get("output_directory")))
-        
-        
+        input_file_path = abspath(self.get("input_file"))
+        try:
+            os.makedirs(self.working_directory)
+        except OSError as e:
+            print("Cannot create {}".format(self.working_directory))
+            return
+        try:
+            working_dir_input = pjoin(working_directory, "IN.DAT")
+            shutil.copy2(input_file_path, working_dir_input)
+        except OSError as e:
+            print("Cannot copy {} to {}: {}".format(input_file_path,
+                                                    working_dir_input, e))
+            # TODO: probably want to cleanup just-created files/dirs before ret
+            return
+                                                    
+    def run(self):
+        pass
     
-
 
 #class RunProcessConfig(Config):
 #    
@@ -766,3 +779,6 @@ class RunProcessConfig(ProcessConfig):
         in_dat.write_in_dat(filename='IN.DAT')
 
 
+if __name__ == "__main__":
+    cfg = RunProcessConfigNew("../run_process.json")
+    cfg.setup_directory()

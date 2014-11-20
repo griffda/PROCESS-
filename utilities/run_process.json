@@ -3,12 +3,13 @@
 	"run_comment": "Test run for new output format",
 	"output_directory": "Run10",
 	"process_binary": "/home/pknight/process/bin/process",
-	"input_file": "demo_10.DAT",
+	"input_file": "../../IN.DAT_demo1",
 	"maximum_iterations": 5,
 	"pseudorandom_seed": 2,
 	"iteration_factor": 1.5,
 	"max_unfeasible_points": 2,
 	"output_iterations_summary": true,
+	
 	"custom_variables": {
 		"_doc": "Pre-ordain specific variables in this section.",
 		"example": 10,

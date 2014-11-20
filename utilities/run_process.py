@@ -40,8 +40,8 @@ from process_io_lib.process_funcs import (get_neqns_itervars,
 
 def parse_command_line():
     """Process the command line arguments to execute PROCESS."""
-    parser = ArgumentParser(description="Program to run PROCESS until"
-                                     "a solution is found.")
+    parser = ArgumentParser(description="Program to run PROCESS until a "
+                                        "solution is found.")
     
     parser.add_argument("-f", "--configfile", default="run_process.conf",
                         help="configuration file, default = run_process.conf")
@@ -89,10 +89,10 @@ if __name__ == "__main__":
                           "Please check the log file!\n")
                 break
             else:
-                print('WARNING: %i non feasible point(s) in sweep!\
-     Rerunning!' % no_unfeasible)
+                print("WARNING: {} non-feasible point(s) in sweep! "
+                      "Rerunning!".format(no_unfeasible))
         else:
-            print('PROCESS has stopped without finishing!')
+            print("PROCESS has stopped without finishing!")
     
         vary_iteration_variables(ITERVARS, LBS, UBS)
     
