@@ -81,8 +81,9 @@ class Config(object):
         else:
             return objekt
     
-    def _search_config_for(self, config, default=None, *keys):
+    def _search_config_for(self, config, *keys, default=None):
         """Recursively search config (a dict) for keys."""
+
         try:
             if isinstance(keys[0], str):
                 search_key = keys[0].lower()
@@ -115,7 +116,7 @@ class Config(object):
         you can access the value of "z" by calling get("c", 2, "z").
         
         """
-        
+
         try:
             return self._search_config_for(self.config_data, *config_keys)
         except KeyError:

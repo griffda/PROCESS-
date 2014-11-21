@@ -634,7 +634,8 @@ class UncertaintiesConfig(ProcessConfig, Config):
         #parameters
         super().__init__(configfilename)
         self.filename = configfilename
-        self.wdir = os.path.abspath(self.get("config", "working_directory"),default=self.wdir)
+
+        self.wdir = os.path.abspath(self.get("config", "working_directory",default=self.wdir))
         self.or_in_dat = os.path.abspath(self.get("config", "IN.DAT_path",default=self.or_in_dat))
         self.process = self.get("config", "process_bin", default=self.process)
         #self.niter = should not get changed?
