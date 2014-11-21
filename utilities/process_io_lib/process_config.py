@@ -638,12 +638,47 @@ class UncertaintiesConfig(ProcessConfig, Config):
         self.wdir = os.path.abspath(self.get("config", "working_directory",default=self.wdir))
         self.or_in_dat = os.path.abspath(self.get("config", "IN.DAT_path",default=self.or_in_dat))
         self.process = self.get("config", "process_bin", default=self.process)
-        #self.niter = should not get changed?
-        #self.u_seed = 
-        #self.factor = 
+        self.niter = self.get("config", "no_iter", default=self.niter)
+        self.u_seed = self.get("config", "pseudorandom_seed", default=self.u_seed)
+        self.factor = self.get("config", "factor", default=self.factor) 
         self.comment = self.get("config", "runtitle", default=self.comment)
 
         #additional new parameters
-       # self.no_scans = 
+        self.no_scans = self.get("no_scans", default=self.no_scans)
         self.no_samples = self.get("no_samples", default=self.no_samples)
         self.uncertainties = self.get("uncertainties", default=self.uncertainties)
+        self.output_vars = self.get("output_vars", default=self.output_vars)
+
+
+
+    def echo(self):
+
+        """ echos the values of the current class """
+
+        print('')
+        self.echo_base()
+
+        print('No scans            %i' % self.no_scans)
+        print('No samples          %i' % self.no_samples)
+        if self.uncertainties != []:
+            print('uncertainties:')
+            for item in self.uncertainties: 
+                print('     ', item['varname'])
+                for key in item.keys():
+                    if key not in ['varname']:
+                        print('     ', key, item[key])
+                print(' -------')
+        if self.output_vars != []:
+            print('output vars        ', self.output_vars)
+        print('')
+        sleep(1)
+
+
+    def modify_in_dat(self):
+
+        """ modifies IN.DAT before running uncertainty evaluation """
+
+        #TODO: Write this function
+        # create proper scan
+        # run lots of tests (should not be a scan in the first place!)
+        pass
