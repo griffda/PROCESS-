@@ -90,6 +90,7 @@ class Config(object):
                 search_key = keys[0]
             value = config[search_key]
         except IndexError:
+            print(keys)
             raise
         except KeyError:
             raise
@@ -104,7 +105,7 @@ class Config(object):
         else:
             return self._lowercase(value)
     
-    def get(self, default=None, *config_keys):
+    def get(self, *config_keys, default=None):
         """
         Return configured value corresponding to config_keys if possible.
         
