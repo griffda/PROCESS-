@@ -71,12 +71,23 @@ class Config(object):
     def __init__(self, config_file, parser=JsonConfigParser):
         self.config_file = config_file
         parser = JsonConfigParser(config_file)
-        self.config_data = parser.data
+        self.config_data = self._lowercase(parser.data)
+        
+    def _lowercase(self, objekt):
+        if isinstance(objekt, list):
+            return [self._lowercase(item) for item in objekt]
+        elif isinstance(objekt, dict):
+            return dict((key.lower(), self._lowercase(value)) for key, value in objekt.items())
+        else:
+            return objekt
     
-    def _search_config_for(self, config, *keys):
+    def _search_config_for(self, config, default=None, *keys):
         """Recursively search config (a dict) for keys."""
         try:
-            search_key = keys[0]
+            if isinstance(keys[0], str):
+                search_key = keys[0].lower()
+            else:
+                search_key = keys[0]
             value = config[search_key]
         except IndexError:
             raise
@@ -91,9 +102,9 @@ class Config(object):
             raise KeyError("{} cannot be found in "
                            "{}".format(search_key, value))
         else:
-            return value
+            return self._lowercase(value)
     
-    def get(self, *config_keys):
+    def get(self, default=None, *config_keys):
         """
         Return configured value corresponding to config_keys if possible.
         
@@ -109,4 +120,10 @@ class Config(object):
         except KeyError:
             api_logger.exception("Cannot find value for {} in "
                                  "configuration".format(config_keys))
+            if default:
+                return default
+            else:
+                raise
+        except:
+            raise
         
