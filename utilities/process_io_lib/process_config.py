@@ -1,15 +1,12 @@
 """
 Author: Hanni Lux (Hanni.Lux@ccfe.ac.uk)
-Date: March 2014
 
 Interfaces for Configuration values for programs
-- RunPROCESS.py
-- TestPROCESS.py
+- run_process.py
+- test_process.py
+- evaluate_uncertainties.py
 
-Notes:
-11/08/2014 added error_status2readme
-
-Compatible with PROCESS version 316
+Compatible with PROCESS version 368
 
 """
 
@@ -19,7 +16,7 @@ from numpy.random import seed
 from process_io_lib.in_dat import INDATNew, INVariable
 from process_io_lib.process_funcs import mfile_exists
 from process_io_lib.mfile import MFile
-
+from process_io_lib.configuration import Config
 
 class ProcessConfig(object):
 
@@ -51,7 +48,7 @@ class ProcessConfig(object):
     process  = 'process'
     niter    = 10
     u_seed   = None
-    factor   = 2.
+    factor   = 1.5
     comment  = ''
 
 
@@ -399,7 +396,7 @@ class RunProcessConfig(ProcessConfig):
         """
         creates an instance of the RunProcessConfig class
         that stores all configuration parameters of the
-        RunProcess.py
+        run_process.py
         """
 
         self.filename = filename
@@ -608,3 +605,44 @@ class RunProcessConfig(ProcessConfig):
         in_dat.write_in_dat(filename='IN.DAT')
 
 
+################################################################################
+#class UncertaintiesConfig(RunProcessConfig)
+################################################################################
+
+
+class UncertaintiesConfig(ProcessConfig, Config):
+
+    """ 
+    Configuration parameters for evaluate_uncertainties.py program
+
+    """
+
+    no_scans = 5
+    no_samples = 10000
+    uncertainties = []
+    output_vars = []
+
+
+    def __init__(self, configfilename="evaluate_uncertainties.json"):
+
+        """
+        creates and instance of the UncertaintiesConfig class 
+        """
+
+        #TODO: Once ProcessConfig has been ported to only use json
+        #use the ProcessConfig __init__ routine to set up these 
+        #parameters
+        super().__init__(configfilename)
+        self.filename = configfilename
+        self.wdir = os.path.abspath(self.get("config", "working_directory"),default=self.wdir)
+        self.or_in_dat = os.path.abspath(self.get("config", "IN.DAT_path",default=self.or_in_dat))
+        self.process = self.get("config", "process_bin", default=self.process)
+        #self.niter = should not get changed?
+        #self.u_seed = 
+        #self.factor = 
+        self.comment = self.get("config", "runtitle", default=self.comment)
+
+        #additional new parameters
+       # self.no_scans = 
+        self.no_samples = self.get("no_samples", default=self.no_samples)
+        self.uncertainties = self.get("uncertainties", default=self.uncertainties)
