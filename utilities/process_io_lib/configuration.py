@@ -81,7 +81,7 @@ class Config(object):
         else:
             return objekt
     
-    def _search_config_for(self, config, *keys):
+    def _search_config_for(self, config, default=None, *keys):
         """Recursively search config (a dict) for keys."""
         try:
             if isinstance(keys[0], str):
@@ -104,7 +104,7 @@ class Config(object):
         else:
             return self._lowercase(value)
     
-    def get(self, *config_keys):
+    def get(self, default=None, *config_keys):
         """
         Return configured value corresponding to config_keys if possible.
         
@@ -120,7 +120,10 @@ class Config(object):
         except KeyError:
             api_logger.exception("Cannot find value for {} in "
                                  "configuration".format(config_keys))
-            raise
+            if default:
+                return default
+            else:
+                raise
         except:
             raise
         
