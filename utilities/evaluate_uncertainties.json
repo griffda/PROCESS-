@@ -10,7 +10,7 @@
 		  "pseudorandom_seed": 2
 		  },
 	"uncertainties": [
-		}
+		{
                	"Varname":"flhthresh",
                	"Errortype":"Gaussian",
                	"Mean":1.0,
