@@ -283,6 +283,8 @@ contains
     !  Planned unavailability
     call calc_u_planned(outfile, iprint, u_planned)
 
+    t_operation = tlife * (1-u_planned)
+
     !  Un-planned unavailability
     !  Magnets
     call calc_u_unplanned_magnets(outfile,iprint, u_unplanned_magnets)
@@ -325,6 +327,8 @@ contains
     call oblnkl(outfile)
     call ovarre(outfile,'Total plant availability fraction', &
          '(cfactr)',cfactr)
+    call ovarre(outfile,'Total DT operational time (years)','(t_operation)',t_operation)
+    call ovarre(outfile,'Total plant lifetime (years)','(tlife)',tlife)
    
   end subroutine avail_new
 
@@ -511,7 +515,7 @@ contains
     mag_main_time = 0.5
 
     !  Minimum unplanned unavailability
-    mag_min_u_unplanned = mag_main_time / (tlife + mag_main_time)
+    mag_min_u_unplanned = mag_main_time / (t_operation + mag_main_time)
     
     !  point at which risk of unplanned unavailability increases
     !  conf_mag is magnet availability confidence level (global var)
@@ -527,7 +531,7 @@ contains
 
        !  Linear decrease in expected lifetime when approaching the limit
        !
-       t_life = max( 0.0, (tlife/(start_of_risk - tmargmin))*(temp_margin - tmargmin) )
+       t_life = max( 0.0, (t_operation/(start_of_risk - tmargmin))*(temp_margin - tmargmin) )
        u_unplanned_magnets = mag_main_time/(t_life + mag_main_time)
 
     end if
@@ -579,7 +583,7 @@ contains
     div_main_time = 0.25
 
     !  Minimum unplanned unavailability
-    div_min_u_unplanned = div_main_time / (tlife + div_main_time)
+    div_min_u_unplanned = div_main_time / (t_operation + div_main_time)
     
     !  Determine if the number of cycles is under the design criteria
     !  Cycle limit is a global var
@@ -591,13 +595,15 @@ contains
 
        ! Linear decrease in expected lifetime when approaching the limit
        !
-       t_life = max( 0.0, tlife + (-tlife/ & 
+       t_life = max( 0.0, t_operation + (-t_operation/ & 
             (div_cycle_lim*conf_div - div_cycle_lim))* &
             (div_num_cycles - div_cycle_lim) )
 
        u_unplanned_div = div_main_time/(t_life + div_main_time)
 
     end if
+
+    write(*,*) t_operation
 
     if (iprint /= 1) return
 
@@ -644,7 +650,7 @@ contains
     fwbs_main_time = 0.5
 
     !  Minimum unplanned unavailability
-    fwbs_min_u_unplanned = fwbs_main_time / (tlife + fwbs_main_time)
+    fwbs_min_u_unplanned = fwbs_main_time / (t_operation + fwbs_main_time)
  
     !  Determine if the number of cycles is under the design criteria
     if (fwbs_num_cycles <= fwbs_cycle_lim) then
@@ -655,7 +661,7 @@ contains
 
        !  Linear decrease in expected lifetime when approaching the limit
        !
-       t_life = max( 0.0, tlife + (-tlife/ & 
+       t_life = max( 0.0, t_operation + (-t_operation/ & 
             (fwbs_cycle_lim*conf_fwbs - fwbs_cycle_lim))* &
             (fwbs_num_cycles - fwbs_cycle_lim) )
 
@@ -749,7 +755,7 @@ contains
     !  Cryopump failure rate per machine lifetime
     !  From "Selected component failure rate values from fusion 
     !  safety assessment tasks", Cadwallader (1994)
-    cryo_failure_rate = 2D-6 * 365.25 * 24 *tlife
+    cryo_failure_rate = 2D-6 * 365.25 * 24 *t_operation
 
     !  Redundancy pumps 
     !  Redundancy % will be a user input
@@ -764,7 +770,7 @@ contains
     pump_maintenance_time = 1.0D0/6.0D0
  
     !  Total vacuum unplanned unavailability
-    u_unplanned_vacuum = (pump_maintenance_time*pump_failures)/(tlife)
+    u_unplanned_vacuum = (pump_maintenance_time*pump_failures)/(t_operation)
     
     if (iprint /= 1) return
 

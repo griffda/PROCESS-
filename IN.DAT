@@ -344,6 +344,9 @@ tdivrepl=0.35,
 num_rh_systems=4,
 conf_div = 1.0,
 div_cycle_lim=15000,
+conf_fwbs = 1.0,
+fwbs_cycle_lim=25000,
+redun_vac=50,
 $END
 
 $UCSTINP

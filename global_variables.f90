@@ -2750,6 +2750,8 @@ module cost_variables
   real(kind(1.0D0)) :: conf_fwbs = 1.1D0
   !+ad_vars  redun_vac /75/ Vacuum system pump redundancy level (%)
   integer :: redun_vac = 75
+  !+ad_vars t_operation : Operational time (yrs)
+  real(kind(1.0D0)) :: t_operation = 0.0D0
   !+ad_vars  ifueltyp /0/ : switch:<UL>
   !+ad_varc            <LI> = 1 treat blanket divertor, first wall and
   !+ad_varc                     fraction fcdfuel of CD equipment as fuel cost;
