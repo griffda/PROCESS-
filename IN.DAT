@@ -341,6 +341,9 @@ ABKTFLNC = 15,
 CFACTR   = 0.75,
 tlife = 40,
 tdivrepl=0.35,
+num_rh_systems=4,
+conf_div = 1.0,
+div_cycle_lim=15000,
 $END
 
 $UCSTINP

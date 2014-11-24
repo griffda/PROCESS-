@@ -2738,6 +2738,18 @@ module cost_variables
   real(kind(1.0D0)) :: favail = 1.0D0  
   !+ad_vars  num_rh_systems /4/ : Number of remote handling systems (1-10)
   integer :: num_rh_systems = 4
+  !+ad_vars  conf_mag /0.99/ Availability confidence level for magnet system
+  real(kind(1.0D0)) :: conf_mag = 0.99D0
+  !+ad_vars  div_cycle_lim /20000/ Cycle limit of the divertor
+  integer :: div_cycle_lim = 20000
+  !+ad_vars  conf_div /1.1/ Availability confidence level for divertor system
+  real(kind(1.0D0)) :: conf_div = 1.1D0
+  !+ad_vars  fwbs_cycle_lim /30000/ Cycle limit of the blanket
+  integer :: fwbs_cycle_lim = 30000
+  !+ad_vars  conf_fwbs /1.1/ Availability confidence level for blanket system
+  real(kind(1.0D0)) :: conf_fwbs = 1.1D0
+  !+ad_vars  redun_vac /75/ Vacuum system pump redundancy level (%)
+  integer :: redun_vac = 75
   !+ad_vars  ifueltyp /0/ : switch:<UL>
   !+ad_varc            <LI> = 1 treat blanket divertor, first wall and
   !+ad_varc                     fraction fcdfuel of CD equipment as fuel cost;

@@ -2100,6 +2100,24 @@ contains
        case ('NUM_RH_SYSTEMS')
           call parse_int_variable('NUM_RH_SYSTEMS', num_rh_systems, 1, 10, &
                'Number of remote handling systems (from 1-10)')
+       case ('CONF_MAG')
+          call parse_real_variable('CONF_MAG', conf_mag, 0.9D0, 0.999999D0, &
+               'Availability confidence level for magnet system')
+       case ('DIV_CYCLE_LIM')
+          call parse_int_variable('DIV_CYCLE_LIM', div_cycle_lim, 5000, 25000, &
+               'Cycle limit of the divertor')
+       case ('CONF_DIV')
+          call parse_real_variable('CONF_DIV', conf_div, 1.0D0, 1.5D0, &
+               'Availability confidence level for divertor system')
+       case ('FWBS_CYCLE_LIM')
+          call parse_int_variable('FWBS_CYCLE_LIM', fwbs_cycle_lim, 10000, 35000, &
+               'Cycle limit of the fwbs')
+       case ('CONF_FWBS')
+          call parse_real_variable('CONF_FWBS', conf_fwbs, 1.0D0, 1.5D0, &
+               'Availability confidence level for fwbs system')
+       case ('REDUN_VAC')
+          call parse_int_variable('REDUN_VAC', redun_vac, 0, 100, &
+               'Vacuum system pump redundancy level (%)')
        case ('TBKTREPL')
           call parse_real_variable('TBKTREPL', tbktrepl, 0.01D0, 2.0D0, &
                'Time needed to replace blanket (yr)')
