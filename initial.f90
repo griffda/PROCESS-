@@ -240,6 +240,8 @@ subroutine check
   !+ad_hist  23/10/14 PJK ipowerflow=0 and blkttype=3 for KIT blanket model
   !+ad_hist  29/10/14 PJK Ensured constraint 42 no longer used
   !+ad_hist  17/11/14 PJK Added trap for deprecated constraints 3,4
+  !+ad_hist  24/11/14 PJK Added trap if blanket material fractions do not sum to 1.0
+  !+ad_hist  24/11/14 PJK Set coolwh via blkttype
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -267,6 +269,7 @@ subroutine check
   !  Local variables
 
   integer :: i,j,k,imp
+  real(kind(1.0D0)) :: fsum
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -516,23 +519,58 @@ subroutine check
      rnbeam = 0.0D0
   end if
 
-  !  Coolant set to water if blktmodel > 0
-  !  Although the blanket is by definition helium-cooled in this case,
+  !  Solid breeder assumed if ipowerflow=0
+
+  if (ipowerflow == 0) blkttype = 3
+
+  !  Set coolant fluid type
+
+  if ((blkttype == 1).or.(blkttype == 2)) then
+     coolwh = 2  !  water
+  else
+     coolwh = 1  !  helium
+  end if
+
+  !  But... set coolant to water if blktmodel > 0
+  !  Although the *blanket* is by definition helium-cooled in this case,
   !  the shield etc. are assumed to be water-cooled, and since water is
   !  heavier (and the unit cost of pumping it is higher), the calculation
   !  for coolmass is better done with coolwh=2 if blktmodel > 0 to give
   !  slightly pessimistic results.
 
   if (blktmodel > 0) then
-     !ipowerflow = 0
      blktcycle = 0
      blkttype = 3  !  HCPB
      coolwh = 2
   end if
 
-  !  Solid breeder assumed if ipowerflow=0
+  !  Ensure that blanket material fractions add up to 1.0
 
-  if (ipowerflow == 0) blkttype = 3
+  if (blkttype < 3) then
+     fsum = fblli2o + fblbe + vfblkt + fblss + fblvd
+     if (abs(fsum-1.0D0) > 1.0D-4) then
+        idiags(1) = blkttype
+        fdiags(1) = fblli2o
+        fdiags(2) = fblbe
+        fdiags(3) = vfblkt
+        fdiags(4) = fblss
+        fdiags(5) = fblvd
+        fdiags(6) = fsum
+        call report_error(165)
+     end if
+  else
+     fsum = fbllipb + fblli + vfblkt + fblss + fblvd
+     if (abs(fsum-1.0D0) > 1.0D-4) then
+        idiags(1) = blkttype
+        fdiags(1) = fbllipb
+        fdiags(2) = fblli
+        fdiags(3) = vfblkt
+        fdiags(4) = fblss
+        fdiags(5) = fblvd
+        fdiags(6) = fsum
+        call report_error(165)
+     end if
+  end if
 
   errors_on = .false.
 

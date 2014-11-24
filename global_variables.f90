@@ -999,6 +999,7 @@ module fwbs_variables
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  30/10/14 PJK Changed blkttype default from 1 to 3
   !+ad_hist  05/11/14 PJK Added praddiv etc.
+  !+ad_hist  24/11/14 PJK Modified coolwh comments
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1165,10 +1166,10 @@ module fwbs_variables
   integer :: blktcycle = 0
   !+ad_vars  coolp /15.5e6/ : first wall coolant pressure (Pa) (blktcycle>0)
   real(kind(1.0D0)) :: coolp = 15.5D6
-  !+ad_vars  coolwh /2/ : Switch for coolant choice:<UL>
+  !+ad_vars  coolwh : Coolant fluid type (set via blkttype):<UL>
   !+ad_varc         <LI> = 1 helium;
   !+ad_varc         <LI> = 2 pressurized water</UL>
-  integer :: coolwh = 2
+  integer :: coolwh = 1
   !+ad_vars  afwi /0.008/ : inner radius of inboard first wall/blanket coolant channels (m)
   real(kind(1.0D0)) :: afwi = 0.008D0
   !+ad_vars  afwo /0.008/ : inner radius of outboard first wall/blanket coolant channels (m)

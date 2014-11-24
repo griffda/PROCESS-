@@ -328,6 +328,7 @@ contains
     !+ad_hist  13/11/14 PJK Added FKZOHM
     !+ad_hist  13/11/14 PJK Modified IRADLOSS limit
     !+ad_hist  17/11/14 PJK Added OUTPUT_COSTS
+    !+ad_hist  24/11/14 PJK Removed COOLWH (now set via blkttype)
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1583,9 +1584,6 @@ contains
        case ('BLKTCYCLE')
           call parse_int_variable('BLKTCYCLE', blktcycle, 0, 3, &
                'Switch for blanket thermodynamic model')
-       case ('COOLWH')
-          call parse_int_variable('COOLWH', coolwh, 1, 2, &
-               'Switch for coolant type')
        case ('AFWI')
           call parse_real_variable('AFWI', afwi, 1.0D-3, 0.05D0, &
                'I/B fw/blkt coolant channel inner radius (m)')

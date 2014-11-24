@@ -1860,3 +1860,5 @@ end subroutine output
 !          power balance constraints
 ! GIT 367: Added output_costs switch to turn on/off costing information to file
 ! GIT 368: Minor changes to User Guide
+! GIT (dev_charrington_bop): Ensured that blanket material fractions sum to 1.0;
+!          Coolant type coolwh now set via blkttype (assumed same coolant in all regions)
