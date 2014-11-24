@@ -7,19 +7,6 @@
   James Morris
   CCFE
 
-  Notes:
-    + JM 12/03/2014: Initial version
-    + JM 12/03/2014: Added IN.DAT variable class
-    + JM 12/03/2014: Added IN.DAT class for containing all info from file.
-    + JM 21/03/2014: Added VAR_TYPE checks for the writing of parameters
-                     back to IN.DAT
-    + JM 23/03/2014: Added remove/add constraint equation and iteration
-                     variable functions to classes
-    + JM 26/03/2014: Tested Git integration
-    + PJK 19/08/2014: Added __delitem__ method to INDATDataDictionary class
-
-  Compatible with PROCESS version 317
-
 """
 
 from process_io_lib.process_dicts import DICT_VAR_TYPE as VAR_TYPE
@@ -549,7 +536,7 @@ def variable_type(var_name, var_value):
 
     """
     var_name = var_name.lower()
-    if "bound" in var_name.lower() or "zref" in var_name.lower():
+    if "bound" in var_name.lower() or "zref(" in var_name.lower():
         val = fortran_python_scientific(var_value).replace(",", "")
         return float(val)
     elif "ixc(" in var_name.lower() or "icc(" in var_name.lower():

@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '368    Release Date :: 2014-11-17'
+       '371    Release Date :: 2014-11-24'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1860,5 +1860,8 @@ end subroutine output
 !          power balance constraints
 ! GIT 367: Added output_costs switch to turn on/off costing information to file
 ! GIT 368: Minor changes to User Guide
+! GIT 369: Updated in_dat.py
+! GIT 370: Corrected dcond usage for resistive PF coils
 ! GIT (dev_charrington_bop): Ensured that blanket material fractions sum to 1.0;
 !          Coolant type coolwh now set via blkttype (assumed same coolant in all regions)
+! GIT 371: Minor changes to User Guide

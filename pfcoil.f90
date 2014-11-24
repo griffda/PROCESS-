@@ -121,6 +121,7 @@ contains
     !+ad_hist  16/10/14 PJK New calculation for critical current density
     !+ad_hisc               and steel case thickness
     !+ad_hist  17/11/14 PJK Removed aturn argument from superconpf
+    !+ad_hist  24/11/14 PJK Corrected wtc for resistive coils
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -660,7 +661,11 @@ contains
 
           !  Conductor weight (vf is the void fraction)
 
-          wtc(i) = volpf * dcond(isumatpf) * (1.0D0-vf(i))
+          if (ipfres == 0) then
+             wtc(i) = volpf * dcond(isumatpf) * (1.0D0-vf(i))
+          else
+             wtc(i) = volpf * dcopper * (1.0D0-vf(i))
+          end if
 
           !  (J x B) force on coil
 
@@ -767,6 +772,7 @@ contains
     !+ad_hist  10/11/14 PJK Clarified comments
     !+ad_hist  13/11/14 PJK Added fudge to ensure positive conductor area
     !+ad_hist  17/11/14 PJK Removed aturn argument from superconpf
+    !+ad_hist  24/11/14 PJK Corrected wtc for resistive coils
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -902,7 +908,11 @@ contains
 
     !  Weight of conductor in OH coil
 
-    wtc(nohc) = awpoh * (1.0D0-vfohc) * 2.0D0*pi*rpf(nohc) * dcond(isumatoh)
+    if (ipfres == 0) then
+       wtc(nohc) = awpoh * (1.0D0-vfohc) * 2.0D0*pi*rpf(nohc) * dcond(isumatoh)
+    else
+       wtc(nohc) = awpoh * (1.0D0-vfohc) * 2.0D0*pi*rpf(nohc) * dcopper
+    end if
 
     if (ipfres == 0) then
 
