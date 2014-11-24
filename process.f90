@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '369    Release Date :: 2014-11-24'
+       '370    Release Date :: 2014-11-24'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1861,3 +1861,4 @@ end subroutine output
 ! GIT 367: Added output_costs switch to turn on/off costing information to file
 ! GIT 368: Minor changes to User Guide
 ! GIT 369: Updated in_dat.py
+! GIT 370: Corrected dcond usage for resistive PF coils
