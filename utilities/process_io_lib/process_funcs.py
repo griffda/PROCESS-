@@ -417,3 +417,14 @@ def get_from_indat_or_default(in_dat, varname):
         return in_dat.variables[varname].value
     else:
         return DICT_DEFAULT[varname]
+
+
+def set_variable_in_indat(in_dat, varname, value):
+    
+    """ quick function that sets a variable value in 
+        IN.DAT and creates it if necessary """
+
+    if varname in in_dat.variables.keys():
+        in_dat.variables[varname].value = value
+    else:
+        in_dat.add_variable(INVariable(varname, value))
