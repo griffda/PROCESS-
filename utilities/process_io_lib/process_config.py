@@ -14,9 +14,12 @@ import os
 from time import sleep
 from numpy.random import seed
 from process_io_lib.in_dat import INDATNew, INVariable
-from process_io_lib.process_funcs import mfile_exists
+from process_io_lib.process_funcs import mfile_exists,\
+    get_from_indat_or_default, set_variable_in_indat
 from process_io_lib.mfile import MFile
 from process_io_lib.configuration import Config
+from process_io_lib.process_dicts import DICT_NSWEEP2IXC, DICT_NSWEEP2VARNAME,\
+    DICT_DEFAULT
 
 class ProcessConfig(object):
 
@@ -548,6 +551,7 @@ class RunProcessConfig(ProcessConfig):
   
             key = key.lower()
  
+            #TODO update using set_variable_in_indat function!
             if key in in_dat.variables.keys():
                 in_dat.variables[key].value = self.dictvar[key]
             else:
@@ -678,7 +682,47 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
         """ modifies IN.DAT before running uncertainty evaluation """
 
-        #TODO: Write this function
-        # create proper scan
-        # run lots of tests (should not be a scan in the first place!)
-        pass
+
+        in_dat = INDATNew()
+
+        #Is IN.DAT already having a scan?
+        isweep = get_from_indat_or_default(in_dat, 'isweep')
+        if isweep > 0:
+            #check that sweep variable is not an iteration variable
+            # and all values are the same value
+            nsweep = get_from_indat_or_default(in_dat, 'nsweep')
+            ixc = get_from_indat_or_default(in_dat, 'ixc')
+            sweep = get_from_indat_or_default(in_dat, 'sweep')
+            if ((str(nsweep) in DICT_NSWEEP2IXC.keys()) and
+                (DICT_NSWEEP2IXC[str(nsweep)] in ixc) and
+                (not all(sweep[0] == item for item in sweep)) ):
+                pass # we can actually use this scan
+            else:
+                print('Error: Inbuild sweep is not compatible with uncertainty\
+ evaluation! Edit IN.DAT file!')
+                exit()
+        else:
+            # create a scan!
+            nsweep = '3'
+            if nsweep in DICT_NSWEEP2IXC.keys():
+                # if this ever happens, program this testing whether a certain
+                # variable is used as iteration variable, if not choose another
+                print("Error: The developer should program this more wisely using\
+ a sweep variable that is not an iteration variable!")
+                exit()
+            else:
+                set_variable_in_indat(in_dat, 'nsweep', nsweep)
+                set_variable_in_indat(in_dat, 'isweep', self.no_scans)
+                value = get_from_indat_or_default(in_dat, 
+                                                  DICT_NSWEEP2VARNAME[nsweep])
+                #TODO: Double check this should be a list!!
+                set_variable_in_indat(in_dat, 'sweep', [value]*self.no_scans)
+                
+
+        # write comment in runtitle!
+        runtitle = self.comment.replace(',', ' ')
+        runtitle = runtitle.replace('\n', ' ')
+        set_variable_in_indat(in_dat, 'runtitle', runtitle)
+        in_dat.write_in_dat(filename='IN.DAT')
+
+        #TODO: Check that uncertain variables are not iteration variables, but not in this function!
