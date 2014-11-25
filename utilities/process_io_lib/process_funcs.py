@@ -13,7 +13,7 @@ Compatible with PROCESS version 319
 """
 
 from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,\
-    DICT_IXC_DEFAULT, NON_F_VALUES, IFAIL_SUCCESS
+    DICT_IXC_DEFAULT, NON_F_VALUES, IFAIL_SUCCESS, DICT_DEFAULT
 from process_io_lib.in_dat import INDATNew, INVariable
 from process_io_lib.mfile import MFile
 from numpy.random import uniform
@@ -406,3 +406,14 @@ def get_solution_from_outdat(neqns, nvars):
 
     return ifail, objective_function, constraints, table_sol, table_res
 
+############################################
+
+def get_from_indat_or_default(in_dat, varname):
+
+    """ quick function to get variable value from IN.DAT
+        or PROCESS default value """
+
+    if varname in in_dat.variables.keys():
+        return in_dat.variables[varname].value
+    else:
+        return DICT_DEFAULT[varname]
