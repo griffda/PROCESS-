@@ -3731,6 +3731,7 @@ DICT_MODULE['Times Variables'] = ['tburn', 'tdwell', 'theat', 'tohs', 'tohsin', 
 DICT_MODULE['Vacuum Variables'] = ['ntype', 'pbase', 'prdiv', 'rat', 'tn']
 
 
+DICT_NSWEEP2VARNAME = {}
 DICT_NSWEEP2VARNAME['1'] = 'aspect'
 DICT_NSWEEP2VARNAME['2'] = 'hldivlim'
 DICT_NSWEEP2VARNAME['3'] = 'pnetelin'
