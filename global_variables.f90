@@ -134,6 +134,8 @@ module physics_variables
   !+ad_hist  01/10/14 PJK Modified q wording
   !+ad_hist  01/10/14 PJK Added ilhthresh, plhthresh
   !+ad_hist  02/10/14 PJK Added cwrmax
+  !+ad_hist  13/11/14 PJK Added fkzohm
+  !+ad_hist  13/11/14 PJK Modified iradloss usage
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -262,6 +264,8 @@ module physics_variables
   real(kind(1.0D0)) :: fhe3 = 0.0D0
   !+ad_vars  figmer : physics figure of merit (= plascur*aspect**sbar, where sbar=1)
   real(kind(1.0D0)) :: figmer = 0.0D0
+  !+ad_vars  fkzohm /1.0/ : Zohm elongation scaling adjustment factor (ishape=2, 3)
+  real(kind(1.0D0)) :: fkzohm = 1.0D0
   !+ad_vars  ftrit /0.5/ : tritium fuel fraction
   real(kind(1.0D0)) :: ftrit = 0.5D0
   !+ad_vars  fusionrate : fusion reaction rate (reactions/m3/sec)
@@ -367,11 +371,11 @@ module physics_variables
   !+ad_varc             <LI> = 1 make these consistent with input q, q0 values
   !+ad_varc                      (recommendation: use icurr=4 with this option) </UL>
   integer :: iprofile = 1
-  !+ad_vars  iradloss /1/ : switch for radiation loss term usage in power balance:<UL>
-  !+ad_varc             <LI> = 0 use non-radiation-adjusted loss power in
-  !+ad_varc                      confinement scaling and power balance
-  !+ad_varc             <LI> = 1 use radiation-adjusted loss power in
-  !+ad_varc                      confinement scaling and power balance</UL>
+  !+ad_vars  iradloss /1/ : switch for radiation loss term usage in power balance (see User Guide):<UL>
+  !+ad_varc             <LI> = 0 total power lost is scaling power plus radiation
+  !+ad_varc             <LI> = 1 total power lost is scaling power plus core radiation only
+  !+ad_varc             <LI> = 2 total power lost is scaling power only, with no additional
+  !+ad_varc                      allowance for radiation. This is not recommended for power plant models.</UL>
   integer :: iradloss = 1
 
   !+ad_vars  isc /34 (=IPB98(y,2))/ : switch for energy confinement time scaling law
@@ -643,8 +647,6 @@ module physics_variables
   real(kind(1.0D0)) :: tauei = 0.0D0
   !+ad_vars  taup : alpha particle confinement time (sec)
   real(kind(1.0D0)) :: taup = 0.0D0
-  !+ad_vars tcycle: Total cycle time for plant (sec)
-  real(kind(1.0D0)) :: tcycle = 0.0D0
   !+ad_vars  te /12.9/ : volume averaged electron temperature (keV)
   !+ad_varc              (iteration variable 4)
   real(kind(1.0D0)) :: te = 12.9D0
@@ -1283,6 +1285,9 @@ module pfcoil_variables
   !+ad_hist  22/09/14 PJK Attempted to clarify zref description
   !+ad_hist  16/10/14 PJK Added pfcaseth,isumatoh,fcupfsu,awpoh
   !+ad_hist  20/10/14 PJK Added alstroh
+  !+ad_hist  06/11/14 PJK Added areaoh,jstrandoh_bop,jstrandoh_eof,jscoh_bop,jscoh_eof
+  !+ad_hist  11/11/14 PJK Changed default values for fcuohsu, vfohc
+  !+ad_hist  11/11/14 PJK Added tmargoh
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1314,7 +1319,9 @@ module pfcoil_variables
   real(kind(1.0D0)) :: alfapf = 5.0D-10
   !+ad_vars  alstroh : allowable hoop stress in central solenoid (Pa)
   real(kind(1.0D0)) :: alstroh = 0.0D0
-  !+ad_vars  awpoh : central solenoid winding pack area (m2)
+  !+ad_vars  areaoh : central solenoid cross-sectional area (m2)
+  real(kind(1.0D0)) :: areaoh = 0.0D0
+  !+ad_vars  awpoh : central solenoid conductor+void area (m2)
   real(kind(1.0D0)) :: awpoh = 0.0D0
   !+ad_vars  bmaxoh : maximum field in central solenoid at end of flat-top (EoF) (T)
   real(kind(1.0D0)) :: bmaxoh = 0.0D0
@@ -1344,8 +1351,8 @@ module pfcoil_variables
   !+ad_varc                  beginning of pulse / end of flat-top
   !+ad_varc                  (iteration variable 41)
   real(kind(1.0D0)) :: fcohbop = 0.9D0
-  !+ad_vars  fcuohsu /0.4/ : copper fraction of conductor in central solenoid cable
-  real(kind(1.0D0)) :: fcuohsu = 0.4D0
+  !+ad_vars  fcuohsu /0.7/ : copper fraction of strand in central solenoid cable
+  real(kind(1.0D0)) :: fcuohsu = 0.7D0
   !+ad_vars  fcupfsu /0.69/ : copper fraction of cable conductor (PF coils)
   real(kind(1.0D0)) :: fcupfsu = 0.69D0
   !+ad_vars  ipfloc(ngc) /2,2,3/ : switch for locating scheme of PF coil group i:<UL>
@@ -1373,6 +1380,18 @@ module pfcoil_variables
   !+ad_varc            <LI> = 3 NbTi;
   !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters</UL>
   integer :: isumatpf = 1
+  !+ad_vars  jscoh_bop : central solenoid superconductor critical current density (A/m2)
+  !+ad_varc                  at beginning-of-pulse
+  real(kind(1.0D0)) :: jscoh_bop = 0.0D0
+  !+ad_vars  jscoh_eof : central solenoid superconductor critical current density (A/m2)
+  !+ad_varc                  at end-of-flattop
+  real(kind(1.0D0)) :: jscoh_eof = 0.0D0
+  !+ad_vars  jstrandoh_bop : central solenoid strand critical current density (A/m2)
+  !+ad_varc                  at beginning-of-pulse
+  real(kind(1.0D0)) :: jstrandoh_bop = 0.0D0
+  !+ad_vars  jstrandoh_eof : central solenoid strand critical current density (A/m2)
+  !+ad_varc                  at end-of-flattop
+  real(kind(1.0D0)) :: jstrandoh_eof = 0.0D0
   !+ad_vars  ncirt : number of PF circuits (including central solenoid and plasma)
   integer :: ncirt = 0
   !+ad_vars  ncls(ngrpmx+2) /1,1,2/ : number of PF coils in group j
@@ -1443,12 +1462,14 @@ module pfcoil_variables
   real(kind(1.0D0)) :: sigpfcf = 0.666D0
   !+ad_vars  sxlg(ngc2,ngc2) : mutual inductance matrix (H)
   real(kind(1.0D0)), dimension(ngc2,ngc2) :: sxlg = 0.0D0
+  !+ad_vars  tmargoh :  Central solenoid temperature margin (K)
+  real(kind(1.0D0)) :: tmargoh = 0.0D0
   !+ad_vars  turns(ngc2) : number of turns in PF coil i
   real(kind(1.0D0)), dimension(ngc2) :: turns = 0.0D0
   !+ad_vars  vf(ngc2) /0.3/ : winding pack void fraction of PF coil i for coolant
   real(kind(1.0D0)), dimension(ngc2) :: vf = 0.3D0
-  !+ad_vars  vfohc /0.2/ : winding pack void fraction of central solenoid for coolant
-  real(kind(1.0D0)) :: vfohc = 0.2D0
+  !+ad_vars  vfohc /0.3/ : void fraction of central solenoid for coolant
+  real(kind(1.0D0)) :: vfohc = 0.3D0
   !+ad_vars  vsbn : total flux swing available for burn (Wb)
   real(kind(1.0D0)) :: vsbn = 0.0D0
   !+ad_vars  vsefbn : flux swing from PF coils for burn (Wb)
@@ -1706,7 +1727,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: sigver  = 0.0D0
   !+ad_vars  sigvert : vertical tensile stress in TF coil (Pa)
   real(kind(1.0D0)) :: sigvert = 0.0D0
-  !+ad_vars  strncon /-0.005/ : strain in superconductor material
+  !+ad_vars  strncon /-0.005/ : strain in superconductor material (TF, PF and CS)
   !+ad_varc                     (used in ITER Nb3Sn critical surface model)
   real(kind(1.0D0)) :: strncon = -0.005D0
   !+ad_vars  strtf1 : Von Mises stress in TF cable conduit (Pa)
@@ -1780,7 +1801,7 @@ module tfcoil_variables
   !+ad_vars  tinstf /0.01/ : ground wall insulation thickness (m)
   !+ad_varc                  (calculated for stellarators)
   real(kind(1.0D0)) :: tinstf = 0.01D0
-  !+ad_vars  tmargmin /2.5/ : minimum allowable temperature margin (K)
+  !+ad_vars  tmargmin /2.5/ : minimum allowable temperature margin (CS and TF coils) (K)
   !+ad_varc                   (iteration variable 55)
   real(kind(1.0D0)) :: tmargmin = 2.5D0
   !+ad_vars  temp_margin  : temperature margin (K)
@@ -2264,6 +2285,7 @@ module times_variables
   !+ad_hist  30/10/12 PJK Initial version of module
   !+ad_hist  27/06/13 PJK Relabelled tohs, tohsin
   !+ad_hist  17/09/14 PJK Changed default values
+  !+ad_hist  12/11/14 PJK Added tcycle; tdwell default changed from 100s to 1800s
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2277,9 +2299,11 @@ module times_variables
   real(kind(1.0D0)) :: tburn = 1000.0D0
   !+ad_vars  tburn0 : burn time (s) - used for internal consistency
   real(kind(1.0D0)) :: tburn0 = 0.0D0
+  !+ad_vars  tcycle : full cycle time (s)
+  real(kind(1.0D0)) :: tcycle = 0.0D0
   !+ad_vars  tdown : down time (s)
   real(kind(1.0D0)) :: tdown = 0.0D0
-  !+ad_vars  tdwell /180.0/ : time between pulses in a pulsed reactor (s)
+  !+ad_vars  tdwell /1800.0/ : time between pulses in a pulsed reactor (s)
   !+ad_varc                   (iteration variable 17)
   real(kind(1.0D0)) :: tdwell = 1800.0D0
   !+ad_vars  theat /10.0/ : heating time, after current ramp up (s)
@@ -2616,6 +2640,7 @@ module cost_variables
   !+ad_summ  costing algorithms
   !+ad_type  Module
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_auth  J Morris, CCFE, Culham Science Centre
   !+ad_cont  N/A
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
@@ -2627,6 +2652,8 @@ module cost_variables
   !+ad_hist  18/06/13 PJK Changed uccryo from cryostat to vacuum vessel
   !+ad_hist  15/08/13 PJK Changed cdrlife description
   !+ad_hist  03/12/13 PJK Changed ucfwps units from $/m2 to $
+  !+ad_hist  19/11/14 PJK Modified iavail wording
+  !+ad_hist  25/11/14 JM  Added new availability model variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2727,9 +2754,10 @@ module cost_variables
   real(kind(1.0D0)) :: fkind = 1.0D0
   !+ad_vars  fwallcst : first wall cost (M$)
   real(kind(1.0D0)) :: fwallcst = 0.0D0
+
   !+ad_vars  iavail /0/ : switch for plant availability model:<UL>
   !+ad_varc          <LI> = 0 use input value for cfactr;
-  !+ad_varc          <LI> = 1 calculate cfactr using model</UL>
+  !+ad_varc          <LI> = 1 calculate cfactr using Taylor and Ward 1999 model;
   !+ad_varc          <LI> = 2 calculate cfactr using new model</UL>
   integer :: iavail= 0
   !+ad_vars  avail_min /0.75/ : Minimum availability (constraint equation 60)
@@ -2738,20 +2766,51 @@ module cost_variables
   real(kind(1.0D0)) :: favail = 1.0D0  
   !+ad_vars  num_rh_systems /4/ : Number of remote handling systems (1-10)
   integer :: num_rh_systems = 4
-  !+ad_vars  conf_mag /0.99/ Availability confidence level for magnet system
+  !+ad_vars  conf_mag /0.99/ : Availability confidence level for magnet system
   real(kind(1.0D0)) :: conf_mag = 0.99D0
-  !+ad_vars  div_cycle_lim /20000/ Cycle limit of the divertor
+  !+ad_vars  div_cycle_lim /20000/ : Cycle limit of the divertor
   integer :: div_cycle_lim = 20000
-  !+ad_vars  conf_div /1.1/ Availability confidence level for divertor system
+  !+ad_vars  conf_div /1.1/ : Availability confidence level for divertor system
   real(kind(1.0D0)) :: conf_div = 1.1D0
-  !+ad_vars  fwbs_cycle_lim /30000/ Cycle limit of the blanket
+  !+ad_vars  fwbs_cycle_lim /30000/ : Cycle limit of the blanket
   integer :: fwbs_cycle_lim = 30000
-  !+ad_vars  conf_fwbs /1.1/ Availability confidence level for blanket system
+  !+ad_vars  conf_fwbs /1.1/ : Availability confidence level for blanket system
   real(kind(1.0D0)) :: conf_fwbs = 1.1D0
-  !+ad_vars  redun_vac /75/ Vacuum system pump redundancy level (%)
+  !+ad_vars  redun_vac /75/ : Vacuum system pump redundancy level (%)
   integer :: redun_vac = 75
-  !+ad_vars t_operation : Operational time (yrs)
+  !+ad_vars  t_operation : Operational time (yrs)
   real(kind(1.0D0)) :: t_operation = 0.0D0
+  !+ad_vars  tbktrepl /0.5/ : time taken to replace blanket (y)
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: tbktrepl = 0.5D0
+  !+ad_vars  tcomrepl /0.5/ : time taken to replace both blanket and divertor (y)
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: tcomrepl = 0.5D0
+  !+ad_vars  tdivrepl /0.25/ : time taken to replace divertor (y)
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: tdivrepl = 0.25D0
+  !+ad_vars  uubop /0.02/ : unplanned unavailability factor for balance of plant
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: uubop = 0.02D0
+  !+ad_vars  uucd /0.02/ : unplanned unavailability factor for current drive
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: uucd = 0.02D0
+  !+ad_vars  uudiv /0.04/ : unplanned unavailability factor for divertor
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: uudiv = 0.04D0
+  !+ad_vars  uufuel /0.02/ : unplanned unavailability factor for fuel system
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: uufuel = 0.02D0
+  !+ad_vars  uufw /0.04/ : unplanned unavailability factor for first wall
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: uufw = 0.04D0
+  !+ad_vars  uumag /0.02/ : unplanned unavailability factor for magnets
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: uumag = 0.02D0
+  !+ad_vars  uuves /0.04/ : unplanned unavailability factor for vessel
+  !+ad_varc                 (iavail=1)
+  real(kind(1.0D0)) :: uuves = 0.04D0
+
   !+ad_vars  ifueltyp /0/ : switch:<UL>
   !+ad_varc            <LI> = 1 treat blanket divertor, first wall and
   !+ad_varc                     fraction fcdfuel of CD equipment as fuel cost;
@@ -2773,14 +2832,12 @@ module cost_variables
   integer :: lsa = 4
   !+ad_vars  moneyint : interest portion of capital cost (M$)
   real(kind(1.0D0)) :: moneyint = 0.0D0
+  !+ad_vars  output_costs /1/ : switch for costs output:<UL>
+  !+ad_varc            <LI> = 0 do not write cost-related outputs to file;
+  !+ad_varc            <LI> = 1 write cost-related outputs to file</UL>
+  integer :: output_costs = 1
   !+ad_vars  ratecdol /0.0435/ : effective cost of money in constant dollars
   real(kind(1.0D0)) :: ratecdol = 0.0435D0
-  !+ad_vars  tbktrepl /0.5/ : time taken to replace blanket (y)
-  real(kind(1.0D0)) :: tbktrepl = 0.5D0
-  !+ad_vars  tcomrepl /0.5/ : time taken to replace both blanket and divertor (y)
-  real(kind(1.0D0)) :: tcomrepl = 0.5D0
-  !+ad_vars  tdivrepl /0.25/ : time taken to replace divertor (y)
-  real(kind(1.0D0)) :: tdivrepl = 0.25D0
   !+ad_vars  tlife /30.0/ : plant life (years)
   real(kind(1.0D0)) :: tlife = 30.0D0
   !+ad_vars  ucad /180.0/ FIX : unit cost for administration buildings (M$/m3)
@@ -2969,20 +3026,6 @@ module cost_variables
   !+ad_vars  ucwst(4) /0.0,3.94,5.91,7.88/ : cost of waste disposal (M$/y/1200MW)
   real(kind(1.0D0)), dimension(4) :: ucwst = &
        (/0.0D0, 3.94D0, 5.91D0, 7.88D0/)
-  !+ad_vars  uubop /0.02/ : unplanned unavailability factor for balance of plant
-  real(kind(1.0D0)) :: uubop = 0.02D0
-  !+ad_vars  uucd /0.02/ : unplanned unavailability factor for current drive
-  real(kind(1.0D0)) :: uucd = 0.02D0
-  !+ad_vars  uudiv /0.04/ : unplanned unavailability factor for divertor
-  real(kind(1.0D0)) :: uudiv = 0.04D0
-  !+ad_vars  uufuel /0.02/ : unplanned unavailability factor for fuel system
-  real(kind(1.0D0)) :: uufuel = 0.02D0
-  !+ad_vars  uufw /0.04/ : unplanned unavailability factor for first wall
-  real(kind(1.0D0)) :: uufw = 0.04D0
-  !+ad_vars  uumag /0.02/ : unplanned unavailability factor for magnets
-  real(kind(1.0D0)) :: uumag = 0.02D0
-  !+ad_vars  uuves /0.04/ : unplanned unavailability factor for vessel
-  real(kind(1.0D0)) :: uuves = 0.04D0
 
 end module cost_variables
 
@@ -3014,6 +3057,7 @@ module constraint_variables
   !+ad_hist  01/10/14 PJK Added flhthresh
   !+ad_hist  02/10/14 PJK Added fcwr
   !+ad_hist  06/10/14 PJK Added fnbshinef, nbshinefmax
+  !+ad_hist  11/11/14 PJK Added ftmargoh
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -3159,6 +3203,9 @@ module constraint_variables
   !+ad_vars  ftftort /1.0/ : f-value for TF coil outer leg toroidal width lower limit
   !+ad_varc                  (constraint equation 57, iteration variable 99)
   real(kind(1.0D0)) :: ftftort = 1.0D0
+  !+ad_vars  ftmargoh /1.0/ : f-value for central solenoid temperature margin
+  !+ad_varc                   (constraint equation 60, iteration variable 106)
+  real(kind(1.0D0)) :: ftmargoh = 1.0D0
   !+ad_vars  ftmargtf /1.0/ : f-value for TF coil temperature margin
   !+ad_varc                   (constraint equation 36, iteration variable 54)
   real(kind(1.0D0)) :: ftmargtf = 1.0D0

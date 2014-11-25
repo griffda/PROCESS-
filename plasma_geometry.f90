@@ -1,4 +1,3 @@
-!  $Id:: plasma_geometry.f90 258 2014-04-24 12:28:55Z pknight           $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module plasma_geometry_module
@@ -71,6 +70,7 @@ contains
     !+ad_hist  14/11/13 PJK Unified kappa95 estimate to Hartmann suggestion
     !+ad_hist  28/11/13 PJK Updated references
     !+ad_hist  01/10/14 PJK Added new ishape options
+    !+ad_hist  13/11/14 PJK Added fkzohm factor for ishape=2,3 elongations
     !+ad_stat  Okay
     !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
     !+ad_docc  unpublished internal Oak Ridge document
@@ -123,14 +123,14 @@ contains
 
     case (2)  !  Zohm et al. ITER scaling for elongation, input triang
 
-       kappa = min(2.0D0, 1.5D0 + 0.5D0/(aspect-1.0D0))
+       kappa = fkzohm * min(2.0D0, 1.5D0 + 0.5D0/(aspect-1.0D0))
 
        kappa95 = kappa / 1.12D0  !  Hartmann and Zohm
        triang95 = triang / 1.50D0
 
     case (3)  !  Zohm et al. ITER scaling for elongation, input triang95
 
-       kappa = min(2.0D0, 1.5D0 + 0.5D0/(aspect-1.0D0))
+       kappa = fkzohm * min(2.0D0, 1.5D0 + 0.5D0/(aspect-1.0D0))
        triang = 1.5D0 * triang95
 
        kappa95 = kappa / 1.12D0  !  Hartmann and Zohm

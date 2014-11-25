@@ -289,6 +289,10 @@ contains
     tpulse = tohs + theat + tburn + tqnch
     tdown  = tramp + tohs + tqnch + tdwell
 
+    !  Total cycle time
+
+    tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
+
     !  Calculate bootstrap current fraction using various models
 
     bscf_iter89 = bootstrap_fraction_iter89(aspect,beta,btot,cboot,plascur, &
@@ -3234,6 +3238,7 @@ contains
     !+ad_hist  03/06/14 PJK Changed pchargepv usage to pchargemw
     !+ad_hist  17/06/14 PJK Added scaling law 39
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  13/11/14 PJK Modified iradloss usage
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  N. A. Uckan and ITER Physics Group,
@@ -3286,7 +3291,13 @@ contains
 
     !  Include the radiation as a loss term if requested
 
-    if (iradloss == 1) powerht = powerht - pcoreradpv*vol
+    if (iradloss == 0) then
+       powerht = powerht - pradpv*vol
+    else if (iradloss == 1) then
+       powerht = powerht - pcoreradpv*vol
+    else
+       continue  !  do not adjust powerht for radiation
+    end if
 
     !  Ensure heating power is positive (shouldn't be necessary)
 
@@ -4639,6 +4650,7 @@ contains
     !+ad_hist  20/05/14 PJK Changed prad to pcorerad; introduced iradloss;
     !+ad_hisc               Added falpha multiplier to palp term
     !+ad_hist  22/05/14 PJK Name changes to power quantities
+    !+ad_hist  13/11/14 PJK Modified iradloss usage
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -4679,7 +4691,13 @@ contains
 
     !  Include the radiation power if requested
 
-    if (iradloss == 1) fhz = fhz + pcoreradpv
+    if (iradloss == 0) then
+       fhz = fhz + pradpv
+    else if (iradloss == 1) then
+       fhz = fhz + pcoreradpv
+    else
+       continue
+    end if
 
   end function fhz
 
@@ -5253,6 +5271,9 @@ contains
     !+ad_hist  01/10/14 PJK Modified safety factor output statements
     !+ad_hist  01/10/14 PJK Added plhthresh output
     !+ad_hist  06/10/14 PJK Modified plhthresh output
+    !+ad_hist  11/11/14 PJK Added aion output
+    !+ad_hist  13/11/14 PJK Modified elong, triang outputs with ishape
+    !+ad_hist  13/11/14 PJK Modified iradloss usage
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5304,15 +5325,27 @@ contains
        case (1)
           call ovarrf(outfile,'Elongation, X-point (TART scaling)', &
                '(kappa)',kappa)
-       case (2)
+       case (2,3)
           call ovarrf(outfile,'Elongation, X-point (Zohm scaling)', &
+               '(kappa)',kappa)
+          call ovarrf(outfile,'Zohm scaling adjustment factor', &
+               '(fkzohm)',fkzohm)
+       case (4)
+          call ovarrf(outfile,'Elongation, X-point (calculated from kappa95)', &
                '(kappa)',kappa)
        case default
           idiags(1) = ishape ; call report_error(86)
        end select
 
-       call ovarrf(outfile,'Elongation, 95% surface (kappa/1.12)', &
-            '(kappa95)',kappa95)
+       select case (ishape)
+       case (4)
+          call ovarrf(outfile,'Elongation, 95% surface (input value used)', &
+               '(kappa95)',kappa95)
+       case default
+          call ovarrf(outfile,'Elongation, 95% surface (kappa/1.12)', &
+               '(kappa95)',kappa95)
+       end select
+
        call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa)
 
        select case (ishape)
@@ -5322,11 +5355,20 @@ contains
        case (1)
           call ovarrf(outfile,'Triangularity, X-point (TART scaling)', &
                '(triang)',triang)
-       case default
-          idiags(1) = ishape ; call report_error(86)
+       case (3,4)
+          call ovarrf(outfile,'Triangularity, X-point (calculated from triang95)', &
+               '(triang)',triang)
        end select
 
-       call ovarrf(outfile,'Triangularity, 95% surface','(triang95)',triang95)
+       select case (ishape)
+       case (3,4)
+          call ovarrf(outfile,'Triangularity, 95% surface (input value used)', &
+               '(triang95)',triang95)
+       case default
+          call ovarrf(outfile,'Triangularity, 95% surface (triang/1.5)', &
+               '(triang95)',triang95)
+       end select
+
        call ovarrf(outfile,'Plasma poloidal perimeter (m)','(pperim)',pperim)
 
     end if
@@ -5475,6 +5517,7 @@ contains
           call ovarre(outfile,str1,str2,impurity_arr(imp)%frac)
        end do
     end if
+    call ovarre(outfile,'Average mass of all ions (amu)','(aion)',aion)
     call ovarre(outfile,'Impurity fraction (for iteration variable use)','(fimpvar)',fimpvar)
     call oblnkl(outfile)
 
@@ -5541,15 +5584,6 @@ contains
 
     call osubhd(outfile,'Core Plasma Power Balance :')
 
-    call ovarin(outfile,'Switch for radiation loss term usage in power balance','(iradloss)',iradloss)
-    if (iradloss == 1) then
-       call osubhd(outfile,'Confinement scaling and power balance uses'// &
-            ' radiation-corrected loss power')
-    else
-       call osubhd(outfile,'Confinement scaling and power balance uses'// &
-            ' loss power not corrected for radiation')
-    end if
-
     write(outfile,10) palpmw*falpha,ptremw
 10  format(t12,'Alpha power deposited in core (MW)', &
          t48,f8.2, &
@@ -5562,7 +5596,13 @@ contains
          t67,'Power transported by ions (MW)', &
          t99,f8.2)
 
-    if (iradloss == 1) then
+    if (iradloss == 0) then
+       write(outfile,25) pohmmw,pradmw
+25     format(t30,'Ohmic power (MW)', &
+            t48,f8.2, &
+            t72,'Total radiation power (MW)', &
+            t99,f8.2)
+    else if (iradloss == 1) then
        write(outfile,30) pohmmw,pcoreradmw
 30     format(t30,'Ohmic power (MW)', &
             t48,f8.2, &
@@ -5582,10 +5622,12 @@ contains
 60  format(t18,'Injection power to ions (MW)', &
          t48,f8.2)
 
-!    call oblnkl(outfile)
     write(outfile,'(t10,a)') repeat('-',97)
 
-    if (iradloss == 1) then
+    if (iradloss == 0) then
+       write(outfile,70) palpmw*falpha + pchargemw + pohmmw + pinjemw + pinjimw, &
+            ptremw + ptrimw + pradmw
+    else if (iradloss == 1) then
        write(outfile,70) palpmw*falpha + pchargemw + pohmmw + pinjemw + pinjimw, &
             ptremw + ptrimw + pcoreradmw
     else
@@ -5696,7 +5738,23 @@ contains
     call ovarrf(outfile,'Ion energy confinement time (s)','(tauei)',tauei)
     call ovarrf(outfile,'Electron energy confinement time (s)','(tauee)',tauee)
     call ovarre(outfile,'n-tau (s/m3)','(dntau)',dntau)
-    call ovarre(outfile,'Transport loss power (MW)','(powerht)',powerht)
+    call ovarre(outfile,'Transport loss power assumed in scaling law (MW)', &
+         '(powerht)',powerht)
+    call ovarin(outfile,'Switch for radiation loss term usage in power balance', &
+         '(iradloss)',iradloss)
+    if (iradloss == 0) then
+       call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', &
+         '',pradmw)
+       call ocmmnt(outfile,'  (Radiation correction is total radiation power)')
+    else if (iradloss == 1) then
+       call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', &
+         '',pcoreradmw)
+       call ocmmnt(outfile,'  (Radiation correction is core radiation power)')
+    else
+       call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', &
+         '',0.0D0)
+       call ocmmnt(outfile,'  (No radiation correction applied)')
+    end if
     call ovarrf(outfile,'Alpha particle confinement time (s)','(taup)',taup)
     call ovarrf(outfile,'Particle/energy confinement time ratio',' ',taup/taueff)
 
@@ -5766,6 +5824,7 @@ contains
     !+ad_hist  30/10/12 PJK Added times_variables
     !+ad_hist  27/06/13 PJK Relabelled tohs
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  12/11/14 PJK tcycle now a global variable
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5777,10 +5836,9 @@ contains
 
     integer, intent(in) :: outfile
 
+    !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
 
     call oheadr(outfile,'Times')
 

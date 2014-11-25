@@ -721,7 +721,7 @@ def plot_physics_info(axis, mfile_data, scan):
         mfile_data.data["dene"].get_scan(scan)
 
     data = [("plascur/1d6", "$I_p$", "MA"),
-            ("bt", "Vacuum $B_T$ as $R_0$", "T"),
+            ("bt", "Vacuum $B_T$ at $R_0$", "T"),
             ("q", "$q_{edge}$", ""),
             ("normalised thermal beta", r"$\beta_N$, thermal",
              "% m T MA$^{-1}$"),
@@ -917,7 +917,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
             ("facoh", "Ohmic fraction", ""),
             ("gamnb", "NB gamma", "$10^{20}$ A W$^{-1}$ m$^{-2}$"),
             ("enbeam", "NB energy", "keV"),
-            ("powerht", "Assumed heating power", "MW"),
+            ("powerht", "Confinement loss power", "MW"),
             (pdivr, r"$\frac{P_{\mathrm{div}}}{R_{0}}$", "MW m$^{-1}$"),
             (pdivnr, r"$\frac{P_{\mathrm{div}}}{<n> R_{0}}$",
              r"$\times 10^{-20}$ MW m$^{2}$"),

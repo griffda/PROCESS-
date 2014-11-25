@@ -169,6 +169,7 @@ contains
     !+ad_hist  18/06/13 PJK Changed cryostat to vacuum vessel for c2223
     !+ad_hist  17/02/14 PJK Output format modifications
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  17/11/14 PJK Added output_costs switch
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -228,7 +229,7 @@ contains
 
     if ((ireactor == 1).and.(ipnet == 0)) call coelc(outfile,iprint)
 
-    if (iprint == 0) return
+    if ((iprint == 0).or.(output_costs == 0)) return
 
     !  Output section
 
@@ -503,6 +504,8 @@ contains
     !+ad_hist  05/06/14 PJK Moved some power outputs to plant_power.f90
     !+ad_hist  16/06/14 PJK Removed duplicate outputs
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  12/11/14 PJK tburn factor incorporated into cost of electricity
+    !+ad_hist  17/11/14 PJK Added output_costs switch
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -525,7 +528,7 @@ contains
 
     !  Number of kWh generated each year
 
-    kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr * (tburn/tcycle)
+    kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr * tburn/tcycle
 
     !  Costs due to reactor plant
     !  ==========================
@@ -751,7 +754,7 @@ contains
 
     coe = coecap + coefuelt + coeoam + coedecom
 
-    if (iprint == 0) return
+    if ((iprint == 0).or.(output_costs == 0)) return
 
     !  Output section
 
@@ -1610,6 +1613,7 @@ contains
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  16/10/14 PJK Replaced sccufac usage with input copper fractions
+    !+ad_hist  24/11/14 PJK Corrected conductor costs for resistive coils
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1669,15 +1673,24 @@ contains
 
        !costpfsc = ucsc(isumatpf) * (sccufac*bpf(i)) * &
        !     abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcond(isumatpf)
-       costpfsc = ucsc(isumatpf) * (1.0D0-fcupfsu)*(1.0D0-vf(i)) * &
-            abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcond(isumatpf)
+       if (ipfres == 0) then
+          costpfsc = ucsc(isumatpf) * (1.0D0-fcupfsu)*(1.0D0-vf(i)) * &
+               abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcond(isumatpf)
+       else
+          costpfsc = 0.0D0
+       end if
 
        !  Copper ($/m)
 
        !costpfcu = uccu * (1.0D0-sccufac*bpf(i)) * &
        !     abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
-       costpfcu = uccu * fcupfsu*(1.0D0-vf(i)) * &
-            abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
+       if (ipfres == 0) then
+          costpfcu = uccu * fcupfsu*(1.0D0-vf(i)) * &
+               abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
+       else
+          costpfcu = uccu * (1.0D0-vf(i)) * &
+               abs(ric(i)/turns(i))*1.0D6 / rjconpf(i) * dcopper
+       end if
 
        !  Total cost/metre of superconductor and copper wire
 
@@ -1704,10 +1717,14 @@ contains
        !     (sccufac * max(abs(bmaxoh),abs(bmaxoh0)) ) * &
        !     abs(ric(nohc)/turns(nohc))*1.0D6 / &
        !     max(abs(cohbop),abs(coheof)) * dcond(isumatoh)
-       costpfsc = ucsc(isumatoh) * &
-            awpoh*(1.0D0-fcuohsu)*(1.0D0-vf(nohc)) * &
-            abs(ric(nohc)/turns(nohc))*1.0D6 / &
-            max(abs(cohbop),abs(coheof)) * dcond(isumatoh)
+       if (ipfres == 0) then
+          costpfsc = ucsc(isumatoh) * &
+               awpoh*(1.0D0-fcuohsu)*(1.0D0-vf(nohc)) * &
+               abs(ric(nohc)/turns(nohc))*1.0D6 / &
+               max(abs(cohbop),abs(coheof)) * dcond(isumatoh)
+       else
+          costpfsc = 0.0D0
+       end if
 
        !  Copper ($/m)
 
@@ -1715,10 +1732,17 @@ contains
        !     (1.0D0 - sccufac*max(abs(bmaxoh),abs(bmaxoh0)) ) * &
        !     abs(ric(nohc)/turns(nohc))*1.0D6 / &
        !     max(abs(cohbop),abs(coheof)) * dcopper
-       costpfcu = uccu * &
-            awpoh*fcuohsu*(1.0D0-vf(nohc)) * &
-            abs(ric(nohc)/turns(nohc))*1.0D6 / &
-            max(abs(cohbop),abs(coheof)) * dcopper
+       if (ipfres == 0) then
+          costpfcu = uccu * &
+               awpoh*fcuohsu*(1.0D0-vf(nohc)) * &
+               abs(ric(nohc)/turns(nohc))*1.0D6 / &
+               max(abs(cohbop),abs(coheof)) * dcopper
+       else
+          costpfcu = uccu * &
+               awpoh*(1.0D0-vf(nohc)) * &
+               abs(ric(nohc)/turns(nohc))*1.0D6 / &
+               max(abs(cohbop),abs(coheof)) * dcopper
+       end if
 
        !  Total cost/metre of superconductor and copper wire (OH coil)
 

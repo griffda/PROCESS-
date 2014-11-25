@@ -20,6 +20,8 @@ module availability_module
   !+ad_call  process_output
   !+ad_call  pulse_variables
   !+ad_call  rfp_variables
+  !+ad_call  times_variables
+  !+ad_call  vacuum_variables
   !+ad_hist  06/11/12 PJK Initial version of module
   !+ad_hist  24/11/14 JM  New version of availability model
   !+ad_stat  Okay
@@ -36,6 +38,7 @@ module availability_module
   use pulse_variables
   use rfp_variables
   use tfcoil_variables
+  use times_variables
   use vacuum_variables
 
   implicit none

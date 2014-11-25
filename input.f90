@@ -224,6 +224,7 @@ contains
     !+ad_summ  Routine that parses the contents of the input file
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_auth  F Warmer, IPP Greifswald
     !+ad_cont  N/A
     !+ad_args  in_file  : input integer : Fortran input unit identifier
@@ -323,6 +324,10 @@ contains
     !+ad_hist  06/10/14 PJK Added FORBITLOSS
     !+ad_hist  16/10/14 PJK Added ISUMATOH,FCUPFSU
     !+ad_hist  22/10/14 PJK Modified FORBITLOSS upper limit
+    !+ad_hist  13/11/14 PJK Added FKZOHM
+    !+ad_hist  13/11/14 PJK Modified IRADLOSS limit
+    !+ad_hist  17/11/14 PJK Added OUTPUT_COSTS
+    !+ad_hist  25/11/14 JM  Added new availability model variables
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -528,6 +533,9 @@ contains
        case ('FIMPVAR')
           call parse_real_variable('FIMPVAR', fimpvar, 1.0D-6, 0.5D0, &
                'Impurity fraction to be varied')
+       case ('FKZOHM')
+          call parse_real_variable('FKZOHM', fkzohm, 0.5D0, 2.0D0, &
+               'Zohm elongation scaling multiplier')
        case ('FRADMIN')
           write(outfile,*) ' '
           write(outfile,*) '**********'
@@ -638,7 +646,7 @@ contains
           call parse_int_variable('IPROFILE', iprofile, 0, 1, &
                'Switch for current profile consistency')
        case ('IRADLOSS')
-          call parse_int_variable('IRADLOSS', iradloss, 0, 1, &
+          call parse_int_variable('IRADLOSS', iradloss, 0, 2, &
                'Switch for radiation loss term inclusion in pwr balance')
        case ('IRES')
           write(outfile,*) ' '
@@ -1904,6 +1912,9 @@ contains
        case ('LSA')
           call parse_int_variable('LSA', lsa, 1, 4, &
                'Level of safety assurance')
+       case ('OUTPUT_COSTS')
+          call parse_int_variable('OUTPUT_COSTS', output_costs, 0, 1, &
+               'Switch for writing costs to file')
        case ('RATECDOL')
           call parse_real_variable('RATECDOL', ratecdol, 0.0D0, 0.5D0, &
                'Effective cost of money')
@@ -2085,35 +2096,34 @@ contains
           call parse_real_array('UCWST', ucwst, isub1, 4, &
                'cost of waste disposal (M$/yr)', icode)
 
-
           !  Availability settings
  
        case ('IAVAIL')
-          call parse_int_variable('IAVAIL', iavail, 0, 3, &
+          call parse_int_variable('IAVAIL', iavail, 0, 2, &
                'Switch for plant availability model')
        case ('AVAIL_MIN')
           call parse_real_variable('AVAIL_MIN', avail_min, 0.0D0, 1.0D0, &
-               'Required minimum availability (constraint equation 60)')
+               'Required minimum availability (constraint equation 61)')
        case ('FAVAIL')
           call parse_real_variable('FAVAIL', favail, 0.0D0, 1.0D0, &
-               'F-value for minimum availability (constraint equation 60)')
+               'F-value for minimum availability (constraint equation 61)')
        case ('NUM_RH_SYSTEMS')
           call parse_int_variable('NUM_RH_SYSTEMS', num_rh_systems, 1, 10, &
                'Number of remote handling systems (from 1-10)')
        case ('CONF_MAG')
-          call parse_real_variable('CONF_MAG', conf_mag, 0.9D0, 0.999999D0, &
+          call parse_real_variable('CONF_MAG', conf_mag, 0.9D0, 1.0D0, &
                'Availability confidence level for magnet system')
        case ('DIV_CYCLE_LIM')
-          call parse_int_variable('DIV_CYCLE_LIM', div_cycle_lim, 5000, 25000, &
+          call parse_int_variable('DIV_CYCLE_LIM', div_cycle_lim, 5000, 50000, &
                'Cycle limit of the divertor')
        case ('CONF_DIV')
-          call parse_real_variable('CONF_DIV', conf_div, 1.0D0, 1.5D0, &
+          call parse_real_variable('CONF_DIV', conf_div, 1.0D0, 2.0D0, &
                'Availability confidence level for divertor system')
        case ('FWBS_CYCLE_LIM')
-          call parse_int_variable('FWBS_CYCLE_LIM', fwbs_cycle_lim, 10000, 35000, &
+          call parse_int_variable('FWBS_CYCLE_LIM', fwbs_cycle_lim, 10000, 100000, &
                'Cycle limit of the fwbs')
        case ('CONF_FWBS')
-          call parse_real_variable('CONF_FWBS', conf_fwbs, 1.0D0, 1.5D0, &
+          call parse_real_variable('CONF_FWBS', conf_fwbs, 1.0D0, 2.0D0, &
                'Availability confidence level for fwbs system')
        case ('REDUN_VAC')
           call parse_int_variable('REDUN_VAC', redun_vac, 0, 100, &
