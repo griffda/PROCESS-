@@ -536,11 +536,12 @@ def variable_type(var_name, var_value):
 
     """
     var_name = var_name.lower()
+
     if "bound" in var_name.lower() or "zref(" in var_name.lower():
         val = fortran_python_scientific(var_value).replace(",", "")
         return float(val)
     elif "ixc(" in var_name.lower() or "icc(" in var_name.lower():
-        return int(var_value)
+        return int(var_value.replace(",", ""))
     elif "fimp(" in var_name.lower():
         val = fortran_python_scientific(var_value).replace(",", "")
         return float(val)
@@ -556,8 +557,8 @@ def variable_type(var_name, var_value):
         return int(float(val))
 
     elif VAR_TYPE[var_name] == 'int_array':
-        val = [fortran_python_scientific(vl) for vl
-               in var_value.split(",") if vl != ""]
+        val = [fortran_python_scientific(vl.replace(" ", "")) for vl
+               in var_value.split(",") if vl.replace(" ", "") != ""]
         return [int(float(value)) for value in val]
 
     elif VAR_TYPE[var_name] == 'real_variable':
@@ -565,8 +566,8 @@ def variable_type(var_name, var_value):
         return float(val)
 
     elif VAR_TYPE[var_name] == 'real_array':
-        val = [fortran_python_scientific(vl) for vl
-               in var_value.split(",") if vl != ""]
+        val = [fortran_python_scientific(vl.replace(" ", "")) for vl
+               in var_value.split(",") if vl.replace(" ", "") != ""]
         return [float(value) for value in val]
 
     else:
