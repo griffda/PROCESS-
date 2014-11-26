@@ -424,6 +424,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
     !+ad_hist  23/07/14 PJK Changed icase description
+    !+ad_hist  12/11/14 PJK Added tpulse, tdown, tcycle
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -473,11 +474,13 @@ contains
 
     !  Times for different phases
 
-    tburn = 3.15576D7  !  one year
-    tohs = 0.0D0
-    tpulse = 3.15576D7  !  one year
-    tqnch = 0.0D0
     tramp = 0.0D0
+    tohs = 0.0D0
+    tburn = 3.15576D7  !  one year
+    tqnch = 0.0D0
+    tpulse = tohs + theat + tburn + tqnch
+    tdown  = tramp + tohs + tqnch + tdwell
+    tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
 
     !  Coil quantities
 

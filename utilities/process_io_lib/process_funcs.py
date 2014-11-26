@@ -298,7 +298,7 @@ def get_solution_from_mfile(neqns, nvars, wdir='.'):
     m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
 
 
-    if not m_file.data['isweep'].exists():
+    if not m_file.data['isweep'].exists:
         ind = 0  # only one run, no scan
     else:
         ind = -1 # last scan point
@@ -317,7 +317,8 @@ def get_solution_from_mfile(neqns, nvars, wdir='.'):
 
     table_res = []
     for con_no in range(neqns):
-        table_res += [m_file.data['constr%03i'%(con_no+1)].get_scan(ind)]
+       # table_res += [m_file.data['constr%03i'%(con_no+1)].get_scan(ind)]
+        table_res += [m_file.data['normres%03i'%(con_no+1)].get_scan(ind)]
 
     if ifail != IFAIL_SUCCESS:
         return ifail, '0', '0', ['0']*nvars, ['0']*neqns

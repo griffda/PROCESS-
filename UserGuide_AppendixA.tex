@@ -126,9 +126,9 @@ variables $\vec{x}$ with bounds $\vec{x} \in \Omega$. In this context, all
 $\vec{x}\in\Omega$ that fulfill the constraints $c_i(\vec{x})$ are called {\it
   feasible}. They describe the allowed space in which we are trying to
 optimise the objective function $f(\vec{x})$. Note that any maximisation
-problem can be written as a minimisation by using $f'(\vec{x}) = - f(\vec{x})$
+problem can be written as a minimisation by using $f_{\mbox{\scriptsize{new}}}(\vec{x}) = - f(\vec{x})$
 and that any equality constraint $c(\vec{x}) = a$ can be rewritten as
-$c'(\vec{x}) = c(\vec{x}) - a = 0$. Any inequality constraint can therefore be
+$c_{\mbox{\scriptsize{new}}}(\vec{x}) = c(\vec{x}) - a = 0$. Any inequality constraint can therefore be
 rearranged analogously to fit the form described in eq. \ref{eqn:NPP3}.
 
 \section{The Lagrange Method}
@@ -559,7 +559,7 @@ does not seem to be able to find a solution.
 
 \vmcon\/ uses a quasi-Newtonian update, the Broyden-Fletcher-Goldfarb-Shanno
 update, in the approximation of the Hessian of the Lagrange function. This
-means it is applicable to all continously differentialbe objective and
+means it is applicable to all continuously differentiable objective and
 constraint functions. Note, that due to the constraints it is not actually
 necessary for the Hessian of the solution to be positive definite, even though
 this is essential for the convergence of the algorithm.

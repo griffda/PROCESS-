@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '354    Release Date :: 2014-11-04'
+       '371    Release Date :: 2014-11-24'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1844,3 +1844,22 @@ end subroutine output
 ! GIT 352: Confinement times for H=1 instead of H=2 now output
 ! GIT 353: Corrections to NBI orbit loss power handling; User Guide figure updates
 ! GIT 354: Updated build diagrams in User Guide
+! GIT 355: Minor modifications and extra outputs for superconductor current density calculations
+! GIT 356: Clarified some comments in PF coil field and current density calculations
+! GIT 357: Added aion as an output
+! GIT 358: Changed default values for fcuohsu, vfohc
+! GIT 359: Added CS temperature margin calculation plus constraint
+! GIT 360: Updated plot_proc_func.py
+! GIT 361: Added warnings if itersc variables are out of range
+! GIT 362: Changed tdwell default value;
+!          incorporated tburn/tcycle into cost of electricity calculation
+! GIT 363: Added fkzohm elongation adjustment multiplier
+! GIT 364: Modified iradloss usage
+! GIT 365: Ensured that CS conductor area remains positive
+! GIT 366: Removed confusing acs/aturn comments in superconpf; disabled separate ion and electron
+!          power balance constraints
+! GIT 367: Added output_costs switch to turn on/off costing information to file
+! GIT 368: Minor changes to User Guide
+! GIT 369: Updated in_dat.py
+! GIT 370: Corrected dcond usage for resistive PF coils
+! GIT 371: Minor changes to User Guide

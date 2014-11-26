@@ -63,6 +63,8 @@ module numerics
   !+ad_hist  06/10/14 PJK New iteration variable 105; new constraint 59
   !+ad_hist  13/10/14 PJK Changed boundu(50: fiooic) from 0.5 to 1.0
   !+ad_hist  20/10/14 PJK OH to CS
+  !+ad_hist  11/11/14 PJK New iteration variable 106; new constraint 60
+  !+ad_hist  13/11/14 PJK lablxc(106) corrected
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -75,10 +77,10 @@ module numerics
 
   public
 
-  !+ad_vars  ipnvars /105/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 105
-  !+ad_vars  ipeqns /59/ FIX : number of constraint equations available
-  integer, parameter :: ipeqns  = 59
+  !+ad_vars  ipnvars /106/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 106
+  !+ad_vars  ipeqns /60/ FIX : number of constraint equations available
+  integer, parameter :: ipeqns  = 60
   !+ad_vars  ipnfoms /15/ FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 15
 
@@ -210,7 +212,8 @@ module numerics
        0,  &  !  56
        0,  &  !  57
        0,  &  !  58
-       0   &  !  59
+       0,  &  !  59
+       0   &  !  60
        /)
   !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -332,8 +335,10 @@ module numerics
        'TF coil leg tor width lower limit', &
        !+ad_varc  <LI> (58) TF coil leg radial thickness lower limit (OBSOLETE)
        'TF coil leg rad width lower limit', &
-       !+ad_varc  <LI> (59) Neutral beam shine-through fraction upper limit (NBI)</UL>
-       'NB shine-through frac upper limit'  &
+       !+ad_varc  <LI> (59) Neutral beam shine-through fraction upper limit (NBI)
+       'NB shine-through frac upper limit', &
+       !+ad_varc  <LI> (60) Central solenoid temperature margin lower limit (SCTF)</UL>
+       'CS temperature margin lower limit'  &
        /)
 
   !+ad_vars  ixc(ipnvars) /4,5,6,7,10,12,13,19,28,29,36,39,50,53,54,61/ :
@@ -444,7 +449,8 @@ module numerics
        0,  &  !  102
        0,  &  !  103
        0,  &  !  104
-       0   &  !  105
+       0,  &  !  105
+       0   &  !  106
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -657,8 +663,10 @@ module numerics
        'flhthresh', &
        !+ad_varc  <LI> (104) fcwr
        'fcwr     ', &
-       !+ad_varc  <LI> (105) fnbshinef</UL>
-       'fnbshinef'  &
+       !+ad_varc  <LI> (105) fnbshinef (f-value for equation 59)
+       'fnbshinef', &
+       !+ad_varc  <LI> (106) ftmargoh (f-value for equation 60)</UL>
+       'ftmargoh ' &
        /)
 
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
@@ -779,7 +787,8 @@ module numerics
        1.00D-6, &  !  102
        1.000D0, &  !  103
        0.001D0, &  !  104
-       0.001D0  &  !  105
+       0.001D0, &  !  105
+       0.001D0  &  !  106
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -889,7 +898,8 @@ module numerics
        0.010D0, &  !  102
        1.000D6, &  !  103
        1.000D0, &  !  104
-       1.000D0  &  !  105
+       1.000D0, &  !  105
+       1.000D0  &  !  106
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

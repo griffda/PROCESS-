@@ -236,6 +236,7 @@ subroutine check
   !+ad_hist  19/08/14 PJK Added trap for nvar < neqns
   !+ad_hist  01/09/14 PJK Added trap for insufficient specification of ixc, icc
   !+ad_hist  15/09/14 PJK Added plasma pedestal consistency checks
+  !+ad_hist  17/11/14 PJK Added trap for deprecated constraints 3,4
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -285,6 +286,16 @@ subroutine check
   if ( any(icc(1:neqns+nineqns) == 0) ) then
      idiags(1) = neqns ; idiags(2) = nineqns
      call report_error(140)
+  end if
+
+  !  Deprecate constraints 3 and 4
+
+  if ( any(icc(1:neqns+nineqns) == 3) ) then
+     call report_error(162)
+  end if
+
+  if ( any(icc(1:neqns+nineqns) == 4) ) then
+     call report_error(163)
   end if
 
   !  Fuel ion fractions must add up to 1.0
