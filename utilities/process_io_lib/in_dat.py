@@ -569,7 +569,8 @@ def variable_type(var_name, var_value):
         val = [fortran_python_scientific(vl.replace(" ", "")) for vl
                in var_value.split(",") if vl.replace(" ", "") != ""]
         return [float(value) for value in val]
-
+    elif VAR_TYPE[var_name] == 'string': #hack until James updates this!
+        return var_value
     else:
         print("Variable: %s" % var_name)
         print("variable type not recognised. Please check the process_dicts"

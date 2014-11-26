@@ -706,6 +706,8 @@ DICT_VAR_TYPE['xtfo']          = 'real_variable'
 DICT_VAR_TYPE['zeffdiv']       = 'real_variable'
 DICT_VAR_TYPE['zfear']         = 'int_variable'
 DICT_VAR_TYPE['zref']          = 'real_array'
+#hack until things get updated
+DICT_VAR_TYPE['runtitle']      = 'string'
 
 #Dictionary mapping ixc no to name and bounds
 DICT_IXC_FULL = defaultdict(dict)
