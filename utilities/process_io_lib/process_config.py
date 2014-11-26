@@ -12,14 +12,15 @@ Compatible with PROCESS version 368
 
 import os
 from time import sleep
-from numpy.random import seed
+from numpy.random import seed, uniform, normal
+from numpy import argsort
 from process_io_lib.in_dat import INDATNew, INVariable
 from process_io_lib.process_funcs import mfile_exists,\
     get_from_indat_or_default, set_variable_in_indat
 from process_io_lib.mfile import MFile
 from process_io_lib.configuration import Config
 from process_io_lib.process_dicts import DICT_NSWEEP2IXC, DICT_NSWEEP2VARNAME,\
-    DICT_DEFAULT
+    DICT_IXC_SIMPLE
 
 class ProcessConfig(object):
 
@@ -116,7 +117,9 @@ class ProcessConfig(object):
                 readme = open(directory+'/README.txt', 'w')
 
             m_file = MFile(filename=directory+"/MFILE.DAT")
-            error_status = "Error status: %i  Error ID: %i\n" %(m_file.data['error status'].get_scan(-1), m_file.data['error id'].get_scan(-1))
+            error_status = "Error status: %i  Error ID: %i\n" \
+                %(m_file.data['error status'].get_scan(-1),
+                  m_file.data['error id'].get_scan(-1))
             readme.write(error_status)
             readme.close()
 
@@ -412,7 +415,7 @@ class RunProcessConfig(ProcessConfig):
 
         buf = self.get_attribute('create_itervar_diff')
         if buf != None:
-            if buf.lower() in ['true', 'y', 'yes'] :
+            if buf.lower() in ['true', 'y', 'yes']:
                 self.create_itervar_diff = True
             elif buf.lower() in ['false', 'n', 'no']:
                 self.create_itervar_diff = False
@@ -512,7 +515,8 @@ class RunProcessConfig(ProcessConfig):
 
         print('no. allowed UNFEASIBLE points %i' % self.no_allowed_unfeasible)
         if self.create_itervar_diff:
-            print('Set to create a summary file of the iteration variable values!')
+            print('Set to create a summary file of the iteration variable\
+ values!')
 
         if self.add_ixc != []:
             print('add_ixc', self.add_ixc)
@@ -538,7 +542,7 @@ class RunProcessConfig(ProcessConfig):
         self.modify_vars()
         self.modify_ixc()
         self.modify_icc()
-        
+
 
     def modify_vars(self):
 
@@ -548,16 +552,16 @@ class RunProcessConfig(ProcessConfig):
 
         #add and modify variables
         for key in self.dictvar.keys():
-  
+
             key = key.lower()
- 
+
             #TODO update using set_variable_in_indat function!
             if key in in_dat.variables.keys():
                 in_dat.variables[key].value = self.dictvar[key]
             else:
                 in_dat.add_variable(INVariable(key, self.dictvar[key]))
                 #in_dat.variables[key] = INVariable(key, self.dictvar[key])
-  
+
         #delete variables
         for key in self.del_var:
             key = key.lower()
@@ -616,9 +620,8 @@ class RunProcessConfig(ProcessConfig):
 
 class UncertaintiesConfig(ProcessConfig, Config):
 
-    """ 
+    """
     Configuration parameters for evaluate_uncertainties.py program
-
     """
 
     no_allowed_unfeasible = 2
@@ -631,27 +634,31 @@ class UncertaintiesConfig(ProcessConfig, Config):
     def __init__(self, configfilename="evaluate_uncertainties.json"):
 
         """
-        creates and instance of the UncertaintiesConfig class 
+        creates and instance of the UncertaintiesConfig class
         """
 
         #TODO: Once ProcessConfig has been ported to only use json
-        #use the ProcessConfig __init__ routine to set up these 
+        #use the ProcessConfig __init__ routine to set up these
         #parameters
         super().__init__(configfilename)
         self.filename = configfilename
 
-        self.wdir = os.path.abspath(self.get("config", "working_directory",default=self.wdir))
-        self.or_in_dat = os.path.abspath(self.get("config", "IN.DAT_path",default=self.or_in_dat))
+        self.wdir = os.path.abspath(self.get("config", "working_directory",
+                                             default=self.wdir))
+        self.or_in_dat = os.path.abspath(self.get("config", "IN.DAT_path",
+                                                  default=self.or_in_dat))
         self.process = self.get("config", "process_bin", default=self.process)
         self.niter = self.get("config", "no_iter", default=self.niter)
-        self.u_seed = self.get("config", "pseudorandom_seed", default=self.u_seed)
-        self.factor = self.get("config", "factor", default=self.factor) 
+        self.u_seed = self.get("config", "pseudorandom_seed",
+                               default=self.u_seed)
+        self.factor = self.get("config", "factor", default=self.factor)
         self.comment = self.get("config", "runtitle", default=self.comment)
 
         #additional new parameters
         self.no_scans = self.get("no_scans", default=self.no_scans)
         self.no_samples = self.get("no_samples", default=self.no_samples)
-        self.uncertainties = self.get("uncertainties", default=self.uncertainties)
+        self.uncertainties = self.get("uncertainties",
+                                      default=self.uncertainties)
         self.output_vars = self.get("output_vars", default=self.output_vars)
 
 
@@ -667,7 +674,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
         print('No samples          %i' % self.no_samples)
         if self.uncertainties != []:
             print('uncertainties:')
-            for item in self.uncertainties: 
+            for item in self.uncertainties:
                 print('     ', item['varname'])
                 for key in item.keys():
                     if key not in ['varname']:
@@ -696,16 +703,17 @@ class UncertaintiesConfig(ProcessConfig, Config):
             sweep = get_from_indat_or_default(in_dat, 'sweep')
             if ((str(nsweep) in DICT_NSWEEP2IXC.keys()) and
                 (DICT_NSWEEP2IXC[str(nsweep)] in ixc) and
-                (not all(sweep[0] == item for item in sweep)) ):
+                (not all(sweep[0] == item for item in sweep))):
                 if self.no_scans != isweep:
                     #Change no of sweep points to correct value!!
                     set_variable_in_indat(in_dat, 'isweep', self.no_scans)
                     value = sweep[0]
-                    set_variable_in_indat(in_dat, 'sweep', [value]*self.no_scans)
+                    set_variable_in_indat(in_dat, 'sweep',
+                                          [value]*self.no_scans)
                 #Else: we can actually use this scan
-            
+
             else:
-                
+
                 print('Error: Inbuild sweep is not compatible with uncertainty\
  evaluation! Edit IN.DAT file!')
                 exit()
@@ -713,18 +721,19 @@ class UncertaintiesConfig(ProcessConfig, Config):
             # create a scan!
             nsweep = '3'
             if nsweep in DICT_NSWEEP2IXC.keys():
-                #TODO: if this ever happens, program this testing whether a certain
-                # variable is used as iteration variable, if not choose another
-                print("Error: The developer should program this more wisely using\
- a sweep variable that is not an iteration variable!")
+                #TODO: if this ever happens, program this testing whether
+                #a certain variable is used as iteration variable, if not
+                #choose another
+                print("Error: The developer should program this more wisely\
+ using a sweep variable that is not an iteration variable!")
                 exit()
             else:
                 set_variable_in_indat(in_dat, 'nsweep', nsweep)
                 set_variable_in_indat(in_dat, 'isweep', self.no_scans)
-                value = get_from_indat_or_default(in_dat, 
+                value = get_from_indat_or_default(in_dat,
                                                   DICT_NSWEEP2VARNAME[nsweep])
                 set_variable_in_indat(in_dat, 'sweep', [value]*self.no_scans)
-                
+
 
         # write comment in runtitle!
         runtitle = self.comment.replace(',', ' ')
@@ -735,4 +744,69 @@ class UncertaintiesConfig(ProcessConfig, Config):
         #TODO: Add when James has added this functionality!
         #in_dat.close()
 
- 
+
+
+    def checks_before_run(self):
+
+        """ run several checks before you start running """
+
+        in_dat = INDATNew()
+        ixc_list = in_dat.variables['ixc'].value
+        #TODO: hack until James fixes in_dat.py
+        ixc_list = [1,2,3,4,5,6,7,9,10,12,13,14,16,18,29,35,36,37,38,39,41,42,44,48,49,50,51,53,56,57,58,59,60]
+        ixc_varname_list = [DICT_IXC_SIMPLE[str(x)] for x in ixc_list]
+
+        for u_dict in self.uncertainties:
+            varname = u_dict['varname'].lower()
+            if varname in ixc_varname_list:
+                print('Error: an uncertain variable should never be an\
+ iteration variable at the same time!', varname)
+                exit()
+        # check uncertainties are within bounds??
+
+
+    def set_sample_values(self):
+
+        """ determines the values of each sample point and orders them """
+
+        for u_dict in self.uncertainties:
+            if u_dict['errortype'].lower() == 'gaussian':
+                mean = u_dict['mean']
+                std = u_dict['std']
+                values = normal(mean, std, self.no_samples)
+            elif u_dict['errortype'].lower() == 'uniform':
+                lbound = u_dict['lowerbound']
+                ubound = u_dict['upperbound']
+                values = uniform(lbound, ubound, self.no_samples)
+            elif u_dict['errortype'].lower() == 'relative':
+                err = u_dict['percentage']/100.
+                lbound = u_dict['mean']*(1.-err)
+                ubound = u_dict['mean']*(1.+err)
+                values = uniform(lbound, ubound, self.no_samples)
+            u_dict['samples'] = values
+
+        #order by one parameter
+        #TODO: Find a more cunning way to determine which is a good 
+        #variable to sort by! e.g. largest range?
+        arr = self.uncertainties[0]['samples']
+        sorted_index = argsort(arr)
+        for u_dict in self.uncertainties:
+            u_dict['samples'] = u_dict['samples'][sorted_index]
+
+
+    def go2newsamplepoint(self, sample_index):
+
+        """ create a new sample point from uncertainty distributions
+        """
+
+        in_dat = INDATNew()
+
+        for u_dict in self.uncertainties:
+            value = u_dict['samples'][sample_index]
+            varname = u_dict['varname']
+            set_variable_in_indat(in_dat, varname, value)
+
+
+        in_dat.write_in_dat(filename='IN.DAT')
+        #TODO: Add when James has added this functionality!
+        #in_dat.close()

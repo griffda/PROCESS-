@@ -29,8 +29,7 @@ from process_io_lib.process_config import UncertaintiesConfig
 from process_io_lib.process_funcs import get_neqns_itervars,\
     update_ixc_bounds, get_variable_range, check_input_error,\
     process_stopped, no_unfeasible_mfile,\
-    vary_iteration_variables, process_warnings,\
-    checks_uncertainties_run, go2newsamplepoint
+    vary_iteration_variables
 
 if __name__ == '__main__':
 ############################################################
@@ -61,12 +60,14 @@ if __name__ == '__main__':
 
     LBS, UBS = get_variable_range(ITERVARS, CONFIG.factor)
 
-    checks_uncertainties_run(CONFIG.uncertainties)
+    CONFIG.checks_before_run()
+
+    CONFIG.set_sample_values()
 
     for j in range(CONFIG.no_samples):
 
         print('sample point', j, ':')
-        go2newsamplepoint(CONFIG.uncertainties)
+        CONFIG.go2newsamplepoint(j)
 
         for i in range(CONFIG.niter):
 
@@ -83,15 +84,12 @@ if __name__ == '__main__':
                     if no_unfeasible > 0:
                         print('WARNING: Non feasible point(s) in sweep,\
          but finished anyway! %i ' % no_unfeasible)
-                    #if process_warnings():
-                    #    print('\nThere were warnings in the final\
-         #PROCESS run. Please check the log file!\n')
                     break
                 else:
                     print('WARNING: %i non feasible point(s) in sweep!\
          Rerunning!' % no_unfeasible)
-            #else:
-                #print('PROCESS has stopped without finishing!')
+            else:
+                print('PROCESS has stopped without finishing!')
 
             vary_iteration_variables(ITERVARS, LBS, UBS)
 
