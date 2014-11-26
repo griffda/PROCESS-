@@ -3,20 +3,14 @@ A selection of functions for using the PROCESS code
 
 Author: Hanni Lux (Hanni.Lux@ccfe.ac.uk)
 
-Date: March 2013 - initial released version
-
-Notes:
-13/08/2014 HL updated functions to work with new error_status flag
-20/08/2014 HL fixed bug in get_variable_range
-
-Compatible with PROCESS version 319
+Compatible with PROCESS version 368
 """
 
 from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,\
     DICT_IXC_DEFAULT, NON_F_VALUES, IFAIL_SUCCESS, DICT_DEFAULT
 from process_io_lib.in_dat import INDATNew, INVariable
 from process_io_lib.mfile import MFile
-from numpy.random import uniform
+from numpy.random import uniform, normal
 
 
 def get_neqns_itervars(wdir='.'):
@@ -29,7 +23,8 @@ def get_neqns_itervars(wdir='.'):
     in_dat = INDATNew(wdir+'/IN.DAT')
 
     ixc_list = in_dat.variables['ixc'].value
-
+    #TODO: hack until James fixes in_dat.py
+    ixc_list = [1,2,3,4,5,6,7,9,10,12,13,14,16,18,29,35,36,37,38,39,41,42,44,48,49,50,51,53,56,57,58,59,60] 
     itervars = []
     for var in ixc_list:
         if var != '':
@@ -424,7 +419,62 @@ def set_variable_in_indat(in_dat, varname, value):
     """ quick function that sets a variable value in 
         IN.DAT and creates it if necessary """
 
+    varname = varname.lower()
     if varname in in_dat.variables.keys():
         in_dat.variables[varname].value = value
     else:
-        in_dat.add_variable(INVariable(varname, value))
+         in_dat.add_variable(INVariable(varname, value))
+
+
+def checks_uncertainties_run(list_uncertainties):
+
+    """ run several checks before you start running an 
+        evaluate_uncertainties.py run """
+
+    in_dat = INDATNew()
+    ixc_list = in_dat.variables['ixc'].value
+    #TODO: hack until James fixes in_dat.py
+    ixc_list = [1,2,3,4,5,6,7,9,10,12,13,14,16,18,29,35,36,37,38,39,41,42,44,48,49,50,51,53,56,57,58,59,60]
+    ixc_varname_list = [DICT_IXC_SIMPLE[str(x)] for x in ixc_list ]
+
+    for u_dict in list_uncertainties:
+        varname = u_dict['varname'].lower()
+        if varname in ixc_varname_list :
+            print('Error: an uncertain variable should never be an\
+ iteration variable at the same time!', varname)
+            exit()
+    # check uncertainties are within bounds??
+    
+
+
+def go2newsamplepoint(list_uncertainties):
+
+    """ create a new sample point from uncertainty distributions
+    
+    assumes list_uncertainties contains dicts  """
+
+    in_dat = INDATNew()
+
+    for u_dict in list_uncertainties:
+        if u_dict['errortype'].lower() == 'gaussian':
+            mean = u_dict['mean'] 
+            std = u_dict['std']
+            value = normal(mean, std)
+        elif u_dict['errortype'].lower() == 'uniform':
+            lbound = u_dict['lowerbound']
+            ubound = u_dict['upperbound']
+            value = uniform(lbound, ubound)
+        elif u_dict['errortype'].lower() == 'relative':
+            err = u_dict['percentage']/100.
+            lbound = u_dict['mean']*(1.-err)
+            ubound = u_dict['mean']*(1.+err)
+            value = uniform(lbound, ubound)
+        
+        
+        varname = u_dict['varname']
+        set_variable_in_indat(in_dat, varname, value)
+
+
+    in_dat.write_in_dat(filename='IN.DAT')
+    #TODO: Add when James has added this functionality!
+    #in_dat.close()

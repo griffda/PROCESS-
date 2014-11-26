@@ -80,16 +80,16 @@ if __name__ == '__main__':
                 no_unfeasible = no_unfeasible_mfile()
 
                 if no_unfeasible <= CONFIG.no_allowed_unfeasible:
-                    #if no_unfeasible > 0:
-                    #    print('WARNING: Non feasible point(s) in sweep,\
-         #but finished anyway! %i ' % no_unfeasible)
+                    if no_unfeasible > 0:
+                        print('WARNING: Non feasible point(s) in sweep,\
+         but finished anyway! %i ' % no_unfeasible)
                     #if process_warnings():
                     #    print('\nThere were warnings in the final\
          #PROCESS run. Please check the log file!\n')
                     break
-                #else:
-                    #print('WARNING: %i non feasible point(s) in sweep!\
-         #Rerunning!' % no_unfeasible)
+                else:
+                    print('WARNING: %i non feasible point(s) in sweep!\
+         Rerunning!' % no_unfeasible)
             #else:
                 #print('PROCESS has stopped without finishing!')
 
