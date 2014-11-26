@@ -54,9 +54,11 @@ class MFileVariable(dict):
                                                           self.var_description))
 
     def __getattr__(self, name):
-        try:
-            return self[name]
-        except KeyError as e:
+        result = self.get(name)
+        #print("Trying to get({}) on {}, {}".format(name, self, id(self)))
+        if result:
+            return result
+        else:
             raise AttributeError("{} object has no attribute {}".format(
                                     self.__class__, name))
         
@@ -98,20 +100,10 @@ class MFileVariable(dict):
           [List of all scans for variable]
 
         """
+        return [v for k, v in sorted(
+                filter(lambda x: True if "scan" in x[0] else False,
+                       self.items()))]
 
-#        scan_numbers = list()
-#        for key in self.__dict__.keys():
-#            if "scan" in key:
-#                scan_number = "".join([num for num in key if num.isdigit()])
-#                scan_numbers.append(int(scan_number))
-#
-#        scan_numbers.sort()
-#        scan_keys = ["scan{}".format(item) for item in scan_numbers]
-#        
-#        return [self.__dict__[key] for key in scan_keys]
-        return [v for k, v in sorted(filter(lambda x: True if "scan" in x[0] else False, self.items()))]
-#        return [v for k, v in sorted(self.items(),
-#                                     key=operator.itemgetter(0)) if "scan" in k]
 
     def get_number_of_scans(self):
         """Function to return the number of scans in the variable class"""
@@ -146,6 +138,14 @@ class MFileErrorClass(object):
 class MFileDataDictionary(dict):
     """ Class object to act as a dictionary for the data.
     """
+    
+    def __getattr__(self, name):
+        result = self.get(name)
+        if result:
+            return result
+        else:
+            raise AttributeError("{} object has no attribute {}".format(
+                                    self.__class__, name))
 
     def __getitem__(self, item):
         try:
@@ -180,7 +180,8 @@ class MFile(object):
         class or create a new class if it is the first instance of it.
         """
         var_des = line[0]
-        var_name = sort_brackets(line[1])
+        extracted_var_name = sort_brackets(line[1]) 
+        var_name = var_des if extracted_var_name == "" else extracted_var_name
         var_value = sort_value(line[2])
         self.add_to_mfile_variable(var_des, var_name, var_value)
 
