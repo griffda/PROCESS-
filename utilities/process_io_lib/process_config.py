@@ -788,6 +788,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
         #order by one parameter
         #TODO: Find a more cunning way to determine which is a good 
         #variable to sort by! e.g. largest range?
+        # always try to choose a uniform case?
         arr = self.uncertainties[0]['samples']
         sorted_index = argsort(arr)
         for u_dict in self.uncertainties:
@@ -810,3 +811,8 @@ class UncertaintiesConfig(ProcessConfig, Config):
         in_dat.write_in_dat(filename='IN.DAT')
         #TODO: Add when James has added this functionality!
         #in_dat.close()
+
+    def add_results2netcdf(self):
+
+        """ reads current MFILE and adds specified output variables
+            of last scan point to summary netCDF file """

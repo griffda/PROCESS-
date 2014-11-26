@@ -84,6 +84,7 @@ if __name__ == '__main__':
                     if no_unfeasible > 0:
                         print('WARNING: Non feasible point(s) in sweep,\
          but finished anyway! %i ' % no_unfeasible)
+                    CONFIG.add_results2netcdf()
                     break
                 else:
                     print('WARNING: %i non feasible point(s) in sweep!\
