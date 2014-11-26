@@ -621,6 +621,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
     """
 
+    no_allowed_unfeasible = 2
     no_scans = 5
     no_samples = 10000
     uncertainties = []
@@ -696,8 +697,15 @@ class UncertaintiesConfig(ProcessConfig, Config):
             if ((str(nsweep) in DICT_NSWEEP2IXC.keys()) and
                 (DICT_NSWEEP2IXC[str(nsweep)] in ixc) and
                 (not all(sweep[0] == item for item in sweep)) ):
-                pass # we can actually use this scan
+                if self.no_scans != isweep:
+                    #Change no of sweep points to correct value!!
+                    set_variable_in_indat(in_dat, 'isweep', self.no_scans)
+                    value = sweep[0]
+                    set_variable_in_indat(in_dat, 'sweep', [value]*self.no_scans)
+                #Else: we can actually use this scan
+            
             else:
+                
                 print('Error: Inbuild sweep is not compatible with uncertainty\
  evaluation! Edit IN.DAT file!')
                 exit()
@@ -705,7 +713,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
             # create a scan!
             nsweep = '3'
             if nsweep in DICT_NSWEEP2IXC.keys():
-                # if this ever happens, program this testing whether a certain
+                #TODO: if this ever happens, program this testing whether a certain
                 # variable is used as iteration variable, if not choose another
                 print("Error: The developer should program this more wisely using\
  a sweep variable that is not an iteration variable!")
@@ -715,7 +723,6 @@ class UncertaintiesConfig(ProcessConfig, Config):
                 set_variable_in_indat(in_dat, 'isweep', self.no_scans)
                 value = get_from_indat_or_default(in_dat, 
                                                   DICT_NSWEEP2VARNAME[nsweep])
-                #TODO: Double check this should be a list!!
                 set_variable_in_indat(in_dat, 'sweep', [value]*self.no_scans)
                 
 
@@ -725,4 +732,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
         set_variable_in_indat(in_dat, 'runtitle', runtitle)
         in_dat.write_in_dat(filename='IN.DAT')
 
-        #TODO: Check that uncertain variables are not iteration variables, but not in this function!
+        #TODO: Add when James has added this functionality!
+        #in_dat.close()
+
+ 
