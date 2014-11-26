@@ -23,14 +23,15 @@
 
 """
 
+import operator
 import logging
 LOG = logging.getLogger("mfile")
 
 from . import process_dicts
 
-class MFileVariable(object):
+class MFileVariable(dict):
     """Class for containing a single mfile variable """
-    def __init__(self, var_name, var_description):
+    def __init__(self, var_name, var_description, *args, **kwargs):
         """
         An object class to contain information (and data values) for a single
         variable from the PROCESS machine readable output file (MFILE.DAT).
@@ -45,11 +46,20 @@ class MFileVariable(object):
             get_scan    --> function to retrieve a given scan
             get_scans   --> function to retrieve all scans.
         """
-        self.var_name = var_name
-        self.var_description = var_description
+        self["var_name"] = var_name
+        self["var_description"] = var_description
+        self.latest_scan = 0
+        super().__init__(*args, **kwargs)
         LOG.debug("Initialising variable '{}': {}".format(self.var_name,
                                                           self.var_description))
 
+    def __getattr__(self, name):
+        try:
+            return self[name]
+        except KeyError as e:
+            raise AttributeError("{} object has no attribute {}".format(
+                                    self.__class__, name))
+        
     def set_scan(self, scan_number, scan_value):
         """ Sets the class attribute self.scan# where # is scan number
 
@@ -58,26 +68,28 @@ class MFileVariable(object):
           scan_value --> value of parameter for scan
 
         """
-        setattr(self, "scan{}".format(scan_number), scan_value)
-        LOG.debug("Scan {} for variable '{}' == {}".format(scan_number, self.var_name, str(scan_value)))
+        self["scan{}".format(scan_number)] = scan_value
+        if scan_number > self.latest_scan:
+            self.latest_scan = scan_number
+        LOG.debug("Scan {} for variable '{}' == {}".format(scan_number,
+                                                           self.var_name,
+                                                           scan_value))
 
-    def get_scan(self, scan_number):
-        """Returns the value of a specific scan. For scan = -1 the last scan is
-        given.
+    def get_scan(self, scan_number=None):
+        """Returns the value of a specific scan. For scan = -1 or None the last
+        scan is given.
 
         Arguments:
-          scan_number --> scan number to return [-1 = last scan]
+          scan_number --> scan number to return [-1/None = last scan]
 
         Returns:
           [single scan requested]
         """
 
-        scan_keys = [key for key in self.__dict__.keys() if "scan" in key]
-        scan_keys.sort()
-        if scan_number == -1:
-            return self.__dict__[scan_keys[-1]]
+        if scan_number is None or scan_number == -1:
+            return self.get("scan{}".format(self.latest_scan))
         else:
-            return self.__dict__[scan_keys[scan_number-1]]
+            return self.get("scan{}".format(scan_number))
 
     def get_scans(self):
         """Returns a list of scan values in order of scan number
@@ -87,20 +99,25 @@ class MFileVariable(object):
 
         """
 
-        scan_numbers = list()
-        for key in self.__dict__.keys():
-            if "scan" in key:
-                scan_number = "".join([num for num in key if num.isdigit()])
-                scan_numbers.append(int(scan_number))
-
-        scan_numbers.sort()
-        scan_keys = ["scan"+str(item) for item in scan_numbers]
-        return [self.__dict__[key] for key in scan_keys]
+#        scan_numbers = list()
+#        for key in self.__dict__.keys():
+#            if "scan" in key:
+#                scan_number = "".join([num for num in key if num.isdigit()])
+#                scan_numbers.append(int(scan_number))
+#
+#        scan_numbers.sort()
+#        scan_keys = ["scan{}".format(item) for item in scan_numbers]
+#        
+#        return [self.__dict__[key] for key in scan_keys]
+        return [v for k, v in sorted(filter(lambda x: True if "scan" in x[0] else False, self.items()))]
+#        return [v for k, v in sorted(self.items(),
+#                                     key=operator.itemgetter(0)) if "scan" in k]
 
     def get_number_of_scans(self):
         """Function to return the number of scans in the variable class"""
-        key_list = [key for key in self.__dict__.keys() if "scan" in key]
-        return len(key_list)
+        # likely we can just use self.latest_scan, but not guaranteed, so
+        # keeping this as it is for now...
+        return len([key for key in self.keys() if "scan" in key])
 
     @property
     def exists(self):
@@ -126,24 +143,15 @@ class MFileErrorClass(object):
         return False
 
 
-class MFileDataDictionary(object):
+class MFileDataDictionary(dict):
     """ Class object to act as a dictionary for the data.
     """
-    def __init__(self):
-        pass
 
     def __getitem__(self, item):
         try:
-            return self.__dict__[item]
+            return dict.__getitem__(self, item)
         except KeyError:
             return MFileErrorClass(item)
-
-    def __setitem__(self, key, value):
-        self.__dict__[key] = value
-
-    def keys(self):
-        return self.__dict__.keys()
-
 
 class MFile(object):
     def __init__(self, filename="MFILE.DAT"):
@@ -164,8 +172,8 @@ class MFile(object):
 
     def parse_mfile(self):
         """Function to parse MFILE.DAT"""
-        self.add_line(clean_line for clean_line in self.mfile_lines
-                      if clean_line != [""])
+        for line in (clean_line(l) for l in self.mfile_lines):
+            self.add_line(line)
 
     def add_line(self, line):
         """Function to read the line from MFILE and add to the appropriate
