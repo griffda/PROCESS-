@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Code to assess uncertainties in the input parameters in PROCESS 
+Code to assess uncertainties in the input parameters in PROCESS
 
 Author: H. Lux (Hanni.Lux@ccfe.ac.uk)
 
@@ -28,20 +28,23 @@ import argparse
 from process_io_lib.process_config import UncertaintiesConfig
 from process_io_lib.process_funcs import get_neqns_itervars,\
     update_ixc_bounds, get_variable_range, check_input_error,\
-    process_stopped, mfile_exists, no_unfeasible_mfile,\
-    vary_iteration_variables, process_warnings
+    process_stopped, no_unfeasible_mfile,\
+    vary_iteration_variables, process_warnings,\
+    checks_uncertainties_run, go2newsamplepoint
 
-
+if __name__ == '__main__':
 ############################################################
 #Usage
 
-PARSER = argparse.ArgumentParser(description='Program to evaluate uncertainties\
- in a given PROCESS design point.')
+    PARSER = argparse.ArgumentParser(description='Program to evaluate\
+ uncertainties in a given PROCESS design point.')
 
-PARSER.add_argument("-f", "--configfile", default='evaluate_uncertainties.json',
-                    help="configuration file, default = evaluate_uncertainties.json")
+    PARSER.add_argument("-f", "--configfile",
+                        default='evaluate_uncertainties.json',
+                        help="configuration file, default =\
+ evaluate_uncertainties.json")
 
-ARGS = PARSER.parse_args()
+    ARGS = PARSER.parse_args()
 
 
 ############################################################
@@ -49,45 +52,50 @@ ARGS = PARSER.parse_args()
 
 
 
-CONFIG = UncertaintiesConfig(ARGS.configfile)
-CONFIG.setup()
+    CONFIG = UncertaintiesConfig(ARGS.configfile)
+    CONFIG.setup()
 
-exit()
+    NEQNS, ITERVARS = get_neqns_itervars()
 
-NEQNS, ITERVARS = get_neqns_itervars()
+    update_ixc_bounds()
 
-update_ixc_bounds()
+    LBS, UBS = get_variable_range(ITERVARS, CONFIG.factor)
 
-LBS, UBS = get_variable_range(ITERVARS, CONFIG.factor)
+    checks_uncertainties_run(CONFIG.uncertainties)
+
+    for j in range(CONFIG.no_samples):
+
+        print('sample point', j, ':')
+        go2newsamplepoint(CONFIG.uncertainties)
+
+        for i in range(CONFIG.niter):
+
+            print('  ', i, end=' ')
+            CONFIG.run_process()
+
+            check_input_error()
+
+            if not process_stopped():
+
+                no_unfeasible = no_unfeasible_mfile()
+
+                if no_unfeasible <= CONFIG.no_allowed_unfeasible:
+                    #if no_unfeasible > 0:
+                    #    print('WARNING: Non feasible point(s) in sweep,\
+         #but finished anyway! %i ' % no_unfeasible)
+                    #if process_warnings():
+                    #    print('\nThere were warnings in the final\
+         #PROCESS run. Please check the log file!\n')
+                    break
+                #else:
+                    #print('WARNING: %i non feasible point(s) in sweep!\
+         #Rerunning!' % no_unfeasible)
+            #else:
+                #print('PROCESS has stopped without finishing!')
+
+            vary_iteration_variables(ITERVARS, LBS, UBS)
 
 
-
-for i in range(CONFIG.niter):
-
-    print(i, end=' ')
-    CONFIG.run_process()
-
-    check_input_error()
-
-    if not process_stopped():
-
-        no_unfeasible = no_unfeasible_mfile()
-
-        if no_unfeasible <= CONFIG.no_allowed_unfeasible:
-            if no_unfeasible > 0:
-                print('WARNING: Non feasible point(s) in sweep,\
- but finished anyway! %i ' % no_unfeasible)
-            if process_warnings():
-                print('\nThere were warnings in the final\
- PROCESS run. Please check the log file!\n')
-            break
-        else:
-            print('WARNING: %i non feasible point(s) in sweep!\
- Rerunning!' % no_unfeasible)
-    else:
-        print('PROCESS has stopped without finishing!')
-
-    vary_iteration_variables(ITERVARS, LBS, UBS)
 
 
 
