@@ -172,7 +172,7 @@ class MFile(object):
 
     def parse_mfile(self):
         """Function to parse MFILE.DAT"""
-        for line in (clean_line(l) for l in self.mfile_lines):
+        for line in (c for c in (clean_line(l) for l in self.mfile_lines) if c != [""]):
             self.add_line(line)
 
     def add_line(self, line):
