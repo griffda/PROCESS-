@@ -27,11 +27,11 @@ import operator
 import logging
 LOG = logging.getLogger("mfile")
 
-from . import process_dicts
+import process_dicts
 
 class MFileVariable(dict):
     """Class for containing a single mfile variable """
-    def __init__(self, var_name, var_description, *args, **kwargs):
+    def __init__(self, var_name, var_description, var_unit=None, *args, **kwargs):
         """
         An object class to contain information (and data values) for a single
         variable from the PROCESS machine readable output file (MFILE.DAT).
@@ -48,6 +48,7 @@ class MFileVariable(dict):
         """
         self["var_name"] = var_name
         self["var_description"] = var_description
+        self["var_unit"] = var_unit
         self.latest_scan = 0
         super().__init__(*args, **kwargs)
         LOG.debug("Initialising variable '{}': {}".format(self.var_name,
@@ -183,9 +184,10 @@ class MFile(object):
         extracted_var_name = sort_brackets(line[1]) 
         var_name = var_des if extracted_var_name == "" else extracted_var_name
         var_value = sort_value(line[2])
-        self.add_to_mfile_variable(var_des, var_name, var_value)
+        var_unit = get_unit(var_des)
+        self.add_to_mfile_variable(var_des, var_name, var_value, var_unit)
 
-    def add_to_mfile_variable(self, des, name, value):
+    def add_to_mfile_variable(self, des, name, value, unit):
         """Function to add value to MFile class for that name/description
         """
         if name == "":
@@ -193,11 +195,11 @@ class MFile(object):
         else:
             var_key = name.lower().replace("_", " ")
 
-        if var_key in self.data.__dict__.keys():
+        if var_key in self.data.keys():
             scan_num = self.data[var_key].get_number_of_scans()
             self.data[var_key].set_scan(scan_num+1, value)
         else:
-            var = MFileVariable(name, des)
+            var = MFileVariable(name, des, unit)
             self.data[var_key] = var
             self.data[var_key].set_scan(1, value)
 
@@ -273,6 +275,14 @@ def search_des(dictionary, description):
             matches.append(item)
     return matches
 
+
+def get_unit(variable_desc):
+    """Returns the unit from a variable description if possible, else None."""
+    candidate = variable_desc.rsplit("_", 1)[-1]
+    if candidate.startswith("(") and candidate.endswith(")"):
+        return candidate[1:-1]
+    else:
+        return None
 
 def make_plot_dat(mfile_data, custom_keys, filename="make_plot_dat.out",
                   file_format="row"):
