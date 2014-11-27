@@ -826,9 +826,15 @@ class UncertaintiesConfig(ProcessConfig, Config):
         #TODO: rewrite using netcdf file once library is ready!
         m_file = MFile(filename="MFILE.DAT")
 
-        for varname in self.output_vars:
-            value = m_file.data[varname].get_scan(-1) #get last scan
-            self.dict_results[varname]+=[value]
+        if m_file.data['ifail'].get_scan(-1) == 1:
+            for varname in self.output_vars:
+                value = m_file.data[varname].get_scan(-1) #get last scan
+                self.dict_results[varname]+=[value]
+        else:
+            self.write_results()
+            print('WARNING to developer: scan has unfeasible point at the\
+ end!\nPress Enter to continue!')
+            raw_input()
 
 
     def write_results(self):
