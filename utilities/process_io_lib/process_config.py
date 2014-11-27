@@ -740,12 +740,15 @@ class UncertaintiesConfig(ProcessConfig, Config):
         runtitle = self.comment.replace(',', ' ')
         runtitle = runtitle.replace('\n', ' ')
         set_variable_in_indat(in_dat, 'runtitle', runtitle)
-        in_dat.write_in_dat(filename='IN.DAT')
+
+        #set epsvmc to appropriate value!
+        # recommendation from solver work!
+        set_variable_in_indat(in_dat, 'epsvmc', 1e-8)    
 
         #TODO: Add when James has added this functionality!
         #in_dat.close()
 
-
+        in_dat.write_in_dat(filename='IN.DAT')
 
     def checks_before_run(self):
 
@@ -764,6 +767,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
  iteration variable at the same time!', varname)
                 exit()
         # check uncertainties are within bounds??
+
 
 
     def set_sample_values(self):

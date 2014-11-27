@@ -17,7 +17,7 @@ UNCERTAINTIES.DAT
 import argparse
 from numpy import loadtxt
 from matplotlib.ticker import NullFormatter
-from pylab import figure, axes, show
+from pylab import figure, axes, show, savefig
 
 if __name__ == '__main__':
 
@@ -80,7 +80,7 @@ if __name__ == '__main__':
         bins = 10
         axHistx.hist(x, bins=bins)
         axHisty.hist(y, bins=bins, orientation='horizontal')
-
+        savefig('Uncertainties_'+labels[i]+'_'+labels[i+1]+'.pdf')
 
     
     
