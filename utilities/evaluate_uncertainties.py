@@ -97,4 +97,4 @@ if __name__ == '__main__':
 
 
 
-
+CONFIG.write_results()

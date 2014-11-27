@@ -629,6 +629,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
     no_samples = 10000
     uncertainties = []
     output_vars = []
+    dict_results = {}
 
 
     def __init__(self, configfilename="evaluate_uncertainties.json"):
@@ -660,8 +661,8 @@ class UncertaintiesConfig(ProcessConfig, Config):
         self.uncertainties = self.get("uncertainties",
                                       default=self.uncertainties)
         self.output_vars = self.get("output_vars", default=self.output_vars)
-
-
+        for varname in self.output_vars:
+            self.dict_results[varname] = []
 
     def echo(self):
 
@@ -818,8 +819,25 @@ class UncertaintiesConfig(ProcessConfig, Config):
             of last scan point to summary netCDF file """
 
 
+        #TODO: rewrite using netcdf file once library is ready!
         m_file = MFile(filename="MFILE.DAT")
 
         for varname in self.output_vars:
             value = m_file.data[varname].get_scan(-1) #get last scan
-            print(varname, value)
+            self.dict_results[varname]+=[value]
+
+
+    def write_results(self):
+        """ writes data into file. Uncessary, if netcdf library works?"""
+
+        results = open('UNCERTAINTIES.DAT', 'w')
+        for varname in self.output_vars:
+            results.write(varname + '\t')
+        results.write('\n')
+
+        for i in range(len(self.dict_results[varname])):
+            for varname in self.output_vars:
+                results.write(str(self.dict_results[varname][i]) + '\t')
+            results.write('\n')  
+        
+        results.close()
