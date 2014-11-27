@@ -816,3 +816,10 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
         """ reads current MFILE and adds specified output variables
             of last scan point to summary netCDF file """
+
+
+        m_file = MFile(filename="MFILE.DAT")
+
+        for varname in self.output_vars:
+            value = m_file.data[varname].get_scan(-1) #get last scan
+            print(varname, value)
