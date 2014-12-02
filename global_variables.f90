@@ -2754,7 +2754,6 @@ module cost_variables
   real(kind(1.0D0)) :: fkind = 1.0D0
   !+ad_vars  fwallcst : first wall cost (M$)
   real(kind(1.0D0)) :: fwallcst = 0.0D0
-
   !+ad_vars  iavail /0/ : switch for plant availability model:<UL>
   !+ad_varc          <LI> = 0 use input value for cfactr;
   !+ad_varc          <LI> = 1 calculate cfactr using Taylor and Ward 1999 model;

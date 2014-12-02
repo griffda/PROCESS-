@@ -258,6 +258,15 @@ contains
     !+ad_prob  None
     !+ad_call  oheadr
     !+ad_call  ovarre
+    !+ad_call  ocmmnt
+    !+ad_call  oblnkl
+    !+ad_call  calc_u_unplanned_magnets
+    !+ad_call  calc_u_unplanned_divertor
+    !+ad_call  calc_u_unplanned_bop
+    !+ad_call  calc_u_unplanned_fwbs
+    !+ad_call  calc_u_unplanned_vacuum
+    !+ad_call  calc_u_unplanned_hc
+    !+ad_call  modify_lifetimes
     !+ad_hist  03/11/14 JM  Initial version
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -382,14 +391,13 @@ contains
 
     end if
 
+    !  Current drive (assumed equal to first wall and blanket lifetime)
+    cdrlife = bktlife
+
     !  Calculate the blanket and divertor replacement times
 
     !  Blanket replacement time
     !  ( Calculated using scaling from 2014 EUROfusion RAMI report )
-    
-    !  num_rh_systems is a global variable with integer values 
-    !  ranging from 1-10
-    !  num_rh_systems = 4
     
     !  Mean time to repair blanket is same as replacing both blanket and divertor
     !  +2.0 at the end is for the 1 month cooldown and pump down at either end
@@ -581,7 +589,6 @@ contains
     div_num_cycles = (divlife*365.25*24*60*60)/tcycle
 
     !  Divertor maintenance time (years)
-    !  For replacing a faulty divertor cassette you might as well replace the whole set
     !  
     div_main_time = 0.25
 
@@ -605,8 +612,6 @@ contains
        u_unplanned_div = div_main_time/(t_life + div_main_time)
 
     end if
-
-    write(*,*) t_operation
 
     if (iprint /= 1) return
 
@@ -647,8 +652,7 @@ contains
     !  Number of cycles in divertor lifetime
     fwbs_num_cycles = (bktlife*365.25*24*60*60)/tcycle
 
-    !  Divertor maintenance time (years)
-    !  For replacing a faulty divertor cassette you might as well replace the whole set
+    !  fwbs maintenance time (years)
     !  
     fwbs_main_time = 0.5
 
@@ -704,12 +708,40 @@ contains
     integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_unplanned_bop
 
-    u_unplanned_bop = 0.0D0
+    !  Local variables
+    real(kind(1.0D0)) :: bop_fail_rate, bop_mttr
+    integer :: bop_num_failures
 
-    
-    
+    !  Balance of plant failure rate (1/hour)
+    !  ENEA study WP13-DTM02-T01
+    bop_fail_rate = 9.39D-5
 
-  end subroutine calc_u_unplanned_bop
+    !  Number of balance of plant failures in plant operational lifetime
+    bop_num_failures =  anint(bop_fail_rate * 365.25D0 * 24.0D0 * t_operation)
+
+    !  Balance of plant mean time to repair (years)
+    !  ENEA study WP13-DTM02-T01 
+    bop_mttr = 96.0D0 / (24.0D0 * 365.25D0)
+
+    !  Unplanned downtime balance of plant
+    u_unplanned_bop = (bop_mttr * bop_num_failures)/(t_operation)
+
+    if (iprint /= 1) return
+
+    call ocmmnt(outfile,'Balance of plant:')
+    call oblnkl(outfile)
+    call ovarre(outfile,'Failure rate (1/h)', &
+         '(bop_fail_rate)',bop_fail_rate)
+    call ovarin(outfile,'Number of failures in lifetime', &
+         '(bop_num_failures)',bop_num_failures)
+    call ovarre(outfile,'Balance of plant MTTR', &
+         '(bop_mttr)',bop_mttr)
+    call ovarre(outfile,'Balance of plant unplanned unavailability', &
+         '(u_unplanned_bop)',u_unplanned_bop)
+    call oblnkl(outfile)
+
+
+ subroutine calc_u_unplanned_bop
 
   subroutine calc_u_unplanned_hcd(outfile, iprint, u_unplanned_hcd)
 
@@ -729,7 +761,9 @@ contains
     integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_unplanned_hcd
 
-    u_unplanned_hcd = 0.0D0
+    !  Currently just a fixed value until more information available or Q. Tran's response provides
+    !  useful data.
+    u_unplanned_hcd = 0.02
 
   end subroutine calc_u_unplanned_hcd
 

@@ -41,6 +41,7 @@ subroutine caller(xc,nvars)
   !+ad_call  vacuum_module
   !+ad_call  acpow
   !+ad_call  avail
+  !+ad_call  avail_new
   !+ad_call  bldgcall
   !+ad_call  cntrpst
   !+ad_call  convxc
@@ -109,6 +110,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  06/11/12 PJK Added availability_module
   !+ad_hist  06/11/12 PJK Added plasma_geometry_module
   !+ad_hist  19/06/14 PJK Removed obsolete calls to nbeam, ech, lwhymod
+  !+ad_hist  02/12/14 JM  Added new availability model in caller (avail_new)
   !+ad_stat  Okay
   !+ad_docs  None
   !
