@@ -92,6 +92,7 @@ contains
     !+ad_hist  06/10/14 PJK Added use of forbitloss
     !+ad_hist  06/10/14 PJK Made feffcd usage consistent for all CD methods
     !+ad_hist  22/10/14 PJK Corrected forbitloss usage
+    !+ad_hist  01/12/14 PJK Modified pinjmw output description
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -319,7 +320,7 @@ contains
     end if
 
     call ovarin(outfile,'Current drive efficiency model','(iefrf)',iefrf)
-    call ovarre(outfile,'Steady state power requirement (MW)', &
+    call ovarre(outfile,'Steady state current drive power absorbed by plasma (MW)', &
          '(pinjmw)',pinjmw)
     call ovarre(outfile,'Auxiliary power used for plasma heating only (MW)', &
          '(pheat)',pheat)

@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '372    Release Date :: 2014-11-26'
+       '373    Release Date :: 2014-12-02'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1864,3 +1864,4 @@ end subroutine output
 ! GIT 370: Corrected dcond usage for resistive PF coils
 ! GIT 371: Minor changes to User Guide
 ! GIT 372: Updated plot_proc_func.py; added 'make all' option
+! GIT 373: Modified pinjmw description in output; changed abktflnc, adivflnc default values
