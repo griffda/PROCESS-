@@ -2757,7 +2757,7 @@ module cost_variables
   !+ad_vars  iavail /0/ : switch for plant availability model:<UL>
   !+ad_varc          <LI> = 0 use input value for cfactr;
   !+ad_varc          <LI> = 1 calculate cfactr using Taylor and Ward 1999 model;
-  !+ad_varc          <LI> = 2 calculate cfactr using new model</UL>
+  !+ad_varc          <LI> = 2 calculate cfactr using new (2014) model</UL>
   integer :: iavail= 0
   !+ad_vars  avail_min /0.75/ : Minimum availability (constraint equation 60)
   real(kind(1.0D0)) :: avail_min = 0.75D0

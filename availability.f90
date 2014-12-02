@@ -1,4 +1,3 @@
-!  $Id:: availability.f90 258 2014-04-24 12:28:55Z pknight              $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module availability_module
@@ -242,6 +241,8 @@ contains
 
   end subroutine avail
 
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   subroutine avail_new(outfile,iprint)
 
     !+ad_name  avail_new
@@ -256,18 +257,21 @@ contains
     !+ad_desc  plant availability using an updated model linked to the 2014 EUROfusion
     !+ad_desc  RAMI task
     !+ad_prob  None
+    !+ad_call  calc_u_planned
+    !+ad_call  calc_u_unplanned_bop
+    !+ad_call  calc_u_unplanned_divertor
+    !+ad_call  calc_u_unplanned_fwbs
+    !+ad_call  calc_u_unplanned_hc
+    !+ad_call  calc_u_unplanned_magnets
+    !+ad_call  calc_u_unplanned_vacuum
+    !+ad_call  modify_lifetimes
+    !+ad_call  oblnkl
+    !+ad_call  ocmmnt
     !+ad_call  oheadr
     !+ad_call  ovarre
-    !+ad_call  ocmmnt
-    !+ad_call  oblnkl
-    !+ad_call  calc_u_unplanned_magnets
-    !+ad_call  calc_u_unplanned_divertor
-    !+ad_call  calc_u_unplanned_bop
-    !+ad_call  calc_u_unplanned_fwbs
-    !+ad_call  calc_u_unplanned_vacuum
-    !+ad_call  calc_u_unplanned_hc
-    !+ad_call  modify_lifetimes
     !+ad_hist  03/11/14 JM  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -293,11 +297,13 @@ contains
     !  Plant Availability
 
     !  Planned unavailability
+
     call calc_u_planned(outfile, iprint, u_planned)
 
-    t_operation = tlife * (1-u_planned)
+    t_operation = tlife * (1.0D0-u_planned)
 
     !  Un-planned unavailability
+
     !  Magnets
     call calc_u_unplanned_magnets(outfile,iprint, u_unplanned_magnets)
 
@@ -317,17 +323,21 @@ contains
     call calc_u_unplanned_vacuum(outfile,iprint, u_unplanned_vacuum)
 
     !  Total unplanned unavailability    
-    u_unplanned = min( 1.0, u_unplanned_magnets + &
+
+    u_unplanned = min(1.0D0, u_unplanned_magnets + &
          u_unplanned_div + u_unplanned_fwbs + &
          u_unplanned_bop + u_unplanned_hcd + u_unplanned_vacuum)  
        
     !  Total availability
-    cfactr = max(1 - (u_planned + u_unplanned + u_planned*u_unplanned), 0.0)
+
+    cfactr = max(1.0D0 - (u_planned + u_unplanned + u_planned*u_unplanned), 0.0D0)
 
     !  Modify lifetimes to take account of the availability
+
     call modify_lifetimes()
 
     ! Output
+
     if (iprint /= 1) return
 
     call ocmmnt(outfile,'Total unavailability:')
@@ -344,29 +354,48 @@ contains
    
   end subroutine avail_new
 
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   subroutine calc_u_planned(outfile, iprint, u_planned)
 
-    !+ad_name  calc_u_unplanned_magnets
-    !+ad_summ  Calculates the planned availability of the plant
-    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
+    !+ad_name  calc_u_planned
+    !+ad_summ  Calculates the planned unavailability of the plant
     !+ad_type  Subroutine
     !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  None
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_args  u_planned : output real : planned unavailability of plant
-
+    !+ad_desc  This routine calculates the planned unavailability of the
+    !+ad_desc  plant, using the methodology outlined in the 2014 EUROfusion
+    !+ad_desc  RAMI report.
+    !+ad_prob  None
+    !+ad_call  oblnkl
+    !+ad_call  ocmmnt
+    !+ad_call  oheadr
+    !+ad_call  ovarin
+    !+ad_call  ovarre
+    !+ad_hist  02/12/14 JM  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
     implicit none
 
     !  Arguments
+
     integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_planned
 
     !  Local variables
+
     real(kind(1.0D0)) :: lb, ld, td
     real(kind(1.0D0)) :: mttr_blanket, mttr_divertor, mttr_shortest
     real(kind(1.0D0)) :: lifetime_shortest, lifetime_longest
     integer :: n
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Full power lifetimes (in years)
     !  Most of these are already calculated for an IFE device
@@ -392,6 +421,7 @@ contains
     end if
 
     !  Current drive (assumed equal to first wall and blanket lifetime)
+
     cdrlife = bktlife
 
     !  Calculate the blanket and divertor replacement times
@@ -399,14 +429,16 @@ contains
     !  Blanket replacement time
     !  ( Calculated using scaling from 2014 EUROfusion RAMI report )
     
-    !  Mean time to repair blanket is same as replacing both blanket and divertor
-    !  +2.0 at the end is for the 1 month cooldown and pump down at either end
+    !  Mean time to repair blanket is same as replacing both blanket and divertor.
+    !  The +2.0 at the end is for the 1 month cooldown and pump down at either end
     !  of the maintenance period
-    mttr_blanket = (21 * num_rh_systems**(-0.9) + 2.0D0) / 12.0D0
+
+    mttr_blanket = (21.0D0 * num_rh_systems**(-0.9D0) + 2.0D0) / 12.0D0
 
     !  Mean time to repair divertor is 70% of time taken to replace blanket
-    !  this is taken from Oliver Crofts 2014 paper
-    mttr_divertor = 0.7*mttr_blanket
+    !  This is taken from Oliver Crofts 2014 paper
+
+    mttr_divertor = 0.7D0*mttr_blanket
 
     !  Which component has the shorter life?
 
@@ -425,6 +457,7 @@ contains
     n = int(lifetime_longest/lifetime_shortest) - 1
 
     !  Planned unavailability
+
     u_planned = (n*mttr_shortest + mttr_blanket) / &
          ( (n+1)*lifetime_shortest + (n*mttr_shortest + mttr_blanket) )
 
@@ -457,17 +490,34 @@ contains
 
   end subroutine calc_u_planned
 
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   subroutine modify_lifetimes
 
-    !+ad_name  calc_u_unplanned_magnets
-    !+ad_summ  Calculates the planned availability of the plant
-    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
+    !+ad_name  modify_lifetimes
+    !+ad_summ  Calculate the component lifetimes
     !+ad_type  Subroutine
     !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  None
-
+    !+ad_args  None
+    !+ad_desc  This routine calculates the lifetimes of the main fusion power core
+    !+ad_desc  components.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  02/12/14 JM  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
     implicit none
 
+    !  Arguments
+
+    !  Local variables
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
     if (ife /= 1) then
 
        !  First wall / blanket
@@ -493,47 +543,70 @@ contains
 
   end subroutine modify_lifetimes
 
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   subroutine calc_u_unplanned_magnets(outfile, iprint, u_unplanned_magnets)
 
     !+ad_name  calc_u_unplanned_magnets
-    !+ad_summ  Calculates the unplanned unavailability of the magnets using
-    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
+    !+ad_summ  Calculates the unplanned unavailability of the magnets
     !+ad_type  Subroutine
     !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  None
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_args  u_unplanned_magnets : output real : unplanned unavailability of magnets
-
+    !+ad_desc  This routine calculates the unplanned unavailability of the magnets,
+    !+ad_desc  using the methodology outlined in the 2014 EUROfusion
+    !+ad_desc  RAMI report.
+    !+ad_prob  None
+    !+ad_call  oblnkl
+    !+ad_call  ocmmnt
+    !+ad_call  ovarre
+    !+ad_hist  02/12/14 JM  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
     implicit none
 
     !  Arguments
+
     integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_unplanned_magnets
 
     !  Local Variables
+
     real(kind(1.0D0)) :: m, dy, dx, c, y_i, e, lam, u_diff, t_diff, u_diff_e
     real(kind(1.0D0)) :: mag_temp_marg_limit, mag_temp_marg, mag_main_time
     real(kind(1.0D0)) :: mag_min_u_unplanned, start_of_risk, t_life
 
-    !  Magnet temperature margin limit (k)
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Magnet temperature margin limit (K)
+
     mag_temp_marg_limit = tmargmin
 
     !  Magnet temperature margin (K)
+
     mag_temp_marg = temp_margin
 
     !  Magnet maintenance time (years)
-    mag_main_time = 0.5
+
+    mag_main_time = 0.5D0
 
     !  Minimum unplanned unavailability
+
     mag_min_u_unplanned = mag_main_time / (t_operation + mag_main_time)
     
-    !  point at which risk of unplanned unavailability increases
+    !  Point at which risk of unplanned unavailability increases
     !  conf_mag is magnet availability confidence level (global var)
+
     start_of_risk = mag_temp_marg_limit / conf_mag
 
     !  Determine if temperature margin is in region with risk of 
     !  unplanned unavailability
+
     if (temp_margin >= start_of_risk) then
 
        u_unplanned_magnets = mag_min_u_unplanned
@@ -541,8 +614,8 @@ contains
     else
 
        !  Linear decrease in expected lifetime when approaching the limit
-       !
-       t_life = max( 0.0, (t_operation/(start_of_risk - tmargmin))*(temp_margin - tmargmin) )
+
+       t_life = max( 0.0D0, (t_operation/(start_of_risk - tmargmin))*(temp_margin - tmargmin) )
        u_unplanned_magnets = mag_main_time/(t_life + mag_main_time)
 
     end if
@@ -563,40 +636,62 @@ contains
     
   end subroutine calc_u_unplanned_magnets
 
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   subroutine calc_u_unplanned_divertor(outfile, iprint, u_unplanned_div)
 
     !+ad_name  calc_u_unplanned_divertor
-    !+ad_summ  Calculates the unplanned unavailability of the divertor "system"
-    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
+    !+ad_summ  Calculates the unplanned unavailability of the divertor
     !+ad_type  Subroutine
     !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  None
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_args  u_unplanned_div : output real : unplanned unavailability of divertor
+    !+ad_desc  This routine calculates the unplanned unavailability of the divertor,
+    !+ad_desc  using the methodology outlined in the 2014 EUROfusion
+    !+ad_desc  RAMI report.
+    !+ad_prob  None
+    !+ad_call  oblnkl
+    !+ad_call  ocmmnt
+    !+ad_call  ovarin
+    !+ad_call  ovarre
+    !+ad_hist  02/12/14 JM  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     !  Arguments
+
     integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_unplanned_div
 
     !  Local Variables
+
+    real(kind(1.0D0)), parameter :: years_to_seconds = 3.15576D7
     real(kind(1.0D0)) :: div_num_cycles, div_main_time, div_min_u_unplanned
     real(kind(1.0D0)) :: t_life
 
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     !  Number of cycles in divertor lifetime
-    div_num_cycles = (divlife*365.25*24*60*60)/tcycle
+
+    div_num_cycles = (divlife*years_to_seconds)/tcycle
 
     !  Divertor maintenance time (years)
-    !  
-    div_main_time = 0.25
+
+    div_main_time = 0.25D0
 
     !  Minimum unplanned unavailability
+
     div_min_u_unplanned = div_main_time / (t_operation + div_main_time)
     
     !  Determine if the number of cycles is under the design criteria
     !  Cycle limit is a global var
+
     if (div_num_cycles <= div_cycle_lim) then
 
        u_unplanned_div = div_min_u_unplanned
@@ -604,8 +699,8 @@ contains
     else
 
        ! Linear decrease in expected lifetime when approaching the limit
-       !
-       t_life = max( 0.0, t_operation + (-t_operation/ & 
+
+       t_life = max( 0.0D0, t_operation + (-t_operation/ & 
             (div_cycle_lim*conf_div - div_cycle_lim))* &
             (div_num_cycles - div_cycle_lim) )
 
@@ -627,39 +722,61 @@ contains
 
   end subroutine calc_u_unplanned_divertor
 
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   subroutine calc_u_unplanned_fwbs(outfile, iprint, u_unplanned_fwbs)
 
     !+ad_name  calc_u_unplanned_fwbs
-    !+ad_summ  Calculates the unplanned unavailability of the first wall and blanket "system"
-    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
+    !+ad_summ  Calculates the unplanned unavailability of the first wall and blanket
     !+ad_type  Subroutine
     !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  None
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_args  u_unplanned_fwbs : output real : unplanned unavailability of first wall and blanket
+    !+ad_desc  This routine calculates the unplanned unavailability of the first wall and blanket,
+    !+ad_desc  using the methodology outlined in the 2014 EUROfusion
+    !+ad_desc  RAMI report.
+    !+ad_prob  None
+    !+ad_call  oblnkl
+    !+ad_call  ocmmnt
+    !+ad_call  ovarin
+    !+ad_call  ovarre
+    !+ad_hist  02/12/14 JM  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     !  Arguments
+
     integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_unplanned_fwbs
 
     !  Local Variables
+
+    real(kind(1.0D0)), parameter :: years_to_seconds = 3.15576D7
     real(kind(1.0D0)) :: fwbs_num_cycles, fwbs_main_time, fwbs_min_u_unplanned
     real(kind(1.0D0)) :: t_life
 
-    !  Number of cycles in divertor lifetime
-    fwbs_num_cycles = (bktlife*365.25*24*60*60)/tcycle
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Number of cycles in first wall/blanket lifetime
+
+    fwbs_num_cycles = (bktlife*years_to_seconds)/tcycle
 
     !  fwbs maintenance time (years)
-    !  
-    fwbs_main_time = 0.5
+
+    fwbs_main_time = 0.5D0
 
     !  Minimum unplanned unavailability
+
     fwbs_min_u_unplanned = fwbs_main_time / (t_operation + fwbs_main_time)
  
     !  Determine if the number of cycles is under the design criteria
+
     if (fwbs_num_cycles <= fwbs_cycle_lim) then
 
        u_unplanned_fwbs = fwbs_min_u_unplanned
@@ -667,8 +784,8 @@ contains
     else
 
        !  Linear decrease in expected lifetime when approaching the limit
-       !
-       t_life = max( 0.0, t_operation + (-t_operation/ & 
+
+       t_life = max( 0.0D0, t_operation + (-t_operation/ & 
             (fwbs_cycle_lim*conf_fwbs - fwbs_cycle_lim))* &
             (fwbs_num_cycles - fwbs_cycle_lim) )
 
@@ -684,46 +801,68 @@ contains
          '(fwbs_cycle_lim)',fwbs_cycle_lim)
     call ovarre(outfile,'Number of cycles', &
          '(fwbs_num_cycles)',fwbs_num_cycles)
-    call ovarre(outfile,'fwbs unplanned unavailability', &
+    call ovarre(outfile,'First wall / blanket unplanned unavailability', &
          '(u_unplanned_fwbs)',u_unplanned_fwbs)
     call oblnkl(outfile)
 
   end subroutine calc_u_unplanned_fwbs
 
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   subroutine calc_u_unplanned_bop(outfile, iprint, u_unplanned_bop)
 
-    !+ad_name  calc_u_unplanned_fwbs
+    !+ad_name  calc_u_unplanned_bop
     !+ad_summ  Calculates the unplanned unavailability of the balance of plant
-    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
     !+ad_type  Subroutine
     !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  None
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_args  u_unplanned_bop : output real : unplanned unavailability of balance of plant
+    !+ad_desc  This routine calculates the unplanned unavailability of the balance of plant,
+    !+ad_desc  using the methodology outlined in the 2014 EUROfusion
+    !+ad_desc  RAMI report.
+    !+ad_prob  None
+    !+ad_call  oblnkl
+    !+ad_call  ocmmnt
+    !+ad_call  ovarin
+    !+ad_call  ovarre
+    !+ad_hist  02/12/14 JM  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     !  Arguments
+
     integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_unplanned_bop
 
     !  Local variables
+
     real(kind(1.0D0)) :: bop_fail_rate, bop_mttr
     integer :: bop_num_failures
 
-    !  Balance of plant failure rate (1/hour)
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Balance of plant failure rate (failures per hour)
     !  ENEA study WP13-DTM02-T01
+
     bop_fail_rate = 9.39D-5
 
     !  Number of balance of plant failures in plant operational lifetime
-    bop_num_failures =  anint(bop_fail_rate * 365.25D0 * 24.0D0 * t_operation)
+
+    bop_num_failures = nint(bop_fail_rate * 365.25D0 * 24.0D0 * t_operation)
 
     !  Balance of plant mean time to repair (years)
-    !  ENEA study WP13-DTM02-T01 
+    !  ENEA study WP13-DTM02-T01
+
     bop_mttr = 96.0D0 / (24.0D0 * 365.25D0)
 
     !  Unplanned downtime balance of plant
+
     u_unplanned_bop = (bop_mttr * bop_num_failures)/(t_operation)
 
     if (iprint /= 1) return
@@ -740,73 +879,112 @@ contains
          '(u_unplanned_bop)',u_unplanned_bop)
     call oblnkl(outfile)
 
+  end subroutine calc_u_unplanned_bop
 
- subroutine calc_u_unplanned_bop
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine calc_u_unplanned_hcd(outfile, iprint, u_unplanned_hcd)
 
     !+ad_name  calc_u_unplanned_fwbs
     !+ad_summ  Calculates the unplanned unavailability of the heating and current drive system
-    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
     !+ad_type  Subroutine
     !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  None
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_args  u_unplanned_hcd : output real : unplanned unavailability of hcd
+    !+ad_desc  This routine calculates the unplanned unavailability of the heating
+    !+ad_desc  and current drive system, using the methodology outlined in the
+    !+ad_desc  2014 EUROfusion RAMI report.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  02/12/14 JM  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     !  Arguments
+
     integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_unplanned_hcd
 
+    !  Local variables
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     !  Currently just a fixed value until more information available or Q. Tran's response provides
     !  useful data.
-    u_unplanned_hcd = 0.02
+
+    u_unplanned_hcd = 0.02D0
 
   end subroutine calc_u_unplanned_hcd
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine calc_u_unplanned_vacuum(outfile, iprint, u_unplanned_vacuum)
 
     !+ad_name  calc_u_unplanned_fwbs
-    !+ad_summ  Calculates the unplanned unavailability of the vacuum "system"
-    !+ad_dumm  methodology outlines in 2014 EUROfusion RAMI report "Availability in PROCESS"
+    !+ad_summ  Calculates the unplanned unavailability of the vacuum system
     !+ad_type  Subroutine
     !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  None
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_args  u_unplanned_vacuum : output real : unplanned unavailability of vacuum system
+    !+ad_desc  This routine calculates the unplanned unavailability of the vacuum system,
+    !+ad_desc  using the methodology outlined in the 2014 EUROfusion
+    !+ad_desc  RAMI report.
+    !+ad_prob  None
+    !+ad_call  oblnkl
+    !+ad_call  ocmmnt
+    !+ad_call  ovarin
+    !+ad_call  ovarre
+    !+ad_hist  02/12/14 JM  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
     !  Arguments
+
     integer, intent(in) :: outfile, iprint
     real(kind(1.0D0)), intent(out) :: u_unplanned_vacuum
 
     ! Local variables
+
     real(kind(1.0D0)) :: cryo_failure_rate, num_redundancy_pumps
     real(kind(1.0D0)) :: pump_failures, pump_maintenance_time
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Cryopump failure rate per machine lifetime
     !  From "Selected component failure rate values from fusion 
     !  safety assessment tasks", Cadwallader (1994)
-    cryo_failure_rate = 2D-6 * 365.25 * 24 *t_operation
+
+    cryo_failure_rate = 2.0D-6 * 365.25D0 * 24.0D0 * t_operation
 
     !  Redundancy pumps 
     !  Redundancy % will be a user input
-    num_redundancy_pumps = (redun_vac/100.0)*vpumpn
+
+    num_redundancy_pumps = (0.01D0*redun_vac)*vpumpn
   
     !  Number of failures for all pumps
+
     pump_failures = anint((vpumpn - num_redundancy_pumps)*cryo_failure_rate)
 
     !  Pump replacement time (years)
-    !  Taken value ot be 2 months. Minimum time for in-vessel 
+    !  Taken value to be 2 months. Minimum time for in-vessel 
     !  activities with normal RH equipment
+
     pump_maintenance_time = 1.0D0/6.0D0
  
     !  Total vacuum unplanned unavailability
+
     u_unplanned_vacuum = (pump_maintenance_time*pump_failures)/(t_operation)
     
     if (iprint /= 1) return

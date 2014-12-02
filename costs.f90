@@ -529,7 +529,6 @@ contains
     !  Number of kWh generated each year
 
     kwhpy = 1.0D3 * pnetelmw * (24.0D0*365.0D0) * cfactr * tburn/tcycle
-    
 
     !  Costs due to reactor plant
     !  ==========================
@@ -573,7 +572,6 @@ contains
     !  Cost of electricity due to first wall/blanket replacements
 
     coefwbl = 1.0D9 * annfwbl / kwhpy
-
 
     !  Costs due to divertor renewal
     !  =============================
@@ -652,7 +650,6 @@ contains
     !  Cost of electricity due to current drive system replacements
 
     coecdr = 1.0D9 * anncdr / kwhpy
-
 
     !  Costs due to operation and maintenance
     !  ======================================

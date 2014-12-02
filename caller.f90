@@ -1,4 +1,3 @@
-!  $Id:: caller.f90 119 2012-11-06 12:12:13Z pknight                    $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine caller(xc,nvars)
@@ -7,6 +6,7 @@ subroutine caller(xc,nvars)
   !+ad_summ  Routine to call the physics and engineering modules
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_auth  J Morris, CCFE, Culham Science Centre
   !+ad_cont  N/A
   !+ad_args  xc(ipnvars) : input real : Array of iteration variables
   !+ad_args  nvars : input integer : Number of active iteration variables
