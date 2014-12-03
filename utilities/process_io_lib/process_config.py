@@ -626,7 +626,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
     no_allowed_unfeasible = 2
     no_scans = 5
-    no_samples = 10000
+    no_samples = 1000
     uncertainties = []
     output_vars = []
     dict_results = {}
@@ -753,6 +753,15 @@ class UncertaintiesConfig(ProcessConfig, Config):
     def checks_before_run(self):
 
         """ run several checks before you start running """
+
+        if self.uncertainties = {}:
+            print('Error: No uncertain parameter specified in config file!')
+            exit()
+            
+
+        if self.output_vars = []:
+            print('Error: No output variables specified in config file!')
+            exit()
 
         in_dat = INDATNew()
         ixc_list = in_dat.variables['ixc'].value
