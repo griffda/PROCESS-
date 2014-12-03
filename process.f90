@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '374    Release Date :: 2014-12-03'
+       '375    Release Date :: 2014-12-03'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1872,3 +1872,4 @@ end subroutine output
 ! GIT 372: Updated plot_proc_func.py; added 'make all' option
 ! GIT 373: Modified pinjmw description in output; changed abktflnc, adivflnc default values
 ! GIT 374: Added new availability model
+! GIT 375: Updated instructions in User Guide regarding code changes and documentation
