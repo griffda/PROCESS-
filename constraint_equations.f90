@@ -54,6 +54,7 @@ module constraints
   use stellarator_variables
   use tfcoil_variables
   use times_variables
+  use cost_variables
 
   implicit none
 
@@ -69,6 +70,7 @@ contains
     !+ad_summ  Routine that formulates the constraint equations
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  m : input integer : Number of constraint equations to solve
     !+ad_args  cc(m) : output real array : Residual error in equation i
@@ -153,6 +155,7 @@ contains
     !+ad_hist  12/11/14 PJK tcycle now a global variable
     !+ad_hist  13/11/14 PJK Changed iradloss usage in eqns 2 and 4
     !+ad_hist  17/11/14 PJK Added 'not recommended' comments to constraints 3 and 4
+    !+ad_hist  25/11/14 JM  Added new eqn 61
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -943,6 +946,16 @@ contains
              err(i) = tmargmin * cc(i)
              symbol(i) = '>'
              units(i) = 'K'
+          end if
+
+       case (61)  !  Equation for availability limit
+
+          cc(i) = 1.0D0 - favail * cfactr / avail_min
+          if (present(con)) then
+             con(i) = avail_min * (1.0D0 - cc(i))
+             err(i) = cfactr * cc(i)
+             symbol(i) = '>'
+             units(i) = ''
           end if
 
        case default
