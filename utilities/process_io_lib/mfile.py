@@ -315,42 +315,44 @@ def make_plot_dat(mfile_data, custom_keys, filename="make_plot_dat.out",
 
     """
 
-    plot_dat = open(filename, "w")
+    with open(filename, "w") as plot_dat:
 
-    # The first two lines contain the scanning variable and the number of
-    # scans. These lines are preceded by a # symbol for ease of excluding.
-    plot_dat.write("# Scanning Variable: {}".format(
-                   process_dicts.DICT_SWEEP_VARS
-                   [mfile_data.data["nsweep"].get_scan(-1)] + "\n"))
-    plot_dat.write("# Number of scans: {}".format(
-                   int(mfile_data.data["isweep"].get_scan(-1)) + "\n"))
-    plot_dat.close()
+        # The first two lines contain the scanning variable and the number of
+        # scans. These lines are preceded by a # symbol for ease of excluding.
+        plot_dat.write("# Scanning Variable: {}".format(
+                       process_dicts.DICT_SWEEP_VARS
+                       [mfile_data.data["nsweep"].get_scan(-1)] + "\n"))
+        plot_dat.write("# Number of scans: {}".format(
+                       int(mfile_data.data["isweep"].get_scan(-1)) + "\n"))
+        plot_dat.close()
 
-    # The order of searching is set so that the output variables are always
-    # in the same order. i.e. searching custom_keys first as it is a list.
-    keys = mfile_data.data.keys()
+        # The order of searching is set so that the output variables are always
+        # in the same order. i.e. searching custom_keys first as it is a list.
+        keys = mfile_data.data.keys()
 
-    # Row format
-    if file_format == "row":
-        write_row_mplot_dat(filename, custom_keys, mfile_data)
-    elif file_format == "column":
-        write_column_mplot_dat(filename, custom_keys, mfile_data)
-    else:
-        # If file_format not recognised print error
-        print("# Error >> Format {} not recognised. Use row or column".format(file_format))
+        # Row format
+        if file_format == "row":
+            write_row_mplot_dat(filename, custom_keys, mfile_data)
+        elif file_format == "column":
+            write_column_mplot_dat(filename, custom_keys, mfile_data)
+        else:
+            # If file_format not recognised print error
+            print("# Error >> Format {} not recognised. Use row or column".format(file_format))
 
-    for ckey in custom_keys:
-        if ckey not in keys:
-            # For each item in the custom_keys list that isn't in the file
-            # print out an error.
-            print(" # Error >> Key: '{}' was NOT found in MFILE.DAT!".format(ckey))
-            print(" \t\t (So is NOT in make_plot_dat.out!)")
+        for ckey in custom_keys:
+            if ckey not in keys:
+                # For each item in the custom_keys list that isn't in the file
+                # print out an error.
+                print(" # Error >> Key: '{}' was NOT found in MFILE.DAT!".format(ckey))
+                print(" \t\t (So is NOT in make_plot_dat.out!)")
 
 
 def write_row_mplot_dat(filename, custom_keys, mfile_data):
     """Function to make a PLOT.DAT using MFILE in row format"""
 
     mfile_keys = mfile_data.data.keys()
+
+    lines = []
 
     for key in custom_keys:
         if key in mfile_keys:
@@ -363,14 +365,13 @@ def write_row_mplot_dat(filename, custom_keys, mfile_data):
             # Create the file line [name, description, val1, val2, ...]
             # Entries are justified to give the impression of fixed
             # width columns
-            line = mfile_data.data[key].var_description.\
-                replace(" ", "_").ljust(45)\
-                + " " + key.ljust(25) + " " + values
+            lines.append(mfile_data.data[key].var_description.replace(" ", "_").ljust(45)
+                         + " " + key.ljust(25) + " " + values + "\n")
 
-            # Write row to file.
-            plot_dat = open(filename, "a")
-            plot_dat.write(line)
-            plot_dat.close()
+    # Write row to file.
+    if lines != []:
+        with open(filename, "a") as plot_dat:
+            plot_dat.write(lines)
 
 
 def write_column_mplot_dat(filename, custom_keys, mfile_data):
@@ -390,9 +391,8 @@ def write_column_mplot_dat(filename, custom_keys, mfile_data):
             val_keys.append(key)
 
     # Write row to file
-    plot_dat = open(filename, "a")
-    plot_dat.write(var_names + "\n")
-    plot_dat.close()
+    with open(filename, "a") as plot_dat:
+        plot_dat.write(var_names + "\n")
 
     # Write rows of values. One row for each scan.
     for num in range(num_scans):
@@ -400,9 +400,8 @@ def write_column_mplot_dat(filename, custom_keys, mfile_data):
         for vkey in val_keys:
             values += "{:.4e} ".format(mfile_data.data[vkey].get_scan(num+1))
         values += "\n"
-        plot_dat = open(filename, "a")
-        plot_dat.write(values)
-        plot_dat.close()
+        with open(filename, "a") as plot_dat:
+            plot_dat.write(values)
 
 
 def read_mplot_conf(filename="make_plot_dat.conf"):
@@ -419,17 +418,16 @@ def read_mplot_conf(filename="make_plot_dat.conf"):
 
     """
     # Open config file
-    conf_file = open(filename, "r")
-    conf_lines = conf_file.readlines()
-    conf_params = []
+    with open(filename, "r") as conf_file:
+        conf_lines = conf_file.readlines()
+        conf_params = []
 
-    # For each line check the it is not a comment (#) and if not add it to the
-    # list of parameters.
-    for item in conf_lines:
-        if "#" not in item:
-            if item.strip("\n") != "":
-                conf_params.append(item.strip("\n"))
-    conf_file.close()
+        # For each line check the it is not a comment (#) and if not add it to the
+        # list of parameters.
+        for item in conf_lines:
+            if "#" not in item:
+                if item.strip("\n") != "":
+                    conf_params.append(item.strip("\n"))
 
     return conf_params
 
@@ -444,11 +442,10 @@ def write_mplot_conf(filename="make_plot_dat.conf"):
       filename --> config file name
 
     """
-    conf_file = open(filename, "w")
-    conf_file.write("# make_plot_dat.out config file.\n")
-    for item in process_dicts.PARAMETER_DEFAULTS:
-        conf_file.write(item + "\n")
-    conf_file.close()
+    with open(filename, "w") as conf_file:
+        conf_file.write("# make_plot_dat.out config file.\n")
+        for item in process_dicts.PARAMETER_DEFAULTS:
+            conf_file.write(item + "\n")
 
 
 def is_number(val):

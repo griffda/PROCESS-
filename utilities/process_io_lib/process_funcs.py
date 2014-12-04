@@ -345,50 +345,49 @@ def get_solution_from_outdat(neqns, nvars):
 
     flag_solution_vector = False
     flag_constr_residue  = False
-    outdatfile = open('OUT.DAT', 'r')
-    for line in outdatfile:
-        if  "value       change" in line:
-            flag_solution_vector = True
-            flag_constr_residue  = False
-            cnt_sol = 0
-            table_sol     = []
-        elif "constraint residues should be" in line:
-            flag_solution_vector = False
-            flag_constr_residue  = True
-            cnt_res = 0
-            table_res     = []
-        elif "*******************" in line:
-            flag_solution_vector = False
-            flag_constr_residue  = False
-        elif flag_solution_vector and len(line) >= 10:
-            row = line.split()
-            assert int(row[0])-1 == cnt_sol
-            table_sol     += [row[2]] #final value
-            cnt_sol += 1
-        elif flag_constr_residue and len(line) >= 10:
-            row = line.split()
+    with open('OUT.DAT', 'r') as outdatfile:
+        for line in outdatfile:
+            if  "value       change" in line:
+                flag_solution_vector = True
+                flag_constr_residue  = False
+                cnt_sol = 0
+                table_sol     = []
+            elif "constraint residues should be" in line:
+                flag_solution_vector = False
+                flag_constr_residue  = True
+                cnt_res = 0
+                table_res     = []
+            elif "*******************" in line:
+                flag_solution_vector = False
+                flag_constr_residue  = False
+            elif flag_solution_vector and len(line) >= 10:
+                row = line.split()
+                assert int(row[0])-1 == cnt_sol
+                table_sol     += [row[2]] #final value
+                cnt_sol += 1
+            elif flag_constr_residue and len(line) >= 10:
+                row = line.split()
 
-            assert int(row[0])-1 == cnt_res
-            try:
-                float(row[-2])
-                table_res     += [row[-2]]
-            except ValueError:
-                table_res     += [row[-1]]
+                assert int(row[0])-1 == cnt_res
+                try:
+                    float(row[-2])
+                    table_res     += [row[-2]]
+                except ValueError:
+                    table_res     += [row[-1]]
 
-            cnt_res += 1
-        elif 'Figure of merit objective function' in line:
-            buf = line.split()
-            objective_function = buf[-1]
-        elif 'Estimate of the constraints' in line:
-            buf = line.split()
-            constraints = buf[-1]
-        elif 'ifail' in line:
-            buf = line.split()
-            ifail = int(buf[-1])
-        elif "and found a feasible set of parameters." in line:
-            ifail = IFAIL_SUCCESS
+                cnt_res += 1
+            elif 'Figure of merit objective function' in line:
+                buf = line.split()
+                objective_function = buf[-1]
+            elif 'Estimate of the constraints' in line:
+                buf = line.split()
+                constraints = buf[-1]
+            elif 'ifail' in line:
+                buf = line.split()
+                ifail = int(buf[-1])
+            elif "and found a feasible set of parameters." in line:
+                ifail = IFAIL_SUCCESS
 
-    outdatfile.close()
 
     if ifail != IFAIL_SUCCESS:
         return ifail, '0', '0', ['0']*nvars, ['0']*neqns

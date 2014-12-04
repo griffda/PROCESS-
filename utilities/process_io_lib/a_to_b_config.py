@@ -1,4 +1,5 @@
 import os
+from os.path import abspath
 
 class AToBConfig():
     """Class to read in and store configuration parameters for a_to_b
@@ -25,9 +26,9 @@ class AToBConfig():
                       B_vale / bound_gap
     
     """
-    wdir = os.path.abspath("wdir")
+    wdir = abspath("wdir")
     keep_output = True
-    outdir = os.path.abspath("steps")
+    outdir = abspath("steps")
     a = "A.DAT"
     b = "B.DAT"
     path_to_process = "/home/pknight/process/bin/process_draft"
@@ -39,61 +40,61 @@ class AToBConfig():
     def __init__(self, configfile="a_to_b.conf"):
         if not os.path.isfile(configfile):
             return
-        myfile = open(configfile)
-        for line in myfile:
-            if line[0] == "*" or line.strip() == "":
-                continue
-            elif "=" in line:
-                t_lhs, t_rhs = line.split("=")
-                lhs = t_lhs.strip().lower()
-                rhs = t_rhs.strip()
-                if lhs == "wdir":
-                    self.wdir = os.path.abspath(rhs)
+        with open(configfile) as myfile:
+            for line in myfile:
+                if line[0] == "*" or line.strip() == "":
                     continue
-                elif lhs == "keep_output":
-                    if rhs.lower() == "true":
-                        self.keep_output = True
+                elif "=" in line:
+                    t_lhs, t_rhs = line.split("=")
+                    lhs = t_lhs.strip().lower()
+                    rhs = t_rhs.strip()
+                    if lhs == "wdir":
+                        self.wdir = abspath(rhs)
                         continue
-                    elif rhs.lower() == "false":
-                        self.keep_output = False
+                    elif lhs == "keep_output":
+                        if rhs.lower() == "true":
+                            self.keep_output = True
+                            continue
+                        elif rhs.lower() == "false":
+                            self.keep_output = False
+                            continue
+                    elif lhs == "outdir":
+                        self.outdir = abspath(rhs)
                         continue
-                elif lhs == "outdir":
-                    self.outdir = os.path.abspath(rhs)
-                    continue
-                elif lhs == "a_filename":
-                    self.a = os.path.abspath(rhs)
-                    continue
-                elif lhs == "b_filename":
-                    self.b = os.path.abspath(rhs)
-                    continue
-                elif lhs == "path_to_process":
-                    self.path_to_process = os.path.abspath(rhs)
-                    continue
-                elif lhs == "vary_niter":
-                    if int(rhs) < 0:
-                        print("vary_niter must be positive")
-                        exit()
-                    self.vary_niter = int(rhs)
-                    continue
-                elif lhs == "nsteps":
-                    if int(rhs) < 0:
-                        print("nsteps must be positive")
-                        exit()
-                    self.nsteps = int(rhs)
-                    continue
-                elif lhs == "factor":
-                    if float(rhs) < 0:
-                        print("factor must be positive")
-                        exit()
-                    self.factor = float(rhs)
-                    continue
-                elif lhs == "bound_gap":
-                    if float(rhs) < 0:
-                        print("bound_gap must be positive")
-                        exit()
-                    self.bound_gap = float(rhs)
-                    continue
-                
-            print("Unrecognised line in {}:".format(configfile))
-            print(line)
-            exit()
+                    elif lhs == "a_filename":
+                        self.a = abspath(rhs)
+                        continue
+                    elif lhs == "b_filename":
+                        self.b = abspath(rhs)
+                        continue
+                    elif lhs == "path_to_process":
+                        self.path_to_process = abspath(rhs)
+                        continue
+                    elif lhs == "vary_niter":
+                        if int(rhs) < 0:
+                            print("vary_niter must be positive")
+                            exit()
+                        self.vary_niter = int(rhs)
+                        continue
+                    elif lhs == "nsteps":
+                        if int(rhs) < 0:
+                            print("nsteps must be positive")
+                            exit()
+                        self.nsteps = int(rhs)
+                        continue
+                    elif lhs == "factor":
+                        if float(rhs) < 0:
+                            print("factor must be positive")
+                            exit()
+                        self.factor = float(rhs)
+                        continue
+                    elif lhs == "bound_gap":
+                        if float(rhs) < 0:
+                            print("bound_gap must be positive")
+                            exit()
+                        self.bound_gap = float(rhs)
+                        continue
+
+                print("Unrecognised line in {}:".format(configfile))
+                print(line)
+                break
