@@ -319,11 +319,11 @@ def make_plot_dat(mfile_data, custom_keys, filename="make_plot_dat.out",
 
     # The first two lines contain the scanning variable and the number of
     # scans. These lines are preceded by a # symbol for ease of excluding.
-    plot_dat.write("# Scanning Variable: %s" %
+    plot_dat.write("# Scanning Variable: {}".format(
                    process_dicts.DICT_SWEEP_VARS
-                   [mfile_data.data["nsweep"].get_scan(-1)] + "\n")
-    plot_dat.write("# Number of scans: %d" %
-                   int(mfile_data.data["isweep"].get_scan(-1)) + "\n")
+                   [mfile_data.data["nsweep"].get_scan(-1)] + "\n"))
+    plot_dat.write("# Number of scans: {}".format(
+                   int(mfile_data.data["isweep"].get_scan(-1)) + "\n"))
     plot_dat.close()
 
     # The order of searching is set so that the output variables are always

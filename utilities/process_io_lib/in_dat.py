@@ -110,8 +110,8 @@ class INModule(object):
             self.variables["icc"].value.sort()
             self.variables["neqns"].value += 1
         else:
-            print("Constraint equation %d already in the constraint equation"
-                  "list." % equation_number)
+            print("Constraint equation {} already in the constraint equation"
+                  "list.".format(equation_number))
 
     def remove_constraint_eqn(self, equation_number):
         """Function to remove a constraint number to the list of constraint
@@ -124,8 +124,8 @@ class INModule(object):
             self.variables["icc"].value.sort()
             self.variables["neqns"].value -= 1
         else:
-            print("Constraint equation %d not in the constraint equation"
-                  "list." % equation_number)
+            print("Constraint equation {} not in the constraint equation"
+                  "list.".format(equation_number))
 
     def add_iteration_variable(self, variable_number):
         """Function to add an iteration variable to the list of iteration
@@ -139,8 +139,8 @@ class INModule(object):
             self.variables["ixc"].value.sort()
             self.variables["nvar"].value += 1
         else:
-            print("Iteration variable %d already in the iteration variable"
-                  "list." % variable_number)
+            print("Iteration variable {} already in the iteration variable"
+                  "list.".format(variable_number))
 
     def remove_iteration_variable(self, variable_number):
         """Function to remove an iteration variable from the list of iteration
@@ -154,8 +154,8 @@ class INModule(object):
             self.variables["ixc"].value.sort()
             self.variables["nvar"].value -= 1
         else:
-            print("Iteration variable %d not in the iteration variable"
-                  "list." % variable_number)
+            print("Iteration variable {} not in the iteration variable"
+                  "list.".format(variable_number))
 
 
 class INDATClassic(object):
@@ -282,33 +282,22 @@ class INDATErrorClass(object):
         self.get_error()
 
     def get_error(self, *args, **kwargs):
-        print("Key '%s' not in MFILE. KeyError! Check MFILE" % self.item)
+        print("Key '{}' not in IN.DAT. KeyError! Check IN.DAT".format(self.item))
 
     @property
     def exists(self):
         return False
 
 
-class INDATDataDictionary(object):
+class INDATDataDictionary(dict):
     """ Class object to act as a dictionary for the data.
     """
-    def __init__(self):
-        pass
 
     def __getitem__(self, item):
         try:
-            return self.__dict__[item]
+            return self[item]
         except KeyError:
             return INDATErrorClass(item)
-
-    def __setitem__(self, key, value):
-        self.__dict__[key] = value
-
-    def keys(self):
-        return self.__dict__.keys()
-
-    def __delitem__(self, key):
-        del self.__dict__[key]
 
 
 class INDATNew(object):
@@ -423,7 +412,7 @@ class INDATNew(object):
             self.order.remove(variable_name)
             self.number_of_lines -= 1
         else:
-            print("Variable %d not in IN.DAT! Check code!" % variable_name)
+            print("Variable {} not in IN.DAT! Check code!".format(variable_name))
         
     def add_constraint_eqn(self, equation_number):
         """Function to add a constraint number to the list of constraint
@@ -436,8 +425,8 @@ class INDATNew(object):
             self.variables["icc"].value.sort()
             self.variables["neqns"].value += 1
         else:
-            print("Constraint equation %d already in the constraint equation"
-                  "list." % equation_number)
+            print("Constraint equation {} already in the constraint equation"
+                  "list.".format(equation_number))
 
     def remove_constraint_eqn(self, equation_number):
         """Function to remove a constraint number to the list of constraint
@@ -450,8 +439,8 @@ class INDATNew(object):
             self.variables["icc"].value.sort()
             self.variables["neqns"].value -= 1
         else:
-            print("Constraint equation %d not in the constraint equation"
-                  "list." % equation_number)
+            print("Constraint equation {} not in the constraint equation"
+                  "list.".format(equation_number))
 
     def add_iteration_variable(self, variable_number):
         """Function to add an iteration variable to the list of iteration
@@ -465,8 +454,8 @@ class INDATNew(object):
             self.variables["ixc"].value.sort()
             self.variables["nvar"].value += 1
         else:
-            print("Iteration variable %d already in the iteration variable"
-                  "list." % variable_number)
+            print("Iteration variable {} already in the iteration variable"
+                  "list.".format(variable_number))
 
     def remove_iteration_variable(self, variable_number):
         """Function to remove an iteration variable from the list of iteration
@@ -480,8 +469,8 @@ class INDATNew(object):
             self.variables["ixc"].value.sort()
             self.variables["nvar"].value -= 1
         else:
-            print("Iteration variable %d not in the iteration variable"
-                  "list." % variable_number)
+            print("Iteration variable {} not in the iteration variable"
+                  "list.".format(variable_number))
 
 
 def clear_lines(lines):
@@ -545,7 +534,7 @@ def variable_type(var_name, var_value):
         val = fortran_python_scientific(var_value).replace(",", "")
         return float(val)
     elif var_name not in VAR_TYPE:
-        print("Variable: %s" % var_name)
+        print("Variable: {}".format(var_name))
         print("variable not in variable type list. Please check the "
               "process_dicts file! Variable type left as string")
         var_value = var_value.replace(",", "")
@@ -570,7 +559,7 @@ def variable_type(var_name, var_value):
         return [float(value) for value in val]
 
     else:
-        print("Variable: %s" % var_name)
+        print("Variable: {}".format(var_name))
         print("variable type not recognised. Please check the process_dicts"
               "file! Variable type left as string")
         return var_value

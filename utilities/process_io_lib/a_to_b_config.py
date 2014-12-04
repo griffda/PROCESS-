@@ -94,6 +94,6 @@ class AToBConfig():
                     self.bound_gap = float(rhs)
                     continue
                 
-            print("Unrecognised line in %s:" % configfile)
+            print("Unrecognised line in {}:".format(configfile))
             print(line)
             exit()

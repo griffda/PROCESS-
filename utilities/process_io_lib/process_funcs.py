@@ -125,8 +125,8 @@ def  get_variable_range(itervars, factor, wdir='.'):
             ubs += [min(value*factor, DICT_IXC_BOUNDS[varname]['ub'])]
 
         if lbs[-1] > ubs[-1]:
-            print('Error: Iteration variable %s has BOUNDL=%f >\
- BOUNDU=%f\n Update process_dicts or input file!' %(varname, lbs[-1], ubs[-1]))
+            print('Error: Iteration variable {} has BOUNDL={.f} >\
+ BOUNDU={.f}\n Update process_dicts or input file!'.format(varname, lbs[-1], ubs[-1]))
             exit()
         #assert lbs[-1] < ubs[-1]
 
@@ -313,12 +313,12 @@ def get_solution_from_mfile(neqns, nvars, wdir='.'):
 
     table_sol = []
     for var_no in range(nvars):
-        table_sol += [m_file.data['itvar%03i'%(var_no+1)].get_scan(ind)]
+        table_sol.append(m_file.data['itvar{:03}'.format(var_no+1)].get_scan(ind))
 
     table_res = []
     for con_no in range(neqns):
        # table_res += [m_file.data['constr%03i'%(con_no+1)].get_scan(ind)]
-        table_res += [m_file.data['normres%03i'%(con_no+1)].get_scan(ind)]
+        table_res.append(m_file.data['normres{:03}'.format(con_no+1)].get_scan(ind))
 
     if ifail != IFAIL_SUCCESS:
         return ifail, '0', '0', ['0']*nvars, ['0']*neqns

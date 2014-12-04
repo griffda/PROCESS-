@@ -230,17 +230,17 @@ class ProcessConfig(object):
 
         """ echos the attributes of the base class """
 
-        print("Working directory:   %s" % self.wdir)
-        print('Original IN.DAT:     %s' % self.or_in_dat)
-        print("PROCESS binary:      %s" % self.process)
-        print('Number of iterations %i' % self.niter)
+        print("Working directory:   {}".format(self.wdir))
+        print("Original IN.DAT:     {}".format(self.or_in_dat))
+        print("PROCESS binary:      {}".format(self.process))
+        print("Number of iterations {}".format(self.niter))
         if self.u_seed != None:
-            print('random seed          %i' % self.u_seed)
-        print('variable range factor %f' % self.factor)
+            print("random seed          {}".format(self.u_seed))
+        print("variable range factor {}".format(self.factor))
         if self.filename != None:
-            print('Config file          %s' % self.filename)
+            print("Config file          {}".format(self.filename))
         if self.comment != '':
-            print('Comment  %s'         % self.comment)
+            print("Comment  {}".format(self.comment))
 
     def echo(self):
 
@@ -287,7 +287,7 @@ class ProcessConfig(object):
                 readme = open(directory+'/README.txt', 'w')
 
             m_file = MFile(filename=directory+"/MFILE.DAT")
-            error_status = "Error status: %i  Error ID: %i\n" %(m_file.data['error status'].get_scan(-1), m_file.data['error id'].get_scan(-1))
+            error_status = "Error status: {}  Error ID: {}\n".format(m_file.data['error status'].get_scan(-1), m_file.data['error id'].get_scan(-1))
             readme.write(error_status)
             readme.close()
 
