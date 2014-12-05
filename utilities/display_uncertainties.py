@@ -32,6 +32,11 @@ if __name__ == '__main__':
                         help="uncertainties data file, default =\
  UNCERTAINTIES.DAT")
 
+    PARSER.add_argument("-e", "--end",
+                        default='.pdf',
+                        help="file format default =\
+ .pdf")
+
     ARGS = PARSER.parse_args()
 
 
@@ -80,7 +85,7 @@ if __name__ == '__main__':
         bins = 10
         axHistx.hist(x, bins=bins)
         axHisty.hist(y, bins=bins, orientation='horizontal')
-        savefig('Uncertainties_'+labels[i]+'_'+labels[i+1]+'.pdf')
+        savefig('Uncertainties_'+labels[i]+'_'+labels[i+1]+ARGS.end)
 
     
     
