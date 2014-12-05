@@ -751,6 +751,19 @@ def dict_module():
     return module_dict
 
 
+def dict_nsweep2varname():
+
+    """
+    This function creates the nsweep2varname dictionary from the fortran code
+    """
+
+    di = {}
+    file = SOURCEDIR + "/scan.f90"
+
+
+    return di
+
+
 def print_header():
     """Prints the file header
     """
@@ -783,6 +796,7 @@ List of dictionaries:
     DICT_DESCRIPTIONS      : Dictionary of variable descriptions
     DICT_MODULE            : Ordered dictionary mapping module names to list
                              of associatied variables
+    DICT_NSWEEP2VARNAME    : Dictionary mapping scan variable number to name
 
 Automatically produced by create_dicts.py for PROCESS version %i
 \"\"\"
@@ -942,6 +956,18 @@ def print_module():
     comment = "Dictionary mapping module name to list of variables"
     print_dict(module, "DICT_MODULE", comment, dict_type="OrderedDict()")
 
+
+def print_nsweep2varname():
+
+    """
+    Prints: 
+    DICT_NSWEEP2VARNAME
+    """
+
+    nsweep2varname = dict_nsweep2varname()
+    comment = 'Dictionary mapping nsweep to varname'
+    print_dict(nsweep2varname, 'DICT_NSWEEP2VARNAME', comment)
+
 def print_all():
     """Prints every dictionary
     """
@@ -955,6 +981,7 @@ def print_all():
     print_input_bounds()
     print_descriptions()
     print_module()
+    print_nsweep2varname()
 
 
 if __name__ == "__main__":
