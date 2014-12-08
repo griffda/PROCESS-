@@ -64,6 +64,8 @@ if __name__ == '__main__':
 
     CONFIG.set_sample_values()
 
+    run_id = 0
+
     for j in range(CONFIG.no_samples):
 
         print('sample point', j, ':')
@@ -84,7 +86,8 @@ if __name__ == '__main__':
                     if no_unfeasible > 0:
                         print('WARNING: Non feasible point(s) in sweep,\
          but finished anyway! %i ' % no_unfeasible)
-                    CONFIG.add_results2netcdf()
+                    CONFIG.add_results2netcdf(run_id)
+                    run_id+=1
                     break
                 else:
                     print('WARNING: %i non feasible point(s) in sweep!\
@@ -97,4 +100,4 @@ if __name__ == '__main__':
 
 
 
-CONFIG.write_results()
+    CONFIG.write_results()

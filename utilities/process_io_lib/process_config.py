@@ -21,6 +21,7 @@ from process_io_lib.mfile import MFile
 from process_io_lib.configuration import Config
 from process_io_lib.process_dicts import DICT_NSWEEP2IXC, DICT_NSWEEP2VARNAME,\
     DICT_IXC_SIMPLE
+from process_io_lib.process_netcdf import NetCDFWriter
 
 class ProcessConfig(object):
 
@@ -617,6 +618,7 @@ class RunProcessConfig(ProcessConfig):
 #class UncertaintiesConfig(RunProcessConfig)
 ################################################################################
 
+NETCDF_SWITCH = True
 
 class UncertaintiesConfig(ProcessConfig, Config):
 
@@ -630,6 +632,8 @@ class UncertaintiesConfig(ProcessConfig, Config):
     uncertainties = []
     output_vars = []
     dict_results = {}
+    if NETCDF_SWITCH :
+        ncdf_writer = None
 
 
     def __init__(self, configfilename="evaluate_uncertainties.json"):
@@ -663,6 +667,11 @@ class UncertaintiesConfig(ProcessConfig, Config):
         self.output_vars = self.get("output_vars", default=self.output_vars)
         for varname in self.output_vars:
             self.dict_results[varname] = []
+
+        #set up NetCDF ouput instance
+        if NETCDF_SWITCH:
+            self.ncdf_writer = NetCDFWriter("uncertainties.nc", append=False,
+                                            overwrite=True)
 
     def echo(self):
 
@@ -754,12 +763,12 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
         """ run several checks before you start running """
 
-        if self.uncertainties = {}:
+        if self.uncertainties == {}:
             print('Error: No uncertain parameter specified in config file!')
             exit()
             
 
-        if self.output_vars = []:
+        if self.output_vars == []:
             print('Error: No output variables specified in config file!')
             exit()
 
@@ -826,37 +835,48 @@ class UncertaintiesConfig(ProcessConfig, Config):
         #TODO: Add when James has added this functionality!
         #in_dat.close()
 
-    def add_results2netcdf(self):
+    def add_results2netcdf(self, run_id):
 
         """ reads current MFILE and adds specified output variables
             of last scan point to summary netCDF file """
 
 
-        #TODO: rewrite using netcdf file once library is ready!
-        m_file = MFile(filename="MFILE.DAT")
-
-        if m_file.data['ifail'].get_scan(-1) == 1:
-            for varname in self.output_vars:
-                value = m_file.data[varname].get_scan(-1) #get last scan
-                self.dict_results[varname]+=[value]
+        if NETCDF_SWITCH:
+            m_file = MFile(filename="MFILE.DAT")
+            self.ncdf_writer.write_mfile_data(m_file, run_id)
+            #TODO: only write last scan point
+            #TODO: only write selected data
         else:
-            self.write_results()
-            print('WARNING to developer: scan has unfeasible point at the\
- end!\nPress Enter to continue!')
-            raw_input()
+            m_file = MFile(filename="MFILE.DAT")
+
+            if m_file.data['ifail'].get_scan(-1) == 1:
+                for varname in self.output_vars:
+                    value = m_file.data[varname].get_scan(-1) #get last scan
+                    self.dict_results[varname]+=[value]
+            else:
+                self.write_results()
+                print('WARNING to developer: scan has unfeasible point at the\
+     end!\nPress Enter to continue!')
+                raw_input()
 
 
     def write_results(self):
         """ writes data into file. Uncessary, if netcdf library works?"""
 
-        results = open('UNCERTAINTIES.DAT', 'w')
-        for varname in self.output_vars:
-            results.write(varname + '\t')
-        results.write('\n')
+        if NETCDF_SWITCH:    
+            self.ncdf_writer.close()
 
-        for i in range(len(self.dict_results[varname])):
+        else:
+            results = open('uncertainties.nc', 'w')
             for varname in self.output_vars:
-                results.write(str(self.dict_results[varname][i]) + '\t')
-            results.write('\n')  
-        
-        results.close()
+                results.write(varname + '\t')
+            results.write('\n')
+
+            for i in range(len(self.dict_results[varname])):
+                for varname in self.output_vars:
+                    results.write(str(self.dict_results[varname][i]) + '\t')
+                results.write('\n')  
+
+            results.close()
+
+
