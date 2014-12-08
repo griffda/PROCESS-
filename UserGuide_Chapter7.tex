@@ -3,8 +3,7 @@
 
 This chapter will be of interest to people involved in the continuing
 maintenance of the \process\ source code. As stated elsewhere, the source code
-is maintained by CCFE, and resides in a \textit{Git}\
-repository on the CCFE servers.
+is maintained by CCFE, and resides in a Git repository on the CCFE servers.
 
 \section{The Makefile}
 \label{sec:makefile}
@@ -125,13 +124,12 @@ type \verb+make doc+.
 
 This section describes the procedures that should be followed whenever new
 commits to the \texttt{develop} or \texttt{master} branches of the \process\
-\textit{Git}\ repository are to be made, and how new code releases are
-performed. We assume that readers have a working knowledge of \textit{Git}\
-commands.
+Git repository are to be made, and how new code releases are performed. It is
+assumed that readers have a working knowledge of Git commands.
 
-\subsection{Access to the source code}
+\subsection{Initial access to the source code}
 
-To gain access to the \process\ source code \textit{Git} repository, you need
+To gain access to the \process\ source code Git repository, you need
 to be given permission to do so via the CCFE \texttt{GitLab} server.
 \begin{enumerate}
 
@@ -140,9 +138,9 @@ to be given permission to do so via the CCFE \texttt{GitLab} server.
 
 \item Login using your normal CCFE computer login details.
 
-\item Once this has worked (!), contact the \process\ ``Master'' (currently
-  Peter Knight), who will add you to \texttt{GitLab} as a \process\
-  ``Developer''.
+\item Assuming this is successful, contact the \texttt{GitLab} \process\
+  ``Owner'' (currently Peter Knight), who will add you to \texttt{GitLab} as a
+  \process\ ``Developer''.
 
 \item (If this is your first access to \texttt{GitLab}, you may have to set up
   SSH keys and a few other things; follow the instructions on screen.)
@@ -194,11 +192,10 @@ back into the \texttt{develop} branch.
 
 The following commands create a new branch in which to work on a new model. We
 assume that you are already in the \texttt{process} directory created above.
-
 \begin{enumerate}
 
-\item \texttt{git checkout develop}  (just to ensure that this is the branch
-  from which you will be branching \textit{from})
+\item \texttt{git checkout develop} (just to ensure that this is the branch
+  \textit{from which}\/ you will be branching)
 
 \item \texttt{git branch dev\_mynewmodel}
 
