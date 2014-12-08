@@ -9,7 +9,7 @@ import os
 import numpy as np
 from netCDF4 import Dataset
 
-from mfile import MFile
+from .mfile import MFile
 
 class NetCDFWriter(object):
     
