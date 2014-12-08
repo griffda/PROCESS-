@@ -657,6 +657,7 @@ contains
     !+ad_call  ovarin
     !+ad_call  ovarre
     !+ad_hist  02/12/14 JM  Initial version
+    !+ad_hist  08/12/14 JM  Corrections to calculation for divertor lifetime
     !+ad_stat  Okay
     !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
     !
@@ -740,6 +741,7 @@ contains
     !+ad_call  ovarin
     !+ad_call  ovarre
     !+ad_hist  02/12/14 JM  Initial version
+    !+ad_hist  08/12/14 JM  Corrections to calculation for blanket lifetime
     !+ad_stat  Okay
     !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
     !
