@@ -471,9 +471,9 @@ contains
          '(abktflnc)',abktflnc)
     call ovarre(outfile,'Allowable divertor heat fluence (MW-yr/m2)', &
          '(adivflnc)',adivflnc)
-    call ovarre(outfile,'First wall / blanket lifetime (years)', &
+    call ovarre(outfile,'First wall / blanket lifetime (FPY)', &
          '(bktlife)',bktlife)
-    call ovarre(outfile,'Divertor lifetime (years)', &
+    call ovarre(outfile,'Divertor lifetime (FPY)', &
          '(divlife)',divlife)
 
     call ovarin(outfile,'Number of remote handling systems', &
@@ -673,7 +673,7 @@ contains
 
     real(kind(1.0D0)), parameter :: years_to_seconds = 3.15576D7
     real(kind(1.0D0)) :: div_num_cycles, div_main_time, div_min_u_unplanned
-    real(kind(1.0D0)) :: t_life
+    real(kind(1.0D0)) :: t_life, t_loss, f_loss
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -699,12 +699,9 @@ contains
     else
 
        ! Linear decrease in expected lifetime when approaching the limit
-
-       t_life = max( 0.0D0, t_operation + (-t_operation/ & 
-            (div_cycle_lim*conf_div - div_cycle_lim))* &
-            (div_num_cycles - div_cycle_lim) )
-
-       u_unplanned_div = div_main_time/(t_life + div_main_time)
+       f_loss = max(0.0D0, (div_num_cycles - div_cycle_lim)/(div_cycle_lim*(conf_div - 1.0D0)))
+       t_loss = f_loss*(div_num_cycles - div_cycle_lim)*tcycle
+       u_unplanned_div = (div_main_time + t_loss)/(divlife + div_main_time)
 
     end if
 
@@ -759,7 +756,7 @@ contains
 
     real(kind(1.0D0)), parameter :: years_to_seconds = 3.15576D7
     real(kind(1.0D0)) :: fwbs_num_cycles, fwbs_main_time, fwbs_min_u_unplanned
-    real(kind(1.0D0)) :: t_life
+    real(kind(1.0D0)) :: t_life, t_loss, f_loss
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -769,11 +766,11 @@ contains
 
     !  fwbs maintenance time (years)
 
-    fwbs_main_time = 0.5D0
+    fwbs_main_time = 0.25D0
 
     !  Minimum unplanned unavailability
 
-    fwbs_min_u_unplanned = fwbs_main_time / (t_operation + fwbs_main_time)
+    fwbs_min_u_unplanned = fwbs_main_time / (bktlife + fwbs_main_time)
  
     !  Determine if the number of cycles is under the design criteria
 
@@ -784,12 +781,9 @@ contains
     else
 
        !  Linear decrease in expected lifetime when approaching the limit
-
-       t_life = max( 0.0D0, t_operation + (-t_operation/ & 
-            (fwbs_cycle_lim*conf_fwbs - fwbs_cycle_lim))* &
-            (fwbs_num_cycles - fwbs_cycle_lim) )
-
-       u_unplanned_fwbs = fwbs_main_time/(t_life + fwbs_main_time)
+       f_loss = max(0.0D0, (fwbs_num_cycles - fwbs_cycle_lim)/(fwbs_cycle_lim*(conf_fwbs - 1.0D0)))
+       t_loss = f_loss*(fwbs_num_cycles - fwbs_cycle_lim)*tcycle
+       u_unplanned_fwbs = (fwbs_main_time + t_loss)/(bktlife + fwbs_main_time)
 
     end if   
 
