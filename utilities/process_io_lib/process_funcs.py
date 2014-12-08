@@ -6,8 +6,11 @@ Author: Hanni Lux (Hanni.Lux@ccfe.ac.uk)
 Compatible with PROCESS version 368
 """
 
-from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,\
-    DICT_IXC_DEFAULT, NON_F_VALUES, IFAIL_SUCCESS, DICT_DEFAULT
+import os
+from os.path import join as pjoin
+
+from process_io_lib.process_dicts import (DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,
+    DICT_IXC_DEFAULT, NON_F_VALUES, IFAIL_SUCCESS, DICT_DEFAULT)
 from process_io_lib.in_dat import INDATNew, INVariable
 from process_io_lib.mfile import MFile
 from numpy.random import uniform
@@ -20,7 +23,7 @@ def get_neqns_itervars(wdir='.'):
     names of all iteration variables
     """
 
-    in_dat = INDATNew(wdir+'/IN.DAT')
+    in_dat = INDATNew(pjoin(wdir, "IN.DAT"))
 
     ixc_list = in_dat.variables['ixc'].value
     #TODO: hack until James fixes in_dat.py
@@ -45,7 +48,7 @@ def update_ixc_bounds(wdir='.'):
     from IN.DAT
     """
 
-    in_dat = INDATNew(wdir+'/IN.DAT')
+    in_dat = INDATNew(pjoin(wdir, "IN.DAT"))
 
     for key in in_dat.variables.keys():
         if 'bound' in key.lower():
@@ -81,7 +84,7 @@ def  get_variable_range(itervars, factor, wdir='.'):
 
     """
 
-    in_dat = INDATNew(wdir+'/IN.DAT')
+    in_dat = INDATNew(pjoin(wdir, "IN.DAT"))
 
     lbs = []
     ubs = []
@@ -117,8 +120,8 @@ def  get_variable_range(itervars, factor, wdir='.'):
             ubs += [min(value*factor, DICT_IXC_BOUNDS[varname]['ub'])]
 
         if lbs[-1] > ubs[-1]:
-            print('Error: Iteration variable %s has BOUNDL=%f >\
- BOUNDU=%f\n Update process_dicts or input file!' %(varname, lbs[-1], ubs[-1]))
+            print('Error: Iteration variable {} has BOUNDL={.f} >\
+ BOUNDU={.f}\n Update process_dicts or input file!'.format(varname, lbs[-1], ubs[-1]))
             exit()
         #assert lbs[-1] < ubs[-1]
 
@@ -135,13 +138,13 @@ def check_logfile(logfile='process.log'):
     XXX should be deprecated!! XXX
     """
 
-    outlogfile = open(logfile, 'r')
-    errormessage = 'Please check the output file for further information.'
-    for line in outlogfile:
-        if errormessage in line:
-            print('An Error has occured. Please check the output \
-                   file for more information.')
-            exit()
+    with open(logfile, 'r') as outlogfile:
+        errormessage = 'Please check the output file for further information.'
+        for line in outlogfile:
+            if errormessage in line:
+                print('An Error has occured. Please check the output \
+                       file for more information.')
+                exit()
 
 
 def check_input_error(wdir='.'):
@@ -151,7 +154,7 @@ def check_input_error(wdir='.'):
     Stops as a consequence.
     """
 
-    m_file = MFile(filename=wdir+"/MFILE.DAT")
+    m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
     error_id = m_file.data['error id'].get_scan(-1)
 
     if error_id == 130:
@@ -169,7 +172,7 @@ def process_stopped(wdir='.'):
     prematurely stopped.
     """
 
-    m_file = MFile(filename=wdir+"/MFILE.DAT")
+    m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
     error_status = m_file.data['error status'].get_scan(-1)
 
     if error_status >= 3:
@@ -186,27 +189,13 @@ def process_warnings(wdir='.'):
     warnings have occurred.
     """
 
-    m_file = MFile(filename=wdir+"/MFILE.DAT")
+    m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
     error_status = m_file.data['error status'].get_scan(-1)
 
     if error_status >= 2:
         return True
 
     return False
-
-
-############################################
-
-def mfile_exists():
-
-    """checks whether MFILE.DAT exists"""
-
-    try:
-        m_file = open('MFILE.DAT', 'r')
-        m_file.close()
-        return True
-    except FileNotFoundError:
-        return False
 
 
 ############################################
@@ -218,10 +207,10 @@ def no_unfeasible_mfile(wdir='.'):
     in a scan in MFILE.DAT
     """
 
-    m_file = MFile(filename=wdir+"/MFILE.DAT")
+    m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
 
     #no scans
-    if not m_file.data['isweep'].exists:
+    if not m_file.data['isweep'].exists():
 
         if m_file.data['ifail'].get_scan(0) == IFAIL_SUCCESS:
             return 0
@@ -245,10 +234,10 @@ def no_unfeasible_outdat(wdir='.'):
     """
 
     no_unfeasible = 0
-    outdat = open(wdir+'/OUT.DAT', 'r')
-    for line in outdat:
-        if 'UNFEASIBLE' in line:
-            no_unfeasible += 1
+    with open(pjoin(wdir, "OUT.DAT"), "r") as outdat_fh:
+        for line in outdat_fh:
+            if 'UNFEASIBLE' in line:
+                no_unfeasible += 1
 
     return no_unfeasible
 
@@ -301,7 +290,7 @@ def get_solution_from_mfile(neqns, nvars, wdir='.'):
     will be returned.
     """
 
-    m_file = MFile(filename=wdir+"/MFILE.DAT")
+    m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
 
 
     if not m_file.data['isweep'].exists:
@@ -319,12 +308,12 @@ def get_solution_from_mfile(neqns, nvars, wdir='.'):
 
     table_sol = []
     for var_no in range(nvars):
-        table_sol += [m_file.data['itvar%03i'%(var_no+1)].get_scan(ind)]
+        table_sol.append(m_file.data['itvar{:03}'.format(var_no+1)].get_scan(ind))
 
     table_res = []
     for con_no in range(neqns):
        # table_res += [m_file.data['constr%03i'%(con_no+1)].get_scan(ind)]
-        table_res += [m_file.data['normres%03i'%(con_no+1)].get_scan(ind)]
+        table_res.append(m_file.data['normres{:03}'.format(con_no+1)].get_scan(ind))
 
     if ifail != IFAIL_SUCCESS:
         return ifail, '0', '0', ['0']*nvars, ['0']*neqns
@@ -351,50 +340,49 @@ def get_solution_from_outdat(neqns, nvars):
 
     flag_solution_vector = False
     flag_constr_residue  = False
-    outdatfile = open('OUT.DAT', 'r')
-    for line in outdatfile:
-        if  "value       change" in line:
-            flag_solution_vector = True
-            flag_constr_residue  = False
-            cnt_sol = 0
-            table_sol     = []
-        elif "constraint residues should be" in line:
-            flag_solution_vector = False
-            flag_constr_residue  = True
-            cnt_res = 0
-            table_res     = []
-        elif "*******************" in line:
-            flag_solution_vector = False
-            flag_constr_residue  = False
-        elif flag_solution_vector and len(line) >= 10:
-            row = line.split()
-            assert int(row[0])-1 == cnt_sol
-            table_sol     += [row[2]] #final value
-            cnt_sol += 1
-        elif flag_constr_residue and len(line) >= 10:
-            row = line.split()
+    with open('OUT.DAT', 'r') as outdatfile:
+        for line in outdatfile:
+            if  "value       change" in line:
+                flag_solution_vector = True
+                flag_constr_residue  = False
+                cnt_sol = 0
+                table_sol     = []
+            elif "constraint residues should be" in line:
+                flag_solution_vector = False
+                flag_constr_residue  = True
+                cnt_res = 0
+                table_res     = []
+            elif "*******************" in line:
+                flag_solution_vector = False
+                flag_constr_residue  = False
+            elif flag_solution_vector and len(line) >= 10:
+                row = line.split()
+                assert int(row[0])-1 == cnt_sol
+                table_sol     += [row[2]] #final value
+                cnt_sol += 1
+            elif flag_constr_residue and len(line) >= 10:
+                row = line.split()
 
-            assert int(row[0])-1 == cnt_res
-            try:
-                float(row[-2])
-                table_res     += [row[-2]]
-            except ValueError:
-                table_res     += [row[-1]]
+                assert int(row[0])-1 == cnt_res
+                try:
+                    float(row[-2])
+                    table_res     += [row[-2]]
+                except ValueError:
+                    table_res     += [row[-1]]
 
-            cnt_res += 1
-        elif 'Figure of merit objective function' in line:
-            buf = line.split()
-            objective_function = buf[-1]
-        elif 'Estimate of the constraints' in line:
-            buf = line.split()
-            constraints = buf[-1]
-        elif 'ifail' in line:
-            buf = line.split()
-            ifail = int(buf[-1])
-        elif "and found a feasible set of parameters." in line:
-            ifail = IFAIL_SUCCESS
+                cnt_res += 1
+            elif 'Figure of merit objective function' in line:
+                buf = line.split()
+                objective_function = buf[-1]
+            elif 'Estimate of the constraints' in line:
+                buf = line.split()
+                constraints = buf[-1]
+            elif 'ifail' in line:
+                buf = line.split()
+                ifail = int(buf[-1])
+            elif "and found a feasible set of parameters." in line:
+                ifail = IFAIL_SUCCESS
 
-    outdatfile.close()
 
     if ifail != IFAIL_SUCCESS:
         return ifail, '0', '0', ['0']*nvars, ['0']*neqns

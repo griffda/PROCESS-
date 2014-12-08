@@ -9,6 +9,8 @@
 
 """
 
+from os.path import abspath
+
 from process_io_lib.process_dicts import DICT_VAR_TYPE as VAR_TYPE
 
 
@@ -49,7 +51,7 @@ class INModule(object):
         # Dictionary for variables only
         self.variables = {}
 
-        # List to remember the order in IN.DAT
+        # List to remember the order inl IN.DAT
         self.order = []
 
     def add_variable(self, var):
@@ -108,8 +110,8 @@ class INModule(object):
             self.variables["icc"].value.sort()
             self.variables["neqns"].value += 1
         else:
-            print("Constraint equation %d already in the constraint equation"
-                  "list." % equation_number)
+            print("Constraint equation {} already in the constraint equation"
+                  "list.".format(equation_number))
 
     def remove_constraint_eqn(self, equation_number):
         """Function to remove a constraint number to the list of constraint
@@ -122,8 +124,8 @@ class INModule(object):
             self.variables["icc"].value.sort()
             self.variables["neqns"].value -= 1
         else:
-            print("Constraint equation %d not in the constraint equation"
-                  "list." % equation_number)
+            print("Constraint equation {} not in the constraint equation"
+                  "list.".format(equation_number))
 
     def add_iteration_variable(self, variable_number):
         """Function to add an iteration variable to the list of iteration
@@ -137,8 +139,8 @@ class INModule(object):
             self.variables["ixc"].value.sort()
             self.variables["nvar"].value += 1
         else:
-            print("Iteration variable %d already in the iteration variable"
-                  "list." % variable_number)
+            print("Iteration variable {} already in the iteration variable"
+                  "list.".format(variable_number))
 
     def remove_iteration_variable(self, variable_number):
         """Function to remove an iteration variable from the list of iteration
@@ -152,8 +154,8 @@ class INModule(object):
             self.variables["ixc"].value.sort()
             self.variables["nvar"].value -= 1
         else:
-            print("Iteration variable %d not in the iteration variable"
-                  "list." % variable_number)
+            print("Iteration variable {} not in the iteration variable"
+                  "list.".format(variable_number))
 
 
 class INDATClassic(object):
@@ -186,56 +188,56 @@ class INDATClassic(object):
 
         """
         # Open IN.DAT (or self.filename) and read lines
-        in_dat = open(self.filename, "r")
-        in_dat_lines = in_dat.readlines()
-
-        # Clean the lines using self.clear_lines
-        clean_lines = clear_lines(in_dat_lines)
-
-        for line in clean_lines:
-
-            # If the module delimiter '$' present then make sure it is not the
-            # end of the module
-            if "$" in line:
-                if "END" not in line:
-                    module = line.strip("$ \n \r").replace(" ", "")
-                    self.order.append(module)
-                    self.module_data[module] = INModule(module)
-
-            # Keep empty lines. self.clear_lines already swapped multiple
-            # empty lines with a single empty line.
-            elif line == "":
-                self.module_data[module].add_line(line)
-
-            else:
-                # If line starts with a '*' then the line is commented out so
-                # will be added as a non-variable string line.
-                if line[0] == "*":
-                    self.module_data[module].add_line(line.strip("\n"))
-
+        with open(self.filename, "r") as in_dat:
+            in_dat_lines = in_dat.readlines()
+    
+            # Clean the lines using self.clear_lines
+            clean_lines = clear_lines(in_dat_lines)
+    
+            for line in clean_lines:
+    
+                # If the module delimiter '$' present then make sure it is not the
+                # end of the module
+                if "$" in line:
+                    if "END" not in line:
+                        module = line.strip("$ \n \r").replace(" ", "")
+                        self.order.append(module)
+                        self.module_data[module] = INModule(module)
+    
+                # Keep empty lines. self.clear_lines already swapped multiple
+                # empty lines with a single empty line.
+                elif line == "":
+                    self.module_data[module].add_line(line)
+    
                 else:
-
-                    # If there is a '*' elsewhere in the line then it is
-                    # assumed that there is an inline comment
-                    if "*" in line:
-                        var_comment = " *"+line.split("*")[-1].strip("\n")
-                        var_name = line.split("=")[0].replace(" ", "")
-                        var_value = line.split("=")[1].split("*")[0]
-                        var_value = variable_type(var_name, var_value)
-                        # Create variable class and add it to the module class
-                        var = INVariable(var_name, var_value,
-                                         comment=var_comment)
-                        self.module_data[module].add_variable(var)
-
+                    # If line starts with a '*' then the line is commented out so
+                    # will be added as a non-variable string line.
+                    if line[0] == "*":
+                        self.module_data[module].add_line(line.strip("\n"))
+    
                     else:
-                        # Finally if it is a regular variable line
-                        var_name = line.split("=")[0].replace(" ", "")
-                        var_value = line.split("=")[1].lstrip().rstrip()
-                        var_value = variable_type(var_name, var_value)
-                        # Create variable class and add it to the module
-                        # class
-                        var = INVariable(var_name, var_value)
-                        self.module_data[module].add_variable(var)
+    
+                        # If there is a '*' elsewhere in the line then it is
+                        # assumed that there is an inline comment
+                        if "*" in line:
+                            var_comment = " *"+line.split("*")[-1].strip("\n")
+                            var_name = line.split("=")[0].replace(" ", "")
+                            var_value = line.split("=")[1].split("*")[0]
+                            var_value = variable_type(var_name, var_value)
+                            # Create variable class and add it to the module class
+                            var = INVariable(var_name, var_value,
+                                             comment=var_comment)
+                            self.module_data[module].add_variable(var)
+    
+                        else:
+                            # Finally if it is a regular variable line
+                            var_name = line.split("=")[0].replace(" ", "")
+                            var_value = line.split("=")[1].lstrip().rstrip()
+                            var_value = variable_type(var_name, var_value)
+                            # Create variable class and add it to the module
+                            # class
+                            var = INVariable(var_name, var_value)
+                            self.module_data[module].add_variable(var)
 
     def write_in_dat(self, filename="new_IN.DAT"):
         """ Write a new IN.DAT (default name is new_IN.DAT)
@@ -246,21 +248,19 @@ class INDATClassic(object):
         """
 
         # Create new file
-        new_in_file = open(filename, "w")
-
-        # Use self.order to create new IN.DAT with same order as old IN.DAT
-        for item in self.order:
-            for line in self.module_data[item].order:
-                if str(line).isdigit():
-                    newline = self.module_data[item].store[line]
-                else:
-                    newline = self.module_data[item].variables[line].name + \
-                        " = " + \
-                        str(self.module_data[item].variables[line].value) + \
-                        "," + \
-                        self.module_data[item].variables[line].comment
-                new_in_file.write(newline+"\n")
-        new_in_file.close()
+        with open(filename, "w") as new_in_file:
+            # Use self.order to create new IN.DAT with same order as old IN.DAT
+            for item in self.order:
+                for line in self.module_data[item].order:
+                    if str(line).isdigit():
+                        newline = self.module_data[item].store[line]
+                    else:
+                        newline = self.module_data[item].variables[line].name + \
+                            " = " + \
+                            str(self.module_data[item].variables[line].value) + \
+                            "," + \
+                            self.module_data[item].variables[line].comment
+                    new_in_file.write(newline+"\n")
 
 
 class INDATErrorClass(object):
@@ -282,33 +282,22 @@ class INDATErrorClass(object):
         self.get_error()
 
     def get_error(self, *args, **kwargs):
-        print("Key '%s' not in MFILE. KeyError! Check MFILE" % self.item)
+        print("Key '{}' not in IN.DAT. KeyError! Check IN.DAT".format(self.item))
 
     @property
     def exists(self):
         return False
 
 
-class INDATDataDictionary(object):
+class INDATDataDictionary(dict):
     """ Class object to act as a dictionary for the data.
     """
-    def __init__(self):
-        pass
 
     def __getitem__(self, item):
         try:
-            return self.__dict__[item]
+            return self[item]
         except KeyError:
             return INDATErrorClass(item)
-
-    def __setitem__(self, key, value):
-        self.__dict__[key] = value
-
-    def keys(self):
-        return self.__dict__.keys()
-
-    def __delitem__(self, key):
-        del self.__dict__[key]
 
 
 class INDATNew(object):
@@ -341,40 +330,41 @@ class INDATNew(object):
 
     def read_in_dat(self):
         """Read in data from IN.DAT"""
-        in_dat = open(self.filename, "r")
-        in_dat_lines = in_dat.readlines()
-        clean_lines = clear_lines(in_dat_lines)
-        for line in clean_lines:
-            if "$" in line:
-                pass
-            elif line == "":
-                self.data[self.number_of_lines] = line
-                self.order.append(self.number_of_lines)
-                self.number_of_lines += 1
-            else:
-                if line[0] == "*":
-                    self.data[self.number_of_lines] = line.strip("\n")
+        print("Attempting to open", abspath(self.filename))
+        with open(self.filename, "r") as in_dat:
+            in_dat_lines = in_dat.readlines()
+            clean_lines = clear_lines(in_dat_lines)
+            for line in clean_lines:
+                if "$" in line:
+                    pass
+                elif line == "":
+                    self.data[self.number_of_lines] = line
                     self.order.append(self.number_of_lines)
                     self.number_of_lines += 1
                 else:
-                    if "*" in line:
-                        var_comment = " *"+line.split("*")[-1].strip("\n")
-                        var_name = line.split("=")[0].rstrip().lower()
-                        var_value = line.split("=")[1].split("*")[0]
-                        var_value = variable_type(var_name, var_value)
-                        var = INVariable(var_name, var_value,
-                                         comment=var_comment)
-                        self.data[var_name.lower()] = var
-                        self.variables[var_name.lower()] = var
-                        self.order.append(var_name.lower())
+                    if line[0] == "*":
+                        self.data[self.number_of_lines] = line.strip("\n")
+                        self.order.append(self.number_of_lines)
+                        self.number_of_lines += 1
                     else:
-                        var_name = line.split("=")[0].rstrip().lower()
-                        var_value = line.split("=")[1].lstrip().rstrip()
-                        var_value = variable_type(var_name, var_value)
-                        var = INVariable(var_name, var_value)
-                        self.data[var_name.lower()] = var
-                        self.variables[var_name.lower()] = var
-                        self.order.append(var_name.lower())
+                        if "*" in line:
+                            var_comment = " *"+line.split("*")[-1].strip("\n")
+                            var_name = line.split("=")[0].rstrip().lower()
+                            var_value = line.split("=")[1].split("*")[0]
+                            var_value = variable_type(var_name, var_value)
+                            var = INVariable(var_name, var_value,
+                                             comment=var_comment)
+                            self.data[var_name.lower()] = var
+                            self.variables[var_name.lower()] = var
+                            self.order.append(var_name.lower())
+                        else:
+                            var_name = line.split("=")[0].rstrip().lower()
+                            var_value = line.split("=")[1].lstrip().rstrip()
+                            var_value = variable_type(var_name, var_value)
+                            var = INVariable(var_name, var_value)
+                            self.data[var_name.lower()] = var
+                            self.variables[var_name.lower()] = var
+                            self.order.append(var_name.lower())
 
     def write_in_dat(self, filename="new_IN.DAT"):
         """ Write a new IN.DAT
@@ -383,20 +373,19 @@ class INDATNew(object):
           filename --> filename to write new IN.DAT to
 
         """
-        new_in_file = open(filename, "w")
+        with open(filename, "w") as new_in_file:
 
-        # Use self.order to maintain same order as original IN.DAT
-        for item in self.order:
-            if str(item).isdigit():
-                newline = self.data[item]
-            else:
-                newline = self.variables[item].name + \
-                    " = " + \
-                    str(self.variables[item].value).replace("[", "").\
-                    replace("]", "") + "," + \
-                    self.variables[item].comment
-            new_in_file.write(newline+"\n")
-        new_in_file.close()
+            # Use self.order to maintain same order as original IN.DAT
+            for item in self.order:
+                if str(item).isdigit():
+                    newline = self.data[item]
+                else:
+                    newline = self.variables[item].name + \
+                        " = " + \
+                        str(self.variables[item].value).replace("[", "").\
+                        replace("]", "") + "," + \
+                        self.variables[item].comment
+                new_in_file.write(newline+"\n")
 
     def add_variable(self, var):
         """ Adds a variable from the IN.DAT class
@@ -423,7 +412,7 @@ class INDATNew(object):
             self.order.remove(variable_name)
             self.number_of_lines -= 1
         else:
-            print("Variable %d not in IN.DAT! Check code!" % variable_name)
+            print("Variable {} not in IN.DAT! Check code!".format(variable_name))
         
     def add_constraint_eqn(self, equation_number):
         """Function to add a constraint number to the list of constraint
@@ -436,8 +425,8 @@ class INDATNew(object):
             self.variables["icc"].value.sort()
             self.variables["neqns"].value += 1
         else:
-            print("Constraint equation %d already in the constraint equation"
-                  "list." % equation_number)
+            print("Constraint equation {} already in the constraint equation"
+                  "list.".format(equation_number))
 
     def remove_constraint_eqn(self, equation_number):
         """Function to remove a constraint number to the list of constraint
@@ -450,8 +439,8 @@ class INDATNew(object):
             self.variables["icc"].value.sort()
             self.variables["neqns"].value -= 1
         else:
-            print("Constraint equation %d not in the constraint equation"
-                  "list." % equation_number)
+            print("Constraint equation {} not in the constraint equation"
+                  "list.".format(equation_number))
 
     def add_iteration_variable(self, variable_number):
         """Function to add an iteration variable to the list of iteration
@@ -465,8 +454,8 @@ class INDATNew(object):
             self.variables["ixc"].value.sort()
             self.variables["nvar"].value += 1
         else:
-            print("Iteration variable %d already in the iteration variable"
-                  "list." % variable_number)
+            print("Iteration variable {} already in the iteration variable"
+                  "list.".format(variable_number))
 
     def remove_iteration_variable(self, variable_number):
         """Function to remove an iteration variable from the list of iteration
@@ -480,8 +469,8 @@ class INDATNew(object):
             self.variables["ixc"].value.sort()
             self.variables["nvar"].value -= 1
         else:
-            print("Iteration variable %d not in the iteration variable"
-                  "list." % variable_number)
+            print("Iteration variable {} not in the iteration variable"
+                  "list.".format(variable_number))
 
 
 def clear_lines(lines):
@@ -546,7 +535,7 @@ def variable_type(var_name, var_value):
         val = fortran_python_scientific(var_value).replace(",", "")
         return float(val)
     elif var_name not in VAR_TYPE:
-        print("Variable: %s" % var_name)
+        print("Variable: {}".format(var_name))
         print("variable not in variable type list. Please check the "
               "process_dicts file! Variable type left as string")
         var_value = var_value.replace(",", "")
@@ -572,7 +561,7 @@ def variable_type(var_name, var_value):
     elif VAR_TYPE[var_name] == 'string': #hack until James updates this!
         return var_value
     else:
-        print("Variable: %s" % var_name)
+        print("Variable: {}".format(var_name))
         print("variable type not recognised. Please check the process_dicts"
               "file! Variable type left as string")
         return var_value
@@ -586,9 +575,3 @@ def fortran_python_scientific(var_value):
       var_value --> variable value as type string!
     """
     return var_value.replace("D", "e").replace("d", "e")
-
-if __name__ == '__main__':
-    I = INDATNew(filename="/home/morrisj/"
-                          "Dropbox/programs/process_utilities/"
-                          "PROCESS_Python_Library/test_input_files/"
-                          "Michael_ARIES_nocomments.IN.DAT")

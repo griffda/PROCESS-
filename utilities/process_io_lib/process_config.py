@@ -10,18 +10,188 @@ Compatible with PROCESS version 368
 
 """
 
-import os
+import os, shutil, glob
+from os.path import abspath, join as pjoin
+import json
 from time import sleep
 from numpy.random import seed, uniform, normal
 from numpy import argsort
 from process_io_lib.in_dat import INDATNew, INVariable
 from process_io_lib.process_funcs import mfile_exists,\
     get_from_indat_or_default, set_variable_in_indat
+
 from process_io_lib.mfile import MFile
 from process_io_lib.configuration import Config
 from process_io_lib.process_dicts import DICT_NSWEEP2IXC, DICT_NSWEEP2VARNAME,\
     DICT_IXC_SIMPLE
 from process_io_lib.process_netcdf import NetCDFWriter
+
+def print_config(config_instance):
+    print(config_instance.get_current_state())
+
+
+
+class RunProcessConfigNew(Config):
+    
+    """Configuration for the execution of PROCESS."""
+    
+    def __init__(self, config_file="run_process.json"):
+        super().__init__(config_file)
+        self.working_directory = abspath(self.get("output_directory"))
+        
+    def setup_directory(self):
+        input_file_path = abspath(self.get("input_file"))
+        try:
+            os.makedirs(self.working_directory)
+        except OSError as e:
+            print("Cannot create {}".format(self.working_directory))
+            return
+        try:
+            working_dir_input = pjoin(working_directory, "IN.DAT")
+            shutil.copy2(input_file_path, working_dir_input)
+        except OSError as e:
+            print("Cannot copy {} to {}: {}".format(input_file_path,
+                                                    working_dir_input, e))
+            # TODO: probably want to cleanup just-created files/dirs before ret
+            return
+                                                    
+    def run(self):
+        pass
+    
+
+#class RunProcessConfig(Config):
+#    
+#    """The run_process tool configuration."""
+#    
+#    def __init__(self, config_file):
+#        """Setup PROCESS configuration before execution."""
+#        super().__init__(self, config_file)
+#        self.filename = None
+#        self.working_directory = abspath(".")
+##        self.setup_working_directory()
+##        self.create_readme()
+##        self.modify_in_dat()
+#        seed(self.get("pseudorandom_seed"))
+#    
+#    def setup_working_directory(self):
+#        """Prepare working directory with required input & output files."""
+#        config = self._config["config"]
+#        self.working_directory = abspath(config["working_directory"])
+#        try:
+#            os.mkdir(self.working_directory)
+#        except IOError:
+#            raise
+#        
+#        # Get the original IN.DAT for this run
+#        original_in_dat = config["IN.DAT_path"]
+#        try:
+#            shutil.copy2(abspath(original_in_dat),
+#                         os.path.join(self.working_directory, "IN.DAT"))
+#        except IOError:
+#            raise
+#        # Store a copy of this configuration for this run
+#        try:
+#            shutil.copy2(abspath(self.config_file_path),
+#                         self.working_directory)
+#        except IOError:
+#            raise
+#        
+#        # TODO: Why are all of these being removed?
+#        os.chdir(self.working_directory)
+#        for file_ in ["OUT.DAT", "MFILE.DAT", "PLOT.DAT", "*.txt", "*.out",
+#                      "*.log", "*.pdf", "*.eps"]:
+#            for f in glob(file_):
+#                os.remove(f)
+#
+#class ProcessConfig(object):
+#    
+#    """PROCESS runtime configuration."""
+#    
+#    def __init__(self, config_file_path):
+#        """Setup PROCESS configuration before execution."""
+#        self.filename = None
+#        self.working_directory = abspath(".")
+#        try:
+#            with open(config_file_path) as fh:
+#                self._config = json.load(fh)
+#        except IOError:
+#            raise
+#        self.config_file_path = config_file_path
+#        self.setup_working_directory()
+#        self.create_readme()
+#        self.modify_in_dat()
+#        seed(self._config["config"]["pseudorandom_seed"])
+#        
+#    def setup_working_directory(self):
+#        """Prepare working directory with required input & output files."""
+#        config = self._config["config"]
+#        self.working_directory = abspath(config["working_directory"])
+#        try:
+#            os.mkdir(self.working_directory)
+#        except IOError:
+#            raise
+#        
+#        # Get the original IN.DAT for this run
+#        original_in_dat = config["IN.DAT_path"]
+#        try:
+#            shutil.copy2(abspath(original_in_dat),
+#                         os.path.join(self.working_directory, "IN.DAT"))
+#        except IOError:
+#            raise
+#        # Store a copy of this configuration for this run
+#        try:
+#            shutil.copy2(abspath(self.config_file_path),
+#                         self.working_directory)
+#        except IOError:
+#            raise
+#        
+#        # TODO: Why are all of these being removed?
+#        os.chdir(self.working_directory)
+#        for file_ in ["OUT.DAT", "MFILE.DAT", "PLOT.DAT", "*.txt", "*.out",
+#                      "*.log", "*.pdf", "*.eps"]:
+#            for f in glob(file_):
+#                os.remove(f)
+#        
+#    def get_current_state(self):
+#        """Return the current state of this configuration"""
+#        return self._config["config"]
+#        
+#    def create_readme(self):
+#        """Generate a README file from the configuration comment."""
+#        readme_comment = self._config["config"]["readme"]
+#        if readme_comment is None or readme_comment == "":
+#            pass
+#        else:
+#            with open(os.path.join(self.working_directory, "README"), "w") as fh:
+#                fh.write(readme_comment)
+#                
+#    def append_errors_to_readme(self, directory=os.getcwd()):
+#        """Appends PROCESS outcome to README.txt"""
+#        if os.path.isfile("MFILE.DAT"):
+#            with open(os.path.join(directory, "README.txt"),
+#                      "w" if self.comment == "" else "a") as readme_fh:
+#                m_file = MFile(filename=os.path.join)
+#                readme_fh.write("Error status: {}  Error ID: {}\n".format(
+#                    m_file.data["error status"].get_scan(-1),
+#                    m_file.data["error id"].get_scan(-1)))
+#                
+#                
+#    def modify_in_dat(self):
+#        """TODO: Modify original IN.DAT."""
+#        pass
+#    
+#    def run_process(self):
+#        """Run PROCESS binary."""
+#
+#        print("PROCESS run started...", end='')
+#        # return_code = subprocess.call([self.process_binary], stdout=TODO: process.log file)
+#        returncode = os.system(self.process+' >& process.log')
+#        if returncode != 0:
+#            print('\n Error: There was a problem with the PROCESS \
+#                   execution! %i' % returncode)
+#            print('       Refer to the logfile for more information!')
+#            exit()
+#        print("Finished.")
 
 class ProcessConfig(object):
 
@@ -61,17 +231,17 @@ class ProcessConfig(object):
 
         """ echos the attributes of the base class """
 
-        print("Working directory:   %s" % self.wdir)
-        print('Original IN.DAT:     %s' % self.or_in_dat)
-        print("PROCESS binary:      %s" % self.process)
-        print('Number of iterations %i' % self.niter)
+        print("Working directory:   {}".format(self.wdir))
+        print("Original IN.DAT:     {}".format(self.or_in_dat))
+        print("PROCESS binary:      {}".format(self.process))
+        print("Number of iterations {}".format(self.niter))
         if self.u_seed != None:
-            print('random seed          %i' % self.u_seed)
-        print('variable range factor %f' % self.factor)
+            print("random seed          {}".format(self.u_seed))
+        print("variable range factor {}".format(self.factor))
         if self.filename != None:
-            print('Config file          %s' % self.filename)
+            print("Config file          {}".format(self.filename))
         if self.comment != '':
-            print('Comment  %s'         % self.comment)
+            print("Comment  {}".format(self.comment))
 
     def echo(self):
 
@@ -111,16 +281,14 @@ class ProcessConfig(object):
 
         """ appends PROCESS outcome to README.txt """
 
-        if mfile_exists():
+        if os.path.isfile("MFILE.DAT"):
             if self.comment != '':
                 readme = open(directory+'/README.txt', 'a')
             else:
                 readme = open(directory+'/README.txt', 'w')
 
             m_file = MFile(filename=directory+"/MFILE.DAT")
-            error_status = "Error status: %i  Error ID: %i\n" \
-                %(m_file.data['error status'].get_scan(-1),
-                  m_file.data['error id'].get_scan(-1))
+            error_status = "Error status: {}  Error ID: {}\n".format(m_file.data['error status'].get_scan(-1), m_file.data['error id'].get_scan(-1))
             readme.write(error_status)
             readme.close()
 
@@ -879,4 +1047,8 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
             results.close()
 
+
+#if __name__ == "__main__":
+#    cfg = RunProcessConfigNew("../run_process.json")
+#    cfg.setup_directory()
 
