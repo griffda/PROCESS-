@@ -2654,6 +2654,7 @@ module cost_variables
   !+ad_hist  03/12/13 PJK Changed ucfwps units from $/m2 to $
   !+ad_hist  19/11/14 PJK Modified iavail wording
   !+ad_hist  25/11/14 JM  Added new availability model variables
+  !+ad_hist  02/12/14 PJK Changed abktflnc, adivflnc default values
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2663,11 +2664,11 @@ module cost_variables
 
   public
 
-  !+ad_vars  abktflnc /20.0/ : allowable first wall/blanket neutron
+  !+ad_vars  abktflnc /5.0/ : allowable first wall/blanket neutron
   !+ad_varc                    fluence (MW-yr/m2) (blktmodel=0)
-  real(kind(1.0D0)) :: abktflnc = 20.0D0
-  !+ad_vars  adivflnc /25.0/ : allowable divertor heat fluence (MW-yr/m2)
-  real(kind(1.0D0)) :: adivflnc = 25.0D0
+  real(kind(1.0D0)) :: abktflnc = 5.0D0
+  !+ad_vars  adivflnc /7.0/ : allowable divertor heat fluence (MW-yr/m2)
+  real(kind(1.0D0)) :: adivflnc = 7.0D0
   !+ad_vars  blkcst : blanket direct cost (M$)
   real(kind(1.0D0)) :: blkcst = 0.0D0
   !+ad_vars  c221 : total account 221 cost (M$) (first wall, blanket, shield,
