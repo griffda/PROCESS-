@@ -14,10 +14,10 @@
  .section {font-weight: bold}
 </STYLE>
 <link rel="stylesheet" type="text/css"
-  href="http://fusweb1.fusion.ccfe.ac.uk/~pknight/pjk_nn.css">
+  href="http://fusweb1.fusion.ccfe.ac.uk/~PROCESS/pjk_nn.css">
 <style type="text/css"> 
 /* import stylesheet that only IE and netscape 6 will read */
-@import url(http://fusweb1.fusion.ccfe.ac.uk/~pknight/pjk.css);
+@import url(http://fusweb1.fusion.ccfe.ac.uk/~PROCESS/pjk.css);
 </style>
 
  </HEAD>

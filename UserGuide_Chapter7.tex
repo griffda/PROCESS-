@@ -120,14 +120,13 @@ type \verb+make doc+.
 \section{Code Updates and Release Procedure}
 \label{sec:code_release}
 
-\Red{to be updated}
-
 This section describes the procedures that should be followed whenever new
 commits to the \texttt{develop} or \texttt{master} branches of the \process\
 Git repository are to be made, and how new code releases are performed. It is
 assumed that readers have a working knowledge of Git commands.
 
 \subsection{Initial access to the source code}
+\label{sec:getsource}
 
 To gain access to the \process\ source code Git repository, you need
 to be given permission to do so via the CCFE \texttt{GitLab} server.
@@ -149,7 +148,7 @@ to be given permission to do so via the CCFE \texttt{GitLab} server.
 
 \item \texttt{cd SomewhereAppropriate} (you choose!)
 
-\item \texttt{git clone git@git.ccfe.ac.uk:pknight/process.git process}
+\item \texttt{git clone git@git.ccfe.ac.uk:PROCESS/process.git process}
 
 \item \texttt{cd process}
 
@@ -191,7 +190,8 @@ back into the \texttt{develop} branch.
 \subsubsection{Branching from \texttt{develop}}
 
 The following commands create a new branch in which to work on a new model. We
-assume that you are already in the \texttt{process} directory created above.
+assume that you are already in the \texttt{process} directory created above
+(Section~\ref{sec:getsource}).
 \begin{enumerate}
 
 \item \texttt{git checkout develop} (just to ensure that this is the branch
@@ -207,65 +207,169 @@ assume that you are already in the \texttt{process} directory created above.
 
 \subsubsection{Working on a new model}
 
-git add changedfile1 changedfile2 (etc.)
-git commit
+Edit your local copies of the files as necessary. Whenever you want to save
+the changes back to the repository (it is prudent to do this at the end of
+each working day, as well as when the changes are complete, the code compiles
+and all test runs are successful!), use the following commands:
+\begin{enumerate}
 
-\subsubsection{Merging develop into working branch}
+\item \texttt{git status}  (this will show a list of modified files)
 
+\item \texttt{git add changedfile1 changedfile2 ...}  (this `stages' the files
+  marking them as ready for committing)
 
+\item \texttt{git commit}
 
-\subsubsection{Merging working branch back into develop}
+\item An editor window will open; add a line summarising the changes you have
+  made, save and close the window. This will initiate the commit to your
+  \textit{local}\ copy of the repository.
 
+\item \texttt{git push}  (to send the changes to the central \texttt{GitLab}
+  repository)
 
+\end{enumerate}
 
-\subsubsection{Committing changes to develop}
+\subsubsection{Merging \texttt{develop} into working branch}
 
-Whenever a commit to develop is to be made, a brief comment should be added to
-the bottom of source file \texttt{process.f90} describing the changes made
-since the last commit in the same branch. Ensure all documentation is up to
-date (see Section...)
+It is a good idea to periodically merge the \texttt{develop} branch into the
+branch in which you are working.
+\begin{enumerate}
 
-cd wherever
+\item Firstly, make sure you have committed your latest changes into the
+  central \texttt{GitLab} repository as described in the previous section.
 
-git commit
+\item \texttt{git pull}
 
-git tag -a rXXX -m ``Revision XXX''
+\item \texttt{git checkout develop}
 
-git push
+\item \texttt{git pull}
 
-git push origin rXXX
+\item \texttt{git checkout dev\_mynewmodel}
+
+\item \texttt{git merge develop}
+
+\item Look for messages on the screen indicating that some files cannot be
+  merged directly because of a merge `conflict'. This typically happens if the
+  same (or very closely-spaced) lines have been edited in both the
+  \texttt{develop} and \texttt{dev\_mynewmodel} branches.
+
+  If any files are affected, edit them and look for any lines containing
+  \texttt{========}. Such lines separate the changes made in the two branches,
+  as in:
+\begin{verbatim}
+<<<<<<<<<<<<<
+This line was edited in dev_mynewmodel branch
+=============
+This line was edited in develop branch
+>>>>>>>>>>>>>
+\end{verbatim}
+  Resolve the conflict(s) as necessary. Then type \texttt{git add file1 file2 ...}, where
+  \texttt{file1} etc.\ are the names of the files you removed conflicts
+  from. Finally type \texttt{git commit} and edit the change log file.
+
+\item \texttt{git push}
+
+\end{enumerate}
+
+\subsubsection{Merging working branch back into \texttt{develop}}
+
+Once the work on a model has been completed, fully tested and documented, the
+working branch should be merged back into the \texttt{develop} branch. This is
+done almost exactly as in the previous section, but there are a few crucial
+differences:
+
+\begin{enumerate}
+
+\item Firstly, make sure you have committed your latest changes to the working
+  branch into the central \texttt{GitLab} repository.
+
+\item \texttt{git pull}
+
+\item \texttt{git checkout dev\_mynewmodel}
+
+\item \texttt{git checkout develop}
+
+\item \texttt{git merge dev\_mynewmodel}
+
+\item Look for any conflicts and resolve them as described in the previous
+  section.
+
+\item \texttt{git push}
+
+\end{enumerate}
+
+\subsubsection{Committing changes to \texttt{develop}}
+
+Whenever a commit to the \texttt{develop} branch is to be made, the following
+procedure should be followed. Ensure all documentation is up to date (see
+Section~\ref{sec:codemods}).
+\begin{enumerate}
+
+\item In routine \texttt{inform} of file \texttt{process.f90}, change the
+  definition of \texttt{progver} by incrementing the revision number by one to
+  \texttt{XYZ} (for instance) and the Release Date. It is important to keep
+  exactly the same format.
+
+\item Add a brief comment to the bottom of source file \texttt{process.f90}
+  describing the changes made since the last commit in the same branch. Start
+  the line with \texttt{! GIT XYZ: }, following the existing examples.
+
+\item If any of the User Guide \texttt{.tex} files have been modified, edit
+  the definition of \verb+\version+ in \texttt{process.tex} by changing the
+  Revision (to \texttt{XYZ}) and the date.
+
+\item \texttt{git add process.f90 process.tex file1 file2 ...}  (where
+  \texttt{file1} etc.\ are other changed files ready to be committed as listed
+  via \texttt{git status})
+
+\item \texttt{git commit}
+
+\item Add a one- or two-line comment describing the changes made, using a format similar to
+\begin{verbatim}
+09/12/2014: (rXYZ)  A short description of the changes made
+\end{verbatim}
+
+\item \texttt{git tag -a rXYZ -m `Revision XYZ'}
+
+\item \texttt{git push}
+
+\item \texttt{git push origin rXYZ}
+
+\item \texttt{make all}
+
+\end{enumerate}
+
+The instructions given in Section~\ref{sec:fullrebuild} should now be followed
+to make the new \texttt{develop} release available to all users.
 
 \subsubsection{Merging develop into master}
 
-
+\Red{(to follow)}
 
 \subsection{Full code rebuild}
+\label{sec:fullrebuild}
 
-develop branch:
+The standard \process\ executables and the corresponding documentation
+available to all users are stored in the functional account called
+\texttt{PROCESS} on the CCFE Fusion Unix Network. Whenever the \texttt{master}
+or \texttt{develop} branches are updated a full rebuild of the standard
+executables and documentation should be performed. This is done as follows:
+\begin{enumerate}
 
-cd wherever
+\item \texttt{alter PROCESS}  (this changes your current login to that of the
+  \texttt{PROCESS} user; only registered individuals are able to do this)
 
-git pull
+\item \texttt{cd develop}  (or \texttt{cd master}, as appropriate to the
+  branch to be rebuilt)
 
-make all (describe)
+\item \texttt{git pull}
 
-master branch:
+\item \texttt{make all}
 
-cd wherever
+\item \texttt{alter yourusername}  (to return to your own username again)
 
-git pull
+\end{enumerate}
 
-make all
-
-personal copy:
-
-cd wherever
-
-git clone ...
-
-make all
-
-\subsection{Python dictionaries}
-
-make dicts
-
+The \texttt{make all} step performs the rebuild of the \texttt{process.exe} executable
+file, updates the User Guide and all the html files, and recreates the Python
+dictionaries as required by the Python utilities.
