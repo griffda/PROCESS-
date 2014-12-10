@@ -930,6 +930,8 @@ contains
     !+ad_hist  22/10/14 PJK Corrected orbit loss power usage
     !+ad_hist  04/11/14 PJK Corrected pnucblkt(*emult) usage
     !+ad_hist  17/11/14 PJK Added palpfwmw to first wall thermal power
+    !+ad_hist  10/12/14 PJK Replaced real rnphx to integer nphx (with
+    !+ad_hisc               different scaling)
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -999,16 +1001,16 @@ contains
 
        htpsecmw = htpmw - (htpmw_fw + htpmw_blkt + htpmw_shld + htpmw_div)
 
-       !  Total thermal power deposited in first wall coolant
+       !  Total power deposited in first wall coolant
 
        pthermfw = pnucfw + pradfw + htpmw_fw + porbitlossmw + palpfwmw
 
-       !  Total thermal power deposited in blanket coolant
+       !  Total power deposited in blanket coolant
        !  Nuclear energy multiplication is included in pnucblkt already
 
        pthermblkt = pnucblkt + htpmw_blkt
 
-       !  Total thermal power deposited in shield coolant
+       !  Total power deposited in shield coolant
 
        pthermshld = pnucshld + htpmw_shld
 
@@ -1051,7 +1053,8 @@ contains
 
     !  Number of primary heat exchangers
 
-    rnphx = max(2.0D0, (pthermmw/400.0D0 + 0.8D0) )
+    !rnphx = max(2.0D0, (pthermmw/400.0D0 + 0.8D0) )
+    nphx = ceiling(pthermmw/1000.0D0)
 
     !  Secondary heat (some of it... rest calculated in POWER2)
 
@@ -1102,7 +1105,6 @@ contains
     !+ad_desc  and plant power balance constituents, not already calculated in
     !+ad_desc  <A HREF="acpow.html">ACPOW</A> or <A HREF="power1.html">POWER1</A>.
     !+ad_prob  None
-    !+ad_call  blanket_panos
     !+ad_call  oblnkl
     !+ad_call  oheadr
     !+ad_call  osubhd
@@ -1134,6 +1136,8 @@ contains
     !+ad_hist  04/11/14 PJK Corrected pnucblkt emult factor
     !+ad_hist  17/11/14 PJK Added palpfwmw to first wall power balance
     !+ad_hist  18/11/14 PJK Corrected input power when ignite=1
+    !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx;
+    !+ad_hisc               deleted ctht, rnihx
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1151,7 +1155,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Centrepost coolant pump power
+    !  Centrepost coolant pump power (ST)
 
     ppumpmw = 1.0D-6 * ppump
 
@@ -1186,6 +1190,9 @@ contains
          + trithtmw + vachtmw
 
     !  Total secondary heat
+    !  (total low-grade heat rejected - does not contribute to
+    !  power conversion cycle)
+
     !+PJK slight concern over possible double-counting of hthermmw here...
 
     if (ipowerflow == 0) then
@@ -1201,14 +1208,6 @@ contains
             + psecdiv + psecshld + psechcd
 
     end if
-
-    !  Total plant heat removal
-
-    ctht = pthermmw + psechtmw
-
-    !  Number of intermediate heat exchangers
-
-    rnihx = max(2.0D0, (ctht/50.0D0 + 0.8D0) )
 
     !  Calculate powers relevant to a power-producing plant
 
@@ -1299,11 +1298,8 @@ contains
             helpow/1.0D6)
        call ovarre(outfile,'Heat removal from facilities (MW)', &
             '(fachtmw)',fachtmw)
-       call ovarrf(outfile,'Number of primary heat exchangers','(rnphx)', &
-            rnphx)
-       call ovarrf(outfile,'Number of intermediate heat exchangers', &
-            '(rnihx)',rnihx)
-       call ovarre(outfile,'Total plant heat rejection (MW)','(ctht)',ctht)
+       call ovarin(outfile,'Number of primary heat exchangers','(nphx)', &
+            nphx)
 
        if (ireactor /= 1) return
 
@@ -1382,28 +1378,28 @@ contains
             'Electrical efficiency of heat transport coolant pumps', &
             '(etahtp)',etahtp)
        call ovarin(outfile, &
-            'Switch for destination of divertor thermal power (1=primary)', &
+            'Switch for destination of divertor thermal power (1 = power conv. cycle)', &
             '(iprimdiv)',iprimdiv)  !'
        call ovarin(outfile, &
-            'Switch for destination of shield thermal power (1=primary)', &
+            'Switch for destination of shield thermal power (1 = power conv. cycle)', &
             '(iprimshld)',iprimshld)
 
        if (ireactor == 1) then
           if (blktcycle == 0) then
-             call osubhd(outfile,'Plant thermal efficiency model: '// &
-                  'turbine efficiency set according to blanket type')
+             call osubhd(outfile,'Power conversion cycle efficiency model: '// &
+                  'efficiency set according to blanket type')
           else if (blktcycle == 1) then
-             call osubhd(outfile,'Plant thermal efficiency model: '// &
-                  'user-defined turbine efficiency')
+             call osubhd(outfile,'Power conversion cycle efficiency model: '// &
+                  'user-defined efficiency')
           else if (blktcycle == 2) then
-             call osubhd(outfile,'Plant thermal efficiency model: '// &
-                  'superheated steam Rankine cycle')
+             call osubhd(outfile,'Power conversion cycle efficiency model: '// &
+                  'steam Rankine cycle')
           else
-             call osubhd(outfile,'Plant thermal efficiency model: '// &
+             call osubhd(outfile,'Power conversion cycle efficiency model: '// &
                   'supercritical CO2 cycle')
           end if
           call ovarrf(outfile, &
-               'Thermal to electric conversion efficiency of turbines', &
+               'Thermal to electric conversion efficiency of the power conversion cycle', &
                '(etath)',etath)
           call ovarre(outfile, &
                '(Input) Balance of plant recirculating power fraction', &
@@ -1577,14 +1573,10 @@ contains
        call ovarre(outfile, &
             'Total primary (high-grade) thermal power (MW)','(pthermmw)' &
             ,pthermmw)
-       call ovarre(outfile,'Total plant heat rejection (MW)','(ctht)',ctht)
-
 
        call oblnkl(outfile)
-       call ovarrf(outfile,'Number of primary heat exchangers','(rnphx)', &
-            rnphx)
-       call ovarrf(outfile,'Number of intermediate heat exchangers', &
-            '(rnihx)',rnihx)
+       call ovarin(outfile,'Number of primary heat exchangers','(nphx)', &
+            nphx)
 
        if (ihplant /= 0) then
           call oblnkl(outfile)
@@ -1772,6 +1764,7 @@ contains
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  23/10/14 PJK Initial version
+    !+ad_hist  10/12/14 PJK Added tturb ranges of validity
     !+ad_stat  Okay
     !+ad_docs  C. Harrington, K:\Power Plant Physics and Technology \ PROCESS \ blanket_model
     !+ad_docc  \ New Power Module Harrington \ Cycle correlations \ Cycle correlations.xls
@@ -1795,7 +1788,7 @@ contains
 
     select case (blktcycle)
 
-    case (0)
+    case default  !  i.e. blktcycle = 0
 
        if (blkttype == 1) then
 
@@ -1847,7 +1840,8 @@ contains
           !  is assumed to be 45 degrees below the primary coolant outlet 
           !  temperature, as is common for PWR steam generators.
 
-          !  Saturated steam Rankine cycle correlation, from C. Harrington
+          !  Saturated steam Rankine cycle correlation (C. Harrington)
+          !  Range of validity: 543 K < tturb < 583 K
 
           tturb = outlet_temp - 45.0D0
           etath = -2.265D0 + 0.932D0*log10(tturb + 49.999D0)
@@ -1864,7 +1858,8 @@ contains
           !  is assumed to be 20 degrees below the primary coolant outlet 
           !  temperature, as was stated as practical in EFDA_D_2LLNBX.
 
-          !  Superheated steam Rankine cycle correlation, from C. Harrington
+          !  Superheated steam Rankine cycle correlation (C. Harrington)
+          !  Range of validity: 656 K < tturb < 840 K
 
           tturb = outlet_temp - 20.0D0
           etath = -0.89D0 + 0.442D0*log10(tturb + 49.088D0)
@@ -1876,7 +1871,7 @@ contains
 
        end if
 
-    case default  !  Supercritical CO2 cycle to be used
+    case (3)  !  Supercritical CO2 cycle to be used
 
        !  The same temperature/efficiency correlation is used regardless of 
        !  primary coolant choice.  The turbine inlet temperature is assumed to 
@@ -1885,7 +1880,8 @@ contains
        !  so no differentiation is made, but for water the efficiency will be 
        !  very low and the correlation will reflect this.
 
-       !  Supercritical CO2 cycle correlation, from C. Harrington
+       !  Supercritical CO2 cycle correlation (C. Harrington)
+       !  Range of validity: 408 K < tturb < 1023 K
 
        tturb = outlet_temp - 20.0D0
        etath = -1.873D0 + 0.804D0*log10(tturb - 124.061D0)

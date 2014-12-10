@@ -124,7 +124,7 @@ module costs_module
        c22514,c22515,c2252,c22521,c22522,c22523,c22524,c22525,c22526, &
        c22527,c2253,c226,c2261,c2262,c2263,c227,c2271,c2272,c2273, &
        c2274,c228,c229,c23,c24,c241,c242,c243,c244,c245,c25,c26,ccont, &
-       chx,chxa,cindrt,cpp,cppa
+       chx,cindrt,cpp,cppa
 
 contains
 
@@ -392,7 +392,6 @@ contains
     call ocosts(outfile,'chx','Primary heat exchanger cost (M$)',chx)
     call ocosts(outfile,'2261','Total, reactor cooling system cost (M$)',c2261)
     call ocosts(outfile,'cppa','Pumps, piping cost (M$)',cppa)
-    call ocosts(outfile,'chxa','Heat exchanger cost (M$)',chxa)
     call ocosts(outfile,'2262','Total, auxiliary cooling system cost (M$)',c2262)
     call ocosts(outfile,'2263','Total, cryogenic system cost (M$)',c2263)
     call oblnkl(outfile)
@@ -2492,6 +2491,8 @@ contains
     !+ad_hist  03/06/14 PJK Changed facht to fachtmw
     !+ad_hist  17/06/14 PJK Changed priheat to pthermmw in chx calculation
     !+ad_hist  08/09/14 PJK Changed costr to coolwh
+    !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx;
+    !+ad_hisc               deleted references to intermediate heat exchangers
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2529,7 +2530,7 @@ contains
 
     !  Primary heat exchangers
 
-    chx = 1.0D-6 * ucphx * rnphx * (1.0D6*pthermmw/rnphx)**exphts
+    chx = 1.0D-6 * ucphx * nphx * (1.0D6*pthermmw/nphx)**exphts
     chx = fkind * chx * cmlsa(lsa)
 
     c2261 = chx + cpp
@@ -2551,13 +2552,7 @@ contains
          (1.0D6*hthermmw)**exphts + (1.0D6*helecmw)**exphts )
 
     cppa = fkind * cppa * cmlsa(lsa)
-
-    !  Intermediate heat exchangers
-
-    chxa = 1.0D-6 * ucihx * rnihx * (1.0D6*ctht/rnihx)**exphts
-    chxa = fkind * chxa * cmlsa(lsa)
-
-    c2262 = cppa + chxa
+    c2262 = cppa
 
     !  Account 226.3 : Cryogenic system
 

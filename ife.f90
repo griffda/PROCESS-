@@ -2011,6 +2011,7 @@ contains
     !+ad_hist  18/10/12 PJK Added fwbs_variables
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  17/04/13 PJK Changed priheat to pthermmw in rnphx calculation
+    !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, pp.67,89
     !+ad_docs  Bourque et al., Fusion Technology vol.21 (1992) 1465
@@ -2062,7 +2063,8 @@ contains
 
     !  Number of primary heat exchangers
 
-    rnphx = max(2.0D0, (pthermmw/400.0D0 + 0.8D0) )
+    !rnphx = max(2.0D0, (pthermmw/400.0D0 + 0.8D0) )
+    nphx = ceiling(pthermmw/1000.0D0)
 
     !  Secondary heat (some of it... rest calculated in IFEPW2)
 
@@ -2199,6 +2201,7 @@ contains
     !+ad_call  oblnkl
     !+ad_call  oheadr
     !+ad_call  osubhd
+    !+ad_call  ovarin
     !+ad_call  ovarre
     !+ad_call  ovarrf
     !+ad_hist  21/03/97 PJK Initial version
@@ -2213,6 +2216,8 @@ contains
     !+ad_hist  03/06/14 PJK precir renamed precircmw and made global;
     !+ad_hisc               changed psecht to psechtmw, facht to fachtmw
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx;
+    !+ad_hisc               deleted ctht, rnihx
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.67
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2237,14 +2242,6 @@ contains
 
     psechtmw = pinjht + pnucloss + fachtmw + vachtmw + trithtmw + &
          tdspmw + tfacmw + crypmw + htpmw
-
-    !  Total plant heat removal
-
-    ctht = pthermmw + psechtmw
-
-    !  Number of intermediate heat exchangers
-
-    rnihx = max(2.0D0, (ctht/50.0D0 + 0.8D0) )
 
     !  Calculate powers relevant to a power-producing plant
 
@@ -2305,11 +2302,8 @@ contains
          '(trithtmw)',trithtmw)
     call ovarre(outfile,'Heat removal from facilities (MW)','(fachtmw)' &
          ,fachtmw)
-    call ovarrf(outfile,'Number of primary heat exchangers','(rnphx)' &
-         ,rnphx)
-    call ovarrf(outfile,'Number of intermediate heat exchangers', &
-         '(rnihx)',rnihx)
-    call ovarre(outfile,'Total plant heat rejection (MW)','(ctht)',ctht)
+    call ovarin(outfile,'Number of primary heat exchangers','(nphx)' &
+         ,nphx)
 
     if (ireactor /= 1) return
 

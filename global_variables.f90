@@ -1000,6 +1000,7 @@ module fwbs_variables
   !+ad_hist  30/10/14 PJK Changed blkttype default from 1 to 3
   !+ad_hist  05/11/14 PJK Added praddiv etc.
   !+ad_hist  24/11/14 PJK Modified coolwh comments
+  !+ad_hist  10/12/14 PJK Modified blktcycle, blkttype descriptions
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1157,16 +1158,16 @@ module fwbs_variables
   !+ad_vars  <P><B>The following are used in the new thermodynamic blanket model
   !+ad_varc  (blktcycle > 0):</B><P>
 
-  !+ad_vars  blktcycle /0/ : Switch for blanket thermodynamic model (supersedes lblnkt):<UL>
-  !+ad_varc             <LI> = 0 simple model;
-  !+ad_varc             <LI> > 0 detailed thermo-hydraulic and balance-of-plant model;
+  !+ad_vars  blktcycle /0/ : Switch for thermodynamic model of power conversion (secondary) cycle:<UL>
+  !+ad_varc             <LI> = 0 simple model: a set efficiency for the chosen blanket design is used;
+  !+ad_varc             <LI> &gt; 0 detailed thermo-hydraulic and balance-of-plant model -
   !+ad_vars             <UL><LI> = 1 use input thermal-electric efficiency (etath);
-  !+ad_varc                 <LI> = 2 superheated steam Rankine cycle;
+  !+ad_varc                 <LI> = 2 steam Rankine cycle;
   !+ad_varc                 <LI> = 3 supercritical CO2 cycle</UL> </UL>
   integer :: blktcycle = 0
   !+ad_vars  coolp /15.5e6/ : first wall coolant pressure (Pa) (blktcycle>0)
   real(kind(1.0D0)) :: coolp = 15.5D6
-  !+ad_vars  coolwh : Coolant fluid type (set via blkttype):<UL>
+  !+ad_vars  coolwh : Primary coolant fluid type (set via blkttype):<UL>
   !+ad_varc         <LI> = 1 helium;
   !+ad_varc         <LI> = 2 pressurized water</UL>
   integer :: coolwh = 1
@@ -1193,11 +1194,10 @@ module fwbs_variables
   real(kind(1.0D0)) :: etaiso = 0.85D0
   !+ad_vars  fwerlim /0.005/ : erosion thickness allowance for first wall (m)
   real(kind(1.0D0)) :: fwerlim = 0.005D0
-  !+ad_vars  blkttype /3/ : Switch for blanket type, determining breeder materials
-  !+ad_varc                 for neutron deposition:<UL>
-  !+ad_varc            <LI> = 1 WCLL;
-  !+ad_varc            <LI> = 2 HCLL;
-  !+ad_varc            <LI> = 3 HCPB</UL>
+  !+ad_vars  blkttype /3/ : Switch for blanket type:<UL>
+  !+ad_varc            <LI> = 1 WCLL; efficiency taken from WP13-DAS08-T02, EFDA_D_2M97B7
+  !+ad_varc            <LI> = 2 HCLL; efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
+  !+ad_varc            <LI> = 3 HCPB; efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX</UL>
   integer :: blkttype = 3
 
   !+ad_vars  <P><B>The following are used only in the KIT HCPB blanket model
@@ -2161,6 +2161,9 @@ module heat_transport_variables
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_hist  22/10/14 PJK Removed psechole, etathdiv
   !+ad_hist  05/11/14 PJK Added htpmw_*
+  !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx;
+  !+ad_hisc               deleted ctht, rnihx;
+  !+ad_hisc               modified some descriptions
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2174,8 +2177,6 @@ module heat_transport_variables
   real(kind(1.0D0)) :: baseel = 5.0D6
   !+ad_vars  crypmw : cryogenic plant power (MW)
   real(kind(1.0D0)) :: crypmw = 0.0D0
-  !+ad_vars  ctht : total plant heat removal (primary + secondary) (MW)
-  real(kind(1.0D0)) :: ctht = 0.0D0
   !+ad_vars  etahhten /1.35/ : efficiency of H production for ihplant=2
   real(kind(1.0D0)) :: etahhten = 1.35D0
   !+ad_vars  etahhtex /1.12/ : efficiency of H production for ihplant=3
@@ -2184,7 +2185,7 @@ module heat_transport_variables
   real(kind(1.0D0)) :: etahlte = 0.75D0
   !+ad_vars  etahth /0.5/ : efficiency of H production for ihplant=4
   real(kind(1.0D0)) :: etahth = 0.5D0
-  !+ad_vars  etahtp /0.95/ : electrical efficiency of coolant pumps
+  !+ad_vars  etahtp /0.95/ : electrical efficiency of primary coolant pumps
   !+ad_varc                  (ipowerflow=1)
   real(kind(1.0D0)) :: etahtp = 0.95D0
   !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency; input if ipowerflow=0
@@ -2225,13 +2226,13 @@ module heat_transport_variables
   !+ad_vars  htpmw /10.0/ : heat transport system electrical pump power (MW)
   !+ad_varc                 (calculated if ipowerflow=1)
   real(kind(1.0D0)) :: htpmw = 10.0D0
-  !+ad_vars  htpmw_blkt : blanket pumping power (MW) (ipowerflow=1)
+  !+ad_vars  htpmw_blkt : blanket coolant isentropic pumping power (MW) (ipowerflow=1)
   real(kind(1.0D0)) :: htpmw_blkt = 0.0D0
-  !+ad_vars  htpmw_div : divertor pumping power (MW) (ipowerflow=1)
+  !+ad_vars  htpmw_div : divertor coolant isentropic pumping power (MW) (ipowerflow=1)
   real(kind(1.0D0)) :: htpmw_div = 0.0D0
-  !+ad_vars  htpmw_fw : first wall pumping power (MW) (ipowerflow=1)
+  !+ad_vars  htpmw_fw : first wall coolant isentropic pumping power (MW) (ipowerflow=1)
   real(kind(1.0D0)) :: htpmw_fw = 0.0D0
-  !+ad_vars  htpmw_shld : shield pumping power (MW) (ipowerflow=1)
+  !+ad_vars  htpmw_shld : shield and vacuum vessel coolant isentropic pumping power (MW) (ipowerflow=1)
   real(kind(1.0D0)) :: htpmw_shld = 0.0D0
   !+ad_vars  htpsecmw : waste power lost from heat transport system (MW)
   !+ad_varc             (ipowerflow=1)
@@ -2262,25 +2263,27 @@ module heat_transport_variables
   integer :: ipowerflow = 1
 
   !+ad_vars  iprimdiv /1/ : switch for divertor thermal power destiny:<UL>
-  !+ad_varc            <LI> = 0 contributes to secondary heat;
-  !+ad_varc            <LI> = 1 contributes to primary heat</UL>
+  !+ad_varc            <LI> = 0 does not contribute to energy generation cycle;
+  !+ad_varc            <LI> = 1 contributes to energy generation cycle</UL>
   !+ad_varc            (ipowerflow=1) (N.B. is forced to be 1 under certain circumstances)
   integer :: iprimdiv = 1
   !+ad_vars  iprimhtp /0/ : switch for heat transport pump power destiny:<UL>
-  !+ad_varc            <LI> = 0 contributes to secondary heat;
-  !+ad_varc            <LI> = 1 contributes to primary heat</UL>
+  !+ad_varc            <LI> = 0 does not contribute to energy generation cycle;
+  !+ad_varc            <LI> = 1 contributes to energy generation cycle</UL>
   !+ad_varc            (ipowerflow=0)
   integer :: iprimhtp = 0
   !+ad_vars  iprimnloss /0/ : switch for lost neutron power through holes destiny:<UL>
-  !+ad_varc              <LI> = 0 contributes to secondary heat;
-  !+ad_varc              <LI> = 1 contributes to primary heat</UL>
+  !+ad_varc              <LI> = 0 does not contribute to energy generation cycle;
+  !+ad_varc              <LI> = 1 contributes to energy generation cycle</UL>
   !+ad_varc              (ipowerflow=0)
   integer :: iprimnloss = 0
   !+ad_vars  iprimshld /1/ : switch for shield thermal power destiny:<UL>
-  !+ad_varc             <LI> = 0 contributes to secondary heat;
-  !+ad_varc             <LI> = 1 contributes to primary heat</UL>
+  !+ad_varc             <LI> = 0 does not contribute to energy generation cycle;
+  !+ad_varc             <LI> = 1 contributes to energy generation cycle</UL>
   !+ad_varc             (ipowerflow=1)
   integer :: iprimshld = 1
+  !+ad_vars  nphx : number of primary heat exchangers
+  integer :: nphx = 0
   !+ad_vars  pacpmw : total pulsed power system load (MW)
   real(kind(1.0D0)) :: pacpmw = 0.0D0
   !+ad_vars  peakmva : peak MVA requirement
@@ -2299,25 +2302,21 @@ module heat_transport_variables
   real(kind(1.0D0)) :: precircmw = 0.0D0
   !+ad_vars  priheat : total thermal power removed from fusion core (MW)
   real(kind(1.0D0)) :: priheat = 0.0D0
-  !+ad_vars  psecdiv : secondary (low-grade) heat lost in divertor (MW)
+  !+ad_vars  psecdiv : Low-grade heat lost in divertor (MW)
   !+ad_varc            (ipowerflow=1)
   real(kind(1.0D0)) :: psecdiv = 0.0D0
-  !+ad_vars  psechcd : secondary (low-grade) heat lost into HCD apparatus (MW)
+  !+ad_vars  psechcd : Low-grade heat lost into HCD apparatus (MW)
   !+ad_varc            (ipowerflow=1)
   real(kind(1.0D0)) :: psechcd = 0.0D0
-  !+ad_vars  psechtmw : secondary (low-grade) heat (MW)
+  !+ad_vars  psechtmw : Low-grade heat (MW)
   real(kind(1.0D0)) :: psechtmw = 0.0D0
-  !+ad_vars  psecshld : secondary (low-grade) heat lost in shield (MW)
+  !+ad_vars  psecshld : Low-grade heat deposited in shield (MW)
   !+ad_varc             (ipowerflow=1)
   real(kind(1.0D0)) :: psecshld = 0.0D0
-  !+ad_vars  pthermmw : primary (high-grade) heat (useful for electric production) (MW)
+  !+ad_vars  pthermmw : High-grade heat useful for electric production (MW)
   real(kind(1.0D0)) :: pthermmw = 0.0D0
   !+ad_vars  pwpm2 /150.0/ : base AC power requirement per unit floor area (W/m2)
   real(kind(1.0D0)) :: pwpm2 = 150.0D0
-  !+ad_vars  rnihx : number of intermediate heat exchangers
-  real(kind(1.0D0)) :: rnihx = 0.0D0
-  !+ad_vars  rnphx : number of primary heat exchangers
-  real(kind(1.0D0)) :: rnphx = 0.0D0
   !+ad_vars  tfacpd /0.0/ : total steady state TF coil AC power demand (MW)
   !+ad_varc                 (itfsup=0 only; calculated for itfsup=1)
   real(kind(1.0D0)) :: tfacpd = 0.0D0
@@ -2715,6 +2714,7 @@ module cost_variables
   !+ad_hist  15/08/13 PJK Changed cdrlife description
   !+ad_hist  03/12/13 PJK Changed ucfwps units from $/m2 to $
   !+ad_hist  19/11/14 PJK Modified iavail wording
+  !+ad_hist  10/12/14 PJK Removed ucihx
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2975,8 +2975,6 @@ module cost_variables
   real(kind(1.0D0)) :: uciac = 1.5D8
   !+ad_vars  ucich /3.0/ : ICH system cost ($/W)
   real(kind(1.0D0)) :: ucich = 3.0D0
-  !+ad_vars  ucihx /0.0/ : cost of intermediate heat exchangers ($/W**exphts)
-  real(kind(1.0D0)) :: ucihx = 0.0D0
   !+ad_vars  ucint /35.0/ FIX : superconductor intercoil structure cost ($/kg)
   real(kind(1.0D0)) :: ucint = 35.0D0
   !+ad_vars  uclh /3.3/ : lower hybrid system cost ($/W)

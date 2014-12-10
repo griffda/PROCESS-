@@ -329,6 +329,7 @@ contains
     !+ad_hist  13/11/14 PJK Modified IRADLOSS limit
     !+ad_hist  17/11/14 PJK Added OUTPUT_COSTS
     !+ad_hist  24/11/14 PJK Removed COOLWH (now set via blkttype)
+    !+ad_hist  10/12/14 PJK Removed UCIHX
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -2085,9 +2086,6 @@ contains
        case ('UCICH')
           call parse_real_variable('UCICH', ucich, 1.0D0, 10.0D0, &
                'Cost of ICH system ($/W)')
-       case ('UCIHX')
-          call parse_real_variable('UCIHX', ucihx, 0.0D0, 100.0D0, &
-               'Cost of intermed. ht exchangers ($/W)')
        case ('UCLH')
           call parse_real_variable('UCLH', uclh, 1.0D0, 10.0D0, &
                'LH system cost ($/W)')
