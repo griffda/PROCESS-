@@ -1869,6 +1869,8 @@ module tfcoil_variables
   !+ad_vars  tmargmin /2.5/ : minimum allowable temperature margin (CS and TF coils) (K)
   !+ad_varc                   (iteration variable 55)
   real(kind(1.0D0)) :: tmargmin = 2.5D0
+  !+ad_vars  temp_margin  : temperature margin (K)
+  real(kind(1.0D0)) :: temp_margin = 0.00D0
   !+ad_vars  tmargtf :  TF coil temperature margin (K)
   real(kind(1.0D0)) :: tmargtf = 0.0D0
   !+ad_vars  tmaxpro /150.0/ : maximum temp rise during a quench for protection (K)
@@ -2702,6 +2704,7 @@ module cost_variables
   !+ad_summ  costing algorithms
   !+ad_type  Module
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_auth  J Morris, CCFE, Culham Science Centre
   !+ad_cont  N/A
   !+ad_args  N/A
   !+ad_desc  This module contains global variables relating to the
@@ -2714,6 +2717,8 @@ module cost_variables
   !+ad_hist  15/08/13 PJK Changed cdrlife description
   !+ad_hist  03/12/13 PJK Changed ucfwps units from $/m2 to $
   !+ad_hist  19/11/14 PJK Modified iavail wording
+  !+ad_hist  25/11/14 JM  Added new availability model variables
+  !+ad_hist  02/12/14 PJK Changed abktflnc, adivflnc default values
   !+ad_hist  10/12/14 PJK Removed ucihx
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2724,11 +2729,11 @@ module cost_variables
 
   public
 
-  !+ad_vars  abktflnc /20.0/ : allowable first wall/blanket neutron
+  !+ad_vars  abktflnc /5.0/ : allowable first wall/blanket neutron
   !+ad_varc                    fluence (MW-yr/m2) (blktmodel=0)
-  real(kind(1.0D0)) :: abktflnc = 20.0D0
-  !+ad_vars  adivflnc /25.0/ : allowable divertor heat fluence (MW-yr/m2)
-  real(kind(1.0D0)) :: adivflnc = 25.0D0
+  real(kind(1.0D0)) :: abktflnc = 5.0D0
+  !+ad_vars  adivflnc /7.0/ : allowable divertor heat fluence (MW-yr/m2)
+  real(kind(1.0D0)) :: adivflnc = 7.0D0
   !+ad_vars  blkcst : blanket direct cost (M$)
   real(kind(1.0D0)) :: blkcst = 0.0D0
   !+ad_vars  c221 : total account 221 cost (M$) (first wall, blanket, shield,
@@ -2815,11 +2820,31 @@ module cost_variables
   real(kind(1.0D0)) :: fkind = 1.0D0
   !+ad_vars  fwallcst : first wall cost (M$)
   real(kind(1.0D0)) :: fwallcst = 0.0D0
-
   !+ad_vars  iavail /0/ : switch for plant availability model:<UL>
   !+ad_varc          <LI> = 0 use input value for cfactr;
-  !+ad_varc          <LI> = 1 calculate cfactr using Taylor and Ward 1999 model</UL>
+  !+ad_varc          <LI> = 1 calculate cfactr using Taylor and Ward 1999 model;
+  !+ad_varc          <LI> = 2 calculate cfactr using new (2014) model</UL>
   integer :: iavail= 0
+  !+ad_vars  avail_min /0.75/ : Minimum availability (constraint equation 60)
+  real(kind(1.0D0)) :: avail_min = 0.75D0
+  !+ad_vars  favail /1.0/ : F-value for minimum availability (constraint equation 60)
+  real(kind(1.0D0)) :: favail = 1.0D0  
+  !+ad_vars  num_rh_systems /4/ : Number of remote handling systems (1-10)
+  integer :: num_rh_systems = 4
+  !+ad_vars  conf_mag /0.99/ : Availability confidence level for magnet system
+  real(kind(1.0D0)) :: conf_mag = 0.99D0
+  !+ad_vars  div_cycle_lim /20000/ : Cycle limit of the divertor
+  integer :: div_cycle_lim = 20000
+  !+ad_vars  conf_div /1.1/ : Availability confidence level for divertor system
+  real(kind(1.0D0)) :: conf_div = 1.1D0
+  !+ad_vars  fwbs_cycle_lim /30000/ : Cycle limit of the blanket
+  integer :: fwbs_cycle_lim = 30000
+  !+ad_vars  conf_fwbs /1.1/ : Availability confidence level for blanket system
+  real(kind(1.0D0)) :: conf_fwbs = 1.1D0
+  !+ad_vars  redun_vac /75/ : Vacuum system pump redundancy level (%)
+  integer :: redun_vac = 75
+  !+ad_vars  t_operation : Operational time (yrs)
+  real(kind(1.0D0)) :: t_operation = 0.0D0
   !+ad_vars  tbktrepl /0.5/ : time taken to replace blanket (y)
   !+ad_varc                 (iavail=1)
   real(kind(1.0D0)) :: tbktrepl = 0.5D0

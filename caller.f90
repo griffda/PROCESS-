@@ -1,4 +1,3 @@
-!  $Id:: caller.f90 119 2012-11-06 12:12:13Z pknight                    $
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine caller(xc,nvars)
@@ -7,6 +6,7 @@ subroutine caller(xc,nvars)
   !+ad_summ  Routine to call the physics and engineering modules
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_auth  J Morris, CCFE, Culham Science Centre
   !+ad_cont  N/A
   !+ad_args  xc(ipnvars) : input real : Array of iteration variables
   !+ad_args  nvars : input integer : Number of active iteration variables
@@ -41,6 +41,7 @@ subroutine caller(xc,nvars)
   !+ad_call  vacuum_module
   !+ad_call  acpow
   !+ad_call  avail
+  !+ad_call  avail_new
   !+ad_call  bldgcall
   !+ad_call  cntrpst
   !+ad_call  convxc
@@ -109,6 +110,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  06/11/12 PJK Added availability_module
   !+ad_hist  06/11/12 PJK Added plasma_geometry_module
   !+ad_hist  19/06/14 PJK Removed obsolete calls to nbeam, ech, lwhymod
+  !+ad_hist  02/12/14 JM  Added new availability model in caller (avail_new)
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -140,6 +142,8 @@ subroutine caller(xc,nvars)
   use structure_module
   use tfcoil_module
   use vacuum_module
+
+  use cost_variables
 
   implicit none
 
@@ -226,7 +230,13 @@ subroutine caller(xc,nvars)
   call bldgcall(nout,0)
   call acpow(nout,0)
   call power2(nout,0)
-  call avail(nout,0)
+
+  if (iavail > 1) then
+     call avail_new(nout,0)
+  else
+     call avail(nout,0)
+  end if
+
   call costs(nout,0)
 
   !+**PJK  if (ifispact.eq.1) then

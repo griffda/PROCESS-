@@ -90,16 +90,16 @@ in \process\/ and the interpretation of its results, we give a short
 introduction into the mathematical background for solving these type of
 problems as well as the specific algorithm used.
 
-In section \ref{sec:GNPP}, we the general nonlinear programming problem is
-defined which is the mathematical description of our problem. This problem is
+In section \ref{sec:GNPP}, the general nonlinear programming problem is
+defined, which is the mathematical description of our problem. This problem is
 typically formulated using Lagrange multipliers (c.f. \ref{sec:Lagrange}) and
 is solved numerically most efficiently using sequential quadratic programming
 (c.f. \ref{sec:SQP}). The Fortran subroutine that is used to implement such an
 optimisation solver in \process\/ is called \vmcon\ (c.f. \ref{sec:vmcon}),
 which iterates between solving a local quadratic subproblem
 (c.f. \ref{sec:QSP}) and a one dimensional line search
-(c.f. \ref{sec:linesearch}). As the total method is using a quasi-Newtonian
-approach the Hessian matrix is approximated by a variant of the
+(c.f. \ref{sec:linesearch}). As the method uses a quasi-Newtonian approach the
+Hessian matrix is approximated by a variant of the
 Broyden-Fletcher-Goldfarb-Shanno update (\ref{sec:BFGS}). Section
 \ref{sec:symbols} summarises the symbol convention used in this chapter.
 
@@ -126,10 +126,12 @@ variables $\vec{x}$ with bounds $\vec{x} \in \Omega$. In this context, all
 $\vec{x}\in\Omega$ that fulfill the constraints $c_i(\vec{x})$ are called {\it
   feasible}. They describe the allowed space in which we are trying to
 optimise the objective function $f(\vec{x})$. Note that any maximisation
-problem can be written as a minimisation by using $f_{\mbox{\scriptsize{new}}}(\vec{x}) = - f(\vec{x})$
-and that any equality constraint $c(\vec{x}) = a$ can be rewritten as
-$c_{\mbox{\scriptsize{new}}}(\vec{x}) = c(\vec{x}) - a = 0$. Any inequality constraint can therefore be
-rearranged analogously to fit the form described in eq. \ref{eqn:NPP3}.
+problem can be written as a minimisation by using
+$f_{\mbox{\scriptsize{new}}}(\vec{x}) = - f(\vec{x})$ and that any equality
+constraint $c(\vec{x}) = a$ can be rewritten as
+$c_{\mbox{\scriptsize{new}}}(\vec{x}) = c(\vec{x}) - a = 0$. Any inequality
+constraint can therefore be rearranged analogously to fit the form described
+in eq. \ref{eqn:NPP3}.
 
 \section{The Lagrange Method}
 \label{sec:Lagrange}
@@ -159,14 +161,14 @@ will then be stationary, i.e. it does not locally increase or decrease along
 the constraint. As the gradient of a function is perpedicular to its contour
 lines of $f(x,y) =d$, this is equivalent to saying that the gradient of the
 objective function at that point is parallel to the gradient of the
-constraints
+constraints:
 \begin{equation}
 \label{eqn:lagrangeequality}
 \nabla f(x,y) = - \lambda \nabla c(x,y),
 \end{equation}
 where the factor $\lambda$ is necessary as only the direction, but not the
 magnitude nor the sign of the gradients need to be equal. This is also
-illustrated in Figure \ref{fig:LagrangeMultipliers}.
+illustrated in Figure~\ref{fig:LagrangeMultipliers}.
 
 When expanding the method to several equality and inequality constraints we
 can make use of the {\it Lagrange function}. For the nonlinear programming
@@ -357,9 +359,6 @@ dimensional feasible subspace \cite{Luenberger2008}.
   subproblem or restriction by artificial bounds & This is fairly
   self-explanatory. & If this is meaningful, widen the boundaries of the
   iteration variables.  \\
-  \hline
-  \colorbox{red!20}{ 7 } & Line search has been aborted & \Red{ADD SOME STUFF
-    HERE (CHECK WITH MDK)} &   \\
   \hline
 \end{tabular}
 \end{center}

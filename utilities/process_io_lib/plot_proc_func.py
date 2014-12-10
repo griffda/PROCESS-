@@ -17,6 +17,7 @@ import scipy as sp
 import numpy as np
 import process_io_lib.process_dicts as proc_dict
 
+
 RADIAL_BUILD = ["bore", "ohcth", "gapoh", "tfcth", "gapds",
                 "ddwi", "shldith", "blnkith", "fwith", "scrapli",
                 "rminori", "rminoro", "scraplo", "fwoth", "blnkoth",
@@ -510,13 +511,23 @@ def plot_tf_coils(axis, mfile_data, scan):
     in_x = np.concatenate([in_x, in_x[::-1]])
     in_y = np.concatenate([in_y, -in_y[::-1]])
 
-    in_width = cumulative_radial_build("gapsto", mfile_data, scan) - \
-        cumulative_radial_build("tfcth", mfile_data, scan)
-    out_width = in_width + mfile_data.data["tfcth"].get_scan(scan) + \
-        mfile_data.data["tfthko"].get_scan(scan)
+    #in_width = cumulative_radial_build("gapsto", mfile_data, scan) - \
+    #    cumulative_radial_build("tfcth", mfile_data, scan)
+    #out_width = in_width + mfile_data.data["tfcth"].get_scan(scan) + \
+    #    mfile_data.data["tfthko"].get_scan(scan)
+    #out_x = ((in_x - cumulative_radial_build("tfcth", mfile_data, scan)) *
+    #         (out_width/in_width))
 
-    out_x = ((in_x - cumulative_radial_build("tfcth", mfile_data, scan)) *
-             (out_width/in_width))
+    centre_in_x = (cumulative_radial_build("tfcth", mfile_data, scan) +  \
+         cumulative_radial_build("gapsto", mfile_data, scan))/2.0
+    centre_out_x = (cumulative_radial_build("gapoh", mfile_data, scan) +  \
+         cumulative_radial_build("tfthko", mfile_data, scan))/2.0
+    in_width = (cumulative_radial_build("gapsto", mfile_data, scan) -  \
+         cumulative_radial_build("tfcth", mfile_data, scan))
+    out_width = (cumulative_radial_build("tfthko", mfile_data, scan) -  \
+         cumulative_radial_build("gapoh", mfile_data, scan))
+
+    out_x = ((in_x - centre_in_x) * (out_width/in_width))+centre_out_x
     extern = (vert_build[7]/vert_build[6])
     if vert_build[-1]:
         extern = (vert_build[0] - vert_build[15])/(vert_build[1] -
@@ -728,15 +739,15 @@ def plot_physics_info(axis, mfile_data, scan):
             ("normalised total beta", r"$\beta_N$, total", "% m T MA$^{-1}$"),
             ("thermal poloidal beta", r"$\beta_P$, thermal", ""),
             ("betap", r"$\beta_P$, total", ""),
-            ("te", "$<t_e>$", "keV"),
-            ("dene", "$<n_e>$", "m$^{-3}$"),
-            (nong, "$<n_{\mathrm{e,vol}}>/n_G$", ""),
-            ("alphat", "$T_{e0}/<T_e>$", ""),
-            ("alphan", "$n_{e0}/<n_{\mathrm{e, vol}}>$", ""),
-            ("zeff", "$Z_{\mathrm{eff}}$", ""),
-            ("zeffso", "$Z_{\mathrm{eff, SoL}}$", ""),
-            (dnz, "$n_Z/<n_{\mathrm{e, vol}}>$", ""),
-            ("taueff", "$\tau_e$", "s"),
+            ("te", r"$< t_e >$", "keV"),
+            ("dene", r"$< n_e >$", "m$^{-3}$"),
+            (nong, r"$< n_{\mathrm{e,line}} >/n_G$", ""),
+            ("alphat", r"$T_{e0}/ < T_e >$", ""),
+            ("alphan", r"$n_{e0}/ < n_{\mathrm{e, vol}} >$", ""),
+            ("zeff", r"$Z_{\mathrm{eff}}$", ""),
+            ("zeffso", r"$Z_{\mathrm{eff, SoL}}$", ""),
+            (dnz, r"$n_Z/ < n_{\mathrm{e, vol}} >$", ""),
+            ("taueff", r"$\tau_e$", "s"),
             ("hfact", "H-factor", ""),
             ("tauelaw", "Scaling law", "")]
 
@@ -917,7 +928,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
             ("facoh", "Ohmic fraction", ""),
             ("gamnb", "NB gamma", "$10^{20}$ A W$^{-1}$ m$^{-2}$"),
             ("enbeam", "NB energy", "keV"),
-            ("powerht", "Confinement loss power", "MW"),
+            ("powerht", "Assumed heating power", "MW"),
             (pdivr, r"$\frac{P_{\mathrm{div}}}{R_{0}}$", "MW m$^{-1}$"),
             (pdivnr, r"$\frac{P_{\mathrm{div}}}{<n> R_{0}}$",
              r"$\times 10^{-20}$ MW m$^{2}$"),

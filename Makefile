@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 349
+#  GIT Revision 372
 #
 #  P J Knight
 #
@@ -46,6 +46,9 @@
 #
 #  Type 'make dicts' to recreate the dictionary file 'process_dicts.py'
 #    used by the Python utilities, and 'gui_dicts.py' used by the GUI.
+#
+#  Type 'make all' to compile the code, create all the documentation,
+#    and build the dictionaries.
 #
 ################# Start of Custom Section #####################
 
@@ -325,3 +328,4 @@ dicts: root.dir
 	@ echo 'Dictionaries have been updated'
 	@ echo ''
 
+all: process.exe doc dicts

@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '371    Release Date :: 2014-11-24'
+       '376    Release Date :: 2014-12-09'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1372,6 +1372,7 @@ subroutine output(outfile)
   !+ad_call  vaccum_module
   !+ad_call  acpow
   !+ad_call  avail
+  !+ad_call  avail_new
   !+ad_call  bldgcall
   !+ad_call  cntrpst
   !+ad_call  costs
@@ -1444,6 +1445,7 @@ subroutine output(outfile)
   use build_module
   use buildings_module
   use costs_module
+  use cost_variables
   use current_drive_module
   use divertor_module
   use error_handling
@@ -1496,7 +1498,11 @@ subroutine output(outfile)
   end if
 
   call costs(outfile,1)
-  call avail(outfile,1)
+  if (iavail > 1) then
+     call avail_new(outfile, 1)
+  else 
+     call avail(outfile,1)
+  end if
   call outplas(outfile)
   !call startup(outfile,1)  !  commented-out for speed reasons
   call igmarcal(outfile)
@@ -1865,3 +1871,8 @@ end subroutine output
 ! GIT (dev_charrington_bop): Ensured that blanket material fractions sum to 1.0;
 !          Coolant type coolwh now set via blkttype (assumed same coolant in all regions)
 ! GIT 371: Minor changes to User Guide
+! GIT 372: Updated plot_proc_func.py; added 'make all' option
+! GIT 373: Modified pinjmw description in output; changed abktflnc, adivflnc default values
+! GIT 374: Added new availability model
+! GIT 375: Updated instructions in User Guide regarding code changes and documentation
+! GIT 376: Merged latest changes from dev_availability; addition of git commands to User Guide

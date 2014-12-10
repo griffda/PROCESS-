@@ -1,4 +1,4 @@
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !  Uncomment #define line below to perform unit testing
 !  Compile using pre-processor, e.g. ifort -cpp input.f90
@@ -224,6 +224,7 @@ contains
     !+ad_summ  Routine that parses the contents of the input file
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_auth  F Warmer, IPP Greifswald
     !+ad_cont  N/A
     !+ad_args  in_file  : input integer : Fortran input unit identifier
@@ -329,6 +330,7 @@ contains
     !+ad_hist  13/11/14 PJK Modified IRADLOSS limit
     !+ad_hist  17/11/14 PJK Added OUTPUT_COSTS
     !+ad_hist  24/11/14 PJK Removed COOLWH (now set via blkttype)
+    !+ad_hist  25/11/14 JM  Added new availability model variables
     !+ad_hist  10/12/14 PJK Removed UCIHX
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
@@ -1933,9 +1935,6 @@ contains
        case ('FKIND')
           call parse_real_variable('FKIND', fkind, 0.5D0, 1.0D0, &
                'Multiplier for Nth of a kind costs')
-       case ('IAVAIL')
-          call parse_int_variable('IAVAIL', iavail, 0, 1, &
-               'Switch for plant availability model')
        case ('IFUELTYP')
           call parse_int_variable('IFUELTYP', ifueltyp, 0, 1, &
                'Switch for costing of 1st wall etc.')
@@ -1954,39 +1953,6 @@ contains
        case ('RATECDOL')
           call parse_real_variable('RATECDOL', ratecdol, 0.0D0, 0.5D0, &
                'Effective cost of money')
-       case ('TBKTREPL')
-          call parse_real_variable('TBKTREPL', tbktrepl, 0.01D0, 2.0D0, &
-               'Time needed to replace blanket (yr)')
-       case ('TCOMREPL')
-          call parse_real_variable('TCOMREPL', tcomrepl, 0.01D0, 2.0D0, &
-               'Time needed to replace blanket+divertor (yr)')
-       case ('TDIVREPL')
-          call parse_real_variable('TDIVREPL', tdivrepl, 0.01D0, 2.0D0, &
-               'Time needed to replace divertor (yr)')
-       case ('TLIFE')
-          call parse_real_variable('TLIFE', tlife, 1.0D0, 100.0D0, &
-               'Plant life (yr)')
-       case ('UUBOP')
-          call parse_real_variable('UUBOP', uubop, 0.005D0, 0.1D0, &
-               'Unplanned unavailability for BOP')
-       case ('UUCD')
-          call parse_real_variable('UUCD', uucd, 0.005D0, 0.1D0, &
-               'Unplanned unavailability for CD system')
-       case ('UUDIV')
-          call parse_real_variable('UUDIV', uudiv, 0.005D0, 0.1D0, &
-               'Unplanned unavailability for divertor')
-       case ('UUFUEL')
-          call parse_real_variable('UUFUEL', uufuel, 0.005D0, 0.1D0, &
-               'Unplanned unavailability for fuel system')
-       case ('UUFW')
-          call parse_real_variable('UUFW', uufw, 0.005D0, 0.1D0, &
-               'Unplanned unavailability for first wall')
-       case ('UUMAG')
-          call parse_real_variable('UUMAG', uumag, 0.005D0, 0.1D0, &
-               'Unplanned unavailability for magnets')
-       case ('UUVES')
-          call parse_real_variable('UUVES', uuves, 0.005D0, 0.1D0, &
-               'Unplanned unavailability for vessel')
 
           !  Unit cost settings
 
@@ -2161,6 +2127,73 @@ contains
        case ('UCWST')
           call parse_real_array('UCWST', ucwst, isub1, 4, &
                'cost of waste disposal (M$/yr)', icode)
+
+          !  Availability settings
+ 
+       case ('IAVAIL')
+          call parse_int_variable('IAVAIL', iavail, 0, 2, &
+               'Switch for plant availability model')
+       case ('AVAIL_MIN')
+          call parse_real_variable('AVAIL_MIN', avail_min, 0.0D0, 1.0D0, &
+               'Required minimum availability (constraint equation 61)')
+       case ('FAVAIL')
+          call parse_real_variable('FAVAIL', favail, 0.0D0, 1.0D0, &
+               'F-value for minimum availability (constraint equation 61)')
+       case ('NUM_RH_SYSTEMS')
+          call parse_int_variable('NUM_RH_SYSTEMS', num_rh_systems, 1, 10, &
+               'Number of remote handling systems (from 1-10)')
+       case ('CONF_MAG')
+          call parse_real_variable('CONF_MAG', conf_mag, 0.9D0, 1.0D0, &
+               'Availability confidence level for magnet system')
+       case ('DIV_CYCLE_LIM')
+          call parse_int_variable('DIV_CYCLE_LIM', div_cycle_lim, 5000, 50000, &
+               'Cycle limit of the divertor')
+       case ('CONF_DIV')
+          call parse_real_variable('CONF_DIV', conf_div, 1.0D0, 2.0D0, &
+               'Availability confidence level for divertor system')
+       case ('FWBS_CYCLE_LIM')
+          call parse_int_variable('FWBS_CYCLE_LIM', fwbs_cycle_lim, 10000, 100000, &
+               'Cycle limit of the fwbs')
+       case ('CONF_FWBS')
+          call parse_real_variable('CONF_FWBS', conf_fwbs, 1.0D0, 2.0D0, &
+               'Availability confidence level for fwbs system')
+       case ('REDUN_VAC')
+          call parse_int_variable('REDUN_VAC', redun_vac, 0, 100, &
+               'Vacuum system pump redundancy level (%)')
+       case ('TBKTREPL')
+          call parse_real_variable('TBKTREPL', tbktrepl, 0.01D0, 2.0D0, &
+               'Time needed to replace blanket (yr)')
+       case ('TCOMREPL')
+          call parse_real_variable('TCOMREPL', tcomrepl, 0.01D0, 2.0D0, &
+               'Time needed to replace blanket+divertor (yr)')
+       case ('TDIVREPL')
+          call parse_real_variable('TDIVREPL', tdivrepl, 0.01D0, 2.0D0, &
+               'Time needed to replace divertor (yr)')
+       case ('TLIFE')
+          call parse_real_variable('TLIFE', tlife, 1.0D0, 100.0D0, &
+               'Plant life (yr)')
+       case ('UUBOP')
+          call parse_real_variable('UUBOP', uubop, 0.005D0, 0.1D0, &
+               'Unplanned unavailability for BOP')
+       case ('UUCD')
+          call parse_real_variable('UUCD', uucd, 0.005D0, 0.1D0, &
+               'Unplanned unavailability for CD system')
+       case ('UUDIV')
+          call parse_real_variable('UUDIV', uudiv, 0.005D0, 0.1D0, &
+               'Unplanned unavailability for divertor')
+       case ('UUFUEL')
+          call parse_real_variable('UUFUEL', uufuel, 0.005D0, 0.1D0, &
+               'Unplanned unavailability for fuel system')
+       case ('UUFW')
+          call parse_real_variable('UUFW', uufw, 0.005D0, 0.1D0, &
+               'Unplanned unavailability for first wall')
+       case ('UUMAG')
+          call parse_real_variable('UUMAG', uumag, 0.005D0, 0.1D0, &
+               'Unplanned unavailability for magnets')
+       case ('UUVES')
+          call parse_real_variable('UUVES', uuves, 0.005D0, 0.1D0, &
+               'Unplanned unavailability for vessel')
+
 
           !  Sweep settings
 
