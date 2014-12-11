@@ -205,7 +205,7 @@ class MFile(object):
 
 
 def sort_value(val):
-    """Function to sort out value line in MFILE"""
+    """Function to sort out value line in MFILE."""
     if '"' in val:
         return str(val.strip('"'))
     else:
@@ -213,8 +213,7 @@ def sort_value(val):
 
 
 def sort_brackets(var):
-    """Function to sort bracket madness on variable name
-    """
+    """Function to sort bracket madness on variable name."""
     if var != "":
         tmp_name = var.lstrip("(").split(")")
         if len(tmp_name) > 2:
