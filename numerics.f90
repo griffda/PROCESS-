@@ -66,6 +66,10 @@ module numerics
   !+ad_hist  11/11/14 PJK New iteration variable 106; new constraint 60
   !+ad_hist  13/11/14 PJK lablxc(106) corrected
   !+ad_hist  25/11/14 PJK New iteration variable 107; new constraint 61
+  !+ad_hist  11/12/14 PJK Corrected lablcc(61) - all strings must be defined with
+  !+ad_hisc               the correct length as declared in the corresponding
+  !+ad_hisc               character(len=...) statement, otherwise
+  !+ad_hisc               compilation using gfortran fails
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -342,8 +346,8 @@ module numerics
        !+ad_varc  <LI> (60) Central solenoid temperature margin lower limit (SCTF)
        'CS temperature margin lower limit', &
        !+ad_varc  <LI> (61) Minimum availability value</UL>
-       'Minimum availability value'  &
-       /)
+       'Minimum availability value       '  &
+       /)  !  Please note: All strings between '...' above must be exactly 33 chars long
 
   !+ad_vars  ixc(ipnvars) /4,5,6,7,10,12,13,19,28,29,36,39,50,53,54,61/ :
   !+ad_varc               array defining which iteration variables to activate
