@@ -1,8 +1,8 @@
 {
- "version":  [ "PROCESS revision 371" ],
+ "version":  [ "PROCESS revision 378" ],
  "comment1": [ "List of error messages used via error_handling.f90" ],
  "comment2": [ "Increment n_errortypes if an error is added to this list" ],
- "n_errortypes": 165,
+ "n_errortypes": 172,
  "errors": [
   { "level": 3, "message": "CONSTRAINTS: Do not use constraint 7 if ignite=1" },
   { "level": 3, "message": "CONSTRAINTS: Constraint equation 15 is redundant" },
@@ -168,6 +168,13 @@
   { "level": 3, "message": "CHECK: Constraint no.3 is currently deprecated" },
   { "level": 3, "message": "CHECK: Constraint no.4 is currently deprecated" },
   { "level": 3, "message": "CHECK: Minimum cycle time constraint 42 not available" },
-  { "level": 3, "message": "CHECK: Blanket material fractions do not sum to 1.0" }
+  { "level": 3, "message": "CHECK: Blanket material fractions do not sum to 1.0" },
+  { "level": 2, "message": "PLANT_THERMAL_EFFICIENCY: Turbine temperature tturb out of range of validity" },
+  { "level": 2, "message": "PUMPPOWER: Pressure drop calculation uses invalid Reynolds number" },
+  { "level": 2, "message": "INITIALISE_REFPROP: Problem in call to setup(REFPROP)" },
+  { "level": 2, "message": "FLUID_PROPERTIES: Problem in call to tpflsh(REFPROP)" },
+  { "level": 2, "message": "FLUID_PROPERTIES: Problem in call to trnprp(REFPROP)" },
+  { "level": 2, "message": "ENTHALPY_PS: Problem in call to psflsh(REFPROP)" },
+  { "level": 2, "message": "TSAT_REFPROP: Problem in call to satp(REFPROP)" }
  ]
 }

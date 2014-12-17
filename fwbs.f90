@@ -1147,6 +1147,7 @@ module fwbs_module
   !+ad_call  physics_variables
   !+ad_call  plasma_geometry_module
   !+ad_call  process_output
+  !+ad_call  refprop_interface
   !+ad_call  rfp_variables
   !+ad_call  stellarator_variables
   !+ad_call  tfcoil_variables
@@ -1169,6 +1170,7 @@ module fwbs_module
   !+ad_hisc               into new routine
   !+ad_hist  05/11/14 PJK Split ST centrepost nuclear heating, and
   !+ad_hisc               volume calculations into new routines
+  !+ad_hist  17/12/14 PJK Added refprop_interface
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1189,6 +1191,7 @@ module fwbs_module
   use physics_variables
   use plasma_geometry_module
   use process_output
+  use refprop_interface
   use rfp_variables
   use stellarator_variables
   use tfcoil_variables
@@ -3175,10 +3178,14 @@ contains
     !+ad_desc  drop, with a correction for non-isentropic pump behaviour applied.
     !+ad_desc  Since helium is a compressible fluid the pumping power is be calculated
     !+ad_desc  using enthalpies before and after the pump.
-    !+ad_prob  The functions to find enthalpies should come from REFPROP
+    !+ad_prob  None
     !+ad_call  cprops
+    !+ad_call  enthalpy_ps
+    !+ad_call  fluid_properties
+    !+ad_call  report_error
     !+ad_call  smt
     !+ad_hist  04/09/14 PJK Initial version
+    !+ad_hist  17/12/14 PJK Added calls to REFPROP interface
     !+ad_stat  Okay
     !+ad_docs  WCLL DDD, WP12-DAS02-T03, J. Aubert et al, EFDA_D_2JNFUP
     !+ad_docs  A Textbook on Heat Transfer, S.P. Sukhatme, 2005
@@ -3197,12 +3204,12 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: cf,coolpin,deltap,dh,kelbwn,kelbwt,kf,kstrght,lambda, &
-         ppump,reyn,rhof,viscf,viscfs,xifn,xift,ximn,ximt
+    real(kind(1.0D0)) :: cf,coolpin,deltap,dh,h1,h2,kelbwn,kelbwt,kf,kstrght, &
+         lambda,ppump,reyn,rhof,s1,s2,viscf,viscfs,xifn,xift,ximn,ximt
 
     !  Global shared variables
 
-    !  Inputs: pi
+    !  Inputs: pi, irefprop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3222,12 +3229,9 @@ contains
     !  valid for 1.0e4 < Re < 1.0e7 (Sukhatme)
 
     if ((reyn < 1.0D4).or.(reyn > 1.0D7)) then
-       !+PJK Add proper error message
-       !  Print warning that pressure drop calculation is being performed 
-       !  outside the range of validity of friction factor correlation
-       write(*,*) 'Warning... pressure drop calculation is being performed'
-       write(*,*) 'outside the range of validity of the friction factor correlation.'
-       write(*,*) 'Reyn = ',reyn,mfp,dh,viscf
+       fdiags(1) = reyn ; fdiags(2) = mfp
+       fdiags(3) = dh ; fdiags(4) = viscf
+       call report_error(167)
     end if
     lambda = 1.0D0 / (1.8D0*log(reyn) - 1.64D0)**2
 
@@ -3263,66 +3267,40 @@ contains
 
     else  !  helium coolant
 
-       !+PJK Treating as for water for now; awaiting helpropps,helproppt routines
-       ppump = deltap*mf / (rhof*etaiso)
+       if (irefprop == 0) then
+          !  Treat as for water
+          ppump = deltap*mf / (rhof*etaiso)
 
-       !  Compressible fluid pumping power (MW)
+       else
+          !  Compressible fluid pumping power (MW)
 
-       !  Inlet pressure
+          !  Inlet pressure (Pa)
 
-       !coolpin = 1.0D-6*coolp + deltap
+          coolpin = coolp + 1.0D6*deltap
 
-       !  Obtain inlet enthalpy and entropy from inlet pressure and temperature
+          !  Obtain inlet enthalpy and entropy from inlet pressure and temperature
 
-       !call helproppt(coolpin,inlet_temp,h2,s2)
+          call fluid_properties(inlet_temp,coolpin,coolwh, &
+               enthalpy=h2, entropy=s2)
 
-       !  Assume isentropic pump so that s1 = s2
+          !  Assume isentropic pump so that s1 = s2
 
-       !s1 = s2
+          s1 = s2
 
-       !  Get enthalpy before pump using coolp and s1
+          !  Get enthalpy (J/kg) before pump using coolp and s1
 
-       !call helpropps(coolp,s1,h1)
+          call enthalpy_ps(coolp, s1, coolwh, h1)
 
-       !  Pumping power, dividing by 1000(?) to get MW
+          !  Pumping power (MW)
 
-       !ppump = 1.0D-3 * mf*(h2-h1) / etaiso
+          ppump = 1.0D-6 * mf * (h2-h1) / etaiso
+
+       end if
 
     end if
 
     pumppower = ppump
 
-  contains
-    !+PJK to do...
-    subroutine helproppt()
-      !- helproppt - function to find enthalpy and entropy of helium, given pressure
-      !              and temperature
-      ! This should be taken from REFPROP routines
-      !Inputs: p,t
-      !Outputs: h,s
-
-      !  Calculate enthalpy from pressure and temperature (kJ/kg)
-
-      !h = f(p,t)
-
-      !  Calculate entropy from pressure and temperature (kJ/kg/K)
-
-      !s = f(p,t)
-
-    end subroutine helproppt
-
-    subroutine helpropps()
-      !- helpropps - function to find enthalpy of helium, given pressure and entropy
-      ! This should be taken from REFPROP routines
-      !Inputs: p,s
-      !Outputs: h
-
-      !  Calculate enthalpy from pressure and entropy (kJ/kg)
-
-      !h = f(p,s)
-
-    end subroutine helpropps
-    !-PJK
   end function pumppower
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3355,10 +3333,12 @@ contains
     !+ad_desc  The latter is found by averaging the difference between the material
     !+ad desc  temperature and the inlet temperature and the difference between the
     !+ad_desc  material temperature and the outlet temperature.
-    !+ad_prob  Fluid properties should be taken from REFPROP (those currently given
-    !+ad_prob  here are taken from Panos Karditsas's original subroutine 'props')
-    !+ad_call  None
+    !+ad_desc  <P>The fluid properties are obtained from REFPROP, or using formulae
+    !+ad_desc  from Panos Karditsas's original subroutine 'props'.
+    !+ad_prob  None
+    !+ad_call  fluid_properties
     !+ad_hist  04/09/14 PJK Initial version
+    !+ad_hist  17/12/14 PJK Added calls to REFPROP interface
     !+ad_stat  Okay
     !+ad_docs  Blanket and Energy Conversion Model for Fusion Reactors,
     !+ad_docc  Dr. P.J. Karditsas, AEA Technology, Theoretical and Strategic Studies
@@ -3377,6 +3357,10 @@ contains
 
     real(kind(1.0D0)) :: x,y,gascf,kfs,cfs,pran,prans,tbc
 
+    !  Global shared variables
+
+    !  Inputs: coolwh, irefprop
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  x: average coolant temperature (K)
@@ -3385,65 +3369,69 @@ contains
     x = 0.5D0*(tfo + tfi)
     y = x + 0.5D0*( (tb-tfo) + (tb-tfi) )
 
-    if (coolwh == 1) then  !  Helium coolant
+    if (irefprop == 0) then  !  Use Panos's correlations
 
-       !  Helium properties, to come from REFPROP routines
-       !  Panos's correlations currently provided as placeholders
+       if (coolwh == 1) then  !  Helium coolant
 
-       !  Specific heat capacity of gaseous coolant (J/kg/K)
+          !  Specific heat capacity of gaseous coolant (J/kg/K)
 
-       gascf = 8314.3D0/4.0026D0
+          gascf = 8314.3D0/4.0026D0
 
-       !  Density (kg/m3)
+          !  Density (kg/m3)
 
-       rhof = pf / (gascf*x)
+          rhof = pf / (gascf*x)
 
-       !  Thermal conductivity (W/m/K)
-       !  N.B. REFPROP gives kf in milliWatts/m/K
+          !  Thermal conductivity (W/m/K)
 
-       kf = 0.033378D0 + 4.2674D-04*x - 1.0807D-07*x*x
+          kf = 0.033378D0 + 4.2674D-04*x - 1.0807D-07*x*x
 
-       !  Dynamic viscosity of the fluid at the bulk temperature (Pa-s)
-       !  N.B. REFPROP gives viscosity in uPa-s
+          !  Dynamic viscosity of the fluid at the bulk temperature (Pa-s)
 
-       viscf  = 4.7744D-07*x**0.6567D0
+          viscf  = 4.7744D-07*x**0.6567D0
 
-       !  Dynamic viscosity of the fluid at the wall temperature (Pa-s)
+          !  Dynamic viscosity of the fluid at the wall temperature (Pa-s)
 
-       viscfs = 4.7744D-07*y**0.6567D0
+          viscfs = 4.7744D-07*y**0.6567D0
 
-       !  Specific heat capacity at constant pressure (J/kg/K)
+          !  Specific heat capacity at constant pressure (J/kg/K)
 
-       cf = 5193.0D0
+          cf = 5193.0D0
 
-    else  !  Pressurized water coolant
+       else  !  Pressurized water coolant
 
-       !  Water properties, to come from REFPROP routines
-       !  Panos's correlations currently provided as placeholders
+          !  Thermal conductivity (W/m/K)
 
-       !  Thermal conductivity (W/m/K)
+          kf  = 8.9372D0 - 0.048702D0*x + 9.6994D-05*x*x - 6.5541D-08*x*x*x
+          kfs = 8.9372D0 - 0.048702D0*y + 9.6994D-05*y*y - 6.5541D-08*y*y*y
 
-       kf  = 8.9372D0 - 0.048702D0*x + 9.6994D-05*x*x - 6.5541D-08*x*x*x
-       kfs = 8.9372D0 - 0.048702D0*y + 9.6994D-05*y*y - 6.5541D-08*y*y*y
+          !  Specific heat capacity at constant pressure (J/kg/K)
 
-       !  Specific heat capacity at constant pressure (J/kg/K)
+          cf  = -371240.0D0 + 2188.7D0*x - 4.2565D0*x*x + 0.0027658D0*x*x*x
+          cfs = -371240.0D0 + 2188.7D0*y - 4.2565D0*y*y + 0.0027658D0*y*y*y
 
-       cf  = -371240.0D0 + 2188.7D0*x - 4.2565D0*x*x + 0.0027658D0*x*x*x
-       cfs = -371240.0D0 + 2188.7D0*y - 4.2565D0*y*y + 0.0027658D0*y*y*y
+          !  Prandtl number
 
-       !  Prandtl number
+          pran  = -68.469D0 + 0.41786D0*x - 8.3547D-04*x*x + 5.5443D-07*x*x*x
+          prans = -68.469D0 + 0.41786D0*y - 8.3547D-04*y*y + 5.5443D-07*y*y*y
 
-       pran  = -68.469D0 + 0.41786D0*x - 8.3547D-04*x*x + 5.5443D-07*x*x*x
-       prans = -68.469D0 + 0.41786D0*y - 8.3547D-04*y*y + 5.5443D-07*y*y*y
+          !  Density (kg/m3)
 
-       !  Density (kg/m3)
+          rhof = 15307.0D0 - 81.04D0*x + 0.15318D0*x*x - 9.8061D-05*x*x*x
 
-       rhof = 15307.0D0 - 81.04D0*x + 0.15318D0*x*x - 9.8061D-05*x*x*x
+          !  Dynamic viscosity (Pa-s)
 
-       !  Dynamic viscosity (Pa-s)
+          viscf = kf*pran/cf
+          viscfs = kfs*prans/cfs
 
-       viscf = kf*pran/cf
-       viscfs = kfs*prans/cfs
+       end if
+
+    else  !  use REFPROP interface routine
+
+       call fluid_properties(x,pf,coolwh, &
+            density=rhof, thermal_conductivity=kf, viscosity=viscf, &
+            specific_heat_const_p=cf)
+
+       call fluid_properties(y,pf,coolwh, viscosity=viscfs)
 
     end if
 
@@ -3649,19 +3637,21 @@ contains
 
   function tsat(p)
 
-    !+ad_name  satliq
+    !+ad_name  tsat
     !+ad_summ  Saturation temperature of water as a function of pressure
     !+ad_type  Function returning real
-    !+ad_auth  P Karditsas, CCFE, Culham Science Centre
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  P Karditsas, CCFE, Culham Science Centre
     !+ad_cont  None
     !+ad_args  p  : input real : saturated liquid/steam pressure (MPa)
     !+ad_desc  This routine calculates the saturation temperature (K) of
-    !+ad_desc  water given the pressure. Currently, the method is taken
-    !+ad_desc  from Panos's satliq routine.
-    !+ad_prob  This should be updated with the REFPROP calculation.
-    !+ad_call  None
+    !+ad_desc  water given the pressure. The calculation is performed
+    !+ad_desc  either by calling a REFPROP routine, or by using an
+    !+ad_desc  algorithm taken from Panos's satliq routine.
+    !+ad_prob  None
+    !+ad_call  tsat_refprop
     !+ad_hist  04/09/14 PJK Initial version
+    !+ad_hist  17/12/14 PJK Added call to REFPROP interface
     !+ad_stat  Okay
     !+ad_docs  Blanket and Energy Conversion Model for Fusion Reactors,
     !+ad_docc  Dr. P.J. Karditsas, AEA Technology, Theoretical and Strategic Studies
@@ -3681,20 +3671,32 @@ contains
 
     real(kind(1.0D0)) :: ta1,ta2,ta3,ta4,ta5,ta6,ta7
 
+    !  Global shared variables
+
+    !  Inputs: coolwh, irefprop
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Saturated liquid properties
+    if (irefprop == 1) then
 
-    ta1 = 168.396D0
-    ta2 =   0.314653D0
-    ta3 =  -0.000728D0
-    ta4 =  31.588979D0
-    ta5 =  11.473141D0
-    ta6 =  -0.575335D0
-    ta7 =   0.013165D0
+       tsat = tsat_refprop(p*1.0D6, coolwh)
 
-    tsat = 273.15D0 + ta1 + ta2/p + ta3/p**2 + ta4*log(p) &
-         + ta5*p + ta6*p*p + ta7*p*p*p
+    else
+
+       !  Method taken from Panos Karditsas's satliq routine
+
+       ta1 = 168.396D0
+       ta2 =   0.314653D0
+       ta3 =  -0.000728D0
+       ta4 =  31.588979D0
+       ta5 =  11.473141D0
+       ta6 =  -0.575335D0
+       ta7 =   0.013165D0
+
+       tsat = 273.15D0 + ta1 + ta2/p + ta3/p**2 + ta4*log(p) &
+            + ta5*p + ta6*p*p + ta7*p*p*p
+
+    end if
 
   end function tsat
 

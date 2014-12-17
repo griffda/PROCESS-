@@ -1001,6 +1001,7 @@ module fwbs_variables
   !+ad_hist  05/11/14 PJK Added praddiv etc.
   !+ad_hist  24/11/14 PJK Modified coolwh comments
   !+ad_hist  10/12/14 PJK Modified blktcycle, blkttype descriptions
+  !+ad_hist  17/12/14 PJK Added irefprop
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1177,6 +1178,10 @@ module fwbs_variables
   real(kind(1.0D0)) :: afwo = 0.008D0
   !+ad_vars  inlet_temp /558.0/ : inlet temperature of coolant for blanket and first wall (K) (blktcycle>0)
   real(kind(1.0D0)) :: inlet_temp = 558.0D0
+  !+ad_vars  irefprop /1/ : Switch to use NIST REFPROP routines to obtain fluid properties:<UL>
+  !+ad_varc            <LI> = 0 Use Panos Karditsas algorithms;
+  !+ad_varc            <LI> = 1 Use REFPROP routines</UL>
+  integer :: irefprop = 1
   !+ad_vars  outlet_temp /598.0/ : outlet temperature of coolant for blanket and first wall (K) (blktcycle>0);
   !+ad_varc                        input if coolwh=1 (helium), calculated if coolwh=2 (water)
   real(kind(1.0D0)) :: outlet_temp = 598.0D0
@@ -2166,6 +2171,7 @@ module heat_transport_variables
   !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx;
   !+ad_hisc               deleted ctht, rnihx;
   !+ad_hisc               modified some descriptions
+  !+ad_hist  17/12/14 PJK Modified htpmw_* descriptions
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2228,13 +2234,13 @@ module heat_transport_variables
   !+ad_vars  htpmw /10.0/ : heat transport system electrical pump power (MW)
   !+ad_varc                 (calculated if ipowerflow=1)
   real(kind(1.0D0)) :: htpmw = 10.0D0
-  !+ad_vars  htpmw_blkt : blanket coolant isentropic pumping power (MW) (ipowerflow=1)
+  !+ad_vars  htpmw_blkt : blanket coolant mechanical pumping power (MW) (ipowerflow=1)
   real(kind(1.0D0)) :: htpmw_blkt = 0.0D0
-  !+ad_vars  htpmw_div : divertor coolant isentropic pumping power (MW) (ipowerflow=1)
+  !+ad_vars  htpmw_div : divertor coolant mechanical pumping power (MW) (ipowerflow=1)
   real(kind(1.0D0)) :: htpmw_div = 0.0D0
-  !+ad_vars  htpmw_fw : first wall coolant isentropic pumping power (MW) (ipowerflow=1)
+  !+ad_vars  htpmw_fw : first wall coolant mechanical pumping power (MW) (ipowerflow=1)
   real(kind(1.0D0)) :: htpmw_fw = 0.0D0
-  !+ad_vars  htpmw_shld : shield and vacuum vessel coolant isentropic pumping power (MW) (ipowerflow=1)
+  !+ad_vars  htpmw_shld : shield and vacuum vessel coolant mechanical pumping power (MW) (ipowerflow=1)
   real(kind(1.0D0)) :: htpmw_shld = 0.0D0
   !+ad_vars  htpsecmw : waste power lost from heat transport system (MW)
   !+ad_varc             (ipowerflow=1)
@@ -2326,6 +2332,8 @@ module heat_transport_variables
   real(kind(1.0D0)) :: tlvpmw = 0.0D0
   !+ad_vars  trithtmw /15.0/ : power required for tritium processing (MW)
   real(kind(1.0D0)) :: trithtmw = 15.0D0
+  !+ad_vars  tturb : coolant temperature at turbine inlet (K) (blktcycle = 2,3)
+  real(kind(1.0D0)) :: tturb = 0.0D0
   !+ad_vars  vachtmw /0.5/ : vacuum pump power (MW)
   real(kind(1.0D0)) :: vachtmw = 0.5D0
 

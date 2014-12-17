@@ -332,6 +332,7 @@ contains
     !+ad_hist  24/11/14 PJK Removed COOLWH (now set via blkttype)
     !+ad_hist  25/11/14 JM  Added new availability model variables
     !+ad_hist  10/12/14 PJK Removed UCIHX
+    !+ad_hist  17/12/14 PJK Added IREFPROP
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1596,6 +1597,9 @@ contains
        case ('INLET_TEMP')
           call parse_real_variable('INLET_TEMP', inlet_temp, 500.0D0, 600.0D0, &
                'Coolant inlet temperature (K)')
+       case ('IREFPROP')
+          call parse_int_variable('IREFPROP', irefprop, 0, 1, &
+               'Switch to use REFPROP routines')
        case ('OUTLET_TEMP')
           call parse_real_variable('OUTLET_TEMP', outlet_temp, 550.0D0, 700.0D0, &
                'Coolant outlet temperature (K)')

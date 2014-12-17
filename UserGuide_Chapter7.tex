@@ -254,14 +254,14 @@ branch in which you are working.
   \texttt{develop} and \texttt{dev\_mynewmodel} branches.
 
   If any files are affected, edit them and look for any lines containing
-  \texttt{========}. Such lines separate the changes made in the two branches,
+  \texttt{=======}. Such lines separate the changes made in the two branches,
   as in:
 \begin{verbatim}
-<<<<<<<<<<<<<
+<<<<<<< HEAD
 This line was edited in dev_mynewmodel branch
-=============
+=======
 This line was edited in develop branch
->>>>>>>>>>>>>
+>>>>>>> develop
 \end{verbatim}
   Resolve the conflict(s) as necessary. Then type \texttt{git add file1 file2 ...}, where
   \texttt{file1} etc.\ are the names of the files you removed conflicts

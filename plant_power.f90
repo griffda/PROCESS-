@@ -22,6 +22,7 @@ module power_module
   !+ad_call  constants
   !+ad_call  cost_variables
   !+ad_call  current_drive_variables
+  !+ad_call  error_handling
   !+ad_call  fwbs_module
   !+ad_call  fwbs_variables
   !+ad_call  heat_transport_variables
@@ -37,6 +38,7 @@ module power_module
   !+ad_hist  30/10/12 PJK Added buildings_variables
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  31/10/12 PJK Added cost_variables
+  !+ad_hist  17/12/14 PJK Added error_handling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -47,6 +49,7 @@ module power_module
   use constants
   use cost_variables
   use current_drive_variables
+  use error_handling
   use fwbs_module
   use fwbs_variables
   use heat_transport_variables
@@ -1138,6 +1141,7 @@ contains
     !+ad_hist  18/11/14 PJK Corrected input power when ignite=1
     !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx;
     !+ad_hisc               deleted ctht, rnihx
+    !+ad_hist  17/12/14 PJK Added tturb to output
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1397,6 +1401,10 @@ contains
           else
              call osubhd(outfile,'Power conversion cycle efficiency model: '// &
                   'supercritical CO2 cycle')
+          end if
+          if (blktcycle > 1) then
+             call ovarrf(outfile, &
+               'Coolant temperature at turbine inlet (K)','(tturb)',tturb)
           end if
           call ovarrf(outfile, &
                'Thermal to electric conversion efficiency of the power conversion cycle', &
@@ -1762,9 +1770,10 @@ contains
     !+ad_desc  and breeder zone is used to calculate an efficiency, using a simple relationship
     !+ad_desc  between etath and outlet_temp again obtained from previous studies.
     !+ad_prob  None
-    !+ad_call  None
+    !+ad_call  report_error
     !+ad_hist  23/10/14 PJK Initial version
     !+ad_hist  10/12/14 PJK Added tturb ranges of validity
+    !+ad_hist  17/12/14 PJK Added warning messages if tturb out of range
     !+ad_stat  Okay
     !+ad_docs  C. Harrington, K:\Power Plant Physics and Technology \ PROCESS \ blanket_model
     !+ad_docc  \ New Power Module Harrington \ Cycle correlations \ Cycle correlations.xls
@@ -1781,8 +1790,6 @@ contains
     real(kind(1.0D0)), intent(inout) :: etath
 
     !  Local variables
-
-    real(kind(1.0D0)) :: tturb
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1844,6 +1851,10 @@ contains
           !  Range of validity: 543 K < tturb < 583 K
 
           tturb = outlet_temp - 45.0D0
+          if ((tturb < 543.0D0).or.(tturb > 583.0D0)) then
+             idiags(1) = 1 ; fdiags(1) = tturb
+             call report_error(166)
+          end if
           etath = -2.265D0 + 0.932D0*log10(tturb + 49.999D0)
 
           ! These efficiencies assumed the divertor heat is used in the 
@@ -1862,6 +1873,10 @@ contains
           !  Range of validity: 656 K < tturb < 840 K
 
           tturb = outlet_temp - 20.0D0
+          if ((tturb < 656.0D0).or.(tturb > 840.0D0)) then
+             idiags(1) = 2 ; fdiags(1) = tturb
+             call report_error(166)
+          end if
           etath = -0.89D0 + 0.442D0*log10(tturb + 49.088D0)
 
           !  These efficiencies assumed the divertor heat is used in the 
@@ -1884,6 +1899,10 @@ contains
        !  Range of validity: 408 K < tturb < 1023 K
 
        tturb = outlet_temp - 20.0D0
+       if ((tturb < 408.0D0).or.(tturb > 1023.0D0)) then
+          idiags(1) = 3 ; fdiags(1) = tturb
+          call report_error(166)
+       end if
        etath = -1.873D0 + 0.804D0*log10(tturb - 124.061D0)
 
        !  These efficiencies assumed the divertor heat is used in the 

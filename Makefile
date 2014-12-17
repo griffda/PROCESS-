@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 372
+#  GIT Revision 378
 #
 #  P J Knight
 #
@@ -56,6 +56,8 @@ source = \
  availability.f90 \
  buildings.f90 \
  caller.f90 \
+ commons.for \
+ comtrn.for \
  constraint_equations.f90 \
  costs.f90 \
  current_drive.f90 \
@@ -82,6 +84,8 @@ source = \
  plasma_profiles.f90 \
  process.f90 \
  pulse.f90 \
+ refprop.f \
+ refprop_interface.f90 \
  rfp.f90 \
  safety.f90 \
  scan.f90 \
@@ -122,6 +126,8 @@ object = \
  plasma_profiles.o \
  process.o \
  pulse.o \
+ refprop.o \
+ refprop_interface.o \
  rfp.o \
  safety.o \
  scan.o \
@@ -211,7 +217,7 @@ error_handling.o: output.o fson_library.o root.dir
 evaluators.o: error_handling.o global_variables.o numerics.o output.o
 fispact.o: global_variables.o
 fson_library.o: 
-fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o
+fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o refprop_interface.o
 global_variables.o:
 ife.o: availability.o costs.o error_handling.o global_variables.o output.o
 impurity_radiation.o: error_handling.o global_variables.o root.dir
@@ -225,7 +231,7 @@ output.o:
 pfcoil.o: error_handling.o global_variables.o maths_library.o output.o sctfcoil.o
 physics.o: current_drive.o error_handling.o global_variables.o impurity_radiation.o \
   maths_library.o numerics.o output.o plasma_profiles.o
-plant_power.o: fwbs.o global_variables.o output.o
+plant_power.o: error_handling.o fwbs.o global_variables.o output.o
 plasma_geometry.o: global_variables.o
 plasma_profiles.o: error_handling.o global_variables.o maths_library.o
 process.o: availability.o buildings.o constraint_equations.o costs.o current_drive.o \
@@ -234,6 +240,8 @@ process.o: availability.o buildings.o constraint_equations.o costs.o current_dri
   plant_power.o pulse.o rfp.o scan.o sctfcoil.o startup.o stellarator.o structure.o \
   tfcoil.o vacuum.o
 pulse.o: error_handling.o global_variables.o maths_library.o output.o physics.o
+refprop.o:
+refprop_interface.o: error_handling.o refprop.o
 rfp.o: current_drive.o input.o global_variables.o machine_build.o output.o pfcoil.o \
   plasma_profiles.o physics.o
 safety.o: global_variables.o output.o
@@ -276,7 +284,7 @@ cleandoc:
 otherfiles = Makefile setrootdir vardes.html \
              *.tex *.eps process.pdf \
              autodoc.f90 adheader.src adfooter.src \
-             impuritydata/* \
+             impuritydata/* fluids/* \
              utilities/*.py utilities/*.conf utilities/*.json \
              utilities/process_io_lib/*.py utilities/process_io_lib/*.json \
              utilities/processgui/*
