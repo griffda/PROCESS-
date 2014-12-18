@@ -197,6 +197,21 @@ def process_warnings(wdir='.'):
 
     return False
 
+############################################
+
+
+def mfile_exists():
+
+    """checks whether MFILE.DAT exists"""
+
+    try:
+        m_file = open('MFILE.DAT', 'r')
+        m_file.close()
+        return True
+    
+    except FileNotFoundError:
+        return False
+
 
 ############################################
 
