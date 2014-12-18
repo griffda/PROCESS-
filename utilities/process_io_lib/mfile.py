@@ -27,7 +27,7 @@ import operator
 import logging
 LOG = logging.getLogger("mfile")
 
-import process_dicts
+import process_io_lib.process_dicts
 
 class MFileVariable(dict):
     """Class for containing a single mfile variable """
