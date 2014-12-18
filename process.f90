@@ -1876,4 +1876,5 @@ end subroutine output
 ! GIT 374: Added new availability model
 ! GIT 375: Updated instructions in User Guide regarding code changes and documentation
 ! GIT 376: Merged latest changes from dev_availability; addition of git commands to User Guide
+! GIT 377: Minor correction to numerics.f90 for gfortran compilation
 ! GIT 378 (dev_charrington_bop): Incorporated REFPROP calls into code for coolant fluid properties
