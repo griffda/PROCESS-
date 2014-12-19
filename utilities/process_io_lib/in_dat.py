@@ -10,16 +10,16 @@
 """
 
 # Dictionary for variable types
-from process_dicts import DICT_VAR_TYPE
+from process_io_lib.process_dicts import DICT_VAR_TYPE
 
 # Dictionary for ixc -> name
-from process_dicts import DICT_IXC_SIMPLE
+from process_io_lib.process_dicts import DICT_IXC_SIMPLE
 
 # Dictionary for variable modules
-from process_dicts import DICT_MODULE
+from process_io_lib.process_dicts import DICT_MODULE
 
 # Dictionary for parameter descriptions
-from process_dicts import DICT_DESCRIPTIONS
+from process_io_lib.process_dicts import DICT_DESCRIPTIONS
 
 
 def fortran_python_scientific(var_value):
@@ -808,6 +808,8 @@ class InDat(object):
         with open(self.filename) as indat:
             self.in_dat_lines = indat.readlines()
 
+        indat.close()
+
         # Remove empty lines from the file
         self.in_dat_lines = remove_empty_lines(self.in_dat_lines)
 
@@ -824,6 +826,7 @@ class InDat(object):
 
                 # for non-title lines process line and store data.
                 process_line(self.data, line_type, l_line)
+
 
     def add_iteration_variable(self, variable_number):
         """ Function to add iteration variable to IN.DAT data dictionary
