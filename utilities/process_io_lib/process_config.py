@@ -16,7 +16,7 @@ import json
 from time import sleep
 from numpy.random import seed, uniform, normal
 from numpy import argsort
-from process_io_lib.in_dat import INDATNew, INVariable
+from process_io_lib.in_dat import InDat
 from process_io_lib.process_funcs import mfile_exists,\
     get_from_indat_or_default, set_variable_in_indat
 
@@ -497,34 +497,22 @@ class TestProcessConfig(ProcessConfig):
 
         """ modifies IN.DAT using the configuration parameters """
 
-        in_dat = INDATNew()
+        in_dat = InDat()
 
         #by convention all variablenames are lower case
         if self.ioptimz != 'None':
-            if 'ioptimz' in in_dat.variables.keys():
-                in_dat.variables['ioptimz'].value = self.ioptimz
-            else:
-                in_dat.variables['ioptimz'] = INVariable('ioptimz',
-                                                         self.ioptimz)
+            in_dat.data['ioptimz'].add_parameter('ioptimz',
+                                                 self.ioptimz)
         if self.epsvmc != 'None':
-            if 'epsvmc' in in_dat.variables.keys():
-                in_dat.variables['epsvmc'].value = self.epsvmc
-            else:
-                in_dat.variables['epsvmc'] = INVariable('epsvmc', self.epsvmc)
+            in_dat.data['epsvmc'].add_parameter('epsvmc', self.epsvmc)
 
         if self.epsfcn != 'None':
-            if 'epsfcn' in in_dat.variables.keys():
-                in_dat.variables['epsfcn'].value = self.epsfcn
-            else:
-                in_dat.variables['epsfcn'] = INVariable('epsfcn', self.epsfcn)
+            in_dat.data['epsfcn'].add_parameter('epsfcn', self.epsfcn)
 
         if self.minmax != 'None':
-            if 'minmax' in in_dat.variables.keys():
-                in_dat.variables['minmax'].value = self.minmax
-            else:
-                in_dat.variables['minmax'] = INVariable('minmax', self.minmax)
+            in_dat.data['minmax'].add_parameter('minmax', self.minmax)
 
-        in_dat.write_in_dat(filename='IN.DAT')
+        in_dat.write_in_dat(output_filename='IN.DAT')
 
 
 ################################################################################
@@ -717,26 +705,24 @@ class RunProcessConfig(ProcessConfig):
 
         """ modifies IN.DAT by adding, deleting and modifiying variables """
 
-        in_dat = INDATNew()
+        in_dat = InDat()
 
         #add and modify variables
         for key in self.dictvar.keys():
 
             key = key.lower()
 
-            #TODO update using set_variable_in_indat function!
-            if key in in_dat.variables.keys():
-                in_dat.variables[key].value = self.dictvar[key]
-            else:
-                in_dat.add_variable(INVariable(key, self.dictvar[key]))
-                #in_dat.variables[key] = INVariable(key, self.dictvar[key])
+            #TODO check this is a parameter??
+            in_dat.data[key].set_parameter(key, self.dictvar[key])
+
 
         #delete variables
+        #TODO check key is a parameter?
         for key in self.del_var:
             key = key.lower()
-            in_dat.remove_variable(key)
+            in_dat.remove_parameter(key)
 
-        in_dat.write_in_dat(filename='IN.DAT')
+        in_dat.write_in_dat(output_filename='IN.DAT')
 
 
     def modify_ixc(self):
@@ -750,7 +736,7 @@ class RunProcessConfig(ProcessConfig):
                    the same variable from ixc!')
             exit()
 
-        in_dat = INDATNew()
+        in_dat = InDat()
 
         for iter_var in self.add_ixc:
             in_dat.add_iteration_variable(int(iter_var))
@@ -758,7 +744,7 @@ class RunProcessConfig(ProcessConfig):
         for iter_var in self.del_ixc:
             in_dat.remove_iteration_variable(int(iter_var))
 
-        in_dat.write_in_dat(filename='IN.DAT')
+        in_dat.write_in_dat(output_filename='IN.DAT')
 
 
     def modify_icc(self):
@@ -771,15 +757,15 @@ class RunProcessConfig(ProcessConfig):
                   variable from icc!')
             exit()
 
-        in_dat = INDATNew()
+        in_dat = InDat()
 
         for constr in self.add_icc:
-            in_dat.add_constraint_eqn(int(constr))
+            in_dat.add_constraint_equation(int(constr))
 
         for constr in self.del_icc:
-            in_dat.remove_constraint_eqn(int(constr))
+            in_dat.remove_constraint_equation(int(constr))
 
-        in_dat.write_in_dat(filename='IN.DAT')
+        in_dat.write_in_dat(output_filename='IN.DAT')
 
 
 ################################################################################
@@ -869,7 +855,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
         """ modifies IN.DAT before running uncertainty evaluation """
 
 
-        in_dat = INDATNew()
+        in_dat = InDat()
 
         #Is IN.DAT already having a scan?
         isweep = get_from_indat_or_default(in_dat, 'isweep')
@@ -922,10 +908,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
         # recommendation from solver work!
         set_variable_in_indat(in_dat, 'epsvmc', 1e-8)    
 
-        #TODO: Add when James has added this functionality!
-        #in_dat.close()
-
-        in_dat.write_in_dat(filename='IN.DAT')
+        in_dat.write_in_dat(output_filename='IN.DAT')
 
     def checks_before_run(self):
 
@@ -940,10 +923,10 @@ class UncertaintiesConfig(ProcessConfig, Config):
             print('Error: No output variables specified in config file!')
             exit()
 
-        in_dat = INDATNew()
-        ixc_list = in_dat.variables['ixc'].value
-        #TODO: hack until James fixes in_dat.py
-        ixc_list = [1,2,3,4,5,6,7,9,10,12,13,14,16,18,29,35,36,37,38,39,41,42,44,48,49,50,51,53,56,57,58,59,60]
+        in_dat = InDat()
+        ixc_list = in_dat.data['ixc'].get_value
+        assert type(ixc_list) == list
+
         ixc_varname_list = [DICT_IXC_SIMPLE[str(x)] for x in ixc_list]
 
         for u_dict in self.uncertainties:
@@ -991,7 +974,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
         """ create a new sample point from uncertainty distributions
         """
 
-        in_dat = INDATNew()
+        in_dat = InDat()
 
         for u_dict in self.uncertainties:
             value = u_dict['samples'][sample_index]
@@ -999,9 +982,8 @@ class UncertaintiesConfig(ProcessConfig, Config):
             set_variable_in_indat(in_dat, varname, value)
 
 
-        in_dat.write_in_dat(filename='IN.DAT')
-        #TODO: Add when James has added this functionality!
-        #in_dat.close()
+        in_dat.write_in_dat(output_filename='IN.DAT')
+
 
     def add_results2netcdf(self, run_id):
 

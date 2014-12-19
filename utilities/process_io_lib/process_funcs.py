@@ -3,15 +3,14 @@ A selection of functions for using the PROCESS code
 
 Author: Hanni Lux (Hanni.Lux@ccfe.ac.uk)
 
-Compatible with PROCESS version 368
-"""
+Compatible with PROCESS version 368 """
 
 import os
 from os.path import join as pjoin
 
 from process_io_lib.process_dicts import (DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,
     DICT_IXC_DEFAULT, NON_F_VALUES, IFAIL_SUCCESS, DICT_DEFAULT)
-from process_io_lib.in_dat import INDATNew, INVariable
+from process_io_lib.in_dat import InDat, INVariable
 from process_io_lib.mfile import MFile
 from numpy.random import uniform
 
@@ -23,19 +22,18 @@ def get_neqns_itervars(wdir='.'):
     names of all iteration variables
     """
 
-    in_dat = INDATNew(pjoin(wdir, "IN.DAT"))
+    in_dat = InDat(pjoin(wdir, "IN.DAT"))
 
-    ixc_list = in_dat.variables['ixc'].value
-    #TODO: hack until James fixes in_dat.py
-    ixc_list = [1,2,3,4,5,6,7,9,10,12,13,14,16,18,29,35,36,37,38,39,41,42,44,48,49,50,51,53,56,57,58,59,60]
+    ixc_list = in_dat.data['ixc'].get_value
+ 
     itervars = []
     for var in ixc_list:
         if var != '':
             itervars += [DICT_IXC_SIMPLE[str(var)]]
 
-    assert in_dat.variables['nvar'].value == len(itervars)
+    assert in_dat.data['nvar'].get_value == len(itervars)
 
-    return in_dat.variables['neqns'].value, itervars
+    return in_dat.data['neqns'].get_value, itervars
 
 
 
@@ -48,22 +46,18 @@ def update_ixc_bounds(wdir='.'):
     from IN.DAT
     """
 
-    in_dat = INDATNew(pjoin(wdir, "IN.DAT"))
+    in_dat = InDat(pjoin(wdir, "IN.DAT"))
 
-    for key in in_dat.variables.keys():
-        if 'bound' in key.lower():
-            var = key[key.find('(')+1:key.find(')')]
-            name = DICT_IXC_SIMPLE[var]
+    bounds = in_dat.data['bounds'].get_value
 
-            if 'boundl' in key:
-                DICT_IXC_BOUNDS[name]['lb'] = in_dat.variables[key].value
+    for key, value in bounds.items():
+        name = DICT_IXC_SIMPLE[key]
 
-            elif 'boundu' in key:
-                DICT_IXC_BOUNDS[name]['ub'] = in_dat.variables[key].value
+        if 'l' in value:
+            DICT_IXC_BOUNDS[name]['lb'] = float(value['l'])
+        if 'u' in value:
+            DICT_IXC_BOUNDS[name]['ub'] = float(value['u'])
 
-            else:
-                print('Error in update_ixc_bounds: Unexpected variable name!')
-                exit()
 
 
 ###############################
@@ -84,7 +78,7 @@ def  get_variable_range(itervars, factor, wdir='.'):
 
     """
 
-    in_dat = INDATNew(pjoin(wdir, "IN.DAT"))
+    in_dat = InDat(pjoin(wdir, "IN.DAT"))
 
     lbs = []
     ubs = []
@@ -99,8 +93,8 @@ def  get_variable_range(itervars, factor, wdir='.'):
         #for non-f-values we modify the range with the factor
         else:
             #value set from IN.DAT
-            if varname in in_dat.variables.keys():
-                value = in_dat.variables[varname].value
+            if varname in in_dat.data.keys():
+                value = in_dat.data[varname].get_value
 
             #value set from defaults
             else:
@@ -269,7 +263,7 @@ def vary_iteration_variables(itervars, lbs, ubs):
     ubs      - float list of upper bounds for variables
     """
 
-    in_dat = INDATNew()
+    in_dat = InDat()
 
     new_values = []
 
@@ -278,11 +272,7 @@ def vary_iteration_variables(itervars, lbs, ubs):
         new_value = uniform(lbnd, ubnd)
         new_values += [new_value]
 
-        if varname in in_dat.variables.keys():
-            in_dat.variables[varname].value = new_value
-
-        else:
-            in_dat.variables[varname] = INVariable(varname, new_value)
+        in_dat.data[varname].add_parameter(varname, new_value)
 
     in_dat.write_in_dat(filename='IN.DAT')
 
@@ -411,8 +401,8 @@ def get_from_indat_or_default(in_dat, varname):
     """ quick function to get variable value from IN.DAT
         or PROCESS default value """
 
-    if varname in in_dat.variables.keys():
-        return in_dat.variables[varname].value
+    if varname in in_dat.data.keys():
+        return in_dat.data[varname].get_value
     else:
         return DICT_DEFAULT[varname]
 
@@ -423,10 +413,8 @@ def set_variable_in_indat(in_dat, varname, value):
         IN.DAT and creates it if necessary """
 
     varname = varname.lower()
-    if varname in in_dat.variables.keys():
-        in_dat.variables[varname].value = value
-    else:
-        in_dat.add_variable(INVariable(varname, value))
+    #TODO check whether paramter or bound etc.
+    in_dat.add_parameter(varname, value)
 
 
 
