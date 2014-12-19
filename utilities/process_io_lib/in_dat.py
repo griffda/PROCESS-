@@ -46,7 +46,7 @@ def is_title(line):
     :param line: line from IN.DAT
     :return: True/False if line is a title or header.
     """
-    return line[:2] == "*-" or line[:3] == "***"
+    return line[:2] == "*-" or line[:3] == "***" or line[0] == "$"
 
 
 def is_iteration_variable(name):
@@ -597,9 +597,6 @@ def parameter_type(name, value):
     :return: Formatted value
     """
 
-    if name == 'bounds':
-        return value
-
     # Find parameter type from PROCESS dictionary
     param_type = DICT_VAR_TYPE[name]
 
@@ -773,7 +770,10 @@ class INVariable(object):
     @property
     def get_value(self):
         """Return value in correct format"""
-        return parameter_type(self.name, self.value)
+        if self.v_type != "Bound":
+            return parameter_type(self.name, self.value)
+        else:
+            return self.value
 
 
 class InDat(object):
@@ -811,12 +811,11 @@ class InDat(object):
         with open(self.filename) as indat:
             self.in_dat_lines = indat.readlines()
 
-        indat.close()
-
         # Remove empty lines from the file
         self.in_dat_lines = remove_empty_lines(self.in_dat_lines)
 
         for line in self.in_dat_lines:
+
             # Put everything in lower case
             l_line = line.lower()
 
@@ -829,7 +828,6 @@ class InDat(object):
 
                 # for non-title lines process line and store data.
                 process_line(self.data, line_type, l_line)
-
 
     def add_iteration_variable(self, variable_number):
         """ Function to add iteration variable to IN.DAT data dictionary
@@ -973,10 +971,13 @@ if __name__ == "__main__":
     i.remove_iteration_variable("3")
     i.remove_iteration_variable(4.5)
     i.remove_iteration_variable("6.5")
+    # Add bound will change the bound value if it already exists
     i.add_bound(2, "upper", 5.0)
     i.remove_bound(2, "upper")
+    # Add parameter will change the parameter value if it already exists
     i.add_parameter("blnktthdsd", 0.5)
     i.add_parameter("iavail", 1)
     i.remove_parameter("blnkithsddd")
     i.remove_parameter("blnkith")
+    print(i.data["bounds"].get_value)
     i.write_in_dat()
