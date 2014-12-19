@@ -597,6 +597,9 @@ def parameter_type(name, value):
     :return: Formatted value
     """
 
+    if name == 'bounds':
+        return value
+
     # Find parameter type from PROCESS dictionary
     param_type = DICT_VAR_TYPE[name]
 
