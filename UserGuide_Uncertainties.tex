@@ -1,0 +1,298 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{framed}
+\usepackage{graphicx}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%for tikz flow chart 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+% Define the layers to draw the diagram
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+% Define block styles  
+\tikzstyle{boxes} = [draw, fill=blue!20, text centered,
+   text width=8em, minimum width=10em, minimum height=3em, rounded corners]
+\tikzstyle{boxesr} = [draw, fill=red!20, text centered,
+   text width=8em, minimum width=10em, minimum height=3em, rounded corners]
+\tikzstyle{boxesg} = [draw, fill=blue!40, text centered,
+   text width=8em, minimum width=10em, minimum height=3em, rounded corners]
+\tikzstyle{texto} = [above, text width=8em, text centered]
+\tikzstyle{linepart} = [draw, thick, color=black!50, -latex', dashed]
+\tikzstyle{line} = [draw, thick, color=black!50, -latex']
+
+ 
+\newcommand{\boxes}[2]{node (p#1) [boxes] {#2}}
+\newcommand{\boxesr}[2]{node(p#1) [boxesr] {#2}}
+\newcommand{\boxesg}[2]{node(p#1) [boxesg] {#2}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\title{User Guide Section for Uncertainty Tools}
+\author{H.~Lux}
+
+
+\newcommand{\process}{\mbox{\texttt{PROCESS}}}
+\newcommand{\mfile}{\mbox{\texttt{MFILE.DAT}}}
+\newcommand{\outdat}{\mbox{\texttt{OUT.DAT}}}
+\newcommand{\plotdat}{\mbox{\texttt{PLOT.DAT}}}
+\newcommand{\vmcon}{\mbox{\texttt{VMCON}}}
+\newcommand{\ifail}{\mbox{\texttt{ifail}}}
+\newcommand{\indat}{\mbox{\texttt{IN.DAT}}}
+\newcommand{\fresco}{\mbox{\texttt{FRESCO}}}
+
+
+\begin{document}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{abstract}
+%Design points of future power plants can only ever be optimised within the accuracy of the input parameters and the validity limits of the used models. To aid systems modellers in evaluating the uncertainties involved in the creation of such design points, we have developed a Python tool that determines the effect of uncertainties in the input parameters on a final power plant design when using the \process\ systems code. Using a Monte Carlo method, we efficiently sample the input parameter space. At the same time, we assure that the numerical noise intrinsic to the \process\ optimisation solver does not swamp the results by enforcing high level convergence at each sample point. Initial tests indicate that, as expected, the resulting parameter distribution does not follow a simple Gaussian and therefore cannot be simply described by a mean and a standard deviation.
+%\end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Introduction}
+%The \process\/ systems code \cite{Kovari2014} is used in modelling future power plants like DEMO \cite{Federici2014}. It contains simple 0D and 1/2D models that describe all significant physics and engineering aspects that affect the overall design of a power plant. It finds optimal solutions in a parameter space constrained by physical laws and engineering limits.
+
+%The models implemented in \process\/ contain uncertainties due to measurement errors in the underlying data, as well as limitations due to simplifications in the models. Furthermore, uncertainties arise from extrapolation of existing machines to future reactors with rather different physical conditions. Where these uncertainties are known, their effect on \process\/ predictions for reactor design can be evaluated.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% flow diagram of PROCESS
+
+%\begin{figure}
+%\begin{centering}
+%\begin{tikzpicture}[scale=0.88,transform shape]
+ 
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % Draw diagram elements
+
+%  \path  \boxes{1}{Iteration Variables};
+%  \path (p1.east)+(2.5,0.0) \boxes{2}{Other Input Parameters (fixed)};
+%  \path (p2.south)+(-2.5,-1.75) \boxesr{3}{\process};
+%  \path (p3.south)+(0.0,-1.5) \boxesg{4}{Constrained optimised solution};
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % Draw arrows between elements
+
+%  \path [line] (p3.south) -- node [above] {} (p4);
+%   \path [line] (p1.south) -- +(0.0,-0.25) 
+%  -- node [above, midway] {} (p3);
+%  \path [line] (p2.south) -- +(0.0,-0.25) 
+%  -- node [above, midway] {} (p3);
+
+%\end{tikzpicture}
+%\caption{This is a general input flowchart for a \process\ run in optimisation mode.}
+%\label{fig:PROCESSflow}
+%\end{centering}
+%\end{figure}
+
+%The optimisation solver implemented in \process, \vmcon, is a local constrained optimisation solver that can operate with both non-linear constraints as well as non-linear figures of merit. Its operation is depicted in Figure \ref{fig:PROCESSflow}. It varies a set of iteration variables within the feasible parameter space i.e. the parameters allowed by the user-specified equality and inequality constraints. It stops once it has found an optimal solution with respect to a given figure of merit within this feasible parameter space \cite{PROCESSUserGuide,Medley2014}.
+
+%For any uncertain parameters that are not used as iteration variables, the effect on the uncertainties in the final machine design can be evaluated using a Monte Carlo method allowing for different types of error distributions. This approach is similar to the one taken in \fresco\ to evaluate the effect of uncertainties of certain machine parameters on the cost of a fusion power plant \cite{Bustreo2012}.
+
+%In this work, we describe a Python tool that evaluates known uncertainties in \process\ input parameters that are not iteration parameters of the optimisation using a Monte Carlo technique. In section \ref{sec:method}, we describe the general method that we adopted including its limitations and applicability. Section \ref{sec:usage} illustrates the usage of the tool, while we give some exemplary results in Section \ref{sec:results}. In Section \ref{sec:summary} we summarise our work.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Method}
+%\label{sec:method}
+%We use a Monte Carlo sampling method to evaluate the effects of uncertainties in the input parameters on the final design point. We allow the user to choose between three different types of uncertainty distributions for the input parameters, i.e.
+%\begin{itemize}
+%\item Gaussian profile (specify mean and standard deviation),
+%\item Flat top profile with relative errors (specify mean and percentage),
+%\item Flat top profile with bounds (specify upper and lower bound).
+%\end{itemize}
+%For comparison, the \fresco\ code allows flat top profiles and triangular distributions, but not Gaussian. After confirming that none of the uncertain parameters are also used as iteration variables, we evaluate the effect of the uncertainties on the output machine design by running \process\ on each sample point.
+
+%\begin{figure}
+%\centering
+%\includegraphics[width=0.9\textwidth]{figures/Run5_NoScanTestSummary.pdf}
+%\caption{Mean and standard deviation of the relative change in percent between the current and next scan point of several key machine parameters ($R_{major}$, $B_T$, $<n_e>$ and $<T_e>$) for 5 scan points out of which 2 were allowed to be unfeasible.}% factor 2.0,  44 samples out of 1000 runs. }
+%\label{fig:noscantests}
+%\end{figure}
+
+%To ensure robust solver convergence, we run \process\ repeatedly at each point, each time starting the new run from the converged solution of the previous run. This is done using the build-in scan/sweep function of \process, assuring that the used scan variable is {\it not} an iteration variable. This avoids issues as have been encountered when using the Ndscan tool without the 'smooth' option and is also significantly faster than if the same was done in Python \cite{Torrisi2014}.
+
+%Testing by varying the number of scans shows that to sufficiently assure a robust solution we can set $N_{scans} = 5$, of which 2 are allowed to have failed to find a solution at each point. Figure \ref{fig:noscantests} shows the mean and standard deviation of the relative change in percent between the current and next scan point of several key machine parameters ($R_{major}$, $B_T$, $<n_e>$ and $<T_e>$) for 5 scans out of which 2 were allowed to be unfeasible. The graph clearly shows that the difference between the last two scan points is within the output precision (4 significant digits) and therefore negligible. 
+
+
+%Using small uncertainties in the input parameters may result in numerical noise intrinsic to the solver obscuring the results of the uncertainty evaluation tool. To assure against this it is important to set the convergence parameter \texttt{epsvmc} for VMCON as low as possible. Recent tests of the solver indicate that it is safe to set this parameter as low as \texttt{epsvmc}$=10^{-8}$, which is why this is automatically set in the preparation of the \indat\ file. 
+
+%The advantage of a Monte Carlo method over a brute force grid search is that it typically reduces the number of points necessary to properly sample the parameter space. Given that the build-in sweep is fast in comparison to the same number of \process\ runs using a Python front end \cite{Torrisi2014}, there is no significant delay expected in the calculation of the uncertainty tool in comparison to an Ndscan run with the same number of samples. In order to properly sample the parameter space, we recommend at least $N_{sample}= 1000$ sample points. (Though the users should verify themselves that the results suggest a good sampling of the solution space and if in doubt should increase the number of samples. This is particularly recommended for a large number of uncertain parameters that need to be sampled.) 
+
+%Python uses the Mersenne Twister pseudo-random number generator. For reproducibility of the results, we allow the user to specify the seed for the random distribution function. If no seed is specified, the seed will be taken from the system clock and will therefore change with each run.
+
+%As \process\ is a local optimisation tool, it is possible that it does not find a solution given a certain set of starting points for the iteration variables. This is either because no feasible solution exits or the solver cannot find a solution. As this tool should only ever be used on existing machine design points, the first option can only happen, if the uncertainties take the code too far away from a valid design point. The latter can happen more frequently and we try to avoid these cases in our tool by slightly varying the starting points of the iteration variables and rerunning \process\ if more than 2 out of the 5 scan points result in unfeasible solutions. Like in the \texttt{run\_process.py} tool \cite{PROCESSUserGuide}, this iteration is tried $N_{iter}=10$ times before giving up and ignoring this point in the analysis. 
+
+
+
+%XXX used sorting in first parameter to aid solver, less issues with more sample points as steps are smaller!
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Uncertainty Tools}
+
+In this section, we explain the usage of the \process\/ tools to both evaluate the uncertainties of a design point as well as display them using a simple plotting facility.
+
+Note that the uncertainty evaluation tool has a significantly longer run time than typical evaluations of \process\/ design points and therefore should only be used once a suitable design point has been found.  As only user selected output data is kept, the user is recommended to put careful thought into the list of needed output variables.
+
+\subsubsection{evaluate\_uncertainties.py}
+This program evaluates the uncertainties of a single \process\ design point by use of a Monte Carlo method as described in \cite{WPPMI2014Report}. It takes a set of uncertain parameters as input that can have either a Gaussian or a flat distribution. These are specified together with optional details about the \process\ run in a configuration file. Additionally, an \indat\ file describing the relevant design point needs to be present. This can be created from an \mfile\ by using the \texttt{write\_new\_indat.py} tool.
+
+When running the \texttt{evaluate\_uncertainties.py} tool, optional arguments are:
+\begin{quote}
+\begin{verbatim}
+#to specify another location/name for the configfile
+evaluate_uncertainties.py -f CONFIGFILE
+
+Use -h or --help for help
+\end{verbatim}
+\end{quote}
+It takes the following input and produces the following output files
+\begin{description}
+\item{\textbf{Input:}}
+ \texttt{evaluate\_uncertainties.json}, \indat\ (or an alternative input file as specified in the config file)
+                                
+\item{\textbf{Output:}}
+\texttt{uncertainties.nc}, \texttt{Readme.txt}, \texttt{process.log} and the standard \process\ output from the last run. 
+\end{description}
+The configuration file \texttt{evaluate\_uncertainties.json} uses the JSON format\footnote{www.json.org} and has the following style
+\begin{framed}
+\begin{verbatim}
+{
+	"_description": "Config file for uncertainties evaluation",
+	"_author": "Hanni Lux",
+	
+	"config": {
+		  "runtitle": "testrun for uncertainty tool on DEMO2",
+		  "IN.DAT_path": "IN.DAT_demo2",
+		  "process_bin": "~pknight/process/branches/master/process.exe",
+		  "working_directory": "Run1",
+		  "pseudorandom_seed": 2
+		  },
+	"uncertainties": [
+		     {
+               	     "Varname":"flhthresh",
+               	     "Errortype":"Gaussian",
+               	     "Mean":1.0,
+               	     "Std":0.05
+          	     },          
+          	     {
+               	     "Varname":"coreradius",
+               	     "Errortype":"Uniform",
+               	     "Lowerbound":0.6,
+               	     "Upperbound":0.9
+          	     },
+          	     {
+               	     "Varname":"etanbi",
+               	     "Errortype":"Relative",
+               	     "Mean":0.3,
+               	     "Percentage":10.0
+          	     } 
+	     	],
+     "output_vars": [ "rmajor", "dene", "te", "bt"],
+     "no_samples": 1000    
+}
+\end{verbatim}
+\end{framed}
+By convention, we have designated metadata about the \process\ runs as having a preceeding underscore to distinguish these values from the other configuration data used directly by the tools or \process\ itself. Furthermore, all the optional attributes that can be changed when running \process\ from most Python utilities like e.g. \texttt{run\_process.py} can be specified in the ``config'' section. All these values have default values and do not need to be set.
+\begin{description}
+\item[\texttt{runtitle}] is a one line description of the purpose of the run to be saved in Readme.txt in the working directory as well as the runtitle parameter in the \outdat\ and \mfile\ files. Per default it is empty. 
+\item[\texttt{IN.DAT\_path}] is the name/path of the \indat\ file describing the design point. If not specified it is assumed to be \indat. 
+\item[\texttt{process\_bin}] is the process binary that should be used. The default assumes that the user works on the CCFE Fusion Linux machines and has executed the module commands for \process\ as described in \ref{sec:run_environment}. Then either the master or development branch of process is being used depending on which module has been loaded. 
+\item[\texttt{working\_directory}] represents the working directory, in which \process\ will be executed, in case this is supposed to be different to the current directory which can be helpful when executing several runs with slightly different setups. 
+\item[\texttt{pseudorandom\_seed}] is the value of the seed for the random number generator. It can be any integer value. If it is not specified, its default value is taken from the system clock. 
+\end{description}
+
+Other parameters that can be specified in the config section are \texttt{Niter} and \texttt{factor}. Both do not typically need to be changed by the user. \texttt{Niter} is the maximum number of retries that the tool will attempt, if \process\ fails to find a feasible solution. This means that the tool varies the start values of the iteration variables within a factor given by \texttt{factor} of the original values as this does not change the physical meaning of the input file, but can help the solver to find a better starting point for its iteration. Their default values are \texttt{Niter}=10 and \texttt{factor}=1.5.
+
+Any uncertain parameters should be specified in the ``uncertainties'' section. Each parameter is specified in its own sub dictionary as shown in the example. For each, the \texttt{Varname} and \texttt{Errortype} need to be specified as well as the \texttt{Mean} and standard deviation \texttt{Std} for Gaussian type errors as well as \texttt{Lowerbound} and \texttt{Upperbound} for Uniform or \texttt{Mean} and a \texttt{Percentage} for Relative errors. At least one uncertain parameter has to be specified for the program to run and technically there is no upper limit as to how many uncertain parameters can be used. However, for large numbers of uncertain parameters it is recommended to increase the number of sampling points. 
+
+There are a number of other parameters in the configuration file that can be specified:
+\begin{description}
+\item[\texttt{output\_vars}] is a list of strings of output variable names in the \mfile. These are the variables saved. This list is empty by default and it is therefore crucial for the user to specify the variables of interest because otherwise the tool will not run. 
+\item[\texttt{no\_samples}] sets the number of sample points in the Monte Carlo method. It is by default set to its recommended minimum value of 1000, but the user should contemplate higher values especially if a large number of uncertain parameters is involved.
+\end{description}
+ Two parameters that can be further set in the config file (but are not recommended to be changed) are the number of scan points \texttt{no\_scans} which is by default 5 and the number of allowed unfeasible points in a scan \texttt{no\_allowed\_unfeasible} which is 2 as recommended in \cite{WPPMI2014Report}.
+ 
+
+As the distributions of the uncertainties do not have to be represented by a simple Gaussian, reducing the output to two simple numbers like a mean and a standard deviation is not typically possible. Therefore, we have decided to keep all sampled points in the output files. However, to reduce the amount of data we have decided to only store the user specified parameters in the form of a NetCDF binary file. Given that a scan is performed at each sample point, only the last of these scan points is ever kept for evaluation. (There is an option for developers to keep all the data for debugging purposes. However, this should typically not be used in production runs.) These files can be visualised using the \texttt{display\_uncertainties.py} tool. 
+
+
+\subsubsection{display\_uncertainties.py}
+This is a Python facility to display the NetCDF file created by the previously described \texttt{evaluate\_uncertainties.py} tool. 
+
+By default, if run in the working directory of an uncertainty evaluation, it plots the 2D parameter distribution of each user defined output parameter against the next. It also shows the 1D histograms of each parameter distribution. If two specific variables are given as arguments, the tool plots only these two against each other.
+
+\begin{description}
+\item{\textbf{Input:}}
+ \texttt{uncertainties.nc}
+                                
+\item{\textbf{Output:}}
+Uncertainties\_varname1\_varname2.pdf
+\end{description}
+
+Usage:
+%\begin{quote}
+\begin{verbatim}
+display_uncertainties.py [-h] [-f FILENAME] [-e END] [v [v ...]]
+
+Program to display uncertainties of a given PROCESS design point.
+
+positional arguments:
+  v              list of variables to be plotted; default = all
+
+optional arguments:
+  -h, --help     show this help message and exit
+  -f FILENAME, --filename FILENAME
+                 uncertainties data file, default = uncertainties.nc
+  -e END, --end END     file format default = .pdf
+\end{verbatim}
+%\end{quote}
+
+
+
+
+%\begin{figure}
+%\centering
+%\includegraphics[width=1.0\textwidth]{figures/Run3_Uncertainties_te_bt.pdf}
+%\caption{Example results from an uncertainties run. \texttt{bt}[T] is the toroidal magnetic field on axis and \texttt{te}[keV] the volume averaged electron temperature. Clearly, the shape of the distribution is dominated by the physics and engineering constraints implemented in \process\ and can, therefore, not be represented by a simple Gaussian with mean and standard deviation.}
+%\label{fig:results}
+%\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Example Results}
+%\label{sec:results}
+%Figure \ref{fig:results} shows example results using the \texttt{evaluate\_uncertainties.py} tool described in this report to evaluate the uncertainties in a steady state DEMO-like machine. We have assumed uncertainties in several different parameters though the actual values (of both the input and results) are not necessarily reflecting realistic values or distributions. Therefore, these sample results are only used to illustrate the functionality of the tool and the type of outputs produced. As can be clearly seen, the resulting distributions are dominated by the physics and engineering constraints placed on the design point making the distributions highly correlated. Therefore, they do not represent a Gaussian distribution and cannot be described by a simple mean and standard deviation. In general it is highly recommended for the user to look at each distribution independently before blindly using some values indicating the mean and spread in the distribution.  
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Summary}
+%\label{sec:summary}
+%We have developed a new Python tool to evaluate the effect of uncertainties in the input parameters on a fixed \process\ design point. The tool uses a Monte Carlo method and allows Gaussian as well as flat uncertainty distributions in its input parameters. To assure robust solver convergence it performs a \process\ scan at each sample point. To avoid being dominated by intrinsic numerical noise of the optimisation solver, we have furthermore enforced a low convergence criterion. The Python tool is simple to use and comes with a configuration file that allows the user to specify a range of uncertainty distributions for all input parameter that are not used as iteration variables at the same time. It returns a NetCDF output file to store the large amount of output data more efficiently and comes with further tool to display the output data on 2D scatter plots that are projected onto 1D histograms. Initial tests show that the resulting distributions are dominated by the physics and engineering constraints and therefore cannot be described by simple Gaussian distributions. The user is therefore encouraged to always visually inspect the resulting distributions before using some mean and spread value describing the uncertainties in the design point.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Acknowledgments}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{unsrt}
+\bibliography{Uncertainties}
+
+
+
+
+\end{document}
