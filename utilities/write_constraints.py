@@ -70,46 +70,46 @@ def tidy(file):
 				line="*" + line
 		sys.stdout.write(line)	
 
-		
-#Main program
-#----------------------------------------
-#Initialise arrays 
-constraint=["0" for i in range(100)]
-IterationVariable=["0" for i in range(100)]
-description=["0" for i in range(100)]
-os.system("cp IN.DAT OLD.IN.DAT ")
-tidy("IN.DAT")
+if __name__ == '__main__':		
+	#Main program
+	#----------------------------------------
+	#Initialise arrays 
+	constraint=["0" for i in range(100)]
+	IterationVariable=["0" for i in range(100)]
+	description=["0" for i in range(100)]
+	os.system("cp IN.DAT OLD.IN.DAT ")
+	tidy("IN.DAT")
 
-NumberConstraints, NumberIterationVariables = readConstraints()
-NEQNSLine = "NEQNS = " + str(NumberConstraints) + "\n"		
-NVARLine = "NVAR = " + str(NumberIterationVariables) + "\n"
+	NumberConstraints, NumberIterationVariables = readConstraints()
+	NEQNSLine = "NEQNS = " + str(NumberConstraints) + "\n"		
+	NVARLine = "NVAR = " + str(NumberIterationVariables) + "\n"
 
-#Adds a new constraint statement in IN.DAT
-g=open("IN.DAT",'a')
-k=0
-ConstraintLine= "ICC = "
-IterationVariableLine="IXC = "
-for c in constraint:
-	if c != "0":
-		ConstraintLine = ConstraintLine + constraint[k] + ", "
-		k=k+1
-ConstraintLine = ConstraintLine + " \n"
+	#Adds a new constraint statement in IN.DAT
+	g=open("IN.DAT",'a')
+	k=0
+	ConstraintLine= "ICC = "
+	IterationVariableLine="IXC = "
+	for c in constraint:
+		if c != "0":
+			ConstraintLine = ConstraintLine + constraint[k] + ", "
+			k=k+1
+	ConstraintLine = ConstraintLine + " \n"
 
-# Adds a new iteration variable statement in IN.DAT
-l=0
-BoundLine=""
-for iv in IterationVariable:
-	if iv != "0":
-		IterationVariableLine = IterationVariableLine + IterationVariable[l] + ", "
-		BoundLine=BoundLine+"boundl(" + IterationVariable[l] + ") =  " + "\t\t*"+description[l] + "boundu(" + IterationVariable[l] + ") =  " + " \n"
-		l=l+1
-IterationVariableLine = IterationVariableLine +  " \n"
+	# Adds a new iteration variable statement in IN.DAT
+	l=0
+	BoundLine=""
+	for iv in IterationVariable:
+		if iv != "0":
+			IterationVariableLine = IterationVariableLine + IterationVariable[l] + ", "
+			BoundLine=BoundLine+"boundl(" + IterationVariable[l] + ") =  " + "\t\t*"+description[l] + "boundu(" + IterationVariable[l] + ") =  " + " \n"
+			l=l+1
+	IterationVariableLine = IterationVariableLine +  " \n"
 
 
-g.write(NEQNSLine)
-g.write(NVARLine)	
-g.write(ConstraintLine)	
-g.write(IterationVariableLine)	
-g.write(BoundLine)
-g.write("$END")
-g.close()
+	g.write(NEQNSLine)
+	g.write(NVARLine)	
+	g.write(ConstraintLine)	
+	g.write(IterationVariableLine)	
+	g.write(BoundLine)
+	g.write("$END")
+	g.close()
