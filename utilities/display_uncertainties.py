@@ -18,6 +18,7 @@ import argparse
 from numpy import loadtxt
 from matplotlib.ticker import NullFormatter
 from pylab import figure, axes, show, savefig
+from process_io_lib.process_config import NETCDF_SWITCH
 
 
 def fig_2dscatter_and_hist(x,y):
@@ -65,17 +66,13 @@ if __name__ == '__main__':
 #Usage
 
     PARSER = argparse.ArgumentParser(description='Program to display\
- uncertainties in a given PROCESS design point.')
+     uncertainties in a given PROCESS design point.')
 
-    PARSER.add_argument("-f", "--filename",
-                        default='UNCERTAINTIES.DAT',
-                        help="uncertainties data file, default =\
- UNCERTAINTIES.DAT")
 
     PARSER.add_argument("-e", "--end",
                         default='.pdf',
                         help="file format default =\
- .pdf")
+.pdf")
 
 
     PARSER.add_argument("variables", metavar='v', type=str,
@@ -84,31 +81,54 @@ if __name__ == '__main__':
 default = all")
 
 
+    #version with NetCDF files:
+    if NETCDF_SWITCH:
+        from process_io_lib.process_netcdf import NetCDFReader
 
-    ARGS = PARSER.parse_args()
+        PARSER.add_argument("-f", "--filename",
+                            default='uncertainties.nc',
+                            help="uncertainties data file, default =\
+uncertainties.nc")
+        ARGS = PARSER.parse_args()
+        filename = ARGS.filename
+
+        ncdf_reader = NetCDFReader(filename)
+        mfile1 = ncdf_reader.get_mfile(0)
+        print('Yes got so far, not finished yet!')
+        #TODO! continue here!
+
+    #version without NetCDF files:
+    else:
+        PARSER.add_argument("-f", "--filename",
+                            default='UNCERTAINTIES.DAT',
+                            help="uncertainties data file, default =\
+UNCERTAINTIES.DAT")
 
 
-############################################################
-#main program
 
-    filename = ARGS.filename
+        ARGS = PARSER.parse_args()
 
-    ufile = open(filename,'r')
-    labels = ufile.readline()
-    ufile.close()
-    labels = labels.split()
+    ############################################################
+    #main program
 
-    data = loadtxt('UNCERTAINTIES.DAT',skiprows=1)
+        filename = ARGS.filename
 
-    if ARGS.variables == 'all':
-        for i in range(len(data[0])-1):
-            x = data[:,i]
-            y = data[:,i+1]
+        ufile = open(filename,'r')
+        labels = ufile.readline()
+        ufile.close()
+        labels = labels.split()
 
-            fig_2dscatter_and_hist(x,y)
-            savefig('Uncertainties_'+labels[i]+'_'+labels[i+1]+ARGS.end)
-    else: 
-        pass#TODO program this option
-    
+        data = loadtxt('UNCERTAINTIES.DAT',skiprows=1)
+
+        if ARGS.variables == 'all':
+            for i in range(len(data[0])-1):
+                x = data[:,i]
+                y = data[:,i+1]
+
+                fig_2dscatter_and_hist(x,y)
+                savefig('Uncertainties_'+labels[i]+'_'+labels[i+1]+ARGS.end)
+        else: 
+            pass#TODO program this option
+
     
 show()
