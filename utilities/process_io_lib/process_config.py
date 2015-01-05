@@ -824,7 +824,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
         #set up NetCDF ouput instance
         if NETCDF_SWITCH:
-            self.ncdf_writer = NetCDFWriter("uncertainties.nc", append=False,
+            self.ncdf_writer = NetCDFWriter(self.wdir+"/uncertainties.nc", append=False,
                                             overwrite=True)
 
     def echo(self):
