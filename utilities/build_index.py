@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Short program to create an index file of all README files in the subdirectories
 

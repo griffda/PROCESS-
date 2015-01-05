@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
    This is a program to automatically produce the process_dicts.py file

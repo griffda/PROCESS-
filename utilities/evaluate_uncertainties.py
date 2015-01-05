@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Code to assess uncertainties in the input parameters in PROCESS
 

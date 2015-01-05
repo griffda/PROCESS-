@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Code to produce several plots to aid the diagnosis of a PROCESS run.
 

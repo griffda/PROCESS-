@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 	Modifies the PROCESS input file IN.DAT to include the constraints marked

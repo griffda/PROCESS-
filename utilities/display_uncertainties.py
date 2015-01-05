@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Code to display the results of an evaluate_uncertainties.py run
 

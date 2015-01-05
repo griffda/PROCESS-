@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Code to test PROCESS Solver by choosing different starting values
 for the iteration parameters around the initial values in the INPUT file
