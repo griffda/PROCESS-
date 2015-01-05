@@ -19,14 +19,15 @@ List of dictionaries:
     DICT_DESCRIPTIONS      : Dictionary of variable descriptions
     DICT_MODULE            : Ordered dictionary mapping module names to list
                              of associatied variables
+    DICT_NSWEEP2VARNAME    : Dictionary mapping scan variable number to name
 
-Automatically produced by create_dicts.py for PROCESS version 368
+Automatically produced by create_dicts.py for PROCESS version 371
 """
 
 from collections import defaultdict, OrderedDict
 
 #Version number of process dictionaries created for
-DICTIONARY_VERSION = 368
+DICTIONARY_VERSION = 371
 
 #ifail value of a successful process run
 IFAIL_SUCCESS = 1
@@ -706,8 +707,6 @@ DICT_VAR_TYPE['xtfo']          = 'real_variable'
 DICT_VAR_TYPE['zeffdiv']       = 'real_variable'
 DICT_VAR_TYPE['zfear']         = 'int_variable'
 DICT_VAR_TYPE['zref']          = 'real_array'
-#hack until things get updated
-DICT_VAR_TYPE['runtitle']      = 'string'
 
 #Dictionary mapping ixc no to name and bounds
 DICT_IXC_FULL = defaultdict(dict)
@@ -3732,10 +3731,35 @@ DICT_MODULE['Tfcoil Variables'] = ['bcritsc', 'casthi', 'casths', 'cdtfleg', 'cp
 DICT_MODULE['Times Variables'] = ['tburn', 'tdwell', 'theat', 'tohs', 'tohsin', 'tqnch', 'tramp']
 DICT_MODULE['Vacuum Variables'] = ['ntype', 'pbase', 'prdiv', 'rat', 'tn']
 
-
-DICT_NSWEEP2VARNAME = {}
-DICT_NSWEEP2VARNAME['1'] = 'aspect'
-DICT_NSWEEP2VARNAME['2'] = 'hldivlim'
-DICT_NSWEEP2VARNAME['3'] = 'pnetelin'
-# should get automatically created from fortran code! 
-# so I have not populated the rest of the dictionary just yet!
+#Dictionary mapping nsweep to varname
+DICT_NSWEEP2VARNAME = dict()
+DICT_NSWEEP2VARNAME['1']       = 'aspect'
+DICT_NSWEEP2VARNAME['2']       = 'hldivlim'
+DICT_NSWEEP2VARNAME['3']       = 'pnetelin'
+DICT_NSWEEP2VARNAME['4']       = 'hfact'
+DICT_NSWEEP2VARNAME['5']       = 'oacdcp'
+DICT_NSWEEP2VARNAME['6']       = 'walalw'
+DICT_NSWEEP2VARNAME['7']       = 'beamfus0'
+DICT_NSWEEP2VARNAME['8']       = 'fqval'
+DICT_NSWEEP2VARNAME['9']       = 'te'
+DICT_NSWEEP2VARNAME['10']      = 'boundu(15)'
+DICT_NSWEEP2VARNAME['11']      = 'dnbeta'
+DICT_NSWEEP2VARNAME['12']      = 'bscfmax'
+DICT_NSWEEP2VARNAME['13']      = 'boundu(10)'
+DICT_NSWEEP2VARNAME['14']      = 'fiooic'
+DICT_NSWEEP2VARNAME['15']      = 'fjprot'
+DICT_NSWEEP2VARNAME['16']      = 'rmajor'
+DICT_NSWEEP2VARNAME['17']      = 'bmxlim'
+DICT_NSWEEP2VARNAME['18']      = 'gammax'
+DICT_NSWEEP2VARNAME['19']      = 'boundl(16)'
+DICT_NSWEEP2VARNAME['20']      = 'tbrnmn'
+DICT_NSWEEP2VARNAME['21']      = 'sigpfalw'
+DICT_NSWEEP2VARNAME['22']      = 'cfactr'
+DICT_NSWEEP2VARNAME['23']      = 'boundu(72)'
+DICT_NSWEEP2VARNAME['24']      = 'powfmax'
+DICT_NSWEEP2VARNAME['25']      = 'kappa'
+DICT_NSWEEP2VARNAME['26']      = 'triang'
+DICT_NSWEEP2VARNAME['27']      = 'tbrmin'
+DICT_NSWEEP2VARNAME['28']      = 'bt'
+DICT_NSWEEP2VARNAME['29']      = 'coreradius'
+DICT_NSWEEP2VARNAME['30']      = 'fimpvar'
