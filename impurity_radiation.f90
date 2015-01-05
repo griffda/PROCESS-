@@ -39,6 +39,7 @@ module impurity_radiation_module
   !+ad_hist  24/09/14 PJK Path name now set automatically (via make)
   !+ad_hist  25/09/14 PJK Corrected root.dir include syntax
   !+ad_hist  06/10/14 PJK Changed impvar default from 10 to 9
+  !+ad_hist  08/12/14 PJK Changed impdir label
   !+ad_stat  Okay
   !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
   !+ad_docs  Sertoli, private communication
@@ -114,7 +115,7 @@ module impurity_radiation_module
 
 #include "root.dir"
 
-  !+ad_vars  impdir /'/home/pknight/process/branches/develop/impuritydata'/ :
+  !+ad_vars  impdir /'/home/PROCESS/[branch]/impuritydata'/ :
   !+ad_varc           Directory containing impurity radiation data files
   character(len=60), public :: impdir = ROOTDIR//'/impuritydata/'
 

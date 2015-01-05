@@ -1277,8 +1277,8 @@ contains
     integer, parameter :: ishmat = 1  !  stainless steel coil casing is assumed
 
     real(kind(1.0D0)) :: coilhtmx,decaybl,dpacop,dshieq,dshoeq,elong, &
-         fpsdt,fpydt,frachit,hbot,hblnkt,hcryopf,hecan,hshld,htop,htheci,hvv, &
-         pheci,pheco,pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2,r3, &
+         fpsdt,frachit,hbot,hblnkt,hcryopf,hecan,hshld,htop,htheci,hvv, &
+         pheci,pheco, fpydt, pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2,r3, &
          raddose,v1,v2,volshldi,volshldo,wpthk,zdewex,coolvol
 
     real(kind(1.0D0)) :: pnucfwbs,pnucbs,pnucs

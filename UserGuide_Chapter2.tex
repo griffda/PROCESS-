@@ -113,31 +113,31 @@ optimisation mode. For these applications \process\/ uses the routine \vmcon\/
 \cite{vmcon} based on a variable metric method for constrained optimisation by
 Powell \cite{Powell1978}. It finds a stationary point of an objective
 function/figure of merit consistent with a set of equality and inequality
-constraints (c.f. section \ref{sec:GNPP}). It is designed to solve the
+constraints (see Section~\ref{sec:GNPP}). It is designed to solve the
 necessary but not sufficient conditions of a constrained optimum, hence, the
-solution does not have to be a global optimum (c.f. \ref{sec:Lagrange}).
+solution does not have to be a global optimum (see Section~\ref{sec:Lagrange}).
 
 The detailed algorithm is explained in Appendix~\ref{app:Opt} and is based on
-the Lagrange method (c.f. section \ref{sec:Lagrange}) that combines both the
+the Lagrange method (see Section~\ref{sec:Lagrange}) that combines both the
 objective function and the constraints using Lagrange multipliers. It applies
-a sequential quadratic programming approach (c.f. section \ref{sec:SQP}) in
-which a series of subproblems is solved that constitute a local quadratic
-expansion of the Lagrangian (c.f. section \ref{sec:QSP}). The solution of the
-quadratic subproblem is the direction of a line search along which a one
-dimensional optimisation is performed (c.f. section
-\ref{sec:linesearch}). This line search was introduced by Powell to assure
-convergence from bad starting parameters. Within \process\/ we have modified
-the line search of the original \vmcon\/ routine to assure convergence, even
-for slightly inconsistent input functions.
+a sequential quadratic programming approach (Section~\ref{sec:SQP}) in which a
+series of subproblems is solved that constitute a local quadratic expansion of
+the Lagrangian (Section~\ref{sec:QSP}). The solution of the quadratic
+subproblem is the direction of a line search along which a one dimensional
+optimisation is performed (Section~\ref{sec:linesearch}). This line search was
+introduced by Powell to assure convergence from bad starting parameters.
+Within \process\/ we have modified the line search of the original \vmcon\/
+routine to (try to) assure convergence, even for slightly inconsistent input
+functions.
 
 The algorithm uses a quasi-Newtonian approach which only requires continuous
 first derivatives of these functions. While the first derivatives are
 evaluated using a finite difference approximation, the second derivatives are
-estimated using a variant of the Broyden-Fletcher-Goldfarb-Shanno update
-(c.f. section \ref{sec:BFGS}).
+estimated using a variant of the Broyden-Fletcher-Goldfarb-Shanno update (see
+Section~\ref{sec:BFGS}).
 
 The convergence criterium of the solver as well as the detailed interpretation
-of the various error codes are explained in section \ref{sec:vmcon}. A flow
+of the various error codes are explained in Section~\ref{sec:vmcon}. A flow
 diagram of \process\/ in optimisation mode is shown in Figure
 \ref{fig:flow_vmcon}.
 
@@ -273,10 +273,10 @@ value are calculated by the code from a combination of other parameters, and
 so it would be meaningless to initialise them.  Obviously, these variables
 cannot be changed using the input file.
 
-The file is generated from specially-formatted comment lines within the source
-code (see Section~\ref{sec:autodoc} for more details). Therefore, it is
-exceedingly important to keep these comment lines relevant and in sync with
-the variables they describe.
+The variable descriptor file is generated from specially-formatted comment
+lines within the source code (see Section~\ref{sec:autodoc} for more
+details). Therefore, it is exceedingly important to keep these comment lines
+relevant and in sync with the variables they describe.
 
 \section{Input Parameters}
 \label{sec:inpars}
@@ -293,7 +293,7 @@ variables (Section~\ref{sec:itvars}) can change during the course of a run.
 Any computer program naturally contains myriads of equations. The built-in
 equation solvers within \process\ act on a special class, known as
 \textit{constraint equations}, all of which are formulated in routine
-\texttt{CONSTRAINTS} in source file
+\texttt{constraint\_eqns} in source file
 \texttt{constraint\_equations.f90}. Table~\ref{tab:eqns} summarises the
 constraint equations available in \process. These can be split into two types
 --- (1) consistency equations, that enforce consistency between the physics
@@ -317,7 +317,7 @@ equal:
 g(x,y,z,\ldots) & = & h(x,y,z,\ldots) \\
 c_i & = & 1 - \frac{g}{h}
 \end{eqnarray*}
-The equation solvers VMCON and HYBRD need the constraint equations $c_i$ to be
+The equation solvers \vmcon\ and HYBRD need the constraint equations $c_i$ to be
 given in the form shown, since they adjust the iteration variables so as to
 obtain $c_i = 0$, thereby ensuring that $g = h$.
 
@@ -325,8 +325,8 @@ obtain $c_i = 0$, thereby ensuring that $g = h$.
 
 The limit equations are usually \textit{inequalities}\/ that ensure that
 various physics or engineering limits are not exceeded. Each of these
-equations has an associated \textit{f-value}, which allow them to be coded as
-equalities. The f-values are used as follows.
+equations has an associated \textit{f-value}, which allow them to be
+\textit{coded}\ as equalities. The f-values are used as follows.
 
 In general, limit equations have the form
 
@@ -536,10 +536,10 @@ variables are adjusted so as to find the minimum (or maximum) value of a
 parameter (the \textit{ figure of merit}) in the \texttt{nvar}-dimensional
 space of the problem.
 
-All the iteration variables are constrained to lie between lower and upper
-bounds, stored in arrays \texttt{boundl} and \texttt{boundu},
-respectively. For instance, the plasma electron density is, by default,
-confined to lie between the values $10^{19}$~m$^{-3}$ and
+In optimisation mode, all the iteration variables are constrained to lie
+between lower and upper bounds, stored in arrays \texttt{boundl} and
+\texttt{boundu}, respectively. For instance, the plasma electron density is,
+by default, confined to lie between the values $10^{19}$~m$^{-3}$ and
 $10^{21}$~m$^{-3}$. Of course, it can also be constrained to lie below the
 \textit{calculated}\/ density limit, if constraint equation 5 is activated and
 the f-value \texttt{fdene} (iteration variable no.\ 9) is bounded by the
@@ -734,7 +734,7 @@ $\pm 11$        & injection power \\
 $\pm 12$        & hydrogen plant capital cost \\
 $\pm 13$        & hydrogen production rate \\
 $\pm 14$        & pulse length \\
-$\pm 15$        & plant availability factor (N.B.\ requires \texttt{iavail=1}) \\
+$\pm 15$        & plant availability factor (N.B.\ requires \texttt{iavail>=1}) \\
 \hline
 \end{tabular}
 \end{center}
@@ -753,7 +753,8 @@ One of a number of variables can be scanned during the course of a \process\
 run.  This option provides a method of determining the sensitivity of the
 results to different input assumptions. The user specifies which variable is
 to be scanned (see Table~\ref{tab:scans}) and its required value at each point
-in the scan. The scanned variable to use is defined by the value of
+in the scan. Set input parameter \texttt{isweep} to the desired number of scan
+points. The scanned variable to use is defined by the value of
 \texttt{nsweep}, and the chosen variable's values during the scan are set in
 array \texttt{sweep}.
 
@@ -840,7 +841,6 @@ These modules contain the equation solvers, their calling routines and other
 relevant procedures. Various mathematical routines from a number of standard
 libraries are also incorporated into these files. Table~\ref{tab:numerics}
 summarises the numerics source file contents.
-% Link to concepts, i.e. constraints, iteration variables etc.
 
 % Table summarising numerics modules in PROCESS
 \begin{table}[tbph]
@@ -848,14 +848,14 @@ summarises the numerics source file contents.
 \begin{center}
 \begin{tabular}{||l||l||} \hline
 source file   & description \\ \hline
-\texttt{caller.f90} & calls physics and engineering routines \\
+\texttt{caller.f90} & calls physics, engineering, building and cost routines \\
 \texttt{constraint\_equations.f90} & defines the constraint equations \\
-\texttt{evaluators.f90} & function evaluators for HYBRD and VMCON packages \\
+\texttt{evaluators.f90} & function evaluators for HYBRD and \vmcon\ packages \\
 \texttt{iteration\_variables.f90} & adjusts values of iteration variables \\
 \texttt{maths\_library.f90} & miscellaneous `black-box' maths routines,
-including HYBRD and VMCON \\
+including HYBRD and \vmcon \\
 \texttt{numerics.f90} & numerics array definitions, and calling routines for
-HYBRD and VMCON packages \\
+HYBRD and \vmcon\ packages \\
 \texttt{scan.f90} & performs a parameter scan \\
 \hline
 \end{tabular}

@@ -183,7 +183,7 @@ Python utilities (see Chapter~\ref{chap:utilities}), add the following lines
 to your \texttt{.bashrc} file:
 \begin{quote}
 \begin{verbatim}
-module use /home/pknight/modules
+module use /home/PROCESS/modules
 module swap python
 module load process/master
 \end{verbatim}
@@ -212,15 +212,15 @@ the machine to be modelled. This may include some or all of the following:
 \item type of current drive to be used
 \item net electric power
 \item various physics parameters, e.g.
-\begin{itemize}
-\item toroidal field on axis
-\item electron density
-\item electron temperature
-\item elongation
-\item triangularity
-\item beta $g$ coefficient
-\item edge safety factor
-\end{itemize}
+  \begin{itemize}
+  \item toroidal field on axis
+  \item electron density
+  \item electron temperature
+  \item elongation
+  \item triangularity
+  \item beta $g$ coefficient
+  \item edge safety factor
+  \end{itemize}
 \end{itemize}
 
 In addition, some of the switch values summarised in Chapter~\ref{chap:models}
@@ -323,8 +323,8 @@ optimisation mode. If \texttt{ioptimz = 0}, a non-optimisation pass is
 performed first, to provide a (hopefully) feasible set of initial conditions;
 if \texttt{ioptimz = 1}, this is skipped and the code runs in optimisation
 mode from the start. However, it is recommended to use \texttt{ioptimz = 1}
-for optimisation runs, as using the HYBRD step before a VMCON iteration tends
-to cause \process\ to fail to converge more often.
+for optimisation runs, as using the HYBRD step before a \vmcon\ iteration
+tends to cause \process\ to fail to converge more often.
 
 As before, the user must decide which constraint equations and iteration
 variables to activate. Again, the choice depends largely on the information
@@ -497,14 +497,14 @@ The former implies a successful outcome, although it is always worth checking
 that the estimate of the constraints (\texttt{sqsumsq}) is small ($\sim
 10^{-3}$ or less); the code will issue a warning if the run seems feasible but
 the value of \texttt{sqsumsq} exceeds $10^{-2}$. If this occurs, reducing the
-value of the HYBRD tolerance \texttt{ftol} or VMCON tolerance \texttt{epsvmc}
-(as appropriate) should indicate whether the result is valid or not; the
-output can usually be trusted if (1) the constraint residues\footnote{The
-  constraint residues are the final values of $c_i$ in the constraint
-  equations --- see Section~\ref{sec:constraints}. The value \texttt{sqsumsq}
-  is the square root of the sum of the squares of these residuals.} fall as
-the tolerance is reduced to about $10^{-8}$, and (2) the code indicates that a
-feasible solution is still found.
+value of the HYBRD tolerance \texttt{ftol} or \vmcon\ tolerance
+\texttt{epsvmc} (as appropriate) should indicate whether the result is valid
+or not; the output can usually be trusted if (1) the constraint
+residues\footnote{The constraint residues are the final values of $c_i$ in the
+  constraint equations --- see Section~\ref{sec:constraints}. The value
+  \texttt{sqsumsq} is the square root of the sum of the squares of these
+  residuals.} fall as the tolerance is reduced to about $10^{-8}$, and (2) the
+code indicates that a feasible solution is still found.
 
 An unfeasible result occurs if \process\ cannot find a set of values for the
 iteration variables which satisfies all the given constraints. In this case,
@@ -569,9 +569,9 @@ output file.
 
 It may be the case that the act of satisfying all the required constraints is
 impossible. No machine can exist if the allowed operating regime is too
-restrictive, or if two constraint equations require conflicting parameter
-spaces. In this case some relaxation of the requirements is needed for the
-code to produce a successful machine design.
+restrictive, or if two constraint equations require conflicting
+(non-overlapping) parameter spaces. In this case some relaxation of the
+requirements is needed for the code to produce a successful machine design.
 
 \subsection{Hints}
 

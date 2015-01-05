@@ -7,6 +7,7 @@ subroutine loadxc
   !+ad_summ  optimisation variables array
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_auth  J Morris, CCFE, Culham Science Centre
   !+ad_cont  N/A
   !+ad_args  None
   !+ad_desc  This subroutine loads the physics and engineering variables
@@ -14,6 +15,7 @@ subroutine loadxc
   !+ad_prob  None
   !+ad_call  build_variables
   !+ad_call  constraint_variables
+  !+ad_call  cost_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  error_handling
@@ -68,6 +70,7 @@ subroutine loadxc
   !+ad_hist  02/10/14 PJK Added fcwr (104)
   !+ad_hist  06/10/14 PJK Added fnbshinef (105)
   !+ad_hist  11/11/14 PJK Added ftmargoh (106)
+  !+ad_hist  25/11/14 JM  Added favail (107)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -75,6 +78,7 @@ subroutine loadxc
 
   use build_variables
   use constraint_variables
+  use cost_variables
   use current_drive_variables
   use divertor_variables
   use error_handling
@@ -223,6 +227,7 @@ subroutine loadxc
      case (104) ; xcm(i) = fcwr
      case (105) ; xcm(i) = fnbshinef
      case (106) ; xcm(i) = ftmargoh
+     case (107) ; xcm(i) = favail
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -268,6 +273,7 @@ subroutine convxc(xc,nn)
   !+ad_summ  their real values
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_auth  J Morris, CCFE, Culham Science Centre
   !+ad_cont  N/A
   !+ad_args  xc(ipnvars) : input/output real array : scaled iteration variable values
   !+ad_args  nn : input integer : number of iteration variables
@@ -276,6 +282,7 @@ subroutine convxc(xc,nn)
   !+ad_prob  None
   !+ad_call  build_variables
   !+ad_call  constraint_variables
+  !+ad_call  cost_variables
   !+ad_call  current_drive_variables
   !+ad_call  divertor_variables
   !+ad_call  error_handling
@@ -322,6 +329,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  02/10/14 PJK Added fcwr (104)
   !+ad_hist  06/10/14 PJK Added fnbshinef (105)
   !+ad_hist  11/11/14 PJK Added ftmargoh (106)
+  !+ad_hist  25/11/14 JM  Added favail (107)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -329,6 +337,7 @@ subroutine convxc(xc,nn)
 
   use build_variables
   use constraint_variables
+  use cost_variables
   use current_drive_variables
   use divertor_variables
   use error_handling
@@ -467,7 +476,8 @@ subroutine convxc(xc,nn)
      case (103) ; flhthresh = xc(i)/scale(i)
      case (104) ; fcwr      = xc(i)/scale(i)
      case (105) ; fnbshinef = xc(i)/scale(i)
-     case (106) ; ftmargoh = xc(i)/scale(i)
+     case (106) ; ftmargoh  = xc(i)/scale(i)
+     case (107) ; favail    = xc(i)/scale(i)
 
      case default
         call report_error(57)
