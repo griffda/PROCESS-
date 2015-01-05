@@ -9,17 +9,18 @@
 
 """
 
+
 # Dictionary for variable types
-from process_io_lib.process_dicts import DICT_VAR_TYPE
+from process_dicts import DICT_VAR_TYPE
 
 # Dictionary for ixc -> name
-from process_io_lib.process_dicts import DICT_IXC_SIMPLE
+from process_dicts import DICT_IXC_SIMPLE
 
 # Dictionary for variable modules
-from process_io_lib.process_dicts import DICT_MODULE
+from process_dicts import DICT_MODULE
 
 # Dictionary for parameter descriptions
-from process_io_lib.process_dicts import DICT_DESCRIPTIONS
+from process_dicts import DICT_DESCRIPTIONS
 
 
 def fortran_python_scientific(var_value):
@@ -259,7 +260,8 @@ def process_parameter(data, line):
     parameter_group = find_parameter_group(name)
 
     # Get parameter comment/description from dictionary
-    comment = DICT_DESCRIPTIONS[name]
+    comment = DICT_DESCRIPTIONS[name].replace(",", ";").\
+        replace(".", ";").replace(":", ";")
 
     # Populate the IN.DAT dictionary with the information
     data[name] = INVariable(name, value, "Parameter", parameter_group, comment)
@@ -320,8 +322,8 @@ def write_constraint_equations(data, out_file):
     write_title("Constraint Equations", out_file)
 
     # Write number of equations to file
-    neqns_line = "neqns = {0}\t* {1}\n\n".format(data["neqns"].value,
-                                                 data["neqns"].comment)
+    neqns_line = "neqns = {0} * {1}\n\n".format(data["neqns"].value,
+                                                data["neqns"].comment)
     out_file.write(neqns_line)
 
     # List of constraints
@@ -350,16 +352,17 @@ def write_iteration_variables(data, out_file):
     iteration_variables = data["ixc"].value
 
     # Write nvar
-    nvar_line = "nvar = {0}\t* {1}\n\n".format(data["nvar"].value,
-                                               data["nvar"].comment)
+    nvar_line = "nvar = {0} * {1}\n\n".format(data["nvar"].value,
+                                              data["nvar"].comment)
     out_file.write(nvar_line)
 
     # Write constraints to file
     counter = 1
     for variable in iteration_variables:
-        comment = DICT_IXC_SIMPLE[str(variable)]
-        variable_line = "ixc({0}) = {1}\t* {2}\n\n".format(counter, variable,
-                                                           comment)
+        comment = DICT_IXC_SIMPLE[str(variable).replace(",", ";").
+                                  replace(".", ";").replace(":", ";")]
+        variable_line = "ixc({0}) = {1} * {2}\n\n".format(counter, variable,
+                                                          comment)
         out_file.write(variable_line)
         counter += 1
 
