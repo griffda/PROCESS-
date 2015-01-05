@@ -219,7 +219,7 @@ def no_unfeasible_mfile(wdir='.'):
     m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
 
     #no scans
-    if not m_file.data['isweep'].exists():
+    if not m_file.data['isweep'].exists:
 
         if m_file.data['ifail'].get_scan(0) == IFAIL_SUCCESS:
             return 0

@@ -772,7 +772,7 @@ class RunProcessConfig(ProcessConfig):
 #class UncertaintiesConfig(RunProcessConfig)
 ################################################################################
 
-NETCDF_SWITCH = True
+NETCDF_SWITCH = False
 
 class UncertaintiesConfig(ProcessConfig, Config):
 

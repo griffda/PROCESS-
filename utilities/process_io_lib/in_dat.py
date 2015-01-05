@@ -50,6 +50,14 @@ def is_title(line):
     return line[:2] == "*-" or line[:3] == "***" or line[0] == "$"
 
 
+def is_comment(line):
+    """ Function to determine if line is a commented line
+    :param line: line from IN.DAT
+    :return: True/False if line is a commented line
+    """
+    return line[0] == "*"
+
+
 def is_iteration_variable(name):
     """ Function to determine if item is an iteration variable
 
@@ -90,6 +98,10 @@ def find_line_type(line):
     # If the line is just the title for a section
     if is_title(line):
         return "Title"
+
+    # If the line is a commented line
+    elif is_comment(line):
+        return "Comment"
 
     # Else if the line contains a constraint equation
     elif is_constraint_equation(name):
@@ -138,11 +150,10 @@ def process_constraint_equation(data, line):
 
     # Else the line contains a list of constraint equations icc = #, #, #
     else:
-        constraints = list(no_comment_line[1].strip().replace(",", "").
-                           replace(" ", ""))
+        constraints = no_comment_line[1].strip().split(",")
 
     # List of new constraints read in
-    value = [int(item) for item in constraints]
+    value = [int(item.strip()) for item in constraints]
 
     # Populate data dictionary with constraint equations
     # If constraint equation list not already in data dictionary initialise
@@ -176,11 +187,10 @@ def process_iteration_variables(data, line):
 
     # Else the line contains a list of iteration variables IXC = #, #, #
     else:
-        iteration_variables = list(no_comment_line[1].strip().replace(",", "").
-                                   replace(" ", ""))
+        iteration_variables = no_comment_line[1].strip().split(",")
 
     # List of new constraints read in
-    value = [int(item) for item in iteration_variables]
+    value = [int(item.strip()) for item in iteration_variables]
 
     # Populate data dictionary with iteration variables
     # If iteration variables list not already in data dictionary initialise
@@ -254,7 +264,7 @@ def process_parameter(data, line):
     name = no_comment_line[0].strip()
 
     # Parameter value
-    value = no_comment_line[1].strip()
+    value = no_comment_line[1].strip().replace(",", "")
 
     # Find group of variables the parameter belongs to
     parameter_group = find_parameter_group(name)
@@ -404,8 +414,16 @@ def write_parameters(data, out_file):
             if item not in exclusions and item in data.keys():
                 # Left justification set to 8 to allow easier reading
                 # Only use first line of comment to avoid lots of info
+                line_value = data[item].value
+                line_string = ""
+                # if parameter is a list only output values comma separated
+                if isinstance(line_value, list):
+                    for val in line_value:
+                        line_string += str(val) + ", "
+                    line_value = line_string.rstrip(", ")
+
                 parameter_line = "{0} = {1} * {2}\n\n". \
-                    format(item.ljust(8), data[item].value,
+                    format(item.ljust(8), line_value,
                            data[item].comment.split("\n")[0])
                 out_file.write(parameter_line)
 
@@ -826,11 +844,16 @@ class InDat(object):
             # [constraint equation, iteration variable, bound, parameter]
             line_type = find_line_type(l_line)
 
-            # Ignore title and header lines
-            if line_type != "Title":
+            # Ignore title, header and commented lines
+            if line_type != "Title" and line_type != "Comment":
 
-                # for non-title lines process line and store data.
-                process_line(self.data, line_type, l_line)
+                try:
+                    # for non-title lines process line and store data.
+                    process_line(self.data, line_type, l_line)
+                except KeyError:
+                    print("Warning: Line below is causing a problem. Check "
+                          "that line in IN.DAT is valid. Line skipped!\n{0}".
+                          format(line))
 
     def add_iteration_variable(self, variable_number):
         """ Function to add iteration variable to IN.DAT data dictionary
@@ -961,7 +984,7 @@ class InDat(object):
 
 
 if __name__ == "__main__":
-    i = InDat(filename="../../IN.DAT")
+    i = InDat(filename="../../IN.DAT_demo1")
     print(i.data["ixc"].value)
     i.remove_constraint_equation(2.5)
     i.add_constraint_equation("3.0")
@@ -982,5 +1005,6 @@ if __name__ == "__main__":
     i.add_parameter("iavail", 1)
     i.remove_parameter("blnkithsddd")
     i.remove_parameter("blnkith")
+    i.add_parameter("sweep", [3.0, 3.0])
     print(i.data["bounds"].get_value)
     i.write_in_dat()
