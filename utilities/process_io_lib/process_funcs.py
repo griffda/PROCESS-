@@ -272,9 +272,10 @@ def vary_iteration_variables(itervars, lbs, ubs):
         new_value = uniform(lbnd, ubnd)
         new_values += [new_value]
 
-        in_dat.data[varname].add_parameter(varname, new_value)
+        #in_dat.data[varname].add_parameter(varname, new_value)
+        in_dat.add_parameter(varname, new_value)
 
-    in_dat.write_in_dat(filename='IN.DAT')
+    in_dat.write_in_dat(output_filename='IN.DAT')
 
     return new_values
 
