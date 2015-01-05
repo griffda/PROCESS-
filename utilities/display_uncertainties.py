@@ -80,17 +80,21 @@ if __name__ == '__main__':
                         help="list of variables to be plotted; \
 default = all")
 
+    PARSER.add_argument("-f", "--filename",
+                        default='uncertainties.nc',
+                        help="uncertainties data file, default =\
+uncertainties.nc")
+    ARGS = PARSER.parse_args()
+
+    filename = ARGS.filename
+
+
+############################################################
+#main program
 
     #version with NetCDF files:
     if NETCDF_SWITCH:
         from process_io_lib.process_netcdf import NetCDFReader
-
-        PARSER.add_argument("-f", "--filename",
-                            default='uncertainties.nc',
-                            help="uncertainties data file, default =\
-uncertainties.nc")
-        ARGS = PARSER.parse_args()
-        filename = ARGS.filename
 
         ncdf_reader = NetCDFReader(filename)
         mfile1 = ncdf_reader.get_mfile(0)
@@ -99,26 +103,12 @@ uncertainties.nc")
 
     #version without NetCDF files:
     else:
-        PARSER.add_argument("-f", "--filename",
-                            default='UNCERTAINTIES.DAT',
-                            help="uncertainties data file, default =\
-UNCERTAINTIES.DAT")
-
-
-
-        ARGS = PARSER.parse_args()
-
-    ############################################################
-    #main program
-
-        filename = ARGS.filename
-
         ufile = open(filename,'r')
         labels = ufile.readline()
         ufile.close()
         labels = labels.split()
 
-        data = loadtxt('UNCERTAINTIES.DAT',skiprows=1)
+        data = loadtxt(filename, skiprows=1)
 
         if ARGS.variables == 'all':
             for i in range(len(data[0])-1):
