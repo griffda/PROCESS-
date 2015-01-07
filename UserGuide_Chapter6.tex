@@ -982,6 +982,34 @@ For all of the functions below the arguments are:
 
 \end{description}
 
+
+\subsection{fit\_profile.py}
+
+This is a Python tool to fit a general temperature or density profile as given by the pedestalised profile parametrisation (\texttt{ipedestal} =1) to an ascii table. It is using a least squares method and is fitting the position of the pedestal as well as the peaking factors.  Optional arguments are 
+\begin{verbatim}
+
+  -h, --help            show this help message and exit
+  -f FILENAME, --filename FILENAME
+                        ascii file containing data in columns, default =
+                        profile.txt
+  -r RHO, --rho RHO     column of the normalised radius rho=r/a, default = 0
+  -n DENSITY, --density DENSITY
+                        column of the density profile, default = 1
+  -t TEMPERATURE, --temperature TEMPERATURE
+                        column of the temperature profile, default = 2
+  -rn RHOPEDN, --rhopedn RHOPEDN
+                        user defined initial guess of the density pedestal
+                        position, if outside [0,1] starts at 0.9, default =
+                        0.9
+  -rt RHOPEDT, --rhopedt RHOPEDT
+                        user defined initial guess of the temperature pedestal
+                        position, if outside [0,1], starts at 0.9, default =
+                        0.9
+
+\end{verbatim}
+If the column of the density or temperature data does not exist, it is ignored. A warning is issued.
+
+
 \section{User Interface}
 \label{sec:gui}
 The user interface is still being developed, but currently allows for viewing
