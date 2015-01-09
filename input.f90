@@ -328,6 +328,7 @@ contains
     !+ad_hist  13/11/14 PJK Modified IRADLOSS limit
     !+ad_hist  17/11/14 PJK Added OUTPUT_COSTS
     !+ad_hist  25/11/14 JM  Added new availability model variables
+    !+ad_hist  05/01/15 JM  Added 2015 cost model variables
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1714,6 +1715,9 @@ contains
        case ('FWBSSHAPE')
           call parse_int_variable('FWBSSHAPE', fwbsshape, 1, 2, &
                'Switch for fw/blanket/shield/vv shape')
+       case ('FW_W_THICKNESS')
+          call parse_real_variable('FW_W_THICKNESS', fw_w_thickness, 0.0D0, 1.0D0, &
+               'First wall W coating thickness (m)')
        case ('HCDPORTSIZE')
           call parse_int_variable('HCDPORTSIZE', hcdportsize, 1, 2, &
                'H/CD port size')
@@ -1933,6 +1937,29 @@ contains
        case ('CLAND')
           call parse_real_variable('CLAND', cland, 10.0D0, 100.0D0, &
                'Cost of land (M$)')
+       case ('COSTEXP')
+          call parse_real_variable('COSTEXP', costexp, 0.01D0, 5.0D0, &
+               'Cost exponent for 2015 costs model')
+       case ('COST_FACTOR_BUILDINGS')
+          call parse_real_variable('COST_FACTOR_BUILDINGS', cost_factor_buildings, &
+               0.1D0, 10.0D0, &
+               'Cost scaling factor for buildings (2015 costs model)')
+       case ('COST_FACTOR_LAND')
+          call parse_real_variable('COST_FACTOR_LAND', cost_factor_land, &
+               0.1D0, 10.0D0, &
+               'Cost scaling factor for land (2015 costs model)')
+       case ('COST_FACTOR_TF_COILS')
+          call parse_real_variable('COST_FACTOR_TF_COILS', cost_factor_tf_coils, &
+               0.1D0, 10.0D0, &
+               'Cost scaling factor for TF coils (2015 costs model)')
+       case ('COST_FACTOR_FWBS')
+          call parse_real_variable('COST_FACTOR_FWBS', cost_factor_fwbs, &
+               0.1D0, 10.0D0, &
+               'Cost scaling factor for fwbs (2015 costs model)')
+       case ('COST_FACTOR_RH')
+          call parse_real_variable('COST_FACTOR_RH', cost_factor_rh, &
+               0.1D0, 10.0D0, &
+               'Cost scaling factor for remote handling (2015 costs model)')
        case ('COWNER')
           call parse_real_variable('COWNER', cowner, 0.0D0, 1.0D0, &
                'Owner cost factor')

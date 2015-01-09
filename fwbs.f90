@@ -1257,6 +1257,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  23/06/14 PJK Corrected wallmw units
     !+ad_hist  03/09/14 PJK Changed PF coil to cryostat top vertical clearance
+    !+ad_hist  08/01/15 JM  Changed default blanket model to have ss, TiBe12 and Li4SiO4
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1811,12 +1812,12 @@ contains
 
     !  Blanket mass, excluding coolant
 
+    !  Default blanket model now changed to ss, TiBe12 and Li4SiO4
     if (blktmodel == 0) then
        whtblss = volblkt * denstl * fblss
-       whtblbe = volblkt * 1850.0D0  * fblbe  !  density modified from 1900 kg/m3
-       whtblvd = volblkt * 5870.0D0  * fblvd
-       wtblli2o = volblkt * 2010.0D0  * fblli2o
-       whtblkt = whtblss + whtblvd + wtblli2o + whtblbe
+       whtbltibe12 = volblkt * 2260.0D0  * fbltibe12  ! 2.26 g cm^-3
+       whtblli4sio4 = volblkt * 2400.0D0  * fblli4sio4 ! 2.4 g cm^-3
+       whtblkt = whtblss + wtblli4sio4 + whtbltibe12
     else  !  volume fractions proportional to sub-assembly thicknesses
        whtblss = denstl * ( &
             volblkti/blnkith * ( &
@@ -2101,18 +2102,18 @@ contains
        if (smstr == 1) then
           write(outfile,600) volblkti, volblkto, volblkt,  &
                whtblkt, vfblkt, fblbe, whtblbe, fblli2o, wtblli2o,  &
-               fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
+               fblss, whtblss, volshldi, volshldo,  &
                volshld, whtshld, vfshld, wpenshld
        else
           write(outfile,601) volblkti, volblkto, volblkt,  &
                whtblkt, vfblkt, fbllipb, wtbllipb, fblli, whtblli,  &
-               fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
+               fblss, whtblss, volshldi, volshldo,  &
                volshld, whtshld, vfshld, wpenshld
        end if
     else if (blktmodel == 0) then
        write(outfile,600) volblkti, volblkto, volblkt, whtblkt, vfblkt, &
-            fblbe, whtblbe, fblli2o, wtblli2o, fblss, whtblss, fblvd, &
-            whtblvd, volshldi, volshldo, volshld, whtshld, vfshld, &
+            fblbe, whtblbe, fblli2o, wtblli2o, fblss, whtblss, &
+            volshldi, volshldo, volshld, whtshld, vfshld, &
             wpenshld
     else
        write(outfile,602) volblkti, volblkto, volblkt, whtblkt, vfblkt, &

@@ -993,6 +993,7 @@ module fwbs_variables
   !+ad_hist  14/11/13 PJK Changed 'breeding unit' to 'breeding zone'
   !+ad_hist  03/06/14 PJK Added new power flow variables
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
+  !+ad_hist  08/01/15 JM  Changed default blanket now has (li4sio4 and tibe12)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1040,12 +1041,17 @@ module fwbs_variables
   !+ad_vars  fblli2o /0.08/ : lithium oxide fraction of blanket by volume
   !+ad_varc                   (blktmodel=0, lblnkt=1, smstr=1)
   real(kind(1.0D0)) :: fblli2o = 0.08D0
+  !+ad_vars  fblli4sio4 /0.08/ : lithium orthosilicate fraction of blanket by volume
+  !+ad_varc                   (blktmodel=0, lblnkt=1, smstr=1)
+  real(kind(1.0D0)) :: fblli4sio4 = 0.08D0
   !+ad_vars  fbllipb /0.68/ : lithium lead fraction of blanket by volume
   !+ad_varc                   (blktmodel=0, lblnkt=0 or 1, smstr=2)
   real(kind(1.0D0)) :: fbllipb = 0.68D0
   !+ad_vars  fblss /0.07/ : stainless steel fraction of blanket by volume
   !+ad_varc                 (if blktmodel>0, steel fraction of breeding zone)
   real(kind(1.0D0)) :: fblss = 0.07D0
+  !+ad_vars  fblbe /0.6/ : Titanium beryllide fraction of blanket by volume (blktmodel==0)
+  real(kind(1.0D0)) :: fbltibe12 = 0.6D0
   !+ad_vars  fblvd /0.0/ : vanadium fraction of blanket by volume
   !+ad_varc                (blktmodel=0)
   real(kind(1.0D0)) :: fblvd = 0.0D0
@@ -1071,6 +1077,8 @@ module fwbs_variables
   integer :: fwbsshape = 2
   !+ad_vars  fwmass : first wall mass (kg)
   real(kind(1.0D0)) :: fwmass = 0.0D0
+  !+ad_vars  fw_w_thickness : first wall W coating thickness (m)
+  real(kind(1.0D0)) :: fw_w_thickness = 0.005D0
   !+ad_vars  pnucblkt : nuclear heating in the blanket (MW)
   real(kind(1.0D0)) :: pnucblkt = 0.0D0
   !+ad_vars  pnuccp : nuclear heating in the ST centrepost (MW)
@@ -1128,8 +1136,12 @@ module fwbs_variables
   real(kind(1.0D0)) :: wpenshld = 0.0D0
   !+ad_vars  wtblli2o : mass of blanket - Li_2O part (kg)
   real(kind(1.0D0)) :: wtblli2o = 0.0D0
+  !+ad_vars  wtblli4sio4 : mass of blanket - Li_4 Li O_4 part (kg)
+  real(kind(1.0D0)) :: wtblli4sio4 = 0.0D0
   !+ad_vars  wtbllipb : mass of blanket - Li-Pb part (kg)
   real(kind(1.0D0)) :: wtbllipb = 0.0D0
+  !+ad_vars  wtbltibe12 : mass of blanket - Ti Be_12 part (kg)
+  real(kind(1.0D0)) :: wtbltibe12 = 0.0D0
   !+ad_vars  wtshldi : mass of inboard shield (kg)
   real(kind(1.0D0)) :: wtshldi = 0.0D0
   !+ad_vars  wtshldo : mass of outboard shield (kg)
@@ -2655,6 +2667,7 @@ module cost_variables
   !+ad_hist  19/11/14 PJK Modified iavail wording
   !+ad_hist  25/11/14 JM  Added new availability model variables
   !+ad_hist  02/12/14 PJK Changed abktflnc, adivflnc default values
+  !+ad_hist  05/01/15 JM  Added 2015 costs model variables
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2712,6 +2725,18 @@ module cost_variables
   real(kind(1.0D0)) :: coeoam = 0.0D0
   !+ad_vars  concost : plant construction cost (M$)
   real(kind(1.0D0)) :: concost = 0.0D0
+  !+ad_vars  costexp /0.8/ : cost exponent for scaling in 2015 costs model
+  real(kind(1.0D0)) :: costexp = 0.8D0
+  !+ad_vars  cost_factor_buildings /1.0/ : cost scaling factor for buildings
+  real(kind(1.0D0)) :: cost_factor_buildings = 1.0D0
+  !+ad_vars  cost_factor_land /1.0/ : cost scaling factor for land
+  real(kind(1.0D0)) :: cost_factor_land = 1.0D0
+  !+ad_vars  cost_factor_tf_coils /1.0/ : cost scaling factor for TF coils
+  real(kind(1.0D0)) :: cost_factor_tf_coils = 1.0D0
+  !+ad_vars  cost_factor_fwbs /1.0/ : cost scaling factor for fwbs
+  real(kind(1.0D0)) :: cost_factor_fwbs = 1.0D0
+  !+ad_vars  cost_factor_rh /1.0/ : cost scaling factor for remote handling
+  real(kind(1.0D0)) :: cost_factor_rh = 1.0D0
   !+ad_vars  cowner /0.15/ : owner cost factor
   real(kind(1.0D0)) :: cowner = 0.15D0
   !+ad_vars  cplife : lifetime of centrepost (y)
@@ -2762,6 +2787,9 @@ module cost_variables
   integer :: iavail= 0
   !+ad_vars  avail_min /0.75/ : Minimum availability (constraint equation 60)
   real(kind(1.0D0)) :: avail_min = 0.75D0
+  !+ad_vars  ITER_build_cost_per_vol /1090.0/ : ITER averaged building cost per 
+  !+ad_varc                                        unit volume (2014 $)
+  real(kind(1.0D0)) :: ITER_build_cost_per_vol = 1090.0D0
   !+ad_vars  favail /1.0/ : F-value for minimum availability (constraint equation 60)
   real(kind(1.0D0)) :: favail = 1.0D0  
   !+ad_vars  num_rh_systems /4/ : Number of remote handling systems (1-10)
