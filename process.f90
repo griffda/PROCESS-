@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '380    Release Date :: 2015-01-05'
+       '381    Release Date :: 2015-01-13'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1877,3 +1877,5 @@ end subroutine output
 ! GIT 377: Minor correction to numerics.f90 for gfortran compilation
 ! GIT 379: Modified FISPACT I/O to use formatted data files
 ! GIT 380: Post-merger with dev_uncertainties branch
+! GIT 381: Changed pinjht description;
+!          Changed Django library location for GUI
