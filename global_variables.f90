@@ -2172,6 +2172,7 @@ module heat_transport_variables
   !+ad_hisc               deleted ctht, rnihx;
   !+ad_hisc               modified some descriptions
   !+ad_hist  17/12/14 PJK Modified htpmw_* descriptions
+  !+ad_hist  13/01/15 PJK Changed pinjht description
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2300,7 +2301,7 @@ module heat_transport_variables
   real(kind(1.0D0)) :: pfwdiv = 0.0D0
   !+ad_vars  pgrossmw : gross electric power (MW)
   real(kind(1.0D0)) :: pgrossmw = 0.0D0
-  !+ad_vars  pinjht : heat removal from injection power (MW)
+  !+ad_vars  pinjht : power dissipated in heating and current drive system (MW)
   real(kind(1.0D0)) :: pinjht = 0.0D0
   !+ad_vars  pinjwp : injector wall plug power (MW)
   real(kind(1.0D0)) :: pinjwp = 0.0D0

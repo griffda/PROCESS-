@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#! /usr/bin/env python
 """
 
   Modifies the PROCESS input file IN.DAT so all the iteration variables are

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
    This is a program to automatically produce the process_dicts.py file
@@ -751,6 +751,38 @@ def dict_module():
     return module_dict
 
 
+def dict_nsweep2varname():
+
+    """
+    This function creates the nsweep2varname dictionary from the fortran code
+    It maps the sweep variable number to its variable name
+    """
+
+
+    di = {}
+    file = SOURCEDIR + "/scan.f90"
+
+    #slice the file to get the switch statement relating to nsweep
+    lines = slice_file(file, r"select case \(nsweep\)", r"case default")
+
+    #remove extra lines that aren't case(#) or varname = sweep(iscan) lines
+    modlines = []
+    for line in lines[1:-1]:
+        if "case" in line or "sweep(iscan)" in line:
+            line = remove_comments(line).replace(' ', '')
+            modlines.append(line)
+
+    for i in range(len(modlines)//2):
+        line1 = modlines[i*2]
+        no = line1.replace('case(', '')
+        no = no.replace(')', '')
+        line2 = modlines[i*2+1]
+        varname = line2.replace('=sweep(iscan)', '')
+        di[no] = varname
+
+    return di
+
+
 def print_header():
     """Prints the file header
     """
@@ -783,6 +815,7 @@ List of dictionaries:
     DICT_DESCRIPTIONS      : Dictionary of variable descriptions
     DICT_MODULE            : Ordered dictionary mapping module names to list
                              of associatied variables
+    DICT_NSWEEP2VARNAME    : Dictionary mapping scan variable number to name
 
 Automatically produced by create_dicts.py for PROCESS version %i
 \"\"\"
@@ -942,6 +975,18 @@ def print_module():
     comment = "Dictionary mapping module name to list of variables"
     print_dict(module, "DICT_MODULE", comment, dict_type="OrderedDict()")
 
+
+def print_nsweep2varname():
+
+    """
+    Prints: 
+    DICT_NSWEEP2VARNAME
+    """
+    lam = lambda x: int(x[0])
+    nsweep2varname = dict_nsweep2varname()
+    comment = 'Dictionary mapping nsweep to varname'
+    print_dict(nsweep2varname, 'DICT_NSWEEP2VARNAME', comment, lam)
+
 def print_all():
     """Prints every dictionary
     """
@@ -955,9 +1000,11 @@ def print_all():
     print_input_bounds()
     print_descriptions()
     print_module()
+    print_nsweep2varname()
 
 
 if __name__ == "__main__":
+
     desc = "Creates a python dictionary file for use by utility programs. " + \
            "Prints to stdout. Redirect to output file using '>'"
     PARSER = argparse.ArgumentParser(description=desc)

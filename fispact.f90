@@ -1,11 +1,3 @@
-!
-!  If the contents of this file are to be used (by commenting out the RETURN
-!  statement near line 99) it is necessary to compile the file using
-!    ifort -c -convert big_endian fispact.f90
-!  before compiling the rest of the code.
-!  This needs to be done until the files in subdirectory fispact/ are
-!  rewritten as formatted rather than binary files.
-!
 !----------------------------------------------------------------------
       SUBROUTINE FISPAC(IPRINT)
 !CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
@@ -978,6 +970,7 @@
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !  17/11/97 PJK 1.010 Added IVMS1 coding
+!  23/12/14 PJK       Converted WARRY files to ASCII
 !
 !--Arguments
 !  None
@@ -1049,21 +1042,20 @@
          TEMP = 'fispact/WARRY'//NUMRGN//'.DAT'
       END IF
 
-      OPEN(25,FILE=TEMP,STATUS='OLD',ACCESS='SEQUENTIAL', &
-           FORM='UNFORMATTED')
-      READ(25) LIBDAT
-      READ(25) NSTART,NCH,NSPEC,NISOT,MTOTAL,MFRAC,N,MASS, &
+      OPEN(25,FILE=TEMP,STATUS='OLD')
+      READ(25,'(a72)') LIBDAT
+      READ(25,*) NSTART,NCH,NSPEC,NISOT,MTOTAL,MFRAC,N,MASS, &
            MIDEN,MLAMDA,MSPEC,MYILDS,MYIELD,NTRANS,MTRANS,NCROSS,MCROSS
-      READ(25) (IX3(K),K=1,70)
-      READ(25) (IX4(K),K=1,10)
-      READ(25) (FLUX(K),K=1,3),MIND
-      READ(25) (B(K),K=1,N)
-      READ(25) ICOU,(IN(K),K=1,N)
-      READ(25) (IW(K),K=1,N),KDIC
+      READ(25,*) (IX3(K),K=1,70)
+      READ(25,*) (IX4(K),K=1,10)
+      READ(25,*) (FLUX(K),K=1,3),MIND
+      READ(25,*) (B(K),K=1,N)
+      READ(25,*) ICOU,(IN(K),K=1,N)
+      READ(25,*) (IW(K),K=1,N),KDIC
       KS = 1
       DO 710 KAR=1,9
          KE = KS + 1999
-         READ(25) (A(K),K=KS,KE)
+         READ(25,*) (A(K),K=KS,KE)
          KS = KE + 1
  710  CONTINUE
 
@@ -3024,6 +3016,7 @@
 !--History
 !  01/12/93 PJK 1.000 Initial version
 !  17/11/97 PJK 1.010 Added IVMS1 coding
+!  23/12/14 PJK       Converted WARRY files to ASCII
 !
 !--Arguments
 !  None
@@ -3132,30 +3125,28 @@
          IF (IVMS1.EQ.1) THEN
             TEMP = 'WCOLL'//NUMRGN//'.DAT'
             OPEN(24,FILE=TEMP,STATUS='OLD')
-            OPEN(25,FILE='WARRY000.DAT',STATUS='OLD', &
-                 ACCESS='SEQUENTIAL',FORM='UNFORMATTED')
+            OPEN(25,FILE='WARRY000.DAT',STATUS='OLD')
          ELSE
             TEMP = 'fispact/WCOLL'//NUMRGN//'.DAT'
             OPEN(24,FILE=TEMP,STATUS='OLD')
-            OPEN(25,FILE='fispact/WARRY000.DAT',STATUS='OLD', &
-                 ACCESS='SEQUENTIAL',FORM='UNFORMATTED')
+            OPEN(25,FILE='fispact/WARRY000.DAT',STATUS='OLD')
          END IF
 
          KNISOT = 0
-         READ(25) OLDLIB
-         READ(25) &
+         READ(25,'(a72)') OLDLIB
+         READ(25,*) &
               NSTART,NCH,NSPEC,NISOT,MTOTAL,MFRAC,N,MASS,MIDEN,MLAMDA, &
               MSPEC,MYILDS,MYIELD,NTRANS,MTRANS,NCROSS,MCROSS
-         READ(25) (IX3(K),K=1,70)
-         READ(25) (IX4(K),K=1,10)
-         READ(25) (FLUX(K),K=1,3),MIND
-         READ(25) (BB(K),K=1,N)
-         READ(25) ICOU,(IN(K),K=1,N)
-         READ(25) (IW(K),K=1,N),KDIC
+         READ(25,*) (IX3(K),K=1,70)
+         READ(25,*) (IX4(K),K=1,10)
+         READ(25,*) (FLUX(K),K=1,3),MIND
+         READ(25,*) (BB(K),K=1,N)
+         READ(25,*) ICOU,(IN(K),K=1,N)
+         READ(25,*) (IW(K),K=1,N),KDIC
          KS = 1
          DO 2 KAR=1,9
             KE = KS + 1999
-            READ(25) (A(K),K=KS,KE)
+            READ(25,*) (A(K),K=KS,KE)
             KS = KE + 1
  2       CONTINUE
          CLOSE(25)
@@ -3421,26 +3412,24 @@
 !+**PJK 17/11/97
       IF (IVMS1.EQ.1) THEN
          TEMP = 'WARRY'//NUMRGN//'.DAT'
-         OPEN(25,FILE=TEMP,STATUS='UNKNOWN',ACCESS='SEQUENTIAL', &
-              FORM='UNFORMATTED')
+         OPEN(25,FILE=TEMP,STATUS='UNKNOWN')
       ELSE
          TEMP = 'fispact/WARRY'//NUMRGN//'.DAT'
-         OPEN(25,FILE=TEMP,STATUS='UNKNOWN',ACCESS='SEQUENTIAL', &
-              FORM='UNFORMATTED')
+         OPEN(25,FILE=TEMP,STATUS='UNKNOWN')
       END IF
-      WRITE(25) LIBDAT
-      WRITE(25) NSTART,NCH,NSPEC,NISOT,MTOTAL,MFRAC,N,MASS,MIDEN, &
+      WRITE(25,'(a72)') LIBDAT
+      WRITE(25,*) NSTART,NCH,NSPEC,NISOT,MTOTAL,MFRAC,N,MASS,MIDEN, &
            MLAMDA,MSPEC,MYILDS,MYIELD,NTRANS,MTRANS,NCROSS,MCROSS
-      WRITE(25) (IX3(K),K=1,70)
-      WRITE(25) (IX4(K),K=1,10)
-      WRITE(25) (FLUX(K),K=1,3),MIND
-      WRITE(25) (BB(K),K=1,N)
-      WRITE(25) ICOU,(IN(K),K=1,N)
-      WRITE(25) (IW(K),K=1,N),KDIC
+      WRITE(25,*) (IX3(K),K=1,70)
+      WRITE(25,*) (IX4(K),K=1,10)
+      WRITE(25,*) (FLUX(K),K=1,3),MIND
+      WRITE(25,*) (BB(K),K=1,N)
+      WRITE(25,*) ICOU,(IN(K),K=1,N)
+      WRITE(25,*) (IW(K),K=1,N),KDIC
       KS = 1
       DO 160 KAR = 1,9
          KE = KS + 1999
-         WRITE(25) (A(K),K=KS,KE)
+         WRITE(25,*) (A(K),K=KS,KE)
          KS = KE + 1
  160  CONTINUE
 
