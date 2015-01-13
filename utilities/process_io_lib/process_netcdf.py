@@ -10,7 +10,7 @@ import re
 import numpy as np
 from netCDF4 import Dataset
 
-from mfile import MFile
+from process_io_lib.mfile import MFile, MFileErrorClass
 
 NAME_MAPPINGS = {"/": "_slash_",
                  "*": "_asterisk_",
@@ -18,9 +18,9 @@ NAME_MAPPINGS = {"/": "_slash_",
 METADATA = ("procver", "date", "time", "username", "isweep", "nsweep")
 
 class NetCDFWriter(object):
-    
+
     """Takes PROCESS data and writes it to a NetCDF file."""
-    
+
     def __init__(self, netcdf_filename, append=True, overwrite=False):
         self.netcdf_filename = os.path.abspath(netcdf_filename)
         self._append = append
@@ -48,14 +48,30 @@ class NetCDFWriter(object):
         except AttributeError:
             print("File not initially opened by NetCDFWriter")
 
-    def write_mfile_data(self, mfile, run_id, save_vars=list()):
+    def _store_variable(self, var_name, value, var_group):
+        try:
+            var_type = "f8"
+            stored_val = np.array(value, dtype=var_type)
+        except ValueError:
+            var_type = "str"
+            stored_val = np.array(value, dtype=var_type)
+
+        stored_var = var_group.createVariable(var_name, var_type)
+        stored_var[:] = stored_val
+
+    def write_mfile_data(self, mfile, run_id, save_vars="all",
+                         latest_scan_only=False):
         """Write the provided mfile instance out as a run within the NetCDF."""
+
         mfile_data = mfile.data
         mfile_vars = self.root.createGroup("output_{}".format(run_id))
 
         # Make sure we include metadata
-        save_vars += METADATA
+        keys = METADATA
+        if save_vars != "all" and isinstance(save_vars, list):
+            keys += save_vars
 
+        keys = []
         for k, v in mfile_data.items():
             if k.endswith("."):
                 continue
@@ -64,32 +80,41 @@ class NetCDFWriter(object):
             rep_key = dict((re.escape(k), v) for k, v in NAME_MAPPINGS.items())
             pattern = re.compile("|".join(rep_key.keys()))
             # Swaps all illegal characters in one go
-            key = pattern.sub(lambda m: rep_key[re.escape(m.group(0))], k)
+            if save_vars == "all" or k in save_vars:
+                keys.append(pattern.sub(lambda m: rep_key[re.escape(m.group(0))], k))
+            else:
+                pass
 
-            if key in save_vars or save_vars is None:
-                var_group = mfile_vars.createGroup(key)
+        for key in keys:
+            var_group = mfile_vars.createGroup(key)
+            v = mfile_data[key]
+            if isinstance(v, MFileErrorClass):
+                continue
+            else:
                 var_group.description = v["var_description"]
                 var_group.name = v["var_name"]
                 var_group.unit = v["var_unit"] if v["var_unit"] is not None else "None"
-                for scan, scanval in v.items():
-                    if "scan" not in scan:
-                        continue
-                    else:
-                        try:
-                            var_type = "f8"
-                            stored_val = np.array(scanval, dtype=var_type)
-                        except ValueError:
-                            var_type = "str"
-                            stored_val = np.array(scanval, dtype=var_type)
+            possible_scans = dict((scan, scanval) for scan, scanval in mfile_data[key].items() if "scan" in scan)
 
-                        stored_var = var_group.createVariable(scan, var_type)
-                        stored_var[:] = stored_val
+            if latest_scan_only:
+                highest_scan = 0
+                latest_scan = None
+                for scan_k in possible_scans.keys():
+                    scan_num = int(scan_k.strip("scan"))
+                    if scan_num > highest_scan:
+                        highest_scan = scan_num
+                        latest_scan = scan_k
+                self._store_variable(latest_scan, possible_scans[latest_scan],
+                                     var_group)
+            else:
+                for scan, scan_val in possible_scans.items():
+                    self._store_variable(scan, scan_val, var_group)
 
 
 class NetCDFReader(object):
 
     """Capable of reading NetCDF PROCESS data files and returning [...]."""
-    
+
     def __init__(self, netcdf_filename):
         self.netcdf_filename = os.path.abspath(netcdf_filename)
 
@@ -123,7 +148,7 @@ class NetCDFReader(object):
             mfile_data = self.root.groups[path]
         except:
             raise KeyError("Cannot access {} in "
-                           "{}".format(run_id, self.netcdf_filename))
+                           "{}".format(path, self.netcdf_filename))
         for group_name, group in mfile_data.groups.items():
             for var_name, variable in group.variables.items():
                 scan_num = None
@@ -159,12 +184,12 @@ if __name__ == "__main__":
 
     if sys.argv[1] == "write":
         # Writer example - now uses context manager (i.e. with statement)
-        with NetCDFWriter("/home/edwardsj/test.nc", append=True,
+        with NetCDFWriter("/home/edwardsj/tester.nc", append=True,
                           overwrite=False) as ncdf_writer:
-            ncdf_writer.write_mfile_data(mf, 4, save_vars=[])
+            ncdf_writer.write_mfile_data(mf, 3, save_vars="all", latest_scan_only=True)
     elif sys.argv[1] == "read":
         # Reader example - gives back MFile instances
-        with NetCDFReader("/home/edwardsj/test.nc") as ncdf_reader:
+        with NetCDFReader("/home/edwardsj/tester.nc") as ncdf_reader:
             # Get an individual run
             returned_mf = ncdf_reader.get_run(4)
             print(returned_mf.data)
