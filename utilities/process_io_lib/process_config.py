@@ -772,7 +772,7 @@ class RunProcessConfig(ProcessConfig):
 #class UncertaintiesConfig(RunProcessConfig)
 ################################################################################
 
-NETCDF_SWITCH = False
+NETCDF_SWITCH = True
 
 class UncertaintiesConfig(ProcessConfig, Config):
 
@@ -823,7 +823,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
             self.dict_results[varname] = []
 
         #set up NetCDF ouput instance
-        if NETCDF_SWITCH:
+        if NETCDF_SWITCH: #TODO: Too early, wdir does not have to exist yet!
             self.ncdf_writer = NetCDFWriter(self.wdir+"/uncertainties.nc", append=False,
                                             overwrite=True)
 
