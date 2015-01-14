@@ -264,7 +264,7 @@ class ProcessConfig(object):
         os.system('cp ' + self.filename + ' ' + self.wdir)
         os.chdir(self.wdir)
         os.system('rm -f OUT.DAT MFILE.DAT PLOT.DAT \
-                   *.txt *.out *.log *.pdf *.eps')
+                   *.txt *.out *.log *.pdf *.eps *.nc')
 
     def create_readme(self, directory='.'):
 
@@ -823,9 +823,11 @@ class UncertaintiesConfig(ProcessConfig, Config):
             self.dict_results[varname] = []
 
         #set up NetCDF ouput instance
-        if NETCDF_SWITCH: #TODO: Too early, wdir does not have to exist yet!
-            self.ncdf_writer = NetCDFWriter(self.wdir+"/uncertainties.nc", append=False,
-                                            overwrite=True)
+        # no longer necessary due to context manager??
+        # need to get rid of any old files!
+        #if NETCDF_SWITCH: #TODO: Too early, wdir does not have to exist yet!
+        #    self.ncdf_writer = NetCDFWriter(self.wdir+"/uncertainties.nc", append=False,
+        #                                    overwrite=True)
 
     def echo(self):
 
@@ -993,9 +995,12 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
         if NETCDF_SWITCH:
             m_file = MFile(filename="MFILE.DAT")
-            self.ncdf_writer.write_mfile_data(m_file, run_id)
-            #TODO: only write last scan point
             #TODO: only write selected data
+            with NetCDFWriter(self.wdir+"/uncertainties.nc", append=True,
+                              overwrite=False) as ncdf_writer:
+                ncdf_writer.write_mfile_data(m_file, run_id, save_vars="all",
+                                             latest_scan_only=True)
+
         else:
             m_file = MFile(filename="MFILE.DAT")
 
@@ -1014,8 +1019,8 @@ class UncertaintiesConfig(ProcessConfig, Config):
         """ writes data into file. Uncessary, if netcdf library works?"""
 
         if NETCDF_SWITCH:    
-            self.ncdf_writer.close()
-
+            #self.ncdf_writer.close() #no longer necessary due to with statement
+            pass
         else:
             results = open('uncertainties.nc', 'w')
             for varname in self.output_vars:
