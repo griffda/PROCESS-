@@ -21,7 +21,7 @@ from pylab import figure, axes, show, savefig
 from process_io_lib.process_config import NETCDF_SWITCH
 
 
-def fig_2dscatter_and_hist(x,y):
+def fig_2dscatter_and_hist(x, y, labelx, labely):
 
     """ function to create a 2d scatter plot with histograms"""
     nullfmt   = NullFormatter()
@@ -46,8 +46,8 @@ def fig_2dscatter_and_hist(x,y):
 
     # the scatter plot:
     axScatter.scatter(x, y,edgecolors='None')
-    axScatter.set_xlabel(labels[i])
-    axScatter.set_ylabel(labels[i+1])
+    axScatter.set_xlabel(labelx)
+    axScatter.set_ylabel(labely)
 
     bins = 10
     axHistx.hist(x, bins=bins)
@@ -96,10 +96,27 @@ uncertainties.nc")
     if NETCDF_SWITCH:
         from process_io_lib.process_netcdf import NetCDFReader
 
-        ncdf_reader = NetCDFReader(filename)
-        mfile1 = ncdf_reader.get_mfile(0)
-        print('Yes got so far, not finished yet!')
-        #TODO! continue here!
+
+        if ARGS.variables == 'all':
+            print('Sorry, this option is not actually programmed yet!')
+            exit()
+        else:
+
+            xarr = []
+            yarr = []
+
+            with NetCDFReader(filename) as ncdf_reader:
+
+                # Get multiple runs 
+                for mfile in ncdf_reader.runs(start_run=0):
+                    
+                    xarr += [mfile.data[ARGS.variables[0]].get_scan(-1)]
+                    yarr += [mfile.data[ARGS.variables[1]].get_scan(-1)]
+            fig_2dscatter_and_hist(xarr, yarr, ARGS.variables[0], 
+                                   ARGS.variables[1])
+            savefig('Uncertainties_'+ARGS.variables[0]+'_'+ARGS.variables[1]\
+                    +ARGS.end)
+ 
 
     #version without NetCDF files:
     else:
@@ -115,10 +132,12 @@ uncertainties.nc")
                 x = data[:,i]
                 y = data[:,i+1]
 
-                fig_2dscatter_and_hist(x,y)
+                fig_2dscatter_and_hist(x, y, labels[i], labels[i+1])
                 savefig('Uncertainties_'+labels[i]+'_'+labels[i+1]+ARGS.end)
         else: 
-            pass#TODO program this option
+            print('Sorry, this option is not actually programmed yet!')
+            exit()
+            #TODO program this option
 
     
 show()
