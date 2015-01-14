@@ -995,10 +995,11 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
         if NETCDF_SWITCH:
             m_file = MFile(filename="MFILE.DAT")
-            #TODO: only write selected data
+        
             with NetCDFWriter(self.wdir+"/uncertainties.nc", append=True,
                               overwrite=False) as ncdf_writer:
-                ncdf_writer.write_mfile_data(m_file, run_id, save_vars="all",
+                ncdf_writer.write_mfile_data(m_file, run_id, 
+                                             save_vars=self.output_vars,
                                              latest_scan_only=True)
 
         else:
@@ -1019,7 +1020,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
         """ writes data into file. Uncessary, if netcdf library works?"""
 
         if NETCDF_SWITCH:    
-            #self.ncdf_writer.close() #no longer necessary due to with statement
+            #no longer necessary due to with statement
             pass
         else:
             results = open('uncertainties.nc', 'w')
