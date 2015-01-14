@@ -68,11 +68,11 @@ class NetCDFWriter(object):
         mfile_vars = self.root.createGroup("output_{}".format(run_id))
 
         # Make sure we include metadata
-        keys = METADATA
+        keys = list(METADATA) #HL to JE: this should be a list, right?
         if save_vars != "all" and isinstance(save_vars, list):
             keys += save_vars
 
-        keys = []
+        keys = [] #HL to JE: Why are you adding the METADATA before this???
         for k, v in mfile_data.items():
             if k.endswith("."):
                 continue
