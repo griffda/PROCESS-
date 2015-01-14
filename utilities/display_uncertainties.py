@@ -21,12 +21,12 @@ from pylab import figure, axes, show, savefig
 from process_io_lib.process_config import NETCDF_SWITCH
 
 
-def fig_2dscatter_and_hist(x, y, labelx, labely):
+def fig_2dscatter_and_hist(xarr, yarr, labelx, labely):
 
     """ function to create a 2d scatter plot with histograms"""
-    nullfmt   = NullFormatter()
- 
-    figsize=(8,8)
+    nullfmt = NullFormatter()
+
+    figsize = (8, 8)
     left, width = 0.14, 0.61
     bottom, height = 0.14, 0.61
     bottom_h = left_h = left+width
@@ -34,30 +34,24 @@ def fig_2dscatter_and_hist(x, y, labelx, labely):
     # start with a rectangular Figure
     figure(figsize=figsize)
 
-    axScatter = axes([left, bottom, width, height])
-    axHistx = axes([left, bottom_h, width, 0.2])
-    axHisty = axes( [left_h, bottom, 0.2, height])
+    axscatter = axes([left, bottom, width, height])
+    axhistx = axes([left, bottom_h, width, 0.2])
+    axhisty = axes([left_h, bottom, 0.2, height])
 
     # no labels
-    axHistx.xaxis.set_major_formatter(nullfmt)
-    axHistx.yaxis.set_major_formatter(nullfmt)
-    axHisty.xaxis.set_major_formatter(nullfmt)
-    axHisty.yaxis.set_major_formatter(nullfmt)
+    axhistx.xaxis.set_major_formatter(nullfmt)
+    axhistx.yaxis.set_major_formatter(nullfmt)
+    axhisty.xaxis.set_major_formatter(nullfmt)
+    axhisty.yaxis.set_major_formatter(nullfmt)
 
     # the scatter plot:
-    axScatter.scatter(x, y,edgecolors='None')
-    axScatter.set_xlabel(labelx)
-    axScatter.set_ylabel(labely)
+    axscatter.scatter(xarr, yarr, edgecolors='None')
+    axscatter.set_xlabel(labelx)
+    axscatter.set_ylabel(labely)
 
     bins = 10
-    axHistx.hist(x, bins=bins)
-    axHisty.hist(y, bins=bins, orientation='horizontal')
-
-
-
-
-
-
+    axhistx.hist(xarr, bins=bins)
+    axhisty.hist(yarr, bins=bins, orientation='horizontal')
 
 
 if __name__ == '__main__':
@@ -86,7 +80,7 @@ default = all")
 uncertainties.nc")
     ARGS = PARSER.parse_args()
 
-    filename = ARGS.filename
+    FILENAME = ARGS.filename
 
 
 ############################################################
@@ -98,46 +92,64 @@ uncertainties.nc")
 
 
         if ARGS.variables == 'all':
-            print('Sorry, this option is not actually programmed yet!')
-            exit()
+            with NetCDFReader(FILENAME) as ncdf_reader:
+                MFILE = ncdf_reader.get_run(0)
+                if len(MFILE.data) > 6:
+                    print('There are too many variables stored.\
+ Choose 2 for plotting!')
+                    exit()
+
+                DATA = {}
+                LABELS = list(MFILE.data.keys())
+                for i in range(len(MFILE.data)):
+                    DATA[str(i)] = []
+
+                for MFILE in ncdf_reader.runs(start_run=0):
+                    for i in range(len(LABELS)):
+                        DATA[str(i)] += [MFILE.data[LABELS[i]].get_scan(-1)]
+
+
+            for i in range(len(LABELS)-1):
+                XARR = DATA[str(i)]
+                YARR = DATA[str(i+1)]
+                fig_2dscatter_and_hist(XARR, YARR, LABELS[i], LABELS[i+1])
+                savefig('Uncertainties_'+LABELS[i]+'_'+LABELS[i+1]+ARGS.end)
+
         else:
+            XARR = []
+            YARR = []
 
-            xarr = []
-            yarr = []
+            with NetCDFReader(FILENAME) as ncdf_reader:
 
-            with NetCDFReader(filename) as ncdf_reader:
+                # Get multiple runs
+                for MFILE in ncdf_reader.runs(start_run=0):
 
-                # Get multiple runs 
-                for mfile in ncdf_reader.runs(start_run=0):
-                    
-                    xarr += [mfile.data[ARGS.variables[0]].get_scan(-1)]
-                    yarr += [mfile.data[ARGS.variables[1]].get_scan(-1)]
-            fig_2dscatter_and_hist(xarr, yarr, ARGS.variables[0], 
+                    XARR += [MFILE.data[ARGS.variables[0]].get_scan(-1)]
+                    YARR += [MFILE.data[ARGS.variables[1]].get_scan(-1)]
+            fig_2dscatter_and_hist(XARR, YARR, ARGS.variables[0],
                                    ARGS.variables[1])
             savefig('Uncertainties_'+ARGS.variables[0]+'_'+ARGS.variables[1]\
                     +ARGS.end)
- 
+
 
     #version without NetCDF files:
     else:
-        ufile = open(filename,'r')
-        labels = ufile.readline()
-        ufile.close()
-        labels = labels.split()
+        UFILE = open(FILENAME, 'r')
+        LABELS = UFILE.readline()
+        UFILE.close()
+        LABELS = LABELS.split()
 
-        data = loadtxt(filename, skiprows=1)
+        DATA = loadtxt(FILENAME, skiprows=1)
 
         if ARGS.variables == 'all':
-            for i in range(len(data[0])-1):
-                x = data[:,i]
-                y = data[:,i+1]
+            for i in range(len(DATA[0])-1):
+                XARR = DATA[:, i]
+                YARR = DATA[:, i+1]
 
-                fig_2dscatter_and_hist(x, y, labels[i], labels[i+1])
-                savefig('Uncertainties_'+labels[i]+'_'+labels[i+1]+ARGS.end)
-        else: 
+                fig_2dscatter_and_hist(XARR, YARR, LABELS[i], LABELS[i+1])
+                savefig('Uncertainties_'+LABELS[i]+'_'+LABELS[i+1]+ARGS.end)
+        else:
             print('Sorry, this option is not actually programmed yet!')
             exit()
-            #TODO program this option
 
-    
 show()
