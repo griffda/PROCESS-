@@ -58,6 +58,7 @@ source = \
  caller.f90 \
  constraint_equations.f90 \
  costs.f90 \
+ costs_2015.f90 \
  current_drive.f90 \
  divertor.f90 \
  error_handling.f90 \
@@ -98,6 +99,7 @@ object = \
  caller.o \
  constraint_equations.o \
  costs.o \
+ costs_2015.o \
  current_drive.o \
  divertor.o \
  error_handling.o \
@@ -205,6 +207,7 @@ caller.o: availability.o buildings.o costs.o current_drive.o divertor.o fwbs.o \
   stellarator.o tfcoil.o vacuum.o
 constraint_equations.o: error_handling.o global_variables.o numerics.o
 costs.o: error_handling.o global_variables.o output.o
+costs_2015.o: error_handling.o global_variables.o output.o
 current_drive.o: error_handling.o global_variables.o output.o plasma_profiles.o
 divertor.o: error_handling.o global_variables.o output.o
 error_handling.o: output.o fson_library.o root.dir

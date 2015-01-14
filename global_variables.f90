@@ -1137,11 +1137,11 @@ module fwbs_variables
   !+ad_vars  wtblli2o : mass of blanket - Li_2O part (kg)
   real(kind(1.0D0)) :: wtblli2o = 0.0D0
   !+ad_vars  wtblli4sio4 : mass of blanket - Li_4 Li O_4 part (kg)
-  real(kind(1.0D0)) :: wtblli4sio4 = 0.0D0
+  real(kind(1.0D0)) :: whtblli4sio4 = 0.0D0
   !+ad_vars  wtbllipb : mass of blanket - Li-Pb part (kg)
   real(kind(1.0D0)) :: wtbllipb = 0.0D0
-  !+ad_vars  wtbltibe12 : mass of blanket - Ti Be_12 part (kg)
-  real(kind(1.0D0)) :: wtbltibe12 = 0.0D0
+  !+ad_vars  whtbltibe12 : mass of blanket - Ti Be_12 part (kg)
+  real(kind(1.0D0)) :: whtbltibe12 = 0.0D0
   !+ad_vars  wtshldi : mass of inboard shield (kg)
   real(kind(1.0D0)) :: wtshldi = 0.0D0
   !+ad_vars  wtshldo : mass of outboard shield (kg)

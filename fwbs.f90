@@ -1817,7 +1817,7 @@ contains
        whtblss = volblkt * denstl * fblss
        whtbltibe12 = volblkt * 2260.0D0  * fbltibe12  ! 2.26 g cm^-3
        whtblli4sio4 = volblkt * 2400.0D0  * fblli4sio4 ! 2.4 g cm^-3
-       whtblkt = whtblss + wtblli4sio4 + whtbltibe12
+       whtblkt = whtblss + whtblli4sio4 + whtbltibe12
     else  !  volume fractions proportional to sub-assembly thicknesses
        whtblss = denstl * ( &
             volblkti/blnkith * ( &
