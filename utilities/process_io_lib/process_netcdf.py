@@ -62,14 +62,29 @@ class NetCDFWriter(object):
         stored_var[:] = stored_val
 
     def write_mfile_data(self, mfile, run_id, save_vars="all",
-                         latest_scan_only=False):
-        """Write the provided mfile instance out as a run within the NetCDF."""
+                         latest_scan_only=False, ignore_unknowns=False):
+        """Write the provided mfile instance out as a run within the NetCDF.
+
+        Raises KeyError if save_vars is a list of variables and any of which are
+        not available for extraction from the provided MFile instance and
+        ignore_unknowns is False"""
 
         mfile_data = mfile.data
         mfile_vars = self.root.createGroup("output_{}".format(run_id))
 
         # Make sure we include metadata
         keys = METADATA
+
+        # Stop/warn when there are requested to-save variables that don't exist
+        if isinstance(save_vars, list):
+            unknown_vars = set(save_vars) - set(mfile_data.keys())
+            if ignore_unknowns:
+                # TODO: globally available logging mechanism for I/O library
+                print("Cannot save these variables (not provided in MFile"
+                      "instance): {}".format(unknown_vars))
+            else:
+                raise KeyError("Cannot save these variables (not in provided "
+                               "MFile instance): {}".format(unknown_vars))
 
         for k, v in mfile_data.items():
             if k.endswith("."):
