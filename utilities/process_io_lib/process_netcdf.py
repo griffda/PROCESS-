@@ -16,7 +16,7 @@ from process_io_lib.mfile import MFile, MFileErrorClass
 NAME_MAPPINGS = {"/": "_slash_",
                  "*": "_asterisk_",
                  ".": "_dot_"}
-METADATA = ("procver", "date", "time", "username", "isweep", "nsweep")
+METADATA = ["procver", "date", "time", "username", "isweep", "nsweep"]
 
 class NetCDFWriter(object):
 
@@ -37,7 +37,8 @@ class NetCDFWriter(object):
     def _open(self):
         try:
             mode = "a" if (os.path.exists(self.netcdf_filename) and self._append) else "w"
-            self.root = Dataset(self.netcdf_filename, mode, clobber=self._overwrite)
+            self.root = Dataset(self.netcdf_filename, mode,
+                                clobber=self._overwrite)
         except RuntimeError:
             raise OSError("Cannot create {} - file may already "
                               "exist".format(self.netcdf_filename))
@@ -68,11 +69,8 @@ class NetCDFWriter(object):
         mfile_vars = self.root.createGroup("output_{}".format(run_id))
 
         # Make sure we include metadata
-        keys = list(METADATA) #HL to JE: this should be a list, right?
-        if save_vars != "all" and isinstance(save_vars, list):
-            keys += save_vars
+        keys = METADATA
 
-        keys = [] #HL to JE: Why are you adding the METADATA before this???
         for k, v in mfile_data.items():
             if k.endswith("."):
                 continue
@@ -82,7 +80,8 @@ class NetCDFWriter(object):
             pattern = re.compile("|".join(rep_key.keys()))
             # Swaps all illegal characters in one go
             if save_vars == "all" or k in save_vars:
-                keys.append(pattern.sub(lambda m: rep_key[re.escape(m.group(0))], k))
+                keys.append(pattern.sub(
+                    lambda m: rep_key[re.escape(m.group(0))], k))
             else:
                 pass
 
@@ -188,7 +187,8 @@ if __name__ == "__main__":
         # Writer example - now uses context manager (i.e. with statement)
         with NetCDFWriter("/home/edwardsj/tester.nc", append=True,
                           overwrite=False) as ncdf_writer:
-            ncdf_writer.write_mfile_data(mf, 3, save_vars="all", latest_scan_only=True)
+            ncdf_writer.write_mfile_data(mf, 3, save_vars="all",
+                                         latest_scan_only=True)
     elif sys.argv[1] == "read":
         # Reader example - gives back MFile instances
         with NetCDFReader("/home/edwardsj/tester.nc") as ncdf_reader:
