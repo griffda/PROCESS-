@@ -78,13 +78,15 @@ class NetCDFWriter(object):
         # Stop/warn when there are requested to-save variables that don't exist
         if isinstance(save_vars, list):
             unknown_vars = set(save_vars) - set(mfile_data.keys())
-            if ignore_unknowns:
+            if any(unknown_vars) and ignore_unknowns:
                 # TODO: globally available logging mechanism for I/O library
                 print("Cannot save these variables (not provided in MFile"
                       "instance): {}".format(unknown_vars))
-            else:
+            elif any(unknown_vars):
                 raise KeyError("Cannot save these variables (not in provided "
                                "MFile instance): {}".format(unknown_vars))
+            else:
+                pass
 
         for k, v in mfile_data.items():
             if k.endswith("."):
