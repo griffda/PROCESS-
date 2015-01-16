@@ -16,7 +16,7 @@ from process_io_lib.mfile import MFile, MFileErrorClass
 NAME_MAPPINGS = {"/": "_slash_",
                  "*": "_asterisk_",
                  ".": "_dot_"}
-METADATA = ["procver", "date", "time", "username", "isweep", "nsweep"]
+METADATA = ("procver", "date", "time", "username", "isweep", "nsweep")
 
 class NetCDFWriter(object):
 
@@ -73,7 +73,8 @@ class NetCDFWriter(object):
         mfile_vars = self.root.createGroup("output_{}".format(run_id))
 
         # Make sure we include metadata
-        keys = METADATA
+        keys = []
+        keys += METADATA
 
         # Stop/warn when there are requested to-save variables that don't exist
         if isinstance(save_vars, list):
