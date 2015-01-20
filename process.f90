@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '381    Release Date :: 2015-01-13'
+       '382    Release Date :: 2015-01-20'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1879,3 +1879,4 @@ end subroutine output
 ! GIT 380: Post-merger with dev_uncertainties branch
 ! GIT 381: Changed pinjht description;
 !          Changed Django library location for GUI
+! GIT 382: Various GIT branches merged
