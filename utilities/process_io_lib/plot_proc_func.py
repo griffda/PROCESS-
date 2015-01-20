@@ -575,13 +575,13 @@ def plot_pf_coils(axis, mfile_data, scan):
 
     # Rest of the coils
     for coil in range(1, number_of_coils):
-        coils_r.append(mfile_data.data["rpf(%s)" % str(coil).zfill(2)].
+        coils_r.append(mfile_data.data["rpf({:02})".format(coil)].
                        get_scan(scan))
-        coils_z.append(mfile_data.data["zpf(%s)" % str(coil).zfill(2)].
+        coils_z.append(mfile_data.data["zpf({:02})".format(coil)].
                        get_scan(scan))
-        coils_dr.append(mfile_data.data["pfdr%s" % str(coil).zfill(2)].
+        coils_dr.append(mfile_data.data["pfdr{:02}".format(coil)].
                         get_scan(scan))
-        coils_dz.append(mfile_data.data["pfdz%s" % str(coil).zfill(2)].
+        coils_dz.append(mfile_data.data["pfdz{:02}".format(coil)].
                         get_scan(scan))
         coil_text.append(str(coil))
 
@@ -622,7 +622,7 @@ def plot_info(axis, data, mfile_data, scan):
                 axis.text(eqpos, -i, "\n",
                           ha='left', va='center')
             elif data[i][0][0] == "#":
-                axis.text(-0.05, -i, "%s\n" % data[i][0][1:],
+                axis.text(-0.05, -i, "{}\n".format(data[i][0][1:]),
                           ha='left', va='center')
             elif data[i][0][0] == "!":
                 value = data[i][0][1:]
@@ -634,7 +634,7 @@ def plot_info(axis, data, mfile_data, scan):
                     if isinstance(dat, str):
                         value = dat
                     else:
-                        value = "%.4g" % mfile_data.data[data[i][0]].get_scan(scan)
+                        value = "{:.4g}".format(mfile_data.data[data[i][0]].get_scan(scan))
                     if "alpha" in data[i][0]:
                         value = str(float(value) + 1.0)
                     axis.text(eqpos, -i, '= ' + value + ' ' + data[i][2],
@@ -648,7 +648,7 @@ def plot_info(axis, data, mfile_data, scan):
             if isinstance(dat, str):
                 value = dat
             else:
-                value = "%.4g" % data[i][0]
+                value = "{:.4g}".format(data[i][0])
             axis.text(eqpos, -i, '= ' + value + ' ' + data[i][2],
                       ha='left', va='center')
 
@@ -732,7 +732,7 @@ def plot_physics_info(axis, mfile_data, scan):
         mfile_data.data["dene"].get_scan(scan)
 
     data = [("plascur/1d6", "$I_p$", "MA"),
-            ("bt", "Vacuum $B_T$ at $R_0$", "T"),
+            ("bt", "Vacuum $B_T$ as $R_0$", "T"),
             ("q", "$q_{edge}$", ""),
             ("normalised thermal beta", r"$\beta_N$, thermal",
              "% m T MA$^{-1}$"),
@@ -785,8 +785,8 @@ def plot_magnetics_info(axis, mfile_data, scan):
     pf_info = []
     for i in range(1, number_of_coils):
         if i % 2 != 0:
-            pf_info.append((mfile_data.data["ric(%s)" % str(i).zfill(2)].
-                           get_scan(scan), "PF %s" % str(i)))
+            pf_info.append((mfile_data.data["ric({:02})".format(i)].
+                           get_scan(scan), "PF {}".format(i)))
 
     tburn = mfile_data.data["tburn"].get_scan(scan)/3600.0
     tftype = proc_dict.DICT_TF_TYPE[mfile_data.data["isumattf"].get_scan(scan)]
@@ -800,7 +800,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
             ("vstot", "Available flux swing", "Wb"),
             (tburn, "Burn time", "hrs"),
             ("", "", ""),
-            ("#TF coil type is %s" % tftype, "", ""),
+            ("#TF coil type is {}".format(tftype), "", ""),
             ("bmaxtf", "Peak field at conductor", "T"),
             ("iooic", "I/I$_{\mathrm{crit}}$", ""),
             ("tmarg", "Temperature margin", "K"),
@@ -864,7 +864,7 @@ def plot_power_info(axis, mfile_data, scan):
             ("pnucblkt", "Nuclear heating in blanket", "MW"),
             ("pnucshld", "Nuclear heating in shield", "MW"),
             ("pdivt", "Psep / Pdiv", "MW"),
-            (pthresh, "H-mode threshold (M=2.5)", "$\pm$%.3f MW" % err),
+            (pthresh, "H-mode threshold (M=2.5)", "$\pm${:.3f} MW".format(err)),
             ("fwbllife", "FW/Blanket life", "years"),
             ("divlife", "Divertor life", "years"),
             ("pthermmw", "Thermal Power", "MW"),

@@ -1,24 +1,32 @@
 """
 Author: Hanni Lux (Hanni.Lux@ccfe.ac.uk)
-Date: March 2014
 
 Interfaces for Configuration values for programs
-- RunPROCESS.py
-- TestPROCESS.py
+- run_process.py
+- test_process.py
+- evaluate_uncertainties.py
 
-Notes:
-11/08/2014 added error_status2readme
-
-Compatible with PROCESS version 316
+Compatible with PROCESS version 368
 
 """
 
 import os
 from time import sleep
-from numpy.random import seed
-from process_io_lib.in_dat import INDATNew, INVariable
-from process_io_lib.process_funcs import mfile_exists
+from numpy.random import seed, uniform, normal
+from numpy import argsort
+from process_io_lib.in_dat import InDat
+from process_io_lib.process_funcs import get_from_indat_or_default,\
+    set_variable_in_indat
+
 from process_io_lib.mfile import MFile
+from process_io_lib.configuration import Config
+from process_io_lib.process_dicts import DICT_NSWEEP2IXC, DICT_NSWEEP2VARNAME,\
+    DICT_IXC_SIMPLE
+from process_io_lib.process_netcdf import NetCDFWriter
+
+def print_config(config_instance):
+    print(config_instance.get_current_state())
+
 
 
 class ProcessConfig(object):
@@ -51,7 +59,7 @@ class ProcessConfig(object):
     process  = 'process'
     niter    = 10
     u_seed   = None
-    factor   = 2.
+    factor   = 1.5
     comment  = ''
 
 
@@ -59,17 +67,17 @@ class ProcessConfig(object):
 
         """ echos the attributes of the base class """
 
-        print("Working directory:   %s" % self.wdir)
-        print('Original IN.DAT:     %s' % self.or_in_dat)
-        print("PROCESS binary:      %s" % self.process)
-        print('Number of iterations %i' % self.niter)
+        print("Working directory:   {}".format(self.wdir))
+        print("Original IN.DAT:     {}".format(self.or_in_dat))
+        print("PROCESS binary:      {}".format(self.process))
+        print("Number of iterations {}".format(self.niter))
         if self.u_seed != None:
-            print('random seed          %i' % self.u_seed)
-        print('variable range factor %f' % self.factor)
+            print("random seed          {}".format(self.u_seed))
+        print("variable range factor {}".format(self.factor))
         if self.filename != None:
-            print('Config file          %s' % self.filename)
+            print("Config file          {}".format(self.filename))
         if self.comment != '':
-            print('Comment  %s'         % self.comment)
+            print("Comment  {}".format(self.comment))
 
     def echo(self):
 
@@ -92,7 +100,7 @@ class ProcessConfig(object):
         os.system('cp ' + self.filename + ' ' + self.wdir)
         os.chdir(self.wdir)
         os.system('rm -f OUT.DAT MFILE.DAT PLOT.DAT \
-                   *.txt *.out *.log *.pdf *.eps')
+                   *.txt *.out *.log *.pdf *.eps *.nc')
 
     def create_readme(self, directory='.'):
 
@@ -109,14 +117,17 @@ class ProcessConfig(object):
 
         """ appends PROCESS outcome to README.txt """
 
-        if mfile_exists():
+        if os.path.isfile("MFILE.DAT"):
             if self.comment != '':
                 readme = open(directory+'/README.txt', 'a')
             else:
                 readme = open(directory+'/README.txt', 'w')
 
             m_file = MFile(filename=directory+"/MFILE.DAT")
-            error_status = "Error status: %i  Error ID: %i\n" %(m_file.data['error status'].get_scan(-1), m_file.data['error id'].get_scan(-1))
+            error_status =\
+                "Error status: {}  Error ID: {}\n".format(
+                m_file.data['error status'].get_scan(-1),
+                m_file.data['error id'].get_scan(-1))
             readme.write(error_status)
             readme.close()
 
@@ -325,34 +336,22 @@ class TestProcessConfig(ProcessConfig):
 
         """ modifies IN.DAT using the configuration parameters """
 
-        in_dat = INDATNew()
+        in_dat = InDat()
 
         #by convention all variablenames are lower case
         if self.ioptimz != 'None':
-            if 'ioptimz' in in_dat.variables.keys():
-                in_dat.variables['ioptimz'].value = self.ioptimz
-            else:
-                in_dat.variables['ioptimz'] = INVariable('ioptimz',
-                                                         self.ioptimz)
+            in_dat.data['ioptimz'].add_parameter('ioptimz',
+                                                 self.ioptimz)
         if self.epsvmc != 'None':
-            if 'epsvmc' in in_dat.variables.keys():
-                in_dat.variables['epsvmc'].value = self.epsvmc
-            else:
-                in_dat.variables['epsvmc'] = INVariable('epsvmc', self.epsvmc)
+            in_dat.data['epsvmc'].add_parameter('epsvmc', self.epsvmc)
 
         if self.epsfcn != 'None':
-            if 'epsfcn' in in_dat.variables.keys():
-                in_dat.variables['epsfcn'].value = self.epsfcn
-            else:
-                in_dat.variables['epsfcn'] = INVariable('epsfcn', self.epsfcn)
+            in_dat.data['epsfcn'].add_parameter('epsfcn', self.epsfcn)
 
         if self.minmax != 'None':
-            if 'minmax' in in_dat.variables.keys():
-                in_dat.variables['minmax'].value = self.minmax
-            else:
-                in_dat.variables['minmax'] = INVariable('minmax', self.minmax)
+            in_dat.data['minmax'].add_parameter('minmax', self.minmax)
 
-        in_dat.write_in_dat(filename='IN.DAT')
+        in_dat.write_in_dat(output_filename='IN.DAT')
 
 
 ################################################################################
@@ -399,7 +398,7 @@ class RunProcessConfig(ProcessConfig):
         """
         creates an instance of the RunProcessConfig class
         that stores all configuration parameters of the
-        RunProcess.py
+        run_process.py
         """
 
         self.filename = filename
@@ -412,7 +411,7 @@ class RunProcessConfig(ProcessConfig):
 
         buf = self.get_attribute('create_itervar_diff')
         if buf != None:
-            if buf.lower() in ['true', 'y', 'yes'] :
+            if buf.lower() in ['true', 'y', 'yes']:
                 self.create_itervar_diff = True
             elif buf.lower() in ['false', 'n', 'no']:
                 self.create_itervar_diff = False
@@ -512,7 +511,8 @@ class RunProcessConfig(ProcessConfig):
 
         print('no. allowed UNFEASIBLE points %i' % self.no_allowed_unfeasible)
         if self.create_itervar_diff:
-            print('Set to create a summary file of the iteration variable values!')
+            print('Set to create a summary file of the iteration variable\
+ values!')
 
         if self.add_ixc != []:
             print('add_ixc', self.add_ixc)
@@ -538,31 +538,30 @@ class RunProcessConfig(ProcessConfig):
         self.modify_vars()
         self.modify_ixc()
         self.modify_icc()
-        
+
 
     def modify_vars(self):
 
         """ modifies IN.DAT by adding, deleting and modifiying variables """
 
-        in_dat = INDATNew()
+        in_dat = InDat()
 
         #add and modify variables
         for key in self.dictvar.keys():
-  
+
             key = key.lower()
- 
-            if key in in_dat.variables.keys():
-                in_dat.variables[key].value = self.dictvar[key]
-            else:
-                in_dat.add_variable(INVariable(key, self.dictvar[key]))
-                #in_dat.variables[key] = INVariable(key, self.dictvar[key])
-  
+
+            #TODO check this is a parameter??
+            in_dat.data[key].set_parameter(key, self.dictvar[key])
+
+
         #delete variables
+        #TODO check key is a parameter?
         for key in self.del_var:
             key = key.lower()
-            in_dat.remove_variable(key)
+            in_dat.remove_parameter(key)
 
-        in_dat.write_in_dat(filename='IN.DAT')
+        in_dat.write_in_dat(output_filename='IN.DAT')
 
 
     def modify_ixc(self):
@@ -576,7 +575,7 @@ class RunProcessConfig(ProcessConfig):
                    the same variable from ixc!')
             exit()
 
-        in_dat = INDATNew()
+        in_dat = InDat()
 
         for iter_var in self.add_ixc:
             in_dat.add_iteration_variable(int(iter_var))
@@ -584,7 +583,7 @@ class RunProcessConfig(ProcessConfig):
         for iter_var in self.del_ixc:
             in_dat.remove_iteration_variable(int(iter_var))
 
-        in_dat.write_in_dat(filename='IN.DAT')
+        in_dat.write_in_dat(output_filename='IN.DAT')
 
 
     def modify_icc(self):
@@ -597,14 +596,285 @@ class RunProcessConfig(ProcessConfig):
                   variable from icc!')
             exit()
 
-        in_dat = INDATNew()
+        in_dat = InDat()
 
         for constr in self.add_icc:
-            in_dat.add_constraint_eqn(int(constr))
+            in_dat.add_constraint_equation(int(constr))
 
         for constr in self.del_icc:
-            in_dat.remove_constraint_eqn(int(constr))
+            in_dat.remove_constraint_equation(int(constr))
 
-        in_dat.write_in_dat(filename='IN.DAT')
+        in_dat.write_in_dat(output_filename='IN.DAT')
 
+
+################################################################################
+#class UncertaintiesConfig(RunProcessConfig)
+################################################################################
+
+NETCDF_SWITCH = True
+
+class UncertaintiesConfig(ProcessConfig, Config):
+
+    """
+    Configuration parameters for evaluate_uncertainties.py program
+    """
+
+    no_allowed_unfeasible = 2
+    no_scans = 5
+    no_samples = 1000
+    uncertainties = []
+    output_vars = []
+    dict_results = {}
+    if NETCDF_SWITCH:
+        ncdf_writer = None
+
+
+    def __init__(self, configfilename="evaluate_uncertainties.json"):
+
+        """
+        creates and instance of the UncertaintiesConfig class
+        """
+
+        #TODO: Once ProcessConfig has been ported to only use json
+        #use the ProcessConfig __init__ routine to set up these
+        #parameters
+        super().__init__(configfilename)
+        self.filename = configfilename
+
+        self.wdir = os.path.abspath(self.get("config", "working_directory",
+                                             default=self.wdir))
+        self.or_in_dat = os.path.abspath(self.get("config", "IN.DAT_path",
+                                                  default=self.or_in_dat))
+        self.process = self.get("config", "process_bin", default=self.process)
+        self.niter = self.get("config", "no_iter", default=self.niter)
+        self.u_seed = self.get("config", "pseudorandom_seed",
+                               default=self.u_seed)
+        self.factor = self.get("config", "factor", default=self.factor)
+        self.comment = self.get("config", "runtitle", default=self.comment)
+
+        #additional new parameters
+        self.no_scans = self.get("no_scans", default=self.no_scans)
+        self.no_samples = self.get("no_samples", default=self.no_samples)
+        self.uncertainties = self.get("uncertainties",
+                                      default=self.uncertainties)
+        self.output_vars = self.get("output_vars", default=self.output_vars)
+        for varname in self.output_vars:
+            self.dict_results[varname] = []
+
+
+    def echo(self):
+
+        """ echos the values of the current class """
+
+        print('')
+        self.echo_base()
+
+        print('No scans            %i' % self.no_scans)
+        print('No samples          %i' % self.no_samples)
+        if self.uncertainties != []:
+            print('uncertainties:')
+            for item in self.uncertainties:
+                print('     ', item['varname'])
+                for key in item.keys():
+                    if key not in ['varname']:
+                        print('     ', key, item[key])
+                print(' -------')
+        if self.output_vars != []:
+            print('output vars        ', self.output_vars)
+        print('')
+        sleep(1)
+
+
+    def modify_in_dat(self):
+
+        """ modifies IN.DAT before running uncertainty evaluation """
+
+
+        in_dat = InDat()
+
+        #Is IN.DAT already having a scan?
+        isweep = get_from_indat_or_default(in_dat, 'isweep')
+        if isweep > 0:
+            #check that sweep variable is not an iteration variable
+            # and all values are the same value
+            nsweep = get_from_indat_or_default(in_dat, 'nsweep')
+            ixc = get_from_indat_or_default(in_dat, 'ixc')
+            sweep = get_from_indat_or_default(in_dat, 'sweep')
+            if ((str(nsweep) in DICT_NSWEEP2IXC.keys()) and
+                (DICT_NSWEEP2IXC[str(nsweep)] in ixc) and
+                (not all(sweep[0] == item for item in sweep))):
+                if self.no_scans != isweep:
+                    #Change no of sweep points to correct value!!
+                    set_variable_in_indat(in_dat, 'isweep', self.no_scans)
+                    value = sweep[0]
+                    set_variable_in_indat(in_dat, 'sweep',
+                                          [value]*self.no_scans)
+                #Else: we can actually use this scan
+
+            else:
+
+                print('Error: Inbuild sweep is not compatible with uncertainty\
+ evaluation! Edit IN.DAT file!')
+                exit()
+        else:
+            # create a scan!
+            nsweep = '3'
+            if nsweep in DICT_NSWEEP2IXC.keys():
+                #TODO: if this ever happens, program this testing whether
+                #a certain variable is used as iteration variable, if not
+                #choose another
+                print("Error: The developer should program this more wisely\
+ using a sweep variable that is not an iteration variable!")
+                exit()
+            else:
+                set_variable_in_indat(in_dat, 'nsweep', nsweep)
+                set_variable_in_indat(in_dat, 'isweep', self.no_scans)
+                value = get_from_indat_or_default(in_dat,
+                                                  DICT_NSWEEP2VARNAME[nsweep])
+                set_variable_in_indat(in_dat, 'sweep', [value]*self.no_scans)
+
+
+        # write comment in runtitle!
+        runtitle = self.comment.replace(',', ' ')
+        runtitle = runtitle.replace('\n', ' ')
+        set_variable_in_indat(in_dat, 'runtitle', runtitle)
+
+        #set epsvmc to appropriate value!
+        # recommendation from solver work!
+        set_variable_in_indat(in_dat, 'epsvmc', 1e-8)
+
+        in_dat.write_in_dat(output_filename='IN.DAT')
+
+    def checks_before_run(self):
+
+        """ run several checks before you start running """
+
+        if self.uncertainties == {}:
+            print('Error: No uncertain parameter specified in config file!')
+            exit()
+
+
+        if self.output_vars == []:
+            print('Error: No output variables specified in config file!')
+            exit()
+
+        in_dat = InDat()
+        ixc_list = in_dat.data['ixc'].get_value
+        assert type(ixc_list) == list
+
+        ixc_varname_list = [DICT_IXC_SIMPLE[str(x)] for x in ixc_list]
+
+        for u_dict in self.uncertainties:
+            varname = u_dict['varname'].lower()
+            if varname in ixc_varname_list:
+                print('Error: an uncertain variable should never be an\
+ iteration variable at the same time!', varname)
+                exit()
+        # check uncertainties are within bounds??
+
+
+
+    def set_sample_values(self):
+
+        """ determines the values of each sample point and orders them """
+
+        for u_dict in self.uncertainties:
+            if u_dict['errortype'].lower() == 'gaussian':
+                mean = u_dict['mean']
+                std = u_dict['std']
+                values = normal(mean, std, self.no_samples)
+            elif u_dict['errortype'].lower() == 'uniform':
+                lbound = u_dict['lowerbound']
+                ubound = u_dict['upperbound']
+                values = uniform(lbound, ubound, self.no_samples)
+            elif u_dict['errortype'].lower() == 'relative':
+                err = u_dict['percentage']/100.
+                lbound = u_dict['mean']*(1.-err)
+                ubound = u_dict['mean']*(1.+err)
+                values = uniform(lbound, ubound, self.no_samples)
+            u_dict['samples'] = values
+
+        #order by one parameter
+        #TODO: Find a more cunning way to determine which is a good
+        #variable to sort by! e.g. largest range?
+        # always try to choose a uniform case?
+        arr = self.uncertainties[0]['samples']
+        sorted_index = argsort(arr)
+        for u_dict in self.uncertainties:
+            u_dict['samples'] = u_dict['samples'][sorted_index]
+
+
+    def go2newsamplepoint(self, sample_index):
+
+        """ create a new sample point from uncertainty distributions
+        """
+
+        in_dat = InDat()
+
+        for u_dict in self.uncertainties:
+            value = u_dict['samples'][sample_index]
+            varname = u_dict['varname']
+            set_variable_in_indat(in_dat, varname, value)
+
+
+        in_dat.write_in_dat(output_filename='IN.DAT')
+
+
+    def add_results2netcdf(self, run_id):
+
+        """ reads current MFILE and adds specified output variables
+            of last scan point to summary netCDF file """
+
+
+        if NETCDF_SWITCH:
+            m_file = MFile(filename="MFILE.DAT")
+
+            with NetCDFWriter(self.wdir+"/uncertainties.nc", append=True,
+                              overwrite=False) as ncdf_writer:
+                try :
+                    ncdf_writer.write_mfile_data(m_file, run_id,
+                                                 save_vars=self.output_vars,
+                                                 latest_scan_only=True,
+                                                 ignore_unknowns=False)
+                except KeyError as Err:
+                    print('Error: You have specified an output variable that\
+ does not exist in MFILE. If this is a valid PROCESS variable, request it being\
+ added to the MFILE output, else check your spelling!')
+                    print(Err)
+                    exit()
+                    
+        else:
+            m_file = MFile(filename="MFILE.DAT")
+
+            if m_file.data['ifail'].get_scan(-1) == 1:
+                for varname in self.output_vars:
+                    value = m_file.data[varname].get_scan(-1) #get last scan
+                    self.dict_results[varname] += [value]
+            else:
+                self.write_results()
+                print('WARNING to developer: scan has unfeasible point at the\
+     end!\nPress Enter to continue!')
+                raw_input()
+
+
+    def write_results(self):
+        """ writes data into file. Uncessary, if netcdf library works?"""
+
+        if not NETCDF_SWITCH:
+            results = open('uncertainties.nc', 'w')
+            for varname in self.output_vars:
+                results.write(varname + '\t')
+            results.write('\n')
+
+            for i in range(len(self.dict_results[self.output_vars[0]])):
+                for varname in self.output_vars:
+                    results.write(str(self.dict_results[varname][i]) + '\t')
+                results.write('\n')
+
+            results.close()
+
+
+#if __name__ == "__main__":
+#    cfg = RunProcessConfigNew("../run_process.json")
+#    cfg.setup_directory()
 

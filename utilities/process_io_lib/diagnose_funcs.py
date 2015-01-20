@@ -30,10 +30,10 @@ def plot_normalised_ixc(mfilename='MFILE.DAT'):
     nvar = int(m_file.data['nvar'].get_scan(-1))
     for i in range(1, nvar+1):
 
-        nitvar = m_file.data['nitvar%03i' %i].get_scan(-1)
+        nitvar = m_file.data['nitvar{:03}'.format(i)].get_scan(-1)
         list_nitvar += [nitvar]
 
-        label = m_file.data['nitvar%03i' %i].var_description
+        label = m_file.data['nitvar{:03}'.format(i)].var_description
         list_labels += [label.replace('_(range_normalised)', '')]
 
     figure()
@@ -58,10 +58,10 @@ def plot_normalised_icc_res(mfilename='MFILE.DAT'):
     neqns = int(m_file.data['neqns'].get_scan(-1))
     for i in range(1, neqns+1):
 
-        normres = m_file.data['normres%03i' %i].get_scan(-1)
+        normres = m_file.data['normres{:03}'.format(i)].get_scan(-1)
         list_normres += [normres]
 
-        label = m_file.data['normres%03i' %i].var_description
+        label = m_file.data['normres{:03}'.format(i)].var_description
         list_labels += [label.replace('_normalised_residue', '')]
 
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
   Given an initial IN.DAT file (A) and a target IN.DAT file (B)
   containing target values for a set of variables, runs PROCESS
