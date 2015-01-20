@@ -95,9 +95,6 @@ contains
 
     integer, intent(in) :: iprint, outfile
 
-    !  Local variables
-    real(kind=double) :: total_costs
-
     !  Assign module private variables to iprint and outfile
     ip = iprint
     ofile = outfile
@@ -128,50 +125,8 @@ contains
     !  Calculate remaining subsystems costs
     call calc_remaining_subsystems
 
-    !  Calculate total costs
-    total_costs = s(9)%cost + s(13)%cost + s(22)%cost + &
-         s(28)%cost + s(32)%cost + s(36)%cost + &
-         s(37)%cost + s(62)%cost
-
-    !write(*,*) s(9)%label, s(9)%cost/1.0D6
-    !write(*,*) s(13)%label, s(13)%cost/1.0D6
-    !write(*,*) s(22)%label, s(22)%cost/1.0D6
-    !write(*,*) s(28)%label, s(28)%cost/1.0D6
-    !write(*,*) s(32)%label, s(32)%cost/1.0D6
-    !write(*,*) s(36)%label, s(36)%cost/1.0D6
-    !write(*,*) s(37)%label, s(37)%cost/1.0D6
-    !write(*,*) s(62)%label, s(62)%cost/1.0D6
-
-    write(*,*) "38", s(38)%label, s(38)%cost/1.0D6
-    write(*,*) "39", s(39)%label, s(39)%cost/1.0D6
-    !write(*,*) "40", s(40)%label, s(40)%cost/1.0D6
-    !write(*,*) "41", s(41)%label, s(41)%cost/1.0D6
-    !write(*,*) "42", s(42)%label, s(42)%cost/1.0D6
-    !write(*,*) "43", s(43)%label, s(43)%cost/1.0D6
-    !write(*,*) "44", s(44)%label, s(44)%cost/1.0D6
-    !write(*,*) "45", s(45)%label, s(45)%cost/1.0D6
-    write(*,*) "46", s(46)%label, s(46)%cost/1.0D6
-    !write(*,*) "47", s(47)%label, s(47)%cost/1.0D6
-    !write(*,*) "48", s(48)%label, s(48)%cost/1.0D6
-    write(*,*) "49", s(49)%label, s(49)%cost/1.0D6
-    write(*,*) "50", s(50)%label, s(50)%cost/1.0D6
-    !write(*,*) "51", s(51)%label, s(51)%cost/1.0D6
-    !write(*,*) "52", s(52)%label, s(52)%cost/1.0D6
-    !write(*,*) "53", s(53)%label, s(53)%cost/1.0D6
-    write(*,*) "54", s(54)%label, s(54)%cost/1.0D6
-    !write(*,*) "55", s(55)%label, s(55)%cost/1.0D6
-    !write(*,*) "56", s(56)%label, s(56)%cost/1.0D6
-    !write(*,*) "57", s(57)%label, s(57)%cost/1.0D6
-    write(*,*) "58", s(58)%label, s(58)%cost/1.0D6
-    write(*,*) "59", s(59)%label, s(59)%cost/1.0D6
-    write(*,*) "60", s(60)%label, s(60)%cost/1.0D6
-    !write(*,*) "61", s(61)%label, s(61)%cost/1.0D6
-
-
-    !write(*,*) "Total cost (2014 M$)", total_costs/1.0D6 
-
-    !  Output cost calculations
-    !call output_costs
+    !  Output costs
+    !call write_costs_to_output
 
   end subroutine costs_2015
   
@@ -299,8 +254,7 @@ contains
     if ((ip == 0).or.(output_costs == 0)) return
 
     !  Output section for building costs
-    
-    !  TODO
+
 
   end subroutine calc_building_costs
 
@@ -680,6 +634,13 @@ contains
     do j=23, 27
        s(28)%cost = s(28)%cost + s(j)%cost
     end do
+
+    write(*,*) s(23)%label, s(23)%cost/1.0D6
+    write(*,*) s(24)%label, s(24)%cost/1.0D6
+    write(*,*) s(25)%label, s(25)%cost/1.0D6
+    write(*,*) s(26)%label, s(26)%cost/1.0D6
+    write(*,*) s(27)%label, s(27)%cost/1.0D6
+    write(*,*) s(28)%label, s(28)%cost/1.0D6
 
     !  Output to file if option chosen
 
@@ -1153,7 +1114,7 @@ contains
     s(59)%k = s(22)%cost + s(28)%cost + s(34)%cost + s(38)%cost + s(39)%cost + &
          s(40)%cost + s(46)%cost + s(48)%cost + s(49)%cost + s(50)%cost + &
          s(51)%cost + s(55)%cost + s(56)%cost
-    s(59)%kref = 2996
+    s(59)%kref = 2996000000.0D0
     s(59)%cost = s(59)%cost_factor * s(59)%cref * (s(59)%k / s(59)%kref)**costexp
 
     
@@ -1166,7 +1127,7 @@ contains
     s(60)%k = s(22)%cost + s(28)%cost + s(34)%cost + s(38)%cost + s(39)%cost + &
          s(40)%cost + s(46)%cost + s(48)%cost + s(49)%cost + s(50)%cost + &
          s(51)%cost + s(55)%cost + s(56)%cost 
-    s(60)%kref = 2996
+    s(60)%kref = 2996000000.0D0
     s(60)%cost = s(60)%cost_factor * s(60)%cref * (s(60)%k / s(60)%kref)**costexp
 
     
@@ -1184,6 +1145,89 @@ contains
     end do
 
   end subroutine calc_remaining_subsystems
+
+  subroutine write_costs_to_output
+
+    
+    !+ad_name  write_costs_to_output
+    !+ad_summ  Function to output the costs calculations
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine outputs the costs to output file
+    !+ad_prob  None
+    !+ad_hist  20/01/15 JM  Initial Version
+    !+ad_stat  Okay
+    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris, P. Knight)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Local Variables
+    integer :: i, j, k, l, m, n, p, q
+    real(kind=double) :: total_costs
+    
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!    
+
+    call oheadr(ofile,'Costings (2015 model)')
+    call oblnkl(ofile)
+
+    call oshead(ofile,'Buildings')
+    do i=1, 9
+      call ovarre(ofile,s(i)%label,'',s(i)%cost)
+    end do
+    call oblnkl(ofile)
+
+    call oshead(ofile,'Land')
+    do j=10, 13
+      call ovarre(ofile,s(j)%label,'',s(j)%cost)
+    end do
+    call oblnkl(ofile)
+
+    call oshead(ofile,'TF Coils')
+    do k=14, 20
+      call ovarre(ofile,s(k)%label,'',s(k)%cost)
+    end do
+    call oblnkl(ofile)
+
+    call oshead(ofile,'First wall and blanket')
+    do l=23, 28
+      call ovarre(ofile,s(l)%label,'',s(l)%cost)
+    end do
+    call oblnkl(ofile)
+
+    call oshead(ofile,'Remote handling')
+    do m=29, 33
+      call ovarre(ofile,s(m)%label,'',s(m)%cost)
+    end do
+    call oblnkl(ofile)
+
+    call oshead(ofile,'N plant and vacuum vessel')
+    do n=34, 36
+      call ovarre(ofile,s(n)%label,'',s(n)%cost)
+    end do
+    call oblnkl(ofile)
+
+    call oshead(ofile,'Energy conversion systems')
+    call ovarre(ofile,s(37)%label,'',s(37)%cost)
+    call oblnkl(ofile)
+
+    call oshead(ofile,'Remaining subsystems')
+    do q=38, 62
+      call ovarre(ofile,s(q)%label,'',s(q)%cost)
+    end do
+    call oblnkl(ofile)
+
+    !  Calculate total costs
+    total_costs = s(9)%cost + s(13)%cost + s(22)%cost + &
+         s(28)%cost + s(32)%cost + s(36)%cost + &
+         s(37)%cost + s(62)%cost
+
+    call ovarre(ofile,"Total Costs",'',total_costs)
+    
+  end subroutine write_costs_to_output
+  
 
   subroutine value_function(x, v)
 
