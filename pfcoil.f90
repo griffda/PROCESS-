@@ -122,6 +122,8 @@ contains
     !+ad_hisc               and steel case thickness
     !+ad_hist  17/11/14 PJK Removed aturn argument from superconpf
     !+ad_hist  24/11/14 PJK Corrected wtc for resistive coils
+    !+ad_hist  16/01/15 JM  Added variable "itr_sum" for new costs module
+    !+ad_hist  16/01/15 JM  Added counter variables "c", "m" & "n" for new costs module
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -136,7 +138,7 @@ contains
     integer, parameter :: lrow1 = 2*nptsmx + ngrpmx
     integer, parameter :: lcol1 = ngrpmx
 
-    integer :: i,ii,iii,ij,it,j,k,ncl,nfxf0,ng2,ngrp0,nng,nocoil,npts,npts0
+    integer :: i,ii,iii,ij,it,j,k,c,m,n,ncl,nfxf0,ng2,ngrp0,nng,nocoil,npts,npts0
     integer :: ccount, top_bottom
     integer, dimension(ngrpmx) :: pcls0
     integer, dimension(ngrpmx+2) :: ncls0
@@ -703,6 +705,17 @@ contains
 
        end do
     end do
+
+    !  Find sum of current x turns x radius for all coils for 2015 costs model
+    c = 0
+    itr_sum = 0.0D0
+    do m=1, ngrp
+       do n=1, ncls(m)
+          c = c + 1
+          itr_sum = itr_sum + (rpf(c) * turns(c) * cptdin(c))
+       end do
+    end do
+    itr_sum = itr_sum + ((bore + 0.5*ohcth) * turns(nohc) * cptdin(nohc))
 
     !  Find OH coil information
 

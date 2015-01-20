@@ -120,6 +120,7 @@ subroutine caller(xc,nvars)
   use build_module
   use buildings_module
   use costs_module
+  use costs_2015_module
   use current_drive_module
   use divertor_module
   use fwbs_module
@@ -238,6 +239,7 @@ subroutine caller(xc,nvars)
   end if
 
   call costs(nout,0)
+  call costs_2015(0,0)
 
   !+**PJK  if (ifispact.eq.1) then
   !+**PJK     call fispac(0)

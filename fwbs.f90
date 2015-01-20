@@ -1258,6 +1258,7 @@ contains
     !+ad_hist  23/06/14 PJK Corrected wallmw units
     !+ad_hist  03/09/14 PJK Changed PF coil to cryostat top vertical clearance
     !+ad_hist  08/01/15 JM  Changed default blanket model to have ss, TiBe12 and Li4SiO4
+    !+ad_hist  16/01/15 JM  Changed zdewex to a global variable
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1280,7 +1281,7 @@ contains
     real(kind(1.0D0)) :: coilhtmx,decaybl,dpacop,dshieq,dshoeq,elong, &
          fpsdt,frachit,hbot,hblnkt,hcryopf,hecan,hshld,htop,htheci,hvv, &
          pheci,pheco, fpydt, pneut2,ptfi,ptfiwp,ptfo,ptfowp,r1,r2,r3, &
-         raddose,v1,v2,volshldi,volshldo,wpthk,zdewex,coolvol
+         raddose,v1,v2,volshldi,volshldo,wpthk,coolvol
 
     real(kind(1.0D0)) :: pnucfwbs,pnucbs,pnucs
     real(kind(1.0D0)) :: fwthick,decayfw,decaysh

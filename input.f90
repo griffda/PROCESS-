@@ -1960,6 +1960,18 @@ contains
           call parse_real_variable('COST_FACTOR_RH', cost_factor_rh, &
                0.1D0, 10.0D0, &
                'Cost scaling factor for remote handling (2015 costs model)')
+       case ('COST_FACTOR_VV')
+          call parse_real_variable('COST_FACTOR_VV', cost_factor_VV, &
+               0.1D0, 10.0D0, &
+               'Cost scaling factor for vacuum vessel (2015 costs model)')
+       case ('COST_FACTOR_BOP')
+          call parse_real_variable('COST_FACTOR_BOP', cost_factor_bop, &
+               0.1D0, 10.0D0, &
+               'Cost scaling factor for energy conversion system (2015 costs model)')
+       case ('COST_FACTOR_MISC')
+          call parse_real_variable('COST_FACTOR_MISC', cost_factor_misc, &
+               0.1D0, 10.0D0, &
+               'Cost scaling factor for remaining subsystems (2015 costs model)')
        case ('COWNER')
           call parse_real_variable('COWNER', cowner, 0.0D0, 1.0D0, &
                'Owner cost factor')

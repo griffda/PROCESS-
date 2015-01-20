@@ -18,15 +18,49 @@ module costs_2015_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use constants
   use cost_variables
   use current_drive_variables
+  use build_variables
+  use fwbs_variables
+  use tfcoil_variables
+  use physics_variables
+  use divertor_variables
+  use pfcoil_variables
+  use structure_variables
+  use vacuum_variables
+  use pf_power_variables
+  use heat_transport_variables
+  use times_variables
+  use buildings_variables
+  use pulse_variables
 
   implicit none
 
-  private
-  public :: costs_2015
+  !  Precision variable
+  integer, parameter :: double = 8
+  
+  !  Output variables
+  integer :: ip, ofile
 
-  !  Various cost account values (M$)
+  !  Costs structure for scaling laws (scl)
+  type :: scl
+     character(len=50) :: label
+     real(kind=double) :: kref
+     real(kind=double) :: k
+     real(kind=double) :: cref
+     real(kind=double) :: cost
+     real(kind=double) :: cost_factor
+  end type scl
+
+  !  Scaling law array (unused entries will be zeroes)
+  type(scl), dimension(100) :: s
+  
+  !  Private module variables
+  private :: ip, ofile, double, s
+
+  !  Public variables/subroutines
+  public :: costs_2015
 
 contains
 
@@ -61,16 +95,85 @@ contains
 
     integer, intent(in) :: iprint, outfile
 
-    !  Local Variables
-    
+    !  Local variables
+    real(kind=double) :: total_costs
+
+    !  Assign module private variables to iprint and outfile
+    ip = iprint
+    ofile = outfile
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
     !  Calculate building costs
     call calc_building_costs
 
+    !  Calculate land costs
+    call calc_land_costs
+
+    !  Calculate tf coil costs
+    call calc_tf_coil_costs
+
+    !  Calculate fwbs costs
+    call calc_fwbs_costs
+    
+    !  Calculate remote handling costs
+    call calc_remote_handling_costs
+    
+    !  Calculate N plant and vacuum vessel costs
+    call calc_n_plant_and_vv_costs
+
+    !  Calculate energy conversion system costs
+    call calc_energy_conversion_system
+    
+    !  Calculate remaining subsystems costs
+    call calc_remaining_subsystems
+
+    !  Calculate total costs
+    total_costs = s(9)%cost + s(13)%cost + s(22)%cost + &
+         s(28)%cost + s(32)%cost + s(36)%cost + &
+         s(37)%cost + s(62)%cost
+
+    !write(*,*) s(9)%label, s(9)%cost/1.0D6
+    !write(*,*) s(13)%label, s(13)%cost/1.0D6
+    !write(*,*) s(22)%label, s(22)%cost/1.0D6
+    !write(*,*) s(28)%label, s(28)%cost/1.0D6
+    !write(*,*) s(32)%label, s(32)%cost/1.0D6
+    !write(*,*) s(36)%label, s(36)%cost/1.0D6
+    !write(*,*) s(37)%label, s(37)%cost/1.0D6
+    !write(*,*) s(62)%label, s(62)%cost/1.0D6
+
+    write(*,*) "38", s(38)%label, s(38)%cost/1.0D6
+    write(*,*) "39", s(39)%label, s(39)%cost/1.0D6
+    !write(*,*) "40", s(40)%label, s(40)%cost/1.0D6
+    !write(*,*) "41", s(41)%label, s(41)%cost/1.0D6
+    !write(*,*) "42", s(42)%label, s(42)%cost/1.0D6
+    !write(*,*) "43", s(43)%label, s(43)%cost/1.0D6
+    !write(*,*) "44", s(44)%label, s(44)%cost/1.0D6
+    !write(*,*) "45", s(45)%label, s(45)%cost/1.0D6
+    write(*,*) "46", s(46)%label, s(46)%cost/1.0D6
+    !write(*,*) "47", s(47)%label, s(47)%cost/1.0D6
+    !write(*,*) "48", s(48)%label, s(48)%cost/1.0D6
+    write(*,*) "49", s(49)%label, s(49)%cost/1.0D6
+    write(*,*) "50", s(50)%label, s(50)%cost/1.0D6
+    !write(*,*) "51", s(51)%label, s(51)%cost/1.0D6
+    !write(*,*) "52", s(52)%label, s(52)%cost/1.0D6
+    !write(*,*) "53", s(53)%label, s(53)%cost/1.0D6
+    write(*,*) "54", s(54)%label, s(54)%cost/1.0D6
+    !write(*,*) "55", s(55)%label, s(55)%cost/1.0D6
+    !write(*,*) "56", s(56)%label, s(56)%cost/1.0D6
+    !write(*,*) "57", s(57)%label, s(57)%cost/1.0D6
+    write(*,*) "58", s(58)%label, s(58)%cost/1.0D6
+    write(*,*) "59", s(59)%label, s(59)%cost/1.0D6
+    write(*,*) "60", s(60)%label, s(60)%cost/1.0D6
+    !write(*,*) "61", s(61)%label, s(61)%cost/1.0D6
+
+
+    !write(*,*) "Total cost (2014 M$)", total_costs/1.0D6 
+
+    !  Output cost calculations
+    !call output_costs
 
   end subroutine costs_2015
-
   
   subroutine calc_building_costs
 
@@ -91,201 +194,115 @@ contains
 
     implicit none
 
-    !  Arguments
-
     !  Local Variables
-
-    !  Total cost
-    real(kind(1.0D0)) :: cost_buildings_total
-    
-    !  Admin building variables
-    real(kind(1.0D0)) :: cost_admin_buildings
-    real(kind(1.0D0)) :: ITER_admin_building_vol
-    
-    !  Tokamak complex variables
-    real(kind(1.0D0)) :: cost_tokamak_buildings
-    real(kind(1.0D0)) :: ITER_tokamak_building_vol
-    real(kind(1.0D0)) :: ITER_cryo_vol
-    real(kind(1.0D0)) :: cryo_size_ratio
-
-    !  Neutral beam building variables
-    real(kind(1.0D0)) :: cost_NBI_buildings
-    real(kind(1.0D0)) :: ITER_NBI_buildings_vol
-    real(kind(1.0D0)) :: ITER_NBI_wp_power
-    real(kind(1.0D0)) :: NBI_wp_power_ratio
-
-    !  Cryoplant building variables
-    real(kind(1.0D0)) :: cost_cryoplant_buildings
-    real(kind(1.0D0)) :: ITER_cryoplant_buildings_vol
-    real(kind(1.0D0)) :: ITER_cryoplant_heat_load
-    real(kind(1.0D0)) :: cryoplant_heat_load_ratio
-
-    !  PF coil winding building variables
-    real(kind(1.0D0)) :: cost_PF_wind_buildings
-    real(kind(1.0D0)) :: ITER_PF_wind_buildings_vol
-    real(kind(1.0D0)) :: ITER_largest_PF_radius_sq
-    real(kind(1.0D0)) :: PF_largest_radius_sq_ratio
-
-    !  Magnet power supplies and related building variables
-    real(kind(1.0D0)) :: cost_mag_pow_sup_buildings
-    real(kind(1.0D0)) :: ITER_mag_pow_sup_buildings_vol
-    real(kind(1.0D0)) :: ITER_TF_current_per_coil
-    real(kind(1.0D0)) :: TF_current_per_coil_ratio
-
-    !  Magnet discharge buildings
-    real(kind(1.0D0)) :: cost_mag_discharge_buildings
-    real(kind(1.0D0)) :: ITER_mag_discharge_buildings_vol
-    real(kind(1.0D0)) :: ITER_tot_stored_energy_TF
-    real(kind(1.0D0)) :: TF_tot_stored_energy_ratio
-
-    !  Cooling water buildings
-    real(kind(1.0D0)) :: cost_cooling_water_buildings
-    real(kind(1.0D0)) :: ITER_cooling_water_buildings_vol
-    real(kind(1.0D0)) :: ITER_tot_thermal_power_removed
-    real(kind(1.0D0)) :: tot_thermal_power_removed_ratio
-
+    integer :: i, j
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
-    !  Administration buildings
-     
+    !  Set cost factor for buildings
+    do i=1, 9
+       s(i)%cost_factor = cost_factor_buildings
+    end do
+
+    s(1)%label = "Admin Buildings"
+
     !  ITER volume of admin buildings (m^3)
-    ITER_admin_building_vol = 129000.0D0
-
-    !  Cost of power plant admin buildings (2014 $)
-    cost_admin_buildings = cost_factor_buildings * ITER_admin_building_vol * &
-         ITER_build_cost_per_vol
-
+    s(1)%cref = 129000.0D0 * ITER_build_cost_per_vol
+    s(1)%cost = s(1)%cost_factor * s(1)%cref
     
-    !  Tokamak complex (excluding Hot Cell)
 
-    !  ITER volume of tokamak complex (m^3)
-    ITER_tokamak_building_vol = 1100000.0D0
+    s(2)%label = "Tokamak Complex (excluding hot cell)"
     
-    !  Scale with the overall size of the cryostat    
+    !  Cost of ITER of tokamak complex (volume * cost per vol)
+    s(2)%cref = 1100000.0D0 * ITER_build_cost_per_vol
+   
     !  ITER cryostat volume (m^3)
-    ITER_cryo_vol = 18712.0D0
-
-    !  cryostat size ratio
-    cryo_size_ratio = vdewex / ITER_cryo_vol
-
-    !  Cost of power plant tokamak complex (2014 $)
-    cost_tokamak_buildings = cost_factor_buildings * ITER_tokamak_building_vol * &
-         (cryo_size_ratio**costexp) * ITER_build_cost_per_vol
+    s(2)%k = (pi*rdewex**2) * 2.0D0 * zdewex
+    s(2)%kref = 18712.0D0
+    s(2)%cost = s(2)%cost_factor * s(2)%cref * (s(2)%k / s(2)%kref)**costexp
     
     
-    !  Neutral beam buildings
+    s(3)%label="Neutral beam buildings"
 
-    !  ITER volume of neutral beam buildings (m^3)
-    ITER_NBI_buildings_vol = 28000.0D0
+    !  Cost of ITER neutral beam buildings (volume * cost per vol)
+    s(3)%cref = 28000.0D0 * ITER_build_cost_per_vol
 
     !  Scale with neutral beam wall plug power (MW)
-    ITER_NBI_wp_power = 120.0D0
-    
-    !  NBI power ratio
-    NBI_wp_power_ratio = pwpnb / ITER_NBI_wp_power
-    
-    !  Cost of power plant neutral beam buildings (2014 $)
-    cost_NBI_buildings = cost_factor_buildings * ITER_NBI_buildings_vol * &
-         (NBI_wp_power_ratio**costexp) * ITER_build_cost_per_vol
+    s(3)%k = pwpnb
+    s(3)%kref = 120.0D0
+    s(3)%cost = s(3)%cost_factor * s(3)%cref * (s(3)%k / s(3)%kref)**costexp
     
     
-    !  Cryoplant buildings
+    s(4)%label = "Cryoplant buildings"
     
-    !  ITER volume of cryoplant buildings (m^3)
-    ITER_cryoplant_buildings_vol = 130000.0D0
+    !  Cost of ITER cryoplant buildings (volume * cost per vol)
+    s(4)%cref = 130000.0D0 * ITER_build_cost_per_vol
     
     !  Scale with the total heat load on the cryoplant at ~4.5K (kW)
-    ITER_cryoplant_heat_load = 61.0D0
-
-    !  Cryoplant heat load ratio
-    cryoplant_heat_load_ratio = (helpow / 1.0D3) / ITER_cryoplant_heat_load
-
-    !  Cost of power plant cryoplant buildings (2014 $)
-    cost_cryoplant_buildings = cost_factor_buildings * ITER_cryoplant_buildings_vol * &
-         (cryoplant_heat_load_ratio**costexp) * ITER_build_cost_per_vol
+    s(4)%k = helpow/1.0D3
+    s(4)%kref = 61.0D0
+    s(4)%cost = s(4)%cost_factor * s(4)%cref * (s(4)%k / s(4)%kref)**costexp
 
     
-    !  PF Coil winding building
+    s(5)%label = "PF Coil winding building"
     
-    !  ITER volume of PF winding buildings (m^3)
-    ITER_PF_wind_buildings_vol = 190000.0D0
+    !  Cost of ITER PF winding buildings (volume * cost per vol)
+    s(5)%cref = 190000.0D0 * ITER_build_cost_per_vol
     
     !  Scale with the outer radius of the largest PF coil squared (m^2)
-    ITER_largest_PF_radius_sq = 12.4D0**2
-    
-    !  Outer radius of the largest PF coil squared ratio
-    PF_largest_radius_sq_ratio =  / ITER_largest_PF_radius_sq
-
-    !  Cost of power plant PF coil winding buildings (2014 $)
-    cost_PF_wind_buildings = cost_factor_buildings * ITER_PF_wind_buildings_vol * &
-         (PF_largest_radius_sq_ratio**costexp) * ITER_build_cost_per_vol
+    s(5)%k = pfrmax**2
+    s(5)%kref = 12.4D0**2
+    s(5)%cost = s(5)%cost_factor * s(5)%cref * (s(5)%k / s(5)%kref)**costexp
 
     
-    !  Magnet power supplies and related buildings
+    s(6)%label = "Magnet power supplies and related buildings"
 
-    !  ITER volume of magnet power supplies and related buildings (m^3)
-    ITER_mag_pow_sup_buildings_vol = 110000.0D0
+    !  Cost of ITER magnet power supplies and related buildings (volume * cost per vol)
+    s(6)%cref = 110000.0D0 * ITER_build_cost_per_vol
     
     !  Scale with TF current per coil (MA)
-    ITER_TF_current_per_coil = 9.1D0
-    
-    !  TF current per coil ratio
-    TF_current_per_coil_ratio = (ritfc/tfno) / ITER_TF_current_per_coil
-    
-    !  Cost of power plant magnet power supplies and related buildings (2014 $)
-    cost_mag_pow_sup_buildings = cost_factor_buildings * ITER_mag_pow_sup_buildings_vol * &
-         (TF_current_per_coil_ratio**costexp) * ITER_build_cost_per_vol
+    s(6)%k = (ritfc/tfno)/1.0D6
+    s(6)%kref = 9.1D0
+    s(6)%cost = s(6)%cost_factor * s(6)%cref * (s(6)%k / s(6)%kref)**costexp
 
+     
+    s(7)%label = "Magnet discharge buildings"
     
-    !  Magnet discharge buildings
-    
-    !  ITER volume of magnet discharge buildings
-    ITER_mag_discharge_buildings_vol = 35000.0D0
+    !  Cost of ITER magnet discharge buildings (volume * cost per vol)
+    s(7)%cref = 35000.0D0 * ITER_build_cost_per_vol
     
     !  Scale with total stored energy in TF coils (GJ)
-    ITER_tot_stored_energy_TF = 41.0D0
-    
-    !  Total power plant stored energy in TF coils ratio
-    TF_tot_stored_energy_ratio = (estotf*tfno) / ITER_tot_stored_energy_TF
-    
-    !  Cost of magnet discharge buildings (2014 $)
-    cost_mag_discharge_buildings = cost_factor_buildings * ITER_mag_discharge_buildings_vol * &
-         (TF_tot_stored_energy_ratio**costexp) * ITER_build_cost_per_vol
+    s(7)%k = estotf*tfno
+    s(7)%kref = 41.0D0
+    s(7)%cost  = s(7)%cost_factor * s(7)%cref * (s(7)%k / s(7)%kref)**costexp
 
     
-    !  Cooling water buildings
+    s(8)%label = "Cooling water buildings"
 
     !  ITER volume of cooling water buildings (m^3)
-    ITER_cooling_water_buildings_vol = 51000.0D0
+    s(8)%cref = 51000.0D0 * ITER_build_cost_per_vol
 
     !  Scale with total thermal power removed from the core (MW)
-    ITER_tot_thermal_power_removed = 880.0D0
-
-    !  Total thermal power remove from the core ratio
-    tot_thermal_power_removed_ratio = priheat / ITER_tot_thermal_power_removed
-
-    !  Cost of cooling water buildings (2014 $)
-    cost_cooling_water_buildings = cost_factor_buildings * ITER_cooling_water_buildings_vol * &
-         (tot_thermal_power_removed_ratio**costexp) * ITER_build_cost_per_vol
+    s(8)%k = priheat
+    s(8)%kref = 880.0D0
+    s(8)%cost = s(8)%cost_factor * s(8)%cref * (s(8)%k / s(8)%kref)**costexp
 
 
-    !  Total cost of buildings (2014 $)
-    cost_buildings_total = cost_admin_buildings + cost_tokamak_buildings + cost_NBI_buildings + &
-         cost_PF_wind_buildings + cost_mag_pow_sup_buildings + cost_mag_discharge_buildings + &
-         cost_cooling_water_buildings
-    
-    
+    s(9)%label = "Total cost of buildings"
+    s(9)%cost = 0.0D0
+    do j=1, 8
+       s(9)%cost = s(9)%cost + s(j)%cost
+    end do
+        
     !  Output to file if option chosen
 
-    if ((iprint == 0).or.(output_costs == 0)) return
+    if ((ip == 0).or.(output_costs == 0)) return
 
     !  Output section for building costs
     
     !  TODO
 
   end subroutine calc_building_costs
-
 
   subroutine calc_land_costs
 
@@ -306,28 +323,20 @@ contains
 
     implicit none
 
-    !  Arguments
-
     !  Local Variables
-
-    !  Total cost of land and clearing
-    real(kind(1.0D0)) :: cost_land_total
-
-    !  Land Costs
-    real(kind(1.0D0)) :: cost_land
-    real(kind(1.0D0)) :: ITER_total_land_area
-    real(kind(1.0D0)) :: ITER_key_buildings_land_area
-    real(kind(1.0D0)) :: ITER_buffer_land_area
-    real(kind(1.0D0)) :: ITER_cryostat_diameter
-    real(kind(1.0D0)) :: cost_of_land_per_hectare
-
-    !  Clearing Costs
-    real(kind(1.0D0)) :: cost_clearing
-    real(kind(1.0D0)) :: cost_of_clearing_per_hectare
+    integer :: i, j
+    real(kind=double) :: ITER_total_land_area
+    real(kind=double) :: ITER_key_buildings_land_area
+    real(kind=double) :: ITER_buffer_land_area
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Land Costs
+    !  Set cost factor for land
+    do i=10, 13
+       s(i)%cost_factor = cost_factor_land
+    end do
+
+    s(10)%label = "Land purchasing costs"
 
     !  ITER Land area (hectares)
     ITER_total_land_area = 180.0D0
@@ -339,40 +348,49 @@ contains
     ITER_buffer_land_area = ITER_total_land_area - ITER_key_buildings_land_area
 
     !  Scale with diameter of cryostat (m)
-    ITER_cryostat_diameter = 28.5D0
-
-    !  Diameter of cryostat ratio
-    diameter_cryostat_ratio = (2.0D0 * rdewex) / ITER_cryostat_diameter
+    s(10)%k = 2.0D0 * rdewex
+    s(10)%kref = 28.5D0
 
     !  Cost of land per hectare (2014 $ / ha)
-    cost_of_land_per_hectare = 260000.0D0
+    s(10)%cref = 260000.0D0
 
     !  Cost of power plant land (2014 $)
-    cost_land = cost_factor_land * (ITER_key_buildings_land_area * &
-         (diameter_cryostat_ratio**costexp) + ITER_buffer_land_area) * &
-         cost_of_land_per_hectare
+    s(10)%cost = s(10)%cost_factor * (ITER_key_buildings_land_area * & 
+         (s(10)%k / s(10)%kref)**costexp + ITER_buffer_land_area) * &
+         s(10)%cref
 
     
-    !  Clearing costs
+    s(11)%label = "Land clearing costs"
     
-    !  Cost of clearing land per hectare (2014 $ / ha)
-    cost_of_clearing_per_hectare = 460000.0D0
+    !  Cost of clearing ITER land (area (ha) * cost per ha)
+    s(11)%cref = 460000.0D0 * ITER_key_buildings_land_area
     
-    !  Cost of clearing the key buildings area for power plant
-    cost_clearing = cost_factor_land * ITER_key_buildings_land_area * &
-         (diameter_cryostat_ratio**costexp) * cost_of_clearing_per_hectare
-
-    !  Total land and clearing costs (2014 $)
-    cost_land_total = cost_land + cost_clearing
+    !  Scale with diameter of cryostat (m)
+    s(11)%k = 2.0D0 *rdewex
+    s(11)%kref = 28.5D0
+    s(11)%cost = s(11)%cost_factor * (s(11)%k / s(11)%kref )**costexp * s(11)%cref
 
     
-    !  Road works
-    !  TODO
+    s(12)%label = "Road works"
+    
+    !  Cost of ITER road works
+    s(12)%cref = 150000000.0D0
 
+    !  Scale with TF coil longest dimension
+    s(12)%k = max(tfborev, tfboreh) + 2.0D0*tfcth
+    s(12)%kref = 14.0D0
+    s(12)%cost = s(12)%cost_factor * s(12)%cref * (s(12)%k / s(12)%kref)**costexp
+
+
+    s(13)%label = "Total land costs"
+    s(13)%cost = 0.0D0
+    do j=10, 12
+       s(13)%cost = s(13)%cost + s(j)%cost
+    end do
    
     !  Output to file if option chosen
 
-    if ((iprint == 0).or.(output_costs == 0)) return
+    if ((ip == 0).or.(output_costs == 0)) return
 
     !  Output section for land costs
     
@@ -399,182 +417,110 @@ contains
 
     implicit none
 
-    !  Arguments
-
     !  Local Variables
-    real(kind(1.0D0)) :: cost_tf_coils_total
-    real(kind(1.0D0)) :: ITER_TF_coil_height
-    real(kind(1.0D0)) :: TF_coil_height_ratio
-
-    !  Coil insertion and welding variables
-    real(kind(1.0D0)) :: cost_coil_insertion_welding
-    real(kind(1.0D0)) :: ITER_coil_insertion_welding_cost
-    real(kind(1.0D0)) :: ITER_total_TF_coil_length
-    real(kind(1.0D0)) :: total_TF_coil_length_ratio
-
-    !  Radial plates
-    real(kind(1.0D0)) :: cost_radial_plates
-    real(kind(1.0D0)) :: ITER_radial_plates_cost
-    real(kind(1.0D0)) :: ITER_total_TF_coil_volume
-    real(kind(1.0D0)) :: total_TF_coil_volume_ratio
-
-    !  Winding
-    real(kind(1.0D0)) :: cost_winding
-    real(kind(1.0D0)) :: ITER_winding_cost
-    real(kind(1.0D0)) :: ITER_total_turn_length
-    real(kind(1.0D0)) :: total_turn_length_ratio
-
-    !  Chromium plated Cu strand for TF superconductor (quench protection copper)
-    real(kind(1.0D0)) :: cost_crcu_strands
-    real(kind(1.0D0)) :: ITER_crcu_strands_cost
-    real(kind(1.0D0)) :: ITER_crcu_strands_mass
-    real(kind(1.0D0)) :: crcu_strands_mass_ratio
-
-    !  Radial plate prototypes
-    real(kind(1.0D0)) :: cost_radial_plate_proto
-    real(kind(1.0D0)) :: ITER_radial_plate_proto_cost
-    real(kind(1.0D0)) :: ITER_radial_plate_s_area
-    real(kind(1.0D0)) :: radial_plate_s_area_ratio
-        
-    !  Nb3Sn conductor strands
-    real(kind(1.0D0)) :: cost_nb3sn_strands
-    real(kind(1.0D0)) :: ITER_nb3sn_strands_cost
-    real(kind(1.0D0)) :: ITER_total_nb3sn_mass
-    real(kind(1.0D0)) :: total_nb3sn_mass_ratio
-
-    !  Testing of TF Nb3Sn strands
-    real(kind(1.0D0)) :: cost_nb3sn_strands_testing
-    real(kind(1.0D0)) :: ITER_nb3sn_strands_testing_cost
-
-    !  Cabling and jacketing (uses total turn length and total turn length ratio)
-    real(kind(1.0D0)) :: cost_cabling_jacketing
-    real(kind(1.0D0)) :: ITER_cabling_jacketing_cost
+    integer :: i, j
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Coil insertion and welding
+    !  Set cost factor for tf coils
+    do i=14, 20
+       s(i)%cost_factor = cost_factor_tf_coils
+    end do
+    
 
+    s(14)%label = "TF Coil insertion and welding"
+    
     !  ITER coil insertion and welding cost (2014 $)
-    ITER_coil_insertion_welding_cost = 258000000.0
+    s(14)%cref = 258000000.0
 
     !  Scale with total TF coil length (m)
-    ITER_total_TF_coil_length = 18.0D0*34.1D0
-
-    !  Total TF coil length ratio
-    total_TF_coil_length_ratio = (tfno * tfleng) / ITER_total_TF_coil_length
-    
-    !  Cost of power plant coil insertion and welding (2014 $)
-    cost_coil_insertion_welding = cost_factor_tf_coils * ITER_coil_insertion_welding_cost * &
-         (total_TF_coil_length_ratio**costexp)
+    s(14)%k = tfno * tfleng
+    s(14)%kref = 18.0D0*34.1D0
+    s(14)%cost = s(14)%cost_factor * s(14)%cref * (s(14)%k / s(14)%kref)**costexp
     
 
-    !  Radial plates
-
+    s(15)%label = "TF coil radial plates"
     !  if radial plate option is turned on? TODO
-
     !  ITER radial plates cost (2014 $)
-    ITER_radial_plates_cost = 395000000.0D0
+    s(15)%cref = 395000000.0D0
 
     !  Scale with the total TF coil volume (m^3)
-    ITER_total_TF_coil_volume = 317.3D0
-    
-    !  Total TF coil volume ratio
-    total_TF_coil_volume_ratio = ((tficrn + tfocrn)*tfcth*tfleng) / ITER_total_TF_coil_volume
-
-    !  Cost of power plant radial plates (2014 $)
-    cost_radial_plates = cost_factor_tf_coils * ITER_radial_plates_cost * &
-         total_TF_coil_volume_ratio**costexp
+    s(15)%k = (tficrn + tfocrn)*tfcth*tfleng
+    s(15)%kref = 317.3D0
+    s(15)%cost = s(15)%cost_factor * s(15)%cref * (s(15)%k / s(15)%kref)**costexp
 
 
-    !  Winding
+    s(16)%label = "TF coil winding"
     
     !  ITER winding cost (2014 $)
-    ITER_winding_cost = 414000000.0D0
+    s(16)%cref = 414000000.0D0
     
     !  Scale with the total turn length (m)
-    ITER_total_turn_length = 82249.0D0
-    
-    !  Total turn length ratio
-    total_turn_length_ratio = (tfno * tfleng * turnstf) / ITER_total_turn_length
-    
-    !  Cost of power plant winding (2014 $)
-    cost_winding = cost_factor_tf_coils * ITER_winding_cost * & 
-         total_turn_length_ratio**costexp
+    s(16)%k = tfno * tfleng * turnstf
+    s(16)%kref = 82249.0D0
+    s(16)%cost = s(16)%cost_factor * s(16)%cref * (s(16)%k / s(16)%kref)**costexp
 
     
-    !  Chromium plated Cu strand for TF superconductor (quench protection copper)
+    s(17)%label = "CrCu strand for TF SC (quench protection Cu)"
     
     !  ITER Chromium plated Cu strand for TF SC cost (2014 $)
-    ITER_crcu_strands_cost = 225000000.0D0
+    s(17)%cref = 225000000.0D0
     
     !  Scale with total copper mass (excluding mass of copper in Nb3Sn strands) (kg)
-    ITER_crcu_strands_mass = 220000.0D0
-    
-    !  Total copper mass ratio
-    crcu_strands_mass_ratio = (whtconcu*tfno) / ITER_crcu_strands_mass
-    
-    !  Cost of power plant chromium plated Cu strand for TF SC (2014 $)
-    cost_crcu_strands = cost_factor_tf_coils * ITER_crcu_strands_cost * &
-         crcu_strands_mass_ratio**costexp
+    s(17)%k = whtconcu * tfno
+    s(17)%kref = 220000.0D0
+    s(17)%cost = s(17)%cost_factor * s(17)%cref * (s(17)%k / s(17)%kref)**costexp
     
     
-    !  Radial plate prototypes
+    s(18)%label = "Radial plate prototypes"
     
     !  ITER radial plate prototypes cost (2014 $)
-    ITER_radial_plate_proto_cost = 15000000.0D0
+    s(18)%cref = 15000000.0D0
     
     !  Scale with surface are of radial plate (m^2)
-    ITER_radial_plate_s_area = 21.1D0
-    
-    !  Radial plate surface area ratio
-    radial_plate_s_area_ratio = (tfleng*thkwp) / ITER_radial_plate_s_area
-
-    !  Cost of power plant radial plate prototypes (2014 $)
-    cost_radial_plate_proto = cost_factor_tf_coils * ITER_radial_plate_proto_cost * &
-         radial_plate_s_area_ratio**costexp
+    s(18)%k = tfleng * thkwp
+    s(18)%kref = 21.1D0
+    s(18)%cost = s(18)%cost_factor * s(18)%cref * (s(18)%k / s(18)%kref)**costexp
 
     
-    !  Nb3Sn superconductor strands
+    s(19)%label = "Nb3Sn superconductor strands"
     
     !  ITER Nb3Sn SC strands cost (2014 $)
-    ITER_nb3sn_strands_cost = 526000000.0D0
+    s(19)%cref = 526000000.0D0
     
     !  Scale with the total mass of nb3sn strands (kg)
-    ITER_total_nb3sn_mass = 420000.0D0
-
-    !  Total mass of Nb3Sn strands ratio
-    total_nb3sn_mass_ratio = (whtconsc * tfno) / ITER_total_nb3sn_mass
-
-    !  Cost of power plant Nb3Sn strands (2014 $)
-    cost_nb3sn_strands = cost_factor_tf_coils * ITER_nb3sn_strands_cost * &
-         total_nb3sn_mass_ratio**costexp
+    s(19)%k = whtconsc * tfno
+    s(19)%kref = 420000.0D0
+    s(19)%cost = s(19)%cost_factor * s(19)%cref * (s(19)%k / s(19)%kref)**costexp
 
     
-    !  Testing of nb3sn strands
+    s(20)%label = "Testing of nb3sn strands"
     
     !  ITER Nb3Sn strand test costs (2014 $)
-    ITER_nb3sn_strands_testing_cost = 4200000.0D0
-    
-    !  No scaling currently (could scale with current density per strand). Cost is (2014 $)
-    cost_nb3sn_strands_testing = cost_factor_tf_coils * ITER_nb3sn_strands_testing_cost
+    s(20)%cref = 4200000.0D0
+    s(20)%cost = s(20)%cost_factor * s(20)%cref
 
 
-    !  Cabling and jacketing
+    s(21)%label = "Cabling and jacketing"
     
     !  ITER cabling and jacketing costs (2014 $)
-    ITER_cabling_jacketing_cost = 81000000.0D0
+    s(21)%cref = 81000000.0D0
     
     !  Scale with total turn length.
-    !  Use value from "winding" cost calculation
+    s(21)%k = tfno * tfleng * turnstf
+    s(21)%kref = 82249.0D0
+    s(21)%cost = s(21)%cost_factor * s(21)%cref * (s(21)%k / s(21)%kref)**costexp
 
-    !  Cost for power plant cabling and jacketing (2014 $)
-    cost_cabling_jacketing = cost_factor_tf_coils * ITER_cabling_jacketing_cost * &
-         total_turn_length_ratio**costexp
-
+    
+    s(22)%label = "Total TF coil costs"
+    s(22)%cost = 0.0D0
+    do j=14, 22
+       s(22)%cost = s(22)%cost + s(j)%cost
+    end do
 
     !  Output to file if option chosen
 
-    if ((iprint == 0).or.(output_costs == 0)) return
+    if ((ip == 0).or.(output_costs == 0)) return
 
     !  Output section for TF coil costs
     
@@ -601,9 +547,8 @@ contains
 
     implicit none
 
-    !  Arguments
-
     !  Local Variables
+    integer :: i, j
     real(kind(1.0D0)) :: cost_total_fwbs
 
     !  Enrichment variables
@@ -614,39 +559,18 @@ contains
     real(kind(1.0D0)) :: tail_to_product_mass_ratio
     real(kind(1.0D0)) :: p_v, f_v, t_v
     real(kind(1.0D0)) :: swu, total_swu
-    real(kind(1.0D0)) :: boron_swu
-    real(kind(1.0D0)) :: boron_reference_cost
     real(kind(1.0D0)) :: pebble_packing_fraction
     real(kind(1.0D0)) :: mass_li_pebbles
-    real(kind(1.0D0)) :: cost_li6_enrichment
-
-    !  Li pebble manufacture variables
-    real(kind(1.0D0)) :: reference_mass_li_pebbles
-    real(kind(1.0D0)) :: li_pebble_mass_ratio
-    real(kind(1.0D0)) :: reference_cost_li_pebble_manufacture
-    real(kind(1.0D0)) :: cost_li_pebble_manufacture
-
-    !  Be pebble manufacture variables
-    real(kind(1.0D0)) :: reference_mass_be_pebbles
-    real(kind(1.0D0)) :: be_pebble_mass_ratio
-    real(kind(1.0D0)) :: reference_cost_be_pebble_manufacture
-    real(kind(1.0D0)) :: cost_be_pebble_manufacture
 
     !  First wall W coating variables
-    real(kind(1.0D0)) :: cost_first_wall_W_coating_manufacture
-    real(kind(1.0D0)) :: first_wall_W_coating_thickness
     real(kind(1.0D0)) :: W_density
-    real(kind(1.0D0)) :: first_wall_W_coating_mass
-    real(kind(1.0D0)) :: reference_first_wall_W_coating_mass
-    real(kind(1.0D0)) :: reference_first_wall_W_coating_cost
-
-    !  Blanket manufacture variables
-    real(kind(1.0D0)) :: cost_blanket_steel_manufacture
-    real(kind(1.0D0)) :: reference_blanket_steel_mass
-    real(kind(1.0D0)) :: reference_blanket_steel_cost
-    real(kind(1.0D0)) :: blanket_steel_mass_ratio
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Set cost factor for tf coils
+    do i=23, 28
+       s(i)%cost_factor = cost_factor_fwbs
+    end do
     
     !  Enrichment
     !  Costs based on the number of separative work units (SWU) required
@@ -677,9 +601,9 @@ contains
          (feed_li6_percentage - tail_li6_percentage)
 
     !  Calculate value functions
-    p_v = call value_function(product_li6_percentage)
-    f_v = call value_function(feed_li6_percentage)
-    t_v = call value_function(tail_li6_percentage)
+    call value_function(product_li6_percentage/100.0, p_v)
+    call value_function(feed_li6_percentage/100.0, f_v)
+    call value_function(tail_li6_percentage/100.0, t_v)
 
     !  Calculate separative work units per kg
     swu = p_v + tail_to_product_mass_ratio * t_v - feed_to_product_mass_ratio * f_v
@@ -693,105 +617,73 @@ contains
     !  Total swu for lithium in blanket
     total_swu = swu * mass_li_pebbles
 
-    !  Reference case of Boron SWU
-    boron_swu = 6900
+    s(23)%label = "Lithium enrichment cost"
 
     !  Reference cost for Boron enrichment (2014 $)
-    boron_reference_cost = 23000000.0D0
+    s(23)%cref = 23000000.0D0
 
-    !  Ratio of swu
-    ratio_swu = total_swu / boron_swu
-
-    !  Cost of li6 enrichment (2014 $)
-    cost_li6_enrichment = cost_factor_fwbs * boron_reference_cost * &
-         ratio_swu**costexp
-
+    !  Reference case of Boron SWU
+    s(23)%k =  total_swu
+    s(23)%kref = 6900
+    s(23)%cost = s(23)%cost_factor * s(23)%cref * (s(23)%k / s(23)%kref)**costexp
     
-    !  Lithium pebble manufacture
+    
+    s(24)%label = "Lithium pebble manufacture"
     
     !  Reference cost of lithium pebble manufacture (2014 $)
-    reference_cost_li_pebble_manufacture = 650000.0D0
+    s(24)%cref = 650000.0D0
 
     !  Scale with mass of lithium pebbles (kg)
-    reference_mass_li_pebbles = 10.0D0
-    
-    !  Ratio of lithium pebble masses
-    li_pebble_mass_ratio = mass_li_pebbles / reference_mass_li_pebbles
-    
-    !  Cost of Li4SiO4 pebbles for power plant (2014 $)
-    cost_li_pebble_manufacture = cost_factor_fwbs * reference_cost_li_pebble_manufacture * &
-         li_pebble_mass_ratio**costexp
+    s(24)%k = mass_li_pebbles
+    s(24)%kref = 10.0D0
+    s(24)%cost = s(24)%cost_factor * s(24)%cref * (s(24)%k / s(24)%kref)**costexp
     
     
-    ! Beryllium pebble manufacture
+    s(25)%label = "Beryllium pebble manufacture"
     
     !  Reference cost of beryllium pebble manufacture (2014 $)
-    reference_cost_be_pebble_manufacture = 450000000.0D0
+    s(25)%cref = 450000000.0D0
 
     !  Scale with mass of beryllium pebbles (kg)
-    reference_mass_be_pebbles = 100000.0D0
+    s(25)%k = whtbltibe12*pebble_packing_fraction
+    s(25)%kref = 100000.0D0
+    s(25)%cost = s(25)%cost_factor * s(25)%cref * (s(25)%k / s(25)%kref)**costexp
 
-    !  Mass of beryllium pebbles
-    mass_be_pebbles = whtbltibe12 * pebble_packing_fraction
+
+    s(26)%label = "First wall W coating manufacture"
     
-    !  Ratio of beryllium pebble masses
-    be_pebble_mass_ratio = mass_be_pebbles / reference_mass_be_pebbles
-    
-    !  Cost of TiBe12 pebbles for power plant (2014 $)
-    cost_be_pebble_manufacture = cost_factor_fwbs * reference_cost_be_pebble_manufacture * &
-         be_pebble_mass_ratio**costexp
-
-
-    !  First wall W coating manufacture
-    
-    !  First wall W coating thickness (m)
-    first_wall_W_coating_thickness = fw_w_thickness
-
-    !  First wall W coating volume (m^3)
-    first_wall_W_coating_volume = fwarea * first_wall_W_coating_thickness
+    !  Reference (PPCS A) first wall W coating cost (2014 $)
+    s(26)%cref = 25000000.0D0
     
     !  W density (kg/m^3)
     W_density = 19250.0D0
 
     !  First wall W coating mass (kg)
-    first_wall_W_coating_mass = W_density * first_wall_W_coating_volume
-    
-    !  Reference (PPCS A) first wall W coating mass (kg)
-    reference_first_wall_W_coating_mass = 29000.0D0
-    
-    !  Reference (PPCS A) first wall W coating cost (2014 $)
-    reference_first_wall_W_coating_cost = 25000000.0D0
-    
-    !  Cost of W first wall coating manufacture (2014 $)
-    cost_first_wall_W_coating_manufacture = cost_factor_fwbs * first_wall_W_coating_mass * &
-         unit_cost_fw_manufacture
+    s(26)%k = fwarea * fw_w_thickness * W_density
+    s(26)%kref = 29000.0D0
+    s(26)%cost = s(26)%cost_factor * s(26)%cref * (s(26)%k / s(26)%kref)**costexp
     
     
-    !  Blanket manufacture (EUROFER)
+    s(27)%label = "Blanket manufacture (EUROFER)"
 
-    !  Reference case (PPCS A) blanket steel mass (kg)
-    reference_blanket_steel_mass = 4070000.0D0
-    
     !  Reference case (PPCS A) blanket steel cost (2014 $)
-    reference_blanket_steel_cost = 317300000.0D0
+    s(27)%cref = 317300000.0D0
     
-    !  Blanket steel mass ratio
-    blanket_steel_mass_ratio = whtblss / reference_blanket_steel_mass
-
-    !  Cost of power plant blanket steel (2014 $)
-    cost_blanket_steel_manufacture = cost_factor_fwbs * reference_blanket_steel_cost * &
-         blanket_steel_mass_ratio**costexp
+    !  Scale with steel mass
+    s(27)%k = whtblss
+    s(27)%kref = 4070000.0D0
+    s(27)%cost = s(27)%cost_factor * s(27)%cref * (s(27)%k / s(27)%kref)**costexp
 
 
-    !  Total cost of fwbs
-    cost_total_fwbs = cost_li6_enrichment + cost_li_pebble_manufacture + &
-         cost_be_pebble_manufacture + cost_first_wall_W_coating_manufacture + &
-         cost_blanket_steel_manufacture
-
+    s(28)%label = "Total fwbs cost"
+    s(28)%cost = 0.0D0
+    do j=23, 27
+       s(28)%cost = s(28)%cost + s(j)%cost
+    end do
 
     !  Output to file if option chosen
 
-    if ((iprint == 0).or.(output_costs == 0)) return
+    if ((ip == 0).or.(output_costs == 0)) return
 
     !  Output section for TF coil costs
     
@@ -818,122 +710,83 @@ contains
 
     implicit none
 
-    !  Arguments
-
     !  Local Variables
-    real(kind(1.0D0)) :: cost_total_rh
+    integer :: i, j
 
     !  Divertor RH system variables
-    real(kind(1.0D0)) :: ITER_div_rh_costs
-    real(kind(1.0D0)) :: ITER_div_cassette_mass
     real(kind(1.0D0)) :: ITER_num_div_rh_systems
     real(kind(1.0D0)) :: div_num_rh_systems_ratio
-    real(kind(1.0D0)) :: div_mass_estimate
-    real(kind(1.0D0)) :: div_cassette_mass_ratio
-    real(kind(1.0D0)) :: cost_divertor_rh
     
     !  First wall and blanket RH system variables
-    real(kind(1.0D0)) :: cost_blanket_rh
-    real(kind(1.0D0)) :: ITER_blanket_rh_costs
     real(kind(1.0D0)) :: ITER_num_blanket_rh_systems
     real(kind(1.0D0)) :: blanket_num_rh_systems_ratio
-    real(kind(1.0D0)) :: ITER_blanket_segment_mass
-    real(kind(1.0D0)) :: blanket_mass_estimate
-    real(kind(1.0D0)) :: blanket_module_mass_ratio
-
-    !  Active maintenance facility variables
-    real(kind(1.0D0)) :: cost_amf
-    real(kind(1.0D0)) :: reference_amf_volume
-    real(kind(1.0D0)) :: reference_major_radius
-    real(kind(1.0D0)) :: major_radius_ratio
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Divertor remote handling system
+    !  Set cost factor for remote handling
+    do i=29, 33
+       s(i)%cost_factor = cost_factor_rh
+    end do
+
+    s(29)%label = "Divertor remote handling system"
 
     !  Reference ITER costs (2014 $)
-    ITER_div_rh_costs = 40000000.0D0
+    s(29)%cref = 40000000.0D0
 
-    !  Scale with the number of remote handling systems and 
-    !  mass of a divertor module
-
-    !  ITER Number of RH systems
+    !  Scale with the number of remote handling systems and  mass of a divertor module
     ITER_num_div_rh_systems = 1.0
-
-    !  Ratio of number of divertor RH systems
-    div_num_rh_systems_ratio = num_rh_systems / ITER_num_rh_systems
+    div_num_rh_systems_ratio = num_rh_systems / ITER_num_div_rh_systems
     
     !  ITER divertor cassette mass (kg)
-    ITER_div_cassette_mass = 4700.0D0
+    s(29)%kref = 4700.0D0
 
-    !  Estimated divertor mass
     if (ipowerflow == 0) then
-       div_mass_estimate = (whtblkt/(1 - fhole))*fhole
+       s(29)%k = (whtblkt/(1 - fhole))*fhole
     else
-       div_mass_estimate = (whtblkt/(1 - fhole - fdiv - fhcd))*(fdiv)
+       s(29)%k = (whtblkt/(1 - fhole - fdiv - fhcd))*(fdiv)
     end if
-
-    !  Ratio of divertor cassette masses
-    div_cassette_mass_ratio = div_mass_estimate / ITER_div_cassette_mass
     
     !  Cost of power plant divertor remote handling equipment  (2014 $)
-    cost_divertor_rh = cost_factor_rh * ITER_div_rh_costs * &
-         div_num_rh_systems_ratio**costexp * div_cassette_mass_ratio**costexp
+    s(29)%cost = s(29)%cost_factor * s(29)%cref * &
+         div_num_rh_systems_ratio**costexp * (s(29)%k / s(29)%kref)**costexp
     
     
-    !  First wall and blanket RH system
+    s(30)%label = "First wall and blanket RH system"
     
     !  Reference ITER cost (2014 $)
-    ITER_blanket_rh_costs = 80000000.0D0
+    s(30)%cref = 80000000.0D0
     
-    !  Scale with the number of remote handling systems and 
-    !  mass of a blanket segment
-    
-    !  ITER Number of RH systems
+    !  Scale with the number of remote handling systems and mass of a blanket segment
     ITER_num_blanket_rh_systems = 1.0
-
-    !  Ratio of number of divertor RH systems
-    blanket_num_rh_systems_ratio = num_rh_systems / ITER_num_rh_systems
+    blanket_num_rh_systems_ratio = num_rh_systems / ITER_num_blanket_rh_systems
     
-    !  ITER Total blanket module mass (kg)
-    ITER_blanket_segment_mass = (3500.0D0*440.0D0) / (18.0D0 * 5.0D0)
+    !  Scale with blanket mass (kg)
+    s(30)%k = whtblkt / (tfno * 5.0D0)
+    s(30)%kref = 3500.0D0
+    s(30)%cost = s(30)%cost_factor * s(30)%cref * &
+         blanket_num_rh_systems_ratio**costexp * (s(30)%k / s(30)%kref)**costexp    
 
-    !  Blanket mass (kg)
-    blanket_mass_estimate = whtblkt / (tfno * 5.0D0)
+
+    s(31)%label = "Active maintenance facility"
     
-    !  Ratio of divertor cassette masses
-    blanket_module_mass_ratio = blanket_mass_estimate / ITER_blanket_module_mass
-    
-    !  Cost of power plant blanket remote handling equipment  (2014 $)
-    cost_blanket_rh = cost_factor_rh * ITER_blanket_rh_costs * &
-         blanket_num_rh_systems_ratio**costexp * blanket_module_mass_ratio**costexp    
+    !  Cost of reference AMF (volume * cost per vol)
+    s(31)%cref = 737000.0D0 * ITER_build_cost_per_vol
+
+    !  Scales with plasma major radius compared to EFDA AMF report
+    s(31)%k = rmajor
+    s(31)%kref = 9.0D0
+    s(31)%cost = s(31)%cost_factor * (s(31)%k / s(31)%kref)**costexp
 
 
-    !  Active maintenance facility
-    
-    !  Scales with plasma major radiu compared to EFDA AMF report
-
-    !  reference volume (m^3)
-    reference_amf_volume = 737000.0D0
-
-    !  reference plasma major radius (m)
-    reference_major_radius = 9.0D0
-    
-    !  Major radius ratio
-    major_radius_ratio = rmajor / reference_major_radius
-    
-    !  Cost of power plant amf (2014 $)
-    cost_amf = cost_factor_rh * major_radius_ratio**costexp * &
-         ITER_build_cost_per_vol
-
-
-    !  Total fwbs remote handling cost (2014 $)
-    cost_total_rh = cost_divertor_rh + cost_blanket_rh + cost_amf
-    
+    s(32)%label = "Total remote handling cost"
+    s(32)%cost = 0.0D0
+    do j=29, 31
+       s(32)%cost = s(32)%cost + s(j)%cost
+    end do    
 
     !  Output to file if option chosen
 
-    if ((iprint == 0).or.(output_costs == 0)) return
+    if ((ip == 0).or.(output_costs == 0)) return
 
     !  Output section for TF coil costs
     
@@ -960,36 +813,377 @@ contains
 
     implicit none
 
-    !  Arguments
-
     !  Local Variables
+    integer :: i, j
     
     !  Vacuum vessel variables
-    real(kind(1.0D0)) :: ITER_vv_cost_per_sector
-    real(kind(1.0D0)) :: ITER_vv_cost
     real(kind(1.0D0)) :: ITER_max_midplane_radius
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Vacuum vessel
-    
-    !  ITER reference vacuum vessel cost (2014 $) per sector
-    ITER_vv_cost_per_sector = 323000000.0D0 / 7.0D0
+    !  Set cost factor for vacuum vessel and N plant
+    do i=34, 36
+       s(i)%cost_factor = cost_factor_vv
+    end do
 
+    !  Vacuum vessel
+    s(34)%label = "Vacuum vessel"
+    
     !  ITER reference vacuum vessel cost (2014 $)
-    ITER_vv_cost = 9.0D0 * ITER_vv_cost_per_sector
+    s(34)%cref = (323000000.0D0 / 7.0D0) * 9.0D0
 
     !  Scale with outermost midplane radius of vacuum vessel
+    s(34)%k = bore + ohcth + gapoh + tfcth + gapds + ddwi + &
+         shldith + blnkith + fwith + scrapli + 2.0D0*rminor + &
+         scraplo + blnkoth + shldoth + ddwi
+    s(34)%kref = 6.472D0
+    s(34)%cost = s(34)%cost_factor * s(34)%cref * (s(34)%k / s(34)%kref)**costexp
 
-    !  ITER vacuum vessel width midplane radius (m)
-    ITER_max_midplane_radius = 6.472D0
-
-    !  Power plant vacuum vessel width
-    vacuum_vessel_width = (rad build up to vv outer) - (rad build up to vv inner)
 
     !  Nitrogen plant
+    s(35)%label = "Nitrogen plant"
+    s(35)%cost = 0.0D0
+
+    ! TODO
+
+    s(36)%label = "Total N plant and VV costs"
+    s(36)%cost = 0.0D0
+    do j=34,35
+       s(36)%cost = s(36)%cost + s(j)%cost
+    end do
   
   end subroutine calc_n_plant_and_vv_costs
+
+  subroutine calc_energy_conversion_system
+    
+    !+ad_name  calc_energy_conversion_system
+    !+ad_summ  Function to calculate the cost of the energy conversion system
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine calculates the cost of the energy conversion system
+    !+ad_desc  for a fusion power plant based on the costings in the PROCESS costs paper.
+    !+ad_prob  None
+    !+ad_call  some function? (OUTPUT functions)
+    !+ad_hist  15/01/15 JM  Initial Version
+    !+ad_stat  Okay
+    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris, P. Knight)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Local Variables
+    integer :: i, j
+    
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    s(37)%label = "Energy conversion system cost"
+
+    !  Set cost factor for energy conversion system
+    s(37)%cost_factor = cost_factor_bop
+    
+    !  Cost of reference energy conversion system (Rolls Royce)
+    s(37)%cref = 511000000.0D0
+
+    !  Scale with gross electric power (MWe)
+    s(37)%k = pgrossmw
+    s(37)%kref = 692.0D0
+    s(37)%cost = s(37)%cost_factor * s(37)%cref * (s(37)%k / s(37)%kref)**costexp
+
+  end subroutine calc_energy_conversion_system
+
+  subroutine calc_remaining_subsystems
+    
+    !+ad_name  calc_remaining_subsystems
+    !+ad_summ  Function to calculate the cost of the remaining subsystems
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  None
+    !+ad_desc  This routine calculates the cost of the remaining subsystems
+    !+ad_desc  for a fusion power plant based on the costings in the PROCESS costs paper.
+    !+ad_prob  None
+    !+ad_call  some function? (OUTPUT functions)
+    !+ad_hist  15/01/15 JM  Initial Version
+    !+ad_stat  Okay
+    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris, P. Knight)
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Local Variables
+    integer :: i, j, k
+    
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    !  Set cost factor for remaining subsystems
+    do i=38, 61
+       s(i)%cost_factor = cost_factor_misc
+    end do
+
+    s(38)%label = "CS and PF magnets"
+
+    ! !  Cost of ITER CS and PF magnets
+    s(38)%cref = 1538000000.0D0
+    
+    !  Scale with sum of (kA x turns x radius) of CS and all PF coils
+    s(38)%k = itr_sum/1.0D3
+    s(38)%kref = 7.4D5
+    s(38)%cost = s(38)%cost_factor * s(38)%cref * (s(38)%k / s(38)%kref)**costexp
+
+    
+    s(39)%label = "VV in-wall shielding, ports and in-vessel coils"
+
+    !  Cost of ITER VV in-wall shielding, ports and in-vessel coils
+    s(39)%cref = 211000000.0D0
+    
+    !  Scale with vacuum vessel mass (t)
+    s(39)%k = dewmkg/1.0D3
+    s(39)%kref = 5236.0D0
+    s(39)%cost = s(39)%cost_factor * s(39)%cref * (s(39)%k / s(39)%kref)**costexp
+
+
+    s(40)%label = "Divertor"
+
+    !  Cost of ITER divertor
+    s(40)%cref = 381000000.0D0
+    
+    !  Scale with max power to SOL (MW)
+    s(40)%k = pdivt
+    s(40)%kref = 140.0D0
+    s(40)%cost = s(40)%cost_factor * s(40)%cref * (s(40)%k / s(40)%kref)**costexp
+    
+    
+    s(41)%label = "In-vessel blanket RH system"
+    
+    !  Cost of ITER In-vessel blanket RH system
+    s(41)%cref = 187000000.0D0
+
+    !  Scale with mass of blanket module (kg)
+    s(41)%k = whtblkt / (tfno * 5.0D0)
+    s(41)%kref = 3500.0
+    s(41)%cost = s(41)%cost_factor * s(41)%cref * (s(41)%k / s(41)%kref)**costexp
+
+
+    s(42)%label = "Viewing and metrology for RH system"
+    
+    !  Cost of ITER Viewing and metrology for RH system
+    s(42)%cref = 31000000.0D0
+    s(42)%cost = s(42)%cost_factor * s(42)%cref
+
+
+    s(43)%label = "Ex-vessel NBI RH equipment"
+
+    !  Cost of ITER Ex-vessel NBI RH equipment
+    s(43)%cref = 27000000.0D0
+    
+    !  Scale with total aux injected power (MW)
+    s(43)%k = pinjmw
+    s(43)%kref = 50.0D0
+    s(43)%cost = s(43)%cost_factor * s(43)%cref *(s(43)%k / s(43)%kref)**costexp
+
+
+    s(44)%label = "Hot Cell Maintenance equipment"
+    
+    !  Cost of Hot Cell Maintenance equipment
+    s(44)%cref = 62000000.0D0
+    
+    !  Scale with Blanket mass (tonne) x no. of parallel RH systems
+    s(44)%k = (whtblkt / (tfno * 5.0D0))*num_rh_systems
+    s(44)%kref = 1530.0D0
+    s(44)%cost = s(44)%cost_factor * s(44)%cref * (s(44)%k / s(44)%kref)**costexp
+    
+
+    s(45)%label = "Vacuum vessel pressure suppression system"
+    
+    !  Cost of ITER Vacuum vessel pressure suppression system
+    s(45)%cref = 40000000.0D0
+    
+    !  Scale with total thermal power removed from fusion core (MW)
+    s(45)%k = priheat
+    s(45)%kref = 550.0D0
+    s(45)%cost = s(45)%cost_factor * s(45)%cref * (s(45)%k / s(45)%kref)**costexp
+    
+
+    s(46)%label = "Cyrostat"
+    
+    !  Cost of ITER cryostat
+    s(46)%cref = 351000000.0D0
+    
+    !  Scale with (cryostat shell radius)^2 x height (external dims) (m3)
+    s(46)%k = (pi*rdewex**2.0D0) * 2.0D0 * zdewex
+    s(46)%kref = 18700.0D0
+    s(46)%cost = s(46)%cost_factor * s(46)%cref * (s(46)%k / s(46)%kref)**costexp    
+
+    s(47)%label = "Cooling water"
+    
+    !  Cost of ITER cooling water 
+    s(47)%cref = 724000000.0D0
+    
+    !  Scale with total thermal power removed from fusion core (MW)
+    s(47)%k = priheat
+    s(47)%kref = 550.0D0
+    s(47)%cost = s(47)%cost_factor * s(47)%cref * (s(47)%k / s(47)%kref)**costexp
+
+    
+    s(48)%label = "Thermal shield"
+
+    !  Cost of ITER thermal shield
+    s(48)%cref = 126000000.0D0
+    
+    !  Scale with (cryostat shell radius) x height (external dims) (m2)
+    s(48)%k = rdewex
+    s(48)%kref = 400.0D0
+    s(48)%cost = s(48)%cost_factor * s(47)%cref * (s(47)%k / s(47)%kref)**costexp
+
+
+    s(49)%label = "Pellet injector and pellet injection system"
+    
+    !  Cost of ITER pellet injector and pellet injection system
+    s(49)%cref = 25000000.0D0
+    
+    !  Scale with core fuelling rate (atoms/s)
+    s(49)%k = qfuel
+    s(49)%kref = 9.7D22
+    s(49)%cost = s(49)%cost_factor * s(49)%cref * (s(49)%k / s(49)%kref)**costexp
+
+
+    s(50)%label = "Gas injection system, GDC, Gi valve boxes"
+
+    ! !  Cost of ITER gas injection system, GDC, Gi valve boxes
+    s(50)%cref = 32000000.0D0
+
+    !  Scale with core fuelling rate (atoms/s)
+    s(50)%k = qfuel
+    s(50)%kref = 9.7D22
+    s(50)%cost = s(50)%cost_factor * s(50)%cref * (s(50)%k / s(50)%kref)**costexp
+    
+
+    s(51)%label = "Vacuum pumping"
+    
+    !  Cost of ITER vacuum pumping
+    s(51)%cref = 201000000.0D0
+    
+    !  Scale with fusion power (MW)
+    s(51)%k = powfmw
+    s(51)%kref = 500.0D0
+    s(51)%cost = s(51)%cost_factor * s(51)%cref * (s(51)%k / s(51)%kref)**costexp
+
+
+    s(52)%label = "Tritium plant"
+    
+    !  Cost of ITER tritium plant
+    s(52)%cref = 226000000.0D0
+
+    !  Scale with fusion power (MW)
+    s(52)%k = powfmw
+    s(52)%kref = 500.0D0
+    s(52)%cost = s(52)%cost_factor * s(52)%cref * (s(52)%k / s(52)%kref)**costexp
+
+
+    s(53)%label = "Cryoplant and distribution"
+
+    !  Cost of ITER Cryoplant and distribution
+    s(53)%cref = 397000000.0D0
+    
+    !  Scale with heat removal at 4.5 K approx (W)
+    s(53)%k = helpow
+    s(53)%kref = 50000.0D0
+    s(53)%cost = s(53)%cost_factor * s(53)%cref * (s(53)%k / s(53)%kref)**costexp
+
+
+    s(54)%label = "Electrical power supply and distribution"
+    
+    !  Cost of ITER electrical power supply and distribution
+    s(54)%cref = 1188000000.0D0
+    
+    !  Scale with total magnetic energy stored by CS and PF coils (GJ)
+    s(54)%k = ensxpfm/1.0D3
+    s(54)%kref = 15.56
+    s(54)%cost = s(54)%cost_factor * s(54)%cref * (s(54)%k / s(54)%kref)**costexp
+
+
+    s(55)%label = "NB H & CD"
+    
+    !  Cost of ITER NB H & CD
+    s(55)%cref = 814000000.0D0
+    
+    !  Scale with Total auxiliary injected power (MW)
+    s(55)%k = pinjmw
+    s(55)%kref = 50.0D0
+    s(55)%cost = s(55)%cost_factor * s(55)%cref * (s(55)%k / s(55)%kref)**costexp
+    
+
+    s(56)%label = "Diagnostics systems"
+    
+    !  Cost of ITER diagnostic systems
+    s(56)%cref = 640000000.0D0
+    s(56)%cost = s(56)%cost_factor * s(56)%cref
+    
+
+    s(57)%label = "Radiological protection"
+    
+    !  Cost of ITER radiological protection
+    s(57)%cref = 19000000.0D0
+
+    !  Scale with fusion power (MW)
+    s(57)%k = powfmw
+    s(57)%kref = 500.0D0
+    s(57)%cost = s(57)%cost_factor * s(57)%cref * (s(57)%k / s(57)%kref)**costexp
+
+
+    s(58)%label = "Access control and security systems"
+    
+    !  Cost of ITER access control and security systems
+    s(58)%cref = 42000000.0D0
+
+    !  Scale with inner area (equivalent to ITER platform) (hectare)
+    s(58)%k = efloor/1.0D4
+    s(58)%kref = 42.0
+    s(58)%cost = s(58)%cost_factor * s(58)%cref * (s(58)%k / s(58)%kref)**costexp
+    
+
+    s(59)%label = "Assembly"
+    
+    !  Cost of ITER assembly
+    s(59)%cref = 732000000.0D0
+    
+    !  Scale with total cost of reactor items (cryostat and everything inside it)
+    s(59)%k = s(22)%cost + s(28)%cost + s(34)%cost + s(38)%cost + s(39)%cost + &
+         s(40)%cost + s(46)%cost + s(48)%cost + s(49)%cost + s(50)%cost + &
+         s(51)%cost + s(55)%cost + s(56)%cost
+    s(59)%kref = 2996
+    s(59)%cost = s(59)%cost_factor * s(59)%cref * (s(59)%k / s(59)%kref)**costexp
+
+    
+    s(60)%label = "Control and data access and communication"
+
+    !  Cost of ITER control and data access and communication
+    s(60)%cref = 219000000.0D0
+    
+    !  Scale with total cost of reactor items (cryostat and everythign inside it)
+    s(60)%k = s(22)%cost + s(28)%cost + s(34)%cost + s(38)%cost + s(39)%cost + &
+         s(40)%cost + s(46)%cost + s(48)%cost + s(49)%cost + s(50)%cost + &
+         s(51)%cost + s(55)%cost + s(56)%cost 
+    s(60)%kref = 2996
+    s(60)%cost = s(60)%cost_factor * s(60)%cref * (s(60)%k / s(60)%kref)**costexp
+
+    
+    s(61)%label = "Additional ITER IO expenditure"
+    
+    !  Cost of ITER additional ITER IO expenditure
+    s(61)%cref = 1624000000.0D0
+    s(61)%cost = s(61)%cost_factor * s(61)%cref
+
+
+    s(62)%label = "Total remaining subsystem costs"
+    s(62)%cost = 0.0D0
+    do j=38, 61
+       s(62)%cost = s(62)%cost + s(j)%cost
+    end do
+
+  end subroutine calc_remaining_subsystems
 
   subroutine value_function(x, v)
 
@@ -1009,8 +1203,8 @@ contains
     implicit none
 
     !  Arguments
-    real(kind(1.0D0)) intent(in) :: x
-    real(kind(1.0D0)) intent(out) :: v
+    real(kind(1.0D0)), intent(in) :: x
+    real(kind(1.0D0)), intent(out) :: v
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     

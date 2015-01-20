@@ -1445,6 +1445,7 @@ subroutine output(outfile)
   use build_module
   use buildings_module
   use costs_module
+  use costs_2015_module
   use cost_variables
   use current_drive_module
   use divertor_module
@@ -1498,6 +1499,7 @@ subroutine output(outfile)
   end if
 
   call costs(outfile,1)
+  call costs_2015(outfile,1)
   if (iavail > 1) then
      call avail_new(outfile, 1)
   else 

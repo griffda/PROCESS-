@@ -1146,6 +1146,8 @@ module fwbs_variables
   real(kind(1.0D0)) :: wtshldi = 0.0D0
   !+ad_vars  wtshldo : mass of outboard shield (kg)
   real(kind(1.0D0)) :: wtshldo = 0.0D0
+  !+ad_vars  zdewex : external cryostat half-height (m)
+  real(kind(1.0D0)) :: zdewex = 0.0D0
 
   !+ad_vars  <P><B>The following are used only in the KIT HCPB blanket model
   !+ad_varc  (blktmodel=1):</B><P>
@@ -1376,13 +1378,15 @@ module pfcoil_variables
   !+ad_varc          <LI> = 0 superconducting PF coils;
   !+ad_varc          <LI> = 1 resistive PF coils</UL>
   integer :: ipfres = 0
+  !+ad_vars  itr_sum : total sum of I x rad x turns for all PF coils and CS (Am)
+  real(kind(1.0D0)) :: itr_sum = 0.0D0
   !+ad_vars  isumatoh /1/ : switch for superconductor material in central solenoid:<UL>
   !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
   !+ad_varc                     ITER parameters;
   !+ad_varc            <LI> = 2 Bi-2212 high temperature superconductor (range of
   !+ad_varc                     validity T < 20K, adjusted field b < 104 T, B > 6 T);
   !+ad_varc            <LI> = 3 NbTi;
-  !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters</UL>
+  !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters</UL>  
   integer :: isumatoh = 1
   !+ad_vars  isumatpf /1/ : switch for superconductor material in PF coils:<UL>
   !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
@@ -2737,6 +2741,12 @@ module cost_variables
   real(kind(1.0D0)) :: cost_factor_fwbs = 1.0D0
   !+ad_vars  cost_factor_rh /1.0/ : cost scaling factor for remote handling
   real(kind(1.0D0)) :: cost_factor_rh = 1.0D0
+  !+ad_vars  cost_factor_vv /1.0/ : cost scaling factor for vacuum vessel
+  real(kind(1.0D0)) :: cost_factor_vv = 1.0D0
+  !+ad_vars  cost_factor_bop /1.0/ : cost scaling factor for energy conversion system
+  real(kind(1.0D0)) :: cost_factor_bop = 1.0D0
+  !+ad_vars  cost_factor_misc /1.0/ : cost scaling factor for remaining subsystems
+  real(kind(1.0D0)) :: cost_factor_misc = 1.0D0
   !+ad_vars  cowner /0.15/ : owner cost factor
   real(kind(1.0D0)) :: cowner = 0.15D0
   !+ad_vars  cplife : lifetime of centrepost (y)
