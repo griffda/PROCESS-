@@ -229,8 +229,13 @@ def no_unfeasible_mfile(wdir='.'):
     else:
 
         ifail = m_file.data['ifail'].get_scans()
-
-        return len(ifail) - ifail.count(IFAIL_SUCCESS)
+        try :
+            return len(ifail) - ifail.count(IFAIL_SUCCESS)
+        except TypeError as err:
+            # This seems to occur, if ifail is not in MFILE!
+            # This probably means in the mfile library a KeyError 
+            # should be raised not only a message to stdout!
+            return 100000 
 
 ############################################
 
