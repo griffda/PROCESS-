@@ -161,10 +161,11 @@ class MFile(object):
         self.filename = filename
         self.data = MFileDataDictionary()
         self.mfile_lines = list()
-        LOG.info("Opening file '{}'".format(self.filename))
-        self.open_mfile()
-        LOG.info("Parsing file '{}'".format(self.filename))
-        self.parse_mfile()
+        if filename is not None:
+            LOG.info("Opening file '{}'".format(self.filename))
+            self.open_mfile()
+            LOG.info("Parsing file '{}'".format(self.filename))
+            self.parse_mfile()
 
     def open_mfile(self):
         """Function to open MFILE.DAT"""
@@ -187,7 +188,7 @@ class MFile(object):
         var_unit = get_unit(var_des)
         self.add_to_mfile_variable(var_des, var_name, var_value, var_unit)
 
-    def add_to_mfile_variable(self, des, name, value, unit):
+    def add_to_mfile_variable(self, des, name, value, unit, scan=None):
         """Function to add value to MFile class for that name/description
         """
         if name == "":
@@ -196,8 +197,8 @@ class MFile(object):
             var_key = name.lower().replace("_", " ")
 
         if var_key in self.data.keys():
-            scan_num = self.data[var_key].get_number_of_scans()
-            self.data[var_key].set_scan(scan_num+1, value)
+            scan_num = scan if scan else (self.data[var_key].get_number_of_scans()+1)
+            self.data[var_key].set_scan(scan_num, value)
         else:
             var = MFileVariable(name, des, unit)
             self.data[var_key] = var
@@ -205,7 +206,7 @@ class MFile(object):
 
 
 def sort_value(val):
-    """Function to sort out value line in MFILE"""
+    """Function to sort out value line in MFILE."""
     if '"' in val:
         return str(val.strip('"'))
     else:
@@ -213,8 +214,7 @@ def sort_value(val):
 
 
 def sort_brackets(var):
-    """Function to sort bracket madness on variable name
-    """
+    """Function to sort bracket madness on variable name."""
     if var != "":
         tmp_name = var.lstrip("(").split(")")
         if len(tmp_name) > 2:

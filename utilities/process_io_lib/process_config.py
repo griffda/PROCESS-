@@ -10,15 +10,13 @@ Compatible with PROCESS version 368
 
 """
 
-import os, shutil, glob
-from os.path import abspath, join as pjoin
-import json
+import os
 from time import sleep
 from numpy.random import seed, uniform, normal
 from numpy import argsort
 from process_io_lib.in_dat import InDat
-from process_io_lib.process_funcs import mfile_exists,\
-    get_from_indat_or_default, set_variable_in_indat
+from process_io_lib.process_funcs import get_from_indat_or_default,\
+    set_variable_in_indat
 
 from process_io_lib.mfile import MFile
 from process_io_lib.configuration import Config
@@ -30,168 +28,6 @@ def print_config(config_instance):
     print(config_instance.get_current_state())
 
 
-
-class RunProcessConfigNew(Config):
-    
-    """Configuration for the execution of PROCESS."""
-    
-    def __init__(self, config_file="run_process.json"):
-        super().__init__(config_file)
-        self.working_directory = abspath(self.get("output_directory"))
-        
-    def setup_directory(self):
-        input_file_path = abspath(self.get("input_file"))
-        try:
-            os.makedirs(self.working_directory)
-        except OSError as e:
-            print("Cannot create {}".format(self.working_directory))
-            return
-        try:
-            working_dir_input = pjoin(working_directory, "IN.DAT")
-            shutil.copy2(input_file_path, working_dir_input)
-        except OSError as e:
-            print("Cannot copy {} to {}: {}".format(input_file_path,
-                                                    working_dir_input, e))
-            # TODO: probably want to cleanup just-created files/dirs before ret
-            return
-                                                    
-    def run(self):
-        pass
-    
-
-#class RunProcessConfig(Config):
-#    
-#    """The run_process tool configuration."""
-#    
-#    def __init__(self, config_file):
-#        """Setup PROCESS configuration before execution."""
-#        super().__init__(self, config_file)
-#        self.filename = None
-#        self.working_directory = abspath(".")
-##        self.setup_working_directory()
-##        self.create_readme()
-##        self.modify_in_dat()
-#        seed(self.get("pseudorandom_seed"))
-#    
-#    def setup_working_directory(self):
-#        """Prepare working directory with required input & output files."""
-#        config = self._config["config"]
-#        self.working_directory = abspath(config["working_directory"])
-#        try:
-#            os.mkdir(self.working_directory)
-#        except IOError:
-#            raise
-#        
-#        # Get the original IN.DAT for this run
-#        original_in_dat = config["IN.DAT_path"]
-#        try:
-#            shutil.copy2(abspath(original_in_dat),
-#                         os.path.join(self.working_directory, "IN.DAT"))
-#        except IOError:
-#            raise
-#        # Store a copy of this configuration for this run
-#        try:
-#            shutil.copy2(abspath(self.config_file_path),
-#                         self.working_directory)
-#        except IOError:
-#            raise
-#        
-#        # TODO: Why are all of these being removed?
-#        os.chdir(self.working_directory)
-#        for file_ in ["OUT.DAT", "MFILE.DAT", "PLOT.DAT", "*.txt", "*.out",
-#                      "*.log", "*.pdf", "*.eps"]:
-#            for f in glob(file_):
-#                os.remove(f)
-#
-#class ProcessConfig(object):
-#    
-#    """PROCESS runtime configuration."""
-#    
-#    def __init__(self, config_file_path):
-#        """Setup PROCESS configuration before execution."""
-#        self.filename = None
-#        self.working_directory = abspath(".")
-#        try:
-#            with open(config_file_path) as fh:
-#                self._config = json.load(fh)
-#        except IOError:
-#            raise
-#        self.config_file_path = config_file_path
-#        self.setup_working_directory()
-#        self.create_readme()
-#        self.modify_in_dat()
-#        seed(self._config["config"]["pseudorandom_seed"])
-#        
-#    def setup_working_directory(self):
-#        """Prepare working directory with required input & output files."""
-#        config = self._config["config"]
-#        self.working_directory = abspath(config["working_directory"])
-#        try:
-#            os.mkdir(self.working_directory)
-#        except IOError:
-#            raise
-#        
-#        # Get the original IN.DAT for this run
-#        original_in_dat = config["IN.DAT_path"]
-#        try:
-#            shutil.copy2(abspath(original_in_dat),
-#                         os.path.join(self.working_directory, "IN.DAT"))
-#        except IOError:
-#            raise
-#        # Store a copy of this configuration for this run
-#        try:
-#            shutil.copy2(abspath(self.config_file_path),
-#                         self.working_directory)
-#        except IOError:
-#            raise
-#        
-#        # TODO: Why are all of these being removed?
-#        os.chdir(self.working_directory)
-#        for file_ in ["OUT.DAT", "MFILE.DAT", "PLOT.DAT", "*.txt", "*.out",
-#                      "*.log", "*.pdf", "*.eps"]:
-#            for f in glob(file_):
-#                os.remove(f)
-#        
-#    def get_current_state(self):
-#        """Return the current state of this configuration"""
-#        return self._config["config"]
-#        
-#    def create_readme(self):
-#        """Generate a README file from the configuration comment."""
-#        readme_comment = self._config["config"]["readme"]
-#        if readme_comment is None or readme_comment == "":
-#            pass
-#        else:
-#            with open(os.path.join(self.working_directory, "README"), "w") as fh:
-#                fh.write(readme_comment)
-#                
-#    def append_errors_to_readme(self, directory=os.getcwd()):
-#        """Appends PROCESS outcome to README.txt"""
-#        if os.path.isfile("MFILE.DAT"):
-#            with open(os.path.join(directory, "README.txt"),
-#                      "w" if self.comment == "" else "a") as readme_fh:
-#                m_file = MFile(filename=os.path.join)
-#                readme_fh.write("Error status: {}  Error ID: {}\n".format(
-#                    m_file.data["error status"].get_scan(-1),
-#                    m_file.data["error id"].get_scan(-1)))
-#                
-#                
-#    def modify_in_dat(self):
-#        """TODO: Modify original IN.DAT."""
-#        pass
-#    
-#    def run_process(self):
-#        """Run PROCESS binary."""
-#
-#        print("PROCESS run started...", end='')
-#        # return_code = subprocess.call([self.process_binary], stdout=TODO: process.log file)
-#        returncode = os.system(self.process+' >& process.log')
-#        if returncode != 0:
-#            print('\n Error: There was a problem with the PROCESS \
-#                   execution! %i' % returncode)
-#            print('       Refer to the logfile for more information!')
-#            exit()
-#        print("Finished.")
 
 class ProcessConfig(object):
 
@@ -264,7 +100,7 @@ class ProcessConfig(object):
         os.system('cp ' + self.filename + ' ' + self.wdir)
         os.chdir(self.wdir)
         os.system('rm -f OUT.DAT MFILE.DAT PLOT.DAT \
-                   *.txt *.out *.log *.pdf *.eps')
+                   *.txt *.out *.log *.pdf *.eps *.nc')
 
     def create_readme(self, directory='.'):
 
@@ -288,7 +124,10 @@ class ProcessConfig(object):
                 readme = open(directory+'/README.txt', 'w')
 
             m_file = MFile(filename=directory+"/MFILE.DAT")
-            error_status = "Error status: {}  Error ID: {}\n".format(m_file.data['error status'].get_scan(-1), m_file.data['error id'].get_scan(-1))
+            error_status =\
+                "Error status: {}  Error ID: {}\n".format(
+                m_file.data['error status'].get_scan(-1),
+                m_file.data['error id'].get_scan(-1))
             readme.write(error_status)
             readme.close()
 
@@ -772,7 +611,7 @@ class RunProcessConfig(ProcessConfig):
 #class UncertaintiesConfig(RunProcessConfig)
 ################################################################################
 
-NETCDF_SWITCH = False
+NETCDF_SWITCH = True
 
 class UncertaintiesConfig(ProcessConfig, Config):
 
@@ -786,7 +625,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
     uncertainties = []
     output_vars = []
     dict_results = {}
-    if NETCDF_SWITCH :
+    if NETCDF_SWITCH:
         ncdf_writer = None
 
 
@@ -822,10 +661,6 @@ class UncertaintiesConfig(ProcessConfig, Config):
         for varname in self.output_vars:
             self.dict_results[varname] = []
 
-        #set up NetCDF ouput instance
-        if NETCDF_SWITCH:
-            self.ncdf_writer = NetCDFWriter(self.wdir+"/uncertainties.nc", append=False,
-                                            overwrite=True)
 
     def echo(self):
 
@@ -906,7 +741,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
         #set epsvmc to appropriate value!
         # recommendation from solver work!
-        set_variable_in_indat(in_dat, 'epsvmc', 1e-8)    
+        set_variable_in_indat(in_dat, 'epsvmc', 1e-8)
 
         in_dat.write_in_dat(output_filename='IN.DAT')
 
@@ -917,7 +752,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
         if self.uncertainties == {}:
             print('Error: No uncertain parameter specified in config file!')
             exit()
-            
+
 
         if self.output_vars == []:
             print('Error: No output variables specified in config file!')
@@ -960,7 +795,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
             u_dict['samples'] = values
 
         #order by one parameter
-        #TODO: Find a more cunning way to determine which is a good 
+        #TODO: Find a more cunning way to determine which is a good
         #variable to sort by! e.g. largest range?
         # always try to choose a uniform case?
         arr = self.uncertainties[0]['samples']
@@ -993,16 +828,28 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
         if NETCDF_SWITCH:
             m_file = MFile(filename="MFILE.DAT")
-            self.ncdf_writer.write_mfile_data(m_file, run_id)
-            #TODO: only write last scan point
-            #TODO: only write selected data
+
+            with NetCDFWriter(self.wdir+"/uncertainties.nc", append=True,
+                              overwrite=False) as ncdf_writer:
+                try :
+                    ncdf_writer.write_mfile_data(m_file, run_id,
+                                                 save_vars=self.output_vars,
+                                                 latest_scan_only=True,
+                                                 ignore_unknowns=False)
+                except KeyError as Err:
+                    print('Error: You have specified an output variable that\
+ does not exist in MFILE. If this is a valid PROCESS variable, request it being\
+ added to the MFILE output, else check your spelling!')
+                    print(Err)
+                    exit()
+                    
         else:
             m_file = MFile(filename="MFILE.DAT")
 
             if m_file.data['ifail'].get_scan(-1) == 1:
                 for varname in self.output_vars:
                     value = m_file.data[varname].get_scan(-1) #get last scan
-                    self.dict_results[varname]+=[value]
+                    self.dict_results[varname] += [value]
             else:
                 self.write_results()
                 print('WARNING to developer: scan has unfeasible point at the\
@@ -1013,19 +860,16 @@ class UncertaintiesConfig(ProcessConfig, Config):
     def write_results(self):
         """ writes data into file. Uncessary, if netcdf library works?"""
 
-        if NETCDF_SWITCH:    
-            self.ncdf_writer.close()
-
-        else:
+        if not NETCDF_SWITCH:
             results = open('uncertainties.nc', 'w')
             for varname in self.output_vars:
                 results.write(varname + '\t')
             results.write('\n')
 
-            for i in range(len(self.dict_results[varname])):
+            for i in range(len(self.dict_results[self.output_vars[0]])):
                 for varname in self.output_vars:
                     results.write(str(self.dict_results[varname][i]) + '\t')
-                results.write('\n')  
+                results.write('\n')
 
             results.close()
 
