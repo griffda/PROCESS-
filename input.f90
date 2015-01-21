@@ -1204,10 +1204,10 @@ contains
                'Martensitic frac of steel in TF coil')
        case ('FWITH')
           call parse_real_variable('FWITH', fwith, 0.0D0, 10.0D0, &
-               'Inboard first wall thickness (m)')
+               'Inboard first wall thickness, initial estimate (m)')
        case ('FWOTH')
           call parse_real_variable('FWOTH', fwoth, 0.0D0, 10.0D0, &
-               'Outboard first wall thickness (m)')
+               'Outboard first wall thickness, initial estimate (m)')
        case ('GAPOH')
           call parse_real_variable('GAPOH', gapoh, 0.0D0, 10.0D0, &
                'Gap between OHC and TF coil (m)')
