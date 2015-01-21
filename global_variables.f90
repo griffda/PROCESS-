@@ -2748,6 +2748,10 @@ module cost_variables
   real(kind(1.0D0)) :: cost_factor_bop = 1.0D0
   !+ad_vars  cost_factor_misc /1.0/ : cost scaling factor for remaining subsystems
   real(kind(1.0D0)) :: cost_factor_misc = 1.0D0
+  !+ad_vars  cost_model /1/ : switch for cost model:<UL>
+  !+ad_varc          <LI> = 0 use $ 1990 PROCESS model
+  !+ad_varc          <LI> = 1 use $ 2014 Costs paper model
+  integer :: cost_model = 1
   !+ad_vars  cowner /0.15/ : owner cost factor
   real(kind(1.0D0)) :: cowner = 0.15D0
   !+ad_vars  cplife : lifetime of centrepost (y)

@@ -238,8 +238,12 @@ subroutine caller(xc,nvars)
      call avail(nout,0)
   end if
 
-  call costs(nout,0)
-  call costs_2015(0,0)
+  if (cost_model == 1) then
+     call costs_2015(0,0)
+  else
+     call costs(nout,0)
+  end if
+
 
   !+**PJK  if (ifispact.eq.1) then
   !+**PJK     call fispac(0)

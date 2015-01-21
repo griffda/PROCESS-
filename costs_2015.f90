@@ -14,7 +14,7 @@ module costs_2015_module
   !+ad_call  some function
   !+ad_hist  05/01/15 JM  Initial version of module
   !+ad_stat  Okay
-  !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris, P. Knight)
+  !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -27,6 +27,7 @@ module costs_2015_module
   use physics_variables
   use divertor_variables
   use pfcoil_variables
+  use process_output
   use structure_variables
   use vacuum_variables
   use pf_power_variables
@@ -76,7 +77,7 @@ contains
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_desc  This routine performs the cost accounting for a fusion power plant.
-    !+ad_desc  Costs are based on PROCESS costs paper (M. Kovari, J. Morris, P.knight)
+    !+ad_desc  Costs are based on PROCESS costs paper (M. Kovari, J. Morris)
     !+ad_desc  The direct costs are calculated based on parameters input
     !+ad_desc  from other sections of the code.
     !+ad_desc  <P>Costs are in 2014 $, and assume first-of-a-kind components
@@ -85,7 +86,7 @@ contains
     !+ad_call  calc_building_costs
     !+ad_hist  05/01/15 JM Initial version
     !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris, P Knight)
+    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -125,8 +126,10 @@ contains
     !  Calculate remaining subsystems costs
     call calc_remaining_subsystems
 
+    if ((ip == 0).or.(output_costs == 0)) return    
+
     !  Output costs
-    !call write_costs_to_output
+    call write_costs_to_output
 
   end subroutine costs_2015
   
@@ -143,7 +146,7 @@ contains
     !+ad_call  some function? (OUTPUT functions)
     !+ad_hist  05/01/15 JM  Initial Version
     !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris, P. Knight)
+    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -159,14 +162,14 @@ contains
        s(i)%cost_factor = cost_factor_buildings
     end do
 
-    s(1)%label = "Admin Buildings"
+    s(1)%label = "Admin Buildings cost (M$)"
 
     !  ITER volume of admin buildings (m^3)
     s(1)%cref = 129000.0D0 * ITER_build_cost_per_vol
     s(1)%cost = s(1)%cost_factor * s(1)%cref
     
 
-    s(2)%label = "Tokamak Complex (excluding hot cell)"
+    s(2)%label = "Tokamak Complex (excluding hot cell) cost (M$)"
     
     !  Cost of ITER of tokamak complex (volume * cost per vol)
     s(2)%cref = 1100000.0D0 * ITER_build_cost_per_vol
@@ -177,7 +180,7 @@ contains
     s(2)%cost = s(2)%cost_factor * s(2)%cref * (s(2)%k / s(2)%kref)**costexp
     
     
-    s(3)%label="Neutral beam buildings"
+    s(3)%label="Neutral beam buildings cost (M$)"
 
     !  Cost of ITER neutral beam buildings (volume * cost per vol)
     s(3)%cref = 28000.0D0 * ITER_build_cost_per_vol
@@ -188,7 +191,7 @@ contains
     s(3)%cost = s(3)%cost_factor * s(3)%cref * (s(3)%k / s(3)%kref)**costexp
     
     
-    s(4)%label = "Cryoplant buildings"
+    s(4)%label = "Cryoplant buildings cost (M$)"
     
     !  Cost of ITER cryoplant buildings (volume * cost per vol)
     s(4)%cref = 130000.0D0 * ITER_build_cost_per_vol
@@ -199,7 +202,7 @@ contains
     s(4)%cost = s(4)%cost_factor * s(4)%cref * (s(4)%k / s(4)%kref)**costexp
 
     
-    s(5)%label = "PF Coil winding building"
+    s(5)%label = "PF Coil winding building cost (M$)"
     
     !  Cost of ITER PF winding buildings (volume * cost per vol)
     s(5)%cref = 190000.0D0 * ITER_build_cost_per_vol
@@ -210,7 +213,7 @@ contains
     s(5)%cost = s(5)%cost_factor * s(5)%cref * (s(5)%k / s(5)%kref)**costexp
 
     
-    s(6)%label = "Magnet power supplies and related buildings"
+    s(6)%label = "Magnet power supplies and related buildings cost (M$)"
 
     !  Cost of ITER magnet power supplies and related buildings (volume * cost per vol)
     s(6)%cref = 110000.0D0 * ITER_build_cost_per_vol
@@ -221,7 +224,7 @@ contains
     s(6)%cost = s(6)%cost_factor * s(6)%cref * (s(6)%k / s(6)%kref)**costexp
 
      
-    s(7)%label = "Magnet discharge buildings"
+    s(7)%label = "Magnet discharge buildings cost (M$)"
     
     !  Cost of ITER magnet discharge buildings (volume * cost per vol)
     s(7)%cref = 35000.0D0 * ITER_build_cost_per_vol
@@ -232,7 +235,7 @@ contains
     s(7)%cost  = s(7)%cost_factor * s(7)%cref * (s(7)%k / s(7)%kref)**costexp
 
     
-    s(8)%label = "Cooling water buildings"
+    s(8)%label = "Cooling water buildings cost (M$)"
 
     !  ITER volume of cooling water buildings (m^3)
     s(8)%cref = 51000.0D0 * ITER_build_cost_per_vol
@@ -243,18 +246,11 @@ contains
     s(8)%cost = s(8)%cost_factor * s(8)%cref * (s(8)%k / s(8)%kref)**costexp
 
 
-    s(9)%label = "Total cost of buildings"
+    s(9)%label = "Total cost of buildings (M$)"
     s(9)%cost = 0.0D0
     do j=1, 8
        s(9)%cost = s(9)%cost + s(j)%cost
     end do
-        
-    !  Output to file if option chosen
-
-    if ((ip == 0).or.(output_costs == 0)) return
-
-    !  Output section for building costs
-
 
   end subroutine calc_building_costs
 
@@ -271,7 +267,7 @@ contains
     !+ad_call  some function? (OUTPUT functions)
     !+ad_hist  05/01/15 JM  Initial Version
     !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris, P. Knight)
+    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -290,7 +286,7 @@ contains
        s(i)%cost_factor = cost_factor_land
     end do
 
-    s(10)%label = "Land purchasing costs"
+    s(10)%label = "Land purchasing costs (M$)"
 
     !  ITER Land area (hectares)
     ITER_total_land_area = 180.0D0
@@ -314,7 +310,7 @@ contains
          s(10)%cref
 
     
-    s(11)%label = "Land clearing costs"
+    s(11)%label = "Land clearing costs (M$)"
     
     !  Cost of clearing ITER land (area (ha) * cost per ha)
     s(11)%cref = 460000.0D0 * ITER_key_buildings_land_area
@@ -325,7 +321,7 @@ contains
     s(11)%cost = s(11)%cost_factor * (s(11)%k / s(11)%kref )**costexp * s(11)%cref
 
     
-    s(12)%label = "Road works"
+    s(12)%label = "Road works cost (M$)"
     
     !  Cost of ITER road works
     s(12)%cref = 150000000.0D0
@@ -336,19 +332,11 @@ contains
     s(12)%cost = s(12)%cost_factor * s(12)%cref * (s(12)%k / s(12)%kref)**costexp
 
 
-    s(13)%label = "Total land costs"
+    s(13)%label = "Total land costs (M$)"
     s(13)%cost = 0.0D0
     do j=10, 12
        s(13)%cost = s(13)%cost + s(j)%cost
     end do
-   
-    !  Output to file if option chosen
-
-    if ((ip == 0).or.(output_costs == 0)) return
-
-    !  Output section for land costs
-    
-    !  TODO
 
   end subroutine calc_land_costs
 
@@ -365,7 +353,7 @@ contains
     !+ad_call  some function? (OUTPUT functions)
     !+ad_hist  06/01/15 JM  Initial Version
     !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris, P. Knight)
+    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -382,7 +370,7 @@ contains
     end do
     
 
-    s(14)%label = "TF Coil insertion and welding"
+    s(14)%label = "TF Coil insertion and welding cost (M$)"
     
     !  ITER coil insertion and welding cost (2014 $)
     s(14)%cref = 258000000.0
@@ -393,7 +381,7 @@ contains
     s(14)%cost = s(14)%cost_factor * s(14)%cref * (s(14)%k / s(14)%kref)**costexp
     
 
-    s(15)%label = "TF coil radial plates"
+    s(15)%label = "TF coil radial plates cost (M$)"
     !  if radial plate option is turned on? TODO
     !  ITER radial plates cost (2014 $)
     s(15)%cref = 395000000.0D0
@@ -404,7 +392,7 @@ contains
     s(15)%cost = s(15)%cost_factor * s(15)%cref * (s(15)%k / s(15)%kref)**costexp
 
 
-    s(16)%label = "TF coil winding"
+    s(16)%label = "TF coil winding cost (M$)"
     
     !  ITER winding cost (2014 $)
     s(16)%cref = 414000000.0D0
@@ -415,7 +403,7 @@ contains
     s(16)%cost = s(16)%cost_factor * s(16)%cref * (s(16)%k / s(16)%kref)**costexp
 
     
-    s(17)%label = "CrCu strand for TF SC (quench protection Cu)"
+    s(17)%label = "CrCu strand for TF SC (quench protection Cu) cost (M$)"
     
     !  ITER Chromium plated Cu strand for TF SC cost (2014 $)
     s(17)%cref = 225000000.0D0
@@ -426,7 +414,7 @@ contains
     s(17)%cost = s(17)%cost_factor * s(17)%cref * (s(17)%k / s(17)%kref)**costexp
     
     
-    s(18)%label = "Radial plate prototypes"
+    s(18)%label = "Radial plate prototypes cost (M$)"
     
     !  ITER radial plate prototypes cost (2014 $)
     s(18)%cref = 15000000.0D0
@@ -437,7 +425,7 @@ contains
     s(18)%cost = s(18)%cost_factor * s(18)%cref * (s(18)%k / s(18)%kref)**costexp
 
     
-    s(19)%label = "Nb3Sn superconductor strands"
+    s(19)%label = "Nb3Sn superconductor strands cost (M$)"
     
     !  ITER Nb3Sn SC strands cost (2014 $)
     s(19)%cref = 526000000.0D0
@@ -448,14 +436,14 @@ contains
     s(19)%cost = s(19)%cost_factor * s(19)%cref * (s(19)%k / s(19)%kref)**costexp
 
     
-    s(20)%label = "Testing of nb3sn strands"
+    s(20)%label = "Testing of nb3sn strands cost (M$)"
     
     !  ITER Nb3Sn strand test costs (2014 $)
     s(20)%cref = 4200000.0D0
     s(20)%cost = s(20)%cost_factor * s(20)%cref
 
 
-    s(21)%label = "Cabling and jacketing"
+    s(21)%label = "Cabling and jacketing cost (M$)"
     
     !  ITER cabling and jacketing costs (2014 $)
     s(21)%cref = 81000000.0D0
@@ -466,19 +454,11 @@ contains
     s(21)%cost = s(21)%cost_factor * s(21)%cref * (s(21)%k / s(21)%kref)**costexp
 
     
-    s(22)%label = "Total TF coil costs"
+    s(22)%label = "Total TF coil costs (M$)"
     s(22)%cost = 0.0D0
-    do j=14, 22
+    do j=14, 21
        s(22)%cost = s(22)%cost + s(j)%cost
     end do
-
-    !  Output to file if option chosen
-
-    if ((ip == 0).or.(output_costs == 0)) return
-
-    !  Output section for TF coil costs
-    
-    !  TODO
 
   end subroutine calc_tf_coil_costs
 
@@ -495,7 +475,7 @@ contains
     !+ad_call  some function? (OUTPUT functions)
     !+ad_hist  07/01/15 JM  Initial Version
     !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris, P. Knight)
+    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -571,7 +551,7 @@ contains
     !  Total swu for lithium in blanket
     total_swu = swu * mass_li_pebbles
 
-    s(23)%label = "Lithium enrichment cost"
+    s(23)%label = "Lithium enrichment cost (M$)"
 
     !  Reference cost for Boron enrichment (2014 $)
     s(23)%cref = 23000000.0D0
@@ -582,7 +562,7 @@ contains
     s(23)%cost = s(23)%cost_factor * s(23)%cref * (s(23)%k / s(23)%kref)**costexp
     
     
-    s(24)%label = "Lithium pebble manufacture"
+    s(24)%label = "Lithium pebble manufacturing cost (M$)"
     
     !  Reference cost of lithium pebble manufacture (2014 $)
     s(24)%cref = 650000.0D0
@@ -593,7 +573,7 @@ contains
     s(24)%cost = s(24)%cost_factor * s(24)%cref * (s(24)%k / s(24)%kref)**costexp
     
     
-    s(25)%label = "Beryllium pebble manufacture"
+    s(25)%label = "Beryllium pebble manufacturing cost (M$)"
     
     !  Reference cost of beryllium pebble manufacture (2014 $)
     s(25)%cref = 450000000.0D0
@@ -604,7 +584,7 @@ contains
     s(25)%cost = s(25)%cost_factor * s(25)%cref * (s(25)%k / s(25)%kref)**costexp
 
 
-    s(26)%label = "First wall W coating manufacture"
+    s(26)%label = "First wall W coating manufacturing cost (M$)"
     
     !  Reference (PPCS A) first wall W coating cost (2014 $)
     s(26)%cref = 25000000.0D0
@@ -618,7 +598,7 @@ contains
     s(26)%cost = s(26)%cost_factor * s(26)%cref * (s(26)%k / s(26)%kref)**costexp
     
     
-    s(27)%label = "Blanket manufacture (EUROFER)"
+    s(27)%label = "Blanket manufacturing (EUROFER) cost (M$)"
 
     !  Reference case (PPCS A) blanket steel cost (2014 $)
     s(27)%cref = 317300000.0D0
@@ -629,26 +609,11 @@ contains
     s(27)%cost = s(27)%cost_factor * s(27)%cref * (s(27)%k / s(27)%kref)**costexp
 
 
-    s(28)%label = "Total fwbs cost"
+    s(28)%label = "Total fwbs cost (M$)"
     s(28)%cost = 0.0D0
     do j=23, 27
        s(28)%cost = s(28)%cost + s(j)%cost
     end do
-
-    write(*,*) s(23)%label, s(23)%cost/1.0D6
-    write(*,*) s(24)%label, s(24)%cost/1.0D6
-    write(*,*) s(25)%label, s(25)%cost/1.0D6
-    write(*,*) s(26)%label, s(26)%cost/1.0D6
-    write(*,*) s(27)%label, s(27)%cost/1.0D6
-    write(*,*) s(28)%label, s(28)%cost/1.0D6
-
-    !  Output to file if option chosen
-
-    if ((ip == 0).or.(output_costs == 0)) return
-
-    !  Output section for TF coil costs
-    
-    !  TODO    
     
   end subroutine calc_fwbs_costs
 
@@ -665,7 +630,7 @@ contains
     !+ad_call  some function? (OUTPUT functions)
     !+ad_hist  09/01/15 JM  Initial Version
     !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris, P. Knight)
+    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -685,11 +650,11 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Set cost factor for remote handling
-    do i=29, 33
+    do i=29, 32
        s(i)%cost_factor = cost_factor_rh
     end do
 
-    s(29)%label = "Divertor remote handling system"
+    s(29)%label = "Divertor remote handling system cost (M$)"
 
     !  Reference ITER costs (2014 $)
     s(29)%cref = 40000000.0D0
@@ -712,7 +677,7 @@ contains
          div_num_rh_systems_ratio**costexp * (s(29)%k / s(29)%kref)**costexp
     
     
-    s(30)%label = "First wall and blanket RH system"
+    s(30)%label = "First wall and blanket RH system cost (M$)"
     
     !  Reference ITER cost (2014 $)
     s(30)%cref = 80000000.0D0
@@ -728,7 +693,7 @@ contains
          blanket_num_rh_systems_ratio**costexp * (s(30)%k / s(30)%kref)**costexp    
 
 
-    s(31)%label = "Active maintenance facility"
+    s(31)%label = "Active maintenance facility cost (M$)"
     
     !  Cost of reference AMF (volume * cost per vol)
     s(31)%cref = 737000.0D0 * ITER_build_cost_per_vol
@@ -739,19 +704,11 @@ contains
     s(31)%cost = s(31)%cost_factor * (s(31)%k / s(31)%kref)**costexp
 
 
-    s(32)%label = "Total remote handling cost"
+    s(32)%label = "Total remote handling cost (M$)"
     s(32)%cost = 0.0D0
     do j=29, 31
        s(32)%cost = s(32)%cost + s(j)%cost
     end do    
-
-    !  Output to file if option chosen
-
-    if ((ip == 0).or.(output_costs == 0)) return
-
-    !  Output section for TF coil costs
-    
-    !  TODO        
     
   end subroutine calc_remote_handling_costs
 
@@ -768,7 +725,7 @@ contains
     !+ad_call  some function? (OUTPUT functions)
     !+ad_hist  09/01/15 JM  Initial Version
     !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris, P. Knight)
+    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -783,34 +740,40 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Set cost factor for vacuum vessel and N plant
-    do i=34, 36
+    do i=33, 35
        s(i)%cost_factor = cost_factor_vv
     end do
 
     !  Vacuum vessel
-    s(34)%label = "Vacuum vessel"
+    s(33)%label = "Vacuum vessel cost (M$)"
     
     !  ITER reference vacuum vessel cost (2014 $)
-    s(34)%cref = (323000000.0D0 / 7.0D0) * 9.0D0
+    s(33)%cref = (323000000.0D0 / 7.0D0) * 9.0D0
 
     !  Scale with outermost midplane radius of vacuum vessel
-    s(34)%k = bore + ohcth + gapoh + tfcth + gapds + ddwi + &
+    s(33)%k = bore + ohcth + gapoh + tfcth + gapds + ddwi + &
          shldith + blnkith + fwith + scrapli + 2.0D0*rminor + &
          scraplo + blnkoth + shldoth + ddwi
-    s(34)%kref = 6.472D0
-    s(34)%cost = s(34)%cost_factor * s(34)%cref * (s(34)%k / s(34)%kref)**costexp
+    s(33)%kref = 6.472D0
+    s(33)%cost = s(33)%cost_factor * s(33)%cref * (s(33)%k / s(33)%kref)**costexp
 
 
     !  Nitrogen plant
-    s(35)%label = "Nitrogen plant"
+    s(34)%label = "Nitrogen plant cost (M$)"
+    
+    !  ITER reference cost (2014 $)
+    s(34)%cref = 86000000.0D0
+
+    !  Scale with 4.5K cryopower
+    s(34)%k = helpow/1.0D3
+    s(34)%kref = 50.0D0
+    s(34)%cost = s(34)%cost_factor * s(34)%cref * (s(34)%k / s(34)%kref)**costexp
+
+
+    s(35)%label = "Total N plant and VV costs (M$)"
     s(35)%cost = 0.0D0
-
-    ! TODO
-
-    s(36)%label = "Total N plant and VV costs"
-    s(36)%cost = 0.0D0
-    do j=34,35
-       s(36)%cost = s(36)%cost + s(j)%cost
+    do j=33,34
+       s(35)%cost = s(35)%cost + s(j)%cost
     end do
   
   end subroutine calc_n_plant_and_vv_costs
@@ -828,7 +791,7 @@ contains
     !+ad_call  some function? (OUTPUT functions)
     !+ad_hist  15/01/15 JM  Initial Version
     !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris, P. Knight)
+    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -839,18 +802,18 @@ contains
     
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    s(37)%label = "Energy conversion system cost"
+    s(36)%label = "Energy conversion system cost (M$)"
 
     !  Set cost factor for energy conversion system
-    s(37)%cost_factor = cost_factor_bop
+    s(36)%cost_factor = cost_factor_bop
     
     !  Cost of reference energy conversion system (Rolls Royce)
-    s(37)%cref = 511000000.0D0
+    s(36)%cref = 511000000.0D0
 
     !  Scale with gross electric power (MWe)
-    s(37)%k = pgrossmw
-    s(37)%kref = 692.0D0
-    s(37)%cost = s(37)%cost_factor * s(37)%cref * (s(37)%k / s(37)%kref)**costexp
+    s(36)%k = pgrossmw
+    s(36)%kref = 692.0D0
+    s(36)%cost = s(36)%cost_factor * s(36)%cref * (s(36)%k / s(36)%kref)**costexp
 
   end subroutine calc_energy_conversion_system
 
@@ -867,7 +830,7 @@ contains
     !+ad_call  some function? (OUTPUT functions)
     !+ad_hist  15/01/15 JM  Initial Version
     !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris, P. Knight)
+    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -879,269 +842,269 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
     !  Set cost factor for remaining subsystems
-    do i=38, 61
+    do i=37, 60
        s(i)%cost_factor = cost_factor_misc
     end do
 
-    s(38)%label = "CS and PF magnets"
+    s(37)%label = "CS and PF magnets cost (M$)"
 
     ! !  Cost of ITER CS and PF magnets
-    s(38)%cref = 1538000000.0D0
+    s(37)%cref = 1538000000.0D0
     
     !  Scale with sum of (kA x turns x radius) of CS and all PF coils
-    s(38)%k = itr_sum/1.0D3
-    s(38)%kref = 7.4D5
-    s(38)%cost = s(38)%cost_factor * s(38)%cref * (s(38)%k / s(38)%kref)**costexp
+    s(37)%k = itr_sum/1.0D3
+    s(37)%kref = 7.4D5
+    s(37)%cost = s(37)%cost_factor * s(37)%cref * (s(37)%k / s(37)%kref)**costexp
 
     
-    s(39)%label = "VV in-wall shielding, ports and in-vessel coils"
+    s(38)%label = "VV in-wall shielding, ports and in-vessel coils cost (M$)"
 
     !  Cost of ITER VV in-wall shielding, ports and in-vessel coils
-    s(39)%cref = 211000000.0D0
+    s(38)%cref = 211000000.0D0
     
     !  Scale with vacuum vessel mass (t)
-    s(39)%k = dewmkg/1.0D3
-    s(39)%kref = 5236.0D0
-    s(39)%cost = s(39)%cost_factor * s(39)%cref * (s(39)%k / s(39)%kref)**costexp
+    s(38)%k = dewmkg/1.0D3
+    s(38)%kref = 5236.0D0
+    s(38)%cost = s(38)%cost_factor * s(38)%cref * (s(38)%k / s(38)%kref)**costexp
 
 
-    s(40)%label = "Divertor"
+    s(39)%label = "Divertor cost (M$)"
 
     !  Cost of ITER divertor
-    s(40)%cref = 381000000.0D0
+    s(39)%cref = 381000000.0D0
     
     !  Scale with max power to SOL (MW)
-    s(40)%k = pdivt
-    s(40)%kref = 140.0D0
-    s(40)%cost = s(40)%cost_factor * s(40)%cref * (s(40)%k / s(40)%kref)**costexp
+    s(39)%k = pdivt
+    s(39)%kref = 140.0D0
+    s(39)%cost = s(39)%cost_factor * s(39)%cref * (s(39)%k / s(39)%kref)**costexp
     
     
-    s(41)%label = "In-vessel blanket RH system"
+    s(40)%label = "In-vessel blanket RH system cost (M$)"
     
     !  Cost of ITER In-vessel blanket RH system
-    s(41)%cref = 187000000.0D0
+    s(40)%cref = 187000000.0D0
 
     !  Scale with mass of blanket module (kg)
-    s(41)%k = whtblkt / (tfno * 5.0D0)
-    s(41)%kref = 3500.0
-    s(41)%cost = s(41)%cost_factor * s(41)%cref * (s(41)%k / s(41)%kref)**costexp
+    s(40)%k = whtblkt / (tfno * 5.0D0)
+    s(40)%kref = 3500.0
+    s(40)%cost = s(40)%cost_factor * s(40)%cref * (s(40)%k / s(40)%kref)**costexp
 
 
-    s(42)%label = "Viewing and metrology for RH system"
+    s(41)%label = "Viewing and metrology for RH system cost (M$)"
     
     !  Cost of ITER Viewing and metrology for RH system
-    s(42)%cref = 31000000.0D0
-    s(42)%cost = s(42)%cost_factor * s(42)%cref
+    s(41)%cref = 31000000.0D0
+    s(41)%cost = s(41)%cost_factor * s(41)%cref
 
 
-    s(43)%label = "Ex-vessel NBI RH equipment"
+    s(42)%label = "Ex-vessel NBI RH equipment cost (M$)"
 
     !  Cost of ITER Ex-vessel NBI RH equipment
-    s(43)%cref = 27000000.0D0
+    s(42)%cref = 27000000.0D0
     
     !  Scale with total aux injected power (MW)
-    s(43)%k = pinjmw
-    s(43)%kref = 50.0D0
-    s(43)%cost = s(43)%cost_factor * s(43)%cref *(s(43)%k / s(43)%kref)**costexp
+    s(42)%k = pinjmw
+    s(42)%kref = 50.0D0
+    s(42)%cost = s(42)%cost_factor * s(42)%cref *(s(42)%k / s(42)%kref)**costexp
 
 
-    s(44)%label = "Hot Cell Maintenance equipment"
+    s(43)%label = "Hot Cell Maintenance equipment cost (M$)"
     
     !  Cost of Hot Cell Maintenance equipment
-    s(44)%cref = 62000000.0D0
+    s(43)%cref = 62000000.0D0
     
     !  Scale with Blanket mass (tonne) x no. of parallel RH systems
-    s(44)%k = (whtblkt / (tfno * 5.0D0))*num_rh_systems
-    s(44)%kref = 1530.0D0
+    s(43)%k = (whtblkt / (tfno * 5.0D0))*num_rh_systems
+    s(43)%kref = 1530.0D0
+    s(43)%cost = s(43)%cost_factor * s(43)%cref * (s(43)%k / s(43)%kref)**costexp
+    
+
+    s(44)%label = "Vacuum vessel pressure suppression system cost (M$)"
+    
+    !  Cost of ITER Vacuum vessel pressure suppression system
+    s(44)%cref = 40000000.0D0
+    
+    !  Scale with total thermal power removed from fusion core (MW)
+    s(44)%k = priheat
+    s(44)%kref = 550.0D0
     s(44)%cost = s(44)%cost_factor * s(44)%cref * (s(44)%k / s(44)%kref)**costexp
     
 
-    s(45)%label = "Vacuum vessel pressure suppression system"
-    
-    !  Cost of ITER Vacuum vessel pressure suppression system
-    s(45)%cref = 40000000.0D0
-    
-    !  Scale with total thermal power removed from fusion core (MW)
-    s(45)%k = priheat
-    s(45)%kref = 550.0D0
-    s(45)%cost = s(45)%cost_factor * s(45)%cref * (s(45)%k / s(45)%kref)**costexp
-    
-
-    s(46)%label = "Cyrostat"
+    s(45)%label = "Cyrostat cost (M$)"
     
     !  Cost of ITER cryostat
-    s(46)%cref = 351000000.0D0
+    s(45)%cref = 351000000.0D0
     
     !  Scale with (cryostat shell radius)^2 x height (external dims) (m3)
-    s(46)%k = (pi*rdewex**2.0D0) * 2.0D0 * zdewex
-    s(46)%kref = 18700.0D0
-    s(46)%cost = s(46)%cost_factor * s(46)%cref * (s(46)%k / s(46)%kref)**costexp    
+    s(45)%k = (pi*rdewex**2.0D0) * 2.0D0 * zdewex
+    s(45)%kref = 18700.0D0
+    s(45)%cost = s(45)%cost_factor * s(45)%cref * (s(45)%k / s(45)%kref)**costexp    
 
-    s(47)%label = "Cooling water"
+    s(46)%label = "Cooling water cost (M$)"
     
     !  Cost of ITER cooling water 
-    s(47)%cref = 724000000.0D0
+    s(46)%cref = 724000000.0D0
     
     !  Scale with total thermal power removed from fusion core (MW)
-    s(47)%k = priheat
-    s(47)%kref = 550.0D0
-    s(47)%cost = s(47)%cost_factor * s(47)%cref * (s(47)%k / s(47)%kref)**costexp
+    s(46)%k = priheat
+    s(46)%kref = 550.0D0
+    s(46)%cost = s(46)%cost_factor * s(46)%cref * (s(46)%k / s(46)%kref)**costexp
 
     
-    s(48)%label = "Thermal shield"
+    s(47)%label = "Thermal shield cost (M$)"
 
     !  Cost of ITER thermal shield
-    s(48)%cref = 126000000.0D0
+    s(47)%cref = 126000000.0D0
     
     !  Scale with (cryostat shell radius) x height (external dims) (m2)
-    s(48)%k = rdewex
-    s(48)%kref = 400.0D0
-    s(48)%cost = s(48)%cost_factor * s(47)%cref * (s(47)%k / s(47)%kref)**costexp
+    s(47)%k = rdewex
+    s(47)%kref = 400.0D0
+    s(47)%cost = s(47)%cost_factor * s(47)%cref * (s(47)%k / s(47)%kref)**costexp
 
 
-    s(49)%label = "Pellet injector and pellet injection system"
+    s(48)%label = "Pellet injector and pellet injection system cost (M$)"
     
     !  Cost of ITER pellet injector and pellet injection system
-    s(49)%cref = 25000000.0D0
+    s(48)%cref = 25000000.0D0
     
+    !  Scale with core fuelling rate (atoms/s)
+    s(48)%k = qfuel
+    s(48)%kref = 9.7D22
+    s(48)%cost = s(48)%cost_factor * s(48)%cref * (s(48)%k / s(48)%kref)**costexp
+
+
+    s(49)%label = "Gas injection system, GDC, Gi valve boxes cost (M$)"
+
+    ! !  Cost of ITER gas injection system, GDC, Gi valve boxes
+    s(49)%cref = 32000000.0D0
+
     !  Scale with core fuelling rate (atoms/s)
     s(49)%k = qfuel
     s(49)%kref = 9.7D22
     s(49)%cost = s(49)%cost_factor * s(49)%cref * (s(49)%k / s(49)%kref)**costexp
-
-
-    s(50)%label = "Gas injection system, GDC, Gi valve boxes"
-
-    ! !  Cost of ITER gas injection system, GDC, Gi valve boxes
-    s(50)%cref = 32000000.0D0
-
-    !  Scale with core fuelling rate (atoms/s)
-    s(50)%k = qfuel
-    s(50)%kref = 9.7D22
-    s(50)%cost = s(50)%cost_factor * s(50)%cref * (s(50)%k / s(50)%kref)**costexp
     
 
-    s(51)%label = "Vacuum pumping"
+    s(50)%label = "Vacuum pumping cost (M$)"
     
     !  Cost of ITER vacuum pumping
-    s(51)%cref = 201000000.0D0
+    s(50)%cref = 201000000.0D0
     
+    !  Scale with fusion power (MW)
+    s(50)%k = powfmw
+    s(50)%kref = 500.0D0
+    s(50)%cost = s(50)%cost_factor * s(50)%cref * (s(50)%k / s(50)%kref)**costexp
+
+
+    s(51)%label = "Tritium plant cost (M$)"
+    
+    !  Cost of ITER tritium plant
+    s(51)%cref = 226000000.0D0
+
     !  Scale with fusion power (MW)
     s(51)%k = powfmw
     s(51)%kref = 500.0D0
     s(51)%cost = s(51)%cost_factor * s(51)%cref * (s(51)%k / s(51)%kref)**costexp
 
 
-    s(52)%label = "Tritium plant"
-    
-    !  Cost of ITER tritium plant
-    s(52)%cref = 226000000.0D0
+    s(52)%label = "Cryoplant and distribution cost (M$)"
 
-    !  Scale with fusion power (MW)
-    s(52)%k = powfmw
-    s(52)%kref = 500.0D0
+    !  Cost of ITER Cryoplant and distribution
+    s(52)%cref = 397000000.0D0
+    
+    !  Scale with heat removal at 4.5 K approx (W)
+    s(52)%k = helpow
+    s(52)%kref = 50000.0D0
     s(52)%cost = s(52)%cost_factor * s(52)%cref * (s(52)%k / s(52)%kref)**costexp
 
 
-    s(53)%label = "Cryoplant and distribution"
-
-    !  Cost of ITER Cryoplant and distribution
-    s(53)%cref = 397000000.0D0
+    s(53)%label = "Electrical power supply and distribution cost (M$)"
     
-    !  Scale with heat removal at 4.5 K approx (W)
-    s(53)%k = helpow
-    s(53)%kref = 50000.0D0
+    !  Cost of ITER electrical power supply and distribution
+    s(53)%cref = 1188000000.0D0
+    
+    !  Scale with total magnetic energy stored by CS and PF coils (GJ)
+    s(53)%k = ensxpfm/1.0D3
+    s(53)%kref = 15.56
     s(53)%cost = s(53)%cost_factor * s(53)%cref * (s(53)%k / s(53)%kref)**costexp
 
 
-    s(54)%label = "Electrical power supply and distribution"
-    
-    !  Cost of ITER electrical power supply and distribution
-    s(54)%cref = 1188000000.0D0
-    
-    !  Scale with total magnetic energy stored by CS and PF coils (GJ)
-    s(54)%k = ensxpfm/1.0D3
-    s(54)%kref = 15.56
-    s(54)%cost = s(54)%cost_factor * s(54)%cref * (s(54)%k / s(54)%kref)**costexp
-
-
-    s(55)%label = "NB H & CD"
+    s(54)%label = "NB H & CD cost (M$)"
     
     !  Cost of ITER NB H & CD
-    s(55)%cref = 814000000.0D0
+    s(54)%cref = 814000000.0D0
     
     !  Scale with Total auxiliary injected power (MW)
-    s(55)%k = pinjmw
-    s(55)%kref = 50.0D0
-    s(55)%cost = s(55)%cost_factor * s(55)%cref * (s(55)%k / s(55)%kref)**costexp
+    s(54)%k = pinjmw
+    s(54)%kref = 50.0D0
+    s(54)%cost = s(54)%cost_factor * s(54)%cref * (s(54)%k / s(54)%kref)**costexp
     
 
-    s(56)%label = "Diagnostics systems"
+    s(55)%label = "Diagnostics systems cost (M$)"
     
     !  Cost of ITER diagnostic systems
-    s(56)%cref = 640000000.0D0
-    s(56)%cost = s(56)%cost_factor * s(56)%cref
+    s(55)%cref = 640000000.0D0
+    s(55)%cost = s(55)%cost_factor * s(55)%cref
     
 
-    s(57)%label = "Radiological protection"
+    s(56)%label = "Radiological protection cost (M$)"
     
     !  Cost of ITER radiological protection
-    s(57)%cref = 19000000.0D0
+    s(56)%cref = 19000000.0D0
 
     !  Scale with fusion power (MW)
-    s(57)%k = powfmw
-    s(57)%kref = 500.0D0
-    s(57)%cost = s(57)%cost_factor * s(57)%cref * (s(57)%k / s(57)%kref)**costexp
+    s(56)%k = powfmw
+    s(56)%kref = 500.0D0
+    s(56)%cost = s(56)%cost_factor * s(56)%cref * (s(56)%k / s(56)%kref)**costexp
 
 
-    s(58)%label = "Access control and security systems"
+    s(57)%label = "Access control and security systems cost (M$)"
     
     !  Cost of ITER access control and security systems
-    s(58)%cref = 42000000.0D0
+    s(57)%cref = 42000000.0D0
 
     !  Scale with inner area (equivalent to ITER platform) (hectare)
-    s(58)%k = efloor/1.0D4
-    s(58)%kref = 42.0
-    s(58)%cost = s(58)%cost_factor * s(58)%cref * (s(58)%k / s(58)%kref)**costexp
+    s(57)%k = efloor/1.0D4
+    s(57)%kref = 42.0
+    s(57)%cost = s(57)%cost_factor * s(57)%cref * (s(57)%k / s(57)%kref)**costexp
     
 
-    s(59)%label = "Assembly"
+    s(58)%label = "Assembly cost (M$)"
     
     !  Cost of ITER assembly
-    s(59)%cref = 732000000.0D0
+    s(58)%cref = 732000000.0D0
     
     !  Scale with total cost of reactor items (cryostat and everything inside it)
-    s(59)%k = s(22)%cost + s(28)%cost + s(34)%cost + s(38)%cost + s(39)%cost + &
-         s(40)%cost + s(46)%cost + s(48)%cost + s(49)%cost + s(50)%cost + &
-         s(51)%cost + s(55)%cost + s(56)%cost
+    s(58)%k = s(22)%cost + s(28)%cost + s(33)%cost + s(36)%cost + s(38)%cost + &
+         s(39)%cost + s(45)%cost + s(47)%cost + s(48)%cost + s(49)%cost + &
+         s(50)%cost + s(54)%cost + s(55)%cost
+    s(58)%kref = 2996000000.0D0
+    s(58)%cost = s(58)%cost_factor * s(58)%cref * (s(58)%k / s(58)%kref)**costexp
+
+    
+    s(59)%label = "Control and data access and communication cost (M$)"
+
+    !  Cost of ITER control and data access and communication
+    s(59)%cref = 219000000.0D0
+    
+    !  Scale with total cost of reactor items (cryostat and everythign inside it)
+    s(59)%k = s(22)%cost + s(28)%cost + s(33)%cost + s(36)%cost + s(38)%cost + &
+         s(39)%cost + s(45)%cost + s(47)%cost + s(48)%cost + s(49)%cost + &
+         s(50)%cost + s(54)%cost + s(55)%cost 
     s(59)%kref = 2996000000.0D0
     s(59)%cost = s(59)%cost_factor * s(59)%cref * (s(59)%k / s(59)%kref)**costexp
 
     
-    s(60)%label = "Control and data access and communication"
-
-    !  Cost of ITER control and data access and communication
-    s(60)%cref = 219000000.0D0
-    
-    !  Scale with total cost of reactor items (cryostat and everythign inside it)
-    s(60)%k = s(22)%cost + s(28)%cost + s(34)%cost + s(38)%cost + s(39)%cost + &
-         s(40)%cost + s(46)%cost + s(48)%cost + s(49)%cost + s(50)%cost + &
-         s(51)%cost + s(55)%cost + s(56)%cost 
-    s(60)%kref = 2996000000.0D0
-    s(60)%cost = s(60)%cost_factor * s(60)%cref * (s(60)%k / s(60)%kref)**costexp
-
-    
-    s(61)%label = "Additional ITER IO expenditure"
+    s(60)%label = "Additional ITER IO expenditure cost (M$)"
     
     !  Cost of ITER additional ITER IO expenditure
-    s(61)%cref = 1624000000.0D0
-    s(61)%cost = s(61)%cost_factor * s(61)%cref
+    s(60)%cref = 1624000000.0D0
+    s(60)%cost = s(60)%cost_factor * s(60)%cref
 
 
-    s(62)%label = "Total remaining subsystem costs"
-    s(62)%cost = 0.0D0
-    do j=38, 61
-       s(62)%cost = s(62)%cost + s(j)%cost
+    s(61)%label = "Total remaining subsystem costs (M$)"
+    s(61)%cost = 0.0D0
+    do j=37, 60
+       s(61)%cost = s(61)%cost + s(j)%cost
     end do
 
   end subroutine calc_remaining_subsystems
@@ -1158,7 +1121,7 @@ contains
     !+ad_prob  None
     !+ad_hist  20/01/15 JM  Initial Version
     !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris, P. Knight)
+    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1175,56 +1138,57 @@ contains
 
     call oshead(ofile,'Buildings')
     do i=1, 9
-      call ovarre(ofile,s(i)%label,'',s(i)%cost)
+       call ocosts(ofile,'', s(i)%label, s(i)%cost/1.0D6)
     end do
     call oblnkl(ofile)
 
     call oshead(ofile,'Land')
     do j=10, 13
-      call ovarre(ofile,s(j)%label,'',s(j)%cost)
+       call ocosts(ofile,'', s(j)%label, s(j)%cost/1.0D6)
     end do
     call oblnkl(ofile)
 
     call oshead(ofile,'TF Coils')
-    do k=14, 20
-      call ovarre(ofile,s(k)%label,'',s(k)%cost)
+    do k=14, 22
+       call ocosts(ofile,'', s(k)%label, s(k)%cost/1.0D6)
     end do
     call oblnkl(ofile)
 
     call oshead(ofile,'First wall and blanket')
     do l=23, 28
-      call ovarre(ofile,s(l)%label,'',s(l)%cost)
+       call ocosts(ofile,'', s(l)%label, s(l)%cost/1.0D6)
     end do
     call oblnkl(ofile)
 
     call oshead(ofile,'Remote handling')
-    do m=29, 33
-      call ovarre(ofile,s(m)%label,'',s(m)%cost)
+    do m=29, 32
+       call ocosts(ofile,'', s(m)%label, s(m)%cost/1.0D6)
     end do
     call oblnkl(ofile)
 
     call oshead(ofile,'N plant and vacuum vessel')
-    do n=34, 36
-      call ovarre(ofile,s(n)%label,'',s(n)%cost)
+    do n=33, 35
+       call ocosts(ofile,'', s(n)%label, s(n)%cost/1.0D6)
     end do
     call oblnkl(ofile)
 
     call oshead(ofile,'Energy conversion systems')
-    call ovarre(ofile,s(37)%label,'',s(37)%cost)
+    call ocosts(ofile,'', s(36)%label, s(36)%cost/1.0D6)
     call oblnkl(ofile)
 
     call oshead(ofile,'Remaining subsystems')
-    do q=38, 62
-      call ovarre(ofile,s(q)%label,'',s(q)%cost)
+    do q=37, 61
+       call ocosts(ofile,'', s(q)%label, s(q)%cost/1.0D6)
     end do
     call oblnkl(ofile)
 
     !  Calculate total costs
     total_costs = s(9)%cost + s(13)%cost + s(22)%cost + &
-         s(28)%cost + s(32)%cost + s(36)%cost + &
-         s(37)%cost + s(62)%cost
+         s(28)%cost + s(32)%cost + s(35)%cost + &
+         s(36)%cost + s(61)%cost
 
-    call ovarre(ofile,"Total Costs",'',total_costs)
+    call oblnkl(ofile)
+    call ocosts(ofile,'', "Total Costs (M$)", total_costs/1.0D6)
     
   end subroutine write_costs_to_output
   
@@ -1240,7 +1204,7 @@ contains
     !+ad_prob  None
     !+ad_hist  07/01/15 JM  Initial Version
     !+ad_stat  Okay
-    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris, P. Knight)
+    !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

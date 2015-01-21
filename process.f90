@@ -1498,8 +1498,12 @@ subroutine output(outfile)
      return
   end if
 
-  call costs(outfile,1)
-  call costs_2015(outfile,1)
+  if (cost_model == 1) then
+     call costs_2015(outfile,1)
+  else
+     call costs(outfile,1)
+  end if
+
   if (iavail > 1) then
      call avail_new(outfile, 1)
   else 
