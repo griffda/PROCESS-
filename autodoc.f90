@@ -77,6 +77,7 @@ module autodoc_data
   character(len=4) , parameter :: html_ulist_open = '<UL>'
   character(len=5) , parameter :: html_ulist_close = '</UL>'
   character(len=4) , parameter :: html_listitem = '<LI>'
+  character(len=4) , parameter :: html_hrule = '<HR>'
   character(len=20), parameter :: html_summary_header =   '<P><H3>Summary:</H3>'
   character(len=17), parameter :: html_type_header =      '<P><H3>Type:</H3>'
   character(len=21), parameter :: html_contents_header =  '<P><H3>Contents:</H3>'
@@ -1891,6 +1892,7 @@ subroutine open_vardes(flag)
   !+ad_call  header_vardes
   !+ad_call  write_to_vardes
   !+ad_hist  07/11/2012 PJK Initial version
+  !+ad_hist  18/09/2014 PJK Added reference to default values
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -1930,21 +1932,45 @@ subroutine open_vardes(flag)
 
   call write_to_vardes(html_h2_close,flag)
 
+  string = 'Default values roughly correspond to the ITER-FDR (1998) design.'
+  call write_to_vardes(string,flag)
+  string = '<P><B>Reference:</B>'
+  call write_to_vardes(string,flag)
+  string = 'Table 1. ITER design features and parameters for reference'
+  call write_to_vardes(string,flag)
+  string = 'ignited ELMy H-mode operation,'
+  call write_to_vardes(string,flag)
+
+  call write_to_vardes(html_link_open,flag)
+  string = 'http://iopscience.iop.org/0029-5515/39/12/301/pdf/0029-5515_39_12_301.pdf'
+  call write_to_vardes(string,flag)
+  call write_to_vardes(html_link_mid,flag)
+  string = 'Nuclear Fusion <B>39</B> (1999) 2137'
+  call write_to_vardes(string,flag)
+  call write_to_vardes(html_link_close,flag)
+
+  call write_to_vardes(html_hrule,flag)
+
   string = 'Variables labelled with FIX are initialised with the given'
   call write_to_vardes(string,flag)
   string = 'default value (shown between / / characters), but currently'
   call write_to_vardes(string,flag)
   string = 'are not available to be changed in the input file.'
   call write_to_vardes(string,flag)
-  string = '<P>All other variables shown with a default value can be changed in'
+
+  call write_to_vardes(html_par,flag)
+  string = 'All other variables shown with a default value can be changed in'
   call write_to_vardes(string,flag)
   string = 'the input file.'
   call write_to_vardes(string,flag)
 
-  string = '<P>Variables not shown with a default value are calculated'
+  call write_to_vardes(html_par,flag)
+  string = 'Variables not shown with a default value are calculated'
   call write_to_vardes(string,flag)
   string = 'within PROCESS, so need not be initialised.'
   call write_to_vardes(string,flag)
+
+  call write_to_vardes(html_hrule,flag)
 
 end subroutine open_vardes
 
@@ -1984,7 +2010,7 @@ subroutine close_vardes(flag)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   if (flag%vdfileopen == 1) then
-     call write_to_vardes(html_ulist_close,flag)
+!     call write_to_vardes(html_ulist_close,flag)
      call footer_vardes(flag)
      close(unit=vdunit)
      flag%vdfileopen = 0

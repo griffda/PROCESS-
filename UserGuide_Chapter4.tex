@@ -1,0 +1,609 @@
+\mychapter{Execution of the Code}
+\label{chap:run}
+
+The intention of this chapter is to provide a comprehensive prescription for
+setting up and performing runs with the code.  Firstly, the input file's
+structure and format is described. The user is then taken through the
+procedure for setting up the code to model a new machine, and finally an
+attempt is made to indicate and solve the problems that the user will face
+whilst trying to achieve a feasible solution.
+
+\textbf{Please note:} There is now a prototype Graphical User Interface (GUI)
+for people to use to run \process; see Section~\ref{sec:gui} for details.
+
+\section{The Input File}
+\label{sec:infile}
+
+The input file \indat\ is used to change the values of the physics,
+engineering and other code parameters from their default values, and to set up
+the numerics (constraint equations, iteration variables etc.) required to
+define the problem to be solved.
+
+\subsection{Tokamak, stellarator, RFP or IFE?}
+\label{sec:device}
+
+In addition to the main input file \indat, a second input file
+\texttt{device.dat} is used to signal to the code whether a tokamak,
+stellarator, reversed field pinch or inertial fusion enery plant is to be
+modelled. (If the file does not exist in the working directory, the standard
+tokamak model is used.)
+
+File \texttt{device.dat} should contain a single character in the first
+line, which is interpreted as follows:
+\begin{tabbing}
+\hspace{15mm}\= \texttt{0} : use tokamak model \\
+\> \texttt{1} : use stellarator model \\
+\> \texttt{2} : use reversed field pinch model \\
+\> \texttt{3} : use inertial fusion energy model
+\end{tabbing}
+
+\subsection{File structure}
+
+The input file comprises a number of lines reminiscent of the Fortran
+\texttt{NAMELIST} format used by some programs to read in data. Except for
+comment lines that start with a \texttt{*} character, each line is of the form
+\begin{verbatim}
+variable = value
+\end{verbatim}
+where \texttt{variable} is the name of one of the input parameters or
+iteration variables listed in the variable descriptor file, and \texttt{value}
+is the (usually numerical) initial value required for that variable. (Arrays,
+as opposed to scalar quantities, are treated differently --- see below.)
+Variables can be specified in any order in the input file.
+
+The routines that read in and parse the data from the input file are in source
+file \texttt{input.f90}. They allow a great deal of error-trapping to be
+carried out at the input stage.  All input data are screened for non-sensible
+values directly; this is a useful feature of the code, since without such
+intervention modern computers are notorious at not terminating programs when
+an arithmetically impossible or undefined operation (``\texttt{NaN}'' error)
+is encountered.
+
+\subsection{Format rules}
+
+The following rules must be obeyed when writing an input file:
+
+\begin{enumerate}
+
+\item Each variable must be on a separate line.
+
+\item Variable names can be upper case, lower case, or a mixture of both.
+
+\item Spaces may not appear within a variable name or data value.
+
+\item Other spaces within a line, and trailing spaces, are ignored.
+
+\item Commas are not necessary between variables (but see below).
+
+\item Data can extend over more than one line.
+
+\item One-dimensional arrays can be explicitly subscripted, or unscripted, in
+  which case the following element order is assumed: \texttt{A(1), A(2),
+    A(3),...}
+
+\item At present, multiple dimension arrays can only be handled without
+  reference to explicit subscripts, in which case the following element order
+  is assumed: \texttt{B(1,1), B(2,1), B(3,1),...} The use of the input file to
+  specify multiple dimension array elements is prone to error.
+
+\item Unscripted array elements must be separated by commas.
+
+\item Blank lines are allowed anywhere in the input file.
+
+\item Lines starting with a \texttt{*} are assumed to be comments.
+
+\item Comment lines starting with five or more asterisks (i.e.\
+  \texttt{*****}) are reproduced verbatim in the output file. These should be
+  used copiously to give a great deal of information about the run being
+  performed, and should be updated before every single run of the code, as it
+  is very easy to lose track of what is being attempted.
+
+\item In-line comments are \textit{usually}\/ ignored, but there can be
+  problems if one contains a comma (\texttt{,}). If this is the case, there
+  must also be a comma after the variable's value and before the comment.
+
+\end{enumerate}
+
+It is useful to divide the input file into sections, using suitable comment
+lines, to help the user keep related variables together.
+
+The following is a valid fragment of an input file (the vertical lines are
+simply to help show the column alignment):
+\begin{center}
+\begin{tabular}{||l}
+$\!\!$\texttt{* This line is a comment that will not appear in the output} \\
+$\!\!$\texttt{***** This line is a comment that will appear in the output} \\
+$\!\!$\texttt{boundl(1) = 2.5,} \\
+$\!\!$\texttt{BOUNDU(10) = 3.,} \\
+$\!\!$\texttt{BOUNDU(45) = 1,} \\
+$\!\!$\texttt{* Another comment... Note that real values can be entered as if} \\
+$\!\!$\texttt{* they were integers, and vice versa (but it's not recommended...)} \\
+$\!\!$\texttt{epsfcn = 10.e-4,} \\
+$\!\!$\texttt{Ftol = 1.D-4,} \\
+$\!\!$\texttt{* The next line sets the first five elements of array icc:} \\
+$\!\!$\texttt{ICC =   2, 10, 11, 24, 31} \\
+$\!\!$\texttt{* The next line sets the first ten elements of array ixc:} \\
+$\!\!$\texttt{ixc =   10, 12, 3, 36, 48,} \\
+$\!\!$\hspace{15mm}\texttt{1, 2, 6, 13, 16,} \\
+$\!\!$\texttt{IOPTIMZ = 1,} \\
+$\!\!$\texttt{maxcal = 200} \\
+$\!\!$\texttt{ nsweep = 7} \\
+$\!\!$\texttt{NEQNS = 5,    This is an in-line comment} \\
+$\!\!$\texttt{NVAR = 10,    Another, but successfully containing a comma!} \\
+\end{tabular}
+\end{center}
+
+The following are \textit{invalid}\/ entries in the input file
+(Q: Why?!):
+\begin{center}
+\begin{tabular}{||l}
+$\!\!$\texttt{boundl(1,1) = 2.5,} \\
+$\!\!$\texttt{BOUNDU(N) = 3.,} \\
+$\!\!$\texttt{A line of `random' characters like this will clearly wreak havoc} \\
+$\!\!$\texttt{eps fcn = 10.e-4, ftol = 1.D-4} \\
+$\!\!$\texttt{epsvmc = 1.0 e-4} \\
+$\!\!$\texttt{ICC =   2  10  11  24  31} \\
+$\!\!$\texttt{IOPTIMZ = 1.0,  This will in fact be okay - but is not recommended} \\
+$\!\!$\texttt{NEQNS = 5    An in-line comment on a line with only one comma (,) character} \\
+\end{tabular}
+\end{center}
+
+If the code encounters a problem reading the input file, it will stop immediately
+with a (hopefully) useful error message. It may be worth looking at the
+contents of the output file as well, to help narrow down on which line of the
+input file the problem might lie.
+
+\section{The Output File}
+
+The main output from the code is sent to file \outdat\ in the working
+directory.
+
+A second file, \mfile, is also produced in the working directory.  This file
+contains most of the same data as \outdat\ but in a different format, and has
+been designed to be ``machine-readable'' by some of the utility programs
+described in Chapter~\ref{chap:utilities}, to allow simple post-processing and
+graphical output to be produced easily.
+
+\section{Running the Code}
+
+This section will attempt to guide the user through the actual running of the
+code in its various modes. In most cases only minor changes to the input file
+are necessary to change the code's mode of operation --- usually the physics
+and engineering variables, etc.\ remain unchanged, with the major differences
+occurring in the numerical input only.
+
+\subsection{Environment set-up}
+\label{sec:run_environment}
+
+Under normal circumstances, the code is only available for execution from the
+CCFE Fusion Unix Network, on which you must have an account.
+
+To set up your environment to be able to run the code and the associated
+Python utilities (see Chapter~\ref{chap:utilities}), add the following lines
+to your \texttt{.bashrc} file:
+\begin{quote}
+\begin{verbatim}
+module use /home/PROCESS/modules
+module swap python
+module load process/master
+\end{verbatim}
+\end{quote}
+(If you want to use --- with care! --- the latest draft version of the code
+instead of the latest verified release version, replace \texttt{module load
+  process/master} with \texttt{module load process/develop} above.)
+
+After re-logging in, execute \process\ by simply typing \texttt{process} on
+the command line.
+
+\subsection{Non-optimisation mode}
+
+Non-optimisation mode is used to perform benchmark comparisons, whereby the
+machine size, output power etc.\ are known and one only wishes to find the
+calculated stresses, beta values and fusion powers, for example. When starting
+to model a new machine, \process\ should always be run first in non-optimisation
+mode, before any attempt is made to optimise the machine's parameters.
+
+The first thing to do is to add to the input file all the known details about
+the machine to be modelled. This may include some or all of the following:
+\begin{itemize}
+\item machine build
+\item plasma aspect ratio
+\item PF coil locations
+\item type of current drive to be used
+\item net electric power
+\item various physics parameters, e.g.
+  \begin{itemize}
+  \item toroidal field on axis
+  \item electron density
+  \item electron temperature
+  \item elongation
+  \item triangularity
+  \item beta $g$ coefficient
+  \item edge safety factor
+  \end{itemize}
+\end{itemize}
+
+In addition, some of the switch values summarised in Chapter~\ref{chap:models}
+may have to be altered from their default values.
+
+Next, the relevant numerics information must be entered. Switch
+\texttt{ioptimz} must be set to \texttt{-1} for non-optimisation mode. Then
+the user must decide which constraint equations and iteration variables to
+activate --- this choice is dictated partly by the information required by the
+user, and partly by the machine being modelled itself.
+
+As stated earlier, all the relevant consistency equations must be activated,
+together with the corresponding iteration variables. A number of limit
+equations can also be activated, to investigate how the calculated values
+compare with the physics or engineering limits.  The following is part of an
+example non-optimisation input file:
+\begin{verbatim}
+IOPTIMZ = -1
+NEQNS = 8
+NVAR = 8
+ICC =  1,  2, 10, 11,  7, 16,  5, 24,
+IXC =  5, 10, 12, 29,  7,      9, 36, 4,
+
+FPNETEL = 1.0
+PNETELIN = 1200.0
+\end{verbatim}
+\vspace{-6mm}
+$\vdots$
+
+Consistency equations 1, 2, 10, 11 and 7 are activated, together with limit
+equations~16, 5 and 24 (refer to Table~\ref{tab:eqns}). This example assumes
+that neutral beam current drive is present (equation~7 with variable~7), and
+that the net electric power is to be fixed at 1200~MW\@. Note the optional
+(but beneficial) practice of vertically aligning corresponding equations and
+variables --- constraint equation~16 has no corresponding iteration variable
+(which would normally be no.\ 25, \texttt{fpnetel}), as we want the net
+electric power to be fixed at the value given by \texttt{pnetelin}. Since in
+non-optimisation mode, the number of variables must be equal to the number of
+equations, we have scope to add a ``free'' iteration variable (refer to
+Tables~\ref{tab:itvars1} and~\ref{tab:itvars2}), in this case no.\ 4 ---
+electron temperature, to help raise the fusion power sufficiently to obtain
+the required net electric power. Finally, note the use of the density and beta
+limit equations (\texttt{5} and \texttt{24}, respectively); the final values
+of the corresponding f-values will indicate if the limits are exceeded and by
+how much.
+
+On running \process\ and (hopefully) achieving a feasible result, examination
+of the output may well show up discrepancies between some of the parameter
+values produced and their known values (if available). Remember that, of all
+the variables shown in the variable descriptor file with a default value, only
+those declared as \textit{active iteration variables}\/ can change from their
+initial values, whether they are set in the input file or in the relevant
+module. However some of the calculated parameters may be wrong, the most
+common of which are as follows:
+\begin{itemize}
+
+\item Plasma current; this can be adjusted using the edge safety factor
+  \texttt{q}: $I_p \propto 1/q$
+
+\item Fusion power; this scales roughly with the density profile factor
+  \texttt{alphan}.
+
+\item Build parameters; it may be necessary to change non-critical thicknesses
+  to achieve the correct machine build.
+
+\end{itemize}
+
+It may still be difficult, if not impossible, to reconcile the fusion power
+and the net electric power with the required values. This may well be due to
+the power conversion efficiency values being used --- refer to
+Figure~\ref{fig:powerflow3}.
+
+With luck, a few iterations of this process will produce an adequate benchmark
+case. A typical input file for use with \process\ in non-optimisation mode is
+contained in Appendix~\ref{app:infile1}.
+
+\subsection{Optimisation mode}
+\label{sec:optim}
+
+Running \process\ in optimisation mode requires few changes to be made to the
+input file from the non-optimisation case. The main differences between
+optimisation mode and non-optimisation mode are:
+
+\begin{enumerate}
+
+\item Optimisation mode applies lower and upper bounds to all active iteration
+  variables.
+
+\item There is no upper limit to the number of active iteration variables in
+  optimisation mode.
+
+\item A figure of merit must be specified in optimisation mode.
+
+\item Scans can be performed in optimisation mode.
+
+\end{enumerate}
+
+Switch \texttt{ioptimz} must be set to \texttt{0} or \texttt{1} for
+optimisation mode. If \texttt{ioptimz = 0}, a non-optimisation pass is
+performed first, to provide a (hopefully) feasible set of initial conditions;
+if \texttt{ioptimz = 1}, this is skipped and the code runs in optimisation
+mode from the start. However, it is recommended to use \texttt{ioptimz = 1}
+for optimisation runs, as using the HYBRD step before a \vmcon\ iteration
+tends to cause \process\ to fail to converge more often.
+
+As before, the user must decide which constraint equations and iteration
+variables to activate. Again, the choice depends largely on the information
+required by the user and the extent of the freedom that the code may have with
+the machine's parameters.
+
+The following is part of an example optimisation input file:
+\begin{verbatim}
+IOPTIMZ = 1
+NEQNS = 16
+NVAR = 19
+ICC =  1,  2, 10, 11,  7, 16,  5, 24, 14,  8, 31, 32, 33, 34, 35, 36,
+IXC =  5, 10, 12, 29,  7,      9, 36, 19, 14, 48, 49, 50, 51, 53, 54,
+4, 6, 1, 18,
+BOUNDL(1) = 2.5
+BOUNDU(10) = 2.0
+MINMAX = 6
+
+FPNETEL = 1.0
+PNETELIN = 1200.0
+WALALW = 4.4
+
+ISWEEP = 3
+NSWEEP = 11
+SWEEP = 3.5, 3.7, 3.9
+\end{verbatim}
+\vspace{-6mm}
+$\vdots$
+
+The figure of merit in this example is the (minimum) cost of electricity
+(\texttt{minmax = 6}). Note that additional limit equations are now active,
+along with a second consistency equation related to the neutral beam current
+drive --- the number of decay lengths to the plasma centre is constrained to
+be equal to the input value (\texttt{tbeamin}, which is not shown here).
+Furthermore, there are now more iteration variables than constraint equations,
+to aid the minimisation process.  Finally, note that a three-point scan in the
+beta $g$ coefficient \texttt{dnbeta} --- scanning variable~11, is to be
+performed.
+
+A useful practice in optimisation mode is to perform ``stationary'' scans,
+whereby the same value is given to the scanning variable on successive
+iterations. This provides a check as to how well converged the solution has
+become. If scans of a given variable are to be made over a large range of
+values, it is often a good idea to start the scan in the middle of the desired
+range, and to split the scan in two --- one going downwards from the initial
+value, and the other upwards.  This ensures that the whole range of the scan
+produces well-converged machines (assuming a ``good'' initial point), without
+sharp changes in gradient in the parameter values.
+
+It should be remembered that the value of the scan variable is set in the
+array \texttt{sweep}, and this overrules any value set for the variable
+elsewhere in the input file. For instance, in the example above, the values of
+\texttt{dnbeta} set in the \texttt{sweep} array would overrule any value for
+\texttt{dnbeta} set elsewhere in the file.
+
+The output from an optimisation run contains an indication as to which
+iteration variables lie at their limiting values. On the whole there is a
+greater chance of unfeasible solutions being found whilst in optimisation
+mode, and Section~\ref{sec:problems} will hopefully be of some use in this
+situation. A typical input file for use with \process\ in optimisation mode
+is contained in Appendix~\ref{app:infile2}.
+
+\section{Problem Solving}
+\label{sec:problems}
+
+Experience has shown that the first few attempts at running \process\ with a
+new input file tends to produce unfeasible results --- that is, the code will
+not find a consistent set of machine parameters. The highly non-linear nature
+of the numerics of \process\ is the reason for this difficulty, and it often
+requires a great deal of painstaking adjustment of the input file to overcome.
+
+\subsection{Error handling}
+\label{sec:errors}
+
+In general, errors detected during a run are handled in a consistent manner,
+with the code producing (hopefully) useful diagnostic messages to help the
+user understand what has happened.
+
+There are three levels of ``error'' that may occur:
+\begin{description}
+
+\item{Level 1:} An \textit{informational}\/ message is produced under certain
+  conditions, for example if the code has modified the user's input choice for
+  some reason.
+
+\item{Level 2:} A \textit{warning}\/ message is produced if a non-fatal situation has
+  occurred that may result in an output case that is inaccurate or
+  unreliable in some way.
+
+\item{Level 3:} An \textit{error}\/ message will occur if a severe or fatal
+  error has occurred and the program cannot continue.
+
+\end{description}
+
+These messages are printed on the screen during the course of a run, and those
+still active at the final (feasible or unfeasible) solution point are also
+written to the end of the output file (messages encountered during the
+iteration process are not copied to the output file, as the convergence to a
+valid solution might resolve some of the warnings produced earlier in the
+solution process).
+
+The \texttt{error\_status} variable returns the highest severity level that
+has been encountered (or zero if no abnormal conditions have been found); if a
+severe error (level 3) is flagged at any point the program is terminated
+immediately. The final message number encountered during a run is returned via
+output variable \texttt{error\_id}. In addition, with certain messages, a
+number of diagnostic values may also be given; these can be used to provide
+extra diagnostic information if the source code is available.
+
+\subsection{General problems}
+
+A code of the size and complexity of \process\ contains myriads of equations
+and variables. Virtually everything depends indirectly on everything else
+because of the nature of the code structure, so perhaps it is not surprising
+that it is often difficult to achieve a successful outcome.
+
+Naturally, problems will occur if some of the parameters become unphysical.
+For example, if the aspect ratio becomes less than or equal to one, then we
+must expect problems to appear. For this reason, the default bounds on the
+iteration variables and the allowed ranges of all the input variables have
+been selected with great care.
+
+The code contains a large (though probably not exhaustive) number of error
+traps to try and prevent problems from propagating. These include tests for
+unphysical values, and checks to prevent divisions by zero, and non-sensible
+arguments for logarithms and square roots, etc. However, occasionally
+arithmetic (``\texttt{NaN}'') errors still occur, although their incidence is
+low. They now usually only occur due to unfeasibility problems (see later).
+
+The error messages produced by the code attempt to provide diagnostic
+information, telling the user where the problem occurs, and also suggest a
+possible solution. These messages are out of necessity brief, and so cannot
+promise to lead to a more successful outcome.
+
+For expert users, there is the option to turn on extra debugging output; to do
+this, set \texttt{verbose = 1} in the input file.
+
+\subsection{Optimisation problems}
+
+On reflection it is perhaps surprising that \process\ ever does manage to
+find the global minimum figure of merit value, since if there are
+\texttt{nvar} iteration variables active the search is over
+\texttt{nvar}-dimensional parameter space, in which there may be many shallow
+minima of approximately equal depth. Remember that \texttt{nvar} is usually of
+the order of twenty.
+
+The machine found by \process\ may not, therefore, be the absolutely optimal
+device. It is quite easy to have two or more solutions, with results only a
+few per cent different, but a long way apart in parameter space. The technique
+of ``stationary'' scans described in Section~\ref{sec:optim} above can often
+help in this situation, which is why this method is recommended at all times.
+
+Scans should be started in the middle of a range of values, to try to keep the
+scan within the same family of machines. The optimum machine found may
+otherwise suddenly jump to a new region of parameter space, causing the output
+variables to seem to vary unpredictably with the scanning variable.
+
+It should be noted that in general the machine produced by \process\ will
+always sit against one or more operation limits. If, during a scan, the limit
+being leant upon changes (i.e.\ if the machine jumps from leaning on the beta
+limit to leaning on the density limit) the output parameters may well become
+discontinuous in gradient, and trends may suddenly change direction.
+
+\subsection{Unfeasible results}
+
+In the numerics section of the output file, the code indicates whether the run
+produced a feasible or unfeasible result.
+
+The former implies a successful outcome, although it is always worth checking
+that the estimate of the constraints (\texttt{sqsumsq}) is small ($\sim
+10^{-3}$ or less); the code will issue a warning if the run seems feasible but
+the value of \texttt{sqsumsq} exceeds $10^{-2}$. If this occurs, reducing the
+value of the HYBRD tolerance \texttt{ftol} or \vmcon\ tolerance
+\texttt{epsvmc} (as appropriate) should indicate whether the result is valid
+or not; the output can usually be trusted if (1) the constraint
+residues\footnote{The constraint residues are the final values of $c_i$ in the
+  constraint equations --- see Section~\ref{sec:constraints}. The value
+  \texttt{sqsumsq} is the square root of the sum of the squares of these
+  residuals.} fall as the tolerance is reduced to about $10^{-8}$, and (2) the
+code indicates that a feasible solution is still found.
+
+An unfeasible result occurs if \process\ cannot find a set of values for the
+iteration variables which satisfies all the given constraints. In this case,
+the values of the constraint residues shown in the output give some indication
+of which constraint equations are not being satisfied --- those with the
+highest residues should be examined further. In optimisation mode, the code
+also indicates which iteration variables lie at the edge of their allowed
+range.
+
+Unfeasible runs are caused either by ill-defining the problem to be solved, or
+by starting the problem in an unfavourable region of parameter space. The
+latter can be checked simply by changing the initial values of the
+\textit{active}\/ iteration variables in the input file, but the former
+requires some extra work. This situation arises if there are insufficient
+iteration variables for the given constraint equations. It is important to
+choose the right number of \textit{useful}\/ iteration variables for the
+problem to be solved --- it is possible to activate too many iteration
+variables as well as too few, some of which may be redundant.
+
+Both optimisation and non-optimisation runs can fail with an error message
+suggesting that the iteration process is not making good progress. This is
+likely to be due to the code finding itself unable to escape a region of the
+parameter space where the minimum in the residuals is significantly above
+zero. In this situation, there is either no solution possible (the residuals
+can therefore never approach zero), or the topology of the local minimum makes
+it difficult for the code to escape to the global minimum. Again, a helpful
+technique is to either change the list of iteration variables in use, or to
+simply modify their initial values to try to help the code avoid such regions.
+
+A technique that occasionally removes problems due to unfeasible results,
+particularly if an error code \texttt{ifail = 3} is encountered during an
+optimisation run, is to adjust slightly one of the limits imposed on the
+iteration variables, even if the limit in question has not been reached. This
+subtly alters the gradients computed by the code during the iteration process,
+and may tip the balance so that the code decides that the device produced is
+feasible after all. For instance, a certain component's temperature might be
+400~K, and its maximum allowable temperature is 1000~K\@. Adjusting this limit
+to 900~K (which will make no difference to the \textit{actual}\/ temperature)
+may be enough to persuade the code that it has found a feasible solution.
+
+Similarly, the order in which the constraint equations and iteration variables
+are stored in the \texttt{icc} and \texttt{ixc} arrays can make the difference
+between a feasible and unfeasible result. This seemingly illogical behaviour
+is, sadly, typical of the way in which the code works.
+
+Another technique in such situations may be to change the finite difference
+step length \texttt{epsfcn}, as this might subtly change the path taken in the
+approach towards a solution.
+
+Unfeasible cases often produce unrealistic machines, so one should not believe
+the output values from these runs. Unfortunately, the stationary scan method
+sometimes, though not always, fails to help these cases, since it will tend to
+keep starting the run at the same point. Ill-defined problems sometimes
+produce arithmetic errors, for obscure reasons.
+
+Though a great deal of work has been performed on the code to improve its
+standard, there can be no guarantee that \process\ is entirely bug-free,
+simply because of its large size. Rarely, then, it may be that an unfeasible
+result indicates that the code has encountered a programming error, although
+its precise location will be almost impossible to find by simply examining the
+output file.
+
+It may be the case that the act of satisfying all the required constraints is
+impossible. No machine can exist if the allowed operating regime is too
+restrictive, or if two constraint equations require conflicting
+(non-overlapping) parameter spaces. In this case some relaxation of the
+requirements is needed for the code to produce a successful machine design.
+
+\subsection{Hints}
+
+The above sections should indicate that it is the complex interplay between
+the constraint equations and the iteration variables that determines whether
+the code will be successful at producing a useful result. It can be a somewhat
+laborious process to arrive at a working case, and (unfortunately, perhaps)
+experience is often of great value in this situation.
+
+It should be remembered that sufficient iteration variables should be used to
+solve each constraint equation. For instance, a particular limit equation may
+be $A \leq B$, i.e.\ $A = fB$, where the f-value $f$ must lie between zero and
+one for the relation to be satisfied.  However, if none of the iteration
+variables have any effect on the values of $A$ and $B$, and $A$ happens to be
+\textit{greater}\/ than $B$, then \process\ will clearly not be able to solve
+the constraint.
+
+The lower and upper bounds of the iteration variables are all available to be
+changed in the input file. Constraints can be relaxed in a controlled manner
+by moving these bounds, although in some cases care should be taken to ensure
+that unphysical values cannot occur.  The code indicates which iteration
+variables lie at the edge of their range.
+
+It is suggested that constraint equations should be added one at a time, with
+sufficient new iteration variables activated at each step.  If the situation
+becomes unfeasible it can be helpful to reset the initial iteration variable
+values to those shown in the output from a previous feasible case, and rerun
+the code.
+
+Finally, it should be borne in mind that the machine that is envisaged may not
+be a valid solution to the constraints being imposed, no matter how many
+degrees of freedom (i.e.\ iteration variables) are available. In this case,
+and many others, the user has to relax the constraints slowly until a feasible
+result is found.
+

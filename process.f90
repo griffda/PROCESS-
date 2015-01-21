@@ -31,6 +31,7 @@ program process
   !+ad_prob  None
   !+ad_call  numerics
   !+ad_call  error_handling
+  !+ad_call  global_variables
   !+ad_call  process_input
   !+ad_call  process_output
   !+ad_call  scan_module
@@ -48,6 +49,7 @@ program process
   !+ad_hist  06/11/12 PJK Renamed this source file from aamain.f90 to process.f90.
   !+ad_hisc               Transferred routine inform from aachange.f90 
   !+ad_hist  13/02/14 PJK Added mfile close statement
+  !+ad_hist  10/09/14 PJK Added vfile close statement
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  Box file F/RS/CIRE5523/PWF (up to 15/01/96)
@@ -57,6 +59,7 @@ program process
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use error_handling
+  use global_variables
   use process_input
   use process_output
   use scan_module
@@ -97,6 +100,7 @@ program process
   close(unit=nout)
   close(unit=nplot)
   close(unit=mfile)
+  if (verbose == 1) close(unit=vfile)
 
 end program process
 
@@ -117,6 +121,7 @@ subroutine init
   !+ad_call  error_handling
   !+ad_call  global_variables
   !+ad_call  impurity_radiation_module
+  !+ad_call  numerics
   !+ad_call  process_input
   !+ad_call  process_output
   !+ad_call  check
@@ -134,13 +139,16 @@ subroutine init
   !+ad_hist  13/05/14 PJK Added impurity radiation model initialisation
   !+ad_hist  25/06/14 PJK Introduced call to initialise error handling
   !+ad_hist  22/07/14 PJK Rearranged calls to print output headers
+  !+ad_hist  10/09/14 PJK Added vfile open statement
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use error_handling
+  use global_variables, only: verbose
   use impurity_radiation_module
+  use numerics
   use process_input
   use process_output
 
@@ -149,6 +157,8 @@ subroutine init
   !  Arguments
 
   !  Local variables
+
+  integer :: i
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -182,6 +192,18 @@ subroutine init
   !  Write to the output file certain relevant details about this run
 
   call run_summary
+
+  !  Open verbose diagnostics file
+
+  if (verbose == 1) then
+     open(unit=vfile,file='VFILE.DAT',status='unknown')  
+     write(vfile,'(a80)') 'nviter = number of VMCON iterations.'
+     write(vfile,'(a80)') '(1-mod(ifail,7))=1 indicates that there has '// &
+          'been an escape from a failed line search.'
+     write(vfile,'(a80)') 'odd/even is a convenient plotting bit.'
+     write(vfile,'(100a13)') 'nviter','escape', 'odd/even', 'te','coe','rmajor', &
+          'powfmw','bt','tburn','sqsumsq', (lablxc(ixc(i)),i=1,nvar)
+  end if
 
 end subroutine init
 
@@ -252,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '316    Release Date :: 2014-07-31'
+       '382    Release Date :: 2015-01-20'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -530,6 +552,7 @@ subroutine eqslv(ifail)
   !+ad_hist  09/07/14 PJK Turned on error reporting
   !+ad_hist  28/07/14 PJK Added constraint_eqns call to evaluate residues
   !+ad_hisc               in physical units
+  !+ad_hist  19/08/14 PJK Added neqns, normalised residues to output
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -585,6 +608,7 @@ subroutine eqslv(ifail)
   if (ifail /= 1) then
      call ocmmnt(nout,'but could not find a feasible set of parameters.')
      call oblnkl(nout)
+     call ovarin(nout,'Number of iteration variables and constraints','(neqns)',neqns)
      call ovarin(nout,'HYBRD error flag','(ifail)',ifail)
 
      call oheadr(iotty,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
@@ -664,6 +688,8 @@ subroutine eqslv(ifail)
   do inn = 1,neqns
      write(nout,60) inn,lablcc(icc(inn)),sym(inn),con2(inn), &
           lab(inn),err(inn),lab(inn),con1(inn)
+     call ovarre(mfile,lablcc(icc(inn))//' normalised residue', &
+          '(normres'//int_to_string3(inn)//')',con1(inn))
   end do
 60 format(t2,i4,t8,a33,t46,a1,t47,1pe12.4,t60,a10,t71,1pe12.4,t84,a10,t98,1pe12.4)
 
@@ -977,6 +1003,7 @@ subroutine doopt(ifail)
   !+ad_hist  09/07/14 PJK Added range-normalised iteration variable values to mfile
   !+ad_hist  28/07/14 PJK Added constraint_eqns call to evaluate residues
   !+ad_hisc               in physical units
+  !+ad_hist  19/08/14 PJK Added nvar, neqns to output, constraint residues to mfile
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1073,6 +1100,8 @@ subroutine doopt(ifail)
      end if
   end if
 
+  call ovarin(nout,'Number of iteration variables','(nvar)',nvar)
+  call ovarin(nout,'Number of constraints','(neqns)',neqns)
   call ovarin(nout,'Optimisation switch','(ioptimz)',ioptimz)
   call ovarin(nout,'Figure of merit switch','(minmax)',minmax)
   if (ifail /= 1) then
@@ -1191,6 +1220,8 @@ subroutine doopt(ifail)
   do inn = 1,neqns
      write(nout,110) inn,lablcc(icc(inn)),sym(inn),con2(inn), &
           lab(inn),err(inn),lab(inn),con1(inn)
+     call ovarre(mfile,lablcc(icc(inn))//' normalised residue', &
+          '(normres'//int_to_string3(inn)//')',con1(inn))
   end do
 110 format(t2,i4,t8,a33,t46,a1,t47,1pe12.4,t60,a10,t71,1pe12.4,t84,a10,t98,1pe12.4)
 
@@ -1229,6 +1260,7 @@ subroutine final(ifail)
   !+ad_hist  09/10/12 PJK Modified to use new process_output module
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
   !+ad_hist  23/01/13 PJK Changed format for single iteration outputs
+  !+ad_hist  10/09/14 PJK Removed output lines if a given solver is unused
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1255,23 +1287,47 @@ subroutine final(ifail)
 
   call output(nout)
 
-  if (nfev1 == 1) then ! (unlikely that nviter is also 1...)
-     write(iotty,10) nfev1,nviter,ncalls
+  if (nfev1 == 0) then  !  no HYBRD call
+     if (nviter == 1) then
+        write(iotty,10) nviter,ncalls
+     else
+        write(iotty,20) nviter,ncalls
+     end if
+  else if (nviter == 0) then  !  no VMCON call
+     if (nfev1 == 1) then
+        write(iotty,30) nfev1,ncalls
+     else
+        write(iotty,40) nfev1,ncalls
+     end if
+  else if (nfev1 == 1) then ! (unlikely that nviter is also 1...)
+     write(iotty,50) nfev1,nviter,ncalls
   else if (nviter == 1) then ! (unlikely that nfev1 is also 1...)
-     write(iotty,20) nfev1,nviter,ncalls
+     write(iotty,60) nfev1,nviter,ncalls
   else
-     write(iotty,30) nfev1,nviter,ncalls
+     write(iotty,70) nfev1,nviter,ncalls
   end if
 
 10 format( &
+       t2,'The optimisation required ',i5,' iteration',/, &
+       t2,'There were ',i6,' function calls')
+20 format( &
+       t2,'The optimisation required ',i5,' iterations',/, &
+       t2,'There were ',i6,' function calls')
+30 format( &
+       t2,'The HYBRD point required ',i5,' iteration',/, &
+       t2,'There were ',i6,' function calls')
+40 format( &
+       t2,'The HYBRD point required ',i5,' iterations',/, &
+       t2,'There were ',i6,' function calls')
+50 format( &
        t2,'The HYBRD point required ',i5,' iteration',/, &
        t2,'The optimisation required ',i5,' iterations',/, &
        t2,'There were ',i6,' function calls')
-20 format( &
+60 format( &
        t2,'The HYBRD point required ',i5,' iterations',/, &
        t2,'The optimisation required ',i5,' iteration',/, &
        t2,'There were ',i6,' function calls')
-30 format( &
+70 format( &
        t2,'The HYBRD point required ',i5,' iterations',/, &
        t2,'The optimisation required ',i5,' iterations',/, &
        t2,'There were ',i6,' function calls')
@@ -1316,6 +1372,7 @@ subroutine output(outfile)
   !+ad_call  vaccum_module
   !+ad_call  acpow
   !+ad_call  avail
+  !+ad_call  avail_new
   !+ad_call  bldgcall
   !+ad_call  cntrpst
   !+ad_call  costs
@@ -1388,6 +1445,7 @@ subroutine output(outfile)
   use build_module
   use buildings_module
   use costs_module
+  use cost_variables
   use current_drive_module
   use divertor_module
   use error_handling
@@ -1440,7 +1498,11 @@ subroutine output(outfile)
   end if
 
   call costs(outfile,1)
-  call avail(outfile,1)
+  if (iavail > 1) then
+     call avail_new(outfile, 1)
+  else 
+     call avail(outfile,1)
+  end if
   call outplas(outfile)
   !call startup(outfile,1)  !  commented-out for speed reasons
   call igmarcal(outfile)
@@ -1741,3 +1803,80 @@ end subroutine output
 !          tokamaks
 ! GIT 315: Changed TF coil outboard radial thickness calculation
 ! GIT 316: tfthko now equal to tfcth for tokamaks; improved TF coil conductor mass calculations
+! GIT 317: Updated run_process.py, process_config.py, process_funcs.py, process_dicts.py,
+!          write_new_in_dat.py, in_dat.py
+! GIT 318: Removed obsolete variables, other minor tidy-ups
+! GIT 319: Removed casfact; added some variables to output files; trapped nvar < neqns
+! GIT 320: Set fshine to zero if it is negligible; updated process_funcs.py;
+!          trapped insufficient numbers of specified ixc, icc elements
+! GIT 321: Added diagnose_process.py utility + funcs; minor wording changes elsewhere.
+! GIT 322: Error list now read in from a JSON file
+! GIT 323: New peak TF with ripple calculation; modified ripple calculation applicability range
+! GIT 324: New scaling for PF coil to cryostat lid clearance
+! GIT 325: Updated impurity radiation datafiles
+! GIT 326: Added additional power balance outputs
+! GIT 327: Added verbose output to VFILE.DAT
+! GIT 328: Added error traps to pedestal profile routines
+! GIT 329: Added tfcryoarea in advance of a change to the steady state cryogenic load calculation
+! GIT 330: Removed Myall TF coil stress model; tfc_model switch usage changed
+! GIT (new_defaults branch): Changed default values to approximate ITER-FDR (ITER98) design
+! GIT (new_defaults branch): Updated/re-ordered variable descriptions
+! GIT 331: Updated plot_proc_func.py
+! GIT 332: Attempted to clarify zref usage
+! GIT 333: Minor comment changes
+! GIT 334: Merged new_defaults branch into develop branch
+! GIT 335: Introduced a_to_b python utility
+! GIT 336: Root directory is set via Makefile and new shell script setrootdir
+! GIT 337: Corrections to create_dicts.py
+! GIT 338: Minor corrections arising from gfortran warnings/error reports; added
+!          impuritydata files to repository
+! GIT 339: Merged process_gui branch into develop branch
+! GIT 340: Rearranged GUI directory contents; reworded parts of User Guide
+! GIT 341: September 2014 Master Release
+! GIT 342: Added more ishape options
+! GIT 343: Added L-H power threshold constraint
+! GIT 344: Fixed problem with create_dicts.py (need to remove *.f90*~ files before running);
+!          added conducting shell radius to rminor ratio constraint
+! GIT 345: New NBI shine-through fraction constraint
+! GIT 346: Added NBI orbit loss fraction
+! GIT 347: Clarified NBI comments
+! GIT 348: Improved TF coil superconductor temperature margin calculation;
+!          modified reporting of errors pertaining to the input file;
+!          clarified comments and variable names in routine itersc
+! GIT 349: Split User Guide over several .tex files
+! GIT 350: PF/CS superconductor calculations now use same routines as for TF coils;
+!          PF/CS coil case calculations clarified
+! GIT 351: OH coil changed to Central solenoid in output files
+! GIT 352: Confinement times for H=1 instead of H=2 now output
+! GIT 353: Corrections to NBI orbit loss power handling; User Guide figure updates
+! GIT 354: Updated build diagrams in User Guide
+! GIT 355: Minor modifications and extra outputs for superconductor current density calculations
+! GIT 356: Clarified some comments in PF coil field and current density calculations
+! GIT 357: Added aion as an output
+! GIT 358: Changed default values for fcuohsu, vfohc
+! GIT 359: Added CS temperature margin calculation plus constraint
+! GIT 360: Updated plot_proc_func.py
+! GIT 361: Added warnings if itersc variables are out of range
+! GIT 362: Changed tdwell default value;
+!          incorporated tburn/tcycle into cost of electricity calculation
+! GIT 363: Added fkzohm elongation adjustment multiplier
+! GIT 364: Modified iradloss usage
+! GIT 365: Ensured that CS conductor area remains positive
+! GIT 366: Removed confusing acs/aturn comments in superconpf; disabled separate ion and electron
+!          power balance constraints
+! GIT 367: Added output_costs switch to turn on/off costing information to file
+! GIT 368: Minor changes to User Guide
+! GIT 369: Updated in_dat.py
+! GIT 370: Corrected dcond usage for resistive PF coils
+! GIT 371: Minor changes to User Guide
+! GIT 372: Updated plot_proc_func.py; added 'make all' option
+! GIT 373: Modified pinjmw description in output; changed abktflnc, adivflnc default values
+! GIT 374: Added new availability model
+! GIT 375: Updated instructions in User Guide regarding code changes and documentation
+! GIT 376: Merged latest changes from dev_availability; addition of git commands to User Guide
+! GIT 377: Minor correction to numerics.f90 for gfortran compilation
+! GIT 379: Modified FISPACT I/O to use formatted data files
+! GIT 380: Post-merger with dev_uncertainties branch
+! GIT 381: Changed pinjht description;
+!          Changed Django library location for GUI
+! GIT 382: Various GIT branches merged

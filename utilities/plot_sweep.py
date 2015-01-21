@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#! /usr/bin/env python
 
 """
    PJK 15/05/2014: Updated to python3 using 2to3 tool

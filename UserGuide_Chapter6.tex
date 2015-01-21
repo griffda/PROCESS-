@@ -1,0 +1,1450 @@
+\mychapter{Utility Programs}
+\label{chap:utilities}
+
+A number of Python utilities for \process\ are available which allow the user
+to perform a number of useful actions, for instance to modify the
+input file \indat, run \process\ until a feasible solution is found, or to
+extract and plot data from the \process\ output. All utilities are available
+from \texttt{~PROCESS/master/utilities}.
+
+For \process\ \textit{users}, only the Python executables described in
+Section~\ref{sec:py_exec} are relevant. For anyone interested in modifying the
+existing code or developing new Python utilities the \process\ Python
+libraries are described in Section~\ref{sec:py_lib}.
+
+All executables are using Python library functions either from the publicly
+available \texttt{numpy}, \texttt{scipy} and \texttt{matplotlib} libraries or
+the \process\ Python libraries documented in Section~\ref{sec:py_lib}. To use
+the \process\ Python libraries you need to make sure their directory is in
+your Python path. Use the commands given in Section~\ref{sec:run_environment} to
+do this.
+
+All Python code has been written for Python 3 and adheres to the PEP8 standard.
+
+\section{Executables}
+\label{sec:py_exec}
+
+All executables can be run by using any of the following commands:
+\begin{quote}
+\begin{verbatim}
+python executable_name.py
+python3 executable_name.py
+executable_name.py
+\end{verbatim}
+\end{quote}
+and they typically have a short description of their usage when putting
+\texttt{-h} or \texttt{--help} as arguments:
+\begin{quote}
+\begin{verbatim}
+python executable_name.py -h
+\end{verbatim}
+\end{quote}
+
+Some executables come with a configuration file that typically follows the
+naming convention \texttt{executable\_name.conf}. To run the executable please
+copy the config file into your own work directory. Do \textbf{NOT} try to edit
+the config file in the \process\ directory.
+
+\subsection{write\_new\_in\_dat.py}
+
+This program modifies a given \indat\ file such that all iteration variables
+are given by their values in \outdat. The final values of the iteration
+variables in \outdat\ are set in a block at the end of \indat. Any other
+definitions of these variables are commented out.
+
+\begin{description}
+\item{\textbf{Input:}}
+\indat, \outdat\ 
+                                
+\item{\textbf{Output:}}
+\texttt{new\_IN.DAT}
+\end{description}
+
+\subsection{write\_constraints.py}
+
+This Python script modifies the \process\ input file \indat\ to include the
+constraints marked ``\texttt{Y}'' or ``\texttt{y}'' in a configuration file
+called \texttt{write\_constraints.conf}. It automatically adds the required
+iteration variable for each constraint, and any additional iteration variables
+selected. The script also creates blank upper and lower bound equations; these
+need to be completed manually or deleted. All files used need to be in the
+working directory. The original \indat\ is renamed \texttt{OLD.IN.DAT}.
+
+\begin{description}
+\item{\textbf{Input:}}
+\indat, \texttt{write\_constraints.conf}
+                                
+\item{\textbf{Output:}}
+\indat, \texttt{OLD.IN.DAT}
+\end{description}
+
+\paragraph{Configuration Options:}
+
+The configuration file \texttt{write\_constraints.conf} has the following style:
+\begin{framed}
+\begin{verbatim}
+Constraints and associated iteration variables
+y ICC=1 plasma beta consistency ixc=5 beta plasma beta 0.001d0 1.0d0
+y ICC=2 global power balance    ixc=10 hfact confinement time h-factor 0.1d0 3.0d0
+  ICC=3 ion power balance                                            
+  ICC=4 electron power balance 
+...
+Remaining iteration variables
+  IXC=1 aspect plasma aspect ratio 1.100D0 10.00D0
+y IXC=2 bt toroidal field on axis 0.010D0 100.0D0
+  IXC=3 rmajor plasma major radius 0.100D0 10.00D0
+...
+\end{verbatim}
+\end{framed}
+An example version that can be modified is available in the utilities directory.
+
+\subsection{run\_process.py}
+
+This program runs \process, if necessary, with varying iteration variable
+start parameters until a feasible solution is found.
+
+\begin{description}
+\item{\textbf{Input:}}
+\texttt{run\_process.conf}, an \indat\ file as specified in the config file
+                                
+\item{\textbf{Output (in the specified work directory):}} All the standard
+  PROCESS output, \texttt{process.log} (log file), \texttt{README.txt}
+  (contains comments from config file)
+\end{description}
+
+\paragraph{Configuration Options:}
+
+The configuration file \texttt{run\_process.conf} has the following style:
+\begin{framed}
+\begin{verbatim}
+* This is a comment in the config file!
+
+* Path to working directory in which PROCESS is run.
+WDIR = Run1
+* original IN.DAT name 
+ORIGINAL_IN_DAT = demo1a_10_sep_13.IN.DAT
+* PATH to PROCESS binary
+PROCESS = ~PROCESS/master/process
+* ONE line comment to be put into README.txt
+COMMENT = This is a test DEMO run! ;-)
+* Max. no iterations
+NITER = 5
+* integer seed for random number generator; use None for random seed
+SEED = 2
+* factor within which the iteration variables are changed
+FACTOR = 1.5
+* Number of allowed unfeasible points that do not trigger rerunning.
+NO_ALLOWED_UNFEASIBLE = 0 
+* include a summary file with the iteration variables at each stage.
+INCLUDE_ITERVAR_DIFF = True
+* add iteration variables - comma separated
+ADD_IXC = 99, 77
+* remove iteration variables - comma separated
+DEL_IXC = 
+* add constraint equations  - comma separated 
+ADD_ICC = 57,
+* remove constraint equations - comma separated
+DEL_ICC =
+* set any variable to a new value
+* the variable does not have to exist in IN.DAT
+VAR_TFTORT = 1.9
+VAR_EPSVMC = 1e-4
+* remove variables
+DEL_VAR_IITER
+\end{verbatim}
+\end{framed}
+A configuration file with an alternative name can be specified using the optional argument
+\begin{quote}
+\begin{verbatim}
+run_process.py -f CONFIGFILE
+\end{verbatim}
+\end{quote}
+
+\subsection{build\_index.py}
+
+Creates an index of all \process\ run comments in a series of subfolders.
+
+\begin{description}
+\item{\textbf{Input:}}
+None
+                                
+\item{\textbf{Output:}}
+\verb|Index.txt|
+\end{description}
+
+\paragraph{Configuration Options:}
+
+Optional arguments are:
+\begin{quote}
+\begin{verbatim}
+# change the name of the file containing the folder description
+build_index.py -r README.txt 
+# append the results to Index.txt instead of creating a new file
+build_index.py -m a
+# change the name of the subfolder Base - default=Run
+build_index.py -b Base 
+# give a list of subfolder suffixes - default=all
+build_index.py -s 1-4,6,8,9-12 
+# increase verbosity
+build_index.py -v
+\end{verbatim}
+\end{quote}
+
+An example \texttt{Index.txt} file might look like this
+\begin{framed}
+\begin{verbatim}
+Run1:
+ Original run
+
+Run2:
+ Changed the no. TF coils
+...
+\end{verbatim}
+\end{framed}
+
+\subsection{make\_plot\_dat.py}
+
+Creates a \plotdat-type file from \mfile.
+
+\begin{description}
+\item{\textbf{Input:}}
+\verb|make_plot_dat.conf|, \mfile\
+                                
+\item{\textbf{Output:}}
+\verb|make_plot_dat.out|
+\end{description}
+
+\paragraph{Configuration Options:}
+
+Optional arguments are:
+\begin{quote} 
+\begin{verbatim}
+# new variables for output
+make_plot_dat.py -p rmajor
+# writes make_plot_dat.out in columns 
+make_plot_dat.py --columns
+# resets make_plot_dat.conf to PLOT.DAT layout
+make_plot_dat.py --reset-config
+# file to read as input
+make_plot_dat.py -f MFILE.DAT 
+# run with default parameters
+make_plot_dat.py --defaults
+\end{verbatim}
+\end{quote}
+
+An example version of \texttt{make\_plot\_dat.conf} might look like this:
+\begin{framed}
+\begin{verbatim}
+# make_plot_dat.out config file.
+rmajor
+aspect
+rminor
+bt
+powfmw
+pnetelmw
+te
+pdivt
+strtf1
+strtf2
+\end{verbatim}
+\end{framed}
+
+\subsection{plot\_proc.py}
+
+A utility to produce the standard \process\ summary output, covering the major
+parameters, provenance data, and a machine cross-section. It allows a wide
+range of graphical output formats and can easily be customised using the
+function \texttt{gather\_info()} in \texttt{plot\_proc\_func.py}.
+
+\begin{description}
+\item{\textbf{Input:}}
+ \mfile
+                                
+\item{\textbf{Output:}}
+\verb|proc_plot_out.pdf| (or as specified by user)
+\end{description}
+
+\paragraph{Configuration Options:}
+
+Optional arguments are:
+\begin{quote}
+\begin{verbatim}
+# change the input file name
+python plot_proc.py -f MFILE.DAT 
+# change the output file name
+python plot_proc.py -o out.pdf
+# show the plot as well as saving the figure
+python plot_proc.py -s 
+\end{verbatim}
+\end{quote}
+
+\subsection{plot\_sweep.py}
+
+This utility plots normalised values from \plotdat\ and allows comparisons of
+changes in values from a sweep compared to the first point in the sweep. It is
+now somewhat deprecated due to the existence of more flexible sweep-generating
+and output-handling utilities.
+
+\begin{description}
+\item{\textbf{Input:}}
+ \plotdat\
+                                
+\item{\textbf{Output:}}
+\texttt{PLOT.DAT.eps} (default or as specified by user)
+\end{description}
+
+\paragraph{Configuration Options:}
+
+Optional arguments are:
+\begin{quote}
+\begin{verbatim}
+# creates PLOT.DAT.eps with R0, IP, beta
+python plot_sweep.py -g 11 13 18 
+# creates demo1.png with Te, n
+python plot_sweep.py -o demo1.png 21 22
+\end{verbatim}
+\end{quote}
+
+\subsection{plot\_mfile\_sweep.py}
+
+This utility plots normalised values from \mfile\ and allows comparisons of
+changes in values from a sweep compared to the first point in the sweep.
+
+\begin{description}
+\item{\textbf{Input:}}
+ \mfile
+                                
+\item{\textbf{Output:}}
+\texttt{sweep\_fig.pdf} (default or as specified by user)
+\end{description}
+
+Optional arguments are:
+\begin{quote}
+\begin{verbatim}
+# creates sweep_fig.pdf with R0, te, aspect (same variable names as in MFILE.DAT)
+python plot_mfile_sweep.py -p rmajor te aspect
+# creates demo1.png with Te, n
+python plot_mfile_sweep.py -o demo1.png -p te dene
+# creates a sweep_fig.pdf with R0, aspect with a different MFILE.DAT
+python plot_mfile_sweep.py -f diff_mfile.dat -p rmajor aspect
+# Show plot to screen instead of saving with R0 and aspect
+python plot_mfile_sweep.py -p rmajor aspect --show
+
+Use -h or --help for help
+
+\end{verbatim}
+\end{quote}
+
+\subsection{diagnose\_process.py}
+
+This utility aids the user to interpret (unsuccessful) \process\/ runs, unless
+\process\/ has terminated prematurely. It takes an existing \mfile\ and plots
+the normalised iteration variables, i.e.\ the iteration variable values
+normalised to their bounds such that 0 indicates an iteration variable at its
+lower bound and 1 an iteration variable at its upper bound. Furthermore, it
+shows the normalised constraint residuals.
+
+\begin{description}
+\item{\textbf{Input:}}
+ \mfile
+                                
+\item{\textbf{Output:}}
+  Displays plots on screen, still need to be saved by the user! (Remember to
+  use -Y or -X, if \texttt{ssh}ing into a remote machine!)
+
+\end{description}
+
+Optional arguments are:
+\begin{quote}
+\begin{verbatim}
+# allows to specify another location/name for the MFILE
+python diagnose_process.py -f MFILE.DAT
+
+Use -h or --help for help
+
+\end{verbatim}
+\end{quote}
+
+%\subsection{2D\_scan.py}
+
+%\Red{N.B.\ This utility is currently not working --- please do not try to use it.}
+
+%Runs a two-dimensional scan of \process\ variables. This code does not yet use
+%the new \process\ Python libraries.
+
+%\begin{description}
+%\item{\textbf{Input:}}
+% \texttt{2D\_scan.conf}, \indat\
+                                
+%\item{\textbf{Output:}} All the standard PROCESS output files,
+%  \texttt{ERROR.DAT} (Error matrix for all iterations), \texttt{EDGETABLE.DAT}
+%  (Marks if variables at bounds), \texttt{MATRICES.DAT} (Solution for each
+%  variable), \texttt{EDGEVARS.DAT} (Names of variables at bounds)
+%\end{description}
+
+%\paragraph{Configuration Options:}
+
+%The configuration file \texttt{2D\_scan.conf} has the following style
+%\begin{framed}
+%\begin{verbatim}
+%* This is a comment
+
+%* No evaluations of the first variable
+%N1= 10
+%* lower bound of first variable
+%LB1= 1
+%* upper bound of first variable
+%UB1= 3
+%* name of first variable
+%NAME1= abktflnc
+
+%* No evaluations of the second variable
+%N2= 15
+%* lower bound of the second variable
+%LB2= 3
+%* upper bound of the second variable
+%UB2= 8
+%* name of the second variable
+%NAME2= bktlife
+
+%* Output variables as given by their variable description
+%OUT_VARS
+%Major Radius
+%Pdivt
+%/OUT_VARS
+
+%* Directory path to IN.DAT
+%PATH=/DIR2INDAT
+%* Boolean flag to store OUT.DAT and PLOT.DAT for each run
+%* in the Data/ subdir
+%DATA=0
+%\end{verbatim}
+%\end{framed}
+
+
+
+\subsection{N-Dimensional Scanner Utility}
+
+This suite of Python utilities allows the user to conduct systematic, multi-dimensional parameter studies with \process. It systematically varies a set of N user defined parameters within predefined bounds. The final results can be evaluated using the corresponding visualisation tool and/or saved in standard NetCDF format for further analysis.
+
+The suite contains the following executables
+\begin{itemize}
+\item \texttt{ndscan.py} - executes the Nd-scan as specified in the configuration file.
+\item \texttt{make\_netcdf.py} - creates a NetCDF output file from a previous Nd-scan run.
+\item \texttt{ndscan\_and\_package.py} - both executes the Nd-scan and creates the NetCDF output file.
+\item \texttt{ndscan\_visualisation.py} - visualises the NetCDF output.
+\end{itemize}
+
+
+\begin{description}
+\item{\textbf{Input:}}
+ \texttt{ndscan.conf}, \indat\, \texttt{run\_process.conf} (optional)
+                                
+\item{\textbf{Output:}} All the standard PROCESS output files,
+plus XXX
+\end{description}
+
+\paragraph{Configuration Options:}
+
+The configuration file \texttt{ndscan.conf} uses the JSON format and has the following style
+\begin{framed}
+\begin{verbatim}
+{
+     ``Axes'':[
+          {
+               ``Varname'':''x'',
+               ``Lowerbound'':1.0,
+               ``Upperbound'':2.0,
+               ``Steps'':5
+          }
+	     ],
+     ``RanBefore'':false
+}
+\end{verbatim}
+\end{framed}
+
+\subsection{a\_to\_b.py}
+
+Takes an initial \indat\ and a target \indat\ and runs \process\ repeatedly
+with the aim of walking the solution to the initial input file to a solution
+using the values of the variables in the target input file.  After each step,
+the output values of the iteration variables are used as the input values for
+the next step.
+
+\begin{description}
+\item{\textbf{Input:}}
+\texttt{a\_to\_b.conf}
+
+\item{\textbf{Output}} 
+
+When the program finishes, the .DAT files from the last run of \process\ can
+be found in the specified working directory.
+
+If option keep\_output = True: \indat, \outdat, \mfile\ and logged process
+output of each step are stored. Files are prefaced with their step number
+eg. \texttt{003.IN.DAT} and copied to the specified output directory.
+
+\end{description}
+
+\paragraph{Configuration Options:}
+
+The configuration file \texttt{a\_to\_b.conf} has the following style:
+\begin{framed}
+\begin{verbatim}
+*Comment line
+
+*Working directory to store temporary files, default = wdir
+wdir = wdir
+
+*Switch to keep .DAT files for every step, default = True
+keep_output = True
+
+*Directory for output if keep_output = True, default = steps
+outdir = steps
+
+*IN.DAT file for A, default = A.DAT
+a_filename = A.DAT
+
+*IN.DAT file for B, default = B.DAT
+b_filename = B.DAT
+
+*Path to process binary
+*path_to_process = /home/PROCESS/master/process
+path_to_process = /home/PROCESS/master/process
+
+*Number of iterations of vary_iteration_variables to run, default = 20
+vary_niter = 20
+
+*Number of steps to go from A to B, default = 10
+nsteps = 10
+
+*Factor to vary iteration variables within, default = 1.2
+factor = 1.2
+
+*Gap between upper and lower bounds to narrow to, default = 1.001
+bound_gap = 1.001
+\end{verbatim}
+\end{framed}
+
+\subsection{Uncertainty Tools}
+
+In this section, we explain the usage of the \process\/ tools to both evaluate
+the uncertainties of a design point as well as display them using a simple
+plotting facility.
+
+Note that the uncertainty evaluation tool has a significantly longer run time
+than typical evaluations of \process\/ design points and therefore should only
+be used once a suitable design point has been found.  As only user selected
+output data is kept, the user is recommended to put careful thought into the
+list of needed output variables.
+
+\subsubsection{evaluate\_uncertainties.py}
+This program evaluates the uncertainties of a single \process\ design point by
+use of a Monte Carlo method as described in \cite{WPPMI2014Report}. It takes a
+set of uncertain parameters as input that can have either a Gaussian or a flat
+distribution. These are specified together with optional details about the
+\process\ run in a configuration file. Additionally, an \indat\ file
+describing the relevant design point needs to be present. This can be created
+from an \mfile\ by using the \texttt{write\_new\_indat.py} tool.
+
+When running the \texttt{evaluate\_uncertainties.py} tool, optional arguments are:
+\begin{quote}
+\begin{verbatim}
+#to specify another location/name for the configfile
+evaluate_uncertainties.py -f CONFIGFILE
+
+Use -h or --help for help
+\end{verbatim}
+\end{quote}
+It takes the following input and produces the following output files
+\begin{description}
+\item{\textbf{Input:}} \texttt{evaluate\_uncertainties.json}, \indat\ (or an
+  alternative input file as specified in the config file)
+                                
+\item{\textbf{Output:}} \texttt{uncertainties.nc}, \texttt{Readme.txt},
+  \texttt{process.log} and the standard \process\ output from the last run.
+\end{description}
+The configuration file \texttt{evaluate\_uncertainties.json} uses the JSON
+format\footnote{www.json.org} and has the following style
+\begin{framed}
+\begin{verbatim}
+{
+	"_description": "Config file for uncertainties evaluation",
+	"_author": "Hanni Lux",
+	
+	"config": {
+		  "runtitle": "testrun for uncertainty tool on DEMO2",
+		  "IN.DAT_path": "IN.DAT_demo2",
+		  "process_bin": "~pknight/process/branches/master/process.exe",
+		  "working_directory": "Run1",
+		  "pseudorandom_seed": 2
+		  },
+	"uncertainties": [
+		     {
+               	     "Varname":"flhthresh",
+               	     "Errortype":"Gaussian",
+               	     "Mean":1.0,
+               	     "Std":0.05
+          	     },          
+          	     {
+               	     "Varname":"coreradius",
+               	     "Errortype":"Uniform",
+               	     "Lowerbound":0.6,
+               	     "Upperbound":0.9
+          	     },
+          	     {
+               	     "Varname":"etanbi",
+               	     "Errortype":"Relative",
+               	     "Mean":0.3,
+               	     "Percentage":10.0
+          	     } 
+	     	],
+     "output_vars": [ "rmajor", "dene", "te", "bt"],
+     "no_samples": 1000    
+}
+\end{verbatim}
+\end{framed}
+By convention, we have designated metadata about the \process\ runs as having
+a preceding underscore to distinguish these values from the other
+configuration data used directly by the tools or \process\
+itself. Furthermore, all the optional attributes that can be changed when
+running \process\ from most Python utilities like
+e.g. \texttt{run\_process.py} can be specified in the ``config'' section. All
+these values have default values and do not need to be set.
+\begin{description}
+\item[\texttt{runtitle}] is a one line description of the purpose of the run
+  to be saved in Readme.txt in the working directory as well as the runtitle
+  parameter in the \outdat\ and \mfile\ files. Per default it is empty.
+\item[\texttt{IN.DAT\_path}] is the name/path of the \indat\ file describing
+  the design point. If not specified it is assumed to be \indat.
+\item[\texttt{process\_bin}] is the process binary that should be used. The
+  default assumes that the user works on the CCFE Fusion Linux machines and
+  has executed the module commands for \process\ as described in
+  \ref{sec:run_environment}. Then either the master or development branch of
+  process is being used depending on which module has been loaded.
+\item[\texttt{working\_directory}] represents the working directory, in which
+  \process\ will be executed, in case this is supposed to be different to the
+  current directory which can be helpful when executing several runs with
+  slightly different setups.
+\item[\texttt{pseudorandom\_seed}] is the value of the seed for the random
+  number generator. It can be any integer value. If it is not specified, its
+  default value is taken from the system clock.
+\end{description}
+
+Other parameters that can be specified in the config section are
+\texttt{Niter} and \texttt{factor}. Both do not typically need to be changed
+by the user. \texttt{Niter} is the maximum number of retries that the tool
+will attempt, if \process\ fails to find a feasible solution. This means that
+the tool varies the start values of the iteration variables within a factor
+given by \texttt{factor} of the original values as this does not change the
+physical meaning of the input file, but can help the solver to find a better
+starting point for its iteration. Their default values are \texttt{Niter}=10
+and \texttt{factor}=1.5.
+
+Any uncertain parameters should be specified in the ``uncertainties''
+section. Each parameter is specified in its own sub dictionary as shown in the
+example. For each, the \texttt{Varname} and \texttt{Errortype} need to be
+specified as well as the \texttt{Mean} and standard deviation \texttt{Std} for
+Gaussian type errors as well as \texttt{Lowerbound} and \texttt{Upperbound}
+for Uniform or \texttt{Mean} and a \texttt{Percentage} for Relative errors. At
+least one uncertain parameter has to be specified for the program to run and
+technically there is no upper limit as to how many uncertain parameters can be
+used. However, for large numbers of uncertain parameters it is recommended to
+increase the number of sampling points.
+
+There are a number of other parameters in the configuration file that can be specified:
+\begin{description}
+\item[\texttt{output\_vars}] is a list of strings of output variable names in
+  the \mfile. These are the variables saved. This list is empty by default and
+  it is therefore crucial for the user to specify the variables of interest
+  because otherwise the tool will not run.
+\item[\texttt{no\_samples}] sets the number of sample points in the Monte
+  Carlo method. It is by default set to its recommended minimum value of 1000,
+  but the user should contemplate higher values especially if a large number
+  of uncertain parameters is involved.
+\end{description}
+Two parameters that can be further set in the config file (but are not
+recommended to be changed) are the number of scan points \texttt{no\_scans}
+which is by default 5 and the number of allowed unfeasible points in a scan
+\texttt{no\_allowed\_unfeasible} which is 2 as recommended in
+\cite{WPPMI2014Report}.
+
+As the distributions of the uncertainties do not have to be represented by a
+simple Gaussian, reducing the output to two simple numbers like a mean and a
+standard deviation is not typically possible. Therefore, we have decided to
+keep all sampled points in the output files. However, to reduce the amount of
+data we have decided to only store the user specified parameters in the form
+of a NetCDF binary file. Given that a scan is performed at each sample point,
+only the last of these scan points is ever kept for evaluation. (There is an
+option for developers to keep all the data for debugging purposes. However,
+this should typically not be used in production runs.) These files can be
+visualised using the \texttt{display\_uncertainties.py} tool.
+
+
+\subsubsection{display\_uncertainties.py}
+
+This is a Python facility to display the NetCDF file created by the previously
+described \texttt{evaluate\_uncertainties.py} tool.
+
+By default, if run in the working directory of an uncertainty evaluation, it
+plots the 2D parameter distribution of each user defined output parameter
+against the next. It also shows the 1D histograms of each parameter
+distribution. If two specific variables are given as arguments, the tool plots
+only these two against each other.
+
+\begin{description}
+\item{\textbf{Input:}}
+ \texttt{uncertainties.nc}
+                                
+\item{\textbf{Output:}}
+Uncertainties\_varname1\_varname2.pdf
+\end{description}
+
+Usage:
+\begin{verbatim}
+display_uncertainties.py [-h] [-f FILENAME] [-e END] [v [v ...]]
+
+Program to display uncertainties of a given PROCESS design point.
+
+positional arguments:
+  v              list of variables to be plotted; default = all
+
+optional arguments:
+  -h, --help     show this help message and exit
+  -f FILENAME, --filename FILENAME
+                 uncertainties data file, default = uncertainties.nc
+  -e END, --end END     file format default = .pdf
+\end{verbatim}
+
+\subsection{create\_dicts.py}
+
+\Red{To do}
+
+\subsection{fit\_profile.py}
+
+This is a Python tool to fit a general temperature or density profile as given by the pedestalised profile parametrisation (\texttt{ipedestal} =1) to an ascii table. It is using a least squares method and is fitting the position of the pedestal as well as the peaking factors.  Optional arguments are 
+\begin{verbatim}
+
+  -h, --help            show this help message and exit
+  -f FILENAME, --filename FILENAME
+                        ascii file containing data in columns, default =
+                        profile.txt
+  -r RHO, --rho RHO     column of the normalised radius rho=r/a, default = 0
+  -n DENSITY, --density DENSITY
+                        column of the density profile, default = 1
+  -t TEMPERATURE, --temperature TEMPERATURE
+                        column of the temperature profile, default = 2
+  -rn RHOPEDN, --rhopedn RHOPEDN
+                        user defined initial guess of the density pedestal
+                        position, if outside [0,1] starts at 0.9, default =
+                        0.9
+  -rt RHOPEDT, --rhopedt RHOPEDT
+                        user defined initial guess of the temperature pedestal
+                        position, if outside [0,1], starts at 0.9, default =
+                        0.9
+
+\end{verbatim}
+If the column of the density or temperature data does not exist, it is ignored. A warning is issued.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Uncertainty Tools}
+
+In this section, we explain the usage of the \process\/ tools to both evaluate the uncertainties of a design point as well as display them using a simple plotting facility.
+
+Note that the uncertainty evaluation tool has a significantly longer run time than typical evaluations of \process\/ design points and therefore should only be used once a suitable design point has been found.  As only user selected output data is kept, the user is recommended to put careful thought into the list of needed output variables.
+
+\subsubsection{evaluate\_uncertainties.py}
+This program evaluates the uncertainties of a single \process\ design point by use of a Monte Carlo method as described in \cite{WPPMI2014Report}. It takes a set of uncertain parameters as input that can have either a Gaussian or a flat distribution. These are specified together with optional details about the \process\ run in a configuration file. Additionally, an \indat\ file describing the relevant design point needs to be present. This can be created from an \mfile\ by using the \texttt{write\_new\_indat.py} tool.
+
+When running the \texttt{evaluate\_uncertainties.py} tool, optional arguments are:
+\begin{quote}
+\begin{verbatim}
+#to specify another location/name for the configfile
+evaluate_uncertainties.py -f CONFIGFILE
+
+Use -h or --help for help
+\end{verbatim}
+\end{quote}
+It takes the following input and produces the following output files
+\begin{description}
+\item{\textbf{Input:}}
+ \texttt{evaluate\_uncertainties.json}, \indat\ (or an alternative input file as specified in the config file)
+                                
+\item{\textbf{Output:}}
+\texttt{uncertainties.nc}, \texttt{Readme.txt}, \texttt{process.log} and the standard \process\ output from the last run. 
+\end{description}
+The configuration file \texttt{evaluate\_uncertainties.json} uses the JSON format\footnote{www.json.org} and has the following style
+\begin{framed}
+\begin{verbatim}
+{
+	"_description": "Config file for uncertainties evaluation",
+	"_author": "Hanni Lux",
+	
+	"config": {
+		  "runtitle": "testrun for uncertainty tool on DEMO2",
+		  "IN.DAT_path": "IN.DAT_demo2",
+		  "process_bin": "~pknight/process/branches/master/process.exe",
+		  "working_directory": "Run1",
+		  "pseudorandom_seed": 2
+		  },
+	"uncertainties": [
+		     {
+               	     "Varname":"flhthresh",
+               	     "Errortype":"Gaussian",
+               	     "Mean":1.0,
+               	     "Std":0.05
+          	     },          
+          	     {
+               	     "Varname":"coreradius",
+               	     "Errortype":"Uniform",
+               	     "Lowerbound":0.6,
+               	     "Upperbound":0.9
+          	     },
+          	     {
+               	     "Varname":"etanbi",
+               	     "Errortype":"Relative",
+               	     "Mean":0.3,
+               	     "Percentage":10.0
+          	     } 
+	     	],
+     "output_vars": [ "rmajor", "dene", "te", "bt"],
+     "no_samples": 1000    
+}
+\end{verbatim}
+\end{framed}
+By convention, we have designated metadata about the \process\ runs as having a preceeding underscore to distinguish these values from the other configuration data used directly by the tools or \process\ itself. Furthermore, all the optional attributes that can be changed when running \process\ from most Python utilities like e.g. \texttt{run\_process.py} can be specified in the ``config'' section. All these values have default values and do not need to be set.
+\begin{description}
+\item[\texttt{runtitle}] is a one line description of the purpose of the run to be saved in Readme.txt in the working directory as well as the runtitle parameter in the \outdat\ and \mfile\ files. Per default it is empty. 
+\item[\texttt{IN.DAT\_path}] is the name/path of the \indat\ file describing the design point. If not specified it is assumed to be \indat. 
+\item[\texttt{process\_bin}] is the process binary that should be used. The default assumes that the user works on the CCFE Fusion Linux machines and has executed the module commands for \process\ as described in \ref{sec:run_environment}. Then either the master or development branch of process is being used depending on which module has been loaded. 
+\item[\texttt{working\_directory}] represents the working directory, in which \process\ will be executed, in case this is supposed to be different to the current directory which can be helpful when executing several runs with slightly different setups. 
+\item[\texttt{pseudorandom\_seed}] is the value of the seed for the random number generator. It can be any integer value. If it is not specified, its default value is taken from the system clock. 
+\end{description}
+
+Other parameters that can be specified in the config section are \texttt{Niter} and \texttt{factor}. Both do not typically need to be changed by the user. \texttt{Niter} is the maximum number of retries that the tool will attempt, if \process\ fails to find a feasible solution. This means that the tool varies the start values of the iteration variables within a factor given by \texttt{factor} of the original values as this does not change the physical meaning of the input file, but can help the solver to find a better starting point for its iteration. Their default values are \texttt{Niter}=10 and \texttt{factor}=1.5.
+
+Any uncertain parameters should be specified in the ``uncertainties'' section. Each parameter is specified in its own sub dictionary as shown in the example. For each, the \texttt{Varname} and \texttt{Errortype} need to be specified as well as the \texttt{Mean} and standard deviation \texttt{Std} for Gaussian type errors as well as \texttt{Lowerbound} and \texttt{Upperbound} for Uniform or \texttt{Mean} and a \texttt{Percentage} for Relative errors. At least one uncertain parameter has to be specified for the program to run and technically there is no upper limit as to how many uncertain parameters can be used. However, for large numbers of uncertain parameters it is recommended to increase the number of sampling points. 
+
+There are a number of other parameters in the configuration file that can be specified:
+\begin{description}
+\item[\texttt{output\_vars}] is a list of strings of output variable names in the \mfile. These are the variables saved. This list is empty by default and it is therefore crucial for the user to specify the variables of interest because otherwise the tool will not run. 
+\item[\texttt{no\_samples}] sets the number of sample points in the Monte Carlo method. It is by default set to its recommended minimum value of 1000, but the user should contemplate higher values especially if a large number of uncertain parameters is involved.
+\end{description}
+ Two parameters that can be further set in the config file (but are not recommended to be changed) are the number of scan points \texttt{no\_scans} which is by default 5 and the number of allowed unfeasible points in a scan \texttt{no\_allowed\_unfeasible} which is 2 as recommended in \cite{WPPMI2014Report}.
+ 
+
+As the distributions of the uncertainties do not have to be represented by a simple Gaussian, reducing the output to two simple numbers like a mean and a standard deviation is not typically possible. Therefore, we have decided to keep all sampled points in the output files. However, to reduce the amount of data we have decided to only store the user specified parameters in the form of a NetCDF binary file. Given that a scan is performed at each sample point, only the last of these scan points is ever kept for evaluation. (There is an option for developers to keep all the data for debugging purposes. However, this should typically not be used in production runs.) These files can be visualised using the \texttt{display\_uncertainties.py} tool. 
+
+
+\subsubsection{display\_uncertainties.py}
+This is a Python facility to display the NetCDF file created by the previously described \texttt{evaluate\_uncertainties.py} tool. 
+
+By default, if run in the working directory of an uncertainty evaluation, it plots the 2D parameter distribution of each user defined output parameter against the next. It also shows the 1D histograms of each parameter distribution. If two specific variables are given as arguments, the tool plots only these two against each other.
+
+\begin{description}
+\item{\textbf{Input:}}
+ \texttt{uncertainties.nc}
+                                
+\item{\textbf{Output:}}
+Uncertainties\_varname1\_varname2.pdf
+\end{description}
+
+Usage:
+\begin{verbatim}
+display_uncertainties.py [-h] [-f FILENAME] [-e END] [v [v ...]]
+
+Program to display uncertainties of a given PROCESS design point.
+
+positional arguments:
+  v              list of variables to be plotted; default = all
+
+optional arguments:
+  -h, --help     show this help message and exit
+  -f FILENAME, --filename FILENAME
+                 uncertainties data file, default = uncertainties.nc
+  -e END, --end END     file format default = .pdf
+\end{verbatim}
+
+\subsection{Batch Jobs}
+As \process\/ typically runs very fast and does not produce much data output, it is not typically necessary to submit \process\/ runs or any of the python executables as a batch job to the fusion linux machines. However, the \texttt{evaluate\_uncertainties.py} tool is one example of a python tool for \process\/ that does run for a long time and does create a lots of output. As the CPU time limit for any non-batch jobs on the fuslw machines is 30 Minutes, any decently sampled \texttt{evaluate\_uncertainties.py} run will need to be submitted as a batch job. (Please note, that if you have forgotten to submit your job as a batch job, your job will be terminated after 30 CPU minutes, but as the output is written to file continuously, you should not loose any of the output that has been produced until then.)
+
+To submit a batch job, first create a file called e.g. myjob.cmd. It should contain the following content
+\begin{verbatim}
+# @ executable = evaluate_uncertainties.py
+# @ arguments 
+# @ input = /dev/null
+# @ output = /ABSOLUTE_PATH_TO_WORK_DIR/ll.out
+# @ error = /ABSOLUTE_PATH_TO_WORK_DIR/ll.err
+# @ initialdir = /ABSOLUTE_PATH_TO_WORK_DIR/
+# @ notify_user = USERNAME
+# @ notification = complete
+# @ queue
+module use /home/pknight/modules
+module swap python
+module load process/master
+evaluate_uncertainties.py
+\end{verbatim}
+Once you have created the file you can submit a batch job by typing 
+\begin{verbatim}
+llsubmit myjob.cmd
+\end{verbatim}
+while your job is running you can keep track of its progress by typing \texttt{llq} or \texttt{xloadl}. More information and help with trouble shooting can be found under \url{http://fusweb1.fusion.ccfe.ac.uk/computing/funfaq/ll/}
+
+As the uncertainties.nc output file can get quite large, it might be indicated t o write the output to the /scratch or /tmp directories as they have faster I/O. Please remember, to copy your results into your home directory afterwards, as these directories are not backed up and will be frequently cleaned.
+
+
+\section{Libraries}
+\label{sec:py_lib}
+
+All library modules and functions are documented using docstrings. These can
+be accessed by reading the code directly or via the \texttt{help()} function
+in Python.
+
+\subsection{in\_dat.py}
+
+A set of Python classes to read, modify and write an \indat\ file.
+
+\begin{description}
+
+\item{\verb|INVariable(name, value, comment="")| } Initialises an \indat\
+  variable class which requires a name and a value.
+
+\end{description}
+
+\rule{\textwidth}{0.4pt}
+
+\begin{description}
+
+\item{\verb|INModule(name)|} Initialises an \indat\ module class which
+  requires a name. This class stores information for an \indat\ file which has
+  modules separated with lines with \$MODULE\_NAME and \$END.
+
+\item{\verb|INModule.add_variable(var)|} Adds an \verb|INVariable| object to
+  the \verb|INModule| class.
+
+\item{\verb|INModule.remove_variable(variable_name)|} Removes an
+  \verb|INVariable| object from the \verb|INModule| class.
+
+\item{\verb|INModule.add_line(line)|} Adds a line from the \indat\ that isn't
+  a variable line (e.g. a comment) to the \verb|INModule| class.
+
+\item{\verb|INModule.get_var(var_name)|} Returns an \verb|INVariable| object
+  from the \verb|INModule| class.
+
+\item{\verb|INModule.add_constraint_eqn(eqn_number)|} Adds constraint
+  equation \verb|eqn_number| to the list of constraint equations
+  \verb|InVariable| class if the equation is not already in the list.
+
+\item{\verb|INModule.remove_constraint_eqn(eqn_number)|} Removes
+  constraint equation \verb|eqn_number| from the list of constraint
+  equations \verb|InVariable| class if the equation is already in the list.
+
+\item{\verb|INModule.add_iteration_variable(var_number)|} Adds iteration
+  variable \verb|var_number| to the list of iteration variables
+  \verb|InVariable| class if the variable is not already in the list.
+
+\item{\verb|INModule.remove_iteration_variable(var_number)|} Removes
+  iteration variable \verb|var_number| to the list of iteration variables
+  \verb|InVariable| class if the variable is already in the list.
+
+\end{description}
+
+\rule{\textwidth}{0.4pt}
+
+\begin{description}
+
+\item{\verb|INDATClassic(filename="IN.DAT")| } Initialises an \indat\ class
+  which can be given a different filename. This class is used for an \indat\
+  with a module structure.
+
+\item{\verb|INDATClassic.read_in_dat()| } Reads an \indat\ file with modular
+  structure.
+
+\item{\verb|INDATClassic.write_in_dat(filename="new_IN.DAT")| } Writes a new
+  \indat\ with modular structure.
+
+\item{\verb|INDATNew.read_in_dat()| } Reads an \indat\ file without modular
+  structure.
+
+\item{\verb|INDATNew.write_in_dat(filename="new_IN.DAT")| } Writes a new
+  \indat\ without modular structure.
+
+\item{\verb|INDATNew.add_variable(var)| } Adds an \verb|INVariable| object to
+  the \verb|INDATNew| class.
+
+\item{\verb|INDATNew.remove_variable(var_name)| } Removes an
+  \verb|INVariable| object from the \verb|INDATNew| class.
+
+\item{\verb|INDATNew.add_constraint_eqn(eqn_number)|} Adds constraint
+  equation \verb|eqn_number| to the list of constraint equations
+  \verb|InVariable| class if the equation is not already in the list.
+
+\item{\verb|INDATNew.remove_constraint_eqn(eqn_number)|} Removes
+  constraint equation \verb|eqn_number| from the list of constraint
+  equations \verb|InVariable| class if the equation is already in the list.
+
+\item{\verb|INDATNew.add_iteration_variable(var_number)| } Adds iteration
+  variable \verb|var_number| to the list of iteration variables
+  \verb|InVariable| class if the variable is not already in the list.
+
+\item{\verb|INDATNew.remove_iteration_variable(var_number)| } Removes
+  iteration variable \verb|var_number| to the list of iteration variables
+  \verb|InVariable| class if the variable is already in the list.
+
+\end{description}
+
+\rule{\textwidth}{0.4pt}
+
+\begin{description}
+
+\item{\verb|clear_lines(lines)|} Removes comment only lines and replaces
+  multiple empty lines with a single empty line.
+
+\item{\verb|variable_type(var_name, var_value)|} Checks the type of an \indat\
+  variable using \verb|DICT_VAR_TYPE|
+
+\item{\verb|fortran_python_scientific(var_value)|} Changes from FORTRAN double
+  precision notation \verb|D| to Python's \verb|e| notation.
+
+\end{description}
+
+\subsection{mfile.py}
+
+A set of Python classes to read and extract data from \mfile.
+
+\begin{description}
+
+\item{\verb|MFileVariable(var_name, var_description)|} Object to contain
+  information for a single \mfile\ variable.
+
+\item{\verb|MFileVariable.set_scan(scan_number, scan_value)|} Sets the
+  variable value for scan number \verb|scan_number|
+
+\item{\verb|MFileVariable.get_scan(scan_number)|} Returns the variable value
+  for scan number \verb|scan_number|
+
+\item{\verb|MFileVariable.get_scans()|} Returns the variable value for all
+  scans.
+
+\end{description}
+
+\rule{\textwidth}{0.4pt}
+
+\begin{description}
+
+\item{\verb|MFile(filename="MFILE.DAT")|} Object to contain information for
+  all variables in an \mfile\ for all scans.
+
+\item{\verb|MFile.search_keys(variable)|} Search for an MFILE variable in the
+  data dictionary.
+
+\item{\verb|MFile.search_des(description)|} Search for an MFILE description in
+  the data dictionary.
+
+\item{\verb|MFile.make_plot_dat(custom_keys, filename="make_plot_dat.out", file_format="row")|}
+  Create a \plotdat\ equivalent for the variables in \verb|custom_keys| in
+  either row or column format.
+
+\item{\verb|MFile.get_num_scans()|} Returns the number of scans in the
+  \mfile
+
+\end{description}
+
+\rule{\textwidth}{0.4pt}
+
+\begin{description}
+
+\item{\verb|read_mplot_conf(filename="make_plot_dat.conf")|} Reads the config
+  file \verb|make_plot_dat.conf| and fills the list \verb|custom_keys| with
+  these variables.
+
+\item{\verb|write_mplot_conf(filename="make_plot_dat.conf")|} Writes a new
+  \verb|make_plot_dat.conf| adding any additional variables that the user
+  \verb|gave make_plot_dat.py| at runtime.
+
+\end{description}
+
+\subsection{process\_funcs.py}
+
+This library contains a collection of functions used by various \process\
+utilities.
+
+\begin{description}
+
+\item{\verb|get_neqns_itervars(wdir='.')| } Returns the number of equations
+  and a list of variable names of all iteration variables.
+
+\item{\verb|update_ixc_bounds(wdir='.')|} Updates the lower and upper bounds
+  in \verb|DICT_IXC_BOUNDS| from \indat.
+
+\item{\verb|get_variable_range(itervars, factor, wdir='.')|} Returns the lower
+  and upper bounds of the variable range for each iteration variable.
+
+  \texttt{itervars}: string list of all iteration variable names
+
+  \texttt{factor}: defines the variation range for non-f-values by setting
+  them to value * factor and value / factor respectively while taking their
+  \process\ bounds into account.
+
+  For f-values the allowed range is equal to their \process\ bounds.
+
+\item{\verb|check_logfile(logfile='process.log')|} Checks the log file of the
+  \process\ output.  Stops if an error occurred that needs to be fixed before
+  rerunning.
+
+\item{\verb|process_stopped(logfile='process.log')|} Checks the \process\
+  logfile whether it has prematurely stopped.
+
+\item{\verb|process_warnings(logfile='process.log')|} Checks the \process\
+  logfile whether any warnings have occurred.
+
+\item{\verb|mfile_exists()|} Checks whether \mfile\ exists.
+
+\item{\verb|no_unfeasible_mfile(wdir='.')|} Returns the number of unfeasible
+  points in a scan in \mfile.
+
+\item{\verb|no_unfeasible_outdat(wdir='.')|} Returns the number of unfeasible
+  points in a scan in \outdat.
+
+\item{\verb|vary_iteration_variables(itervars, lbs, ubs) |} Changes the
+  iteration variables in \indat\ within given bounds.
+
+  \texttt{itervars}: string list of all iteration variable names
+
+  \texttt{lbs}: float list of lower bounds for variables
+
+  \texttt{ubs}: float list of upper bounds for variables
+
+\item{\verb|get_solution_from_mfile(neqns, nvars, wdir='.')|} Returns:-
+
+\begin{itemize}
+\item \texttt{ifail}: error value of \process
+\item the objective functions
+\item the square root of the sum of the squares of the constraints
+\item a list of the final iteration variable values
+\item a list of the final constraint residue values
+\item If the run was a scan, the values of the last scan point will be returned.
+\end{itemize}
+
+\item{\verb|get_solution_from_outdat(neqns, nvars)|} Returns:-
+
+\begin{itemize}
+\item \texttt{ifail}: error value of \process
+\item the objective functions
+\item the square root of the sum of the squares of the constraints
+\item a list of the final iteration variable values
+\item a list of the final constraint residue values
+\item If the run was a scan, the values of the last scan point will be returned.
+\end{itemize}
+
+\end{description}
+
+\subsection{process\_config.py}
+
+A collection of Python classes for configuration files used by various
+\process\ utilities, e.g. \texttt{run\_process.py} or
+\texttt{test\_process.py}. It contains a base class \texttt{ProcessConfig} and
+two derived classes \texttt{RunProcessConfig} and \texttt{TestProcessConfig}.
+
+\begin{description}
+
+\item{\verb|ProcessConfig()|} Object that contains the configuration
+  parameters for PROCESS runs.
+
+  \verb|filename| : Configuration file name
+
+  \verb|wdir| : Working directory
+
+  \verb|or_in_dat| : Original \indat\/ file
+
+  \verb|process| : \process\/ binary
+
+  \verb|niter| : (Maximum) number of iterations
+
+  \verb|u_seed| : User specified seed value for the random number generator
+
+  \verb|factor| : Multiplication factor adjusting the range in which the
+  original iteration variables should be varied
+
+  \verb|comment| : Additional comment to be written into \verb|README.txt|
+
+\item{\verb|ProcessConfig.echo_base()|} Echos the attributes of the base class
+  to standard output.
+
+\item{\verb|ProcessConfig.echo()|} Echos the values of the current class to
+  standard output.
+
+\item{\verb|ProcessConfig.prepare_wdir()|} Prepares the work directory for the
+  run.
+
+\item{\verb|ProcessConfig.create_readme(directory='.')|} Creates a file called
+  \texttt{README.txt} containing \texttt{ProcessConfig.comment}.
+
+\item{\verb|ProcessConfig.modify_in_dat()|} Modifies the original \indat\/
+  file.
+
+\item{\verb|ProcessConfig.setup()|} Sets up the program for running.
+
+\item{\verb|ProcessConfig.run_process()|} Runs \process\/ binary.
+
+\item{\verb|ProcessConfig.get_comment()|} Gets the comment line from the
+  configuration file.
+
+\item{\verb|ProcessConfig.get_attribute(attributename)|} Gets a class
+  attribute from the configuration file.
+
+\item{\verb|ProcessConfig.set_base_attributes()|} Sets the attributes of the
+  base class.
+
+\end{description}
+
+\rule{\textwidth}{0.4pt}
+
+\begin{description}
+
+\item{\verb|TestProcessConfig(filename='test_process.conf')|} Object that
+  contains the configuration parameter of the \verb|test_process.py| program.
+
+  \verb|ioptimz| : sets \verb|ioptimz| (optimisation solver) in \indat.
+
+  \verb|epsvmc| : sets \verb|epsvmc| (VMCON error tolerance) in \indat.
+
+  \verb|epsfcn| : sets \verb|epsfcn| (finite diff. steplength) in \indat.
+
+  \verb|minmax| : sets \verb|minmax| (figure of merit switch) in \indat.
+
+\item{\verb|TestProcessConfig.echo()|} Echos the values of the current class
+  to std out.
+
+\item{\verb|TestProcessConfig.modify_in_dat()|} Modifies \indat\/ using the
+  configuration parameters.
+
+\end{description}
+
+\rule{\textwidth}{0.4pt}
+
+\begin{description}
+
+\item{\verb|RunProcessConfig(filename='run_process.conf')|} Configuration
+  parameters of the \verb|run_process.py| program.
+
+  \verb|no_allowed_unfeasible| : The number of allowed unfeasible points in a
+  sweep
+
+  \verb|create_itervar_diff| : Boolean to indicate the creation of a summary
+  file of the iteration variable values at each stage
+
+  \verb|add_ixc| : List of iteration variables to be added to \indat.
+
+  \verb|del_ixc| : List of iteration variables to be deleted from \indat.
+
+  \verb|add_icc| : List of constrained equations to be added to \indat.
+
+  \verb|del_icc| : List of constrained equations to be deleted from \indat.
+
+  \verb|dictvar| : Dictionary mapping variable name to new value (replaces old
+  or gets appended)
+
+  \verb|del_var| : List of variables to be deleted from \indat.
+
+\item{\verb|RunProcessConfig.get_attribute_csv_list(attributename)|} Get a
+  class attribute list from the configuration file; expects comma separated
+  values.
+
+\item{\verb|RunProcessConfig.set_del_var()|} Sets the
+  \verb|RunProcessConfig.del_var| attribute from the config file.
+
+\item{\verb|RunProcessConfig.set_dictvar()|} Sets the
+  \verb|RunProcessConfig.dictvar| attribute from config file.
+
+\item{\verb|RunProcessConfig.echo()|} Echos the values of the current class.
+
+\item{\verb|RunProcessConfig.modify_in_dat()|} Modifies \indat\/ using the
+  configuration parameters.
+
+\item{\verb|RunProcessConfig.modify_vars()|} Modifies \indat\/ by adding,
+  deleting and modifiying variables.
+
+\item{\verb|RunProcessConfig.modify_ixc()|} Modifies the array of iteration
+  variables in \indat.
+
+\item{\verb|RunProcessConfig.modify_icc()|} Modifies the array of constraint
+  equations in \indat.
+
+\end{description}
+
+% Its class structure is described in Figure \ref{fig:uml_config}.
+%\begin{figure}
+%\includegraphics[height=0.9\textheight]{process_config_classes.pdf}
+%\caption{UML diagram of the class structure in \texttt{process\_config.py}.}
+%\includegraphics[width=0.9\textwidth]{process_config_classes_limited.pdf}
+%\caption{Class structure in \texttt{process\_config.py}.}
+%\label{fig:uml_config}
+%\end{figure}
+
+\subsection{process\_dicts.py}
+
+A collection of dictionaries and lists used by various \process\ utilities.
+
+\begin{description}
+
+\item{\verb|IFAIL_SUCCESS|} This is the \process\ error code of a successful
+  run.
+
+\item{\verb|PARAMETER_DEFAULTS|} Default values for making a \plotdat\ file
+  from \mfile.
+
+\item{\verb|DICT_VAR_TYPE|} Maps the \process\ variable name to its value
+  type. The value type can be one of \verb|int_array|, \verb|int_variable|,
+  \verb|real_array| or \verb|real_variable|.
+
+\item{\verb|DICT_IXC_SIMPLE|} Maps the string number of the iteration variable
+  to its variable name.
+
+\item{\verb|DICT_IXC_FULL|} Maps the string number of the iteration variable
+  to a dictionary that contains the variable name under 'name', the default
+  lower variable bound (float) under 'lb' and the default upper variable bound
+  (float) under 'ub'.
+
+\item{\verb|DICT_IXC_BOUNDS|} Maps each iteration variable name to a
+  dictionary that contains the default lower variable bound (float) under 'lb'
+  and the default upper variable bound (float) under 'ub'.
+
+\item{\verb|NON_F_VALUES|} List of iteration variable names that start with an
+  f, but are not f-values.
+
+\item{\verb|DICT_NSWEEP2IXC|} Maps the sweep variable number \texttt{nsweep}
+  to the respective iteration variable number, if applicable.
+
+\item{\verb|DICT_IX2NSWEEPC|} Maps the iteration variable number to the
+  respective sweep variable number \texttt{nsweep}, if applicable.
+
+\item{\verb|DICT_TF_TYPE|} Maps the \process\ TF coil type number to its type.
+
+\item{\verb|DICT_OPTIMISATION_VARS|} Maps each figure of merit number to its
+  description.
+
+\item{\verb|DICT_IXC_DEFAULT|} Maps each iteration variable name to its
+  default value.
+
+\end{description}
+
+\Red{Add new stuff used by GUI etc.}
+
+\subsection{a\_to\_b\_config.py}
+
+\Red{To do...}
+
+\subsection{proc\_plot\_func.py}
+
+A collection of functions and lists used by \texttt{plot\_proc.py}.
+
+\begin{description}
+
+\item{\verb|RADIAL_BUILD|} A list of radial build variables.
+
+\item{\verb|VERTICAL_BUILD|} A list of vertical build variables.
+
+\item{\verb|FILL_COLS|} A list of plotting colours
+
+\end{description}
+
+For all of the functions below the arguments are:
+
+\hspace{1cm} \texttt{axis} : Matplotlib axis object to plot to
+
+\hspace{1cm} \texttt{mfile\_data} : MFILE data object \verb|MFile|
+
+\hspace{1cm} \texttt{scan} : Scan number to plot
+
+\begin{description}
+
+\item{\verb|plot_plasma(axis, mfile_data,scan)|} Function to plot plasma
+
+\item{\verb|plot_machine_pic(axis, mfile_data, scan)|} Function to plot machine build
+
+\item{\verb|plot_tf_coils(axis, mfile_data, scan)|} Function to plot the TF coils
+
+\item{\verb|plot_pf_coils(axis, mfile_data, scan)|} Function to plot the PF coils
+
+\item{\verb|plot_geometry_info(axis, mfile_data, scan)|} Function to plot the
+  geometry info block
+
+\item{\verb|plot_physics_info(axis, mfile_data, scan)|} Function to plot the
+  physics info block
+
+\item{\verb|plot_magnetics_info(axis, mfile_data, scan)|} Function to plot the
+  magnetics info block
+
+\item{\verb|plot_power_info(axis, mfile_data, scan)|} Function to plot the
+  power info block
+
+\item{\verb|plot_current_drive_info(axis, mfile_data, scan)|} Function to plot
+  the current drive info block
+
+\item{\verb|plot_geometry_info(axis, mfile_data, scan)|} Function to plot the
+  geometry info block
+
+\end{description}
+
+
+\subsection{diagnose\_funcs.py}
+
+A collection of functions used by \texttt{diagnose\_process.py}.
+
+\begin{description}
+
+\item{\verb|plot_normalised_ixc(mfilename='MFILE.DAT')|} Plots the normalised values of the iteration variables of a given \mfile.
+
+\item{\verb|plot_normalised_icc_res(mfilename='MFILE.DAT')|} Plots the normalised values of the costraint residuals of a given \mfile.
+
+\end{description}
+
+
+\section{User Interface}
+\label{sec:gui}
+The user interface is still being developed, but currently allows for viewing
+and editing of \indat\ files in a web browser. It can be found in the
+\texttt{utilities/gui} directory.
+
+\subsection{Launching}
+The interface uses Django for its web framework. Currently it can only be
+launched by running the Django development server locally. This is performed
+automatically if you launch the GUI by typing \verb+start_gui+ from the
+command line. For instructions on starting the server manually, see the
+\verb|README| file in the \texttt{utilities/gui} directory.
+
+\subsection{Editing variables}
+Every variable should be listed along with its current value, a 'reference'
+value and a short description. Hovering over the short description will
+provide a longer description. All values begin with the default value
+assigned by \process. 
+
+The reference values are used to compare differences between two files.
+Differences between the reference value and the current input value will be
+highlighted in red.
+
+The 'Meta' section allows editing of the run description, which will be placed
+at the top of the created \indat. Changes to the iteration variables and
+constraint equations that are enabled can be done using the checkboxes in the
+relevant section.
+
+\subsection{Opening and saving files}
+An input file and a reference file can be opened using the buttons at the top
+of the screen. The files opened must be compatible with the \process\ version
+number shown in the top right of the screen.
+
+The 'Save' button should produce a \indat\ file with a similar
+layout to the GUI. Variables whose values are set different from the
+\process\ default are listed under module headings, along with a comment
+describing the variable. For integer variables, a description of the value
+taken may also be included. The variables \texttt{neqns} and \texttt{nvar} are automatically
+calculated.
+
+\subsection{Searching}
+There is currently no search feature, but searching for a particular
+variable can be done using the browser's in-built search. Use the button
+in the top-right of the screen to expand every module heading and use Ctrl-f
+to search through the page.
+

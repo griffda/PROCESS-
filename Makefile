@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 307
+#  GIT Revision 372
 #
 #  P J Knight
 #
@@ -25,21 +25,30 @@
 #  Turn on full debugging using 'make ARCH=... DEBUG=YES'
 #    (currently this is turned on by default)
 #
-#  Type 'make clean' to clean up the directory to allow a full recompilation
+#  Type 'make clean' to clean up the directory to allow a full Fortran recompilation
+#
+#  Type 'make cleandoc' to remove all html files and the intermediate files used
+#    to build the PROCESS User Guide, so that they can be recreated using 'make doc'
 #
 #  Type 'make html' to produce web-compatible html files from the autodoc
 #    comments embedded in the source code
 #
-#  Type 'make manual' to produce dvi and pdf files from the PROCESS manual
+#  Type 'make userguide' to produce dvi and pdf files from the PROCESS User Guide
 #    contained in the *.tex files and associated postscript pictures
 #
-#  Type 'make doc' to produce both html files and the PROCESS manual
+#  Type 'make doc' to produce both html files and the PROCESS User Guide
 #
 #  Type 'make tar' to produce a tar file containing all the source files
 #    and primary documentation files; the file will be called process.tar.gz
 #
 #  Type 'make archive' to produce an archive of the latest run in this directory
 #    (including input and output files); this produces a file called process_run.tar.gz
+#
+#  Type 'make dicts' to recreate the dictionary file 'process_dicts.py'
+#    used by the Python utilities, and 'gui_dicts.py' used by the GUI.
+#
+#  Type 'make all' to compile the code, create all the documentation,
+#    and build the dictionaries.
 #
 ################# Start of Custom Section #####################
 
@@ -54,6 +63,7 @@ source = \
  error_handling.f90 \
  evaluators.f90 \
  fispact.f90 \
+ fson_library.f90 \
  fwbs.f90 \
  global_variables.f90 \
  ife.f90 \
@@ -93,6 +103,7 @@ object = \
  error_handling.o \
  evaluators.o \
  fispact.o \
+ fson_library.o \
  fwbs.o \
  global_variables.o \
  ife.o \
@@ -196,13 +207,14 @@ constraint_equations.o: error_handling.o global_variables.o numerics.o
 costs.o: error_handling.o global_variables.o output.o
 current_drive.o: error_handling.o global_variables.o output.o plasma_profiles.o
 divertor.o: error_handling.o global_variables.o output.o
-error_handling.o: output.o
-evaluators.o: error_handling.o global_variables.o numerics.o
+error_handling.o: output.o fson_library.o root.dir
+evaluators.o: error_handling.o global_variables.o numerics.o output.o
 fispact.o: global_variables.o
+fson_library.o: 
 fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o
 global_variables.o:
 ife.o: availability.o costs.o error_handling.o global_variables.o output.o
-impurity_radiation.o: error_handling.o global_variables.o
+impurity_radiation.o: error_handling.o global_variables.o root.dir
 initial.o: error_handling.o global_variables.o output.o scan.o stellarator.o
 input.o: error_handling.o global_variables.o numerics.o output.o scan.o
 iteration_variables.o: error_handling.o global_variables.o numerics.o
@@ -210,12 +222,12 @@ machine_build.o: error_handling.o global_variables.o output.o
 maths_library.o: global_variables.o
 numerics.o: global_variables.o maths_library.o
 output.o:
-pfcoil.o: error_handling.o global_variables.o maths_library.o output.o
+pfcoil.o: error_handling.o global_variables.o maths_library.o output.o sctfcoil.o
 physics.o: current_drive.o error_handling.o global_variables.o impurity_radiation.o \
-  maths_library.o output.o plasma_profiles.o
+  maths_library.o numerics.o output.o plasma_profiles.o
 plant_power.o: fwbs.o global_variables.o output.o
 plasma_geometry.o: global_variables.o
-plasma_profiles.o: global_variables.o maths_library.o
+plasma_profiles.o: error_handling.o global_variables.o maths_library.o
 process.o: availability.o buildings.o constraint_equations.o costs.o current_drive.o \
   divertor.o error_handling.o evaluators.o fwbs.o global_variables.o ife.o \
   impurity_radiation.o input.o machine_build.o numerics.o output.o pfcoil.o physics.o \
@@ -238,27 +250,36 @@ vacuum.o: error_handling.o global_variables.o output.o
 process.exe: $(object)
 	$(FORTRAN) $(LFLAGS) -o $@ $(object) $(LIBS)
 
+root.dir:
+	./setrootdir
+
 ### Utilities #################
 
-.PHONY: clean tar archive doc manual html
+.PHONY: clean cleandoc tar archive doc userguide html dicts
 
 # Clean up directory, to force full recompilation
 
 clean:
 	rm -f process.exe *.o *.mod
+	rm -f root.dir
 	rm -f *~
+
+cleandoc:
 	rm -f autodoc
 	rm -f *.aux *.log process.dvi process.toc process.lof process.lot process.pdf
-	rm -f *.html
+	cp -f vardes.html vardes.bak && rm -f *.html
 
 # Make a tar distribution of the source and other critical files
 # from the current directory
 # (excludes input files IN.DAT, device.dat)
 
-otherfiles = Makefile vardes.html \
+otherfiles = Makefile setrootdir vardes.html \
              *.tex *.eps process.pdf \
              autodoc.f90 adheader.src adfooter.src \
-             utilities/*
+             impuritydata/* \
+             utilities/*.py utilities/*.conf utilities/*.json \
+             utilities/process_io_lib/*.py utilities/process_io_lib/*.json \
+             utilities/processgui/*
 
 tar:
 	rm -f process.tar process.tar.gz
@@ -283,10 +304,28 @@ autodoc: autodoc.f90
 html: autodoc
 	@ cat $(source) | ./autodoc
 
-manual: process.tex
+userguide: process.tex
 	@ latex process
 	@ latex process # to make sure cross-references are included
 	@ latex process # to make doubly sure cross-references are included
 	@ dvipdf process
 
-doc: html manual
+doc: html userguide
+
+dicts: root.dir
+	@ touch utilities/process_io_lib/process_dicts.py
+	@ mv utilities/process_io_lib/process_dicts.py utilities/process_io_lib/process_dicts.py_prev
+	@ echo ''
+	@ echo 'Creating Python dictionaries... warnings are usually ignorable!'
+	@ echo ''
+	@ rm -f *.f90*~
+	utilities/create_dicts.py > utilities/process_io_lib/process_dicts.py
+	@ chmod 755 utilities/process_io_lib/process_dicts.py
+	@ touch utilities/processgui/dicts/gui_dicts.py
+	@ mv utilities/processgui/dicts/gui_dicts.py utilities/processgui/dicts/gui_dicts.py_prev
+	utilities/processgui/dicts/make_gui_dicts.py > utilities/processgui/dicts/gui_dicts.py
+	@ echo ''
+	@ echo 'Dictionaries have been updated'
+	@ echo ''
+
+all: process.exe doc dicts

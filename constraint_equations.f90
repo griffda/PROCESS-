@@ -54,6 +54,7 @@ module constraints
   use stellarator_variables
   use tfcoil_variables
   use times_variables
+  use cost_variables
 
   implicit none
 
@@ -69,6 +70,7 @@ contains
     !+ad_summ  Routine that formulates the constraint equations
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  m : input integer : Number of constraint equations to solve
     !+ad_args  cc(m) : output real array : Residual error in equation i
@@ -146,6 +148,14 @@ contains
     !+ad_hist  28/07/14 PJK Subsumed routine into a module;
     !+ad_hisc               Added evaluation of residues etc. in physical
     !+ad_hisc               units
+    !+ad_hist  01/10/14 PJK Added new eqn 15
+    !+ad_hist  02/10/14 PJK Added new eqn 23
+    !+ad_hist  06/10/14 PJK Added new eqn 59
+    !+ad_hist  11/11/14 PJK Added new eqn 60
+    !+ad_hist  12/11/14 PJK tcycle now a global variable
+    !+ad_hist  13/11/14 PJK Changed iradloss usage in eqns 2 and 4
+    !+ad_hist  17/11/14 PJK Added 'not recommended' comments to constraints 3 and 4
+    !+ad_hist  25/11/14 JM  Added new eqn 61
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -166,7 +176,8 @@ contains
     !  Local variables
 
     integer :: i,i1,i2
-    real(kind(1.0D0)) :: cratmx, tcycle, totmva, acoil, pradmaxpv
+    real(kind(1.0D0)) :: acoil,cratmx,pdenom,pnumerator,pradmaxpv, &
+         pscaling,rcw,totmva
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -206,54 +217,34 @@ contains
        case (2)  !  Global plasma power balance equation
           !  This is a consistency equation
 
-          if (iradloss == 1) then  !  include pcoreradpv
+          pscaling = ptrepv + ptripv
 
-             if (ignite == 0) then
-                cc(i) = 1.0D0 - (ptrepv + ptripv + pcoreradpv) / &
-                     (falpha*palppv + pchargepv + pohmpv + pinjmw/vol)
-                if (present(con)) then
-                   con(i) = (falpha*palppv + pchargepv + pohmpv + pinjmw/vol) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palppv + pchargepv + pohmpv + pinjmw/vol) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             else
-                cc(i) = 1.0D0 - (ptrepv + ptripv + pcoreradpv) / &
-                     (falpha*palppv + pchargepv + pohmpv)
-                if (present(con)) then
-                   con(i) = (falpha*palppv + pchargepv + pohmpv) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palppv + pchargepv + pohmpv) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             end if
+          if (iradloss == 0) then  !  total power lost is scaling power plus radiation
+             pnumerator = pscaling + pradpv
+          else if (iradloss == 1) then  !  total power lost is scaling power plus core radiation only
+             pnumerator = pscaling + pcoreradpv
+          else  !  total power lost is scaling power only, with no additional allowance for radiation
+             pnumerator = pscaling
+          end if
 
-          else  !  exclude pcoreradpv
+          if (ignite == 0) then
+             pdenom = falpha*palppv + pchargepv + pohmpv + pinjmw/vol
+          else
+             pdenom = falpha*palppv + pchargepv + pohmpv
+          end if
 
-             if (ignite == 0) then
-                cc(i) = 1.0D0 - (ptrepv + ptripv) / &
-                     (falpha*palppv + pchargepv + pohmpv + pinjmw/vol)
-                if (present(con)) then
-                   con(i) = (falpha*palppv + pchargepv + pohmpv + pinjmw/vol) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palppv + pchargepv + pohmpv + pinjmw/vol) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             else
-                cc(i) = 1.0D0 - (ptrepv + ptripv) / &
-                     (falpha*palppv + pchargepv + pohmpv)
-                if (present(con)) then
-                   con(i) = (falpha*palppv + pchargepv + pohmpv) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palppv + pchargepv + pohmpv) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             end if
-
+          cc(i) = 1.0D0 - pnumerator / pdenom
+          if (present(con)) then
+             con(i) = pdenom * (1.0D0 - cc(i))
+             err(i) = pdenom * cc(i)
+             symbol(i) = '='
+             units(i) = 'MW/m3'
           end if
 
        case (3)  !  Global power balance equation for ions
           !  This is a consistency equation
+
+          !  N.B. This constraint is currently NOT RECOMMENDED for use.
 
           if (ignite == 0) then
              cc(i) = 1.0D0 - (ptripv + piepv) / &
@@ -277,48 +268,30 @@ contains
        case (4)  !  Global power balance equation for electrons
           !  This is a consistency equation
 
-          if (iradloss == 1) then  !  include pcoreradpv
+          !  N.B. This constraint is currently NOT RECOMMENDED for use.
 
-             if (ignite == 0) then
-                cc(i) = 1.0D0 - (ptrepv + pcoreradpv) / &
-                     (falpha*palpepv + piepv + pinjemw/vol)
-                if (present(con)) then
-                   con(i) = (falpha*palpepv + piepv + pinjemw/vol) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palpepv + piepv + pinjemw/vol) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             else
-                cc(i) = 1.0D0 - (ptrepv + pcoreradpv) / &
-                     (falpha*palpepv + piepv)
-                if (present(con)) then
-                   con(i) = (falpha*palpepv + piepv) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palpepv + piepv) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             end if
+          pscaling = ptrepv
 
-          else  !  exclude pcoreradpv
+          if (iradloss == 0) then  !  total power lost is scaling power plus radiation
+             pnumerator = pscaling + pradpv
+          else if (iradloss == 1) then  !  total power lost is scaling power plus core radiation only
+             pnumerator = pscaling + pcoreradpv
+          else  !  total power lost is scaling power only, with no additional allowance for radiation
+             pnumerator = pscaling
+          end if
 
-             if (ignite == 0) then
-                cc(i) = 1.0D0 - ptrepv / (falpha*palpepv + piepv + pinjemw/vol)
-                if (present(con)) then
-                   con(i) = (falpha*palpepv + piepv + pinjemw/vol) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palpepv + piepv + pinjemw/vol) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             else
-                cc(i) = 1.0D0 - ptrepv / (falpha*palpepv + piepv)
-                if (present(con)) then
-                   con(i) = (falpha*palpepv + piepv) * (1.0D0 - cc(i))
-                   err(i) = (falpha*palpepv + piepv) * cc(i)
-                   symbol(i) = '='
-                   units(i) = 'MW/m3'
-                end if
-             end if
+          if (ignite == 0) then
+             pdenom = falpha*palpepv + piepv + pinjemw/vol
+          else
+             pdenom = falpha*palpepv + piepv
+          end if
 
+          cc(i) = 1.0D0 - pnumerator / pdenom
+          if (present(con)) then
+             con(i) = pdenom * (1.0D0 - cc(i))
+             err(i) = pdenom * cc(i)
+             symbol(i) = '='
+             units(i) = 'MW/m3'
           end if
 
        case (5)  !  Equation for density upper limit
@@ -430,7 +403,7 @@ contains
              units(i) = 'sec'
           end if
 
-       case (14)  !  Equation for beam energy consistency
+       case (14)  !  Equation to fix number of NBI decay lengths to plasma centre
           !  This is a consistency equation
 
           cc(i) = 1.0D0 - taubeam/tbeamin
@@ -441,10 +414,19 @@ contains
              units(i) = ''
           end if
 
-       case (15)  !  Equation for burn time consistency
-          !  This equation is redundant... thought to be un-necessary
+       case (15)  !  Equation for L-H power threshold limit
 
-          call report_error(2)
+          cc(i) = 1.0D0 - flhthresh * plhthresh / pdivt
+          if (present(con)) then
+             con(i) = plhthresh * (1.0D0 - cc(i))
+             err(i) = pdivt * cc(i)
+             if (flhthresh > 1.0D0) then
+                symbol(i) = '>'
+             else
+                symbol(i) = '<'
+             end if
+             units(i) = 'MW'
+          end if
 
        case (16)  !  Equation for net electric power lower limit
 
@@ -519,10 +501,16 @@ contains
              units(i) = ''
           end if
 
-       case (23)  !  Equation for allowable TF Coil current density
-          !  This equation is redundant... pre-1992!
+       case (23)  !  Equation for conducting shell radius / rminor upper limit
 
-          call report_error(3)
+          rcw = rminor + scraplo + fwoth + blnkoth
+          cc(i) = 1.0D0 - fcwr * cwrmax*rminor / rcw
+          if (present(con)) then
+             con(i) = cwrmax*rminor * (1.0D0 - cc(i))
+             err(i) = rcw * cc(i)
+             symbol(i) = '<'
+             units(i) = 'm'
+          end if
 
        case (24)  !  Equation for beta upper limit
 
@@ -753,7 +741,6 @@ contains
 
           if (tcycmn == 0.0D0) call report_error(6)
 
-          tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
           cc(i) = 1.0D0 - ftcycl * tcycle/tcycmn
           if (present(con)) then
              con(i) = tcycmn * (1.0D0 - cc(i))
@@ -939,6 +926,36 @@ contains
              err(i) = (thkwp + 2.0D0*tinstf) * cc(i)
              symbol(i) = '>'
              units(i) = 'm'
+          end if
+
+       case (59)  !  Equation for neutral beam shine-through fraction upper limit
+
+          cc(i) = 1.0D0 - fnbshinef * nbshinefmax / nbshinef
+          if (present(con)) then
+             con(i) = nbshinefmax * (1.0D0 - cc(i))
+             err(i) = nbshinef * cc(i)
+             symbol(i) = '<'
+             units(i) = ''
+          end if
+
+       case (60)  !  Equation for OH coil s/c temperature margin lower limit (SCTF)
+
+          cc(i) = 1.0D0 - ftmargoh * tmargoh/tmargmin
+          if (present(con)) then
+             con(i) = tmargmin * (1.0D0 - cc(i))
+             err(i) = tmargmin * cc(i)
+             symbol(i) = '>'
+             units(i) = 'K'
+          end if
+
+       case (61)  !  Equation for availability limit
+
+          cc(i) = 1.0D0 - favail * cfactr / avail_min
+          if (present(con)) then
+             con(i) = avail_min * (1.0D0 - cc(i))
+             err(i) = cfactr * cc(i)
+             symbol(i) = '>'
+             units(i) = ''
           end if
 
        case default

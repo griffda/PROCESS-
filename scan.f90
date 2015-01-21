@@ -73,7 +73,7 @@ module scan_module
   !+ad_vars  ipnscnv /30/ FIX : number of available scan variables
   integer, parameter :: ipnscnv = 30
 
-  !+ad_vars  isweep /0/ : number of loops to perform
+  !+ad_vars  isweep /0/ : number of scan points to calculate
   integer :: isweep = 0
   !+ad_vars  nsweep /1/ : switch denoting quantity to scan:<UL>
   !+ad_varc          <LI> 1  aspect
@@ -108,7 +108,7 @@ module scan_module
   !+ad_varc          <LI> 30 fimpvar</UL>
   integer :: nsweep = 1
 
-  !+ad_vars  sweep(ipnscns) : Actual values to use in scan
+  !+ad_vars  sweep(ipnscns) : actual values to use in scan
   real(kind(1.0D0)), dimension(ipnscns) :: sweep = 0.0D0
 
 contains
@@ -161,6 +161,7 @@ contains
     !+ad_hist  16/06/14 PJK Added scan variable 30: fimpvar
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  09/07/14 PJK Turned error reporting off after each output step
+    !+ad_hist  20/10/14 PJK OHC to CS
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -326,7 +327,7 @@ contains
           vlabel = 'gammax = ' ; xlabel = 'Maximum_CD_gamma'
        case (19)
           boundl(16) = sweep(iscan)
-          vlabel = 'boundl(16) = ' ; xlabel = 'OHC_thickness_lower_bound'
+          vlabel = 'boundl(16) = ' ; xlabel = 'CS_thickness_lower_bound'
        case (20)
           tbrnmn = sweep(iscan)
           vlabel = 'tbrnmn = ' ; xlabel = 'Minimum_burn_time_(s)'

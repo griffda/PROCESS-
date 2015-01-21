@@ -17,7 +17,8 @@ import scipy as sp
 import numpy as np
 import process_io_lib.process_dicts as proc_dict
 
-RADIAL_BUILD = ["bore", "ohcth", "gapoh", "bcylth", "tfcth", "gapds",
+
+RADIAL_BUILD = ["bore", "ohcth", "gapoh", "tfcth", "gapds",
                 "ddwi", "shldith", "blnkith", "fwith", "scrapli",
                 "rminori", "rminoro", "scraplo", "fwoth", "blnkoth",
                 "shldoth", "ddwo", "gapsto", "tfthko"]
@@ -510,14 +511,23 @@ def plot_tf_coils(axis, mfile_data, scan):
     in_x = np.concatenate([in_x, in_x[::-1]])
     in_y = np.concatenate([in_y, -in_y[::-1]])
 
-    in_width = cumulative_radial_build("gapsto", mfile_data, scan) - \
-        cumulative_radial_build("tfcth", mfile_data, scan)
-    out_width = in_width + mfile_data.data["tfcth"].get_scan(scan) + \
-        mfile_data.data["tfthko"].get_scan(scan)
+    #in_width = cumulative_radial_build("gapsto", mfile_data, scan) - \
+    #    cumulative_radial_build("tfcth", mfile_data, scan)
+    #out_width = in_width + mfile_data.data["tfcth"].get_scan(scan) + \
+    #    mfile_data.data["tfthko"].get_scan(scan)
+    #out_x = ((in_x - cumulative_radial_build("tfcth", mfile_data, scan)) *
+    #         (out_width/in_width))
 
-    out_x = ((in_x - cumulative_radial_build("tfcth", mfile_data, scan)) *
-             (out_width/in_width)) + \
-        cumulative_radial_build("bcylth", mfile_data, scan)
+    centre_in_x = (cumulative_radial_build("tfcth", mfile_data, scan) +  \
+         cumulative_radial_build("gapsto", mfile_data, scan))/2.0
+    centre_out_x = (cumulative_radial_build("gapoh", mfile_data, scan) +  \
+         cumulative_radial_build("tfthko", mfile_data, scan))/2.0
+    in_width = (cumulative_radial_build("gapsto", mfile_data, scan) -  \
+         cumulative_radial_build("tfcth", mfile_data, scan))
+    out_width = (cumulative_radial_build("tfthko", mfile_data, scan) -  \
+         cumulative_radial_build("gapoh", mfile_data, scan))
+
+    out_x = ((in_x - centre_in_x) * (out_width/in_width))+centre_out_x
     extern = (vert_build[7]/vert_build[6])
     if vert_build[-1]:
         extern = (vert_build[0] - vert_build[15])/(vert_build[1] -
@@ -565,13 +575,13 @@ def plot_pf_coils(axis, mfile_data, scan):
 
     # Rest of the coils
     for coil in range(1, number_of_coils):
-        coils_r.append(mfile_data.data["rpf(%s)" % str(coil).zfill(2)].
+        coils_r.append(mfile_data.data["rpf({:02})".format(coil)].
                        get_scan(scan))
-        coils_z.append(mfile_data.data["zpf(%s)" % str(coil).zfill(2)].
+        coils_z.append(mfile_data.data["zpf({:02})".format(coil)].
                        get_scan(scan))
-        coils_dr.append(mfile_data.data["pfdr%s" % str(coil).zfill(2)].
+        coils_dr.append(mfile_data.data["pfdr{:02}".format(coil)].
                         get_scan(scan))
-        coils_dz.append(mfile_data.data["pfdz%s" % str(coil).zfill(2)].
+        coils_dz.append(mfile_data.data["pfdz{:02}".format(coil)].
                         get_scan(scan))
         coil_text.append(str(coil))
 
@@ -612,7 +622,7 @@ def plot_info(axis, data, mfile_data, scan):
                 axis.text(eqpos, -i, "\n",
                           ha='left', va='center')
             elif data[i][0][0] == "#":
-                axis.text(-0.05, -i, "%s\n" % data[i][0][1:],
+                axis.text(-0.05, -i, "{}\n".format(data[i][0][1:]),
                           ha='left', va='center')
             elif data[i][0][0] == "!":
                 value = data[i][0][1:]
@@ -624,7 +634,7 @@ def plot_info(axis, data, mfile_data, scan):
                     if isinstance(dat, str):
                         value = dat
                     else:
-                        value = "%.4g" % mfile_data.data[data[i][0]].get_scan(scan)
+                        value = "{:.4g}".format(mfile_data.data[data[i][0]].get_scan(scan))
                     if "alpha" in data[i][0]:
                         value = str(float(value) + 1.0)
                     axis.text(eqpos, -i, '= ' + value + ' ' + data[i][2],
@@ -638,7 +648,7 @@ def plot_info(axis, data, mfile_data, scan):
             if isinstance(dat, str):
                 value = dat
             else:
-                value = "%.4g" % data[i][0]
+                value = "{:.4g}".format(data[i][0])
             axis.text(eqpos, -i, '= ' + value + ' ' + data[i][2],
                       ha='left', va='center')
 
@@ -729,15 +739,15 @@ def plot_physics_info(axis, mfile_data, scan):
             ("normalised total beta", r"$\beta_N$, total", "% m T MA$^{-1}$"),
             ("thermal poloidal beta", r"$\beta_P$, thermal", ""),
             ("betap", r"$\beta_P$, total", ""),
-            ("te", "$<t_e>$", "keV"),
-            ("dene", "$<n_e>$", "m$^{-3}$"),
-            (nong, "$<n_{\mathrm{e,vol}}>/n_G$", ""),
-            ("alphat", "$T_{e0}/<T_e>$", ""),
-            ("alphan", "$n_{e0}/<n_{\mathrm{e, vol}}>$", ""),
-            ("zeff", "$Z_{\mathrm{eff}}$", ""),
-            ("zeffso", "$Z_{\mathrm{eff, SoL}}$", ""),
-            (dnz, "$n_Z/<n_{\mathrm{e, vol}}>$", ""),
-            ("taueff", "$\tau_e$", "s"),
+            ("te", r"$< t_e >$", "keV"),
+            ("dene", r"$< n_e >$", "m$^{-3}$"),
+            (nong, r"$< n_{\mathrm{e,line}} >/n_G$", ""),
+            ("alphat", r"$T_{e0}/ < T_e >$", ""),
+            ("alphan", r"$n_{e0}/ < n_{\mathrm{e, vol}} >$", ""),
+            ("zeff", r"$Z_{\mathrm{eff}}$", ""),
+            ("zeffso", r"$Z_{\mathrm{eff, SoL}}$", ""),
+            (dnz, r"$n_Z/ < n_{\mathrm{e, vol}} >$", ""),
+            ("taueff", r"$\tau_e$", "s"),
             ("hfact", "H-factor", ""),
             ("tauelaw", "Scaling law", "")]
 
@@ -775,8 +785,8 @@ def plot_magnetics_info(axis, mfile_data, scan):
     pf_info = []
     for i in range(1, number_of_coils):
         if i % 2 != 0:
-            pf_info.append((mfile_data.data["ric(%s)" % str(i).zfill(2)].
-                           get_scan(scan), "PF %s" % str(i)))
+            pf_info.append((mfile_data.data["ric({:02})".format(i)].
+                           get_scan(scan), "PF {}".format(i)))
 
     tburn = mfile_data.data["tburn"].get_scan(scan)/3600.0
     tftype = proc_dict.DICT_TF_TYPE[mfile_data.data["isumattf"].get_scan(scan)]
@@ -790,7 +800,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
             ("vstot", "Available flux swing", "Wb"),
             (tburn, "Burn time", "hrs"),
             ("", "", ""),
-            ("#TF coil type is %s" % tftype, "", ""),
+            ("#TF coil type is {}".format(tftype), "", ""),
             ("bmaxtf", "Peak field at conductor", "T"),
             ("iooic", "I/I$_{\mathrm{crit}}$", ""),
             ("tmarg", "Temperature margin", "K"),
@@ -854,7 +864,7 @@ def plot_power_info(axis, mfile_data, scan):
             ("pnucblkt", "Nuclear heating in blanket", "MW"),
             ("pnucshld", "Nuclear heating in shield", "MW"),
             ("pdivt", "Psep / Pdiv", "MW"),
-            (pthresh, "H-mode threshold (M=2.5)", "$\pm$%.3f MW" % err),
+            (pthresh, "H-mode threshold (M=2.5)", "$\pm${:.3f} MW".format(err)),
             ("fwbllife", "FW/Blanket life", "years"),
             ("divlife", "Divertor life", "years"),
             ("pthermmw", "Thermal Power", "MW"),

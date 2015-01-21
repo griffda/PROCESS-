@@ -27,11 +27,19 @@ module impurity_radiation_module
   !+ad_call  constants
   !+ad_call  error_handling
   !+ad_call  profiles_module
-  !+ad_hist  13/12/13 HL Initial version of module
+  !+ad_hist  13/12/13 HL  Initial version of module
   !+ad_hist  13/05/14 PJK Initial PROCESS implementation
   !+ad_hist  02/06/14 PJK Added impvar, fimpvar
   !+ad_hist  17/06/14 PJK Added impdir
   !+ad_hist  26/06/14 PJK Added error_handling
+  !+ad_hist  03/09/14 HL  Added average atomic charge values to data;
+  !+ad_hisc               changed directory containing datafiles
+  !+ad_hist  17/09/14 PJK Changed default values
+  !+ad_hist  18/09/14 PJK Updated/re-ordered comments
+  !+ad_hist  24/09/14 PJK Path name now set automatically (via make)
+  !+ad_hist  25/09/14 PJK Corrected root.dir include syntax
+  !+ad_hist  06/10/14 PJK Changed impvar default from 10 to 9
+  !+ad_hist  08/12/14 PJK Changed impdir label
   !+ad_stat  Okay
   !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
   !+ad_docs  Sertoli, private communication
@@ -49,25 +57,32 @@ module impurity_radiation_module
   public :: initialise_imprad, impradprofile, z2index, element2index, fradcore
   public :: imp_dat
 
+  !+ad_vars  imprad_model /1/ : switch for impurity radiation model:<UL>
+  !+ad_varc               <LI>  = 0 original ITER 1989 model
+  !+ad_varc               <LI>  = 1 2014 multi-impurity, pedestal profile model </UL>
+  !+ad_varc  (Whichever model is used, it is recommended to turn on
+  !+ad_varc  constraint eqn.17 with iteration variable 28: fradpwr.)
+  integer, public :: imprad_model = 1
+
   !+ad_vars  nimp /14/ FIX : number of ion species in impurity radiation model
   integer, public, parameter :: nimp = 14
 
   !+ad_vars  coreradius /0.9/ : normalised radius defining the 'core' region
   real(kind(1.0D0)), public :: coreradius = 0.9D0
 
-  !+ad_vars  fimp(nimp) /1.0,0.0,.../ : impurity number density fractions relative
-  !+ad_varc                             to electron density
-  !+ad_varc                             (iteration variable 102 is fimp(impvar))
+  !+ad_vars  fimp(nimp) /1.0,0.1,0.02,0.0,0.0,0.0,0.0,0.0,0.0016,0.0,0.0,0.0,0.0,0.0/ :
+  !+ad_varc         impurity number density fractions relative to electron density
+  !+ad_varc         (iteration variable 102 is fimp(impvar))
   real(kind(1.0D0)), public, dimension(nimp) :: fimp = &
-       (/ 1.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
-       0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
-  !+ad_vars  imp_label(nimp) /.../ FIX : impurity ion species:<UL>
+       (/ 1.0D0, 0.1D0, 0.02D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
+       0.0D0, 0.0016D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
+  !+ad_vars  imp_label(nimp) : impurity ion species names:<UL>
   character(len=2), public, dimension(nimp) :: imp_label = (/ &
   !+ad_varc  <LI> ( 1)  Hydrogen  (fraction calculated by code)
        'H_', &
   !+ad_varc  <LI> ( 2)  Helium    (fraction calculated by code)
        'He', &
-  !+ad_varc  <LI> ( 3)  Beryllium
+  !+ad_varc  <LI> ( 3)  Beryllium (default fraction 2%)
        'Be', &
   !+ad_varc  <LI> ( 4)  Carbon
        'C_', &
@@ -79,7 +94,7 @@ module impurity_radiation_module
        'Ne', &
   !+ad_varc  <LI> ( 8)  Silicon
        'Si', &
-  !+ad_varc  <LI> ( 9)  Argon
+  !+ad_varc  <LI> ( 9)  Argon (default fraction 0.16%)
        'Ar', &
   !+ad_varc  <LI> (10)  Iron
        'Fe', &
@@ -92,24 +107,21 @@ module impurity_radiation_module
   !+ad_varc  <LI> (14)  Tungsten</UL>
        'W_'/)
 
-  !+ad_vars  fimpvar /1.0D-3/ : impurity fraction to be used as fimp(impvar)
+  !+ad_vars  fimpvar /1.0e-3/ : impurity fraction to be used as fimp(impvar)
   !+ad_varc                     (iteration variable 102)
   real(kind(1.0D0)), public :: fimpvar = 1.0D-3
 
-  !+ad_vars  impdir /'/home/pknight/process/bin/impuritydata'/ : Directory containing
-  !+ad_varc           impurity radiation data files
-  character(len=60), public :: impdir = '/home/pknight/process/bin/impuritydata/'
+    !  Obtain the root directory
 
-  !+ad_vars  imprad_model /0/ : switch for impurity radiation model:<UL>
-  !+ad_varc               <LI>  = 0 original ITER 1989 model
-  !+ad_varc               <LI>  = 1 impurity profile model</UL>
-  !+ad_varc  (Whichever model is used, it is recommended to turn on
-  !+ad_varc  constraint eqn.17 with iteration variable 28: fradpwr.)
-  integer, public :: imprad_model = 0
+#include "root.dir"
 
-  !+ad_vars  impvar /10 (iron)/ : fimp element value to be varied if iteration
+  !+ad_vars  impdir /'/home/PROCESS/[branch]/impuritydata'/ :
+  !+ad_varc           Directory containing impurity radiation data files
+  character(len=60), public :: impdir = ROOTDIR//'/impuritydata/'
+
+  !+ad_vars  impvar /9 (argon)/ : fimp element value to be varied if iteration
   !+ad_varc                       variable number 102 is turned on
-  integer, public :: impvar = 10
+  integer, public :: impvar = 9
 
   !  Declare impurity data type
 
@@ -124,6 +136,8 @@ module impurity_radiation_module
      real(kind(1.0D0)), allocatable, dimension(:) :: Temp_keV
      !  Table of corresponding Lz values
      real(kind(1.0D0)), allocatable, dimension(:) :: Lz_Wm3
+     !  Table of corresponding average atomic charge values
+     real(kind(1.0D0)), allocatable, dimension(:) :: Zav
      
   end type imp_dat
 
@@ -167,7 +181,7 @@ contains
 
     errorflag = 0
 
-    table_length = 200  !  Number of temperature and Lz values in data file
+    table_length = 100  !  Number of temperature and Lz values in data file
     tmult = 1.0D0   !  Conversion from temperatures in data file to keV
     lzmult = 1.0D0  !  Conversion from Lz values in data file to W/m3
 
@@ -288,7 +302,7 @@ contains
 
     integer :: status, i
     character(len=12) :: filename
-    character(len=72) :: fullpath
+    character(len=128) :: fullpath
     logical :: iexist
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -309,6 +323,7 @@ contains
     allocate( &
          impurity_arr(no)%Temp_keV(len_tab), &
          impurity_arr(no)%Lz_Wm3(len_tab), &
+         impurity_arr(no)%Zav(len_tab), &
          stat=status)
     if (status /= 0) then
        idiags(1) = status ; call report_error(28)
@@ -327,8 +342,8 @@ contains
 
     inquire(file=trim(fullpath), exist=iexist)
     if (iexist) then
-       call import_impdata(trim(fullpath), len_tab, &
-            impurity_arr(no)%Temp_keV, impurity_arr(no)%Lz_Wm3)
+       call import_impdata(fullpath, len_tab, &
+            impurity_arr(no)%Temp_keV, impurity_arr(no)%Lz_Wm3, impurity_arr(no)%Zav)
     else
        call report_error(29)
        imprad_model = 0
@@ -347,7 +362,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine import_impdata(filename, nlines, col1, col2, skiprows, fmt)
+  subroutine import_impdata(filename, nlines, col1, col2, col3, skiprows, fmt)
     
     !+ad_name  import_impdata
     !+ad_summ  Reads two columns of data from file
@@ -358,6 +373,7 @@ contains
     !+ad_args  nlines   : input integer           : no. of lines to be read
     !+ad_args  col1(nlines) : output real array   : data in column1 
     !+ad_args  col2(nlines) : output real array   : data in column2
+    !+ad_args  col3(nlines) : output real array   : data in column3
     !+ad_args  skiprows : optional input integer  : no. of initial rows to skip
     !+ad_args  fmt      : optional input char(len=128) : data format
     !+ad_desc  This routine reads in the data of a two column file and
@@ -368,6 +384,7 @@ contains
     !+ad_hist  07/05/14 HL  Added skiprows
     !+ad_hist  19/05/14 PJK Modified error handling
     !+ad_hist  26/06/14 PJK Added (proper) error handling
+    !+ad_hist  03/09/14 HL  Added third column of data
     !+ad_stat  Okay
     !+ad_docs  N/A
     !
@@ -377,9 +394,9 @@ contains
 
     !  Arguments
 
-    character(len=72), intent(in) :: filename
+    character(len=128), intent(in) :: filename
     integer, intent(in) :: nlines
-    real(kind(1.0D0)), dimension(nlines), intent(out) :: col1, col2
+    real(kind(1.0D0)), dimension(nlines), intent(out) :: col1, col2, col3
     integer, optional, intent(in) :: skiprows
     character(len=128), optional, intent(in) :: fmt
 
@@ -388,7 +405,7 @@ contains
     integer :: iostat, i, local_skip
     integer, parameter :: unit = 18
     character(len=25) :: buffer
-    real(kind(1.0D0)) :: in1, in2
+    real(kind(1.0D0)) :: in1, in2, in3
     character(len=128) :: local_fmt
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -404,7 +421,7 @@ contains
     if (present(fmt)) then
        local_fmt = fmt
     else 
-       local_fmt = '(2F10.2)'
+       local_fmt = '(3F10.2)'
     end if
 
     open(unit=unit, file=trim(filename), status='old', action='read', iostat=iostat)
@@ -423,7 +440,7 @@ contains
     end do
 
     do i = 1, nlines
-       read(unit=unit, fmt=local_fmt, iostat=iostat) in1, in2
+       read(unit=unit, fmt=local_fmt, iostat=iostat) in1, in2, in3
        if (iostat > 0) then 
           idiags(1) = iostat ; idiags(2) = i
           call report_error(32)
@@ -432,6 +449,7 @@ contains
        else
           col1(i) = in1 
           col2(i) = in2 
+          col3(i) = in3
        end if
     end do
 
@@ -592,7 +610,7 @@ contains
 
     if (pimp >= pbrem) then
        pline = pimp - pbrem
-    else  !  shouldn't do this... model inconsistency has occurred
+    else  !  shouldn't do this... model inconsistency has occurred; okay at high T!
        pline = 0.0D0
        pimp = pbrem
     end if
@@ -707,7 +725,7 @@ contains
        end if
 
     else if (te >= imp_element%Temp_keV(imp_element%len_tab)) then
-
+       !  This is okay because Bremsstrahlung will dominate at higher temp.
        lz = imp_element%Lz_Wm3(imp_element%len_tab)
 
     else 

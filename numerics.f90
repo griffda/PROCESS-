@@ -56,6 +56,20 @@ module numerics
   !+ad_hist  08/07/14 PJK Added verbose from global_variables
   !+ad_hist  31/07/14 PJK Labelled constraints 57 and 58 as obsolete,
   !+ad_hisc               also iteration variables 99, 100
+  !+ad_hist  17/09/14 PJK Changed default values
+  !+ad_hist  18/09/14 PJK Updated/re-ordered comments
+  !+ad_hist  01/10/14 PJK Reassigned lablcc(15); new iteration variable 103
+  !+ad_hist  02/10/14 PJK Reassigned lablcc(23); new iteration variable 104
+  !+ad_hist  06/10/14 PJK New iteration variable 105; new constraint 59
+  !+ad_hist  13/10/14 PJK Changed boundu(50: fiooic) from 0.5 to 1.0
+  !+ad_hist  20/10/14 PJK OH to CS
+  !+ad_hist  11/11/14 PJK New iteration variable 106; new constraint 60
+  !+ad_hist  13/11/14 PJK lablxc(106) corrected
+  !+ad_hist  25/11/14 PJK New iteration variable 107; new constraint 61
+  !+ad_hist  11/12/14 PJK Corrected lablcc(61) - all strings must be defined with
+  !+ad_hisc               the correct length as declared in the corresponding
+  !+ad_hisc               character(len=...) statement, otherwise
+  !+ad_hisc               compilation using gfortran fails
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -68,10 +82,10 @@ module numerics
 
   public
 
-  !+ad_vars  ipnvars /102/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 102
-  !+ad_vars  ipeqns /58/ FIX : number of constraint equations available
-  integer, parameter :: ipeqns  = 58
+  !+ad_vars  ipnvars /107/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 107
+  !+ad_vars  ipeqns /61/ FIX : number of constraint equations available
+  integer, parameter :: ipeqns  = 61
   !+ad_vars  ipnfoms /15/ FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 15
 
@@ -80,49 +94,85 @@ module numerics
   integer, parameter :: ipvp1   = ipnvars+1
 
   !+ad_vars  ioptimz /1/ : code operation switch:<UL>
-  !+ad_varc           <LI> < 0 for no optimisation, HYBRD only;
-  !+ad_varc           <LI> = 0 for HYBRD and VMCON (not recommended);
-  !+ad_varc           <LI> > 0 for optimisation, VMCON only</UL>
+  !+ad_varc           <LI> = -1 for no optimisation, HYBRD only;
+  !+ad_varc           <LI> = 0  for HYBRD and VMCON (not recommended);
+  !+ad_varc           <LI> = 1  for optimisation, VMCON only</UL>
   integer :: ioptimz = 1
   !+ad_vars  maxcal /200/ : maximum number of VMCON iterations
-  integer :: maxcal  = 200
-  !+ad_vars  minmax /6/ : switch for figure-of-merit (see lablmm for descriptions)
+  integer :: maxcal = 200
+
+  !+ad_vars  minmax /7/ : switch for figure-of-merit (see lablmm for descriptions)
   !+ad_varc               negative => maximise, positive => minimise
-  integer :: minmax  = 6
+  integer :: minmax = 7
+  !+ad_vars  lablmm(ipnfoms) : labels describing figures of merit:<UL>
+  character(len=22), dimension(ipnfoms) :: lablmm = (/ &
+       !+ad_varc  <LI> ( 1) major radius
+       'major radius.         ', &
+       !+ad_varc  <LI> ( 2) P_fus P_in-total
+       'P_fus P_in-total.     ', &
+       !+ad_varc  <LI> ( 3) neutron wall load
+       'neutron wall load.    ', &
+       !+ad_varc  <LI> ( 4) P_tf + P_pf
+       'P_tf + P_pf.          ', &
+       !+ad_varc  <LI> ( 5) fusion gain Q
+       'fusion gain.          ', &
+       !+ad_varc  <LI> ( 6) cost of electricity
+       'cost of electricity.  ', &
+       !+ad_varc  <LI> ( 7) capital cost (direct cost if ireactor=0,
+       !+ad_varc                          constructed cost otherwise)
+       'capital cost.         ', &
+       !+ad_varc  <LI> ( 8) aspect ratio
+       'aspect ratio.         ', &
+       !+ad_varc  <LI> ( 9) divertor heat load
+       'divertor heat load.   ', &
+       !+ad_varc  <LI> (10) toroidal field
+       'toroidal field.       ', &
+       !+ad_varc  <LI> (11) total injected power
+       'total injected power. ', &
+       !+ad_varc  <LI> (12) hydrogen plant capital cost
+       'H plant capital cost. ', &
+       !+ad_varc  <LI> (13) hydrogen production rate
+       'H production rate.    ', &
+       !+ad_varc  <LI> (14) pulse length
+       'pulse length.         ', &
+       !+ad_varc  <LI> (15) plant availability factor (N.B. requires
+       !+ad_varc            iavail=1 to be set) </UL>
+       'plant availability.   ' /)
+
   !+ad_vars  ncalls : number of function calls during solution
-  integer :: ncalls  = 0
-  !+ad_vars  neqns /14/ : number of equality constraints root solver must satisfy
-  integer :: neqns   = 14
+  integer :: ncalls = 0
+  !+ad_vars  neqns /14/ : number of equality constraints to be satisfied
+  integer :: neqns = 14
   !+ad_vars  nfev1 : number of calls to FCNHYB (HYBRD function caller) made
-  integer :: nfev1   = 0
+  integer :: nfev1 = 0
   !+ad_vars  nfev2 : number of calls to FCNVMC1 (VMCON function caller) made
-  integer :: nfev2   = 0
+  integer :: nfev2 = 0
   !+ad_vars  nineqns /0/ : number of inequality constraints VMCON must satisfy
   !+ad_varc                (leave at zero for now)
   integer :: nineqns = 0
-  !+ad_vars  nvar /25/ : number of iteration (independent) variables
-  integer :: nvar    = 25
+  !+ad_vars  nvar /16/ : number of iteration variables to use
+  integer :: nvar = 16
   !+ad_vars  nviter : number of VMCON iterations performed
   integer :: nviter = 0
 
-  !+ad_vars  icc(ipeqns) /2,10,11,24,31,32,33,34,35,36,1,7,14,16/ :
-  !+ad_varc                array defining which constraint equations to activate
-  !+ad_varc                (see lablcc for descriptions)
+  !+ad_vars  icc(ipeqns) /1,2,5,7,9,10,11,14,17,24,27,33,35,36/ :
+  !+ad_varc           array defining which constraint equations to activate
+  !+ad_varc           (see lablcc for descriptions)
   integer, dimension(ipeqns) :: icc = (/ &
-       2,  &  !  1
-       10, &  !  2
-       11, &  !  3
-       24, &  !  4
-       31, &  !  5
-       32, &  !  6
-       33, &  !  7
-       34, &  !  8
-       35, &  !  9
-       36, &  !  10
-       1,  &  !  11
-       7,  &  !  12
-       14, &  !  13
-       16, &  !  14
+       1,  &  !  1
+       2,  &  !  2
+       5,  &  !  3
+       7,  &  !  4
+       9,  &  !  5
+       10, &  !  6
+       11, &  !  7
+       14, &  !  8
+       17, &  !  9
+       24, &  !  10
+       27, &  !  11
+       33, &  !  12
+       35, &  !  13
+       36, &  !  14
        0,  &  !  15
        0,  &  !  16
        0,  &  !  17
@@ -166,38 +216,168 @@ module numerics
        0,  &  !  55
        0,  &  !  56
        0,  &  !  57
-       0   &  !  58
+       0,  &  !  58
+       0,  &  !  59
+       0,  &  !  60
+       0   &  !  61
        /)
+  !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
+  !+ad_varc                   (starred ones are turned on by default):<UL>
+  character(len=33), dimension(ipeqns) :: lablcc = (/ &
+       !+ad_varc  <LI> ( 1) * Beta (consistency equation)
+       'Beta consistency                 ', &
+       !+ad_varc  <LI> ( 2) * Global power balance (consistency equation)
+       'Global power balance consistency ', &
+       !+ad_varc  <LI> ( 3) Ion power balance
+       'Ion power balance                ', &
+       !+ad_varc  <LI> ( 4) Electron power balance
+       'Electron power balance           ', &
+       !+ad_varc  <LI> ( 5) * Density upper limit
+       'Density upper limit              ', &
+       !+ad_varc  <LI> ( 6) (Epsilon x beta poloidal) upper limit
+       '(Epsilon x beta-pol) upper limit ', &
+       !+ad_varc  <LI> ( 7) * Beam ion density (NBI) (consistency equation)
+       'Beam ion density consistency     ', &
+       !+ad_varc  <LI> ( 8) Neutron wall load upper limit
+       'Neutron wall load upper limit    ', &
+       !+ad_varc  <LI> ( 9) * Fusion power upper limit
+       'Fusion power upper limit         ', &
+       !+ad_varc  <LI> (10) * Toroidal field 1/R (consistency equation)
+       'Toroidal field 1/R consistency   ', &
+       !+ad_varc  <LI> (11) * Radial build (consistency equation)
+       'Radial build consistency         ', &
+       !+ad_varc  <LI> (12) Volt second lower limit
+       'Volt second lower limit          ', &
+       !+ad_varc  <LI> (13) Burn time lower limit (PULSE)
+       'Burn time lower limit            ', &
+       !+ad_varc  <LI> (14) * Neutral beam decay lengths to plasma centre (NBI) (consistency equation)
+       'NBI decay lengths consistency    ', &
+       !+ad_varc  <LI> (15) L-H power threshold limit
+       'L-H power threshold limit        ', &
+       !+ad_varc  <LI> (16) Net electric power lower limit
+       'Net electric power lower limit   ', &
+       !+ad_varc  <LI> (17) * Radiation power upper limit
+       'Radiation power upper limit      ', &
+       !+ad_varc  <LI> (18) Divertor heat load upper limit
+       'Divertor heat load upper limit   ', &
+       !+ad_varc  <LI> (19) MVA upper limit
+       'MVA upper limit                  ', &
+       !+ad_varc  <LI> (20) Neutral beam tangency radius upper limit (NBI)
+       'Beam tangency radius upper limit ', &
+       !+ad_varc  <LI> (21) Plasma minor radius lower limit
+       'Plasma minor radius lower limit  ', &
+       !+ad_varc  <LI> (22) Divertor collisionality upper limit
+       'Divertor collisionality upper lim', &
+       !+ad_varc  <LI> (23) Conducting shell to plasma minor radius ratio upper limit
+       'Conducting shell radius upper lim', &
+       !+ad_varc  <LI> (24) * Beta upper limit
+       'Beta upper limit                 ', &
+       !+ad_varc  <LI> (25) Peak toroidal field upper limit
+       'Peak toroidal field upper limit  ', &
+       !+ad_varc  <LI> (26) Central solenoid EOF current density upper limit
+       'CS coil EOF current density limit', &
+       !+ad_varc  <LI> (27) * Central solenoid BOP current density upper limit
+       'CS coil BOP current density limit', &
+       !+ad_varc  <LI> (28) Fusion gain Q lower limit
+       'Fusion gain Q lower limit        ', &
+       !+ad_varc  <LI> (29) Inboard radial build consistency
+       'Inboard radial build consistency ', &
+       !+ad_varc  <LI> (30) Injection power upper limit
+       'Injection power upper limit      ', &
+       !+ad_varc  <LI> (31) TF coil case stress upper limit (SCTF)
+       'TF coil case stress upper limit  ', &
+       !+ad_varc  <LI> (32) TF coil conduit stress upper limit (SCTF)
+       'TF coil conduit stress upper lim ', &
+       !+ad_varc  <LI> (33) * I_op / I_critical (TF coil) (SCTF)
+       'I_op / I_critical (TF coil)      ', &
+       !+ad_varc  <LI> (34) Dump voltage upper limit (SCTF)
+       'Dump voltage upper limit         ', &
+       !+ad_varc  <LI> (35) * J_winding pack/J_protection upper limit (SCTF)
+       'J_winding pack/J_protection limit', &
+       !+ad_varc  <LI> (36) * TF coil temperature margin lower limit (SCTF)
+       'TF coil temp. margin lower limit ', &
+       !+ad_varc  <LI> (37) Current drive gamma upper limit
+       'Current drive gamma limit        ', &
+       !+ad_varc  <LI> (38) First wall coolant temperature rise upper limit (PULSE)
+       '1st wall coolant temp rise limit ', &
+       !+ad_varc  <LI> (39) First wall peak temperature upper limit (PULSE)
+       'First wall peak temperature limit', &
+       !+ad_varc  <LI> (40) Start-up injection power lower limit (PULSE)
+       'Start-up inj. power lower limit  ', &
+       !+ad_varc  <LI> (41) Plasma current ramp-up time lower limit (PULSE)
+       'Plasma curr. ramp time lower lim ', &
+       !+ad_varc  <LI> (42) Cycle time lower limit (PULSE)
+       'Cycle time lower limit           ', &
+       !+ad_varc  <LI> (43) Average centrepost temperature
+       !+ad_varc            (TART) (consistency equation)
+       'Average centrepost temperature   ', &
+       !+ad_varc  <LI> (44) Peak centrepost temperature upper limit (TART)
+       'Peak centrepost temp. upper limit', &
+       !+ad_varc  <LI> (45) Edge safety factor lower limit (TART)
+       'Edge safety factor lower limit   ', &
+       !+ad_varc  <LI> (46) Ip/Irod upper limit (TART)
+       'Ip/Irod upper limit              ', &
+       !+ad_varc  <LI> (47) TF coil toroidal thickness upper limit (RFP)
+       'TF coil tor. thickness upper lim ', &
+       !+ad_varc  <LI> (48) Poloidal beta upper limit
+       'Poloidal beta upper limit        ', &
+       !+ad_varc  <LI> (49) RFP reversal parameter &lt; 0 (RFP)
+       'RFP reversal parameter < 0       ', &
+       !+ad_varc  <LI> (50) IFE repetition rate upper limit (IFE)
+       'IFE repetition rate upper limit  ', &
+       !+ad_varc  <LI> (51) Startup volt-seconds consistency (PULSE)
+       'Startup volt-seconds consistency ', &
+       !+ad_varc  <LI> (52) Tritium breeding ratio lower limit
+       'Tritium breeding ratio lower lim ', &
+       !+ad_varc  <LI> (53) Neutron fluence on TF coil upper limit
+       'Neutron fluence on TF coil limit ', &
+       !+ad_varc  <LI> (54) Peak TF coil nuclear heating upper limit
+       'Peak TF coil nucl. heating limit ', &
+       !+ad_varc  <LI> (55) Vacuum vessel helium concentration upper limit
+       'Vessel helium concentration limit', &
+       !+ad_varc  <LI> (56) Pseparatrix/Rmajor upper limit
+       'Psep / R upper limit             ', &
+       !+ad_varc  <LI> (57) TF coil leg toroidal thickness lower limit (OBSOLETE)
+       'TF coil leg tor width lower limit', &
+       !+ad_varc  <LI> (58) TF coil leg radial thickness lower limit (OBSOLETE)
+       'TF coil leg rad width lower limit', &
+       !+ad_varc  <LI> (59) Neutral beam shine-through fraction upper limit (NBI)
+       'NB shine-through frac upper limit', &
+       !+ad_varc  <LI> (60) Central solenoid temperature margin lower limit (SCTF)
+       'CS temperature margin lower limit', &
+       !+ad_varc  <LI> (61) Minimum availability value</UL>
+       'Minimum availability value       '  &
+       /)  !  Please note: All strings between '...' above must be exactly 33 chars long
 
-  !+ad_vars  ixc(ipnvars) /10,12,3,36,48,49,50,51,53,54,5,7,19,1,2,6,13,16,29,56,57,58,59,60,4/ :
-  !+ad_varc                 array defining which iteration variables to activate
-  !+ad_varc                 (see lablxc for descriptions)
+  !+ad_vars  ixc(ipnvars) /4,5,6,7,10,12,13,19,28,29,36,39,50,53,54,61/ :
+  !+ad_varc               array defining which iteration variables to activate
+  !+ad_varc               (see lablxc for descriptions)
   integer, dimension(ipnvars) :: ixc = (/ &
-       10, &  !  1
-       12, &  !  2
-       3,  &  !  3
-       36, &  !  4
-       48, &  !  5
-       49, &  !  6
-       50, &  !  7
-       51, &  !  8
-       53, &  !  9
-       54, &  !  10
-       5,  &  !  11
-       7,  &  !  12
-       19, &  !  13
-       1,  &  !  14
-       2,  &  !  15
-       6,  &  !  16
-       13, &  !  17
-       16, &  !  18
-       29, &  !  19
-       56, &  !  20
-       57, &  !  21
-       58, &  !  22
-       59, &  !  23
-       60, &  !  24
-       4,  &  !  25
+       4,  &  !  1
+       5,  &  !  2
+       6,  &  !  3
+       7,  &  !  4
+       10, &  !  5
+       12, &  !  6
+       13, &  !  7
+       19, &  !  8
+       28, &  !  9
+       29, &  !  10
+       36, &  !  11
+       39, &  !  12
+       50, &  !  13
+       53, &  !  14
+       54, &  !  15
+       61, &  !  16
+       0,  &  !  17
+       0,  &  !  18
+       0,  &  !  19
+       0,  &  !  20
+       0,  &  !  21
+       0,  &  !  22
+       0,  &  !  23
+       0,  &  !  24
+       0,  &  !  25
        0,  &  !  26
        0,  &  !  27
        0,  &  !  28
@@ -274,174 +454,21 @@ module numerics
        0,  &  !  99
        0,  &  !  100
        0,  &  !  101
-       0   &  !  102
+       0,  &  !  102
+       0,  &  !  103
+       0,  &  !  104
+       0,  &  !  105
+       0,  &  !  106
+       0   &  !  107
        /)
-
-  !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
-  !+ad_varc                   (starred ones are turned on by default):<UL>
-  character(len=33), dimension(ipeqns) :: lablcc = (/ &
-       !+ad_varc  <LI> ( 1) * Beta (consistency equation)
-       'Beta consistency                 ', &
-       !+ad_varc  <LI> ( 2) * Global power balance (consistency equation)
-       'Global power balance consistency ', &
-       !+ad_varc  <LI> ( 3) Ion power balance
-       'Ion power balance                ', &
-       !+ad_varc  <LI> ( 4) Electron power balance
-       'Electron power balance           ', &
-       !+ad_varc  <LI> ( 5) Density upper limit
-       'Density upper limit              ', &
-       !+ad_varc  <LI> ( 6) Epsilon * beta poloidal upper limit
-       'Epsilon * beta-pol upper limit   ', &
-       !+ad_varc  <LI> ( 7) * Beam ion density (NBI) (consistency equation)
-       'Beam ion density consistency     ', &
-       !+ad_varc  <LI> ( 8) Neutron wall load upper limit
-       'Neutron wall load upper limit    ', &
-       !+ad_varc  <LI> ( 9) Fusion power upper limit
-       'Fusion power upper limit         ', &
-       !+ad_varc  <LI> (10) * Toroidal field 1/R (consistency equation)
-       'Toroidal field 1/R consistency   ', &
-       !+ad_varc  <LI> (11) * Radial build (consistency equation)
-       'Radial build consistency         ', &
-       !+ad_varc  <LI> (12) Volt second lower limit
-       'Volt second lower limit          ', &
-       !+ad_varc  <LI> (13) Burn time lower limit (PULSE)
-       'Burn time lower limit            ', &
-       !+ad_varc  <LI> (14) * Energy of neutral beam (NBI) (consistency equation)
-       'Neutral beam energy consistency  ', &
-       !+ad_varc  <LI> (15) UNUSED
-       'UNUSED                           ', &
-       !+ad_varc  <LI> (16) * Net electric power lower limit
-       'Net electric power lower limit   ', &
-       !+ad_varc  <LI> (17) Radiation power upper limit
-       'Radiation power upper limit      ', &
-       !+ad_varc  <LI> (18) Divertor heat load upper limit
-       'Divertor heat load upper limit   ', &
-       !+ad_varc  <LI> (19) MVA upper limit
-       'MVA upper limit                  ', &
-       !+ad_varc  <LI> (20) Neutral beam tangency radius upper limit (NBI)
-       'Beam tangency radius upper limit ', &
-       !+ad_varc  <LI> (21) Plasma minor radius lower limit
-       'Plasma minor radius lower limit  ', &
-       !+ad_varc  <LI> (22) Divertor collisionality upper limit
-       'Divertor collisionality upper lim', &
-       !+ad_varc  <LI> (23) UNUSED
-       'UNUSED                           ', &
-       !+ad_varc  <LI> (24) * Beta upper limit
-       'Beta upper limit                 ', &
-       !+ad_varc  <LI> (25) Peak toroidal field upper limit
-       'Peak toroidal field upper limit  ', &
-       !+ad_varc  <LI> (26) OH coil EOF current density upper limit
-       'OH coil EOF current density limit', &
-       !+ad_varc  <LI> (27) OH coil BOP current density upper limit
-       'OH coil BOP current density limit', &
-       !+ad_varc  <LI> (28) Fusion gain Q lower limit
-       'Fusion gain Q lower limit        ', &
-       !+ad_varc  <LI> (29) Inboard radial build consistency
-       'Inboard radial build consistency ', &
-       !+ad_varc  <LI> (30) Injection power upper limit
-       'Injection power upper limit      ', &
-       !+ad_varc  <LI> (31) * TF coil case stress upper limit (SCTF)
-       'TF coil case stress upper limit  ', &
-       !+ad_varc  <LI> (32) * TF coil conduit stress upper limit (SCTF)
-       'TF coil conduit stress upper lim ', &
-       !+ad_varc  <LI> (33) * I_op / I_critical (TF coil) (SCTF)
-       'I_op / I_critical (TF coil)      ', &
-       !+ad_varc  <LI> (34) * Dump voltage upper limit (SCTF)
-       'Dump voltage upper limit         ', &
-       !+ad_varc  <LI> (35) * J_winding pack/J_protection upper limit (SCTF)
-       'J_winding pack/J_protection limit', &
-       !+ad_varc  <LI> (36) * TF coil temperature margin lower limit (SCTF)
-       'TF coil temp. margin lower limit ', &
-       !+ad_varc  <LI> (37) Current drive gamma upper limit
-       'Current drive gamma limit        ', &
-       !+ad_varc  <LI> (38) First wall coolant temperature rise upper limit (PULSE)
-       '1st wall coolant temp rise limit ', &
-       !+ad_varc  <LI> (39) First wall peak temperature upper limit (PULSE)
-       'First wall peak temperature limit', &
-       !+ad_varc  <LI> (40) Start-up injection power lower limit (PULSE)
-       'Start-up inj. power lower limit  ', &
-       !+ad_varc  <LI> (41) Plasma current ramp-up time lower limit (PULSE)
-       'Plasma curr. ramp time lower lim ', &
-       !+ad_varc  <LI> (42) Cycle time lower limit (PULSE)
-       'Cycle time lower limit           ', &
-       !+ad_varc  <LI> (43) Average centrepost temperature
-       !+ad_varc            (TART) (consistency equation)
-       'Average centrepost temperature   ', &
-       !+ad_varc  <LI> (44) Peak centrepost temperature upper limit (TART)
-       'Peak centrepost temp. upper limit', &
-       !+ad_varc  <LI> (45) Edge safety factor lower limit (TART)
-       'Edge safety factor lower limit   ', &
-       !+ad_varc  <LI> (46) Ip/Irod upper limit (TART)
-       'Ip/Irod upper limit              ', &
-       !+ad_varc  <LI> (47) TF coil toroidal thickness upper limit (RFP)
-       'TF coil tor. thickness upper lim ', &
-       !+ad_varc  <LI> (48) Poloidal beta upper limit
-       'Poloidal beta upper limit        ', &
-       !+ad_varc  <LI> (49) RFP reversal parameter &lt; 0 (RFP)
-       'RFP reversal parameter < 0       ', &
-       !+ad_varc  <LI> (50) IFE repetition rate upper limit (IFE)
-       'IFE repetition rate upper limit  ', &
-       !+ad_varc  <LI> (51) Startup volt-seconds consistency (PULSE)
-       'Startup volt-seconds consistency ', &
-       !+ad_varc  <LI> (52) Tritium breeding ratio lower limit
-       'Tritium breeding ratio lower lim ', &
-       !+ad_varc  <LI> (53) Neutron fluence on TF coil upper limit
-       'Neutron fluence on TF coil limit ', &
-       !+ad_varc  <LI> (54) Peak TF coil nuclear heating upper limit
-       'Peak TF coil nucl. heating limit ', &
-       !+ad_varc  <LI> (55) Vacuum vessel helium concentration upper limit
-       'Vessel helium concentration limit', &
-       !+ad_varc  <LI> (56) Pseparatrix/Rmajor upper limit
-       'Psep / R upper limit             ', &
-       !+ad_varc  <LI> (57) TF coil leg toroidal thickness lower limit (OBSOLETE)
-       'TF coil leg tor width lower limit', &
-       !+ad_varc  <LI> (58) TF coil leg radial thickness lower limit (OBSOLETE)</UL>
-       'TF coil leg rad width lower limit'  &
-       /)
-
-  !+ad_vars  lablmm(ipnfoms) : labels describing figures of merit:<UL>
-  character(len=22), dimension(ipnfoms) :: lablmm = (/ &
-       !+ad_varc  <LI> ( 1) major radius
-       'major radius.         ', &
-       !+ad_varc  <LI> ( 2) P_fus P_in-total
-       'P_fus P_in-total.     ', &
-       !+ad_varc  <LI> ( 3) neutron wall load
-       'neutron wall load.    ', &
-       !+ad_varc  <LI> ( 4) P_tf + P_pf
-       'P_tf + P_pf.          ', &
-       !+ad_varc  <LI> ( 5) fusion gain Q
-       'fusion gain.          ', &
-       !+ad_varc  <LI> ( 6) cost of electricity
-       'cost of electricity.  ', &
-       !+ad_varc  <LI> ( 7) capital cost (direct cost if ireactor=0,
-       !+ad_varc                          constructed cost otherwise)
-       'capital cost.         ', &
-       !+ad_varc  <LI> ( 8) aspect ratio
-       'aspect ratio.         ', &
-       !+ad_varc  <LI> ( 9) divertor heat load
-       'divertor heat load.   ', &
-       !+ad_varc  <LI> (10) toroidal field
-       'toroidal field.       ', &
-       !+ad_varc  <LI> (11) total injected power
-       'total injected power. ', &
-       !+ad_varc  <LI> (12) hydrogen plant capital cost
-       'H plant capital cost. ', &
-       !+ad_varc  <LI> (13) hydrogen production rate
-       'H production rate.    ', &
-       !+ad_varc  <LI> (14) pulse length
-       'pulse length.         ', &
-       !+ad_varc  <LI> (15) plant availability factor (N.B. requires
-       !+ad_varc            iavail=1 to be set) </UL>
-       'plant availability.   ' /)
-
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
   character(len=9), dimension(ipnvars) :: lablxc = (/ &
-       !+ad_varc  <LI> ( 1) * aspect
+       !+ad_varc  <LI> ( 1) aspect
        'aspect   ', &
-       !+ad_varc  <LI> ( 2) * bt
+       !+ad_varc  <LI> ( 2) bt
        'bt       ', &
-       !+ad_varc  <LI> ( 3) * rmajor
+       !+ad_varc  <LI> ( 3) rmajor
        'rmajor   ', &
        !+ad_varc  <LI> ( 4) * te
        'te       ', &
@@ -467,7 +494,7 @@ module numerics
        'fwalld   ', &
        !+ad_varc  <LI> (15) fvs (f-value for equation 12)
        'fvs      ', &
-       !+ad_varc  <LI> (16) * ohcth
+       !+ad_varc  <LI> (16) ohcth
        'ohcth    ', &
        !+ad_varc  <LI> (17) tdwell
        'tdwell   ', &
@@ -491,7 +518,7 @@ module numerics
        'ffuspow  ', &
        !+ad_varc  <LI> (27) fhldiv (f-value for equation 18)
        'fhldiv   ', &
-       !+ad_varc  <LI> (28) fradpwr (f-value for equation 17)
+       !+ad_varc  <LI> (28) * fradpwr (f-value for equation 17)
        'fradpwr  ', &
        !+ad_varc  <LI> (29) * bore
        'bore     ', &
@@ -513,7 +540,7 @@ module numerics
        'coheof   ', &
        !+ad_varc  <LI> (38) fjohc (f-value for equation 26)
        'fjohc    ', &
-       !+ad_varc  <LI> (39) fjohc0 (f-value for equation 27)
+       !+ad_varc  <LI> (39) * fjohc0 (f-value for equation 27)
        'fjohc0   ', &
        !+ad_varc  <LI> (40) fgamcd (f-value for equation 37)
        'fgamcd   ', &
@@ -531,13 +558,13 @@ module numerics
        'fpinj    ', &
        !+ad_varc  <LI> (47) feffcd
        'feffcd   ', &
-       !+ad_varc  <LI> (48) * fstrcase (f-value for equation 31)
+       !+ad_varc  <LI> (48) fstrcase (f-value for equation 31)
        'fstrcase ', &
-       !+ad_varc  <LI> (49) * fstrcond (f-value for equation 32)
+       !+ad_varc  <LI> (49) fstrcond (f-value for equation 32)
        'fstrcond ', &
        !+ad_varc  <LI> (50) * fiooic (f-value for equation 33)
        'fiooic   ', &
-       !+ad_varc  <LI> (51) * fvdump (f-value for equation 34)
+       !+ad_varc  <LI> (51) fvdump (f-value for equation 34)
        'fvdump   ', &
        !+ad_varc  <LI> (52) vdalw
        'vdalw    ', &
@@ -547,17 +574,17 @@ module numerics
        'ftmargtf ', &
        !+ad_varc  <LI> (55) tmargmin
        'tmargmin ', &
-       !+ad_varc  <LI> (56) * tdmptf
+       !+ad_varc  <LI> (56) tdmptf
        'tdmptf   ', &
-       !+ad_varc  <LI> (57) * thkcas
+       !+ad_varc  <LI> (57) thkcas
        'thkcas   ', &
-       !+ad_varc  <LI> (58) * thwcndut
+       !+ad_varc  <LI> (58) thwcndut
        'thwcndut ', &
-       !+ad_varc  <LI> (59) * fcutfsu
+       !+ad_varc  <LI> (59) fcutfsu
        'fcutfsu  ', &
-       !+ad_varc  <LI> (60) * cpttf
+       !+ad_varc  <LI> (60) cpttf
        'cpttf    ', &
-       !+ad_varc  <LI> (61) gapds
+       !+ad_varc  <LI> (61) * gapds
        'gapds    ', &
        !+ad_varc  <LI> (62) fdtmp (f-value for equation 38)
        'fdtmp    ', &
@@ -639,19 +666,29 @@ module numerics
        'ftfthko  ', &
        !+ad_varc  <LI> (101) prp
        'prp      ', &
-       !+ad_varc  <LI> (102) fimpvar</UL>
-       'fimpvar  '  &
+       !+ad_varc  <LI> (102) fimpvar
+       'fimpvar  ', &
+       !+ad_varc  <LI> (103) flhthresh
+       'flhthresh', &
+       !+ad_varc  <LI> (104) fcwr
+       'fcwr     ', &
+       !+ad_varc  <LI> (105) fnbshinef (f-value for equation 59)
+       'fnbshinef', &
+       !+ad_varc  <LI> (106) ftmargoh (f-value for equation 60)
+       'ftmargoh ', &
+       !+ad_varc  <LI> (107) favail (f-value for equation 61)</UL>
+       'favail   '  &
        /)
 
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
   real(kind(1.0D0)) :: sqsumsq = 0.0D0
-  !+ad_vars  epsfcn /1.0D-3/ : finite difference step length for HYBRD/VMCON derivatives
+  !+ad_vars  epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON derivatives
   real(kind(1.0D0)) :: epsfcn = 1.0D-3
-  !+ad_vars  epsvmc /1.0D-3/ : error tolerance for VMCON
-  real(kind(1.0D0)) :: epsvmc = 1.0D-3
+  !+ad_vars  epsvmc /1.0e-6/ : error tolerance for VMCON
+  real(kind(1.0D0)) :: epsvmc = 1.0D-6
   !+ad_vars  factor /0.1/ : used in HYBRD for first step size
   real(kind(1.0D0)) :: factor = 0.1D0
-  !+ad_vars  ftol /1.0D-4/ : error tolerance for HYBRD
+  !+ad_vars  ftol /1.0e-4/ : error tolerance for HYBRD
   real(kind(1.0D0)) :: ftol = 1.0D-4
 
   !+ad_vars  boundl(ipnvars) : lower bounds used on ixc variables during
@@ -669,7 +706,7 @@ module numerics
        0.100D0, &  !  10
        1.00D-3, &  !  11
        1.000D5, &  !  12
-       0.100D0, &  !  13
+       1.000D0, &  !  13
        0.001D0, &  !  14
        0.001D0, &  !  15
        0.001D0, &  !  16
@@ -758,7 +795,12 @@ module numerics
        0.001D0, &  !  99
        0.001D0, &  !  100
        1.00D-6, &  !  101
-       1.00D-6  &  !  102
+       1.00D-6, &  !  102
+       1.000D0, &  !  103
+       0.001D0, &  !  104
+       0.001D0, &  !  105
+       0.001D0, &  !  106
+       0.001D0  &  !  107
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -813,7 +855,7 @@ module numerics
        1.000D0, &  !  47
        1.000D0, &  !  48
        1.000D0, &  !  49
-       0.500D0, &  !  50
+       1.000D0, &  !  50
        1.000D0, &  !  51
        1.000D6, &  !  52
        1.000D0, &  !  53
@@ -865,7 +907,12 @@ module numerics
        1.000D0, &  !  99
        1.000D0, &  !  100
        0.010D0, &  !  101
-       0.010D0  &  !  102
+       0.010D0, &  !  102
+       1.000D6, &  !  103
+       1.000D0, &  !  104
+       1.000D0, &  !  105
+       1.000D0, &  !  106
+       1.000D0  &  !  107
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

@@ -233,6 +233,10 @@ subroutine check
   !+ad_hist  24/06/14 PJK Removed refs to bcylth
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  23/07/14 PJK Modified icase descriptions
+  !+ad_hist  19/08/14 PJK Added trap for nvar < neqns
+  !+ad_hist  01/09/14 PJK Added trap for insufficient specification of ixc, icc
+  !+ad_hist  15/09/14 PJK Added plasma pedestal consistency checks
+  !+ad_hist  17/11/14 PJK Added trap for deprecated constraints 3,4
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -263,6 +267,37 @@ subroutine check
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  errors_on = .true.
+
+  !  Check that there are sufficient iteration variables
+
+  if (nvar < neqns) then
+     idiags(1) = nvar ; idiags(2) = neqns
+     call report_error(137)
+  end if
+
+  !  Check that sufficient elements of ixc and icc have been specified
+
+  if ( any(ixc(1:nvar) == 0) ) then
+     idiags(1) = nvar
+     call report_error(139)
+  end if
+
+  if ( any(icc(1:neqns+nineqns) == 0) ) then
+     idiags(1) = neqns ; idiags(2) = nineqns
+     call report_error(140)
+  end if
+
+  !  Deprecate constraints 3 and 4
+
+  if ( any(icc(1:neqns+nineqns) == 3) ) then
+     call report_error(162)
+  end if
+
+  if ( any(icc(1:neqns+nineqns) == 4) ) then
+     call report_error(163)
+  end if
+
   !  Fuel ion fractions must add up to 1.0
 
   if (abs(1.0D0 - fdeut - ftrit - fhe3) > 1.0D-6) then
@@ -288,6 +323,78 @@ subroutine check
 
   if ( any(ixc == 102) ) then
      impurity_arr(impvar)%frac = fimpvar
+  end if
+
+  !  Warn if ion power balance equation is being used with the new radiation model
+
+  if ((imprad_model == 1).and.(any(icc == 3))) then
+     call report_error(138)
+  end if
+
+  !  Plasma profile consistency checks
+
+  if (ipedestal == 1) then
+
+     !  Temperature checks
+
+     if (teped < tesep) then
+        fdiags(1) = teped ; fdiags(2) = tesep
+        call report_error(146)
+     end if
+
+     if ((abs(rhopedt-1.0D0) <= 1.0D-7).and.((teped-tesep) >= 1.0D-7)) then
+        fdiags(1) = rhopedt ; fdiags(2) = teped ; fdiags(3) = tesep
+        call report_error(147)
+     end if
+
+     !  Core temperature should always be calculated (later) as being
+     !  higher than the pedestal temperature, if and only if the
+     !  volume-averaged temperature never drops below the pedestal
+     !  temperature. Prevent this by adjusting te, and its lower bound
+     !  (which will only have an effect if this is an optimisation run)
+
+     if (te <= teped) then
+        fdiags(1) = te ; fdiags(2) = teped
+        te = teped*1.001D0
+        call report_error(149)
+     end if
+
+     if ((ioptimz >= 0).and.(any(ixc == 4)).and.(boundl(4) < teped*1.001D0)) then
+        call report_error(150)
+        boundl(4) = teped*1.001D0
+        boundu(4) = max(boundu(4), boundl(4))
+     end if
+
+     !  Density checks
+
+     if (neped < nesep) then
+        fdiags(1) = neped ; fdiags(2) = nesep
+        call report_error(151)
+     end if
+
+     if ((abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7)) then
+        fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
+        call report_error(152)
+     end if
+
+     !  Core density should always be calculated (later) as being
+     !  higher than the pedestal density, if and only if the
+     !  volume-averaged density never drops below the pedestal
+     !  density. Prevent this by adjusting dene, and its lower bound
+     !  (which will only have an effect if this is an optimisation run)
+
+     if (dene <= neped) then
+        fdiags(1) = dene ; fdiags(2) = neped
+        dene = neped*1.001D0
+        call report_error(154)
+     end if
+
+     if ((ioptimz >= 0).and.(any(ixc == 6)).and.(boundl(6) < neped*1.001D0)) then
+        call report_error(155)
+        boundl(6) = neped*1.001D0
+        boundu(6) = max(boundu(6), boundl(6))
+     end if
+
   end if
 
   !  Tight aspect ratio options 
@@ -409,5 +516,7 @@ subroutine check
   !  in the thermodynamic blanket model...
 
   if (blktmodel > 0) costr = 2
+
+  errors_on = .false.
 
 end subroutine check

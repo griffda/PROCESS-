@@ -1,0 +1,375 @@
+\mychapter{Code Management Tools}
+\label{chap:codetools}
+
+This chapter will be of interest to people involved in the continuing
+maintenance of the \process\ source code. As stated elsewhere, the source code
+is maintained by CCFE, and resides in a Git repository on the CCFE servers.
+
+\section{The Makefile}
+\label{sec:makefile}
+
+In addition to its normal role for compilation, the makefile (named
+\texttt{Makefile}) includes a number of utility functions that perform tasks
+such as automatic generation of the code documentation, and the creation of a
+tar file containing the entire source code, its documentation files, and the
+input and output files. This has proved to be of great benefit in keeping all
+of the data from a given run together for archival purposes.
+
+\subsection{Compilation}
+
+Compilation is trivially performed using the makefile. Currently, the
+available options are (type the following on the command line):
+\begin{tabbing}
+123\=12345678901234567890\= \kill
+\> \texttt{make ARCH=FUN} \> CCFE Fusion Unix Network (Intel Fortran ifort compiler) \\
+\> \texttt{make ARCH=GFORT} \> GNU Fortran compiler (gfortran; N.B.\ only versions
+4.6.3 or above) \\
+\> \texttt{make ARCH=JAC} \> JET Analysis Cluster (pgf95 compiler)
+\end{tabbing}
+The Intel Fortran compiler is the default option, so typing simply
+\texttt{make} will have the same effect as typing \texttt{make ARCH=FUN}.
+
+The code is almost trivial to port to new architectures, by adding extra
+stanzas to the makefile as required.
+
+To force a full recompilation, type \texttt{make clean}. N.B.\ This will
+remove (without prompting) all ``backup'' files (\texttt{*\~}) as well as
+certain other files from the working directory.
+
+Extra run-time diagnostics (array-bound checking, etc.) is turned on by
+default at present; the code is sufficiently quick to run that the performance
+penalty is barely noticeable. However, this can be turned off (beware\ldots
+results can change!), by adding \texttt{DEBUG=NO} to the relevant command
+above, i.e.\ type \verb+make ARCH=... DEBUG=NO+.  N.B.\ there must be no
+spaces either side of the \texttt{=} characters in any of the above commands.
+
+\subsection{Archiving utilities}
+
+The makefile can be used in a number of ways to pack the various file sets
+together into a single compressed tar file, for ease of portability and
+archiving.
+
+\begin{itemize}
+
+\item \texttt{make tar}: Typing this command produces a file
+  \texttt{process.tar.gz} that contains all of the source files, utility
+  programs and documentation files necessary to run the program from scratch
+  on a new machine or in a new directory. (Note that the input files \indat\
+  and \texttt{device.dat} are not included.) This is useful for transferring
+  new copies of source files, etc.\ into an existing directory already
+  containing a previous \process\ run, as the pre-existing customised input
+  files will not be overwritten. To extract the individual files again, copy
+  the file to the destination working directory and type
+  \verb+tar zxvf process.tar.gz+
+
+\item \texttt{make archive}: Typing this command produces a file
+  \texttt{process\_run.tar.gz} containing the working directory's input and
+  output files (\indat, \outdat, \plotdat, \mfile\ and \texttt{device.dat}
+  (which must exist to avoid an error message; see Section~\ref{sec:device}),
+  together with all of the source files, utility programs and documentation
+  files. These files together comprise the full set that define a given run,
+  and so the file produced by this command is suitable for long-term storage
+  for archival purposes. To extract the contents, type
+  \verb+tar zxvf process_run.tar.gz+
+\end{itemize}
+
+Note that each of the above commands will overwrite the given named tar file
+if one already exists in the working directory.
+
+\subsection{Code documentation}
+
+The makefile can also be used to produce source code documentation, as
+described in the next section.
+
+\section{Automatic Documentation}
+\label{sec:autodoc}
+
+The \process\ source code is self-documenting to a degree, using an included
+parser program (\texttt{autodoc}) to generate html files for each subprogram
+from specially-formatted comment lines within the code. It is the
+responsibility of the programmer to keep the \texttt{autodoc} comments within
+the source code relevant, comprehensive and up-to-date! Use the examples in
+the code as a starting basis for new routines; the output section
+corresponding to the various \texttt{autodoc} tags should be
+self-explanatory. See also Section~\ref{sec:codemods}.
+
+The following files are used:
+\begin{verbatim}
+   autodoc.f90
+   adheader.src
+   adfooter.src
+\end{verbatim}
+To create the ($\sim 430$) html files from the source code, type
+\verb+make html+.  Then, point your favourite web browser to the file
+\texttt{process.html} or \texttt{calling\_tree.html} in the working
+directory. The variable descriptor file \texttt{vardes.html} (see
+Section~\ref{sec:vardes}) is also produced at the same time (though it may be
+helpful to modify the file manually afterwards to remove empty sections from
+it).
+
+In addition, a full \LaTeX\/ User Guide (this document!), contained within
+\texttt{process.tex} and the other \texttt{.tex} files called from it, is
+rigorously maintained to ensure its continuing strict agreement with the
+evolving source code. To create an Adobe PDF file \texttt{process.pdf} from
+\texttt{process.tex} (and the associated PostScript figures), type
+\verb+make userguide+.
+
+Finally, to produce both the html files and the User Guide in one go, simply
+type \verb+make doc+.
+
+\section{Code Updates and Release Procedure}
+\label{sec:code_release}
+
+This section describes the procedures that should be followed whenever new
+commits to the \texttt{develop} or \texttt{master} branches of the \process\
+Git repository are to be made, and how new code releases are performed. It is
+assumed that readers have a working knowledge of Git commands.
+
+\subsection{Initial access to the source code}
+\label{sec:getsource}
+
+To gain access to the \process\ source code Git repository, you need
+to be given permission to do so via the CCFE \texttt{GitLab} server.
+\begin{enumerate}
+
+\item Use a web browser to go to
+  \href{http://git.ccfe.ac.uk}{\texttt{http://git.ccfe.ac.uk}}
+
+\item Login using your normal CCFE computer login details.
+
+\item Assuming this is successful, contact the \texttt{GitLab} \process\
+  ``Owner'' (currently Peter Knight), who will add you to \texttt{GitLab} as a
+  \process\ ``Developer''.
+
+\item (If this is your first access to \texttt{GitLab}, you may have to set up
+  SSH keys and a few other things; follow the instructions on screen.)
+
+\item Login to a Fusion Unix Network machine.
+
+\item \texttt{cd SomewhereAppropriate} (you choose!)
+
+\item \texttt{git clone git@git.ccfe.ac.uk:process/process.git process}
+
+\item \texttt{cd process}
+
+\item \texttt{git checkout develop}
+
+\end{enumerate}
+
+The above sequence of commands will provide you with a full copy of the
+\texttt{develop} branch of the \process\ source code, Python utilities and all
+the documentation files. Type \texttt{make all} to perform a full compilation
+and build the executable, create the User Guide and produce all the web-based
+documentation.
+
+\subsection{Git workflow}
+
+The code management methodology is based on the so-called
+\href{https://www.atlassian.com/git/workflows#!workflow-gitflow}{``gitflow''}
+workflow. There are two main branches:
+\begin{itemize}
+
+\item \texttt{develop}, which is the basis for all code development work, and
+  changes are committed to it frequently.
+
+\item \texttt{master}, which contains official ``release'' versions of
+  \process, and is updated on a roughly three-monthly timescale.
+
+\end{itemize}
+
+Development work on new models should use separate branches, named e.g.\
+\texttt{dev\_mynewmodel}, split from the \texttt{develop} branch. It is a very
+good idea to merge the \texttt{develop} branch into \texttt{dev\_mynewmodel}
+frequently during the course of the work, so that changes to the main branch
+are transferred to the new model's files with minimal effort.
+
+Once the new model has been finished and tested successfully (complete with full
+documentation --- see Section~\ref{sec:codemods}), the branch should be merged
+back into the \texttt{develop} branch.
+
+\subsubsection{Branching from \texttt{develop}}
+
+The following commands create a new branch in which to work on a new model. We
+assume that you are already in the \texttt{process} directory created above
+(Section~\ref{sec:getsource}).
+\begin{enumerate}
+
+\item \texttt{git checkout develop} (just to ensure that this is the branch
+  \textit{from which}\/ you will be branching)
+
+\item \texttt{git branch dev\_mynewmodel}
+
+\item \texttt{git checkout dev\_mynewmodel}
+
+\item \texttt{git push origin HEAD}  (updates the central \texttt{GitLab} repository)
+
+\end{enumerate}
+
+\subsubsection{Working on a new model}
+
+Edit your local copies of the files as necessary. Whenever you want to save
+the changes back to the repository (it is prudent to do this at the end of
+each working day, as well as when the changes are complete, the code compiles
+and all test runs are successful!), use the following commands:
+\begin{enumerate}
+
+\item \texttt{git status}  (this will show a list of modified files)
+
+\item \texttt{git add changedfile1 changedfile2 ...}  (this `stages' the files
+  marking them as ready for committing)
+
+\item \texttt{git commit}
+
+\item An editor window will open; add a line summarising the changes you have
+  made, save and close the window. This will initiate the commit to your
+  \textit{local}\ copy of the repository.
+
+\item \texttt{git push}  (to send the changes to the central \texttt{GitLab}
+  repository)
+
+\end{enumerate}
+
+\subsubsection{Merging \texttt{develop} into working branch}
+
+It is a good idea to periodically merge the \texttt{develop} branch into the
+branch in which you are working.
+\begin{enumerate}
+
+\item Firstly, make sure you have committed your latest changes into the
+  central \texttt{GitLab} repository as described in the previous section.
+
+\item \texttt{git pull}
+
+\item \texttt{git checkout develop}
+
+\item \texttt{git pull}
+
+\item \texttt{git checkout dev\_mynewmodel}
+
+\item \texttt{git merge develop}
+
+\item Look for messages on the screen indicating that some files cannot be
+  merged directly because of a merge `conflict'. This typically happens if the
+  same (or very closely-spaced) lines have been edited in both the
+  \texttt{develop} and \texttt{dev\_mynewmodel} branches.
+
+  If any files are affected, edit them and look for any lines containing
+  \texttt{=======}. Such lines separate the changes made in the two branches,
+  as in:
+\begin{verbatim}
+<<<<<<< HEAD
+This line was edited in dev_mynewmodel branch
+=======
+This line was edited in develop branch
+>>>>>>> develop
+\end{verbatim}
+  Resolve the conflict(s) as necessary. Then type \texttt{git add file1 file2 ...}, where
+  \texttt{file1} etc.\ are the names of the files you removed conflicts
+  from. Finally type \texttt{git commit} and edit the change log file.
+
+\item \texttt{git push}
+
+\end{enumerate}
+
+\subsubsection{Merging working branch back into \texttt{develop}}
+
+Once the work on a model has been completed, fully tested and documented, the
+working branch should be merged back into the \texttt{develop} branch. This is
+done almost exactly as in the previous section, but there are a few crucial
+differences:
+
+\begin{enumerate}
+
+\item Firstly, make sure you have committed your latest changes to the working
+  branch into the central \texttt{GitLab} repository.
+
+\item \texttt{git pull}
+
+\item \texttt{git checkout dev\_mynewmodel}
+
+\item \texttt{git checkout develop}
+
+\item \texttt{git merge dev\_mynewmodel}
+
+\item Look for any conflicts and resolve them as described in the previous
+  section.
+
+\item \texttt{git push}
+
+\end{enumerate}
+
+\subsubsection{Committing changes to \texttt{develop}}
+
+Whenever a commit to the \texttt{develop} branch is to be made, the following
+procedure should be followed. Ensure all documentation is up to date (see
+Section~\ref{sec:codemods}).
+\begin{enumerate}
+
+\item In routine \texttt{inform} of file \texttt{process.f90}, change the
+  definition of \texttt{progver} by incrementing the revision number by one to
+  \texttt{XYZ} (for instance) and the Release Date. It is important to keep
+  exactly the same format.
+
+\item Add a brief comment to the bottom of source file \texttt{process.f90}
+  describing the changes made since the last commit in the same branch. Start
+  the line with \texttt{! GIT XYZ: }, following the existing examples.
+
+\item If any of the User Guide \texttt{.tex} files have been modified, edit
+  the definition of \verb+\version+ in \texttt{process.tex} by changing the
+  Revision (to \texttt{XYZ}) and the date.
+
+\item \texttt{git add process.f90 process.tex file1 file2 ...}  (where
+  \texttt{file1} etc.\ are other changed files ready to be committed as listed
+  via \texttt{git status})
+
+\item \texttt{git commit}
+
+\item Add a one- or two-line comment describing the changes made, using a format similar to
+\begin{verbatim}
+09/12/2014: (rXYZ)  A short description of the changes made
+\end{verbatim}
+
+\item \texttt{git tag -a rXYZ -m `Revision XYZ'}
+
+\item \texttt{git push}
+
+\item \texttt{git push origin rXYZ}
+
+\item \texttt{make all}
+
+\end{enumerate}
+
+The instructions given in Section~\ref{sec:fullrebuild} should now be followed
+to make the new \texttt{develop} release available to all users.
+
+\subsubsection{Merging develop into master}
+
+\Red{(to follow)}
+
+\subsection{Full code rebuild}
+\label{sec:fullrebuild}
+
+The standard \process\ executables and the corresponding documentation
+available to all users are stored in the functional account called
+\texttt{PROCESS} on the CCFE Fusion Unix Network. Whenever the \texttt{master}
+or \texttt{develop} branches are updated a full rebuild of the standard
+executables and documentation should be performed. This is done as follows:
+\begin{enumerate}
+
+\item \texttt{alter PROCESS}  (this changes your current login to that of the
+  \texttt{PROCESS} user; only registered individuals are able to do this)
+
+\item \texttt{cd develop}  (or \texttt{cd master}, as appropriate to the
+  branch to be rebuilt)
+
+\item \texttt{git pull}
+
+\item \texttt{make all}
+
+\item \texttt{exit}  (to return to your own username again)
+
+\end{enumerate}
+
+The \texttt{make all} step performs the rebuild of the \texttt{process.exe} executable
+file, updates the User Guide and all the html files, and recreates the Python
+dictionaries as required by the Python utilities.

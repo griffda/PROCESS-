@@ -424,6 +424,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
     !+ad_hist  23/07/14 PJK Changed icase description
+    !+ad_hist  12/11/14 PJK Added tpulse, tdown, tcycle
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -473,11 +474,13 @@ contains
 
     !  Times for different phases
 
-    tburn = 3.15576D7  !  one year
-    tohs = 0.0D0
-    tpulse = 3.15576D7  !  one year
-    tqnch = 0.0D0
     tramp = 0.0D0
+    tohs = 0.0D0
+    tburn = 3.15576D7  !  one year
+    tqnch = 0.0D0
+    tpulse = tohs + theat + tburn + tqnch
+    tdown  = tramp + tohs + tqnch + tdwell
+    tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
 
     !  Coil quantities
 
@@ -974,6 +977,7 @@ contains
     !+ad_hist  11/06/14 PJK Introduced pchargemw, ptremw, ptrimw
     !+ad_hist  24/06/14 PJK Corrected neutron wall load to account for gaps
     !+ad_hisc               in first wall
+    !+ad_hist  19/08/14 PJK Removed impfe usage
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -993,7 +997,7 @@ contains
     !  Calculate plasma composition
 
     if (imprad_model == 0) then
-       call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impfe,impo, &
+       call betcom(cfe0,dene,fdeut,ftrit,fhe3,ftritbm,ignite,impc,impo, &
             ralpne,rnbeam,te,zeff,abeam,afuel,aion,deni,dlamee,dlamie,dnalp, &
             dnbeam,dnitot,dnprot,dnz,falpe,falpi,rncne,rnone,rnfene,zeffai, &
             zion,zfear)
@@ -1163,6 +1167,8 @@ contains
     !+ad_hist  01/05/14 PJK Changed bigq description
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  06/10/14 PJK Use global nbshinef instead of local fshine
+    !+ad_hisc               introduced porbitlossmw
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1177,7 +1183,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), save :: effnbss,fpion,fshine
+    real(kind(1.0D0)), save :: effnbss,fpion
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1201,11 +1207,12 @@ contains
 
        !  Use routine described in AEA FUS 172, but discard the current
        !  drive efficiency as this is irrelevant for stellarators. We are
-       !  only really interested in fpion, fshine and taubeam.
+       !  only really interested in fpion, nbshinef and taubeam.
 
-       call culnbi(effnbss,fpion,fshine)
+       call culnbi(effnbss,fpion,nbshinef)
 
-       pnbeam = pheat
+       pnbeam = pheat * (1.0D0-forbitloss)
+       porbitlossmw = pheat * forbitloss
        pinjimw = pnbeam * fpion
        pinjemw = pnbeam * (1.0D0-fpion)
 
@@ -1229,10 +1236,10 @@ contains
 
     !  Ratio of fusion to input (injection+ohmic) power
 
-    if (abs(pinjmw + pohmmw) < 1.0D-6) then
+    if (abs(pinjmw + porbitlossmw + pohmmw) < 1.0D-6) then
        bigq = 1.0D18
     else
-       bigq = powfmw / (pinjmw + pohmmw)
+       bigq = powfmw / (pinjmw + porbitlossmw + pohmmw)
     end if
 
     if (iprint == 0) return
@@ -1264,8 +1271,10 @@ contains
        call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam)
        call ovarre(outfile,'Fraction of beam energy to ions','(fpion)', &
             fpion)
-       call ovarre(outfile,'Neutral beam shine-through','(fshine)', &
-            fshine)
+       call ovarre(outfile,'Neutral beam shine-through fraction','(nbshinef)', &
+            nbshinef)
+       call ovarre(outfile,'Neutral beam orbit loss power (MW)','(porbitlossmw)', &
+            porbitlossmw)
        call ovarre(outfile,'Beam duct shielding thickness (m)','(nbshield)',nbshield)
        call ovarre(outfile,'R injection tangent / R-major','(frbeam)', &
             frbeam)
@@ -2415,6 +2424,7 @@ contains
     !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
     !+ad_hist  26/06/14 PJK Added error_handling
     !+ad_hist  30/07/14 PJK Renamed borev to tfborev
+    !+ad_hist  16/09/14 PJK Added tfcryoarea
     !+ad_stat  Okay
     !+ad_docs  The Stellarator Coil model for the Systems code PROCESS,
     !+ad_docc  F. Warmer, F. Schauer, IPP Greifswald, October 2013
@@ -2794,6 +2804,10 @@ contains
     ! [m^2] Total surface area of coil side facing plasma: outboard region
 
     tfsao = tfsai  !  depends, how 'inboard' and 'outboard' are defined
+
+    ! [m^2] Total surface area of toroidal shells covering coils
+
+    tfcryoarea = 2.0D0 * tfleng * twopi*0.5D0*(rtfcin+rtot)
 
     !  Masses of conductor constituents
 
@@ -3189,6 +3203,7 @@ contains
       !+ad_call  sumup3
       !+ad_call  tril
       !+ad_hist  03/03/14 PJK Initial version
+      !+ad_hist  25/09/14 PJK Corrected do-loop argument
       !+ad_stat  Okay
       !+ad_docs  The Stellarator Coil model for the Systems code PROCESS,
       !+ad_docc  F. Warmer, F. Schauer, IPP Greifswald, October 2013
@@ -3251,7 +3266,7 @@ contains
       d_phi = 2.0D0*pi/(n-1)
       zaehler = 0  !  counter
 
-      do j = 1,nsp-1  !  loop over other (secondary) coils
+      do j = 1,nsp_int-1  !  loop over other (secondary) coils
 
          !  Toroidal angle of secondary coil relative to primary
 
