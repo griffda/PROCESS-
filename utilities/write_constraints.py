@@ -35,7 +35,7 @@
 
 import sys, os
 import fileinput
-from subprocess import call
+import subprocess
 import string
 	
 def readConstraints():
@@ -77,7 +77,8 @@ if __name__ == '__main__':
 	constraint=["0" for i in range(100)]
 	IterationVariable=["0" for i in range(100)]
 	description=["0" for i in range(100)]
-	os.system("cp IN.DAT OLD.IN.DAT ")
+	subprocess.call(["cp IN.DAT OLD.IN.DAT"])
+	#os.system("cp IN.DAT OLD.IN.DAT ")
 	tidy("IN.DAT")
 
 	NumberConstraints, NumberIterationVariables = readConstraints()
