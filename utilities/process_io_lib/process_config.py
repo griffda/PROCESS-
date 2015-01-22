@@ -11,6 +11,7 @@ Compatible with PROCESS version 368
 """
 
 import os
+import subprocess
 from time import sleep
 from numpy.random import seed, uniform, normal
 from numpy import argsort
@@ -96,11 +97,11 @@ class ProcessConfig(object):
         except FileNotFoundError:
             os.mkdir(self.wdir)
 
-        os.system('cp ' + self.or_in_dat + ' ' + self.wdir + '/IN.DAT')
-        os.system('cp ' + self.filename + ' ' + self.wdir)
+        subprocess.call(['cp ' + self.or_in_dat + ' ' + self.wdir + '/IN.DAT'])
+        subprocess.call(['cp ' + self.filename + ' ' + self.wdir])
         os.chdir(self.wdir)
-        os.system('rm -f OUT.DAT MFILE.DAT PLOT.DAT \
-                   *.txt *.out *.log *.pdf *.eps *.nc')
+        subprocess.call(['rm -f OUT.DAT MFILE.DAT PLOT.DAT \
+                   *.txt *.out *.log *.pdf *.eps *.nc'])
 
     def create_readme(self, directory='.'):
 
@@ -162,7 +163,7 @@ class ProcessConfig(object):
         """ runs PROCESS binary """
 
         print("PROCESS run started ...", end='')
-        returncode = os.system(self.process+' >& process.log')
+        returncode = subprocess.call([self.process+' >& process.log'])
         if returncode != 0:
             print('\n Error: There was a problem with the PROCESS \
                    execution! %i' % returncode)
