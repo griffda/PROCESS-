@@ -262,6 +262,7 @@ contains
 
     poissn = 0.27D0
 
+    !  COMMENTED OUT CHANGING FWITH AND FWOTH. TO BE REVISED AT A LATER DATE
     !  Start of iteration of bfw - code returns to here
     !  if bfw has been altered to lie within constraints
 
@@ -445,7 +446,7 @@ contains
 
              fboa = (1.001D0/boa)**0.01D0
 
-             bfw = bfw*fboa
+             !bfw = bfw*fboa
              if ((bfw/afw) <= 1.001D0) then
                 fdiags(1) = afw ; fdiags(2) = bfw
                 call report_error(90)
@@ -478,13 +479,13 @@ contains
           !  Keep afw fixed and alter bfw so that the lower limit
           !  is satisfied
 
-          bfw = afw * (smt(tpeak,fwlifs) + coolp/2.0D0) / &
-               (smt(tpeak,fwlifs) - coolp/2.0D0)
+          bfw = bfw!afw * (smt(tpeak,fwlifs) + coolp/2.0D0) / &
+          !               (smt(tpeak,fwlifs) - coolp/2.0D0)
        end if
 
     end do bfw_iteration
 
-    !  Reset inboard and outboard first wall thicknesses
+    ! !  Reset inboard and outboard first wall thicknesses
 
     fwith = 2.0D0*bfw
     fwoth = 2.0D0*bfw

@@ -2547,9 +2547,9 @@ module build_variables
   real(kind(1.0D0)) :: fwareaib = 0.0D0
   !+ad_vars  fwareaob : outboard first wall surface area (m2)
   real(kind(1.0D0)) :: fwareaob = 0.0D0
-  !+ad_vars  fwith /0.035/ : inboard first wall thickness (m) (if lpulse=1, =2*bfw)
+  !+ad_vars  fwith /0.035/ : inboard first wall thickness, initial estimate (m)
   real(kind(1.0D0)) :: fwith = 0.035D0
-  !+ad_vars  fwoth /0.035/ : outboard first wall thickness (m) (if lpulse=1, =2*bfw)
+  !+ad_vars  fwoth /0.035/ : outboard first wall thickness, initial estimate (m)
   real(kind(1.0D0)) :: fwoth = 0.035D0
   !+ad_vars  gapds /0.155/ : gap between inboard vacuum vessel and TF coil (m)
   !+ad_varc                (iteration variable 61)

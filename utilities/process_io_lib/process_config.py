@@ -11,6 +11,7 @@ Compatible with PROCESS version 368
 """
 
 import os
+import subprocess
 from time import sleep
 import numpy as np
 from process_io_lib.process_funcs import  get_neqns_itervars,\
@@ -118,6 +119,14 @@ class ProcessConfig(object):
                 os.system('cp ' + self.or_in_dat + ' IN.DAT')
 
 
+#<<<<<<< HEAD
+#=======
+#        subprocess.call(['cp ' + self.or_in_dat + ' ' + self.wdir + '/IN.DAT'])
+#        subprocess.call(['cp ' + self.filename + ' ' + self.wdir])
+#        os.chdir(self.wdir)
+#        subprocess.call(['rm -f OUT.DAT MFILE.DAT PLOT.DAT \
+#                   *.txt *.out *.log *.pdf *.eps *.nc'])
+#>>>>>>> develop
 
     def create_readme(self, directory='.'):
 
@@ -182,7 +191,7 @@ class ProcessConfig(object):
         """ runs PROCESS binary """
 
         print("PROCESS run started ...", end='')
-        returncode = os.system(self.process+' >& process.log')
+        returncode = subprocess.call([self.process+' >& process.log'])
         if returncode != 0:
             print('\n Error: There was a problem with the PROCESS \
                    execution! %i' % returncode)
