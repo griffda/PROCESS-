@@ -9,7 +9,6 @@
 
 """
 
-
 # Dictionary for variable types
 from process_io_lib.process_dicts import DICT_VAR_TYPE
 
@@ -151,6 +150,7 @@ def process_constraint_equation(data, line):
     # Else the line contains a list of constraint equations icc = #, #, #
     else:
         constraints = no_comment_line[1].strip().split(",")
+        if "" in constraints: constraints.remove("")
 
     # List of new constraints read in
     value = [int(item.strip()) for item in constraints]
@@ -188,6 +188,7 @@ def process_iteration_variables(data, line):
     # Else the line contains a list of iteration variables IXC = #, #, #
     else:
         iteration_variables = no_comment_line[1].strip().split(",")
+        if "" in iteration_variables: iteration_variables.remove("")
 
     # List of new constraints read in
     value = [int(item.strip()) for item in iteration_variables]
@@ -217,12 +218,6 @@ def process_bound(data, line):
 
     # Initialise bound type
     bound_type = None
-
-    # Create bound variable class using INVariable class if the bounds entry
-    # doesn't exist
-    if "bounds" not in data.keys():
-        data["bounds"] = INVariable("bounds", dict(), "Bound",
-                                    "Bound", "Bounds")
 
     # Remove comment from line to make things easier
     no_comment_line = line.split("*")[0].split("=")
@@ -286,6 +281,12 @@ def process_line(data, line_type, line):
     :param line: Line from IN.DAT to process
     :return: Nothing
     """
+
+    # Create bound variable class using INVariable class if the bounds entry
+    # doesn't exist
+    if "bounds" not in data.keys():
+        data["bounds"] = INVariable("bounds", dict(), "Bound",
+                                    "Bound", "Bounds")
 
     # Constraint equations
     if line_type == "Constraint Equation":
@@ -421,6 +422,11 @@ def write_parameters(data, out_file):
                     for val in line_value:
                         line_string += str(val) + ", "
                     line_value = line_string.rstrip(", ")
+
+                if isinstance(line_value, str):
+                    split_line = line_value.split(" ")
+                if len(split_line) > 1:
+                    line_value = ", ".join([entry for entry in split_line])
 
                 parameter_line = "{0} = {1} * {2}\n\n". \
                     format(item.ljust(8), line_value,
