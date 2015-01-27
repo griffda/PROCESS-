@@ -10,16 +10,28 @@
 """
 
 # Dictionary for variable types
-from process_io_lib.process_dicts import DICT_VAR_TYPE
+from process_dicts import DICT_VAR_TYPE
 
 # Dictionary for ixc -> name
-from process_io_lib.process_dicts import DICT_IXC_SIMPLE
+from process_dicts import DICT_IXC_SIMPLE
 
 # Dictionary for variable modules
-from process_io_lib.process_dicts import DICT_MODULE
+from process_dicts import DICT_MODULE
 
 # Dictionary for parameter descriptions
-from process_io_lib.process_dicts import DICT_DESCRIPTIONS
+from process_dicts import DICT_DESCRIPTIONS
+
+# Dictionary for variable types
+#from process_io_lib.process_dicts import DICT_VAR_TYPE
+
+# Dictionary for ixc -> name
+#from process_io_lib.process_dicts import DICT_IXC_SIMPLE
+
+# Dictionary for variable modules
+#from process_io_lib.process_dicts import DICT_MODULE
+
+# Dictionary for parameter descriptions
+#from process_io_lib.process_dicts import DICT_DESCRIPTIONS
 
 
 def fortran_python_scientific(var_value):
@@ -990,27 +1002,27 @@ class InDat(object):
 
 
 if __name__ == "__main__":
-    i = InDat(filename="../../IN.DAT_demo1")
+    i = InDat(filename="../IN.DAT_demo2")
     print(i.data["ixc"].value)
-    i.remove_constraint_equation(2.5)
-    i.add_constraint_equation("3.0")
-    i.add_constraint_equation("2")
-    i.add_iteration_variable(8)
-    i.add_iteration_variable("2")
-    i.add_iteration_variable(7.5)
-    i.add_iteration_variable("5.5")
-    i.remove_iteration_variable(2)
-    i.remove_iteration_variable("3")
-    i.remove_iteration_variable(4.5)
-    i.remove_iteration_variable("6.5")
-    # Add bound will change the bound value if it already exists
-    i.add_bound(2, "upper", 5.0)
-    i.remove_bound(2, "upper")
-    # Add parameter will change the parameter value if it already exists
-    i.add_parameter("blnktthdsd", 0.5)
-    i.add_parameter("iavail", 1)
-    i.remove_parameter("blnkithsddd")
-    i.remove_parameter("blnkith")
-    i.add_parameter("sweep", [3.0, 3.0])
-    print(i.data["bounds"].get_value)
+    # i.remove_constraint_equation(2.5)
+    # i.add_constraint_equation("3.0")
+    # i.add_constraint_equation("2")
+    # i.add_iteration_variable(8)
+    # i.add_iteration_variable("2")
+    # i.add_iteration_variable(7.5)
+    # i.add_iteration_variable("5.5")
+    # i.remove_iteration_variable(2)
+    # i.remove_iteration_variable("3")
+    # i.remove_iteration_variable(4.5)
+    # i.remove_iteration_variable("6.5")
+    # # Add bound will change the bound value if it already exists
+    # i.add_bound(2, "upper", 5.0)
+    # i.remove_bound(2, "upper")
+    # # Add parameter will change the parameter value if it already exists
+    # i.add_parameter("blnktthdsd", 0.5)
+    # i.add_parameter("iavail", 1)
+    # i.remove_parameter("blnkithsddd")
+    # i.remove_parameter("blnkith")
+    # i.add_parameter("sweep", [3.0, 3.0])
+    # print(i.data["bounds"].get_value)
     i.write_in_dat()
