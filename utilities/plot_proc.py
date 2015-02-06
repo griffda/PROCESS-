@@ -93,7 +93,6 @@ nbshield = m_file.data["nbshield"].get_scan(scan)
 rtanbeam = m_file.data["rtanbeam"].get_scan(scan)
 rtanmax = m_file.data["rtanmax"].get_scan(scan)
 beamwd = m_file.data["beamwd"].get_scan(scan)
-beamwd = 0.58
 casthi = m_file.data["casthi"].get_scan(scan)
 # Pedestal profile parameters
 ipedestal = m_file.data["ipedestal"].get_scan(scan)
@@ -1275,6 +1274,14 @@ def plot_magnetics_info(axis, mfile_data, scan):
             pf_info.append((mfile_data.data["ric({:02})".format(i)].
                             get_scan(scan), "PF {}".format(i)))
 
+    if len(pf_info) > 2:
+        pf_info_3_a = pf_info[2][0]
+        pf_info_3_b = pf_info[2][1]
+    else:
+        pf_info_3_a = ""
+        pf_info_3_b = ""
+
+
     tburn = mfile_data.data["tburn"].get_scan(scan) / 3600.0
     tftype = proc_dict.DICT_TF_TYPE[mfile_data.data["isumattf"].get_scan(scan)]
     vssoft = mfile_data.data["vsres"].get_scan(scan) + \
@@ -1282,7 +1289,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
 
     data = [(pf_info[0][0], pf_info[0][1], "MA"),
             (pf_info[1][0], pf_info[1][1], "MA"),
-            (pf_info[2][0], pf_info[2][1], "MA"),
+            (pf_info_3_a, pf_info_3_b, "MA"),
             (vssoft, "Startup flux swing", "Wb"),
             ("vstot", "Available flux swing", "Wb"),
             (tburn, "Burn time", "hrs"),
