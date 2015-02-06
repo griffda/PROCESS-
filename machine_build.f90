@@ -113,6 +113,7 @@ contains
     !+ad_hist  19/08/14 PJK Added ddwex, ohhghf to mfile
     !+ad_hist  02/09/14 PJK Modified ripflag handling
     !+ad_hist  20/10/14 PJK Changed OH coil to central solenoid
+    !+ad_hist  06/02/15 JM  Added output of beamwd to mfile
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -493,6 +494,8 @@ contains
     call ovarre(mfile,'External cryostat thickness (m)','(ddwex)',ddwex)
     call ovarre(mfile,'Ratio of Central solenoid height to TF coil internal height', &
          '(ohhghf)',ohhghf)
+    call ovarre(mfile,'Width of neutral beam duct where it passes between the TF coils (m)', &
+         '(beamwd)',beamwd)
 
   end subroutine radialb
 
