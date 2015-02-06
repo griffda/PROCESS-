@@ -425,8 +425,12 @@ def write_parameters(data, out_file):
 
                 if isinstance(line_value, str):
                     split_line = line_value.split(" ")
-                if len(split_line) > 1:
-                    line_value = ", ".join([entry for entry in split_line])
+                try:
+                    float(split_line[0])
+                    if len(split_line) > 1:
+                        line_value = ", ".join([entry for entry in split_line])
+                except:
+                    pass
 
                 parameter_line = "{0} = {1} * {2}\n\n". \
                     format(item.ljust(8), line_value,
@@ -527,7 +531,6 @@ def add_parameter(data, parameter_name, parameter_value):
 
     # Check that the parameter is not already in the dictionary
     if parameter_name not in data.keys():
-
         try:
             parameter_group = find_parameter_group(parameter_name)
             comment = DICT_DESCRIPTIONS[parameter_name]
