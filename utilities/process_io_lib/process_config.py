@@ -97,11 +97,12 @@ class ProcessConfig(object):
         except FileNotFoundError:
             os.mkdir(self.wdir)
 
-        subprocess.call(['cp ' + self.or_in_dat + ' ' + self.wdir + '/IN.DAT'])
-        subprocess.call(['cp ' + self.filename + ' ' + self.wdir])
+        subprocess.call(['cp', self.or_in_dat, self.wdir + '/IN.DAT'])
+        subprocess.call(['cp', self.filename, self.wdir])
         os.chdir(self.wdir)
-        subprocess.call(['rm -f OUT.DAT MFILE.DAT PLOT.DAT \
-                   *.txt *.out *.log *.pdf *.eps *.nc'])
+        subprocess.call(['rm -f OUT.DAT MFILE.DAT PLOT.DAT *.txt *.out\
+ *.log *.pdf *.eps *.nc *.info'], shell= True)
+
 
     def create_readme(self, directory='.'):
 
@@ -162,13 +163,18 @@ class ProcessConfig(object):
 
         """ runs PROCESS binary """
 
+        logfile = open('process.log','w')
         print("PROCESS run started ...", end='')
-        returncode = subprocess.call([self.process+' >& process.log'])
-        if returncode != 0:
+
+        try:
+            subprocess.check_call([self.process], stdout=logfile, stderr=logfile)
+        except subprocess.CalledProcessError as err:
             print('\n Error: There was a problem with the PROCESS \
-                   execution! %i' % returncode)
+                   execution!', err)
             print('       Refer to the logfile for more information!')
             exit()
+
+        logfile.close()
         print("finished.")
 
 
@@ -341,16 +347,15 @@ class TestProcessConfig(ProcessConfig):
 
         #by convention all variablenames are lower case
         if self.ioptimz != 'None':
-            in_dat.data['ioptimz'].add_parameter('ioptimz',
-                                                 self.ioptimz)
+            in_dat.add_parameter('ioptimz', self.ioptimz)
         if self.epsvmc != 'None':
-            in_dat.data['epsvmc'].add_parameter('epsvmc', self.epsvmc)
+            in_dat.add_parameter('epsvmc', self.epsvmc)
 
         if self.epsfcn != 'None':
-            in_dat.data['epsfcn'].add_parameter('epsfcn', self.epsfcn)
+            in_dat.add_parameter('epsfcn', self.epsfcn)
 
         if self.minmax != 'None':
-            in_dat.data['minmax'].add_parameter('minmax', self.minmax)
+            in_dat.add_parameter('minmax', self.minmax)
 
         in_dat.write_in_dat(output_filename='IN.DAT')
 
@@ -613,7 +618,6 @@ class RunProcessConfig(ProcessConfig):
 ################################################################################
 
 NETCDF_SWITCH = True
-
 
 class UncertaintiesConfig(ProcessConfig, Config):
 
