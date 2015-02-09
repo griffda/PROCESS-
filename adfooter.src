@@ -4,8 +4,15 @@
 <P ALIGN="RIGHT">
 <A HREF="process.html">Main Program</A> <BR>
 <A HREF="callingtree.html">Full Calling Tree</A> <BR>
-<A HREF="vardes.html">Variable Descriptor File</A> <BR>
-<A HREF="process.pdf" TARGET="_TOP">Primary Code Documentation (PDF)</A>
+<A HREF="vardes.html">Variable Descriptor File</A>
+<P ALIGN="RIGHT">
+<I>(N.B. One or more of the following should work...)</I>
+<P ALIGN="RIGHT">
+<A HREF="process.pdf" TARGET="_TOP">PROCESS User Guide (local copy)</A> <BR>
+<A HREF="UserGuide_develop.pdf" TARGET="_TOP">PROCESS User Guide
+(development version)</A> <BR>
+<A HREF="UserGuide_master.pdf" TARGET="_TOP">PROCESS User Guide
+(master version)</A>
 
 <!--Signature=============================================================-->
 
