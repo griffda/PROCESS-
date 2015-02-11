@@ -9,6 +9,8 @@
 
 """
 
+import numpy as np
+
 # Dictionary for variable types
 from process_io_lib.process_dicts import DICT_VAR_TYPE
 
@@ -116,7 +118,12 @@ def find_line_type(line):
 
     # Else the line contains an regular parameter
     else:
-        return "Parameter"
+        if "fimp" in name:
+            return "fimp"
+        elif "zref" in name:
+            return "zref"
+        else:
+            return "Parameter"
 
 
 def find_parameter_group(name):
@@ -150,7 +157,8 @@ def process_constraint_equation(data, line):
     # Else the line contains a list of constraint equations icc = #, #, #
     else:
         constraints = no_comment_line[1].strip().split(",")
-        if "" in constraints: constraints.remove("")
+        if "" in constraints:
+            constraints.remove("")
 
     # List of new constraints read in
     value = [int(item.strip()) for item in constraints]
@@ -188,7 +196,8 @@ def process_iteration_variables(data, line):
     # Else the line contains a list of iteration variables IXC = #, #, #
     else:
         iteration_variables = no_comment_line[1].strip().split(",")
-        if "" in iteration_variables: iteration_variables.remove("")
+        if "" in iteration_variables:
+            iteration_variables.remove("")
 
     # List of new constraints read in
     value = [int(item.strip()) for item in iteration_variables]
@@ -233,7 +242,7 @@ def process_bound(data, line):
     # Get bound information
     bound = no_comment_line[0].strip("boundl").replace("(", "").\
         replace(")", "").strip()
-    bound_value = no_comment_line[1].strip()
+    bound_value = no_comment_line[1].strip().replace(",", "")
 
     # If bound not in the bound dictionary then add entry for bound with an
     # empty dictionary
@@ -242,6 +251,32 @@ def process_bound(data, line):
 
     # Populate data dictionary with bound information
     data["bounds"].value[bound][bound_type] = bound_value
+
+
+def process_fimp(data, line):
+    """Function to process fimp array
+
+    :param data: Data dictionary for the IN.DAT information
+    :param line: Line from IN.DAT to process
+    :return: nothing
+    """
+
+    fimp_index = int(line.split("(")[1].split(")")[0]) - 1
+    fimp_value = eval(line.split("=")[-1])
+    data["fimp"].value[fimp_index] = fimp_value
+
+
+def process_zref(data, line):
+    """ Function to process zref array
+
+    :param data: Data dictionary for the IN.DAT information
+    :param line: Line from IN.DAT to process
+    :return: nothing
+    """
+
+    zref_index = int(line.split("(")[1].split(")")[0]) - 1
+    zref_value = eval(line.split("=")[-1].replace(",", ""))
+    data["zref"].value[zref_index] = zref_value
 
 
 def process_parameter(data, line):
@@ -288,6 +323,32 @@ def process_line(data, line_type, line):
         data["bounds"] = INVariable("bounds", dict(), "Bound",
                                     "Bound", "Bounds")
 
+    # Create a fimp variables class using INVariable class if the fimp entry
+    # doesn't exist
+    if "fimp" not in data.keys():
+        empty_fimp = np.zeros(14)
+        parameter_group = find_parameter_group("fimp")
+
+        # Get parameter comment/description from dictionary
+        comment = DICT_DESCRIPTIONS["fimp"].replace(",", ";").\
+            replace(".", ";").replace(":", ";")
+
+        data["fimp"] = INVariable("fimp", empty_fimp, "fimp", parameter_group,
+                                  comment)
+
+    # Create a zref variable class using INVariable class if the zref entry
+    # doesn't exist
+    if "zref" not in data.keys():
+        empty_zref = np.zeros(8)
+        parameter_group = find_parameter_group("zref")
+
+        # Get parameter comment/description from dictionary
+        comment = DICT_DESCRIPTIONS["zref"].replace(",", ";").\
+            replace(".", ";").replace(":", ";")
+
+        data["zref"] = INVariable("zref", empty_zref, "zref", parameter_group,
+                                  comment)
+
     # Constraint equations
     if line_type == "Constraint Equation":
         process_constraint_equation(data, line)
@@ -299,6 +360,14 @@ def process_line(data, line_type, line):
     # Bounds
     elif line_type == "Bound":
         process_bound(data, line)
+
+    # fimp
+    elif line_type == "fimp":
+        process_fimp(data, line)
+
+    # zref
+    elif line_type == "zref":
+        process_zref(data, line)
 
     # Parameter
     else:
@@ -413,29 +482,45 @@ def write_parameters(data, out_file):
         # Write parameters for given module
         for item in DICT_MODULE[module]:
             if item not in exclusions and item in data.keys():
-                # Left justification set to 8 to allow easier reading
-                # Only use first line of comment to avoid lots of info
-                line_value = data[item].value
-                line_string = ""
-                # if parameter is a list only output values comma separated
-                if isinstance(line_value, list):
-                    for val in line_value:
-                        line_string += str(val) + ", "
-                    line_value = line_string.rstrip(", ")
 
-                if isinstance(line_value, str):
-                    split_line = line_value.split(" ")
-                try:
-                    float(split_line[0])
-                    if len(split_line) > 1:
-                        line_value = ", ".join([entry for entry in split_line])
-                except:
-                    pass
+                if item == "fimp":
+                    for k in range(len(data["fimp"].get_value)):
+                        tmp_fimp_name = "fimp({0})".format(str(k+1).zfill(1))
+                        tmp_fimp_value = data["fimp"].get_value[k]
+                        parameter_line = "{0} = {1}\n\n".\
+                            format(tmp_fimp_name, tmp_fimp_value)
+                        out_file.write(parameter_line)
+                elif item == "zref":
+                    for j in range(len(data["zref"].get_value)):
+                        tmp_zref_name = "zref({0})".format(str(j+1).zfill(1))
+                        tmp_zref_value = data["zref"].get_value[j]
+                        parameter_line = "{0} = {1}\n\n".\
+                            format(tmp_zref_name, tmp_zref_value)
+                        out_file.write(parameter_line)
+                else:
+                    # Left justification set to 8 to allow easier reading
+                    # Only use first line of comment to avoid lots of info
+                    line_value = data[item].value
+                    line_string = ""
+                    # if parameter is a list only output values comma separated
+                    if isinstance(line_value, list):
+                        for val in line_value:
+                            line_string += str(val) + ", "
+                        line_value = line_string.rstrip(", ")
 
-                parameter_line = "{0} = {1} * {2}\n\n". \
-                    format(item.ljust(8), line_value,
-                           data[item].comment.split("\n")[0])
-                out_file.write(parameter_line)
+                    if isinstance(line_value, str):
+                        split_line = line_value.split(" ")
+                    try:
+                        float(split_line[0])
+                        if len(split_line) > 1:
+                            line_value = ", ".join([entry for entry in split_line])
+                    except:
+                        pass
+
+                    parameter_line = "{0} = {1} * {2}\n\n". \
+                        format(item.ljust(8), line_value,
+                               data[item].comment.split("\n")[0])
+                    out_file.write(parameter_line)
 
 
 def add_iteration_variable(data, variable_number):
@@ -564,6 +649,28 @@ def remove_parameter(data, parameter_name):
     # data dictionary
     else:
         print("Parameter {0} not in IN.DAT".format(parameter_name))
+
+
+def change_fimp(data, fimp_id, fimp_val):
+    """Function to change value in fimp array
+
+    :param data: Data dictionary for the IN.DAT information
+    :param fimp_id: impurity fraction array index
+    :param fimp_val: new impurity fraction array value
+    :return:
+    """
+    data["fimp"].value[fimp_id] = fimp_val
+
+
+def change_zref(data, zref_id, zref_val):
+    """Function to change value in zref array
+
+    :param data: Data dictionary for the IN.DAT information
+    :param zref_id: zref array index
+    :param zref_val: new zref array value
+    :return:
+    """
+    data["zref"].value[zref_id] = zref_val
 
 
 def add_bound(data, bound, bound_type, bound_value):
@@ -930,6 +1037,28 @@ class InDat(object):
         # add/change parameter to/in IN.DAT data dictionary
         add_parameter(self.data, parameter_name, parameter_value)
 
+    def change_fimp(self, fimp_index, fimp_value):
+        """Function to change value of an impurity fraction
+
+        :param fimp_index: index of impurity fraction array to change
+        :param fimp_value: value to change impurity fraction to
+        :return:
+        """
+
+        # change impurity fraction value in IN.DAT data dictionary
+        change_fimp(self.data, fimp_index, fimp_value)
+
+    def change_zref(self, zref_index, zref_value):
+        """Function to change value of zref
+
+        :param zref_index: index of zref to change
+        :param zref_value: value to change zref entry to
+        :return:
+        """
+
+        # change zref value in IN.DAT data dictionary
+        change_zref(self.data, zref_index, zref_value)
+
     def remove_parameter(self, parameter_name):
         """ Function to remove parameter from IN.DAT data dictionary
 
@@ -993,8 +1122,12 @@ class InDat(object):
 
 
 if __name__ == "__main__":
-    i = InDat(filename="../IN.DAT_demo2")
-    print(i.data["ixc"].value)
+    i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
+    # print(i.data["ixc"].value)
+    # print(i.data["fimp"].value)
+    # i.change_fimp(3, 0.5)
+    # print(i.data["zref"].value)
+    # i.change_zref(3, 0.5)
     # i.remove_constraint_equation(2.5)
     # i.add_constraint_equation("3.0")
     # i.add_constraint_equation("2")
