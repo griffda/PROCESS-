@@ -1774,6 +1774,7 @@ contains
     !+ad_hist  23/10/14 PJK Initial version
     !+ad_hist  10/12/14 PJK Added tturb ranges of validity
     !+ad_hist  17/12/14 PJK Added warning messages if tturb out of range
+    !+ad_hist  12/02/15 JM  Changed the thermal efficiency fits for detailed model
     !+ad_stat  Okay
     !+ad_docs  C. Harrington, K:\Power Plant Physics and Technology \ PROCESS \ blanket_model
     !+ad_docc  \ New Power Module Harrington \ Cycle correlations \ Cycle correlations.xls
@@ -1848,14 +1849,15 @@ contains
           !  temperature, as is common for PWR steam generators.
 
           !  Saturated steam Rankine cycle correlation (C. Harrington)
-          !  Range of validity: 543 K < tturb < 583 K
+          !  Range of validity: 548 K < tturb < 583 K
 
           tturb = outlet_temp - 45.0D0
           if ((tturb < 543.0D0).or.(tturb > 583.0D0)) then
              idiags(1) = 1 ; fdiags(1) = tturb
              call report_error(166)
           end if
-          etath = -2.265D0 + 0.932D0*log10(tturb + 49.999D0)
+
+          etath = 0.3720D0*log(tturb) - 2.0219D0
 
           ! These efficiencies assumed the divertor heat is used in the 
           ! main cycle, therefore set iprimdiv = 1
@@ -1870,14 +1872,14 @@ contains
           !  temperature, as was stated as practical in EFDA_D_2LLNBX.
 
           !  Superheated steam Rankine cycle correlation (C. Harrington)
-          !  Range of validity: 656 K < tturb < 840 K
+          !  Range of validity: 657 K < tturb < 840 K
 
           tturb = outlet_temp - 20.0D0
           if ((tturb < 656.0D0).or.(tturb > 840.0D0)) then
              idiags(1) = 2 ; fdiags(1) = tturb
              call report_error(166)
           end if
-          etath = -0.89D0 + 0.442D0*log10(tturb + 49.088D0)
+          etath = 0.1802D0*log(tturb) - 0.8002D0
 
           !  These efficiencies assumed the divertor heat is used in the 
           !  main cycle, therefore set iprimdiv = 1
@@ -1903,7 +1905,7 @@ contains
           idiags(1) = 3 ; fdiags(1) = tturb
           call report_error(166)
        end if
-       etath = -1.873D0 + 0.804D0*log10(tturb - 124.061D0)
+       etath = 0.4347D0*log(tturb) - 2.5043D0
 
        !  These efficiencies assumed the divertor heat is used in the 
        !  main cycle, therefore set iprimdiv = 1
