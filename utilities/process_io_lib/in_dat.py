@@ -118,9 +118,9 @@ def find_line_type(line):
 
     # Else the line contains an regular parameter
     else:
-        if "fimp" in name:
+        if "fimp(" in name:
             return "fimp"
-        elif "zref" in name:
+        elif "zref(" in name:
             return "zref"
         else:
             return "Parameter"
@@ -294,7 +294,10 @@ def process_parameter(data, line):
     name = no_comment_line[0].strip()
 
     # Parameter value
-    value = no_comment_line[1].strip().replace(",", "")
+    if len(no_comment_line[-1].split(",")) > 2:
+        value = no_comment_line[1].strip()
+    else:
+        value = no_comment_line[1].strip().replace(",", "")
 
     # Find group of variables the parameter belongs to
     parameter_group = find_parameter_group(name)
@@ -513,7 +516,9 @@ def write_parameters(data, out_file):
                     try:
                         float(split_line[0])
                         if len(split_line) > 1:
-                            line_value = ", ".join([entry for entry in split_line])
+
+                            line_value = ", ".\
+                                join([entry for entry in split_line])
                     except:
                         pass
 
@@ -1123,8 +1128,10 @@ class InDat(object):
 
 if __name__ == "__main__":
     i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
+    # i = InDat(filename="../../tmp_IN.DAT")
     # print(i.data["ixc"].value)
     # print(i.data["fimp"].value)
+    # print(i.data["ipfloc"].value)
     # i.change_fimp(3, 0.5)
     # print(i.data["zref"].value)
     # i.change_zref(3, 0.5)
