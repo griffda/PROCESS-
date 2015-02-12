@@ -2653,7 +2653,30 @@ input parameter & description \\ \hline
 \end{table}
 
 If \texttt{iavail = 2}, a new plant availability model based on data from
-the EUROfusion projects is implemented. \Red{Details to follow}
+the EUROfusion projects is implemented. The model is split into several parts. 
+\begin{enumerate}
+ \item Calculation of the planned unavailability - uses data from \cite{Crofts2014} to determine the length of the 
+       planned maintenance period depending on the number of remote handling systems operating in parallel. The number 
+       of planned maintenance periods is determined by the estimated lifetimes of the blanket and divertor based on the
+       heat and neutron loads.
+ \item Calculation of the unplanned unavailability - for this the plant is split into a number of subsystems each with their
+       own calculation for the unplanned unavailability. The aim of the model it to try and capture the increased risk to 
+       availability when approaching technological limits. The breakdown is:
+       \begin{itemize}
+        \item Magnets
+        \item Divertor
+        \item First wall and blanket
+        \item Balance of plant
+        \item Heating and current drive
+        \item Cryogenic systems
+       \end{itemize}
+       The list is not exhaustive or contains adequate detail for a full RAMI analysis but it allows
+       PROCESS to include some idea of the plant parameters than can influence the availability.
+
+ \item Calculation of relevant parameters (e.g. total availability, capacity factor, etc.).
+\end{enumerate}
+
+
 
 \subsection{Cost of electricity calculations}
 

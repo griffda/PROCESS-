@@ -2769,14 +2769,14 @@ module cost_variables
   integer :: num_rh_systems = 4
   !+ad_vars  conf_mag /0.99/ : Availability confidence level for magnet system
   real(kind(1.0D0)) :: conf_mag = 0.99D0
-  !+ad_vars  div_cycle_lim /20000/ : Cycle limit of the divertor
-  integer :: div_cycle_lim = 20000
-  !+ad_vars  conf_div /1.1/ : Availability confidence level for divertor system
-  real(kind(1.0D0)) :: conf_div = 1.1D0
-  !+ad_vars  fwbs_cycle_lim /30000/ : Cycle limit of the blanket
-  integer :: fwbs_cycle_lim = 30000
-  !+ad_vars  conf_fwbs /1.1/ : Availability confidence level for blanket system
-  real(kind(1.0D0)) :: conf_fwbs = 1.1D0
+  !+ad_vars  div_prob_fail /0.0002/ : Divertor probability of failure (per op day)
+  real(kind(1.0D0)) :: div_prob_fail = 0.0002D0
+  !+ad_vars  div_umain_time /0.25/ : Divertor unplanned maintenance time (years)
+  real(kind(1.0D0)) :: div_umain_time = 0.25D0
+  !+ad_vars  fwbs_prob_fail /0.0002/ : Fwbs probability of failure (per op day)
+  real(kind(1.0D0)) :: fwbs_prob_fail = 0.0002D0
+  !+ad_vars  fwbs_umain_time /0.25/ : Fwbs unplanned maintenance time (years)
+  real(kind(1.0D0)) :: fwbs_umain_time = 0.25D0
   !+ad_vars  redun_vac /75/ : Vacuum system pump redundancy level (%)
   integer :: redun_vac = 75
   !+ad_vars  t_operation : Operational time (yrs)
