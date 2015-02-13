@@ -242,7 +242,8 @@ def process_bound(data, line):
     # Get bound information
     bound = no_comment_line[0].strip("boundl").replace("(", "").\
         replace(")", "").strip()
-    bound_value = no_comment_line[1].strip().replace(",", "")
+    bound_value = no_comment_line[1].strip().replace(",", "").replace("d", "e").\
+        replace("D","e")
 
     # If bound not in the bound dictionary then add entry for bound with an
     # empty dictionary
@@ -455,13 +456,15 @@ def write_iteration_variables(data, out_file):
             # Lower bound
             if "l" in data["bounds"].value[str(variable)].keys():
                 lower_bound_line = "boundl({0}) = {1}\n\n".\
-                    format(variable, data["bounds"].value[str(variable)]["l"])
+                    format(variable, data["bounds"].value[str(variable)]["l"].
+                           replace("e", "d"))
                 out_file.write(lower_bound_line)
 
             # Upper bound
             if "u" in data["bounds"].value[str(variable)].keys():
                 upper_bound_line = "boundu({0}) = {1}\n\n".\
-                    format(variable, data["bounds"].value[str(variable)]["u"])
+                    format(variable, data["bounds"].value[str(variable)]["u"].
+                           replace("e", "d"))
                 out_file.write(upper_bound_line)
 
 
@@ -1127,8 +1130,8 @@ class InDat(object):
 
 
 if __name__ == "__main__":
-    i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
-    # i = InDat(filename="../../tmp_IN.DAT")
+    #i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
+    i = InDat(filename="../../IN.DAT_demo1")
     # print(i.data["ixc"].value)
     # print(i.data["fimp"].value)
     # print(i.data["ipfloc"].value)
@@ -1155,5 +1158,5 @@ if __name__ == "__main__":
     # i.remove_parameter("blnkithsddd")
     # i.remove_parameter("blnkith")
     # i.add_parameter("sweep", [3.0, 3.0])
-    # print(i.data["bounds"].get_value)
+    print(i.data["bounds"].get_value)
     i.write_in_dat()
