@@ -554,16 +554,29 @@ class RunProcessConfig(ProcessConfig):
 
         #add and modify variables
         for key in self.dictvar.keys():
-
             name = key.lower()
-            in_dat.add_parameter(name, self.dictvar[key])
+            if 'bound' in name:
+                number = (name.split('('))[1].split(')')[0]
+                if 'boundu' in name:
+                    in_dat.add_bound(number, 'u', self.dictvar[key])
+                else:
+                    in_dat.add_bound(number, 'l', self.dictvar[key])
+            else:
+                in_dat.add_parameter(name, self.dictvar[key])
 
 
         #delete variables
         for key in self.del_var:
             key = key.lower()
-            in_dat.remove_parameter(key)
-
+            if 'bound' in key:
+                number = (key.split('('))[1].split(')')[0]
+                if 'boundu' in key:
+                    in_dat.remove_bound(number, 'u')
+                else:
+                    in_dat.remove_bound(number, 'l')
+            else:
+                in_dat.remove_parameter(key)
+ 
         in_dat.write_in_dat(output_filename='IN.DAT')
 
 
