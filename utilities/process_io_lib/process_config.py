@@ -555,14 +555,11 @@ class RunProcessConfig(ProcessConfig):
         #add and modify variables
         for key in self.dictvar.keys():
 
-            key = key.lower()
-
-            #TODO check this is a parameter??
-            in_dat.data[key].set_parameter(key, self.dictvar[key])
+            name = key.lower()
+            in_dat.add_parameter(name, self.dictvar[key])
 
 
         #delete variables
-        #TODO check key is a parameter?
         for key in self.del_var:
             key = key.lower()
             in_dat.remove_parameter(key)
