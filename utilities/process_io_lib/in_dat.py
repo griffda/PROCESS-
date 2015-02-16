@@ -700,11 +700,11 @@ def add_bound(data, bound, bound_type, bound_value):
     # dictionary and assign new bound
     if bound not in data["bounds"].value.keys():
         data["bounds"].value[bound] = dict()
-        data["bounds"].value[bound][bound_type] = bound_value
+        data["bounds"].value[bound][bound_type] = str(bound_value)
 
     # If bound already exists change value
     elif bound in data["bounds"].value.keys():
-        data["bounds"].value[bound][bound_type] = bound_value
+        data["bounds"].value[bound][bound_type] = str(bound_value)
 
     # Bound not recognised.
     else:
@@ -1131,7 +1131,7 @@ class InDat(object):
 
 if __name__ == "__main__":
     #i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
-    i = InDat(filename="../../IN.DAT_demo1")
+    i = InDat(filename="../../new_IN.DAT")
     # print(i.data["ixc"].value)
     # print(i.data["fimp"].value)
     # print(i.data["ipfloc"].value)
@@ -1141,7 +1141,7 @@ if __name__ == "__main__":
     # i.remove_constraint_equation(2.5)
     # i.add_constraint_equation("3.0")
     # i.add_constraint_equation("2")
-    # i.add_iteration_variable(8)
+    # i.add_iteration_variable(103)
     # i.add_iteration_variable("2")
     # i.add_iteration_variable(7.5)
     # i.add_iteration_variable("5.5")
@@ -1150,7 +1150,7 @@ if __name__ == "__main__":
     # i.remove_iteration_variable(4.5)
     # i.remove_iteration_variable("6.5")
     # # Add bound will change the bound value if it already exists
-    # i.add_bound(2, "upper", 5.0)
+    # i.add_bound(103, "upper", 5.0)
     # i.remove_bound(2, "upper")
     # # Add parameter will change the parameter value if it already exists
     # i.add_parameter("blnktthdsd", 0.5)
