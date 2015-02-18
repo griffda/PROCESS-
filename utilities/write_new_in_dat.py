@@ -11,8 +11,9 @@
      + JM 30/04/2014: Initial version using new libraries
      + JM 30/04/2014: Added command line arguments
      + PJK 19/08/2014: Corrected -- if "itvar" in value: -- line
+     + HL 16/12/2014: Updated to use new in_dat.py library
 
-  Compatible with PROCESS version 317
+  Compatible with PROCESS version 382
 
 """
 
@@ -57,13 +58,9 @@ def replace_iteration_variables(iteration_vars, in_data):
 
     """
 
-    for value in iteration_vars.keys():
-        if value in in_data.variables.keys():
-            in_data.data[value].value = iteration_vars[value]
-            in_data.variables[value].value = iteration_vars[value]
-        else:
-            var = in_dat.INVariable(value, iteration_vars[value])
-            in_data.add_variable(var)
+    for name in iteration_vars.keys():
+        varname = name.lower()
+        in_data.add_parameter(varname, iteration_vars[name])
 
     return in_data
 
@@ -89,10 +86,10 @@ if __name__ == "__main__":
     it_vars = get_iteration_variables(args.f)
 
     # Read IN.DAT
-    in_dat_data = in_dat.INDATNew(args.i)
+    in_dat_data = in_dat.InDat(args.i)
 
     # Amend the values for the iteration variables
     in_dat_data = replace_iteration_variables(it_vars, in_dat_data)
 
     # Write a new IN.DAT
-    in_dat_data.write_in_dat(filename=args.o)
+    in_dat_data.write_in_dat(output_filename=args.o)

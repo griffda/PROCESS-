@@ -105,28 +105,21 @@ class ProcessConfig(object):
                 os.mkdir(self.wdir)
 
 
-            os.system('cp ' + self.or_in_dat + ' ' + self.wdir + '/IN.DAT')
+            subprocess.call(['cp', self.or_in_dat, self.wdir + '/IN.DAT'])
 
             if self.config_exists:
-                os.system('cp ' + self.filename + ' ' + self.wdir)
+                subprocess.call(['cp', self.filename, self.wdir])
 
             os.chdir(self.wdir)
-            os.system('rm -f OUT.DAT MFILE.DAT PLOT.DAT \
-                       *.txt *.out *.log *.pdf *.eps *.nc')
+            subprocess.call(['rm -f OUT.DAT MFILE.DAT PLOT.DAT *.txt *.out\
+ *.log *.pdf *.eps *.nc *.info'], shell= True)
+        
 
         else:
             if not self.or_in_dat == 'IN.DAT':
                 os.system('cp ' + self.or_in_dat + ' IN.DAT')
 
 
-#<<<<<<< HEAD
-#=======
-#        subprocess.call(['cp ' + self.or_in_dat + ' ' + self.wdir + '/IN.DAT'])
-#        subprocess.call(['cp ' + self.filename + ' ' + self.wdir])
-#        os.chdir(self.wdir)
-#        subprocess.call(['rm -f OUT.DAT MFILE.DAT PLOT.DAT \
-#                   *.txt *.out *.log *.pdf *.eps *.nc'])
-#>>>>>>> develop
 
     def create_readme(self, directory='.'):
 
@@ -190,13 +183,18 @@ class ProcessConfig(object):
 
         """ runs PROCESS binary """
 
+        logfile = open('process.log','w')
         print("PROCESS run started ...", end='')
-        returncode = subprocess.call([self.process+' >& process.log'])
-        if returncode != 0:
+
+        try:
+            subprocess.check_call([self.process], stdout=logfile, stderr=logfile)
+        except subprocess.CalledProcessError as err:
             print('\n Error: There was a problem with the PROCESS \
-                   execution! %i' % returncode)
+                   execution!', err)
             print('       Refer to the logfile for more information!')
             exit()
+
+        logfile.close()
         print("finished.")
 
 
@@ -389,16 +387,15 @@ class TestProcessConfig(ProcessConfig):
 
         #by convention all variablenames are lower case
         if self.ioptimz != 'None':
-            in_dat.data['ioptimz'].add_parameter('ioptimz',
-                                                 self.ioptimz)
+            in_dat.add_parameter('ioptimz', self.ioptimz)
         if self.epsvmc != 'None':
-            in_dat.data['epsvmc'].add_parameter('epsvmc', self.epsvmc)
+            in_dat.add_parameter('epsvmc', self.epsvmc)
 
         if self.epsfcn != 'None':
-            in_dat.data['epsfcn'].add_parameter('epsfcn', self.epsfcn)
+            in_dat.add_parameter('epsfcn', self.epsfcn)
 
         if self.minmax != 'None':
-            in_dat.data['minmax'].add_parameter('minmax', self.minmax)
+            in_dat.add_parameter('minmax', self.minmax)
 
         in_dat.write_in_dat(output_filename='IN.DAT')
 
@@ -627,19 +624,30 @@ class RunProcessConfig(ProcessConfig):
         #add and modify variables
         for key in self.dictvar.keys():
 
-            key = key.lower()
+            name = key.lower()
+            if 'bound' in name:
+                number = (name.split('('))[1].split(')')[0]
+                if 'boundu' in name:
+                    in_dat.add_bound(number, 'u', self.dictvar[key])
+                else:
+                    in_dat.add_bound(number, 'l', self.dictvar[key])
+            else:
+                in_dat.add_parameter(name, self.dictvar[key])
 
-
-            #TODO check this is a parameter??
-            in_dat.data[key].set_parameter(key, self.dictvar[key])
 
 
         #delete variables
-        #TODO check key is a parameter?
         for key in self.del_var:
             key = key.lower()
-            in_dat.remove_parameter(key)
-
+            if 'bound' in key:
+                number = (key.split('('))[1].split(')')[0]
+                if 'boundu' in key:
+                    in_dat.remove_bound(number, 'u')
+                else:
+                    in_dat.remove_bound(number, 'l')
+            else:
+                in_dat.remove_parameter(key)
+ 
         in_dat.write_in_dat(output_filename='IN.DAT')
 
 

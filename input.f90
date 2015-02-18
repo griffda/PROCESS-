@@ -2113,18 +2113,18 @@ contains
        case ('CONF_MAG')
           call parse_real_variable('CONF_MAG', conf_mag, 0.9D0, 1.0D0, &
                'Availability confidence level for magnet system')
-       case ('DIV_CYCLE_LIM')
-          call parse_int_variable('DIV_CYCLE_LIM', div_cycle_lim, 5000, 50000, &
-               'Cycle limit of the divertor')
-       case ('CONF_DIV')
-          call parse_real_variable('CONF_DIV', conf_div, 1.0D0, 2.0D0, &
-               'Availability confidence level for divertor system')
-       case ('FWBS_CYCLE_LIM')
-          call parse_int_variable('FWBS_CYCLE_LIM', fwbs_cycle_lim, 10000, 100000, &
-               'Cycle limit of the fwbs')
-       case ('CONF_FWBS')
-          call parse_real_variable('CONF_FWBS', conf_fwbs, 1.0D0, 2.0D0, &
-               'Availability confidence level for fwbs system')
+       case ('DIV_PROB_FAIL')
+          call parse_real_variable('DIV_PROB_FAIL', div_prob_fail, 0.0D0, 1.0D0, &
+               'Divertor probability of failure (per op day)')
+       case ('DIV_UMAIN_TIME')
+          call parse_real_variable('DIV_UMAIN_TIME', div_umain_time, 0.1D0, 2.0D0, &
+               'Divertor unplanned maintenance time (years)')
+       case ('FWBS_PROB_FAIL')
+          call parse_real_variable('FWBS_PROB_FAIL', fwbs_prob_fail, 0.0D0, 1.0D0, &
+               'Fwbs probability of failure (per op day)')
+       case ('FWBS_UMAIN_TIME')
+          call parse_real_variable('FWBS_UMAIN_TIME', fwbs_umain_time, 0.1D0, 2.0D0, &
+               'Fwbs unplanned maintenace time (years)')
        case ('REDUN_VAC')
           call parse_int_variable('REDUN_VAC', redun_vac, 0, 100, &
                'Vacuum system pump redundancy level (%)')
