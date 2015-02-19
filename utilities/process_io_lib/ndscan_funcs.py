@@ -12,7 +12,7 @@ Compatible with PROCESS version 319
 """
 
 from process_io_lib.process_dicts import DICT_IXC_SIMPLE
-from process_io_lib.in_dat import INDATNew
+from process_io_lib.in_dat import InDat
 import collections as col
 import subprocess
 
@@ -123,13 +123,13 @@ def get_iter_vars(inputfile='IN.DAT', makeboundarydict=False):
 
     #Stored as a dictionary, where the KEY is the number and the
     #VALUE is the name.
-    indat = INDATNew(inputfile)
+    indat = InDat(inputfile)
     output = col.OrderedDict({})
     if not makeboundarydict:
-        for iternumber in indat.variables['ixc'].value:
+        for iternumber in indat.data['ixc'].get_value:
             output[iternumber] = get_var_name_or_number(iternumber)
     else:
-        for iternumber in indat.variables['ixc'].value:
+        for iternumber in indat.data['ixc'].get_value:
             output[get_var_name_or_number(iternumber)] = [0, 0]
     return output
 

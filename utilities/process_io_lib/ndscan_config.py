@@ -62,7 +62,7 @@ __author__ = 'steto'
 
 import json
 import collections as col
-
+#from process_io_lib.configuration import Config
 
 class NdScanConfigFile(object):
 
@@ -139,7 +139,6 @@ class NdScanConfigFile(object):
         self.internaldict["RanBefore"] = None
 
         self.majormodmade = False
-
         self.read_ndscanconfig_file(configfile)
 
 
@@ -313,6 +312,9 @@ class NdScanConfigFile(object):
             print('Error: Could not open configfile %s!' %filename)
             exit()
 
+        #super().__init__(filename)
+        #print('DB done')
+        #exit()
         data = json.load(configfile)
         configfile.close()
         for key in data.keys():
