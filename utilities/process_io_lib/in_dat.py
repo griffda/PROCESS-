@@ -506,6 +506,10 @@ def write_parameters(data, out_file):
                         parameter_line = "{0} = {1}\n\n".\
                             format(tmp_zref_name, tmp_zref_value)
                         out_file.write(parameter_line)
+                elif "vmec" in item:
+                    parameter_line = "{0} = {1}\n\n".format(item,
+                                                            data[item].value)
+                    out_file.write(parameter_line)
                 else:
                     # Left justification set to 8 to allow easier reading
                     # Only use first line of comment to avoid lots of info
@@ -965,7 +969,10 @@ class InDat(object):
         for line in self.in_dat_lines:
 
             # Put everything in lower case
-            l_line = line.lower()
+            if "vmec" not in line.split("=")[0].lower():
+                l_line = line.lower()
+            else:
+                l_line = line
 
             # find the type of the line:
             # [constraint equation, iteration variable, bound, parameter]
@@ -1134,7 +1141,7 @@ class InDat(object):
 
 if __name__ == "__main__":
     #i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
-    i = InDat(filename="../../target_IN.DAT")
+    i = InDat(filename="../../Original_IN.DAT")
     # print(i.data["ixc"].value)
     # print(i.data["fimp"].value)
     # print(i.data["ipfloc"].value)
