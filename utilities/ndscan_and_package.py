@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Code to run multi-dimensional parameter scans using PROCESS.
 
