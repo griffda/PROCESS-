@@ -23,6 +23,9 @@ from process_io_lib.process_dicts import DICT_MODULE
 # Dictionary for parameter descriptions
 from process_io_lib.process_dicts import DICT_DESCRIPTIONS
 
+# Dictionary for parameter defaults
+from process_io_lib.process_dicts import DICT_DEFAULT
+
 
 def fortran_python_scientific(var_value):
     """ Convert FORTRAN scientific notation to Python notation
@@ -263,7 +266,7 @@ def process_fimp(data, line):
     """
 
     fimp_index = int(line.split("(")[1].split(")")[0]) - 1
-    fimp_value = eval(line.split("=")[-1])
+    fimp_value = eval(line.split("=")[-1].replace(",", ""))
     data["fimp"].value[fimp_index] = fimp_value
 
 
@@ -330,7 +333,7 @@ def process_line(data, line_type, line):
     # Create a fimp variables class using INVariable class if the fimp entry
     # doesn't exist
     if "fimp" not in data.keys():
-        empty_fimp = np.zeros(14)
+        empty_fimp = DICT_DEFAULT['fimp']
         parameter_group = find_parameter_group("fimp")
 
         # Get parameter comment/description from dictionary
@@ -343,7 +346,7 @@ def process_line(data, line_type, line):
     # Create a zref variable class using INVariable class if the zref entry
     # doesn't exist
     if "zref" not in data.keys():
-        empty_zref = np.zeros(8)
+        empty_zref = DICT_DEFAULT['zref']
         parameter_group = find_parameter_group("zref")
 
         # Get parameter comment/description from dictionary
@@ -503,6 +506,10 @@ def write_parameters(data, out_file):
                         parameter_line = "{0} = {1}\n\n".\
                             format(tmp_zref_name, tmp_zref_value)
                         out_file.write(parameter_line)
+                elif "vmec" in item:
+                    parameter_line = "{0} = {1}\n\n".format(item,
+                                                            data[item].value)
+                    out_file.write(parameter_line)
                 else:
                     # Left justification set to 8 to allow easier reading
                     # Only use first line of comment to avoid lots of info
@@ -968,7 +975,10 @@ class InDat(object):
         for line in self.in_dat_lines:
 
             # Put everything in lower case
-            l_line = line.lower()
+            if "vmec" not in line.split("=")[0].lower():
+                l_line = line.lower()
+            else:
+                l_line = line
 
             # find the type of the line:
             # [constraint equation, iteration variable, bound, parameter]
@@ -1137,7 +1147,7 @@ class InDat(object):
 
 if __name__ == "__main__":
     #i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
-    i = InDat(filename="../../new_IN.DAT")
+    i = InDat(filename="../../Original_IN.DAT")
     # print(i.data["ixc"].value)
     # print(i.data["fimp"].value)
     # print(i.data["ipfloc"].value)
