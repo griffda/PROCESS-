@@ -23,21 +23,21 @@ Compatible with PROCESS version 319
 from process_io_lib.process_config import NdScanConfig
 import argparse
 
-
+if __name__ = '__main__':
 ############################################################
 #Usage
 
 
-PARSER = argparse.ArgumentParser(description='Program to run a multi-\
-dimensional parameter scan using PROCESS.')
+    PARSER = argparse.ArgumentParser(description='Program to run a multi-\
+    dimensional parameter scan using PROCESS.')
 
-PARSER.add_argument("-f", "--configfile", default='ndscan.conf',
-                    help="configuration file, default = ndscan.conf")
+    PARSER.add_argument("-f", "--configfile", default='ndscan.conf',
+                        help="configuration file, default = ndscan.conf")
 
-ARGS = PARSER.parse_args()
+    ARGS = PARSER.parse_args()
 
-############################################################
-#main program
+    ############################################################
+    #main program
 
-NDSCANNER = NdScanConfig(ARGS.configfile)
-NDSCANNER.start_scan()
+    NDSCANNER = NdScanConfig(ARGS.configfile)
+    NDSCANNER.start_scan()
