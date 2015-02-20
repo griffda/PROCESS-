@@ -365,103 +365,43 @@ Use -h or --help for help
 \end{verbatim}
 \end{quote}
 
-%\subsection{2D\_scan.py}
-
-%\Red{N.B.\ This utility is currently not working --- please do not try to use it.}
-
-%Runs a two-dimensional scan of \process\ variables. This code does not yet use
-%the new \process\ Python libraries.
-
-%\begin{description}
-%\item{\textbf{Input:}}
-% \texttt{2D\_scan.conf}, \indat\
-                                
-%\item{\textbf{Output:}} All the standard PROCESS output files,
-%  \texttt{ERROR.DAT} (Error matrix for all iterations), \texttt{EDGETABLE.DAT}
-%  (Marks if variables at bounds), \texttt{MATRICES.DAT} (Solution for each
-%  variable), \texttt{EDGEVARS.DAT} (Names of variables at bounds)
-%\end{description}
-
-%\paragraph{Configuration Options:}
-
-%The configuration file \texttt{2D\_scan.conf} has the following style
-%\begin{framed}
-%\begin{verbatim}
-%* This is a comment
-
-%* No evaluations of the first variable
-%N1= 10
-%* lower bound of first variable
-%LB1= 1
-%* upper bound of first variable
-%UB1= 3
-%* name of first variable
-%NAME1= abktflnc
-
-%* No evaluations of the second variable
-%N2= 15
-%* lower bound of the second variable
-%LB2= 3
-%* upper bound of the second variable
-%UB2= 8
-%* name of the second variable
-%NAME2= bktlife
-
-%* Output variables as given by their variable description
-%OUT_VARS
-%Major Radius
-%Pdivt
-%/OUT_VARS
-
-%* Directory path to IN.DAT
-%PATH=/DIR2INDAT
-%* Boolean flag to store OUT.DAT and PLOT.DAT for each run
-%* in the Data/ subdir
-%DATA=0
-%\end{verbatim}
-%\end{framed}
 
 
+\subsection{create\_dicts.py}
 
-\subsection{N-Dimensional Scanner Utility}
+\Red{To do}
 
-This suite of Python utilities allows the user to conduct systematic, multi-dimensional parameter studies with \process. It systematically varies a set of N user defined parameters within predefined bounds. The final results can be evaluated using the corresponding visualisation tool and/or saved in standard NetCDF format for further analysis.
+\subsection{fit\_profile.py}
 
-The suite contains the following executables
-\begin{itemize}
-\item \texttt{ndscan.py} - executes the Nd-scan as specified in the configuration file.
-\item \texttt{make\_netcdf.py} - creates a NetCDF output file from a previous Nd-scan run.
-\item \texttt{ndscan\_and\_package.py} - both executes the Nd-scan and creates the NetCDF output file.
-\item \texttt{ndscan\_visualisation.py} - visualises the NetCDF output.
-\end{itemize}
-
-
-\begin{description}
-\item{\textbf{Input:}}
- \texttt{ndscan.conf}, \indat\, \texttt{run\_process.conf} (optional)
-                                
-\item{\textbf{Output:}} All the standard PROCESS output files,
-plus XXX
-\end{description}
-
-\paragraph{Configuration Options:}
-
-The configuration file \texttt{ndscan.conf} uses the JSON format and has the following style
-\begin{framed}
+This is a Python tool to fit a general temperature or density profile as given
+by the pedestalised profile parametrisation (\texttt{ipedestal} =1) to an
+ascii table. It is using a least squares method and is fitting the position of
+the pedestal as well as the peaking factors.  Optional arguments are
 \begin{verbatim}
-{
-     ``Axes'':[
-          {
-               ``Varname'':''x'',
-               ``Lowerbound'':1.0,
-               ``Upperbound'':2.0,
-               ``Steps'':5
-          }
-	     ],
-     ``RanBefore'':false
-}
+
+  -h, --help            show this help message and exit
+  -f FILENAME, --filename FILENAME
+                        ascii file containing data in columns, default =
+                        profile.txt
+  -r RHO, --rho RHO     column of the normalised radius rho=r/a, default = 0
+  -n DENSITY, --density DENSITY
+                        column of the density profile, default = 1
+  -t TEMPERATURE, --temperature TEMPERATURE
+                        column of the temperature profile, default = 2
+  -rn RHOPEDN, --rhopedn RHOPEDN
+                        user defined initial guess of the density pedestal
+                        position, if outside [0,1] starts at 0.9, default =
+                        0.9
+  -rt RHOPEDT, --rhopedt RHOPEDT
+                        user defined initial guess of the temperature pedestal
+                        position, if outside [0,1], starts at 0.9, default =
+                        0.9
+
 \end{verbatim}
-\end{framed}
+If the column of the density or temperature data does not exist, it is
+ignored. A warning is issued.
+
+
 
 \subsection{a\_to\_b.py}
 
@@ -526,39 +466,48 @@ bound_gap = 1.001
 \end{verbatim}
 \end{framed}
 
-\subsection{create\_dicts.py}
 
-\Red{To do}
+\subsection{N-Dimensional Scanner Utility}
 
-\subsection{fit\_profile.py}
+This suite of Python utilities allows the user to conduct systematic, multi-dimensional parameter studies with \process. It systematically varies a set of N user defined parameters within predefined bounds. The final results can be evaluated using the corresponding visualisation tool and/or saved in standard NetCDF format for further analysis.
 
-This is a Python tool to fit a general temperature or density profile as given
-by the pedestalised profile parametrisation (\texttt{ipedestal} =1) to an
-ascii table. It is using a least squares method and is fitting the position of
-the pedestal as well as the peaking factors.  Optional arguments are
+The suite contains the following executables
+\begin{itemize}
+\item \texttt{ndscan.py} - executes the Nd-scan as specified in the configuration file.
+\item \texttt{ndscan\_package_only.py} - creates a NetCDF output file from a previous Nd-scan run.
+\item \texttt{ndscan\_and\_package.py} - both executes the Nd-scan and creates the NetCDF output file.
+\item \texttt{ndscan\_visualisation.py} - visualises the NetCDF output.
+\end{itemize}
+
+
+\begin{description}
+\item{\textbf{Input:}}
+ \texttt{ndscan.conf}, \indat\, \texttt{run\_process.conf} (optional)
+                                
+\item{\textbf{Output:}} All the standard PROCESS output files,
+plus XXX
+\end{description}
+
+\paragraph{Configuration Options:}
+
+The configuration file \texttt{ndscan.conf} uses the JSON format and has the following style
+\begin{framed}
 \begin{verbatim}
-
-  -h, --help            show this help message and exit
-  -f FILENAME, --filename FILENAME
-                        ascii file containing data in columns, default =
-                        profile.txt
-  -r RHO, --rho RHO     column of the normalised radius rho=r/a, default = 0
-  -n DENSITY, --density DENSITY
-                        column of the density profile, default = 1
-  -t TEMPERATURE, --temperature TEMPERATURE
-                        column of the temperature profile, default = 2
-  -rn RHOPEDN, --rhopedn RHOPEDN
-                        user defined initial guess of the density pedestal
-                        position, if outside [0,1] starts at 0.9, default =
-                        0.9
-  -rt RHOPEDT, --rhopedt RHOPEDT
-                        user defined initial guess of the temperature pedestal
-                        position, if outside [0,1], starts at 0.9, default =
-                        0.9
-
+{
+     ``Axes'':[
+          {
+               ``Varname'':''x'',
+               ``Lowerbound'':1.0,
+               ``Upperbound'':2.0,
+               ``Steps'':5
+          }
+	     ],
+     ``RanBefore'':false
+}
 \end{verbatim}
-If the column of the density or temperature data does not exist, it is
-ignored. A warning is issued.
+\end{framed}
+
+
 
 \subsection{Uncertainty Tools}
 
