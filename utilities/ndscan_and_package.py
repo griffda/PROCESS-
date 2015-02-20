@@ -43,6 +43,6 @@ if __name__ == '__main__':
     NDSCANNER = NdScanConfig(ARGS.configfile)
     NDSCANNER.start_scan()
 
-    NC.NCDFconverter(convertnow=True)
+    NC.NCDFconverter(ARGS.configfile, convertnow=True)
 
 
