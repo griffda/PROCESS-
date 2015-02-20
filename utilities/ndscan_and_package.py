@@ -15,7 +15,7 @@ Outputfiles:
 Notes:
 29/08/2014 HL added documentation + usage, updated to PEP8
 
-Compatible with PROCESS version 319
+Compatible with PROCESS version 382
 
 """
 
@@ -24,24 +24,25 @@ from process_io_lib.process_config import NdScanConfig
 import process_io_lib.NCDFfromMFILE as NC
 import argparse
 
+if __name__ == '__main__':
 ############################################################
 #Usage
 
 
-PARSER = argparse.ArgumentParser(description='Program to run a multi-\
-dimensional parameter scan using PROCESS.')
+    PARSER = argparse.ArgumentParser(description='Program to run a multi-\
+    dimensional parameter scan using PROCESS.')
 
-PARSER.add_argument("-f", "--configfile", default='ndscan.conf',
-                    help="configuration file, default = ndscan.conf")
+    PARSER.add_argument("-f", "--configfile", default='ndscan.conf',
+                        help="configuration file, default = ndscan.conf")
 
-ARGS = PARSER.parse_args()
+    ARGS = PARSER.parse_args()
 
-############################################################
-#main program
+    ############################################################
+    #main program
 
-NDSCANNER = NdScanConfig(ARGS.configfile)
-NDSCANNER.start_scan()
+    NDSCANNER = NdScanConfig(ARGS.configfile)
+    NDSCANNER.start_scan()
 
-NC.NCDFconverter(convertnow=True)
+    NC.NCDFconverter(convertnow=True)
 
 
