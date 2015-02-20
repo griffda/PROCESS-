@@ -41,7 +41,12 @@ import time
 import sys
 from numpy import histogram
 import argparse
-from process_io_lib.process_dicts import IFAIL_SUCCESS
+try:
+    from process_io_lib.process_dicts import IFAIL_SUCCESS
+except ImportError:
+    print("The Python dictionaries have not yet been created. Please run \
+'make dicts'!")
+    exit()
 from process_io_lib.process_config import TestProcessConfig
 from process_io_lib.process_funcs import get_neqns_itervars,\
     update_ixc_bounds, get_variable_range, check_input_error,\

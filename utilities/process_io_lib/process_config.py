@@ -7,32 +7,33 @@ Interfaces for Configuration values for programs
 - ndscan.py
 - evaluate_uncertainties.py
 
-Compatible with PROCESS version 368
+Compatible with PROCESS version 382
 """
 
 import os
 import subprocess
 from time import sleep
-import numpy as np
+from numpy.random import seed, uniform, normal
+from numpy import argsort, ndarray
+import collections as col
+import pylab
 from process_io_lib.process_funcs import  get_neqns_itervars,\
     get_variable_range, vary_iteration_variables, check_input_error,\
-    process_stopped
+    process_stopped, get_from_indat_or_default,\
+    set_variable_in_indat
 from process_io_lib.ndscan_config import NdScanConfigFile
 from process_io_lib.ndscan_funcs import get_var_name_or_number,\
     get_iter_variables_from_mfile, get_iter_vars, backup_in_file
-import collections as col
-import subprocess
-import pylab
-from numpy.random import seed, uniform, normal
-from numpy import argsort
 from process_io_lib.in_dat import InDat
-from process_io_lib.process_funcs import get_from_indat_or_default,\
-    set_variable_in_indat
-
 from process_io_lib.mfile import MFile
 from process_io_lib.configuration import Config
-from process_io_lib.process_dicts import DICT_NSWEEP2IXC, DICT_NSWEEP2VARNAME,\
-    DICT_IXC_SIMPLE
+try:
+    from process_io_lib.process_dicts import DICT_NSWEEP2IXC, \
+        DICT_NSWEEP2VARNAME, DICT_IXC_SIMPLE
+except ImportError:
+    print("The Python dictionaries have not yet been created. Please run \
+'make dicts'!")
+    exit()
 from process_io_lib.process_netcdf import NetCDFWriter
 
 #def print_config(config_instance):
@@ -112,8 +113,8 @@ class ProcessConfig(object):
 
             os.chdir(self.wdir)
             subprocess.call(['rm -f OUT.DAT MFILE.DAT PLOT.DAT *.txt *.out\
- *.log *.pdf *.eps *.nc *.info'], shell= True)
-        
+ *.log *.pdf *.eps *.nc *.info'], shell=True)
+
 
         else:
             if not self.or_in_dat == 'IN.DAT':
@@ -183,11 +184,12 @@ class ProcessConfig(object):
 
         """ runs PROCESS binary """
 
-        logfile = open('process.log','w')
+        logfile = open('process.log', 'w')
         print("PROCESS run started ...", end='')
 
         try:
-            subprocess.check_call([self.process], stdout=logfile, stderr=logfile)
+            subprocess.check_call([self.process], stdout=logfile,
+                                  stderr=logfile)
         except subprocess.CalledProcessError as err:
             print('\n Error: There was a problem with the PROCESS \
                    execution!', err)
@@ -647,7 +649,7 @@ class RunProcessConfig(ProcessConfig):
                     in_dat.remove_bound(number, 'l')
             else:
                 in_dat.remove_parameter(key)
- 
+
         in_dat.write_in_dat(output_filename='IN.DAT')
 
 
@@ -996,7 +998,7 @@ class NdScanConfig(RunProcessConfig):
     configfileloaded = False
     configfile = None # Will point to a config file opened with JSON.
     outdirectory = ""
-    failcoords = np.ndarray((1), int)
+    failcoords = ndarray((1), int)
     errorlist = col.OrderedDict({})
 
     iterationvariables = col.OrderedDict({})
@@ -1213,7 +1215,7 @@ class NdScanConfig(RunProcessConfig):
         # values respectively.
 
 
-        self.failcoords = np.ndarray(tuple(totalsteps), int)
+        self.failcoords = ndarray(tuple(totalsteps), int)
 
     def adjust_variable(self, varname, newvalue):
         """

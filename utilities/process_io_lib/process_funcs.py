@@ -6,8 +6,13 @@ Author: Hanni Lux (Hanni.Lux@ccfe.ac.uk)
 Compatible with PROCESS version 368 """
 
 from os.path import join as pjoin
-from process_io_lib.process_dicts import (DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,
-    DICT_IXC_DEFAULT, NON_F_VALUES, IFAIL_SUCCESS, DICT_DEFAULT)
+try:
+    from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,\
+    DICT_IXC_DEFAULT, NON_F_VALUES, IFAIL_SUCCESS, DICT_DEFAULT
+except ImportError:
+    print("The Python dictionaries have not yet been created. Please run \
+'make dicts'!")
+    exit()
 from process_io_lib.in_dat import InDat
 from process_io_lib.mfile import MFile
 from numpy.random import uniform

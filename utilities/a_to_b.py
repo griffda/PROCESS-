@@ -48,11 +48,16 @@ import argparse
 
 import process_io_lib.in_dat as inmod
 import process_io_lib.mfile as mfmod
-from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_VAR_TYPE, \
-            DICT_DEFAULT, DICT_IXC_BOUNDS, IFAIL_SUCCESS, \
-            DICT_INPUT_BOUNDS
+try:
+    from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_VAR_TYPE, \
+        DICT_DEFAULT, DICT_IXC_BOUNDS, IFAIL_SUCCESS, \
+        DICT_INPUT_BOUNDS
+except ImportError:
+    print("The Python dictionaries have not yet been created. Please run \
+'make dicts'!")
+    exit()
 from process_io_lib.process_funcs import check_logfile, \
-            process_warnings, process_stopped, vary_iteration_variables
+    process_warnings, process_stopped, vary_iteration_variables
 from process_io_lib.a_to_b_config import AToBConfig
 
 def is_bound(var_name):

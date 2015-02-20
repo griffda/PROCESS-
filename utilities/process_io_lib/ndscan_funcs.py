@@ -11,7 +11,13 @@ Notes:
 Compatible with PROCESS version 319
 """
 
-from process_io_lib.process_dicts import DICT_IXC_SIMPLE
+try:
+    from process_io_lib.process_dicts import DICT_IXC_SIMPLE
+except ImportError:
+    print("The Python dictionaries have not yet been created. Please run \
+'make dicts'!")
+    exit()
+
 from process_io_lib.in_dat import InDat
 import collections as col
 import subprocess

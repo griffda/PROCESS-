@@ -12,8 +12,13 @@
 import numpy as np
 
 # Dictionary for variable types
-from process_io_lib.process_dicts import DICT_VAR_TYPE
-
+try :
+    from process_io_lib.process_dicts import DICT_VAR_TYPE
+except ImportError:
+    print("The Python dictionaries have not yet been created. Please run \
+'make dicts'!")
+    exit()
+    
 # Dictionary for ixc -> name
 from process_io_lib.process_dicts import DICT_IXC_SIMPLE
 

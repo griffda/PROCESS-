@@ -27,7 +27,12 @@ import operator
 import logging
 LOG = logging.getLogger("mfile")
 
-import process_io_lib.process_dicts
+try :
+    import process_io_lib.process_dicts
+except ImportError:
+    print("The Python dictionaries have not yet been created. Please run \
+'make dicts'!")
+    exit()
 
 class MFileVariable(dict):
     """Class for containing a single mfile variable """

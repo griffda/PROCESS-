@@ -21,7 +21,13 @@ from matplotlib.path import Path
 import matplotlib.patches as patches
 import scipy as sp
 import numpy as np
-import process_io_lib.process_dicts as proc_dict
+try:
+    import process_io_lib.process_dicts as proc_dict
+except ImportError:
+    print("The Python dictionaries have not yet been created. Please run \
+'make dicts'!")
+    exit()
+
 
 solenoid = 'pink'
 tfc = 'cyan'
