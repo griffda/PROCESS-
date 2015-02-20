@@ -16,7 +16,6 @@ from time import sleep
 from numpy.random import seed, uniform, normal
 from numpy import argsort, ndarray
 import collections as col
-import pylab
 from process_io_lib.process_funcs import  get_neqns_itervars,\
     get_variable_range, vary_iteration_variables, check_input_error,\
     process_stopped, get_from_indat_or_default,\
@@ -1450,34 +1449,6 @@ class NdScanConfig(RunProcessConfig):
 
                 self.after_run_do()
 
-    def two_d_failplot(self):
-        """
-        NOT SUPPORTED CURRENTLY- USE WITH CAUTION, will likely be deleted
-        or moved into vis_utility.
-        Only works with 2 dimensional scans.
-        """
-
-        for x in range(self.scanaxes['steps'][0]):
-
-            for y in range(self.scanaxes['steps'][1]):
-                if self.failcoords[x][y] != 1:
-                    pylab.text(self.scanaxes['coords'][0][x],
-                               self.scanaxes['coords'][1][y], 'x', color='red')
-                else:
-                    pylab.text(self.scanaxes['coords'][0][x],
-                               self.scanaxes['coords'][1][y], 'o',
-                               color='green')
-
-        pylab.axis([self.scanaxes['coords'][0][0] - \
-                        .05 * self.scanaxes['coords'][0][0],
-                    self.scanaxes['coords'][0][-1] + \
-                        .05 * self.scanaxes['coords'][0][0],
-                    self.scanaxes['coords'][1][0] - \
-                        .05 * self.scanaxes['coords'][1][0],
-                    self.scanaxes['coords'][1][-1] + \
-                        .05 * self.scanaxes['coords'][1][0]])
-
-        pylab.show()
 
 
     def smooth_iter_variables(self, mfile):
@@ -1640,6 +1611,3 @@ class NdScanConfig(RunProcessConfig):
 
 
 
-#if __name__ == "__main__":
-#    cfg = RunProcessConfigNew("../run_process.json")
-#    cfg.setup_directory()
