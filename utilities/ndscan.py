@@ -23,7 +23,7 @@ Compatible with PROCESS version 319
 from process_io_lib.process_config import NdScanConfig
 import argparse
 
-if __name__ = '__main__':
+if __name__ == '__main__':
 ############################################################
 #Usage
 
