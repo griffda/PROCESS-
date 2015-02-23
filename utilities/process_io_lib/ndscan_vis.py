@@ -1,7 +1,7 @@
 """ Visualisation Class for Ndscan utility """
 
 
-import numpy as np
+from numpy import meshgrid, amax, amin, std, sum
 import matplotlib.pyplot as pl
 from netCDF4 import Dataset
 
@@ -10,12 +10,6 @@ class VisUtility(object):
 
     """Visualisation class containing Netcdf files from ndscan tool"""
 
-    class Configuration(object):
-        def __init__(self):
-            self.xname = None
-            self.yname = None
-            self.zname = None
-
 
     def __init__(self, ncfilename='Demonstrationdata.nc'):
         """
@@ -23,7 +17,11 @@ class VisUtility(object):
         into memory.
 
         """
-        self.ncfile = Dataset(ncfilename, 'r')
+        try:
+            self.ncfile = Dataset(ncfilename, 'r')
+        except RuntimeError:
+            print('Error: NetCDF file does not exist, specify with -f!')
+            exit()
         scanvars = self.ncfile.scanvars
         self.scanvars = scanvars.split(',')
         self.currentslice = None
@@ -38,7 +36,7 @@ class VisUtility(object):
         xdim-------------> String representing the X scan dimension
         ydim-------------> String representing the Y scan dimension
         zvar-------------> String which represents the Z variable to plot.
-        masterconfigs----> A configuration class with some details.
+        masterconfigs----> A configuration dict with some details.
 
 
         NOTE! XVAR AND Y VAR SHOULD BE A STRING REPRESENTING SCANNING VARIABLES,
@@ -52,21 +50,18 @@ class VisUtility(object):
             ydim = "SCAN" + ydim
         xcoords = self.ncfile.variables[xdim][:]
         ycoords = self.ncfile.variables[ydim][:]
-        X, Y = np.meshgrid(xcoords, ycoords)
+        xarr, yarr = meshgrid(xcoords, ycoords)
         if self.currentslice is not None:
-            Z = self.ncfile.variables[zvar][self.currentslice]
+            zarr = self.ncfile.variables[zvar][self.currentslice]
         else:
-            Z = self.ncfile.variables[zvar][:]
-        Z = Z.transpose()
+            zarr = self.ncfile.variables[zvar][:]
+        zarr = zarr.transpose()
 
-        CP = pl.contour(X, Y, Z, 10)
-        try:
-            pl.xlabel(masterconfigs.xname)
-            pl.ylabel(masterconfigs.yname)
-            pl.title(masterconfigs.zname)
-        except: 
-            pass
-        pl.clabel(CP, inline=1, fontsize=10)
+        conp = pl.contour(xarr, yarr, zarr, 10)
+        pl.xlabel(masterconfigs['xname'])
+        pl.ylabel(masterconfigs['yname'])
+        pl.title(masterconfigs['zname'])
+        pl.clabel(conp, inline=1, fontsize=10)
         pl.show()
 
     def make_scatter_plot(self, xdim, ydim, zvar, masterconfigs):
@@ -77,7 +72,7 @@ class VisUtility(object):
         xdim-------------> String representing the X scan dimension
         ydim-------------> String representing the Y scan dimension
         zvar-------------> String which represents the Z variable to plot.
-        masterconfigs----> A configuration class which is not implemented.
+        masterconfigs----> A configuration dicts which is not implemented.
 
         NOTE! XVAR AND Y VAR SHOULD BE A NUMBER REPRESENTING SCANNING VARIABLES,
         ZVAR SHOULD BE A NUMBER REPRESENTING A VARIABLE OF INTEREST.
@@ -90,23 +85,19 @@ class VisUtility(object):
             ydim = "SCAN" + ydim
         xcoords = self.ncfile.variables[xdim]
         ycoords = self.ncfile.variables[ydim]
-        X, Y = np.meshgrid(xcoords, ycoords)
+        xarr, yarr = meshgrid(xcoords, ycoords)
         if self.currentslice is not None:
-            Z = self.ncfile.variables[zvar][self.currentslice]
+            zarr = self.ncfile.variables[zvar][self.currentslice]
         else:
-            Z = self.ncfile.variables[zvar][:]
-        print(Z)
-        Z = Z.transpose()
-        print(Z)
+            zarr = self.ncfile.variables[zvar][:]
+
+        zarr = zarr.transpose()
 
 
-        pl.scatter(X, Y, c=Z, marker='s')
-        try:
-            pl.xlabel(masterconfigs.xname)
-            pl.ylabel(masterconfigs.yname)
-            pl.title(masterconfigs.zname)
-        except:
-            pass
+        pl.scatter(xarr, yarr, c=zarr, marker='s')
+        pl.xlabel(masterconfigs['xname'])
+        pl.ylabel(masterconfigs['yname'])
+        pl.title(masterconfigs['zname'])
         pl.colorbar()
         pl.show()
 
@@ -151,11 +142,11 @@ class VisUtility(object):
         steptuple = tuple(self.ncfile.scansteps)
         stepslist = []
 
-        for n in range(len(steptuple)):
-            if n != xvarnum and n != yvarnum:
+        for i in range(len(steptuple)):
+            if i != xvarnum and i != yvarnum:
                 stepslist.append(0)
             else:
-                stepslist.append(list(range(steptuple[n])))
+                stepslist.append(list(range(steptuple[i])))
         self.stepslist = stepslist
         # We just reset it so that it's [x][0][0][p][0]...[0] for our
         # dimensions.
@@ -165,9 +156,6 @@ class VisUtility(object):
         # left. once stepslist's non-list elements
         # are equal to the steptuple, then we are good.
 
-
-        #This one is a real headache. It's very C and not terrbly pythonic but
-        # oh well.
         def keep_going(steptuple, stepslist):
 
             for index in range(len(stepslist)):
@@ -182,7 +170,8 @@ class VisUtility(object):
                     return stepslist
 
 
-                if stepslist[index] == steptuple[index] and index != len(stepslist)-1:
+                if stepslist[index] == steptuple[index] and\
+                        index != len(stepslist)-1:
 
                     stepslist[index] = 0
                     for countahead in range(len(stepslist))[index+1::]:
@@ -217,20 +206,20 @@ class VisUtility(object):
 
             sliceindexlist.append(list(stepslist))
             temp = self.ncfile.variables[zvar][stepslist]
-            maxlist.append(np.amax(temp))
-            minlist.append(np.amin(temp))
-            sumlist.append(np.sum(temp))
-            stdlist.append(np.std(temp))
-            print("Analytics: Max:", np.amax(temp),
-                  "Min:", np.amin(temp),
-                  "Sum:", np.sum(temp),
-                  "Std:", np.std(temp))
+            maxlist.append(amax(temp))
+            minlist.append(amin(temp))
+            sumlist.append(sum(temp))
+            stdlist.append(std(temp))
+            print("Analytics: Max:", amax(temp),
+                  "Min:", amin(temp),
+                  "Sum:", sum(temp),
+                  "Std:", std(temp))
             print(temp)
             stepslist = keep_going(steptuple, stepslist)
 
         print("Your options:")
-        for n in range(len(sliceindexlist)):
-            print(n, ":", sliceindexlist[n])
+        for i in range(len(sliceindexlist)):
+            print(i, ":", sliceindexlist[i])
 
         superlatives["ZenithSlice"] = sliceindexlist[maxlist.index(max(maxlist))]
         superlatives["NadirSlice"] = sliceindexlist[minlist.index(min(minlist))]
@@ -321,7 +310,8 @@ class VisUtility(object):
         print("``'-.,_,.-'``'-.,_,.='``'-.,_,.-'``'-.,_,.='``")
         print("``'-.,_,.-'`VISUALIZATION UTILITY`'-.,_,.='``")
         print("``'-.,_,.-'``'-.,_,.='``'-.,_,.-'``'-.,_,.='``")
-        masterconfigs = self.Configuration()
+
+        masterconfigs = {'xname': '', 'yname': '', 'zname': ''}
 
         while 1 == 1:
 
@@ -356,25 +346,25 @@ class VisUtility(object):
                         print("Sorry- invalid x axis! Please try again...")
                         xaxis = input("x:")
                         print()
-                    masterconfigs.xname = xaxis
+                    masterconfigs['xname'] = xaxis
                     yaxis = input('y:')
                     print()
                     while yaxis not in self.scanvars:
                         print("Sorry- invalid y axis! Please try again...")
                         yaxis = input("y:")
                         print()
-                    masterconfigs.yname = yaxis
+                    masterconfigs['yname'] = yaxis
                     print("Please choose a Z:")
-                    for vars in self.ncfile.variables:
-                        if vars[0:4] != "SCAN":
-                            print(vars)
+                    for varbs in self.ncfile.variables:
+                        if varbs[0:4] != "SCAN":
+                            print(varbs)
                     zaxis = input('z:')
                     print()
                     while zaxis not in self.ncfile.variables:
                         print("Sorry- invalid z axis! Please try again...")
                         zaxis = input('z:')
                         print()
-                    masterconfigs.zname = zaxis
+                    masterconfigs['zname'] = zaxis
                     print("And what plotting routine would you like?")
                     print("1) Contour")
                     print("2) Scatter w/ Z Coloring")
