@@ -293,7 +293,12 @@ class NdScanConfigFile(object):
         #super().__init__(filename)
         #print('DB done')
         #exit()
-        data = json.load(configfile)
+        try:
+            data = json.load(configfile)
+        except ValueError:
+            print("Error: Most likely there is a syntax error in",
+                  configfile, " Cannot read file!")
+            exit()
         configfile.close()
         for key in data.keys():
             if key in self.internaldict.keys():
