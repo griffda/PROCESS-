@@ -23,9 +23,6 @@ Methods:
                      refers to the varname, or an integer representing the
                      index of the axis in the Axes list.
 
-    add_var_of_interest(varname): Appends a variable of interest to the list
-                               which will later be extracted from the MFILEs
-
     read_ndscanfconfig_file(filename): Reads a config file to store it in the
                                        class for modification.
 
@@ -84,10 +81,6 @@ class NdScanConfigFile(object):
         the varname, or an integer representing the index of the axis in the
         Axes list.
 
-        add_var_of_interest(varname):
-        Appends a variable of interest to the list which will later be
-        extracted from the MFILEs
-
         read_ndscanfconfig_file(filename):
         Reads a config file to store it in the class for modification.
 
@@ -131,7 +124,7 @@ class NdScanConfigFile(object):
         # if the user tries to ad information.
         self.internaldict['OutputDirectory'] = None
         self.internaldict['Optionals'] = None
-        self.internaldict['VariablesOfInterest'] = None
+        self.internaldict['VariablesOfInterest'] = []
         self.internaldict["Author"] = None
         self.internaldict["Title"] = None
         self.internaldict["Comment"] = None
@@ -276,21 +269,6 @@ class NdScanConfigFile(object):
             print("Error- could not delete axis", axisid)
             return False
 
-    def add_var_of_interest(self, varname):
-        """
-        Adds a variable of interest to the built-in VariablesOfInterest list.
-
-        Creates the variable of interest list if it does not already exist.
-
-        Arguments:
-            Varname--> Variable to be added. String
-        """
-
-
-        if self.internaldict["VariablesOfInterest"] == None:
-            self.internaldict["VariablesOfInterest"] = []
-
-        self.internaldict["VariablesOfInterest"].append(varname)
 
     def read_ndscanconfig_file(self, filename="ndscan.conf"):
         """
