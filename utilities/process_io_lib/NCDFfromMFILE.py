@@ -341,15 +341,6 @@ class NCDFconverter(object):
 
         ncfile.ndim = len(self.scanconfig.get_value("Axes"))
 
-        if self.scanconfig.get_value("RanBefore") is False:
-            response = input("Warning! This configuration appears to have\
- not been run yet. Are you sure you want to continue? y/n")
-            if response == 'y' or response == 'Y':
-                print("Continuing!")
-            else:
-                print("Exiting.")
-                exit()
-
         return ncfile
 
     def create_dimensions_and_var_slots(self, ncfile):

@@ -996,7 +996,7 @@ class NdScanConfig(RunProcessConfig):
     # To be used in a check before commencing the scan.
     configfileloaded = False
     configfile = None # Will point to a config file opened with JSON.
-    outdirectory = ""
+    outdirectory = "DATA"
     failcoords = ndarray((1), int)
     errorlist = col.OrderedDict({})
 
@@ -1088,7 +1088,6 @@ class NdScanConfig(RunProcessConfig):
                     Title       (Will be used in naming the NetCDF file)
                     Comment     (For reading the config file)
                     Description (Saved in the netcdf file)
-                    RanBefore   (Used for warnings later)
                     Optionals   (Established in establish_default_optionals,
                                 changes behavior function)
         Arguments:
@@ -1104,12 +1103,10 @@ class NdScanConfig(RunProcessConfig):
         self.configfile = NdScanConfigFile(configfilename)
 
         # This overwrites the default optionals with the ones found..
-        #try:
         for option in self.configfile.get_value("Optionals").keys():
             self.optionals[option] = \
                 self.configfile.get_value("Optionals")[option]
-        #except:
-        #    pass
+
 
         # Grab the number of dimensions
         self.scanaxes['ndim'] = len(self.configfile.get_value("Axes"))
@@ -1130,30 +1127,16 @@ class NdScanConfig(RunProcessConfig):
                 self.scanaxes['steps'].append(
                     self.configfile.get_value("Axes")[var]["Steps"])
 
-        #Assign a default out directory if none are assigned
-        self.outdirectory = self.configfile.get_value("OutputDirectory")
-        if self.outdirectory is None:
+        #TODO: get value from file, if it exists
+        # currently returns <class 'KeyError'>
+        #self.outdirectory = self.configfile.get_value("OutputDirectory")
+        currentdirectory = os.getcwd()
+        try:
+            os.stat(currentdirectory + '/' + self.outdirectory)
+        except FileNotFoundError:
+            os.mkdir(currentdirectory + '/' + self.outdirectory)
 
-            currentdirectory = os.getcwd()
-
-            if not os.path.exists(currentdirectory + "/DATA"):
-
-                subprocess.call(["mkdir", "DATA"])
-                print("No output directory was specified, and the current\
- directory has no DATA folder;")
-                print("Creating one...")
-
-
-            self.outdirectory = "DATA"
-
-
-        # Some external program functionality needs to know if the scan
-        # has run before.
-
-        self.ranbefore = self.configfile.get_value("RanBefore")
-
-        if self.ranbefore is None:
-            self.ranbefore = False
+        
 
     def generate_coords(self):
         """
@@ -1169,15 +1152,6 @@ class NdScanConfig(RunProcessConfig):
         are created The failure coordinates
         store a value from ifail, which can later be interpreted to figure out
         what went wrong with PROCESS in a given run.
-
-
-        Modifies:
-            self.coords
-            self.currentstep
-            self.dim
-            self.failcoords
-        Dependencies:
-            numpy
 
         """
 
@@ -1543,14 +1517,10 @@ class NdScanConfig(RunProcessConfig):
                               "%)")
 
 
-        ndscan = NdScanConfigFile()
-        ndscan.modify_config_file("ndscan.conf", "RanBefore", True,
-                                  majormod=False)
         return(self.totalfails, self.totalruns)
 
     def start_scan(self):
         """
-        #FINISH THIS DOCSTRING
         Commences the N-dimensional scan, and calls all of the necessary
         methods.
         dimension_scan is the function which carries out 'motion' along

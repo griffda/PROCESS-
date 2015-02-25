@@ -26,13 +26,6 @@ Methods:
     read_ndscanfconfig_file(filename): Reads a config file to store it in the
                                        class for modification.
 
-    write_config_file(filename,majormod=false): Writes a config file with the
-        internally stored data. Set majormod to true to set RanBefore to False.
-
-    modifyconfigfile(filename,varname,value,majormod): Reads a config file,
-             changes varname to value, saves it, but if majormod is true sets
-             RanBefore to False.
-
     create_custom_variable(varname,value): Creates a new variable in the file.
                                            Only for developers.
 
@@ -52,7 +45,6 @@ Optional:   OutputDirectory     (Where to save the mfiles)
             Title       (Will be used in naming the NetCDF file)
             Comment     (For reading the config file)
             Description (Saved in the netcdf file)
-            RanBefore   (Used for warnings later)
 
 """
 __author__ = 'steto'
@@ -84,14 +76,6 @@ class NdScanConfigFile(object):
         read_ndscanfconfig_file(filename):
         Reads a config file to store it in the class for modification.
 
-        write_config_file(filename,majormod=false):
-        Writes a config file with the internally stored data. Set majormod to
-        true to set RanBefore to False.
-
-        modifyconfigfile(filename,varname,value,majormod):
-        Reads a config file, changes varname to value, saves it, but if
-        majormod is true sets RanBefore to False.
-
         create_custom_variable(varname,value):
         Creates a new variable in the file. Only for developers.
     """
@@ -104,11 +88,6 @@ class NdScanConfigFile(object):
 
         Init defines the internal dict and sets blank values for the expected
         inputs.
-        It also establishes 'majormodmade' as false. If a major modification
-        is made to the config file,
-        such as changing an axis or an optional, majormodmade toggles to True,
-        setting the ndscan.conf file's "RanBefore"
-        flag to False.
 
         It's important that values that aren't defined are set to "None",
         because then the writer
@@ -129,9 +108,7 @@ class NdScanConfigFile(object):
         self.internaldict["Title"] = None
         self.internaldict["Comment"] = None
         self.internaldict["Description"] = None
-        self.internaldict["RanBefore"] = None
 
-        self.majormodmade = False
         self.read_ndscanconfig_file(configfile)
 
 
@@ -214,7 +191,6 @@ class NdScanConfigFile(object):
 
         Returns nothing.
         """
-        self.majormodmade = True
 
         for axis in self.internaldict["Axes"]:
             if axis["Varname"] == name:
@@ -253,7 +229,6 @@ class NdScanConfigFile(object):
 
 
         """
-        self.majormodmade = True
 
         if type(axisid) is int:
             del self.internaldict["Axes"][axisid]
@@ -304,71 +279,3 @@ class NdScanConfigFile(object):
             if key in self.internaldict.keys():
                 self.internaldict[key] = data[key]
 
-
-    def write_config_file(self, filename="ndscan.conf", majormod=False):
-        """
-        Writes a config file in the current directory with the name specified.
-        If the user decides a major modification was made, toggling majormod
-        to true sets the
-        "RanBefore" flag to False.
-
-        Arguments:
-            filename---->Name of the new file. string
-            majormod---->If the changes were significant enough to warrant
-            setting "RanBefore" to false. Boolean.
-        """
-
-
-        #todo change default to ndscan.conf when wrapping up project
-        configfile = open(filename, "w+")
-        thedict = col.OrderedDict(self.internaldict)
-        for axis in thedict["Axes"]:
-            try:
-                if axis["Lowerbound"] is None:
-                    del axis["Lowerbound"]
-            # XXX specify exception type
-            except:
-                pass
-            try:
-                if axis["Upperbound"] is None:
-                    del axis["Upperbound"]
-            # XXX specify exception type
-            except:
-                pass
-        for keys in thedict:
-            if thedict[keys] is None:
-                del thedict[keys]
-
-        # Sets RanBefore to False, assuming that some modification has been
-        # made and that this is
-        # a new config file.
-        if majormod is True or self.majormodmade is True:
-            thedict["RanBefore"] = False
-        jsonform = json.dumps(thedict, sort_keys=True,\
-                       indent=4, separators=(',', ': '))
-        configfile.write(jsonform)
-        configfile.close()
-
-    def modify_config_file(self, filename, varname, value, majormod=False):
-        """
-        A quick method included to make changing a single variable easy with
-        just one call.
-
-        Arguments:
-            filename-->The name of the configuration file to load. string
-            varname--->The name of the variable to change. string
-            value----->The new value to assign to the variable.
-            majormod-->If the change significantly affects the function of the
-            scan, set this to true. Boolean.
-
-        Dependencies:
-            read_ndscanconfig_file
-            set_value
-            write_config_file
-        """
-
-        self.read_ndscanconfig_file(filename)
-        if self.set_value(varname, value):
-            print("Successfully modified ", filename, " variable ", varname,\
-                      " to ", value, ".")
-        self.write_config_file(filename, majormod)
