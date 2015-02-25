@@ -95,13 +95,7 @@ def  get_variable_range(itervars, factor, wdir='.'):
 
         #for non-f-values we modify the range with the factor
         else:
-            #value set from IN.DAT
-            if varname in in_dat.data.keys():
-                value = in_dat.data[varname].get_value
-
-            #value set from defaults
-            else:
-                value = DICT_IXC_DEFAULT[varname]
+            value = get_from_indat_or_default(in_dat, varname)
 
             # to allow the factor to have some influence
             if value == 0.:
