@@ -1306,10 +1306,9 @@ class NdScanConfig(RunProcessConfig):
                 print("Ifail = ", int(currentfail), " Rerunning ", x + 1,
                       "of", self.niter)
 
-                #If a certain kind of failure is detected, PROCESS may run
-                #again with randomized iteration variables..
-                if currentfail != 1:
-                    # XXX this seems to set te outside its bounds!
+                 if currentfail != 1:
+                    # Does not work, if bounds in input.f90 are tighter
+                    # than boundu/boundl
                     neqns, itervars = get_neqns_itervars()
                     lbs, ubs = get_variable_range(itervars, self.factor)
                     vary_iteration_variables(itervars, lbs, ubs)
