@@ -51,14 +51,7 @@ def update_ixc_bounds(wdir='.'):
 
     in_dat = InDat(pjoin(wdir, "IN.DAT"))
 
-#<<<<<<< HEAD
-#    for key in in_dat.variables.keys():
-#        if 'bound' in key.lower():
-#            var = key[key.find('(')+1:key.find(')')]
-#            name = DICT_IXC_SIMPLE[var]
-#=======
     bounds = in_dat.data['bounds'].get_value
-#>>>>>>> develop
 
     for key, value in bounds.items():
         name = DICT_IXC_SIMPLE[key]

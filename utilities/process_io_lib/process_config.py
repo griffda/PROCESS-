@@ -19,7 +19,7 @@ import collections as col
 from process_io_lib.process_funcs import  get_neqns_itervars,\
     get_variable_range, vary_iteration_variables, check_input_error,\
     process_stopped, get_from_indat_or_default,\
-    set_variable_in_indat
+    set_variable_in_indat, update_ixc_bounds
 from process_io_lib.ndscan_config import NdScanConfigFile
 from process_io_lib.ndscan_funcs import get_var_name_or_number,\
     get_iter_variables_from_mfile, get_iter_vars, backup_in_file
@@ -1306,7 +1306,7 @@ class NdScanConfig(RunProcessConfig):
                 print("Ifail = ", int(currentfail), " Rerunning ", x + 1,
                       "of", self.niter)
 
-                 if currentfail != 1:
+                if currentfail != 1:
                     # Does not work, if bounds in input.f90 are tighter
                     # than boundu/boundl
                     neqns, itervars = get_neqns_itervars()
@@ -1570,6 +1570,8 @@ class NdScanConfig(RunProcessConfig):
 
         self.counter = 0
 
+        #updates dictionary from IN.DAT in wdir
+        update_ixc_bounds()
 
         backup_in_file("w")
         self.dimension_scan(self.scanaxes['ndim'] - 1)
