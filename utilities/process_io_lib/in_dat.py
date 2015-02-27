@@ -769,7 +769,8 @@ def parameter_type(name, value):
 
         # If a real variable just convert to float
         if "real_variable" in param_type:
-            return float(value)
+            val = fortran_python_scientific(value)
+            return float(val)
 
         # If a real array split and make a float list
         elif "real_array" in param_type:
