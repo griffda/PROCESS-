@@ -70,6 +70,7 @@ module numerics
   !+ad_hisc               the correct length as declared in the corresponding
   !+ad_hisc               character(len=...) statement, otherwise
   !+ad_hisc               compilation using gfortran fails
+  !+ad_hist  27/02/15 JM  Changed default values for boundu(4) and boundu & l (103)
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -809,7 +810,7 @@ module numerics
        10.00D0, &  !  1 
        100.0D0, &  !  2 
        10.00D0, &  !  3 
-       500.0D0, &  !  4 
+       150.0D0, &  !  4 
        1.000D0, &  !  5 
        1.00D21, &  !  6 
        1.000D0, &  !  7 

@@ -328,6 +328,7 @@ contains
     !+ad_hist  13/11/14 PJK Modified IRADLOSS limit
     !+ad_hist  17/11/14 PJK Added OUTPUT_COSTS
     !+ad_hist  25/11/14 JM  Added new availability model variables
+    !+ad_hist  25/11/14 JM  Changed default bound for for te flhthresh
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -720,7 +721,7 @@ contains
           call parse_real_variable('TBETA', tbeta, 0.0D0, 4.0D0, &
                'Temperature profile index beta')
        case ('TE')
-          call parse_real_variable('TE', te, 2.0D0, 150.0D0, &
+          call parse_real_variable('TE', te, 1.0D0, 200.0D0, &
                'Electron temperature (keV)')
        case ('TEPED')
           call parse_real_variable('TEPED', teped, 0.0D0, 20.0D0, &
@@ -821,7 +822,7 @@ contains
           call parse_real_variable('FJPROT', fjprot, 0.001D0, 10.0D0, &
                'F-value for SCTF winding pack J')
        case ('FLHTHRESH')
-          call parse_real_variable('FLHTHRESH', flhthresh, 0.001D0, 10.0D0, &
+          call parse_real_variable('FLHTHRESH', flhthresh, 0.001D0, 1.0D6, &
                'F-value for L-H power threshold')
        case ('FMVA')
           call parse_real_variable('FMVA', fmva, 0.001D0, 10.0D0, &
