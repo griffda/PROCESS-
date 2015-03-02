@@ -1032,6 +1032,7 @@ contains
       !+ad_hist  01/10/12 PJK Initial F90 version
       !+ad_hist  26/06/14 PJK Added error handling
       !+ad_hist  29/07/14 PJK Uncommented initial tpeak test
+      !+ad_hist  02/03/15 JM  Changed else statement to continue even if error
       !+ad_stat  Okay
       !+ad_docs  Methods of first wall structural analysis ...,
       !+ad_docc  R.J. LeClaire, PFC/RR-84-9
@@ -1113,8 +1114,8 @@ contains
             logn = lgn510 + (tpeak-510.0D0)*(lgn649-lgn510) / &
                  (649.0D0-510.0D0)
          else
-            !  Shouldn't get here (trapped by initial test above)
-            continue
+            ! Continue even if error condition
+			logn = lgn649
          end if
 
          if (logn > 15.0D0) logn = 15.0D0

@@ -1880,4 +1880,5 @@ end subroutine output
 ! GIT 381: Changed pinjht description;
 !          Changed Django library location for GUI
 ! GIT 382: Various GIT branches merged
-! GIT 383: Various minor changes and availability model updated. See release notes v383
+! GIT 383: Various minor changes and availability model updated. See release notes t383
+! GIT 384: Changes to TF magnets calculations and a few minor fixes. See release notes t384
