@@ -374,6 +374,7 @@ subroutine run_summary
   !+ad_hist  27/02/14 PJK Introduced use of nineqns
   !+ad_hist  22/07/14 PJK Moved routine from input.f90, and rearranged layout,
   !+ad_hisc               incorporating old routine codever
+  !+ad_hisc  02/03/15 JM  Added runtitle to MFILE
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -473,6 +474,8 @@ subroutine run_summary
 
   ustring = '"'//trim(progid(4)(13:20))//'"'
   call ovarst(mfile,'User','(username)',ustring)
+  
+  call ovarst(mfile,'PROCESS run title','(runtitle)',runtitle)
 
 #ifndef unit_test
   call oblnkl(nout)
