@@ -294,12 +294,24 @@ def process_parameter(data, line):
     # Remove comment from line to make things easier
     no_comment_line = line.split("*")[0].split("=")
 
+    if len("".join(no_comment_line).strip()) == 0:
+        return
+
     # Parameter name
     name = no_comment_line[0].strip()
 
     # Parameter value
     if len(no_comment_line[-1].split(",")) > 2:
-        value = no_comment_line[1].strip()
+        try:
+            value = no_comment_line[1].strip()
+        except ValueError:
+            print("Error when reading line below. Remove multiline parameter "
+                  "in line with new format for IN.DAT")
+            print(line)
+        except IndexError:
+            print("Error when reading line below. Remove multiline parameter "
+                  "in line with new format for IN.DAT")
+            print(line)
     else:
         value = no_comment_line[1].strip().replace(",", "")
 
@@ -1142,7 +1154,7 @@ class InDat(object):
 
 if __name__ == "__main__":
     #i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
-    i = InDat(filename="../../Original_IN.DAT")
+    i = InDat(filename="../../IN.DAT_demo1")
     # print(i.data["ixc"].value)
     # print(i.data["fimp"].value)
     # print(i.data["ipfloc"].value)
