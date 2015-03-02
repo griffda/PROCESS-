@@ -184,7 +184,11 @@ class MFile(object):
         var_des = line[0]
         extracted_var_name = sort_brackets(line[1]) 
         var_name = var_des if extracted_var_name == "" else extracted_var_name
-        var_value = sort_value(line[2])
+        if "runtitle" in var_name:
+            var_value = " ".join(line[2:])
+            print(line)
+        else:
+            var_value = sort_value(line[2])
         var_unit = get_unit(var_des)
         self.add_to_mfile_variable(var_des, var_name, var_value, var_unit)
 
