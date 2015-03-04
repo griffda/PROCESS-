@@ -274,7 +274,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '383    Release Date :: 2015-03-02'
+       '385    Release Date :: 2015-03-04'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1885,3 +1885,4 @@ end subroutine output
 ! GIT 382: Various GIT branches merged
 ! GIT 383: Various minor changes and availability model updated. See release notes t383
 ! GIT 384: Changes to TF magnets calculations and a few minor fixes. See release notes t384
+! GIT 385: Fixed tagging error and see release notes t385
