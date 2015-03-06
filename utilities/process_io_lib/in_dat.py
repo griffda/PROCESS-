@@ -498,7 +498,7 @@ def write_parameters(data, out_file):
         write_title("{0}".format(module), out_file)
 
         # Items to exclude
-        exclusions = ["neqns", "nvar", "icc", "ixc"]
+        exclusions = ["neqns", "nvar", "icc", "ixc", "runtitle"]
 
         # Write parameters for given module
         for item in DICT_MODULE[module]:
@@ -935,7 +935,9 @@ class INVariable(object):
     @property
     def get_value(self):
         """Return value in correct format"""
-        if self.v_type != "Bound":
+        if "runtitle" in self.name:
+            return self.value
+        elif self.v_type != "Bound":
             return parameter_type(self.name, self.value)
         else:
             return self.value
@@ -1139,6 +1141,11 @@ class InDat(object):
         # Write Header
         write_title("", output)
 
+        # Write run title
+        runtitle_line = "{0} = {1}\n\n".format("runtitle",
+                                           self.data["runtitle"].get_value)
+        output.write(runtitle_line)
+
         # Write Constraint Equations
         write_constraint_equations(self.data, output)
 
@@ -1181,5 +1188,6 @@ if __name__ == "__main__":
     # i.remove_parameter("blnkithsddd")
     # i.remove_parameter("blnkith")
     # i.add_parameter("sweep", [3.0, 3.0])
-    print(i.data["bounds"].get_value)
+    # print(i.data["bounds"].get_value)
+    print(i.data["runtitle"].get_value)
     i.write_in_dat()
