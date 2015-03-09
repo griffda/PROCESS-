@@ -1413,6 +1413,7 @@ contains
     call ovarre(outfile,'Peak field (Amperes Law,T)','(bmaxtf)',bmaxtf)
     call ovarre(outfile,'Peak field (with ripple,T)','(bmaxtfrp)',bmaxtfrp)
     call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
+    call ovarre(outfile,'Ripple amplitude at plasma (%)','(ripple)',ripple)
     call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotf*tfno)',estotf*tfno)
     call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf)
     call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/tfno)',whttf/tfno)
