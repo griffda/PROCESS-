@@ -3,22 +3,21 @@
   PROCESS to CAD program
 
   James Morris
-  30/07/2014
+  02/03/2015
 
 """
 
-# Import scientific python library
 import scipy
 
-# Import MFILE library for reading MFILE.DAT
-import process_io_lib.mfile as mf
-
-# Import argument parser
+# import argument parser
 import argparse
+
+# import mfile library
+import process_io_lib.mfile as mf
 
 # Import matplotlib libraries for plotting
 import matplotlib.pyplot as plt
-from matplotlib.patches import Ellipse, Arc
+from matplotlib.patches import Arc
 
 
 class BuildDataContainer(object):
@@ -131,6 +130,9 @@ class BuildDataContainer(object):
         # Cryostat half-height
         self.zdewex = data.data["zdewex"].get_scan(-1)
 
+        # External cryostat radial thickness
+        self.ddwex = data.data["ddwex"].get_scan(-1)
+
         # Number of TF coils
         self.tfno = data.data["tfno"].get_scan(-1)
 
@@ -149,7 +151,8 @@ class BuildDataContainer(object):
         # TF coil inboard leg sidewall case thickness
         self.casths = data.data["casths"].get_scan(-1)
 
-        # 
+        # ohhghf
+        self.ohhghf = data.data["ohhghf"].get_scan(-1)
 
         # TF Coil arcs
 
@@ -180,23 +183,50 @@ class BuildDataContainer(object):
         self.yarc_5 = data.data["yarc(5)"].get_scan(-1)
 
 
+def write_header(cd_file, mfile):
+    """Function to write header information for CAD output
+
+    :param cd_file: cad file to write to
+    :param mfile: mfile object with PROCESS data
+    :return: -
+    """
+
+    # border
+    cd_file.write("############################################################\n")
+
+    # Write date
+    export_day, export_month, export_year = mfile.data["date"].get_scan(-1).split("/")
+    cd_file.write("Process Code Export Date:{0}_{1}_{2}\n".
+                  format(export_year[-2:], export_month, export_day))
+
+    runtitle = mfile.data["runtitle"].get_scan(-1).replace(" ", "_")
+    time = mfile.data["time"].get_scan(-1).replace(":", "_")
+    cd_file.write("Process Code Export ID:{0}_{1}_{2}_{3}_{4}\n".
+                  format(runtitle, export_year, export_month, export_day,
+                         time))
+
+    proc_user = mfile.data["username"].get_scan(-1)
+    cd_file.write("Process Code Contact:{0}\n".format(proc_user))
+
+    # border
+    cd_file.write("############################################################\n")
+
+
 def write_machine_bore(data, output_file):
     """Function to write data for the machine bore
     """
 
     # Description line
-    output_file.write("# Machine Bore (Cylinder)\n")
+    output_file.write("\n# Machine Bore (Cylinder)\n")
 
     # Bore radial thickness
     bore_thickness = data.bore
-    line_1 = "Bore thickness = " + str(bore_thickness) + " m\n"
+    line_1 = "Bore thickness = {0:.3f} m\n".format(bore_thickness)
 
-    # Half-height from midplane. Multiplied by 0.9 because actually need
-    # variable "ohhghf" but it isn't in MFILE.
-    # TODO: put ohhghf in here when it is available in MFILE
-    bore_half_height = data.hmax*0.9
-    line_2 = "Bore half-height from mid-plane = " + str(bore_half_height) + \
-             " m\n"
+    # Half-height from midplane
+    bore_half_height = data.hmax*data.ohhghf
+    line_2 = "Bore half-height from mid-plane = {0:.3f} m\n".\
+        format(bore_half_height)
 
     # Write data to file
     output_file.write(line_1)
@@ -211,20 +241,22 @@ def write_oh_coil(data, output_file):
     # Description line
     output_file.write("# OH Coil (Cylinder)\n")
 
-    # OH coil radial thickness
-    oh_thickness = data.ohcth
-    line_1 = "OH coil thickness = " + str(oh_thickness) + " m\n"
+    # OH coil radial mid point (m)
+    oh_rad_mid = data.bore + data.ohcth/2.0
+    line_1 = "OH coil - radius mid = {0:.3f} m\n".format(oh_rad_mid)
 
-    # Half-height from midplane. Multiplied by 0.9 because actually need
-    # variable "ohhghf" but it isn't in MFILE.
-    # TODO: put ohhghf in here when it is available in MFILE
-    oh_half_height = data.hmax*0.9
-    line_2 = "OH coil half-height from mid-plane = " \
-             + str(oh_half_height) + " m\n"
+    # OH coil half-height from midplane (m)
+    oh_half_height = data.hmax*data.ohhghf
+    line_2 = "OH coil - half height = {0:.3f} m\n".format(oh_half_height)
+
+    # OH coil thickness (m)
+    oh_thickness = data.ohcth
+    line_3 = "OH coil - thickness = {0:.3f} m\n".format(oh_thickness)
 
     # Write data to file
     output_file.write(line_1)
     output_file.write(line_2)
+    output_file.write(line_3)
     output_file.write("\n")
 
     if data.plot:
@@ -242,178 +274,916 @@ def write_oh_gap(data, output_file):
     """
 
     # Description line
-    output_file.write("# OH to TF gap (Cylinder)\n")
+    output_file.write("# OH Coil to TF gap (Cylinder)\n")
 
-    # OH coil radial thickness
+    # OH coil to TF coil gap radial mid point
+    oh_gap_rad_mid = data.bore + data.ohcth + data.gapoh/2.0
+    line_1 = "OH Coil to TF coil gap - radius mid = {0:.3f} m\n".\
+        format(oh_gap_rad_mid)
+
+    # OH coil to TF coil gap half-height from midplane.
+    oh_gap_half_height = data.hmax*data.ohhghf
+    line_2 = "OH Coil to TF coil gap - half height = {0:.3f} m\n".\
+        format(oh_gap_half_height)
+
+    # OH coil to TF coil gap thickness
     oh_gap_thickness = data.gapoh
-    line_1 = "OH to TF coil gap thickness = " + str(oh_gap_thickness) + " m\n"
-
-    # Half-height from midplane. Multiplied by 0.9 because actually need
-    # variable "ohhghf" but it isn't in MFILE.
-    # TODO: put ohhghf in here when it is available in MFILE
-    oh_gap_half_height = data.hmax*0.9
-    line_2 = "OH coil half-height from mid-plane = " \
-             + str(oh_gap_half_height) + " m\n"
+    line_3 = "OH Coil to TF coil gap - thickness = {0:.3f} m\n".\
+        format(oh_gap_thickness)
 
     # Write data to file
     output_file.write(line_1)
     output_file.write(line_2)
+    output_file.write(line_3)
     output_file.write("\n")
 
 
-def angle_check(angle1, angle2):
-    """Function to perform TF coil angle check
+def write_cryostat(data, output_file):
+    """Function to write cryostat data
     """
-    if angle1 > 1:
-        angle1 = 1
-    if angle1 < -1:
-        angle1 = -1
-    if angle2 > 1:
-        angle2 = 1
-    if angle2 < -1:
-        angle2 = -1
-    return angle1, angle2
-
-
-def write_tf_coils(data, output_file):
-    """Function to plot TF coils
-    """
-
-    # Arc points
-    x_1 = data.__dict__["xarc_1"]
-    y_1 = data.__dict__["yarc_1"]
-    x_2 = data.__dict__["xarc_2"]
-    y_2 = data.__dict__["yarc_2"]
-    x_3 = data.__dict__["xarc_3"]
-    y_3 = data.__dict__["yarc_3"]
-    x_4 = data.__dict__["xarc_4"]
-    y_4 = data.__dict__["yarc_4"]
-    x_5 = data.__dict__["xarc_5"]
-
-    # Arc centres
-    x_c_1 = data.__dict__["xctfc_1"]
-    y_c_1 = data.__dict__["yctfc_1"]
-    x_c_2 = data.__dict__["xctfc_2"]
-    y_c_2 = data.__dict__["yctfc_2"]
-    x_c_3 = data.__dict__["xctfc_3"]
-    y_c_3 = data.__dict__["yctfc_3"]
-    x_c_4 = data.__dict__["xctfc_4"]
-    y_c_4 = data.__dict__["yctfc_4"]
-
-    # Arc radii
-    rad_1 = scipy.sqrt((x_1-x_c_1)**2 + (y_1 - y_c_1)**2)
-    rad_2 = scipy.sqrt((x_2-x_c_2)**2 + (y_2 - y_c_2)**2)
-    rad_3 = scipy.sqrt((x_3-x_c_3)**2 + (y_3 - y_c_3)**2)
-    rad_4 = scipy.sqrt((x_4-x_c_4)**2 + (y_4 - y_c_4)**2)
-
-    # Arc angles
-    a_1_1 = (x_1 - x_c_1)/rad_1
-    a_1_2 = (x_2 - x_c_1)/rad_1
-    a_1_1, a_1_2 = angle_check(a_1_1, a_1_2)
-    angle_1_1 = scipy.arcsin(a_1_1)
-    angle_1_2 = scipy.arcsin(a_1_2)
-
-    a_2_1 = (x_2 - x_c_2)/rad_2
-    a_2_2 = (x_3 - x_c_2)/rad_2
-    a_2_1, a_2_2 = angle_check(a_2_1, a_2_2)
-    angle_2_1 = scipy.arcsin(a_2_1)
-    angle_2_2 = scipy.arcsin(a_2_2)
-
-    a_3_1 = (x_3 - x_c_3)/rad_3
-    a_3_2 = (x_4 - x_c_3)/rad_3
-    a_3_1, a_3_2 = angle_check(a_3_1, a_3_2)
-    angle_3_1 = scipy.arcsin(a_3_1)
-    angle_3_2 = scipy.arcsin(a_3_2)
-
-    a_4_1 = (x_4 - x_c_4)/rad_4
-    a_4_2 = (x_5 - x_c_4)/rad_4
-    a_4_1, a_4_2 = angle_check(a_4_1, a_4_2)
-    angle_4_1 = scipy.arcsin(a_4_1)
-    angle_4_2 = scipy.arcsin(a_4_2)
-
-    in_x_1 = rad_1*scipy.sin(scipy.linspace(angle_1_1, angle_1_2, 30,
-                             endpoint=True)) + x_c_1
-    in_x_2 = rad_2*scipy.sin(scipy.linspace(angle_2_1, angle_2_2, 30,
-                             endpoint=True)) + x_c_2
-    in_x_3 = rad_3*scipy.sin(scipy.linspace(angle_3_1, angle_3_2, 30,
-                             endpoint=True)) + x_c_3
-    in_x_4 = rad_4*scipy.sin(scipy.linspace(angle_4_1, angle_4_2, 30,
-                             endpoint=True)) + x_c_4
-    in_x = scipy.concatenate((in_x_1, in_x_2, in_x_3, in_x_4))
-
-    in_y_1 = rad_1*scipy.cos(scipy.linspace(angle_1_1, angle_1_2, 30,
-                             endpoint=True)) + y_c_1
-    in_y_2 = rad_2*scipy.cos(scipy.linspace(angle_2_1, angle_2_2, 30,
-                             endpoint=True)) + y_c_2
-    in_y_3 = rad_3*scipy.cos(scipy.linspace(angle_3_1, angle_3_2, 30,
-                             endpoint=True)) + y_c_3
-    in_y_4 = rad_4*scipy.cos(scipy.linspace(angle_4_1, angle_4_2, 30,
-                             endpoint=True)) + y_c_4
-    in_y = scipy.concatenate((in_y_1, in_y_2, in_y_3, in_y_4))
-
-    in_x = scipy.concatenate([in_x, in_x[::-1]])
-    in_y = scipy.concatenate([in_y, -in_y[::-1]])
-
-    rad_to_outer_tf = data.r0 + data.a + data.scraplo + data.fwoth + \
-        data.blnkoth + data.shldoth + data.ddwi + data.gapsto
-    rad_to_inner_tf = data.bore + data.ohcth + data.gapoh + data.tfcth
-
-    in_width = rad_to_outer_tf - rad_to_inner_tf
-    out_width = in_width + data.tfcth + data.tfthko
-
-    rad_to_inside_inner_tf = data.bore + data.ohcth + data.gapoh
-
-    out_x = ((in_x - rad_to_inner_tf)*(out_width/in_width)) + \
-        rad_to_inside_inner_tf
-
-    top = data.plasma_half_height + (data.scrapli + data.scraplo)/2.0 + \
-        (data.fwith + data.fwoth)/2.0 + data.blnktth + data.shldtth + \
-        data.ddwi + data.vgap2 + data.tfcth
-
-    bottom = -data.plasma_half_height - data.vgap - \
-        data.divfix - data.shldtth - data.ddwi - data.vgap2 - data.tfcth
-
-    external = (top - bottom)/((top - data.tfcth) - (bottom + data.tfcth))
-
-    out_y = in_y * external
-
-    shift = (top + bottom)/2.0
-    out_y += shift
-    in_y += shift
-
-    ins_x = scipy.concatenate((in_x, out_x[::-1]))
-    ins_y = scipy.concatenate((in_y, out_y[::-1]))
 
     # Description line
-    output_file.write("# TF Coil information\n")
+    output_file.write("# Cryostat (cylinder with lid)\n")
 
-    # TF coil toroidal thickness
+    # Cryostat inner and outer radii
+    cryostat_inner_radius = data.rdewex
+    cryostat_outer_radius = data.rdewex + data.ddwex
 
-    # Outboard
-    tf_toroidal_thickness_outboard = data.tftort
-    line_1 = "TF coil toroidal thickness outboard = %.3f m\n" % \
-             tf_toroidal_thickness_outboard
+    # Cryostat radial mid point
+    cryostat_rad_mid = cryostat_inner_radius + data.ddwex/2.0
+    line_1 = "Cryostat - radius mid = {0:.3f} m\n".format(cryostat_rad_mid)
 
-    # Number of TF coils
-    line_2 = "Number of TF coils = %d \n" % int(data.tfno)
+    # Cryostat half-height
+    cryostat_half_height = data.zdewex
+    line_2 = "Cryostat - half height = {0:.3f} m\n".\
+        format(cryostat_half_height)
 
-    # Write data to file
+    # Cryostat thickness
+    cryostat_thickness = data.ddwex
+    line_3 = "Cryostat - thickness = {0:.3f} m\n".format(cryostat_thickness)
+
+    # Write cryostat data
     output_file.write(line_1)
     output_file.write(line_2)
-
-    # Write TF coil plot points to file
+    output_file.write(line_3)
     output_file.write("\n")
-    output_file.write("# TF coil x, y co-ordinates\n")
-    output_file.write("x\t\t\ty\n")
 
-    for i in range(len(ins_x)):
-        line = "%.3f\t\t%.3f\n" % (ins_x[i], ins_y[i])
-        output_file.write(line)
-    
     if data.plot:
         fig = plt.figure(1)
         ax = fig.add_subplot(111, aspect='equal')
-        ax.fill(ins_x, ins_y, color='0.8')
+        x = [0, 0, cryostat_outer_radius, cryostat_outer_radius,
+             0, 0, cryostat_inner_radius, cryostat_inner_radius, 0]
+        y = [cryostat_half_height, cryostat_half_height + cryostat_thickness,
+             cryostat_half_height + cryostat_thickness,
+             -cryostat_half_height - cryostat_thickness,
+             -cryostat_half_height - cryostat_thickness,
+             -cryostat_half_height, -cryostat_half_height,
+             +cryostat_half_height, +cryostat_half_height]
+        ax.fill(x, y, "b")
+
+
+def write_tf_to_vv_gap(data, output_file):
+    """Function to write the data for the gap between the TF coil and the
+    vacuum vessel for both the inboard and outboard sides.
+    """
+
+    # Description line
+    output_file.write("# TF to vacuum vessel (VV) gap\n")
+
+    # Radial gap inside
+    radial_gap_inner = data.gapds
+    line_1 = "Radial gap between TF coil and VV inboard side = {0:.3f} m\n".\
+        format(radial_gap_inner)
+
+    # Radial gap outside
+    radial_gap_outer = data.gapsto
+    line_2 = "Radial gap between TF coil and VV outboard side = {0:.3f} m\n".\
+        format(radial_gap_outer)
+
+    # Vertical gap upper
+    vertical_gap_upper = data.vgap2
+    line_3 = "Vertical gap between TF coil and VV upper = {0:.3f} m\n".\
+        format(vertical_gap_upper)
+
+    # Vertical gap lower
+    vertical_gap_lower = data.vgap2
+    line_4 = "Vertical gap between TF coil and VV lower = {0:.3f} m\n".\
+        format(vertical_gap_lower)
+
+    # Write data to file
+    output_file.write(line_1)
+    output_file.write(line_2)
+    output_file.write(line_3)
+    output_file.write(line_4)
+    output_file.write("\n")
+
+
+def write_vacuum_vessel(data, output_file):
+    """Function to write vacuum vessel data to the output file.
+    """
+
+    # Description line
+    output_file.write("# Vacuum vessel (Ellipses)\n")
+
+    # Vacuum vessel ellipse centre y point
+    output_file.write("#Ellipse centre y position = 0.000 m\n")
+
+    # Vacuum vessel ellipse centre x point
+    ellipse_centre = data.r0 - data.delta*data.a
+    output_file.write("vacuum vessel - Ellipse centre = {0:.3f} m\n".
+                      format(ellipse_centre))
+
+    # Vacuum vessel ellipse minor radius, outside inboard
+    outside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
+        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds
+    output_file.write("vacuum vessel - Ellipse minor radius - "
+                      "outside inboard = {0:.3f} m\n".
+                      format(outside_inboard_ellipse_minor_radius))
+
+    # Vacuum vessel ellipse major radius - outside upper
+    outside_upper_ellipse_major_radius = data.plasma_half_height + \
+        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
+        data.blnktth + data.shldtth + data.ddwi
+    output_file.write("vacuum vessel - Ellipse major radius - "
+                      "outside upper {0:.3f} m\n".
+                      format(outside_upper_ellipse_major_radius))
+
+    # Vacuum vessel ellipse major radius - outside lower
+    outside_lower_ellipse_major_radius = data.plasma_half_height + \
+        data.vgap + data.divfix + data.shldtth + data.ddwi
+    output_file.write("vacuum vessel - Ellipse major radius - "
+                      "outside lower = {0:.3f} m\n".
+                      format(outside_lower_ellipse_major_radius))
+
+    # Vacuum vessel ellipse minor radius - outside outboard
+    outside_outboard_ellipse_minor_radius = data.delta*data.a + data.a + \
+        data.scraplo + data.fwoth + data.blnkoth + data.shldoth + data.ddwi
+    output_file.write("vacuum vessel - Ellipse minor radius - "
+                      "outside outboard = {0:.3f} m\n".
+                      format(outside_outboard_ellipse_minor_radius))
+
+    # Vacuum vessel ellipse minor radius - inside inboard
+    inside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
+        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
+        data.ddwi
+    output_file.write("vacuum vessel - Ellipse minor radius - "
+                      "inside inboard = {0:.3f} m\n".
+                      format(inside_inboard_ellipse_minor_radius))
+
+    # Vacuum vessel ellipse major radius - inside upper
+    inside_upper_ellipse_major_radius = data.plasma_half_height + \
+        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
+        data.blnktth + data.shldtth
+    output_file.write("vacuum vessel - Ellipse major radius - "
+                      "inside upper {0:.3f} m\n".
+                      format(inside_upper_ellipse_major_radius))
+
+    # Vacuum vessel ellipse major radius - inside lower
+    inside_lower_ellipse_major_radius = data.plasma_half_height + \
+        data.vgap + data.divfix + data.shldtth
+    output_file.write("vacuum vessel - Ellipse major radius - "
+                      "inside lower = {0:.3f} m\n".
+                      format(inside_lower_ellipse_major_radius))
+
+    # Vacuum vessel ellipse minor radius - inside outboard
+    inside_outboard_ellipse_minor_radius = data.delta*data.a + data.a + \
+        data.scraplo + data.fwoth + data.blnkoth + data.shldoth
+    output_file.write("vacuum vessel - Ellipse minor radius - "
+                      "inside outboard = {0:.3f} m\n".
+                      format(inside_outboard_ellipse_minor_radius))
+
+    if data.plot:
+        fig = plt.figure(1)
+        ax = fig.add_subplot(111, aspect='equal')
+
+        a = Arc((ellipse_centre, 0.0),
+                2.0*outside_inboard_ellipse_minor_radius,
+                2.0*outside_upper_ellipse_major_radius,
+                angle=0.0, theta1=90.0, theta2=180.0,
+                edgecolor="r", linewidth="2")
+        a.set_clip_box(ax.bbox)
+        a.set_alpha(data.alpha)
+        ax.add_artist(a)
+
+        b = Arc((ellipse_centre, 0.0),
+                2.0*outside_inboard_ellipse_minor_radius,
+                2.0*outside_lower_ellipse_major_radius,
+                angle=0.0, theta1=180.0, theta2=270.0,
+                edgecolor="r", linewidth="2")
+        b.set_clip_box(ax.bbox)
+        b.set_alpha(data.alpha)
+        ax.add_artist(b)
+
+        c = Arc((ellipse_centre, 0.0),
+                2.0*outside_outboard_ellipse_minor_radius,
+                2.0*outside_upper_ellipse_major_radius,
+                angle=0.0, theta1=0.0, theta2=90.0,
+                edgecolor="r", linewidth="2")
+        c.set_clip_box(ax.bbox)
+        c.set_alpha(data.alpha)
+        ax.add_artist(c)
+
+        d = Arc((ellipse_centre, 0.0),
+                2.0*outside_outboard_ellipse_minor_radius,
+                2.0*outside_lower_ellipse_major_radius,
+                angle=0.0, theta1=270.0, theta2=0.0,
+                edgecolor="r", linewidth="2")
+        d.set_clip_box(ax.bbox)
+        d.set_alpha(data.alpha)
+        ax.add_artist(d)
+
+        e = Arc((ellipse_centre, 0.0),
+                2.0*inside_inboard_ellipse_minor_radius,
+                2.0*inside_upper_ellipse_major_radius,
+                angle=0.0, theta1=90.0, theta2=180.0,
+                edgecolor="r", linewidth="2")
+        e.set_clip_box(ax.bbox)
+        e.set_alpha(data.alpha)
+        ax.add_artist(e)
+
+        f = Arc((ellipse_centre, 0.0),
+                2.0*inside_inboard_ellipse_minor_radius,
+                2.0*inside_lower_ellipse_major_radius,
+                angle=0.0, theta1=180.0, theta2=270.0,
+                edgecolor="r", linewidth="2")
+        f.set_clip_box(ax.bbox)
+        f.set_alpha(data.alpha)
+        ax.add_artist(f)
+
+        g = Arc((ellipse_centre, 0.0),
+                2.0*inside_outboard_ellipse_minor_radius,
+                2.0*inside_upper_ellipse_major_radius,
+                angle=0.0, theta1=0.0, theta2=90.0,
+                edgecolor="r", linewidth="2")
+        g.set_clip_box(ax.bbox)
+        g.set_alpha(data.alpha)
+        ax.add_artist(g)
+
+        h = Arc((ellipse_centre, 0.0),
+                2.0*inside_outboard_ellipse_minor_radius,
+                2.0*inside_lower_ellipse_major_radius,
+                angle=0.0, theta1=270.0, theta2=0.0,
+                edgecolor="r", linewidth="2")
+        h.set_clip_box(ax.bbox)
+        h.set_alpha(data.alpha)
+        ax.add_artist(h)
+
+        ax.set_xlim([0, 20])
+        ax.set_ylim([-12, 12])
+
+
+def write_shield(data, output_file):
+    """Function to write the shield information to the output_file.
+    """
+
+    # # Description line
+    output_file.write("\n# Shield (Ellipses)\n")
+
+    # Ellipse centre y position
+    output_file.write("#Ellipse centre y position = 0.000 m\n")
+
+    # Ellipse centre x position
+    ellipse_centre = data.r0 - data.delta*data.a
+    output_file.write("Shield - Ellipse centre = {0:.3f} m\n".
+                      format(ellipse_centre))
+
+    # Outside inboard ellipse minor radius
+    outside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
+        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
+        data.ddwi
+    output_file.write("Shield - Ellipse minor radius - "
+                      "outside inboard = {0:.3f} m\n".
+                      format(outside_inboard_ellipse_minor_radius))
+
+    # Outside upper ellipse major radius
+    outside_upper_ellipse_major_radius = data.plasma_half_height + \
+        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
+        data.blnktth + data.shldtth
+    output_file.write("Shield - Ellipse major radius - "
+                      "outside upper {0:.3f} m\n".
+                      format(outside_upper_ellipse_major_radius))
+
+    # Outside lower ellipse major radius
+    outside_lower_ellipse_major_radius = data.plasma_half_height + \
+        data.vgap + data.divfix + data.shldtth
+    output_file.write("Shield - Ellipse major radius - "
+                      "outside lower = {0:.3f} m\n".
+                      format(outside_lower_ellipse_major_radius))
+
+    # Outside outboard ellipse minor radius
+    outside_outboard_ellipse_minor_radius = data.delta*data.a + data.a + \
+        data.scraplo + data.fwoth + data.blnkoth + data.shldoth
+    output_file.write("Shield - Ellipse minor radius - "
+                      "outside outboard = {0:.3f} m\n".
+                      format(outside_outboard_ellipse_minor_radius))
+
+    # Inside inboard ellipse minor radius
+    inside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
+        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
+        data.ddwi - data.shldith
+    output_file.write("Shield - Ellipse minor radius - "
+                      "inside inboard = {0:.3f} m\n".
+                      format(inside_inboard_ellipse_minor_radius))
+
+    # Inside upper ellipse major radius
+    inside_upper_ellipse_major_radius = data.plasma_half_height + \
+        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
+        data.blnktth
+    output_file.write("Shield - Ellipse major radius - "
+                      "inside upper {0:.3f} m\n".
+                      format(inside_upper_ellipse_major_radius))
+
+    # Inside lower ellipse major radius
+    inside_lower_ellipse_major_radius = data.plasma_half_height + \
+        data.vgap + data.divfix
+    output_file.write("Shield - Ellipse major radius - "
+                      "inside lower = {0:.3f} m\n".
+                      format(inside_lower_ellipse_major_radius))
+
+    # Inside outboard ellipse minor radius
+    inside_outboard_ellipse_minor_radius = data.delta*data.a + data.a + \
+        data.scraplo + data.fwoth + data.blnkoth
+    output_file.write("Shield - Ellipse minor radius - "
+                      "inside outboard = {0:.3f} m\n".
+                      format(inside_outboard_ellipse_minor_radius))
+
+    if data.plot:
+        fig = plt.figure(1)
+        ax = fig.add_subplot(111, aspect='equal')
+
+        a = Arc((ellipse_centre, 0.0),
+                2.0*outside_inboard_ellipse_minor_radius,
+                2.0*outside_upper_ellipse_major_radius,
+                angle=0.0, theta1=90.0, theta2=180.0,
+                edgecolor="b", linewidth="2")
+        a.set_clip_box(ax.bbox)
+        a.set_alpha(data.alpha)
+        ax.add_artist(a)
+
+        b = Arc((ellipse_centre, 0.0),
+                2.0*outside_inboard_ellipse_minor_radius,
+                2.0*outside_lower_ellipse_major_radius,
+                angle=0.0, theta1=180.0, theta2=270.0,
+                edgecolor="b", linewidth="2")
+        b.set_clip_box(ax.bbox)
+        b.set_alpha(data.alpha)
+        ax.add_artist(b)
+
+        c = Arc((ellipse_centre, 0.0),
+                2.0*outside_outboard_ellipse_minor_radius,
+                2.0*outside_upper_ellipse_major_radius,
+                angle=0.0, theta1=0.0, theta2=90.0,
+                edgecolor="b", linewidth="2")
+        c.set_clip_box(ax.bbox)
+        c.set_alpha(data.alpha)
+        ax.add_artist(c)
+
+        d = Arc((ellipse_centre, 0.0),
+                2.0*outside_outboard_ellipse_minor_radius,
+                2.0*outside_lower_ellipse_major_radius,
+                angle=0.0, theta1=270.0, theta2=0.0,
+                edgecolor="b", linewidth="2")
+        d.set_clip_box(ax.bbox)
+        d.set_alpha(data.alpha)
+        ax.add_artist(d)
+
+        e = Arc((ellipse_centre, 0.0),
+                2.0*inside_inboard_ellipse_minor_radius,
+                2.0*inside_upper_ellipse_major_radius,
+                angle=0.0, theta1=90.0, theta2=180.0,
+                edgecolor="b", linewidth="2")
+        e.set_clip_box(ax.bbox)
+        e.set_alpha(data.alpha)
+        ax.add_artist(e)
+
+        f = Arc((ellipse_centre, 0.0),
+                2.0*inside_inboard_ellipse_minor_radius,
+                2.0*inside_lower_ellipse_major_radius,
+                angle=0.0, theta1=180.0, theta2=270.0,
+                edgecolor="b", linewidth="2")
+        f.set_clip_box(ax.bbox)
+        f.set_alpha(data.alpha)
+        ax.add_artist(f)
+
+        g = Arc((ellipse_centre, 0.0),
+                2.0*inside_outboard_ellipse_minor_radius,
+                2.0*inside_upper_ellipse_major_radius,
+                angle=0.0, theta1=0.0, theta2=90.0,
+                edgecolor="b", linewidth="2")
+        g.set_clip_box(ax.bbox)
+        g.set_alpha(data.alpha)
+        ax.add_artist(g)
+
+        h = Arc((ellipse_centre, 0.0),
+                2.0*inside_outboard_ellipse_minor_radius,
+                2.0*inside_lower_ellipse_major_radius,
+                angle=0.0, theta1=270.0, theta2=0.0,
+                edgecolor="b", linewidth="2")
+        h.set_clip_box(ax.bbox)
+        h.set_alpha(data.alpha)
+        ax.add_artist(h)
+
+        ax.set_xlim([0, 20])
+        ax.set_ylim([-12, 12])
+
+
+def write_blanket(data, output_file):
+    """Function to write the blanket information to the output_file.
+    """
+
+    # Description line
+    output_file.write("\n# Blanket (Ellipses)\n")
+
+    # Blanket ellipse centre y position
+    output_file.write("# Ellipse centre y position = 0.000 m\n")
+
+    # Blanket ellipse centre x position
+    ellipse_centre = data.r0 - data.delta*data.a
+    output_file.write("Blanket - Ellipse centre = {0:.3f} m\n".
+                      format(ellipse_centre))
+
+    # Outside inboard ellipse minor radius
+    outside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
+        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
+        data.ddwi - data.shldith
+    output_file.write("Blanket - Ellipse minor radius - "
+                      "outside inboard = {0:.3f} m\n".
+                      format(outside_inboard_ellipse_minor_radius))
+
+    # Outside upper ellipse major radius
+    outside_upper_ellipse_major_radius = data.plasma_half_height + \
+        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
+        data.blnktth
+    output_file.write("Blanket - Ellipse major radius - "
+                      "outside upper {0:.3f} m\n".
+                      format(outside_upper_ellipse_major_radius))
+
+    # Outside lower ellipse major radius
+    outside_lower_ellipse_major_radius = data.plasma_half_height + \
+        data.vgap + data.divfix
+    output_file.write("Blanket - Ellipse major radius - "
+                      "outside lower = {0:.3f} m\n".
+                      format(outside_lower_ellipse_major_radius))
+
+    # Outside outboard ellipse minor radius
+    outside_outboard_ellipse_minor_radius = data.delta*data.a + data.a + \
+        data.scraplo + data.fwoth + data.blnkoth
+    output_file.write("Blanket - Ellipse minor radius - "
+                      "outside outboard = {0:.3f} m\n".
+                      format(outside_outboard_ellipse_minor_radius))
+
+    # Inside inboard ellipse minor radius
+    inside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
+        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
+        data.ddwi - data.shldith - data.blnkith
+    output_file.write("Blanket - Ellipse minor radius - "
+                      "inside inboard = {0:.3f} m\n".
+                      format(inside_inboard_ellipse_minor_radius))
+
+    # Inside upper ellipse major radius
+    inside_upper_ellipse_major_radius = data.plasma_half_height + \
+        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0
+    output_file.write("Blanket - Ellipse major radius - "
+                      "inside upper {0:.3f} m\n".
+                      format(inside_upper_ellipse_major_radius))
+
+    # Inside lower ellipse major radius
+    inside_lower_ellipse_major_radius = data.plasma_half_height + \
+        data.vgap + data.divfix - data.blnktth
+    output_file.write("Blanket - Ellipse major radius - "
+                      "inside lower = {0:.3f} m\n".
+                      format(inside_lower_ellipse_major_radius))
+
+    # Inside outboard ellipse minor radius
+    inside_outboard_ellipse_minor_radius = data.delta*data.a + data.a + \
+        data.scraplo + data.fwoth
+    output_file.write("Blanket - Ellipse minor radius - "
+                      "inside outboard = {0:.3f} m\n".
+                      format(inside_outboard_ellipse_minor_radius))
+
+    # Blanket - lower angle inboard = 120 deg
+    output_file.write("Blanket - lower angle inboard = 120 deg\n")
+
+    # Blanket - lower angle outboard = 120 deg
+    output_file.write("Blanket - lower angle outboard = 120 deg\n")
+
+    # Blanket - lower angle height = 4.050 m
+    output_file.write("Blanket - lower angle height = {0:.3f} m\n".
+                      format(data.plasma_half_height))
+
+    if data.plot:
+        fig = plt.figure(1)
+        ax = fig.add_subplot(111, aspect='equal')
+
+        a = Arc((ellipse_centre, 0.0),
+                2.0*outside_inboard_ellipse_minor_radius,
+                2.0*outside_upper_ellipse_major_radius,
+                angle=0.0, theta1=90.0, theta2=180.0,
+                edgecolor="g", linewidth="2")
+        a.set_clip_box(ax.bbox)
+        a.set_alpha(data.alpha)
+        ax.add_artist(a)
+
+        b = Arc((ellipse_centre, 0.0),
+                2.0*outside_inboard_ellipse_minor_radius,
+                2.0*outside_lower_ellipse_major_radius,
+                angle=0.0, theta1=180.0, theta2=270.0,
+                edgecolor="g", linewidth="2")
+        b.set_clip_box(ax.bbox)
+        b.set_alpha(data.alpha)
+        ax.add_artist(b)
+
+        c = Arc((ellipse_centre, 0.0),
+                2.0*outside_outboard_ellipse_minor_radius,
+                2.0*outside_upper_ellipse_major_radius,
+                angle=0.0, theta1=0.0, theta2=90.0,
+                edgecolor="g", linewidth="2")
+        c.set_clip_box(ax.bbox)
+        c.set_alpha(data.alpha)
+        ax.add_artist(c)
+
+        d = Arc((ellipse_centre, 0.0),
+                2.0*outside_outboard_ellipse_minor_radius,
+                2.0*outside_lower_ellipse_major_radius,
+                angle=0.0, theta1=270.0, theta2=0.0,
+                edgecolor="g", linewidth="2")
+        d.set_clip_box(ax.bbox)
+        d.set_alpha(data.alpha)
+        ax.add_artist(d)
+
+        e = Arc((ellipse_centre, 0.0),
+                2.0*inside_inboard_ellipse_minor_radius,
+                2.0*inside_upper_ellipse_major_radius,
+                angle=0.0, theta1=90.0, theta2=180.0,
+                edgecolor="g", linewidth="2")
+        e.set_clip_box(ax.bbox)
+        e.set_alpha(data.alpha)
+        ax.add_artist(e)
+
+        f = Arc((ellipse_centre, 0.0),
+                2.0*inside_inboard_ellipse_minor_radius,
+                2.0*inside_lower_ellipse_major_radius,
+                angle=0.0, theta1=180.0, theta2=225.0,
+                edgecolor="g", linewidth="2")
+        f.set_clip_box(ax.bbox)
+        f.set_alpha(data.alpha)
+        ax.add_artist(f)
+
+        g = Arc((ellipse_centre, 0.0),
+                2.0*inside_outboard_ellipse_minor_radius,
+                2.0*inside_upper_ellipse_major_radius,
+                angle=0.0, theta1=0.0, theta2=90.0,
+                edgecolor="g", linewidth="2")
+        g.set_clip_box(ax.bbox)
+        g.set_alpha(data.alpha)
+        ax.add_artist(g)
+
+        h = Arc((ellipse_centre, 0.0),
+                2.0*inside_outboard_ellipse_minor_radius,
+                2.0*inside_lower_ellipse_major_radius,
+                angle=0.0, theta1=315.0, theta2=0.0,
+                edgecolor="g", linewidth="2")
+        h.set_clip_box(ax.bbox)
+        h.set_alpha(data.alpha)
+        ax.add_artist(h)
+
+        ax.set_xlim([0, 20])
+        ax.set_ylim([-12, 12])
+
+
+def write_first_wall(data, output_file):
+    """Function to write the first wall information to the output_file.
+    """
+
+    # Description line
+    output_file.write("\n# First Wall (Ellipses)\n")
+
+    # First wall ellipse centre y position
+    output_file.write("#Ellipse centre y position = 0.000 m\n")
+
+    # First wall ellipse centre x position
+    ellipse_centre = data.r0 - data.delta*data.a
+    output_file.write("First Wall - Ellipse centre = {0:.3f} m \n".
+                      format(ellipse_centre))
+
+    # Outside inboard ellipse minor radius
+    outside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
+        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
+        data.ddwi - data.shldith - data.blnkith
+    output_file.write("First Wall - Ellipse minor radius - "
+                      "outside inboard = {0:.3f} m\n".
+                      format(outside_inboard_ellipse_minor_radius))
+
+    # Outside upper ellipse major radius
+    outside_upper_ellipse_major_radius = data.plasma_half_height + \
+        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0
+    output_file.write("First Wall - Ellipse major radius - "
+                      "outside upper {0:.3f} m\n".
+                      format(outside_upper_ellipse_major_radius))
+
+    # Outside lower ellipse major radius
+    outside_lower_ellipse_major_radius = data.plasma_half_height + \
+        data.vgap + data.divfix - data.blnktth
+    output_file.write("First Wall - Ellipse major radius - "
+                      "outside lower = {0:.3f} m\n".
+                      format(outside_lower_ellipse_major_radius))
+
+    # Outside outboard ellipse minor radius
+    outside_outboard_ellipse_minor_radius = data.delta*data.a + data.a + \
+        data.scraplo + data.fwoth
+    output_file.write("First Wall - Ellipse minor radius - "
+                      "outside outboard = {0:.3f} m\n".
+                      format(outside_outboard_ellipse_minor_radius))
+
+    # Inside outboard lower ellipse minor radius ???
+
+    # Inside inboard ellipse minor radius
+    inside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
+        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
+        data.ddwi - data.shldith - data.blnkith - data.fwith
+    output_file.write("First Wall - Ellipse minor radius - "
+                      "inside inboard = {0:.3f} m\n".
+                      format(inside_inboard_ellipse_minor_radius))
+
+    # Inside upper ellipse major radius
+    inside_upper_ellipse_major_radius = data.plasma_half_height + \
+        ((data.scraplo + data.scrapli)/2.0)
+    output_file.write("First Wall - Ellipse major radius - "
+                      "inside upper {0:.3f} m\n".
+                      format(inside_upper_ellipse_major_radius))
+
+    # Inside lower ellipse major radius
+    inside_lower_ellipse_major_radius = data.plasma_half_height + \
+        data.vgap + data.divfix - data.blnktth - (data.fwith + data.fwoth)/2.0
+    output_file.write("First Wall - Ellipse major radius - "
+                      "inside lower = {0:.3f} m\n".
+                      format(inside_lower_ellipse_major_radius))
+
+    # Inside outboard ellipse minor radius
+    inside_outboard_ellipse_minor_radius = data.delta*data.a + data.a + \
+        data.scraplo
+    output_file.write("First Wall - Ellipse minor radius - "
+                      "inside outboard = {0:.3f} m\n".
+                      format(inside_outboard_ellipse_minor_radius))
+
+    # Inside outboard lower ellipse minor radius ???
+
+    # First Wall - lower angle inboard = 120 deg
+    output_file.write("First Wall - lower angle inboard = 120 deg\n")
+
+    # First Wall - lower angle outboard = 120 deg
+    output_file.write("First Wall - lower angle outboard = 120 deg\n")
+
+    # First Wall - lower angle height = 4.050 m
+    output_file.write("First Wall - lower angle height = {0:.3f} m\n".
+                      format(data.plasma_half_height))
+
+    if data.plot:
+        fig = plt.figure(1)
+        ax = fig.add_subplot(111, aspect='equal')
+
+        a = Arc((ellipse_centre, 0.0),
+                2.0*outside_inboard_ellipse_minor_radius,
+                2.0*outside_upper_ellipse_major_radius,
+                angle=0.0, theta1=90.0, theta2=180.0,
+                edgecolor="b", linewidth="2")
+        a.set_clip_box(ax.bbox)
+        a.set_alpha(data.alpha)
+        ax.add_artist(a)
+
+        b = Arc((ellipse_centre, 0.0),
+                2.0*outside_inboard_ellipse_minor_radius,
+                2.0*outside_lower_ellipse_major_radius,
+                angle=0.0, theta1=180.0, theta2=225.0,
+                edgecolor="b", linewidth="2")
+        b.set_clip_box(ax.bbox)
+        b.set_alpha(data.alpha)
+        ax.add_artist(b)
+
+        c = Arc((ellipse_centre, 0.0),
+                2.0*outside_outboard_ellipse_minor_radius,
+                2.0*outside_upper_ellipse_major_radius,
+                angle=0.0, theta1=0.0, theta2=90.0,
+                edgecolor="b", linewidth="2")
+        c.set_clip_box(ax.bbox)
+        c.set_alpha(data.alpha)
+        ax.add_artist(c)
+
+        d = Arc((ellipse_centre, 0.0),
+                2.0*outside_outboard_ellipse_minor_radius,
+                2.0*outside_lower_ellipse_major_radius,
+                angle=0.0, theta1=315.0, theta2=0.0,
+                edgecolor="b", linewidth="2")
+        d.set_clip_box(ax.bbox)
+        d.set_alpha(data.alpha)
+        ax.add_artist(d)
+
+        e = Arc((ellipse_centre, 0.0),
+                2.0*inside_inboard_ellipse_minor_radius,
+                2.0*inside_upper_ellipse_major_radius,
+                angle=0.0, theta1=90.0, theta2=180.0,
+                edgecolor="b", linewidth="2")
+        e.set_clip_box(ax.bbox)
+        e.set_alpha(data.alpha)
+        ax.add_artist(e)
+
+        f = Arc((ellipse_centre, 0.0),
+                2.0*inside_inboard_ellipse_minor_radius,
+                2.0*inside_lower_ellipse_major_radius,
+                angle=0.0, theta1=180.0, theta2=225.0,
+                edgecolor="b", linewidth="2")
+        f.set_clip_box(ax.bbox)
+        f.set_alpha(data.alpha)
+        ax.add_artist(f)
+
+        g = Arc((ellipse_centre, 0.0),
+                2.0*inside_outboard_ellipse_minor_radius,
+                2.0*inside_upper_ellipse_major_radius,
+                angle=0.0, theta1=0.0, theta2=90.0,
+                edgecolor="b", linewidth="2")
+        g.set_clip_box(ax.bbox)
+        g.set_alpha(data.alpha)
+        ax.add_artist(g)
+
+        h = Arc((ellipse_centre, 0.0),
+                2.0*inside_outboard_ellipse_minor_radius,
+                2.0*inside_lower_ellipse_major_radius,
+                angle=0.0, theta1=315.0, theta2=0.0,
+                edgecolor="b", linewidth="2")
+        h.set_clip_box(ax.bbox)
+        h.set_alpha(data.alpha)
+        ax.add_artist(h)
+
+        ax.set_xlim([0, 20])
+        ax.set_ylim([-12, 12])
+
+
+def write_tungsten_armour(data, output_file):
+    """Function to write the tungsten armour information to the output_file.
+    """
+
+    # Description line
+    output_file.write("\n# Tungsten Shielding (Ellipses)\n")
+
+    # First wall ellipse centre y position
+    output_file.write("#Ellipse centre y position = 0.000 m\n")
+
+    # First wall ellipse centre x position
+    ellipse_centre = data.r0 - data.delta*data.a
+    output_file.write("Tungsten Shielding - Ellipse centre = {0:.3f} m \n".
+                      format(ellipse_centre))
+
+    # Outside inboard ellipse minor radius
+    outside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
+        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
+        data.ddwi - data.shldith - data.blnkith - data.fwith
+    output_file.write("Tungsten Shielding - Ellipse minor radius - "
+                      "outside inboard = {0:.3f} m\n".
+                      format(outside_inboard_ellipse_minor_radius))
+
+    # Outside upper ellipse major radius
+    outside_upper_ellipse_major_radius = data.plasma_half_height + \
+        ((data.scraplo + data.scrapli)/2.0)
+    output_file.write("Tungsten Shielding - Ellipse major radius - "
+                      "outside upper {0:.3f} m\n".
+                      format(outside_upper_ellipse_major_radius))
+
+    # Outside lower ellipse major radius
+    outside_lower_ellipse_major_radius = data.plasma_half_height + \
+        data.vgap + data.divfix - data.blnktth
+    output_file.write("Tungsten Shielding - Ellipse major radius - "
+                      "outside lower = {0:.3f} m\n".
+                      format(outside_lower_ellipse_major_radius))
+
+    # Outside outboard ellipse minor radius
+    outside_outboard_ellipse_minor_radius = data.delta*data.a + data.a + \
+        data.scraplo
+    output_file.write("Tungsten Shielding - Ellipse minor radius - "
+                      "outside outboard = {0:.3f} m\n".
+                      format(outside_outboard_ellipse_minor_radius))
+
+    # Inside outboard lower ellipse minor radius ???
+
+    # Inside inboard ellipse minor radius
+    inside_inboard_ellipse_minor_radius = data.r0 - data.delta*data.a - \
+        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
+        data.ddwi - data.shldith - data.blnkith - data.fwith - 0.003
+    output_file.write("Tungsten Shielding - Ellipse minor radius - "
+                      "inside inboard = {0:.3f} m\n".
+                      format(inside_inboard_ellipse_minor_radius))
+
+    # Inside upper ellipse major radius
+    inside_upper_ellipse_major_radius = data.plasma_half_height + \
+        ((data.scraplo + data.scrapli)/2.0) - 0.003
+    output_file.write("Tungsten Shielding - Ellipse major radius - "
+                      "inside upper {0:.3f} m\n".
+                      format(inside_upper_ellipse_major_radius))
+
+    # Inside lower ellipse major radius
+    inside_lower_ellipse_major_radius = data.plasma_half_height + \
+        data.vgap + data.divfix - data.blnktth - \
+        (data.fwith + data.fwoth)/2.0 - 0.003
+    output_file.write("Tungsten Shielding - Ellipse major radius - "
+                      "inside lower = {0:.3f} m\n".
+                      format(inside_lower_ellipse_major_radius))
+
+    # Inside outboard ellipse minor radius
+    inside_outboard_ellipse_minor_radius = data.delta*data.a + data.a + \
+        data.scraplo - 0.003
+    output_file.write("Tungsten Shielding - Ellipse minor radius - "
+                      "inside outboard = {0:.3f} m\n".
+                      format(inside_outboard_ellipse_minor_radius))
+
+    # Inside outboard lower ellipse minor radius ???
+
+    # First Wall - lower angle inboard = 120 deg
+    output_file.write("First Wall - lower angle inboard = 120 deg\n")
+
+    # First Wall - lower angle outboard = 120 deg
+    output_file.write("First Wall - lower angle outboard = 120 deg\n")
+
+    # First Wall - lower angle height = 4.050 m
+    output_file.write("First Wall - lower angle height = {0:.3f} m\n".
+                      format(data.plasma_half_height))
+
+    if data.plot:
+        fig = plt.figure(1)
+        ax = fig.add_subplot(111, aspect='equal')
+
+        a = Arc((ellipse_centre, 0.0),
+                2.0*outside_inboard_ellipse_minor_radius,
+                2.0*outside_upper_ellipse_major_radius,
+                angle=0.0, theta1=90.0, theta2=180.0,
+                edgecolor="b", linewidth="2")
+        a.set_clip_box(ax.bbox)
+        a.set_alpha(data.alpha)
+        ax.add_artist(a)
+
+        b = Arc((ellipse_centre, 0.0),
+                2.0*outside_inboard_ellipse_minor_radius,
+                2.0*outside_lower_ellipse_major_radius,
+                angle=0.0, theta1=180.0, theta2=225.0,
+                edgecolor="b", linewidth="2")
+        b.set_clip_box(ax.bbox)
+        b.set_alpha(data.alpha)
+        ax.add_artist(b)
+
+        c = Arc((ellipse_centre, 0.0),
+                2.0*outside_outboard_ellipse_minor_radius,
+                2.0*outside_upper_ellipse_major_radius,
+                angle=0.0, theta1=0.0, theta2=90.0,
+                edgecolor="b", linewidth="2")
+        c.set_clip_box(ax.bbox)
+        c.set_alpha(data.alpha)
+        ax.add_artist(c)
+
+        d = Arc((ellipse_centre, 0.0),
+                2.0*outside_outboard_ellipse_minor_radius,
+                2.0*outside_lower_ellipse_major_radius,
+                angle=0.0, theta1=315.0, theta2=0.0,
+                edgecolor="b", linewidth="2")
+        d.set_clip_box(ax.bbox)
+        d.set_alpha(data.alpha)
+        ax.add_artist(d)
+
+        e = Arc((ellipse_centre, 0.0),
+                2.0*inside_inboard_ellipse_minor_radius,
+                2.0*inside_upper_ellipse_major_radius,
+                angle=0.0, theta1=90.0, theta2=180.0,
+                edgecolor="b", linewidth="2")
+        e.set_clip_box(ax.bbox)
+        e.set_alpha(data.alpha)
+        ax.add_artist(e)
+
+        f = Arc((ellipse_centre, 0.0),
+                2.0*inside_inboard_ellipse_minor_radius,
+                2.0*inside_lower_ellipse_major_radius,
+                angle=0.0, theta1=180.0, theta2=225.0,
+                edgecolor="b", linewidth="2")
+        f.set_clip_box(ax.bbox)
+        f.set_alpha(data.alpha)
+        ax.add_artist(f)
+
+        g = Arc((ellipse_centre, 0.0),
+                2.0*inside_outboard_ellipse_minor_radius,
+                2.0*inside_upper_ellipse_major_radius,
+                angle=0.0, theta1=0.0, theta2=90.0,
+                edgecolor="b", linewidth="2")
+        g.set_clip_box(ax.bbox)
+        g.set_alpha(data.alpha)
+        ax.add_artist(g)
+
+        h = Arc((ellipse_centre, 0.0),
+                2.0*inside_outboard_ellipse_minor_radius,
+                2.0*inside_lower_ellipse_major_radius,
+                angle=0.0, theta1=315.0, theta2=0.0,
+                edgecolor="b", linewidth="2")
+        h.set_clip_box(ax.bbox)
+        h.set_alpha(data.alpha)
+        ax.add_artist(h)
+
+        ax.set_xlim([0, 20])
+        ax.set_ylim([-12, 12])
 
 
 def write_plasma_shape(data, output_file):
@@ -472,984 +1242,244 @@ def write_plasma_shape(data, output_file):
         ax.plot(xs2, ys2, color='orange')
 
     # Description line
-    output_file.write("# Plasma arcs\n\n")
+    output_file.write("\n# Plasma Arc\n")
+    output_file.write("Y	Z Catia values\n")
 
-    # Write data for outside plasma arc
-    output_file.write("# Outside plasma arc\n")
-    output_file.write("x\t\t\ty\n")
-
-    for i in range(len(xs1)):
-        line = "%.3f\t\t%.3f\n" % (xs1[i], ys1[i])
+    # Write data for plasma arcs
+    n = int(len(xs1))
+    for i in range(n):
+        line = "Point.{0} {1:.3f} {2:.3f}\n".format(i+1, xs1[i], ys1[i])
         output_file.write(line)
 
-    output_file.write("\n")
-
-    # Write data for inside plasma arc
-    output_file.write("# Inside plasma arc\n")
-    output_file.write("x\t\t\ty\n")
-
-    for i in range(len(xs2)):
-        line = "%.3f\t\t%.3f\n" % (xs2[i], ys2[i])
+    m = int(len(xs2))
+    for j in range(m):
+        line = "Point.{0} {1:.3f} {2:.3f}\n".\
+            format(n + j + 1, xs2[j], ys2[j])
         output_file.write(line)
 
-    output_file.write("\n")
 
-
-def write_tf_to_vv_gap(data, output_file):
-    """Function to write the data for the gap between the TF coil and the
-    vacuum vessel for both the inboard and outboard sides.
+def write_tf_coils(data, output_file):
+    """Function to plot TF coils
     """
 
-    # Description line
-    output_file.write("# TF to vacuum vessel (VV) gap\n")
+    # Calc shift
+    top = data.plasma_half_height + (data.scrapli + data.scraplo)/2.0 + \
+        (data.fwith + data.fwoth)/2.0 + data.blnktth + data.shldtth + \
+        data.ddwi + data.vgap2 + data.tfcth
 
-    # Radial gap inside
-    radial_gap_inner = data.gapds
-    line_1 = "Radial gap between TF coil and VV inboard side = " + \
-             str(radial_gap_inner) + " m\n"
+    bottom = -data.plasma_half_height - data.vgap - \
+        data.divfix - data.shldtth - data.ddwi - data.vgap2 - data.tfcth
 
-    # Radial gap outside
-    radial_gap_outer = data.gapsto
-    line_2 = "Radial gap between TF coil and VV outboard side = " + \
-             str(radial_gap_outer) + " m\n"
+    shift = (top + bottom)/2.0
 
-    # Vertical gap upper
-    vertical_gap_upper = data.vgap2
-    line_3 = "Vertical gap between TF coil and VV upper = " + \
-             str(vertical_gap_upper) + " m\n"
-
-    # Vertical gap lower
-    vertical_gap_lower = data.vgap2
-    line_4 = "Vertical gap between TF coil and VV lower = " + \
-             str(vertical_gap_lower) + " m\n"
-
-    # Write data to file
-    output_file.write(line_1)
-    output_file.write(line_2)
-    output_file.write(line_3)
-    output_file.write(line_4)
-    output_file.write("\n")
-
-
-def write_vacuum_vessel(data, output_file):
-    """Function to write vacuum vessel data to the output file.
-    """
+    # Arc radii
+    rad_1 = scipy.sqrt((data.xarc_1-data.xctfc_1)**2 +
+                       (data.yarc_1 - data.yctfc_1)**2)
+    rad_2 = scipy.sqrt((data.xarc_2 - data.xctfc_2)**2 +
+                       (data.yarc_2 - data.yctfc_2)**2)
+    rad_3 = scipy.sqrt((data.xarc_3 - data.xctfc_3)**2 +
+                       (data.yarc_3 - data.yctfc_3)**2)
+    rad_4 = scipy.sqrt((data.xarc_4 - data.xctfc_4)**2 +
+                       (data.yarc_4 - data.yctfc_4)**2)
 
     # Description line
-    output_file.write("# Vacuum vessel outer edge (ellipses)\n\n")
+    output_file.write("\n# TF Coil\n")
 
-    # Vacuum vessel inboard upper ellipse
-    output_file.write("# Vacuum vessel inboard upper quarter ellipse\n")
+    # Arc 1
+    output_file.write("TF Coil - arc 1 centre X = {0:.3f} m\n".
+                      format(data.xctfc_1))
+    output_file.write("TF Coil - arc 1 centre Y = {0:.3f} m\n".
+                      format(data.yctfc_1 + shift))
+    output_file.write("TF Coil - arc 1 radius = {0:.3f} m\n".format(rad_1))
+    #output_file.write("TF Coil - arc 1 position 1 - inside X = {0:.3f} m\n".
+    #                  format(data.xarc_1))
+    #output_file.write("TF Coil - arc 1 position 1 - inside Y = {0:.3f} m\n".
+    #                  format(data.yarc_1 + shift))
+    #output_file.write("TF Coil - arc 1 position 2 - inside X = {0:.3f} m\n".
+    #                  format(data.xarc_2))
+    #output_file.write("TF Coil - arc 1 position 2 - inside Y = {0:.3f} m\n".
+    #                  format(data.yarc_2 + shift))
 
-    # Inboard upper ellipse centre x position
-    inboard_upper_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_1 = "Ellipse centre x position = %.3f m\n" % \
-        inboard_upper_ellipse_centre_x
+    # Arc 2
+    output_file.write("TF Coil - arc 2 centre X = {0:.3f} m\n".
+                      format(data.xctfc_2))
+    output_file.write("TF Coil - arc 2 centre Y = {0:.3f} m\n".
+                      format(data.yctfc_2 + shift))
+    output_file.write("TF Coil - arc 2 radius = {0:.3f} m\n".format(rad_2))
+    #output_file.write("TF Coil - arc 2 position 2 - inside X = {0:.3f} m\n".
+    #                  format(data.xarc_3))
+    #output_file.write("TF Coil - arc 2 position 2 - inside Y = {0:.3f} m\n".
+    #                  format(data.yarc_3 + shift))
 
-    # Inboard upper ellipse centre y position
-    inboard_upper_ellipse_centre_y = 0.0
-    line_2 = "Ellipse centre y position = %.3f m\n" % \
-        inboard_upper_ellipse_centre_y
+    # Arc 3
+    output_file.write("TF Coil - arc 3 centre X = {0:.3f} m\n".
+                      format(data.xctfc_3))
+    output_file.write("TF Coil - arc 3 centre Y = {0:.3f} m\n".
+                      format(data.yctfc_3 + shift))
+    output_file.write("TF Coil - arc 3 radius = {0:.3f} m\n".format(rad_3))
+    #output_file.write("TF Coil - arc 3 position 2 - inside X = {0:.3f} m\n".
+    #                  format(data.xarc_4))
+    #output_file.write("TF Coil - arc 3 position 2 - inside Y = {0:.3f} m\n".
+    #                  format(data.yarc_4 + shift))
 
-    # Inboard upper ellipse minor radius
-    inboard_upper_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds
-    line_3 = "Ellipse minor radius = %.3f m\n" % \
-        inboard_upper_ellipse_minor_radius
+    # Arc 4
+    output_file.write("TF Coil - arc 4 centre X = {0:.3f} m\n".
+                      format(data.xctfc_4))
+    output_file.write("TF Coil - arc 4 centre Y = {0:.3f} m\n".
+                      format(data.yctfc_4 + shift))
+    output_file.write("TF Coil - arc 4 radius = {0:.3f} m\n".format(rad_4))
+    #output_file.write("TF Coil - arc 4 position 2 - inside X = {0:.3f} m\n".
+    #                  format(data.xarc_5))
+    #output_file.write("TF Coil - arc 4 position 2 - inside Y = {0:.3f} m\n".
+    #                  format(data.yarc_5 + shift))
 
-    # Inboard upper ellipse major radius
-    inboard_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
-        data.blnktth + data.shldtth + data.ddwi
-    line_4 = "Ellipse major radius = %.3f m\n" % \
-        inboard_upper_ellipse_major_radius
+    # Inboard TF coil
+    output_file.write("\n# TF Coil - inboard leg - Wedged\n")
 
-    # Write inboard upper ellipse data
-    output_file.write(line_1)
-    output_file.write(line_2)
-    output_file.write(line_3)
-    output_file.write(line_4)
-    output_file.write("\n")
+    # Inboard TF coil centre x position
+    tf_coil_centre_x = data.bore + data.ohcth + data.gapoh + data.tfcth/2.0
+    output_file.write("TF Coil - inboard leg - centre X = {0:.3f} m\n".
+                      format(tf_coil_centre_x))
 
-    # Vacuum vessel inboard lower ellipse
-    output_file.write("# Vacuum vessel inboard lower quarter ellipse\n")
+    # Inboard TF coil centre y position
+    output_file.write("TF Coil - inboard leg - centre Y = {0:.3f} m\n".
+                      format(0.0))
 
-    # Inboard lower ellipse centre x position
-    inboard_lower_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_5 = "Ellipse centre x position = %.3f m\n" % \
-        inboard_lower_ellipse_centre_x
+    # Inboard TF coil radial thickness
+    output_file.write("TF Coil - inboard leg - radial thickness = {0:.3f} m\n".
+                      format(data.tfcth))
 
-    # Inboard lower ellipse centre y position
-    inboard_lower_ellipse_centre_y = 0.0
-    line_6 = "Ellipse centre y position = %.3f m\n" % \
-        inboard_lower_ellipse_centre_y
+    # Outboard TF coil
+    output_file.write("\n# TF Coil - outboard leg - Not wedged\n")
 
-    # Inboard lower ellipse minor radius
-    inboard_lower_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds
-    line_7 = "Ellipse minor radius = %.3f m\n" % \
-        inboard_lower_ellipse_minor_radius
+    # Outboard TF coil centre X position
+    tf_coil_centre_x = data.r0 + data.delta*data.a + data.a + \
+        data.scraplo + data.fwoth + data.blnkoth + data.shldoth + data.ddwi + \
+        data.gapsto + data.tfthko/2.0
+    output_file.write("TF Coil - inboard leg - centre X = {0:.3f} m\n".
+                      format(tf_coil_centre_x))
 
-    # Inboard lower ellipse major radius
-    inboard_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.vgap + + data.divfix + data.shldtth + data.ddwi
-    line_8 = "Ellipse major radius = %.3f m\n" % \
-        inboard_lower_ellipse_major_radius
+    # Outboard TF coil centre y position
+    output_file.write("TF Coil - outboard leg - centre Y = {0:.3f} m\n".
+                      format(0.0))
 
-    # Write inboard lower ellipse data
-    output_file.write(line_5)
-    output_file.write(line_6)
-    output_file.write(line_7)
-    output_file.write(line_8)
-    output_file.write("\n")
+    # Outboard TF coil radial thickness
+    output_file.write("TF Coil - outboard leg - radial thickness = {0:.3f} m\n".
+                      format(data.tfthko))
 
-    # Vacuum vessel outboard upper ellipse
-    output_file.write("# Vacuum vessel outboard upper quarter ellipse\n")
-
-    # Outboard upper ellipse centre x position
-    outboard_upper_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_9 = "Ellipse centre x position = %.3f m\n" % \
-        outboard_upper_ellipse_centre_x
-
-    # Outboard upper ellipse centre y position
-    outboard_upper_ellipse_centre_y = 0.0
-    line_10 = "Ellipse centre y position = %.3f m\n" % \
-        outboard_upper_ellipse_centre_y
-
-    # Outboard upper ellipse minor radius
-    outboard_upper_ellipse_minor_radius = data.delta*data.a + data.a + \
-        data.scraplo + data.fwoth + data.blnkoth + data.shldoth + data.ddwi
-    line_11 = "Ellipse minor radius = %.3f m\n" % \
-        outboard_upper_ellipse_minor_radius
-
-    # Outboard upper ellipse major radius
-    outboard_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
-        data.blnktth + data.shldtth + data.ddwi
-    line_12 = "Ellipse major radius = %.3f m\n" % \
-        outboard_upper_ellipse_major_radius
-
-    # Write outboard upper ellipse data
-    output_file.write(line_9)
-    output_file.write(line_10)
-    output_file.write(line_11)
-    output_file.write(line_12)
-    output_file.write("\n")
-
-    # Vacuum vessel outboard lower ellipse
-    output_file.write("# Vacuum vessel outboard lower quarter ellipse\n")
-
-    # Outboard lower ellipse centre x position
-    outboard_lower_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_13 = "Ellipse centre x position = %.3f m\n" % \
-        outboard_lower_ellipse_centre_x
-
-    # Outboard lower ellipse centre y position
-    outboard_lower_ellipse_centre_y = 0.0
-    line_14 = "Ellipse centre y position = %.3f m\n" % \
-        outboard_lower_ellipse_centre_y
-
-    # Outboard lower ellipse minor radius
-    outboard_lower_ellipse_minor_radius = data.delta*data.a + data.a + \
-        data.scraplo + data.fwoth + data.blnkoth + data.shldoth + data.ddwi
-    line_15 = "Ellipse minor radius = %.3f m\n" % \
-        outboard_lower_ellipse_minor_radius
-
-    # Outboard lower ellipse major radius
-    outboard_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.vgap + data.divfix + data.shldtth + data.ddwi
-    line_16 = "Ellipse major radius = %.3f m\n" % \
-        outboard_lower_ellipse_major_radius
-
-    # Write outboard lower ellipse data
-    output_file.write(line_13)
-    output_file.write(line_14)
-    output_file.write(line_15)
-    output_file.write(line_16)
-    output_file.write("\n")
+    # Outboard TF coil tangential thickness
+    output_file.write("TF Coil - outboard leg - tangential thickness = {0:.3f}"
+                      " m\n".format(data.tfthko))
 
     if data.plot:
+
+        x_1 = data.__dict__["xarc_1"]
+        y_1 = data.__dict__["yarc_1"]
+        x_2 = data.__dict__["xarc_2"]
+        y_2 = data.__dict__["yarc_2"]
+        x_3 = data.__dict__["xarc_3"]
+        y_3 = data.__dict__["yarc_3"]
+        x_4 = data.__dict__["xarc_4"]
+        y_4 = data.__dict__["yarc_4"]
+        x_5 = data.__dict__["xarc_5"]
+
+        # Arc centres
+        x_c_1 = data.__dict__["xctfc_1"]
+        y_c_1 = data.__dict__["yctfc_1"]
+        x_c_2 = data.__dict__["xctfc_2"]
+        y_c_2 = data.__dict__["yctfc_2"]
+        x_c_3 = data.__dict__["xctfc_3"]
+        y_c_3 = data.__dict__["yctfc_3"]
+        x_c_4 = data.__dict__["xctfc_4"]
+        y_c_4 = data.__dict__["yctfc_4"]
+
+
+        # Arc radii
+        rad_1 = scipy.sqrt((x_1-x_c_1)**2 + (y_1 - y_c_1)**2)
+        rad_2 = scipy.sqrt((x_2-x_c_2)**2 + (y_2 - y_c_2)**2)
+        rad_3 = scipy.sqrt((x_3-x_c_3)**2 + (y_3 - y_c_3)**2)
+        rad_4 = scipy.sqrt((x_4-x_c_4)**2 + (y_4 - y_c_4)**2)
+
+        # Arc angles
+        a_1_1 = (x_1 - x_c_1)/rad_1
+        a_1_2 = (x_2 - x_c_1)/rad_1
+        a_1_1, a_1_2 = angle_check(a_1_1, a_1_2)
+        angle_1_1 = scipy.arcsin(a_1_1)
+        angle_1_2 = scipy.arcsin(a_1_2)
+
+        a_2_1 = (x_2 - x_c_2)/rad_2
+        a_2_2 = (x_3 - x_c_2)/rad_2
+        a_2_1, a_2_2 = angle_check(a_2_1, a_2_2)
+        angle_2_1 = scipy.arcsin(a_2_1)
+        angle_2_2 = scipy.arcsin(a_2_2)
+
+        a_3_1 = (x_3 - x_c_3)/rad_3
+        a_3_2 = (x_4 - x_c_3)/rad_3
+        a_3_1, a_3_2 = angle_check(a_3_1, a_3_2)
+        angle_3_1 = scipy.arcsin(a_3_1)
+        angle_3_2 = scipy.arcsin(a_3_2)
+
+        a_4_1 = (x_4 - x_c_4)/rad_4
+        a_4_2 = (x_5 - x_c_4)/rad_4
+        a_4_1, a_4_2 = angle_check(a_4_1, a_4_2)
+        angle_4_1 = scipy.arcsin(a_4_1)
+        angle_4_2 = scipy.arcsin(a_4_2)
+
+        in_x_1 = rad_1*scipy.sin(scipy.linspace(angle_1_1, angle_1_2, 30,
+                                 endpoint=True)) + x_c_1
+        in_x_2 = rad_2*scipy.sin(scipy.linspace(angle_2_1, angle_2_2, 30,
+                                 endpoint=True)) + x_c_2
+        in_x_3 = rad_3*scipy.sin(scipy.linspace(angle_3_1, angle_3_2, 30,
+                                 endpoint=True)) + x_c_3
+        in_x_4 = rad_4*scipy.sin(scipy.linspace(angle_4_1, angle_4_2, 30,
+                                 endpoint=True)) + x_c_4
+        in_x = scipy.concatenate((in_x_1, in_x_2, in_x_3, in_x_4))
+
+        in_y_1 = rad_1*scipy.cos(scipy.linspace(angle_1_1, angle_1_2, 30,
+                                 endpoint=True)) + y_c_1
+        in_y_2 = rad_2*scipy.cos(scipy.linspace(angle_2_1, angle_2_2, 30,
+                                 endpoint=True)) + y_c_2
+        in_y_3 = rad_3*scipy.cos(scipy.linspace(angle_3_1, angle_3_2, 30,
+                                 endpoint=True)) + y_c_3
+        in_y_4 = rad_4*scipy.cos(scipy.linspace(angle_4_1, angle_4_2, 30,
+                                 endpoint=True)) + y_c_4
+        in_y = scipy.concatenate((in_y_1, in_y_2, in_y_3, in_y_4))
+
+        in_x = scipy.concatenate([in_x, in_x[::-1]])
+        in_y = scipy.concatenate([in_y, -in_y[::-1]])
+
+        rad_to_outer_tf = data.r0 + data.a + data.scraplo + data.fwoth + \
+            data.blnkoth + data.shldoth + data.ddwi + data.gapsto
+        rad_to_inner_tf = data.bore + data.ohcth + data.gapoh + data.tfcth
+
+        in_width = rad_to_outer_tf - rad_to_inner_tf
+        out_width = in_width + data.tfcth + data.tfthko
+
+        rad_to_inside_inner_tf = data.bore + data.ohcth + data.gapoh
+
+        out_x = ((in_x - rad_to_inner_tf)*(out_width/in_width)) + \
+            rad_to_inside_inner_tf
+
+        top = data.plasma_half_height + (data.scrapli + data.scraplo)/2.0 + \
+            (data.fwith + data.fwoth)/2.0 + data.blnktth + data.shldtth + \
+            data.ddwi + data.vgap2 + data.tfcth
+
+        bottom = -data.plasma_half_height - data.vgap - \
+            data.divfix - data.shldtth - data.ddwi - data.vgap2 - data.tfcth
+
+        external = (top - bottom)/((top - data.tfcth) - (bottom + data.tfcth))
+
+        out_y = in_y * external
+
+        shift = (top + bottom)/2.0
+        out_y += shift
+        in_y += shift
+
+        ins_x = scipy.concatenate((in_x, out_x[::-1]))
+        ins_y = scipy.concatenate((in_y, out_y[::-1]))
         fig = plt.figure(1)
         ax = fig.add_subplot(111, aspect='equal')
-
-        a = Arc((inboard_upper_ellipse_centre_x, 0.0),
-                2.0*inboard_upper_ellipse_minor_radius,
-                2.0*inboard_upper_ellipse_major_radius,
-                angle=0.0, theta1=90.0, theta2=180.0,
-                edgecolor="r", linewidth="2")
-        a.set_clip_box(ax.bbox)
-        a.set_alpha(data.alpha)
-        ax.add_artist(a)
-
-        b = Arc((inboard_lower_ellipse_centre_x, 0.0),
-                2.0*inboard_lower_ellipse_minor_radius,
-                2.0*inboard_lower_ellipse_major_radius,
-                angle=0.0, theta1=180.0, theta2=270.0,
-                edgecolor="r", linewidth="2")
-        b.set_clip_box(ax.bbox)
-        b.set_alpha(data.alpha)
-        ax.add_artist(b)
-
-        c = Arc((outboard_upper_ellipse_centre_x, 0.0),
-                2.0*outboard_upper_ellipse_minor_radius,
-                2.0*outboard_upper_ellipse_major_radius,
-                angle=0.0, theta1=0.0, theta2=90.0,
-                edgecolor="r", linewidth="2")
-        c.set_clip_box(ax.bbox)
-        c.set_alpha(data.alpha)
-        ax.add_artist(c)
-
-        d = Arc((outboard_lower_ellipse_centre_x, 0.0),
-                2.0*outboard_lower_ellipse_minor_radius,
-                2.0*outboard_lower_ellipse_major_radius,
-                angle=0.0, theta1=270.0, theta2=0.0,
-                edgecolor="r", linewidth="2")
-        d.set_clip_box(ax.bbox)
-        d.set_alpha(data.alpha)
-        ax.add_artist(d)
-
-        ax.set_xlim([0, 20])
-        ax.set_ylim([-12, 12])
-
-
-def write_shield(data, output_file):
-    """Function to write the shield information to the output_file.
-    """
-
-    # Description line
-    output_file.write("# Shield outer edge (ellipses)\n\n")
-
-    # Shield inboard upper ellipse
-    output_file.write("# Shield inboard upper quarter ellipse\n")
-
-    # Inboard upper ellipse centre x position
-    inboard_upper_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_1 = "Ellipse centre x position = %.3f m\n" % \
-        inboard_upper_ellipse_centre_x
-
-    # Inboard upper ellipse centre y position
-    inboard_upper_ellipse_centre_y = 0.0
-    line_2 = "Ellipse centre y position = %.3f m\n" % \
-        inboard_upper_ellipse_centre_y
-
-    # Inboard upper ellipse minor radius
-    inboard_upper_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi
-    line_3 = "Ellipse minor radius = %.3f m\n" % \
-        inboard_upper_ellipse_minor_radius
-
-    # Inboard upper ellipse major radius
-    inboard_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
-        data.blnktth + data.shldtth
-    line_4 = "Ellipse major radius = %.3f m\n" % \
-        inboard_upper_ellipse_major_radius
-
-    # Write upper inboard ellipse data
-    output_file.write(line_1)
-    output_file.write(line_2)
-    output_file.write(line_3)
-    output_file.write(line_4)
-    output_file.write("\n")
-
-    # Shield inboard lower ellipse
-    output_file.write("# Shield inboard lower quarter ellipse\n")
-
-    # Inboard lower ellipse centre x position
-    inboard_lower_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_5 = "Ellipse centre x position = %.3f m\n" % \
-        inboard_lower_ellipse_centre_x
-
-    # Inboard lower ellipse centre y position
-    inboard_lower_ellipse_centre_y = 0.0
-    line_6 = "Ellipse centre y position = %.3f m\n" % \
-        inboard_lower_ellipse_centre_y
-
-    # Inboard lower ellipse minor radius
-    inboard_lower_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi
-    line_7 = "Ellipse minor radius = %.3f m\n" % \
-        inboard_lower_ellipse_minor_radius
-
-    # Inboard lower ellipse major radius
-    inboard_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.vgap + data.divfix + data.shldtth
-    line_8 = "Ellipse major radius = %.3f m\n" % \
-        inboard_lower_ellipse_major_radius
-
-    # Write lower inboard ellipse data
-    output_file.write(line_5)
-    output_file.write(line_6)
-    output_file.write(line_7)
-    output_file.write(line_8)
-    output_file.write("\n")
-
-    # Shield outboard upper ellipse
-    output_file.write("# Shield outboard upper quarter ellipse\n")
-
-    # Outboard upper ellipse centre x position
-    outboard_upper_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_9 = "Ellipse centre x position = %.3f m\n" % \
-        outboard_upper_ellipse_centre_x
-
-    # Outboard upper ellipse centre y position
-    outboard_upper_ellipse_centre_y = 0.0
-    line_10 = "Ellipse centre y position = %.3f m\n" % \
-        outboard_upper_ellipse_centre_y
-
-    # Outboard upper ellipse minor radius
-    outboard_upper_ellipse_minor_radius = data.delta*data.a + data.a + \
-        data.scraplo + data.fwoth + data.blnkoth + data.shldoth
-    line_11 = "Ellipse minor radius = %.3f m\n" % \
-        outboard_upper_ellipse_minor_radius
-
-    # Outboard upper ellipse major radius
-    outboard_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
-        data.blnktth + data.shldtth
-    line_12 = "Ellipse major radius = %.3f m\n" % \
-        outboard_upper_ellipse_major_radius
-
-    # Write outboard upper ellipse data
-    output_file.write(line_9)
-    output_file.write(line_10)
-    output_file.write(line_11)
-    output_file.write(line_12)
-    output_file.write("\n")
-
-    # Shield outboard lower ellipse
-    output_file.write("# Shield outboard lower quarter ellipse\n")
-
-    # Outboard lower ellipse centre x position
-    outboard_lower_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_13 = "Ellipse centre x position = %.3f m\n" % \
-        outboard_lower_ellipse_centre_x
-
-    # Outboard lower ellipse centre y position
-    outboard_lower_ellipse_centre_y = 0.0
-    line_14 = "Ellipse centre y position = %.3f m\n" % \
-        outboard_lower_ellipse_centre_y
-
-    # Outboard lower ellipse minor radius
-    outboard_lower_ellipse_minor_radius = data.delta*data.a + data.a + \
-        data.scraplo + data.fwoth + data.blnkoth + data.shldoth
-    line_15 = "Ellipse minor radius = %.3f m\n" % \
-        outboard_lower_ellipse_minor_radius
-
-    # Outboard lower ellipse major radius
-    outboard_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.vgap + data.divfix + data.shldtth
-    line_16 = "Ellipse major radius = %.3f m\n" % \
-        outboard_lower_ellipse_major_radius
-
-    # Write outboard lower ellipse data
-    output_file.write(line_13)
-    output_file.write(line_14)
-    output_file.write(line_15)
-    output_file.write(line_16)
-    output_file.write("\n")
-
-    if data.plot:
-        fig = plt.figure(1)
-        ax = fig.add_subplot(111, aspect='equal')
-        a = Arc((inboard_upper_ellipse_centre_x, 0.0),
-                2.0*inboard_upper_ellipse_minor_radius,
-                2.0*inboard_upper_ellipse_major_radius,
-                angle=0.0, theta1=90.0, theta2=180.0,
-                edgecolor="b", linewidth="2")
-        a.set_clip_box(ax.bbox)
-        a.set_alpha(data.alpha)
-        ax.add_artist(a)
-
-        b = Arc((inboard_lower_ellipse_centre_x, 0.0),
-                2.0*inboard_lower_ellipse_minor_radius,
-                2.0*inboard_lower_ellipse_major_radius,
-                angle=0.0, theta1=180.0, theta2=270.0,
-                edgecolor="b", linewidth="2")
-        b.set_clip_box(ax.bbox)
-        b.set_alpha(data.alpha)
-        ax.add_artist(b)
-
-        c = Arc((outboard_upper_ellipse_centre_x, 0.0),
-                2.0*outboard_upper_ellipse_minor_radius,
-                2.0*outboard_upper_ellipse_major_radius,
-                angle=0.0, theta1=0.0, theta2=90.0,
-                edgecolor="b", linewidth="2")
-        c.set_clip_box(ax.bbox)
-        c.set_alpha(data.alpha)
-        ax.add_artist(c)
-
-        d = Arc((outboard_lower_ellipse_centre_x, 0.0),
-                2.0*outboard_lower_ellipse_minor_radius,
-                2.0*outboard_lower_ellipse_major_radius,
-                angle=0.0, theta1=270.0, theta2=0.0,
-                edgecolor="b", linewidth="2")
-        d.set_clip_box(ax.bbox)
-        d.set_alpha(data.alpha)
-        ax.add_artist(d)
-
-
-def write_blanket(data, output_file):
-    """Function to write the blanket information to the output_file.
-    """
-
-    # Description line
-    output_file.write("# Blanket outer edge (ellipses)\n\n")
-
-    # Blanket inboard upper ellipse
-    output_file.write("# Blanket inboard upper quarter ellipse\n")
-
-    # Inboard upper ellipse centre x position
-    inboard_upper_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_1 = "Ellipse centre x position = %.3f m\n" % \
-        inboard_upper_ellipse_centre_x
-
-    # Inboard upper ellipse centre y position
-    inboard_upper_ellipse_centre_y = 0.0
-    line_2 = "Ellipse centre y position = %.3f m\n" % \
-        inboard_upper_ellipse_centre_y
-
-    # Inboard upper ellipse minor radius
-    inboard_upper_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi - data.shldith
-    line_3 = "Ellipse minor radius = %.3f m\n" % \
-        inboard_upper_ellipse_minor_radius
-
-    # Inboard upper ellipse major radius
-    inboard_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
-        data.blnktth
-    line_4 = "Ellipse major radius = %.3f m\n" % \
-        inboard_upper_ellipse_major_radius
-
-    # Write inboard upper ellipse data
-    output_file.write(line_1)
-    output_file.write(line_2)
-    output_file.write(line_3)
-    output_file.write(line_4)
-    output_file.write("\n")
-
-    # Blanket inboard lower ellipse
-    output_file.write("# Blanket inboard lower quarter ellipse\n")
-
-    # Inboard lower ellipse centre x position
-    inboard_lower_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_5 = "Ellipse centre x position = %.3f m\n" % \
-        inboard_lower_ellipse_centre_x
-
-    # Inboard lower ellipse centre y position
-    inboard_lower_ellipse_centre_y = 0.0
-    line_6 = "Ellipse centre y position = %.3f m\n" % \
-        inboard_lower_ellipse_centre_y
-
-    # Inboard lower ellipse minor radius
-    inboard_lower_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi - data.shldith
-    line_7 = "Ellipse minor radius = %.3f m\n" % \
-        inboard_lower_ellipse_minor_radius
-
-    # Inboard lower ellipse major radius
-    inboard_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.vgap + data.divfix
-    line_8 = "Ellipse major radius = %.3f m\n" % \
-        inboard_lower_ellipse_major_radius
-
-    # Write inboard ellipse data
-    output_file.write(line_5)
-    output_file.write(line_6)
-    output_file.write(line_7)
-    output_file.write(line_8)
-    output_file.write("\n")
-
-    # Blanket outboard upper ellipse
-    output_file.write("# Blanket outboard upper quarter ellipse\n")
-
-    # Outboard upper ellipse centre x position
-    outboard_upper_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_9 = "Ellipse centre x position = %.3f m\n" % \
-        outboard_upper_ellipse_centre_x
-
-    # Outboard upper ellipse centre y position
-    outboard_upper_ellipse_centre_y = 0.0
-    line_10 = "Ellipse centre y position = %.3f m\n" % \
-        outboard_upper_ellipse_centre_y
-
-    # Outboard upper ellipse minor radius
-    outboard_upper_ellipse_minor_radius = data.delta*data.a + data.a + \
-        data.scraplo + data.fwoth + data.blnkoth
-    line_11 = "Ellipse minor radius = %.3f m\n" % \
-        outboard_upper_ellipse_minor_radius
-
-    # Outboard ellipse major radius
-    outboard_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0 + \
-        data.blnktth
-    line_12 = "Ellipse major radius = %.3f m\n" % \
-        outboard_upper_ellipse_major_radius
-
-    # Write outboard upper ellipse data
-    output_file.write(line_9)
-    output_file.write(line_10)
-    output_file.write(line_11)
-    output_file.write(line_12)
-    output_file.write("\n")
-
-    # Blanket outboard lower ellipse
-    output_file.write("# Blanket outboard lower quarter ellipse\n")
-
-    # Outboard ellipse centre x position
-    outboard_lower_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_13 = "Ellipse centre x position = %.3f m\n" % \
-        outboard_lower_ellipse_centre_x
-
-    # Outboard ellipse centre y position
-    outboard_lower_ellipse_centre_y = 0.0
-    line_14 = "Ellipse centre y position = %.3f m\n" % \
-        outboard_lower_ellipse_centre_y
-
-    # Outboard ellipse minor radius
-    outboard_lower_ellipse_minor_radius = data.delta*data.a + data.a + \
-        data.scraplo + data.fwoth + data.blnkoth
-    line_15 = "Ellipse minor radius = %.3f m\n" % \
-        outboard_lower_ellipse_minor_radius
-
-    # Outboard ellipse major radius
-    outboard_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.vgap + data.divfix
-    line_16 = "Ellipse major radius = %.3f m\n" % \
-        outboard_lower_ellipse_major_radius
-
-    # Write outboard lower ellipse data
-    output_file.write(line_13)
-    output_file.write(line_14)
-    output_file.write(line_15)
-    output_file.write(line_16)
-    output_file.write("\n")
-
-    if data.plot:
-        fig = plt.figure(1)
-        ax = fig.add_subplot(111, aspect='equal')
-        a = Arc((inboard_upper_ellipse_centre_x, 0.0),
-                2.0*inboard_upper_ellipse_minor_radius,
-                2.0*inboard_upper_ellipse_major_radius,
-                angle=0.0, theta1=90.0, theta2=180.0,
-                edgecolor="g", linewidth="2")
-        a.set_clip_box(ax.bbox)
-        a.set_alpha(data.alpha)
-        ax.add_artist(a)
-
-        b = Arc((inboard_lower_ellipse_centre_x, 0.0),
-                2.0*inboard_lower_ellipse_minor_radius,
-                2.0*inboard_lower_ellipse_major_radius,
-                angle=0.0, theta1=180.0, theta2=270.0,
-                edgecolor="g", linewidth="2")
-        b.set_clip_box(ax.bbox)
-        b.set_alpha(data.alpha)
-        ax.add_artist(b)
-
-        c = Arc((outboard_upper_ellipse_centre_x, 0.0),
-                2.0*outboard_upper_ellipse_minor_radius,
-                2.0*outboard_upper_ellipse_major_radius,
-                angle=0.0, theta1=0.0, theta2=90.0,
-                edgecolor="g", linewidth="2")
-        c.set_clip_box(ax.bbox)
-        c.set_alpha(data.alpha)
-        ax.add_artist(c)
-
-        d = Arc((outboard_lower_ellipse_centre_x, 0.0),
-                2.0*outboard_lower_ellipse_minor_radius,
-                2.0*outboard_lower_ellipse_major_radius,
-                angle=0.0, theta1=270.0, theta2=0.0,
-                edgecolor="g", linewidth="2")
-        d.set_clip_box(ax.bbox)
-        d.set_alpha(data.alpha)
-        ax.add_artist(d)
-
-
-def write_first_wall_outer(data, output_file):
-    """Function to write the blanket information to the output_file.
-    """
-
-    # Description line
-    output_file.write("# First Wall outer edge (ellipses)\n\n")
-
-    # First wall inboard ellipse
-    output_file.write("# First Wall inboard upper quarter ellipse\n")
-
-    # Inboard upper ellipse centre x position
-    inboard_upper_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_1 = "Ellipse centre x position = %.3f m\n" % \
-        inboard_upper_ellipse_centre_x
-
-    # Inboard upper ellipse centre y position
-    inboard_upper_ellipse_centre_y = 0.0
-    line_2 = "Ellipse centre y position = %.3f m\n" % \
-        inboard_upper_ellipse_centre_y
-
-    # Inboard upper ellipse minor radius
-    inboard_upper_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi - data.shldith - data.blnkith
-    line_3 = "Ellipse minor radius = %.3f m\n" % \
-        inboard_upper_ellipse_minor_radius
-
-    # Inboard ellipse major radius
-    inboard_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0
-    line_4 = "Ellipse major radius = %.3f m\n" % \
-        inboard_upper_ellipse_major_radius
-
-    # Write inboard upper ellipse data
-    output_file.write(line_1)
-    output_file.write(line_2)
-    output_file.write(line_3)
-    output_file.write(line_4)
-    output_file.write("\n")
-
-    # First wall inboard ellipse
-    output_file.write("# First Wall inboard lower partial ellipse\n")
-
-    # Inboard lower ellipse centre x position
-    inboard_lower_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_5 = "Ellipse centre x position = %.3f m\n" % \
-        inboard_lower_ellipse_centre_x
-
-    # Inboard lower ellipse centre y position
-    inboard_lower_ellipse_centre_y = 0.0
-    line_6 = "Ellipse centre y position = %.3f" % \
-        inboard_lower_ellipse_centre_y
-
-    # Inboard lower ellipse minor radius
-    inboard_lower_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi - data.shldith - data.blnkith
-    line_7 = "Ellipse minor radius = %.3f m\n" % \
-        inboard_lower_ellipse_minor_radius
-
-    # Inboard lower ellipse major radius
-    inboard_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.blnkith + data.fwith
-    line_8 = "Ellipse major radius = %.3f m\n" % \
-        inboard_lower_ellipse_major_radius
-
-    # Angle subtended
-    angle_1 = 180.0
-    angle_2 = 230.0
-    line_9 = "Ellipse angle (0 at y=0 at going anti-clockwise) = " + \
-        str(angle_1) + "->" + str(angle_2) + "\n"
-
-    # Write inboard lower ellipse data
-    output_file.write(line_5)
-    output_file.write(line_6)
-    output_file.write(line_7)
-    output_file.write(line_8)
-    output_file.write(line_9)
-    output_file.write("\n")
-
-    # First wall outboard upper ellipse
-    output_file.write("# First Wall outboard upper quarter ellipse\n")
-
-    # Outboard ellipse centre x position
-    outboard_upper_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_10 = "Ellipse centre x position = %.3f m\n" % \
-        outboard_upper_ellipse_centre_x
-
-    # Outboard upper ellipse centre y position
-    outboard_upper_ellipse_centre_y = 0.0
-    line_11 = "Ellipse centre y position = %.3f m\n" % \
-        outboard_upper_ellipse_centre_y
-
-    # Outboard ellipse minor radius
-    outboard_upper_ellipse_minor_radius = data.delta*data.a + data.a + \
-        data.scraplo + data.fwoth
-    line_12 = "Ellipse minor radius = %.3f m\n" % \
-        outboard_upper_ellipse_minor_radius
-
-    # Outboard upper ellipse major radius
-    outboard_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0) + (data.fwith + data.fwoth)/2.0
-    line_13 = "Ellipse major radius = %.3f m\n" % \
-        outboard_upper_ellipse_major_radius
-
-    # Write upper outboard ellipse data
-    output_file.write(line_10)
-    output_file.write(line_11)
-    output_file.write(line_12)
-    output_file.write(line_13)
-    output_file.write("\n")
-
-    # First wall outboard lower ellipse
-    output_file.write("# First Wall outboard lower partial ellipse\n")
-
-    # Outboard lower ellipse centre x position
-    outboard_lower_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_14 = "Ellipse centre x position = %.3f m\n" % \
-        outboard_lower_ellipse_centre_x
-
-    # Outboard lower ellipse centre y position
-    outboard_lower_ellipse_centre_y = 0.0
-    line_15 = "Ellipse centre y position = %.3f m\n" % \
-        outboard_lower_ellipse_centre_y
-
-    # Outboard lower ellipse minor radius
-    outboard_lower_ellipse_minor_radius = data.delta*data.a + data.a + \
-        data.scraplo + data.fwoth
-    line_16 = "Ellipse minor radius = %.3f m\n" % \
-        outboard_lower_ellipse_minor_radius
-
-    # Outboard lower ellipse major radius
-    outboard_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.blnkoth + data.fwoth
-    line_17 = "Ellipse major radius = %.3fm \n" % \
-        outboard_lower_ellipse_major_radius
-
-    # Angle subtended
-    angle_3 = 290.0
-    angle_4 = 0.0
-    line_18 = "Ellipse angle (0 at y=0 at going anti-clockwise) = " + \
-        str(angle_1) + "->" + str(angle_2) + "\n"
-
-    # Write outboard lower ellipse data
-    output_file.write(line_14)
-    output_file.write(line_15)
-    output_file.write(line_16)
-    output_file.write(line_17)
-    output_file.write(line_18)
-    output_file.write("\n")
-
-    if data.plot:
-        fig = plt.figure(1)
-        ax = fig.add_subplot(111, aspect='equal')
-        a = Arc((inboard_upper_ellipse_centre_x, 0.0),
-                2.0*inboard_upper_ellipse_minor_radius,
-                2.0*inboard_upper_ellipse_major_radius,
-                angle=0.0, theta1=90.0, theta2=180.0,
-                edgecolor="k", linewidth="2")
-        a.set_clip_box(ax.bbox)
-        a.set_alpha(data.alpha)
-        ax.add_artist(a)
-
-        b = Arc((inboard_lower_ellipse_centre_x, 0.0),
-                2.0*inboard_lower_ellipse_minor_radius,
-                2.0*inboard_lower_ellipse_major_radius,
-                angle=0.0, theta1=angle_1, theta2=angle_2,
-                edgecolor="k", linewidth="2")
-        b.set_clip_box(ax.bbox)
-        b.set_alpha(data.alpha)
-        ax.add_artist(b)
-
-        c = Arc((outboard_upper_ellipse_centre_x, 0.0),
-                2.0*outboard_upper_ellipse_minor_radius,
-                2.0*outboard_upper_ellipse_major_radius,
-                angle=0.0, theta1=0.0, theta2=90.0,
-                edgecolor="k", linewidth="2")
-        c.set_clip_box(ax.bbox)
-        c.set_alpha(data.alpha)
-        ax.add_artist(c)
-
-        d = Arc((outboard_lower_ellipse_centre_x, 0.0),
-                2.0*outboard_lower_ellipse_minor_radius,
-                2.0*outboard_lower_ellipse_major_radius,
-                angle=0.0, theta1=angle_3, theta2=angle_4,
-                edgecolor="k", linewidth="2")
-        d.set_clip_box(ax.bbox)
-        d.set_alpha(data.alpha)
-        ax.add_artist(d)
-
-
-def write_first_wall_inner(data, output_file):
-    """Function to write the blanket information to the output_file.
-    """
-
-    # Description line
-    output_file.write("# First Wall inner edge (ellipses)\n\n")
-
-    # First wall inboard ellipse
-    output_file.write("# First Wall inboard upper quarter ellipse\n")
-
-    # Inboard upper ellipse centre x position
-    inboard_upper_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_1 = "Ellipse centre x position = %.3f m\n" % \
-        inboard_upper_ellipse_centre_x
-
-    # Inboard upper ellipse centre y position
-    inboard_upper_ellipse_centre_y = 0.0
-    line_2 = "Ellipse centre y position = %.3f m\n" % \
-        inboard_upper_ellipse_centre_y
-
-    # Inboard upper ellipse minor radius
-    inboard_upper_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi - data.shldith - data.blnkith - data.fwith
-    line_3 = "Ellipse minor radius = %.3f m\n" % \
-        inboard_upper_ellipse_minor_radius
-
-    # Inboard upper ellipse major radius
-    inboard_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0)
-    line_4 = "Ellipse major radius = %.3f m\n" % \
-        inboard_upper_ellipse_major_radius
-
-    # Write inboard ellipse data
-    output_file.write(line_1)
-    output_file.write(line_2)
-    output_file.write(line_3)
-    output_file.write(line_4)
-    output_file.write("\n")
-
-    # First wall inboard ellipse
-    output_file.write("# First Wall inboard lower partial ellipse\n")
-
-    # Inboard lower ellipse centre x position
-    inboard_lower_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_5 = "Ellipse centre x position = %.3f m\n" % \
-        inboard_lower_ellipse_centre_x
-
-    # Inboard lower ellipse centre y position
-    inboard_lower_ellipse_centre_y = 0.0
-    line_6 = "Ellipse centre y position = %.3fm \n" % \
-        inboard_lower_ellipse_centre_y
-
-    # Inboard lower ellipse minor radius
-    inboard_lower_ellipse_minor_radius = data.r0 - data.delta*data.a - \
-        data.bore - data.ohcth - data.gapoh - data.tfcth - data.gapds - \
-        data.ddwi - data.shldith - data.blnkith - data.fwith
-    line_7 = "Ellipse minor radius = %.3f m\n" % \
-        inboard_lower_ellipse_minor_radius
-
-    # Inboard lower ellipse major radius
-    inboard_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.blnkith
-    line_8 = "Ellipse major radius = %.3f m\n" % \
-        inboard_lower_ellipse_major_radius
-
-    # Angle subtended
-    angle_1 = 180.0
-    angle_2 = 230.0
-    line_9 = "Ellipse angle (0 at y=0 at going anti-clockwise) = " + \
-        str(angle_1) + "->" + str(angle_2) + "\n"
-
-    # Write inboard ellipse data
-    output_file.write(line_5)
-    output_file.write(line_6)
-    output_file.write(line_7)
-    output_file.write(line_8)
-    output_file.write(line_9)
-    output_file.write("\n")
-
-    # First wall outboard upper ellipse
-    output_file.write("# First Wall outboard upper quarter ellipse\n")
-
-    # Outboard ellipse centre x position
-    outboard_upper_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_10 = "Ellipse centre x position = %.3f m\n" % \
-        outboard_upper_ellipse_centre_x
-
-    # Outboard upper ellipse centre y position
-    outboard_upper_ellipse_centre_y = 0.0
-    line_11 = "Ellipse centre y position = %.3f m\n" % \
-        outboard_upper_ellipse_centre_y
-
-    # Outboard ellipse minor radius
-    outboard_upper_ellipse_minor_radius = data.delta*data.a + data.a + \
-        data.scraplo
-    line_12 = "Ellipse minor radius = %.3f m\n" % \
-        outboard_upper_ellipse_minor_radius
-
-    # Outboard upper ellipse major radius
-    outboard_upper_ellipse_major_radius = data.plasma_half_height + \
-        ((data.scraplo + data.scrapli)/2.0)
-    line_13 = "Ellipse major radius = %.3f m\n" % \
-        outboard_upper_ellipse_major_radius
-
-    # Write outboard upper ellipse data
-    output_file.write(line_10)
-    output_file.write(line_11)
-    output_file.write(line_12)
-    output_file.write(line_13)
-    output_file.write("\n")
-
-    # First wall outboard lower ellipse
-    output_file.write("# First Wall outboard lower partial ellipse\n")
-
-    # Outboard lower ellipse centre x position
-    outboard_lower_ellipse_centre_x = data.r0 - data.delta*data.a
-    line_14 = "Ellipse centre x position = %.3f m\n" % \
-        outboard_lower_ellipse_centre_x
-
-    # Outboard lower ellipse centre y position
-    outboard_lower_ellipse_centre_y = 0.0
-    line_15 = "Ellipse centre y position = %.3f m\n" % \
-        outboard_lower_ellipse_centre_y
-
-    # Outboard lower ellipse minor radius
-    outboard_lower_ellipse_minor_radius = data.delta*data.a + data.a + \
-        data.scraplo + data.fwoth
-    line_16 = "Ellipse minor radius = %.3f m\n" % \
-        outboard_lower_ellipse_minor_radius
-
-    # Outboard lower ellipse major radius
-    outboard_lower_ellipse_major_radius = data.plasma_half_height + \
-        data.blnkoth
-    line_17 = "Ellipse major radius = %.3f m\n" % \
-        outboard_lower_ellipse_major_radius
-
-    # Angle subtended
-    angle_3 = 290.0
-    angle_4 = 0.0
-    line_18 = "Ellipse angle (0 at y=0 at going anti-clockwise) = " + \
-        str(angle_1) + "->" + str(angle_2) + "\n"
-
-    # Write outboard lower ellipse data
-    output_file.write(line_14)
-    output_file.write(line_15)
-    output_file.write(line_16)
-    output_file.write(line_17)
-    output_file.write(line_18)
-    output_file.write("\n")
-
-    if data.plot:
-        fig = plt.figure(1)
-        ax = fig.add_subplot(111, aspect='equal')
-        a = Arc((inboard_upper_ellipse_centre_x, 0.0),
-                2.0*inboard_upper_ellipse_minor_radius,
-                2.0*inboard_upper_ellipse_major_radius,
-                angle=0.0, theta1=90.0, theta2=180.0,
-                edgecolor="k", linewidth="2")
-        a.set_clip_box(ax.bbox)
-        a.set_alpha(data.alpha)
-        ax.add_artist(a)
-
-        b = Arc((inboard_lower_ellipse_centre_x, 0.0),
-                2.0*inboard_lower_ellipse_minor_radius,
-                2.0*inboard_lower_ellipse_major_radius,
-                angle=0.0, theta1=angle_1, theta2=angle_2,
-                edgecolor="k", linewidth="2")
-        b.set_clip_box(ax.bbox)
-        b.set_alpha(data.alpha)
-        ax.add_artist(b)
-
-        c = Arc((outboard_upper_ellipse_centre_x, 0.0),
-                2.0*outboard_upper_ellipse_minor_radius,
-                2.0*outboard_upper_ellipse_major_radius,
-                angle=0.0, theta1=0.0, theta2=90.0,
-                edgecolor="k", linewidth="2")
-        c.set_clip_box(ax.bbox)
-        c.set_alpha(data.alpha)
-        ax.add_artist(c)
-
-        d = Arc((outboard_lower_ellipse_centre_x, 0.0),
-                2.0*outboard_lower_ellipse_minor_radius,
-                2.0*outboard_lower_ellipse_major_radius,
-                angle=0.0, theta1=angle_3, theta2=angle_4,
-                edgecolor="k", linewidth="2")
-        d.set_clip_box(ax.bbox)
-        d.set_alpha(data.alpha)
-        ax.add_artist(d)
+        ax.fill(ins_x, ins_y, color='0.8')
 
 
 def write_pf_coils(data, output_file):
@@ -1485,9 +1515,11 @@ def write_pf_coils(data, output_file):
         ax = fig.add_subplot(111, aspect='equal')
 
     # Description line
-    output_file.write("# PF coil information\n\n")
+    output_file.write("\n# PF coil information")
 
     for i in range(len(coils_r)):
+
+        # points for plotting
         r_1 = coils_r[i] - 0.5*coils_dr[i]
         z_1 = coils_z[i] - 0.5*coils_dz[i]
         r_2 = coils_r[i] - 0.5*coils_dr[i]
@@ -1498,67 +1530,38 @@ def write_pf_coils(data, output_file):
         z_4 = coils_z[i] - 0.5*coils_dz[i]
         r_5 = coils_r[i] - 0.5*coils_dr[i]
         z_5 = coils_z[i] - 0.5*coils_dz[i]
-
         r_points = [r_1, r_2, r_3, r_4, r_5]
         z_points = [z_1, z_2, z_3, z_4, z_5]
 
-        output_file.write("# PF coil: %s\n" % coil_text[i])
-        output_file.write("x_values = %s\n" %
-                          str(["%.3f" % item for item in r_points]))
-        output_file.write("y_values = %s\n" %
-                          str(["%.3f" % item for item in z_points]))
-        output_file.write("\n")
+        output_file.write("\n# PF coil: {0}\n".format(coil_text[i]))
+
+        output_file.write("Coil 1 - height = {0:.3f} m\n".format(coils_z[i]))
+        output_file.write("Coil 1 - radius = {0:.3f} m\n".format(coils_r[i]))
+        output_file.write("Coil 1 - coil height = {0:.3f} m\n".
+                          format(coils_dz[i]))
+        output_file.write("Coil 1 - coil width = {0:.3f} m\n".
+                          format(coils_dr[i]))
 
         if data.plot:
+
+
             ax.plot(r_points, z_points, color='black')
             ax.text(coils_r[i], coils_z[i], coil_text[i],
                     ha='center', va='center', fontsize='smaller')
 
 
-def write_cryostat(data, output_file):
-    """Function to write cryostat data
+def angle_check(angle1, angle2):
+    """Function to perform TF coil angle check
     """
-
-    # Description line
-    output_file.write("# Cryostat (cylinder with lid)\n")
-
-    # Cryostat inner radius
-    cryostat_inner_radius = data.rdewex
-    line_1 = "Cryostat inner radius = %.3f m\n" % cryostat_inner_radius
-
-    # TODO put in proper value here
-    # Cryostat thickness
-    #cryostat_thickness = data.ddwex
-    cryostat_thickness = 0.15
-    line_2 = "Cryostat thickness = %.3f m\n" % cryostat_thickness
-
-    # Cryostat outer radius
-    cryostat_outer_radius = cryostat_inner_radius + cryostat_thickness
-    line_3 = "Cryostat outer radius = %.3f m\n" % cryostat_outer_radius
-
-    # Cryostat half-height
-    cryostat_half_height = data.zdewex
-    line_4 = "Cryostat half height = %.3f m\n" % cryostat_half_height
-
-    # Write cryostat data
-    output_file.write(line_1)
-    output_file.write(line_2)
-    output_file.write(line_3)
-    output_file.write(line_4)
-    output_file.write("\n")
-
-    if data.plot:
-        fig = plt.figure(1)
-        ax = fig.add_subplot(111, aspect='equal')
-        x = [0, 0, cryostat_outer_radius, cryostat_outer_radius,
-             0, 0, cryostat_inner_radius, cryostat_inner_radius, 0]
-        y = [cryostat_half_height, cryostat_half_height + cryostat_thickness,
-             cryostat_half_height + cryostat_thickness,
-             -cryostat_half_height - cryostat_thickness,
-             -cryostat_half_height - cryostat_thickness,
-             -cryostat_half_height, -cryostat_half_height,
-             +cryostat_half_height, +cryostat_half_height]
-        ax.fill(x, y, "b")
+    if angle1 > 1:
+        angle1 = 1
+    if angle1 < -1:
+        angle1 = -1
+    if angle2 > 1:
+        angle2 = 1
+    if angle2 < -1:
+        angle2 = -1
+    return angle1, angle2
 
 
 def write_cad_data(data, output_file):
@@ -1577,7 +1580,6 @@ def write_cad_data(data, output_file):
     # Write cryostat data
     write_cryostat(data, output_file)
 
-    # Not needed if just empty space?
     # Write TF coil to vacuum vessel gap data
     write_tf_to_vv_gap(data, output_file)
 
@@ -1591,17 +1593,19 @@ def write_cad_data(data, output_file):
     write_blanket(data, output_file)
 
     # Write first wall data
-    write_first_wall_outer(data, output_file)
-    write_first_wall_inner(data, output_file)
+    write_first_wall(data, output_file)
+
+    # Write tungsten armour
+    write_tungsten_armour(data, output_file)
+
+    # Write TF coil data
+    write_tf_coils(data, output_file)
 
     # Write PF coil data
     write_pf_coils(data, output_file)
 
     # Write plasma shape
     write_plasma_shape(data, output_file)
-
-    # Write TF coil data
-    write_tf_coils(data, output_file)
 
     # Show plot if plot option chosen
     if data.plot:
@@ -1617,6 +1621,9 @@ def cad_main(cl_args):
 
     # Setup CAD file
     cad_file = open(cl_args.o, "w")
+
+    # Write CAD file header
+    write_header(cad_file, m_file)
 
     # Extract build data
     build_data = BuildDataContainer(m_file)
