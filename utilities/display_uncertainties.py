@@ -5,7 +5,7 @@ Code to display the results of an evaluate_uncertainties.py run
 Author: H. Lux (Hanni.Lux@ccfe.ac.uk)
 
 Input file:
-UNCERTAINTIES.DAT
+uncertainties.nc
 
 
 """
@@ -52,6 +52,9 @@ def fig_2dscatter_and_hist(xarr, yarr, labelx, labely):
     bins = 10
     axhistx.hist(xarr, bins=bins)
     axhisty.hist(yarr, bins=bins, orientation='horizontal')
+
+    axhistx.set_xlim( axscatter.get_xlim() )
+    axhisty.set_ylim( axscatter.get_ylim() )
 
 
 if __name__ == '__main__':

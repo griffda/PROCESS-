@@ -55,9 +55,10 @@ class ProcessConfig(object):
     """
 
     filename = None
+    configfileexists = True
     wdir     = '.'
     or_in_dat = 'IN.DAT'
-    process  = 'process'
+    process  = 'process.exe'
     niter    = 10
     u_seed   = None
     factor   = 1.5
@@ -97,11 +98,16 @@ class ProcessConfig(object):
         except FileNotFoundError:
             os.mkdir(self.wdir)
 
-        subprocess.call(['cp', self.or_in_dat, self.wdir + '/IN.DAT'])
-        subprocess.call(['cp', self.filename, self.wdir])
+        if self.or_in_dat != 'IN.DAT' or self.wdir != '.':
+            subprocess.call(['cp', self.or_in_dat, self.wdir + '/IN.DAT'])
+        else:
+            subprocess.call(['cp', self.or_in_dat, 'Input_IN.DAT'])
+
+        if self.configfileexists:
+            subprocess.call(['cp', self.filename, self.wdir])
         os.chdir(self.wdir)
         subprocess.call(['rm -f OUT.DAT MFILE.DAT PLOT.DAT *.txt *.out\
- *.log *.pdf *.eps *.nc *.info'], shell= True)
+ *.log *.pdf *.eps *.nc *.info'], shell=True)
 
 
     def create_readme(self, directory='.'):
@@ -163,11 +169,12 @@ class ProcessConfig(object):
 
         """ runs PROCESS binary """
 
-        logfile = open('process.log','w')
+        logfile = open('process.log', 'w')
         print("PROCESS run started ...", end='')
 
         try:
-            subprocess.check_call([self.process], stdout=logfile, stderr=logfile)
+            subprocess.check_call([self.process], stdout=logfile,
+                                  stderr=logfile)
         except subprocess.CalledProcessError as err:
             print('\n Error: There was a problem with the PROCESS \
                    execution!', err)
@@ -182,11 +189,15 @@ class ProcessConfig(object):
 
         """ gets the comment line from the configuration file """
 
+        if not self.configfileexists:
+            return False
+
         try:
             configfile = open(self.filename, 'r')
         except FileNotFoundError:
             print('Error: No config file named %s' %self.filename)
-            exit()
+            self.configfileexists = False
+            return False
 
         for line in configfile:
 
@@ -206,11 +217,15 @@ class ProcessConfig(object):
 
         """ gets class attribute from configuration file """
 
+        if not self.configfileexists:
+            return None
+
         try:
             configfile = open(self.filename, 'r')
         except FileNotFoundError:
             print('Error: No config file named %s' %self.filename)
-            exit()
+            self.configfileexists = False
+            return None
 
         for line in configfile:
             condense = line.replace(' ', '')
@@ -445,11 +460,16 @@ class RunProcessConfig(ProcessConfig):
         expects comma separated values
         """
 
+        if not self.configfileexists:
+            return []
+
         try:
             configfile = open(self.filename, 'r')
         except FileNotFoundError:
             print('Error: No config file named %s' %self.filename)
-            exit()
+            self.configfileexists = False
+            return []
+
 
         attribute_list = []
 
@@ -473,7 +493,15 @@ class RunProcessConfig(ProcessConfig):
 
         """ sets the del_var attribute from the config file """
 
-        configfile = open(self.filename, 'r')
+        if not self.configfileexists:
+            return
+
+        try:
+            configfile = open(self.filename, 'r')
+        except FileNotFoundError:
+            print('Error: No config file named %s' %self.filename)
+            self.configfileexists = False
+            return
 
         for line in configfile:
 
@@ -491,7 +519,16 @@ class RunProcessConfig(ProcessConfig):
 
         """ sets the dictvar attribute from config file """
 
-        configfile = open(self.filename, 'r')
+        if not self.configfileexists:
+            return
+
+        try:
+            configfile = open(self.filename, 'r')
+        except FileNotFoundError:
+            print('Error: No config file named %s' %self.filename)
+            self.configfileexists = False
+            return
+
         for line in configfile:
 
             condense = line.replace(' ', '')
@@ -568,7 +605,7 @@ class RunProcessConfig(ProcessConfig):
                     in_dat.remove_bound(number, 'l')
             else:
                 in_dat.remove_parameter(key)
- 
+
         in_dat.write_in_dat(output_filename='IN.DAT')
 
 
@@ -839,18 +876,18 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
             with NetCDFWriter(self.wdir+"/uncertainties.nc", append=True,
                               overwrite=False) as ncdf_writer:
-                try :
+                try:
                     ncdf_writer.write_mfile_data(m_file, run_id,
                                                  save_vars=self.output_vars,
                                                  latest_scan_only=True,
                                                  ignore_unknowns=False)
-                except KeyError as Err:
+                except KeyError as err:
                     print('Error: You have specified an output variable that\
  does not exist in MFILE. If this is a valid PROCESS variable, request it being\
  added to the MFILE output, else check your spelling!')
-                    print(Err)
+                    print(err)
                     exit()
-                    
+
         else:
             m_file = MFile(filename="MFILE.DAT")
 
