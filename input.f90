@@ -706,7 +706,7 @@ contains
           call parse_real_variable('RLI', rli, 0.0D0, 10.0D0, &
                'Normalised inductivity')
        case ('RMAJOR')
-          call parse_real_variable('RMAJOR', rmajor, 0.1D0, 30.0D0, &
+          call parse_real_variable('RMAJOR', rmajor, 0.1D0, 50.0D0, &
                'Plasma major radius (m)')
        case ('RNBEAM')
           call parse_real_variable('RNBEAM', rnbeam, 0.0D0, 1.0D0, &
@@ -1168,7 +1168,7 @@ contains
           write(outfile,*) ' '
           obsolete_var = .true.
        case ('BORE')
-          call parse_real_variable('BORE', bore, 0.0D0, 20.0D0, &
+          call parse_real_variable('BORE', bore, 0.0D0, 50.0D0, &
                'Machine bore (m)')
        case ('CLHSF')
           call parse_real_variable('CLHSF', clhsf, 2.0D0, 10.0D0, &
