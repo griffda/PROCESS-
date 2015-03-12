@@ -122,7 +122,9 @@ subroutine caller(xc,nvars)
   use costs_module
   use current_drive_module
   use divertor_module
+  ! use fwbs_module
   use fwbs_module
+  use fwbs_variables
   use ife_module
   use ife_variables
   use numerics
@@ -142,8 +144,10 @@ subroutine caller(xc,nvars)
   use structure_module
   use tfcoil_module
   use vacuum_module
-
   use cost_variables
+  
+  !  Import blanket modules
+  use ccfe_hcpb_module
 
   implicit none
 
@@ -211,7 +215,10 @@ subroutine caller(xc,nvars)
   end if
 
   call pulse(nout,0)
-  call fwbs(nout,0)
+  
+  !call fwbs(nout,0)
+  call ccfe_hcpb(nout, 0)
+  
   call divcall(nout,0)
   call strucall(nout,0)
 
@@ -238,6 +245,13 @@ subroutine caller(xc,nvars)
   end if
 
   call costs(nout,0)
+  
+  !select case (iblanket)
+  
+  !case (1)
+  !   call ccfe_hcpb(nout, 0)
+
+  !end select
 
   !+**PJK  if (ifispact.eq.1) then
   !+**PJK     call fispac(0)

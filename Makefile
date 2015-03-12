@@ -68,6 +68,7 @@ source = \
  fson_library.f90 \
  fwbs.f90 \
  global_variables.f90 \
+ hcpb.f90 \
  ife.f90 \
  impurity_radiation.f90 \
  initial.f90 \
@@ -110,6 +111,7 @@ object = \
  fson_library.o \
  fwbs.o \
  global_variables.o \
+ hcpb.o \
  ife.o \
  impurity_radiation.o \
  initial.o \
@@ -217,8 +219,10 @@ error_handling.o: output.o fson_library.o root.dir
 evaluators.o: error_handling.o global_variables.o numerics.o output.o
 fispact.o: global_variables.o
 fson_library.o: 
-fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o refprop_interface.o
+fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o refprop_interface.o \
+  maths_library.o
 global_variables.o:
+hcpb.o : global_variables.o output.o maths_library.o
 ife.o: availability.o costs.o error_handling.o global_variables.o output.o
 impurity_radiation.o: error_handling.o global_variables.o root.dir
 initial.o: error_handling.o global_variables.o output.o scan.o stellarator.o

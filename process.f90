@@ -1450,6 +1450,7 @@ subroutine output(outfile)
   use divertor_module
   use error_handling
   use fwbs_module
+  use fwbs_variables
   use ife_module
   use ife_variables
   use pfcoil_module
@@ -1466,6 +1467,9 @@ subroutine output(outfile)
   use structure_module
   use tfcoil_module
   use vacuum_module
+  
+  !  Import blanket modules
+  use ccfe_hcpb_module
 
   implicit none
 
@@ -1534,7 +1538,8 @@ subroutine output(outfile)
 
   if (irfp == 0) call induct(outfile,1)
 
-  call fwbs(outfile,1)
+  call ccfe_hcpb(outfile, 1)
+  !call fwbs(outfile,1)
 
   if (ifispact == 1) then
      call fispac(0)
@@ -1555,6 +1560,11 @@ subroutine output(outfile)
   call bldgcall(outfile,1)
   call acpow(outfile,1)
   call power2(outfile,1)
+  
+  !select case (iblanket)
+  !case(1)
+  !	call ccfe_hcpb(outfile, 1)
+  !end select
 
 end subroutine output
 

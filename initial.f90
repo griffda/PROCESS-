@@ -66,6 +66,7 @@ subroutine initial
   !+ad_hist  31/10/12 PJK Removed RFP variables
   !+ad_hist  05/11/12 PJK Removed call to ifeini
   !+ad_hist  05/11/12 PJK Removed pulsed reactor variables
+  !+ad_hist  05/03/15 JM  
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -242,6 +243,7 @@ subroutine check
   !+ad_hist  17/11/14 PJK Added trap for deprecated constraints 3,4
   !+ad_hist  24/11/14 PJK Added trap if blanket material fractions do not sum to 1.0
   !+ad_hist  24/11/14 PJK Set coolwh via blkttype
+  !+ad_hist  25/02/15 JM  Changed blanket composition check to use new blanket model layout
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -539,37 +541,26 @@ subroutine check
   !  slightly pessimistic results.
 
   if (blktmodel > 0) then
-     blktcycle = 0
+     secondary_cycle = 0
      blkttype = 3  !  HCPB
      coolwh = 2
   end if
 
   !  Ensure that blanket material fractions add up to 1.0
-
-  if (blkttype < 3) then
-     fsum = fblli2o + fblbe + vfblkt + fblss + fblvd
-     if (abs(fsum-1.0D0) > 1.0D-4) then
-        idiags(1) = blkttype
-        fdiags(1) = fblli2o
-        fdiags(2) = fblbe
-        fdiags(3) = vfblkt
-        fdiags(4) = fblss
-        fdiags(5) = fblvd
-        fdiags(6) = fsum
-        call report_error(165)
-     end if
-  else
-     fsum = fbllipb + fblli + vfblkt + fblss + fblvd
-     if (abs(fsum-1.0D0) > 1.0D-4) then
-        idiags(1) = blkttype
-        fdiags(1) = fbllipb
-        fdiags(2) = fblli
-        fdiags(3) = vfblkt
-        fdiags(4) = fblss
-        fdiags(5) = fblvd
-        fdiags(6) = fsum
-        call report_error(165)
-     end if
+  
+  !  CCFE HCPB Model
+  if (iblanket == 1) then
+    fsum = fbltibe12 + fblli2sio4 + fblss + vfcblkt + vfpblkt
+    if (abs(fsum-1.0D0) > 1.0D-4) then
+      idiags(1) = iblanket
+      fdiags(1) = fbltibe12
+      fdiags(2) = fblli2sio4
+      fdiags(3) = fblss
+      fdiags(4) = vfcblkt
+      fdiags(5) = vfpblkt
+      fdiags(6) = fsum
+      call report_error(165)
+    end if
   end if
 
   errors_on = .false.

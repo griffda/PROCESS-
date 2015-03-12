@@ -19,8 +19,12 @@ module maths_library
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  dogleg
   !+ad_cont  dotpmc
+  !+ad_cont  dshellarea
+  !+ad_cont  dshellvol
   !+ad_cont  ellipke
   !+ad_cont  enorm
+  !+ad_cont  eshellarea
+  !+ad_cont  eshellvol
   !+ad_cont  fdjac1
   !+ad_cont  find_y_nonuniform_x
   !+ad_cont  gamfun
@@ -64,19 +68,25 @@ module maths_library
   !+ad_hist  25/02/14 PJK Added global_variables
   !+ad_hist  04/03/14 PJK Added sumup2, sumup3, tril, ellipke,
   !+ad_hisc               find_y_nonuniform_x
+  !+ad_hist  04/03/14 PJK Added dshellvol, eshellvol, dshellarea, eshellarea
   !+ad_stat  Okay
   !+ad_docs  http://en.wikipedia.org/wiki/Gamma_function
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use global_variables, only: verbose
+  use constants
 
   implicit none
+  
+  !  Precision variable
+  integer, parameter :: double = 8
 
   private
 
   public :: ellipke,find_y_nonuniform_x,gamfun,hybrd,linesolv,qpsub, &
-       quanc8,sumup3,svd,tril,vmcon,zeroin
+       quanc8,sumup3,svd,tril,vmcon,zeroin, eshellvol, dshellvol, &
+       eshellarea, dshellarea
 
 contains
 
@@ -5592,6 +5602,276 @@ contains
     spmpar = rmach(i)
 
   end function spmpar
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine eshellvol(rshell,rmini,rmino,zminor,drin,drout,dz,vin,vout,vtot)
+
+    !+ad_name  eshellvol
+    !+ad_summ  Routine to calculate the inboard, outboard and total volumes
+    !+ad_summ  of a toroidal shell comprising two elliptical sections
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  rshell : input real : major radius of centre of both ellipses (m)
+    !+ad_args  rmini  : input real : horizontal distance from rshell to outer edge
+    !+ad_argc                        of inboard elliptical shell (m)
+    !+ad_args  rmino  : input real : horizontal distance from rshell to inner edge
+    !+ad_argc                        of outboard elliptical shell (m)
+    !+ad_args  zminor : input real : vertical internal half-height of shell (m)
+    !+ad_args  drin   : input real : horiz. thickness of inboard shell at midplane (m)
+    !+ad_args  drout  : input real : horiz. thickness of outboard shell at midplane (m)
+    !+ad_args  dz     : input real : vertical thickness of shell at top/bottom (m)
+    !+ad_args  vin    : output real : volume of inboard section (m3)
+    !+ad_args  vout   : output real : volume of outboard section (m3)
+    !+ad_args  vtot   : output real : total volume of shell (m3)
+    !+ad_desc  This routine calculates the volume of the inboard and outboard sections
+    !+ad_desc  of a toroidal shell defined by two co-centred semi-ellipses.
+    !+ad_desc  Each section's internal and external surfaces are in turn defined
+    !+ad_desc  by two semi-ellipses. The volumes of each section are calculated as
+    !+ad_desc  the difference in those of the volumes of revolution enclosed by their
+    !+ad_desc  inner and outer surfaces.
+    !+ad_desc  <P>See also <A HREF="eshellarea.html"><CODE>eshellarea</CODE></A>
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  09/05/13 PJK Initial version
+    !+ad_hist  13/02/15 JM  Moved to maths library
+    !+ad_stat  Okay
+    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
+    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+    real(kind=double), intent(in) :: rshell, rmini, rmino, zminor, drin, drout, dz
+    real(kind=double), intent(out) :: vin, vout, vtot
+
+    !  Local variables
+    real(kind=double) :: a, b, elong, v1, v2
+
+    !  Global shared variables
+    !  Input: pi,twopi
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Inboard section
+
+    !  Volume enclosed by outer (higher R) surface of elliptical section
+    !  and the vertical straight line joining its ends
+    a = rmini ; b = zminor ; elong = b/a
+    v1 = twopi * elong * (0.5D0*pi*rshell*a*a - 2.0D0/3.0D0*a*a*a)
+
+    !  Volume enclosed by inner (lower R) surface of elliptical section
+    !  and the vertical straight line joining its ends
+    a = rmini+drin ; b = zminor+dz ; elong = b/a
+    v2 = twopi * elong * (0.5D0*pi*rshell*a*a - 2.0D0/3.0D0*a*a*a)
+
+    !  Volume of inboard section of shell
+    vin = v2 - v1
+
+    !  Outboard section
+
+    !  Volume enclosed by inner (lower R) surface of elliptical section
+    !  and the vertical straight line joining its ends
+    a = rmino ; b = zminor ; elong = b/a
+    v1 = twopi * elong * (0.5D0*pi*rshell*a*a + 2.0D0/3.0D0*a*a*a)
+
+    !  Volume enclosed by outer (higher R) surface of elliptical section
+    !  and the vertical straight line joining its ends
+    a = rmino+drout ; b = zminor+dz ; elong = b/a
+    v2 = twopi * elong * (0.5D0*pi*rshell*a*a + 2.0D0/3.0D0*a*a*a)
+
+    !  Volume of outboard section of shell
+    vout = v2 - v1
+
+    !  Total shell volume
+    vtot = vin + vout
+
+  end subroutine eshellvol
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  subroutine dshellvol(rmajor,rminor,zminor,drin,drout,dz,vin,vout,vtot)
+
+    !+ad_name  dshellvol
+    !+ad_summ  Routine to calculate the inboard, outboard and total volumes
+    !+ad_summ  of a D-shaped toroidal shell
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  rmajor : input real : major radius to outer point of inboard
+    !+ad_argc                        straight section of shell (m)
+    !+ad_args  rminor : input real : horizontal internal width of shell (m)
+    !+ad_args  zminor : input real : vertical internal half-height of shell (m)
+    !+ad_args  drin   : input real : horiz. thickness of inboard shell at midplane (m)
+    !+ad_args  drout  : input real : horiz. thickness of outboard shell at midplane (m)
+    !+ad_args  dz     : input real : vertical thickness of shell at top/bottom (m)
+    !+ad_args  vin    : output real : volume of inboard straight section (m3)
+    !+ad_args  vout   : output real : volume of outboard curved section (m3)
+    !+ad_args  vtot   : output real : total volume of shell (m3)
+    !+ad_desc  This routine calculates the volume of the inboard and outboard sections
+    !+ad_desc  of a D-shaped toroidal shell defined by the above input parameters.
+    !+ad_desc  The inboard section is assumed to be a cylinder of uniform thickness.
+    !+ad_desc  The outboard section's internal and external surfaces are defined
+    !+ad_desc  by two semi-ellipses, centred on the outer edge of the inboard section;
+    !+ad_desc  its volume is calculated as the difference in those of the volumes of
+    !+ad_desc  revolution enclosed by the two surfaces.
+    !+ad_desc  <P>See also <A HREF="dshellarea.html"><CODE>dshellarea</CODE></A>
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  09/05/13 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
+    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+    real(kind=double), intent(in) :: rmajor, rminor, zminor, drin, drout, dz
+    real(kind=double), intent(out) :: vin, vout, vtot
+
+    !  Local variables
+    real(kind=double) :: a, b, elong, v1, v2
+
+    !  Global shared variables
+    !  Input: pi,twopi
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Volume of inboard cylindrical shell
+    vin = 2.0D0*(zminor+dz) * pi*(rmajor**2 - (rmajor-drin)**2)
+
+    !  Volume enclosed by inner surface of elliptical outboard section
+    !  and the vertical straight line joining its ends
+    a = rminor ; b = zminor ; elong = b/a
+    v1 = twopi * elong * (0.5D0*pi*rmajor*a*a + 2.0D0/3.0D0*a*a*a)
+
+    !  Volume enclosed by outer surface of elliptical outboard section
+    !  and the vertical straight line joining its ends
+    a = rminor+drout ; b = zminor+dz ; elong = b/a
+    v2 = twopi * elong * (0.5D0*pi*rmajor*a*a + 2.0D0/3.0D0*a*a*a)
+
+    !  Volume of elliptical outboard shell
+    vout = v2 - v1
+
+    !  Total shell volume
+    vtot = vin + vout
+
+  end subroutine dshellvol
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine dshellarea(rmajor,rminor,zminor,ain,aout,atot)
+
+    !+ad_name  dshellarea
+    !+ad_summ  Routine to calculate the inboard, outboard and total surface areas
+    !+ad_summ  of a D-shaped toroidal shell
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  rmajor : input real : major radius of inboard straight section (m)
+    !+ad_args  rminor : input real : horizontal width of shell (m)
+    !+ad_args  zminor : input real : vertical half-height of shell (m)
+    !+ad_args  ain    : output real : surface area of inboard straight section (m3)
+    !+ad_args  aout   : output real : surface area of outboard curved section (m3)
+    !+ad_args  atot   : output real : total surface area of shell (m3)
+    !+ad_desc  This routine calculates the surface area of the inboard and outboard
+    !+ad_desc  sections of a D-shaped toroidal shell defined by the above input
+    !+ad_desc  parameters.
+    !+ad_desc  The inboard section is assumed to be a cylinder.
+    !+ad_desc  The outboard section is defined by a semi-ellipse, centred on the
+    !+ad_desc  major radius of the inboard section.
+    !+ad_desc  <P>See also <A HREF="dshellvol.html"><CODE>dshellvol</CODE></A>
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  09/05/13 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
+    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+    real(kind=double), intent(in) :: rmajor,rminor,zminor
+    real(kind=double), intent(out) :: ain,aout,atot
+
+    !  Local variables
+    real(kind=double) :: elong
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Area of inboard cylindrical shell
+    ain = 4.0D0*zminor*pi*rmajor
+
+    !  Area of elliptical outboard section
+    elong = zminor/rminor
+    aout = twopi * elong * (pi*rmajor*rminor + 2.0D0*rminor*rminor)
+
+    !  Total surface area
+    atot = ain + aout
+
+  end subroutine dshellarea
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine eshellarea(rshell,rmini,rmino,zminor,ain,aout,atot)
+
+    !+ad_name  eshellarea
+    !+ad_summ  Routine to calculate the inboard, outboard and total surface areas
+    !+ad_summ  of a toroidal shell comprising two elliptical sections
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  rshell : input real : major radius of centre of both ellipses (m)
+    !+ad_args  rmini  : input real : horizontal distance from rshell to
+    !+ad_argc                        inboard elliptical shell (m)
+    !+ad_args  rmino  : input real : horizontal distance from rshell to
+    !+ad_argc                        outboard elliptical shell (m)
+    !+ad_args  zminor : input real : vertical internal half-height of shell (m)
+    !+ad_args  ain    : output real : surface area of inboard section (m3)
+    !+ad_args  aout   : output real : surface area of outboard section (m3)
+    !+ad_args  atot   : output real : total surface area of shell (m3)
+    !+ad_desc  This routine calculates the surface area of the inboard and outboard
+    !+ad_desc  sections of a toroidal shell defined by two co-centred semi-ellipses.
+    !+ad_desc  <P>See also <A HREF="eshellvol.html"><CODE>eshellvol</CODE></A>
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  09/05/13 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
+    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+    real(kind=double), intent(in) :: rshell,rmini,rmino,zminor
+    real(kind=double), intent(out) :: ain,aout,atot
+
+    !  Local variables
+    real(kind=double) :: elong
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Inboard section
+    elong = zminor/rmini
+    ain = twopi * elong * (pi*rshell*rmini - 2.0D0*rmini*rmini)
+
+    !  Outboard section
+    elong = zminor/rmino
+    aout = twopi * elong * (pi*rshell*rmino + 2.0D0*rmino*rmino)
+
+    !  Total surface area
+    atot = ain + aout
+
+  end subroutine eshellarea
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module maths_library
 

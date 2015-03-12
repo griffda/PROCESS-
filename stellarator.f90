@@ -424,7 +424,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
     !+ad_hist  23/07/14 PJK Changed icase description
-    !+ad_hist  06/11/14 PJK Added blktcycle=0 assumption
+    !+ad_hist  06/11/14 PJK Added secondary_cycle=0 assumption
     !+ad_hist  12/11/14 PJK Added tpulse, tdown, tcycle
     !+ad_hist  24/11/14 PJK Brought blanket properties in line with tokamak
     !+ad_stat  Okay
@@ -492,7 +492,7 @@ contains
 
     !  Blanket properties
 
-    blktcycle = 0  !  simple thermal hydraulic model assumed
+    secondary_cycle = 0  !  simple thermal hydraulic model assumed
 
     !  Solid breeder assumed if ipowerflow=0
 
@@ -514,7 +514,7 @@ contains
     !  slightly pessimistic results.
 
     if (blktmodel > 0) then
-       blktcycle = 0
+       secondary_cycle = 0
        blkttype = 3  !  HCPB
        coolwh = 2
     end if
@@ -1435,7 +1435,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  First wall full-power lifetime (years)
-    !  May be recalculated below if ipowerflow=1 and blktcycle>0,
+    !  May be recalculated below if ipowerflow=1 and secondary_cycle>0,
     !  and also by the availability model
 
     fwlife = min(abktflnc/wallmw, tlife)
@@ -1593,7 +1593,7 @@ contains
           psurffwi = pradfw * fwareaib/fwarea
           psurffwo = pradfw * fwareaob/fwarea
 
-          !  Simple blanket model (blktcycle=0) is assumed for stellarators
+          !  Simple blanket model (secondary_cycle=0) is assumed for stellarators
 
           !  The power deposited in the first wall, breeder zone and shield is
           !  calculated according to their dimensions and materials assuming
@@ -1644,7 +1644,7 @@ contains
 
           !  Calculation of shield and divertor powers
           !  Shield and divertor powers and pumping powers are calculated using the same 
-          !  simplified method as the first wall and breeder zone when blktcycle = 0. 
+          !  simplified method as the first wall and breeder zone when secondary_cycle = 0. 
           !  i.e. the pumping power is a fraction of the total thermal power deposited in the
           !  coolant.
 
@@ -1950,8 +1950,8 @@ contains
     if ((ipowerflow == 1).and.(blktmodel == 0)) then
        call oblnkl(outfile)
        call ovarin(outfile, &
-            'First wall / blanket thermodynamic model','(blktcycle)',blktcycle)
-       if (blktcycle == 0) then
+            'First wall / blanket thermodynamic model','(secondary_cycle)',secondary_cycle)
+       if (secondary_cycle == 0) then
           call ocmmnt(outfile,'   (Simple calculation)')
        end if
     end if

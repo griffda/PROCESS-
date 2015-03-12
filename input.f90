@@ -333,6 +333,7 @@ contains
     !+ad_hist  25/11/14 JM  Added new availability model variables
     !+ad_hist  10/12/14 PJK Removed UCIHX
     !+ad_hist  17/12/14 PJK Added IREFPROP
+    !+ad_hist  27/02/15 JM  Changed blktcycle to secondary_cycle
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1585,8 +1586,8 @@ contains
 
           !  First wall, blanket, shield settings
 
-       case ('BLKTCYCLE')
-          call parse_int_variable('BLKTCYCLE', blktcycle, 0, 3, &
+       case ('SECONDARY_CYCLE')
+          call parse_int_variable('SECONDARY_CYCLE', secondary_cycle, 0, 3, &
                'Switch for blanket thermodynamic model')
        case ('AFWI')
           call parse_real_variable('AFWI', afwi, 1.0D-3, 0.05D0, &
@@ -1762,9 +1763,15 @@ contains
        case ('FWBSSHAPE')
           call parse_int_variable('FWBSSHAPE', fwbsshape, 1, 2, &
                'Switch for fw/blanket/shield/vv shape')
+       case ('FW_W_THICKNESS')
+          call parse_real_variable('FW_W_THICKNESS', fw_w_thickness, 0.0D0, 1.0D0, &
+               'First wall W coating thickness (m)')
        case ('HCDPORTSIZE')
           call parse_int_variable('HCDPORTSIZE', hcdportsize, 1, 2, &
                'H/CD port size')
+       case ('IBLANKET')
+          call parse_int_variable('IBLANKET', iblanket, 1, 5, &
+               'Switch for blanket model')
        case ('LBLNKT')
           call parse_int_variable('LBLNKT', lblnkt, 0, 1, &
                'Switch for blanket model invoked')
@@ -1873,9 +1880,9 @@ contains
        case ('IPOWERFLOW')
           call parse_int_variable('IPOWERFLOW', ipowerflow, 0, 1, &
                'Switch for power flow model')
-       case ('IPRIMDIV')
-          call parse_int_variable('IPRIMDIV', iprimdiv, 0, 1, &
-               'Switch for divertor thermal power destiny')
+       !case ('IPRIMDIV')
+       !   call parse_int_variable('IPRIMDIV', iprimdiv, 0, 1, &
+       !        'Switch for divertor thermal power destiny')
        case ('IPRIMHTP')
           call parse_int_variable('IPRIMHTP', iprimhtp, 0, 1, &
                'Switch for heat transport pump power destiny')

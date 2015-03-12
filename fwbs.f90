@@ -1187,6 +1187,7 @@ module fwbs_module
   use fwbs_variables
   use heat_transport_variables
   use kit_blanket_model
+  use maths_library
   use pfcoil_variables
   use physics_variables
   use plasma_geometry_module
@@ -1295,7 +1296,7 @@ contains
     !  Global shared variables
 
     !  Input: abktflnc,blbmith,blbmoth,blbpith,blbpoth,blbuith,blbuoth
-    !  Input: blktcycle,blktmodel,blkttype,blnkith,blnkoth,coolp,coolwh
+    !  Input: secondary_cycle,blktmodel,blkttype,blnkith,blnkoth,coolp,coolwh
     !  Input: declblkt,declfw,declshld,denstl,divclfr,divplt,emult
     !  Input: etaiso,fblbe,fblbreed,fblhebmi,fblhebmo
     !  Input: fblhebpi,fblhebpo,fblli,fblli2o,fblli2o,fbllipb
@@ -1317,7 +1318,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  First wall full-power lifetime (years)
-    !  May be recalculated below if ipowerflow=1 and blktcycle>0,
+    !  May be recalculated below if ipowerflow=1 and secondary_cycle>0,
     !  and also by the availability model
 
     fwlife = min(abktflnc/wallmw, tlife)
@@ -1449,7 +1450,7 @@ contains
           psurffwi = pradfw * fwareaib/fwarea
           psurffwo = pradfw * fwareaob/fwarea
 
-          if (blktcycle == 0) then
+          if (secondary_cycle == 0) then
 
              !  Simple blanket model
              !  The power deposited in the first wall, breeder zone and shield is
@@ -1493,7 +1494,7 @@ contains
              htpmw_blkt = fpumpblkt * (pnucbzi*emult + pnucbzo*emult)
 
           else
-             !  blktcycle > 0; detailed thermal hydraulic model for first wall and breeding zone
+             !  secondary_cycle > 0; detailed thermal hydraulic model for first wall and breeding zone
 
              !  Determine size of blanket modules
              !  Length of coolant pipes is assumed to be 80% of total radial space
@@ -1602,6 +1603,8 @@ contains
              no180bz = 1
 
              !  Start thermal hydraulic calculations with inboard side
+             
+             !write(*,*) "here"
 
              !  Calculation of maximum first wall temperature
              !  Include a fraction of the escaped alpha power as
@@ -1610,6 +1613,8 @@ contains
              call iterate_fw(afwi,bfwi,fwareaib,fwarea,decayfwi,abktflnc,fwlife, &
                   pnucfwbsi,(psurffwi+fwareaib/fwarea*palpfwmw),inlet_temp, &
                   outlet_temp,bllengi,coolp,fwerlim,pnucfwi,tpeakfwi,cf,rhof,velfwi)
+                  
+             !write(*,*) pnucfwi, tpeakfwi, cf, rhof, velfwi
 
              !  Adjust first wall thickness if bfwi has been changed
 
@@ -1752,14 +1757,14 @@ contains
 
              tpeak = max(tpeakfwi, tpeakfwo) - 273.15D0  !  deg C
 
-          end if  !  blktcycle
+          end if  !  secondary_cycle
 
           pnucfw = pnucfwi + pnucfwo
           pnucblkt = (pnucbzi + pnucbzo)*emult
 
           !  Calculation of shield and divertor powers
           !  Shield and divertor powers and pumping powers are calculated using the same 
-          !  simplified method as the first wall and breeder zone when blktcycle = 0. 
+          !  simplified method as the first wall and breeder zone when secondary_cycle = 0. 
           !  i.e. the pumping power is a fraction of the total thermal power deposited in the
           !  coolant.
 
@@ -2027,8 +2032,8 @@ contains
     if ((ipowerflow == 1).and.(blktmodel == 0)) then
        call oblnkl(outfile)
        call ovarin(outfile, &
-            'First wall / blanket thermodynamic model','(blktcycle)',blktcycle)
-       if (blktcycle == 0) then
+            'First wall / blanket thermodynamic model','(secondary_cycle)',secondary_cycle)
+       if (secondary_cycle == 0) then
           call ocmmnt(outfile,'   (Simple calculation)')
        else
           call ocmmnt(outfile, &
@@ -2307,38 +2312,30 @@ contains
     if ((itart == 1).or.(fwbsshape == 1)) then  !  D-shaped 
 
        !  Major radius to outer edge of inboard blanket
-
        r1 = rsldi + shldith + blnkith
 
        !  Horizontal distance between inside edges of blanket,
        !  i.e. outer radius of inboard part to inner radius of outboard part
-
        r2 = fwith + scrapli + 2.0D0*rminor + scraplo + fwoth
 
        !  Calculate blanket surface area, assuming 100% coverage
-
        call dshellarea(r1,r2,hblnkt,blareaib,blareaob,blarea)
 
        !  Calculate blanket volumes, assuming 100% coverage
-
        call dshellvol(r1,r2,hblnkt,blnkith,blnkoth,blnktth, &
             volblkti,volblkto,volblkt)
 
        !  Major radius to outer edge of inboard shield
-
        r1 = rsldi + shldith
 
        !  Horizontal distance between inside edges of shield,
        !  i.e. outer radius of inboard part to inner radius of outboard part
-
        r2 = blnkith + fwith + scrapli + 2.0D0*rminor + scraplo + fwoth + blnkoth
 
        !  Calculate shield surface area, assuming 100% coverage
-
        call dshellarea(r1,r2,hshld,shareaib,shareaob,sharea)
 
        !  Calculate shield volumes, assuming 100% coverage
-
        call dshellvol(r1,r2,hshld,shldith,shldoth,shldtth, &
             volshldi,volshldo,volshld)
 
@@ -2346,40 +2343,31 @@ contains
 
        !  Major radius to centre of inboard and outboard ellipses
        !  (coincident in radius with top of plasma)
-
        r1 = rmajor - rminor*triang
 
        !  Distance between r1 and outer edge of inboard blanket
-
        r2 = r1 - (rsldi + shldith + blnkith)
 
        !  Distance between r1 and inner edge of outboard blanket
-
        r3 = (rsldo - shldoth - blnkoth) - r1
 
        !  Calculate blanket surface area, assuming 100% coverage
-
        call eshellarea(r1,r2,r3,hblnkt,blareaib,blareaob,blarea)
 
        !  Calculate blanket volumes, assuming 100% coverage
-
        call eshellvol(r1,r2,r3,hblnkt,blnkith,blnkoth,blnktth, &
             volblkti,volblkto,volblkt)
 
        !  Distance between r1 and outer edge of inboard shield
-
        r2 = r1 - (rsldi + shldith)
 
        !  Distance between r1 and inner edge of outboard shield
-
        r3 = (rsldo - shldoth) - r1
 
        !  Calculate shield surface area, assuming 100% coverage
-
        call eshellarea(r1,r2,r3,hshld,shareaib,shareaob,sharea)
 
        !  Calculate shield volumes, assuming 100% coverage
-
        call eshellvol(r1,r2,r3,hshld,shldith,shldoth,shldtth, &
             volshldi,volshldo,volshld)
 
@@ -2515,183 +2503,6 @@ contains
   end subroutine blshvv_volume
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine dshellvol(rmajor,rminor,zminor,drin,drout,dz,vin,vout,vtot)
-
-    !+ad_name  dshellvol
-    !+ad_summ  Routine to calculate the inboard, outboard and total volumes
-    !+ad_summ  of a D-shaped toroidal shell
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rmajor : input real : major radius to outer point of inboard
-    !+ad_argc                        straight section of shell (m)
-    !+ad_args  rminor : input real : horizontal internal width of shell (m)
-    !+ad_args  zminor : input real : vertical internal half-height of shell (m)
-    !+ad_args  drin   : input real : horiz. thickness of inboard shell at midplane (m)
-    !+ad_args  drout  : input real : horiz. thickness of outboard shell at midplane (m)
-    !+ad_args  dz     : input real : vertical thickness of shell at top/bottom (m)
-    !+ad_args  vin    : output real : volume of inboard straight section (m3)
-    !+ad_args  vout   : output real : volume of outboard curved section (m3)
-    !+ad_args  vtot   : output real : total volume of shell (m3)
-    !+ad_desc  This routine calculates the volume of the inboard and outboard sections
-    !+ad_desc  of a D-shaped toroidal shell defined by the above input parameters.
-    !+ad_desc  The inboard section is assumed to be a cylinder of uniform thickness.
-    !+ad_desc  The outboard section's internal and external surfaces are defined
-    !+ad_desc  by two semi-ellipses, centred on the outer edge of the inboard section;
-    !+ad_desc  its volume is calculated as the difference in those of the volumes of
-    !+ad_desc  revolution enclosed by the two surfaces.
-    !+ad_desc  <P>See also <A HREF="dshellarea.html"><CODE>dshellarea</CODE></A>
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  09/05/13 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
-    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    real(kind(1.0D0)), intent(in) :: rmajor,rminor,zminor,drin,drout,dz
-    real(kind(1.0D0)), intent(out) :: vin,vout,vtot
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: a,b,elong,v1,v2
-
-    !  Global shared variables
-
-    !  Input: pi,twopi
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Volume of inboard cylindrical shell
-
-    vin = 2.0D0*(zminor+dz) * pi*(rmajor**2 - (rmajor-drin)**2)
-
-    !  Volume enclosed by inner surface of elliptical outboard section
-    !  and the vertical straight line joining its ends
-
-    a = rminor ; b = zminor ; elong = b/a
-    v1 = twopi * elong * (0.5D0*pi*rmajor*a*a + 2.0D0/3.0D0*a*a*a)
-
-    !  Volume enclosed by outer surface of elliptical outboard section
-    !  and the vertical straight line joining its ends
-
-    a = rminor+drout ; b = zminor+dz ; elong = b/a
-    v2 = twopi * elong * (0.5D0*pi*rmajor*a*a + 2.0D0/3.0D0*a*a*a)
-
-    !  Volume of elliptical outboard shell
-
-    vout = v2 - v1
-
-    !  Total shell volume
-
-    vtot = vin + vout
-
-  end subroutine dshellvol
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine eshellvol(rshell,rmini,rmino,zminor,drin,drout,dz,vin,vout,vtot)
-
-    !+ad_name  eshellvol
-    !+ad_summ  Routine to calculate the inboard, outboard and total volumes
-    !+ad_summ  of a toroidal shell comprising two elliptical sections
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rshell : input real : major radius of centre of both ellipses (m)
-    !+ad_args  rmini  : input real : horizontal distance from rshell to outer edge
-    !+ad_argc                        of inboard elliptical shell (m)
-    !+ad_args  rmino  : input real : horizontal distance from rshell to inner edge
-    !+ad_argc                        of outboard elliptical shell (m)
-    !+ad_args  zminor : input real : vertical internal half-height of shell (m)
-    !+ad_args  drin   : input real : horiz. thickness of inboard shell at midplane (m)
-    !+ad_args  drout  : input real : horiz. thickness of outboard shell at midplane (m)
-    !+ad_args  dz     : input real : vertical thickness of shell at top/bottom (m)
-    !+ad_args  vin    : output real : volume of inboard section (m3)
-    !+ad_args  vout   : output real : volume of outboard section (m3)
-    !+ad_args  vtot   : output real : total volume of shell (m3)
-    !+ad_desc  This routine calculates the volume of the inboard and outboard sections
-    !+ad_desc  of a toroidal shell defined by two co-centred semi-ellipses.
-    !+ad_desc  Each section's internal and external surfaces are in turn defined
-    !+ad_desc  by two semi-ellipses. The volumes of each section are calculated as
-    !+ad_desc  the difference in those of the volumes of revolution enclosed by their
-    !+ad_desc  inner and outer surfaces.
-    !+ad_desc  <P>See also <A HREF="eshellarea.html"><CODE>eshellarea</CODE></A>
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  09/05/13 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
-    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    real(kind(1.0D0)), intent(in) :: rshell,rmini,rmino,zminor,drin,drout,dz
-    real(kind(1.0D0)), intent(out) :: vin,vout,vtot
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: a,b,elong,v1,v2
-
-    !  Global shared variables
-
-    !  Input: pi,twopi
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Inboard section
-
-    !  Volume enclosed by outer (higher R) surface of elliptical section
-    !  and the vertical straight line joining its ends
-
-    a = rmini ; b = zminor ; elong = b/a
-    v1 = twopi * elong * (0.5D0*pi*rshell*a*a - 2.0D0/3.0D0*a*a*a)
-
-    !  Volume enclosed by inner (lower R) surface of elliptical section
-    !  and the vertical straight line joining its ends
-
-    a = rmini+drin ; b = zminor+dz ; elong = b/a
-    v2 = twopi * elong * (0.5D0*pi*rshell*a*a - 2.0D0/3.0D0*a*a*a)
-
-    !  Volume of inboard section of shell
-
-    vin = v2 - v1
-
-    !  Outboard section
-
-    !  Volume enclosed by inner (lower R) surface of elliptical section
-    !  and the vertical straight line joining its ends
-
-    a = rmino ; b = zminor ; elong = b/a
-    v1 = twopi * elong * (0.5D0*pi*rshell*a*a + 2.0D0/3.0D0*a*a*a)
-
-    !  Volume enclosed by outer (higher R) surface of elliptical section
-    !  and the vertical straight line joining its ends
-
-    a = rmino+drout ; b = zminor+dz ; elong = b/a
-    v2 = twopi * elong * (0.5D0*pi*rshell*a*a + 2.0D0/3.0D0*a*a*a)
-
-    !  Volume of outboard section of shell
-
-    vout = v2 - v1
-
-    !  Total shell volume
-
-    vtot = vin + vout
-
-  end subroutine eshellvol
-
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine sctfcoil_nuclear_heating_iter90(coilhtmx,dpacop,htheci,nflutf, &
        pheci,pheco,ptfiwp,ptfowp,raddose,ptfnuc)
@@ -2946,6 +2757,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     boa = bfw/afw
+
     tmprse = outlet_temp - inlet_temp
 
     it = 0
