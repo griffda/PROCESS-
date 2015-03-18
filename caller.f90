@@ -16,12 +16,14 @@ subroutine caller(xc,nvars)
   !+ad_call  availability_module
   !+ad_call  build_module
   !+ad_call  buildings_module
+  !+ad_call  ccfe_hcpb_module
   !+ad_call  costs_module
   !+ad_call  current_drive_module
   !+ad_call  divertor_module
   !+ad_call  fwbs_module
   !+ad_call  ife_module
   !+ad_call  ife_variables
+  !+ad_call  kit_hcpb_module
   !+ad_call  numerics
   !+ad_call  pfcoil_module
   !+ad_call  physics_module
@@ -111,6 +113,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  06/11/12 PJK Added plasma_geometry_module
   !+ad_hist  19/06/14 PJK Removed obsolete calls to nbeam, ech, lwhymod
   !+ad_hist  02/12/14 JM  Added new availability model in caller (avail_new)
+  !+ad_hist  13/03/15 JM  Changed calling of blanket models and import of blanket modules
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -122,8 +125,7 @@ subroutine caller(xc,nvars)
   use costs_module
   use current_drive_module
   use divertor_module
-  ! use fwbs_module
-  use fwbs_module
+   !use fwbs_module
   use fwbs_variables
   use ife_module
   use ife_variables
@@ -148,6 +150,7 @@ subroutine caller(xc,nvars)
   
   !  Import blanket modules
   use ccfe_hcpb_module
+  use kit_hcpb_module
 
   implicit none
 
@@ -161,31 +164,26 @@ subroutine caller(xc,nvars)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Increment the call counter
-
   ncalls = ncalls + 1
 
   !  Convert variables
-
   call convxc(xc,nvars)
 
   !  Perform the various function calls
 
   !  Stellarator calls
-
   if (istell /= 0) then
      call stcall
      return
   end if
 
   !  Inertial Fusion Energy calls
-
   if (ife /= 0) then
      call ifecll
      return
   end if
 
   !  Tokamak and RFP calls
-
   call geomty
   call radialb(nout,0)
   call vbuild
@@ -197,7 +195,6 @@ subroutine caller(xc,nvars)
   end if
 
   !call startup(nout,0)  !  commented-out for speed reasons
-
   if (irfp == 0) then
      call tfcoil(nout,0)
   else
@@ -216,9 +213,12 @@ subroutine caller(xc,nvars)
 
   call pulse(nout,0)
   
-  !call fwbs(nout,0)
-  call ccfe_hcpb(nout, 0)
-  
+  if (iblanket == 1) then
+	 call ccfe_hcpb(nout, 0)
+  else if (iblanket == 2) then
+     call kit_hcpb(nout, 0)  
+  end if 
+   
   call divcall(nout,0)
   call strucall(nout,0)
 
@@ -246,13 +246,6 @@ subroutine caller(xc,nvars)
 
   call costs(nout,0)
   
-  !select case (iblanket)
-  
-  !case (1)
-  !   call ccfe_hcpb(nout, 0)
-
-  !end select
-
   !+**PJK  if (ifispact.eq.1) then
   !+**PJK     call fispac(0)
   !+**PJK     call loca(nout,0)

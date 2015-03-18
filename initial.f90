@@ -66,7 +66,7 @@ subroutine initial
   !+ad_hist  31/10/12 PJK Removed RFP variables
   !+ad_hist  05/11/12 PJK Removed call to ifeini
   !+ad_hist  05/11/12 PJK Removed pulsed reactor variables
-  !+ad_hist  05/03/15 JM  
+  !+ad_hist  05/03/15 JM  Changed blanket fraction check to new models
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -523,15 +523,15 @@ subroutine check
 
   !  Solid breeder assumed if ipowerflow=0
 
-  if (ipowerflow == 0) blkttype = 3
+  !if (ipowerflow == 0) blkttype = 3
 
   !  Set coolant fluid type
 
-  if ((blkttype == 1).or.(blkttype == 2)) then
-     coolwh = 2  !  water
-  else
-     coolwh = 1  !  helium
-  end if
+  !if ((blkttype == 1).or.(blkttype == 2)) then
+  !   coolwh = 2  !  water
+  !else
+  !   coolwh = 1  !  helium
+  !end if
 
   !  But... set coolant to water if blktmodel > 0
   !  Although the *blanket* is by definition helium-cooled in this case,

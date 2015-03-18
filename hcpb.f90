@@ -83,8 +83,8 @@ module ccfe_hcpb_module
   !  Unit nuclear heating in TF coil (W per W of fusion power)
   real(kind=double), private :: tfc_nuc_heating
   
-  !  Unit nuclear heating in FW armour (W/kg per W of fusion power)
-  real(kind=double), private :: fw_w_u_nuc_heating
+  !  Unit heating of FW and armour in FW armour (W/kg per W of fusion power)
+  real(kind=double), private :: fw_armour_u_nuc_heating
   
   !  Unit nuclear heating in shield (W per W of fusion power)
   real(kind=double), private :: shld_u_nuc_heating
@@ -186,11 +186,14 @@ contains
     !+ad_desc  This routine calculates nuclear heating for the CCFE HCPB
     !+ad_desc  blanket model.
     !+ad_prob  None
+    !+ad_call  component_volumes
     !+ad_call  nuclear_heating_magnets
     !+ad_call  nuclear_heating_fw
     !+ad_call  nuclear_heating_blanket
     !+ad_call  nuclear_heating_shield
     !+ad_call  nuclear_heating_divertor
+    !+ad_call  powerflow_calc
+    !+ad_call  component_masses
     !+ad_call  write_ccfe_hcpb_output
     !+ad_hist  10/02/15 JM Initial version
     !+ad_stat  Okay
@@ -245,10 +248,10 @@ contains
     call nuclear_heating_divertor
     
     !  Power to VV or lost (MW)
-    pnucloss = 0.8D0 * emult * powfmw - pnucfw - pnucblkt - pnucshld - pnucdiv - ptfnuc
+    pnucvvplus = 0.8D0 * emult * powfmw - pnucfw - pnucblkt - pnucshld - pnucdiv - ptfnuc
     
-    if (pnucloss >=0 ) then
-		pseclossmw = pnucloss
+    if (pnucvvplus >=0 ) then
+		pseclossmw = pnucvvplus
 	
 	!  pnucloss is negative. split powfmw * emult between fw, bkt, shld, div and TF with same 
 	!  fractions as before
@@ -259,6 +262,8 @@ contains
 		pnucshld = (pnucshld / nuc_pow_dep_tot) * 0.8D0 * emult * powfmw
 		ptfnuc = (ptfnuc / nuc_pow_dep_tot) * 0.8D0 * emult * powfmw
 		pnucdiv = (pnucdiv / nuc_pow_dep_tot) * 0.8D0 * emult * powfmw
+		pnucvvplus = 0.0D0
+		pseclossmw = pnucvvplus
 	
 	end if
 
@@ -811,7 +816,7 @@ contains
 	
 	!  Exponents (tonne/m2)
 	!  Blanket exponent (/1000 for kg -> tonnes)
-    x_blanket = (armour_density * fw_w_thickness + &
+    x_blanket = (armour_density * fw_armour_thickness + &
 				fw_density * (fwith+fwoth)/2.0D0 + &
 				blanket_density * (blnkith+blnkoth)/2.0D0) / 1000.0D0
 				
@@ -845,11 +850,11 @@ contains
 
     implicit none
   
-    !  Unit heating of FW armour (W/kg per W of fusion power)
-    fw_w_u_nuc_heating = 6.25D-7
+    !  Unit heating of FW and armour (W/kg per W of fusion power)
+    fw_armour_u_nuc_heating = 6.25D-7
     
     !  Total nuclear heating in FW (MW)
-    pnucfw = fwmass * fw_w_u_nuc_heating * powfmw
+    pnucfw = fwmass * fw_armour_u_nuc_heating * powfmw
   
   end subroutine
 
@@ -989,12 +994,8 @@ contains
     !  If we have chosen pressurised water as the coolant, set the
     !  coolant outlet temperature as 20 deg C below the boiling point
     !if (coolwh == 2) then
-    !    outlet_temp = tsat(1.0D-6*coolp) - 20.0D0  !  in K
+    !    outlet_temp = tsat_refprop(coolp*1.0D6, coolwh) - 20.0D0  !  in K
     !end if
-
-	!  Inboard and outboard FW coolant void fraction
-    vffwi = afwi*afwi/(bfwi*bfwi)
-    vffwo = afwo*afwo/(bfwo*bfwo)
 
     !  Surface heat flux on first wall (MW) (sum = pradfw)
     psurffwi = pradfw * fwareaib/fwarea
@@ -1012,7 +1013,7 @@ contains
 	!  Detailed model
 	else
 		
-		call detailed_powerflow_model
+		call thermo_hydraulic_model
 		
 	end if
 	
@@ -1031,18 +1032,13 @@ contains
     !  Divertor pumping power (MW)
     htpmw_div = fpumpdiv*(pdivt + pnucdiv + praddiv)
 
-    !  If not superconducting coils then power to the TF is zero
-    if (itfsup == 0) then
-        ptfnuc = 0.0D0
-    end if
-  
   end subroutine
   
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-  subroutine detailed_powerflow_model
-	!+ad_name  detailed_powerflow_model
-    !+ad_summ  Calculations for detailed powerflow
+  subroutine thermo_hydraulic_model
+	!+ad_name  thermo_hydraulic_model
+    !+ad_summ  Calculations for detailed thermo-hydraulic model for fw
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
@@ -1134,8 +1130,8 @@ contains
 
     !  Repeat thermal hydraulic calculations for outboard side
 
-    !  Calculation of max FW temp. Include NBI orbit loss power and a fraction of the escaped 
-    !  alpha power as components of the outboard wall surface power
+    !  Calculation of max FW temp. Include NBI orbit loss power (assume to be only on outboard side)
+    ! and a fraction of the escaped alpha power as components of the outboard wall surface power
     call iterate_fw(afwo, bfwo, fwareaob, (psurffwo + porbitlossmw + fwareaob/fwarea*palpfwmw), &
         bllengo, fwerlim, pnucfwo, tpeakfwo, cf, rhof, velfwo)
 
@@ -1161,8 +1157,7 @@ contains
     mfblkto = 1.0D6*(pnucblkto) / (cf*(outlet_temp-inlet_temp))  !  kg/s
 
     !  Calculate total number of pipes (in all outboard modules) from coolant fraction and 
-    !  channel dimensions
-    !  Assumes up/down flow, two 90 deg bends per length
+    !  channel dimensions (assumes up/down flow, two 90 deg bends per length)
     npblkto = (vfblkt*volblkto)/(pi*afwo*afwo*bzfllengo)
 
     !  mass flow rate per coolant pipe (kg/s)
@@ -1238,6 +1233,7 @@ contains
     whtbltibe12 = volblkt * fbltibe12 * 2260.0D0
     
     !  Blanket Lithium orthosilicate mass (kg)
+    !  Ref: www.rockwoodlithium.com...
     whtblli2sio4 = volblkt * fblli2sio4 * 2400.0D0
     
     !  Blanket Steel mass (kg)
@@ -1257,6 +1253,12 @@ contains
 
 	!  First wall mass (kg)
     fwmass = denstl * volfw
+    
+    !  First wall armour volume (m^3)
+    fw_armour_vol = sarea*fw_armour_thickness
+    
+    !  First wall armour mass (kg)
+    fw_armour_mass = fw_armour_vol*W_density
   
   end subroutine
   
@@ -1435,7 +1437,7 @@ contains
        !  Heat flux incident on the first wall surface from electromagnetic radiation flux (W/m2)      
        qpp = 1.0D6 * prad_incident / area
 
-       !  Coolant properties at average coolant temperature
+       !  Coolant properties at average coolant temperature (tb)
        !  tb is not known at this point, but since we only need the cf output (which does not
        !  depend on tb) we simply use outlet_temp as the input for tb
        call cprops(outlet_temp, cf, rhof, viscf, viscfs, kf)
@@ -1513,7 +1515,7 @@ contains
        !  the wall lifetime. This fluence limit is a conservative one, with
        !  the upper bound on the fluence set by the value abktflnc (MW-yr/m2)
 
-       !  Fluence
+       !  Fluence (MW-yr/m^2)
        flnce = 1.0D-6*qppp * fwvol/area * fwlife
 
        !  Calculate peak temperature - occurs at (r,theta) = (bfw,0)
@@ -1537,11 +1539,8 @@ contains
 
           bfw = bfw*fboa
           if ((bfw/afw) <= 1.001D0) then
-             write(*,*) 'Warning in routine ITERATE_FW:'
-             write(*,*) 'Swelling limit exceeded, and'
-             write(*,*) 'optimisation is failing to find a'
-             write(*,*) 'suitable first wall thickness...'
-             write(*,*) 'PROCESS continuing.'
+             write(*,*) 'Warning in routine ITERATE_FW: Swelling limit exceeded, and optimisation'// &
+             ' is failing to find a suitable first wall thickness...PROCESS continuing.'
              exit iteration
           else
              cycle iteration
@@ -1700,62 +1699,14 @@ contains
     !  x: average coolant temperature (K)
     !  y: average coolant temperature at the material surface (K)
     x = 0.5D0*(outlet_temp + inlet_temp)
+    
+    !  y = tb?!
     y = x + 0.5D0*( (tb - outlet_temp) + (tb - inlet_temp) )
 
-    if (irefprop == 0) then  !  Use Panos's correlations
+    call fluid_properties(x, coolp, coolwh, density=rhof, thermal_conductivity=kf, &
+      viscosity=viscf, specific_heat_const_p=cf)
 
-       if (coolwh == 1) then  !  Helium coolant
-
-          !  Specific heat capacity of gaseous coolant (J/kg/K)
-          gascf = 8314.3D0/4.0026D0
-
-          !  Density (kg/m3)
-          rhof = coolp / (gascf*x)
-
-          !  Thermal conductivity (W/m/K)
-          kf = 0.033378D0 + 4.2674D-04*x - 1.0807D-07*x*x
-
-          !  Dynamic viscosity of the fluid at the bulk temperature (Pa-s)
-          viscf  = 4.7744D-07*x**0.6567D0
-
-          !  Dynamic viscosity of the fluid at the wall temperature (Pa-s)
-          viscfs = 4.7744D-07*y**0.6567D0
-
-          !  Specific heat capacity at constant pressure (J/kg/K)
-          cf = 5193.0D0
-
-       else  !  Pressurized water coolant
-
-          !  Thermal conductivity (W/m/K)
-          kf  = 8.9372D0 - 0.048702D0*x + 9.6994D-05*x*x - 6.5541D-08*x*x*x
-          kfs = 8.9372D0 - 0.048702D0*y + 9.6994D-05*y*y - 6.5541D-08*y*y*y
-
-          !  Specific heat capacity at constant pressure (J/kg/K)
-          cf  = -371240.0D0 + 2188.7D0*x - 4.2565D0*x*x + 0.0027658D0*x*x*x
-          cfs = -371240.0D0 + 2188.7D0*y - 4.2565D0*y*y + 0.0027658D0*y*y*y
-
-          !  Prandtl number
-          pran  = -68.469D0 + 0.41786D0*x - 8.3547D-04*x*x + 5.5443D-07*x*x*x
-          prans = -68.469D0 + 0.41786D0*y - 8.3547D-04*y*y + 5.5443D-07*y*y*y
-
-          !  Density (kg/m3)
-          rhof = 15307.0D0 - 81.04D0*x + 0.15318D0*x*x - 9.8061D-05*x*x*x
-
-          !  Dynamic viscosity (Pa-s)
-          viscf = kf*pran/cf
-          viscfs = kfs*prans/cfs
-
-       end if
-
-    else  !  use REFPROP interface routine
-
-       call fluid_properties(x, coolp, coolwh, &
-            density=rhof, thermal_conductivity=kf, viscosity=viscf, &
-            specific_heat_const_p=cf)
-
-       call fluid_properties(y, coolp, coolwh, viscosity=viscfs)
-
-    end if
+    call fluid_properties(y, coolp, coolwh, viscosity=viscfs)
 
   end subroutine cprops
 
@@ -1788,7 +1739,7 @@ contains
     
     call osubhd(ofile, 'Component Volumes :')
     
-    ! TODO: Volume of FW ARMOUR
+    call ovarrf(ofile, 'First Wall Armour Volume (m3)', '(fw_armour_vol)', fw_armour_vol)
     call ovarrf(ofile, 'First Wall Volume (m3)', '(volfw)', volfw)
     call ovarrf(ofile, 'Blanket Volume (m3)', '(volblkt)', volblkt)
     call ovarrf(ofile, 'Shield Volume (m3)', '(volshld)', volshld)
@@ -1796,7 +1747,7 @@ contains
         
     call osubhd(ofile, 'Component Masses :')
     
-    ! TODO: Mass of FW ARMOUR
+    call ovarre(ofile, 'First Wall Armour Mass (kg)', '(fw_armour_mass)', fw_armour_mass)
     call ovarre(ofile, 'First Wall Mass (kg)', '(fwmass)', fwmass)
     call ovarre(ofile, 'Blanket Mass - Total(kg)', '(whtblkt)', whtblkt)
     call ovarre(ofile, 'Blanket Mass - TiBe12 (kg)', '(whtbltibe12)', whtbltibe12)
@@ -1818,7 +1769,7 @@ contains
        call ovarre(ofile,'ST centrepost heating (MW)','(pnuccp)',pnuccp)
     end if
     
-    call ovarre(ofile, 'Total nuclear heating in TF coil (MW)', '(ptfnuc)', ptfnuc) 
+    call ovarre(ofile, 'Total nuclear heating in TF+PF coils (CS is negligible) (MW)', '(ptfnuc)', ptfnuc) 
     call ovarre(ofile, 'Total nuclear heating in FW (MW)', '(pnucfw)', pnucfw) 
 	call ovarre(ofile, 'Total nuclear heating in the blanket (including emult) (MW)', '(pnucblkt)', pnucblkt) 
 	call ovarre(ofile, 'Total nuclear heating in the shield (MW)', '(pnucshld)', pnucshld)
@@ -1856,7 +1807,7 @@ contains
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    
-  function st_centrepost_nuclear_heating(pneut,cphalflen,cpradius,rmajor) &
+  function st_centrepost_nuclear_heating(pneut, cphalflen, cpradius, rmajor) &
        result(pnuccp)
 
     !+ad_name  st_centrepost_nuclear_heating
@@ -1902,72 +1853,7 @@ contains
   end function st_centrepost_nuclear_heating
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   
-  function tsat(p)
-
-    !+ad_name  tsat
-    !+ad_summ  Saturation temperature of water as a function of pressure
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  P Karditsas, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  p  : input real : saturated liquid/steam pressure (MPa)
-    !+ad_desc  This routine calculates the saturation temperature (K) of
-    !+ad_desc  water given the pressure. The calculation is performed
-    !+ad_desc  either by calling a REFPROP routine, or by using an
-    !+ad_desc  algorithm taken from Panos's satliq routine.
-    !+ad_prob  None
-    !+ad_call  tsat_refprop
-    !+ad_hist  04/09/14 PJK Initial version
-    !+ad_hist  17/12/14 PJK Added call to REFPROP interface
-    !+ad_stat  Okay
-    !+ad_docs  Blanket and Energy Conversion Model for Fusion Reactors,
-    !+ad_docc  Dr. P.J. Karditsas, AEA Technology, Theoretical and Strategic Studies
-    !+ad_docc  Dept., Culham Laboratory, Abingdon
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    real(kind=double) :: tsat
-
-    !  Arguments
-
-    real(kind=double), intent(in) :: p
-
-    !  Local variables
-
-    real(kind=double) :: ta1, ta2, ta3, ta4, ta5, ta6, ta7
-
-    !  Global shared variables
-    !  Inputs: coolwh, irefprop
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    if (irefprop == 1) then
-
-       tsat = tsat_refprop(p*1.0D6, coolwh)
-
-    else
-
-       !  Method taken from Panos Karditsas's satliq routine
-       ta1 = 168.396D0
-       ta2 =   0.314653D0
-       ta3 =  -0.000728D0
-       ta4 =  31.588979D0
-       ta5 =  11.473141D0
-       ta6 =  -0.575335D0
-       ta7 =   0.013165D0
-
-       tsat = 273.15D0 + ta1 + ta2/p + ta3/p**2 + ta4*log(p) &
-            + ta5*p + ta6*p*p + ta7*p*p*p
-
-    end if
-
-  end function tsat
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+    
   function tk(t)
     !+ad_name  tk
     !+ad_summ  Calculates the thermal conductivity of the first wall
@@ -1993,25 +1879,19 @@ contains
 
     implicit none
 
-    real(kind=double) :: tk
+    real(kind=double) :: tk, temp
 
     !  Arguments
     real(kind=double), intent(in) :: t
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !if (first wall material is Eurofer) then
-    !
-    !   ! Eurofer correlation, from "Fusion Demo Interim Structural Design Criteria - 
-    !   ! Appendix A Material Design Limit Data", F. Tavassoli, TW4-TTMS-005-D01, 2004
-    !
-    !   tk = 5.4308D0 + 0.13565D0*t - 0.00023863D0*t*t + 1.3393D-7*t*t*t
-    !
-    !else if (first wall material is 316 stainless steel)
-    !
-    !   ! 316 stainless steel correlation, from pulse.f90 module
-    !
-    tk = 3.78D0 * t**0.28D0
+	! Convert to Kelvin
+    temp = t + 273.15
+
+    ! Eurofer correlation, from "Fusion Demo Interim Structural Design Criteria - 
+    ! Appendix A Material Design Limit Data", F. Tavassoli, TW4-TTMS-005-D01, 2004
+    tk = 5.4308D0 + 0.13565D0*temp - 0.00023862D0*temp*temp + 1.3393D-7*temp*temp*temp
 
   end function tk
 
@@ -2179,30 +2059,29 @@ contains
 
     else  !  helium coolant
 
-       if (irefprop == 0) then
-          !  Treat as for water
-          ppump = deltap*mf / (rhof*etaiso)
+       !if (irefprop == 0) then
+       !   !  Treat as for water
+       !   ppump = deltap*mf / (rhof*etaiso)
 
-       else
-          !  Compressible fluid pumping power (MW)
+       !else
+       !  Compressible fluid pumping power (MW)
 
-          !  Inlet pressure (Pa)
+       !  Inlet pressure (Pa)
+       coolpin = coolp + 1.0D6*deltap
 
-          coolpin = coolp + 1.0D6*deltap
+       !  Obtain inlet enthalpy and entropy from inlet pressure and temperature
+       call fluid_properties(inlet_temp, coolpin, coolwh, enthalpy=h2, entropy=s2)
 
-          !  Obtain inlet enthalpy and entropy from inlet pressure and temperature
-          call fluid_properties(inlet_temp, coolpin, coolwh, enthalpy=h2, entropy=s2)
+       !  Assume isentropic pump so that s1 = s2
+       s1 = s2
 
-          !  Assume isentropic pump so that s1 = s2
-          s1 = s2
+       !  Get enthalpy (J/kg) before pump using coolp and s1
+       call enthalpy_ps(coolp, s1, coolwh, h1)
 
-          !  Get enthalpy (J/kg) before pump using coolp and s1
-          call enthalpy_ps(coolp, s1, coolwh, h1)
+       !  Pumping power (MW)
+       ppump = 1.0D-6 * mf * (h2-h1) / etaiso
 
-          !  Pumping power (MW)
-          ppump = 1.0D-6 * mf * (h2-h1) / etaiso
-
-       end if
+       !end if
 
     end if
 
@@ -2256,16 +2135,26 @@ module kit_hcpb_module
   !  IB = inboard, OB = outboard
 
   !  Modules to import
+  use build_variables
+  use cost_variables
   use error_handling
+  use fwbs_variables
+  use physics_variables
+  use process_output
+  use tfcoil_variables
+  use times_variables
 
   implicit none
 
   !  Subroutine declarations
   private
-  public :: kit_hcpb_blanket
+  public :: kit_hcpb
   
   !  Precision variable
   integer, parameter :: double = 8
+ 
+  !  Variables for output to file
+  integer, private :: ip, ofile
   
   !  Array length
   integer, parameter :: np = 2
@@ -2410,12 +2299,13 @@ module kit_hcpb_module
   real(kind=double), public :: t_bl_fpy ! [y] blanket lifetime in full power years
   real(kind=double), public :: t_bl_y   ! [y] blanket lifetime in calendar years
 
+  !  Inboard/outboard void fraction of blanket
+  real(kind=double), private :: vfblkti, vfblkto
+
 contains
 
-  ! TODO : main function for calling
-  ! TODO : component mass calculation
-  ! TODO : check of fractions in initial.f90
   ! TODO : global check
+  ! TODO : Output section for model!
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2456,15 +2346,16 @@ contains
   
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-  subroutine kit_hcpb_blanket
+  subroutine kit_hcpb(outfile, iprint)
 
-    !+ad_name  kit_hcpb_blanket
+    !+ad_name  kit_hcpb
     !+ad_summ  Main routine for the KIT HCPB blanket model
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_auth  F Franza, KIT (original MATLAB implementation)
     !+ad_cont  None
-    !+ad_args  None
+    !+ad_args  outfile : input integer : output file unit
+    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_desc  This routine calls the main work routines for the KIT HCPB
     !+ad_desc  blanket model.
     !+ad_prob  None
@@ -2481,9 +2372,88 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
+    
+    !  Arguments
+
+    integer, intent(in) :: iprint, outfile
+
+    !  Assign module private variables to iprint and outfile
+    ip = iprint
+    ofile = outfile
+
+	!  Convert global variables into KIT blanket inputs
+    A_FW_IB = fwareaib * 1.0D4  ! [cm^2] IB first wall area
+    A_FW_OB = fwareaob * 1.0D4  ! [cm^2] OB first wall area
+    A_bl_IB = blareaib * 1.0D4  ! [cm^2] IB blanket area
+    A_bl_OB = blareaob * 1.0D4  ! [cm^2] OB blanket area
+    A_VV_IB = shareaib * 1.0D4  ! [cm^2] IB shield/VV area
+    A_VV_OB = shareaob * 1.0D4  ! [cm^2] OB shield/VV area
+    P_n = pneutmw               ! [MW] Fusion neutron power
+    NWL_av = wallmw             ! [MW/m^2] Average neutron wall load
+    f_peak = wallpf             ! [--] NWL peaking factor
+    t_FW_IB = fwith * 100.0D0   ! [cm] IB first wall thickness
+    t_FW_OB = fwoth * 100.0D0   ! [cm] OB first wall thickness
+    !  f_FW = 0.99D0            ! [--] Frac. FW area for junctions, etc.
+    CF_bl = (1.0D0-fhole-fhcd-fdiv) * 100.0D0 ! [%] Blanket coverage factor
+    n_ports_div = npdiv         ! [ports] Number of divertor ports
+    n_ports_H_CD_IB = nphcdin   ! [ports] Number of IB H&CD ports
+    n_ports_H_CD_OB = nphcdout  ! [ports] Number of OB H&CD ports
+
+    if (hcdportsize == 1) then
+       H_CD_ports = 'small'
+    else
+       H_CD_ports = 'large'
+    end if
+
+    e_Li = li6enrich            ! [%] Lithium 6 enrichment
+    t_plant = tlife/cfactr      ! [FPY] Plant lifetime
+    alpha_m = cfactr            ! [--] Availability factor
+    alpha_puls = tpulse/(tramp+tpulse+tdwell) ! [--] Pulsed regime fraction
+
+    !  Breeder type (allowed values are Orthosilicate, Metatitanate or Zirconate)
+    !
+    !  Mass densities supplied by F. Franza, taken from Seventh International
+    !  Workshop on Ceramic Breeder Blanket Interactions, September 14-16, 1998,
+    !  Petten, Netherlands:
+    !                              Li4Si04      Li2TiO3      Li2ZrO3
+    !  Theory density [g/cm^3]      2.40         3.45         4.19
+    !  Material density             98 %         94 %         89 %
+    !  Packing factor               64 %         55 %         57 %
+    !  Pebble bed density [g/cm^3]  1.50         1.78         2.12
+    if (breedmat == 1) then
+       breeder = 'Orthosilicate'
+       densbreed = 1.50D3
+    else if (breedmat == 2) then
+       breeder = 'Metatitanate'
+       densbreed = 1.78D3
+    else
+       breeder = 'Zirconate'  !  (In reality, rarely used - activation problems)
+       densbreed = 2.12D3
+    end if
+
+    !  Inboard parameters
+    t_BZ_IB = blbuith * 100.0D0          ! [cm] BZ thickness
+    t_BM_IB = blbmith * 100.0D0          ! [cm] BM thickness
+    t_BP_IB = blbpith * 100.0D0          ! [cm] BP thickness
+    t_VV_IB = (shldith+ddwi) * 100.0D0   ! [cm] VV thickness
+    alpha_BM_IB = fblhebmi * 100.0D0     ! [%] Helium fraction in the IB BM
+    alpha_BP_IB = fblhebpi * 100.0D0     ! [%] Helium fraction in the IB BP
+    chi_Be_BZ_IB = fblbe * 100.0D0       ! [%] Beryllium vol. frac. in IB BZ
+    chi_breed_BZ_IB = fblbreed * 100.0D0 ! [%] Breeder vol. frac. in IB BZ
+    chi_steels_BZ_IB = fblss * 100.0D0   ! [%] Steels vol. frac. in IB BZ
+
+    !  Outboard parameters
+    t_BZ_OB = blbuoth * 100.0D0          ! [cm] BZ thickness
+    t_BM_OB = blbmoth * 100.0D0          ! [cm] BM thickness
+    t_BP_OB = blbpoth * 100.0D0          ! [cm] BP thickness
+    t_VV_OB = (shldoth+ddwi) * 100.0D0   ! [cm] VV thickness
+    alpha_BM_OB = fblhebmo * 100.0D0     ! [%] Helium fraction in the OB BM
+    alpha_BP_OB = fblhebpo * 100.0D0     ! [%] Helium fraction in the OB BP
+    chi_Be_BZ_OB = fblbe * 100.0D0       ! [%] Beryllium vol. frac. in OB BZ
+    chi_breed_BZ_OB = fblbreed * 100.0D0 ! [%] Breeder vol. frac. in OB BZ
+    chi_steels_BZ_OB = fblss * 100.0D0   ! [%] Steels vol. frac. in OB BZ
 
     !  Perform preliminary calculations for the PPCS Model B configuration
-
     !  Blanket coverage factor (%)
     CF_bl_PPCS = A_FW_PPCS/A_cov_PPCS * 100.0D0
 
@@ -2514,8 +2484,38 @@ contains
          vvhemini,vvhemino,vvhemaxi,vvhemaxo)
 
     call blanket_lifetime(t_bl_FPY,t_bl_Y)
+    
+    call component_masses
+    
+    !  Transfer output values from model to global variables
+    pnucblkt = P_th_tot
+    pnucshld = pnucsh
+    emult = M_E
+    tbr = tbratio
+    tritprate = G_tot
+    bktlife = t_bl_fpy  !  This is later adjusted for availability in routine AVAIL
 
-  end subroutine kit_hcpb_blanket
+    !  Peak fast neutron fluence on TF coils (neutrons/m2)
+    nflutf = max(nflutfi,nflutfo) * 1.0D4
+
+    !  Peak nuclear heating in TF coil (MW/m3)
+    ptfnucpm3 = max(pnuctfi,pnuctfo)
+
+    !  Total nuclear heating in TF coil (MW)
+    !  Rough estimate of TF coil volume used, assuming 25% of the total
+    !  TF coil perimeter is inboard, 75% outboard
+    ptfnuc = 0.25D0*tfleng*tfareain * pnuctfi &
+         + 0.75D0*tfleng*arealeg*tfno * pnuctfo
+
+    !  Maximum helium concentration in vacuum vessel at
+    !  end of plant lifetime (appm)
+    vvhemax = max(vvhemaxi,vvhemaxo)
+    
+    if (ip == 0) return
+    
+    call write_kit_hcpb_output
+
+  end subroutine kit_hcpb
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -3178,6 +3178,147 @@ contains
 
   end subroutine blanket_lifetime
 
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  subroutine component_masses
+    !+ad_name  component_masses
+    !+ad_summ  Calculations for component masses
+    !+ad_type  Subroutine
+    !+ad_auth  J. Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  Calculations for component masses
+    !+ad_prob  None
+    !+ad_hist  23/02/15 JM  Initial version
+    !+ad_stat  Okay
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    implicit none
+    
+    !  Mass of steel in blanket (kg)
+    whtblss = denstl * ( volblkti/blnkith * ( blbuith * fblss + blbmith * (1.0D0-fblhebmi) + &
+		blbpith * (1.0D0-fblhebpi) ) + volblkto/blnkoth * ( blbuoth * fblss + &
+		blbmoth * (1.0D0-fblhebmo) + blbpoth * (1.0D0-fblhebpo) ) )
+            
+    !  Mass of beryllium in blanket (kg)
+    whtblbe = 1850.0D0 * fblbe * ( (volblkti * blbuith/blnkith) + (volblkto * blbuoth/blnkoth) )
+       
+    !  Mass of breeder material in blanket (kg)
+    whtblbreed = densbreed * fblbreed * ( (volblkti * blbuith/blnkith) + (volblkto * blbuoth/blnkoth) )
+    
+    !  Mass of blanket (kg)
+    whtblkt = whtblss + whtblbe + whtblbreed
+
+	!  Void fraction of blanket inboard portion
+    vfblkti = volblkti/volblkt * ( (blbuith/blnkith) * (1.0D0 - fblbe - fblbreed - fblss) &
+       + (blbmith/blnkith) * fblhebmi + (blbpith/blnkith) * fblhebpi )
+       
+    !  Void fraction of blanket outboard portion
+    vfblkto = volblkto/volblkt * ( (blbuoth/blnkoth) * (1.0D0 - fblbe - fblbreed - fblss) &
+       + (blbmoth/blnkoth) * fblhebmo + (blbpoth/blnkoth) * fblhebpo )
+       
+    !  Void fraction of blanket
+    vfblkt = vfblkti + vfblkto
+  
+  end subroutine
+  
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  subroutine write_kit_hcpb_output
+	!+ad_name  write_kit_hcpb_output
+    !+ad_summ  Write output to file for KIT HCPB model
+    !+ad_type  Subroutine
+    !+ad_auth  J. Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  This subroutine outputs the CCFE HCPB model results to 
+    !+ad_desc  an output file
+    !+ad_prob  None
+    !+ad_hist  12/03/15 JM  Initial version
+    !+ad_stat  Okay
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+    
+    call oheadr(ofile, 'Blanket model output - KIT HCPB model')   
+    call osubhd(ofile, 'Blanket Composition :')
+ 
+    !call ovarrf(ofile, 'Titanium beryllide fraction', '(fbltibe12)', fbltibe12)
+    !call ovarrf(ofile, 'Lithium orthosilicate fraction', '(fblli2sio4)', fblli2sio4)
+    !call ovarrf(ofile, 'Steel fraction', '(fblss)', fblss)
+    !call ovarrf(ofile, 'Void fraction coolant', '(vfcblkt)', vfcblkt)
+    !call ovarrf(ofile, 'Void fraction purge gas', '(vfpblkt)', vfpblkt)
+    
+    !call osubhd(ofile, 'Component Volumes :')
+    
+    ! TODO: Volume of FW ARMOUR
+    !call ovarrf(ofile, 'First Wall Volume (m3)', '(volfw)', volfw)
+    !call ovarrf(ofile, 'Blanket Volume (m3)', '(volblkt)', volblkt)
+    !call ovarrf(ofile, 'Shield Volume (m3)', '(volshld)', volshld)
+    !call ovarre(ofile, 'Vacuum vessel volume (m3)', '(vdewin)', vdewin)
+        
+    !call osubhd(ofile, 'Component Masses :')
+    
+    ! TODO: Mass of FW ARMOUR
+    !call ovarre(ofile, 'First Wall Mass (kg)', '(fwmass)', fwmass)
+    !call ovarre(ofile, 'Blanket Mass - Total(kg)', '(whtblkt)', whtblkt)
+    !call ovarre(ofile, 'Blanket Mass - TiBe12 (kg)', '(whtbltibe12)', whtbltibe12)
+    !call ovarre(ofile, 'Blanket Mass - Li2SiO4 (kg)', '(whtblli2sio4)', whtblli2sio4)
+    !call ovarre(ofile, 'Blanket Mass - Steel (kg)', '(whtblss)', whtblss)
+    !call ovarre(ofile, 'Shield Mass (kg)', '(whtshld)', whtshld)
+    !call ovarre(ofile, 'Vacuum vessel mass (kg)', '(cryomass)', cryomass)
+    
+    !  Nuclear heting section
+    !call osubhd(ofile, 'Nuclear heating :')
+    
+    !call ovarre(ofile, 'Average neutron wall load (MW/m2)','(wallmw)', wallmw)
+    !call ovarre(ofile, 'First wall full-power lifetime (years)', '(fwlife)', fwlife)
+    !call oblnkl(ofile)
+    
+    !  ST centre post
+    !if (itart == 1) then
+    !   call osubhd(ofile,'(Copper centrepost used)')
+    !   call ovarre(ofile,'ST centrepost heating (MW)','(pnuccp)',pnuccp)
+    !end if
+    
+    !call ovarre(ofile, 'Total nuclear heating in TF coil (MW)', '(ptfnuc)', ptfnuc) 
+    !call ovarre(ofile, 'Total nuclear heating in FW (MW)', '(pnucfw)', pnucfw) 
+	!call ovarre(ofile, 'Total nuclear heating in the blanket (including emult) (MW)', '(pnucblkt)', pnucblkt) 
+	!call ovarre(ofile, 'Total nuclear heating in the shield (MW)', '(pnucshld)', pnucshld)
+	!call ovarre(ofile, 'Total nuclear heating in the divertor (MW)', '(pnucdiv)', pnucdiv)
+    !call oblnkl(ofile)
+    
+    !call osubhd(ofile,'Thermodynamic Model Output :')
+    
+    !call ovarin(ofile, 'Switch for plant secondary cycle ', '(secondary_cycle)', secondary_cycle) 
+    !call ovarre(ofile, 'First wall coolant pressure (Pa)', '(coolp)', coolp)
+    !call ovarre(ofile, 'Inner radius of inboard first wall coolant channels (m)', '(afwi)', afwi)
+    !call ovarre(ofile, 'Outer radius of inboard first wall coolant channels (m)', '(bfwi)', bfwi)
+    !call ovarre(ofile, 'Inner radius of outboard first wall coolant channels (m)', '(afwo)', afwo)
+    !call ovarre(ofile, 'Outer radius of outboard first wall coolant channels (m)', '(bfwo)', bfwo)
+    !call ovarrf(ofile, 'Inlet temperature of coolant (K)', '(inlet_temp)', inlet_temp)
+    !call ovarrf(ofile, 'Outlet temperature of coolant (K)', '(outlet_temp)', outlet_temp)
+    !call ovarre(ofile, 'Erosion thickness allowance for first wall (m)', '(fwerlim)', fwerlim)
+    !call ovarre(ofile, 'Maximum temperature of first wall material (K)', '(tfwmatmax)', tfwmatmax)
+    !call ovarin(ofile, 'No of inboard blanket modules poloidally', '(nblktmodpi)', nblktmodpi)
+    !call ovarin(ofile, 'No of inboard blanket modules toroidally', '(nblktmodti)', nblktmodti)
+    !call ovarin(ofile, 'No of outboard blanket modules poloidally', '(nblktmodpo)', nblktmodpo)
+    !call ovarin(ofile,'No of outboard blanket modules toroidally', '(nblktmodto)', nblktmodto)
+    !call ovarre(ofile, 'Isentropic efficiency of first wall / blanket coolant pumps', '(etaiso)', etaiso)
+    
+    !call osubhd(ofile, 'Other volumes, masses and areas :')
+    !call ovarre(ofile, 'First wall area (m2)', '(fwarea)', fwarea)
+    !call ovarre(ofile, 'External cryostat radius (m)', '(rdewex)', rdewex)
+    !call ovarre(ofile, 'External cryostat half-height (m)', '(zdewex)', zdewex)
+    !call ovarre(ofile, 'External cryostat volume (m3)', '(vdewex)', vdewex)
+    !call ovarre(ofile, 'Total cryostat + vacuum vessel mass (kg)', '(dewmkg)', dewmkg)
+    !call ovarre(ofile, 'Divertor area (m2)', '(divsur)', divsur)
+    !call ovarre(ofile, 'Divertor mass (kg)', '(divmas)', divmas)
+    
+  end subroutine
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 end module
+
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

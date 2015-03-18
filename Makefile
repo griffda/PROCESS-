@@ -207,8 +207,8 @@ default: process.exe
 
 availability.o: global_variables.o output.o
 buildings.o: global_variables.o output.o
-caller.o: availability.o buildings.o costs.o current_drive.o divertor.o fwbs.o \
-  global_variables.o ife.o machine_build.o numerics.o output.o pfcoil.o physics.o \
+caller.o: availability.o buildings.o costs.o current_drive.o divertor.o fwbs.o\
+  global_variables.o hcpb.o ife.o machine_build.o numerics.o output.o pfcoil.o physics.o \
   plant_power.o plasma_geometry.o pulse.o rfp.o sctfcoil.o startup.o structure.o \
   stellarator.o tfcoil.o vacuum.o
 constraint_equations.o: error_handling.o global_variables.o numerics.o

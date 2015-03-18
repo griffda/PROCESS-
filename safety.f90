@@ -424,7 +424,6 @@
 
     else  !  New blanket model
 
-       !if (smstr == 1) then
        if (blkttype == 3) then
 
           !  Li2O/Be solid blanket

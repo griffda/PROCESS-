@@ -70,21 +70,17 @@ program process
   !  Arguments
 
   !  Local variables
-
   integer :: ifail
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Initialise things
-
   call init
 
   !  Call equation solver (HYBRD)
-
   call eqslv(ifail)
 
   !  Call routine to do optimisation scans
-
   if (ioptimz >= 0) then
      call scan
   else
@@ -157,44 +153,35 @@ subroutine init
   !  Arguments
 
   !  Local variables
-
   integer :: i
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Initialise error handling
-
   call initialise_error_list
 
   !  Initialise the program variables
-
   call initial
 
   !  Open the three input/output external files
-
   open(unit=nin,file='IN.DAT',status='old')
   open(unit=nout,file='OUT.DAT',status='unknown')
   open(unit=nplot,file='PLOT.DAT',status='unknown')
   open(unit=mfile,file='MFILE.DAT',status='unknown')
 
   !  Input any desired new initial values
-
   call input
 
   !  Initialise impurity radiation data
-
   if (imprad_model == 1) call initialise_imprad
 
   !  Check input data for errors/ambiguities
-
   call check
 
   !  Write to the output file certain relevant details about this run
-
   call run_summary
 
   !  Open verbose diagnostics file
-
   if (verbose == 1) then
      open(unit=vfile,file='VFILE.DAT',status='unknown')  
      write(vfile,'(a80)') 'nviter = number of VMCON iterations.'
@@ -266,11 +253,9 @@ subroutine inform(progid)
   implicit none
 
   !  Arguments
-
   character(len=72), dimension(0:10) :: progid
 
   !  Local variables
-
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
@@ -281,21 +266,18 @@ subroutine inform(progid)
 
   !  External routines
 
-!  external system
+  !  external system
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Program name
-
   progname = 'PROCESS'
 
   !  Create temporary data file
-
   call system('/bin/rm -f '// tempfile // char(0))
   call system('/bin/touch '// tempfile // char(0))
 
   !  Write information to data file
-
   call system('/bin/date >> ' // tempfile // char(0))
   call system('/usr/bin/whoami >> ' // tempfile // char(0))
   call system("/usr/bin/finger `/usr/bin/whoami` " // &
@@ -305,7 +287,6 @@ subroutine inform(progid)
   call system('/bin/pwd >> ' // tempfile // char(0))
 
   !  Read back information into ID array
-
   unit = 20
   unit_available = .false.
   do while (.not.unit_available)
@@ -322,12 +303,10 @@ subroutine inform(progid)
   close(unit)
 
   !  Delete temporary data file
-
   call system('/bin/rm -f ' // tempfile // char(0))
 
   !  Annotate information and store in PROGID character array
   !  for use in other program units via the routine argument
-
   progid(1) = '  Program : ' // progname
   progid(2) = '  Version : ' // progver
   progid(3) = 'Date/time : ' // id(1)
@@ -336,7 +315,6 @@ subroutine inform(progid)
   progid(6) = 'Directory : ' // id(5)
 
   !  Summarise most useful data, and store in progid(0)
-
   progid(0) = trim(progname) // ' ' // trim(progver(:7)) // &
        ' : Run on ' // trim(id(1)) // ' by ' // trim(id(3))
 
@@ -389,7 +367,6 @@ subroutine run_summary
   !  Arguments
 
   !  Local variables
-
   integer, parameter :: width = 110
   integer :: lap, ii, outfile
   character(len=72), dimension(0:10) :: progid
@@ -404,11 +381,9 @@ subroutine run_summary
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Obtain execution details for this run
-
   call inform(progid)
 
   !  Print code banner + run details to screen and output file
-  
   do lap = 1,2
      if (lap == 1) then
         outfile = iotty
@@ -427,7 +402,6 @@ subroutine run_summary
      call oblnkl(outfile)
 
      !  Run execution details
-
      call ocmmnt(outfile, progid(1))  !  program name
      call ocmmnt(outfile, progid(2))  !  version
      call ocmmnt(outfile, progid(3))  !  date/time
@@ -436,7 +410,6 @@ subroutine run_summary
      call ocmmnt(outfile, progid(6))  !  directory
 
      !  Print code version and run description
-
      call oblnkl(outfile)
      call ostars(outfile, width)
      call oblnkl(outfile)
@@ -454,7 +427,6 @@ subroutine run_summary
 
   !  The following should work up to version 99999
   !  Relies on an internal read statement
-
   vstring = progid(2)(13:17)
   read(vstring,'(i5)') version
   call ovarin(mfile,'PROCESS version number','(procver)',version)
@@ -462,12 +434,10 @@ subroutine run_summary
   call date_and_time(date=date, time=time)
 
   !  Date output in the form "DD/MM/YYYY" (including quotes)
-
   dstring = '"'//date(7:8)//'/'//date(5:6)//'/'//date(1:4)//'"'
   call ovarst(mfile,'Date of run','(date)',dstring)
 
   !  Time output in the form "hh:mm" (including quotes)
-
   tstring = '"'//time(1:2)//':'//time(3:4)//'"'
   call ovarst(mfile,'Time of run','(time)',tstring)
 
@@ -566,11 +536,9 @@ subroutine eqslv(ifail)
   implicit none
 
   !  Arguments
-
   integer, intent(out) :: ifail
 
   !  Local variables
-
   integer :: inn,nprint,nx
   real(kind(1.0D0)) :: sumsq
   real(kind(1.0D0)), dimension(iptnt) :: wa
@@ -581,7 +549,6 @@ subroutine eqslv(ifail)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  If no HYBRD (non-optimisation) runs are required, exit routine
-
   if (ioptimz > 0) return
 
   ncalls = 0
@@ -590,17 +557,14 @@ subroutine eqslv(ifail)
   nprint = 0
 
   !  Use HYBRD to find a starting point
-
   call loadxc
   call eqsolv(fcnhyb,neqns,xcm,rcm,ftol,epsfcn,factor,nprint,ifail, &
        wa,iptnt,resdl,nfev1)
 
   !  Turn on error reporting
-
   errors_on = .true.
 
   !  Print out information on solution
-
   call oheadr(nout,'Numerics')
   call ocmmnt(nout, &
        'PROCESS has performed a HYBRD (non-optimisation) run,')
@@ -626,7 +590,6 @@ subroutine eqslv(ifail)
   end if
 
   !  Sum the square of the residuals
-
   sumsq = 0.0D0
   do nx = 1,neqns
      sumsq = sumsq + rcm(nx)**2
@@ -636,7 +599,6 @@ subroutine eqslv(ifail)
   call ovarre(nout,'Estimate of the constraints','(sqsumsq)',sqsumsq)
 
   !  If necessary, write out a relevant error message
-
   if (ifail /= 1) then
      call oblnkl(nout)
      call herror(ifail)
@@ -730,7 +692,6 @@ subroutine herror(ifail)
   implicit none
 
   !  Arguments
-
   integer, intent(in) :: ifail
 
   !  Local variables
@@ -842,7 +803,6 @@ subroutine verror(ifail)
   implicit none
 
   !  Arguments
-
   integer, intent(in) :: ifail
 
   !  Local variables
@@ -1018,11 +978,9 @@ subroutine doopt(ifail)
   implicit none
 
   !  Arguments
-
   integer, intent(out) :: ifail
 
   !  Local variables
-
   integer :: ii,inn,iflag
   real(kind(1.0D0)) :: summ,xcval,xmaxx,xminn,f,xnorm
   real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
@@ -1032,18 +990,15 @@ subroutine doopt(ifail)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  If no optimisation is required, leave the routine
-
   if (ioptimz < 0) return
 
   !  Set up variables to be iterated
-
   call loadxc
   call boundxc
   call optimiz(fcnvmc1,fcnvmc2,ifail,f)
 
   !  Check on accuracy of solution by summing the
   !  squares of the residuals of the equality constraints
-
   summ = 0.0D0
   do ii = 1,neqns
      summ = summ + rcm(ii)*rcm(ii)
@@ -1051,11 +1006,9 @@ subroutine doopt(ifail)
   sqsumsq = sqrt(summ)
 
   !  Turn on error reporting
-
   errors_on = .true.
 
   !  Print out information on solution
-
   call oheadr(nout,'Numerics')
   call ocmmnt(nout,'PROCESS has performed a VMCON (optimisation) run,')
   if (ifail /= 1) then
@@ -1077,7 +1030,6 @@ subroutine doopt(ifail)
   call oblnkl(nout)
 
   !  If necessary, write out a relevant error message
-
   if (ifail /= 1) then
      call verror(ifail)
      call oblnkl(nout)
@@ -1130,7 +1082,6 @@ subroutine doopt(ifail)
   call oblnkl(nout)
 
   !  Check which variables are at bounds
-
   iflag = 0
   do ii = 1,nvar
      xminn = 1.01D0*bondl(ii)
@@ -1173,7 +1124,6 @@ subroutine doopt(ifail)
         ',',1pe12.4,') is at or above its upper bound:',1pe12.4)
 
   !  Print out information on numerics
-
   call osubhd(nout,'The solution vector is comprised as follows :')
   write(nout,50)
 50 format(t47,'lower',t59,'upper')
@@ -1195,7 +1145,6 @@ subroutine doopt(ifail)
 
      !  'Range-normalised' iteration variable values:
      !  0.0 (at lower bound) to 1.0 (at upper bound)
-
      if (bondl(inn) == bondu(inn)) then
         xnorm = 1.0D0
      else
@@ -1272,7 +1221,6 @@ subroutine final(ifail)
   implicit none
 
   !  Arguments
-
   integer, intent(in) :: ifail
 
   !  Local variables
@@ -1470,6 +1418,7 @@ subroutine output(outfile)
   
   !  Import blanket modules
   use ccfe_hcpb_module
+  use kit_hcpb_module
 
   implicit none
 
@@ -1484,18 +1433,15 @@ subroutine output(outfile)
   !  Turn on error reporting
   !  (warnings etc. encountered in previous iterations may have cleared themselves
   !  during the solution process)
-
   errors_on = .true.
 
   !  Call stellarator output routine instead if relevant
-
   if (istell /= 0) then
      call stout(outfile)
      return
   end if
 
   !  Call inertial fusion energy output routine instead if relevant
-
   if (ife /= 0) then
      call ifeout(outfile)
      return
@@ -1538,7 +1484,12 @@ subroutine output(outfile)
 
   if (irfp == 0) call induct(outfile,1)
 
-  call ccfe_hcpb(outfile, 1)
+  if (iblanket == 1) then
+	call ccfe_hcpb(outfile, 1)
+  else if (iblanket == 2) then
+	call kit_hcpb(outfile, 1)
+  end if
+  
   !call fwbs(outfile,1)
 
   if (ifispact == 1) then

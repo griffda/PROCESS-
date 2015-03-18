@@ -124,36 +124,27 @@ contains
 
        !  TF coil bus length (m)
        !  Assume power supplies are 5m away
-
        tfbusl = 300.0D0
 
        !  Cross-sectional area of bus
        !  cpttf  - current per TFC turn (A)
        !  jbus   - bus current density (A/m2)
-
        abus = cpttf/jbus
 
        !  Bus resistance (ohm)
-
        rhobus = 2.5D-8 * tfbusl/abus
 
        !  Bus mass (kg)
-
        tfbusmas = tfbusl * abus * 8000.0D0
 
        !  Total maximum impedance
-
        ztot = tfno*rhotfleg + rhocp + rhobus
 
-       !  No reactive portion of the voltage is included here - assume 
-       !  long ramp times
-
+       !  No reactive portion of the voltage is included here - assume long ramp times
        !  Peak voltage (kV)
-
        vtfkv = 1.0D-3 * ztot * cpttf/tfno
 
        !  Resistive powers (MW):
-
        tfcpmw  = 1.0D-6 * prescp  !  inboard legs
        tflegmw = 1.0D-6 * (ritfc/tfno)**2 * rhotfleg * tfno  !  outboard legs
        tfbusmw = 1.0D-6 * cpttf**2 * rhobus  !  TF coil bus
@@ -161,11 +152,9 @@ contains
        !  TF coil reactive power
        !  Set reactive power to 0, since ramp up can be long
        !     tfreacmw = 1.0D-6 * 1.0D9 * estotf/(tohs + tramp)
-
        tfreacmw = 0.0D0
 
        !  Total power consumption (MW)
-
        tfcmw = tfcpmw + tflegmw + tfbusmw + tfreacmw
 
     else  !  Superconducting TF coil option
@@ -176,7 +165,6 @@ contains
     end if
 
     !  Output section
-
     if (iprint == 0) return
 
     call oheadr(outfile,'TF Coil Power Conversion')
@@ -609,14 +597,12 @@ contains
     pfcr(:) = 0.0D0
 
     !  Bus length
-
     pfbusl = 8.0D0 * rmajor + 140.0D0
 
     !  Find power requirements for PF coils at tim(ktim)
 
     !  PF coil resistive power requirements
     !  Bussing losses assume aluminium bussing with 100 A/cm**2
-
     ic = 0
     ngrpt = ngrp
     if (iohcl /= 0) ngrpt = ngrpt + 1
@@ -629,18 +615,15 @@ contains
 
        !  Section area of aluminium bussing for circuit (cm**2)
        !  cptdin : max current per turn of coil (A)
-
        albusa(ig) = abs(cptdin(ic)) / 100.0D0  
 
        !  Resistance of bussing for circuit (ohm)
        !  Include 50% enhancement for welds, joints etc, (G. Gorker, ORNL)
        !  pfbusl : bus length for each PF circuit (m)
-
        pfbusr(ig) = 1.5D0 * 2.62D-4 * pfbusl/albusa(ig)
 
        !  Total PF coil resistance (during burn)
        !  ric : maximum current in coil (A)
-
        pfcr(ig) = pfclres * 2.0D0 * pi * rpf(ic) * abs(rjconpf(ic) / &
             ( (1.0D0-vf(ic))*1.0D6*ric(ic)) ) * turns(ic)**2 * ncls(ig)
 
@@ -650,18 +633,15 @@ contains
        rcktpm(ig) = 1.0D-6*rcktvm(ig)*abs(cptburn)  !  peak resistive power (MW)
 
        !  Compute the sum of resistive power in the PF circuits, kW
-
        pfbuspwr = pfbuspwr + 1.0D-3 * pfbusr(ig) * cptburn**2
        srcktpm = srcktpm + 1.0D3*rcktpm(ig)
     end do
 
     !  Inductive MVA requirements, and stored energy
-
     delktim = tohs
 
     !  PF system (including OH solenoid) inductive MVA requirements
     !  cpt(i,j) : current per turn of coil i at (end) time period j (A)
-
     powpfi = 0.0D0
     powpfr = 0.0D0
     powpfr2 = 0.0D0
@@ -670,7 +650,6 @@ contains
     !  ncirt : total number of PF coils (including OH coil and plasma)
     !          plasma is #ncirt, and OH coil is #(ncirt-1)
     !  sxlg(i,j) : mutual inductance between coil i and j
-
     do i = 1, ncirt
        powpfii(i) = 0.0D0
        vpfi(i) = 0.0D0
@@ -683,33 +662,23 @@ contains
           engx = 0.0D0
           do ipf = 1,ncirt
 
-             !  Voltage in circuit jpf due to change in current from
-             !  circuit ipf
-
+             !  Voltage in circuit jpf due to change in current from circuit ipf
              vpfij = sxlg(jpf,ipf) * (cpt(ipf,3)-cpt(ipf,2))/delktim
 
-             !  Voltage in circuit jpf at time, tim(3), due to changes
-             !  in coil currents
-
+             !  Voltage in circuit jpf at time, tim(3), due to changes in coil currents
              vpfi(jpf) = vpfi(jpf) + vpfij
 
-             !  MVA in circuit jpf at time, tim(3) due to changes
-             !  in current
-
+             !  MVA in circuit jpf at time, tim(3) due to changes in current
              powpfii(jpf) = powpfii(jpf) + vpfij*cpt(jpf,3)/1.d6
              engx = engx + sxlg(jpf,ipf)*cpt(ipf,5)
 
           end do
 
-          !  Compute inductive energy of each PF coil circuit at time
-          !  tim(5)
-
+          !  Compute inductive energy of each PF coil circuit at time tim(5)
           engxpc = 0.5D0 * engx * cpt(jpf,5)
           ensxpf = ensxpf + engxpc
 
-          !  Resistive power in circuits at times tim(3) and tim(5)
-          !  respectively (MW)
-
+          !  Resistive power in circuits at times tim(3) and tim(5) respectively (MW)
           powpfr = powpfr + turns(jpf) * cpt(jpf,3) * cktr(jjpf)/1.0D6
           powpfr2 = powpfr2 +turns(jpf)* cpt(jpf,5) * cktr(jjpf)/1.0D6
           powpfi = powpfi + powpfii(jpf)
@@ -719,11 +688,9 @@ contains
 
     !  Compute the maximum stored energy and the maximum dissipative
     !  energy in all the PF circuits over the entire cycle time, MJ
-
     ensxpfm = 1.0D-6 * ensxpf
 
     !  Maximum total MVA requirements
-
     peakmva =  max( (powpfr + powpfi), powpfr2)
 
     vpfskv = 20.0D0
@@ -735,21 +702,17 @@ contains
     do jpf = 1,ncirt-1
 
        !  Power supply MVA for each PF circuit
-
        psmva(jpf) = 1.0D-6 * abs (vpfi(jpf)*cptdin(jpf) )
 
        !  Sum of the power supply MVA of the PF circuits
-
        spsmva = spsmva + psmva(jpf)
 
        !  Average of the maximum currents in the PF circuits, kA
-
        acptmax = acptmax + 1.0D-3 * abs(cptdin(jpf))/pfckts
 
     end do
 
     !  Output Section
-
     if (iprint == 0) return
 
     call oheadr(outfile,'PF Coil Power Conversion')
@@ -822,56 +785,44 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Power to TF coil power supplies, MW
-
     ptfmw = tfacpd
 
     ! Power to PF coil power supplies, MW
-
     ppfmw = 1.0D-3 * srcktpm
     if (iscenr == 2) ppfmw = ppfmw + peakmva
 
     !  Power to plasma heating supplies, MW
-
     pheatingmw = pinjwp  !  Should be zero if ignite==1
 
     !  Power to cryogenic comp. motors, MW
-
     crymw = crypmw
 
     !  Facility base load, MW (loads not dependent on floor area)
-
     basemw = baseel * 1.0D-6
 
     !  Power needed per unit floor area, kW/m2
-
     pkwpm2 = pwpm2 * 1.0D-3
 
     !  Power to divertor coil supplies, MW
-
     bdvmw = 0.0D0
 
     !  Total pulsed power system load, MW
-
     pacpmw = ppfmw + bdvmw + ptfmw + crymw + vachtmw + &
          htpmw + trithtmw + pheatingmw + basemw + efloor*pkwpm2/1000.0D0
 
     !  Add contribution from motor-generator flywheels if these are part of
     !  the PF coil energy storage system
-
     if (iscenr /= 2) pacpmw = pacpmw + fmgdmw
 
     !  Total baseline power to facility loads, MW
-
     fcsht  = basemw + efloor*pkwpm2/1000.0D0
 
     !  Estimate of the total low voltage power, MW
-
     tlvpmw = fcsht + trithtmw + htpmw + vachtmw + 0.5D0*(crymw+ppfmw)
 
     if (iprint == 0) return
 
     !  Output section
-
     call oheadr(outfile,'AC Power')
 
     call ovarre(outfile,'Facility base load (MW)','(basemw)',basemw)
@@ -989,6 +940,7 @@ contains
     !  Primary (high-grade) thermal power, available for electricity generation.  Switch iprimshld
     !  is 1 or 0, is user choice on whether the shield thermal power goes to primary or secondary heat
     if (secondary_cycle == 0) then
+    
 		!  Primary thermal power (MW)
 		pthermmw = pthermfw + pthermblkt + iprimshld*pthermshld
 		
@@ -1096,6 +1048,7 @@ contains
     !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx;
     !+ad_hisc               deleted ctht, rnihx
     !+ad_hist  17/12/14 PJK Added tturb to output
+    !+ad_hist  18/03/15 JM  Made changes in line with fwbs refactor
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1114,15 +1067,16 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Centrepost coolant pump power (ST)
-
-    ppumpmw = 1.0D-6 * ppump
+    if (itart == 1) then
+		ppumpmw = 1.0D-6 * ppump
+	else
+		ppumpmw = 0.0D0
+	end if
 
     !  Facility heat removal (fcsht calculated in ACPOW)
-
     fachtmw = fcsht
 
     !  Hydrogen plant powers
-
     if (ihplant == 0) then
        helecmw = 0.0D0
        hthermmw = 0.0D0
@@ -1141,27 +1095,14 @@ contains
        hpower = etahth * hthermmw
     end if
 
-    !  Power consumed by fusion power core systems
+    !  Electrical power consumed by fusion power core systems
     !  (excluding heat transport pumps and auxiliary injection power system)
+    !(*,*) crypmw, fachtmw, helecmw, ppumpmw, tfcmw, trithtmw, vachtmw
     pcoresystems = crypmw + fachtmw + helecmw + ppumpmw + tfcmw + trithtmw + vachtmw
 
     !  Total secondary heat
-    !  (total low-grade heat rejected - does not contribute to
-    !  power conversion cycle)
-
-    !+PJK slight concern over possible double-counting of hthermmw here...
-    !if (ipowerflow == 0) then
-
-    !   psechtmw = pcoresystems + pinjht + ffwlg*pfwdiv + hthermmw
-
-       !if (iprimhtp == 0) psechtmw = psechtmw + htpmw
-       !if (iprimnloss == 0) psechtmw = psechtmw + pnucloss
-
-    !else
-
+    !  (total low-grade heat rejected - does not contribute to power conversion cycle)
     psechtmw = pcoresystems + pinjht + htpsecmw + hthermmw + psecdiv + psecshld + psechcd + pseclossmw
-
-    !end if
 
     !  Calculate powers relevant to a power-producing plant
     if (ireactor == 1) then
@@ -1195,8 +1136,7 @@ contains
     call oheadr(outfile,'Plant Power / Heat Transport Balance')
     call osubhd(outfile,'Assumptions :')
 
-	! TODO: what to do with emult?
-    !call ovarre(outfile,'Neutron power multiplication in blanket', '(emult)', emult)
+    call ovarre(outfile,'Neutron power multiplication in blanket', '(emult)', emult)
     call ovarre(outfile, 'Divertor area fraction of whole toroid surface', '(fdiv)', fdiv)
     call ovarre(outfile,'H/CD apparatus + diagnostics area fraction', '(fhcd)', fhcd)
     call ovarre(outfile,'Area fraction of other holes', '(fhole)', fhole)
@@ -1469,20 +1409,16 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Steady state loads (W)
-
     qss = 4.3D-4 * coldmass
     if (itfsup == 1) qss = qss + 2.0D0*tfsai
 
     !  Nuclear heating of TF coils (W) (zero if resistive)
-
     qnuc = 1.0D6 * ptfnuc
 
     !  AC losses
-
     qac = 1.0D3 * ensxpfm/tpulse
 
     !  Current leads
-
     if (itfsup == 1) then
        qcl = 13.6D-3 * tfno * cpttf
     else
@@ -1490,7 +1426,6 @@ contains
     end if
 
     !  Total includes 45% extra miscellaneous, piping and reserves
-
     helpow = max(0.0D0, (1.45D0 * (qss + qnuc + qac + qcl)) )
 
   end subroutine cryo

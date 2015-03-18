@@ -254,7 +254,7 @@
       if (ipowerflow == 1) then
 
          !  Strictly, this is not correct for ipowerflow=1, but currently
-         !  I have simply replaced the old usage of lblnkt, smstr etc.
+         !  I have simply replaced the old usage of lblnkt etc.
          if (blkttype == 3) then
             dklen = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
          else

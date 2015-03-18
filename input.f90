@@ -1662,21 +1662,6 @@ contains
        case ('ESTR')
           call parse_int_variable('ESTR', estr, 1, 2, &
                'Switch for cooling channel orientation')
-       case ('ETACP')
-          call parse_real_variable('ETACP', etacp, 0.1D0, 1.0D0, &
-               'Condenser isentropic efficiency')
-       case ('ETAFP')
-          call parse_real_variable('ETAFP', etafp, 0.1D0, 1.0D0, &
-               'Feed pump isentropic efficiency')
-       case ('ETAHP')
-          call parse_real_variable('ETAHP', etahp, 0.1D0, 1.0D0, &
-               'HP turbine isentropic efficiency')
-       case ('ETAINP')
-          call parse_real_variable('ETAINP', etainp, 0.1D0, 1.0D0, &
-               'IP turbine isentropic efficiency')
-       case ('ETALP')
-          call parse_real_variable('ETALP', etalp, 0.1D0, 1.0D0, &
-               'LP turbine isentropic efficiency')
        case ('FBLBE')
           call parse_real_variable('FBLBE', fblbe, 0.0D0, 1.0D0, &
                'Beryllium fraction of blanket')
@@ -1719,9 +1704,6 @@ contains
        case ('FHOLE')
           call parse_real_variable('FHOLE', fhole, 0.0D0, 1.0D0, &
                'Hole area fraction')
-       case ('FKBLKT')
-          call parse_real_variable('FKBLKT', fkblkt, 0.2D0, 5.0D0, &
-               'Blanket elongation / plasma elongation')
        case ('FVOLBI')
           write(outfile,*) ' '
           write(outfile,*) '**********'
@@ -1763,8 +1745,8 @@ contains
        case ('FWBSSHAPE')
           call parse_int_variable('FWBSSHAPE', fwbsshape, 1, 2, &
                'Switch for fw/blanket/shield/vv shape')
-       case ('FW_W_THICKNESS')
-          call parse_real_variable('FW_W_THICKNESS', fw_w_thickness, 0.0D0, 1.0D0, &
+       case ('FW_ARMOUR_THICKNESS')
+          call parse_real_variable('FW_ARMOUR_THICKNESS', fw_armour_thickness, 0.0D0, 1.0D0, &
                'First wall W coating thickness (m)')
        case ('HCDPORTSIZE')
           call parse_int_variable('HCDPORTSIZE', hcdportsize, 1, 2, &
@@ -1778,12 +1760,6 @@ contains
        case ('LI6ENRICH')
           call parse_real_variable('LI6ENRICH', li6enrich, 0.0D0, 100.0D0, &
                'Li-6 enrichment')
-       case ('NIPFWH')
-          call parse_int_variable('NIPFWH', nipfwh, 1, 4, &
-               'Number of IP feed water heater pumps')
-       case ('NLPFWH')
-          call parse_int_variable('NLPFWH', nlpfwh, 1, 4, &
-               'Number of LP feed water heater pumps')
        case ('NPDIV')
           call parse_int_variable('NPDIV', npdiv, 0, 4, &
                'Number of divertor ports')
@@ -1793,24 +1769,6 @@ contains
        case ('NPHCDOUT')
           call parse_int_variable('NPHCDOUT', nphcdout, 0, 4, &
                'Number of outboard H/CD ports')
-       case ('PC')
-          call parse_real_variable('PC', pc, 0.004D0, 0.01D0, &
-               'Condenser pressure (MPa)')
-       case ('PH')
-          call parse_real_variable('PH', ph, 5.0D0, 20.0D0, &
-               'High pressure inlet pressure (MPa)')
-       case ('PIN')
-          call parse_real_variable('PIN', pin, 0.2D0, 1.0D0, &
-               'Low pressure inlet pressure (MPa)')
-       case ('PR')
-          call parse_real_variable('PR', pr, 1.0D0, 5.0D0, &
-               'Reheat intermediate pressure (MPa)')
-       case ('SGEFF')
-          call parse_real_variable('SGEFF', sgeff, 0.1D0, 1.0D0, &
-               'Steam generator effectiveness')
-       case ('SMSTR')
-          call parse_int_variable('SMSTR', smstr, 1, 2, &
-               'Switch for blanket material')
        case ('VFBLKT')
           call parse_real_variable('VFBLKT', vfblkt, 0.0D0, 1.0D0, &
                'Coolant void fraction in blanket')
@@ -1820,27 +1778,6 @@ contains
        case ('WALLPF')
           call parse_real_variable('WALLPF', wallpf, 1.0D0, 2.0D0, &
                'Neutron wall load peaking factor')
-       case ('XDI')
-          call parse_real_variable('XDI', xdi, 1.0D0, 10.0D0, &
-               'Inner cooling channel diameter (cm)')
-       case ('XDO')
-          call parse_real_variable('XDO', xdo, 1.0D0, 10.0D0, &
-               'Outer cooling channel diameter (cm)')
-       case ('XPF')
-          !  correct range: 1-5 for costr=1, 8-15 for costr=2
-          call parse_real_variable('XPF', xpf, 1.0D0, 15.0D0, &
-               'Blanket coolant inlet pressure (MPa)')
-       case ('XTB')
-          call parse_real_variable('XTB', xtb, 400.0D0, 800.0D0, &
-               'Maximum blanket temperature (C)')
-       case ('XTFI')
-          !  correct range: 250-350 for costr=1, 200-300 for costr=2
-          call parse_real_variable('XTFI', xtfi, 200.0D0, 350.0D0, &
-               'Blanket coolant inlet temperature (C)')
-       case ('XTFO')
-          !  correct range: 500-800 for costr=1, 295-342 for costr=2
-          call parse_real_variable('XTFO', xtfo, 295.0D0, 800.0D0, &
-               'Blanket coolant outlet temperature (C)')
 
           !  Heat transport / power settings
 
@@ -1883,9 +1820,6 @@ contains
        !case ('IPRIMDIV')
        !   call parse_int_variable('IPRIMDIV', iprimdiv, 0, 1, &
        !        'Switch for divertor thermal power destiny')
-       case ('IPRIMHTP')
-          call parse_int_variable('IPRIMHTP', iprimhtp, 0, 1, &
-               'Switch for heat transport pump power destiny')
        case ('IPRIMNLOSS')
           call parse_int_variable('IPRIMNLOSS', iprimnloss, 0, 1, &
                'Switch for lost neutron power destiny')
