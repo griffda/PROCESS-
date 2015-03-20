@@ -9,6 +9,7 @@
 
 """
 
+import numpy as np
 
 # Dictionary for variable types
 from process_io_lib.process_dicts import DICT_VAR_TYPE
@@ -21,6 +22,9 @@ from process_io_lib.process_dicts import DICT_MODULE
 
 # Dictionary for parameter descriptions
 from process_io_lib.process_dicts import DICT_DESCRIPTIONS
+
+# Dictionary for parameter defaults
+from process_io_lib.process_dicts import DICT_DEFAULT
 
 
 def fortran_python_scientific(var_value):
@@ -117,7 +121,12 @@ def find_line_type(line):
 
     # Else the line contains an regular parameter
     else:
-        return "Parameter"
+        if "fimp(" in name:
+            return "fimp"
+        elif "zref(" in name:
+            return "zref"
+        else:
+            return "Parameter"
 
 
 def find_parameter_group(name):
@@ -151,6 +160,8 @@ def process_constraint_equation(data, line):
     # Else the line contains a list of constraint equations icc = #, #, #
     else:
         constraints = no_comment_line[1].strip().split(",")
+        if "" in constraints:
+            constraints.remove("")
 
     # List of new constraints read in
     value = [int(item.strip()) for item in constraints]
@@ -188,6 +199,8 @@ def process_iteration_variables(data, line):
     # Else the line contains a list of iteration variables IXC = #, #, #
     else:
         iteration_variables = no_comment_line[1].strip().split(",")
+        if "" in iteration_variables:
+            iteration_variables.remove("")
 
     # List of new constraints read in
     value = [int(item.strip()) for item in iteration_variables]
@@ -218,12 +231,6 @@ def process_bound(data, line):
     # Initialise bound type
     bound_type = None
 
-    # Create bound variable class using INVariable class if the bounds entry
-    # doesn't exist
-    if "bounds" not in data.keys():
-        data["bounds"] = INVariable("bounds", dict(), "Bound",
-                                    "Bound", "Bounds")
-
     # Remove comment from line to make things easier
     no_comment_line = line.split("*")[0].split("=")
 
@@ -238,7 +245,8 @@ def process_bound(data, line):
     # Get bound information
     bound = no_comment_line[0].strip("boundl").replace("(", "").\
         replace(")", "").strip()
-    bound_value = no_comment_line[1].strip()
+    bound_value = no_comment_line[1].strip().replace(",", "").replace("d", "e").\
+        replace("D","e")
 
     # If bound not in the bound dictionary then add entry for bound with an
     # empty dictionary
@@ -247,6 +255,32 @@ def process_bound(data, line):
 
     # Populate data dictionary with bound information
     data["bounds"].value[bound][bound_type] = bound_value
+
+
+def process_fimp(data, line):
+    """Function to process fimp array
+
+    :param data: Data dictionary for the IN.DAT information
+    :param line: Line from IN.DAT to process
+    :return: nothing
+    """
+
+    fimp_index = int(line.split("(")[1].split(")")[0]) - 1
+    fimp_value = eval(line.split("=")[-1].replace(",", ""))
+    data["fimp"].value[fimp_index] = fimp_value
+
+
+def process_zref(data, line):
+    """ Function to process zref array
+
+    :param data: Data dictionary for the IN.DAT information
+    :param line: Line from IN.DAT to process
+    :return: nothing
+    """
+
+    zref_index = int(line.split("(")[1].split(")")[0]) - 1
+    zref_value = eval(line.split("=")[-1].replace(",", ""))
+    data["zref"].value[zref_index] = zref_value
 
 
 def process_parameter(data, line):
@@ -260,11 +294,26 @@ def process_parameter(data, line):
     # Remove comment from line to make things easier
     no_comment_line = line.split("*")[0].split("=")
 
+    if len("".join(no_comment_line).strip()) == 0:
+        return
+
     # Parameter name
     name = no_comment_line[0].strip()
 
     # Parameter value
-    value = no_comment_line[1].strip().replace(",", "")
+    if len(no_comment_line[-1].split(",")) > 2:
+        try:
+            value = no_comment_line[1].strip()
+        except ValueError:
+            print("Error when reading line below. Remove multiline parameter "
+                  "in line with new format for IN.DAT")
+            print(line)
+        except IndexError:
+            print("Error when reading line below. Remove multiline parameter "
+                  "in line with new format for IN.DAT")
+            print(line)
+    else:
+        value = no_comment_line[1].strip().replace(",", "")
 
     # Find group of variables the parameter belongs to
     parameter_group = find_parameter_group(name)
@@ -287,6 +336,38 @@ def process_line(data, line_type, line):
     :return: Nothing
     """
 
+    # Create bound variable class using INVariable class if the bounds entry
+    # doesn't exist
+    if "bounds" not in data.keys():
+        data["bounds"] = INVariable("bounds", dict(), "Bound",
+                                    "Bound", "Bounds")
+
+    # Create a fimp variables class using INVariable class if the fimp entry
+    # doesn't exist
+    if "fimp" not in data.keys():
+        empty_fimp = DICT_DEFAULT['fimp']
+        parameter_group = find_parameter_group("fimp")
+
+        # Get parameter comment/description from dictionary
+        comment = DICT_DESCRIPTIONS["fimp"].replace(",", ";").\
+            replace(".", ";").replace(":", ";")
+
+        data["fimp"] = INVariable("fimp", empty_fimp, "fimp", parameter_group,
+                                  comment)
+
+    # Create a zref variable class using INVariable class if the zref entry
+    # doesn't exist
+    if "zref" not in data.keys():
+        empty_zref = DICT_DEFAULT['zref']
+        parameter_group = find_parameter_group("zref")
+
+        # Get parameter comment/description from dictionary
+        comment = DICT_DESCRIPTIONS["zref"].replace(",", ";").\
+            replace(".", ";").replace(":", ";")
+
+        data["zref"] = INVariable("zref", empty_zref, "zref", parameter_group,
+                                  comment)
+
     # Constraint equations
     if line_type == "Constraint Equation":
         process_constraint_equation(data, line)
@@ -298,6 +379,14 @@ def process_line(data, line_type, line):
     # Bounds
     elif line_type == "Bound":
         process_bound(data, line)
+
+    # fimp
+    elif line_type == "fimp":
+        process_fimp(data, line)
+
+    # zref
+    elif line_type == "zref":
+        process_zref(data, line)
 
     # Parameter
     else:
@@ -382,13 +471,15 @@ def write_iteration_variables(data, out_file):
             # Lower bound
             if "l" in data["bounds"].value[str(variable)].keys():
                 lower_bound_line = "boundl({0}) = {1}\n\n".\
-                    format(variable, data["bounds"].value[str(variable)]["l"])
+                    format(variable, data["bounds"].value[str(variable)]["l"].
+                           replace("e", "d"))
                 out_file.write(lower_bound_line)
 
             # Upper bound
             if "u" in data["bounds"].value[str(variable)].keys():
                 upper_bound_line = "boundu({0}) = {1}\n\n".\
-                    format(variable, data["bounds"].value[str(variable)]["u"])
+                    format(variable, data["bounds"].value[str(variable)]["u"].
+                           replace("e", "d"))
                 out_file.write(upper_bound_line)
 
 
@@ -407,25 +498,56 @@ def write_parameters(data, out_file):
         write_title("{0}".format(module), out_file)
 
         # Items to exclude
-        exclusions = ["neqns", "nvar", "icc", "ixc"]
+        exclusions = ["neqns", "nvar", "icc", "ixc", "runtitle"]
 
         # Write parameters for given module
         for item in DICT_MODULE[module]:
             if item not in exclusions and item in data.keys():
-                # Left justification set to 8 to allow easier reading
-                # Only use first line of comment to avoid lots of info
-                line_value = data[item].value
-                line_string = ""
-                # if parameter is a list only output values comma separated
-                if isinstance(line_value, list):
-                    for val in line_value:
-                        line_string += str(val) + ", "
-                    line_value = line_string.rstrip(", ")
 
-                parameter_line = "{0} = {1} * {2}\n\n". \
-                    format(item.ljust(8), line_value,
-                           data[item].comment.split("\n")[0])
-                out_file.write(parameter_line)
+                if item == "fimp":
+                    for k in range(len(data["fimp"].get_value)):
+                        tmp_fimp_name = "fimp({0})".format(str(k+1).zfill(1))
+                        tmp_fimp_value = data["fimp"].get_value[k]
+                        parameter_line = "{0} = {1}\n\n".\
+                            format(tmp_fimp_name, tmp_fimp_value)
+                        out_file.write(parameter_line)
+                elif item == "zref":
+                    for j in range(len(data["zref"].get_value)):
+                        tmp_zref_name = "zref({0})".format(str(j+1).zfill(1))
+                        tmp_zref_value = data["zref"].get_value[j]
+                        parameter_line = "{0} = {1}\n\n".\
+                            format(tmp_zref_name, tmp_zref_value)
+                        out_file.write(parameter_line)
+                elif "vmec" in item:
+                    parameter_line = "{0} = {1}\n\n".format(item,
+                                                            data[item].value)
+                    out_file.write(parameter_line)
+                else:
+                    # Left justification set to 8 to allow easier reading
+                    # Only use first line of comment to avoid lots of info
+                    line_value = data[item].value
+                    line_string = ""
+                    # if parameter is a list only output values comma separated
+                    if isinstance(line_value, list):
+                        for val in line_value:
+                            line_string += str(val) + ", "
+                        line_value = line_string.rstrip(", ")
+
+                    if isinstance(line_value, str):
+                        split_line = line_value.split(" ")
+                    try:
+                        float(split_line[0])
+                        if len(split_line) > 1:
+
+                            line_value = ", ".\
+                                join([entry for entry in split_line])
+                    except:
+                        pass
+
+                    parameter_line = "{0} = {1} * {2}\n\n". \
+                        format(item.ljust(8), line_value,
+                               data[item].comment.split("\n")[0])
+                    out_file.write(parameter_line)
 
 
 def add_iteration_variable(data, variable_number):
@@ -521,7 +643,6 @@ def add_parameter(data, parameter_name, parameter_value):
 
     # Check that the parameter is not already in the dictionary
     if parameter_name not in data.keys():
-
         try:
             parameter_group = find_parameter_group(parameter_name)
             comment = DICT_DESCRIPTIONS[parameter_name]
@@ -557,6 +678,28 @@ def remove_parameter(data, parameter_name):
         print("Parameter {0} not in IN.DAT".format(parameter_name))
 
 
+def change_fimp(data, fimp_id, fimp_val):
+    """Function to change value in fimp array
+
+    :param data: Data dictionary for the IN.DAT information
+    :param fimp_id: impurity fraction array index
+    :param fimp_val: new impurity fraction array value
+    :return:
+    """
+    data["fimp"].value[fimp_id] = fimp_val
+
+
+def change_zref(data, zref_id, zref_val):
+    """Function to change value in zref array
+
+    :param data: Data dictionary for the IN.DAT information
+    :param zref_id: zref array index
+    :param zref_val: new zref array value
+    :return:
+    """
+    data["zref"].value[zref_id] = zref_val
+
+
 def add_bound(data, bound, bound_type, bound_value):
     """ Function to add/change a bound to the bounds entry in the IN.dat data
     dictionary
@@ -576,11 +719,11 @@ def add_bound(data, bound, bound_type, bound_value):
     # dictionary and assign new bound
     if bound not in data["bounds"].value.keys():
         data["bounds"].value[bound] = dict()
-        data["bounds"].value[bound][bound_type] = bound_value
+        data["bounds"].value[bound][bound_type] = str(bound_value)
 
     # If bound already exists change value
     elif bound in data["bounds"].value.keys():
-        data["bounds"].value[bound][bound_type] = bound_value
+        data["bounds"].value[bound][bound_type] = str(bound_value)
 
     # Bound not recognised.
     else:
@@ -638,7 +781,8 @@ def parameter_type(name, value):
 
         # If a real variable just convert to float
         if "real_variable" in param_type:
-            return float(value)
+            val = fortran_python_scientific(value)
+            return float(val)
 
         # If a real array split and make a float list
         elif "real_array" in param_type:
@@ -791,7 +935,9 @@ class INVariable(object):
     @property
     def get_value(self):
         """Return value in correct format"""
-        if self.v_type != "Bound":
+        if "runtitle" in self.name:
+            return self.value
+        elif self.v_type != "Bound":
             return parameter_type(self.name, self.value)
         else:
             return self.value
@@ -838,7 +984,10 @@ class InDat(object):
         for line in self.in_dat_lines:
 
             # Put everything in lower case
-            l_line = line.lower()
+            if "vmec" not in line.split("=")[0].lower():
+                l_line = line.lower()
+            else:
+                l_line = line
 
             # find the type of the line:
             # [constraint equation, iteration variable, bound, parameter]
@@ -921,6 +1070,28 @@ class InDat(object):
         # add/change parameter to/in IN.DAT data dictionary
         add_parameter(self.data, parameter_name, parameter_value)
 
+    def change_fimp(self, fimp_index, fimp_value):
+        """Function to change value of an impurity fraction
+
+        :param fimp_index: index of impurity fraction array to change
+        :param fimp_value: value to change impurity fraction to
+        :return:
+        """
+
+        # change impurity fraction value in IN.DAT data dictionary
+        change_fimp(self.data, fimp_index, fimp_value)
+
+    def change_zref(self, zref_index, zref_value):
+        """Function to change value of zref
+
+        :param zref_index: index of zref to change
+        :param zref_value: value to change zref entry to
+        :return:
+        """
+
+        # change zref value in IN.DAT data dictionary
+        change_zref(self.data, zref_index, zref_value)
+
     def remove_parameter(self, parameter_name):
         """ Function to remove parameter from IN.DAT data dictionary
 
@@ -970,6 +1141,11 @@ class InDat(object):
         # Write Header
         write_title("", output)
 
+        # Write run title
+        runtitle_line = "{0} = {1}\n\n".format("runtitle",
+                                           self.data["runtitle"].get_value)
+        output.write(runtitle_line)
+
         # Write Constraint Equations
         write_constraint_equations(self.data, output)
 
@@ -984,27 +1160,34 @@ class InDat(object):
 
 
 if __name__ == "__main__":
+    #i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
     i = InDat(filename="../../IN.DAT_demo1")
-    print(i.data["ixc"].value)
-    i.remove_constraint_equation(2.5)
-    i.add_constraint_equation("3.0")
-    i.add_constraint_equation("2")
-    i.add_iteration_variable(8)
-    i.add_iteration_variable("2")
-    i.add_iteration_variable(7.5)
-    i.add_iteration_variable("5.5")
-    i.remove_iteration_variable(2)
-    i.remove_iteration_variable("3")
-    i.remove_iteration_variable(4.5)
-    i.remove_iteration_variable("6.5")
-    # Add bound will change the bound value if it already exists
-    i.add_bound(2, "upper", 5.0)
-    i.remove_bound(2, "upper")
-    # Add parameter will change the parameter value if it already exists
-    i.add_parameter("blnktthdsd", 0.5)
-    i.add_parameter("iavail", 1)
-    i.remove_parameter("blnkithsddd")
-    i.remove_parameter("blnkith")
-    i.add_parameter("sweep", [3.0, 3.0])
-    print(i.data["bounds"].get_value)
+    # print(i.data["ixc"].value)
+    # print(i.data["fimp"].value)
+    # print(i.data["ipfloc"].value)
+    # i.change_fimp(3, 0.5)
+    # print(i.data["zref"].value)
+    # i.change_zref(3, 0.5)
+    # i.remove_constraint_equation(2.5)
+    # i.add_constraint_equation("3.0")
+    # i.add_constraint_equation("2")
+    # i.add_iteration_variable(103)
+    # i.add_iteration_variable("2")
+    # i.add_iteration_variable(7.5)
+    # i.add_iteration_variable("5.5")
+    # i.remove_iteration_variable(2)
+    # i.remove_iteration_variable("3")
+    # i.remove_iteration_variable(4.5)
+    # i.remove_iteration_variable("6.5")
+    # # Add bound will change the bound value if it already exists
+    # i.add_bound(103, "upper", 5.0)
+    # i.remove_bound(2, "upper")
+    # # Add parameter will change the parameter value if it already exists
+    # i.add_parameter("blnktthdsd", 0.5)
+    # i.add_parameter("iavail", 1)
+    # i.remove_parameter("blnkithsddd")
+    # i.remove_parameter("blnkith")
+    # i.add_parameter("sweep", [3.0, 3.0])
+    # print(i.data["bounds"].get_value)
+    print(i.data["runtitle"].get_value)
     i.write_in_dat()

@@ -553,12 +553,12 @@ subroutine check
     fsum = fbltibe12 + fblli2sio4 + fblss + vfcblkt + vfpblkt
     if (abs(fsum-1.0D0) > 1.0D-4) then
       idiags(1) = iblanket
-      fdiags(1) = fbltibe12
-      fdiags(2) = fblli2sio4
-      fdiags(3) = fblss
-      fdiags(4) = vfcblkt
-      fdiags(5) = vfpblkt
-      fdiags(6) = fsum
+      fdiags(2) = fbltibe12
+      fdiags(3) = fblli2sio4
+      fdiags(4) = fblss
+      fdiags(5) = vfcblkt
+      fdiags(6) = vfpblkt
+      fdiags(7) = fsum
       call report_error(165)
     end if
   end if

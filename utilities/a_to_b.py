@@ -43,6 +43,7 @@
 """
 
 import os
+import subprocess
 import argparse
 
 import process_io_lib.in_dat as inmod
@@ -213,7 +214,8 @@ def run_process(path_to_process, niter=100, bound_spread=1.2):
 
     #loop niter times, varying iteration variables if no solution
     for i in range(niter + 1):
-        returncode = os.system(path_to_process + " >& process.log")
+        #returncode = os.system(path_to_process + " >& process.log")
+        returncode = subprocess.call([path_to_process + " >& process.log"])
         if returncode != 0:
             print('\n Error: There was a problem with PROCESS \
                         execution %i!' % returncode)
@@ -261,7 +263,8 @@ def copy_files(from_dir, target_dir, count=None):
         if not os.path.isfile(from_file):
             print("Can't find %s" % from_file)
             exit()
-        os.system("cp " + from_file + " " + to_file)
+        #os.system("cp " + from_file + " " + to_file)
+        subprocess.call(["cp " + from_file + " " + to_file])
 
 def get_step_dicts(a_dat, b_dat, allowed_diffs=None):
     """Works out which values are to be stepped from the value in A to the

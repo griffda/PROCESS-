@@ -11,6 +11,7 @@ Compatible with PROCESS version 368
 """
 
 import os
+import subprocess
 from time import sleep
 from numpy.random import seed, uniform, normal
 from numpy import argsort
@@ -54,9 +55,10 @@ class ProcessConfig(object):
     """
 
     filename = None
+    configfileexists = True
     wdir     = '.'
     or_in_dat = 'IN.DAT'
-    process  = 'process'
+    process  = 'process.exe'
     niter    = 10
     u_seed   = None
     factor   = 1.5
@@ -96,11 +98,17 @@ class ProcessConfig(object):
         except FileNotFoundError:
             os.mkdir(self.wdir)
 
-        os.system('cp ' + self.or_in_dat + ' ' + self.wdir + '/IN.DAT')
-        os.system('cp ' + self.filename + ' ' + self.wdir)
+        if self.or_in_dat != 'IN.DAT' or self.wdir != '.':
+            subprocess.call(['cp', self.or_in_dat, self.wdir + '/IN.DAT'])
+        else:
+            subprocess.call(['cp', self.or_in_dat, 'Input_IN.DAT'])
+
+        if self.configfileexists:
+            subprocess.call(['cp', self.filename, self.wdir])
         os.chdir(self.wdir)
-        os.system('rm -f OUT.DAT MFILE.DAT PLOT.DAT \
-                   *.txt *.out *.log *.pdf *.eps *.nc')
+        subprocess.call(['rm -f OUT.DAT MFILE.DAT PLOT.DAT *.txt *.out\
+ *.log *.pdf *.eps *.nc *.info'], shell=True)
+
 
     def create_readme(self, directory='.'):
 
@@ -161,13 +169,19 @@ class ProcessConfig(object):
 
         """ runs PROCESS binary """
 
+        logfile = open('process.log', 'w')
         print("PROCESS run started ...", end='')
-        returncode = os.system(self.process+' >& process.log')
-        if returncode != 0:
+
+        try:
+            subprocess.check_call([self.process], stdout=logfile,
+                                  stderr=logfile)
+        except subprocess.CalledProcessError as err:
             print('\n Error: There was a problem with the PROCESS \
-                   execution! %i' % returncode)
+                   execution!', err)
             print('       Refer to the logfile for more information!')
             exit()
+
+        logfile.close()
         print("finished.")
 
 
@@ -175,11 +189,15 @@ class ProcessConfig(object):
 
         """ gets the comment line from the configuration file """
 
+        if not self.configfileexists:
+            return False
+
         try:
             configfile = open(self.filename, 'r')
         except FileNotFoundError:
             print('Error: No config file named %s' %self.filename)
-            exit()
+            self.configfileexists = False
+            return False
 
         for line in configfile:
 
@@ -199,11 +217,15 @@ class ProcessConfig(object):
 
         """ gets class attribute from configuration file """
 
+        if not self.configfileexists:
+            return None
+
         try:
             configfile = open(self.filename, 'r')
         except FileNotFoundError:
             print('Error: No config file named %s' %self.filename)
-            exit()
+            self.configfileexists = False
+            return None
 
         for line in configfile:
             condense = line.replace(' ', '')
@@ -340,16 +362,15 @@ class TestProcessConfig(ProcessConfig):
 
         #by convention all variablenames are lower case
         if self.ioptimz != 'None':
-            in_dat.data['ioptimz'].add_parameter('ioptimz',
-                                                 self.ioptimz)
+            in_dat.add_parameter('ioptimz', self.ioptimz)
         if self.epsvmc != 'None':
-            in_dat.data['epsvmc'].add_parameter('epsvmc', self.epsvmc)
+            in_dat.add_parameter('epsvmc', self.epsvmc)
 
         if self.epsfcn != 'None':
-            in_dat.data['epsfcn'].add_parameter('epsfcn', self.epsfcn)
+            in_dat.add_parameter('epsfcn', self.epsfcn)
 
         if self.minmax != 'None':
-            in_dat.data['minmax'].add_parameter('minmax', self.minmax)
+            in_dat.add_parameter('minmax', self.minmax)
 
         in_dat.write_in_dat(output_filename='IN.DAT')
 
@@ -439,11 +460,16 @@ class RunProcessConfig(ProcessConfig):
         expects comma separated values
         """
 
+        if not self.configfileexists:
+            return []
+
         try:
             configfile = open(self.filename, 'r')
         except FileNotFoundError:
             print('Error: No config file named %s' %self.filename)
-            exit()
+            self.configfileexists = False
+            return []
+
 
         attribute_list = []
 
@@ -467,7 +493,15 @@ class RunProcessConfig(ProcessConfig):
 
         """ sets the del_var attribute from the config file """
 
-        configfile = open(self.filename, 'r')
+        if not self.configfileexists:
+            return
+
+        try:
+            configfile = open(self.filename, 'r')
+        except FileNotFoundError:
+            print('Error: No config file named %s' %self.filename)
+            self.configfileexists = False
+            return
 
         for line in configfile:
 
@@ -485,7 +519,16 @@ class RunProcessConfig(ProcessConfig):
 
         """ sets the dictvar attribute from config file """
 
-        configfile = open(self.filename, 'r')
+        if not self.configfileexists:
+            return
+
+        try:
+            configfile = open(self.filename, 'r')
+        except FileNotFoundError:
+            print('Error: No config file named %s' %self.filename)
+            self.configfileexists = False
+            return
+
         for line in configfile:
 
             condense = line.replace(' ', '')
@@ -548,18 +591,20 @@ class RunProcessConfig(ProcessConfig):
 
         #add and modify variables
         for key in self.dictvar.keys():
-
-            key = key.lower()
-
-            #TODO check this is a parameter??
-            in_dat.data[key].set_parameter(key, self.dictvar[key])
+            set_variable_in_indat(in_dat, key, self.dictvar[key])
 
 
         #delete variables
-        #TODO check key is a parameter?
         for key in self.del_var:
             key = key.lower()
-            in_dat.remove_parameter(key)
+            if 'bound' in key:
+                number = (key.split('('))[1].split(')')[0]
+                if 'boundu' in key:
+                    in_dat.remove_bound(number, 'u')
+                else:
+                    in_dat.remove_bound(number, 'l')
+            else:
+                in_dat.remove_parameter(key)
 
         in_dat.write_in_dat(output_filename='IN.DAT')
 
@@ -831,18 +876,18 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
             with NetCDFWriter(self.wdir+"/uncertainties.nc", append=True,
                               overwrite=False) as ncdf_writer:
-                try :
+                try:
                     ncdf_writer.write_mfile_data(m_file, run_id,
                                                  save_vars=self.output_vars,
                                                  latest_scan_only=True,
                                                  ignore_unknowns=False)
-                except KeyError as Err:
+                except KeyError as err:
                     print('Error: You have specified an output variable that\
  does not exist in MFILE. If this is a valid PROCESS variable, request it being\
  added to the MFILE output, else check your spelling!')
-                    print(Err)
+                    print(err)
                     exit()
-                    
+
         else:
             m_file = MFile(filename="MFILE.DAT")
 

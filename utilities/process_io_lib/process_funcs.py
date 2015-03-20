@@ -419,8 +419,21 @@ def set_variable_in_indat(in_dat, varname, value):
         IN.DAT and creates it if necessary """
 
     varname = varname.lower()
-    #TODO check whether paramter or bound etc.
-    in_dat.add_parameter(varname, value)
+    if 'bound' in varname:
+        number = (varname.split('('))[1].split(')')[0]
+        if 'boundu' in varname:
+            in_dat.add_bound(number, 'u', value)
+        else:
+            in_dat.add_bound(number, 'l', value)
+    elif 'fimp' in varname:
+        number = (varname.split('('))[1].split(')')[0]
+        in_dat.change_fimp(number, value)
+    elif 'zref' in varname:
+        number = (varname.split('('))[1].split(')')[0]
+        in_dat.change_zref(number, value)
+    else:
+        in_dat.add_parameter(varname, value)
+
 
 
 

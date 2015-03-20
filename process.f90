@@ -259,7 +259,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '382    Release Date :: 2015-01-20'
+       '385    Release Date :: 2015-03-04'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -352,6 +352,7 @@ subroutine run_summary
   !+ad_hist  27/02/14 PJK Introduced use of nineqns
   !+ad_hist  22/07/14 PJK Moved routine from input.f90, and rearranged layout,
   !+ad_hisc               incorporating old routine codever
+  !+ad_hisc  02/03/15 JM  Added runtitle to MFILE
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -443,6 +444,8 @@ subroutine run_summary
 
   ustring = '"'//trim(progid(4)(13:20))//'"'
   call ovarst(mfile,'User','(username)',ustring)
+  
+  call ovarst(mfile,'PROCESS run title','(runtitle)',runtitle)
 
 #ifndef unit_test
   call oblnkl(nout)
@@ -1844,3 +1847,6 @@ end subroutine output
 ! GIT 381: Changed pinjht description;
 !          Changed Django library location for GUI
 ! GIT 382: Various GIT branches merged
+! GIT 383: Various minor changes and availability model updated. See release notes t383
+! GIT 384: Changes to TF magnets calculations and a few minor fixes. See release notes t384
+! GIT 385: Fixed tagging error and see release notes t385

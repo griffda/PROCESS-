@@ -49,7 +49,8 @@
 
 import sys, os
 import fileinput
-from subprocess import call
+#from subprocess import call
+import subprocess
 import string
 	
 """ LOAD INPUT VARIABLES FROM CONFIG.DAT"""
@@ -290,14 +291,17 @@ for it1 in valores1:
 		replaceall("../2013_demos/IN.DAT",lista_inp,lista_cambio)
 		
 		""" executes PROCESS code """		
-		os.system("~pknight/process/bin/process20130410")
+		subprocess.call(["~pknight/process/bin/process20130410"])
+		#os.system("~pknight/process/bin/process20130410")
 		
 		""" copy PLOT.DAT and OUT.DAT to DATA directory"""
 		if data:
 			destination = "DATA/PLOT.DAT"	+ ".%f" % (it1) + ".%f" % (it2)
-			os.system("cp PLOT.DAT "+destination)
+			subprocess.call(["cp PLOT.DAT " + destination])
+			#os.system("cp PLOT.DAT "+destination)
 			destination = "DATA/OUT.DAT"	+ ".%f" % (it1) + ".%f" % (it2)
-			os.system("cp OUT.DAT "+destination)
+			subprocess.call(["cp OUT.DAT " + destination])
+			#os.system("cp OUT.DAT "+destination)
 		
 		""" the previous solution is introduced in the next IN.DAT"""
 		readVars()

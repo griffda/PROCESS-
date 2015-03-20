@@ -1028,7 +1028,7 @@ module fwbs_variables
   !+ad_vars  emult /1.27/ : energy multiplication in blanket and shield
   !                         (calculated if blktmodel>0)
   real(kind(1.0D0)) :: emult = 1.27D0
-  !+ad_vars  fblss /0.10/ : stainless steel fraction of blanket by volume
+  !+ad_vars  fblss /0.09705/ : stainless steel fraction of blanket by volume
   !+ad_varc                 (if blktmodel>0, steel fraction of breeding zone)
   real(kind(1.0D0)) :: fblss = 0.09705D0
   !+ad_vars  fdiv /0.15/ : area fraction taken up by divertor (ipowerflow=1)
@@ -2624,9 +2624,9 @@ module build_variables
   real(kind(1.0D0)) :: fwareaib = 0.0D0
   !+ad_vars  fwareaob : outboard first wall surface area (m2)
   real(kind(1.0D0)) :: fwareaob = 0.0D0
-  !+ad_vars  fwith /0.035/ : inboard first wall thickness (m) (if lpulse=1, =2*bfw)
+  !+ad_vars  fwith /0.035/ : inboard first wall thickness, initial estimate (m)
   real(kind(1.0D0)) :: fwith = 0.035D0
-  !+ad_vars  fwoth /0.035/ : outboard first wall thickness (m) (if lpulse=1, =2*bfw)
+  !+ad_vars  fwoth /0.035/ : outboard first wall thickness, initial estimate (m)
   real(kind(1.0D0)) :: fwoth = 0.035D0
   !+ad_vars  gapds /0.155/ : gap between inboard vacuum vessel and TF coil (m)
   !+ad_varc                (iteration variable 61)
@@ -2847,14 +2847,14 @@ module cost_variables
   integer :: num_rh_systems = 4
   !+ad_vars  conf_mag /0.99/ : Availability confidence level for magnet system
   real(kind(1.0D0)) :: conf_mag = 0.99D0
-  !+ad_vars  div_cycle_lim /20000/ : Cycle limit of the divertor
-  integer :: div_cycle_lim = 20000
-  !+ad_vars  conf_div /1.1/ : Availability confidence level for divertor system
-  real(kind(1.0D0)) :: conf_div = 1.1D0
-  !+ad_vars  fwbs_cycle_lim /30000/ : Cycle limit of the blanket
-  integer :: fwbs_cycle_lim = 30000
-  !+ad_vars  conf_fwbs /1.1/ : Availability confidence level for blanket system
-  real(kind(1.0D0)) :: conf_fwbs = 1.1D0
+  !+ad_vars  div_prob_fail /0.0002/ : Divertor probability of failure (per op day)
+  real(kind(1.0D0)) :: div_prob_fail = 0.0002D0
+  !+ad_vars  div_umain_time /0.25/ : Divertor unplanned maintenance time (years)
+  real(kind(1.0D0)) :: div_umain_time = 0.25D0
+  !+ad_vars  fwbs_prob_fail /0.0002/ : Fwbs probability of failure (per op day)
+  real(kind(1.0D0)) :: fwbs_prob_fail = 0.0002D0
+  !+ad_vars  fwbs_umain_time /0.25/ : Fwbs unplanned maintenance time (years)
+  real(kind(1.0D0)) :: fwbs_umain_time = 0.25D0
   !+ad_vars  redun_vac /75/ : Vacuum system pump redundancy level (%)
   integer :: redun_vac = 75
   !+ad_vars  t_operation : Operational time (yrs)

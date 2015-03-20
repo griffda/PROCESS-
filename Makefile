@@ -205,7 +205,7 @@ default: process.exe
 
 # object dependencies (usually via modules or header files)
 
-availability.o: global_variables.o output.o
+availability.o: global_variables.o output.o maths_library.o
 buildings.o: global_variables.o output.o
 caller.o: availability.o buildings.o costs.o current_drive.o divertor.o fwbs.o\
   global_variables.o hcpb.o ife.o machine_build.o numerics.o output.o pfcoil.o physics.o \

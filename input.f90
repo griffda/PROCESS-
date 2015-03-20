@@ -331,9 +331,11 @@ contains
     !+ad_hist  17/11/14 PJK Added OUTPUT_COSTS
     !+ad_hist  24/11/14 PJK Removed COOLWH (now set via blkttype)
     !+ad_hist  25/11/14 JM  Added new availability model variables
+    !+ad_hist  25/11/14 JM  Changed default bound for for te flhthresh
     !+ad_hist  10/12/14 PJK Removed UCIHX
     !+ad_hist  17/12/14 PJK Added IREFPROP
     !+ad_hist  27/02/15 JM  Changed blktcycle to secondary_cycle
+    !+ad_hist  17/03/15 JM  Removed irefprop
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -711,7 +713,7 @@ contains
           call parse_real_variable('RLI', rli, 0.0D0, 10.0D0, &
                'Normalised inductivity')
        case ('RMAJOR')
-          call parse_real_variable('RMAJOR', rmajor, 0.1D0, 30.0D0, &
+          call parse_real_variable('RMAJOR', rmajor, 0.1D0, 50.0D0, &
                'Plasma major radius (m)')
        case ('RNBEAM')
           call parse_real_variable('RNBEAM', rnbeam, 0.0D0, 1.0D0, &
@@ -726,7 +728,7 @@ contains
           call parse_real_variable('TBETA', tbeta, 0.0D0, 4.0D0, &
                'Temperature profile index beta')
        case ('TE')
-          call parse_real_variable('TE', te, 2.0D0, 150.0D0, &
+          call parse_real_variable('TE', te, 1.0D0, 200.0D0, &
                'Electron temperature (keV)')
        case ('TEPED')
           call parse_real_variable('TEPED', teped, 0.0D0, 20.0D0, &
@@ -827,7 +829,7 @@ contains
           call parse_real_variable('FJPROT', fjprot, 0.001D0, 10.0D0, &
                'F-value for SCTF winding pack J')
        case ('FLHTHRESH')
-          call parse_real_variable('FLHTHRESH', flhthresh, 0.001D0, 10.0D0, &
+          call parse_real_variable('FLHTHRESH', flhthresh, 0.001D0, 1.0D6, &
                'F-value for L-H power threshold')
        case ('FMVA')
           call parse_real_variable('FMVA', fmva, 0.001D0, 10.0D0, &
@@ -1173,7 +1175,7 @@ contains
           write(outfile,*) ' '
           obsolete_var = .true.
        case ('BORE')
-          call parse_real_variable('BORE', bore, 0.0D0, 20.0D0, &
+          call parse_real_variable('BORE', bore, 0.0D0, 50.0D0, &
                'Machine bore (m)')
        case ('CLHSF')
           call parse_real_variable('CLHSF', clhsf, 2.0D0, 10.0D0, &
@@ -1210,10 +1212,10 @@ contains
                'Martensitic frac of steel in TF coil')
        case ('FWITH')
           call parse_real_variable('FWITH', fwith, 0.0D0, 10.0D0, &
-               'Inboard first wall thickness (m)')
+               'Inboard first wall thickness, initial estimate (m)')
        case ('FWOTH')
           call parse_real_variable('FWOTH', fwoth, 0.0D0, 10.0D0, &
-               'Outboard first wall thickness (m)')
+               'Outboard first wall thickness, initial estimate (m)')
        case ('GAPOH')
           call parse_real_variable('GAPOH', gapoh, 0.0D0, 10.0D0, &
                'Gap between OHC and TF coil (m)')
@@ -2090,18 +2092,18 @@ contains
        case ('CONF_MAG')
           call parse_real_variable('CONF_MAG', conf_mag, 0.9D0, 1.0D0, &
                'Availability confidence level for magnet system')
-       case ('DIV_CYCLE_LIM')
-          call parse_int_variable('DIV_CYCLE_LIM', div_cycle_lim, 5000, 50000, &
-               'Cycle limit of the divertor')
-       case ('CONF_DIV')
-          call parse_real_variable('CONF_DIV', conf_div, 1.0D0, 2.0D0, &
-               'Availability confidence level for divertor system')
-       case ('FWBS_CYCLE_LIM')
-          call parse_int_variable('FWBS_CYCLE_LIM', fwbs_cycle_lim, 10000, 100000, &
-               'Cycle limit of the fwbs')
-       case ('CONF_FWBS')
-          call parse_real_variable('CONF_FWBS', conf_fwbs, 1.0D0, 2.0D0, &
-               'Availability confidence level for fwbs system')
+       case ('DIV_PROB_FAIL')
+          call parse_real_variable('DIV_PROB_FAIL', div_prob_fail, 0.0D0, 1.0D0, &
+               'Divertor probability of failure (per op day)')
+       case ('DIV_UMAIN_TIME')
+          call parse_real_variable('DIV_UMAIN_TIME', div_umain_time, 0.1D0, 2.0D0, &
+               'Divertor unplanned maintenance time (years)')
+       case ('FWBS_PROB_FAIL')
+          call parse_real_variable('FWBS_PROB_FAIL', fwbs_prob_fail, 0.0D0, 1.0D0, &
+               'Fwbs probability of failure (per op day)')
+       case ('FWBS_UMAIN_TIME')
+          call parse_real_variable('FWBS_UMAIN_TIME', fwbs_umain_time, 0.1D0, 2.0D0, &
+               'Fwbs unplanned maintenace time (years)')
        case ('REDUN_VAC')
           call parse_int_variable('REDUN_VAC', redun_vac, 0, 100, &
                'Vacuum system pump redundancy level (%)')
