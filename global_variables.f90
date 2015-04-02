@@ -589,6 +589,8 @@ module physics_variables
   real(kind(1.0D0)) :: ptrepv = 0.0D0
   !+ad_vars  ptrimw : ion transport power (MW)
   real(kind(1.0D0)) :: ptrimw = 0.0D0
+  !+ad_vars  pscalingmw : Total transport power from scaling law (MW)
+  real(kind(1.0D0)) :: pscalingmw = 0.0D0
   !+ad_vars  ptripv : ion transport power per volume (MW/m3)
   real(kind(1.0D0)) :: ptripv = 0.0D0
   !+ad_vars  q /3.0/ : safety factor 'near' plasma edge (iteration variable 18):
@@ -777,6 +779,10 @@ module current_drive_variables
   real(kind(1.0D0)) :: etalh = 0.3D0
   !+ad_vars  etanbi /0.3/ : neutral beam wall plug to injector efficiency
   real(kind(1.0D0)) :: etanbi = 0.3D0
+  !+ad_vars  pnbitot : neutral beam power entering vacuum vessel
+  real(kind(1.0D0)) :: pnbitot = 0.0D0
+  !+ad_vars  nbshinemw : neutral beam shine-through power 
+  real(kind(1.0D0)) :: nbshinemw = 0.0D0
   !+ad_vars  etaof /0.3/ : oscillating field wall plug to injector efficiency
   real(kind(1.0D0)) :: etaof = 0.3D0
   !+ad_vars  feffcd /1.0/ : current drive efficiency fudge factor (iteration variable 47)
@@ -1003,6 +1009,7 @@ module fwbs_variables
   !+ad_hist  10/12/14 PJK Modified secondary_cycle, blkttype descriptions
   !+ad_hist  17/12/14 PJK Added irefprop
   !+ad_hist  25/02/15 JM  Removed redundant blanket fractions and switches
+  !+ad_hist  02/04/15 JM  Removed fwerlim
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1028,6 +1035,8 @@ module fwbs_variables
   !+ad_vars  emult /1.27/ : energy multiplication in blanket and shield
   !                         (calculated if blktmodel>0)
   real(kind(1.0D0)) :: emult = 1.27D0
+  !+ad_vars  emultmw : power due to energy multiplication in blanket and shield [MW]
+  real(kind(1.0D0)) :: emultmw = 0.0D0
   !+ad_vars  fblss /0.09705/ : stainless steel fraction of blanket by volume
   !+ad_varc                 (if blktmodel>0, steel fraction of breeding zone)
   real(kind(1.0D0)) :: fblss = 0.09705D0
@@ -1052,7 +1061,7 @@ module fwbs_variables
   real(kind(1.0D0)) :: fw_armour_thickness = 0.005D0
   !+ad_vars  fw_armour_vol : first wall armour volume (m3)
   real(kind(1.0D0)) :: fw_armour_vol = 0.0D0
-  !+ad_vars  iblanket /1/ : switch for blanket model
+  !+ad_vars  iblanket /1/ : switch for blanket model: <UL>
   !+ad_varc             <LI> = 1 CCFE HCPB model;
   !+ad_varc             <LI> = 2 KIT HCPB model</UL>
   integer :: iblanket = 1
@@ -1200,8 +1209,6 @@ module fwbs_variables
   real(kind(1.0D0)) :: tfwmatmax = 823.0D0
   !+ad_vars  etaiso /0.85/ : isentropic efficiency of first wall and blanket coolant pumps (secondary_cycle>1)
   real(kind(1.0D0)) :: etaiso = 0.85D0
-  !+ad_vars  fwerlim /0.005/ : erosion thickness allowance for first wall armour (m)
-  real(kind(1.0D0)) :: fwerlim = 0.005D0
   !+ad_vars  fvoldw /1.4/ : area coverage factor for vacuum vessel volume
   real(kind(1.0D0)) :: fvoldw = 1.4D0
   !+ad_vars  fvolsi /1.0/ : area coverage factor for inboard shield volume
@@ -2839,9 +2846,9 @@ module cost_variables
   !+ad_varc          <LI> = 1 calculate cfactr using Taylor and Ward 1999 model;
   !+ad_varc          <LI> = 2 calculate cfactr using new (2014) model</UL>
   integer :: iavail= 0
-  !+ad_vars  avail_min /0.75/ : Minimum availability (constraint equation 60)
+  !+ad_vars  avail_min /0.75/ : Minimum availability (constraint equation 61)
   real(kind(1.0D0)) :: avail_min = 0.75D0
-  !+ad_vars  favail /1.0/ : F-value for minimum availability (constraint equation 60)
+  !+ad_vars  favail /1.0/ : F-value for minimum availability (constraint equation 61)
   real(kind(1.0D0)) :: favail = 1.0D0  
   !+ad_vars  num_rh_systems /4/ : Number of remote handling systems (1-10)
   integer :: num_rh_systems = 4

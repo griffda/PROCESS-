@@ -173,6 +173,12 @@ module ccfe_hcpb_module
   !  Total nuclear power deposited in FW, BLKT, SHLD, DIV, TF (MW)
   real(kind=double), private :: nuc_pow_dep_tot
   
+  !  Exponential factors in nuclear heating calcs
+  real(kind=double), private :: exp_blanket, exp_shield1, exp_shield2
+  
+  !  Fraction of neutron energy lost by main wall
+  real(kind=double), private :: fdep
+  
 contains
   
   subroutine ccfe_hcpb(outfile, iprint)
@@ -247,25 +253,30 @@ contains
     !  Calculate the nuclear heating in the divertor
     call nuclear_heating_divertor
     
-    !  Power to VV or lost (MW)
-    pnucvvplus = 0.8D0 * emult * powfmw - pnucfw - pnucblkt - pnucshld - pnucdiv - ptfnuc
+    !  Neutron power to divertor: 0.8D0 * fdiv * powfmw (assume this is all absorbed, no multiplication)
+    !  Neutron power to main wall: 0.8D0 * (1-fdiv) * powfmw (assume that all are absorbed)
+    !  Total energy deposited in main wall: emult * 0.8D0 * (1-fdiv) * powfmw
+    !  Assume that all the neutrons are absorbed. (Not applicable for very thin blankets)   
     
-    if (pnucvvplus >=0 ) then
-		pseclossmw = pnucvvplus
+    !  Split neutron power to main wall between fw, bkt, shld and TF with same fractions as before.
+    !  Total nuclear power deposited (MW)
+	nuc_pow_dep_tot = pnucfw + pnucblkt + pnucshld + ptfnuc
 	
-	!  pnucloss is negative. split powfmw * emult between fw, bkt, shld, div and TF with same 
-	!  fractions as before
-	else
-		nuc_pow_dep_tot = pnucfw + pnucblkt + pnucshld + pnucdiv + ptfnuc
-		pnucfw = (pnucfw / nuc_pow_dep_tot) * 0.8D0 * emult * powfmw
-		pnucblkt = (pnucblkt / nuc_pow_dep_tot) * 0.8D0 * emult * powfmw
-		pnucshld = (pnucshld / nuc_pow_dep_tot) * 0.8D0 * emult * powfmw
-		ptfnuc = (ptfnuc / nuc_pow_dep_tot) * 0.8D0 * emult * powfmw
-		pnucdiv = (pnucdiv / nuc_pow_dep_tot) * 0.8D0 * emult * powfmw
-		pnucvvplus = 0.0D0
-		pseclossmw = pnucvvplus
+	!  Power to the first wall (MW)
+	pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * 0.8D0 * (1-fdiv) * powfmw
 	
-	end if
+	!  Power to the blanket (MW)
+	pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult * 0.8D0 * (1-fdiv) * powfmw
+	
+	!  Power to the shield(MW)
+	pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * 0.8D0 * (1-fdiv) * powfmw
+	
+	!  Power to the TF coils (MW)
+	ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult * 0.8D0 * (1-fdiv) * powfmw
+	
+	!  pnucdiv is not changed.
+	!  The energy due to multiplication, by subtraction:
+	emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - 0.8D0 * powfmw
 
 	!  Calculate the powerflow
     call powerflow_calc
@@ -886,7 +897,8 @@ contains
     mass = whtblkt / 1000.0D0
     
     !  Total blanket nuclear heating (MW)
-    pnucblkt = powfmw * a * (1-exp(-b*mass))
+    exp_blanket = 1-exp(-b*mass)
+    pnucblkt = powfmw * a * exp_blanket
   
   end subroutine
  
@@ -917,7 +929,9 @@ contains
     y = (shield_density/1000.D0) * (shldith+shldoth)/2.0D0
         
     !  Unit nuclear heating of shield (W/kg/GW of fusion power) x mass
-    shld_u_nuc_heating = whtshld * f * exp(-g * x_blanket) * exp(-h * y)
+    exp_shield1 = exp(-g * x_blanket)
+    exp_shield2 = exp(-h * y)
+    shld_u_nuc_heating = whtshld * f * exp_shield1 * exp_shield2
     
     !  Total nuclear heating in shield (MW)
     pnucshld = shld_u_nuc_heating * (powfmw / 1000.D0) / 1.0D6
@@ -954,9 +968,6 @@ contains
     
     !  No heating of the H & CD
     pnuchcd = 0.0D0
-    
-    !  No power lost. Assume all power is absorbed
-    pnucloss = 0.0D0
   
   end subroutine
 
@@ -1090,7 +1101,7 @@ contains
 
     !  Start thermal hydraulic calculations with inboard side. Calc of max FW temperature.
     !  Includes fraction of escaped alpha power as a component of the inboard wall surface power.
-    call iterate_fw(afwi, bfwi, fwareaib, (psurffwi+fwareaib/fwarea*palpfwmw), bllengi, fwerlim, &
+    call iterate_fw(afwi, bfwi, fwareaib, (psurffwi+fwareaib/fwarea*palpfwmw), bllengi, &
 	    pnucfwi, tpeakfwi, cf, rhof, velfwi)
 
     !  Adjust first wall thickness if bfwi has been changed
@@ -1133,7 +1144,7 @@ contains
     !  Calculation of max FW temp. Include NBI orbit loss power (assume to be only on outboard side)
     ! and a fraction of the escaped alpha power as components of the outboard wall surface power
     call iterate_fw(afwo, bfwo, fwareaob, (psurffwo + porbitlossmw + fwareaob/fwarea*palpfwmw), &
-        bllengo, fwerlim, pnucfwo, tpeakfwo, cf, rhof, velfwo)
+        bllengo, pnucfwo, tpeakfwo, cf, rhof, velfwo)
 
     !  Adjust first wall thickness if bfwo has been changed
     fwoth = 2.0D0*bfwo
@@ -1336,7 +1347,7 @@ contains
   
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-   subroutine iterate_fw(afw, bfw, area, prad_incident, blleng, fwerlim, pnuc_deposited, tpeakfw, &
+   subroutine iterate_fw(afw, bfw, area, prad_incident, blleng, pnuc_deposited, tpeakfw, &
        cf, rhof, velfw)
     !+ad_name  iterate_fw
     !+ad_summ  Routine to perform detailed thermal hydraulic calculations
@@ -1350,7 +1361,6 @@ contains
     !+ad_argc                      (i.e. area of inboard wall or outboard wall)
     !+ad_args  prad_incident : input real : incident radiation power (MW)
     !+ad_args  blleng : input real : poloidal length of pipe per segment (m)
-    !+ad_args  fwerlim : input real : maximum allowable erosion thickness loss (m)
     !+ad_args  pnuc_deposited : output real : neutron power deposited in FW side (IB or OB) (MW)
     !+ad_args  tpeakfw : output real : peak first wall temperature (K)
     !+ad_args  cf : output real : coolant specific heat capacity at constant
@@ -1389,7 +1399,7 @@ contains
     implicit none
 
     !  Arguments
-    real(kind=double), intent(in) :: afw, area, prad_incident, blleng, fwerlim
+    real(kind=double), intent(in) :: afw, area, prad_incident, blleng
     real(kind=double), intent(inout) :: bfw
     real(kind=double), intent(out) :: pnuc_deposited, tpeakfw, cf, rhof, velfw
 
@@ -1552,11 +1562,9 @@ contains
 
        !  The lower limit on the first wall thickness is derived from the
        !  constraint that the first wall must possess the ability to withstand
-       !  the internal coolant pressure. An additional thickness defined by
-       !  user input "fwerlim" is required to account for erosion of the first
-       !  wall surface over its lifetime. The limit is written as,
-       !  (bfw-afw) - fwerlim > p*(afw+bfw)/2/maxstress
-       sgpthn = (coolp*(afw+bfw)/2.0D0) / (bfw-afw-fwerlim)
+       !  the internal coolant pressure. The limit is written as,
+       !  (bfw-afw)	 > p*(afw+bfw)/2/maxstress
+       sgpthn = (coolp*(afw+bfw)/2.0D0) / (bfw-afw)
 
        maxstress = 1.0D9 !smt(tpeakfw_c, fwlifs)
 
@@ -1566,11 +1574,10 @@ contains
           !  First wall too thin
           !  Keep afw fixed and alter bfw so that the lower limit
           !  is satisfied.
-
-          bfw = ( afw*(maxstress + coolp/2.0D0) + fwerlim*maxstress ) / (maxstress - coolp/2.0D0)
+          bfw = ( afw*(maxstress + coolp/2.0D0)) / (maxstress - coolp/2.0D0)
           write(*,*) 'FW too thin...',sgpthn, maxstress, tpeakfw_c
           write(*,*) 'FW too thin...',afw, bfw
-          write(*,*) 'FW too thin...',coolp, fwerlim
+          write(*,*) 'FW too thin...',coolp
        end if
 
     end do iteration
@@ -1774,7 +1781,10 @@ contains
 	call ovarre(ofile, 'Total nuclear heating in the blanket (including emult) (MW)', '(pnucblkt)', pnucblkt) 
 	call ovarre(ofile, 'Total nuclear heating in the shield (MW)', '(pnucshld)', pnucshld)
 	call ovarre(ofile, 'Total nuclear heating in the divertor (MW)', '(pnucdiv)', pnucdiv)
-    call oblnkl(ofile)
+    call osubhd(ofile,'Diagostic output for nuclear heating :')    
+    call ovarre(ofile, 'Blanket exponential factor', '(exp_blanket)', exp_blanket)    
+    call ovarre(ofile, 'Shield: first exponential', '(exp_shield1)', exp_shield1)
+    call ovarre(ofile, 'Shield: second exponential', '(exp_shield2)', exp_shield2)   
     
     call osubhd(ofile,'Thermodynamic Model Output :')
     
@@ -1786,7 +1796,6 @@ contains
     call ovarre(ofile, 'Outer radius of outboard first wall coolant channels (m)', '(bfwo)', bfwo)
     call ovarrf(ofile, 'Inlet temperature of coolant (K)', '(inlet_temp)', inlet_temp)
     call ovarrf(ofile, 'Outlet temperature of coolant (K)', '(outlet_temp)', outlet_temp)
-    call ovarre(ofile, 'Erosion thickness allowance for first wall (m)', '(fwerlim)', fwerlim)
     call ovarre(ofile, 'Maximum temperature of first wall material (K)', '(tfwmatmax)', tfwmatmax)
     call ovarin(ofile, 'No of inboard blanket modules poloidally', '(nblktmodpi)', nblktmodpi)
     call ovarin(ofile, 'No of inboard blanket modules toroidally', '(nblktmodti)', nblktmodti)
@@ -3298,7 +3307,6 @@ contains
     !call ovarre(ofile, 'Outer radius of outboard first wall coolant channels (m)', '(bfwo)', bfwo)
     !call ovarrf(ofile, 'Inlet temperature of coolant (K)', '(inlet_temp)', inlet_temp)
     !call ovarrf(ofile, 'Outlet temperature of coolant (K)', '(outlet_temp)', outlet_temp)
-    !call ovarre(ofile, 'Erosion thickness allowance for first wall (m)', '(fwerlim)', fwerlim)
     !call ovarre(ofile, 'Maximum temperature of first wall material (K)', '(tfwmatmax)', tfwmatmax)
     !call ovarin(ofile, 'No of inboard blanket modules poloidally', '(nblktmodpi)', nblktmodpi)
     !call ovarin(ofile, 'No of inboard blanket modules toroidally', '(nblktmodti)', nblktmodti)

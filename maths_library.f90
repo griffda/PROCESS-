@@ -76,6 +76,7 @@ module maths_library
 
   use global_variables, only: verbose
   use constants
+  use process_output
 
   implicit none
   
@@ -2436,19 +2437,24 @@ contains
     call fcnvmc2(n,m,x,fgrd,cnorm,lcnorm,info)
     if (info < 0) return
 
+	!  Setup line overwrite for VMCON iterations output
+	open(unit=iotty, carriagecontrol='FORTRAN')
+	write(*,*) ""
+    call oheadr(iotty, "VMCON Iterations")
+
     !  Start the iteration by calling the quadratic programming
     !  subroutine
-
+    
     iteration: do
+       !  Output to terminal number of VMCON iterations
+       write(iotty, '("+", I, '' vmcon iterations'')'), niter+1
 
        !  Increment the quadratic subproblem counter
-
        nqp = nqp + 1
        niter = nqp
 
        !  Set the linear term of the quadratic problem objective function
        !  to the negative gradient of objf
-
        do i = 1, n
           gm(i) = -fgrd(i)
        end do
@@ -2464,15 +2470,12 @@ contains
        !  The following return is made if the quadratic problem solver
        !  failed to find a feasible point, if an artificial bound was
        !  active, or if a singular matrix was detected
-
        if ((info == 5).or.(info == 6)) return
 
        !  Initialize the line search iteration counter
-
        nls = 0
 
        !  Calculate the Lagrange multipliers
-
        do j = 1, mact
           k = iwa(j) - npp
           if (k > 0) goto 59
@@ -2498,7 +2501,6 @@ contains
 
        !  Calculate the gradient of the Lagrangian function
        !  nfinit is the value of nfev at the start of an iteration
-
        nfinit = nfev
        do i = 1, n
           glag(i) = fgrd(i)
@@ -2525,7 +2527,6 @@ contains
 
        !  Set spgdel to the scalar product of fgrd and delta
        !  Store the elements of glag and x
-
        spgdel = zero
        do i = 1, n
           spgdel = spgdel + fgrd(i)*delta(i)
@@ -2534,7 +2535,6 @@ contains
        end do
 
        !  Revise the vector vmu and test for convergence
-
        sum = abs(spgdel)
        do k = 1, mpnppn
           aux = abs(vlam(k))
@@ -2558,7 +2558,6 @@ contains
        end do
 
        !  Check convergence of constraint residuals
-
        summ = 0.0D0
        do i = 1,m
           summ = summ + conf(i)*conf(i)
@@ -2574,7 +2573,6 @@ contains
        !  Exit if both convergence criteria are satisfied
        !  (the original criterion, plus constraint residuals below the tolerance level)
        !  Temporarily set the two tolerances equal (should perhaps be an input parameter)
-
        sqsumsq_tol = tol
        if ((sum <= tol).and.(sqsumsq < sqsumsq_tol)) then
           if (verbose == 1) then
@@ -3030,7 +3028,7 @@ contains
     if (delta(np1) <= cdm6) then
        if (verbose == 1) then
           write(*,*) &
-               'QPSUB: delta(np1) is too small: no feasible solution'
+               'QPSUB: delta(np1) is too small: no  solution'
           write(*,*) 'delta(np1)=',delta(np1),' np1=',np1
        end if
        goto 120

@@ -336,6 +336,7 @@ contains
     !+ad_hist  17/12/14 PJK Added IREFPROP
     !+ad_hist  27/02/15 JM  Changed blktcycle to secondary_cycle
     !+ad_hist  17/03/15 JM  Removed irefprop
+    !+ad_hist  02/04/15 JM  Removed fwerlim
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1624,9 +1625,6 @@ contains
        case ('ETAISO')
           call parse_real_variable('ETAISO', etaiso, 0.1D0, 1.0D0, &
                'Isentropic efficiency of coolant pumps')
-       case ('FWERLIM')
-          call parse_real_variable('FWERLIM', fwerlim, 0.0D0, 0.01D0, &
-               'First wall erosion thickness allowance (m)')
        case ('BLKTTYPE')
           call parse_int_variable('BLKTTYPE', blkttype, 1, 3, &
                'Switch for blanket type')

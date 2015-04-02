@@ -207,6 +207,7 @@ contains
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  19/08/14 PJK Removed impfe usage
     !+ad_hist  01/10/14 PJK Added plhthresh
+    !+ad_hist  01/04/15 JM  Added total transport power from scaling law
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -446,6 +447,8 @@ contains
 
     ptremw = ptrepv*vol
     ptrimw = ptripv*vol
+    !  Total transport power from scaling law (MW)
+    pscalingmw = ptremw + ptrimw
 
     !  Calculate volt-second requirements
 
@@ -5281,6 +5284,7 @@ contains
     !+ad_hist  13/11/14 PJK Modified iradloss usage
     !+ad_hist  17/11/14 PJK Modified output to account for falpha, palpfwmw
     !+ad_hist  18/11/14 PJK Corrected power balance output if ignite=1
+    !+ad_hist  01/04/15 JM  Core plasma power balance removed
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5589,66 +5593,6 @@ contains
          pedgeradmw)
     call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw)
 
-    call osubhd(outfile,'Core Plasma Power Balance :')
-
-    write(outfile,10) palpmw*falpha,ptremw
-10  format(t12,'Alpha power deposited in core (MW)', &
-         t48,f8.2, &
-         t62,'Power transported by electrons (MW)', &
-         t99,f8.2)
-
-    write(outfile,20) pchargemw,ptrimw
-20  format(t2,'Non-alpha charged particle fusion power (MW)', &
-         t48,f8.2, &
-         t67,'Power transported by ions (MW)', &
-         t99,f8.2)
-
-    if (iradloss == 0) then
-       write(outfile,25) pohmmw,pradmw
-25     format(t30,'Ohmic power (MW)', &
-            t48,f8.2, &
-            t72,'Total radiation power (MW)', &
-            t99,f8.2)
-    else if (iradloss == 1) then
-       write(outfile,30) pohmmw,pcoreradmw
-30     format(t30,'Ohmic power (MW)', &
-            t48,f8.2, &
-            t72,'Core radiation power (MW)', &
-            t99,f8.2)
-    else
-       write(outfile,40) pohmmw
-40     format(t30,'Ohmic power (MW)', &
-         t48,f8.2)
-    end if
-
-    if (ignite == 0) then
-       write(outfile,50) pinjemw
-       write(outfile,60) pinjimw
-       pinj = pinjemw + pinjimw
-    else
-       pinj = 0.0D0
-    end if
-
-50  format(t13,'Injection power to electrons (MW)', &
-         t48,f8.2)
-60  format(t18,'Injection power to ions (MW)', &
-         t48,f8.2)
-
-    write(outfile,'(t10,a)') repeat('-',97)
-
-    if (iradloss == 0) then
-       write(outfile,70) palpmw*falpha + pchargemw + pohmmw + pinj, &
-            ptremw + ptrimw + pradmw
-    else if (iradloss == 1) then
-       write(outfile,70) palpmw*falpha + pchargemw + pohmmw + pinj, &
-            ptremw + ptrimw + pcoreradmw
-    else
-       write(outfile,70) palpmw*falpha + pchargemw + pohmmw + pinj, &
-            (ptrepv + ptripv) * vol
-    end if
-
-70  format(t35,'Totals (MW)',t48,f8.2,t99,f8.2)
-
     call oblnkl(outfile)
     call ovarre(outfile,'Ohmic heating power (MW)','(pohmmw)',pohmmw)
     call ovarrf(outfile,'Fraction of alpha power deposited in plasma','(falpha)',falpha)
@@ -5664,13 +5608,8 @@ contains
     call ovarin(outfile,'Ignited plasma switch (0=not ignited, 1=ignited)', &
          '(ignite)',ignite)
 
-    call osubhd(outfile,'Charged Particle Power on Divertor :')
+    call osubhd(outfile,'Charged Particle Power into Divertor Zone :')
 
-    write(outfile,90) ptremw
-90  format(t14,'Power transported by electrons (MW)',t51,f8.2)
-    write(outfile,100) ptrimw
-100 format(t19,'Power transported by ions (MW)',t51,f8.2)
-    write(outfile,110) -pedgeradmw
 110 format(t2,'Particle power converted to edge radiation (MW)',t50,f9.2)
 
     write(outfile,'(t10,a)') repeat('-',49)
@@ -5678,7 +5617,7 @@ contains
 120 format(t39,'Total (MW)',t51,f8.2)
 
     call oblnkl(outfile)
-    call ovarre(outfile,'Power to divertor via charged particles (MW)','(pdivt)',pdivt)
+    call ovarre(outfile,'Power into divertor zone via charged particles (MW)','(pdivt)',pdivt)
 
     if (pdivt <= 0.001D0) then
        fdiags(1) = pdivt ; call report_error(87)

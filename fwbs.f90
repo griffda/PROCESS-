@@ -1291,7 +1291,7 @@ contains
          pnucfwbs,pnucfwbsi,pnucfwbso,pnucfwi,pnucfwo,pnucshldi, &
          pnucshldo,pnucsi,pnucso,psurffwi,psurffwo,ptfiwp, &
          ptfowp,ptor,r1,raddose,rhof,tpeakfwi,tpeakfwo, &
-         velbzi,velbzo,velfwi,velfwo,vffwi,vffwo,volshldi,volshldo,zdewex
+         velbzi,velbzo,velfwi,velfwo,vffwi,vffwo,volshldi,volshldo,zdewex, fwerlim
 
     !  Global shared variables
 

@@ -397,7 +397,7 @@ subroutine run_summary
      call ostars(outfile, width)
      call ocentr(outfile,'PROCESS', width)
      call ocentr(outfile,'Power Reactor Optimisation Code', width)
-     call ocentr(outfile,'for Environmental and Safety Studies', width)
+     !call ocentr(outfile,'for Environmental and Safety Studies', width)
      call ostars(outfile, width)
 
      call oblnkl(outfile)
