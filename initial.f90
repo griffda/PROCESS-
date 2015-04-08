@@ -265,6 +265,7 @@ subroutine check
   use pulse_variables
   use rfp_variables
   use tfcoil_variables
+  use stellarator_variables
 
   implicit none
 
@@ -540,15 +541,19 @@ subroutine check
   !  for coolmass is better done with coolwh=2 if blktmodel > 0 to give
   !  slightly pessimistic results.
 
-  if (blktmodel > 0) then
-     secondary_cycle = 0
-     blkttype = 3  !  HCPB
-     coolwh = 2
-  end if
+  !if (blktmodel > 0) then
+  !   secondary_cycle = 0
+  !   blkttype = 3  !  HCPB
+  !   coolwh = 2
+  !end if
 
   !  Ensure that blanket material fractions add up to 1.0
   
   !  CCFE HCPB Model
+  if (istell == 1) then
+    fsum = 1.0
+  end if
+  
   if (iblanket == 1) then
     fsum = fbltibe12 + fblli2sio4 + fblss + vfcblkt + vfpblkt
     if (abs(fsum-1.0D0) > 1.0D-4) then

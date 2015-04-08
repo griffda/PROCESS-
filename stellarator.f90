@@ -438,7 +438,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: fsum
+    !real(kind(1.0D0)) :: fsum
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -496,15 +496,15 @@ contains
 
     !  Solid breeder assumed if ipowerflow=0
 
-    if (ipowerflow == 0) blkttype = 3
+    !if (ipowerflow == 0) blkttype = 3
 
     !  Coolant fluid type
 
-    if ((blkttype == 1).or.(blkttype == 2)) then
-       coolwh = 2  !  water
-    else
-       coolwh = 1  !  helium
-    end if
+    !if ((blkttype == 1).or.(blkttype == 2)) then
+    !   coolwh = 2  !  water
+    !else
+    !   coolwh = 1  !  helium
+    !end if
 
     !  But... set coolant to water if blktmodel > 0
     !  Although the *blanket* is by definition helium-cooled in this case,
@@ -513,39 +513,39 @@ contains
     !  for coolmass is better done with coolwh=2 if blktmodel > 0 to give
     !  slightly pessimistic results.
 
-    if (blktmodel > 0) then
-       secondary_cycle = 0
-       blkttype = 3  !  HCPB
-       coolwh = 2
-    end if
+    !if (blktmodel > 0) then
+    !   secondary_cycle = 0
+    !   blkttype = 3  !  HCPB
+    !   coolwh = 2
+    !end if
 
     !  Ensure that blanket material fractions add up to 1.0
 
-    if (blkttype < 3) then
-       fsum = fblli2o + fblbe + vfblkt + fblss + fblvd
-       if (abs(fsum-1.0D0) > 1.0D-4) then
-          idiags(1) = blkttype
-          fdiags(1) = fblli2o
-          fdiags(2) = fblbe
-          fdiags(3) = vfblkt
-          fdiags(4) = fblss
-          fdiags(5) = fblvd
-          fdiags(6) = fsum
-          call report_error(165)
-       end if
-    else
-       fsum = fbllipb + fblli + vfblkt + fblss + fblvd
-       if (abs(fsum-1.0D0) > 1.0D-4) then
-          idiags(1) = blkttype
-          fdiags(1) = fbllipb
-          fdiags(2) = fblli
-          fdiags(3) = vfblkt
-          fdiags(4) = fblss
-          fdiags(5) = fblvd
-          fdiags(6) = fsum
-          call report_error(165)
-       end if
-    end if
+    !if (blkttype < 3) then
+    !   fsum = fblli2o + fblbe + vfblkt + fblss + fblvd
+    !   if (abs(fsum-1.0D0) > 1.0D-4) then
+    !      idiags(1) = blkttype
+    !      fdiags(1) = fblli2o
+    !      fdiags(2) = fblbe
+    !      fdiags(3) = vfblkt
+    !      fdiags(4) = fblss
+    !      fdiags(5) = fblvd
+    !      fdiags(6) = fsum
+    !      call report_error(165)
+    !   end if
+    !else
+    !   fsum = fbllipb + fblli + vfblkt + fblss + fblvd
+    !   if (abs(fsum-1.0D0) > 1.0D-4) then
+    !      idiags(1) = blkttype
+    !      fdiags(1) = fbllipb
+    !      fdiags(2) = fblli
+    !      fdiags(3) = vfblkt
+    !      fdiags(4) = fblss
+    !      fdiags(5) = fblvd
+    !      fdiags(6) = fsum
+    !      call report_error(165)
+    !   end if
+    !end if
 
   end subroutine stinit
 
@@ -1524,11 +1524,9 @@ contains
           pnucblkt = pneut2 * (1.0D0 - exp(-blnkoth/decaybl))
 
           !  Nuclear heating in the shield
-
           pnucshld = pneut2 - pnucblkt
 
           !  Superconducting coil shielding calculations
-
           call sctfcoil_nuclear_heating_iter90(coilhtmx,dpacop,htheci,nflutf, &
                pheci,pheco,ptfiwp,ptfowp,raddose,ptfnuc)
 
