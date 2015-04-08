@@ -114,6 +114,8 @@ contains
     !+ad_hist  02/09/14 PJK Modified ripflag handling
     !+ad_hist  20/10/14 PJK Changed OH coil to central solenoid
     !+ad_hist  06/02/15 JM  Added output of beamwd to mfile
+    !+ad_hist  06/03/15 JM  Put an additional call to ripple_amplitude after the change to 
+    !+ad_hisc 				rtot (issue #221)
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -175,13 +177,16 @@ contains
     call ripple_amplitude(ripple,ripmax,rtot,rtotl,ripflag)
 
     !  If the ripple is too large then move the outboard TF coil leg
-
     if (rtotl > rtot) then
        rtot = rtotl
        gapsto = rtot - 0.5D0*tfthko - ddwi - rsldo
     else
        gapsto = gapomin
     end if
+    
+    !  Call ripple calculation again with new rtot/gapsto value
+    !  call rippl(ripmax,rmajor,rminor,rtot,tfno,ripple,rtotl)
+    call ripple_amplitude(ripple,ripmax,rtot,rtotl,ripflag)
 
     !  Calculate first wall area
     !  Old calculation... includes a mysterious factor 0.875

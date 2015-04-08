@@ -629,6 +629,8 @@ contains
     !+ad_hist  12/06/14 PJK Corrections to strtf1, radtf(2) for tfc_model=2
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  16/09/14 PJK Removed myall_stress routine; changed tfc_model usage
+    !+ad_hist  02/03/15 JM  Changed von Mises in winding pack region
+    !+ad_hist  02/03/15 JM  Changed jeff in winding pack region
     !+ad_stat  Okay
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
     !
@@ -641,7 +643,7 @@ contains
     !  Local variables
 
     integer :: i
-    real(kind(1.0D0)) :: seff,tcbs,fac
+    real(kind(1.0D0)) :: seff, tcbs, fac, svmxz, svmyz
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -684,7 +686,7 @@ contains
     eyoung(2) = eyngeff(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
 
     jeff(1) = 0.0D0
-    jeff(2) = jwptf
+    jeff(2) = ritfc / ( pi * (radtf(3)**2 - radtf(2)**2))
 
     !  Call stress routine
 
@@ -704,8 +706,11 @@ contains
     casestr = sigvert / eystl
 
     !  Find Von-Mises stresses
+    !  For winding pack region take worst of two walls
+    svmxz = sigvm(sigrcon, 0.0D0, sigvert, 0.0D0,0.0D0,0.0D0)
+    svmyz = sigvm(0.0D0, sigtcon, sigvert, 0.0D0,0.0D0,0.0D0)
+    strtf1 = max(svmxz,svmyz)
 
-    strtf1 = sigvm(sigrcon, sigtcon, sigvert, 0.0D0,0.0D0,0.0D0)
     strtf2 = sigvm(sigrtf(1), sigttf(1), sigvert, 0.0D0,0.0D0,0.0D0)
 
     !  Young's modulus and strain in vertical direction on winding pack
@@ -1408,6 +1413,7 @@ contains
     call ovarre(outfile,'Peak field (Amperes Law,T)','(bmaxtf)',bmaxtf)
     call ovarre(outfile,'Peak field (with ripple,T)','(bmaxtfrp)',bmaxtfrp)
     call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
+    call ovarre(outfile,'Ripple amplitude at plasma (%)','(ripple)',ripple)
     call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotf*tfno)',estotf*tfno)
     call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf)
     call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/tfno)',whttf/tfno)

@@ -5702,15 +5702,15 @@ contains
        call oblnkl(outfile)
        if (any(icc == 15)) then
           call ovarin(outfile,'Switch for active L-H power threshold scaling', &
-               '(ilhthresh))',ilhthresh)
+               '(ilhthresh)',ilhthresh)
           call ovarre(outfile,'Active L-H power threshold value (MW)', &
-               '(plhthresh))',plhthresh)
+               '(plhthresh)',plhthresh)
        else
           call ovarin(outfile, &
                'Switch for active L-H power threshold scaling (not enforced)', &
-               '(ilhthresh))',ilhthresh)
+               '(ilhthresh)',ilhthresh)
           call ovarre(outfile,'(Inactive) L-H power threshold value (MW)', &
-               '(plhthresh))',plhthresh)
+               '(plhthresh)',plhthresh)
        end if
     end if
 

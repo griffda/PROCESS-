@@ -1091,7 +1091,7 @@ def plot_header(axis, mfile_data, scan):
         O = mfile_data.data["fimp(06"].get_scan(scan)
         Ne = mfile_data.data["fimp(07"].get_scan(scan)
         Si = mfile_data.data["fimp(08"].get_scan(scan)
-        Ar = mfile_data.data["fimp(02"].get_scan(scan)
+        Ar = mfile_data.data["fimp(09"].get_scan(scan)
         Fe = mfile_data.data["fimp(10"].get_scan(scan)
         Ni = mfile_data.data["fimp(11"].get_scan(scan)
         Kr = mfile_data.data["fimp(12"].get_scan(scan)

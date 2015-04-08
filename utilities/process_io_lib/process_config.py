@@ -64,11 +64,11 @@ class ProcessConfig(object):
     """
 
     filename = None
-    config_exists = True
+    configfileexists = True
     wdir     = '.'
     or_in_dat = 'IN.DAT'
     process  = 'process.exe'
-    niter    = 5
+    niter    = 10
     u_seed   = None
     factor   = 1.5
     comment  = ''
@@ -97,28 +97,21 @@ class ProcessConfig(object):
 
         """ prepares the working directory """
 
-        if self.wdir != '.':
+        try:
+            os.stat(self.wdir)
+        except FileNotFoundError:
+            os.mkdir(self.wdir)
 
-            try:
-                os.stat(self.wdir)
-            except FileNotFoundError:
-                os.mkdir(self.wdir)
-
-
+        if self.or_in_dat != 'IN.DAT' or self.wdir != '.':
             subprocess.call(['cp', self.or_in_dat, self.wdir + '/IN.DAT'])
-
-            if self.config_exists:
-                subprocess.call(['cp', self.filename, self.wdir])
-
-            os.chdir(self.wdir)
-            subprocess.call(['rm -f OUT.DAT MFILE.DAT PLOT.DAT *.txt *.out\
- *.log *.pdf *.eps *.nc *.info'], shell=True)
-
-
         else:
-            if not self.or_in_dat == 'IN.DAT':
-                os.system('cp ' + self.or_in_dat + ' IN.DAT')
+            subprocess.call(['cp', self.or_in_dat, 'Input_IN.DAT'])
 
+        if self.configfileexists:
+            subprocess.call(['cp', self.filename, self.wdir])
+        os.chdir(self.wdir)
+        subprocess.call(['rm -f OUT.DAT MFILE.DAT PLOT.DAT *.txt *.out\
+ *.log *.pdf *.eps *.nc *.info'], shell=True)
 
 
     def create_readme(self, directory='.'):
@@ -203,16 +196,14 @@ class ProcessConfig(object):
 
         """ gets the comment line from the configuration file """
 
-        if self.config_exists:
-            try:
-                configfile = open(self.filename, 'r')
-            except FileNotFoundError:
-                print('Warning: No config file named %s detected, using\
- defaults!' %self.filename)
-                self.config_exists = False
-                self.filename = None
-                return False
-        else:
+        if not self.configfileexists:
+            return False
+
+        try:
+            configfile = open(self.filename, 'r')
+        except FileNotFoundError:
+            print('Error: No config file named %s' %self.filename)
+            self.configfileexists = False
             return False
 
         for line in configfile:
@@ -233,16 +224,15 @@ class ProcessConfig(object):
 
         """ gets class attribute from configuration file """
 
-        if self.config_exists:
-            try:
-                configfile = open(self.filename, 'r')
-            except FileNotFoundError:
-                print('Warning: No config file named %s detected, using\
- defaults!' %self.filename)
-                self.config_exists = False
-                self.filename = None
-                return None
-        else:
+
+        if not self.configfileexists:
+            return None
+
+        try:
+            configfile = open(self.filename, 'r')
+        except FileNotFoundError:
+            print('Error: No config file named %s' %self.filename)
+            self.configfileexists = False
             return None
 
         for line in configfile:
@@ -486,16 +476,14 @@ class RunProcessConfig(ProcessConfig):
         expects comma separated values
         """
 
-        if self.config_exists:
-            try:
-                configfile = open(self.filename, 'r')
-            except FileNotFoundError:
-                print('Warning: No config file named %s detected, using\
- defaults!' %self.filename)
-                self.config_exists = False
-                self.filename = None
-                return []
-        else:
+        if not self.configfileexists:
+            return []
+
+        try:
+            configfile = open(self.filename, 'r')
+        except FileNotFoundError:
+            print('Error: No config file named %s' %self.filename)
+            self.configfileexists = False
             return []
 
 
@@ -521,18 +509,15 @@ class RunProcessConfig(ProcessConfig):
 
         """ sets the del_var attribute from the config file """
 
-        if self.config_exists:
-            try:
-                configfile = open(self.filename, 'r')
-            except FileNotFoundError:
-                print('Warning: No config file named %s detected, using\
- defaults!' %self.filename)
-                self.config_exists = False
-                self.filename = None
-                return
-        else:
+        if not self.configfileexists:
             return
 
+        try:
+            configfile = open(self.filename, 'r')
+        except FileNotFoundError:
+            print('Error: No config file named %s' %self.filename)
+            self.configfileexists = False
+            return
 
         for line in configfile:
 
@@ -550,16 +535,15 @@ class RunProcessConfig(ProcessConfig):
 
         """ sets the dictvar attribute from config file """
 
-        if self.config_exists:
-            try:
-                configfile = open(self.filename, 'r')
-            except FileNotFoundError:
-                print('Warning: No config file named %s detected, using\
- defaults!' %self.filename)
-                self.config_exists = False
-                self.filename = None
-                return
-        else:
+
+        if not self.configfileexists:
+            return
+
+        try:
+            configfile = open(self.filename, 'r')
+        except FileNotFoundError:
+            print('Error: No config file named %s' %self.filename)
+            self.configfileexists = False
             return
 
         for line in configfile:
@@ -624,17 +608,7 @@ class RunProcessConfig(ProcessConfig):
 
         #add and modify variables
         for key in self.dictvar.keys():
-
-            name = key.lower()
-            if 'bound' in name:
-                number = (name.split('('))[1].split(')')[0]
-                if 'boundu' in name:
-                    in_dat.add_bound(number, 'u', self.dictvar[key])
-                else:
-                    in_dat.add_bound(number, 'l', self.dictvar[key])
-            else:
-                in_dat.add_parameter(name, self.dictvar[key])
-
+            set_variable_in_indat(in_dat, key, self.dictvar[key])
 
 
         #delete variables
