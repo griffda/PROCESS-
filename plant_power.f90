@@ -976,14 +976,14 @@ contains
     !  Secondary heat (some of it... rest calculated in POWER2)
     !  Wall plug injection power
     if (ignite == 0) then
-       pinjwp = (pinjmw + porbitlossmw)/etacd
+       pinjwp = pnbitot/etacd
     else
        pinjwp = 0.0D0
     end if
 
     !  Waste injection power 
     if (ignite == 0) then
-       pinjht = pinjwp - pinjmw - porbitlossmw
+       pinjht = pinjwp - pnbitot
     else
        pinjht = 0.0D0
     end if
