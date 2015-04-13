@@ -40,17 +40,6 @@ self-consistent manner the parameters of a fusion power plant with a specified
 performance, ensuring that its operating limits are not violated, and with the
 option to optimise a given function of these parameters.
 
-It would not be fair to call \process\ a fusion power plant \textit{design}\/
-code, as this implies that a great deal of complexity would need to be present
-in each and every model describing one of the component systems. Such
-complexity is, however, incompatible with the code's iterative approach to
-solving the optimisation problem, since this requires repeated evaluation of
-the same (large number of) expressions. This is not to say that the models
-employed by the code are oversimplified --- in general they represent good
-numerical estimates of present theoretical understanding, or are fits to
-experimental data. \process\ provides a useful overall description of how a
-conceptual and feasible power plant may look.
-
 \section{History}
 
 \process\ is derived from several earlier systems codes, but is largely based
@@ -63,53 +52,44 @@ with contributions from a number of other laboratories in the USA\@. In
 addition, many of the mathematical routines have been taken from a number of
 different well-established source libraries.
 
-Since the code is descended from such a wide range of sources, its structure
-was initially not ideal from the programmer's viewpoint.  Non-standard
-practices and inconsistent layout within the code led to difficulties in
-modifying, interpreting and indeed running the code. A great deal of effort
-was therefore expended at Culham on the code's arrival from ORNL in the early
-1990s to improve this situation, with the code being given a complete but
-careful upgrade, routine by routine. For many years this Fortran~77 code was
-used for systems code studies of various power plant scenarios, and was
-modified from time-to-time by the addition of new and/or improved models,
-including machines based on the stellerator, reversed field pinch and inertial
-confinement concepts.
+A great deal of effort was expended at Culham on the code's arrival from ORNL in the early
+1990s to upgrade and extend the code, including the addition of machines based on the stellerator, reversed field pinch and inertial confinement concepts.
 
-In 2012, the code structure was revised again to allow it to benefit from
-modern software practices, and the whole program was upgraded to
-Fortran~90/95. At the same time a number of useful code management utilities
-were added.
-
-As with all active research codes, \process\ will continue to be developed
-into the future. This User Guide is updated in parallel with the Fortran
-source code itself to ensure that the documentation remains consistent with
+\process\ is being developed actively. This User Guide is updated in parallel with the 
+code itself to ensure that the documentation remains consistent with
 the latest version of the code. It is to be hoped that it will be of
-assistance to all users of \process, whether they are planning to modify or
-run the code, or are simply trying to understand what the code aims to
-achieve.
+assistance not only to users of \process, but to anyone using  \process\ outputs or models based on them.
 
-\section{Layout of the User Guide}
+%\section{Layout of the User Guide}
 
-The User Guide is divided into a small number of logically separate chapters,
-each one of which provides specific information on a given topic. It depends
-on the user's motive for referring to the guide as to which chapter will be
-the most useful, although hopefully the style and structure adopted will allow
-one to browse through without difficulty.
+%Chapter~\ref{chap:overview} provides an overview of the program, and outlines
+%the numerical and programming concepts involved. Chapter~\ref{chap:models}
+%describes the physics, engineering and economic models that are used within
+%the code, and lists the switches available allowing the user to customise the
+%models' details to achieve the desired simulation. Chapter~\ref{chap:run}
+%describes how to run the program from scratch, and provides a number of hints
+%and suggestions for the user to bear in mind to help the code find a feasible
+%machine. Chapter~\ref{chap:modify} shows how to modify the code in specific
+%ways, for example how to add extra constraints and variables to the code. A
+%useful set of utility programs is introduced in Chapter~\ref{chap:utilities},
+%and some code management tools are described in
+%Chapter~\ref{chap:codetools}. Finally, the Appendices give detailed
+%information about the optimisation method, and example input files for \process\
+%in non-optimisation and optimisation modes.
 
-Chapter~\ref{chap:overview} provides an overview of the program, and outlines
-the numerical and programming concepts involved. Chapter~\ref{chap:models}
-describes the physics, engineering and economic models that are used within
-the code, and lists the switches available allowing the user to customise the
-models' details to achieve the desired simulation. Chapter~\ref{chap:run}
-describes how to run the program from scratch, and provides a number of hints
-and suggestions for the user to bear in mind to help the code find a feasible
-machine. Chapter~\ref{chap:modify} shows how to modify the code in specific
-ways, for example how to add extra constraints and variables to the code. A
-useful set of utility programs is introduced in Chapter~\ref{chap:utilities},
-and some code management tools are described in
-Chapter~\ref{chap:codetools}. Finally, the Appendices give detailed
-information about the optimisation method, example input files for \process\
-in non-optimisation and optimisation modes, and lists of references that
-provide information about the code status, its location, and other details
-relating to the implementation of \process\ to date.
+\section{Sources of information}
+
+The output file OUT.DAT contains details of all the constraints and iteration variables selected, the input and output parameters, and which models have been chosen. It is essential to study the full output before using the results in any way.
+
+Details of the physics, engineering and cost models are being published:
+
+~\cite{kovari_physics}: M. Kovari et al., PROCESS: a systems code for fusion power plants - Part 1: Physics
+
+~\cite{kovari_eng}: M. Kovari et al., PROCESS: a systems code for fusion power plants - Part 2: Engineering, in preparation
+
+~\cite{kovari_cost}: M. Kovari et al., The cost of a fusion power plant: extrapolation from ITER, in preparation
+
+To view sample input and output files and a description of the variables, or to report bugs, request improvements, propose new models, or contact the \process\ developers, please visit
+
+\textcolor{blue}{\href{http://www.ccfe.ac.uk/powerplants.aspx}{ccfe.ac.uk/powerplants.aspx}}.
 
