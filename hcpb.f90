@@ -2526,8 +2526,6 @@ contains
     !  end of plant lifetime (appm)
     vvhemax = max(vvhemaxi,vvhemaxo)
     
-    fpydt = cfactr * tlife
-    
     if (ip == 0) return
     
     call write_kit_hcpb_output
