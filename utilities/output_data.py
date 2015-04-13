@@ -94,7 +94,7 @@ def main(mfile_data, output_file, scan=-1):
             
     PHYSICS = [("plascur/1d6", "I_p"),
             ("bt", "Vacuum B_T"),
-            ("q", "q_edge"),
+            ("q95", "q_edge"),
             ("normalised thermal beta", "beta_N, thermal"),
             ("normalised total beta", "beta_N, total"),
             ("thermal poloidal beta", "beta_P, thermal"),
