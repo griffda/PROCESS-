@@ -360,7 +360,7 @@ contains
     !  Calculate neutral beam slowing down effects
     !  If ignited, then ignore beam fusion effects
 
-    if ((pnbeam /= 0.0D0).and.(ignite == 0)) then
+    if ((cnbeam /= 0.0D0).and.(ignite == 0)) then
        call beamfus(beamfus0,betbm0,bp,bt,cnbeam,dene,deni,dlamie, &
             ealphadt,enbeam,fdeut,ftrit,ftritbm,sigvdt,ten,tin,vol, &
             zeffai,betanb,dnbeam2,palpnb)

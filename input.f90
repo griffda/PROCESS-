@@ -337,6 +337,7 @@ contains
     !+ad_hist  27/02/15 JM  Changed blktcycle to secondary_cycle
     !+ad_hist  17/03/15 JM  Removed irefprop
     !+ad_hist  02/04/15 JM  Removed fwerlim
+    !+ad_hist  12/04/15 JM  Removed costr, astr, bstr, estr, lblnkt
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1590,7 +1591,7 @@ contains
           !  First wall, blanket, shield settings
 
        case ('SECONDARY_CYCLE')
-          call parse_int_variable('SECONDARY_CYCLE', secondary_cycle, 0, 3, &
+          call parse_int_variable('SECONDARY_CYCLE', secondary_cycle, 0, 4, &
                'Switch for blanket thermodynamic model')
        case ('AFWI')
           call parse_real_variable('AFWI', afwi, 1.0D-3, 0.05D0, &
@@ -1628,22 +1629,12 @@ contains
        case ('BLKTTYPE')
           call parse_int_variable('BLKTTYPE', blkttype, 1, 3, &
                'Switch for blanket type')
-
-       case ('ASTR')
-          call parse_int_variable('ASTR', astr, 1, 2, &
-               'Switch for cooling channel geometry')
        case ('BLKTMODEL')
           call parse_int_variable('BLKTMODEL', blktmodel, 0, 1, &
                'Switch for blanket neutronics calculations')
        case ('BREEDMAT')
           call parse_int_variable('BREEDMAT', breedmat, 1, 3, &
                'Switch for blanket breeder material')
-       case ('BSTR')
-          call parse_int_variable('BSTR', bstr, 1, 2, &
-               'Switch for blanket boundary condition')
-       case ('COSTR')
-          call parse_int_variable('COSTR', costr, 1, 2, &
-               'Switch for blanket coolant material')
        case ('DECLBLKT')
           call parse_real_variable('DECLBLKT', declblkt, 0.01D0, 0.2D0, &
                'Neutron decay length in blanket')
@@ -1659,9 +1650,6 @@ contains
        case ('EMULT')
           call parse_real_variable('EMULT', emult, 1.0D0, 2.0D0, &
                'Energy multip. in blanket and shield')
-       case ('ESTR')
-          call parse_int_variable('ESTR', estr, 1, 2, &
-               'Switch for cooling channel orientation')
        case ('FBLBE')
           call parse_real_variable('FBLBE', fblbe, 0.0D0, 1.0D0, &
                'Beryllium fraction of blanket')
@@ -1754,9 +1742,6 @@ contains
        case ('IBLANKET')
           call parse_int_variable('IBLANKET', iblanket, 1, 5, &
                'Switch for blanket model')
-       case ('LBLNKT')
-          call parse_int_variable('LBLNKT', lblnkt, 0, 1, &
-               'Switch for blanket model invoked')
        case ('LI6ENRICH')
           call parse_real_variable('LI6ENRICH', li6enrich, 0.0D0, 100.0D0, &
                'Li-6 enrichment')

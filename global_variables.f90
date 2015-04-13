@@ -1010,6 +1010,7 @@ module fwbs_variables
   !+ad_hist  17/12/14 PJK Added irefprop
   !+ad_hist  25/02/15 JM  Removed redundant blanket fractions and switches
   !+ad_hist  02/04/15 JM  Removed fwerlim
+  !+ad_hist  12/04/15 JM  Removed costr, astr, bstr, estr, lblnkt
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1271,10 +1272,10 @@ module fwbs_variables
   
   real(kind(1.0D0)) :: fblli = 0.0D0
   !+ad_vars  fblli2o /0.08/ : lithium oxide fraction of blanket by volume
-  !+ad_varc                   (blktmodel=0, lblnkt=1)
+  !+ad_varc                   (blktmodel=0)
   real(kind(1.0D0)) :: fblli2o = 0.08D0
   !+ad_vars  fbllipb /0.68/ : lithium lead fraction of blanket by volume
-  !+ad_varc                   (blktmodel=0, lblnkt=0 or 1)
+  !+ad_varc                   (blktmodel=0)
   real(kind(1.0D0)) :: fbllipb = 0.68D0
   !+ad_vars  fblvd /0.0/ : vanadium fraction of blanket by volume
   !+ad_varc                (blktmodel=0)
@@ -1304,36 +1305,12 @@ module fwbs_variables
   real(kind(1.0D0)) :: declfw = 0.075D0
   !+ad_vars  declshld /0.075/ : neutron power deposition decay length of shield structural material (m)
   !+ad_varc                     (ipowerflow=1)
-  real(kind(1.0D0)) :: declshld = 0.075D0
+  real(kind(1.0D0)) :: declshld = 0.075D0	
   !+ad_vars  blkttype /3/ : Switch for blanket type:<UL>
   !+ad_varc            <LI> = 1 WCLL; efficiency taken from WP13-DAS08-T02, EFDA_D_2M97B7
   !+ad_varc            <LI> = 2 HCLL; efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
   !+ad_varc            <LI> = 3 HCPB; efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX</UL>
   integer :: blkttype = 3
-  !+ad_vars  <P><B>The following are used in the (old) full thermodynamic blanket model
-  !+ad_varc  (lblnkt=1):</B><P>
-  !+ad_vars  astr /2/ : Switch for blanket cooling channel geometry (lblnkt=1):<UL>
-  !+ad_varc        <LI> = 1 circular cross section;
-  !+ad_varc        <LI> = 2 annular cross section</UL>
-  integer :: astr = 2
-  !+ad_vars  bstr /1/ : Switch for blanket boundary condition (lblnkt=1):<UL>
-  !+ad_varc        <LI> = 1 coolant outlet temperature fixed;
-  !+ad_varc        <LI> = 2 maximum blanket temperature fixed</UL>
-  integer :: bstr = 1
-  !+ad_vars  costr /2/ : Switch for blanket coolant material (lblnkt=1):<UL>
-  !+ad_varc         <LI> = 1 Gaseous helium coolant;
-  !+ad_varc         <LI> = 2 Pressurized water coolant</UL>
-  !+ad_varc         (costr=2 (sic) is forced if blktmodel > 0, as only the
-  !+ad_varc         blanket is helium-cooled in this model)
-  integer :: costr = 2
-  !+ad_vars  estr /1/ : Switch for cooling channel orientation (lblnkt=1):<UL>
-  !+ad_varc        <LI> = 1 radially orientated;
-  !+ad_varc        <LI> = 2 poloidally orientated</UL>
-  integer :: estr = 1
-  !+ad_vars  lblnkt /0/ : Switch for blanket model:<UL>
-  !+ad_varc          <LI> = 0 original model (but see <CODE>blktmodel</CODE>);
-  !+ad_varc          <LI> = 1 full thermodynamic model</UL>
-  integer :: lblnkt = 0
   
 end module fwbs_variables
 

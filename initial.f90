@@ -554,17 +554,19 @@ subroutine check
     fsum = 1.0
   end if
   
-  if (iblanket == 1) then
-    fsum = fbltibe12 + fblli2sio4 + fblss + vfcblkt + vfpblkt
-    if (abs(fsum-1.0D0) > 1.0D-4) then
-      idiags(1) = iblanket
-      fdiags(2) = fbltibe12
-      fdiags(3) = fblli2sio4
-      fdiags(4) = fblss
-      fdiags(5) = vfcblkt
-      fdiags(6) = vfpblkt
-      fdiags(7) = fsum
-      call report_error(165)
+  if (istell == 0) then
+    if (iblanket == 1) then
+      fsum = fbltibe12 + fblli2sio4 + fblss + vfcblkt + vfpblkt
+      if (abs(fsum-1.0D0) > 1.0D-4) then
+        idiags(1) = iblanket
+        fdiags(2) = fbltibe12
+        fdiags(3) = fblli2sio4
+        fdiags(4) = fblss
+        fdiags(5) = vfcblkt
+        fdiags(6) = vfpblkt
+        fdiags(7) = fsum
+        call report_error(165)
+      end if
     end if
   end if
 
