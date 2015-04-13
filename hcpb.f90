@@ -2389,6 +2389,12 @@ contains
     !  Assign module private variables to iprint and outfile
     ip = iprint
     ofile = outfile
+    
+    !  Calculate FW/Blanket lifetime
+	fwlife = min(abktflnc/wallmw, tlife)
+	
+	!  Coolant type
+	coolwh = 1
 
 	!  Convert global variables into KIT blanket inputs
     A_FW_IB = fwareaib * 1.0D4  ! [cm^2] IB first wall area
@@ -2519,6 +2525,8 @@ contains
     !  Maximum helium concentration in vacuum vessel at
     !  end of plant lifetime (appm)
     vvhemax = max(vvhemaxi,vvhemaxo)
+    
+    fpydt = cfactr * tlife
     
     if (ip == 0) return
     

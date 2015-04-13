@@ -487,14 +487,25 @@ contains
     tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
 
     !  Coil quantities
-
     tfno = 50.0D0
 
     !  Blanket properties
-
     secondary_cycle = 0  !  simple thermal hydraulic model assumed
 
-    !  Solid breeder assumed if ipowerflow=0
+    !  CCFE HCPB blanket model
+	!if (iblanket == 1) then
+    !  fsum = fbltibe12 + fblli2sio4 + fblss + vfcblkt + vfpblkt
+    !  if (abs(fsum-1.0D0) > 1.0D-4) then
+    !    idiags(1) = iblanket
+    !    fdiags(2) = fbltibe12
+    !    fdiags(3) = fblli2sio4
+    !    fdiags(4) = fblss
+    !    fdiags(5) = vfcblkt
+    !    fdiags(6) = vfpblkt
+    !    fdiags(7) = fsum
+    !    call report_error(165)
+    !  end if
+    !end if
 
     !if (ipowerflow == 0) blkttype = 3
 
@@ -1365,7 +1376,6 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine stfwbs(outfile,iprint)
-
     !+ad_name  stfwbs
     !+ad_summ  Routine to calculate first wall, blanket and shield properties
     !+ad_summ  for a stellarator
