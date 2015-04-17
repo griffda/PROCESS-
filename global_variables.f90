@@ -1043,9 +1043,9 @@ module fwbs_variables
   real(kind(1.0D0)) :: fblss = 0.09705D0
   !+ad_vars  fdiv /0.15/ : area fraction taken up by divertor (ipowerflow=1)
   real(kind(1.0D0)) :: fdiv = 0.15D0
-  !+ad_vars  fhcd /0.1/ : area fraction covered by heating/current drive
+  !+ad_vars  fhcd /0.0/ : area fraction covered by heating/current drive
   !+ad_varc               apparatus plus diagnostics (ipowerflow=1)
-  real(kind(1.0D0)) :: fhcd = 0.1D0
+  real(kind(1.0D0)) :: fhcd = 0.0D0
   !+ad_vars  fhole /0.0/ : area fraction taken up by other holes
   real(kind(1.0D0)) :: fhole = 0.0D0
   !+ad_vars  fwbsshape /2/ : first wall, blanket, shield and vacuum vessel shape:<UL>
@@ -1195,7 +1195,7 @@ module fwbs_variables
   real(kind(1.0D0)) :: afwo = 0.008D0
   !+ad_vars  inlet_temp /558.0/ : inlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1)
   real(kind(1.0D0)) :: inlet_temp = 558.0D0
-    !+ad_vars  outlet_temp /598.0/ : outlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1);
+  !+ad_vars  outlet_temp /598.0/ : outlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1);
   !+ad_varc                        input if coolwh=1 (helium), calculated if coolwh=2 (water)
   real(kind(1.0D0)) :: outlet_temp = 598.0D0
   !+ad_vars  nblktmodpo /8/ : number of outboard blanket modules in poloidal direction (secondary_cycle>1)

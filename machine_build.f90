@@ -240,25 +240,27 @@ contains
 
     !  Apply area coverage factor
 
-    if (ipowerflow == 0) then
+    !if (ipowerflow == 0) then
 
-       fwareaib = (1.0D0-fhole) * fwareaib
-       fwareaob = (1.0D0-fhole) * fwareaob
-       fwarea = fwareaib + fwareaob
+    !fwareaib = (1.0D0-fhole) * fwareaib
+    !   fwareaob = (1.0D0-fhole) * fwareaob
+    !   fwarea = fwareaib + fwareaob
 
-    else
+    !else
        !  New power flow method uses different area fraction assumptions
        !  for the first wall
 
-       fwareaob = fwarea*(1.0D0-fhole-fdiv-fhcd) - fwareaib
-       fwarea = fwareaib + fwareaob
+    !fwareaob = fwarea*(1.0D0-fhole-fdiv-fhcd) - fwareaib
+    fwareaob = fwareaob*(1.0D0-fhole-fdiv-fhcd)
+    fwareaib = fwareaib*(1.0D0-fhole-fdiv-fhcd)
+    fwarea = fwareaib + fwareaob
 
-       if (fwareaob <= 0.0D0) then
-          fdiags(1) = fhole ; fdiags(2) = fdiv ; fdiags(3) = fhcd
-          call report_error(61)
-       end if
-
+    if (fwareaob <= 0.0D0) then
+       fdiags(1) = fhole ; fdiags(2) = fdiv ; fdiags(3) = fhcd
+       call report_error(61)
     end if
+
+    !end if
 
     if (iprint == 0) return
 

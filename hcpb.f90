@@ -841,6 +841,15 @@ contains
     
     !  Total heating (MW)
     ptfnuc = tfc_nuc_heating * (powfmw / 1000.0D0) / 1.0D6
+    
+    if (ip == 0) return
+    
+    call oheadr(ofile, 'Nuclear Heating Magnets') 
+    !call ovarin(ofile, '', '()',)
+    call ovarre(ofile, 'Shield exponent (tonne/m2)', '(x_shield)', x_shield)
+    call ovarre(ofile, 'Blanket exponent (tonne/m2)', '(x_blanket)', x_blanket)
+    call ovarre(ofile, 'Unit nuclear heating in TF coil (W/GW)', '(tfc_nuc_heating)', tfc_nuc_heating)
+    call ovarre(ofile, 'Total nuclear heating in TF coil (MW)', '(ptfnuc)', ptfnuc)
   
   end subroutine
 
@@ -1009,14 +1018,14 @@ contains
     !end if
 
     !  Surface heat flux on first wall (MW) (sum = pradfw)
-    psurffwi = pradfw * fwareaib/fwarea
-    psurffwo = pradfw * fwareaob/fwarea
+    psurffwi = (pradfw + porbitlossmw + palpfwmw) * fwareaib/fwarea
+    psurffwo = (pradfw + porbitlossmw + palpfwmw) * fwareaob/fwarea
 	
 	!  Simple model
 	if ((secondary_cycle == 0).or.(secondary_cycle == 1)) then
 	
 		!  First wall pumping power (MW)
-		htpmw_fw = fpumpfw * (pnucfw + psurffwi + psurffwo + porbitlossmw + palpfwmw)
+		htpmw_fw = fpumpfw * (pnucfw + psurffwi + psurffwo)
 
 		!  Blanket pumping power (MW)
 		htpmw_blkt = fpumpblkt * pnucblkt
@@ -1024,12 +1033,9 @@ contains
 	!  Detailed model
 	else
 		
-		call thermo_hydraulic_model
+		call thermo_hydraulic_model		
 		
 	end if
-	
-	!  Power reaching the shield
-	!  TODO! pnucs = pnucbso - pnucbzo + (pnucloss + pradloss) * fwareaob/fwarea
 	
     !  Calculate coolant pumping powers from input fraction.  
     !  The pumping power is assumed to be a fraction, fpump, of the incident
@@ -1084,20 +1090,22 @@ contains
             
     !  Calculate total flow lengths
     !  First wall flow is assumed to follow a radial-poloidal-radial path
-    !  (as WCLL)
     fwfllengi = 2.0D0*bldepti + bllengi
     fwfllengo = 2.0D0*bldepto + bllengo
 
-    !  Blanket flow is assumed to follow a rad-pol-rad-rad-pol-rad path (as WCLL)
+    !  Blanket flow is assumed to follow a rad-pol-rad-rad-pol-rad path
     bzfllengi = 4.0D0*bldepti + 2.0D0*bllengi
     bzfllengo = 4.0D0*bldepto + 2.0D0*bllengo
 
-    !  Number of angle turns in FW and blanket flow channels,
-    !  consistent with flow lengths defined
+    !  Number of angle turns in FW and blanket flow channels, consistent with flow lengths defined
     no90fw = 2
     no180fw = 0
     no90bz = 4
     no180bz = 1
+    
+    !  Nuclear power deposited in fw inner and outer
+    !pnucfwi = pnucfw * fwareaib/(fwareaib + fwareaob)
+    !pnucfwo = 
 
     !  Start thermal hydraulic calculations with inboard side. Calc of max FW temperature.
     !  Includes fraction of escaped alpha power as a component of the inboard wall surface power.
@@ -1106,20 +1114,22 @@ contains
 
     !  Adjust first wall thickness if bfwi has been changed
     fwith = 2.0D0*bfwi
-    vffwi = (afwi/bfwi)**2
+    !vffwi = (afwi/bfwi)**2
+    vffwi = (pi*afwi*afwi)/((2.0D0*bfwi)**2.0D0)
 
     !  Total mass flow rate to remove inboard first wall power (kg/s)
     mffwi = 1.0D6*(pnucfwi + psurffwi) / (cf*(outlet_temp-inlet_temp))
 
     !  Calculate total number of pipes from coolant fraction and channel dimensions
-    npfwi = (vffwi*fwith*fwareaib)/(pi*afwi*afwi*fwfllengi)
+    !npfwi = (vffwi*fwith*fwareaib)/(pi*afwi*afwi*fwfllengi)
+    npfwi = (vffwi*fwith*fwareaib)/(pi*afwi*afwi*bllengi)
 
     !  Mass flow rate per coolant pipe (kg/s)
     mffwpi = mffwi/npfwi
 
     !  Neutron power deposited in inboard blanket (MW)
     pnucblkti = pnucblkt * volblkti / volblkt
-
+	
     !  Assume inlet and outlet temps for blanket are the same as those for the FW. Channel inner 
     !  diameter is also the same. Calculate mass flow rate for inboard blanket coolant (kg/s)
     mfblkti = 1.0D6*(pnucblkti) / (cf*(outlet_temp-inlet_temp))
@@ -1148,13 +1158,15 @@ contains
 
     !  Adjust first wall thickness if bfwo has been changed
     fwoth = 2.0D0*bfwo
-    vffwo = (afwo/bfwo)**2
+    !vffwo = (afwo/bfwo)**2
+    vffwo = (pi*afwo*afwo)/((2.0D0*bfwo)**2.0D0)
 
     !  Total mass flow rate to remove outboard first wall power (kg/s)
     mffwo = 1.0D6*(pnucfwo + psurffwo + porbitlossmw) / (cf*(outlet_temp-inlet_temp))
 
     !  Calculate total number of pipes from coolant fraction and channel dimensions
-    npfwo = (vffwo*fwoth*fwareaob)/(pi*afwo*afwo*fwfllengo)
+    !npfwo = (vffwo*fwoth*fwareaob)/(pi*afwo*afwo*fwfllengo)
+    npfwo = (vffwo*fwoth*fwareaob)/(pi*afwo*afwo*bllengo)
 
     !  Mass flow rate per coolant pipe (kg/s)
     mffwpo = mffwo/npfwo
@@ -1187,9 +1199,57 @@ contains
     !  Total inboard & outboard FW and blanket pumping powers (MW)
     htpmw_fw = htpmw_fwi + htpmw_fwo
     htpmw_blkt = htpmw_blkti + htpmw_blkto
-
+    
 	!  Peak temperature (deg C)
     tpeak = max(tpeakfwi, tpeakfwo) - 273.15D0
+    
+    if (ip == 0) return
+    
+    call oheadr(ofile, 'Thermohydraulics') 
+    call ovarin(ofile, 'Coolant type (1=He, 2=H20)', '(coolwh)',coolwh)
+    call ovarre(ofile, 'Outboard coolant flow rate (m/s)', '(velfwo)',velfwo)
+    call ovarre(ofile, 'Radial thickness available for pipes inboard (80%)', '(bldepti)', bldepti)
+    call ovarre(ofile, 'Radial thickness available for pipes outboard (80%)', '(bldepti)', bldepto)
+    call ovarre(ofile, 'mid-plane toroidal circumference and segment', '(blwidti)', blwidti)
+    call ovarre(ofile, 'mid-plane toroidal circumference and segment', '(blwidti)', blwidto)
+    call ovarre(ofile, 'FW Inboard flow length', '(fwfllengi)', fwfllengi)
+    call ovarre(ofile, 'FW Outboard flow length', '(fwfllengo)', fwfllengo)
+    call ovarre(ofile, 'Blanket Inboard flow length', '(bzfllengi)', bzfllengi)
+    call ovarre(ofile, 'Blanket Outboard flow length', '(bzfllengo)', bzfllengo)
+    call ovarre(ofile, 'coolant specific heat capacity at constant pressure (J/kg/K)', '(cf)',cf)
+    call ovarre(ofile, 'coolant density (kg/m3)', '(rhof)',rhof)
+    call ovarre(ofile, 'Inboard coolant flow rate (m/s)', '(velfwi)',velfwi)
+    call ovarre(ofile, 'Outboard coolant flow rate (m/s)', '(velfwo)',velfwo)
+    call ovarre(ofile, 'Inboard coolant flow rate (m/s)', '(fwareaib)',fwareaib)
+    call ovarre(ofile, 'Outboard coolant flow rate (m/s)', '(fwareaob)',fwareaob)
+    call ovarre(ofile, 'Surface heating FW inner', '(psurffwi)',psurffwi)
+    call ovarre(ofile, 'Surface heating FW outer', '(psurffwo)',psurffwo)
+    call ovarre(ofile, 'Nuclear heating FW inner', '(pnucfwi)',pnucfwi)
+    call ovarre(ofile, 'Nuclear heating FW outer', '(pnucfwo)',pnucfwo)
+    call oblnkl(ofile)
+    call ovarre(ofile, 'void fraction inboard side', '(vffwi)', vffwi)
+    call ovarre(ofile, 'Total mass flow rate to remove inboard first wall power (kg/s)', '(mffwi)', mffwi)
+    call ovarre(ofile, 'Calculate total number of pipes from coolant fraction and channel dimensions', '(npfwi)', npfwi)
+    call ovarre(ofile, 'Mass flow rate per coolant pipe (kg/s)', '(mffwpi)', mffwpi)
+    call ovarre(ofile, 'Neutron power deposited in inboard blanket (MW)', '(pnucblkti)', pnucblkti)
+    call ovarre(ofile, 'mass flow rate for inboard blanket coolant (kg/s)', '(mfblkti)', mfblkti)
+    call ovarre(ofile, 'total num of pipes (in all inboard modules)', '(npblkti)', npblkti)
+    call ovarre(ofile, 'Mass flow rate per coolant pipe (kg/s)', '(mfblktpi)', mfblktpi)
+    call ovarre(ofile, 'Coolant velocity in blanket (m/s)', '(velblkti)', velblkti)
+    call ovarre(ofile, 'pumping powers for first wall (MW)', '(htpmw_fwi)', htpmw_fwi)
+    call ovarre(ofile, 'pumping powers for blanket (MW)', '(htpmw_blkti)', htpmw_blkti)
+    call oblnkl(ofile)
+    call ovarre(ofile, 'void fraction outboard side', '(vffwo)', vffwo)
+    call ovarre(ofile, 'Total mass flow rate to remove outboard first wall power (kg/s)', '(mffwo)', mffwo)
+    call ovarre(ofile, 'Calculate total number of pipes from coolant fraction and channel dimensions', '(npfwo)', npfwo)
+    call ovarre(ofile, 'Mass flow rate per coolant pipe (kg/s)', '(mffwpo)', mffwpo)
+    call ovarre(ofile, 'Neutron power deposited in outboard blanket (MW)', '(pnucblkto)', pnucblkto)
+    call ovarre(ofile, 'mass flow rate for outboard blanket coolant (kg/s)', '(mfblkto)', mfblkto)
+    call ovarre(ofile, 'total num of pipes (in all outboard modules)', '(npblkto)', npblkto)
+    call ovarre(ofile, 'Mass flow rate per coolant pipe (kg/s)', '(mfblktpo)', mfblktpo)
+    call ovarre(ofile, 'Coolant velocity in blanket (m/s)', '(velblkto)', velblkto)
+    call ovarre(ofile, 'pumping powers for first wall (MW)', '(htpmw_fwo)', htpmw_fwo)
+    call ovarre(ofile, 'pumping powers for blanket (MW)', '(htpmw_blkto)', htpmw_blkto)
   
   end subroutine
    
@@ -1239,7 +1299,6 @@ contains
     divmas = divsur * divdens * (1.0D0 - divclfr) * divplt
 
     !  Blanket mass, excluding coolant (kg)
-    
     !  Blanket Titanium beryllide mass (kg)
     whtbltibe12 = volblkt * fbltibe12 * 2260.0D0
     
@@ -1439,7 +1498,14 @@ contains
        fwvol = area*(2.0D0*bfw)
 
        !  Neutron power deposited in FW side (inboard or outboard depending on arguments) (MW)
-       pnuc_deposited = pnucfw * fwvol / (fwvol + ((fwarea - area) * (bfwi + bfwo - bfw )))       
+       if (area == fwareaib) then
+	     pnuc_deposited = pnucfw * fwareaib/fwarea
+	   end if
+	   
+	   if (area == fwareaob) then
+	     pnuc_deposited = pnucfw * fwareaob/fwarea
+	   end if
+       !fwvol / (fwvol + ((fwarea - area) * (bfwi + bfwo - bfw )))       
 
        !  Heat generation in the first wall due to neutron flux deposited in the material (W/m3)
        qppp = 1.0D6 * pnuc_deposited / fwvol
@@ -1453,7 +1519,8 @@ contains
        call cprops(outlet_temp, cf, rhof, viscf, viscfs, kf)
 
        !  Coolant flow rate (kg/m2/s)
-       masflx = blleng*(qppp*(bfw**2) + 2.0D0*qpp*bfw) / afw**2 / cf / tmprse
+       !masflx = blleng*(qppp*(bfw**2) + 2.0D0*qpp*bfw) / afw**2 / cf / tmprse
+       masflx = blleng*(qppp*((2.0D0*bfw)**2.0D0) + 2.0D0*qpp*bfw) / (pi*afw**2.0D0 )/ cf / tmprse
        velfw = masflx/rhof  !  m/s
 
        !  Average first wall temperature
@@ -2018,7 +2085,7 @@ contains
 
     !  Local variables
     real(kind=double) :: cf, coolpin, deltap, dh, h1, h2, kelbwn, kelbwt, kf, kstrght, &
-         lambda, ppump, reyn, rhof, s1, s2, viscf, viscfs, xifn, xift, ximn, ximt
+         lambda, ppump, reyn, rhof, s1, s2, viscf, viscfs, xifn, xift, ximn, ximt, vv
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2038,7 +2105,7 @@ contains
        fdiags(3) = dh ; fdiags(4) = viscf
        call report_error(167)
     end if
-    lambda = 1.0D0 / (1.8D0*log(reyn) - 1.64D0)**2
+    lambda = 1.0D0 / (1.8D0*log10(reyn) - 1.64D0)**2
 
     !  Straight section pressure drop coefficient
     kstrght = lambda * flleng/dh
@@ -2054,47 +2121,50 @@ contains
     ximt = (0.7D0 + 0.35D0*180.0D0/90.0D0) * 0.21D0 / sqrt(0.009D0/dh)
     xift = 0.0175D0*lambda*0.018D0*90.0D0/dh  !+PJK... 90 or 180?
     kelbwt = ximt + xift
+    
+    !  TODO: remove vel from arguments and from where pumppower is called!
 
     !  Total pressure drop, dividing by 1.0e6 to get MPa
-    deltap = 1.0D-6 * (kstrght + no90*kelbwn + no180*kelbwt) * 0.5D0*rhof*vel*vel
+    vv = (mfp/(rhof*Pi*rad*rad))
+    deltap = 1.0D-6 * (kstrght + no90*kelbwn + no180*kelbwt) * 0.5D0*rhof*vv*vv
 
     !  Pumping power
+    
+    !  Inlet pressure (Pa)
+    coolpin = coolp + 1.0D6*deltap
 
-    if (coolwh == 2) then  !  water coolant
+    !  Obtain inlet enthalpy and entropy from inlet pressure and temperature
+    call fluid_properties(inlet_temp, coolpin, coolwh, enthalpy=h2, entropy=s2)
 
-       !  Incompressible fluid pumping power (MW)
+    !  Assume isentropic pump so that s1 = s2
+    s1 = s2
 
-       ppump = deltap*mf / (rhof*etaiso)
+    !  Get enthalpy (J/kg) before pump using coolp and s1
+    call enthalpy_ps(coolp, s1, coolwh, h1)
 
-    else  !  helium coolant
-
-       !if (irefprop == 0) then
-       !   !  Treat as for water
-       !   ppump = deltap*mf / (rhof*etaiso)
-
-       !else
-       !  Compressible fluid pumping power (MW)
-
-       !  Inlet pressure (Pa)
-       coolpin = coolp + 1.0D6*deltap
-
-       !  Obtain inlet enthalpy and entropy from inlet pressure and temperature
-       call fluid_properties(inlet_temp, coolpin, coolwh, enthalpy=h2, entropy=s2)
-
-       !  Assume isentropic pump so that s1 = s2
-       s1 = s2
-
-       !  Get enthalpy (J/kg) before pump using coolp and s1
-       call enthalpy_ps(coolp, s1, coolwh, h1)
-
-       !  Pumping power (MW)
-       ppump = 1.0D-6 * mf * (h2-h1) / etaiso
-
-       !end if
-
-    end if
+    !  Pumping power (MW)
+    ppump = 1.0D-6 * mf * (h2-h1) / etaiso
 
     pumppower = ppump
+    
+    if (ip  == 0) return
+    
+    call oheadr(ofile, 'Pumppower') 
+    call ovarre(ofile, 'Viscosity', '(viscf)', viscf)
+    call ovarre(ofile, 'Density', '(rhof)', rhof)
+    call ovarre(ofile, 'Reynolds number', '(reyn)', reyn)
+    call ovarre(ofile, 'lambda', '(lambda)', lambda)
+    call ovarre(ofile, 'Straight section pressure drop coefficient', '(kstrght)', kstrght)
+    call ovarre(ofile, '90 degree elbow singularity coefficient', '(ximn)', ximn)
+    call ovarre(ofile, '90 degree elbow friction coefficient', '(xifn)', xifn)
+    call ovarre(ofile, '180 degree elbow singularity coefficient', '(ximt)', ximt)
+    call ovarre(ofile, '180 degree elbow friction coefficient', '(xift)', xift)
+    call ovarre(ofile, 'Pressure drop', '(deltap)', deltap)
+    call ovarre(ofile, 'Inlet pressure (Pa)', '(coolpin)', coolpin)
+    call ovarre(ofile, 'Inley enthalpy', '(h2)', h2)
+    call ovarre(ofile, 'Inley entropy', '(s2)', s2)
+    call ovarre(ofile, 'Enthalpy before pump', '(h1)', h1)
+    call ovarre(ofile, 'Pumping power (MW)', '(ppump)', ppump)
 
   end function pumppower
 
