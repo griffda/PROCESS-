@@ -1493,7 +1493,7 @@ contains
 
     if (blktmodel == 1) then
 
-       call blanket_neutronics_hcpb_kit
+       call blanket_neutronics
 
        if (ipowerflow == 1) then
           pnucdiv = pneutmw * fdiv

@@ -1312,6 +1312,10 @@ module fwbs_variables
   !+ad_varc            <LI> = 3 HCPB; efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX</UL>
   integer :: blkttype = 3
   
+  
+  
+  
+  
 end module fwbs_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
