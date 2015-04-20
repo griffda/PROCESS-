@@ -1281,12 +1281,16 @@ contains
        echpwr = pheat
        pinjimw = 0.0D0
        pinjemw = echpwr
+       etacd = etaech
+       pinjwp = (pinjimw + pinjemw)/etacd
 
     case (2)  !  Lower Hybrid heating
 
        plhybd = pheat
        pinjimw = 0.0D0
        pinjemw = plhybd
+       etacd = etalh
+       pinjwp = (pinjimw + pinjemw)/etacd
 
     case (3)  !  Neutral beam injection heating
 
@@ -1300,6 +1304,8 @@ contains
        porbitlossmw = pheat * forbitloss
        pinjimw = pnbeam * fpion
        pinjemw = pnbeam * (1.0D0-fpion)
+       etacd = etanbi
+       pinjwp = (pinjimw + pinjemw)/etacd
 
     case default
 
