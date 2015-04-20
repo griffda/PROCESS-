@@ -828,10 +828,9 @@ contains
     call ovarre(outfile,'Facility base load (MW)','(basemw)',basemw)
     call ovarre(outfile,'Divertor coil power supplies (MW)','(bdvmw)',bdvmw)
     call ovarre(outfile,'Cryogenic comp motors (MW)','(crymw)',crymw)
-    call ovarre(outfile,'MGF (motor-generator flywheel) units (MW)', &
-         '(fmgdmw)',fmgdmw)
-    call ovarre(outfile,'Primary coolant pumps (MW)', &
-         '(htpmw..)',htpmw)
+    call ovarre(outfile,'MGF (motor-generator flywheel) units (MW)', '(fmgdmw)',fmgdmw)
+    call ovarin(outfile,'Primary coolant pumps (MW)', '(coolwh)',coolwh)
+    call ovarre(outfile,'Primary coolant pumps (MW)', '(htpmw..)',htpmw)
     call ovarre(outfile,'PF coil power supplies (MW)','(ppfmw)',ppfmw)
     call ovarre(outfile,'Power/floor area (kW/m2)','(pkwpm2)',pkwpm2)
     call ovarre(outfile,'TF coil power supplies (MW)','(ptfmw)',ptfmw)
