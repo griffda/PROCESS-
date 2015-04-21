@@ -1600,13 +1600,13 @@ contains
           call parse_real_variable('AFWO', afwo, 1.0D-3, 0.05D0, &
                'O/B fw/blkt coolant channel inner radius (m)')
        case ('INLET_TEMP')
-          call parse_real_variable('INLET_TEMP', inlet_temp, 500.0D0, 600.0D0, &
+          call parse_real_variable('INLET_TEMP', inlet_temp, 200.0D0, 600.0D0, &
                'Coolant inlet temperature (K)')
        case ('IREFPROP')
           call parse_int_variable('IREFPROP', irefprop, 0, 1, &
                'Switch to use REFPROP routines')
        case ('OUTLET_TEMP')
-          call parse_real_variable('OUTLET_TEMP', outlet_temp, 550.0D0, 700.0D0, &
+          call parse_real_variable('OUTLET_TEMP', outlet_temp, 450.0D0, 700.0D0, &
                'Coolant outlet temperature (K)')
        case ('NBLKTMODPO')
           call parse_int_variable('NBLKTMODPO', nblktmodpo, 1, 16, &

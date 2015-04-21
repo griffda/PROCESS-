@@ -1013,9 +1013,9 @@ contains
 
     !  If we have chosen pressurised water as the coolant, set the
     !  coolant outlet temperature as 20 deg C below the boiling point
-    !if (coolwh == 2) then
-    !    outlet_temp = tsat_refprop(coolp*1.0D6, coolwh) - 20.0D0  !  in K
-    !end if
+    if (coolwh == 2) then
+        outlet_temp = tsat_refprop(coolp*1.0D6, coolwh) - 20.0D0  !  in K
+    end if
 
     !  Surface heat flux on first wall (MW) (sum = pradfw)
     psurffwi = (pradfw + porbitlossmw + palpfwmw) * fwareaib/fwarea
@@ -1109,8 +1109,9 @@ contains
 
     !  Start thermal hydraulic calculations with inboard side. Calc of max FW temperature.
     !  Includes fraction of escaped alpha power as a component of the inboard wall surface power.
-    call iterate_fw(afwi, bfwi, fwareaib, (psurffwi+fwareaib/fwarea*palpfwmw), bllengi, &
-	    pnucfwi, tpeakfwi, cf, rhof, velfwi)
+    !call iterate_fw(afwi, bfwi, fwareaib, (psurffwi+fwareaib/fwarea*palpfwmw), bllengi, &
+	!    pnucfwi, tpeakfwi, cf, rhof, velfwi)
+	call iterate_fw(afwi, bfwi, fwareaib, psurffwi, bllengi, pnucfwi, tpeakfwi, cf, rhof, velfwi)
 
     !  Adjust first wall thickness if bfwi has been changed
     fwith = 2.0D0*bfwi
@@ -1153,8 +1154,9 @@ contains
 
     !  Calculation of max FW temp. Include NBI orbit loss power (assume to be only on outboard side)
     ! and a fraction of the escaped alpha power as components of the outboard wall surface power
-    call iterate_fw(afwo, bfwo, fwareaob, (psurffwo + porbitlossmw + fwareaob/fwarea*palpfwmw), &
-        bllengo, pnucfwo, tpeakfwo, cf, rhof, velfwo)
+    !call iterate_fw(afwo, bfwo, fwareaob, (psurffwo + porbitlossmw + fwareaob/fwarea*palpfwmw), &
+    !    bllengo, pnucfwo, tpeakfwo, cf, rhof, velfwo)
+    call iterate_fw(afwo, bfwo, fwareaob, psurffwo, bllengo, pnucfwo, tpeakfwo, cf, rhof, velfwo)
 
     !  Adjust first wall thickness if bfwo has been changed
     fwoth = 2.0D0*bfwo
