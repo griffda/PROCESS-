@@ -202,6 +202,77 @@ Run2:
 \end{verbatim}
 \end{framed}
 
+
+\subsection{test\_process.py}
+
+This program has a similar structure to the \texttt{run\_process.py} program, but varies the iteration variable start parameters for as many iterations as requested by the configuration file. It outputs a summary of the final iteration parameter values and figure of merit values for testing the accuracy of the optimisation solver in PROCESS.
+
+\begin{description}
+\item{\textbf{Input:}}
+\texttt{test\_process.conf}, an \indat\ file as specified in the config file
+                                
+\item{\textbf{Output:}} All the standard
+  PROCESS output, \texttt{process.log}, \texttt{README.txt}, \texttt{time.info} (stores the run time of actual PROCESS iterations), \texttt{SolverTest.out}  
+\end{description}
+The \texttt{SolverTest.out} file contains a table of the \texttt{ifail} values (see Table \ref{tab:ifail}), the figure of merit, the square root of the sum of the squares of the individual constraints as well as the initial and final values for the iteration variables and the individual constraint residuals. All values can be used to diagnose the performance of the optimisation solver.
+
+
+\paragraph{Configuration Options:}
+
+The configuration file \texttt{test\_process.conf} has the following style:
+\begin{framed}
+\begin{verbatim}
+* No iterations
+NITER = 1000
+
+* Working directory: Subdirectory in which to copy IN.DAT and test_process.conf
+WDIR=Run1/
+
+* original IN.DAT name (should not be called IN.DAT!)
+ORIGINAL_IN_DAT = minimal_demo2_nosweep.IN.DAT
+
+* sets flag of same name in IN.DAT: 
+*     None - keeps original value
+*     -1   - Non-optimisation only
+*      0   - one non-optimisation step followed by optimised iteration
+*      1   - optimisation only
+IOPTIMZ = 1
+
+* sets the error tolerance for VMCON 
+*     None - keeps the original value (IN.DAT or default)
+EPSVMC = None
+
+* sets the step length for the finite difference derivatives
+*     None - keeps the original value (IN.DAT or default)
+EPSFCN = None
+ 
+
+*sets the figure of merit 
+*positive value - minimise, negative value - maximise
+*     None  - keeps the original value
+*     1     - plasma major radius
+*     6	    - cost of electricity
+MINMAX = None
+
+* integer seed for random number generator; use None for random seed
+SEED = 2
+
+* factor within which the iteration variables are changed
+FACTOR = 1.1
+
+* PATH to PROCESS binary
+PROCESS=process.exe
+\end{verbatim}
+\end{framed}
+
+A configuration file with an alternative name can be specified using the optional argument
+\begin{quote}
+\begin{verbatim}
+test_process.py -f CONFIGFILE
+\end{verbatim}
+\end{quote}
+
+
 \subsection{make\_plot\_dat.py}
 
 Creates a \plotdat-type file from \mfile.
@@ -474,7 +545,7 @@ This suite of Python utilities allows the user to conduct systematic, multi-dime
 The suite contains the following executables
 \begin{itemize}
 \item \texttt{ndscan.py} - executes the Nd-scan as specified in the configuration file.
-\item \texttt{ndscan\_package_only.py} - creates a NetCDF output file from a previous Nd-scan run.
+\item \texttt{ndscan\_package\_only.py} - creates a NetCDF output file from a previous Nd-scan run.
 \item \texttt{ndscan\_and\_package.py} - both executes the Nd-scan and creates the NetCDF output file.
 \item \texttt{ndscan\_visualisation.py} - visualises the NetCDF output.
 \end{itemize}
