@@ -263,6 +263,8 @@ clean:
 	rm -f process.exe *.o *.mod
 	rm -f root.dir
 	rm -f *~
+	rm -f utilities/process_io_lib/process_dicts.py
+	rm -f utilities/processgui/dicts/gui_dicts.py
 
 cleandoc:
 	rm -f autodoc
