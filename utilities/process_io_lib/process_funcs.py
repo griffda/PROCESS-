@@ -264,7 +264,7 @@ def no_unfeasible_mfile(wdir='.'):
     #no scans
     if not m_file.data['isweep'].exists:
 
-        if m_file.data['ifail'].get_scan(0) == IFAIL_SUCCESS:
+        if m_file.data['ifail'].get_scan(-1) == IFAIL_SUCCESS:
             return 0
         else:
             return 1
@@ -327,29 +327,23 @@ def get_solution_from_mfile(neqns, nvars, wdir='.'):
 
     m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
 
-
-    if not m_file.data['isweep'].exists:
-        ind = 0  # only one run, no scan
-    else:
-        ind = -1 # last scan point
-
-    ifail = m_file.data['ifail'].get_scan(ind)
+    ifail = m_file.data['ifail'].get_scan(-1)
 
     #figure of merit objective function
-    objective_function = m_file.data['f'].get_scan(ind)
+    objective_function = m_file.data['f'].get_scan(-1)
 
     #estimate of the constraints
-    constraints = m_file.data['sqsumsq'].get_scan(ind)
+    constraints = m_file.data['sqsumsq'].get_scan(-1)
 
     table_sol = []
     for var_no in range(nvars):
         table_sol.append(
-            m_file.data['itvar{:03}'.format(var_no+1)].get_scan(ind))
+            m_file.data['itvar{:03}'.format(var_no+1)].get_scan(-1))
 
     table_res = []
     for con_no in range(neqns):
         table_res.append(
-            m_file.data['normres{:03}'.format(con_no+1)].get_scan(ind))
+            m_file.data['normres{:03}'.format(con_no+1)].get_scan(-1))
 
     if ifail != IFAIL_SUCCESS:
         return ifail, '0', '0', ['0']*nvars, ['0']*neqns
