@@ -19,7 +19,7 @@ import collections as col
 from process_io_lib.process_funcs import  get_neqns_itervars,\
     get_variable_range, vary_iteration_variables, check_input_error,\
     process_stopped, get_from_indat_or_default,\
-    set_variable_in_indat, update_ixc_bounds
+    set_variable_in_indat, check_in_dat
 from process_io_lib.ndscan_config import NdScanConfigFile
 from process_io_lib.ndscan_funcs import get_var_name_or_number,\
     get_iter_variables_from_mfile, get_iter_vars, backup_in_file
@@ -166,7 +166,8 @@ class ProcessConfig(object):
         self.create_readme()
 
         self.modify_in_dat()
-        #check_in_dat()
+
+        check_in_dat()
 
         seed(self.u_seed)
 
@@ -1110,7 +1111,7 @@ class NdScanConfig(RunProcessConfig):
         except FileNotFoundError:
             os.mkdir(currentdirectory + '/' + self.outdirectory)
 
-        
+
 
     def generate_coords(self):
         """
@@ -1543,9 +1544,6 @@ class NdScanConfig(RunProcessConfig):
             self.totalruns *= self.scanaxes['steps'][i]
 
         self.counter = 0
-
-        #updates dictionary from IN.DAT in wdir
-        update_ixc_bounds()
 
         backup_in_file("w")
         self.dimension_scan(self.scanaxes['ndim'] - 1)

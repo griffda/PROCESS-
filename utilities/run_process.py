@@ -30,7 +30,7 @@ Compatible with PROCESS version 316
 from argparse import ArgumentParser
 from process_io_lib.process_config import RunProcessConfig
 from process_io_lib.process_funcs import (get_neqns_itervars,
-    update_ixc_bounds, get_variable_range, check_input_error, process_stopped,
+    get_variable_range, check_input_error, process_stopped,
     no_unfeasible_mfile, vary_iteration_variables, process_warnings)
 
 def parse_command_line():
@@ -44,19 +44,12 @@ def parse_command_line():
     return parser.parse_args()
 
 
-#def run_process(config):
-#    """Execute one runtime execution of PROCESS with given configuration."""
-#    pass
-
-
 if __name__ == "__main__":
 
     ARGS = parse_command_line()
     CONFIG = RunProcessConfig(ARGS.configfile)
     CONFIG.setup()
     NEQNS, ITERVARS = get_neqns_itervars()
-
-    update_ixc_bounds()
 
     LBS, UBS = get_variable_range(ITERVARS, CONFIG.factor)
 
