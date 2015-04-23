@@ -388,12 +388,6 @@ Use -h or --help for help
 \end{verbatim}
 \end{quote}
 
-
-
-\subsection{create\_dicts.py}
-
-\Red{To do}
-
 \subsection{fit\_profile.py}
 
 This is a Python tool to fit a general temperature or density profile as given
@@ -795,40 +789,7 @@ This automatically generates the \texttt{process\_dicts.py} file used by \proces
 create_dicts.py > process_dicts.py
 \end{verbatim}
 
-\subsection{fit\_profile.py}
 
-This creates a set of pedestalised profile parameters that provides the best fit to a temperature or density profile given in the input file.  It uses a least squares method and fits the position of the pedestal as well as the peaking factors.  
-
-\begin{description}
-\item{\textbf{Input:}}
- \texttt{profile.txt}  This can contain either a density or temperature profile, or both.  It should contain data in columns, as described below.  Comment lines start with \#.
-                                
-\item{\textbf{Output:}} The profile parameters are output to the terminal.
-\end{description}
-
-Optional arguments are 
-\begin{verbatim}
-
-  -h, --help            show this help message and exit
-  -f FILENAME, --filename FILENAME
-                        ascii file containing data in columns, default =
-                        profile.txt
-  -r RHO, --rho RHO     column of the normalised radius rho=r/a, default = 0
-  -n DENSITY, --density DENSITY
-                        column of the density profile, default = 1
-  -t TEMPERATURE, --temperature TEMPERATURE
-                        column of the temperature profile, default = 2
-  -rn RHOPEDN, --rhopedn RHOPEDN
-                        user defined initial guess of the density pedestal
-                        position, if outside [0,1] starts at 0.9, default =
-                        0.9
-  -rt RHOPEDT, --rhopedt RHOPEDT
-                        user defined initial guess of the temperature pedestal
-                        position, if outside [0,1], starts at 0.9, default =
-                        0.9
-
-\end{verbatim}
-If the column of the density or temperature data does not exist, it is ignored. A warning is issued.
 
 \subsection{Batch Jobs}
 As \process\/ typically runs very fast and does not produce much data output, it is not typically necessary to submit \process\/ runs or any of the python executables as a batch job to the fusion linux machines. However, the \texttt{evaluate\_uncertainties.py} tool is one example of a python tool for \process\/ that does run for a long time and does create a lots of output. As the CPU time limit for any non-batch jobs on the fuslw machines is 30 Minutes, any decently sampled \texttt{evaluate\_uncertainties.py} run will need to be submitted as a batch job. (Please note, that if you have forgotten to submit your job as a batch job, your job will be terminated after 30 CPU minutes, but as the output is written to file continuously, you should not loose any of the output that has been produced until then.)
