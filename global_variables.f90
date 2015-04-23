@@ -1033,20 +1033,20 @@ module fwbs_variables
   real(kind(1.0D0)) :: denstl = 7800.0D0
   !+ad_vars  dewmkg : total mass of vacuum vessel + cryostat (kg)
   real(kind(1.0D0)) :: dewmkg = 0.0D0
-  !+ad_vars  emult /1.27/ : energy multiplication in blanket and shield
+  !+ad_vars  emult /1.269/ : energy multiplication in blanket and shield
   !                         (calculated if blktmodel>0)
-  real(kind(1.0D0)) :: emult = 1.27D0
+  real(kind(1.0D0)) :: emult = 1.269D0
   !+ad_vars  emultmw : power due to energy multiplication in blanket and shield [MW]
   real(kind(1.0D0)) :: emultmw = 0.0D0
   !+ad_vars  fblss /0.09705/ : stainless steel fraction of blanket by volume
   !+ad_varc                 (if blktmodel>0, steel fraction of breeding zone)
   real(kind(1.0D0)) :: fblss = 0.09705D0
-  !+ad_vars  fdiv /0.15/ : area fraction taken up by divertor (ipowerflow=1)
-  real(kind(1.0D0)) :: fdiv = 0.15D0
+  !+ad_vars  fdiv /0.115/ : area fraction taken up by divertor 
+  real(kind(1.0D0)) :: fdiv = 0.115D0
   !+ad_vars  fhcd /0.0/ : area fraction covered by heating/current drive
   !+ad_varc               apparatus plus diagnostics (ipowerflow=1)
   real(kind(1.0D0)) :: fhcd = 0.0D0
-  !+ad_vars  fhole /0.0/ : area fraction taken up by other holes
+  !+ad_vars  fhole /0.0/ : area fraction taken up by other holes (not used)
   real(kind(1.0D0)) :: fhole = 0.0D0
   !+ad_vars  fwbsshape /2/ : first wall, blanket, shield and vacuum vessel shape:<UL>
   !+ad_varc                  <LI> = 1 D-shaped (cylinder inboard + ellipse outboard);

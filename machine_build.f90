@@ -34,6 +34,7 @@ module build_module
   !+ad_hist  09/05/13 PJK Added dshellarea, eshellarea
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  19/08/14 PJK Added pfcoil_variables
+  !+ad_hist  23/04/15 MDK Removed fhole  
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -101,7 +102,6 @@ contains
     !+ad_hist  25/09/13 PJK Removed port size output
     !+ad_hist  17/02/14 PJK Additional output information to mfile
     !+ad_hist  06/03/14 PJK Changed mfile output to 'E' format
-    !+ad_hist  03/06/14 PJK Modified fhole etc. usage
     !+ad_hist  18/06/14 PJK New ripple amplitude model
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  24/06/14 PJK Removed bcylth;
@@ -240,23 +240,12 @@ contains
 
     !  Apply area coverage factor
 
-    !if (ipowerflow == 0) then
-
-    !fwareaib = (1.0D0-fhole) * fwareaib
-    !   fwareaob = (1.0D0-fhole) * fwareaob
-    !   fwarea = fwareaib + fwareaob
-
-    !else
-       !  New power flow method uses different area fraction assumptions
-       !  for the first wall
-
-    !fwareaob = fwarea*(1.0D0-fhole-fdiv-fhcd) - fwareaib
-    fwareaob = fwareaob*(1.0D0-fhole-fdiv-fhcd)
-    fwareaib = fwareaib*(1.0D0-fhole-fdiv-fhcd)
+    fwareaob = fwareaob*(1.0D0-fdiv-fhcd)
+    fwareaib = fwareaib*(1.0D0-fdiv-fhcd)
     fwarea = fwareaib + fwareaob
 
     if (fwareaob <= 0.0D0) then
-       fdiags(1) = fhole ; fdiags(2) = fdiv ; fdiags(3) = fhcd
+       fdiags(1) = fdiv ; fdiags(2) = fhcd
        call report_error(61)
     end if
 

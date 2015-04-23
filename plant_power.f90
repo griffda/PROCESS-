@@ -39,6 +39,7 @@ module power_module
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_hist  17/12/14 PJK Added error_handling
+  !+ad_hist  23/04/15 MDK Removed fhole
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1154,8 +1155,7 @@ contains
     call ovarre(outfile,'Neutron power multiplication in blanket', '(emult)', emult)
     call ovarre(outfile, 'Divertor area fraction of whole toroid surface', '(fdiv)', fdiv)
     call ovarre(outfile,'H/CD apparatus + diagnostics area fraction', '(fhcd)', fhcd)
-    call ovarre(outfile,'Area fraction of other holes', '(fhole)', fhole)
-    call ovarre(outfile,'First wall area fraction ', '(1-fdiv-fhcd-fhole)', 1.0D0-fdiv-fhcd-fhole)
+    call ovarre(outfile,'First wall area fraction ', '(1-fdiv-fhcd)', 1.0D0-fdiv-fhcd)
     
     if ((secondary_cycle == 0).or.(secondary_cycle == 1)) then
         call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in first wall', '(fpumpfw)', fpumpfw)
