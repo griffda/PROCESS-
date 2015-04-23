@@ -38,6 +38,8 @@ module current_drive_module
   use profiles_module
   use physics_variables
   use process_output
+  ! MDK
+  use heat_transport_variables
 
   implicit none
 
@@ -244,6 +246,8 @@ contains
           pinjemw = pinjmw * (1.0D0-fpion)         
           ! neutral beam wall plug power
           pwpnb = pnbitot/etanbi
+          ! MDK
+          pinjwp = pwpnb
           etacd = etanbi
 
           gamnb = effnbss * (dene20 * rmajor)
@@ -267,6 +271,11 @@ contains
           gamcd = gamof
 
        end select
+       
+       ! MDK Reset injected power to zero for ignited plasma (fudge)
+       if (ignite == 1) then
+           pinjwp = 0.0D0
+       end if
 
        !  Total injected power
 

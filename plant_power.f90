@@ -983,15 +983,15 @@ contains
 
     !  Secondary heat (some of it... rest calculated in POWER2)
     !  Wall plug injection power
-    if (ignite == 0) then
-	   pinjwp = (pinjmw + porbitlossmw + palpfwmw)/etacd
-	else
-       pinjwp = 0.0D0
-    end if
+    ! MDK
+    ! pinjwp = (pinjmw + porbitlossmw + palpfwmw)/etacd
+	! pinjwp calculated in current_drive.f90
 
     !  Waste injection power 
     if (ignite == 0) then
-       pinjht = pinjwp - pinjmw - porbitlossmw - palpfwmw
+       ! MDK
+       !pinjht = pinjwp - pinjmw - porbitlossmw - palpfwmw
+       pinjht = pinjwp - pinjmw
     else
        pinjht = 0.0D0
     end if

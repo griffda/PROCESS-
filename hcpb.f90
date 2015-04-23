@@ -1015,9 +1015,10 @@ contains
         outlet_temp = tsat_refprop(coolp*1.0D6, coolwh) - 20.0D0  !  in K
     end if
 
-    !  Surface heat flux on first wall (MW) (sum = pradfw)
+    !  Surface heat flux on first wall (MW) 
     psurffwi = (pradfw + porbitlossmw + palpfwmw) * fwareaib/fwarea
-    psurffwo = (pradfw + porbitlossmw + palpfwmw) * fwareaob/fwarea
+    !psurffwo = (pradfw + porbitlossmw + palpfwmw) * fwareaob/fwarea
+    psurffwo = pradfw - psurffwi
 	
 	!  Simple model
 	if ((secondary_cycle == 0).or.(secondary_cycle == 1)) then
