@@ -1346,6 +1346,7 @@ module pfcoil_variables
   !+ad_hist  06/11/14 PJK Added areaoh,jstrandoh_bop,jstrandoh_eof,jscoh_bop,jscoh_eof
   !+ad_hist  11/11/14 PJK Changed default values for fcuohsu, vfohc
   !+ad_hist  11/11/14 PJK Added tmargoh
+  !+ad_hist  22/04/15 JM  Added etapsu, pfwp and pfsec
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1402,6 +1403,8 @@ module pfcoil_variables
   real(kind(1.0D0)), dimension(ngc2) :: curpff = 0.0D0
   !+ad_vars  curpfs(ngc2) : work array
   real(kind(1.0D0)), dimension(ngc2) :: curpfs = 0.0D0
+  !+ad_vars  etapsu : Efficiency of ohmic heating
+  real(kind(1.0D0)) :: etapsu = 0.9D0
   !+ad_vars  fcohbof : ratio of central solenoid overall current density at
   !+ad_varc            beginning of flat-top / end of flat-top
   real(kind(1.0D0)) :: fcohbof = 0.0D0
@@ -1472,6 +1475,10 @@ module pfcoil_variables
   real(kind(1.0D0)) :: pfmmax = 0.0D0
   !+ad_vars  pfrmax : radius of largest PF coil (m)
   real(kind(1.0D0)) :: pfrmax = 0.0D0
+  !+ad_vars  pfsec : PF Coil waste heat (MW)
+  real(kind(1.0D0)) :: pfsec = 0.0D0
+  !+ad_vars  pfwp : PF Coil wall-plug power requirements (MW)
+  real(kind(1.0D0)) :: pfwp = 0.0D0
   !+ad_vars  powohres : central solenoid resistive power during flattop (W)
   real(kind(1.0D0)) :: powohres = 0.0D0
   !+ad_vars  powpfres : total PF coil resistive losses during flattop (W)

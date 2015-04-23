@@ -338,6 +338,7 @@ contains
     !+ad_hist  17/03/15 JM  Removed irefprop
     !+ad_hist  02/04/15 JM  Removed fwerlim
     !+ad_hist  12/04/15 JM  Removed costr, astr, bstr, estr, lblnkt
+    !+ad_hist  22/04/15 JM  Added etapsu
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1483,6 +1484,9 @@ contains
        case ('CPTDIN')
           call parse_real_array('CPTDIN', cptdin, isub1, ngc2, &
                'Current per turn for PF coil', icode)
+       case ('ETAPSU')
+          call parse_real_variable('ETAPSU', etapsu, 0.0D0, 1.0D0, &
+               'Efficiency of ohmic heating')
        case ('FCOHBOF')
           write(outfile,*) ' '
           write(outfile,*) '**********'
