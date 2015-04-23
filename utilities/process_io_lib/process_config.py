@@ -971,7 +971,7 @@ class NdScanConfig(RunProcessConfig):
     # To be used in a check before commencing the scan.
     configfileloaded = False
     configfile = None # Will point to a config file opened with JSON.
-    outdirectory = "DATA"
+    mfiledir = "MFILES"
     failcoords = ndarray((1), int)
     errorlist = col.OrderedDict({})
 
@@ -1061,7 +1061,6 @@ class NdScanConfig(RunProcessConfig):
                                          Mfiles)
                     Author
                     Title       (Will be used in naming the NetCDF file)
-                    Comment     (For reading the config file)
                     Description (Saved in the netcdf file)
                     Optionals   (Established in establish_default_optionals,
                                 changes behavior function)
@@ -1102,14 +1101,11 @@ class NdScanConfig(RunProcessConfig):
                 self.scanaxes['steps'].append(
                     self.configfile.get_value("Axes")[var]["Steps"])
 
-        #TODO: get value from file, if it exists
-        # currently returns <class 'KeyError'>
-        #self.outdirectory = self.configfile.get_value("OutputDirectory")
         currentdirectory = os.getcwd()
         try:
-            os.stat(currentdirectory + '/' + self.outdirectory)
+            os.stat(currentdirectory + '/' + self.mfiledir)
         except FileNotFoundError:
-            os.mkdir(currentdirectory + '/' + self.outdirectory)
+            os.mkdir(currentdirectory + '/' + self.mfiledir)
 
 
 
@@ -1193,9 +1189,8 @@ class NdScanConfig(RunProcessConfig):
 
     def catalog_output(self, currentstep):
         """
-        Copies the MFILE.DAT in the current directory to OutDirectory
-        (or DATA if none was specified), with a
-        name determined by currentstep.
+        Copies the MFILE.DAT in the current directory to subdirectory MFILES
+        with a name determined by currentstep.
 
         Because PROCESS outputs an MFILE for each run, and many runs will be
         made in a given Nd scan, this stores away the files produced to be
@@ -1207,24 +1202,16 @@ class NdScanConfig(RunProcessConfig):
         Arguments:
             currentstep--> The list describes the current step the scanner
             is on.
-
-
-
-        Dependencies:
-            self.ndim
-            self.outdirectory
-            subprocess
-
         """
-        #Instantiate a string which will be used in the mfile's cataloged name
+
         stepstring = ''
 
         for dims in range(self.scanaxes['ndim']):
-            stepstring += str(currentstep[dims])
-            stepstring += '.'
+            stepstring += str(currentstep[dims]) + '.'
 
-        destination = self.outdirectory + "/M." + stepstring + "DAT"
+        destination = self.mfiledir + "/M." + stepstring + "DAT"
         subprocess.call(["cp", "MFILE.DAT", destination])
+
 
     def before_run_do(self):
         """
@@ -1241,7 +1228,6 @@ class NdScanConfig(RunProcessConfig):
 
         """
 
-        # The counter ticks up for each process call.
         self.counter += 1
 
         # We can't smooth the variables if we are on the first run

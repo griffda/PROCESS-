@@ -39,11 +39,9 @@ Required:   Axes               (at least one)
                 -Steps        (integer number of evaluations, must be greater
                               than 1)
 
-Optional:   OutputDirectory     (Where to save the mfiles)
-            VariablesOfInterst  (What variables swill be extracted from Mfiles)
+Optional:   VariablesOfInterst  (What variables swill be extracted from Mfiles)
             Author
             Title       (Will be used in naming the NetCDF file)
-            Comment     (For reading the config file)
             Description (Saved in the netcdf file)
 
 """
@@ -101,12 +99,10 @@ class NdScanConfigFile(object):
 
         # Optional items are specified as 'None' and will be corrected later.
         # if the user tries to ad information.
-        self.internaldict['OutputDirectory'] = None
         self.internaldict['Optionals'] = None
         self.internaldict['VariablesOfInterest'] = []
         self.internaldict["Author"] = None
         self.internaldict["Title"] = None
-        self.internaldict["Comment"] = None
         self.internaldict["Description"] = None
 
         self.read_ndscanconfig_file(configfile)

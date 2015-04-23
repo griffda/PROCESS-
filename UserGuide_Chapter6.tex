@@ -553,32 +553,100 @@ The suite contains the following executables
 
 \begin{description}
 \item{\textbf{Input:}}
- \texttt{ndscan.conf}, \indat\, \texttt{run\_process.conf} (optional)
+ \texttt{ndscan.conf}, \indat\, \texttt{run\_process.conf} (optional, will be incorporated in ndscan.conf in the future!)
                                 
-\item{\textbf{Output:}} All the standard PROCESS output files,
-plus XXX
+\item{\textbf{Output:}} All MFILES in subdirectory \texttt{DATA}, packaged NetCDF output file as named in configuration file
 \end{description}
+
+When running any of the ndscan tools, optional arguments are:
+\begin{quote}
+\begin{verbatim}
+#to specify another location/name for the configfile
+ndscan.py -f CONFIGFILE
+
+Use -h or --help for help
+\end{verbatim}
+\end{quote}
+For the visualisation tool the corresponding NetCDF input file can also be specified with \texttt{-f}. Per default ``Demonstrationdata.nc'' is used.
 
 \paragraph{Configuration Options:}
 
-The configuration file \texttt{ndscan.conf} uses the JSON format and has the following style
+The configuration file \texttt{ndscan.conf} uses the JSON format\footnote{www.json.org} and has the following style
 \begin{framed}
 \begin{verbatim}
 {
-     ``Axes'':[
-          {
-               ``Varname'':''x'',
-               ``Lowerbound'':1.0,
-               ``Upperbound'':2.0,
-               ``Steps'':5
-          }
-	     ],
-     ``RanBefore'':false
+    "Author": "Me",
+    "Axes": [
+	{
+            "Lowerbound": 7.5,
+            "Steps": 16,
+            "Upperbound": 9.0,
+            "Varname": "rmajor"
+        },
+        {
+            "Lowerbound": 5.5,
+            "Steps": 16,
+            "Upperbound": 7.0,
+            "Varname": "bt"
+        }
+    ],
+    "_Comment": [
+        "This field helps to describe the config file for users reading",
+        "Anything you write in here will be ignored by the code",
+        "Each axis has these configuration parameters available:",
+        "Varname",
+        "Lowerbound",
+        "Upperbound",
+        "'Steps': number of evaluations"
+    ],
+    "Description": "Description of the goals of this specific run",
+    "Title": "Demonstrationdata",
+    "RanBefore": false,
+    "Optionals": {
+        "MakeFailPlot": true,
+        "RemoveScanVarsFromIteration": false,
+        "RemoveSomeVarsFromIteration": 0,
+        "RerunOnFailure": 5,
+        "SmoothIterVars": true,
+        "StoreOutput": true
+    },
+    "VariablesOfInterest": [
+        "beta",
+        "pheat",
+        "powfmw",
+        "pradmw",
+        "powerht",
+        "cirpowfr",
+        "te",
+        "hfact",
+        "dnelimt",
+        "dene",
+        "estotf",
+        "rmajor",
+        "bt",
+        "pnetelmw",
+        "coe",
+        "fwbllife",
+        "capcost",
+        "palpmw",
+        "wallmw",
+        "taueff"
+    ]
 }
 \end{verbatim}
 \end{framed}
+Required input parameters in the configuration file are the Scan Axes, which has to be at least one and can be N-dimensional. For each axis a \texttt{varname}, a \texttt{Lowerbound}, an \texttt{Upperbound} and the number of \texttt{Steps} $>1$ have to be specified. All other parameters in the configuration file are optional.
+\begin{description}
+\item[\texttt{\_Comment}] Anything in the comment section is for the user only and will be ignored by the program.
+\item[\texttt{Description}] The description will be copied into the NetCDF file.
+\item[\texttt{Title}] Name of the output NetCDF file (default \texttt{Demonstrationdata}
+\item[\texttt{RanBefore}] Flag to indicate whether this scan has already been run.
+
+\end{description}
 
 
+
+The resulting NetCDF file can be visualised using the \texttt{ndscan\_visualisation.py} tool. It has an interactive menu and is fairly self-explanatory.
 
 \subsection{Uncertainty Tools}
 
