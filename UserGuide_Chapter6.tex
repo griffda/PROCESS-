@@ -1,25 +1,24 @@
 \mychapter{Utility Programs}
 \label{chap:utilities}
 
-A number of Python utilities for \process\ are available which allow the user
-to perform a number of useful actions, for instance to modify the
+A number of utilities for \process\ are available, for instance to modify the
 input file \indat, run \process\ until a feasible solution is found, or to
 extract and plot data from the \process\ output. All utilities are available
 from \texttt{~PROCESS/master/utilities}.
 
-For \process\ \textit{users}, only the Python executables described in
+For \process\ \textit{users}, only the executables described in
 Section~\ref{sec:py_exec} are relevant. For anyone interested in modifying the
-existing code or developing new Python utilities the \process\ Python
+existing code or developing new utilities the \process\ Python
 libraries are described in Section~\ref{sec:py_lib}.
 
-All executables are using Python library functions either from the publicly
+All executables use Python library functions either from the publicly
 available \texttt{numpy}, \texttt{scipy} and \texttt{matplotlib} libraries or
 the \process\ Python libraries documented in Section~\ref{sec:py_lib}. To use
 the \process\ Python libraries you need to make sure their directory is in
 your Python path. Use the commands given in Section~\ref{sec:run_environment} to
 do this.
 
-All Python code has been written for Python 3 and adheres to the PEP8 standard.
+All Python code has been written for Python 3.
 
 \section{Executables}
 \label{sec:py_exec}
@@ -36,7 +35,7 @@ and they typically have a short description of their usage when putting
 \texttt{-h} or \texttt{--help} as arguments:
 \begin{quote}
 \begin{verbatim}
-python executable_name.py -h
+executable_name.py -h
 \end{verbatim}
 \end{quote}
 
@@ -45,12 +44,9 @@ naming convention \texttt{executable\_name.conf}. To run the executable please
 copy the config file into your own work directory. Do \textbf{NOT} try to edit
 the config file in the \process\ directory.
 
-\subsection{write\_new\_in\_dat.py}
+\subsection{Turn output into input (write\_new\_in\_dat.py)}
 
-This program modifies a given \indat\ file such that all iteration variables
-are given by their values in \outdat. The final values of the iteration
-variables in \outdat\ are set in a block at the end of \indat. Any other
-definitions of these variables are commented out.
+This program modifies a given \indat\ file such that the specified initial values of all the iteration variables are given by their values in \outdat. 
 
 \begin{description}
 \item{\textbf{Input:}}
@@ -60,55 +56,16 @@ definitions of these variables are commented out.
 \texttt{new\_IN.DAT}
 \end{description}
 
-\subsection{write\_constraints.py}
-
-This Python script modifies the \process\ input file \indat\ to include the
-constraints marked ``\texttt{Y}'' or ``\texttt{y}'' in a configuration file
-called \texttt{write\_constraints.conf}. It automatically adds the required
-iteration variable for each constraint, and any additional iteration variables
-selected. The script also creates blank upper and lower bound equations; these
-need to be completed manually or deleted. All files used need to be in the
-working directory. The original \indat\ is renamed \texttt{OLD.IN.DAT}.
+\subsection{Randomly vary the starting point (run\_process.py)}
+\label{subsec:run_process}
+This program runs \process\ many times, randomly varying the initial values of the iteration variables until a feasible solution is found.  Stops when a feasible solution is found.  If in the course of a scan some scan points result in feasible solutions and some do not, \texttt{run\_process.py} will stop if and only if the number of unfeasible scan points is less than or equal to the parameter \texttt{NO\_ALLOWED\_UNFEASIBLE}.
 
 \begin{description}
 \item{\textbf{Input:}}
-\indat, \texttt{write\_constraints.conf}
+\texttt{run\_process.conf} (optional), \indat\
                                 
-\item{\textbf{Output:}}
-\indat, \texttt{OLD.IN.DAT}
-\end{description}
-
-\paragraph{Configuration Options:}
-
-The configuration file \texttt{write\_constraints.conf} has the following style:
-\begin{framed}
-\begin{verbatim}
-Constraints and associated iteration variables
-y ICC=1 plasma beta consistency ixc=5 beta plasma beta 0.001d0 1.0d0
-y ICC=2 global power balance    ixc=10 hfact confinement time h-factor 0.1d0 3.0d0
-  ICC=3 ion power balance                                            
-  ICC=4 electron power balance 
-...
-Remaining iteration variables
-  IXC=1 aspect plasma aspect ratio 1.100D0 10.00D0
-y IXC=2 bt toroidal field on axis 0.010D0 100.0D0
-  IXC=3 rmajor plasma major radius 0.100D0 10.00D0
-...
-\end{verbatim}
-\end{framed}
-An example version that can be modified is available in the utilities directory.
-
-\subsection{run\_process.py}
-
-This program runs \process, if necessary, with varying iteration variable
-start parameters until a feasible solution is found.
-
-\begin{description}
-\item{\textbf{Input:}}
-\texttt{run\_process.conf}, an \indat\ file as specified in the config file
-                                
-\item{\textbf{Output (in the specified work directory):}} All the standard
-  PROCESS output, \texttt{process.log} (log file), \texttt{README.txt}
+\item{\textbf{Output:}} A directory is created for each run. containing all the standard
+  PROCESS output, \texttt{process.log} (log file), and \texttt{README.txt}
   (contains comments from config file)
 \end{description}
 
@@ -127,7 +84,7 @@ ORIGINAL_IN_DAT = demo1a_10_sep_13.IN.DAT
 PROCESS = ~PROCESS/master/process
 * ONE line comment to be put into README.txt
 COMMENT = This is a test DEMO run! ;-)
-* Max. no iterations
+* Maximum number of PROCESS runs
 NITER = 5
 * integer seed for random number generator; use None for random seed
 SEED = 2
@@ -160,9 +117,9 @@ run_process.py -f CONFIGFILE
 \end{verbatim}
 \end{quote}
 
-\subsection{build\_index.py}
+\subsection{List \process\ runs with comments (build\_index.py)}
 
-Creates an index of all \process\ run comments in a series of subfolders.
+Creates an index of all \process\ run comments, after they have been created by \texttt{run\_process} in a series of subfolders.
 
 \begin{description}
 \item{\textbf{Input:}}
@@ -201,7 +158,6 @@ Run2:
 ...
 \end{verbatim}
 \end{framed}
-
 
 \subsection{test\_process.py}
 
@@ -273,9 +229,9 @@ test_process.py -f CONFIGFILE
 \end{quote}
 
 
-\subsection{make\_plot\_dat.py}
+\subsection{Output plotting: create data file (make\_plot\_dat.py)}
 
-Creates a \plotdat-type file from \mfile.
+Creates a \plotdat-type file from \mfile.  This is required by \texttt{plot\_sweep.py}. 
 
 \begin{description}
 \item{\textbf{Input:}}
@@ -320,12 +276,10 @@ strtf2
 \end{verbatim}
 \end{framed}
 
-\subsection{plot\_proc.py}
+\subsection{Create a two-page summary (plot\_proc.py)}
 
-A utility to produce the standard \process\ summary output, covering the major
-parameters, provenance data, and a machine cross-section. It allows a wide
-range of graphical output formats and can easily be customised using the
-function \texttt{gather\_info()} in \texttt{plot\_proc\_func.py}.
+A utility to produce a two-page summary of the output, including the major
+parameters, poloidal and toroidal cross-sections, and temperature and density profiles.
 
 \begin{description}
 \item{\textbf{Input:}}
@@ -353,12 +307,12 @@ python plot_proc.py -s
 
 This utility plots normalised values from \plotdat\ and allows comparisons of
 changes in values from a sweep compared to the first point in the sweep. It is
-now somewhat deprecated due to the existence of more flexible sweep-generating
+now deprecated due to the existence of more flexible sweep-generating
 and output-handling utilities.
 
 \begin{description}
 \item{\textbf{Input:}}
- \plotdat\
+ \plotdat\, as output by \texttt{make\_plot\_dat.py}
                                 
 \item{\textbf{Output:}}
 \texttt{PLOT.DAT.eps} (default or as specified by user)
@@ -376,10 +330,9 @@ python plot_sweep.py -o demo1.png 21 22
 \end{verbatim}
 \end{quote}
 
-\subsection{plot\_mfile\_sweep.py}
+\subsection{Plot scan results (plot\_mfile\_sweep.py)}
 
-This utility plots normalised values from \mfile\ and allows comparisons of
-changes in values from a sweep compared to the first point in the sweep.
+This utility plots normalised values of the iteration variables output by a parameter scan. Zero indicates an iteration variable at its lower bound and 1 an iteration variable at its upper bound.
 
 \begin{description}
 \item{\textbf{Input:}}
@@ -406,10 +359,9 @@ Use -h or --help for help
 \end{verbatim}
 \end{quote}
 
-\subsection{diagnose\_process.py}
+\subsection{Plot iteration variables and constraint residuals (diagnose\_process.py)}
 
-This utility aids the user to interpret (unsuccessful) \process\/ runs, unless
-\process\/ has terminated prematurely. It takes an existing \mfile\ and plots
+This utility aids the user to interpret \process\/ runs that do not find a feasible solution (unless \process\/ has terminated prematurely). It reads the \mfile\ and plots
 the normalised iteration variables, i.e.\ the iteration variable values
 normalised to their bounds such that 0 indicates an iteration variable at its
 lower bound and 1 an iteration variable at its upper bound. Furthermore, it
@@ -474,24 +426,22 @@ ignored. A warning is issued.
 
 
 
-\subsection{a\_to\_b.py}
+\subsection{Step from one model to another (a\_to\_b.py)}
+\label{sec:atob}
 
-Takes an initial \indat\ and a target \indat\ and runs \process\ repeatedly
-with the aim of walking the solution to the initial input file to a solution
-using the values of the variables in the target input file.  After each step,
-the output values of the iteration variables are used as the input values for
-the next step.
+When attempting to model a reactor very different from those in previous studies, it can be difficult to find a feasible solution.  This utility takes an initial \indat\ (\texttt{A.DAT}) that is known to run successfully, and a target \indat\ (\texttt{B.DAT}) that is substantially different.  The difference is broken into small steps, and \process\ runs repeatedly, stepping from the initial input file to the target input file.  After each step, the output values of the iteration variables are used as the input starting values for the next step.
 
 \begin{description}
 \item{\textbf{Input:}}
-\texttt{a\_to\_b.conf}
+\texttt{a\_to\_b.conf}, \texttt{A.DAT} and its corresponding \texttt{MFILE.DAT}, \texttt{B.DAT}.
+(These names can be changed by the user.)
 
 \item{\textbf{Output}} 
 
 When the program finishes, the .DAT files from the last run of \process\ can
 be found in the specified working directory.
 
-If option keep\_output = True: \indat, \outdat, \mfile\ and logged process
+If option keep\_output = True, then \indat, \outdat, \mfile\ and logged \process\
 output of each step are stored. Files are prefaced with their step number
 eg. \texttt{003.IN.DAT} and copied to the specified output directory.
 
@@ -536,7 +486,6 @@ factor = 1.2
 bound_gap = 1.001
 \end{verbatim}
 \end{framed}
-
 
 \subsection{N-Dimensional Scanner Utility}
 
@@ -648,6 +597,7 @@ Required input parameters in the configuration file are the Scan Axes, which has
 
 The resulting NetCDF file can be visualised using the \texttt{ndscan\_visualisation.py} tool. It has an interactive menu and is fairly self-explanatory.
 
+
 \subsection{Uncertainty Tools}
 
 In this section, we explain the usage of the \process\/ tools to both evaluate
@@ -663,11 +613,10 @@ list of needed output variables.
 \subsubsection{evaluate\_uncertainties.py}
 This program evaluates the uncertainties of a single \process\ design point by
 use of a Monte Carlo method as described in \cite{WPPMI2014Report}. It takes a
-set of uncertain parameters as input that can have either a Gaussian or a flat
-distribution. These are specified together with optional details about the
+set of uncertain parameters as input, each of which can have either a Gaussian or a flat ('top-hat') probability distribution. These are specified together with optional details about the
 \process\ run in a configuration file. Additionally, an \indat\ file
-describing the relevant design point needs to be present. This can be created
-from an \mfile\ by using the \texttt{write\_new\_indat.py} tool.
+describing the relevant design point needs to be present. (If necessary this can be created
+from an \mfile\ by using the \texttt{write\_new\_indat.py} tool.)
 
 When running the \texttt{evaluate\_uncertainties.py} tool, optional arguments are:
 \begin{quote}
@@ -678,16 +627,22 @@ evaluate_uncertainties.py -f CONFIGFILE
 Use -h or --help for help
 \end{verbatim}
 \end{quote}
-It takes the following input and produces the following output files
+
+
+
 \begin{description}
-\item{\textbf{Input:}} \texttt{evaluate\_uncertainties.json}, \indat\ (or an
-  alternative input file as specified in the config file)
+\item{\textbf{Input:}} \texttt{evaluate\_uncertainties.json},\\
+\indat\ (or an alternative input file as specified in the config file)
                                 
-\item{\textbf{Output:}} \texttt{uncertainties.nc}, \texttt{Readme.txt},
-  \texttt{process.log} and the standard \process\ output from the last run.
+\item{\textbf{Output:}} \\
+\texttt{uncertainties.nc}. This file (NetCDF format) can be visualised using the \texttt{display\_uncertainties.py} tool. \\
+\texttt{Readme.txt},\\
+\texttt{process.log}, \\
+\process\ output from the last run.
+
 \end{description}
 The configuration file \texttt{evaluate\_uncertainties.json} uses the JSON
-format\footnote{www.json.org} and has the following style
+format\footnote{www.json.org}, and has the following style
 \begin{framed}
 \begin{verbatim}
 {
@@ -727,7 +682,7 @@ format\footnote{www.json.org} and has the following style
 \end{verbatim}
 \end{framed}
 By convention, we have designated metadata about the \process\ runs as having
-a preceeding underscore to distinguish these values from the other
+a preceding underscore to distinguish these values from the other
 configuration data used directly by the tools or \process\
 itself. Furthermore, all the optional attributes that can be changed when
 running \process\ from most Python utilities like
@@ -774,8 +729,7 @@ technically there is no upper limit as to how many uncertain parameters can be
 used. However, for large numbers of uncertain parameters it is recommended to
 increase the number of sampling points.
 
-There are a number of other parameters in the configuration file that can be
-specified:
+There are a number of other parameters in the configuration file that can be specified:
 \begin{description}
 \item[\texttt{output\_vars}] is a list of strings of output variable names in
   the \mfile. These are the variables saved. This list is empty by default and
@@ -791,7 +745,7 @@ recommended to be changed) are the number of scan points \texttt{no\_scans}
 which is by default 5 and the number of allowed unfeasible points in a scan
 \texttt{no\_allowed\_unfeasible} which is 2 as recommended in
 \cite{WPPMI2014Report}.
- 
+
 As the distributions of the uncertainties do not have to be represented by a
 simple Gaussian, reducing the output to two simple numbers like a mean and a
 standard deviation is not typically possible. Therefore, we have decided to
@@ -803,15 +757,12 @@ option for developers to keep all the data for debugging purposes. However,
 this should typically not be used in production runs.) These files can be
 visualised using the \texttt{display\_uncertainties.py} tool.
 
-\subsubsection{display\_uncertainties.py}
-This is a Python facility to display the NetCDF file created by the previously
-described \texttt{evaluate\_uncertainties.py} tool.
 
-By default, if run in the working directory of an uncertainty evaluation, it
-plots the 2D parameter distribution of each user defined output parameter
-against the next. It also shows the 1D histograms of each parameter
-distribution. If two specific variables are given as arguments, the tool plots
-only these two against each other.
+\subsubsection{display\_uncertainties.py}
+
+This is a utility to display the output file \texttt{uncertainties.nc} created by the \texttt{evaluate\_uncertainties.py} tool described above.
+
+By default, if run in the working directory of an uncertainty evaluation, it creates a scatter plot of each user defined output parameter against the next parameter in the list.  It also shows the 1D histograms of each parameter distribution. If two specific variables are given as arguments, the tool plots only these two against each other.
 
 \begin{description}
 \item{\textbf{Input:}}
@@ -837,21 +788,52 @@ optional arguments:
   -e END, --end END     file format default = .pdf
 \end{verbatim}
 
-\subsection{Batch Jobs}
-As \process\/ typically runs very fast and does not produce much data output,
-it is not typically necessary to submit \process\/ runs or any of the python
-executables as a batch job to the fusion linux machines. However, the
-\texttt{evaluate\_uncertainties.py} tool is one example of a python tool for
-\process\/ that does run for a long time and does create a lots of output. As
-the CPU time limit for any non-batch jobs on the fuslw machines is 30 Minutes,
-any decently sampled \texttt{evaluate\_uncertainties.py} run will need to be
-submitted as a batch job. (Please note, that if you have forgotten to submit
-your job as a batch job, your job will be terminated after 30 CPU minutes, but
-as the output is written to file continuously, you should not loose any of the
-output that has been produced until then.)
+\subsection{create\_dicts.py}
 
-To submit a batch job, first create a file called e.g. myjob.cmd. It should
-contain the following content
+This automatically generates the \texttt{process\_dicts.py} file used by \process utility programs.  It does this by scanning the Fortran source code.  The standard output should be redirected, using\\
+\begin{verbatim}
+create_dicts.py > process_dicts.py
+\end{verbatim}
+
+\subsection{fit\_profile.py}
+
+This creates a set of pedestalised profile parameters that provides the best fit to a temperature or density profile given in the input file.  It uses a least squares method and fits the position of the pedestal as well as the peaking factors.  
+
+\begin{description}
+\item{\textbf{Input:}}
+ \texttt{profile.txt}  This can contain either a density or temperature profile, or both.  It should contain data in columns, as described below.  Comment lines start with \#.
+                                
+\item{\textbf{Output:}} The profile parameters are output to the terminal.
+\end{description}
+
+Optional arguments are 
+\begin{verbatim}
+
+  -h, --help            show this help message and exit
+  -f FILENAME, --filename FILENAME
+                        ascii file containing data in columns, default =
+                        profile.txt
+  -r RHO, --rho RHO     column of the normalised radius rho=r/a, default = 0
+  -n DENSITY, --density DENSITY
+                        column of the density profile, default = 1
+  -t TEMPERATURE, --temperature TEMPERATURE
+                        column of the temperature profile, default = 2
+  -rn RHOPEDN, --rhopedn RHOPEDN
+                        user defined initial guess of the density pedestal
+                        position, if outside [0,1] starts at 0.9, default =
+                        0.9
+  -rt RHOPEDT, --rhopedt RHOPEDT
+                        user defined initial guess of the temperature pedestal
+                        position, if outside [0,1], starts at 0.9, default =
+                        0.9
+
+\end{verbatim}
+If the column of the density or temperature data does not exist, it is ignored. A warning is issued.
+
+\subsection{Batch Jobs}
+As \process\/ typically runs very fast and does not produce much data output, it is not typically necessary to submit \process\/ runs or any of the python executables as a batch job to the fusion linux machines. However, the \texttt{evaluate\_uncertainties.py} tool is one example of a python tool for \process\/ that does run for a long time and does create a lots of output. As the CPU time limit for any non-batch jobs on the fuslw machines is 30 Minutes, any decently sampled \texttt{evaluate\_uncertainties.py} run will need to be submitted as a batch job. (Please note, that if you have forgotten to submit your job as a batch job, your job will be terminated after 30 CPU minutes, but as the output is written to file continuously, you should not loose any of the output that has been produced until then.)
+
+To submit a batch job, first create a file called e.g. myjob.cmd. It should contain the following content
 \begin{verbatim}
 # @ executable = evaluate_uncertainties.py
 # @ arguments 
@@ -862,7 +844,7 @@ contain the following content
 # @ notify_user = USERNAME
 # @ notification = complete
 # @ queue
-module use /home/PROCESS/modules
+module use /home/pknight/modules
 module swap python
 module load process/master
 evaluate_uncertainties.py
@@ -871,19 +853,13 @@ Once you have created the file you can submit a batch job by typing
 \begin{verbatim}
 llsubmit myjob.cmd
 \end{verbatim}
-while your job is running you can keep track of its progress by typing
-\texttt{llq} or \texttt{xloadl}. More information and help with trouble
-shooting can be found under
-\url{http://fusweb1.fusion.ccfe.ac.uk/computing/funfaq/ll/}
 
-As the uncertainties.nc output file can get quite large, it might be indicated
-to write the output to the /scratch or /tmp directories as they have faster
-I/O. Please remember, to copy your results into your home directory
-afterwards, as these directories are not backed up and will be frequently
-cleaned.
+While your job is running you can keep track of its progress by typing \texttt{llq} or \texttt{xloadl}. More information and help with troubleshooting can be found under \url{http://fusweb1.fusion.ccfe.ac.uk/computing/funfaq/ll/}.
+
+As the uncertainties.nc output file can get quite large, it might be indicated to write the output to the /scratch or /tmp directories as they have faster I/O. Please remember to copy your results into your home directory afterwards, as these directories are not backed up and will be frequently cleaned.
 
 
-\section{Libraries}
+\section{Python Libraries}
 \label{sec:py_lib}
 
 All library modules and functions are documented using docstrings. These can
@@ -1351,7 +1327,7 @@ For all of the functions below the arguments are:
 
 \item{\verb|plot_plasma(axis, mfile_data,scan)|} Function to plot plasma
 
-\item{\verb|plot_machine_pic(axis, mfile_data, scan)|} Function to plot machine build
+\item{\verb|poloidal_cross_section(axis, mfile_data, scan)|} Function to plot machine build
 
 \item{\verb|plot_tf_coils(axis, mfile_data, scan)|} Function to plot the TF coils
 

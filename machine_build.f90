@@ -12,8 +12,6 @@ module build_module
   !+ad_cont  rippl
   !+ad_cont  ripple_amplitude
   !+ad_cont  portsz
-  !+ad_cont  dshellarea
-  !+ad_cont  eshellarea
   !+ad_args  N/A
   !+ad_desc  This module contains routines for calculating the
   !+ad_desc  geometry (radial and vertical builds) of the fusion power
@@ -48,6 +46,7 @@ module build_module
   use error_handling
   use fwbs_variables
   use heat_transport_variables
+  use maths_library
   use pfcoil_variables
   use physics_variables
   use process_output
@@ -57,7 +56,7 @@ module build_module
   implicit none
 
   private
-  public :: radialb,vbuild,portsz,dshellarea,eshellarea
+  public :: radialb, vbuild, portsz
 
 contains
 
@@ -241,25 +240,27 @@ contains
 
     !  Apply area coverage factor
 
-    if (ipowerflow == 0) then
+    !if (ipowerflow == 0) then
 
-       fwareaib = (1.0D0-fhole) * fwareaib
-       fwareaob = (1.0D0-fhole) * fwareaob
-       fwarea = fwareaib + fwareaob
+    !fwareaib = (1.0D0-fhole) * fwareaib
+    !   fwareaob = (1.0D0-fhole) * fwareaob
+    !   fwarea = fwareaib + fwareaob
 
-    else
+    !else
        !  New power flow method uses different area fraction assumptions
        !  for the first wall
 
-       fwareaob = fwarea*(1.0D0-fhole-fdiv-fhcd) - fwareaib
-       fwarea = fwareaib + fwareaob
+    !fwareaob = fwarea*(1.0D0-fhole-fdiv-fhcd) - fwareaib
+    fwareaob = fwareaob*(1.0D0-fhole-fdiv-fhcd)
+    fwareaib = fwareaib*(1.0D0-fhole-fdiv-fhcd)
+    fwarea = fwareaib + fwareaob
 
-       if (fwareaob <= 0.0D0) then
-          fdiags(1) = fhole ; fdiags(2) = fdiv ; fdiags(3) = fhcd
-          call report_error(61)
-       end if
-
+    if (fwareaob <= 0.0D0) then
+       fdiags(1) = fhole ; fdiags(2) = fdiv ; fdiags(3) = fhcd
+       call report_error(61)
     end if
+
+    !end if
 
     if (iprint == 0) return
 
@@ -902,125 +903,5 @@ contains
     end if
 
   end subroutine portsz
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine dshellarea(rmajor,rminor,zminor,ain,aout,atot)
-
-    !+ad_name  dshellarea
-    !+ad_summ  Routine to calculate the inboard, outboard and total surface areas
-    !+ad_summ  of a D-shaped toroidal shell
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rmajor : input real : major radius of inboard straight section (m)
-    !+ad_args  rminor : input real : horizontal width of shell (m)
-    !+ad_args  zminor : input real : vertical half-height of shell (m)
-    !+ad_args  ain    : output real : surface area of inboard straight section (m3)
-    !+ad_args  aout   : output real : surface area of outboard curved section (m3)
-    !+ad_args  atot   : output real : total surface area of shell (m3)
-    !+ad_desc  This routine calculates the surface area of the inboard and outboard
-    !+ad_desc  sections of a D-shaped toroidal shell defined by the above input
-    !+ad_desc  parameters.
-    !+ad_desc  The inboard section is assumed to be a cylinder.
-    !+ad_desc  The outboard section is defined by a semi-ellipse, centred on the
-    !+ad_desc  major radius of the inboard section.
-    !+ad_desc  <P>See also <A HREF="dshellvol.html"><CODE>dshellvol</CODE></A>
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  09/05/13 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
-    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    real(kind(1.0D0)), intent(in) :: rmajor,rminor,zminor
-    real(kind(1.0D0)), intent(out) :: ain,aout,atot
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: elong
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Area of inboard cylindrical shell
-
-    ain = 4.0D0*zminor*pi*rmajor
-
-    !  Area of elliptical outboard section
-
-    elong = zminor/rminor
-    aout = twopi * elong * (pi*rmajor*rminor + 2.0D0*rminor*rminor)
-
-    !  Total surface area
-
-    atot = ain + aout
-
-  end subroutine dshellarea
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine eshellarea(rshell,rmini,rmino,zminor,ain,aout,atot)
-
-    !+ad_name  eshellarea
-    !+ad_summ  Routine to calculate the inboard, outboard and total surface areas
-    !+ad_summ  of a toroidal shell comprising two elliptical sections
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  rshell : input real : major radius of centre of both ellipses (m)
-    !+ad_args  rmini  : input real : horizontal distance from rshell to
-    !+ad_argc                        inboard elliptical shell (m)
-    !+ad_args  rmino  : input real : horizontal distance from rshell to
-    !+ad_argc                        outboard elliptical shell (m)
-    !+ad_args  zminor : input real : vertical internal half-height of shell (m)
-    !+ad_args  ain    : output real : surface area of inboard section (m3)
-    !+ad_args  aout   : output real : surface area of outboard section (m3)
-    !+ad_args  atot   : output real : total surface area of shell (m3)
-    !+ad_desc  This routine calculates the surface area of the inboard and outboard
-    !+ad_desc  sections of a toroidal shell defined by two co-centred semi-ellipses.
-    !+ad_desc  <P>See also <A HREF="eshellvol.html"><CODE>eshellvol</CODE></A>
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  09/05/13 PJK Initial version
-    !+ad_stat  Okay
-    !+ad_docs  Internal CCFE note T&amp;M/PKNIGHT/PROCESS/009, P J Knight:
-    !+ad_docc  Surface Area and Volume Calculations for Toroidal Shells
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    real(kind(1.0D0)), intent(in) :: rshell,rmini,rmino,zminor
-    real(kind(1.0D0)), intent(out) :: ain,aout,atot
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: elong
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  Inboard section
-
-    elong = zminor/rmini
-    ain = twopi * elong * (pi*rshell*rmini - 2.0D0*rmini*rmini)
-
-    !  Outboard section
-
-    elong = zminor/rmino
-    aout = twopi * elong * (pi*rshell*rmino + 2.0D0*rmino*rmino)
-
-    !  Total surface area
-
-    atot = ain + aout
-
-  end subroutine eshellarea
 
 end module build_module

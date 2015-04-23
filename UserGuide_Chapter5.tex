@@ -13,7 +13,7 @@ Guide if changes are made to the source code!
 
 Described here are the general rules that apply when the Fortran source code
 is modified. See Section~\ref{sec:code_release} for instructions on how to
-commit changes to the \process\ Git repository and produce new releases.
+commit changes to the \process\ Git repository and produce new releases. The variable descriptor file is generated from specially-formatted comment lines within the source code (see Section~\ref{sec:autodoc} for more details). Therefore, it is exceedingly important to keep these lines relevant and in sync with the variables they describe.
 
 \subsection{Changing the Fortran code}
 
@@ -22,7 +22,7 @@ Please ensure that the following rules are adhered to when modifying the
 
 \begin{enumerate}
 
-\item Keep the layout consistent in `look' and style with the existing code,
+\item Keep the layout consistent in with the existing code,
   including indentation of clauses (\texttt{if}-statements, \texttt{do}-loops,
   etc.).
 
@@ -349,11 +349,7 @@ The \process\ source code is maintained by CCFE, and resides in a
 \textit{Git}~\cite{git} repository on the CCFE servers. We welcome
 contributions of alternative or improved models and algorithms.
 
-The Fortran~90/95 source code has a uniform visual style and structural
-layout. CCFE will transfer any contributed models into \process, in order for
-us to maintain its present coding standard. To simplify this task, we request
-that contributors provide the following information for any new models that
-they provide:
+We request that contributors provide the following information for any new models that they provide:
 
 \begin{itemize}
 
@@ -367,15 +363,150 @@ they provide:
   existing global variables listed in the variable descriptor file (see
   Section~\ref{sec:vardes}).
 
-\item A description of any new numerics requirements (input parameters,
-  iteration variables, constraint equations, figures of merit etc.).
+\item Any new input parameters, iteration variables, constraint equations, figures of merit etc.
 
 \item A definition of any pre-requisites.
 
-\item A description of any side-effects.
-
-\item Any available test data, code examples or test programs (in Fortran or
-  other language) would be useful.
+\item Any available test data, code examples or test programs in any language.
 
 \end{itemize}
+
+\section{Code Structure}
+
+\subsection{Numerics modules}
+\label{sec:numerics_modules}
+
+These modules contain the equation solvers, their calling routines and other
+relevant procedures. Various mathematical routines from a number of standard
+libraries are also incorporated into these files. Table~\ref{tab:numerics}
+summarises the numerics source files.
+
+% Table summarising numerics modules in PROCESS
+\begin{table}[tbph]
+\footnotesize
+\begin{center}
+\begin{tabular}{||l||l||} \hline
+source file   & description \\ \hline
+\texttt{caller.f90} & calls physics, engineering, building and cost routines \\
+\texttt{constraint\_equations.f90} & defines the constraint equations \\
+\texttt{evaluators.f90} & function evaluators for HYBRD and \vmcon\ packages \\
+\texttt{iteration\_variables.f90} & adjusts values of iteration variables \\
+\texttt{maths\_library.f90} & miscellaneous `black-box' maths routines,
+including HYBRD and \vmcon \\
+\texttt{numerics.f90} & numerics array definitions, and calling routines for
+HYBRD and \vmcon\ packages \\
+\texttt{scan.f90} & performs a parameter scan \\
+\hline
+\end{tabular}
+\end{center}
+\caption[Summary of numerics modules]
+{\label{tab:numerics}
+  \textit{Summary of the numerics modules in \process.}
+}
+\end{table}
+
+\subsection{Physics modules}
+
+These modules contain the main physics routines that evaluate the plasma and
+fusion parameters. Also included here are the routines describing the current
+drive and divertor systems. Table~\ref{tab:physics} summarises the main physics
+source files.
+
+% Table summarising physics modules in PROCESS
+\begin{table}[tbph]
+\begin{center}
+
+\begin{tabular}{||l||l||} \hline
+source file   & description \\ \hline
+\texttt{current\_drive.f90} & current drive efficiency calculations \\
+\texttt{divertor.f90} & divertor model calculations\\
+\texttt{fispact.f90} & nuclide inventory/activation calculations \\
+\texttt{ife.f90} & inertial fusion energy physics/engineering \\
+\texttt{impurity\_radiation.f90} & radiation power calculations \\
+\texttt{physics.f90} & tokamak plasma and fusion calculations \\
+\texttt{plasma\_geometry.f90} & plasma geometry algorithms \\
+\texttt{plasma\_profiles.f90} & plasma density and temperature profile calculations \\
+\texttt{rfp.f90} & reversed field pinch physics/engineering \\
+\texttt{startup.f90} & plasma start-up auxiliary power requirements \\
+\texttt{stellarator.f90 } & stellarator-relevant physics/engineering \\
+\hline
+\end{tabular}
+\end{center}
+\caption[Summary of physics modules]
+{\label{tab:physics}
+  \textit{Summary of the physics modules in \process.}
+}
+\end{table}
+
+\subsection{Engineering modules}
+
+These modules contain the description of the machine geometry and its major
+systems, including the PF and TF coil sets, the first wall, blanket and
+shield, and other items such as the buildings, vacuum system, power conversion
+and the structural components.  Table~\ref{tab:engineering} summarises the main
+engineering source files.
+
+% Table summarising engineering modules in PROCESS
+\begin{table}[tbph]
+\begin{center}
+
+\begin{tabular}{||l||l||} \hline
+source file     & description \\ \hline
+\texttt{availability.f90} & plant component lifetimes and overall availability \\
+\texttt{buildings.f90} & buildings calculations \\
+\texttt{fwbs.f90} & first wall, blanket and shield calculations \\
+\texttt{machine\_build.f90} & machine build calculations \\
+\texttt{pfcoil.f90} & PF coil calculations \\
+\texttt{plant\_power.f90} & heat transport and power balance calculations \\
+\texttt{pulse.f90} & pulsed power plant calculations \\
+\texttt{safety.f90} & steady-state temperatures after a LOCA event \\
+\texttt{sctfcoil.f90} & superconducting TF coil calculations \\
+\texttt{structure.f90} & support structure calculations \\
+\texttt{tfcoil.f90} & resistive TF coil calculations \\
+\texttt{vacuum.f90} & vacuum system calculations \\
+\hline
+\end{tabular}
+\end{center}
+\caption[Summary of engineering modules]
+{\label{tab:engineering}
+  \textit{Summary of the engineering modules in \process.}
+}
+\end{table}
+
+\subsection{Costing module}
+
+The costing module, \texttt{costs.f90}, performs all the cost calculations,
+including values in M\$ for each machine system, and the cost of electricity
+in m\$/kWh. Normally, the machine costs are written to the output file; if
+this is not required set switch \texttt{output\_costs = 0}.
+
+\subsection{Other modules}
+
+These modules perform miscellaneous tasks, such as initialisation of variables
+and file input / output. File \texttt{process.f90} contains the main program,
+and includes the overall controlling loop.
+
+Table~\ref{tab:other_modules} summarises these modules.
+
+% Table summarising miscellaneous modules in PROCESS
+\begin{table}[tbph]
+\begin{center}
+
+\begin{tabular}{||l||l||} \hline
+source file     & description \\ \hline
+\texttt{error\_handling.f90} & centralised error handling module \\
+\texttt{fson\_library.f90} & library used to read in data from JSON-format files \\
+\texttt{global\_variables.f90} & defines and initialises most shared variables \\
+\texttt{initial.f90} & checks self-consistency of input variables and switches \\
+\texttt{input.f90} & reads in user-defined settings from input file \\
+\texttt{output.f90} & utility routines to format output to file \\
+\texttt{process.f90} & main program and top-level calling routines \\
+\hline
+\end{tabular}
+\end{center}
+\caption[Summary of other modules]
+{\label{tab:other_modules}
+  \textit{Summary of the remaining modules in \process.}
+}
+\end{table}
 

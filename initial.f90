@@ -66,6 +66,7 @@ subroutine initial
   !+ad_hist  31/10/12 PJK Removed RFP variables
   !+ad_hist  05/11/12 PJK Removed call to ifeini
   !+ad_hist  05/11/12 PJK Removed pulsed reactor variables
+  !+ad_hist  05/03/15 JM  Changed blanket fraction check to new models
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -235,8 +236,14 @@ subroutine check
   !+ad_hist  23/07/14 PJK Modified icase descriptions
   !+ad_hist  19/08/14 PJK Added trap for nvar < neqns
   !+ad_hist  01/09/14 PJK Added trap for insufficient specification of ixc, icc
+  !+ad_hist  08/09/14 PJK Changed costr to coolwh
   !+ad_hist  15/09/14 PJK Added plasma pedestal consistency checks
+  !+ad_hist  23/10/14 PJK ipowerflow=0 and blkttype=3 for KIT blanket model
+  !+ad_hist  29/10/14 PJK Ensured constraint 42 no longer used
   !+ad_hist  17/11/14 PJK Added trap for deprecated constraints 3,4
+  !+ad_hist  24/11/14 PJK Added trap if blanket material fractions do not sum to 1.0
+  !+ad_hist  24/11/14 PJK Set coolwh via blkttype
+  !+ad_hist  25/02/15 JM  Changed blanket composition check to use new blanket model layout
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -258,12 +265,14 @@ subroutine check
   use pulse_variables
   use rfp_variables
   use tfcoil_variables
+  use stellarator_variables
 
   implicit none
 
   !  Local variables
 
   integer :: i,j,k,imp
+  real(kind(1.0D0)) :: fsum
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -489,6 +498,13 @@ subroutine check
      esbldgm3 = 0.0D0
   end if
 
+  !  Ensure minimum cycle time constraint is turned off
+  !  (not currently available, as routine thrmal has been commented out)
+
+  if ( any(icc == 42) ) then
+     call report_error(164)
+  end if
+
   !  Ensure that if TF coils are non-superconducting,
   !  only simple stress calculations are performed
 
@@ -506,16 +522,53 @@ subroutine check
      rnbeam = 0.0D0
   end if
 
-  !  Coolant set to water if blktmodel > 0
-  !  Although the blanket is by definition helium-cooled in this case,
+  !  Solid breeder assumed if ipowerflow=0
+
+  !if (ipowerflow == 0) blkttype = 3
+
+  !  Set coolant fluid type
+
+  !if ((blkttype == 1).or.(blkttype == 2)) then
+  !   coolwh = 2  !  water
+  !else
+  !   coolwh = 1  !  helium
+  !end if
+
+  !  But... set coolant to water if blktmodel > 0
+  !  Although the *blanket* is by definition helium-cooled in this case,
   !  the shield etc. are assumed to be water-cooled, and since water is
   !  heavier (and the unit cost of pumping it is higher), the calculation
-  !  for coolmass is better done with costr=2 if blktmodel > 0 to give
+  !  for coolmass is better done with coolwh=2 if blktmodel > 0 to give
   !  slightly pessimistic results.
-  !  However, this also means that if lblnkt=1 the wrong coolant will be assumed
-  !  in the thermodynamic blanket model...
 
-  if (blktmodel > 0) costr = 2
+  !if (blktmodel > 0) then
+  !   secondary_cycle = 0
+  !   blkttype = 3  !  HCPB
+  !   coolwh = 2
+  !end if
+
+  !  Ensure that blanket material fractions add up to 1.0
+  
+  !  CCFE HCPB Model
+  if (istell == 1) then
+    fsum = 1.0
+  end if
+  
+  if (istell == 0) then
+    if (iblanket == 1) then
+      fsum = fbltibe12 + fblli2sio4 + fblss + vfcblkt + vfpblkt
+      if (abs(fsum-1.0D0) > 1.0D-4) then
+        idiags(1) = iblanket
+        fdiags(2) = fbltibe12
+        fdiags(3) = fblli2sio4
+        fdiags(4) = fblss
+        fdiags(5) = vfcblkt
+        fdiags(6) = vfpblkt
+        fdiags(7) = fsum
+        call report_error(165)
+      end if
+    end if
+  end if
 
   errors_on = .false.
 

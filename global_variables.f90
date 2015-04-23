@@ -136,6 +136,7 @@ module physics_variables
   !+ad_hist  02/10/14 PJK Added cwrmax
   !+ad_hist  13/11/14 PJK Added fkzohm
   !+ad_hist  13/11/14 PJK Modified iradloss usage
+  !+ad_hist  17/11/14 PJK Added palpfwmw
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -499,6 +500,8 @@ module physics_variables
   real(kind(1.0D0)) :: palppv = 0.0D0
   !+ad_vars  palpepv : alpha power per volume to electrons (MW/m3)
   real(kind(1.0D0)) :: palpepv = 0.0D0
+  !+ad_vars  palpfwmw : alpha power escaping plasma and reaching first wall (MW)
+  real(kind(1.0D0)) :: palpfwmw = 0.0D0
   !+ad_vars  palpipv : alpha power per volume to ions (MW/m3)
   real(kind(1.0D0)) :: palpipv = 0.0D0
   !+ad_vars  palpmw : alpha power (MW)
@@ -522,7 +525,7 @@ module physics_variables
   real(kind(1.0D0)) :: pdd = 0.0D0
   !+ad_vars  pdhe3 : deuterium-helium3 fusion power (MW)
   real(kind(1.0D0)) :: pdhe3 = 0.0D0
-  !+ad_vars  pdivt : power to divertor (MW)
+  !+ad_vars  pdivt : power to conducted to the divertor region (MW)
   real(kind(1.0D0)) :: pdivt = 0.0D0
   !+ad_vars  pdt : deuterium-tritium fusion power (MW)
   real(kind(1.0D0)) :: pdt = 0.0D0
@@ -586,6 +589,8 @@ module physics_variables
   real(kind(1.0D0)) :: ptrepv = 0.0D0
   !+ad_vars  ptrimw : ion transport power (MW)
   real(kind(1.0D0)) :: ptrimw = 0.0D0
+  !+ad_vars  pscalingmw : Total transport power from scaling law (MW)
+  real(kind(1.0D0)) :: pscalingmw = 0.0D0
   !+ad_vars  ptripv : ion transport power per volume (MW/m3)
   real(kind(1.0D0)) :: ptripv = 0.0D0
   !+ad_vars  q /3.0/ : safety factor 'near' plasma edge (iteration variable 18):
@@ -774,6 +779,10 @@ module current_drive_variables
   real(kind(1.0D0)) :: etalh = 0.3D0
   !+ad_vars  etanbi /0.3/ : neutral beam wall plug to injector efficiency
   real(kind(1.0D0)) :: etanbi = 0.3D0
+  !+ad_vars  pnbitot : neutral beam power entering vacuum vessel
+  real(kind(1.0D0)) :: pnbitot = 0.0D0
+  !+ad_vars  nbshinemw : neutral beam shine-through power 
+  real(kind(1.0D0)) :: nbshinemw = 0.0D0
   !+ad_vars  etaof /0.3/ : oscillating field wall plug to injector efficiency
   real(kind(1.0D0)) :: etaof = 0.3D0
   !+ad_vars  feffcd /1.0/ : current drive efficiency fudge factor (iteration variable 47)
@@ -992,7 +1001,16 @@ module fwbs_variables
   !+ad_hist  18/06/13 PJK Changed cryomass description
   !+ad_hist  14/11/13 PJK Changed 'breeding unit' to 'breeding zone'
   !+ad_hist  03/06/14 PJK Added new power flow variables
+  !+ad_hist  21/08/14 PJK Added new thermodynamic blanket model variables
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
+  !+ad_hist  30/10/14 PJK Changed blkttype default from 1 to 3
+  !+ad_hist  05/11/14 PJK Added praddiv etc.
+  !+ad_hist  24/11/14 PJK Modified coolwh comments
+  !+ad_hist  10/12/14 PJK Modified secondary_cycle, blkttype descriptions
+  !+ad_hist  17/12/14 PJK Added irefprop
+  !+ad_hist  25/02/15 JM  Removed redundant blanket fractions and switches
+  !+ad_hist  02/04/15 JM  Removed fwerlim
+  !+ad_hist  12/04/15 JM  Removed costr, astr, bstr, estr, lblnkt
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1002,28 +1020,15 @@ module fwbs_variables
 
   public
 
+  !  General blanket parameters
+  
   !+ad_vars  bktlife : blanket lifetime (years)
   real(kind(1.0D0)) :: bktlife = 0.0D0
-  !+ad_vars  blktmodel /0/ : switch for blanket/tritium breeding model
-  !+ad_varc                  (but see <CODE>lblnkt</CODE>):<UL>
-  !+ad_varc             <LI> = 0 original simple model;
-  !+ad_varc             <LI> = 1 KIT model based on a helium-cooled pebble-bed
-  !+ad_varc                      blanket (HCPB) reference design</UL>
-  integer :: blktmodel = 0
   !+ad_vars  coolmass : mass of water coolant (in shield, blanket,
   !+ad_varc             first wall, divertor) (kg)
   real(kind(1.0D0)) :: coolmass = 0.0D0
   !+ad_vars  cryomass : vacuum vessel mass (kg)
   real(kind(1.0D0)) :: cryomass = 0.0D0
-  !+ad_vars  declblkt /0.075/ : neutron power deposition decay length of blanket structural material (m)
-  !+ad_varc                     (ipowerflow=1)
-  real(kind(1.0D0)) :: declblkt = 0.075D0
-  !+ad_vars  declfw /0.075/ : neutron power deposition decay length of first wall structural material (m)
-  !+ad_varc                   (ipowerflow=1)
-  real(kind(1.0D0)) :: declfw = 0.075D0
-  !+ad_vars  declshld /0.075/ : neutron power deposition decay length of shield structural material (m)
-  !+ad_varc                     (ipowerflow=1)
-  real(kind(1.0D0)) :: declshld = 0.075D0
   !+ad_vars  denstl /7800.0/ : density of steel (kg/m3)
   real(kind(1.0D0)) :: denstl = 7800.0D0
   !+ad_vars  dewmkg : total mass of vacuum vessel + cryostat (kg)
@@ -1031,46 +1036,36 @@ module fwbs_variables
   !+ad_vars  emult /1.27/ : energy multiplication in blanket and shield
   !                         (calculated if blktmodel>0)
   real(kind(1.0D0)) :: emult = 1.27D0
-  !+ad_vars  fblbe /0.6/ : beryllium fraction of blanket by volume
-  !+ad_varc                (if blktmodel>0, Be fraction of breeding zone)
-  real(kind(1.0D0)) :: fblbe = 0.6D0
-  !+ad_vars  fblli /0.0/ : lithium fraction of blanket by volume
-  !+ad_varc                (blktmodel=0, lblnkt=1, smstr=2)
-  real(kind(1.0D0)) :: fblli = 0.0D0
-  !+ad_vars  fblli2o /0.08/ : lithium oxide fraction of blanket by volume
-  !+ad_varc                   (blktmodel=0, lblnkt=1, smstr=1)
-  real(kind(1.0D0)) :: fblli2o = 0.08D0
-  !+ad_vars  fbllipb /0.68/ : lithium lead fraction of blanket by volume
-  !+ad_varc                   (blktmodel=0, lblnkt=0 or 1, smstr=2)
-  real(kind(1.0D0)) :: fbllipb = 0.68D0
-  !+ad_vars  fblss /0.07/ : stainless steel fraction of blanket by volume
+  !+ad_vars  emultmw : power due to energy multiplication in blanket and shield [MW]
+  real(kind(1.0D0)) :: emultmw = 0.0D0
+  !+ad_vars  fblss /0.09705/ : stainless steel fraction of blanket by volume
   !+ad_varc                 (if blktmodel>0, steel fraction of breeding zone)
-  real(kind(1.0D0)) :: fblss = 0.07D0
-  !+ad_vars  fblvd /0.0/ : vanadium fraction of blanket by volume
-  !+ad_varc                (blktmodel=0)
-  real(kind(1.0D0)) :: fblvd = 0.0D0
+  real(kind(1.0D0)) :: fblss = 0.09705D0
   !+ad_vars  fdiv /0.15/ : area fraction taken up by divertor (ipowerflow=1)
   real(kind(1.0D0)) :: fdiv = 0.15D0
-  !+ad_vars  fhcd /0.1/ : area fraction covered by heating/current drive
+  !+ad_vars  fhcd /0.0/ : area fraction covered by heating/current drive
   !+ad_varc               apparatus plus diagnostics (ipowerflow=1)
-  real(kind(1.0D0)) :: fhcd = 0.1D0
-  !+ad_vars  fhole /0.15/ : area fraction taken up by other holes
-  real(kind(1.0D0)) :: fhole = 0.15D0
-  !+ad_vars  fvoldw /1.4/ : area coverage factor for vacuum vessel volume
-  real(kind(1.0D0)) :: fvoldw = 1.4D0
-  !+ad_vars  fvolsi /0.64/ : area coverage factor for inboard shield volume
-  real(kind(1.0D0)) :: fvolsi = 0.64D0
-  !+ad_vars  fvolso /0.64/ : area coverage factor for outboard shield volume
-  real(kind(1.0D0)) :: fvolso = 0.64D0
-  !+ad_vars  fwclfr /0.15/ : first wall coolant fraction
-  !+ad_varc                  (calculated if lpulse=1)
-  real(kind(1.0D0)) :: fwclfr = 0.15D0
+  real(kind(1.0D0)) :: fhcd = 0.0D0
+  !+ad_vars  fhole /0.0/ : area fraction taken up by other holes
+  real(kind(1.0D0)) :: fhole = 0.0D0
   !+ad_vars  fwbsshape /2/ : first wall, blanket, shield and vacuum vessel shape:<UL>
   !+ad_varc                  <LI> = 1 D-shaped (cylinder inboard + ellipse outboard);
   !+ad_varc                  <LI> = 2 defined by two ellipses</UL>
   integer :: fwbsshape = 2
+  !+ad_vars  fwlife : first wall full-power lifetime (y)
+  real(kind(1.0D0)) :: fwlife = 0.0D0
   !+ad_vars  fwmass : first wall mass (kg)
   real(kind(1.0D0)) :: fwmass = 0.0D0
+  !+ad_vars  fw_armour_mass : first wall armour mass (kg)
+  real(kind(1.0D0)) :: fw_armour_mass = 0.0D0
+  !+ad_vars  fw_armour_thickness /0.005/ : first wall armour thickness (m)
+  real(kind(1.0D0)) :: fw_armour_thickness = 0.005D0
+  !+ad_vars  fw_armour_vol : first wall armour volume (m3)
+  real(kind(1.0D0)) :: fw_armour_vol = 0.0D0
+  !+ad_vars  iblanket /1/ : switch for blanket model: <UL>
+  !+ad_varc             <LI> = 1 CCFE HCPB model;
+  !+ad_varc             <LI> = 2 KIT HCPB model</UL>
+  integer :: iblanket = 1
   !+ad_vars  pnucblkt : nuclear heating in the blanket (MW)
   real(kind(1.0D0)) :: pnucblkt = 0.0D0
   !+ad_vars  pnuccp : nuclear heating in the ST centrepost (MW)
@@ -1083,8 +1078,155 @@ module fwbs_variables
   real(kind(1.0D0)) :: pnuchcd = 0.0D0
   !+ad_vars  pnucloss : nuclear heating lost via holes (MW)
   real(kind(1.0D0)) :: pnucloss = 0.0D0
+  !+ad_vars  pnucloss : nuclear heating to vacuum vessel and beyond(MW)
+  real(kind(1.0D0)) :: pnucvvplus = 0.0D0
   !+ad_vars  pnucshld : nuclear heating in the shield (MW)
   real(kind(1.0D0)) :: pnucshld = 0.0D0
+  !+ad_vars  whtblkt : mass of blanket (kg)
+  real(kind(1.0D0)) :: whtblkt = 0.0D0
+  !+ad_vars  whtblss : mass of blanket - stainless steel part (kg)
+  real(kind(1.0D0)) :: whtblss = 0.0D0
+  
+   !  CCFE HCPB Blanket Model
+  
+  !+ad_vars  <P><B>The following are used only in the CCFE HCPB blanket model
+  !+ad_varc  (iblanket=1):</B><P>
+  
+  !+ad_vars  fblli2sio4 /0.22/ : lithium orthosilicate fraction of blanket by volume
+  !+ad_varc                   (iblanket = 1 (CCFE HCPB))
+  real(kind(1.0D0)) :: fblli2sio4 = 0.2205D0
+  !+ad_vars  fbltibe12 /0.32/ : titanium beryllide fraction of blanket by volume
+  !+ad_varc                   (iblanket = 1 (CCFE HCPB))
+  real(kind(1.0D0)) :: fbltibe12 = 0.315D0
+  !+ad_vars  vfcblkt /0.05/ : He coolant void fraction of blanket by volume
+  !+ad_varc                   (iblanket = 1 (CCFE HCPB))
+  real(kind(1.0D0)) :: vfcblkt = 0.05295D0
+  !+ad_vars  vfpblkt /0.31/ : He purge void fraction of blanket by volume
+  !+ad_varc                   (iblanket = 1 (CCFE HCPB))
+  real(kind(1.0D0)) :: vfpblkt = 0.3145D0
+  !+ad_vars  whtblli2sio4 : mass of lithium orthosilicat in blanket (kg)
+  !+ad_varc                   (iblanket = 1 (CCFE HCPB))
+  real(kind(1.0D0)) :: whtblli2sio4 = 0.0D0
+  !+ad_vars  whtbltibe12 : mass of titanium beryllide in blanket (kg)
+  !+ad_varc                   (iblanket = 1 (CCFE HCPB))
+  real(kind(1.0D0)) :: whtbltibe12 = 0.0D0
+  
+  !  KIT HCPB blanket model
+  
+  !+ad_vars  <P><B>The following are used only in the KIT HCPB blanket model
+  !+ad_varc  (iblanket=2):</B><P>
+
+  !+ad_vars  breedmat /1/ : breeder material switch (iblanket=2 (KIT HCPB)):<UL>
+  !+ad_varc                  <LI> = 1 Lithium orthosilicate;
+  !+ad_varc                  <LI> = 2 Lithium methatitanate;
+  !+ad_varc                  <LI> = 3 Lithium zirconate</UL>
+  integer :: breedmat = 1
+  !+ad_vars  densbreed : density of breeder material (kg/m3) (iblanket=2 (KIT HCPB))
+  real(kind(1.0D0)) :: densbreed = 0.0D0
+  !+ad_vars  fblbe /0.6/ : beryllium fraction of blanket by volume
+  !+ad_varc                (if (iblanket=2 (KIT HCPB)), Be fraction of breeding zone)
+  real(kind(1.0D0)) :: fblbe = 0.6D0
+  !+ad_vars  fblbreed /0.154/ : breeder fraction of blanket breeding zone by volume
+  !+ad_varc                     (iblanket=2 (KIT HCPB))
+  real(kind(1.0D0)) :: fblbreed = 0.154D0
+  !+ad_vars  fblhebmi /0.40/ : helium fraction of inboard blanket box manifold by volume
+  !+ad_varc                     (iblanket=2 (KIT HCPB))
+  real(kind(1.0D0)) :: fblhebmi = 0.4D0
+  !+ad_vars  fblhebmo /0.40/ : helium fraction of outboard blanket box manifold by volume
+  !+ad_varc                     (iblanket=2 (KIT HCPB))
+  real(kind(1.0D0)) :: fblhebmo = 0.4D0
+  !+ad_vars  fblhebpi /0.6595/ : helium fraction of inboard blanket back plate by volume
+  !+ad_varc                     (iblanket=2 (KIT HCPB))
+  real(kind(1.0D0)) :: fblhebpi = 0.6595D0
+  !+ad_vars  fblhebpo /0.6713/ : helium fraction of outboard blanket back plate by volume
+  !+ad_varc                     (iblanket=2 (KIT HCPB))
+  real(kind(1.0D0)) :: fblhebpo = 0.6713D0
+  !+ad_vars  hcdportsize /1/ : size of heating/current drive ports (iblanket=2 (KIT HCPB)):<UL>
+  !+ad_varc                  <LI> = 1 'small'
+  !+ad_varc                  <LI> = 2 'large'</UL>
+  integer :: hcdportsize = 1
+  !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)
+  !+ad_varc                     (iblanket=2 (KIT HCPB))
+  real(kind(1.0D0)) :: li6enrich = 30.0D0
+  !+ad_vars  nflutf : peak fast neutron fluence on TF coil superconductor (n/m2)
+  !+ad_varc           (iblanket=2 (KIT HCPB))
+  real(kind(1.0D0)) :: nflutf = 0.0D0
+  !+ad_vars  npdiv /2/ : number of divertor ports (iblanket=2 (KIT HCPB))
+  integer :: npdiv = 2
+  !+ad_vars  nphcdin /2/ : number of inboard ports for heating/current drive
+  !+ad_varc                (iblanket=2 (KIT HCPB))
+  integer :: nphcdin = 2
+  !+ad_vars  nphcdout /2/ : number of outboard ports for heating/current drive
+  !+ad_varc                 (iblanket=2 (KIT HCPB))
+  integer :: nphcdout = 2
+  !+ad_vars  tbr : tritium breeding ratio (iblanket=2 (KIT HCPB))
+  real(kind(1.0D0)) :: tbr = 0.0D0
+  !+ad_vars  tritprate : tritium production rate (g/day) (iblanket=2 (KIT HCPB))
+  real(kind(1.0D0)) :: tritprate = 0.0D0
+  !+ad_vars  vvhemax : maximum helium concentration in vacuum vessel at end of
+  !+ad_varc            plant life (appm) (iblanket=2 (KIT HCPB))
+  real(kind(1.0D0)) :: vvhemax = 0.0D0
+  !+ad_vars  wallpf /1.21/ : neutron wall load peaking factor (iblanket=2 (KIT HCPB))
+  real(kind(1.0D0)) :: wallpf = 1.21D0
+  !+ad_vars  whtblbreed : mass of blanket - breeder part (kg) (iblanket=2 (KIT HCPB))
+  real(kind(1.0D0)) :: whtblbreed = 0.0D0
+  !+ad_vars  whtblbe : mass of blanket - beryllium part (kg)
+  real(kind(1.0D0)) :: whtblbe = 0.0D0
+ 
+  !+ad_vars  <P><B>The following are used in the thermodynamic blanket model </B><P>
+ 
+  !+ad_vars  secondary_cycle /0/ : Switch for thermodynamic model of power conversion cycle:<UL>
+  !+ad_varc     <LI> = 0 set efficiency for chosen blanket used (divertor not to primary loop);
+  !+ad_varc     <LI> = 1 set efficiency for chosen blanket used (divertor to primary loop);
+  !+ad_varc     <LI> &gt; 1 detailed thermo-hydraulic and balance-of-plant model -
+  !+ad_varc     <UL><LI> = 2 use input thermal-electric efficiency (etath);
+  !+ad_varc         <LI> = 3 steam Rankine cycle;
+  !+ad_varc         <LI> = 4 supercritical CO2 cycle</UL> </UL>
+  integer :: secondary_cycle = 0
+  !+ad_vars  coolp /15.5e6/ : first wall coolant pressure (Pa) (secondary_cycle>1)
+  real(kind(1.0D0)) :: coolp = 15.5D6
+  !+ad_vars  coolwh : Primary coolant fluid type (set via blkttype):<UL>
+  !+ad_varc         <LI> = 1 helium;
+  !+ad_varc         <LI> = 2 pressurized water</UL>
+  integer :: coolwh = 1
+  !+ad_vars  afwi /0.008/ : inner radius of inboard first wall/blanket coolant channels (m)
+  real(kind(1.0D0)) :: afwi = 0.008D0
+  !+ad_vars  afwo /0.008/ : inner radius of outboard first wall/blanket coolant channels (m)
+  real(kind(1.0D0)) :: afwo = 0.008D0
+  !+ad_vars  inlet_temp /300.0/ : inlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1)
+  real(kind(1.0D0)) :: inlet_temp = 300.0D0
+  !+ad_vars  outlet_temp /550.0/ : outlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1);
+  !+ad_varc                        input if coolwh=1 (helium), calculated if coolwh=2 (water)
+  real(kind(1.0D0)) :: outlet_temp = 550.0D0
+  !+ad_vars  nblktmodpo /8/ : number of outboard blanket modules in poloidal direction (secondary_cycle>1)
+  integer :: nblktmodpo = 8
+  !+ad_vars  nblktmodpi /7/ : number of inboard blanket modules in poloidal direction (secondary_cycle>1)
+  integer :: nblktmodpi = 7
+  !+ad_vars  nblktmodto /48/ : number of outboard blanket modules in toroidal direction (secondary_cycle>1)
+  integer :: nblktmodto = 48
+  !+ad_vars  nblktmodti /32/ : number of inboard blanket modules in toroidal direction (secondary_cycle>1)
+  integer :: nblktmodti = 32
+  !+ad_vars  tfwmatmax /823.0/ : maximum temperature of first wall material (K) (secondary_cycle>1)
+  real(kind(1.0D0)) :: tfwmatmax = 823.0D0
+  !+ad_vars  etaiso /0.85/ : isentropic efficiency of first wall and blanket coolant pumps (secondary_cycle>1)
+  real(kind(1.0D0)) :: etaiso = 0.85D0
+  !+ad_vars  fvoldw /1.4/ : area coverage factor for vacuum vessel volume
+  real(kind(1.0D0)) :: fvoldw = 1.4D0
+  !+ad_vars  fvolsi /1.0/ : area coverage factor for inboard shield volume
+  real(kind(1.0D0)) :: fvolsi = 1.0D0
+  !+ad_vars  fvolso /0.64/ : area coverage factor for outboard shield volume
+  real(kind(1.0D0)) :: fvolso = 0.64D0
+  !+ad_vars  fwclfr /0.15/ : first wall coolant fraction
+  !+ad_varc                  (calculated if lpulse=1 or ipowerflow=1)
+  real(kind(1.0D0)) :: fwclfr = 0.15D0
+  !+ad_vars  praddiv : radiation power incident on the divertor (MW)
+  real(kind(1.0D0)) :: praddiv = 0.0D0
+  !+ad_vars  pradfw : radiation power incident on the divertor (MW)
+  real(kind(1.0D0)) :: pradfw = 0.0D0
+  !+ad_vars  pradhcd : radiation power incident on the divertor (MW)
+  real(kind(1.0D0)) :: pradhcd = 0.0D0
+  !+ad_vars  pradloss : radiation power incident on the divertor (MW)
+  real(kind(1.0D0)) :: pradloss = 0.0D0
   !+ad_vars  ptfnuc : nuclear heating in the TF coil (MW)
   real(kind(1.0D0)) :: ptfnuc = 0.0D0
   !+ad_vars  ptfnucpm3 : nuclear heating in the TF coil (MW/m3) (blktmodel>0)
@@ -1095,13 +1237,12 @@ module fwbs_variables
   !+ad_varc                    ipfloc=3 PF coil (or stellarator modular coil)
   !+ad_varc                    and external cryostat (m)
   real(kind(1.0D0)) :: rpf2dewar = 0.5D0
+  !+ad_vars  tpeak : peak first wall temperature (C)
+  real(kind(1.0D0)) :: tpeak = 0.0D0
   !+ad_vars  vdewex : external cryostat volume (m3)
   real(kind(1.0D0)) :: vdewex = 0.0D0
   !+ad_vars  vdewin : vacuum vessel volume (m3)
   real(kind(1.0D0)) :: vdewin = 0.0D0
-  !+ad_vars  vfblkt /0.25/ : coolant void fraction in blanket (blktmodel=0),
-  !+ad_varc                  (calculated if blktmodel > 0)
-  real(kind(1.0D0)) :: vfblkt = 0.25D0
   !+ad_vars  vfshld /0.25/ : coolant void fraction in shield
   real(kind(1.0D0)) :: vfshld = 0.25D0
   !+ad_vars  volblkt : volume of blanket (m3)
@@ -1111,153 +1252,70 @@ module fwbs_variables
   !+ad_vars  volblkto : volume of outboard blanket (m3)
   real(kind(1.0D0)) :: volblkto = 0.0D0
   !+ad_vars  volshld : volume of shield (m3)
-  real(kind(1.0D0)) :: volshld = 0.0D0
-  !+ad_vars  whtblbe : mass of blanket - Be part (kg)
-  real(kind(1.0D0)) :: whtblbe = 0.0D0
-  !+ad_vars  whtblkt : mass of blanket (kg)
-  real(kind(1.0D0)) :: whtblkt = 0.0D0
-  !+ad_vars  whtblli : mass of blanket - Li part (kg)
-  real(kind(1.0D0)) :: whtblli = 0.0D0
-  !+ad_vars  whtblss : mass of blanket - stainless steel part (kg)
-  real(kind(1.0D0)) :: whtblss = 0.0D0
-  !+ad_vars  whtblvd : mass of blanket - Vanadium part (kg)
-  real(kind(1.0D0)) :: whtblvd = 0.0D0
+  real(kind(1.0D0)) :: volshld = 0.0D0  
   !+ad_vars  whtshld : mass of shield (kg)
   real(kind(1.0D0)) :: whtshld = 0.0D0
   !+ad_vars  wpenshld : mass of the penetration shield (kg)
-  real(kind(1.0D0)) :: wpenshld = 0.0D0
+  real(kind(1.0D0)) :: wpenshld = 0.0D0 
+  !+ad_vars  wtshldi : mass of inboard shield (kg)
+  real(kind(1.0D0)) :: wtshldi = 0.0D0
+  !+ad_vars  wtshldo : mass of outboard shield (kg)
+  real(kind(1.0D0)) :: wtshldo = 0.0D0 
+    
+  !  Old stuff to be removed !
+  !###########################
+  
+  !+ad_vars  irefprop /1/ : Switch to use NIST REFPROP routines to obtain fluid properties:<UL>
+  !+ad_varc            <LI> = 0 Use Panos Karditsas algorithms;
+  !+ad_varc            <LI> = 1 Use REFPROP routines</UL>
+  integer :: irefprop = 1
+  
+  real(kind(1.0D0)) :: fblli = 0.0D0
+  !+ad_vars  fblli2o /0.08/ : lithium oxide fraction of blanket by volume
+  !+ad_varc                   (blktmodel=0)
+  real(kind(1.0D0)) :: fblli2o = 0.08D0
+  !+ad_vars  fbllipb /0.68/ : lithium lead fraction of blanket by volume
+  !+ad_varc                   (blktmodel=0)
+  real(kind(1.0D0)) :: fbllipb = 0.68D0
+  !+ad_vars  fblvd /0.0/ : vanadium fraction of blanket by volume
+  !+ad_varc                (blktmodel=0)
+  real(kind(1.0D0)) :: fblvd = 0.0D0
   !+ad_vars  wtblli2o : mass of blanket - Li_2O part (kg)
   real(kind(1.0D0)) :: wtblli2o = 0.0D0
   !+ad_vars  wtbllipb : mass of blanket - Li-Pb part (kg)
   real(kind(1.0D0)) :: wtbllipb = 0.0D0
-  !+ad_vars  wtshldi : mass of inboard shield (kg)
-  real(kind(1.0D0)) :: wtshldi = 0.0D0
-  !+ad_vars  wtshldo : mass of outboard shield (kg)
-  real(kind(1.0D0)) :: wtshldo = 0.0D0
-
-  !+ad_vars  <P><B>The following are used only in the KIT HCPB blanket model
-  !+ad_varc  (blktmodel=1):</B><P>
-
-  !+ad_vars  breedmat /1/ : breeder material switch (blktmodel>0):<UL>
-  !+ad_varc                  <LI> = 1 Lithium orthosilicate;
-  !+ad_varc                  <LI> = 2 Lithium methatitanate;
-  !+ad_varc                  <LI> = 3 Lithium zirconate</UL>
-  integer :: breedmat = 1
-  !+ad_vars  densbreed : density of breeder material (kg/m3) (blktmodel>0)
-  real(kind(1.0D0)) :: densbreed = 0.0D0
-  !+ad_vars  fblbreed /0.154/ : breeder fraction of blanket breeding zone by volume
-  !+ad_varc                     (blktmodel>0)
-  real(kind(1.0D0)) :: fblbreed = 0.154D0
-  !+ad_vars  fblhebmi /0.40/ : helium fraction of inboard blanket box manifold by volume
-  !+ad_varc                     (blktmodel>0)
-  real(kind(1.0D0)) :: fblhebmi = 0.4D0
-  !+ad_vars  fblhebmo /0.40/ : helium fraction of outboard blanket box manifold by volume
-  !+ad_varc                     (blktmodel>0)
-  real(kind(1.0D0)) :: fblhebmo = 0.4D0
-  !+ad_vars  fblhebpi /0.6595/ : helium fraction of inboard blanket back plate by volume
-  !+ad_varc                     (blktmodel>0)
-  real(kind(1.0D0)) :: fblhebpi = 0.6595D0
-  !+ad_vars  fblhebpo /0.6713/ : helium fraction of outboard blanket back plate by volume
-  !+ad_varc                     (blktmodel>0)
-  real(kind(1.0D0)) :: fblhebpo = 0.6713D0
-  !+ad_vars  hcdportsize /1/ : size of heating/current drive ports (blktmodel>0):<UL>
-  !+ad_varc                  <LI> = 1 'small'
-  !+ad_varc                  <LI> = 2 'large'</UL>
-  integer :: hcdportsize = 1
-  !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)
-  !+ad_varc                     (blktmodel>0)
-  real(kind(1.0D0)) :: li6enrich = 30.0D0
-  !+ad_vars  nflutf : peak fast neutron fluence on TF coil superconductor (n/m2)
-  !+ad_varc           (blktmodel>0)
-  real(kind(1.0D0)) :: nflutf = 0.0D0
-  !+ad_vars  npdiv /2/ : number of divertor ports (blktmodel>0)
-  integer :: npdiv = 2
-  !+ad_vars  nphcdin /2/ : number of inboard ports for heating/current drive
-  !+ad_varc                (blktmodel>0)
-  integer :: nphcdin = 2
-  !+ad_vars  nphcdout /2/ : number of outboard ports for heating/current drive
-  !+ad_varc                 (blktmodel>0)
-  integer :: nphcdout = 2
-  !+ad_vars  tbr : tritium breeding ratio (blktmodel>0)
-  real(kind(1.0D0)) :: tbr = 0.0D0
-  !+ad_vars  tritprate : tritium production rate (g/day) (blktmodel>0)
-  real(kind(1.0D0)) :: tritprate = 0.0D0
-  !+ad_vars  vvhemax : maximum helium concentration in vacuum vessel at end of
-  !+ad_varc            plant life (appm) (blktmodel>0)
-  real(kind(1.0D0)) :: vvhemax = 0.0D0
-  !+ad_vars  wallpf /1.21/ : neutron wall load peaking factor (blktmodel>0)
-  real(kind(1.0D0)) :: wallpf = 1.21D0
-  !+ad_vars  whtblbreed : mass of blanket - breeder part (kg) (blktmodel>0)
-  real(kind(1.0D0)) :: whtblbreed = 0.0D0
-
-  !+ad_vars  <P><B>The following are used in the full thermodynamic blanket model
-  !+ad_varc  (lblnkt=1):</B><P>
-
-  !+ad_vars  astr /2/ : Switch for blanket cooling channel geometry (lblnkt=1):<UL>
-  !+ad_varc        <LI> = 1 circular cross section;
-  !+ad_varc        <LI> = 2 annular cross section</UL>
-  integer :: astr = 2
-  !+ad_vars  bstr /1/ : Switch for blanket boundary condition (lblnkt=1):<UL>
-  !+ad_varc        <LI> = 1 coolant outlet temperature fixed;
-  !+ad_varc        <LI> = 2 maximum blanket temperature fixed</UL>
-  integer :: bstr = 1
-  !+ad_vars  costr /2/ : Switch for blanket coolant material (lblnkt=1):<UL>
-  !+ad_varc         <LI> = 1 Gaseous helium coolant;
-  !+ad_varc         <LI> = 2 Pressurized water coolant</UL>
-  !+ad_varc         (costr=2 (sic) is forced if blktmodel > 0, as only the
-  !+ad_varc         blanket is helium-cooled in this model)
-  integer :: costr = 2
-  !+ad_vars  estr /1/ : Switch for cooling channel orientation (lblnkt=1):<UL>
-  !+ad_varc        <LI> = 1 radially orientated;
-  !+ad_varc        <LI> = 2 poloidally orientated</UL>
-  integer :: estr = 1
-  !+ad_vars  etacp /0.75/ : condenser isentropic efficiency
-  real(kind(1.0D0)) :: etacp = 0.75D0
-  !+ad_vars  etafp /0.75/ : feed water pumps' isentropic efficiency
-  real(kind(1.0D0)) :: etafp = 0.75D0
-  !+ad_vars  etahp /0.85/ : high pressure turbine isentropic efficiency
-  real(kind(1.0D0)) :: etahp = 0.85D0
-  !+ad_vars  etainp /0.85/ : intermediate pressure turbine isentropic efficiency
-  real(kind(1.0D0)) :: etainp = 0.85D0
-  !+ad_vars  etalp /0.85/ : low pressure turbine isentropic efficiency
-  real(kind(1.0D0)) :: etalp = 0.85D0
-  !+ad_vars  fkblkt /1.0/ : blanket elongation / plasma elongation
-  real(kind(1.0D0)) :: fkblkt = 1.0D0
-  !+ad_vars  lblnkt /0/ : Switch for blanket model:<UL>
-  !+ad_varc          <LI> = 0 original model (but see <CODE>blktmodel</CODE>);
-  !+ad_varc          <LI> = 1 full thermodynamic model</UL>
-  integer :: lblnkt = 0
-  !+ad_vars  nipfwh /1/ : Number of intermediate pressure feed water heater pumps
-  integer :: nipfwh = 1
-  !+ad_vars  nlpfwh /1/ : Number of low pressure feed water heater pumps
-  integer :: nlpfwh = 1
-  !+ad_vars  pc /0.005/ : low pressure turbine outlet pressure (MPa)
-  real(kind(1.0D0)) :: pc = 0.005D0
-  !+ad_vars  ph /8.6/ : high pressure turbine inlet pressure (MPa)
-  real(kind(1.0D0)) :: ph = 8.6D0
-  !+ad_vars  pin /0.2/ : low pressure turbine inlet pressure (MPa)
-  real(kind(1.0D0)) :: pin = 0.2D0
-  !+ad_vars  pr /1.0/ : intermediate pressure turbine inlet pressure (MPa)
-  real(kind(1.0D0)) :: pr = 1.0D0
-  !+ad_vars  sgeff /1.0/ : steam generator effectiveness
-  real(kind(1.0D0)) :: sgeff = 1.0D0
-  !+ad_vars  smstr /1/ : Switch for blanket material (lblnkt=1):<UL>
-  !+ad_varc         <LI> = 1 Li2O/Be (solid blanket);
-  !+ad_varc         <LI> = 2 LiPb/Li (liquid blanket)</UL>
-  integer :: smstr = 1
-  !+ad_vars  xdi /2.0/ : inner cooling channel diameter (cm)
-  real(kind(1.0D0)) :: xdi = 2.0D0
-  !+ad_vars  xdo /2.4/ : outer cooling channel diameter (cm)
-  real(kind(1.0D0)) :: xdo = 2.4D0
-  !+ad_vars  xpf /8.6/ : blanket coolant inlet pressure (MPa)
-  real(kind(1.0D0)) :: xpf = 8.6D0
-  !+ad_vars  xtb /350.0/ : maximum blanket temperature (C)
-  real(kind(1.0D0)) :: xtb = 350.0D0
-  !+ad_vars  xtfi /200.0/ : inlet coolant temperature (C)
-  real(kind(1.0D0)) :: xtfi = 200.0D0
-  !+ad_vars  xtfo /300.0/ : outlet coolant temperature (C)
-  real(kind(1.0D0)) :: xtfo = 300.0D0
-
+  !+ad_vars  whtblvd : mass of blanket - vanadium part (kg)
+  real(kind(1.0D0)) :: whtblvd = 0.0D0
+  !+ad_vars  whtblli : mass of blanket - lithium part (kg)
+  real(kind(1.0D0)) :: whtblli = 0.0D0
+  !+ad_vars  vfblkt /0.25/ : coolant void fraction in blanket (blktmodel=0),
+  !+ad_varc                  (calculated if blktmodel > 0)
+  real(kind(1.0D0)) :: vfblkt = 0.25D0
+  !+ad_vars  blktmodel /0/ : switch for blanket/tritium breeding model
+  !+ad_varc                  (but see <CODE>lblnkt</CODE>):<UL>
+  !+ad_varc             <LI> = 0 original simple model;
+  !+ad_varc             <LI> = 1 KIT model based on a helium-cooled pebble-bed
+  !+ad_varc                      blanket (HCPB) reference design</UL>
+  integer :: blktmodel = 0
+  !+ad_vars  declblkt /0.075/ : neutron power deposition decay length of blanket structural material (m)
+  !+ad_varc                     (ipowerflow=1)
+  real(kind(1.0D0)) :: declblkt = 0.075D0
+  !+ad_vars  declfw /0.075/ : neutron power deposition decay length of first wall structural material (m)
+  !+ad_varc                   (ipowerflow=1)
+  real(kind(1.0D0)) :: declfw = 0.075D0
+  !+ad_vars  declshld /0.075/ : neutron power deposition decay length of shield structural material (m)
+  !+ad_varc                     (ipowerflow=1)
+  real(kind(1.0D0)) :: declshld = 0.075D0	
+  !+ad_vars  blkttype /3/ : Switch for blanket type:<UL>
+  !+ad_varc            <LI> = 1 WCLL; efficiency taken from WP13-DAS08-T02, EFDA_D_2M97B7
+  !+ad_varc            <LI> = 2 HCLL; efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX
+  !+ad_varc            <LI> = 3 HCPB; efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX</UL>
+  integer :: blkttype = 3
+  
+  
+  
+  
+  
 end module fwbs_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1810,7 +1868,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tmargtf = 0.0D0
   !+ad_vars  tmaxpro /150.0/ : maximum temp rise during a quench for protection (K)
   real(kind(1.0D0)) :: tmaxpro = 150.0D0
-  !+ad_vars  tmpcry /4.5/ : cryostat temperature for cryogenic plant power calculation (K)
+  !+ad_vars  tmpcry /4.5/ : coil temperature for cryogenic plant power calculation (K)
   real(kind(1.0D0)) :: tmpcry = 4.5D0
   !+ad_vars  trp : TF coil radial plate and inter-turn steel cap half-thickness (m)
   real(kind(1.0D0)) :: trp = 0.0D0
@@ -2092,8 +2150,16 @@ module heat_transport_variables
   !+ad_hist  17/04/13 PJK Added iprimnloss
   !+ad_hist  04/06/14 PJK Added/modified various quantities for new power flow method
   !+ad_hist  17/06/14 PJK Comment change to pfwdiv, ctht
+  !+ad_hist  21/08/14 PJK Added etathdiv
+  !+ad_hist  27/08/14 PJK Replaced etahtp* with just etahtp
   !+ad_hist  17/09/14 PJK Changed default values
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
+  !+ad_hist  22/10/14 PJK Removed psechole, etathdiv
+  !+ad_hist  05/11/14 PJK Added htpmw_*
+  !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx;
+  !+ad_hisc               deleted ctht, rnihx;
+  !+ad_hisc               modified some descriptions
+  !+ad_hist  17/12/14 PJK Modified htpmw_* descriptions
   !+ad_hist  13/01/15 PJK Changed pinjht description
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2108,10 +2174,19 @@ module heat_transport_variables
   real(kind(1.0D0)) :: baseel = 5.0D6
   !+ad_vars  crypmw : cryogenic plant power (MW)
   real(kind(1.0D0)) :: crypmw = 0.0D0
-  !+ad_vars  ctht : total plant heat removal (primary + secondary) (MW)
-  real(kind(1.0D0)) :: ctht = 0.0D0
-  !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency
-  !+ad_varc                 if lblnkt=0, otherwise calculated
+  !+ad_vars  etahhten /1.35/ : efficiency of H production for ihplant=2
+  real(kind(1.0D0)) :: etahhten = 1.35D0
+  !+ad_vars  etahhtex /1.12/ : efficiency of H production for ihplant=3
+  real(kind(1.0D0)) :: etahhtex = 1.12D0
+  !+ad_vars  etahlte /0.75/ : efficiency of H production for ihplant=1
+  real(kind(1.0D0)) :: etahlte = 0.75D0
+  !+ad_vars  etahth /0.5/ : efficiency of H production for ihplant=4
+  real(kind(1.0D0)) :: etahth = 0.5D0
+  !+ad_vars  etahtp /0.95/ : electrical efficiency of primary coolant pumps
+  !+ad_varc                  (ipowerflow=1)
+  real(kind(1.0D0)) :: etahtp = 0.95D0
+  !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency; input if ipowerflow=0
+  !+ad_varc                 or if secondary_cycle=2; otherwise calculated
   real(kind(1.0D0)) :: etath = 0.35D0
   !+ad_vars  fachtmw : facility heat removal (MW)
   real(kind(1.0D0)) :: fachtmw = 0.0D0
@@ -2124,14 +2199,41 @@ module heat_transport_variables
   real(kind(1.0D0)) :: ffwlg = 1.0D0
   !+ad_vars  fgrosbop : scaled fraction of gross power to balance-of-plant
   real(kind(1.0D0)) :: fgrosbop = 0.0D0
-  !+ad_vars  fmgdmw /0.0/ : power to MGF (motor-generator flywheel) units (MW)
+  !+ad_vars  fmgdmw /0.0/ : power to mgf (motor-generator flywheel) units (MW)
   !+ad_varc                 (ignored if iscenr=2)
   real(kind(1.0D0)) :: fmgdmw = 0.0D0
+  !+ad_vars  fpumpblkt /0.005/ : fraction of total blanket thermal power required
+  !+ad_varc                      to drive the blanket coolant pumps (default assumes
+  !+ad_varc                      water coolant) (secondary_cycle=0, ipowerflow=1)
+  real(kind(1.0D0)) :: fpumpblkt = 0.005D0
+  !+ad_vars  fpumpdiv /0.005/ : fraction of total divertor thermal power required
+  !+ad_varc                     to drive the divertor coolant pumps (default assumes
+  !+ad_varc                     water coolant) (ipowerflow=1)
+  real(kind(1.0D0)) :: fpumpdiv = 0.005D0
+  !+ad_vars  fpumpfw /0.005/ : fraction of total first wall thermal power required
+  !+ad_varc                    to drive the FW coolant pumps (default assumes water
+  !+ad_varc                    coolant) (secondary_cycle=0, ipowerflow=1)
+  real(kind(1.0D0)) :: fpumpfw = 0.005D0
+  !+ad_vars  fpumpshld /0.005/ : fraction of total shield thermal power required
+  !+ad_varc                      to drive the shield coolant pumps (default assumes
+  !+ad_varc                      water coolant) (ipowerflow=1)
+  real(kind(1.0D0)) :: fpumpshld = 0.005D0
   !+ad_vars  helpow : heat removal at cryogenic temperatures (W)
   real(kind(1.0D0)) :: helpow = 0.0D0
   !+ad_vars  htpmw /10.0/ : heat transport system electrical pump power (MW)
   !+ad_varc                 (calculated if ipowerflow=1)
   real(kind(1.0D0)) :: htpmw = 10.0D0
+  !+ad_vars  htpmw_blkt : blanket coolant mechanical pumping power (MW) (ipowerflow=1)
+  real(kind(1.0D0)) :: htpmw_blkt = 0.0D0
+  !+ad_vars  htpmw_div : divertor coolant mechanical pumping power (MW) (ipowerflow=1)
+  real(kind(1.0D0)) :: htpmw_div = 0.0D0
+  !+ad_vars  htpmw_fw : first wall coolant mechanical pumping power (MW) (ipowerflow=1)
+  real(kind(1.0D0)) :: htpmw_fw = 0.0D0
+  !+ad_vars  htpmw_shld : shield and vacuum vessel coolant mechanical pumping power (MW) (ipowerflow=1)
+  real(kind(1.0D0)) :: htpmw_shld = 0.0D0
+  !+ad_vars  htpsecmw : Waste power lost from primary coolant pumps (MW)
+  !+ad_varc             (ipowerflow=1)
+  real(kind(1.0D0)) :: htpsecmw = 0.0D0
 
   !+ad_vars  ihplant /0/ : switch for hydrogen production plant:<UL>
   !+ad_varc           <LI> = 0 no hydrogen plant;
@@ -2140,14 +2242,6 @@ module heat_transport_variables
   !+ad_varc           <LI> = 3 High Temperature Electrolysis - exothermic;
   !+ad_varc           <LI> = 4 Thermo-chemical</UL>
   integer :: ihplant = 0
-  !+ad_vars  etahhten /1.35/ : efficiency of H production for ihplant=2
-  real(kind(1.0D0)) :: etahhten = 1.35D0
-  !+ad_vars  etahhtex /1.12/ : efficiency of H production for ihplant=3
-  real(kind(1.0D0)) :: etahhtex = 1.12D0
-  !+ad_vars  etahlte /0.75/ : efficiency of H production for ihplant=1
-  real(kind(1.0D0)) :: etahlte = 0.75D0
-  !+ad_vars  etahth /0.5/ : efficiency of H production for ihplant=4
-  real(kind(1.0D0)) :: etahth = 0.5D0
   !+ad_vars  helecmw /0.0/ : electrical power required for H production (MW)
   !+ad_varc                  (iteration variable 87)
   real(kind(1.0D0)) :: helecmw = 0.0D0
@@ -2160,74 +2254,33 @@ module heat_transport_variables
   !+ad_vars  hvolume : hydrogen production (Normal m3/second)
   real(kind(1.0D0)) :: hvolume = 0.0D0
 
+  !  To be REMOVED
   !+ad_vars  ipowerflow /1/ : switch for power flow model:<UL>
   !+ad_varc              <LI> = 0 pre-2014 version;
   !+ad_varc              <LI> = 1 comprehensive 2014 model</UL>
   integer :: ipowerflow = 1
-  !+ad_vars  etahtpblkt /0.82/ : electrical efficiency of blanket coolant pumps
-  !+ad_varc                      (default assumes helium coolant) (ipowerflow=1)
-  real(kind(1.0D0)) :: etahtpblkt = 0.82D0
-  !+ad_vars  etahtpdiv /0.9/ : electrical efficiency of divertor coolant pumps
-  !+ad_varc                    (default assumes water coolant) (ipowerflow=1)
-  real(kind(1.0D0)) :: etahtpdiv = 0.9D0
-  !+ad_vars  etahtpfw /0.82/ : electrical efficiency of first wall coolant pumps
-  !+ad_varc                    (default assumes helium coolant) (ipowerflow=1)
-  real(kind(1.0D0)) :: etahtpfw = 0.82D0
-  !+ad_vars  etahtpshld /0.9/ : electrical efficiency of shield coolant pumps
-  !+ad_varc                     (default assumes water coolant) (ipowerflow=1)
-  real(kind(1.0D0)) :: etahtpshld = 0.9D0
-  !+ad_vars  fpumpblkt /0.085/ : fraction of total blanket thermal power required
-  !+ad_varc                      to drive the blanket coolant pumps (default assumes
-  !+ad_varc                      helium coolant) (ipowerflow=1)
-  real(kind(1.0D0)) :: fpumpblkt = 0.085D0
-  !+ad_vars  fpumpdiv /0.005/ : fraction of total divertor thermal power required
-  !+ad_varc                     to drive the divertor coolant pumps (default assumes
-  !+ad_varc                     water coolant) (ipowerflow=1)
-  real(kind(1.0D0)) :: fpumpdiv = 0.005D0
-  !+ad_vars  fpumpfw /0.085/ : fraction of total first wall thermal power required
-  !+ad_varc                    to drive the FW coolant pumps (default assumes helium
-  !+ad_varc                    coolant) (ipowerflow=1)
-  real(kind(1.0D0)) :: fpumpfw = 0.085D0
-  !+ad_vars  fpumpshld /0.005/ : fraction of total shield thermal power required
-  !+ad_varc                      to drive the shield coolant pumps (default assumes
-  !+ad_varc                      water coolant) (ipowerflow=1)
-  real(kind(1.0D0)) :: fpumpshld = 0.005D0
-  !+ad_vars  htpsecmw : waste power lost from heat transport system (MW)
-  !+ad_varc             (ipowerflow=1)
-  real(kind(1.0D0)) :: htpsecmw = 0.0D0
-  !+ad_vars  iprimdiv /1/ : switch for divertor thermal power destiny:<UL>
-  !+ad_varc            <LI> = 0 contributes to secondary heat;
-  !+ad_varc            <LI> = 1 contributes to primary heat</UL>
-  !+ad_varc            (ipowerflow=1)
-  integer :: iprimdiv = 1
-  !+ad_vars  iprimshld /1/ : switch for shield thermal power destiny:<UL>
-  !+ad_varc             <LI> = 0 contributes to secondary heat;
-  !+ad_varc             <LI> = 1 contributes to primary heat</UL>
-  !+ad_varc             (ipowerflow=1)
-  integer :: iprimshld = 1
-  !+ad_vars  psecdiv : secondary (low-grade) heat lost in divertor (MW)
-  !+ad_varc            (ipowerflow=1)
-  real(kind(1.0D0)) :: psecdiv = 0.0D0
-  !+ad_vars  psechcd : secondary (low-grade) heat lost into HCD apparatus (MW)
-  !+ad_varc            (ipowerflow=1)
-  real(kind(1.0D0)) :: psechcd = 0.0D0
-  !+ad_vars  psechole : secondary (low-grade) heat lost through holes (MW)
-  !+ad_varc             (ipowerflow=1)
-  real(kind(1.0D0)) :: psechole = 0.0D0
-  !+ad_vars  psecshld : secondary (low-grade) heat lost in shield (MW)
-  !+ad_varc             (ipowerflow=1)
-  real(kind(1.0D0)) :: psecshld = 0.0D0
-
-  !+ad_vars  iprimhtp /0/ : switch for heat transport pump power destiny:<UL>
-  !+ad_varc            <LI> = 0 contributes to secondary heat;
-  !+ad_varc            <LI> = 1 contributes to primary heat</UL>
-  !+ad_varc            (ipowerflow=0)
-  integer :: iprimhtp = 0
   !+ad_vars  iprimnloss /0/ : switch for lost neutron power through holes destiny:<UL>
-  !+ad_varc              <LI> = 0 contributes to secondary heat;
-  !+ad_varc              <LI> = 1 contributes to primary heat</UL>
+  !+ad_varc              <LI> = 0 does not contribute to energy generation cycle;
+  !+ad_varc              <LI> = 1 contributes to energy generation cycle</UL>
   !+ad_varc              (ipowerflow=0)
   integer :: iprimnloss = 0
+  !+ad_vars  iprimdiv /1/ : switch for divertor thermal power destiny:<UL>
+  !+ad_varc            <LI> = 0 does not contribute to energy generation cycle;
+  !+ad_varc            <LI> = 1 contributes to energy generation cycle</UL>
+  !+ad_varc            (ipowerflow=1) (N.B. is forced to be 1 under certain circumstances)
+  !integer :: iprimdiv = 1
+
+  ! KEEP
+  !+ad_vars  iprimshld /1/ : switch for shield thermal power destiny:<UL>
+  !+ad_varc             <LI> = 0 does not contribute to energy generation cycle;
+  !+ad_varc             <LI> = 1 contributes to energy generation cycle</UL>
+  !+ad_varc             (ipowerflow=1)
+  integer :: iprimshld = 1
+  
+  
+  
+  !+ad_vars  nphx : number of primary heat exchangers
+  integer :: nphx = 0
   !+ad_vars  pacpmw : total pulsed power system load (MW)
   real(kind(1.0D0)) :: pacpmw = 0.0D0
   !+ad_vars  peakmva : peak MVA requirement
@@ -2246,16 +2299,26 @@ module heat_transport_variables
   real(kind(1.0D0)) :: precircmw = 0.0D0
   !+ad_vars  priheat : total thermal power removed from fusion core (MW)
   real(kind(1.0D0)) :: priheat = 0.0D0
-  !+ad_vars  psechtmw : secondary (low-grade) heat (MW)
+  !+ad_vars  psecdiv : Low-grade heat lost in divertor (MW)
+  !+ad_varc            (ipowerflow=1)
+  real(kind(1.0D0)) :: psecdiv = 0.0D0
+  !+ad_vars  psechcd : Low-grade heat lost into HCD apparatus (MW)
+  !+ad_varc            (ipowerflow=1)
+  real(kind(1.0D0)) :: psechcd = 0.0D0
+  !+ad_vars  psechtmw : Low-grade heat (MW)
   real(kind(1.0D0)) :: psechtmw = 0.0D0
-  !+ad_vars  pthermmw : primary (high-grade) heat (useful for electric production) (MW)
+  
+  ! NEW
+  !+ad_vars  pseclossmw : Low-grade heat (VV + lost)(MW)
+  real(kind(1.0D0)) :: pseclossmw = 0.0D0
+  
+  !+ad_vars  psecshld : Low-grade heat deposited in shield (MW)
+  !+ad_varc             (ipowerflow=1)
+  real(kind(1.0D0)) :: psecshld = 0.0D0
+  !+ad_vars  pthermmw : High-grade heat useful for electric production (MW)
   real(kind(1.0D0)) :: pthermmw = 0.0D0
   !+ad_vars  pwpm2 /150.0/ : base AC power requirement per unit floor area (W/m2)
   real(kind(1.0D0)) :: pwpm2 = 150.0D0
-  !+ad_vars  rnihx : number of intermediate heat exchangers
-  real(kind(1.0D0)) :: rnihx = 0.0D0
-  !+ad_vars  rnphx : number of primary heat exchangers
-  real(kind(1.0D0)) :: rnphx = 0.0D0
   !+ad_vars  tfacpd /0.0/ : total steady state TF coil AC power demand (MW)
   !+ad_varc                 (itfsup=0 only; calculated for itfsup=1)
   real(kind(1.0D0)) :: tfacpd = 0.0D0
@@ -2263,6 +2326,8 @@ module heat_transport_variables
   real(kind(1.0D0)) :: tlvpmw = 0.0D0
   !+ad_vars  trithtmw /15.0/ : power required for tritium processing (MW)
   real(kind(1.0D0)) :: trithtmw = 15.0D0
+  !+ad_vars  tturb : coolant temperature at turbine inlet (K) (secondary_cycle = 3,4)
+  real(kind(1.0D0)) :: tturb = 0.0D0
   !+ad_vars  vachtmw /0.5/ : vacuum pump power (MW)
   real(kind(1.0D0)) :: vachtmw = 0.5D0
 
@@ -2656,6 +2721,7 @@ module cost_variables
   !+ad_hist  19/11/14 PJK Modified iavail wording
   !+ad_hist  25/11/14 JM  Added new availability model variables
   !+ad_hist  02/12/14 PJK Changed abktflnc, adivflnc default values
+  !+ad_hist  10/12/14 PJK Removed ucihx
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2761,9 +2827,9 @@ module cost_variables
   !+ad_varc          <LI> = 1 calculate cfactr using Taylor and Ward 1999 model;
   !+ad_varc          <LI> = 2 calculate cfactr using new (2014) model</UL>
   integer :: iavail= 0
-  !+ad_vars  avail_min /0.75/ : Minimum availability (constraint equation 60)
+  !+ad_vars  avail_min /0.75/ : Minimum availability (constraint equation 61)
   real(kind(1.0D0)) :: avail_min = 0.75D0
-  !+ad_vars  favail /1.0/ : F-value for minimum availability (constraint equation 60)
+  !+ad_vars  favail /1.0/ : F-value for minimum availability (constraint equation 61)
   real(kind(1.0D0)) :: favail = 1.0D0  
   !+ad_vars  num_rh_systems /4/ : Number of remote handling systems (1-10)
   integer :: num_rh_systems = 4
@@ -2821,6 +2887,8 @@ module cost_variables
   !+ad_varc         <LI> = 0 scale so that always > 0;
   !+ad_varc         <LI> = 1 let go < 0 (no c-o-e)</UL>
   integer :: ipnet = 0
+  
+  
   !+ad_vars  ireactor /1/ : switch for net electric power and cost of
   !+ad_varc                 electricity calculations:<UL>
   !+ad_varc            <LI> = 0 do not calculate MW(electric) or c-o-e;
@@ -2930,14 +2998,12 @@ module cost_variables
   !+ad_vars  uchth /700.0/ : cost of H production (thermo-chemical) ($/kW Hydrogen)
   real(kind(1.0D0)) :: uchth = 700.0D0
   !+ad_vars  uchts(2) /15.3,19.1/ : cost of heat transport system equipment
-  !+ad_varc                         per loop ($/W); dependent on coolant type
+  !+ad_varc                         per loop ($/W); dependent on coolant type (coolwh)
   real(kind(1.0D0)), dimension(2) :: uchts = (/15.3D0, 19.1D0/)
   !+ad_vars  uciac /1.5e8/ : cost of instrumentation, control & diagnostics ($/W)
   real(kind(1.0D0)) :: uciac = 1.5D8
   !+ad_vars  ucich /3.0/ : ICH system cost ($/W)
   real(kind(1.0D0)) :: ucich = 3.0D0
-  !+ad_vars  ucihx /0.0/ : cost of intermediate heat exchangers ($/W**exphts)
-  real(kind(1.0D0)) :: ucihx = 0.0D0
   !+ad_vars  ucint /35.0/ FIX : superconductor intercoil structure cost ($/kg)
   real(kind(1.0D0)) :: ucint = 35.0D0
   !+ad_vars  uclh /3.3/ : lower hybrid system cost ($/W)
@@ -3009,8 +3075,8 @@ module cost_variables
   real(kind(1.0D0)) :: uctpmp = 1.105D5
   !+ad_vars  uctr /370.0/ FIX : cost of tritium building ($/m3)
   real(kind(1.0D0)) :: uctr = 370.0D0
-  !+ad_vars  ucturb(2) /230.0e6,245.0e6/: cost of turbine plant equipment ($)
-  !+ad_varc                               (dependent on coolant type)
+  !+ad_vars  ucturb(2) /230.0e6, 245.0e6/: cost of turbine plant equipment ($)
+  !+ad_varc                               (dependent on coolant type coolwh)
   real(kind(1.0D0)), dimension(2) :: ucturb = (/230.0D6, 245.0D6/)
   !+ad_vars  ucvalv /3.9e5/ FIX : vacuum system valve cost ($)
   real(kind(1.0D0)) :: ucvalv = 3.9D5
@@ -3778,6 +3844,7 @@ module pulse_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  05/11/12 PJK Initial version of module
+  !+ad_hist  21/08/14 PJK Moved some variables into fwbs_variables
   !+ad_stat  Okay
   !+ad_docs  Work File Notes in F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -3795,13 +3862,9 @@ module pulse_variables
   !+ad_vars  bfw : outer radius of each first wall structural tube (m)
   !+ad_varc        (0.5 * average of fwith and fwoth)
   real(kind(1.0D0)) :: bfw = 0.0D0
-  !+ad_vars  coolp /15.5e6/ : first wall coolant pressure (Pa)
-  real(kind(1.0D0)) :: coolp = 15.5D6
   !+ad_vars  dtstor /300.0/ : maximum allowable temperature change in stainless
   !+ad_varc                   steel thermal storage block (K) (istore=3)
   real(kind(1.0D0)) :: dtstor = 300.0D0
-  !+ad_vars  fwlife : first wall lifetime (y)
-  real(kind(1.0D0)) :: fwlife = 0.0D0
   !+ad_vars  istore /1/ : switch for thermal storage method:<UL>
   !+ad_varc          <LI> = 1 option 1 of Electrowatt report, AEA FUS 205;
   !+ad_varc          <LI> = 2 option 2 of Electrowatt report, AEA FUS 205;
@@ -3818,8 +3881,6 @@ module pulse_variables
   integer :: lpulse = 0
   !+ad_vars  tmprse /40.0/ : first wall coolant temperature rise (C)
   real(kind(1.0D0)) :: tmprse = 40.0D0
-  !+ad_vars  tpeak : peak first wall temperature (C)
-  real(kind(1.0D0)) :: tpeak = 0.0D0
 
 end module pulse_variables
 
