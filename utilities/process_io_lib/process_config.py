@@ -980,10 +980,6 @@ class NdScanConfig(RunProcessConfig):
     # one for number at lower and one for number at upper
     iterationvariablesatbounds = col.OrderedDict({})
     optionals = {
-        'MakeFailPlot'               : False,
-        #^ Outputs a 2d failure plot at the end of the run with the
-        #  first two specified dimensions. Most effective for a 2d scan.
-        #todo revise failplot
         'StoreOutput'                : True,
         #^ Saves the output data from the run. Toggle to false to save time with
         #  writing data if you want to debug some other functionality.
@@ -1066,10 +1062,6 @@ class NdScanConfig(RunProcessConfig):
                                 changes behavior function)
         Arguments:
             configfilename--> The name of the configuration file to open
-
-        Dependencies:
-            json
-            os module
 
         """
 
@@ -1491,16 +1483,11 @@ class NdScanConfig(RunProcessConfig):
 
             self.iterationvariables = get_iter_vars()
 
-            removeflag = False
-
             for varname in self.scanaxes['varnames']:
                 if varname in self.iterationvariables.values():
                     print("Warning! Removing scan variable", varname,\
                               " from the iteration variable list.")
                     self.del_ixc.append(get_var_name_or_number(varname))
-                    removeflag = True
-
-                if removeflag:
                     print("Please either reconsider your iteration variables\
  in the IN.DAT file in the future, or if this was intended, set the\
  RemoveIterVars optional to False in your config file.")

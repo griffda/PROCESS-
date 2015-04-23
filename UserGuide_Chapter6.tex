@@ -533,7 +533,7 @@ The configuration file \texttt{ndscan.conf} uses the JSON format\footnote{www.js
             "Varname": "bt"
         }
     ],
-    "_Comment": [
+    "_comment": [
         "This field helps to describe the config file for users reading",
         "Anything you write in here will be ignored by the code",
         "Each axis has these configuration parameters available:",
@@ -546,8 +546,7 @@ The configuration file \texttt{ndscan.conf} uses the JSON format\footnote{www.js
     "Title": "Demonstrationdata",
     "RanBefore": false,
     "Optionals": {
-        "MakeFailPlot": true,
-        "RemoveScanVarsFromIteration": false,
+        "RemoveScanVarsFromIteration": True,
         "RemoveSomeVarsFromIteration": 0,
         "RerunOnFailure": 5,
         "SmoothIterVars": true,
@@ -580,11 +579,12 @@ The configuration file \texttt{ndscan.conf} uses the JSON format\footnote{www.js
 \end{framed}
 Required input parameters in the configuration file are the Scan Axes, which has to be at least one and can be N-dimensional. For each axis a \texttt{varname}, a \texttt{Lowerbound}, an \texttt{Upperbound} and the number of \texttt{Steps} $>1$ have to be specified. All other parameters in the configuration file are optional.
 \begin{description}
-\item[\texttt{\_Comment}] Anything in the comment section is for the user only and will be ignored by the program.
+\item[\texttt{\_comment}] Anything in the comment section (like all other undefined sections) is for the user only and will be ignored by the program.
+\item[\texttt{Author}] The author will be copied into the NetCDF file.
 \item[\texttt{Description}] The description will be copied into the NetCDF file.
 \item[\texttt{Title}] Name of the output NetCDF file (default \texttt{Demonstrationdata}
 \item[\texttt{RanBefore}] Flag to indicate whether this scan has already been run.
-
+\item[\texttt{Optionals:RemoveScanVarsFromIteration}] Removes all scanning variables from the iteration variables of the IN.DAT file (default=True). 
 \end{description}
 
 
