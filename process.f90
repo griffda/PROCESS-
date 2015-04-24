@@ -1850,3 +1850,5 @@ end subroutine output
 ! GIT 383: Various minor changes and availability model updated. See release notes t383
 ! GIT 384: Changes to TF magnets calculations and a few minor fixes. See release notes t384
 ! GIT 385: Fixed tagging error and see release notes t385
+! GIT 386: Fixes for new powerflow. Notes to be released with r388
+! GIT 387: More minor fixes for powerflow. Notes to be released with r388
