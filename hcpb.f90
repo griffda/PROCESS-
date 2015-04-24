@@ -843,14 +843,16 @@ contains
     !  Total heating (MW)
     ptfnuc = tfc_nuc_heating * (powfmw / 1000.0D0) / 1.0D6
     
-    if (ip == 0) return
+    !if (ip == 0) return
     
-    call oheadr(ofile, 'Nuclear Heating Magnets') 
+    !if (verbose == 
+    
+    !call oheadr(ofile, 'Nuclear Heating Magnets Before Renormalisation') 
     !call ovarin(ofile, '', '()',)
-    call ovarre(ofile, 'Shield exponent (tonne/m2)', '(x_shield)', x_shield)
-    call ovarre(ofile, 'Blanket exponent (tonne/m2)', '(x_blanket)', x_blanket)
-    call ovarre(ofile, 'Unit nuclear heating in TF coil (W/GW)', '(tfc_nuc_heating)', tfc_nuc_heating)
-    call ovarre(ofile, 'Total nuclear heating in TF coil (MW)', '(ptfnuc)', ptfnuc)
+    !call ovarre(ofile, 'Shield line density (tonne/m2)', '(x_shield)', x_shield)
+    !call ovarre(ofile, 'Blanket line density (tonne/m2)', '(x_blanket)', x_blanket)
+    !call ovarre(ofile, 'Unit nuclear heating in TF coil (W/GW)', '(tfc_nuc_heating)', tfc_nuc_heating)
+    !call ovarre(ofile, 'Total nuclear heating in TF coil (MW)', '(ptfnuc)', ptfnuc)
   
   end subroutine
 
