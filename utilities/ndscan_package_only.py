@@ -7,7 +7,7 @@ Author: S. Torrisi (storrisi@u.rochester.edu)
 Date: August 2014
 
 Input files:
-ndscan.conf (configuration file, per default in working directory)
+ndscan.json (configuration file, per default in working directory)
 
 Outputfiles:
 
@@ -27,12 +27,13 @@ if __name__ == '__main__':
     PARSER = argparse.ArgumentParser(description='Program to create a netcdf\
  file from a multi-dimensional parameter scan.')
 
-    PARSER.add_argument("-f", "--configfile", default='ndscan.conf',
-                        help="configuration file, default = ndscan.conf")
+    PARSER.add_argument("-f", "--configfile", default='ndscan.json',
+                        help="configuration file, default = ndscan.json")
 
     ARGS = PARSER.parse_args()
 
 ############################################################
 #main program
 
-    NCD.NCDFconverter(ARGS.configfile, convertnow=True)
+    NCONVERTER = NCD.NCDFconverter(ARGS.configfile)
+    NCONVERTER.convert_mfilelibrary()

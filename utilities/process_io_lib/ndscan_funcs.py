@@ -59,45 +59,6 @@ def get_var_name_or_number(variable):
     return None
 
 
-def get_iter_variables_from_mfile(mfile, normalized=False):
-    """
-    Returns the values of the iteration variables from mfile in a list.
-    If normalized is specified, returns the iteration values normalized
-    according to their bounds (0 at lower bound, 1 at upper bound).
-
-    Arguments:
-        mfile-----------> MFile class from mfile.py
-        numberofitvars--> Integer specifying the number of iteration
-                          variables to find the values of.
-                          Will then return the first N number of values,
-                          where N is numberofitvars.
-        normalized------> Whether to return the normalized values or not.
-                          Boolean.
-
-    Returns:
-        output----------> An ordered dict with keys as the name of the
-                          iteration variable, and values of the variable
-                          values, either normalized or not based on
-                          argument normalized. Has length=numberofitvars.
-
-    Dependencies:
-        collections module for OrderedDict
-    """
-    output = col.OrderedDict({})
-
-    nvar = int(mfile.data['nvar'].get_scan(-1))
-
-    for i in range(1, nvar+1):
-        itervarstring = "itvar%03i" %i
-
-        if normalized:
-            itervarstring = "n" + itervarstring
-        value = mfile.data[itervarstring].get_scan(-1)
-        itervarname = mfile.data[itervarstring].var_description
-        output[itervarname] = value
-
-    return output
-
 
 def get_iter_vars(inputfile='IN.DAT', makeboundarydict=False):
 

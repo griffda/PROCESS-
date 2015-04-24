@@ -19,26 +19,23 @@ Variables (variables)
  one variable of interest
 """
 
+from os import getlogin
 from process_io_lib.mfile import MFile
 from numpy import array, transpose
 from netCDF4 import Dataset
-from process_io_lib.ndscan_config import NdScanConfigFile
 from datetime import datetime
+from process_io_lib.configuration import Config
 
-class NCDFconverter(object):
+class NCDFconverter(Config):
     """
     Contains all of the necessary methods to convert MFILEs from a scan
     to a NetCDF file.
     """
-    def __init__(self, configfile='ndscan.conf', convertnow=False,
-                 verbosity=1):
+    def __init__(self, configfilename='ndscan.json', verbosity=1):
         """
-        Specifies which configuration file to read. If convertnow is True,
-        will begin a conversion upon instantiation of the class.
+        Specifies which configuration file to read.
         Arguments:
             configfile---> Specifies which configuration file to read.
-            convertnow---> If set to True, will begin a conversion upon
-            instantiation of the class.
             verbosity----> If set to 1, will output some information about
             the results. If set to 2, will output results as well as process.
 
@@ -49,45 +46,43 @@ class NCDFconverter(object):
                                       for each variable of interest
             variablepointers--------> List of strings; the names of each
                                       variable of interest
-            variableofinterestnames-> List of strings; the names of each
+            output_vars-------------> List of strings; the names of each
                                       variable of interest
-            scanconfig--------------> Pointer to the NdScanConfigFile class
             stepstring--------------> String which represents the current step
                                       along the coordinates.
-            outputdirectory---------> Stored as a variable to save time; this
-                                      is referenced many times.
+            mfiledir----------------> Directory name in which the MFILES are 
+                                      stored.
 
         """
+        super().__init__(configfilename)
 
         self.currentstep = []
         self.variablecollector = []
         self.variablepointers = []
-        self.variableofinterestnames = []
         self.steptuple = ()
         self.axestuple = ()
-        self.outputdirectory = "."
+        self.mfiledir = "MFILES"
         self.stepstring = ""
         self.verbosity = verbosity
 
-        self.configfilename = configfile
-        self.scanconfig = NdScanConfigFile(configfile)
-        self.check_ndscan_file()
-
-        if convertnow:
-            self.convert_mfilelibrary()
-
-
-    def check_ndscan_file(self):
-        """
-        Checks to make sure that there are variables of interest present in
-        the ndscan.conf file.
-        """
-
-        interest = self.scanconfig.get_value("VariablesOfInterest")
-        if len(interest) == 0:
-            print("No variables of interest detected. Check the config file.",
-                  self.configfilename)
+        self.configfilename = configfilename
+        self.output_vars = self.get("output_vars", default=[])
+        if len(self.output_vars) == 0:
+            print("No output variables specified in config file.",
+                  self.configfilename, "\nNo NetCDF file created!")
             exit()
+
+        self.time = str(datetime.now())
+        self.time = self.time.replace(" ", "-")
+        self.time = self.time[0:16]
+
+        self.title = self.get("title", default="NdscanOutput")
+        self.author = self.get("author", default=getlogin())
+        self.description = self.get("description",
+                                    default="No description given")
+
+        self.axes = self.get("axes", default=[])
+
 
     def convert_mfilelibrary(self):
         """
@@ -99,22 +94,20 @@ class NCDFconverter(object):
         # Determine roughly but dynamically what level of compression to use.
         scanvars = []
         scansteps = []
-        for axis in self.scanconfig.get_value("Axes"):
-            scanvars.append(axis["Varname"])
+        for axis in self.axes:
+            scanvars.append(axis["varname"])
 
-            if type(axis["Steps"]) is list:
-                scansteps.append(len(axis["Steps"]))
+            if type(axis["steps"]) is list:
+                scansteps.append(len(axis["steps"]))
             else:
-                scansteps.append(axis["Steps"])
+                scansteps.append(axis["steps"])
 
         self.steptuple = tuple(scansteps)
         self.axestuple = tuple(scanvars)
 
         compressionlevel = self.determine_compression()
 
-        # Create the nc file with circumstantial data: for instance, time,
-        # title, description.
-        ncfile = self.create_ncfile_from_scanconfig()
+        ncfile = self.create_ncfile()
 
         # A list of lists which will later be converted into n dimensional
         # arrays for each variable.
@@ -205,11 +198,7 @@ class NCDFconverter(object):
             stepstring += str(currentstep[i])+'.'
         stepstring += 'DAT'
 
-        mfile = MFile(self.outputdirectory+ '/' +stepstring)
-
-        #And now return the mfile which is pointed to by stepstring.
-        #We have now 'walked' from one Mfile to the next while incrementing
-        #the currentstep.
+        mfile = MFile(self.mfiledir+ '/' +stepstring)
 
         return mfile
 
@@ -225,12 +214,12 @@ class NCDFconverter(object):
         varoutput----->List of values corresponding with the variables in
                        varstofind.
         """
-        varoutput = [-1]*len(self.variableofinterestnames)
+        varoutput = [-1]*len(self.output_vars)
 
         error_status = mfile.data['error status'].get_scan(-1)
         if error_status < 3:
-            for ind, hook in enumerate(self.variableofinterestnames):
-                varoutput[ind] = mfile.data[hook].get_scan(-1)
+            for ind, varname in enumerate(self.output_vars):
+                varoutput[ind] = mfile.data[varname].get_scan(-1)
         #else:
         #    print('Unsuccessful PROCESS run, MFILE being ignored!')
 
@@ -249,13 +238,7 @@ class NCDFconverter(object):
         compressionlevel-----> An integer which will be valued either 4, 6, 8,
                                or 9.
 
-        Dependencies:
-
-        self.steptuple
-        self.variableofinterestnames
-
-
-        """
+                               """
 
         # Default level established first
         compressionlevel = 4
@@ -266,7 +249,7 @@ class NCDFconverter(object):
         for i in dataarray:
             totalsteps *= i
 
-        totalpoints = totalsteps * len(self.variableofinterestnames)
+        totalpoints = totalsteps * len(self.output_vars)
 
         # In a rough way, dynamically set the compression based on how much
         # data points are going to be
@@ -280,66 +263,21 @@ class NCDFconverter(object):
                     compressionlevel = 9
         return compressionlevel
 
-    def create_ncfile_from_scanconfig(self):
+    def create_ncfile(self):
         """
         Constructs a NetCDF file from the descriptive information contained
         in an ndscan.conf file.
 
         The data pieces it searches for are title, output directory,
         description, and author.
-
-        Dependencies:
-
-        datetime module
-        self.scanconfig
-
-        Modifies:
-
-        self.outputdirectory
-
-        Returns:
-
-        ncfile--------> a pointer to a NetCDF file class.
-
         """
 
-        time = str(datetime.now())
-        time = time.replace(" ", "-")
-        time = time[0:16]
-
-        # Checks to see if a title is specified in the ndscanconfig file.
-        # If not, the date and time is used.
-        try:
-            title = self.scanconfig.get_value("Title")
-            ncfile = Dataset(title + "data.nc", 'w')
-            ncfile.title = title
-        except TypeError:
-            ncfile = Dataset(time + "datfile.nc", 'w')
-            ncfile.title = "NCDFfile"
-
-        # Establish 'biographical data' about the ncfile to ensure portability.
-        # If no such biographical data is written, use default values
-
-        # Time is recorded for archival purposes
-        ncfile.time = time
-
-        self.outputdirectory = self.scanconfig.get_value("OutputDirectory")
-
-        if self.scanconfig.get_value("OutputDirectory") is None:
-            self.outputdirectory = "DATA"
-
-
-        try:
-            ncfile.description = self.scanconfig.get_value("Description")
-        except TypeError:
-            ncfile.description = "No description given."
-
-        try:
-            ncfile.author = self.scanconfig.get_value("Author")
-        except TypeError:
-            ncfile.author = "No Author Given."
-
-        ncfile.ndim = len(self.scanconfig.get_value("Axes"))
+        ncfile = Dataset(self.title + ".nc", 'w')
+        ncfile.title = self.title
+        ncfile.time = self.time
+        ncfile.description = self.description
+        ncfile.author = self.author
+        ncfile.ndim = len(self.axes)
 
         return ncfile
 
@@ -359,55 +297,38 @@ class NCDFconverter(object):
         ncfile-----> A netCDF file class which will have dimensions and
         variables added to it.
 
-        Dependencies:
-
-        self.scanconfig
-        self.verbosity
-        self.currentstep
-
-        Modifies:
-
-        self.stepstring
-        self.currentstep
-        self.variablecollector
-        self.variablepointers
-        self.variableofinterestnames
-
         """
         self.stepstring = "M."
-        axes = self.scanconfig.get_value("Axes")
-        for i in range(len(axes)):
+        for i in range(len(self.axes)):
 
-            if type(axes[i]["Steps"]) is list:
-                axissize = len(axes[i]["Steps"])
+            if type(self.axes[i]["steps"]) is list:
+                axissize = len(self.axes[i]["steps"])
             else:
-                axissize = int(axes[i]["Steps"])
+                axissize = int(self.axes[i]["steps"])
 
             if self.verbosity > 1:
-                print("Creating dimension:", axes[i]["Varname"], "with size",
-                      axissize)
+                print("Creating dimension:", self.axes[i]["varname"],
+                      "with size", axissize)
 
-            ncfile.createDimension(dimname=axes[i]["Varname"],
+            ncfile.createDimension(dimname=self.axes[i]["varname"],
                                    size=axissize)
 
             self.currentstep.append(0)
             self.stepstring += "0."
 
-        for var in self.scanconfig.get_value("VariablesOfInterest"):
+        for var in self.output_vars:
             if self.verbosity > 1:
                 print("Creating variable", var)
             self.variablecollector.append([])
             self.variablepointers.append(0)
-            self.variableofinterestnames.append(var)
 
-        if "ifail" not in self.variableofinterestnames:
+        if "ifail" not in self.output_vars:
             if self.verbosity > 1:
                 print("Adding ifail in by default...")
 
-            # Remove a slot from collector, pointers, and the offending ifail.
             self.variablecollector.append([])
             self.variablepointers.append(0)
-            self.variableofinterestnames.append("ifail")
+            self.output_vars.append("ifail")
 
         self.stepstring += "DAT"
 
@@ -417,7 +338,7 @@ class NCDFconverter(object):
         others for efficiency, and is handled as a seperate function
         before the automated extraction begins.
         """
-        mstring = self.outputdirectory + '/' + self.stepstring
+        mstring = self.mfiledir + '/' + self.stepstring
 
         try:
             currentmfile = MFile(mstring)
@@ -498,7 +419,7 @@ class NCDFconverter(object):
             if len(elputpets) > 1:
                 variablearray.shape = elputpets
             self.variablepointers[i] = \
-                ncfile.createVariable(self.variableofinterestnames[i],
+                ncfile.createVariable(self.output_vars[i],
                                       "f4",
                                       tuple(self.axestuple),
                                       zlib=True,
@@ -508,20 +429,19 @@ class NCDFconverter(object):
             self.variablepointers[i][:] = transpose(variablearray[:])
 
         scanvarpointers = []
-        axes = self.scanconfig.get_value("Axes")
 
-        for ind, axis in enumerate(axes):
-            scanvarname = "SCAN" + axis["Varname"]
+        for ind, axis in enumerate(self.axes):
+            scanvarname = "SCAN" + axis["varname"]
             scanvarpointers.append(0)
             scanvarpointers[ind] = \
-                ncfile.createVariable(scanvarname, "f4", axis["Varname"])
-            if type(axis["Steps"]) is list:
-                scanvarpointers[ind][:] = array(axis["Steps"])
+                ncfile.createVariable(scanvarname, "f4", axis["varname"])
+            if type(axis["steps"]) is list:
+                scanvarpointers[ind][:] = array(axis["steps"])
             else:
-                coords = [axis["Lowerbound"] + \
-                              j * (axis["Upperbound"] - axis["Lowerbound"]) \
-                              / (axis["Steps"]-1) \
-                              for j in range(int(axis["Steps"]))]
+                coords = [axis["lowerbound"] + \
+                              j * (axis["upperbound"] - axis["lowerbound"]) \
+                              / (axis["steps"]-1) \
+                              for j in range(int(axis["steps"]))]
                 scanvarpointers[ind][:] = array(coords)
 
     def print_ncfile_variables(self, ncfile):

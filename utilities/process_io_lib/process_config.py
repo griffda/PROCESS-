@@ -20,9 +20,8 @@ from process_io_lib.process_funcs import  get_neqns_itervars,\
     get_variable_range, vary_iteration_variables, check_input_error,\
     process_stopped, get_from_indat_or_default,\
     set_variable_in_indat, check_in_dat
-from process_io_lib.ndscan_config import NdScanConfigFile
 from process_io_lib.ndscan_funcs import get_var_name_or_number,\
-    get_iter_variables_from_mfile, get_iter_vars, backup_in_file
+    get_iter_vars, backup_in_file
 from process_io_lib.in_dat import InDat
 from process_io_lib.mfile import MFile
 from process_io_lib.configuration import Config
@@ -71,7 +70,7 @@ class ProcessConfig(object):
     niter    = 10
     u_seed   = None
     factor   = 1.5
-    comment  = ''
+    comment  = ' '
 
 
     def echo(self):
@@ -943,19 +942,15 @@ class UncertaintiesConfig(ProcessConfig, Config):
 ################################################################################
 
 
-class NdScanConfig(RunProcessConfig):
+class NdScanConfig(Config, RunProcessConfig):
 
     """
     # Author: Steven Torrisi (storrisi@u.rochester.edu)
     # University of Rochester, IPP Greifswald
     # July 2014
-
-    #``'-.,_,.-'``'-.,_,.='``'-.,_,.-'``'-.,_,.='``#
     """
     scanaxes = {'ndim' : 0,
                 'varnames' : [],
-                # The ixc numbers of the variables to be scanned.
-                'varnumbers': [],
                 'lbs' : [],
                 'ubs' : [],
                 'steps': [],
@@ -966,40 +961,23 @@ class NdScanConfig(RunProcessConfig):
     #   step's numbers from 0 to the [# of steps-1] of coordinates
     #   to keep track of where the scan is.
     currentstep = []
-    # no of unsuccessful runs
     totalfails = 0
-    # To be used in a check before commencing the scan.
-    configfileloaded = False
-    configfile = None # Will point to a config file opened with JSON.
     mfiledir = "MFILES"
     failcoords = ndarray((1), int)
     errorlist = col.OrderedDict({})
 
-    iterationvariables = col.OrderedDict({})
     #A dictionary of lists; each sublist has 2 elements,
     # one for number at lower and one for number at upper
     iterationvariablesatbounds = col.OrderedDict({})
     optionals = {
-        'StoreOutput'                : True,
-        #^ Saves the output data from the run. Toggle to false to save time with
-        #  writing data if you want to debug some other functionality.
-        'RemoveScanVarsFromIteration': True,
+        'remove_scanvars_from_ixc': True,
         #^ Removes all scanning variables from the iteration variables
         #  of the IN.DAT file.
-        'RemoveSomeVarsFromIteration': 0,
-        #Only removes the first n scanning variables from the iteration variables
-        #of the IN.DAT file. For example, if n=2, then dimensions 1 and 2 will
-        # be removed from the scanning variables. If set to 0, no variables will
-        # be taken out of the iteration variables.
-        'SmoothIterVars'              : False,
+        'smooth_itervars'              : False
         #^ Activates data smoothing, which increases run time but reduces errors
-        "FailDiagnostics.Boundaries"  : False
-        # Prints at the end of a run what fractions of each failure included
-        # iteration values at their boundaries;
-        # Helps to inform the user in a rough way what variables are sensitive.
         }
 
-    def __init__(self, configfilename="ndscan.conf"):
+    def __init__(self, configfilename="ndscan.json"):
 
         """
         Contains the code which parses ndscan.conf files, manipulates IN.DAT
@@ -1013,85 +991,45 @@ class NdScanConfig(RunProcessConfig):
         Arguments:
             configfilename--> The name of the configuration file to read.
 
-        Dependencies:
-            process_config.py RunProcessConfig class
-            establish_default_optionals (calls)
-            parse_config_file    (calls)
-            generate_coords (calls)
-            get_iter_vars   (calls)
-            numpy's ndarray option
-            collection module's ordered dictionary
         """
 
-        super().__init__()
+        super().__init__(configfilename)
+        self.filename = configfilename
 
-        self.parse_config_file(configfilename)
-
-        self.setup()#XXX does not copy config file!!
-
-        self.generate_coords()
-
-        if self.optionals["SmoothIterVars"] is True:
-            self.wasjustsmoothed = False
-
-        self.iterationvariables = get_iter_vars("IN.DAT")
-        for i in range(self.scanaxes['ndim']):
-            self.scanaxes['varnumbers'].append(
-                get_var_name_or_number(self.scanaxes['varnames'][i]))
-
-
-    def parse_config_file(self, configfilename='ndscan.conf'):
-        """
-        Opens and parses the configuration file at configfilename.
-
-        Gets the following information from the ndscan file:
-        Required:
-                    Axes                (at least one)
-                        -"Varname"      (string)
-                        -"Lowerbound"   (float)
-                        -"Upperbound"   (float)
-                        -"Steps" (number of evaluations, must be greater than 1)
-
-        Optional:   OutputDirectory     (Where to save the mfiles)
-                    VariablesOfInterst  (What variables swill be extracted from
-                                         Mfiles)
-                    Author
-                    Title       (Will be used in naming the NetCDF file)
-                    Description (Saved in the netcdf file)
-                    Optionals   (Established in establish_default_optionals,
-                                changes behavior function)
-        Arguments:
-            configfilename--> The name of the configuration file to open
-
-        """
-
-        # Open the config file with the json module
-        self.configfile = NdScanConfigFile(configfilename)
-
-        # This overwrites the default optionals with the ones found..
-        for option in self.configfile.get_value("Optionals").keys():
-            self.optionals[option] = \
-                self.configfile.get_value("Optionals")[option]
+        #-------------------------
+        #set general config params
+        self.wdir = os.path.abspath(self.get("config", "working_directory",
+                                             default=self.wdir))
+        self.or_in_dat = os.path.abspath(self.get("config", "IN.DAT_path",
+                                                  default=self.or_in_dat))
+        self.process = self.get("config", "process_bin", default=self.process)
+        self.niter = self.get("config", "no_iter", default=self.niter)
+        self.u_seed = self.get("config", "pseudorandom_seed",
+                               default=self.u_seed)
+        self.factor = self.get("config", "factor", default=self.factor)
+        self.comment = self.get("config", "runtitle", default=self.comment)
 
 
-        # Grab the number of dimensions
-        self.scanaxes['ndim'] = len(self.configfile.get_value("Axes"))
+        #--------------------------------
+        #set ndscan specific config params
+        for option, value in self.get("optionals",
+                                      default=self.optionals).items():
+            self.optionals[option] = value
 
-        # Gets the varname, lowerbound, upperbound, and step # for each axis
-        for var in range(self.scanaxes['ndim']):
-            self.scanaxes['varnames'].append(
-                self.configfile.get_value("Axes")[var]["Varname"])
+        axes = self.get("axes", default=[])
+        self.scanaxes['ndim'] = len(axes)
 
-            if type(self.configfile.get_value("Axes")[var]["Steps"]) is list:
-                self.scanaxes['steps'].append(
-                    len(self.configfile.get_value("Axes")[var]["Steps"]))
+        for axis in axes:
+            self.scanaxes['varnames'].append(axis["varname"])
+
+            if type(axis["steps"]) is list:
+                self.scanaxes['steps'].append(axis["steps"])
             else:
-                self.scanaxes['lbs'].append(
-                    self.configfile.get_value("Axes")[var]["Lowerbound"])
-                self.scanaxes['ubs'].append(
-                    self.configfile.get_value("Axes")[var]["Upperbound"])
-                self.scanaxes['steps'].append(
-                    self.configfile.get_value("Axes")[var]["Steps"])
+                self.scanaxes['lbs'].append(axis["lowerbound"])
+                self.scanaxes['ubs'].append(axis["upperbound"])
+                self.scanaxes['steps'].append(axis["steps"])
+
+        self.setup()
 
         currentdirectory = os.getcwd()
         try:
@@ -1099,7 +1037,34 @@ class NdScanConfig(RunProcessConfig):
         except FileNotFoundError:
             os.mkdir(currentdirectory + '/' + self.mfiledir)
 
+        self.generate_coords()
 
+        if self.optionals["smooth_itervars"]:
+            self.wasjustsmoothed = False
+
+
+    def echo(self):
+
+        """ echos the values of the current class """
+
+        print('')
+        super().echo()
+
+        print('Remove Scanvars from IXC ',
+              self.optionals['remove_scanvars_from_ixc'])
+        print('Smooth Itervars          ',
+              self.optionals['smooth_itervars'])
+        if self.scanaxes['varnames'] != []:
+            print('axes:')
+            for i in range(self.scanaxes['ndim']):
+                print('     ', self.scanaxes['varnames'][i])
+                print('     steps', self.scanaxes['steps'][i])
+                if type(self.scanaxes["steps"][i]) is not list:
+                    print('     lbs  ', self.scanaxes['lbs'][i])
+                    print('     ubs  ', self.scanaxes['ubs'][i])
+                print(' -------')
+        print('')
+        sleep(1)
 
     def generate_coords(self):
         """
@@ -1130,9 +1095,8 @@ class NdScanConfig(RunProcessConfig):
 
             self.currentstep.append(0)
 
-            if type(self.configfile.get_value("Axes")[i]["Steps"]) is list:
-                self.scanaxes['coords'].append(
-                    self.configfile.get_value("Axes")[i]["Steps"])
+            if type(self.scanaxes["steps"][i]) is list:
+                self.scanaxes['coords'] = self.scanaxes["steps"][i]
                 totalsteps.append(len(self.scanaxes['coords'][i]))
 
             else:
@@ -1224,7 +1188,7 @@ class NdScanConfig(RunProcessConfig):
 
         # We can't smooth the variables if we are on the first run
         # so it waits until counter is greater than 1.
-        if self.counter > 1 and self.optionals['SmoothIterVars'] is True:
+        if self.counter > 1 and self.optionals['smooth_itervars'] is True:
             lastrun = MFile()
             #Establishing a new self variable outside of __init__; is that ok?
             backup_in_file("w", "IN.DATSMOOTHERBACKUP")
@@ -1277,26 +1241,11 @@ class NdScanConfig(RunProcessConfig):
                     break
 
 
-        if self.optionals['SmoothIterVars'] and self.wasjustsmoothed:
+        if self.optionals['smooth_itervars'] and self.wasjustsmoothed:
             backup_in_file("r", "IN.DATSMOOTHERBACKUP")
             subprocess.call(["rm", "IN.DATSMOOTHERBACKUP"])
             self.wasjustsmoothed = False
 
-
-
-        if self.optionals["FailDiagnostics.Boundaries"] and currentfail > 1:
-
-            nitvars = get_iter_variables_from_mfile(currentrun,
-                                                           normalized=True)
-            for varname in nitvars.keys():
-
-                #Take off the last 19 characters because the last 19
-                #characters are "_(range_normalised)"
-                if nitvars[varname] == 0:
-                    self.iterationvariablesatbounds[varname[:-19]][0] += 1
-
-                elif nitvars[varname] == 1:
-                    self.iterationvariablesatbounds[varname[:-19]][1] += 1
 
         #Records the ifail value of the last run
         self.failcoords[tuple(self.currentstep)] = int(currentfail)
@@ -1322,8 +1271,7 @@ class NdScanConfig(RunProcessConfig):
         # Stores the MFILE away with the convention used of
         # M.currentstep[0].currentstep[1]......currentstep[N].DAT
         # So currentstep=[1,2,4,0] => M.1.2.4.0.DAT
-        if self.optionals['StoreOutput']:
-            self.catalog_output(self.currentstep)
+        self.catalog_output(self.currentstep)
 
 
     def dimension_scan(self, currentdim):
@@ -1450,25 +1398,6 @@ class NdScanConfig(RunProcessConfig):
         print("Scan complete.", self.totalfails, " of ", self.totalruns,\
                   " runs ended in failure.")
 
-        if self.optionals["FailDiagnostics.Boundaries"] and self.totalfails > 0:
-            print("Now printing failure diagnostics on boundary conditions:")
-            for x in self.iterationvariablesatbounds.keys():
-                if self.iterationvariablesatbounds[x][0] +\
-                        self.iterationvariablesatbounds[x][1] > 0:
-                    sumfails = self.iterationvariablesatbounds[x][0] +\
-                        self.iterationvariablesatbounds[x][1]
-                    print("Ixc", x, "\twas at a lower bound for ",\
-                              self.iterationvariablesatbounds[x][0],\
-                              "/", self.totalfails,\
-                              " failures and at an upper bound for ",\
-                              self.iterationvariablesatbounds[x][1], "/",\
-                          self.totalfails, " failures,\t for a total of",\
-                          sumfails, " of ", self.totalfails,\
-                          "(", 100 - \
-                          (100*(self.totalfails-sumfails) / (self.totalfails)),\
-                              "%)")
-
-
         return(self.totalfails, self.totalruns)
 
     def start_scan(self):
@@ -1479,12 +1408,12 @@ class NdScanConfig(RunProcessConfig):
         the axes, which is a recursive function which
         calls itself however many times it needs to.
         """
-        if self.optionals['RemoveScanVarsFromIteration']:
+        if self.optionals['remove_scanvars_from_ixc']:
 
-            self.iterationvariables = get_iter_vars()
+            iterationvariables = get_iter_vars()
 
             for varname in self.scanaxes['varnames']:
-                if varname in self.iterationvariables.values():
+                if varname in iterationvariables.values():
                     print("Warning! Removing scan variable", varname,\
                               " from the iteration variable list.")
                     self.del_ixc.append(get_var_name_or_number(varname))
@@ -1493,24 +1422,8 @@ class NdScanConfig(RunProcessConfig):
  RemoveIterVars optional to False in your config file.")
                     self.modify_ixc()
 
-        if self.optionals['RemoveSomeVarsFromIteration'] > 0:
-            numbertodelete = self.optionals["RemoveSomeVarsFromIteration"]
-            print("Warning! Removing the first ", numbertodelete,\
-                      "variables from the iteration variables.")
-            for i in range(numbertodelete):
-                self.del_ixc.append(self.scanaxes['varnumbers'][i])
-            self.modify_ixc()
-
-        if self.optionals['SmoothIterVars']:
-            if not self.optionals['StoreOutput']:
-                print('Cannot smooth the jumps: no adjacent successful\
- MFILE exists in records')
-                self.optionals['SmoothIterVars'] = False
-            else:
-                get_iter_vars()
-
-        if self.optionals["FailDiagnostics.Boundaries"]:
-            self.iterationvariablesatbounds = get_iter_vars("IN.DAT", True)
+        if self.optionals['smooth_itervars']:
+            get_iter_vars()
 
         self.totalruns = 1
         for i in range(self.scanaxes['ndim']):

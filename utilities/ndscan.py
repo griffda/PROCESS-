@@ -7,15 +7,7 @@ Author: S. Torrisi (storrisi@u.rochester.edu)
 Date: August 2014
 
 Input files:
-ndscan.conf (configuration file, per default in working directory)
-
-Outputfiles:
-
-
-Notes:
-21/08/2014 HL added documentation + usage, updated to PEP8
-
-Compatible with PROCESS version 319
+ndscan.json (configuration file, per default in working directory)
 
 """
 
@@ -31,8 +23,8 @@ if __name__ == '__main__':
     PARSER = argparse.ArgumentParser(description='Program to run a multi-\
     dimensional parameter scan using PROCESS.')
 
-    PARSER.add_argument("-f", "--configfile", default='ndscan.conf',
-                        help="configuration file, default = ndscan.conf")
+    PARSER.add_argument("-f", "--configfile", default='ndscan.json',
+                        help="configuration file, default = ndscan.json")
 
     ARGS = PARSER.parse_args()
 

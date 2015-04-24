@@ -7,12 +7,7 @@ Author: S. Torrisi (storrisi@u.rochester.edu)
 Date: August 2014
 
 Input files:
-Demonstrationdata.nc (netcdf file, per default in working directory)
-
-Outputfiles:
-??
-
-Compatible with PROCESS version 382
+NdscanOutput.nc (netcdf file, per default in working directory)
 
 """
 
@@ -28,8 +23,8 @@ if __name__ == '__main__':
     PARSER = argparse.ArgumentParser(description='Program to visualise a multi-\
     dimensional parameter scan.')
 
-    PARSER.add_argument("-f", "--netcdffile", default='Demonstrationdata.nc',
-                        help="netcdf file, default = Demonstrationdata.nc")
+    PARSER.add_argument("-f", "--netcdffile", default='NdscanOutput.nc',
+                        help="netcdf file, default = NdscanOutput.nc")
 
     ARGS = PARSER.parse_args()
 
