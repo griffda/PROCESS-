@@ -259,7 +259,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '385    Release Date :: 2015-03-04'
+       '387    Release Date :: 2015-04-24'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available

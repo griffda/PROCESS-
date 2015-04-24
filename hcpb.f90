@@ -16,6 +16,7 @@ module ccfe_hcpb_module
   !+ad_call  process_output
   !+ad_call  tfcoil_variables
   !+ad_hist  10/02/15 JM  Initial version of module
+  !+ad_hist  23/04/15 MDK Removed fhole, changed 1 to 1.0D) for safety
   !+ad_stat  Okay
   !+ad_docs  PROCESS Engineering paper (M. Kovari et al.)
   !
@@ -263,16 +264,16 @@ contains
 	nuc_pow_dep_tot = pnucfw + pnucblkt + pnucshld + ptfnuc
 	
 	!  Power to the first wall (MW)
-	pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * 0.8D0 * (1-fdiv) * powfmw
+	pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
 	
 	!  Power to the blanket (MW)
-	pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult * 0.8D0 * (1-fdiv) * powfmw
+	pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
 	
 	!  Power to the shield(MW)
-	pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * 0.8D0 * (1-fdiv) * powfmw
+	pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
 	
 	!  Power to the TF coils (MW)
-	ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult * 0.8D0 * (1-fdiv) * powfmw
+	ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
 	
 	!  pnucdiv is not changed.
 	!  The energy due to multiplication, by subtraction:
@@ -698,10 +699,10 @@ contains
     implicit none
     
     !  Apply blanket coverage factors
-    blareaob = blarea*(1.0D0-fhole-fdiv-fhcd) - blareaib
+    blareaob = blarea*(1.0D0-fdiv-fhcd) - blareaib
     blarea = blareaib + blareaob
 
-    volblkto = volblkt*(1.0D0-fhole-fdiv-fhcd) - volblkti
+    volblkto = volblkt*(1.0D0-fdiv-fhcd) - volblkti
     volblkt = volblkti + volblkto
 
 	!  Apply shield coverage factors
@@ -819,8 +820,8 @@ contains
     
 	!  Calculate smeared densities of blanket sections
 	!  gaseous He coolant in armour, FW & blanket: He mass is neglected
-	armour_density = W_density*(1-vffwm)
-	fw_density = denstl*(1-vffwm)
+	armour_density = W_density*(1.0D0-vffwm)
+	fw_density = denstl*(1.0D0-vffwm)
 	blanket_density = whtblkt / volblkt
 	shield_density = whtshld / volshld
 	vv_density = cryomass / vdewin
@@ -842,14 +843,16 @@ contains
     !  Total heating (MW)
     ptfnuc = tfc_nuc_heating * (powfmw / 1000.0D0) / 1.0D6
     
-    if (ip == 0) return
+    !if (ip == 0) return
     
-    call oheadr(ofile, 'Nuclear Heating Magnets') 
+    !if (verbose == 
+    
+    !call oheadr(ofile, 'Nuclear Heating Magnets Before Renormalisation') 
     !call ovarin(ofile, '', '()',)
-    call ovarre(ofile, 'Shield exponent (tonne/m2)', '(x_shield)', x_shield)
-    call ovarre(ofile, 'Blanket exponent (tonne/m2)', '(x_blanket)', x_blanket)
-    call ovarre(ofile, 'Unit nuclear heating in TF coil (W/GW)', '(tfc_nuc_heating)', tfc_nuc_heating)
-    call ovarre(ofile, 'Total nuclear heating in TF coil (MW)', '(ptfnuc)', ptfnuc)
+    !call ovarre(ofile, 'Shield line density (tonne/m2)', '(x_shield)', x_shield)
+    !call ovarre(ofile, 'Blanket line density (tonne/m2)', '(x_blanket)', x_blanket)
+    !call ovarre(ofile, 'Unit nuclear heating in TF coil (W/GW)', '(tfc_nuc_heating)', tfc_nuc_heating)
+    !call ovarre(ofile, 'Total nuclear heating in TF coil (MW)', '(ptfnuc)', ptfnuc)
   
   end subroutine
 
@@ -1005,11 +1008,8 @@ contains
     !  Radiation power incident on HCD apparatus (MW)
     pradhcd = pradmw * fhcd
 
-    !  Radiation power lost through holes (eventually hits shield) (MW)
-    pradloss = pradmw * fhole
-
     !  Radiation power incident on first wall (MW)
-    pradfw = pradmw - praddiv - pradloss - pradhcd
+    pradfw = pradmw - praddiv - pradhcd
 
     !  If we have chosen pressurised water as the coolant, set the
     !  coolant outlet temperature as 20 deg C below the boiling point
@@ -1017,9 +1017,10 @@ contains
         outlet_temp = tsat_refprop(coolp*1.0D6, coolwh) - 20.0D0  !  in K
     end if
 
-    !  Surface heat flux on first wall (MW) (sum = pradfw)
+    !  Surface heat flux on first wall (MW) 
     psurffwi = (pradfw + porbitlossmw + palpfwmw) * fwareaib/fwarea
-    psurffwo = (pradfw + porbitlossmw + palpfwmw) * fwareaob/fwarea
+    !psurffwo = (pradfw + porbitlossmw + palpfwmw) * fwareaob/fwarea
+    psurffwo = pradfw - psurffwi
 	
 	!  Simple model
 	if ((secondary_cycle == 0).or.(secondary_cycle == 1)) then
@@ -2265,7 +2266,7 @@ module kit_hcpb_module
   real(kind=double) :: NWL_av_OB_PPCS = 1.92D0 ! [MW/m^2] Average OB wall load
   real(kind=double) :: NWL_max_IB_PPCS = 1.99D0 ! [MW/m^2] Maximum IB wall load
   real(kind=double) :: NWL_max_OB_PPCS = 2.41D0 ! [MW/m^2] Maximum OB wall load
-  real(kind=double) :: f_peak_PPCS = 1.21      ! [--] Neutron wall load peaking factor
+  real(kind=double) :: f_peak_PPCS = 1.21D0      ! [--] Neutron wall load peaking factor
   real(kind=double) :: CF_bl_PPCS              ! [%] Blanket coverage factor (calculated)
   real(kind=double) :: e_Li_PPCS = 30.0D0      ! [%] Li6 enrichment
   character(len=13) :: breeder_PPCS = 'Orthosilicate' ! Breeder type
@@ -2481,7 +2482,7 @@ contains
     t_FW_IB = fwith * 100.0D0   ! [cm] IB first wall thickness
     t_FW_OB = fwoth * 100.0D0   ! [cm] OB first wall thickness
     !  f_FW = 0.99D0            ! [--] Frac. FW area for junctions, etc.
-    CF_bl = (1.0D0-fhole-fhcd-fdiv) * 100.0D0 ! [%] Blanket coverage factor
+    CF_bl = (1.0D0-fhcd-fdiv) * 100.0D0 ! [%] Blanket coverage factor
     n_ports_div = npdiv         ! [ports] Number of divertor ports
     n_ports_H_CD_IB = nphcdin   ! [ports] Number of IB H&CD ports
     n_ports_H_CD_OB = nphcdout  ! [ports] Number of OB H&CD ports

@@ -30,6 +30,7 @@ module pulse_module
   !+ad_hist  05/11/12 PJK Initial version of module
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  29/07/14 PJK Added heat_transport_variables
+  !+ad_hist  23/04/15 MDK Removed fhole
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -290,23 +291,13 @@ contains
        !  First wall properties
 
        !  Heating power due to neutron deposition (W)
-       !  The previous method assumed that the neutrons lost via fhole
-       !  actually stop in the first wall, so are not lost at all...
-       !fwndep = pneutmw*fhole*1.0D6
-
        !  New method based on that for nuclear heating in the blanket
        !  in fwbs.f90. A neutron decay length of 0.075m (or declfw) is assumed, and
        !  the TART centrepost term is ignored.
 
-       if (ipowerflow == 0) then
-          decay = 0.075D0 / (1.0D0 - afw*afw/(bfw*bfw))  !  a2/b2 = coolant fraction
-          fwndep = (1.0D6*pneutmw) * (1.0D0-fhole) * &
+       decay = declfw / (1.0D0 - afw*afw/(bfw*bfw))  !  a2/b2 = coolant fraction
+       fwndep = (1.0D6*pneutmw) * (1.0D0-fdiv-fhcd) * &
                ( 1.0D0 - exp( -(2.0D0*bfw)/decay) )
-       else
-          decay = declfw / (1.0D0 - afw*afw/(bfw*bfw))  !  a2/b2 = coolant fraction
-          fwndep = (1.0D6*pneutmw) * (1.0D0-fhole-fdiv-fhcd) * &
-               ( 1.0D0 - exp( -(2.0D0*bfw)/decay) )
-       end if
 
        !  Assume that the first wall volume is equal to its surface area
        !  multiplied by the external diameter of the hollow cylindrical

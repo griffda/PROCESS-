@@ -379,11 +379,7 @@ contains
     if (iwalld == 1) then
        wallmw = ffwal * pneutmw / sarea
     else
-       if (ipowerflow == 0) then
-          wallmw = (1.0D0-fhole)*pneutmw / fwarea
-       else
-          wallmw = (1.0D0-fhole-fhcd-fdiv)*pneutmw / fwarea
-       end if
+       wallmw = (1.0D0-fhcd-fdiv)*pneutmw / fwarea
     end if
 
     !  Calculate ion/electron equilibration power

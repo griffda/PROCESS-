@@ -39,6 +39,7 @@ module power_module
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_hist  17/12/14 PJK Added error_handling
+  !+ad_hist  23/04/15 MDK Removed fhole
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -711,6 +712,13 @@ contains
        acptmax = acptmax + 1.0D-3 * abs(cptdin(jpf))/pfckts
 
     end do
+    
+    !  PF Power requirements
+    !  Wall plug power (MW)
+    pfwp = pohmmw / etapsu
+    
+    !  Secondary waste heat (MW)
+    pfsec = pfwp - pohmmw
 
     !  Output Section
     if (iprint == 0) return
@@ -909,6 +917,7 @@ contains
     htpmwe_blkt = htpmw_blkt / etahtp
     htpmwe_shld = htpmw_shld / etahtp
     htpmwe_div = htpmw_div / etahtp
+    
     ! Total mechanical pump power (deposited in coolant)
     htpmw_mech = htpmw_fw + htpmw_blkt + htpmw_shld + htpmw_div
 
@@ -916,7 +925,7 @@ contains
     htpmw = htpmwe_fw + htpmwe_blkt + htpmwe_shld + htpmwe_div
 
     !  Heat lost through pump power inefficiencies (MW)
-    htpsecmw = htpmw - htpmw_mech 
+    htpsecmw = htpmw - htpmw_mech
 
     !  Total power deposited in first wall coolant (MW)
     pthermfw = pnucfw + pradfw + htpmw_fw + porbitlossmw + palpfwmw + nbshinemw
@@ -974,15 +983,15 @@ contains
 
     !  Secondary heat (some of it... rest calculated in POWER2)
     !  Wall plug injection power
-    if (ignite == 0) then
-	   pinjwp = (pinjmw + porbitlossmw + palpfwmw)/etacd
-	else
-       pinjwp = 0.0D0
-    end if
+    ! MDK
+    ! pinjwp = (pinjmw + porbitlossmw + palpfwmw)/etacd
+	! pinjwp calculated in current_drive.f90
 
     !  Waste injection power 
     if (ignite == 0) then
-       pinjht = pinjwp - pinjmw - porbitlossmw - palpfwmw
+       ! MDK
+       !pinjht = pinjwp - pinjmw - porbitlossmw - palpfwmw
+       pinjht = pinjwp - pinjmw
     else
        pinjht = 0.0D0
     end if
@@ -1099,14 +1108,13 @@ contains
 
     !  Electrical power consumed by fusion power core systems
     !  (excluding heat transport pumps and auxiliary injection power system)
-    !(*,*) crypmw, fachtmw, helecmw, ppumpmw, tfcmw, trithtmw, vachtmw
-    ! pcoresystems = crypmw + fachtmw + helecmw + ppumpmw + tfcmw + trithtmw + vachtmw
-    pcoresystems = crypmw + fachtmw + helecmw + ppumpmw + tfacpd + trithtmw + vachtmw
+    !  Added pfwp (waste heat from PF coil ohmic heating)
+    pcoresystems = crypmw + fachtmw + helecmw + ppumpmw + tfacpd + trithtmw + vachtmw + pfwp
 
     !  Total secondary heat
     !  (total low-grade heat rejected - does not contribute to power conversion cycle)
-    !psechtmw = pcoresystems + pinjht + htpsecmw + hthermmw + psecdiv + psecshld + psechcd + pseclossmw
-    psechtmw = pcoresystems + pinjht + htpsecmw + hthermmw + psecdiv + psecshld + psechcd
+    !  Included ptfnuc
+    psechtmw = pcoresystems + pinjht + htpsecmw + hthermmw + psecdiv + psecshld + psechcd + ptfnuc
 
     !  Calculate powers relevant to a power-producing plant
     if (ireactor == 1) then
@@ -1147,8 +1155,7 @@ contains
     call ovarre(outfile,'Neutron power multiplication in blanket', '(emult)', emult)
     call ovarre(outfile, 'Divertor area fraction of whole toroid surface', '(fdiv)', fdiv)
     call ovarre(outfile,'H/CD apparatus + diagnostics area fraction', '(fhcd)', fhcd)
-    call ovarre(outfile,'Area fraction of other holes', '(fhole)', fhole)
-    call ovarre(outfile,'First wall area fraction ', '(1-fdiv-fhcd-fhole)', 1.0D0-fdiv-fhcd-fhole)
+    call ovarre(outfile,'First wall area fraction ', '(1-fdiv-fhcd)', 1.0D0-fdiv-fhcd)
     
     if ((secondary_cycle == 0).or.(secondary_cycle == 1)) then
         call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in first wall', '(fpumpfw)', fpumpfw)
@@ -1374,8 +1381,9 @@ contains
 	call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw)
 	call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw)
 	call ovarrf(outfile,'Injected power (MW)','(pnbitot)',pnbitot)
+	call ovarrf(outfile,'Ohmic power (MW)','(pohmmw)',pohmmw)
 	call ovarrf(outfile,'Power deposited in primary coolant by pump (MW)','(htpmw_mech)',htpmw_mech)
-	call ovarrf(outfile,'Total (MW)','',powfmw+emultmw+pnbitot+htpmw_mech)
+	call ovarrf(outfile,'Total (MW)','',powfmw+emultmw+pnbitot+htpmw_mech+pohmmw)
 	call oblnkl(outfile)
 	call ovarrf(outfile,'Heat extracted from armour and first wall (MW)','(pthermfw)',pthermfw)
 	call ovarrf(outfile,'Heat extracted from blanket (MW)','(pthermblkt)',pthermblkt)
@@ -1397,9 +1405,10 @@ contains
 	call ovarrf(outfile,'Electric power for tritium plant (MW)','(trithtmw)',trithtmw)
 	call ovarrf(outfile,'Electric power for cryoplant (MW)','(crypmw)',crypmw)
 	call ovarrf(outfile,'Electric power for TF coils (MW)','(tfacpd)',tfacpd)	
+	call ovarrf(outfile,'Electric power for PF coils (MW)','(pfwp)', pfwp)	
 	!call ovarrf(outfile,'Electric power for secondary (power conversion)cycle (MW)','(bopmw)', bopmw)	
 	call ovarrf(outfile,'All other internal electric power requirements (MW)','(fachtmw)', fachtmw)	
-	call ovarrf(outfile,'Total (MW)','',pnetelmw+pinjwp+htpmw+vachtmw+trithtmw+crypmw+tfacpd+fachtmw)
+	call ovarrf(outfile,'Total (MW)','',pnetelmw+pinjwp+htpmw+vachtmw+trithtmw+crypmw+tfacpd+fachtmw+pfwp)
 	call oblnkl(outfile)
 	call ovarrf(outfile,'Gross electrical output* (MW)','(pgrossmw)',pgrossmw)
 	call ocmmnt(outfile,'(*Power for pumps in secondary circuit already subtracted)')
