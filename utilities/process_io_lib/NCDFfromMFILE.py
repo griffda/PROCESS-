@@ -77,7 +77,8 @@ class NCDFconverter(Config):
         self.time = self.time[0:16]
 
         self.title = self.get("title", default="NdscanOutput")
-        self.author = self.get("author", default=getlogin())
+        #self.author = self.get("author", default=getlogin())
+        self.author = self.get("author", default="No author given")
         self.description = self.get("description",
                                     default="No description given")
 
