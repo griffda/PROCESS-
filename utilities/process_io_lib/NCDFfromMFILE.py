@@ -19,7 +19,7 @@ Variables (variables)
  one variable of interest
 """
 
-from os import getlogin
+from getpass import getuser
 from process_io_lib.mfile import MFile
 from numpy import array, transpose
 from netCDF4 import Dataset
@@ -77,7 +77,8 @@ class NCDFconverter(Config):
         self.time = self.time[0:16]
 
         self.title = self.get("title", default="NdscanOutput")
-        self.author = self.get("author", default=getlogin())
+        self.author = self.get("author", default=getuser())
+        #self.author = self.get("author", default="No author given")
         self.description = self.get("description",
                                     default="No description given")
 
