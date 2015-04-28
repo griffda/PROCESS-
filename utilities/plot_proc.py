@@ -1225,6 +1225,12 @@ def plot_physics_info(axis, mfile_data, scan):
     dnz = mfile_data.data["dnz"].get_scan(scan) / \
           mfile_data.data["dene"].get_scan(scan)
 
+    tepeak = mfile_data.data["te0"].get_scan(scan) / \
+        mfile_data.data["te"].get_scan(scan)
+	
+    nepeak = mfile_data.data["ne0"].get_scan(scan) / \
+        mfile_data.data["dene"].get_scan(scan)
+
     data = [("plascur/1d6", "$I_p$", "MA"),
             ("bt", "Vacuum $B_T$ at $R_0$", "T"),
             ("q95", "$q_{\mathrm{95}}$", ""),
@@ -1236,6 +1242,8 @@ def plot_physics_info(axis, mfile_data, scan):
             ("te", r"$< t_e >$", "keV"),
             ("dene", r"$< n_e >$", "m$^{-3}$"),
             (nong, r"$< n_{\mathrm{e,line}} >/n_G$", ""),
+            (tepeak, r"$T_{e0}/ < T_e >$", ""),
+            (nepeak, r"$n_{e0}/ < n_{\mathrm{e, vol}} >$", ""),
             ("zeff", r"$Z_{\mathrm{eff}}$", ""),
             ("zeffso", r"$Z_{\mathrm{eff, SoL}}$", ""),
             (dnz, r"$n_Z/ < n_{\mathrm{e, vol}} >$", ""),
@@ -1301,7 +1309,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
             (tburn, "Burn time", "hrs"),
             ("", "", ""),
             ("#TF coil type is {}".format(tftype), "", ""),
-            ("bmaxtf", "Peak field at conductor", "T"),
+            ("bmaxtfrp”, "Peak field at conductor (w. rip.)“, "T"),
             ("iooic", "I/I$_{\mathrm{crit}}$", ""),
             ("tmarg", "Temperature margin", "K"),
             ("strtf1", "Conduit Von Mises stress", "Pa"),
@@ -1341,10 +1349,8 @@ def plot_power_info(axis, mfile_data, scan):
     dnla = mfile_data.data["dnla"].get_scan(scan) / 1.0e20
     bt = mfile_data.data["bt"].get_scan(scan)
     surf = mfile_data.data["sarea"].get_scan(scan)
-    pthresh = 0.0488 * dnla ** 0.717 * bt ** 0.803 * surf ** 0.941 * 0.8
-    err = 0.057 ** 2 + (0.035 * sp.log(dnla)) ** 2 + (0.032 * sp.log(bt)) ** 2 \
-          + (0.019 * sp.log(surf)) ** 2
-    err = np.sqrt(err) * pthresh
+    pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
+    err = pthresh - mfile_data.data["pthrmw(7)"].get_scan(scan)
 
     gross_eff = 100.0 * (mfile_data.data["pgrossmw"].get_scan(scan) /
                          mfile_data.data["pthermmw"].get_scan(scan))
@@ -1435,7 +1441,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
     dnla = mfile_data.data["dnla"].get_scan(scan) / 1.0e20
     bt = mfile_data.data["bt"].get_scan(scan)
     surf = mfile_data.data["sarea"].get_scan(scan)
-    pthresh = 0.0488 * dnla ** 0.717 * bt ** 0.803 * surf ** 0.941 * 0.8
+    pthresh = mfile_data.data["pthrmw(6)"].get_scan(scan)
     flh = pdivt / pthresh
 
     powerht = mfile_data.data["powerht"].get_scan(scan)
