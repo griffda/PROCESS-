@@ -807,7 +807,7 @@ contains
     !  Model factors and coefficients
     a = 2.830D0       	! Exponential factor (m2/tonne)
     b = 0.583D0       	! Exponential factor (m2/tonne)
-    e = 18.5	       	! Pre-factor (1/kg)
+    e = 9.062D0	       	! Pre-factor (1/kg). Corrected see issue #272
     
     !  Half-widths of inboard and outboard first wall
     bfwi = 0.5D0*fwith
