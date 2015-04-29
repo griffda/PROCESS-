@@ -695,7 +695,7 @@ contains
           call parse_real_variable('NESEP', nesep, 0.0D0, 1.0D21, &
                'Electron density at separatrix (/m3)')
        case ('Q')
-          call parse_real_variable('Q', q, 0.01D0, 50.0D0, &
+          call parse_real_variable('Q', q, 2.00D0, 50.0D0, &
                'Edge safety factor')
        case ('Q0')
           call parse_real_variable('Q0', q0, 0.01D0, 20.0D0, &
@@ -1443,7 +1443,7 @@ contains
           call parse_real_variable('THKCAS', thkcas, 0.0D0, 1.0D0, &
                'External supercond. case thickness (m)')
        case ('THWCNDUT')
-          call parse_real_variable('THWCNDUT', thwcndut, 0.0D0, 0.1D0, &
+          call parse_real_variable('THWCNDUT', thwcndut, 0.001D0, 0.1D0, &
                'TF coil conduit case thickness (m)')
        case ('TINSTF')
           call parse_real_variable('TINSTF', tinstf, 0.0D0, 0.1D0, &
