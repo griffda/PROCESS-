@@ -259,7 +259,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '387    Release Date :: 2015-04-24'
+       '389    Release Date :: 2015-04-30'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1852,3 +1852,5 @@ end subroutine output
 ! GIT 385: Fixed tagging error and see release notes t385
 ! GIT 386: Fixes for new powerflow. Notes to be released with r388
 ! GIT 387: More minor fixes for powerflow. Notes to be released with r388
+! GIT 388: Minor fix to version number
+! GIT 389: New release. See release notes.
