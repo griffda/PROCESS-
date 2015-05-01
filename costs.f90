@@ -124,7 +124,7 @@ module costs_module
        c22514,c22515,c2252,c22521,c22522,c22523,c22524,c22525,c22526, &
        c22527,c2253,c226,c2261,c2262,c2263,c227,c2271,c2272,c2273, &
        c2274,c228,c229,c23,c24,c241,c242,c243,c244,c245,c25,c26,ccont, &
-       chx,chxa,cindrt,cpp,cppa
+       chx,cindrt,cpp,cppa
 
 contains
 
@@ -169,6 +169,8 @@ contains
     !+ad_hist  18/06/13 PJK Changed cryostat to vacuum vessel for c2223
     !+ad_hist  17/02/14 PJK Output format modifications
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  08/09/14 PJK Modified blanket costs for ipowerflow=1 model
+    !+ad_hist  03/11/14 PJK Clarified ipowerflow, blkttype logic
     !+ad_hist  17/11/14 PJK Added output_costs switch
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -256,28 +258,15 @@ contains
     call ocosts(outfile,'2211','First wall cost (M$)',c2211)
 
     if (ife /= 1) then
-       if (lblnkt == 1) then
-
-          if (smstr == 1) then
-             call ocosts(outfile,'22121','Blanket beryllium cost (M$)',c22121)
-             call ocosts(outfile,'22122','Blanket lithium oxide cost (M$)',c22122)
-             call ocosts(outfile,'22123','Blanket stainless steel cost (M$)', &
-                  c22123)
-             call ocosts(outfile,'22124','Blanket vanadium cost (M$)',c22124)
-          else
-             call ocosts(outfile,'22121','Blanket lithium-lead cost (M$)',c22121)
-             call ocosts(outfile,'22122','Blanket lithium cost (M$)',c22122)
-             call ocosts(outfile,'22123','Blanket stainless steel cost (M$)', &
-                  c22123)
-             call ocosts(outfile,'22124','Blanket vanadium cost (M$)',c22124)
-          end if
-
-       else
+       if ((ipowerflow == 0).or.(blkttype == 3)) then
           call ocosts(outfile,'22121','Blanket beryllium cost (M$)',c22121)
           call ocosts(outfile,'22122','Blanket breeder material cost (M$)',c22122)
-          call ocosts(outfile,'22123','Blanket stainless steel cost (M$)',c22123)
-          call ocosts(outfile,'22124','Blanket vanadium cost (M$)',c22124)
+       else
+          call ocosts(outfile,'22121','Blanket lithium-lead cost (M$)',c22121)
+          call ocosts(outfile,'22122','Blanket lithium cost (M$)',c22122)
        end if
+       call ocosts(outfile,'22123','Blanket stainless steel cost (M$)',c22123)
+       call ocosts(outfile,'22124','Blanket vanadium cost (M$)',c22124)
     else  !  IFE
        call ocosts(outfile,'22121','Blanket beryllium cost (M$)',c22121)
        call ocosts(outfile,'22122','Blanket lithium oxide cost (M$)',c22122)
@@ -403,7 +392,6 @@ contains
     call ocosts(outfile,'chx','Primary heat exchanger cost (M$)',chx)
     call ocosts(outfile,'2261','Total, reactor cooling system cost (M$)',c2261)
     call ocosts(outfile,'cppa','Pumps, piping cost (M$)',cppa)
-    call ocosts(outfile,'chxa','Heat exchanger cost (M$)',chxa)
     call ocosts(outfile,'2262','Total, auxiliary cooling system cost (M$)',c2262)
     call ocosts(outfile,'2263','Total, cryogenic system cost (M$)',c2263)
     call oblnkl(outfile)
@@ -1155,6 +1143,7 @@ contains
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  03/06/13 PJK Added blktmodel>0 breeder cost
+    !+ad_hist  08/09/14 PJK Added blanket costs for ipowerflow=1 model
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1186,22 +1175,22 @@ contains
 
     if (ife /= 1) then
 
-       if (lblnkt == 1) then
-          if (smstr == 1) then
-             !  Solid blanket (Li2O + Be)
-             c22121 = 1.0D-6 * whtblbe * ucblbe
-             c22122 = 1.0D-6 * wtblli2o * ucblli2o
-          else
-             !  Liquid blanket (LiPb + Li)
-             c22121 = 1.0D-6 * wtbllipb * ucbllipb
-             c22122 = 1.0D-6 * whtblli * ucblli
-          end if
-       else
+       if (ipowerflow == 0) then
           c22121 = 1.0D-6 * whtblbe * ucblbe
           if (blktmodel == 0) then
              c22122 = 1.0D-6 * wtblli2o * ucblli2o
           else
              c22122 = 1.0D-6 * whtblbreed * ucblbreed
+          end if
+       else
+          if ((blkttype == 1).or.(blkttype == 2)) then
+             !  Liquid blanket (LiPb + Li)
+             c22121 = 1.0D-6 * wtbllipb * ucbllipb
+             c22122 = 1.0D-6 * whtblli * ucblli
+          else
+             !  Solid blanket (Li2O + Be)
+             c22121 = 1.0D-6 * whtblbe * ucblbe
+             c22122 = 1.0D-6 * wtblli2o * ucblli2o
           end if
        end if
 
@@ -2501,6 +2490,9 @@ contains
     !+ad_hist  23/05/13 PJK Added blktmodel comment about coolant inconsistency
     !+ad_hist  03/06/14 PJK Changed facht to fachtmw
     !+ad_hist  17/06/14 PJK Changed priheat to pthermmw in chx calculation
+    !+ad_hist  08/09/14 PJK Changed costr to coolwh
+    !+ad_hist  10/12/14 PJK Replaced real rnphx with integer nphx;
+    !+ad_hisc               deleted references to intermediate heat exchangers
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2529,16 +2521,16 @@ contains
 
     !  Pumps and piping system
     !  N.B. with blktmodel > 0, the blanket is assumed to be helium-cooled,
-    !  but the shield etc. is water-cooled (costr=2). Therefore, a slight
+    !  but the shield etc. is water-cooled (coolwh=2). Therefore, a slight
     !  inconsistency exists here...
 
-    cpp = 1.0D-6 * uchts(costr) * ( (1.0D6*pfwdiv)**exphts + &
+    cpp = 1.0D-6 * uchts(coolwh) * ( (1.0D6*pfwdiv)**exphts + &
          (1.0D6*pnucblkt)**exphts + (1.0D6*pnucshld)**exphts)
     cpp = fkind * cpp * cmlsa(lsa)
 
     !  Primary heat exchangers
 
-    chx = 1.0D-6 * ucphx * rnphx * (1.0D6*pthermmw/rnphx)**exphts
+    chx = 1.0D-6 * ucphx * nphx * (1.0D6*pthermmw/nphx)**exphts
     chx = fkind * chx * cmlsa(lsa)
 
     c2261 = chx + cpp
@@ -2560,13 +2552,7 @@ contains
          (1.0D6*hthermmw)**exphts + (1.0D6*helecmw)**exphts )
 
     cppa = fkind * cppa * cmlsa(lsa)
-
-    !  Intermediate heat exchangers
-
-    chxa = 1.0D-6 * ucihx * rnihx * (1.0D6*ctht/rnihx)**exphts
-    chxa = fkind * chxa * cmlsa(lsa)
-
-    c2262 = cppa + chxa
+    c2262 = cppa
 
     !  Account 226.3 : Cryogenic system
 
@@ -2743,6 +2729,7 @@ contains
     !+ad_call  None
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
+    !+ad_hist  08/09/14 PJK Changed costr to coolwh
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2759,7 +2746,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     if (ireactor == 1) then
-       c23 = 1.0D-6 * ucturb(costr) * (pgrossmw/1200.0D0)**exptpe
+       c23 = 1.0D-6 * ucturb(coolwh) * (pgrossmw/1200.0D0)**exptpe
     end if
 
   end subroutine acc23

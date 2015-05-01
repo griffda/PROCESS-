@@ -117,7 +117,7 @@ module impurity_radiation_module
 
   !+ad_vars  impdir /'/home/PROCESS/[branch]/impuritydata'/ :
   !+ad_varc           Directory containing impurity radiation data files
-  character(len=60), public :: impdir = ROOTDIR//'/impuritydata/'
+  character(len=80), public :: impdir = ROOTDIR//'/impuritydata/'
 
   !+ad_vars  impvar /9 (argon)/ : fimp element value to be varied if iteration
   !+ad_varc                       variable number 102 is turned on
@@ -347,6 +347,7 @@ contains
     else
        call report_error(29)
        imprad_model = 0
+       write(*,*) "#####   Imprad_model = 0   #####", label // 'Lzdata.dat', iexist, impdir
        error = 1
        return
     end if

@@ -424,7 +424,9 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  24/06/14 PJK Removed refs to bucking cylinder
     !+ad_hist  23/07/14 PJK Changed icase description
+    !+ad_hist  06/11/14 PJK Added secondary_cycle=0 assumption
     !+ad_hist  12/11/14 PJK Added tpulse, tdown, tcycle
+    !+ad_hist  24/11/14 PJK Brought blanket properties in line with tokamak
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -435,6 +437,8 @@ contains
     !  Arguments
 
     !  Local variables
+
+    !real(kind(1.0D0)) :: fsum
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -483,8 +487,76 @@ contains
     tcycle = tramp + tohs + theat + tburn + tqnch + tdwell
 
     !  Coil quantities
-
     tfno = 50.0D0
+
+    !  Blanket properties
+    secondary_cycle = 0  !  simple thermal hydraulic model assumed
+
+    !  CCFE HCPB blanket model
+	!if (iblanket == 1) then
+    !  fsum = fbltibe12 + fblli2sio4 + fblss + vfcblkt + vfpblkt
+    !  if (abs(fsum-1.0D0) > 1.0D-4) then
+    !    idiags(1) = iblanket
+    !    fdiags(2) = fbltibe12
+    !    fdiags(3) = fblli2sio4
+    !    fdiags(4) = fblss
+    !    fdiags(5) = vfcblkt
+    !    fdiags(6) = vfpblkt
+    !    fdiags(7) = fsum
+    !    call report_error(165)
+    !  end if
+    !end if
+
+    !if (ipowerflow == 0) blkttype = 3
+
+    !  Coolant fluid type
+
+    !if ((blkttype == 1).or.(blkttype == 2)) then
+    !   coolwh = 2  !  water
+    !else
+    !   coolwh = 1  !  helium
+    !end if
+
+    !  But... set coolant to water if blktmodel > 0
+    !  Although the *blanket* is by definition helium-cooled in this case,
+    !  the shield etc. are assumed to be water-cooled, and since water is
+    !  heavier (and the unit cost of pumping it is higher), the calculation
+    !  for coolmass is better done with coolwh=2 if blktmodel > 0 to give
+    !  slightly pessimistic results.
+
+    !if (blktmodel > 0) then
+    !   secondary_cycle = 0
+    !   blkttype = 3  !  HCPB
+    !   coolwh = 2
+    !end if
+
+    !  Ensure that blanket material fractions add up to 1.0
+
+    !if (blkttype < 3) then
+    !   fsum = fblli2o + fblbe + vfblkt + fblss + fblvd
+    !   if (abs(fsum-1.0D0) > 1.0D-4) then
+    !      idiags(1) = blkttype
+    !      fdiags(1) = fblli2o
+    !      fdiags(2) = fblbe
+    !      fdiags(3) = vfblkt
+    !      fdiags(4) = fblss
+    !      fdiags(5) = fblvd
+    !      fdiags(6) = fsum
+    !      call report_error(165)
+    !   end if
+    !else
+    !   fsum = fbllipb + fblli + vfblkt + fblss + fblvd
+    !   if (abs(fsum-1.0D0) > 1.0D-4) then
+    !      idiags(1) = blkttype
+    !      fdiags(1) = fbllipb
+    !      fdiags(2) = fblli
+    !      fdiags(3) = vfblkt
+    !      fdiags(4) = fblss
+    !      fdiags(5) = fblvd
+    !      fdiags(6) = fsum
+    !      call report_error(165)
+    !   end if
+    !end if
 
   end subroutine stinit
 
@@ -773,6 +845,7 @@ contains
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  24/06/14 PJK Removed refs to bcylth;
     !+ad_hisc               blnktth now always calculated
+    !+ad_hist  06/11/14 PJK Added fhole etc. adjustment to first wall area
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -837,14 +910,14 @@ contains
     rstrko = rmajor
 
     !  First wall area: scales with minor radius
-    !  (c.f. area ~ 2.pi.R * 2.pi.a)
-
-    !  Old method
-    !fwarea = 4.0D0*pi**2*sf*rmajor*(rminor+(scrapli+scraplo)/2.0D0) &
-    !     * 0.875D0
 
     awall = rminor + 0.5D0*(scrapli + scraplo)
     fwarea = sarea * awall/rminor
+    if (ipowerflow == 0) then
+       fwarea = (1.0D0-fhole) * fwarea
+    else
+       fwarea = (1.0D0-fhole-fdiv-fhcd) * fwarea
+    end if
 
     if (iprint == 0) return
 
@@ -863,7 +936,7 @@ contains
     call obuild(outfile,'Machine bore',drbild,radius)
 
     radius = radius + tfcth
-    call obuild(outfile,'TF coil inboard leg',tfcth,radius)
+    call obuild(outfile,'Coil inboard leg',tfcth,radius)
 
     radius = radius + gapds
     call obuild(outfile,'Gap',gapds,radius)
@@ -908,7 +981,7 @@ contains
     call obuild(outfile,'Gap',gapsto,radius)
 
     radius = radius + tfthko
-    call obuild(outfile,'TF coil outboard leg',tfthko,radius)
+    call obuild(outfile,'Coil outboard leg',tfthko,radius)
 
   end subroutine stbild
 
@@ -978,6 +1051,8 @@ contains
     !+ad_hist  24/06/14 PJK Corrected neutron wall load to account for gaps
     !+ad_hisc               in first wall
     !+ad_hist  19/08/14 PJK Removed impfe usage
+    !+ad_hist  17/11/14 PJK Recalculated radiation power totals; included
+    !+ad_hisc               falpha contributions
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  AEA FUS 172: Physics Assessment for the European Reactor Study
@@ -1070,7 +1145,8 @@ contains
     call rether(alphan,alphat,dene,dlamie,te,ti,zeffai,piepv)
 
     !  Calculate radiation power
-    !  N.B. pedgeradpv is recalculated below
+    !  N.B. pedgeradpv is recalculated below - thus making the model
+    !  inconsistent with the tokamak version
 
     call radpwr(imprad_model,pbrempv,plinepv,psyncpv, &
          pcoreradpv,pedgeradpv,pradpv)
@@ -1081,14 +1157,19 @@ contains
     !  Heating power to plasma (= Psol in divertor model)
     !  Ohmic power is zero in a stellarator
 
-    powht = palpmw + pchargemw + pohmmw - pcoreradmw
+    powht = falpha*palpmw + pchargemw + pohmmw - pcoreradmw
     if (ignite == 0) powht = powht + pinjmw
 
-    !  Line radiation power/volume is obtained via input parameter f_rad
+    !  Edge radiation power/volume is obtained via input parameter f_rad
     !  (in contrast to tokamak calculation)
 
     pedgeradpv = f_rad*powht/vol
     pedgeradmw = pedgeradpv*vol
+
+    !  Reset radiation power totals
+
+    pradmw = pcoreradmw + pedgeradmw
+    pradpv = pradmw/vol
 
     !  Power to divertor, = (1-f_rad)*Psol
 
@@ -1099,6 +1180,10 @@ contains
     !  this may not be quite correct for stellarators)
 
     pdivt = max(0.001D0, pdivt)
+
+    !  Power transported to the first wall by escaped alpha particles
+
+    palpfwmw = palpmw * (1.0D0-falpha)
 
     !  Calculate density limit
 
@@ -1196,12 +1281,16 @@ contains
        echpwr = pheat
        pinjimw = 0.0D0
        pinjemw = echpwr
+       etacd = etaech
+       pinjwp = (pinjimw + pinjemw)/etacd
 
     case (2)  !  Lower Hybrid heating
 
        plhybd = pheat
        pinjimw = 0.0D0
        pinjemw = plhybd
+       etacd = etalh
+       pinjwp = (pinjimw + pinjemw)/etacd
 
     case (3)  !  Neutral beam injection heating
 
@@ -1215,6 +1304,8 @@ contains
        porbitlossmw = pheat * forbitloss
        pinjimw = pnbeam * fpion
        pinjemw = pnbeam * (1.0D0-fpion)
+       etacd = etanbi
+       pinjwp = (pinjimw + pinjemw)/etacd
 
     case default
 
@@ -1291,7 +1382,6 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine stfwbs(outfile,iprint)
-
     !+ad_name  stfwbs
     !+ad_summ  Routine to calculate first wall, blanket and shield properties
     !+ad_summ  for a stellarator
@@ -1318,12 +1408,13 @@ contains
     !+ad_desc  which scale the surface area of the components from that
     !+ad_desc  of the plasma.
     !+ad_prob  None
-    !+ad_call  blanket
-    !+ad_call  blanket_neutronics
+    !+ad_call  blanket_panos
+    !+ad_call  blanket_neutronics_hcpb_kit
     !+ad_call  oheadr
     !+ad_call  osubhd
     !+ad_call  ovarin
     !+ad_call  ovarre
+    !+ad_call  sctfcoil_nuclear_heating_iter90
     !+ad_hist  01/07/94 PJK Initial version
     !+ad_hist  10/06/96 PJK Moved first wall area calculation into STBILD
     !+ad_hist  24/09/12 PJK Initial F90 version
@@ -1332,6 +1423,9 @@ contains
     !+ad_hist  03/03/14 PJK Moved divertor surface area calculation into STDIV
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  23/06/14 PJK Corrected wallmw units
+    !+ad_hist  23/10/14 PJK costr --> coolwh
+    !+ad_hist  29/10/14 PJK Added fwlife calculation
+    !+ad_hist  06/11/14 PJK Introduced ipowerflow=1 coding
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1345,19 +1439,22 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)), dimension(5) :: fact
-    real(kind(1.0D0)), dimension(5,2) :: coef
-    real(kind(1.0D0)), dimension(7,2) :: decay
-
-    integer, parameter :: ishmat = 1  !  stainless steel coil casing is assumed
-
-    real(kind(1.0D0)) :: adewex,coilhtmx,decaybl,dpacop,dshieq,dshoeq, &
-         fpsdt,fpydt,hecan,htheci,pheci,pheco,pneut2,ptfi,ptfiwp, &
-         ptfo,ptfowp,r1,r2,raddose,volshldi,volshldo,wpthk
+    real(kind(1.0D0)) :: adewex,bfwi,bfwo,coilhtmx,coolvol,decaybl,decaybzi, &
+         decaybzo,decayfwi,decayfwo,decayshldi,decayshldo,dpacop,htheci, &
+         pheci,pheco,pneut2,pnucbsi,pnucbso,pnucbzi,pnucbzo,pnucfwbs, &
+         pnucfwbsi,pnucfwbso,pnucfwi,pnucfwo,pnucshldi,pnucshldo,pnucsi, &
+         pnucso,psurffwi,psurffwo,ptfiwp,ptfowp,r1,r2,raddose,vffwi,vffwo, &
+         volshldi,volshldo
 
     logical :: first_call = .true.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  First wall full-power lifetime (years)
+    !  May be recalculated below if ipowerflow=1 and secondary_cycle>0,
+    !  and also by the availability model
+
+    fwlife = min(abktflnc/wallmw, tlife)
 
     !  First wall inboard, outboard areas (assume 50% of total each)
 
@@ -1366,11 +1463,14 @@ contains
 
     !  Blanket volume; assume that its surface area is scaled directly from the
     !  plasma surface area.
-    !  Uses fhole (only, in contrast to tokamaks using ipowerflow=1) to take
-    !  account of gaps due to ports etc.
+    !  Uses fhole etc. to take account of gaps due to ports etc.
 
     r1 = rminor + 0.5D0*(scrapli+fwith + scraplo+fwoth)
-    blarea = sarea * r1/rminor * (1.0D0-fhole)
+    if (ipowerflow == 0) then
+       blarea = sarea * r1/rminor * (1.0D0-fhole)
+    else
+       blarea = sarea * r1/rminor * (1.0D0-fhole-fdiv-fhcd)
+    end if
     blareaib = 0.5D0*blarea
     blareaob = 0.5D0*blarea
 
@@ -1390,7 +1490,8 @@ contains
     volshldo = shareaob * shldoth
     volshld = volshldi + volshldo
 
-    !  Neutron power lost through holes in first wall
+    !  Neutron power lost through holes in first wall (eventually absorbed by
+    !  shield)
 
     pnucloss = pneutmw * fhole
 
@@ -1400,154 +1501,212 @@ contains
 
        call blanket_neutronics
 
-       fpydt = cfactr * tlife
+       if (ipowerflow == 1) then
+          pnucdiv = pneutmw * fdiv
+          pnuchcd = pneutmw * fhcd
+          pnucfw = pneutmw - pnucdiv - pnucloss - pnuchcd
+
+          pradloss = pradmw * fhole
+          praddiv = pradmw * fdiv
+          pradhcd = pradmw * fhcd
+          pradfw = pradmw - praddiv - pradloss - pradhcd
+
+          htpmw_fw = fpumpfw * (pnucfw + pradfw + porbitlossmw)
+          htpmw_blkt = fpumpblkt * pnucblkt
+          htpmw_shld = fpumpshld * pnucshld
+          htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)
+
+          !  Void fraction in first wall / breeding zone,
+          !  for use in fwmass and coolvol calculation below
+
+          vffwi = 1.0D0 - fblbe - fblbreed - fblss
+          vffwo = vffwi
+       end if
 
     else
 
-       !  TF coil nuclear heating parameters
-
-       fact(1) = 8.0D0
-       fact(2) = 8.0D0
-       fact(3) = 6.0D0
-       fact(4) = 4.0D0
-       fact(5) = 4.0D0
-
-       coef(1,1) = 10.3D0
-       coef(2,1) = 11.6D0
-       coef(3,1) = 7.08D5
-       coef(4,1) = 2.19D18
-       coef(5,1) = 3.33D-7
-       coef(1,2) = 8.32D0
-       coef(2,2) = 10.6D0
-       coef(3,2) = 7.16D5
-       coef(4,2) = 2.39D18
-       coef(5,2) = 3.84D-7
-
-       decay(1,1) = 10.05D0
-       decay(2,1) = 17.61D0
-       decay(3,1) = 13.82D0
-       decay(4,1) = 13.24D0
-       decay(5,1) = 14.31D0
-       decay(6,1) = 13.26D0
-       decay(7,1) = 13.25D0
-       decay(1,2) = 10.02D0
-       decay(2,2) = 3.33D0
-       decay(3,2) = 15.45D0
-       decay(4,2) = 14.47D0
-       decay(5,2) = 15.87D0
-       decay(6,2) = 15.25D0
-       decay(7,2) = 17.25D0
-
        pnuccp = 0.0D0
 
-       !  Energy-multiplied neutron power
+       if (ipowerflow == 0) then
 
-       pneut2 = (pneutmw - pnucloss - pnuccp) * emult
+          !  Energy-multiplied neutron power
 
-       !  Nuclear heating in the blanket
+          pneut2 = (pneutmw - pnucloss - pnuccp) * emult
 
-       if (lblnkt == 1) then
-          if (smstr == 1) then  !  solid blanket
-             decaybl = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
-          else  !  liquid blanket
-             decaybl = 0.075D0 / (1.0D0 - vfblkt - fbllipb - fblli)
-          end if
-       else  !  original blanket model - solid blanket
+          !  Nuclear heating in the blanket
+
           decaybl = 0.075D0 / (1.0D0 - vfblkt - fblli2o - fblbe)
-       end if
 
-       pnucblkt = pneut2 * (1.0D0 - exp(-blnkoth/decaybl) )
+          pnucblkt = pneut2 * (1.0D0 - exp(-blnkoth/decaybl))
 
-       !  Nuclear heating in the shield
+          !  Nuclear heating in the shield
+          pnucshld = pneut2 - pnucblkt
 
-       pnucshld = pneut2 - pnucblkt
+          !  Superconducting coil shielding calculations
+          call sctfcoil_nuclear_heating_iter90(coilhtmx,dpacop,htheci,nflutf, &
+               pheci,pheco,ptfiwp,ptfowp,raddose,ptfnuc)
 
-       !  Full power DT operation years for replacement of TF Coil
-       !  (or Plant Life)
+       else  !  ipowerflow == 1
 
-       fpydt = cfactr * tlife
-       fpsdt = fpydt * 3.154D7
+          !  Neutron power incident on divertor (MW)
 
-       !  Superconducting TF coil shielding calculations
-       !  The 'He can' previously referred to is actually the steel case on the
-       !  plasma-facing side of the TF coil.
+          pnucdiv = pneutmw * fdiv
 
-       if (itfsup == 1) then
+          !  Neutron power incident on HCD apparatus (MW)
 
-          !  N.B. The vacuum vessel appears to be ignored
+          pnuchcd = pneutmw * fhcd
 
-          dshieq = shldith + fwith + blnkith
-          dshoeq = shldoth + fwoth + blnkoth
+          !  Neutron power deposited in first wall, blanket and shield (MW)
 
-          !  Case thickness on plasma-facing side of TF coil
+          pnucfwbs = pneutmw - pnucdiv - pnucloss - pnuccp - pnuchcd
 
-          hecan = casthi
+          !  Split between inboard and outboard by first wall area fractions
 
-          !  Winding pack radial thickness, including groundwall insulation
+          pnucfwbsi = pnucfwbs * fwareaib/fwarea
+          pnucfwbso = pnucfwbs * fwareaob/fwarea
 
-          wpthk = thkwp + 2.0D0*tinstf
+          !  Radiation power incident on divertor (MW)
 
-          !  Nuclear heating rate in inboard TF coil (MW/m**3)
+          praddiv = pradmw * fdiv
 
-          coilhtmx = fact(1) * wallmw * coef(1,ishmat) * &
-               exp(-decay(6,ishmat) * (dshieq + hecan))
+          !  Radiation power incident on HCD apparatus (MW)
 
-          !  Total nuclear heating (MW)
+          pradhcd = pradmw * fhcd
 
-          ptfiwp = coilhtmx * tfsai * &
-               (1.0D0-exp(-decay(1,ishmat)*wpthk)) / decay(1,ishmat)
-          ptfowp = fact(1) * wallmw * coef(1,ishmat) * &
-               exp(-decay(6,ishmat) * (dshoeq + hecan)) * tfsao * &
-               (1.0D0 - exp(-decay(1,ishmat)*wpthk)) / decay(1,ishmat)
+          !  Radiation power lost through holes (eventually hits shield) (MW)
 
-          !  Nuclear heating in plasma-side TF coil case (MW)
+          pradloss = pradmw * fhole
 
-          htheci = fact(2) * wallmw * coef(2,ishmat) * &
-               exp(-decay(7,ishmat) * dshieq)
-          pheci = htheci * tfsai * (1.0D0-exp(-decay(2,ishmat)*hecan))/ &
-               decay(2,ishmat)
-          pheco = fact(2) * wallmw * coef(2,ishmat) * &
-               exp(-decay(7,ishmat) * dshoeq) * tfsao * &
-               (1.0D0-exp(-decay(2,ishmat)*hecan))/decay(2,ishmat)
-          ptfi = ptfiwp + pheci
-          ptfo = ptfowp + pheco
-          ptfnuc = ptfi + ptfo
+          !  Radiation power incident on first wall (MW)
 
-          !  Insulator dose (rad)
+          pradfw = pradmw - praddiv - pradloss - pradhcd
 
-          raddose = coef(3,ishmat) * fpsdt * fact(3) * wallmw * &
-               exp(-decay(3,ishmat) * (dshieq+hecan))
+          !  Calculate the power deposited in the first wall, blanket and shield,
+          !  and the required coolant pumping power
 
-          !  Maximum neutron fluence in superconductor (n/m**2)
+          !  If we have chosen pressurised water as the coolant, set the
+          !  coolant outlet temperature as 20 deg C below the boiling point
 
-          nflutf = fpsdt * fact(4) * wallmw * coef(4,ishmat) * &
-               exp(-decay(4,ishmat) * (dshieq+hecan))
+          if (coolwh == 2) then
+             outlet_temp = tsat(1.0D-6*coolp) - 20.0D0  !  in K
+          end if
 
-          !  Atomic displacement in copper stabilizer
+          bfwi = 0.5D0*fwith
+          bfwo = 0.5D0*fwoth
 
-          dpacop = fpsdt * fact(5) * wallmw * coef(5,ishmat) * &
-               exp(-decay(5,ishmat) * (dshieq + hecan) )
+          vffwi = afwi*afwi/(bfwi*bfwi)  !  inboard FW coolant void fraction
+          vffwo = afwo*afwo/(bfwo*bfwo)  !  outboard FW coolant void fraction
 
-       else  !  Resistive TF coils
-          dshieq = 0.0D0
-          dshoeq = 0.0D0
-          hecan = 0.0D0
-          wpthk = 0.0D0
-          coilhtmx = 0.0D0
-          ptfiwp = 0.0D0
-          ptfowp = 0.0D0
-          htheci = 0.0D0
-          pheci = 0.0D0
-          pheco = 0.0D0
-          ptfi = 0.0D0
-          ptfo = 0.0D0
-          ptfnuc = 0.0D0
-          raddose = 0.0D0
-          nflutf = 0.0D0
-          dpacop = 0.0D0
-       end if
+          !  First wall decay length (m) - improved calculation required
 
-    end if ! blktmodel = 0
+          decayfwi = declfw
+          decayfwo = declfw
+
+          !  Surface heat flux on first wall (MW) (sum = pradfw)
+
+          psurffwi = pradfw * fwareaib/fwarea
+          psurffwo = pradfw * fwareaob/fwarea
+
+          !  Simple blanket model (secondary_cycle=0) is assumed for stellarators
+
+          !  The power deposited in the first wall, breeder zone and shield is
+          !  calculated according to their dimensions and materials assuming
+          !  an exponential attenuation of nuclear heating with increasing
+          !  radial distance.  The pumping power for the coolant is calculated
+          !  as a fraction of the total thermal power deposited in the
+          !  coolant.
+
+          pnucfwi = pnucfwbsi * (1.0D0 - exp(-2.0D0*bfwi/decayfwi))
+          pnucfwo = pnucfwbso * (1.0D0 - exp(-2.0D0*bfwo/decayfwo))
+
+          !  Neutron power reaching blanket and shield (MW)
+
+          pnucbsi = pnucfwbsi - pnucfwi
+          pnucbso = pnucfwbso - pnucfwo
+
+          !  Blanket decay length (m) - improved calculation required
+
+          decaybzi = declblkt
+          decaybzo = declblkt
+
+          !  Neutron power deposited in breeder zone (MW)
+
+          pnucbzi = pnucbsi * (1.0D0 - exp(-blnkith/decaybzi))
+          pnucbzo = pnucbso * (1.0D0 - exp(-blnkoth/decaybzo))
+
+          !  Calculate coolant pumping powers from input fraction.  
+          !  The pumping power is assumed to be a fraction, fpump, of the
+          !  incident thermal power to each component so that
+          !  htpmw_i = fpump_i*C, where C is the non-pumping thermal power
+          !  deposited in the coolant
+
+          !  First wall pumping power (MW)
+
+          htpmw_fw = fpumpfw * (pnucfwi + pnucfwo + psurffwi + psurffwo + porbitlossmw)
+
+          !  Blanket pumping power (MW)
+
+          htpmw_blkt = fpumpblkt * (pnucbzi*emult + pnucbzo*emult)
+
+          !  Total nuclear heating of first wall (MW)
+
+          pnucfw = pnucfwi + pnucfwo
+
+          !  Total nuclear heating of blanket (MW)
+
+          pnucblkt = (pnucbzi + pnucbzo)*emult
+
+          !  Calculation of shield and divertor powers
+          !  Shield and divertor powers and pumping powers are calculated using the same 
+          !  simplified method as the first wall and breeder zone when secondary_cycle = 0. 
+          !  i.e. the pumping power is a fraction of the total thermal power deposited in the
+          !  coolant.
+
+          !  Neutron power reaching the shield (MW)
+          !  The power lost from the fhole area fraction is assumed to be incident upon the shield
+
+          pnucsi = pnucbsi - pnucbzi + (pnucloss + pradloss) * fwareaib/fwarea
+          pnucso = pnucbso - pnucbzo + (pnucloss + pradloss) * fwareaob/fwarea
+
+          !  Improved calculation of shield power decay lengths required
+
+          decayshldi = declshld
+          decayshldo = declshld
+
+          !  Neutron power deposited in the shield (MW)
+
+          pnucshldi = pnucsi * (1.0D0 - exp(-shldith/decayshldi))
+          pnucshldo = pnucso * (1.0D0 - exp(-shldoth/decayshldo))
+
+          pnucshld = pnucshldi + pnucshldo
+
+          !  Calculate coolant pumping powers from input fraction.  
+          !  The pumping power is assumed to be a fraction, fpump, of the incident
+          !  thermal power to each component so that,
+          !     htpmw_i = fpump_i*C
+          !  where C is the non-pumping thermal power deposited in the coolant
+
+          !  Shield pumping power (MW)
+
+          htpmw_shld = fpumpshld*(pnucshldi + pnucshldo)
+
+          !  Divertor pumping power (MW)
+
+          htpmw_div = fpumpdiv*(pdivt + pnucdiv + praddiv)
+
+          !  Remaining neutron power to coils and elsewhere. This is assumed
+          !  (for superconducting coils at least) to be absorbed by the
+          !  coils, and so contributes to the cryogenic load
+
+          if (itfsup == 1) then
+             ptfnuc = pnucsi + pnucso - pnucshldi - pnucshldo
+          else  !  resistive coils
+             ptfnuc = 0.0D0
+          end if
+
+       end if  !  ipowerflow
+
+    end if  !  blktmodel
 
     !  Divertor mass
     !  N.B. divsur is calculated in stdiv after this point, so will
@@ -1563,16 +1722,25 @@ contains
     !  Start adding components of the coolant mass:
     !  Divertor coolant volume (m3)
 
-    coolmass = divsur * divclfr * divplt  !  volume
+    coolvol = divsur * divclfr * divplt
 
     !  Blanket mass, excluding coolant
 
     if (blktmodel == 0) then
+       if ((blkttype == 1).or.(blkttype == 2)) then  !  liquid breeder (WCLL or HCLL)
+          wtbllipb = volblkt * fbllipb * 9400.0D0
+          whtblli = volblkt * fblli * 534.0D0
+          whtblkt = wtbllipb + whtblli
+       else  !  solid breeder (HCPB); always for ipowerflow=0
+          wtblli2o = volblkt * fblli2o * 2010.0D0
+          whtblbe = volblkt * fblbe * 1850.0D0
+          whtblkt = wtblli2o + whtblbe
+       end if
        whtblss = volblkt * denstl * fblss
-       whtblbe = volblkt * 1850.0D0  * fblbe  !  density modified from 1900 kg/m3
        whtblvd = volblkt * 5870.0D0  * fblvd
-       wtblli2o = volblkt * 2010.0D0  * fblli2o
-       whtblkt = whtblss + whtblvd + wtblli2o + whtblbe
+
+       whtblkt = whtblkt + whtblss + whtblvd
+
     else  !  volume fractions proportional to sub-assembly thicknesses
        whtblss = denstl * ( &
             volblkti/blnkith * ( &
@@ -1597,55 +1765,62 @@ contains
             (blbuoth/blnkoth) * (1.0D0 - fblbe - fblbreed - fblss) &
             + (blbmoth/blnkoth) * fblhebmo &
             + (blbpoth/blnkoth) * fblhebpo )
-    end if
-
-    whtshld = volshld * denstl * (1.0D0 - vfshld)
-
-    !  Thermodynamic blanket model
-    !  (supersedes above calculations of blanket mass and volume)
-
-    if (lblnkt == 1) then
-       call blanket(1,outfile,iprint)
-
-       !  Different (!) approximation for inboard/outboard
-       !  blanket volumes: assume cylinders of equal heights
-
-       r1 = rsldi + shldith + 0.5D0*blnkith
-       r2 = rsldo - shldoth - 0.5D0*blnkoth
-       volblkti = volblkt * (r1*blnkith)/((r1*blnkith)+(r2*blnkoth))
-       volblkto = volblkt * (r2*blnkoth)/((r1*blnkith)+(r2*blnkoth))
 
     end if
 
-    !  Blanket coolant is assumed to be helium for the models used
-    !  when blktmodel > 0
+    !  When blktmodel > 0, although the blanket is by definition helium-cooled
+    !  in this case, the shield etc. are assumed to be water-cooled, and since
+    !  water is heavier the calculation for coolmass is better done with
+    !  coolwh=2 if blktmodel > 0; thus we can ignore the helium coolant mass
+    !  in the blanket.
 
     if (blktmodel == 0) then
-       coolmass = coolmass + volblkt*vfblkt  !  volume
+       coolvol = coolvol + volblkt*vfblkt
     end if
+
+    !  Shield mass
+
+    whtshld = volshld * denstl * (1.0D0 - vfshld)
+    coolvol = coolvol + volshld*vfshld
 
     !  Penetration shield (set = internal shield)
 
     wpenshld = whtshld
-    coolmass = coolmass + volshld*vfshld  !  volume
 
-    !  First wall mass
-    !  (first wall area is calculated elsewhere)
+    if (ipowerflow == 0) then
 
-    fwmass = fwarea * (fwith+fwoth)/2.0D0 * denstl * (1.0D0-fwclfr)
+       !  First wall mass
+       !  (first wall area is calculated elsewhere)
 
-    !  Surface areas adjacent to plasma
+       fwmass = fwarea * (fwith+fwoth)/2.0D0 * denstl * (1.0D0-fwclfr)
 
-    coolmass = coolmass + fwarea * (fwith+fwoth)/2.0D0 * fwclfr  !  volume
+       !  Surface areas adjacent to plasma
+
+       coolvol = coolvol + fwarea * (fwith+fwoth)/2.0D0 * fwclfr
+
+    else
+
+       fwmass = denstl * &
+            (fwareaib*fwith*(1.0D0-vffwi) + fwareaob*fwoth*(1.0D0-vffwo))
+       coolvol = coolvol + fwareaib*fwith*vffwi + fwareaob*fwoth*vffwo
+
+       !  Average first wall coolant fraction, only used by old routines
+       !  in fispact.f90, safety.f90
+
+       fwclfr = (fwareaib*fwith*vffwi + fwareaob*fwoth*vffwo) / &
+            (fwarea*0.5D0*(fwith+fwoth))
+
+    end if
 
     !  Mass of coolant = volume * density at typical coolant
     !  temperatures and pressures
-    !  N.B. for blktmodel > 0, mass of helium coolant in blanket is ignored...
+    !  N.B. for blktmodel > 0, mass of *water* coolant in the non-blanket
+    !  structures is used (see comment above)
 
-    if ((blktmodel > 0).or.(costr == 2)) then  !  pressurised water coolant
-       coolmass = coolmass*806.719D0
+    if ((blktmodel > 0).or.(coolwh == 2)) then  !  pressurised water coolant
+       coolmass = coolvol*806.719D0
     else  !  gaseous helium coolant
-       coolmass = coolmass*1.517D0
+       coolmass = coolvol*1.517D0
     end if
 
     !  Assume external cryostat is a torus with circular cross-section,
@@ -1680,40 +1855,47 @@ contains
 
     !  Output section
 
-    call oheadr(outfile,'Shield / Blanket')
+    call oheadr(outfile,'First Wall / Blanket / Shield')
     call ovarre(outfile,'Average neutron wall load (MW/m2)','(wallmw)', wallmw)
     if (blktmodel > 0) then
        call ovarre(outfile,'Neutron wall load peaking factor','(wallpf)', wallpf)
     end if
-    call ovarre(outfile,'DT full power TF coil operation (yrs)', &
-         '(fpydt)',fpydt)
+    call ovarre(outfile,'First wall full-power lifetime (years)', &
+         '(fwlife)',fwlife)
+
     call ovarre(outfile,'Inboard shield thickness (m)','(shldith)',shldith)
     call ovarre(outfile,'Outboard shield thickness (m)','(shldoth)',shldoth)
     call ovarre(outfile,'Top shield thickness (m)','(shldtth)',shldtth)
+
     if (blktmodel > 0) then
-       call ovarre(outfile,'Inboard breeding unit thickness (m)','(blbuith)', blbuith)
-       call ovarre(outfile,'Inboard box manifold thickness (m)','(blbmith)', blbmith)
-       call ovarre(outfile,'Inboard back plate thickness (m)','(blbpith)', blbpith)
+       call ovarre(outfile,'Inboard breeding zone thickness (m)', &
+            '(blbuith)', blbuith)
+       call ovarre(outfile,'Inboard box manifold thickness (m)', &
+            '(blbmith)', blbmith)
+       call ovarre(outfile,'Inboard back plate thickness (m)', &
+            '(blbpith)', blbpith)
     end if
     call ovarre(outfile,'Inboard blanket thickness (m)','(blnkith)', blnkith)
     if (blktmodel > 0) then
-       call ovarre(outfile,'Outboard breeding unit thickness (m)','(blbuoth)', blbuoth)
-       call ovarre(outfile,'Outboard box manifold thickness (m)','(blbmoth)', blbmoth)
-       call ovarre(outfile,'Outboard back plate thickness (m)','(blbpoth)', blbpoth)
+       call ovarre(outfile,'Outboard breeding zone thickness (m)', &
+            '(blbuoth)', blbuoth)
+       call ovarre(outfile,'Outboard box manifold thickness (m)', &
+            '(blbmoth)', blbmoth)
+       call ovarre(outfile,'Outboard back plate thickness (m)', &
+            '(blbpoth)', blbpoth)
     end if
     call ovarre(outfile,'Outboard blanket thickness (m)','(blnkoth)', blnkoth)
     call ovarre(outfile,'Top blanket thickness (m)','(blnktth)',blnktth)
-    if (blktmodel == 0) then
-       call ovarre(outfile,'Inboard side TF coil case thickness (m)', &
-            '(hecan)',hecan)
-       call osubhd(outfile,'TF coil nuclear parameters :')
+
+    if ((ipowerflow == 0).and.(blktmodel == 0)) then
+       call osubhd(outfile,'Coil nuclear parameters :')
        call ovarre(outfile,'Peak magnet heating (MW/m3)','(coilhtmx)', &
             coilhtmx)
-       call ovarre(outfile,'Inboard TF coil winding pack heating (MW)', &
+       call ovarre(outfile,'Inboard coil winding pack heating (MW)', &
             '(ptfiwp)',ptfiwp)
-       call ovarre(outfile,'Outboard TF coil winding pack heating (MW)', &
+       call ovarre(outfile,'Outboard coil winding pack heating (MW)', &
             '(ptfowp)',ptfowp)
-       call ovarre(outfile,'Peak TF coil case heating (MW/m3)','(htheci)', &
+       call ovarre(outfile,'Peak coil case heating (MW/m3)','(htheci)', &
             htheci)
        call ovarre(outfile,'Inboard coil case heating (MW)','(pheci)',pheci)
        call ovarre(outfile,'Outboard coil case heating (MW)','(pheco)',pheco)
@@ -1722,13 +1904,22 @@ contains
             nflutf)
        call ovarre(outfile,'Copper stabiliser displacements/atom', &
             '(dpacop)',dpacop)
+    end if
 
+    if (blktmodel == 0) then
        call osubhd(outfile,'Nuclear heating :')
-       call ovarre(outfile,'Blanket heating (MW)','(pnucblkt)',pnucblkt)
-       call ovarre(outfile,'Shield heating (MW)','(pnucshld)',pnucshld)
+       call ovarre(outfile, &
+            'Blanket heating (including energy multiplication) (MW)', &
+            '(pnucblkt)',pnucblkt)
+       call ovarre(outfile,'Shield nuclear heating (MW)', &
+            '(pnucshld)',pnucshld)
+       call ovarre(outfile,'Coil nuclear heating (MW)', &
+            '(ptfnuc)',ptfnuc)
     else
        call osubhd(outfile,'Blanket neutronics :')
-       call ovarre(outfile,'Blanket heating (MW)','(pnucblkt)',pnucblkt)
+       call ovarre(outfile, &
+            'Blanket heating (including energy multiplication) (MW)', &
+            '(pnucblkt)',pnucblkt)
        call ovarre(outfile,'Shield heating (MW)','(pnucshld)',pnucshld)
        call ovarre(outfile,'Energy multiplication in blanket','(emult)',emult)
        call ovarin(outfile,'Number of divertor ports assumed','(npdiv)',npdiv)
@@ -1755,12 +1946,12 @@ contains
        call ovarre(outfile,'Lithium-6 enrichment (%)','(li6enrich)',li6enrich)
        call ovarre(outfile,'Tritium breeding ratio','(tbr)',tbr)
        call ovarre(outfile,'Tritium production rate (g/day)','(tritprate)',tritprate)
-       call ovarre(outfile,'Nuclear heating on i/b TF coil (MW/m3)','(pnuctfi)',pnuctfi)
-       call ovarre(outfile,'Nuclear heating on o/b TF coil (MW/m3)','(pnuctfo)',pnuctfo)
-       call ovarre(outfile,'Total nuclear heating on TF coil (MW)','(ptfnuc)',ptfnuc)
-       call ovarre(outfile,'Fast neut. fluence on i/b TF coil (n/m2)', &
+       call ovarre(outfile,'Nuclear heating on i/b coil (MW/m3)','(pnuctfi)',pnuctfi)
+       call ovarre(outfile,'Nuclear heating on o/b coil (MW/m3)','(pnuctfo)',pnuctfo)
+       call ovarre(outfile,'Total nuclear heating on coil (MW)','(ptfnuc)',ptfnuc)
+       call ovarre(outfile,'Fast neut. fluence on i/b coil (n/m2)', &
             '(nflutfi)',nflutfi*1.0D4)
-       call ovarre(outfile,'Fast neut. fluence on o/b TF coil (n/m2)', &
+       call ovarre(outfile,'Fast neut. fluence on o/b coil (n/m2)', &
             '(nflutfo)',nflutfo*1.0D4)
        call ovarre(outfile,'Minimum final He conc. in IB VV (appm)','(vvhemini)',vvhemini)
        call ovarre(outfile,'Minimum final He conc. in OB VV (appm)','(vvhemino)',vvhemino)
@@ -1770,25 +1961,29 @@ contains
        call ovarre(outfile,'Blanket lifetime (calendar years)','(t_bl_y)',t_bl_y)
     end if
 
+    if ((ipowerflow == 1).and.(blktmodel == 0)) then
+       call oblnkl(outfile)
+       call ovarin(outfile, &
+            'First wall / blanket thermodynamic model','(secondary_cycle)',secondary_cycle)
+       if (secondary_cycle == 0) then
+          call ocmmnt(outfile,'   (Simple calculation)')
+       end if
+    end if
+
     call osubhd(outfile,'Blanket / shield volumes and weights :')
 
-    if (lblnkt == 1) then
-       if (smstr == 1) then
-          write(outfile,600) volblkti, volblkto, volblkt,  &
-               whtblkt, vfblkt, fblbe, whtblbe, fblli2o, wtblli2o,  &
-               fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
-               volshld, whtshld, vfshld, wpenshld
-       else
+    if (blktmodel == 0) then
+       if ((blkttype == 1).or.(blkttype == 2)) then
           write(outfile,601) volblkti, volblkto, volblkt,  &
                whtblkt, vfblkt, fbllipb, wtbllipb, fblli, whtblli,  &
                fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
                volshld, whtshld, vfshld, wpenshld
+       else  !  (also if ipowerflow=0)
+          write(outfile,600) volblkti, volblkto, volblkt,  &
+               whtblkt, vfblkt, fblbe, whtblbe, fblli2o, wtblli2o,  &
+               fblss, whtblss, fblvd, whtblvd, volshldi, volshldo,  &
+               volshld, whtshld, vfshld, wpenshld
        end if
-    else if (blktmodel == 0) then
-       write(outfile,600) volblkti, volblkto, volblkt, whtblkt, vfblkt, &
-            fblbe, whtblbe, fblli2o, wtblli2o, fblss, whtblss, fblvd, &
-            whtblvd, volshldi, volshldo, volshld, whtshld, vfshld, &
-            wpenshld
     else
        write(outfile,602) volblkti, volblkto, volblkt, whtblkt, vfblkt, &
             (volblkti/volblkt * blbuith/blnkith + &

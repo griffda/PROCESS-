@@ -1,0 +1,17 @@
+# PROCESS release notes for Git tag 384
+
+# 02/03/15
+#===============================
+
+# Major Changes
+#==============
+
+- Change to TF magnets von Mises calculation (issue #209)
+- Change to current density in winding pack region in TF coil (issue #210)
+
+
+# GitLab Issue Changes
+#=====================
+
+- Fixed bounds for flhthresh and te in input.f90 and global_variables.f90 (issue #189)
+- Changed error level in pulse.f90 for t > 649 in cycles calculation (issue #200)

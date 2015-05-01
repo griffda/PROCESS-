@@ -30,6 +30,7 @@ module pulse_module
   !+ad_hist  05/11/12 PJK Initial version of module
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  29/07/14 PJK Added heat_transport_variables
+  !+ad_hist  23/04/15 MDK Removed fhole
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -82,6 +83,7 @@ contains
     !+ad_hist  30/10/12 PJK Added build_variables
     !+ad_hist  05/11/12 PJK Added pulse_variables
     !+ad_hist  27/06/13 PJK Comment change
+    !+ad_hist  29/10/14 PJK Commented out call to thrmal
     !+ad_stat  Okay
     !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -100,7 +102,7 @@ contains
 
     !  Thermal cycling package
 
-    call thrmal(outfile,iprint)
+    !call thrmal(outfile,iprint)
 
     !  Evaluate minimum plasma current ramp-up time
 
@@ -262,6 +264,7 @@ contains
 
     poissn = 0.27D0
 
+    !  COMMENTED OUT CHANGING FWITH AND FWOTH. TO BE REVISED AT A LATER DATE
     !  Start of iteration of bfw - code returns to here
     !  if bfw has been altered to lie within constraints
 
@@ -288,23 +291,13 @@ contains
        !  First wall properties
 
        !  Heating power due to neutron deposition (W)
-       !  The previous method assumed that the neutrons lost via fhole
-       !  actually stop in the first wall, so are not lost at all...
-       !fwndep = pneutmw*fhole*1.0D6
-
        !  New method based on that for nuclear heating in the blanket
        !  in fwbs.f90. A neutron decay length of 0.075m (or declfw) is assumed, and
        !  the TART centrepost term is ignored.
 
-       if (ipowerflow == 0) then
-          decay = 0.075D0 / (1.0D0 - afw*afw/(bfw*bfw))  !  a2/b2 = coolant fraction
-          fwndep = (1.0D6*pneutmw) * (1.0D0-fhole) * &
+       decay = declfw / (1.0D0 - afw*afw/(bfw*bfw))  !  a2/b2 = coolant fraction
+       fwndep = (1.0D6*pneutmw) * (1.0D0-fdiv-fhcd) * &
                ( 1.0D0 - exp( -(2.0D0*bfw)/decay) )
-       else
-          decay = declfw / (1.0D0 - afw*afw/(bfw*bfw))  !  a2/b2 = coolant fraction
-          fwndep = (1.0D6*pneutmw) * (1.0D0-fhole-fdiv-fhcd) * &
-               ( 1.0D0 - exp( -(2.0D0*bfw)/decay) )
-       end if
 
        !  Assume that the first wall volume is equal to its surface area
        !  multiplied by the external diameter of the hollow cylindrical
@@ -445,7 +438,7 @@ contains
 
              fboa = (1.001D0/boa)**0.01D0
 
-             bfw = bfw*fboa
+             !bfw = bfw*fboa
              if ((bfw/afw) <= 1.001D0) then
                 fdiags(1) = afw ; fdiags(2) = bfw
                 call report_error(90)
@@ -478,13 +471,13 @@ contains
           !  Keep afw fixed and alter bfw so that the lower limit
           !  is satisfied
 
-          bfw = afw * (smt(tpeak,fwlifs) + coolp/2.0D0) / &
-               (smt(tpeak,fwlifs) - coolp/2.0D0)
+          bfw = bfw!afw * (smt(tpeak,fwlifs) + coolp/2.0D0) / &
+          !               (smt(tpeak,fwlifs) - coolp/2.0D0)
        end if
 
     end do bfw_iteration
 
-    !  Reset inboard and outboard first wall thicknesses
+    ! !  Reset inboard and outboard first wall thicknesses
 
     fwith = 2.0D0*bfw
     fwoth = 2.0D0*bfw
@@ -1031,6 +1024,7 @@ contains
       !+ad_hist  01/10/12 PJK Initial F90 version
       !+ad_hist  26/06/14 PJK Added error handling
       !+ad_hist  29/07/14 PJK Uncommented initial tpeak test
+      !+ad_hist  02/03/15 JM  Changed else statement to continue even if error
       !+ad_stat  Okay
       !+ad_docs  Methods of first wall structural analysis ...,
       !+ad_docc  R.J. LeClaire, PFC/RR-84-9
@@ -1112,8 +1106,8 @@ contains
             logn = lgn510 + (tpeak-510.0D0)*(lgn649-lgn510) / &
                  (649.0D0-510.0D0)
          else
-            !  Shouldn't get here (trapped by initial test above)
-            continue
+            ! Continue even if error condition
+			logn = lgn649
          end if
 
          if (logn > 15.0D0) logn = 15.0D0
@@ -1155,6 +1149,7 @@ contains
     !+ad_hist  11/06/13 PJK Modified ipdot and tohsmn equations
     !+ad_hist  27/06/13 PJK Modified output heading
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
+    !+ad_hist  29/10/14 PJK Label changed from OH to CS
     !+ad_stat  Okay
     !+ad_docs  Work File Note F/MPE/MOD/CAG/PROCESS/PULSE/0013
     !+ad_docs  Work File Note F/PL/PJK/PROCESS/CODE/050
@@ -1227,7 +1222,7 @@ contains
 
     if (iprint == 1) then
 
-       call osubhd(outfile,'OH coil considerations:')
+       call osubhd(outfile,'Central solenoid considerations:')
        call ovarre(outfile,'Minimum plasma current ramp-up time (s)', &
             '(tohsmn)',tohsmn)
 

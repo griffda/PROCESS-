@@ -127,7 +127,6 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine fcnvmc1(n,m,xv,objf,conf,ifail)
-
     !+ad_name  fcnvmc1
     !+ad_summ  Function evaluator for VMCON
     !+ad_type  Subroutine
@@ -158,11 +157,12 @@ contains
     !+ad_hist  19/05/14 PJK Added tburn consistency check
     !+ad_hist  28/07/14 PJK Modified constraints call
     !+ad_hist  10/09/14 PJK Added vfile output
+    !+ad_hist  01/04/15 JM  Reduced tburn consistency error output
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    
     implicit none
 
     !  Arguments
@@ -202,8 +202,14 @@ contains
             (abs((tburn-tburn0)/max(tburn,0.01D0)) > 0.001D0) )
           loop = loop+1
           call caller(xv,n)
-          write(*,*) 'Internal tburn consistency check: ',tburn,tburn0
+          if (verbose == 1) then
+              write(*,*) 'Internal tburn consistency check: ',tburn,tburn0
+          end if 
        end do
+       if (loop >= 10) then
+            write(*,*) 'Burn time values are not consistent in iteration: ', nviter
+            write(*,*) 'tburn,tburn0: ',tburn,tburn0            
+       end if       
     end if
 
     !  Evaluate figure of merit (objective function)

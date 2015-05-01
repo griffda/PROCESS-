@@ -2,7 +2,7 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 372
+#  GIT Revision 389
 #
 #  P J Knight
 #
@@ -56,6 +56,8 @@ source = \
  availability.f90 \
  buildings.f90 \
  caller.f90 \
+ commons.for \
+ comtrn.for \
  constraint_equations.f90 \
  costs.f90 \
  costs_2015.f90 \
@@ -65,8 +67,8 @@ source = \
  evaluators.f90 \
  fispact.f90 \
  fson_library.f90 \
- fwbs.f90 \
  global_variables.f90 \
+ hcpb.f90 \
  ife.f90 \
  impurity_radiation.f90 \
  initial.f90 \
@@ -83,12 +85,15 @@ source = \
  plasma_profiles.f90 \
  process.f90 \
  pulse.f90 \
+ refprop.f \
+ refprop_interface.f90 \
  rfp.f90 \
  safety.f90 \
  scan.f90 \
  sctfcoil.f90 \
  startup.f90 \
  stellarator.f90 \
+ stellarator_fwbs.f90 \
  structure.f90 \
  tfcoil.f90 \
  vacuum.f90 
@@ -106,8 +111,8 @@ object = \
  evaluators.o \
  fispact.o \
  fson_library.o \
- fwbs.o \
  global_variables.o \
+ hcpb.o \
  ife.o \
  impurity_radiation.o \
  initial.o \
@@ -124,12 +129,15 @@ object = \
  plasma_profiles.o \
  process.o \
  pulse.o \
+ refprop.o \
+ refprop_interface.o \
  rfp.o \
  safety.o \
  scan.o \
  sctfcoil.o \
  startup.o \
  stellarator.o \
+ stellarator_fwbs.o \
  structure.o \
  tfcoil.o \
  vacuum.o 
@@ -198,11 +206,15 @@ LIBS   = ${LIBS_${ARCH}}
 default: process.exe
 
 # object dependencies (usually via modules or header files)
+#fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o refprop_interface.o \
+#  maths_library.o
+#stellarator_fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o refprop_interface.o \
+#  maths_library.o
 
-availability.o: global_variables.o output.o
+availability.o: global_variables.o output.o maths_library.o
 buildings.o: global_variables.o output.o
-caller.o: availability.o buildings.o costs.o costs_2015.o current_drive.o divertor.o fwbs.o \
-  global_variables.o ife.o machine_build.o numerics.o output.o pfcoil.o physics.o \
+caller.o: availability.o buildings.o costs.o current_drive.o divertor.o \
+  global_variables.o hcpb.o ife.o machine_build.o numerics.o output.o pfcoil.o physics.o \
   plant_power.o plasma_geometry.o pulse.o rfp.o sctfcoil.o startup.o structure.o \
   stellarator.o tfcoil.o vacuum.o
 constraint_equations.o: error_handling.o global_variables.o numerics.o
@@ -214,8 +226,8 @@ error_handling.o: output.o fson_library.o root.dir
 evaluators.o: error_handling.o global_variables.o numerics.o output.o
 fispact.o: global_variables.o
 fson_library.o: 
-fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o
 global_variables.o:
+hcpb.o : global_variables.o output.o maths_library.o refprop_interface.o
 ife.o: availability.o costs.o error_handling.o global_variables.o output.o
 impurity_radiation.o: error_handling.o global_variables.o root.dir
 initial.o: error_handling.o global_variables.o output.o scan.o stellarator.o
@@ -228,15 +240,17 @@ output.o:
 pfcoil.o: error_handling.o global_variables.o maths_library.o output.o sctfcoil.o
 physics.o: current_drive.o error_handling.o global_variables.o impurity_radiation.o \
   maths_library.o numerics.o output.o plasma_profiles.o
-plant_power.o: fwbs.o global_variables.o output.o
+plant_power.o: error_handling.o global_variables.o output.o
 plasma_geometry.o: global_variables.o
 plasma_profiles.o: error_handling.o global_variables.o maths_library.o
 process.o: availability.o buildings.o constraint_equations.o costs.o current_drive.o \
-  divertor.o error_handling.o evaluators.o fwbs.o global_variables.o ife.o \
+  divertor.o error_handling.o evaluators.o global_variables.o ife.o \
   impurity_radiation.o input.o machine_build.o numerics.o output.o pfcoil.o physics.o \
   plant_power.o pulse.o rfp.o scan.o sctfcoil.o startup.o stellarator.o structure.o \
   tfcoil.o vacuum.o
 pulse.o: error_handling.o global_variables.o maths_library.o output.o physics.o
+refprop.o:
+refprop_interface.o: error_handling.o refprop.o
 rfp.o: current_drive.o input.o global_variables.o machine_build.o output.o pfcoil.o \
   plasma_profiles.o physics.o
 safety.o: global_variables.o output.o
@@ -244,8 +258,10 @@ scan.o: error_handling.o global_variables.o numerics.o output.o
 sctfcoil.o: error_handling.o global_variables.o maths_library.o output.o
 startup.o: global_variables.o maths_library.o output.o physics.o
 stellarator.o: availability.o buildings.o costs.o current_drive.o divertor.o error_handling.o \
-  fwbs.o global_variables.o maths_library.o numerics.o output.o physics.o plant_power.o \
+  stellarator_fwbs.o global_variables.o maths_library.o numerics.o output.o physics.o plant_power.o \
   plasma_geometry.o plasma_profiles.o scan.o sctfcoil.o structure.o vacuum.o
+stellarator_fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o refprop_interface.o \
+  maths_library.o
 structure.o: global_variables.o output.o
 tfcoil.o: error_handling.o global_variables.o machine_build.o output.o sctfcoil.o
 vacuum.o: error_handling.o global_variables.o output.o
@@ -266,6 +282,8 @@ clean:
 	rm -f process.exe *.o *.mod
 	rm -f root.dir
 	rm -f *~
+	rm -f utilities/process_io_lib/process_dicts.py
+	rm -f utilities/processgui/dicts/gui_dicts.py
 
 cleandoc:
 	rm -f autodoc
@@ -279,7 +297,7 @@ cleandoc:
 otherfiles = Makefile setrootdir vardes.html \
              *.tex *.eps process.pdf \
              autodoc.f90 adheader.src adfooter.src \
-             impuritydata/* \
+             impuritydata/* fluids/* \
              utilities/*.py utilities/*.conf utilities/*.json \
              utilities/process_io_lib/*.py utilities/process_io_lib/*.json \
              utilities/processgui/*

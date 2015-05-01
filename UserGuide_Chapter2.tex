@@ -17,9 +17,7 @@ also incorporate the option to maximise or minimise a given \textit{figure of
 
 \section{Equation Solvers}
 
-\process\ contains two non-linear equation solver packages, which reflect the
-two major modes of operation available. Each of these has its own uses, as is
-now discussed.
+\process\ contains a constrained non-linear optimiser, and a constrained non-linear equation solver, which reflect the two modes of operation available. Each of these has its own uses, as is now discussed.
 
 \subsection{Non-optimisation mode}
 
@@ -136,7 +134,7 @@ evaluated using a finite difference approximation, the second derivatives are
 estimated using a variant of the Broyden-Fletcher-Goldfarb-Shanno update (see
 Section~\ref{sec:BFGS}).
 
-The convergence criterium of the solver as well as the detailed interpretation
+The convergence criterion of the solver as well as the detailed interpretation
 of the various error codes are explained in Section~\ref{sec:vmcon}. A flow
 diagram of \process\/ in optimisation mode is shown in Figure
 \ref{fig:flow_vmcon}.
@@ -152,11 +150,13 @@ diagram of \process\/ in optimisation mode is shown in Figure
 
 \put(50.0,197.0){\makebox(0,0){initialise variables}}
 \put(50.0,185.0){\makebox(0,0){input from file}}
-\put(50.0,173.0){\makebox(0,0){define free parameters}}
-\put(50.0,161.0){\makebox(0,0){define rules}}
-\put(50.0,155.0){\makebox(0,0){to be obeyed}}
-\put(50.0,143.0){\makebox(0,0){define performance}}
-\put(50.0,137.0){\makebox(0,0){requirements}}
+\put(50.0,170.0){\makebox(0,0){define free parameters}}
+\put(50.0,164.5){\makebox(0,0){(iteration variables)}}
+\put(50.0,159.0){\makebox(0,0){and their bounds}}
+%\put(50.0,155.0){\makebox(0,0){define constraints}}
+%\put(50.0,155.0){\makebox(0,0){to be obeyed}}
+\put(50.0,137.0){\makebox(0,0){define constraints}}
+%\put(50.0,137.0){\makebox(0,0){requirements}}
 \put(50.0,125.0){\makebox(0,0){define figure-of-merit}}
 \put(50.0,107.0){\makebox(0,0){evaluate physics, engineering}}
 \put(50.0,101.0){\makebox(0,0){and cost functions}}
@@ -170,9 +170,9 @@ diagram of \process\/ in optimisation mode is shown in Figure
 
 \put(30.0,194.0){\framebox(40.0,6.0){}}
 \put(34.0,182.0){\framebox(32.0,6.0){}}
-\put(28.0,170.0){\framebox(44.0,6.0){}}
-\put(34.0,152.0){\framebox(32.0,12.0){}}
-\put(30.0,134.0){\framebox(40.0,12.0){}}
+\put(28.0,156.0){\framebox(44.0,17.0){}}
+%\put(34.0,152.0){\framebox(32.0,6.0){}}
+\put(30.0,134.0){\framebox(40.0,6.0){}}
 \put(28.0,122.0){\framebox(44.0,6.0){}}
 \put(22.0,98.0){\framebox(56.0,12.0){}}
 \put(22.0,80.0){\framebox(56.0,12.0){}}
@@ -199,7 +199,7 @@ diagram of \process\/ in optimisation mode is shown in Figure
 
 \put(50.0,194.0){\vector(0,-1){6.0}}
 \put(50.0,182.0){\vector(0,-1){6.0}}
-\put(50.0,170.0){\vector(0,-1){6.0}}
+%\put(50.0,163.0){\vector(0,-1){4.0}}
 \put(50.0,152.0){\vector(0,-1){6.0}}
 \put(50.0,134.0){\vector(0,-1){6.0}}
 \put(50.0,122.0){\vector(0,-1){12.0}}
@@ -232,18 +232,19 @@ diagram of \process\/ in optimisation mode is shown in Figure
     non-optimisation and optimisation modes. For a more detailed (and
     correct!) \vmcon\ flow diagram, please see Figure~\ref{fig:vmconflow}.}  }
 \end{figure}
+\clearpage
 
 \subsection{Scans}
 
 It is often useful to be able to scan through a range of values of a given
 parameter to see what effect this has on the machine as a whole.  Sensitivity
 studies of this kind can be achieved very easily using \process. Scans are
-carried out in optimisation mode, whereby the code performs initially a run
+carried out in optimisation mode, whereby the code initially performs a run
 using the parameters specified in the input file, and then a series of runs
 using the parameters produced at the end of the previous iteration. The value
 of the quantity being scanned is specified at every stage --- see
 Section~\ref{sec:scans}. This method ensures that a smooth variation in the
-machine parameters is achieved.
+machine parameters is achieved.  A tool to carry out scans in any number of parameters is under development.
 
 \section{The Variable Descriptor File}
 \label{sec:vardes}
@@ -254,9 +255,7 @@ code's variables, and contains the following information about each:
 \begin{itemize}
 \item name
 \item dimensions (of arrays)
-\item default value(s) of those variables that are not initially derived from
-  a combination of other values. The default values are mostly set in the
-  modules contained within source file \texttt{global\_variables.f90}.
+\item default value(s)  
 \item description, including physical units if relevant
 \item for switches/flags, the meanings of all allowed values
 \item iteration variable number, if relevant
@@ -273,19 +272,196 @@ value are calculated by the code from a combination of other parameters, and
 so it would be meaningless to initialise them.  Obviously, these variables
 cannot be changed using the input file.
 
-The variable descriptor file is generated from specially-formatted comment
-lines within the source code (see Section~\ref{sec:autodoc} for more
-details). Therefore, it is exceedingly important to keep these comment lines
-relevant and in sync with the variables they describe.
-
 \section{Input Parameters}
 \label{sec:inpars}
 
 Input parameters make up a large proportion of the variables listed in the
 variable descriptor file. They comprise all those variables that, once set in
-the initialisation routine or redefined in the input file, do not change
-throughout a \process\ run. In fact, only those variables defined as iteration
-variables (Section~\ref{sec:itvars}) can change during the course of a run.
+the input file (or set to a default value), do not change
+throughout a \process\ run. For example, the variable \texttt{fdeut} is input, and cannot change during a run, appearing in vardes.html as follows: \texttt{fdeut /0.5/ : deuterium fuel fraction}.
+
+\section{Iteration Variables}
+\label{sec:itvars}
+
+Variables that are adjusted by \process\ in order to satisfy the constraints and optimise the figure of merit are referred to as iteration variables. Successive
+calls are made to the physics and engineering routines, with slightly
+different values for the iteration variables on each call, and the equation
+solver determines the effect on the output due to these small changes to the
+input (see Figures~\ref{fig:flow_hybrd} and \ref{fig:flow_vmcon}). Tables~\ref{tab:itvars1} and~\ref{tab:itvars2} list the iteration variables available in \process.  Any one or more of these variables may be selected.
+
+Clearly, the equation solvers need at least as many variables to iterate as
+there are equations to solve, i.e.\ \texttt{nvar} $\geq$ \texttt{neqns}. If
+the run is a non-optimising case, then \texttt{neqns} variables are iterated
+--- the values of the remaining \texttt{(nvar-neqns)} variables are left
+alone. If the run is an optimising case, then all the active iteration
+variables are adjusted so as to find the minimum (or maximum) value of a
+parameter (the \textit{ figure of merit}) in the \texttt{nvar}-dimensional
+space of the problem.
+
+In optimisation mode, all the iteration variables are constrained to lie
+between lower and upper bounds.  For instance, the plasma electron density is,
+by default, confined to lie between the values $10^{19}$~m$^{-3}$ and
+$10^{21}$~m$^{-3}$. Of course, it can also be constrained to lie below the
+\textit{calculated}\/ density limit, if constraint equation 5 is activated and
+the f-value \texttt{fdene} (iteration variable no.\ 9) is bounded by the
+values 0 and 1.
+
+It is important to remember that iteration variables \textit{must never be
+initialised to zero}. The code will not be able to adjust the variable's value
+if this is done, and it will stop with an error message.
+
+For example, the major radius is available as an iteration variable, and appears in the variable description file as \texttt{rmajor /8.14/ : plasma major radius (m) (iteration variable 3)}. 
+If it is selected as an iteration variable, it will be adjusted by the code.  The value input by the user (or the default, if no value is specified), will be used as the starting value.
+
+% Tables summarising iteration variables
+
+\begin{table}[tbph]
+\footnotesize
+\begin{center}
+
+\begin{tabular}{||c|l|l|c|c|c||} \hline
+\texttt{ixc} &          &                                               & \texttt{icc} & lower        & upper       \\
+no. & variable name     & description                                   & eqn & bound        & bound       \\ \hline
+1   & \texttt{aspect}   & plasma aspect ratio                           &     & \texttt{1.100D0} & \texttt{10.00D0} \\
+2   & \texttt{bt}       & toroidal field on axis                        &     & \texttt{0.010D0} & \texttt{100.0D0} \\
+3   & \texttt{rmajor}   & plasma major radius                           &     & \texttt{0.100D0} & \texttt{10.00D0} \\
+4   & \texttt{te}       & electron temperature                          &     & \texttt{5.000D0} & \texttt{500.0D0} \\
+5   & \texttt{beta}     & plasma beta                                   &     & \texttt{0.001D0} & \texttt{1.000D0} \\
+6   & \texttt{dene}     & electron density                              &     & \texttt{1.00D19} & \texttt{1.00D21} \\
+7   & \texttt{rnbeam}   & hot beam density / electron density           &     & \texttt{1.00D-6} & \texttt{1.000D0} \\
+8   & \texttt{fbeta}    & f-value for $\epsilon.\beta_p$ limit equation & 6   & \texttt{0.001D0} & \texttt{1.000D0} \\
+9   & \texttt{fdene}    & f-value for density limit equation            & 5   & \texttt{0.001D0} & \texttt{1.000D0} \\
+10  & \texttt{hfact}    & confinement time $H$-factor                   &     & \texttt{0.100D0} & \texttt{3.000D0} \\
+11  & \texttt{pheat}    & heating power not used for current drive      &     & \texttt{0.001D0} & \texttt{1.000D3} \\
+12  & \texttt{oacdcp}   & overall current density in TF coil inboard leg&     & \texttt{1.000D5} & \texttt{1.500D8} \\
+13  & \texttt{tfcth}    & TF coil inboard leg thickness                 &     & \texttt{1.000D0} & \texttt{5.000D0} \\
+14  & \texttt{fwalld}   & f-value for wall load limit equation          & 8   & \texttt{0.001D0} & \texttt{1.000D0} \\
+15  & \texttt{fvs}      & f-value for volt second limit equation        & 12  & \texttt{0.001D0} & \texttt{1.000D0} \\
+16  & \texttt{ohcth}    & central solenoid thickness                    &     & \texttt{0.001D0} & \texttt{1.000D2} \\
+17  & \texttt{tdwell}   & dwell time                                    &     & \texttt{0.100D0} & \texttt{1.000D8} \\
+18  & \texttt{q}        & edge safety factor                            &     & \texttt{2.000D0} & \texttt{100.0D0} \\
+19  & \texttt{enbeam}   & neutral beam energy                           &     & \texttt{1.000D0} & \texttt{1.000D6} \\
+20  & \texttt{tcpav}    & average (resistive) TF coil temperature       &     & \texttt{40.00D0} & \texttt{1.000D3} \\
+21  & \texttt{ftburn}   & f-value for burn time limit equation          & 13  & \texttt{0.001D0} & \texttt{1.000D0} \\
+22  & \texttt{tbrnmn}   & minimum burn time                             &     & \texttt{0.001D0} & \texttt{1.000D6} \\
+23  & \texttt{fcoolcp}  & coolant fraction of resistive TF coil         &     & \texttt{0.100D0} & \texttt{0.500D0} \\
+24  & \texttt{cdtfleg}  & TF coil leg overall current density           &     & \texttt{1.000D4} & \texttt{1.000D8} \\
+25  & \texttt{fpnetel}  & f-value for net electric power limit equation & 16  & \texttt{0.001D0} & \texttt{1.000D0} \\
+26  & \texttt{ffuspow}  & f-value for fusion power limit equation       & 9   & \texttt{0.001D0} & \texttt{1.000D0} \\
+27  & \texttt{fhldiv}   & f-value for divertor heat load limit equation & 18  & \texttt{0.001D0} & \texttt{1.000D0} \\
+28  & \texttt{fradpwr}  & f-value for radiation power limit equation    & 17  & \texttt{0.001D0} & \texttt{1.000D0} \\
+29  & \texttt{bore}     & machine bore                                  &     & \texttt{0.100D0} & \texttt{10.00D0} \\
+30  & \texttt{fmva}     & f-value for MVA limit equation                & 19  & \texttt{0.010D0} & \texttt{1.000D0} \\
+31  & \texttt{gapomin}  & minimum gap between outboard vacuum vessel and TF coil &     & \texttt{0.001D0} & \texttt{10.00D0} \\
+32  & \texttt{frminor}  & f-value for minor radius limit equation       & 21  & \texttt{0.001D0} & \texttt{1.000D0} \\
+33  & \texttt{fportsz}  & f-value for beam tangency radius limit equation & 20  & \texttt{0.001D0} & \texttt{1.000D0} \\
+34  & \texttt{fdivcol}  & f-value for divertor collisionality limit equation & 22  & \texttt{0.001D0} & \texttt{1.000D0} \\
+35  & \texttt{fpeakb}   & f-value for peak toroidal field limit equation & 25  & \texttt{0.001D0} & \texttt{1.000D0} \\
+36  & \texttt{fbetatry} & f-value for beta limit equation               & 24  & \texttt{0.001D0} & \texttt{1.000D0} \\
+37  & \texttt{coheof}   & central solenoid current density at end of flat-top &     & \texttt{1.000D5} & \texttt{1.000D8} \\
+38  & \texttt{fjohc}    & f-value for central solenoid current at EOF limit equation & 26  & \texttt{0.010D0} & \texttt{1.000D0} \\
+39  & \texttt{fjohc0}   & f-value for central solenoid current at BOP limit equation & 27  & \texttt{0.001D0} & \texttt{1.000D0} \\
+40  & \texttt{fgamcd}   & f-value for current drive gamma limit equation & 37  & \texttt{0.001D0} & \texttt{1.000D0} \\
+41  & \texttt{fcohbop}  & central solenoid current density ratio BOP/EOF &     & \texttt{0.001D0} & \texttt{1.000D0} \\
+42  & \texttt{gapoh}    & gap between central solenoid and TF coil      &     & \texttt{0.001D0} & \texttt{10.00D0} \\
+43  & \texttt{cfe0}     & seeded high-Z impurity fraction               &     & \texttt{1.00D-6} & \texttt{3.00D-3} \\
+44  & \texttt{fvsbrnni} & fraction of plasma current produced by non-inductive means &     & \texttt{0.001D0} & \texttt{1.000D0} \\
+45  & \texttt{fqval}    & f-value for fusion gain limit equation        & 28  & \texttt{0.001D0} & \texttt{1.000D0} \\
+46  & \texttt{fpinj}    & f-value for injection power limit equation    & 30  & \texttt{0.001D0} & \texttt{1.000D0} \\
+47  & \texttt{feffcd}   & current drive efficiency multiplier           &     & \texttt{0.001D0} & \texttt{1.000D0} \\
+48  & \texttt{fstrcase} & f-value for TF coil case stress limit equation & 31  & \texttt{0.001D0} & \texttt{1.000D0} \\
+49  & \texttt{fstrcond} & f-value for TF coil conduit stress limit equation & 32  & \texttt{0.001D0} & \texttt{1.000D0} \\
+50  & \texttt{fiooic}   & f-value for TF coil operational current limit equation & 33  & \texttt{0.001D0} & \texttt{1.000D0} \\
+51  & \texttt{fvdump}   & f-value for TF coil dump voltage limit equation         & 34  & \texttt{0.001D0} & \texttt{1.000D0} \\
+52  & \texttt{vdalw}    & allowable TF coil dump voltage                          &     & \texttt{0.001D0} & \texttt{1.000D6} \\
+53  & \texttt{fjprot}   & f-value for TF coil current protection limit equation   & 35  & \texttt{0.001D0} & \texttt{1.000D0} \\
+54  & \texttt{ftmargtf} & f-value for TF coil temperature margin limit equation   & 36  & \texttt{0.001D0} & \texttt{1.000D0} \\
+55  & \texttt{tmargmin} & minimum allowable TF/CS coil temperature margin          &     & \texttt{0.001D0} & \texttt{100.0D0} \\
+\hline
+\end{tabular}
+\end{center}
+\caption[List of iteration variables 1 to 55]
+{\label{tab:itvars1}
+  \textit{Iteration variables 1 to 55 present in \process. The f-values correspond to the
+    given constraint equations (see Table~\ref{tab:eqns}). The other iteration
+    variables are shown in Table~\ref{tab:itvars2}.}
+}
+\end{table}
+\clearpage
+\normalsize
+
+\begin{table}[tbph]
+\footnotesize
+\begin{center}
+
+\begin{tabular}{||c|l|l|c|c|c||} \hline
+\texttt{ixc} &           &                                                         & \texttt{icc} & lower        & upper       \\
+no. & variable name     & description                                             & eqn & bound        & bound       \\ \hline
+56  & \texttt{tdmptf}   & dump time for TF coil                                   &     & \texttt{10.00D0} & \texttt{1.000D6} \\
+57  & \texttt{thkcas}   & TF coil external case thickness                         &     & \texttt{0.050D0} & \texttt{1.000D0} \\
+58  & \texttt{thwcndut} & TF coil conduit case thickness                          &     & \texttt{0.001D0} & \texttt{1.000D0} \\
+59  & \texttt{fcutfsu}  & copper fraction of cable conductor                      &     & \texttt{0.001D0} & \texttt{1.000D0} \\
+60  & \texttt{cpttf}    & current per turn in the TF coils                        &     & \texttt{0.001D0} & \texttt{4.000D4} \\
+61  & \texttt{gapds}    & gap between vacuum vessel and inboard TF coil           &     & \texttt{0.001D0} & \texttt{10.00D0} \\
+62  & \texttt{fdtmp}    & f-value for 1st wall coolant temperature rise limit equation & 38  & \texttt{0.001D0} & \texttt{1.000D0} \\
+63  & \texttt{ftpeak}   & f-value for 1st wall peak temperature limit equation    & 39  & \texttt{0.001D0} & \texttt{1.000D0} \\
+64  & \texttt{fauxmn}   & f-value for minimum auxiliary power limit equation      & 40  & \texttt{0.001D0} & \texttt{1.000D0} \\
+65  & \texttt{tohs}     & central solenoid current ramp-up time                   &     & \texttt{0.100D0} & \texttt{1.000D3} \\
+66  & \texttt{ftohs}    & f-value for central solenoid current ramp-up time limit equation & 41  & \texttt{0.001D0} & \texttt{1.000D0} \\
+67  & \texttt{ftcycl}   & f-value for minimum cycle time limit equation           & 42  & \texttt{0.001D0} & \texttt{1.000D0} \\
+68  & \texttt{fptemp}   & f-value for maximum centrepost temperature limit equation & 44  & \texttt{0.001D0} & \texttt{1.000D0} \\
+69  & \texttt{rcool}    & average radius of centrepost coolant channel            &     & \texttt{0.001D0} & \texttt{0.010D0} \\
+70  & \texttt{vcool}    & maximum centrepost coolant flow speed at midplane       &     & \texttt{1.000D0} & \texttt{1.000D2} \\
+71  & \texttt{fq}       & f-value for minimum edge safety factor limit equation   & 45  & \texttt{0.001D0} & \texttt{1.000D0} \\
+72  & \texttt{fipir}    & f-value for maximum $I_p/I_{rod}$ limit equation         & 46  & \texttt{0.001D0} & \texttt{1.000D0} \\
+73  & \texttt{scrapli}  & inboard gap between plasma and first wall               &     & \texttt{0.001D0} & \texttt{10.00D0} \\
+74  & \texttt{scraplo}  & outboard gap between plasma and first wall              &     & \texttt{0.001D0} & \texttt{10.00D0} \\
+75  & \texttt{tfootfi}  & ratio of TF coil outboard/inboard leg thickness         &     & \texttt{0.200D0} & \texttt{5.000D0} \\
+76  & \texttt{frfptf}   & f-value for TF coil toroidal thickness limit equation   & 47  & \texttt{0.001D0} & \texttt{1.000D0} \\
+77  & \texttt{tftort}   & TF coil toroidal thickness (use for RFPs only)          &     & \texttt{0.050D0} & \texttt{4.000D0} \\
+78  & \texttt{rfpth}    & RFP pinch parameter, $\Theta$                           &     & \texttt{0.010D0} & \texttt{1.800D0} \\
+79  & \texttt{fbetap}   & f-value for poloidal beta limit equation                & 48  & \texttt{0.001D0} & \texttt{1.000D0} \\
+80  & \texttt{frfpf}    & f-value for RFP reversal parameter limit equation       & 49  & \texttt{0.001D0} & \texttt{1.000D0} \\
+81  & \texttt{edrive}   & IFE driver energy                                       &     & \texttt{1.000D5} & \texttt{5.000D7} \\
+82  & \texttt{drveff}   & IFE driver wall plug to target efficiency               &     & \texttt{0.010D0} & \texttt{1.000D0} \\
+83  & \texttt{tgain}    & IFE target gain                                         &     & \texttt{1.000D0} & \texttt{500.0D0} \\
+84  & \texttt{chrad}    & radius of IFE chamber                                   &     & \texttt{0.100D0} & \texttt{20.00D0} \\
+85  & \texttt{pdrive}   & IFE driver power reaching target                        &     & \texttt{1.000D6} & \texttt{2.000D8} \\
+86  & \texttt{frrmax}   & f-value for maximum IFE repetition rate equation        & 50  & \texttt{0.001D0} & \texttt{1.000D0} \\
+87  & \texttt{helecmw}  & electrical power required for hydrogen production       &     & \texttt{1.000D0} & \texttt{4.000D3} \\
+88  & \texttt{hthermmw} & thermal power required for hydrogen production          &     & \texttt{1.000D0} & \texttt{4.000D3} \\
+89  & \texttt{ftbr}     & f-value for tritium breeding ratio limit equation       & 52  & \texttt{0.001D0} & \texttt{1.000D0} \\
+90  & \texttt{blbuith}  & inboard blanket breeding unit thickness                 &     & \texttt{0.001D0} & \texttt{2.000D0} \\
+91  & \texttt{blbuoth}  & outboard blanket breeding unit thickness                &     & \texttt{0.001D0} & \texttt{2.000D0} \\
+92  & \texttt{fflutf}   & f-value for fast neutron fluence on TF coil equation    & 53  & \texttt{0.001D0} & \texttt{1.000D0} \\
+93  & \texttt{shldith}  & inboard shield thickness                                &     & \texttt{0.001D0} & \texttt{10.00D0} \\
+94  & \texttt{shldoth}  & outboard shield thickness                               &     & \texttt{0.001D0} & \texttt{10.00D0} \\
+95  & \texttt{fptfnuc}  & f-value for TF coil nuclear heating limit equation      & 54  & \texttt{0.001D0} & \texttt{1.000D0} \\
+96  & \texttt{fvvhe}    & f-value for vessel He concentration limit equation      & 55  & \texttt{0.001D0} & \texttt{1.000D0} \\
+97  & \texttt{fpsepr}   & f-value for $P_{\mbox{\scriptsize separatrix}}/R_{\mbox{\scriptsize major}}$ limit equation & 56
+  & \texttt{0.001D0} & \texttt{1.000D0} \\
+98  & \texttt{li6enrich}& lithium-6 enrichment percentage (\texttt{blktmodel=1})  &     & \texttt{0.001D0} & \texttt{100.0D0} \\
+99  & \texttt{}         & (OBSOLETE)                                              & 57  & \texttt{0.001D0} & \texttt{1.000D0} \\
+100 & \texttt{}         & (OBSOLETE)                                              & 58  & \texttt{0.001D0} & \texttt{1.000D0} \\
+101 & \texttt{prp}      & ratio of TF coil radial plate area to winding pack area &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
+102 & \texttt{fimpvar}  & impurity fraction of element \texttt{impvar}            &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
+103 & \texttt{flhthresh}& f-value for L-H power threshold limit equation          & 15  & \texttt{1.000D0} & \texttt{1.000D6} \\
+104 & \texttt{fcwr}     & f-value for conducting shell radius limit equation      & 23  & \texttt{0.001D0} & \texttt{1.000D0} \\
+105 & \texttt{fnbshinef}& f-value for NBI shine-through fraction limit equation   & 59  & \texttt{0.001D0} & \texttt{1.000D0} \\
+106 & \texttt{ftmargoh} & f-value for CS coil temperature margin limit equation   & 60  & \texttt{0.001D0} & \texttt{1.000D0} \\
+107 & \texttt{favail}   & f-value for minimum availability limit equation         & 61  & \texttt{0.001D0} & \texttt{1.000D0} \\
+\hline
+\end{tabular}
+\end{center}
+\caption[List of iteration variables 56 onwards]
+{\label{tab:itvars2}
+  \textit{Iteration variables 56 onwards. The f-values correspond to the
+    given constraint equations (see Table~\ref{tab:eqns}). The other iteration
+    variables are shown in Table~\ref{tab:itvars1}.}
+}
+\end{table}
+\clearpage
+\normalsize
 
 \section{Constraint Equations}
 \label{sec:constraints}
@@ -304,7 +480,7 @@ equation numbers in the first \texttt{neqns} elements of array \texttt{icc}.
 
 \subsection{Consistency equations}
 
-Consistency equations are usually \textit{equalities}\/ that ensure that the
+Consistency equations are \textit{equalities}\/ that ensure that the
 machine produced by \process\ is self-consistent. This means, therefore, that
 many of these constraint equations should \textit{always}\/ be used, namely
 equations~1, 2, 10 and 11 (see Table~\ref{tab:eqns}).  Equation~7 should also
@@ -322,8 +498,9 @@ given in the form shown, since they adjust the iteration variables so as to
 obtain $c_i = 0$, thereby ensuring that $g = h$.
 
 \subsection{Limit equations}
+\label{subsec:limit}
 
-The limit equations are usually \textit{inequalities}\/ that ensure that
+The limit equations are \textit{inequalities}\/ that ensure that
 various physics or engineering limits are not exceeded. Each of these
 equations has an associated \textit{f-value}, which allow them to be
 \textit{coded}\ as equalities. The f-values are used as follows.
@@ -352,11 +529,11 @@ By fixing the f-value (i.e.\ not including it in the \texttt{ixc} array), the
 limit equations can be used as equality constraints. For example, to set the
 net electric power to a certain value, the following should be carried out:
 \begin{enumerate}
-\item Activate constraint equation 16 by including it in the first
+\item Activate constraint 16 (net electric power lower limit) by including it in the first
   \texttt{neqns} elements of array \texttt{icc}
-\item Set \texttt{fpnetel = 1.0D0}
-\item Ensure that \texttt{fpnetel} (iteration variable no.\ 25) \textit{DOES
-    NOT}\/ appear in array \texttt{ixc}
+\item Set the corresponding f-value \texttt{fpnetel = 1.0D0}
+\item Ensure that \texttt{fpnetel} (iteration variable no.\ 25) \textit{IS
+    NOT}\/ selected as an iteration variable.
 \item Set \texttt{pnetelin} to the required net electric power.
 \end{enumerate}
 
@@ -402,7 +579,6 @@ equations.
 % XXX include test results from new version.
 
 % XXX Comment on reduction of iteration variables and NVAR $>$ NEQNS. 
-
 
 
 % Table summarising constraint equations
@@ -479,6 +655,7 @@ J_{\mbox{\scriptsize protection}}$ upper limit (SCTF)                   & L    &
 }
 \normalsize
 \end{table}
+\clearpage
 
 \begin{table}[tbph]
 \footnotesize
@@ -497,12 +674,13 @@ no. & description                                               & type & \texttt
 58  & (OBSOLETE) TF coil outer leg radial thickness lower limit (SCTF)     & L    & \textbf{100},13 \\
 59  & Neutral beam shine-through fraction upper limit (NBI)     & L    & \textbf{105},6,19,4 \\
 60  & Central solenoid temperature margin lower limit (SCTF)    & L    & \textbf{106}, \\
+61  & Minimum availability value limit                          & L    & \textbf{107}, \\
 \hline
 \end{tabular}
 \end{center}
 \caption[List of constraint equations 51 onwards]
 {\label{tab:eqns2}
-  \textit{Summary of constraint equations 51--60 present in \process. Consistency
+  \textit{Summary of constraint equations 51 onwards. Consistency
     equations are marked C, limit equations are marked L\@. Some
     (non-exhaustive) iteration variable numbers (see Tables~\ref{tab:itvars1}
     and~\ref{tab:itvars2}) that directly affect the associated constraint
@@ -510,192 +688,6 @@ no. & description                                               & type & \texttt
 }
 \normalsize
 \end{table}
-
-\section{Iteration Variables}
-\label{sec:itvars}
-
-It is necessary to calculate numerical derivatives during the solution of the
-constraint equations. The iteration variables are the parameters that the
-equation solvers use for this purpose --- all the other code variables (input
-parameters --- see above) remain fixed at their initial value. Successive
-calls are made to the physics and engineering routines, with slightly
-different values for the iteration variables on each call, and the equation
-solver determines the effect on the output due to these small changes to the
-input (see Figures~\ref{fig:flow_hybrd} and \ref{fig:flow_vmcon}). The
-\texttt{nvar} iteration variables that the user chooses for a given run are
-activated by including the variable numbers in the first \texttt{nvar}
-elements of array \texttt{ixc}. Tables~\ref{tab:itvars1} and~\ref{tab:itvars2}
-list the iteration variables available in \process.
-
-Clearly, the equation solvers need at least as many variables to iterate as
-there are equations to solve, i.e.\ \texttt{nvar} $\geq$ \texttt{neqns}. If
-the run is a non-optimising case, then \texttt{neqns} variables are iterated
---- the values of the remaining \texttt{(nvar-neqns)} variables are left
-alone. If the run is an optimising case, then all the active iteration
-variables are adjusted so as to find the minimum (or maximum) value of a
-parameter (the \textit{ figure of merit}) in the \texttt{nvar}-dimensional
-space of the problem.
-
-In optimisation mode, all the iteration variables are constrained to lie
-between lower and upper bounds, stored in arrays \texttt{boundl} and
-\texttt{boundu}, respectively. For instance, the plasma electron density is,
-by default, confined to lie between the values $10^{19}$~m$^{-3}$ and
-$10^{21}$~m$^{-3}$. Of course, it can also be constrained to lie below the
-\textit{calculated}\/ density limit, if constraint equation 5 is activated and
-the f-value \texttt{fdene} (iteration variable no.\ 9) is bounded by the
-values 0 and 1.
-
-It is important to remember that iteration variables \textit{must never be
-initialised to zero}. The code will not be able to adjust the variable's value
-if this is done, and it will stop with an error message.
-
-% Tables summarising iteration variables
-
-\begin{table}[tbph]
-\footnotesize
-\begin{center}
-
-\begin{tabular}{||c|l|l|c|c|c||} \hline
-\texttt{ixc} &          &                                               & \texttt{icc} & lower        & upper       \\
-no. & variable name     & description                                   & eqn & bound        & bound       \\ \hline
-1   & \texttt{aspect}   & plasma aspect ratio                           &     & \texttt{1.100D0} & \texttt{10.00D0} \\
-2   & \texttt{bt}       & toroidal field on axis                        &     & \texttt{0.010D0} & \texttt{100.0D0} \\
-3   & \texttt{rmajor}   & plasma major radius                           &     & \texttt{0.100D0} & \texttt{10.00D0} \\
-4   & \texttt{te}       & electron temperature                          &     & \texttt{5.000D0} & \texttt{500.0D0} \\
-5   & \texttt{beta}     & plasma beta                                   &     & \texttt{0.001D0} & \texttt{1.000D0} \\
-6   & \texttt{dene}     & electron density                              &     & \texttt{1.00D19} & \texttt{1.00D21} \\
-7   & \texttt{rnbeam}   & hot beam density / electron density           &     & \texttt{1.00D-6} & \texttt{1.000D0} \\
-8   & \texttt{fbeta}    & f-value for $\epsilon.\beta_p$ limit equation & 6   & \texttt{0.001D0} & \texttt{1.000D0} \\
-9   & \texttt{fdene}    & f-value for density limit equation            & 5   & \texttt{0.001D0} & \texttt{1.000D0} \\
-10  & \texttt{hfact}    & confinement time $H$-factor                   &     & \texttt{0.100D0} & \texttt{3.000D0} \\
-11  & \texttt{pheat}    & heating power not used for current drive      &     & \texttt{0.001D0} & \texttt{1.000D3} \\
-12  & \texttt{oacdcp}   & overall current density in TF coil inboard leg&     & \texttt{1.000D5} & \texttt{1.500D8} \\
-13  & \texttt{tfcth}    & TF coil inboard leg thickness                 &     & \texttt{1.000D0} & \texttt{5.000D0} \\
-14  & \texttt{fwalld}   & f-value for wall load limit equation          & 8   & \texttt{0.001D0} & \texttt{1.000D0} \\
-15  & \texttt{fvs}      & f-value for volt second limit equation        & 12  & \texttt{0.001D0} & \texttt{1.000D0} \\
-16  & \texttt{ohcth}    & central solenoid thickness                    &     & \texttt{0.001D0} & \texttt{1.000D2} \\
-17  & \texttt{tdwell}   & dwell time                                    &     & \texttt{0.100D0} & \texttt{1.000D8} \\
-18  & \texttt{q}        & edge safety factor                            &     & \texttt{2.000D0} & \texttt{100.0D0} \\
-19  & \texttt{enbeam}   & neutral beam energy                           &     & \texttt{1.000D0} & \texttt{1.000D6} \\
-20  & \texttt{tcpav}    & average (resistive) TF coil temperature       &     & \texttt{40.00D0} & \texttt{1.000D3} \\
-21  & \texttt{ftburn}   & f-value for burn time limit equation          & 13  & \texttt{0.001D0} & \texttt{1.000D0} \\
-22  & \texttt{tbrnmn}   & minimum burn time                             &     & \texttt{0.001D0} & \texttt{1.000D6} \\
-23  & \texttt{fcoolcp}  & coolant fraction of resistive TF coil         &     & \texttt{0.100D0} & \texttt{0.500D0} \\
-24  & \texttt{cdtfleg}  & TF coil leg overall current density           &     & \texttt{1.000D4} & \texttt{1.000D8} \\
-25  & \texttt{fpnetel}  & f-value for net electric power limit equation & 16  & \texttt{0.001D0} & \texttt{1.000D0} \\
-26  & \texttt{ffuspow}  & f-value for fusion power limit equation       & 9   & \texttt{0.001D0} & \texttt{1.000D0} \\
-27  & \texttt{fhldiv}   & f-value for divertor heat load limit equation & 18  & \texttt{0.001D0} & \texttt{1.000D0} \\
-28  & \texttt{fradpwr}  & f-value for radiation power limit equation    & 17  & \texttt{0.001D0} & \texttt{1.000D0} \\
-29  & \texttt{bore}     & machine bore                                  &     & \texttt{0.100D0} & \texttt{10.00D0} \\
-30  & \texttt{fmva}     & f-value for MVA limit equation                & 19  & \texttt{0.010D0} & \texttt{1.000D0} \\
-31  & \texttt{gapomin}  & minimum gap between outboard vacuum vessel and TF coil &     & \texttt{0.001D0} & \texttt{10.00D0} \\
-32  & \texttt{frminor}  & f-value for minor radius limit equation       & 21  & \texttt{0.001D0} & \texttt{1.000D0} \\
-33  & \texttt{fportsz}  & f-value for beam tangency radius limit equation & 20  & \texttt{0.001D0} & \texttt{1.000D0} \\
-34  & \texttt{fdivcol}  & f-value for divertor collisionality limit equation & 22  & \texttt{0.001D0} & \texttt{1.000D0} \\
-35  & \texttt{fpeakb}   & f-value for peak toroidal field limit equation & 25  & \texttt{0.001D0} & \texttt{1.000D0} \\
-36  & \texttt{fbetatry} & f-value for beta limit equation               & 24  & \texttt{0.001D0} & \texttt{1.000D0} \\
-37  & \texttt{coheof}   & central solenoid current density at end of flat-top &     & \texttt{1.000D5} & \texttt{1.000D8} \\
-38  & \texttt{fjohc}    & f-value for central solenoid current at EOF limit equation & 26  & \texttt{0.010D0} & \texttt{1.000D0} \\
-39  & \texttt{fjohc0}   & f-value for central solenoid current at BOP limit equation & 27  & \texttt{0.001D0} & \texttt{1.000D0} \\
-40  & \texttt{fgamcd}   & f-value for current drive gamma limit equation & 37  & \texttt{0.001D0} & \texttt{1.000D0} \\
-41  & \texttt{fcohbop}  & central solenoid current density ratio BOP/EOF &     & \texttt{0.001D0} & \texttt{1.000D0} \\
-42  & \texttt{gapoh}    & gap between central solenoid and TF coil      &     & \texttt{0.001D0} & \texttt{10.00D0} \\
-43  & \texttt{cfe0}     & seeded high-Z impurity fraction               &     & \texttt{1.00D-6} & \texttt{3.00D-3} \\
-44  & \texttt{fvsbrnni} & fraction of plasma current produced by non-inductive means &     & \texttt{0.001D0} & \texttt{1.000D0} \\
-45  & \texttt{fqval}    & f-value for fusion gain limit equation        & 28  & \texttt{0.001D0} & \texttt{1.000D0} \\
-46  & \texttt{fpinj}    & f-value for injection power limit equation    & 30  & \texttt{0.001D0} & \texttt{1.000D0} \\
-47  & \texttt{feffcd}   & current drive efficiency multiplier           &     & \texttt{0.001D0} & \texttt{1.000D0} \\
-48  & \texttt{fstrcase} & f-value for TF coil case stress limit equation & 31  & \texttt{0.001D0} & \texttt{1.000D0} \\
-49  & \texttt{fstrcond} & f-value for TF coil conduit stress limit equation & 32  & \texttt{0.001D0} & \texttt{1.000D0} \\
-50  & \texttt{fiooic}   & f-value for TF coil operational current limit equation & 33  & \texttt{0.001D0} & \texttt{1.000D0} \\
-51  & \texttt{fvdump}   & f-value for TF coil dump voltage limit equation         & 34  & \texttt{0.001D0} & \texttt{1.000D0} \\
-52  & \texttt{vdalw}    & allowable TF coil dump voltage                          &     & \texttt{0.001D0} & \texttt{1.000D6} \\
-53  & \texttt{fjprot}   & f-value for TF coil current protection limit equation   & 35  & \texttt{0.001D0} & \texttt{1.000D0} \\
-54  & \texttt{ftmargtf} & f-value for TF coil temperature margin limit equation   & 36  & \texttt{0.001D0} & \texttt{1.000D0} \\
-55  & \texttt{tmargmin} & minimum allowable TF/CS coil temperature margin          &     & \texttt{0.001D0} & \texttt{100.0D0} \\
-\hline
-\end{tabular}
-\end{center}
-\caption[List of iteration variables 1 to 55]
-{\label{tab:itvars1}
-  \textit{Iteration variables 1 to 55 present in \process. The f-values correspond to the
-    given constraint equations (see Table~\ref{tab:eqns}). The other iteration
-    variables are shown in Table~\ref{tab:itvars2}.}
-}
-\end{table}
-\normalsize
-
-\begin{table}[tbph]
-\footnotesize
-\begin{center}
-
-\begin{tabular}{||c|l|l|c|c|c||} \hline
-\texttt{ixc} &           &                                                         & \texttt{icc} & lower        & upper       \\
-no. & variable name     & description                                             & eqn & bound        & bound       \\ \hline
-56  & \texttt{tdmptf}   & dump time for TF coil                                   &     & \texttt{10.00D0} & \texttt{1.000D6} \\
-57  & \texttt{thkcas}   & TF coil external case thickness                         &     & \texttt{0.050D0} & \texttt{1.000D0} \\
-58  & \texttt{thwcndut} & TF coil conduit case thickness                          &     & \texttt{0.001D0} & \texttt{1.000D0} \\
-59  & \texttt{fcutfsu}  & copper fraction of cable conductor                      &     & \texttt{0.001D0} & \texttt{1.000D0} \\
-60  & \texttt{cpttf}    & current per turn in the TF coils                        &     & \texttt{0.001D0} & \texttt{4.000D4} \\
-61  & \texttt{gapds}    & gap between vacuum vessel and inboard TF coil           &     & \texttt{0.001D0} & \texttt{10.00D0} \\
-62  & \texttt{fdtmp}    & f-value for 1st wall coolant temperature rise limit equation & 38  & \texttt{0.001D0} & \texttt{1.000D0} \\
-63  & \texttt{ftpeak}   & f-value for 1st wall peak temperature limit equation    & 39  & \texttt{0.001D0} & \texttt{1.000D0} \\
-64  & \texttt{fauxmn}   & f-value for minimum auxiliary power limit equation      & 40  & \texttt{0.001D0} & \texttt{1.000D0} \\
-65  & \texttt{tohs}     & central solenoid current ramp-up time                   &     & \texttt{0.100D0} & \texttt{1.000D3} \\
-66  & \texttt{ftohs}    & f-value for central solenoid current ramp-up time limit equation & 41  & \texttt{0.001D0} & \texttt{1.000D0} \\
-67  & \texttt{ftcycl}   & f-value for minimum cycle time limit equation           & 42  & \texttt{0.001D0} & \texttt{1.000D0} \\
-68  & \texttt{fptemp}   & f-value for maximum centrepost temperature limit equation & 44  & \texttt{0.001D0} & \texttt{1.000D0} \\
-69  & \texttt{rcool}    & average radius of centrepost coolant channel            &     & \texttt{0.001D0} & \texttt{0.010D0} \\
-70  & \texttt{vcool}    & maximum centrepost coolant flow speed at midplane       &     & \texttt{1.000D0} & \texttt{1.000D2} \\
-71  & \texttt{fq}       & f-value for minimum edge safety factor limit equation   & 45  & \texttt{0.001D0} & \texttt{1.000D0} \\
-72  & \texttt{fipir}    & f-value for maximum $I_p/I_{rod}$ limit equation         & 46  & \texttt{0.001D0} & \texttt{1.000D0} \\
-73  & \texttt{scrapli}  & inboard gap between plasma and first wall               &     & \texttt{0.001D0} & \texttt{10.00D0} \\
-74  & \texttt{scraplo}  & outboard gap between plasma and first wall              &     & \texttt{0.001D0} & \texttt{10.00D0} \\
-75  & \texttt{tfootfi}  & ratio of TF coil outboard/inboard leg thickness         &     & \texttt{0.200D0} & \texttt{5.000D0} \\
-76  & \texttt{frfptf}   & f-value for TF coil toroidal thickness limit equation   & 47  & \texttt{0.001D0} & \texttt{1.000D0} \\
-77  & \texttt{tftort}   & TF coil toroidal thickness (use for RFPs only)          &     & \texttt{0.050D0} & \texttt{4.000D0} \\
-78  & \texttt{rfpth}    & RFP pinch parameter, $\Theta$                           &     & \texttt{0.010D0} & \texttt{1.800D0} \\
-79  & \texttt{fbetap}   & f-value for poloidal beta limit equation                & 48  & \texttt{0.001D0} & \texttt{1.000D0} \\
-80  & \texttt{frfpf}    & f-value for RFP reversal parameter limit equation       & 49  & \texttt{0.001D0} & \texttt{1.000D0} \\
-81  & \texttt{edrive}   & IFE driver energy                                       &     & \texttt{1.000D5} & \texttt{5.000D7} \\
-82  & \texttt{drveff}   & IFE driver wall plug to target efficiency               &     & \texttt{0.010D0} & \texttt{1.000D0} \\
-83  & \texttt{tgain}    & IFE target gain                                         &     & \texttt{1.000D0} & \texttt{500.0D0} \\
-84  & \texttt{chrad}    & radius of IFE chamber                                   &     & \texttt{0.100D0} & \texttt{20.00D0} \\
-85  & \texttt{pdrive}   & IFE driver power reaching target                        &     & \texttt{1.000D6} & \texttt{2.000D8} \\
-86  & \texttt{frrmax}   & f-value for maximum IFE repetition rate equation        & 50  & \texttt{0.001D0} & \texttt{1.000D0} \\
-87  & \texttt{helecmw}  & electrical power required for hydrogen production       &     & \texttt{1.000D0} & \texttt{4.000D3} \\
-88  & \texttt{hthermmw} & thermal power required for hydrogen production          &     & \texttt{1.000D0} & \texttt{4.000D3} \\
-89  & \texttt{ftbr}     & f-value for tritium breeding ratio limit equation       & 52  & \texttt{0.001D0} & \texttt{1.000D0} \\
-90  & \texttt{blbuith}  & inboard blanket breeding unit thickness                 &     & \texttt{0.001D0} & \texttt{2.000D0} \\
-91  & \texttt{blbuoth}  & outboard blanket breeding unit thickness                &     & \texttt{0.001D0} & \texttt{2.000D0} \\
-92  & \texttt{fflutf}   & f-value for fast neutron fluence on TF coil equation    & 53  & \texttt{0.001D0} & \texttt{1.000D0} \\
-93  & \texttt{shldith}  & inboard shield thickness                                &     & \texttt{0.001D0} & \texttt{10.00D0} \\
-94  & \texttt{shldoth}  & outboard shield thickness                               &     & \texttt{0.001D0} & \texttt{10.00D0} \\
-95  & \texttt{fptfnuc}  & f-value for TF coil nuclear heating limit equation      & 54  & \texttt{0.001D0} & \texttt{1.000D0} \\
-96  & \texttt{fvvhe}    & f-value for vessel He concentration limit equation      & 55  & \texttt{0.001D0} & \texttt{1.000D0} \\
-97  & \texttt{fpsepr}   & f-value for $P_{\mbox{\scriptsize separatrix}}/R_{\mbox{\scriptsize major}}$ limit equation & 56
-  & \texttt{0.001D0} & \texttt{1.000D0} \\
-98  & \texttt{li6enrich}& lithium-6 enrichment percentage (\texttt{blktmodel=1})  &     & \texttt{0.001D0} & \texttt{100.0D0} \\
-99  & \texttt{ftftort}  & (OBSOLETE) f-value for TF coil toroidal thickness lower limit eqn  & 57  & \texttt{0.001D0} & \texttt{1.000D0} \\
-100 & \texttt{ftfthko}  & (OBSOLETE) f-value for TF coil radial thickness lower limit eqn    & 58  & \texttt{0.001D0} & \texttt{1.000D0} \\
-101 & \texttt{prp}      & ratio of TF coil radial plate area to winding pack area &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
-102 & \texttt{fimpvar}  & impurity fraction of element \texttt{impvar}            &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
-103 & \texttt{flhthresh}& f-value for L-H power threshold limit equation          & 15  & \texttt{1.000D0} & \texttt{1.000D6} \\
-104 & \texttt{fcwr}     & f-value for conducting shell radius limit equation      & 23  & \texttt{0.001D0} & \texttt{1.000D0} \\
-105 & \texttt{fnbshinef}& f-value for NBI shine-through fraction limit equation   & 59  & \texttt{0.001D0} & \texttt{1.000D0} \\
-106 & \texttt{ftmargoh} & f-value for CS coil temperature margin limit equation   & 60  & \texttt{0.001D0} & \texttt{1.000D0} \\
-\hline
-\end{tabular}
-\end{center}
-\caption[List of iteration variables 56 to 106]
-{\label{tab:itvars2}
-  \textit{Iteration variables 56 to 106 present in \process. The f-values correspond to the
-    given constraint equations (see Table~\ref{tab:eqns}). The other iteration
-    variables are shown in Table~\ref{tab:itvars1}.}
-}
-\end{table}
-\normalsize
-
 
 \section{Figures of Merit}
 \label{sec:foms}
@@ -711,13 +703,15 @@ a maximised figure of merit is desired, \texttt{minmax} should be negative.
 
 % Table summarising figures of merit
 
-\begin{table}[tbph]
+\begin{table}[h!]
+%[tbph]
 \begin{center}
 
 \begin{tabular}{||c|l||} \hline
 \texttt{minmax} & description \\ \hline
 $\pm 1 $        & plasma major radius \\
-$\pm 2 $        & ratio of fusion power to input power \\
+%$\pm 2 $        & ratio of fusion power to input power \\
+$\pm 2 $        & not used \\
 $\pm 3 $        & neutron wall load \\
 $\pm 4 $        & total TF coil + PF coil power \\
 $\pm 5 $        & ratio of fusion power to injection power \\
@@ -765,9 +759,7 @@ of the output quantities in a separate output file called \plotdat, which can
 be read by the utility program \texttt{plot\_sweep} to produce graphical
 output (see Chapter~\ref{chap:utilities}).
 
-Scanning of derived quantities requires use of the appropriate constraint
-equations. For instance, if the net electric power is scanned, constraint
-equation~16 should be employed.
+It is also possible to scan a derived quantity that is not set directly by the user. For instance, one can scan the net electric power by constraining it to a specified value using the technique described in Section~\ref{subsec:limit}.  The required net electric power, \texttt{pnetelin}, is then used as the scanning variable.
 
 For obvious reasons, the active scanning variable must not also be an active
 iteration variable.
@@ -818,156 +810,3 @@ $30$ & \texttt{fimpvar}    & impurity fraction of element \texttt{impvar} \\
   \textit{Summary of the scanning variables available in \process.}
 }
 \end{table}
-
-\section{Code Structure}
-
-The structure of the majority of the code reflects to a certain extent the
-layout of the machine being modelled. As stated above, a large proportion of
-the code is simply a description of the underlying physics and engineering
-issues in terms of numerous expressions and relationships. In effect these
-define the machine so that the numerical solver within the code can then get
-to work adjusting the parameters in its search for a self-consistent solution.
-
-It is essential for a program of the size and complexity of \process\ to be
-modular to a high degree, in order to simplify the tasks of understanding and
-maintaining the code. The use of Fortran~90/95 modules provides a natural and
-convenient way for this to be done. The following sections describe briefly
-the modules into which \process\ is divided.
-
-\subsection{Numerics modules}
-\label{sec:numerics_modules}
-
-These modules contain the equation solvers, their calling routines and other
-relevant procedures. Various mathematical routines from a number of standard
-libraries are also incorporated into these files. Table~\ref{tab:numerics}
-summarises the numerics source file contents.
-
-% Table summarising numerics modules in PROCESS
-\begin{table}[tbph]
-\footnotesize
-\begin{center}
-\begin{tabular}{||l||l||} \hline
-source file   & description \\ \hline
-\texttt{caller.f90} & calls physics, engineering, building and cost routines \\
-\texttt{constraint\_equations.f90} & defines the constraint equations \\
-\texttt{evaluators.f90} & function evaluators for HYBRD and \vmcon\ packages \\
-\texttt{iteration\_variables.f90} & adjusts values of iteration variables \\
-\texttt{maths\_library.f90} & miscellaneous `black-box' maths routines,
-including HYBRD and \vmcon \\
-\texttt{numerics.f90} & numerics array definitions, and calling routines for
-HYBRD and \vmcon\ packages \\
-\texttt{scan.f90} & performs a parameter scan \\
-\hline
-\end{tabular}
-\end{center}
-\caption[Summary of numerics modules]
-{\label{tab:numerics}
-  \textit{Summary of the numerics modules in \process.}
-}
-\end{table}
-
-\subsection{Physics modules}
-
-These modules contain the main physics routines that evaluate the plasma and
-fusion parameters. Also included here are the routines describing the current
-drive and divertor systems. Table~\ref{tab:physics} summarises the physics
-source file contents.
-
-% Table summarising physics modules in PROCESS
-\begin{table}[tbph]
-\begin{center}
-
-\begin{tabular}{||l||l||} \hline
-source file   & description \\ \hline
-\texttt{current\_drive.f90} & current drive efficiency calculations \\
-\texttt{divertor.f90} & divertor model calculations\\
-\texttt{fispact.f90} & nuclide inventory/activation calculations \\
-\texttt{ife.f90} & inertial fusion energy physics/engineering \\
-\texttt{impurity\_radiation.f90} & radiation power calculations \\
-\texttt{physics.f90} & tokamak plasma and fusion calculations \\
-\texttt{plasma\_geometry.f90} & plasma geometry algorithms \\
-\texttt{plasma\_profiles.f90} & plasma density and temperature profile calculations \\
-\texttt{rfp.f90} & reversed field pinch physics/engineering \\
-\texttt{startup.f90} & plasma start-up auxiliary power requirements \\
-\texttt{stellarator.f90 } & stellarator-relevant physics/engineering \\
-\hline
-\end{tabular}
-\end{center}
-\caption[Summary of physics modules]
-{\label{tab:physics}
-  \textit{Summary of the physics modules in \process.}
-}
-\end{table}
-
-\subsection{Engineering modules}
-
-These modules contain the description of the machine geometry and its major
-systems, including the PF and TF coil sets, the first wall, blanket and
-shield, and other items such as the buildings, vacuum system, power conversion
-and the structural components.  Table~\ref{tab:engineering} summarises the
-engineering source file contents.
-
-% Table summarising engineering modules in PROCESS
-\begin{table}[tbph]
-\begin{center}
-
-\begin{tabular}{||l||l||} \hline
-source file     & description \\ \hline
-\texttt{availability.f90} & plant component lifetimes and overall availability \\
-\texttt{buildings.f90} & buildings calculations \\
-\texttt{fwbs.f90} & first wall, blanket and shield calculations \\
-\texttt{machine\_build.f90} & machine build calculations \\
-\texttt{pfcoil.f90} & PF coil calculations \\
-\texttt{plant\_power.f90} & heat transport and power balance calculations \\
-\texttt{pulse.f90} & pulsed power plant calculations \\
-\texttt{safety.f90} & steady-state temperatures after a LOCA event \\
-\texttt{sctfcoil.f90} & superconducting TF coil calculations \\
-\texttt{structure.f90} & support structure calculations \\
-\texttt{tfcoil.f90} & resistive TF coil calculations \\
-\texttt{vacuum.f90} & vacuum system calculations \\
-\hline
-\end{tabular}
-\end{center}
-\caption[Summary of engineering modules]
-{\label{tab:engineering}
-  \textit{Summary of the engineering modules in \process.}
-}
-\end{table}
-
-\subsection{Costing module}
-
-The costing module, \texttt{costs.f90}, performs all the cost calculations,
-including values in M\$ for each machine system, and the cost of electricity
-in m\$/kWh. Normally, the machine costs are written to the output file; if
-this is not required set switch \texttt{output\_costs = 0}.
-
-\subsection{Other modules}
-
-These modules perform miscellaneous tasks, such as initialisation of variables
-and file input / output. File \texttt{process.f90} contains the main program,
-and includes the overall controlling loop.
-
-Table~\ref{tab:other_modules} summarises these modules.
-
-% Table summarising miscellaneous modules in PROCESS
-\begin{table}[tbph]
-\begin{center}
-
-\begin{tabular}{||l||l||} \hline
-source file     & description \\ \hline
-\texttt{error\_handling.f90} & centralised error handling module \\
-\texttt{fson\_library.f90} & library used to read in data from JSON-format files \\
-\texttt{global\_variables.f90} & defines and initialises most shared variables \\
-\texttt{initial.f90} & checks self-consistency of input variables and switches \\
-\texttt{input.f90} & reads in user-defined settings from input file \\
-\texttt{output.f90} & utility routines to format output to file \\
-\texttt{process.f90} & main program and top-level calling routines \\
-\hline
-\end{tabular}
-\end{center}
-\caption[Summary of other modules]
-{\label{tab:other_modules}
-  \textit{Summary of the remaining modules in \process.}
-}
-\end{table}
-

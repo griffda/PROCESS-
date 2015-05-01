@@ -1,0 +1,41 @@
+# PROCESS release notes for Git tag 389
+
+# 30/04/15
+#===============================
+
+- Last develop release before master release r390
+- Includes new powerflow
+- Includes new power balance
+- Includes new CCFE HCPB blanket model
+- Stellarator costs issues fixed
+- RK made some changes to User guide chapter 6, output_data.py and plot_proc.py
+- Removed Makefile_Old and Makefile_New
+
+# GitLab Issue Changes
+#=====================
+
+- Power balance output and tburn consistency (#16)
+- First wall thick pipe formula (#174)
+- Refactor fwbs subroutine (#179)
+- Nuclear heating in armour, first wall, blanket, and coils in HCPB (#180)
+- Make changes to cad_output.py to work with PROCESS-CAD catia script (#216)
+- mfile.data['ifail'].get_scan(-1) (#218)
+- plot_proc.py - minor issue  (#220)
+- Ripple error warning (#221)
+- MFILE - minor issue  (#222)
+- in_dat.py - Minor Issue (#223)
+- New New fit for peak field at TF coil (#224)
+- update to python libraries (#225)
+- Ripple should be output (#227)
+- display_uncertainties.py - update (#228)
+- rcoil does not exist (#230)
+- raise input limits for rmajor and bore - minor change (#231)
+- TF coil power (#243)
+- Scaling to prevent negative net electric (#245)
+- Output of "Internal tburn consistency check" (#246)
+- Balance of plant recirculating power (#246)
+- Neutral beam power balance: tidy up (#248)
+- User Guide (#250)
+- Erosion allowance (#253)
+- SECONDARY_CYCLE lies outside its allowed range (#259)
+- Allowed default bounds larger than allowed input values (#265)

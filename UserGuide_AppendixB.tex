@@ -1,121 +1,121 @@
-\myappendix{Non-optimisation Input File}
-\label{app:infile1}
+\myappendix{The Input File}
+\label{app:infile}
 
-The following is a typical input file used to run \process\ in
-non-optimisation mode. Comments in [\ldots] have been added to the right of
-each line.
+The input file \indat\ is used to change the values of the physics,
+engineering and other code parameters from their default values, and to set up
+the numerics (constraint equations, iteration variables etc.) required to
+define the problem to be solved.  The user interface writes the input file, so it is not necessary to edit it directly.
 
-\footnotesize
+\subsection{Tokamak, stellarator, RFP or IFE?}
+\label{sec:device}
+
+The default model is the tokamak.  To select a stellarator, reversed field pinch or inertial fusion energy plant, an additional input file is required, \texttt{device.dat}, which should contain a single character in the first
+line, which is interpreted as follows:
+\begin{tabbing}
+\hspace{15mm}\= \texttt{0} : use tokamak model \\
+\> \texttt{1} : use stellarator model \\
+\> \texttt{2} : use reversed field pinch model \\
+\> \texttt{3} : use inertial fusion energy model
+\end{tabbing}
+
+\subsection{File format}
+
+Variables can be specified in any order in the input file.  Comment lines start with a \texttt{*} character.  Data lines are of the form
 \begin{verbatim}
-* Numerics information                [Comment]
-
-NEQNS = 14,                           [Number of active constraint equations]
-NVAR = 14,                            [Number of active iteration variables]
-ICC =   1,  2, 10, 11, 7, 16, 24, 5, 31, 32, 33, 34, 35, 36,  [Constraint eqns]
-ixc =   5, 10, 12, 3,  7,  6, 36, 9, 48, 49, 50, 51, 53, 54,  [Iteration variables]
-IOPTIMZ = -1,                         [Turn off optimisation]
-ISWEEP=0                              [No scans (non-optimisation mode)]
-
-* F-values and limits
-
-FBETATRY = 1.0                        [N.B. active iteration variable 36]
-
-* Physics parameters
-
-ASPECT = 3.5,                         [Machine aspect ratio]
-BETA = 0.042,                         [N.B. active iteration variable 5]
-BT = 6.,                              [Toroidal field on axis]
-DENE = 1.5e20,                        [N.B. active iteration variable 6]
-FVSBRNNI = 1.0,                       [Non-inductive volt seconds fraction]
-DNBETA = 3.5,                         [Beta g coefficient]
-HFACT = 2.,                           [N.B. active iteration variable 10]
-ICURR = 4,                            [Use ITER current scaling]
-ISC = 6,                              [Use ITER 89-P confinement time scaling law]
-IINVQD = 1,                           [Use inverse quadrature]
-IITER = 1,                            [Use ITER fusion power calculations]
-ISHAPE = 0,                           [Use input values for KAPPA and TRIANG]
-KAPPA = 2.218,                        [Plasma elongation]
-Q = 3.0,                              [Edge safety factor]
-RMAJOR = 7.0,                         [N.B. active iteration variable 3]
-RNBEAM = 0.0002,                      [N.B. active iteration variable 7]
-TBURN = 227.9                         [Burn time]
-TE = 15.,                             [Electron temperature]
-TRIANG = 0.6                          [Plasma triangularity]
-
-* Current drive parameters
-
-IRFCD = 1,                            [Use current drive]
-IEFRF = 5                             [Use ITER neutral beam current drive]
-FEFFCD = 3.,                          [Artificially enhance efficiency]
-
-* Divertor parameters
-
-ANGINC=0.262,                         [Angle of incidence of field lines on plate]
-PRN1=0.285                            [Density ratio]
-
-* Machine build
-
-BORE = 0.12,                          [Machine bore]
-OHCTH = 0.1,                          [central solenoid thickness]
-GAPOH = 0.08,                         [Inboard gap]
-TFCTH = 0.9,                          [Inboard TF coil leg thickness]
-DDWI = 0.07,                          [Vacuum vessel thickness]
-SHLDITH = 0.69,                       [Inboard shield thickness]
-BLNKITH = 0.115,                      [Inboard blanket thickness]
-FWITH = 0.035,                        [Inboard first wall thickness]
-SCRAPLI = 0.14,                       [Inboard scrape-off layer thickness]
-SCRAPLO = 0.15,                       [Outboard scrape-off layer thickness]
-FWOTH = 0.035,                        [Outboard first wall thickness]
-BLNKOTH = 0.235,                      [Outboard blanket thickness]
-SHLDOTH = 1.05,                       [Outboard shield thickness]
-GAPOMIN = 0.21,                       [Outboard gap]
-VGAPTF = 0,                           [Vertical gap]
-
-* First wall, blanket, shield parameters
-
-LBLNKT=0                              [Use old blanket model]
-DENSTL=7800.                          [Steel density]
-
-* TF coil parameters
-
-OACDCP = 1.4e7,                       [N.B. active iteration variable 12]
-ITFSUP = 1,                           [Use superconducting TF coils]
-RIPMAX = 5.,                          [Maximum TF ripple]
-
-* PF coil parameters
-
-NGRP = 3,                             [Three groups of PF coils]
-IPFLOC = 1,2,3,                       [Locations for each group]
-NCLS = 2,2,2,1,                       [Number of coils in each group]
-COHEOF = 1.85e7,                      [central solenoid current at End Of Flat-top]
-FCOHBOP = 0.9,                        [central solenoid current at Begin. Of Pulse / COHEOF]
-ROUTR = 1.5,                          [Radial position for group 3]
-ZREF(3) = 2.5,                        [Z position for group 3]
-OHHGHF = .71                          [Height ratio central solenoid / TF coil]
-
-* Vacuum system parameters
-
-NTYPE = 1                             [Use cryopump]
-
-* Heat transport parameters
-
-ETATH=0.35                            [Thermal to electric conversion efficiency]
-FMGDMW = 0.                           [Power to MGF units]
-BASEEL=5.e6                           [Base plant electric load]
-ISCENR=2                              [Energy store option]
-
-* Buildings
-
-FNDT = 2.                             [Foundation thickness]
-EFLOOR=1.d5                           [Effective total floor space]
-
-* Costs
-
-IREACTOR = 1,                         [Calculate cost of electricity]
-IFUELTYP = 0                          [Treat blanket, first wall etc as capital cost]
-UCHRS = 87.9,                         [Unit cost of heat rejection system]
-UCCPCL1 = 250,                        [Unit cost of high strength tapered copper]
-UCCPCLB = 150                         [Unit cost of TF outer leg plate coils]
+variable = value
 \end{verbatim}
+where \texttt{variable} is the name of one of the input parameters or
+iteration variables listed in the variable descriptor file, and \texttt{value}
+is the (usually numerical) initial value required for that variable. (Arrays,
+as opposed to scalar quantities, are treated differently --- see below.) All input data are screened for non-sensible values.
+
+The following rules must be obeyed when writing an input file:
+
+\begin{enumerate}
+
+\item Each variable must be on a separate line.
+
+\item Variable names can be upper case, lower case, or a mixture of both.
+
+\item Spaces may not appear within a variable name or data value.
+
+\item Other spaces within a line, and trailing spaces, are ignored.
+
+\item Commas are not necessary between variables (but see below).
+
+\item Data can extend over more than one line.
+
+\item One-dimensional arrays can be explicitly subscripted, or unscripted, in
+  which case the following element order is assumed: \texttt{A(1), A(2),
+    A(3),...}
+
+\item At present, multiple dimension arrays can only be handled without
+  reference to explicit subscripts, in which case the following element order
+  is assumed: \texttt{B(1,1), B(2,1), B(3,1),...} The use of the input file to
+  specify multiple dimension array elements is prone to error.
+
+\item Unscripted array elements must be separated by commas.
+
+\item Blank lines are allowed anywhere in the input file.
+
+\item Lines starting with a \texttt{*} are assumed to be comments.
+
+\item Comment lines starting with five or more asterisks (i.e.\
+  \texttt{*****}) are reproduced verbatim in the output file. This feature is not recommended, as these comments are likely to become out of date.  The user interface does not support this feature.
+
+\item In-line comments are \textit{usually}\/ ignored, but there can be
+  problems if one contains a comma (\texttt{,}). If this is the case, there
+  must also be a comma after the variable's value and before the comment.
+
+\end{enumerate}
+
+It is useful to divide the input file into sections, using suitable comment
+lines, to help the user keep related variables together.
+
+The following is a valid fragment of an input file (the vertical lines are
+simply to help show the column alignment):
+\begin{center}
+\begin{tabular}{||l}
+$\!\!$\texttt{* This line is a comment that will not appear in the output} \\
+$\!\!$\texttt{***** This line is a comment that will appear in the output} \\
+$\!\!$\texttt{boundl(1) = 2.5,} \\
+$\!\!$\texttt{BOUNDU(10) = 3.,} \\
+$\!\!$\texttt{BOUNDU(45) = 1,} \\
+$\!\!$\texttt{* Another comment... Note that real values can be entered as if} \\
+$\!\!$\texttt{* they were integers, and vice versa (but it's not recommended...)} \\
+$\!\!$\texttt{epsfcn = 10.e-4,} \\
+$\!\!$\texttt{Ftol = 1.D-4,} \\
+$\!\!$\texttt{* The next line sets the first five elements of array icc:} \\
+$\!\!$\texttt{ICC =   2, 10, 11, 24, 31} \\
+$\!\!$\texttt{* The next line sets the first ten elements of array ixc:} \\
+$\!\!$\texttt{ixc =   10, 12, 3, 36, 48,} \\
+$\!\!$\hspace{15mm}\texttt{1, 2, 6, 13, 16,} \\
+$\!\!$\texttt{IOPTIMZ = 1,} \\
+$\!\!$\texttt{maxcal = 200} \\
+$\!\!$\texttt{ nsweep = 7} \\
+$\!\!$\texttt{NEQNS = 5,    This is an in-line comment} \\
+$\!\!$\texttt{NVAR = 10,    Another, but successfully containing a comma!} \\
+\end{tabular}
+\end{center}
+
+The following are \textit{invalid}\/ entries in the input file
+(Q: Why?!):
+\begin{center}
+\begin{tabular}{||l}
+$\!\!$\texttt{boundl(1,1) = 2.5,} \\
+$\!\!$\texttt{BOUNDU(N) = 3.,} \\
+$\!\!$\texttt{A line of `random' characters like this will clearly wreak havoc} \\
+$\!\!$\texttt{eps fcn = 10.e-4, ftol = 1.D-4} \\
+$\!\!$\texttt{epsvmc = 1.0 e-4} \\
+$\!\!$\texttt{ICC =   2  10  11  24  31} \\
+$\!\!$\texttt{IOPTIMZ = 1.0,  This will in fact be okay - but is not recommended} \\
+$\!\!$\texttt{NEQNS = 5    An in-line comment on a line with only one comma (,) character} \\
+\end{tabular}
+\end{center}
+
+If the code encounters a problem reading the input file, it will stop immediately
+with a (hopefully) useful error message. It may be worth looking at the
+contents of the output file as well, to help narrow down on which line of the
+input file the problem might lie.
 \normalsize
 

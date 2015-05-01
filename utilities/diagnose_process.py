@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 """
 Code to produce several plots to aid the diagnosis of a PROCESS run.
 
@@ -25,7 +26,8 @@ from process_io_lib.diagnose_funcs import plot_normalised_ixc,\
     plot_normalised_icc_res
 from pylab import show
 
-if __name__ == '__main__' :
+
+if __name__ == '__main__':
 ############################################################
 #Usage
 
@@ -48,3 +50,4 @@ if __name__ == '__main__' :
     plot_normalised_icc_res(ARGS.mfile)
 
     show()
+

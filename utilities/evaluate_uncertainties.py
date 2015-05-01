@@ -27,9 +27,8 @@ Compatible with PROCESS version 368
 import argparse
 from process_io_lib.process_config import UncertaintiesConfig
 from process_io_lib.process_funcs import get_neqns_itervars,\
-    update_ixc_bounds, get_variable_range, check_input_error,\
-    process_stopped, no_unfeasible_mfile,\
-    vary_iteration_variables
+    get_variable_range, check_input_error, process_stopped, \
+    no_unfeasible_mfile, vary_iteration_variables
 
 if __name__ == '__main__':
 ############################################################
@@ -55,8 +54,6 @@ if __name__ == '__main__':
     CONFIG.setup()
 
     NEQNS, ITERVARS = get_neqns_itervars()
-
-    update_ixc_bounds()
 
     LBS, UBS = get_variable_range(ITERVARS, CONFIG.factor)
 

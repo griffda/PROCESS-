@@ -38,6 +38,8 @@ module current_drive_module
   use profiles_module
   use physics_variables
   use process_output
+  ! MDK
+  use heat_transport_variables
 
   implicit none
 
@@ -93,6 +95,7 @@ contains
     !+ad_hist  06/10/14 PJK Made feffcd usage consistent for all CD methods
     !+ad_hist  22/10/14 PJK Corrected forbitloss usage
     !+ad_hist  01/12/14 PJK Modified pinjmw output description
+    !+ad_hist  01/04/15 JM  Implemented MDK's changes to NB power requirements
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -107,7 +110,7 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: dene20,effnbss,effofss,effrfss,fpion, &
-         gamnb,gamof,gamrf,pnbitot
+         gamnb,gamof,gamrf, power1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -226,20 +229,25 @@ contains
           !  (gamma not calculated for ECCD)
 
        case (5,8)  !  NBCD
-
-          pnbeam = 1.0D-6 * faccd * plascur / effnbss + pheat
-          pinjimw = pnbeam * fpion
-          pinjemw = pnbeam * (1.0D0-fpion)
-
-          if (forbitloss /= 1.0D0) then  !  = 1.0 shouldn't occur...
-             pnbitot = pnbeam / (1.0D0-forbitloss)
-             porbitlossmw = forbitloss * pnbitot
-          else
-             pnbitot = 1.0D3 * pnbeam  !  ...but just in case
-             porbitlossmw = 0.999D0 * pnbitot
-          end if
-
+          ! MDK. See Gitlab issue #248, and scanned note.
+          power1 = 1.0D-6 * faccd * plascur / effnbss + pheat
+          ! Account for first orbit losses 
+          ! (power due to particles that are ionised but not thermalised) [MW]:
+          ! This includes a second order term in shinethrough*(first orbit loss)
+          forbitloss = min(0.999,forbitloss) ! Should never be needed
+          pnbitot = power1 / (1.0D0-forbitloss+forbitloss*nbshinef)
+          ! Shinethrough power (atoms that are not ionised) [MW]:
+          nbshinemw = pnbitot * nbshinef
+          ! First orbit loss
+          porbitlossmw = forbitloss * (pnbitot - nbshinemw)          
+          ! Power deposited
+          pinjmw = pnbitot - nbshinemw - porbitlossmw
+          pinjimw = pinjmw * fpion
+          pinjemw = pinjmw * (1.0D0-fpion)         
+          ! neutral beam wall plug power
           pwpnb = pnbitot/etanbi
+          ! MDK
+          pinjwp = pwpnb
           etacd = etanbi
 
           gamnb = effnbss * (dene20 * rmajor)
@@ -247,7 +255,9 @@ contains
 
           !  Neutral beam current (A)
 
-          cnbeam = 1.0D-3 * (pnbeam*1.0D6) / enbeam
+          !cnbeam = 1.0D-3 * (pnbeam*1.0D6) / enbeam
+          cnbeam = 1.0D-3 * (pnbitot*1.0D6) / enbeam
+          ! MDK end
 
        case (9)  !  OFCD
 
@@ -261,6 +271,11 @@ contains
           gamcd = gamof
 
        end select
+       
+       ! MDK Reset injected power to zero for ignited plasma (fudge)
+       if (ignite == 1) then
+           pinjwp = 0.0D0
+       end if
 
        !  Total injected power
 
@@ -350,25 +365,29 @@ contains
        call ovarre(outfile,'Lower hybrid wall plug power (MW)','(pwplh)',pwplh)
     end if
 
-    if (abs(pnbeam) > 1.0D-8) then
-       call ovarre(outfile,'Beam efficiency (A/W)','(effnbss)',effnbss)
-       call ovarre(outfile,'Beam gamma (10^20 A/W-m2)','(gamnb)',gamnb)
-       call ovarre(outfile,'Neutral beam injected power (MW)','(pnbeam)',pnbeam)
-       call ovarre(outfile,'Neutral beam wall plug efficiency','(etanbi)',etanbi)
-       call ovarre(outfile,'Neutral beam orbit loss power (MW)','(porbitlossmw)', &
-            porbitlossmw)
-       call ovarre(outfile,'Neutral beam wall plug power (MW)','(pwpnb)',pwpnb)
+    ! MDK rearranged and added nbshinemw       
+    !if (abs(pnbeam) > 1.0D-8) then
+    if ((iefrf == 5).or.(iefrf== 8)) then
        call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)
        call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam)
-       call ovarre(outfile,'Fraction of beam energy to ions','(fpion)',fpion)
-       call ovarre(outfile,'Neutral beam shine-through fraction','(nbshinef)',nbshinef)
+       call ovarre(outfile,'Beam efficiency (A/W)','(effnbss)',effnbss)
+       call ovarre(outfile,'Beam gamma (10^20 A/W-m2)','(gamnb)',gamnb)
+       call ovarre(outfile,'Neutral beam wall plug efficiency','(etanbi)',etanbi)
+       call ovarre(outfile,'Neutral beam wall plug power (MW)','(pwpnb)',pwpnb)
+       !  call ovarre(outfile,'Neutral beam injected power (MW)','(pnbeam)',pnbeam)
+       call ovarre(outfile,'Neutral beam power entering vacuum vessel (MW)','(pnbitot)',pnbitot)       
+       call ovarre(outfile,'Neutral beam first orbit loss power (MW)','(porbitlossmw)', &
+            porbitlossmw)
+       call ovarre(outfile,'Beam decay lengths to centre','(taubeam)',taubeam)
+       call ovarre(outfile,'Beam shine-through fraction','(nbshinef)',nbshinef)
+       call ovarre(outfile,'Beam shine-through power [MW]','(nbshinemw)',nbshinemw)
+       call ovarre(outfile,'Fraction of beam energy to ions','(fpion)',fpion)       
        call ovarre(outfile,'Beam duct shielding thickness (m)','(nbshield)',nbshield)
-       call ovarre(outfile,'R injection tangent / R-major','(frbeam)',frbeam)
+       call ovarre(outfile,'Beam tangency radius / Plasma major radius','(frbeam)',frbeam)
        call ovarre(outfile,'Beam centreline tangency radius (m)','(rtanbeam)', &
             rtanbeam)
        call ovarre(outfile,'Maximum possible tangency radius (m)','(rtanmax)', &
-            rtanmax)
-       call ovarre(outfile,'Beam decay lengths to centre','(taubeam)',taubeam)
+            rtanmax)          
     end if
 
     if (abs(echpwr) > 1.0D-8) then

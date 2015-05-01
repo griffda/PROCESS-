@@ -10,6 +10,7 @@
 \usepackage{hyperref}
 \usepackage{framed}
 
+
 \pretolerance=10000
 \topmargin=0mm
 \headheight=0mm
@@ -21,6 +22,8 @@
 \evensidemargin=-12mm
 \parskip=2mm
 \parindent=0mm
+
+
 
 \setcounter{secnumdepth}{3}
 \newcommand{\indat}{\mbox{\texttt{IN.DAT}}}
@@ -34,9 +37,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Add here the date of the latest change and the code revision number
 \newcommand{\version}{
-2015-01-05
+30 April 2015
 \hfill
-Revision: 380
+PROCESS version: r389
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -56,12 +59,13 @@ Revision: 380
 \begin{document}
 
 \footnotesize
-\hfill T\&M/PKNIGHT/PROCESS/MANUAL
+\hfill 
 
 \vspace*{4cm}
 \begin{center}
-\Huge A User Guide\\ to the \\ PROCESS Systems Code\\
+\Huge A User Guide\\ to the \\ PROCESS Fusion Reactor Systems Code\\
 ~\\ \LARGE P.\ J.\ Knight\\
+~\\ \LARGE M.\ D.\ Kovari\\
 ~\\ \Large Culham Centre for Fusion Energy\\
 Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 \end{center}
@@ -77,25 +81,7 @@ Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 
 \listoftables
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% To do list:
-%  (apart from bringing it in line with the F90 code, of course...)
-%  scaling law references into table
-%  IFE model; expand details about build, materials
-%  check and expand references
-%  show buildings calculations
-%  iavail usage
-%  tratio
-%  density limit refs
-%  check PF coil location
-%  add descriptions of other switches
-%  
-%  
-%  
-%  
-%  
-%  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \include{UserGuide_Chapter1}  %  Introduction
 \include{UserGuide_Chapter2}  %  Program Overview --- The Fundamental Concepts
@@ -108,6 +94,7 @@ Culham Science Centre, Abingdon, Oxon, OX14 3DB, UK
 \include{UserGuide_AppendixA} %  The Optimisation Solver Explained
 \include{UserGuide_AppendixB} %  Non-optimisation Input File
 \include{UserGuide_AppendixC} %  Optimisation Input File
-\include{UserGuide_AppendixD} %  Source Code Documentation
+\include{UserGuide_AppendixD} %  Non-optimisation Input File
+
 
 \end{document}

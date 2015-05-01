@@ -5,14 +5,18 @@ Author: Hanni Lux (Hanni.Lux@ccfe.ac.uk)
 
 Compatible with PROCESS version 368 """
 
-import os
 from os.path import join as pjoin
-
-from process_io_lib.process_dicts import (DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,
-    DICT_IXC_DEFAULT, NON_F_VALUES, IFAIL_SUCCESS, DICT_DEFAULT)
-from process_io_lib.in_dat import InDat, INVariable
+try:
+    from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,\
+    NON_F_VALUES, IFAIL_SUCCESS, DICT_DEFAULT, DICT_INPUT_BOUNDS
+except ImportError:
+    print("The Python dictionaries have not yet been created. Please run \
+'make dicts'!")
+    exit()
+from process_io_lib.in_dat import InDat
 from process_io_lib.mfile import MFile
 from numpy.random import uniform
+from time import sleep
 
 
 def get_neqns_itervars(wdir='.'):
@@ -25,7 +29,7 @@ def get_neqns_itervars(wdir='.'):
     in_dat = InDat(pjoin(wdir, "IN.DAT"))
 
     ixc_list = in_dat.data['ixc'].get_value
- 
+
     itervars = []
     for var in ixc_list:
         if var != '':
@@ -57,8 +61,6 @@ def update_ixc_bounds(wdir='.'):
             DICT_IXC_BOUNDS[name]['lb'] = float(value['l'])
         if 'u' in value:
             DICT_IXC_BOUNDS[name]['ub'] = float(value['u'])
-
-
 
 ###############################
 
@@ -92,13 +94,7 @@ def  get_variable_range(itervars, factor, wdir='.'):
 
         #for non-f-values we modify the range with the factor
         else:
-            #value set from IN.DAT
-            if varname in in_dat.data.keys():
-                value = in_dat.data[varname].get_value
-
-            #value set from defaults
-            else:
-                value = DICT_IXC_DEFAULT[varname]
+            value = get_from_indat_or_default(in_dat, varname)
 
             # to allow the factor to have some influence
             if value == 0.:
@@ -115,11 +111,58 @@ def  get_variable_range(itervars, factor, wdir='.'):
 
         if lbs[-1] > ubs[-1]:
             print('Error: Iteration variable {} has BOUNDL={.f} >\
- BOUNDU={.f}\n Update process_dicts or input file!'.format(varname, lbs[-1], ubs[-1]))
+ BOUNDU={.f}\n Update process_dicts or input file!'.format(varname, lbs[-1],
+                                                           ubs[-1]))
+
             exit()
         #assert lbs[-1] < ubs[-1]
 
     return lbs, ubs
+
+
+###############################
+
+def check_in_dat():
+
+    """ Tests IN.DAT during setup:
+    1)Are ixc bounds outside of allowed input ranges?  """
+
+    in_dat = InDat()
+
+    #Necessary for the correct use of this function as well as
+    #get_variable_range
+    update_ixc_bounds()
+
+    #1) Are ixc bounds outside of allowed input ranges?
+
+    ixc_list = in_dat.data['ixc'].get_value
+
+    for itervarno in ixc_list:
+        itervarname = DICT_IXC_SIMPLE[str(itervarno)]
+        lowerinputbound = DICT_INPUT_BOUNDS[itervarname]['lb']
+
+        if DICT_IXC_BOUNDS[itervarname]['lb'] < lowerinputbound:
+            print("Warning: boundl for ", itervarname,
+                  " lies out of allowed input range!\n Reset boundl(",
+                  itervarno, ") to ", lowerinputbound)
+            DICT_IXC_BOUNDS[itervarname]['lb'] = lowerinputbound
+            set_variable_in_indat(in_dat, "boundl("+str(itervarno)+")",
+                                  lowerinputbound)
+            sleep(1)
+
+        upperinputbound = DICT_INPUT_BOUNDS[itervarname]['ub']
+
+        if DICT_IXC_BOUNDS[itervarname]['ub'] > upperinputbound:
+            print("Warning: boundu for", itervarname,
+                  "lies out of allowed input range!\n Reset boundu({}) \
+to".format(itervarno), upperinputbound)
+            DICT_IXC_BOUNDS[itervarname]['ub'] = upperinputbound
+            set_variable_in_indat(in_dat, "boundu("+str(itervarno)+")",
+                                  upperinputbound)
+            sleep(1)
+
+    in_dat.write_in_dat(output_filename='IN.DAT')
+
 
 ###############################
 
@@ -129,7 +172,7 @@ def check_logfile(logfile='process.log'):
     Checks the log file of the PROCESS output.
     Stops, if an error occured that needs to be
     fixed before rerunning.
-    XXX should be deprecated!! XXX
+    XXX should be deprecated!! and replaced by check_input_error!
     """
 
     with open(logfile, 'r') as outlogfile:
@@ -165,8 +208,8 @@ def process_stopped(wdir='.'):
     Checks the process Mfile whether it has
     prematurely stopped.
     """
-
     m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
+
     error_status = m_file.data['error status'].get_scan(-1)
 
     if error_status >= 3:
@@ -202,7 +245,7 @@ def mfile_exists():
         m_file = open('MFILE.DAT', 'r')
         m_file.close()
         return True
-    
+
     except FileNotFoundError:
         return False
 
@@ -221,7 +264,7 @@ def no_unfeasible_mfile(wdir='.'):
     #no scans
     if not m_file.data['isweep'].exists:
 
-        if m_file.data['ifail'].get_scan(0) == IFAIL_SUCCESS:
+        if m_file.data['ifail'].get_scan(-1) == IFAIL_SUCCESS:
             return 0
         else:
             return 1
@@ -229,31 +272,14 @@ def no_unfeasible_mfile(wdir='.'):
     else:
 
         ifail = m_file.data['ifail'].get_scans()
-        try :
+        try:
             return len(ifail) - ifail.count(IFAIL_SUCCESS)
-        except TypeError as err:
+        except TypeError:
             # This seems to occur, if ifail is not in MFILE!
-            # This probably means in the mfile library a KeyError 
+            # This probably means in the mfile library a KeyError
             # should be raised not only a message to stdout!
-            return 100000 
+            return 100000
 
-############################################
-
-def no_unfeasible_outdat(wdir='.'):
-
-    """
-    returns the number of unfeasible points
-    in a scan in OUT.DAT
-    XXX Should be deprecated! XXX
-    """
-
-    no_unfeasible = 0
-    with open(pjoin(wdir, "OUT.DAT"), "r") as outdat_fh:
-        for line in outdat_fh:
-            if 'UNFEASIBLE' in line:
-                no_unfeasible += 1
-
-    return no_unfeasible
 
 
 ################################
@@ -276,8 +302,6 @@ def vary_iteration_variables(itervars, lbs, ubs):
 
         new_value = uniform(lbnd, ubnd)
         new_values += [new_value]
-
-        #in_dat.data[varname].add_parameter(varname, new_value)
         in_dat.add_parameter(varname, new_value)
 
     in_dat.write_in_dat(output_filename='IN.DAT')
@@ -303,28 +327,23 @@ def get_solution_from_mfile(neqns, nvars, wdir='.'):
 
     m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
 
-
-    if not m_file.data['isweep'].exists:
-        ind = 0  # only one run, no scan
-    else:
-        ind = -1 # last scan point
-
-    ifail = m_file.data['ifail'].get_scan(ind)
+    ifail = m_file.data['ifail'].get_scan(-1)
 
     #figure of merit objective function
-    objective_function = m_file.data['f'].get_scan(ind)
+    objective_function = m_file.data['f'].get_scan(-1)
 
     #estimate of the constraints
-    constraints = m_file.data['sqsumsq'].get_scan(ind)
+    constraints = m_file.data['sqsumsq'].get_scan(-1)
 
     table_sol = []
     for var_no in range(nvars):
-        table_sol.append(m_file.data['itvar{:03}'.format(var_no+1)].get_scan(ind))
+        table_sol.append(
+            m_file.data['itvar{:03}'.format(var_no+1)].get_scan(-1))
 
     table_res = []
     for con_no in range(neqns):
-       # table_res += [m_file.data['constr%03i'%(con_no+1)].get_scan(ind)]
-        table_res.append(m_file.data['normres{:03}'.format(con_no+1)].get_scan(ind))
+        table_res.append(
+            m_file.data['normres{:03}'.format(con_no+1)].get_scan(-1))
 
     if ifail != IFAIL_SUCCESS:
         return ifail, '0', '0', ['0']*nvars, ['0']*neqns
@@ -332,73 +351,6 @@ def get_solution_from_mfile(neqns, nvars, wdir='.'):
     return ifail, objective_function, constraints, table_sol, table_res
 
 
-
-#################################################
-def get_solution_from_outdat(neqns, nvars):
-
-    """
-    returns
-    ifail - error_value of VMCON/PROCESS
-    the objective functions
-    the square root of the sum of the squares of the constraints
-    a list of the final iteration variable values
-    a list of the final constraint residue values
-
-    If the run was a scan, the values of the last scan point
-    will be returned.
-    XXX should be deprecated XXX
-    """
-
-    flag_solution_vector = False
-    flag_constr_residue  = False
-    with open('OUT.DAT', 'r') as outdatfile:
-        for line in outdatfile:
-            if  "value       change" in line:
-                flag_solution_vector = True
-                flag_constr_residue  = False
-                cnt_sol = 0
-                table_sol     = []
-            elif "constraint residues should be" in line:
-                flag_solution_vector = False
-                flag_constr_residue  = True
-                cnt_res = 0
-                table_res     = []
-            elif "*******************" in line:
-                flag_solution_vector = False
-                flag_constr_residue  = False
-            elif flag_solution_vector and len(line) >= 10:
-                row = line.split()
-                assert int(row[0])-1 == cnt_sol
-                table_sol     += [row[2]] #final value
-                cnt_sol += 1
-            elif flag_constr_residue and len(line) >= 10:
-                row = line.split()
-
-                assert int(row[0])-1 == cnt_res
-                try:
-                    float(row[-2])
-                    table_res     += [row[-2]]
-                except ValueError:
-                    table_res     += [row[-1]]
-
-                cnt_res += 1
-            elif 'Figure of merit objective function' in line:
-                buf = line.split()
-                objective_function = buf[-1]
-            elif 'Estimate of the constraints' in line:
-                buf = line.split()
-                constraints = buf[-1]
-            elif 'ifail' in line:
-                buf = line.split()
-                ifail = int(buf[-1])
-            elif "and found a feasible set of parameters." in line:
-                ifail = IFAIL_SUCCESS
-
-
-    if ifail != IFAIL_SUCCESS:
-        return ifail, '0', '0', ['0']*nvars, ['0']*neqns
-
-    return ifail, objective_function, constraints, table_sol, table_res
 
 ############################################
 
@@ -419,8 +371,21 @@ def set_variable_in_indat(in_dat, varname, value):
         IN.DAT and creates it if necessary """
 
     varname = varname.lower()
-    #TODO check whether paramter or bound etc.
-    in_dat.add_parameter(varname, value)
+    if 'bound' in varname:
+        number = (varname.split('('))[1].split(')')[0]
+        if 'boundu' in varname:
+            in_dat.add_bound(number, 'u', value)
+        else:
+            in_dat.add_bound(number, 'l', value)
+    elif 'fimp' in varname and not varname == 'fimpvar':
+        number = (varname.split('('))[1].split(')')[0]
+        in_dat.change_fimp(number, value)
+    elif 'zref' in varname:
+        number = (varname.split('('))[1].split(')')[0]
+        in_dat.change_zref(number, value)
+    else:
+        in_dat.add_parameter(varname, value)
+
 
 
 

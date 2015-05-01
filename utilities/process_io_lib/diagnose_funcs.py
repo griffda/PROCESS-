@@ -34,6 +34,7 @@ def plot_normalised_ixc(mfilename='MFILE.DAT'):
         list_nitvar += [nitvar]
 
         label = m_file.data['nitvar{:03}'.format(i)].var_description
+
         list_labels += [label.replace('_(range_normalised)', '')]
 
     figure()
@@ -62,6 +63,7 @@ def plot_normalised_icc_res(mfilename='MFILE.DAT'):
         list_normres += [normres]
 
         label = m_file.data['normres{:03}'.format(i)].var_description
+
         list_labels += [label.replace('_normalised_residue', '')]
 
 

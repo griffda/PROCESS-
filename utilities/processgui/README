@@ -5,14 +5,21 @@ Tom Miller 09/14
 Currently the only way to access the GUI is by running the
 development server locally.
 
-The is a script 'rungui.sh' that should automate this. Just
-type './rungui.sh' and the GUI should start. There will be
+The is a script 'start_gui' that should automate this. Just
+type './start_gui' and the GUI should start. There will be
 a pause the first time while the server is started.
+
+*NOTE* If you are working on a Linux desktop machine and already have Firefox
+ open, trying 'start_gui' on a Fusion Unix Network machine will try to open a
+ PROCESS GUI session on the already-open Firefox running locally. This will
+ fail! You need to either close the local Firefox session completely, or open
+ manually a different browser (e.g. konqueror) and navigate to 127.0.0.1:8000
+ in the address bar.
 
 To launch the server manually:
 You need to add the django library to your PYTHONPATH. If you are working
 on the Fusion Unix Network, you can do this by running the line
-export PYTHONPATH=$PYTHONPATH:'/home/tmiller/django/Django-1.7/build/lib/'
+export PYTHONPATH=$PYTHONPATH:'/home/PROCESS/django/Django-1.7/build/lib/'
 
 then start the server by typing
 python manage.py runserver
@@ -20,7 +27,6 @@ in the top level directory of the project.
 
 The GUI should now be visible if you open a web browser (on the same
 machine only) and navigate to 127.0.0.1:8000
-
 
 --Using GUI--
 Currently you can upload two files. One file that is available for

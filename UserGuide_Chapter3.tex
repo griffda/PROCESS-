@@ -5,11 +5,14 @@ There are a great number of individual models within \process, characterising
 many different aspects of a fusion power plant. Several of these will always
 be used by the code and so require no input by the user to activate them.
 However, in many cases there is a choice of model available, and each of these
-has its own user-controlled switches or flags. This chapter summarises these
+has its own user-controlled switches or flags. This chapter summarises some of these
 models, and indicates their location and interaction within the code, together
 with the relevant switch settings and required parameter values. The concepts
 used (iteration variables, constraint equations, etc.), and instructions on
 how to set switches, etc., are explained fully in Chapter~\ref{chap:overview}.
+
+It is essential for the user to refer to the variable descriptor file,
+\texttt{vardes.html}, this contains details of all the parameters within the code that can be changed by the user, in order to customise the machine modelled by \process.
 
 \textbf{Disclaimer: Users are discouraged from using non-default or older
 models, as they are likely to be less well tested than the default models and
@@ -99,8 +102,7 @@ Section~\ref{sec:itvars}) to help in the optimisation process.
 
 \subsection{Plasma physics models}
 
-Arguably, the most important component of the machine is the plasma itself. By
-default, this is assumed to have an up-down asymmetric, single null
+By default, the plasma is assumed to have an up-down asymmetric, single null
 configuration (although this can be changed if desired --- see
 Section~\ref{sec:divertor}). A great number of physics models are coded within
 \process\ to describe the behaviour of the plasma parameters such as its
@@ -286,7 +288,7 @@ in~\cite{helios}:
 \end{equation}
 Subscripts $0$, $ped$ and $sep$, denote values at the centre ($\rho = 0$), the
 pedestal ($\rho = \rho_{ped}$) and the separatrix ($\rho=1$),
-respectively. The density and temperature peaking parameters $\alpha_n$ and
+respectively. The density and temperature peaking parameters $\alpha_n$ and a
 $\alpha_T$ as well as the second exponent $\beta_T$ (input parameter
 \texttt{tbeta}, not to be confused with the plasma beta) in the temperature
 profile can be chosen by the user, as can the pedestal heights and the values
@@ -323,7 +325,7 @@ with
 \end{equation}
 where $\Gamma$ is the gamma function.
 
-Note that both density and temperature can have different pedestal positions
+Note that density and temperature can have different pedestal positions
 $\rho_{ped,n}$ (\texttt{rhopedn}) and $\rho_{ped,T}$ (\texttt{rhopedt}) in
 agreement with simulations.
 
@@ -518,7 +520,7 @@ Many energy confinement time scaling laws are present within \process, for
 tokamaks, RFPs or stellarators. These are calculated in routine
 \texttt{PCOND}. The value of \texttt{isc} determines which of the scalings is
 used in the plasma energy balance calculation (Section~\ref{sec:corepower}).
-Table~\ref{tab:scaling_laws} summarises the available scaling laws.
+Table~\ref{tab:scaling_laws} summarises the available scaling laws.  The most commonly used is the so-called IPB98(y,2) scaling.
 
 % Table summarising confinement time scaling laws in PROCESS.
 \begin{table}[tbph]
@@ -598,10 +600,9 @@ drop in power transported by ions and electrons, leaving the confinement
 nearly unchanged.
 
 To allow for these uncertainties, three options are available, using the
-switch \texttt{iradloss}. In each case, the quantity \texttt{pscaling} is
-derived directly from the energy confinement scaling (see above;
-\texttt{pscaling} is $P_{\mbox{\scriptsize loss}}$ in
-Equation~\ref{eqn:ploss}).
+switch \texttt{iradloss}. In each case, the particle transport loss power $P_{\mbox{\scriptsize loss}}$ (Equation~\ref{eqn:ploss}), referred to in the code as \texttt{pscaling}, is
+derived directly from the energy confinement scaling law (see~\ref{sec:taue} and Figure~\ref{fig:radiation} above).
+
 \begin{description}
 
 \item{\texttt{iradloss = 0}:}  Total power lost is scaling power plus
@@ -628,19 +629,13 @@ pscaling = falpha*palppv + pchargepv + pohmpv + pinjmw/vol
 \subsubsection{Plasma core power balance}
 \label{sec:corepower}
 
-Figure~\ref{fig:powerflow1} shows schematically the flow of power within the
-plasma as calculated by the code. (Figures~\ref{fig:powerflow2} and
-\ref{fig:powerflow3} show the power transfer mechanisms for the remainder of
-the power plant.)
+Figure~\ref{fig:powerflow1} shows the flow of power as calculated by the code. (Figure~
+\ref{fig:powerflow3} shows an alternative view of the power transfer outside the reactor core.)
 
 \begin{figure}[tbph]
 \epsfig{file=powerflow1.eps,width=170mm}
 \caption[Power balance within the core plasma] {\label{fig:powerflow1}
-  \textit{Schematic diagram of the flow of power within the plasma core
-    (assuming switch \texttt{iradloss=1}). Variable names are given in
-    [\ldots]. Refer to Figure~\ref{fig:powerflow2} for the onward flow of
-    power from the five red-bordered boxes, while the source of the power in
-    the blue box is indicated in Figure~\ref{fig:powerflow3}.} }
+  \textit{Power flows} }
 \end{figure}
 
 The primary sources of power are the fusion reactions themselves, ohmic power
@@ -654,10 +649,7 @@ alpha power, any power carried by non-alpha charged particles, the ohmic power
 and any injected power, is converted into charged particle transport power
 ($P_{\mbox{\scriptsize loss}}$ in Equation~\ref{eqn:ploss}) plus core
 radiation power (see Section~\ref{sec:radiation}), as shown in
-Figure~\ref{fig:powerflow1}. (This assumes \texttt{iradloss=1} --- see
-Section~\ref{sec:iradloss}; other values for \texttt{iradloss} are equivalent
-to subtle differences in the positioning of the arrows leaving the core plasma
-power balance circle in Figure~\ref{fig:powerflow1}.)
+Figure~\ref{fig:powerflow1}. 
 
 The core power balance calculation is turned on using constraint equation
 no.\ 2 (which should therefore always be used).
@@ -752,7 +744,7 @@ Journal of Physics: \\
 
 \subsubsection*{Neo-classical correction effects}
 
-Switch \texttt{ires} controls whether neo-classical correction
+Switch \texttt{ires} controls whether neo-classical (trapped particle) 
 effects~\cite{Uckan} are included in the calculation of the plasma resistance
 and ohmic heating power in routine \texttt{POHM}, which is called by routine
 \texttt{PHYSICS}. If \texttt{ires = 1}, these effects are included. Note that
@@ -778,13 +770,10 @@ whether the inboard and outboard gaps should be calculated as 10\% of the
 plasma minor radius (\texttt{iscrp = 0}), or set equal to the input values
 \texttt{scrapli} and \texttt{scraplo} (\texttt{iscrp = 1}).
 
-\subsection{First wall}
+\subsection{Armour, first wall and breeding blanket}
+The surface facing the plasma is a thin layer of a material highly resistant to melting and erosion, such as tungsten, referred to "armour".  It is cooled by conduction to the first wall underneath.
 
-The first wall acts as a physical barrier protecting the rest of the machine
-from the hot plasma. Due to its hostile environment the first wall has only a
-short lifetime and therefore needs to be replaced regularly. Its stainless
-steel structure is cooled either by gaseous helium or by pressurised water, as
-chosen using switch \texttt{coolwh} -- see Section~\ref{sec:blanket_switches}.
+The first wall sits behind the armour, and is dedicated to removing the heat landing on the armour.  It does not breed tritium.  Due to the hostile environment the first wall and armour have only a short lifetime and therefore need to be replaced regularly. It is cooled either by gaseous helium or by pressurised liquid water, depending on the selection of blanket type using the switch \texttt{blkttype}  -- see Section~\ref{sec:blanket_switches}.
 
 \subsubsection*{Wall load calculation}
 
@@ -794,9 +783,7 @@ unit area) should be calculated using the plasma surface area (\texttt{iwalld
 the former case, input parameter \texttt{ffwal} (default value 0.92)
 can be used to scale the neutron power reaching the first wall.
 
-\subsection{Blanket}
-
-The blanket performs a number of tasks. An incoming neutron from a
+The breeding blanket performs a number of tasks. An incoming neutron from a
 deuterium-tritium (D-T) fusion reaction in the plasma loses energy in the
 blanket. This energy is removed by the blanket coolant and used to produce
 electricity. The neutron may also react with a lithium nucleus present in the
@@ -807,114 +794,20 @@ destruction and creation. The blanket therefore contains beryllium to fulfil
 this purpose. As with the first wall, the blanket has a relatively short
 lifetime because of the high neutron fluence.
 
-(In reality, the blanket comprises the first wall plus the so-called breeding
-zone behind it; in \process, the region described as the `blanket' is just the
-breeding zone.)
-
 \subsubsection{Blanket model options}
 \label{sec:blanket_switches}
 
-A number of switches may be used to choose between a range of models, as follows:
+The models used for the thermoydraulics of the first wall, the profile of deposition of the neutron energy, tritium breeding, and conversion of heat to electricity have been revised extensively.
 \begin{description}
 
-\item{\texttt{blktmodel}:} This switch determines whether a simple blanket
-  neutronics model or a more comprehensive treatment based on recent full
-  neutronics analyses for EFDA~\cite{efda_blanket_model} is used.
+\item{\texttt{iblanket}:} This switch selects between different types of blanket.
 
-  In the simple model (\texttt{blktmodel = 0}), the overall radial thicknesses
-  of the inboard and outboard blanket sections are specified via input
-  parameters \texttt{blnkith} and \texttt{blnkoth}, respectively. The energy
-  multiplication in the blanket (\texttt{emult}) is also an input
-  parameter. Steel and vanadium may be used as structural materials within the
-  blanket, which is cooled either by gaseous helium or by pressurised water
-  (see switch \texttt{blkttype} below). The nuclear heating of the TF coil
-  superconductor is calculated assuming an exponential neutron attenuation
-  through the blanket and shield materials, based on 1990 ITER data.
+In the CCFE HCPB (helium-cooled pebble bed) model (\texttt{iblanket = 1}), the energy deposition in the armour and first wall, blanket and shield are calculated using parametric fits to an MCNP neutron and photon transport model of a sector of a tokamak.  The blanket contains lithium orthosilicate Li$_4$SiO$_4$, titanium beryllide TiBe$_{12}$, helium and Eurofer steel.
 
-  The more advanced model (\texttt{blktmodel = 1}) allows the energy
-  multiplication factor \texttt{emult}, the shielding requirements and tritium
-  breeding ratio to be calculated self-consistently with the blanket and
-  shielding materials and sub-assembly thicknesses, and for constraints to be
-  applied to satisfy the engineering requirements. For further details of this
-  model, see Section~\ref{sec:blanket_neutronics}.
+The KIT HCPB model (\texttt{iblanket = 2}) allows the energy multiplication factor \texttt{emult}, the shielding requirements and tritium breeding ratio to be calculated self-consistently with the blanket and shielding materials and sub-assembly thicknesses, and for constraints to be applied to satisfy the engineering requirements. For further details of this model, see Section~\ref{sec:blanket_neutronics}.
 
-  Note that \texttt{blktmodel = 1} forces \texttt{blktcycle = 0} and
-  \texttt{blkttype = 3} (see below).
-
-\item{\texttt{blktcycle}:} This switch controls how the coolant pumping power
-  in the first wall and blanket is determined, and also how the calculation of
-  the plant's thermal to electric conversion efficiency (the secondary cycle
-  thermal efficiency) proceeds. See also Section~\ref{sec:powerflow}, which
-  describes the flow of power through the fusion power core.
-
-  If \texttt{blktcycle = 0}, a simplified model calculates the respective
-  powers deposited in the first wall, breeder zone, shield and divertor, and
-  calculates the coolant pumping powers for these systems from a user
-  specified fraction of the total heat deposited in the coolant. The thermal
-  efficiency of the secondary cycle is determined from the choice of blanket
-  type (see \texttt{blkttype} below) and is a fixed value for the each of the
-  three options (WCLL, HCLL, HCPB --- see Section~\ref{sec:etath}).
-
-  If \texttt{blktcycle $>$ 0}, a more detailed routine~\cite{Harrington_bop}
-  takes user inputs for the coolant outlet temperature (which may be used as
-  an iteration variable), the internal coolant channel diameter, and the
-  segmentation of the blanket and calculates the maximum temperature in the
-  first wall. If the first wall temperature is above user-specified material
-  limits, the outer diameter of the first wall pipes is reduced, up to a limit
-  determined by the internal coolant pressure. The pumping power for the first
-  wall and breeder zone is then calculated from thermal-hydraulic formulae,
-  assuming these are separate coolant loops with the same inlet and outlet
-  temperatures. Note that the pumping powers for the shield and divertor are
-  still calculated using the simplified method. The secondary cycle thermal
-  efficiency (\texttt{etath}) is calculated from the coolant outlet
-  temperature using simple relations between temperature and efficiency from
-  previous cycle modelling studies (see also Section~\ref{sec:etath}):
-  \begin{itemize}
-  \item If \texttt{blktcycle = 1}, the input value for \texttt{etath} is used.
-  \item If \texttt{blktcycle = 2}, a steam Rankine cycle is used to calculate
-    \texttt{etath}.
-  \item If \texttt{blktcycle = 3}, a supercritical CO$_2$ cycle is used to
-    calculate \texttt{etath}.
-  \end{itemize}
-
-\item{\texttt{blkttype}:} This switch allows the user to choose between
-  different blanket compositions. This determines the breeder materials (and
-  the overall plant thermal to electric thermal efficiency if
-  \texttt{blktcycle = 0}). Table~\ref{tab:blkttype} shows the various options
-  available.
-
-% Table summarising blanket materials
-
-\begin{table}[tbph]
-\begin{center}
-
-\begin{tabular}{||l||c||c||c||} \hline
- & \texttt{blkttype = 1} & \texttt{blkttype = 2} & \texttt{blkttype = 3} \\
- & WCLL & HCLL & HCPB \\ \hline
-Breeder material         & liquid LiPb-Li   & liquid LiPb-Li   & solid Li$_2$O-Be \\
-Coolant fluid            & water            & water            & helium           \\
-Coolant switch \texttt{coolwh} &  2         &   2              &  1$^*$           \\ \hline
-Li$_2$O fraction         & \texttt{fblli2o} & \texttt{fblli2o} &     ---          \\
-beryllium fraction       & \texttt{fblbe}   & \texttt{fblbe}   &     ---          \\
-LiPb fraction            &     ---          &     ---          & \texttt{fbllipb} \\
-lithium fraction         &     ---          &     ---          & \texttt{fblli}   \\
-coolant fraction         & \texttt{vfblkt}  & \texttt{vfblkt}  & \texttt{vfblkt}  \\
-stainless steel fraction & \texttt{fblss}   & \texttt{fblss}   & \texttt{fblss}   \\
-vanadium fraction        & \texttt{fblvd}   & \texttt{fblvd}   & \texttt{fblvd}   \\ \hline
-\end{tabular}
-\end{center}
-\caption[Summary of blanket material scenarios]
-{\label{tab:blkttype}
-  \textit{Summary of the materials comprising the blanket in the various scenarios
-    available assuming \texttt{blktmodel=0}. ( $^*$If \texttt{blktmodel=1} ---
-    see Section~\ref{sec:blanket_neutronics} --- \texttt{blkttype=3} is
-    assumed, but \texttt{coolwh=2} as the KIT model assumes that, other than
-    the first wall/blanket, the rest of the fusion power core is
-    water-cooled.) The fractions given are all available to be modified, and 
-    should of course add up to 1.0 for any given model.}
-}
-\end{table}
-
+\item{\texttt{secondary\_cycle }:} This switch controls how the coolant pumping power in the first wall and blanket is determined, and also how the calculation of the plant's thermal to electric conversion efficiency (the secondary cycle thermal efficiency) proceeds. See Section~\ref{sec:powerflow}.
+ 
 \end{description}
 
 \subsubsection{KIT Blanket neutronics model}
@@ -995,14 +888,14 @@ A few other input parameters are useful for tuning purposes, as follows:
 
 \end{itemize}
 
-\subsubsection*{Model outputs and available constraints}
+\subsubsection*{KIT model outputs and available constraints}
 
-The advanced blanket neutronics model provides the following outputs:
+The KIT blanket neutronics model provides the following outputs:
 \begin{itemize}
 
 \item The total nuclear power deposited in the blanket and shield,
   \texttt{pnucblkt} and \texttt{pnucshld}, respectively, and the energy
-  multiplication factor in the blanket, \texttt{emult} are calculated.
+  multiplication factor in the blanket, \texttt{emult} aref calculated.
 
 \item The tritium breeding ratio, \texttt{tbr}. This can be constrained to be
   no less than a certain value \texttt{tbrmin} for tritium self-sufficiency by
@@ -1044,75 +937,9 @@ The advanced blanket neutronics model provides the following outputs:
 
 \end{itemize}
 
-% \subsubsection{Full thermodynamic blanket model}
-% \label{sec:blanket}
-
-% \Red{Remove asap.}
-
-% \textbf{N.B.\ it is recommended that this model is \textit{not}\ used in
-%   conjunction with the advanced blanket neutronics model (\texttt{blktmodel >
-%     0}).}
-
-% Switch \texttt{lblnkt} determines whether the blanket is to be simulated using
-% a full thermodynamic model~\cite{Panos} (\texttt{lblnkt = 1}), or simply
-% assumed to be made up of relevant materials (see
-% Section~\ref{sec:blanket_materials}) in user-defined proportions. The former
-% model also performs a self-consistent calculation of the thermal-to-electric
-% conversion efficiency, whereas the latter simply uses the input value
-% \texttt{etath}.
-
-% The following switches control the details of the full thermodynamic model of
-% the blanket.
-
-% \begin{itemize}
-
-% \item \textbf{Cooling channel geometry:} The value of switch \texttt{astr}
-%   determines whether the cooling channels have a circular cross-section
-%   (\texttt{astr = 1}) or an annular cross-section (\texttt{astr = 2}). The
-%   latter case is the default.
-
-% \item \textbf{Cooling channel orientation:} The value of switch \texttt{estr}
-%   determines whether the cooling channels lie in the radial direction
-%   (\texttt{estr = 1}) or in the poloidal direction (\texttt{estr = 2}). The
-%   former case is the default.
-
-% \item \textbf{Coolant type:} The value of switch \texttt{costr} determines the
-%   type of coolant used in the first wall, blanket and shield. If \texttt{costr
-%     = 1}, the coolant is assumed to be gaseous helium. If \texttt{costr = 2},
-%   the coolant is assumed to be pressurised water/steam, which is the
-%   default. This switch is used whether or not the full blanket model is used,
-%   i.e.\ is independent of the setting of switch \texttt{lblnkt}.
-
-% \item \textbf{Boundary condition:} The value of switch \texttt{bstr}
-%   determines whether the coolant output temperature is to be fixed
-%   (\texttt{bstr = 1}) or whether the maximum blanket temperature is to be
-%   fixed (\texttt{bstr = 2}). The former case is the default.  The desired
-%   coolant output temperature for \texttt{bstr = 1} is set using input
-%   parameter \texttt{xtfo}, and the required maximum blanket temperature is set
-%   using input parameter \texttt{xtb}.
-
-% \end{itemize}
-
-%\subsubsection{Blanket materials}
-%\label{sec:blanket_materials}
-%\Red{Modify from here...}
-%Table~\ref{tab:blanket} summarises the possible options for the blanket
-%materials. Switch \texttt{smstr} determines whether a solid blanket of
-%Li$_2$O-Be (\texttt{smstr = 1}), or a liquid blanket of LiPb-Li (\texttt{smstr
-%  = 2}) is used. The former is the default, and is the type assumed if
-%$\mathtt{lblnkt \not= 1}$.
-
 \subsection{Shield}
 
-The stainless steel shield reduces the neutron flux reaching the TF coils and
-beyond. This minimises the radiological impact of the neutrons, and their
-heating of the TF coils which, if superconducting, need to remain at liquid
-helium temperatures. The shield is cooled either by gaseous helium or by
-pressurised water, as chosen using switch \texttt{coolwh} --- see
-Section~\ref{sec:blanket_switches}, and as with the blanket the energy
-deposited in the coolant may be used to produce electricity (see
-Section~\ref{sec:shldpower}). The shield coolant fraction is set via input
-parameter \texttt{vfshld}.
+The shield reduces the neutron flux reaching the vacuum vessel, TF coils and beyond. This minimises the radiological impact of the neutrons, and their heating of the TF coils which, if superconducting, need to remain at liquid helium temperatures. As with the blanket the energy deposited in the coolant may or may not be used to produce electricity, depending on the value of the switch \texttt{iprimshld} . The shield coolant fraction by volume is set via the input parameter \texttt{vfshld}.
 
 The inboard and outboard shield thicknesses (\texttt{shldith} and
 \texttt{shldoth}, respectively) may be used as iteration variables.
@@ -1120,11 +947,7 @@ The inboard and outboard shield thicknesses (\texttt{shldith} and
 \subsection{Divertor}
 \label{sec:divertor}
 
-The divertor provides a means of removing plasma reaching the scrape-off layer
-and heavy ions that are ejected from the first wall. The principal outputs
-from the code are the divertor heat load, used to determine its lifetime, and
-its peak temperature. The divertor is cooled either by gaseous helium or by
-pressurised water.
+The divertor provides a means of removing plasma reaching the scrape-off layer. The principal outputs from the code are the divertor heat load, used to determine its lifetime, and its peak temperature. The divertor is cooled either by gaseous helium or by pressurised water.
 
 Switch \texttt{snull} controls the overall plasma configuration. Setting
 \texttt{snull = 0} corresponds to an up-down symmetric, double null
@@ -1134,12 +957,7 @@ Figure~\ref{fig:buildsnd}) and PF coil current scaling algorithms take the
 value of this switch into account, although not the plasma geometry at
 present.
 
-The Harrison-Kukushkin-Hotston divertor model~\cite{IPDG} developed for ITER
-is used (except for the case of spherical tokamaks or stellarators --- see
-later). This is appropriate for conventional aspect ratio machines, but care
-should be taken in inputting the divertor magnetics for this model, and
-projections far from the ITER CDA machine parameters are likely to be
-unreliable.
+The Harrison-Kukushkin-Hotston divertor model~\cite{IPDG} developed for ITER is available, but is unlikely to be relevant for a reactor.
 
 \subsection{Toroidal field coils}
 \label{sec:tfcoil}
@@ -1151,12 +969,8 @@ superconductor model, the \textit{CICC}\/ (Conductor In Cable Conduit)
 structure shown in Figure~\ref{fig:CICC} is assumed, and the coils are cooled
 using a liquid helium cryogenic system.
 
-The steel radial plates shown in the Figure help in the winding process and
-also provide extra support against tangential stresses. Grooves are machined
-into the radial plates which act as a guide for the cable. Each winding pack
-turn slots into a radial plate and is covered by a steel cap. Each turn is
-assigned half the thickness (along each edge) of its surrounding radial plates
-and steel caps in the calculation of the cross-sectional areas. Iteration
+The steel radial plates shown in the figure help in the winding process and
+also provide extra support against tangential stresses. Iteration
 variable no.\ 101 (\texttt{prp}) is the ratio of the total radial plate plus
 steel cap cross-sectional area within the winding pack to the total winding
 pack cross-sectional area; from this, the half-thickness \texttt{trp} is
@@ -1184,8 +998,8 @@ inner leg]
 \end{figure}
 
 Each TF coil is defined in the $(R,Z)$ plane by four circular arcs of
-different radius, which create a D-shaped profile. Because of the finite
-number of TF coils used in a tokamak (typically around 16), the toroidal field
+different radius, which create an approximately D-shaped profile. Because of the finite
+number of TF coils used in a tokamak (18 for ITER), the toroidal field
 has a ripple introduced into it, the amplitude of which can be limited to a
 few percent (given by input parameter \texttt{ripmax}, default value 1\%) by
 the code by adjusting the outboard gap thickness (labelled \texttt{gapsto} in
@@ -1317,7 +1131,7 @@ group only);
 \begin{eqnarray*}
 R & = & \mathtt{rohc + rpf1} \\
 Z & = & \pm
-\mathtt{( hmax*ohhghf + 0.1 + 0.5*( hmax*(1.0D0-ohhghf)+tfcth+0.1) )}
+\mathtt{( hmax*ohhghf + 0.1 + 0.5*( hmax*(1-ohhghf)+tfcth+0.1) )}
 \end{eqnarray*}
 
 \item [\texttt{ipfloc(j) = 2} :]  PF coils are placed above the TF coils (one
@@ -1330,7 +1144,7 @@ Z & = & \pm (\mathtt{hmax + tfcth + 0.86})
 \item [\texttt{ipfloc(j) = 3} :]  PF coils are placed radially outside the TF
 coils (any number of groups \Red{(?)});
 \begin{eqnarray*}
-R & = & \mathtt{rtot + tfthko/2.0D0 + routr} \hspace{63mm}\\
+R & = & \mathtt{rtot + tfthko/2 + routr} \hspace{63mm}\\
 Z & = & \pm(\mathtt{rminor*zref(j)})
 \end{eqnarray*}
 
@@ -1360,15 +1174,13 @@ Section~\ref{sec:ohcoil}).
 }
 \end{figure}
 
-\subsubsection{PF coil resistance}
+\subsubsection{PF coil material}
 
 The PF coils can be either resistive or superconducting. This is determined
 from the value of \texttt{ipfres}. If \texttt{ipfres = 0}, the PF coils and
 the central solenoid are assumed to be superconducting. If \texttt{ipfres = 1},
 they are assumed to be resistive, with their resistivity given by the value of
 variable \texttt{pfclres}.
-
-\subsubsection{Superconducting materials}
 
 If \texttt{ipfres = 0}, switch \texttt{isumatpf} specifies which
 superconducting material is to be used for the PF coils. The values for
@@ -1390,7 +1202,7 @@ supported by the case.
 \label{sec:ohcoil}
 
 Formerly known as the ohmic heating (OH) coil, the central solenoid is a PF
-coil used primarily during start-up (but also during the burn phase) to create
+coil used during start-up and during the burn phase to create
 and maintain the plasma current by inductive means. Swinging (changing) the
 current through the central solenoid causes a change in the flux linked to the
 plasma region, inducing a current in it. \process\ calculates the amount of
@@ -1460,11 +1272,11 @@ In the steady-state power plant scenario ($\mathtt{lpulse \not= 1}$ --- see
 Section~\ref{sec:pulsed}), the length of time taken for the central solenoid
 current to (possibly) reverse (which is equal to the plasma current ramp-up time --- see
 Figure~\ref{fig:current_vs_time}) is determined from the value of switch
-\texttt{tohsin}. If \texttt{tohsin = 0.0D0}, then the plasma current ramp-up
+\texttt{tohsin}. If \texttt{tohsin = 0}, then the plasma current ramp-up
 time \texttt{tohs} in seconds is given by $\mathtt{tohs} = I_p / 0.5$, where
 $I_p$ is the plasma current in MA\@. Furthermore, the PF coil ramp time
 \texttt{tramp} and shutdown time \texttt{tqnch} are set equal to
-\texttt{tohs}.  If $\mathtt{tohsin \not= 0.0D0}$, the plasma current ramp-up
+\texttt{tohs}.  If $\mathtt{tohsin \not= 0}$, the plasma current ramp-up
 time \texttt{tohs = tohsin}, and the PF coil ramp and shutdown times are input
 parameters.
 
@@ -1473,20 +1285,18 @@ plasma current ramp-up time \texttt{tohs} is either an input parameter, or it ca
 iterated by using iteration variable~65. The ramp and shutdown times in the
 pulsed case are always set equal to \texttt{tohs}. To ensure that the plasma
 current ramp rate during start-up is prevented from being too high, as
-governed by the requirement to maintain plasma stability in $l_i$-$q_\psi$
-space, constraint equation no.\ 41 should be turned on with iteration variable
-no.\ 66 (\texttt{ftohs}).
+governed by the requirement to maintain plasma stability by ensuring that the induced current has time to diffuse into the body of the plasma, constraint equation no.\ 41 should be turned on with iteration variable no.\ 66 (\texttt{ftohs}).
 
 \subsection{Auxiliary power systems: heating and current drive}
 \label{sec:hcd}
 
 \subsubsection{Current Drive}
 
-The use of purely inductive current drive leads to pulsed plant operation
+The use of inductive current drive leads to pulsed plant operation
 because of the limited flux swing that can be achieved using the central
 solenoid. This poses problems due to the fact that fatigue failures may
-result, and there would also be a need for thermal storage to maintain a level
-supply between pulses. However, the plasma current can also be produced and
+result, and there would also be a need for thermal storage to maintain output of electricity
+between pulses, and supply power for starting a new pulse. However, the plasma current can also be produced and
 maintained (partially or wholly) using non-inductive means which, in
 principle, removes this restriction. \process\ contains a number of auxiliary
 current drive schemes, including various RF methods (Lower Hybrid, Electron
@@ -1512,8 +1322,7 @@ the value of switch \texttt{iefrf}:-
 Section~\ref{sec:rfpcd})
 \end{description}
 
-(Note that, at present, the neutral beam models assume parabolic plasma
-profiles only.)
+(Note that, at present, the neutral beam models do not include the effect of an edge transport barrier (pedestal) in the plasma profile.)
 
 It is sometimes useful to adjust artificially the current drive efficiency
 values produced by these routines. This can be achieved by setting the scaling
@@ -1554,10 +1363,10 @@ be set using input parameter \texttt{nbshield}.
 
 Input parameter \texttt{forbitloss} can be used to specify the fraction of the
 net injected neutral beam power that is lost between the beam particles'
-ionisation and thermalisation (i.e.\ the orbit loss fraction). The power lost
+ionisation and thermalisation (known as the first orbit loss). This quantity cannot easily be calculated as it depends on the field ripple and other three-dimensional effects.  The power lost
 is assumed to be absorbed by the first wall.
 
-There are two constraint equations that can be used to control the beam
+The power in the beam atoms that are not ionised as they pass through the plasma (shine-through) is calculated by the code.  There are two constraint equations that can be used to control the beam
 penetration and deposition, as follows:
 \begin{itemize}
 
@@ -1638,35 +1447,17 @@ The \process\ power plant takes into account all the systems required to
 perform the necessary conversion of fusion power to electricity, from the
 coolant systems in the plant components to the heat exchangers and turbines.
 
-Figures~\ref{fig:powerflow2} and \ref{fig:powerflow3} show schematically the
-overall power transfer mechanisms within the power plant outside of the plasma
-(the power flow \textit{within}\/ the plasma is shown in
-Figure~\ref{fig:powerflow1}).
+Figure~\ref{fig:powerflow3} shows the overall power transfer mechanisms within the power plant outside of the plasma.  The efficiency of the primary coolant pumps in converting electrical to mechanical power is given by input parameter \texttt{etahtp} in all the calculations described below.
 
-\Red{(Note that these figures and the following description assume that switch
-\texttt{ipowerflow} is set to 1; its default value is currently
-zero, as the new power flow model is in draft form.)}
-
-\begin{figure}[tbph]
-\epsfig{file=powerflow2.eps,width=170mm}
-\caption[Power flow within the fusion power plant core]
-{\label{fig:powerflow2} \textit{Schematic diagram of the flow of power from
-    the plasma to the thermal power deposited within the divertor, first wall,
-    blanket and shield. Variable names are given in [\ldots]. The five
-    red-bordered contributions are passed from Figure~\ref{fig:powerflow1},
-    while the blue box comes from Figure~\ref{fig:powerflow3}.} }
-\end{figure}
-
-Figure~\ref{fig:powerflow2} shows how the power contributions originating from
-the plasma are converted to thermal power in the first wall, blanket, shield
-and divertor.
-
-The radiation and neutron power contributions are distributed according to the
-following area fractions of a theoretical first wall with 100\% coverage,
-which may be set as input parameters: \texttt{fdiv} (divertor area fraction),
-\texttt{fhcd} (heating / current drive / diagnostics apparatus), and
-\texttt{fhole} (any other gaps). The remaining fraction
-(\texttt{1-fdiv-fhcd-fhole}) is the area fraction of the actual first wall.
+%\begin{figure}[tbph]
+%\epsfig{file=powerflow2.eps,width=170mm}
+%\caption[Power flow within the fusion power plant core]
+%{\label{fig:powerflow2} \textit{Schematic diagram of the flow of power from
+%    the plasma to the thermal power deposited within the divertor, first wall,
+%    blanket and shield. Variable names are given in [\ldots]. The five
+%    red-bordered contributions are passed from Figure~\ref{fig:powerflow1},
+%    while the blue box comes from Figure~\ref{fig:powerflow3}.} }
+%\end{figure}
 
 \subsubsection{Divertor}
 \label{sec:divpower}
@@ -1675,179 +1466,97 @@ All of the charged particle transport power leaving the plasma (excluding the
 \texttt{1-falpha} portion of the alpha power that escapes directly to the first
 wall --- Section~\ref{sec:corepower}) is assumed to be absorbed in the
 divertor, along with a proportion \texttt{fdiv} of the radiation power and the
-neutron power. The power necessary to drive the divertor coolant pumps,
-\texttt{htpmw\_div} in Figure~\ref{fig:powerflow2}, is assumed to be a
-fraction $f$ (= input parameter \texttt{fpumpdiv}) of the total thermal power
-absorbed by the divertor, excluding the coolant pump power itself:
-\begin{equation}
-\mathtt{htpmw\_div = fpumpdiv . (pdivt + praddiv + pnucdiv)}
-\end{equation}
-The efficiency of the divertor coolant pump is given by input parameter
-\texttt{etahtp}.
+neutron power. 
 
 Switch \texttt{iprimdiv} may be used to specify whether the thermal power
-deposited in the divertor becomes primary (high-grade) thermal power
-(\texttt{iprimdiv = 1}) or secondary (low-grade) thermal power (see
-Figure~\ref{fig:powerflow3}). (N.B.\ see also the caption for
-Table~\ref{tab:etath}.)
+deposited in the divertor becomes high-grade thermal power
+(\texttt{iprimdiv = 1}) or low-grade waste heat (see
+Figure~\ref{fig:powerflow3}). 
+%(N.B.\ see also the caption for Table~\ref{tab:etath}.)
 
 \subsubsection{First wall}
 
-All of the remaining radiation power (i.e.\ the fraction not incident upon the
-divertor or lost through holes or the heating / current drive apparatus) is
-assumed to be absorbed by the first wall. The same fraction of the neutron
-power is assumed to pass into the first wall. Of this neutron power, a
-fraction $(1-e^{d/\lambda})$ is assumed to be absorbed in the first wall
-(of thickness $d$), given by the neutron decay length $\lambda$ in the first wall
-(input parameter \texttt{declfw}). In addition, the orbit loss fraction of the
-neutral beam power (if present), and the alpha power fraction lost directly
-from the plasma also contribute to the total thermal power absorbed by the first wall.
+The remaining photon power (i.e.\ the fraction not incident upon the divertor or lost through holes or the heating / current drive apparatus) is assumed to be absorbed by the first wall. Power due to ions derived from the neutral beams but lost before being thermalised (known as "first orbit loss"), and from the fast alpha particles lost before being thermalised, also contribute to the total thermal power absorbed by the first wall.
 
-If switch \texttt{blktcycle = 0} (see Section~\ref{sec:blanket_switches}), the
-first wall coolant pump power is a fraction \texttt{fpumpfw} of the total
-(non-pumping) thermal power absorbed by the first wall.
-
-If switch \texttt{blktcycle > 0}, a detailed thermal hydraulic model for the
-first wall (and breeding zone) is used~\cite{Harrington_bop}, as outlined in
-Section~\ref{sec:blanket_switches}. A number of input parameters may be
-used to adjust the model, as follows:
-\begin{itemize}
-\item \texttt{coolp} is the first wall coolant pressure (Pa);
-\item \texttt{afwi, afwo} are the inner radii of the inboard and outboard
-  first wall/blanket coolant channels (m);
-\item \texttt{inlet\_temp} is the inlet temperature of the coolant for blanket and first wall (K);
-\item \texttt{outlet\_temp} is the outlet temperature of coolant for blanket
-  and first wall (K) (N.B.\ this is a calculated quantity if water is the coolant);
-\item \texttt{nblktmodpi, nblktmodpo} are the number of inboard and outboard
-  blanket modules in the poloidal direction;
-\item \texttt{nblktmodti, nblktmodto} are the number of inboard and outboard
-  blanket modules in the toroidal direction;
-\item \texttt{tfwmatmax} is the maximum temperature of the first wall material (K);
-\item \texttt{etaiso} is the isentropic efficiency of the first wall and blanket coolant pumps;
-\item \texttt{fwerlim} is the erosion thickness allowance for the first wall (m).
-\end{itemize}
-
-The efficiency of the first wall coolant pump is \texttt{etahtp}.
-
-\subsubsection{Blanket}
-
-A fraction (\texttt{1 - exp(}$d$\texttt{/declblkt)}) of the neutron power
-incident on the blanket is assumed to be absorbed in the blanket, where input
-parameter \texttt{declblkt} is the neutron decay length in the blanket, and
-$d$ is the blanket thickness (the calculations are performed separately for
-the inboard and outboard regions, as is the case for the first wall and
-shield). This absorbed neutron power is multiplied by the energy
-multiplication factor \texttt{emult} to calculate its contribution to the
-thermal power within the blanket.
-
-If switch \texttt{blktcycle = 0}, the blanket coolant pump power is a fraction
-\texttt{fpumpblkt} of the non-pumping thermal power absorbed by the blanket.
-
-If switch \texttt{blktcycle > 0}, the detailed thermal-hydraulic model
-described above is used to calculate the blanket coolant pump power.
-
-The efficiency of the blanket coolant pump is again \texttt{etahtp}.
-
-\subsubsection{Shield}
-\label{sec:shldpower}
-
-A fraction (\texttt{1 - exp(}$d$\texttt{/declshld)}) of the neutron power
-incident on the shield is assumed to be absorbed in the shield, where input
-parameter \texttt{declshld} is the neutron decay length in the shield, and
-$d$ is the shield thickness.
-
-The shield coolant pump power is a fraction \texttt{fpumpshld} of the
-non-pumping thermal power absorbed by the shield, and the efficiency of the
-shield coolant pump is \texttt{etahtp}.
-
-Switch \texttt{iprimshld} may be used to specify whether the thermal power
-deposited in the shield becomes primary (high-grade) thermal power
-(\texttt{iprimshld = 1}) or secondary (low-grade) thermal power (see
-Figure~\ref{fig:powerflow3}).
-
-The remaining neutron power after passing through the shield is assumed to be
-absorbed in the TF coils as quantity \texttt{ptfnuc}. This power contributes
-to the total cryogenic power requirements of the machine.
-
-\subsubsection{Power conversion outside of the fusion power core}
+\subsubsection{Power conversion cycle}
 \label{sec:etath}
 
-Figure~\ref{fig:powerflow3} summarises the power conversion mechanisms outside
-of the fusion power core.
+Figure~\ref{fig:powerflow3} summarises the power conversion mechanisms.
 
 \begin{figure}[tbph]
 \epsfig{file=powerflow3.eps,width=170mm}
 \caption[Power flow outside the fusion power plant core]
 {\label{fig:powerflow3} \textit{Schematic diagram of the flow of power beyond
-    the fusion power core, showing the origin of the primary and secondary
-    thermal power and the electrical power balance within the plant. Variable
+    the fusion power core, showing the origin of the high-grade and waste
+    heat and the electrical power balance within the plant. Variable
     names are given in [\ldots]. The input power contributions in green boxes
     originate in Figure~\ref{fig:powerflow2}. }  }
 \end{figure}
 
-The primary (high-grade, i.e.\ useable) thermal power comprises the thermal
-power contributions from the first wall and blanket, and possibly also those
-from the divertor and shield, depending on the values of the switches
-\texttt{iprimdiv} and \texttt{iprimshld} as described in the previous
-sections. The primary thermal power (less any thermal power required to
+The high-grade, i.e.\ useable thermal power (less any thermal power required to
 produce hydrogen in a hydrogen production plant --- see
 Section~\ref{sec:hplant}) is used to produce steam to turn the turbines, thus
 generating the plant's gross electrical power, with an efficiency given by
-quantity \texttt{etath}. The power lost via the turbines' inefficiency
-escapes from the plant to the environment.
+quantity \texttt{etath}. The remainder is dumped to the environment through the condenser.  All of the low-grade heat is dumped to the environment.
 
-If switch \texttt{blktcycle = 0} (see Section~\ref{sec:blanket_switches}), the
-thermal to electric conversion efficiency \texttt{etath} depends on the
-blanket type (as given by switch \texttt{blkttype}) and on whether the
-divertor heat is used as primary power (via switch \texttt{iprimdiv}; see
-Section~\ref{sec:divpower}). Table~\ref{tab:etath} summarises these options.
+\begin{description}
+\item{\texttt{secondary\_cycle }:} This switch controls how the coolant pumping power in the first wall and blanket is determined, and also how the calculation of the plant's thermal to electric conversion efficiency (the secondary cycle thermal efficiency) proceeds. See also Section~\ref{sec:powerflow}, which describes the flow of power through the fusion power core.
 
-% Table summarising the etath calculation
+If \texttt{secondary\_cycle = 0}, the efficiency of the power generation cycle is set to a single value obtained from previous cycle modelling studies.  The heat deposited in the divertor coolant is assumed to be at such low temperature that it cannot be used for power generation and is dumped to the environment.  The mechanical power consumed by the primary coolant pumps is estimated as a fixed fraction of the heat transported.
 
-\begin{table}[tbph]
-\begin{center}
+If \texttt{secondary\_cycle = 1}, the efficiency of the power generation cycle is set as above, but the divertor heat is used for electricity generation.
 
-\begin{tabular}{||l||c||c||c||} \hline
- & \texttt{blkttype = 1} & \texttt{blkttype = 2} & \texttt{blkttype = 3} \\
- & WCLL & HCLL & HCPB \\ \hline
-Divertor heat $\longrightarrow$ primary power & 31.11\%  & 39.70\% & 39.70\% \\
-\texttt{iprimdiv = 1} & & & \\ \hline
-Divertor heat $\longrightarrow$ secondary power & --- & 43.60\% & 43.60\% \\
-\texttt{iprimdiv = 0} & & & \\ \hline
-\end{tabular}
-\end{center}
-\caption[Summary of plant thermal to electric conversion efficiency values]
-{\label{tab:etath}
-  \textit{Summary of the plant thermal to electric conversion efficiency
-    values, \texttt{etath}, for \texttt{blktcycle=0}. Note that the WCLL
-    modelling on which the figures are based assumed that the divertor heat
-    was used in the primary cycle, so switch \texttt{iprimdiv=1} is enforced
-    if \texttt{blktcycle=0} and \texttt{blkttype=1}.}
-}
-\end{table}
+In the remaining options (\texttt{secondary\_cycle = 1, 2 or 3}), a more detailed routine~\cite{Harrington_bop} takes user inputs for the coolant outlet temperature (which may be used as an iteration variable), the internal coolant channel diameter, and the segmentation of the blanket and calculates the maximum temperature in the armour. If this temperature is above user-specified material limits, the outer diameter of the first wall pipes is reduced, up to a limit determined by the internal coolant pressure. The mechanical pumping power required for the first wall and breeder zone is then calculated from thermal-hydraulic formulae, assuming these are separate coolant loops with the same inlet and outlet temperatures. The isentropic efficiency of the first wall and blanket coolant pumps (enthalpy increase in the fluid for isentropic compression divided by the mechanical power used) is specified by the parameter \texttt{etaiso}.  Note that the mechanical pumping powers for the shield and divertor are still calculated using the simplified method (a fixed fraction of the heat transported).  The heat deposited in the divertor coolant is used for power generation.
 
-If switch \texttt{blktcycle = 1}, the input value for the thermal to electric
-conversion efficiency \texttt{etath} is used.
+If \texttt{secondary\_cycle = 2}, the efficiency of the power generation cycle is input by the user.
 
-If switch \texttt{blktcycle = 2}, an equation for \texttt{etath} ($\eta$)
-assuming a steam Rankine cycle is used~\cite{Harrington_bop}:
+If \texttt{secondary\_cycle = 3}, a steam Rankine cycle is assumed.  The secondary cycle thermal efficiency (\texttt{etath}) is calculated from the coolant outlet temperature using simple relations between temperature and efficiency ~\cite{Harrington_bop}:
 \begin{eqnarray}
-\eta & = & -2.265 + 0.932 \, \log(T + 49.999) \;\;\; \mbox{\small(water coolant;
+\eta & = & -2.0219 + 0.3720 \, \ln(T) \;\;\; \mbox{\small(water coolant;
   saturated steam Rankine cycle)} \\
-\eta & = & -0.890 + 0.442 \, \log(T + 49.088) \;\;\; \mbox{\small(helium coolant;
+\eta & = & -0.8002 + 0.1802 \, \ln(T) \;\;\; \mbox{\small(helium coolant;
   superheated steam Rankine cycle)}
 \end{eqnarray}
 
-If switch \texttt{blktcycle = 3}, an equation for \texttt{etath} ($\eta$)
-assuming a supercritical CO$_2$ Brayton cycle is used~\cite{Harrington_bop}:
+If \texttt{secondary\_cycle = 4}, a supercritical CO$_2$ Brayton cycle is assumed.  The secondary cycle thermal efficiency (\texttt{etath}) is calculated from the coolant outlet temperature using simple relations between temperature and efficiency from ~\cite{Harrington_bop}:
 \begin{equation}
-\eta = -1.873 + 0.804 \, \log(T + 124.061) \;\;\; \mbox{\small(water or
+\eta = -2.5043 + 0.4347 \, \log(T) \;\;\; \mbox{\small(water or
   helium coolant}
 \end{equation}
+  
+\end{description}
+
+
+%Table~\ref{tab:etath} summarises these options.
+
+% Table summarising the etath calculation
+% The WCLL and HCLL options are not yet available, so I have commented this table out for the moment.
+
+%\begin{table}[tbph]
+%\begin{center}
+
+%\begin{tabular}{||l||c||c||c||} \hline
+% & \texttt{blkttype = 1} & \texttt{blkttype = 2} & \texttt{blkttype = 3} \\
+% & WCLL & HCLL & HCPB \\ \hline
+%Divertor heat $\longrightarrow$ primary power & 31.11\%  & 39.70\% & 39.70\% \\
+%\texttt{iprimdiv = 1} & & & \\ \hline
+%Divertor heat $\longrightarrow$ secondary power & --- & 43.60\% & 43.60\% \\
+%\texttt{iprimdiv = 0} & & & \\ \hline
+%\end{tabular}
+%\end{center}
+%\caption[Summary of plant thermal to electric conversion efficiency values]
+%{\label{tab:etath}
+%  \textit{Summary of the plant thermal to electric conversion efficiency
+%    values, \texttt{etath}, for \texttt{blktcycle=0}. Note that the WCLL
+%    modelling on which the figures are based assumed that the divertor heat
+%    was used in the primary cycle, so switch \texttt{iprimdiv=1} is enforced
+%    if \texttt{blktcycle=0} and \texttt{blkttype=1}.}
+%}
+%\end{table}
 
 In the above three equations, $T$ is the temperature of the (secondary)
 coolant at the inlet to the turbine, assumed to be a fixed margin below the
-outlet temperature of the (primary) coolant.
+outlet temperature of the primary coolant.
 
 The electrical power required to operate the power plant itself is the
 so-called recirculating electric power. Any surplus is exported to the
@@ -1960,9 +1669,9 @@ summarises the switch values relevant to each aspect ratio regime.
 \section{Pulsed Plant Operation}
 \label{sec:pulsed}
 
-If the plasma current is not to be driven by purely non-inductive means, it is
+If the plasma current is partially or entirely driven by electromagnetic induction, it is
 necessary to operate the plant in a pulsed manner as the current swing in the
-OH/PF coils cannot be continued indefinitely. \process\ can perform a number of
+central solenoid coils cannot be continued indefinitely. \process\ can perform a number of
 calculations relevant to a pulsed power plant, as detailed below.
 
 Switch \texttt{lpulse} determines whether the power plant is assumed to be
@@ -2582,6 +2291,8 @@ values scale with (for example) power output, volume, component mass etc., and
 many are available to be changed via the input file. All costs and their
 algorithms correspond to 1990 dollars.
 
+An entirely new capital cost model is being developed, and will be described in~\cite{kovari_cost}.
+
 \subsection{$N^{th}$ of a kind costs}
 
 The unit costs of the components of the fusion power core are relevant to
@@ -2620,14 +2331,13 @@ treated as capital costs.
 
 \subsection{Plant availability}
 
+
 Switch \texttt{iavail} is used to control how the overall plant availability
-factor \texttt{cfactr} is calculated. If \texttt{iavail = 0}, the input value
-of \texttt{cfactr} is used. If \texttt{iavail = 1}, a plant availability model
-by N.~Taylor and D.~Ward~\cite{TaylorWard_avail1999} is used instead, in which
-\texttt{cfactr} is calculated taking into account the time taken to replace
-certain components of the fusion power core, and various unplanned
-unavailability fractions which may be set by the user, as summarised in
-Table~\ref{tab:availability}.
+factor \texttt{cfactr} is calculated, as follows
+
+If \texttt{iavail = 0}, the input value of \texttt cfactr is used.
+
+If \texttt{iavail = 1}, a model by N.~Taylor and D.~Ward~\cite{TaylorWard_avail1999} is used instead, in which \texttt{cfactr} is calculated taking into account the time taken to replace certain components of the fusion power core, and various unplanned unavailability fractions which may be set by the user, as summarised in Table~\ref{tab:availability}.
 \begin{table}[tbph]
 \begin{center}
 \begin{tabular}{||c|c||} \hline
@@ -2652,41 +2362,27 @@ input parameter & description \\ \hline
 }
 \end{table}
 
-If \texttt{iavail = 2}, a new plant availability model based on data from
-the EUROfusion projects is implemented. \Red{Details to follow}
+If \texttt{iavail = 2}, the new Morris model is implemented \cite{kovari_eng}. It estimates both planned and unplanned unavailability, and the time during which no power is being generated if the reactor is pulsed. 
 
-\subsection{Cost of electricity calculations}
+The planned unavailability is linked to the lifetimes of the blanket and divertor and the time taken to replace them.  The lifetime of the blanket is based on the allowable fast neutron fluence.  In contrast, the lifetime of the divertor is estimated using the particle and photon load. The time to replace the blanket and divertor have been estimated by Crofts et al, who studied the influence of the number of remote handling systems working in parallel.  \process\ uses a simple fit to their results, and adds a month to allow the dose rate to reduce to an acceptable level before remote handling operations start, and a month to allow for pump-down and preparation for operation at the end of the shutdown.   
 
-Switch \texttt{ireactor} determines the type of cost of electricity
-calculation that is performed. If \texttt{ireactor = 0}, no cost of
-electricity calculation is performed. If \texttt{ireactor = 1}, then the cost
-of electricity is evaluated, with the value quoted in units of m\$/kWh.
+To estimate the unplanned downtime, each susbsystem is represented by a simple model that tries to capture the degradation of reliability when approaching operational and technological limits.  This increases the risk of unplanned downtime as design margins are reduced.
 
+For the toroidal field coils, the chance of a quench is likely to be the largest driver of the risk of unplanned unavailability, and this may depend on the temperature margin - the difference between the actual temperature and the critical temperature of the superconductor.  The user inputs a minimum temperature margin, below which quench is immediate, and a second, higher value, above which quenches never occur.  In between, there is a finite quench rate.
+
+The unplanned downtime for the blanket is based on the number of cycles it experiences before planned replacment.  (This model is restricted to pulsed reactors.) The cycle life of the blanket is expressed using a reference lifetime.  Before this liefetime, there is a constant but small probability of failure in ecah pulse.  After the reference lifetime the reliability of the blanket starts to decline, reaching zero at the upper lifetime limit.
+
+It is assumed that the vacuum system can be maintained in parallel with blanket replacement, so it does not contribute to the planned downtime.  The unplanned downtime is based on an assumed failure rate for a cryopump, and a specified total number of pumps, with some of them being redundant.  The resulting downtime can be reduced to a negligible level if there are several redundant pumps, but in addition, there is a fixed unavailability to allow for common mode failures affecting several pumps.
+a
 \subsection{Net electric power calculation}
 
-Related to the cost of electricity is the net electric power calculation
-performed in routine \texttt{POWER}. It is possible that the net electric
-power can become negative due to a high recirculating power. Switch
+The net electric power is calculated in routine \texttt{POWER}. It is possible that the net electric power can become negative due to a high recirculating power. Switch
 \texttt{ipnet} determines whether the net electric power is scaled to always
 remain positive (\texttt{ipnet = 0}), or whether it is allowed to become
 negative (\texttt{ipnet = 1}), in which case no cost of electricity
 calculation is performed.
 
-\section{Other Switches and Models}
+\subsection{Cost of electricity calculations}
 
-\subsection{Diagnostic output}
-
-Switch \texttt{verbose} can be set to \texttt{1} in the input file to allow
-the code to write some additional diagnostic output to the screen. Currently,
-extra information about the progress of the optimiser is produced. This
-setting is likely to be of interest only to ``expert'' users.
-
-\subsection{Code parameters affecting other models}
-
-This chapter has summarised the methods by which several of the models in the
-code can be activated. There are many others present, however, and it is
-suggested that the user refers to the variable descriptor file,
-\texttt{vardes.html}. As stated earlier in Section~\ref{sec:vardes}, this
-contains details of all the parameters within the code that can be changed by
-the user, in order to customise the machine modelled by \process.
+Switch \texttt{ireactor} determines whether the cost of electricity is calculated. If \texttt{ireactor = 0}, no cost of electricity calculation is performed. If \texttt{ireactor = 1}, then the cost of electricity is evaluated, with the value quoted in units of \$/MWh.
 
