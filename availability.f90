@@ -49,6 +49,8 @@ module availability_module
   private
   public :: avail
   public :: avail_new
+  real(kind(1.0D0)), parameter :: year = 31557600.0D0
+  real(kind(1.0D0)), parameter :: day = 86400.0D0
 
 contains
 
@@ -663,19 +665,15 @@ contains
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_args  u_unplanned_div : output real : unplanned unavailability of divertor
-    !+ad_desc  This routine calculates the unplanned unavailability of the divertor,
-    !+ad_desc  using the methodology outlined in the 2014 EUROfusion
-    !+ad_desc  RAMI report.
     !+ad_prob  None
     !+ad_call  oblnkl
     !+ad_call  ocmmnt
     !+ad_call  ovarin
     !+ad_call  ovarre
     !+ad_hist  02/12/14 JM  Initial version
-    !+ad_hist  08/12/14 JM  Corrections to calculation for divertor lifetime
-    !+ad_hist  09/02/15 JM  More corrections to calculation for divertor lifetime
+    !+ad_hist  06/05/15 MDK Rewrote routine to match engineering paper
     !+ad_stat  Okay
-    !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
+    !+ad_docs  
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -688,56 +686,45 @@ contains
 
     !  Local Variables
 
-    real(kind(1.0D0)), parameter :: years_to_days = 365.25D0
-    real(kind(1.0D0)), parameter :: seconds_to_days = 1.157D-5
-    real(kind(1.0D0)) :: div_time_dlim, div_time_ulim, div_time, div_main_time
-    real(kind(1.0D0)) :: div_max_a, div_avail
+    real(kind(1.0D0)) :: a0, div_avail, n, pf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Calculate cycle limit in terms of days 
-
-    !  Design limit (7000 cycles)
-    div_time_dlim = (tcycle * 7000.0D0) * seconds_to_days
-
-    !  Upper limit (14000 cycles)
-    div_time_ulim = (tcycle * 14000.0D0) * seconds_to_days
-
-    !  Operational time in days
-    div_time = divlife * years_to_days
-
-    !  Divertor maintenance time (days)
-    div_main_time = div_umain_time * years_to_days
-
-    !  Maximum availability
-    div_max_a = 1.0D0 - (div_prob_fail * div_main_time)
-  
-    !  Determine if the operational time is under the design criteria
-    !  Cycle limit is a global var
-
-    if (div_time <= div_time_dlim) then
-
-       u_unplanned_div = 1.0D0 - div_max_a
-
-    else if (div_time >= div_time_ulim) then
-
-       u_unplanned_div = 1.0D0
-
-    else
-
-       div_avail = div_max_a - (-div_max_a/(div_time * (div_time_ulim - div_time_dlim))) * &
-            (div_time**2.0D0 - div_time * div_time_dlim - 0.5D0 * div_time_dlim**2.0D0)
-       u_unplanned_div = 1.0D0 - div_avail
-
+    ! Number of cycles between planned blanket replacements, N
+    n = divlife * year / tcycle
+    ! The probability of failure in one pulse cycle 
+    ! (before the reference cycle life)    
+    pf = (div_prob_fail / day) * tcycle
+    a0 = 1.0D0 - pf * div_umain_time * year / tcycle
+    
+    !  Integrating the instantaneous availability gives the mean 
+    !  availability over the planned cycle life N
+    if (div_nu <= div_nref) then
+        write(*,*) 'div_nu <= div_nref'
+        write(*,*) 'The cycle when the divertor fails with 100% probability <= Reference value for cycle cycle life of divertor'
+        call ocmmnt(outfile,'EROROR: The cycle when the divertor fails with 100% probability <= Reference value for cycle cycle life of divertor')
     end if
+    
+    if (n <= div_nref) then
+       div_avail = a0
+    else if (n >= div_nu) then       
+       div_avail = 0.0D0
+    else    
+       div_avail = (a0/(div_nu-div_nref))*(div_nu - 0.5D0*div_nref**2.0D0/n -0.5D0*n)              
+    end if   
+    
+    u_unplanned_div = 1.0D0 - div_avail  
 
     if (iprint /= 1) return
-
     call ocmmnt(outfile,'Divertor:')
-    call oblnkl(outfile)
-    call ovarre(outfile,'Design criteria operational time (days)', '(div_time_dlim)', div_time_dlim)
-    call ovarre(outfile,'Time operating', '(div_time)', div_time)
-    call ovarre(outfile,'Divertor unplanned unavailability', '(u_unplanned_div)',u_unplanned_div)
+    call oblnkl(outfile)   
+    call ovarre(outfile,'Probability of failure per operational day', '(div_prob_fail)',div_prob_fail)
+    call ovarre(outfile,'Repair time (years)', '(div_umain_time)',div_umain_time)
+    call ovarre(outfile,'Reference value for cycle life', '(div_nref)',div_nref)
+    call ovarre(outfile,'The cycle when failure is with 100% certain', '(div_nu)',div_nu)
+    call ovarre(outfile,'Number of cycles between planned replacements', '(n)',n)
+    call ovarre(outfile,'Unplanned unavailability', '(u_unplanned_div)', u_unplanned_div)   
     call oblnkl(outfile)
 
   end subroutine calc_u_unplanned_divertor
@@ -754,9 +741,6 @@ contains
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_args  u_unplanned_fwbs : output real : unplanned unavailability of first wall and blanket
-    !+ad_desc  This routine calculates the unplanned unavailability of the first wall and blanket,
-    !+ad_desc  using the methodology outlined in the 2014 EUROfusion
-    !+ad_desc  RAMI report.
     !+ad_prob  None
     !+ad_call  oblnkl
     !+ad_call  ocmmnt
@@ -779,55 +763,49 @@ contains
 
     !  Local Variables
 
-    real(kind(1.0D0)), parameter :: years_to_days = 365.25D0
-    real(kind(1.0D0)), parameter :: seconds_to_days = 1.157D-5
-    real(kind(1.0D0)) :: fwbs_time_dlim, fwbs_time_ulim, fwbs_time, fwbs_main_time
-    real(kind(1.0D0)) :: fwbs_max_a, fwbs_avail
+    real(kind(1.0D0)) ::  fwbs_main_time
+    real(kind(1.0D0)) :: a0, fwbs_avail, n, pf
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Calculate cycle limit in terms of days
+    
+	 ! MDK Rewrote routine to match the engineering paper
+    ! Number of cycles between planned blanket replacements, N
+    n = bktlife * year / tcycle
 
-    !  Design limit (20000 cycles)
-    fwbs_time_dlim = tcycle * 20000.0D0 * seconds_to_days
-
-    !  Upper limit (20000 cycles)
-    fwbs_time_ulim = tcycle * 40000.0D0 * seconds_to_days
-
-    !  Operational time in days
-    fwbs_time = bktlife * years_to_days
-
-    !  fwbs maintenance time (days)
-    fwbs_main_time = fwbs_umain_time * years_to_days
-
-    !  Max availability
-    fwbs_max_a = 1.0D0 - (fwbs_prob_fail * fwbs_main_time)
+    ! The probability of failure in one pulse cycle 
+    ! (before the reference cycle life)    
+    pf = (fwbs_prob_fail / day) * tcycle
+    a0 = 1.0D0 - pf * fwbs_umain_time * year / tcycle
  
-    !  Determine if the operational time is under the design criteria
-
-    if (fwbs_time <= fwbs_time_dlim) then
-
-       u_unplanned_fwbs = 1.0D0 - fwbs_max_a
-
-    else if (fwbs_time >= fwbs_time_ulim) then
-       
-       u_unplanned_fwbs = 1.0D0
-
-    else
-       
-       fwbs_avail = fwbs_max_a - (-fwbs_max_a/(fwbs_time * (fwbs_time_ulim - fwbs_time_dlim))) * &
-            (fwbs_time**2.0D0 - fwbs_time * fwbs_time_dlim - 0.5D0 * fwbs_time_dlim**2.0D0)
-       u_unplanned_fwbs = 1.0D0 - fwbs_avail
-       
+    if (fwbs_nu <= fwbs_nref) then
+        write(*,*) 'fwbs_nu <= fwbs_nref'
+        write(*,*) 'The cycle when the blanket fails with 100% probability <= Reference value for cycle life of blanket'
+        call ocmmnt(outfile,'EROROR: The cycle when the blanket fails with 100% probability <= Reference value for cycle life of blanket')
+    end if
+ 
+    !  Integrating the instantaneous availability gives the mean 
+    !  availability over the planned cycle life N
+    if (n <= fwbs_nref) then
+       fwbs_avail = a0
+    else if (n >= fwbs_nu) then       
+       fwbs_avail = 0.0D0
+    else    
+       fwbs_avail = (a0/(fwbs_nu-fwbs_nref))*(fwbs_nu - 0.5D0*fwbs_nref**2.0D0/n -0.5D0*n)              
     end if   
-
+    
+    u_unplanned_fwbs = 1.0D0 - fwbs_avail  
+   
     if (iprint /= 1) return
-
-    call ocmmnt(outfile,'Blanket:')
+    call ocmmnt(outfile,'First wall / Blanket:')
     call oblnkl(outfile)
-    call ovarre(outfile,'Design criteria operational time (days)', '(fwbs_time_dlim)',fwbs_time_dlim)
-    call ovarre(outfile,'Fwbs operational time', '(fwbs_time)',fwbs_time)
-    call ovarre(outfile,'First wall / blanket unplanned unavailability', '(u_unplanned_fwbs)', u_unplanned_fwbs)
+    call ovarre(outfile,'Probability of failure per operational day', '(fwbs_prob_fail)',fwbs_prob_fail)
+    call ovarre(outfile,'Repair time (years)', '(fwbs_umain_time)',fwbs_umain_time)
+    call ovarre(outfile,'Reference value for cycle life', '(fwbs_nref)',fwbs_nref)
+    call ovarre(outfile,'The cycle when failure is with 100% certain', '(fwbs_nu)',fwbs_nu)
+    call ovarre(outfile,'Number of cycles between planned replacements', '(n)',n)
+    call ovarre(outfile,'Unplanned unavailability', '(u_unplanned_fwbs)', u_unplanned_fwbs)
     call oblnkl(outfile)
 
   end subroutine calc_u_unplanned_fwbs

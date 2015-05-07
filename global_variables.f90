@@ -2846,6 +2846,20 @@ module cost_variables
   real(kind(1.0D0)) :: div_prob_fail = 0.0002D0
   !+ad_vars  div_umain_time /0.25/ : Divertor unplanned maintenance time (years)
   real(kind(1.0D0)) :: div_umain_time = 0.25D0
+  
+  ! MDK
+  !+ad_vars  div_nref /7000/ : Reference value for cycle cycle life of divertor
+  real(kind(1.0D0)) :: div_nref = 7000.0D0
+  !+ad_vars  div_nu /14000/ : The cycle when the divertor fails with 100% probability
+  real(kind(1.0D0)) :: div_nu = 14000.0D0
+
+  
+  !+ad_vars  fwbs_nref /7000/ : Reference value for cycle life of blanket
+  real(kind(1.0D0)) :: fwbs_nref = 20000.0D0
+  !+ad_vars  fwbs_nu /14000/ : The cycle when the blanket fails with 100% probability
+  real(kind(1.0D0)) :: fwbs_nu = 40000.0D0
+  
+  
   !+ad_vars  fwbs_prob_fail /0.0002/ : Fwbs probability of failure (per op day)
   real(kind(1.0D0)) :: fwbs_prob_fail = 0.0002D0
   !+ad_vars  fwbs_umain_time /0.25/ : Fwbs unplanned maintenance time (years)
