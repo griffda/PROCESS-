@@ -73,7 +73,7 @@ module power_module
   !  Local variables
   real(kind=double) :: htpmwe_fw, htpmwe_blkt, htpmwe_shld, htpmwe_div, htpmw_mech
   real(kind=double) :: pthermdiv, pthermfw, pthermblkt, pthermshld
-  real(kind=double) :: ppumpmw, pcoresystems
+  real(kind=double) :: ppumpmw, pcoresystems, pdivfraction, delta_eta
   
   !  Primary power to divertor factor
   integer, private :: iprimdiv
@@ -943,7 +943,7 @@ contains
 
     !  Heat removal from first wall and divertor (MW) (only used in costs.f90)
     pfwdiv = pthermfw + pthermdiv
-
+    
     !  Thermal to electric efficiency
     call plant_thermal_efficiency(etath)
 
@@ -971,6 +971,12 @@ contains
 		iprimdiv = 1
 		
 	end if
+	if (abs(pthermmw) < 1.0D-4) write(*,*) 'ERROR Primary thermal power is zero or negative'
+	
+	! #284 Fraction of total high-grade thermal power to divertor
+    pdivfraction = pthermdiv / pthermmw
+    ! Loss in efficiency as this primary power is collecetd at very low temperature
+    delta_eta = 0.339*pdivfraction
 
     !  Secondary thermal power deposited in shield
     psecshld = pthermshld * (1-iprimshld)
@@ -1073,7 +1079,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: cirpowfr, primsum, pinj, secsum, othermw, rejected_main
+    real(kind(1.0D0)) :: cirpowfr, primsum, pinj, secsum, othermw, rejected_main, sum
     
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1165,37 +1171,43 @@ contains
     call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in shield', '(fpumpshld)', fpumpshld)
     call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in divertor', '(fpumpdiv)',fpumpdiv)
     call ovarre(outfile, 'Electrical efficiency of heat transport coolant pumps', '(etahtp)', etahtp)
-    call ovarin(outfile, 'Switch for destination of divertor thermal power (1 = power conv. cycle)', '(iprimdiv)', iprimdiv)
-    call ovarin(outfile, 'Switch for destination of shield thermal power (1 = power conv. cycle)', '(iprimshld)', iprimshld)
-
+    ! #284
+    call osubhd(outfile,'Plant thermodynamics: options :')
+    if (iprimdiv == 1) then
+        call ocmmnt(outfile, 'Divertor thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle')
+    else if (iprimdiv == 0) then
+        call ocmmnt(outfile, 'Divertor thermal power is not used, but rejected directly to the environment.')
+    end if
+    if (iprimshld == 1) then
+        call ocmmnt(outfile, 'Shield thermal power is collected at only 150 C and is used to preheat the coolant in the power cycle')
+    else if (iprimshld == 0) then
+        call ocmmnt(outfile, 'Shield thermal power is not used, but rejected directly to the environment.')
+    end if         
+ 
     if (ireactor == 1) then
         if (secondary_cycle == 0) then
-            call osubhd(outfile,'Power conversion cycle efficiency model: '// &
+            call ocmmnt(outfile,'Power conversion cycle efficiency model: '// &
                 'efficiency set according to blanket type (div power to secondary)')
         else if (secondary_cycle == 1) then
-			call osubhd(outfile,'Power conversion cycle efficiency model: '// &
-                'efficiency set according to blanket type (div power to primary)')
-            call ovarrf(outfile, 'Thermal to electric conversion efficiency of the power conversion cycle', & 
-			    '(etath)', etath)                
+			call ocmmnt(outfile,'Power conversion cycle efficiency model: '// &
+                'efficiency set according to blanket type (div power to primary)')        
             call ovarrf(outfile, 'Thermal to electric conversion efficiency of the power conversion cycle', & 
 			    '(etath)', etath)                
         else if (secondary_cycle == 2) then
-            call osubhd(outfile,'Power conversion cycle efficiency model: user-defined efficiency')
+            call ocmmnt(outfile,'Power conversion cycle efficiency model: user-defined efficiency')
             call ovarrf(outfile, 'Thermal to electric conversion efficiency of the power conversion cycle', & 
 			    '(etath)', etath)            
         else if (secondary_cycle == 3) then
-            call osubhd(outfile,'Power conversion cycle efficiency model: steam Rankine cycle')
+            call ocmmnt(outfile,'Power conversion cycle efficiency model: steam Rankine cycle')
         else
-            call osubhd(outfile,'Power conversion cycle efficiency model: supercritical CO2 cycle')
-        end if
+            call ocmmnt(outfile,'Power conversion cycle efficiency model: supercritical CO2 cycle')
+        end if        
    
         if (secondary_cycle > 2) then
             call ovarrf(outfile, 'Coolant temperature at turbine inlet (K)', '(tturb)', tturb)
         end if
-   
-!        call ovarrf(outfile, 'Thermal to electric conversion efficiency of the power conversion cycle', & 
-!			'(etath)', etath)
-!        call ovarre(outfile, '(Input) Balance of plant recirculating power fraction', '(fauxbop)', fauxbop)
+        call ovarrf(outfile, 'Fraction of total high-grade thermal power to divertor', '(pdivfraction)', pdivfraction)
+        
     end if
 
     call oblnkl(outfile)
@@ -1352,17 +1364,20 @@ contains
 		call ocmmnt(outfile,'Total power loss is scaling power plus radiation (iradloss = 0)')
 		call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw)
 		call ovarrf(outfile,'Total net radiation power (MW)','(pradmw)',pradmw)
-		call ovarrf(outfile,'Total (MW)','',pscalingmw+pradmw)
+		sum = pscalingmw+pradmw
+		call ovarrf(outfile,'Total (MW)','',sum)		
     else if (iradloss == 1) then
 		call ocmmnt(outfile,'Total power loss is scaling power plus core radiation only (iradloss = 1)')
 		call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw)
 		call ovarrf(outfile,'Radiation power from inside "coreradius" (MW)','(pcoreradmw)',pcoreradmw)
 		call ovarrf(outfile,'Total (MW)','',pscalingmw+pcoreradmw)
+		sum = pscalingmw+pcoreradmw
     else if (iradloss == 2) then
 		call ocmmnt(outfile,'Total power loss is scaling power only (iradloss = 1).')
 		call ocmmnt(outfile,'This is not recommended for power plant models.')
 		call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw)
 		call ovarrf(outfile,'Total (MW)','',pscalingmw)
+		sum = pscalingmw
     else
         write(*,*) 'The value of iradloss appears to be invalid.'
         call ocmmnt(outfile,'THE VALUE OF IRADLOSS APPEARS TO BE INVALID.') 
@@ -1375,6 +1390,10 @@ contains
 	call ovarrf(outfile,'Injected power deposited in plasma (MW)','(pinjmw)',pinjmw)
 	call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw+pinjmw)		  
 	call oblnkl(outfile)
+	if (abs(sum - (falpha*palpmw+pchargemw+pohmmw+pinjmw)) > 5.0D0) then
+	    write(*,*) 'WARNING: Power balance across separatrix is in error by more than 5 MW.'
+	    call ocmmnt(outfile,'WARNING: Power balance across separatrix is in error by more than 5 MW.')
+    end if
 
     call ocmmnt(outfile,'Power Balance for Reactor - Summary :')
     call ocmmnt(outfile,'-------------------------------------')
@@ -1383,7 +1402,8 @@ contains
 	call ovarrf(outfile,'Injected power (MW)','(pnbitot)',pnbitot)
 	call ovarrf(outfile,'Ohmic power (MW)','(pohmmw)',pohmmw)
 	call ovarrf(outfile,'Power deposited in primary coolant by pump (MW)','(htpmw_mech)',htpmw_mech)
-	call ovarrf(outfile,'Total (MW)','',powfmw+emultmw+pnbitot+htpmw_mech+pohmmw)
+	sum = powfmw+emultmw+pnbitot+htpmw_mech+pohmmw
+	call ovarrf(outfile,'Total (MW)','',sum)
 	call oblnkl(outfile)
 	call ovarrf(outfile,'Heat extracted from armour and first wall (MW)','(pthermfw)',pthermfw)
 	call ovarrf(outfile,'Heat extracted from blanket (MW)','(pthermblkt)',pthermblkt)
@@ -1392,6 +1412,11 @@ contains
 	call ovarrf(outfile,'Nuclear and photon power lost to H/CD system (MW)','(psechcd)',psechcd)
 	call ovarrf(outfile,'Total (MW)','',pthermfw+pthermblkt+pthermshld+pthermdiv+psechcd)
 	call oblnkl(outfile)
+    if (abs(sum - (pthermfw+pthermblkt+pthermshld+pthermdiv+psechcd)) > 5.0D0) then
+	    write(*,*) 'WARNING: Power balance for reactor is in error by more than 5 MW.'
+	    call ocmmnt(outfile,'WARNING: Power balance for reactor is in error by more than 5 MW.')
+    end if
+
 	
 	! Heat rejected by main power conversion circuit	
 	rejected_main = pthermmw * (1 - etath)
@@ -1406,25 +1431,34 @@ contains
 	call ovarrf(outfile,'Electric power for cryoplant (MW)','(crypmw)',crypmw)
 	call ovarrf(outfile,'Electric power for TF coils (MW)','(tfacpd)',tfacpd)	
 	call ovarrf(outfile,'Electric power for PF coils (MW)','(pfwp)', pfwp)	
-	!call ovarrf(outfile,'Electric power for secondary (power conversion)cycle (MW)','(bopmw)', bopmw)	
 	call ovarrf(outfile,'All other internal electric power requirements (MW)','(fachtmw)', fachtmw)	
-	call ovarrf(outfile,'Total (MW)','',pnetelmw+pinjwp+htpmw+vachtmw+trithtmw+crypmw+tfacpd+fachtmw+pfwp)
+	sum = pnetelmw+pinjwp+htpmw+vachtmw+trithtmw+crypmw+tfacpd+fachtmw+pfwp
+	call ovarrf(outfile,'Total (MW)','',sum)
 	call oblnkl(outfile)
 	call ovarrf(outfile,'Gross electrical output* (MW)','(pgrossmw)',pgrossmw)
 	call ocmmnt(outfile,'(*Power for pumps in secondary circuit already subtracted)')
 	call oblnkl(outfile)
+	if (abs(sum - pgrossmw) > 5.0D0) then
+	    write(*,*) 'WARNING: Electrical Power balance is in error by more than 5 MW.'
+	    call ocmmnt(outfile,'WARNING: Electrical Power balance is in error by more than 5 MW.')
+    end if
 	
 	call ocmmnt(outfile,'Power balance for power plant :')
     call ocmmnt(outfile,'-------------------------------')
 	call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw)
 	call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw)
-	call ovarrf(outfile,'Total (MW)','',powfmw + emultmw)
+	sum = powfmw + emultmw
+	call ovarrf(outfile,'Total (MW)','',sum)
 	call oblnkl(outfile)
 	call ovarrf(outfile,'Net electrical output (MW)	','(pnetelmw)',pnetelmw)
 	call ovarrf(outfile,'Heat rejected by main power conversion circuit (MW)','(rejected_main)',rejected_main)
 	call ovarrf(outfile,'Heat rejected by other cooling circuits (MW)','(psechtmw)',psechtmw)
 	call ovarrf(outfile,'Total (MW)','',pnetelmw + rejected_main + psechtmw)
-    call oblnkl(outfile)    
+    call oblnkl(outfile)   
+    if (abs(sum - (pnetelmw + rejected_main + psechtmw)) > 5.0D0) then
+	    write(*,*) 'WARNING: Power balance for power plant is in error by more than 5 MW.'
+	    call ocmmnt(outfile,'WARNING: Power balance for power plant is in error by more than 5 MW.')
+    end if 
     
     call osubhd(outfile,'Plant efficiency measures :')
     call ovarrf(outfile,'Net electric power / total nuclear power (%)', '(pnetelmw/(powfmw+emultmw)', 100.0D0*pnetelmw/(powfmw+emultmw))
@@ -1531,6 +1565,7 @@ contains
     !+ad_hist  17/12/14 PJK Added warning messages if tturb out of range
     !+ad_hist  12/02/15 JM  Changed the thermal efficiency fits for detailed model
     !+ad_hist  11/03/15 JM  Changed the argument list to remove global variables.
+    !+ad_hist  08/05/15 MDK Revised efficiency formulae: see issue #284
     !+ad_stat  Okay
     !+ad_docs  C. Harrington, K:\Power Plant Physics and Technology \ PROCESS \ blanket_model
     !+ad_docc  \ New Power Module Harrington \ Cycle correlations \ Cycle correlations.xls
@@ -1552,12 +1587,14 @@ contains
 	   !  CCFE HCPB model
 	   if (iblanket == 1) then
 		  !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX Feedheat & reheat cycle assumed
-          etath = 0.436D0
+          !etath = 0.436D0
+          etath = 0.411D0
           
        !  KIT HCPB model
 	   else if (iblanket == 2) then
 		  !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX Feedheat & reheat cycle assumed
-          etath = 0.436D0
+          !etath = 0.436D0
+          etath = 0.411D0
           
        end if
 
@@ -1567,11 +1604,13 @@ contains
 		!  CCFE HCPB model
 		if (iblanket == 1) then
 		  !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX Feedheat & reheat cycle assumed
-          etath = 0.397D0
+          !etath = 0.397D0
+          etath = 0.411D0 - delta_eta
         
         !  KIT HCPB model
         else if (iblanket == 2) then
-			etath = 0.397D0
+			!etath = 0.397D0
+			etath = 0.411D0 - delta_eta
 			
 		end if
 
@@ -1591,23 +1630,26 @@ contains
           !  temperature, as was stated as practical in EFDA_D_2LLNBX.
           
           !  Superheated steam Rankine cycle correlation (C. Harrington)
-          !  Range of validity: 657 K < tturb < 840 K
+          !  Range of validity: 657 K < tturb < 915 K          
           tturb = outlet_temp - 20.0D0
-          if ((tturb < 656.0D0).or.(tturb > 840.0D0)) then
+          !if ((tturb < 656.0D0).or.(tturb > 840.0D0)) then
+          if ((tturb < 657.0D0).or.(tturb > 915.0D0)) then
              idiags(1) = 2 ; fdiags(1) = tturb
              call report_error(166)
           end if
-          etath = 0.1802D0*log(tturb) - 0.8002D0
+          !etath = 0.1802D0*log(tturb) - 0.8002D0
+          etath = 0.1802D0*log(tturb) - 0.7823 - delta_eta
           
        !  KIT HCPB Model
        else if (iblanket == 2) then
 		  !  Same as iblanket = 1
           tturb = outlet_temp - 20.0D0
-          if ((tturb < 656.0D0).or.(tturb > 840.0D0)) then
+          !if ((tturb < 656.0D0).or.(tturb > 840.0D0)) then
+          if ((tturb < 657.0D0).or.(tturb > 915.0D0)) then
              idiags(1) = 2 ; fdiags(1) = tturb
              call report_error(166)
           end if
-          etath = 0.1802D0*log(tturb) - 0.8002D0
+          etath = 0.1802D0*log(tturb) - 0.7823 - delta_eta
           
        end if
 

@@ -1625,7 +1625,7 @@ contains
           call parse_int_variable('NBLKTMODTI', nblktmodti, 8, 96, &
                'No of i/b blanket modules in toroidal direction')
        case ('TFWMATMAX')
-          call parse_real_variable('TFWMATMAX', tfwmatmax, 700.0D0, 1000.0D0, &
+          call parse_real_variable('TFWMATMAX', tfwmatmax, 500.0D0, 2000.0D0, &
                'Max temperature of first wall material (K)')
        case ('ETAISO')
           call parse_real_variable('ETAISO', etaiso, 0.1D0, 1.0D0, &

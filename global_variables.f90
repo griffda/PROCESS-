@@ -1193,11 +1193,11 @@ module fwbs_variables
   real(kind(1.0D0)) :: afwi = 0.008D0
   !+ad_vars  afwo /0.008/ : inner radius of outboard first wall/blanket coolant channels (m)
   real(kind(1.0D0)) :: afwo = 0.008D0
-  !+ad_vars  inlet_temp /300.0/ : inlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1)
-  real(kind(1.0D0)) :: inlet_temp = 300.0D0
-  !+ad_vars  outlet_temp /550.0/ : outlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1);
+  !+ad_vars  inlet_temp /573.0/ : inlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1)
+  real(kind(1.0D0)) :: inlet_temp = 573.0D0
+  !+ad_vars  outlet_temp /823.0/ : outlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1);
   !+ad_varc                        input if coolwh=1 (helium), calculated if coolwh=2 (water)
-  real(kind(1.0D0)) :: outlet_temp = 550.0D0
+  real(kind(1.0D0)) :: outlet_temp = 823.0D0
   !+ad_vars  nblktmodpo /8/ : number of outboard blanket modules in poloidal direction (secondary_cycle>1)
   integer :: nblktmodpo = 8
   !+ad_vars  nblktmodpi /7/ : number of inboard blanket modules in poloidal direction (secondary_cycle>1)
