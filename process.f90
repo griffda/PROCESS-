@@ -259,7 +259,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '391    Release Date :: 2015-05-11'
+       '393    Release Date :: 2015-05-11'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1855,4 +1855,4 @@ end subroutine output
 ! GIT 388: Minor fix to version number
 ! GIT 389: New release. See release notes.
 ! GIT 390: Rewrite of calc_u_unplanned_fwbs and calc_u_unplanned_divertor
-! GIT 391: Issue #290 Improvements to thermohtdraulic model of first wall.
+! GIT 393: Issue #290 Improvements to thermohtdraulic model of first wall.
