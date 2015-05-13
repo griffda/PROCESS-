@@ -63,6 +63,7 @@ module scan_module
   use pf_power_variables
   use process_output
   use tfcoil_variables
+  use fwbs_variables
 
   implicit none
 
@@ -176,7 +177,7 @@ contains
     character(len=25) :: xlabel,vlabel
     character(len=48) :: tlabel
 
-    integer, parameter :: noutvars = 50
+    integer, parameter :: noutvars = 57
     integer, parameter :: width = 110
 
     character(len=25), dimension(noutvars), save :: plabel
@@ -244,7 +245,7 @@ contains
        plabel(34) = 'Divertor_Heat_(MW/m^2)___'
        plabel(35) = 'TF_coil_Power_(MW)_______'
        plabel(36) = 'TF_coil_weight_(kg)______'
-       plabel(37) = 'TF_stress_(MPa)__________'
+       plabel(37) = 'vM_stress_in_TF_case_(Pa)'
        plabel(38) = 'J_TF_inboard_leg_(MA/m^2)'
        plabel(39) = 'Centrepost_max_T_(TART)__'
        plabel(40) = 'Res_TF_inbrd_leg_Pwr_(MW)'
@@ -258,6 +259,14 @@ contains
        plabel(48) = 'Net_electric_Pwr_(MW)____'
        plabel(49) = 'Recirculating_Fraction___'
        plabel(50) = 'Psep/R___________________'
+       ! MDK
+       plabel(51) = 'fimpvar__________________'       
+       plabel(52) = 'Tot._radiation_power_(MW)'
+       plabel(53) = 'First_wall_peak_temp_(K)_'
+       plabel(54) = 'Cu_frac_TFC_conductor____'
+       plabel(55) = 'Winding_pack_area_TFC(m2)'
+       plabel(56) = 'Conductor_area_TFC_(m2)__'
+       plabel(57) = 'Area_TF_inboard_leg_(m2)_'
 
        call ovarin(mfile,'Number of scan points','(isweep)',isweep)
        call ovarin(mfile,'Scanning variable number','(nsweep)',nsweep)
@@ -430,7 +439,7 @@ contains
        outvar(34,iscan) = hldiv
        outvar(35,iscan) = tfcmw
        outvar(36,iscan) = whttf
-       outvar(37,iscan) = sigrad + sigtan
+       outvar(37,iscan) = strtf2
        outvar(38,iscan) = oacdcp/1.0D6
        outvar(39,iscan) = tcpmax
        outvar(40,iscan) = tfcpmw
@@ -448,6 +457,14 @@ contains
           outvar(49,iscan) = 0.0D0
        end if
        outvar(50,iscan) = pdivt/rmajor
+       outvar(51,iscan) = fimpvar
+       outvar(52,iscan) = pradmw
+       outvar(53,iscan) = tpeak
+       outvar(54,iscan) = fcutfsu
+       outvar(55,iscan) = (wwp1+wwp2)*thkwp
+       outvar(56,iscan) = acond
+       outvar(57,iscan) = tfareain/tfno
+       
 
     end do  !  End of scanning loop
 

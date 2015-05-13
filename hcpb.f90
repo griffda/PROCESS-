@@ -1616,7 +1616,7 @@ contains
             ! This should never happen
             !  Nominal fluence limit exceeded; reduce first wall lifetime
             fwlife = abktflnc * area/ fwvol / (1.0D-6*qppp)
-            write(*,*) 'Nominal fluence limit exceeded; first wall lifetime reduced.'
+            !write(*,*) 'Nominal fluence limit exceeded; first wall lifetime reduced.'
        end if
 
        if (tpeakfw > tfwmatmax) then

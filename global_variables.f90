@@ -1237,7 +1237,7 @@ module fwbs_variables
   !+ad_varc                    ipfloc=3 PF coil (or stellarator modular coil)
   !+ad_varc                    and external cryostat (m)
   real(kind(1.0D0)) :: rpf2dewar = 0.5D0
-  !+ad_vars  tpeak : peak first wall temperature (C)
+  !+ad_vars  tpeak : peak first wall temperature (K)
   real(kind(1.0D0)) :: tpeak = 0.0D0
   !+ad_vars  vdewex : external cryostat volume (m3)
   real(kind(1.0D0)) :: vdewex = 0.0D0
