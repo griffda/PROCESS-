@@ -1498,8 +1498,10 @@ contains
     ap = acond + aswp + aiwp + avwp
 
     call osubhd(outfile,'Winding Pack Information :')
-    call ovarre(outfile,'Conductor fraction of winding pack','(acond/ap)',acond/ap)
+    
     call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcutfsu)
+    call ovarre(outfile,'Superconductor fraction of conductor','(1-fcutfsu)',1-fcutfsu)
+    call ovarre(outfile,'Conductor fraction of winding pack','(acond/ap)',acond/ap)
     call ovarre(outfile,'Structure fraction of winding pack','(aswp/ap)',aswp/ap)
     call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap)
     call ovarre(outfile,'Helium fraction of winding pack','(avwp/ap)',avwp/ap)
@@ -1533,10 +1535,10 @@ contains
     call ovarre(outfile,'Conduit tangential stress (Pa)','(sigtcon)',sigtcon)
     call ovarre(outfile,'Conduit Von Mises combination stress (Pa)','(strtf1)',strtf1)
     if (tfc_model == 1) then
-       call ovarre(outfile,'Case radial stress (Pa)','(sigrtf(1))',sigrtf(1))
-       call ovarre(outfile,'Case tangential stress (Pa)','(sigttf(1))',sigttf(1))
+       !call ovarre(outfile,'Case inboard radial stress (Pa)','(sigrtf(1))',sigrtf(1))
+       call ovarre(outfile,'Case inboard tangential stress (Pa)','(sigttf(1))',sigttf(1))
     end if
-    call ovarre(outfile,'Case Von Mises combination stress (Pa)','(strtf2)',strtf2)
+    call ovarre(outfile,'Case peak Von Mises combination stress (Pa)','(strtf2)',strtf2)
     call ovarre(outfile,'Allowable stress (Pa)','(alstrtf)',alstrtf)
     call ovarre(outfile,'Deflection at midplane (m)','(deflect)',deflect)
     if (tfc_model == 1) then

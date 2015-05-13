@@ -1194,11 +1194,11 @@ module fwbs_variables
   real(kind(1.0D0)) :: afwi = 0.008D0
   !+ad_vars  afwo /0.008/ : inner radius of outboard first wall/blanket coolant channels (m)
   real(kind(1.0D0)) :: afwo = 0.008D0
-  !+ad_vars  inlet_temp /300.0/ : inlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1)
-  real(kind(1.0D0)) :: inlet_temp = 300.0D0
-  !+ad_vars  outlet_temp /550.0/ : outlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1);
+  !+ad_vars  inlet_temp /573.0/ : inlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1)
+  real(kind(1.0D0)) :: inlet_temp = 573.0D0
+  !+ad_vars  outlet_temp /823.0/ : outlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1);
   !+ad_varc                        input if coolwh=1 (helium), calculated if coolwh=2 (water)
-  real(kind(1.0D0)) :: outlet_temp = 550.0D0
+  real(kind(1.0D0)) :: outlet_temp = 823.0D0
   !+ad_vars  nblktmodpo /8/ : number of outboard blanket modules in poloidal direction (secondary_cycle>1)
   integer :: nblktmodpo = 8
   !+ad_vars  nblktmodpi /7/ : number of inboard blanket modules in poloidal direction (secondary_cycle>1)
@@ -1238,7 +1238,7 @@ module fwbs_variables
   !+ad_varc                    ipfloc=3 PF coil (or stellarator modular coil)
   !+ad_varc                    and external cryostat (m)
   real(kind(1.0D0)) :: rpf2dewar = 0.5D0
-  !+ad_vars  tpeak : peak first wall temperature (C)
+  !+ad_vars  tpeak : peak first wall temperature (K)
   real(kind(1.0D0)) :: tpeak = 0.0D0
   !+ad_vars  vdewex : external cryostat volume (m3)
   real(kind(1.0D0)) :: vdewex = 0.0D0
@@ -2875,6 +2875,20 @@ module cost_variables
   real(kind(1.0D0)) :: div_prob_fail = 0.0002D0
   !+ad_vars  div_umain_time /0.25/ : Divertor unplanned maintenance time (years)
   real(kind(1.0D0)) :: div_umain_time = 0.25D0
+  
+  ! MDK
+  !+ad_vars  div_nref /7000/ : Reference value for cycle cycle life of divertor
+  real(kind(1.0D0)) :: div_nref = 7000.0D0
+  !+ad_vars  div_nu /14000/ : The cycle when the divertor fails with 100% probability
+  real(kind(1.0D0)) :: div_nu = 14000.0D0
+
+  
+  !+ad_vars  fwbs_nref /7000/ : Reference value for cycle life of blanket
+  real(kind(1.0D0)) :: fwbs_nref = 20000.0D0
+  !+ad_vars  fwbs_nu /14000/ : The cycle when the blanket fails with 100% probability
+  real(kind(1.0D0)) :: fwbs_nu = 40000.0D0
+  
+  
   !+ad_vars  fwbs_prob_fail /0.0002/ : Fwbs probability of failure (per op day)
   real(kind(1.0D0)) :: fwbs_prob_fail = 0.0002D0
   !+ad_vars  fwbs_umain_time /0.25/ : Fwbs unplanned maintenance time (years)

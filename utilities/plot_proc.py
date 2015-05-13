@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 """
 
   PROCESS plot_proc using process_io_lib functions and MFILE.DAT
@@ -1309,7 +1309,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
             (tburn, "Burn time", "hrs"),
             ("", "", ""),
             ("#TF coil type is {}".format(tftype), "", ""),
-            ("bmaxtfrp”, "Peak field at conductor (w. rip.)“, "T"),
+            ("bmaxtfrp", "Peak field at conductor (w. rip.)", "T"),
             ("iooic", "I/I$_{\mathrm{crit}}$", ""),
             ("tmarg", "Temperature margin", "K"),
             ("strtf1", "Conduit Von Mises stress", "Pa"),

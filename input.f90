@@ -1626,7 +1626,7 @@ contains
           call parse_int_variable('NBLKTMODTI', nblktmodti, 8, 96, &
                'No of i/b blanket modules in toroidal direction')
        case ('TFWMATMAX')
-          call parse_real_variable('TFWMATMAX', tfwmatmax, 700.0D0, 1000.0D0, &
+          call parse_real_variable('TFWMATMAX', tfwmatmax, 500.0D0, 2000.0D0, &
                'Max temperature of first wall material (K)')
        case ('ETAISO')
           call parse_real_variable('ETAISO', etaiso, 0.1D0, 1.0D0, &
@@ -2124,6 +2124,21 @@ contains
        case ('DIV_UMAIN_TIME')
           call parse_real_variable('DIV_UMAIN_TIME', div_umain_time, 0.1D0, 2.0D0, &
                'Divertor unplanned maintenance time (years)')
+
+       case ('DIV_NREF')
+          call parse_real_variable('DIV_NREF', div_nref, 1.0D3, 1.0D8, &
+               'Reference value for cycle life of divertor')               
+       case ('DIV_NU')
+          call parse_real_variable('DIV_NU', div_nu, 1.0D3, 1.0D8, &
+               'The cycle when the divertor fails with 100% probability')               
+
+       case ('FWBS_NREF')
+          call parse_real_variable('fwbs_nref', fwbs_nref, 1.0D3, 1.0D8, &
+               'Reference value for cycle life of blanket')               
+       case ('FWBS_NU')
+          call parse_real_variable('fwbs_nu', fwbs_nu, 1.0D3, 1.0D8, &
+               'The cycle when the blanket fails with 100% probability')               
+               
        case ('FWBS_PROB_FAIL')
           call parse_real_variable('FWBS_PROB_FAIL', fwbs_prob_fail, 0.0D0, 1.0D0, &
                'Fwbs probability of failure (per op day)')

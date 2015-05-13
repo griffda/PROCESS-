@@ -180,6 +180,8 @@ module ccfe_hcpb_module
   !  Fraction of neutron energy lost by main wall
   real(kind=double), private :: fdep
   
+  real(kind=double) :: flnce
+  
 contains
   
   subroutine ccfe_hcpb(outfile, iprint)
@@ -1203,8 +1205,8 @@ contains
     htpmw_fw = htpmw_fwi + htpmw_fwo
     htpmw_blkt = htpmw_blkti + htpmw_blkto
     
-	!  Peak temperature (deg C)
-    tpeak = max(tpeakfwi, tpeakfwo) - 273.15D0
+	!  Peak temperature (K)
+    tpeak = max(tpeakfwi, tpeakfwo)
     
     if (ip == 0) return
     
@@ -1468,7 +1470,7 @@ contains
     !  Local variables
     integer, parameter :: nk = 51
     integer :: it, k
-    real(kind=double) :: boa, fboa, flnce, fwlifs, fwvol, hcoeff, kf, masflx, maxstress, &
+    real(kind=double) :: boa, fboa, fwlifs, fwvol, hcoeff, kf, masflx, maxstress, &
         mindif, qpp, qppp, sgpthn, tav, temp_c, temp_k, tfwav, tmpdif, tmprop_c, tmprop_k, &
         tmprse, tmthet, tpeakfw_c, viscf, viscfs
 
@@ -1590,13 +1592,15 @@ contains
        !  Limits on the first wall thickness
        !  The upper limit on the first wall thickness is derived from the
        !  maximum temperature of the FW material.  There is also a fluence
-       !  limit; if this is exceeded the FW lifetime is reduced. The fluence
-       !  is the product of the neutron wall loading (qppp*fwvol/fwarea) and
-       !  the wall lifetime. This fluence limit is a conservative one, with
-       !  the upper bound on the fluence set by the value abktflnc (MW-yr/m2)
+       !  limit; if this is exceeded the FW lifetime is reduced. 
+       !  The upper bound on the fluence set by the value abktflnc (MW-yr/m2)
 
        !  Fluence (MW-yr/m^2)
-       flnce = 1.0D-6*qppp * fwvol/area * fwlife
+       ! flnce = 1.0D-6*qppp * fwvol/area * fwlife
+       ! Issue #290:
+       ! Replace this so-called fluence by nominal neutron wall loading x first wall life:
+       ! wallmw : average neutron wall load (MW/m2)
+       flnce = wallmw * fwlife
 
        !  Calculate peak temperature - occurs at (r,theta) = (bfw,0)
        call cosine_term(afw, bfw, 0.0D0, bfw, qpp, hcoeff, tmprop_c, tmthet)
@@ -1606,26 +1610,28 @@ contains
             + (pi*(bfw**2-afw**2)*qppp + 2.0D0*bfw*qpp) / &
             (2.0D0*pi*afw*hcoeff) + outlet_temp + tmthet  !  in K
        tpeakfw_c = tpeakfw - 273.15D0
+       
+       
+       if (flnce > abktflnc) then
+            ! This should never happen
+            !  Nominal fluence limit exceeded; reduce first wall lifetime
+            fwlife = abktflnc * area/ fwvol / (1.0D-6*qppp)
+            !write(*,*) 'Nominal fluence limit exceeded; first wall lifetime reduced.'
+       end if
 
-       if ((tpeakfw > tfwmatmax).or.(flnce > abktflnc)) then
-
-          !  Temperature or fluence limit exceeded; reduce first wall lifetime
-          fwlife = abktflnc * area/ fwvol / (1.0D-6*qppp)
-
+       if (tpeakfw > tfwmatmax) then
+          !  Temperature limit exceeded: reduce wall thickness.
           !  fboa is chosen such that fboa**100 * (bfw/afw) = 1.001,
           !  i.e. after 100 iterations bfw is still just larger than afw
           !  N.B. bfw may also have been modified via the stress test below...
           fboa = (1.001D0/boa)**0.01D0
-
           bfw = bfw*fboa
           if ((bfw/afw) <= 1.001D0) then
-             write(*,*) 'Warning in routine ITERATE_FW: Swelling limit exceeded, and optimisation'// &
-             ' is failing to find a suitable first wall thickness...PROCESS continuing.'
+             write(*,*) 'Failed to find a suitable first wall thickness so far.' , 'tpeakfw = ', tpeakfw
              exit iteration
           else
              cycle iteration
           end if
-
        end if
 
        fwlifs = 3.1536D7*fwlife
@@ -1836,8 +1842,8 @@ contains
     !  Nuclear heting section
     call osubhd(ofile, 'Nuclear heating :')
     
-    call ovarre(ofile, 'Average neutron wall load (MW/m2)','(wallmw)', wallmw)
-    call ovarre(ofile, 'First wall full-power lifetime (years)', '(fwlife)', fwlife)
+    call ovarre(ofile, 'Average nominal neutron wall load (MW/m2)','(wallmw)', wallmw)
+    !call ovarre(ofile, 'First wall full-power lifetime (years)', '(fwlife)', fwlife)
     call oblnkl(ofile)
     
     !  ST centre post
@@ -1866,7 +1872,11 @@ contains
     call ovarre(ofile, 'Outer radius of outboard first wall coolant channels (m)', '(bfwo)', bfwo)
     call ovarrf(ofile, 'Inlet temperature of coolant (K)', '(inlet_temp)', inlet_temp)
     call ovarrf(ofile, 'Outlet temperature of coolant (K)', '(outlet_temp)', outlet_temp)
-    call ovarre(ofile, 'Maximum temperature of first wall material (K)', '(tfwmatmax)', tfwmatmax)
+    call ovarre(ofile, 'Allowable temperature of first wall material (K)', '(tfwmatmax)', tfwmatmax)
+    call ovarre(ofile, 'Actual peak temperature of first wall material (K)', '(tpeak)', tpeak)
+    call ovarre(ofile, 'Allowable nominal neutron fluence at first wall (MW.year/m2)', '(abktflnc)', abktflnc)    
+    call ovarre(ofile, 'Actual nominal neutron fluence at first wall (MW.year/m2)', '(flnce)', flnce)
+    call ovarre(ofile, 'First wall full-power lifetime (years)', '(fwlife)', fwlife)
     call ovarin(ofile, 'No of inboard blanket modules poloidally', '(nblktmodpi)', nblktmodpi)
     call ovarin(ofile, 'No of inboard blanket modules toroidally', '(nblktmodti)', nblktmodti)
     call ovarin(ofile, 'No of outboard blanket modules poloidally', '(nblktmodpo)', nblktmodpo)
@@ -3359,7 +3369,7 @@ contains
     !  Nuclear heting section
     !call osubhd(ofile, 'Nuclear heating :')
     
-    !call ovarre(ofile, 'Average neutron wall load (MW/m2)','(wallmw)', wallmw)
+    !call ovarre(ofile, 'Average nominal neutron wall load (MW/m2)','(wallmw)', wallmw)
     !call ovarre(ofile, 'First wall full-power lifetime (years)', '(fwlife)', fwlife)
     !call oblnkl(ofile)
     
