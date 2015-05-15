@@ -330,6 +330,8 @@ contains
     call calc_u_unplanned_hcd(outfile,iprint, u_unplanned_hcd)
 
     !  Vacuum systems
+    ! Number of redundant pumps MDK
+    redun_vac = floor(vpumpn*redun_vacp/100.0 + 0.5D0)
     call calc_u_unplanned_vacuum(outfile,iprint, u_unplanned_vacuum)
 
     !  Total unplanned unavailability    
@@ -968,9 +970,9 @@ contains
 
     ! Local variables
 
-    integer :: i, j, k
+    integer :: i, j, k, total_pumps
     real(kind(1.0D0)) :: cryo_failure_rate, num_redundancy_pumps, cryo_main_time
-    real(kind(1.0D0)) :: cryo_nfailure_rate, total_pumps, t_down
+    real(kind(1.0D0)) :: cryo_nfailure_rate, t_down
     real(kind(1.0D0)) :: pump_failures, n_shutdown, t_op_bt, sum_vals
 
     real(kind(1.0D0)), dimension(vpumpn + redun_vac + 1) :: coefficients, vac_fail_pdf
@@ -1019,9 +1021,11 @@ contains
        end if
     end do
 
-    !  down time for maintenance
+    !  Number of pump failures in one operational period.
+    pump_failures = sum_vals
+    ! Total down time in reactor life
     t_down = sum_vals*cryo_main_time*(n_shutdown + 1.0D0)
-
+    
     !  Total vacuum unplanned unavailability
     u_unplanned_vacuum = max(0.005, t_down / (t_operation + t_down))
     
@@ -1029,9 +1033,9 @@ contains
 
     call ocmmnt(outfile,'Vacuum:')    
     call oblnkl(outfile)
-    call ovarre(outfile,'Number of pumps', '(vpumpn)', vpumpn)
-    call ovarre(outfile,'Number of pump failures over lifetime', '(pump_failures)', pump_failures)
-    call ovarin(outfile,'Number of redundant cryo pumps', '(redun_vac)', redun_vac)
+    call ovarin(outfile,'Number of pumps (excluding redundant pumps)', '(vpumpn)', vpumpn)
+    call ovarin(outfile,'Number of redundant pumps', '(redun_vac)', redun_vac)
+    call ovarre(outfile,'Expected number of pump failures in one operational period', '(pump_failures)', pump_failures)
     call ovarre(outfile,'Vacuum unplanned unavailability', '(u_unplanned_vacuum)', u_unplanned_vacuum)
     call oblnkl(outfile)
 

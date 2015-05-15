@@ -1210,7 +1210,7 @@ contains
     
     if (ip == 0) return
     
-    call oheadr(ofile, 'Thermohydraulics') 
+    call oheadr(ofile, 'First wall and blanket thermohydraulics') 
     call ovarin(ofile, 'Coolant type (1=He, 2=H20)', '(coolwh)',coolwh)
     call ovarre(ofile, 'Outboard coolant flow rate (m/s)', '(velfwo)',velfwo)
     call ovarre(ofile, 'Radial thickness available for pipes inboard (80%)', '(bldepti)', bldepti)
@@ -1811,7 +1811,7 @@ contains
 
     implicit none
     
-    call oheadr(ofile, 'Blanket model output - CCFE HCPB model')   
+    call oheadr(ofile, 'First wall and blanket : CCFE HCPB model')   
     call osubhd(ofile, 'Blanket Composition :')
  
     call ovarrf(ofile, 'Titanium beryllide fraction', '(fbltibe12)', fbltibe12)

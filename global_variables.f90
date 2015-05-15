@@ -2089,7 +2089,8 @@ module vacuum_variables
   !+ad_vars  vcdimax : diameter of duct passage (m)
   real(kind(1.0D0)) :: vcdimax = 0.0D0
   !+ad_vars  vpumpn : number of high vacuum pumps
-  real(kind(1.0D0)) :: vpumpn = 0.0D0
+  !real(kind(1.0D0)) :: vpumpn = 0.0D0
+  integer :: vpumpn = 0
 
 end module vacuum_variables
 
@@ -2902,8 +2903,10 @@ module cost_variables
   real(kind(1.0D0)) :: fwbs_prob_fail = 0.0002D0
   !+ad_vars  fwbs_umain_time /0.25/ : Fwbs unplanned maintenance time (years)
   real(kind(1.0D0)) :: fwbs_umain_time = 0.25D0
-  !+ad_vars  redun_vac /75/ : Vacuum system pump redundancy level (%)
-  integer :: redun_vac = 75
+  !+ad_vars  redun_vacp /75/ : Vacuum system pump redundancy level (%)
+  real(kind(1.0D0)) :: redun_vacp = 10.0D0
+  !+ad_vars  redun_vac : Number of redundant vacuum pumps
+  integer :: redun_vac = 0
   !+ad_vars  t_operation : Operational time (yrs)
   real(kind(1.0D0)) :: t_operation = 0.0D0
   !+ad_vars  tbktrepl /0.5/ : time taken to replace blanket (y)

@@ -235,7 +235,7 @@ subroutine caller(xc,nvars)
 
   call power1
   call vaccall(nout,0)
-  call bldgcall(nout,0)
+  if (cost_model==0) call bldgcall(nout,0)
   call acpow(nout,0)
   call power2(nout,0)
 

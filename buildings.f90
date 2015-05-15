@@ -29,6 +29,7 @@ module buildings_module
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  24/01/13 PJK Added stellarator_variables
+  !+ad_hist  15/5/15 MDK This module is now only used for cost_model=0 (old cost model)  
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !

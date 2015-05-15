@@ -78,7 +78,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: qtorus, gasld
+    real(kind(1.0D0)) :: qtorus, gasld, pumpn
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -90,10 +90,12 @@ contains
     !  2 nuclei * nucleus-pairs/sec * mass/nucleus
 
     gasld = 2.0D0*qfuel * afuel*umass
-
+    
     call vacuum(powfmw,rmajor,rminor,0.5D0*(scrapli+scraplo),sarea,vol, &
          shldoth,shldith,tfcth,rsldi-gapds-ddwi,tfno,tdwell,dene,idivrt, &
-         qtorus,gasld,vpumpn,nvduct,dlscal,vacdshm,vcdimax,iprint,outfile)
+         qtorus,gasld,pumpn,nvduct,dlscal,vacdshm,vcdimax,iprint,outfile)
+    ! MDK pumpn is real: convert to integer by rounding.
+    vpumpn = floor(pumpn+0.5D0)         
 
   end subroutine vaccall
 

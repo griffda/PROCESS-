@@ -407,7 +407,7 @@ subroutine run_summary
      call ocmmnt(outfile, progid(2))  !  version
      call ocmmnt(outfile, progid(3))  !  date/time
      call ocmmnt(outfile, progid(4))  !  user
-     call ocmmnt(outfile, progid(5))  !  computer
+     !call ocmmnt(outfile, progid(5))  !  computer
      call ocmmnt(outfile, progid(6))  !  directory
 
      !  Print code version and run description
@@ -448,37 +448,50 @@ subroutine run_summary
   call ovarst(mfile,'PROCESS run title','(runtitle)',runtitle)
 
 #ifndef unit_test
-  call oblnkl(nout)
-  call ocmmnt(nout,'The following variables will be adjusted by')
-  call ocmmnt(nout,'the code during the iteration process :')
-  call oblnkl(nout)
+! MDK these lines duplicate the ones below.
+!  call oblnkl(nout)
+!  call ocmmnt(nout,'The following variables will be adjusted by')
+!  call ocmmnt(nout,'the code during the iteration process :')
+!  call oblnkl(nout)
 
-  write(nout,10)
-10 format(t10,'ixc',t18,'label')
+!  write(nout,10)
+!10 format(t10,'ixc',t18,'label')
 
+!  call oblnkl(nout)
+
+!  write(nout,20) (ii,ixc(ii),lablxc(ixc(ii)),ii=1,nvar)
+!20 format(t1,i3,t10,i3,t18,a9)
+
+! MDK Only print out the constraints here for HYBRD.
+! For VMCON they are printed out later with residues.
   call oblnkl(nout)
-
-  write(nout,20) (ii,ixc(ii),lablxc(ixc(ii)),ii=1,nvar)
-20 format(t1,i3,t10,i3,t18,a9)
-
-  call oblnkl(nout)
-  call ocmmnt(nout, & 
-       'The following constraint equations have been imposed,')
   if (ioptimz == -1) then
-     call ocmmnt(nout, & 
-          'but limits will not be enforced by the code :')
-  else
-     call ocmmnt(nout,'and will be enforced by the code :')
+		call ocmmnt(nout, 'The following constraint equations have been imposed,')
+		call ocmmnt(nout, 'but limits will not be enforced by the code :')
+		write(nout,30)
+30 	format(t10,'icc',t25,'label')
+		call oblnkl(nout)
+		write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
+40 	format(t1,i3,t10,i3,t18,a33)
   end if
-  call oblnkl(nout)
+  
+!  call ocmmnt(nout, & 
+!       'The following constraint equations have been imposed,')
+!  if (ioptimz == -1) then
+!     call ocmmnt(nout, & 
+!          'but limits will not be enforced by the code :')
+!  else
+!     call ocmmnt(nout,'and will be enforced by the code :')
+!  end if
+!  call oblnkl(nout)
 
-  write(nout,30)
-30 format(t10,'icc',t25,'label')
+!  write(nout,30)
+!30 format(t10,'icc',t25,'label')
 
-  call oblnkl(nout)
+!  call oblnkl(nout)
 
-  write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
-40 format(t1,i3,t10,i3,t18,a33)
+!  write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
+!40 format(t1,i3,t10,i3,t18,a33)
 #endif
 
 end subroutine run_summary
@@ -599,7 +612,7 @@ subroutine eqslv(ifail)
   end do
   sqsumsq = sqrt(sumsq)
 
-  call ovarre(nout,'Estimate of the constraints','(sqsumsq)',sqsumsq)
+  call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq)
 
   !  If necessary, write out a relevant error message
   if (ifail /= 1) then
@@ -639,7 +652,9 @@ subroutine eqslv(ifail)
      write(nout,30) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn),resdl(inn)
      call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
   end do
-30 format(t2,i4,t8,a9,t19,1pe12.4,1pe12.4,1pe12.4)
+!30 format(t2,i4,t8,a9,t19,1pe12.4,1pe12.4,1pe12.4)
+! Make lablxc longer
+30 format(t2,i4,t8,a30,t39,1pe12.4,1pe12.4,1pe12.4)
 
   call osubhd(nout, &
        'The following constraint residues should be close to zero :')
@@ -977,6 +992,7 @@ subroutine doopt(ifail)
   use function_evaluator
   use numerics
   use process_output
+  use process_input
 
   implicit none
 
@@ -989,6 +1005,7 @@ subroutine doopt(ifail)
   real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
   character(len=1), dimension(ipeqns) :: sym
   character(len=10), dimension(ipeqns) :: lab
+  character(len=30) :: strfom
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1058,12 +1075,13 @@ subroutine doopt(ifail)
   call ovarin(nout,'Number of iteration variables','(nvar)',nvar)
   call ovarin(nout,'Number of constraints','(neqns)',neqns)
   call ovarin(nout,'Optimisation switch','(ioptimz)',ioptimz)
-  call ovarin(nout,'Figure of merit switch','(minmax)',minmax)
+  ! MDK
+  !call ovarin(nout,'Figure of merit switch','(minmax)',minmax) 
   if (ifail /= 1) then
      call ovarin(nout,'VMCON error flag','(ifail)',ifail)
   end if
-  call ovarre(nout,'Figure of merit objective function','(f)',f)
-  call ovarre(nout,'Estimate of the constraints','(sqsumsq)',sqsumsq)
+  ! MDK call ovarre(nout,'Figure of merit objective function','(f)',f)
+  call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq)
   call oblnkl(nout)
 
   if (ifail == 1) then
@@ -1075,12 +1093,16 @@ subroutine doopt(ifail)
   end if
 
   if (minmax > 0) then
-     write(nout,10) lablmm(abs(minmax))
+     strfom = lablmm(abs(minmax))
+     call upper_case(strfom)
+     write(nout,10) strfom
   else
-     write(nout,20) lablmm(abs(minmax))
+     strfom = lablmm(abs(minmax))
+     call upper_case(strfom)
+     write(nout,20) strfom     
   end if
-10 format(' to minimise the ',a22)
-20 format(' to maximise the ',a22)
+10 format(' to minimise the figure of merit:          ',a22)
+20 format(' to maximise the the figure of merit:      ',a22)
 
   call oblnkl(nout)
 
@@ -1102,7 +1124,8 @@ subroutine doopt(ifail)
            iflag = 1
         end if
         xcval = xcm(ii)*scafc(ii)
-        write(nout,30) ii,lablxc(ixc(ii)),xcval,bondl(ii)*scafc(ii)
+        !write(nout,30) ii,lablxc(ixc(ii)),xcval,bondl(ii)*scafc(ii)
+        write(nout,30) lablxc(ixc(ii)),xcval,bondl(ii)*scafc(ii)
      end if
 
      if (xcm(ii) > xmaxx) then
@@ -1117,36 +1140,44 @@ subroutine doopt(ifail)
            iflag = 1
         end if
         xcval = xcm(ii)*scafc(ii)
-        write(nout,40) ii,lablxc(ixc(ii)),xcval,bondu(ii)*scafc(ii)
+        write(nout,40) lablxc(ixc(ii)),xcval,bondu(ii)*scafc(ii)
      end if
   end do
 
-30 format(t4,'Variable ',i3,' (',a9, &
-        ',',1pe12.4,') is at or below its lower bound:',1pe12.4)
-40 format(t4,'Variable ',i3,' (',a9, &
-        ',',1pe12.4,') is at or above its upper bound:',1pe12.4)
+!30 format(t4,'Variable ',i3,' (',a9, &
+!        ',',1pe12.4,') is at or below its lower bound:',1pe12.4)
+30 format(t4, a30, '=',1pe12.4,' is at or below its lower bound:',1pe12.4)
+40 format(t4, a30, '=',1pe12.4,' is at or below its upper bound:',1pe12.4)
+!40 format(t4,'Variable ',i3,' (',a9, &
+!        ',',1pe12.4,') is at or above its upper bound:',1pe12.4)
 
   !  Print out information on numerics
   call osubhd(nout,'The solution vector is comprised as follows :')
-  write(nout,50)
-50 format(t47,'lower',t59,'upper')
+!  write(nout,50)
+! Remove Lagrange multipliers as no-one understands them.  
+! MFILE not changed
+!50 format(t47,'lower',t59,'upper')
 
   write(nout,60)
-60 format(t23,'final',t33,'fractional',t46,'Lagrange',t58,'Lagrange')
+!60 format(t23,'final',t33,'fractional',t46,'Lagrange',t58,'Lagrange')
+60 format(t43,'final',t53,'final /')
+
 
   write(nout,70)
-70 format(t5,'i',t23,'value',t35,'change',t45,'multiplier', &
-        t57,'multiplier')
+!70 format(t5,'i',t23,'value',t35,'change',t45,'multiplier', &
+!        t57,'multiplier')
+70 format(t5,'i',t43,'value',t53,'initial')
 
   call oblnkl(nout)
 
   do inn = 1,nvar
      xcs(inn) = xcm(inn)*scafc(inn)
-     write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
-          vlam(neqns+nineqns+inn), vlam(neqns+nineqns+1+inn+nvar)
+!     write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
+!          vlam(neqns+nineqns+inn), vlam(neqns+nineqns+1+inn+nvar)
+	  write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn)	  
      call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
 
-     !  'Range-normalised' iteration variable values:
+     !  'Range-normalised' iteration variable values for MFILE:
      !  0.0 (at lower bound) to 1.0 (at upper bound)
      if (bondl(inn) == bondu(inn)) then
         xnorm = 1.0D0
@@ -1155,10 +1186,14 @@ subroutine doopt(ifail)
         xnorm = max(xnorm, 0.0D0)
         xnorm = min(xnorm, 1.0D0)
      end if
+     ! Added ratio final/initial to MFILE
+     call ovarre(mfile,trim(lablxc(ixc(inn)))//' (final value/initial value)', &
+          '(xcm'//int_to_string3(inn)//')',xcm(inn))
      call ovarre(mfile,trim(lablxc(ixc(inn)))//' (range normalised)', &
           '(nitvar'//int_to_string3(inn)//')',xnorm)
   end do
-80 format(t2,i4,t8,a9,t19,4(1pe12.4))
+!80 format(t2,i4,t8,a9,t19,4(1pe12.4))
+80 format(t2,i4,t8,a30,t39,2(1pe12.4))
 
   call osubhd(nout, &
        'The following equality constraint residues should be close to zero :')
@@ -1517,7 +1552,7 @@ subroutine output(outfile)
   end if
 
   call vaccall(outfile,1)
-  call bldgcall(outfile,1)
+  if (cost_model==0) call bldgcall(outfile,1)
   call acpow(outfile,1)
   call power2(outfile,1)
   

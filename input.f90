@@ -167,6 +167,7 @@ module process_input
 #ifdef unit_test
   public :: parse_input_file
 #endif
+  public :: upper_case
 
   integer, parameter :: maxlen = 300  !  maximum line length
   character(len=maxlen) :: line  !  current line of text from input file
@@ -1907,37 +1908,29 @@ contains
           call parse_real_variable('COSTEXP', costexp, 0.01D0, 5.0D0, &
                'Cost exponent for 2015 costs model')
        case ('COST_FACTOR_BUILDINGS')
-          call parse_real_variable('COST_FACTOR_BUILDINGS', cost_factor_buildings, &
-               0.1D0, 10.0D0, &
-               'Cost scaling factor for buildings (2015 costs model)')
+          call parse_real_variable('COST_FACTOR_BUILDINGS', cost_factor_buildings, 0.1D0, 10.0D0, &
+           'Cost scaling factor for buildings (2015 costs model)')
        case ('COST_FACTOR_LAND')
-          call parse_real_variable('COST_FACTOR_LAND', cost_factor_land, &
-               0.1D0, 10.0D0, &
-               'Cost scaling factor for land (2015 costs model)')
+          call parse_real_variable('COST_FACTOR_LAND', cost_factor_land, 0.1D0, 10.0D0, &
+          'Cost scaling factor for land (2015 costs model)')
        case ('COST_FACTOR_TF_COILS')
-          call parse_real_variable('COST_FACTOR_TF_COILS', cost_factor_tf_coils, &
-               0.1D0, 10.0D0, &
-               'Cost scaling factor for TF coils (2015 costs model)')
+          call parse_real_variable('COST_FACTOR_TF_COILS', cost_factor_tf_coils, 0.1D0, 10.0D0, &
+          'Cost scaling factor for TF coils (2015 costs model)')
        case ('COST_FACTOR_FWBS')
-          call parse_real_variable('COST_FACTOR_FWBS', cost_factor_fwbs, &
-               0.1D0, 10.0D0, &
-               'Cost scaling factor for fwbs (2015 costs model)')
+          call parse_real_variable('COST_FACTOR_FWBS', cost_factor_fwbs, 0.1D0, 10.0D0, &
+          'Cost scaling factor for fwbs (2015 costs model)')
        case ('COST_FACTOR_RH')
-          call parse_real_variable('COST_FACTOR_RH', cost_factor_rh, &
-               0.1D0, 10.0D0, &
-               'Cost scaling factor for remote handling (2015 costs model)')
+          call parse_real_variable('COST_FACTOR_RH', cost_factor_rh, 0.1D0, 10.0D0, &
+          'Cost scaling factor for remote handling (2015 costs model)')
        case ('COST_FACTOR_VV')
-          call parse_real_variable('COST_FACTOR_VV', cost_factor_VV, &
-               0.1D0, 10.0D0, &
-               'Cost scaling factor for vacuum vessel (2015 costs model)')
+          call parse_real_variable('COST_FACTOR_VV', cost_factor_vv, 0.1D0, 10.0D0, &
+          'Cost scaling factor for vacuum vessel (2015 costs model)')
        case ('COST_FACTOR_BOP')
-          call parse_real_variable('COST_FACTOR_BOP', cost_factor_bop, &
-               0.1D0, 10.0D0, &
-               'Cost scaling factor for energy conversion system (2015 costs model)')
+          call parse_real_variable('COST_FACTOR_BOP', cost_factor_bop, 0.1D0, 10.0D0, &
+          'Cost scaling factor for energy conversion system (2015 costs model)')
        case ('COST_FACTOR_MISC')
-          call parse_real_variable('COST_FACTOR_MISC', cost_factor_misc, &
-               0.1D0, 10.0D0, &
-               'Cost scaling factor for remaining subsystems (2015 costs model)')
+          call parse_real_variable('COST_FACTOR_MISC', cost_factor_misc, 0.1D0, 10.0D0, &
+          'Cost scaling factor for remaining subsystems (2015 costs model)')
        case ('COST_MODEL')
           call parse_int_variable('COST_MODEL', cost_model, 0, 2, &
                'Switch for cost model')
@@ -2145,8 +2138,8 @@ contains
        case ('FWBS_UMAIN_TIME')
           call parse_real_variable('FWBS_UMAIN_TIME', fwbs_umain_time, 0.1D0, 2.0D0, &
                'Fwbs unplanned maintenace time (years)')
-       case ('REDUN_VAC')
-          call parse_int_variable('REDUN_VAC', redun_vac, 0, 100, &
+       case ('REDUN_VACP')
+          call parse_real_variable('REDUN_VACP', redun_vacp, 0.0D0, 100.0D0, &
                'Vacuum system pump redundancy level (%)')
        case ('TBKTREPL')
           call parse_real_variable('TBKTREPL', tbktrepl, 0.01D0, 2.0D0, &
