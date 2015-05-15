@@ -1085,7 +1085,7 @@ module fwbs_variables
   real(kind(1.0D0)) :: pnucshld = 0.0D0
   !+ad_vars  whtblkt : mass of blanket (kg)
   real(kind(1.0D0)) :: whtblkt = 0.0D0
-  !+ad_vars  whtblss : mass of blanket - stainless steel part (kg)
+  !+ad_vars  whtblss : mass of blanket - steel part (kg)
   real(kind(1.0D0)) :: whtblss = 0.0D0
   
    !  CCFE HCPB Blanket Model
@@ -1105,9 +1105,9 @@ module fwbs_variables
   !+ad_vars  vfpblkt /0.31/ : He purge void fraction of blanket by volume
   !+ad_varc                   (iblanket = 1 (CCFE HCPB))
   real(kind(1.0D0)) :: vfpblkt = 0.3145D0
-  !+ad_vars  whtblli2sio4 : mass of lithium orthosilicat in blanket (kg)
+  !+ad_vars  whtblli4sio4 : mass of lithium orthosilicate in blanket (kg)
   !+ad_varc                   (iblanket = 1 (CCFE HCPB))
-  real(kind(1.0D0)) :: whtblli2sio4 = 0.0D0
+  real(kind(1.0D0)) :: whtblli4sio4 = 0.0D0
   !+ad_vars  whtbltibe12 : mass of titanium beryllide in blanket (kg)
   !+ad_varc                   (iblanket = 1 (CCFE HCPB))
   real(kind(1.0D0)) :: whtbltibe12 = 0.0D0
@@ -1147,7 +1147,7 @@ module fwbs_variables
   !+ad_varc                  <LI> = 2 'large'</UL>
   integer :: hcdportsize = 1
   !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)
-  !+ad_varc                     (iblanket=2 (KIT HCPB))
+  !+ad_varc                     (iblanket=2 or 3 (KIT or CCFE HCPB))
   real(kind(1.0D0)) :: li6enrich = 30.0D0
   !+ad_vars  nflutf : peak fast neutron fluence on TF coil superconductor (n/m2)
   !+ad_varc           (iblanket=2 (KIT HCPB))
@@ -1234,6 +1234,8 @@ module fwbs_variables
   real(kind(1.0D0)) :: ptfnucpm3 = 0.0D0
   !+ad_vars  rdewex : external cryostat radius (m)
   real(kind(1.0D0)) :: rdewex = 0.0D0
+  !+ad_vars  zdewex : external cryostat height (m)
+  real(kind(1.0D0)) :: zdewex = 0.0D0  
   !+ad_vars  rpf2dewar /0.5/ : radial distance between outer edge of largest
   !+ad_varc                    ipfloc=3 PF coil (or stellarator modular coil)
   !+ad_varc                    and external cryostat (m)
@@ -1426,7 +1428,7 @@ module pfcoil_variables
   !+ad_varc          <LI> = 0 superconducting PF coils;
   !+ad_varc          <LI> = 1 resistive PF coils</UL>
   integer :: ipfres = 0
-  !+ad_vars  itr_sum : total sum of I x rad x turns for all PF coils and CS (Am)
+  !+ad_vars  itr_sum : total sum of I x turns x radius for all PF coils and CS (Am)
   real(kind(1.0D0)) :: itr_sum = 0.0D0
   !+ad_vars  isumatoh /1/ : switch for superconductor material in central solenoid:<UL>
   !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
@@ -1704,8 +1706,11 @@ module tfcoil_variables
   real(kind(1.0D0)) :: deflect = 0.0D0
   !+ad_vars  denh2o /985.0/ FIX : density of water (kg/m3)
   real(kind(1.0D0)) :: denh2o = 985.0D0
-  !+ad_vars  estotf : stored energy per TF coil (GJ)
+  !+ad_vars  estotf : stored energy per TF coil (GJ) OBSOLETE
   real(kind(1.0D0)) :: estotf = 0.0D0
+  !+ad_vars  estotf : total stored energy in the toroidal field (GJ) 
+  real(kind(1.0D0)) :: estotft = 0.0D0
+  
   !+ad_vars  eyins /2.0e10/ : insulator Young's modulus (Pa)
   !+ad_varc                   (default value from DDD11-2 v2 2 (2009))
   real(kind(1.0D0)) :: eyins = 2.0D10
@@ -2810,7 +2815,7 @@ module cost_variables
   real(kind(1.0D0)) :: cost_factor_misc = 1.0D0
   !+ad_vars  cost_model /1/ : switch for cost model:<UL>
   !+ad_varc          <LI> = 0 use $ 1990 PROCESS model
-  !+ad_varc          <LI> = 1 use $ 2014 Costs paper model
+  !+ad_varc          <LI> = 1 use $ 2015 Kovari model
   integer :: cost_model = 1
   !+ad_vars  cowner /0.15/ : owner cost factor
   real(kind(1.0D0)) :: cowner = 0.15D0
@@ -2862,9 +2867,13 @@ module cost_variables
   integer :: iavail= 0
   !+ad_vars  avail_min /0.75/ : Minimum availability (constraint equation 61)
   real(kind(1.0D0)) :: avail_min = 0.75D0
-  !+ad_vars  ITER_build_cost_per_vol /1090.0/ : ITER averaged building cost per 
-  !+ad_varc                                        unit volume (2014 $)
-  real(kind(1.0D0)) :: ITER_build_cost_per_vol = 1090.0D0
+  
+  !+ad_vars  tok_build_cost_per_vol /1283.0/ : Unit cost for tokamak complex buildings,  
+  !+ad_varc                                    including building and site services ($/m3)
+  real(kind(1.0D0)) :: tok_build_cost_per_vol = 1283.0D0
+  !+ad_vars  light_build_cost_per_vol /270.0/ : Unit cost for unshielded non-active buildings ($/m3)
+  real(kind(1.0D0)) :: light_build_cost_per_vol = 270.0D0
+  
   !+ad_vars  favail /1.0/ : F-value for minimum availability (constraint equation 61)
   real(kind(1.0D0)) :: favail = 1.0D0  
   !+ad_vars  num_rh_systems /4/ : Number of remote handling systems (1-10)

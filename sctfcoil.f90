@@ -196,9 +196,10 @@ contains
 
     call tfcind(tfcth)
 
-    !  Find TF coil energy (GJ)
+    !  Find total TF coil energy (GJ)
 
-    estotf = 1.0D-9 *  0.5D0*tfind / tfno * ritfc**2
+    estotf = 1.0D-9 *  0.5D0*tfind / tfno * ritfc**2   ! OBSOLETE
+    estotft = 1.0D-9 *  0.5D0*tfind * ritfc**2
 
     !  Case thicknesses (inboard leg)
 
@@ -1426,7 +1427,7 @@ contains
     call ovarre(outfile,'Peak field (with ripple,T)','(bmaxtfrp)',bmaxtfrp)
     call ovarre(outfile,'Max allowed ripple amplitude at plasma (%)','(ripmax)',ripmax)
     call ovarre(outfile,'Ripple amplitude at plasma (%)','(ripple)',ripple)
-    call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotf*tfno)',estotf*tfno)
+    call ovarre(outfile,'Total stored energy in TF coils (GJ)','(estotft)',estotft)
     call ovarre(outfile,'Total mass of TF coils (kg)','(whttf)',whttf)
     call ovarre(outfile,'Mass of each TF coil (kg)','(whttf/tfno)',whttf/tfno)
     call ovarre(outfile,'Vertical separating force per leg (N)','(vforce)',vforce)
@@ -1599,9 +1600,9 @@ contains
        return
     end if
 
-    !  Stored energy (J) and cross-sectional area per turn
+    !  Stored energy (J) per coil and cross-sectional area per turn
 
-    tfes = estotf * 1.0D9
+    tfes = estotft * 1.0D9 / tfno
     aturn = ritfc/(jwptf*tfno*turnstf)
 
     call supercon(acstf,aturn,bmaxtfrp,vftf,fcutfsu,cpttf,jwptf,isumattf, &

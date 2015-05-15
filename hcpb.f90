@@ -106,7 +106,7 @@ module ccfe_hcpb_module
   real(kind=double), private :: volshldi, volshldo
   
   !  Internal half-height of external cryostat (m)
-  real(kind=double), private :: zdewex
+  ! real(kind=double), public :: zdewex  Now module fwbs_variables
   
   !  Inboard/outboard FW half thicknesses (m)
   real(kind=double), private :: bfwi, bfwo
@@ -1309,13 +1309,13 @@ contains
     
     !  Blanket Lithium orthosilicate mass (kg)
     !  Ref: www.rockwoodlithium.com...
-    whtblli2sio4 = volblkt * fblli2sio4 * 2400.0D0
+    whtblli4sio4 = volblkt * fblli2sio4 * 2400.0D0
     
     !  Blanket Steel mass (kg)
     whtblss = volblkt * fblss * denstl
     
     !  Total blanket mass (kg)
-    whtblkt = whtbltibe12 + whtblli2sio4 + whtblss  
+    whtblkt = whtbltibe12 + whtblli4sio4 + whtblss  
 
     !  Shield mass (kg)
     whtshld = volshld * denstl * (1.0D0 - vfshld)
@@ -1834,7 +1834,7 @@ contains
     call ovarre(ofile, 'First Wall Mass (kg)', '(fwmass)', fwmass)
     call ovarre(ofile, 'Blanket Mass - Total(kg)', '(whtblkt)', whtblkt)
     call ovarre(ofile, 'Blanket Mass - TiBe12 (kg)', '(whtbltibe12)', whtbltibe12)
-    call ovarre(ofile, 'Blanket Mass - Li2SiO4 (kg)', '(whtblli2sio4)', whtblli2sio4)
+    call ovarre(ofile, 'Blanket Mass - Li2SiO4 (kg)', '(whtblli4sio4)', whtblli4sio4)
     call ovarre(ofile, 'Blanket Mass - Steel (kg)', '(whtblss)', whtblss)
     call ovarre(ofile, 'Shield Mass (kg)', '(whtshld)', whtshld)
     call ovarre(ofile, 'Vacuum vessel mass (kg)', '(cryomass)', cryomass)
@@ -3361,7 +3361,7 @@ contains
     !call ovarre(ofile, 'First Wall Mass (kg)', '(fwmass)', fwmass)
     !call ovarre(ofile, 'Blanket Mass - Total(kg)', '(whtblkt)', whtblkt)
     !call ovarre(ofile, 'Blanket Mass - TiBe12 (kg)', '(whtbltibe12)', whtbltibe12)
-    !call ovarre(ofile, 'Blanket Mass - Li2SiO4 (kg)', '(whtblli2sio4)', whtblli2sio4)
+    !call ovarre(ofile, 'Blanket Mass - Li2SiO4 (kg)', '(whtblli4sio4)', whtblli4sio4)
     !call ovarre(ofile, 'Blanket Mass - Steel (kg)', '(whtblss)', whtblss)
     !call ovarre(ofile, 'Shield Mass (kg)', '(whtshld)', whtshld)
     !call ovarre(ofile, 'Vacuum vessel mass (kg)', '(cryomass)', cryomass)

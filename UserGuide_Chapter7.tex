@@ -147,9 +147,10 @@ to be given permission to do so via the CCFE \texttt{GitLab} server.
 
 \item \texttt{cd SomewhereAppropriate} (you choose!)
 
-\item \texttt{git clone git@git.ccfe.ac.uk:process/process.git process}
-
-\item \texttt{cd process}
+\item 
+\texttt{git clone git@git.ccfe.ac.uk:process/process.git -b develop my\_develop}
+This copies the \texttt{develop} branch of the repository into a local folder \texttt{my\_develop}, which will be created if it does not already exist.
+\item \texttt{cd my\_develop}
 
 \item \texttt{git checkout develop}
 
@@ -157,9 +158,7 @@ to be given permission to do so via the CCFE \texttt{GitLab} server.
 
 The above sequence of commands will provide you with a full copy of the
 \texttt{develop} branch of the \process\ source code, Python utilities and all
-the documentation files. Type \texttt{make all} to perform a full compilation
-and build the executable, create the User Guide and produce all the web-based
-documentation.
+the documentation files. If necessary type \texttt{make all} to perform a full compilation and build the executable, create the User Guide and produce all the web-based documentation.
 
 \subsection{Git workflow}
 
@@ -235,26 +234,28 @@ branch in which you are working.
 \begin{enumerate}
 
 \item Firstly, make sure you have committed your latest changes into the
-  central \texttt{GitLab} repository as described in the previous section.
+  central \texttt{GitLab} repository as described in the previous section.  Set the directory containing the working branch as your current directory.
 
-\item \texttt{git pull}
+\item \texttt{git pull}.  \\
+Ensures files in current local branch are consistent with those in the central repository.
 
-\item \texttt{git checkout develop}
+\item \texttt{git checkout develop}  \\
+This switches the "current branch" to \texttt{develop}.
 
-\item \texttt{git pull}
+\item \texttt{git pull} \\
+Updates the current branch of the local repository to the same branch on the central repository.
 
-\item \texttt{git checkout dev\_mynewmodel}
+\item \texttt{git checkout dev\_mynewmodel}  \\
+This switches the "current branch" to \texttt{dev\_mynewmodel}.
 
-\item \texttt{git merge develop}
+\item \texttt{git merge develop} \\
+Merges \texttt{develop} into the \texttt{dev\_mynewmodel} branch.
 
-\item Look for messages on the screen indicating that some files cannot be
-  merged directly because of a merge `conflict'. This typically happens if the
+\item Look for messages on the screen containing the word "conflict" indicating that some files cannot be merged directly. This typically happens if the
   same (or very closely-spaced) lines have been edited in both the
   \texttt{develop} and \texttt{dev\_mynewmodel} branches.
 
-  If any files are affected, edit them and look for any lines containing
-  \texttt{=======}. Such lines separate the changes made in the two branches,
-  as in:
+  If any files are affected, they will be listed.  Edit them and look for any lines containing  \texttt{=======}. Such lines separate the changes made in the two branches, as in:
 \begin{verbatim}
 <<<<<<< HEAD
 This line was edited in dev_mynewmodel branch
@@ -266,7 +267,8 @@ This line was edited in develop branch
   \texttt{file1} etc.\ are the names of the files you removed conflicts
   from. Finally type \texttt{git commit} and edit the change log file.
 
-\item \texttt{git push}
+\item \texttt{git push} \\
+Updates the central repository.
 
 \end{enumerate}
 

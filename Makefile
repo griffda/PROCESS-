@@ -59,8 +59,6 @@ source = \
  commons.for \
  comtrn.for \
  constraint_equations.f90 \
- costs.f90 \
- costs_2015.f90 \
  current_drive.f90 \
  divertor.f90 \
  error_handling.f90 \
@@ -96,15 +94,15 @@ source = \
  stellarator_fwbs.f90 \
  structure.f90 \
  tfcoil.f90 \
- vacuum.f90 
+ vacuum.f90 \
+ costs.f90 \
+ costs_2015.f90 
 
 object = \
  availability.o \
  buildings.o \
  caller.o \
  constraint_equations.o \
- costs.o \
- costs_2015.o \
  current_drive.o \
  divertor.o \
  error_handling.o \
@@ -140,7 +138,9 @@ object = \
  stellarator_fwbs.o \
  structure.o \
  tfcoil.o \
- vacuum.o 
+ vacuum.o \
+ costs.o \
+ costs_2015.o 
 
 ###### Architecture specifics #######
 #
@@ -213,13 +213,13 @@ default: process.exe
 
 availability.o: global_variables.o output.o maths_library.o
 buildings.o: global_variables.o output.o
-caller.o: availability.o buildings.o costs.o current_drive.o divertor.o \
+caller.o: availability.o buildings.o costs.o costs_2015.o current_drive.o divertor.o \
   global_variables.o hcpb.o ife.o machine_build.o numerics.o output.o pfcoil.o physics.o \
   plant_power.o plasma_geometry.o pulse.o rfp.o sctfcoil.o startup.o structure.o \
   stellarator.o tfcoil.o vacuum.o
 constraint_equations.o: error_handling.o global_variables.o numerics.o
 costs.o: error_handling.o global_variables.o output.o
-costs_2015.o: error_handling.o global_variables.o output.o
+costs_2015.o: error_handling.o global_variables.o output.o hcpb.o
 current_drive.o: error_handling.o global_variables.o output.o plasma_profiles.o
 divertor.o: error_handling.o global_variables.o output.o
 error_handling.o: output.o fson_library.o root.dir

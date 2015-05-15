@@ -225,9 +225,9 @@ contains
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      !  Stored energy (MJ)
+      !  Stored energy (MJ) MDK changed to estotft/tfno
 
-      ettfmj = estotf * 1.0D3
+      ettfmj = estotft / tfno * 1.0D3
 
       !  TF coil current (kA)
 
@@ -483,8 +483,6 @@ contains
       if (iprint == 0) return
 
       call oheadr(outfile,'Superconducting TF Coil Power Conversion')
-
-      call ovarre(outfile,'TF coil stored energy (MJ)','(ettfmj)',ettfmj)
       call ovarre(outfile,'TF coil current (kA)','(itfka)',itfka)
       call ovarre(outfile,'Number of TF coils','(ntfc)',ntfc)
       call ovarre(outfile,'Maximum voltage across TF coil (kV)','(vtfskv)', &
