@@ -3946,14 +3946,15 @@ contains
     !  (Consider detailed model in: G. L. Jackson, V. S. Chan, R. D. Stambaugh,
     !  Fusion Science and Technology, vol.64, no.1, July 2013, pp.8-12)
 
-    !  Assume that the ash and fuel particle confinement times are equal.
+    !  The ratio of ash to fuel particle confinement times is given by
+    !  tauratio
     !  Possible logic...
     !  burnup = fuel ion-pairs burned/m3 / initial fuel ion-pairs/m3;
     !  fuel ion-pairs burned/m3 = alpha particles/m3 (for both D-T and D-He3 reactions)
     !  initial fuel ion-pairs/m3 = burnt fuel ion-pairs/m3 + unburnt fuel-ion pairs/m3
     !  Remember that unburnt fuel-ion pairs/m3 = 0.5 * unburnt fuel-ions/m3
 
-    burnup = dnalp / (dnalp + 0.5D0*deni)
+    burnup = dnalp / (dnalp + 0.5D0*deni) / tauratio
 
     !  Fuel burnup rate (reactions/second) (previously Amps)
 
@@ -5740,7 +5741,8 @@ contains
        call ovarrf(outfile,'Sawteeth coefficient','(csawth)',csawth)
     end if
 
-    call osubhd(outfile,'Auxiliary Information :')
+    call osubhd(outfile,'Fuelling :')
+    call ovarre(outfile,'Ratio of He and pellet particle confinement times','(tauratio)',tauratio)
     call ovarre(outfile,'Fuelling rate (nucleus-pairs/s)','(qfuel)',qfuel)
     call ovarre(outfile,'Fuel burn-up rate (reactions/s)','(rndfuel)',rndfuel)
     call ovarrf(outfile,'Burn-up fraction','(burnup)',burnup)

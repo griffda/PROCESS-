@@ -303,7 +303,8 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     call oheadr(iotty,'Program Error Report')
-    write(iotty,'(a,i1)') 'PROCESS error status flag (error_status) = ',error_status
+    !write(iotty,'(a,i1)') 'PROCESS error status flag (error_status) = ',error_status
+    write(*,'(a,i1)') 'PROCESS error status flag (error_status) = ',error_status
     call oblnkl(iotty)
 
     call oheadr(nout,'Program Error Report')

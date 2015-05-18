@@ -300,7 +300,6 @@ contains
     real(kind(1.0D0)) :: u_unplanned_bop
     real(kind(1.0D0)) :: u_unplanned_hcd
     real(kind(1.0D0)) :: u_unplanned_vacuum
-    real(kind(1.0D0)) :: cpfact
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -366,7 +365,7 @@ contains
          '(cfactr)',cfactr)
     call ovarre(outfile,'Total DT operational time (years)','(t_operation)',t_operation)
     call ovarre(outfile,'Total plant lifetime (years)','(tlife)',tlife)
-    call ovarre(outfile,'Plant capacity factor','(cpfact)',cpfact)
+    call ovarre(outfile,'Capacity factor: total lifetime electrical energy output / output power','(cpfact)',cpfact)
    
   end subroutine avail_new
 
@@ -619,7 +618,7 @@ contains
     mag_min_u_unplanned = mag_main_time / (t_operation + mag_main_time)
     
     !  Point at which risk of unplanned unavailability increases
-    !  conf_mag is magnet availability confidence level (global var)
+    !  conf_mag is the c factor, which determines the temperature margin at which lifetime starts to decline.
 
     start_of_risk = mag_temp_marg_limit / conf_mag
 
@@ -645,7 +644,7 @@ contains
     call oblnkl(outfile)
     call ovarre(outfile,'Minimum temperature margin (K)', &
          '(tmargmin)',tmargmin)
-    call ovarre(outfile,'Confidence level (%)', &
+    call ovarre(outfile,'c parameter, determining the temperature margin where lifetime declines', &
          '(conf_mag)',conf_mag)
     call ovarre(outfile,'Temperature Margin (K)', &
          '(temp_margin)',temp_margin)

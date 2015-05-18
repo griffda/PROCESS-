@@ -13,7 +13,7 @@ module costs_2015_module
   !+ad_prob  None
   !+ad_call  some function
   !+ad_hist  05/01/15 JM  Initial version of module
-  !+ad_hist  13/05/15 MDK
+  !+ad_hist  18/05/15 MDK
   !+ad_stat  Okay
   !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
   !
@@ -128,12 +128,14 @@ contains
     !  Calculate remaining subsystems costs
     call calc_remaining_subsystems    
 
-    !  Calculate total costs
+    !  Calculate total capital cost
     total_costs = s(9)%cost + s(13)%cost + s(21)%cost + &
          s(27)%cost + s(31)%cost + s(34)%cost + &
          s(35)%cost + s(61)%cost
+    ! Save as concost, the variable used as a Figure of Merit (M$) 
+    concost = total_costs/1.0D6
 
-    mean_electric_output = pnetelmw * cfactr             
+    mean_electric_output = pnetelmw * cpfact             
          
     if ((ip == 0).or.(output_costs == 0)) return    
 
@@ -993,7 +995,7 @@ contains
     call ocost(ofile, "TOTAL OVERNIGHT CAPITAL COST (M$)", total_costs/1.0D6)
     call oblnkl(ofile)
     call ovarrf(ofile, "Net electric output (MW)", '(pnetelmw)', pnetelmw)    
-    call ovarrf(ofile,"Capacity factor", '(cfactr)', cfactr)
+    call ovarrf(ofile,"Capacity factor", '(cpfact)', cpfact)
     call ovarrf(ofile,"Mean electric output (MW)", '(mean_electric_output)', mean_electric_output)
     call ovarrf(ofile,"Capital cost / mean electric output ($/W)", &
       '(total_costs/mean_electric_output/1.0D6)', total_costs/mean_electric_output/1.0D6)
@@ -1008,7 +1010,7 @@ contains
     !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  None
-    !+ad_desc  Value function for separative work unit calculation
+    !+ad_desc  Function for separative work unit calculation for enrichment cost
     !+ad_prob  None
     !+ad_hist  07/01/15 JM  Initial Version
     !+ad_stat  Okay

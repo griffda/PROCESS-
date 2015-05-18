@@ -702,6 +702,11 @@ contains
        case ('Q0')
           call parse_real_variable('Q0', q0, 0.01D0, 20.0D0, &
                'Safety factor on axis')
+               
+       case ('TAURATIO')
+          call parse_real_variable('TAURATIO', tauratio, 0.1D0, 100.0D0, &
+               'Ratio of He and pellet particle confinement times')        
+               
        case ('RALPNE')
           call parse_real_variable('RALPNE', ralpne, 1.0D-12, 1.0D0, &
                'Thermal alpha density / electron density')
@@ -2110,7 +2115,7 @@ contains
                'Number of remote handling systems (from 1-10)')
        case ('CONF_MAG')
           call parse_real_variable('CONF_MAG', conf_mag, 0.9D0, 1.0D0, &
-               'Availability confidence level for magnet system')
+               'c parameter, which determines the temperature margin at which magnet lifetime starts to decline')
        case ('DIV_PROB_FAIL')
           call parse_real_variable('DIV_PROB_FAIL', div_prob_fail, 0.0D0, 1.0D0, &
                'Divertor probability of failure (per op day)')

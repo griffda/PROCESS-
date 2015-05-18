@@ -132,7 +132,7 @@ def main():
     dict_module["Numerics"].remove("boundu")
 
     #get rid of runtitle
-    dict_module["Global"].remove("runtitle")
+    #dict_module["Global"].remove("runtitle")
 
     gui_module = OrderedDict()
     #make gui_module

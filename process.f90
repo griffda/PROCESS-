@@ -586,7 +586,7 @@ subroutine eqslv(ifail)
        'PROCESS has performed a HYBRD (non-optimisation) run,')
 
   if (ifail /= 1) then
-     call ocmmnt(nout,'but could not find a feasible set of parameters.')
+     call ocmmnt(nout,'but could NOT find a feasible set of parameters.')
      call oblnkl(nout)
      call ovarin(nout,'Number of iteration variables and constraints','(neqns)',neqns)
      call ovarin(nout,'HYBRD error flag','(ifail)',ifail)
@@ -1030,10 +1030,10 @@ subroutine doopt(ifail)
 
   !  Print out information on solution
   call oheadr(nout,'Numerics')
-  call ocmmnt(nout,'PROCESS has performed a VMCON (optimisation) run,')
+  call ocmmnt(nout,'PROCESS has performed a VMCON (optimisation) run.')
   if (ifail /= 1) then
-     call ocmmnt(nout,'but could not find a feasible set of parameters.')
-
+     !call ocmmnt(nout,'but could not find a feasible set of parameters.')
+     call oheadr(nout,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
      call oheadr(iotty,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
      call ovarin(iotty,'VMCON error flag (ifail)','',ifail)
      call oblnkl(iotty)
@@ -1119,7 +1119,7 @@ subroutine doopt(ifail)
            call ocmmnt(nout, &
                 'as shown by the following iteration variables that are')
            call ocmmnt(nout, &
-                'at the edge of their prescribed range :')
+                'at or near to the edge of their prescribed range :')
            call oblnkl(nout)
            iflag = 1
         end if
@@ -1135,7 +1135,7 @@ subroutine doopt(ifail)
            call ocmmnt(nout, &
                 'as shown by the following iteration variables that are')
            call ocmmnt(nout, &
-                'at the edge of their prescribed range :')
+                'at or near to the edge of their prescribed range :')
            call oblnkl(nout)
            iflag = 1
         end if
@@ -1147,7 +1147,7 @@ subroutine doopt(ifail)
 !30 format(t4,'Variable ',i3,' (',a9, &
 !        ',',1pe12.4,') is at or below its lower bound:',1pe12.4)
 30 format(t4, a30, '=',1pe12.4,' is at or below its lower bound:',1pe12.4)
-40 format(t4, a30, '=',1pe12.4,' is at or below its upper bound:',1pe12.4)
+40 format(t4, a30, '=',1pe12.4,' is at or above its upper bound:',1pe12.4)
 !40 format(t4,'Variable ',i3,' (',a9, &
 !        ',',1pe12.4,') is at or above its upper bound:',1pe12.4)
 

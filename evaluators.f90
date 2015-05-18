@@ -203,7 +203,7 @@ contains
           loop = loop+1
           call caller(xv,n)
           if (verbose == 1) then
-              write(*,*) 'Internal tburn consistency check: ',tburn,tburn0
+              write(*, '(a, 2e10.3)') 'Internal tburn consistency check: ',tburn,tburn0
           end if 
        end do
        if (loop >= 10) then

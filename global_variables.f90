@@ -603,6 +603,11 @@ module physics_variables
   real(kind(1.0D0)) :: q95 = 0.0D0
   !+ad_vars  qfuel : plasma fuelling rate (nucleus-pairs/s)
   real(kind(1.0D0)) :: qfuel = 0.0D0
+  
+  !+ad_vars  tauratio /1.0/ : ratio of He and pellet particle confinement times
+  real(kind(1.0D0)) :: tauratio = 1.0D0
+  
+  
   !+ad_vars  qlim : lower limit for edge safety factor
   real(kind(1.0D0)) :: qlim = 0.0D0
   !+ad_vars  qstar : cylindrical safety factor
@@ -2774,9 +2779,13 @@ module cost_variables
   real(kind(1.0D0)) :: cdirt = 0.0D0
   !+ad_vars  cdrlife : lifetime of heating/current drive system (y)
   real(kind(1.0D0)) :: cdrlife = 0.0D0
-  !+ad_vars  cfactr /0.75/ : plant capacity factor, availability;
+  !+ad_vars  cfactr /0.75/ : Total plant availability fraction;
   !+ad_varc                  input if iavail = 0
   real(kind(1.0D0)) :: cfactr = 0.75D0
+  
+  !+ad_vars  cfactr : Total plant capacity factor
+  real(kind(1.0D0)) :: cpfact = 0.0D0
+  
   !+ad_vars  cfind(4) /0.244,0.244,0.244,0.29/ : indirect cost factor (func of lsa)
   real(kind(1.0D0)), dimension(4) :: cfind = &
        (/0.244D0, 0.244D0, 0.244D0, 0.29D0/)
@@ -2861,11 +2870,11 @@ module cost_variables
   real(kind(1.0D0)) :: fkind = 1.0D0
   !+ad_vars  fwallcst : first wall cost (M$)
   real(kind(1.0D0)) :: fwallcst = 0.0D0
-  !+ad_vars  iavail /0/ : switch for plant availability model:<UL>
+  !+ad_vars  iavail /2/ : switch for plant availability model:<UL>
   !+ad_varc          <LI> = 0 use input value for cfactr;
   !+ad_varc          <LI> = 1 calculate cfactr using Taylor and Ward 1999 model;
-  !+ad_varc          <LI> = 2 calculate cfactr using new (2014) model</UL>
-  integer :: iavail= 0
+  !+ad_varc          <LI> = 2 calculate cfactr using new (2015) model</UL>
+  integer :: iavail= 2
   !+ad_vars  avail_min /0.75/ : Minimum availability (constraint equation 61)
   real(kind(1.0D0)) :: avail_min = 0.75D0
   
@@ -2879,7 +2888,7 @@ module cost_variables
   real(kind(1.0D0)) :: favail = 1.0D0  
   !+ad_vars  num_rh_systems /4/ : Number of remote handling systems (1-10)
   integer :: num_rh_systems = 4
-  !+ad_vars  conf_mag /0.99/ : Availability confidence level for magnet system
+  !+ad_vars  conf_mag /0.99/ : c parameter, which determines the temperature margin at which magnet lifetime starts to decline
   real(kind(1.0D0)) :: conf_mag = 0.99D0
   !+ad_vars  div_prob_fail /0.0002/ : Divertor probability of failure (per op day)
   real(kind(1.0D0)) :: div_prob_fail = 0.0002D0
