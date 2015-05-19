@@ -39,6 +39,7 @@ module ccfe_hcpb_module
   use refprop_interface
   use tfcoil_variables
   use constants
+  use global_variables
   
   implicit none
 
@@ -223,7 +224,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         
 	!  Calculate FW/Blanket lifetime
-	fwlife = min(abktflnc/wallmw, tlife)
+	!fwlife = min(abktflnc/wallmw, tlife)
 	
 	!  Coolant type
 	coolwh = 1
@@ -1110,7 +1111,10 @@ contains
     !pnucfwi = pnucfw * fwareaib/(fwareaib + fwareaob)
     !pnucfwo = 
 
-    !  Start thermal hydraulic calculations with inboard side. Calc of max FW temperature.
+    !  Thermal hydraulic calculations 
+    
+    !  INBOARD
+    !  Calc of max FW temperature.
     !  Includes fraction of escaped alpha power as a component of the inboard wall surface power.
     !call iterate_fw(afwi, bfwi, fwareaib, (psurffwi+fwareaib/fwarea*palpfwmw), bllengi, &
 	!    pnucfwi, tpeakfwi, cf, rhof, velfwi)
@@ -1150,10 +1154,10 @@ contains
 
     !  Should check max temp in the blanket is below necessary limits; this is not straightforward
     !  Calculate pumping powers for blanket and first wall (MW)
-    htpmw_fwi = pumppower(fwfllengi, afwi, mffwi, mffwpi, no90fw, no180fw, velfwi, etaiso, coolwh)
-    htpmw_blkti = pumppower(bzfllengi, afwi, mfblkti, mfblktpi, no90bz, no180bz, velblkti, etaiso, coolwh)
+    htpmw_fwi = pumppower(fwfllengi, afwi, mffwi, mffwpi, no90fw, no180fw, velfwi, etaiso, coolwh, 'Inboard first wall')
+    htpmw_blkti = pumppower(bzfllengi, afwi, mfblkti, mfblktpi, no90bz, no180bz, velblkti, etaiso, coolwh, 'Inboard blanket')
 
-    !  Repeat thermal hydraulic calculations for outboard side
+    !  OUTBOARD
 
     !  Calculation of max FW temp. Include NBI orbit loss power (assume to be only on outboard side)
     ! and a fraction of the escaped alpha power as components of the outboard wall surface power
@@ -1198,8 +1202,8 @@ contains
     !  necessary limits, but this is not straightforward
 
     !  Calculate pumping powers for blanket and first wall
-    htpmw_fwo = pumppower(fwfllengo, afwo, mffwo, mffwpo, no90fw, no180fw, velfwo, etaiso, coolwh)
-    htpmw_blkto = pumppower(bzfllengo, afwo, mfblkto, mfblktpo, no90bz, no180bz, velblkto, etaiso, coolwh)
+    htpmw_fwo = pumppower(fwfllengo, afwo, mffwo, mffwpo, no90fw, no180fw, velfwo, etaiso, coolwh, 'Outboard first wall')
+    htpmw_blkto = pumppower(bzfllengo, afwo, mfblkto, mfblktpo, no90bz, no180bz, velblkto, etaiso, coolwh, 'Outboard blanket')
 
     !  Total inboard & outboard FW and blanket pumping powers (MW)
     htpmw_fw = htpmw_fwi + htpmw_fwo
@@ -1209,7 +1213,8 @@ contains
     tpeak = max(tpeakfwi, tpeakfwo)
     
     if (ip == 0) return
-    
+    call oheadr(ofile, 'Detailed thermohydraulic parameters for first wall and blanket are output if verbose=1.' )
+
     call oheadr(ofile, 'First wall and blanket thermohydraulics') 
     call ovarin(ofile, 'Coolant type (1=He, 2=H20)', '(coolwh)',coolwh)
     call ovarre(ofile, 'Outboard coolant flow rate (m/s)', '(velfwo)',velfwo)
@@ -1470,7 +1475,7 @@ contains
     !  Local variables
     integer, parameter :: nk = 51
     integer :: it, k
-    real(kind=double) :: boa, fboa, fwlifs, fwvol, hcoeff, kf, masflx, maxstress, &
+    real(kind=double) :: boa, fboa, fwvol, hcoeff, kf, masflx, maxstress, &
         mindif, qpp, qppp, sgpthn, tav, temp_c, temp_k, tfwav, tmpdif, tmprop_c, tmprop_k, &
         tmprse, tmthet, tpeakfw_c, viscf, viscfs
 
@@ -1600,7 +1605,7 @@ contains
        ! Issue #290:
        ! Replace this so-called fluence by nominal neutron wall loading x first wall life:
        ! wallmw : average neutron wall load (MW/m2)
-       flnce = wallmw * fwlife
+       !flnce = wallmw * fwlife
 
        !  Calculate peak temperature - occurs at (r,theta) = (bfw,0)
        call cosine_term(afw, bfw, 0.0D0, bfw, qpp, hcoeff, tmprop_c, tmthet)
@@ -1612,12 +1617,12 @@ contains
        tpeakfw_c = tpeakfw - 273.15D0
        
        
-       if (flnce > abktflnc) then
+       !if (flnce > abktflnc) then
             ! This should never happen
             !  Nominal fluence limit exceeded; reduce first wall lifetime
-            fwlife = abktflnc * area/ fwvol / (1.0D-6*qppp)
+            !fwlife = abktflnc * area/ fwvol / (1.0D-6*qppp)
             !write(*,*) 'Nominal fluence limit exceeded; first wall lifetime reduced.'
-       end if
+      ! end if
 
        if (tpeakfw > tfwmatmax) then
           !  Temperature limit exceeded: reduce wall thickness.
@@ -1634,7 +1639,7 @@ contains
           end if
        end if
 
-       fwlifs = 3.1536D7*fwlife
+       !fwlifs = 3.1536D7*fwlife
 
        !  The lower limit on the first wall thickness is derived from the
        !  constraint that the first wall must possess the ability to withstand
@@ -1839,12 +1844,12 @@ contains
     call ovarre(ofile, 'Shield Mass (kg)', '(whtshld)', whtshld)
     call ovarre(ofile, 'Vacuum vessel mass (kg)', '(cryomass)', cryomass)
     
-    !  Nuclear heting section
+    !  Nuclear heating section
     call osubhd(ofile, 'Nuclear heating :')
     
-    call ovarre(ofile, 'Average nominal neutron wall load (MW/m2)','(wallmw)', wallmw)
+    !call ovarre(ofile, 'Average nominal neutron wall load (MW/m2)','(wallmw)', wallmw)
     !call ovarre(ofile, 'First wall full-power lifetime (years)', '(fwlife)', fwlife)
-    call oblnkl(ofile)
+    !call oblnkl(ofile)
     
     !  ST centre post
     if (itart == 1) then
@@ -1875,8 +1880,8 @@ contains
     call ovarre(ofile, 'Allowable temperature of first wall material (K)', '(tfwmatmax)', tfwmatmax)
     call ovarre(ofile, 'Actual peak temperature of first wall material (K)', '(tpeak)', tpeak)
     call ovarre(ofile, 'Allowable nominal neutron fluence at first wall (MW.year/m2)', '(abktflnc)', abktflnc)    
-    call ovarre(ofile, 'Actual nominal neutron fluence at first wall (MW.year/m2)', '(flnce)', flnce)
-    call ovarre(ofile, 'First wall full-power lifetime (years)', '(fwlife)', fwlife)
+    !call ovarre(ofile, 'Actual nominal neutron fluence at first wall (MW.year/m2)', '(flnce)', flnce)
+    !call ovarre(ofile, 'First wall full-power lifetime (years)', '(fwlife)', fwlife)
     call ovarin(ofile, 'No of inboard blanket modules poloidally', '(nblktmodpi)', nblktmodpi)
     call ovarin(ofile, 'No of inboard blanket modules toroidally', '(nblktmodti)', nblktmodti)
     call ovarin(ofile, 'No of outboard blanket modules poloidally', '(nblktmodpo)', nblktmodpo)
@@ -2046,7 +2051,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-  function pumppower(flleng, rad, mf, mfp, no90, no180, vel, etaiso, coolwh)
+  function pumppower(flleng, rad, mf, mfp, no90, no180, vel, etaiso, coolwh, label)
 
     !+ad_name  pumppower
     !+ad_summ  Routine to calculate the coolant pumping power in MW in the first
@@ -2063,6 +2068,7 @@ contains
     !+ad_args  vel         : input real : coolant flow speed (m/s)
     !+ad_args  etaiso      : input real : isentropic efficiency of coolant pumps
     !+ad_args  coolwh      : input integer: coolant fluid (1=helium, 2=water)
+    !+ad_args  label       : input string: description of this calculation
     !+ad_desc  This routine calculates the power required (MW) to pump the coolant in the
     !+ad_desc  first wall and breeding zone.
     !+ad_desc  <P>Pressure drops are calculated for a pipe with a number of 90
@@ -2095,6 +2101,7 @@ contains
     !  Arguments
     real(kind=double), intent(in) :: flleng, rad, mf, mfp, vel, etaiso
     integer, intent(in) :: no90, no180, coolwh
+    character(len=*), intent(in) :: label
 
     !  Local variables
     real(kind=double) :: cf, coolpin, deltap, dh, h1, h2, kelbwn, kelbwt, kf, kstrght, &
@@ -2161,23 +2168,24 @@ contains
     pumppower = ppump
     
     if (ip  == 0) return
-    
-    call oheadr(ofile, 'Pumppower') 
-    call ovarre(ofile, 'Viscosity', '(viscf)', viscf)
-    call ovarre(ofile, 'Density', '(rhof)', rhof)
-    call ovarre(ofile, 'Reynolds number', '(reyn)', reyn)
-    call ovarre(ofile, 'lambda', '(lambda)', lambda)
-    call ovarre(ofile, 'Straight section pressure drop coefficient', '(kstrght)', kstrght)
-    call ovarre(ofile, '90 degree elbow singularity coefficient', '(ximn)', ximn)
-    call ovarre(ofile, '90 degree elbow friction coefficient', '(xifn)', xifn)
-    call ovarre(ofile, '180 degree elbow singularity coefficient', '(ximt)', ximt)
-    call ovarre(ofile, '180 degree elbow friction coefficient', '(xift)', xift)
-    call ovarre(ofile, 'Pressure drop', '(deltap)', deltap)
-    call ovarre(ofile, 'Inlet pressure (Pa)', '(coolpin)', coolpin)
-    call ovarre(ofile, 'Inley enthalpy', '(h2)', h2)
-    call ovarre(ofile, 'Inley entropy', '(s2)', s2)
-    call ovarre(ofile, 'Enthalpy before pump', '(h1)', h1)
-    call ovarre(ofile, 'Pumping power (MW)', '(ppump)', ppump)
+    if (verbose == 1) then
+        call oheadr(ofile, 'Pumping power for ' // label) 
+        call ovarre(ofile, 'Viscosity', '(viscf)', viscf)
+        call ovarre(ofile, 'Density', '(rhof)', rhof)
+        call ovarre(ofile, 'Reynolds number', '(reyn)', reyn)
+        call ovarre(ofile, 'lambda', '(lambda)', lambda)
+        call ovarre(ofile, 'Straight section pressure drop coefficient', '(kstrght)', kstrght)
+        call ovarre(ofile, '90 degree elbow singularity coefficient', '(ximn)', ximn)
+        call ovarre(ofile, '90 degree elbow friction coefficient', '(xifn)', xifn)
+        call ovarre(ofile, '180 degree elbow singularity coefficient', '(ximt)', ximt)
+        call ovarre(ofile, '180 degree elbow friction coefficient', '(xift)', xift)
+        call ovarre(ofile, 'Pressure drop', '(deltap)', deltap)
+        call ovarre(ofile, 'Inlet pressure (Pa)', '(coolpin)', coolpin)
+        call ovarre(ofile, 'Inlet enthalpy', '(h2)', h2)
+        call ovarre(ofile, 'Inlet entropy', '(s2)', s2)
+        call ovarre(ofile, 'Enthalpy before pump', '(h1)', h1)
+        call ovarre(ofile, 'Pumping power (MW)', '(ppump)', ppump)
+    end if        
 
   end function pumppower
 

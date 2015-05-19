@@ -1,4 +1,3 @@
- *****New input variable: tauratio = ratio of He and pellet particle confinem
  
  **************************************************************************************************************
  ************************************************** PROCESS ***************************************************
@@ -7,16 +6,16 @@
  
    Program : PROCESS
    Version : 393    Release Date :: 2015-05-11
- Date/time : Mon May 18 16:03:45 BST 2015
+ Date/time : Tue May 19 13:56:12 BST 2015
       User : mkovari (Michael Kovari)
  Directory : /home/mkovari/PROCESS/cost_tests/minmax
  
  **************************************************************************************************************
  
- PROCESS 393 : Run on Mon May 18 16:03:45 BST 2015 by Michael Kovari
+ PROCESS 393 : Run on Tue May 19 13:56:12 BST 2015 by Michael Kovari
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  
- Test file for new cost model  * Short descriptive title for the run
+ test file for new cost model * Short descriptive title for the run
  
  (Please include this header in any models, presentations and papers based on these results)
  
@@ -37,7 +36,7 @@
  Number of iteration variables                                            (nvar)                           35
  Number of constraints                                                    (neqns)                          21
  Optimisation switch                                                      (ioptimz)                         1
- Square root of the sum of squares of the constraint residuals            (sqsumsq)                 2.543E-10
+ Square root of the sum of squares of the constraint residuals            (sqsumsq)                 3.560E-10
  
  PROCESS has successfully optimised the program variables
  to minimise the figure of merit:          CAPITAL COST.         
@@ -46,87 +45,87 @@
  as shown by the following iteration variables that are
  at or near to the edge of their prescribed range :
  
-   fdene = f for density limit   =  1.2000E+00 is at or above its upper bound:  1.2000E+00
-   hfact = H factor              =  1.1000E+00 is at or above its upper bound:  1.1000E+00
-   q = safety factor             =  3.0000E+00 is at or below its lower bound:  3.0000E+00
-   fjohc = f for CS current EOF  =  2.5000E-01 is at or above its upper bound:  2.5000E-01
-   fjohc0 = f for CS current BOP =  2.5000E-01 is at or above its upper bound:  2.5000E-01
-   gapoh                         =  5.0000E-02 is at or below its lower bound:  5.0000E-02
-   fstrcase                      =  1.0000E+00 is at or above its upper bound:  1.0000E+00
-   fiooic = f for TFC I/Ic       =  5.0000E-01 is at or above its upper bound:  5.0000E-01
-   fjprot                        =  1.0000E+00 is at or above its upper bound:  1.0000E+00
-   tdmptf = dump time for TF coil=  1.0000E+01 is at or below its lower bound:  1.0000E+01
-   thwcndut                      =  4.0000E-03 is at or below its lower bound:  4.0000E-03
-   gapds                         =  1.2000E-01 is at or below its lower bound:  1.2000E-01
-   fpsepr                        =  1.0000E+00 is at or above its upper bound:  1.0000E+00
+                        fdene    =  1.2000E+00 is at or above its upper bound:  1.2000E+00
+                        hfact    =  1.1000E+00 is at or above its upper bound:  1.1000E+00
+                        q        =  3.0000E+00 is at or below its lower bound:  3.0000E+00
+                        fjohc    =  2.5000E-01 is at or above its upper bound:  2.5000E-01
+                        fjohc0   =  2.5000E-01 is at or above its upper bound:  2.5000E-01
+                        gapoh    =  5.0000E-02 is at or below its lower bound:  5.0000E-02
+                        fstrcase =  1.0000E+00 is at or above its upper bound:  1.0000E+00
+                        fiooic   =  5.0000E-01 is at or above its upper bound:  5.0000E-01
+                        fjprot   =  1.0000E+00 is at or above its upper bound:  1.0000E+00
+                        tdmptf   =  1.0000E+01 is at or below its lower bound:  1.0000E+01
+                        thwcndut =  4.0000E-03 is at or below its lower bound:  4.0000E-03
+                        gapds    =  1.2000E-01 is at or below its lower bound:  1.2000E-01
+                        fpsepr   =  1.0000E+00 is at or above its upper bound:  1.0000E+00
  
  The solution vector is comprised as follows :
  
                                           final     final /
     i                                     value     initial
  
-    1  bt = toroidal feld               5.1960E+00  1.0000E+00
-    2  rmajor = major radius            8.3563E+00  1.0000E+00
-    3  te = electron temperature        1.1846E+01  9.9968E-01
-    4  beta                             3.4763E-02  1.0001E+00
-    5  dene = electron density          8.4595E+19  1.0001E+00
-    6  rnbeam = hot beam density / ne   1.6421E-03  1.0001E+00
-    7  fdene = f for density limit      1.2000E+00  1.0000E+00
-    8  hfact = H factor                 1.1000E+00  1.0000E+00
-    9  oacdcp = TFC current density     1.3186E+07  1.0262E+00
-   10  tfcth = inboard TFC thickness    7.3890E-01  9.6931E-01
-   11  fwalld = f for max n wall load   1.1956E-01  9.5421E-01
-   12  ohcth = CS thickness             7.9889E-01  9.7449E-01
-   13  q = safety factor                3.0000E+00  1.0000E+00
-   14  bore                             2.3279E+00  9.9997E-01
-   15  fbetatry                         5.3474E-01  1.0001E+00
-   16  coheof                           1.3859E+07  9.9994E-01
-   17  fjohc = f for CS current EOF     2.5000E-01  1.0000E+00
-   18  fjohc0 = f for CS current BOP    2.5000E-01  1.0000E+00
-   19  fcohbop                          9.3612E-01  1.0000E+00
-   20  gapoh                            5.0000E-02  1.0000E+00
-   21  fvsbrnni                         4.6429E-01  9.9998E-01
-   22  fstrcase                         1.0000E+00  1.0000E+00
-   23  fstrcond                         8.4720E-01  1.0000E+00
-   24  fiooic = f for TFC I/Ic          5.0000E-01  1.0000E+00
-   25  fvdump                           7.6842E-01  1.0000E+00
-   26  fjprot                           1.0000E+00  1.0000E+00
-   27  tdmptf = dump time for TF coil   1.0000E+01  1.0000E+00
-   28  thkcas = TFC case thickness      3.8704E-01  9.7516E-01
-   29  thwcndut                         4.0000E-03  1.0000E+00
-   30  fcutfsu = Cu fract TFC strand    6.4022E-01  1.1204E+00
-   31  gapds                            1.2000E-01  1.0000E+00
-   32  fpsepr                           1.0000E+00  1.0000E+00
-   33  fimpvar                          2.4390E-04  9.9999E-01
-   34  flhthresh                        1.3779E+00  9.9992E-01
-   35  favail                           9.3671E-01  9.9714E-01
+    1                       bt          5.1960E+00  1.0000E+00
+    2                       rmajor      8.3563E+00  1.0000E+00
+    3                       te          1.1846E+01  9.9968E-01
+    4                       beta        3.4763E-02  1.0001E+00
+    5                       dene        8.4595E+19  1.0001E+00
+    6                       rnbeam      1.6421E-03  1.0001E+00
+    7                       fdene       1.2000E+00  1.0000E+00
+    8                       hfact       1.1000E+00  1.0000E+00
+    9                       oacdcp      1.3186E+07  9.9971E-01
+   10                       tfcth       7.3890E-01  1.0000E+00
+   11                       fwalld      1.1956E-01  9.9969E-01
+   12                       ohcth       7.9889E-01  9.9999E-01
+   13                       q           3.0000E+00  1.0000E+00
+   14                       bore        2.3279E+00  9.9997E-01
+   15                       fbetatry    5.3474E-01  1.0001E+00
+   16                       coheof      1.3859E+07  9.9994E-01
+   17                       fjohc       2.5000E-01  1.0000E+00
+   18                       fjohc0      2.5000E-01  1.0000E+00
+   19                       fcohbop     9.3612E-01  1.0000E+00
+   20                       gapoh       5.0000E-02  1.0000E+00
+   21                       fvsbrnni    4.6429E-01  9.9998E-01
+   22                       fstrcase    1.0000E+00  1.0000E+00
+   23                       fstrcond    8.4720E-01  1.0000E+00
+   24                       fiooic      5.0000E-01  1.0000E+00
+   25                       fvdump      7.6842E-01  1.0000E+00
+   26                       fjprot      1.0000E+00  1.0000E+00
+   27                       tdmptf      1.0000E+01  1.0000E+00
+   28                       thkcas      3.8704E-01  1.0001E+00
+   29                       thwcndut    4.0000E-03  1.0000E+00
+   30                       fcutfsu     6.4022E-01  1.0000E+00
+   31                       gapds       1.2000E-01  1.0000E+00
+   32                       fpsepr      1.0000E+00  1.0000E+00
+   33                       fimpvar     2.4390E-04  9.9999E-01
+   34                       flhthresh   1.3779E+00  9.9992E-01
+   35                       favail      9.3671E-01  1.0000E+00
  
  The following equality constraint residues should be close to zero :
  
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.4763E-02             -8.0276E-16                -2.3093E-14
-    2  Global power balance consistency      =  1.7958E-01 MW/m3        9.7495E-15 MW/m3           5.4290E-14
-    3  Density upper limit                   <  7.8479E+19 /m3          6.2733E+05 /m3             6.6613E-15
-    4  Beam ion density consistency          =  1.3892E+17 /m3         -7.7730E+03 /m3            -5.5955E-14
-    5  Neutron wall load upper limit         <  8.0000E+00 MW/m2        1.6917E-13 MW/m2           1.7686E-13
-    6  Toroidal field 1/R consistency        =  4.3420E+01 T.m          1.9282E-13 T.m             4.4409E-15
-    7  Radial build consistency              =  8.3563E+00 m           -1.8555E-15 m              -2.2204E-16
-    8  Burn time lower limit                 >  7.2000E+03 sec          4.9289E-07 sec             6.8457E-11
-    9  L-H power threshold limit             >  1.0310E+02 MW           6.6729E-11 MW              4.6974E-13
-   10  Net electric power lower limit        >  5.0000E+02 MW           9.0716E-08 MW              1.8143E-10
-   11  Beta upper limit                      <  5.6067E-02             -8.3214E-16                -2.7756E-14
-   12  CS coil EOF current density limit     <  5.5436E+07 A/m2        -1.7222E-04 A/m2           -1.2426E-11
-   13  CS coil BOP current density limit     <  5.1895E+07 A/m2        -1.5524E-04 A/m2           -1.1966E-11
-   14  Injection power upper limit           <  5.0000E+01 MW          -2.3204E-12 MW             -4.6407E-14
-   15  TF coil case stress upper limit       <  6.6000E+08 Pa           4.7423E-04 Pa              7.1854E-13
-   16  TF coil conduit stress upper lim      <  6.6000E+08 Pa           5.0650E-04 Pa              9.0583E-13
-   17  I_op / I_critical (TF coil)           <  7.3448E+07 A/m2         9.0105E-07 A/m2            2.4536E-14
-   18  Dump voltage upper limit              <  2.0000E+01 V            3.1502E-11 V               2.0498E-12
-   19  J_winding pack/J_protection limit     <  3.6724E+07 A/m2         5.3819E-07 A/m2            1.4655E-14
-   20  Psep / R upper limit                  <  1.7000E+01 MW/m         7.5061E-12 MW/m            4.4154E-13
-   21  Minimum availability value            >  5.0000E-01              1.1391E-10                 2.1340E-10
+    1  Beta consistency                      =  3.4763E-02             -1.2427E-15                -3.5749E-14
+    2  Global power balance consistency      =  1.7958E-01 MW/m3        1.3039E-14 MW/m3           7.2609E-14
+    3  Density upper limit                   <  7.8479E+19 /m3          0.0000E+00 /m3             0.0000E+00
+    4  Beam ion density consistency          =  1.3892E+17 /m3         -8.7909E+03 /m3            -6.3283E-14
+    5  Neutron wall load upper limit         <  8.0000E+00 MW/m2        2.7302E-13 MW/m2           2.8544E-13
+    6  Toroidal field 1/R consistency        =  4.3420E+01 T.m          1.3016E-13 T.m             2.9976E-15
+    7  Radial build consistency              =  8.3563E+00 m           -1.8555E-14 m              -2.2204E-15
+    8  Burn time lower limit                 >  7.2000E+03 sec          7.6755E-07 sec             1.0660E-10
+    9  L-H power threshold limit             >  1.0310E+02 MW           1.0146E-10 MW              7.1421E-13
+   10  Net electric power lower limit        >  5.0000E+02 MW           1.3876E-07 MW              2.7752E-10
+   11  Beta upper limit                      <  5.6067E-02             -1.0119E-15                -3.3751E-14
+   12  CS coil EOF current density limit     <  5.5436E+07 A/m2        -4.5318E-04 A/m2           -3.2699E-11
+   13  CS coil BOP current density limit     <  5.1895E+07 A/m2        -4.0986E-04 A/m2           -3.1592E-11
+   14  Injection power upper limit           <  5.0000E+01 MW           9.9365E-13 MW              1.9873E-14
+   15  TF coil case stress upper limit       <  6.6000E+08 Pa           7.3766E-04 Pa              1.1177E-12
+   16  TF coil conduit stress upper lim      <  6.6000E+08 Pa           7.8914E-04 Pa              1.4113E-12
+   17  I_op / I_critical (TF coil)           <  7.3448E+07 A/m2         3.7102E-07 A/m2            1.0103E-14
+   18  Dump voltage upper limit              <  2.0000E+01 V            4.8629E-11 V               3.1642E-12
+   19  J_winding pack/J_protection limit     <  3.6724E+07 A/m2        -1.8755E-06 A/m2           -5.1070E-14
+   20  Psep / R upper limit                  <  1.7000E+01 MW/m         1.0360E-11 MW/m            6.0940E-13
+   21  Minimum availability value            >  5.0000E-01              1.4326E-10                 2.6839E-10
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -432,6 +431,8 @@
  Total core radiation power (MW)                                          (pcoreradmw)              9.534E+01
  Edge radiation power (MW)                                                (pedgeradmw)              1.137E+02
  Total radiation power (MW)                                               (pradmw)                  2.090E+02
+ Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             1.587E-01
+ Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  9.565E-01
  
  Ohmic heating power (MW)                                                 (pohmmw)                  9.502E-01
  Fraction of alpha power deposited in plasma                              (falpha)                      0.950
@@ -651,7 +652,7 @@
  
  Divertor Model Output :
  
- Iteration relative error                                                 (delta)                   6.245E-12
+ Iteration relative error                                                 (delta)                   6.244E-12
  Private flux power factor                                                (omlarg)                  1.327E+00
  Separatrix temperature (eV)                                              (tsep)                    3.376E+02
  Divertor temperature (eV)                                                (tdiv)                    1.509E+02
@@ -986,7 +987,7 @@
    4         0.000E+00  0.000E+00 -7.063E+06 -7.063E+06 -7.063E+06  0.000E+00
    5         0.000E+00  0.000E+00 -4.558E+06 -4.558E+06 -4.558E+06  0.000E+00
    6         0.000E+00  0.000E+00 -4.558E+06 -4.558E+06 -4.558E+06  0.000E+00
-   7         0.000E+00  0.000E+00  6.543E-09  6.543E-09 -2.617E-08  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
  
  fcohbop:     0.936     fcohbof:    -0.192
  
@@ -1013,77 +1014,8 @@
   CS     1.1E+00 1.1E+00 5.4E-01 5.4E-01 2.9E-01 2.9E-01 1.4E+01 5.0E-03
  Plasma  1.1E-03 1.1E-03 1.6E-03 1.6E-03 7.4E-04 7.4E-04 5.0E-03 1.5E-05
  
- ************************************************* Pumppower **************************************************
+ ********** Detailed thermohydraulic parameters for first wall and blanket are output if verbose=1. ***********
  
- Viscosity                                                                (viscf)                   3.604E-05
- Density                                                                  (rhof)                    1.041E+01
- Reynolds number                                                          (reyn)                    1.712E+04
- lambda                                                                   (lambda)                  2.796E-02
- Straight section pressure drop coefficient                               (kstrght)                 4.770E+00
- 90 degree elbow singularity coefficient                                  (ximn)                    1.980E-01
- 90 degree elbow friction coefficient                                     (xifn)                    4.954E-02
- 180 degree elbow singularity coefficient                                 (ximt)                    3.920E-01
- 180 degree elbow friction coefficient                                    (xift)                    4.954E-02
- Pressure drop                                                            (deltap)                  3.765E-04
- Inlet pressure (Pa)                                                      (coolpin)                 1.550E+07
- Inley enthalpy                                                           (h2)                      3.030E+06
- Inley entropy                                                            (s2)                      2.093E+04
- Enthalpy before pump                                                     (h1)                      3.030E+06
- Pumping power (MW)                                                       (ppump)                   4.143E-03
- 
- ************************************************* Pumppower **************************************************
- 
- Viscosity                                                                (viscf)                   3.604E-05
- Density                                                                  (rhof)                    1.041E+01
- Reynolds number                                                          (reyn)                    1.544E+04
- lambda                                                                   (lambda)                  2.873E-02
- Straight section pressure drop coefficient                               (kstrght)                 9.804E+00
- 90 degree elbow singularity coefficient                                  (ximn)                    1.980E-01
- 90 degree elbow friction coefficient                                     (xifn)                    5.091E-02
- 180 degree elbow singularity coefficient                                 (ximt)                    3.920E-01
- 180 degree elbow friction coefficient                                    (xift)                    5.091E-02
- Pressure drop                                                            (deltap)                  6.534E-04
- Inlet pressure (Pa)                                                      (coolpin)                 1.550E+07
- Inley enthalpy                                                           (h2)                      3.030E+06
- Inley entropy                                                            (s2)                      2.093E+04
- Enthalpy before pump                                                     (h1)                      3.030E+06
- Pumping power (MW)                                                       (ppump)                   1.405E-02
- 
- ************************************************* Pumppower **************************************************
- 
- Viscosity                                                                (viscf)                   3.604E-05
- Density                                                                  (rhof)                    1.041E+01
- Reynolds number                                                          (reyn)                    1.801E+04
- lambda                                                                   (lambda)                  2.759E-02
- Straight section pressure drop coefficient                               (kstrght)                 6.466E+00
- 90 degree elbow singularity coefficient                                  (ximn)                    1.980E-01
- 90 degree elbow friction coefficient                                     (xifn)                    4.889E-02
- 180 degree elbow singularity coefficient                                 (ximt)                    3.920E-01
- 180 degree elbow friction coefficient                                    (xift)                    4.889E-02
- Pressure drop                                                            (deltap)                  5.505E-04
- Inlet pressure (Pa)                                                      (coolpin)                 1.550E+07
- Inley enthalpy                                                           (h2)                      3.030E+06
- Inley entropy                                                            (s2)                      2.093E+04
- Enthalpy before pump                                                     (h1)                      3.030E+06
- Pumping power (MW)                                                       (ppump)                   9.184E-03
- 
- ************************************************* Pumppower **************************************************
- 
- Viscosity                                                                (viscf)                   3.604E-05
- Density                                                                  (rhof)                    1.041E+01
- Reynolds number                                                          (reyn)                    2.120E+04
- lambda                                                                   (lambda)                  2.646E-02
- Straight section pressure drop coefficient                               (kstrght)                 1.240E+01
- 90 degree elbow singularity coefficient                                  (ximn)                    1.980E-01
- 90 degree elbow friction coefficient                                     (xifn)                    4.688E-02
- 180 degree elbow singularity coefficient                                 (ximt)                    3.920E-01
- 180 degree elbow friction coefficient                                    (xift)                    4.688E-02
- Pressure drop                                                            (deltap)                  1.515E-03
- Inlet pressure (Pa)                                                      (coolpin)                 1.550E+07
- Inley enthalpy                                                           (h2)                      3.030E+06
- Inley entropy                                                            (s2)                      2.093E+04
- Enthalpy before pump                                                     (h1)                      3.030E+06
- Pumping power (MW)                                                       (ppump)                   1.001E-01
  
  ********************************** First wall and blanket thermohydraulics ***********************************
  
@@ -1164,8 +1096,6 @@
  
  Nuclear heating :
  
- Average nominal neutron wall load (MW/m2)                                (wallmw)                  9.565E-01
- 
  Total nuclear heating in TF+PF coils (CS is negligible) (MW)             (ptfnuc)                  2.477E-02
  Total nuclear heating in FW (MW)                                         (pnucfw)                  1.990E+02
  Total nuclear heating in the blanket (including emult) (MW)              (pnucblkt)                1.215E+03
@@ -1191,8 +1121,6 @@
  Allowable temperature of first wall material (K)                         (tfwmatmax)               1.100E+03
  Actual peak temperature of first wall material (K)                       (tpeak)                   9.775E+02
  Allowable nominal neutron fluence at first wall (MW.year/m2)             (abktflnc)                1.000E+01
- Actual nominal neutron fluence at first wall (MW.year/m2)                (flnce)                   1.000E+01
- First wall full-power lifetime (years)                                   (fwlife)                  1.045E+01
  No of inboard blanket modules poloidally                                 (nblktmodpi)                      7
  No of inboard blanket modules toroidally                                 (nblktmodti)                     32
  No of outboard blanket modules poloidally                                (nblktmodpo)                      8

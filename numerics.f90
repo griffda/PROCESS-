@@ -464,63 +464,65 @@ module numerics
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
-  character(len=30), dimension(ipnvars) :: lablxc = (/ &     
+  ! WARNING These labels are used as variable names by write_new_in_dat.py, and possibly
+  ! othr python utilities, so they cannot easily be changed.
+  character(len=9), dimension(ipnvars) :: lablxc = (/ &     
        !+ad_varc  <LI> ( 1) aspect
-       'aspect = aspect ratio', &
+       'aspect   ', &
        !+ad_varc  <LI> ( 2) bt
-       'bt = toroidal feld', &
+       'bt       ', &
        !+ad_varc  <LI> ( 3) rmajor
-       'rmajor = major radius', &
+       'rmajor   ', &
        !+ad_varc  <LI> ( 4) * te
-       'te = electron temperature', &
+       'te       ', &
        !+ad_varc  <LI> ( 5) * beta
        'beta     ', &
        !+ad_varc  <LI> ( 6) * dene
-       'dene = electron density', &
+       'dene     ', &
        !+ad_varc  <LI> ( 7) * rnbeam
-       'rnbeam = hot beam density / ne', &
+       'rnbeam   ', &
        !+ad_varc  <LI> ( 8) fbeta (f-value for equation 6)
        'fbeta    ', &
        !+ad_varc  <LI> ( 9) fdene (f-value for equation 5)
-       'fdene = f for density limit', &
+       'fdene    ', &
        !+ad_varc  <LI> (10) * hfact
-       'hfact = H factor', &
+       'hfact    ', &
        !+ad_varc  <LI> (11) pheat
-       'pheat = heating not for CD', &
+       'pheat    ', &
        !+ad_varc  <LI> (12) * oacdcp
-       'oacdcp = TFC current density', &
+       'oacdcp   ', &
        !+ad_varc  <LI> (13) * tfcth
-       'tfcth = inboard TFC thickness', &
+       'tfcth    ', &
        !+ad_varc  <LI> (14) fwalld (f-value for equation 8)
-       'fwalld = f for max n wall load', &
+       'fwalld   ', &
        !+ad_varc  <LI> (15) fvs (f-value for equation 12)
-       'fvs = f for flux-swing (V-s)', &
+       'fvs      ', &
        !+ad_varc  <LI> (16) ohcth
-       'ohcth = CS thickness', &
+       'ohcth    ', &
        !+ad_varc  <LI> (17) tdwell
-       'tdwell = time between pulses', &
+       'tdwell   ', &
        !+ad_varc  <LI> (18) q
-       'q = safety factor', &
+       'q        ', &
        !+ad_varc  <LI> (19) * enbeam
-       'enbeam = NBI energy (keV)', &
+       'enbeam   ', &
        !+ad_varc  <LI> (20) tcpav
-       'tcpav =    ', &
+       'tcpav    ', &
        !+ad_varc  <LI> (21) ftburn (f-value for equation 13)
        'ftburn   ', &
        !+ad_varc  <LI> (22) tbrnmn
-       'tbrnmn = minimum burn time ', &
+       'tbrnmn   ', &
        !+ad_varc  <LI> (23) fcoolcp
        'fcoolcp  ', &
        !+ad_varc  <LI> (24) cdtfleg
        'cdtfleg  ', &
        !+ad_varc  <LI> (25) fpnetel (f-value for equation 16)
-       'fpnetel = f for net electric', &
+       'fpnetel  ', &
        !+ad_varc  <LI> (26) ffuspow (f-value for equation 9)
-       'ffuspow = f for max fusion', &
+       'ffuspow  ', &
        !+ad_varc  <LI> (27) fhldiv (f-value for equation 18)
        'fhldiv   ', &
        !+ad_varc  <LI> (28) * fradpwr (f-value for equation 17)
-       'fradpwr = f for max core rad', &
+       'fradpwr  ', &
        !+ad_varc  <LI> (29) * bore
        'bore     ', &
        !+ad_varc  <LI> (30) fmva (f-value for equation 19)
@@ -540,9 +542,9 @@ module numerics
        !+ad_varc  <LI> (37) coheof
        'coheof   ', &
        !+ad_varc  <LI> (38) fjohc (f-value for equation 26)
-       'fjohc = f for CS current EOF', &
+       'fjohc    ', &
        !+ad_varc  <LI> (39) * fjohc0 (f-value for equation 27)
-       'fjohc0 = f for CS current BOP  ', &
+       'fjohc0   ', &
        !+ad_varc  <LI> (40) fgamcd (f-value for equation 37)
        'fgamcd   ', &
        !+ad_varc  <LI> (41) fcohbop
@@ -564,7 +566,7 @@ module numerics
        !+ad_varc  <LI> (49) fstrcond (f-value for equation 32)
        'fstrcond ', &
        !+ad_varc  <LI> (50) * fiooic (f-value for equation 33)
-       'fiooic = f for TFC I/Ic', &
+       'fiooic   ', &
        !+ad_varc  <LI> (51) fvdump (f-value for equation 34)
        'fvdump   ', &
        !+ad_varc  <LI> (52) vdalw
@@ -574,15 +576,15 @@ module numerics
        !+ad_varc  <LI> (54) * ftmargtf (f-value for equation 36)
        'ftmargtf ', &
        !+ad_varc  <LI> (55) tmargmin
-       'tmargmin = min sc temp margin', &
+       'tmargmin ', &
        !+ad_varc  <LI> (56) tdmptf
-       'tdmptf = dump time for TF coil', &
+       'tdmptf   ', &
        !+ad_varc  <LI> (57) thkcas
-       'thkcas = TFC case thickness', &
+       'thkcas   ', &
        !+ad_varc  <LI> (58) thwcndut
        'thwcndut ', &
        !+ad_varc  <LI> (59) fcutfsu
-       'fcutfsu = Cu fract TFC strand', &
+       'fcutfsu  ', &
        !+ad_varc  <LI> (60) cpttf
        'cpttf    ', &
        !+ad_varc  <LI> (61) * gapds

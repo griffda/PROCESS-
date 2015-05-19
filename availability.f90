@@ -348,7 +348,7 @@ contains
 
     !  Modify lifetimes to take account of the availability
 
-    call modify_lifetimes()
+    !call modify_lifetimes()
 
     ! Output
 
@@ -356,13 +356,10 @@ contains
 
     call ocmmnt(outfile,'Total unavailability:')
     call oblnkl(outfile) 
-    call ovarre(outfile,'Total planned unavailability', &
-         '(u_planned)', u_planned)
-    call ovarre(outfile,'Total unplanned unavailability', &
-         '(u_unplanned)', u_unplanned)
+    call ovarre(outfile,'Total planned unavailability', '(u_planned)', u_planned)
+    call ovarre(outfile,'Total unplanned unavailability', '(u_unplanned)', u_unplanned)
     call oblnkl(outfile)
-    call ovarre(outfile,'Total plant availability fraction', &
-         '(cfactr)',cfactr)
+    call ovarre(outfile,'Total plant availability fraction', '(cfactr)',cfactr)
     call ovarre(outfile,'Total DT operational time (years)','(t_operation)',t_operation)
     call ovarre(outfile,'Total plant lifetime (years)','(tlife)',tlife)
     call ovarre(outfile,'Capacity factor: total lifetime electrical energy output / output power','(cpfact)',cpfact)
@@ -419,8 +416,8 @@ contains
 
        !  First wall / blanket
 
-       if (blktmodel == 0) bktlife = min(fwlife, abktflnc/wallmw, tlife)
-       !fwlife = bktlife
+       !bktlife = min(fwlife, abktflnc/wallmw, tlife)       
+       bktlife =  min(abktflnc/wallmw, tlife)
 
        !  Divertor
 
@@ -507,56 +504,56 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine modify_lifetimes
+!  subroutine modify_lifetimes
 
-    !+ad_name  modify_lifetimes
-    !+ad_summ  Calculate the component lifetimes
-    !+ad_type  Subroutine
-    !+ad_auth  J Morris, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  None
-    !+ad_desc  This routine calculates the lifetimes of the main fusion power core
-    !+ad_desc  components.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  02/12/14 JM  Initial version
-    !+ad_stat  Okay
-    !+ad_docs  None
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!    !+ad_name  modify_lifetimes
+!    !+ad_summ  Calculate the component lifetimes
+!    !+ad_type  Subroutine
+!    !+ad_auth  J Morris, CCFE, Culham Science Centre
+!    !+ad_cont  None
+!    !+ad_args  None
+!    !+ad_desc  This routine calculates the lifetimes of the main fusion power core
+!    !+ad_desc  components.
+!    !+ad_prob  None
+!    !+ad_call  None
+!    !+ad_hist  02/12/14 JM  Initial version
+!    !+ad_stat  Okay
+!    !+ad_docs  None
+!    !
+!    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-    implicit none
+!    implicit none
 
-    !  Arguments
+!    !  Arguments
 
-    !  Local variables
+!    !  Local variables
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-    if (ife /= 1) then
+!    if (ife /= 1) then
 
-       !  First wall / blanket
+!       !  First wall / blanket
 
-       if (bktlife < tlife) then
-          bktlife = min( bktlife/cfactr, tlife )
-          fwlife = bktlife
-       end if
+!       if (bktlife < tlife) then
+!          bktlife = min( bktlife/cfactr, tlife )
+!          fwlife = bktlife
+!       end if
 
-       !  Divertor
+!       !  Divertor
 
-       if ((divlife < tlife).and.(irfp /= 1)) then
-          divlife = min( divlife/cfactr, tlife )
-       end if
+!       if ((divlife < tlife).and.(irfp /= 1)) then
+!          divlife = min( divlife/cfactr, tlife )
+!       end if
 
-       !  Centrepost
+!       !  Centrepost
 
-       if ((itart == 1).and.(cplife < tlife)) then
-          cplife = min( cplife/cfactr, tlife )
-       end if
+!       if ((itart == 1).and.(cplife < tlife)) then
+!          cplife = min( cplife/cfactr, tlife )
+!       end if
 
-    end if
+!    end if
 
-  end subroutine modify_lifetimes
+!  end subroutine modify_lifetimes
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

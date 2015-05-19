@@ -1,8 +1,8 @@
  PROCESS_version_number__________________________________________________ (procver)___________            393
- Date_of_run_____________________________________________________________ (date)______________     "18/05/2015"
- Time_of_run_____________________________________________________________ (time)______________     "16:03"
+ Date_of_run_____________________________________________________________ (date)______________     "19/05/2015"
+ Time_of_run_____________________________________________________________ (time)______________     "13:56"
  User____________________________________________________________________ (username)__________     "mkovari" 
- PROCESS_run_title_______________________________________________________ (runtitle)__________     Test file for new cost model  * Short descriptive title for the run             
+ PROCESS_run_title_______________________________________________________ (runtitle)__________     test file for new cost model * Short descriptive title for the run              
  Number_of_scan_points___________________________________________________ (isweep)____________              1
  Scanning_variable_number________________________________________________ (nsweep)____________              3
  
@@ -11,46 +11,46 @@
  Number_of_iteration_variables___________________________________________ (nvar)______________             35
  Number_of_constraints___________________________________________________ (neqns)_____________             21
  Optimisation_switch_____________________________________________________ (ioptimz)___________              1
- Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)___________      2.543E-10
- bt_=_toroidal_feld______________________________________________________ (itvar001)__________      5.196E+00
- bt_=_toroidal_feld_(final_value/initial_value)__________________________ (xcm001)____________      1.000E+00
- bt_=_toroidal_feld_(range_normalised)___________________________________ (nitvar001)_________      5.187E-02
- rmajor_=_major_radius___________________________________________________ (itvar002)__________      8.356E+00
- rmajor_=_major_radius_(final_value/initial_value)_______________________ (xcm002)____________      1.000E+00
- rmajor_=_major_radius_(range_normalised)________________________________ (nitvar002)_________      6.400E-01
- te_=_electron_temperature_______________________________________________ (itvar003)__________      1.185E+01
- te_=_electron_temperature_(final_value/initial_value)___________________ (xcm003)____________      9.997E-01
- te_=_electron_temperature_(range_normalised)____________________________ (nitvar003)_________      4.388E-02
+ Square_root_of_the_sum_of_squares_of_the_constraint_residuals___________ (sqsumsq)___________      3.560E-10
+ bt______________________________________________________________________ (itvar001)__________      5.196E+00
+ bt_(final_value/initial_value)__________________________________________ (xcm001)____________      1.000E+00
+ bt_(range_normalised)___________________________________________________ (nitvar001)_________      5.187E-02
+ rmajor__________________________________________________________________ (itvar002)__________      8.356E+00
+ rmajor_(final_value/initial_value)______________________________________ (xcm002)____________      1.000E+00
+ rmajor_(range_normalised)_______________________________________________ (nitvar002)_________      6.400E-01
+ te______________________________________________________________________ (itvar003)__________      1.185E+01
+ te_(final_value/initial_value)__________________________________________ (xcm003)____________      9.997E-01
+ te_(range_normalised)___________________________________________________ (nitvar003)_________      4.388E-02
  beta____________________________________________________________________ (itvar004)__________      3.476E-02
  beta_(final_value/initial_value)________________________________________ (xcm004)____________      1.000E+00
  beta_(range_normalised)_________________________________________________ (nitvar004)_________      3.380E-02
- dene_=_electron_density_________________________________________________ (itvar005)__________      8.459E+19
- dene_=_electron_density_(final_value/initial_value)_____________________ (xcm005)____________      1.000E+00
- dene_=_electron_density_(range_normalised)______________________________ (nitvar005)_________      1.569E-02
- rnbeam_=_hot_beam_density_/_ne__________________________________________ (itvar006)__________      1.642E-03
- rnbeam_=_hot_beam_density_/_ne_(final_value/initial_value)______________ (xcm006)____________      1.000E+00
- rnbeam_=_hot_beam_density_/_ne_(range_normalised)_______________________ (nitvar006)_________      1.641E-03
- fdene_=_f_for_density_limit_____________________________________________ (itvar007)__________      1.200E+00
- fdene_=_f_for_density_limit_(final_value/initial_value)_________________ (xcm007)____________      1.000E+00
- fdene_=_f_for_density_limit_(range_normalised)__________________________ (nitvar007)_________      1.000E+00
- hfact_=_H_factor________________________________________________________ (itvar008)__________      1.100E+00
- hfact_=_H_factor_(final_value/initial_value)____________________________ (xcm008)____________      1.000E+00
- hfact_=_H_factor_(range_normalised)_____________________________________ (nitvar008)_________      1.000E+00
- oacdcp_=_TFC_current_density____________________________________________ (itvar009)__________      1.319E+07
- oacdcp_=_TFC_current_density_(final_value/initial_value)________________ (xcm009)____________      1.026E+00
- oacdcp_=_TFC_current_density_(range_normalised)_________________________ (nitvar009)_________      8.730E-02
- tfcth_=_inboard_TFC_thickness___________________________________________ (itvar010)__________      7.389E-01
- tfcth_=_inboard_TFC_thickness_(final_value/initial_value)_______________ (xcm010)____________      9.693E-01
- tfcth_=_inboard_TFC_thickness_(range_normalised)________________________ (nitvar010)_________      5.309E-02
- fwalld_=_f_for_max_n_wall_load__________________________________________ (itvar011)__________      1.196E-01
- fwalld_=_f_for_max_n_wall_load_(final_value/initial_value)______________ (xcm011)____________      9.542E-01
- fwalld_=_f_for_max_n_wall_load_(range_normalised)_______________________ (nitvar011)_________      1.187E-01
- ohcth_=_CS_thickness____________________________________________________ (itvar012)__________      7.989E-01
- ohcth_=_CS_thickness_(final_value/initial_value)________________________ (xcm012)____________      9.745E-01
- ohcth_=_CS_thickness_(range_normalised)_________________________________ (nitvar012)_________      6.996E-03
- q_=_safety_factor_______________________________________________________ (itvar013)__________      3.000E+00
- q_=_safety_factor_(final_value/initial_value)___________________________ (xcm013)____________      1.000E+00
- q_=_safety_factor_(range_normalised)____________________________________ (nitvar013)_________      0.000E+00
+ dene____________________________________________________________________ (itvar005)__________      8.459E+19
+ dene_(final_value/initial_value)________________________________________ (xcm005)____________      1.000E+00
+ dene_(range_normalised)_________________________________________________ (nitvar005)_________      1.569E-02
+ rnbeam__________________________________________________________________ (itvar006)__________      1.642E-03
+ rnbeam_(final_value/initial_value)______________________________________ (xcm006)____________      1.000E+00
+ rnbeam_(range_normalised)_______________________________________________ (nitvar006)_________      1.641E-03
+ fdene___________________________________________________________________ (itvar007)__________      1.200E+00
+ fdene_(final_value/initial_value)_______________________________________ (xcm007)____________      1.000E+00
+ fdene_(range_normalised)________________________________________________ (nitvar007)_________      1.000E+00
+ hfact___________________________________________________________________ (itvar008)__________      1.100E+00
+ hfact_(final_value/initial_value)_______________________________________ (xcm008)____________      1.000E+00
+ hfact_(range_normalised)________________________________________________ (nitvar008)_________      1.000E+00
+ oacdcp__________________________________________________________________ (itvar009)__________      1.319E+07
+ oacdcp_(final_value/initial_value)______________________________________ (xcm009)____________      9.997E-01
+ oacdcp_(range_normalised)_______________________________________________ (nitvar009)_________      8.730E-02
+ tfcth___________________________________________________________________ (itvar010)__________      7.389E-01
+ tfcth_(final_value/initial_value)_______________________________________ (xcm010)____________      1.000E+00
+ tfcth_(range_normalised)________________________________________________ (nitvar010)_________      5.309E-02
+ fwalld__________________________________________________________________ (itvar011)__________      1.196E-01
+ fwalld_(final_value/initial_value)______________________________________ (xcm011)____________      9.997E-01
+ fwalld_(range_normalised)_______________________________________________ (nitvar011)_________      1.187E-01
+ ohcth___________________________________________________________________ (itvar012)__________      7.989E-01
+ ohcth_(final_value/initial_value)_______________________________________ (xcm012)____________      1.000E+00
+ ohcth_(range_normalised)________________________________________________ (nitvar012)_________      6.996E-03
+ q_______________________________________________________________________ (itvar013)__________      3.000E+00
+ q_(final_value/initial_value)___________________________________________ (xcm013)____________      1.000E+00
+ q_(range_normalised)____________________________________________________ (nitvar013)_________      0.000E+00
  bore____________________________________________________________________ (itvar014)__________      2.328E+00
  bore_(final_value/initial_value)________________________________________ (xcm014)____________      1.000E+00
  bore_(range_normalised)_________________________________________________ (nitvar014)_________      2.250E-01
@@ -60,12 +60,12 @@
  coheof__________________________________________________________________ (itvar016)__________      1.386E+07
  coheof_(final_value/initial_value)______________________________________ (xcm016)____________      9.999E-01
  coheof_(range_normalised)_______________________________________________ (nitvar016)_________      1.377E-01
- fjohc_=_f_for_CS_current_EOF____________________________________________ (itvar017)__________      2.500E-01
- fjohc_=_f_for_CS_current_EOF_(final_value/initial_value)________________ (xcm017)____________      1.000E+00
- fjohc_=_f_for_CS_current_EOF_(range_normalised)_________________________ (nitvar017)_________      1.000E+00
- fjohc0_=_f_for_CS_current_BOP___________________________________________ (itvar018)__________      2.500E-01
- fjohc0_=_f_for_CS_current_BOP_(final_value/initial_value)_______________ (xcm018)____________      1.000E+00
- fjohc0_=_f_for_CS_current_BOP_(range_normalised)________________________ (nitvar018)_________      1.000E+00
+ fjohc___________________________________________________________________ (itvar017)__________      2.500E-01
+ fjohc_(final_value/initial_value)_______________________________________ (xcm017)____________      1.000E+00
+ fjohc_(range_normalised)________________________________________________ (nitvar017)_________      1.000E+00
+ fjohc0__________________________________________________________________ (itvar018)__________      2.500E-01
+ fjohc0_(final_value/initial_value)______________________________________ (xcm018)____________      1.000E+00
+ fjohc0_(range_normalised)_______________________________________________ (nitvar018)_________      1.000E+00
  fcohbop_________________________________________________________________ (itvar019)__________      9.361E-01
  fcohbop_(final_value/initial_value)_____________________________________ (xcm019)____________      1.000E+00
  fcohbop_(range_normalised)______________________________________________ (nitvar019)_________      9.361E-01
@@ -81,30 +81,30 @@
  fstrcond________________________________________________________________ (itvar023)__________      8.472E-01
  fstrcond_(final_value/initial_value)____________________________________ (xcm023)____________      1.000E+00
  fstrcond_(range_normalised)_____________________________________________ (nitvar023)_________      8.470E-01
- fiooic_=_f_for_TFC_I/Ic_________________________________________________ (itvar024)__________      5.000E-01
- fiooic_=_f_for_TFC_I/Ic_(final_value/initial_value)_____________________ (xcm024)____________      1.000E+00
- fiooic_=_f_for_TFC_I/Ic_(range_normalised)______________________________ (nitvar024)_________      1.000E+00
+ fiooic__________________________________________________________________ (itvar024)__________      5.000E-01
+ fiooic_(final_value/initial_value)______________________________________ (xcm024)____________      1.000E+00
+ fiooic_(range_normalised)_______________________________________________ (nitvar024)_________      1.000E+00
  fvdump__________________________________________________________________ (itvar025)__________      7.684E-01
  fvdump_(final_value/initial_value)______________________________________ (xcm025)____________      1.000E+00
  fvdump_(range_normalised)_______________________________________________ (nitvar025)_________      7.682E-01
  fjprot__________________________________________________________________ (itvar026)__________      1.000E+00
  fjprot_(final_value/initial_value)______________________________________ (xcm026)____________      1.000E+00
  fjprot_(range_normalised)_______________________________________________ (nitvar026)_________      1.000E+00
- tdmptf_=_dump_time_for_TF_coil__________________________________________ (itvar027)__________      1.000E+01
- tdmptf_=_dump_time_for_TF_coil_(final_value/initial_value)______________ (xcm027)____________      1.000E+00
- tdmptf_=_dump_time_for_TF_coil_(range_normalised)_______________________ (nitvar027)_________      8.882E-21
- thkcas_=_TFC_case_thickness_____________________________________________ (itvar028)__________      3.870E-01
- thkcas_=_TFC_case_thickness_(final_value/initial_value)_________________ (xcm028)____________      9.752E-01
- thkcas_=_TFC_case_thickness_(range_normalised)__________________________ (nitvar028)_________      3.548E-01
+ tdmptf__________________________________________________________________ (itvar027)__________      1.000E+01
+ tdmptf_(final_value/initial_value)______________________________________ (xcm027)____________      1.000E+00
+ tdmptf_(range_normalised)_______________________________________________ (nitvar027)_________      0.000E+00
+ thkcas__________________________________________________________________ (itvar028)__________      3.870E-01
+ thkcas_(final_value/initial_value)______________________________________ (xcm028)____________      1.000E+00
+ thkcas_(range_normalised)_______________________________________________ (nitvar028)_________      3.548E-01
  thwcndut________________________________________________________________ (itvar029)__________      4.000E-03
  thwcndut_(final_value/initial_value)____________________________________ (xcm029)____________      1.000E+00
  thwcndut_(range_normalised)_____________________________________________ (nitvar029)_________      0.000E+00
- fcutfsu_=_Cu_fract_TFC_strand___________________________________________ (itvar030)__________      6.402E-01
- fcutfsu_=_Cu_fract_TFC_strand_(final_value/initial_value)_______________ (xcm030)____________      1.120E+00
- fcutfsu_=_Cu_fract_TFC_strand_(range_normalised)________________________ (nitvar030)_________      6.399E-01
+ fcutfsu_________________________________________________________________ (itvar030)__________      6.402E-01
+ fcutfsu_(final_value/initial_value)_____________________________________ (xcm030)____________      1.000E+00
+ fcutfsu_(range_normalised)______________________________________________ (nitvar030)_________      6.399E-01
  gapds___________________________________________________________________ (itvar031)__________      1.200E-01
  gapds_(final_value/initial_value)_______________________________________ (xcm031)____________      1.000E+00
- gapds_(range_normalised)________________________________________________ (nitvar031)_________      0.000E+00
+ gapds_(range_normalised)________________________________________________ (nitvar031)_________      4.045E-18
  fpsepr__________________________________________________________________ (itvar032)__________      1.000E+00
  fpsepr_(final_value/initial_value)______________________________________ (xcm032)____________      1.000E+00
  fpsepr_(range_normalised)_______________________________________________ (nitvar032)_________      1.000E+00
@@ -115,29 +115,29 @@
  flhthresh_(final_value/initial_value)___________________________________ (xcm034)____________      9.999E-01
  flhthresh_(range_normalised)____________________________________________ (nitvar034)_________      3.779E-07
  favail__________________________________________________________________ (itvar035)__________      9.367E-01
- favail_(final_value/initial_value)______________________________________ (xcm035)____________      9.971E-01
+ favail_(final_value/initial_value)______________________________________ (xcm035)____________      1.000E+00
  favail_(range_normalised)_______________________________________________ (nitvar035)_________      9.366E-01
- Beta_consistency__________________normalised_residue____________________ (normres001)________     -2.309E-14
- Global_power_balance_consistency__normalised_residue____________________ (normres002)________      5.429E-14
- Density_upper_limit_______________normalised_residue____________________ (normres003)________      6.661E-15
- Beam_ion_density_consistency______normalised_residue____________________ (normres004)________     -5.596E-14
- Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres005)________      1.769E-13
- Toroidal_field_1/R_consistency____normalised_residue____________________ (normres006)________      4.441E-15
- Radial_build_consistency__________normalised_residue____________________ (normres007)________     -2.220E-16
- Burn_time_lower_limit_____________normalised_residue____________________ (normres008)________      6.846E-11
- L-H_power_threshold_limit_________normalised_residue____________________ (normres009)________      4.697E-13
- Net_electric_power_lower_limit____normalised_residue____________________ (normres010)________      1.814E-10
- Beta_upper_limit__________________normalised_residue____________________ (normres011)________     -2.776E-14
- CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres012)________     -1.243E-11
- CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres013)________     -1.197E-11
- Injection_power_upper_limit_______normalised_residue____________________ (normres014)________     -4.641E-14
- TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres015)________      7.185E-13
- TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres016)________      9.058E-13
- I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres017)________      2.454E-14
- Dump_voltage_upper_limit__________normalised_residue____________________ (normres018)________      2.050E-12
- J_winding_pack/J_protection_limit_normalised_residue____________________ (normres019)________      1.465E-14
- Psep_/_R_upper_limit______________normalised_residue____________________ (normres020)________      4.415E-13
- Minimum_availability_value________normalised_residue____________________ (normres021)________      2.134E-10
+ Beta_consistency__________________normalised_residue____________________ (normres001)________     -3.575E-14
+ Global_power_balance_consistency__normalised_residue____________________ (normres002)________      7.261E-14
+ Density_upper_limit_______________normalised_residue____________________ (normres003)________      0.000E+00
+ Beam_ion_density_consistency______normalised_residue____________________ (normres004)________     -6.328E-14
+ Neutron_wall_load_upper_limit_____normalised_residue____________________ (normres005)________      2.854E-13
+ Toroidal_field_1/R_consistency____normalised_residue____________________ (normres006)________      2.998E-15
+ Radial_build_consistency__________normalised_residue____________________ (normres007)________     -2.220E-15
+ Burn_time_lower_limit_____________normalised_residue____________________ (normres008)________      1.066E-10
+ L-H_power_threshold_limit_________normalised_residue____________________ (normres009)________      7.142E-13
+ Net_electric_power_lower_limit____normalised_residue____________________ (normres010)________      2.775E-10
+ Beta_upper_limit__________________normalised_residue____________________ (normres011)________     -3.375E-14
+ CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres012)________     -3.270E-11
+ CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres013)________     -3.159E-11
+ Injection_power_upper_limit_______normalised_residue____________________ (normres014)________      1.987E-14
+ TF_coil_case_stress_upper_limit___normalised_residue____________________ (normres015)________      1.118E-12
+ TF_coil_conduit_stress_upper_lim__normalised_residue____________________ (normres016)________      1.411E-12
+ I_op_/_I_critical_(TF_coil)_______normalised_residue____________________ (normres017)________      1.010E-14
+ Dump_voltage_upper_limit__________normalised_residue____________________ (normres018)________      3.164E-12
+ J_winding_pack/J_protection_limit_normalised_residue____________________ (normres019)________     -5.107E-14
+ Psep_/_R_upper_limit______________normalised_residue____________________ (normres020)________      6.094E-13
+ Minimum_availability_value________normalised_residue____________________ (normres021)________      2.684E-10
  Admin_Buildings_($)_____________________________________________________ ____________________      3.483E+01
  Tokamak_Complex_(excluding_hot_cell)_($)________________________________ ____________________      2.105E+03
  Neutral_beam_buildings_($)______________________________________________ ____________________      7.876E+00
@@ -352,6 +352,8 @@
  Total_core_radiation_power_(MW)_________________________________________ (pcoreradmw)________      9.534E+01
  Edge_radiation_power_(MW)_______________________________________________ (pedgeradmw)________      1.137E+02
  Total_radiation_power_(MW)______________________________________________ (pradmw)____________      2.090E+02
+ Nominal_mean_radiation_load_on_inside_surface_of_reactor_(MW/m2)________ (photon_wall)_______      1.587E-01
+ Nominal_mean_neutron_load_on_inside_surface_of_reactor_(MW/m2)__________ (wallmw)____________      9.565E-01
  Ohmic_heating_power_(MW)________________________________________________ (pohmmw)____________      9.502E-01
  Fraction_of_alpha_power_deposited_in_plasma_____________________________ (falpha)____________      9.500E-01
  Fraction_of_alpha_power_to_electrons____________________________________ (falpe)_____________      7.265E-01
@@ -472,7 +474,7 @@
  Radius_ratio_R_s/R_d____________________________________________________ (rsrd)______________      1.201E+00
  Strike_radius_(m)_______________________________________________________ (rstrko)____________      8.030E+00
  Connection_length_(m)___________________________________________________ (tconl)_____________      6.303E+01
- Iteration_relative_error________________________________________________ (delta)_____________      6.245E-12
+ Iteration_relative_error________________________________________________ (delta)_____________      6.244E-12
  Private_flux_power_factor_______________________________________________ (omlarg)____________      1.327E+00
  Separatrix_temperature_(eV)_____________________________________________ (tsep)______________      3.376E+02
  Divertor_temperature_(eV)_______________________________________________ (tdiv)______________      1.509E+02
@@ -702,66 +704,6 @@
  Torus_leg_support_mass_(kg)_____________________________________________ (gsm1)______________      8.002E+04
  Ring_beam_mass_(kg)_____________________________________________________ (gsm2)______________      4.044E+05
  Ring_legs_mass_(kg)_____________________________________________________ (gsm3)______________      5.802E+05
- Viscosity_______________________________________________________________ (viscf)_____________      3.604E-05
- Density_________________________________________________________________ (rhof)______________      1.041E+01
- Reynolds_number_________________________________________________________ (reyn)______________      1.712E+04
- lambda__________________________________________________________________ (lambda)____________      2.796E-02
- Straight_section_pressure_drop_coefficient______________________________ (kstrght)___________      4.770E+00
- 90_degree_elbow_singularity_coefficient_________________________________ (ximn)______________      1.980E-01
- 90_degree_elbow_friction_coefficient____________________________________ (xifn)______________      4.954E-02
- 180_degree_elbow_singularity_coefficient________________________________ (ximt)______________      3.920E-01
- 180_degree_elbow_friction_coefficient___________________________________ (xift)______________      4.954E-02
- Pressure_drop___________________________________________________________ (deltap)____________      3.765E-04
- Inlet_pressure_(Pa)_____________________________________________________ (coolpin)___________      1.550E+07
- Inley_enthalpy__________________________________________________________ (h2)________________      3.030E+06
- Inley_entropy___________________________________________________________ (s2)________________      2.093E+04
- Enthalpy_before_pump____________________________________________________ (h1)________________      3.030E+06
- Pumping_power_(MW)______________________________________________________ (ppump)_____________      4.143E-03
- Viscosity_______________________________________________________________ (viscf)_____________      3.604E-05
- Density_________________________________________________________________ (rhof)______________      1.041E+01
- Reynolds_number_________________________________________________________ (reyn)______________      1.544E+04
- lambda__________________________________________________________________ (lambda)____________      2.873E-02
- Straight_section_pressure_drop_coefficient______________________________ (kstrght)___________      9.804E+00
- 90_degree_elbow_singularity_coefficient_________________________________ (ximn)______________      1.980E-01
- 90_degree_elbow_friction_coefficient____________________________________ (xifn)______________      5.091E-02
- 180_degree_elbow_singularity_coefficient________________________________ (ximt)______________      3.920E-01
- 180_degree_elbow_friction_coefficient___________________________________ (xift)______________      5.091E-02
- Pressure_drop___________________________________________________________ (deltap)____________      6.534E-04
- Inlet_pressure_(Pa)_____________________________________________________ (coolpin)___________      1.550E+07
- Inley_enthalpy__________________________________________________________ (h2)________________      3.030E+06
- Inley_entropy___________________________________________________________ (s2)________________      2.093E+04
- Enthalpy_before_pump____________________________________________________ (h1)________________      3.030E+06
- Pumping_power_(MW)______________________________________________________ (ppump)_____________      1.405E-02
- Viscosity_______________________________________________________________ (viscf)_____________      3.604E-05
- Density_________________________________________________________________ (rhof)______________      1.041E+01
- Reynolds_number_________________________________________________________ (reyn)______________      1.801E+04
- lambda__________________________________________________________________ (lambda)____________      2.759E-02
- Straight_section_pressure_drop_coefficient______________________________ (kstrght)___________      6.466E+00
- 90_degree_elbow_singularity_coefficient_________________________________ (ximn)______________      1.980E-01
- 90_degree_elbow_friction_coefficient____________________________________ (xifn)______________      4.889E-02
- 180_degree_elbow_singularity_coefficient________________________________ (ximt)______________      3.920E-01
- 180_degree_elbow_friction_coefficient___________________________________ (xift)______________      4.889E-02
- Pressure_drop___________________________________________________________ (deltap)____________      5.505E-04
- Inlet_pressure_(Pa)_____________________________________________________ (coolpin)___________      1.550E+07
- Inley_enthalpy__________________________________________________________ (h2)________________      3.030E+06
- Inley_entropy___________________________________________________________ (s2)________________      2.093E+04
- Enthalpy_before_pump____________________________________________________ (h1)________________      3.030E+06
- Pumping_power_(MW)______________________________________________________ (ppump)_____________      9.184E-03
- Viscosity_______________________________________________________________ (viscf)_____________      3.604E-05
- Density_________________________________________________________________ (rhof)______________      1.041E+01
- Reynolds_number_________________________________________________________ (reyn)______________      2.120E+04
- lambda__________________________________________________________________ (lambda)____________      2.646E-02
- Straight_section_pressure_drop_coefficient______________________________ (kstrght)___________      1.240E+01
- 90_degree_elbow_singularity_coefficient_________________________________ (ximn)______________      1.980E-01
- 90_degree_elbow_friction_coefficient____________________________________ (xifn)______________      4.688E-02
- 180_degree_elbow_singularity_coefficient________________________________ (ximt)______________      3.920E-01
- 180_degree_elbow_friction_coefficient___________________________________ (xift)______________      4.688E-02
- Pressure_drop___________________________________________________________ (deltap)____________      1.515E-03
- Inlet_pressure_(Pa)_____________________________________________________ (coolpin)___________      1.550E+07
- Inley_enthalpy__________________________________________________________ (h2)________________      3.030E+06
- Inley_entropy___________________________________________________________ (s2)________________      2.093E+04
- Enthalpy_before_pump____________________________________________________ (h1)________________      3.030E+06
- Pumping_power_(MW)______________________________________________________ (ppump)_____________      1.001E-01
  Coolant_type_(1=He,_2=H20)______________________________________________ (coolwh)____________              1
  Outboard_coolant_flow_rate_(m/s)________________________________________ (velfwo)____________      3.899E+00
  Radial_thickness_available_for_pipes_inboard_(80%)______________________ (bldepti)___________      6.040E-01
@@ -822,7 +764,6 @@
  Blanket_Mass_-_Steel_(kg)_______________________________________________ (whtblss)___________      1.114E+06
  Shield_Mass_(kg)________________________________________________________ (whtshld)___________      2.051E+06
  Vacuum_vessel_mass_(kg)_________________________________________________ (cryomass)__________      6.913E+06
- Average_nominal_neutron_wall_load_(MW/m2)_______________________________ (wallmw)____________      9.565E-01
  Total_nuclear_heating_in_TF+PF_coils_(CS_is_negligible)_(MW)____________ (ptfnuc)____________      2.477E-02
  Total_nuclear_heating_in_FW_(MW)________________________________________ (pnucfw)____________      1.990E+02
  Total_nuclear_heating_in_the_blanket_(including_emult)_(MW)_____________ (pnucblkt)__________      1.215E+03
@@ -842,8 +783,6 @@
  Allowable_temperature_of_first_wall_material_(K)________________________ (tfwmatmax)_________      1.100E+03
  Actual_peak_temperature_of_first_wall_material_(K)______________________ (tpeak)_____________      9.775E+02
  Allowable_nominal_neutron_fluence_at_first_wall_(MW.year/m2)____________ (abktflnc)__________      1.000E+01
- Actual_nominal_neutron_fluence_at_first_wall_(MW.year/m2)_______________ (flnce)_____________      1.000E+01
- First_wall_full-power_lifetime_(years)__________________________________ (fwlife)____________      1.045E+01
  No_of_inboard_blanket_modules_poloidally________________________________ (nblktmodpi)________              7
  No_of_inboard_blanket_modules_toroidally________________________________ (nblktmodti)________             32
  No_of_outboard_blanket_modules_poloidally_______________________________ (nblktmodpo)________              8

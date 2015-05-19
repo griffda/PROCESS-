@@ -118,7 +118,7 @@ module physics_module
   !  Local variables
 
   integer :: iscz
-  real(kind(1.0D0)) :: vcritx
+  real(kind(1.0D0)) :: vcritx, photon_wall
 
 contains
 
@@ -374,8 +374,8 @@ contains
          ifalphap,pchargepv,pneutpv,ten,tin,vol,palpmw,pneutmw,pchargemw,betaft, &
          palppv,palpipv,palpepv,pfuscmw,powfmw)
 
-    !  Neutron wall load
-
+    !  Nominal mean neutron wall load on entire first wall area including divertor and beam holes
+    !  Note that 'fwarea' excludes these, so they have been added back in.
     if (iwalld == 1) then
        wallmw = ffwal * pneutmw / sarea
     else
@@ -394,6 +394,16 @@ contains
     pcoreradmw = pcoreradpv*vol
     pedgeradmw = pedgeradpv*vol
     pradmw = pradpv*vol
+    
+    ! MDK 
+    !  Nominal mean photon wall load on entire first wall area including divertor and beam holes
+    !  Note that 'fwarea' excludes these, so they have been added back in.
+    if (iwalld == 1) then
+       photon_wall = ffwal * pradmw / sarea
+    else
+       photon_wall = (1.0D0-fhcd-fdiv)*pradmw / fwarea
+    end if    
+    
 
     !  Calculate ohmic power
 
@@ -5584,11 +5594,12 @@ contains
        call ovarre(outfile,"Normalised minor radius defining 'core'", &
             '(coreradius)',coreradius)
     end if
-    call ovarre(outfile,'Total core radiation power (MW)', &
-         '(pcoreradmw)',pcoreradmw)
-    call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', &
-         pedgeradmw)
+    call ovarre(outfile,'Total core radiation power (MW)', '(pcoreradmw)',pcoreradmw)
+    call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', pedgeradmw)
     call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw)
+    
+    call ovarre(outfile,'Nominal mean radiation load on inside surface of reactor (MW/m2)','(photon_wall)',photon_wall)
+    call ovarre(outfile,'Nominal mean neutron load on inside surface of reactor (MW/m2)','(wallmw)',wallmw)    
 
     call oblnkl(outfile)
     call ovarre(outfile,'Ohmic heating power (MW)','(pohmmw)',pohmmw)

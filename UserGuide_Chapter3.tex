@@ -2279,58 +2279,28 @@ nuclide inventory will also be included as the need arises.
 
 \section{Cost Models}
 
-The cost accounting used by \process\ combines methods~\cite{cost1} used in
-the TETRA code~\cite{tetra} and the Generomak~\cite{generomak} scheme.  The
-costs are split into the standard accounting categories~\cite{cost2} generally
-used in the reporting of power plant costs. The best references for the
-algorithms used are~\cite{storac}, and source file \texttt{costs.f90} in the
-code itself.
+Two cost models are available, determined by the switch \texttt{cost\_model}.
 
-The majority of the costed items have a unit cost associated with them. These
-values scale with (for example) power output, volume, component mass etc., and
-many are available to be changed via the input file. All costs and their
-algorithms correspond to 1990 dollars.
+\subsection{1990 cost model (\texttt{cost\_model = 0})}
 
-An entirely new capital cost model is being developed, and will be described in~\cite{kovari_cost}.
+This combines methods~\cite{cost1} used in the TETRA code~\cite{tetra} and the Generomak~\cite{generomak} scheme.  The
+costs are split into accounting categories~\cite{cost2}. The best references for the algorithms used are~\cite{storac}, and source file \texttt{costs.f90} in the code itself. The majority of the costed items have a unit cost associated with them. These values scale with (for example) power output, volume, component mass etc., and many are available to be changed via the input file. All costs and their algorithms correspond to 1990 dollars.
 
-\subsection{$N^{th}$ of a kind costs}
+The unit costs of the components of the fusion power core are relevant to ``first-of-a-kind'' items. That is to say, the items are assumed to be relatively expensive to build as they are effectively prototypes and specialised tools and machines have perhaps been made specially to create them. However, if a ``production line'' has been set up, and R \& D progress has allowed more experience to be gained in constructing the power core components, the costs will be reduced as a result. Variable \texttt{fkind} may be used to multiply the raw unit costs of the fusion power core items (by a
+factor less than one) to simulate this cost reduction for an $N^{th}$-of-a-kind device. In other systems studies of fusion power plants~\cite{galambos}, values for this multiplier have ranged from 0.5 to 0.8.
 
-The unit costs of the components of the fusion power core are relevant to
-``first-of-a-kind'' items. That is to say, the items are assumed to be
-relatively expensive to build as they are effectively prototypes and
-specialised tools and machines have perhaps been made specially to create
-them. However, if a ``production line'' has been set up, and R \& D progress
-has allowed more experience to be gained in constructing the power core
-components, the costs will be reduced as a result. Variable \texttt{fkind} may
-be used to multiply the raw unit costs of the fusion power core items (by a
-factor less than one) to simulate this cost reduction for an
-$N^{th}$-of-a-kind device. In other systems studies of fusion power
-plants~\cite{galambos}, values for this multiplier have ranged from 0.5 to
-0.8.
+Many of the unit costs have four possible choices, relating to the level of safety assurance~\cite{lsa} flag \texttt{lsa}. A value \texttt{lsa = 1} corresponds to a plant with a full safety credit (i.e.\ is truly passively safe). Levels \texttt{2} and \texttt{3} lie between the two extremes, and level \texttt{4} corresponds to a present day fission reactor, with no safety credit.
 
-\subsection{Level of safety assurance}
+The first wall, blanket, divertor, centrepost (if present) and current drive system have relatively short lifetimes because of their hostile environment, after which they must be replaced. Because of this frequent renewal they can be regarded as though they are ``fuel'' items, and can be costed accordingly. Switch \texttt{ifueltyp} is used to control whether this option is used in the code. If \texttt{ifueltyp = 1}, the costs of the first wall, blanket, divertor and a fraction \texttt{fcdfuel} of the cost of the current drive system are treated as fuel costs. If \texttt{ifueltyp = 0}, these are treated as capital costs.
 
-Many of the unit costs have four possible choices, relating to the level of
-safety assurance~\cite{lsa} flag \texttt{lsa}. A value \texttt{lsa = 1}
-corresponds to a plant with a full safety credit (i.e.\ is truly passively
-safe). Levels \texttt{2} and \texttt{3} lie between the two extremes, and
-level \texttt{4} corresponds to a present day fission reactor, with no safety
-credit.
+If the switch \texttt{ireactor = 0}, no cost of electricity calculation is performed. If \texttt{ireactor = 1}, then the cost of electricity is evaluated, with the value quoted in units of \$/MWh.
 
-\subsection{Replaceable components}
+The net electric power is calculated in routine \texttt{POWER}. It is possible that the net electric power can become negative due to a high recirculating power. Switch \texttt{ipnet} determines whether the net electric power is scaled to always remain positive (\texttt{ipnet = 0}), or whether it is allowed to become negative (\texttt{ipnet = 1}), in which case no cost of electricity calculation is performed.
 
-The first wall, blanket, divertor, centrepost (if present) and current drive
-system have relatively short lifetimes because of their hostile environment,
-after which they must be replaced. Because of this frequent renewal they can
-be regarded as though they are ``fuel'' items, and can be costed
-accordingly. Switch \texttt{ifueltyp} is used to control whether this option
-is used in the code. If \texttt{ifueltyp = 1}, the costs of the first wall,
-blanket, divertor and a fraction \texttt{fcdfuel} of the cost of the current
-drive system are treated as fuel costs. If \texttt{ifueltyp = 0}, these are
-treated as capital costs.
+\subsection{2015 Kovari model (\texttt{cost\_model = 1})}
+This model~\cite{kovari_cost} provides only capital cost, and is not currently suitable for estimating the cost of electricity.  $N^{th}$-of-a-kind factors, level of safety assurance factors, and blanket replacement costs are not included.  The mean electric output is calculated using the capacity factor, which takes accountof the availability and the dwell time for a pulsed reactor.  The capital cost divided by the mean electric output is a useful comparison parameter.
 
-\subsection{Plant availability}
-
+\section{Plant availability}
 
 Switch \texttt{iavail} is used to control how the overall plant availability
 factor \texttt{cfactr} is calculated, as follows
@@ -2373,16 +2343,7 @@ For the toroidal field coils, the chance of a quench is likely to be the largest
 The unplanned downtime for the blanket is based on the number of cycles it experiences before planned replacment.  (This model is restricted to pulsed reactors.) The cycle life of the blanket is expressed using a reference lifetime.  Before this liefetime, there is a constant but small probability of failure in ecah pulse.  After the reference lifetime the reliability of the blanket starts to decline, reaching zero at the upper lifetime limit.
 
 It is assumed that the vacuum system can be maintained in parallel with blanket replacement, so it does not contribute to the planned downtime.  The unplanned downtime is based on an assumed failure rate for a cryopump, and a specified total number of pumps, with some of them being redundant.  The resulting downtime can be reduced to a negligible level if there are several redundant pumps, but in addition, there is a fixed unavailability to allow for common mode failures affecting several pumps.
-a
-\subsection{Net electric power calculation}
 
-The net electric power is calculated in routine \texttt{POWER}. It is possible that the net electric power can become negative due to a high recirculating power. Switch
-\texttt{ipnet} determines whether the net electric power is scaled to always
-remain positive (\texttt{ipnet = 0}), or whether it is allowed to become
-negative (\texttt{ipnet = 1}), in which case no cost of electricity
-calculation is performed.
 
-\subsection{Cost of electricity calculations}
 
-Switch \texttt{ireactor} determines whether the cost of electricity is calculated. If \texttt{ireactor = 0}, no cost of electricity calculation is performed. If \texttt{ireactor = 1}, then the cost of electricity is evaluated, with the value quoted in units of \$/MWh.
 
