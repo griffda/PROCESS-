@@ -213,24 +213,23 @@ and all test runs are successful!), use the following commands:
 
 \item \texttt{git status}  (this will show a list of modified files)
 
-\item \texttt{git add changedfile1 changedfile2 ...}  (this `stages' the files
-  marking them as ready for committing)
+\item \texttt{git add changedfile1 changedfile2 ...}  \\
+  (This `stages' the modified files marking them as ready for committing).  \\
+  \texttt{git commit}
+  
+  Alternatively, just use\\
+  \texttt{git commit -a} \\
+  This commits all modified tracked files.
 
-\item \texttt{git commit}
+\item An editor window will open; add a line summarising the changes you have made, save and close the window. This will initiate the commit to your \textit{local}\ copy of the repository.
 
-\item An editor window will open; add a line summarising the changes you have
-  made, save and close the window. This will initiate the commit to your
-  \textit{local}\ copy of the repository.
-
-\item \texttt{git push}  (to send the changes to the central \texttt{GitLab}
-  repository)
+\item \texttt{git push}  (to send the changes to the central \texttt{GitLab} repository)
 
 \end{enumerate}
 
 \subsubsection{Merging \texttt{develop} into working branch}
 
-It is a good idea to periodically merge the \texttt{develop} branch into the
-branch in which you are working.
+It is a good idea to periodically merge the \texttt{develop} branch into the branch in which you are working, to ensure that any changes made in \texttt{develop} are included in your working branch.
 \begin{enumerate}
 
 \item Firstly, make sure you have committed your latest changes into the
