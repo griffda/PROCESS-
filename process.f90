@@ -136,6 +136,8 @@ subroutine init
   !+ad_hist  25/06/14 PJK Introduced call to initialise error handling
   !+ad_hist  22/07/14 PJK Rearranged calls to print output headers
   !+ad_hist  10/09/14 PJK Added vfile open statement
+  !+ad_hist  19/05/15 PJK Added ability to use a file prefix obtained
+  !+ad_hisc               from a command line argument
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -153,7 +155,8 @@ subroutine init
   !  Arguments
 
   !  Local variables
-  integer :: i
+  integer :: i, nargs
+  character(len=100) :: fileprefix
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -163,11 +166,21 @@ subroutine init
   !  Initialise the program variables
   call initial
 
-  !  Open the three input/output external files
-  open(unit=nin,file='IN.DAT',status='old')
-  open(unit=nout,file='OUT.DAT',status='unknown')
-  open(unit=nplot,file='PLOT.DAT',status='unknown')
-  open(unit=mfile,file='MFILE.DAT',status='unknown')
+  !  Obtain a file prefix from a command line argument
+  !  (uses Fortran 2003 routines)
+
+  nargs = command_argument_count()
+  if (nargs == 0) then
+     fileprefix = ''
+  else
+     call get_command_argument(1, fileprefix)
+  end if
+
+  !  Open the input/output external files
+  open(unit=nin,file=trim(fileprefix)//'IN.DAT',status='old')
+  open(unit=nout,file=trim(fileprefix)//'OUT.DAT',status='unknown')
+  open(unit=nplot,file=trim(fileprefix)//'PLOT.DAT',status='unknown')
+  open(unit=mfile,file=trim(fileprefix)//'MFILE.DAT',status='unknown')
 
   !  Input any desired new initial values
   call input
@@ -183,7 +196,7 @@ subroutine init
 
   !  Open verbose diagnostics file
   if (verbose == 1) then
-     open(unit=vfile,file='VFILE.DAT',status='unknown')  
+     open(unit=vfile,file=trim(fileprefix)//'VFILE.DAT',status='unknown')  
      write(vfile,'(a80)') 'nviter = number of VMCON iterations.'
      write(vfile,'(a80)') '(1-mod(ifail,7))=1 indicates that there has '// &
           'been an escape from a failed line search.'

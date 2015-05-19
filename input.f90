@@ -30,6 +30,7 @@ module process_input
   !+ad_cont  string_to_int
   !+ad_cont  string_to_real
   !+ad_cont  upper_case
+  !+ad_cont  lower_case
   !+ad_args  N/A
   !+ad_desc  This module provides a set of routines to read in data from the
   !+ad_desc  main PROCESS input file (IN.DAT). The format of the file is
@@ -128,6 +129,7 @@ module process_input
   !+ad_hist  13/05/14 PJK Added impurity_radiation_module
   !+ad_hist  30/06/14 PJK Added error_handling
   !+ad_hist  22/07/14 PJK Moved run_summary into process.f90
+  !+ad_hist  19/05/15 PJK Added lower_case
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -339,6 +341,7 @@ contains
     !+ad_hist  02/04/15 JM  Removed fwerlim
     !+ad_hist  12/04/15 JM  Removed costr, astr, bstr, estr, lblnkt
     !+ad_hist  22/04/15 JM  Added etapsu
+    !+ad_hist  19/05/15 PJK Variable names in calls now lowercase
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -421,133 +424,133 @@ contains
 
           !  General settings
 
-       case ('RUNTITLE')
-          call parse_string_variable('RUNTITLE', runtitle, &
-               'Title of run')
-       case ('VERBOSE')
-          call parse_int_variable('VERBOSE', verbose, 0, 1, &
+       case ('runtitle')
+          call parse_string_variable('runtitle', runtitle, &
+               'title of run')
+       case ('verbose')
+          call parse_int_variable('verbose', verbose, 0, 1, &
                'Switch for diagnostic output')
 
           !  Numerical solver settings
 
-       case ('BOUNDL')
-          call parse_real_array('BOUNDL', boundl, isub1, ipnvars, &
+       case ('boundl')
+          call parse_real_array('boundl', boundl, isub1, ipnvars, &
                'Iteration variable lower bound', icode)
-       case ('BOUNDU')
-          call parse_real_array('BOUNDU', boundu, isub1, ipnvars, &
+       case ('boundu')
+          call parse_real_array('boundu', boundu, isub1, ipnvars, &
                'Iteration variable upper bound', icode)
-       case ('EPSFCN')
-          call parse_real_variable('EPSFCN', epsfcn, 0.0D0, 1.0D0, &
+       case ('epsfcn')
+          call parse_real_variable('epsfcn', epsfcn, 0.0D0, 1.0D0, &
                'HYBRD/VMCON derivative step length')
-       case ('EPSVMC')
-          call parse_real_variable('EPSVMC', epsvmc, 0.0D0, 1.0D0, &
+       case ('epsvmc')
+          call parse_real_variable('epsvmc', epsvmc, 0.0D0, 1.0D0, &
                'VMCON error tolerance')
-       case ('FACTOR')
-          call parse_real_variable('FACTOR', factor, 0.0D0, 10.0D0, &
+       case ('factor')
+          call parse_real_variable('factor', factor, 0.0D0, 10.0D0, &
                'HYBRD initial step size')
-       case ('FTOL')
-          call parse_real_variable('FTOL', ftol, 0.0D0, 1.0D0, &
+       case ('ftol')
+          call parse_real_variable('ftol', ftol, 0.0D0, 1.0D0, &
                'HYBRD tolerance')
-       case ('ICC')
-          call parse_int_array('ICC', icc, isub1, ipeqns, &
+       case ('icc')
+          call parse_int_array('icc', icc, isub1, ipeqns, &
                'Constraint equation', icode)
-       case ('IOPTIMZ')
-          call parse_int_variable('IOPTIMZ', ioptimz, -1, 1, &
+       case ('ioptimz')
+          call parse_int_variable('ioptimz', ioptimz, -1, 1, &
                'Switch for solver method')
-       case ('IXC')
-          call parse_int_array('IXC', ixc, isub1, ipnvars, &
+       case ('ixc')
+          call parse_int_array('ixc', ixc, isub1, ipnvars, &
                'Iteration variable', icode)
-       case ('MAXCAL')
-          call parse_int_variable('MAXCAL', maxcal, 0, 10000, &
+       case ('maxcal')
+          call parse_int_variable('maxcal', maxcal, 0, 10000, &
                'Max no of VMCON iterations')
-       case ('MINMAX')
-          call parse_int_variable('MINMAX', minmax, -ipnfoms, ipnfoms, &
+       case ('minmax')
+          call parse_int_variable('minmax', minmax, -ipnfoms, ipnfoms, &
                'Switch for figure of merit')
-      case ('NEQNS')
-          call parse_int_variable('NEQNS', neqns, 1, ipeqns, &
+      case ('neqns')
+          call parse_int_variable('neqns', neqns, 1, ipeqns, &
                'No of equality constraints')
-      case ('NINEQNS')
-          call parse_int_variable('NINEQNS', nineqns, 1, ipeqns, &
+      case ('nineqns')
+          call parse_int_variable('nineqns', nineqns, 1, ipeqns, &
                'No of inequality constraints')
-       case ('NVAR')
-          call parse_int_variable('NVAR', nvar, 1, ipnvars, &
+       case ('nvar')
+          call parse_int_variable('nvar', nvar, 1, ipnvars, &
                'No of independent variables')
 
           !  Physics settings
 
-       case ('ALPHAJ')
-          call parse_real_variable('ALPHAJ', alphaj, 0.0D0, 10.0D0, &
+       case ('alphaj')
+          call parse_real_variable('alphaj', alphaj, 0.0D0, 10.0D0, &
                'Current density profile factor')
-       case ('ALPHAN')
-          call parse_real_variable('ALPHAN', alphan, 0.0D0, 10.0D0, &
+       case ('alphan')
+          call parse_real_variable('alphan', alphan, 0.0D0, 10.0D0, &
                'Density profile factor')
-       case ('ALPHAT')
-          call parse_real_variable('ALPHAT', alphat, 0.0D0, 10.0D0, &
+       case ('alphat')
+          call parse_real_variable('alphat', alphat, 0.0D0, 10.0D0, &
                'Temperature profile factor')
-       case ('ASPECT')
-          call parse_real_variable('ASPECT', aspect, 1.001D0, 20.0D0, &
+       case ('aspect')
+          call parse_real_variable('aspect', aspect, 1.001D0, 20.0D0, &
                'Aspect ratio')
-       case ('BEAMFUS0')
-          call parse_real_variable('BEAMFUS0', beamfus0, 0.01D0, 10.0D0, &
+       case ('beamfus0')
+          call parse_real_variable('beamfus0', beamfus0, 0.01D0, 10.0D0, &
                'Beam-background fusion multiplier')
-       case ('BETA')
-          call parse_real_variable('BETA', beta, 0.0D0, 1.0D0, &
+       case ('beta')
+          call parse_real_variable('beta', beta, 0.0D0, 1.0D0, &
                'Plasma beta')
-       case ('BETBM0')
-          call parse_real_variable('BETBM0', betbm0, 0.0D0, 10.0D0, &
+       case ('betbm0')
+          call parse_real_variable('betbm0', betbm0, 0.0D0, 10.0D0, &
                'Leading coeff. for NB beta fraction')
-       case ('BT')
-          call parse_real_variable('BT', bt, 0.0D0, 20.0D0, &
+       case ('bt')
+          call parse_real_variable('bt', bt, 0.0D0, 20.0D0, &
                'Toroidal field on axis (T)')
-       case ('CFE0')
-          call parse_real_variable('CFE0', cfe0, 0.0D0, 10.0D0, &
+       case ('cfe0')
+          call parse_real_variable('cfe0', cfe0, 0.0D0, 10.0D0, &
                'Additional Fe impurity fraction')
-       case ('CORERADIUS')
-          call parse_real_variable('CORERADIUS', coreradius, 0.0D0, 1.0D0, &
+       case ('coreradius')
+          call parse_real_variable('coreradius', coreradius, 0.0D0, 1.0D0, &
                'Normalised core radius')
-       case ('CSAWTH')
-          call parse_real_variable('CSAWTH', csawth, 0.0D0, 10.0D0, &
+       case ('csawth')
+          call parse_real_variable('csawth', csawth, 0.0D0, 10.0D0, &
                'Coefficient for sawteeth effects')
-       case ('CVOL')
-          call parse_real_variable('CVOL', cvol, 0.01D0, 10.0D0, &
+       case ('cvol')
+          call parse_real_variable('cvol', cvol, 0.01D0, 10.0D0, &
                'Plasma volume multiplier')
-       case ('CWRMAX')
-          call parse_real_variable('CWRMAX', cwrmax, 1.0D0, 3.0D0, &
+       case ('cwrmax')
+          call parse_real_variable('cwrmax', cwrmax, 1.0D0, 3.0D0, &
                'Max conducting shell to rminor radius')
-       case ('DENE')
-          call parse_real_variable('DENE', dene, 1.0D18, 1.0D22, &
+       case ('dene')
+          call parse_real_variable('dene', dene, 1.0D18, 1.0D22, &
                'Electron density (/m3)')
-       case ('DNBETA')
-          call parse_real_variable('DNBETA', dnbeta, 0.3D0, 20.0D0, &
+       case ('dnbeta')
+          call parse_real_variable('dnbeta', dnbeta, 0.3D0, 20.0D0, &
                'beta coefficient')
-       case ('EPBETMAX')
-          call parse_real_variable('EPBETMAX', epbetmax, 0.01D0, 10.0D0, &
+       case ('epbetmax')
+          call parse_real_variable('epbetmax', epbetmax, 0.01D0, 10.0D0, &
                'Max epsilon*beta value')
-       case ('FALPHA')
-          call parse_real_variable('FALPHA', falpha, 0.0D0, 1.0D0, &
+       case ('falpha')
+          call parse_real_variable('falpha', falpha, 0.0D0, 1.0D0, &
                'Fraction of alpha power deposited to plasma')
-       case ('FBFE')
-          call parse_real_variable('FBFE', fbfe, 0.0D0, 1.0D0, &
+       case ('fbfe')
+          call parse_real_variable('fbfe', fbfe, 0.0D0, 1.0D0, &
                'Fraction of Fe radn to Bremsstrahlung')
-       case ('FDEUT')
-          call parse_real_variable('FDEUT', fdeut, 0.0D0, 1.0D0, &
+       case ('fdeut')
+          call parse_real_variable('fdeut', fdeut, 0.0D0, 1.0D0, &
                'Deuterium fuel fraction')
-       case ('FFWAL')
-          call parse_real_variable('FFWAL', ffwal, 0.0D0, 10.0D0, &
+       case ('ffwal')
+          call parse_real_variable('ffwal', ffwal, 0.0D0, 10.0D0, &
                'Wall load fiddle factor')
-       case ('FHE3')
-          call parse_real_variable('FHE3', fhe3, 0.0D0, 1.0D0, &
+       case ('fhe3')
+          call parse_real_variable('fhe3', fhe3, 0.0D0, 1.0D0, &
                'Helium-3 fuel fraction')
-       case ('FIMP')
-          call parse_real_array('FIMP', fimp, isub1, nimp, &
+       case ('fimp')
+          call parse_real_array('fimp', fimp, isub1, nimp, &
                'Impurity density fraction', icode)
-       case ('FIMPVAR')
-          call parse_real_variable('FIMPVAR', fimpvar, 1.0D-6, 0.5D0, &
+       case ('fimpvar')
+          call parse_real_variable('fimpvar', fimpvar, 1.0D-6, 0.5D0, &
                'Impurity fraction to be varied')
-       case ('FKZOHM')
-          call parse_real_variable('FKZOHM', fkzohm, 0.5D0, 2.0D0, &
+       case ('fkzohm')
+          call parse_real_variable('fkzohm', fkzohm, 0.5D0, 2.0D0, &
                'Zohm elongation scaling multiplier')
-       case ('FRADMIN')
+       case ('fradmin')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'FRADMIN is now obsolete -'
@@ -555,7 +558,7 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('FTR')
+       case ('ftr')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'FTR is now obsolete -'
@@ -564,28 +567,28 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('FTRIT')
-          call parse_real_variable('FTRIT', ftrit, 0.0D0, 1.0D0, &
+       case ('ftrit')
+          call parse_real_variable('ftrit', ftrit, 0.0D0, 1.0D0, &
                'Tritium fuel fraction')
-       case ('FVSBRNNI')
-          call parse_real_variable('FVSBRNNI', fvsbrnni, 0.0D0, 1.0D0, &
+       case ('fvsbrnni')
+          call parse_real_variable('fvsbrnni', fvsbrnni, 0.0D0, 1.0D0, &
                'Non-inductive volt-sec burn fraction')
-       case ('GAMMA')
-          call parse_real_variable('GAMMA', gamma, 0.1D0, 1.0D0, &
+       case ('gamma')
+          call parse_real_variable('gamma', gamma, 0.1D0, 1.0D0, &
                'Ejima coefficient for resistive V-s formula')
-       case ('GTSCALE')
-          call parse_int_variable('GTSCALE', gtscale, 0, 1, &
+       case ('gtscale')
+          call parse_int_variable('gtscale', gtscale, 0, 1, &
                'Flag to scale beta coefficient with R/a')
-       case ('HFACT')
-          call parse_real_variable('HFACT', hfact, 0.01D0, 10.0D0, &
+       case ('hfact')
+          call parse_real_variable('hfact', hfact, 0.01D0, 10.0D0, &
                'Energy confinement time H factor')
-       case ('IBSS')
-          call parse_int_variable('IBSS', ibss, 1, 4, &
+       case ('ibss')
+          call parse_int_variable('ibss', ibss, 1, 4, &
                'Switch for bootstrap scaling')
-       case ('ICULBL')
-          call parse_int_variable('ICULBL', iculbl, 0, 2, &
+       case ('iculbl')
+          call parse_int_variable('iculbl', iculbl, 0, 2, &
                'Switch for beta limit scaling')
-       case ('ICULDL')
+       case ('iculdl')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'ICULDL is now obsolete -'
@@ -594,13 +597,13 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('ICURR')
-          call parse_int_variable('ICURR', icurr, 1, 7, &
+       case ('icurr')
+          call parse_int_variable('icurr', icurr, 1, 7, &
                'Switch for plasma current scaling')
-       case ('IDENSL')
-          call parse_int_variable('IDENSL', idensl, 1, 7, &
+       case ('idensl')
+          call parse_int_variable('idensl', idensl, 1, 7, &
                'Switch for enforced density limit')
-       case ('IDHE3')
+       case ('idhe3')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'IDHE3 is now obsolete -'
@@ -609,22 +612,22 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('IFALPHAP')
-          call parse_int_variable('IFALPHAP', ifalphap, 0, 1, &
+       case ('ifalphap')
+          call parse_int_variable('ifalphap', ifalphap, 0, 1, &
                'Switch for fast alpha pressure fit')
-       case ('IFISPACT')
-          call parse_int_variable('IFISPACT', ifispact, 0, 0, &
+       case ('ifispact')
+          call parse_int_variable('ifispact', ifispact, 0, 0, &
                'Switch for neutronics calculations')
-       case ('IGEOM')
-          call parse_int_variable('IGEOM', igeom, 0, 1, &
+       case ('igeom')
+          call parse_int_variable('igeom', igeom, 0, 1, &
                'Switch for plasma geometry calculation')
-       case ('IGNITE')
-          call parse_int_variable('IGNITE', ignite, 0, 1, &
+       case ('ignite')
+          call parse_int_variable('ignite', ignite, 0, 1, &
                'Switch for ignited plasma assumption')
-       case ('IINVQD')
-          call parse_int_variable('IINVQD', iinvqd, 0, 1, &
+       case ('iinvqd')
+          call parse_int_variable('iinvqd', iinvqd, 0, 1, &
                'Switch for inverse quadrature')
-       case ('IITER')
+       case ('iiter')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'IITER is now obsolete -'
@@ -632,34 +635,34 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('ILHTHRESH')
-          call parse_int_variable('ILHTHRESH', ilhthresh, 1, 8, &
+       case ('ilhthresh')
+          call parse_int_variable('ilhthresh', ilhthresh, 1, 8, &
                'Switch for L-H power threshold to enforce')
-       case ('IMPC')
-          call parse_real_variable('IMPC', impc, 0.0D0, 10.0D0, &
+       case ('impc')
+          call parse_real_variable('impc', impc, 0.0D0, 10.0D0, &
                'Carbon impurity multiplier')
-       case ('IMPDIR')
-          call parse_string_variable('IMPDIR', impdir, &
+       case ('impdir')
+          call parse_string_variable('impdir', impdir, &
                'Directory containing impurity radiation data files')
-       case ('IMPO')
-          call parse_real_variable('IMPO', impo, 0.0D0, 10.0D0, &
+       case ('impo')
+          call parse_real_variable('impo', impo, 0.0D0, 10.0D0, &
                'Oxygen impurity multiplier')
-       case ('IMPRAD_MODEL')
-          call parse_int_variable('IMPRAD_MODEL', imprad_model, 0, 1, &
+       case ('imprad_model')
+          call parse_int_variable('imprad_model', imprad_model, 0, 1, &
                'Switch for impurity radiation model')
-       case ('IMPVAR')
-          call parse_int_variable('IMPVAR', impvar, 3, nimp, &
+       case ('impvar')
+          call parse_int_variable('impvar', impvar, 3, nimp, &
                'Index for impurity fraction iteration variable')
-       case ('IPEDESTAL')
-          call parse_int_variable('IPEDESTAL', ipedestal, 0, 1, &
+       case ('ipedestal')
+          call parse_int_variable('ipedestal', ipedestal, 0, 1, &
                'Switch for plasma profile type')
-       case ('IPROFILE')
-          call parse_int_variable('IPROFILE', iprofile, 0, 1, &
+       case ('iprofile')
+          call parse_int_variable('iprofile', iprofile, 0, 1, &
                'Switch for current profile consistency')
-       case ('IRADLOSS')
-          call parse_int_variable('IRADLOSS', iradloss, 0, 2, &
+       case ('iradloss')
+          call parse_int_variable('iradloss', iradloss, 0, 2, &
                'Switch for radiation loss term inclusion in pwr balance')
-       case ('IRES')
+       case ('ires')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'IRES is now obsolete -'
@@ -667,148 +670,148 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('ISC')
-          call parse_int_variable('ISC', isc, 1, ipnlaws, &
+       case ('isc')
+          call parse_int_variable('isc', isc, 1, ipnlaws, &
                'Switch for confinement scaling law')
-       case ('ISCRP')
-          call parse_int_variable('ISCRP', iscrp, 0, 1, &
+       case ('iscrp')
+          call parse_int_variable('iscrp', iscrp, 0, 1, &
                'Switch for scrapeoff width')
-       case ('ISHAPE')
-          call parse_int_variable('ISHAPE', ishape, 0, 4, &
+       case ('ishape')
+          call parse_int_variable('ishape', ishape, 0, 4, &
                'Switch for plasma shape vs. aspect')
-       case ('ITART')
-          call parse_int_variable('ITART', itart, 0, 1, &
+       case ('itart')
+          call parse_int_variable('itart', itart, 0, 1, &
                'Switch for tight aspect ratio physics')
-       case ('IWALLD')
-          call parse_int_variable('IWALLD', iwalld, 1, 2, &
+       case ('iwalld')
+          call parse_int_variable('iwalld', iwalld, 1, 2, &
                'Switch for wall load calculation')
-       case ('KAPPA')
-          call parse_real_variable('KAPPA', kappa, 0.99D0, 5.0D0, &
+       case ('kappa')
+          call parse_real_variable('kappa', kappa, 0.99D0, 5.0D0, &
                'Plasma separatrix elongation')
-       case ('KAPPA95')
-          call parse_real_variable('KAPPA95', kappa95, 0.99D0, 5.0D0, &
+       case ('kappa95')
+          call parse_real_variable('kappa95', kappa95, 0.99D0, 5.0D0, &
                'Plasma 95% elongation')
-       case ('NEPED')
-          call parse_real_variable('NEPED', neped, 0.0D0, 1.0D21, &
+       case ('neped')
+          call parse_real_variable('neped', neped, 0.0D0, 1.0D21, &
                'Electron density pedestal height (/m3)')
-       case ('NESEP')
-          call parse_real_variable('NESEP', nesep, 0.0D0, 1.0D21, &
+       case ('nesep')
+          call parse_real_variable('nesep', nesep, 0.0D0, 1.0D21, &
                'Electron density at separatrix (/m3)')
-       case ('Q')
-          call parse_real_variable('Q', q, 2.00D0, 50.0D0, &
+       case ('q')
+          call parse_real_variable('q', q, 2.00D0, 50.0D0, &
                'Edge safety factor')
-       case ('Q0')
-          call parse_real_variable('Q0', q0, 0.01D0, 20.0D0, &
+       case ('q0')
+          call parse_real_variable('q0', q0, 0.01D0, 20.0D0, &
                'Safety factor on axis')
-       case ('RALPNE')
-          call parse_real_variable('RALPNE', ralpne, 1.0D-12, 1.0D0, &
+       case ('ralpne')
+          call parse_real_variable('ralpne', ralpne, 1.0D-12, 1.0D0, &
                'Thermal alpha density / electron density')
-       case ('RFPTH')
-          call parse_real_variable('RFPTH', rfpth, 0.01D0, 1.8D0, &
+       case ('rfpth')
+          call parse_real_variable('rfpth', rfpth, 0.01D0, 1.8D0, &
                'RFP pinch parameter, theta')
-       case ('RHOPEDN')
-          call parse_real_variable('RHOPEDN', rhopedn, 0.01D0, 1.0D0, &
+       case ('rhopedn')
+          call parse_real_variable('rhopedn', rhopedn, 0.01D0, 1.0D0, &
                'Density pedestal r/a')
-       case ('RHOPEDT')
-          call parse_real_variable('RHOPEDT', rhopedt, 0.01D0, 1.0D0, &
+       case ('rhopedt')
+          call parse_real_variable('rhopedt', rhopedt, 0.01D0, 1.0D0, &
                'Temperature pedestal r/a')
-       case ('RLI')
-          call parse_real_variable('RLI', rli, 0.0D0, 10.0D0, &
+       case ('rli')
+          call parse_real_variable('rli', rli, 0.0D0, 10.0D0, &
                'Normalised inductivity')
-       case ('RMAJOR')
-          call parse_real_variable('RMAJOR', rmajor, 0.1D0, 50.0D0, &
+       case ('rmajor')
+          call parse_real_variable('rmajor', rmajor, 0.1D0, 50.0D0, &
                'Plasma major radius (m)')
-       case ('RNBEAM')
-          call parse_real_variable('RNBEAM', rnbeam, 0.0D0, 1.0D0, &
+       case ('rnbeam')
+          call parse_real_variable('rnbeam', rnbeam, 0.0D0, 1.0D0, &
                'Hot beam density / electron density')
-       case ('SNULL')
-          call parse_int_variable('SNULL', snull, 0, 1, &
+       case ('snull')
+          call parse_int_variable('snull', snull, 0, 1, &
                'Switch for single/double null plasma')
-       case ('SSYNC')
-          call parse_real_variable('SSYNC', ssync, 0.0D0, 1.0D0, &
+       case ('ssync')
+          call parse_real_variable('ssync', ssync, 0.0D0, 1.0D0, &
                'Synchrotron wall reflectivity factor')
-       case ('TBETA')
-          call parse_real_variable('TBETA', tbeta, 0.0D0, 4.0D0, &
+       case ('tbeta')
+          call parse_real_variable('tbeta', tbeta, 0.0D0, 4.0D0, &
                'Temperature profile index beta')
-       case ('TE')
-          call parse_real_variable('TE', te, 1.0D0, 200.0D0, &
+       case ('te')
+          call parse_real_variable('te', te, 1.0D0, 200.0D0, &
                'Electron temperature (keV)')
-       case ('TEPED')
-          call parse_real_variable('TEPED', teped, 0.0D0, 20.0D0, &
+       case ('teped')
+          call parse_real_variable('teped', teped, 0.0D0, 20.0D0, &
                'Electron temperature pedestal height (keV)')
-       case ('TESEP')
-          call parse_real_variable('TESEP', tesep, 0.0D0, 20.0D0, &
+       case ('tesep')
+          call parse_real_variable('tesep', tesep, 0.0D0, 20.0D0, &
                'Electron temperature at separatrix (keV)')
-       case ('TI')
-          call parse_real_variable('TI', ti, 5.0D0, 50.0D0, &
+       case ('ti')
+          call parse_real_variable('ti', ti, 5.0D0, 50.0D0, &
                'Ion temperature (keV)')
-       case ('TRATIO')
-          call parse_real_variable('TRATIO', tratio, 0.0D0, 2.0D0, &
+       case ('tratio')
+          call parse_real_variable('tratio', tratio, 0.0D0, 2.0D0, &
                'Ion / electron temperature ratio')
-       case ('TRIANG')
-          call parse_real_variable('TRIANG', triang, 0.0D0, 1.0D0, &
+       case ('triang')
+          call parse_real_variable('triang', triang, 0.0D0, 1.0D0, &
                'Plasma separatrix triangularity')
-       case ('TRIANG95')
-          call parse_real_variable('TRIANG95', triang95, 0.0D0, 1.0D0, &
+       case ('triang95')
+          call parse_real_variable('triang95', triang95, 0.0D0, 1.0D0, &
                'Plasma 95% triangularity')
-       case ('ZFEAR')
-          call parse_int_variable('ZFEAR', zfear, 0, 1, &
+       case ('zfear')
+          call parse_int_variable('zfear', zfear, 0, 1, &
                'Switch for high-Z inpurity')
 
           !  Inequality settings
 
-       case ('AUXMIN')
-          call parse_real_variable('AUXMIN', auxmin, 0.01D0, 100.0D0, &
+       case ('auxmin')
+          call parse_real_variable('auxmin', auxmin, 0.01D0, 100.0D0, &
                'Minimum auxiliary power (MW)')
-       case ('BETPMX')
-          call parse_real_variable('BETPMX', betpmx, 0.01D0, 2.0D0, &
+       case ('betpmx')
+          call parse_real_variable('betpmx', betpmx, 0.01D0, 2.0D0, &
                'Maximum poloidal beta')
-       case ('BIGQMIN')
-          call parse_real_variable('BIGQMIN', bigqmin, 0.01D0, 100.0D0, &
+       case ('bigqmin')
+          call parse_real_variable('bigqmin', bigqmin, 0.01D0, 100.0D0, &
                'Minimum fusion gain Q')
-       case ('BMXLIM')
-          call parse_real_variable('BMXLIM', bmxlim, 0.1D0, 50.0D0, &
+       case ('bmxlim')
+          call parse_real_variable('bmxlim', bmxlim, 0.1D0, 50.0D0, &
                'Maximum toroidal field (T)')
-       case ('DTMPMX')
-          call parse_real_variable('DTMPMX', dtmpmx, 1.0D0, 1000.0D0, &
+       case ('dtmpmx')
+          call parse_real_variable('dtmpmx', dtmpmx, 1.0D0, 1000.0D0, &
                'Maximum temp rise in f.w. coolant (K)')
-       case ('FAUXMN')
-          call parse_real_variable('FAUXMN', fauxmn, 0.001D0, 10.0D0, &
+       case ('fauxmn')
+          call parse_real_variable('fauxmn', fauxmn, 0.001D0, 10.0D0, &
                'F-value for minimum auxiliary power')
-       case ('FBETA')
-          call parse_real_variable('FBETA', fbeta, 0.001D0, 10.0D0, &
+       case ('fbeta')
+          call parse_real_variable('fbeta', fbeta, 0.001D0, 10.0D0, &
                'F-value for eps.betap beta limit')
-       case ('FBETAP')
-          call parse_real_variable('FBETAP', fbetap, 0.001D0, 10.0D0, &
+       case ('fbetap')
+          call parse_real_variable('fbetap', fbetap, 0.001D0, 10.0D0, &
                'F-value for poloidal beta limit')
-       case ('FBETATRY')
-          call parse_real_variable('FBETATRY', fbetatry, 0.001D0, 10.0D0, &
+       case ('fbetatry')
+          call parse_real_variable('fbetatry', fbetatry, 0.001D0, 10.0D0, &
                'F-value for beta limit')
-       case ('FCWR')
-          call parse_real_variable('FCWR', fcwr, 0.001D0, 10.0D0, &
+       case ('fcwr')
+          call parse_real_variable('fcwr', fcwr, 0.001D0, 10.0D0, &
                'F-value for conducting wall radius')
-       case ('FDENE')
-          call parse_real_variable('FDENE', fdene, 0.001D0, 10.0D0, &
+       case ('fdene')
+          call parse_real_variable('fdene', fdene, 0.001D0, 10.0D0, &
                'F-value for density limit')
-       case ('FDIVCOL')
-          call parse_real_variable('FDIVCOL', fdivcol, 0.001D0, 10.0D0, &
+       case ('fdivcol')
+          call parse_real_variable('fdivcol', fdivcol, 0.001D0, 10.0D0, &
                'F-value for divertor collisionality')
-       case ('FDTMP')
-          call parse_real_variable('FDTMP', fdtmp, 0.001D0, 10.0D0, &
+       case ('fdtmp')
+          call parse_real_variable('fdtmp', fdtmp, 0.001D0, 10.0D0, &
                'F-value for first wall coolant temp rise')
-       case ('FGAMCD')
-          call parse_real_variable('FGAMCD', fgamcd, 0.001D0, 10.0D0, &
+       case ('fgamcd')
+          call parse_real_variable('fgamcd', fgamcd, 0.001D0, 10.0D0, &
                'F-value for current drive gamma')
-       case ('FIPIR')
-          call parse_real_variable('FIPIR', fipir, 0.001D0, 10.0D0, &
+       case ('fipir')
+          call parse_real_variable('fipir', fipir, 0.001D0, 10.0D0, &
                'F-value for Ip/Irod')
-       case ('FJOHC')
-          call parse_real_variable('FJOHC', fjohc, 0.001D0, 10.0D0, &
+       case ('fjohc')
+          call parse_real_variable('fjohc', fjohc, 0.001D0, 10.0D0, &
                'F-value for OH coil current at EOF')
-       case ('FJOHC0')
-          call parse_real_variable('FJOHC0', fjohc0, 0.001D0, 10.0D0, &
+       case ('fjohc0')
+          call parse_real_variable('fjohc0', fjohc0, 0.001D0, 10.0D0, &
                'F-value for OH coil current at BOP')
-       case ('FJTFC')
+       case ('fjtfc')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'FJTFC is now obsolete -'
@@ -816,352 +819,352 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('FHLDIV')
-          call parse_real_variable('FHLDIV', fhldiv, 0.001D0, 10.0D0, &
+       case ('fhldiv')
+          call parse_real_variable('fhldiv', fhldiv, 0.001D0, 10.0D0, &
                'F-value for divertor heat load')
-       case ('FFLUTF')
-          call parse_real_variable('FFLUTF', fflutf, 0.001D0, 10.0D0, &
+       case ('fflutf')
+          call parse_real_variable('fflutf', fflutf, 0.001D0, 10.0D0, &
                'F-value for neutron fluence on TF coil')
-       case ('FFUSPOW')
-          call parse_real_variable('FFUSPOW', ffuspow, 0.001D0, 10.0D0, &
+       case ('ffuspow')
+          call parse_real_variable('ffuspow', ffuspow, 0.001D0, 10.0D0, &
                'F-value for maximum fusion power')
-       case ('FIOOIC')
-          call parse_real_variable('FIOOIC', fiooic, 0.001D0, 10.0D0, &
+       case ('fiooic')
+          call parse_real_variable('fiooic', fiooic, 0.001D0, 10.0D0, &
                'F-value for SCTF iop/icrit')
-       case ('FJPROT')
-          call parse_real_variable('FJPROT', fjprot, 0.001D0, 10.0D0, &
+       case ('fjprot')
+          call parse_real_variable('fjprot', fjprot, 0.001D0, 10.0D0, &
                'F-value for SCTF winding pack J')
-       case ('FLHTHRESH')
-          call parse_real_variable('FLHTHRESH', flhthresh, 0.001D0, 1.0D6, &
+       case ('flhthresh')
+          call parse_real_variable('flhthresh', flhthresh, 0.001D0, 1.0D6, &
                'F-value for L-H power threshold')
-       case ('FMVA')
-          call parse_real_variable('FMVA', fmva, 0.001D0, 10.0D0, &
+       case ('fmva')
+          call parse_real_variable('fmva', fmva, 0.001D0, 10.0D0, &
                'F-value for maximum MVA')
-       case ('FNBSHINEF')
-          call parse_real_variable('FNBSHINEF', fnbshinef, 0.001D0, 10.0D0, &
+       case ('fnbshinef')
+          call parse_real_variable('fnbshinef', fnbshinef, 0.001D0, 10.0D0, &
                'F-value for maximum NBI shine-through fraction')
-       case ('FPEAKB')
-          call parse_real_variable('FPEAKB', fpeakb, 0.001D0, 10.0D0, &
+       case ('fpeakb')
+          call parse_real_variable('fpeakb', fpeakb, 0.001D0, 10.0D0, &
                'F-value for max toroidal field')
-       case ('FPINJ')
-          call parse_real_variable('FPINJ', fpinj, 0.001D0, 10.0D0, &
+       case ('fpinj')
+          call parse_real_variable('fpinj', fpinj, 0.001D0, 10.0D0, &
                'F-value for injection power')
-       case ('FPNETEL')
-          call parse_real_variable('FPNETEL', fpnetel, 0.001D0, 10.0D0, &
+       case ('fpnetel')
+          call parse_real_variable('fpnetel', fpnetel, 0.001D0, 10.0D0, &
                'F-value for net electric power')
-       case ('FPORTSZ')
-          call parse_real_variable('FPORTSZ', fportsz, 0.001D0, 10.0D0, &
+       case ('fportsz')
+          call parse_real_variable('fportsz', fportsz, 0.001D0, 10.0D0, &
                'F-value for port size')
-       case ('FPSEPR')
-          call parse_real_variable('FPSEPR', fpsepr, 0.001D0, 10.0D0, &
+       case ('fpsepr')
+          call parse_real_variable('fpsepr', fpsepr, 0.001D0, 10.0D0, &
                'F-value for Psep/R limit')
-       case ('FPTEMP')
-          call parse_real_variable('FPTEMP', fptemp, 0.001D0, 10.0D0, &
+       case ('fptemp')
+          call parse_real_variable('fptemp', fptemp, 0.001D0, 10.0D0, &
                'F-value for peak centrepost temperature')
-       case ('FPTFNUC')
-          call parse_real_variable('FPTFNUC', fptfnuc, 0.001D0, 10.0D0, &
+       case ('fptfnuc')
+          call parse_real_variable('fptfnuc', fptfnuc, 0.001D0, 10.0D0, &
                'F-value for max TF coil nuclear heating')
-       case ('FQ')
-          call parse_real_variable('FQ', fq, 0.001D0, 10.0D0, &
+       case ('fq')
+          call parse_real_variable('fq', fq, 0.001D0, 10.0D0, &
                'F-value for edge safety factor')
-       case ('FQVAL')
-          call parse_real_variable('FQVAL', fqval, 0.001D0, 10.0D0, &
+       case ('fqval')
+          call parse_real_variable('fqval', fqval, 0.001D0, 10.0D0, &
                'F-value for fusion gain Q')
-       case ('FRADPWR')
-          call parse_real_variable('FRADPWR', fradpwr, 0.0D0, 1.0D0, &
+       case ('fradpwr')
+          call parse_real_variable('fradpwr', fradpwr, 0.0D0, 1.0D0, &
                'F-value for radiation power limit')
-       case ('FRFPF')
-          call parse_real_variable('FRFPF', frfpf, 0.001D0, 10.0D0, &
+       case ('frfpf')
+          call parse_real_variable('frfpf', frfpf, 0.001D0, 10.0D0, &
                'F-value for RFP reversal parameter')
-       case ('FRFPTF')
-          call parse_real_variable('FRFPTF', frfptf, 0.001D0, 1.0D0, &
+       case ('frfptf')
+          call parse_real_variable('frfptf', frfptf, 0.001D0, 1.0D0, &
                'F-value for TF coil toroidal thickness')
-       case ('FRMINOR')
-          call parse_real_variable('FRMINOR', frminor, 0.001D0, 10.0D0, &
+       case ('frminor')
+          call parse_real_variable('frminor', frminor, 0.001D0, 10.0D0, &
                'F-value for minor radius limit')
-       case ('FSTRCASE')
-          call parse_real_variable('FSTRCASE', fstrcase, 0.001D0, 10.0D0, &
+       case ('fstrcase')
+          call parse_real_variable('fstrcase', fstrcase, 0.001D0, 10.0D0, &
                'F-value for TF coil case stress')
-       case ('FSTRCOND')
-          call parse_real_variable('FSTRCOND', fstrcond, 0.001D0, 10.0D0, &
+       case ('fstrcond')
+          call parse_real_variable('fstrcond', fstrcond, 0.001D0, 10.0D0, &
                'F-value for TF coil conduit stress')
-       case ('FTBR')
-          call parse_real_variable('FTBR', ftbr, 0.001D0, 10.0D0, &
+       case ('ftbr')
+          call parse_real_variable('ftbr', ftbr, 0.001D0, 10.0D0, &
                'F-value for tritium breeding ratio limit')
-       case ('FTBURN')
-          call parse_real_variable('FTBURN', ftburn, 0.001D0, 10.0D0, &
+       case ('ftburn')
+          call parse_real_variable('ftburn', ftburn, 0.001D0, 10.0D0, &
                'F-value for burn time limit')
-       case ('FTCYCL')
-          call parse_real_variable('FTCYCL', ftcycl, 0.001D0, 10.0D0, &
+       case ('ftcycl')
+          call parse_real_variable('ftcycl', ftcycl, 0.001D0, 10.0D0, &
                'F-value for cycle time')
-       case ('FTFTHKO')
-          call parse_real_variable('FTFTHKO', ftfthko, 0.001D0, 1.0D0, &
+       case ('ftfthko')
+          call parse_real_variable('ftfthko', ftfthko, 0.001D0, 1.0D0, &
                'F-value for minimum TF coil leg rad width')
-       case ('FTFTORT')
-          call parse_real_variable('FTFTORT', ftftort, 0.001D0, 1.0D0, &
+       case ('ftftort')
+          call parse_real_variable('ftftort', ftftort, 0.001D0, 1.0D0, &
                'F-value for minimum TF coil leg tor width')
-       case ('FTMARGTF')
-          call parse_real_variable('FTMARGTF', ftmargtf, 0.001D0, 10.0D0, &
+       case ('ftmargtf')
+          call parse_real_variable('ftmargtf', ftmargtf, 0.001D0, 10.0D0, &
                'F-value for TF coil temp. margin')
-       case ('FTOHS')
-          call parse_real_variable('FTOHS', ftohs, 0.001D0, 10.0D0, &
+       case ('ftohs')
+          call parse_real_variable('ftohs', ftohs, 0.001D0, 10.0D0, &
                'F-value for plasma current ramp-up time')
-       case ('FTPEAK')
-          call parse_real_variable('FTPEAK', ftpeak, 0.001D0, 10.0D0, &
+       case ('ftpeak')
+          call parse_real_variable('ftpeak', ftpeak, 0.001D0, 10.0D0, &
                'F-value for peak first wall temperature')
-       case ('FVDUMP')
-          call parse_real_variable('FVDUMP', fvdump, 0.001D0, 10.0D0, &
+       case ('fvdump')
+          call parse_real_variable('fvdump', fvdump, 0.001D0, 10.0D0, &
                'F-value for dump voltage')
-       case ('FVS')
-          call parse_real_variable('FVS', fvs, 0.001D0, 10.0D0, &
+       case ('fvs')
+          call parse_real_variable('fvs', fvs, 0.001D0, 10.0D0, &
                'F-value for startup V-s requirement')
-       case ('FVVHE')
-          call parse_real_variable('FVVHE', fvvhe, 0.001D0, 10.0D0, &
+       case ('fvvhe')
+          call parse_real_variable('fvvhe', fvvhe, 0.001D0, 10.0D0, &
                'F-value for VV He concentration limit')
-       case ('FWALLD')
-          call parse_real_variable('FWALLD', fwalld, 0.001D0, 10.0D0, &
+       case ('fwalld')
+          call parse_real_variable('fwalld', fwalld, 0.001D0, 10.0D0, &
                'F-value for wall load limit')
-       case ('GAMMAX')
-          call parse_real_variable('GAMMAX', gammax, 0.01D0, 10.0D0, &
+       case ('gammax')
+          call parse_real_variable('gammax', gammax, 0.01D0, 10.0D0, &
                'Maximum current drive gamma (A/W-m2)')
-       case ('MVALIM')
-          call parse_real_variable('MVALIM', mvalim, 0.0D0, 1000.0D0, &
+       case ('mvalim')
+          call parse_real_variable('mvalim', mvalim, 0.0D0, 1000.0D0, &
                'Maximum MVA limit')
-       case ('NBSHINEFMAX')
-          call parse_real_variable('NBSHINEFMAX', nbshinefmax, 1.0D-20, 1.0D-1, &
+       case ('nbshinefmax')
+          call parse_real_variable('nbshinefmax', nbshinefmax, 1.0D-20, 1.0D-1, &
                'Maximum NB shine-through fraction')
-       case ('NFLUTFMAX')
-          call parse_real_variable('NFLUTFMAX', nflutfmax, 1.0D22, 1.0D24, &
+       case ('nflutfmax')
+          call parse_real_variable('nflutfmax', nflutfmax, 1.0D22, 1.0D24, &
                'Max fast neutron fluence on TF coil (n/m2)')
-       case ('PNETELIN')
-          call parse_real_variable('PNETELIN', pnetelin, 1.0D0, 1.0D4, &
+       case ('pnetelin')
+          call parse_real_variable('pnetelin', pnetelin, 1.0D0, 1.0D4, &
                'Required net electric power (MW)')
-       case ('POWFMAX')
-          call parse_real_variable('POWFMAX', powfmax, 1.0D0, 1.0D4, &
+       case ('powfmax')
+          call parse_real_variable('powfmax', powfmax, 1.0D0, 1.0D4, &
                'Maximum fusion power (MW)')
-       case ('PSEPRMAX')
-          call parse_real_variable('PSEPRMAX', pseprmax, 1.0D0, 50.0D0, &
+       case ('pseprmax')
+          call parse_real_variable('pseprmax', pseprmax, 1.0D0, 50.0D0, &
                'Maximum Psep/R ratio (MW/m)')
-       case ('PTFNUCMAX')
-          call parse_real_variable('PTFNUCMAX', ptfnucmax, 1.0D-6, 1.0D0, &
+       case ('ptfnucmax')
+          call parse_real_variable('ptfnucmax', ptfnucmax, 1.0D-6, 1.0D0, &
                'Maximum TF coil nuclear heating (MW/m3)')
-       case ('TBRMIN')
-          call parse_real_variable('TBRMIN', tbrmin, 1.0D0, 2.0D0, &
+       case ('tbrmin')
+          call parse_real_variable('tbrmin', tbrmin, 1.0D0, 2.0D0, &
                'Minimum tritium breeding ratio')
-       case ('TBRNMN')
-          call parse_real_variable('TBRNMN', tbrnmn, 1.0D-3, 1.0D6, &
+       case ('tbrnmn')
+          call parse_real_variable('tbrnmn', tbrnmn, 1.0D-3, 1.0D6, &
                'Minimum burn time (s)')
-       case ('TPKMAX')
-          call parse_real_variable('TPKMAX', tpkmax, 100.0D0, 1.0D3, &
+       case ('tpkmax')
+          call parse_real_variable('tpkmax', tpkmax, 100.0D0, 1.0D3, &
                'Maximum first wall peak temperature (C)')
-       case ('VVHEALW')
-          call parse_real_variable('VVHEALW', vvhealw, 0.01D0, 10.0D0, &
+       case ('vvhealw')
+          call parse_real_variable('vvhealw', vvhealw, 0.01D0, 10.0D0, &
                'Allowable maximum He conc. in VV (appm)')
-       case ('WALALW')
-          call parse_real_variable('WALALW', walalw, 0.001D0, 50.0D0, &
+       case ('walalw')
+          call parse_real_variable('walalw', walalw, 0.001D0, 50.0D0, &
                'Allowable wall load (MW/m2)')
 
           !  Current drive settings
 
-       case ('BEAMWD')
-          call parse_real_variable('BEAMWD', beamwd, 0.001D0, 5.0D0, &
+       case ('beamwd')
+          call parse_real_variable('beamwd', beamwd, 0.001D0, 5.0D0, &
                'Beam width (m)')
-       case ('BSCFMAX')
-          call parse_real_variable('BSCFMAX', bscfmax, -0.999D0, 0.999D0, &
+       case ('bscfmax')
+          call parse_real_variable('bscfmax', bscfmax, -0.999D0, 0.999D0, &
                '(-fixed)/maximum Bootstrap fraction')
-       case ('CBOOT')
-          call parse_real_variable('CBOOT', cboot, 0.0D0, 10.0D0, &
+       case ('cboot')
+          call parse_real_variable('cboot', cboot, 0.0D0, 10.0D0, &
                'Bootstrap current fraction multiplier')
-       case ('ENBEAM')
-          call parse_real_variable('ENBEAM', enbeam, 1.0D0, 20.0D3, &
+       case ('enbeam')
+          call parse_real_variable('enbeam', enbeam, 1.0D0, 20.0D3, &
                'Neutral beam energy (keV)')
-       case ('ETALH')
-          call parse_real_variable('ETALH', etalh, 0.0D0, 1.0D0, &
+       case ('etalh')
+          call parse_real_variable('etalh', etalh, 0.0D0, 1.0D0, &
                'LH wall plug to plasma efficiency')
-       case ('ETAECH')
-          call parse_real_variable('ETAECH', etaech, 0.0D0, 1.0D0, &
+       case ('etaech')
+          call parse_real_variable('etaech', etaech, 0.0D0, 1.0D0, &
                'ECH wall plug to injector efficiency')
-       case ('ETANBI')
-          call parse_real_variable('ETANBI', etanbi, 0.0D0, 1.0D0, &
+       case ('etanbi')
+          call parse_real_variable('etanbi', etanbi, 0.0D0, 1.0D0, &
                'NBI wall plug to injector efficiency')
-       case ('ETAOF')
-          call parse_real_variable('ETAOF', etaof, 0.0D0, 1.0D0, &
+       case ('etaof')
+          call parse_real_variable('etaof', etaof, 0.0D0, 1.0D0, &
                'OFCD wall plug to injector efficiency')
-       case ('FEFFCD')
-          call parse_real_variable('FEFFCD', feffcd, 0.0D0, 20.0D0, &
+       case ('feffcd')
+          call parse_real_variable('feffcd', feffcd, 0.0D0, 20.0D0, &
                'Current drive efficiency fiddle factor')
-       case ('FORBITLOSS')
-          call parse_real_variable('FORBITLOSS', forbitloss, 0.0D0, 0.999D0, &
+       case ('forbitloss')
+          call parse_real_variable('forbitloss', forbitloss, 0.0D0, 0.999D0, &
                'NBI power orbit loss fraction')
-       case ('FRBEAM')
-          call parse_real_variable('FRBEAM', frbeam, 0.5D0, 2.0D0, &
+       case ('frbeam')
+          call parse_real_variable('frbeam', frbeam, 0.5D0, 2.0D0, &
                'R_tan / R_major for NBI')
-       case ('FTRITBM')
-          call parse_real_variable('FTRITBM', ftritbm, 0.0D0, 1.0D0, &
+       case ('ftritbm')
+          call parse_real_variable('ftritbm', ftritbm, 0.0D0, 1.0D0, &
                'Tritium fraction of beam')
-       case ('IEFRF')
-          call parse_int_variable('IEFRF', iefrf, 1, 9, &
+       case ('iefrf')
+          call parse_int_variable('iefrf', iefrf, 1, 9, &
                'Switch for curr drive efficiency model')
-       case ('IRFCD')
-          call parse_int_variable('IRFCD', irfcd, 0, 1, &
+       case ('irfcd')
+          call parse_int_variable('irfcd', irfcd, 0, 1, &
                'Switch for current drive calculation')
-       case ('NBSHIELD')
-          call parse_real_variable('NBSHIELD', nbshield, 0.01D0, 0.5D0, &
+       case ('nbshield')
+          call parse_real_variable('nbshield', nbshield, 0.01D0, 0.5D0, &
                'Wall thickness of neutral beam duct (m)')
-       case ('PHEAT')
-          call parse_real_variable('PHEAT', pheat, 0.0D0, 1.0D3, &
+       case ('pheat')
+          call parse_real_variable('pheat', pheat, 0.0D0, 1.0D3, &
                'Heating power not used for C.D. (MW)')
-       case ('PINJALW')
-          call parse_real_variable('PINJALW', pinjalw, 0.0D0, 1.0D3, &
+       case ('pinjalw')
+          call parse_real_variable('pinjalw', pinjalw, 0.0D0, 1.0D3, &
                'Maximum allowed injection power (MW)')
-       case ('TBEAMIN')
-          call parse_real_variable('TBEAMIN', tbeamin, 0.0D0, 10.0D0, &
+       case ('tbeamin')
+          call parse_real_variable('tbeamin', tbeamin, 0.0D0, 10.0D0, &
                'No of NB decay lengths to plas centre')
 
           !  Time settings
 
-       case ('TBURN')
-          call parse_real_variable('TBURN', tburn, 0.0D0, 1.0D7, &
+       case ('tburn')
+          call parse_real_variable('tburn', tburn, 0.0D0, 1.0D7, &
                'Burn time (s)')
-       case ('TDWELL')
-          call parse_real_variable('TDWELL', tdwell, 0.0D0, 1.0D4, &
+       case ('tdwell')
+          call parse_real_variable('tdwell', tdwell, 0.0D0, 1.0D4, &
                'Time between burns (s)')
-       case ('THEAT')
-          call parse_real_variable('THEAT', theat, 0.0D0, 1.0D4, &
+       case ('theat')
+          call parse_real_variable('theat', theat, 0.0D0, 1.0D4, &
                'Heating time after current ramp (s)')
-       case ('TOHS')
-          call parse_real_variable('TOHS', tohs, 0.0D0, 1.0D4, &
+       case ('tohs')
+          call parse_real_variable('tohs', tohs, 0.0D0, 1.0D4, &
                'Plasma current ramp-up time for current init (s)')
-       case ('TOHSIN')
-          call parse_real_variable('TOHSIN', tohsin, 0.0D0, 1.0D4, &
+       case ('tohsin')
+          call parse_real_variable('tohsin', tohsin, 0.0D0, 1.0D4, &
                'Switch for TOHS calculation')
-       case ('TQNCH')
-          call parse_real_variable('TQNCH', tqnch, 0.0D0, 1.0D4, &
+       case ('tqnch')
+          call parse_real_variable('tqnch', tqnch, 0.0D0, 1.0D4, &
                'PF coil shutdown time (s)')
-       case ('TRAMP')
-          call parse_real_variable('TRAMP', tramp, 0.0D0, 1.0D4, &
+       case ('tramp')
+          call parse_real_variable('tramp', tramp, 0.0D0, 1.0D4, &
                'Initial charge time for PF coils (s)')
 
           !  Divertor settings
 
-       case ('ANGINC')
-          call parse_real_variable('ANGINC', anginc, 0.0D0, 1.5707D0, &
+       case ('anginc')
+          call parse_real_variable('anginc', anginc, 0.0D0, 1.5707D0, &
                'Field line ang of incid on dvrtr (rad)')
-       case ('BPSOUT')
-          call parse_real_variable('BPSOUT', bpsout, 0.0D0, 10.0D0, &
+       case ('bpsout')
+          call parse_real_variable('bpsout', bpsout, 0.0D0, 10.0D0, &
                'Ref B_p at outboard divertor strike point')
-       case ('C1DIV')
-          call parse_real_variable('C1DIV', c1div, -100.0D0, 100.0D0, &
+       case ('c1div')
+          call parse_real_variable('c1div', c1div, -100.0D0, 100.0D0, &
                'Divertor model fitting coefficient')
-       case ('C2DIV')
-          call parse_real_variable('C2DIV', c2div, -100.0D0, 100.0D0, &
+       case ('c2div')
+          call parse_real_variable('c2div', c2div, -100.0D0, 100.0D0, &
                'Divertor model fitting coefficient')
-       case ('C3DIV')
-          call parse_real_variable('C3DIV', c3div, -100.0D0, 100.0D0, &
+       case ('c3div')
+          call parse_real_variable('c3div', c3div, -100.0D0, 100.0D0, &
                'Divertor model fitting coefficient')
-       case ('C4DIV')
-          call parse_real_variable('C4DIV', c4div, -100.0D0, 100.0D0, &
+       case ('c4div')
+          call parse_real_variable('c4div', c4div, -100.0D0, 100.0D0, &
                'Divertor model fitting coefficient')
-       case ('C5DIV')
-          call parse_real_variable('C5DIV', c5div, -100.0D0, 100.0D0, &
+       case ('c5div')
+          call parse_real_variable('c5div', c5div, -100.0D0, 100.0D0, &
                'Divertor model fitting coefficient')
-       case ('C6DIV')
-          call parse_real_variable('C6DIV', c6div, -100.0D0, 100.0D0, &
+       case ('c6div')
+          call parse_real_variable('c6div', c6div, -100.0D0, 100.0D0, &
                'Divertor model fitting coefficient')
-       case ('DELLD')
-          call parse_real_variable('DELLD', delld, 0.1D0, 2.0D0, &
+       case ('delld')
+          call parse_real_variable('delld', delld, 0.1D0, 2.0D0, &
                'Coefficient for power distribution')
-       case ('DIVCLFR')
-          call parse_real_variable('DIVCLFR', divclfr, 0.0D0, 1.0D0, &
+       case ('divclfr')
+          call parse_real_variable('divclfr', divclfr, 0.0D0, 1.0D0, &
                'Divertor coolant fraction')
-       case ('DIVDENS')
-          call parse_real_variable('DIVDENS', divdens, 0.1D0, 1.0D5, &
+       case ('divdens')
+          call parse_real_variable('divdens', divdens, 0.1D0, 1.0D5, &
                'Divertor structure density (kg/m3)')
-       case ('DIVDUM')
-          call parse_int_variable('DIVDUM', divdum, 0, 1, &
+       case ('divdum')
+          call parse_int_variable('divdum', divdum, 0, 1, &
                'Switch for divertor Zeff value')
-       case ('DIVFIX')
-          call parse_real_variable('DIVFIX', divfix, 0.1D0, 5.0D0, &
+       case ('divfix')
+          call parse_real_variable('divfix', divfix, 0.1D0, 5.0D0, &
                'Divertor structure vertical extent (m)')
-       case ('DIVPLT')
-          call parse_real_variable('DIVPLT', divplt, 0.1D0, 1.0D0, &
+       case ('divplt')
+          call parse_real_variable('divplt', divplt, 0.1D0, 1.0D0, &
                'Divertor plate thickness (m)')
-       case ('FDFS')
-          call parse_real_variable('FDFS', fdfs, 0.0D0, 20.0D0, &
+       case ('fdfs')
+          call parse_real_variable('fdfs', fdfs, 0.0D0, 20.0D0, &
                'Radial gradient ratio')
-       case ('FDIVA')
-          call parse_real_variable('FDIVA', fdiva, 0.1D0, 2.0D0, &
+       case ('fdiva')
+          call parse_real_variable('fdiva', fdiva, 0.1D0, 2.0D0, &
                'Divertor area fiddle factor')
-       case ('FGAMP')
-          call parse_real_variable('FGAMP', fgamp, -100.0D0, 100.0D0, &
+       case ('fgamp')
+          call parse_real_variable('fgamp', fgamp, -100.0D0, 100.0D0, &
                'Sheath potential factor')
-       case ('FIFIFI')
-          call parse_real_variable('FIFIFI', fififi, 1.0D-6, 1.0D0, &
+       case ('fififi')
+          call parse_real_variable('fififi', fififi, 1.0D-6, 1.0D0, &
                'Coefficient for gamdiv')
-       case ('FRRP')
-          call parse_real_variable('FRRP', frrp, 0.0D0, 1.0D0, &
+       case ('frrp')
+          call parse_real_variable('frrp', frrp, 0.0D0, 1.0D0, &
                'Fraction of radiated power to plate')
-       case ('HLDIVLIM')
-          call parse_real_variable('HLDIVLIM', hldivlim, 0.1D0, 20.0D0, &
+       case ('hldivlim')
+          call parse_real_variable('hldivlim', hldivlim, 0.1D0, 20.0D0, &
                'Divertor heat load limit (MW/m2)')
-       case ('KSIC')
-          call parse_real_variable('KSIC', ksic, 0.0D0, 2.0D0, &
+       case ('ksic')
+          call parse_real_variable('ksic', ksic, 0.0D0, 2.0D0, &
                'Divertor power fraction thingy')
-       case ('OMEGAN')
-          call parse_real_variable('OMEGAN', omegan, 0.1D0, 10.0D0, &
+       case ('omegan')
+          call parse_real_variable('omegan', omegan, 0.1D0, 10.0D0, &
                'Pressure ratio (nT)_p / (nT)_s')
-       case ('PLSEPO')
-          call parse_real_variable('PLSEPO', plsepo, 0.1D0, 10.0D0, &
+       case ('plsepo')
+          call parse_real_variable('plsepo', plsepo, 0.1D0, 10.0D0, &
                'Poloidal length, x to outboard strike point')
-       case ('PRN1')
-          call parse_real_variable('PRN1', prn1, 0.0D0, 1.0D0, &
+       case ('prn1')
+          call parse_real_variable('prn1', prn1, 0.0D0, 1.0D0, &
                'n_scrapeoff / n_average plasma')
-       case ('RLENMAX')
-          call parse_real_variable('RLENMAX', rlenmax, 0.0D0, 1.0D0, &
+       case ('rlenmax')
+          call parse_real_variable('rlenmax', rlenmax, 0.0D0, 1.0D0, &
                'Maximum value for length ratio')
-       case ('TDIV')
-          call parse_real_variable('TDIV', tdiv, 0.1D0, 100.0D0, &
+       case ('tdiv')
+          call parse_real_variable('tdiv', tdiv, 0.1D0, 100.0D0, &
                'Plasma temperature at divertor (eV)')
-       case ('XPARAIN')
-          call parse_real_variable('XPARAIN', xparain, 0.01D0, 1.0D4, &
+       case ('xparain')
+          call parse_real_variable('xparain', xparain, 0.01D0, 1.0D4, &
                'Parallel heat transport coeff (m2/s)')
-       case ('XPERTIN')
-          call parse_real_variable('XPERTIN', xpertin, 0.0D0, 10.0D0, &
+       case ('xpertin')
+          call parse_real_variable('xpertin', xpertin, 0.0D0, 10.0D0, &
                'Perpendicular heat trans coeff (m2/s)')
-       case ('ZEFFDIV')
-          call parse_real_variable('ZEFFDIV', zeffdiv, 0.01D0, 100.0D0, &
+       case ('zeffdiv')
+          call parse_real_variable('zeffdiv', zeffdiv, 0.01D0, 100.0D0, &
                'Zeff in the divertor region (if divdum.ne.0)')
 
           !  Radial / vertical build settings
 
-       case ('APLASMIN')
-          call parse_real_variable('APLASMIN', aplasmin, 0.01D0, 10.0D0, &
+       case ('aplasmin')
+          call parse_real_variable('aplasmin', aplasmin, 0.01D0, 10.0D0, &
                'Minimum minor radius (m)')
-       case ('BLBMITH')
-          call parse_real_variable('BLBMITH', blbmith, 0.0D0, 2.0D0, &
+       case ('blbmith')
+          call parse_real_variable('blbmith', blbmith, 0.0D0, 2.0D0, &
                'Inboard blanket box manifold thickness (m)')
-       case ('BLBMOTH')
-          call parse_real_variable('BLBMOTH', blbmoth, 0.0D0, 2.0D0, &
+       case ('blbmoth')
+          call parse_real_variable('blbmoth', blbmoth, 0.0D0, 2.0D0, &
                'Outboard blanket box manifold thickness (m)')
-       case ('BLBPITH')
-          call parse_real_variable('BLBPITH', blbpith, 0.0D0, 2.0D0, &
+       case ('blbpith')
+          call parse_real_variable('blbpith', blbpith, 0.0D0, 2.0D0, &
                'Inboard blanket back plate thickness (m)')
-       case ('BLBPOTH')
-          call parse_real_variable('BLBPOTH', blbpoth, 0.0D0, 2.0D0, &
+       case ('blbpoth')
+          call parse_real_variable('blbpoth', blbpoth, 0.0D0, 2.0D0, &
                'Outboard blanket back plate thickness (m)')
-       case ('BLBUITH')
-          call parse_real_variable('BLBUITH', blbuith, 0.0D0, 2.0D0, &
+       case ('blbuith')
+          call parse_real_variable('blbuith', blbuith, 0.0D0, 2.0D0, &
                'Inboard blanket breeding unit thickness (m)')
-       case ('BLBUOTH')
-          call parse_real_variable('BLBUOTH', blbuoth, 0.0D0, 2.0D0, &
+       case ('blbuoth')
+          call parse_real_variable('blbuoth', blbuoth, 0.0D0, 2.0D0, &
                'Outboard blanket breeding unit thickness (m)')
-       case ('BLNKITH')
-          call parse_real_variable('BLNKITH', blnkith, 0.0D0, 10.0D0, &
+       case ('blnkith')
+          call parse_real_variable('blnkith', blnkith, 0.0D0, 10.0D0, &
                'Inboard blanket thickness (m)')
-       case ('BLNKOTH')
-          call parse_real_variable('BLNKOTH', blnkoth, 0.0D0, 10.0D0, &
+       case ('blnkoth')
+          call parse_real_variable('blnkoth', blnkoth, 0.0D0, 10.0D0, &
                'Outboard blanket thickness (m)')
-       case ('BLNKTTH')
+       case ('blnktth')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'BLNKTTH is now always calculated rather than input -'
@@ -1169,7 +1172,7 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('BCYLTH')
+       case ('bcylth')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'BCYLTH is now obsolete -'
@@ -1177,167 +1180,167 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('BORE')
-          call parse_real_variable('BORE', bore, 0.0D0, 50.0D0, &
+       case ('bore')
+          call parse_real_variable('bore', bore, 0.0D0, 50.0D0, &
                'Machine bore (m)')
-       case ('CLHSF')
-          call parse_real_variable('CLHSF', clhsf, 2.0D0, 10.0D0, &
+       case ('clhsf')
+          call parse_real_variable('clhsf', clhsf, 2.0D0, 10.0D0, &
                'Cryostat lid height scaling factor (m)')
-       case ('DDWEX')
-          call parse_real_variable('DDWEX', ddwex, 0.0D0, 10.0D0, &
+       case ('ddwex')
+          call parse_real_variable('ddwex', ddwex, 0.0D0, 10.0D0, &
                'External cryostat thickness (m)')
-       case ('DDWI')
-          call parse_real_variable('DDWI', ddwi, 0.0D0, 10.0D0, &
+       case ('ddwi')
+          call parse_real_variable('ddwi', ddwi, 0.0D0, 10.0D0, &
                'Vacuum vessel thickness (m)')
-       case ('FMSBC')
-          call parse_real_variable('FMSBC', fmsbc, 0.0D0, 1.0D0, &
+       case ('fmsbc')
+          call parse_real_variable('fmsbc', fmsbc, 0.0D0, 1.0D0, &
                'Martensitic frac of steel in buck cyl')
-       case ('FMSBL')
-          call parse_real_variable('FMSBL', fmsbl, 0.0D0, 1.0D0, &
+       case ('fmsbl')
+          call parse_real_variable('fmsbl', fmsbl, 0.0D0, 1.0D0, &
                'Martensitic frac of steel in blanket')
-       case ('FMSDWE')
-          call parse_real_variable('FMSDWE', fmsdwe, 0.0D0, 1.0D0, &
+       case ('fmsdwe')
+          call parse_real_variable('fmsdwe', fmsdwe, 0.0D0, 1.0D0, &
                'Martensitic frac of steel in external cryostat')
-       case ('FMSDWI')
-          call parse_real_variable('FMSDWI', fmsdwi, 0.0D0, 1.0D0, &
+       case ('fmsdwi')
+          call parse_real_variable('fmsdwi', fmsdwi, 0.0D0, 1.0D0, &
                'Martensitic frac of steel in vacuum vessel')
-       case ('FMSFW')
-          call parse_real_variable('FMSFW', fmsfw, 0.0D0, 1.0D0, &
+       case ('fmsfw')
+          call parse_real_variable('fmsfw', fmsfw, 0.0D0, 1.0D0, &
                'Martensitic frac of steel in first wall')
-       case ('FMSOH')
-          call parse_real_variable('FMSOH', fmsoh, 0.0D0, 1.0D0, &
+       case ('fmsoh')
+          call parse_real_variable('fmsoh', fmsoh, 0.0D0, 1.0D0, &
                'Martensitic frac of steel in OH coil')
-       case ('FMSSH')
-          call parse_real_variable('FMSSH', fmssh, 0.0D0, 1.0D0, &
+       case ('fmssh')
+          call parse_real_variable('fmssh', fmssh, 0.0D0, 1.0D0, &
                'Martensitic frac of steel in shield')
-       case ('FMSTF')
-          call parse_real_variable('FMSTF', fmstf, 0.0D0, 1.0D0, &
+       case ('fmstf')
+          call parse_real_variable('fmstf', fmstf, 0.0D0, 1.0D0, &
                'Martensitic frac of steel in TF coil')
-       case ('FWITH')
-          call parse_real_variable('FWITH', fwith, 0.0D0, 10.0D0, &
+       case ('fwith')
+          call parse_real_variable('fwith', fwith, 0.0D0, 10.0D0, &
                'Inboard first wall thickness, initial estimate (m)')
-       case ('FWOTH')
-          call parse_real_variable('FWOTH', fwoth, 0.0D0, 10.0D0, &
+       case ('fwoth')
+          call parse_real_variable('fwoth', fwoth, 0.0D0, 10.0D0, &
                'Outboard first wall thickness, initial estimate (m)')
-       case ('GAPOH')
-          call parse_real_variable('GAPOH', gapoh, 0.0D0, 10.0D0, &
+       case ('gapoh')
+          call parse_real_variable('gapoh', gapoh, 0.0D0, 10.0D0, &
                'Gap between OHC and TF coil (m)')
-       case ('GAPDS')
-          call parse_real_variable('GAPDS', gapds, 0.0D0, 10.0D0, &
+       case ('gapds')
+          call parse_real_variable('gapds', gapds, 0.0D0, 10.0D0, &
                'Gap between inboard vacuum vessel and shield (m)')
-       case ('GAPOMIN')
-          call parse_real_variable('GAPOMIN', gapomin, 0.0D0, 10.0D0, &
+       case ('gapomin')
+          call parse_real_variable('gapomin', gapomin, 0.0D0, 10.0D0, &
                'Min gap between outboard shield & vac vessel (m)')
-       case ('IOHCL')
-          call parse_int_variable('IOHCL', iohcl, 0, 1, &
+       case ('iohcl')
+          call parse_int_variable('iohcl', iohcl, 0, 1, &
                'Switch for existence of OH coil')
-       case ('OHCTH')
-          call parse_real_variable('OHCTH', ohcth, 0.0D0, 10.0D0, &
+       case ('ohcth')
+          call parse_real_variable('ohcth', ohcth, 0.0D0, 10.0D0, &
                'OH coil thickness (m)')
-       case ('RINBOARD')
-          call parse_real_variable('RINBOARD', rinboard, 0.1D0, 10.0D0, &
+       case ('rinboard')
+          call parse_real_variable('rinboard', rinboard, 0.1D0, 10.0D0, &
                'Plasma inboard radius (m)')
-       case ('RPF2DEWAR')
-          call parse_real_variable('RPF2DEWAR', rpf2dewar, 0.1D0, 5.0D0, &
+       case ('rpf2dewar')
+          call parse_real_variable('rpf2dewar', rpf2dewar, 0.1D0, 5.0D0, &
                'Outer PF coil to cryostat distance (m)')
-       case ('SCRAPLI')
-          call parse_real_variable('SCRAPLI', scrapli, 0.0D0, 10.0D0, &
+       case ('scrapli')
+          call parse_real_variable('scrapli', scrapli, 0.0D0, 10.0D0, &
                'Inboard scrapeoff length (m)')
-       case ('SCRAPLO')
-          call parse_real_variable('SCRAPLO', scraplo, 0.0D0, 10.0D0, &
+       case ('scraplo')
+          call parse_real_variable('scraplo', scraplo, 0.0D0, 10.0D0, &
                'Outboard scrapeoff length (m)')
-       case ('SHLDITH')
-          call parse_real_variable('SHLDITH', shldith, 0.0D0, 10.0D0, &
+       case ('shldith')
+          call parse_real_variable('shldith', shldith, 0.0D0, 10.0D0, &
                'Inboard shield thickness (m)')
-       case ('SHLDOTH')
-          call parse_real_variable('SHLDOTH', shldoth, 0.0D0, 10.0D0, &
+       case ('shldoth')
+          call parse_real_variable('shldoth', shldoth, 0.0D0, 10.0D0, &
                'Outboard shield thickness (m)')
-       case ('SHLDTTH')
-          call parse_real_variable('SHLDTTH', shldtth, 0.0D0, 10.0D0, &
+       case ('shldtth')
+          call parse_real_variable('shldtth', shldtth, 0.0D0, 10.0D0, &
                'Top shield thickness (m)')
-       case ('TFCTH')
-          call parse_real_variable('TFCTH', tfcth, 0.0D0, 10.0D0, &
+       case ('tfcth')
+          call parse_real_variable('tfcth', tfcth, 0.0D0, 10.0D0, &
                'TF coil thickness (m)')
-       case ('TFOOTFI')
-          call parse_real_variable('TFOOTFI', tfootfi, 0.2D0, 5.0D0, &
+       case ('tfootfi')
+          call parse_real_variable('tfootfi', tfootfi, 0.2D0, 5.0D0, &
                'TFC outboard/inboard leg thickness')
-       case ('VGAPTF')
-          call parse_real_variable('VGAPTF', vgaptf, 0.0D0, 10.0D0, &
+       case ('vgaptf')
+          call parse_real_variable('vgaptf', vgaptf, 0.0D0, 10.0D0, &
                'Vert gap between x-pnt and divertor (m)')
-       case ('VGAP2')
-          call parse_real_variable('VGAP2', vgap2, 0.0D0, 10.0D0, &
+       case ('vgap2')
+          call parse_real_variable('vgap2', vgap2, 0.0D0, 10.0D0, &
                'Vert gap between TF coil and shield (m)')
 
           !  TF coil settings
 
-       case ('BCRITSC')
-          call parse_real_variable('BCRITSC', bcritsc, 10.0D0, 50.0D0, &
+       case ('bcritsc')
+          call parse_real_variable('bcritsc', bcritsc, 10.0D0, 50.0D0, &
                'Critical field for superconductor')
-       case ('CASTHI')
-          call parse_real_variable('CASTHI', casthi, 0.0D0, 1.0D0, &
+       case ('casthi')
+          call parse_real_variable('casthi', casthi, 0.0D0, 1.0D0, &
                'TF coil case inner thickness (m)')
-       case ('CASTHS')
-          call parse_real_variable('CASTHS', casths, 0.0D0, 1.0D0, &
+       case ('casths')
+          call parse_real_variable('casths', casths, 0.0D0, 1.0D0, &
                'TF coil case sidewall thickness (m)')
-       case ('CDTFLEG')
-          call parse_real_variable('CDTFLEG', cdtfleg, 0.1D0, 1.0D8, &
+       case ('cdtfleg')
+          call parse_real_variable('cdtfleg', cdtfleg, 0.1D0, 1.0D8, &
                'TF leg overall current density (A/m2)')
-       case ('CPTTF')
-          call parse_real_variable('CPTTF', cpttf, 1.0D0, 1.0D6, &
+       case ('cpttf')
+          call parse_real_variable('cpttf', cpttf, 1.0D0, 1.0D6, &
                'TF coil leg current per turn (A)')
-       case ('CSUTF')
-          call parse_real_variable('CSUTF', csutf, 1.0D6, 1.0D11, &
+       case ('csutf')
+          call parse_real_variable('csutf', csutf, 1.0D6, 1.0D11, &
                'Ultimate strength of TF coil case (Pa)')
-       case ('CSYTF')
-          call parse_real_variable('CSYTF', csytf, 1.0D6, 1.0D11, &
+       case ('csytf')
+          call parse_real_variable('csytf', csytf, 1.0D6, 1.0D11, &
                'Yield strength of TF coil case (Pa)')
-       case ('DCASE')
-          call parse_real_variable('DCASE', dcase, 1.0D3, 1.0D5, &
+       case ('dcase')
+          call parse_real_variable('dcase', dcase, 1.0D3, 1.0D5, &
                'Density of TF coil case (kg/m3)')
-       case ('DCOND')
-          call parse_real_array('DCOND', dcond, isub1, 4, &
+       case ('dcond')
+          call parse_real_array('dcond', dcond, isub1, 4, &
                'TF/PF coil superconductor density (kg/m3)', icode)
-       case ('DCONDINS')
-          call parse_real_variable('DCONDINS', dcondins, 5.0D2, 1.0D4, &
+       case ('dcondins')
+          call parse_real_variable('dcondins', dcondins, 5.0D2, 1.0D4, &
                'Density of TF coil insulation (kg/m3)')
-       case ('DCOPPER')
-          call parse_real_variable('DCOPPER', dcopper, 8.0D3, 1.0D4, &
+       case ('dcopper')
+          call parse_real_variable('dcopper', dcopper, 8.0D3, 1.0D4, &
                'Density of copper (kg/m3)')
-       case ('DRTOP')
-          call parse_real_variable('DRTOP', drtop, -1.5D0, 1.5D0, &
+       case ('drtop')
+          call parse_real_variable('drtop', drtop, -1.5D0, 1.5D0, &
                'ST CP top radius adjust (m)')
-       case ('DZTOP')
-          call parse_real_variable('DZTOP', dztop, -0.5D0, 0.5D0, &
+       case ('dztop')
+          call parse_real_variable('dztop', dztop, -0.5D0, 0.5D0, &
                'ST CP taper height adjust (m)')
-       case ('ETAPUMP')
-          call parse_real_variable('ETAPUMP', etapump, 0.0D0, 1.0D0, &
+       case ('etapump')
+          call parse_real_variable('etapump', etapump, 0.0D0, 1.0D0, &
                'Efficiency of c/p coolant pump')
-       case ('EYSTL')
-          call parse_real_variable('EYSTL', eystl, 1.0D8, 1.0D13, &
+       case ('eystl')
+          call parse_real_variable('eystl', eystl, 1.0D8, 1.0D13, &
                'Steel case Youngs Modulus (Pa)')
-       case ('EYINS')
-          call parse_real_variable('EYINS', eyins, 1.0D8, 1.0D13, &
+       case ('eyins')
+          call parse_real_variable('eyins', eyins, 1.0D8, 1.0D13, &
                'Insulator Youngs Modulus (Pa)')
-       case ('EYWP')
-          call parse_real_variable('EYWP', eywp, 1.0D8, 1.0D13, &
+       case ('eywp')
+          call parse_real_variable('eywp', eywp, 1.0D8, 1.0D13, &
                'Winding pack Youngs Modulus (Pa)')
-       case ('FARC4TF')
-          call parse_real_variable('FARC4TF', farc4tf, 0.0D0, 1.0D0, &
+       case ('farc4tf')
+          call parse_real_variable('farc4tf', farc4tf, 0.0D0, 1.0D0, &
                'TF coil shape parameter')
-       case ('FCOOLCP')
-          call parse_real_variable('FCOOLCP', fcoolcp, 0.0D0, 1.0D0, &
+       case ('fcoolcp')
+          call parse_real_variable('fcoolcp', fcoolcp, 0.0D0, 1.0D0, &
                'Coolant fraction of TF inboard leg')
-       case ('FCUTFSU')
-          call parse_real_variable('FCUTFSU', fcutfsu, 0.0D0, 1.0D0, &
+       case ('fcutfsu')
+          call parse_real_variable('fcutfsu', fcutfsu, 0.0D0, 1.0D0, &
                'Cu fraction of SCTF cable conductor')
-       case ('FHTS')
-          call parse_real_variable('FHTS', fhts, 0.01D0, 1.0D0, &
+       case ('fhts')
+          call parse_real_variable('fhts', fhts, 0.01D0, 1.0D0, &
                'Technology adjustment factor for Bi-2212 HTS')
-       case ('FRHOCP')
-          call parse_real_variable('FRHOCP', frhocp, 0.01D0, 5.0D0, &
+       case ('frhocp')
+          call parse_real_variable('frhocp', frhocp, 0.01D0, 5.0D0, &
                'TART c/p resistivity enhancement factor')
-       case ('ISUMATTF')
-          call parse_int_variable('ISUMATTF', isumattf, 1, 4, &
+       case ('isumattf')
+          call parse_int_variable('isumattf', isumattf, 1, 4, &
                'TF coil superconductor material')
           if (isumattf == 2) then
              write(outfile,*) ' '
@@ -1348,7 +1351,7 @@ contains
              write(outfile,*) '**********'
              write(outfile,*) ' '
           end if
-       case ('ITFMOD')
+       case ('itfmod')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'ITFMOD is now obsolete -'
@@ -1357,13 +1360,13 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('ITFSUP')
-          call parse_int_variable('ITFSUP', itfsup, 0, 1, &
+       case ('itfsup')
+          call parse_int_variable('itfsup', itfsup, 0, 1, &
                'Switch for TF coil type')
-       case ('JBUS')
-          call parse_real_variable('JBUS', jbus, 1.0D4, 1.0D8, &
+       case ('jbus')
+          call parse_real_variable('jbus', jbus, 1.0D4, 1.0D8, &
                'TF coil bus current density (A/m2)')
-       case ('JCRIT_MODEL')
+       case ('jcrit_model')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'JCRIT_MODEL is now obsolete -'
@@ -1371,7 +1374,7 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('JCRITSC')
+       case ('jcritsc')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'JCRITSC is now obsolete -'
@@ -1379,52 +1382,52 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('OACDCP')
-          call parse_real_variable('OACDCP', oacdcp, 1.0D4, 1.0D9, &
+       case ('oacdcp')
+          call parse_real_variable('oacdcp', oacdcp, 1.0D4, 1.0D9, &
                'Overall J in inboard TF coil midplane')
-       case ('POISSON')
-          call parse_real_variable('POISSON', poisson, 0.0D0, 1.0D0, &
+       case ('poisson')
+          call parse_real_variable('poisson', poisson, 0.0D0, 1.0D0, &
                'Poissons ratio for TF stress calc.')
-       case ('PRP')
-          call parse_real_variable('PRP', prp, 0.0D0, 0.1D0, &
+       case ('prp')
+          call parse_real_variable('prp', prp, 0.0D0, 0.1D0, &
                'Radial plate area / winding pack area')
-       case ('PTEMPALW')
-          call parse_real_variable('PTEMPALW', ptempalw, 50.0D0, 300.0D0, &
+       case ('ptempalw')
+          call parse_real_variable('ptempalw', ptempalw, 50.0D0, 300.0D0, &
                'Maximum peak centrepost temp. (C)')
-       case ('RCOOL')
-          call parse_real_variable('RCOOL', rcool, 1.0D-6, 1.0D0, &
+       case ('rcool')
+          call parse_real_variable('rcool', rcool, 1.0D-6, 1.0D0, &
                'Centrepost coolant channel radius')
-       case ('RIPMAX')
-          call parse_real_variable('RIPMAX', ripmax, 0.1D0, 100.0D0, &
+       case ('ripmax')
+          call parse_real_variable('ripmax', ripmax, 0.1D0, 100.0D0, &
                'Max allowed ripple ampl. at plasma edge (%)')
-       case ('STRNCON')
-          call parse_real_variable('STRNCON', strncon, -0.02D0, 0.02D0, &
+       case ('strncon')
+          call parse_real_variable('strncon', strncon, -0.02D0, 0.02D0, &
                'Strain in superconductor material')
-       case ('TCOOLIN')
-          call parse_real_variable('TCOOLIN', tcoolin, -273.1D0, 100.0D0, &
+       case ('tcoolin')
+          call parse_real_variable('tcoolin', tcoolin, -273.1D0, 100.0D0, &
                'Centrepost coolant inlet temperature')
-       case ('TCPAV')
-          call parse_real_variable('TCPAV', tcpav, -200.0D0, 300.0D0, &
+       case ('tcpav')
+          call parse_real_variable('tcpav', tcpav, -200.0D0, 300.0D0, &
                'Average centrepost coolant temperature')
-       case ('TCRITSC')
-          call parse_real_variable('TCRITSC', tcritsc, 1.0D0, 300.0D0, &
+       case ('tcritsc')
+          call parse_real_variable('tcritsc', tcritsc, 1.0D0, 300.0D0, &
                'Critical temperature for superconductor')
-       case ('TDMPTF')
-          call parse_real_variable('TDMPTF', tdmptf, 0.1D0, 100.0D0, &
+       case ('tdmptf')
+          call parse_real_variable('tdmptf', tdmptf, 0.1D0, 100.0D0, &
                'Dump time for TF coil (s)')
-       case ('TFC_MODEL')
-          call parse_int_variable('TFC_MODEL', tfc_model, 0, 1, &
+       case ('tfc_model')
+          call parse_int_variable('tfc_model', tfc_model, 0, 1, &
                'Switch for TF coil model')
-       case ('TFLEGRES')
-          call parse_real_variable('TFLEGRES', tflegres, 1.0D-10, 1.0D-5, &
+       case ('tflegres')
+          call parse_real_variable('tflegres', tflegres, 1.0D-10, 1.0D-5, &
                'TF coil leg resistivity (ohm-m)')
-       case ('TFNO')
-          call parse_real_variable('TFNO', tfno, 0.0D0, 100.0D0, &
+       case ('tfno')
+          call parse_real_variable('tfno', tfno, 0.0D0, 100.0D0, &
                'Number of TF coils')
-       case ('TFTMP')
-          call parse_real_variable('TFTMP', tftmp, 0.01D0, 10.0D0, &
+       case ('tftmp')
+          call parse_real_variable('tftmp', tftmp, 0.01D0, 10.0D0, &
                'Peak TF coil He coolant temp. (K)')
-       case ('TFTORT')
+       case ('tftort')
           if (irfp == 0) then
              write(outfile,*) ' '
              write(outfile,*) '**********'
@@ -1434,60 +1437,60 @@ contains
              write(outfile,*) ' '
              obsolete_var = .true.
           end if
-          call parse_real_variable('TFTORT', tftort, 0.1D0, 4.0D0, &
+          call parse_real_variable('tftort', tftort, 0.1D0, 4.0D0, &
                'RFP TF coil toroidal thickness (m)')
-       case ('THICNDUT')
-          call parse_real_variable('THICNDUT', thicndut, 0.0D0, 0.1D0, &
+       case ('thicndut')
+          call parse_real_variable('thicndut', thicndut, 0.0D0, 0.1D0, &
                'Conduit insulation thickness (m)')
-       case ('THKCAS')
-          call parse_real_variable('THKCAS', thkcas, 0.0D0, 1.0D0, &
+       case ('thkcas')
+          call parse_real_variable('thkcas', thkcas, 0.0D0, 1.0D0, &
                'External supercond. case thickness (m)')
-       case ('THWCNDUT')
-          call parse_real_variable('THWCNDUT', thwcndut, 0.001D0, 0.1D0, &
+       case ('thwcndut')
+          call parse_real_variable('thwcndut', thwcndut, 0.001D0, 0.1D0, &
                'TF coil conduit case thickness (m)')
-       case ('TINSTF')
-          call parse_real_variable('TINSTF', tinstf, 0.0D0, 0.1D0, &
+       case ('tinstf')
+          call parse_real_variable('tinstf', tinstf, 0.0D0, 0.1D0, &
                'Ground wall insulation thickness (m)')
-       case ('TMARGMIN')
-          call parse_real_variable('TMARGMIN', tmargmin, 0.0D0, 10.0D0, &
+       case ('tmargmin')
+          call parse_real_variable('tmargmin', tmargmin, 0.0D0, 10.0D0, &
                'Minimum allowable temp margin (K)')
-       case ('TMAXPRO')
-          call parse_real_variable('TMAXPRO', tmaxpro, 0.0D0, 1.0D3, &
+       case ('tmaxpro')
+          call parse_real_variable('tmaxpro', tmaxpro, 0.0D0, 1.0D3, &
                'Maximum temp rise during quench (K)')
-       case ('TMPCRY')
-          call parse_real_variable('TMPCRY', tmpcry, 0.01D0, 10.0D0, &
+       case ('tmpcry')
+          call parse_real_variable('tmpcry', tmpcry, 0.01D0, 10.0D0, &
                'Cryogenic temperature (K)')
-       case ('VCOOL')
-          call parse_real_variable('VCOOL', vcool, 0.001D0, 100.0D0, &
+       case ('vcool')
+          call parse_real_variable('vcool', vcool, 0.001D0, 100.0D0, &
                'Max centrepost coolant speed (m/s)')
-       case ('VDALW')
-          call parse_real_variable('VDALW', vdalw, 0.0D0, 100.0D0, &
+       case ('vdalw')
+          call parse_real_variable('vdalw', vdalw, 0.0D0, 100.0D0, &
                'Max V across TFC during quench (kV)')
-       case ('VFTF')
-          call parse_real_variable('VFTF', vftf, 0.0D0, 1.0D0, &
+       case ('vftf')
+          call parse_real_variable('vftf', vftf, 0.0D0, 1.0D0, &
                'Coolant fraction of TF coil leg')
  
           !  PF coil settings
 
-       case ('AC1OH')
-          call parse_real_variable('AC1OH', ac1oh, 0.0D0, 1.0D0, &
+       case ('ac1oh')
+          call parse_real_variable('ac1oh', ac1oh, 0.0D0, 1.0D0, &
                'OH coil cable conduit area (m2)')
-       case ('ACSOH')
-          call parse_real_variable('ACSOH', acsoh, 1.0D-6, 1.0D0, &
+       case ('acsoh')
+          call parse_real_variable('acsoh', acsoh, 1.0D-6, 1.0D0, &
                'Conduit conductor X-section (m2)')
-       case ('ALFAPF')
-          call parse_real_variable('ALFAPF', alfapf, 1.0D-12, 1.0D0, &
+       case ('alfapf')
+          call parse_real_variable('alfapf', alfapf, 1.0D-12, 1.0D0, &
                'PF coil current smoothing parameter')
-       case ('COHEOF')
-          call parse_real_variable('COHEOF', coheof, 1.0D4, 1.0D8, &
+       case ('coheof')
+          call parse_real_variable('coheof', coheof, 1.0D4, 1.0D8, &
                'OH coil current density at EOF')
-       case ('CPTDIN')
-          call parse_real_array('CPTDIN', cptdin, isub1, ngc2, &
+       case ('cptdin')
+          call parse_real_array('cptdin', cptdin, isub1, ngc2, &
                'Current per turn for PF coil', icode)
-       case ('ETAPSU')
-          call parse_real_variable('ETAPSU', etapsu, 0.0D0, 1.0D0, &
+       case ('etapsu')
+          call parse_real_variable('etapsu', etapsu, 0.0D0, 1.0D0, &
                'Efficiency of ohmic heating')
-       case ('FCOHBOF')
+       case ('fcohbof')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'FCOHBOF is now obsolete -'
@@ -1495,208 +1498,208 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('FCOHBOP')
-          call parse_real_variable('FCOHBOP', fcohbop, 0.0D0, 1.0D0, &
+       case ('fcohbop')
+          call parse_real_variable('fcohbop', fcohbop, 0.0D0, 1.0D0, &
                'OH coil J ratio : BOP/EOF')
-       case ('FCUOHSU')
-          call parse_real_variable('FCUOHSU', fcuohsu, 0.0D0, 1.0D0, &
+       case ('fcuohsu')
+          call parse_real_variable('fcuohsu', fcuohsu, 0.0D0, 1.0D0, &
                'Cu frac of conductor in OH coil cable')
-       case ('FCUPFSU')
-          call parse_real_variable('FCUPFSU', fcupfsu, 0.0D0, 1.0D0, &
+       case ('fcupfsu')
+          call parse_real_variable('fcupfsu', fcupfsu, 0.0D0, 1.0D0, &
                'Cu fraction of PF cable conductor')
-       case ('IPFLOC')
-          call parse_int_array('IPFLOC', ipfloc, isub1, ngc, &
+       case ('ipfloc')
+          call parse_int_array('ipfloc', ipfloc, isub1, ngc, &
                'PF coil location', icode)
-       case ('IPFRES')
-          call parse_int_variable('IPFRES', ipfres, 0, 1, &
+       case ('ipfres')
+          call parse_int_variable('ipfres', ipfres, 0, 1, &
                'Switch for supercond / resist PF coils')
-       case ('ISUMATOH')
-          call parse_int_variable('ISUMATOH', isumatoh, 1, 4, &
+       case ('isumatoh')
+          call parse_int_variable('isumatoh', isumatoh, 1, 4, &
                'OH coil superconductor material')
-       case ('ISUMATPF')
-          call parse_int_variable('ISUMATPF', isumatpf, 1, 4, &
+       case ('isumatpf')
+          call parse_int_variable('isumatpf', isumatpf, 1, 4, &
                'PF coil superconductor material')
-       case ('NCLS')
-          call parse_int_array('NCLS', ncls, isub1, ngrpmx, &
+       case ('ncls')
+          call parse_int_array('ncls', ncls, isub1, ngrpmx, &
                'No of coils in PF group', icode)
-       case ('NFXFH')
-          call parse_int_variable('NFXFH', nfxfh, 1, nfixmx/2, &
+       case ('nfxfh')
+          call parse_int_variable('nfxfh', nfxfh, 1, nfixmx/2, &
                'OH coil splitting parameter')
-       case ('NGRP')
-          call parse_int_variable('NGRP', ngrp, 0, ngrpmx, &
+       case ('ngrp')
+          call parse_int_variable('ngrp', ngrp, 0, ngrpmx, &
                'No of groups of PF coils')
-       case ('OHHGHF')
-          call parse_real_variable('OHHGHF', ohhghf, 0.0D0, 2.0D0, &
+       case ('ohhghf')
+          call parse_real_variable('ohhghf', ohhghf, 0.0D0, 2.0D0, &
                'OH coil height / TF coil height')
-       case ('PFCLRES')
-          call parse_real_variable('PFCLRES', pfclres, 0.0D0, 1.0D-4, &
+       case ('pfclres')
+          call parse_real_variable('pfclres', pfclres, 0.0D0, 1.0D-4, &
                'PF coil resistivity (ohm-m)')
-       case ('RJCONPF')
-          call parse_real_array('RJCONPF', rjconpf, isub1, ngc2, &
+       case ('rjconpf')
+          call parse_real_array('rjconpf', rjconpf, isub1, ngc2, &
                'Average J of PF coil (A/m2)', icode)
-       case ('ROUTR')
-          call parse_real_variable('ROUTR', routr, -3.0D0, 3.0D0, &
+       case ('routr')
+          call parse_real_variable('routr', routr, -3.0D0, 3.0D0, &
                'Gap from outboard TFC leg for PFC')
-       case ('RPF1')
-          call parse_real_variable('RPF1', rpf1, 0.0D0, 3.0D0, &
+       case ('rpf1')
+          call parse_real_variable('rpf1', rpf1, 0.0D0, 3.0D0, &
                'Radial offset for group 1 PF coils')
-       case ('RPF2')
-          call parse_real_variable('RPF2', rpf2, -3.0D0, 3.0D0, &
+       case ('rpf2')
+          call parse_real_variable('rpf2', rpf2, -3.0D0, 3.0D0, &
                'Radial offset for group 2 PF coils')
-       case ('SCCUFAC')
-          call parse_real_variable('SCCUFAC', sccufac, 0.001D0, 0.1D0, &
+       case ('sccufac')
+          call parse_real_variable('sccufac', sccufac, 0.001D0, 0.1D0, &
                'sc/cu ratio in PF coils per tesla')
-       case ('SIGPFALW')
-          call parse_real_variable('SIGPFALW', sigpfalw, 1.0D0, 1.0D3, &
+       case ('sigpfalw')
+          call parse_real_variable('sigpfalw', sigpfalw, 1.0D0, 1.0D3, &
                'Allowable stress in the PF coil (MPa)')
-       case ('SIGPFCALW')
-          call parse_real_variable('SIGPFCALW', sigpfcalw, 1.0D0, 1.0D3, &
+       case ('sigpfcalw')
+          call parse_real_variable('sigpfcalw', sigpfcalw, 1.0D0, 1.0D3, &
                'Allowable stress in the PF coil case (MPa)')
-       case ('SIGPFCF')
-          call parse_real_variable('SIGPFCF', sigpfcf, 0.1D0, 1.0D0, &
+       case ('sigpfcf')
+          call parse_real_variable('sigpfcf', sigpfcf, 0.1D0, 1.0D0, &
                'Fraction of JxB force supported by PF coil case')
-       case ('VF')
-          call parse_real_array('VF', vf, isub1, ngc2, &
+       case ('vf')
+          call parse_real_array('vf', vf, isub1, ngc2, &
                'Void fraction of PF coil', icode)
-       case ('VFOHC')
-          call parse_real_variable('VFOHC', vfohc, 0.0D0, 1.0D0, &
+       case ('vfohc')
+          call parse_real_variable('vfohc', vfohc, 0.0D0, 1.0D0, &
                'OH coil void fraction for coolant')
-       case ('ZREF')
-          call parse_real_array('ZREF', zref, isub1, ngrpmx, &
+       case ('zref')
+          call parse_real_array('zref', zref, isub1, ngrpmx, &
                'height of coil group / minor radius', icode)
 
           !  Pulsed reactor settings
 
-       case ('AFW')
-          call parse_real_variable('AFW', afw, 1.0D-3, 0.5D0, &
+       case ('afw')
+          call parse_real_variable('afw', afw, 1.0D-3, 0.5D0, &
                'Inner radius of first wall coolant channel (m)')
-       case ('BCTMP')
-          call parse_real_variable('BCTMP', bctmp, 1.0D0, 800.0D0, &
+       case ('bctmp')
+          call parse_real_variable('bctmp', bctmp, 1.0D0, 800.0D0, &
                'First wall bulk coolant temperature (C)')
-       case ('COOLP')
-          call parse_real_variable('COOLP', coolp, 1.0D5, 1.0D9, &
+       case ('coolp')
+          call parse_real_variable('coolp', coolp, 1.0D5, 1.0D9, &
                'First wall coolant pressure (Pa)')
-       case ('DTSTOR')
-          call parse_real_variable('DTSTOR', dtstor, 50.0D0, 500.0D0, &
+       case ('dtstor')
+          call parse_real_variable('dtstor', dtstor, 50.0D0, 500.0D0, &
                'Max temp change in thermal storage medium (K)')
-       case ('ISTORE')
-          call parse_int_variable('ISTORE', istore, 1, 3, &
+       case ('istore')
+          call parse_int_variable('istore', istore, 1, 3, &
                'Switch for thermal storage option')
-       case ('ITCYCL')
-          call parse_int_variable('ITCYCL', itcycl, 1, 3, &
+       case ('itcycl')
+          call parse_int_variable('itcycl', itcycl, 1, 3, &
                'Switch for 1st wall axial stress model')
-       case ('LPULSE')
-          call parse_int_variable('LPULSE', lpulse, 0, 1, &
+       case ('lpulse')
+          call parse_int_variable('lpulse', lpulse, 0, 1, &
                'Switch for pulsed reactor model')
-       case ('TMPRSE')
-          call parse_real_variable('TMPRSE', tmprse, 1.0D0, 1.0D3, &
+       case ('tmprse')
+          call parse_real_variable('tmprse', tmprse, 1.0D0, 1.0D3, &
                'Temperature rise in first wall coolant (C)')
 
           !  First wall, blanket, shield settings
 
-       case ('SECONDARY_CYCLE')
-          call parse_int_variable('SECONDARY_CYCLE', secondary_cycle, 0, 4, &
+       case ('secondary_cycle')
+          call parse_int_variable('secondary_cycle', secondary_cycle, 0, 4, &
                'Switch for blanket thermodynamic model')
-       case ('AFWI')
-          call parse_real_variable('AFWI', afwi, 1.0D-3, 0.05D0, &
+       case ('afwi')
+          call parse_real_variable('afwi', afwi, 1.0D-3, 0.05D0, &
                'I/B fw/blkt coolant channel inner radius (m)')
-       case ('AFWO')
-          call parse_real_variable('AFWO', afwo, 1.0D-3, 0.05D0, &
+       case ('afwo')
+          call parse_real_variable('afwo', afwo, 1.0D-3, 0.05D0, &
                'O/B fw/blkt coolant channel inner radius (m)')
-       case ('INLET_TEMP')
-          call parse_real_variable('INLET_TEMP', inlet_temp, 200.0D0, 600.0D0, &
+       case ('inlet_temp')
+          call parse_real_variable('inlet_temp', inlet_temp, 200.0D0, 600.0D0, &
                'Coolant inlet temperature (K)')
-       case ('IREFPROP')
-          call parse_int_variable('IREFPROP', irefprop, 0, 1, &
+       case ('irefprop')
+          call parse_int_variable('irefprop', irefprop, 0, 1, &
                'Switch to use REFPROP routines')
-       case ('OUTLET_TEMP')
-          call parse_real_variable('OUTLET_TEMP', outlet_temp, 450.0D0, 700.0D0, &
+       case ('outlet_temp')
+          call parse_real_variable('outlet_temp', outlet_temp, 450.0D0, 700.0D0, &
                'Coolant outlet temperature (K)')
-       case ('NBLKTMODPO')
-          call parse_int_variable('NBLKTMODPO', nblktmodpo, 1, 16, &
+       case ('nblktmodpo')
+          call parse_int_variable('nblktmodpo', nblktmodpo, 1, 16, &
                'No of o/b blanket modules in poloidal direction')
-       case ('NBLKTMODPI')
-          call parse_int_variable('NBLKTMODPI', nblktmodpi, 1, 16, &
+       case ('nblktmodpi')
+          call parse_int_variable('nblktmodpi', nblktmodpi, 1, 16, &
                'No of i/b blanket modules in poloidal direction')
-       case ('NBLKTMODTO')
-          call parse_int_variable('NBLKTMODTO', nblktmodto, 8, 96, &
+       case ('nblktmodto')
+          call parse_int_variable('nblktmodto', nblktmodto, 8, 96, &
                'No of o/b blanket modules in toroidal direction')
-       case ('NBLKTMODTI')
-          call parse_int_variable('NBLKTMODTI', nblktmodti, 8, 96, &
+       case ('nblktmodti')
+          call parse_int_variable('nblktmodti', nblktmodti, 8, 96, &
                'No of i/b blanket modules in toroidal direction')
-       case ('TFWMATMAX')
-          call parse_real_variable('TFWMATMAX', tfwmatmax, 500.0D0, 2000.0D0, &
+       case ('tfwmatmax')
+          call parse_real_variable('tfwmatmax', tfwmatmax, 500.0D0, 2000.0D0, &
                'Max temperature of first wall material (K)')
-       case ('ETAISO')
-          call parse_real_variable('ETAISO', etaiso, 0.1D0, 1.0D0, &
+       case ('etaiso')
+          call parse_real_variable('etaiso', etaiso, 0.1D0, 1.0D0, &
                'Isentropic efficiency of coolant pumps')
-       case ('BLKTTYPE')
-          call parse_int_variable('BLKTTYPE', blkttype, 1, 3, &
+       case ('blkttype')
+          call parse_int_variable('blkttype', blkttype, 1, 3, &
                'Switch for blanket type')
-       case ('BLKTMODEL')
-          call parse_int_variable('BLKTMODEL', blktmodel, 0, 1, &
+       case ('blktmodel')
+          call parse_int_variable('blktmodel', blktmodel, 0, 1, &
                'Switch for blanket neutronics calculations')
-       case ('BREEDMAT')
-          call parse_int_variable('BREEDMAT', breedmat, 1, 3, &
+       case ('breedmat')
+          call parse_int_variable('breedmat', breedmat, 1, 3, &
                'Switch for blanket breeder material')
-       case ('DECLBLKT')
-          call parse_real_variable('DECLBLKT', declblkt, 0.01D0, 0.2D0, &
+       case ('declblkt')
+          call parse_real_variable('declblkt', declblkt, 0.01D0, 0.2D0, &
                'Neutron decay length in blanket')
-       case ('DECLFW')
-          call parse_real_variable('DECLFW', declfw, 0.01D0, 0.2D0, &
+       case ('declfw')
+          call parse_real_variable('declfw', declfw, 0.01D0, 0.2D0, &
                'Neutron decay length in first wall')
-       case ('DECLSHLD')
-          call parse_real_variable('DECLSHLD', declshld, 0.01D0, 0.2D0, &
+       case ('declshld')
+          call parse_real_variable('declshld', declshld, 0.01D0, 0.2D0, &
                'Neutron decay length in blanket')
-       case ('DENSTL')
-          call parse_real_variable('DENSTL', denstl, 5.0D3, 1.0D4, &
+       case ('denstl')
+          call parse_real_variable('denstl', denstl, 5.0D3, 1.0D4, &
                'Density of steel (kg/m3)')
-       case ('EMULT')
-          call parse_real_variable('EMULT', emult, 1.0D0, 2.0D0, &
+       case ('emult')
+          call parse_real_variable('emult', emult, 1.0D0, 2.0D0, &
                'Energy multip. in blanket and shield')
-       case ('FBLBE')
-          call parse_real_variable('FBLBE', fblbe, 0.0D0, 1.0D0, &
+       case ('fblbe')
+          call parse_real_variable('fblbe', fblbe, 0.0D0, 1.0D0, &
                'Beryllium fraction of blanket')
-       case ('FBLBREED')
-          call parse_real_variable('FBLBREED', fblbreed, 0.0D0, 1.0D0, &
+       case ('fblbreed')
+          call parse_real_variable('fblbreed', fblbreed, 0.0D0, 1.0D0, &
                'Breeder fraction of blanket breeding unit')
-       case ('FBLHEBMI')
-          call parse_real_variable('FBLHEBMI', fblhebmi, 0.0D0, 1.0D0, &
+       case ('fblhebmi')
+          call parse_real_variable('fblhebmi', fblhebmi, 0.0D0, 1.0D0, &
                'Helium fraction of IB blanket box manifold')
-       case ('FBLHEBMO')
-          call parse_real_variable('FBLHEBMO', fblhebmo, 0.0D0, 1.0D0, &
+       case ('fblhebmo')
+          call parse_real_variable('fblhebmo', fblhebmo, 0.0D0, 1.0D0, &
                'Helium fraction of OB blanket box manifold')
-       case ('FBLHEBPI')
-          call parse_real_variable('FBLHEBPI', fblhebpi, 0.0D0, 1.0D0, &
+       case ('fblhebpi')
+          call parse_real_variable('fblhebpi', fblhebpi, 0.0D0, 1.0D0, &
                'Helium fraction of IB blanket back plate')
-       case ('FBLHEBPO')
-          call parse_real_variable('FBLHEBPO', fblhebpo, 0.0D0, 1.0D0, &
+       case ('fblhebpo')
+          call parse_real_variable('fblhebpo', fblhebpo, 0.0D0, 1.0D0, &
                'Helium fraction of OB blanket back plate')
-       case ('FBLLI')
-          call parse_real_variable('FBLLI', fblli, 0.0D0, 1.0D0, &
+       case ('fblli')
+          call parse_real_variable('fblli', fblli, 0.0D0, 1.0D0, &
                'Lithium fraction of blanket')
-       case ('FBLLI2O')
-          call parse_real_variable('FBLLI2O', fblli2o, 0.0D0, 1.0D0, &
+       case ('fblli2o')
+          call parse_real_variable('fblli2o', fblli2o, 0.0D0, 1.0D0, &
                'Li2O fraction of blanket')
-       case ('FBLLIPB')
-          call parse_real_variable('FBLLIPB', fbllipb, 0.0D0, 1.0D0, &
+       case ('fbllipb')
+          call parse_real_variable('fbllipb', fbllipb, 0.0D0, 1.0D0, &
                'Li-Pb fraction of blanket')
-       case ('FBLSS')
-          call parse_real_variable('FBLSS', fblss, 0.0D0, 1.0D0, &
+       case ('fblss')
+          call parse_real_variable('fblss', fblss, 0.0D0, 1.0D0, &
                'Stainless steel fraction of blanket')
-       case ('FBLVD')
-          call parse_real_variable('FBLVD', fblvd, 0.0D0, 1.0D0, &
+       case ('fblvd')
+          call parse_real_variable('fblvd', fblvd, 0.0D0, 1.0D0, &
                'Vanadium fraction of blanket')
-       case ('FDIV')
-          call parse_real_variable('FDIV', fdiv, 0.0D0, 1.0D0, &
+       case ('fdiv')
+          call parse_real_variable('fdiv', fdiv, 0.0D0, 1.0D0, &
                'Divertor area fraction')
-       case ('FHCD')
-          call parse_real_variable('FHCD', fhcd, 0.0D0, 1.0D0, &
+       case ('fhcd')
+          call parse_real_variable('fhcd', fhcd, 0.0D0, 1.0D0, &
                'HCD + diagnostics area fraction')
-       case ('FHOLE')
-          call parse_real_variable('FHOLE', fhole, 0.0D0, 1.0D0, &
+       case ('fhole')
+          call parse_real_variable('fhole', fhole, 0.0D0, 1.0D0, &
                'Hole area fraction')
-       case ('FVOLBI')
+       case ('fvolbi')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'FVOLBI is now obsolete - (use FHOLE)'
@@ -1704,7 +1707,7 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('FVOLBO')
+       case ('fvolbo')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'FVOLBO is now obsolete - (use FHOLE)'
@@ -1712,7 +1715,7 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('FVOLCRY')
+       case ('fvolcry')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'FVOLCRY is now obsolete -'
@@ -1720,533 +1723,533 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
-       case ('FVOLDW')
-          call parse_real_variable('FVOLDW', fvoldw, 0.0D0, 10.0D0, &
+       case ('fvoldw')
+          call parse_real_variable('fvoldw', fvoldw, 0.0D0, 10.0D0, &
                'Fudge factor for vacuum vessel volume')
 !+PJK FVOLSI, FVOLSO should now be restricted to <= 1
-       case ('FVOLSI')
-          call parse_real_variable('FVOLSI', fvolsi, 0.0D0, 10.0D0, &
+       case ('fvolsi')
+          call parse_real_variable('fvolsi', fvolsi, 0.0D0, 10.0D0, &
                'Fudge factor for inboard shield volume')
-       case ('FVOLSO')
-          call parse_real_variable('FVOLSO', fvolso, 0.0D0, 10.0D0, &
+       case ('fvolso')
+          call parse_real_variable('fvolso', fvolso, 0.0D0, 10.0D0, &
                'Fudge factor for outboard shield volume')
 !-PJK
-       case ('FWCLFR')
-          call parse_real_variable('FWCLFR', fwclfr, 0.0D0, 1.0D0, &
+       case ('fwclfr')
+          call parse_real_variable('fwclfr', fwclfr, 0.0D0, 1.0D0, &
                'First wall coolant fraction')
-       case ('FWBSSHAPE')
-          call parse_int_variable('FWBSSHAPE', fwbsshape, 1, 2, &
+       case ('fwbsshape')
+          call parse_int_variable('fwbsshape', fwbsshape, 1, 2, &
                'Switch for fw/blanket/shield/vv shape')
-       case ('FW_ARMOUR_THICKNESS')
-          call parse_real_variable('FW_ARMOUR_THICKNESS', fw_armour_thickness, 0.0D0, 1.0D0, &
+       case ('fw_armour_thickness')
+          call parse_real_variable('fw_armour_thickness', fw_armour_thickness, 0.0D0, 1.0D0, &
                'First wall W coating thickness (m)')
-       case ('HCDPORTSIZE')
-          call parse_int_variable('HCDPORTSIZE', hcdportsize, 1, 2, &
+       case ('hcdportsize')
+          call parse_int_variable('hcdportsize', hcdportsize, 1, 2, &
                'H/CD port size')
-       case ('IBLANKET')
-          call parse_int_variable('IBLANKET', iblanket, 1, 5, &
+       case ('iblanket')
+          call parse_int_variable('iblanket', iblanket, 1, 5, &
                'Switch for blanket model')
-       case ('LI6ENRICH')
-          call parse_real_variable('LI6ENRICH', li6enrich, 0.0D0, 100.0D0, &
+       case ('li6enrich')
+          call parse_real_variable('li6enrich', li6enrich, 0.0D0, 100.0D0, &
                'Li-6 enrichment')
-       case ('NPDIV')
-          call parse_int_variable('NPDIV', npdiv, 0, 4, &
+       case ('npdiv')
+          call parse_int_variable('npdiv', npdiv, 0, 4, &
                'Number of divertor ports')
-       case ('NPHCDIN')
-          call parse_int_variable('NPHCDIN', nphcdin, 0, 4, &
+       case ('nphcdin')
+          call parse_int_variable('nphcdin', nphcdin, 0, 4, &
                'Number of inboard H/CD ports')
-       case ('NPHCDOUT')
-          call parse_int_variable('NPHCDOUT', nphcdout, 0, 4, &
+       case ('nphcdout')
+          call parse_int_variable('nphcdout', nphcdout, 0, 4, &
                'Number of outboard H/CD ports')
-       case ('VFBLKT')
-          call parse_real_variable('VFBLKT', vfblkt, 0.0D0, 1.0D0, &
+       case ('vfblkt')
+          call parse_real_variable('vfblkt', vfblkt, 0.0D0, 1.0D0, &
                'Coolant void fraction in blanket')
-       case ('VFSHLD')
-          call parse_real_variable('VFSHLD', vfshld, 0.0D0, 1.0D0, &
+       case ('vfshld')
+          call parse_real_variable('vfshld', vfshld, 0.0D0, 1.0D0, &
                'Coolant void fraction in shield')
-       case ('WALLPF')
-          call parse_real_variable('WALLPF', wallpf, 1.0D0, 2.0D0, &
+       case ('wallpf')
+          call parse_real_variable('wallpf', wallpf, 1.0D0, 2.0D0, &
                'Neutron wall load peaking factor')
 
           !  Heat transport / power settings
 
-       case ('BASEEL')
-          call parse_real_variable('BASEEL', baseel, 1.0D6, 1.0D10, &
+       case ('baseel')
+          call parse_real_variable('baseel', baseel, 1.0D6, 1.0D10, &
                'Base plant electric load (W)')
-       case ('ETAHTP')
-          call parse_real_variable('ETAHTP', etahtp, 0.1D0, 1.0D0, &
+       case ('etahtp')
+          call parse_real_variable('etahtp', etahtp, 0.1D0, 1.0D0, &
                'Coolant pump electrical efficiency')
-       case ('ETATH')
-          call parse_real_variable('ETATH', etath, 0.0D0, 1.0D0, &
+       case ('etath')
+          call parse_real_variable('etath', etath, 0.0D0, 1.0D0, &
                'Thermal-electric conversion efficiency')
-       case ('FAUXBOP')
-          call parse_real_variable('FAUXBOP', fauxbop, 0.0D0, 1.0D0, &
+       case ('fauxbop')
+          call parse_real_variable('fauxbop', fauxbop, 0.0D0, 1.0D0, &
                'Frac. of gross electric power to BOP')
-       case ('FFWLG')
-          call parse_real_variable('FFWLG', ffwlg, 0.0D0, 1.0D0, &
+       case ('ffwlg')
+          call parse_real_variable('ffwlg', ffwlg, 0.0D0, 1.0D0, &
                '1st wall/dvrtr power frac to lg heat')
-       case ('FMGDMW')
-          call parse_real_variable('FMGDMW', fmgdmw, 0.0D0, 100.0D0, &
+       case ('fmgdmw')
+          call parse_real_variable('fmgdmw', fmgdmw, 0.0D0, 100.0D0, &
                'Power to MGF units (MW)')
-       case ('FPUMPBLKT')
-          call parse_real_variable('FPUMPBLKT', fpumpblkt, 0.0D0, 0.2D0, &
+       case ('fpumpblkt')
+          call parse_real_variable('fpumpblkt', fpumpblkt, 0.0D0, 0.2D0, &
                'Blanket pumping/thermal power ratio')
-       case ('FPUMPDIV')
-          call parse_real_variable('FPUMPDIV', fpumpdiv, 0.0D0, 0.2D0, &
+       case ('fpumpdiv')
+          call parse_real_variable('fpumpdiv', fpumpdiv, 0.0D0, 0.2D0, &
                'Divertor pumping/thermal power ratio')
-       case ('FPUMPFW')
-          call parse_real_variable('FPUMPFW', fpumpfw, 0.0D0, 0.2D0, &
+       case ('fpumpfw')
+          call parse_real_variable('fpumpfw', fpumpfw, 0.0D0, 0.2D0, &
                'First wall pumping/thermal power ratio')
-       case ('FPUMPSHLD')
-          call parse_real_variable('FPUMPSHLD', fpumpshld, 0.0D0, 0.2D0, &
+       case ('fpumpshld')
+          call parse_real_variable('fpumpshld', fpumpshld, 0.0D0, 0.2D0, &
                'Shield pumping/thermal power ratio')
-       case ('HTPMW')
-          call parse_real_variable('HTPMW', htpmw, 0.0D0, 500.0D0, &
+       case ('htpmw')
+          call parse_real_variable('htpmw', htpmw, 0.0D0, 500.0D0, &
                'Heat transport system pump power')
-       case ('IPOWERFLOW')
-          call parse_int_variable('IPOWERFLOW', ipowerflow, 0, 1, &
+       case ('ipowerflow')
+          call parse_int_variable('ipowerflow', ipowerflow, 0, 1, &
                'Switch for power flow model')
-       !case ('IPRIMDIV')
-       !   call parse_int_variable('IPRIMDIV', iprimdiv, 0, 1, &
+       !case ('iprimdiv')
+       !   call parse_int_variable('iprimdiv', iprimdiv, 0, 1, &
        !        'Switch for divertor thermal power destiny')
-       case ('IPRIMNLOSS')
-          call parse_int_variable('IPRIMNLOSS', iprimnloss, 0, 1, &
+       case ('iprimnloss')
+          call parse_int_variable('iprimnloss', iprimnloss, 0, 1, &
                'Switch for lost neutron power destiny')
-       case ('IPRIMSHLD')
-          call parse_int_variable('IPRIMSHLD', iprimshld, 0, 1, &
+       case ('iprimshld')
+          call parse_int_variable('iprimshld', iprimshld, 0, 1, &
                'Switch for shield thermal power destiny')
-       case ('PWPM2')
-          call parse_real_variable('PWPM2', pwpm2, 0.0D0, 1.0D3, &
+       case ('pwpm2')
+          call parse_real_variable('pwpm2', pwpm2, 0.0D0, 1.0D3, &
                'Base AC power requirement (W/m2)')
-       case ('TFACPD')
-          call parse_real_variable('TFACPD', tfacpd, 0.0D0, 100.0D0, &
+       case ('tfacpd')
+          call parse_real_variable('tfacpd', tfacpd, 0.0D0, 100.0D0, &
                'Total ss TF coil AC power demand (MW)')
-       case ('TRITHTMW')
-          call parse_real_variable('TRITHTMW', trithtmw, 0.0D0, 100.0D0, &
+       case ('trithtmw')
+          call parse_real_variable('trithtmw', trithtmw, 0.0D0, 100.0D0, &
                'Tritium process power (MW)')
-       case ('VACHTMW')
-          call parse_real_variable('VACHTMW', vachtmw, 0.0D0, 100.0D0, &
+       case ('vachtmw')
+          call parse_real_variable('vachtmw', vachtmw, 0.0D0, 100.0D0, &
                'Vacuum pump power (MW)')
 
           !  Cost information settings
 
-       case ('ABKTFLNC')
-          call parse_real_variable('ABKTFLNC', abktflnc, 0.1D0, 100.0D0, &
+       case ('abktflnc')
+          call parse_real_variable('abktflnc', abktflnc, 0.1D0, 100.0D0, &
                'Allowable blanket fluence (MW-yr/m2)')
-       case ('ADIVFLNC')
-          call parse_real_variable('ADIVFLNC', adivflnc, 0.1D0, 100.0D0, &
+       case ('adivflnc')
+          call parse_real_variable('adivflnc', adivflnc, 0.1D0, 100.0D0, &
                'Allowable divertor fluence (MW-yr/m2)')
-       case ('CFACTR')
-          call parse_real_variable('CFACTR', cfactr, 0.0D0, 1.0D0, &
+       case ('cfactr')
+          call parse_real_variable('cfactr', cfactr, 0.0D0, 1.0D0, &
                'Plant capacity factor or availability')
-       case ('CFIND')
-          call parse_real_array('CFIND', cfind, isub1, 4, &
+       case ('cfind')
+          call parse_real_array('cfind', cfind, isub1, 4, &
                'Indirect cost factor vs LSA', icode)
-       case ('CPSTFLNC')
-          call parse_real_variable('CPSTFLNC', cpstflnc, 0.01D0, 30.0D0, &
+       case ('cpstflnc')
+          call parse_real_variable('cpstflnc', cpstflnc, 0.01D0, 30.0D0, &
                'Allowable centrepost neutron fluence (MW-yr/m2)')
-       case ('DECOMF')
-          call parse_real_variable('DECOMF', decomf, 0.0D0, 1.0D0, &
+       case ('decomf')
+          call parse_real_variable('decomf', decomf, 0.0D0, 1.0D0, &
                'Decommissioning fund fraction')
-       case ('DINTRT')
-          call parse_real_variable('DINTRT', dintrt, 0.0D0, 0.1D0, &
+       case ('dintrt')
+          call parse_real_variable('dintrt', dintrt, 0.0D0, 0.1D0, &
                'Borrowing - saving interest rate difference')
-       case ('DTLIFE')
-          call parse_real_variable('DTLIFE', dtlife, 0.0D0, 15.0D0, &
+       case ('dtlife')
+          call parse_real_variable('dtlife', dtlife, 0.0D0, 15.0D0, &
                'Decommissioning time prior to end of plant')
-       case ('FCAP0')
-          call parse_real_variable('FCAP0', fcap0, 1.0D0, 1.5D0, &
+       case ('fcap0')
+          call parse_real_variable('fcap0', fcap0, 1.0D0, 1.5D0, &
                'Ave cost of money for plant construction')
-       case ('FCAP0CP')
-          call parse_real_variable('FCAP0CP', fcap0cp, 1.0D0, 1.5D0, &
+       case ('fcap0cp')
+          call parse_real_variable('fcap0cp', fcap0cp, 1.0D0, 1.5D0, &
                'Ave cost of money for replaceable components')
-       case ('FCDFUEL')
-          call parse_real_variable('FCDFUEL', fcdfuel, 0.0D0, 1.0D0, &
+       case ('fcdfuel')
+          call parse_real_variable('fcdfuel', fcdfuel, 0.0D0, 1.0D0, &
                'Fraction of CD cost assumed fuel cost')
-       case ('FCR0')
-          call parse_real_variable('FCR0', fcr0, 0.0D0, 1.0D0, &
+       case ('fcr0')
+          call parse_real_variable('fcr0', fcr0, 0.0D0, 1.0D0, &
                'Fixed charge rate during construction')
-       case ('FKIND')
-          call parse_real_variable('FKIND', fkind, 0.5D0, 1.0D0, &
+       case ('fkind')
+          call parse_real_variable('fkind', fkind, 0.5D0, 1.0D0, &
                'Multiplier for Nth of a kind costs')
-       case ('IFUELTYP')
-          call parse_int_variable('IFUELTYP', ifueltyp, 0, 1, &
+       case ('ifueltyp')
+          call parse_int_variable('ifueltyp', ifueltyp, 0, 1, &
                'Switch for costing of 1st wall etc.')
-       case ('IPNET')
-          call parse_int_variable('IPNET', ipnet, 0, 1, &
+       case ('ipnet')
+          call parse_int_variable('ipnet', ipnet, 0, 1, &
                'Switch for net electric power calc.')
-       case ('IREACTOR')
-          call parse_int_variable('IREACTOR', ireactor, 0, 1, &
+       case ('ireactor')
+          call parse_int_variable('ireactor', ireactor, 0, 1, &
                'Switch for MWe / C-o-E calculation')
-       case ('LSA')
-          call parse_int_variable('LSA', lsa, 1, 4, &
+       case ('lsa')
+          call parse_int_variable('lsa', lsa, 1, 4, &
                'Level of safety assurance')
-       case ('OUTPUT_COSTS')
-          call parse_int_variable('OUTPUT_COSTS', output_costs, 0, 1, &
+       case ('output_costs')
+          call parse_int_variable('output_costs', output_costs, 0, 1, &
                'Switch for writing costs to file')
-       case ('RATECDOL')
-          call parse_real_variable('RATECDOL', ratecdol, 0.0D0, 0.5D0, &
+       case ('ratecdol')
+          call parse_real_variable('ratecdol', ratecdol, 0.0D0, 0.5D0, &
                'Effective cost of money')
 
           !  Unit cost settings
 
-       case ('CCONFIX')
-          call parse_real_variable('CCONFIX', cconfix, 50.0D0, 200.0D0, &
+       case ('cconfix')
+          call parse_real_variable('cconfix', cconfix, 50.0D0, 200.0D0, &
                'Fixed cost of superconducting cable ($/m)')
-       case ('CCONSHPF')
-          call parse_real_variable('CCONSHPF', cconshpf, 50.0D0, 200.0D0, &
+       case ('cconshpf')
+          call parse_real_variable('cconshpf', cconshpf, 50.0D0, 200.0D0, &
                'PF coil steel conduit/sheath cost ($/m)')
-       case ('CCONSHTF')
-          call parse_real_variable('CCONSHTF', cconshtf, 50.0D0, 200.0D0, &
+       case ('cconshtf')
+          call parse_real_variable('cconshtf', cconshtf, 50.0D0, 200.0D0, &
                'TF coil steel conduit/sheath cost ($/m)')
-       case ('CLAND')
-          call parse_real_variable('CLAND', cland, 10.0D0, 100.0D0, &
+       case ('cland')
+          call parse_real_variable('cland', cland, 10.0D0, 100.0D0, &
                'Cost of land (M$)')
-       case ('COWNER')
-          call parse_real_variable('COWNER', cowner, 0.0D0, 1.0D0, &
+       case ('cowner')
+          call parse_real_variable('cowner', cowner, 0.0D0, 1.0D0, &
                'Owner cost factor')
-       case ('CSI')
-          call parse_real_variable('CSI', csi, 1.0D0, 100.0D0, &
+       case ('csi')
+          call parse_real_variable('csi', csi, 1.0D0, 100.0D0, &
                'Allowance for site costs (M$)')
-       case ('CTURBB')
-          call parse_real_variable('CTURBB', cturbb, 100.0D0, 1000.0D0, &
+       case ('cturbb')
+          call parse_real_variable('cturbb', cturbb, 100.0D0, 1000.0D0, &
                'Cost of turbine building (M$)')
-       case ('FCONTNG')
-          call parse_real_variable('FCONTNG', fcontng, 0.0D0, 1.0D0, &
+       case ('fcontng')
+          call parse_real_variable('fcontng', fcontng, 0.0D0, 1.0D0, &
                'Project contingency factor')
-       case ('UCBLBE')
-          call parse_real_variable('UCBLBE', ucblbe, 1.0D0, 1.0D3, &
+       case ('ucblbe')
+          call parse_real_variable('ucblbe', ucblbe, 1.0D0, 1.0D3, &
                'Unit cost for blanket Be ($/kg)')
-       case ('UCBLBREED')
-          call parse_real_variable('UCBLBREED', ucblbreed, 1.0D0, 1.0D3, &
+       case ('ucblbreed')
+          call parse_real_variable('ucblbreed', ucblbreed, 1.0D0, 1.0D3, &
                'Unit cost for blanket breeder material ($/kg)')
-       case ('UCBLLI')
-          call parse_real_variable('UCBLLI', ucblli, 1.0D2, 1.0D4, &
+       case ('ucblli')
+          call parse_real_variable('ucblli', ucblli, 1.0D2, 1.0D4, &
                'Unit cost for blanket Li ($/kg)')
-       case ('UCBLLI2O')
-          call parse_real_variable('UCBLLI2O', ucblli2o, 1.0D2, 1.0D4, &
+       case ('ucblli2o')
+          call parse_real_variable('ucblli2o', ucblli2o, 1.0D2, 1.0D4, &
                'Unit cost for blanket Li2O ($/kg)')
-       case ('UCBLLIPB')
-          call parse_real_variable('UCBLLIPB', ucbllipb, 1.0D2, 1.0D4, &
+       case ('ucbllipb')
+          call parse_real_variable('ucbllipb', ucbllipb, 1.0D2, 1.0D4, &
                'Unit cost for blanket Li-Pb ($/kg)')
-       case ('UCBLSS')
-          call parse_real_variable('UCBLSS', ucblss, 10.0D0, 1.0D3, &
+       case ('ucblss')
+          call parse_real_variable('ucblss', ucblss, 10.0D0, 1.0D3, &
                'Unit cost for blanket st.steel ($/kg)')
-       case ('UCBLVD')
-          call parse_real_variable('UCBLVD', ucblvd, 100.0D0, 1.0D3, &
+       case ('ucblvd')
+          call parse_real_variable('ucblvd', ucblvd, 100.0D0, 1.0D3, &
                'Unit cost for blanket Vd ($/kg)')
-       case ('UCBUS')
-          call parse_real_variable('UCBUS', ucbus, 0.01D0, 10.0D0, &
+       case ('ucbus')
+          call parse_real_variable('ucbus', ucbus, 0.01D0, 10.0D0, &
                'Cost of Al bus for TF coil ($/A-m)')
-       case ('UCCASE')
-          call parse_real_variable('UCCASE', uccase, 1.0D0, 1.0D3, &
+       case ('uccase')
+          call parse_real_variable('uccase', uccase, 1.0D0, 1.0D3, &
                'Cost of superconductor case ($/kg)')
-       case ('UCCPCL1')
-          call parse_real_variable('UCCPCL1', uccpcl1, 1.0D0, 1.0D3, &
+       case ('uccpcl1')
+          call parse_real_variable('uccpcl1', uccpcl1, 1.0D0, 1.0D3, &
                'Cost of tapered copper ($/kg)')
-       case ('UCCPCLB')
-          call parse_real_variable('UCCPCLB', uccpclb, 1.0D0, 1.0D3, &
+       case ('uccpclb')
+          call parse_real_variable('uccpclb', uccpclb, 1.0D0, 1.0D3, &
                'Cost TF outer leg plate coils ($/kg)')
-       case ('UCCRY')
-          call parse_real_variable('UCCRY', uccry, 1.0D4, 1.0D6, &
+       case ('uccry')
+          call parse_real_variable('uccry', uccry, 1.0D4, 1.0D6, &
                'Heat transport cryoplant costs ($/W)')
-       case ('UCCRYO')
-          call parse_real_variable('UCCRYO', uccryo, 1.0D0, 1.0D3, &
+       case ('uccryo')
+          call parse_real_variable('uccryo', uccryo, 1.0D0, 1.0D3, &
                'Unit cost for cryostat ($/kg)')
-       case ('UCCU')
-          call parse_real_variable('UCCU', uccu, 10.0D0, 1.0D2, &
+       case ('uccu')
+          call parse_real_variable('uccu', uccu, 10.0D0, 1.0D2, &
                'Copper in SC cable cost ($/kg)')
-       case ('UCDIV')
-          call parse_real_variable('UCDIV', ucdiv, 1.0D3, 1.0D7, &
+       case ('ucdiv')
+          call parse_real_variable('ucdiv', ucdiv, 1.0D3, 1.0D7, &
                'Cost of divertor blade ($)')
-       case ('UCECH')
-          call parse_real_variable('UCECH', ucech, 1.0D0, 10.0D0, &
+       case ('ucech')
+          call parse_real_variable('ucech', ucech, 1.0D0, 10.0D0, &
                'ECH system cost ($/W)')
-       case ('UCF1')
-          call parse_real_variable('UCF1', ucf1, 1.0D6, 50.0D6, &
+       case ('ucf1')
+          call parse_real_variable('ucf1', ucf1, 1.0D6, 50.0D6, &
                'Fuelling system cost ($)')
-       case ('UCFNC')
-          call parse_real_variable('UCFNC', ucfnc, 10.0D0, 100.0D0, &
+       case ('ucfnc')
+          call parse_real_variable('ucfnc', ucfnc, 10.0D0, 100.0D0, &
                'Outer PF fence support cost ($/kg)')
-       case ('UCFUEL')
-          call parse_real_variable('UCFUEL', ucfuel, 1.0D0, 10.0D0, &
+       case ('ucfuel')
+          call parse_real_variable('ucfuel', ucfuel, 1.0D0, 10.0D0, &
                'Cost of fuel (M$/yr)')
-       case ('UCHE3')
-          call parse_real_variable('UCHE3', uche3, 1.0D5, 1.0D7, &
+       case ('uche3')
+          call parse_real_variable('uche3', uche3, 1.0D5, 1.0D7, &
                'Cost of He3 fuel ($/kg)')
-       case ('UCHRS')
-          call parse_real_variable('UCHRS', uchrs, 1.0D7, 5.0D8, &
+       case ('uchrs')
+          call parse_real_variable('uchrs', uchrs, 1.0D7, 5.0D8, &
                'Cost of heat rejection system ($)')
-       case ('UCHTS')
-          call parse_real_array('UCHTS', uchts, isub1, 2, &
+       case ('uchts')
+          call parse_real_array('uchts', uchts, isub1, 2, &
                'Cost of heat transp system equip per loop ($/W)', icode)
-       case ('UCIAC')
-          call parse_real_variable('UCIAC', uciac, 1.0D7, 1.0D9, &
+       case ('uciac')
+          call parse_real_variable('uciac', uciac, 1.0D7, 1.0D9, &
                'Cost of instrum, control & diag.($/W)')
-       case ('UCICH')
-          call parse_real_variable('UCICH', ucich, 1.0D0, 10.0D0, &
+       case ('ucich')
+          call parse_real_variable('ucich', ucich, 1.0D0, 10.0D0, &
                'Cost of ICH system ($/W)')
-       case ('UCLH')
-          call parse_real_variable('UCLH', uclh, 1.0D0, 10.0D0, &
+       case ('uclh')
+          call parse_real_variable('uclh', uclh, 1.0D0, 10.0D0, &
                'LH system cost ($/W)')
-       case ('UCME')
-          call parse_real_variable('UCME', ucme, 1.0D7, 1.0D9, &
+       case ('ucme')
+          call parse_real_variable('ucme', ucme, 1.0D7, 1.0D9, &
                'Unit cost of maintenance equip. ($/W)')
-       case ('UCMISC')
-          call parse_real_variable('UCMISC', ucmisc, 1.0D7, 5.0D7, &
+       case ('ucmisc')
+          call parse_real_variable('ucmisc', ucmisc, 1.0D7, 5.0D7, &
                'Miscellaneous plant allowance ($)')
-       case ('UCNBI')
-          call parse_real_variable('UCNBI', ucnbi, 1.0D0, 10.0D0, &
+       case ('ucnbi')
+          call parse_real_variable('ucnbi', ucnbi, 1.0D0, 10.0D0, &
                'NBI system cost ($/W)')
-       case ('UCOAM')
-          call parse_real_array('UCOAM', ucoam, isub1, 4, &
+       case ('ucoam')
+          call parse_real_array('ucoam', ucoam, isub1, 4, &
                'Annual cost of operation and maintenance', icode)
-       case ('UCOF')
-          call parse_real_variable('UCOF', ucof, 0.1D0, 10.0D0, &
+       case ('ucof')
+          call parse_real_variable('ucof', ucof, 0.1D0, 10.0D0, &
                'Oscillating field current drive cost ($/W)')
-       case ('UCPENS')
-          call parse_real_variable('UCPENS', ucpens, 1.0D0, 100.0D0, &
+       case ('ucpens')
+          call parse_real_variable('ucpens', ucpens, 1.0D0, 100.0D0, &
                'Penetration shield cost ($/kg)')
-       case ('UCPFB')
-          call parse_real_variable('UCPFB', ucpfb, 1.0D0, 1.0D3, &
+       case ('ucpfb')
+          call parse_real_variable('ucpfb', ucpfb, 1.0D0, 1.0D3, &
                'Cost of PF coil buses ($/kA-m)')
-       case ('UCPFBK')
-          call parse_real_variable('UCPFBK', ucpfbk, 1.0D3, 1.0D5, &
+       case ('ucpfbk')
+          call parse_real_variable('ucpfbk', ucpfbk, 1.0D3, 1.0D5, &
                'Cost of PF coil DC breakers ($/MVA)')
-       case ('UCPFBS')
-          call parse_real_variable('UCPFBS', ucpfbs, 1.0D3, 1.0D4, &
+       case ('ucpfbs')
+          call parse_real_variable('ucpfbs', ucpfbs, 1.0D3, 1.0D4, &
                'Cost of PF burn power supplies ($/kW)')
-       case ('UCPFCB')
-          call parse_real_variable('UCPFCB', ucpfcb, 1.0D3, 1.0D5, &
+       case ('ucpfcb')
+          call parse_real_variable('ucpfcb', ucpfcb, 1.0D3, 1.0D5, &
                'Cost of PF coil AC breakers ($/circ)')
-       case ('UCPFDR1')
-          call parse_real_variable('UCPFDR1', ucpfdr1, 1.0D0, 1.0D3, &
+       case ('ucpfdr1')
+          call parse_real_variable('ucpfdr1', ucpfdr1, 1.0D0, 1.0D3, &
                'Cost factor for dump resistors ($/MJ)')
-       case ('UCPFIC')
-          call parse_real_variable('UCPFIC', ucpfic, 1.0D3, 1.0D5, &
+       case ('ucpfic')
+          call parse_real_variable('ucpfic', ucpfic, 1.0D3, 1.0D5, &
                'Cost of PF instrum & cont ($/channel)')
-       case ('UCPFPS')
-          call parse_real_variable('UCPFPS', ucpfps, 1.0D3, 1.0D5, &
+       case ('ucpfps')
+          call parse_real_variable('ucpfps', ucpfps, 1.0D3, 1.0D5, &
                'Cost of PF coil pulsed P.S. ($/MVA)')
-       case ('UCRB')
-          call parse_real_variable('UCRB', ucrb, 1.0D2, 1.0D3, &
+       case ('ucrb')
+          call parse_real_variable('ucrb', ucrb, 1.0D2, 1.0D3, &
                'Cost of reactor building ($/m3)')
-       case ('UCSC')
-          call parse_real_array('UCSC', ucsc, isub1, 5, &
+       case ('ucsc')
+          call parse_real_array('ucsc', ucsc, isub1, 5, &
                'Cost of superconductor ($/kg)', icode)
-       case ('UCSHLD')
-          call parse_real_variable('UCSHLD', ucshld, 1.0D0, 100.0D0, &
+       case ('ucshld')
+          call parse_real_variable('ucshld', ucshld, 1.0D0, 100.0D0, &
                'Cost of shield structural steel ($/kg)')
-       case ('UCTFBR')
-          call parse_real_variable('UCTFBR', uctfbr, 1.0D0, 10.0D0, &
+       case ('uctfbr')
+          call parse_real_variable('uctfbr', uctfbr, 1.0D0, 10.0D0, &
                'Cost of TF coil breakers ($/W**0.7)')
-       case ('UCTFBUS')
-          call parse_real_variable('UCTFBUS', uctfbus, 1.0D0, 1.0D3, &
+       case ('uctfbus')
+          call parse_real_variable('uctfbus', uctfbus, 1.0D0, 1.0D3, &
                'Cost of TF coil bus ($/kg)')
-       case ('UCTFPS')
-          call parse_real_variable('UCTFPS', uctfps, 1.0D0, 1.0D3, &
+       case ('uctfps')
+          call parse_real_variable('uctfps', uctfps, 1.0D0, 1.0D3, &
                'Cost of TF power supplies ($/W**0.7)')
-       case ('UCTFSW')
-          call parse_real_variable('UCTFSW', uctfsw, 0.1D0, 10.0D0, &
+       case ('uctfsw')
+          call parse_real_variable('uctfsw', uctfsw, 0.1D0, 10.0D0, &
                'Cost of TF slow dump switches ($/A)')
-       case ('UCTURB')
-          call parse_real_array('UCTURB', ucturb, isub1, 2, &
+       case ('ucturb')
+          call parse_real_array('ucturb', ucturb, isub1, 2, &
                'Cost of turbine plant equipment ($)', icode)
-       case ('UCWINDPF')
-          call parse_real_variable('UCWINDPF', ucwindpf, 100.0D0, 1.0D3, &
+       case ('ucwindpf')
+          call parse_real_variable('ucwindpf', ucwindpf, 100.0D0, 1.0D3, &
                'Cost of SCPF windings ($/m)')
-       case ('UCWINDTF')
-          call parse_real_variable('UCWINDTF', ucwindtf, 100.0D0, 1.0D3, &
+       case ('ucwindtf')
+          call parse_real_variable('ucwindtf', ucwindtf, 100.0D0, 1.0D3, &
                'Cost of SCTF windings ($/m)')
-       case ('UCWST')
-          call parse_real_array('UCWST', ucwst, isub1, 4, &
+       case ('ucwst')
+          call parse_real_array('ucwst', ucwst, isub1, 4, &
                'cost of waste disposal (M$/yr)', icode)
 
           !  Availability settings
  
-       case ('IAVAIL')
-          call parse_int_variable('IAVAIL', iavail, 0, 2, &
+       case ('iavail')
+          call parse_int_variable('iavail', iavail, 0, 2, &
                'Switch for plant availability model')
-       case ('AVAIL_MIN')
-          call parse_real_variable('AVAIL_MIN', avail_min, 0.0D0, 1.0D0, &
+       case ('avail_min')
+          call parse_real_variable('avail_min', avail_min, 0.0D0, 1.0D0, &
                'Required minimum availability (constraint equation 61)')
-       case ('FAVAIL')
-          call parse_real_variable('FAVAIL', favail, 0.0D0, 1.0D0, &
+       case ('favail')
+          call parse_real_variable('favail', favail, 0.0D0, 1.0D0, &
                'F-value for minimum availability (constraint equation 61)')
-       case ('NUM_RH_SYSTEMS')
-          call parse_int_variable('NUM_RH_SYSTEMS', num_rh_systems, 1, 10, &
+       case ('num_rh_systems')
+          call parse_int_variable('num_rh_systems', num_rh_systems, 1, 10, &
                'Number of remote handling systems (from 1-10)')
-       case ('CONF_MAG')
-          call parse_real_variable('CONF_MAG', conf_mag, 0.9D0, 1.0D0, &
+       case ('conf_mag')
+          call parse_real_variable('conf_mag', conf_mag, 0.9D0, 1.0D0, &
                'Availability confidence level for magnet system')
-       case ('DIV_PROB_FAIL')
-          call parse_real_variable('DIV_PROB_FAIL', div_prob_fail, 0.0D0, 1.0D0, &
+       case ('div_prob_fail')
+          call parse_real_variable('div_prob_fail', div_prob_fail, 0.0D0, 1.0D0, &
                'Divertor probability of failure (per op day)')
-       case ('DIV_UMAIN_TIME')
-          call parse_real_variable('DIV_UMAIN_TIME', div_umain_time, 0.1D0, 2.0D0, &
+       case ('div_umain_time')
+          call parse_real_variable('div_umain_time', div_umain_time, 0.1D0, 2.0D0, &
                'Divertor unplanned maintenance time (years)')
 
-       case ('DIV_NREF')
-          call parse_real_variable('DIV_NREF', div_nref, 1.0D3, 1.0D8, &
+       case ('div_nref')
+          call parse_real_variable('div_nref', div_nref, 1.0D3, 1.0D8, &
                'Reference value for cycle life of divertor')               
-       case ('DIV_NU')
-          call parse_real_variable('DIV_NU', div_nu, 1.0D3, 1.0D8, &
+       case ('div_nu')
+          call parse_real_variable('div_nu', div_nu, 1.0D3, 1.0D8, &
                'The cycle when the divertor fails with 100% probability')               
 
-       case ('FWBS_NREF')
+       case ('fwbs_nref')
           call parse_real_variable('fwbs_nref', fwbs_nref, 1.0D3, 1.0D8, &
                'Reference value for cycle life of blanket')               
-       case ('FWBS_NU')
+       case ('fwbs_nu')
           call parse_real_variable('fwbs_nu', fwbs_nu, 1.0D3, 1.0D8, &
                'The cycle when the blanket fails with 100% probability')               
                
-       case ('FWBS_PROB_FAIL')
-          call parse_real_variable('FWBS_PROB_FAIL', fwbs_prob_fail, 0.0D0, 1.0D0, &
+       case ('fwbs_prob_fail')
+          call parse_real_variable('fwbs_prob_fail', fwbs_prob_fail, 0.0D0, 1.0D0, &
                'Fwbs probability of failure (per op day)')
-       case ('FWBS_UMAIN_TIME')
-          call parse_real_variable('FWBS_UMAIN_TIME', fwbs_umain_time, 0.1D0, 2.0D0, &
+       case ('fwbs_umain_time')
+          call parse_real_variable('fwbs_umain_time', fwbs_umain_time, 0.1D0, 2.0D0, &
                'Fwbs unplanned maintenace time (years)')
-       case ('REDUN_VAC')
-          call parse_int_variable('REDUN_VAC', redun_vac, 0, 100, &
+       case ('redun_vac')
+          call parse_int_variable('redun_vac', redun_vac, 0, 100, &
                'Vacuum system pump redundancy level (%)')
-       case ('TBKTREPL')
-          call parse_real_variable('TBKTREPL', tbktrepl, 0.01D0, 2.0D0, &
+       case ('tbktrepl')
+          call parse_real_variable('tbktrepl', tbktrepl, 0.01D0, 2.0D0, &
                'Time needed to replace blanket (yr)')
-       case ('TCOMREPL')
-          call parse_real_variable('TCOMREPL', tcomrepl, 0.01D0, 2.0D0, &
+       case ('tcomrepl')
+          call parse_real_variable('tcomrepl', tcomrepl, 0.01D0, 2.0D0, &
                'Time needed to replace blanket+divertor (yr)')
-       case ('TDIVREPL')
-          call parse_real_variable('TDIVREPL', tdivrepl, 0.01D0, 2.0D0, &
+       case ('tdivrepl')
+          call parse_real_variable('tdivrepl', tdivrepl, 0.01D0, 2.0D0, &
                'Time needed to replace divertor (yr)')
-       case ('TLIFE')
-          call parse_real_variable('TLIFE', tlife, 1.0D0, 100.0D0, &
+       case ('tlife')
+          call parse_real_variable('tlife', tlife, 1.0D0, 100.0D0, &
                'Plant life (yr)')
-       case ('UUBOP')
-          call parse_real_variable('UUBOP', uubop, 0.005D0, 0.1D0, &
+       case ('uubop')
+          call parse_real_variable('uubop', uubop, 0.005D0, 0.1D0, &
                'Unplanned unavailability for BOP')
-       case ('UUCD')
-          call parse_real_variable('UUCD', uucd, 0.005D0, 0.1D0, &
+       case ('uucd')
+          call parse_real_variable('uucd', uucd, 0.005D0, 0.1D0, &
                'Unplanned unavailability for CD system')
-       case ('UUDIV')
-          call parse_real_variable('UUDIV', uudiv, 0.005D0, 0.1D0, &
+       case ('uudiv')
+          call parse_real_variable('uudiv', uudiv, 0.005D0, 0.1D0, &
                'Unplanned unavailability for divertor')
-       case ('UUFUEL')
-          call parse_real_variable('UUFUEL', uufuel, 0.005D0, 0.1D0, &
+       case ('uufuel')
+          call parse_real_variable('uufuel', uufuel, 0.005D0, 0.1D0, &
                'Unplanned unavailability for fuel system')
-       case ('UUFW')
-          call parse_real_variable('UUFW', uufw, 0.005D0, 0.1D0, &
+       case ('uufw')
+          call parse_real_variable('uufw', uufw, 0.005D0, 0.1D0, &
                'Unplanned unavailability for first wall')
-       case ('UUMAG')
-          call parse_real_variable('UUMAG', uumag, 0.005D0, 0.1D0, &
+       case ('uumag')
+          call parse_real_variable('uumag', uumag, 0.005D0, 0.1D0, &
                'Unplanned unavailability for magnets')
-       case ('UUVES')
-          call parse_real_variable('UUVES', uuves, 0.005D0, 0.1D0, &
+       case ('uuves')
+          call parse_real_variable('uuves', uuves, 0.005D0, 0.1D0, &
                'Unplanned unavailability for vessel')
 
 
           !  Sweep settings
 
-       case ('ISWEEP')
-          call parse_int_variable('ISWEEP', isweep, 0, ipnscns, &
+       case ('isweep')
+          call parse_int_variable('isweep', isweep, 0, ipnscns, &
                'Number of scans to perform')
-       case ('NSWEEP')
-          call parse_int_variable('NSWEEP', nsweep, 1, ipnscnv, &
+       case ('nsweep')
+          call parse_int_variable('nsweep', nsweep, 1, ipnscnv, &
                'Variable used in scan')
-       case ('SWEEP')
-          call parse_real_array('SWEEP', sweep, isub1, ipnscns, &
+       case ('sweep')
+          call parse_real_array('sweep', sweep, isub1, ipnscns, &
                'Actual values to use in scan', icode)
 
           !  Buildings settings
 
-       case ('ADMV')
-          call parse_real_variable('ADMV', admv, 1.0D4, 1.0D6, &
+       case ('admv')
+          call parse_real_variable('admv', admv, 1.0D4, 1.0D6, &
                'Administration building volume (m3)')
-       case ('CLH1')
-          call parse_real_variable('CLH1', clh1, 0.0D0, 20.0D0, &
+       case ('clh1')
+          call parse_real_variable('clh1', clh1, 0.0D0, 20.0D0, &
                'Clearance TF coil to cryostat top (m)')
-       case ('CLH2')
-          call parse_real_variable('CLH2', clh2, 0.0D0, 30.0D0, &
+       case ('clh2')
+          call parse_real_variable('clh2', clh2, 0.0D0, 30.0D0, &
                'Clearance TF coil to foundation (m)')
-       case ('CONV')
-          call parse_real_variable('CONV', conv, 1.0D4, 1.0D6, &
+       case ('conv')
+          call parse_real_variable('conv', conv, 1.0D4, 1.0D6, &
                'Control building volume (m3)')
-       case ('ESBLDGM3')
-          call parse_real_variable('ESBLDGM3', esbldgm3, 1.0D3, 1.0D6, &
+       case ('esbldgm3')
+          call parse_real_variable('esbldgm3', esbldgm3, 1.0D3, 1.0D6, &
                'Energy storage building volume (m3)')
-       case ('FNDT')
-          call parse_real_variable('FNDT', fndt, 0.0D0, 10.0D0, &
+       case ('fndt')
+          call parse_real_variable('fndt', fndt, 0.0D0, 10.0D0, &
                'Foundation thickness (m)')
-       case ('HCCL')
-          call parse_real_variable('HCCL', hccl, 0.0D0, 10.0D0, &
+       case ('hccl')
+          call parse_real_variable('hccl', hccl, 0.0D0, 10.0D0, &
                'Clearance around components in hot cell (m)')
-       case ('HCWT')
-          call parse_real_variable('HCWT', hcwt, 0.0D0, 10.0D0, &
+       case ('hcwt')
+          call parse_real_variable('hcwt', hcwt, 0.0D0, 10.0D0, &
                'Hot cell wall thickness (m)')
-       case ('MBVFAC')
-          call parse_real_variable('MBVFAC', mbvfac, 0.9D0, 3.0D0, &
+       case ('mbvfac')
+          call parse_real_variable('mbvfac', mbvfac, 0.9D0, 3.0D0, &
                'Maintenance building volume multiplier')
-       case ('PFBLDGM3')
-          call parse_real_variable('PFBLDGM3', pfbldgm3, 1.0D4, 1.0D6, &
+       case ('pfbldgm3')
+          call parse_real_variable('pfbldgm3', pfbldgm3, 1.0D4, 1.0D6, &
                'PF coil power conv. bldg volume (m3)')
-       case ('PIBV')
-          call parse_real_variable('PIBV', pibv, 1.0D3, 1.0D5, &
+       case ('pibv')
+          call parse_real_variable('pibv', pibv, 1.0D3, 1.0D5, &
                'Power injection building volume (m3)')
-       case ('RBRT')
-          call parse_real_variable('RBRT', rbrt, 0.0D0, 10.0D0, &
+       case ('rbrt')
+          call parse_real_variable('rbrt', rbrt, 0.0D0, 10.0D0, &
                'Reactor building roof thickness (m)')
-       case ('RBVFAC')
-          call parse_real_variable('RBVFAC', rbvfac, 0.9D0, 3.0D0, &
+       case ('rbvfac')
+          call parse_real_variable('rbvfac', rbvfac, 0.9D0, 3.0D0, &
                'Reactor building volume multiplier')
-       case ('RBWT')
-          call parse_real_variable('RBWT', rbwt, 0.0D0, 10.0D0, &
+       case ('rbwt')
+          call parse_real_variable('rbwt', rbwt, 0.0D0, 10.0D0, &
                'Reactor building wall thickness (m)')
-       case ('ROW')
-          call parse_real_variable('ROW', row, 0.0D0, 10.0D0, &
+       case ('row')
+          call parse_real_variable('row', row, 0.0D0, 10.0D0, &
                'Wall clearance for cranes (m)')
-       case ('RXCL')
-          call parse_real_variable('RXCL', rxcl, 0.0D0, 10.0D0, &
+       case ('rxcl')
+          call parse_real_variable('rxcl', rxcl, 0.0D0, 10.0D0, &
                'Clearance around reactor (m)')
-       case ('SHMF')
-          call parse_real_variable('SHMF', shmf, 0.0D0, 1.0D0, &
+       case ('shmf')
+          call parse_real_variable('shmf', shmf, 0.0D0, 1.0D0, &
                'Fraction of TF shield mass per lift')
-       case ('SHOV')
-          call parse_real_variable('SHOV', shov, 1.0D3, 1.0D6, &
+       case ('shov')
+          call parse_real_variable('shov', shov, 1.0D3, 1.0D6, &
                'Shops and warehouse volume (m3)')
-       case ('STCL')
-          call parse_real_variable('STCL', stcl, 0.0D0, 10.0D0, &
+       case ('stcl')
+          call parse_real_variable('stcl', stcl, 0.0D0, 10.0D0, &
                'Clearance above crane to roof (m)')
-       case ('TFCBV')
-          call parse_real_variable('TFCBV', tfcbv, 1.0D4, 1.0D6, &
+       case ('tfcbv')
+          call parse_real_variable('tfcbv', tfcbv, 1.0D4, 1.0D6, &
                'TF coil power conv. bldg volume (m3)')
-       case ('TRCL')
-          call parse_real_variable('TRCL', trcl, 0.0D0, 10.0D0, &
+       case ('trcl')
+          call parse_real_variable('trcl', trcl, 0.0D0, 10.0D0, &
                'Transport clearance between comps (m)')
-       case ('TRIV')
-          call parse_real_variable('TRIV', triv, 1.0D4, 1.0D6, &
+       case ('triv')
+          call parse_real_variable('triv', triv, 1.0D4, 1.0D6, &
                'Tritium building volume (m3)')
-       case ('WGT')
-          call parse_real_variable('WGT', wgt, 1.0D4, 1.0D6, &
+       case ('wgt')
+          call parse_real_variable('wgt', wgt, 1.0D4, 1.0D6, &
                'Reactor building crane capacity (kg)')
-       case ('WGT2')
-          call parse_real_variable('WGT2', wgt2, 1.0D4, 1.0D6, &
+       case ('wgt2')
+          call parse_real_variable('wgt2', wgt2, 1.0D4, 1.0D6, &
                'Hot cell crane capacity (kg)')
-       case ('WSVFAC')
-          call parse_real_variable('WSVFAC', wsvfac, 0.9D0, 3.0D0, &
+       case ('wsvfac')
+          call parse_real_variable('wsvfac', wsvfac, 0.9D0, 3.0D0, &
                'Warm shop building volume multiplier')
 
           !  Energy storage settings
 
-       case ('ISCENR')
-          call parse_int_variable('ISCENR', iscenr, 1, 3, &
+       case ('iscenr')
+          call parse_int_variable('iscenr', iscenr, 1, 3, &
                'Switch for energy storage option')
 
           !  Output file options settings
 
-       case ('SECT01', 'SECT02', 'SECT03', 'SECT04', 'SECT05', &
-            'SECT06', 'SECT07', 'SECT08', 'SECT09', 'SECT10', &
-            'SECT11', 'SECT12', 'SECT13', 'SECT14', 'SECT15', &
-            'SECT16', 'SECT17', 'SECT18', 'SECT19', 'SECT20', &
-            'SECT21')
+       case ('sect01', 'sect02', 'sect03', 'sect04', 'sect05', &
+            'sect06', 'sect07', 'sect08', 'sect09', 'sect10', &
+            'sect11', 'sect12', 'sect13', 'sect14', 'sect15', &
+            'sect16', 'sect17', 'sect18', 'sect19', 'sect20', &
+            'sect21')
           write(outfile,*) ' '
           write(outfile,*) '**********'
           write(outfile,*) 'SECT flags are now ignored -'
@@ -2256,272 +2259,272 @@ contains
 
           !  Vacuum system settings
 
-       case ('NTYPE')
-          call parse_int_variable('NTYPE', ntype, 0, 1, &
+       case ('ntype')
+          call parse_int_variable('ntype', ntype, 0, 1, &
                'Pump type')
-       case ('PBASE')
-          call parse_real_variable('PBASE', pbase, 1.0D-8, 1.0D-3, &
+       case ('pbase')
+          call parse_real_variable('pbase', pbase, 1.0D-8, 1.0D-3, &
                'Base pressure (Pa)')
-       case ('PRDIV')
-          call parse_real_variable('PRDIV', prdiv, 0.0D0, 10.0D0, &
+       case ('prdiv')
+          call parse_real_variable('prdiv', prdiv, 0.0D0, 10.0D0, &
                'Divertor chamber pressure in burn (Pa)')
-       case ('RAT')
-          call parse_real_variable('RAT', rat, 1.0D-10, 1.0D-6, &
+       case ('rat')
+          call parse_real_variable('rat', rat, 1.0D-10, 1.0D-6, &
                'Plas chamber wall outgas rate (Pa-m/s)')
-       case ('TN')
-          call parse_real_variable('TN', tn, 1.0D0, 1.0D3, &
+       case ('tn')
+          call parse_real_variable('tn', tn, 1.0D0, 1.0D3, &
                'Neutral gas temp in chamber (K)')
 
           !  Stellarator settings
 
-       case ('BMN')
-          call parse_real_variable('BMN', bmn, 1.0D-4, 1.0D-2, &
+       case ('bmn')
+          call parse_real_variable('bmn', bmn, 1.0D-4, 1.0D-2, &
                'Relative radial field perturbation')
-       case ('F_ASYM')
-          call parse_real_variable('F_ASYM', f_asym, 0.9D0, 2.0D0, &
+       case ('f_asym')
+          call parse_real_variable('f_asym', f_asym, 0.9D0, 2.0D0, &
                'Heat load peaking factor')
-       case ('F_RAD')
-          call parse_real_variable('F_RAD', f_rad, 0.0D0, 1.0D0, &
+       case ('f_rad')
+          call parse_real_variable('f_rad', f_rad, 0.0D0, 1.0D0, &
                'Radiated power fraction in SOL')
-       case ('F_W')
-          call parse_real_variable('F_W', f_w, 0.1D0, 1.0D0, &
+       case ('f_w')
+          call parse_real_variable('f_w', f_w, 0.1D0, 1.0D0, &
                'Island size fraction factor')
-       case ('FDIVWET')
-          call parse_real_variable('FDIVWET', fdivwet, 0.01D0, 1.0D0, &
+       case ('fdivwet')
+          call parse_real_variable('fdivwet', fdivwet, 0.01D0, 1.0D0, &
                'Wetted area fraction of divertor plates')
-       case ('FLPITCH')
-          call parse_real_variable('FLPITCH', flpitch, 1.0D-4, 1.0D-2, &
+       case ('flpitch')
+          call parse_real_variable('flpitch', flpitch, 1.0D-4, 1.0D-2, &
                'Field line pitch (rad)')
-       case ('IOTABAR')
-          call parse_real_variable('IOTABAR', iotabar, 0.1D0, 10.0D0, &
+       case ('iotabar')
+          call parse_real_variable('iotabar', iotabar, 0.1D0, 10.0D0, &
                'Stellarator rotational transform')
-       case ('ISTHTR')
-          call parse_int_variable('ISTHTR', isthtr, 1, 3, &
+       case ('isthtr')
+          call parse_int_variable('isthtr', isthtr, 1, 3, &
                'Stellarator method of auxiliary heating')
-       case ('M_RES')
-          call parse_int_variable('M_RES', m_res, 1, 10, &
+       case ('m_res')
+          call parse_int_variable('m_res', m_res, 1, 10, &
                'Poloidal resonance number')
-       case ('N_RES')
-          call parse_int_variable('N_RES', n_res, 3, 6, &
+       case ('n_res')
+          call parse_int_variable('n_res', n_res, 3, 6, &
                'Toroidal resonance number')
-       case ('SHEAR')
-          call parse_real_variable('SHEAR', shear, 0.1D0, 10.0D0, &
+       case ('shear')
+          call parse_real_variable('shear', shear, 0.1D0, 10.0D0, &
                'Magnetic shear')
-       case ('VMEC_INFO_FILE')
-          call parse_string_variable('VMEC_INFO_FILE', vmec_info_file, &
+       case ('vmec_info_file')
+          call parse_string_variable('vmec_info_file', vmec_info_file, &
                'VMEC information filename')
-       case ('VMEC_RMN_FILE')
-          call parse_string_variable('VMEC_RMN_FILE', vmec_rmn_file, &
+       case ('vmec_rmn_file')
+          call parse_string_variable('vmec_rmn_file', vmec_rmn_file, &
                'VMEC R(m,n) filename')
-       case ('VMEC_ZMN_FILE')
-          call parse_string_variable('VMEC_ZMN_FILE', vmec_zmn_file, &
+       case ('vmec_zmn_file')
+          call parse_string_variable('vmec_zmn_file', vmec_zmn_file, &
                'VMEC Z(m,n) filename')
 
           !  Inertial Fusion Energy plant settings
 
-       case ('BLDR')
-          call parse_real_variable('BLDR', bldr, 0.0D0, 10.0D0, &
+       case ('bldr')
+          call parse_real_variable('bldr', bldr, 0.0D0, 10.0D0, &
                'IFE blanket radial thickness (m)')
-       case ('BLDZL')
-          call parse_real_variable('BLDZL', bldzl, 0.0D0, 10.0D0, &
+       case ('bldzl')
+          call parse_real_variable('bldzl', bldzl, 0.0D0, 10.0D0, &
                'IFE blanket bottom part thickness (m)')
-       case ('BLDZU')
-          call parse_real_variable('BLDZU', bldzu, 0.0D0, 10.0D0, &
+       case ('bldzu')
+          call parse_real_variable('bldzu', bldzu, 0.0D0, 10.0D0, &
                'IFE blanket top part thickness (m)')
-       case ('BLMATF')  !  N.B. actually a 2-D array
-          call parse_real_array('BLMATF', blmatf, isub1, 3*(maxmat+1), &
+       case ('blmatf')  !  N.B. actually a 2-D array
+          call parse_real_array('blmatf', blmatf, isub1, 3*(maxmat+1), &
                'IFE blanket material fraction', icode)
-       case ('CDRIV0')
-          call parse_real_variable('CDRIV0', cdriv0, 50.0D0, 500.0D0, &
+       case ('cdriv0')
+          call parse_real_variable('cdriv0', cdriv0, 50.0D0, 500.0D0, &
                'IFE driver cost offset (M$)')
-       case ('CDRIV1')
-          call parse_real_variable('CDRIV1', cdriv1, 50.0D0, 500.0D0, &
+       case ('cdriv1')
+          call parse_real_variable('cdriv1', cdriv1, 50.0D0, 500.0D0, &
                'IFE driver cost offset (M$)')
-       case ('CDRIV2')
-          call parse_real_variable('CDRIV2', cdriv2, 50.0D0, 500.0D0, &
+       case ('cdriv2')
+          call parse_real_variable('cdriv2', cdriv2, 50.0D0, 500.0D0, &
                'IFE driver cost offset (M$)')
-       case ('CHDZL')
-          call parse_real_variable('CHDZL', chdzl, 0.0D0, 10.0D0, &
+       case ('chdzl')
+          call parse_real_variable('chdzl', chdzl, 0.0D0, 10.0D0, &
                'IFE chamber bottom part thickness (m)')
-       case ('CHDZU')
-          call parse_real_variable('CHDZU', chdzu, 0.0D0, 10.0D0, &
+       case ('chdzu')
+          call parse_real_variable('chdzu', chdzu, 0.0D0, 10.0D0, &
                'IFE chamber top part thickness (m)')
-       case ('CHMATF')
-          call parse_real_array('CHMATF', chmatf, isub1, maxmat+1, &
+       case ('chmatf')
+          call parse_real_array('chmatf', chmatf, isub1, maxmat+1, &
                'IFE chamber material fraction', icode)
-       case ('CHRAD')
-          call parse_real_variable('CHRAD', chrad, 0.1D0, 20.0D0, &
+       case ('chrad')
+          call parse_real_variable('chrad', chrad, 0.1D0, 20.0D0, &
                'IFE chamber radial thickness (m)')
-       case ('DCDRV0')
-          call parse_real_variable('DCDRV0', dcdrv0, 0.0D0, 200.0D0, &
+       case ('dcdrv0')
+          call parse_real_variable('dcdrv0', dcdrv0, 0.0D0, 200.0D0, &
                'IFE driver cost gradient (M$/MJ)')
-       case ('DCDRV1')
-          call parse_real_variable('DCDRV1', dcdrv1, 0.0D0, 200.0D0, &
+       case ('dcdrv1')
+          call parse_real_variable('dcdrv1', dcdrv1, 0.0D0, 200.0D0, &
                'IFE driver cost gradient (M$/MJ)')
-       case ('DCDRV2')
-          call parse_real_variable('DCDRV2', dcdrv2, 0.0D0, 200.0D0, &
+       case ('dcdrv2')
+          call parse_real_variable('dcdrv2', dcdrv2, 0.0D0, 200.0D0, &
                'IFE driver cost gradient (M$/MJ)')
-       case ('DRVEFF')
-          call parse_real_variable('DRVEFF', drveff, 0.01D0, 1.0D0, &
+       case ('drveff')
+          call parse_real_variable('drveff', drveff, 0.01D0, 1.0D0, &
                'IFE driver efficiency')
-       case ('EDRIVE')
-          call parse_real_variable('EDRIVE', edrive, 1.0D5, 50.0D6, &
+       case ('edrive')
+          call parse_real_variable('edrive', edrive, 1.0D5, 50.0D6, &
                'IFE driver energy (J)')
-       case ('ETAVE')
-          call parse_real_array('ETAVE', etave, isub1, 10, &
+       case ('etave')
+          call parse_real_array('etave', etave, isub1, 10, &
                'IFE driver efficiency vs driver energy', icode)
-       case ('FBREED')
-          call parse_real_variable('FBREED', fbreed, 0.0D0, 0.999D0, &
+       case ('fbreed')
+          call parse_real_variable('fbreed', fbreed, 0.0D0, 0.999D0, &
                'Fraction of breeder outside core')
-       case ('FBURN')
-          call parse_real_variable('FBURN', fburn, 0.01D0, 1.0D0, &
+       case ('fburn')
+          call parse_real_variable('fburn', fburn, 0.01D0, 1.0D0, &
                'IFE burn fraction')
-       case ('FLIRAD')
-          call parse_real_variable('FLIRAD', flirad, 0.0D0, 10.0D0, &
+       case ('flirad')
+          call parse_real_variable('flirad', flirad, 0.0D0, 10.0D0, &
                'Radius of FLiBe inlet (HYLIFE) (m)')
-       case ('FRRMAX')
-          call parse_real_variable('FRRMAX', frrmax, 1.0D-6, 1.0D0, &
+       case ('frrmax')
+          call parse_real_variable('frrmax', frrmax, 1.0D-6, 1.0D0, &
                'F-value for IFE repetition rate')
-       case ('FWDR')
-          call parse_real_variable('FWDR', fwdr, 0.0D0, 10.0D0, &
+       case ('fwdr')
+          call parse_real_variable('fwdr', fwdr, 0.0D0, 10.0D0, &
                'IFE first wall radial thickness (m)')
-       case ('FWDZL')
-          call parse_real_variable('FWDZL', fwdzl, 0.0D0, 10.0D0, &
+       case ('fwdzl')
+          call parse_real_variable('fwdzl', fwdzl, 0.0D0, 10.0D0, &
                'IFE first wall bottom part thickness (m)')
-       case ('FWDZU')
-          call parse_real_variable('FWDZU', fwdzu, 0.0D0, 10.0D0, &
+       case ('fwdzu')
+          call parse_real_variable('fwdzu', fwdzu, 0.0D0, 10.0D0, &
                'IFE first wall top part thickness (m)')
-       case ('FWMATF')  !  N.B. actually a 2-D array
-          call parse_real_array('FWMATF', fwmatf, isub1, 3*(maxmat+1), &
+       case ('fwmatf')  !  N.B. actually a 2-D array
+          call parse_real_array('fwmatf', fwmatf, isub1, 3*(maxmat+1), &
                'IFE first wall material fraction', icode)
-       case ('GAINVE')
-          call parse_real_array('GAINVE', gainve, isub1, 10, &
+       case ('gainve')
+          call parse_real_array('gainve', gainve, isub1, 10, &
                'IFE target gain vs driver energy', icode)
-       case ('IFEDRV')
-          call parse_int_variable('IFEDRV', ifedrv, -1, 2, &
+       case ('ifedrv')
+          call parse_int_variable('ifedrv', ifedrv, -1, 2, &
                'IFE driver type')
-       case ('IFETYP')
-          call parse_int_variable('IFETYP', ifetyp, 0, 3, &
+       case ('ifetyp')
+          call parse_int_variable('ifetyp', ifetyp, 0, 3, &
                'IFE device build type')
-       case ('MCDRIV')
-          call parse_real_variable('MCDRIV', mcdriv, 0.1D0, 10.0D0, &
+       case ('mcdriv')
+          call parse_real_variable('mcdriv', mcdriv, 0.1D0, 10.0D0, &
                'IFE driver cost multiplier')
-       case ('PDRIVE')
-          call parse_real_variable('PDRIVE', pdrive, 1.0D6, 200.0D6, &
+       case ('pdrive')
+          call parse_real_variable('pdrive', pdrive, 1.0D6, 200.0D6, &
                'IFE driver power to target (W)')
-       case ('PIFECR')
-          call parse_real_variable('PIFECR', pifecr, 0.0D0, 100.0D0, &
+       case ('pifecr')
+          call parse_real_variable('pifecr', pifecr, 0.0D0, 100.0D0, &
                'IFE cryogenic power (MW)')
-       case ('PTARGF')
-          call parse_real_variable('PTARGF', ptargf, 0.1D0, 100.0D0, &
+       case ('ptargf')
+          call parse_real_variable('ptargf', ptargf, 0.1D0, 100.0D0, &
                'IFE target factory power at 6Hz (MW)')
-       case ('RRMAX')
-          call parse_real_variable('RRMAX', rrmax, 1.0D0, 50.0D0, &
+       case ('rrmax')
+          call parse_real_variable('rrmax', rrmax, 1.0D0, 50.0D0, &
                'Maximum IFE repetition rate (Hz)')
-       case ('SHDR')
-          call parse_real_variable('SHDR', shdr, 0.0D0, 10.0D0, &
+       case ('shdr')
+          call parse_real_variable('shdr', shdr, 0.0D0, 10.0D0, &
                'IFE shield radial thickness (m)')
-       case ('SHDZL')
-          call parse_real_variable('SHDZL', shdzl, 0.0D0, 10.0D0, &
+       case ('shdzl')
+          call parse_real_variable('shdzl', shdzl, 0.0D0, 10.0D0, &
                'IFE shield bottom part thickness (m)')
-       case ('SHDZU')
-          call parse_real_variable('SHDZU', shdzu, 0.0D0, 10.0D0, &
+       case ('shdzu')
+          call parse_real_variable('shdzu', shdzu, 0.0D0, 10.0D0, &
                'IFE shield top part thickness (m)')
-       case ('SHMATF')  !  N.B. actually a 2-D array
-          call parse_real_array('SHMATF', shmatf, isub1, 3*(maxmat+1), &
+       case ('shmatf')  !  N.B. actually a 2-D array
+          call parse_real_array('shmatf', shmatf, isub1, 3*(maxmat+1), &
                'IFE shield material fraction', icode)
-       case ('SOMBDR')
-          call parse_real_variable('SOMBDR', sombdr, 0.0D0, 10.0D0, &
+       case ('sombdr')
+          call parse_real_variable('sombdr', sombdr, 0.0D0, 10.0D0, &
                'Radius of SOMBRERO blanket bottom (m)')
-       case ('SOMTDR')
-          call parse_real_variable('SOMTDR', somtdr, 0.0D0, 10.0D0, &
+       case ('somtdr')
+          call parse_real_variable('somtdr', somtdr, 0.0D0, 10.0D0, &
                'Radius of SOMBRERO blanket top (m)')
-       case ('TGAIN')
-          call parse_real_variable('TGAIN', tgain, 1.0D0, 500.0D0, &
+       case ('tgain')
+          call parse_real_variable('tgain', tgain, 1.0D0, 500.0D0, &
                'IFE target gain')
-       case ('UCCARB')
-          call parse_real_variable('UCCARB', uccarb, 10.0D0, 1.0D3, &
+       case ('uccarb')
+          call parse_real_variable('uccarb', uccarb, 10.0D0, 1.0D3, &
                'Cost of carbon cloth ($/kg)')
-       case ('UCCONC')
-          call parse_real_variable('UCCONC', ucconc, 0.1D0, 1.0D3, &
+       case ('ucconc')
+          call parse_real_variable('ucconc', ucconc, 0.1D0, 1.0D3, &
                'Cost of concrete ($/kg)')
-       case ('UCFLIB')
-          call parse_real_variable('UCFLIB', ucflib, 10.0D0, 1.0D3, &
+       case ('ucflib')
+          call parse_real_variable('ucflib', ucflib, 10.0D0, 1.0D3, &
                'Cost of FLiBe ($/kg)')
-       case ('UCTARG')
-          call parse_real_variable('UCTARG', uctarg, 0.1D0, 1.0D3, &
+       case ('uctarg')
+          call parse_real_variable('uctarg', uctarg, 0.1D0, 1.0D3, &
                'Cost per IFE target ($/target)')
-       case ('V1DR')
-          call parse_real_variable('V1DR', v1dr, 0.0D0, 10.0D0, &
+       case ('v1dr')
+          call parse_real_variable('v1dr', v1dr, 0.0D0, 10.0D0, &
                'IFE void 1 radial thickness (m)')
-       case ('V1DZL')
-          call parse_real_variable('V1DZL', v1dzl, 0.0D0, 10.0D0, &
+       case ('v1dzl')
+          call parse_real_variable('v1dzl', v1dzl, 0.0D0, 10.0D0, &
                'IFE void 1 bottom part thickness (m)')
-       case ('V1DZU')
-          call parse_real_variable('V1DZU', v1dzu, 0.0D0, 10.0D0, &
+       case ('v1dzu')
+          call parse_real_variable('v1dzu', v1dzu, 0.0D0, 10.0D0, &
                'IFE void 1 top part thickness (m)')
-       case ('V1MATF')  !  N.B. actually a 2-D array
-          call parse_real_array('V1MATF', v1matf, isub1, 3*(maxmat+1), &
+       case ('v1matf')  !  N.B. actually a 2-D array
+          call parse_real_array('v1matf', v1matf, isub1, 3*(maxmat+1), &
                'IFE void 1 material fraction', icode)
-       case ('V2DR')
-          call parse_real_variable('V2DR', v2dr, 0.0D0, 10.0D0, &
+       case ('v2dr')
+          call parse_real_variable('v2dr', v2dr, 0.0D0, 10.0D0, &
                'IFE void 2 radial thickness (m)')
-       case ('V2DZL')
-          call parse_real_variable('V2DZL', v2dzl, 0.0D0, 10.0D0, &
+       case ('v2dzl')
+          call parse_real_variable('v2dzl', v2dzl, 0.0D0, 10.0D0, &
                'IFE void 2 bottom part thickness (m)')
-       case ('V2DZU')
-          call parse_real_variable('V2DZU', v2dzu, 0.0D0, 10.0D0, &
+       case ('v2dzu')
+          call parse_real_variable('v2dzu', v2dzu, 0.0D0, 10.0D0, &
                'IFE void 2 top part thickness (m)')
-       case ('V2MATF')  !  N.B. actually a 2-D array
-          call parse_real_array('V2MATF', v2matf, isub1, 3*(maxmat+1), &
+       case ('v2matf')  !  N.B. actually a 2-D array
+          call parse_real_array('v2matf', v2matf, isub1, 3*(maxmat+1), &
                'IFE void 2 material fraction', icode)
-       case ('V3DR')
-          call parse_real_variable('V3DR', v3dr, 0.0D0, 50.0D0, &
+       case ('v3dr')
+          call parse_real_variable('v3dr', v3dr, 0.0D0, 50.0D0, &
                'IFE void 3 radial thickness (m)')
-       case ('V3DZL')
-          call parse_real_variable('V3DZL', v3dzl, 0.0D0, 30.0D0, &
+       case ('v3dzl')
+          call parse_real_variable('v3dzl', v3dzl, 0.0D0, 30.0D0, &
                'IFE void 3 bottom part thickness (m)')
-       case ('V3DZU')
-          call parse_real_variable('V3DZU', v3dzu, 0.0D0, 30.0D0, &
+       case ('v3dzu')
+          call parse_real_variable('v3dzu', v3dzu, 0.0D0, 30.0D0, &
                'IFE void 3 top part thickness (m)')
-       case ('V3MATF')  !  N.B. actually a 2-D array
-          call parse_real_array('V3MATF', v3matf, isub1, 3*(maxmat+1), &
+       case ('v3matf')  !  N.B. actually a 2-D array
+          call parse_real_array('v3matf', v3matf, isub1, 3*(maxmat+1), &
                'IFE void 3 material fraction', icode)
 
           !  Hydrogen plant settings
 
-       case ('ETAHHTEN')
-          call parse_real_variable('ETAHHTEN', etahhten, 0.0D0, 1.48D0, &
+       case ('etahhten')
+          call parse_real_variable('etahhten', etahhten, 0.0D0, 1.48D0, &
                'H production efficiency for HTEN')
-       case ('ETAHHTEX')
-          call parse_real_variable('ETAHHTEX', etahhtex, 0.0D0, 1.19D0, &
+       case ('etahhtex')
+          call parse_real_variable('etahhtex', etahhtex, 0.0D0, 1.19D0, &
                'H production efficiency for HTEX')
-       case ('ETAHLTE')
-          call parse_real_variable('ETAHLTE', etahlte, 0.0D0, 1.0D0, &
+       case ('etahlte')
+          call parse_real_variable('etahlte', etahlte, 0.0D0, 1.0D0, &
                'H production efficiency for LTE')
-       case ('ETAHTH')
-          call parse_real_variable('ETAHTH', etahth, 0.0D0, 1.0D0, &
+       case ('etahth')
+          call parse_real_variable('etahth', etahth, 0.0D0, 1.0D0, &
                'H production efficiency for TH')
-       case ('HELECMW')
-          call parse_real_variable('HELECMW', helecmw, 0.0D0, 8000.0D0, &
+       case ('helecmw')
+          call parse_real_variable('helecmw', helecmw, 0.0D0, 8000.0D0, &
                'Electrical power for H production (MW)')
-       case ('HTHERMMW')
-          call parse_real_variable('HTHERMMW', hthermmw, 0.0D0, 8000.0D0, &
+       case ('hthermmw')
+          call parse_real_variable('hthermmw', hthermmw, 0.0D0, 8000.0D0, &
                'Thermal power for H production (MW)')
-       case ('IHPLANT')
-          call parse_int_variable('IHPLANT', ihplant, 0, 4, &
+       case ('ihplant')
+          call parse_int_variable('ihplant', ihplant, 0, 4, &
                'Hydrogen Production Plant')
-       case ('UCHHTEN')
-          call parse_real_variable('UCHHTEN', uchhten, 0.0D0, 2000.0D0, &
+       case ('uchhten')
+          call parse_real_variable('uchhten', uchhten, 0.0D0, 2000.0D0, &
                'Unit cost of HTEN H production ($/kW)')
-       case ('UCHHTEX')
-          call parse_real_variable('UCHHTEX', uchhtex, 0.0D0, 2000.0D0, &
+       case ('uchhtex')
+          call parse_real_variable('uchhtex', uchhtex, 0.0D0, 2000.0D0, &
                'Unit cost of HTEX H production ($/kW)')
-       case ('UCHLTE')
-          call parse_real_variable('UCHLTE', uchlte, 0.0D0, 2000.0D0, &
+       case ('uchlte')
+          call parse_real_variable('uchlte', uchlte, 0.0D0, 2000.0D0, &
                'Unit cost of LTE H production ($/kW)')
-       case ('UCHTH')
-          call parse_real_variable('UCHTH', uchth, 0.0D0, 2000.0D0, &
+       case ('uchth')
+          call parse_real_variable('uchth', uchth, 0.0D0, 2000.0D0, &
                'Unit cost of TH H production ($/kW)')
 
        case default
@@ -4044,9 +4047,10 @@ contains
     !+ad_desc  variable <CODE>varlen</CODE>.
     !+ad_prob  None
     !+ad_call  get_subscript
-    !+ad_call  upper_case
+    !+ad_call  lower_case
     !+ad_hist  05/01/04 PJK Initial F90 version
     !+ad_hist  14/01/13 PJK Used maxlen for character array size
+    !+ad_hist  19/05/15 PJK Variable name is now returned in lower case
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -4070,23 +4074,23 @@ contains
 
     line1 = line
 
-    ! *** Convert string to upper case
+    ! *** Convert string to lower case
 
-    call upper_case(line)
+    call lower_case(line)
 
     varlen = 0
     ifrom = iptr
 
     ! *** First character must be alphabetic
 
-    if ((line(iptr:iptr) < 'A').or.(line(iptr:iptr) > 'Z')) goto 1000
+    if ((line(iptr:iptr) < 'a').or.(line(iptr:iptr) > 'z')) goto 1000
     iptr = iptr + 1
     if (iptr > linelen) goto 1000
 
     ! *** Now parse the rest of the letters (must be alphanumeric or _ )
 
 10  continue
-    if ( ((line(iptr:iptr) >= 'A').and.(line(iptr:iptr) <= 'Z')).or. &
+    if ( ((line(iptr:iptr) >= 'a').and.(line(iptr:iptr) <= 'z')).or. &
          ((line(iptr:iptr) == '_')).or. &
          ((line(iptr:iptr) >= '0').and.(line(iptr:iptr) <= '9')) ) then
        iptr = iptr + 1
@@ -4320,6 +4324,67 @@ contains
     end if
 
   end subroutine upper_case
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine lower_case(string,start,finish)
+
+    !+ad_name  lower_case
+    !+ad_summ  Routine that converts a (sub-)string to lowercase
+    !+ad_type  Subroutine
+    !+ad_auth  P J Knight, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  string : input string   : character string of interest
+    !+ad_args  start  : optional input integer  : starting character for conversion
+    !+ad_args  finish : optional input integer  : final character for conversion
+    !+ad_desc  This routine converts the specified section of a string
+    !+ad_desc  to lowercase. By default, the whole string will be converted.
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  19/05/15 PJK Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+
+    character(len=*), intent(inout) :: string
+    integer, optional, intent(in) :: start,finish
+
+    !  Local variables
+
+    character(len=1) :: letter
+    character(len=27) :: lowtab = 'abcdefghijklmnopqrstuvwxyz_'
+    integer :: loop, i
+
+    integer :: first, last
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (present(start)) then
+       first = start
+    else
+       first = 1
+    end if
+
+    if (present(finish)) then
+       last = finish
+    else
+       last = len(string)
+    end if
+
+    if (first <= last) then
+       do loop = first,last
+          letter = string(loop:loop)
+          i = index('ABCDEFGHIJKLMNOPQRSTUVWXYZ_',letter)
+          if (i > 0) string(loop:loop) = lowtab(i:i)
+       end do
+    end if
+
+  end subroutine lower_case
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
