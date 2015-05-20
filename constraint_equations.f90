@@ -441,7 +441,9 @@ contains
        case (17)  !  Equation for radiation power upper limit
           !  pradmaxpv is the maximum possible power/vol that can be radiated
 
-          pradmaxpv = pinjmw/vol + palppv + pchargepv + pohmpv
+          !pradmaxpv = pinjmw/vol + palppv + pchargepv + pohmpv
+          ! Take account of alpha losses.
+          pradmaxpv = pinjmw/vol + palppv*falpha + pchargepv + pohmpv
           cc(i) = 1.0D0 - fradpwr * pradmaxpv / pradpv
           if (present(con)) then
              con(i) = pradmaxpv * (1.0D0 - cc(i))

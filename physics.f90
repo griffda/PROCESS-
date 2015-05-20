@@ -118,7 +118,7 @@ module physics_module
   !  Local variables
 
   integer :: iscz
-  real(kind(1.0D0)) :: vcritx, photon_wall
+  real(kind(1.0D0)) :: vcritx, photon_wall, rad_fraction
 
 contains
 
@@ -485,6 +485,9 @@ contains
     end if
 
     call culblm(bt,dnbeta,plascur,rminor,betalim)
+    
+    ! Calculate some derived quantities that may not have been defined earlier
+    rad_fraction = pradmw / (falpha*palpmw+pchargemw+pohmmw+pinjmw)
 
   end subroutine physics
 
@@ -3349,7 +3352,8 @@ contains
     select case (isc)
 
     case (1)  !  Neo-Alcator scaling (ohmic)
-       tauee = taueena
+       !tauee = taueena
+       tauee = hfact * taueena
        gtaue = 0.0D0
        ptaue = 1.0D0
        qtaue = 0.0D0
@@ -3775,6 +3779,7 @@ contains
     !  Global energy confinement time
 
     taueff = ((ratio + 1.0D0)/(ratio/tauei + 1.0D0/tauee))
+    
 
     ftaue = (tauee-gtaue) / &
          (n20**ptaue * (te/10.0D0)**qtaue * powerht**rtaue)
@@ -4690,10 +4695,11 @@ contains
          plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
          xarea,zeff,ptrez,ptriz,taueezz,taueiz,taueffz,powerhtz)
 
-    if (iscz < 3) then  !  only laws 1 and 2 are affected???
-       ptrez = ptrez/hhh
-       ptriz = ptriz/hhh
-    end if
+    ! MDK All the scaling laws now contain hfact, so this code no longer required.
+    !if (iscz < 3) then  !  only laws 1 and 2 are affected???
+    !   ptrez = ptrez/hhh
+    !   ptriz = ptriz/hhh
+    !end if
 
     !  At power balance, fhz is zero.
 
@@ -5596,8 +5602,8 @@ contains
     end if
     call ovarre(outfile,'Total core radiation power (MW)', '(pcoreradmw)',pcoreradmw)
     call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', pedgeradmw)
-    call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw)
-    
+    call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw)    
+    call ovarre(outfile,'Radiation fraction','(rad_fraction)',rad_fraction)    
     call ovarre(outfile,'Nominal mean radiation load on inside surface of reactor (MW/m2)','(photon_wall)',photon_wall)
     call ovarre(outfile,'Nominal mean neutron load on inside surface of reactor (MW/m2)','(wallmw)',wallmw)    
 
@@ -5693,7 +5699,9 @@ contains
     call ovarrf(outfile,'Global energy confinement time (s)','(taueff)',taueff)
     call ovarrf(outfile,'Ion energy confinement time (s)','(tauei)',tauei)
     call ovarrf(outfile,'Electron energy confinement time (s)','(tauee)',tauee)
-    call ovarre(outfile,'n-tau (s/m3)','(dntau)',dntau)
+    call ovarre(outfile,'n.tau = Volume-average electron density x Energy confinement time (s/m3)','(dntau)',dntau)
+    call ocmmnt(outfile,'Triple product = Vol-average electron density x Vol-average electron temperature x Energy confinement time:')
+    call ovarre(outfile,'Triple product  (keV s/m3)','(dntau*te)',dntau*te)
     call ovarre(outfile,'Transport loss power assumed in scaling law (MW)', &
          '(powerht)',powerht)
     call ovarin(outfile,'Switch for radiation loss term usage in power balance', &

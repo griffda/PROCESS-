@@ -247,7 +247,7 @@ process.o: availability.o buildings.o constraint_equations.o costs.o current_dri
   divertor.o error_handling.o evaluators.o global_variables.o ife.o \
   impurity_radiation.o input.o machine_build.o numerics.o output.o pfcoil.o physics.o \
   plant_power.o pulse.o rfp.o scan.o sctfcoil.o startup.o stellarator.o structure.o \
-  tfcoil.o vacuum.o
+  tfcoil.o vacuum.o maths_library.o
 pulse.o: error_handling.o global_variables.o maths_library.o output.o physics.o
 refprop.o:
 refprop_interface.o: error_handling.o refprop.o

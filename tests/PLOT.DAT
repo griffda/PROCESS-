@@ -2,7 +2,7 @@
 Pulsed tokamak model                            
 Net_electric_power_(MW)   0.5000E+03
 Ifail____________________ 0.1000E+01
-Sqsumsq__________________ 0.3560E-09
+Sqsumsq__________________ 0.1883E-09
 Electric_cost_(mil/kwh)__ 0.0000E+00
 Capital_cost_(mil/kwh)___ 0.0000E+00
 Fuel_cost_(mil/kwh)______ 0.0000E+00
@@ -26,7 +26,7 @@ H-fact_Iter_Power________ 0.2181E+01
 H-fact_Iter_Offset_______ 0.1950E+01
 Fusion_Power_(MW)________ 0.1575E+04
 nb_Fusion_Power_(MW)_____ 0.1961E+02
-Wall_Load_(MW/m^2)_______ 0.9565E+00
+Wall_Load_(MW/m^2)_______ 0.9564E+00
 Injection_Power_(MW)_____ 0.5000E+02
 Inject_Pwr_Wall_Plug_(MW) 0.1250E+03
 Heating_Power_(MW)_______ 0.0000E+00
@@ -34,7 +34,7 @@ Current_Drive_(MW)_______ 0.5000E+02
 Big_Q____________________ 0.3092E+02
 Bootstrap_Fraction_______ 0.3513E+00
 Neutral_Beam_Energy_(MeV) 0.1000E+01
-Divertor_Heat_(MW/m^2)___ 0.6779E+01
+Divertor_Heat_(MW/m^2)___ 0.6778E+01
 TF_coil_Power_(MW)_______ 0.0000E+00
 TF_coil_weight_(kg)______ 0.1012E+08
 vM_stress_in_TF_case_(Pa) 0.6600E+09
@@ -45,16 +45,16 @@ Coolant_Fraction_Ctr.____ 0.3000E+00
 C/P_coolant_radius_(m)___ 0.5000E-02
 C/P_coolant_velocity(m/s) 0.2000E+02
 C/P_pump_power_(MW)______ 0.0000E+00
-PF_coil_Power_(MW)_______ 0.1059E+01
-PF_coil_weight_(kg)______ 0.4055E+07
-Gross_Elect_Pwr_(MW)_____ 0.7108E+03
+PF_coil_Power_(MW)_______ 0.1058E+01
+PF_coil_weight_(kg)______ 0.4018E+07
+Gross_Elect_Pwr_(MW)_____ 0.7107E+03
 Net_electric_Pwr_(MW)____ 0.5000E+03
 Recirculating_Fraction___ 0.2965E+00
 Psep/R___________________ 0.1700E+02
 fimpvar__________________ 0.2439E-03
 Tot._radiation_power_(MW) 0.2090E+03
-First_wall_peak_temp_(K)_ 0.9775E+03
+First_wall_peak_temp_(K)_ 0.9774E+03
 Cu_frac_TFC_conductor____ 0.6402E+00
-Winding_pack_area_TFC(m2) 0.6569E+00
+Winding_pack_area_TFC(m2) 0.6568E+00
 Conductor_area_TFC_(m2)__ 0.1263E+00
 Area_TF_inboard_leg_(m2)_ 0.9147E+00

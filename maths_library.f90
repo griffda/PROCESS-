@@ -87,7 +87,7 @@ module maths_library
 
   public :: ellipke,find_y_nonuniform_x,gamfun,hybrd,linesolv,qpsub, &
        quanc8,sumup3,svd,tril,vmcon,zeroin, eshellvol, dshellvol, &
-       eshellarea, dshellarea
+       eshellarea, dshellarea, binomial
 
 contains
 
@@ -420,6 +420,23 @@ contains
 
   end subroutine ellipke
 
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  real(kind(1.0D0))  function binomial(n,k) result(coefficient)
+    ! This outputs a real approximation to the coefficient
+    ! http://en.wikipedia.org/wiki/Binomial_coefficient#Multiplicative_formula
+    implicit none
+    integer, intent(in) :: n, k
+    integer :: numerator, i
+    if (k == 0) then
+        coefficient = 1
+    else        
+        coefficient = 1.0D0
+        do i = 1, k
+            numerator = n + 1 -i
+            coefficient = coefficient * real(numerator)/real(i)
+        end do
+    end if
+  end function binomial
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   recursive real(kind(1.0D0)) function gamfun(x) result(gamma)

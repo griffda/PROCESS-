@@ -432,6 +432,9 @@ contains
        case ('verbose')
           call parse_int_variable('verbose', verbose, 0, 1, &
                'Switch for diagnostic output')
+       case ('run_tests')
+          call parse_int_variable('run_tests', run_tests, 0, 1, &
+               'Switch for running built-in tests')
 
           !  Numerical solver settings
 
@@ -583,7 +586,10 @@ contains
                'Flag to scale beta coefficient with R/a')
        case ('hfact')
           call parse_real_variable('hfact', hfact, 0.01D0, 10.0D0, &
-               'Energy confinement time H factor')
+               'Energy confinement time H factor')               
+       case ('taumax')
+          call parse_real_variable('taumax', taumax, 0.1D0, 100.0D0, &
+               'Maximum allowed energy confinement time (s)')               
        case ('ibss')
           call parse_int_variable('ibss', ibss, 1, 4, &
                'Switch for bootstrap scaling')

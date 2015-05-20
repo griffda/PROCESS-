@@ -43,6 +43,7 @@ module availability_module
   use times_variables
   use vacuum_variables
   use maths_library
+  use global_variables
 
   implicit none
 
@@ -720,7 +721,7 @@ contains
     call ovarre(outfile,'Probability of failure per operational day', '(div_prob_fail)',div_prob_fail)
     call ovarre(outfile,'Repair time (years)', '(div_umain_time)',div_umain_time)
     call ovarre(outfile,'Reference value for cycle life', '(div_nref)',div_nref)
-    call ovarre(outfile,'The cycle when failure is with 100% certain', '(div_nu)',div_nu)
+    call ovarre(outfile,'The cycle when failure is 100% certain', '(div_nu)',div_nu)
     call ovarre(outfile,'Number of cycles between planned replacements', '(n)',n)
     call ovarre(outfile,'Unplanned unavailability', '(u_unplanned_div)', u_unplanned_div)   
     call oblnkl(outfile)
@@ -801,7 +802,7 @@ contains
     call ovarre(outfile,'Probability of failure per operational day', '(fwbs_prob_fail)',fwbs_prob_fail)
     call ovarre(outfile,'Repair time (years)', '(fwbs_umain_time)',fwbs_umain_time)
     call ovarre(outfile,'Reference value for cycle life', '(fwbs_nref)',fwbs_nref)
-    call ovarre(outfile,'The cycle when failure is with 100% certain', '(fwbs_nu)',fwbs_nu)
+    call ovarre(outfile,'The cycle when failure is 100% certain', '(fwbs_nu)',fwbs_nu)
     call ovarre(outfile,'Number of cycles between planned replacements', '(n)',n)
     call ovarre(outfile,'Unplanned unavailability', '(u_unplanned_fwbs)', u_unplanned_fwbs)
     call oblnkl(outfile)
@@ -935,12 +936,9 @@ contains
     !+ad_auth  J Morris, CCFE, Culham Science Centre
     !+ad_cont  None
     !+ad_args  outfile : input integer : output file unit
-    !+ad_args  iprint : input integer : switch for writing to output
-    ! file (1=yes)
-    !+ad_args  u_unplanned_vacuum : output real : unplanned
-    ! unavailability of vacuum system
-    !+ad_desc  This routine calculates the unplanned unavailability
-    ! of the vacuum system,
+    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
+    !+ad_args  u_unplanned_vacuum : output real : unplanned unavailability of vacuum system
+    !+ad_desc  This routine calculates the unplanned unavailability of the vacuum system,
     !+ad_desc  using the methodology outlined in the 2014 EUROfusion
     !+ad_desc  RAMI report.
     !+ad_prob  None
@@ -951,6 +949,8 @@ contains
     !+ad_call  gamfun
     !+ad_hist  02/12/14 JM  Initial version
     !+ad_hist  18/12/14 JM  Corrected calculation now with binomial coefficients
+    !+ad_hist  20/05/15 MDK New binomial routine (maths_library) and revised code
+    !+ad_hist  here to resemble engineering paper more closely.
     !+ad_stat  Okay
     !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in
     ! PROCESS&quot;
@@ -966,12 +966,12 @@ contains
 
     ! Local variables
 
-    integer :: i, j, k, total_pumps
+    integer :: i, j, k, total_pumps, n
     real(kind(1.0D0)) :: cryo_failure_rate, num_redundancy_pumps, cryo_main_time
     real(kind(1.0D0)) :: cryo_nfailure_rate, t_down
-    real(kind(1.0D0)) :: pump_failures, n_shutdown, t_op_bt, sum_vals
+    real(kind(1.0D0)) :: pump_failures, n_shutdown, t_op_bt, sum_prob
 
-    real(kind(1.0D0)), dimension(vpumpn + redun_vac + 1) :: coefficients, vac_fail_pdf
+    real(kind(1.0D0)), dimension(vpumpn + redun_vac + 1) :: vac_fail_p
     
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -982,7 +982,7 @@ contains
     !  Operational time between shutdowns
     t_op_bt = t_operation/(n_shutdown + 1.0D0)
 
-    !  Cryopump maintenance time
+    !  Cryopump maintenance time (y) = 2 months
     cryo_main_time = 1.0D0/6.0D0
 
     !  Total pumps = pumps + redundant pumps
@@ -997,41 +997,37 @@ contains
 
     !  probability of no pump failure per operational period
     cryo_nfailure_rate = 1.0D0 - cryo_failure_rate
+    
+    sum_prob = 0.0D0
+    do n = redun_vac + 1, total_pumps
+    
+        !  Probability for n failures in the operational period, n > number of redundant pumps
+        vac_fail_p(n) = binomial(total_pumps,n)*(cryo_nfailure_rate**(total_pumps-n))*(cryo_failure_rate**n)  
 
-    !  binomial coefficients
-    do i = 0, total_pumps
-       coefficients(i+1) = gamfun(total_pumps+1.0D0)/(gamfun(i+1.0D0)*&
-            gamfun(total_pumps - i + 1.0D0))
+        !  calculate sum in formula for downtime        
+        sum_prob = sum_prob + vac_fail_p(n) * (n - redun_vac)
     end do
-
-    !  calculate probability density function
-    do j = 0, total_pumps
-       vac_fail_pdf(j+1) = coefficients(j+1)*(cryo_nfailure_rate**(total_pumps-j))*(cryo_failure_rate**j)
-    end do
-
-    !  calculate sum
-    sum_vals = 0.0D0
-    do k = 0, total_pumps
-       if (k > redun_vac) then
-          sum_vals = sum_vals + ((k - redun_vac)*vac_fail_pdf(k+1))
-       end if
-    end do
-
-    !  Number of pump failures in one operational period.
-    pump_failures = sum_vals
-    ! Total down time in reactor life
-    t_down = sum_vals*cryo_main_time*(n_shutdown + 1.0D0)
+    ! Total down-time in reactor life
+    t_down = (n_shutdown + 1.0D0) * cryo_main_time * sum_prob
     
     !  Total vacuum unplanned unavailability
     u_unplanned_vacuum = max(0.005, t_down / (t_operation + t_down))
     
     if (iprint /= 1) return
+    
+    !if (verbose == 1) then
+        !do n = redun_vac + 1, total_pumps
+            !write(outfile,*) 'binomial', binomial(total_pumps,n)
+            !call ovarre(outfile, 'cryo_failure_rate**n', '(cryo_failure_rate**n)', cryo_failure_rate**n)
+            !call ovarre(outfile, 'Probability for n failures in the operational period, n > redun_vac', '(vac_fail_p(n))', vac_fail_p(n))
+        !end do
+    !end if
 
     call ocmmnt(outfile,'Vacuum:')    
     call oblnkl(outfile)
     call ovarin(outfile,'Number of pumps (excluding redundant pumps)', '(vpumpn)', vpumpn)
     call ovarin(outfile,'Number of redundant pumps', '(redun_vac)', redun_vac)
-    call ovarre(outfile,'Expected number of pump failures in one operational period', '(pump_failures)', pump_failures)
+    call ovarre(outfile,'Total unplanned down-time due to pumps, excl fixed 0.5% (years)', '(t_down)', t_down)
     call ovarre(outfile,'Vacuum unplanned unavailability', '(u_unplanned_vacuum)', u_unplanned_vacuum)
     call oblnkl(outfile)
 

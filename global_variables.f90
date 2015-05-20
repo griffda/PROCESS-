@@ -33,6 +33,8 @@ module global_variables
   !+ad_varc            <LI> = 0 turn off diagnostics
   !+ad_varc            <LI> = 1 turn on diagnostics</UL>
   integer :: verbose = 0
+  !+ad_vars  run_tests /0/ : Turns on built-in tests if set to 1<UL>
+  integer :: run_tests = 0
 
 end module global_variables
 
@@ -287,6 +289,9 @@ module physics_variables
   real(kind(1.0D0)), dimension(ipnlaws) :: hfac = 0.0D0
   !+ad_vars  hfact /1.0/ : H factor on energy confinement times (iteration variable 10)
   real(kind(1.0D0)) :: hfact = 1.0D0
+  ! Issue #219
+  !+ad_vars  taumax /10/ : Maximum allowed energy confinement time (s)
+  real(kind(1.0D0)) :: taumax = 10.0D0  
   !+ad_vars  ibss /3/ : switch for bootstrap current scaling:<UL>
   !+ad_varc        <LI> = 1 ITER 1989 bootstrap scaling (high R/a only);
   !+ad_varc        <LI> = 2 for Nevins et al general scaling;
@@ -2912,8 +2917,8 @@ module cost_variables
   real(kind(1.0D0)) :: fwbs_prob_fail = 0.0002D0
   !+ad_vars  fwbs_umain_time /0.25/ : Fwbs unplanned maintenance time (years)
   real(kind(1.0D0)) :: fwbs_umain_time = 0.25D0
-  !+ad_vars  redun_vacp /75/ : Vacuum system pump redundancy level (%)
-  real(kind(1.0D0)) :: redun_vacp = 10.0D0
+  !+ad_vars  redun_vacp /25/ : Vacuum system pump redundancy level (%)
+  real(kind(1.0D0)) :: redun_vacp = 25.0D0
   !+ad_vars  redun_vac : Number of redundant vacuum pumps
   integer :: redun_vac = 0
   !+ad_vars  t_operation : Operational time (yrs)

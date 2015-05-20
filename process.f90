@@ -76,7 +76,11 @@ program process
 
   !  Initialise things
   call init
-
+  
+  ! Run built-in tests.
+  ! These are distinct from the tests that are dependent on 'unit_test'.
+  if (run_tests == 1) call runtests
+  
   !  Call equation solver (HYBRD)
   call eqslv(ifail)
 
@@ -272,7 +276,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '393    Release Date :: 2015-05-11'
+       '395    Release Date :: 2015-05-20'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1576,6 +1580,21 @@ subroutine output(outfile)
 
 end subroutine output
 
+subroutine runtests
+  use maths_library
+  use global_variables
+  use numerics
+  use process_output
+  implicit none
+  call ovarre(nout,'Binomial coefficients C(5,0): 1', '(binomial(5,0))', binomial(5,0))
+  call ovarre(nout,'Binomial coefficients C(5,1): 5', '(binomial(5,1))', binomial(5,1))
+  call ovarre(nout,'Binomial coefficients C(5,2): 10', '(binomial(5,2))', binomial(5,2))
+  call ovarre(nout,'Binomial coefficients C(5,3): 10', '(binomial(5,3))', binomial(5,3))
+  call ovarre(nout,'Binomial coefficients C(5,4): 5', '(binomial(5,4))', binomial(5,4))
+  call ovarre(nout,'Binomial coefficients C(5,5): 1', '(binomial(5,5))', binomial(5,5))
+end subroutine runtests
+  
+
 ! SVN 145: New CICC plots for User Guide
 ! SVN 149: MGF power usage correction
 ! SVN 150: Machine parameters use Fortran intrinsics
@@ -1909,4 +1928,5 @@ end subroutine output
 ! GIT 388: Minor fix to version number
 ! GIT 389: New release. See release notes.
 ! GIT 390: Rewrite of calc_u_unplanned_fwbs and calc_u_unplanned_divertor
-! GIT 393: Issue #290 Improvements to thermohtdraulic model of first wall.
+! GIT 393: Issue #290 Improvements to thermohydraulic model of first wall.
+! GIT 395: Rewrite to vacuum pump availability. New Binomial routine.
