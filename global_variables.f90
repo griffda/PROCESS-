@@ -139,6 +139,7 @@ module physics_variables
   !+ad_hist  13/11/14 PJK Added fkzohm
   !+ad_hist  13/11/14 PJK Modified iradloss usage
   !+ad_hist  17/11/14 PJK Added palpfwmw
+  !+ad_hist  20/05/15 RK  Added iscdens, fgwped for pedestal density scaling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -263,6 +264,9 @@ module physics_variables
   !+ad_vars  ffwal /0.92/ : factor to convert plasma surface area to first wall
   !+ad_varc                 area in neutron wall load calculation (iwalld=1)
   real(kind(1.0D0)) :: ffwal = 0.92D0
+  !+ad_vars  fgwped /0.80/ : fraction of Greenwald density to set as pedestal-top density
+  !+ad_varc                  (ipedestal=1, iscdens=1)
+  real(kind(1.0D0)) :: fgwped = 0.80D0
   !+ad_vars  fhe3 /0.0/ : helium-3 fuel fraction
   real(kind(1.0D0)) :: fhe3 = 0.0D0
   !+ad_vars  figmer : physics figure of merit (= plascur*aspect**sbar, where sbar=1)
@@ -356,6 +360,10 @@ module physics_variables
   !+ad_varc             <LI> = 0 use original parabolic profiles;
   !+ad_varc             <LI> = 1 use pedestal profiles </UL>
   integer :: ipedestal = 1
+  !+ad_vars  iscdens /0/ : switch for pedestal profiles:<UL>
+  !+ad_varc             <LI> = 0 set pedestal-top density manually using neped;
+  !+ad_varc             <LI> = 1 set pedestal-top density as fgwped * Greenwald density limit </UL>
+  integer :: iscdens = 0
   !+ad_vars  neped /0.0/ : electron density of pedestal (/m3) (ipedestal=1)
   real(kind(1.0D0)) :: neped = 0.0D0
   !+ad_vars  nesep /0.0/ : electron density at separatrix (/m3) (ipedestal=1)

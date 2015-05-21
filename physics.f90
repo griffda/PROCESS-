@@ -81,6 +81,7 @@ module physics_module
   !+ad_hist  13/05/14 PJK Added plasma_composition routine, impurity_radiation_module
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  01/10/14 PJK Added numerics
+  !+ad_hist  20/05/15  RK Added iscdens, fgwped for pedestal density scaling
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -237,10 +238,6 @@ contains
        call plasma_composition
     end if
 
-    !  Calculate density and temperature profile quantities
-
-    call plasma_profiles
-
     !  Calculate plasma current
 
     call culcur(alphaj,alphap,bt,eps,icurr,iprofile,kappa,kappa95,p0, &
@@ -251,6 +248,17 @@ contains
     else
        q95 = q  !  i.e. input (or iteration variable) value
     end if
+    
+    !  Calculate density and temperature profile quantities
+    !  If ipedestal = 1 and iscdens = 1 then set pedestal density to
+    !    fgwped * Greenwald density limit
+    !  Note: this used to be done before plasma current
+    
+    if ((ipedestal == 1).and.(iscdens == 1)) then
+      neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
+    end if
+    
+    call plasma_profiles
 
     btot = sqrt(bt**2 + bp**2)
     betap = beta * ( btot/bp )**2

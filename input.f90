@@ -344,6 +344,7 @@ contains
     !+ad_hist  12/04/15 JM  Removed costr, astr, bstr, estr, lblnkt
     !+ad_hist  22/04/15 JM  Added etapsu
     !+ad_hist  19/05/15 PJK Variable names in calls now lowercase
+    !+ad_hist  20/05/15 RK  Added iscdens, fgwped
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -543,6 +544,9 @@ contains
        case ('ffwal')
           call parse_real_variable('ffwal', ffwal, 0.0D0, 10.0D0, &
                'Wall load fiddle factor')
+       case ('fgwped')
+          call parse_real_variable('fgwped', fgwped, 0.01D0, 5.0D0, &
+               'Fraction of n_G at pedestal top')
        case ('fhe3')
           call parse_real_variable('fhe3', fhe3, 0.0D0, 1.0D0, &
                'Helium-3 fuel fraction')
@@ -681,6 +685,9 @@ contains
        case ('isc')
           call parse_int_variable('isc', isc, 1, ipnlaws, &
                'Switch for confinement scaling law')
+       case ('iscdens')
+          call parse_int_variable('iscdens', iscdens, 0, 1, &
+               'Switch for pedestal density scaling')
        case ('iscrp')
           call parse_int_variable('iscrp', iscrp, 0, 1, &
                'Switch for scrapeoff width')
