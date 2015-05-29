@@ -5,15 +5,15 @@
  ************************************** Power Reactor Optimisation Code ***************************************
  **************************************************************************************************************
  
-   Program : PROCESS
-   Version : 395    Release Date :: 2015-05-20
- Date/time : Thu May 28 16:28:25 BST 2015
+   Program : /home/mkovari/PROCESS/develop/process.exe
+   Version : 396    Release Date :: 2015-05-29
+ Date/time : Fri May 29 09:46:30 BST 2015
       User : mkovari (Michael Kovari)
  Directory : /home/mkovari/PROCESS/develop/tests
  
  **************************************************************************************************************
  
- PROCESS 395 : Run on Thu May 28 16:28:25 BST 2015 by Michael Kovari
+ PROCESS 396 : Run on Fri May 29 09:46:30 BST 2015 by Michael Kovari
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  
  DEMO 1 model for TBR model  * Short descriptive title for the run

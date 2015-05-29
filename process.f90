@@ -161,7 +161,7 @@ subroutine init
 
   !  Local variables
   integer :: i, nargs
-  character(len=100) :: fileprefix
+  character(len=100) :: fileprefix, executable
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -276,6 +276,7 @@ subroutine inform(progid)
   !  Local variables
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
+  character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
        '396    Release Date :: 2015-05-29'
   character(len=72), dimension(10) :: id
@@ -290,7 +291,7 @@ subroutine inform(progid)
 
   !  Program name
   progname = 'PROCESS'
-
+  call get_command_argument(0,executable)
   !  Create temporary data file
   call system('/bin/rm -f '// tempfile // char(0))
   call system('/bin/touch '// tempfile // char(0))
@@ -325,7 +326,8 @@ subroutine inform(progid)
 
   !  Annotate information and store in PROGID character array
   !  for use in other program units via the routine argument
-  progid(1) = '  Program : ' // progname
+  !progid(1) = '  Program : ' // progname
+  progid(1) = '  Program : ' // executable
   progid(2) = '  Version : ' // progver
   progid(3) = 'Date/time : ' // id(1)
   progid(4) = '     User : ' // trim(id(2)) // ' (' // trim(id(3)) // ')'
