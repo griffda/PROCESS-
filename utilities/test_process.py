@@ -2,11 +2,13 @@
 """
 Code to test PROCESS Solver by choosing different starting values
 for the iteration parameters around the initial values in the INPUT file
+Code modified by Sarah Medley in April 2015 to also calculate Q (fusion power/injected power) and output this to SolverTest.out
 
 Author: H. Lux (Hanni.Lux@ccfe.ac.uk)
 
 Date: November 2013 (Initial version)
       March 2014 (Initial release version)
+      April 2015 - Code modified by Sarah Medley to also calculate Q - see above
 
 - Input files -
 test_process.conf  in the same directory as this file
@@ -37,21 +39,18 @@ Ifail values:
 #######################
 #imported libraries
 
+from process_io_lib.mfile import MFile
 import time
 import sys
 from numpy import histogram
 import argparse
-try:
-    from process_io_lib.process_dicts import IFAIL_SUCCESS
-except ImportError:
-    print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!")
-    exit()
+from process_io_lib.process_dicts import IFAIL_SUCCESS
 from process_io_lib.process_config import TestProcessConfig
 from process_io_lib.process_funcs import get_neqns_itervars,\
-    get_variable_range, check_input_error,\
+    update_ixc_bounds, get_variable_range, check_input_error,\
     vary_iteration_variables, process_stopped,\
-    get_solution_from_mfile, process_warnings
+    get_solution_from_mfile,\
+    process_warnings
 
 
 if __name__ == '__main__':
@@ -72,6 +71,8 @@ if __name__ == '__main__':
 
     NEQNS, ITERVARS = get_neqns_itervars()
 
+    update_ixc_bounds()
+
     LBS, UBS = get_variable_range(ITERVARS, CONFIG.factor)
 
     #############################################################
@@ -82,6 +83,9 @@ if __name__ == '__main__':
     TABLE_CON = []
     TABLE_IN  = []
     TABLE_OUT = []
+    TABLE_POWF = []
+    TABLE_PINJ = []
+    TABLE_RATIO_POWF_PINJ = []
 
     WARNING_CNT = 0
 
@@ -103,9 +107,21 @@ if __name__ == '__main__':
         if process_stopped():
             ifail, objective_function, constraints, table_sol, table_res \
                 = -1, '0', '0', ['0']*len(ITERVARS), ['0']*NEQNS
+            fusion_power = '0'
+            injected_power = '0'
+            ratio_fus_inj_power = 0
         else:
             ifail, objective_function, constraints, table_sol, table_res \
                 = get_solution_from_mfile(NEQNS, len(ITERVARS))
+
+            # Access MFILE.DAT
+            m_file = MFile(filename="MFILE.DAT")
+            ind = -1 # last scan point
+
+            # Obtain fusion power and injected power from MFILE.DAT
+            fusion_power = m_file.data['powfmw'].get_scan(ind)
+            injected_power = m_file.data['pinjmw'].get_scan(ind)
+            ratio_fus_inj_power = fusion_power/injected_power
 
             if ifail == IFAIL_SUCCESS and process_warnings():
                 WARNING_CNT += 1
@@ -114,6 +130,9 @@ if __name__ == '__main__':
         TABLE_ERR += [ifail]
         TABLE_OBJ += [objective_function]
         TABLE_CON += [constraints]
+        TABLE_POWF += [fusion_power]
+        TABLE_PINJ += [injected_power]
+        TABLE_RATIO_POWF_PINJ += [ratio_fus_inj_power]
 
         i += 1
 
@@ -150,6 +169,9 @@ if __name__ == '__main__':
         OUTHEADER += 'itvar%03i\t' %(var_no+1)
     for con_no in range(NEQNS):          #constraints
         OUTHEADER += 'constr%03i\t' %(con_no+1)
+    #OUTHEADER += 'Fusion_Power_(MW)\t'
+    #OUTHEADER += 'Injected_Power_(MW)\t'
+    OUTHEADER += 'Ratio_fus_inj_power_(MW)'
     OUTHEADER += '\n'
     OUTFILE.write(OUTHEADER)
 
@@ -160,6 +182,9 @@ if __name__ == '__main__':
             outstr += '%s\t' %valuein
         for valueout in TABLE_OUT[i]:
             outstr += '%s\t'%valueout
+        #outstr += '%d\t' % TABLE_POWF[i]
+        #outstr += '%d\t' % TABLE_PINJ[i]
+        outstr += '%.1f\t' % TABLE_RATIO_POWF_PINJ[i]
         outstr += '\n'
         OUTFILE.write(outstr)
 
