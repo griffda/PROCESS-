@@ -1063,7 +1063,7 @@ module fwbs_variables
   !+ad_vars  fdiv /0.115/ : area fraction taken up by divertor 
   real(kind(1.0D0)) :: fdiv = 0.115D0
   !+ad_vars  fhcd /0.0/ : area fraction covered by heating/current drive
-  !+ad_varc               apparatus plus diagnostics (ipowerflow=1)
+  !+ad_varc               apparatus plus diagnostics 
   real(kind(1.0D0)) :: fhcd = 0.0D0
   !+ad_vars  fhole /0.0/ : area fraction taken up by other holes (not used)
   real(kind(1.0D0)) :: fhole = 0.0D0
@@ -1163,7 +1163,7 @@ module fwbs_variables
   !+ad_vars  fblhebpo /0.6713/ : helium fraction of outboard blanket back plate by volume
   !+ad_varc                     (iblanket=2 (KIT HCPB))
   real(kind(1.0D0)) :: fblhebpo = 0.6713D0
-  !+ad_vars  hcdportsize /1/ : size of heating/current drive ports (iblanket=2 (KIT HCPB)):<UL>
+  !+ad_vars  hcdportsize /1/ : size of heating/current drive ports (iblanket=2 (KIT HCPB)): <UL>
   !+ad_varc                  <LI> = 1 'small'
   !+ad_varc                  <LI> = 2 'large'</UL>
   integer :: hcdportsize = 1
@@ -1300,12 +1300,7 @@ module fwbs_variables
   !+ad_vars  wtshldo : mass of outboard shield (kg)
   real(kind(1.0D0)) :: wtshldo = 0.0D0 
     
-  !  Old stuff to be removed !
-  !###########################
-  
-  !+ad_vars  irefprop /1/ : Switch to use NIST REFPROP routines to obtain fluid properties:<UL>
-  !+ad_varc            <LI> = 0 Use Panos Karditsas algorithms;
-  !+ad_varc            <LI> = 1 Use REFPROP routines</UL>
+  !+ad_vars  irefprop /1/ : obsolete
   integer :: irefprop = 1
   
   real(kind(1.0D0)) :: fblli = 0.0D0
@@ -1336,13 +1331,13 @@ module fwbs_variables
   !+ad_varc                      blanket (HCPB) reference design</UL>
   integer :: blktmodel = 0
   !+ad_vars  declblkt /0.075/ : neutron power deposition decay length of blanket structural material (m)
-  !+ad_varc                     (ipowerflow=1)
+  !+ad_varc                     
   real(kind(1.0D0)) :: declblkt = 0.075D0
   !+ad_vars  declfw /0.075/ : neutron power deposition decay length of first wall structural material (m)
-  !+ad_varc                   (ipowerflow=1)
+  !+ad_varc                   
   real(kind(1.0D0)) :: declfw = 0.075D0
   !+ad_vars  declshld /0.075/ : neutron power deposition decay length of shield structural material (m)
-  !+ad_varc                     (ipowerflow=1)
+  !+ad_varc                     
   real(kind(1.0D0)) :: declshld = 0.075D0	
   !+ad_vars  blkttype /3/ : Switch for blanket type:<UL>
   !+ad_varc            <LI> = 1 WCLL; efficiency taken from WP13-DAS08-T02, EFDA_D_2M97B7
@@ -2234,7 +2229,7 @@ module heat_transport_variables
   !+ad_vars  etahth /0.5/ : efficiency of H production for ihplant=4
   real(kind(1.0D0)) :: etahth = 0.5D0
   !+ad_vars  etahtp /0.95/ : electrical efficiency of primary coolant pumps
-  !+ad_varc                  (ipowerflow=1)
+  !+ad_varc                  
   real(kind(1.0D0)) :: etahtp = 0.95D0
   !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency; input if ipowerflow=0
   !+ad_varc                 or if secondary_cycle=2; otherwise calculated
@@ -2255,35 +2250,34 @@ module heat_transport_variables
   real(kind(1.0D0)) :: fmgdmw = 0.0D0
   !+ad_vars  fpumpblkt /0.005/ : fraction of total blanket thermal power required
   !+ad_varc                      to drive the blanket coolant pumps (default assumes
-  !+ad_varc                      water coolant) (secondary_cycle=0, ipowerflow=1)
+  !+ad_varc                      water coolant) (secondary_cycle=0)
   real(kind(1.0D0)) :: fpumpblkt = 0.005D0
   !+ad_vars  fpumpdiv /0.005/ : fraction of total divertor thermal power required
   !+ad_varc                     to drive the divertor coolant pumps (default assumes
-  !+ad_varc                     water coolant) (ipowerflow=1)
+  !+ad_varc                     water coolant) 
   real(kind(1.0D0)) :: fpumpdiv = 0.005D0
   !+ad_vars  fpumpfw /0.005/ : fraction of total first wall thermal power required
   !+ad_varc                    to drive the FW coolant pumps (default assumes water
-  !+ad_varc                    coolant) (secondary_cycle=0, ipowerflow=1)
+  !+ad_varc                    coolant) (secondary_cycle=0)
   real(kind(1.0D0)) :: fpumpfw = 0.005D0
   !+ad_vars  fpumpshld /0.005/ : fraction of total shield thermal power required
   !+ad_varc                      to drive the shield coolant pumps (default assumes
-  !+ad_varc                      water coolant) (ipowerflow=1)
+  !+ad_varc                      water coolant) 
   real(kind(1.0D0)) :: fpumpshld = 0.005D0
   !+ad_vars  helpow : heat removal at cryogenic temperatures (W)
   real(kind(1.0D0)) :: helpow = 0.0D0
-  !+ad_vars  htpmw /10.0/ : heat transport system electrical pump power (MW)
-  !+ad_varc                 (calculated if ipowerflow=1)
-  real(kind(1.0D0)) :: htpmw = 10.0D0
-  !+ad_vars  htpmw_blkt : blanket coolant mechanical pumping power (MW) (ipowerflow=1)
+  !+ad_vars  htpmw  :: heat transport system electrical pump power (MW)
+  real(kind(1.0D0)) :: htpmw = 0.0D0
+  !+ad_vars  htpmw_blkt : blanket coolant mechanical pumping power (MW) 
   real(kind(1.0D0)) :: htpmw_blkt = 0.0D0
-  !+ad_vars  htpmw_div : divertor coolant mechanical pumping power (MW) (ipowerflow=1)
+  !+ad_vars  htpmw_div : divertor coolant mechanical pumping power (MW) 
   real(kind(1.0D0)) :: htpmw_div = 0.0D0
-  !+ad_vars  htpmw_fw : first wall coolant mechanical pumping power (MW) (ipowerflow=1)
+  !+ad_vars  htpmw_fw : first wall coolant mechanical pumping power (MW) 
   real(kind(1.0D0)) :: htpmw_fw = 0.0D0
-  !+ad_vars  htpmw_shld : shield and vacuum vessel coolant mechanical pumping power (MW) (ipowerflow=1)
+  !+ad_vars  htpmw_shld : shield and vacuum vessel coolant mechanical pumping power (MW) 
   real(kind(1.0D0)) :: htpmw_shld = 0.0D0
   !+ad_vars  htpsecmw : Waste power lost from primary coolant pumps (MW)
-  !+ad_varc             (ipowerflow=1)
+  !+ad_varc             
   real(kind(1.0D0)) :: htpsecmw = 0.0D0
 
   !+ad_vars  ihplant /0/ : switch for hydrogen production plant:<UL>
@@ -2318,14 +2312,14 @@ module heat_transport_variables
   !+ad_vars  iprimdiv /1/ : switch for divertor thermal power destiny:<UL>
   !+ad_varc            <LI> = 0 does not contribute to energy generation cycle;
   !+ad_varc            <LI> = 1 contributes to energy generation cycle</UL>
-  !+ad_varc            (ipowerflow=1) (N.B. is forced to be 1 under certain circumstances)
+  !+ad_varc             (N.B. is forced to be 1 under certain circumstances)
   !integer :: iprimdiv = 1
 
   ! KEEP
   !+ad_vars  iprimshld /1/ : switch for shield thermal power destiny:<UL>
   !+ad_varc             <LI> = 0 does not contribute to energy generation cycle;
   !+ad_varc             <LI> = 1 contributes to energy generation cycle</UL>
-  !+ad_varc             (ipowerflow=1)
+  !+ad_varc             
   integer :: iprimshld = 1
   
   
@@ -2351,10 +2345,8 @@ module heat_transport_variables
   !+ad_vars  priheat : total thermal power removed from fusion core (MW)
   real(kind(1.0D0)) :: priheat = 0.0D0
   !+ad_vars  psecdiv : Low-grade heat lost in divertor (MW)
-  !+ad_varc            (ipowerflow=1)
   real(kind(1.0D0)) :: psecdiv = 0.0D0
   !+ad_vars  psechcd : Low-grade heat lost into HCD apparatus (MW)
-  !+ad_varc            (ipowerflow=1)
   real(kind(1.0D0)) :: psechcd = 0.0D0
   !+ad_vars  psechtmw : Low-grade heat (MW)
   real(kind(1.0D0)) :: psechtmw = 0.0D0
@@ -2364,7 +2356,6 @@ module heat_transport_variables
   real(kind(1.0D0)) :: pseclossmw = 0.0D0
   
   !+ad_vars  psecshld : Low-grade heat deposited in shield (MW)
-  !+ad_varc             (ipowerflow=1)
   real(kind(1.0D0)) :: psecshld = 0.0D0
   !+ad_vars  pthermmw : High-grade heat useful for electric production (MW)
   real(kind(1.0D0)) :: pthermmw = 0.0D0
