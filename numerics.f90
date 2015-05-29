@@ -71,6 +71,7 @@ module numerics
   !+ad_hisc               character(len=...) statement, otherwise
   !+ad_hisc               compilation using gfortran fails
   !+ad_hist  27/02/15 JM  Changed default values for boundu(4) and boundu & l (103)
+  !+ad_hist  27/05/15 MDK Added breeder_f as iteration variable 108
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -83,8 +84,8 @@ module numerics
 
   public
 
-  !+ad_vars  ipnvars /107/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 107
+  !+ad_vars  ipnvars /108/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 108
   !+ad_vars  ipeqns /61/ FIX : number of constraint equations available
   integer, parameter :: ipeqns  = 61
   !+ad_vars  ipnfoms /15/ FIX : number of available figures of merit
@@ -460,7 +461,8 @@ module numerics
        0,  &  !  104
        0,  &  !  105
        0,  &  !  106
-       0   &  !  107
+       0,  &  !  107
+       0   &  !  108       
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -679,8 +681,10 @@ module numerics
        'fnbshinef', &
        !+ad_varc  <LI> (106) ftmargoh (f-value for equation 60)
        'ftmargoh ', &
-       !+ad_varc  <LI> (107) favail (f-value for equation 61)</UL>
-       'favail   '  &
+       !+ad_varc  <LI> (107) favail (f-value for equation 61)
+       'favail   ', &
+       !+ad_varc  <LI> (108) breeder_f: Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)</UL>
+       'breeder_f'  &
        /)
 
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
@@ -794,7 +798,7 @@ module numerics
        0.001D0, &  !  95
        0.001D0, &  !  96
        0.001D0, &  !  97
-       0.001D0, &  !  98
+       10.00D0, &  !  98
        0.001D0, &  !  99
        0.001D0, &  !  100
        1.00D-6, &  !  101
@@ -803,7 +807,8 @@ module numerics
        0.001D0, &  !  104
        0.001D0, &  !  105
        0.001D0, &  !  106
-       0.001D0  &  !  107
+       0.001D0, &  !  107
+       0.060D0  &  !  108
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -915,7 +920,8 @@ module numerics
        1.000D0, &  !  104
        1.000D0, &  !  105
        1.000D0, &  !  106
-       1.000D0  &  !  107
+       1.000D0, &  !  107
+       1.000D0  &  !  108
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

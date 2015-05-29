@@ -24,11 +24,11 @@ icc(17) = 32      * tf coil conduit stress upper limit (sctf)
 icc(18) = 33      * i_op / i_critical (tf coil) (sctf)
 icc(19) = 34      * dump voltage upper limit (sctf)
 icc(20) = 35      * j_winding pack/j_protection upper limit (sctf)
-icc(21) = 56      * pseparatrix/rmajor upper limit
-icc(22) = 61      * minimum availability value
+icc(21) = 52      * tritium breeding ratio lower limit
+icc(22) = 56      * pseparatrix/rmajor upper limit
 
 *---------------Iteration Variables----------------*
-nvar = 36        
+nvar = 40        
 ixc(1) = 2        * bt * Toroidal field on axis (t) (iteration variable 2)
 boundl(2) = 0.01  
 boundu(2) = 100.0  
@@ -81,97 +81,113 @@ ixc(13) = 18      * q * Safety factor 'near' plasma edge (iteration variable 18)
 boundl(18) = 3.0  
 boundu(18) = 100.0  
 
-ixc(14) = 28      * fradpwr * F-value for core radiation power limit
+ixc(14) = 21      * ftburn * F-value for minimum burn time
+boundl(21) = 0.001  
+boundu(21) = 1.0  
+
+ixc(15) = 28      * fradpwr * F-value for core radiation power limit
 boundl(28) = 0.001  
 boundu(28) = 0.99  
 
-ixc(15) = 29      * bore * Central solenoid inboard radius (m)
+ixc(16) = 29      * bore * Central solenoid inboard radius (m)
 boundl(29) = 0.1  
 boundu(29) = 10.0  
 
-ixc(16) = 36      * fbetatry * F-value for beta limit
+ixc(17) = 36      * fbetatry * F-value for beta limit
 boundl(36) = 0.001  
 boundu(36) = 1.0  
 
-ixc(17) = 37      * coheof * Central solenoid overall current density at end of flat-top (a/m2)
+ixc(18) = 37      * coheof * Central solenoid overall current density at end of flat-top (a/m2)
 boundl(37) = 100000.0  
 boundu(37) = 100000000.0  
 
-ixc(18) = 38      * fjohc * F-value for central solenoid current at end-of-flattop
+ixc(19) = 38      * fjohc * F-value for central solenoid current at end-of-flattop
 boundl(38) = 0.01  
 boundu(38) = 0.25  
 
-ixc(19) = 39      * fjohc0 * F-value for central solenoid current at beginning of pulse
+ixc(20) = 39      * fjohc0 * F-value for central solenoid current at beginning of pulse
 boundl(39) = 0.001  
 boundu(39) = 0.25  
 
-ixc(20) = 41      * fcohbop * Ratio of central solenoid overall current density at
+ixc(21) = 41      * fcohbop * Ratio of central solenoid overall current density at
 boundl(41) = 0.001  
 boundu(41) = 1.0  
 
-ixc(21) = 42      * gapoh * Gap between central solenoid and tf coil
+ixc(22) = 42      * gapoh * Gap between central solenoid and tf coil
 boundl(42) = 0.05  
 boundu(42) = 0.1  
 
-ixc(22) = 44      * fvsbrnni * Fraction of the plasma current produced by
+ixc(23) = 44      * fvsbrnni * Fraction of the plasma current produced by
 boundl(44) = 0.001  
 boundu(44) = 1.0  
 
-ixc(23) = 48      * fstrcase * F-value for tf coil case stress
+ixc(24) = 48      * fstrcase * F-value for tf coil case stress
 boundl(48) = 0.001  
 boundu(48) = 1.0  
 
-ixc(24) = 49      * fstrcond * F-value for tf coil conduit stress
+ixc(25) = 49      * fstrcond * F-value for tf coil conduit stress
 boundl(49) = 0.001  
 boundu(49) = 1.0  
 
-ixc(25) = 50      * fiooic * F-value for tf coil operating current / critical
+ixc(26) = 50      * fiooic * F-value for tf coil operating current / critical
 boundl(50) = 0.001  
 boundu(50) = 0.5  
 
-ixc(26) = 51      * fvdump * F-value for dump voltage
+ixc(27) = 51      * fvdump * F-value for dump voltage
 boundl(51) = 0.001  
 boundu(51) = 1.0  
 
-ixc(27) = 53      * fjprot * F-value for tf coil winding pack current density
+ixc(28) = 53      * fjprot * F-value for tf coil winding pack current density
 boundl(53) = 0.001  
 boundu(53) = 1.0  
 
-ixc(28) = 56      * tdmptf * Dump time for tf coil (s)
+ixc(29) = 56      * tdmptf * Dump time for tf coil (s)
 boundl(56) = 10.0  
 boundu(56) = 1000000.0  
 
-ixc(29) = 57      * thkcas * Inboard tf coil case outer (non-plasma side) thickness (m)
+ixc(30) = 57      * thkcas * Inboard tf coil case outer (non-plasma side) thickness (m)
 boundl(57) = 0.05  
 boundu(57) = 1.0  
 
-ixc(30) = 58      * thwcndut * Tf coil conduit case thickness (m)
+ixc(31) = 58      * thwcndut * Tf coil conduit case thickness (m)
 boundl(58) = 0.004  
 boundu(58) = 1.0  
 
-ixc(31) = 59      * fcutfsu * Copper fraction of cable conductor (tf coils)
+ixc(32) = 59      * fcutfsu * Copper fraction of cable conductor (tf coils)
 boundl(59) = 0.001  
 boundu(59) = 1.0  
 
-ixc(32) = 61      * gapds * Gap between inboard vacuum vessel and tf coil (m)
+ixc(33) = 61      * gapds * Gap between inboard vacuum vessel and tf coil (m)
 boundl(61) = 0.12  
 boundu(61) = 10.0  
 
-ixc(33) = 97      * fpsepr * F-value for maximum psep/r limit
+ixc(34) = 89      * ftbr * F-value for minimum tritium breeding ratio
+boundl(89) = 0.001  
+boundu(89) = 1.0  
+
+ixc(35) = 97      * fpsepr * F-value for maximum psep/r limit
 boundl(97) = 0.001  
 boundu(97) = 1.0  
 
-ixc(34) = 102     * fimpvar * Impurity fraction to be used as fimp(impvar)
+ixc(36) = 98      * li6enrich * Lithium-6 enrichment of breeding material (%)
+boundl(98) = 7.4  
+boundu(98) = 100.0  
+
+ixc(37) = 102     * fimpvar * Impurity fraction to be used as fimp(impvar)
 boundl(102) = 1e-06  
 boundu(102) = 0.01  
 
-ixc(35) = 103     * flhthresh * F-value for l-h power threshold
+ixc(38) = 103     * flhthresh * F-value for l-h power threshold
 boundl(103) = 1.0  
 boundu(103) = 1000000.0  
 
-ixc(36) = 107     * favail * F-value for minimum availability (constraint equation 61)
+ixc(39) = 107     * favail * F-value for minimum availability (constraint equation 61)
 boundl(107) = 0.001  
 boundu(107) = 1.0  
+
+ixc(40) = 108     * breeder_f * Volume ratio* li4sio4/(be12ti+li4sio4) (iteration variable 108)
+boundl(108) = 0.001  
+boundu(108) = 1.0  
 
 *-----------------Build Variables------------------*
 blnkith = 0.755  * Inboard blanket thickness (m);
@@ -184,7 +200,6 @@ fwoth = 0.025    * Outboard first wall thickness; initial estimate (m)
 gapds = 0.12     * Gap between inboard vacuum vessel and tf coil (m)
 gapoh = 0.05     * Gap between central solenoid and tf coil
 gapomin = 0.2    * Minimum gap between outboard vacuum vessel and tf coil (m)
-ohcth = 0.7989   * Central solenoid thickness (m)
 scrapli = 0.225  * Gap between plasma and first wall; inboard side (m)
 scraplo = 0.225  * Gap between plasma and first wall; outboard side (m)
 shldith = 0.3    * Inboard shield thickness (m)
@@ -212,6 +227,7 @@ fvdump = 0.7684  * F-value for dump voltage
 fwalld = 0.1196  * F-value for minimum wall load
 pnetelin = 500.0  * Required net electric power (mw)
 pseprmax = 17.0  * Maximum ratio of power crossing the separatrix to
+tbrmin = 1.25    * Minimum tritium breeding ratio
 tbrnmn = 7200.0  * Minimum burn time (s)
 walalw = 8.0     * Allowable wall-load (mw/m2)
 
@@ -219,14 +235,13 @@ walalw = 8.0     * Allowable wall-load (mw/m2)
 *------------------Cost Variables------------------*
 abktflnc = 10.0  * Allowable first wall/blanket neutron
 adivflnc = 20.0  * Allowable divertor heat fluence (mw-yr/m2)
-cfactr = 0.6     * Total plant capacity factor
-cfactr = 0.6     * Total plant capacity factor
-avail_min = 0.5  * Minimum availability (constraint equation 61)
+cfactr = 0.5     * Total plant availability fraction;
+avail_min = 0.45  * Minimum availability (constraint equation 61)
 favail = 0.9367  * F-value for minimum availability (constraint equation 61)
-div_nref =  300000  * Reference value for cycle life of blanket
-div_nu =    800000   * The cycle when the divertor fails with 100% probability
+div_nref = 300000  * Reference value for cycle cycle life of divertor
+div_nu = 800000  * The cycle when the divertor fails with 100% probability
 fwbs_nref = 300000  * Reference value for cycle life of blanket
-fwbs_nu =   800000  * The cycle when the blanket fails with 100% probability
+fwbs_nu = 800000  * The cycle when the blanket fails with 100% probability
 tlife = 40.0     * Plant life (years)
 
 
@@ -248,21 +263,18 @@ zeffdiv = 3.5    * Zeff in the divertor region (if divdum /= 0)
 
 
 *------------------Fwbs Variables------------------*
-fhole = 0.05     * Area fraction taken up by other holes (not used)
-fblbe = 0.47     * Beryllium fraction of blanket by volume
+iblanket = 3     * Switch for blanket model * ccfe hcpb model with tritium breeding ratio calculation
+li6enrich = 95.0  * Lithium-6 enrichment of breeding material (%)
+breeder_f = 0.25  * Volume ratio* li4sio4/(be12ti+li4sio4) (iteration variable 108)
+li6enrich = 95.0  * Lithium-6 enrichment of breeding material (%)
+tbrmin = 1.25    * Minimum tritium breeding ratio
+iblanket_thickness = 3  * Blanket thickness switch * thick   0;75 m inboard; 1;30 m outboard
 secondary_cycle = 3  * Switch for thermodynamic model of power conversion cycle * steam rankine cycle;
 tfwmatmax = 1100.0  * Maximum temperature of first wall material (k) (secondary_cycle>1)
-fwclfr = 0.1     * First wall coolant fraction
-vfshld = 0.6     * Coolant void fraction in shield
-fblli2o = 0.07   * Lithium oxide fraction of blanket by volume
-fbllipb = 0.0    * Lithium lead fraction of blanket by volume
-vfblkt = 0.1     * Coolant void fraction in blanket (blktmodel=0);
 
 
 *-----------------Global Variables-----------------*
-runtitle = test file
-verbose = 1      * Switch for turning on/off diagnostic messages * turn on diagnostics
-run_tests = 0
+runtitle = DEMO 1 model for TBR model  * Short descriptive title for the run
 
 
 *-------------Heat Transport Variables-------------*
@@ -290,7 +302,7 @@ impvar = 13      * Fimp element value to be varied if iteration
 *---------------------Numerics---------------------*
 ioptimz = 1      * Code operation switch * for no optimisation; hybrd only;
 minmax = 7       * Switch for figure-of-merit * capital cost (direct cost if ireactor=0;
-epsvmc = 1e-08   * Error tolerance for vmcon
+epsvmc = 1e-07   * Error tolerance for vmcon
 
 
 *----------------Pf Power Variables----------------*
@@ -328,7 +340,7 @@ ibss = 4         * Switch for bootstrap current scaling * for sauter et al scali
 iculbl = 1       * Switch for beta limit scaling * apply limit to thermal beta;
 impc = 0.0       * Carbon impurity multiplier (imprad_model=0 only)
 impo = 0.0       * Oxygen impurity multiplier (imprad_model=0 only)
-neped = 6.78e+19  * Electron density of pedestal (/m3) (ipedestal=1)
+iscdens = 1      * Switch for pedestal profiles * set pedestal-top density as fgwped * greenwald density limit
 nesep = 2e+19    * Electron density at separatrix (/m3) (ipedestal=1)
 rhopedn = 0.94   * R/a of density pedestal (ipedestal=1)
 rhopedt = 0.94   * R/a of temperature pedestal (ipedestal=1)
@@ -354,7 +366,7 @@ lpulse = 1       * Switch for reactor model * pulsed operation
 *-------------------Scan Module--------------------*
 isweep = 1       * Number of scan points to calculate
 nsweep = 3       * Switch denoting quantity to scan * pnetelin
-sweep = 500.0, 550.0, 600.0, 650.0, 700.0, 750.0, 800.0, 850.0, 900.0, 950.0, 1000.0, 1050.0, 1100.0  * Actual values to use in scan
+sweep = 500.0    * Actual values to use in scan
 
 
 *--------------Stellarator Variables---------------*
@@ -377,8 +389,7 @@ vftf = 0.333     * Coolant fraction of tf coil leg (itfsup=0)
 
 
 *-----------------Times Variables------------------*
-tburn = 10000.0  * Burn time (s) (calculated if lpulse=1)
-tdwell = 600.0   * Time between pulses in a pulsed reactor (s)
+tdwell = 500.0   * Time between pulses in a pulsed reactor (s)
 
 
 *-----------------Vacuum Variables-----------------*

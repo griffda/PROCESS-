@@ -45,7 +45,7 @@ module ccfe_hcpb_module
 
   !  Subroutine declarations
   private
-  public :: ccfe_hcpb
+  public :: ccfe_hcpb, tbr_shimwell
   
   !  Precision variable
   integer, parameter :: double = 8
@@ -1308,8 +1308,10 @@ contains
     if (idivrt == 2) divsur = divsur * 2.0D0
     divmas = divsur * divdens * (1.0D0 - divclfr) * divplt
 
-    !  Blanket mass, excluding coolant (kg)
     !  Blanket Titanium beryllide mass (kg)
+    if (breeder_f < 1.0D-10) breeder_f = 1.0D-10
+    if (breeder_f > 1.0D0  ) breeder_f = 1.0D0
+    fbltibe12 = fblli2sio4 * (1 - breeder_f)/breeder_f
     whtbltibe12 = volblkt * fbltibe12 * 2260.0D0
     
     !  Blanket Lithium orthosilicate mass (kg)
@@ -1331,7 +1333,7 @@ contains
 	!  First wall volume (m^3)
 	volfw = (fwareaib*fwith*(1.0D0-vffwi) + fwareaob*fwoth*(1.0D0-vffwo))
 
-	!  First wall mass (kg)
+	!  First wall mass, excluding armour (kg)
     fwmass = denstl * volfw
     
     !  First wall armour volume (m^3)
@@ -1339,6 +1341,9 @@ contains
     
     !  First wall armour mass (kg)
     fw_armour_mass = fw_armour_vol*W_density
+    
+    ! Total mass of first wall and blanket
+    armour_fw_bl_mass = fw_armour_mass + fwmass + whtblkt
   
   end subroutine
   
@@ -1836,11 +1841,12 @@ contains
     call osubhd(ofile, 'Component Masses :')
     
     call ovarre(ofile, 'First Wall Armour Mass (kg)', '(fw_armour_mass)', fw_armour_mass)
-    call ovarre(ofile, 'First Wall Mass (kg)', '(fwmass)', fwmass)
+    call ovarre(ofile, 'First Wall Mass, excluding armour (kg)', '(fwmass)', fwmass)
     call ovarre(ofile, 'Blanket Mass - Total(kg)', '(whtblkt)', whtblkt)
-    call ovarre(ofile, 'Blanket Mass - TiBe12 (kg)', '(whtbltibe12)', whtbltibe12)
-    call ovarre(ofile, 'Blanket Mass - Li2SiO4 (kg)', '(whtblli4sio4)', whtblli4sio4)
-    call ovarre(ofile, 'Blanket Mass - Steel (kg)', '(whtblss)', whtblss)
+    call ovarre(ofile, '    Blanket Mass - TiBe12 (kg)', '(whtbltibe12)', whtbltibe12)
+    call ovarre(ofile, '    Blanket Mass - Li2SiO4 (kg)', '(whtblli4sio4)', whtblli4sio4)
+    call ovarre(ofile, '    Blanket Mass - Steel (kg)', '(whtblss)', whtblss)
+    call ovarre(ofile, 'Total mass of armour, first wall and blanket (kg)', '(armour_fw_bl_mass)', armour_fw_bl_mass)
     call ovarre(ofile, 'Shield Mass (kg)', '(whtshld)', whtshld)
     call ovarre(ofile, 'Vacuum vessel mass (kg)', '(cryomass)', cryomass)
     
@@ -2190,6 +2196,115 @@ contains
   end function pumppower
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+subroutine tbr_shimwell(outfile, iprint, breeder_f, li6enrich, iblanket_thickness, tbr) 
+    !+ad_name  cprops
+    !+ad_summ  Calculates TBR
+    !+ad_type  Subroutine
+    !+ad_auth  Michael Kovari
+    !+ad_args  breeder_f   : input real : Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)
+    !+ad_args  li6enrich   : input real : lithium-6 enrichment (%)
+    !+ad_args  iblanket_thickness   : input integer : blanket thickness switch
+    !+ad_args  tbr         : output real : 5-year time-averaged tritium breeding ratio
+    !+ad_hist  27/05/15 MDK Initial version
+    !+ad_stat  Okay
+    
+    !  Arguments
+    integer, intent(in) :: iprint, outfile
+    
+    ! Local variables
+    real(kind(1.0D0)), dimension(3) :: v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, &
+                                       v11, v12, v13, v14, v15, v16, v17, v18, v19
+    real(kind(1.0D0)) :: breeder_f, li6enrich, tbr, x, y
+    integer :: iblanket_thickness, i        
+
+    ! Thin blanket:
+v1(1)=  1.93920586301
+v2(1)=  -0.948494854004
+v3(1)=  -0.0186700302911
+v4(1)=  0.483417432982
+v5(1)=  0.785901227724
+v6(1)=  -0.0120169189644
+v7(1)=  -3.45723121388
+v8(1)=  -2.05212472576
+v9(1)=  6.45375263346
+v10(1)= -0.436421277881
+v11(1)= 0.0129809166177
+v12(1)= 2.26116309299
+v13(1)= -3.87538808736
+v14(1)= 1.05778783291
+v15(1)= -3.12644013943
+v16(1)= 1.86242247177
+v17(1)= 0.253324925437
+v18(1)= 0.18795823903
+v19(1)= -0.0256707269253
+    
+    ! Medium blanket
+v1(2)=  1.96122608615
+v2(2)=  -0.860855681012
+v3(2)=  0.0193393390622
+v4(2)=  0.279977226537
+v5(2)=  0.659918133027
+v6(2)=  0.013070435947
+v7(2)=  -3.48450356973
+v8(2)=  -2.3360647329
+v9(2)=  7.38314099334
+v10(2)= -0.365511595682
+v11(2)= -0.0181287662329
+v12(2)= 2.30397890094
+v13(2)= -4.37481611533
+v14(2)= 1.30804004777
+v15(2)= -3.71450110227
+v16(2)= 2.1588023402
+v17(2)= 0.263823845354
+v18(2)= 0.198976219881
+v19(2)= -0.0192924115968
+
+    ! Thick blanket
+v1(3)=  1.95893103797
+v2(3)=  -0.809792727863
+v3(3)=  0.016958778333
+v4(3)=  -0.120230857418
+v5(3)=  0.461211316443
+v6(3)=  -0.0478789050674
+v7(3)=  -2.1978304461
+v8(3)=  -1.38785787744
+v9(3)=  4.93883798388
+v10(3)= -0.223668963335
+v11(3)= 0.0178181886132
+v12(3)= 1.42583418972
+v13(3)= -2.80720698559
+v14(3)= 0.814691647096
+v15(3)= -2.48568193656
+v16(3)= 1.37932384899
+v17(3)= 0.253355839249
+v18(3)= 0.190845918447
+v19(3)= -0.0257699008284    
+    
+    i = iblanket_thickness    
+    y = li6enrich/100.0D0       ! 6Li atom fraction
+    x = breeder_f
+    tbr = v1(i) + v2(i)*x + v3(i)*y + v4(i)*y*x + v5(i)*x**2 + v6(i)*y**2 + v7(i)*x**2*y + &
+          v8(i)*x*y**2 + v9(i)*x**2*y**2 + v10(i)*x**3 + v11(i)*y**3 + v12(i)*y*x**3 + &
+          v13(i)*y**2*x**3 + v14(i)*y**3*x + v15(i)*y**3*x**2 + v16(i)*y**3*x**3 + &
+          v17(i)*log(x) + v18(i)*log(y) + v19(i)*log(x)*log(y)
+    
+    if (iprint == 1) then
+        call ovarrf(outfile, 'Lithium-6 enrichment (%)', '(li6enrich)', li6enrich)
+        call ovarrf(outfile, 'Breeder fraction by volume: Li4SiO4/(Be12Ti+Li4SiO4)', '(breeder_f)', breeder_f)
+        if (i == 1) call ovarin(outfile, 'Blanket thickness choice: THIN (0.53 m inboard, 0.91 m outboard)', '(iblanket_thickness)', iblanket_thickness)
+        if (i == 2) call ovarin(outfile, 'Blanket thickness choice: MEDIUM (0.64 m inboard, 1.11 m outboard)', '(iblanket_thickness)', iblanket_thickness)
+        if (i == 3) call ovarin(outfile, 'Blanket thickness choice: THICK (0.75 m inboard, 1.30 m outboard)', '(iblanket_thickness)', iblanket_thickness)
+        call ovarrf(outfile, 'Tritium breeding ratio (5-year time-averaged)','(tbr)',tbr)
+        
+        call ocmmnt(outfile,'(See "A parameter study of time-varying tritium production in solid-type breeder blankets,') 
+        call ocmmnt(outfile, 'J. Shimwell et al, Fusion Engineering and Design"')
+        call ovarre(outfile, 'For consistency, inboard first wall thicknesses should be 0.03 (m)','(fwith)',fwith)
+        call ovarre(outfile, 'For consistency, outboard first wall thicknesses should be 0.03 (m)','(fwoth)',fwoth)
+        call ovarre(outfile, 'For consistency, first wall armour thickness should be 0.003 (m)','(fw_armour_thickness)',fw_armour_thickness)
+    end if
+
+end subroutine  
 
 end module
     

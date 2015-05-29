@@ -38,7 +38,7 @@ module process_output
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+  use global_variables
   implicit none
 
   public
@@ -432,10 +432,15 @@ contains
     dum20 = varnam
 
     if (file /= mfile) then
-       write(file,10) dum72, dum20, value
+        if (verbose==1) then 
+            write(file,20) dum72, dum20, value
+        else
+            write(file,10) dum72, dum20, value
+        end if            
     end if
 
 10  format(1x,a,t75,a,t100,f10.3)
+20  format(1x,a,t75,a,t100,f13.6)
 
     call ovarre(mfile,descr,varnam,value)
 

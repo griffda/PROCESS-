@@ -374,14 +374,15 @@ subroutine check
         boundu(4) = max(boundu(4), boundl(4))
      end if
 
-     !  Density checks
-
-     if (neped < nesep) then
+     !  Density checks: 
+     !  not required if pedestal is set using Greenwald density (Issue #292)
+     
+     if ((iscdens == 0) .and. (neped < nesep)) then
         fdiags(1) = neped ; fdiags(2) = nesep
         call report_error(151)
      end if
 
-     if ((abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7)) then
+     if ((iscdens == 0) .and. (abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7)) then
         fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
         call report_error(152)
      end if
@@ -391,8 +392,9 @@ subroutine check
      !  volume-averaged density never drops below the pedestal
      !  density. Prevent this by adjusting dene, and its lower bound
      !  (which will only have an effect if this is an optimisation run)
+     !  Not required if pedestal is set using Greenwald density (Issue #292)
 
-     if (dene <= neped) then
+     if ((iscdens == 0) .and. (dene <= neped)) then
         fdiags(1) = dene ; fdiags(2) = neped
         dene = neped*1.001D0
         call report_error(154)

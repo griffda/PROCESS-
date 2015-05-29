@@ -329,6 +329,8 @@ Note that density and temperature can have different pedestal positions
 $\rho_{ped,n}$ (\texttt{rhopedn}) and $\rho_{ped,T}$ (\texttt{rhopedt}) in
 agreement with simulations.
 
+The pedestal density can be set directly (if \texttt{iscdens=1}), or as a fraction of the Greenwald density (if \texttt{iscdens=1}).  The default fraction is 0.8~\cite{Bernert}. 
+
 \subsubsection{Beta limits}
 
 The plasma beta limit~\cite{IPDG,172} is given by
@@ -802,9 +804,12 @@ The models used for the thermoydraulics of the first wall, the profile of deposi
 
 \item{\texttt{iblanket}:} This switch selects between different types of blanket.
 
-In the CCFE HCPB (helium-cooled pebble bed) model (\texttt{iblanket = 1}), the energy deposition in the armour and first wall, blanket and shield are calculated using parametric fits to an MCNP neutron and photon transport model of a sector of a tokamak.  The blanket contains lithium orthosilicate Li$_4$SiO$_4$, titanium beryllide TiBe$_{12}$, helium and Eurofer steel.
+In the CCFE HCPB (helium-cooled pebble bed) model (\texttt{iblanket = 1}), the energy deposition in the armour and first wall, blanket and shield are calculated using parametric fits to an MCNP neutron and photon transport model of a sector of a tokamak.  The blanket contains lithium orthosilicate Li$_4$SiO$_4$, titanium beryllide TiBe$_{12}$, helium and Eurofer steel. 
 
 The KIT HCPB model (\texttt{iblanket = 2}) allows the energy multiplication factor \texttt{emult}, the shielding requirements and tritium breeding ratio to be calculated self-consistently with the blanket and shielding materials and sub-assembly thicknesses, and for constraints to be applied to satisfy the engineering requirements. For further details of this model, see Section~\ref{sec:blanket_neutronics}.
+
+The CCFE HCPB model with tritium breeding ratio (\texttt{iblanket = 3}) has the features of the CCFE HCPB model above, with a set of fitting functions for calculating tritium breeding ratio (TBR).  It requires a choice of \texttt{iblanket\_thickness}, specifiying a THIN, MEDIUM or THICK blanket.  This fixes the values of inboard and outboard blanket thickness, and the initial values of first wall thickness (3 cm) and first wall armour (3 mm).  Note that these last two can be modified by the first wall thermohydraulic module, in which case the output will not be fully self-consistent.  The lithium-6 enrichment and the breeder fraction (Li4SiO4/(Be12Ti+Li4SiO4) by volume) are available as iteration variables, and the minimum TBR can be set as a constraint.  The maximum values of TBR achievable are as follows:\\
+Thin: 1.247, Medium: 1.261, Thick: 1.264.
 
 \item{\texttt{secondary\_cycle }:} This switch controls how the coolant pumping power in the first wall and blanket is determined, and also how the calculation of the plant's thermal to electric conversion efficiency (the secondary cycle thermal efficiency) proceeds. See Section~\ref{sec:powerflow}.
  

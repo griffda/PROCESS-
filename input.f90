@@ -967,7 +967,7 @@ contains
           call parse_real_variable('ptfnucmax', ptfnucmax, 1.0D-6, 1.0D0, &
                'Maximum TF coil nuclear heating (MW/m3)')
        case ('tbrmin')
-          call parse_real_variable('tbrmin', tbrmin, 1.0D0, 2.0D0, &
+          call parse_real_variable('tbrmin', tbrmin, 0.001D0, 2.0D0, &
                'Minimum tritium breeding ratio')
        case ('tbrnmn')
           call parse_real_variable('tbrnmn', tbrnmn, 1.0D-3, 1.0D6, &
@@ -1177,15 +1177,31 @@ contains
           call parse_real_variable('blbuoth', blbuoth, 0.0D0, 2.0D0, &
                'Outboard blanket breeding unit thickness (m)')
        case ('blnkith')
-          call parse_real_variable('blnkith', blnkith, 0.0D0, 10.0D0, &
-               'Inboard blanket thickness (m)')
+          if (iblanket == 3) then
+            !CCFE HCPB model with Tritium Breeding Ratio calculation
+            write(outfile,*) '**********'
+            write(outfile,*) 'ERROR. BLNKITH input is not required for CCFE HCPB model with Tritium Breeding Ratio calculation -'
+            write(outfile,*) 'please remove it from the input file'
+            write(outfile,*) '**********'
+          else          
+            call parse_real_variable('blnkith', blnkith, 0.0D0, 10.0D0, &
+                'Inboard blanket thickness (m)')
+          end if
        case ('blnkoth')
-          call parse_real_variable('blnkoth', blnkoth, 0.0D0, 10.0D0, &
-               'Outboard blanket thickness (m)')
+           if (iblanket == 3) then
+            !CCFE HCPB model with Tritium Breeding Ratio calculation
+            write(outfile,*) '**********'
+            write(outfile,*) 'ERROR. BLNKOTH input is not required for CCFE HCPB model with Tritium Breeding Ratio calculation -'
+            write(outfile,*) 'please remove it from the input file'
+            write(outfile,*) '**********'
+          else     
+            call parse_real_variable('blnkoth', blnkoth, 0.0D0, 10.0D0, &
+                'Outboard blanket thickness (m)')
+          end if
        case ('blnktth')
           write(outfile,*) ' '
           write(outfile,*) '**********'
-          write(outfile,*) 'BLNKTTH is now always calculated rather than input -'
+          write(outfile,*) 'WARNING. BLNKTTH is now always calculated rather than input -'
           write(outfile,*) 'please remove it from the input file'
           write(outfile,*) '**********'
           write(outfile,*) ' '
@@ -1193,7 +1209,7 @@ contains
        case ('bcylth')
           write(outfile,*) ' '
           write(outfile,*) '**********'
-          write(outfile,*) 'BCYLTH is now obsolete -'
+          write(outfile,*) 'ERROR. BCYLTH is now obsolete -'
           write(outfile,*) 'please remove it from the input file'
           write(outfile,*) '**********'
           write(outfile,*) ' '
@@ -1765,11 +1781,31 @@ contains
           call parse_int_variable('hcdportsize', hcdportsize, 1, 2, &
                'H/CD port size')
        case ('iblanket')
-          call parse_int_variable('iblanket', iblanket, 1, 5, &
-               'Switch for blanket model')
+          call parse_int_variable('iblanket', iblanket, 1, 3, 'Switch for blanket model')
+          if (iblanket == 3) then
+              fwith = 0.03D0
+              fwoth = 0.03D0
+              fw_armour_thickness = 0.003D0
+          end if
        case ('li6enrich')
-          call parse_real_variable('li6enrich', li6enrich, 0.0D0, 100.0D0, &
+          call parse_real_variable('li6enrich', li6enrich, 7.40D0, 100.0D0, &
                'Li-6 enrichment')
+       case ('breeder_f')
+          call parse_real_variable('breeder_f', breeder_f, 0.00D0, 1.0D0, &
+               'Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)')
+       case ('iblanket_thickness')
+          call parse_int_variable('iblanket_thickness', iblanket_thickness, 1, 3, &
+               'Blanket thickness switch')
+          if (iblanket_thickness == 1) then
+            blnkith = 0.53D0
+            blnkoth = 0.91D0
+          else if (iblanket_thickness == 2) then
+            blnkith = 0.64D0
+            blnkoth = 1.11D0
+          else if (iblanket_thickness == 3) then
+            blnkith = 0.75D0
+            blnkoth = 1.30D0
+          end if
        case ('npdiv')
           call parse_int_variable('npdiv', npdiv, 0, 4, &
                'Number of divertor ports')

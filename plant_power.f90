@@ -736,6 +736,10 @@ contains
     call ovarre(outfile,'Maximum PF coil voltage (kV)','(vpfskv)',vpfskv)
     call ovarre(outfile,'Max stored energy in PF coil circuits (MJ)', &
          '(ensxpfm)',ensxpfm)
+    if (ensxpfm < 0)  then
+        call oheadr(outfile,'ERROR Negative stored energy in coils') 
+        write(*,*) 'ERROR Negative stored energy in coils'
+    end if         
 
   end subroutine pfpwr
 

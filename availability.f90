@@ -91,6 +91,7 @@ contains
     !+ad_hist  22/10/14 PJK Modified blanket and first wall lifetime
     !+ad_hisc               calculation; fwlife is calculated in fwbs now
     !+ad_hist  09/02/15 JM  Changed int function to ceiling
+    !+ad_hist  21/05/15 MDK Added capacity factor
     !+ad_stat  Okay
     !+ad_docs  F/PL/PJK/PROCESS/CODE/043
     !
@@ -134,12 +135,11 @@ contains
 
     end if
 
-    !  Plant Availability (Use new model if IAVAIL = 2)
-
+    !  Plant Availability (This subroutine is not used for IAVAIL = 2)
+    ! if iavail = 0 use input value for cfactr
     if (iavail == 1) then
-
+        ! calculate cfactr using Taylor and Ward 1999 model; 
        !  Which component has the shorter life?
-
        if (divlife < bktlife) then
           ld = divlife
           lb = bktlife
@@ -151,19 +151,15 @@ contains
        end if
 
        !  Number of outages between each combined outage
-
        n = ceiling(lb/ld) - 1
 
        !  Planned unavailability
-
-       uplanned = (n*td + tcomrepl) / &
-            ( (n+1)*ld + (n*td + tcomrepl) )
+       uplanned = (n*td + tcomrepl) / ( (n+1)*ld + (n*td + tcomrepl) )
 
        !  Unplanned unavailability
        !  Rather than simply summing the individual terms, the
        !  following protects against the total availability becoming zero
        !  or negative
-
        uutot = uubop
        uutot = uutot + (1.0D0 - uutot)*uucd
        uutot = uutot + (1.0D0 - uutot)*uudiv
@@ -173,10 +169,11 @@ contains
        uutot = uutot + (1.0D0 - uutot)*uuves
 
        !  Total availability
-
        cfactr = 1.0D0 - (uplanned + uutot - (uplanned*uutot))
-
     end if
+    
+    !  Capacity factor
+    cpfact = cfactr * (tburn / tcycle)   
 
     !  Modify lifetimes to take account of the availability
 

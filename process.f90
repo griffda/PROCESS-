@@ -64,6 +64,7 @@ program process
   use process_output
   use scan_module
   use numerics
+  use ccfe_hcpb_module
 
   implicit none
 
@@ -276,7 +277,7 @@ subroutine inform(progid)
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '395    Release Date :: 2015-05-20'
+       '396    Release Date :: 2015-05-29'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1092,8 +1093,7 @@ subroutine doopt(ifail)
   call ovarin(nout,'Number of iteration variables','(nvar)',nvar)
   call ovarin(nout,'Number of constraints','(neqns)',neqns)
   call ovarin(nout,'Optimisation switch','(ioptimz)',ioptimz)
-  ! MDK
-  !call ovarin(nout,'Figure of merit switch','(minmax)',minmax) 
+  call ovarin(nout,'Figure of merit switch','(minmax)',minmax) 
   if (ifail /= 1) then
      call ovarin(nout,'VMCON error flag','(ifail)',ifail)
   end if
@@ -1544,13 +1544,16 @@ subroutine output(outfile)
   call strucall(outfile,1)
 
   if (irfp == 0) call induct(outfile,1)
-
-  if (iblanket == 1) then
-	call ccfe_hcpb(outfile, 1)
-  else if (iblanket == 2) then
-	call kit_hcpb(outfile, 1)
-  end if
   
+  if (iblanket == 1) then           ! CCFE HCPB model
+	 call ccfe_hcpb(nout, 1) 
+  else if (iblanket == 2) then      ! KIT HCPB model
+     call kit_hcpb(nout, 1) 
+  else if (iblanket == 3) then      ! CFE HCPB model with Tritium Breeding Ratio calculation
+     call ccfe_hcpb(nout, 1)
+	 call tbr_shimwell(nout, 1, breeder_f, li6enrich, iblanket_thickness, tbr)      
+  end if
+ 
   !call fwbs(outfile,1)
 
   if (ifispact == 1) then
@@ -1930,3 +1933,4 @@ end subroutine runtests
 ! GIT 390: Rewrite of calc_u_unplanned_fwbs and calc_u_unplanned_divertor
 ! GIT 393: Issue #290 Improvements to thermohydraulic model of first wall.
 ! GIT 395: Rewrite to vacuum pump availability. New Binomial routine.
+! GIT 396: New cost model complete.  J Shimwell parametric TBR model #195. #292, #293

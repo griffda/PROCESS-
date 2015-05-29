@@ -33,7 +33,7 @@ module global_variables
   !+ad_varc            <LI> = 0 turn off diagnostics
   !+ad_varc            <LI> = 1 turn on diagnostics</UL>
   integer :: verbose = 0
-  !+ad_vars  run_tests /0/ : Turns on built-in tests if set to 1<UL>
+  !+ad_vars  run_tests /0/ : Turns on built-in tests if set to 1
   integer :: run_tests = 0
 
 end module global_variables
@@ -1083,7 +1083,8 @@ module fwbs_variables
   real(kind(1.0D0)) :: fw_armour_vol = 0.0D0
   !+ad_vars  iblanket /1/ : switch for blanket model: <UL>
   !+ad_varc             <LI> = 1 CCFE HCPB model;
-  !+ad_varc             <LI> = 2 KIT HCPB model</UL>
+  !+ad_varc             <LI> = 2 KIT HCPB model;
+  !+ad_varc             <LI> = 3 CCFE HCPB model with Tritium Breeding Ratio calculation</UL>  
   integer :: iblanket = 1
   !+ad_vars  pnucblkt : nuclear heating in the blanket (MW)
   real(kind(1.0D0)) :: pnucblkt = 0.0D0
@@ -1105,6 +1106,8 @@ module fwbs_variables
   real(kind(1.0D0)) :: whtblkt = 0.0D0
   !+ad_vars  whtblss : mass of blanket - steel part (kg)
   real(kind(1.0D0)) :: whtblss = 0.0D0
+  !+ad_vars  armour_fw_bl_mass : Total mass of armour, first wall and blanket (kg)
+  real(kind(1.0D0)) :: armour_fw_bl_mass = 0.0D0  
   
    !  CCFE HCPB Blanket Model
   
@@ -1114,7 +1117,7 @@ module fwbs_variables
   !+ad_vars  fblli2sio4 /0.22/ : lithium orthosilicate fraction of blanket by volume
   !+ad_varc                   (iblanket = 1 (CCFE HCPB))
   real(kind(1.0D0)) :: fblli2sio4 = 0.2205D0
-  !+ad_vars  fbltibe12 /0.32/ : titanium beryllide fraction of blanket by volume
+  !+ad_vars  fbltibe12 : titanium beryllide fraction of blanket by volume
   !+ad_varc                   (iblanket = 1 (CCFE HCPB))
   real(kind(1.0D0)) :: fbltibe12 = 0.315D0
   !+ad_vars  vfcblkt /0.05/ : He coolant void fraction of blanket by volume
@@ -1191,7 +1194,21 @@ module fwbs_variables
   real(kind(1.0D0)) :: whtblbreed = 0.0D0
   !+ad_vars  whtblbe : mass of blanket - beryllium part (kg)
   real(kind(1.0D0)) :: whtblbe = 0.0D0
- 
+   
+  !+ad_vars  <P><B>CCFE HCPB model with Tritium Breeding Ratio calculation
+  !+ad_varc  (iblanket=3):</B><P>
+  !+ad_vars  breeder_f /0.154/ :  Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (iteration variable 108)
+  real(kind(1.0D0)) :: breeder_f = 0.154D0
+  !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)
+  !+ad_vars  tbrmin /1.1/ : minimum tritium breeding ratio (constraint equation 52)
+  !+ad_varc                 (If iblanket=1, tbrmin=minimum 5-year time-averaged tritium breeding ratio)
+  !+ad_vars  iblanket_thickness /2/ : Blanket thickness switch:<UL>
+  !+ad_varc     <LI> = 1 thin    0.53 m inboard, 0.91 m outboard
+  !+ad_varc     <LI> = 2 medium  0.64 m inboard, 1.11 m outboard
+  !+ad_varc     <LI> = 3 thick   0.75 m inboard, 1.30 m outboard</UL>  
+  !+ad_vars  Do not set blnkith, blnkoth, fwith or fwoth when iblanket=3.
+  integer :: iblanket_thickness = 2
+  
   !+ad_vars  <P><B>The following are used in the thermodynamic blanket model </B><P>
  
   !+ad_vars  secondary_cycle /0/ : Switch for thermodynamic model of power conversion cycle:<UL>
@@ -2794,9 +2811,8 @@ module cost_variables
   real(kind(1.0D0)) :: cdrlife = 0.0D0
   !+ad_vars  cfactr /0.75/ : Total plant availability fraction;
   !+ad_varc                  input if iavail = 0
-  real(kind(1.0D0)) :: cfactr = 0.75D0
-  
-  !+ad_vars  cfactr : Total plant capacity factor
+  real(kind(1.0D0)) :: cfactr = 0.75D0  
+  !+ad_vars  cpfact : Total plant capacity factor
   real(kind(1.0D0)) :: cpfact = 0.0D0
   
   !+ad_vars  cfind(4) /0.244,0.244,0.244,0.29/ : indirect cost factor (func of lsa)
@@ -2838,7 +2854,7 @@ module cost_variables
   real(kind(1.0D0)) :: cost_factor_misc = 1.0D0
   !+ad_vars  cost_model /1/ : switch for cost model:<UL>
   !+ad_varc          <LI> = 0 use $ 1990 PROCESS model
-  !+ad_varc          <LI> = 1 use $ 2015 Kovari model
+  !+ad_varc          <LI> = 1 use $ 2015 Kovari model</UL>
   integer :: cost_model = 1
   !+ad_vars  cowner /0.15/ : owner cost factor
   real(kind(1.0D0)) :: cowner = 0.15D0
@@ -3339,7 +3355,7 @@ module constraint_variables
   !+ad_vars  fstrcond /1.0/ : f-value for TF coil conduit stress
   !+ad_varc                   (constraint equation 32, iteration variable 49)
   real(kind(1.0D0)) :: fstrcond = 1.0D0
-  !+ad_vars  ftbr /1.0/ : f-value for minimum tritium breeding ratio (blktmodel>0)
+  !+ad_vars  ftbr /1.0/ : f-value for minimum tritium breeding ratio
   !+ad_varc                 (constraint equation 52, iteration variable 89)
   real(kind(1.0D0)) :: ftbr = 1.0D0
   !+ad_vars  ftburn /1.0/ : f-value for minimum burn time
@@ -3405,7 +3421,7 @@ module constraint_variables
   !+ad_vars  ptfnucmax /1.0e-3/ : maximum nuclear heating in TF coil (MW/m3)
   !+ad_varc                       (constraint equation 54)
   real(kind(1.0D0)) :: ptfnucmax = 1.0D-3
-  !+ad_vars  tbrmin /1.1/ : minimum tritium breeding ratio (blktmodel>0)
+  !+ad_vars  tbrmin /1.1/ : minimum tritium breeding ratio 
   !+ad_varc                 (constraint equation 52)
   real(kind(1.0D0)) :: tbrmin = 1.1D0
   !+ad_vars  tbrnmn /1.0/ : minimum burn time (s)

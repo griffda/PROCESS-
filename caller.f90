@@ -214,10 +214,13 @@ subroutine caller(xc,nvars)
 
   call pulse(nout,0)
   
-  if (iblanket == 1) then
-	 call ccfe_hcpb(nout, 0)
-  else if (iblanket == 2) then
-     call kit_hcpb(nout, 0)  
+  if (iblanket == 1) then           ! CCFE HCPB model
+	 call ccfe_hcpb(nout, 0) 
+  else if (iblanket == 2) then      ! KIT HCPB model
+     call kit_hcpb(nout, 0) 
+  else if (iblanket == 3) then      ! CFE HCPB model with Tritium Breeding Ratio calculation
+     call ccfe_hcpb(nout, 0)
+	 call tbr_shimwell(nout, 0, breeder_f, li6enrich, iblanket_thickness, tbr)      
   end if 
    
   call divcall(nout,0)

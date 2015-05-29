@@ -71,6 +71,7 @@ subroutine loadxc
   !+ad_hist  06/10/14 PJK Added fnbshinef (105)
   !+ad_hist  11/11/14 PJK Added ftmargoh (106)
   !+ad_hist  25/11/14 JM  Added favail (107)
+  !+ad_hist  27/05/15 MDK Added breeder_f (108)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -228,6 +229,8 @@ subroutine loadxc
      case (105) ; xcm(i) = fnbshinef
      case (106) ; xcm(i) = ftmargoh
      case (107) ; xcm(i) = favail
+     case (108) ; xcm(i) = breeder_f
+
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -478,6 +481,7 @@ subroutine convxc(xc,nn)
      case (105) ; fnbshinef = xc(i)/scale(i)
      case (106) ; ftmargoh  = xc(i)/scale(i)
      case (107) ; favail    = xc(i)/scale(i)
+     case (108) ; breeder_f = xc(i)/scale(i)
 
      case default
         call report_error(57)
