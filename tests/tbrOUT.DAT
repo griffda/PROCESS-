@@ -7,13 +7,13 @@
  
    Program : /home/mkovari/PROCESS/develop/process.exe
    Version : 396    Release Date :: 2015-05-29
- Date/time : Fri May 29 09:46:30 BST 2015
+ Date/time : Fri May 29 16:19:45 BST 2015
       User : mkovari (Michael Kovari)
  Directory : /home/mkovari/PROCESS/develop/tests
  
  **************************************************************************************************************
  
- PROCESS 396 : Run on Fri May 29 09:46:30 BST 2015 by Michael Kovari
+ PROCESS 396 : Run on Fri May 29 16:19:45 BST 2015 by Michael Kovari
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  
  DEMO 1 model for TBR model  * Short descriptive title for the run
@@ -125,7 +125,7 @@
     8  Burn time lower limit                 >  7.2000E+03 sec         -7.4726E-06 sec            -1.0379E-09
     9  L-H power threshold limit             >  1.0090E+02 MW          -1.9538E-09 MW             -1.3863E-11
    10  Net electric power lower limit        >  5.0001E+02 MW          -6.5256E-03 MW             -1.3051E-05
-   11  Radiation power upper limit           <  1.7626E-01 MW/m3        4.5782E-13 MW/m3           4.4692E-12
+   11  Radiation fraction upper limit        <  1.7626E-01 MW/m3        4.5782E-13 MW/m3           4.4692E-12
    12  Beta upper limit                      <  5.6067E-02              2.7110E-14                 9.1116E-13
    13  CS coil EOF current density limit     <  5.7684E+07 A/m2         5.9504E-05 A/m2            4.1263E-12
    14  CS coil BOP current density limit     <  5.3995E+07 A/m2         4.6416E-05 A/m2            3.4386E-12
@@ -368,9 +368,10 @@
  Cold alpha ash density (/m3)                                             (dnalp)                   8.325E+18
  Proton ash density (/m3)                                                 (dnprot)                  4.458E+16
  Hot beam density (/m3)                                                   (dnbeam)                  1.435E+17
- Density limit (enforced) (/m3)                                           (dnelimt)                 7.843E+19
- Plasma impurity model                                                    (imprad_model)                    1
+ Density limit from scaling (/m3)                                         (dnelimt)                 7.843E+19
+ Density limit (enforced) (/m3)                                           (boundu(9)*dnelimt)       9.412E+19
  
+ Plasma impurity model                                                    (imprad_model)                    1
  New generalised impurity model
  
  Plasma ion densities / electron density:
@@ -429,6 +430,7 @@
  Alpha power: beam-plasma (MW)                                            (palpnb)                  3.990E+00
  Neutron power (MW)                                                       (pneutmw)                 1.199E+03
  Charged particle power (excluding alphas) (MW)                           (pchargemw)               1.080E+00
+ Total power deposited in plasma (MW)                                     ()                        3.365E+02
  
  Radiation Power :
  
@@ -440,7 +442,7 @@
  Total core radiation power (MW)                                          (pcoreradmw)              9.365E+01
  Edge radiation power (MW)                                                (pedgeradmw)              1.019E+02
  Total radiation power (MW)                                               (pradmw)                  1.956E+02
- Radiation fraction                                                       (rad_fraction)            5.812E-01
+ Radiation fraction = total radiation / total power deposited in plasma   (rad_fraction)            5.812E-01
  Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             1.509E-01
  Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  9.247E-01
  
@@ -506,7 +508,6 @@
  Bootstrap fraction (Sauter et al)                                        (bscf_sauter)                 0.356
    (Sauter et al bootstrap current fraction model used)
  Bootstrap fraction (enforced)                                            (bootipf.)                    0.356
- Auxiliary current drive fraction                                         (faccd.)                      0.117
  Loop voltage during burn (V)                                             (vburn)                   5.179E-02
  Plasma resistance (ohm)                                                  (rplas)                   5.576E-09
  Plasma inductance (H)                                                    (rlp)                     1.452E-05
@@ -571,7 +572,6 @@
  Current is driven by both inductive
  and non-inductive means.
  Current drive efficiency model                                           (iefrf)                           5
- Steady state current drive power absorbed by plasma (MW)                 (pinjmw)                  5.000E+01
  Auxiliary power used for plasma heating only (MW)                        (pheat)                   0.000E+00
  Fusion gain factor Q                                                     (bigq)                    2.944E+01
  Current drive efficiency (A/W)                                           (effcd)                   4.114E-02
@@ -583,18 +583,26 @@
  Bootstrap fraction                                                       (bootipf)                     0.356
  Auxiliary current drive fraction                                         (faccd)                       0.117
  Inductive fraction                                                       (facoh)                       0.527
+ Total                                                                    (bootipf+faccd+facoh          1.000
  
  Neutral beam energy (keV)                                                (enbeam)                  1.000E+03
  Neutral beam current (A)                                                 (cnbeam)                  5.001E+01
  Beam efficiency (A/W)                                                    (effnbss)                 4.114E-02
  Beam gamma (10^20 A/W-m2)                                                (gamnb)                   2.839E-01
  Neutral beam wall plug efficiency                                        (etanbi)                  4.000E-01
- Neutral beam wall plug power (MW)                                        (pwpnb)                   1.250E+02
- Neutral beam power entering vacuum vessel (MW)                           (pnbitot)                 5.001E+01
- Neutral beam first orbit loss power (MW)                                 (porbitlossmw)            0.000E+00
  Beam decay lengths to centre                                             (taubeam)                 4.395E+00
  Beam shine-through fraction                                              (nbshinef)                1.523E-04
- Beam shine-through power [MW]                                            (nbshinemw)               7.616E-03
+ Neutral beam wall plug power (MW)                                        (pwpnb)                   1.250E+02
+ 
+ Neutral beam power balance :
+ ----------------------------
+ Beam first orbit loss power (MW)                                         (porbitlossmw)                0.000
+ Beam shine-through power [MW]                                            (nbshinemw)                   0.008
+ Beam power deposited in plasma (MW)                                      (pinjmw)                     50.000
+ Total (MW)                                                               (porbitlossmw+nbshin         50.008
+ 
+ Beam power entering vacuum vessel (MW)                                   (pnbitot)                    50.008
+ 
  Fraction of beam energy to ions                                          (fpion)                   3.777E-01
  Beam duct shielding thickness (m)                                        (nbshield)                5.000E-01
  Beam tangency radius / Plasma major radius                               (frbeam)                  1.000E+00
@@ -1079,13 +1087,13 @@
  ********************************** First wall and blanket : CCFE HCPB model **********************************
  
  
- Blanket Composition :
+ Blanket Composition by volume :
  
  Titanium beryllide fraction                                              (fbltibe12)                   0.533
  Lithium orthosilicate fraction                                           (fblli2sio4)                  0.221
  Steel fraction                                                           (fblss)                       0.097
- Void fraction coolant                                                    (vfcblkt)                     0.053
- Void fraction purge gas                                                  (vfpblkt)                     0.315
+ Coolant fraction                                                         (vfcblkt)                     0.053
+ Purge gas fraction                                                       (vfpblkt)                     0.315
  
  Component Volumes :
  
@@ -1093,7 +1101,7 @@
  First Wall Volume (m3)                                                   (volfw)                      34.672
  Blanket Volume (m3)                                                      (volblkt)                  1472.517
  Shield Volume (m3)                                                       (volshld)                   650.916
- Vacuum vessel volume (m3)                                                (vdewin)                  8.782E+02
+ Vacuum vessel volume (m3)                                                (vdewin)                    878.226
  
  Component Masses :
  
@@ -1105,7 +1113,7 @@
      Blanket Mass - Steel (kg)                                            (whtblss)                 1.115E+06
  Total mass of armour, first wall and blanket (kg)                        (armour_fw_bl_mass)       4.007E+06
  Shield Mass (kg)                                                         (whtshld)                 3.808E+06
- Vacuum vessel mass (kg)                                                  (cryomass)                6.850E+06
+ Vacuum vessel mass (kg)                                                  (vvmass)                  6.850E+06
  
  Nuclear heating :
  
@@ -1131,7 +1139,7 @@
  Outer radius of outboard first wall coolant channels (m)                 (bfwo)                    1.500E-02
  Inlet temperature of coolant (K)                                         (inlet_temp)                573.000
  Outlet temperature of coolant (K)                                        (outlet_temp)               823.000
- Allowable temperature of first wall material (K)                         (tfwmatmax)               1.100E+03
+ Allowable temperature of first wall material, excluding armour (K)       (tfwmatmax)               1.100E+03
  Actual peak temperature of first wall material (K)                       (tpeak)                   9.902E+02
  Allowable nominal neutron fluence at first wall (MW.year/m2)             (abktflnc)                1.000E+01
  No of inboard blanket modules poloidally                                 (nblktmodpi)                      7
@@ -1143,10 +1151,8 @@
  Other volumes, masses and areas :
  
  First wall area (m2)                                                     (fwarea)                  1.488E+03
- External cryostat radius (m)                                             (rdewex)                  1.748E+01
- External cryostat half-height (m)                                        (zdewex)                  1.426E+01
- External cryostat volume (m3)                                            (vdewex)                  7.578E+02
- Total cryostat + vacuum vessel mass (kg)                                 (dewmkg)                  1.276E+07
+ Cryostat internal radius (m)                                             (rdewex)                  1.748E+01
+ Cryostat internal full height (m)                                        (2*zdewex)                2.853E+01
  Divertor area (m2)                                                       (divsur)                  1.546E+02
  Divertor mass (kg)                                                       (divmas)                  3.789E+04
  Lithium-6 enrichment (%)                                                 (li6enrich)                  99.604

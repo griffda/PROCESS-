@@ -400,7 +400,10 @@ contains
        fc = sgn * 0.2D0 * rmajor
 
     case (2)  !  fusion power / input power
-       fc = sgn * powfmw / (pinjmw + porbitlossmw + tfcpmw + ppump/1.0D6)
+        write(*,*) 'Figure of merit 2 (fusion power / input power) is not used.'
+        write(*,*) 'Figure of merit 5 (fusion gain Q) is available.'
+        stop
+       ! fc = sgn * powfmw / (pinjmw + porbitlossmw + tfcpmw + ppump/1.0D6)
 
     case (3)  !  neutron wall load
        fc = sgn * wallmw

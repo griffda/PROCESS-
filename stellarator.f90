@@ -1845,7 +1845,7 @@ contains
 
     !  Vacuum vessel mass
 
-    cryomass = vdewin * denstl
+    vvmass = vdewin * denstl
 
     !  Sum of internal vacuum vessel and external cryostat masses
 
@@ -2055,9 +2055,9 @@ contains
     call ovarre(outfile,'External cryostat outer radius (m)','(rdewex)',rdewex)
     call ovarre(outfile,'External cryostat minor radius (m)','(adewex)',adewex)
     call ovarre(outfile,'External cryostat shell volume (m3)','(vdewex)',vdewex)
-    call ovarre(outfile,'External cryostat mass (kg)','',dewmkg-cryomass)
+    call ovarre(outfile,'External cryostat mass (kg)','',dewmkg-vvmass)
     call ovarre(outfile,'Internal vacuum vessel shell volume (m3)','(vdewin)',vdewin)
-    call ovarre(outfile,'Vacuum vessel mass (kg)','(cryomass)',cryomass)
+    call ovarre(outfile,'Vacuum vessel mass (kg)','(vvmass)',vvmass)
     call ovarre(outfile,'Total cryostat + vacuum vessel mass (kg)','(dewmkg)',dewmkg)
     call ovarre(outfile,'Divertor area (m2)','(divsur)',divsur)
     call ovarre(outfile,'Divertor mass (kg)','(divmas)',divmas)

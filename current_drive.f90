@@ -335,8 +335,6 @@ contains
     end if
 
     call ovarin(outfile,'Current drive efficiency model','(iefrf)',iefrf)
-    call ovarre(outfile,'Steady state current drive power absorbed by plasma (MW)', &
-         '(pinjmw)',pinjmw)
     call ovarre(outfile,'Auxiliary power used for plasma heating only (MW)', &
          '(pheat)',pheat)
     call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq)
@@ -349,6 +347,11 @@ contains
     call ovarrf(outfile,'Bootstrap fraction','(bootipf)',bootipf)
     call ovarrf(outfile,'Auxiliary current drive fraction','(faccd)',faccd)
     call ovarrf(outfile,'Inductive fraction','(facoh)',facoh)
+    ! Add total error check.
+    call ovarrf(outfile,'Total','(bootipf+faccd+facoh)',bootipf+faccd+facoh)
+    if (abs(bootipf+faccd+facoh-1.0d0) > 1.0d-10) then
+        call ocmmnt(outfile,'ERROR: current drive fractions do not add to 1')
+    end if
 
     if (abs(bootipf-bscfmax) < 1.0D-8) then
        call ocmmnt(outfile,'Warning : bootstrap current fraction is at')
@@ -373,21 +376,27 @@ contains
        call ovarre(outfile,'Beam efficiency (A/W)','(effnbss)',effnbss)
        call ovarre(outfile,'Beam gamma (10^20 A/W-m2)','(gamnb)',gamnb)
        call ovarre(outfile,'Neutral beam wall plug efficiency','(etanbi)',etanbi)
-       call ovarre(outfile,'Neutral beam wall plug power (MW)','(pwpnb)',pwpnb)
-       !  call ovarre(outfile,'Neutral beam injected power (MW)','(pnbeam)',pnbeam)
-       call ovarre(outfile,'Neutral beam power entering vacuum vessel (MW)','(pnbitot)',pnbitot)       
-       call ovarre(outfile,'Neutral beam first orbit loss power (MW)','(porbitlossmw)', &
-            porbitlossmw)
        call ovarre(outfile,'Beam decay lengths to centre','(taubeam)',taubeam)
-       call ovarre(outfile,'Beam shine-through fraction','(nbshinef)',nbshinef)
-       call ovarre(outfile,'Beam shine-through power [MW]','(nbshinemw)',nbshinemw)
+       call ovarre(outfile,'Beam shine-through fraction','(nbshinef)',nbshinef)       
+       call ovarre(outfile,'Neutral beam wall plug power (MW)','(pwpnb)',pwpnb)
+       
+       call oblnkl(outfile)
+       call ocmmnt(outfile,'Neutral beam power balance :')
+       call ocmmnt(outfile,'----------------------------')
+       call ovarrf(outfile,'Beam first orbit loss power (MW)','(porbitlossmw)', porbitlossmw)
+       call ovarrf(outfile,'Beam shine-through power [MW]','(nbshinemw)',nbshinemw)
+       call ovarrf(outfile,'Beam power deposited in plasma (MW)','(pinjmw)',pinjmw)
+       call ovarrf(outfile,'Total (MW)', &
+                           '(porbitlossmw+nbshinemw+pinjmw)',porbitlossmw+nbshinemw+pinjmw)
+       call oblnkl(outfile)                    
+       call ovarrf(outfile,'Beam power entering vacuum vessel (MW)','(pnbitot)',pnbitot)
+       call oblnkl(outfile)
+       
        call ovarre(outfile,'Fraction of beam energy to ions','(fpion)',fpion)       
        call ovarre(outfile,'Beam duct shielding thickness (m)','(nbshield)',nbshield)
        call ovarre(outfile,'Beam tangency radius / Plasma major radius','(frbeam)',frbeam)
-       call ovarre(outfile,'Beam centreline tangency radius (m)','(rtanbeam)', &
-            rtanbeam)
-       call ovarre(outfile,'Maximum possible tangency radius (m)','(rtanmax)', &
-            rtanmax)          
+       call ovarre(outfile,'Beam centreline tangency radius (m)','(rtanbeam)', rtanbeam)
+       call ovarre(outfile,'Maximum possible tangency radius (m)','(rtanmax)', rtanmax)          
     end if
 
     if (abs(echpwr) > 1.0D-8) then

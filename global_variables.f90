@@ -1046,8 +1046,9 @@ module fwbs_variables
   !+ad_vars  coolmass : mass of water coolant (in shield, blanket,
   !+ad_varc             first wall, divertor) (kg)
   real(kind(1.0D0)) :: coolmass = 0.0D0
-  !+ad_vars  cryomass : vacuum vessel mass (kg)
-  real(kind(1.0D0)) :: cryomass = 0.0D0
+  !+ad_vars  vvmass : vacuum vessel mass (kg)
+  ! Formerly known as cryomass.
+  real(kind(1.0D0)) :: vvmass = 0.0D0
   !+ad_vars  denstl /7800.0/ : density of steel (kg/m3)
   real(kind(1.0D0)) :: denstl = 7800.0D0
   !+ad_vars  dewmkg : total mass of vacuum vessel + cryostat (kg)
@@ -1114,23 +1115,23 @@ module fwbs_variables
   !+ad_vars  <P><B>The following are used only in the CCFE HCPB blanket model
   !+ad_varc  (iblanket=1):</B><P>
   
-  !+ad_vars  fblli2sio4 /0.22/ : lithium orthosilicate fraction of blanket by volume
-  !+ad_varc                   (iblanket = 1 (CCFE HCPB))
+  !+ad_vars  fblli2sio4 /0.2205/ : lithium orthosilicate fraction of blanket by volume
+  !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: fblli2sio4 = 0.2205D0
   !+ad_vars  fbltibe12 : titanium beryllide fraction of blanket by volume
-  !+ad_varc                   (iblanket = 1 (CCFE HCPB))
+  !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: fbltibe12 = 0.315D0
-  !+ad_vars  vfcblkt /0.05/ : He coolant void fraction of blanket by volume
-  !+ad_varc                   (iblanket = 1 (CCFE HCPB))
+  !+ad_vars  vfcblkt /0.05295/ : He coolant void fraction of blanket by volume
+  !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: vfcblkt = 0.05295D0
-  !+ad_vars  vfpblkt /0.31/ : He purge void fraction of blanket by volume
-  !+ad_varc                   (iblanket = 1 (CCFE HCPB))
+  !+ad_vars  vfpblkt /0.3145/ : He purge void fraction of blanket by volume
+  !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: vfpblkt = 0.3145D0
   !+ad_vars  whtblli4sio4 : mass of lithium orthosilicate in blanket (kg)
-  !+ad_varc                   (iblanket = 1 (CCFE HCPB))
+  !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: whtblli4sio4 = 0.0D0
   !+ad_vars  whtbltibe12 : mass of titanium beryllide in blanket (kg)
-  !+ad_varc                   (iblanket = 1 (CCFE HCPB))
+  !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: whtbltibe12 = 0.0D0
   
   !  KIT HCPB blanket model
@@ -1267,17 +1268,17 @@ module fwbs_variables
   real(kind(1.0D0)) :: ptfnuc = 0.0D0
   !+ad_vars  ptfnucpm3 : nuclear heating in the TF coil (MW/m3) (blktmodel>0)
   real(kind(1.0D0)) :: ptfnucpm3 = 0.0D0
-  !+ad_vars  rdewex : external cryostat radius (m)
+  !+ad_vars  rdewex : cryostat radius (m)
   real(kind(1.0D0)) :: rdewex = 0.0D0
-  !+ad_vars  zdewex : external cryostat height (m)
+  !+ad_vars  zdewex : cryostat height (m)
   real(kind(1.0D0)) :: zdewex = 0.0D0  
   !+ad_vars  rpf2dewar /0.5/ : radial distance between outer edge of largest
   !+ad_varc                    ipfloc=3 PF coil (or stellarator modular coil)
-  !+ad_varc                    and external cryostat (m)
+  !+ad_varc                    and cryostat (m)
   real(kind(1.0D0)) :: rpf2dewar = 0.5D0
   !+ad_vars  tpeak : peak first wall temperature (K)
   real(kind(1.0D0)) :: tpeak = 0.0D0
-  !+ad_vars  vdewex : external cryostat volume (m3)
+  !+ad_vars  vdewex : cryostat volume (m3)
   real(kind(1.0D0)) :: vdewex = 0.0D0
   !+ad_vars  vdewin : vacuum vessel volume (m3)
   real(kind(1.0D0)) :: vdewin = 0.0D0
@@ -1797,7 +1798,7 @@ module tfcoil_variables
   !+ad_vars  poisson /0.3/ : Poisson's ratio for TF stress calculation
   !+ad_varc                  (assumed constant over entire coil)
   real(kind(1.0D0)) :: poisson = 0.3D0
-  !+ad_vars  prp /0.0/ : ratio of the cross-sectional area of the radial plates
+  !+ad_vars  prp /0/ : ratio of the cross-sectional area of the radial plates
   !+ad_varc              + inter-turn steel caps to the whole winding pack's
   !+ad_varc              cross-sectional area (iteration variable 101)
   real(kind(1.0D0)) :: prp = 0.0D0
@@ -2628,7 +2629,7 @@ module build_variables
   real(kind(1.0D0)) :: bore = 1.42D0
   !+ad_vars  clhsf /4.268/ : cryostat lid height scaling factor (tokamaks, RFPs)
   real(kind(1.0D0)) :: clhsf = 4.268D0
-  !+ad_vars  ddwex /0.07/ : external cryostat thickness (m)
+  !+ad_vars  ddwex /0.07/ : cryostat thickness (m)
   real(kind(1.0D0)) :: ddwex = 0.07D0
   !+ad_vars  ddwi /0.07/ : vacuum vessel thickness (TF coil / shield) (m)
   real(kind(1.0D0)) :: ddwi = 0.07D0
@@ -2636,7 +2637,7 @@ module build_variables
   real(kind(1.0D0)) :: fmsbc = 0.0D0
   !+ad_vars  fmsbl /0.0/ : Martensitic fraction of steel in blanket
   real(kind(1.0D0)) :: fmsbl = 0.0D0
-  !+ad_vars  fmsdwe /0.0/ : Martensitic fraction of steel in external cryostat
+  !+ad_vars  fmsdwe /0.0/ : Martensitic fraction of steel in cryostat
   real(kind(1.0D0)) :: fmsdwe = 0.0D0
   !+ad_vars  fmsdwi /0.0/ : Martensitic fraction of steel in vacuum vessel
   real(kind(1.0D0)) :: fmsdwi = 0.0D0
@@ -3376,14 +3377,14 @@ module constraint_variables
   !+ad_vars  fvdump /1.0/ : f-value for dump voltage
   !+ad_varc                 (constraint equation 34, iteration variable 51)
   real(kind(1.0D0)) :: fvdump = 1.0D0
-  !+ad_vars  fvs /1.0/ : f-value for flux-swing (V-s) requirement
+  !+ad_vars  fvs /1.0/ : f-value for flux-swing (V-s) requirement (STEADY STATE)
   !+ad_varc              (constraint equation 12, iteration variable 15)
   real(kind(1.0D0)) :: fvs = 1.0D0
   !+ad_vars  fvvhe /1.0/ : f-value for vacuum vessel He concentration limit
   !+ad_varc                (blktmodel>0)
   !+ad_varc                (constraint equation 55, iteration variable 96)
   real(kind(1.0D0)) :: fvvhe = 1.0D0
-  !+ad_vars  fwalld /1.0/ : f-value for minimum wall load
+  !+ad_vars  fwalld /1.0/ : f-value for maximum wall load
   !+ad_varc                 (constraint equation 8, iteration variable 14)
   real(kind(1.0D0)) :: fwalld = 1.0D0
   !+ad_vars  gammax /2.0/ : maximum current drive gamma

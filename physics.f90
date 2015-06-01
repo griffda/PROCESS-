@@ -5527,8 +5527,12 @@ contains
     call ovarre(outfile,'Proton ash density (/m3)','(dnprot)',dnprot)
 
     call ovarre(outfile,'Hot beam density (/m3)','(dnbeam)',dnbeam)
-    call ovarre(outfile,'Density limit (enforced) (/m3)','(dnelimt)',dnelimt)
-
+    call ovarre(outfile,'Density limit from scaling (/m3)','(dnelimt)',dnelimt)
+    if (ioptimz > 0) then
+        call ovarre(outfile,'Density limit (enforced) (/m3)','(boundu(9)*dnelimt)',boundu(9)*dnelimt)    
+    end if
+    call oblnkl(outfile)
+    
     call ovarin(outfile,'Plasma impurity model','(imprad_model)',imprad_model)
     if (imprad_model == 0) then
        call ocmmnt(outfile,'Original model; ITER 1989 Bremsstrahlung calculation')
@@ -5541,7 +5545,8 @@ contains
           call ovarre(outfile,'Iron impurity concentration (%)','(cfe0*100)',cfe0*100)
        end if
     else
-       call osubhd(outfile,'New generalised impurity model')
+       call ocmmnt(outfile,'New generalised impurity model')
+       call oblnkl(outfile)
        call ocmmnt(outfile,'Plasma ion densities / electron density:')
        do imp = 1,nimp
           str1 = impurity_arr(imp)%label // ' concentration'
@@ -5593,6 +5598,7 @@ contains
     call ovarre(outfile,'Neutron power (MW)','(pneutmw)',pneutmw)
     call ovarre(outfile,'Charged particle power (excluding alphas) (MW)', &
          '(pchargemw)',pchargemw)
+    call ovarre(outfile,'Total power deposited in plasma (MW)','()',falpha*palpmw+pchargemw+pohmmw+pinjmw)
 
     call osubhd(outfile,'Radiation Power :')
     if (imprad_model == 1) then
@@ -5611,7 +5617,7 @@ contains
     call ovarre(outfile,'Total core radiation power (MW)', '(pcoreradmw)',pcoreradmw)
     call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', pedgeradmw)
     call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw)    
-    call ovarre(outfile,'Radiation fraction','(rad_fraction)',rad_fraction)    
+    call ovarre(outfile,'Radiation fraction = total radiation / total power deposited in plasma','(rad_fraction)',rad_fraction)    
     call ovarre(outfile,'Nominal mean radiation load on inside surface of reactor (MW/m2)','(photon_wall)',photon_wall)
     call ovarre(outfile,'Nominal mean neutron load on inside surface of reactor (MW/m2)','(wallmw)',wallmw)    
 
@@ -5760,7 +5766,7 @@ contains
        end if
        call ovarrf(outfile,'Bootstrap fraction (enforced)','(bootipf.)',bootipf)
 
-       call ovarrf(outfile,'Auxiliary current drive fraction','(faccd.)',faccd)
+       !call ovarrf(outfile,'Auxiliary current drive fraction','(faccd.)',faccd)
        call ovarre(outfile,'Loop voltage during burn (V)','(vburn)', &
             plascur*rplas*facoh)
        call ovarre(outfile,'Plasma resistance (ohm)','(rplas)',rplas)

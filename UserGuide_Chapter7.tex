@@ -321,17 +321,20 @@ Section~\ref{sec:codemods}).
   the definition of \verb+\version+ in \texttt{process.tex} by changing the
   Revision (to \texttt{XYZ}) and the date.
 
-\item \texttt{git add process.f90 process.tex file1 file2 ...}  (where
-  \texttt{file1} etc.\ are other changed files ready to be committed as listed
-  via \texttt{git status})
+\item \texttt{git add process.f90 process.tex changedfile1 changedfile2 ...}  \\
+  (This `stages' the modified files marking them as ready for committing).  \\
+  \texttt{git commit}
+  
+  Alternatively, just use\\
+  \texttt{git commit -a} \\
+  This commits all modified tracked files.
 
-\item \texttt{git commit}
-
-\item Add a one- or two-line comment describing the changes made, using a format similar to
+\item An editor window will open; add a line summarising the changes you have made.  Use a format similar to
 \begin{verbatim}
 09/12/2014: (rXYZ)  A short description of the changes made
 @rkemp @hlux @morrisj @pknight @mkovari
 \end{verbatim}
+Save and close the window. This will initiate the commit to your \textit{local}\ copy of the repository.  
 
 \item \texttt{git tag -a rXYZ -m `Revision XYZ'}
 

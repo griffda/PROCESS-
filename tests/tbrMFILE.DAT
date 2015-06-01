@@ -1,6 +1,6 @@
  PROCESS_version_number__________________________________________________ (procver)___________            396
  Date_of_run_____________________________________________________________ (date)______________     "29/05/2015"
- Time_of_run_____________________________________________________________ (time)______________     "09:46"
+ Time_of_run_____________________________________________________________ (time)______________     "16:19"
  User____________________________________________________________________ (username)__________     "mkovari" 
  PROCESS_run_title_______________________________________________________ (runtitle)__________     DEMO 1 model for TBR model  * Short descriptive title for the run               
  Number_of_scan_points___________________________________________________ (isweep)____________              1
@@ -143,7 +143,7 @@
  Burn_time_lower_limit_____________normalised_residue____________________ (normres008)________     -1.038E-09
  L-H_power_threshold_limit_________normalised_residue____________________ (normres009)________     -1.386E-11
  Net_electric_power_lower_limit____normalised_residue____________________ (normres010)________     -1.305E-05
- Radiation_power_upper_limit_______normalised_residue____________________ (normres011)________      4.469E-12
+ Radiation_fraction_upper_limit____normalised_residue____________________ (normres011)________      4.469E-12
  Beta_upper_limit__________________normalised_residue____________________ (normres012)________      9.112E-13
  CS_coil_EOF_current_density_limit_normalised_residue____________________ (normres013)________      4.126E-12
  CS_coil_BOP_current_density_limit_normalised_residue____________________ (normres014)________      3.439E-12
@@ -312,7 +312,8 @@
  Cold_alpha_ash_density_(/m3)____________________________________________ (dnalp)_____________      8.325E+18
  Proton_ash_density_(/m3)________________________________________________ (dnprot)____________      4.458E+16
  Hot_beam_density_(/m3)__________________________________________________ (dnbeam)____________      1.435E+17
- Density_limit_(enforced)_(/m3)__________________________________________ (dnelimt)___________      7.843E+19
+ Density_limit_from_scaling_(/m3)________________________________________ (dnelimt)___________      7.843E+19
+ Density_limit_(enforced)_(/m3)__________________________________________ (boundu(9)*dnelimt)_      9.412E+19
  Plasma_impurity_model___________________________________________________ (imprad_model)______              1
  H__concentration________________________________________________________ fimp(01)____________      7.836E-01
  He_concentration________________________________________________________ fimp(02)____________      1.000E-01
@@ -359,6 +360,7 @@
  Alpha_power:_beam-plasma_(MW)___________________________________________ (palpnb)____________      3.990E+00
  Neutron_power_(MW)______________________________________________________ (pneutmw)___________      1.199E+03
  Charged_particle_power_(excluding_alphas)_(MW)__________________________ (pchargemw)_________      1.080E+00
+ Total_power_deposited_in_plasma_(MW)____________________________________ ()__________________      3.365E+02
  Bremsstrahlung_radiation_power_(MW)_____________________________________ (pbrempv*vol)_______      5.930E+01
  Line_radiation_power_(MW)_______________________________________________ (plinepv*vol)_______      1.262E+02
  Synchrotron_radiation_power_(MW)________________________________________ (psyncpv*vol)_______      1.011E+01
@@ -367,7 +369,7 @@
  Total_core_radiation_power_(MW)_________________________________________ (pcoreradmw)________      9.365E+01
  Edge_radiation_power_(MW)_______________________________________________ (pedgeradmw)________      1.019E+02
  Total_radiation_power_(MW)______________________________________________ (pradmw)____________      1.956E+02
- Radiation_fraction______________________________________________________ (rad_fraction)______      5.812E-01
+ Radiation_fraction_=_total_radiation_/_total_power_deposited_in_plasma__ (rad_fraction)______      5.812E-01
  Nominal_mean_radiation_load_on_inside_surface_of_reactor_(MW/m2)________ (photon_wall)_______      1.509E-01
  Nominal_mean_neutron_load_on_inside_surface_of_reactor_(MW/m2)__________ (wallmw)____________      9.247E-01
  Ohmic_heating_power_(MW)________________________________________________ (pohmmw)____________      9.127E-01
@@ -413,7 +415,6 @@
  Bootstrap_fraction_(Wilson_et_al)_______________________________________ (bscf_wilson)_______      3.909E-01
  Bootstrap_fraction_(Sauter_et_al)_______________________________________ (bscf_sauter)_______      3.562E-01
  Bootstrap_fraction_(enforced)___________________________________________ (bootipf.)__________      3.562E-01
- Auxiliary_current_drive_fraction________________________________________ (faccd.)____________      1.167E-01
  Loop_voltage_during_burn_(V)____________________________________________ (vburn)_____________      5.179E-02
  Plasma_resistance_(ohm)_________________________________________________ (rplas)_____________      5.576E-09
  Plasma_inductance_(H)___________________________________________________ (rlp)_______________      1.452E-05
@@ -423,7 +424,6 @@
  Fuel_burn-up_rate_(reactions/s)_________________________________________ (rndfuel)___________      5.342E+20
  Burn-up_fraction________________________________________________________ (burnup)____________      4.076E-02
  Current_drive_efficiency_model__________________________________________ (iefrf)_____________              5
- Steady_state_current_drive_power_absorbed_by_plasma_(MW)________________ (pinjmw)____________      5.000E+01
  Auxiliary_power_used_for_plasma_heating_only_(MW)_______________________ (pheat)_____________      0.000E+00
  Fusion_gain_factor_Q____________________________________________________ (bigq)______________      2.944E+01
  Current_drive_efficiency_(A/W)__________________________________________ (effcd)_____________      4.114E-02
@@ -432,17 +432,20 @@
  Bootstrap_fraction______________________________________________________ (bootipf)___________      3.562E-01
  Auxiliary_current_drive_fraction________________________________________ (faccd)_____________      1.167E-01
  Inductive_fraction______________________________________________________ (facoh)_____________      5.270E-01
+ Total___________________________________________________________________ (bootipf+faccd+facoh      1.000E+00
  Neutral_beam_energy_(keV)_______________________________________________ (enbeam)____________      1.000E+03
  Neutral_beam_current_(A)________________________________________________ (cnbeam)____________      5.001E+01
  Beam_efficiency_(A/W)___________________________________________________ (effnbss)___________      4.114E-02
  Beam_gamma_(10^20_A/W-m2)_______________________________________________ (gamnb)_____________      2.839E-01
  Neutral_beam_wall_plug_efficiency_______________________________________ (etanbi)____________      4.000E-01
- Neutral_beam_wall_plug_power_(MW)_______________________________________ (pwpnb)_____________      1.250E+02
- Neutral_beam_power_entering_vacuum_vessel_(MW)__________________________ (pnbitot)___________      5.001E+01
- Neutral_beam_first_orbit_loss_power_(MW)________________________________ (porbitlossmw)______      0.000E+00
  Beam_decay_lengths_to_centre____________________________________________ (taubeam)___________      4.395E+00
  Beam_shine-through_fraction_____________________________________________ (nbshinef)__________      1.523E-04
+ Neutral_beam_wall_plug_power_(MW)_______________________________________ (pwpnb)_____________      1.250E+02
+ Beam_first_orbit_loss_power_(MW)________________________________________ (porbitlossmw)______      0.000E+00
  Beam_shine-through_power_[MW]___________________________________________ (nbshinemw)_________      7.616E-03
+ Beam_power_deposited_in_plasma_(MW)_____________________________________ (pinjmw)____________      5.000E+01
+ Total_(MW)______________________________________________________________ (porbitlossmw+nbshin      5.001E+01
+ Beam_power_entering_vacuum_vessel_(MW)__________________________________ (pnbitot)___________      5.001E+01
  Fraction_of_beam_energy_to_ions_________________________________________ (fpion)_____________      3.777E-01
  Beam_duct_shielding_thickness_(m)_______________________________________ (nbshield)__________      5.000E-01
  Beam_tangency_radius_/_Plasma_major_radius______________________________ (frbeam)____________      1.000E+00
@@ -766,8 +769,8 @@
  Titanium_beryllide_fraction_____________________________________________ (fbltibe12)_________      5.331E-01
  Lithium_orthosilicate_fraction__________________________________________ (fblli2sio4)________      2.205E-01
  Steel_fraction__________________________________________________________ (fblss)_____________      9.705E-02
- Void_fraction_coolant___________________________________________________ (vfcblkt)___________      5.295E-02
- Void_fraction_purge_gas_________________________________________________ (vfpblkt)___________      3.145E-01
+ Coolant_fraction________________________________________________________ (vfcblkt)___________      5.295E-02
+ Purge_gas_fraction______________________________________________________ (vfpblkt)___________      3.145E-01
  First_Wall_Armour_Volume_(m3)___________________________________________ (fw_armour_vol)_____      3.577E+00
  First_Wall_Volume_(m3)__________________________________________________ (volfw)_____________      3.467E+01
  Blanket_Volume_(m3)_____________________________________________________ (volblkt)___________      1.473E+03
@@ -781,7 +784,7 @@
  ____Blanket_Mass_-_Steel_(kg)___________________________________________ (whtblss)___________      1.115E+06
  Total_mass_of_armour,_first_wall_and_blanket_(kg)_______________________ (armour_fw_bl_mass)_      4.007E+06
  Shield_Mass_(kg)________________________________________________________ (whtshld)___________      3.808E+06
- Vacuum_vessel_mass_(kg)_________________________________________________ (cryomass)__________      6.850E+06
+ Vacuum_vessel_mass_(kg)_________________________________________________ (vvmass)____________      6.850E+06
  Total_nuclear_heating_in_TF+PF_coils_(CS_is_negligible)_(MW)____________ (ptfnuc)____________      1.843E-03
  Total_nuclear_heating_in_FW_(MW)________________________________________ (pnucfw)____________      2.440E+02
  Total_nuclear_heating_in_the_blanket_(including_emult)_(MW)_____________ (pnucblkt)__________      1.103E+03
@@ -798,7 +801,7 @@
  Outer_radius_of_outboard_first_wall_coolant_channels_(m)________________ (bfwo)______________      1.500E-02
  Inlet_temperature_of_coolant_(K)________________________________________ (inlet_temp)________      5.730E+02
  Outlet_temperature_of_coolant_(K)_______________________________________ (outlet_temp)_______      8.230E+02
- Allowable_temperature_of_first_wall_material_(K)________________________ (tfwmatmax)_________      1.100E+03
+ Allowable_temperature_of_first_wall_material,_excluding_armour_(K)______ (tfwmatmax)_________      1.100E+03
  Actual_peak_temperature_of_first_wall_material_(K)______________________ (tpeak)_____________      9.902E+02
  Allowable_nominal_neutron_fluence_at_first_wall_(MW.year/m2)____________ (abktflnc)__________      1.000E+01
  No_of_inboard_blanket_modules_poloidally________________________________ (nblktmodpi)________              7
@@ -807,10 +810,8 @@
  No_of_outboard_blanket_modules_toroidally_______________________________ (nblktmodto)________             48
  Isentropic_efficiency_of_first_wall_/_blanket_coolant_pumps_____________ (etaiso)____________      8.500E-01
  First_wall_area_(m2)____________________________________________________ (fwarea)____________      1.488E+03
- External_cryostat_radius_(m)____________________________________________ (rdewex)____________      1.748E+01
- External_cryostat_half-height_(m)_______________________________________ (zdewex)____________      1.426E+01
- External_cryostat_volume_(m3)___________________________________________ (vdewex)____________      7.578E+02
- Total_cryostat_+_vacuum_vessel_mass_(kg)________________________________ (dewmkg)____________      1.276E+07
+ Cryostat_internal_radius_(m)____________________________________________ (rdewex)____________      1.748E+01
+ Cryostat_internal_full_height_(m)_______________________________________ (2*zdewex)__________      2.853E+01
  Divertor_area_(m2)______________________________________________________ (divsur)____________      1.546E+02
  Divertor_mass_(kg)______________________________________________________ (divmas)____________      3.789E+04
  Lithium-6_enrichment_(%)________________________________________________ (li6enrich)_________      9.960E+01

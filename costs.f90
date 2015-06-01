@@ -1932,7 +1932,7 @@ contains
     cmlsa(3) = 0.9225D0
     cmlsa(4) = 1.0000D0
 
-    c2223 = 1.0D-6 * cryomass * uccryo
+    c2223 = 1.0D-6 * vvmass * uccryo
     c2223 = fkind * c2223 * cmlsa(lsa)
 
   end subroutine acc2223

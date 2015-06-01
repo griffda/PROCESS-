@@ -106,7 +106,7 @@ module ccfe_hcpb_module
   !  Volume of inboard and outboard shield (m3)
   real(kind=double), private :: volshldi, volshldo
   
-  !  Internal half-height of external cryostat (m)
+  !  Internal half-height of cryostat (m)
   ! real(kind=double), public :: zdewex  Now module fwbs_variables
   
   !  Inboard/outboard FW half thicknesses (m)
@@ -181,7 +181,8 @@ module ccfe_hcpb_module
   !  Fraction of neutron energy lost by main wall
   real(kind=double), private :: fdep
   
-  real(kind=double) :: flnce
+  ! obsolete
+  ! real(kind=double) :: flnce
   
 contains
   
@@ -232,7 +233,7 @@ contains
 	!  Energy multiplication
 	emult = 1.269
 	
-	!  Calculate blanket, shield, vacuum vessel and external cryostat volumes
+	!  Calculate blanket, shield, vacuum vessel and cryostat volumes
 	call component_volumes
 	
 	!  Centrepost heating for a ST machine
@@ -299,11 +300,11 @@ contains
   
   subroutine component_volumes
 	!+ad_name  component_volumes
-    !+ad_summ  Calculate the blanket, shield, vacuum vessel and external cryostat volumes
+    !+ad_summ  Calculate the blanket, shield, vacuum vessel and cryostat volumes
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_desc  Calculate the blanket, shield, vacuum vessel and external cryostat volumes
+    !+ad_desc  Calculate the blanket, shield, vacuum vessel and cryostat volumes
     !+ad_prob  None
     !+ad_hist  16/02/15 JM  Initial version
     !+ad_stat  Okay
@@ -347,7 +348,7 @@ contains
 	!  Apply coverage factors to volumes and surface areas
     call apply_coverage_factors
     
-    !  Calculate external cryostat geometry
+    !  Calculate cryostat geometry
     call external_cryo_geometry
       
   end subroutine
@@ -723,11 +724,11 @@ contains
 
   subroutine external_cryo_geometry
     !+ad_name  external_cryo_geometry
-    !+ad_summ  Calculate external cryostat geometry
+    !+ad_summ  Calculate cryostat geometry
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_desc  Calculate external cryostat geometry
+    !+ad_desc  Calculate cryostat geometry
     !+ad_prob  None
     !+ad_hist  16/02/15 JM  Initial version
     !+ad_stat  Okay
@@ -736,7 +737,7 @@ contains
     
     implicit none  
   
-    !  External cryostat radius (m)
+    !  cryostat radius (m)
     !  For rfp machines 
     if (irfp == 1) then
     
@@ -771,13 +772,13 @@ contains
     !  Vertical clearance between TF coil and cryostat (m)
     clh1 = zdewex - (hmax + tfcth)
 
-    !  External cryostat volume (m3)
+    !  cryostat volume (m3)
     vdewex = ( (2.0D0*pi*rdewex) * 2.0D0*zdewex + (2.0D0*pi*rdewex**2) ) * ddwex
 
     !  Vacuum vessel mass (kg)
-    cryomass = vdewin * denstl
+    vvmass = vdewin * denstl
 
-    !  Sum of internal vacuum vessel and external cryostat masses (kg)
+    !  Sum of internal vacuum vessel and cryostat masses (kg)
     dewmkg = (vdewin + vdewex) * denstl
   
   end subroutine
@@ -827,7 +828,7 @@ contains
 	fw_density = denstl*(1.0D0-vffwm)
 	blanket_density = whtblkt / volblkt
 	shield_density = whtshld / volshld
-	vv_density = cryomass / vdewin
+	vv_density = vvmass / vdewin
 	
 	!  Exponents (tonne/m2)
 	!  Blanket exponent (/1000 for kg -> tonnes)
@@ -1822,13 +1823,13 @@ contains
     implicit none
     
     call oheadr(ofile, 'First wall and blanket : CCFE HCPB model')   
-    call osubhd(ofile, 'Blanket Composition :')
+    call osubhd(ofile, 'Blanket Composition by volume :')
  
     call ovarrf(ofile, 'Titanium beryllide fraction', '(fbltibe12)', fbltibe12)
     call ovarrf(ofile, 'Lithium orthosilicate fraction', '(fblli2sio4)', fblli2sio4)
     call ovarrf(ofile, 'Steel fraction', '(fblss)', fblss)
-    call ovarrf(ofile, 'Void fraction coolant', '(vfcblkt)', vfcblkt)
-    call ovarrf(ofile, 'Void fraction purge gas', '(vfpblkt)', vfpblkt)
+    call ovarrf(ofile, 'Coolant fraction', '(vfcblkt)', vfcblkt)
+    call ovarrf(ofile, 'Purge gas fraction', '(vfpblkt)', vfpblkt)
     
     call osubhd(ofile, 'Component Volumes :')
     
@@ -1836,7 +1837,7 @@ contains
     call ovarrf(ofile, 'First Wall Volume (m3)', '(volfw)', volfw)
     call ovarrf(ofile, 'Blanket Volume (m3)', '(volblkt)', volblkt)
     call ovarrf(ofile, 'Shield Volume (m3)', '(volshld)', volshld)
-    call ovarre(ofile, 'Vacuum vessel volume (m3)', '(vdewin)', vdewin)
+    call ovarrf(ofile, 'Vacuum vessel volume (m3)', '(vdewin)', vdewin)
         
     call osubhd(ofile, 'Component Masses :')
     
@@ -1848,7 +1849,7 @@ contains
     call ovarre(ofile, '    Blanket Mass - Steel (kg)', '(whtblss)', whtblss)
     call ovarre(ofile, 'Total mass of armour, first wall and blanket (kg)', '(armour_fw_bl_mass)', armour_fw_bl_mass)
     call ovarre(ofile, 'Shield Mass (kg)', '(whtshld)', whtshld)
-    call ovarre(ofile, 'Vacuum vessel mass (kg)', '(cryomass)', cryomass)
+    call ovarre(ofile, 'Vacuum vessel mass (kg)', '(vvmass)', vvmass)
     
     !  Nuclear heating section
     call osubhd(ofile, 'Nuclear heating :')
@@ -1883,7 +1884,7 @@ contains
     call ovarre(ofile, 'Outer radius of outboard first wall coolant channels (m)', '(bfwo)', bfwo)
     call ovarrf(ofile, 'Inlet temperature of coolant (K)', '(inlet_temp)', inlet_temp)
     call ovarrf(ofile, 'Outlet temperature of coolant (K)', '(outlet_temp)', outlet_temp)
-    call ovarre(ofile, 'Allowable temperature of first wall material (K)', '(tfwmatmax)', tfwmatmax)
+    call ovarre(ofile, 'Allowable temperature of first wall material, excluding armour (K)', '(tfwmatmax)', tfwmatmax)
     call ovarre(ofile, 'Actual peak temperature of first wall material (K)', '(tpeak)', tpeak)
     call ovarre(ofile, 'Allowable nominal neutron fluence at first wall (MW.year/m2)', '(abktflnc)', abktflnc)    
     !call ovarre(ofile, 'Actual nominal neutron fluence at first wall (MW.year/m2)', '(flnce)', flnce)
@@ -1896,10 +1897,9 @@ contains
     
     call osubhd(ofile, 'Other volumes, masses and areas :')
     call ovarre(ofile, 'First wall area (m2)', '(fwarea)', fwarea)
-    call ovarre(ofile, 'External cryostat radius (m)', '(rdewex)', rdewex)
-    call ovarre(ofile, 'External cryostat half-height (m)', '(zdewex)', zdewex)
-    call ovarre(ofile, 'External cryostat volume (m3)', '(vdewex)', vdewex)
-    call ovarre(ofile, 'Total cryostat + vacuum vessel mass (kg)', '(dewmkg)', dewmkg)
+    call ovarre(ofile, 'Cryostat internal radius (m)', '(rdewex)', rdewex)
+    call ovarre(ofile, 'Cryostat internal full height (m)', '(2*zdewex)', 2.0D0*zdewex)
+    !call ovarre(ofile, 'Cryostat volume (m3)', '(vdewex)', vdewex)
     call ovarre(ofile, 'Divertor area (m2)', '(divsur)', divsur)
     call ovarre(ofile, 'Divertor mass (kg)', '(divmas)', divmas)
     
@@ -2013,6 +2013,9 @@ contains
     !+ad_hist  25/11/93 PJK Incorporation into PROCESS
     !+ad_hist  01/10/12 PJK Initial F90 version
     !+ad_hist  04/09/14 PJK Copied from pulse.f90
+    !+ad_hist  29/5/15  MDK Not in use at the moment
+    !+ad_hist  As this depends on the temperature and lifetime, the rest of the 
+    !+ad_hist  code may no longer be consistent with using this function.
     !+ad_stat  Okay
     !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
     !

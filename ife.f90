@@ -1974,7 +1974,7 @@ contains
 
     !  Cryostat mass (=zero)
 
-    cryomass = 0.0D0
+    !cryomass = 0.0D0
 
     if (iprint == 0) return
 

@@ -769,7 +769,7 @@ contains
     !  Cost of ITER VV in-wall shielding, ports and in-vessel coils
     s(37)%cref = 211.0D6    
     !  Scale with vacuum vessel mass (kg)
-    s(37)%k = cryomass
+    s(37)%k = vvmass
     s(37)%kref = 5.2360D6
     s(37)%cost = s(37)%cost_factor * s(37)%cref * (s(37)%k / s(37)%kref)**costexp
 

@@ -1222,7 +1222,7 @@ contains
                'Cryostat lid height scaling factor (m)')
        case ('ddwex')
           call parse_real_variable('ddwex', ddwex, 0.0D0, 10.0D0, &
-               'External cryostat thickness (m)')
+               'cryostat wall thickness (m)')
        case ('ddwi')
           call parse_real_variable('ddwi', ddwi, 0.0D0, 10.0D0, &
                'Vacuum vessel thickness (m)')
@@ -1234,7 +1234,7 @@ contains
                'Martensitic frac of steel in blanket')
        case ('fmsdwe')
           call parse_real_variable('fmsdwe', fmsdwe, 0.0D0, 1.0D0, &
-               'Martensitic frac of steel in external cryostat')
+               'Martensitic frac of steel in cryostat')
        case ('fmsdwi')
           call parse_real_variable('fmsdwi', fmsdwi, 0.0D0, 1.0D0, &
                'Martensitic frac of steel in vacuum vessel')

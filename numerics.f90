@@ -72,6 +72,7 @@ module numerics
   !+ad_hisc               compilation using gfortran fails
   !+ad_hist  27/02/15 JM  Changed default values for boundu(4) and boundu & l (103)
   !+ad_hist  27/05/15 MDK Added breeder_f as iteration variable 108
+  !+ad_hist  29/05/15 MDK Figure of merit 2 (P_fus P_in-total) has been replaced by "not used"
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -110,8 +111,8 @@ module numerics
   character(len=22), dimension(ipnfoms) :: lablmm = (/ &
        !+ad_varc  <LI> ( 1) major radius
        'major radius.         ', &
-       !+ad_varc  <LI> ( 2) P_fus P_in-total
-       'P_fus P_in-total.     ', &
+       !+ad_varc  <LI> ( 2) not used
+       'not used.             ', &
        !+ad_varc  <LI> ( 3) neutron wall load
        'neutron wall load.    ', &
        !+ad_varc  <LI> ( 4) P_tf + P_pf
@@ -248,7 +249,7 @@ module numerics
        'Toroidal field 1/R consistency   ', &
        !+ad_varc  <LI> (11) * Radial build (consistency equation)
        'Radial build consistency         ', &
-       !+ad_varc  <LI> (12) Volt second lower limit
+       !+ad_varc  <LI> (12) Volt second lower limit (STEADY STATE)
        'Volt second lower limit          ', &
        !+ad_varc  <LI> (13) Burn time lower limit (PULSE)
        'Burn time lower limit            ', &
@@ -258,8 +259,8 @@ module numerics
        'L-H power threshold limit        ', &
        !+ad_varc  <LI> (16) Net electric power lower limit
        'Net electric power lower limit   ', &
-       !+ad_varc  <LI> (17) * Radiation power upper limit
-       'Radiation power upper limit      ', &
+       !+ad_varc  <LI> (17) * Radiation fraction upper limit
+       'Radiation fraction upper limit   ', &
        !+ad_varc  <LI> (18) Divertor heat load upper limit
        'Divertor heat load upper limit   ', &
        !+ad_varc  <LI> (19) MVA upper limit
@@ -523,7 +524,7 @@ module numerics
        'ffuspow  ', &
        !+ad_varc  <LI> (27) fhldiv (f-value for equation 18)
        'fhldiv   ', &
-       !+ad_varc  <LI> (28) * fradpwr (f-value for equation 17)
+       !+ad_varc  <LI> (28) * fradpwr (f-value for equation 17), total radiation fraction
        'fradpwr  ', &
        !+ad_varc  <LI> (29) * bore
        'bore     ', &

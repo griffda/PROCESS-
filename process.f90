@@ -278,7 +278,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '396    Release Date :: 2015-05-29'
+       '397    Release Date :: 2015-06-01'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1936,3 +1936,4 @@ end subroutine runtests
 ! GIT 393: Issue #290 Improvements to thermohydraulic model of first wall.
 ! GIT 395: Rewrite to vacuum pump availability. New Binomial routine.
 ! GIT 396: New cost model complete.  J Shimwell parametric TBR model #195. #292, #293
+! GIT 397: Issues dealt with now or previously: #301 #219 #244 #252 #255 #262 #264 #268 #269 #278 #294 #295 #284
