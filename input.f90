@@ -1423,7 +1423,7 @@ contains
           call parse_real_variable('poisson', poisson, 0.0D0, 1.0D0, &
                'Poissons ratio for TF stress calc.')
        case ('prp')
-          call parse_real_variable('prp', prp, 0.0D0, 0.1D0, &
+          call parse_real_variable('prp', prp, 0.0D0, 0.9D0, &
                'Radial plate area / winding pack area')
        case ('ptempalw')
           call parse_real_variable('ptempalw', ptempalw, 50.0D0, 300.0D0, &
@@ -1664,6 +1664,10 @@ contains
        case ('tfwmatmax')
           call parse_real_variable('tfwmatmax', tfwmatmax, 500.0D0, 2000.0D0, &
                'Max temperature of first wall material (K)')
+       case ('fw_th_conductivity')
+          call parse_real_variable('fw_th_conductivity', fw_th_conductivity, 1.0D0, 100.0D0, &
+               'thermal conductivity of first wall material at 293 K (W/m/K)')               
+               
        case ('etaiso')
           call parse_real_variable('etaiso', etaiso, 0.1D0, 1.0D0, &
                'Isentropic efficiency of coolant pumps')

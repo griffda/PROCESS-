@@ -5636,13 +5636,14 @@ contains
     call ovarin(outfile,'Ignited plasma switch (0=not ignited, 1=ignited)', &
          '(ignite)',ignite)
 
-    call osubhd(outfile,'Charged Particle Power into Divertor Zone :')
+    !call ovarre(outfile,'Charged Particle Power into Divertor Zone (MW)', &
+    !                    '(ptremw+ptrimw-pedgeradmw)', ptremw+ptrimw-pedgeradmw)
 
-110 format(t2,'Particle power converted to edge radiation (MW)',t50,f9.2)
+!  110 format(t2,'Particle power converted to edge radiation (MW)',t50,f9.2)
 
-    write(outfile,'(t10,a)') repeat('-',49)
-    write(outfile,120) ptremw + ptrimw - pedgeradmw
-120 format(t39,'Total (MW)',t51,f8.2)
+    !write(outfile,'(t10,a)') repeat('-',49)
+    !write(outfile,120) ptremw + ptrimw - pedgeradmw
+!  120 format(t39,'Total (MW)',t51,f8.2)
 
     call oblnkl(outfile)
     call ovarre(outfile,'Power into divertor zone via charged particles (MW)','(pdivt)',pdivt)
@@ -5651,8 +5652,9 @@ contains
        fdiags(1) = pdivt ; call report_error(87)
        call oblnkl(outfile)
        call ocmmnt(outfile,'  BEWARE: possible problem with high radiation power')
-       call ocmmnt(outfile,'          forcing pdivt to an unrealistic value;')
-       call ocmmnt(outfile,'          divertor calculations may be nonsense!')
+       call ocmmnt(outfile,'          Power into divertor zone is unrealistic;')
+       call ocmmnt(outfile,'          divertor calculations will be nonsense!')
+       call ocmmnt(outfile,'  Set constraint 17 (Radiation fraction upper limit).')
        call oblnkl(outfile)
     end if
 

@@ -35,6 +35,7 @@ module global_variables
   integer :: verbose = 0
   !+ad_vars  run_tests /0/ : Turns on built-in tests if set to 1
   integer :: run_tests = 0
+  character(len=100) :: fileprefix = 'dummy_file_prefix'
 
 end module global_variables
 
@@ -1245,6 +1246,10 @@ module fwbs_variables
   integer :: nblktmodti = 32
   !+ad_vars  tfwmatmax /823.0/ : maximum temperature of first wall material (K) (secondary_cycle>1)
   real(kind(1.0D0)) :: tfwmatmax = 823.0D0
+  !+ad_vars  fw_th_conductivity /28.34/ : thermal conductivity of first wall material at 
+  !+ad_varc        293 K (W/m/K) (Temperature dependence is as for unirradiated Eurofer)  
+  real(kind(1.0D0)) :: fw_th_conductivity = 28.34D0  
+  
   !+ad_vars  etaiso /0.85/ : isentropic efficiency of first wall and blanket coolant pumps (secondary_cycle>1)
   real(kind(1.0D0)) :: etaiso = 0.85D0
   !+ad_vars  fvoldw /1.4/ : area coverage factor for vacuum vessel volume

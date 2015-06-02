@@ -17,6 +17,7 @@ module ccfe_hcpb_module
   !+ad_call  tfcoil_variables
   !+ad_hist  10/02/15 JM  Initial version of module
   !+ad_hist  23/04/15 MDK Removed fhole, changed 1 to 1.0D) for safety
+  !+ad_hist  01/06/15 MDK Tidied up details: Issue #302.
   !+ad_stat  Okay
   !+ad_docs  PROCESS Engineering paper (M. Kovari et al.)
   !
@@ -1155,8 +1156,8 @@ contains
 
     !  Should check max temp in the blanket is below necessary limits; this is not straightforward
     !  Calculate pumping powers for blanket and first wall (MW)
-    htpmw_fwi = pumppower(fwfllengi, afwi, mffwi, mffwpi, no90fw, no180fw, velfwi, etaiso, coolwh, 'Inboard first wall')
-    htpmw_blkti = pumppower(bzfllengi, afwi, mfblkti, mfblktpi, no90bz, no180bz, velblkti, etaiso, coolwh, 'Inboard blanket')
+    htpmw_fwi = pumppower(fwfllengi, afwi, mffwi, mffwpi, no90fw, no180fw, etaiso, coolwh, 'Inboard first wall')
+    htpmw_blkti = pumppower(bzfllengi, afwi, mfblkti, mfblktpi, no90bz, no180bz, etaiso, coolwh, 'Inboard blanket')
 
     !  OUTBOARD
 
@@ -1203,8 +1204,10 @@ contains
     !  necessary limits, but this is not straightforward
 
     !  Calculate pumping powers for blanket and first wall
-    htpmw_fwo = pumppower(fwfllengo, afwo, mffwo, mffwpo, no90fw, no180fw, velfwo, etaiso, coolwh, 'Outboard first wall')
-    htpmw_blkto = pumppower(bzfllengo, afwo, mfblkto, mfblktpo, no90bz, no180bz, velblkto, etaiso, coolwh, 'Outboard blanket')
+    !htpmw_fwo = pumppower(fwfllengo, afwo, mffwo, mffwpo, no90fw, no180fw, velfwo, etaiso, coolwh, 'Outboard first wall')
+    htpmw_fwo = pumppower(fwfllengo, afwo, mffwo, mffwpo, no90fw, no180fw, etaiso, coolwh, 'Outboard first wall')
+    !htpmw_blkto = pumppower(bzfllengo, afwo, mfblkto, mfblktpo, no90bz, no180bz, velblkto, etaiso, coolwh, 'Outboard blanket')
+    htpmw_blkto = pumppower(bzfllengo, afwo, mfblkto, mfblktpo, no90bz, no180bz, etaiso, coolwh, 'Outboard blanket')
 
     !  Total inboard & outboard FW and blanket pumping powers (MW)
     htpmw_fw = htpmw_fwi + htpmw_fwo
@@ -1482,7 +1485,7 @@ contains
     integer, parameter :: nk = 51
     integer :: it, k
     real(kind=double) :: boa, fboa, fwvol, hcoeff, kf, masflx, maxstress, &
-        mindif, qpp, qppp, sgpthn, tav, temp_c, temp_k, tfwav, tmpdif, tmprop_c, tmprop_k, &
+        mindif, qpp, qppp, sgpthn, tav, temp_k, tfwav, tmpdif, tmprop_k, &
         tmprse, tmthet, tpeakfw_c, viscf, viscfs
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1561,9 +1564,8 @@ contains
 
        do k = 1, nk
 		
-		  !  Temperature in Kelvin and deg C
+		  !  Temperature in Kelvin 
           temp_k = outlet_temp + (1073.15D0-outlet_temp) * dble(k-1)/(nk-1)
-          temp_c = temp_k - 273.15D0
 
           !  hcoeff also depends on FW temp so the calc of coolant properties & hcoeff is repeated
           call cprops(temp_k, cf, rhof, viscf, viscfs, kf)
@@ -1574,12 +1576,12 @@ contains
                /viscf)**0.8D0 * (viscf*cf/kf)**0.33D0 &
                *(viscf/viscfs)**0.14D0
 
-          tav = bfw/tk(temp_c)*(qpp/pi + qppp*bfw/2.0D0)*(bfw**2/ &
+          tav = bfw/tk(temp_k)*(qpp/pi + qppp*bfw/2.0D0)*(bfw**2/ &
                (bfw**2-afw**2)*log(bfw/afw)-0.5D0) &
-               - qppp/4.0D0/tk(temp_c)*((bfw**2-afw**2)/2.0D0) &
+               - qppp/4.0D0/tk(temp_k)*((bfw**2-afw**2)/2.0D0) &
                + (pi*(bfw**2-afw**2)*qppp + 2.0D0*bfw*qpp)/ &
                (2.0D0*pi*afw*hcoeff) + outlet_temp - 273.15D0
-          tmpdif = abs(tav-temp_c)
+          tmpdif = abs(tav-temp_k)
 
           if (tmpdif <= mindif) then
              mindif = tmpdif
@@ -1589,8 +1591,7 @@ contains
 
        end do
 
-       tmprop_c = tmprop_k - 273.15D0
-
+       
        !  Recalculate hcoeff with the found average first wall temperature
        call cprops(tmprop_k, cf, rhof, viscf, viscfs, kf)
 
@@ -1614,10 +1615,10 @@ contains
        !flnce = wallmw * fwlife
 
        !  Calculate peak temperature - occurs at (r,theta) = (bfw,0)
-       call cosine_term(afw, bfw, 0.0D0, bfw, qpp, hcoeff, tmprop_c, tmthet)
+       call cosine_term(afw, bfw, 0.0D0, bfw, qpp, hcoeff, tmprop_k, tmthet)
 
-       tpeakfw = bfw/tk(tmprop_c) * (qpp/pi + qppp*bfw/2.0D0) &
-            * log(bfw/afw) - qppp/4.0D0/tk(tmprop_c)*(bfw**2-afw**2) &
+       tpeakfw = bfw/tk(tmprop_k) * (qpp/pi + qppp*bfw/2.0D0) &
+            * log(bfw/afw) - qppp/4.0D0/tk(tmprop_k)*(bfw**2-afw**2) &
             + (pi*(bfw**2-afw**2)*qppp + 2.0D0*bfw*qpp) / &
             (2.0D0*pi*afw*hcoeff) + outlet_temp + tmthet  !  in K
        tpeakfw_c = tpeakfw - 273.15D0
@@ -1686,8 +1687,8 @@ contains
     !+ad_args  rad    : input real : radial position within first wall tube (m)
     !+ad_args  qpp    : input real : surface heat flux incident on first wall (W/m**2)
     !+ad_args  hcoeff : input real : heat transfer coefficient (W/m**2/K)
-    !+ad_args  tmprop : input real : property temperature (C)
-    !+ad_args  tmthet : output real : azimuthal temperature term (C)
+    !+ad_args  tmprop : input real : property temperature (K)
+    !+ad_args  tmthet : output real : azimuthal temperature term (K)
     !+ad_desc  This routine calculates the cosine terms in the temperature
     !+ad_desc  distribution formula. These terms are calculated with the material
     !+ad_desc  properties measured at the property temperature.
@@ -1873,9 +1874,7 @@ contains
     call ovarre(ofile, 'Blanket exponential factor', '(exp_blanket)', exp_blanket)    
     call ovarre(ofile, 'Shield: first exponential', '(exp_shield1)', exp_shield1)
     call ovarre(ofile, 'Shield: second exponential', '(exp_shield2)', exp_shield2)   
-    
-    call osubhd(ofile,'Thermodynamic Model Output :')
-    
+       
     call ovarin(ofile, 'Switch for plant secondary cycle ', '(secondary_cycle)', secondary_cycle) 
     call ovarre(ofile, 'First wall coolant pressure (Pa)', '(coolp)', coolp)
     call ovarre(ofile, 'Inner radius of inboard first wall coolant channels (m)', '(afwi)', afwi)
@@ -1958,40 +1957,32 @@ contains
     !+ad_name  tk
     !+ad_summ  Calculates the thermal conductivity of the first wall
     !+ad_type  Function returning real
-    !+ad_auth  C A Gardner, AEA Fusion, Culham Laboratory
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  None
-    !+ad_args  t : input real : property temperature (C)
-    !+ad_desc  This routine calculates the thermal conductivity of the
-    !+ad_desc  first wall (W/m/K). This gives a reasonable fit to 316 stainless
-    !+ad_desc  steel for temperatures between 300 and 800 degrees Celsius.
-    !+ad_desc  An additional option for using Eurofer steel as the first wall
-    !+ad_desc  material has been added for future use (currently commented out).
+    !+ad_args  t : input real : property temperature (K)
+    !+ad_desc  Calculates the thermal conductivity of Eurofer (W/m/K). 
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  25/11/93 PJK Incorporation into PROCESS
     !+ad_hist  01/10/12 PJK Initial F90 version
     !+ad_hist  04/09/14 PJK Added Eurofer steel fit
+    !+ad_hist  01/06/15 MDK Convert to Kelvin. Added user-defined multiplier fw_th_conductivity
     !+ad_stat  Okay
-    !+ad_docs  Work File Notes F/MPE/MOD/CAG/PROCESS/PULSE
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
-    real(kind=double) :: tk, temp
+    real(kind=double) :: tk
 
     !  Arguments
     real(kind=double), intent(in) :: t
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-	! Convert to Kelvin
-    temp = t + 273.15
-
+	
     ! Eurofer correlation, from "Fusion Demo Interim Structural Design Criteria - 
     ! Appendix A Material Design Limit Data", F. Tavassoli, TW4-TTMS-005-D01, 2004
-    tk = 5.4308D0 + 0.13565D0*temp - 0.00023862D0*temp*temp + 1.3393D-7*temp*temp*temp
+    ! t in Kelvin
+    tk = (5.4308D0 + 0.13565D0*t - 0.00023862D0*t*t + 1.3393D-7*t*t*t)*fw_th_conductivity/28.34D0
 
   end function tk
 
@@ -2060,7 +2051,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-  function pumppower(flleng, rad, mf, mfp, no90, no180, vel, etaiso, coolwh, label)
+   function pumppower(flleng, rad, mf, mfp, no90, no180, etaiso, coolwh, label)
 
     !+ad_name  pumppower
     !+ad_summ  Routine to calculate the coolant pumping power in MW in the first
@@ -2074,7 +2065,6 @@ contains
     !+ad_args  mfp         : input real : coolant mass flow rate per pipe (kg/s)
     !+ad_args  no90        : input integer : number of 90 degree bends in pipe
     !+ad_args  no180       : input integer : number of 180 degree bends in pipe
-    !+ad_args  vel         : input real : coolant flow speed (m/s)
     !+ad_args  etaiso      : input real : isentropic efficiency of coolant pumps
     !+ad_args  coolwh      : input integer: coolant fluid (1=helium, 2=water)
     !+ad_args  label       : input string: description of this calculation
@@ -2108,7 +2098,7 @@ contains
     real(kind=double) :: pumppower  !  MW
 
     !  Arguments
-    real(kind=double), intent(in) :: flleng, rad, mf, mfp, vel, etaiso
+    real(kind=double), intent(in) :: flleng, rad, mf, mfp, etaiso
     integer, intent(in) :: no90, no180, coolwh
     character(len=*), intent(in) :: label
 
@@ -2123,9 +2113,11 @@ contains
 
     !  Hydraulic diameter (circular channels assumed) (m)
     dh = 2.0D0*rad
-
+    ! MDK Clarify the Reynolds number formula.  Flow velocity:
+    vv = mfp / (rhof*pi*rad*rad)
     !  Reynolds number
-    reyn = 4.0D0*mfp / (pi*dh*viscf)
+    !reyn = 4.0D0*mfp / (pi*dh*viscf)
+    reyn = rhof * vv * dh / viscf
 
     !  Darcy friction factor, using Filonenko equation
     !  valid for 1.0e4 < Re < 1.0e7 (Sukhatme)
@@ -2151,16 +2143,14 @@ contains
     xift = 0.0175D0*lambda*0.018D0*90.0D0/dh  !+PJK... 90 or 180?
     kelbwt = ximt + xift
     
-    !  TODO: remove vel from arguments and from where pumppower is called!
+    !  Total pressure drop (Pa)
 
-    !  Total pressure drop, dividing by 1.0e6 to get MPa
-    vv = (mfp/(rhof*Pi*rad*rad))
-    deltap = 1.0D-6 * (kstrght + no90*kelbwn + no180*kelbwt) * 0.5D0*rhof*vv*vv
+    deltap = (kstrght + no90*kelbwn + no180*kelbwt) * 0.5D0*rhof*vv*vv
 
     !  Pumping power
     
     !  Inlet pressure (Pa)
-    coolpin = coolp + 1.0D6*deltap
+    coolpin = coolp + deltap
 
     !  Obtain inlet enthalpy and entropy from inlet pressure and temperature
     call fluid_properties(inlet_temp, coolpin, coolwh, enthalpy=h2, entropy=s2)
@@ -2168,7 +2158,7 @@ contains
     !  Assume isentropic pump so that s1 = s2
     s1 = s2
 
-    !  Get enthalpy (J/kg) before pump using coolp and s1
+    !  Get specific enthalpy (J/kg) before pump using coolp and s1
     call enthalpy_ps(coolp, s1, coolwh, h1)
 
     !  Pumping power (MW)
@@ -2179,8 +2169,9 @@ contains
     if (ip  == 0) return
     if (verbose == 1) then
         call oheadr(ofile, 'Pumping power for ' // label) 
-        call ovarre(ofile, 'Viscosity', '(viscf)', viscf)
-        call ovarre(ofile, 'Density', '(rhof)', rhof)
+        call ovarre(ofile, 'Viscosity (Pa.s)', '(viscf)', viscf)
+        call ovarre(ofile, 'Density (kg/m3)', '(rhof)', rhof)
+        call ovarre(ofile, 'Velocity (m/s)', '(vv)', vv)
         call ovarre(ofile, 'Reynolds number', '(reyn)', reyn)
         call ovarre(ofile, 'lambda', '(lambda)', lambda)
         call ovarre(ofile, 'Straight section pressure drop coefficient', '(kstrght)', kstrght)
@@ -2188,11 +2179,11 @@ contains
         call ovarre(ofile, '90 degree elbow friction coefficient', '(xifn)', xifn)
         call ovarre(ofile, '180 degree elbow singularity coefficient', '(ximt)', ximt)
         call ovarre(ofile, '180 degree elbow friction coefficient', '(xift)', xift)
-        call ovarre(ofile, 'Pressure drop', '(deltap)', deltap)
+        call ovarre(ofile, 'Pressure drop (Pa)', '(deltap)', deltap)
         call ovarre(ofile, 'Inlet pressure (Pa)', '(coolpin)', coolpin)
-        call ovarre(ofile, 'Inlet enthalpy', '(h2)', h2)
-        call ovarre(ofile, 'Inlet entropy', '(s2)', s2)
-        call ovarre(ofile, 'Enthalpy before pump', '(h1)', h1)
+        call ovarre(ofile, 'Inlet specific enthalpy (J/kg)', '(h2)', h2)
+        call ovarre(ofile, 'Specific enthalpy before pump (J/kg)', '(h1)', h1)
+        call ovarre(ofile, 'Specific enthalpy added by pump (J/kg)', '(h2-h1)', h2-h1)        
         call ovarre(ofile, 'Pumping power (MW)', '(ppump)', ppump)
     end if        
 

@@ -28,6 +28,20 @@ module load process/master
 \label{sec:gui}
 The user interface allows for viewing and editing of \indat\ files in a web browser. Launch the interface (GUI) by typing \verb+start_gui+ from the Unix command line. 
 
+(The interface uses Django for its web framework. Currently it can only be
+launched by running the Django development server locally. This is performed
+automatically if you launch the GUI as above. For instructions on starting the server manually, see the \verb|README| file in the \texttt{utilities/processgui} directory.)
+
+\textit{Please note: If you are working on a Linux desktop machine and already
+  have Firefox open, typing} \verb+start_gui+ \textit{on a Fusion Unix Network
+  machine will try to open a \process\ GUI session on the already-open Firefox
+  running locally. This will fail! You need to either close the local Firefox
+  session completely before typing} \verb+start_gui+ \textit{or open a
+  different browser manually (e.g.\ konqueror) after typing} \verb+start_gui+
+\textit{and navigate to 127.0.0.1:8000 in the address bar.}
+
+
+
 \includegraphics[scale=1]{gui.eps}
 
 Every variable is listed along with its current value, a 'reference'

@@ -72,6 +72,8 @@ program process
 
   !  Local variables
   integer :: ifail
+  ! MDK  
+  character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -102,6 +104,11 @@ program process
   close(unit=nplot)
   close(unit=mfile)
   if (verbose == 1) close(unit=vfile)
+  
+  ! MDK System calls to append IN.DAT to OUT.DAT
+  call system('cat '//trim(fileprefix)//'OUT.DAT  '//trim(fileprefix)//'IN.DAT  '//'> '//tempfile)
+  call system('mv  '//tempfile//'  '//trim(fileprefix)//'OUT.DAT')
+  
 
 end program process
 
@@ -149,7 +156,7 @@ subroutine init
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use error_handling
-  use global_variables, only: verbose
+  use global_variables, only: verbose, fileprefix
   use impurity_radiation_module
   use numerics
   use process_input
@@ -161,7 +168,8 @@ subroutine init
 
   !  Local variables
   integer :: i, nargs
-  character(len=100) :: fileprefix, executable
+  !character(len=100) :: fileprefix, executable
+  character(len=100) :: executable
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -278,7 +286,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '397    Release Date :: 2015-06-01'
+       '398    Release Date :: 2015-06-02'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1937,3 +1945,4 @@ end subroutine runtests
 ! GIT 395: Rewrite to vacuum pump availability. New Binomial routine.
 ! GIT 396: New cost model complete.  J Shimwell parametric TBR model #195. #292, #293
 ! GIT 397: Issues dealt with now or previously: #301 #219 #244 #252 #255 #262 #264 #268 #269 #278 #294 #295 #284
+! GIT 398: Tidy first wall and blanket thermohydraulics (#302), Radial plate error (#300), Append input file to output file (#305)

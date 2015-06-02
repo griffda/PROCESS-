@@ -124,7 +124,7 @@ contains
 
     integer :: i,peaktfflag
     real(kind(1.0D0)) :: awpc,awptf,bcylir,cplen,leni,leno,leno0, &
-         radwp,rbcndut,rcoil,rcoilp,tant,thtcoil,wbtf
+         radwp,rbcndut,rcoil,rcoilp,tant,thtcoil,wbtf, a, b, c
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -294,11 +294,14 @@ contains
 
     leno0 = sqrt(cpttf / jwptf)
 
-    !  Half-thickness of radial plates and inter-turn steel caps (m)
-    !  prp is the ratio of the radial plates + caps cross-sectional area
-    !  to the winding pack area awptf; solve for trp via simple quadratic eqn
-
-    trp = 0.5D0 * (-leno0 + sqrt(leno0*leno0 + prp*awptf))
+    !  trp = Half-thickness of radial plates and inter-turn steel caps (m)
+    !  prp = ratio of the radial plates + caps cross-sectional area
+    !  to the total winding pack area; solve for trp via quadratic eqn.
+    !  MDK
+    a = 1.0D0 - prp
+    b = leno0 * (1.0D0 - prp)
+    c = - leno0*leno0*prp / 4
+    trp = (-b + sqrt(b*b-4*a*c)) / (2*a)    
 
     !  Dimension of square cross-section of a turn, including the radial plate
 
@@ -1496,16 +1499,21 @@ contains
     call ovarre(outfile,'Conduit case thickness (m)','(thwcndut)',thwcndut)
     call ovarre(outfile,'Conduit insulation thickness (m)','(thicndut)',thicndut)
 
-    ap = acond + aswp + aiwp + avwp
+    ap = acond + turnstf*acndttf + arp + aiwp + avwp
 
     call osubhd(outfile,'Winding Pack Information :')
     
+    call ocmmnt(outfile,'Fractions by area')
     call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcutfsu)
     call ovarre(outfile,'Superconductor fraction of conductor','(1-fcutfsu)',1-fcutfsu)
+    
     call ovarre(outfile,'Conductor fraction of winding pack','(acond/ap)',acond/ap)
-    call ovarre(outfile,'Structure fraction of winding pack','(aswp/ap)',aswp/ap)
+    call ovarre(outfile,'Conduit fraction of winding pack','(turnstf*acndttf/ap)',turnstf*acndttf/ap)
+    call ovarre(outfile,'Additional steel (radial plate) fraction of winding pack','(arp/ap)',arp/ap)    
     call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap)
     call ovarre(outfile,'Helium fraction of winding pack','(avwp/ap)',avwp/ap)
+    call ovarrf(outfile,'      Total for winding pack','',(acond + turnstf*acndttf + arp + aiwp + avwp)/ap)    
+    
     call ovarre(outfile,'Winding radial thickness (m)','(thkwp)',thkwp)
     call ovarre(outfile,'Winding width 1 (m)','(wwp1)',wwp1)
     call ovarre(outfile,'Winding width 2 (m)','(wwp2)',wwp2)
