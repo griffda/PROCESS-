@@ -2819,7 +2819,7 @@ module cost_variables
   real(kind(1.0D0)) :: chplant = 0.0D0
   !+ad_vars  cland /19.2/ : cost of land (M$)
   real(kind(1.0D0)) :: cland = 19.2D0
-  !+ad_vars  coe : cost of electricity (m$/kW-hr)
+  !+ad_vars  coe : cost of electricity ($/MW-hr)
   real(kind(1.0D0)) :: coe = 0.0D0
   !+ad_vars  coecap : capital cost of electricity (m$/kW-hr)
   real(kind(1.0D0)) :: coecap = 0.0D0
@@ -2833,6 +2833,8 @@ module cost_variables
   real(kind(1.0D0)) :: concost = 0.0D0
   !+ad_vars  costexp /0.8/ : cost exponent for scaling in 2015 costs model
   real(kind(1.0D0)) :: costexp = 0.8D0
+  !+ad_vars  costexp_pebbles /0.6/ : cost exponent for pebbles in 2015 costs model
+  real(kind(1.0D0)) :: costexp_pebbles = 0.6D0
   !+ad_vars  cost_factor_buildings /1.0/ : cost scaling factor for buildings
   real(kind(1.0D0)) :: cost_factor_buildings = 1.0D0
   !+ad_vars  cost_factor_land /1.0/ : cost scaling factor for land
@@ -2849,6 +2851,16 @@ module cost_variables
   real(kind(1.0D0)) :: cost_factor_bop = 1.0D0
   !+ad_vars  cost_factor_misc /1.0/ : cost scaling factor for remaining subsystems
   real(kind(1.0D0)) :: cost_factor_misc = 1.0D0
+  
+  !+ad_vars  maintenance_fwbs /0.2/ : Maintenance cost factor: 
+  !+ad_varc                           first wall, blanket, shield, divertor
+  real(kind(1.0D0)) :: maintenance_fwbs = 0.2D0
+  !+ad_vars  maintenance_gen /0.05/ : Maintenance cost factor: All other components except
+  !+ad_varc                           coils, vacuum vessel, thermal shield, cryostat, land
+  real(kind(1.0D0)) :: maintenance_gen = 0.05D0
+  !+ad_vars  amortization /13.6/ : amortization factor (fixed charge factor) "A" (years)
+  real(kind(1.0D0)) :: amortization = 13.6D0  
+  
   !+ad_vars  cost_model /1/ : switch for cost model:<UL>
   !+ad_varc          <LI> = 0 use $ 1990 PROCESS model
   !+ad_varc          <LI> = 1 use $ 2015 Kovari model</UL>

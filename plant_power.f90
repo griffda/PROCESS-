@@ -837,7 +837,8 @@ contains
 
     call ovarre(outfile,'Facility base load (MW)','(basemw)',basemw)
     call ovarre(outfile,'Divertor coil power supplies (MW)','(bdvmw)',bdvmw)
-    call ovarre(outfile,'Cryogenic comp motors (MW)','(crymw)',crymw)
+    call ovarre(outfile,'Cryoplant electric power (MW)','(crymw)',crymw)
+    call ovarre(outfile,'Heat removed from cryogenic coils (MWth)','(helpow)',helpow)
     call ovarre(outfile,'MGF (motor-generator flywheel) units (MW)', '(fmgdmw)',fmgdmw)
     call ovarin(outfile,'Primary coolant pumps (MW)', '(coolwh)',coolwh)
     call ovarre(outfile,'Primary coolant pumps (MW)', '(htpmw..)',htpmw)
@@ -1425,7 +1426,7 @@ contains
 	
 	call ocmmnt(outfile,'Electrical Power Balance :')
     call ocmmnt(outfile,'--------------------------')
-	call ovarrf(outfile,'Net electric power output(MW)','(pnetelmw)',pnetelmw)
+	call ovarrf(outfile,'Net electric power output(MW)','(pnetelmw.)',pnetelmw)
 	call ovarrf(outfile,'Electric power for heating and current drive (MW)','(pinjwp)',pinjwp)
 	call ovarrf(outfile,'Electric power for primary coolant pumps (MW)','(htpmw)',htpmw)
 	call ovarrf(outfile,'Electric power for vacuum pumps (MW)','(vachtmw)',vachtmw)

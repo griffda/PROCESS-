@@ -1966,6 +1966,9 @@ contains
        case ('costexp')
           call parse_real_variable('costexp', costexp, 0.01D0, 5.0D0, &
                'Cost exponent for 2015 costs model')
+       case ('costexp_pebbles')
+          call parse_real_variable('costexp_pebbles', costexp_pebbles, 0.01D0, 5.0D0, &
+               'cost exponent for pebbles in 2015 costs model')
        case ('cost_factor_buildings')
           call parse_real_variable('cost_factor_buildings', cost_factor_buildings, 0.1D0, 10.0D0, &
            'Cost scaling factor for buildings (2015 costs model)')
@@ -1989,7 +1992,17 @@ contains
           'Cost scaling factor for energy conversion system (2015 costs model)')
        case ('cost_factor_misc')
           call parse_real_variable('cost_factor_misc', cost_factor_misc, 0.1D0, 10.0D0, &
-          'Cost scaling factor for remaining subsystems (2015 costs model)')
+          'Cost scaling factor for remaining subsystems (2015 costs model)')          
+       case ('maintenance_fwbs')
+          call parse_real_variable('maintenance_fwbs', maintenance_fwbs, 0.0D0, 1.0D0, &
+          'Maintenance cost factor: first wall, blanket, shield, divertor')
+       case ('maintenance_gen')
+          call parse_real_variable('maintenance_gen', maintenance_gen, 0.0D0, 1.0D0, &
+          'Maintenance cost factor: All other components except coils, vacuum vessel, thermal shield, cryostat, land')
+       case ('amortization')
+          call parse_real_variable('amortization', amortization, 1.0D0, 50.0D0, &
+               'amortization factor (fixed charge factor) "A" (years)')
+                  
        case ('cost_model')
           call parse_int_variable('cost_model', cost_model, 0, 2, &
                'Switch for cost model')

@@ -6,9 +6,8 @@
   James Morris
   13/04/2014
   CCFE
+  Revised by Michael Kovari, 4/6/2105
 
-  Compatible with PROCESS version ???
-  Latest update 17/06/2014 PJK
 """
 
 import argparse
@@ -42,31 +41,21 @@ winding = 'blue'
 thin = 0
 
 # Setup command line arguments
-parser = argparse.ArgumentParser(description="Produce a one-page summary "
-                                             "of the PROCESS MFILE file "
-                                             "for a given scan."
-                                             "For info contact "
-                                             "rich.kemp@ccfe.ac.uk or"
-                                             "james.morris2@ccfe.ac.uk")
+parser = argparse.ArgumentParser(description="Produces a two page summary of the PROCESS MFILE output, using the MFILE.  "
+                                             "For info contact rich.kemp@ccfe.ac.uk or james.morris2@ccfe.ac.uk")
 
 parser.add_argument("-f", metavar='FILENAME', type=str,
-                    default="MFILE.DAT",
-                    help='specify input filename')
+                    default="",
+                    help='specify filename prefix')
 
-parser.add_argument("-o", metavar='OUTPUT', type=str,
-                    default="2_page_summary.pdf",
-                    help='specify output filename')
+parser.add_argument("-s", "--show", help="show plot as well as saving figure", action="store_true")
 
-parser.add_argument("-s", "--show", help="show plot as well as saving "
-                    "figure", action="store_true")
-
-parser.add_argument("--svg", help="save plots as svg files",
-                    action="store_true")
+parser.add_argument("--svg", help="save plots as svg files", action="store_true")
 
 args = parser.parse_args()
 
 # read MFILE
-m_file = mf.MFile(args.f)
+m_file = mf.MFile(args.f + "MFILE.DAT")
 scan = -1
 bore = m_file.data["bore"].get_scan(scan)
 ohcth = m_file.data["ohcth"].get_scan(scan)
@@ -1584,7 +1573,8 @@ def save_plots(m_file_data, scan=-1):
 if __name__ == '__main__':
 
     # read MFILE
-    m_file = mf.MFile(args.f)
+    # m_file = mf.MFile(args.f)
+    m_file = mf.MFile(args.f + "MFILE.DAT")
     scan = -1
 
     # create main plot
@@ -1594,7 +1584,8 @@ if __name__ == '__main__':
     # run main
     main(page1, page2, m_file)
 
-    with bpdf.PdfPages(args.o) as pdf:
+    # with bpdf.PdfPages(args.o) as pdf:
+    with bpdf.PdfPages(args.f + "SUMMARY.pdf") as pdf:
         pdf.savefig(page1)
         pdf.savefig(page2)
 

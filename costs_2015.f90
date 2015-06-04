@@ -62,10 +62,11 @@ module costs_2015_module
 
   !  Scaling law array (unused entries will be zeroes)
   type(scl), dimension(100) :: s
-  real(kind=double) :: total_costs, mean_electric_output
+  real(kind=double) :: total_costs, mean_electric_output, annual_electric_output, &
+                       maintenance
 
   !  Private module variables
-  private :: ip, ofile, double, s, total_costs
+  private :: ip, ofile, double, s, total_costs 
   
   !  Public variables/subroutines
   public :: costs_2015
@@ -134,16 +135,33 @@ contains
          s(35)%cost + s(61)%cost
     ! Save as concost, the variable used as a Figure of Merit (M$) 
     concost = total_costs/1.0D6
-    mean_electric_output = pnetelmw * cpfact             
+    mean_electric_output = pnetelmw * cpfact     
+    annual_electric_output = mean_electric_output * 24.0D0*265.25D0
+    
+    ! Annual maintenance cost.
+    maintenance =  (s(27)%cost + s(38)%cost ) * maintenance_fwbs + &
+                   (s(9)%cost + s(31)%cost + s(34)%cost + s(35)%cost + &
+                   s(41)%cost + s(43)%cost + s(45)%cost + s(47)%cost + &
+                   s(48)%cost + s(49)%cost + s(50)%cost + s(51)%cost + &
+                   s(52)%cost + s(53)%cost + s(54)%cost + s(58)%cost)* &
+                   maintenance_gen
+    ! Levelized cost of electricity (LCOE) ($/MWh)
+    coe = (1.0D0/annual_electric_output)*(total_costs/amortization + maintenance)    
     
     ! Switch on output if there is a NaN error
     if ((abs(concost) > 9.99D99).or.(concost /= concost)) then
         call write_costs_to_output
-        write(*,*) s
+        write(*,*) s        
         return
     end if
          
     if ((ip == 0).or.(output_costs == 0)) return    
+    if (((abs(coe) > 9.99D99).or.(coe /= coe)).and. (verbose==1))  then
+        call write_costs_to_output
+        write(*,*) s        
+        return
+    end if
+    
 
     !  Output costs
     call write_costs_to_output   
@@ -451,7 +469,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Set cost factor for tf coils
+    !  Set cost factor for fwbs
     do i=22, 27
        s(i)%cost_factor = cost_factor_fwbs
     end do
@@ -542,7 +560,7 @@ contains
     !  Scale with mass of pebbles (kg)
     s(23)%k = whtblli4sio4
     s(23)%kref = 10.0D0
-    s(23)%cost = s(23)%cost_factor * s(23)%cref * (s(23)%k / s(23)%kref)**costexp    
+    s(23)%cost = s(23)%cost_factor * s(23)%cref * (s(23)%k / s(23)%kref)**costexp_pebbles    
     
     s(24)%label = "Titanium beryllide pebble manufacturing"    
     !  Reference cost of titanium beryllide pebble manufacture (2014 $)
@@ -550,7 +568,7 @@ contains
     !  Scale with mass of titanium beryllide pebbles (kg)
     s(24)%k = whtbltibe12
     s(24)%kref = 1.0D5
-    s(24)%cost = s(24)%cost_factor * s(24)%cref * (s(24)%k / s(24)%kref)**costexp
+    s(24)%cost = s(24)%cost_factor * s(24)%cref * (s(24)%k / s(24)%kref)**costexp_pebbles
 
     s(25)%label = "First wall W coating manufacturing"    
     !  Reference (PPCS A) first wall W coating cost (2014 $)
@@ -1012,12 +1030,14 @@ contains
 
     call oblnkl(ofile)
     call ocost(ofile, "TOTAL OVERNIGHT CAPITAL COST (M$)", total_costs/1.0D6)
+    call ocost(ofile, "Annual maintenance cost (M$)", maintenance/1.0D6)  
     call oblnkl(ofile)
-    call ovarrf(ofile, "Net electric output (MW)", '(pnetelmw)', pnetelmw)    
+    call ovarrf(ofile,"Net electric output (MW)", '(pnetelmw)', pnetelmw)    
     call ovarrf(ofile,"Capacity factor", '(cpfact)', cpfact)
     call ovarrf(ofile,"Mean electric output (MW)", '(mean_electric_output)', mean_electric_output)
     call ovarrf(ofile,"Capital cost / mean electric output ($/W)", &
-      '(total_costs/mean_electric_output/1.0D6)', total_costs/mean_electric_output/1.0D6)
+      '(total_costs/mean_electric_output/1.0D6)', total_costs/mean_electric_output/1.0D6)    
+    call ovarrf(ofile, "Levelized cost of electricity ($/MWh)", '(coe)', coe)  
     
   end subroutine write_costs_to_output
   
