@@ -320,6 +320,9 @@ Section~\ref{sec:codemods}).
 \item If any of the User Guide \texttt{.tex} files have been modified, edit
   the definition of \verb+\version+ in \texttt{process.tex} by changing the
   Revision (to \texttt{XYZ}) and the date.
+  
+\item \texttt{make all}
+This ensures that all the code and documentation compiles successfully.  
 
 \item \texttt{git add process.f90 process.tex changedfile1 changedfile2 ...}  \\
   (This `stages' the modified files marking them as ready for committing).  \\
@@ -342,12 +345,9 @@ Save and close the window. This will initiate the commit to your \textit{local}\
 
 \item \texttt{git push origin rXYZ}
 
-\item \texttt{make all}
-
 \end{enumerate}
 
-The instructions given in Section~\ref{sec:fullrebuild} should now be followed
-to make the new \texttt{develop} release available to all users.
+The instructions given in Section~\ref{sec:fullrebuild} should now be followed to make the new \texttt{develop} release available to all users.
 
 \subsubsection{Merging develop into master}
 

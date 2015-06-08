@@ -1095,8 +1095,7 @@ To enforce the stress limits calculated using either of these models,
 constraint equation no.\ 31 (case stress) and/or constraint equation no.\ 32
 (conduit stress) should be turned on with iteration variables no.\ 48
 (\texttt{fstrcase}) and/or no.\ 49 (\texttt{fstrcond}), respectively. The
-stress limit can be adjusted using input parameters \texttt{csutf} and
-\texttt{csytf}.
+stress limit is set using input parameter \texttt{alstrtf}.
 
 \subsection{Poloidal field coils}
 \label{sec:pfcoils}
@@ -1231,11 +1230,7 @@ variable \texttt{fcuohsu}.
 
 If the central solenoid is superconducting, the coil contains steel for
 strength. The cross-sectional area of steel is determined by the $J \times B$
-hoop force on the coil divided by the allowable hoop stress, calculated as the
-lower of the two quantities (2/3 * \texttt{csytf}) and (0.5 * \texttt{csutf}),
-where input parameter \texttt{csytf} (Pa) is the yield strength of the steel,
-and \texttt{csutf} (Pa) is the ultimate strength of the steel. (This is the
-same calculation as for the allowable stress in the TF coil cases.) A steel
+hoop force on the coil divided by the allowable hoop stress, given by the input \texttt{alstroh}. A steel
 thickness is given in the output, which would be the thickness of a
 steel case of the same cross-sectional area if it simply surrounded the
 conducting region.

@@ -286,7 +286,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '398    Release Date :: 2015-06-02'
+       '399    Release Date :: 2015-06-08'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1946,3 +1946,4 @@ end subroutine runtests
 ! GIT 396: New cost model complete.  J Shimwell parametric TBR model #195. #292, #293
 ! GIT 397: Issues dealt with now or previously: #301 #219 #244 #252 #255 #262 #264 #268 #269 #278 #294 #295 #284
 ! GIT 398: Tidy first wall and blanket thermohydraulics (#302), Radial plate error (#300), Append input file to output file (#305)
+! GIT 399: Minimum total electrical power for primary coolant pumps (htpmw_min) (#303). The user now specifies the allowable von Mises stress for TFC and hoop stress for CS.
