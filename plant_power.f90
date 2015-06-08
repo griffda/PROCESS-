@@ -838,12 +838,12 @@ contains
     call ovarre(outfile,'Facility base load (MW)','(basemw)',basemw)
     call ovarre(outfile,'Divertor coil power supplies (MW)','(bdvmw)',bdvmw)
     call ovarre(outfile,'Cryoplant electric power (MW)','(crymw)',crymw)
-    call ovarre(outfile,'Heat removed from cryogenic coils (MWth)','(helpow)',helpow)
-    call ovarre(outfile,'MGF (motor-generator flywheel) units (MW)', '(fmgdmw)',fmgdmw)
-    call ovarin(outfile,'Primary coolant pumps (MW)', '(coolwh)',coolwh)
+    call ovarre(outfile,'Heat removed from cryogenic coils (MWth)','(helpow/1.0D6)',helpow/1.0D6)
+    !call ovarre(outfile,'MGF (motor-generator flywheel) units (MW)', '(fmgdmw)',fmgdmw)
+    !call ovarin(outfile,'Primary coolant pumps (MW)', '(coolwh)',coolwh)
     call ovarre(outfile,'Primary coolant pumps (MW)', '(htpmw..)',htpmw)
     call ovarre(outfile,'PF coil power supplies (MW)','(ppfmw)',ppfmw)
-    call ovarre(outfile,'Power/floor area (kW/m2)','(pkwpm2)',pkwpm2)
+    !call ovarre(outfile,'Power/floor area (kW/m2)','(pkwpm2)',pkwpm2)
     call ovarre(outfile,'TF coil power supplies (MW)','(ptfmw)',ptfmw)
     call ovarre(outfile,'Plasma heating supplies (MW)','(pheatingmw)', &
          pheatingmw)
@@ -923,9 +923,9 @@ contains
     
     ! Total mechanical pump power (deposited in coolant)
     htpmw_mech = htpmw_fw + htpmw_blkt + htpmw_shld + htpmw_div
-
-    !  Total heat transport system input electrical power (MW)
-    htpmw = htpmwe_fw + htpmwe_blkt + htpmwe_shld + htpmwe_div
+   
+    ! Minimum total electrical power for primary coolant pumps  (MW) Issue #303
+    htpmw = max(htpmw_min, htpmwe_fw + htpmwe_blkt + htpmwe_shld + htpmwe_div)
 
     !  Heat lost through pump power inefficiencies (MW)
     htpsecmw = htpmw - htpmw_mech

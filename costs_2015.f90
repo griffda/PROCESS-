@@ -156,13 +156,7 @@ contains
     end if
          
     if ((ip == 0).or.(output_costs == 0)) return    
-    if (((abs(coe) > 9.99D99).or.(coe /= coe)).and. (verbose==1))  then
-        call write_costs_to_output
-        write(*,*) s        
-        return
-    end if
     
-
     !  Output costs
     call write_costs_to_output   
 

@@ -1043,7 +1043,7 @@ contains
 		
 	end if
 	
-    !  Calculate coolant pumping powers from input fraction.  
+    !  Calculate shield and divertor coolant pumping powers from input fraction.  
     !  The pumping power is assumed to be a fraction, fpump, of the incident
     !  thermal power to each component so that,
     !     htpmw_i = fpump_i*C
@@ -1241,29 +1241,31 @@ contains
     call ovarre(ofile, 'Nuclear heating FW inner', '(pnucfwi)',pnucfwi)
     call ovarre(ofile, 'Nuclear heating FW outer', '(pnucfwo)',pnucfwo)
     call oblnkl(ofile)
-    call ovarre(ofile, 'void fraction inboard side', '(vffwi)', vffwi)
-    call ovarre(ofile, 'Total mass flow rate to remove inboard first wall power (kg/s)', '(mffwi)', mffwi)
-    call ovarre(ofile, 'Calculate total number of pipes from coolant fraction and channel dimensions', '(npfwi)', npfwi)
-    call ovarre(ofile, 'Mass flow rate per coolant pipe (kg/s)', '(mffwpi)', mffwpi)
-    call ovarre(ofile, 'Neutron power deposited in inboard blanket (MW)', '(pnucblkti)', pnucblkti)
-    call ovarre(ofile, 'mass flow rate for inboard blanket coolant (kg/s)', '(mfblkti)', mfblkti)
-    call ovarre(ofile, 'total num of pipes (in all inboard modules)', '(npblkti)', npblkti)
-    call ovarre(ofile, 'Mass flow rate per coolant pipe (kg/s)', '(mfblktpi)', mfblktpi)
+    call ocmmnt(ofile, 'Inboard first wall and blanket')
+    call ovarre(ofile, 'Coolant volume fraction in first wall', '(vffwi)', vffwi)
+    call ovarre(ofile, 'Mass flow rate of first wall coolant (kg/s)', '(mffwi)', mffwi)
+    call ovarre(ofile, 'Number of coolant pipes in first wall', '(npfwi)', npfwi)
+    call ovarre(ofile, 'Mass flow rate per coolant pipe in first wall (kg/s)', '(mffwpi)', mffwpi)
+    call ovarre(ofile, 'Neutron power deposited in blanket (MW)', '(pnucblkti)', pnucblkti)
+    call ovarre(ofile, 'Mass flow rate of blanket coolant (kg/s)', '(mfblkti)', mfblkti)
+    call ovarre(ofile, 'Number of coolant pipes in blanket', '(npblkti)', npblkti)
+    call ovarre(ofile, 'Mass flow rate per coolant pipe in blanket (kg/s)', '(mfblktpi)', mfblktpi)
     call ovarre(ofile, 'Coolant velocity in blanket (m/s)', '(velblkti)', velblkti)
-    call ovarre(ofile, 'pumping powers for first wall (MW)', '(htpmw_fwi)', htpmw_fwi)
-    call ovarre(ofile, 'pumping powers for blanket (MW)', '(htpmw_blkti)', htpmw_blkti)
+    call ovarre(ofile, 'Pumping power for first wall (MW)', '(htpmw_fwi)', htpmw_fwi)
+    call ovarre(ofile, 'Pumping power for blanket (MW)', '(htpmw_blkti)', htpmw_blkti)
     call oblnkl(ofile)
-    call ovarre(ofile, 'void fraction outboard side', '(vffwo)', vffwo)
-    call ovarre(ofile, 'Total mass flow rate to remove outboard first wall power (kg/s)', '(mffwo)', mffwo)
-    call ovarre(ofile, 'Calculate total number of pipes from coolant fraction and channel dimensions', '(npfwo)', npfwo)
-    call ovarre(ofile, 'Mass flow rate per coolant pipe (kg/s)', '(mffwpo)', mffwpo)
-    call ovarre(ofile, 'Neutron power deposited in outboard blanket (MW)', '(pnucblkto)', pnucblkto)
-    call ovarre(ofile, 'mass flow rate for outboard blanket coolant (kg/s)', '(mfblkto)', mfblkto)
-    call ovarre(ofile, 'total num of pipes (in all outboard modules)', '(npblkto)', npblkto)
-    call ovarre(ofile, 'Mass flow rate per coolant pipe (kg/s)', '(mfblktpo)', mfblktpo)
+    call ocmmnt(ofile, 'Outboard first wall and blanket')
+    call ovarre(ofile, 'Coolant volume fraction in first wall', '(vffwo)', vffwo)
+    call ovarre(ofile, 'Mass flow rate of first wall coolant (kg/s)', '(mffwo)', mffwo)
+    call ovarre(ofile, 'Number of coolant pipes in first wall', '(npfwo)', npfwo)
+    call ovarre(ofile, 'Mass flow rate per coolant pipe in first wall (kg/s)', '(mffwpo)', mffwpo)
+    call ovarre(ofile, 'Neutron power deposited in blanket (MW)', '(pnucblkto)', pnucblkto)
+    call ovarre(ofile, 'Mass flow rate of blanket coolant (kg/s)', '(mfblkto)', mfblkto)
+    call ovarre(ofile, 'Number of coolant pipes in blanket', '(npblkto)', npblkto)
+    call ovarre(ofile, 'Mass flow rate per coolant pipe in blanket (kg/s)', '(mfblktpo)', mfblktpo)
     call ovarre(ofile, 'Coolant velocity in blanket (m/s)', '(velblkto)', velblkto)
-    call ovarre(ofile, 'pumping powers for first wall (MW)', '(htpmw_fwo)', htpmw_fwo)
-    call ovarre(ofile, 'pumping powers for blanket (MW)', '(htpmw_blkto)', htpmw_blkto)
+    call ovarre(ofile, 'Pumping power for first wall (MW)', '(htpmw_fwo)', htpmw_fwo)
+    call ovarre(ofile, 'Pumping power for blanket (MW)', '(htpmw_blkto)', htpmw_blkto)
   
   end subroutine
    
@@ -2161,7 +2163,8 @@ contains
     !  Get specific enthalpy (J/kg) before pump using coolp and s1
     call enthalpy_ps(coolp, s1, coolwh, h1)
 
-    !  Pumping power (MW)
+    !  Pumping power (MW) is given by enthalpy change,
+    !  provided the pumping process is adiabatic.
     ppump = 1.0D-6 * mf * (h2-h1) / etaiso
 
     pumppower = ppump
@@ -2183,7 +2186,8 @@ contains
         call ovarre(ofile, 'Inlet pressure (Pa)', '(coolpin)', coolpin)
         call ovarre(ofile, 'Inlet specific enthalpy (J/kg)', '(h2)', h2)
         call ovarre(ofile, 'Specific enthalpy before pump (J/kg)', '(h1)', h1)
-        call ovarre(ofile, 'Specific enthalpy added by pump (J/kg)', '(h2-h1)', h2-h1)        
+        call ovarre(ofile, 'Specific enthalpy added by pump (J/kg)', '(h2-h1)', h2-h1)     
+        call ovarre(ofile, 'Total coolant mass flow rate in (kg/s)', '(mf)', mf)   
         call ovarre(ofile, 'Pumping power (MW)', '(ppump)', ppump)
     end if        
 
@@ -2290,6 +2294,7 @@ v19(3)= -0.0257699008284
         if (i == 2) call ovarin(outfile, 'Blanket thickness choice: MEDIUM (0.64 m inboard, 1.11 m outboard)', '(iblanket_thickness)', iblanket_thickness)
         if (i == 3) call ovarin(outfile, 'Blanket thickness choice: THICK (0.75 m inboard, 1.30 m outboard)', '(iblanket_thickness)', iblanket_thickness)
         call ovarrf(outfile, 'Tritium breeding ratio (5-year time-averaged)','(tbr)',tbr)
+        call ovarre(outfile, 'Tritium breeding ratio (5-year time-averaged)','(tbr)',tbr)
         
         call ocmmnt(outfile,'(See "A parameter study of time-varying tritium production in solid-type breeder blankets,') 
         call ocmmnt(outfile, 'J. Shimwell et al, Fusion Engineering and Design"')

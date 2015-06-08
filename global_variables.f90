@@ -1415,8 +1415,10 @@ module pfcoil_variables
   !+ad_vars  alfapf /5.0e-10/ : smoothing parameter used in PF coil
   !+ad_varc                     current calculation at the beginning of pulse (BoP)
   real(kind(1.0D0)) :: alfapf = 5.0D-10
-  !+ad_vars  alstroh : allowable hoop stress in central solenoid (Pa)
-  real(kind(1.0D0)) :: alstroh = 0.0D0
+  
+  !+ad_vars  alstroh /4.0D8/ : allowable hoop stress in Central Solenoid structural material (Pa)
+  real(kind(1.0D0)) :: alstroh = 4.0D8
+  
   !+ad_vars  areaoh : central solenoid cross-sectional area (m2)
   real(kind(1.0D0)) :: areaoh = 0.0D0
   !+ad_vars  awpoh : central solenoid conductor+void area (m2)
@@ -1688,8 +1690,9 @@ module tfcoil_variables
   real(kind(1.0D0)) :: acstf = 0.0D0
   !+ad_vars  aiwp : winding pack insulation area (m2)
   real(kind(1.0D0)) :: aiwp = 0.0D0
-  !+ad_vars  alstrtf : allowable stress in TF coil (Pa)
-  real(kind(1.0D0)) :: alstrtf = 0.0D0
+  !+ad_vars  alstrtf /6.0D8/ : allowable von Mises stress in TF coil structural material (Pa)
+  real(kind(1.0D0)) :: alstrtf = 6.0D8
+
   !+ad_vars  arealeg : outboard TF leg area (m2)
   real(kind(1.0D0)) :: arealeg = 0.0D0
   !+ad_vars  arp : TF coil radial plate area (m2)
@@ -1724,12 +1727,7 @@ module tfcoil_variables
   !+ad_varc                  (calculated for stellarators)
   !+ad_varc                  (iteration variable 60)
   real(kind(1.0D0)) :: cpttf = 3.79D4
-  !+ad_vars  csutf /1.32e9/ : ultimate strength of case (TF coils and CS coils) (Pa)
-  !+ad_varc                   (default value from DDD11-2 v2 2 (2009))
-  real(kind(1.0D0)) :: csutf = 1.32D9
-  !+ad_vars  csytf /1.0005e9/ : yield strength of case (TF coils and CS coils) (Pa)
-  !+ad_varc                     (default value from DDD11-2 v2 2 (2009))
-  real(kind(1.0D0)) :: csytf = 1.0005D9
+
   !+ad_vars  dcase /8000.0/ : density of coil case (kg/m3)
   real(kind(1.0D0)) :: dcase = 8000.0D0
   !+ad_vars  dcond(4) /9000.0/ : density of superconductor type given by isumattf/isumatoh/isumatpf (kg/m3)
@@ -2270,6 +2268,9 @@ module heat_transport_variables
   !+ad_varc                      to drive the shield coolant pumps (default assumes
   !+ad_varc                      water coolant) 
   real(kind(1.0D0)) :: fpumpshld = 0.005D0
+  !+ad_vars  htpmw_min /0.0/ : Minimum total electrical power for primary coolant pumps (MW)
+  real(kind(1.0D0)) :: htpmw_min = 0.0D0
+  
   !+ad_vars  helpow : heat removal at cryogenic temperatures (W)
   real(kind(1.0D0)) :: helpow = 0.0D0
   !+ad_vars  htpmw  :: heat transport system electrical pump power (MW)

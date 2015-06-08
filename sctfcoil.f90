@@ -668,9 +668,9 @@ contains
 
     eyrp = eystl
 
-    !  Allowable stress (Pa)
+    !  Allowable von Mises stress (Pa).  This is now a user input: alstrtf
 
-    alstrtf = min( (2.0D0*csytf/3.0D0), (0.5D0*csutf) )
+    ! alstrtf = min( (2.0D0*csytf/3.0D0), (0.5D0*csutf) )
 
     !  Simple stress model option
 

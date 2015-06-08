@@ -889,9 +889,10 @@ contains
     if (ipfres == 0) then
 
        !  Superconducting coil
-       !  Allowable (hoop) stress (Pa); calculated as for the TF coils' alstrtf
+       !  Allowable (hoop) stress (Pa) alstroh
+       ! Now a user input
 
-       alstroh = min( (2.0D0*csytf/3.0D0), (0.5D0*csutf) )
+       ! alstroh = min( (2.0D0*csytf/3.0D0), (0.5D0*csutf) )
        areaspf = forcepf / alstroh
 
        !  Thickness of hypothetical steel cylinders assumed to encase the CS along

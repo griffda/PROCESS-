@@ -421,7 +421,7 @@ contains
        if (ireactor == 0) then
           fc = sgn * cdirt/1.0D3
        else
-          fc = sgn * concost/1.0D3
+          fc = sgn * concost/1.0D4
        end if
 
     case (8)  !  aspect ratio

@@ -1322,12 +1322,13 @@ contains
        case ('cpttf')
           call parse_real_variable('cpttf', cpttf, 1.0D0, 1.0D6, &
                'TF coil leg current per turn (A)')
-       case ('csutf')
-          call parse_real_variable('csutf', csutf, 1.0D6, 1.0D11, &
-               'Ultimate strength of TF coil case (Pa)')
-       case ('csytf')
-          call parse_real_variable('csytf', csytf, 1.0D6, 1.0D11, &
-               'Yield strength of TF coil case (Pa)')
+       case ('alstrtf')
+          call parse_real_variable('alstrtf', alstrtf, 1.0D6, 1.0D11, &
+               'Allowable von Mises stress in TF coil structural material (Pa)')
+       case ('alstroh')
+          call parse_real_variable('alstroh', alstroh, 1.0D6, 1.0D11, &
+               'Allowable hoop stress in Central Solenoid structural material (Pa)')
+       
        case ('dcase')
           call parse_real_variable('dcase', dcase, 1.0D3, 1.0D5, &
                'Density of TF coil case (kg/m3)')
@@ -1861,9 +1862,9 @@ contains
        case ('fpumpshld')
           call parse_real_variable('fpumpshld', fpumpshld, 0.0D0, 0.2D0, &
                'Shield pumping/thermal power ratio')
-       case ('htpmw')
-          call parse_real_variable('htpmw', htpmw, 0.0D0, 500.0D0, &
-               'Heat transport system pump power')
+       case ('htpmw_min')
+          call parse_real_variable('htpmw_min', htpmw_min, 0.0D0, 500.0D0, &
+               'Minimum total electrical power for primary coolant pumps  (MW)')
        case ('ipowerflow')
           call parse_int_variable('ipowerflow', ipowerflow, 0, 1, &
                'Switch for power flow model')
