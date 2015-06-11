@@ -73,7 +73,7 @@ module power_module
   !  Local variables
   real(kind=double) :: htpmwe_fw, htpmwe_blkt, htpmwe_shld, htpmwe_div, htpmw_mech
   real(kind=double) :: pthermdiv, pthermfw, pthermblkt, pthermshld
-  real(kind=double) :: ppumpmw, pcoresystems, pdivfraction, delta_eta
+  real(kind=double) :: ppumpmw, pcoresystems, pdivfraction, delta_eta, qss, qnuc, qac, qcl, qmisc
   
   !  Primary power to divertor factor
   integer, private :: iprimdiv
@@ -838,7 +838,7 @@ contains
     call ovarre(outfile,'Facility base load (MW)','(basemw)',basemw)
     call ovarre(outfile,'Divertor coil power supplies (MW)','(bdvmw)',bdvmw)
     call ovarre(outfile,'Cryoplant electric power (MW)','(crymw)',crymw)
-    call ovarre(outfile,'Heat removed from cryogenic coils (MWth)','(helpow/1.0D6)',helpow/1.0D6)
+    !call ovarre(outfile,'Heat removed from cryogenic coils (MWth)','(helpow/1.0D6)',helpow/1.0D6)
     !call ovarre(outfile,'MGF (motor-generator flywheel) units (MW)', '(fmgdmw)',fmgdmw)
     !call ovarin(outfile,'Primary coolant pumps (MW)', '(coolwh)',coolwh)
     call ovarre(outfile,'Primary coolant pumps (MW)', '(htpmw..)',htpmw)
@@ -949,7 +949,7 @@ contains
     
     !  Thermal to electric efficiency
     call plant_thermal_efficiency(etath)
-
+    
     !  Primary (high-grade) thermal power, available for electricity generation.  Switch iprimshld
     !  is 1 or 0, is user choice on whether the shield thermal power goes to primary or secondary heat
     if (secondary_cycle == 0) then
@@ -1151,7 +1151,17 @@ contains
     if (iprint == 0) return
 
     !  Output section
-
+    call oheadr(outfile,'Cryogenics')
+    call ovarre(outfile,'Conduction and radiation heat loads on cryogenic components (MW)', '(qss/1.0D6)', qss/1.0D6)
+    call ovarre(outfile,'Nuclear heating of cryogenic components (MW)', '(qnuc/1.0D6)', qnuc/1.0D6)
+    call ovarre(outfile,'AC losses in cryogenic components (MW)', '(qac/1.0D6)', qac/1.0D6)
+    call ovarre(outfile,'Resistive losses in current leads (MW)', '(qcl/1.0D6)', qcl/1.0D6)
+    call ovarre(outfile,'45% allowance for heat loads in transfer lines, storage tanks etc (MW)', '(qmisc/1.0D6)', qmisc/1.0D6)
+    call ovarre(outfile,'Sum = Total heat removal at cryogenic temperatures (W)', '(helpow/1.0D6)', helpow/1.0D6)
+    call ovarre(outfile,'Temperature of cryogenic components (K)', '(tmpcry)', tmpcry)
+    call ovarre(outfile,'Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot value:', '', (0.13D0*tmpcry)/(293.0D0 - tmpcry))
+    call ovarre(outfile,'Electric power for cryogenic plant (MW)', '(crypmw)', crypmw)
+    
     call oheadr(outfile,'Plant Power / Heat Transport Balance')
     ! MDK Add warning for negative net electric
     if (pnetelmw < 0) then
@@ -1217,22 +1227,11 @@ contains
     call ocmmnt(outfile, 'Power Balance for Reactor (across vacuum vessel boundary) - Detail')
     call ocmmnt(outfile, '------------------------------------------------------------------')
 
-!    call ovarre(outfile, 'Fusion power (MW)', '(powfmw.)',powfmw)
-
     if (ignite == 0) then
         pinj = pinjmw
-!        call ovarre(outfile, 'Injected heating/current drive power (MW)', '(pinjmw.)', pinjmw)
     else
         pinj = 0.0D0
     end if
-
-    !call ovarre(outfile, 'Power from energy multiplication in blanket (MW)','', pnucblkt*(1.0D0 - 1.0D0/emult))
-    !call ovarre(outfile, 'Power deposited in coolant by pump (MW)','', htpmw_fw + htpmw_blkt + htpmw_shld + htpmw_div)
-    !call ovarre(outfile, 'Power deposited in coolant by pump (MW)','(htpmw_mech)', htpmw_mech)
-    !call ovarre(outfile, 'Total power entering fusion power core (MW)','', &
-    !        powfmw + pinj + pnucblkt*(1.0D0 - 1.0D0/emult) + htpmw_fw + htpmw_blkt + htpmw_shld + htpmw_div)
-    !call ovarre(outfile, 'Total power entering fusion power core (MW)','', &
-    !         powfmw + pinj + pnucblkt*(1.0D0 - 1.0D0/emult) + htpmw_mech)
 
     primsum = 0.0D0 ; secsum = 0.0D0
 
@@ -1499,6 +1498,7 @@ contains
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  02/08/11 PJK Initial F90 version
+    !+ad_hist  09/06/15 MDK Make the outputs module-level variables so they can be output 
     !+ad_stat  Okay
     !+ad_docs  D. Slack memo SCMDG 88-5-1-059, LLNL ITER-88-054, Aug. 1988
     !
@@ -1515,7 +1515,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: qac,qcl,qnuc,qss
+    !real(kind(1.0D0)) :: qac,qcl,qnuc,qss
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1536,8 +1536,9 @@ contains
        qcl = 0.0D0
     end if
 
-    !  Total includes 45% extra miscellaneous, piping and reserves
-    helpow = max(0.0D0, (1.45D0 * (qss + qnuc + qac + qcl)) )
+    !  45% extra miscellaneous, piping and reserves
+    qmisc = 0.45D0 * (qss + qnuc + qac + qcl)
+    helpow = max(0.0D0, qmisc + qss + qnuc + qac + qcl)
 
   end subroutine cryo
 
@@ -1569,6 +1570,7 @@ contains
     !+ad_hist  12/02/15 JM  Changed the thermal efficiency fits for detailed model
     !+ad_hist  11/03/15 JM  Changed the argument list to remove global variables.
     !+ad_hist  08/05/15 MDK Revised efficiency formulae: see issue #284
+    !+ad_hist  08/06/15 MDK Added missing iblanket=3 option.
     !+ad_stat  Okay
     !+ad_docs  C. Harrington, K:\Power Plant Physics and Technology \ PROCESS \ blanket_model
     !+ad_docc  \ New Power Module Harrington \ Cycle correlations \ Cycle correlations.xls
@@ -1585,36 +1587,35 @@ contains
     select case (secondary_cycle)
 
     !  Etath from reference. Div power not to primary
-    case default  
+    case (0)  
 
-	   !  CCFE HCPB model
-	   if (iblanket == 1) then
+	   !  CCFE HCPB Model (with or without TBR)
+	   if ((iblanket == 1).or.(iblanket == 3)) then
 		  !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX Feedheat & reheat cycle assumed
-          !etath = 0.436D0
           etath = 0.411D0
           
        !  KIT HCPB model
 	   else if (iblanket == 2) then
 		  !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX Feedheat & reheat cycle assumed
-          !etath = 0.436D0
           etath = 0.411D0
+       else
+          write(*,*) 'iblanket does not have a value in range 1-3.'
           
        end if
 
 	!  Etath from reference. Div power to primary
     case (1) 
     
-		!  CCFE HCPB model
-		if (iblanket == 1) then
+		!  CCFE HCPB Model (with or without TBR)
+	   if ((iblanket == 1).or.(iblanket == 3)) then
 		  !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX Feedheat & reheat cycle assumed
-          !etath = 0.397D0
           etath = 0.411D0 - delta_eta
         
         !  KIT HCPB model
         else if (iblanket == 2) then
-			!etath = 0.397D0
 			etath = 0.411D0 - delta_eta
-			
+		else
+          write(*,*) 'iblanket does not have a value in range 1-3.'	
 		end if
 
 	!  User input used, etath not changed
@@ -1625,8 +1626,8 @@ contains
     !  Steam Rankine cycle to be used
     case (3)
 
-		!  CCFE HCPB Model
-        if (iblanket == 1) then
+		!  CCFE HCPB Model (with or without TBR)
+        if ((iblanket == 1).or.(iblanket == 3)) then
           !  If coolant is helium, the steam cycle is assumed to be superheated
           !  and a different correlation is used. The turbine inlet temperature 
           !  is assumed to be 20 degrees below the primary coolant outlet 
@@ -1635,25 +1636,24 @@ contains
           !  Superheated steam Rankine cycle correlation (C. Harrington)
           !  Range of validity: 657 K < tturb < 915 K          
           tturb = outlet_temp - 20.0D0
-          !if ((tturb < 656.0D0).or.(tturb > 840.0D0)) then
           if ((tturb < 657.0D0).or.(tturb > 915.0D0)) then
              idiags(1) = 2 ; fdiags(1) = tturb
              call report_error(166)
           end if
-          !etath = 0.1802D0*log(tturb) - 0.8002D0
+          
           etath = 0.1802D0*log(tturb) - 0.7823 - delta_eta
           
        !  KIT HCPB Model
        else if (iblanket == 2) then
 		  !  Same as iblanket = 1
           tturb = outlet_temp - 20.0D0
-          !if ((tturb < 656.0D0).or.(tturb > 840.0D0)) then
           if ((tturb < 657.0D0).or.(tturb > 915.0D0)) then
              idiags(1) = 2 ; fdiags(1) = tturb
              call report_error(166)
           end if
           etath = 0.1802D0*log(tturb) - 0.7823 - delta_eta
-          
+       else
+          write(*,*) 'iblanket does not have a value in range 1-3.'	   
        end if
 
     !  Supercritical CO2 cycle to be used
@@ -1674,6 +1674,9 @@ contains
        end if
        etath = 0.4347D0*log(tturb) - 2.5043D0
 
+    case default 
+        write(*,*) 'secondary_cycle does not appear to have a value within its range (0-4)'
+    
     end select
 
   end subroutine plant_thermal_efficiency

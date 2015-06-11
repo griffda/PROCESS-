@@ -98,6 +98,7 @@ program process
 
   call oheadr(nout,'End of PROCESS Output')
   call oheadr(iotty,'End of PROCESS Output')
+  call oheadr(nout,'Copy of PROCESS Input Follows')
 
   close(unit=nin)
   close(unit=nout)
@@ -286,7 +287,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '399    Release Date :: 2015-06-08'
+       '400    Release Date :: 2015-06-11'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1947,3 +1948,5 @@ end subroutine runtests
 ! GIT 397: Issues dealt with now or previously: #301 #219 #244 #252 #255 #262 #264 #268 #269 #278 #294 #295 #284
 ! GIT 398: Tidy first wall and blanket thermohydraulics (#302), Radial plate error (#300), Append input file to output file (#305)
 ! GIT 399: Minimum total electrical power for primary coolant pumps (htpmw_min) (#303). The user now specifies the allowable von Mises stress for TFC and hoop stress for CS.
+! GIT 400: Blanket fractions now defined using breeder_multiplier: combined breeder/multipler fraction. Steel is remainder. Cryogenics output added.
+!          Corrected surface heat flux on first wall #309. Cost of electricity and maintenance cost now included in 2015 cost model.

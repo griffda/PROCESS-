@@ -258,6 +258,8 @@ zeffdiv = 3.5    * Zeff in the divertor region (if divdum /= 0)
 iblanket = 3     * Switch for blanket model * ccfe hcpb model with tritium breeding ratio calculation
 li6enrich = 83.463014  * Lithium-6 enrichment of breeding material (%)
 breeder_f = 0.510455  * Volume ratio* li4sio4/(be12ti+li4sio4) (iteration variable 108)
+
+vfpblkt = 0.1              * He purge void fraction of blanket by volume 
 iblanket_thickness = 1  * Blanket thickness switch * thin    0;53 m inboard; 0;91 m outboard
 secondary_cycle = 3  * Switch for thermodynamic model of power conversion cycle * steam rankine cycle;
 afwi = 0.006     * Inner radius of inboard first wall/blanket coolant channels (m)
@@ -270,7 +272,7 @@ tbrmin = 1.15       * minimum tritium breeding ratio (constraint equation 52)
 
 *-----------------Global Variables-----------------*
 runtitle = demo 1 model for cost paper  * Short descriptive title for the run
-verbose = 1      * Switch for turning on/off diagnostic messages * turn on diagnostics
+verbose = 0      * Switch for turning on/off diagnostic messages * turn on diagnostics
 
 
 *-------------Heat Transport Variables-------------*

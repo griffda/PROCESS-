@@ -1059,8 +1059,7 @@ module fwbs_variables
   real(kind(1.0D0)) :: emult = 1.269D0
   !+ad_vars  emultmw : power due to energy multiplication in blanket and shield [MW]
   real(kind(1.0D0)) :: emultmw = 0.0D0
-  !+ad_vars  fblss /0.09705/ : stainless steel fraction of blanket by volume
-  !+ad_varc                 (if blktmodel>0, steel fraction of breeding zone)
+  !+ad_vars  fblss /0.09705/ : KIT blanket model: steel fraction of breeding zone  
   real(kind(1.0D0)) :: fblss = 0.09705D0
   !+ad_vars  fdiv /0.115/ : area fraction taken up by divertor 
   real(kind(1.0D0)) :: fdiv = 0.115D0
@@ -1111,21 +1110,21 @@ module fwbs_variables
   !+ad_vars  armour_fw_bl_mass : Total mass of armour, first wall and blanket (kg)
   real(kind(1.0D0)) :: armour_fw_bl_mass = 0.0D0  
   
-   !  CCFE HCPB Blanket Model
+   !  CCFE HCPB Blanket Model (with or without TBR calculation)
   
   !+ad_vars  <P><B>The following are used only in the CCFE HCPB blanket model
   !+ad_varc  (iblanket=1):</B><P>
   
-  !+ad_vars  fblli2sio4 /0.2205/ : lithium orthosilicate fraction of blanket by volume
-  !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
-  real(kind(1.0D0)) :: fblli2sio4 = 0.2205D0
-  !+ad_vars  fbltibe12 : titanium beryllide fraction of blanket by volume
-  !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
-  real(kind(1.0D0)) :: fbltibe12 = 0.315D0
-  !+ad_vars  vfcblkt /0.05295/ : He coolant void fraction of blanket by volume
+  !+ad_vars  breeder_f /0.154/ :  Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (iteration variable 108)
+  real(kind(1.0D0)) :: breeder_f = 0.5D0
+  !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)  
+  real(kind(1.0D0)) :: li6enrich = 30.0D0
+  !+ad_vars  breeder_multiplier /0.75/ FIX : combined breeder/multipler fraction of blanket by volume
+  real(kind(1.0D0)) :: breeder_multiplier = 0.75D0  
+  !+ad_vars  vfcblkt /0.05295/ : He coolant fraction of blanket by volume
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: vfcblkt = 0.05295D0
-  !+ad_vars  vfpblkt /0.3145/ : He purge void fraction of blanket by volume
+  !+ad_vars  vfpblkt /0.3145/ : He purge gas fraction of blanket by volume
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: vfpblkt = 0.3145D0
   !+ad_vars  whtblli4sio4 : mass of lithium orthosilicate in blanket (kg)
@@ -1137,7 +1136,7 @@ module fwbs_variables
   
   !  KIT HCPB blanket model
   
-  !+ad_vars  <P><B>The following are used only in the KIT HCPB blanket model
+  !+ad_vars  <P><B>The following are used in the KIT HCPB blanket model
   !+ad_varc  (iblanket=2):</B><P>
 
   !+ad_vars  breedmat /1/ : breeder material switch (iblanket=2 (KIT HCPB)):<UL>
@@ -1171,7 +1170,6 @@ module fwbs_variables
   integer :: hcdportsize = 1
   !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)
   !+ad_varc                     (iblanket=2 or 3 (KIT or CCFE HCPB))
-  real(kind(1.0D0)) :: li6enrich = 30.0D0
   !+ad_vars  nflutf : peak fast neutron fluence on TF coil superconductor (n/m2)
   !+ad_varc           (iblanket=2 (KIT HCPB))
   real(kind(1.0D0)) :: nflutf = 0.0D0
@@ -1199,9 +1197,7 @@ module fwbs_variables
    
   !+ad_vars  <P><B>CCFE HCPB model with Tritium Breeding Ratio calculation
   !+ad_varc  (iblanket=3):</B><P>
-  !+ad_vars  breeder_f /0.154/ :  Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (iteration variable 108)
-  real(kind(1.0D0)) :: breeder_f = 0.154D0
-  !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)
+  
   !+ad_vars  tbrmin /1.1/ : minimum tritium breeding ratio (constraint equation 52)
   !+ad_varc                 (If iblanket=1, tbrmin=minimum 5-year time-averaged tritium breeding ratio)
   !+ad_vars  iblanket_thickness /2/ : Blanket thickness switch:<UL>
@@ -1233,8 +1229,9 @@ module fwbs_variables
   real(kind(1.0D0)) :: afwo = 0.008D0
   !+ad_vars  inlet_temp /573.0/ : inlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1)
   real(kind(1.0D0)) :: inlet_temp = 573.0D0
-  !+ad_vars  outlet_temp /823.0/ : outlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1);
-  !+ad_varc                        input if coolwh=1 (helium), calculated if coolwh=2 (water)
+  !+ad_vars  outlet_temp /823.0/ : outlet temperature of coolant for blanket and first wall (K)<UL>
+  !+ad_varc         <LI> (secondary_cycle>1); 
+  !+ad_varc         <LI> input if coolwh=1 (helium), calculated if coolwh=2 (water)</UL>
   real(kind(1.0D0)) :: outlet_temp = 823.0D0
   !+ad_vars  nblktmodpo /8/ : number of outboard blanket modules in poloidal direction (secondary_cycle>1)
   integer :: nblktmodpo = 8

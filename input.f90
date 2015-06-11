@@ -1798,6 +1798,20 @@ contains
        case ('breeder_f')
           call parse_real_variable('breeder_f', breeder_f, 0.00D0, 1.0D0, &
                'Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)')
+               
+               
+       case ('breeder_multiplier')
+          call parse_real_variable('breeder_multiplier', breeder_multiplier, 0.0D0, 1.0D0, &
+               'combined breeder/multipler fraction of blanket by volume')        
+       case ('vfcblkt')
+          call parse_real_variable('vfcblkt', vfcblkt, 0.0D0, 1.0D0, &
+               'He coolant fraction of blanket by volume')
+       case ('vfpblkt')
+          call parse_real_variable('vfpblkt', vfpblkt, 0.0D0, 1.0D0, &
+               'He purge gas fraction of blanket by volume')               
+               
+               
+               
        case ('iblanket_thickness')
           call parse_int_variable('iblanket_thickness', iblanket_thickness, 1, 3, &
                'Blanket thickness switch')

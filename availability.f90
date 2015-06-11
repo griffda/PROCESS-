@@ -116,12 +116,15 @@ contains
 
     if (ife /= 1) then
 
-       !  First wall / blanket
-
-       if (blktmodel == 0) then
-          bktlife = min(fwlife, abktflnc/wallmw, tlife)
-       end if
-
+       ! First wall / blanket
+       ! MDK Do this calculation whatever the value of blktmodel (whatever that is)
+       ! For some reason fwlife is not always calculated, so ignore it if it is still zero.
+       if (fwlife < 0.0001D0) then
+            bktlife = min(abktflnc/wallmw, tlife)
+       else
+            bktlife = min(fwlife, abktflnc/wallmw, tlife)
+       end if       
+       
        !  Divertor
 
        divlife = min(adivflnc/hldiv, tlife)

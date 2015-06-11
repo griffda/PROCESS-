@@ -181,10 +181,10 @@ module ccfe_hcpb_module
   
   !  Fraction of neutron energy lost by main wall
   real(kind=double), private :: fdep
+  ! Fractions of blanket by volume: steel, lithium orthosilicate, titanium beryllide
+  real(kind=double), private :: fblss_ccfe, fblli2sio4, fbltibe12
   
-  ! obsolete
-  ! real(kind=double) :: flnce
-  
+   
 contains
   
   subroutine ccfe_hcpb(outfile, iprint)
@@ -999,6 +999,7 @@ contains
     !+ad_desc  Calculations for powerflow
     !+ad_prob  None
     !+ad_hist  11/02/15 JM  Initial version
+    !+ad_hist  10/06/15 MDK Corrected surface heat flux on first wall #309
     !+ad_stat  Okay
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1022,10 +1023,10 @@ contains
         outlet_temp = tsat_refprop(coolp*1.0D6, coolwh) - 20.0D0  !  in K
     end if
 
-    !  Surface heat flux on first wall (MW) 
-    psurffwi = (pradfw + porbitlossmw + palpfwmw) * fwareaib/fwarea
-    !psurffwo = (pradfw + porbitlossmw + palpfwmw) * fwareaob/fwarea
-    psurffwo = pradfw - psurffwi
+    !  Surface heat flux on first wall (outboard and inboard) (MW) 
+    !  All of the fast particle losses go to the outer wall.
+    psurffwo = pradfw * fwareaob/fwarea + porbitlossmw + palpfwmw
+    psurffwi = pradfw * (1.0D0 - fwareaob/fwarea)
 	
 	!  Simple model
 	if ((secondary_cycle == 0).or.(secondary_cycle == 1)) then
@@ -1272,7 +1273,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
   subroutine component_masses
-    !+ad_name  component_masses
+    !+ad_name  component_masses: CCFE model
     !+ad_summ  Calculations for component masses
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -1314,18 +1315,25 @@ contains
     if (idivrt == 2) divsur = divsur * 2.0D0
     divmas = divsur * divdens * (1.0D0 - divclfr) * divplt
 
-    !  Blanket Titanium beryllide mass (kg)
+    
     if (breeder_f < 1.0D-10) breeder_f = 1.0D-10
     if (breeder_f > 1.0D0  ) breeder_f = 1.0D0
-    fbltibe12 = fblli2sio4 * (1 - breeder_f)/breeder_f
+    ! fbltibe12 = fblli2sio4 * (1 - breeder_f)/breeder_f
+    ! New combined variable breeder_multiplier
+    ! Lithium orthosilicate fraction:
+    fblli2sio4 = breeder_f * breeder_multiplier    
+    ! Titanium beryllide fraction, and mass (kg):
+    fbltibe12  = breeder_multiplier - fblli2sio4    
     whtbltibe12 = volblkt * fbltibe12 * 2260.0D0
     
     !  Blanket Lithium orthosilicate mass (kg)
     !  Ref: www.rockwoodlithium.com...
     whtblli4sio4 = volblkt * fblli2sio4 * 2400.0D0
     
-    !  Blanket Steel mass (kg)
-    whtblss = volblkt * fblss * denstl
+    !  Steel fraction by volume is the remainder:
+    fblss_ccfe = 1.0D0 - fblli2sio4 - fbltibe12 - vfcblkt - vfpblkt 
+    !  Steel mass (kg)
+    whtblss = volblkt * fblss_ccfe * denstl
     
     !  Total blanket mass (kg)
     whtblkt = whtbltibe12 + whtblli4sio4 + whtblss  
@@ -1830,7 +1838,7 @@ contains
  
     call ovarrf(ofile, 'Titanium beryllide fraction', '(fbltibe12)', fbltibe12)
     call ovarrf(ofile, 'Lithium orthosilicate fraction', '(fblli2sio4)', fblli2sio4)
-    call ovarrf(ofile, 'Steel fraction', '(fblss)', fblss)
+    call ovarrf(ofile, 'Steel fraction', '(fblss_ccfe)', fblss_ccfe)
     call ovarrf(ofile, 'Coolant fraction', '(vfcblkt)', vfcblkt)
     call ovarrf(ofile, 'Purge gas fraction', '(vfpblkt)', vfpblkt)
     
@@ -3401,7 +3409,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
   subroutine component_masses
-    !+ad_name  component_masses
+    !+ad_name  component_masses KIT model
     !+ad_summ  Calculations for component masses
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre

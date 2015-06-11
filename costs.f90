@@ -557,6 +557,8 @@ contains
     annfwbl = (fwallcst + blkcst) * &
          (1.0D0+cfind(lsa)) * fcap0cp * crffwbl
 
+         
+
     !  Cost of electricity due to first wall/blanket replacements
 
     coefwbl = 1.0D9 * annfwbl / kwhpy
@@ -761,7 +763,14 @@ contains
     call ovarrf(outfile,'Cost of electricity (m$/kWh)','(coe)',coe)
 
     call osubhd(outfile,'Power Generation Costs :')
-
+    
+    if ((annfwbl /= annfwbl).or.(annfwbl > 1.0D10).or.(annfwbl < 0.0D0)) then
+        write(outfile,*)'Problem with annfwbl'
+        write(outfile,*)'fwallcst=', fwallcst, '  blkcst=', blkcst
+        write(outfile,*)'crffwbl=', crffwbl,   '  fcap0cp=', fcap0cp
+        write(outfile,*)'feffwbl=', feffwbl,   '  fwbllife=', fwbllife
+    end if
+    
     write(outfile,200) &
          anncap,coecap, &
          annoam,coeoam, &

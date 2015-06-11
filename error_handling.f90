@@ -285,6 +285,7 @@ contains
     !+ad_call  oheadr
     !+ad_call  ovarin
     !+ad_hist  24/06/14 PJK Initial version
+    !+ad_hist  09/06/15 MDK Added ifail as argument
     !+ad_stat  Okay
     !+ad_docs  Introduction to Fortran 90/95, Stephen J, Chapman, pp.467-472,
     !+ad_docc    McGraw-Hill, ISBN 0-07-115896-0
@@ -294,26 +295,40 @@ contains
     implicit none
 
     !  Arguments
-
+    
     !  Local variables
 
     type (error_list_item), pointer :: ptr
     integer :: i
+    character(len=50) :: status_message
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    call oheadr(iotty,'Program Error Report')
-    !write(iotty,'(a,i1)') 'PROCESS error status flag (error_status) = ',error_status
-    write(*,'(a,i1)') 'PROCESS error status flag (error_status) = ',error_status
+    call oheadr(iotty,'Errors and Warnings')       
+    call oheadr(nout,'Errors and Warnings')    
+    call ocmmnt(nout,'(See top of file for solver errors and warnings.)')
+       
+    select case (error_status)
+    case (0)
+        status_message = 'No messages'
+    case (1)
+        status_message = 'Information messages only'
+    case (2)
+        status_message = 'Warning messages'
+    case (3)
+        status_message = 'Errors'
+    case default
+        status_message = 'Incorrect value of error_status'
+    end select    
+    
+    call ocmmnt(nout,'PROCESS status flag:   '//status_message)           
+    write(*,*)       'PROCESS status flag:   '//status_message
     call oblnkl(iotty)
-
-    call oheadr(nout,'Program Error Report')
-    call ovarin(nout,'PROCESS error status flag','(error_status)',error_status)
 
     ptr => error_head
 
     if (.not.associated(ptr)) then
-       call ovarin(nout,'Final error identifier','(error_id)',error_id)
+       call ovarin(nout,'Final error/warning identifier','(error_id)',error_id)
        return
     end if
 
