@@ -287,7 +287,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '400    Release Date :: 2015-06-11'
+       '401    Release Date :: 2015-06-17'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1950,3 +1950,7 @@ end subroutine runtests
 ! GIT 399: Minimum total electrical power for primary coolant pumps (htpmw_min) (#303). The user now specifies the allowable von Mises stress for TFC and hoop stress for CS.
 ! GIT 400: Blanket fractions now defined using breeder_multiplier: combined breeder/multipler fraction. Steel is remainder. Cryogenics output added.
 !          Corrected surface heat flux on first wall #309. Cost of electricity and maintenance cost now included in 2015 cost model.
+! GIT 401: Add active_constraints(ipeqns) : logical array showing which constraints are active. 
+!          #308 L-H threshold power (enforced) is boundl(103)*plhthresh.
+!          #306 Added central tube for helium coolant in TF cable, but these variables don't yet do anything.
+!          #311 Added Murari energy confinement non-power law scaling (isc=40)

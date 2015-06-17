@@ -73,6 +73,7 @@ module numerics
   !+ad_hist  27/02/15 JM  Changed default values for boundu(4) and boundu & l (103)
   !+ad_hist  27/05/15 MDK Added breeder_f as iteration variable 108
   !+ad_hist  29/05/15 MDK Figure of merit 2 (P_fus P_in-total) has been replaced by "not used"
+  !+ad_hist  11/06/15 MDK Add active_constraints(ipeqns) : Boolean array showing which constraints are active.
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -82,7 +83,8 @@ module numerics
   use maths_library
 
   implicit none
-
+  integer, private :: i, j      ! Loop counters
+  
   public
 
   !+ad_vars  ipnvars /108/ FIX : total number of variables available for iteration
@@ -160,70 +162,12 @@ module numerics
 
   !+ad_vars  icc(ipeqns) /1,2,5,7,9,10,11,14,17,24,27,33,35,36/ :
   !+ad_varc           array defining which constraint equations to activate
-  !+ad_varc           (see lablcc for descriptions)
-  integer, dimension(ipeqns) :: icc = (/ &
-       1,  &  !  1
-       2,  &  !  2
-       5,  &  !  3
-       7,  &  !  4
-       9,  &  !  5
-       10, &  !  6
-       11, &  !  7
-       14, &  !  8
-       17, &  !  9
-       24, &  !  10
-       27, &  !  11
-       33, &  !  12
-       35, &  !  13
-       36, &  !  14
-       0,  &  !  15
-       0,  &  !  16
-       0,  &  !  17
-       0,  &  !  18
-       0,  &  !  19
-       0,  &  !  20
-       0,  &  !  21
-       0,  &  !  22
-       0,  &  !  23
-       0,  &  !  24
-       0,  &  !  25
-       0,  &  !  26
-       0,  &  !  27
-       0,  &  !  28
-       0,  &  !  29
-       0,  &  !  30
-       0,  &  !  31
-       0,  &  !  32
-       0,  &  !  33
-       0,  &  !  34
-       0,  &  !  35
-       0,  &  !  36
-       0,  &  !  37
-       0,  &  !  38
-       0,  &  !  39
-       0,  &  !  40
-       0,  &  !  41
-       0,  &  !  42
-       0,  &  !  43
-       0,  &  !  44
-       0,  &  !  45
-       0,  &  !  46
-       0,  &  !  47
-       0,  &  !  48
-       0,  &  !  49
-       0,  &  !  50
-       0,  &  !  51
-       0,  &  !  52
-       0,  &  !  53
-       0,  &  !  54
-       0,  &  !  55
-       0,  &  !  56
-       0,  &  !  57
-       0,  &  !  58
-       0,  &  !  59
-       0,  &  !  60
-       0   &  !  61
-       /)
+  !+ad_varc           (see lablcc for descriptions)  
+  integer, dimension(ipeqns) :: icc = 0
+       
+  !+ad_vars  active_constraints(ipeqns) : Logical array showing which constraints are active       
+  logical, dimension(ipeqns) :: active_constraints = .false.  
+  
   !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
   !+ad_varc                   (starred ones are turned on by default):<UL>
   character(len=33), dimension(ipeqns) :: lablcc = (/ &
@@ -351,6 +295,7 @@ module numerics
        !+ad_varc  <LI> (61) Minimum availability value</UL>
        'Minimum availability value       '  &
        /)  !  Please note: All strings between '...' above must be exactly 33 chars long
+
 
   !+ad_vars  ixc(ipnvars) /4,5,6,7,10,12,13,19,28,29,36,39,50,53,54,61/ :
   !+ad_varc               array defining which iteration variables to activate

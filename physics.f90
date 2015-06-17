@@ -3264,6 +3264,7 @@ contains
     !+ad_hist  17/06/14 PJK Added scaling law 39
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  13/11/14 PJK Modified iradloss usage
+    !+ad_hist  17/06/15 MDK Added Murari scaling (40)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  N. A. Uckan and ITER Physics Group,
@@ -3288,7 +3289,7 @@ contains
 
     real(kind(1.0D0)) :: chii,ck2,denfac,dnla19,dnla20,eps2,gjaeri,iotabar, &
          n20,pcur,qhat,ratio,rll,str2,str5,taueena,tauit1,tauit2, &
-         term1,term2
+         term1,term2, h
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3764,6 +3765,23 @@ contains
        ptaue = 0.49D0
        qtaue = 0.0D0
        rtaue = -0.55D0
+       
+    case (40)  !  "Non-power law" (NPL) Murari energy confinement scaling
+       !   Based on the ITPA database of H-mode discharges               
+       !   A new approach to the formulation and validation of scaling expressions for plasma confinement in tokamaks
+       !   A. Murari et al 2015 Nucl. Fusion 55 073009, doi:10.1088/0029-5515/55/7/073009  
+       !   Table 4.  (Issue #311)
+       !  Note that aspect ratio and M (afuel) do not appear, and B (bt) only 
+       !  appears in the "saturation factor" h.
+       h = dnla19**0.448D0 / (1.0D0 + exp(-9.403D0*(bt/dnla19)**1.365D0))
+       tauee = hfact * 0.0367D0 * pcur**1.006D0 * rmajor**1.731D0 * kappaa**1.450D0 * &
+               powerht**(-0.735D0) * h
+       
+       gtaue = 0.0D0
+       ptaue = 0.448D0
+       qtaue = 0.0D0
+       rtaue = -0.735D0
+       
 
     case default
        idiags(1) = isc ; call report_error(81)
@@ -3788,7 +3806,8 @@ contains
 
     taueff = ((ratio + 1.0D0)/(ratio/tauei + 1.0D0/tauee))
     
-
+    ! This is used only in subroutine startup, which is currently (r400) 
+    ! not used.
     ftaue = (tauee-gtaue) / &
          (n20**ptaue * (te/10.0D0)**qtaue * powerht**rtaue)
 
@@ -5528,7 +5547,7 @@ contains
 
     call ovarre(outfile,'Hot beam density (/m3)','(dnbeam)',dnbeam)
     call ovarre(outfile,'Density limit from scaling (/m3)','(dnelimt)',dnelimt)
-    if (ioptimz > 0) then
+    if ((ioptimz > 0).and.(active_constraints(5))) then
         call ovarre(outfile,'Density limit (enforced) (/m3)','(boundu(9)*dnelimt)',boundu(9)*dnelimt)    
     end if
     call oblnkl(outfile)
@@ -5678,17 +5697,10 @@ contains
        call ovarre(outfile,'2008 Martin scaling: 95% lower bound (MW)', &
             '(pthrmw(8))',pthrmw(8))
        call oblnkl(outfile)
-       if (any(icc == 15)) then
-          call ovarin(outfile,'Switch for active L-H power threshold scaling', &
-               '(ilhthresh)',ilhthresh)
-          call ovarre(outfile,'Active L-H power threshold value (MW)', &
-               '(plhthresh)',plhthresh)
-       else
-          call ovarin(outfile, &
-               'Switch for active L-H power threshold scaling (not enforced)', &
-               '(ilhthresh)',ilhthresh)
-          call ovarre(outfile,'(Inactive) L-H power threshold value (MW)', &
-               '(plhthresh)',plhthresh)
+       if ((ioptimz > 0).and.(active_constraints(15))) then
+          call ovarre(outfile,'L-H threshold power (enforced) (MW)', '(boundl(103)*plhthresh)',boundl(103)*plhthresh)
+       else          
+          call ovarre(outfile,'L-H threshold power (NOT enforced) (MW)', '(plhthresh)',plhthresh)
        end if
     end if
 

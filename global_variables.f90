@@ -141,6 +141,7 @@ module physics_variables
   !+ad_hist  13/11/14 PJK Modified iradloss usage
   !+ad_hist  17/11/14 PJK Added palpfwmw
   !+ad_hist  20/05/15 RK  Added iscdens, fgwped for pedestal density scaling
+  !+ad_hist  17/06/15 MDK Added Murari scaling (isc=40)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -150,8 +151,8 @@ module physics_variables
 
   public
 
-  !+ad_vars  ipnlaws /39/ FIX : number of energy confinement time scaling laws
-  integer, parameter :: ipnlaws = 39
+  !+ad_vars  ipnlaws /40/ FIX : number of energy confinement time scaling laws
+  integer, parameter :: ipnlaws = 40
 
   !+ad_vars  abeam : beam ion mass (amu)
   real(kind(1.0D0)) :: abeam = 0.0D0
@@ -474,8 +475,10 @@ module physics_variables
        'ISS95            (stell)', &
   !+ad_varc  <LI> (38)  ISS04 (stellarator)
        'ISS04            (stell)', &
-  !+ad_varc  <LI> (39)  DS03 (H-mode)</UL>
-       'DS03                 (H)' /)
+  !+ad_varc  <LI> (39)  DS03 (H-mode)
+       'DS03                 (H)', &
+  !+ad_varc  <LI> (40)  Murari et al non-power law (H-mode)</UL>
+       'Murari et al NPL     (H)' /)
 
   !+ad_vars  iscrp /1/ : switch for plasma-first wall clearances:<UL>
   !+ad_varc         <LI> = 0 use 10% of rminor;
@@ -1383,6 +1386,7 @@ module pfcoil_variables
   !+ad_hist  11/11/14 PJK Changed default values for fcuohsu, vfohc
   !+ad_hist  11/11/14 PJK Added tmargoh
   !+ad_hist  22/04/15 JM  Added etapsu, pfwp and pfsec
+  !+ad_hist  11/06/15 MDK Added spiral_od and spiral_id
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1665,6 +1669,7 @@ module tfcoil_variables
   !+ad_hist  16/09/14 PJK Added tfcryoarea
   !+ad_hist  16/09/14 PJK Modified array sizes in TF coil stress calculations;
   !+ad_hisc               changed tfc_model switch values
+  !+ad_hist  11/06/15 MDK Mods to TF coil defaults
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
@@ -1720,10 +1725,10 @@ module tfcoil_variables
   real(kind(1.0D0)) :: cforce = 0.0D0
   !+ad_vars  cph2o /4180.0/ FIX : specific heat capacity of water (J/kg/K)
   real(kind(1.0D0)) :: cph2o = 4180.0D0
-  !+ad_vars  cpttf /3.79e4/ : TF coil current per turn (A)
+  !+ad_vars  cpttf /9.0e4/ : TF coil current per turn (A).  
   !+ad_varc                  (calculated for stellarators)
   !+ad_varc                  (iteration variable 60)
-  real(kind(1.0D0)) :: cpttf = 3.79D4
+  real(kind(1.0D0)) :: cpttf = 9.0e4
 
   !+ad_vars  dcase /8000.0/ : density of coil case (kg/m3)
   real(kind(1.0D0)) :: dcase = 8000.0D0
@@ -1899,12 +1904,19 @@ module tfcoil_variables
   real(kind(1.0D0)) :: thkcas = 0.3D0
   !+ad_vars  thkwp : radial thickness of winding pack (m)
   real(kind(1.0D0)) :: thkwp = 0.0D0
-  !+ad_vars  thwcndut /3.0e-3/ : TF coil conduit case thickness (m)
+  !+ad_vars  thwcndut /8.0e-3/ : TF coil conduit case thickness (m)
   !+ad_varc                      (iteration variable 58)
-  real(kind(1.0D0)) :: thwcndut = 3.0D-3
-  !+ad_vars  tinstf /0.01/ : ground wall insulation thickness (m)
-  !+ad_varc                  (calculated for stellarators)
-  real(kind(1.0D0)) :: tinstf = 0.01D0
+  real(kind(1.0D0)) :: thwcndut = 8.0D-3
+  !+ad_vars  tinstf /0.018/ : ground insulation thickness surrounding winding pack (m)
+  !+ad_vars                   Includes allowance for 10 mm insertion gap.
+  !+ad_varc                   (calculated for stellarators)
+  real(kind(1.0D0)) :: tinstf = 0.018D0
+  
+  !+ad_vars  spiral_od /0.01/ : central tube for helium coolant: outer diameter (m)
+  real(kind(1.0D0)) :: spiral_od = 0.01D0
+  !+ad_vars  spiral_id /0.01/ : central tube for helium coolant: inner diameter (m)
+  real(kind(1.0D0)) :: spiral_id = 0.008D0
+  
   !+ad_vars  tmargmin /2.5/ : minimum allowable temperature margin (CS and TF coils) (K)
   !+ad_varc                   (iteration variable 55)
   real(kind(1.0D0)) :: tmargmin = 2.5D0
@@ -1925,8 +1937,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: vdalw = 20.0D0
   !+ad_vars  vforce : vertical separating force on inboard leg/coil (N)
   real(kind(1.0D0)) :: vforce = 0.0D0
-  !+ad_vars  vftf /0.4/ : coolant fraction of TF coil leg (itfsup=0)
-  !+ad_varc               or of TF coil cable space (itfsup=1)
+  !+ad_vars  vftf /0.4/ : coolant fraction of TFC 'cable' (itfsup=1), or of TFC leg (itfsup=0)
   real(kind(1.0D0)) :: vftf = 0.4D0
   !+ad_vars  voltfleg : volume of each TF coil outboard leg (m3)
   real(kind(1.0D0)) :: voltfleg = 0.0D0

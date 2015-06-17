@@ -28,6 +28,7 @@ import copy
 import argparse
 from pprint import pformat
 from collections import defaultdict
+import sys
 
 from rootdir import ROOTDIR
 
@@ -263,7 +264,10 @@ def get_array_from_fortran(array_name):
     rexp = array_name + r" = \(/"
     #find files that look like they have an assignment in
     filelist = find(SOURCEDIR, rexp)
-    assert len(filelist) == 1
+    if len(filelist) > 1 :
+        print('The regular expression ',rexp, '\n  does not appear exactly once in the folder \n',SOURCEDIR,
+              '\n The list of files is ', filelist, file=sys.stderr)
+    assert(len(filelist)==1)
     #slice the file between the parenthesis
     arr = slice_file(filelist[0], rexp, r"/\)")
 

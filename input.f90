@@ -199,6 +199,7 @@ contains
     !+ad_call  parse_input_file
     !+ad_hist  03/10/12 PJK Initial version
     !+ad_hist  30/09/14 PJK Changed show_changes to 0
+    !+ad_hist  11/06/15 MDK Fill the two arrays that specify the active constraints
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -212,11 +213,44 @@ contains
     !  Local variables
 
     integer :: show_changes = 0
-
+    integer :: i, j
+    logical :: constraints_exist=.false.
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    
     call parse_input_file(nin,nout,show_changes)
 
+    ! Set all the values of the active_constraints array
+    do i = 1, ipeqns
+        if (icc(i) /= 0) then
+            active_constraints(icc(i)) = .true.
+            constraints_exist = .true.
+        end if
+    end do
+    
+    if (constraints_exist == .false.) then
+       ! Fill the two arrays that specify the active constraints with defaults
+        active_constraints(1) = .true.
+        active_constraints(2) = .true.
+        active_constraints(5) = .true.
+        active_constraints(7) = .true.
+        active_constraints(9) = .true.
+        active_constraints(11) = .true.
+        active_constraints(14) = .true.
+        active_constraints(17) = .true.
+        active_constraints(24) = .true.
+        active_constraints(27) = .true.
+        active_constraints(33) = .true.
+        active_constraints(35) = .true.
+        active_constraints(36) = .true.
+        j=0
+        do i = 1, ipeqns
+            if (active_constraints(i)) then
+                j = j+1
+                icc(j) = i
+            end if
+        end do        
+     end if
+   
   end subroutine input
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -345,6 +379,7 @@ contains
     !+ad_hist  22/04/15 JM  Added etapsu
     !+ad_hist  19/05/15 PJK Variable names in calls now lowercase
     !+ad_hist  20/05/15 RK  Added iscdens, fgwped
+    !+ad_hist  11/06/15 MDK Added spiral_od and spiral_id
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1485,7 +1520,13 @@ contains
                'TF coil conduit case thickness (m)')
        case ('tinstf')
           call parse_real_variable('tinstf', tinstf, 0.0D0, 0.1D0, &
-               'Ground wall insulation thickness (m)')
+               'Ground wall insulation thickness (m)')       
+       case ('spiral_od')
+          call parse_real_variable('spiral_od', spiral_od, 0.0D0, 0.1D0, &
+               'central tube for helium coolant: outer diameter (m)')
+       case ('spiral_id')
+          call parse_real_variable('spiral_id', spiral_id, 0.0D0, 0.1D0, &
+               'central tube for helium coolant: inner diameter (m)')              
        case ('tmargmin')
           call parse_real_variable('tmargmin', tmargmin, 0.0D0, 10.0D0, &
                'Minimum allowable temp margin (K)')
