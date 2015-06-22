@@ -324,6 +324,7 @@ contains
     call ocmmnt(nout,'PROCESS status flag:   '//status_message)           
     write(*,*)       'PROCESS status flag:   '//status_message
     call oblnkl(iotty)
+    call ovarin(nout,'PROCESS error status flag','(error_status)',error_status)
 
     ptr => error_head
 
