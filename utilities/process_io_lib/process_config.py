@@ -14,7 +14,7 @@ import os
 import subprocess
 from time import sleep
 from numpy.random import seed, uniform, normal
-from numpy import argsort, ndarray
+from numpy import argsort, ndarray, argwhere, logical_or
 import collections as col
 from process_io_lib.process_funcs import  get_neqns_itervars,\
     get_variable_range, vary_iteration_variables, check_input_error,\
@@ -27,7 +27,7 @@ from process_io_lib.mfile import MFile
 from process_io_lib.configuration import Config
 try:
     from process_io_lib.process_dicts import DICT_NSWEEP2IXC, \
-        DICT_NSWEEP2VARNAME, DICT_IXC_SIMPLE
+        DICT_NSWEEP2VARNAME, DICT_IXC_SIMPLE, DICT_INPUT_BOUNDS
 except ImportError:
     print("The Python dictionaries have not yet been created. Please run \
 'make dicts'!")
@@ -832,7 +832,85 @@ class UncertaintiesConfig(ProcessConfig, Config):
                 print('Error: an uncertain variable should never be an\
  iteration variable at the same time!', varname)
                 exit()
-        # check uncertainties are within bounds??
+
+            if u_dict['errortype'].lower() == 'uniform':
+                lbound = u_dict['lowerbound']
+                ubound = u_dict['upperbound']
+                if lbound > ubound:
+                    print('Error: the lower bound of the uncertain variable',
+                          varname, 'is higher than its upper bound!')
+                    exit()
+
+                if varname in DICT_INPUT_BOUNDS:
+                    #check bounds are inside input bounds
+                    if lbound < DICT_INPUT_BOUNDS[varname]['lb']:
+                        u_dict['lowerbound'] = DICT_INPUT_BOUNDS[varname]['lb']
+                        print('Warning: The lower bound of the uncertain variable',
+                              varname, 'is lower than the lowest allowed input',
+                              'value! \n Corrected value to', u_dict['lowerbound'])
+                    if ubound > DICT_INPUT_BOUNDS[varname]['ub']:
+                        u_dict['upperbound'] = DICT_INPUT_BOUNDS[varname]['ub']
+                        print('Warning: The upper bound of the uncertain variable',
+                              varname, 'is higher than the highest allowed input',
+                              'value! \n Corrected value to', u_dict['upperbound'])
+
+            elif u_dict['errortype'].lower() == 'relative':
+                err = u_dict['percentage']/100.
+                lbound = u_dict['mean']*(1.-err)
+                ubound = u_dict['mean']*(1.+err)
+
+                if err < 0.:
+                    print('Error: The percentage of the uncertain variable',
+                          varname, 'should never be negative!')
+                    exit()
+
+                if varname in DICT_INPUT_BOUNDS:
+                    #check mean is inside input bounds
+                    if u_dict['mean'] < DICT_INPUT_BOUNDS[varname]['lb']:
+                        print('Error: The mean of the uncertain variable',
+                              varname, 'is lower than the lowest allowed input!',
+                              DICT_INPUT_BOUNDS[varname]['lb'])
+                        exit()
+                    elif u_dict['mean'] > DICT_INPUT_BOUNDS[varname]['ub']:
+                        print('Error: The mean of the uncertain variable',
+                              varname, 'is higher than the highest allowed input!',
+                              DICT_INPUT_BOUNDS[varname]['ub'])
+                        exit()
+
+                    #check bounds are inside input bounds
+                    if lbound < DICT_INPUT_BOUNDS[varname]['lb']:
+                        u_dict['errortype'] = 'uniform'
+                        u_dict['lowerbound'] = DICT_INPUT_BOUNDS[varname]['lb']
+                        u_dict['upperbound'] = ubound
+                        print('Warning: The lower bound of the uncertain variable',
+                              varname, 'is lower than the lowest allowed input',
+                              'value! \n Corrected value to', u_dict['lowerbound'])
+                    if ubound > DICT_INPUT_BOUNDS[varname]['ub']:
+                        if u_dict['errortype'] != 'uniform':
+                            u_dict['errortype'] = 'uniform'
+                            u_dict['lowerbound'] = lbound
+                        u_dict['upperbound'] = DICT_INPUT_BOUNDS[varname]['ub']
+                        print('Warning: The upper bound of the uncertain variable',
+                              varname, 'is higher than the highest allowed input',
+                              'value! \n Corrected value to', u_dict['upperbound'])
+
+            elif u_dict['errortype'].lower() in  ['gaussian', 'lowerhalfgaussian',
+                                                  'upperhalfgaussian']:
+
+                if varname in DICT_INPUT_BOUNDS:
+                    #check mean is inside input bounds
+                    if u_dict['mean'] < DICT_INPUT_BOUNDS[varname]['lb']:
+                        print('Error: The mean of the uncertain variable',
+                              varname, 'is lower than the lowest allowed input!',
+                              u_dict['mean'], '<',
+                              DICT_INPUT_BOUNDS[varname]['lb'])
+                        exit()
+                    elif u_dict['mean'] > DICT_INPUT_BOUNDS[varname]['ub']:
+                        print('Error: The mean of the uncertain variable',
+                              varname, 'is higher than the highest allowed input!',
+                              u_dict['mean'], '>',
+                              DICT_INPUT_BOUNDS[varname]['ub'])
+                        exit()
 
 
 
@@ -841,10 +919,22 @@ class UncertaintiesConfig(ProcessConfig, Config):
         """ determines the values of each sample point and orders them """
 
         for u_dict in self.uncertainties:
+            varname = u_dict['varname'].lower()
             if u_dict['errortype'].lower() == 'gaussian':
                 mean = u_dict['mean']
                 std = u_dict['std']
                 values = normal(mean, std, self.no_samples)
+                # assures values are inside input bounds!
+                if varname in DICT_INPUT_BOUNDS:
+                    args = argwhere(logical_or(
+                            values < DICT_INPUT_BOUNDS[varname]['lb'],
+                            values > DICT_INPUT_BOUNDS[varname]['ub']))
+                    while len(args) > 0:
+                        values[args] = normal(mean, std, len(args))
+                        args = argwhere(logical_or(
+                                values < DICT_INPUT_BOUNDS[varname]['lb'],
+                                values > DICT_INPUT_BOUNDS[varname]['ub']))
+
             elif u_dict['errortype'].lower() == 'uniform':
                 lbound = u_dict['lowerbound']
                 ubound = u_dict['upperbound']
@@ -854,6 +944,43 @@ class UncertaintiesConfig(ProcessConfig, Config):
                 lbound = u_dict['mean']*(1.-err)
                 ubound = u_dict['mean']*(1.+err)
                 values = uniform(lbound, ubound, self.no_samples)
+            elif u_dict['errortype'].lower() == 'lowerhalfgaussian':
+                mean = u_dict['mean']
+                std = u_dict['std']
+                values = normal(mean, std, self.no_samples)
+                if varname in DICT_INPUT_BOUNDS:
+                    args = argwhere(logical_or(
+                            values < DICT_INPUT_BOUNDS[varname]['lb'],
+                            values > mean))
+                    while len(args) > 0:
+                        values[args] = normal(mean, std, len(args))
+                        args = argwhere(logical_or(
+                                values < DICT_INPUT_BOUNDS[varname]['lb'],
+                                values > mean))
+                else:
+                    args = argwhere(values > mean)
+                    while len(args) > 0:
+                        values[args] = normal(mean, std, len(args))
+                        args = argwhere(values > mean)
+            elif u_dict['errortype'].lower() == 'upperhalfgaussian':
+                mean = u_dict['mean']
+                std = u_dict['std']
+                values = normal(mean, std, self.no_samples)
+                if varname in DICT_INPUT_BOUNDS:
+                    args = argwhere(logical_or(
+                            values < mean,
+                            values > DICT_INPUT_BOUNDS[varname]['ub']))
+                    while len(args) > 0:
+                        values[args] = normal(mean, std, len(args))
+                        args = argwhere(logical_or(
+                                values < mean,
+                                values > DICT_INPUT_BOUNDS[varname]['ub']))
+                else:
+                    args = argwhere(values < mean)
+                    while len(args) > 0:
+                        values[args] = normal(mean, std, len(args))
+                        args = argwhere(values < mean)
+
             u_dict['samples'] = values
 
         #order by one parameter

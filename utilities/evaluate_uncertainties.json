@@ -5,7 +5,7 @@
 	"config": {
 		  "runtitle": "testrun for uncertainty tool",
 		  "IN.DAT_path": "IN.DAT_demo2",
-		  "process_bin": "~pknight/process/branches/master/process.exe",
+		  "process_bin": "process.exe",
 		  "working_directory": "Run1",
 		  "pseudorandom_seed": 2
 		  },
@@ -17,17 +17,29 @@
                	"Std":0.05
           	},          
           	{
-               	"Varname":"rcore",
+               	"Varname":"coreradius",
                	"Errortype":"Uniform",
                	"Lowerbound":0.6,
                	"Upperbound":0.9
           	},
           	{
-               	"Varname":"Hfact",
+               	"Varname":"cboot",
                	"Errortype":"Relative",
                	"Mean":1.0,
                	"Percentage":10.0
-          	} 
+          	},
+		{
+		"Varname": "boundu(9)",
+		"Errortype": "LowerHalfGaussian",
+		"Mean": 1.2,
+		"Std": 0.1
+		},
+		{
+		"Varname": "boundl(103)",
+		"Errortype": "UpperHalfGaussian",
+		"Mean": 1.0,
+		"std":0.25
+		} 
 	     	],
      "output_vars": [ "rmajor", "dene", "te", "bt"],
      "no_samples": 1000     

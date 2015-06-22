@@ -675,7 +675,7 @@ format\footnote{www.json.org}, and has the following style
 		  "pseudorandom_seed": 2
 		  },
 	"uncertainties": [
-		     {
+          	     {
                	     "Varname":"flhthresh",
                	     "Errortype":"Gaussian",
                	     "Mean":1.0,
@@ -692,6 +692,18 @@ format\footnote{www.json.org}, and has the following style
                	     "Errortype":"Relative",
                	     "Mean":0.3,
                	     "Percentage":10.0
+          	     },
+          	     {
+               	     "Varname":"boundu(9)",
+               	     "Errortype":"LowerHalfGaussian",
+               	     "Mean":1.2,
+               	     "Std":0.1
+          	     }, 
+          	     {
+               	     "Varname":"boundl(103)",
+               	     "Errortype":"UpperHalfGaussian",
+               	     "Mean":1.0,
+               	     "Std":0.25
           	     } 
 	     	],
      "output_vars": [ "rmajor", "dene", "te", "bt"],
@@ -741,7 +753,7 @@ section. Each parameter is specified in its own sub dictionary as shown in the
 example. For each, the \texttt{Varname} and \texttt{Errortype} need to be
 specified as well as the \texttt{Mean} and standard deviation \texttt{Std} for
 Gaussian type errors as well as \texttt{Lowerbound} and \texttt{Upperbound}
-for Uniform or \texttt{Mean} and a \texttt{Percentage} for Relative errors. At
+for Uniform or \texttt{Mean} and a \texttt{Percentage} for Relative errors. Apart from a standard Gaussian distribution, also a lower and an upper half Gaussian distribution are available that have a sharp cut off at the mean. Please note, that \emph{all distributions are being cut off at the boundaries for the input values for \process!}  At
 least one uncertain parameter has to be specified for the program to run and
 technically there is no upper limit as to how many uncertain parameters can be
 used. However, for large numbers of uncertain parameters it is recommended to
