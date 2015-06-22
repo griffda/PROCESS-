@@ -1127,9 +1127,9 @@ module fwbs_variables
   !+ad_vars  vfcblkt /0.05295/ : He coolant fraction of blanket by volume
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: vfcblkt = 0.05295D0
-  !+ad_vars  vfpblkt /0.3145/ : He purge gas fraction of blanket by volume
+  !+ad_vars  vfpblkt /0.1/ : He purge gas fraction of blanket by volume
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
-  real(kind(1.0D0)) :: vfpblkt = 0.3145D0
+  real(kind(1.0D0)) :: vfpblkt = 0.1D0
   !+ad_vars  whtblli4sio4 : mass of lithium orthosilicate in blanket (kg)
   !+ad_varc                   (iblanket = 1 or 3 (CCFE HCPB))
   real(kind(1.0D0)) :: whtblli4sio4 = 0.0D0
