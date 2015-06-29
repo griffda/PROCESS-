@@ -306,7 +306,13 @@ def process_parameter(data, line):
     if len(no_comment_line[-1].split(",")) > 2:
         value = no_comment_line[1].strip()
     else:
-        value = no_comment_line[1].strip().replace(",", "")
+        try :
+            value = no_comment_line[1].strip().replace(",", "")
+        except IndexError:
+            print('Error when reading IN.DAT file on line', no_comment_line,
+                  '\n Please note, that our Python Library cannot cope with',
+                  ' variable definitions on multiple lines.')
+            exit()
 
     # Find group of variables the parameter belongs to
     parameter_group = find_parameter_group(name)
@@ -765,6 +771,8 @@ def parameter_type(name, value):
 
     # Check if parameter is a list
     if isinstance(value, list):
+        if value[-1] == '':
+            value = value[:-1]
 
         # Real array parameter
         if "real_array" in param_type:
@@ -772,7 +780,6 @@ def parameter_type(name, value):
 
         # Integer array parameter
         elif "int_array" in param_type:
-
             return [int(item) for item in value]
 
     # Check if parameter is a string
@@ -785,7 +792,10 @@ def parameter_type(name, value):
         # If a real array split and make a float list
         elif "real_array" in param_type:
             value = value.split(",")
+            if value[-1] == '':
+                value = value[:-1]    
             return [float(item) for item in value]
+
 
         # If an integer variable convert to integer
         elif "int_variable" in param_type:
@@ -794,6 +804,8 @@ def parameter_type(name, value):
         # If an integer array split and make an integer list
         elif "int_array" in param_type:
             value = value.split(",")
+            if value[-1] == '':
+                value = value[:-1]
             return [int(item) for item in value]
 
         # If type unknown return original value
