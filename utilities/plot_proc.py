@@ -1306,9 +1306,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
             ("alstrtf", "Allowable stress", "Pa"),
             ("", "", ""),
             ("#Costs", "", ""),
-            ("coe", "Cost of electricity", "\$/MWh"),
-            ("concost", "Constructed cost", "M\$"),
-            ("capcost", "Total capex", "M\$")]
+            ("coe", "Cost of electricity", "\$/MWh")]
 
     plot_info(axis, data, mfile_data, scan)
 
@@ -1352,7 +1350,7 @@ def plot_power_info(axis, mfile_data, scan):
     plant_eff = 100.0 * (mfile_data.data["pnetelmw"].get_scan(scan) /
                          mfile_data.data["powfmw"].get_scan(scan))
 
-    imprad = mfile_data.data["imprad"].get_scan(scan)
+    imprad = mfile_data.data["imprad model"].get_scan(scan)
 
 
     # Define appropriate pedestal and impurity parameters
@@ -1383,7 +1381,6 @@ def plot_power_info(axis, mfile_data, scan):
             ("pnucshld", "Nuclear heating in shield", "MW"),
             ("pdivt", "Power to divertor", "MW"),
             (pthresh, "H-mode threshold", "MW"),
-            ("fwbllife", "FW/Blanket life", "years"),
             ("divlife", "Divertor life", "years"),
             ("pthermmw", "Primary (high grade) heat", "MW"),
             (gross_eff, "Gross cycle efficiency", "%"),
