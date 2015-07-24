@@ -5542,7 +5542,7 @@ contains
     call ovarre(outfile,'Ion density (/m3)','(dnitot)',dnitot)
     call ovarre(outfile,'Fuel density (/m3)','(deni)',deni)
     call ovarre(outfile,'High Z impurity density (/m3)','(dnz)',dnz)
-    call ovarre(outfile,'Cold alpha ash density (/m3)','(dnalp)',dnalp)
+    call ovarre(outfile,'Helium ion density (thermalised ions only) (/m3)','(dnalp)',dnalp)
     call ovarre(outfile,'Proton ash density (/m3)','(dnprot)',dnprot)
 
     call ovarre(outfile,'Hot beam density (/m3)','(dnbeam)',dnbeam)
@@ -5550,6 +5550,7 @@ contains
     if ((ioptimz > 0).and.(active_constraints(5))) then
         call ovarre(outfile,'Density limit (enforced) (/m3)','(boundu(9)*dnelimt)',boundu(9)*dnelimt)    
     end if
+    call ovarre(outfile,'Helium ion density (thermalised ions only) / electron density','(ralpne)',ralpne)
     call oblnkl(outfile)
     
     call ovarin(outfile,'Plasma impurity model','(imprad_model)',imprad_model)
