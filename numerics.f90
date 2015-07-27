@@ -523,8 +523,8 @@ module numerics
        'fjprot   ', &
        !+ad_varc  <LI> (54) * ftmargtf (f-value for equation 36)
        'ftmargtf ', &
-       !+ad_varc  <LI> (55) tmargmin
-       'tmargmin ', &
+       !+ad_varc  <LI> (55) obsolete
+       'obsolete ', &
        !+ad_varc  <LI> (56) tdmptf
        'tdmptf   ', &
        !+ad_varc  <LI> (57) thkcas

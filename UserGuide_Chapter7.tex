@@ -324,16 +324,18 @@ Section~\ref{sec:codemods}).
 \item \texttt{make all} \\
 This ensures that all the code and documentation compiles successfully.  
 
+\item Run the input file(s) in the \texttt{tests} folder to ensure PROCESS runs correctly.
+
 \item 
 Close all open editor windows.
 
-\item \texttt{git add process.f90 process.tex changedfile1 changedfile2 ...}  \\
+\item   \texttt{git commit -a} \\
+  This commits all modified tracked files.\\
+  \\
+  Alternatively, you can this in two steps:\\  
+  \texttt{git add process.f90 process.tex changedfile1 changedfile2 ...}  \\
   (This `stages' the modified files marking them as ready for committing).  \\
-  \texttt{git commit}
-  
-  Alternatively, just use\\
-  \texttt{git commit -a} \\
-  This commits all modified tracked files.
+  \texttt{git commit}  
 
 \item An editor window will open; add a line summarising the changes you have made.  Use a format similar to
 \begin{verbatim}

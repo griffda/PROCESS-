@@ -287,7 +287,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '401    Release Date :: 2015-06-17'
+       '402    Release Date :: 2015-07-24'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1954,3 +1954,10 @@ end subroutine runtests
 !          #308 L-H threshold power (enforced) is boundl(103)*plhthresh.
 !          #306 Added central tube for helium coolant in TF cable, but these variables don't yet do anything.
 !          #311 Added Murari energy confinement non-power law scaling (isc=40)
+! GIT 402  #318 Update to ICC list in user guide
+!          #316 plot_proc missing values from MFILE 
+!          #315 Add comment to user Guide that release notes should be included on the checklist for adding changes.
+!          #314 Inconsistent input data for blanket model: change default vfpblkt = 0.1 to have a working default input blanket model.
+!          #263 'tmargmin' should not be an iteration variable.  Set the label and vardes text for iteration variable 55 to "obsolete".
+
+
