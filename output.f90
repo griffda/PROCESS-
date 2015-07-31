@@ -39,6 +39,7 @@ module process_output
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   use global_variables
+  use numerics
   implicit none
 
   public
@@ -421,7 +422,7 @@ contains
 
     character(len=72) :: dum72
     character(len=20) :: dum20
-
+    character(len=20) :: stripped
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Replace descr and varnam with dummy strings of the correct length.
@@ -430,17 +431,31 @@ contains
 
     dum72 = descr
     dum20 = varnam
+    stripped = varnam(2:len(varnam)-1)
 
     if (file /= mfile) then
-        if (verbose==1) then 
-            write(file,20) dum72, dum20, value
-        else
-            write(file,10) dum72, dum20, value
+       !MDK add label if it is an iteration variable
+       if (any(name_xc == stripped)) then
+          if (verbose==1) then 
+            write(file,10) dum72, dum20, value, 'IV'
+          else
+            write(file,20) dum72, dum20, value, 'IV'
+          end if           
+           
+       else
+           if (verbose==1) then 
+            write(file,30) dum72, dum20, value
+          else
+            write(file,40) dum72, dum20, value
+          end if           
+          
         end if            
     end if
 
-10  format(1x,a,t75,a,t100,f10.3)
-20  format(1x,a,t75,a,t100,f13.6)
+10  format(1x,a,t75,a,t100,f13.6, t115, a)
+20  format(1x,a,t75,a,t100,f10.3, t112, a)
+30  format(1x,a,t75,a,t100,f13.6)
+40  format(1x,a,t75,a,t100,f10.3)
 
     call ovarre(mfile,descr,varnam,value)
 
@@ -469,6 +484,7 @@ contains
     !+ad_hist  13/02/14 PJK Added output to mfile, with underscores replacing spaces
     !+ad_hist  17/02/14 PJK Ensured mfile output is not replicated if file=mfile
     !+ad_hist  15/05/14 PJK Longer line length
+    !+ad_hist  31/07/15 MDK Add label if it is an iteration variable
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -486,6 +502,7 @@ contains
 
     character(len=72) :: dum72
     character(len=20) :: dum20
+    character(len=20) :: stripped
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -495,9 +512,16 @@ contains
 
     dum72 = descr
     dum20 = varnam
+    ! Remove the "(" and ")" from the varnam
+    stripped = varnam(2:len(varnam)-1)
 
     if (file /= mfile) then
-       write(file,10) dum72, dum20, value
+       !MDK add label if it is an iteration variable
+       if (any(name_xc == stripped)) then
+           write(file,20) dum72, dum20, value, 'IV'
+       else
+           write(file,10) dum72, dum20, value
+       end if        
     end if
 
     call underscore(dum72)
@@ -505,6 +529,7 @@ contains
     write(mfile,10) dum72, dum20, value
 
 10  format(1x,a,t75,a,t100,1pe10.3)
+20  format(1x,a,t75,a,t100,1pe10.3, t112, a)
 
   end subroutine ovarre
 

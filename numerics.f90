@@ -632,7 +632,9 @@ module numerics
        !+ad_varc  <LI> (108) breeder_f: Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)</UL>
        'breeder_f'  &
        /)
-
+  
+  character(len=9), dimension(:), allocatable :: name_xc
+  
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
   real(kind(1.0D0)) :: sqsumsq = 0.0D0
   !+ad_vars  epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON derivatives
@@ -879,6 +881,7 @@ module numerics
   real(kind(1.0D0)), dimension(ipnvars) :: xcm = 0.0D0
   real(kind(1.0D0)), dimension(ipnvars) :: xcs = 0.0D0
   real(kind(1.0D0)), dimension(ipvlam)  :: vlam = 0.0D0
+
 
 contains
 

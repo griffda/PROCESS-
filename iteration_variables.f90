@@ -102,8 +102,8 @@ subroutine loadxc
 
   !  Local variables
 
-  integer :: i
-
+  integer :: i,j
+  allocate(name_xc(nvar))
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   do i = 1,nvar
@@ -230,14 +230,16 @@ subroutine loadxc
      case (106) ; xcm(i) = ftmargoh
      case (107) ; xcm(i) = favail
      case (108) ; xcm(i) = breeder_f
-
-
+    
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
         call report_error(54)
 
      end select
 
+      ! Simple list of iteration variable names (with trailing spaces)
+      name_xc(i) = lablxc(ixc(i))
+      
      !  Check that no iteration variable is zero
 
      if (abs(xcm(i)) <= 1.0D-12) then

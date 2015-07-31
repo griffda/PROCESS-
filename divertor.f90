@@ -191,7 +191,9 @@ contains
     rlclolcn = 1.44D-3 * tsep**2 / (delne*15.0D0*tconl)
 
     if (iprint == 0) return
-
+    ! MDK Issue #242 Switch off divertor output
+    return
+    
     call oheadr(outfile,'Divertor')
     call ocmmnt(outfile,'Harrison (ITER) Model')
     call oblnkl(outfile)

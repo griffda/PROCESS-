@@ -1959,5 +1959,5 @@ end subroutine runtests
 !          #315 Add comment to user Guide that release notes should be included on the checklist for adding changes.
 !          #314 Inconsistent input data for blanket model: change default vfpblkt = 0.1 to have a working default input blanket model.
 !          #263 'tmargmin' should not be an iteration variable.  Set the label and vardes text for iteration variable 55 to "obsolete".
-
-
+! GIT TBA  #242 As we never use the divertor output, I will just switch it off. 
+!          #270 Add "IV" to all iteration variable outputs

@@ -292,6 +292,7 @@ subroutine check
      call report_error(139)
   end if
 
+
   if ( any(icc(1:neqns+nineqns) == 0) ) then
      idiags(1) = neqns ; idiags(2) = nineqns
      call report_error(140)
