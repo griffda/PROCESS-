@@ -76,7 +76,8 @@ module maths_library
 
   use global_variables, only: verbose
   use constants
-  use process_output
+  ! MDK Remove this dependency, as iotty is now defined in global variables.
+  !use process_output
 
   implicit none
   
@@ -2457,7 +2458,10 @@ contains
 	!  Setup line overwrite for VMCON iterations output
 	open(unit=iotty, carriagecontrol='FORTRAN')
 	write(*,*) ""
-    call oheadr(iotty, "VMCON Iterations")
+	! MDK To prevent circular dependencies in compilation, I will replace this
+	! a simple write statement
+    ! call oheadr(iotty, "VMCON Iterations")
+    write(*,*) "VMCON Iterations"
 
     !  Start the iteration by calling the quadratic programming
     !  subroutine

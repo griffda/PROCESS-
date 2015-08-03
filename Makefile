@@ -234,9 +234,9 @@ initial.o: error_handling.o global_variables.o output.o scan.o stellarator.o
 input.o: error_handling.o global_variables.o numerics.o output.o scan.o
 iteration_variables.o: error_handling.o global_variables.o numerics.o
 machine_build.o: error_handling.o global_variables.o output.o
-maths_library.o: global_variables.o
+maths_library.o: global_variables.o 
 numerics.o: global_variables.o maths_library.o
-output.o:
+output.o: global_variables.o numerics.o
 pfcoil.o: error_handling.o global_variables.o maths_library.o output.o sctfcoil.o
 physics.o: current_drive.o error_handling.o global_variables.o impurity_radiation.o \
   maths_library.o numerics.o output.o plasma_profiles.o

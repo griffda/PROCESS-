@@ -352,6 +352,8 @@ contains
     if (abs(bootipf+faccd+facoh-1.0d0) > 1.0d-10) then
         call ocmmnt(outfile,'ERROR: current drive fractions do not add to 1')
     end if
+    ! MDK Add fvsbrnni as it can be an iteration variable
+    call ovarrf(outfile,'Fraction of the plasma current produced by non-inductive means','(fvsbrnni)',fvsbrnni)
 
     if (abs(bootipf-bscfmax) < 1.0D-8) then
        call ocmmnt(outfile,'Warning : bootstrap current fraction is at')

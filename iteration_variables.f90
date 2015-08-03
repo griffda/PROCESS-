@@ -72,6 +72,7 @@ subroutine loadxc
   !+ad_hist  11/11/14 PJK Added ftmargoh (106)
   !+ad_hist  25/11/14 JM  Added favail (107)
   !+ad_hist  27/05/15 MDK Added breeder_f (108)
+  !+ad_hist  03/08/15 MDK Create list of iteration variable names
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -237,8 +238,11 @@ subroutine loadxc
 
      end select
 
-      ! Simple list of iteration variable names (with trailing spaces)
+      ! Simple list of iteration variable names 
       name_xc(i) = lablxc(ixc(i))
+      ! Note that iteration variable 18 has more than one name:
+      if ((ixc(i) == 18).and.(icurr /= 2)) name_xc(i) = 'q95'
+      if ((ixc(i) == 18).and.(icurr == 2)) name_xc(i) = 'qbar'
       
      !  Check that no iteration variable is zero
 

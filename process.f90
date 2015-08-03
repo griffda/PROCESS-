@@ -287,7 +287,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '402    Release Date :: 2015-07-24'
+       '403    Release Date :: 2015-08-3'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -452,6 +452,9 @@ subroutine run_summary
        'presentations and papers based on these results)')
   call oblnkl(nout)
   call ostars(nout, width)
+  ! Issue #270
+  call ocmmnt(nout,'Active iteration variables are labelled with "ITV" in columns 112-114 of standard format output lines.')
+  
 
   !  Beware of possible future changes to the progid(...) layouts
 
@@ -1959,5 +1962,6 @@ end subroutine runtests
 !          #315 Add comment to user Guide that release notes should be included on the checklist for adding changes.
 !          #314 Inconsistent input data for blanket model: change default vfpblkt = 0.1 to have a working default input blanket model.
 !          #263 'tmargmin' should not be an iteration variable.  Set the label and vardes text for iteration variable 55 to "obsolete".
-! GIT TBA  #242 As we never use the divertor output, I will just switch it off. 
-!          #270 Add "IV" to all iteration variable outputs
+! GIT 403  #242 As we never use the divertor output, I will just switch it off. 
+!          #270 Add "ITV" to all iteration variable outputs, and 
+!          ensure that all iteration variables are output using ovarre or ovarin, except for f-values.

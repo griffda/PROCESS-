@@ -63,6 +63,13 @@ module constants
   implicit none
 
   public
+  
+  ! MDK These moved here to prevent circular dependency
+  integer, parameter :: iotty = 6  !  Standard output unit identifier
+  integer, parameter :: nout = 11  !  Output file unit identifier
+  integer, parameter :: nplot = 12 !  Plot data file unit identifier
+  integer, parameter :: mfile = 13 !  Machine-optimised output file unit
+  integer, parameter :: vfile = 14 !  Verbose diagnostics file
 
   !+ad_vars  degrad FIX : degrees to radians, = pi/180
   real(kind(1.0D0)), parameter :: degrad = 0.01745329251D0
@@ -2676,7 +2683,7 @@ module build_variables
   !+ad_vars  gapds /0.155/ : gap between inboard vacuum vessel and TF coil (m)
   !+ad_varc                (iteration variable 61)
   real(kind(1.0D0)) :: gapds = 0.155D0
-  !+ad_vars  gapoh /0.08/ : gap between central solenoid and TF coil
+  !+ad_vars  gapoh /0.08/ : gap between central solenoid and TF coil (m)
   !+ad_varc                (iteration variable 42)
   real(kind(1.0D0)) :: gapoh = 0.08D0
   !+ad_vars  gapomin /0.234/ : minimum gap between outboard vacuum vessel and TF coil (m)

@@ -1419,8 +1419,8 @@ contains
     call ovarre(outfile,'Number of TF coils','(tfno)',tfno)
     call ovarre(outfile,'Cross-sectional area per coil (m2)','(tfarea/tfno)', &
          tfareain/tfno)
-    call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth.)',tfcth)
-    call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko.)',tfthko)
+    call ovarre(outfile,'Total inboard leg radial thickness (m)','(tfcth)',tfcth)
+    call ovarre(outfile,'Total outboard leg radial thickness (m)','(tfthko)',tfthko)
     call ovarre(outfile,'Inboard leg outboard half-width (m)','(tficrn)',tficrn)
     call ovarre(outfile,'Inboard leg inboard half-width (m)','(tfocrn)',tfocrn)
     call ovarre(outfile,'Outboard leg toroidal thickness (m)','(tftort)',tftort)
@@ -1450,9 +1450,12 @@ contains
     call ovarre(outfile,'Inboard leg centre radius (m)','(rtfcin)',rtfcin)
     call ovarre(outfile,'Outboard leg centre radius (m)','(rtot)',rtot)
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax)
-    call ovarre(outfile,'Clear horizontal bore (m)','(tfboreh)',tfboreh)
-    call ovarre(outfile,'Clear vertical bore (m)','(tfborev)',tfborev)
-
+    ! MDK Remove these two as they can easily be calculated from build
+    ! call ovarre(outfile,'Clear horizontal bore (m)','(tfboreh)',tfboreh)
+    ! call ovarre(outfile,'Clear vertical bore (m)','(tfborev)',tfborev)
+    ! MDK Add gapds as it can be an iteration variable
+    call ovarre(outfile,'Gap between inboard vacuum vessel and TF coil (m)','(gapds)',gapds)
+    
     call oblnkl(outfile)
     call ocmmnt(outfile,'TF coil inner surface shape is approximated')
     call ocmmnt(outfile,'by arcs between the following points :')
@@ -1626,7 +1629,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     subroutine supercon(acs,aturn,bmax,fhe,fcu,iop,jwp,isumat,fhts, &
-         strain,tdump,tfes,thelium,tmax,bcritsc,tcritsc,iprint,outfile, &
+         strain,tdmptf,tfes,thelium,tmax,bcritsc,tcritsc,iprint,outfile, &
          jwdgpro,jwdgcrt,vd,tmarg)
 
       !+ad_name  supercon
@@ -1653,7 +1656,7 @@ contains
       !+ad_args  fhts    : input real : Adjustment factor (<= 1) to account for strain,
       !+ad_argc                         radiation damage, fatigue or AC losses
       !+ad_args  strain : input real : Strain on superconductor at operation conditions
-      !+ad_args  tdump : input real : Dump time (sec)
+      !+ad_args  tdmptf : input real : Dump time (sec)
       !+ad_args  tfes : input real : Energy stored in one TF coil (J)
       !+ad_args  thelium : input real : He temperature at peak field point (K)
       !+ad_args  tmax : input real : Max conductor temperature during quench (K)
@@ -1702,6 +1705,7 @@ contains
       !+ad_hisc               areas in bi2212 jstrand input
       !+ad_hist  11/11/14 PJK Shifted exit criteria for temperature margin
       !+ad_hisc               iteration to reduce calculations
+      !+ad_hist  03/08/15 MDK Rename argument tdump = tdmptf as this is a global varibale
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
@@ -1713,7 +1717,7 @@ contains
 
       integer, intent(in) :: isumat, iprint, outfile
       real(kind(1.0D0)), intent(in) :: acs, aturn, bmax, fcu, fhe, fhts, &
-           iop, jwp, strain, tdump, tfes, thelium, tmax, bcritsc, tcritsc
+           iop, jwp, strain, tdmptf, tfes, thelium, tmax, bcritsc, tcritsc
       real(kind(1.0D0)), intent(out) :: jwdgpro, jwdgcrt, vd, tmarg
 
       !  Local variables
@@ -1721,10 +1725,11 @@ contains
       integer :: lap
       real(kind(1.0D0)) :: b,bc20m,bcrit,c0,delt,fcond,icrit,iooic, &
            jcritsc,jcrit0,jcritm,jcritp,jcritstr,jsc,jstrand,jtol,jwdgop, &
-           t,tc0m,tcrit,ttest,ttestm,ttestp
+           t,tc0m,tcrit,ttest,ttestm,ttestp, tdump
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+      ! Rename tdmptf as it is called tdump in this routine and those called from here.
+      tdump = tdmptf
       !  Conductor fraction
 
       fcond = 1.0D0 - fhe
@@ -1897,7 +1902,7 @@ contains
            tmax)
       call ovarre(outfile,'Winding pack protection J (A/m2)','(jwdgpro)', &
            jwdgpro)
-      call ovarre(outfile,'Dump time (s)','(tdump)',tdump)
+      call ovarre(outfile,'Dump time (s)','(tdmptf)',tdmptf)
       call ovarre(outfile,'Dump voltage (V)','(vd)',vd)
 
     end subroutine supercon

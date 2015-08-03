@@ -44,11 +44,7 @@ module process_output
 
   public
 
-  integer, parameter :: iotty = 6  !  Standard output unit identifier
-  integer, parameter :: nout = 11  !  Output file unit identifier
-  integer, parameter :: nplot = 12 !  Plot data file unit identifier
-  integer, parameter :: mfile = 13 !  Machine-optimised output file unit
-  integer, parameter :: vfile = 14 !  Verbose diagnostics file
+  
 
 contains
 
@@ -437,9 +433,9 @@ contains
        !MDK add label if it is an iteration variable
        if (any(name_xc == stripped)) then
           if (verbose==1) then 
-            write(file,10) dum72, dum20, value, 'IV'
+            write(file,10) dum72, dum20, value, 'ITV'
           else
-            write(file,20) dum72, dum20, value, 'IV'
+            write(file,20) dum72, dum20, value, 'ITV'
           end if           
            
        else
@@ -518,7 +514,7 @@ contains
     if (file /= mfile) then
        !MDK add label if it is an iteration variable
        if (any(name_xc == stripped)) then
-           write(file,20) dum72, dum20, value, 'IV'
+           write(file,20) dum72, dum20, value, 'ITV'
        else
            write(file,10) dum72, dum20, value
        end if        

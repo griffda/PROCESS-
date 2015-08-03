@@ -79,7 +79,8 @@ module numerics
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use global_variables, only: verbose
+  use global_variables
+  use constants
   use maths_library
 
   implicit none

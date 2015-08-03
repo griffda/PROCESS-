@@ -320,6 +320,9 @@ Section~\ref{sec:codemods}).
 \item If any of the User Guide \texttt{.tex} files have been modified, edit
   the definition of \verb+\version+ in \texttt{process.tex} by changing the
   Revision (to \texttt{XYZ}) and the date.
+
+\item If you have changed any "use" statements in the code, or any compilation dependencies in the Makefile, run \\
+\texttt{make clean}
   
 \item \texttt{make all} \\
 This ensures that all the code and documentation compiles successfully.  

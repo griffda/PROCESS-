@@ -2554,9 +2554,12 @@ contains
                '(jstrandoh_eof)',jstrandoh_eof)
           call ovarre(outfile,'Allowable overall current density at EOF (A/m2)', &
                '(rjohc)',rjohc)
-          call ovarre(outfile,'Actual overall current density at EOF (A/m2)', &
-               '(coheof)',coheof)
+          call ovarre(outfile,'Actual overall current density at EOF (A/m2)', '(coheof)',coheof)
           call oblnkl(outfile)
+          ! MDK add ohcth, bore and gapoh as they can be iteration variables
+          call ovarre(outfile,'CS inside radius (m)', '(bore)',bore)
+          call ovarre(outfile,'CS thickness (m)', '(ohcth)',ohcth)
+          call ovarre(outfile,'Gap between central solenoid and TF coil (m)', '(gapoh)',gapoh)
           call ovarre(outfile,'CS overall cross-sectional area (m2)', &
                '(areaoh)',areaoh)
           call ovarre(outfile,'CS conductor+void cross-sectional area (m2)', &
@@ -2793,6 +2796,7 @@ contains
     !+ad_hist  15/05/14 PJK Added vstot to output
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  20/10/14 PJK OH to CS
+    !+ad_hist  03/08/15 MDK Change in output format for fcohop, fcohbof
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2879,9 +2883,8 @@ contains
 90  format(t3,i2,t12,6(1pe11.3))
 
     call oblnkl(outfile)
-    write(outfile,100) fcohbop, fcohbof
-100 format(' fcohbop:',f10.3,5x,'fcohbof:',f10.3)
-
+    call ovarre(outfile,'Ratio of central solenoid current at beginning of Pulse / end of flat-top','(fcohbop)',fcohbop)
+    call ovarre(outfile,'Ratio of central solenoid current at beginning of Flat-top / end of flat-top','(fcohbof)',fcohbof)
   end subroutine outvolt
 
 end module pfcoil_module
