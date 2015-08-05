@@ -36,6 +36,7 @@ module global_variables
   !+ad_vars  run_tests /0/ : Turns on built-in tests if set to 1
   integer :: run_tests = 0
   character(len=100) :: fileprefix = 'dummy_file_prefix'
+  character(len=25) :: xlabel,vlabel
 
 end module global_variables
 
@@ -1818,7 +1819,7 @@ module tfcoil_variables
   real(kind(1.0D0)), dimension(3) :: radtf = 0.0D0
   !+ad_vars  rbmax : radius of maximum TF B-field (m)
   real(kind(1.0D0)) :: rbmax = 0.0D0
-  !+ad_vars  rhotfleg : TF coil leg resistance (Ohm)
+  !+ad_vars  rhotfleg : TF coil leg resistance (ohm)
   real(kind(1.0D0)) :: rhotfleg = 0.0D0
   !+ad_vars  ripmax /1.0/ : maximum allowable toroidal field ripple amplitude
   !+ad_varc                 at plasma edge (%)
@@ -1948,7 +1949,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: vftf = 0.4D0
   !+ad_vars  voltfleg : volume of each TF coil outboard leg (m3)
   real(kind(1.0D0)) :: voltfleg = 0.0D0
-  !+ad_vars  vtfkv : peak TF coil voltage (kV)
+  !+ad_vars  vtfkv : TF coil voltage for resistive coil including bus (kV)
   real(kind(1.0D0)) :: vtfkv = 0.0D0
   !+ad_vars  vtfskv : voltage across a TF coil during quench (kV)
   real(kind(1.0D0)) :: vtfskv = 0.0D0
@@ -2027,7 +2028,7 @@ module tfcoil_variables
   !+ad_vars  rcool /0.005/ : average radius of coolant channel (m)
   !+ad_varc                  (iteration variable 69)
   real(kind(1.0D0)) :: rcool = 0.005D0
-  !+ad_vars  rhocp : TF coil inboard leg resistance (Ohm)
+  !+ad_vars  rhocp : TF coil inboard leg resistance (ohm)
   real(kind(1.0D0)) :: rhocp = 0.0D0
   !+ad_vars  tcoolin /40.0/ : centrepost coolant inlet temperature (C)
   real(kind(1.0D0)) :: tcoolin = 40.0D0

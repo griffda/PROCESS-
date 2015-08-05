@@ -337,6 +337,7 @@ contains
     !+ad_hist  20/09/11 PJK Initial F90 version
     !+ad_hist  15/05/14 PJK Increased output width to 110 characters
     !+ad_hist  23/07/14 PJK Trimmed off trailing spaces
+    !+ad_hist  05/08/15 MDK Remove "stop" command when the comment is too long.
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -353,6 +354,7 @@ contains
 
     integer, parameter :: maxwidth = 110
     integer :: lh
+    character(len=110) :: dummy
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -369,17 +371,18 @@ contains
        write(*,*) 'Error in routine OCMMNT :'
        write(*,*) string
        write(*,*) 'This is too long to fit into ',maxwidth,' columns.'
-       write(*,*) 'PROCESS stopping.'
-       stop
+       !write(*,*) 'PROCESS stopping.'
+       !stop
     end if
-
-    write(file,'(t2,a)') trim(string)
+    dummy = string
+    !write(file,'(t2,a)') trim(string)
+    write(file,'(t2,a)') trim(dummy)
 
   end subroutine ocmmnt
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine ovarrf(file,descr,varnam,value)
+  subroutine ovarrf(file,descr,varnam,value,output_flag)
 
     !+ad_name  ovarrf
     !+ad_summ  Routine to print out the details of a floating-point
@@ -413,12 +416,14 @@ contains
     integer, intent(in) :: file
     character(len=*), intent(in) :: descr, varnam
     real(kind(1.0D0)), intent(in) :: value
+    character(len=3), intent(in), optional :: output_flag
 
     !  Local variables
 
     character(len=72) :: dum72
     character(len=20) :: dum20
     character(len=20) :: stripped
+    character(len=3) :: flag
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Replace descr and varnam with dummy strings of the correct length.
@@ -428,30 +433,26 @@ contains
     dum72 = descr
     dum20 = varnam
     stripped = varnam(2:len(varnam)-1)
+    
+    if (present(output_flag)) then
+        flag = output_flag
+    else 
+        flag = ''
+    end if
 
     if (file /= mfile) then
        !MDK add label if it is an iteration variable
-       if (any(name_xc == stripped)) then
-          if (verbose==1) then 
-            write(file,10) dum72, dum20, value, 'ITV'
-          else
-            write(file,20) dum72, dum20, value, 'ITV'
-          end if           
-           
+       ! The ITV flag overwrites the output_flag 
+       if (any(name_xc == stripped))  flag = 'ITV'
+       if (verbose==1) then 
+            write(file,10) dum72, dum20, value, flag
        else
-           if (verbose==1) then 
-            write(file,30) dum72, dum20, value
-          else
-            write(file,40) dum72, dum20, value
-          end if           
-          
-        end if            
+            write(file,20) dum72, dum20, value, flag
+       end if                  
     end if
 
 10  format(1x,a,t75,a,t100,f13.6, t115, a)
 20  format(1x,a,t75,a,t100,f10.3, t112, a)
-30  format(1x,a,t75,a,t100,f13.6)
-40  format(1x,a,t75,a,t100,f10.3)
 
     call ovarre(mfile,descr,varnam,value)
 
@@ -459,7 +460,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine ovarre(file,descr,varnam,value)
+  subroutine ovarre(file,descr,varnam,value,output_flag)
 
     !+ad_name  ovarre
     !+ad_summ  Routine to print out the details of a floating-point
@@ -493,12 +494,14 @@ contains
     integer, intent(in) :: file
     character(len=*), intent(in) :: descr, varnam
     real(kind(1.0D0)), intent(in) :: value
+    character(len=3), intent(in), optional :: output_flag
 
     !  Local variables
 
     character(len=72) :: dum72
     character(len=20) :: dum20
     character(len=20) :: stripped
+    character(len=3) :: flag
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -510,14 +513,17 @@ contains
     dum20 = varnam
     ! Remove the "(" and ")" from the varnam
     stripped = varnam(2:len(varnam)-1)
+    if (present(output_flag)) then
+        flag = output_flag
+    else 
+        flag = ''
+    end if
 
     if (file /= mfile) then
-       !MDK add label if it is an iteration variable
-       if (any(name_xc == stripped)) then
-           write(file,20) dum72, dum20, value, 'ITV'
-       else
-           write(file,10) dum72, dum20, value
-       end if        
+       ! MDK add ITV label if it is an iteration variable
+       ! The ITV flag overwrites the output_flag 
+       if (any(name_xc == stripped))  flag = 'ITV'
+       write(file,20) dum72, dum20, value, flag
     end if
 
     call underscore(dum72)
@@ -531,7 +537,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine ovarin(file,descr,varnam,value)
+  subroutine ovarin(file,descr,varnam,value,output_flag)
 
     !+ad_name  ovarin
     !+ad_summ  Routine to print out the details of an integer variable
@@ -550,6 +556,7 @@ contains
     !+ad_hist  13/02/14 PJK Added output to mfile, with underscores replacing spaces
     !+ad_hist  17/02/14 PJK Ensured mfile output is not replicated if file=mfile
     !+ad_hist  15/05/14 PJK Longer line length
+    !+ad_hist  15/05/14 MDK added output flag
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -562,11 +569,14 @@ contains
     integer, intent(in) :: file
     character(len=*), intent(in) :: descr, varnam
     integer, intent(in) :: value
+    character(len=3), intent(in), optional :: output_flag
 
     !  Local variables
 
     character(len=72) :: dum72
     character(len=20) :: dum20
+    character(len=20) :: stripped
+    character(len=3) :: flag
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -576,9 +586,18 @@ contains
 
     dum72 = descr
     dum20 = varnam
+    stripped = varnam(2:len(varnam)-1)
+    if (present(output_flag)) then
+        flag = output_flag
+    else 
+        flag = ''
+    end if
 
     if (file /= mfile) then
-       write(file,10) dum72, dum20, value
+       ! MDK add ITV label if it is an iteration variable
+       ! The ITV flag overwrites the output_flag 
+       if (any(name_xc == stripped))  flag = 'ITV'
+       write(file,20) dum72, dum20, value, flag
     end if
 
     call underscore(dum72)
@@ -586,6 +605,7 @@ contains
     write(mfile,10) dum72, dum20, value
 
 10  format(1x,a,t75,a,t100,i10)
+20  format(1x,a,t75,a,t100,i10,t112, a)
 
   end subroutine ovarin
 

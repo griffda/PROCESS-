@@ -382,6 +382,7 @@ subroutine run_summary
   !+ad_hist  22/07/14 PJK Moved routine from input.f90, and rearranged layout,
   !+ad_hisc               incorporating old routine codever
   !+ad_hisc  02/03/15 JM  Added runtitle to MFILE
+  !+ad_hist  05/08/15 MDK Header describes output flag
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -445,16 +446,20 @@ subroutine run_summary
      call oblnkl(outfile)
      call ocmmnt(outfile, progid(0))
      call ocmmnt(outfile, 'Reactor concept design: '// trim(icase) // ', (c) CCFE')
-     call osubhd(outfile, runtitle)
+     !call osubhd(outfile, runtitle)
+     call ocmmnt(outfile, runtitle)
   end do
 
-  call ocmmnt(nout,'(Please include this header in any models, ' // &
-       'presentations and papers based on these results)')
+  call ocmmnt(nout,'(Please include this header in any models, presentations and papers based on these results)')
   call oblnkl(nout)
   call ostars(nout, width)
   ! Issue #270
-  call ocmmnt(nout,'Active iteration variables are labelled with "ITV" in columns 112-114 of standard format output lines.')
-  
+  call ocmmnt(nout,'Quantities listed in standard row format are labelled as follows in columns 112-114:')
+  call ocmmnt(nout,'ITV : Active iteration variable (in any output blocks)')
+  call ocmmnt(nout,'OP  : Calculated output quantity')  
+  call ocmmnt(nout,'Unlabelled quantities in standard row format are generally inputs')
+  call ocmmnt(nout,'Note that calculated quantities may be trivially rescaled from inputs, or equal to bounds which are input.')
+  ! MDK Note that the label must be exactly three characters or none - I don't know how to fix this.
 
   !  Beware of possible future changes to the progid(...) layouts
 
@@ -644,7 +649,7 @@ subroutine eqslv(ifail)
   end do
   sqsumsq = sqrt(sumsq)
 
-  call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq)
+  call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq, 'OP ')
 
   !  If necessary, write out a relevant error message
   if (ifail /= 1) then
@@ -1038,6 +1043,7 @@ subroutine doopt(ifail)
   character(len=1), dimension(ipeqns) :: sym
   character(len=10), dimension(ipeqns) :: lab
   character(len=30) :: strfom
+  character(len=60) :: string1, string2
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1079,7 +1085,7 @@ subroutine doopt(ifail)
      call oheadr(iotty,'PROCESS found a feasible solution')
   end if
 
-  call oblnkl(nout)
+  !call oblnkl(nout)
 
   !  If necessary, write out a relevant error message
   if (ifail /= 1) then
@@ -1093,7 +1099,7 @@ subroutine doopt(ifail)
         call ocmmnt(nout,'WARNING: Constraint residues are HIGH; consider re-running')
         call ocmmnt(nout,'   with lower values of EPSVMC to confirm convergence...')
         call ocmmnt(nout,'   (should be able to get down to about 1.0E-8 okay)')
-
+        call oblnkl(nout)
         call ocmmnt(iotty,'WARNING: Constraint residues are HIGH; consider re-running')
         call ocmmnt(iotty,'   with lower values of EPSVMC to confirm convergence...')
         call ocmmnt(iotty,'   (should be able to get down to about 1.0E-8 okay)')
@@ -1112,28 +1118,27 @@ subroutine doopt(ifail)
      call ovarin(nout,'VMCON error flag','(ifail)',ifail)
   end if
   ! MDK call ovarre(nout,'Figure of merit objective function','(f)',f)
-  call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq)
+  call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq, 'OP ')
   call oblnkl(nout)
 
+! MDK Try cleaner code, one line output
   if (ifail == 1) then
-     call ocmmnt(nout, &
-          'PROCESS has successfully optimised the program variables')
+     string1 = 'PROCESS has successfully optimised the iteration variables'
   else
-     call ocmmnt(nout, &
-          'PROCESS has tried to optimise the program variables')
-  end if
+     string1 = 'PROCESS has tried to optimise the iteration variables'
+  end if  
 
   if (minmax > 0) then
-     strfom = lablmm(abs(minmax))
-     call upper_case(strfom)
-     write(nout,10) strfom
+     string2 = ' to minimise the figure of merit: ' 
   else
-     strfom = lablmm(abs(minmax))
-     call upper_case(strfom)
-     write(nout,20) strfom     
+     string2 = ' to maximise the figure of merit: '    
   end if
-10 format(' to minimise the figure of merit:          ',a22)
-20 format(' to maximise the the figure of merit:      ',a22)
+  
+  strfom = lablmm(abs(minmax))
+  call upper_case(strfom)   
+  write(nout,10) trim(string1) // trim(string2),  trim(strfom)
+10 format(a90, t92, a22)
+! MDK end
 
   call oblnkl(nout)
 
@@ -1191,13 +1196,13 @@ subroutine doopt(ifail)
 
   write(nout,60)
 !60 format(t23,'final',t33,'fractional',t46,'Lagrange',t58,'Lagrange')
-60 format(t43,'final',t53,'final /')
+60 format(t43,'final',t55,'final /')
 
 
   write(nout,70)
 !70 format(t5,'i',t23,'value',t35,'change',t45,'multiplier', &
 !        t57,'multiplier')
-70 format(t5,'i',t43,'value',t53,'initial')
+70 format(t5,'i',t43,'value',t55,'initial')
 
   call oblnkl(nout)
 
@@ -1206,6 +1211,11 @@ subroutine doopt(ifail)
 !     write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
 !          vlam(neqns+nineqns+inn), vlam(neqns+nineqns+1+inn+nvar)
 	  write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn)	  
+!80 format(t2,i4,t8,a9,t19,4(1pe12.4))
+!80 format(t2,i4,t8,a30,t39,2(1pe12.4))
+80 format(t2,i4,t8,a30,t39,1pe12.4, t52, 0pf10.4)
+! MDK The 0p is needed because of a bizarre "feature"/bug in fortran:
+! the 1p in the previous format continues until changed.	  
      call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
 
      !  'Range-normalised' iteration variable values for MFILE:
@@ -1223,8 +1233,7 @@ subroutine doopt(ifail)
      call ovarre(mfile,trim(lablxc(ixc(inn)))//' (range normalised)', &
           '(nitvar'//int_to_string3(inn)//')',xnorm)
   end do
-!80 format(t2,i4,t8,a9,t19,4(1pe12.4))
-80 format(t2,i4,t8,a30,t39,2(1pe12.4))
+
 
   call osubhd(nout, &
        'The following equality constraint residues should be close to zero :')
@@ -1965,3 +1974,8 @@ end subroutine runtests
 ! GIT 403  #242 As we never use the divertor output, I will just switch it off. 
 !          #270 Add "ITV" to all iteration variable outputs, and 
 !          ensure that all iteration variables are output using ovarre or ovarin, except for f-values.
+! GIT TBA  #256 There is now a warning in the output file and to the terminal if the sweep variable is also an iteration variable.
+!          #270 Quantities listed in standard format are labelled as follows in columns 112-114:
+!               ITV : Active iteration variable (in any output blocks)
+!               OP  : Calculated output quantity
+!          Tweaked OUT.DAT in a few places.

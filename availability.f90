@@ -218,16 +218,16 @@ contains
     call ovarre(outfile,'Allowable divertor heat fluence (MW-yr/m2)', &
          '(adivflnc)',adivflnc)
     call ovarre(outfile,'First wall / blanket lifetime (years)', &
-         '(bktlife)',bktlife)
+         '(bktlife)',bktlife,'OP ')
     call ovarre(outfile,'Divertor lifetime (years)', &
-         '(divlife)',divlife)
+         '(divlife)',divlife,'OP ')
 
     if (itart == 1) then
-       call ovarre(outfile,'Centrepost lifetime (years)','(cplife)',cplife)
+       call ovarre(outfile,'Centrepost lifetime (years)','(cplife)',cplife,'OP ')
     end if
 
     call ovarre(outfile,'Heating/CD system lifetime (years)', &
-         '(cdrlife)',cdrlife)
+         '(cdrlife)',cdrlife,'OP ')
     call ovarre(outfile,'Total plant lifetime (years)','(tlife)',tlife)
 
     if (iavail == 1) then
@@ -241,13 +241,15 @@ contains
        call ovarre(outfile,'Time needed to replace blkt + div (years)', &
             '(tcomrepl)',tcomrepl)
        call ovarre(outfile,'Planned unavailability fraction', &
-            '(uplanned)',uplanned)
+            '(uplanned)',uplanned,'OP ')
        call ovarre(outfile,'Unplanned unavailability fraction', &
-            '(uutot)',uutot)
+            '(uutot)',uutot,'OP ')
     end if
-
-    call ovarre(outfile,'Total plant availability fraction', &
-         '(cfactr)',cfactr)
+    if (iavail == 0) then
+        call ovarre(outfile,'Total plant availability fraction', '(cfactr)',cfactr) 
+    else
+        call ovarre(outfile,'Total plant availability fraction', '(cfactr)',cfactr, 'OP ')
+    end if
 
   end subroutine avail
 
@@ -357,13 +359,18 @@ contains
 
     call ocmmnt(outfile,'Total unavailability:')
     call oblnkl(outfile) 
-    call ovarre(outfile,'Total planned unavailability', '(u_planned)', u_planned)
-    call ovarre(outfile,'Total unplanned unavailability', '(u_unplanned)', u_unplanned)
+    call ovarre(outfile,'Total planned unavailability', '(u_planned)', u_planned, 'OP ')
+    call ovarre(outfile,'Total unplanned unavailability', '(u_unplanned)', u_unplanned, 'OP ')
     call oblnkl(outfile)
-    call ovarre(outfile,'Total plant availability fraction', '(cfactr)',cfactr)
-    call ovarre(outfile,'Total DT operational time (years)','(t_operation)',t_operation)
+    
+    if (iavail == 0) then
+        call ovarre(outfile,'Total plant availability fraction', '(cfactr)',cfactr) 
+    else
+        call ovarre(outfile,'Total plant availability fraction', '(cfactr)',cfactr, 'OP ')
+    end if
+    call ovarre(outfile,'Total DT operational time (years)','(t_operation)',t_operation, 'OP ')
     call ovarre(outfile,'Total plant lifetime (years)','(tlife)',tlife)
-    call ovarre(outfile,'Capacity factor: total lifetime electrical energy output / output power','(cpfact)',cpfact)
+    call ovarre(outfile,'Capacity factor: total lifetime electrical energy output / output power','(cpfact)',cpfact, 'OP ')
    
   end subroutine avail_new
 
@@ -485,9 +492,9 @@ contains
     call ovarre(outfile,'Allowable divertor heat fluence (MW-yr/m2)', &
          '(adivflnc)',adivflnc)
     call ovarre(outfile,'First wall / blanket lifetime (FPY)', &
-         '(bktlife)',bktlife)
+         '(bktlife)',bktlife, 'OP ')
     call ovarre(outfile,'Divertor lifetime (FPY)', &
-         '(divlife)',divlife)
+         '(divlife)',divlife, 'OP ')
 
     call ovarin(outfile,'Number of remote handling systems', &
          '(num_rh_systems)',num_rh_systems)
@@ -498,7 +505,7 @@ contains
     call ovarre(outfile,'Time needed to replace blkt + div (years)', &
          '(mttr_blanket)',mttr_blanket)
     call ovarre(outfile,'Total planned unavailability', &
-         '(uplanned)',u_planned)
+         '(uplanned)',u_planned, 'OP ')
     call oblnkl(outfile)
 
   end subroutine calc_u_planned
@@ -645,9 +652,9 @@ contains
     call ovarre(outfile,'c parameter, determining the temperature margin where lifetime declines', &
          '(conf_mag)',conf_mag)
     call ovarre(outfile,'Temperature Margin (K)', &
-         '(temp_margin)',temp_margin)
+         '(temp_margin)',temp_margin, 'OP ')
     call ovarre(outfile,'Magnets unplanned unavailability', &
-         '(u_unplanned_magnets)',u_unplanned_magnets)
+         '(u_unplanned_magnets)',u_unplanned_magnets, 'OP ')
     call oblnkl(outfile)
     
   end subroutine calc_u_unplanned_magnets
@@ -723,7 +730,7 @@ contains
     call ovarre(outfile,'Reference value for cycle life', '(div_nref)',div_nref)
     call ovarre(outfile,'The cycle when failure is 100% certain', '(div_nu)',div_nu)
     call ovarre(outfile,'Number of cycles between planned replacements', '(n)',n)
-    call ovarre(outfile,'Unplanned unavailability', '(u_unplanned_div)', u_unplanned_div)   
+    call ovarre(outfile,'Unplanned unavailability', '(u_unplanned_div)', u_unplanned_div, 'OP ')   
     call oblnkl(outfile)
 
   end subroutine calc_u_unplanned_divertor
@@ -804,7 +811,7 @@ contains
     call ovarre(outfile,'Reference value for cycle life', '(fwbs_nref)',fwbs_nref)
     call ovarre(outfile,'The cycle when failure is 100% certain', '(fwbs_nu)',fwbs_nu)
     call ovarre(outfile,'Number of cycles between planned replacements', '(n)',n)
-    call ovarre(outfile,'Unplanned unavailability', '(u_unplanned_fwbs)', u_unplanned_fwbs)
+    call ovarre(outfile,'Unplanned unavailability', '(u_unplanned_fwbs)', u_unplanned_fwbs, 'OP ')
     call oblnkl(outfile)
 
   end subroutine calc_u_unplanned_fwbs
@@ -874,11 +881,11 @@ contains
     call ovarre(outfile,'Failure rate (1/h)', &
          '(bop_fail_rate)',bop_fail_rate)
     call ovarin(outfile,'Number of failures in lifetime', &
-         '(bop_num_failures)',bop_num_failures)
+         '(bop_num_failures)',bop_num_failures, 'OP ')
     call ovarre(outfile,'Balance of plant MTTR', &
          '(bop_mttr)',bop_mttr)
     call ovarre(outfile,'Balance of plant unplanned unavailability', &
-         '(u_unplanned_bop)',u_unplanned_bop)
+         '(u_unplanned_bop)',u_unplanned_bop, 'OP ')
     call oblnkl(outfile)
 
   end subroutine calc_u_unplanned_bop
@@ -1025,10 +1032,10 @@ contains
 
     call ocmmnt(outfile,'Vacuum:')    
     call oblnkl(outfile)
-    call ovarin(outfile,'Number of pumps (excluding redundant pumps)', '(vpumpn)', vpumpn)
-    call ovarin(outfile,'Number of redundant pumps', '(redun_vac)', redun_vac)
-    call ovarre(outfile,'Total unplanned down-time due to pumps, excl fixed 0.5% (years)', '(t_down)', t_down)
-    call ovarre(outfile,'Vacuum unplanned unavailability', '(u_unplanned_vacuum)', u_unplanned_vacuum)
+    call ovarin(outfile,'Number of pumps (excluding redundant pumps)', '(vpumpn)', vpumpn, 'OP ')
+    call ovarin(outfile,'Number of redundant pumps', '(redun_vac)', redun_vac, 'OP ')
+    call ovarre(outfile,'Total unplanned down-time due to pumps, excl fixed 0.5% (years)', '(t_down)', t_down, 'OP ')
+    call ovarre(outfile,'Vacuum unplanned unavailability', '(u_unplanned_vacuum)', u_unplanned_vacuum, 'OP ')
     call oblnkl(outfile)
 
   end subroutine calc_u_unplanned_vacuum

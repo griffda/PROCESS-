@@ -96,6 +96,7 @@ subroutine loadxc
   use stellarator_variables
   use tfcoil_variables
   use times_variables
+  use global_variables
 
   implicit none
 
@@ -243,6 +244,14 @@ subroutine loadxc
       ! Note that iteration variable 18 has more than one name:
       if ((ixc(i) == 18).and.(icurr /= 2)) name_xc(i) = 'q95'
       if ((ixc(i) == 18).and.(icurr == 2)) name_xc(i) = 'qbar'
+      
+      
+       ! MDK Check if sweep variable is also an iteration variable
+       if (name_xc(i) == vlabel) then
+            write(nout,*) 'WARNING: The sweep variable is also an iteration variable.'
+            write(nout,*) 'The values of the sweep variable will be overwritten by the optimiser.'
+            write(*,*) 'WARNING: The sweep variable is also an iteration variable.'
+       end if
       
      !  Check that no iteration variable is zero
 

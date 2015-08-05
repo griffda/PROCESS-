@@ -104,6 +104,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  18/10/12 PJK Added tfcoil_variables
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  05/08/15 MDK Tweaked the terminology in the output, added output labels
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -138,11 +139,11 @@ contains
        !  Bus mass (kg)
        tfbusmas = tfbusl * abus * 8000.0D0
 
-       !  Total maximum impedance
+       !  Total maximum impedance MDK actually just fixed resistance
        ztot = tfno*rhotfleg + rhocp + rhobus
 
        !  No reactive portion of the voltage is included here - assume long ramp times
-       !  Peak voltage (kV)
+       !  MDK This is steady state voltage, not "peak" voltage
        vtfkv = 1.0D-3 * ztot * cpttf/tfno
 
        !  Resistive powers (MW):
@@ -152,6 +153,8 @@ contains
 
        !  TF coil reactive power
        !  Set reactive power to 0, since ramp up can be long
+       !  The TF coil can be ramped up as slowly as you like 
+       !  (although this will affect the time to recover from a magnet quench).
        !     tfreacmw = 1.0D-6 * 1.0D9 * estotf/(tohs + tramp)
        tfreacmw = 0.0D0
 
@@ -167,23 +170,23 @@ contains
 
     !  Output section
     if (iprint == 0) return
-
-    call oheadr(outfile,'TF Coil Power Conversion')
-    call ovarre(outfile,'Bus resistance (ohm)','(rhobus)',rhobus)
+    ! Clarify that these outputs are for resistive coils only
+    call oheadr(outfile,'Resistive TF Coil Power Conversion')
+    call ovarre(outfile,'Bus resistance (ohm)','(rhobus)',rhobus, 'OP ')
     call ovarre(outfile,'Bus current density (A/m2)','(jbus)',jbus)
     call ovarre(outfile,'Bus length - all coils (m)','(tfbusl)',tfbusl)
-    call ovarre(outfile,'Bus mass (kg)','(tfbusmas)',tfbusmas)
-    call ovarre(outfile,'Maximum impedance (ohm)','(ztot)',ztot)
-    call ovarre(outfile,'Peak voltage per coil (kV)','(vtfkv)',vtfkv)
-    call ovarre(outfile,'Peak power (MW)','(tfcmw..)',tfcmw)
-    call ovarre(outfile,'TF coil inboard leg resistive power (MW)', &
-         '(tfcpmw)',tfcpmw)
-    call ovarre(outfile,'TF coil outboard leg resistive power (MW)', &
-         '(tflegmw)',tflegmw)
-    call ovarre(outfile,'TF coil buswork resistive power','(tfbusmw)', &
-         tfbusmw)
-    call ovarre(outfile,'TF coil reactive power (MW)','(tfreacmw)', &
-         tfreacmw)
+    call ovarre(outfile,'Bus mass (kg)','(tfbusmas)',tfbusmas, 'OP ')
+    !call ovarre(outfile,'Maximum impedance (ohm)','(ztot)',ztot)
+    call ovarre(outfile,'Total resistance for TF coil set (ohm)','(ztot)',ztot, 'OP ')
+    !call ovarre(outfile,'Peak voltage per coil (kV)','(vtfkv)',vtfkv)
+    call ovarre(outfile,'Steady-state voltage per coil (kV)','(vtfkv)',vtfkv, 'OP ')
+    !call ovarre(outfile,'Peak power (MW)','(tfcmw..)',tfcmw)
+    call ovarre(outfile,'Total power dissipation in TF coil set (MW)','(tfcmw..)',tfcmw, 'OP ')
+    call ovarre(outfile,'Power dissipation in TF coil set: inboard legs (MW)', '(tfcpmw)',tfcpmw, 'OP ')
+    call ovarre(outfile,'Power dissipation in TF coil set: outboard legs (MW)', '(tflegmw)',tflegmw, 'OP ')
+    call ovarre(outfile,'Power dissipation in TF coil set: buses','(tfbusmw)', tfbusmw, 'OP ')
+    ! Reactive poower has been set to zero.
+    !call ovarre(outfile,'TF coil reactive power (MW)','(tfreacmw)', tfreacmw)
 
   contains
 
@@ -483,55 +486,43 @@ contains
       if (iprint == 0) return
 
       call oheadr(outfile,'Superconducting TF Coil Power Conversion')
-      call ovarre(outfile,'TF coil current (kA)','(itfka)',itfka)
+      call ovarre(outfile,'TF coil current (kA)','(itfka)',itfka, 'OP ')
       call ovarre(outfile,'Number of TF coils','(ntfc)',ntfc)
-      call ovarre(outfile,'Maximum voltage across TF coil (kV)','(vtfskv)', &
-           vtfskv)
+      call ovarre(outfile,'Voltage across a TF coil during quench (kV)','(vtfskv)', vtfskv, 'OP ')
       call ovarre(outfile,'TF coil charge time (hours)','(tchghr)',tchghr)
-      call ovarre(outfile,'Total inductance of TF coils (H)','(ltfth)', &
-           ltfth)
-      call ovarre(outfile,'Total resistance of TF coils (ohm)','(rcoils)', &
-           rcoils)
-      call ovarre(outfile,'Inductance per TF coil (H)','(lptfcs)',lptfcs)
+      call ovarre(outfile,'Total inductance of TF coils (H)','(ltfth)', ltfth, 'OP ')
+      call ovarre(outfile,'Total resistance of TF coils (ohm)','(rcoils)', rcoils, 'OP ')
+      ! MDK Remove this as it leads to confusion between (a) total inductance/tfno, or (b)
+      !     self-inductance of one single coil
+      !call ovarre(outfile,'Inductance per TF coil (H)','(lptfcs)',lptfcs, 'OP ')
       call ovarre(outfile,'TF coil charging voltage (V)','(tfcv)',tfcv)
       call ovarre(outfile,'Number of DC circuit breakers','(ntfbkr)', &
            ntfbkr)
       call ovarre(outfile,'Number of dump resistors','(ndumpr)',ndumpr)
-      call ovarre(outfile,'Resistance per dump resistor (ohm)','(r1dump)', &
-           r1dump)
-      call ovarre(outfile,'Dump resistor peak power (MW)','(r1ppmw)', &
-           r1ppmw)
-      call ovarre(outfile,'Energy supplied per dump resistor (MJ)', &
-           '(r1emj)',r1emj)
-      call ovarre(outfile,'TF coil L/R time constant (s)','(ttfsec)', &
-           ttfsec)
-      call ovarre(outfile,'Power supply voltage (V)','(tfpsv)',tfpsv)
-      call ovarre(outfile,'Power supply current (kA)','(tfpska)',tfpska)
-      call ovarre(outfile,'DC power supply rating (kW)','(tfckw)',tfckw)
-      call ovarre(outfile,'AC power for charging (kW)','(tfackw)',tfackw)
-      call ovarre(outfile,'TF coil resistive power (MW)','(rpower)',rpower)
-      call ovarre(outfile,'TF coil inductive power (MVA)','(xpower)',xpower)
-      call ovarre(outfile,'Aluminium bus current density (kA/cm2)', &
-           '(djmka)',djmka)
-      call ovarre(outfile,'Aluminium bus cross-sectional area (cm2)', &
-           '(albusa)',albusa)
-      call ovarre(outfile,'Total length of TF coil bussing (m)', &
-           '(tfbusl)',tfbusl)
-      call ovarre(outfile,'Aluminium bus weight (tonnes)','(albuswt)', &
-           albuswt)
-      call ovarre(outfile,'Total TF coil bus resistance (ohm)','(rtfbus)', &
-           rtfbus)
-      call ovarre(outfile,'TF coil bus voltage drop (V)','(vtfbus)',vtfbus)
-      call ovarre(outfile,'Dump resistor floor area (m2)','(drarea)', &
-           drarea)
-      call ovarre(outfile,'TF coil power conversion floor space (m2)', &
-           '(tfcfsp)',tfcfsp)
-      call ovarre(outfile,'TF coil power conv. building volume (m3)', &
-           '(tfcbv)',tfcbv)
-      call ovarre(outfile,'TF coil AC inductive power demand (MW)', &
-           '(xpwrmw)',xpwrmw)
-      call ovarre(outfile,'Total steady state AC power demand (MW)', &
-           '(tfacpd)',tfacpd)
+      call ovarre(outfile,'Resistance per dump resistor (ohm)','(r1dump)', r1dump, 'OP ')
+      call ovarre(outfile,'Dump resistor peak power (MW)','(r1ppmw)', r1ppmw, 'OP ')
+      call ovarre(outfile,'Energy supplied per dump resistor (MJ)', '(r1emj)',r1emj, 'OP ')      
+      call ovarre(outfile,'TF coil L/R time constant (s)','(ttfsec)', ttfsec, 'OP ')
+      
+      call ovarre(outfile,'Power supply voltage (V)','(tfpsv)',tfpsv, 'OP ')
+      call ovarre(outfile,'Power supply current (kA)','(tfpska)',tfpska, 'OP ')
+      call ovarre(outfile,'DC power supply rating (kW)','(tfckw)',tfckw, 'OP ')
+      call ovarre(outfile,'AC power for charging (kW)','(tfackw)',tfackw, 'OP ')
+      call ovarre(outfile,'TF coil resistive power (MW)','(rpower)',rpower, 'OP ')
+      
+      call ovarre(outfile,'TF coil inductive power (MVA)','(xpower)',xpower, 'OP ')
+      call ovarre(outfile,'Aluminium bus current density (kA/cm2)', '(djmka)',djmka)
+      call ovarre(outfile,'Aluminium bus cross-sectional area (cm2)', '(albusa)',albusa, 'OP ')
+      call ovarre(outfile,'Total length of TF coil bussing (m)', '(tfbusl)',tfbusl, 'OP ')
+      call ovarre(outfile,'Aluminium bus weight (tonnes)','(albuswt)', albuswt, 'OP ')
+      
+      call ovarre(outfile,'Total TF coil bus resistance (ohm)','(rtfbus)', rtfbus, 'OP ')
+      call ovarre(outfile,'TF coil bus voltage drop (V)','(vtfbus)',vtfbus, 'OP ')
+      call ovarre(outfile,'Dump resistor floor area (m2)','(drarea)', drarea, 'OP ')
+      call ovarre(outfile,'TF coil power conversion floor space (m2)', '(tfcfsp)',tfcfsp, 'OP ')
+      call ovarre(outfile,'TF coil power conv. building volume (m3)', '(tfcbv)',tfcbv, 'OP ')
+      call ovarre(outfile,'TF coil AC inductive power demand (MW)', '(xpwrmw)',xpwrmw, 'OP ')
+      call ovarre(outfile,'Total steady state AC power demand (MW)', '(tfacpd)',tfacpd, 'OP ')
 
     end subroutine tfcpwr
 
@@ -567,7 +558,8 @@ contains
     !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  04/02/13 PJK Comment change
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
-    !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  19/06/14 PJK Removed sect?? flags    
+    !+ad_hist  05/08/15 MDK Added output labels.  Tweaked descriptions in output.  
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -721,24 +713,24 @@ contains
     !  Output Section
     if (iprint == 0) return
 
-    call oheadr(outfile,'PF Coil Power Conversion')
+    !call oheadr(outfile,'PF Coil Power Conversion')
+    call oheadr(outfile,'PF Coils and Central Solenoid: Power and Energy')
     call ovarre(outfile,'Number of PF coil circuits','(pfckts)',pfckts)
-    call ovarre(outfile,'Total power supply MVA for PF circuits', &
-         '(spsmva)',spsmva)
-    call ovarre(outfile,'Av. max curr/turn of PF coil circuits (kA)', &
-         '(acptmax)',acptmax)
-    call ovarre(outfile,'Total PF coil circuit bus length (m)', &
-         '(spfbusl)',spfbusl)
-    call ovarre(outfile,'Total PF coil bus resistive power (kW)', &
-         '(pfbuspwr)',pfbuspwr)
-    call ovarre(outfile,'Total PF coil resistive power (kW)', &
-         '(srcktpm)',srcktpm)
+    !call ovarre(outfile,'Total power supply MVA for PF circuits', '(spsmva)',spsmva, 'OP ')
+    call ovarre(outfile,'Sum of PF power supply ratings (MVA)', '(spsmva)',spsmva, 'OP ')
+    ! MDK Remove this output as it is not very obvious
+    ! call ovarre(outfile,'Av. max curr/turn of PF coil circuits (kA)', '(acptmax)',acptmax, 'OP ')
+    call ovarre(outfile,'Total PF coil circuit bus length (m)', '(spfbusl)',spfbusl, 'OP ')
+    call ovarre(outfile,'Total PF coil bus resistive power (kW)', '(pfbuspwr)',pfbuspwr, 'OP ')
+    call ovarre(outfile,'Total PF coil resistive power (kW)', '(srcktpm)',srcktpm, 'OP ')
     call ovarre(outfile,'Maximum PF coil voltage (kV)','(vpfskv)',vpfskv)
-    call ovarre(outfile,'Max stored energy in PF coil circuits (MJ)', &
-         '(ensxpfm)',ensxpfm)
+    call ovarre(outfile,'Max stored energy in PF coil circuits (MJ)', '(ensxpfm)',ensxpfm, 'OP ')
     if (ensxpfm < 0)  then
-        call oheadr(outfile,'ERROR Negative stored energy in coils') 
-        write(*,*) 'ERROR Negative stored energy in coils'
+        ! MDK  This energy includes the CS and the plasma.
+        !call oheadr(outfile,'ERROR Negative stored energy in PF coils (ensxpfm)') 
+        !write(*,*) 'ERROR Negative stored energy in PF coils (ensxpfm)'
+        call oheadr(outfile,'ERROR Negative stored energy in poloidal field (ensxpfm)') 
+        write(*,*) 'ERROR Negative stored energy in poloidal field (ensxpfm)'
     end if         
 
   end subroutine pfpwr
@@ -777,6 +769,7 @@ contains
     !+ad_hist  21/05/14 PJK Added ignite comment
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  05/08/15 MDK Added output labels.  Tweaked descriptions in output.
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -827,35 +820,37 @@ contains
     !  Total baseline power to facility loads, MW
     fcsht  = basemw + efloor*pkwpm2/1000.0D0
 
-    !  Estimate of the total low voltage power, MW
+    ! Estimate of the total low voltage power, MW
+    ! MDK No idea what this is - especially the last term
+    ! It is used in the old cost routine, so I will leave it in place.
     tlvpmw = fcsht + trithtmw + htpmw + vachtmw + 0.5D0*(crymw+ppfmw)
 
     if (iprint == 0) return
 
     !  Output section
-    call oheadr(outfile,'AC Power')
-
+    !call oheadr(outfile,'AC Power')
+    call oheadr(outfile,'Electric Power Requirements')
     call ovarre(outfile,'Facility base load (MW)','(basemw)',basemw)
     call ovarre(outfile,'Divertor coil power supplies (MW)','(bdvmw)',bdvmw)
-    call ovarre(outfile,'Cryoplant electric power (MW)','(crymw)',crymw)
+    call ovarre(outfile,'Cryoplant electric power (MW)','(crymw)',crymw, 'OP ')
     !call ovarre(outfile,'Heat removed from cryogenic coils (MWth)','(helpow/1.0D6)',helpow/1.0D6)
     !call ovarre(outfile,'MGF (motor-generator flywheel) units (MW)', '(fmgdmw)',fmgdmw)
     !call ovarin(outfile,'Primary coolant pumps (MW)', '(coolwh)',coolwh)
-    call ovarre(outfile,'Primary coolant pumps (MW)', '(htpmw..)',htpmw)
-    call ovarre(outfile,'PF coil power supplies (MW)','(ppfmw)',ppfmw)
+    call ovarre(outfile,'Primary coolant pumps (MW)', '(htpmw..)',htpmw, 'OP ')
+    
+    call ovarre(outfile,'PF coil power supplies (MW)','(ppfmw)',ppfmw, 'OP ')
     !call ovarre(outfile,'Power/floor area (kW/m2)','(pkwpm2)',pkwpm2)
-    call ovarre(outfile,'TF coil power supplies (MW)','(ptfmw)',ptfmw)
-    call ovarre(outfile,'Plasma heating supplies (MW)','(pheatingmw)', &
-         pheatingmw)
+    call ovarre(outfile,'TF coil power supplies (MW)','(ptfmw)',ptfmw, 'OP ')
+    call ovarre(outfile,'Plasma heating supplies (MW)','(pheatingmw)', pheatingmw, 'OP ')
     call ovarre(outfile,'Tritium processing (MW)','(trithtmw..)',trithtmw)
     call ovarre(outfile,'Vacuum pumps  (MW)','(vachtmw..)',vachtmw)
 
     call oblnkl(outfile)
 
-    call ovarre(outfile,'Total pulsed power (MW)','(pacpmw)',pacpmw)
-    call ovarre(outfile,'Total base power reqd at all times (MW)', &
-         '(fcsht)',fcsht)
-    call ovarre(outfile,'Total low voltage power (MW)','(tlvpmw)',tlvpmw)
+    call ovarre(outfile,'Total pulsed power (MW)','(pacpmw)',pacpmw, 'OP ')
+    call ovarre(outfile,'Total base power required at all times (MW)', '(fcsht)',fcsht, 'OP ')
+    ! MDK Remove this output: no idea what this is
+    ! call ovarre(outfile,'Total low voltage power (MW)','(tlvpmw)',tlvpmw)
 
   end subroutine acpow
 
@@ -1069,6 +1064,7 @@ contains
     !+ad_hist  17/12/14 PJK Added tturb to output
     !+ad_hist  18/03/15 JM  Made changes in line with fwbs refactor
     !+ad_hist  02/04/15 JM  Pnetelmw doesn't scale on last run through
+    !+ad_hist  05/08/15 MDK Add output labels
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -1152,18 +1148,18 @@ contains
 
     !  Output section
     call oheadr(outfile,'Cryogenics')
-    call ovarre(outfile,'Conduction and radiation heat loads on cryogenic components (MW)', '(qss/1.0D6)', qss/1.0D6)
-    call ovarre(outfile,'Nuclear heating of cryogenic components (MW)', '(qnuc/1.0D6)', qnuc/1.0D6)
-    call ovarre(outfile,'AC losses in cryogenic components (MW)', '(qac/1.0D6)', qac/1.0D6)
-    call ovarre(outfile,'Resistive losses in current leads (MW)', '(qcl/1.0D6)', qcl/1.0D6)
-    call ovarre(outfile,'45% allowance for heat loads in transfer lines, storage tanks etc (MW)', '(qmisc/1.0D6)', qmisc/1.0D6)
-    call ovarre(outfile,'Sum = Total heat removal at cryogenic temperatures (W)', '(helpow/1.0D6)', helpow/1.0D6)
+    call ovarre(outfile,'Conduction and radiation heat loads on cryogenic components (MW)', '(qss/1.0D6)', qss/1.0D6, 'OP ')
+    call ovarre(outfile,'Nuclear heating of cryogenic components (MW)', '(qnuc/1.0D6)', qnuc/1.0D6, 'OP ')
+    call ovarre(outfile,'AC losses in cryogenic components (MW)', '(qac/1.0D6)', qac/1.0D6, 'OP ')
+    call ovarre(outfile,'Resistive losses in current leads (MW)', '(qcl/1.0D6)', qcl/1.0D6, 'OP ')
+    call ovarre(outfile,'45% allowance for heat loads in transfer lines, storage tanks etc (MW)', '(qmisc/1.0D6)', qmisc/1.0D6, 'OP ')
+    
+    call ovarre(outfile,'Sum = Total heat removal at cryogenic temperatures (W)', '(helpow/1.0D6)', helpow/1.0D6, 'OP ')
     call ovarre(outfile,'Temperature of cryogenic components (K)', '(tmpcry)', tmpcry)
-    call ovarre(outfile,'Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot value:', '', (0.13D0*tmpcry)/(293.0D0 - tmpcry))
-    call ovarre(outfile,'Electric power for cryogenic plant (MW)', '(crypmw)', crypmw)
+    call ovarre(outfile,'Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot value:', '', (0.13D0*tmpcry)/(293.0D0 - tmpcry), 'OP ')
+    call ovarre(outfile,'Electric power for cryogenic plant (MW)', '(crypmw)', crypmw, 'OP ')
     
     call oheadr(outfile,'Plant Power / Heat Transport Balance')
-    ! MDK Add warning for negative net electric
     if (pnetelmw < 0) then
         call ocmmnt(outfile, 'WARNING: Calculated net electric power is negative')
         call ocmmnt(outfile, '--------------------------------------------------')
@@ -1219,7 +1215,7 @@ contains
         if (secondary_cycle > 2) then
             call ovarrf(outfile, 'Coolant temperature at turbine inlet (K)', '(tturb)', tturb)
         end if
-        call ovarrf(outfile, 'Fraction of total high-grade thermal power to divertor', '(pdivfraction)', pdivfraction)
+        call ovarrf(outfile, 'Fraction of total high-grade thermal power to divertor', '(pdivfraction)', pdivfraction, 'OP ')
         
     end if
 
@@ -1323,34 +1319,34 @@ contains
 50     format(t34,'Totals',t50,f8.2,t70,f8.2,t90,f8.2)
 
     call oblnkl(outfile)
-    call ovarrf(outfile, 'Total power leaving reactor (across vacuum vessel boundary) (MW)', '', primsum + secsum + ptfnuc)
+    call ovarrf(outfile, 'Total power leaving reactor (across vacuum vessel boundary) (MW)', '', primsum + secsum + ptfnuc, 'OP ')
 
     call osubhd(outfile, 'Other secondary thermal power constituents :')
-    call ovarrf(outfile,'Heat removal from cryogenic plant (MW)', '(crypmw)', crypmw)
-    call ovarrf(outfile,'Heat removal from facilities (MW)', '(fachtmw)', fachtmw)
+    call ovarrf(outfile,'Heat removal from cryogenic plant (MW)', '(crypmw)', crypmw, 'OP ')
+    call ovarrf(outfile,'Heat removal from facilities (MW)', '(fachtmw)', fachtmw, 'OP ')
 
     if (ihplant /= 0) then
-        call ovarrf(outfile, 'Electrical power used for hydrogen production (MW)', '(helecmw)', helecmw)
-        call ovarrf(outfile, 'Thermal power used for hydrogen production (MW)', '(hthermmw)', hthermmw)
+        call ovarrf(outfile, 'Electrical power used for hydrogen production (MW)', '(helecmw)', helecmw, 'OP ')
+        call ovarrf(outfile, 'Thermal power used for hydrogen production (MW)', '(hthermmw)', hthermmw, 'OP ')
     end if
 
-    call ovarrf(outfile,'Coolant pumping efficiency losses (MW)', '(htpsecmw)', htpsecmw)
-    call ovarrf(outfile,'Heat removal from injection power (MW)', '(pinjht)', pinjht)
-    call ovarrf(outfile,'Heat removal from tritium plant (MW)', '(trithtmw)', trithtmw)
-    call ovarrf(outfile,'Heat removal from vacuum pumps (MW)', '(vachtmw)', vachtmw)
-    call ovarrf(outfile,'TF coil resistive power (MW)', '(tfcmw)', tfcmw)
+    call ovarrf(outfile,'Coolant pumping efficiency losses (MW)', '(htpsecmw)', htpsecmw, 'OP ')
+    call ovarrf(outfile,'Heat removal from injection power (MW)', '(pinjht)', pinjht, 'OP ')
+    call ovarrf(outfile,'Heat removal from tritium plant (MW)', '(trithtmw)', trithtmw, 'OP ')
+    call ovarrf(outfile,'Heat removal from vacuum pumps (MW)', '(vachtmw)', vachtmw, 'OP ')
+    call ovarrf(outfile,'TF coil resistive power (MW)', '(tfcmw)', tfcmw, 'OP ')
 
     call oblnkl(outfile)
-    call ovarrf(outfile, 'Total low-grade thermal power (MW)', '(psechtmw)', psechtmw)
-    call ovarrf(outfile, 'Total High-grade thermal power (MW)', '(pthermmw)', pthermmw)
+    call ovarrf(outfile, 'Total low-grade thermal power (MW)', '(psechtmw)', psechtmw, 'OP ')
+    call ovarrf(outfile, 'Total High-grade thermal power (MW)', '(pthermmw)', pthermmw, 'OP ')
 
     call oblnkl(outfile)
-    call ovarin(outfile,'Number of primary heat exchangers', '(nphx)', nphx)
+    call ovarin(outfile,'Number of primary heat exchangers', '(nphx)', nphx, 'OP ')
 
     if (ihplant /= 0) then
         call oblnkl(outfile)
-        call ovarrf(outfile,'Hydrogen production rate (MW)', '(hpower)', hpower)
-        call ovarre(outfile,'Hydrogen production rate (Nm3/sec)', '(hpower/13)', hpower/13.0D0)
+        call ovarrf(outfile,'Hydrogen production rate (MW)', '(hpower)', hpower, 'OP ')
+        call ovarre(outfile,'Hydrogen production rate (Nm3/sec)', '(hpower/13)', hpower/13.0D0, 'OP ')
     end if
 
     if (ireactor /= 1) return
@@ -1364,33 +1360,33 @@ contains
 
     if (iradloss == 0) then
 		call ocmmnt(outfile,'Total power loss is scaling power plus radiation (iradloss = 0)')
-		call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw)
-		call ovarrf(outfile,'Total net radiation power (MW)','(pradmw)',pradmw)
+		call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw, 'OP ')
+		call ovarrf(outfile,'Total net radiation power (MW)','(pradmw)',pradmw, 'OP ')
 		sum = pscalingmw+pradmw
-		call ovarrf(outfile,'Total (MW)','',sum)		
+		call ovarrf(outfile,'Total (MW)','',sum, 'OP ')		
     else if (iradloss == 1) then
 		call ocmmnt(outfile,'Total power loss is scaling power plus core radiation only (iradloss = 1)')
-		call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw)
-		call ovarrf(outfile,'Radiation power from inside "coreradius" (MW)','(pcoreradmw)',pcoreradmw)
-		call ovarrf(outfile,'Total (MW)','',pscalingmw+pcoreradmw)
+		call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw, 'OP ')
+		call ovarrf(outfile,'Radiation power from inside "coreradius" (MW)','(pcoreradmw)',pcoreradmw, 'OP ')
+		call ovarrf(outfile,'Total (MW)','',pscalingmw+pcoreradmw, 'OP ')
 		sum = pscalingmw+pcoreradmw
     else if (iradloss == 2) then
 		call ocmmnt(outfile,'Total power loss is scaling power only (iradloss = 1).')
 		call ocmmnt(outfile,'This is not recommended for power plant models.')
-		call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw)
-		call ovarrf(outfile,'Total (MW)','',pscalingmw)
+		call ovarrf(outfile,'Transport power from scaling law (MW)','(pscalingmw)',pscalingmw, 'OP ')
+		call ovarrf(outfile,'Total (MW)','',pscalingmw, 'OP ')
 		sum = pscalingmw
     else
         write(*,*) 'The value of iradloss appears to be invalid.'
-        call ocmmnt(outfile,'THE VALUE OF IRADLOSS APPEARS TO BE INVALID.') 
+        call ocmmnt(outfile,'ERROR: The value of iradloss appears to be invalid.') 
     end if
     
     call oblnkl(outfile)
-	call ovarrf(outfile,'Alpha power deposited in plasma (MW)','(falpha*palpmw)',falpha*palpmw)
-	call ovarrf(outfile,'Power from charged products of DD and/or D-He3 fusion (MW)','(pchargemw)',pchargemw)
-	call ovarrf(outfile,'Ohmic heating (MW)','(pohmmw)',pohmmw)
-	call ovarrf(outfile,'Injected power deposited in plasma (MW)','(pinjmw)',pinjmw)
-	call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw+pinjmw)		  
+	call ovarrf(outfile,'Alpha power deposited in plasma (MW)','(falpha*palpmw)',falpha*palpmw, 'OP ')
+	call ovarrf(outfile,'Power from charged products of DD and/or D-He3 fusion (MW)','(pchargemw)',pchargemw, 'OP ')
+	call ovarrf(outfile,'Ohmic heating (MW)','(pohmmw)',pohmmw, 'OP ')
+	call ovarrf(outfile,'Injected power deposited in plasma (MW)','(pinjmw)',pinjmw, 'OP ')
+	call ovarrf(outfile,'Total (MW)','',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')		  
 	call oblnkl(outfile)
 	if (abs(sum - (falpha*palpmw+pchargemw+pohmmw+pinjmw)) > 5.0D0) then
 	    write(*,*) 'WARNING: Power balance across separatrix is in error by more than 5 MW.'
@@ -1399,20 +1395,20 @@ contains
 
     call ocmmnt(outfile,'Power Balance for Reactor - Summary :')
     call ocmmnt(outfile,'-------------------------------------')
-	call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw)
-	call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw)
-	call ovarrf(outfile,'Injected power (MW)','(pnbitot)',pnbitot)
-	call ovarrf(outfile,'Ohmic power (MW)','(pohmmw)',pohmmw)
-	call ovarrf(outfile,'Power deposited in primary coolant by pump (MW)','(htpmw_mech)',htpmw_mech)
+	call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw, 'OP ')
+	call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
+	call ovarrf(outfile,'Injected power (MW)','(pnbitot)',pnbitot, 'OP ')
+	call ovarrf(outfile,'Ohmic power (MW)','(pohmmw)',pohmmw, 'OP ')
+	call ovarrf(outfile,'Power deposited in primary coolant by pump (MW)','(htpmw_mech)',htpmw_mech, 'OP ')
 	sum = powfmw+emultmw+pnbitot+htpmw_mech+pohmmw
-	call ovarrf(outfile,'Total (MW)','',sum)
+	call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
 	call oblnkl(outfile)
-	call ovarrf(outfile,'Heat extracted from armour and first wall (MW)','(pthermfw)',pthermfw)
-	call ovarrf(outfile,'Heat extracted from blanket (MW)','(pthermblkt)',pthermblkt)
-	call ovarrf(outfile,'Heat extracted from shield  (MW)','(pthermshld)',pthermshld)
-	call ovarrf(outfile,'Heat extracted from divertor (MW)','(pthermdiv)',pthermdiv)
-	call ovarrf(outfile,'Nuclear and photon power lost to H/CD system (MW)','(psechcd)',psechcd)
-	call ovarrf(outfile,'Total (MW)','',pthermfw+pthermblkt+pthermshld+pthermdiv+psechcd)
+	call ovarrf(outfile,'Heat extracted from armour and first wall (MW)','(pthermfw)',pthermfw, 'OP ')
+	call ovarrf(outfile,'Heat extracted from blanket (MW)','(pthermblkt)',pthermblkt, 'OP ')
+	call ovarrf(outfile,'Heat extracted from shield  (MW)','(pthermshld)',pthermshld, 'OP ')
+	call ovarrf(outfile,'Heat extracted from divertor (MW)','(pthermdiv)',pthermdiv, 'OP ')
+	call ovarrf(outfile,'Nuclear and photon power lost to H/CD system (MW)','(psechcd)',psechcd, 'OP ')
+	call ovarrf(outfile,'Total (MW)','',pthermfw+pthermblkt+pthermshld+pthermdiv+psechcd, 'OP ')
 	call oblnkl(outfile)
     if (abs(sum - (pthermfw+pthermblkt+pthermshld+pthermdiv+psechcd)) > 5.0D0) then
 	    write(*,*) 'WARNING: Power balance for reactor is in error by more than 5 MW.'
@@ -1425,19 +1421,19 @@ contains
 	
 	call ocmmnt(outfile,'Electrical Power Balance :')
     call ocmmnt(outfile,'--------------------------')
-	call ovarrf(outfile,'Net electric power output(MW)','(pnetelmw.)',pnetelmw)
-	call ovarrf(outfile,'Electric power for heating and current drive (MW)','(pinjwp)',pinjwp)
-	call ovarrf(outfile,'Electric power for primary coolant pumps (MW)','(htpmw)',htpmw)
+	call ovarrf(outfile,'Net electric power output(MW)','(pnetelmw.)',pnetelmw, 'OP ')
+	call ovarrf(outfile,'Electric power for heating and current drive (MW)','(pinjwp)',pinjwp, 'OP ')
+	call ovarrf(outfile,'Electric power for primary coolant pumps (MW)','(htpmw)',htpmw, 'OP ')
 	call ovarrf(outfile,'Electric power for vacuum pumps (MW)','(vachtmw)',vachtmw)
 	call ovarrf(outfile,'Electric power for tritium plant (MW)','(trithtmw)',trithtmw)
-	call ovarrf(outfile,'Electric power for cryoplant (MW)','(crypmw)',crypmw)
-	call ovarrf(outfile,'Electric power for TF coils (MW)','(tfacpd)',tfacpd)	
-	call ovarrf(outfile,'Electric power for PF coils (MW)','(pfwp)', pfwp)	
-	call ovarrf(outfile,'All other internal electric power requirements (MW)','(fachtmw)', fachtmw)	
+	call ovarrf(outfile,'Electric power for cryoplant (MW)','(crypmw)',crypmw, 'OP ')
+	call ovarrf(outfile,'Electric power for TF coils (MW)','(tfacpd)',tfacpd, 'OP ')	
+	call ovarrf(outfile,'Electric power for PF coils (MW)','(pfwp)', pfwp, 'OP ')	
+	call ovarrf(outfile,'All other internal electric power requirements (MW)','(fachtmw)', fachtmw, 'OP ')	
 	sum = pnetelmw+pinjwp+htpmw+vachtmw+trithtmw+crypmw+tfacpd+fachtmw+pfwp
-	call ovarrf(outfile,'Total (MW)','',sum)
+	call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
 	call oblnkl(outfile)
-	call ovarrf(outfile,'Gross electrical output* (MW)','(pgrossmw)',pgrossmw)
+	call ovarrf(outfile,'Gross electrical output* (MW)','(pgrossmw)',pgrossmw, 'OP ')
 	call ocmmnt(outfile,'(*Power for pumps in secondary circuit already subtracted)')
 	call oblnkl(outfile)
 	if (abs(sum - pgrossmw) > 5.0D0) then
@@ -1447,15 +1443,15 @@ contains
 	
 	call ocmmnt(outfile,'Power balance for power plant :')
     call ocmmnt(outfile,'-------------------------------')
-	call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw)
-	call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw)
+	call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw, 'OP ')
+	call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
 	sum = powfmw + emultmw
-	call ovarrf(outfile,'Total (MW)','',sum)
+	call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
 	call oblnkl(outfile)
-	call ovarrf(outfile,'Net electrical output (MW)	','(pnetelmw)',pnetelmw)
-	call ovarrf(outfile,'Heat rejected by main power conversion circuit (MW)','(rejected_main)',rejected_main)
-	call ovarrf(outfile,'Heat rejected by other cooling circuits (MW)','(psechtmw)',psechtmw)
-	call ovarrf(outfile,'Total (MW)','',pnetelmw + rejected_main + psechtmw)
+	call ovarrf(outfile,'Net electrical output (MW)	','(pnetelmw)',pnetelmw, 'OP ')
+	call ovarrf(outfile,'Heat rejected by main power conversion circuit (MW)','(rejected_main)',rejected_main, 'OP ')
+	call ovarrf(outfile,'Heat rejected by other cooling circuits (MW)','(psechtmw)',psechtmw, 'OP ')
+	call ovarrf(outfile,'Total (MW)','',pnetelmw + rejected_main + psechtmw, 'OP ')
     call oblnkl(outfile)   
     if (abs(sum - (pnetelmw + rejected_main + psechtmw)) > 5.0D0) then
 	    write(*,*) 'WARNING: Power balance for power plant is in error by more than 5 MW.'
@@ -1463,11 +1459,11 @@ contains
     end if 
     
     call osubhd(outfile,'Plant efficiency measures :')
-    call ovarrf(outfile,'Net electric power / total nuclear power (%)', '(pnetelmw/(powfmw+emultmw)', 100.0D0*pnetelmw/(powfmw+emultmw))
-    call ovarrf(outfile,'Net electric power / total fusion power (%)', '(pnetelmw/powfmw)', 100.0D0*pnetelmw/powfmw)
+    call ovarrf(outfile,'Net electric power / total nuclear power (%)', '(pnetelmw/(powfmw+emultmw)', 100.0D0*pnetelmw/(powfmw+emultmw), 'OP ')
+    call ovarrf(outfile,'Net electric power / total fusion power (%)', '(pnetelmw/powfmw)', 100.0D0*pnetelmw/powfmw, 'OP ')
     call ovarrf(outfile,'Gross electric power* / high grade heat (%)', '(etath)', 100.0D0*etath)
     call ocmmnt(outfile,'(*Power for pumps in secondary circuit already subtracted)')
-    call ovarrf(outfile,'Recirculating power fraction', '(cirpowfr)', cirpowfr)
+    call ovarrf(outfile,'Recirculating power fraction', '(cirpowfr)', cirpowfr, 'OP ')
     
 
   end subroutine power2

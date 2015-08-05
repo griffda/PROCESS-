@@ -337,16 +337,16 @@ contains
     call ovarin(outfile,'Current drive efficiency model','(iefrf)',iefrf)
     call ovarre(outfile,'Auxiliary power used for plasma heating only (MW)', &
          '(pheat)',pheat)
-    call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq)
-    call ovarre(outfile,'Current drive efficiency (A/W)','(effcd)',effcd)
+    call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq, 'OP ')
+    call ovarre(outfile,'Current drive efficiency (A/W)','(effcd)',effcd, 'OP ')
     call ovarre(outfile,'Normalised current drive efficiency, gamma (10^20 A/W-m2)', &
-         '(gamcd)',gamcd)
+         '(gamcd)',gamcd, 'OP ')
     call ovarre(outfile,'Wall plug to injector efficiency','(etacd)',etacd)
 
     call osubhd(outfile,'Fractions of current drive :')
-    call ovarrf(outfile,'Bootstrap fraction','(bootipf)',bootipf)
-    call ovarrf(outfile,'Auxiliary current drive fraction','(faccd)',faccd)
-    call ovarrf(outfile,'Inductive fraction','(facoh)',facoh)
+    call ovarrf(outfile,'Bootstrap fraction','(bootipf)',bootipf, 'OP ')
+    call ovarrf(outfile,'Auxiliary current drive fraction','(faccd)',faccd, 'OP ')
+    call ovarrf(outfile,'Inductive fraction','(facoh)',facoh, 'OP ')
     ! Add total error check.
     call ovarrf(outfile,'Total','(bootipf+faccd+facoh)',bootipf+faccd+facoh)
     if (abs(bootipf+faccd+facoh-1.0d0) > 1.0d-10) then
@@ -363,54 +363,54 @@ contains
     call oblnkl(outfile)
 
     if (abs(plhybd) > 1.0D-8) then
-       call ovarre(outfile,'RF efficiency (A/W)','(effrfss)',effrfss)
-       call ovarre(outfile,'RF gamma (10^20 A/W-m2)','(gamrf)',gamrf)
-       call ovarre(outfile,'Lower hybrid injected power (MW)','(plhybd)',plhybd)
+       call ovarre(outfile,'RF efficiency (A/W)','(effrfss)',effrfss, 'OP ')
+       call ovarre(outfile,'RF gamma (10^20 A/W-m2)','(gamrf)',gamrf, 'OP ')
+       call ovarre(outfile,'Lower hybrid injected power (MW)','(plhybd)',plhybd, 'OP ')
        call ovarre(outfile,'Lower hybrid wall plug efficiency','(etalh)',etalh)
-       call ovarre(outfile,'Lower hybrid wall plug power (MW)','(pwplh)',pwplh)
+       call ovarre(outfile,'Lower hybrid wall plug power (MW)','(pwplh)',pwplh, 'OP ')
     end if
 
     ! MDK rearranged and added nbshinemw       
     !if (abs(pnbeam) > 1.0D-8) then
     if ((iefrf == 5).or.(iefrf== 8)) then
        call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)
-       call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam)
-       call ovarre(outfile,'Beam efficiency (A/W)','(effnbss)',effnbss)
-       call ovarre(outfile,'Beam gamma (10^20 A/W-m2)','(gamnb)',gamnb)
+       call ovarre(outfile,'Neutral beam current (A)','(cnbeam)',cnbeam, 'OP ')
+       call ovarre(outfile,'Beam efficiency (A/W)','(effnbss)',effnbss, 'OP ')
+       call ovarre(outfile,'Beam gamma (10^20 A/W-m2)','(gamnb)',gamnb, 'OP ')
        call ovarre(outfile,'Neutral beam wall plug efficiency','(etanbi)',etanbi)
-       call ovarre(outfile,'Beam decay lengths to centre','(taubeam)',taubeam)
-       call ovarre(outfile,'Beam shine-through fraction','(nbshinef)',nbshinef)       
-       call ovarre(outfile,'Neutral beam wall plug power (MW)','(pwpnb)',pwpnb)
+       call ovarre(outfile,'Beam decay lengths to centre','(taubeam)',taubeam, 'OP ')
+       call ovarre(outfile,'Beam shine-through fraction','(nbshinef)',nbshinef, 'OP ')       
+       call ovarre(outfile,'Neutral beam wall plug power (MW)','(pwpnb)',pwpnb, 'OP ')
        
        call oblnkl(outfile)
        call ocmmnt(outfile,'Neutral beam power balance :')
        call ocmmnt(outfile,'----------------------------')
-       call ovarrf(outfile,'Beam first orbit loss power (MW)','(porbitlossmw)', porbitlossmw)
-       call ovarrf(outfile,'Beam shine-through power [MW]','(nbshinemw)',nbshinemw)
-       call ovarrf(outfile,'Beam power deposited in plasma (MW)','(pinjmw)',pinjmw)
+       call ovarrf(outfile,'Beam first orbit loss power (MW)','(porbitlossmw)', porbitlossmw, 'OP ')
+       call ovarrf(outfile,'Beam shine-through power [MW]','(nbshinemw)',nbshinemw, 'OP ')
+       call ovarrf(outfile,'Beam power deposited in plasma (MW)','(pinjmw)',pinjmw, 'OP ')
        call ovarrf(outfile,'Total (MW)', &
                            '(porbitlossmw+nbshinemw+pinjmw)',porbitlossmw+nbshinemw+pinjmw)
        call oblnkl(outfile)                    
-       call ovarrf(outfile,'Beam power entering vacuum vessel (MW)','(pnbitot)',pnbitot)
+       call ovarrf(outfile,'Beam power entering vacuum vessel (MW)','(pnbitot)',pnbitot, 'OP ')
        call oblnkl(outfile)
        
-       call ovarre(outfile,'Fraction of beam energy to ions','(fpion)',fpion)       
+       call ovarre(outfile,'Fraction of beam energy to ions','(fpion)',fpion, 'OP ')       
        call ovarre(outfile,'Beam duct shielding thickness (m)','(nbshield)',nbshield)
        call ovarre(outfile,'Beam tangency radius / Plasma major radius','(frbeam)',frbeam)
-       call ovarre(outfile,'Beam centreline tangency radius (m)','(rtanbeam)', rtanbeam)
-       call ovarre(outfile,'Maximum possible tangency radius (m)','(rtanmax)', rtanmax)          
+       call ovarre(outfile,'Beam centreline tangency radius (m)','(rtanbeam)', rtanbeam, 'OP ')
+       call ovarre(outfile,'Maximum possible tangency radius (m)','(rtanmax)', rtanmax, 'OP ')          
     end if
 
     if (abs(echpwr) > 1.0D-8) then
-       call ovarre(outfile,'Electron cyclotron injected power (MW)','(echpwr)',echpwr)
+       call ovarre(outfile,'Electron cyclotron injected power (MW)','(echpwr)',echpwr, 'OP ')
        call ovarre(outfile,'ECH wall plug efficiency','(etaech)',etaech)
-       call ovarre(outfile,'ECH wall plug power (MW)','(echwpow)',echwpow)
+       call ovarre(outfile,'ECH wall plug power (MW)','(echwpow)',echwpow, 'OP ')
     end if
 
     if (abs(pofcd) > 1.0D-8) then
-       call ovarre(outfile,'OFCD efficiency (A/W)','(effofss)',effofss)
-       call ovarre(outfile,'OFCD gamma (10^20 A/W-m2)','(gamof)',gamof)
-       call ovarre(outfile,'OFCD power (MW)','(pofcd)',pofcd)
+       call ovarre(outfile,'OFCD efficiency (A/W)','(effofss)',effofss, 'OP ')
+       call ovarre(outfile,'OFCD gamma (10^20 A/W-m2)','(gamof)',gamof, 'OP ')
+       call ovarre(outfile,'OFCD power (MW)','(pofcd)',pofcd, 'OP ')
     end if
 
   end subroutine cudriv

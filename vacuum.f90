@@ -416,33 +416,29 @@ contains
     call ocmmnt(outfile,'Pumpdown to Base Pressure :')
     call oblnkl(outfile)
     call ovarre(outfile,'First wall outgassing rate (Pa m/s)','(rat)',rat)
-    call ovarre(outfile,'Total outgassing load (Pa m3/s)','(ogas)',ogas)
+    call ovarre(outfile,'Total outgassing load (Pa m3/s)','(ogas)',ogas, 'OP ')
     call ovarre(outfile,'Base pressure required (Pa)','(pbase)',pbase)
-    call ovarre(outfile,'Required N2 pump speed (m3/s)','(s(1))',s(1))
-    call ovarre(outfile,'N2 pump speed provided (m3/s)','(snet(1))',snet(1))
+    call ovarre(outfile,'Required N2 pump speed (m3/s)','(s(1))',s(1), 'OP ')
+    call ovarre(outfile,'N2 pump speed provided (m3/s)','(snet(1))',snet(1), 'OP ')
 
     call osubhd(outfile,'Pumpdown between Burns :')
-    call ovarre(outfile,'Plasma chamber volume (m3)','(volume)',volume)
-    call ovarre(outfile,'Chamber pressure after burn (Pa)','(pend)',pend)
-    call ovarre(outfile,'Chamber pressure before burn (Pa)','(pstart)', &
-         pstart)
+    call ovarre(outfile,'Plasma chamber volume (m3)','(volume)',volume, 'OP ')
+    call ovarre(outfile,'Chamber pressure after burn (Pa)','(pend)',pend, 'OP ')
+    call ovarre(outfile,'Chamber pressure before burn (Pa)','(pstart)', pstart)
     call ovarre(outfile,'Dwell time between burns (s)','(tdwell.)',tdwell)
-    call ovarre(outfile,'Required D-T pump speed (m3/s)','(s(2))',s(2))
-    call ovarre(outfile,'D-T pump speed provided (m3/s)','(snet(2))',snet(2))
+    call ovarre(outfile,'Required D-T pump speed (m3/s)','(s(2))',s(2), 'OP ')
+    call ovarre(outfile,'D-T pump speed provided (m3/s)','(snet(2))',snet(2), 'OP ')
 
     call osubhd(outfile,'Helium Ash Removal :')
-    call ovarre(outfile,'Divertor chamber gas pressure (Pa)','(prdiv)', &
-         prdiv)
-    call ovarre(outfile,'Helium gas fraction in divertor chamber','(fhe)', &
-         fhe)
-    call ovarre(outfile,'Required helium pump speed (m3/s)','(s(3))',s(3))
-    call ovarre(outfile,'Helium pump speed provided (m3/s)','(snet(3))', &
-         snet(3))
+    call ovarre(outfile,'Divertor chamber gas pressure (Pa)','(prdiv)', prdiv)
+    call ovarre(outfile,'Helium gas fraction in divertor chamber','(fhe)', fhe, 'OP ')
+    call ovarre(outfile,'Required helium pump speed (m3/s)','(s(3))',s(3), 'OP ')
+    call ovarre(outfile,'Helium pump speed provided (m3/s)','(snet(3))', snet(3), 'OP ')
 
     call osubhd(outfile,'D-T Removal at Fuelling Rate :')
-    call ovarre(outfile,'D-T fuelling rate (kg/s)','(frate)',frate)
-    call ovarre(outfile,'Required D-T pump speed (m3/s)','(s(4))',s(4))
-    call ovarre(outfile,'D-T pump speed provided (m3/s)','(snet(4))',snet(4))
+    call ovarre(outfile,'D-T fuelling rate (kg/s)','(frate)',frate, 'OP ')
+    call ovarre(outfile,'Required D-T pump speed (m3/s)','(s(4))',s(4), 'OP ')
+    call ovarre(outfile,'D-T pump speed provided (m3/s)','(snet(4))',snet(4), 'OP ')
 
     if (nflag == 1) then
        call oblnkl(outfile)
@@ -474,15 +470,14 @@ contains
     end select
 
     call oblnkl(outfile)
-
     call ovarin(outfile,'Number of large pump ducts','(nduct)',nduct)
-    call ovarre(outfile,'Passage diameter, divertor to ducts (m)', &
-         '(d(imax))',d(imax))
-    call ovarre(outfile,'Passage length (m)','(l1)',l1)
-    call ovarre(outfile,'Diameter of ducts (m)','(dout)',dout)
-    call ovarre(outfile,'Duct length, divertor to elbow (m)','(l2)',l2)
+    call ovarre(outfile,'Passage diameter, divertor to ducts (m)', '(d(imax))',d(imax), 'OP ')
+    call ovarre(outfile,'Passage length (m)','(l1)',l1, 'OP ')
+    call ovarre(outfile,'Diameter of ducts (m)','(dout)',dout, 'OP ')
+    
+    call ovarre(outfile,'Duct length, divertor to elbow (m)','(l2)',l2, 'OP ')
     call ovarre(outfile,'Duct length, elbow to pumps (m)','(l3)',l3)
-    call ovarre(outfile,'Number of pumps','(pumpn)',pumpn)
+    call ovarre(outfile,'Number of pumps','(pumpn)',pumpn, 'OP ')
     call oblnkl(outfile)
     write(outfile,20) ipump
 20  format(' The vacuum system uses ',a5,'pumps')

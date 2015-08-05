@@ -208,17 +208,13 @@ contains
     if (iprint == 0) return
 
     call oheadr(outfile,'Support Structure')
-    call ovarre(outfile,'Outer PF coil fence mass (kg)', &
-         '(fncmass)',fncmass)
-    call ovarre(outfile,'Intercoil support structure mass (kg)', &
-         '(aintmass)',aintmass)
-    call ovarre(outfile,'Mass of cooled components (kg)', &
-         '(coldmass)',coldmass)
-    call ovarre(outfile,'Gravity support structure mass (kg)', &
-         '(clgsmass)',clgsmass)
-    call ovarre(outfile,'Torus leg support mass (kg)','(gsm1)',gsm1)
-    call ovarre(outfile,'Ring beam mass (kg)','(gsm2)',gsm2)
-    call ovarre(outfile,'Ring legs mass (kg)','(gsm3)',gsm3)
+    call ovarre(outfile,'Outer PF coil fence mass (kg)', '(fncmass)',fncmass, 'OP ')
+    call ovarre(outfile,'Intercoil support structure mass (kg)', '(aintmass)',aintmass, 'OP ')
+    call ovarre(outfile,'Mass of cooled components (kg)', '(coldmass)',coldmass, 'OP ')
+    call ovarre(outfile,'Gravity support structure mass (kg)', '(clgsmass)',clgsmass, 'OP ')
+    call ovarre(outfile,'Torus leg support mass (kg)','(gsm1)',gsm1, 'OP ')
+    call ovarre(outfile,'Ring beam mass (kg)','(gsm2)',gsm2, 'OP ')
+    call ovarre(outfile,'Ring legs mass (kg)','(gsm3)',gsm3, 'OP ')
 
   end subroutine struct
 

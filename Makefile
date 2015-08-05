@@ -254,7 +254,7 @@ refprop_interface.o: error_handling.o refprop.o
 rfp.o: current_drive.o input.o global_variables.o machine_build.o output.o pfcoil.o \
   plasma_profiles.o physics.o
 safety.o: global_variables.o output.o
-scan.o: error_handling.o global_variables.o numerics.o output.o
+scan.o: error_handling.o global_variables.o numerics.o output.o 
 sctfcoil.o: error_handling.o global_variables.o maths_library.o output.o
 startup.o: global_variables.o maths_library.o output.o physics.o
 stellarator.o: availability.o buildings.o costs.o current_drive.o divertor.o error_handling.o \

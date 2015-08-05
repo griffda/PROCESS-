@@ -970,6 +970,7 @@ contains
     !+ad_desc  This routine outputs the costs to output file
     !+ad_prob  None
     !+ad_hist  20/01/15 JM  Initial Version
+    !+ad_hist  05/08/15 MDK Output labels (only for ovarrf)
     !+ad_stat  Okay
     !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
     !
@@ -1026,12 +1027,11 @@ contains
     call ocost(ofile, "TOTAL OVERNIGHT CAPITAL COST (M$)", total_costs/1.0D6)
     call ocost(ofile, "Annual maintenance cost (M$)", maintenance/1.0D6)  
     call oblnkl(ofile)
-    call ovarrf(ofile,"Net electric output (MW)", '(pnetelmw)', pnetelmw)    
-    call ovarrf(ofile,"Capacity factor", '(cpfact)', cpfact)
-    call ovarrf(ofile,"Mean electric output (MW)", '(mean_electric_output)', mean_electric_output)
-    call ovarrf(ofile,"Capital cost / mean electric output ($/W)", &
-      '(total_costs/mean_electric_output/1.0D6)', total_costs/mean_electric_output/1.0D6)    
-    call ovarrf(ofile, "Levelized cost of electricity ($/MWh)", '(coe)', coe)  
+    call ovarrf(ofile,"Net electric output (MW)", '(pnetelmw)', pnetelmw, 'OP ')    
+    call ovarrf(ofile,"Capacity factor", '(cpfact)', cpfact, 'OP ')
+    call ovarrf(ofile,"Mean electric output (MW)", '(mean_electric_output)', mean_electric_output, 'OP ')
+    call ovarrf(ofile,"Capital cost / mean electric output ($/W)", '', total_costs/mean_electric_output/1.0D6, 'OP ')    
+    call ovarrf(ofile, "Levelized cost of electricity ($/MWh)", '(coe)', coe, 'OP ')  
     
   end subroutine write_costs_to_output
   

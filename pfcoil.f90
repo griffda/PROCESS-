@@ -2536,24 +2536,24 @@ contains
 
           call osubhd(outfile,'Central Solenoid Current Density Limits :')
           call ovarre(outfile,'Maximum field at Beginning Of Pulse (T)', &
-               '(bmaxoh0)',bmaxoh0)
+               '(bmaxoh0)',bmaxoh0, 'OP ')
           call ovarre(outfile,'Critical superconductor current density at BOP (A/m2)', &
-               '(jscoh_bop)',jscoh_bop)
+               '(jscoh_bop)',jscoh_bop, 'OP ')
           call ovarre(outfile,'Critical strand current density at BOP (A/m2)', &
-               '(jstrandoh_bop)',jstrandoh_bop)
+               '(jstrandoh_bop)',jstrandoh_bop, 'OP ')
           call ovarre(outfile,'Allowable overall current density at BOP (A/m2)', &
-               '(rjohc0)',rjohc0)
+               '(rjohc0)',rjohc0, 'OP ')
           call ovarre(outfile,'Actual overall current density at BOP (A/m2)', &
-               '(cohbop)',cohbop)
+               '(cohbop)',cohbop, 'OP ')
           call oblnkl(outfile)
           call ovarre(outfile,'Maximum field at End Of Flattop (T)', &
-               '(bmaxoh)',bmaxoh)
+               '(bmaxoh)',bmaxoh, 'OP ')
           call ovarre(outfile,'Critical superconductor current density at EOF (A/m2)', &
-               '(jscoh_eof)',jscoh_eof)
+               '(jscoh_eof)',jscoh_eof, 'OP ')
           call ovarre(outfile,'Critical strand current density at EOF (A/m2)', &
-               '(jstrandoh_eof)',jstrandoh_eof)
+               '(jstrandoh_eof)',jstrandoh_eof, 'OP ')
           call ovarre(outfile,'Allowable overall current density at EOF (A/m2)', &
-               '(rjohc)',rjohc)
+               '(rjohc)',rjohc, 'OP ')
           call ovarre(outfile,'Actual overall current density at EOF (A/m2)', '(coheof)',coheof)
           call oblnkl(outfile)
           ! MDK add ohcth, bore and gapoh as they can be iteration variables
@@ -2561,17 +2561,17 @@ contains
           call ovarre(outfile,'CS thickness (m)', '(ohcth)',ohcth)
           call ovarre(outfile,'Gap between central solenoid and TF coil (m)', '(gapoh)',gapoh)
           call ovarre(outfile,'CS overall cross-sectional area (m2)', &
-               '(areaoh)',areaoh)
+               '(areaoh)',areaoh, 'OP ')
           call ovarre(outfile,'CS conductor+void cross-sectional area (m2)', &
-               '(awpoh)',awpoh)
+               '(awpoh)',awpoh, 'OP ')
           call ovarre(outfile,'   CS conductor cross-sectional area (m2)', &
-               '(awpoh*(1-vfohc))',awpoh*(1.0D0-vfohc))
+               '(awpoh*(1-vfohc))',awpoh*(1.0D0-vfohc), 'OP ')
           call ovarre(outfile,'   CS void cross-sectional area (m2)', &
-               '(awpoh*vfohc)',awpoh*vfohc)
+               '(awpoh*vfohc)',awpoh*vfohc, 'OP ')
           call ovarre(outfile,'CS steel cross-sectional area (m2)', &
-               '(areaoh-awpoh)',areaoh-awpoh)
+               '(areaoh-awpoh)',areaoh-awpoh, 'OP ')
           call ovarre(outfile,'CS steel area fraction', &
-               '',(areaoh-awpoh)/areaoh)
+               '',(areaoh-awpoh)/areaoh, 'OP ')
           call ovarre(outfile,'Allowable hoop stress in CS steel (Pa)', &
                '(alstroh)',alstroh)
           call ovarre(outfile,'Strain on superconductor', &
@@ -2583,7 +2583,7 @@ contains
           call ovarre(outfile,'Helium coolant temperature (K)', &
                '(tftmp)',tftmp)
           call ovarre(outfile,'CS temperature margin (K)', &
-               '(tmargoh)',tmargoh)
+               '(tmargoh)',tmargoh, 'OP ')
 
           if ( (abs(coheof) < 0.99D0*abs(rjohc)).and. &
                (abs(cohbop) < 0.99D0*abs(rjohc0)) ) then
@@ -2627,11 +2627,10 @@ contains
        call ocmmnt(outfile,'Resistive PF coils')
 
        call osubhd(outfile,'Resistive Power :')
-       call ovarre(outfile,'PF coil resistive power (W)','(powpfres)', &
-            powpfres)
+       call ovarre(outfile,'PF coil resistive power (W)','(powpfres)', powpfres, 'OP ')
        if (iohcl /= 0) then
           call ovarre(outfile,'Central solenoid resistive power (W)','(powohres)', &
-               powohres)
+               powohres, 'OP ')
        end if
 
     end if
@@ -2765,7 +2764,7 @@ contains
 120 format(t6,f8.2,t41,1pe11.3,1pe12.3)
 
     call osubhd(outfile,'PF coil current scaling information :')
-    call ovarre(outfile,'Sum of squares of residuals ','(ssq0)',ssq0)
+    call ovarre(outfile,'Sum of squares of residuals ','(ssq0)',ssq0, 'OP ')
     call ovarre(outfile,'Smoothing parameter ','(alfapf)',alfapf)
 
   end subroutine outpf
@@ -2825,7 +2824,7 @@ contains
          t2,'Total :   ',t13,3(f10.2,5x) )
 
     call oblnkl(outfile)
-    call ovarre(outfile,'Total volt-second consumption by coils (Wb)','(vstot)',vstot)
+    call ovarre(outfile,'Total volt-second consumption by coils (Wb)','(vstot)',vstot, 'OP ')
 
     call osubhd(outfile, &
          'Summary of volt-second consumption by circuit (Wb) :')
@@ -2884,7 +2883,7 @@ contains
 
     call oblnkl(outfile)
     call ovarre(outfile,'Ratio of central solenoid current at beginning of Pulse / end of flat-top','(fcohbop)',fcohbop)
-    call ovarre(outfile,'Ratio of central solenoid current at beginning of Flat-top / end of flat-top','(fcohbof)',fcohbof)
+    call ovarre(outfile,'Ratio of central solenoid current at beginning of Flat-top / end of flat-top','(fcohbof)',fcohbof, 'OP ')
   end subroutine outvolt
 
 end module pfcoil_module

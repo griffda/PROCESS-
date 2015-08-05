@@ -5325,6 +5325,7 @@ contains
     !+ad_hist  17/11/14 PJK Modified output to account for falpha, palpfwmw
     !+ad_hist  18/11/14 PJK Corrected power balance output if ignite=1
     !+ad_hist  01/04/15 JM  Core plasma power balance removed
+    !+ad_hist  05/08/15 MDK Output to say which impurity (if any) is an iteration variable.
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -5364,26 +5365,21 @@ contains
 
     call osubhd(outfile,'Plasma Geometry :')
     call ovarrf(outfile,'Major radius (m)','(rmajor)',rmajor)
-    call ovarrf(outfile,'Minor radius (m)','(rminor)',rminor)
+    call ovarrf(outfile,'Minor radius (m)','(rminor)',rminor, 'OP ')
     call ovarrf(outfile,'Aspect ratio','(aspect)',aspect)
 
     if (istell == 0) then
 
        select case (ishape)
        case (0)
-          call ovarrf(outfile,'Elongation, X-point (input value used)', &
-               '(kappa)',kappa)
+          call ovarrf(outfile,'Elongation, X-point (input value used)', '(kappa)',kappa)
        case (1)
-          call ovarrf(outfile,'Elongation, X-point (TART scaling)', &
-               '(kappa)',kappa)
+          call ovarrf(outfile,'Elongation, X-point (TART scaling)', '(kappa)',kappa, 'OP ')
        case (2,3)
-          call ovarrf(outfile,'Elongation, X-point (Zohm scaling)', &
-               '(kappa)',kappa)
-          call ovarrf(outfile,'Zohm scaling adjustment factor', &
-               '(fkzohm)',fkzohm)
+          call ovarrf(outfile,'Elongation, X-point (Zohm scaling)', '(kappa)',kappa, 'OP ')
+          call ovarrf(outfile,'Zohm scaling adjustment factor', '(fkzohm)',fkzohm)
        case (4)
-          call ovarrf(outfile,'Elongation, X-point (calculated from kappa95)', &
-               '(kappa)',kappa)
+          call ovarrf(outfile,'Elongation, X-point (calculated from kappa95)', '(kappa)',kappa, 'OP ')
        case default
           idiags(1) = ishape ; call report_error(86)
        end select
@@ -5394,10 +5390,10 @@ contains
                '(kappa95)',kappa95)
        case default
           call ovarrf(outfile,'Elongation, 95% surface (kappa/1.12)', &
-               '(kappa95)',kappa95)
+               '(kappa95)',kappa95, 'OP ')
        end select
 
-       call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa)
+       call ovarrf(outfile,'Elongation, area ratio calc.','(kappaa)',kappaa, 'OP ')
 
        select case (ishape)
        case (0,2)
@@ -5405,10 +5401,10 @@ contains
                '(triang)',triang)
        case (1)
           call ovarrf(outfile,'Triangularity, X-point (TART scaling)', &
-               '(triang)',triang)
+               '(triang)',triang, 'OP ')
        case (3,4)
           call ovarrf(outfile,'Triangularity, X-point (calculated from triang95)', &
-               '(triang)',triang)
+               '(triang)',triang, 'OP ')
        end select
 
        select case (ishape)
@@ -5417,16 +5413,16 @@ contains
                '(triang95)',triang95)
        case default
           call ovarrf(outfile,'Triangularity, 95% surface (triang/1.5)', &
-               '(triang95)',triang95)
+               '(triang95)',triang95, 'OP ')
        end select
 
-       call ovarrf(outfile,'Plasma poloidal perimeter (m)','(pperim)',pperim)
+       call ovarrf(outfile,'Plasma poloidal perimeter (m)','(pperim)',pperim, 'OP ')
 
     end if
 
-    call ovarrf(outfile,'Plasma cross-sectional area (m2)','(xarea)',xarea)
-    call ovarre(outfile,'Plasma surface area (m2)','(sarea)',sarea)
-    call ovarre(outfile,'Plasma volume (m3)','(vol)',vol)
+    call ovarrf(outfile,'Plasma cross-sectional area (m2)','(xarea)',xarea, 'OP ')
+    call ovarre(outfile,'Plasma surface area (m2)','(sarea)',sarea, 'OP ')
+    call ovarre(outfile,'Plasma volume (m3)','(vol)',vol, 'OP ')
 
     call osubhd(outfile,'Current and Field :')
 
@@ -5443,36 +5439,42 @@ contains
     end if
 
     if (istell == 0) then
-       call ovarrf(outfile,'Plasma current (MA)','(plascur/1D6)',plascur/1.0D6)
-       call ovarrf(outfile,'Current density profile factor','(alphaj)',alphaj)
-       call ovarrf(outfile,'Plasma internal inductance, li','(rli)',rli)
-       call ovarrf(outfile,'Vertical field at plasma (T)','(bvert)',bvert)
+       call ovarrf(outfile,'Plasma current (MA)','(plascur/1D6)',plascur/1.0D6, 'OP ')
+       if (iprofile == 1) then
+            call ovarrf(outfile,'Current density profile factor','(alphaj)',alphaj, 'OP ')
+       else
+            call ovarrf(outfile,'Current density profile factor','(alphaj)',alphaj)
+       end if
+       
+       call ovarrf(outfile,'Plasma internal inductance, li','(rli)',rli, 'OP ')
+       call ovarrf(outfile,'Vertical field at plasma (T)','(bvert)',bvert, 'OP ')
     end if
 
     if (irfp == 0) then
        call ovarrf(outfile,'Vacuum toroidal field at R (T)','(bt)',bt)
-       call ovarrf(outfile,'Average poloidal field (T)','(bp)',bp)
+       call ovarrf(outfile,'Average poloidal field (T)','(bp)',bp, 'OP ')
     else
        call ovarrf(outfile,'Toroidal field at plasma edge (T)','(-bt)',-bt)
-       call ovarrf(outfile,'Poloidal field at plasma edge (T)','(bp)',bp)
-       call ovarrf(outfile,'Reversal parameter F','(rfpf)',rfpf)
+       call ovarrf(outfile,'Poloidal field at plasma edge (T)','(bp)',bp, 'OP ')
+       call ovarrf(outfile,'Reversal parameter F','(rfpf)',rfpf, 'OP ')
        call ovarrf(outfile,'Pinch parameter theta','(rfpth)',rfpth)
     end if
 
-    call ovarrf(outfile,'Total field (sqrt(bp^2 + bt^2)) (T)','(btot)',btot)
+    call ovarrf(outfile,'Total field (sqrt(bp^2 + bt^2)) (T)','(btot)',btot, 'OP ')
 
     if (istell == 0) then
        call ovarrf(outfile,'Safety factor on axis','(q0)',q0)
-       call ovarrf(outfile,'Safety factor at 95% flux surface','(q95)',q95)
+       
        if (icurr == 2) then
           call ovarrf(outfile,'Mean edge safety factor','(q)',q)
+       else
+          call ovarrf(outfile,'Safety factor at 95% flux surface','(q95)',q95)
        end if
 
-       call ovarrf(outfile,'Cylindrical safety factor (qcyl)','(qstar)',qstar)
+       call ovarrf(outfile,'Cylindrical safety factor (qcyl)','(qstar)',qstar, 'OP ')
 
        if (ishape == 1) then
-          call ovarrf(outfile,'Lower limit for edge safety factor q', &
-               '(qlim)',qlim)
+          call ovarrf(outfile,'Lower limit for edge safety factor q', '(qlim)',qlim, 'OP ')
        end if
     else
        call ovarrf(outfile,'Rotational transform','(iotabar)',iotabar)
@@ -5484,71 +5486,69 @@ contains
     gammaft = (betaft + betanb)/betath
 
     call ovarre(outfile,'Total plasma beta','(beta)',beta)
-    call ovarre(outfile,'Total poloidal beta','(betap)',betap)
-    call ovarre(outfile,'Total toroidal beta',' ',beta*(btot/bt)**2)
-    call ovarre(outfile,'Fast alpha beta','(betaft)',betaft)
-    call ovarre(outfile,'Beam ion beta','(betanb)',betanb)
-    call ovarre(outfile,'(Fast alpha + beam beta)/(thermal beta)','(gammaft)',gammaft)
+    call ovarre(outfile,'Total poloidal beta','(betap)',betap, 'OP ')
+    call ovarre(outfile,'Total toroidal beta',' ',beta*(btot/bt)**2, 'OP ')
+    call ovarre(outfile,'Fast alpha beta','(betaft)',betaft, 'OP ')
+    call ovarre(outfile,'Beam ion beta','(betanb)',betanb, 'OP ')
+    call ovarre(outfile,'(Fast alpha + beam beta)/(thermal beta)','(gammaft)',gammaft, 'OP ')
 
-    call ovarre(outfile,'Thermal beta',' ',betath)
-    call ovarre(outfile,'Thermal poloidal beta',' ',betath*(btot/bp)**2)
-    call ovarre(outfile,'Thermal toroidal beta (= beta-exp)',' ', &
-         betath*(btot/bt)**2)
+    call ovarre(outfile,'Thermal beta',' ',betath, 'OP ')
+    call ovarre(outfile,'Thermal poloidal beta',' ',betath*(btot/bp)**2, 'OP ')
+    call ovarre(outfile,'Thermal toroidal beta (= beta-exp)',' ', betath*(btot/bt)**2, 'OP ')
 
-    call ovarrf(outfile,'2nd stability beta : beta_p / (R/a)', &
-         '(eps*betap)',eps*betap)
-    call ovarrf(outfile,'2nd stability beta upper limit','(epbetmax)', &
-         epbetmax)
+    call ovarrf(outfile,'2nd stability beta : beta_p / (R/a)', '(eps*betap)',eps*betap, 'OP ')
+    call ovarrf(outfile,'2nd stability beta upper limit','(epbetmax)', epbetmax)
 
-    if (istell == 0) then
-       call ovarrf(outfile,'Beta g coefficient','(dnbeta)',dnbeta)
-       call ovarrf(outfile,'Normalised thermal beta',' ',1.0D8*betath*rminor*bt/plascur)
-       call ovarrf(outfile,'Normalised total beta',' ',1.0D8*beta*rminor*bt/plascur)
+    if (istell == 0) then    
+       if (iprofile == 1) then       
+            call ovarrf(outfile,'Beta g coefficient','(dnbeta)',dnbeta, 'OP ')
+       else
+            call ovarrf(outfile,'Beta g coefficient','(dnbeta)',dnbeta)
+       end if
+       
+       call ovarrf(outfile,'Normalised thermal beta',' ',1.0D8*betath*rminor*bt/plascur, 'OP ')
+       call ovarrf(outfile,'Normalised total beta',' ',1.0D8*beta*rminor*bt/plascur, 'OP ')
     end if
 
     if (itart == 1) then
-       call ovarrf(outfile,'Normalised thermal toroidal beta', &
-            ' ',fbetatry*dnbeta*btot**2/bt**2)
+       call ovarrf(outfile,'Normalised thermal toroidal beta', ' ',fbetatry*dnbeta*btot**2/bt**2, 'OP ')
     end if
 
     if (iculbl == 0) then
-       call ovarrf(outfile,'Limit on total beta','(betalim)',betalim)
+       call ovarrf(outfile,'Limit on total beta','(betalim)',betalim, 'OP ')
     else if (iculbl == 1) then
-       call ovarrf(outfile,'Limit on thermal beta','(betalim)',betalim)
+       call ovarrf(outfile,'Limit on thermal beta','(betalim)',betalim, 'OP ')
     else
-       call ovarrf(outfile,'Limit on thermal + NB beta','(betalim)', &
-            betalim)
+       call ovarrf(outfile,'Limit on thermal + NB beta','(betalim)', betalim, 'OP ')
     end if
 
-    call ovarre(outfile,'Plasma thermal energy (J)',' ', &
-         1.5D0*betath*btot*btot/(2.0D0*rmu0)*vol)
-    call ovarre(outfile,'Total plasma internal energy (J)',' ', &
-         1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol)
+    call ovarre(outfile,'Plasma thermal energy (J)',' ', 1.5D0*betath*btot*btot/(2.0D0*rmu0)*vol, 'OP ')
+    call ovarre(outfile,'Total plasma internal energy (J)',' ', 1.5D0*beta*btot*btot/(2.0D0*rmu0)*vol, 'OP ')
 
     call osubhd(outfile,'Temperature and Density (volume averaged) :')
     call ovarrf(outfile,'Electron temperature (keV)','(te)',te)
-    call ovarrf(outfile,'Electron temperature on axis (keV)','(te0)',te0)
+    call ovarrf(outfile,'Electron temperature on axis (keV)','(te0)',te0, 'OP ')
     call ovarrf(outfile,'Ion temperature (keV)','(ti)',ti)
-    call ovarrf(outfile,'Ion temperature on axis (keV)','(ti0)',ti0)
-    call ovarrf(outfile,'Electron temp., density weighted (keV)','(ten)',ten)
+    call ovarrf(outfile,'Ion temperature on axis (keV)','(ti0)',ti0, 'OP ')
+    call ovarrf(outfile,'Electron temp., density weighted (keV)','(ten)',ten, 'OP ')
     call ovarre(outfile,'Electron density (/m3)','(dene)',dene)
-    call ovarre(outfile,'Electron density on axis (/m3)','(ne0)',ne0)
-    call ovarre(outfile,'Line-averaged electron density (/m3)','(dnla)',dnla)
+    call ovarre(outfile,'Electron density on axis (/m3)','(ne0)',ne0, 'OP ')
+    call ovarre(outfile,'Line-averaged electron density (/m3)','(dnla)',dnla, 'OP ')
     if (istell == 0) then
        call ovarre(outfile,'Line-averaged electron density / Greenwald density', &
-            '(dnla_gw)',dnla/dlimit(7))
+            '(dnla_gw)',dnla/dlimit(7), 'OP ')
     end if
 
-    call ovarre(outfile,'Ion density (/m3)','(dnitot)',dnitot)
-    call ovarre(outfile,'Fuel density (/m3)','(deni)',deni)
-    call ovarre(outfile,'High Z impurity density (/m3)','(dnz)',dnz)
-    call ovarre(outfile,'Helium ion density (thermalised ions only) (/m3)','(dnalp)',dnalp)
-    call ovarre(outfile,'Proton ash density (/m3)','(dnprot)',dnprot)
+    call ovarre(outfile,'Ion density (/m3)','(dnitot)',dnitot, 'OP ')
+    call ovarre(outfile,'Fuel density (/m3)','(deni)',deni, 'OP ')
+    call ovarre(outfile,'High Z impurity density (/m3)','(dnz)',dnz, 'OP ')
+    call ovarre(outfile,'Helium ion density (thermalised ions only) (/m3)','(dnalp)',dnalp, 'OP ')
+    call ovarre(outfile,'Proton ash density (/m3)','(dnprot)',dnprot, 'OP ')
 
-    call ovarre(outfile,'Hot beam density (/m3)','(dnbeam)',dnbeam)
-    call ovarre(outfile,'Density limit from scaling (/m3)','(dnelimt)',dnelimt)
+    call ovarre(outfile,'Hot beam density (/m3)','(dnbeam)',dnbeam, 'OP ')
+    call ovarre(outfile,'Density limit from scaling (/m3)','(dnelimt)',dnelimt, 'OP ')
     if ((ioptimz > 0).and.(active_constraints(5))) then
-        call ovarre(outfile,'Density limit (enforced) (/m3)','(boundu(9)*dnelimt)',boundu(9)*dnelimt)    
+        call ovarre(outfile,'Density limit (enforced) (/m3)','(boundu(9)*dnelimt)',boundu(9)*dnelimt, 'OP ')    
     end if
     call ovarre(outfile,'Helium ion density (thermalised ions only) / electron density','(ralpne)',ralpne)
     call oblnkl(outfile)
@@ -5571,36 +5571,45 @@ contains
        do imp = 1,nimp
           str1 = impurity_arr(imp)%label // ' concentration'
           str2 = 'fimp('//int_to_string2(imp)//')'
-          call ovarre(outfile,str1,str2,impurity_arr(imp)%frac)
+          ! MDK Add output flag for H and He, which are calculated
+          if ((imp==1).or.(imp==2)) then
+            call ovarre(outfile,str1,str2,impurity_arr(imp)%frac, 'OP ')
+          else
+            call ovarre(outfile,str1,str2,impurity_arr(imp)%frac)
+          end if
        end do
     end if
-    call ovarre(outfile,'Average mass of all ions (amu)','(aion)',aion)
-    call ovarre(outfile,'Impurity fraction (for iteration variable use)','(fimpvar)',fimpvar)
+    call ovarre(outfile,'Average mass of all ions (amu)','(aion)',aion, 'OP ')
+    ! MDK Say which impurity is varied, if iteration variable fimpvar (102) is turned on 
+    if (any(ixc == 102)) then
+        call ovarst(outfile,'Impurity used as an iteration variable' , '',impurity_arr(impvar)%label)
+        call ovarre(outfile,'Fractional density of variable impurity (ion / electron density)','(fimpvar)',fimpvar)
+    end if
     call oblnkl(outfile)
 
-    call ovarrf(outfile,'Effective charge','(zeff)',zeff)
-    call ovarrf(outfile,'Mass weighted effective charge','(zeffai)',zeffai)
+    call ovarrf(outfile,'Effective charge','(zeff)',zeff, 'OP ')
+    call ovarrf(outfile,'Mass weighted effective charge','(zeffai)',zeffai, 'OP ')
 
     call ovarin(outfile,'Plasma profile model','(ipedestal)',ipedestal)
     call ovarrf(outfile,'Density profile factor','(alphan)',alphan)
     call ovarrf(outfile,'Density pedestal r/a location','(rhopedn)',rhopedn)
     call ovarre(outfile,'Electron density pedestal height (/m3)','(neped)',neped)
     call ovarre(outfile,'Electron density at separatrix (/m3)','(nesep)',nesep)
-    call ovarrf(outfile,'Temperature profile factor','(alphat)',alphat)
-    call ovarrf(outfile,'Temperature profile beta factor','(tbeta)',tbeta)
+    call ovarrf(outfile,'Temperature profile index','(alphat)',alphat)
+    call ovarrf(outfile,'Temperature profile index beta','(tbeta)',tbeta)
     call ovarrf(outfile,'Temperature pedestal r/a location','(rhopedt)',rhopedt)
     call ovarrf(outfile,'Electron temp. pedestal height (keV)','(teped)',teped)
     call ovarrf(outfile,'Electron temp. at separatrix (keV)','(tesep)',tesep)
 
     if (istell == 0) then
        call osubhd(outfile,'Density Limit using different models :')
-       call ovarre(outfile,'Old ASDEX model','(dlimit(1))',dlimit(1))
-       call ovarre(outfile,'Borrass ITER model I','(dlimit(2))',dlimit(2))
-       call ovarre(outfile,'Borrass ITER model II','(dlimit(3))',dlimit(3))
-       call ovarre(outfile,'JET edge radiation model','(dlimit(4))',dlimit(4))
-       call ovarre(outfile,'JET simplified model','(dlimit(5))',dlimit(5))
-       call ovarre(outfile,'Hugill-Murakami Mq model','(dlimit(6))',dlimit(6))
-       call ovarre(outfile,'Greenwald model','(dlimit(7))',dlimit(7))
+       call ovarre(outfile,'Old ASDEX model','(dlimit(1))',dlimit(1), 'OP ')
+       call ovarre(outfile,'Borrass ITER model I','(dlimit(2))',dlimit(2), 'OP ')
+       call ovarre(outfile,'Borrass ITER model II','(dlimit(3))',dlimit(3), 'OP ')
+       call ovarre(outfile,'JET edge radiation model','(dlimit(4))',dlimit(4), 'OP ')
+       call ovarre(outfile,'JET simplified model','(dlimit(5))',dlimit(5), 'OP ')
+       call ovarre(outfile,'Hugill-Murakami Mq model','(dlimit(6))',dlimit(6), 'OP ')
+       call ovarre(outfile,'Greenwald model','(dlimit(7))',dlimit(7), 'OP ')
     end if
 
     call osubhd(outfile,'Fuel Constituents :')
@@ -5609,64 +5618,49 @@ contains
     if (fhe3 > 1.0D-3) call ovarrf(outfile,'3-Helium fuel fraction','(fhe3)',fhe3)
 
     call osubhd(outfile,'Fusion Power :')
-    call ovarre(outfile,'Total fusion power (MW)','(powfmw)',powfmw)
-    call ovarre(outfile,' =    D-T fusion power (MW)','(pdt)',pdt)
-    call ovarre(outfile,'  +   D-D fusion power (MW)','(pdd)',pdd)
-    call ovarre(outfile,'  + D-He3 fusion power (MW)','(pdhe3)',pdhe3)
-    call ovarre(outfile,'Alpha power: total (MW)','(palpmw)',palpmw)
-    call ovarre(outfile,'Alpha power: beam-plasma (MW)','(palpnb)',palpnb)
-    call ovarre(outfile,'Neutron power (MW)','(pneutmw)',pneutmw)
-    call ovarre(outfile,'Charged particle power (excluding alphas) (MW)', &
-         '(pchargemw)',pchargemw)
-    call ovarre(outfile,'Total power deposited in plasma (MW)','()',falpha*palpmw+pchargemw+pohmmw+pinjmw)
+    call ovarre(outfile,'Total fusion power (MW)','(powfmw)',powfmw, 'OP ')
+    call ovarre(outfile,' =    D-T fusion power (MW)','(pdt)',pdt, 'OP ')
+    call ovarre(outfile,'  +   D-D fusion power (MW)','(pdd)',pdd, 'OP ')
+    call ovarre(outfile,'  + D-He3 fusion power (MW)','(pdhe3)',pdhe3, 'OP ')
+    call ovarre(outfile,'Alpha power: total (MW)','(palpmw)',palpmw, 'OP ')
+    call ovarre(outfile,'Alpha power: beam-plasma (MW)','(palpnb)',palpnb, 'OP ')
+    call ovarre(outfile,'Neutron power (MW)','(pneutmw)',pneutmw, 'OP ')
+    call ovarre(outfile,'Charged particle power (excluding alphas) (MW)', '(pchargemw)',pchargemw, 'OP ')
+    call ovarre(outfile,'Total power deposited in plasma (MW)','()',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
 
     call osubhd(outfile,'Radiation Power :')
     if (imprad_model == 1) then
-       call ovarre(outfile,'Bremsstrahlung radiation power (MW)','(pbrempv*vol)', &
-            pbrempv*vol)
-       call ovarre(outfile,'Line radiation power (MW)','(plinepv*vol)', &
-            plinepv*vol)
+       call ovarre(outfile,'Bremsstrahlung radiation power (MW)','(pbrempv*vol)', pbrempv*vol, 'OP ')
+       call ovarre(outfile,'Line radiation power (MW)','(plinepv*vol)', plinepv*vol, 'OP ')
     end if
-    call ovarre(outfile,'Synchrotron radiation power (MW)','(psyncpv*vol)', &
-         psyncpv*vol)
-    call ovarrf(outfile,'Synchrotron reflection factor','(ssync)',ssync)
+    call ovarre(outfile,'Synchrotron radiation power (MW)','(psyncpv*vol)', psyncpv*vol, 'OP ')
+    call ovarrf(outfile,'synchrotron wall reflectivity factor','(ssync)',ssync)
     if (imprad_model == 1) then
-       call ovarre(outfile,"Normalised minor radius defining 'core'", &
-            '(coreradius)',coreradius)
+       call ovarre(outfile,"Normalised minor radius defining 'core'", '(coreradius)',coreradius)
     end if
-    call ovarre(outfile,'Total core radiation power (MW)', '(pcoreradmw)',pcoreradmw)
-    call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', pedgeradmw)
-    call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw)    
-    call ovarre(outfile,'Radiation fraction = total radiation / total power deposited in plasma','(rad_fraction)',rad_fraction)    
-    call ovarre(outfile,'Nominal mean radiation load on inside surface of reactor (MW/m2)','(photon_wall)',photon_wall)
-    call ovarre(outfile,'Nominal mean neutron load on inside surface of reactor (MW/m2)','(wallmw)',wallmw)    
+    call ovarre(outfile,'Total core radiation power (MW)', '(pcoreradmw)',pcoreradmw, 'OP ')
+    call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', pedgeradmw, 'OP ')
+    call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw, 'OP ')    
+    call ovarre(outfile,'Radiation fraction = total radiation / total power deposited in plasma','(rad_fraction)',rad_fraction, 'OP ')    
+    call ovarre(outfile,'Nominal mean radiation load on inside surface of reactor (MW/m2)','(photon_wall)',photon_wall, 'OP ')
+    call ovarre(outfile,'Nominal mean neutron load on inside surface of reactor (MW/m2)','(wallmw)',wallmw, 'OP ')    
 
     call oblnkl(outfile)
-    call ovarre(outfile,'Ohmic heating power (MW)','(pohmmw)',pohmmw)
-    call ovarrf(outfile,'Fraction of alpha power deposited in plasma','(falpha)',falpha)
-    call ovarrf(outfile,'Fraction of alpha power to electrons','(falpe)',falpe)
-    call ovarrf(outfile,'Fraction of alpha power to ions','(falpi)',falpi)
-    call ovarre(outfile,'Ion transport (MW)','(ptrimw)',ptrimw)
-    call ovarre(outfile,'Electron transport (MW)','(ptremw)',ptremw)
-    call ovarre(outfile,'Injection power to ions (MW)','(pinjimw)',pinjimw)
-    call ovarre(outfile,'Injection power to electrons (MW)','(pinjemw)',pinjemw)
+    call ovarre(outfile,'Ohmic heating power (MW)','(pohmmw)',pohmmw, 'OP ')
+    call ovarrf(outfile,'Fraction of alpha power deposited in plasma','(falpha)',falpha, 'OP ')
+    call ovarrf(outfile,'Fraction of alpha power to electrons','(falpe)',falpe, 'OP ')
+    call ovarrf(outfile,'Fraction of alpha power to ions','(falpi)',falpi, 'OP ')
+    call ovarre(outfile,'Ion transport (MW)','(ptrimw)',ptrimw, 'OP ')
+    call ovarre(outfile,'Electron transport (MW)','(ptremw)',ptremw, 'OP ')
+    call ovarre(outfile,'Injection power to ions (MW)','(pinjimw)',pinjimw, 'OP ')
+    call ovarre(outfile,'Injection power to electrons (MW)','(pinjemw)',pinjemw, 'OP ')
     if (ignite == 1) then
        call ocmmnt(outfile,'  (Injected power only used for start-up phase)')
     end if
-    call ovarin(outfile,'Ignited plasma switch (0=not ignited, 1=ignited)', &
-         '(ignite)',ignite)
-
-    !call ovarre(outfile,'Charged Particle Power into Divertor Zone (MW)', &
-    !                    '(ptremw+ptrimw-pedgeradmw)', ptremw+ptrimw-pedgeradmw)
-
-!  110 format(t2,'Particle power converted to edge radiation (MW)',t50,f9.2)
-
-    !write(outfile,'(t10,a)') repeat('-',49)
-    !write(outfile,120) ptremw + ptrimw - pedgeradmw
-!  120 format(t39,'Total (MW)',t51,f8.2)
+    call ovarin(outfile,'Ignited plasma switch (0=not ignited, 1=ignited)', '(ignite)',ignite)
 
     call oblnkl(outfile)
-    call ovarre(outfile,'Power into divertor zone via charged particles (MW)','(pdivt)',pdivt)
+    call ovarre(outfile,'Power into divertor zone via charged particles (MW)','(pdivt)',pdivt, 'OP ')
 
     if (pdivt <= 0.001D0) then
        fdiags(1) = pdivt ; call report_error(87)
@@ -5678,30 +5672,24 @@ contains
        call oblnkl(outfile)
     end if
 
-    call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivt/rmajor)',pdivt/rmajor)
+    call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivt/rmajor)',pdivt/rmajor, 'OP ')
 
     if (istell == 0) then
        call osubhd(outfile,'H-mode Power Threshold Scalings :')
 
-       call ovarre(outfile,'1996 ITER scaling: nominal (MW)','(pthrmw(1))', &
-            pthrmw(1))
-       call ovarre(outfile,'1996 ITER scaling: upper bound (MW)','(pthrmw(2))', &
-            pthrmw(2))
-       call ovarre(outfile,'1996 ITER scaling: lower bound (MW)','(pthrmw(3))', &
-            pthrmw(3))
-       call ovarre(outfile,'1997 ITER scaling (1) (MW)','(pthrmw(4))',pthrmw(4))
-       call ovarre(outfile,'1997 ITER scaling (2) (MW)','(pthrmw(5))',pthrmw(5))
-       call ovarre(outfile,'2008 Martin scaling: nominal (MW)', &
-            '(pthrmw(6))',pthrmw(6))
-       call ovarre(outfile,'2008 Martin scaling: 95% upper bound (MW)', &
-            '(pthrmw(7))',pthrmw(7))
-       call ovarre(outfile,'2008 Martin scaling: 95% lower bound (MW)', &
-            '(pthrmw(8))',pthrmw(8))
+       call ovarre(outfile,'1996 ITER scaling: nominal (MW)','(pthrmw(1))', pthrmw(1), 'OP ')
+       call ovarre(outfile,'1996 ITER scaling: upper bound (MW)','(pthrmw(2))', pthrmw(2), 'OP ')
+       call ovarre(outfile,'1996 ITER scaling: lower bound (MW)','(pthrmw(3))', pthrmw(3), 'OP ')
+       call ovarre(outfile,'1997 ITER scaling (1) (MW)','(pthrmw(4))',pthrmw(4), 'OP ')
+       call ovarre(outfile,'1997 ITER scaling (2) (MW)','(pthrmw(5))',pthrmw(5), 'OP ')
+       call ovarre(outfile,'2008 Martin scaling: nominal (MW)', '(pthrmw(6))',pthrmw(6), 'OP ')
+       call ovarre(outfile,'2008 Martin scaling: 95% upper bound (MW)', '(pthrmw(7))',pthrmw(7), 'OP ')
+       call ovarre(outfile,'2008 Martin scaling: 95% lower bound (MW)', '(pthrmw(8))',pthrmw(8), 'OP ')
        call oblnkl(outfile)
        if ((ioptimz > 0).and.(active_constraints(15))) then
-          call ovarre(outfile,'L-H threshold power (enforced) (MW)', '(boundl(103)*plhthresh)',boundl(103)*plhthresh)
+          call ovarre(outfile,'L-H threshold power (enforced) (MW)', '(boundl(103)*plhthresh)',boundl(103)*plhthresh, 'OP ')
        else          
-          call ovarre(outfile,'L-H threshold power (NOT enforced) (MW)', '(plhthresh)',plhthresh)
+          call ovarre(outfile,'L-H threshold power (NOT enforced) (MW)', '(plhthresh)',plhthresh, 'OP ')
        end if
     end if
 
@@ -5709,8 +5697,7 @@ contains
 
     if (ignite == 1) then
        call ocmmnt(outfile, &
-            'Device is assumed to be ignited for the calculation'// &
-            ' of confinement time')
+            'Device is assumed to be ignited for the calculation of confinement time')
        call oblnkl(outfile)
     end if
 
@@ -5725,48 +5712,39 @@ contains
     call ovarst(mfile,'Confinement scaling law','(tauelaw)',trim(tauelaw))
 
     call ovarrf(outfile,'Confinement H factor','(hfact)',hfact)
-    call ovarrf(outfile,'Global energy confinement time (s)','(taueff)',taueff)
-    call ovarrf(outfile,'Ion energy confinement time (s)','(tauei)',tauei)
-    call ovarrf(outfile,'Electron energy confinement time (s)','(tauee)',tauee)
-    call ovarre(outfile,'n.tau = Volume-average electron density x Energy confinement time (s/m3)','(dntau)',dntau)
+    call ovarrf(outfile,'Global energy confinement time (s)','(taueff)',taueff, 'OP ')
+    call ovarrf(outfile,'Ion energy confinement time (s)','(tauei)',tauei, 'OP ')
+    call ovarrf(outfile,'Electron energy confinement time (s)','(tauee)',tauee, 'OP ')
+    call ovarre(outfile,'n.tau = Volume-average electron density x Energy confinement time (s/m3)','(dntau)',dntau, 'OP ')
     call ocmmnt(outfile,'Triple product = Vol-average electron density x Vol-average electron temperature x Energy confinement time:')
-    call ovarre(outfile,'Triple product  (keV s/m3)','(dntau*te)',dntau*te)
-    call ovarre(outfile,'Transport loss power assumed in scaling law (MW)', &
-         '(powerht)',powerht)
-    call ovarin(outfile,'Switch for radiation loss term usage in power balance', &
-         '(iradloss)',iradloss)
+    call ovarre(outfile,'Triple product  (keV s/m3)','(dntau*te)',dntau*te, 'OP ')
+    call ovarre(outfile,'Transport loss power assumed in scaling law (MW)', '(powerht)',powerht, 'OP ')
+    call ovarin(outfile,'Switch for radiation loss term usage in power balance', '(iradloss)',iradloss)
     if (iradloss == 0) then
-       call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', &
-         '',pradmw)
+       call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', '',pradmw, 'OP ')
        call ocmmnt(outfile,'  (Radiation correction is total radiation power)')
     else if (iradloss == 1) then
-       call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', &
-         '',pcoreradmw)
+       call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', '',pcoreradmw, 'OP ')
        call ocmmnt(outfile,'  (Radiation correction is core radiation power)')
     else
-       call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', &
-         '',0.0D0)
+       call ovarre(outfile,'Radiation power subtracted from plasma power balance (MW)', '',0.0D0)
        call ocmmnt(outfile,'  (No radiation correction applied)')
     end if
-    call ovarrf(outfile,'Alpha particle confinement time (s)','(taup)',taup)
-    call ovarrf(outfile,'Particle/energy confinement time ratio',' ',taup/taueff)
+    call ovarrf(outfile,'Alpha particle confinement time (s)','(taup)',taup, 'OP ')
+    call ovarrf(outfile,'Particle/energy confinement time ratio',' ',taup/taueff, 'OP ')
 
     if (istell == 0) then
        call osubhd(outfile,'Plasma Volt-second Requirements :')
-       call ovarre(outfile,'Total volt-second requirement (Wb)','(vsstt)',vsstt)
-       call ovarre(outfile,'Inductive volt-seconds (Wb)','(vsind)',vsind)
+       call ovarre(outfile,'Total volt-second requirement (Wb)','(vsstt)',vsstt, 'OP ')
+       call ovarre(outfile,'Inductive volt-seconds (Wb)','(vsind)',vsind, 'OP ')
        call ovarrf(outfile,'Ejima coefficient','(gamma)',gamma)
-       call ovarre(outfile,'Start-up resistive (Wb)','(vsres)',vsres)
-       call ovarre(outfile,'Flat-top resistive (Wb)','(vsbrn)',vsbrn)
+       call ovarre(outfile,'Start-up resistive (Wb)','(vsres)',vsres, 'OP ')
+       call ovarre(outfile,'Flat-top resistive (Wb)','(vsbrn)',vsbrn, 'OP ')
 
-       call ovarrf(outfile,'Bootstrap fraction (ITER 1989)', &
-            '(bscf_iter89)',bscf_iter89)
-       call ovarrf(outfile,'Bootstrap fraction (Nevins et al)', &
-            '(bscf_nevins)',bscf_nevins)
-       call ovarrf(outfile,'Bootstrap fraction (Wilson et al)', &
-            '(bscf_wilson)',bscf_wilson)
-       call ovarrf(outfile,'Bootstrap fraction (Sauter et al)', &
-            '(bscf_sauter)',bscf_sauter)
+       call ovarrf(outfile,'Bootstrap fraction (ITER 1989)', '(bscf_iter89)',bscf_iter89, 'OP ')
+       call ovarrf(outfile,'Bootstrap fraction (Nevins et al)', '(bscf_nevins)',bscf_nevins, 'OP ')
+       call ovarrf(outfile,'Bootstrap fraction (Wilson et al)', '(bscf_wilson)',bscf_wilson, 'OP ')
+       call ovarrf(outfile,'Bootstrap fraction (Sauter et al)', '(bscf_sauter)',bscf_sauter, 'OP ')
 
        if (bscfmax < 0.0D0) then
           call ocmmnt(outfile,'  (User-specified bootstrap current fraction used)')
@@ -5779,21 +5757,19 @@ contains
        else if (ibss == 4) then
           call ocmmnt(outfile,'  (Sauter et al bootstrap current fraction model used)')
        end if
-       call ovarrf(outfile,'Bootstrap fraction (enforced)','(bootipf.)',bootipf)
+       call ovarrf(outfile,'Bootstrap fraction (enforced)','(bootipf.)',bootipf, 'OP ')
 
-       !call ovarrf(outfile,'Auxiliary current drive fraction','(faccd.)',faccd)
-       call ovarre(outfile,'Loop voltage during burn (V)','(vburn)', &
-            plascur*rplas*facoh)
-       call ovarre(outfile,'Plasma resistance (ohm)','(rplas)',rplas)
-       call ovarre(outfile,'Plasma inductance (H)','(rlp)',rlp)
+       call ovarre(outfile,'Loop voltage during burn (V)','(vburn)', plascur*rplas*facoh, 'OP ')
+       call ovarre(outfile,'Plasma resistance (ohm)','(rplas)',rplas, 'OP ')
+       call ovarre(outfile,'Plasma inductance (H)','(rlp)',rlp, 'OP ')
        call ovarrf(outfile,'Sawteeth coefficient','(csawth)',csawth)
     end if
 
     call osubhd(outfile,'Fuelling :')
     call ovarre(outfile,'Ratio of He and pellet particle confinement times','(tauratio)',tauratio)
-    call ovarre(outfile,'Fuelling rate (nucleus-pairs/s)','(qfuel)',qfuel)
-    call ovarre(outfile,'Fuel burn-up rate (reactions/s)','(rndfuel)',rndfuel)
-    call ovarrf(outfile,'Burn-up fraction','(burnup)',burnup)
+    call ovarre(outfile,'Fuelling rate (nucleus-pairs/s)','(qfuel)',qfuel, 'OP ')
+    call ovarre(outfile,'Fuel burn-up rate (reactions/s)','(rndfuel)',rndfuel, 'OP ')
+    call ovarrf(outfile,'Burn-up fraction','(burnup)',burnup, 'OP ')
 
   end subroutine outplas
 
@@ -5836,17 +5812,16 @@ contains
 
     call oheadr(outfile,'Times')
 
-    call ovarrf(outfile,'Initial charge time for PF coils (s)','(tramp)', &
-         tramp)
+    call ovarrf(outfile,'Initial charge time for PF coils (s)','(tramp)', tramp)
     call ovarrf(outfile,'Plasma current ramp-up time (s)','(tohs)',tohs)
     call ovarrf(outfile,'Heating time (s)','(theat)',theat)
-    call ovarre(outfile,'Burn time (s)','(tburn)',tburn)
+    call ovarre(outfile,'Burn time (s)','(tburn)',tburn, 'OP ')
     call ovarrf(outfile,'Shutdown time for PF coils (s)','(tqnch)',tqnch)
     call ovarrf(outfile,'Time between pulses (s)','(tdwell)',tdwell)
     call oblnkl(outfile)
-    call ovarre(outfile,'Pulse time (s)','(tpulse)',tpulse)
-    call ovarrf(outfile,'Down time (s)','(tdown)',tdown)
-    call ovarre(outfile,'Total plant cycle time (s)','(tcycle)',tcycle)
+    call ovarre(outfile,'Pulse time (s)','(tpulse)',tpulse, 'OP ')
+    call ovarrf(outfile,'Down time (s)','(tdown)',tdown, 'OP ')
+    call ovarre(outfile,'Total plant cycle time (s)','(tcycle)',tcycle, 'OP ')
 
   end subroutine outtim
 
