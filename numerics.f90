@@ -74,6 +74,7 @@ module numerics
   !+ad_hist  27/05/15 MDK Added breeder_f as iteration variable 108
   !+ad_hist  29/05/15 MDK Figure of merit 2 (P_fus P_in-total) has been replaced by "not used"
   !+ad_hist  11/06/15 MDK Add active_constraints(ipeqns) : Boolean array showing which constraints are active.
+  !+ad_hist  05/08/15 MDK Add ralpne as an iteration variable. Constraint on taup/taueff, the ratio of particle to energy confinement times
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -89,9 +90,14 @@ module numerics
   public
 
   !+ad_vars  ipnvars /108/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 108
-  !+ad_vars  ipeqns /61/ FIX : number of constraint equations available
-  integer, parameter :: ipeqns  = 61
+  ! MDK Add ralpne as an iteration variable.  This is a bit of an experiment.
+  ! MDK Add f-value for constraint on taup/taueff, the ratio of particle to energy confinement times
+  !integer, parameter :: ipnvars = 108
+  integer, parameter :: ipnvars = 110
+  !+ad_vars  ipeqns /62/ FIX : number of constraint equations available
+  ! MDK add a new constraint on taup/taueff, the ratio of particle to energy confinement times
+  !integer, parameter :: ipeqns = 61
+  integer, parameter :: ipeqns  = 62
   !+ad_vars  ipnfoms /15/ FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 15
 
@@ -165,6 +171,9 @@ module numerics
   !+ad_varc           array defining which constraint equations to activate
   !+ad_varc           (see lablcc for descriptions)  
   integer, dimension(ipeqns) :: icc = 0
+  ! MDK The icc array is now populated with its default values in input.f90.  
+  ! This may not have been the best method, in hindsight. 
+  ! As it is filled with zeroes, no extra lines need to be added for new constraints.
        
   !+ad_vars  active_constraints(ipeqns) : Logical array showing which constraints are active       
   logical, dimension(ipeqns) :: active_constraints = .false.  
@@ -293,10 +302,13 @@ module numerics
        'NB shine-through frac upper limit', &
        !+ad_varc  <LI> (60) Central solenoid temperature margin lower limit (SCTF)
        'CS temperature margin lower limit', &
-       !+ad_varc  <LI> (61) Minimum availability value</UL>
-       'Minimum availability value       '  &
+       !+ad_varc  <LI> (61) Minimum availability value
+       'Minimum availability value       ',  &
+       !+ad_varc  <LI> (62) taup/taueff, the ratio of particle to energy confinement times</UL>
+       'taup/taueff                      '  &
        /)  !  Please note: All strings between '...' above must be exactly 33 chars long
-
+       ! Note that each line of code has a comma before the ampersand, except the last one.
+       ! Note that the last ad_varc line ends with the html tag "</UL>".
 
   !+ad_vars  ixc(ipnvars) /4,5,6,7,10,12,13,19,28,29,36,39,50,53,54,61/ :
   !+ad_varc               array defining which iteration variables to activate
@@ -409,7 +421,9 @@ module numerics
        0,  &  !  105
        0,  &  !  106
        0,  &  !  107
-       0   &  !  108       
+       0,  &  !  108 
+       0,  &  !  109
+       0   &  !  110
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -630,8 +644,12 @@ module numerics
        'ftmargoh ', &
        !+ad_varc  <LI> (107) favail (f-value for equation 61)
        'favail   ', &
-       !+ad_varc  <LI> (108) breeder_f: Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)</UL>
-       'breeder_f'  &
+       !+ad_varc  <LI> (108) breeder_f: Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)
+       'breeder_f', &
+       !+ad_varc  <LI> (109) ralpne: thermal alpha density / electron density
+       'ralpne   ', &
+       !+ad_varc  <LI> (110) ftaulimit: Lower limit on taup/taueff, the ratio of alpha particle to energy confinement times</UL>
+       'ftaulimit'  &
        /)
   
   character(len=9), dimension(:), allocatable :: name_xc
@@ -757,7 +775,9 @@ module numerics
        0.001D0, &  !  105
        0.001D0, &  !  106
        0.001D0, &  !  107
-       0.060D0  &  !  108
+       0.060D0, &  !  108
+       0.050D0, &  !  109
+       0.001D0  &  !  110
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -870,7 +890,9 @@ module numerics
        1.000D0, &  !  105
        1.000D0, &  !  106
        1.000D0, &  !  107
-       1.000D0  &  !  108
+       1.000D0, &  !  108
+       0.150D0, &  !  109
+       1.000D0  &  !  110
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

@@ -637,7 +637,7 @@ module physics_variables
   real(kind(1.0D0)) :: qlim = 0.0D0
   !+ad_vars  qstar : cylindrical safety factor
   real(kind(1.0D0)) :: qstar = 0.0D0
-  !+ad_vars  ralpne /0.1/ : thermal alpha density / electron density
+  !+ad_vars  ralpne /0.1/ : thermal alpha density / electron density (iteration variable 109)
   real(kind(1.0D0)) :: ralpne = 0.10D0
   !+ad_vars  rli /0.9/ : plasma normalised internal inductance;
   !+ad_varc              calculated from alphaj if iprofile=1
@@ -682,6 +682,7 @@ module physics_variables
   real(kind(1.0D0)) :: tauei = 0.0D0
   !+ad_vars  taup : alpha particle confinement time (sec)
   real(kind(1.0D0)) :: taup = 0.0D0
+  
   !+ad_vars  te /12.9/ : volume averaged electron temperature (keV)
   !+ad_varc              (iteration variable 4)
   real(kind(1.0D0)) :: te = 12.9D0
@@ -3251,6 +3252,7 @@ module constraint_variables
   !+ad_hist  02/10/14 PJK Added fcwr
   !+ad_hist  06/10/14 PJK Added fnbshinef, nbshinefmax
   !+ad_hist  11/11/14 PJK Added ftmargoh
+  !+ad_hist  06/08/15 MDK ftaulimit
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -3469,6 +3471,12 @@ module constraint_variables
   !+ad_vars  walalw /1.0/ : allowable wall-load (MW/m2)
   !+ad_varc                 (constraint equation 8)
   real(kind(1.0D0)) :: walalw = 1.0D0
+  
+  !+ad_vars  taulimit : Lower limit on taup/taueff, the ratio of alpha particle to energy confinement times
+  real(kind(1.0D0)) :: taulimit = 5.0D0  
+  !+ad_vars  ftaulimit /1.0/ : f-value for lower limit on taup/taueff, the ratio of alpha particle to energy confinement times
+  !+ad_varc                   (constraint equation 62, iteration variable 110)
+  real(kind(1.0D0)) :: ftaulimit = 1.0D0
 
 end module constraint_variables
 

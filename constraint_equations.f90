@@ -156,6 +156,7 @@ contains
     !+ad_hist  13/11/14 PJK Changed iradloss usage in eqns 2 and 4
     !+ad_hist  17/11/14 PJK Added 'not recommended' comments to constraints 3 and 4
     !+ad_hist  25/11/14 JM  Added new eqn 61
+    !+ad_hist  06/08/15 MDK Eqn 62: Issue #213 - lower limit on taup/taueff, the ratio of particle to energy confinement times
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -960,7 +961,16 @@ contains
              units(i) = ''
           end if
 
-       case default
+       case (62)  !  Lower limit on taup/taueff, the ratio of alpha particle to energy confinement times
+          cc(i) = 1.0D0 - ftaulimit * (taup / taueff) / taulimit
+          if (present(con)) then
+             con(i) = taulimit
+             err(i) = (taup / taueff) * cc(i)
+             symbol(i) = '>'
+             units(i) = ''
+          end if
+
+      case default
 
           idiags(1) = icc(i)
           call report_error(13)

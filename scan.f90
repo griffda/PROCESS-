@@ -44,6 +44,7 @@ module scan_module
   !+ad_hist  16/06/14 PJK Added scan variable 30: fimpvar
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  22/07/14 PJK Raised ipnscns from 50 to 200
+  !+ad_hist  06/08/15 MDK Added taulimit (31)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -72,7 +73,7 @@ module scan_module
   !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 200
   !+ad_vars  ipnscnv /30/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 30
+  integer, parameter :: ipnscnv = 31
 
   !+ad_vars  isweep /0/ : number of scan points to calculate
   integer :: isweep = 0
@@ -106,7 +107,8 @@ module scan_module
   !+ad_varc          <LI> 27 tbrmin (for blktmodel > 0 only)
   !+ad_varc          <LI> 28 bt
   !+ad_varc          <LI> 29 coreradius
-  !+ad_varc          <LI> 30 fimpvar</UL>
+  !+ad_varc          <LI> 30 fimpvar
+  !+ad_varc          <LI> 31 taulimit</UL>
   integer :: nsweep = 1
 
   !+ad_vars  sweep(ipnscns) : actual values to use in scan
@@ -163,6 +165,8 @@ contains
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  09/07/14 PJK Turned error reporting off after each output step
     !+ad_hist  20/10/14 PJK OHC to CS
+    !+ad_hist  06/08/15 MDK Add taulimit to PLOT.DAT and to scan variables (31)
+    !+ad_hist  06/08/15 MDK Use 1p format: 3.0000E+01 instead of 0.3000E+01
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -178,7 +182,7 @@ contains
     ! character(len=25) :: xlabel,vlabel
     character(len=48) :: tlabel
 
-    integer, parameter :: noutvars = 57
+    integer, parameter :: noutvars = 58
     integer, parameter :: width = 110
 
     character(len=25), dimension(noutvars), save :: plabel
@@ -260,7 +264,6 @@ contains
        plabel(48) = 'Net_electric_Pwr_(MW)____'
        plabel(49) = 'Recirculating_Fraction___'
        plabel(50) = 'Psep/R___________________'
-       ! MDK
        plabel(51) = 'fimpvar__________________'       
        plabel(52) = 'Tot._radiation_power_(MW)'
        plabel(53) = 'First_wall_peak_temp_(K)_'
@@ -268,6 +271,7 @@ contains
        plabel(55) = 'Winding_pack_area_TFC(m2)'
        plabel(56) = 'Conductor_area_TFC_(m2)__'
        plabel(57) = 'Area_TF_inboard_leg_(m2)_'
+       plabel(58) = 'Taup/taueff_lower_limit__'
 
        call ovarin(mfile,'Number of scan points','(isweep)',isweep)
        call ovarin(mfile,'Scanning variable number','(nsweep)',nsweep)
@@ -375,7 +379,10 @@ contains
           fimpvar = sweep(iscan)
           impurity_arr(impvar)%frac = fimpvar
           vlabel = 'fimpvar' ; xlabel = 'Impurity_fraction'
-
+       case (31)
+          taulimit = sweep(iscan)
+          vlabel = 'taulimit' ; xlabel = 'Taup/taueff_lower_limit'
+       
        case default
           idiags(1) = nsweep ; call report_error(96)
 
@@ -467,6 +474,7 @@ contains
        outvar(55,iscan) = (wwp1+wwp2)*thkwp
        outvar(56,iscan) = acond
        outvar(57,iscan) = tfareain/tfno
+       outvar(58,iscan) = taulimit
        
 
     end do  !  End of scanning loop
@@ -475,11 +483,11 @@ contains
 
     write(nplot,'(i8)') isweep
     write(nplot,'(a48)') tlabel
-    write(nplot,'(a25,20e11.4)') xlabel,(sweep(iscan),iscan=1,isweep)
+    write(nplot,'(a25, 1p, 20e11.4)') xlabel,(sweep(iscan),iscan=1,isweep)
 
     do ivar = 1,noutvars
-       write(nplot,'(a25,20e11.4)') plabel(ivar), &
-            (outvar(ivar,iscan), iscan=1,isweep)
+       !write(nplot,'(a25,20e11.4)') plabel(ivar), (outvar(ivar,iscan), iscan=1,isweep)
+       write(nplot,'(a25, 1p, 20e11.4)') plabel(ivar), (outvar(ivar,iscan), iscan=1,isweep)
     end do
 
   end subroutine scan

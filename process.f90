@@ -287,7 +287,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '403    Release Date :: 2015-08-3'
+       '404    Release Date :: 2015-08-6'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -610,6 +610,8 @@ subroutine eqslv(ifail)
   nprint = 0
 
   !  Use HYBRD to find a starting point
+  ! MDK Try allocating here
+  allocate(name_xc(nvar))
   call loadxc
   call eqsolv(fcnhyb,neqns,xcm,rcm,ftol,epsfcn,factor,nprint,ifail, &
        wa,iptnt,resdl,nfev1)
@@ -1051,6 +1053,8 @@ subroutine doopt(ifail)
   if (ioptimz < 0) return
 
   !  Set up variables to be iterated
+  ! MDK Allocating here doesn't work if there is a scan
+  ! allocate(name_xc(nvar))
   call loadxc
   call boundxc
   call optimiz(fcnvmc1,fcnvmc2,ifail,f)
@@ -1974,8 +1978,9 @@ end subroutine runtests
 ! GIT 403  #242 As we never use the divertor output, I will just switch it off. 
 !          #270 Add "ITV" to all iteration variable outputs, and 
 !          ensure that all iteration variables are output using ovarre or ovarin, except for f-values.
-! GIT TBA  #256 There is now a warning in the output file and to the terminal if the sweep variable is also an iteration variable.
+! GIT 404  #256 There is now a warning in the output file and to the terminal if the sweep variable is also an iteration variable.
 !          #270 Quantities listed in standard format are labelled as follows in columns 112-114:
 !               ITV : Active iteration variable (in any output blocks)
 !               OP  : Calculated output quantity
 !          Tweaked OUT.DAT in a few places.
+!          #213 Make helium content an iteration variable and constrain tauP/tauE 

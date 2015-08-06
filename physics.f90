@@ -5731,7 +5731,11 @@ contains
        call ocmmnt(outfile,'  (No radiation correction applied)')
     end if
     call ovarrf(outfile,'Alpha particle confinement time (s)','(taup)',taup, 'OP ')
-    call ovarrf(outfile,'Particle/energy confinement time ratio',' ',taup/taueff, 'OP ')
+    !call ovarrf(outfile,'Particle/energy confinement time ratio',' ',taup/taueff, 'OP ')
+    ! MDK Clarify this, as "taup : alpha particle confinement time (sec)"
+    ! Note alpha confinement time is no longer equal to fuel particle confinement time.
+    call ovarrf(outfile,'Alpha particle/energy confinement time ratio','(taup/taueff)',taup/taueff, 'OP ')
+    call ovarrf(outfile,'Lower limit on taup/taueff','(taulimit)',taulimit)
 
     if (istell == 0) then
        call osubhd(outfile,'Plasma Volt-second Requirements :')

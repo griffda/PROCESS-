@@ -73,6 +73,7 @@ subroutine loadxc
   !+ad_hist  25/11/14 JM  Added favail (107)
   !+ad_hist  27/05/15 MDK Added breeder_f (108)
   !+ad_hist  03/08/15 MDK Create list of iteration variable names
+  !+ad_hist  05/08/15 MDK Added ralpne, ftaulimit
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -105,7 +106,8 @@ subroutine loadxc
   !  Local variables
 
   integer :: i,j
-  allocate(name_xc(nvar))
+  ! MDK This command doesn't work here  when there is a scan
+  !allocate(name_xc(nvar))
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   do i = 1,nvar
@@ -232,6 +234,8 @@ subroutine loadxc
      case (106) ; xcm(i) = ftmargoh
      case (107) ; xcm(i) = favail
      case (108) ; xcm(i) = breeder_f
+     case (109) ; xcm(i) = ralpne
+     case (110) ; xcm(i) = ftaulimit
     
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -348,6 +352,8 @@ subroutine convxc(xc,nn)
   !+ad_hist  06/10/14 PJK Added fnbshinef (105)
   !+ad_hist  11/11/14 PJK Added ftmargoh (106)
   !+ad_hist  25/11/14 JM  Added favail (107)
+  !+ad_hist  27/05/15 MDK Added breeder_f (108)
+  !+ad_hist  05/08/15 MDK Added ralpne (109), ftaulimit (110)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -497,6 +503,8 @@ subroutine convxc(xc,nn)
      case (106) ; ftmargoh  = xc(i)/scale(i)
      case (107) ; favail    = xc(i)/scale(i)
      case (108) ; breeder_f = xc(i)/scale(i)
+     case (109) ; ralpne    = xc(i)/scale(i)
+     case (110) ; ftaulimit = xc(i)/scale(i)
 
      case default
         call report_error(57)

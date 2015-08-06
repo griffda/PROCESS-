@@ -330,7 +330,7 @@ This ensures that all the code and documentation compiles successfully.
 \item Run the input file(s) in the \texttt{tests} folder to ensure PROCESS runs correctly.
 
 \item 
-Close all open editor windows.
+Close all open editor windows.  The commit will not work otherwise.
 
 \item   \texttt{git commit -a} \\
   This commits all modified tracked files.\\
@@ -340,10 +340,12 @@ Close all open editor windows.
   (This `stages' the modified files marking them as ready for committing).  \\
   \texttt{git commit}  
 
-\item An editor window will open; add a line summarising the changes you have made.  Use a format similar to
+\item An editor window will open; add a line summarising the changes you have made.  Use a format like this:
 \begin{verbatim}
-09/12/2014: (rXYZ)  A short description of the changes made
-@rkemp @hlux @morrisj @pknight @mkovari
+rXYZ    A summary of the changes made
+Further details. Changes due to Git issues can be described like this:
+#270    Description
+#273    Description
 \end{verbatim}
 Save and close the window. This will initiate the commit to your \textit{local}\ copy of the repository.  
 

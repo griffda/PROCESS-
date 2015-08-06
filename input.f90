@@ -789,6 +789,11 @@ contains
        case ('te')
           call parse_real_variable('te', te, 1.0D0, 200.0D0, &
                'Electron temperature (keV)')
+               
+       case ('taulimit')
+          call parse_real_variable('taulimit', taulimit, 1.0D0, 100.0D0, &
+               'Lower limit on taup/taueff, the ratio of alpha particle to energy confinement times')
+               
        case ('teped')
           call parse_real_variable('teped', teped, 0.0D0, 20.0D0, &
                'Electron temperature pedestal height (keV)')
@@ -2711,6 +2716,8 @@ contains
        cycle
 
     end do loop_over_lines
+    ! MDK Try allocating here
+    allocate(name_xc(nvar))
 
   end subroutine parse_input_file
 

@@ -450,6 +450,9 @@ no. & variable name     & description                                           
 105 & \texttt{fnbshinef}& f-value for NBI shine-through fraction limit equation   & 59  & \texttt{0.001D0} & \texttt{1.000D0} \\
 106 & \texttt{ftmargoh} & f-value for CS coil temperature margin limit equation   & 60  & \texttt{0.001D0} & \texttt{1.000D0} \\
 107 & \texttt{favail}   & f-value for minimum availability limit equation         & 61  & \texttt{0.001D0} & \texttt{1.000D0} \\
+108 & \texttt{breeder\_f}& breeder volume ratio: Li4SiO4/(Be12Ti+Li4SiO4)          &     & \texttt{0.060D0} & \texttt{1.000D0} \\
+109 & \texttt{ralpne}   & thermal alpha density / electron density                &     & \texttt{0.050D0} & \texttt{0.150D0} \\
+110 & \texttt{ftaulimit}& f-value for limit on ratio of alpha particle to energy confinement times & 62  & \texttt{0.001D0} & \texttt{1.000D0} \\
 \hline
 \end{tabular}
 \end{center}
@@ -675,6 +678,7 @@ no. & description                                               & type & \texttt
 59  & Neutral beam shine-through fraction upper limit (NBI)     & L    & \textbf{105},6,19,4 \\
 60  & Central solenoid temperature margin lower limit (SCTF)    & L    & \textbf{106}, \\
 61  & Minimum availability value limit                          & L    & \textbf{107}, \\
+62  & Lower limit on the ratio of alpha particle to energy confinement times  & L    & \textbf{110}, \\
 \hline
 \end{tabular}
 \end{center}
@@ -802,6 +806,7 @@ $27$ & \texttt{tbrmin}     & minimum tritium breeding ratio (\texttt{blktmodel=1
 $28$ & \texttt{bt}         & toroidal field on axis \\
 $29$ & \texttt{coreradius} & normalised radius defining the core region \\
 $30$ & \texttt{fimpvar}    & impurity fraction of element \texttt{impvar} \\
+$31$ & \texttt{taulimit}   & Taup/taueff lower limit \\
 \hline
 \end{tabular}
 \end{center}

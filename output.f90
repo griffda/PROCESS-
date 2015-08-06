@@ -394,6 +394,7 @@ contains
     !+ad_args  descr : input character string : Description of the variable
     !+ad_args  varnam : input character string : Name of the variable
     !+ad_args  value : input real : Value of the variable
+    !+ad_args  output_flag : optional character
     !+ad_desc  This routine writes out the description, name and value of a
     !+ad_desc  double precision variable in F format (e.g.
     !+ad_desc  <CODE>-12345.000</CODE>).
@@ -404,6 +405,7 @@ contains
     !+ad_hist  17/02/14 PJK Ensured mfile output is not replicated if file=mfile
     !+ad_hist  06/03/14 PJK mfile output now sent to ovarre for 'E' format
     !+ad_hist  15/05/14 PJK Longer line length
+    !+ad_hist  05/08/15 MDK Optional output flag
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -472,6 +474,7 @@ contains
     !+ad_args  descr : input character string : Description of the variable
     !+ad_args  varnam : input character string : Name of the variable
     !+ad_args  value : input real : Value of the variable
+    !+ad_args  output_flag : optional character
     !+ad_desc  This routine writes out the description, name and value of a
     !+ad_desc  double precision variable in E format (e.g.
     !+ad_desc  <CODE>-1.234E+04</CODE>).
@@ -482,6 +485,7 @@ contains
     !+ad_hist  17/02/14 PJK Ensured mfile output is not replicated if file=mfile
     !+ad_hist  15/05/14 PJK Longer line length
     !+ad_hist  31/07/15 MDK Add label if it is an iteration variable
+    !+ad_hist  05/08/15 MDK Optional output flag
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -548,6 +552,7 @@ contains
     !+ad_args  descr : input character string : Description of the variable
     !+ad_args  varnam : input character string : Name of the variable
     !+ad_args  value : input integer : Value of the variable
+    !+ad_args  output_flag : optional character
     !+ad_desc  This routine writes out the description, name and value of an
     !+ad_desc  integer variable.
     !+ad_prob  None
@@ -556,7 +561,7 @@ contains
     !+ad_hist  13/02/14 PJK Added output to mfile, with underscores replacing spaces
     !+ad_hist  17/02/14 PJK Ensured mfile output is not replicated if file=mfile
     !+ad_hist  15/05/14 PJK Longer line length
-    !+ad_hist  15/05/14 MDK added output flag
+    !+ad_hist  05/08/15 MDK Optional output flag
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
