@@ -74,6 +74,7 @@ subroutine loadxc
   !+ad_hist  27/05/15 MDK Added breeder_f (108)
   !+ad_hist  03/08/15 MDK Create list of iteration variable names
   !+ad_hist  05/08/15 MDK Added ralpne, ftaulimit
+  !+ad_hist  26/08/15 MDK Added fniterpump (111)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -236,6 +237,7 @@ subroutine loadxc
      case (108) ; xcm(i) = breeder_f
      case (109) ; xcm(i) = ralpne
      case (110) ; xcm(i) = ftaulimit
+     case (111) ; xcm(i) = fniterpump
     
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -505,6 +507,7 @@ subroutine convxc(xc,nn)
      case (108) ; breeder_f = xc(i)/scale(i)
      case (109) ; ralpne    = xc(i)/scale(i)
      case (110) ; ftaulimit = xc(i)/scale(i)
+     case (111) ; fniterpump = xc(i)/scale(i)
 
      case default
         call report_error(57)

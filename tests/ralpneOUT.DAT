@@ -6,14 +6,14 @@
  **************************************************************************************************************
  
    Program : process.exe
-   Version : 403    Release Date :: 2015-08-3
- Date/time : Thu Aug  6 11:38:06 BST 2015
+   Version : 405    Release Date :: 2015-08-26
+ Date/time : Wed Aug 26 15:40:54 BST 2015
       User : mkovari (Michael Kovari)
  Directory : /home/mkovari/PROCESS/develop/tests
  
  **************************************************************************************************************
  
- PROCESS 403 : Run on Thu Aug  6 11:38:06 BST 2015 by Michael Kovari
+ PROCESS 405 : Run on Wed Aug 26 15:40:54 BST 2015 by Michael Kovari
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  demo 1 model for cost paper  * Short descriptive title for the run
  (Please include this header in any models, presentations and papers based on these results)
@@ -342,7 +342,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Xe concentration                                                         fimp(13)                  4.050E-04     
  W_ concentration                                                         fimp(14)                  5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.681E+00  OP 
- Impurity used as an iteration variable                                                            Xe
+ Impurity used as an iteration variable                                                            "Xe"
  Fractional density of variable impurity (ion / electron density)         (fimpvar)                 4.050E-04  ITV
  
  Effective charge                                                         (zeff)                        2.569  OP 
@@ -1643,7 +1643,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Xe concentration                                                         fimp(13)                  3.384E-04     
  W_ concentration                                                         fimp(14)                  5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.729E+00  OP 
- Impurity used as an iteration variable                                                            Xe
+ Impurity used as an iteration variable                                                            "Xe"
  Fractional density of variable impurity (ion / electron density)         (fimpvar)                 3.384E-04  ITV
  
  Effective charge                                                         (zeff)                        2.439  OP 
@@ -2944,7 +2944,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Xe concentration                                                         fimp(13)                  2.603E-04     
  W_ concentration                                                         fimp(14)                  5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.784E+00  OP 
- Impurity used as an iteration variable                                                            Xe
+ Impurity used as an iteration variable                                                            "Xe"
  Fractional density of variable impurity (ion / electron density)         (fimpvar)                 2.603E-04  ITV
  
  Effective charge                                                         (zeff)                        2.282  OP 
@@ -4246,7 +4246,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Xe concentration                                                         fimp(13)                  1.617E-04     
  W_ concentration                                                         fimp(14)                  5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.850E+00  OP 
- Impurity used as an iteration variable                                                            Xe
+ Impurity used as an iteration variable                                                            "Xe"
  Fractional density of variable impurity (ion / electron density)         (fimpvar)                 1.617E-04  ITV
  
  Effective charge                                                         (zeff)                        2.077  OP 
@@ -5556,7 +5556,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Xe concentration                                                         fimp(13)                  4.341E-05     
  W_ concentration                                                         fimp(14)                  5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.893E+00  OP 
- Impurity used as an iteration variable                                                            Xe
+ Impurity used as an iteration variable                                                            "Xe"
  Fractional density of variable impurity (ion / electron density)         (fimpvar)                 4.341E-05  ITV
  
  Effective charge                                                         (zeff)                        1.794  OP 
@@ -6867,7 +6867,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Xe concentration                                                         fimp(13)                  4.341E-05     
  W_ concentration                                                         fimp(14)                  5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.893E+00  OP 
- Impurity used as an iteration variable                                                            Xe
+ Impurity used as an iteration variable                                                            "Xe"
  Fractional density of variable impurity (ion / electron density)         (fimpvar)                 4.341E-05  ITV
  
  Effective charge                                                         (zeff)                        1.794  OP 

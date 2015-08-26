@@ -74,7 +74,8 @@ module numerics
   !+ad_hist  27/05/15 MDK Added breeder_f as iteration variable 108
   !+ad_hist  29/05/15 MDK Figure of merit 2 (P_fus P_in-total) has been replaced by "not used"
   !+ad_hist  11/06/15 MDK Add active_constraints(ipeqns) : Boolean array showing which constraints are active.
-  !+ad_hist  05/08/15 MDK Add ralpne as an iteration variable. Constraint on taup/taueff, the ratio of particle to energy confinement times
+  !+ad_hist  05/08/15 MDK Add ralpne as an iteration variable. Constraint 62 on taup/taueff, the ratio of particle to energy confinement times
+  !+ad_hist  26/08/15 MDK fniterpump as iteration variable 11, constraint 63 niterpump < tfno
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -89,15 +90,10 @@ module numerics
   
   public
 
-  !+ad_vars  ipnvars /108/ FIX : total number of variables available for iteration
-  ! MDK Add ralpne as an iteration variable.  This is a bit of an experiment.
-  ! MDK Add f-value for constraint on taup/taueff, the ratio of particle to energy confinement times
-  !integer, parameter :: ipnvars = 108
-  integer, parameter :: ipnvars = 110
-  !+ad_vars  ipeqns /62/ FIX : number of constraint equations available
-  ! MDK add a new constraint on taup/taueff, the ratio of particle to energy confinement times
-  !integer, parameter :: ipeqns = 61
-  integer, parameter :: ipeqns  = 62
+  !+ad_vars  ipnvars /111/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 111
+  !+ad_vars  ipeqns /63/ FIX : number of constraint equations available
+  integer, parameter :: ipeqns = 63
   !+ad_vars  ipnfoms /15/ FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 15
 
@@ -170,10 +166,81 @@ module numerics
   !+ad_vars  icc(ipeqns) /1,2,5,7,9,10,11,14,17,24,27,33,35,36/ :
   !+ad_varc           array defining which constraint equations to activate
   !+ad_varc           (see lablcc for descriptions)  
-  integer, dimension(ipeqns) :: icc = 0
-  ! MDK The icc array is now populated with its default values in input.f90.  
+  ! integer, dimension(ipeqns) :: icc = 0
+  ! MDK If no constraints are specified in the input file, the icc array is now 
+  ! populated with its default values in input.f90.  
   ! This may not have been the best method, in hindsight. 
-  ! As it is filled with zeroes, no extra lines need to be added for new constraints.
+  ! The declaration statement below must be included in this format to enable the
+  ! dictionaries to be created.  The initialised values must be zero, because 
+  ! this is tested in input.f90.
+  ! The dictionaries will now show icc = 0 by default.
+  
+  integer, dimension(ipeqns) :: icc = (/ &
+       0,  &  !  1
+       0,  &  !  2
+       0,  &  !  3
+       0,  &  !  4
+       0,  &  !  5
+       0,  &  !  6
+       0,  &  !  7
+       0,  &  !  8
+       0,  &  !  9
+       0,  &  !  10
+       0,  &  !  11
+       0,  &  !  12
+       0,  &  !  13
+       0,  &  !  14
+       0,  &  !  15
+       0,  &  !  16
+       0,  &  !  17
+       0,  &  !  18
+       0,  &  !  19
+       0,  &  !  20
+       0,  &  !  21
+       0,  &  !  22
+       0,  &  !  23
+       0,  &  !  24
+       0,  &  !  25
+       0,  &  !  26
+       0,  &  !  27
+       0,  &  !  28
+       0,  &  !  29
+       0,  &  !  30
+       0,  &  !  31
+       0,  &  !  32
+       0,  &  !  33
+       0,  &  !  34
+       0,  &  !  35
+       0,  &  !  36
+       0,  &  !  37
+       0,  &  !  38
+       0,  &  !  39
+       0,  &  !  40
+       0,  &  !  41
+       0,  &  !  42
+       0,  &  !  43
+       0,  &  !  44
+       0,  &  !  45
+       0,  &  !  46
+       0,  &  !  47
+       0,  &  !  48
+       0,  &  !  49
+       0,  &  !  50
+       0,  &  !  51
+       0,  &  !  52
+       0,  &  !  53
+       0,  &  !  54
+       0,  &  !  55
+       0,  &  !  56
+       0,  &  !  57
+       0,  &  !  58
+       0,  &  !  59
+       0,  &  !  60
+       0,  &  !  61
+       0,  &  !  62
+       0   &  !  63
+       /)
+  
        
   !+ad_vars  active_constraints(ipeqns) : Logical array showing which constraints are active       
   logical, dimension(ipeqns) :: active_constraints = .false.  
@@ -304,11 +371,13 @@ module numerics
        'CS temperature margin lower limit', &
        !+ad_varc  <LI> (61) Minimum availability value
        'Minimum availability value       ',  &
-       !+ad_varc  <LI> (62) taup/taueff, the ratio of particle to energy confinement times</UL>
-       'taup/taueff                      '  &
+       !+ad_varc  <LI> (62) taup/taueff, the ratio of particle to energy confinement times
+       'taup/taueff                      ', &
+       !+ad_varc  <LI> (63) The number of ITER-like vacuum pumps niterpump < tfno </UL>
+       'number of ITER-like vacuum pumps '  &
        /)  !  Please note: All strings between '...' above must be exactly 33 chars long
-       ! Note that each line of code has a comma before the ampersand, except the last one.
-       ! Note that the last ad_varc line ends with the html tag "</UL>".
+       ! Each line of code has a comma before the ampersand, except the last one.
+       ! The last ad_varc line ends with the html tag "</UL>".
 
   !+ad_vars  ixc(ipnvars) /4,5,6,7,10,12,13,19,28,29,36,39,50,53,54,61/ :
   !+ad_varc               array defining which iteration variables to activate
@@ -423,7 +492,8 @@ module numerics
        0,  &  !  107
        0,  &  !  108 
        0,  &  !  109
-       0   &  !  110
+       0,  &  !  110
+       0   &  !  111
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -648,8 +718,12 @@ module numerics
        'breeder_f', &
        !+ad_varc  <LI> (109) ralpne: thermal alpha density / electron density
        'ralpne   ', &
-       !+ad_varc  <LI> (110) ftaulimit: Lower limit on taup/taueff, the ratio of alpha particle to energy confinement times</UL>
-       'ftaulimit'  &
+       !+ad_varc  <LI> (110) ftaulimit: Lower limit on taup/taueff, the ratio of alpha particle 
+       !+ad_varc       to energy confinement times
+       'ftaulimit', &
+       !+ad_varc  <LI> (111) fniterpump: f-value for constraint that  
+       !+ad_varc       number of vacuum pumps <  TF coils</UL>
+       'fniterpump'  &
        /)
   
   character(len=9), dimension(:), allocatable :: name_xc
@@ -777,7 +851,8 @@ module numerics
        0.001D0, &  !  107
        0.060D0, &  !  108
        0.050D0, &  !  109
-       0.001D0  &  !  110
+       0.001D0, &  !  110
+       0.001D0  &  !  111
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -892,7 +967,8 @@ module numerics
        1.000D0, &  !  107
        1.000D0, &  !  108
        0.150D0, &  !  109
-       1.000D0  &  !  110
+       1.000D0, &  !  110
+       1.000D0  &  !  111
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

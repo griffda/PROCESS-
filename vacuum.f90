@@ -89,15 +89,65 @@ contains
     !  Total fuel gas load (kg/s)
     !  2 nuclei * nucleus-pairs/sec * mass/nucleus
 
+! MDK Check this!!
     gasld = 2.0D0*qfuel * afuel*umass
     
-    call vacuum(powfmw,rmajor,rminor,0.5D0*(scrapli+scraplo),sarea,vol, &
+    if (vacuum_model == 'old') then    
+        call vacuum(powfmw,rmajor,rminor,0.5D0*(scrapli+scraplo),sarea,vol, &
          shldoth,shldith,tfcth,rsldi-gapds-ddwi,tfno,tdwell,dene,idivrt, &
          qtorus,gasld,pumpn,nvduct,dlscal,vacdshm,vcdimax,iprint,outfile)
-    ! MDK pumpn is real: convert to integer by rounding.
-    vpumpn = floor(pumpn+0.5D0)         
+        ! MDK pumpn is real: convert to integer by rounding.
+        vpumpn = floor(pumpn+0.5D0)    
+    else if (vacuum_model == 'simple') then
+        call vacuum_simple(niterpump,iprint,outfile)
+    else
+      write(*,*) 'ERROR "vacuum_model" seems to be invalid:', vacuum_model
+      write(outfile,*) 'ERROR "vacuum_model" seems to be invalid:', vacuum_model
+    end if
+    
+         
 
   end subroutine vaccall
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  subroutine vacuum_simple(niterpump,iprint,outfile)
+    !+ad_name  vacuum_simple
+    !+ad_summ  Simple model of vacuum pumping system
+    !+ad_type  Subroutine
+    !+ad_auth  MD Kovari, CCFE, Culham Science Centre
+    !+ad_args  iprint : input integer : Switch to write output (1=yes)
+    !+ad_args  outfile : input integer : Fortran output unit identifier
+    !+ad_args  niterpump : output real : number of ITER-size pumps
+    !+ad_prob  None
+    !+ad_call  oblnkl
+    !+ad_call  ocmmnt
+    !+ad_call  oheadr
+    !+ad_call  osubhd
+    !+ad_call  ovarin
+    !+ad_call  ovarre
+    !+ad_hist  12/08/15 MDK
+    !+ad_stat  Okay
+    
+    implicit none
+
+    !  Arguments
+    integer, intent(in) :: iprint, outfile
+    real(kind(1.0D0)), intent(out) :: niterpump
+    
+    ! One ITER torus cryopump has a throughput of 50 Pa m3/s = 1.2155e+22 molecules/s
+    ! Issue #304
+    niterpump = qfuel / 1.2155D22
+    
+    !  Output section
+    if (iprint == 0) return
+
+    call oheadr(outfile,'Vacuum System')
+    call ovarst(outfile,'Switch for vacuum pumping model','(vacuum_model)','"'//vacuum_model//'"')
+    call ocmmnt(outfile,'Simple steady-state model with comparison to ITER cryopumps')
+    call ovarre(outfile,'Plasma fuelling rate (nucleus-pairs/s)','(qfuel)',qfuel, 'OP ')
+    call ocmmnt(outfile,'Number of high vacuum pumps, each with the throughput')
+    call ocmmnt(outfile,' of one ITER cryopump (50 Pa m3 s-1 = 1.2e+22 molecules/s),')
+    call ovarre(outfile,' all operating at the same time', '(niterpump)',niterpump, 'OP ')
+  end subroutine vacuum_simple
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -485,3 +535,4 @@ contains
   end subroutine vacuum
 
 end module vacuum_module
+

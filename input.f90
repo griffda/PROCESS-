@@ -380,6 +380,7 @@ contains
     !+ad_hist  19/05/15 PJK Variable names in calls now lowercase
     !+ad_hist  20/05/15 RK  Added iscdens, fgwped
     !+ad_hist  11/06/15 MDK Added spiral_od and spiral_id
+    !+ad_hist  12/08/15 MDK vacuum_model and associated variables #304    
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -505,17 +506,13 @@ contains
           call parse_int_variable('maxcal', maxcal, 0, 10000, &
                'Max no of VMCON iterations')
        case ('minmax')
-          call parse_int_variable('minmax', minmax, -ipnfoms, ipnfoms, &
-               'Switch for figure of merit')
+          call parse_int_variable('minmax', minmax, -ipnfoms, ipnfoms, 'Switch for figure of merit')
       case ('neqns')
-          call parse_int_variable('neqns', neqns, 1, ipeqns, &
-               'No of equality constraints')
+          call parse_int_variable('neqns', neqns, 1, ipeqns, 'No of equality constraints')
       case ('nineqns')
-          call parse_int_variable('nineqns', nineqns, 1, ipeqns, &
-               'No of inequality constraints')
+          call parse_int_variable('nineqns', nineqns, 1, ipeqns, 'No of inequality constraints')
        case ('nvar')
-          call parse_int_variable('nvar', nvar, 1, ipnvars, &
-               'No of independent variables')
+          call parse_int_variable('nvar', nvar, 1, ipnvars, 'No of independent variables')
 
           !  Physics settings
 
@@ -818,6 +815,10 @@ contains
 
           !  Inequality settings
 
+       case ('fniterpump')
+          call parse_real_variable('fniterpump', fniterpump, 0.001D0, 10.0D0, &
+               'f-value for constraint on number of vacuum pumps')
+               
        case ('auxmin')
           call parse_real_variable('auxmin', auxmin, 0.01D0, 100.0D0, &
                'Minimum auxiliary power (MW)')
@@ -2421,6 +2422,10 @@ contains
 
           !  Vacuum system settings
 
+       case ('vacuum_model')
+          call parse_string_variable('vacuum_model', vacuum_model, 'vacuum_model')
+       
+       
        case ('ntype')
           call parse_int_variable('ntype', ntype, 0, 1, &
                'Pump type')

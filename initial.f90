@@ -67,6 +67,7 @@ subroutine initial
   !+ad_hist  05/11/12 PJK Removed call to ifeini
   !+ad_hist  05/11/12 PJK Removed pulsed reactor variables
   !+ad_hist  05/03/15 JM  Changed blanket fraction check to new models
+  !+ad_hist  26/08/15 MDK Added check that constraint 63 is not used with wrong vacuum model
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -266,6 +267,7 @@ subroutine check
   use rfp_variables
   use tfcoil_variables
   use stellarator_variables
+  use vacuum_variables
 
   implicit none
 
@@ -307,6 +309,14 @@ subroutine check
   if ( any(icc(1:neqns+nineqns) == 4) ) then
      call report_error(163)
   end if
+  
+  ! MDK Report error is constraint 63 is used with old vacuum model
+  if (any(icc(1:neqns+nineqns) == 63).and.(vacuum_model.ne.'simple') ) then
+     write(*,*) 'Constraint 63 is requested without the correct vacuum model ("simple").'
+     write(*,*) 'vacuum_model = ', vacuum_model
+     write(*,*) 'PROCESS stopping'
+     stop
+  end if  
 
   !  Fuel ion fractions must add up to 1.0
 

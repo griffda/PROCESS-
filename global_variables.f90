@@ -2107,6 +2107,7 @@ module vacuum_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  29/10/12 PJK Initial version of module
+  !+ad_hist  12/08/15 MDK vacuum_model and associated variables #304
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2115,7 +2116,15 @@ module vacuum_variables
   implicit none
 
   public
-
+  !+ad_vars  vacuum_model /'old'/ : switch for vacuum pumping model:<UL>
+  !+ad_varc         <LI> = 'old' for old detailed ETR model;
+  !+ad_varc         <LI> = 'simple' for simple steady-state model with comparison to ITER cryopumps</UL>
+  character(len=6) :: vacuum_model = 'old'
+  !+ad_vars  niterpump : number of high vacuum pumps (real number), each with the throughput
+  !+ad_varc              of one ITER cryopump (50 Pa m3 s-1), all operating at the same time
+  !+ad_varc              (vacuum_model = 'simple')
+  real(kind(1.0D0)) :: niterpump = 0.0D0
+  
   !+ad_vars  ntype /1/ : switch for vacuum pump type:<UL>
   !+ad_varc         <LI> = 0 for turbomolecular pump (magnetic bearing)
   !+ad_varc                  with speed of 2.0 m3/s
@@ -3477,6 +3486,10 @@ module constraint_variables
   !+ad_vars  ftaulimit /1.0/ : f-value for lower limit on taup/taueff, the ratio of alpha particle to energy confinement times
   !+ad_varc                   (constraint equation 62, iteration variable 110)
   real(kind(1.0D0)) :: ftaulimit = 1.0D0
+  
+  !+ad_vars  fniterpump /1.0/ : f-value for constraint that number of pumps < tfno
+  !+ad_varc                   (constraint equation 63, iteration variable 111)
+  real(kind(1.0D0)) :: fniterpump = 1.0D0
 
 end module constraint_variables
 

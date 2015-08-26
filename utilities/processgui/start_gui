@@ -12,7 +12,7 @@ cd $dirloc
 #if the user doesn't already have the server running
 if [[ `ps u` != *"manage.py runserver"* ]]; then
     echo "Starting PROCESS GUI server"
-    python manage.py runserver &> /dev/null &
+    python manage.py runserver # &> /dev/null &
     sleep 5  #probably long enough
 fi
 
