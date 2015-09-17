@@ -209,6 +209,7 @@ contains
     !+ad_hist  19/08/14 PJK Removed impfe usage
     !+ad_hist  01/10/14 PJK Added plhthresh
     !+ad_hist  01/04/15 JM  Added total transport power from scaling law
+    !+ad_hist  11/09/15 MDK Resistive diffusion time
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -417,7 +418,9 @@ contains
 
     call pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol,zeff, &
          pohmpv,pohmmw,rpfac,rplas)
-
+    ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
+    res_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
+    
     !  Calculate L- to H-mode power threshold for different scalings
 
     call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
@@ -4376,7 +4379,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine pohm(facoh,kappa,plascur,rmajor,rminor,ten,vol, &
+  subroutine pohm(facoh,kappa95,plascur,rmajor,rminor,ten,vol, &
        zeff,pohmpv,pohmmw,rpfac,rplas)
 
     !+ad_name  pohm
@@ -4385,7 +4388,7 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  facoh  : input real :  fraction of plasma current produced inductively
-    !+ad_args  kappa  : input real :  plasma elongation
+    !+ad_args  kappa95: input real :  plasma elongation at 95% flux
     !+ad_args  plascur: input real :  plasma current (A)
     !+ad_args  rmajor : input real :  plasma major radius (m)
     !+ad_args  rminor : input real :  plasma minor radius (m)
@@ -4417,7 +4420,7 @@ contains
 
     !  Arguments
 
-    real(kind(1.0D0)), intent(in) :: facoh, kappa, plascur, rmajor, &
+    real(kind(1.0D0)), intent(in) :: facoh, kappa95, plascur, rmajor, &
          rminor, ten, vol, zeff
     real(kind(1.0D0)), intent(out) :: pohmpv, pohmmw, rpfac, rplas
 
@@ -4433,7 +4436,7 @@ contains
 
     !  Plasma resistance, from loop voltage calculation in IPDG89
 
-    rplas = 2.15D-9 * zeff*rmajor / (kappa*rminor**2 * t10**1.5D0)
+    rplas = 2.15D-9 * zeff*rmajor / (kappa95*rminor**2 * t10**1.5D0)
 
     !  Neo-classical resistivity enhancement factor
     !  Taken from  N. A. Uckan et al, Fusion Technology 13 (1988) p.411.
@@ -5731,8 +5734,6 @@ contains
        call ocmmnt(outfile,'  (No radiation correction applied)')
     end if
     call ovarrf(outfile,'Alpha particle confinement time (s)','(taup)',taup, 'OP ')
-    !call ovarrf(outfile,'Particle/energy confinement time ratio',' ',taup/taueff, 'OP ')
-    ! MDK Clarify this, as "taup : alpha particle confinement time (sec)"
     ! Note alpha confinement time is no longer equal to fuel particle confinement time.
     call ovarrf(outfile,'Alpha particle/energy confinement time ratio','(taup/taueff)',taup/taueff, 'OP ')
     call ovarrf(outfile,'Lower limit on taup/taueff','(taulimit)',taulimit)
@@ -5765,6 +5766,8 @@ contains
 
        call ovarre(outfile,'Loop voltage during burn (V)','(vburn)', plascur*rplas*facoh, 'OP ')
        call ovarre(outfile,'Plasma resistance (ohm)','(rplas)',rplas, 'OP ')
+       
+       call ovarre(outfile,'Resistive diffusion time (s)','(res_time)',res_time, 'OP ')
        call ovarre(outfile,'Plasma inductance (H)','(rlp)',rlp, 'OP ')
        call ovarrf(outfile,'Sawteeth coefficient','(csawth)',csawth)
     end if

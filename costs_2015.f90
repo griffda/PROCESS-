@@ -752,6 +752,7 @@ contains
     !+ad_prob  None
     !+ad_call  some function? (OUTPUT functions)
     !+ad_hist  15/01/15 JM  Initial Version
+    !+ad_hist  17/09/15 MDK Scale power supplies with total magnetic energy in the poloidal field / resistive diffusion time
     !+ad_stat  Okay
     !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
     !
@@ -882,9 +883,11 @@ contains
     s(52)%label = "Electrical power supply and distribution"    
     !  Cost of ITER electrical power supply and distribution
     s(52)%cref = 1188.0D6    
-    !  Scale with total magnetic energy in the poloidal field (J)
-    s(52)%k = ensxpfm * 1.0E6
-    s(52)%kref = 8.0D9
+    !  Scale with total magnetic energy in the poloidal field / resistive diffusion time (W)
+    !  For ITER value see 
+    !  K:\Power Plant Physics and Technology\PROCESS\PROCESS documentation papers\resistive diffusion time.xmcd or pdf
+    s(52)%k = ensxpfm * 1.0E6 / res_time
+    s(52)%kref = 8.0D9 / 953.0D0
     s(52)%cost = s(52)%cost_factor * s(52)%cref * (s(52)%k / s(52)%kref)**costexp
 
     s(53)%label = "Neutral beam heating and current drive system"    

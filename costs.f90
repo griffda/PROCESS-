@@ -260,7 +260,7 @@ contains
     if (ife /= 1) then
        if ((ipowerflow == 0).or.(blkttype == 3)) then
           call ocosts(outfile,'22121','Blanket beryllium cost (M$)',c22121)
-          call ocosts(outfile,'22122','Blanket breeder material cost (M$)',c22122)
+          call ocosts(outfile,'22122','Blanket breeder material cost (M$)',c22122)                
        else
           call ocosts(outfile,'22121','Blanket lithium-lead cost (M$)',c22121)
           call ocosts(outfile,'22122','Blanket lithium cost (M$)',c22122)
@@ -1970,6 +1970,7 @@ contains
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  22/05/14 PJK Powers now in MW instead of W
+    !+ad_hist  17/09/15 MDK #327 Neutral beam cost now depends on pnbitot
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2019,7 +2020,9 @@ contains
 
        !  Account 223.3 : Neutral Beam
 
-       c2233 = 1.0D-6 * ucnbi * (1.0D6*pnbeam)**exprf
+       ! c2233 = 1.0D-6 * ucnbi * (1.0D6*pnbeam)**exprf
+       ! #327
+       c2233 = 1.0D-6 * ucnbi * (1.0D6*pnbitot)**exprf
        if (ifueltyp == 1) c2233 = (1.0D0-fcdfuel) * c2233
        c2233 = fkind * c2233
 

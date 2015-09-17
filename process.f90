@@ -287,7 +287,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '405    Release Date :: 2015-08-26'
+       '406    Release Date :: 2015-09-17'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1985,3 +1985,5 @@ end subroutine runtests
 !          Tweaked OUT.DAT in a few places.
 !          #213 Make helium content an iteration variable and constrain tauP/tauE 
 ! 405      #304 Add a very simple vacuum pump model.
+! 406      #325 New rule for Power supply cost.  May not be complete.
+!          #327 Tweaks to make old cost model work

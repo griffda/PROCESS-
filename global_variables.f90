@@ -150,6 +150,7 @@ module physics_variables
   !+ad_hist  17/11/14 PJK Added palpfwmw
   !+ad_hist  20/05/15 RK  Added iscdens, fgwped for pedestal density scaling
   !+ad_hist  17/06/15 MDK Added Murari scaling (isc=40)
+  !+ad_hist  11/09/15 MDK res_time
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -662,6 +663,11 @@ module physics_variables
   real(kind(1.0D0)) :: rpfac = 0.0D0
   !+ad_vars  rplas : plasma resistance (ohm)
   real(kind(1.0D0)) :: rplas = 0.0D0
+  
+  !+ad_vars  res_time : plasma current resistive diffusion time (s)
+  real(kind(1.0D0)) :: res_time = 0.0D0
+  
+  
   !+ad_vars  sarea : plasma surface area
   real(kind(1.0D0)) :: sarea = 0.0D0
   !+ad_vars  sareao : outboard plasma surface area

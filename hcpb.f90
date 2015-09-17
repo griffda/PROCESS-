@@ -1325,11 +1325,15 @@ contains
     fblli2sio4 = breeder_f * breeder_multiplier    
     ! Titanium beryllide fraction, and mass (kg):
     fbltibe12  = breeder_multiplier - fblli2sio4    
-    whtbltibe12 = volblkt * fbltibe12 * 2260.0D0
+    whtbltibe12 = volblkt * fbltibe12 * 2260.0D0    
     
     !  Blanket Lithium orthosilicate mass (kg)
     !  Ref: www.rockwoodlithium.com...
     whtblli4sio4 = volblkt * fblli2sio4 * 2400.0D0
+    
+    ! #327 For backwards compatibility, set the old blanket masses the same:
+    whtblbe = whtbltibe12
+    wtblli2o = whtblli4sio4
     
     !  Steel fraction by volume is the remainder:
     fblss_ccfe = 1.0D0 - fblli2sio4 - fbltibe12 - vfcblkt - vfpblkt 
