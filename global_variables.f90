@@ -2113,7 +2113,8 @@ module vacuum_variables
   !+ad_prob  None
   !+ad_call  None
   !+ad_hist  29/10/12 PJK Initial version of module
-  !+ad_hist  12/08/15 MDK vacuum_model and associated variables #304
+  !+ad_hist  12/08/15 MDK vacuum_model and associated variables (#304 section 1)
+  !+ad_hist  22/09/15 MDK Battes, Day and Rohde pump-down model (#304 section 2)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2142,8 +2143,8 @@ module vacuum_variables
   integer :: nvduct = 0
   !+ad_vars  dlscal : vacuum system duct length scaling
   real(kind(1.0D0)) :: dlscal = 0.0D0
-  !+ad_vars  pbase /2.6e-6/ : base pressure (Pa)
-  real(kind(1.0D0)) :: pbase = 2.6D-6
+  !+ad_vars  pbase /5.0e-4/ : base pressure during dwell before gas pre-fill(Pa)
+  real(kind(1.0D0)) :: pbase = 5.0D-4
   !+ad_vars  prdiv /0.36/ : divertor chamber pressure during burn (Pa)
   real(kind(1.0D0)) :: prdiv = 0.36D0
   !+ad_vars  rat /1.3e-8/ : plasma chamber wall outgassing rate (Pa-m/s)
@@ -2157,6 +2158,25 @@ module vacuum_variables
   !+ad_vars  vpumpn : number of high vacuum pumps
   !real(kind(1.0D0)) :: vpumpn = 0.0D0
   integer :: vpumpn = 0
+  
+  !+ad_vars  <P><B>The following are used in the Battes, Day and Rohde pump-down model
+  !+ad_varc  See "Basic considerations on the pump-down time in the dwell phase of a pulsed fusion DEMO"
+  !+ad_varc  http://dx.doi.org/10.1016/j.fusengdes.2015.07.011)  
+  !+ad_varc  (vacuum_model=simple'):</B><P>  
+  !+ad_vars  pumpareafraction /0.0203/ : area of one pumping port as a fraction of plasma surface area
+  real(kind(1.0D0)) :: pumpareafraction = 0.0203D0  
+  !+ad_vars  pumpspeedmax /27.3/ : maximum pumping speed per unit area for deuterium & tritium, molecular flow
+  real(kind(1.0D0)) :: pumpspeedmax = 27.3D0   
+  !+ad_vars  pumpspeedfactor /0.167/ : effective pumping speed reduction factor due to duct impedance
+  real(kind(1.0D0)) :: pumpspeedfactor = 0.167D0
+  !+ad_vars  initialpressure /1.0/ : initial neutral pressure at the beginning of the dwell phase (Pa)  
+  real(kind(1.0D0)) :: initialpressure = 1.0D0
+  !+ad_vars  pbase /5.0e-4/ : base pressure during dwell before gas pre-fill (Pa)
+  ! (duplicate message)
+  !+ad_vars  outgasindex /1.0/ : outgassing decay index
+  real(kind(1.0D0)) :: outgasindex = 1.0D0
+  !+ad_vars  outgasfactor /0.0235/ : outgassing prefactor kw: outgassing rate at 1 s per unit area (Pa m s-1)
+  real(kind(1.0D0)) :: outgasfactor = 0.0235D0  
 
 end module vacuum_variables
 

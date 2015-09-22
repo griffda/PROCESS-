@@ -2441,6 +2441,29 @@ contains
        case ('tn')
           call parse_real_variable('tn', tn, 1.0D0, 1.0D3, &
                'Neutral gas temp in chamber (K)')
+       
+       case ('pumpareafraction')
+          call parse_real_variable('pumpareafraction', pumpareafraction, 1.0D-6, 1.0D0, &
+               'Area of one pumping port as a fraction of plasma surface area')
+      case ('pumpspeedmax')
+          call parse_real_variable('pumpspeedmax', pumpspeedmax, 1.0D-6, 1.0D3, &
+               'Maximum pumping speed per unit area for deuterium & tritium, molecular flow')
+      case ('pumpspeedfactor')
+          call parse_real_variable('pumpspeedfactor', pumpspeedfactor, 1.0D-6, 1.0D0, &
+               'Effective pumping speed reduction factor due to duct impedance')
+      case ('initialpressure')
+          call parse_real_variable('initialpressure', initialpressure, 1.0D-6, 1.0D4, &
+               'initial neutral pressure at the beginning of the dwell phase (Pa)')
+      case ('outgasindex')
+          call parse_real_variable('outgasindex', outgasindex, 1.0D-6, 1.0D3, &
+               'outgassing decay index')
+      case ('outgasfactor')
+          call parse_real_variable('outgasfactor', outgasfactor, 1.0D-6, 1.0D3, &
+               'outgassing prefactor kw: outgassing rate at 1 s per unit area (Pa m s-1)')
+       
+   
+               
+       
 
           !  Stellarator settings
 
