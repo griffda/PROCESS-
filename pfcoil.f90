@@ -2492,6 +2492,7 @@ contains
     !+ad_hist  06/11/14 PJK Added extra diagnostic outputs
     !+ad_hist  10/11/14 PJK Removed critical current density output for resistive coils
     !+ad_hist  11/11/14 PJK Added extra area outputs
+    !+ad_hist  13/10/15 MDK Issue #328 use max current in the PF Coil Table.
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2698,7 +2699,7 @@ contains
     write(outfile,40) rmajor,0.0D0,2.0D0*rminor,2.0D0*rminor*kappa,1.0D0
 40  format(' Plasma',t10,5f12.2)
 
-    call osubhd(outfile,'PF Coil Information :')
+    call osubhd(outfile,'PF Coil Information at Peak Current:')
 
     write(outfile,50)
 50  format(' coil', &
@@ -2744,11 +2745,12 @@ contains
 
     if (iohcl /= 0) then
        if (ipfres == 0) then
-          write(outfile,100) ric(nohc),rjpfalw(nohc),cohbop, &
-               (cohbop/rjpfalw(nohc)),wtc(nohc),wts(nohc), &
+       ! Issue #328
+          write(outfile,100) ric(nohc),rjpfalw(nohc),max(cohbop,coheof), &
+               (max(cohbop,coheof)/rjpfalw(nohc)),wtc(nohc),wts(nohc), &
                bpf(nohc)
        else
-          write(outfile,100) ric(nohc),-1.0D0,cohbop, &
+          write(outfile,100) ric(nohc),-1.0D0,max(cohbop,coheof), &
                1.0D0,wtc(nohc),wts(nohc),bpf(nohc)
        end if
     end if

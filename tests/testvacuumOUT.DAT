@@ -6,14 +6,14 @@
  **************************************************************************************************************
  
    Program : process.exe
-   Version : 406    Release Date :: 2015-09-17
- Date/time : Tue Sep 22 15:21:05 BST 2015
+   Version : 408    Release Date :: 2015-10-13
+ Date/time : Tue Oct 13 11:43:34 BST 2015
       User : mkovari (Michael Kovari)
  Directory : /home/mkovari/PROCESS/develop/tests
  
  **************************************************************************************************************
  
- PROCESS 406 : Run on Tue Sep 22 15:21:05 BST 2015 by Michael Kovari
+ PROCESS 408 : Run on Tue Oct 13 11:43:34 BST 2015 by Michael Kovari
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  demo 1 model for cost paper  * Short descriptive title for the run
  (Please include this header in any models, presentations and papers based on these results)
@@ -832,7 +832,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
   CS             2.80        0.00        0.85       14.26     3638.23        0.19
  Plasma          8.63        0.00        5.57        9.92        1.00
  
- PF Coil Information :
+ PF Coil Information at Peak Current:
  
  coil  current  allowed J  actual J   J   cond. mass   steel mass     field
          (MA)    (A/m2)     (A/m2)  ratio    (kg)          (kg)        (T)
@@ -843,7 +843,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
   PF4   -8.22  7.555E+08  6.000E+06  0.01 9.309E+05   3.625E+05    2.719E+00
   PF5   -5.19  7.737E+08  8.000E+06  0.01 3.992E+05   1.720E+05    2.555E+00
   PF6   -5.19  7.737E+08  8.000E+06  0.01 3.992E+05   1.720E+05    2.555E+00
-  CS  -156.44  4.859E+07  1.215E+07  0.25 7.434E+05   7.336E+05    1.279E+01
+  CS  -156.44  4.859E+07  1.298E+07  0.27 7.434E+05   7.336E+05    1.279E+01
        ------                             ---------   ---------
        224.28                             4.303E+06   2.346E+06
  

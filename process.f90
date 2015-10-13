@@ -287,7 +287,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '407    Release Date :: 2015-09-22'
+       '408    Release Date :: 2015-10-13'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1988,3 +1988,4 @@ end subroutine runtests
 ! 406      #325 New rule for Power supply cost.  May not be complete.
 !          #327 Tweaks to make old cost model work
 ! 407      #304 Section 2 : pump-down model
+! 408      #328 PF coil and CS cross-section and cost

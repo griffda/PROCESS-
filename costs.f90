@@ -1612,6 +1612,7 @@ contains
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  16/10/14 PJK Replaced sccufac usage with input copper fractions
     !+ad_hist  24/11/14 PJK Corrected conductor costs for resistive coils
+    !+ad_hist  13/10/15 MDK Issue #328 Fix conductor costs.
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1709,37 +1710,21 @@ contains
 
     if (iohcl == 1) then
 
-       !  Superconductor ($/m)
-
-       !costpfsc = ucsc(isumatoh) * &
-       !     (sccufac * max(abs(bmaxoh),abs(bmaxoh0)) ) * &
-       !     abs(ric(nohc)/turns(nohc))*1.0D6 / &
-       !     max(abs(cohbop),abs(coheof)) * dcond(isumatoh)
+       !  Superconductor ($/m)  
+       !  Issue #328  Use CS conductor cross-sectional area (m2) 
        if (ipfres == 0) then
-          costpfsc = ucsc(isumatoh) * &
-               awpoh*(1.0D0-fcuohsu)*(1.0D0-vf(nohc)) * &
-               abs(ric(nohc)/turns(nohc))*1.0D6 / &
-               max(abs(cohbop),abs(coheof)) * dcond(isumatoh)
+          costpfsc = ucsc(isumatoh) * awpoh*(1-vfohc)*(1-fcuohsu)/turns(nohc) * dcond(isumatoh)
        else
           costpfsc = 0.0D0
        end if
 
        !  Copper ($/m)
-
-       !costpfcu = uccu * &
-       !     (1.0D0 - sccufac*max(abs(bmaxoh),abs(bmaxoh0)) ) * &
-       !     abs(ric(nohc)/turns(nohc))*1.0D6 / &
-       !     max(abs(cohbop),abs(coheof)) * dcopper
+       
        if (ipfres == 0) then
-          costpfcu = uccu * &
-               awpoh*fcuohsu*(1.0D0-vf(nohc)) * &
-               abs(ric(nohc)/turns(nohc))*1.0D6 / &
-               max(abs(cohbop),abs(coheof)) * dcopper
+          costpfcu = uccu * awpoh*(1-vfohc)*fcuohsu/turns(nohc) * dcopper
        else
-          costpfcu = uccu * &
-               awpoh*(1.0D0-vf(nohc)) * &
-               abs(ric(nohc)/turns(nohc))*1.0D6 / &
-               max(abs(cohbop),abs(coheof)) * dcopper
+          ! MDK I don't know if this is ccorrect as we never use the resistive model
+          costpfcu = uccu * awpoh*(1-vfohc)/turns(nohc) * dcopper
        end if
 
        !  Total cost/metre of superconductor and copper wire (OH coil)
