@@ -7,13 +7,13 @@
  
    Program : process.exe
    Version : 408    Release Date :: 2015-10-13
- Date/time : Tue Oct 13 11:43:34 BST 2015
+ Date/time : Tue Oct 13 13:38:50 BST 2015
       User : mkovari (Michael Kovari)
  Directory : /home/mkovari/PROCESS/develop/tests
  
  **************************************************************************************************************
  
- PROCESS 408 : Run on Tue Oct 13 11:43:34 BST 2015 by Michael Kovari
+ PROCESS 408 : Run on Tue Oct 13 13:38:50 BST 2015 by Michael Kovari
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  demo 1 model for cost paper  * Short descriptive title for the run
  (Please include this header in any models, presentations and papers based on these results)

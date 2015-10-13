@@ -914,7 +914,7 @@ contains
 
     awpoh = areaoh - areaspf
 
-    !  Fudge to ensure awpoh is positive; result is continuous, smooth and
+    !  Issue #97. Fudge to ensure awpoh is positive; result is continuous, smooth and
     !  monotonically decreases
 
     da = 0.0001D0  !  1 cm^2
@@ -2746,11 +2746,11 @@ contains
     if (iohcl /= 0) then
        if (ipfres == 0) then
        ! Issue #328
-          write(outfile,100) ric(nohc),rjpfalw(nohc),max(cohbop,coheof), &
-               (max(cohbop,coheof)/rjpfalw(nohc)),wtc(nohc),wts(nohc), &
+          write(outfile,100) ric(nohc),rjpfalw(nohc),max(abs(cohbop),abs(coheof)), &
+               (max(abs(cohbop),abs(coheof))/rjpfalw(nohc)),wtc(nohc),wts(nohc), &
                bpf(nohc)
        else
-          write(outfile,100) ric(nohc),-1.0D0,max(cohbop,coheof), &
+          write(outfile,100) ric(nohc),-1.0D0,max(abs(cohbop),abs(coheof)), &
                1.0D0,wtc(nohc),wts(nohc),bpf(nohc)
        end if
     end if
