@@ -18,6 +18,8 @@
 import os
 import argparse
 import process_io_lib.mfile as mf
+from process_io_lib.mfile import make_plot_dat
+from process_io_lib.process_dicts import PARAMETER_DEFAULTS
 
 if __name__ == "__main__":
 
@@ -73,18 +75,17 @@ if __name__ == "__main__":
 
         # If user has specified column format
         if args.columns:
-            M.make_plot_dat(mf.PARAMETER_DEFAULTS,
-                            file_format="column")
+            make_plot_dat(M, PARAMETER_DEFAULTS, file_format="column")
 
         # If user has specified row format
         else:
-            M.make_plot_dat(mf.PARAMETER_DEFAULTS)
+            make_plot_dat(M, PARAMETER_DEFAULTS)
     else:
 
         # If user has specified column format
         if args.columns:
-            M.make_plot_dat(INPUT_CONFIG, file_format="column")
+            make_plot_dat(M, INPUT_CONFIG, file_format="column")
 
         # If user has specified row format
         else:
-            M.make_plot_dat(INPUT_CONFIG)
+            make_plot_dat(M, INPUT_CONFIG)

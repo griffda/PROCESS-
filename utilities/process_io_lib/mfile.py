@@ -29,6 +29,7 @@ LOG = logging.getLogger("mfile")
 
 try :
     import process_io_lib.process_dicts
+    from process_io_lib.process_dicts import DICT_NSWEEP2VARNAME
 except ImportError:
     print("The Python dictionaries have not yet been created. Please run \
 'make dicts'!")
@@ -330,12 +331,15 @@ def make_plot_dat(mfile_data, custom_keys, filename="make_plot_dat.out",
 
         # The first two lines contain the scanning variable and the number of
         # scans. These lines are preceded by a # symbol for ease of excluding.
-        plot_dat.write("# Scanning Variable: {}".format(
-                       process_dicts.DICT_SWEEP_VARS
-                       [mfile_data.data["nsweep"].get_scan(-1)] + "\n"))
-        plot_dat.write("# Number of scans: {}".format(
+        try:
+            plot_dat.write("# Scanning Variable: {}".
+                           format(DICT_NSWEEP2VARNAME
+                            [mfile_data.data["nsweep"].get_scan(-1)] + "\n"))
+            plot_dat.write("# Number of scans: {}".format(
                        int(mfile_data.data["isweep"].get_scan(-1)) + "\n"))
-        plot_dat.close()
+            plot_dat.close()
+        except KeyError:
+            print("File has no scan, continuing...")
 
         # The order of searching is set so that the output variables are always
         # in the same order. i.e. searching custom_keys first as it is a list.
@@ -382,7 +386,8 @@ def write_row_mplot_dat(filename, custom_keys, mfile_data):
     # Write row to file.
     if lines != []:
         with open(filename, "a") as plot_dat:
-            plot_dat.write(lines)
+            for line in lines:
+                plot_dat.write(line)
 
 
 def write_column_mplot_dat(filename, custom_keys, mfile_data):
@@ -390,7 +395,11 @@ def write_column_mplot_dat(filename, custom_keys, mfile_data):
 
     var_descriptions = ""
     var_names = ""
-    num_scans = int(mfile_data.data["isweep"].get_scan(-1))
+    try:
+        num_scans = int(mfile_data.data["isweep"].get_scan(-1))
+    except KeyError:
+        num_scans = 1
+
     val_keys = []
     mfile_keys = mfile_data.data.keys()
 
