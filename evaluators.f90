@@ -370,6 +370,7 @@ contains
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  06/10/14 PJK Added orbit loss power
+    !+ad_hist  18/11/15  RK Major radius/burn time optimiser added
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -450,6 +451,9 @@ contains
        if (iavail /= 1) call report_error(23)
 
        fc = sgn * cfactr
+
+    case (16)  !  major radius/burn time
+       fc = sgn * ( 0.95d0 * (rmajor/9.0d0) + 0.05d0 * (7200.d0/tburn) )
 
     case default
        idiags(1) = iab ; call report_error(24)

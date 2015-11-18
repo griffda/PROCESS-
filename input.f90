@@ -380,7 +380,8 @@ contains
     !+ad_hist  19/05/15 PJK Variable names in calls now lowercase
     !+ad_hist  20/05/15 RK  Added iscdens, fgwped
     !+ad_hist  11/06/15 MDK Added spiral_od and spiral_id
-    !+ad_hist  12/08/15 MDK vacuum_model and associated variables #304    
+    !+ad_hist  12/08/15 MDK vacuum_model and associated variables #304
+    !+ad_hist  18/11/15 RK  zeffmax and fzeffmax for constraint equation 64 
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -983,6 +984,9 @@ contains
        case ('fwalld')
           call parse_real_variable('fwalld', fwalld, 0.001D0, 10.0D0, &
                'F-value for wall load limit')
+       case ('fzeffmax')
+          call parse_real_variable('fzeffmax', fzeffmax, 0.001D0, 1.0D0, &
+               'f-value for Zeff limit equation')
        case ('gammax')
           call parse_real_variable('gammax', gammax, 0.01D0, 10.0D0, &
                'Maximum current drive gamma (A/W-m2)')
@@ -1022,6 +1026,9 @@ contains
        case ('walalw')
           call parse_real_variable('walalw', walalw, 0.001D0, 50.0D0, &
                'Allowable wall load (MW/m2)')
+       case ('zeffmax')
+          call parse_real_variable('zeffmax', zeffmax, 1.0D0, 10.0D0, &
+               'Allowable Zeff')
 
           !  Current drive settings
 

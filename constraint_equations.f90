@@ -159,6 +159,7 @@ contains
     !+ad_hist  25/11/14 JM  Added new eqn 61
     !+ad_hist  06/08/15 MDK Eqn 62: Issue #213 - lower limit on taup/taueff, the ratio of particle to energy confinement times
     !+ad_hist  26/08/15 MDK Eqn 63: Issue #304 - upper limit on niterpump (vacuum_model = simple)
+    !+ad_hist  18/11/15 RK  Eqn 64: Added constrain equation to limit Zeff
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -977,6 +978,15 @@ contains
           if (present(con)) then
              con(i) = tfno
              err(i) = tfno * cc(i)
+             symbol(i) = '<'
+             units(i) = ''
+          end if
+	  
+       case (64)  !  Upper limit on Zeff
+          cc(i) = 1.0D0 - fzeffmax * (zeffmax/zeff)
+	  if (present(con)) then
+             con(i) = zeffmax
+             err(i) = zeffmax * cc(i)
              symbol(i) = '<'
              units(i) = ''
           end if

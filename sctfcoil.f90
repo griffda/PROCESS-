@@ -2052,6 +2052,7 @@ contains
     !+ad_hisc               Corrected problems with jcrit and tcrit formulae
     !+ad_hist  08/10/14 PJK Clarified variable names; added Bottura reference
     !+ad_hist  12/11/14 PJK Added warning messages if limits reached
+    !+ad_hist  18/11/15 RK  Updated to latest WPMAG coefficients (personal communication from Louis Zani describing TFEU4)
     !+ad_stat  Okay
     !+ad_docs  $J_C(B,T,\epsilon)$ Parameterization for ITER Nb3Sn production,
     !+ad_docc    L. Bottura, CERN-ITER Collaboration Report, Version 2, April 2nd 2008
@@ -2074,13 +2075,17 @@ contains
 
     !  Parameters named in Bottura
 
-    real(kind(1.0D0)), parameter :: csc = 16500.0D6 !  scaling constant C
+    !real(kind(1.0D0)), parameter :: csc = 16500.0D6 !  scaling constant C
+    real(kind(1.0D0)), parameter :: csc = 19922.0D6 !  scaling constant C
     real(kind(1.0D0)), parameter :: p = 0.63D0      !  low field exponent p
     real(kind(1.0D0)), parameter :: q = 2.1D0       !  high field exponent q
-    real(kind(1.0D0)), parameter :: ca1 = 44.0D0    !  strain fitting constant C_{a1}
-    real(kind(1.0D0)), parameter :: ca2 = 4.0D0     !  strain fitting constant C_{a2}
+    !real(kind(1.0D0)), parameter :: ca1 = 44.0D0    !  strain fitting constant C_{a1}
+    real(kind(1.0D0)), parameter :: ca1 = 44.48D0    !  strain fitting constant C_{a1}
+    !real(kind(1.0D0)), parameter :: ca2 = 4.0D0     !  strain fitting constant C_{a2}
+    real(kind(1.0D0)), parameter :: ca2 = 0.0D0     !  strain fitting constant C_{a2}
     real(kind(1.0D0)), parameter :: eps0a = 0.00256D0  !  epsilon_{0,a}
-    real(kind(1.0D0)), parameter :: epsmax = -0.003253075D0  !  epsilon_{max} (not used)
+    !real(kind(1.0D0)), parameter :: epsmax = -0.003253075D0  !  epsilon_{max} (not used)
+    real(kind(1.0D0)), parameter :: epsmax = -1.1D-3  !  epsilon_{max} (not used)
 
     real(kind(1.0D0)), parameter :: diter = 0.82D0  !  ITER strand diameter (mm)
     real(kind(1.0D0)), parameter :: cuiter = 0.5D0  !  ITER strand copper fraction
@@ -2091,7 +2096,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  $\epsilon_{sh}$
-
+    
     epssh = (ca2*eps0a)/(sqrt(ca1**2 - ca2**2))
 
     !  Strain function $s(\epsilon)$

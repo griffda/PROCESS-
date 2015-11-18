@@ -76,6 +76,9 @@ module numerics
   !+ad_hist  11/06/15 MDK Add active_constraints(ipeqns) : Boolean array showing which constraints are active.
   !+ad_hist  05/08/15 MDK Add ralpne as an iteration variable. Constraint 62 on taup/taueff, the ratio of particle to energy confinement times
   !+ad_hist  26/08/15 MDK fniterpump as iteration variable 11, constraint 63 niterpump < tfno
+  !+ad_hist  18/11/15  RK Added new FoM for minimising RMAJOR and maximising TBURN and
+  !+ad_hist               added constraint equation to limit Z_eff, including new iteration
+  !+ad_hist		  variable 112 (fzeffmax)
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -90,12 +93,12 @@ module numerics
   
   public
 
-  !+ad_vars  ipnvars /111/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 111
-  !+ad_vars  ipeqns /63/ FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 63
-  !+ad_vars  ipnfoms /15/ FIX : number of available figures of merit
-  integer, parameter :: ipnfoms = 15
+  !+ad_vars  ipnvars /112/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 112
+  !+ad_vars  ipeqns /64/ FIX : number of constraint equations available
+  integer, parameter :: ipeqns = 64
+  !+ad_vars  ipnfoms /16/ FIX : number of available figures of merit
+  integer, parameter :: ipnfoms = 16
 
   integer, parameter :: ipvlam  = ipeqns+2*ipnvars+1
   integer, parameter :: iptnt   = (ipeqns*(3*ipeqns+13))/2
@@ -145,7 +148,10 @@ module numerics
        'pulse length.         ', &
        !+ad_varc  <LI> (15) plant availability factor (N.B. requires
        !+ad_varc            iavail=1 to be set) </UL>
-       'plant availability.   ' /)
+       'plant availability.   ', &
+       !+ad_varc  <LI> (16) linear combination of major radius (minimised) and pulse length (maximised)
+       !+ad_varc              note: FoM should be minimised only!
+       'min R0, max tau_burn. ' /)
 
   !+ad_vars  ncalls : number of function calls during solution
   integer :: ncalls = 0
@@ -238,7 +244,8 @@ module numerics
        0,  &  !  60
        0,  &  !  61
        0,  &  !  62
-       0   &  !  63
+       0,  &  !  63
+       0   &  !  64
        /)
   
        
@@ -374,7 +381,9 @@ module numerics
        !+ad_varc  <LI> (62) taup/taueff, the ratio of particle to energy confinement times
        'taup/taueff                      ', &
        !+ad_varc  <LI> (63) The number of ITER-like vacuum pumps niterpump < tfno </UL>
-       'number of ITER-like vacuum pumps '  &
+       'number of ITER-like vacuum pumps ',  &
+       !+ad_varc  <LI> (64) Zeff less than or equal to zeffmax </UL>
+       'Zeff limit                       '  &
        /)  !  Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
        ! The last ad_varc line ends with the html tag "</UL>".
@@ -493,7 +502,8 @@ module numerics
        0,  &  !  108 
        0,  &  !  109
        0,  &  !  110
-       0   &  !  111
+       0,  &  !  111
+       0   &  !  112
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -723,7 +733,9 @@ module numerics
        'ftaulimit', &
        !+ad_varc  <LI> (111) fniterpump: f-value for constraint that  
        !+ad_varc       number of vacuum pumps <  TF coils</UL>
-       'fniterpump'  &
+       'fniterpump',  &
+       !+ad_varc  <LI> (112) fzeffmax: f-value for max Zeff </UL> 
+       'fzeffmax'  &
        /)
   
   character(len=9), dimension(:), allocatable :: name_xc
@@ -852,7 +864,8 @@ module numerics
        0.060D0, &  !  108
        0.050D0, &  !  109
        0.001D0, &  !  110
-       0.001D0  &  !  111
+       0.001D0, &  !  111
+       0.001D0  &  !  112
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -968,7 +981,8 @@ module numerics
        1.000D0, &  !  108
        0.150D0, &  !  109
        1.000D0, &  !  110
-       1.000D0  &  !  111
+       1.000D0, &  !  111
+       1.000D0  &  !  112
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

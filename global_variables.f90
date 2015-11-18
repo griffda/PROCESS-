@@ -3288,6 +3288,7 @@ module constraint_variables
   !+ad_hist  06/10/14 PJK Added fnbshinef, nbshinefmax
   !+ad_hist  11/11/14 PJK Added ftmargoh
   !+ad_hist  06/08/15 MDK ftaulimit
+  !+ad_hist  18/11/15 RK  fzeffmax and zeffmax
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -3458,6 +3459,9 @@ module constraint_variables
   !+ad_vars  fwalld /1.0/ : f-value for maximum wall load
   !+ad_varc                 (constraint equation 8, iteration variable 14)
   real(kind(1.0D0)) :: fwalld = 1.0D0
+  !+ad_vars  fzeffmax /1.0/ : f-value for mazimum zeff
+  !+ad_varc                 (constraint equation 64, iteration variable 112)
+  real(kind(1.0D0)) :: fzeffmax = 1.0D0
   !+ad_vars  gammax /2.0/ : maximum current drive gamma
   !+ad_varc                 (constraint equation 37)
   real(kind(1.0D0)) :: gammax = 2.0D0
@@ -3516,6 +3520,9 @@ module constraint_variables
   !+ad_vars  fniterpump /1.0/ : f-value for constraint that number of pumps < tfno
   !+ad_varc                   (constraint equation 63, iteration variable 111)
   real(kind(1.0D0)) :: fniterpump = 1.0D0
+  !+ad_vars  zeffmax /3.6/ : maximum value for Zeff
+  !+ad_varc                   (constraint equation 64)
+  real(kind(1.0D0)) :: zeffmax = 3.6D0
 
 end module constraint_variables
 
