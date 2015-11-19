@@ -1274,6 +1274,9 @@ contains
        case ('ddwi')
           call parse_real_variable('ddwi', ddwi, 0.0D0, 10.0D0, &
                'Vacuum vessel thickness (m)')
+       case ('fcspc')
+          call parse_real_variable('fcspc', fcspc, 0.0D0, 1.0D0, &
+               'Fraction of space occupied by CS pre-comp structure')
        case ('fmsbc')
           call parse_real_variable('fmsbc', fmsbc, 0.0D0, 1.0D0, &
                'Martensitic frac of steel in buck cyl')
@@ -1298,6 +1301,9 @@ contains
        case ('fmstf')
           call parse_real_variable('fmstf', fmstf, 0.0D0, 1.0D0, &
                'Martensitic frac of steel in TF coil')
+       case ('fseppc')
+          call parse_real_variable('fseppc', fseppc, 1.0D6, 1.0D9, &
+               'CS separation force held by CS pre-comp structure')
        case ('fwith')
           call parse_real_variable('fwith', fwith, 0.0D0, 10.0D0, &
                'Inboard first wall thickness, initial estimate (m)')
@@ -1334,24 +1340,36 @@ contains
        case ('shldith')
           call parse_real_variable('shldith', shldith, 0.0D0, 10.0D0, &
                'Inboard shield thickness (m)')
+       case ('shldlth')
+          call parse_real_variable('shldlth', shldlth, 0.0D0, 10.0D0, &
+               'Lower (divertor) shield thickness (m)')
        case ('shldoth')
           call parse_real_variable('shldoth', shldoth, 0.0D0, 10.0D0, &
                'Outboard shield thickness (m)')
        case ('shldtth')
           call parse_real_variable('shldtth', shldtth, 0.0D0, 10.0D0, &
                'Top shield thickness (m)')
+       case ('sigallpc')
+          call parse_real_variable('sigallpc', sigallpc, 0.0D1, 1.0D9, &
+               'Allowable stress in CS pre-comp structure (Pa)')
        case ('tfcth')
           call parse_real_variable('tfcth', tfcth, 0.0D0, 10.0D0, &
                'TF coil thickness (m)')
        case ('tfootfi')
           call parse_real_variable('tfootfi', tfootfi, 0.2D0, 5.0D0, &
                'TFC outboard/inboard leg thickness')
+       case ('thshield')
+          call parse_real_variable('thshield', thshield, 0.0D0, 10.0D0, &
+               'TF/VV thermal shield thickness (m)')
        case ('vgaptf')
           call parse_real_variable('vgaptf', vgaptf, 0.0D0, 10.0D0, &
                'Vert gap between x-pnt and divertor (m)')
        case ('vgap2')
           call parse_real_variable('vgap2', vgap2, 0.0D0, 10.0D0, &
                'Vert gap between TF coil and shield (m)')
+       case ('vgaptop')
+          call parse_real_variable('vgaptop', vgaptop, 0.0D0, 10.0D0, &
+               'Top vert gap between plasma and first wall (m)')
 
           !  TF coil settings
 

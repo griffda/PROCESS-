@@ -2636,6 +2636,7 @@ module build_variables
   !+ad_hist  24/06/14 PJK Removed bcylth
   !+ad_hist  03/09/14 PJK Added clhsf
   !+ad_hist  17/09/14 PJK Changed default values
+  !+ad_hist  19/11/15 RK  Added precompression variables, thshield, vgaptop, shldlth
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2691,6 +2692,8 @@ module build_variables
   real(kind(1.0D0)) :: ddwex = 0.07D0
   !+ad_vars  ddwi /0.07/ : vacuum vessel thickness (TF coil / shield) (m)
   real(kind(1.0D0)) :: ddwi = 0.07D0
+  !+ad_vars  fcspc /0.6/ : Fraction of space occupied by CS pre-compression structure
+  real(kind(1.0D0)) :: fcspc = 0.6D0
   !+ad_vars  fmsbc /0.0/ : Martensitic fraction of steel in (non-existent!) bucking cylinder
   real(kind(1.0D0)) :: fmsbc = 0.0D0
   !+ad_vars  fmsbl /0.0/ : Martensitic fraction of steel in blanket
@@ -2707,6 +2710,8 @@ module build_variables
   real(kind(1.0D0)) :: fmssh = 0.0D0
   !+ad_vars  fmstf /0.0/ : Martensitic fraction of steel in TF coil
   real(kind(1.0D0)) :: fmstf = 0.0D0
+  !+ad_vars  fseppc /3.5d8/ : Separation force in CS coil pre-compression structure
+  real(kind(1.0D0)) :: fseppc = 3.5D8
   !+ad_vars  fwarea : first wall total surface area (m2)
   real(kind(1.0D0)) :: fwarea = 0.0D0
   !+ad_vars  fwareaib : inboard first wall surface area (m2)
@@ -2772,12 +2777,16 @@ module build_variables
   !+ad_vars  shldith /0.69/ : inboard shield thickness (m)
   !+ad_varc                   (iteration variable 93)
   real(kind(1.0D0)) :: shldith = 0.69D0
+  !+ad_vars  shldlth /0.7/ : lower (under divertor) shield thickness (m)
+   real(kind(1.0D0)) :: shldlth = 0.7D0
   !+ad_vars  shldoth /1.05/ : outboard shield thickness (m)
   !+ad_varc                   (iteration variable 94)
   real(kind(1.0D0)) :: shldoth = 1.05D0
   !+ad_vars  shldtth /0.60/ : upper/lower shield thickness (m);
   !+ad_varc                   calculated if blktmodel > 0
   real(kind(1.0D0)) :: shldtth = 0.6D0
+  !+ad_vars  sigallpc /3.0d8/ : allowable stress in CSpre-compression structure (Pa);
+  real(kind(1.0D0)) :: sigallpc = 3.0D8
   !+ad_vars  tfcth /1.173/ : inboard TF coil thickness, (centrepost for ST) (m)
   !+ad_varc                (calculated for stellarators)
   !+ad_varc                (iteration variable 13)
@@ -2788,6 +2797,8 @@ module build_variables
   real(kind(1.0D0)) :: tfootfi = 1.19D0
   !+ad_vars  tfthko : outboard TF coil thickness (m)
   real(kind(1.0D0)) :: tfthko = 0.0D0
+  !+ad_vars  thshield /0.02/ : TF-VV thermal shield thickness (m)
+  real(kind(1.0D0)) :: thshield = 0.02D0
   !+ad_vars  vgap : (see vgaptf)
   real(kind(1.0D0)) :: vgap = 0.0D0
   !+ad_vars  vgap2 /0.163/ : vertical gap between vacuum vessel and TF coil (m)
@@ -2795,6 +2806,8 @@ module build_variables
   !+ad_vars  vgaptf /0.0/ : vertical gap between x-point and divertor (m)
   !+ad_varc                (if = 0, it is calculated)
   real(kind(1.0D0)) :: vgaptf = 0.0D0
+  !+ad_vars  vgaptop /0.60/ : vertical gap between top of plasma and first wall (m)
+  real(kind(1.0D0)) :: vgaptop = 0.60D0
 
 end module build_variables
 
