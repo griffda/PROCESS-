@@ -185,7 +185,7 @@ contains
 
     !  Radius to centre of outboard TF coil legs
 
-    rtot = rsldo + ddwi + gapomin + 0.5D0*tfthko
+    rtot = rsldo + ddwi + gapomin + thshield + 0.5D0*tfthko
 
     !  Check ripple
 
@@ -195,7 +195,7 @@ contains
     !  If the ripple is too large then move the outboard TF coil leg
     if (rtotl > rtot) then
        rtot = rtotl
-       gapsto = rtot - 0.5D0*tfthko - ddwi - rsldo
+       gapsto = rtot - 0.5D0*tfthko - ddwi - rsldo - thshield
     else
        gapsto = gapomin
     end if
