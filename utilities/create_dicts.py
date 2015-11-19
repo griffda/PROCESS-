@@ -490,6 +490,55 @@ def dict_ixc_full():
 
     return di
 
+
+def dict_icc_full():
+    """Function to return a dictionary matching str(icc_no) to a dictionary
+       containing the name of that constraint equation. Looks in
+       numerics.f90 at !+ad_varc lines in lablcc to get icc_no and
+       variable names.
+
+       Example of a lablxc line we are looking for:
+           !+ad_varc  <LI> ( 5) * beta
+
+       Example dictionary entry:
+           DICT_IXC_FULL['5'] = {'name' : 'beta'}
+    """
+
+    di = dict()
+
+    # get slice of file from 'lablxc = (/' to '/)'
+    lcctext = slice_file(SOURCEDIR + "/numerics.f90", r"lablcc = \(/", r"/\)")
+
+    regexp = r"""
+               !\+ad_varc       #look for !+ad_varc
+
+               .*?              #irrelevant stuff until open brackets
+
+               \(\s*(\d+)\s*\)  #an integer in brackets possibly bounded by
+                                #whitespace. Capture the number in group 1
+
+               \s*\*?\s*        #whitespace and a possible asterix
+
+               ([\w ]+)        #the name of the variable should be captured
+                               #in group 2
+              """
+    lcc = []
+    #ignore first and last lines
+    for line in lcctext[1:-1]:
+        match = re.search(regexp, line, re.VERBOSE)
+        if match:
+            num = int(match.group(1))
+            name = match.group(2).strip()
+            lcc.append(name)
+            assert num == len(lcc)
+
+    for i in range(len(lcc)):
+        assign = {"name" : lcc[i]}
+        di[str(i+1)] = assign
+
+    return di
+
+
 def dict_default():
     """Function to return a dictionary mapping input variable names to their
        default values. Looks in every file in the source directory for
@@ -944,6 +993,18 @@ def print_ixc():
     print_dict(ixc_simple_rev, "DICT_IXC_SIMPLE_REV", comment)
 
 
+def print_icc():
+    """Prints:
+        DICT_ICC_FULL
+    """
+
+    #lambda to sort by integer value of key
+    lam = lambda x: int(x[0])
+    icc_full = dict_icc_full()
+    comment = "Dictionary mapping icc no to name"
+    print_dict(icc_full, "DICT_ICC_FULL", comment, lam, "defaultdict(dict)")
+
+
 def print_default():
     """Prints:
         DICT_DEFAULT
@@ -999,6 +1060,7 @@ def print_all():
     print_hard_coded()
     print_ixc2nsweep()
     print_var_type()
+    print_icc()
     print_ixc()
     print_default()
     print_input_bounds()
