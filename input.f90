@@ -1358,6 +1358,9 @@ contains
        case ('tfootfi')
           call parse_real_variable('tfootfi', tfootfi, 0.2D0, 5.0D0, &
                'TFC outboard/inboard leg thickness')
+       case ('tftsgap')
+          call parse_real_variable('tftsgap', tftsgap, 0.0D0, 5.0D0, &
+               'Minimum gap between TF and thermal shield for manufacturing etc. (m)')
        case ('thshield')
           call parse_real_variable('thshield', thshield, 0.0D0, 10.0D0, &
                'TF/VV thermal shield thickness (m)')
@@ -1370,6 +1373,9 @@ contains
        case ('vgaptop')
           call parse_real_variable('vgaptop', vgaptop, 0.0D0, 10.0D0, &
                'Top vert gap between plasma and first wall (m)')
+       case ('vvblgap')
+          call parse_real_variable('vvblgap', vvblgap, 0.0D0, 5.0D0, &
+               'Gap between vacuum vessel and blanket (m)')
 
           !  TF coil settings
 

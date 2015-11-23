@@ -2636,7 +2636,7 @@ module build_variables
   !+ad_hist  24/06/14 PJK Removed bcylth
   !+ad_hist  03/09/14 PJK Added clhsf
   !+ad_hist  17/09/14 PJK Changed default values
-  !+ad_hist  19/11/15 RK  Added precompression variables, thshield, vgaptop, shldlth
+  !+ad_hist  19/11/15 RK  Added precompression variables, thshield, vgaptop, shldlth, tftsgap, vvblgap
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2797,8 +2797,10 @@ module build_variables
   real(kind(1.0D0)) :: tfootfi = 1.19D0
   !+ad_vars  tfthko : outboard TF coil thickness (m)
   real(kind(1.0D0)) :: tfthko = 0.0D0
-  !+ad_vars  thshield /0.02/ : TF-VV thermal shield thickness (m)
-  real(kind(1.0D0)) :: thshield = 0.02D0
+  !+ad_vars  tftsgap /0.05/ : manufacturing/thermal expansion gap between TF and thermal shield (m)
+  real(kind(1.0D0)) :: tftsgap = 0.05D0
+  !+ad_vars  thshield /0.05/ : TF-VV thermal shield thickness (m)
+  real(kind(1.0D0)) :: thshield = 0.05D0
   !+ad_vars  vgap : (see vgaptf)
   real(kind(1.0D0)) :: vgap = 0.0D0
   !+ad_vars  vgap2 /0.163/ : vertical gap between vacuum vessel and TF coil (m)
@@ -2808,6 +2810,8 @@ module build_variables
   real(kind(1.0D0)) :: vgaptf = 0.0D0
   !+ad_vars  vgaptop /0.60/ : vertical gap between top of plasma and first wall (m)
   real(kind(1.0D0)) :: vgaptop = 0.60D0
+  !+ad_vars  vvblgap /0.05/ : gap between vacuum vessel and blanket (m)
+  real(kind(1.0D0)) :: vvblgap = 0.05D0
 
 end module build_variables
 

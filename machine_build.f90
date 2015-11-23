@@ -160,12 +160,12 @@ contains
     
     ! Additional gap spacing due to flat surfaces of TF:
     
-    deltf = rbldtotf * ((1.0d0 / cos(pi/tfno)) - 1.0d0)
+    deltf = rbldtotf * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
 
     !  Radial build to centre of plasma (should be equal to rmajor)
 
-    rbld = rbldtotf + deltf + gapds + thshield + ddwi + &
-         shldith + blnkith + fwith + scrapli + rminor
+    rbld = rbldtotf + deltf + thshield + gapds + ddwi + &
+         shldith + vvblgap + blnkith + fwith + scrapli + rminor
 
     !  Radius to inner edge of inboard shield
 
@@ -185,7 +185,7 @@ contains
 
     !  Radius to centre of outboard TF coil legs
 
-    rtot = rsldo + ddwi + gapomin + thshield + 0.5D0*tfthko
+    rtot = rsldo + vvblgap + ddwi + gapomin + thshield + tftsgap + 0.5D0*tfthko
 
     !  Check ripple
 
@@ -195,7 +195,7 @@ contains
     !  If the ripple is too large then move the outboard TF coil leg
     if (rtotl > rtot) then
        rtot = rtotl
-       gapsto = rtot - 0.5D0*tfthko - ddwi - rsldo - thshield
+       gapsto = rtot - 0.5D0*tfthko - ddwi - rsldo - thshield - tftsgap
     else
        gapsto = gapomin
     end if
@@ -332,9 +332,13 @@ contains
        call obuild(outfile,'Gap',gapoh,radius)
        call ovarre(mfile,'CS to TF coil radial gap (m)','(gapoh)',gapoh)
 
-       radius = radius + tfcth + deltf
-       call obuild(outfile,'TF coil inboard leg (angle-corrected)',tfcth + deltf,radius)
-       call ovarre(mfile,'TF coil inboard leg space (m)','(tfcth+deltf)',tfcth+deltf)
+       radius = radius + tfcth
+       call obuild(outfile,'TF coil inboard leg',tfcth,radius)
+       call ovarre(mfile,'TF coil inboard leg space (m)','(tfcth)',tfcth)
+       
+       radius = radius + deltf
+       call obuild(outfile,'Gap',deltf,radius)
+       call ovarre(mfile,'TF coil inboard leg space (m)','(deltf)',deltf)
 
     end if
     
@@ -348,7 +352,11 @@ contains
 
     radius = radius + ddwi + shldith
     call obuild(outfile,'Vacuum vessel',ddwi + shldith,radius)
-    call ovarre(mfile,'Inner vacuum vessel radial thickness (m)','(ddwi+shldith)',ddwi)
+    call ovarre(mfile,'Inner vacuum vessel radial thickness (m)','(ddwi+shldith)',ddwi+shldith)
+    
+    radius = radius + vvblgap
+    call obuild(outfile,'Gap',vvblgap,radius)
+    call ovarre(mfile,'Gap (m)','(vvblgap)',vvblgap)
 
     radius = radius + blnkith
     call obuild(outfile,'Inboard blanket',blnkith,radius)
@@ -379,10 +387,14 @@ contains
     radius = radius + blnkoth
     call obuild(outfile,'Outboard blanket',blnkoth,radius)
     call ovarre(mfile,'Outboard blanket radial thickness (m)','(blnkoth)',blnkoth)
+    
+    radius = radius + vvblgap
+    call obuild(outfile,'Gap',vvblgap,radius)
+    call ovarre(mfile,'Gap (m)','(vvblgap)',vvblgap)
 
     radius = radius + ddwi+shldoth
     call obuild(outfile,'Vacuum vessel',ddwi+shldoth,radius)
-    call ovarre(mfile,'Outer vacuum vessel radial thickness (m)','(ddwi+shldoth)',ddwi)
+    call ovarre(mfile,'Outer vacuum vessel radial thickness (m)','(ddwi+shldoth)',ddwi+shldoth)
 
     radius = radius + gapsto
     call obuild(outfile,'Gap',gapsto,radius)
@@ -391,6 +403,10 @@ contains
     radius = radius + thshield
     call obuild(outfile,'Thermal shield',thshield,radius)
     call ovarre(mfile,'Thermal shield (m)','(thshield)',thshield)
+    
+    radius = radius + tftsgap
+    call obuild(outfile,'Gap',tftsgap,radius)
+    call ovarre(mfile,'Gap (m)','(tftsgap)',tftsgap)
 
     radius = radius + tfthko
     call obuild(outfile,'TF coil outboard leg',tfthko,radius)
@@ -444,11 +460,14 @@ contains
 
        write(outfile,20)
 
-       vbuild = tfcth + thshield + vgap2 + ddwi + shldtth + blnktth + &
+       vbuild = tfcth + tftsgap + thshield + vgap2 + ddwi + vvblgap + shldtth + blnktth + &
             0.5D0*(fwith+fwoth) + vgaptop + rminor*kappa
      
        call obuild(outfile,'TF coil',tfcth,vbuild)
        vbuild = vbuild - tfcth
+       
+       call obuild(outfile,'Gap',tftsgap,vbuild)
+       vbuild = vbuild - tftsgap
        
        call obuild(outfile,'Thermal shield',thshield,vbuild)
        vbuild = vbuild - thshield
@@ -460,6 +479,9 @@ contains
        call obuild(outfile,'Vacuum vessel',ddwi+shldtth,vbuild)
        vbuild = vbuild - ddwi - shldtth
        call ovarre(mfile,'Top vacuum vessel thickness (m)','(ddwi+shldtth)',ddwi+shldtth)
+       
+       call obuild(outfile,'Gap',vvblgap,vbuild)
+       vbuild = vbuild - vvblgap
 
        call obuild(outfile,'Top blanket',blnktth,vbuild)
        call ovarre(mfile,'Top blanket vertical thickness (m)','(blnktth)',blnktth)
@@ -504,6 +526,9 @@ contains
        
        call obuild(outfile,'Thermal shield',thshield,vbuild)
        vbuild = vbuild - thshield
+
+       call obuild(outfile,'Gap',tftsgap,vbuild)
+       vbuild = vbuild - tftsgap
 
        vbuild = vbuild - tfcth
        call obuild(nout,'TF coil',tfcth,vbuild)
@@ -568,7 +593,7 @@ contains
     !  Height to inside edge of TF coil
 
     if (irfp == 0) then
-       hmax = rminor*kappa + vgap + divfix + shldlth + ddwi + vgap2 + thshield
+       hmax = rminor*kappa + vgap + divfix + shldlth + ddwi + vgap2 + thshield + tftsgap
     else
        !  RFP: TF coil is assumed circular
        hmax = 0.5D0 * &
@@ -582,7 +607,7 @@ contains
        hpfu = hmax + tfcth
        hpfdif = 0.0D0
     else
-       hpfu = tfcth + thshield + vgap2 + ddwi + shldtth + blnktth + &
+       hpfu = tfcth + tftsgap + thshield + vgap2 + ddwi + shldtth + vvblgap + blnktth + &
             0.5D0*(fwith+fwoth) + vgaptop + rminor*kappa
        hpfdif = (hpfu - (hmax+tfcth)) / 2.0D0
     end if
