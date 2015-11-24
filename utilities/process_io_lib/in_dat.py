@@ -22,6 +22,9 @@ except ImportError:
 # Dictionary for ixc -> name
 from process_io_lib.process_dicts import DICT_IXC_SIMPLE
 
+# Dictionary for icc -> name
+from process_io_lib.process_dicts import DICT_ICC_FULL
+
 # Dictionary for variable modules
 from process_io_lib.process_dicts import DICT_MODULE
 
@@ -400,6 +403,7 @@ def write_title(title, out_file):
     :return: Nothing
     """
 
+    out_file.write("\n")
     # Insert title name into line of fixed width
     formatted_title = "*" + title.center(50, "-") + "*\n"
 
@@ -420,7 +424,7 @@ def write_constraint_equations(data, out_file):
     write_title("Constraint Equations", out_file)
 
     # Write number of equations to file
-    neqns_line = "neqns = {0} * {1}\n\n".format(data["neqns"].value,
+    neqns_line = "neqns = {0} * {1}\n".format(data["neqns"].value,
                                                 data["neqns"].comment)
     out_file.write(neqns_line)
 
@@ -430,7 +434,9 @@ def write_constraint_equations(data, out_file):
     # Write constraints to file
     counter = 1
     for constraint in constraint_equations:
-        constraint_line = "icc({0}) = {1}\n\n".format(counter, constraint)
+        comment = DICT_ICC_FULL[str(constraint)]["name"]
+        constraint_line = "icc({0}) = {1} * {2}\n".format(counter,
+                                                            constraint, comment)
         out_file.write(constraint_line)
         counter += 1
 
@@ -450,7 +456,7 @@ def write_iteration_variables(data, out_file):
     iteration_variables = data["ixc"].value
 
     # Write nvar
-    nvar_line = "nvar = {0} * {1}\n\n".format(data["nvar"].value,
+    nvar_line = "nvar = {0} * {1}\n".format(data["nvar"].value,
                                               data["nvar"].comment)
     out_file.write(nvar_line)
 
@@ -459,7 +465,7 @@ def write_iteration_variables(data, out_file):
     for variable in iteration_variables:
         comment = DICT_IXC_SIMPLE[str(variable).replace(",", ";").
                                   replace(".", ";").replace(":", ";")]
-        variable_line = "ixc({0}) = {1} * {2}\n\n".format(counter, variable,
+        variable_line = "ixc({0}) = {1} * {2}\n".format(counter, variable,
                                                           comment)
         out_file.write(variable_line)
         counter += 1
@@ -469,14 +475,14 @@ def write_iteration_variables(data, out_file):
 
             # Lower bound
             if "l" in data["bounds"].value[str(variable)].keys():
-                lower_bound_line = "boundl({0}) = {1}\n\n".\
+                lower_bound_line = "boundl({0}) = {1}\n".\
                     format(variable, data["bounds"].value[str(variable)]["l"].
                            replace("e", "d"))
                 out_file.write(lower_bound_line)
 
             # Upper bound
             if "u" in data["bounds"].value[str(variable)].keys():
-                upper_bound_line = "boundu({0}) = {1}\n\n".\
+                upper_bound_line = "boundu({0}) = {1}\n".\
                     format(variable, data["bounds"].value[str(variable)]["u"].
                            replace("e", "d"))
                 out_file.write(upper_bound_line)
@@ -507,18 +513,18 @@ def write_parameters(data, out_file):
                     for k in range(len(data["fimp"].get_value)):
                         tmp_fimp_name = "fimp({0})".format(str(k+1).zfill(1))
                         tmp_fimp_value = data["fimp"].get_value[k]
-                        parameter_line = "{0} = {1}\n\n".\
+                        parameter_line = "{0} = {1}\n".\
                             format(tmp_fimp_name, tmp_fimp_value)
                         out_file.write(parameter_line)
                 elif item == "zref":
                     for j in range(len(data["zref"].get_value)):
                         tmp_zref_name = "zref({0})".format(str(j+1).zfill(1))
                         tmp_zref_value = data["zref"].get_value[j]
-                        parameter_line = "{0} = {1}\n\n".\
+                        parameter_line = "{0} = {1}\n".\
                             format(tmp_zref_name, tmp_zref_value)
                         out_file.write(parameter_line)
                 elif "vmec" in item:
-                    parameter_line = "{0} = {1}\n\n".format(item,
+                    parameter_line = "{0} = {1}\n".format(item,
                                                             data[item].value)
                     out_file.write(parameter_line)
                 else:
@@ -543,7 +549,7 @@ def write_parameters(data, out_file):
                     except:
                         pass
 
-                    parameter_line = "{0} = {1} * {2}\n\n". \
+                    parameter_line = "{0} = {1} * {2}\n". \
                         format(item.ljust(8), line_value,
                                data[item].comment.split("\n")[0])
                     out_file.write(parameter_line)
