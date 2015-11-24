@@ -334,11 +334,11 @@ contains
 
        radius = radius + tfcth
        call obuild(outfile,'TF coil inboard leg',tfcth,radius)
-       call ovarre(mfile,'TF coil inboard leg space (m)','(tfcth)',tfcth)
+       call ovarre(mfile,'TF coil inboard leg (m)','(tfcth)',tfcth)
        
        radius = radius + deltf
        call obuild(outfile,'Gap',deltf,radius)
-       call ovarre(mfile,'TF coil inboard leg space (m)','(deltf)',deltf)
+       call ovarre(mfile,'TF coil inboard leg gap (m)','(deltf)',deltf)
 
     end if
     
