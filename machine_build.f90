@@ -391,7 +391,6 @@ contains
     
     radius = radius + vvblgap
     call obuild(outfile,'Gap',vvblgap,radius)
-    call ovarre(mfile,'Gap (m)','(vvblgap)',vvblgap)
 
     radius = radius + ddwi+shldoth
     call obuild(outfile,'Vacuum vessel (and shielding)',ddwi+shldoth,radius)
@@ -403,7 +402,6 @@ contains
 
     radius = radius + thshield
     call obuild(outfile,'Thermal shield',thshield,radius)
-    call ovarre(mfile,'Thermal shield (m)','(thshield)',thshield)
     
     radius = radius + tftsgap
     call obuild(outfile,'Gap',tftsgap,radius)
