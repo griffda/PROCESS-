@@ -351,8 +351,9 @@ contains
     call ovarre(mfile,'TF to vessel radial gap (m)','(gapds)',gapds)
 
     radius = radius + ddwi + shldith
-    call obuild(outfile,'Vacuum vessel',ddwi + shldith,radius)
-    call ovarre(mfile,'Inner vacuum vessel radial thickness (m)','(ddwi+shldith)',ddwi+shldith)
+    call obuild(outfile,'Vacuum vessel (and shielding)',ddwi + shldith,radius)
+    call ovarre(mfile,'Vacuum vessel radial thickness (m)','(ddwi)',ddwi)
+    call ovarre(mfile,'Inner radiation shield radial thickness (m)','(shldith)',shldith)
     
     radius = radius + vvblgap
     call obuild(outfile,'Gap',vvblgap,radius)
@@ -393,8 +394,8 @@ contains
     call ovarre(mfile,'Gap (m)','(vvblgap)',vvblgap)
 
     radius = radius + ddwi+shldoth
-    call obuild(outfile,'Vacuum vessel',ddwi+shldoth,radius)
-    call ovarre(mfile,'Outer vacuum vessel radial thickness (m)','(ddwi+shldoth)',ddwi+shldoth)
+    call obuild(outfile,'Vacuum vessel (and shielding)',ddwi+shldoth,radius)
+    call ovarre(mfile,'Outer radiation shield radial thickness (m)','(shldoth)',shldoth)
 
     radius = radius + gapsto
     call obuild(outfile,'Gap',gapsto,radius)
@@ -476,9 +477,9 @@ contains
        call ovarre(mfile,'Vessel - TF coil vertical gap (m)','(vgap2)',vgap2)
        vbuild = vbuild - vgap2
 
-       call obuild(outfile,'Vacuum vessel',ddwi+shldtth,vbuild)
+       call obuild(outfile,'Vacuum vessel (and shielding)',ddwi+shldtth,vbuild)
        vbuild = vbuild - ddwi - shldtth
-       call ovarre(mfile,'Top vacuum vessel thickness (m)','(ddwi+shldtth)',ddwi+shldtth)
+       call ovarre(mfile,'Top radiation shield thickness (m)','(shldtth)',shldtth)
        
        call obuild(outfile,'Gap',vvblgap,vbuild)
        vbuild = vbuild - vvblgap
@@ -518,8 +519,8 @@ contains
        vbuild = vbuild - shldlth
 
        vbuild = vbuild - ddwi
-       call obuild(nout,'Vacuum vessel',ddwi+shldlth,vbuild)
-       call ovarre(mfile,'Bottom vacuum vessel thickness (m)','(ddwi+shldlth)',ddwi+shldlth)
+       call obuild(nout,'Vacuum vessel (and shielding)',ddwi+shldlth,vbuild)
+       call ovarre(mfile,'Bottom radiation shield thickness (m)','(shldlth)',shldlth)
 
        vbuild = vbuild - vgap2
        call obuild(nout,'Gap',vgap2,vbuild)
