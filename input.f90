@@ -381,7 +381,8 @@ contains
     !+ad_hist  20/05/15 RK  Added iscdens, fgwped
     !+ad_hist  11/06/15 MDK Added spiral_od and spiral_id
     !+ad_hist  12/08/15 MDK vacuum_model and associated variables #304
-    !+ad_hist  18/11/15 RK  zeffmax and fzeffmax for constraint equation 64 
+    !+ad_hist  18/11/15 RK  zeffmax and fzeffmax for constraint equation 64
+    !+ad_hist  26/11/15 RK  added sigvvall to TF variables
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -948,6 +949,9 @@ contains
        case ('fstrcond')
           call parse_real_variable('fstrcond', fstrcond, 0.001D0, 10.0D0, &
                'F-value for TF coil conduit stress')
+       case ('ftaucq')
+          call parse_real_variable('ftaucq', ftaucq, 0.001D0, 1.0D0, &
+               'F-value for calculated quench time limit')
        case ('ftbr')
           call parse_real_variable('ftbr', ftbr, 0.001D0, 10.0D0, &
                'F-value for tritium breeding ratio limit')
@@ -1507,6 +1511,9 @@ contains
        case ('ripmax')
           call parse_real_variable('ripmax', ripmax, 0.1D0, 100.0D0, &
                'Max allowed ripple ampl. at plasma edge (%)')
+       case ('sigvvall')
+          call parse_real_variable('sigvvall', sigvvall, 0.1D6, 500.0D6, &
+               'Allowable stress in vacuum vessel for TF quench (Pa)')
        case ('strncon')
           call parse_real_variable('strncon', strncon, -0.02D0, 0.02D0, &
                'Strain in superconductor material')

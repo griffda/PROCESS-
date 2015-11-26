@@ -108,6 +108,7 @@ contains
     !+ad_hist  31/07/14 PJK tfthko is now set to tfcth elsewhere; added extra
     !+ad_hisc               mass calculations
     !+ad_hist  02/09/14 PJK New peak field with ripple calculation
+    !+ad_hist  26/11/15 RK  Quench time calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -124,7 +125,7 @@ contains
 
     integer :: i,peaktfflag
     real(kind(1.0D0)) :: awpc,awptf,bcylir,cplen,leni,leno,leno0, &
-         radwp,rbcndut,rcoil,rcoilp,tant,thtcoil,wbtf, a, b, c
+         radwp,rbcndut,rcoil,rcoilp,tant,thtcoil,wbtf, a, b, c, radvv
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -173,6 +174,11 @@ contains
        write(*,*) ' PROCESS continuing, ritfc forced to be +ve...'
        ritfc = abs(ritfc)  !  changed from 1.0D0
     end if
+
+    !  Determine quench time (based on IDM: 2MBSE3)
+    
+    radvv = rmajor - rminor - scrapli - fwith - blnkith - vvblgap - shldith
+    taucq = (bt * ritfc * rminor * rminor) / (radvv * sigvvall)
 
     !  Peak toroidal field (assuming axisymmetry) and radius of its occurrence,
     !  assumed to be at the outer edge of the winding pack
@@ -1489,6 +1495,11 @@ contains
             '(yctfc('//intstring//'))',yctfc(i))
 
     end do
+
+    call osubhd(outfile,'Quench information :')
+    call ovarre(outfile,'Allowable stress in vacuum vessel (Pa)','(sigvvall)',sigvvall)
+    call ovarre(outfile,'Allowable quench time (s)','(taucq)',taucq, 'OP ')
+    call ovarre(outfile,'Dump time (s)','(tdmptf)',tdmptf)
 
     call osubhd(outfile,'Conductor Information :')
     call ovarre(outfile,'Superconductor mass per coil (kg)','(whtconsc)',whtconsc, 'OP ')

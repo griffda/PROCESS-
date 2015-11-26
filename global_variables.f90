@@ -1686,6 +1686,7 @@ module tfcoil_variables
   !+ad_hisc               changed tfc_model switch values
   !+ad_hist  11/06/15 MDK Mods to TF coil defaults
   !+ad_hist  18/09/14 PJK Updated/re-ordered comments
+  !+ad_hist  26/11/15 RK  Added variables for quench time calculation: taucq, sigvvall
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  ITER Magnets design description document DDD11-2 v2 2 (2009)
   !
@@ -1851,6 +1852,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: sigver  = 0.0D0
   !+ad_vars  sigvert : vertical tensile stress in TF coil (Pa)
   real(kind(1.0D0)) :: sigvert = 0.0D0
+  !+ad_vars  sigvvall /9.3e7/ : allowable stress from TF quench in vacuum vessel (Pa)
+  real(kind(1.0D0)) :: sigvvall = 9.3D7
   !+ad_vars  strncon /-0.005/ : strain in superconductor material (TF, PF and CS)
   !+ad_varc                     (used in ITER Nb3Sn critical surface model)
   real(kind(1.0D0)) :: strncon = -0.005D0
@@ -1858,6 +1861,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: strtf1 = 0.0D0
   !+ad_vars  strtf2 : Von Mises stress in TF coil case (Pa)
   real(kind(1.0D0)) :: strtf2 = 0.0D0
+  !+ad_vars  taucq : allowable TF quench time (s)
+  real(kind(1.0D0)) :: taucq = 30.0D0
   !+ad_vars  tcritsc /16.0/ : critical temperature (K) for superconductor
   !+ad_varc                   at zero field and strain (isumattf=4, =tc0m)
   real(kind(1.0D0)) :: tcritsc = 16.0D0
@@ -3436,6 +3441,9 @@ module constraint_variables
   !+ad_vars  fstrcond /1.0/ : f-value for TF coil conduit stress
   !+ad_varc                   (constraint equation 32, iteration variable 49)
   real(kind(1.0D0)) :: fstrcond = 1.0D0
+  !+ad_vars  ftaucq /1.0/ : f-value for calculated minimum TF quench time
+  !+ad_varc                 (constraint equation 65, iteration variable 113)
+  real(kind(1.0D0)) :: ftaucq = 1.0D0
   !+ad_vars  ftbr /1.0/ : f-value for minimum tritium breeding ratio
   !+ad_varc                 (constraint equation 52, iteration variable 89)
   real(kind(1.0D0)) :: ftbr = 1.0D0

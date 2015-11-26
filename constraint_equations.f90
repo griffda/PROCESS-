@@ -160,6 +160,7 @@ contains
     !+ad_hist  06/08/15 MDK Eqn 62: Issue #213 - lower limit on taup/taueff, the ratio of particle to energy confinement times
     !+ad_hist  26/08/15 MDK Eqn 63: Issue #304 - upper limit on niterpump (vacuum_model = simple)
     !+ad_hist  18/11/15 RK  Eqn 64: Added constrain equation to limit Zeff
+    !+ad_hist  26/11/15 RK  Eqn 65: Added constrain equation to set dump time
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -988,6 +989,15 @@ contains
              con(i) = zeffmax
              err(i) = zeffmax * cc(i)
              symbol(i) = '<'
+             units(i) = ''
+          end if
+	  
+       case (65)  !  Limit TF dump time to calculated quench time (IDM: 2MBSE3)
+          cc(i) = 1.0d0 - ftaucq * tdmptf / taucq
+	  if (present(con)) then
+             con(i) = taucq
+             err(i) = taucq * cc(i)
+             symbol(i) = '>'
              units(i) = ''
           end if
 

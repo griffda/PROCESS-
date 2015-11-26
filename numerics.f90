@@ -77,8 +77,9 @@ module numerics
   !+ad_hist  05/08/15 MDK Add ralpne as an iteration variable. Constraint 62 on taup/taueff, the ratio of particle to energy confinement times
   !+ad_hist  26/08/15 MDK fniterpump as iteration variable 11, constraint 63 niterpump < tfno
   !+ad_hist  18/11/15  RK Added new FoM for minimising RMAJOR and maximising TBURN and
-  !+ad_hist               added constraint equation to limit Z_eff, including new iteration
-  !+ad_hist		  variable 112 (fzeffmax)
+  !+ad_hisc               added constraint equation to limit Z_eff, including new iteration
+  !+ad_hisc		  variable 112 (fzeffmax)
+  !+ad_hist  26/11/15  RK New constraint equation for taucq
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -93,10 +94,10 @@ module numerics
   
   public
 
-  !+ad_vars  ipnvars /112/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 112
-  !+ad_vars  ipeqns /64/ FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 64
+  !+ad_vars  ipnvars /113/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 113
+  !+ad_vars  ipeqns /65/ FIX : number of constraint equations available
+  integer, parameter :: ipeqns = 65
   !+ad_vars  ipnfoms /16/ FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 16
 
@@ -245,7 +246,8 @@ module numerics
        0,  &  !  61
        0,  &  !  62
        0,  &  !  63
-       0   &  !  64
+       0,  &  !  64
+       0   &  !  65
        /)
   
        
@@ -383,7 +385,9 @@ module numerics
        !+ad_varc  <LI> (63) The number of ITER-like vacuum pumps niterpump < tfno </UL>
        'number of ITER-like vacuum pumps ',  &
        !+ad_varc  <LI> (64) Zeff less than or equal to zeffmax </UL>
-       'Zeff limit                       '  &
+       'Zeff limit                       ',  &
+       !+ad_varc  <LI> (65) Dump time set by VV loads </UL>
+       'Dump time set by VV stress       '   &
        /)  !  Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
        ! The last ad_varc line ends with the html tag "</UL>".
@@ -503,6 +507,7 @@ module numerics
        0,  &  !  109
        0,  &  !  110
        0,  &  !  111
+       0,  &  !  112
        0   &  !  112
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
@@ -735,7 +740,9 @@ module numerics
        !+ad_varc       number of vacuum pumps <  TF coils</UL>
        'fniterpump',  &
        !+ad_varc  <LI> (112) fzeffmax: f-value for max Zeff </UL> 
-       'fzeffmax'  &
+       'fzeffmax',  &
+       !+ad_varc  <LI> (113) ftaucq: f-value for minimum quench time </UL> 
+       'ftaucq'  &
        /)
   
   character(len=9), dimension(:), allocatable :: name_xc
@@ -865,7 +872,8 @@ module numerics
        0.050D0, &  !  109
        0.001D0, &  !  110
        0.001D0, &  !  111
-       0.001D0  &  !  112
+       0.001D0, &  !  112
+       0.001D0  &  !  113
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -982,7 +990,8 @@ module numerics
        0.150D0, &  !  109
        1.000D0, &  !  110
        1.000D0, &  !  111
-       1.000D0  &  !  112
+       1.000D0, &  !  112
+       1.000D0  &  !  113
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

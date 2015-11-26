@@ -455,6 +455,7 @@ no. & variable name     & description                                           
 110 & \texttt{ftaulimit}& f-value for limit on ratio of alpha particle to energy confinement times & 62  & \texttt{0.001D0} & \texttt{1.000D0} \\
 111 & \texttt{fniterpump}& f-value for constraint that number of pumps < tfno     & 63  & \texttt{0.001D0} & \texttt{1.000D0} \\
 112 & \texttt{fzeffmax}  & f-value for Zeff limit equation                        & 64  & \texttt{0.001D0} & \texttt{1.000D0} \\
+113 & \texttt{ftaucq}  & f-value for quench time limit equation                   & 65  & \texttt{0.001D0} & \texttt{1.000D0} \\
 \hline
 \end{tabular}
 \end{center}
@@ -678,11 +679,12 @@ no. & description                                               & type & \texttt
 57  & (OBSOLETE) TF coil outer leg toroidal thickness lower limit (SCTF)   & L    & \textbf{99},29,13  \\
 58  & (OBSOLETE) TF coil outer leg radial thickness lower limit (SCTF)     & L    & \textbf{100},13 \\
 59  & Neutral beam shine-through fraction upper limit (NBI)     & L    & \textbf{105},6,19,4 \\
-60  & Central solenoid temperature margin lower limit (SCTF)    & L    & \textbf{106}, \\
-61  & Minimum availability value limit                          & L    & \textbf{107}, \\
-62  & Lower limit on the ratio of alpha particle to energy confinement times  & L    & \textbf{110}, \\
-63  & Number of vacuum pumps (vacuum\_model=simple)             & L    & \textbf{111}, \\
-64  & Limit on Zeff $\le$ Zeffmax                               & L    & \textbf{112}, \\
+60  & Central solenoid temperature margin lower limit (SCTF)    & L    & \textbf{106} \\
+61  & Minimum availability value limit                          & L    & \textbf{107} \\
+62  & Lower limit on the ratio of alpha particle to energy confinement times  & L    & \textbf{110} \\
+63  & Number of vacuum pumps (vacuum\_model=simple)             & L    & \textbf{111} \\
+64  & Limit on Zeff $\le$ Zeffmax                               & L    & \textbf{112} \\
+64  & TF dump time greater than or equal to calculated quench time & L    & \textbf{113} \\
 \hline
 \end{tabular}
 \end{center}
