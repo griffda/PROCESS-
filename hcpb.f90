@@ -181,6 +181,7 @@ module ccfe_hcpb_module
   
   !  Fraction of neutron energy lost by main wall
   real(kind=double), private :: fdep
+  
   ! Fractions of blanket by volume: steel, lithium orthosilicate, titanium beryllide
   real(kind=double), private :: fblss_ccfe, fblli2sio4, fbltibe12
   
@@ -2344,6 +2345,7 @@ module kit_hcpb_module
   !+ad_desc  based on the EUROfusion Helium-Cooled Pebble Bed (HCPB) blanket concept.
   !+ad_prob  None
   !+ad_hist  12/02/15 JM  Initial version of refactor
+  !+ad_hist  26/11/15 JM  Updated to 2015 blanket report values.
   !+ad_docs  FU-TF1.1-12/003/01, Development of a new HCPB Blanket Model
   !+ad_docc  for Fusion Reactor System Codes, F. Franza and L. V. Boccaccini,
   !+ad_docc  Karlsruhe Institute of Technology, January 2013;
@@ -2370,6 +2372,11 @@ module kit_hcpb_module
   use process_output
   use tfcoil_variables
   use times_variables
+  use divertor_variables
+  use rfp_variables
+  use pfcoil_variables
+  use global_variables
+  use buildings_variables
 
   implicit none
 
@@ -2413,29 +2420,35 @@ module kit_hcpb_module
   real(kind=double) :: NWL_max_OB_PPCS = 2.41D0 ! [MW/m^2] Maximum OB wall load
   real(kind=double) :: f_peak_PPCS = 1.21D0      ! [--] Neutron wall load peaking factor
   real(kind=double) :: CF_bl_PPCS              ! [%] Blanket coverage factor (calculated)
-  real(kind=double) :: e_Li_PPCS = 30.0D0      ! [%] Li6 enrichment
   character(len=13) :: breeder_PPCS = 'Orthosilicate' ! Breeder type
 
-  real(kind=double) :: t_BZ_IB_PPCS = 36.5D0   ! [cm] IB Breeding Zone thickness
-  real(kind=double) :: t_BZ_OB_PPCS = 46.5D0   ! [cm] OB Breeding Zone thickness
-  real(kind=double) :: TBR_PPCS = 1.12D0       ! [--] Tritium Breeding Ratio
+  real(kind=double) :: e_Li_PPCS = 60.0D0      ! [%] Li6 enrichment
+  real(kind=double) :: t_BZ_IB_PPCS = 23.5D0   ! [cm] IB Breeding Zone thickness
+  real(kind=double) :: t_BZ_OB_PPCS = 50.4D0   ! [cm] OB Breeding Zone thickness
+  real(kind=double) :: TBR_PPCS = 1.09D0       ! [--] Tritium Breeding Ratio
   real(kind=double) :: M_E_PPCS = 1.38D0       ! [--] Energy multiplication factor
   
+  !  2012 blanket report values
+  !real(kind=double) :: e_Li_PPCS = 30.0D0      ! [%] Li6 enrichment
+  !real(kind=double) :: t_BZ_IB_PPCS = 36.5D0   ! [cm] IB Breeding Zone thickness
+  !real(kind=double) :: t_BZ_OB_PPCS = 46.5D0   ! [cm] OB Breeding Zone thickness
+  !real(kind=double) :: TBR_PPCS = 1.12D0       ! [--] Tritium Breeding Ratio
+    
   !  Power density pre-exponential terms and decay lengths
-  real(kind=double) :: q_0_BZ_breed_IB = 31.348D0 ! [W/cm^3] Pre-exp term in IB BZ breeder
-  real(kind=double) :: q_0_BZ_breed_OB = 37.144D0 ! [W/cm^3] Pre-exp term in OB BZ breeder
-  real(kind=double) :: lambda_q_BZ_breed_IB = 29.42D0 ! [cm] Decay length in IB BZ breeder
-  real(kind=double) :: lambda_q_BZ_breed_OB = 27.03D0 ! [cm] Decay length in OB BZ breeder
+  real(kind=double) :: q_0_BZ_breed_IB = 23.41D0 ! [W/cm^3] Pre-exp term in IB BZ breeder
+  real(kind=double) :: q_0_BZ_breed_OB = 28.16D0 ! [W/cm^3] Pre-exp term in OB BZ breeder
+  real(kind=double) :: lambda_q_BZ_breed_IB = 44.56D0 ! [cm] Decay length in IB BZ breeder
+  real(kind=double) :: lambda_q_BZ_breed_OB = 28.37D0 ! [cm] Decay length in OB BZ breeder
 
-  real(kind=double) :: q_0_BZ_Be_IB = 9.532D0 ! [W/cm^3] Pre-exp term in IB BZ Beryllium
-  real(kind=double) :: q_0_BZ_Be_OB = 11.809D0 ! [W/cm^3] Pre-exp term in OB BZ Beryllium
-  real(kind=double) :: lambda_q_BZ_Be_IB = 16.39D0 ! [cm] Decay length in IB BZ Beryllium
-  real(kind=double) :: lambda_q_BZ_Be_OB = 16.39D0 ! [cm] Decay length in OB BZ Beryllium
+  real(kind=double) :: q_0_BZ_Be_IB = 7.5D0 ! [W/cm^3] Pre-exp term in IB BZ Beryllium
+  real(kind=double) :: q_0_BZ_Be_OB = 8.85D0 ! [W/cm^3] Pre-exp term in OB BZ Beryllium
+  real(kind=double) :: lambda_q_BZ_Be_IB = 21.19D0 ! [cm] Decay length in IB BZ Beryllium
+  real(kind=double) :: lambda_q_BZ_Be_OB = 19.33D0 ! [cm] Decay length in OB BZ Beryllium
 
-  real(kind=double) :: q_0_BZ_steels_IB = 16.067D0 ! [W/cm^3] Pre-exp term in IB BZ steels
-  real(kind=double) :: q_0_BZ_steels_OB = 18.788D0 ! [W/cm^3] Pre-exp term in OB BZ steels
-  real(kind=double) :: lambda_q_BZ_steels_IB = 21.27D0 ! [cm] Decay length in IB BZ steels
-  real(kind=double) :: lambda_q_BZ_steels_OB = 21.27D0 ! [cm] Decay length in OB BZ steels
+  real(kind=double) :: q_0_BZ_steels_IB = 9.04D0 ! [W/cm^3] Pre-exp term in IB BZ steels
+  real(kind=double) :: q_0_BZ_steels_OB = 9.93D0 ! [W/cm^3] Pre-exp term in OB BZ steels
+  real(kind=double) :: lambda_q_BZ_steels_IB = 21.59D0 ! [cm] Decay length in IB BZ steels
+  real(kind=double) :: lambda_q_BZ_steels_OB = 20.61D0 ! [cm] Decay length in OB BZ steels
 
   real(kind=double) :: lambda_EU = 11.57D0  ! [cm] Decay length in EUROFER
   real(kind=double) :: lambda_q_BM_IB       ! [cm] Decay length in IB BM (calculated)
@@ -2479,7 +2492,7 @@ module kit_hcpb_module
   integer, public :: n_ports_H_CD_IB = 2         ! [ports] Number of IB H&CD ports
   integer, public :: n_ports_H_CD_OB = 2         ! [ports] Number of OB H&CD ports
   character(len=5), public :: H_CD_ports = 'small' ! Type of H&CD ports (small or large)
-  real(kind=double), public :: e_Li = 30.0D0     ! [%] Lithium 6 enrichment
+  real(kind=double), public :: e_Li = 60.0D0     ! [%] Lithium 6 enrichment
   real(kind=double), public :: t_plant = 40.0D0  ! [FPY] Plant lifetime
   real(kind=double), public :: alpha_m = 0.75D0  ! [--] Availability factor
   real(kind=double), public :: alpha_puls = 1.0D0 ! [--] Pulsed regime fraction
@@ -2528,6 +2541,32 @@ module kit_hcpb_module
 
   !  Inboard/outboard void fraction of blanket
   real(kind=double), private :: vfblkti, vfblkto
+  
+  !  Component volume info
+  !  Blanket internal half-height (m)
+  real(kind=double), private :: hblnkt
+  
+  !  Shield internal half-height (m)
+  real(kind=double), private :: hshld
+  
+  !  Clearance between uppermost PF coil and cryostat lid (m)
+  real(kind=double), private :: hcryopf
+  
+  !  Vacuum vessel internal half-height (m)
+  real(kind=double), private :: hvv
+  
+  !  Volume of inboard and outboard shield (m3)
+  real(kind=double), private :: volshldi, volshldo
+  
+  !  Internal half-height of cryostat (m)
+  ! real(kind=double), public :: zdewex  Now module fwbs_variables
+  
+  !  Inboard/outboard FW half thicknesses (m)
+  real(kind=double), private :: bfwi, bfwo
+  
+  !  Inboard/outboard FW coolant void fraction
+  real(kind=double), private :: vffwi, vffwo
+
 
 contains
 
@@ -2613,6 +2652,9 @@ contains
 	
 	!  Coolant type
 	coolwh = 1
+	
+	!  Calculate component volumes
+	call component_volumes
 
 	!  Convert global variables into KIT blanket inputs
     A_FW_IB = fwareaib * 1.0D4  ! [cm^2] IB first wall area
@@ -2951,7 +2993,7 @@ contains
     !  Breeder (chi... = volumetric fraction as a percentage)
     A_BZ_breed_IB = A_bl_IB * 0.01D0*chi_breed_BZ_IB
     A_BZ_breed_OB = A_bl_OB * 0.01D0*chi_breed_BZ_OB
-
+    
     !  Beryllium pebbles
     A_BZ_Be_IB = A_bl_IB * 0.01D0*chi_Be_BZ_IB
     A_BZ_Be_OB = A_bl_OB * 0.01D0*chi_Be_BZ_OB
@@ -3048,6 +3090,7 @@ contains
 
     !  Energy multiplication factor
     M_E = P_th_tot/P_n_FW
+    
 
   end subroutine nuclear_power_production
   
@@ -3073,6 +3116,7 @@ contains
     !+ad_call  tbr_ports
     !+ad_hist  06/06/13 PJK Initial release
     !+ad_hist  26/09/13 PJK/FF Refinement to take into account IB/OB contributions
+    !+ad_hist  26/11/15 JM  Changed to updated HCPB values. wib and wob changed to % units.
     !+ad_stat  Okay
     !+ad_docs  WP13-SYS01-A-T02 Interim Review Meeting, 10.07.2013, F. Franza
     !+ad_docc  (describes 26/09/2013 model refinement)
@@ -3087,25 +3131,37 @@ contains
 
     !  Local variables
 
-    real(kind=double) :: wib, wob
+    real(kind=double) :: wib, wob, tbr_2, eu_frac
     real(kind=double), parameter :: wib_PPCS = 0.28D0, wob_PPCS = 0.72D0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    wib = A_FW_IB / (A_FW_IB + A_FW_OB)
-    wob = A_FW_OB / (A_FW_IB + A_FW_OB)
+	!  Changed to % units by multiplying by 100.0
+    wib = (A_FW_IB / (A_FW_IB + A_FW_OB))*100.0D0
+    wob = (A_FW_OB / (A_FW_IB + A_FW_OB))*100.0D0
 
-    tbr = TBR_PPCS * CF_bl/CF_bl_PPCS * &
-         TBR_breed(e_Li, breeder)/TBR_breed(e_Li_PPCS, breeder) * &
-         ( 1.0D0 - exp( -(wib*t_BZ_IB + wob*t_BZ_OB) / &
-         (wib*lambda_q_BZ_breed_IB + wob*lambda_q_BZ_breed_OB)) ) / &
-         ( 1.0D0 - exp( -(wib_PPCS*t_BZ_IB_PPCS + wob_PPCS*t_BZ_OB_PPCS) / &
-         (wib_PPCS*lambda_q_BZ_breed_IB + wob_PPCS*lambda_q_BZ_breed_OB)) ) * &
-         TBR_ports(n_ports_div, n_ports_H_CD_IB, n_ports_H_CD_OB, H_CD_ports)
+	eu_frac = (chi_steels_BZ_IB + chi_steels_BZ_OB)/2.0D0
+    tbr = 0.9157 * CF_bl * &
+		(1 - exp(-wib*(t_BZ_IB/38.35))) * &
+		(1 - exp(-wob*(t_BZ_OB/39.95))) * &
+		(1.17126 - 0.01231*eu_frac + 7.9431D-5*eu_frac**2) * &
+		(0.1362*log(e_Li) + 0.6331)
 
     !  Total tritium production rate (grammes/day)
     g_tot = tbr * P_n/(E_n*1.602D-19)/N_Av * PA_T*3600*24
 
+
+	!  OLD TBR calculation from 2012
+	!
+	!    tbr_2 = TBR_PPCS * CF_bl/CF_bl_PPCS * &
+	!         TBR_breed(e_Li, breeder)/TBR_breed(e_Li_PPCS, breeder) * &
+	!         ( 1.0D0 - exp( -(wib*t_BZ_IB + wob*t_BZ_OB) / &
+	!         (wib*lambda_q_BZ_breed_IB + wob*lambda_q_BZ_breed_OB)) ) / &
+	!         ( 1.0D0 - exp( -(wib_PPCS*t_BZ_IB_PPCS + wob_PPCS*t_BZ_OB_PPCS) / &
+	!         (wib_PPCS*lambda_q_BZ_breed_IB + wob_PPCS*lambda_q_BZ_breed_OB)) ) * &
+	!         TBR_ports(n_ports_div, n_ports_H_CD_IB, n_ports_H_CD_OB, H_CD_ports)
+	!
+                     
   contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3455,6 +3511,493 @@ contains
   
   end subroutine
   
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  subroutine component_volumes
+	!+ad_name  component_volumes
+    !+ad_summ  Calculate the blanket, shield, vacuum vessel and cryostat volumes
+    !+ad_type  Subroutine
+    !+ad_auth  J. Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  Calculate the blanket, shield, vacuum vessel and cryostat volumes
+    !+ad_prob  None
+    !+ad_hist  16/02/15 JM  Initial version
+    !+ad_stat  Okay
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+  
+    !  Local variables
+    real(kind=double) :: hcryopf, r1, r2, r3, v1, v2
+           
+    !  Calculate blanket half-height
+    call blanket_half_height
+    
+    !  Calculate shield half-height
+    call shield_half_height
+    
+    !  Calculate vacuum vessel half-height
+    call vv_half_height
+    
+    !  D-shaped blanket and shield
+    if ((itart == 1).or.(fwbsshape == 1)) then
+
+       call dshaped_blanket
+       
+       call dshaped_shield
+       
+       call dshaped_vv
+
+	!  Elliptical blanket and shield
+    else
+    
+	   call elliptical_blanket
+	   
+	   call elliptical_shield
+	   
+	   call elliptical_vv
+
+    end if
+    
+	!  Apply coverage factors to volumes and surface areas
+    call apply_coverage_factors
+    
+    !  Calculate cryostat geometry
+    call external_cryo_geometry
+      
+  end subroutine
+  
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  subroutine blanket_half_height
+    !+ad_name  blanket_half_height
+    !+ad_summ  Calculate the blanket half-height
+    !+ad_type  Subroutine
+    !+ad_auth  J. Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  Calculate the blanket half-height
+    !+ad_prob  None
+    !+ad_hist  16/02/15 JM  Initial version
+    !+ad_stat  Okay
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+	!  Local variables
+	real(kind=double) :: hbot, htop
+  
+	!  Calculate blanket internal lower half-height (m)
+    hbot = rminor*kappa + vgap + divfix - blnktth
+    
+    !  If a double null machine then symmetric
+    !  Calculate blanket internal upper half-height (m)  
+    if (idivrt == 2) then  
+       htop = hbot
+    else
+       htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth)
+    end if
+    
+    !  Average of top and bottom (m)
+    hblnkt = 0.5D0*(htop + hbot)
+  
+  end subroutine
+  
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  subroutine shield_half_height
+    !+ad_name  shield_half_height
+    !+ad_summ  Calculate the shield half-height
+    !+ad_type  Subroutine
+    !+ad_auth  J. Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  Calculate the shield half-height
+    !+ad_prob  None
+    !+ad_hist  16/02/15 JM  Initial version
+    !+ad_stat  Okay
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    !  Local variables
+	real(kind=double) :: hbot, htop
+  
+	!  Calculate shield internal lower half-height (m)
+    hbot = rminor*kappa + vgap + divfix
+    
+    !  If a double null machine then symmetric
+    !  Calculate shield internal upper half-height (m)
+    if (idivrt == 2) then  
+       htop = hbot
+    else
+       htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth) + blnktth
+    end if
+    
+    !  Average of top and bottom (m)
+    hshld = 0.5D0*(htop + hbot)
+  
+  end subroutine
+  
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  subroutine vv_half_height
+    !+ad_name  vv_half_height
+    !+ad_summ  Calculate the vacuum vessel half-height
+    !+ad_type  Subroutine
+    !+ad_auth  J. Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  Calculate the vacuum vessel half-height
+    !+ad_prob  None
+    !+ad_hist  16/02/15 JM  Initial version
+    !+ad_stat  Okay
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    !  Local variables
+	real(kind=double) :: hbot, htop
+  
+	!  Calculate vacuum vessel internal lower half-height (m)
+    hbot = hmax - vgap2 - ddwi
+    
+    !  If a double null machine then symmetric
+    !  Calculate vacuum vessel internal upper half-height (m)
+    if (idivrt == 2) then
+       htop = hbot
+    else
+       htop = rminor*kappa + 0.5D0*(scrapli+scraplo + fwith+fwoth) &
+            + blnktth + shldtth
+    end if
+    
+    !  Average of top and bottom (m)
+    hvv = 0.5D0*(htop + hbot)
+  
+  end subroutine
+  
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  subroutine dshaped_blanket
+	!+ad_name  dshaped_blanket
+    !+ad_summ  Calculate the blanket surface area and volume using dshaped scheme
+    !+ad_type  Subroutine
+    !+ad_auth  J. Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  Calculate the blanket surface area and volume using dshaped scheme
+    !+ad_prob  None
+    !+ad_call  dhshellarea
+    !+ad_call  dhshellvol
+    !+ad_hist  16/02/15 JM  Initial version
+    !+ad_stat  Okay
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    implicit none
+  
+    !  Local variables
+    real(kind=double) :: r1, r2
+  
+	!  Major radius to outer edge of inboard blanket (m)
+    r1 = rsldi + shldith + blnkith
+
+    !  Horizontal distance between inside edges of blanket (m)
+    !  i.e. outer radius of inboard part to inner radius of outboard part
+    r2 = fwith + scrapli + 2.0D0*rminor + scraplo + fwoth
+
+    !  Calculate blanket surface area, assuming 100% coverage
+    call dshellarea(r1, r2, hblnkt, blareaib, blareaob, blarea)
+
+    !  Calculate blanket volumes, assuming 100% coverage
+    call dshellvol(r1, r2, hblnkt, blnkith, blnkoth, blnktth, volblkti, volblkto, volblkt)
+   
+  end subroutine
+  
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  subroutine dshaped_shield
+	!+ad_name  dshaped_shield
+    !+ad_summ  Calculate the shield surface area and volume using dshaped scheme
+    !+ad_type  Subroutine
+    !+ad_auth  J. Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  Calculate the shield surface area and volume using dshaped scheme
+    !+ad_prob  None
+    !+ad_call  dhshellarea
+    !+ad_call  dhshellvol
+    !+ad_hist  16/02/15 JM  Initial version
+    !+ad_stat  Okay
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+	implicit none
+  
+    !  Local variables
+    real(kind=double) :: r1, r2
+  
+    !  Major radius to outer edge of inboard shield (m)
+    r1 = rsldi + shldith
+
+    !  Horizontal distance between inside edges of shield (m)
+    !  i.e. outer radius of inboard part to inner radius of outboard part
+    r2 = blnkith + fwith + scrapli + 2.0D0*rminor + scraplo + fwoth + blnkoth
+
+    !  Calculate shield surface area, assuming 100% coverage
+    call dshellarea(r1, r2, hshld, shareaib, shareaob, sharea)
+
+    !  Calculate shield volumes, assuming 100% coverage
+    call dshellvol(r1, r2, hshld, shldith, shldoth, shldtth, volshldi, volshldo, volshld)
+        
+  end subroutine
+  
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  subroutine dshaped_vv
+	!+ad_name  dshaped_vv
+    !+ad_summ  Calculate the vacuum vessel volume using dshaped scheme
+    !+ad_type  Subroutine
+    !+ad_auth  J. Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  Calculate the vacuum vessel volume using dshaped scheme
+    !+ad_prob  None
+    !+ad_call  dhshellvol
+    !+ad_hist  16/02/15 JM  Initial version
+    !+ad_stat  Okay
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+	implicit none
+  
+    !  Local variables
+    real(kind=double) :: r1, r2, v1, v2
+    
+    !  Major radius to outer edge of inboard section (m)
+    r1 = rsldi
+
+    !  Horizontal distance between inside edges (m)
+    !  i.e. outer radius of inboard part to inner radius of outboard part
+    r2 = rsldo - r1
+
+    !  Calculate volume, assuming 100% coverage
+    call dshellvol(r1, r2, hvv, ddwi, ddwi, ddwi, v1, v2, vdewin)
+
+    !  Apply area coverage factor
+    vdewin = fvoldw*vdewin
+          
+  end subroutine
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine elliptical_blanket
+	!+ad_name  elliptical_blanket
+    !+ad_summ  Calculate the blanket surface area and volume using elliptical scheme
+    !+ad_type  Subroutine
+    !+ad_auth  J. Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  Calculate the blanket surface area and volume using elliptical scheme
+    !+ad_prob  None
+    !+ad_call  ehshellarea
+    !+ad_call  eshellvol
+    !+ad_hist  16/02/15 JM  Initial version
+    !+ad_stat  Okay
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    implicit none
+  
+    !  Local variables
+    real(kind=double) :: r1, r2, r3
+  
+	!  Major radius to centre of inboard and outboard ellipses (m)
+    !  (coincident in radius with top of plasma)
+    r1 = rmajor - rminor*triang
+
+    !  Distance between r1 and outer edge of inboard blanket (m)
+    r2 = r1 - (rsldi + shldith + blnkith)
+
+    !  Distance between r1 and inner edge of outboard blanket (m)
+    r3 = (rsldo - shldoth - blnkoth) - r1
+
+    !  Calculate blanket surface area, assuming 100% coverage
+    call eshellarea(r1, r2, r3, hblnkt, blareaib, blareaob, blarea)
+
+    !  Calculate blanket volumes, assuming 100% coverage
+    call eshellvol(r1, r2, r3, hblnkt, blnkith, blnkoth, blnktth, volblkti, volblkto, volblkt)
+  
+  end subroutine
+  
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  subroutine elliptical_shield
+	!+ad_name  elliptical_shield
+    !+ad_summ  Calculate the shield surface area and volume using elliptical scheme
+    !+ad_type  Subroutine
+    !+ad_auth  J. Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  Calculate the shield surface area and volume using elliptical scheme
+    !+ad_prob  None
+    !+ad_call  ehshellarea
+    !+ad_call  ehshellvol
+    !+ad_hist  16/02/15 JM  Initial version
+    !+ad_stat  Okay
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    implicit none
+  
+    !  Local variables
+    real(kind=double) :: r1, r2, r3
+  
+	!  Major radius to centre of inboard and outboard ellipses (m)
+    !  (coincident in radius with top of plasma)
+    r1 = rmajor - rminor*triang
+  
+  	!  Distance between r1 and outer edge of inboard shield (m)
+	r2 = r1 - (rsldi + shldith)
+
+    !  Distance between r1 and inner edge of outboard shield (m)
+    r3 = (rsldo - shldoth) - r1
+
+    !  Calculate shield surface area, assuming 100% coverage
+    call eshellarea(r1, r2, r3, hshld, shareaib, shareaob, sharea)
+
+    !  Calculate shield volumes, assuming 100% coverage
+    call eshellvol(r1, r2, r3, hshld, shldith, shldoth, shldtth, volshldi, volshldo, volshld)
+  
+  end subroutine
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine elliptical_vv
+    !+ad_name  elliptical_vv
+    !+ad_summ  Calculate the vacuum vessel volume using elliptical scheme
+    !+ad_type  Subroutine
+    !+ad_auth  J. Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  Calculate the vacuum vessel volume using elliptical scheme
+    !+ad_prob  None
+    !+ad_call  ehshellvol
+    !+ad_hist  16/02/15 JM  Initial version
+    !+ad_stat  Okay
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    implicit none
+  
+    !  Local variables
+    real(kind=double) :: r1, r2, r3, v1, v2
+  
+    !  Major radius to centre of inboard and outboard ellipses (m)
+    !  (coincident in radius with top of plasma)
+    r1 = rmajor - rminor*triang
+
+    !  Distance between r1 and outer edge of inboard section (m)
+    r2 = r1 - rsldi
+
+    !  Distance between r1 and inner edge of outboard section (m)
+    r3 = rsldo - r1
+
+    !  Calculate volume, assuming 100% coverage
+    call eshellvol(r1, r2, r3, hvv, ddwi, ddwi, ddwi, v1, v2, vdewin)
+
+    !  Apply area coverage factor
+    vdewin = fvoldw*vdewin
+  
+  end subroutine
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine apply_coverage_factors
+    !+ad_name  apply_coverage_factors
+    !+ad_summ  Apply coverage factors to volumes
+    !+ad_type  Subroutine
+    !+ad_auth  J. Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  Apply coverage factors to volumes
+    !+ad_prob  None
+    !+ad_hist  16/02/15 JM  Initial version
+    !+ad_stat  Okay
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    implicit none
+    
+    !  Apply blanket coverage factors
+    blareaob = blarea*(1.0D0-fdiv-fhcd) - blareaib
+    blarea = blareaib + blareaob
+
+    volblkto = volblkt*(1.0D0-fdiv-fhcd) - volblkti
+    volblkt = volblkti + volblkto
+
+	!  Apply shield coverage factors
+    shareaib = fvolsi*shareaib
+    shareaob = fvolso*shareaob
+    sharea = shareaib + shareaob
+
+    volshldi = fvolsi*volshldi
+    volshldo = fvolso*volshldo
+    volshld = volshldi + volshldo
+  
+  end subroutine
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine external_cryo_geometry
+    !+ad_name  external_cryo_geometry
+    !+ad_summ  Calculate cryostat geometry
+    !+ad_type  Subroutine
+    !+ad_auth  J. Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  Calculate cryostat geometry
+    !+ad_prob  None
+    !+ad_hist  16/02/15 JM  Initial version
+    !+ad_stat  Okay
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    implicit none  
+  
+    !  cryostat radius (m)
+    !  For rfp machines 
+    if (irfp == 1) then
+    
+	    !  rrpf(i) = radius of RFP coil i (RFPs)
+        rdewex = maxval(rrpf + 0.5D0*drpf) + rpf2dewar
+    
+    !  Tokamaks 
+    else
+        
+        !  rb(i) = outer radius of PF coil i (tokamaks)    
+        rdewex = maxval(rb) + rpf2dewar
+       
+    end if
+
+    !  Clearance between uppermost PF coil and cryostat lid (m). 
+    !  Scaling from ITER by M. Kovari
+    hcryopf = clhsf * (2.0D0*rdewex)/28.440D0
+
+    !  Half-height of cryostat (m)
+    !  Tokamak
+    if (irfp /= 1) then
+    
+       zdewex = maxval(zh) + hcryopf
+       
+    !  rfp machine
+    else
+    
+       zdewex = maxval(zzpf + 0.5D0*dzpf) + hcryopf
+       
+    end if
+
+    !  Vertical clearance between TF coil and cryostat (m)
+    clh1 = zdewex - (hmax + tfcth)
+
+    !  cryostat volume (m3)
+    vdewex = ( (2.0D0*pi*rdewex) * 2.0D0*zdewex + (2.0D0*pi*rdewex**2) ) * ddwex
+
+    !  Vacuum vessel mass (kg)
+    vvmass = vdewin * denstl
+
+    !  Sum of internal vacuum vessel and cryostat masses (kg)
+    dewmkg = (vdewin + vdewex) * denstl
+  
+  end subroutine
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
   subroutine write_kit_hcpb_output
@@ -3476,76 +4019,49 @@ contains
     call oheadr(ofile, 'Blanket model output - KIT HCPB model')   
     call osubhd(ofile, 'Blanket Composition :')
  
-    !call ovarrf(ofile, 'Titanium beryllide fraction', '(fbltibe12)', fbltibe12)
-    !call ovarrf(ofile, 'Lithium orthosilicate fraction', '(fblli2sio4)', fblli2sio4)
-    !call ovarrf(ofile, 'Steel fraction', '(fblss)', fblss)
-    !call ovarrf(ofile, 'Void fraction coolant', '(vfcblkt)', vfcblkt)
-    !call ovarrf(ofile, 'Void fraction purge gas', '(vfpblkt)', vfpblkt)
+	call osubhd(ofile,'Blanket neutronics :')
+    call ovarre(ofile,'Blanket heating (prior to energy multiplication) (MW)', &
+        '(pnucblkt)',pnucblkt)
+    call ovarre(ofile,'Shield heating (MW)','(pnucshld)',pnucshld)
+    call ovarre(ofile,'Energy multiplication in blanket','(emult)',emult)
+    call ovarin(ofile,'Number of divertor ports assumed','(npdiv)',npdiv)
+    call ovarin(ofile,'Number of inboard H/CD ports assumed', &
+        '(nphcdin)',nphcdin)
+    call ovarin(ofile,'Number of outboard H/CD ports assumed', &
+        '(nphcdout)',nphcdout)
+    select case (hcdportsize)
+    case (1)
+		call ocmmnt(ofile,'     (small heating/current drive ports assumed)')
+    case default
+        call ocmmnt(ofile,'     (large heating/current drive ports assumed)')
+    end select
+    select case (breedmat)
+       case (1)
+          call ocmmnt(ofile,'Breeder material: Lithium orthosilicate (Li4Si04)')
+       case (2)
+          call ocmmnt(ofile,'Breeder material: Lithium methatitanate (Li2TiO3)')
+       case (3)
+          call ocmmnt(ofile,'Breeder material: Lithium zirconate (Li2ZrO3)')
+       case default  !  shouldn't get here...
+          call ocmmnt(ofile,'Unknown breeder material...')
+    end select
     
-    !call osubhd(ofile, 'Component Volumes :')
-    
-    ! TODO: Volume of FW ARMOUR
-    !call ovarrf(ofile, 'First Wall Volume (m3)', '(volfw)', volfw)
-    !call ovarrf(ofile, 'Blanket Volume (m3)', '(volblkt)', volblkt)
-    !call ovarrf(ofile, 'Shield Volume (m3)', '(volshld)', volshld)
-    !call ovarre(ofile, 'Vacuum vessel volume (m3)', '(vdewin)', vdewin)
-        
-    !call osubhd(ofile, 'Component Masses :')
-    
-    ! TODO: Mass of FW ARMOUR
-    !call ovarre(ofile, 'First Wall Mass (kg)', '(fwmass)', fwmass)
-    !call ovarre(ofile, 'Blanket Mass - Total(kg)', '(whtblkt)', whtblkt)
-    !call ovarre(ofile, 'Blanket Mass - TiBe12 (kg)', '(whtbltibe12)', whtbltibe12)
-    !call ovarre(ofile, 'Blanket Mass - Li2SiO4 (kg)', '(whtblli4sio4)', whtblli4sio4)
-    !call ovarre(ofile, 'Blanket Mass - Steel (kg)', '(whtblss)', whtblss)
-    !call ovarre(ofile, 'Shield Mass (kg)', '(whtshld)', whtshld)
-    !call ovarre(ofile, 'Vacuum vessel mass (kg)', '(cryomass)', cryomass)
-    
-    !  Nuclear heting section
-    !call osubhd(ofile, 'Nuclear heating :')
-    
-    !call ovarre(ofile, 'Average nominal neutron wall load (MW/m2)','(wallmw)', wallmw)
-    !call ovarre(ofile, 'First wall full-power lifetime (years)', '(fwlife)', fwlife)
-    !call oblnkl(ofile)
-    
-    !  ST centre post
-    !if (itart == 1) then
-    !   call osubhd(ofile,'(Copper centrepost used)')
-    !   call ovarre(ofile,'ST centrepost heating (MW)','(pnuccp)',pnuccp)
-    !end if
-    
-    !call ovarre(ofile, 'Total nuclear heating in TF coil (MW)', '(ptfnuc)', ptfnuc) 
-    !call ovarre(ofile, 'Total nuclear heating in FW (MW)', '(pnucfw)', pnucfw) 
-	!call ovarre(ofile, 'Total nuclear heating in the blanket (including emult) (MW)', '(pnucblkt)', pnucblkt) 
-	!call ovarre(ofile, 'Total nuclear heating in the shield (MW)', '(pnucshld)', pnucshld)
-	!call ovarre(ofile, 'Total nuclear heating in the divertor (MW)', '(pnucdiv)', pnucdiv)
-    !call oblnkl(ofile)
-    
-    !call osubhd(ofile,'Thermodynamic Model Output :')
-    
-    !call ovarin(ofile, 'Switch for plant secondary cycle ', '(secondary_cycle)', secondary_cycle) 
-    !call ovarre(ofile, 'First wall coolant pressure (Pa)', '(coolp)', coolp)
-    !call ovarre(ofile, 'Inner radius of inboard first wall coolant channels (m)', '(afwi)', afwi)
-    !call ovarre(ofile, 'Outer radius of inboard first wall coolant channels (m)', '(bfwi)', bfwi)
-    !call ovarre(ofile, 'Inner radius of outboard first wall coolant channels (m)', '(afwo)', afwo)
-    !call ovarre(ofile, 'Outer radius of outboard first wall coolant channels (m)', '(bfwo)', bfwo)
-    !call ovarrf(ofile, 'Inlet temperature of coolant (K)', '(inlet_temp)', inlet_temp)
-    !call ovarrf(ofile, 'Outlet temperature of coolant (K)', '(outlet_temp)', outlet_temp)
-    !call ovarre(ofile, 'Maximum temperature of first wall material (K)', '(tfwmatmax)', tfwmatmax)
-    !call ovarin(ofile, 'No of inboard blanket modules poloidally', '(nblktmodpi)', nblktmodpi)
-    !call ovarin(ofile, 'No of inboard blanket modules toroidally', '(nblktmodti)', nblktmodti)
-    !call ovarin(ofile, 'No of outboard blanket modules poloidally', '(nblktmodpo)', nblktmodpo)
-    !call ovarin(ofile,'No of outboard blanket modules toroidally', '(nblktmodto)', nblktmodto)
-    !call ovarre(ofile, 'Isentropic efficiency of first wall / blanket coolant pumps', '(etaiso)', etaiso)
-    
-    !call osubhd(ofile, 'Other volumes, masses and areas :')
-    !call ovarre(ofile, 'First wall area (m2)', '(fwarea)', fwarea)
-    !call ovarre(ofile, 'External cryostat radius (m)', '(rdewex)', rdewex)
-    !call ovarre(ofile, 'External cryostat half-height (m)', '(zdewex)', zdewex)
-    !call ovarre(ofile, 'External cryostat volume (m3)', '(vdewex)', vdewex)
-    !call ovarre(ofile, 'Total cryostat + vacuum vessel mass (kg)', '(dewmkg)', dewmkg)
-    !call ovarre(ofile, 'Divertor area (m2)', '(divsur)', divsur)
-    !call ovarre(ofile, 'Divertor mass (kg)', '(divmas)', divmas)
+    call ovarre(ofile,'Lithium-6 enrichment (%)','(li6enrich)',li6enrich)
+    call ovarre(ofile,'Tritium breeding ratio','(tbr)',tbr)
+    call ovarre(ofile,'Tritium production rate (g/day)','(tritprate)',tritprate)
+    call ovarre(ofile,'Nuclear heating on i/b TF coil (MW/m3)','(pnuctfi)',pnuctfi)
+    call ovarre(ofile,'Nuclear heating on o/b TF coil (MW/m3)','(pnuctfo)',pnuctfo)
+    call ovarre(ofile,'Total nuclear heating on TF coil (MW)','(ptfnuc)',ptfnuc)
+    call ovarre(ofile,'Fast neut. fluence on i/b TF coil (n/m2)', &
+        '(nflutfi)',nflutfi*1.0D4)
+    call ovarre(ofile,'Fast neut. fluence on o/b TF coil (n/m2)', &
+        '(nflutfo)',nflutfo*1.0D4)
+    call ovarre(ofile,'Minimum final He conc. in IB VV (appm)','(vvhemini)',vvhemini)
+    call ovarre(ofile,'Minimum final He conc. in OB VV (appm)','(vvhemino)',vvhemino)
+    call ovarre(ofile,'Maximum final He conc. in IB VV (appm)','(vvhemaxi)',vvhemaxi)
+    call ovarre(ofile,'Maximum final He conc. in OB VV (appm)','(vvhemaxo)',vvhemaxo)
+    call ovarre(ofile,'Blanket lifetime (full power years)','(t_bl_fpy)',bktlife)
+    call ovarre(ofile,'Blanket lifetime (calendar years)','(t_bl_y)',t_bl_y)
     
   end subroutine
 
