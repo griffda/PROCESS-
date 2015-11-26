@@ -373,13 +373,17 @@ contains
 
     arp = turnstf * 4.0D0 * trp*(trp + leno0)
 
-    !  Total conductor cross-sectional area, taking account of void area
+    !  Total conductor cross-sectional area, taking account of void area and helium pipe
 
-    acond = acstf * turnstf * (1.0D0-vftf)
+    acond = acstf * turnstf * (1.0D0-vftf) - turnstf * ((pi/4.0d0)*dhecoil**2)
 
     !  Void area in cable, for He
 
     avwp = acstf * turnstf * vftf
+    
+    !  He coil area in cable
+    
+    awphec = turnstf * ((pi/4.0d0)*dhecoil**2)
 
     !  Insulation area (not including ground-wall)
 
@@ -445,13 +449,13 @@ contains
 
     !  Superconductor
 
-    whtconsc = tfleng * turnstf * acstf*(1.0D0-vftf) * &
-         (1.0D0-fcutfsu)*dcond(isumattf)
+    whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * &
+         (1.0D0-fcutfsu) - tfleng*turnstf*((pi/4.0d0)*dhecoil**2))*dcond(isumattf)
 
     !  Copper
 
-    whtconcu = tfleng * turnstf * acstf*(1.0D0-vftf) * &
-         fcutfsu*dcopper
+    whtconcu = (tfleng * turnstf * acstf*(1.0D0-vftf) * &
+         fcutfsu- tfleng*turnstf*((pi/4.0d0)*dhecoil**2))*dcopper
 
     !  Steel conduit (sheath)
 
@@ -1512,11 +1516,12 @@ contains
     call ovarre(outfile,'Conduit insulation mass per coil (kg)','(whtconin)',whtconin, 'OP ')
     call ovarre(outfile,'Total conductor cable mass per coil (kg)','(whtcon)',whtcon, 'OP ')
     call ovarre(outfile,'Cable conductor + void area (m2)','(acstf)',acstf, 'OP ')
-    call ovarre(outfile,'Cable space coolant fraction','(vftf)',vftf)
+    call ovarre(outfile,'Fractional cable space coolant fraction','(vftf)',vftf)
+    call ovarre(outfile,'Diameter of He pipe in cable space','(dhecoil)',dhecoil)
     call ovarre(outfile,'Conduit case thickness (m)','(thwcndut)',thwcndut)
     call ovarre(outfile,'Conduit insulation thickness (m)','(thicndut)',thicndut)
 
-    ap = acond + turnstf*acndttf + arp + aiwp + avwp
+    ap = acond + turnstf*acndttf + arp + aiwp + avwp + awphec
 
     call osubhd(outfile,'Winding Pack Information :')
     
@@ -1529,7 +1534,8 @@ contains
     call ovarre(outfile,'Additional steel (radial plate) fraction of winding pack','(arp/ap)',arp/ap, 'OP ')    
     call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap, 'OP ')
     call ovarre(outfile,'Helium fraction of winding pack','(avwp/ap)',avwp/ap, 'OP ')
-    call ovarrf(outfile,'      Total for winding pack','',(acond + turnstf*acndttf + arp + aiwp + avwp)/ap)    
+    call ovarre(outfile,'Helium coil fraction of winding pack','(awphec/ap)',awphec/ap, 'OP ')
+    call ovarrf(outfile,'      Total for winding pack','',(acond + turnstf*acndttf + arp + aiwp + avwp + awphec)/ap)    
     
     call ovarre(outfile,'Winding radial thickness (m)','(thkwp)',thkwp, 'OP ')
     call ovarre(outfile,'Winding width 1 (m)','(wwp1)',wwp1, 'OP ')
@@ -1737,14 +1743,17 @@ contains
       integer :: lap
       real(kind(1.0D0)) :: b,bc20m,bcrit,c0,delt,fcond,icrit,iooic, &
            jcritsc,jcrit0,jcritm,jcritp,jcritstr,jsc,jstrand,jtol,jwdgop, &
-           t,tc0m,tcrit,ttest,ttestm,ttestp, tdump
+           t,tc0m,tcrit,ttest,ttestm,ttestp, tdump, fhetot
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       ! Rename tdmptf as it is called tdump in this routine and those called from here.
       tdump = tdmptf
+      
+      fhetot = fhe + (pi/4.0d0)*dhecoil*dhecoil/acs
+      
       !  Conductor fraction
 
-      fcond = 1.0D0 - fhe
+      fcond = 1.0D0 - fhetot
 
       !  Find critical current density in superconducting strand, jcritstr
 
@@ -1770,7 +1779,7 @@ contains
          !  so this is irrelevant in this model
 
          !  Previously (wrongly) jstrand = jwp * acs*(1.0D0-fhe)/aturn
-         jstrand = jwp * aturn / (acs*(1.0D0-fhe))
+         jstrand = jwp * aturn / (acs*(1.0D0-fhetot))
 
          call bi2212(bmax,jstrand,thelium,fhts,jcritstr,tmarg)
          jcritsc = jcritstr / (1.0D0-fcu)
@@ -1796,7 +1805,7 @@ contains
 
       !  Critical current
 
-      icrit = jcritstr * acs * (1.0D0-fhe)
+      icrit = jcritstr * acs * (1.0D0-fhetot)
 
       !  Critical current density in winding pack
 
@@ -1883,7 +1892,7 @@ contains
       call oblnkl(outfile)
       call ovarre(outfile,'Peak field at conductor (T)','(bmax)',bmax, 'OP ')
       call ovarre(outfile,'Helium temperature at peak field (K)','(thelium)',thelium)
-      call ovarre(outfile,'Helium fraction inside cable space','(vftf)',fhe)
+      call ovarre(outfile,'Total helium fraction inside cable space','(fhetot)',fhetot, 'OP ')
       call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcu)
       call ovarre(outfile,'Strain on superconductor','(strncon)',strain)
 

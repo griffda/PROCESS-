@@ -1719,6 +1719,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: aswp = 0.0D0
   !+ad_vars  avwp : winding pack void (He coolant) area (m2)
   real(kind(1.0D0)) :: avwp = 0.0D0
+  !+ad_vars  awphec : winding pack He coil area (m2)
+  real(kind(1.0D0)) :: awphec = 0.0D0
   !+ad_vars  bcritsc /24.0/ : upper critical field (T) for Nb3Sn superconductor
   !+ad_varc                   at zero temperature and strain (isumattf=4, =bc20m)
   real(kind(1.0D0)) :: bcritsc = 24.0D0
@@ -1758,6 +1760,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: deflect = 0.0D0
   !+ad_vars  denh2o /985.0/ FIX : density of water (kg/m3)
   real(kind(1.0D0)) :: denh2o = 985.0D0
+  !+ad_vars  dhecoil /0.005/ : diameter of He coil in TF winding (m)
+  real(kind(1.0D0)) :: dhecoil = 0.005D0
   !+ad_vars  estotf : stored energy per TF coil (GJ) OBSOLETE
   real(kind(1.0D0)) :: estotf = 0.0D0
   !+ad_vars  estotf : total stored energy in the toroidal field (GJ) 
