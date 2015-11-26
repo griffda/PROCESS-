@@ -382,7 +382,7 @@ contains
     !+ad_hist  11/06/15 MDK Added spiral_od and spiral_id
     !+ad_hist  12/08/15 MDK vacuum_model and associated variables #304
     !+ad_hist  18/11/15 RK  zeffmax and fzeffmax for constraint equation 64
-    !+ad_hist  26/11/15 RK  added sigvvall to TF variables
+    !+ad_hist  26/11/15 RK  added sigvvall to TF variables, tfinsgap
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1532,6 +1532,9 @@ contains
        case ('tfc_model')
           call parse_int_variable('tfc_model', tfc_model, 0, 1, &
                'Switch for TF coil model')
+       case ('tfinsgap')
+          call parse_real_variable('tfinsgap', tfinsgap, 1.0D-10, 1.0D-1, &
+               'TF coil WP insertion gap (m)')
        case ('tflegres')
           call parse_real_variable('tflegres', tflegres, 1.0D-10, 1.0D-5, &
                'TF coil leg resistivity (ohm-m)')

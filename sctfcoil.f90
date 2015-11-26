@@ -108,7 +108,7 @@ contains
     !+ad_hist  31/07/14 PJK tfthko is now set to tfcth elsewhere; added extra
     !+ad_hisc               mass calculations
     !+ad_hist  02/09/14 PJK New peak field with ripple calculation
-    !+ad_hist  26/11/15 RK  Quench time calculation
+    !+ad_hist  26/11/15 RK  Quench time calculation, WP insertion gap
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -222,12 +222,13 @@ contains
 
     !  Radial extent
 
-    thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf
+    thkwp = tfcth - casthi - thkcas - 2.0D0*tinstf - 2.0d0*tfinsgap
 
     if (thkwp <= 0.0D0) then
        fdiags(1) = thkwp ; fdiags(2) = tfcth
        fdiags(3) = thkcas ; fdiags(4) = casthi
        fdiags(5) = casths ; fdiags(6) = tinstf
+       fdiags(7) = tfinsgap
        call report_error(98)
        write(*,*) 'Error in routine SCTFCOIL:'
        write(*,*) 'Negative winding pack thickness:        thkwp (m) =',thkwp
@@ -237,20 +238,21 @@ contains
        write(*,*) 'or their upper bounds:'
        write(*,*) 'thkcas=',thkcas,' casthi=',casthi
        write(*,*) 'casths=',casths,' tinstf=',tinstf
+       write(*,*) 'tfinsgap=', tfinsgap
        write(*,*) ' '
     end if
 
     !  Radius of geometrical centre of winding pack
 
-    radwp = rcoil - casthi - tinstf - 0.5D0*thkwp
+    radwp = rcoil - casthi - tfinsgap - tinstf - 0.5D0*thkwp
 
     !  Thickness of winding pack section at R > radwp
 
-    wwp1 = 2.0D0 * (radwp*tant - casths - tinstf)
+    wwp1 = 2.0D0 * (radwp*tant - casths - tinstf - tfinsgap)
 
     !  Thickness of winding pack section at R < radwp
 
-    wwp2 = 2.0D0 * ((radwp-0.5D0*thkwp)*tant - casths - tinstf)
+    wwp2 = 2.0D0 * ((radwp-0.5D0*thkwp)*tant - casths - tinstf - tfinsgap)
 
     !  Total cross-sectional area of winding pack
 
@@ -258,9 +260,10 @@ contains
 
     !  Total cross-sectional area of winding pack,
     !  including the surrounding ground-wall insulation layer
+    !  and insertion gap
 
-    awpc = 0.5D0*thkwp*(wwp2 + 2.0D0*tinstf) + &
-         (0.5D0*thkwp + 2.0D0*tinstf)*(wwp1 + 2.0D0*tinstf)
+    awpc = 0.5D0*thkwp*(wwp2 + 2.0D0*tinstf + 2.0d0*tfinsgap) + &
+         (0.5D0*thkwp + 2.0D0*tinstf + 2.0d0*tfinsgap)*(wwp1 + 2.0D0*tinstf+ 2.0d0*tfinsgap)
 
     !  Total cross-sectional area of surrounding case
 
@@ -487,6 +490,7 @@ contains
     write(*,*) '  casthi = ',casthi
     write(*,*) '  casths = ',casths
     write(*,*) '  tinstf = ',tinstf
+    write(*,*) 'tfinsgap = ',tfinsgap
     write(*,*) 'thwcndut = ',thwcndut
     write(*,*) 'thicndut = ',thicndut
     write(*,*) '   cpttf = ',cpttf
@@ -1533,6 +1537,7 @@ contains
     call ovarre(outfile,'Radial plate thickness (m)','(2*trp)',2.0D0*trp, 'OP ')
     call ovarre(outfile,'Mass of radial plates + caps per coil (kg)','(whtrp)',whtrp, 'OP ')
     call ovarre(outfile,'Ground wall insulation thickness (m)','(tinstf)',tinstf)
+    call ovarre(outfile,'Winding pack insertion gap (m)','(tfinsgap)',tfinsgap)
     call ovarre(outfile,'Ground wall mass per coil (kg)','(whtgw)',whtgw, 'OP ')
     call ovarre(outfile,'Number of turns per TF coil','(turnstf)',turnstf, 'OP ')
     call ovarre(outfile,'Current per turn (A)','(cpttf)',cpttf)

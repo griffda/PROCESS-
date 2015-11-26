@@ -1895,6 +1895,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tficrn = 0.0D0
   !+ad_vars  tfind : TF coil inductance (H)
   real(kind(1.0D0)) :: tfind = 0.0D0
+  !+ad_vars  tfinsgap /0.005/ : TF coil WP insertion gap (m)
+  real(kind(1.0D0)) :: tfinsgap = 0.005D0
   !+ad_vars  tflegmw : TF coil outboard leg resistive power (MW)
   real(kind(1.0D0)) :: tflegmw = 0.0D0
   !+ad_vars  tflegres /2.5e-8/ : resistivity of a TF coil leg (Ohm-m)
