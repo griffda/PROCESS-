@@ -177,6 +177,7 @@ module process_input
   integer :: iptr             !  current position on line
   integer :: infile, outfile, report_changes, icode
   logical :: subscript_present
+  logical :: error = .False.
 
   integer           :: error_code
   character(len=78) :: error_routine, error_message
@@ -453,10 +454,9 @@ contains
        call get_variable_name(varnam,varlen,isub1,isub2)
        if (isub1 /= 0) subscript_present = .TRUE.
        if (varlen == 0) then
-          error_code = lineno
-          error_routine = 'PARSE_INPUT_FILE'
-          error_message = 'Error whilst reading variable name'
-          call report_input_error
+          write(*,*) 'Error in IN.DAT at line ', lineno
+          write(*,*) line
+          error = .True.
        end if
 
        !  Read the associated data
@@ -2762,23 +2762,24 @@ contains
                'Unit cost of TH H production ($/kW)')
 
        case default
-          error_code = lineno
-          error_routine = 'PARSE_INPUT_FILE'
-          error_message = &
-               'Unknown variable in input file: '//varnam(1:varlen)
-          call report_input_error
+          error_message = 'Unknown variable in input file: '//varnam(1:varlen)
+          write(*,*) error_message
+          write(*,*) 'Error occurred at this line in the IN.DAT file:', lineno
+          write(*,*) line          
+          error = .True.
+          
 
        end select variable
 
        !  Uncomment the following to abort the code if an obsolete variable name
        !  has been found in the input file
 
-       if (obsolete_var) then
-          error_code = lineno
-          error_routine = 'PARSE_INPUT_FILE'
-          error_message = &
-               'Obsolete variable specified - see output file for details'
-          call report_input_error
+       if (obsolete_var) then          
+          error_message = 'Obsolete variable specified'
+          write(*,*) error_message          
+          write(*,*) 'Error occurred at this line in the IN.DAT file: ', lineno
+          write(*,*) line
+          error = .True.
        end if
 
        !  If we have just read in an array, a different loop-back is needed
@@ -2788,6 +2789,9 @@ contains
        cycle
 
     end do loop_over_lines
+    
+    if (error == .True.) stop
+    
     ! MDK Try allocating here
     allocate(name_xc(nvar))
 
@@ -2840,10 +2844,10 @@ contains
     !  and stop if this is the case
 
     if (subscript_present) then
-       error_code = lineno
-       error_routine = 'PARSE_REAL_VARIABLE'
-       error_message = 'Unexpected subscript found'
-       call report_input_error
+       write(*,*) 'Unexpected subscript found at line ', lineno
+       write(*,*) 'Variable name and description:'
+       write(*,*) varnam, description
+          error = .True.
     end if
 
     !  Obtain the new value for the variable
@@ -2851,10 +2855,9 @@ contains
     oldval = varval
     call get_value_real(varval,icode)
     if (icode /= 0) then
-       error_code = icode
-       error_routine = 'PARSE_REAL_VARIABLE'
-       error_message = 'Error whilst reading input file'
-       call report_input_error
+       write(*,*) 'Error whilst reading input file.  Variable name and description:'
+       write(*,*) varnam, description
+          error = .True.
     end if
 
     !  Check variable lies within range
@@ -2913,11 +2916,11 @@ contains
     !  Check whether a subscript was found by the preceding call to GET_VARIABLE_NAME
     !  and stop if this is the case
 
-    if (subscript_present) then
-       error_code = lineno
-       error_routine = 'PARSE_INT_VARIABLE'
-       error_message = 'Unexpected subscript found'
-       call report_input_error
+    if (subscript_present) then       
+       write(*,*) 'Unexpected subscript found in IN.DAT at line number: ', lineno
+       write(*,*) 'Name and description of variable: '
+       write(*,*) varnam, description
+          error = .True.
     end if
 
     !  Obtain the new value for the variable
@@ -2925,10 +2928,10 @@ contains
     oldval = varval
     call get_value_int(varval,icode)
     if (icode /= 0) then
-       error_code = icode
-       error_routine = 'PARSE_INT_VARIABLE'
-       error_message = 'Error whilst reading input file'
-       call report_input_error
+       write(*,*) 'Unexpected subscript found at line ',lineno
+       write(*,*) 'Variable name, description:'
+       write(*,*) varnam, description
+          error = .True.
     end if
 
     !  Check variable lies within range
@@ -2982,11 +2985,11 @@ contains
     !  Check whether a subscript was found by the preceding call to GET_VARIABLE_NAME
     !  and stop if this is the case
 
-    if (subscript_present) then
-       error_code = lineno
-       error_routine = 'PARSE_STRING_VARIABLE'
-       error_message = 'Unexpected subscript found'
-       call report_input_error
+    if (subscript_present) then       
+       write(*,*) 'Unexpected subscript found in IN.DAT at line number: ', lineno
+       write(*,*) 'Name and description of variable: '
+       write(*,*) varnam, description
+          error = .True.
     end if
 
     !  Obtain the new value for the variable
@@ -2994,10 +2997,10 @@ contains
     oldval = varval
     call get_substring(varval,icode)
     if (icode /= 0) then
-       error_code = icode
-       error_routine = 'PARSE_STRING_VARIABLE'
-       error_message = 'Error whilst reading input file'
-       call report_input_error
+       write(*,*) 'Error in IN.DAT found at line ',lineno
+       write(*,*) 'Variable name, description:'
+       write(*,*) varnam, description
+          error = .True.
     end if
 
     if ((report_changes == 1).and.(trim(varval) /= trim(oldval))) then
@@ -3061,11 +3064,11 @@ contains
        oldval = varval(isub1)
        call get_value_real(val,icode)
 
-       if (icode /= 0) then
-          error_code = icode
-          error_routine = 'PARSE_REAL_ARRAY'
-          error_message = 'GET_VALUE_REAL returns with icode = '
-          call report_input_error
+       if (icode /= 0) then          
+          write(*,*) 'Error in IN.DAT found at line ',lineno
+          write(*,*) 'Variable name, description:'
+          write(*,*) varnam, description
+          error = .True.
        end if
 
        varval(isub1) = val
@@ -3156,10 +3159,10 @@ contains
        call get_value_int(val,icode)
 
        if (icode /= 0) then
-          error_code = icode
-          error_routine = 'PARSE_INT_ARRAY'
-          error_message = 'GET_VALUE_INT returns with icode = '
-          call report_input_error
+          write(*,*) 'Error in IN.DAT found at line ',lineno
+          write(*,*) 'Variable name, description:'
+          write(*,*) varnam, description
+          error = .True.
        end if
 
        varval(isub1) = val
@@ -4418,13 +4421,12 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     if (min_value > max_value) then
-       write(outfile,*) &
-            'Illegal relative values of min_value and max_value'
+       write(outfile,*) 'Illegal relative values of min_value and max_value'
        write(outfile,*) 'for variable ',cvar
-       error_code = lineno
-       error_routine = 'CHECK_RANGE_INT'
-       error_message = 'Illegal min_value vs max_value'
-       call report_input_error
+       
+       write(*,*) 'Illegal relative values of min_value and max_value'
+       write(*,*) 'for variable ',cvar
+          error = .True.
     end if
 
     if ((varval < min_value).or.(varval > max_value)) then
@@ -4432,10 +4434,12 @@ contains
        write(outfile,*) 'Minimum value = ',min_value
        write(outfile,*) 'Maximum value = ',max_value
        write(outfile,*) ' Actual value = ',varval
-       error_code = lineno
-       error_routine = 'CHECK_RANGE_INT'
-       error_message = 'Variable range error'
-       call report_input_error
+       
+       write(*,*) cvar,' lies outside its allowed range :'
+       write(*,*) 'Minimum value = ',min_value
+       write(*,*) 'Maximum value = ',max_value
+       write(*,*) ' Actual value = ',varval
+          error = .True.
     end if
 
   end subroutine check_range_int
@@ -4477,13 +4481,12 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     if (min_value > max_value) then
-       write(outfile,*) &
-            'Illegal relative values of min_value and max_value'
+       write(outfile,*) 'Illegal relative values of min_value and max_value'
        write(outfile,*) 'for variable ',cvar
-       error_code = lineno
-       error_routine = 'CHECK_RANGE_REAL'
-       error_message = 'Illegal min_value vs max_value'
-       call report_input_error
+       
+       write(*,*) 'Illegal relative values of min_value and max_value'
+       write(*,*) 'for variable ',cvar
+          error = .True.
     end if
 
     if ((varval < min_value).or.(varval > max_value)) then
@@ -4491,10 +4494,12 @@ contains
        write(outfile,*) 'Minimum value = ',min_value
        write(outfile,*) 'Maximum value = ',max_value
        write(outfile,*) ' Actual value = ',varval
-       error_code = lineno
-       error_routine = 'CHECK_RANGE_REAL'
-       error_message = 'Variable range error'
-       call report_input_error
+       
+       write(*,*) cvar,' lies outside its allowed range :'
+       write(*,*) 'Minimum value = ',min_value
+       write(*,*) 'Maximum value = ',max_value
+       write(*,*) ' Actual value = ',varval       
+          error = .True.
     end if
 
   end subroutine check_range_real

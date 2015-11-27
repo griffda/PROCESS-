@@ -1989,3 +1989,4 @@ end subroutine runtests
 !          #327 Tweaks to make old cost model work
 ! 407      #304 Section 2 : pump-down model
 ! 408      #328 PF coil and CS cross-section and cost
+!          New error reporting in input.f90.
