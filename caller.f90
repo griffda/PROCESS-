@@ -187,7 +187,7 @@ subroutine caller(xc,nvars)
   !  Tokamak and RFP calls
   call geomty
   call radialb(nout,0)
-  call vbuild
+  call vbuild(nout,0)
 
   if (irfp == 0) then
      call physics
