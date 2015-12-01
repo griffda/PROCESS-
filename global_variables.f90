@@ -1235,22 +1235,51 @@ module fwbs_variables
   !+ad_varc         <LI> = 3 steam Rankine cycle;
   !+ad_varc         <LI> = 4 supercritical CO2 cycle</UL> </UL>
   integer :: secondary_cycle = 0
-  !+ad_vars  coolp /15.5e6/ : first wall coolant pressure (Pa) (secondary_cycle>1)
-  real(kind(1.0D0)) :: coolp = 15.5D6
-  !+ad_vars  coolwh : Primary coolant fluid type (set via blkttype):<UL>
+  !+ad_vars  coolwh : Blanket coolant (set via blkttype):<UL>
   !+ad_varc         <LI> = 1 helium;
   !+ad_varc         <LI> = 2 pressurized water</UL>
   integer :: coolwh = 1
-  !+ad_vars  afwi /0.008/ : inner radius of inboard first wall/blanket coolant channels (m)
+  !+ad_vars  afwi /0.008/ : inner radius of inboard first wall/blanket coolant channels OBSOLETE (m)
   real(kind(1.0D0)) :: afwi = 0.008D0
-  !+ad_vars  afwo /0.008/ : inner radius of outboard first wall/blanket coolant channels (m)
+  !+ad_vars  afwo /0.008/ : inner radius of outboard first wall/blanket coolant channels OBSOLETE (m)
   real(kind(1.0D0)) :: afwo = 0.008D0
-  !+ad_vars  inlet_temp /573.0/ : inlet temperature of coolant for blanket and first wall (K) (secondary_cycle>1)
+  
+  ! MDK New first wall calculation
+  !+ad_vars  fwcoolant /helium/ : first wall coolant (can be different from blanket coolant)
+  !+ad_varc                       'helium' or 'water'  (15/11/27)
+  character(len=6) :: fwcoolant = 'helium'  
+  !+ad_vars  fw_wall /0.003/ : wall thickness of first wall coolant channels (m) (15/11/27)
+  real(kind(1.0D0)) :: fw_wall = 0.003D0
+  !+ad_vars  afw /0.006/ : radius of first wall cooling channels (m) (27/11/15)
+  real(kind(1.0D0)) :: afw = 0.006D0
+  !+ad_vars  pitch /0.020/ : pitch of first wall cooling channels (m) (27/11/15)
+  real(kind(1.0D0)) :: pitch = 0.020D0
+  !+ad_vars  fwinlet /623/ : inlet temperature of first wall coolant (K) (15/11/27)
+  real(kind(1.0D0)) :: fwinlet = 573.0D0
+  !+ad_vars  fwoutlet /623/ : outlet temperature of first wall coolant (K) (15/11/27)
+  real(kind(1.0D0)) :: fwoutlet = 823.0D0
+  !+ad_vars  fwpressure /15.5e6/ : first wall coolant pressure (Pa) (secondary_cycle>1)
+  real(kind(1.0D0)) :: fwpressure = 15.5D6
+  !+ad_vars  tpeak : peak first wall temperature (K) (15/11/27)
+  real(kind(1.0D0)) :: tpeak = 873.0D0
+  !+ad_vars  roughness /1e-6/ : first wall channel roughness epsilon (m) (15/11/27)
+  real(kind(1.0D0)) :: roughness = 1.0D-6 
+  
+  ! MDK Blanket has not changed as much, but some new variable names
+  !+ad_vars  blpressure /15.5e6/ : blanket coolant pressure (Pa) (secondary_cycle>1) (15/11/27)
+  real(kind(1.0D0)) :: blpressure = 15.5D6 
+  !+ad_vars  inlet_temp /573.0/ : inlet temperature of blanket coolant  (K) (secondary_cycle>1) (15/11/27)
   real(kind(1.0D0)) :: inlet_temp = 573.0D0
-  !+ad_vars  outlet_temp /823.0/ : outlet temperature of coolant for blanket and first wall (K)<UL>
+  !+ad_vars  outlet_temp /823.0/ : outlet temperature of blanket coolant (K) (15/11/27)<UL>
   !+ad_varc         <LI> (secondary_cycle>1); 
   !+ad_varc         <LI> input if coolwh=1 (helium), calculated if coolwh=2 (water)</UL>
   real(kind(1.0D0)) :: outlet_temp = 823.0D0
+  
+  
+  !+ad_vars  coolp /15.5e6/ : blanket coolant pressure (Pa) stellarator ONLY (15/11/27)
+  real(kind(1.0D0)) :: coolp = 15.5D6 
+  
+  
   !+ad_vars  nblktmodpo /8/ : number of outboard blanket modules in poloidal direction (secondary_cycle>1)
   integer :: nblktmodpo = 8
   !+ad_vars  nblktmodpi /7/ : number of inboard blanket modules in poloidal direction (secondary_cycle>1)
@@ -1296,8 +1325,6 @@ module fwbs_variables
   !+ad_varc                    ipfloc=3 PF coil (or stellarator modular coil)
   !+ad_varc                    and cryostat (m)
   real(kind(1.0D0)) :: rpf2dewar = 0.5D0
-  !+ad_vars  tpeak : peak first wall temperature (K)
-  real(kind(1.0D0)) :: tpeak = 0.0D0
   !+ad_vars  vdewex : cryostat volume (m3)
   real(kind(1.0D0)) :: vdewex = 0.0D0
   !+ad_vars  vdewin : vacuum vessel volume (m3)
@@ -2729,10 +2756,13 @@ module build_variables
   real(kind(1.0D0)) :: fwareaib = 0.0D0
   !+ad_vars  fwareaob : outboard first wall surface area (m2)
   real(kind(1.0D0)) :: fwareaob = 0.0D0
-  !+ad_vars  fwith /0.035/ : inboard first wall thickness, initial estimate (m)
-  real(kind(1.0D0)) :: fwith = 0.035D0
-  !+ad_vars  fwoth /0.035/ : outboard first wall thickness, initial estimate (m)
-  real(kind(1.0D0)) :: fwoth = 0.035D0
+  
+  ! MDK These are now calculated
+  !+ad_vars  fwith : inboard first wall thickness, initial estimate (m)
+  real(kind(1.0D0)) :: fwith = 0.0D0
+  !+ad_vars  fwoth : outboard first wall thickness, initial estimate (m)
+  real(kind(1.0D0)) :: fwoth = 0.0D0
+  
   !+ad_vars  gapds /0.155/ : gap between inboard vacuum vessel and TF coil (m)
   !+ad_varc                (iteration variable 61)
   real(kind(1.0D0)) :: gapds = 0.155D0
@@ -4066,8 +4096,6 @@ module pulse_variables
 
   public
 
-  !+ad_vars  afw /0.005/ : inner radius of each first wall structural tube (m)
-  real(kind(1.0D0)) :: afw = 0.005D0
   !+ad_vars  bctmp /320.0/ : first wall bulk coolant temperature (C)
   real(kind(1.0D0)) :: bctmp = 320.0D0
   !+ad_vars  bfw : outer radius of each first wall structural tube (m)

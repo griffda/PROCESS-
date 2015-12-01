@@ -18,6 +18,7 @@ module ccfe_hcpb_module
   !+ad_hist  10/02/15 JM  Initial version of module
   !+ad_hist  23/04/15 MDK Removed fhole, changed 1 to 1.0D) for safety
   !+ad_hist  01/06/15 MDK Tidied up details: Issue #302.
+  !+ad_hist  01/12/15 MDK Thermohydraulic parts extensively revised.
   !+ad_stat  Okay
   !+ad_docs  PROCESS Engineering paper (M. Kovari et al.)
   !
@@ -140,9 +141,6 @@ module ccfe_hcpb_module
   !  Inboard/outboard first wall peak temperature (K)
   real(kind=double), private :: tpeakfwi, tpeakfwo
   
-  !  Inboard/outboard first wall coolant flow rate (m/s)
-  real(kind=double), private :: velfwi, velfwo
-  
   !  Inboard/outboard total mass flow rate to remove inboard FW power (kg/s)
   real(kind=double), private :: mffwi, mffwo
   
@@ -226,11 +224,13 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         
-	!  Calculate FW/Blanket lifetime
-	!fwlife = min(abktflnc/wallmw, tlife)
+	! MDK (15/11/27) 
+	fwith = 2*afw + 2*fw_wall
+	fwoth = fwith
 	
 	!  Coolant type
 	coolwh = 1
+	! Note that the first wall coolant is now input separately.
 	
 	!  Energy multiplication
 	emult = 1.269
@@ -245,19 +245,11 @@ contains
         pnuccp = 0.0D0
     end if
            
-	!  Calculate the nuclear heating in the magnets
-    call nuclear_heating_magnets
-    
-    !  Calculate the nuclear heating in the fW
-    call nuclear_heating_fw
-    
-    !  Calculate the nuclear heating in the blanket
-    call nuclear_heating_blanket
-    
-    !  Calculate the nuclear heating in the shield
-    call nuclear_heating_shield
-    
-    !  Calculate the nuclear heating in the divertor
+	!  Calculate the nuclear heating 
+    call nuclear_heating_magnets    
+    call nuclear_heating_fw    
+    call nuclear_heating_blanket    
+    call nuclear_heating_shield    
     call nuclear_heating_divertor
     
     !  Neutron power to divertor: 0.8D0 * fdiv * powfmw (assume this is all absorbed, no multiplication)
@@ -286,9 +278,7 @@ contains
 	emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - 0.8D0 * powfmw
 
 	!  Calculate the powerflow
-    call powerflow_calc
-    
-    !  Calculate component masses
+    call powerflow_calc    
     call component_masses
     
 	if (ip == 0) return
@@ -318,38 +308,28 @@ contains
     !  Local variables
     real(kind=double) :: hcryopf, r1, r2, r3, v1, v2
            
-    !  Calculate blanket half-height
-    call blanket_half_height
-    
-    !  Calculate shield half-height
+    call blanket_half_height    
     call shield_half_height
-    
-    !  Calculate vacuum vessel half-height
     call vv_half_height
     
     !  D-shaped blanket and shield
     if ((itart == 1).or.(fwbsshape == 1)) then
 
-       call dshaped_blanket
-       
-       call dshaped_shield
-       
+       call dshaped_blanket       
+       call dshaped_shield       
        call dshaped_vv
 
 	!  Elliptical blanket and shield
     else
     
-	   call elliptical_blanket
-	   
-	   call elliptical_shield
-	   
+	   call elliptical_blanket	   
+	   call elliptical_shield	   
 	   call elliptical_vv
 
     end if
     
 	!  Apply coverage factors to volumes and surface areas
-    call apply_coverage_factors
-    
+    call apply_coverage_factors    
     !  Calculate cryostat geometry
     call external_cryo_geometry
       
@@ -808,21 +788,23 @@ contains
     
     !  Local variables
     real(kind=double) :: a, b, e
-    real(kind=double) :: vffwi, vffwo, vffwm
+    real(kind=double) :: vffwm
     
     !  Model factors and coefficients
     a = 2.830D0       	! Exponential factor (m2/tonne)
     b = 0.583D0       	! Exponential factor (m2/tonne)
     e = 9.062D0	       	! Pre-factor (1/kg). Corrected see issue #272
     
-    !  Half-widths of inboard and outboard first wall
-    bfwi = 0.5D0*fwith
-    bfwo = 0.5D0*fwoth
       
 	!  First wall void fractions
-    vffwi = afwi*afwi/(bfwi*bfwi)  !  inboard FW coolant void fraction
-    vffwo = afwo*afwo/(bfwo*bfwo)  !  outboard FW coolant void fraction
-    vffwm = (vffwi + vffwo) / 2    !  mean FW coolant void fraction
+    !vffwi = afwi*afwi/(bfwi*bfwi)  !  inboard FW coolant void fraction
+    !vffwo = afwo*afwo/(bfwo*bfwo)  !  outboard FW coolant void fraction
+    !vffwm = (vffwi + vffwo) / 2    !  mean FW coolant void fraction
+    
+    ! (15/11/27)
+    vffwi = pi*afw**2/(pitch*fwith)  !  inboard FW coolant void fraction
+    vffwo = vffwi
+    vffwm = vffwi
     
 	!  Calculate smeared densities of blanket sections
 	!  gaseous He coolant in armour, FW & blanket: He mass is neglected
@@ -884,6 +866,10 @@ contains
     
     !  Total nuclear heating in FW (MW)
     pnucfw = fwmass * fw_armour_u_nuc_heating * powfmw
+    if ((pnucfw<0.0d0).or.(pnucfw /= pnucfw)) then
+        write(*,*)'Error in nuclear_heating_fw.  pnucfw = ', pnucfw, 'powfmw = ', powfmw, 'fwmass = ', fwmass
+        stop
+    end if
   
   end subroutine
 
@@ -1018,10 +1004,10 @@ contains
     !  Radiation power incident on first wall (MW)
     pradfw = pradmw - praddiv - pradhcd
 
-    !  If we have chosen pressurised water as the coolant, set the
+    !  If we have chosen pressurised water as the blanket coolant, set the
     !  coolant outlet temperature as 20 deg C below the boiling point
     if (coolwh == 2) then
-        outlet_temp = tsat_refprop(coolp*1.0D6, coolwh) - 20.0D0  !  in K
+        outlet_temp = tsat_refprop(blpressure*1.0D6, coolwh) - 20.0D0  !  in K
     end if
 
     !  Surface heat flux on first wall (outboard and inboard) (MW) 
@@ -1036,13 +1022,11 @@ contains
 		htpmw_fw = fpumpfw * (pnucfw + psurffwi + psurffwo)
 
 		!  Blanket pumping power (MW)
-		htpmw_blkt = fpumpblkt * pnucblkt
+		htpmw_blkt = fpumpblkt * pnucblkt	
 	
-	!  Detailed model
 	else
-		
-		call thermo_hydraulic_model		
-		
+		!  Detailed model
+		call thermo_hydraulic_model				
 	end if
 	
     !  Calculate shield and divertor coolant pumping powers from input fraction.  
@@ -1063,13 +1047,14 @@ contains
   
   subroutine thermo_hydraulic_model
 	!+ad_name  thermo_hydraulic_model
-    !+ad_summ  Calculations for detailed thermo-hydraulic model for fw
+    !+ad_summ  Thermo-hydraulic model for first wall and blanket
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_desc  Calculations for detailed powerflow model secondary_cycle > 0
     !+ad_prob  None
     !+ad_hist  23/02/15 JM  Initial version
+    !+ad_hist  01/12/15 MDK Extensively revised Issue #348 (15/12/01)
     !+ad_stat  Okay
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1077,11 +1062,11 @@ contains
     implicit none
     
     !  Local variables
-    real(kind=double) :: cf, rhof
-    integer :: no90fw, no180fw, no90bz, no180bz
+    real(kind=double) :: cf, rhof, temp_in, temp_out
+    integer :: no90fw, no180fw, no90bz, no180bz, coolant
 
     !  Determine size of blanket modules
-    !  Length of coolant pipes is assumed to be 80% of total radial space
+    !  Radial length of coolant pipes is assumed to be 80% of total radial space
     !  available for blanket, allowing for connections, manifolds etc.
     bldepti = 0.8D0 * blnkith
     bldepto = 0.8D0 * blnkoth
@@ -1096,11 +1081,11 @@ contains
     !  Calculate poloidal height of blanket modules
     call blanket_mod_pol_height
             
-    !  Calculate total flow lengths
-    !  First wall flow is assumed to follow a radial-poloidal-radial path
+    ! Calculate total flow lengths, used for pressure drop calculation
+    
+    ! First wallflow is assumed to follow a rad-pol-rad path
     fwfllengi = 2.0D0*bldepti + bllengi
     fwfllengo = 2.0D0*bldepto + bllengo
-
     !  Blanket flow is assumed to follow a rad-pol-rad-rad-pol-rad path
     bzfllengi = 4.0D0*bldepti + 2.0D0*bllengi
     bzfllengo = 4.0D0*bldepto + 2.0D0*bllengo
@@ -1111,132 +1096,108 @@ contains
     no90bz = 4
     no180bz = 1
     
-    !  Nuclear power deposited in fw inner and outer
-    !pnucfwi = pnucfw * fwareaib/(fwareaib + fwareaob)
-    !pnucfwo = 
+    !  Nuclear power deposited in fw inner and outer (MW)
+    pnucfwi = pnucfw * fwareaib/fwarea
+    pnucfwo = pnucfw * fwareaob/fwarea
 
-    !  Thermal hydraulic calculations 
+    !  Thermohydraulic calculations 
+    ! -------------------------------    
     
-    !  INBOARD
-    !  Calc of max FW temperature.
-    !  Includes fraction of escaped alpha power as a component of the inboard wall surface power.
-    !call iterate_fw(afwi, bfwi, fwareaib, (psurffwi+fwareaib/fwarea*palpfwmw), bllengi, &
-	!    pnucfwi, tpeakfwi, cf, rhof, velfwi)
-	call iterate_fw(afwi, bfwi, fwareaib, psurffwi, bllengi, pnucfwi, tpeakfwi, cf, rhof, velfwi)
-
-    !  Adjust first wall thickness if bfwi has been changed
-    fwith = 2.0D0*bfwi
-    !vffwi = (afwi/bfwi)**2
-    vffwi = (pi*afwi*afwi)/((2.0D0*bfwi)**2.0D0)
-
-    !  Total mass flow rate to remove inboard first wall power (kg/s)
-    mffwi = 1.0D6*(pnucfwi + psurffwi) / (cf*(outlet_temp-inlet_temp))
-
-    !  Calculate total number of pipes from coolant fraction and channel dimensions
-    !npfwi = (vffwi*fwith*fwareaib)/(pi*afwi*afwi*fwfllengi)
-    npfwi = (vffwi*fwith*fwareaib)/(pi*afwi*afwi*bllengi)
-
-    !  Mass flow rate per coolant pipe (kg/s)
-    mffwpi = mffwi/npfwi
-
-    !  Neutron power deposited in inboard blanket (MW)
-    pnucblkti = pnucblkt * volblkti / volblkt
+    ! INBOARD
+    ! Maximum FW temperature. (15/11/27) Issue #348     
+    ! First wall flow is just along the first wall, with no allowance for radial 
+    ! pipes, manifolds etc.
+    ! The outputs are mean quantities of inlet and outlet
+    if (pnucfw<0.0d0) write(*,*)'pnucfw =', pnucfw
+    if (pnucfwi<0.0d0) write(*,*)'pnucfwi =', pnucfwi
+    if (psurffwi<0.0d0) write(*,*)'psurffwi =', psurffwi    
+    
+	call fw_temp(afw, fwith, fwareaib, psurffwi, bllengi, pnucfwi, tpeakfwi, cf, rhof)
 	
-    !  Assume inlet and outlet temps for blanket are the same as those for the FW. Channel inner 
-    !  diameter is also the same. Calculate mass flow rate for inboard blanket coolant (kg/s)
+    !  Total mass flow rate to remove inboard first wall power (kg/s)
+    mffwi = 1.0D6*(pnucfwi + psurffwi) / (cf*(fwoutlet - fwinlet))
+    !  Total number of pipes from coolant fraction and channel dimensions
+    npfwi = (vffwi*fwith*fwareaib)/(pi*afw*afw*bllengi)
+    !  Mass flow rate per coolant pipe (kg/s)
+    mffwpi = mffwi/npfwi    
+    
+    !  Neutron power deposited in inboard blanket (MW)
+    pnucblkti = pnucblkt * volblkti / volblkt	 
+    !  Mass flow rate for inboard blanket coolant (kg/s)
     mfblkti = 1.0D6*(pnucblkti) / (cf*(outlet_temp-inlet_temp))
 
     !  Calc total num of pipes (in all inboard modules) from coolant frac and channel dimensions
     !  Assumes up/down flow, two 90 deg bends per length
-    npblkti = (vfblkt * volblkti) / (pi * afwi * afwi * bzfllengi)
-
+    npblkti = (vfblkt * volblkti) / (pi * afw * afw * bzfllengi)
     !  Mass flow rate per coolant pipe (kg/s)
+    if ((npblkti<=0.0d0).or.(npblkti/=npblkti)) then
+        write(*,*) 'npblkti = ', npblkti, 'vfblkt =', vfblkt, 'volblkti =',volblkti
+        stop
+    end if
     mfblktpi = mfblkti / npblkti
+    
 
     !  Coolant velocity in blanket (m/s)
-    velblkti = mfblktpi / (pi * afwi * afwi * rhof)
+    velblkti = mfblktpi / (pi * afw * afw * rhof)
 
-    !  Should check max temp in the blanket is below necessary limits; this is not straightforward
-    !  Calculate pumping powers for blanket and first wall (MW)
-    htpmw_fwi = pumppower(fwfllengi, afwi, mffwi, mffwpi, no90fw, no180fw, etaiso, coolwh, 'Inboard first wall')
-    htpmw_blkti = pumppower(bzfllengi, afwi, mfblkti, mfblktpi, no90bz, no180bz, etaiso, coolwh, 'Inboard blanket')
+    !  Pumping powers for blanket and first wall (MW)
+    if (fwcoolant == 'helium') coolant=1
+    if (fwcoolant == 'water') coolant=2 
+    htpmw_fwi = pumppower(fwinlet, fwoutlet, fwpressure, fwfllengi, afw, mffwi, mffwpi, no90fw, no180fw, etaiso, coolant, 'Inboard first wall')
+    htpmw_blkti = pumppower(inlet_temp, outlet_temp,blpressure, bzfllengi, afw, mfblkti, mfblktpi, no90bz, no180bz, etaiso, coolwh, 'Inboard blanket')
 
     !  OUTBOARD
 
-    !  Calculation of max FW temp. Include NBI orbit loss power (assume to be only on outboard side)
-    ! and a fraction of the escaped alpha power as components of the outboard wall surface power
-    !call iterate_fw(afwo, bfwo, fwareaob, (psurffwo + porbitlossmw + fwareaob/fwarea*palpfwmw), &
-    !    bllengo, pnucfwo, tpeakfwo, cf, rhof, velfwo)
-    call iterate_fw(afwo, bfwo, fwareaob, psurffwo, bllengo, pnucfwo, tpeakfwo, cf, rhof, velfwo)
-
-    !  Adjust first wall thickness if bfwo has been changed
-    fwoth = 2.0D0*bfwo
-    !vffwo = (afwo/bfwo)**2
-    vffwo = (pi*afwo*afwo)/((2.0D0*bfwo)**2.0D0)
-
+    ! Maximum FW temperature. (15/11/27) Issue #348. 
+    call fw_temp(afw, fwoth, fwareaob, psurffwo, bllengo, pnucfwo, tpeakfwo, cf, rhof)
+    
     !  Total mass flow rate to remove outboard first wall power (kg/s)
-    mffwo = 1.0D6*(pnucfwo + psurffwo + porbitlossmw) / (cf*(outlet_temp-inlet_temp))
+    mffwo = 1.0D6*(pnucfwo + psurffwo + porbitlossmw) / (cf*(fwoutlet-fwinlet))
 
     !  Calculate total number of pipes from coolant fraction and channel dimensions
-    !npfwo = (vffwo*fwoth*fwareaob)/(pi*afwo*afwo*fwfllengo)
-    npfwo = (vffwo*fwoth*fwareaob)/(pi*afwo*afwo*bllengo)
-
+    npfwo = (vffwo*fwoth*fwareaob)/(pi*afw*afw*bllengo)
     !  Mass flow rate per coolant pipe (kg/s)
     mffwpo = mffwo/npfwo
 
     !  Neutron power deposited in outboard blanket (MW)
     pnucblkto = pnucblkt * volblkto / volblkt
-
-    !  Assume inlet and outlet temperatures for breeder zone are the same as those of
-    !  for the first wall. Channel inner diameter is also the same. This does not
-    !  have to be so but is the case for WCLL, and allows the pumping power to be calculated.
+    !  Mass flow rate for outboard blanket coolant (kg/s)    
     mfblkto = 1.0D6*(pnucblkto) / (cf*(outlet_temp-inlet_temp))  !  kg/s
 
     !  Calculate total number of pipes (in all outboard modules) from coolant fraction and 
     !  channel dimensions (assumes up/down flow, two 90 deg bends per length)
-    npblkto = (vfblkt*volblkto)/(pi*afwo*afwo*bzfllengo)
+    npblkto = (vfblkt*volblkto)/(pi*afw*afw*bzfllengo)
 
     !  mass flow rate per coolant pipe (kg/s)
     mfblktpo = mfblkto / npblkto
-
     !  Coolant velocity in breeder zone (m/s)
-    velblkto = mfblktpo/(pi*afwo*afwo*rhof)
+    velblkto = mfblktpo/(pi*afw*afw*rhof)
 
-    !  Ideally we should check the maximum temperature in the breeder zone is below
-    !  necessary limits, but this is not straightforward
-
-    !  Calculate pumping powers for blanket and first wall
-    !htpmw_fwo = pumppower(fwfllengo, afwo, mffwo, mffwpo, no90fw, no180fw, velfwo, etaiso, coolwh, 'Outboard first wall')
-    htpmw_fwo = pumppower(fwfllengo, afwo, mffwo, mffwpo, no90fw, no180fw, etaiso, coolwh, 'Outboard first wall')
-    !htpmw_blkto = pumppower(bzfllengo, afwo, mfblkto, mfblktpo, no90bz, no180bz, velblkto, etaiso, coolwh, 'Outboard blanket')
-    htpmw_blkto = pumppower(bzfllengo, afwo, mfblkto, mfblktpo, no90bz, no180bz, etaiso, coolwh, 'Outboard blanket')
+    !  Pumping powers for blanket and first wall
+    if (fwcoolant == 'helium') coolant=1
+    if (fwcoolant == 'water') coolant=2   
+    htpmw_fwo = pumppower(fwinlet, fwoutlet, fwpressure, fwfllengo, afw, mffwo, mffwpo, no90fw, no180fw, etaiso, coolant, 'Outboard first wall')
+    htpmw_blkto = pumppower(inlet_temp, outlet_temp, blpressure, bzfllengo, afw, mfblkto, mfblktpo, no90bz, no180bz, etaiso, coolwh, 'Outboard blanket')
 
     !  Total inboard & outboard FW and blanket pumping powers (MW)
     htpmw_fw = htpmw_fwi + htpmw_fwo
     htpmw_blkt = htpmw_blkti + htpmw_blkto
     
-	!  Peak temperature (K)
+	!  Peak first wall temperature (K)
     tpeak = max(tpeakfwi, tpeakfwo)
     
     if (ip == 0) return
     call oheadr(ofile, 'Detailed thermohydraulic parameters for first wall and blanket are output if verbose=1.' )
 
     call oheadr(ofile, 'First wall and blanket thermohydraulics') 
-    call ovarin(ofile, 'Coolant type (1=He, 2=H20)', '(coolwh)',coolwh)
-    call ovarre(ofile, 'Outboard coolant flow rate (m/s)', '(velfwo)',velfwo, 'OP ')
-    ! MDK Removed these as I don't know what they mean
-    !call ovarre(ofile, 'Radial thickness available for pipes inboard (80%)', '(bldepti)', bldepti)
-    !call ovarre(ofile, 'Radial thickness available for pipes outboard (80%)', '(bldepti)', bldepto)
-    !call ovarre(ofile, 'mid-plane toroidal circumference and segment', '(blwidti)', blwidti)
-    !call ovarre(ofile, 'mid-plane toroidal circumference and segment', '(blwidti)', blwidto)
+    call ovarin(ofile, 'Blanket coolant type (1=He, 2=H20)', '(coolwh)',coolwh)
+    call ovarst(ofile, 'First wall coolant type', '(fwcoolant)',fwcoolant)
     call ovarre(ofile, 'FW Inboard flow length', '(fwfllengi)', fwfllengi, 'OP ')
     call ovarre(ofile, 'FW Outboard flow length', '(fwfllengo)', fwfllengo, 'OP ')
     call ovarre(ofile, 'Blanket Inboard flow length', '(bzfllengi)', bzfllengi, 'OP ')
     call ovarre(ofile, 'Blanket Outboard flow length', '(bzfllengo)', bzfllengo, 'OP ')
     call ovarre(ofile, 'coolant specific heat capacity at constant pressure (J/kg/K)', '(cf)',cf, 'OP ')
     call ovarre(ofile, 'coolant density (kg/m3)', '(rhof)',rhof, 'OP ')
-    call ovarre(ofile, 'Inboard coolant flow rate (m/s)', '(velfwi)',velfwi, 'OP ')
-    call ovarre(ofile, 'Outboard coolant flow rate (m/s)', '(velfwo)',velfwo, 'OP ')
     call ovarre(ofile, 'Inboard coolant flow rate (m/s)', '(fwareaib)',fwareaib, 'OP ')
     call ovarre(ofile, 'Outboard coolant flow rate (m/s)', '(fwareaob)',fwareaob, 'OP ')
     call ovarre(ofile, 'Surface heating FW inner', '(psurffwi)',psurffwi, 'OP ')
@@ -1270,7 +1231,7 @@ contains
     call ovarre(ofile, 'Pumping power for first wall (MW)', '(htpmw_fwo)', htpmw_fwo, 'OP ')
     call ovarre(ofile, 'Pumping power for blanket (MW)', '(htpmw_blkto)', htpmw_blkto, 'OP ')
   
-  end subroutine
+  end subroutine thermo_hydraulic_model
    
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -1441,21 +1402,20 @@ contains
   
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-   subroutine iterate_fw(afw, bfw, area, prad_incident, blleng, pnuc_deposited, tpeakfw, &
-       cf, rhof, velfw)
-    !+ad_name  iterate_fw
-    !+ad_summ  Routine to perform detailed thermal hydraulic calculations
-    !+ad_summ  for the first wall
+   subroutine fw_temp(afw, thickness, area, prad_incident, blleng, pnuc_deposited, tpeakfw, &
+       cfmean, rhofmean)
+    !+ad_name  fw_temp
+    !+ad_summ  Thermo-hydraulic calculations for the first wall
     !+ad_type  Subroutine
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_args  afw : input real : first wall pipe inner radius (m)
-    !+ad_args  bfw : input/output real : first wall pipe outer radius (m)
+    !+ad_args  afw : input real : first wall coolant channel radius (m)
+    !+ad_args  thickness : first wall thickness (fwith or fwoth) (m)
     !+ad_args  area : input real : area of first wall section under consideration (m2)
     !+ad_argc                      (i.e. area of inboard wall or outboard wall)
     !+ad_args  prad_incident : input real : incident radiation power (MW)
     !+ad_args  blleng : input real : poloidal length of pipe per segment (m)
-    !+ad_args  pnuc_deposited : output real : neutron power deposited in FW side (IB or OB) (MW)
+    !+ad_args  pnuc_deposited : input real : neutron power deposited in FW side (IB or OB) (MW)
     !+ad_args  tpeakfw : output real : peak first wall temperature (K)
     !+ad_args  cf : output real : coolant specific heat capacity at constant
     !+ad_argc                     pressure (J/kg/K)
@@ -1463,22 +1423,14 @@ contains
     !+ad_args  velfw : output real : coolant flow rate (m/s)
     !+ad_desc  Detailed thermal hydraulic model for the blanket (first wall +
     !+ad_desc  breeding zone).
-    !+ad_desc  <P>Given the heating incident on the first wall, and the coolant
+    !+ad_desc  Given the heating incident on the first wall, and the coolant
     !+ad_desc  outlet temperature, the maximum temperature of the first wall is
-    !+ad_desc  calculated to check it is below material limits (given by
-    !+ad_desc  tfwmatmax). The first wall is assumed to consist of a set of
-    !+ad_desc  parallel pipes of outer diameter bfw.  If the FW temperature is
-    !+ad_desc  too high, bfw is decreased. A lower limit is applied such that
-    !+ad_desc  the thickness of the pipe wall is sufficient to withstand the
-    !+ad_desc  internal coolant pressure.
-    !+ad_desc  <P>This routine was extracted from pulse.f90, with some
-    !+ad_desc  modifications.  The routine is called separately for the inboard
-    !+ad_desc  and outboard sides.
+    !+ad_desc  calculated to check it is below material limits (tfwmatmax). 
+    !+ad_desc  The routine is called separately for the inboard and outboard sides.
     !+ad_prob  None
-    !+ad_call  cprops
-    !+ad_call  smt
     !+ad_hist  21/08/14 PJK Initial version
     !+ad_hist  05/11/14 PJK Corrected position of fwlifs evaluation
+    !+ad_hist  27/11/15 MDK Complete rewrite with a non-iterative approach
     !+ad_stat  Okay
     !+ad_docs  The calculation of the maximum temperature is described by Gardner:
     !+ad_docc  "Temperature distribution in the first wall", K:\Power Plant Physics and
@@ -1493,204 +1445,155 @@ contains
     implicit none
 
     !  Arguments
-    real(kind=double), intent(in) :: afw, area, prad_incident, blleng
-    real(kind=double), intent(inout) :: bfw
-    real(kind=double), intent(out) :: pnuc_deposited, tpeakfw, cf, rhof, velfw
+    real(kind=double), intent(in) :: pnuc_deposited, afw, thickness, area, prad_incident, blleng
+    real(kind=double), intent(out) ::  tpeakfw, cfmean, rhofmean
 
     !  Local variables
-    integer, parameter :: nk = 51
-    integer :: it, k
-    real(kind=double) :: boa, fboa, fwvol, hcoeff, kf, masflx, maxstress, &
-        mindif, qpp, qppp, sgpthn, tav, temp_k, tfwav, tmpdif, tmprop_k, &
-        tmprse, tmthet, tpeakfw_c, viscf, viscfs
+    integer :: coolant
+    real(kind=double) :: fwvol, hcoeff, kfi, kfo, masflx, qpp, qppp, temp_k, &
+        tmthet, tpeakfw_c, viscf, viscfi, viscfo, load, tkfw, bfw, deltat_solid, &
+        deltat_coolant, massrate, channel_area, cfi, rhofi, cfo, rhofo, &
+        kfmean, viscfmean, velfwo
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	!  Ratio of outer / inner radius of each structural FW tube
-    boa = bfw/afw
+    !  FW volume (inboard or outboard depending on arguments) (m3)
+    fwvol = area*thickness
+    channel_area = pi * afw**2
+
+    !  Heat generation in the first wall due to neutron flux deposited in the material (W/m3)
+    qppp = 1.0D6 * pnuc_deposited / fwvol
+       
+    !  Heat flux incident on the first wall surface from electromagnetic radiation flux (W/m2)      
+    qpp = 1.0D6 * prad_incident / area
+
+    !  Coolant properties at the outlet    
+    if (fwcoolant == 'helium') coolant=1
+    if (fwcoolant == 'water') coolant=2
     
-    !  Temperature difference (outlet - inlet) (K)
-    tmprse = outlet_temp - inlet_temp
+    ! Inlet temperature
+   call fluid_properties(fwinlet, fwpressure, coolant, density=rhofi, thermal_conductivity=kfi, &
+      viscosity=viscfi, specific_heat_const_p=cfi, label='1475')         
+    ! Outlet temperature
+    call fluid_properties(fwoutlet, fwpressure, coolant, density=rhofo, thermal_conductivity=kfo, &
+      viscosity=viscfo, specific_heat_const_p=cfo, label='1480')    
+      
+    ! Mean properties
+    rhofmean  = (rhofi + rhofo)/2.0d0
+    kfmean    = (kfi + kfo)/2.0d0
+    viscfmean = (viscfi + viscfo)/2.0d0   
+    cfmean    = (cfi + cfo)/2.0d0
+        
+      
+    ! MDK Heat load per unit length of one first wall pipe
+    ! Note that the full first wall volume is used including coolant,
+    ! even though the nuclear heating in the coolant is small.
+    load = qppp * pitch * thickness + qpp * pitch
+    ! Coolant mass flow rate (kg/s)  
+    ! Use mean properties  
+    massrate = blleng * load / cfmean / (fwoutlet - fwinlet)
+    ! Coolant mass flux in a single channel (kg/m2/s)    
+    masflx = massrate / channel_area
+    
+    ! Conditions at the outlet, where the temperature is highest
+    ! -----------------------------------------------------------
+    ! Coolant velocity (m/s)
+    velfwo = masflx/rhofo
+    
+        
+    ! Mean temperature of the wall material on the plasma side of the coolant
+    ! 'tpeak' is the estimate from the previous iteration of the wall surface temperature
+    ! (underneath the armour)
+    temp_k = (fwoutlet + tpeak) / 2.0d0      
+    if ((temp_k <= 100.0d0).or.(temp_k>1500.0d0).or.(temp_k/=temp_k)) then
+        write(*,*) 'temp_k = ', temp_k, 'fwoutlet = ', fwoutlet, 'tpeak = ', tpeak
+        stop
+    end if
+    ! Thermal conductivity of first wall material
+    tkfw = tk(temp_k)
+    
+    hcoeff = heat_transfer(masflx, rhofo, afw, cfo, viscfo, kfo)   
 
-    it = 0
-    iteration: do ; it = it+1
+    !  Calculate peak temperature - occurs at (r,theta) = (bfw,0)
+    bfw = thickness/2.0d0
+    call cosine_term(afw, bfw, 0.0D0, bfw, qpp, hcoeff, tkfw, tmthet)
+    
+    ! Temperature drops between first-wall surface and bulk coolant. 
+    deltat_solid = bfw/tkfw * (qpp/pi + qppp*bfw/2.0D0) * log(bfw/afw) &
+                   - qppp/4.0D0/tkfw*(bfw**2-afw**2) 
+                     
+    deltat_coolant = load /(2.0D0*pi*afw*hcoeff) 
+    tpeakfw = fwoutlet + deltat_solid + deltat_coolant + tmthet  !  in K
+            
+    tpeakfw_c = tpeakfw - 273.15D0
+    
+    
+    
 
-	   !  Iterate for no more than 100 loops
-       if (it > 100) then
-          call report_error(88)
-          exit iteration
-       end if
-
-       !  Check to see if inner radius is greater than outer radius
-       if (afw >= bfw) then
-          fdiags(1) = afw ; fdiags(2) = bfw
-          call report_error(89)
-       end if
-
-	   !  Assume FW volume is equal to its surface area x external diameter of the hollow 
-       !  cylindrical tubes that make up the first wall
-       !  FW volume of FW side (inboard or outboard depending on arguments) (m3)
-       fwvol = area*(2.0D0*bfw)
-
-       !  Neutron power deposited in FW side (inboard or outboard depending on arguments) (MW)
-       if (area == fwareaib) then
-	     pnuc_deposited = pnucfw * fwareaib/fwarea
-	   end if
-	   
-	   if (area == fwareaob) then
-	     pnuc_deposited = pnucfw * fwareaob/fwarea
-	   end if
-       !fwvol / (fwvol + ((fwarea - area) * (bfwi + bfwo - bfw )))       
-
-       !  Heat generation in the first wall due to neutron flux deposited in the material (W/m3)
-       qppp = 1.0D6 * pnuc_deposited / fwvol
-       
-       !  Heat flux incident on the first wall surface from electromagnetic radiation flux (W/m2)      
-       qpp = 1.0D6 * prad_incident / area
-
-       !  Coolant properties at average coolant temperature (tb)
-       !  tb is not known at this point, but since we only need the cf output (which does not
-       !  depend on tb) we simply use outlet_temp as the input for tb
-       call cprops(outlet_temp, cf, rhof, viscf, viscfs, kf)
-
-       !  Coolant flow rate (kg/m2/s)
-       !masflx = blleng*(qppp*(bfw**2) + 2.0D0*qpp*bfw) / afw**2 / cf / tmprse
-       masflx = blleng*(qppp*((2.0D0*bfw)**2.0D0) + 2.0D0*qpp*bfw) / (pi*afw**2.0D0 )/ cf / tmprse
-       velfw = masflx/rhof  !  m/s
-
-       !  Average first wall temperature
-       !  There is a problem here because the expression for the average
-       !  temperature in the first wall contains a term which involves the
-       !  thermal conductivity which is in itself temperature dependent. How
-       !  do we resolve this problem?  Firstly we define a temperature range
-       !  where the lower bound is defined to be the temperature on the inner
-       !  wall (in contact with the coolant) and therefore equal to the bulk
-       !  coolant temperature, and the upper bound is taken to be 800 degrees
-       !  Celsius.  Next we iterate over this range so that at each step the
-       !  average temperature can be calculated together with the difference
-       !  between the average temperature and the iterated temperature. The
-       !  average temperature at which this difference is minimised is taken
-       !  as the correct average temperature in the first wall.
-
-       !  Calculate the first wall average temperature using the conductivity
-       !  taken at temperatures from outlet_temp to 1073 K.  The iteration loop 
-       !  stores the calculated value of the average wall temperature when 
-       !  it is closest to the temperature used for the conductivity.
-       mindif = 1.0D30
-
-       do k = 1, nk
-		
-		  !  Temperature in Kelvin 
-          temp_k = outlet_temp + (1073.15D0-outlet_temp) * dble(k-1)/(nk-1)
-
-          !  hcoeff also depends on FW temp so the calc of coolant properties & hcoeff is repeated
-          call cprops(temp_k, cf, rhof, viscf, viscfs, kf)
-
-          !  Heat transfer coefficient calculated using Sieder-Tate correlation, 
-          !  valid for Re > 1.0e3, 0.7 < Pr < 16700, L/D > 10
-          hcoeff = 0.027D0*(kf/2.0D0/afw)*(masflx*2.0D0*afw &
-               /viscf)**0.8D0 * (viscf*cf/kf)**0.33D0 &
-               *(viscf/viscfs)**0.14D0
-
-          tav = bfw/tk(temp_k)*(qpp/pi + qppp*bfw/2.0D0)*(bfw**2/ &
-               (bfw**2-afw**2)*log(bfw/afw)-0.5D0) &
-               - qppp/4.0D0/tk(temp_k)*((bfw**2-afw**2)/2.0D0) &
-               + (pi*(bfw**2-afw**2)*qppp + 2.0D0*bfw*qpp)/ &
-               (2.0D0*pi*afw*hcoeff) + outlet_temp - 273.15D0
-          tmpdif = abs(tav-temp_k)
-
-          if (tmpdif <= mindif) then
-             mindif = tmpdif
-             tfwav = tav
-             tmprop_k = temp_k
-          end if
-
-       end do
-
-       
-       !  Recalculate hcoeff with the found average first wall temperature
-       call cprops(tmprop_k, cf, rhof, viscf, viscfs, kf)
-
-       !  Heat transfer coefficient calculated using Sieder-Tate
-       !  correlation, valid for Re > 1.0e3, 0.7 < Pr < 16700, L/D > 10
-       hcoeff = 0.027D0*(kf/2.0D0/afw)*(masflx*2.0D0*afw &
-            /viscf)**0.8D0 * (viscf*cf/kf)**0.33D0 &
-            *(viscf/viscfs)**0.14D0
-
-       !  Limits on the first wall thickness
-       !  The upper limit on the first wall thickness is derived from the
-       !  maximum temperature of the FW material.  There is also a fluence
-       !  limit; if this is exceeded the FW lifetime is reduced. 
-       !  The upper bound on the fluence set by the value abktflnc (MW-yr/m2)
-
-       !  Fluence (MW-yr/m^2)
-       ! flnce = 1.0D-6*qppp * fwvol/area * fwlife
-       ! Issue #290:
-       ! Replace this so-called fluence by nominal neutron wall loading x first wall life:
-       ! wallmw : average neutron wall load (MW/m2)
-       !flnce = wallmw * fwlife
-
-       !  Calculate peak temperature - occurs at (r,theta) = (bfw,0)
-       call cosine_term(afw, bfw, 0.0D0, bfw, qpp, hcoeff, tmprop_k, tmthet)
-
-       tpeakfw = bfw/tk(tmprop_k) * (qpp/pi + qppp*bfw/2.0D0) &
-            * log(bfw/afw) - qppp/4.0D0/tk(tmprop_k)*(bfw**2-afw**2) &
-            + (pi*(bfw**2-afw**2)*qppp + 2.0D0*bfw*qpp) / &
-            (2.0D0*pi*afw*hcoeff) + outlet_temp + tmthet  !  in K
-       tpeakfw_c = tpeakfw - 273.15D0
-       
-       
-       !if (flnce > abktflnc) then
-            ! This should never happen
-            !  Nominal fluence limit exceeded; reduce first wall lifetime
-            !fwlife = abktflnc * area/ fwvol / (1.0D-6*qppp)
-            !write(*,*) 'Nominal fluence limit exceeded; first wall lifetime reduced.'
-      ! end if
-
-       if (tpeakfw > tfwmatmax) then
-          !  Temperature limit exceeded: reduce wall thickness.
-          !  fboa is chosen such that fboa**100 * (bfw/afw) = 1.001,
-          !  i.e. after 100 iterations bfw is still just larger than afw
-          !  N.B. bfw may also have been modified via the stress test below...
-          fboa = (1.001D0/boa)**0.01D0
-          bfw = bfw*fboa
-          if ((bfw/afw) <= 1.001D0) then
-             write(*,*) 'Failed to find a suitable first wall thickness so far.' , 'tpeakfw = ', tpeakfw
-             exit iteration
-          else
-             cycle iteration
-          end if
-       end if
-
-       !fwlifs = 3.1536D7*fwlife
-
-       !  The lower limit on the first wall thickness is derived from the
-       !  constraint that the first wall must possess the ability to withstand
-       !  the internal coolant pressure. The limit is written as,
-       !  (bfw-afw)	 > p*(afw+bfw)/2/maxstress
-       sgpthn = (coolp*(afw+bfw)/2.0D0) / (bfw-afw)
-
-       maxstress = 1.0D9 !smt(tpeakfw_c, fwlifs)
-
-       if (sgpthn <= maxstress) then
-          exit iteration
-       else
-          !  First wall too thin
-          !  Keep afw fixed and alter bfw so that the lower limit
-          !  is satisfied.
-          bfw = ( afw*(maxstress + coolp/2.0D0)) / (maxstress - coolp/2.0D0)
-          write(*,*) 'FW too thin...',sgpthn, maxstress, tpeakfw_c
-          write(*,*) 'FW too thin...',afw, bfw
-          write(*,*) 'FW too thin...',coolp
-       end if
-
-    end do iteration
-
-  end subroutine iterate_fw
+  end subroutine fw_temp
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
+  
+  function heat_transfer(masflx, rhof, radius, cf, viscf, kf)
+        implicit none   
+        ! Arguments     
+        real(kind=double) :: heat_transfer, masflx, rhof, radius, cf, viscf, kf
+        !  Local variables
+        real(kind=double) :: velocity, reynolds, pr, f, nusselt, diameter
+        ! (15/11/27)
+        ! Gnielinski correlation.
+        ! Ignore the distinction between wall and bulk temperatures
+        ! https://en.wikipedia.org/wiki/Nusselt_number#Gnielinski_correlation
+        !  valid for:3000 < Re < 5e6, 0.5 < Pr < 2000   
+        diameter = 2*radius           
+        ! Flow velocity, Reynolds and Prandtl numbers:
+        velocity = masflx / rhof        
+        reynolds = rhof * velocity * diameter / viscf
+        pr = cf * viscf / kf
+        call friction(roughness,reynolds,diameter,f)
+        
+        nusselt = (f/8.0d0)*(reynolds-1000.0d0)*pr / (1+12.7*sqrt(f/8.0d0)*(pr**0.6667-1.0d0))
+        heat_transfer = nusselt * kf / (2.0d0*radius)
+        
+        if ((reynolds <= 3000.0d0).or.(reynolds>5.0d6)) call write_errors
+        if ((f<=0.0d0).or.(pr<=0.0d0).or.(pr<0.5d0).or.(pr>2000.0d0)) call write_errors    
+        
+        contains
+        subroutine write_errors
+        write(*,*)'Problem in heat_transfer'
+        write(*,*)'masflx = ', masflx
+        write(*,*)'rhof = ', rhof          
+        write(*,*)'radius = ', radius
+        write(*,*)'cf = ', cf
+        write(*,*)'kf = ', kf
+        write(*,*)'velocity = ', velocity
+        write(*,*)'reynolds = ', reynolds
+        write(*,*)'Prandtl = ', pr
+        write(*,*)'nusselt = ', nusselt
+        write(*,*)'heat_transfer = ', heat_transfer
+        
+        end subroutine
+  end function heat_transfer   
+  
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+  subroutine friction(roughness, reynolds, diameter, darcy_friction)
+    real(kind=double), intent(in) :: roughness, reynolds, diameter
+    real(kind=double), intent(out) :: darcy_friction
+    !  Local variables
+    real(kind=double) :: bracket
+    ! (15/11/27)
+    ! Darcy friction factor, using Haaland equation, an approximation to the 
+    ! implicit Colebrook–White equation
+    ! https://en.wikipedia.org/wiki/Darcy_friction_factor_formulae#Haaland_equation
+    ! valid for ????
+    bracket = (roughness/afw/3.7)**1.11d0 + 6.9/reynolds
+    darcy_friction = (1.8d0 * log10(bracket))**(-2)
+  
+  end subroutine friction
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-  subroutine cosine_term(afw, bfw, angle, rad, qpp, hcoeff, tmprop, tmthet)
+  subroutine cosine_term(afw, bfw, angle, rad, qpp, hcoeff, tkfw, tmthet)
     !+ad_name  cosine_term
     !+ad_summ  Calculates cosine terms in temperature distribution
     !+ad_type  Subroutine
@@ -1703,7 +1606,7 @@ contains
     !+ad_args  rad    : input real : radial position within first wall tube (m)
     !+ad_args  qpp    : input real : surface heat flux incident on first wall (W/m**2)
     !+ad_args  hcoeff : input real : heat transfer coefficient (W/m**2/K)
-    !+ad_args  tmprop : input real : property temperature (K)
+    !+ad_args  tkfw   : input real : thermal conductivity
     !+ad_args  tmthet : output real : azimuthal temperature term (K)
     !+ad_desc  This routine calculates the cosine terms in the temperature
     !+ad_desc  distribution formula. These terms are calculated with the material
@@ -1721,7 +1624,7 @@ contains
     implicit none
 
     !  Arguments
-    real(kind=double), intent(in) :: afw,bfw,angle,rad,qpp,hcoeff,tmprop
+    real(kind=double), intent(in) :: afw,bfw,angle,rad,qpp,hcoeff,tkfw
     real(kind=double), intent(out) :: tmthet
 
     !  Local variables
@@ -1731,26 +1634,26 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Lowest order terms
-    cc = qpp*afw**2*bfw**2/2.0D0/tk(tmprop) * &
-         (tk(tmprop) - hcoeff*afw) / &
-         ( tk(tmprop)*(bfw**2 - afw**2) + hcoeff*afw*(afw**2 + bfw**2) )
-    dd = qpp*bfw**2/2.0D0/tk(tmprop) * &
-         (tk(tmprop) + hcoeff*afw) / &
-         ( tk(tmprop)*(bfw**2 - afw**2) + hcoeff*afw*(afw**2 + bfw**2) )
+    cc = qpp*afw**2*bfw**2/2.0D0/tkfw * &
+         (tkfw - hcoeff*afw) / &
+         ( tkfw*(bfw**2 - afw**2) + hcoeff*afw*(afw**2 + bfw**2) )
+    dd = qpp*bfw**2/2.0D0/tkfw * &
+         (tkfw + hcoeff*afw) / &
+         ( tkfw*(bfw**2 - afw**2) + hcoeff*afw*(afw**2 + bfw**2) )
 
     tmthet = (cc/rad + dd*rad)*cos(angle)
 
     !  Higher order even terms
     do i = 2,8,2
        k = i/2
-       cc = qpp/pi/tk(tmprop)/dble(k) * ( dble((-1)**(k+1)) / &
+       cc = qpp/pi/tkfw/dble(k) * ( dble((-1)**(k+1)) / &
             ((2.0D0*dble(k))**2 - 1.0D0) ) &
-            * ( bfw**(2*k+1)*(2.0D0*dble(k)*tk(tmprop) - hcoeff*afw) ) &
-            / ( 2.0D0*dble(k)*tk(tmprop)*((bfw/afw)**(4*k)-1.0D0) &
+            * ( bfw**(2*k+1)*(2.0D0*dble(k)*tkfw - hcoeff*afw) ) &
+            / ( 2.0D0*dble(k)*tkfw*((bfw/afw)**(4*k)-1.0D0) &
             + hcoeff*afw*((bfw/afw)**(4*k)+1.0D0) )
        dd = 1.0D0 / ((afw*10.0D0)**(4*k)) * (10.0D0)**(4*k) &
-            * (2.0D0*dble(k)*tk(tmprop) + hcoeff*afw) / &
-            (2.0D0*dble(k)*tk(tmprop) - hcoeff*afw)*cc
+            * (2.0D0*dble(k)*tkfw + hcoeff*afw) / &
+            (2.0D0*dble(k)*tkfw - hcoeff*afw)*cc
 
        tmthet = tmthet + (cc/rad**i + dd*rad**i)*cos(dble(i)*angle)
     end do
@@ -1759,69 +1662,6 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-  subroutine cprops(tb, cf, rhof, viscf, viscfs, kf)
-    !+ad_name  cprops
-    !+ad_summ  Calculates various temperature dependent coolant properties
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  None
-    !+ad_args  tb     : input real : bulk temperature (K)
-    !+ad_args  cf     : output real : coolant specific heat capacity at
-    !+ad_argc                         constant pressure (J/kg/K)
-    !+ad_args  rhof   : output real : coolant mass density (kg/m3)
-    !+ad_args  viscf  : output real : coolant dynamic viscosity at the
-    !+ad_argc                         bulk temperature (Pa-s = kg/m/s)
-    !+ad_args  viscfs : output real : coolant dynamic viscosity at the
-    !+ad_argc                         average wall temperature (Pa-s = kg/m/s)
-    !+ad_args  kf     : output real : coolant thermal conductivity at
-    !+ad_argc                         average coolant temperature (W/m/K)
-    !+ad_desc  This routine calculates various temperature dependent properties
-    !+ad_desc  of the liquid coolant in the first wall / blanket.
-    !+ad_desc  <P>The properties required to calculate the heat transfer
-    !+ad_desc  coefficient are found. This is done at the average coolant
-    !+ad_desc  temperature and the average temperature at the material surface.
-    !+ad_desc  The latter is found by averaging the difference between the material
-    !+ad desc  temperature and the inlet temperature and the difference between the
-    !+ad_desc  material temperature and the outlet temperature.
-    !+ad_desc  <P>The fluid properties are obtained from REFPROP, or using formulae
-    !+ad_desc  from Panos Karditsas's original subroutine 'props'.
-    !+ad_prob  None
-    !+ad_call  fluid_properties
-    !+ad_hist  04/09/14 PJK Initial version
-    !+ad_hist  17/12/14 PJK Added calls to REFPROP interface
-    !+ad_stat  Okay
-    !+ad_docs  Blanket and Energy Conversion Model for Fusion Reactors,
-    !+ad_docc  Dr. P.J. Karditsas, AEA Technology, Theoretical and Strategic Studies
-    !+ad_docc  Dept., Culham Laboratory, Abingdon
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-    real(kind=double), intent(in) :: tb
-    real(kind=double), intent(out) :: cf, rhof, viscf, viscfs, kf
-
-    !  Local variables
-    real(kind=double) :: x, y, gascf, kfs, cfs, pran, prans, tbc
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    !  x: average coolant temperature (K)
-    !  y: average coolant temperature at the material surface (K)
-    x = 0.5D0*(outlet_temp + inlet_temp)
-    
-    !  y = tb?!
-    y = x + 0.5D0*( (tb - outlet_temp) + (tb - inlet_temp) )
-
-    call fluid_properties(x, coolp, coolwh, density=rhof, thermal_conductivity=kf, &
-      viscosity=viscf, specific_heat_const_p=cf)
-
-    call fluid_properties(y, coolp, coolwh, viscosity=viscfs)
-
-  end subroutine cprops
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
    
   subroutine write_ccfe_hcpb_output
 	!+ad_name  write_ccfe_hcpb_output
@@ -1892,13 +1732,14 @@ contains
     call ovarre(ofile, 'Shield: second exponential', '(exp_shield2)', exp_shield2, 'OP ')   
        
     call ovarin(ofile, 'Switch for plant secondary cycle ', '(secondary_cycle)', secondary_cycle) 
-    call ovarre(ofile, 'First wall coolant pressure (Pa)', '(coolp)', coolp)
-    call ovarre(ofile, 'Inner radius of inboard first wall coolant channels (m)', '(afwi)', afwi)
-    call ovarre(ofile, 'Outer radius of inboard first wall coolant channels (m)', '(bfwi)', bfwi, 'OP ')
-    call ovarre(ofile, 'Inner radius of outboard first wall coolant channels (m)', '(afwo)', afwo)
-    call ovarre(ofile, 'Outer radius of outboard first wall coolant channels (m)', '(bfwo)', bfwo, 'OP ')
-    call ovarrf(ofile, 'Inlet temperature of coolant (K)', '(inlet_temp)', inlet_temp)
-    call ovarrf(ofile, 'Outlet temperature of coolant (K)', '(outlet_temp)', outlet_temp)
+    call ovarre(ofile, 'First wall coolant pressure (Pa)', '(fwpressure)', fwpressure)
+    call ovarre(ofile, 'Blanket coolant pressure (Pa)', '(blpressure)', blpressure)
+    call ovarre(ofile, 'Radius of first wall cooling channels (m)', '(afw)', afw)
+    call ovarre(ofile, 'Wall thickness of first wall coolant channels (m)', '(fw_wall)', fw_wall)
+    call ovarrf(ofile, 'Inlet temperature of blanket coolant (K)', '(inlet_temp)', inlet_temp)
+    call ovarrf(ofile, 'Outlet temperature of blanket coolant (K)', '(outlet_temp)', outlet_temp)
+    call ovarrf(ofile, 'Inlet temperature of first wall coolant (K)', '(fwinlet)', fwinlet)
+    call ovarrf(ofile, 'Outlet temperature of first wall coolant (K)', '(fwoutlet)', fwoutlet)
     call ovarre(ofile, 'Allowable temperature of first wall material, excluding armour (K)', '(tfwmatmax)', tfwmatmax)
     call ovarre(ofile, 'Actual peak temperature of first wall material (K)', '(tpeak)', tpeak, 'OP ')
     call ovarre(ofile, 'Allowable nominal neutron fluence at first wall (MW.year/m2)', '(abktflnc)', abktflnc)    
@@ -2067,7 +1908,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
-   function pumppower(flleng, rad, mf, mfp, no90, no180, etaiso, coolwh, label)
+   function pumppower(temp_in, temp_out, pressure, flleng, rad, mf, mfp, no90, no180, etaiso, coolant, label)
 
     !+ad_name  pumppower
     !+ad_summ  Routine to calculate the coolant pumping power in MW in the first
@@ -2075,6 +1916,9 @@ contains
     !+ad_type  Function returning real
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
+    !+ad_args  temp_in     : input real : inlet temperature (K)
+    !+ad_args  temp_out    : input real : outlet temperature (K)    
+    !+ad_args  pressure    : input real : outlet coolant pressure (Pa)
     !+ad_args  flleng      : input real : total flow length along pipe (m)
     !+ad_args  rad         : input real : pipe inner radius (m)
     !+ad_args  mf          : input real : total coolant mass flow rate in (kg/s)
@@ -2082,7 +1926,7 @@ contains
     !+ad_args  no90        : input integer : number of 90 degree bends in pipe
     !+ad_args  no180       : input integer : number of 180 degree bends in pipe
     !+ad_args  etaiso      : input real : isentropic efficiency of coolant pumps
-    !+ad_args  coolwh      : input integer: coolant fluid (1=helium, 2=water)
+    !+ad_args  coolant     : input integer: coolant fluid (1=helium, 2=water)
     !+ad_args  label       : input string: description of this calculation
     !+ad_desc  This routine calculates the power required (MW) to pump the coolant in the
     !+ad_desc  first wall and breeding zone.
@@ -2090,19 +1934,17 @@ contains
     !+ad_desc  and 180 degree bends.  The pressure drop due to frictional forces along
     !+ad_desc  the total straight length of the pipe is calculated, then the pressure
     !+ad_desc  drop due to the bends is calculated.  The total pressure drop is the sum
-    !+ad_desc  of all contributions.  For a water coolant the pumping power is
-    !+ad_desc  calculated as the volume flow rate multiplied by the total pressure
-    !+ad_desc  drop, with a correction for non-isentropic pump behaviour applied.
-    !+ad_desc  Since helium is a compressible fluid the pumping power is be calculated
+    !+ad_desc  of all contributions.  
+    !+ad_desc  The pumping power is be calculated in the most general way,
     !+ad_desc  using enthalpies before and after the pump.
     !+ad_prob  None
-    !+ad_call  cprops
     !+ad_call  enthalpy_ps
     !+ad_call  fluid_properties
     !+ad_call  report_error
     !+ad_call  smt
     !+ad_hist  04/09/14 PJK Initial version
     !+ad_hist  17/12/14 PJK Added calls to REFPROP interface
+    !+ad_hist  01/12/15 MDK Remove call to subroutine cprops
     !+ad_stat  Okay
     !+ad_docs  WCLL DDD, WP12-DAS02-T03, J. Aubert et al, EFDA_D_2JNFUP
     !+ad_docs  A Textbook on Heat Transfer, S.P. Sukhatme, 2005
@@ -2115,34 +1957,43 @@ contains
 
     !  Arguments
     real(kind=double), intent(in) :: flleng, rad, mf, mfp, etaiso
-    integer, intent(in) :: no90, no180, coolwh
+    real(kind=double), intent(in) :: temp_in, temp_out, pressure
+    integer, intent(in) :: no90, no180, coolant
     character(len=*), intent(in) :: label
 
     !  Local variables
     real(kind=double) :: cf, coolpin, deltap, dh, h1, h2, kelbwn, kelbwt, kf, kstrght, &
-         lambda, ppump, reyn, rhof, s1, s2, viscf, viscfs, xifn, xift, ximn, ximt, vv
+         lambda, reyn, rhof, s1, s2, viscf, viscfs, xifn, xift, ximn, ximt, vv, &
+         temp_mean
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Get fluid properties (only viscf and rhof are needed)
-    call cprops(outlet_temp, cf, rhof, viscf, viscfs, kf)
-
+    if ((temp_in<100.0d0).or.(temp_in>1500.0d0).or.(temp_in/=temp_in)) then
+        write(*,*) 'temp_in = ', temp_in, 'at ', label
+    end if
+    if ((temp_out<100.0d0).or.(temp_out>1500.0d0).or.(temp_out/=temp_out)) then
+        write(*,*) 'temp_out = ', temp_out, 'at ', label
+    end if
+    if ((pressure<1.0d5).or.(pressure>1.0d9).or.(pressure/=pressure)) then
+        write(*,*) 'pressure = ', pressure, 'at ', label
+    end if
+    
+    ! Mean properties
+    temp_mean = (temp_in + temp_out)/2.0d0
+    call fluid_properties(temp_mean, pressure, coolwh, density=rhof, viscosity=viscf, label='2001')
+    
+    if ((rhof>1.0d9).or.(rhof<=0.0d0).or.(rhof/=rhof)) then
+        write(*,*)'Error in pumppower.  rhof = ', rhof
+        stop
+    end if
     !  Hydraulic diameter (circular channels assumed) (m)
     dh = 2.0D0*rad
-    ! MDK Clarify the Reynolds number formula.  Flow velocity:
+    ! Flow velocity:
     vv = mfp / (rhof*pi*rad*rad)
     !  Reynolds number
-    !reyn = 4.0D0*mfp / (pi*dh*viscf)
     reyn = rhof * vv * dh / viscf
-
-    !  Darcy friction factor, using Filonenko equation
-    !  valid for 1.0e4 < Re < 1.0e7 (Sukhatme)
-    if ((reyn < 1.0D4).or.(reyn > 1.0D7)) then
-       fdiags(1) = reyn ; fdiags(2) = mfp
-       fdiags(3) = dh ; fdiags(4) = viscf
-       call report_error(167)
-    end if
-    lambda = 1.0D0 / (1.8D0*log10(reyn) - 1.64D0)**2
+    !  Darcy friction factor    
+    call friction(roughness,reyn,dh,lambda)
 
     !  Straight section pressure drop coefficient
     kstrght = lambda * flleng/dh
@@ -2165,23 +2016,29 @@ contains
 
     !  Pumping power
     
-    !  Inlet pressure (Pa)
-    coolpin = coolp + deltap
+    ! Inlet pressure (Pa)
+    ! Here we are approximating the outlet pressure as 'pressure'.
+    coolpin = pressure + deltap
 
     !  Obtain inlet enthalpy and entropy from inlet pressure and temperature
-    call fluid_properties(inlet_temp, coolpin, coolwh, enthalpy=h2, entropy=s2)
+    if ((coolpin>1.0d9).or.(coolpin<=0.0d0).or.(coolpin/=coolpin)) then
+        write(*,*)        
+        write(*,*)'coolpin = ', coolpin, ' pressure = ', pressure, ' deltap = ', deltap
+        write(*,*)'kstrght = ', kstrght, ' rhof = ', rhof, ' vv = ', vv
+        write(*,*)'rad = ', rad, ' mfp = ', mfp, ' pi = ', pi
+        stop
+    end if
+    call fluid_properties(temp_in, coolpin, coolant, enthalpy=h2, entropy=s2, label='2049')
 
     !  Assume isentropic pump so that s1 = s2
     s1 = s2
 
-    !  Get specific enthalpy (J/kg) before pump using coolp and s1
-    call enthalpy_ps(coolp, s1, coolwh, h1)
+    !  Get specific enthalpy at the outlet (J/kg) before pump using pressure and entropy s1
+    call enthalpy_ps(pressure, s1, coolant, h1)
 
-    !  Pumping power (MW) is given by enthalpy change,
-    !  provided the pumping process is adiabatic.
-    ppump = 1.0D-6 * mf * (h2-h1) / etaiso
-
-    pumppower = ppump
+    !  Pumping power (MW) is given by enthalpy change, with a correction for
+    !  the isentropic efficiency of the pump.
+    pumppower = 1.0D-6 * mf * (h2-h1) / etaiso
     
     if (ip  == 0) return
     if (verbose == 1) then
@@ -2202,7 +2059,7 @@ contains
         call ovarre(ofile, 'Specific enthalpy before pump (J/kg)', '(h1)', h1, 'OP ')
         call ovarre(ofile, 'Specific enthalpy added by pump (J/kg)', '(h2-h1)', h2-h1, 'OP ')     
         call ovarre(ofile, 'Total coolant mass flow rate in (kg/s)', '(mf)', mf, 'OP ')   
-        call ovarre(ofile, 'Pumping power (MW)', '(ppump)', ppump, 'OP ')
+        call ovarre(ofile, 'Pumping power (MW)', '(pumppower)', pumppower, 'OP ')
     end if        
 
   end function pumppower
@@ -2562,7 +2419,7 @@ module kit_hcpb_module
   ! real(kind=double), public :: zdewex  Now module fwbs_variables
   
   !  Inboard/outboard FW half thicknesses (m)
-  real(kind=double), private :: bfwi, bfwo
+  real(kind=double), private :: bfw
   
   !  Inboard/outboard FW coolant void fraction
   real(kind=double), private :: vffwi, vffwo
