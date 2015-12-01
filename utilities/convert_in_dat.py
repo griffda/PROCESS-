@@ -12,7 +12,7 @@
 import argparse
 
 # Local libraries
-import process_io_lib.in_dat as id
+import process_io_lib.in_dat as indat
 
 
 if __name__ == "__main__":
@@ -31,5 +31,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    i = id.InDat(filename=args.f)
+    i = indat.InDat(filename=args.f)
     i.write_in_dat(output_filename=args.o)
