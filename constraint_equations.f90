@@ -713,12 +713,12 @@ contains
           end if
 
        case (39)  !  Equation for first wall temperature upper limit
-
+          ! Issue #348 (15/12/02) 
           if (tpeak == 0.0D0) call report_error(5)
 
-          cc(i) = 1.0D0 - ftpeak * tpkmax/tpeak
+          cc(i) = 1.0D0 - ftpeak * tfwmatmax/tpeak
           if (present(con)) then
-             con(i) = tpkmax * (1.0D0 - cc(i))
+             con(i) = tfwmatmax * (1.0D0 - cc(i))
              err(i) = tpeak * cc(i)
              symbol(i) = '<'
              units(i) = 'K'

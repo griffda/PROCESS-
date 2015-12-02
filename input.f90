@@ -1719,6 +1719,12 @@ contains
        case ('roughness')
           call parse_real_variable('fwoutlet', fwoutlet, 0.0d0, 1.0D-2, &
                'first wall channel roughness epsilon')    
+       case ('fw_channel_length')
+          call parse_real_variable('fw_channel_length', fw_channel_length, 0.1d0, 1.0D2, &
+               'first wall channel length')    
+       case ('peaking_factor')
+          call parse_real_variable('peaking_factor', peaking_factor, 1.0d0, 100.0D0, &
+               'peaking factor for first wall heat loads')    
        
                
        case ('bctmp')

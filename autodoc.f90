@@ -1932,22 +1932,22 @@ subroutine open_vardes(flag)
 
   call write_to_vardes(html_h2_close,flag)
 
-  string = 'Default values roughly correspond to the ITER-FDR (1998) design.'
-  call write_to_vardes(string,flag)
-  string = '<P><B>Reference:</B>'
-  call write_to_vardes(string,flag)
-  string = 'Table 1. ITER design features and parameters for reference'
-  call write_to_vardes(string,flag)
-  string = 'ignited ELMy H-mode operation,'
-  call write_to_vardes(string,flag)
+  !string = 'Default values roughly correspond to the ITER-FDR (1998) design.'
+  !call write_to_vardes(string,flag)
+  !string = '<P><B>Reference:</B>'
+  !call write_to_vardes(string,flag)
+  !string = 'Table 1. ITER design features and parameters for reference'
+  !call write_to_vardes(string,flag)
+  !string = 'ignited ELMy H-mode operation,'
+  !call write_to_vardes(string,flag)
 
-  call write_to_vardes(html_link_open,flag)
-  string = 'http://iopscience.iop.org/0029-5515/39/12/301/pdf/0029-5515_39_12_301.pdf'
-  call write_to_vardes(string,flag)
-  call write_to_vardes(html_link_mid,flag)
-  string = 'Nuclear Fusion <B>39</B> (1999) 2137'
-  call write_to_vardes(string,flag)
-  call write_to_vardes(html_link_close,flag)
+  !call write_to_vardes(html_link_open,flag)
+  !string = 'http://iopscience.iop.org/0029-5515/39/12/301/pdf/0029-5515_39_12_301.pdf'
+  !call write_to_vardes(string,flag)
+  !call write_to_vardes(html_link_mid,flag)
+  !string = 'Nuclear Fusion <B>39</B> (1999) 2137'
+  !call write_to_vardes(string,flag)
+  !call write_to_vardes(html_link_close,flag)
 
   call write_to_vardes(html_hrule,flag)
 

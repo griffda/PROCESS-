@@ -109,8 +109,6 @@ subroutine loadxc
   !  Local variables
 
   integer :: i,j
-  ! MDK This command doesn't work here  when there is a scan
-  !allocate(name_xc(nvar))
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   do i = 1,nvar
@@ -242,6 +240,7 @@ subroutine loadxc
      case (111) ; xcm(i) = fniterpump
      case (112) ; xcm(i) = fzeffmax
      case (113) ; xcm(i) = ftaucq
+     case (114) ; xcm(i) = fw_channel_length
     
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -516,6 +515,7 @@ subroutine convxc(xc,nn)
      case (111) ; fniterpump = xc(i)/scale(i)
      case (112) ; fzeffmax = xc(i)/scale(i)
      case (113) ; ftaucq = xc(i)/scale(i)
+     case (114) ; fw_channel_length = xc(i)/scale(i)
 
      case default
         call report_error(57)

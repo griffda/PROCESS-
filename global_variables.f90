@@ -1256,7 +1256,7 @@ module fwbs_variables
   real(kind(1.0D0)) :: pitch = 0.020D0
   !+ad_vars  fwinlet /623/ : inlet temperature of first wall coolant (K) (15/11/27)
   real(kind(1.0D0)) :: fwinlet = 573.0D0
-  !+ad_vars  fwoutlet /623/ : outlet temperature of first wall coolant (K) (15/11/27)
+  !+ad_vars  fwoutlet /823/ : outlet temperature of first wall coolant (K) (15/11/27)
   real(kind(1.0D0)) :: fwoutlet = 823.0D0
   !+ad_vars  fwpressure /15.5e6/ : first wall coolant pressure (Pa) (secondary_cycle>1)
   real(kind(1.0D0)) :: fwpressure = 15.5D6
@@ -1264,6 +1264,13 @@ module fwbs_variables
   real(kind(1.0D0)) :: tpeak = 873.0D0
   !+ad_vars  roughness /1e-6/ : first wall channel roughness epsilon (m) (15/11/27)
   real(kind(1.0D0)) :: roughness = 1.0D-6 
+  !+ad_vars  fw_channel_length /4.0/ : Length of a single first wall channel (all in parallel) (m) (15/11/27)
+  !+ad_varc                            (iteration variable 114, useful for constraint equation 39)
+  real(kind(1.0D0)) :: fw_channel_length = 4.0D0 
+  !+ad_vars  peaking_factor /2.0/ : peaking factor for first wall heat loads (15/11/27)
+  !+ad_varc                         (Applied separately to inboard and outboard loads.
+  !+ad_varc                         Applies to both neutron and surface loads.
+  real(kind(1.0D0)) :: peaking_factor = 1.0D-6 
   
   ! MDK Blanket has not changed as much, but some new variable names
   !+ad_vars  blpressure /15.5e6/ : blanket coolant pressure (Pa) (secondary_cycle>1) (15/11/27)
