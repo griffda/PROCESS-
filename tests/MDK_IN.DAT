@@ -156,21 +156,23 @@ fblss    = 0.13 * Kit blanket model; steel fraction of breeding zone
 fhole    = 0.05 * Area fraction taken up by other holes (not used)
 fblbe    = 0.47 * Beryllium fraction of blanket by volume
 secondary_cycle = 2 * Switch for thermodynamic model of power conversion cycle;
-tfwmatmax = 850  * Maximum temperature of first wall material (k) (secondary_cycle>1)
+tfwmatmax = 873  * Maximum temperature of first wall material (k) (secondary_cycle>1)
 fwclfr   = 0.1 * First wall coolant fraction
 vfshld   = 0.60 * Coolant void fraction in shield
 vfblkt   = 0.10 * Coolant void fraction in blanket (blktmodel=0)
-fw_channel_length = 9.0  * Length of a single first wall channel (all in parallel) (m) (15/11/27)
+fw_channel_length = 7.0  * Length of a single first wall channel (all in parallel) (m) (15/11/27)
 fwinlet  = 573  * inlet temperature of first wall coolant (K) (15/11/27)
 fwoutlet = 773 * outlet temperature of first wall coolant (K) (15/11/27)
-pitch = 0.018  * pitch of first wall cooling channels (m) (27/11/15)
+pitch = 0.020  * pitch of first wall cooling channels (m) (27/11/15)
+fwpressure = 8.0e6  * first wall coolant pressure (Pa) (secondary_cycle>1)
+peaking_factor = 2.0 * peaking factor for first wall heat loads (15/11/27)
 *-----------------Global Variables-----------------*
 runtitle = Michael's test file
 verbose = 1
 *-------------Heat Transport Variables-------------*
 baseel   = 55.0d6 * Base plant electric load (w)
 fauxbop  = 0.032 * Fraction of gross electric power to balance-of-plant
-htpmw_min = 155.0 * Minimum total electrical power for primary coolant pumps (mw)
+htpmw_min = 0.0 * Minimum total electrical power for primary coolant pumps (mw)
 *------------------Ife Variables-------------------*
 *------------Impurity Radiation Module-------------*
 imprad_model = 1 * Switch for impurity radiation model;
@@ -194,7 +196,7 @@ impvar   = 13 * Fimp element value to be varied if iteration
 *---------------------Numerics---------------------*
 ioptimz  = 1 * Code operation switch;
 minmax   = 1 * Switch for figure-of-merit (see lablmm for descriptions)
-epsvmc   = 1.0e-3 * Error tolerance for vmcon
+epsvmc   = 1.0e-5 * Error tolerance for vmcon
 *----------------Pf Power Variables----------------*
 *-----------------Pfcoil Variables-----------------*
 coheof   = 1.3465e+07 * Central solenoid overall current density at end of flat-top (a/m2)

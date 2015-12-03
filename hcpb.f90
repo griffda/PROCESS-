@@ -139,7 +139,7 @@ module ccfe_hcpb_module
   real(kind=double), private :: tpeakfwi, tpeakfwo
   
   !  Inboard/outboard total mass flow rate to remove inboard FW power (kg/s)
-  real(kind=double), private :: mffwi, mffwo
+  real(kind=double), private :: mffwi, mffwo, mffw
   
   !  Inboard/utboard total number of pipes
   real(kind=double), private :: npfwi, npfwo
@@ -151,7 +151,10 @@ module ccfe_hcpb_module
   real(kind=double), private :: pnucblkti, pnucblkto
   
   !  Inboard/outboard blanket mass flow rate for coolant (kg/s)
-  real(kind=double), private :: mfblkti, mfblkto
+  real(kind=double), private :: mfblkti, mfblkto, mfblkt
+  
+  !  Total mass flow rate for coolant (kg/s)
+  real(kind=double), private :: mftotal
   
   !  Inboard/outboard total num of pipes
   real(kind=double), private :: npblkti, npblkto
@@ -1184,48 +1187,33 @@ contains
 	!  Peak first wall temperature (K)
     tpeak = max(tpeakfwi, tpeakfwo)
     
+    ! Totals
+    ! Total coolant mass flow rate in the first wall (kg/s) 
+    mffw = mffwi + mffwo
+    ! Total coolant mass flow rate in the blanket (kg/s)
+    mfblkt = mfblkti + mfblkto    
+    
     if (ip == 0) return    
 
-    call oheadr(ofile, 'First wall and blanket thermohydraulics: summary') 
+    call oheadr(ofile, 'First wall and blanket thermohydraulics: Summary') 
     call ovarin(ofile, 'Blanket coolant type (1=He, 2=H20)', '(coolwh)',coolwh)
-    call ovarst(ofile, 'First wall coolant type', '(fwcoolant)',fwcoolant)
-    call ovarre(ofile, 'Blanket Inboard flow length', '(bzfllengi)', bzfllengi, 'OP ')
-    call ovarre(ofile, 'Blanket Outboard flow length', '(bzfllengo)', bzfllengo, 'OP ')
-    call ovarre(ofile, 'coolant specific heat capacity at constant pressure (J/kg/K)', '(cf)',cf, 'OP ')
-    call ovarre(ofile, 'coolant density (kg/m3)', '(rhof)',rhof, 'OP ')
-    call ovarre(ofile, 'Inboard coolant flow rate (m/s)', '(fwareaib)',fwareaib, 'OP ')
-    call ovarre(ofile, 'Outboard coolant flow rate (m/s)', '(fwareaob)',fwareaob, 'OP ')
-    call ovarre(ofile, 'Surface heating FW inner', '(psurffwi)',psurffwi, 'OP ')
-    call ovarre(ofile, 'Surface heating FW outer', '(psurffwo)',psurffwo, 'OP ')
-    call ovarre(ofile, 'Nuclear heating FW inner', '(pnucfwi)',pnucfwi, 'OP ')
-    call ovarre(ofile, 'Nuclear heating FW outer', '(pnucfwo)',pnucfwo, 'OP ')
-    call oblnkl(ofile)
-    call ocmmnt(ofile, 'Inboard first wall and blanket')
-    call ovarre(ofile, 'Coolant volume fraction in first wall', '(vffwi)', vffwi, 'OP ')
-    call ovarre(ofile, 'Mass flow rate of first wall coolant (kg/s)', '(mffwi)', mffwi, 'OP ')
-    call ovarre(ofile, 'Number of coolant pipes in first wall', '(npfwi)', npfwi, 'OP ')
-    call ovarre(ofile, 'Mass flow rate per coolant pipe in first wall (kg/s)', '(mffwpi)', mffwpi, 'OP ')
-    call ovarre(ofile, 'Neutron power deposited in blanket (MW)', '(pnucblkti)', pnucblkti, 'OP ')
-    call ovarre(ofile, 'Mass flow rate of blanket coolant (kg/s)', '(mfblkti)', mfblkti, 'OP ')
-    call ovarre(ofile, 'Number of coolant pipes in blanket', '(npblkti)', npblkti, 'OP ')
-    call ovarre(ofile, 'Mass flow rate per coolant pipe in blanket (kg/s)', '(mfblktpi)', mfblktpi, 'OP ')
-    call ovarre(ofile, 'Coolant velocity in blanket (m/s)', '(velblkti)', velblkti, 'OP ')
-    call ovarre(ofile, 'Pumping power for first wall (MW)', '(htpmw_fwi)', htpmw_fwi, 'OP ')
-    call ovarre(ofile, 'Pumping power for blanket (MW)', '(htpmw_blkti)', htpmw_blkti, 'OP ')
-    call oblnkl(ofile)
-    call ocmmnt(ofile, 'Outboard first wall and blanket')
-    call ovarre(ofile, 'Coolant volume fraction in first wall', '(vffwo)', vffwo, 'OP ')
-    call ovarre(ofile, 'Mass flow rate of first wall coolant (kg/s)', '(mffwo)', mffwo, 'OP ')
-    call ovarre(ofile, 'Number of coolant pipes in first wall', '(npfwo)', npfwo, 'OP ')
-    call ovarre(ofile, 'Mass flow rate per coolant pipe in first wall (kg/s)', '(mffwpo)', mffwpo, 'OP ')
-    call ovarre(ofile, 'Neutron power deposited in blanket (MW)', '(pnucblkto)', pnucblkto, 'OP ')
-    call ovarre(ofile, 'Mass flow rate of blanket coolant (kg/s)', '(mfblkto)', mfblkto, 'OP ')
-    call ovarre(ofile, 'Number of coolant pipes in blanket', '(npblkto)', npblkto, 'OP ')
-    call ovarre(ofile, 'Mass flow rate per coolant pipe in blanket (kg/s)', '(mfblktpo)', mfblktpo, 'OP ')
-    call ovarre(ofile, 'Coolant velocity in blanket (m/s)', '(velblkto)', velblkto, 'OP ')
-    call ovarre(ofile, 'Pumping power for first wall (MW)', '(htpmw_fwo)', htpmw_fwo, 'OP ')
-    call ovarre(ofile, 'Pumping power for blanket (MW)', '(htpmw_blkto)', htpmw_blkto, 'OP ')
-    call ovarre(ofile, 'Total pumping power for first wall & blanket (MW)', '(htpmw)', htpmw, 'OP ')
+    call ovarst(ofile, 'First wall coolant type', '(fwcoolant)',fwcoolant)   
+    call ovarre(ofile, 'Wall thickness of first wall coolant channels (m)', '(fw_wall)',fw_wall)    
+    call ovarre(ofile, 'Channel roughness (m)', '(roughness)', roughness)
+    call ovarre(ofile, 'First wall coolant mass flow rate (kg/s)', '(mffw)', mffw, 'OP ')
+    call ovarre(ofile, 'Blanket coolant mass flow rate (kg/s)', '(mfblkt)', mfblkt, 'OP ')
+    ! Total coolant flow rate (if they are the same coolant)
+    if (((fwcoolant == 'helium').and.(coolwh == 1)).or.((fwcoolant == 'water').and.(coolwh == 2))) then
+        mftotal = mffw + mfblkt
+        call ovarre(ofile, 'Total coolant mass flow rate(kg/s)', '(mftotal)', mftotal, 'OP ')
+    end if    
+    
+    call ovarre(ofile, 'Pumping power for blanket (MW)', '(htpmw_blkt)', htpmw_blkt, 'OP ')
+    call ovarre(ofile, 'Pumping power for first wall (MW)', '(htpmw_fw)', htpmw_fw, 'OP ')    
+    call ovarre(ofile, 'Specified minimum total coolant pumping power (MW)', &
+                       '(htpmw_min)', htpmw_min, 'OP ')    
+    call ovarre(ofile, 'Total coolant pumping power: first wall, blanket, shield and divertor (MW)', &
+                       '(htpmw)', htpmw, 'OP ')
   
   end subroutine thermo_hydraulic_model
    
@@ -1409,8 +1397,8 @@ contains
     !+ad_args  thickness : first wall thickness (fwith or fwoth) (m)
     !+ad_args  area : input real : area of first wall section under consideration (m2)
     !+ad_argc                      (i.e. area of inboard wall or outboard wall)
-    !+ad_args  prad_incident : input real : incident radiation power (MW)
-    !+ad_args  pnuc_deposited : input real : neutron power deposited in FW side (IB or OB) (MW)
+    !+ad_args  prad_incident : input real : Surface heat flux on first wall (outboard and inboard) (MW) 
+    !+ad_args  pnuc_deposited : input real : nuclear power deposited in FW (IB or OB) (MW)
     !+ad_args  tpeakfw : output real : peak first wall temperature (K)
     !+ad_args  cf : output real : coolant specific heat capacity at constant
     !+ad_argc                     pressure (J/kg/K)
@@ -1450,7 +1438,7 @@ contains
     real(kind=double) :: fwvol, hcoeff, kfi, kfo, masflx, qpp, qppp, temp_k, &
         tmthet, viscf, viscfi, viscfo, load, tkfw, bfw, deltat_solid, &
         deltat_coolant, massrate, channel_area, cfi, rhofi, cfo, rhofo, &
-        kfmean, viscfmean, velocity, deltat_solid_lower_bound, deltat_solid_estimate, &
+        kfmean, viscfmean, velocity, deltat_solid_lower_bound, deltat_solid_1D, &
         onedload, effective_area_for_heat_transfer,diagonal, mean_distance, &
         mean_width
 
@@ -1509,6 +1497,7 @@ contains
     hcoeff = heat_transfer(masflx, rhofo, afw, cfo, viscfo, kfo)  
 
     ! Temperature drops between first-wall surface and bulk coolant. 
+    ! Model C is used.  Model B is given for comparison.  Model A is not used.
     
     ! A.  LeClaire formula for circular pipes: NOT used.  This gives a very small temperature 
     ! differential, as the wall thickness is the same all the way round, but the 
@@ -1533,16 +1522,16 @@ contains
     !   --------------
     !   ______________  
     ! 
-    ! Load (as above) per unit length in 1-D calculation
-    onedload = qppp * pitch * thickness / 4.0d0 + qpp * pitch 
+    ! Worst case load (as above) per unit length in 1-D calculation
+    onedload = peaking_factor * (qppp * pitch * thickness / 4.0d0 + qpp * pitch )
     ! Note I do NOT assume that the channel covers the full width of the first wall:
     effective_area_for_heat_transfer = 2 * afw
-    deltat_solid = onedload * fw_wall / (tkfw * effective_area_for_heat_transfer)
+    deltat_solid_1D = onedload * fw_wall / (tkfw * effective_area_for_heat_transfer)
     
     ! C. A more realistic model
     ! Minimum distance travelled by surface heat load:  fw_wall
     ! Maximum distance travelled by surface heat load:  diagonal
-    diagonal = sqrt((pitch/2.0d0)**2 + (afw + fw_wall)**2) - afw
+    diagonal = sqrt((pitch/2.0d0-afw)**2 + (afw + fw_wall)**2)
     ! Mean distance travelled by surface heat:
     mean_distance = (fw_wall+diagonal)/2.0d0
     ! This heat starts off spread over width = 'pitch'.
@@ -1551,7 +1540,7 @@ contains
     mean_width = (pitch + pi*afw) / 2.0d0
     ! As before, use a combined load 'onedload'
     ! Temperature drop in first-wall material:  estimate. 
-    deltat_solid_estimate = onedload * mean_distance / (tkfw * mean_width) 
+    deltat_solid = onedload * mean_distance / (tkfw * mean_width) 
                          
     ! Temperature drop between channel inner wall and bulk coolant.                              
     deltat_coolant = load /(2.0D0*pi*afw*hcoeff) 
@@ -1562,6 +1551,8 @@ contains
     
     call oheadr(ofile, 'Heat transfer parameters at the coolant outlet: ' // label)     
     call ovarre(ofile, 'Radius of coolant channel (m)', '(afw)', afw, 'OP ')
+    call ovarre(ofile, 'Surface heat flux on first wall (MW) ', '(prad_incident)', afw, 'OP ')
+    call ovarre(ofile, 'Nuclear power deposited  (MW)', '(pnuc_deposited)', pnuc_deposited, 'OP ')
     call ovarre(ofile, 'Length of a single coolant channel (all in parallel) (m)', '(fw_channel_length)', fw_channel_length, 'OP ')
     call ovarre(ofile, 'Pitch of coolant channels (m)', '(pitch)', pitch, 'OP ')
     call ovarre(ofile, 'Thermal conductivity of first wall material (W/K/m)', '(tkfw)', tkfw, 'OP ')
@@ -1573,7 +1564,7 @@ contains
     call ovarre(ofile, 'Temperature drop in the wall material (1-D model)', '(deltat_solid)', deltat_solid, 'OP ')
     call ovarre(ofile, 'Temperature drop in the coolant', '(deltat_coolant)', deltat_coolant, 'OP ')
     call ovarre(ofile, 'First wall temperature (excluding armour) (K)', '(tpeakfw)', tpeakfw, 'OP ')    
-    call ovarre(ofile, 'Temperature drop in the wall material: estimate', '(deltat_solid_estimate)', deltat_solid_estimate, 'OP ')
+    call ovarre(ofile, 'Temperature drop in the wall material: 1D estimate', '(deltat_solid_1D)', deltat_solid_1D, 'OP ')
     
     
   end subroutine fw_temp
@@ -1786,8 +1777,8 @@ contains
     call ovarrf(ofile, 'Outlet temperature of blanket coolant (K)', '(outlet_temp)', outlet_temp)
     call ovarrf(ofile, 'Inlet temperature of first wall coolant (K)', '(fwinlet)', fwinlet)
     call ovarrf(ofile, 'Outlet temperature of first wall coolant (K)', '(fwoutlet)', fwoutlet)
-    call ovarre(ofile, 'Allowable temperature of first wall material, excluding armour (K)', '(tfwmatmax)', tfwmatmax)
-    call ovarre(ofile, 'Actual peak temperature of first wall material (K)', '(tpeak)', tpeak, 'OP ')
+    call ovarrf(ofile, 'Allowable temperature of first wall material, excluding armour (K)', '(tfwmatmax)', tfwmatmax)
+    call ovarrf(ofile, 'Actual peak temperature of first wall material (K)', '(tpeak)', tpeak, 'OP ')
     call ovarre(ofile, 'Allowable nominal neutron fluence at first wall (MW.year/m2)', '(abktflnc)', abktflnc)    
     !call ovarre(ofile, 'Actual nominal neutron fluence at first wall (MW.year/m2)', '(flnce)', flnce)
     !call ovarre(ofile, 'First wall full-power lifetime (years)', '(fwlife)', fwlife)
@@ -1870,18 +1861,11 @@ contains
     !+ad_hist  04/09/14 PJK Added Eurofer steel fit
     !+ad_hist  01/06/15 MDK Convert to Kelvin. Added user-defined multiplier fw_th_conductivity
     !+ad_stat  Okay
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
     implicit none
-
     real(kind=double) :: tk
-
     !  Arguments
     real(kind=double), intent(in) :: t
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!	
     ! Eurofer correlation, from "Fusion Demo Interim Structural Design Criteria - 
     ! Appendix A Material Design Limit Data", F. Tavassoli, TW4-TTMS-005-D01, 2004
     ! t in Kelvin
