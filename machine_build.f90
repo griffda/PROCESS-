@@ -129,7 +129,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: a1,a2,hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild, rbldtotf, deltf, precomp
+    real(kind(1.0D0)) :: a1,a2,hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild, rbldtotf, deltf, precomp, vbuild1
     integer :: ripflag = 0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -461,6 +461,9 @@ contains
 
        vbuild = tfcth + tftsgap + thshield + vgap2 + ddwi + vvblgap + shldtth + blnktth + &
             0.5D0*(fwith+fwoth) + vgaptop + rminor*kappa
+	    
+       ! To calculate vertical offset between TF coil centre and plasma centre
+       vbuild1 = vbuild
      
        call obuild(outfile,'TF coil',tfcth,vbuild)
        vbuild = vbuild - tfcth
@@ -531,6 +534,9 @@ contains
 
        vbuild = vbuild - tfcth
        call obuild(nout,'TF coil',tfcth,vbuild)
+       
+       ! To calculate vertical offset between TF coil centre and plasma centre
+       tfoffset = (vbuild1 + vbuild) / 2.0d0
 	
     end if
 
@@ -546,7 +552,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine vbuild
+  subroutine vbuild(outfile,iprint)
 
     !+ad_name  vbuild
     !+ad_summ  Vertical build
@@ -554,7 +560,8 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_auth  R Kemp, CCFE, Culham Science Centre
     !+ad_cont  N/A
-    !+ad_args  None
+    !+ad_args  outfile : input integer : output file unit
+    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_desc  This subroutine determines the vertical build of the machine
     !+ad_desc  inside the TF coil.
     !+ad_prob  None
@@ -573,6 +580,8 @@ contains
 
     !  Arguments
 
+    integer, intent(in) :: iprint,outfile
+
     !  Local variables
 
     real(kind(1.0D0)) :: divht
@@ -581,7 +590,7 @@ contains
 
     !  Calculate the divertor geometry
 
-    call divgeom(divht)
+    call divgeom(divht, outfile, iprint)
 
     if (vgaptf == 0.0D0) then
        vgap = divht
@@ -615,7 +624,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine divgeom(divht)
+  subroutine divgeom(divht,outfile,iprint)
 
     !+ad_name  divgeom
     !+ad_summ  Divertor geometry calculation
@@ -624,6 +633,8 @@ contains
     !+ad_auth  P J Knight, CCFE, Culham Science Centre
     !+ad_cont  N/A
     !+ad_args  divht : output real : divertor height (m)
+    !+ad_args  outfile : input integer : output file unit
+    !+ad_args  iprint : input integer : switch for writing to output file (1=yes)
     !+ad_desc  This subroutine determines the divertor geometry.
     !+ad_desc  The inboard (i) and outboard (o) plasma surfaces
     !+ad_desc  are approximated by arcs, and followed past the X-point to
@@ -634,6 +645,7 @@ contains
     !+ad_hist  26/07/11 PJK Initial F90 version
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  17/10/12 PJK Added divertor_variables
+    !+ad_hist  01/12/15 RK  Added new geometry and output
     !+ad_stat  Okay
     !+ad_docs  TART option: Peng SOFT paper
     !
@@ -643,6 +655,8 @@ contains
 
     !  Arguments
 
+    integer, intent(in) :: iprint,outfile
+
     real(kind(1.0D0)), intent(out) :: divht
 
     !  Local variables
@@ -650,7 +664,11 @@ contains
     real(kind(1.0D0)), parameter :: soleno = 0.2D0  !  length along outboard divertor
     !  plate that scrapeoff hits
     real(kind(1.0D0)) :: kap,tri,xpointo,rprimeo,phio,thetao
-    real(kind(1.0D0)) :: yspointo,xspointo,yprimeb 
+    real(kind(1.0D0)) :: yspointo,xspointo,yprimeb
+    real(kind(1.0d0)) :: triu, tril, denomo, alphad, rxpt, zxpt
+    real(kind(1.0d0)) :: rspi, zspi, rspo, zspo, rplti, zplti
+    real(kind(1.0d0)) :: rplbi, zplbi, rplto, zplto, rplbo, zplbo
+    real(kind(1.0d0)) :: rpltop, zpltop, rgeocent, zgeocent
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -662,39 +680,111 @@ contains
     end if
 
     !  Conventional tokamak divertor model
+    !  options for seperate upper and lower triangularity
 
     kap = kappa
-    tri = triang
+    triu = triang
+    tril = triang
+    
+    !! Old method: assumes that divertor arms are continuations of arcs
+    ! 
+    !!  Outboard side
+    !!  plsepo = poloidal length along the separatrix from null to
+    !!           strike point on outboard [default 1.5 m]
+    !!  thetao = arc angle between the strike point and the null point
+    !
+    !xpointo = rmajor + 0.5D0*rminor*(kap**2 + tri**2 - 1.0D0) / &
+    !     (1.0D0 - tri)
+    !rprimeo = (xpointo - rmajor + rminor)
+    !phio = asin(kap*rminor/rprimeo)
+    !thetao = plsepo/rprimeo
+    !
+    !!  Initial strike point 
+    !
+    !yspointo = rprimeo * sin(thetao + phio)
+    !xspointo = xpointo - rprimeo * cos(thetao + phio)
+    !
+    !!  Outboard strike point radius - normalized to ITER
+    !
+    !rstrko = xspointo + 0.14D0
+    !
+    !!  Uppermost divertor strike point (end of power decay)
+    !!  anginc = angle of incidence of scrape-off field lines on the
+    !!           divertor (rad)
+    !
+    !!+**PJK 25/07/11 Changed sign of anginc contribution
+    !yprimeb = soleno * cos(thetao + phio - anginc)
+    !
+    !divht = yprimeb + yspointo - kap*rminor
 
-    !  Outboard side
-    !  plsepo = poloidal length along the separatrix from null to
-    !           strike point on outboard [default 1.5 m]
-    !  thetao = arc angle between the strike point and the null point
+    ! New method, assuming straight legs
+    
+    !  Find half-angle of outboard arc
 
-    xpointo = rmajor + 0.5D0*rminor*(kap**2 + tri**2 - 1.0D0) / &
-         (1.0D0 - tri)
-    rprimeo = (xpointo - rmajor + rminor)
-    phio = asin(kap*rminor/rprimeo)
-    thetao = plsepo/rprimeo
-
-    !  Initial strike point
-
-    yspointo = rprimeo * sin(thetao + phio)
-    xspointo = xpointo - rprimeo * cos(thetao + phio)
-
-    !  Outboard strike point radius - normalized to ITER
-
-    rstrko = xspointo + 0.14D0
-
-    !  Uppermost divertor strike point (end of power decay)
-    !  anginc = angle of incidence of scrape-off field lines on the
-    !           divertor (rad)
-
-    !+**PJK 25/07/11 Changed sign of anginc contribution
-    yprimeb = soleno * cos(thetao + phio - anginc)
-
-    divht = yprimeb + yspointo - kap*rminor
-
+    denomo = (tril**2 + kap**2 - 1.0D0)/( 2.0D0*(1.0D0+tril) ) - tril
+    thetao = atan(kap/denomo)
+    !  Angle between horizontal and inner divertor leg
+    alphad = (pi/2.0d0) - thetao
+    
+    !  Position of lower x-pt
+    rxpt = rmajor - tril*rminor
+    zxpt = -1.0d0 * kap * rminor
+    
+    ! Position of inner strike point
+    rspi = rxpt - plsepi*cos(alphad)
+    zspi = zxpt - plsepi*sin(alphad)
+    
+    ! Position of outer strike point
+    rspo = rxpt + plsepo*cos((pi/2.0d0)-alphad)
+    zspo = zxpt - plsepo*sin((pi/2.0d0)-alphad)
+    
+    ! Position of inner plate ends
+    rplti = rspi - (plleni/2.0d0)*sin(betai + alphad - pi/2.0d0)
+    zplti = zspi + (plleni/2.0d0)*cos(betai + alphad - pi/2.0d0)
+    rplbi = rspi + (plleni/2.0d0)*sin(betai + alphad - pi/2.0d0)
+    zplbi = zspi - (plleni/2.0d0)*cos(betai + alphad - pi/2.0d0)
+    
+    ! Position of outer plate ends
+    rplto = rspo + (plleno/2.0d0)*sin(betao - alphad)
+    zplto = zspo + (plleno/2.0d0)*cos(betao - alphad)
+    rplbo = rspo - (plleno/2.0d0)*sin(betao - alphad)
+    zplbo = zspo - (plleno/2.0d0)*cos(betao - alphad)
+    
+    divht = max(zplti, zplto) - min(zplbo, zplbi)
+    
+    if (iprint == 1) then
+    
+     call oheadr(outfile, 'Divertor build and plasma position')
+     call ovarrf(outfile, 'Plasma top position, radial (m)', '()', rmajor - triu*rminor, 'OP ')
+     call ovarrf(outfile, 'Plasma top position, vertical (m)', '()', kap*rminor, 'OP ')
+     call ovarrf(outfile, 'Plasma geometric centre, radial (m)', '(rmajor)', rmajor, 'OP ')
+     call ovarrf(outfile, 'Plasma geometric centre, vertical (m)', '(0.0)', 0.0d0, 'OP ')
+     call ovarrf(outfile, 'TF coil vertical offset (m)', '(tfoffset)', tfoffset, 'OP ')
+     call ovarrf(outfile, 'Plasma lower X-pt, radial (m)', '(rxpt)', rxpt, 'OP ')
+     call ovarrf(outfile, 'Plasma lower X-pt, vertical (m)', '(zxpt)', zxpt, 'OP ')
+     call ovarrf(outfile, 'Poloidal plane angle between horizontal and inner leg (rad)', '(alphad)', alphad, 'OP ')
+     call ovarrf(outfile, 'Poloidal plane angle between inner leg and plate (rad)', '(betai)', betai)
+     call ovarrf(outfile, 'Poloidal plane angle between outer leg and plate (rad)', '(betao)', betao)
+     call ovarrf(outfile, 'Inner divertor leg poloidal length (m)', '(plsepi)', plsepi)
+     call ovarrf(outfile, 'Outer divertor leg poloidal length (m)', '(plsepo)', plsepo)
+     call ovarrf(outfile, 'Inner divertor plate length (m)', '(plleni)', plleni)
+     call ovarrf(outfile, 'Outer divertor plate length (m)', '(plleno)', plleno)
+     call ovarrf(outfile, 'Inner strike point, radial (m)', '(rspi)', rspi, 'OP ')
+     call ovarrf(outfile, 'Inner strike point, vertical (m)', '(zspi)', zspi, 'OP ')
+     call ovarrf(outfile, 'Inner plate top, radial (m)', '(rplti)', rplti, 'OP ')
+     call ovarrf(outfile, 'Inner plate top, vertical (m)', '(zplti)', zplti, 'OP ')
+     call ovarrf(outfile, 'Inner plate bottom, radial (m)', '(rplbi)', rplbi, 'OP ')
+     call ovarrf(outfile, 'Inner plate bottom, vertical (m)', '(zplbi)', zplbi, 'OP ')
+     call ovarrf(outfile, 'Outer strike point, radial (m)', '(rspo)', rspo, 'OP ')
+     call ovarrf(outfile, 'Outer strike point, vertical (m)', '(zspo)', zspo, 'OP ')
+     call ovarrf(outfile, 'Outer plate top, radial (m)', '(rplto)', rplto, 'OP ')
+     call ovarrf(outfile, 'Outer plate top, vertical (m)', '(zplto)', zplto, 'OP ')
+     call ovarrf(outfile, 'Outer plate bottom, radial (m)', '(rplbo)', rplbo, 'OP ')
+     call ovarrf(outfile, 'Outer plate bottom, vertical (m)', '(zplbo)', zplbo, 'OP ')
+     call ovarrf(outfile, 'Calculated maximum divertor height (m)', '(divht)', divht, 'OP ')
+    
+    end if
+    
   end subroutine divgeom
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -919,6 +919,10 @@ module divertor_variables
   real(kind(1.0D0)) :: adas = 0.0D0
   !+ad_vars  anginc /0.262/ : angle of incidence of field line on plate (rad)
   real(kind(1.0D0)) :: anginc = 0.262D0
+  !+ad_vars  betai /1.0/ : poloidal plane angle between divertor plate and leg, inboard (rad)
+  real(kind(1.0D0)) :: betai = 1.0D0
+  !+ad_vars  betao /1.0/ : poloidal plane angle between divertor plate and leg, outboard (rad)
+  real(kind(1.0D0)) :: betao = 1.0D0
   !+ad_vars  bpsout /0.6/ : reference B_p at outboard divertor strike point (T)
   real(kind(1.0D0)) :: bpsout = 0.60D0
   !+ad_vars  c1div /0.45/ : fitting coefficient to adjust ptpdiv, ppdiv
@@ -979,6 +983,12 @@ module divertor_variables
   real(kind(1.0D0)) :: omegan = 1.0D0
   !+ad_vars  omlarg : power spillage to private flux factor
   real(kind(1.0D0)) :: omlarg = 0.0D0
+  !+ad_vars  plleni /1.0/ : length of inboard divertor plate (m)
+  real(kind(1.0D0)) :: plleni = 1.0D0
+  !+ad_vars  plleno /1.0/ : length of outboard divertor plate (m)
+  real(kind(1.0D0)) :: plleno = 1.0D0
+  !+ad_vars  plsepi /1.0/ : poloidal length, x-point to inboard strike point (m)
+  real(kind(1.0D0)) :: plsepi = 1.0D0
   !+ad_vars  plsepo /1.5/ : poloidal length, x-point to outboard strike point (m)
   real(kind(1.0D0)) :: plsepo = 1.5D0
   !+ad_vars  ppdivr : peak heat load at plate (with radiation) (MW/m2)
@@ -2839,6 +2849,8 @@ module build_variables
   !+ad_varc                (calculated for stellarators)
   !+ad_varc                (iteration variable 13)
   real(kind(1.0D0)) :: tfcth = 1.173D0
+  !+ad_vars  tfoffset : vertical distance between centre of TF coils and centre of plasma (m)
+  real(kind(1.0D0)) :: tfoffset = 0.0D0
   !+ad_vars  tfootfi /1.19/ : TF coil outboard leg / inboard leg radial thickness
   !+ad_varc                  ratio (itfsup=0 only)
   !+ad_varc                  (iteration variable 75)

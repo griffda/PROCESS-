@@ -1120,6 +1120,12 @@ contains
        case ('anginc')
           call parse_real_variable('anginc', anginc, 0.0D0, 1.5707D0, &
                'Field line ang of incid on dvrtr (rad)')
+       case ('betai')
+          call parse_real_variable('betai', betai, 0.0D0, 1.5707D0, &
+               'Poloidal plane angle between inner divertor leg and plate (rad)')
+       case ('betao')
+          call parse_real_variable('betao', betao, 0.0D0, 1.5707D0, &
+               'Poloidal plane angle between outer divertor leg and plate (rad)')
        case ('bpsout')
           call parse_real_variable('bpsout', bpsout, 0.0D0, 10.0D0, &
                'Ref B_p at outboard divertor strike point')
@@ -1183,9 +1189,18 @@ contains
        case ('omegan')
           call parse_real_variable('omegan', omegan, 0.1D0, 10.0D0, &
                'Pressure ratio (nT)_p / (nT)_s')
+       case ('plleni')
+          call parse_real_variable('plleni', plleni, 0.1D0, 10.0D0, &
+               'Poloidal length, inboard divertor plate (m)')
+       case ('plleno')
+          call parse_real_variable('plleno', plleno, 0.1D0, 10.0D0, &
+               'Poloidal length, outboard divertor plate (m)')
+       case ('plsepi')
+          call parse_real_variable('plsepi', plsepi, 0.1D0, 10.0D0, &
+               'Poloidal length, x to inboard strike point (m)')
        case ('plsepo')
           call parse_real_variable('plsepo', plsepo, 0.1D0, 10.0D0, &
-               'Poloidal length, x to outboard strike point')
+               'Poloidal length, x to outboard strike point (m)')
        case ('prn1')
           call parse_real_variable('prn1', prn1, 0.0D0, 1.0D0, &
                'n_scrapeoff / n_average plasma')

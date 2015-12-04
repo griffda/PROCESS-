@@ -1549,6 +1549,7 @@ subroutine output(outfile)
   call outtim(outfile)
   call divcall(outfile,1)
   call radialb(outfile,1)
+  call vbuild(outfile,1)
 
   if (irfp == 0) then
      call tfcoil(outfile,1)
