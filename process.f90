@@ -1994,4 +1994,4 @@ end subroutine runtests
 ! 408      #328 PF coil and CS cross-section and cost
 !          New error reporting in input.f90.
 ! 409      #348 New first wall model
-!          #329 Improved error handling in input.f90
+!          #329 Improved error handling in input.f90.
