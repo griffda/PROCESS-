@@ -1064,6 +1064,7 @@ contains
     !  Local variables
     real(kind=double) :: cf, rhof, temp_in, temp_out
     integer :: no90fw, no180fw, no90bz, no180bz, coolant
+    character(len=8) :: cstring
 
     !  Determine size of blanket modules
     !  Radial length of coolant pipes is assumed to be 80% of total radial space
@@ -1197,7 +1198,8 @@ contains
 
     call oheadr(ofile, 'First wall and blanket thermohydraulics: Summary') 
     call ovarin(ofile, 'Blanket coolant type (1=He, 2=H20)', '(coolwh)',coolwh)
-    call ovarst(ofile, 'First wall coolant type', '(fwcoolant)',fwcoolant)   
+    cstring = '"'//fwcoolant//'"'
+    call ovarst(ofile, 'First wall coolant type', '(fwcoolant)',cstring)   
     call ovarre(ofile, 'Wall thickness of first wall coolant channels (m)', '(fw_wall)',fw_wall)    
     call ovarre(ofile, 'Channel roughness (m)', '(roughness)', roughness)
     call ovarre(ofile, 'First wall coolant mass flow rate (kg/s)', '(mffw)', mffw, 'OP ')

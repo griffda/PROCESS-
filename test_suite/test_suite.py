@@ -88,6 +88,13 @@ def print_message(test_name, test_obj):
             "{0}".format(test_obj.status) + "({0})\n". \
             format(test_obj.diff_num)
 
+    if test_obj.status == "ERROR":
+        message = "Test ==>  {0:<30}".format(test_name) + BColours.FAIL + \
+            "{0}".format(test_obj.status) + BColours.ENDC
+
+        log_message = "Test ==>  {0:<30}".format(test_name) + \
+            "{0}".format(test_obj.status)
+
     # print message to terminal
     print(message)
 
@@ -288,12 +295,13 @@ def save_summary(line):
     f.close()
 
 
-def copy_test_to_test_area(test_name):
+def copy_test_to_test_area(test_name, test_status):
     """ copy files to test area
 
     Function to copy test files to test_area under directory for test case name
 
     :param test_name: test case name
+    :param test_status: test case status
     """
 
     # make test case "test area" directory
@@ -302,14 +310,14 @@ def copy_test_to_test_area(test_name):
     # copy output files to test case folders
 
     # IN.DAT
-    subprocess.call(["cp", "IN.DAT", "test_area/{0}/".format(test_name)])
+    subprocess.call(["mv", "IN.DAT", "test_area/{0}/".format(test_name)])
 
     # ref.IN.DAT
     subprocess.call(["cp", "test_files/{0}/ref.IN.DAT".format(test_name),
                     "test_area/{0}/".format(test_name)])
 
     # new.MFILE.DAT
-    subprocess.call(["cp", "MFILE.DAT", "test_area/{0}/new.MFILE.DAT".
+    subprocess.call(["mv", "MFILE.DAT", "test_area/{0}/new.MFILE.DAT".
                     format(test_name)])
 
     # ref.MFILE.DAT
@@ -317,7 +325,7 @@ def copy_test_to_test_area(test_name):
                      "test_area/{0}/".format(test_name)])
 
     # new.OUT.DAT
-    subprocess.call(["cp", "OUT.DAT", "test_area/{0}/new.OUT.DAT".
+    subprocess.call(["mv", "OUT.DAT", "test_area/{0}/new.OUT.DAT".
                     format(test_name)])
 
     # ref.OUT.DAT
@@ -325,10 +333,11 @@ def copy_test_to_test_area(test_name):
                      "test_area/{0}/".format(test_name)])
 
     # run.log
-    subprocess.call(["cp", "run.log", "test_area/{0}/".format(test_name)])
+    subprocess.call(["mv", "run.log", "test_area/{0}/".format(test_name)])
 
     # diff.log
-    subprocess.call(["cp", "diff.log", "test_area/{0}/".format(test_name)])
+    if test_status == "DIFF":
+        subprocess.call(["mv", "diff.log", "test_area/{0}/".format(test_name)])
 
 
 def move_summary():
@@ -399,6 +408,24 @@ def write_diff_log(test, diff_val, diffs, diff_n, only_ref, only_new):
     diff_file.close()
 
 
+def check_process_errors():
+    """Check PROCESS run errors
+
+    Function to check errors from PROCESS run using run.log and outputs if
+    there are any.
+
+    """
+
+    # check 1: check MFILE file length
+    mf = open("MFILE.DAT", "r")
+    mf_length = len(mf.readlines())
+
+    if mf_length == 0:
+        return "ERROR"
+
+    return "OK"
+
+
 class TestCase(object):
     """
     Class used for a single reference test case
@@ -435,7 +462,14 @@ class TestCase(object):
         # run PROCESS
         subprocess.call(["cp {0} .".format(self.path + "/IN.DAT")],
                         shell=True)
-        subprocess.call(["process.exe >> run.log"], shell=True)
+        subprocess.call(["./process.exe >> run.log"], shell=True)
+
+        # check for PROCESS errors
+        self.status = check_process_errors()
+
+        if self.status == "ERROR":
+            copy_test_to_test_area(self.test, self.status)
+            return
 
         # read MFILEs
         ref_mfile = MFile("{0}".format(self.path + "ref.MFILE.DAT"))
@@ -458,6 +492,8 @@ class TestCase(object):
             # change test status
             self.status = "DIFF"
 
+            print(len(self.only_new), len(self.only_ref))
+
             # output differences to diff.log
             write_diff_log(self.test, self.diff, self.diffs, self.diff_num,
                            self.only_ref, self.only_new)
@@ -467,18 +503,21 @@ class TestCase(object):
         #    print(key, self.diffs[key]["name"], self.diffs[key]["diff"])
 
         # copy files to test_area
-        copy_test_to_test_area(self.test)
+        copy_test_to_test_area(self.test, self.status)
 
         # rename output files
-        subprocess.call([""], shell=True)
+        # subprocess.call([""], shell=True)
 
         # print("Reference value {0}".format(ref_mfile.data["rmajor"].
         # get_scan(-1)))
 
+        return
+
 
 def main(args):
-    """
-    :param args:
+    """Main
+
+    :param args: command line arguments
     """
 
     # Allowable difference set by user
@@ -516,9 +555,6 @@ def main(args):
         # Output message to terminal
         print_message(key, tests[key])
 
-        # Output message to file
-        # write_message(key, t)
-
     # version number
     vrsn = int(tests[list(drs.keys())[0]].proc_ver)
 
@@ -530,6 +566,7 @@ def main(args):
 
     # Write test to folder if successful and option chosen
     if args.save:
+
         # delete any folders with the same name
         subprocess.call(["rm", "-rf", "test_{0}".format(vrsn)])
 
@@ -571,8 +608,4 @@ if __name__ == "__main__":
     print(BColours.ENDC)
 
 # TODO: Have scans included and ouput
-# TODO: If all tests successful then overwrite files with same tag & date
-# TODO: User option for above?
 # TODO: Output differences above user % 10% and 50%
-# TODO: Save output to summary.log file
-# TODO: Include in make file
