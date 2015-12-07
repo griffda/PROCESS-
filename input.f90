@@ -1323,12 +1323,12 @@ contains
        case ('fseppc')
           call parse_real_variable('fseppc', fseppc, 1.0D6, 1.0D9, &
                'CS separation force held by CS pre-comp structure')
-       case ('fwith')
-          call parse_real_variable('fwith', fwith, 0.0D0, 10.0D0, &
-               'Inboard first wall thickness, initial estimate (m)')
-       case ('fwoth')
-          call parse_real_variable('fwoth', fwoth, 0.0D0, 10.0D0, &
-               'Outboard first wall thickness, initial estimate (m)')
+!       case ('fwith')
+!          call parse_real_variable('fwith', fwith, 0.0D0, 10.0D0, &
+!               'Inboard first wall thickness, initial estimate (m)')
+!       case ('fwoth')
+!          call parse_real_variable('fwoth', fwoth, 0.0D0, 10.0D0, &
+!               'Outboard first wall thickness, initial estimate (m)')
        case ('gapoh')
           call parse_real_variable('gapoh', gapoh, 0.0D0, 10.0D0, &
                'Gap between OHC and TF coil (m)')
@@ -1709,17 +1709,49 @@ contains
           call parse_real_array('zref', zref, isub1, ngrpmx, &
                'height of coil group / minor radius', icode)
 
-          !  Pulsed reactor settings
-
        case ('afw')
           call parse_real_variable('afw', afw, 1.0D-3, 0.5D0, &
                'Inner radius of first wall coolant channel (m)')
+
+       case ('fw_wall')
+          call parse_real_variable('fw_wall', fw_wall, 0.5D-3, 0.1D0, &
+               'wall thickness of first wall coolant channels (m)')
+       case ('pitch')
+          call parse_real_variable('pitch', pitch, 0.5D-3, 0.1D0, &
+               'pitch of first wall cooling channels (m)')
+       case ('fwinlet')
+          call parse_real_variable('fwinlet', fwinlet, 300.0d0, 1500.0D0, &
+               'inlet temperature of first wall coolant (K)')
+       case ('fwoutlet')
+          call parse_real_variable('fwoutlet', fwoutlet, 300.0d0, 1500.0D0, &
+               'outlet temperature of first wall coolant (K)')
+       case ('fwpressure')
+          call parse_real_variable('fwpressure', fwpressure, 1.0d5, 1.0D8, &
+               'first wall coolant pressure (Pa)')
+       case ('fwcoolant')
+          call parse_string_variable('fwcoolant', fwcoolant, 'first wall coolant')     
+          call lower_case(fwcoolant)
+       case ('roughness')
+          call parse_real_variable('fwoutlet', fwoutlet, 0.0d0, 1.0D-2, &
+               'first wall channel roughness epsilon')    
+       case ('fw_channel_length')
+          call parse_real_variable('fw_channel_length', fw_channel_length, 0.1d0, 1.0D2, &
+               'first wall channel length')    
+       case ('peaking_factor')
+          call parse_real_variable('peaking_factor', peaking_factor, 1.0d0, 100.0D0, &
+               'peaking factor for first wall heat loads')    
+       
+               
        case ('bctmp')
           call parse_real_variable('bctmp', bctmp, 1.0D0, 800.0D0, &
                'First wall bulk coolant temperature (C)')
+       case ('blpressure')
+          call parse_real_variable('blpressure', blpressure, 1.0D5, 1.0D8, &
+               'Blanket coolant pressure (Pa)')
        case ('coolp')
-          call parse_real_variable('coolp', coolp, 1.0D5, 1.0D9, &
-               'First wall coolant pressure (Pa)')
+          call parse_real_variable('coolp', coolp, 1.0D5, 1.0D8, &
+               'blanket coolant pressure (Pa) stellarator ONLY')
+       
        case ('dtstor')
           call parse_real_variable('dtstor', dtstor, 50.0D0, 500.0D0, &
                'Max temp change in thermal storage medium (K)')

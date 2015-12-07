@@ -1,6 +1,6 @@
 *--------------------------------------------------*
 *---------------Constraint Equations---------------*
-neqns = 20 * Number of equality constraints to be satisfied
+neqns = 21 * Number of equality constraints to be satisfied
 icc(1) = 1
 icc(2) = 2
 icc(3) = 5
@@ -18,12 +18,13 @@ icc(14) = 32
 icc(15) = 33
 icc(16) = 34
 icc(17) = 35
-icc(18) = 15
-icc(19) = 56
-icc(20) = 62 
+icc(18) = 39
+icc(19) = 15
+icc(20) = 56
+icc(21) = 62 
 
 *---------------Iteration Variables----------------*
-nvar = 36 * Number of iteration variables to use
+nvar = 38 * Number of iteration variables to use
 ixc(1) = 2 * bt
 ixc(2) = 3 * rmajor
 boundu(3) = 13
@@ -79,16 +80,21 @@ boundu(60) = 9.0d4
 ixc(34) = 59 * fcutfsu
 *boundl(59) = 0.66667
 boundl(59) = 0.4
-ixc(35) = 109 * ralpne
-ixc(36) = 110 * ftaulimit
+
+ixc(35) = 63  * ftpeak (f-value for equation 39) 
+
+ixc(36) = 109 * ralpne
+ixc(37) = 110 * ftaulimit
+
+ixc(38) = 114 * fw_channel_length 
 *-----------------Build Variables------------------*
 blnkith  = 0.755 * Inboard blanket thickness (m);
 blnkoth  = 1.275 * Outboard blanket thickness (m);
 bore     = 2.0e+00 * Central solenoid inboard radius (m)
 ddwex    = 0.15 * Cryostat thickness (m)
 ddwi     = 0.3 * Vacuum vessel thickness (tf coil / shield) (m)
-fwith    = 0.025 * Inboard first wall thickness; initial estimate (m)
-fwoth    = 0.025 * Outboard first wall thickness; initial estimate (m)
+*fwith    = 0.025 * Inboard first wall thickness; initial estimate (m) OBSOLETE
+*fwoth    = 0.025 * Outboard first wall thickness; initial estimate (m) OBSOLETE
 gapds    = 0.061 * Gap between inboard vacuum vessel and tf coil (m)
 gapoh    = 0.05 * Gap between central solenoid and tf coil (m)
 gapomin  = 0.2 * Minimum gap between outboard vacuum vessel and tf coil (m)
@@ -127,8 +133,8 @@ fvdump   = 1.0      * F-value for dump voltage
 fwalld   = 1.3024e-01 * F-value for maximum wall load
 pnetelin = 500.0 * Required net electric power (mw)
 pseprmax = 17.0 * Maximum ratio of power crossing the separatrix to
-*tbrnmn   = 7.2e3 * Minimum burn time (s)
-tbrnmn   = 3600 * Minimum burn time (s)
+tbrnmn   = 7.2e3 * Minimum burn time (s)
+
 walalw   = 8.0 * Allowable wall-load (mw/m2)
 *------------------Cost Variables------------------*
 cost_model = 0 * use $ 1990 PROCESS model
@@ -150,21 +156,23 @@ fblss    = 0.13 * Kit blanket model; steel fraction of breeding zone
 fhole    = 0.05 * Area fraction taken up by other holes (not used)
 fblbe    = 0.47 * Beryllium fraction of blanket by volume
 secondary_cycle = 2 * Switch for thermodynamic model of power conversion cycle;
-tfwmatmax = 1300  * Maximum temperature of first wall material (k) (secondary_cycle>1)
-afwi      = 0.012 * inner radius of inboard first wall/blanket coolant channels (m)
-afwo      = 0.012 * inner radius of outboard first wall/blanket coolant channels (m)
-*outlet_temp_fw = 653.0  * first wall coolant outlet temp (secondary_cycle>1) (K)
+tfwmatmax = 873  * Maximum temperature of first wall material (k) (secondary_cycle>1)
 fwclfr   = 0.1 * First wall coolant fraction
 vfshld   = 0.60 * Coolant void fraction in shield
-vfblkt   = 0.10 * Coolant void fraction in blanket (blktmodel=0);
-coolp = 8.0e6   * first wall coolant pressure (Pa) (secondary_cycle>1)
+vfblkt   = 0.10 * Coolant void fraction in blanket (blktmodel=0)
+fw_channel_length = 7.0  * Length of a single first wall channel (all in parallel) (m) (15/11/27)
+fwinlet  = 573  * inlet temperature of first wall coolant (K) (15/11/27)
+fwoutlet = 773 * outlet temperature of first wall coolant (K) (15/11/27)
+pitch = 0.020  * pitch of first wall cooling channels (m) (27/11/15)
+fwpressure = 8.0e6  * first wall coolant pressure (Pa) (secondary_cycle>1)
+peaking_factor = 2.0 * peaking factor for first wall heat loads (15/11/27)
 *-----------------Global Variables-----------------*
 runtitle = Michael's test file
-verbose = 0
+verbose = 1
 *-------------Heat Transport Variables-------------*
 baseel   = 55.0d6 * Base plant electric load (w)
 fauxbop  = 0.032 * Fraction of gross electric power to balance-of-plant
-htpmw_min = 155.0 * Minimum total electrical power for primary coolant pumps (mw)
+htpmw_min = 0.0 * Minimum total electrical power for primary coolant pumps (mw)
 *------------------Ife Variables-------------------*
 *------------Impurity Radiation Module-------------*
 imprad_model = 1 * Switch for impurity radiation model;
@@ -188,7 +196,7 @@ impvar   = 13 * Fimp element value to be varied if iteration
 *---------------------Numerics---------------------*
 ioptimz  = 1 * Code operation switch;
 minmax   = 1 * Switch for figure-of-merit (see lablmm for descriptions)
-epsvmc   = 1.0e-3 * Error tolerance for vmcon
+epsvmc   = 1.0e-5 * Error tolerance for vmcon
 *----------------Pf Power Variables----------------*
 *-----------------Pfcoil Variables-----------------*
 coheof   = 1.3465e+07 * Central solenoid overall current density at end of flat-top (a/m2)

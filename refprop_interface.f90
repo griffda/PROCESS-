@@ -140,7 +140,7 @@ contains
 
   subroutine fluid_properties(temperature,pressure,fluid, &
        density,enthalpy,entropy,specific_heat_const_p, &
-       thermal_conductivity,viscosity)
+       thermal_conductivity,viscosity, label)
 
     !+ad_name  fluid_properties
     !+ad_summ  Calculates properties of a fluid given its temperature and
@@ -190,6 +190,7 @@ contains
     real(kind(1.0D0)), optional, intent(out) :: specific_heat_const_p
     real(kind(1.0D0)), optional, intent(out) :: thermal_conductivity
     real(kind(1.0D0)), optional, intent(out) :: viscosity
+    character(len=*), optional, intent(in) :: label
 
     !  Local variables
 
@@ -198,6 +199,13 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    if ((temperature<100.0d0).or.(temperature>1500.0d0).or.(temperature/=temperature)) then
+        write(*,*) 'temperature = ', temperature, 'near line ', label
+    end if
+    if ((pressure<1.0d5).or.(pressure>1.0d9).or.(pressure/=pressure)) then
+        write(*,*) 'pressure = ', pressure, 'near line ', label
+    end if  
+    
     call initialise_refprop(fluid)
 
     !  Input conversions

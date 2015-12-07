@@ -287,7 +287,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '408    Release Date :: 2015-10-13'
+       '409    Release Date :: 2015-12-07'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -407,6 +407,7 @@ subroutine run_summary
   character(len=12) :: dstring
   character(len=7) :: tstring
   character(len=10) :: ustring
+  character(len=100) :: rstring
   integer :: version
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -482,7 +483,8 @@ subroutine run_summary
   ustring = '"'//trim(progid(4)(13:20))//'"'
   call ovarst(mfile,'User','(username)',ustring)
   
-  call ovarst(mfile,'PROCESS run title','(runtitle)',runtitle)
+  rstring = '"'//runtitle//'"'
+  call ovarst(mfile,'PROCESS run title','(runtitle)',rstring)
 
 #ifndef unit_test
 ! MDK these lines duplicate the ones below.
@@ -1991,3 +1993,5 @@ end subroutine runtests
 ! 407      #304 Section 2 : pump-down model
 ! 408      #328 PF coil and CS cross-section and cost
 !          New error reporting in input.f90.
+! 409      #348 New first wall model
+!          #329 Improved error handling in input.f90.

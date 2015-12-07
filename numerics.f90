@@ -95,7 +95,7 @@ module numerics
   public
 
   !+ad_vars  ipnvars /113/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 113
+  integer, parameter :: ipnvars = 114
   !+ad_vars  ipeqns /65/ FIX : number of constraint equations available
   integer, parameter :: ipeqns = 65
   !+ad_vars  ipnfoms /16/ FIX : number of available figures of merit
@@ -508,7 +508,8 @@ module numerics
        0,  &  !  110
        0,  &  !  111
        0,  &  !  112
-       0   &  !  112
+       0,  &  !  113
+       0   &  !  114
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -742,7 +743,9 @@ module numerics
        !+ad_varc  <LI> (112) fzeffmax: f-value for max Zeff </UL> 
        'fzeffmax',  &
        !+ad_varc  <LI> (113) ftaucq: f-value for minimum quench time </UL> 
-       'ftaucq'  &
+       'ftaucq',  &
+       !+ad_varc  <LI> (114) fw_channel_length: Length of a single first wall channel </UL> 
+       'fw_channel_l'  &
        /)
   
   character(len=9), dimension(:), allocatable :: name_xc
@@ -873,7 +876,8 @@ module numerics
        0.001D0, &  !  110
        0.001D0, &  !  111
        0.001D0, &  !  112
-       0.001D0  &  !  113
+       0.001D0, &  !  113
+       0.001D0  &  !  114
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -991,7 +995,8 @@ module numerics
        1.000D0, &  !  110
        1.000D0, &  !  111
        1.000D0, &  !  112
-       1.000D0  &  !  113
+       1.000D0, &  !  113
+       1.000D3  &  !  114
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0
