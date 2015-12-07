@@ -206,7 +206,7 @@ def mfile_compare(file1, file2, diff, scan=-1):
     :return:
     """
 
-    var_list, only_file1, only_file2 = get_var_lists(file1, file1)
+    var_list, only_file1, only_file2 = get_var_lists(file1, file2)
 
     counter = 0
     differences = dict()
@@ -374,7 +374,9 @@ def write_diff_log(test, diff_val, diffs, diff_n, only_ref, only_new):
     diff_file.write("Difference value: {0}\n".format(diff_val))
 
     diff_file.write("\nDifferences above allowed value\n\n")
-    diff_file.write("Columns: Var\tref\tnew\tdiff\n")
+    diff_file.write("{0:<40}\t{1:<10}\t{2:<10}\t{3:<10}\n".
+                    format("Variable", "ref", "new", "diff"))
+    # diff_file.write("Columns: Var\tref\tnew\tdiff\n")
     diff_file.write("-"*40+"\n")
 
     # write differences
@@ -383,16 +385,18 @@ def write_diff_log(test, diff_val, diffs, diff_n, only_ref, only_new):
         rf = diffs[key]["ref"]
         nw = d = diffs[key]["new"]
 
-        diff_file.write("{0:<40}\t{1:.3g}\t{2:.3g}\t{3:.3g}\n".
-                        format(key, rf, nw, df))
+        diff_file.write("{0:<40}\t{1:<10.3g}\t{2:<10.3g}\t{3:<10.3g}\n".
+                        format(key[:39], rf, nw, df))
 
     # write variables in ref but not in new
-    diff_file.write("Variables in ref NOT IN new:\n\n")
+    diff_file.write("\n\nThere are {0} variables in ref NOT IN new:\n\n".
+                    format(len(only_ref)))
     for item in only_ref:
         diff_file.write("{0}\n".format(item))
 
     # write variables in new but not in ref
-    diff_file.write("Variables in new NOT IN ref:\n\n")
+    diff_file.write("\n\nThere are {0} variables in new NOT IN ref:\n\n".
+                    format(len(only_new)))
     for item in only_new:
         diff_file.write("{0}\n".format(item))
 
@@ -499,8 +503,6 @@ class TestCase(object):
 
             # change test status
             self.status = "DIFF"
-
-            print(len(self.only_new), len(self.only_ref))
 
             # output differences to diff.log
             write_diff_log(self.test, self.diff, self.diffs, self.diff_num,
