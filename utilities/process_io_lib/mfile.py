@@ -27,7 +27,7 @@ import operator
 import logging
 LOG = logging.getLogger("mfile")
 
-try :
+try:
     import process_io_lib.process_dicts
     from process_io_lib.process_dicts import DICT_NSWEEP2VARNAME
 except ImportError:
@@ -35,9 +35,11 @@ except ImportError:
 'make dicts'!")
     exit()
 
+
 class MFileVariable(dict):
     """Class for containing a single mfile variable """
-    def __init__(self, var_name, var_description, var_unit=None, *args, **kwargs):
+    def __init__(self, var_name, var_description, var_unit=None, *args,
+                 **kwargs):
         """
         An object class to contain information (and data values) for a single
         variable from the PROCESS machine readable output file (MFILE.DAT).
@@ -57,18 +59,18 @@ class MFileVariable(dict):
         self["var_unit"] = var_unit
         self.latest_scan = 0
         super().__init__(*args, **kwargs)
-        LOG.debug("Initialising variable '{}': {}".format(self.var_name,
-                                                          self.var_description))
+        LOG.debug("Initialising variable '{}': {}".
+                  format(self.var_name, self.var_description))
 
     def __getattr__(self, name):
         result = self.get(name)
-        #print("Trying to get({}) on {}, {}".format(name, self, id(self)))
+        # print("Trying to get({}) on {}, {}".format(name, self, id(self)))
         if result:
             return result
         else:
             raise AttributeError("{} object has no attribute {}".format(
-                                    self.__class__, name))
-        
+                                 self.__class__, name))
+
     def set_scan(self, scan_number, scan_value):
         """ Sets the class attribute self.scan# where # is scan number
 
@@ -114,7 +116,6 @@ class MFileVariable(dict):
                 filter(lambda x: True if "scan" in x[0] else False,
                        self.items()))]
 
-
     def get_number_of_scans(self):
         """Function to return the number of scans in the variable class"""
         # likely we can just use self.latest_scan, but not guaranteed, so
@@ -137,7 +138,8 @@ class MFileErrorClass(object):
         self.get_number_of_scans = self.get_error
 
     def get_error(self, *args, **kwargs):
-        LOG.error("Key '{}' not in MFILE. KeyError! Check MFILE".format(self.item))
+        LOG.error("Key '{}' not in MFILE. KeyError! Check MFILE".
+                  format(self.item))
         return 0
 
     @property
@@ -148,20 +150,21 @@ class MFileErrorClass(object):
 class MFileDataDictionary(dict):
     """ Class object to act as a dictionary for the data.
     """
-    
+
     def __getattr__(self, name):
         result = self.get(name)
         if result:
             return result
         else:
             raise AttributeError("{} object has no attribute {}".format(
-                                    self.__class__, name))
+                                 self.__class__, name))
 
     def __getitem__(self, item):
         try:
             return dict.__getitem__(self, item)
         except KeyError:
             return MFileErrorClass(item)
+
 
 class MFile(object):
     def __init__(self, filename="MFILE.DAT"):
@@ -183,7 +186,8 @@ class MFile(object):
 
     def parse_mfile(self):
         """Function to parse MFILE.DAT"""
-        for line in (c for c in (clean_line(l) for l in self.mfile_lines) if c != [""]):
+        for line in (c for c in (clean_line(l) for l in self.mfile_lines)
+                     if c != [""]):
             self.add_line(line)
 
     def add_line(self, line):
@@ -191,7 +195,7 @@ class MFile(object):
         class or create a new class if it is the first instance of it.
         """
         var_des = line[0]
-        extracted_var_name = sort_brackets(line[1]) 
+        extracted_var_name = sort_brackets(line[1])
         var_name = var_des if extracted_var_name == "" else extracted_var_name
         if "runtitle" in var_name:
             var_value = " ".join(line[2:])
@@ -209,7 +213,8 @@ class MFile(object):
             var_key = name.lower().replace("_", " ")
 
         if var_key in self.data.keys():
-            scan_num = scan if scan else (self.data[var_key].get_number_of_scans()+1)
+            scan_num = scan if scan else (self.data[var_key].
+                                          get_number_of_scans()+1)
             self.data[var_key].set_scan(scan_num, value)
         else:
             var = MFileVariable(name, des, unit)
@@ -296,6 +301,7 @@ def get_unit(variable_desc):
     else:
         return None
 
+
 def make_plot_dat(mfile_data, custom_keys, filename="make_plot_dat.out",
                   file_format="row"):
     """Make a make_plot_dat.out file for this MFILE.
@@ -334,9 +340,10 @@ def make_plot_dat(mfile_data, custom_keys, filename="make_plot_dat.out",
         try:
             plot_dat.write("# Scanning Variable: {}".
                            format(DICT_NSWEEP2VARNAME
-                            [mfile_data.data["nsweep"].get_scan(-1)] + "\n"))
+                                  [mfile_data.data["nsweep"].
+                                      get_scan(-1)] + "\n"))
             plot_dat.write("# Number of scans: {}".format(
-                       int(mfile_data.data["isweep"].get_scan(-1)) + "\n"))
+                           int(mfile_data.data["isweep"].get_scan(-1)) + "\n"))
             plot_dat.close()
         except KeyError:
             print("File has no scan, continuing...")
@@ -352,13 +359,15 @@ def make_plot_dat(mfile_data, custom_keys, filename="make_plot_dat.out",
             write_column_mplot_dat(filename, custom_keys, mfile_data)
         else:
             # If file_format not recognised print error
-            print("# Error >> Format {} not recognised. Use row or column".format(file_format))
+            print("# Error >> Format {} not recognised. Use row or column".
+                  format(file_format))
 
         for ckey in custom_keys:
             if ckey not in keys:
                 # For each item in the custom_keys list that isn't in the file
                 # print out an error.
-                print(" # Error >> Key: '{}' was NOT found in MFILE.DAT!".format(ckey))
+                print(" # Error >> Key: '{}' was NOT found in MFILE.DAT!".
+                      format(ckey))
                 print(" \t\t (So is NOT in make_plot_dat.out!)")
 
 
@@ -380,7 +389,8 @@ def write_row_mplot_dat(filename, custom_keys, mfile_data):
             # Create the file line [name, description, val1, val2, ...]
             # Entries are justified to give the impression of fixed
             # width columns
-            lines.append(mfile_data.data[key].var_description.replace(" ", "_").ljust(45)
+            lines.append(mfile_data.data[key].var_description.
+                         replace(" ", "_").ljust(45)
                          + " " + key.ljust(25) + " " + values + "\n")
 
     # Write row to file.
@@ -442,8 +452,8 @@ def read_mplot_conf(filename="make_plot_dat.conf"):
         conf_lines = conf_file.readlines()
         conf_params = []
 
-        # For each line check the it is not a comment (#) and if not add it to the
-        # list of parameters.
+        # For each line check the it is not a comment (#) and if not add it to
+        # the list of parameters.
         for item in conf_lines:
             if "#" not in item:
                 if item.strip("\n") != "":
@@ -479,7 +489,7 @@ def is_number(val):
     return False
 
 
-#def test():
+# def test():
 #    """Testing"""
 #    from process_funcs import setup_logging
 #    setup_logging(default_path="logging.json")
@@ -490,5 +500,5 @@ def is_number(val):
 #    print(m.data["ttfsec"].get_scans())
 #    print(m.data["nsweepa"].get_scan(-1))
 
-#if __name__ == "__main__":
+# if __name__ == "__main__":
 #    test()
