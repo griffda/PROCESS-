@@ -244,6 +244,8 @@ contains
     else
         pnuccp = 0.0D0
     end if
+    
+    call component_masses
            
 	!  Calculate the nuclear heating 
     call nuclear_heating_magnets    
@@ -261,6 +263,11 @@ contains
     !  Total nuclear power deposited (MW)
 	nuc_pow_dep_tot = pnucfw + pnucblkt + pnucshld + ptfnuc
 	
+	if((nuc_pow_dep_tot<1.0d0).or.(nuc_pow_dep_tot/=nuc_pow_dep_tot))  then
+        write(*,*)'pnucfw =', pnucfw, ' at line 283  ', 'pnucblkt =', pnucblkt
+        write(*,*)'pnucshld =', pnucshld, ' ptfnuc =', ptfnuc
+     end if
+	
 	!  Power to the first wall (MW)
 	pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
 	
@@ -275,18 +282,18 @@ contains
 	
 	!  pnucdiv is not changed.
 	!  The energy due to multiplication, by subtraction:
-	emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - 0.8D0 * powfmw
+	emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - 0.8D0 * powfmw   
+    
 
-	!  Calculate the powerflow
-    call powerflow_calc    
-    call component_masses
+	call powerflow_calc    
+	! component_masses is now called further up.
+    !call component_masses
     
 	if (ip == 0) return
 	
-	!  Write output to file if chosen
 	call write_ccfe_hcpb_output
     
-  end subroutine
+  end subroutine ccfe_hcpb
   
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
@@ -831,17 +838,17 @@ contains
     !  Total heating (MW)
     ptfnuc = tfc_nuc_heating * (powfmw / 1000.0D0) / 1.0D6
     
-    !if (ip == 0) return
+    if (ip == 0) return
     
-    !if (verbose == 
-    
-    !call oheadr(ofile, 'Nuclear Heating Magnets Before Renormalisation') 
-    !call ovarin(ofile, '', '()',)
-    !call ovarre(ofile, 'Shield line density (tonne/m2)', '(x_shield)', x_shield)
-    !call ovarre(ofile, 'Blanket line density (tonne/m2)', '(x_blanket)', x_blanket)
-    !call ovarre(ofile, 'Unit nuclear heating in TF coil (W/GW)', '(tfc_nuc_heating)', tfc_nuc_heating)
-    !call ovarre(ofile, 'Total nuclear heating in TF coil (MW)', '(ptfnuc)', ptfnuc)
-  
+    if (verbose == 1) then    
+        call oheadr(ofile, 'Nuclear Heating Magnets Before Renormalisation') 
+        call ovarre(ofile, 'Shield line density (tonne/m2)', '(x_shield)', x_shield)
+        call ovarre(ofile, 'Blanket line density (tonne/m2)', '(x_blanket)', x_blanket)
+        call ovarre(ofile, 'Unit nuclear heating in TF coil (W/GW)', '(tfc_nuc_heating)', tfc_nuc_heating)
+        call ovarre(ofile, 'Total nuclear heating in TF coil (MW)', '(ptfnuc)', ptfnuc)
+        call ovarre(ofile, 'powfmw', '(powfmw)', powfmw)
+        call ovarre(ofile, 'total mass of the TF coils (kg)', '(whttf)', whttf)
+    end if
   end subroutine
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -903,6 +910,12 @@ contains
     !  Total blanket nuclear heating (MW)
     exp_blanket = 1-exp(-b*mass)
     pnucblkt = powfmw * a * exp_blanket
+    if ((pnucblkt<1.0d0).or.(pnucblkt /= pnucblkt)) then
+        write(*,*)'Error in nuclear_heating_fw. '
+        write(*,*)'pnucblkt =', pnucblkt, ' exp_blanket =', exp_blanket
+        write(*,*)'powfmw =', powfmw, ' mass =', mass
+        stop
+    end if
   
   end subroutine
  
@@ -1100,6 +1113,10 @@ contains
     !  Nuclear power deposited in fw inner and outer (MW)
     pnucfwi = pnucfw * fwareaib/fwarea
     pnucfwo = pnucfw * fwareaob/fwarea
+    if ((pnucfw<0.0d0).or.(pnucfw/=pnucfw)) write(*,*)'pnucfw =', pnucfw
+    if ((pnucfwi<0.0d0).or.(pnucfwi/=pnucfwi)) write(*,*)'pnucfwi =', pnucfwi
+    if ((pnucfwo<0.0d0).or.(pnucfwo/=pnucfwo)) write(*,*)'pnucfwo =', pnucfwo
+    
 
     !  Thermohydraulic calculations 
     ! -------------------------------    
@@ -1109,18 +1126,15 @@ contains
     ! First wall flow is just along the first wall, with no allowance for radial 
     ! pipes, manifolds etc.
     ! The outputs are mean quantities of inlet and outlet
-    if (pnucfw<0.0d0) write(*,*)'pnucfw =', pnucfw
-    if (pnucfwi<0.0d0) write(*,*)'pnucfwi =', pnucfwi
-    if (psurffwi<0.0d0) write(*,*)'psurffwi =', psurffwi    
-    
-	call fw_temp(afw, fwith, fwareaib, psurffwi, pnucfwi, tpeakfwi, cf, rhof, 'Inboard first wall')
+    call fw_temp(afw, fwith, fwareaib, psurffwi, pnucfwi, tpeakfwi, cf, rhof, mffwpi, 'Inboard first wall')
 	
-    !  Total mass flow rate to remove inboard first wall power (kg/s)
+	! Recalculate the mass flow rates here using the heat capacity output by fw_temp
+	! Total mass flow rate to remove inboard first wall power (kg/s)
     mffwi = 1.0D6*(pnucfwi + psurffwi) / (cf*(fwoutlet - fwinlet))
     !  Total number of first wall pipes from channel length and pitch (15/12/02)
     npfwi = fwareaib / (fw_channel_length*pitch)
-    !  Mass flow rate per coolant pipe (kg/s)
-    mffwpi = mffwi/npfwi    
+    !  Mass flow rate per coolant pipe (kg/s): 
+    mffwpi = mffwi / npfwi
     
     !  Neutron power deposited in inboard blanket (MW)
     pnucblkti = pnucblkt * volblkti / volblkt	 
@@ -1131,8 +1145,10 @@ contains
     !  Assumes up/down flow, two 90 deg bends per length
     npblkti = (vfblkt * volblkti) / (pi * afw * afw * bzfllengi)
     !  Mass flow rate per coolant pipe (kg/s)
-    if ((npblkti<=0.0d0).or.(npblkti/=npblkti)) then
-        write(*,*) 'npblkti = ', npblkti, 'vfblkt =', vfblkt, 'volblkti =',volblkti
+    if ((npblkti<1.0d1).or.(npblkti/=npblkti).or.(mfblkti<1.0d0).or.(mfblkti/=mfblkti)) then
+        write(*,*) 'npblkti = ', npblkti, '   vfblkt =', vfblkt
+        write(*,*) 'mfblkti =',mfblkti,   'pnucblkti =', pnucblkti
+        write(*,*) 'pnucblkt =',pnucblkt,   'volblkti =', volblkti
         stop
     end if
     mfblktpi = mfblkti / npblkti
@@ -1150,10 +1166,11 @@ contains
     !  OUTBOARD
 
     ! Maximum FW temperature. (15/11/27) Issue #348. 
-    call fw_temp(afw, fwoth, fwareaob, psurffwo, pnucfwo, tpeakfwo, cf, rhof, 'Outboard first wall')
+    call fw_temp(afw, fwoth, fwareaob, psurffwo, pnucfwo, tpeakfwo, cf, rhof, mffwo, 'Outboard first wall')
     
-    !  Total mass flow rate to remove outboard first wall power (kg/s)
-    mffwo = 1.0D6*(pnucfwo + psurffwo + porbitlossmw) / (cf*(fwoutlet-fwinlet))
+    ! Recalculate the mass flow rates here using the heat capacity output by fw_temp	
+    ! Total mass flow rate to remove outboard first wall power (kg/s)
+    mffwo = 1.0D6*(pnucfwo + psurffwo) / (cf*(fwoutlet-fwinlet))
 
     !  Total number of first wall pipes from channel length and pitch (15/12/02)
     npfwo = fwareaob / (fw_channel_length*pitch)
@@ -1389,7 +1406,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
    subroutine fw_temp(afw, thickness, area, prad_incident, pnuc_deposited, tpeakfw, &
-       cfmean, rhofmean, label)
+       cfmean, rhofmean, massrate, label)
     !+ad_name  fw_temp
     !+ad_summ  Thermo-hydraulic calculations for the first wall
     !+ad_type  Subroutine
@@ -1402,10 +1419,10 @@ contains
     !+ad_args  prad_incident : input real : Surface heat flux on first wall (outboard and inboard) (MW) 
     !+ad_args  pnuc_deposited : input real : nuclear power deposited in FW (IB or OB) (MW)
     !+ad_args  tpeakfw : output real : peak first wall temperature (K)
-    !+ad_args  cf : output real : coolant specific heat capacity at constant
+    !+ad_args  cfmean : output real : coolant specific heat capacity at constant
     !+ad_argc                     pressure (J/kg/K)
-    !+ad_args  rhof : output real : coolant density (kg/m3)
-    !+ad_args  velfw : output real : coolant flow rate (m/s)
+    !+ad_args  rhofmean : output real : coolant density (kg/m3)
+    !+ad_args  massrate : output real : coolant mass flow rate in a single channel (kg/s)
     !+ad_args  label : input string : information string
     !+ad_desc  Detailed thermal hydraulic model for the blanket (first wall +
     !+ad_desc  breeding zone).
@@ -1432,20 +1449,25 @@ contains
 
     !  Arguments
     real(kind=double), intent(in) :: pnuc_deposited, afw, thickness, area, prad_incident
-    real(kind=double), intent(out) ::  tpeakfw, cfmean, rhofmean
+    real(kind=double), intent(out) ::  tpeakfw, cfmean, rhofmean, massrate
     character(len=*) :: label
 
     !  Local variables
     integer :: coolant
-    real(kind=double) :: fwvol, hcoeff, kfi, kfo, masflx, qpp, qppp, temp_k, &
+    real(kind=double) :: fwvol, hcoeff, kfi, kfo, qpp, qppp, temp_k, &
         tmthet, viscf, viscfi, viscfo, load, tkfw, bfw, deltat_solid, &
-        deltat_coolant, massrate, channel_area, cfi, rhofi, cfo, rhofo, &
+        deltat_coolant, channel_area, cfi, rhofi, cfo, rhofo, &
         kfmean, viscfmean, velocity, deltat_solid_lower_bound, deltat_solid_1D, &
         onedload, effective_area_for_heat_transfer,diagonal, mean_distance, &
-        mean_width
+        mean_width,masflx
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    if ((pnuc_deposited/=pnuc_deposited).or.(pnuc_deposited<0.0d0)) then
+        write(*,*)'pnuc_deposited =', pnuc_deposited, ' at ', label
+        write(*,*)'prad_incident =', prad_incident, ' at ', label
+    end if    
+    
     !  FW volume (inboard or outboard depending on arguments) (m3)
     fwvol = area*thickness
     channel_area = pi * afw**2
@@ -1547,7 +1569,11 @@ contains
     ! Temperature drop between channel inner wall and bulk coolant.                              
     deltat_coolant = load /(2.0D0*pi*afw*hcoeff) 
 
-    tpeakfw = fwoutlet + deltat_solid + deltat_coolant  !  in K                
+    tpeakfw = fwoutlet + deltat_solid + deltat_coolant  !  in K   
+    
+    if ((masflx/=masflx).or.(masflx<0.0d0)) then
+        write(*,*)'masflx = ', masflx, ' at ', label ; ip = 1
+    end if 
 
     if (ip  == 0) return
     
@@ -2000,15 +2026,10 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if ((temp_in<100.0d0).or.(temp_in>1500.0d0).or.(temp_in/=temp_in)) then
-        write(*,*) 'temp_in = ', temp_in, 'at ', label
-    end if
-    if ((temp_out<100.0d0).or.(temp_out>1500.0d0).or.(temp_out/=temp_out)) then
-        write(*,*) 'temp_out = ', temp_out, 'at ', label
-    end if
-    if ((pressure<1.0d5).or.(pressure>1.0d9).or.(pressure/=pressure)) then
-        write(*,*) 'pressure = ', pressure, 'at ', label
-    end if
+    if ((temp_in<100.0d0).or.(temp_in>1500.0d0).or.(temp_in/=temp_in)) call write_output    
+    if ((temp_out<100.0d0).or.(temp_out>1500.0d0).or.(temp_out/=temp_out)) call write_output
+    if ((pressure<1.0d5).or.(pressure>1.0d9).or.(pressure/=pressure)) call write_output
+    if ((mfp<1.0d-8).or.(mfp>1.0d0).or.(mfp/=mfp)) call write_output
     
     ! Mean properties
     temp_mean = (temp_in + temp_out)/2.0d0
@@ -2047,7 +2068,6 @@ contains
     pdrop90 = no90*kelbwn * 0.5D0*rhof*vv*vv
     pdrop180 = no180*kelbwt * 0.5D0*rhof*vv*vv
     deltap = pdropstraight + pdrop90 + pdrop180
-    !deltap = (kstrght + no90*kelbwn + no180*kelbwt) * 0.5D0*rhof*vv*vv
 
     !  Pumping power
     
@@ -2056,13 +2076,8 @@ contains
     coolpin = pressure + deltap
 
     !  Obtain inlet enthalpy and entropy from inlet pressure and temperature
-    if ((coolpin>1.0d9).or.(coolpin<=0.0d0).or.(coolpin/=coolpin)) then
-        write(*,*)        
-        write(*,*)'coolpin = ', coolpin, ' pressure = ', pressure, ' deltap = ', deltap
-        write(*,*)'kstrght = ', kstrght, ' rhof = ', rhof, ' vv = ', vv
-        write(*,*)'rad = ', rad, ' mfp = ', mfp, ' pi = ', pi
-        stop
-    end if
+    if ((coolpin>1.0d9).or.(coolpin<=0.0d0).or.(coolpin/=coolpin)) call write_output
+    
     call fluid_properties(temp_in, coolpin, coolant, enthalpy=h2, entropy=s2, label='2049')
 
     !  Assume isentropic pump so that s1 = s2
@@ -2075,7 +2090,10 @@ contains
     !  the isentropic efficiency of the pump.
     pumppower = 1.0D-6 * mf * (h2-h1) / etaiso
     
-    if (ip  == 0) return
+    if (ip  == 1) call write_output        
+    
+    contains
+    subroutine write_output
     call oheadr(ofile, 'Pumping power for ' // label) 
     call ovarre(ofile, 'Viscosity (Pa.s)', '(viscf)', viscf, 'OP ')
     call ovarre(ofile, 'Density (kg/m3)', '(rhof)', rhof, 'OP ')
@@ -2089,7 +2107,8 @@ contains
     call ovarre(ofile, '            90 degree bends (Pa)', '(pdrop90)', pdrop90, 'OP ')
     call ovarre(ofile, '            180 degree bends (Pa)', '(pdrop180)', pdrop180, 'OP ')
     call ovarre(ofile, 'Inlet pressure (Pa)', '(coolpin)', coolpin, 'OP ')         
-    call ovarre(ofile, 'Total coolant mass flow rate in (kg/s)', '(mf)', mf, 'OP ')   
+    call ovarre(ofile, 'Total coolant mass flow rate in (kg/s)', '(mf)', mf, 'OP ')  
+    call ovarre(ofile, 'Coolant mass flow rate in one channel (kg/s)', '(mfp)', mfp, 'OP ')   
     call ovarre(ofile, 'Pumping power (MW)', '(pumppower)', pumppower, 'OP ')
     call ocmmnt(ofile, 'Additional information is printed when verbose = 1')
     if (verbose==1) then
@@ -2102,7 +2121,9 @@ contains
         call ovarre(ofile, 'Inlet specific enthalpy (J/kg)', '(h2)', h2, 'OP ')
         call ovarre(ofile, 'Specific enthalpy before pump (J/kg)', '(h1)', h1, 'OP ')
         call ovarre(ofile, 'Specific enthalpy added by pump (J/kg)', '(h2-h1)', h2-h1, 'OP ')   
-    end if
+    end if    
+    
+    end subroutine
     
   end function pumppower
 

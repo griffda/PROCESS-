@@ -2057,6 +2057,14 @@ module tfcoil_variables
   real(kind(1.0D0)), dimension(5) :: yarc = 0.0D0
   !+ad_vars  yctfc(4) : y location of arc centre i (m)
   real(kind(1.0D0)), dimension(4) :: yctfc = 0.0D0
+  
+  ! New TF shape:  Horizontal and vertical radii of inside edge of TF coil
+  ! Arcs are numbered clockwise:
+  ! 1=upper inboard, 2=upper outboard, 3=lower ouboard, 4=lower inboard 
+  !+ad_vars  tfa(4) : Horizontal radius of inside edge of TF coil (m)
+  real(kind(1.0D0)), dimension(4) :: tfa = 0.0D0
+  !+ad_vars  tfb(4) : Vertical radius of inside edge of TF coil (m)
+  real(kind(1.0D0)), dimension(4) :: tfb = 0.0D0
 
   !+ad_vars  <P><B>Quantities relating to the spherical tokamak model (itart=1)</B>
   !+ad_varc        (and in some cases, also to resistive TF coils, itfsup=0):<P>
