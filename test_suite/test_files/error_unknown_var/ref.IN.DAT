@@ -184,8 +184,10 @@ DDWI    = 0.32,
 GAPDS   = 0.12,
 SHLDITH = 0.30,
 BLNKITH = 0.755,
+FWITH   = 0.025,
 SCRAPLI = 0.225,
 SCRAPLO = 0.225,
+FWOTH   = 0.025,
 BLNKOTH = 1.275,
 SHLDOTH = 0.80,
 GAPOMIN = 0.20,
@@ -367,3 +369,5 @@ $OSECTS
      flhthresh   = 1.2725E+00 
      fimpvar     = 4.1100E-04 
 $END
+
+error_variable = "Nope"

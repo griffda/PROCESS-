@@ -454,6 +454,40 @@ def get_version(tests_dict):
             return int(item)
 
 
+def overwrite_references(ars, dr, vr):
+    """Overwrite the reference cases with new output.
+
+    :param ars: command line arguments
+    :param dr: directories for reference cases
+    :param vr: PROCESS version number
+    """
+
+    if ars.save:
+        output_folder = "test_{0}".format(vr)
+    else:
+        output_folder = "test_area"
+
+    for key in dr.keys():
+
+        if "error_" not in key:
+            path = dr[key]["path"]
+
+            # copy IN.DAT to ref.IN.DAT
+            subprocess.call(["cp", "{0}/{1}/IN.DAT".format(output_folder, key),
+                            "{0}/IN.DAT".format(path)])
+            subprocess.call(["cp", "{0}/{1}/IN.DAT".format(output_folder, key),
+                            "{0}/ref.IN.DAT".format(path)])
+
+            # copy new.OUT.DAT to ref.OUT.DAT
+            subprocess.call(["cp", "{0}/{1}/new.OUT.DAT".format(output_folder,
+                            key), "{0}/ref.OUT.DAT".format(path)])
+
+            # copy new.MFILE.DAT to ref.MFILE.DAT
+            subprocess.call(["cp", "{0}/{1}/new.MFILE.DAT".
+                            format(output_folder, key),
+                            "{0}/ref.MFILE.DAT".format(path)])
+
+
 class TestCase(object):
     """
     Class used for a single reference test case
@@ -597,8 +631,8 @@ def main(args):
     for key in drs.keys():
 
         if "error_" in key:
-            if args.debug:
 
+            if args.debug:
                 # initiate test object for the test case
                 tests[key] = TestCase(key, drs[key], difference, args)
 
@@ -647,6 +681,10 @@ def main(args):
     # cleanup
     clean_up()
 
+    # if option given to overwrite reference cases with new output.
+    if args.overwrite:
+        overwrite_references(args, drs, vrsn)
+
     return
 
 
@@ -669,6 +707,9 @@ if __name__ == "__main__":
     parser.add_argument("--debug", help="Use debugging reference cases (cases "
                         "beginning with 'error_').", action="store_true")
 
+    parser.add_argument("--overwrite", help="Overwrite reference cases with"
+                        "new output. USE WITH CAUTION.", action="store_true")
+
     parser.add_argument("-r", "--ref", help="Set reference folder. Default ="
                         "test_files", type=str, default="test_files")
 
@@ -678,8 +719,3 @@ if __name__ == "__main__":
 
     # Make sure terminal returns to regular colours
     print(BColours.ENDC)
-
-# TODO: Have scans included and ouput
-# TODO: Output differences above user % 10% and 50%
-# TODO: add error test case as a user option
-# TODO: ifail != 1 case
