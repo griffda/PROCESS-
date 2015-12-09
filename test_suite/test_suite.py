@@ -20,7 +20,7 @@ import subprocess
 from process_io_lib.mfile import MFile
 
 # Constants
-EXCLUSIONS = ["normres", "nitvar"]
+EXCLUSIONS = ["normres", "nitvar", "itvar", "xcm"]
 
 # *********************************** #
 
@@ -47,10 +47,11 @@ def clean_test_dir():
     subprocess.call(["mkdir", "test_area"])
 
 
-def welcome_print(df):
+def welcome_print(df, ars):
     """ Prints welcome message
 
     :param df: difference allowed
+    :param ars: command line arguments
     """
 
     # welcome to terminal
@@ -58,11 +59,14 @@ def welcome_print(df):
     print("Date: {0}".format(datetime.date.today()))
     print("Diff set to:" + " {0}%\n".format(df) +
           BColours.ENDC)
+    print("Using reference folder: " + BColours.BOLD + "{0}\n".format(ars.ref)
+          + BColours.ENDC)
 
     # save welcome to "summary.log"
     save_summary("PROCESS Test Suite\n\n")
     save_summary("Date: {0}\n".format(datetime.date.today()))
     save_summary("Diff set to:" + " {0}%\n".format(df))
+    save_summary("Using reference folder: " + "{0}\n".format(ars.ref))
 
 
 def print_message(test_name, test_obj):
@@ -73,27 +77,27 @@ def print_message(test_name, test_obj):
     """
 
     if test_obj.status == "OK":
-        message = "Test ==>  {0:<30}".format(test_name) + BColours.OKGREEN + \
+        message = "Test ==>  {0:<40}".format(test_name) + BColours.OKGREEN + \
                   "{0}".format(test_obj.status) + BColours.ENDC
 
-        log_message = "\nTest ==>  {0:<30}".format(test_name) + \
-                      "{0}".format(test_obj.status)
+        log_message = "Test ==>  {0:<40}".format(test_name) + \
+                      "{0}\n".format(test_obj.status)
 
     if test_obj.status == "DIFF":
-        message = "Test ==>  {0:<30}".format(test_name) + BColours.OKBLUE + \
+        message = "Test ==>  {0:<40}".format(test_name) + BColours.OKBLUE + \
             "{0}".format(test_obj.status) + "({0})".format(test_obj.diff_num) \
             + BColours.ENDC
 
-        log_message = "Test ==>  {0:<30}".format(test_name) + \
+        log_message = "Test ==>  {0:<40}".format(test_name) + \
             "{0}".format(test_obj.status) + "({0})\n". \
             format(test_obj.diff_num)
 
     if test_obj.status == "ERROR":
-        message = "Test ==>  {0:<30}".format(test_name) + BColours.FAIL + \
+        message = "Test ==>  {0:<40}".format(test_name) + BColours.FAIL + \
             "{0}".format(test_obj.status) + BColours.ENDC
 
-        log_message = "Test ==>  {0:<30}".format(test_name) + \
-            "{0}".format(test_obj.status)
+        log_message = "Test ==>  {0:<40}".format(test_name) + \
+            "{0}\n".format(test_obj.status)
 
     # print message to terminal
     print(message)
@@ -111,38 +115,43 @@ def setup_executable():
     subprocess.call(["cp ../process.exe ."], shell=True)
 
 
-def get_file_info():
+def get_file_info(ar):
     """ Function to get the file structure information about the test files.
 
+    :param ar: arguments from command line
     :return: File information as a list of paths
     """
 
-    # List of directories in the test_files folder
-    dirs = os.listdir("test_files/")
+    # List of directories in the reference folder
+    dirs = os.listdir(ar.ref)
 
     # File information in dictionary form
     file_info = dict()
 
     # Directory address
-    dir_prefix = os.getcwd() + "/test_files/"
+    dir_prefix = os.getcwd() + "/{0}/".format(ar.ref)
 
     # Populate dictionary with file information
     for folder in dirs:
-        # dictionary to hold information for given test
-        test_info = dict()
 
-        # File path
-        direct = dir_prefix + folder + "/"
+        # ignore summary file if reference folder not "test_files"
+        if ".log" not in folder:
 
-        # Files for test case (e.g. IN.DAT, reference MFILE.DAT)
-        files = os.listdir(direct)
+            # dictionary to hold information for given test
+            test_info = dict()
 
-        # store test file names and path
-        test_info["files"] = files
-        test_info["path"] = direct
+            # File path
+            direct = dir_prefix + folder + "/"
 
-        # store test in dictionary of tests
-        file_info[folder] = test_info
+            # Files for test case (e.g. IN.DAT, reference MFILE.DAT)
+            files = os.listdir(direct)
+
+            # store test file names and path
+            test_info["files"] = files
+            test_info["path"] = direct
+
+            # store test in dictionary of tests
+            file_info[folder] = test_info
 
     return file_info
 
@@ -267,6 +276,7 @@ def clean_up():
 
     # remove .DAT files
     subprocess.call(["rm", "PLOT.DAT"])
+    subprocess.call(["rm", "VFILE.DAT"])
 
     # remove executable
     subprocess.call(["rm", "process.exe"])
@@ -287,13 +297,14 @@ def save_summary(line):
     f.close()
 
 
-def copy_test_to_test_area(test_name, test_status):
+def copy_test_to_test_area(test_name, test_status, ars):
     """ copy files to test area
 
     Function to copy test files to test_area under directory for test case name
 
     :param test_name: test case name
     :param test_status: test case status
+    :param ars: command line arguments
     """
 
     # make test case "test area" directory
@@ -305,7 +316,7 @@ def copy_test_to_test_area(test_name, test_status):
     subprocess.call(["mv", "IN.DAT", "test_area/{0}/".format(test_name)])
 
     # ref.IN.DAT
-    subprocess.call(["cp", "test_files/{0}/ref.IN.DAT".format(test_name),
+    subprocess.call(["cp", "{0}/{1}/ref.IN.DAT".format(ars.ref, test_name),
                     "test_area/{0}/".format(test_name)])
 
     # new.MFILE.DAT
@@ -313,7 +324,7 @@ def copy_test_to_test_area(test_name, test_status):
                     format(test_name)])
 
     # ref.MFILE.DAT
-    subprocess.call(["cp", "test_files/{0}/ref.MFILE.DAT".format(test_name),
+    subprocess.call(["cp", "{0}/{1}/ref.MFILE.DAT".format(ars.ref, test_name),
                      "test_area/{0}/".format(test_name)])
 
     # new.OUT.DAT
@@ -321,7 +332,11 @@ def copy_test_to_test_area(test_name, test_status):
                     format(test_name)])
 
     # ref.OUT.DAT
-    subprocess.call(["cp", "test_files/{0}/ref.OUT.DAT".format(test_name),
+    subprocess.call(["cp", "{0}/{1}/ref.OUT.DAT".format(ars.ref, test_name),
+                     "test_area/{0}/".format(test_name)])
+
+    # README file
+    subprocess.call(["cp", "{0}/{1}/README.txt".format(ars.ref, test_name),
                      "test_area/{0}/".format(test_name)])
 
     # run.log
@@ -371,11 +386,12 @@ def write_diff_log(test, diff_val, diffs, diff_n, only_ref, only_new):
     diff_file = open("diff.log", "w")
     diff_file.write("\nPROCESS Test Suite\n")
     diff_file.write("\nTest name: {0}\n".format(test))
-    diff_file.write("Difference value: {0}\n".format(diff_val))
+    diff_file.write("Difference value: {0}%\n".format(diff_val))
 
-    diff_file.write("\nDifferences above allowed value\n\n")
+    diff_file.write("\nTotal of {0} differences above allowed value\n\n".
+                    format(diff_n))
     diff_file.write("{0:<40}\t{1:<10}\t{2:<10}\t{3:<10}\n".
-                    format("Variable", "ref", "new", "diff"))
+                    format("Variable", "ref", "new", "diff (%)"))
     # diff_file.write("Columns: Var\tref\tnew\tdiff\n")
     diff_file.write("-"*40+"\n")
 
@@ -385,7 +401,7 @@ def write_diff_log(test, diff_val, diffs, diff_n, only_ref, only_new):
         rf = diffs[key]["ref"]
         nw = d = diffs[key]["new"]
 
-        diff_file.write("{0:<40}\t{1:<10.3g}\t{2:<10.3g}\t{3:<10.3g}\n".
+        diff_file.write("{0:<40}\t{1:<10.3g}\t{2:<10.3g}\t{3:<10.2f}\n".
                         format(key[:39], rf, nw, df))
 
     # write variables in ref but not in new
@@ -445,24 +461,27 @@ class TestCase(object):
     Takes input file, reference output MFILE and allowed difference as a %.
     """
 
-    def __init__(self, test, files, diff):
+    def __init__(self, test, files, diff, arguments):
         """TestCase initialisation
 
         :param test: test case name
         :param files: input file to compare to reference case
         :param diff: difference allowed (can be changed by user)
+        :param arguments: command line arguments
         :return: (output to terminal and files)
         """
         self.test = test
         self.files = files["files"]
         self.path = files["path"]
         self.status = "OK"
+        self.process_exit_code = 0
         self.diff_num = 0
         self.diff = diff
         self.diffs = dict()
         self.proc_ver = str()
         self.only_ref = list()
         self.only_new = list()
+        self.arguments = arguments
 
     def run_test(self):
         """ Run PROCESS test
@@ -474,13 +493,18 @@ class TestCase(object):
         # run PROCESS
         subprocess.call(["cp {0} .".format(self.path + "/IN.DAT")],
                         shell=True)
-        subprocess.call(["./process.exe >> run.log"], shell=True)
+        self.process_exit_code = subprocess.call(["./process.exe >> run.log"],
+                                                 shell=True, timeout=100)
+
+        # check PROCESS call exit code
+        if self.process_exit_code != 0:
+            self.status = "ERROR"
 
         # check for PROCESS errors
         self.status = check_process_errors()
 
         if self.status == "ERROR":
-            copy_test_to_test_area(self.test, self.status)
+            copy_test_to_test_area(self.test, self.status, self.arguments)
             return
 
         # read MFILEs
@@ -489,6 +513,14 @@ class TestCase(object):
 
         # get process version number
         self.proc_ver = new_mfile.data["procver"].get_scan(-1)
+
+        # check ifail
+        self.ifail = new_mfile.data["ifail"].get_scan(-1)
+
+        if self.ifail != 1:
+            self.status = "ERROR"
+            copy_test_to_test_area(self.test, self.status, self.arguments)
+            return
 
         # get number of scans
         # scan_no = get_scan_num(ref_mfile)
@@ -499,7 +531,7 @@ class TestCase(object):
             mfile_compare(ref_mfile, new_mfile, self.diff)
 
         # if number of differences non-zero change status
-        if self.diff_num > 0:
+        if self.check_diff_status():
 
             # change test status
             self.status = "DIFF"
@@ -508,20 +540,27 @@ class TestCase(object):
             write_diff_log(self.test, self.diff, self.diffs, self.diff_num,
                            self.only_ref, self.only_new)
 
-        #  print differences
-        # TODO for key in self.diffs.keys():
-        #    print(key, self.diffs[key]["name"], self.diffs[key]["diff"])
-
         # copy files to test_area
-        copy_test_to_test_area(self.test, self.status)
-
-        # rename output files
-        # subprocess.call([""], shell=True)
-
-        # print("Reference value {0}".format(ref_mfile.data["rmajor"].
-        # get_scan(-1)))
+        copy_test_to_test_area(self.test, self.status, self.arguments)
 
         return
+
+    def check_diff_status(self):
+        """Check status of comparison after comparing mfiles
+
+        :return: True/False if there are differences
+        """
+
+        if self.diff_num > 0:
+            return True
+
+        if len(self.only_new) > 0:
+            return True
+
+        if len(self.only_ref) > 0:
+            return True
+
+        return False
 
 
 def main(args):
@@ -534,13 +573,13 @@ def main(args):
     difference = args.diff
 
     # Print intro message
-    welcome_print(difference)
+    welcome_print(difference, args)
 
     # clean test_area directory
     clean_test_dir()
 
     # Get test file information
-    drs = get_file_info()
+    drs = get_file_info(args)
 
     # Print start of tests message
     msg = BColours.BOLD + "PROCESS Test Cases\n" + BColours.ENDC
@@ -556,14 +595,31 @@ def main(args):
 
     # Go through and test each case
     for key in drs.keys():
-        # initiate test object for the test case
-        tests[key] = TestCase(key, drs[key], difference)
 
-        # run test
-        tests[key].run_test()
+        if "error_" in key:
+            if args.debug:
 
-        # Output message to terminal
-        print_message(key, tests[key])
+                # initiate test object for the test case
+                tests[key] = TestCase(key, drs[key], difference, args)
+
+                # run test
+                tests[key].run_test()
+
+                # Output message to terminal
+                print_message(key, tests[key])
+
+            else:
+                pass
+        else:
+
+            # initiate test object for the test case
+            tests[key] = TestCase(key, drs[key], difference, args)
+
+            # run test
+            tests[key].run_test()
+
+            # Output message to terminal
+            print_message(key, tests[key])
 
     # version number
     vrsn = get_version(tests)
@@ -586,7 +642,7 @@ def main(args):
         # remove temporary test results folder
         subprocess.call(["rm", "-rf", "test_area"])
 
-        print("\nTest run saved to folder 'test_{0}'".format(k))
+        print("\nTest run saved to folder 'test_{0}'".format(vrsn))
 
     # cleanup
     clean_up()
@@ -610,6 +666,12 @@ if __name__ == "__main__":
                         "reference case for this version of PROCESS.",
                         action="store_true")
 
+    parser.add_argument("--debug", help="Use debugging reference cases (cases "
+                        "beginning with 'error_').", action="store_true")
+
+    parser.add_argument("-r", "--ref", help="Set reference folder. Default ="
+                        "test_files", type=str, default="test_files")
+
     ag = parser.parse_args()
 
     main(ag)
@@ -619,3 +681,5 @@ if __name__ == "__main__":
 
 # TODO: Have scans included and ouput
 # TODO: Output differences above user % 10% and 50%
+# TODO: add error test case as a user option
+# TODO: ifail != 1 case
