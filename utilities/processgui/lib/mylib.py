@@ -40,17 +40,17 @@ def dict_to_in_dat(di):
 
     # do constraint equations
     icc = []
-    f = open('test_text.txt', 'w')
-    for k in di:
-        f.write('\n' + k)
-    f.write('\n\nNext is GUI_LABCC keys')
+    # f = open('test_text.txt', 'w')
+    # for k in di:
+    #     f.write('\n' + k)
+    # f.write('\n\nNext is GUI_LABCC keys')
     for num in GUI_LABLCC.keys():
-        f.write('\n' + str(num))
+        # f.write('\n' + str(num))
         constname = "constraint_" + str(num)
         if constname in di and di[constname] == "on":
             icc.append(num)
-        f.write('\n' + constname)
-    f.close()
+    #     f.write('\n' + constname)
+    # f.close()
 
     in_dat["icc"] = icc
     in_dat["neqns"] = len(icc)
