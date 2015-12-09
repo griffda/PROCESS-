@@ -16,29 +16,29 @@ def dict_to_in_dat(di):
     """
     in_dat = GuiInDat()
     for dummy, tuplist in GUI_MODULE.items():
-        #all of the usual variables that appear in GUI_MODULE
-        #can just be assigned
+        # all of the usual variables that appear in GUI_MODULE
+        # can just be assigned
         for tu in tuplist:
             varname = tu[1]
             in_dat[varname] = di[varname]
 
-    #do iteration variables
+    # do iteration variables
     ixc = []
     for num in GUI_LABLXC.keys():
         itername = "itervar_" + str(num)
         boundlname = "boundl(" + str(num) + ")"
         bounduname = "boundu(" + str(num) + ")"
-        #add to ixc if variable is set as itervar
+        # add to ixc if variable is set as itervar
         if itername in di and di[itername] == "on":
             ixc.append(num)
-        #copy the bounds
+        # copy the bounds
         in_dat[boundlname] = di[boundlname]
         in_dat[bounduname] = di[bounduname]
 
     in_dat["ixc"] = ixc
     in_dat["nvar"] = len(ixc)
 
-    #do constraint equations
+    # do constraint equations
     icc = []
     f = open('test_text.txt', 'w')
     for k in di:
@@ -55,11 +55,12 @@ def dict_to_in_dat(di):
     in_dat["icc"] = icc
     in_dat["neqns"] = len(icc)
 
-    #do description
+    # do description
     if "Run_Description" in di:
         in_dat.Run_Description = di["Run_Description"]
 
     return in_dat
+
 
 def split_dicts(request):
     """Converts a submission from the client to two dictionaries.
@@ -77,5 +78,3 @@ def split_dicts(request):
             in_dict[key] = value
 
     return in_dict, ref_dict
-
-
