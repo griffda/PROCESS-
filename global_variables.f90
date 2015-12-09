@@ -2807,6 +2807,8 @@ module build_variables
   !+ad_vars  ohcth /0.811/ : central solenoid thickness (m)
   !+ad_varc                 (iteration variable 16)
   real(kind(1.0D0)) :: ohcth = 0.811D0
+  !+ad_vars  precomp : CS coil precompression structure thickness (m)
+  real(kind(1.0D0)) :: precomp = 0.0D0
   !+ad_vars  rbld : sum of thicknesses to the major radius (m)
   real(kind(1.0D0)) :: rbld = 0.0D0
   !+ad_vars  rinboard /0.651/ : plasma inboard radius (m)
