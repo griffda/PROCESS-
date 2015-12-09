@@ -18,6 +18,10 @@ import argparse
 # variables in input file but not in dictionaries.
 OMISSIONS = list()
 
+# ioptimz values
+ioptimz_des = {"-1": "for no optimisation, HYBRD only",
+               "0": "for HYBRD and VMCON (not recommended)",
+               "1": "for optimisation, VMCON only"}
 
 class BColours:
     HEADER = '\033[95m'
@@ -202,7 +206,10 @@ def make_line(var, val, comment=True):
     """
     assignstr = (str(var) + " = " + str(val)).ljust(15)
     if comment and var in DICT_DESCRIPTIONS:
-        desc = get_comment(val, DICT_DESCRIPTIONS[var])
+        if var == "ioptimz":
+            desc = ioptimz_des[str(val)]
+        else:
+            desc = get_comment(val, DICT_DESCRIPTIONS[var])
     else:
         desc = ""
 
