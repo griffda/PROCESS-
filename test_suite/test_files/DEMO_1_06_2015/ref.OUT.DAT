@@ -29,13 +29,13 @@
  
    Program : ./process.exe
    Version : 409    Release Date :: 2015-12-07
- Date/time : Wed Dec  9 10:33:48 GMT 2015
+ Date/time : Wed Dec  9 11:18:34 GMT 2015
       User : morrisj (James Morris)
  Directory : /home/morrisj/Work/process_test_suite/test_suite
  
  **************************************************************************************************************
  
- PROCESS 409 : Run on Wed Dec  9 10:33:48 GMT 2015 by James Morris
+ PROCESS 409 : Run on Wed Dec  9 11:18:34 GMT 2015 by James Morris
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)
