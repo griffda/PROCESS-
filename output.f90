@@ -727,7 +727,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine obuild(file,descr,thick,total)
+  subroutine obuild(file,descr,thick,total,variable_name)
 
     !+ad_name  obuild
     !+ad_summ  Routine to print out a description, the thickness and
@@ -755,11 +755,13 @@ contains
 
     integer, intent(in) :: file
     character(len=*), intent(in) :: descr
+    character(len=*), optional :: variable_name
     real(kind(1.0D0)), intent(in) :: thick, total
 
     !  Local variables
 
-    character(len=30) :: dum30
+    character(len=30) :: dum30    
+    character(len=20) :: dum20
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -768,9 +770,14 @@ contains
     !  was the wrong length.
 
     dum30 = descr
+    if (present(variable_name)) then
+        dum20 = variable_name    
+    else 
+        dum20 = ''
+    end if
 
-    write(file,10) dum30, thick, total
-10  format(1x,a,t42,f10.3,t58,f10.3)
+    write(file,10) dum30, thick, total, dum20
+10  format(1x,a,t42,f10.3,t58,f10.3,t71,a)
 
   end subroutine obuild
 

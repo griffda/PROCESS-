@@ -130,6 +130,7 @@ contains
     !  Local variables
 
     real(kind(1.0D0)) :: a1,a2,hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild, rbldtotf, deltf, precomp, vbuild1
+    real(kind(1.0D0)) :: fwtth
     integer :: ripflag = 0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -301,7 +302,7 @@ contains
     call obuild(outfile,'Device centreline',0.0D0,radius)
 
     radius = radius + bore
-    call obuild(outfile,'Machine bore',bore,radius)
+    call obuild(outfile,'Machine bore',bore,radius,'(bore)')
     call ovarre(mfile,'Machine bore (m)','(bore)',bore)
 
     if (itart == 1) then
@@ -318,97 +319,97 @@ contains
        call obuild(outfile,'Central solenoid',ohcth,radius)
        call ovarre(mfile,'CS radial thickness (m)','(ohcth)',ohcth)
 
-    else
+    else       ! conventional aspect ratio tokamak
 
        radius = radius + ohcth
-       call obuild(outfile,'Central solenoid',ohcth,radius)
+       call obuild(outfile,'Central solenoid',ohcth,radius,'(ohcth)')
        call ovarre(mfile,'CS radial thickness (m)','(ohcth)',ohcth)
        
        radius = radius + precomp
-       call obuild(outfile,'CS precompression',precomp,radius)
+       call obuild(outfile,'CS precompression',precomp,radius,'(precomp)')
        call ovarre(mfile,'CS precompression (m)','(precomp)',precomp)
 
        radius = radius + gapoh
-       call obuild(outfile,'Gap',gapoh,radius)
+       call obuild(outfile,'Gap',gapoh,radius,'(gapoh)')
        call ovarre(mfile,'CS to TF coil radial gap (m)','(gapoh)',gapoh)
 
        radius = radius + tfcth
-       call obuild(outfile,'TF coil inboard leg',tfcth,radius)
+       call obuild(outfile,'TF coil inboard leg',tfcth,radius,'(tfcth)')
        call ovarre(mfile,'TF coil inboard leg (m)','(tfcth)',tfcth)
        
        radius = radius + deltf
-       call obuild(outfile,'Gap',deltf,radius)
+       call obuild(outfile,'Gap',deltf,radius,'(deltf)')
        call ovarre(mfile,'TF coil inboard leg gap (m)','(deltf)',deltf)
 
     end if
     
     radius = radius + thshield
-    call obuild(outfile,'Thermal shield',thshield,radius)
+    call obuild(outfile,'Thermal shield',thshield,radius,'(thshield)')
     call ovarre(mfile,'Thermal shield (m)','(thshield)',thshield)
 
     radius = radius + gapds
-    call obuild(outfile,'Gap',gapds,radius)
+    call obuild(outfile,'Gap',gapds,radius,'(gapds)')
     call ovarre(mfile,'TF to vessel radial gap (m)','(gapds)',gapds)
 
     radius = radius + ddwi + shldith
-    call obuild(outfile,'Vacuum vessel (and shielding)',ddwi + shldith,radius)
+    call obuild(outfile,'Vacuum vessel (and shielding)',ddwi + shldith,radius,'(ddwi + shldith)')
     call ovarre(mfile,'Vacuum vessel radial thickness (m)','(ddwi)',ddwi)
     call ovarre(mfile,'Inner radiation shield radial thickness (m)','(shldith)',shldith)
     
     radius = radius + vvblgap
-    call obuild(outfile,'Gap',vvblgap,radius)
+    call obuild(outfile,'Gap',vvblgap,radius,'(vvblgap)')
     call ovarre(mfile,'Gap (m)','(vvblgap)',vvblgap)
 
     radius = radius + blnkith
-    call obuild(outfile,'Inboard blanket',blnkith,radius)
+    call obuild(outfile,'Inboard blanket',blnkith,radius,'(blnkith)')
     call ovarre(mfile,'Inboard blanket radial thickness (m)','(blnkith)',blnkith)
 
     radius = radius + fwith
-    call obuild(outfile,'Inboard first wall',fwith,radius)
+    call obuild(outfile,'Inboard first wall',fwith,radius,'(fwith)')
     call ovarre(mfile,'Inboard first wall radial thickness (m)','(fwith)',fwith)
 
     radius = radius + scrapli
-    call obuild(outfile,'Inboard scrape-off',scrapli,radius)
+    call obuild(outfile,'Inboard scrape-off',scrapli,radius,'(scrapli)')
     call ovarre(mfile,'Inboard scrape-off radial thickness (m)','(scrapli)',scrapli)
 
     radius = radius + rminor
-    call obuild(outfile,'Plasma geometric centre',rminor,radius)
+    call obuild(outfile,'Plasma geometric centre',rminor,radius,'(rminor)')
 
     radius = radius + rminor
-    call obuild(outfile,'Plasma outboard edge',rminor,radius)
+    call obuild(outfile,'Plasma outboard edge',rminor,radius,'(rminor)')
 
     radius = radius + scraplo
-    call obuild(outfile,'Outboard scrape-off',scraplo,radius)
+    call obuild(outfile,'Outboard scrape-off',scraplo,radius,'(scraplo)')
     call ovarre(mfile,'Outboard scrape-off radial thickness (m)','(scraplo)',scraplo)
 
     radius = radius + fwoth
-    call obuild(outfile,'Outboard first wall',fwoth,radius)
+    call obuild(outfile,'Outboard first wall',fwoth,radius,'(fwoth)')
     call ovarre(mfile,'Outboard first wall radial thickness (m)','(fwoth)',fwoth)
 
     radius = radius + blnkoth
-    call obuild(outfile,'Outboard blanket',blnkoth,radius)
+    call obuild(outfile,'Outboard blanket',blnkoth,radius,'(blnkoth)')
     call ovarre(mfile,'Outboard blanket radial thickness (m)','(blnkoth)',blnkoth)
     
     radius = radius + vvblgap
-    call obuild(outfile,'Gap',vvblgap,radius)
+    call obuild(outfile,'Gap',vvblgap,radius,'(vvblgap)')
 
     radius = radius + ddwi+shldoth
-    call obuild(outfile,'Vacuum vessel (and shielding)',ddwi+shldoth,radius)
+    call obuild(outfile,'Vacuum vessel (and shielding)',ddwi+shldoth,radius,'(ddwi+shldoth)')
     call ovarre(mfile,'Outer radiation shield radial thickness (m)','(shldoth)',shldoth)
 
     radius = radius + gapsto
-    call obuild(outfile,'Gap',gapsto,radius)
+    call obuild(outfile,'Gap',gapsto,radius,'(gapsto)')
     call ovarre(mfile,'Vessel to TF radial gap (m)','(gapsto)',gapsto)
 
     radius = radius + thshield
-    call obuild(outfile,'Thermal shield',thshield,radius)
+    call obuild(outfile,'Thermal shield',thshield,radius,'(thshield)')
     
     radius = radius + tftsgap
-    call obuild(outfile,'Gap',tftsgap,radius)
+    call obuild(outfile,'Gap',tftsgap,radius,'(tftsgap)')
     call ovarre(mfile,'Gap (m)','(tftsgap)',tftsgap)
 
     radius = radius + tfthko
-    call obuild(outfile,'TF coil outboard leg',tfthko,radius)
+    call obuild(outfile,'TF coil outboard leg',tfthko,radius,'(tfthko)')
     call ovarre(mfile,'TF coil outboard leg radial thickness (m)','(tfthko)',tfthko)
 
     !  Vertical build
@@ -453,10 +454,10 @@ contains
 
        vbuild = vbuild + tfcth
        call obuild(outfile,'TF coil',tfcth,vbuild)
-
+       
+       ! end of Double null case
     else
        call ocmmnt(outfile,'Single null case')
-
        write(outfile,20)
 
        vbuild = tfcth + tftsgap + thshield + vgap2 + ddwi + vvblgap + shldtth + blnktth + &
@@ -464,80 +465,79 @@ contains
 	    
        ! To calculate vertical offset between TF coil centre and plasma centre
        vbuild1 = vbuild
-     
-       call obuild(outfile,'TF coil',tfcth,vbuild)
+       
+       call obuild(outfile,'TF coil',tfcth,vbuild,'(tfcth)')
        vbuild = vbuild - tfcth
        
-       call obuild(outfile,'Gap',tftsgap,vbuild)
+       call obuild(outfile,'Gap',tftsgap,vbuild,'(tftsgap)')
        vbuild = vbuild - tftsgap
        
-       call obuild(outfile,'Thermal shield',thshield,vbuild)
+       call obuild(outfile,'Thermal shield',thshield,vbuild,'(thshield)')
        vbuild = vbuild - thshield
 
-       call obuild(outfile,'Gap',vgap2,vbuild)
+       call obuild(outfile,'Gap',vgap2,vbuild,'(vgap2)')
        call ovarre(mfile,'Vessel - TF coil vertical gap (m)','(vgap2)',vgap2)
        vbuild = vbuild - vgap2
 
-       call obuild(outfile,'Vacuum vessel (and shielding)',ddwi+shldtth,vbuild)
+       call obuild(outfile,'Vacuum vessel (and shielding)',ddwi+shldtth,vbuild,'(ddwi+shldtth)')
        vbuild = vbuild - ddwi - shldtth
        call ovarre(mfile,'Top radiation shield thickness (m)','(shldtth)',shldtth)
        
-       call obuild(outfile,'Gap',vvblgap,vbuild)
+       call obuild(outfile,'Gap',vvblgap,vbuild,'(vvblgap)')
        vbuild = vbuild - vvblgap
 
-       call obuild(outfile,'Top blanket',blnktth,vbuild)
+       call obuild(outfile,'Top blanket',blnktth,vbuild,'(blnktth)')
        call ovarre(mfile,'Top blanket vertical thickness (m)','(blnktth)',blnktth)
        vbuild = vbuild - blnktth
+       
+       fwtth = 0.5D0*(fwith+fwoth)
+       call obuild(outfile,'Top first wall',fwtth,vbuild,'(fwtth)')
+       call ovarre(mfile,'Top first wall vertical thickness (m)', 'fwtth',fwtth)
+       vbuild = vbuild - fwtth
 
-       call obuild(outfile,'Top first wall',0.5D0*(fwith+fwoth),vbuild)
-       call ovarre(mfile,'Top first wall vertical thickness (m)', &
-            '',0.5D0*(fwith+fwoth))
-       vbuild = vbuild - 0.5D0*(fwith+fwoth)
-
-       call obuild(outfile,'Top scrape-off',vgaptop,vbuild)
-       call ovarre(mfile,'Top scrape-off vertical thickness (m)', &
-            '',vgaptop)
+       call obuild(outfile,'Top scrape-off',vgaptop,vbuild,'(vgaptop)')
+       call ovarre(mfile,'Top scrape-off vertical thickness (m)', 'vgaptop', vgaptop)
        vbuild = vbuild - vgaptop
 
-       call obuild(outfile,'Plasma top',rminor*kappa,vbuild)
+       call obuild(outfile,'Plasma top',rminor*kappa,vbuild,'(rminor*kappa)')
        call ovarre(mfile,'Plasma half-height (m)','(rminor*kappa)',rminor*kappa)
        vbuild = vbuild - rminor*kappa
 
        call obuild(outfile,'Midplane',0.0D0,vbuild)
 
        vbuild = vbuild - rminor*kappa
-       call obuild(outfile,'Plasma bottom',rminor*kappa,vbuild)
+       call obuild(outfile,'Plasma bottom',rminor*kappa,vbuild,'(rminor*kappa)')
 
        vbuild = vbuild - vgap
-       call obuild(nout,'Lower scrape-off',vgap,vbuild)
+       call obuild(nout,'Lower scrape-off',vgap,vbuild,'(vgap)')
        call ovarre(mfile,'Bottom scrape-off vertical thickness (m)','(vgap)',vgap)
 
        vbuild = vbuild - divfix
-       call obuild(outfile,'Divertor structure',divfix,vbuild)
-       call ovarre(mfile,'Divertor structure vertical thickness (m)', &
-            '(divfix)',divfix)
+       call obuild(outfile,'Divertor structure',divfix,vbuild,'(divfix)')
+       call ovarre(mfile,'Divertor structure vertical thickness (m)', '(divfix)',divfix)
 
        vbuild = vbuild - shldlth
 
        vbuild = vbuild - ddwi
-       call obuild(nout,'Vacuum vessel (and shielding)',ddwi+shldlth,vbuild)
+       call obuild(nout,'Vacuum vessel (and shielding)',ddwi+shldlth,vbuild,'(ddwi+shldlth)')
        call ovarre(mfile,'Bottom radiation shield thickness (m)','(shldlth)',shldlth)
 
        vbuild = vbuild - vgap2
-       call obuild(nout,'Gap',vgap2,vbuild)
+       call obuild(nout,'Gap',vgap2,vbuild,'(vgap2)')
        
-       call obuild(outfile,'Thermal shield',thshield,vbuild)
+       call obuild(outfile,'Thermal shield',thshield,vbuild,'(thshield)')
        vbuild = vbuild - thshield
 
-       call obuild(outfile,'Gap',tftsgap,vbuild)
+       call obuild(outfile,'Gap',tftsgap,vbuild,'(tftsgap)')
        vbuild = vbuild - tftsgap
 
        vbuild = vbuild - tfcth
-       call obuild(nout,'TF coil',tfcth,vbuild)
+       call obuild(nout,'TF coil',tfcth,vbuild,'(tfcth)')
        
        ! To calculate vertical offset between TF coil centre and plasma centre
        tfoffset = (vbuild1 + vbuild) / 2.0d0
-	
+       
+       ! end of Single null case	
     end if
 
     !  Other build quantities
@@ -668,7 +668,7 @@ contains
     real(kind(1.0d0)) :: triu, tril, denomo, alphad, rxpt, zxpt
     real(kind(1.0d0)) :: rspi, zspi, rspo, zspo, rplti, zplti
     real(kind(1.0d0)) :: rplbi, zplbi, rplto, zplto, rplbo, zplbo
-    real(kind(1.0d0)) :: rpltop, zpltop, rgeocent, zgeocent
+    real(kind(1.0d0)) :: rpltop, zpltop, rgeocent, zgeocent, ptop_radial,ptop_vertical
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -755,8 +755,10 @@ contains
     if (iprint == 1) then
     
      call oheadr(outfile, 'Divertor build and plasma position')
-     call ovarrf(outfile, 'Plasma top position, radial (m)', '()', rmajor - triu*rminor, 'OP ')
-     call ovarrf(outfile, 'Plasma top position, vertical (m)', '()', kap*rminor, 'OP ')
+     ptop_radial = rmajor - triu*rminor
+     ptop_vertical = kap*rminor
+     call ovarrf(outfile, 'Plasma top position, radial (m)', '(ptop_radial)', ptop_radial, 'OP ')
+     call ovarrf(outfile, 'Plasma top position, vertical (m)', '(ptop_vertical)', ptop_vertical, 'OP ')
      call ovarrf(outfile, 'Plasma geometric centre, radial (m)', '(rmajor)', rmajor, 'OP ')
      call ovarrf(outfile, 'Plasma geometric centre, vertical (m)', '(0.0)', 0.0d0, 'OP ')
      call ovarrf(outfile, 'TF coil vertical offset (m)', '(tfoffset)', tfoffset, 'OP ')

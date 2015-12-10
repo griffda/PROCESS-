@@ -287,7 +287,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '409    Release Date :: 2015-12-07'
+       '410    Release Date :: 2015-12-08'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -1995,3 +1995,4 @@ end subroutine runtests
 !          New error reporting in input.f90.
 ! 409      #348 New first wall model
 !          #329 Improved error handling in input.f90.
+! 410      #341 New TF coil shape.

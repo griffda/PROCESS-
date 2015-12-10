@@ -6,7 +6,7 @@
   James Morris
   13/04/2014
   CCFE
-  Revised by Michael Kovari, 4/6/2105
+  Revised by Michael Kovari, 9/12/2105
 
 """
 
@@ -23,13 +23,14 @@ import numpy as np
 try:
     import process_io_lib.process_dicts as proc_dict
 except ImportError:
-    print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!")
+    print("The Python dictionaries have not yet been created. Please run 'make dicts'!")
     exit()
 
 
 solenoid = 'pink'
+cscompression = 'red'
 tfc = 'cyan'
+thermal_shield = 'gray'
 vessel = 'green'
 shield = 'salmon'
 blanket = 'magenta'
@@ -37,6 +38,7 @@ plasma = 'khaki'
 cryostat='red'
 firstwall = 'darkblue'
 winding = 'blue'
+nbshield_colour = 'gray'
 
 thin = 0
 
@@ -59,11 +61,17 @@ m_file = mf.MFile(args.f + "MFILE.DAT")
 scan = -1
 bore = m_file.data["bore"].get_scan(scan)
 ohcth = m_file.data["ohcth"].get_scan(scan)
+precomp = m_file.data["precomp"].get_scan(scan)
 gapoh = m_file.data["gapoh"].get_scan(scan)
 tfcth = m_file.data["tfcth"].get_scan(scan)
+deltf = m_file.data["deltf"].get_scan(scan)
+thshield = m_file.data["thshield"].get_scan(scan)
 gapds = m_file.data["gapds"].get_scan(scan)
 ddwi = m_file.data["ddwi"].get_scan(scan)
 shldith = m_file.data["shldith"].get_scan(scan)
+#  vvblgap /0.05/ : gap between vacuum vessel and blanket (m) 
+vvblgap = m_file.data["vvblgap"].get_scan(scan)
+
 blnkith = m_file.data["blnkith"].get_scan(scan)
 fwith = m_file.data["fwith"].get_scan(scan)
 scrapli = m_file.data["scrapli"].get_scan(scan)
@@ -75,8 +83,15 @@ blnkoth = m_file.data["blnkoth"].get_scan(scan)
 shldoth = m_file.data["shldoth"].get_scan(scan)
 ddwi = m_file.data["ddwi"].get_scan(scan)
 gapsto = m_file.data["gapsto"].get_scan(scan)
+tftsgap = m_file.data["tftsgap"].get_scan(scan)
 tfthko = m_file.data["tfthko"].get_scan(scan)
+vgap2 = m_file.data["vgap2"].get_scan(scan)
+shldtth = m_file.data["shldtth"].get_scan(scan)
+blnktth = m_file.data["blnktth"].get_scan(scan)
+rtot = m_file.data["rtot"].get_scan(scan)
+
 rdewex = m_file.data["rdewex"].get_scan(scan)
+zdewex = m_file.data["zdewex"].get_scan(scan)
 ddwex = m_file.data["ddwex"].get_scan(scan)
 tfno = m_file.data["tfno"].get_scan(scan)
 wwp1 = m_file.data["wwp1"].get_scan(scan)
@@ -106,17 +121,17 @@ te0 = m_file.data["te0"].get_scan(scan)
 triang = m_file.data["triang95"].get_scan(scan)
 
 
-RADIAL_BUILD = ["bore", "ohcth", "gapoh", "tfcth", "gapds",
-                "ddwi", "shldith", "blnkith", "fwith", "scrapli",
-                "rminori", "rminoro", "scraplo", "fwoth", "blnkoth",
-                "shldoth", "ddwo", "gapsto", "tfthko"]
+RADIAL_BUILD = ["bore", "ohcth", "precomp", "gapoh", "tfcth",
+                "deltf","thshieldi","gapds",
+                 "ddwi", "shldith", "vvblgapi","blnkith", "fwith", "scrapli",
+                "rminori", "rminoro", "scraplo", "fwoth", "blnkoth","vvblgapo",
+                "shldoth", "ddwo", "gapsto", "thshieldo","tftsgap","tfthko"]
 
-VERTICAL_BUILD = ["tfcth", "vgap2", "ddwi", "shldtth", "blnktth",
-                  "top first wall vertical thickness (m)",
-                  "top scrape-off vertical thickness (m)",
+VERTICAL_BUILD = ["tfcth", "tftsgap","thshield", "vgap2", "ddwi", "shldtth", "blnktth",
+                  "fwtth", "vgaptop",
                   "rminor*kappa", "midplane", "rminor*kappa",
-                  "vgap", "divfix", "shldtth", "ddwi", "vgap2", "tfcth"]
-
+                  "vgap", "divfix", "ddwi", "tftsgap",
+                  "tfcth"]
 
 ANIMATION_INFO = [("rmajor", "Major radius", "m"),
                   ("rminor", "Minor radius", "m"),
@@ -271,6 +286,10 @@ def cumulative_radial_build(section, mfile_data, scan):
     for item in RADIAL_BUILD:
         if item == "rminori" or item == "rminoro":
             cumulative_build += mfile_data.data["rminor"].get_scan(scan)
+        elif item == "vvblgapi" or item == "vvblgapo":
+            cumulative_build += mfile_data.data["vvblgap"].get_scan(scan)            
+        elif item == "thshieldi" or item == "thshieldo":
+            cumulative_build += mfile_data.data["thshield"].get_scan(scan)            
         elif "ddw" in item:
             cumulative_build += mfile_data.data["ddwi"].get_scan(scan)
         else:
@@ -279,6 +298,37 @@ def cumulative_radial_build(section, mfile_data, scan):
             break
     return cumulative_build
 
+def cumulative_radial_build2(section, mfile_data, scan):
+    """Function for calculating the cumulative radial build up to and
+    including the given section.
+
+    Arguments:
+        section --> section of the radial build to go up to
+        mfile_data --> MFILE data object
+        scan --> scan number to use
+
+    Returns:
+        cumulative_build --> cumulative radial build up to section given
+
+    """
+
+    cumulative_build = 0; build = 0
+    for item in RADIAL_BUILD:
+        if item == "rminori" or item == "rminoro":
+            build = mfile_data.data["rminor"].get_scan(scan)
+        elif item == "vvblgapi" or item == "vvblgapo":
+            build = mfile_data.data["vvblgap"].get_scan(scan)            
+        elif item == "thshieldi" or item == "thshieldo":
+            build = mfile_data.data["thshield"].get_scan(scan)            
+        elif "ddw" in item:
+            build = mfile_data.data["ddwi"].get_scan(scan)
+        else:
+            build = mfile_data.data[item].get_scan(scan)
+        cumulative_build += build 
+        if item == section:
+            break
+    previous = cumulative_build - build
+    return (cumulative_build, previous)
 
 def cumulative_vertical_build(mfile_data, scan):
     """Function for calculating the cumulative vertical build
@@ -347,12 +397,25 @@ def poloidal_cross_section(axis, mfile_data, scan=-1):
 
     plot_plasma(axis, mfile_data, scan)
     plot_centre_cross(axis, mfile_data, scan)
+    plot_cryostat(axis, mfile_data, scan)
+    
+def plot_cryostat(axis, mfile_data, scan):
+    """Function to plot cryostat in poloidal cross-section"""    
+    rect = patches.Rectangle([rdewex, 0], ddwex, zdewex+ddwex, lw=0, facecolor=cryostat)
+    axis.add_patch(rect)
+    rect = patches.Rectangle([rdewex, 0], ddwex, -(zdewex+ddwex), lw=0, facecolor=cryostat)
+    axis.add_patch(rect)
+    
+    rect = patches.Rectangle([0, zdewex], rdewex, ddwex, lw=0, facecolor=cryostat)
+    axis.add_patch(rect)
+    rect = patches.Rectangle([0, -zdewex], rdewex, -ddwex, lw=0, facecolor=cryostat)
+    axis.add_patch(rect)
+    
 
 def color_key(axis):
     """Function to plot the colour key
     Arguments:
       axis --> object to add plot to
-
     """
     axis.set_ylim([0, 10])
     axis.set_xlim([0, 10])
@@ -361,28 +424,41 @@ def color_key(axis):
     axis.set_autoscalex_on(False)
 
     axis.text(-5, 10, 'Central Solenoid', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0, 9.6], 1, 0.5, lw=0, facecolor=solenoid))
+    axis.add_patch(patches.Rectangle([0.2, 9.7], 1, 0.4, lw=0, facecolor=solenoid))
 
-    axis.text(-5, 9, 'Vacuum vessel', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0, 8.6], 1, 0.5, lw=0, facecolor=vessel))
+    axis.text(-5, 9, 'CS compression', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 8.7], 1, 0.4, lw=0, facecolor=cscompression))
 
-    axis.text(-5, 8, 'TF coil', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0, 7.6], 1, 0.5, lw=0, facecolor=tfc))
+    axis.text(-5, 8,  'TF coil', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 7.7], 1, 0.4, lw=0, facecolor=tfc))
 
-    axis.text(-5, 7, 'Shield', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0, 6.6], 1, 0.5, lw=0, facecolor=shield))
+    axis.text(-5, 7,  'Thermal shield', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 6.7], 1, 0.4, lw=0, facecolor=thermal_shield))
 
-    axis.text(-5, 6, 'Blanket', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0, 5.6], 1, 0.5, lw=0, facecolor=blanket))
+    axis.text(-5, 6,  'V. vessel & shield', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 5.7], 1, 0.4, lw=0, facecolor=vessel))
 
-    axis.text(-5, 5, 'First wall', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0, 4.6], 1, 0.5, lw=0, facecolor=firstwall))
+    axis.text(-5, 5,  'Blanket', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 4.7], 1, 0.4, lw=0, facecolor=blanket))
+ 
+    axis.text(-5, 4,  'First wall', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 3.7], 1, 0.4, lw=0, facecolor=firstwall))
 
-    axis.text(-5, 4, 'Plasma', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0, 3.6], 1, 0.5, lw=0, facecolor=plasma))
+    axis.text(-5, 3,  'Plasma', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 2.7], 1, 0.4, lw=0, facecolor=plasma))
+
+    axis.text(-5, 2,  'PF coils', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 1.7], 1, 0.4, lw=1, facecolor='none'))
+    
+    axis.text(-5, 1,  'NB duct shield', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 0.7], 1, 0.4, lw=0, facecolor=nbshield_colour))
+
+    axis.text(-5, 0.1,  'cryostat', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, -0.3], 1, 0.4, lw=0, facecolor=cryostat))
 
 
-def toroidal_cross_section(axis):
+
+def toroidal_cross_section(axis, mfile_data, scan=-1):
     """Function to plot toroidal cross-section
     Arguments:
       axis --> axis object to add plot to
@@ -402,22 +478,52 @@ def toroidal_cross_section(axis):
     axis.set_ylabel('y / m')
     axis.set_title('Toroidal cross-section')
 
-    rbmax = bore + ohcth + gapoh + tfcth
+    rbmax = bore + ohcth + precomp + gapoh + tfcth
     arc(axis, rmajor, style='dashed')
+    
     # Colour in the main components
-    arc_fill(axis, bore, bore + ohcth, color=solenoid)
-    arc_fill(axis, bore + ohcth + gapoh, rbmax, color=tfc)
-    arc_fill(axis,rbmax+gapds,rbmax + gapds + ddwi, color = vessel)
-    arc_fill(axis, rbmax + gapds + ddwi, rbmax + gapds + ddwi + shldith, color=shield)
-    arc_fill(axis, rbmax + gapds + ddwi + shldith, rbmax + gapds + ddwi + shldith + blnkith, color=blanket)
-    arc_fill(axis, rbmax + gapds + ddwi + shldith + blnkith, rbmax + gapds + ddwi + shldith + blnkith+fwith, color=firstwall)
+    r2, r1 = cumulative_radial_build2("ohcth", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=solenoid)
+    
+    r2, r1 = cumulative_radial_build2("precomp", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=cscompression)
+    
+    r2, r1 = cumulative_radial_build2("tfcth", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=tfc)
+    
+    r2, r1 = cumulative_radial_build2("thshieldi", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=thermal_shield)
+    
+    
+    r2, r1 = cumulative_radial_build2("ddwi", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=vessel)
+    
+    r2, r1 = cumulative_radial_build2("shldith", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=vessel)
+    
+    r2, r1 = cumulative_radial_build2("blnkith", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=blanket)
+       
+    r2, r1 = cumulative_radial_build2("fwith", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=firstwall)
+    
     arc_fill(axis, rmajor-rminor, rmajor+rminor, color=plasma)
-    arc_fill(axis, rmajor + rminor + scraplo, rmajor + rminor + scraplo + fwoth, color=firstwall)
-    arc_fill(axis, rmajor + rminor + scraplo + fwoth,rmajor + rminor + scraplo + fwoth + blnkoth, color=blanket)
-    rsldo =  rmajor + rminor + scraplo + fwoth + blnkoth + shldoth
-    rtot = rsldo + ddwi + gapsto + tfthko/2
-    arc_fill(axis, rmajor + rminor + scraplo + fwoth + blnkoth, rsldo, color=shield)
-    arc_fill(axis, rsldo, rsldo + ddwi, color=vessel)
+       
+    r2, r1 = cumulative_radial_build2("fwoth", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=firstwall)
+       
+    r2, r1 = cumulative_radial_build2("blnkoth", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=blanket)
+       
+    r2, r1 = cumulative_radial_build2("shldoth", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=shield)
+    
+    r2, r1 = cumulative_radial_build2("ddwo", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=vessel)
+    
+    r2, r1 = cumulative_radial_build2("thshieldo", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=thermal_shield)
+    
     arc_fill(axis, rdewex, rdewex+ddwex, color=cryostat)
 
     # Segment the TF coil inboard
@@ -429,10 +535,10 @@ def toroidal_cross_section(axis):
     ang = i*spacing
     angl = ang - spacing/2
     angu = ang + spacing/2
-    r1 = bore + ohcth + gapoh
-    r2 = bore + ohcth + gapoh + tfcth
-    r3 = rsldo + ddwi + gapsto
-    r4 = r3 + tfthko
+    r1, null = cumulative_radial_build2("gapoh", mfile_data, scan)
+    r2, null = cumulative_radial_build2("tfcth", mfile_data, scan)
+    r4, r3 = cumulative_radial_build2("tfthko", mfile_data, scan)
+    
     #Coil width
     w = r2 * np.tan(spacing/2)
     xi = r1 * np.cos(angl)
@@ -450,7 +556,10 @@ def toroidal_cross_section(axis):
     axis.text((rdewex+ddwex)/1.41, (rdewex+ddwex)/1.41, "cryostat", fontsize=(10),ha='left', va='bottom')
 
     for item in i:
-        TF_outboard(axis, item, tfno=tfno,r3=r3, r4=r4, w=w)
+        # Neutral beam shielding
+        TF_outboard(axis, item, tfno=tfno,r3=r3, r4=r4, w=w+nbshield, facecolor=nbshield_colour)
+        # Overlay TF coil segments
+        TF_outboard(axis, item, tfno=tfno,r3=r3, r4=r4, w=w, facecolor='cyan')
 
     # Winding pack: inboard
     rect = patches.Rectangle([r1 + thkcas +tinstf, 0], thkwp/2, wwp2/2, lw=0, facecolor=winding)
@@ -458,66 +567,35 @@ def toroidal_cross_section(axis):
     rect = patches.Rectangle([r1 + thkcas +tinstf + thkwp/2, 0], thkwp/2, wwp1/2, lw=0, facecolor=winding)
     axis.add_patch(rect)
     # Outboard
-    rect = patches.Rectangle([rtot-tfthko/2+casthi+tinstf, 0], thkwp/2, wwp1/2, lw=0, facecolor=winding)
+    rect = patches.Rectangle([r3+casthi+tinstf, 0], thkwp/2, wwp1/2, lw=0, facecolor=winding)
     axis.add_patch(rect)
-    rect = patches.Rectangle([rtot-tfthko/2+casthi+tinstf+thkwp/2, 0], thkwp/2, wwp2/2, lw=0, facecolor=winding)
+    rect = patches.Rectangle([r3+casthi+tinstf+thkwp/2, 0], thkwp/2, wwp2/2, lw=0, facecolor=winding)
     axis.add_patch(rect)
 
     # Neutral beam geometry
     a = w
     b = tfthko
     c = beamwd + 2 * nbshield
-    d = rtot - 0.5 * b
+    d = r3
     e = np.sqrt(a**2 +(d+b)**2)
     # Coordinates of the inner and outer edges of the beam at its tangency point
-    rinner = rtanbeam - c/2
-    router = rtanbeam + c/2
+    rinner = rtanbeam - beamwd
+    router = rtanbeam + beamwd
     beta = np.arccos(rinner/e)
     xinner = rinner * np.cos(beta)
     yinner = rinner * np.sin(beta)
     xouter = router * np.cos(beta)
     youter = router * np.sin(beta)
     # Corner of TF coils
-    xcorner = d + b + nbshield * np.cos(beta)
-    ycorner = a + nbshield * np.sin(beta)
+    xcorner = r4 
+    ycorner = w+nbshield
     axis.plot([xinner, xcorner], [yinner, ycorner], linestyle='dotted', color='black')
     x = xcorner + c * np.cos(beta) - nbshield * np.cos(beta)
     y = ycorner + c * np.sin(beta) - nbshield * np.sin(beta)
     axis.plot([xouter, x], [youter, y], linestyle='dotted', color='black')
-    # Neutral beam shielding
-    x1 = d
-    y1 = a
-    x2 = d + b
-    y2 = a
-    x3 = d + b
-    y3 = ycorner
-    x4 = d
-    y4 = y3
-    verts = [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x1, y1)]
-    path = Path(verts, closed=True)
-    patch = patches.PathPatch(path, facecolor='gray', lw=0)
-    axis.add_patch(patch)
-
-    spacing = 2*np.pi/tfno
-    dx = w * np.sin(spacing)
-    dy = w * np.cos(spacing)
-    sx = (w+nbshield) * np.sin(spacing)
-    sy = (w+nbshield) * np.cos(spacing)
-    x1 = r3 * np.cos(spacing) + sx
-    y1 = r3 * np.sin(spacing) - sy
-    x2 = r4 * np.cos(spacing) + sx
-    y2 = r4 * np.sin(spacing) - sy
-    x3 = r4 * np.cos(spacing) +dx
-    y3 = r4 * np.sin(spacing) - dy
-    x4 = r3 * np.cos(spacing) + dx
-    y4 = r3 * np.sin(spacing) - dy
-    verts = [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x1, y1)]
-    path = Path(verts, closed=True)
-    patch = patches.PathPatch(path, facecolor='gray', lw=0)
-    axis.add_patch(patch)
 
 
-def TF_outboard(axis, item, tfno,r3, r4, w):
+def TF_outboard(axis, item, tfno,r3, r4, w, facecolor):
     spacing = 2*np.pi/tfno
     ang = item*spacing
     dx = w * np.sin(ang)
@@ -532,7 +610,7 @@ def TF_outboard(axis, item, tfno,r3, r4, w):
     y4 = r3 * np.sin(ang) + dy
     verts = [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x1, y1)]
     path = Path(verts, closed=True)
-    patch = patches.PathPatch(path, facecolor='cyan', lw=0)
+    patch = patches.PathPatch(path, facecolor=facecolor, lw=0)
     axis.add_patch(patch)
 
 
@@ -575,6 +653,33 @@ def arc_fill(axis, r1, r2, color='pink'):
     path = Path(verts, closed=True)
     patch = patches.PathPatch(path, facecolor=color, lw=0)
     axis.add_patch(patch)
+    
+def ellips_fill(axis, a1=0, a2=0, b1=0, b2=0, x0=0, y0=0, ang1=0, ang2=rtangle, color='pink'):
+    """Fills the space between two concentric ellipse sectors.
+
+    Arguments
+
+    axis: plot object
+    a1, a2, b1, b2 horizontal and vertical radii to be filled
+    x0, y0 coordinates of centre of the ellipses
+    ang1, ang2 are the polar angles of the start and end
+
+    """
+    angs = np.linspace(ang1, ang2, endpoint=True)
+    r1 = ((np.cos(angs)/a1)**2 + (np.sin(angs)/b1)**2)**(-0.5)
+    xs1 = r1 * np.cos(angs) + x0
+    ys1 = r1 * np.sin(angs) + y0
+    angs = np.linspace(ang2, ang1, endpoint=True)
+    r2 = ((np.cos(angs)/a2)**2 + (np.sin(angs)/b2)**2)**(-0.5)
+    xs2 = r2 * np.cos(angs) + x0
+    ys2 = r2 * np.sin(angs) + y0
+    verts = list(zip(xs1, ys1))
+    verts.extend(list(zip(xs2, ys2)))
+    endpoint=verts[-1:]
+    verts.extend(endpoint)
+    path = Path(verts, closed=True)
+    patch = patches.PathPatch(path, facecolor=color, lw=0)
+    axis.add_patch(patch)    
 
 
 def plot_nprofile(prof):
@@ -768,7 +873,8 @@ def plot_shield_snull(axis, mfile_data, scan):
     # Top
     rs = np.concatenate([temp_array_1[0], temp_array_1[2][::-1]])
     zs = np.concatenate([temp_array_1[1], temp_array_1[3][::-1]])
-    axis.fill(rs, zs, color=shield)
+    #axis.fill(rs, zs, color=shield)
+    axis.fill(rs, zs, color=vessel)
 
     #for i in range(len(rs)):
     #print(rs[i], zs[i])
@@ -784,7 +890,8 @@ def plot_shield_snull(axis, mfile_data, scan):
     # Bottom
     rs = np.concatenate([temp_array_2[0], temp_array_2[2][::-1]])
     zs = np.concatenate([temp_array_2[1], temp_array_2[3][::-1]])
-    axis.fill(rs, zs, color=shield)
+    #axis.fill(rs, zs, color=shield)
+    axis.fill(rs, zs, color=vessel)
 
     plotdhgap(axis, c_shldith, c_blnkoth, blnkith, blnkoth, a[11],
               -blnktth, triang, blanket)
@@ -815,116 +922,60 @@ def plot_tf_coils(axis, mfile_data, scan):
         scan --> scan number to use
 
     """
-
     vert_build = cumulative_vertical_build(mfile_data, scan)
 
     # Arc points
-    x_1 = mfile_data.data["xarc(1)"].get_scan(scan)
-    y_1 = mfile_data.data["yarc(1)"].get_scan(scan)
-    x_2 = mfile_data.data["xarc(2)"].get_scan(scan)
-    y_2 = mfile_data.data["yarc(2)"].get_scan(scan)
-    x_3 = mfile_data.data["xarc(3)"].get_scan(scan)
-    y_3 = mfile_data.data["yarc(3)"].get_scan(scan)
-    x_4 = mfile_data.data["xarc(4)"].get_scan(scan)
-    y_4 = mfile_data.data["yarc(4)"].get_scan(scan)
-    x_5 = mfile_data.data["xarc(5)"].get_scan(scan)
-    #y_5 = mfile_data.data["yarc(5)"].get_scan(scan)
+    # MDK Only 4 points now required for elliptical arcs
+    x1 = mfile_data.data["xarc(1)"].get_scan(scan)
+    y1 = mfile_data.data["yarc(1)"].get_scan(scan)
+    x2 = mfile_data.data["xarc(2)"].get_scan(scan)
+    y2 = mfile_data.data["yarc(2)"].get_scan(scan)
+    x3 = mfile_data.data["xarc(3)"].get_scan(scan)
+    y3 = mfile_data.data["yarc(3)"].get_scan(scan)
+    x4 = mfile_data.data["xarc(4)"].get_scan(scan)
+    y4 = mfile_data.data["yarc(4)"].get_scan(scan)
+    x5 = mfile_data.data["xarc(5)"].get_scan(scan)
+    y5 = mfile_data.data["yarc(5)"].get_scan(scan)
+    if y3 != 0:
+        print("TF coil geometry: The value of yarc(3) is not zero, but should be.")
+    # Inboard upper arc
+    x0 = x2
+    y0 = y1
+    a1 = x2-x1
+    b1 = y2-y1
+    a2 = a1+tfcth
+    b2 = b1+tfcth 
+    ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=rtangle, ang2=2*rtangle, color='cyan')
+    # Outboard upper arc
+    x0 = x2
+    y0 = 0
+    a1 = x3-x2
+    b1 = y2
+    a2 = a1+tfcth
+    b2 = b1+tfcth       
+    ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=0, ang2=rtangle, color='cyan')
+    # Inboard lower arc
+    x0 = x4
+    y0 = y5
+    a1 = x4-x5
+    b1 = y5-y4
+    a2 = a1+tfcth
+    b2 = b1+tfcth
+    ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=-rtangle, ang2=-2*rtangle, color='cyan')
+    # Outboard lower arc
+    x0 = x4
+    y0 = 0
+    a1 = x3-x2
+    b1 = -y4
+    a2 = a1+tfcth
+    b2 = b1+tfcth
+    ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=0, ang2=-rtangle, color='cyan')
+    # Vertical leg
+    # Bottom left corner
+    rect = patches.Rectangle([x5-tfcth, y5], tfcth, (y1-y5), lw=0, facecolor='cyan')
+    axis.add_patch(rect)
+    
 
-    # Arc centres
-    x_c_1 = mfile_data.data["xctfc(1)"].get_scan(scan)
-    y_c_1 = mfile_data.data["yctfc(1)"].get_scan(scan)
-    x_c_2 = mfile_data.data["xctfc(2)"].get_scan(scan)
-    y_c_2 = mfile_data.data["yctfc(2)"].get_scan(scan)
-    x_c_3 = mfile_data.data["xctfc(3)"].get_scan(scan)
-    y_c_3 = mfile_data.data["yctfc(3)"].get_scan(scan)
-    x_c_4 = mfile_data.data["xctfc(4)"].get_scan(scan)
-    y_c_4 = mfile_data.data["yctfc(4)"].get_scan(scan)
-
-    # Arc radii
-    rad_1 = np.sqrt((x_1 - x_c_1) ** 2 + (y_1 - y_c_1) ** 2)
-    rad_2 = np.sqrt((x_2 - x_c_2) ** 2 + (y_2 - y_c_2) ** 2)
-    rad_3 = np.sqrt((x_3 - x_c_3) ** 2 + (y_3 - y_c_3) ** 2)
-    rad_4 = np.sqrt((x_4 - x_c_4) ** 2 + (y_4 - y_c_4) ** 2)
-
-    # Arc angles
-    a_1_1 = (x_1 - x_c_1) / rad_1
-    a_1_2 = (x_2 - x_c_1) / rad_1
-    a_1_1, a_1_2 = angle_check(a_1_1, a_1_2)
-    angle_1_1 = sp.arcsin(a_1_1)
-    angle_1_2 = sp.arcsin(a_1_2)
-
-    a_2_1 = (x_2 - x_c_2) / rad_2
-    a_2_2 = (x_3 - x_c_2) / rad_2
-    a_2_1, a_2_2 = angle_check(a_2_1, a_2_2)
-    angle_2_1 = sp.arcsin(a_2_1)
-    angle_2_2 = sp.arcsin(a_2_2)
-
-    a_3_1 = (x_3 - x_c_3) / rad_3
-    a_3_2 = (x_4 - x_c_3) / rad_3
-    a_3_1, a_3_2 = angle_check(a_3_1, a_3_2)
-    angle_3_1 = sp.arcsin(a_3_1)
-    angle_3_2 = sp.arcsin(a_3_2)
-
-    a_4_1 = (x_4 - x_c_4) / rad_4
-    a_4_2 = (x_5 - x_c_4) / rad_4
-    a_4_1, a_4_2 = angle_check(a_4_1, a_4_2)
-    angle_4_1 = sp.arcsin(a_4_1)
-    angle_4_2 = sp.arcsin(a_4_2)
-
-    in_x_1 = rad_1 * np.sin(np.linspace(angle_1_1, angle_1_2, 30,
-                                        endpoint=True)) + x_c_1
-    in_x_2 = rad_2 * np.sin(np.linspace(angle_2_1, angle_2_2, 30,
-                                        endpoint=True)) + x_c_2
-    in_x_3 = rad_3 * np.sin(np.linspace(angle_3_1, angle_3_2, 30,
-                                        endpoint=True)) + x_c_3
-    in_x_4 = rad_4 * np.sin(np.linspace(angle_4_1, angle_4_2, 30,
-                                        endpoint=True)) + x_c_4
-    in_x = np.concatenate((in_x_1, in_x_2, in_x_3, in_x_4))
-
-    in_y_1 = rad_1 * np.cos(np.linspace(angle_1_1, angle_1_2, 30,
-                                        endpoint=True)) + y_c_1
-    in_y_2 = rad_2 * np.cos(np.linspace(angle_2_1, angle_2_2, 30,
-                                        endpoint=True)) + y_c_2
-    in_y_3 = rad_3 * np.cos(np.linspace(angle_3_1, angle_3_2, 30,
-                                        endpoint=True)) + y_c_3
-    in_y_4 = rad_4 * np.cos(np.linspace(angle_4_1, angle_4_2, 30,
-                                        endpoint=True)) + y_c_4
-    in_y = np.concatenate((in_y_1, in_y_2, in_y_3, in_y_4))
-
-    in_x = np.concatenate([in_x, in_x[::-1]])
-    in_y = np.concatenate([in_y, -in_y[::-1]])
-
-    #in_width = cumulative_radial_build("gapsto", mfile_data, scan) - \
-    #    cumulative_radial_build("tfcth", mfile_data, scan)
-    #out_width = in_width + mfile_data.data["tfcth"].get_scan(scan) + \
-    #    mfile_data.data["tfthko"].get_scan(scan)
-    #out_x = ((in_x - cumulative_radial_build("tfcth", mfile_data, scan)) *
-    #         (out_width/in_width))
-
-    centre_in_x = (cumulative_radial_build("tfcth", mfile_data, scan) + \
-                   cumulative_radial_build("gapsto", mfile_data, scan)) / 2.0
-    centre_out_x = (cumulative_radial_build("gapoh", mfile_data, scan) + \
-                    cumulative_radial_build("tfthko", mfile_data, scan)) / 2.0
-    in_width = (cumulative_radial_build("gapsto", mfile_data, scan) - \
-                cumulative_radial_build("tfcth", mfile_data, scan))
-    out_width = (cumulative_radial_build("tfthko", mfile_data, scan) - \
-                 cumulative_radial_build("gapoh", mfile_data, scan))
-
-    out_x = ((in_x - centre_in_x) * (out_width / in_width)) + centre_out_x
-    extern = (vert_build[7] / vert_build[6])
-    if vert_build[-1]:
-        extern = (vert_build[0] - vert_build[15]) / (vert_build[1] -
-                                                     vert_build[14])
-    out_y = in_y * extern
-
-    shift = (vert_build[0] + vert_build[15]) / 2.0
-    out_y += shift
-    in_y += shift
-
-    ins_x = np.concatenate((in_x, out_x[::-1]))
-    ins_y = np.concatenate((in_y, out_y[::-1]))
-
-    axis.fill(ins_x, ins_y, color='cyan')
 
 
 def plot_pf_coils(axis, mfile_data, scan):
@@ -950,14 +1001,14 @@ def plot_pf_coils(axis, mfile_data, scan):
             number_of_coils += 1
 
     # Get OH coil
-    coils_r.append(mfile_data.data["rpf(nohc)"].get_scan(scan))
-    coils_z.append(mfile_data.data["zpf(nohc)"].get_scan(scan))
-    coils_dr.append(mfile_data.data["ohdr"].get_scan(scan))
-    coils_dz.append(mfile_data.data["ohdz"].get_scan(scan))
+    # coils_r.append(mfile_data.data["rpf(nohc)"].get_scan(scan))
+    # coils_z.append(mfile_data.data["zpf(nohc)"].get_scan(scan))
+    # coils_dr.append(mfile_data.data["ohdr"].get_scan(scan))
+    # coils_dz.append(mfile_data.data["ohdz"].get_scan(scan))
     bore  = mfile_data.data["bore"].get_scan(scan)
     ohcth = mfile_data.data["ohcth"].get_scan(scan)
     ohdz = mfile_data.data["ohdz"].get_scan(scan)
-    coil_text.append("CS")
+    #coil_text.append("CS")
 
     # Rest of the coils
     for coil in range(1, number_of_coils):
@@ -1478,7 +1529,8 @@ def main(fig1, fig2, m_file_data, scan=-1):
 
     # Plot toroidal cross-section
     plot_2 = fig2.add_subplot(222, aspect='equal')
-    toroidal_cross_section(plot_2)
+    #toroidal_cross_section(plot_2)
+    toroidal_cross_section(plot_2, m_file_data, scan=-1)
 
     # Plot color key
     plot_3 = fig2.add_subplot(241)

@@ -226,7 +226,8 @@ and all test runs are successful!), use the following commands:
 
 \item An editor window will open; add a line summarising the changes you have made, save and close the window. This will initiate the commit to your \textit{local}\ copy of the repository.
 
-\item \texttt{git push}  (to send the changes to the central \texttt{GitLab} repository)
+\item \texttt{git push} \\
+Copies the changes you have made locally to the version in the central \texttt{GitLab} repository.  This uses a merging process, but if no-one else has changed your branch then the central version will simply become a copy of your local version.
 
 \end{enumerate}
 
@@ -239,7 +240,7 @@ It is a good idea to periodically merge the \texttt{develop} branch into the bra
   central \texttt{GitLab} repository as described in the previous section.  Set the directory containing the working branch as your current directory.
 
 \item \texttt{git pull}.  \\
-Ensures files in current local branch are consistent with those in the central repository.
+Merges the version in the central repository into the local branch by copying over any changes that have been made in the version stored centrally.
 
 \item \texttt{git checkout develop}  \\
 This switches the "current branch" to \texttt{develop}.
@@ -286,7 +287,8 @@ differences:
 \item Firstly, make sure you have committed your latest changes to the working
   branch into the central \texttt{GitLab} repository.
 
-\item \texttt{git pull}
+\item \texttt{git pull}\\
+Merges the version in the central repository into the local branch by copying over any changes that have been made in the version stored centrally.
 
 \item \texttt{git checkout dev\_mynewmodel}
 
@@ -381,10 +383,11 @@ executables and documentation should be performed. This is done as follows:
 \item \texttt{cd develop}  (or \texttt{cd master}, as appropriate to the
   branch to be rebuilt)
 
-\item \texttt{git pull}
+\item \texttt{git pull}\\
+Updates the version stored in this folder to the version stored centrally.
 
 \item \texttt{make all}
-This is essential because the Git repository does not inlcude any of the files generated in the compilation process.
+This is essential because the Git repository does not include any of the files generated in the compilation process.
 
 \item \texttt{exit}  (to return to your own username again)
 

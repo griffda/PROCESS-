@@ -1819,12 +1819,12 @@ contains
     call osubhd(ofile, 'Other volumes, masses and areas :')
     call ovarre(ofile, 'First wall area (m2)', '(fwarea)', fwarea, 'OP ')
     call ovarre(ofile, 'Cryostat internal radius (m)', '(rdewex)', rdewex, 'OP ')
-    call ovarre(ofile, 'Cryostat internal full height (m)', '(2*zdewex)', 2.0D0*zdewex, 'OP ')
-    !call ovarre(ofile, 'Cryostat volume (m3)', '(vdewex)', vdewex)
+    call ovarre(ofile, 'Cryostat internal half-height (m)', '(zdewex)', zdewex, 'OP ')
+    call ovarre(ofile, 'Vertical clearance from TF coil to cryostat (m)', '(clh1)', clh1, 'OP ')    
     call ovarre(ofile, 'Divertor area (m2)', '(divsur)', divsur, 'OP ')
     call ovarre(ofile, 'Divertor mass (kg)', '(divmas)', divmas, 'OP ')
     
-  end subroutine
+  end subroutine write_ccfe_hcpb_output
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    
