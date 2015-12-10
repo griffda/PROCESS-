@@ -80,6 +80,7 @@ module numerics
   !+ad_hisc               added constraint equation to limit Z_eff, including new iteration
   !+ad_hisc		  variable 112 (fzeffmax)
   !+ad_hist  26/11/15  RK New constraint equation for taucq
+  !+ad_hist  10/12/15  RK Net electrical output added as FoM
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -94,12 +95,12 @@ module numerics
   
   public
 
-  !+ad_vars  ipnvars /113/ FIX : total number of variables available for iteration
+  !+ad_vars  ipnvars /114/ FIX : total number of variables available for iteration
   integer, parameter :: ipnvars = 114
   !+ad_vars  ipeqns /65/ FIX : number of constraint equations available
   integer, parameter :: ipeqns = 65
-  !+ad_vars  ipnfoms /16/ FIX : number of available figures of merit
-  integer, parameter :: ipnfoms = 16
+  !+ad_vars  ipnfoms /17/ FIX : number of available figures of merit
+  integer, parameter :: ipnfoms = 17
 
   integer, parameter :: ipvlam  = ipeqns+2*ipnvars+1
   integer, parameter :: iptnt   = (ipeqns*(3*ipeqns+13))/2
@@ -152,7 +153,9 @@ module numerics
        'plant availability.   ', &
        !+ad_varc  <LI> (16) linear combination of major radius (minimised) and pulse length (maximised)
        !+ad_varc              note: FoM should be minimised only!
-       'min R0, max tau_burn. ' /)
+       'min R0, max tau_burn. ', &
+       !+ad_varc  <LI> (17) net electrical output
+       'net electrical output.' /)
 
   !+ad_vars  ncalls : number of function calls during solution
   integer :: ncalls = 0
