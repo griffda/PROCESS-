@@ -371,6 +371,7 @@ contains
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  06/10/14 PJK Added orbit loss power
     !+ad_hist  18/11/15  RK Major radius/burn time optimiser added
+    !+ad_hist  10/12/15  RK Net electrical output added as FoM
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -414,7 +415,7 @@ contains
 
     case (5)  !  fusion power / injection power
        fc = sgn * powfmw / pinjmw
-
+       
     case (6)  !  cost of electricity
        fc = sgn * coe/100.0D0
 
@@ -454,6 +455,9 @@ contains
 
     case (16)  !  major radius/burn time
        fc = sgn * ( 0.95d0 * (rmajor/9.0d0) + 0.05d0 * (7200.d0/tburn) )
+       
+    case (17)  !  net electrical output
+       fc = sgn * pnetelmw / 500.0d0
 
     case default
        idiags(1) = iab ; call report_error(24)
