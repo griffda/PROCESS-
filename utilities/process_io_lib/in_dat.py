@@ -12,13 +12,13 @@
 import numpy as np
 
 # Dictionary for variable types
-try :
+try:
     from process_io_lib.process_dicts import DICT_VAR_TYPE
 except ImportError:
     print("The Python dictionaries have not yet been created. Please run \
 'make dicts'!")
     exit()
-    
+
 # Dictionary for ixc -> name
 from process_io_lib.process_dicts import DICT_IXC_SIMPLE
 
@@ -33,6 +33,11 @@ from process_io_lib.process_dicts import DICT_DESCRIPTIONS
 
 # Dictionary for parameter defaults
 from process_io_lib.process_dicts import DICT_DEFAULT
+
+# ioptimz values
+ioptimz_des = {"-1": "for no optimisation, HYBRD only",
+               "0": "for HYBRD and VMCON (not recommended)",
+               "1": "for optimisation, VMCON only"}
 
 
 def fortran_python_scientific(var_value):
@@ -254,7 +259,7 @@ def process_bound(data, line):
     bound = no_comment_line[0].strip("boundl").replace("(", "").\
         replace(")", "").strip()
     bound_value = no_comment_line[1].strip().replace(",", "").replace("d", "e").\
-        replace("D","e")
+        replace("D", "e")
 
     # If bound not in the bound dictionary then add entry for bound with an
     # empty dictionary
@@ -309,7 +314,7 @@ def process_parameter(data, line):
     if len(no_comment_line[-1].split(",")) > 2:
         value = no_comment_line[1].strip()
     else:
-        try :
+        try:
             value = no_comment_line[1].strip().replace(",", "")
         except IndexError:
             print('Error when reading IN.DAT file on line', no_comment_line,
@@ -425,7 +430,7 @@ def write_constraint_equations(data, out_file):
 
     # Write number of equations to file
     neqns_line = "neqns = {0} * {1}\n".format(data["neqns"].value,
-                                                data["neqns"].comment)
+                                              data["neqns"].comment)
     out_file.write(neqns_line)
 
     # List of constraints
@@ -436,7 +441,7 @@ def write_constraint_equations(data, out_file):
     for constraint in constraint_equations:
         comment = DICT_ICC_FULL[str(constraint)]["name"]
         constraint_line = "icc({0}) = {1} * {2}\n".format(counter,
-                                                            constraint, comment)
+                                                          constraint, comment)
         out_file.write(constraint_line)
         counter += 1
 
@@ -457,7 +462,7 @@ def write_iteration_variables(data, out_file):
 
     # Write nvar
     nvar_line = "nvar = {0} * {1}\n".format(data["nvar"].value,
-                                              data["nvar"].comment)
+                                            data["nvar"].comment)
     out_file.write(nvar_line)
 
     # Write constraints to file
@@ -466,7 +471,7 @@ def write_iteration_variables(data, out_file):
         comment = DICT_IXC_SIMPLE[str(variable).replace(",", ";").
                                   replace(".", ";").replace(":", ";")]
         variable_line = "ixc({0}) = {1} * {2}\n".format(counter, variable,
-                                                          comment)
+                                                        comment)
         out_file.write(variable_line)
         counter += 1
 
@@ -508,7 +513,7 @@ def write_parameters(data, out_file):
         # Write parameters for given module
         for item in DICT_MODULE[module]:
             if item not in exclusions and item in data.keys():
-
+                
                 if item == "fimp":
                     for k in range(len(data["fimp"].get_value)):
                         tmp_fimp_name = "fimp({0})".format(str(k+1).zfill(1))
@@ -516,6 +521,13 @@ def write_parameters(data, out_file):
                         parameter_line = "{0} = {1}\n".\
                             format(tmp_fimp_name, tmp_fimp_value)
                         out_file.write(parameter_line)
+                elif item == "ioptimz":
+                    iop_val = data["ioptimz"].get_value
+                    iop_comment = ioptimz_des[str(iop_val)]
+                    parameter_line = "{0} = {1} * {2}\n". \
+                        format(item.ljust(8), iop_val, iop_comment)
+                    out_file.write(parameter_line)
+
                 elif item == "zref":
                     for j in range(len(data["zref"].get_value)):
                         tmp_zref_name = "zref({0})".format(str(j+1).zfill(1))
@@ -525,7 +537,7 @@ def write_parameters(data, out_file):
                         out_file.write(parameter_line)
                 elif "vmec" in item:
                     parameter_line = "{0} = {1}\n".format(item,
-                                                            data[item].value)
+                                                          data[item].value)
                     out_file.write(parameter_line)
                 else:
                     # Left justification set to 8 to allow easier reading
@@ -664,10 +676,10 @@ def add_parameter(data, parameter_name, parameter_value):
     else:
         data[parameter_name].value = parameter_value
 
-    #def __delitem__(self, key):
+    # def __delitem__(self, key):
     #    del self.__dict__[key]
 
-    #def keys(self):
+    # def keys(self):
     #    return self.__dict__.keys()
 
 
@@ -799,9 +811,8 @@ def parameter_type(name, value):
         elif "real_array" in param_type:
             value = value.split(",")
             if value[-1] == '':
-                value = value[:-1]    
+                value = value[:-1]
             return [float(item) for item in value]
-
 
         # If an integer variable convert to integer
         elif "int_variable" in param_type:
@@ -1169,7 +1180,7 @@ class InDat(object):
 
 
 if __name__ == "__main__":
-    #i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
+    # i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
     i = InDat(filename="../../Original_IN.DAT")
     # print(i.data["ixc"].value)
     # print(i.data["fimp"].value)

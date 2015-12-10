@@ -3,7 +3,7 @@
 *--------------------------------------------------*
 
 *---------------Constraint Equations---------------*
-neqns = 22       
+neqns = 23     
 icc(1) = 1        * beta (consistency equation)
 icc(2) = 2        * global power balance (consistency equation)
 icc(3) = 5        * density upper limit
@@ -26,9 +26,10 @@ icc(19) = 34      * dump voltage upper limit (sctf)
 icc(20) = 35      * j_winding pack/j_protection upper limit (sctf)
 icc(21) = 52      * tritium breeding ratio lower limit
 icc(22) = 56      * pseparatrix/rmajor upper limit
+icc(23) = 63      * 
 
 *---------------Iteration Variables----------------*
-nvar = 39        
+nvar = 40       
 ixc(1) = 2        * bt * Toroidal field on axis (t) (iteration variable 2)
 boundl(2) = 0.01  
 boundu(2) = 10.0  
@@ -185,6 +186,10 @@ ixc(39) = 108     * breeder_f * Volume ratio* li4sio4/(be12ti+li4sio4) (iteratio
 boundl(108) = 0.001  
 boundu(108) = 1.0  
 
+ixc(40) = 111     * 
+boundl(111) = 0.001  
+boundu(111) = 1.0  
+
 *-----------------Build Variables------------------*
 bore = 2.354     * Central solenoid inboard radius (m)
 ddwex = 0.15     * Cryostat thickness (m)
@@ -271,7 +276,7 @@ htpmw_min = 100.0   * Minimum total electrical power for primary coolant pumps  
 tbrmin = 1.15       * minimum tritium breeding ratio (constraint equation 52) 
 
 *-----------------Global Variables-----------------*
-runtitle = demo 1 model for cost paper  * Short descriptive title for the run
+runtitle = demo 1 vacuum model test  * Short descriptive title for the run
 verbose = 0      * Switch for turning on/off diagnostic messages * turn on diagnostics
 
 
@@ -346,7 +351,7 @@ tesep = 0.1      * Electron temperature at separatrix (kev) (ipedestal=1)
 ishape = 2       * Switch for plasma cross-sectional shape calculation * set kappa to the natural elongation value (zohm iter scaling);
 kappa = 1.7      * Plasma separatrix elongation (calculated if ishape > 0)
 q = 3.2267       * Safety factor 'near' plasma edge (iteration variable 18)
-tauratio = 5.0   * Ratio of he and pellet particle confinement times
+tauratio = 10.0   * Ratio of he and pellet particle confinement times
 rmajor = 8.7  * Plasma major radius (m) (iteration variable 3)
 rnbeam = 0.0020723  * Hot beam density / n_e (iteration variable 7)
 te = 12.6      * Volume averaged electron temperature (kev)
@@ -364,7 +369,7 @@ lpulse = 1       * Switch for reactor model * pulsed operation
 *-------------------Scan Module--------------------*
 isweep = 1       * Number of scan points to calculate
 nsweep = 3       * Switch denoting quantity to scan * pnetelin
-sweep = 500.0    * Actual values to use in scan
+sweep = 500    * Actual values to use in scan
 
 
 *--------------Stellarator Variables---------------*
@@ -395,5 +400,5 @@ tdwell = 500.0   * Time between pulses in a pulsed reactor (s)
 
 
 *-----------------Vacuum Variables-----------------*
-
-
+vacuum_model = simple
+pumpspeedfactor = 0.4

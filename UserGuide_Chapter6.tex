@@ -46,12 +46,12 @@ the config file in the \process\ directory.
 
 \subsection{Turn output into input (write\_new\_in\_dat.py)}
 
-This program modifies a given \indat\ file such that the specified initial values of all the iteration variables are given by their values in \outdat. 
+This program modifies a given \indat\ file such that the specified initial values of all the iteration variables are given by their values in \outdat.
 
 \begin{description}
 \item{\textbf{Input:}}
-\indat, \outdat\ 
-                                
+\indat, \outdat\
+
 \item{\textbf{Output:}}
 \texttt{new\_IN.DAT}
 \end{description}
@@ -63,7 +63,7 @@ This program runs \process\ many times, randomly varying the initial values of t
 \begin{description}
 \item{\textbf{Input:}}
 \texttt{run\_process.conf} (optional), \indat\
-                                
+
 \item{\textbf{Output:}} A directory is created for each run. containing all the standard
   PROCESS output, \texttt{process.log} (log file), and \texttt{README.txt}
   (contains comments from config file)
@@ -78,7 +78,7 @@ The configuration file \texttt{run\_process.conf} has the following style:
 
 * Path to working directory in which PROCESS is run.
 WDIR = Run1
-* original IN.DAT name 
+* original IN.DAT name
 ORIGINAL_IN_DAT = demo1a_10_sep_13.IN.DAT
 * PATH to PROCESS binary
 PROCESS = ~PROCESS/master/process
@@ -91,14 +91,14 @@ SEED = 2
 * factor within which the iteration variables are changed
 FACTOR = 1.5
 * Number of allowed unfeasible points that do not trigger rerunning.
-NO_ALLOWED_UNFEASIBLE = 0 
+NO_ALLOWED_UNFEASIBLE = 0
 * include a summary file with the iteration variables at each stage.
 INCLUDE_ITERVAR_DIFF = True
 * add iteration variables - comma separated
 ADD_IXC = 99, 77
 * remove iteration variables - comma separated
-DEL_IXC = 
-* add constraint equations  - comma separated 
+DEL_IXC =
+* add constraint equations  - comma separated
 ADD_ICC = 57,
 * remove constraint equations - comma separated
 DEL_ICC =
@@ -124,7 +124,7 @@ Creates an index of all \process\ run comments, after they have been created by 
 \begin{description}
 \item{\textbf{Input:}}
 None
-                                
+
 \item{\textbf{Output:}}
 \verb|Index.txt|
 \end{description}
@@ -135,13 +135,13 @@ Optional arguments are:
 \begin{quote}
 \begin{verbatim}
 # change the name of the file containing the folder description
-build_index.py -r README.txt 
+build_index.py -r README.txt
 # append the results to Index.txt instead of creating a new file
 build_index.py -m a
 # change the name of the subfolder Base - default=Run
-build_index.py -b Base 
+build_index.py -b Base
 # give a list of subfolder suffixes - default=all
-build_index.py -s 1-4,6,8,9-12 
+build_index.py -s 1-4,6,8,9-12
 # increase verbosity
 build_index.py -v
 \end{verbatim}
@@ -166,9 +166,9 @@ This program has a similar structure to the \texttt{run\_process.py} program, bu
 \begin{description}
 \item{\textbf{Input:}}
 \texttt{test\_process.conf}, an \indat\ file as specified in the config file
-                                
+
 \item{\textbf{Output:}} All the standard
-  PROCESS output, \texttt{process.log}, \texttt{README.txt}, \texttt{time.info} (stores the run time of actual PROCESS iterations), \texttt{SolverTest.out}  
+  PROCESS output, \texttt{process.log}, \texttt{README.txt}, \texttt{time.info} (stores the run time of actual PROCESS iterations), \texttt{SolverTest.out}
 \end{description}
 The \texttt{SolverTest.out} file contains a table of the \texttt{ifail} values (see Table \ref{tab:ifail}), the figure of merit, the square root of the sum of the squares of the individual constraints as well as the initial and final values for the iteration variables and the individual constraint residuals. The value of Q, i.e. the ratio of
 fusion power to injected power, is also included in the SolverTest.out file. All values can be used to diagnose the performance of the optimisation solver.
@@ -188,23 +188,23 @@ WDIR=Run1/
 * original IN.DAT name (should not be called IN.DAT!)
 ORIGINAL_IN_DAT = minimal_demo2_nosweep.IN.DAT
 
-* sets flag of same name in IN.DAT: 
+* sets flag of same name in IN.DAT:
 *     None - keeps original value
 *     -1   - Non-optimisation only
 *      0   - one non-optimisation step followed by optimised iteration
 *      1   - optimisation only
 IOPTIMZ = 1
 
-* sets the error tolerance for VMCON 
+* sets the error tolerance for VMCON
 *     None - keeps the original value (IN.DAT or default)
 EPSVMC = None
 
 * sets the step length for the finite difference derivatives
 *     None - keeps the original value (IN.DAT or default)
 EPSFCN = None
- 
 
-*sets the figure of merit 
+
+*sets the figure of merit
 *positive value - minimise, negative value - maximise
 *     None  - keeps the original value
 *     1     - plasma major radius
@@ -232,12 +232,12 @@ test_process.py -f CONFIGFILE
 
 \subsection{Output plotting: create data file (make\_plot\_dat.py)}
 
-Creates a \plotdat-type file from \mfile.  This is required by \texttt{plot\_sweep.py}. 
+Creates a \plotdat-type file from \mfile.  This is required by \texttt{plot\_sweep.py}.
 
 \begin{description}
 \item{\textbf{Input:}}
 \verb|make_plot_dat.conf|, \mfile\
-                                
+
 \item{\textbf{Output:}}
 \verb|make_plot_dat.out|
 \end{description}
@@ -245,16 +245,16 @@ Creates a \plotdat-type file from \mfile.  This is required by \texttt{plot\_swe
 \paragraph{Configuration Options:}
 
 Optional arguments are:
-\begin{quote} 
+\begin{quote}
 \begin{verbatim}
 # new variables for output
 make_plot_dat.py -p rmajor
-# writes make_plot_dat.out in columns 
+# writes make_plot_dat.out in columns
 make_plot_dat.py --columns
 # resets make_plot_dat.conf to PLOT.DAT layout
 make_plot_dat.py --reset-config
 # file to read as input
-make_plot_dat.py -f MFILE.DAT 
+make_plot_dat.py -f MFILE.DAT
 # run with default parameters
 make_plot_dat.py --defaults
 \end{verbatim}
@@ -285,7 +285,7 @@ parameters, poloidal and toroidal cross-sections, and temperature and density pr
 \begin{description}
 \item{\textbf{Input:}}
  \mfile
-                                
+
 \item{\textbf{Output:}}
 \verb|proc_plot_out.pdf| (or as specified by user)
 \end{description}
@@ -296,22 +296,22 @@ Optional arguments are:
 \begin{quote}
 \begin{verbatim}
 # change the input file name
-python plot_proc.py -f MFILE.DAT 
+python plot_proc.py -f MFILE.DAT
 # change the output file name
 python plot_proc.py -o out.pdf
 # show the plot as well as saving the figure
-python plot_proc.py -s 
+python plot_proc.py -s
 \end{verbatim}
 \end{quote}
 
 \subsection{output\_data.py}
 
-A utility to output a set of data very similar to {\bf plot\_proc.py}, but to a comma-delimited format for inclusion in spreadsheets. 
+A utility to output a set of data very similar to {\bf plot\_proc.py}, but to a comma-delimited format for inclusion in spreadsheets.
 Not recommended - it's best to use PLOT.DAT instead, as this is always generated by PROCESS, and can be easily loaded into a spreadsheet.
 \begin{description}
 \item{\textbf{Input:}}
  \mfile (or as specified by user)
-                                
+
 \item{\textbf{Output:}}
 \verb|process\_summary.txt| (or as specified by user)
 \end{description}
@@ -322,7 +322,7 @@ Optional arguments are:
 \begin{quote}
 \begin{verbatim}
 # change the input file name
-python output_data.py -f MFILE.DAT 
+python output_data.py -f MFILE.DAT
 # change the output file name
 python output_data.py -o out.txt
 \end{verbatim}
@@ -338,7 +338,7 @@ and output-handling utilities.
 \begin{description}
 \item{\textbf{Input:}}
  \plotdat\, as output by \texttt{make\_plot\_dat.py}
-                                
+
 \item{\textbf{Output:}}
 \texttt{PLOT.DAT.eps} (default or as specified by user)
 \end{description}
@@ -349,7 +349,7 @@ Optional arguments are:
 \begin{quote}
 \begin{verbatim}
 # creates PLOT.DAT.eps with R0, IP, beta
-python plot_sweep.py -g 11 13 18 
+python plot_sweep.py -g 11 13 18
 # creates demo1.png with Te, n
 python plot_sweep.py -o demo1.png 21 22
 \end{verbatim}
@@ -362,7 +362,7 @@ This utility plots normalised values of the iteration variables output by a para
 \begin{description}
 \item{\textbf{Input:}}
  \mfile
-                                
+
 \item{\textbf{Output:}}
 \texttt{sweep\_fig.pdf} (default or as specified by user)
 \end{description}
@@ -395,7 +395,7 @@ shows the normalised constraint residuals.
 \begin{description}
 \item{\textbf{Input:}}
  \mfile
-                                
+
 \item{\textbf{Output:}}
   Displays plots on screen, still need to be saved by the user! (Remember to
   use -Y or -X, if \texttt{ssh}ing into a remote machine!)
@@ -455,7 +455,7 @@ When attempting to model a reactor very different from those in previous studies
 \texttt{a\_to\_b.conf}, \texttt{A.DAT} and its corresponding \texttt{MFILE.DAT}, \texttt{B.DAT}.
 (These names can be changed by the user.)
 
-\item{\textbf{Output}} 
+\item{\textbf{Output}}
 
 When the program finishes, the .DAT files from the last run of \process\ can
 be found in the specified working directory.
@@ -522,7 +522,7 @@ The suite contains the following executables
 \begin{description}
 \item{\textbf{Input:}}
  \texttt{ndscan.json}, \indat
-                                
+
 \item{\textbf{Output:}} All MFILES in subdirectory \texttt{MFILES}, packaged NetCDF output file as named in configuration file (default ``NdscanOutput.nc'').
 \end{description}
 
@@ -600,8 +600,8 @@ The configuration file \texttt{ndscan.json} uses the JSON format\footnote{www.js
 The only required input parameter in the configuration file are the scan axes, out of which at least one has to be specified. For each axis a \texttt{varname}, a \texttt{lowerbound}, an \texttt{upperbound} and the number of \texttt{steps} $>1$ have to be specified. All other parameters in the configuration file are optional. The parameters relevant for running the N-dimensional scan are:
 \begin{description}
 \item[\texttt{\_comment}] Anything in the comment section (like all other undefined sections) is for the user only and will be ignored by the program.
-\item[\texttt{optionals:remove\_scanvars\_from\_ixc}] Removes all scanning variables from the iteration variables of the IN.DAT file (default=True). 
-\item[\texttt{optionals:smooth\_itervars}] Ensures that each next point starts from the last successful run. This increases the run time, but improves convergence and reduces errors. 
+\item[\texttt{optionals:remove\_scanvars\_from\_ixc}] Removes all scanning variables from the iteration variables of the IN.DAT file (default=True).
+\item[\texttt{optionals:smooth\_itervars}] Ensures that each next point starts from the last successful run. This increases the run time, but improves convergence and reduces errors.
 \end{description}
 The parameters only relevant to the creation of the summary NetCDF file are:
 \begin{description}
@@ -651,7 +651,7 @@ Use -h or --help for help
 \begin{description}
 \item{\textbf{Input:}} \texttt{evaluate\_uncertainties.json},\\
 \indat\ (or an alternative input file as specified in the config file)
-                                
+
 \item{\textbf{Output:}} \\
 \texttt{uncertainties.nc}. This file (NetCDF format) can be visualised using the \texttt{display\_uncertainties.py} tool. \\
 \texttt{Readme.txt},\\
@@ -666,7 +666,7 @@ format\footnote{www.json.org}, and has the following style
 {
 	"_description": "Config file for uncertainties evaluation",
 	"_author": "Hanni Lux",
-	
+
 	"config": {
 		  "runtitle": "testrun for uncertainty tool on DEMO2",
 		  "IN.DAT_path": "IN.DAT_demo2",
@@ -680,7 +680,7 @@ format\footnote{www.json.org}, and has the following style
                	     "Errortype":"Gaussian",
                	     "Mean":1.0,
                	     "Std":0.05
-          	     },          
+          	     },
           	     {
                	     "Varname":"coreradius",
                	     "Errortype":"Uniform",
@@ -698,16 +698,16 @@ format\footnote{www.json.org}, and has the following style
                	     "Errortype":"LowerHalfGaussian",
                	     "Mean":1.2,
                	     "Std":0.1
-          	     }, 
+          	     },
           	     {
                	     "Varname":"boundl(103)",
                	     "Errortype":"UpperHalfGaussian",
                	     "Mean":1.0,
                	     "Std":0.25
-          	     } 
+          	     }
 	     	],
      "output_vars": [ "rmajor", "dene", "te", "bt"],
-     "no_samples": 1000    
+     "no_samples": 1000
 }
 \end{verbatim}
 \end{framed}
@@ -797,7 +797,7 @@ By default, if run in the working directory of an uncertainty evaluation, it cre
 \begin{description}
 \item{\textbf{Input:}}
  \texttt{uncertainties.nc}
-                                
+
 \item{\textbf{Output:}}
 Uncertainties\_varname1\_varname2.pdf
 \end{description}
@@ -833,7 +833,7 @@ As \process\/ typically runs very fast and does not produce much data output, it
 To submit a batch job, first create a file called e.g. myjob.cmd. It should contain the following content
 \begin{verbatim}
 # @ executable = evaluate_uncertainties.py
-# @ arguments 
+# @ arguments
 # @ input = /dev/null
 # @ output = /ABSOLUTE_PATH_TO_WORK_DIR/ll.out
 # @ error = /ABSOLUTE_PATH_TO_WORK_DIR/ll.err
@@ -846,7 +846,7 @@ module swap python
 module load process/master
 evaluate_uncertainties.py
 \end{verbatim}
-Once you have created the file you can submit a batch job by typing 
+Once you have created the file you can submit a batch job by typing
 \begin{verbatim}
 llsubmit myjob.cmd
 \end{verbatim}
@@ -864,6 +864,187 @@ Arguments\\
 \texttt{-s        }     Save output to file called comp.txt\\
 \texttt{--acc     }     Percentage difference threshold for reporting\\
 \texttt{--verbose }     Additional output\\
+
+
+\subsection{test\_suite.py}
+
+The PROCESS test suite allows PROCESS developers to quickly test new modifications to PROCESS using a defined library of reference cases. The test suite is bundled with PROCESS and is a single Python script (\textbf{test\_suite.py}) with a number of options.
+
+The test suite will provide the following output
+
+\begin{itemize}
+\item Summary to terminal and file (\textbf{summary.log})
+\item PROCESS terminal output log to file for each test case (\textbf{run.log})
+\item PROCESS error log to terminal and to file if errors for each test case (\textbf{error.log})
+\item New MFILE.DATs and OUT.DATs for each test case (\textbf{new.MFILE.DAT} and \textbf{new.OUT.DAT})
+\end{itemize}
+
+\subsubsection{Folder Structure}
+
+The PROCESS folder structure is shown below. The test suite folder (\textbf{test\_suite}) is in the main directory with the FORTRAN files. Inside the test suite folder there is the main code (\textbf{test\_suite.py}) as well as the folders containing the reference cases (\textbf{test\_files}). The figure below shows the folder structure for the test\_suite.
+
+\tikzstyle{every node}=[draw=black,thick,anchor=west]
+\tikzstyle{selected}=[draw=red,fill=red!30]
+\tikzstyle{optional}=[dashed,fill=gray!50]
+
+\begin{figure}[!ht]
+\centering
+\begin{tikzpicture}[%
+  grow via three points={one child at (0.5,-0.7) and
+  two children at (0.5,-0.7) and (0.5,-1.4)},
+  edge from parent path={(\tikzparentnode.south) |- (\tikzchildnode.west)}]
+  \node {process}
+    child { node [selected] {test\_suite}
+      child { node {test\_suite.py}}
+      child { node {test\_files}
+        child { node {Example Test case}
+          child { node {README.txt}}
+          child { node {IN.DAT}}
+          child { node {ref.IN.DAT}}
+          child { node {ref.MFILE.DAT}}
+          child { node {ref.OUT.DAT}}
+          }
+        }
+      child {}
+      child {}
+      child {}
+      child {}
+      child {}
+      child {}
+      child { node {test\_area}
+        child { node {summary.log}}
+        child { node {Example Test case}
+          child { node {README.txt}}
+          child { node {run.log}}
+          child { node {diff.log}}
+          child { node {IN.DAT}}
+          child { node {ref.IN.DAT}}
+          child { node {ref.MFILE.DAT}}
+          child { node {ref.OUT.DAT}}
+          child { node {new.MFILE.DAT}}
+          child { node {new.OUT.DAT}}
+          }
+        }
+     };
+\end{tikzpicture}
+\caption{PROCESS Test suite folder structure after a test run. The test\_area folder is where the output of the test run is stored. Each test case has a README file which outlines the reasoning for
+the test.}
+\label{fig:test suite struct}
+\end{figure}
+
+subsubsection{Adding a reference case}
+
+To add a reference case do the following:
+
+\begin{enumerate}
+  \item Have an IN.DAT that works with the current version of PROCESS
+  \item \textbf{Run PROCESS} to create an OUT.DAT and MFILE.DAT
+  \item Create a folder in the location \textbf{/process/test\_suite/test\_files/[test\_name]} with the name of the test case
+  \item Rename your IN.DAT, OUT.DAT and MFILE.DAT to \textbf{ref.IN.DAT}, \textbf{ref.MFILE.DAT} and \textbf{ref.OUT.DAT}
+  \item Copy reference files to the folder you created
+  \item Run test suite to check it works
+  \item Push to GitLab (see instructions in PROCESS manual)
+\end{enumerate}
+
+\subsubsection{Running the Test Suite}
+
+To run the test suite the user should go to the folder \textbf{/process/test\_suite/} and then run the Python file \textbf{test\_suite.py}. The test suite Python script has the following optional arguments
+
+\begin{verbatim}
+
+ python test_suite.py [options]
+
+ -h - -help         show usage
+
+ -s --save          save test output to folder with PROCESS revision
+					number in it(e.g. test_r383)
+
+ -d --diff [val]    set allowed difference between reference case and
+					new output in percentage terms.
+
+ -r --ref           choose reference folder to use for the test cases
+                    default is "test_files"
+
+ --debug            run reference cases prefixed with "error_" for
+                    testing of the error handling in the test suite
+
+ Examples
+
+    python test_suite.py -d 10 --save
+
+    python test_suite.py -d 1
+
+\end{verbatim}
+
+\
+
+\subsubsection{Test Suite Output Formatting}
+
+\subsubsection*{summary.log}
+
+The summary.log file mirrors what was displayed to the terminal during a test suite run. It will look something like the following.
+
+\begin{verbatim}
+
+PROCESS Test Suite
+
+Date: 2015-12-03
+Diff set to: 5.0%
+
+PROCESS Test Cases
+
+Test ==>  DEMO1_a31_06_2015             DIFF(6)
+Test ==>  costs_paper                   OK
+Test ==>  test 3                        ERROR
+Test ==>  test 4                        OK
+
+PROCESS version r[version] test run complete
+
+\end{verbatim}
+
+\subsubsection*{diff.log}
+
+This file will contain the differences between the reference case and the new run for a given test. The file will look like the example below.
+
+\begin{verbatim}
+
+PROCESS Test Suite
+
+Test Case: [test_name]
+Difference value: [diff]
+
+Differences above allowed value:
+
+    var | ref | new | %
+    a     10    15    50
+    b     10    9     10
+    ...   ...   ...   ...
+
+Variables in ref NOT IN new:
+
+    var 1
+    var 2
+    ...
+
+Variables in new NOT IN ref:
+
+    var 1
+    var 2
+    ...
+
+\end{verbatim}
+
+\subsubsection*{run.log}
+
+Run.log will take the output to the terminal for each PROCESS test case and dump it to a file in the test folder in \textbf{/process/test\_suite/test\_area/[test\_name]/}. If there is an error while running PROCESS this will be highlighted in \textbf{summary.log} and then the user can inspect the output in run.log\\
+
+\subsubsection*{new.MFILE.DAT}
+
+This is the MFILE.DAT the test suite created when running a given test case. After running the test suite will move this file to the folder \textbf{/process/test\_suite/test\_area/[test\_name]/}.\\
+
+\subsubsection*{new.OUT.DAT}
+
+This is the OUT.DAT the test suite created when running a given test case. After running the test suite will move this file to the folder \textbf{/process/test\_suite/test\_area/[test\_name]/}.\\
 
 
 \section{Python Libraries}
@@ -1379,4 +1560,3 @@ A collection of functions used by \texttt{diagnose\_process.py}.
 The user interface is still being developed, but currently allows for viewing
 and editing of \indat\ files in a web browser. It can be found in the
 \texttt{utilities/gui} directory.  See ~\ref{sec:gui} for details.
-

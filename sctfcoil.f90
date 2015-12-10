@@ -133,7 +133,7 @@ contains
     if (itart == 1) then
        rtfcin = bore + 0.5D0*tfcth
     else
-       rtfcin = bore + ohcth + gapoh + 0.5D0*tfcth
+       rtfcin = bore + ohcth + precomp + gapoh + 0.5D0*tfcth
     end if
 
     !  Radius of outer edge of inboard leg

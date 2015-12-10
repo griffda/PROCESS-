@@ -129,8 +129,10 @@ contains
 
     !  Local variables
 
+
     real(kind(1.0D0)) :: a1,a2,hbot,hfw,htop,r1,r2,r3,radius,rtotl,vbuild, rbldtotf, deltf, precomp, vbuild1
     real(kind(1.0D0)) :: fwtth
+
     integer :: ripflag = 0
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -196,7 +198,7 @@ contains
     !  If the ripple is too large then move the outboard TF coil leg
     if (rtotl > rtot) then
        rtot = rtotl
-       gapsto = rtot - 0.5D0*tfthko - ddwi - rsldo - thshield - tftsgap
+       gapsto = rtot - 0.5D0*tfthko - ddwi - rsldo - thshield - tftsgap - vvblgap
     else
        gapsto = gapomin
     end if
