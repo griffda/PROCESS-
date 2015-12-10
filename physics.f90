@@ -309,15 +309,15 @@ contains
          q95,q0,rmajor,vol)
 
     betat = beta * btot**2 / bt**2
-    bscf_nevins = bootstrap_fraction_nevins(alphan,alphat,betat,bt,dene, &
+    bscf_nevins = cboot * bootstrap_fraction_nevins(alphan,alphat,betat,bt,dene, &
          plascur,q95,q0,rmajor,rminor,ten,zeff)
 
     !  Wilson scaling uses thermal poloidal beta, not total
     betpth = (beta-betaft-betanb) * ( btot/bp )**2
-    bscf_wilson = bootstrap_fraction_wilson(alphaj,alphap,alphat,beta,betpth, &
+    bscf_wilson = cboot * bootstrap_fraction_wilson(alphaj,alphap,alphat,beta,betpth, &
          q0,q95,rmajor,rminor,itart)
 
-    bscf_sauter = bootstrap_fraction_sauter()
+    bscf_sauter = cboot * bootstrap_fraction_sauter()
 
     if (bscfmax < 0.0D0) then
        bootipf = abs(bscfmax)
@@ -5746,6 +5746,7 @@ contains
        call ovarre(outfile,'Start-up resistive (Wb)','(vsres)',vsres, 'OP ')
        call ovarre(outfile,'Flat-top resistive (Wb)','(vsbrn)',vsbrn, 'OP ')
 
+       call ovarrf(outfile,'Bootstrap fraction goose', '(cboot)',cboot)
        call ovarrf(outfile,'Bootstrap fraction (ITER 1989)', '(bscf_iter89)',bscf_iter89, 'OP ')
        call ovarrf(outfile,'Bootstrap fraction (Nevins et al)', '(bscf_nevins)',bscf_nevins, 'OP ')
        call ovarrf(outfile,'Bootstrap fraction (Wilson et al)', '(bscf_wilson)',bscf_wilson, 'OP ')
