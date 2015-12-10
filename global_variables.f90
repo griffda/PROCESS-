@@ -3593,7 +3593,7 @@ module constraint_variables
   !+ad_varc                 (constraint equation 8)
   real(kind(1.0D0)) :: walalw = 1.0D0
 
-  !+ad_vars  taulimit : Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
+  !+ad_vars  taulimit /5.0/ : Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
   real(kind(1.0D0)) :: taulimit = 5.0D0
   !+ad_vars  ftaulimit /1.0/ : f-value for lower limit on taup/taueff the ratio of alpha particle to energy confinement times
   !+ad_varc                   (constraint equation 62, iteration variable 110)
