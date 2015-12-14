@@ -271,10 +271,12 @@ def get_scan_num(m_file):
         return 0
 
 
-def clean_up():
+def clean_up(drs):
     """ Clean up temporary files
 
     Function to clean up the test_suite folder.
+
+    :param drs: directories
     """
 
     # remove .DAT files
@@ -283,6 +285,12 @@ def clean_up():
 
     # remove executable
     subprocess.call(["rm", "process.exe"])
+
+    # remove plot proc outputs
+    for key in drs.keys():
+        if "error_" not in key:
+            subprocess.call(["rm", "{0}ref.SUMMARY.pdf".
+                            format(drs[key]["path"])])
 
 
 def save_summary(line):
@@ -851,7 +859,7 @@ def main(args):
         print("\nTest run saved to folder 'test_{0}'".format(vrsn))
 
     # cleanup
-    clean_up()
+    clean_up(drs)
 
     # if option given to overwrite reference cases with new output.
     if args.overwrite:
