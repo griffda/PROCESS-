@@ -286,12 +286,6 @@ def clean_up(drs):
     # remove executable
     subprocess.call(["rm", "process.exe"])
 
-    # remove plot proc outputs
-    for key in drs.keys():
-        if "error_" not in key:
-            subprocess.call(["rm", "{0}ref.SUMMARY.pdf".
-                            format(drs[key]["path"])])
-
 
 def save_summary(line):
     """ Save summary function

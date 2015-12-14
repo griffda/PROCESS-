@@ -39,6 +39,7 @@ module sctfcoil_module
   !+ad_hist  30/10/12 PJK Added build_variables
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  16/09/14 PJK Removed myall_stress routine
+  !+ad_hist  14/14/15 JM  Added output of peak field fit values if run_test=1
   !+ad_stat  Okay
   !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
   !
@@ -56,6 +57,16 @@ module sctfcoil_module
   private
   public :: bi2212, itersc, jcrit_nbti, outtf, sctfcoil, stresscl, &
        tfcind, tfspcall
+
+  !  Module variables
+  !  Dimensionless winding pack width
+  real(kind(1.0D0)), private :: tf_fit_t
+
+  !  Dimensionless winding pack radial thickness
+  real(kind(1.0D0)), private :: tf_fit_z
+
+  !  Ratio of peak field with ripple to nominal axisymmetric peak field
+  real(kind(1.0D0)), private :: tf_fit_y
 
 contains
 
@@ -158,7 +169,7 @@ contains
 
     !  Annular area of midplane containing TF coil inboard legs
 
-    tfareain = pi * (rcoil**2 - rcoilp**2) 
+    tfareain = pi * (rcoil**2 - rcoilp**2)
 
     !  Total current in TF coils
 
@@ -176,7 +187,7 @@ contains
     end if
 
     !  Determine quench time (based on IDM: 2MBSE3)
-    
+
     radvv = rmajor - rminor - scrapli - fwith - blnkith - vvblgap - shldith
     taucq = (bt * ritfc * rminor * rminor) / (radvv * sigvvall)
 
@@ -310,7 +321,7 @@ contains
     a = 1.0D0 - prp
     b = leno0 * (1.0D0 - prp)
     c = - leno0*leno0*prp / 4
-    trp = (-b + sqrt(b*b-4*a*c)) / (2*a)    
+    trp = (-b + sqrt(b*b-4*a*c)) / (2*a)
 
     !  Dimension of square cross-section of a turn, including the radial plate
 
@@ -380,9 +391,9 @@ contains
     !  Void area in cable, for He
 
     avwp = acstf * turnstf * vftf
-    
+
     !  He coil area in cable
-    
+
     awphec = turnstf * ((pi/4.0d0)*dhecoil**2)
 
     !  Insulation area (not including ground-wall)
@@ -531,6 +542,7 @@ contains
     !+ad_call  None
     !+ad_hist  02/09/14 PJK Initial version
     !+ad_hist  16/10/14 PJK Turned off output to screen
+    !+ad_hist  14/12/15 JM  Changed t,z,y var names for output at end of routine.
     !+ad_stat  Okay
     !+ad_docs  M. Kovari, Toroidal Field Coils - Maximum Field and Ripple -
     !+ad_docc  Parametric Calculation, July 2014
@@ -547,7 +559,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: t,wmax,y,z
+    real(kind(1.0D0)) :: wmax
     real(kind(1.0D0)), dimension(4) :: a
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -604,25 +616,25 @@ contains
 
     !  Dimensionless winding pack width
 
-    t = wwp1/wmax
-    if ((t < 0.3D0).or.(t > 1.1D0)) then
+    tf_fit_t = wwp1/wmax
+    if ((tf_fit_t < 0.3D0).or.(tf_fit_t > 1.1D0)) then
        !write(*,*) 'PEAK_TF_WITH_RIPPLE: fitting problem; t = ',t
        flag = 1
     end if
 
     !  Dimensionless winding pack radial thickness
 
-    z = thkwp/wmax
-    if ((z < 0.26D0).or.(z > 0.7D0)) then
+    tf_fit_z = thkwp/wmax
+    if ((tf_fit_z < 0.26D0).or.(tf_fit_z > 0.7D0)) then
        !write(*,*) 'PEAK_TF_WITH_RIPPLE: fitting problem; z = ',z
        flag = 2
     end if
 
     !  Ratio of peak field with ripple to nominal axisymmetric peak field
 
-    y = a(1) + a(2)*exp(-t) + a(3)*z + a(4)*z*t
+    tf_fit_y = a(1) + a(2)*exp(-tf_fit_t) + a(3)*tf_fit_z + a(4)*tf_fit_z*tf_fit_t
 
-    bmaxtfrp = y * bmaxtf
+    bmaxtfrp = tf_fit_y * bmaxtf
 
   end subroutine peak_tf_with_ripple
 
@@ -1468,7 +1480,7 @@ contains
     ! call ovarre(outfile,'Clear vertical bore (m)','(tfborev)',tfborev)
     ! MDK Add gapds as it can be an iteration variable
     call ovarre(outfile,'Gap between inboard vacuum vessel and TF coil (m)','(gapds)',gapds)
-    
+
     call oblnkl(outfile)
     call ocmmnt(outfile,'TF coil inner surface shape is approximated')
     call ocmmnt(outfile,'by arcs between the following points :')
@@ -1524,19 +1536,19 @@ contains
     ap = acond + turnstf*acndttf + arp + aiwp + avwp + awphec
 
     call osubhd(outfile,'Winding Pack Information :')
-    
+
     call ocmmnt(outfile,'Fractions by area')
     call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcutfsu)
     call ovarre(outfile,'Superconductor fraction of conductor','(1-fcutfsu)',1-fcutfsu)
-    
+
     call ovarre(outfile,'Conductor fraction of winding pack','(acond/ap)',acond/ap, 'OP ')
     call ovarre(outfile,'Conduit fraction of winding pack','(turnstf*acndttf/ap)',turnstf*acndttf/ap, 'OP ')
-    call ovarre(outfile,'Additional steel (radial plate) fraction of winding pack','(arp/ap)',arp/ap, 'OP ')    
+    call ovarre(outfile,'Additional steel (radial plate) fraction of winding pack','(arp/ap)',arp/ap, 'OP ')
     call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap, 'OP ')
     call ovarre(outfile,'Helium fraction of winding pack','(avwp/ap)',avwp/ap, 'OP ')
     call ovarre(outfile,'Helium coil fraction of winding pack','(awphec/ap)',awphec/ap, 'OP ')
-    call ovarrf(outfile,'      Total for winding pack','',(acond + turnstf*acndttf + arp + aiwp + avwp + awphec)/ap)    
-    
+    call ovarrf(outfile,'      Total for winding pack','',(acond + turnstf*acndttf + arp + aiwp + avwp + awphec)/ap)
+
     call ovarre(outfile,'Winding radial thickness (m)','(thkwp)',thkwp, 'OP ')
     call ovarre(outfile,'Winding width 1 (m)','(wwp1)',wwp1, 'OP ')
     call ovarre(outfile,'Winding width 2 (m)','(wwp2)',wwp2, 'OP ')
@@ -1682,7 +1694,7 @@ contains
       !+ad_args  tcritsc : input real : Critical temperature at zero field and strain (K) (isumat=4 only)
       !+ad_args  iprint : input integer : Switch for printing (1 = yes, 0 = no)
       !+ad_args  outfile : input integer : Fortran output unit identifier
-      !+ad_args  jwdgpro : output real : Winding pack current density from temperature 
+      !+ad_args  jwdgpro : output real : Winding pack current density from temperature
       !+ad_argc                          rise protection (A/m2)
       !+ad_args  jwdgcrt : output real : Critical winding pack current density (A/m2)
       !+ad_args  vd : output real : Discharge voltage imposed on a TF coil (V)
@@ -1748,9 +1760,9 @@ contains
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       ! Rename tdmptf as it is called tdump in this routine and those called from here.
       tdump = tdmptf
-      
+
       fhetot = fhe + (pi/4.0d0)*dhecoil*dhecoil/acs
-      
+
       !  Conductor fraction
 
       fcond = 1.0D0 - fhetot
@@ -1889,6 +1901,15 @@ contains
 
       end select
 
+      if (run_tests==1) then
+          call oblnkl(outfile)
+          call ocmmnt(outfile, "PROCESS TF Coil peak field fit. Values for t, z and y:")
+          call oblnkl(outfile)
+          call ovarre(outfile,'Dimensionless winding pack width','(tf_fit_t)', tf_fit_t, 'OP ')
+          call ovarre(outfile,'Dimensionless winding pack radial thickness','(tf_fit_z)', tf_fit_z, 'OP ')
+          call ovarre(outfile,'Ratio of peak field with ripple to nominal axisymmetric peak field','(tf_fit_y)', tf_fit_y, 'OP ')
+      end if
+
       call oblnkl(outfile)
       call ovarre(outfile,'Peak field at conductor (T)','(bmax)',bmax, 'OP ')
       call ovarre(outfile,'Helium temperature at peak field (K)','(thelium)',thelium)
@@ -1944,7 +1965,7 @@ contains
       !+ad_args  fcu : input real : Fraction of conductor that is copper
       !+ad_args  tba : input real : He temperature at peak field point (K)
       !+ad_args  tmax : input real : Max conductor temperature during quench (K)
-      !+ad_args  ajwpro : output real :  Winding pack current density from temperature 
+      !+ad_args  ajwpro : output real :  Winding pack current density from temperature
       !+ad_argc                          rise protection (A/m2)
       !+ad_args  vd : output real :  Discharge voltage imposed on a TF coil (V)
       !+ad_desc  This routine calculates maximum conductor current density which
@@ -2121,7 +2142,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  $\epsilon_{sh}$
-    
+
     epssh = (ca2*eps0a)/(sqrt(ca1**2 - ca2**2))
 
     !  Strain function $s(\epsilon)$
