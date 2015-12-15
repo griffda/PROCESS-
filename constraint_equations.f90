@@ -157,7 +157,7 @@ contains
     !+ad_hist  13/11/14 PJK Changed iradloss usage in eqns 2 and 4
     !+ad_hist  17/11/14 PJK Added 'not recommended' comments to constraints 3 and 4
     !+ad_hist  25/11/14 JM  Added new eqn 61
-    !+ad_hist  06/08/15 MDK Eqn 62: Issue #213 - lower limit on taup/taueff, the ratio of particle to energy confinement times
+    !+ad_hist  06/08/15 MDK Eqn 62: Issue #213 - lower limit on taup/taueff the ratio of particle to energy confinement times
     !+ad_hist  26/08/15 MDK Eqn 63: Issue #304 - upper limit on niterpump (vacuum_model = simple)
     !+ad_hist  18/11/15 RK  Eqn 64: Added constrain equation to limit Zeff
     !+ad_hist  26/11/15 RK  Eqn 65: Added constrain equation to set dump time
@@ -965,7 +965,7 @@ contains
              units(i) = ''
           end if
 
-       case (62)  !  Lower limit on taup/taueff, the ratio of alpha particle to energy confinement times
+       case (62)  !  Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
           cc(i) = 1.0D0 - ftaulimit * (taup / taueff) / taulimit
           if (present(con)) then
              con(i) = taulimit

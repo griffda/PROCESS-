@@ -9,6 +9,7 @@
 
 """
 
+import subprocess
 import numpy as np
 
 # Dictionary for variable types
@@ -513,7 +514,7 @@ def write_parameters(data, out_file):
         # Write parameters for given module
         for item in DICT_MODULE[module]:
             if item not in exclusions and item in data.keys():
-                
+
                 if item == "fimp":
                     for k in range(len(data["fimp"].get_value)):
                         tmp_fimp_name = "fimp({0})".format(str(k+1).zfill(1))
@@ -710,6 +711,13 @@ def change_fimp(data, fimp_id, fimp_val):
     :return:
     """
     data["fimp"].value[fimp_id] = fimp_val
+    if type(data["fimp"].value[fimp_id]) == str:
+        tmp_fimp = list(data["fimp"].value.split(","))
+        tmp_fimp[fimp_id] = fimp_val
+        new_fimp = str(tmp_fimp).strip("[").strip("]").replace("'", "")
+        data["fimp"].value = new_fimp
+    else:
+        data["fimp"].value[fimp_id] = fimp_val
 
 
 def change_zref(data, zref_id, zref_val):
@@ -720,7 +728,14 @@ def change_zref(data, zref_id, zref_val):
     :param zref_val: new zref array value
     :return:
     """
-    data["zref"].value[zref_id] = zref_val
+
+    if type(data["zref"].value[zref_id]) == str:
+        tmp_zref = list(data["zref"].value.split(","))
+        tmp_zref[zref_id] = zref_val
+        new_zref = str(tmp_zref).strip("[").strip("]").replace("'", "")
+        data["zref"].value = new_zref
+    else:
+        data["zref"].value[zref_id] = zref_val
 
 
 def add_bound(data, bound, bound_type, bound_value):
@@ -1177,6 +1192,20 @@ class InDat(object):
 
         # close file
         output.close()
+
+
+def test(f):
+    """Test function
+
+    :param f: file name to test
+    """
+    try:
+        i = InDat(filename=f)
+        i.write_in_dat(output_filename="test_out_IN.DAT")
+        subprocess.call(["rm", "test_out_IN.DAT"])
+        return True
+    except:
+        return False
 
 
 if __name__ == "__main__":

@@ -10,6 +10,7 @@
 
 """
 
+import sys
 import argparse
 import process_io_lib.mfile as mf
 import matplotlib.pyplot as plt
@@ -35,12 +36,13 @@ vessel = 'green'
 shield = 'green'
 blanket = 'magenta'
 plasma = 'khaki'
-cryostat='red'
+cryostat = 'red'
 firstwall = 'darkblue'
 winding = 'blue'
 nbshield_colour = 'gray'
 
 thin = 0
+
 
 # Setup command line arguments
 parser = argparse.ArgumentParser(description="Produces a two page summary of the PROCESS MFILE output, using the MFILE.  "
@@ -119,8 +121,6 @@ ne0 = m_file.data["ne0"].get_scan(scan)
 te0 = m_file.data["te0"].get_scan(scan)
 #Plasma
 triang = m_file.data["triang95"].get_scan(scan)
-
-
 
 RADIAL_BUILD = ["bore", "ohcth", "precomp", "gapoh", "tfcth",
                 "deltf","thshieldi","gapds",
@@ -866,7 +866,24 @@ def plot_shield_snull(axis, mfile_data, scan):
         mfile_data --> MFILE data object
         scan --> scan number to use
     """
+
     triang = mfile_data.data["triang95"].get_scan(scan)
+
+    # triang = mfile_data.data["triang95"].get_scan(scan)
+    # blnkith = mfile_data.data["blnkith"].get_scan(scan)
+    # blnkoth = mfile_data.data["blnkoth"].get_scan(scan)
+    # fwith = mfile_data.data["fwith"].get_scan(scan)
+    # fwoth = mfile_data.data["fwoth"].get_scan(scan)
+    blnktth = mfile_data.data["blnktth"].get_scan(scan)
+    tfwvt = mfile_data.data["top first wall vertical thickness (m)"]. \
+        get_scan(scan)
+    c_shldith = cumulative_radial_build("shldith", mfile_data, scan)
+    c_blnkoth = cumulative_radial_build("blnkoth", mfile_data, scan)
+    c_blnkith = cumulative_radial_build("blnkith", mfile_data, scan)
+    c_fwoth = cumulative_radial_build("fwoth", mfile_data, scan)
+    a = cumulative_vertical_build(mfile_data, scan)
+
+
     temp_array_1 = ()
     temp_array_2 = ()
     
@@ -1222,13 +1239,13 @@ def plot_header(axis, mfile_data, scan):
 
     data2 = [("!" + str(mfile_data.data["runtitle"].get_scan(scan)),
              "Run title", ""),
-            ("!" + str(mfile_data.data["procver"].get_scan(scan)),
+             ("!" + str(mfile_data.data["procver"].get_scan(scan)),
              "PROCESS Version", ""),
-            ("!" + mfile_data.data["date"].get_scan(scan), "Date:", ""),
-            ("!" + mfile_data.data["time"].get_scan(scan), "Time:", ""),
-            ("!" + mfile_data.data["username"].get_scan(scan), "User:", ""),
-            ("!" + proc_dict.DICT_OPTIMISATION_VARS
-            [abs(int(mfile_data.data["minmax"].get_scan(scan)))],
+             ("!" + mfile_data.data["date"].get_scan(scan), "Date:", ""),
+             ("!" + mfile_data.data["time"].get_scan(scan), "Time:", ""),
+             ("!" + mfile_data.data["username"].get_scan(scan), "User:", ""),
+             ("!" + proc_dict.DICT_OPTIMISATION_VARS
+             [abs(int(mfile_data.data["minmax"].get_scan(scan)))],
              "Optimising:", "")]
 
     if mfile_data.data["imprad model"].get_scan(scan) == 1:
@@ -1376,7 +1393,7 @@ def plot_physics_info(axis, mfile_data, scan):
 
     tepeak = mfile_data.data["te0"].get_scan(scan) / \
         mfile_data.data["te"].get_scan(scan)
-	
+
     nepeak = mfile_data.data["ne0"].get_scan(scan) / \
         mfile_data.data["dene"].get_scan(scan)
 
@@ -1728,11 +1745,191 @@ def save_plots(m_file_data, scan=-1):
     fig.savefig('tprofile.svg', format='svg', dpi=1200)
 
 
+def test(f):
+    """Test Function
+
+    :param f: filename to test
+    """
+
+    try:
+        # read MFILE
+        m_file = mf.MFile(filename=f)
+        scan = -1
+
+        global bore
+        bore = m_file.data["bore"].get_scan(scan)
+        global ohcth
+        ohcth = m_file.data["ohcth"].get_scan(scan)
+        global gapoh
+        gapoh = m_file.data["gapoh"].get_scan(scan)
+        global tfcth
+        tfcth = m_file.data["tfcth"].get_scan(scan)
+        global gapds
+        gapds = m_file.data["gapds"].get_scan(scan)
+        global ddwi
+        ddwi = m_file.data["ddwi"].get_scan(scan)
+        global shldith
+        shldith = m_file.data["shldith"].get_scan(scan)
+        global blnkith
+        blnkith = m_file.data["blnkith"].get_scan(scan)
+        global fwith
+        fwith = m_file.data["fwith"].get_scan(scan)
+        global scrapli
+        scrapli = m_file.data["scrapli"].get_scan(scan)
+        global rmajor
+        rmajor = m_file.data["rmajor"].get_scan(scan)
+        global rminor
+        rminor = m_file.data["rminor"].get_scan(scan)
+        global scraplo
+        scraplo = m_file.data["scraplo"].get_scan(scan)
+        global fwoth
+        fwoth = m_file.data["fwoth"].get_scan(scan)
+        global blnkoth
+        blnkoth = m_file.data["blnkoth"].get_scan(scan)
+        global shldoth
+        shldoth = m_file.data["shldoth"].get_scan(scan)
+        # ddwi = m_file.data["ddwi"].get_scan(scan)
+        global gapsto
+        gapsto = m_file.data["gapsto"].get_scan(scan)
+        global tfthko
+        tfthko = m_file.data["tfthko"].get_scan(scan)
+        global rdewex
+        rdewex = m_file.data["rdewex"].get_scan(scan)
+        global ddwex
+        ddwex = m_file.data["ddwex"].get_scan(scan)
+        global tfno
+        tfno = m_file.data["tfno"].get_scan(scan)
+        global wwp1
+        wwp1 = m_file.data["wwp1"].get_scan(scan)
+        global wwp2
+        wwp2 = m_file.data["wwp2"].get_scan(scan)
+        global thkwp
+        thkwp = m_file.data["thkwp"].get_scan(scan)
+        global tinstf
+        tinstf = m_file.data["tinstf"].get_scan(scan)
+        global thkcas
+        thkcas = m_file.data["thkcas"].get_scan(scan)
+        global nbshield
+        nbshield = m_file.data["nbshield"].get_scan(scan)
+        global rtanbeam
+        rtanbeam = m_file.data["rtanbeam"].get_scan(scan)
+        global rtanmax
+        rtanmax = m_file.data["rtanmax"].get_scan(scan)
+        global beamwd
+        beamwd = m_file.data["beamwd"].get_scan(scan)
+        global casthi
+        casthi = m_file.data["casthi"].get_scan(scan)
+        # # Pedestal profile parameters
+        global ipedestal
+        ipedestal = m_file.data["ipedestal"].get_scan(scan)
+        global neped
+        neped = m_file.data["neped"].get_scan(scan)
+        global nesep
+        nesep = m_file.data["nesep"].get_scan(scan)
+        global rhopedn
+        rhopedn = m_file.data["rhopedn"].get_scan(scan)
+        global rhopedt
+        rhopedt = m_file.data["rhopedt"].get_scan(scan)
+        global tbeta
+        tbeta = m_file.data["tbeta"].get_scan(scan)
+        global teped
+        teped = m_file.data["teped"].get_scan(scan)
+        global tesep
+        tesep = m_file.data["tesep"].get_scan(scan)
+        global alphan
+        alphan = m_file.data["alphan"].get_scan(scan)
+        global alphat
+        alphat = m_file.data["alphat"].get_scan(scan)
+        global ne0
+        ne0 = m_file.data["ne0"].get_scan(scan)
+        global te0
+        te0 = m_file.data["te0"].get_scan(scan)
+        # # Plasma
+        global triang
+        triang = m_file.data["triang95"].get_scan(scan)
+
+        # create main plot
+        page1 = plt.figure(figsize=(12, 9), dpi=80)
+        page2 = plt.figure(figsize=(12, 9), dpi=80)
+
+        # run main
+        main(page1, page2, m_file)
+        return True
+    except:
+        return False
+
+
 if __name__ == '__main__':
+
+    # Setup command line arguments
+    parser = argparse. \
+        ArgumentParser(description="Produces a two page summary of the PROCESS MFILE output, using the MFILE.  "
+        "For info contact rich.kemp@ccfe.ac.uk or james.morris2@ccfe.ac.uk")
+
+    parser.add_argument("-f", metavar='FILENAME', type=str,
+                        default="", help='specify filename prefix')
+
+    parser.add_argument("-s", "--show", help="show plot as well as saving figure",
+                        action="store_true")
+
+    parser.add_argument("--svg", help="save plots as svg files",
+                        action="store_true")
+
+    args = parser.parse_args()
+
+    # read MFILE
+    m_file = mf.MFile(args.f + "MFILE.DAT")
+    scan = -1
+    bore = m_file.data["bore"].get_scan(scan)
+    ohcth = m_file.data["ohcth"].get_scan(scan)
+    gapoh = m_file.data["gapoh"].get_scan(scan)
+    tfcth = m_file.data["tfcth"].get_scan(scan)
+    gapds = m_file.data["gapds"].get_scan(scan)
+    ddwi = m_file.data["ddwi"].get_scan(scan)
+    shldith = m_file.data["shldith"].get_scan(scan)
+    blnkith = m_file.data["blnkith"].get_scan(scan)
+    fwith = m_file.data["fwith"].get_scan(scan)
+    scrapli = m_file.data["scrapli"].get_scan(scan)
+    rmajor = m_file.data["rmajor"].get_scan(scan)
+    rminor = m_file.data["rminor"].get_scan(scan)
+    scraplo = m_file.data["scraplo"].get_scan(scan)
+    fwoth = m_file.data["fwoth"].get_scan(scan)
+    blnkoth = m_file.data["blnkoth"].get_scan(scan)
+    shldoth = m_file.data["shldoth"].get_scan(scan)
+    ddwi = m_file.data["ddwi"].get_scan(scan)
+    gapsto = m_file.data["gapsto"].get_scan(scan)
+    tfthko = m_file.data["tfthko"].get_scan(scan)
+    rdewex = m_file.data["rdewex"].get_scan(scan)
+    ddwex = m_file.data["ddwex"].get_scan(scan)
+    tfno = m_file.data["tfno"].get_scan(scan)
+    wwp1 = m_file.data["wwp1"].get_scan(scan)
+    wwp2 = m_file.data["wwp2"].get_scan(scan)
+    thkwp = m_file.data["thkwp"].get_scan(scan)
+    tinstf = m_file.data["tinstf"].get_scan(scan)
+    thkcas = m_file.data["thkcas"].get_scan(scan)
+    nbshield = m_file.data["nbshield"].get_scan(scan)
+    rtanbeam = m_file.data["rtanbeam"].get_scan(scan)
+    rtanmax = m_file.data["rtanmax"].get_scan(scan)
+    beamwd = m_file.data["beamwd"].get_scan(scan)
+    casthi = m_file.data["casthi"].get_scan(scan)
+    # Pedestal profile parameters
+    ipedestal = m_file.data["ipedestal"].get_scan(scan)
+    neped = m_file.data["neped"].get_scan(scan)
+    nesep = m_file.data["nesep"].get_scan(scan)
+    rhopedn = m_file.data["rhopedn"].get_scan(scan)
+    rhopedt = m_file.data["rhopedt"].get_scan(scan)
+    tbeta = m_file.data["tbeta"].get_scan(scan)
+    teped = m_file.data["teped"].get_scan(scan)
+    tesep = m_file.data["tesep"].get_scan(scan)
+    alphan = m_file.data["alphan"].get_scan(scan)
+    alphat = m_file.data["alphat"].get_scan(scan)
+    ne0 = m_file.data["ne0"].get_scan(scan)
+    te0 = m_file.data["te0"].get_scan(scan)
+    # Plasma
+    triang = m_file.data["triang95"].get_scan(scan)
 
     # read MFILE
     # m_file = mf.MFile(args.f)
-    m_file = mf.MFile(args.f + "MFILE.DAT")
     scan = -1
 
     # create main plot
@@ -1755,5 +1952,3 @@ if __name__ == '__main__':
     # This bit doesn't work - the argument is not recognised for some reason.:
     if args.svg:
         save_plots(m_file)
-
-

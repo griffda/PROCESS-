@@ -12,9 +12,12 @@
 
 # Third party libraries
 import os
+import sys
 import datetime
 import argparse
 import subprocess
+import logging
+logging.basicConfig(level=logging.CRITICAL)
 
 # PROCESS libraries
 from process_io_lib.mfile import MFile
@@ -268,10 +271,12 @@ def get_scan_num(m_file):
         return 0
 
 
-def clean_up():
+def clean_up(drs):
     """ Clean up temporary files
 
     Function to clean up the test_suite folder.
+
+    :param drs: directories
     """
 
     # remove .DAT files
@@ -488,6 +493,172 @@ def overwrite_references(ars, dr, vr):
                             "{0}/ref.MFILE.DAT".format(path)])
 
 
+def amend_utility_log(u):
+    """ Update utility log with header for utility
+    """
+    f = open("utilities.log", "a")
+    f.write("\n## {0:<38} ##\n".format(u))
+    f.write("#"*44)
+    f.write("\n")
+    f.close()
+
+
+def test_utilities(file_dict):
+    """Testing python utilities for PROCESS
+
+    :param file_dict: dictionary of the test files for PROCESS.
+    """
+
+    # utility testing message to terminal and summary.log
+    print(BColours.BOLD + "\nUtilities and Python libraries testing\n" +
+          BColours.ENDC)
+    save_summary("\n\nUtilities and Python libraries testing\n\n")
+
+    # utility testing message to terminal and summary.log
+    print("Check utilities.log for warnings and errors.\n")
+    save_summary("\n\nCheck utilities.log for warnings and errors.\n\n")
+
+    # test mfile.py library
+    test_mfile_lib(file_dict)
+
+    # test in_dat.py library
+    test_in_dat_lib(file_dict)
+
+    # test make_plot_dat
+    # TODO test_make_plot_dat(file_dict)
+
+    # test plot_proc.py
+    test_plot_proc(file_dict)
+
+    # test convert_in_dat.py
+    # TODO test_convert_in_dat(file_dict)
+
+    # move "utilities.log"
+    subprocess.call(["mv", "utilities.log", "test_area"])
+
+    return
+
+
+def test_mfile_lib(fs):
+    """Test the PROCESS mfile library
+
+    :param fs: files to test
+    """
+
+    import process_io_lib.mfile as mf
+
+    # results list
+    results = list()
+
+    # add t utilities.log
+    amend_utility_log("mfile.py")
+
+    sys.stdout = open("utilities.log", "a")
+
+    # test all MFILEs
+    for key in fs.keys():
+        if "error_" not in key:
+            file_name = fs[key]["path"] + "ref.MFILE.DAT"
+            results.append(mf.test(file_name))
+
+    sys.stdout = sys.__stdout__
+
+    # Output message
+    msg = "Test ==>  {0:<40}".format("mfile.py")
+
+    # check results
+    if len(results) == results.count(True):
+        lmsg = msg + "OK\n"
+        msg += BColours.OKGREEN + "OK" + BColours.ENDC
+
+    else:
+        lmsg = msg + "OK\n"
+        msg += BColours.FAIL + "ERROR" + BColours.ENDC
+
+    print(msg)
+    save_summary(lmsg)
+
+
+def test_in_dat_lib(fs):
+    """Test the PROCESS in_dat library
+
+    :param fs: files to test
+    """
+
+    import process_io_lib.in_dat as indat
+
+    # results list
+    results = list()
+
+    # add to utilities.log
+    amend_utility_log("in_dat.py")
+
+    sys.stdout = open("utilities.log", "a")
+
+    # test all MFILEs
+    for key in fs.keys():
+        if "error_" not in key:
+            file_name = fs[key]["path"] + "ref.IN.DAT"
+            results.append(indat.test(file_name))
+
+    sys.stdout = sys.__stdout__
+
+    # Output message
+    msg = "Test ==>  {0:<40}".format("in_dat.py")
+
+    # check results
+    if len(results) == results.count(True):
+        lmsg = msg + "OK\n"
+        msg += BColours.OKGREEN + "OK" + BColours.ENDC
+
+    else:
+        lmsg = msg + "OK\n"
+        msg += BColours.FAIL + "ERROR" + BColours.ENDC
+
+    print(msg)
+    save_summary(lmsg)
+
+
+def test_plot_proc(fs):
+    """Test the PROCESS in_dat library
+
+    :param fs: files to test
+    """
+
+    import plot_proc as pp
+
+    # results list
+    results = list()
+
+    # add to utilities.log
+    amend_utility_log("plot_proc.py")
+
+    sys.stdout = open("utilities.log", "a")
+
+    # test all MFILEs
+    for key in fs.keys():
+        if "error_" not in key:
+            file_name = fs[key]["path"] + "ref.MFILE.DAT"
+            results.append(pp.test(file_name))
+
+    sys.stdout = sys.__stdout__
+
+    # Output message
+    msg = "Test ==>  {0:<40}".format("plot_proc.py")
+
+    # check results
+    if len(results) == results.count(True):
+        lmsg = msg + "OK\n"
+        msg += BColours.OKGREEN + "OK" + BColours.ENDC
+
+    else:
+        lmsg = msg + "OK\n"
+        msg += BColours.FAIL + "ERROR" + BColours.ENDC
+
+    print(msg)
+    save_summary(lmsg)
+
+
 class TestCase(object):
     """
     Class used for a single reference test case
@@ -661,6 +832,9 @@ def main(args):
     # Closing messages
     close_print(vrsn)
 
+    # test utilities
+    test_utilities(drs)
+
     # move summary
     move_summary()
 
@@ -679,7 +853,7 @@ def main(args):
         print("\nTest run saved to folder 'test_{0}'".format(vrsn))
 
     # cleanup
-    clean_up()
+    clean_up(drs)
 
     # if option given to overwrite reference cases with new output.
     if args.overwrite:

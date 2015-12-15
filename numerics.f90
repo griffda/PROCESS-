@@ -74,12 +74,13 @@ module numerics
   !+ad_hist  27/05/15 MDK Added breeder_f as iteration variable 108
   !+ad_hist  29/05/15 MDK Figure of merit 2 (P_fus P_in-total) has been replaced by "not used"
   !+ad_hist  11/06/15 MDK Add active_constraints(ipeqns) : Boolean array showing which constraints are active.
-  !+ad_hist  05/08/15 MDK Add ralpne as an iteration variable. Constraint 62 on taup/taueff, the ratio of particle to energy confinement times
+  !+ad_hist  05/08/15 MDK Add ralpne as an iteration variable. Constraint 62 on taup/taueff the ratio of particle to energy confinement times
   !+ad_hist  26/08/15 MDK fniterpump as iteration variable 11, constraint 63 niterpump < tfno
   !+ad_hist  18/11/15  RK Added new FoM for minimising RMAJOR and maximising TBURN and
   !+ad_hisc               added constraint equation to limit Z_eff, including new iteration
   !+ad_hisc		  variable 112 (fzeffmax)
   !+ad_hist  26/11/15  RK New constraint equation for taucq
+  !+ad_hist  10/12/15  RK Net electrical output added as FoM
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -94,12 +95,12 @@ module numerics
   
   public
 
-  !+ad_vars  ipnvars /113/ FIX : total number of variables available for iteration
+  !+ad_vars  ipnvars /114/ FIX : total number of variables available for iteration
   integer, parameter :: ipnvars = 114
   !+ad_vars  ipeqns /65/ FIX : number of constraint equations available
   integer, parameter :: ipeqns = 65
-  !+ad_vars  ipnfoms /16/ FIX : number of available figures of merit
-  integer, parameter :: ipnfoms = 16
+  !+ad_vars  ipnfoms /17/ FIX : number of available figures of merit
+  integer, parameter :: ipnfoms = 17
 
   integer, parameter :: ipvlam  = ipeqns+2*ipnvars+1
   integer, parameter :: iptnt   = (ipeqns*(3*ipeqns+13))/2
@@ -152,7 +153,9 @@ module numerics
        'plant availability.   ', &
        !+ad_varc  <LI> (16) linear combination of major radius (minimised) and pulse length (maximised)
        !+ad_varc              note: FoM should be minimised only!
-       'min R0, max tau_burn. ' /)
+       'min R0, max tau_burn. ', &
+       !+ad_varc  <LI> (17) net electrical output
+       'net electrical output.' /)
 
   !+ad_vars  ncalls : number of function calls during solution
   integer :: ncalls = 0
@@ -380,7 +383,7 @@ module numerics
        'CS temperature margin lower limit', &
        !+ad_varc  <LI> (61) Minimum availability value
        'Minimum availability value       ',  &
-       !+ad_varc  <LI> (62) taup/taueff, the ratio of particle to energy confinement times
+       !+ad_varc  <LI> (62) taup/taueff the ratio of particle to energy confinement times
        'taup/taueff                      ', &
        !+ad_varc  <LI> (63) The number of ITER-like vacuum pumps niterpump < tfno </UL>
        'number of ITER-like vacuum pumps ',  &
@@ -734,7 +737,7 @@ module numerics
        'breeder_f', &
        !+ad_varc  <LI> (109) ralpne: thermal alpha density / electron density
        'ralpne   ', &
-       !+ad_varc  <LI> (110) ftaulimit: Lower limit on taup/taueff, the ratio of alpha particle 
+       !+ad_varc  <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha particle 
        !+ad_varc       to energy confinement times
        'ftaulimit', &
        !+ad_varc  <LI> (111) fniterpump: f-value for constraint that  

@@ -489,16 +489,17 @@ def is_number(val):
     return False
 
 
-# def test():
-#    """Testing"""
-#    from process_funcs import setup_logging
-#    setup_logging(default_path="logging.json")
-#    m = MFile("../../STORRISI_MFILE.DAT")
-#    print(m.data["rmajor"].get_scans())
-#    print(m.data["procver"].get_scans())
-#    print(m.data["isweep"].get_scans())
-#    print(m.data["ttfsec"].get_scans())
-#    print(m.data["nsweepa"].get_scan(-1))
+def test(f):
+    """Testing
+
+    :param f: file to test"""
+
+    try:
+        m = MFile(f)
+        return True
+    except:
+        return False
+    return True
 
 # if __name__ == "__main__":
 #    test()
