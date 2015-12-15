@@ -57,9 +57,6 @@ module sctfcoil_module
   private
   public :: bi2212, itersc, jcrit_nbti, outtf, sctfcoil, stresscl, &
        tfcind, tfspcall
-<<<<<<< HEAD
-  
-=======
 
   !  Module variables
   !  Dimensionless winding pack width
@@ -71,7 +68,6 @@ module sctfcoil_module
   !  Ratio of peak field with ripple to nominal axisymmetric peak field
   real(kind(1.0D0)), private :: tf_fit_y
 
->>>>>>> 24e4d72793ba597a813007586f1440fcc3fd81f8
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -165,12 +161,8 @@ contains
     tftort = 2.0D0 * rcoil*sin(thtcoil)
 
     !  Annular area of midplane containing TF coil inboard legs
-<<<<<<< HEAD
-    tfareain = pi * (rcoil**2 - rcoilp**2) 
-=======
 
     tfareain = pi * (rcoil**2 - rcoilp**2)
->>>>>>> 24e4d72793ba597a813007586f1440fcc3fd81f8
 
     !  Total current in TF coils
 
@@ -1680,12 +1672,7 @@ contains
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       ! Rename tdmptf as it is called tdump in this routine and those called from here.
       tdump = tdmptf
-<<<<<<< HEAD
-=======
 
-      fhetot = fhe + (pi/4.0d0)*dhecoil*dhecoil/acs
-
->>>>>>> 24e4d72793ba597a813007586f1440fcc3fd81f8
       !  Conductor fraction
 
       fcond = 1.0D0 - fhe
