@@ -1808,7 +1808,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: dhecoil = 0.005D0
   !+ad_vars  estotf : stored energy per TF coil (GJ) OBSOLETE
   real(kind(1.0D0)) :: estotf = 0.0D0
-  !+ad_vars  estotf : total stored energy in the toroidal field (GJ) 
+  !+ad_vars  estotft : total stored energy in the toroidal field (GJ) 
   real(kind(1.0D0)) :: estotft = 0.0D0
   
   !+ad_vars  eyins /2.0e10/ : insulator Young's modulus (Pa)
@@ -2186,7 +2186,7 @@ module vacuum_variables
   implicit none
 
   public
-  !+ad_vars  vacuum_model /'old'/ : switch for vacuum pumping model:<UL>
+  !+ad_vars  vacuum_model /old/ : switch for vacuum pumping model:<UL>
   !+ad_varc         <LI> = 'old' for old detailed ETR model;
   !+ad_varc         <LI> = 'simple' for simple steady-state model with comparison to ITER cryopumps</UL>
   character(len=6) :: vacuum_model = 'old'
@@ -3601,7 +3601,7 @@ module constraint_variables
   !+ad_varc                 (constraint equation 8)
   real(kind(1.0D0)) :: walalw = 1.0D0
   
-  !+ad_vars  taulimit : Lower limit on taup/taueff, the ratio of alpha particle to energy confinement times
+  !+ad_vars  taulimit /5.0/: Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
   real(kind(1.0D0)) :: taulimit = 5.0D0  
   !+ad_vars  ftaulimit /1.0/ : f-value for lower limit on taup/taueff, the ratio of alpha particle to energy confinement times
   !+ad_varc                   (constraint equation 62, iteration variable 110)

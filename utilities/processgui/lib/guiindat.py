@@ -19,9 +19,9 @@ import argparse
 OMISSIONS = list()
 
 # ioptimz values
-ioptimz_des = {"-1": "for no optimisation, HYBRD only",
+ioptimz_des = {"-1": "for no optimisation HYBRD only",
                "0": "for HYBRD and VMCON (not recommended)",
-               "1": "for optimisation, VMCON only"}
+               "1": "for optimisation VMCON only"}
 
 class BColours:
     HEADER = '\033[95m'
