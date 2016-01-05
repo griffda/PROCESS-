@@ -92,7 +92,7 @@ module numerics
 
   implicit none
   integer, private :: i, j      ! Loop counters
-  
+
   public
 
   !+ad_vars  ipnvars /114/ FIX : total number of variables available for iteration
@@ -149,12 +149,12 @@ module numerics
        !+ad_varc  <LI> (14) pulse length
        'pulse length.         ', &
        !+ad_varc  <LI> (15) plant availability factor (N.B. requires
-       !+ad_varc            iavail=1 to be set) </UL>
+       !+ad_varc            iavail=1 to be set)
        'plant availability.   ', &
        !+ad_varc  <LI> (16) linear combination of major radius (minimised) and pulse length (maximised)
        !+ad_varc              note: FoM should be minimised only!
        'min R0, max tau_burn. ', &
-       !+ad_varc  <LI> (17) net electrical output
+       !+ad_varc  <LI> (17) net electrical output </UL>
        'net electrical output.' /)
 
   !+ad_vars  ncalls : number of function calls during solution
@@ -175,16 +175,16 @@ module numerics
 
   !+ad_vars  icc(ipeqns) /1,2,5,7,9,10,11,14,17,24,27,33,35,36/ :
   !+ad_varc           array defining which constraint equations to activate
-  !+ad_varc           (see lablcc for descriptions)  
+  !+ad_varc           (see lablcc for descriptions)
   ! integer, dimension(ipeqns) :: icc = 0
-  ! MDK If no constraints are specified in the input file, the icc array is now 
-  ! populated with its default values in input.f90.  
-  ! This may not have been the best method, in hindsight. 
+  ! MDK If no constraints are specified in the input file, the icc array is now
+  ! populated with its default values in input.f90.
+  ! This may not have been the best method, in hindsight.
   ! The declaration statement below must be included in this format to enable the
-  ! dictionaries to be created.  The initialised values must be zero, because 
+  ! dictionaries to be created.  The initialised values must be zero, because
   ! this is tested in input.f90.
   ! The dictionaries will now show icc = 0 by default.
-  
+
   integer, dimension(ipeqns) :: icc = (/ &
        0,  &  !  1
        0,  &  !  2
@@ -252,11 +252,11 @@ module numerics
        0,  &  !  64
        0   &  !  65
        /)
-  
-       
-  !+ad_vars  active_constraints(ipeqns) : Logical array showing which constraints are active       
-  logical, dimension(ipeqns) :: active_constraints = .false.  
-  
+
+
+  !+ad_vars  active_constraints(ipeqns) : Logical array showing which constraints are active
+  logical, dimension(ipeqns) :: active_constraints = .false.
+
   !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
   !+ad_varc                   (starred ones are turned on by default):<UL>
   character(len=33), dimension(ipeqns) :: lablcc = (/ &
@@ -506,7 +506,7 @@ module numerics
        0,  &  !  105
        0,  &  !  106
        0,  &  !  107
-       0,  &  !  108 
+       0,  &  !  108
        0,  &  !  109
        0,  &  !  110
        0,  &  !  111
@@ -518,7 +518,7 @@ module numerics
   !+ad_varc                   (starred ones are turned on by default):<UL>
   ! WARNING These labels are used as variable names by write_new_in_dat.py, and possibly
   ! othr python utilities, so they cannot easily be changed.
-  character(len=9), dimension(ipnvars) :: lablxc = (/ &     
+  character(len=9), dimension(ipnvars) :: lablxc = (/ &
        !+ad_varc  <LI> ( 1) aspect
        'aspect   ', &
        !+ad_varc  <LI> ( 2) bt
@@ -737,22 +737,22 @@ module numerics
        'breeder_f', &
        !+ad_varc  <LI> (109) ralpne: thermal alpha density / electron density
        'ralpne   ', &
-       !+ad_varc  <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha particle 
+       !+ad_varc  <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha particle
        !+ad_varc       to energy confinement times
        'ftaulimit', &
-       !+ad_varc  <LI> (111) fniterpump: f-value for constraint that  
+       !+ad_varc  <LI> (111) fniterpump: f-value for constraint that
        !+ad_varc       number of vacuum pumps <  TF coils</UL>
        'fniterpump',  &
-       !+ad_varc  <LI> (112) fzeffmax: f-value for max Zeff </UL> 
+       !+ad_varc  <LI> (112) fzeffmax: f-value for max Zeff </UL>
        'fzeffmax',  &
-       !+ad_varc  <LI> (113) ftaucq: f-value for minimum quench time </UL> 
+       !+ad_varc  <LI> (113) ftaucq: f-value for minimum quench time </UL>
        'ftaucq',  &
-       !+ad_varc  <LI> (114) fw_channel_length: Length of a single first wall channel </UL> 
+       !+ad_varc  <LI> (114) fw_channel_length: Length of a single first wall channel </UL>
        'fw_channel_l'  &
        /)
-  
+
   character(len=9), dimension(:), allocatable :: name_xc
-  
+
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
   real(kind(1.0D0)) :: sqsumsq = 0.0D0
   !+ad_vars  epsfcn /1.0e-3/ : finite difference step length for HYBRD/VMCON derivatives
@@ -767,15 +767,15 @@ module numerics
   !+ad_vars  boundl(ipnvars) : lower bounds used on ixc variables during
   !+ad_varc                    VMCON optimisation runs
   real(kind(1.0D0)), dimension(ipnvars) :: boundl = (/ &
-       1.100D0, &  !  1 
-       0.010D0, &  !  2 
-       0.100D0, &  !  3 
-       5.000D0, &  !  4 
-       0.001D0, &  !  5 
-       1.00D19, &  !  6 
-       1.00D-6, &  !  7 
-       0.001D0, &  !  8 
-       0.001D0, &  !  9 
+       1.100D0, &  !  1
+       0.010D0, &  !  2
+       0.100D0, &  !  3
+       5.000D0, &  !  4
+       0.001D0, &  !  5
+       1.00D19, &  !  6
+       1.00D-6, &  !  7
+       0.001D0, &  !  8
+       0.001D0, &  !  9
        0.100D0, &  !  10
        1.00D-3, &  !  11
        1.000D5, &  !  12
@@ -886,15 +886,15 @@ module numerics
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
   !+ad_varc                    VMCON optimisation runs
   real(kind(1.0D0)), dimension(ipnvars) :: boundu = (/ &
-       10.00D0, &  !  1 
-       100.0D0, &  !  2 
-       10.00D0, &  !  3 
-       150.0D0, &  !  4 
-       1.000D0, &  !  5 
-       1.00D21, &  !  6 
-       1.000D0, &  !  7 
-       1.000D0, &  !  8 
-       1.000D0, &  !  9 
+       10.00D0, &  !  1
+       100.0D0, &  !  2
+       10.00D0, &  !  3
+       150.0D0, &  !  4
+       1.000D0, &  !  5
+       1.00D21, &  !  6
+       1.000D0, &  !  7
+       1.000D0, &  !  8
+       1.000D0, &  !  9
        3.000D0, &  !  10
        1.000D3, &  !  11
        1.500D8, &  !  12
@@ -1245,7 +1245,7 @@ contains
          gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
          liwa,ilower,iupper,bndl,bndu)
 
-    !  If VMCON has exited with error code 5 try another run using a multiple of 
+    !  If VMCON has exited with error code 5 try another run using a multiple of
     !  the identity matrix as input for the Hessian b(n,n).
     !  Only do this if VMCON has not iterated (nviter=1).
 
@@ -1257,7 +1257,7 @@ contains
           xv(ii) = xcm(ii)	 !  Re-initialise iteration values
        end do
        if (verbose == 1) then
-          write(*,*) 'VMCON error code = 5.  Rerunning VMCON using a new'  
+          write(*,*) 'VMCON error code = 5.  Rerunning VMCON using a new'
           write(*,*) 'initial estimate of the second derivative matrix.'
        end if
 

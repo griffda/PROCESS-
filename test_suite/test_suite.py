@@ -558,7 +558,7 @@ def test_mfile_lib(fs):
     # test all MFILEs
     for key in fs.keys():
         if "error_" not in key:
-            file_name = fs[key]["path"] + "ref.MFILE.DAT"
+            file_name = "test_area/{0}/new.MFILE.DAT".format(key)
             results.append(mf.test(file_name))
 
     sys.stdout = sys.__stdout__
@@ -572,7 +572,7 @@ def test_mfile_lib(fs):
         msg += BColours.OKGREEN + "OK" + BColours.ENDC
 
     else:
-        lmsg = msg + "OK\n"
+        lmsg = msg + "ERROR\n"
         msg += BColours.FAIL + "ERROR" + BColours.ENDC
 
     print(msg)
@@ -598,7 +598,8 @@ def test_in_dat_lib(fs):
     # test all MFILEs
     for key in fs.keys():
         if "error_" not in key:
-            file_name = fs[key]["path"] + "ref.IN.DAT"
+            file_name = "test_area/{0}/IN.DAT".format(key)
+            # file_name = fs[key]["path"] + "IN.DAT"
             results.append(indat.test(file_name))
 
     sys.stdout = sys.__stdout__
@@ -612,7 +613,7 @@ def test_in_dat_lib(fs):
         msg += BColours.OKGREEN + "OK" + BColours.ENDC
 
     else:
-        lmsg = msg + "OK\n"
+        lmsg = msg + "ERROR\n"
         msg += BColours.FAIL + "ERROR" + BColours.ENDC
 
     print(msg)
@@ -638,8 +639,13 @@ def test_plot_proc(fs):
     # test all MFILEs
     for key in fs.keys():
         if "error_" not in key:
-            file_name = fs[key]["path"] + "ref.MFILE.DAT"
+            file_name = "test_area/{0}/new.MFILE.DAT".format(key)
+            # file_name = fs[key]["path"] + "new.MFILE.DAT"
             results.append(pp.test(file_name))
+
+            if results[-1]:
+                subprocess.call(["mv", "ref.SUMMARY.pdf", "test_area/{0}/".
+                                format(key)])
 
     sys.stdout = sys.__stdout__
 
@@ -650,9 +656,8 @@ def test_plot_proc(fs):
     if len(results) == results.count(True):
         lmsg = msg + "OK\n"
         msg += BColours.OKGREEN + "OK" + BColours.ENDC
-
     else:
-        lmsg = msg + "OK\n"
+        lmsg = msg + "ERROR\n"
         msg += BColours.FAIL + "ERROR" + BColours.ENDC
 
     print(msg)
