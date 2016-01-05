@@ -1219,6 +1219,12 @@ contains
     call ovarst(ofile, 'First wall coolant type', '(fwcoolant)',cstring)   
     call ovarre(ofile, 'Wall thickness of first wall coolant channels (m)', '(fw_wall)',fw_wall)    
     call ovarre(ofile, 'Channel roughness (m)', '(roughness)', roughness)
+    
+    call ovarrf(ofile, 'Inlet temperature of first wall coolant (K)', '(fwinlet)', fwinlet)
+    call ovarrf(ofile, 'Outlet temperature of first wall coolant (K)', '(fwoutlet)', fwoutlet)
+    call ovarrf(ofile, 'Inlet temperature of blanket coolant (K)', '(inlet_temp)', inlet_temp)
+    call ovarrf(ofile, 'Outlet temperature of blanket coolant (K)', '(outlet_temp)', outlet_temp)
+   
     call ovarre(ofile, 'First wall coolant mass flow rate (kg/s)', '(mffw)', mffw, 'OP ')
     call ovarre(ofile, 'Blanket coolant mass flow rate (kg/s)', '(mfblkt)', mfblkt, 'OP ')
     ! Total coolant flow rate (if they are the same coolant)
@@ -1459,7 +1465,7 @@ contains
         deltat_coolant, channel_area, cfi, rhofi, cfo, rhofo, &
         kfmean, viscfmean, velocity, deltat_solid_lower_bound, deltat_solid_1D, &
         onedload, effective_area_for_heat_transfer,diagonal, mean_distance, &
-        mean_width,masflx
+        mean_width,masflx, nuclear_heat_per_area
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1474,8 +1480,11 @@ contains
 
     !  Heat generation in the first wall due to neutron flux deposited in the material (W/m3)
     qppp = 1.0D6 * pnuc_deposited / fwvol
+    ! Note that the full first wall volume is used including coolant,
+    ! even though the nuclear heating in the coolant is small.    
+    nuclear_heat_per_area = qppp * thickness
        
-    !  Heat flux incident on the first wall surface from electromagnetic radiation flux (W/m2)      
+    !  Heat flux incident on the first wall surface (W/m2)      
     qpp = 1.0D6 * prad_incident / area
     
     if (fwcoolant == 'helium') coolant=1
@@ -1495,9 +1504,7 @@ contains
     cfmean    = (cfi + cfo)/2.0d0        
       
     ! MDK Heat load per unit length of one first wall pipe
-    ! Note that the full first wall volume is used including coolant,
-    ! even though the nuclear heating in the coolant is small.
-    load = qppp * pitch * thickness + qpp * pitch
+    load = (nuclear_heat_per_area + qpp) * pitch
     ! Coolant mass flow rate (kg/s): use mean properties  
     massrate = fw_channel_length * load / cfmean / (fwoutlet - fwinlet)
     ! Coolant mass flux in a single channel (kg/m2/s)    
@@ -1579,18 +1586,19 @@ contains
     
     call oheadr(ofile, 'Heat transfer parameters at the coolant outlet: ' // label)     
     call ovarre(ofile, 'Radius of coolant channel (m)', '(afw)', afw, 'OP ')
-    call ovarre(ofile, 'Surface heat flux on first wall (MW) ', '(prad_incident)', afw, 'OP ')
-    call ovarre(ofile, 'Nuclear power deposited  (MW)', '(pnuc_deposited)', pnuc_deposited, 'OP ')
+    call ovarre(ofile, 'Surface heat flux on first wall (W/m2) ', '(qpp)', qpp, 'OP ')
+    call ovarre(ofile, 'Nuclear power deposited in first wall per unit area (W/m2)', '', nuclear_heat_per_area, 'OP ')
     call ovarre(ofile, 'Length of a single coolant channel (all in parallel) (m)', '(fw_channel_length)', fw_channel_length, 'OP ')
     call ovarre(ofile, 'Pitch of coolant channels (m)', '(pitch)', pitch, 'OP ')
     call ovarre(ofile, 'Thermal conductivity of first wall material (W/K/m)', '(tkfw)', tkfw, 'OP ')
     call ovarre(ofile, 'Coolant density (kg/m3)', '(rhofo)', rhofo, 'OP ')
     call ovarre(ofile, 'Coolant mass flow rate in one channel (kg/s)', '(massrate)', massrate, 'OP ')
     call ovarre(ofile, 'Coolant velocity (m/s)', '(velocity)', velocity, 'OP ')
-    call ovarre(ofile, 'Bulk coolant temperature', '(fwoutlet)', fwoutlet, 'OP ')
+    call ovarre(ofile, 'Outlet temperature of first wall coolant (K)', '(fwoutlet)', fwoutlet, 'OP ')
+    
     call ovarre(ofile, 'Heat transfer coefficient', '(hcoeff)', hcoeff, 'OP ')
-    call ovarre(ofile, 'Temperature drop in the wall material (1-D model)', '(deltat_solid)', deltat_solid, 'OP ')
-    call ovarre(ofile, 'Temperature drop in the coolant', '(deltat_coolant)', deltat_coolant, 'OP ')
+    call ovarre(ofile, 'Temperature drop in the wall material (simple model)', '(deltat_solid)', deltat_solid, 'OP ')
+    call ovarre(ofile, 'Temperature drop in the coolant (wall to bulk)', '(deltat_coolant)', deltat_coolant, 'OP ')
     call ovarre(ofile, 'First wall temperature (excluding armour) (K)', '(tpeakfw)', tpeakfw, 'OP ')    
     call ovarre(ofile, 'Temperature drop in the wall material: 1D estimate', '(deltat_solid_1D)', deltat_solid_1D, 'OP ')
     
@@ -1801,10 +1809,7 @@ contains
     call ovarre(ofile, 'Blanket coolant pressure (Pa)', '(blpressure)', blpressure)
     call ovarre(ofile, 'Radius of first wall cooling channels (m)', '(afw)', afw)
     call ovarre(ofile, 'Wall thickness of first wall coolant channels (m)', '(fw_wall)', fw_wall)
-    call ovarrf(ofile, 'Inlet temperature of blanket coolant (K)', '(inlet_temp)', inlet_temp)
-    call ovarrf(ofile, 'Outlet temperature of blanket coolant (K)', '(outlet_temp)', outlet_temp)
-    call ovarrf(ofile, 'Inlet temperature of first wall coolant (K)', '(fwinlet)', fwinlet)
-    call ovarrf(ofile, 'Outlet temperature of first wall coolant (K)', '(fwoutlet)', fwoutlet)
+
     call ovarrf(ofile, 'Allowable temperature of first wall material, excluding armour (K)', '(tfwmatmax)', tfwmatmax)
     call ovarrf(ofile, 'Actual peak temperature of first wall material (K)', '(tpeak)', tpeak, 'OP ')
     call ovarre(ofile, 'Allowable nominal neutron fluence at first wall (MW.year/m2)', '(abktflnc)', abktflnc)    
