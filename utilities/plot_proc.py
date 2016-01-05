@@ -43,85 +43,6 @@ nbshield_colour = 'gray'
 
 thin = 0
 
-
-# Setup command line arguments
-parser = argparse.ArgumentParser(description="Produces a two page summary of the PROCESS MFILE output, using the MFILE.  "
-                                             "For info contact rich.kemp@ccfe.ac.uk or james.morris2@ccfe.ac.uk")
-
-parser.add_argument("-f", metavar='FILENAME', type=str,
-                    default="",
-                    help='specify filename prefix')
-
-parser.add_argument("-s", "--show", help="show plot as well as saving figure", action="store_true")
-
-parser.add_argument("--svg", help="save plots as svg files", action="store_true")
-
-args = parser.parse_args()
-
-# read MFILE
-m_file = mf.MFile(args.f + "MFILE.DAT")
-scan = -1
-bore = m_file.data["bore"].get_scan(scan)
-ohcth = m_file.data["ohcth"].get_scan(scan)
-precomp = m_file.data["precomp"].get_scan(scan)
-gapoh = m_file.data["gapoh"].get_scan(scan)
-tfcth = m_file.data["tfcth"].get_scan(scan)
-deltf = m_file.data["deltf"].get_scan(scan)
-thshield = m_file.data["thshield"].get_scan(scan)
-gapds = m_file.data["gapds"].get_scan(scan)
-ddwi = m_file.data["ddwi"].get_scan(scan)
-shldith = m_file.data["shldith"].get_scan(scan)
-#  vvblgap /0.05/ : gap between vacuum vessel and blanket (m) 
-vvblgap = m_file.data["vvblgap"].get_scan(scan)
-
-blnkith = m_file.data["blnkith"].get_scan(scan)
-fwith = m_file.data["fwith"].get_scan(scan)
-scrapli = m_file.data["scrapli"].get_scan(scan)
-rmajor = m_file.data["rmajor"].get_scan(scan)
-rminor = m_file.data["rminor"].get_scan(scan)
-scraplo = m_file.data["scraplo"].get_scan(scan)
-fwoth = m_file.data["fwoth"].get_scan(scan)
-blnkoth = m_file.data["blnkoth"].get_scan(scan)
-shldoth = m_file.data["shldoth"].get_scan(scan)
-ddwi = m_file.data["ddwi"].get_scan(scan)
-gapsto = m_file.data["gapsto"].get_scan(scan)
-tftsgap = m_file.data["tftsgap"].get_scan(scan)
-tfthko = m_file.data["tfthko"].get_scan(scan)
-vgap2 = m_file.data["vgap2"].get_scan(scan)
-shldtth = m_file.data["shldtth"].get_scan(scan)
-blnktth = m_file.data["blnktth"].get_scan(scan)
-rtot = m_file.data["rtot"].get_scan(scan)
-
-rdewex = m_file.data["rdewex"].get_scan(scan)
-zdewex = m_file.data["zdewex"].get_scan(scan)
-ddwex = m_file.data["ddwex"].get_scan(scan)
-tfno = m_file.data["tfno"].get_scan(scan)
-wwp1 = m_file.data["wwp1"].get_scan(scan)
-wwp2 = m_file.data["wwp2"].get_scan(scan)
-thkwp = m_file.data["thkwp"].get_scan(scan)
-tinstf = m_file.data["tinstf"].get_scan(scan)
-thkcas = m_file.data["thkcas"].get_scan(scan)
-nbshield = m_file.data["nbshield"].get_scan(scan)
-rtanbeam = m_file.data["rtanbeam"].get_scan(scan)
-rtanmax = m_file.data["rtanmax"].get_scan(scan)
-beamwd = m_file.data["beamwd"].get_scan(scan)
-casthi = m_file.data["casthi"].get_scan(scan)
-# Pedestal profile parameters
-ipedestal = m_file.data["ipedestal"].get_scan(scan)
-neped = m_file.data["neped"].get_scan(scan)
-nesep = m_file.data["nesep"].get_scan(scan)
-rhopedn = m_file.data["rhopedn"].get_scan(scan)
-rhopedt = m_file.data["rhopedt"].get_scan(scan)
-tbeta = m_file.data["tbeta"].get_scan(scan)
-teped = m_file.data["teped"].get_scan(scan)
-tesep = m_file.data["tesep"].get_scan(scan)
-alphan = m_file.data["alphan"].get_scan(scan)
-alphat = m_file.data["alphat"].get_scan(scan)
-ne0 = m_file.data["ne0"].get_scan(scan)
-te0 = m_file.data["te0"].get_scan(scan)
-#Plasma
-triang = m_file.data["triang95"].get_scan(scan)
-
 RADIAL_BUILD = ["bore", "ohcth", "precomp", "gapoh", "tfcth",
                 "deltf","thshieldi","gapds",
                  "ddwi", "shldith", "vvblgapi","blnkith", "fwith", "scrapli",
@@ -147,49 +68,7 @@ vertical_lower = ["rminor*kappa", "vgap",
                   "vgap2", 
                   "thshield", 
                   "tftsgap", 
-                  "tfcth"]                  
-               
-# Build the dictionaries of radial and vertical build values and cumulative values
-radial = {} ; cumulative_radial = {}; subtotal = 0
-for item in RADIAL_BUILD:
-    if item == "rminori" or item == "rminoro":
-        build = m_file.data["rminor"].get_scan(scan)
-    elif item == "vvblgapi" or item == "vvblgapo":
-        build = m_file.data["vvblgap"].get_scan(scan)            
-    elif item == "thshieldi" or item == "thshieldo":
-        build = m_file.data["thshield"].get_scan(scan)            
-    elif "ddw" in item:
-        build = m_file.data["ddwi"].get_scan(scan)
-    else:
-        build = m_file.data[item].get_scan(scan)
-        
-    radial[item] = build
-    subtotal += build
-    cumulative_radial[item] = subtotal
-      
-upper = {} ; cumulative_upper = {}; subtotal = 0
-for item in vertical_upper:
-    upper[item] = m_file.data[item].get_scan(scan)
-    subtotal +=upper[item]
-    cumulative_upper[item] = subtotal
-
-lower = {} ; cumulative_lower = {}; subtotal = 0
-for item in vertical_lower:
-    lower[item] = m_file.data[item].get_scan(scan)
-    subtotal -=lower[item]
-    cumulative_lower[item] = subtotal       
-    
-colour_dict = {}
-colour_dict['ohcth'] = solenoid
-colour_dict['tfcth'] = tfc
-colour_dict['thshield'] = thermal_shield
-colour_dict['ddwi'] = vessel
-colour_dict['shldith'] = shield
-colour_dict['blnkith'] = blanket
-colour_dict['rminor'] = plasma
-colour_dict['fwith'] = firstwall
-colour_dict['fwoth'] = firstwall
-            
+                  "tfcth"]                                
 
 ANIMATION_INFO = [("rmajor", "Major radius", "m"),
                   ("rminor", "Minor radius", "m"),
@@ -536,7 +415,6 @@ def toroidal_cross_section(axis, mfile_data, scan=-1):
     axis.set_ylabel('y / m')
     axis.set_title('Toroidal cross-section')
 
-    rbmax = bore + ohcth + precomp + gapoh + tfcth
     arc(axis, rmajor, style='dashed')
     
     # Colour in the main components
@@ -1900,6 +1778,7 @@ if __name__ == '__main__':
     gapsto = m_file.data["gapsto"].get_scan(scan)
     tfthko = m_file.data["tfthko"].get_scan(scan)
     rdewex = m_file.data["rdewex"].get_scan(scan)
+    zdewex = m_file.data["zdewex"].get_scan(scan)    
     ddwex = m_file.data["ddwex"].get_scan(scan)
     tfno = m_file.data["tfno"].get_scan(scan)
     wwp1 = m_file.data["wwp1"].get_scan(scan)
@@ -1927,6 +1806,47 @@ if __name__ == '__main__':
     te0 = m_file.data["te0"].get_scan(scan)
     # Plasma
     triang = m_file.data["triang95"].get_scan(scan)
+
+# Build the dictionaries of radial and vertical build values and cumulative values
+    radial = {} ; cumulative_radial = {}; subtotal = 0
+    for item in RADIAL_BUILD:
+        if item == "rminori" or item == "rminoro":
+            build = m_file.data["rminor"].get_scan(scan)
+        elif item == "vvblgapi" or item == "vvblgapo":
+            build = m_file.data["vvblgap"].get_scan(scan)            
+        elif item == "thshieldi" or item == "thshieldo":
+            build = m_file.data["thshield"].get_scan(scan)            
+        elif "ddw" in item:
+            build = m_file.data["ddwi"].get_scan(scan)
+        else:
+            build = m_file.data[item].get_scan(scan)
+        
+    radial[item] = build
+    subtotal += build
+    cumulative_radial[item] = subtotal
+    
+    upper = {} ; cumulative_upper = {}; subtotal = 0
+    for item in vertical_upper:
+        upper[item] = m_file.data[item].get_scan(scan)
+        subtotal +=upper[item]
+        cumulative_upper[item] = subtotal
+
+    lower = {} ; cumulative_lower = {}; subtotal = 0
+    for item in vertical_lower:
+        lower[item] = m_file.data[item].get_scan(scan)
+        subtotal -=lower[item]
+        cumulative_lower[item] = subtotal       
+    
+    colour_dict = {}
+    colour_dict['ohcth'] = solenoid
+    colour_dict['tfcth'] = tfc
+    colour_dict['thshield'] = thermal_shield
+    colour_dict['ddwi'] = vessel
+    colour_dict['shldith'] = shield
+    colour_dict['blnkith'] = blanket
+    colour_dict['rminor'] = plasma
+    colour_dict['fwith'] = firstwall
+    colour_dict['fwoth'] = firstwall
 
     # read MFILE
     # m_file = mf.MFile(args.f)
