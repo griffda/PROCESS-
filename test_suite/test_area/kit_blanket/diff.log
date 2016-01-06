@@ -1,0 +1,51 @@
+
+PROCESS Test Suite
+
+Test name: kit_blanket
+Difference value: 5.0%
+
+Total of 13 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+aintmass                                	3.62e+06  	0         	100.00    
+coldmass                                	4.67e+07  	4.43e+07  	5.12      
+total land costs                        	626       	468       	25.33     
+xarc(5)                                 	16.5      	4.49      	72.79     
+xarc(4)                                 	14.2      	8.95      	37.13     
+road improvements                       	193       	34        	82.36     
+gsm3                                    	9.52e+05  	8.87e+05  	6.74      
+qss/1.0d6                               	0.0207    	0.019     	8.15      
+sqsumsq                                 	1.57e-09  	1.46e-09  	7.32      
+yarc(3)                                 	8.48      	0         	100.00    
+divlife                                 	4.06      	3.84      	5.25      
+yarc(4)                                 	6.11      	-8.96     	246.71    
+clgsmass                                	2.07e+06  	1.97e+06  	5.16      
+
+
+There are 15 variables in ref NOT IN new:
+
+top first wall vertical thickness (m)
+yctfc(4)
+yctfc(2)
+plasma top position, vertical (m)
+yctfc(1)
+xctfc(2)
+fhetot
+plasma top position, radial (m)
+xctfc(1)
+dhecoil
+awphec/ap
+xctfc(3)
+top scrape-off vertical thickness (m)
+yctfc(3)
+xctfc(4)
+
+
+There are 5 variables in new NOT IN ref:
+
+vgaptop
+ptop radial
+fwtth
+ptop vertical
+cboot

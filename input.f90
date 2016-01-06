@@ -1790,6 +1790,7 @@ contains
        case ('secondary_cycle')
           call parse_int_variable('secondary_cycle', secondary_cycle, 0, 4, &
                'Switch for blanket thermodynamic model')
+               
        case ('afwi')
           call parse_real_variable('afwi', afwi, 1.0D-3, 0.05D0, &
                'I/B fw/blkt coolant channel inner radius (m)')

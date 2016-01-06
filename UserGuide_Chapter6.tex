@@ -887,7 +887,7 @@ The PROCESS folder structure is shown below. The test suite folder (\textbf{test
 \tikzstyle{selected}=[draw=red,fill=red!30]
 \tikzstyle{optional}=[dashed,fill=gray!50]
 
-\begin{figure}[!ht]
+\begin{figure}[!hb]
 \centering
 \begin{tikzpicture}[%
   grow via three points={one child at (0.5,-0.7) and
@@ -932,26 +932,26 @@ the test.}
 \label{fig:test suite struct}
 \end{figure}
 
-subsubsection{Adding a reference case}
-
-To add a reference case do the following:
+\subsubsection{Adding a reference case}
+To add a reference case if you have a local PROCESS repository:
 
 \begin{enumerate}
   \item Have an IN.DAT that works with the current version of PROCESS
-  \item \textbf{Run PROCESS} to create an OUT.DAT and MFILE.DAT
-  \item Create a folder in the location \textbf{/process/test\_suite/test\_files/[test\_name]} with the name of the test case
-  \item Rename your IN.DAT, OUT.DAT and MFILE.DAT to \textbf{ref.IN.DAT}, \textbf{ref.MFILE.DAT} and \textbf{ref.OUT.DAT}
-  \item Copy reference files to the folder you created
-  \item Run test suite to check it works
-  \item Push to GitLab (see instructions in PROCESS manual)
+  \item Run PROCESS to create an OUT.DAT and MFILE.DAT
+  \item Create a folder in the location \textbf{/my\_develop/test\_suite/test\_files/[test\_name]} with a suitable name for the test case (if your local PROCESS folder is \texttt{my\_develop}).
+  \item Copy your IN.DAT, OUT.DAT and MFILE.DAT into this folder
+  \item Copy IN.DAT as \textbf{ref.IN.DAT}
+  \item Rename OUT.DAT as \textbf{ref.OUT.DAT}
+  \item Rename MFILE.DAT as \textbf{ref.MFILE.DAT}
+  \item \texttt{cd ../..}  to return to test\_suite folder
+  \item \texttt{test\_suite.py}  to run the test suite to check it works
+  \item Commit to Git locally and push to the central repository (see instructions in PROCESS manual)
 \end{enumerate}
 
 \subsubsection{Running the Test Suite}
 
-To run the test suite the user should go to the folder \textbf{/process/test\_suite/} and then run the Python file \textbf{test\_suite.py}. The test suite Python script has the following optional arguments
-
+To run the test suite the user should go to the folder \textbf{/process/test\_suite/} and then run the Python file \textbf{test\_suite.py}. The test suite Python script has the following optional arguments.\\
 \begin{verbatim}
-
  python test_suite.py [options]
 
  -h - -help         show usage
@@ -976,7 +976,6 @@ To run the test suite the user should go to the folder \textbf{/process/test\_su
 
 \end{verbatim}
 
-\
 
 \subsubsection{Test Suite Output Formatting}
 

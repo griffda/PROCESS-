@@ -1238,20 +1238,19 @@ module fwbs_variables
   !+ad_vars  <P><B>The following are used in the thermodynamic blanket model </B><P>
   
   !+ad_vars  primary_pumping /0/ : Switch for pumping of primary coolant (06/01/2016):<UL>
-  !+ad_varc     <LI> = 0 User sets mechanical pumping power directly;
-  !+ad_varc              (htpmw_blkt, htpmw_fw);
+  !+ad_varc     <LI> = 0 User sets mechanical pumping power directly (htpmw_blkt, htpmw_fw)
+  !+ad_varc              (peak first wall temperature is not calculated);
   !+ad_varc     <LI> = 1 User sets mechanical pumping power as a fraction of thermal power removed by coolant 
-  !+ad_varc              (fpumpblkt, fpumpfw);
-  !+ad_varc     <LI> = 2 Mechanical pumping power is calculated. </UL>
+  !+ad_varc              (fpumpblkt, fpumpfw) (peak first wall temperature is not calculated);
+  !+ad_varc     <LI> = 2 Mechanical pumping power and (peak first wall temperature are calculated. </UL>
   integer :: primary_pumping = 2
 
   !+ad_vars  secondary_cycle /0/ : Switch for thermodynamic model of power conversion cycle:<UL>
-  !+ad_varc     <LI> = 0 set efficiency for chosen blanket used (divertor not to primary loop);
-  !+ad_varc     <LI> = 1 set efficiency for chosen blanket used (divertor to primary loop);
-  !+ad_varc     <LI> &gt; 1 detailed thermo-hydraulic and balance-of-plant model -
-  !+ad_varc     <UL><LI> = 2 use input thermal-electric efficiency (etath);
-  !+ad_varc         <LI> = 3 steam Rankine cycle;
-  !+ad_varc         <LI> = 4 supercritical CO2 cycle</UL> </UL>
+  !+ad_varc     <LI> = 0 pre-set efficiency for chosen blanket, from detailed models (divertor not to primary loop);
+  !+ad_varc     <LI> = 1 pre-set efficiency for chosen blanket, from detailed models (divertor to primary loop);
+  !+ad_varc     <LI> = 2 user input thermal-electric efficiency (etath);
+  !+ad_varc     <LI> = 3 steam Rankine cycle;
+  !+ad_varc     <LI> = 4 supercritical CO2 cycle</UL>
   integer :: secondary_cycle = 0
   !+ad_vars  coolwh : Blanket coolant (set via blkttype):<UL>
   !+ad_varc         <LI> = 1 helium;

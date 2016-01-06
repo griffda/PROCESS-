@@ -1,0 +1,115 @@
+ 
+ **************************************************************************************************************
+ ************************************************** PROCESS ***************************************************
+ ************************************** Power Reactor Optimisation Code ***************************************
+ **************************************************************************************************************
+ 
+   Program : ./process.exe
+   Version : 410    Release Date :: 2015-12-08
+ Date/time : Wed Jan  6 14:33:06 GMT 2016
+      User : mkovari (Michael Kovari)
+ Directory : /home/mkovari/PROCESS/my_develop2/test_suite
+ 
+ **************************************************************************************************************
+ 
+ PROCESS 410 : Run on Wed Jan  6 14:33:06 GMT 2016 by Michael Kovari
+ Reactor concept design: Pulsed tokamak model, (c) CCFE
+ demoa 1 ralpne  * Short descriptive title for the run
+ 
+ VMCON Iterations
+           1 vmcon iterations           2 vmcon iterations           3 vmcon iterations
+
+********************************* PROCESS COULD NOT FIND A FEASIBLE SOLUTION *********************************
+
+VMCON error flag (ifail)                                                                                   6     
+
+The quadratic programming technique was restricted
+by an artificial bound, or failed due to a singular
+matrix.
+Try changing the equations in ICC, or
+adding new variables to IXC.
+
+The optimisation required     3 iterations
+There were    260 function calls
+ 
+ VMCON Iterations
+           1 vmcon iterations
+
+********************************* PROCESS COULD NOT FIND A FEASIBLE SOLUTION *********************************
+
+VMCON error flag (ifail)                                                                                   6     
+
+The quadratic programming technique was restricted
+by an artificial bound, or failed due to a singular
+matrix.
+Try changing the equations in ICC, or
+adding new variables to IXC.
+
+The optimisation required     1 iteration
+There were    344 function calls
+ 
+ VMCON Iterations
+           1 vmcon iterations
+
+********************************* PROCESS COULD NOT FIND A FEASIBLE SOLUTION *********************************
+
+VMCON error flag (ifail)                                                                                   6     
+
+The quadratic programming technique was restricted
+by an artificial bound, or failed due to a singular
+matrix.
+Try changing the equations in ICC, or
+adding new variables to IXC.
+
+The optimisation required     1 iteration
+There were    428 function calls
+
+******************************************** Errors and Warnings *********************************************
+
+ PROCESS status flag:   Warning messages                                  
+
+ ID  LEVEL  MESSAGE
+150     2   CHECK: Lower limit of volume averaged electron temperature (te) has been raised 
+  
+132     2   DOOPT: Optimisation solver VMCON returns with ifail /= 1                        
+ Integer diagnostic values for this error:
+   1)              6
+  
+ 93     2   BURN: Negative burn time available; reduce theat or raise PF coil V-s capability
+ Floating point diagnostic values for this error:
+   1)   -1.00000E+01
+   2)    3.55271E-15
+   3)    5.37304E-02
+   4)    1.00000E+01
+  
+135     1   OUTPF: CS not using max current density: further optimisation may be possible   
+  
+132     2   DOOPT: Optimisation solver VMCON returns with ifail /= 1                        
+ Integer diagnostic values for this error:
+   1)              6
+  
+ 93     2   BURN: Negative burn time available; reduce theat or raise PF coil V-s capability
+ Floating point diagnostic values for this error:
+   1)   -1.00000E+01
+   2)    3.55271E-15
+   3)    5.37304E-02
+   4)    1.00000E+01
+  
+135     1   OUTPF: CS not using max current density: further optimisation may be possible   
+  
+132     2   DOOPT: Optimisation solver VMCON returns with ifail /= 1                        
+ Integer diagnostic values for this error:
+   1)              6
+  
+ 93     2   BURN: Negative burn time available; reduce theat or raise PF coil V-s capability
+ Floating point diagnostic values for this error:
+   1)   -1.00000E+01
+   2)    3.55271E-15
+   3)    5.37304E-02
+   4)    1.00000E+01
+  
+135     1   OUTPF: CS not using max current density: further optimisation may be possible   
+  
+
+******************************************* End of PROCESS Output ********************************************
+

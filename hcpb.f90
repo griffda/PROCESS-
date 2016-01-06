@@ -1233,6 +1233,15 @@ contains
     call ovarrf(ofile, 'Allowable temperature of first wall material, excluding armour (K)', '(tfwmatmax)', tfwmatmax)
     call ovarrf(ofile, 'Actual peak temperature of first wall material (K)', '(tpeak)', tpeak, 'OP ')
     
+    call ovarin(ofile, 'Switch for pumping of primary coolant', '(primary_pumping)', primary_pumping)
+    if (primary_pumping == 0) then
+        call ocmmnt(ofile, 'User sets mechanical pumping power directly')	       
+	else if (primary_pumping == 1) then
+	    call ocmmnt(ofile, 'User sets mechanical pumping power as a fraction of thermal power removed by coolant')
+	else if (primary_pumping == 2) then
+	    call ocmmnt(ofile, 'Mechanical pumping power is calculated for first wall and blanket')
+	end if
+    
     call ovarre(ofile, 'Pumping power for first wall (MW)', '(htpmw_fw)', htpmw_fw, 'OP ')
     call ovarre(ofile, 'Pumping power for blanket (MW)', '(htpmw_blkt)', htpmw_blkt, 'OP ')
     call ovarre(ofile, 'Pumping power for divertor (MW)', '(htpmw_div)', htpmw_div, 'OP ')

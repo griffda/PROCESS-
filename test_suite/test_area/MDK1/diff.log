@@ -1,0 +1,63 @@
+
+PROCESS Test Suite
+
+Test name: MDK1
+Difference value: 5.0%
+
+Total of 9 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+aintmass                                	3.17e+06  	0         	100.00    
+gsm3                                    	7.82e+05  	7.22e+05  	7.74      
+coldmass                                	3.9e+07   	3.66e+07  	6.25      
+qss/1.0d6                               	0.0174    	0.0157    	9.39      
+xarc(5)                                 	15.8      	4.25      	73.11     
+xarc(4)                                 	13.6      	8.53      	37.37     
+yarc(3)                                 	7.9       	0         	100.00    
+yarc(4)                                 	5.69      	-8.17     	243.63    
+clgsmass                                	1.65e+06  	1.55e+06  	6.30      
+
+
+There are 19 variables in ref NOT IN new:
+
+top first wall vertical thickness (m)
+yctfc(4)
+pnuc deposited
+yctfc(2)
+xctfc(1)
+plasma top position, vertical (m)
+yctfc(1)
+xctfc(2)
+fhetot
+prad incident
+plasma top position, radial (m)
+2*zdewex
+dhecoil
+awphec/ap
+xctfc(3)
+htpmw min
+top scrape-off vertical thickness (m)
+yctfc(3)
+xctfc(4)
+
+
+There are 17 variables in new NOT IN ref:
+
+mfp
+peaking factor
+primary pumping
+tfc nuc heating
+htpmw shld
+qpp
+zdewex
+vgaptop
+x blanket
+clh1
+ptop radial
+fwtth
+x shield
+ptop vertical
+cboot
+mean nuclear power deposited in first wall per unit area (w/m2)
+htpmw div

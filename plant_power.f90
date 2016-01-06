@@ -1580,10 +1580,8 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    select case (secondary_cycle)
-
     !  Etath from reference. Div power not to primary
-    case (0)  
+    if (secondary_cycle == 0) then
 
 	   !  CCFE HCPB Model (with or without TBR)
 	   if ((iblanket == 1).or.(iblanket == 3)) then
@@ -1595,12 +1593,11 @@ contains
 		  !  HCPB, efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX Feedheat & reheat cycle assumed
           etath = 0.411D0
        else
-          write(*,*) 'iblanket does not have a value in range 1-3.'
-          
+          write(*,*) 'iblanket does not have a value in range 1-3.'          
        end if
 
 	!  Etath from reference. Div power to primary
-    case (1) 
+    else if (secondary_cycle == 1) then
     
 		!  CCFE HCPB Model (with or without TBR)
 	   if ((iblanket == 1).or.(iblanket == 3)) then
@@ -1615,12 +1612,11 @@ contains
 		end if
 
 	!  User input used, etath not changed
-    case (2)  
-
-       return
+    else if (secondary_cycle == 2) then  
+       ! Do nothing
 
     !  Steam Rankine cycle to be used
-    case (3)
+    else if (secondary_cycle == 3) then
 
 		!  CCFE HCPB Model (with or without TBR)
         if ((iblanket == 1).or.(iblanket == 3)) then
@@ -1653,7 +1649,7 @@ contains
        end if
 
     !  Supercritical CO2 cycle to be used
-    case (4)
+    else if (secondary_cycle == 4) then
        !  The same temperature/efficiency correlation is used regardless of 
        !  primary coolant choice.  The turbine inlet temperature is assumed to 
        !  be 20 degrees below the primary coolant outlet temperature.
@@ -1670,10 +1666,9 @@ contains
        end if
        etath = 0.4347D0*log(tturb) - 2.5043D0
 
-    case default 
-        write(*,*) 'secondary_cycle does not appear to have a value within its range (0-4)'
-    
-    end select
+    else 
+        write(*,*) 'secondary_cycle does not appear to have a value within its range (0-4)'    
+    end if
 
   end subroutine plant_thermal_efficiency
 

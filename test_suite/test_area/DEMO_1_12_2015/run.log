@@ -1,0 +1,80 @@
+ 
+ **************************************************************************************************************
+ ************************************************** PROCESS ***************************************************
+ ************************************** Power Reactor Optimisation Code ***************************************
+ **************************************************************************************************************
+ 
+   Program : ./process.exe
+   Version : 410    Release Date :: 2015-12-08
+ Date/time : Wed Jan  6 14:32:57 GMT 2016
+      User : mkovari (Michael Kovari)
+ Directory : /home/mkovari/PROCESS/my_develop2/test_suite
+ 
+ **************************************************************************************************************
+ 
+ PROCESS 410 : Run on Wed Jan  6 14:32:57 GMT 2016 by Michael Kovari
+ Reactor concept design: Pulsed tokamak model, (c) CCFE
+ Michael's test file
+Internal tburn consistency check:  0.344E+04 0.342E+04
+Internal tburn consistency check:  0.344E+04 0.344E+04
+ 
+ VMCON Iterations
+           1 vmcon iterations
+Constraint residuals (sqsumsq) =   3.79723E+00 Convergence parameter =   3.39706E+00
+Internal tburn consistency check:  0.817E+04 0.799E+04
+Internal tburn consistency check:  0.817E+04 0.817E+04
+           2 vmcon iterations
+Constraint residuals (sqsumsq) =   1.11394E+00 Convergence parameter =   3.15474E-01
+Internal tburn consistency check:  0.707E+04 0.714E+04
+Internal tburn consistency check:  0.706E+04 0.707E+04
+           3 vmcon iterations
+Constraint residuals (sqsumsq) =   1.79840E-01 Convergence parameter =   4.41082E-02
+Internal tburn consistency check:  0.714E+04 0.717E+04
+Internal tburn consistency check:  0.714E+04 0.714E+04
+           4 vmcon iterations
+Constraint residuals (sqsumsq) =   1.14894E-02 Convergence parameter =   4.39256E-02
+Internal tburn consistency check:  0.711E+04 0.716E+04
+Internal tburn consistency check:  0.711E+04 0.711E+04
+           5 vmcon iterations
+Constraint residuals (sqsumsq) =   1.83907E-02 Convergence parameter =   7.64733E-03
+Internal tburn consistency check:  0.719E+04 0.720E+04
+           6 vmcon iterations
+Constraint residuals (sqsumsq) =   2.76421E-03 Convergence parameter =   6.54239E-03
+           7 vmcon iterations
+Constraint residuals (sqsumsq) =   5.31828E-03 Convergence parameter =   1.21481E-03
+Internal tburn consistency check:  0.720E+04 0.720E+04
+           8 vmcon iterations
+Constraint residuals (sqsumsq) =   5.55505E-04 Convergence parameter =   2.47461E-03
+           9 vmcon iterations
+Constraint residuals (sqsumsq) =   8.49274E-03 Convergence parameter =   3.98680E-03
+          10 vmcon iterations
+Constraint residuals (sqsumsq) =   1.29979E-02 Convergence parameter =   1.06512E-03
+Internal tburn consistency check:  0.720E+04 0.720E+04
+          11 vmcon iterations
+Constraint residuals (sqsumsq) =   1.61837E-03 Convergence parameter =   7.86934E-04
+          12 vmcon iterations
+Constraint residuals (sqsumsq) =   6.03839E-03 Convergence parameter =   2.44112E-03
+          13 vmcon iterations
+Constraint residuals (sqsumsq) =   1.32576E-02 Convergence parameter =   7.51811E-04
+          14 vmcon iterations
+Constraint residuals (sqsumsq) =   8.05548E-05 Convergence parameter =   3.40536E-05
+          15 vmcon iterations
+Constraint residuals (sqsumsq) =   5.23899E-06 Convergence parameter =   6.90148E-06
+ Convergence parameter < convergence criterion (epsvmc)
+ Root of sum of squares of residuals < tolerance (sqsumsq_tol)
+
+************************************* PROCESS found a feasible solution **************************************
+
+The optimisation required    15 iterations
+There were   1198 function calls
+
+******************************************** Errors and Warnings *********************************************
+
+ PROCESS status flag:   Information messages only                         
+
+ ID  LEVEL  MESSAGE
+135     1   OUTPF: CS not using max current density: further optimisation may be possible   
+  
+
+******************************************* End of PROCESS Output ********************************************
+

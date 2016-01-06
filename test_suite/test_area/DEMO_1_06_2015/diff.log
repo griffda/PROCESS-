@@ -1,0 +1,96 @@
+
+PROCESS Test Suite
+
+Test name: DEMO_1_06_2015
+Difference value: 5.0%
+
+Total of 16 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+aintmass                                	3.29e+06  	0         	100.00    
+gapsto                                  	1         	0.947     	5.40      
+total land costs                        	591       	433       	26.64     
+xarc(5)                                 	15.8      	4.16      	73.69     
+htpmw..                                 	10.8      	2.07      	80.78     
+xarc(4)                                 	13.6      	8.51      	37.47     
+htpmw mech                              	10.2      	1.96      	80.77     
+htpsecmw                                	0.537     	0.103     	80.77     
+htpmw                                   	10.8      	2.07      	80.78     
+gsm3                                    	7.75e+05  	7.04e+05  	9.09      
+coldmass                                	3.77e+07  	3.5e+07   	7.14      
+qss/1.0d6                               	0.0168    	0.015     	10.48     
+road improvements                       	186       	29        	84.39     
+yarc(3)                                 	8.23      	0         	100.00    
+yarc(4)                                 	5.92      	-8.69     	246.67    
+clgsmass                                	1.59e+06  	1.48e+06  	7.34      
+
+
+There are 16 variables in ref NOT IN new:
+
+top first wall vertical thickness (m)
+yctfc(4)
+yctfc(2)
+plasma top position, vertical (m)
+yctfc(1)
+xctfc(2)
+fhetot
+plasma top position, radial (m)
+xctfc(1)
+2*zdewex
+dhecoil
+awphec/ap
+xctfc(3)
+top scrape-off vertical thickness (m)
+yctfc(3)
+xctfc(4)
+
+
+There are 46 variables in new NOT IN ref:
+
+mfp
+peaking factor
+primary pumping
+pdropstraight
+pdrop90
+htpmw shld
+pitch
+deltat coolant
+roughness
+pdrop180
+pumppower
+tkfw
+htpmw fw
+htpmw blkt
+hcoeff
+viscf
+qpp
+deltat solid
+zdewex
+mfblkt
+lambda
+deltap
+vgaptop
+tpeakfw
+clh1
+ptop radial
+coolwh
+fwtth
+velocity
+mf
+vv
+ptop vertical
+mffw
+fw channel length
+fwcoolant
+rhof
+flleng
+mftotal
+massrate
+deltat solid 1d
+reyn
+cboot
+mean nuclear power deposited in first wall per unit area (w/m2)
+coolpin
+rhofo
+htpmw div

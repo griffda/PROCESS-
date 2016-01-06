@@ -1,0 +1,66 @@
+ 
+ **************************************************************************************************************
+ ************************************************** PROCESS ***************************************************
+ ************************************** Power Reactor Optimisation Code ***************************************
+ **************************************************************************************************************
+ 
+   Program : ./process.exe
+   Version : 410    Release Date :: 2015-12-08
+ Date/time : Wed Jan  6 14:33:24 GMT 2016
+      User : mkovari (Michael Kovari)
+ Directory : /home/mkovari/PROCESS/my_develop2/test_suite
+ 
+ **************************************************************************************************************
+ 
+ PROCESS 410 : Run on Wed Jan  6 14:33:24 GMT 2016 by Michael Kovari
+ Reactor concept design: Pulsed tokamak model, (c) CCFE
+ Run Title (change this line using input variable 'runtitle')
+ 
+ VMCON Iterations
+           1 vmcon iterations           2 vmcon iterations           3 vmcon iterations           4 vmcon iterations           5 vmcon iterations           6 vmcon iterations
+
+************************************* PROCESS found a feasible solution **************************************
+
+ WARNING: Power balance for reactor is in error by more than 5 MW.
+ WARNING: Power balance for power plant is in error by more than 5 MW.
+The optimisation required     6 iterations
+There were    347 function calls
+ 
+ VMCON Iterations
+           1 vmcon iterations           2 vmcon iterations           3 vmcon iterations
+
+************************************* PROCESS found a feasible solution **************************************
+
+ WARNING: Power balance for reactor is in error by more than 5 MW.
+ WARNING: Power balance for power plant is in error by more than 5 MW.
+The optimisation required     3 iterations
+There were    517 function calls
+ 
+ VMCON Iterations
+           1 vmcon iterations           2 vmcon iterations           3 vmcon iterations
+
+************************************* PROCESS found a feasible solution **************************************
+
+ WARNING: Power balance for reactor is in error by more than 5 MW.
+ WARNING: Power balance for power plant is in error by more than 5 MW.
+The optimisation required     3 iterations
+There were    687 function calls
+
+******************************************** Errors and Warnings *********************************************
+
+ PROCESS status flag:   Warning messages                                  
+
+ ID  LEVEL  MESSAGE
+150     2   CHECK: Lower limit of volume averaged electron temperature (te) has been raised 
+  
+155     2   CHECK: boundl(6) has been raised to ensure dene > neped                         
+  
+135     1   OUTPF: CS not using max current density: further optimisation may be possible   
+  
+135     1   OUTPF: CS not using max current density: further optimisation may be possible   
+  
+135     1   OUTPF: CS not using max current density: further optimisation may be possible   
+  
+
+******************************************* End of PROCESS Output ********************************************
+

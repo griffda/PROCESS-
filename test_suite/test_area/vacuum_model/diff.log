@@ -1,0 +1,75 @@
+
+PROCESS Test Suite
+
+Test name: vacuum_model
+Difference value: 5.0%
+
+Total of 24 differences above allowed value
+
+Variable                                	ref       	new       	diff (%)  
+----------------------------------------
+strtf2                                  	5.5e+08   	4.92e+08  	10.64     
+thwcndut                                	0.00442   	0.004     	9.56      
+road improvements                       	184       	32.9      	82.14     
+sigvert                                 	2.31e+08  	2.15e+08  	6.85      
+windstrain                              	0.00383   	0.00361   	5.69      
+thkwp                                   	0.505     	0.412     	18.37     
+whtconsh                                	5.84e+04  	4.88e+04  	16.39     
+deflect                                 	-0.00627  	-0.00549  	12.46     
+yarc(3)                                 	7.99      	0         	100.00    
+whtconin                                	6.87e+03  	6.38e+03  	7.19      
+jwdgpro                                 	2.88e+07  	2.7e+07   	6.42      
+yarc(4)                                 	5.75      	-8.61     	249.64    
+sigtcon                                 	-2.87e+08 	-2.52e+08 	12.09     
+whtconcu                                	7.22e+04  	5.89e+04  	18.41     
+aintmass                                	3.15e+06  	0         	100.00    
+acstf                                   	0.00166   	0.00137   	17.79     
+total land costs                        	584       	432       	25.89     
+xarc(5)                                 	15.4      	4.29      	72.22     
+copper strand for tf coil               	80.1      	68        	15.03     
+xarc(4)                                 	13.3      	8.39      	37.07     
+sigttf(1)                               	-3.97e+08 	-3.48e+08 	12.49     
+whtcon                                  	1.54e+05  	1.32e+05  	14.05     
+tf coil radial plates                   	550       	483       	12.13     
+qss/1.0d6                               	0.0181    	0.017     	5.96      
+
+
+There are 19 variables in ref NOT IN new:
+
+top first wall vertical thickness (m)
+yctfc(4)
+pnuc deposited
+yctfc(2)
+plasma top position, vertical (m)
+yctfc(1)
+xctfc(2)
+fhetot
+prad incident
+plasma top position, radial (m)
+xctfc(1)
+2*zdewex
+dhecoil
+awphec/ap
+xctfc(3)
+htpmw min
+top scrape-off vertical thickness (m)
+yctfc(3)
+xctfc(4)
+
+
+There are 14 variables in new NOT IN ref:
+
+mean nuclear power deposited in first wall per unit area (w/m2)
+mfp
+primary pumping
+htpmw shld
+qpp
+peaking factor
+zdewex
+vgaptop
+clh1
+ptop radial
+fwtth
+ptop vertical
+cboot
+htpmw div
