@@ -1618,6 +1618,7 @@ subroutine runtests
   use global_variables
   use numerics
   use process_output
+  use pfcoil_module
   implicit none
   call ovarre(nout,'Binomial coefficients C(5,0): 1', '(binomial(5,0))', binomial(5,0))
   call ovarre(nout,'Binomial coefficients C(5,1): 5', '(binomial(5,1))', binomial(5,1))
@@ -1625,6 +1626,8 @@ subroutine runtests
   call ovarre(nout,'Binomial coefficients C(5,3): 10', '(binomial(5,3))', binomial(5,3))
   call ovarre(nout,'Binomial coefficients C(5,4): 5', '(binomial(5,4))', binomial(5,4))
   call ovarre(nout,'Binomial coefficients C(5,5): 1', '(binomial(5,5))', binomial(5,5))
+  
+  call brookscoil(nout)
 end subroutine runtests
   
 

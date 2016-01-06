@@ -61,7 +61,7 @@ module pfcoil_module
   implicit none
 
   private
-  public :: pfcoil, outpf, outvolt, induct, vsec, bfield
+  public :: pfcoil, outpf, outvolt, induct, vsec, bfield, brookscoil
 
   !  Local variables
 
@@ -2223,6 +2223,8 @@ contains
     !+ad_hisc               if noh is too large
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  06/01/16 MDK Put the self-inductance formula in a function, 
+    !+ad_hist  06/01/16 MDK added Brooks coil test
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2242,7 +2244,7 @@ contains
     real(kind(1.0D0)), allocatable, dimension(:) :: roh,zoh
     real(kind(1.0D0)), dimension(nplas) :: rplasma,zplasma
     real(kind(1.0D0)), dimension(ngc2+nohmax) :: rc,zc,xc,cc,xcin,xcout
-    real(kind(1.0D0)) :: a,b,c,br,bz,deltar,delzoh,psi,r,reqv,rl,rp,r2_16a2
+    real(kind(1.0D0)) :: a,b,c,br,bz,deltar,delzoh,psi,r,reqv,rl,rp
     real(kind(1.0D0)) :: xohpf,xohpl,xpfpl,zp
     integer :: i,ig,ii,ij,j,jj,k,nc,ncoilj,ncoils,nef,noh
 
@@ -2361,18 +2363,10 @@ contains
     if (iohcl /= 0) then
 
        !  OH coil self inductance
-       !  Equation 86, p. 316 of  Formulas and tables for the calculation
-       !  of mutual and self-inductance [Revised], Rosa and Grover,
-       !  Scientific papers of the Bureau of Standards, No. 169, 3rd ed., 1916
-
-       a = rohc            !  mean radius of coil
-       b = 2.0D0*zh(nohc)  !  length of coil
+       a = rohc                 !  mean radius of coil
+       b = 2.0D0*zh(nohc)       !  length of coil
        c = rb(nohc) - ra(nohc)  !  radial winding thickness
-       r = 0.2235D0*(b + c)  !  approx geometric mean distance of cross-section (Grover)
-       r2_16a2 = r*r / (16.0D0*a*a)
-
-       sxlg(nohc,nohc) = rmu0 * a * turns(nohc)**2 * &
-            (log(8.0D0*a/r)*(1.0D0 + 3.0D0*r2_16a2) - (2.0D0 + r2_16a2))
+       sxlg(nohc,nohc) = selfinductance(a,b,c,turns(nohc))
 
        !  OH coil / PF coil mutual inductances
 
@@ -2458,6 +2452,55 @@ contains
 240 format(' Plasma',t9,20(1pe8.1))
 
   end subroutine induct
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  function selfinductance(a,b,c,N)
+    !  Equation 86, p. 316 of  Formulas and tables for the calculation
+    !  of mutual and self-inductance [Revised], Rosa and Grover,
+    !  Scientific papers of the Bureau of Standards, No. 169, 3rd ed., 1916
+    ! a = mean radius of coil
+    ! b = length of coil
+    ! c = radial winding thickness
+    ! N = number of turns
+    real(kind(1.0D0)) :: a,b,c, N, selfinductance, r, r2_16a2    
+    
+    r = 0.2235D0*(b + c)  !  approx geometric mean distance of cross-section (Grover)
+    r2_16a2 = r*r / (16.0D0*a*a)
+
+    selfinductance = rmu0 * a * N**2 * &
+                    (log(8.0D0*a/r)*(1.0D0 + 3.0D0*r2_16a2) - (2.0D0 + r2_16a2))
+  
+  end function selfinductance
+  
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  subroutine brookscoil(outfile)
+    ! http://www.nessengr.com/techdata/brooks/brooks.html  
+    real(kind(1.0D0)) :: a,b,c, N, l, lp
+    character(len=10) :: test    
+    integer, intent(in) :: outfile
+      
+    c = 1.0d0
+    a = 1.5d0 * c
+    b = c
+    N = 1.0d0
+    
+    l = 0.025491d0 * c * 100.0d0 * N**2 * 1.0d-6
+    lp = selfinductance(a,b,c,N)
+    if ((l/lp < 1.05d0).and.(l/lp > 0.95d0)) then 
+        test = 'PASS'
+    else
+        test = 'FAIL'
+    end if
+    call ocmmnt(outfile,'Unit test of self-inductance formula : //test')
+    call ovarre(outfile,'Self-inductance of 1m Brooks coil: standard formula', '(l)',l, 'OP ')
+    call ovarre(outfile,'Self-inductance of 1m Brooks coil: PROCESS formula', '(lp)',lp, 'OP ')
+    call oblnkl(outfile)
+    write(*,*) 'Test of self-inductance formula: '//test
+    
+  end subroutine brookscoil
+
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
