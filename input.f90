@@ -1770,6 +1770,23 @@ contains
 
           !  First wall, blanket, shield settings
 
+       case ('primary_pumping')
+          call parse_int_variable('primary_pumping', primary_pumping, 0, 2, &
+               'Switch for pumping of primary coolant') 
+       case ('htpmw_blkt')
+          call parse_real_variable('htpmw_blkt', htpmw_blkt, 0.0D0, 2.0D2, &
+               'blanket coolant mechanical pumping power (MW)')
+       case ('htpmw_div')
+          call parse_real_variable('htpmw_div', htpmw_div, 0.0D0, 1.0D2, &
+               'divertor coolant mechanical pumping power (MW)')
+       case ('htpmw_fw')
+          call parse_real_variable('htpmw_fw', htpmw_fw, 0.0D0, 2.0D2, &
+               'first wall coolant mechanical pumping power (MW)')
+       case ('htpmw_shld')
+          call parse_real_variable('htpmw_shld', htpmw_shld, 0.0D0, 1.0D2, &
+               'shield and vacuum vessel coolant mechanical pumping power (MW)')               
+                    
+       
        case ('secondary_cycle')
           call parse_int_variable('secondary_cycle', secondary_cycle, 0, 4, &
                'Switch for blanket thermodynamic model')

@@ -1236,6 +1236,14 @@ module fwbs_variables
   integer :: iblanket_thickness = 2
 
   !+ad_vars  <P><B>The following are used in the thermodynamic blanket model </B><P>
+  
+  !+ad_vars  primary_pumping /0/ : Switch for pumping of primary coolant (06/01/2016):<UL>
+  !+ad_varc     <LI> = 0 User sets mechanical pumping power directly;
+  !+ad_varc              (htpmw_blkt, htpmw_fw);
+  !+ad_varc     <LI> = 1 User sets mechanical pumping power as a fraction of thermal power removed by coolant 
+  !+ad_varc              (fpumpblkt, fpumpfw);
+  !+ad_varc     <LI> = 2 Mechanical pumping power is calculated. </UL>
+  integer :: primary_pumping = 2
 
   !+ad_vars  secondary_cycle /0/ : Switch for thermodynamic model of power conversion cycle:<UL>
   !+ad_varc     <LI> = 0 set efficiency for chosen blanket used (divertor not to primary loop);
@@ -1256,44 +1264,45 @@ module fwbs_variables
 
   ! MDK New first wall calculation
   !+ad_vars  fwcoolant /helium/ : first wall coolant (can be different from blanket coolant)
-  !+ad_varc                       'helium' or 'water'  (15/11/27)
+  !+ad_varc                       'helium' or 'water'  (27/11/2015)
   character(len=6) :: fwcoolant = 'helium'
-  !+ad_vars  fw_wall /0.003/ : wall thickness of first wall coolant channels (m) (15/11/27)
+  !+ad_vars  fw_wall /0.003/ : wall thickness of first wall coolant channels (m) (27/11/2015)
   real(kind(1.0D0)) :: fw_wall = 0.003D0
   !+ad_vars  afw /0.006/ : radius of first wall cooling channels (m) (27/11/15)
   real(kind(1.0D0)) :: afw = 0.006D0
   !+ad_vars  pitch /0.020/ : pitch of first wall cooling channels (m) (27/11/15)
   real(kind(1.0D0)) :: pitch = 0.020D0
-  !+ad_vars  fwinlet /623/ : inlet temperature of first wall coolant (K) (15/11/27)
+  !+ad_vars  fwinlet /623/ : inlet temperature of first wall coolant (K) (27/11/2015)
   real(kind(1.0D0)) :: fwinlet = 573.0D0
-  !+ad_vars  fwoutlet /823/ : outlet temperature of first wall coolant (K) (15/11/27)
+  !+ad_vars  fwoutlet /823/ : outlet temperature of first wall coolant (K) (27/11/2015)
   real(kind(1.0D0)) :: fwoutlet = 823.0D0
   !+ad_vars  fwpressure /15.5e6/ : first wall coolant pressure (Pa) (secondary_cycle>1)
   real(kind(1.0D0)) :: fwpressure = 15.5D6
-  !+ad_vars  tpeak : peak first wall temperature (K) (15/11/27)
+  !+ad_vars  tpeak : peak first wall temperature (K) (27/11/2015)
   real(kind(1.0D0)) :: tpeak = 873.0D0
-  !+ad_vars  roughness /1e-6/ : first wall channel roughness epsilon (m) (15/11/27)
+  !+ad_vars  roughness /1e-6/ : first wall channel roughness epsilon (m) (27/11/2015)
   real(kind(1.0D0)) :: roughness = 1.0D-6
-  !+ad_vars  fw_channel_length /4.0/ : Length of a single first wall channel (all in parallel) (m) (15/11/27)
+  !+ad_vars  fw_channel_length /4.0/ : Length of a single first wall channel (all in parallel) (m) (27/11/2015)
   !+ad_varc                            (iteration variable 114, useful for constraint equation 39)
   real(kind(1.0D0)) :: fw_channel_length = 4.0D0
-  !+ad_vars  peaking_factor /1.0/ : peaking factor for first wall heat loads (15/11/27)
+  !+ad_vars  peaking_factor /1.0/ : peaking factor for first wall heat loads (27/11/2015)
   !+ad_varc                         (Applied separately to inboard and outboard loads.
-  !+ad_varc                         Applies to both neutron and surface loads.)
+  !+ad_varc                         Applies to both neutron and surface loads.
+  !+ad_varc                         Only used to calculate peak temperature - not the coolant flow rate.)
   real(kind(1.0D0)) :: peaking_factor = 1.0D0
 
   ! MDK Blanket has not changed as much, but some new variable names
-  !+ad_vars  blpressure /15.5e6/ : blanket coolant pressure (Pa) (secondary_cycle>1) (15/11/27)
+  !+ad_vars  blpressure /15.5e6/ : blanket coolant pressure (Pa) (secondary_cycle>1) (27/11/2015)
   real(kind(1.0D0)) :: blpressure = 15.5D6
-  !+ad_vars  inlet_temp /573.0/ : inlet temperature of blanket coolant  (K) (secondary_cycle>1) (15/11/27)
+  !+ad_vars  inlet_temp /573.0/ : inlet temperature of blanket coolant  (K) (secondary_cycle>1) (27/11/2015)
   real(kind(1.0D0)) :: inlet_temp = 573.0D0
-  !+ad_vars  outlet_temp /823.0/ : outlet temperature of blanket coolant (K) (15/11/27)<UL>
+  !+ad_vars  outlet_temp /823.0/ : outlet temperature of blanket coolant (K) (27/11/2015)<UL>
   !+ad_varc         <LI> (secondary_cycle>1);
   !+ad_varc         <LI> input if coolwh=1 (helium), calculated if coolwh=2 (water)</UL>
   real(kind(1.0D0)) :: outlet_temp = 823.0D0
 
 
-  !+ad_vars  coolp /15.5e6/ : blanket coolant pressure (Pa) stellarator ONLY (15/11/27)
+  !+ad_vars  coolp /15.5e6/ : blanket coolant pressure (Pa) stellarator ONLY (27/11/2015)
   real(kind(1.0D0)) :: coolp = 15.5D6
 
 
@@ -2392,14 +2401,14 @@ module heat_transport_variables
   real(kind(1.0D0)) :: helpow = 0.0D0
   !+ad_vars  htpmw  :: heat transport system electrical pump power (MW)
   real(kind(1.0D0)) :: htpmw = 0.0D0
-  !+ad_vars  htpmw_blkt : blanket coolant mechanical pumping power (MW)
-  real(kind(1.0D0)) :: htpmw_blkt = 0.0D0
-  !+ad_vars  htpmw_div : divertor coolant mechanical pumping power (MW)
-  real(kind(1.0D0)) :: htpmw_div = 0.0D0
-  !+ad_vars  htpmw_fw : first wall coolant mechanical pumping power (MW)
-  real(kind(1.0D0)) :: htpmw_fw = 0.0D0
-  !+ad_vars  htpmw_shld : shield and vacuum vessel coolant mechanical pumping power (MW)
-  real(kind(1.0D0)) :: htpmw_shld = 0.0D0
+  !+ad_vars  htpmw_blkt /10.0/ blanket coolant mechanical pumping power (MW)
+  real(kind(1.0D0)) :: htpmw_blkt = 10.0D0
+  !+ad_vars  htpmw_div /10.0/ divertor coolant mechanical pumping power (MW)
+  real(kind(1.0D0)) :: htpmw_div = 10.0D0
+  !+ad_vars  htpmw_fw /10.0/ first wall coolant mechanical pumping power (MW)
+  real(kind(1.0D0)) :: htpmw_fw = 10.0D0
+  !+ad_vars  htpmw_shld /1.0/ shield and vacuum vessel coolant mechanical pumping power (MW)
+  real(kind(1.0D0)) :: htpmw_shld = 1.0D0
   !+ad_vars  htpsecmw : Waste power lost from primary coolant pumps (MW)
   !+ad_varc
   real(kind(1.0D0)) :: htpsecmw = 0.0D0

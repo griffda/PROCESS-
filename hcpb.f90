@@ -224,7 +224,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         
-	! MDK (15/11/27) 
+	! MDK (27/11/2015) 
 	fwith = 2*afw + 2*fw_wall
 	fwoth = fwith
 	
@@ -808,7 +808,7 @@ contains
     !vffwo = afwo*afwo/(bfwo*bfwo)  !  outboard FW coolant void fraction
     !vffwm = (vffwi + vffwo) / 2    !  mean FW coolant void fraction
     
-    ! (15/11/27)
+    ! (27/11/2015)
     vffwi = pi*afw**2/(pitch*fwith)  !  inboard FW coolant void fraction
     vffwo = vffwi
     vffwm = vffwi
@@ -1000,6 +1000,7 @@ contains
     !+ad_prob  None
     !+ad_hist  11/02/15 JM  Initial version
     !+ad_hist  10/06/15 MDK Corrected surface heat flux on first wall #309
+    !+ad_hist  06/01/16 MDK Improved options for pumping power #347 
     !+ad_stat  Okay
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1028,32 +1029,25 @@ contains
     psurffwo = pradfw * fwareaob/fwarea + porbitlossmw + palpfwmw
     psurffwi = pradfw * (1.0D0 - fwareaob/fwarea)
 	
-	!  Simple model
-	if ((secondary_cycle == 0).or.(secondary_cycle == 1)) then
-	
-		!  First wall pumping power (MW)
+	if (primary_pumping == 0) then
+	    ! User sets mechanical pumping power directly (primary_pumping_power)
+	    ! Values of htpmw_blkt, htpmw_div, htpmw_fw, htpmw_shld set in input file	 
+	       
+	else if (primary_pumping == 1) then
+	    ! User sets mechanical pumping power as a fraction of thermal power removed by coolant 
 		htpmw_fw = fpumpfw * (pnucfw + psurffwi + psurffwo)
-
-		!  Blanket pumping power (MW)
 		htpmw_blkt = fpumpblkt * pnucblkt	
+        htpmw_shld = fpumpshld * pnucshld
+        htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)		    
 	
-	else
-		!  Detailed model
-		call thermo_hydraulic_model				
+	else if (primary_pumping == 2) then
+	    ! Mechanical pumping power is calculated for first wall and blanket
+	    call thermo_hydraulic_model	
+	    ! For divertor and shield, mechanical pumping power is a fraction of thermal power removed by coolant 
+        htpmw_shld = fpumpshld * pnucshld
+        htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)	
 	end if
 	
-    !  Calculate shield and divertor coolant pumping powers from input fraction.  
-    !  The pumping power is assumed to be a fraction, fpump, of the incident
-    !  thermal power to each component so that,
-    !     htpmw_i = fpump_i*C
-    !  where C is the non-pumping thermal power deposited in the coolant
-
-    !  Shield pumping power (MW)
-    htpmw_shld = fpumpshld*(pnucshld)
-
-    !  Divertor pumping power (MW)
-    htpmw_div = fpumpdiv*(pdivt + pnucdiv + praddiv)
-
   end subroutine
   
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1067,7 +1061,7 @@ contains
     !+ad_desc  Calculations for detailed powerflow model secondary_cycle > 0
     !+ad_prob  None
     !+ad_hist  23/02/15 JM  Initial version
-    !+ad_hist  01/12/15 MDK Extensively revised Issue #348 (15/12/01)
+    !+ad_hist  01/12/15 MDK Extensively revised Issue #348 (01/12/2015)
     !+ad_stat  Okay
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1122,7 +1116,7 @@ contains
     ! -------------------------------    
     
     ! INBOARD
-    ! Maximum FW temperature. (15/11/27) Issue #348     
+    ! Maximum FW temperature. (27/11/2015) Issue #348     
     ! First wall flow is just along the first wall, with no allowance for radial 
     ! pipes, manifolds etc.
     ! The outputs are mean quantities of inlet and outlet
@@ -1131,7 +1125,7 @@ contains
 	! Recalculate the mass flow rates here using the heat capacity output by fw_temp
 	! Total mass flow rate to remove inboard first wall power (kg/s)
     mffwi = 1.0D6*(pnucfwi + psurffwi) / (cf*(fwoutlet - fwinlet))
-    !  Total number of first wall pipes from channel length and pitch (15/12/02)
+    !  Total number of first wall pipes from channel length and pitch (02/12/2015)
     npfwi = fwareaib / (fw_channel_length*pitch)
     !  Mass flow rate per coolant pipe (kg/s): 
     mffwpi = mffwi / npfwi
@@ -1165,14 +1159,14 @@ contains
 
     !  OUTBOARD
 
-    ! Maximum FW temperature. (15/11/27) Issue #348. 
+    ! Maximum FW temperature. (27/11/2015) Issue #348. 
     call fw_temp(afw, fwoth, fwareaob, psurffwo, pnucfwo, tpeakfwo, cf, rhof, mffwo, 'Outboard first wall')
     
     ! Recalculate the mass flow rates here using the heat capacity output by fw_temp	
     ! Total mass flow rate to remove outboard first wall power (kg/s)
     mffwo = 1.0D6*(pnucfwo + psurffwo) / (cf*(fwoutlet-fwinlet))
 
-    !  Total number of first wall pipes from channel length and pitch (15/12/02)
+    !  Total number of first wall pipes from channel length and pitch (02/12/2015)
     npfwo = fwareaob / (fw_channel_length*pitch)
     
     !  Mass flow rate per coolant pipe (kg/s)
@@ -1217,8 +1211,9 @@ contains
     call ovarin(ofile, 'Blanket coolant type (1=He, 2=H20)', '(coolwh)',coolwh)
     cstring = '"'//fwcoolant//'"'
     call ovarst(ofile, 'First wall coolant type', '(fwcoolant)',cstring)   
-    call ovarre(ofile, 'Wall thickness of first wall coolant channels (m)', '(fw_wall)',fw_wall)    
-    call ovarre(ofile, 'Channel roughness (m)', '(roughness)', roughness)
+    call ovarre(ofile, 'Wall thickness of first wall cooling channels (m)', '(fw_wall)',fw_wall)    
+    call ovarre(ofile, 'Radius of first wall cooling channels (m)', '(afw)', afw)    
+    call ovarre(ofile, 'Roughness of first wall cooling channels (m)', '(roughness)', roughness)
     
     call ovarrf(ofile, 'Inlet temperature of first wall coolant (K)', '(fwinlet)', fwinlet)
     call ovarrf(ofile, 'Outlet temperature of first wall coolant (K)', '(fwoutlet)', fwoutlet)
@@ -1232,13 +1227,17 @@ contains
         mftotal = mffw + mfblkt
         call ovarre(ofile, 'Total coolant mass flow rate(kg/s)', '(mftotal)', mftotal, 'OP ')
     end if    
+    call ovarre(ofile, 'First wall coolant pressure (Pa)', '(fwpressure)', fwpressure)
+    call ovarre(ofile, 'Blanket coolant pressure (Pa)', '(blpressure)', blpressure)
+
+    call ovarrf(ofile, 'Allowable temperature of first wall material, excluding armour (K)', '(tfwmatmax)', tfwmatmax)
+    call ovarrf(ofile, 'Actual peak temperature of first wall material (K)', '(tpeak)', tpeak, 'OP ')
     
+    call ovarre(ofile, 'Pumping power for first wall (MW)', '(htpmw_fw)', htpmw_fw, 'OP ')
     call ovarre(ofile, 'Pumping power for blanket (MW)', '(htpmw_blkt)', htpmw_blkt, 'OP ')
-    call ovarre(ofile, 'Pumping power for first wall (MW)', '(htpmw_fw)', htpmw_fw, 'OP ')    
-    call ovarre(ofile, 'Specified minimum total coolant pumping power (MW)', &
-                       '(htpmw_min)', htpmw_min, 'OP ')    
-    call ovarre(ofile, 'Total coolant pumping power: first wall, blanket, shield and divertor (MW)', &
-                       '(htpmw)', htpmw, 'OP ')
+    call ovarre(ofile, 'Pumping power for divertor (MW)', '(htpmw_div)', htpmw_div, 'OP ')
+    call ovarre(ofile, 'Pumping power for shield and vacuum vessel (MW)', '(htpmw_shld)', htpmw_shld, 'OP ')        
+    call ovarre(ofile, 'Total coolant pumping power: first wall, blanket, shield and divertor (MW)', '(htpmw)', htpmw, 'OP ')    
   
   end subroutine thermo_hydraulic_model
    
@@ -1585,16 +1584,17 @@ contains
     if (ip  == 0) return
     
     call oheadr(ofile, 'Heat transfer parameters at the coolant outlet: ' // label)     
-    call ovarre(ofile, 'Radius of coolant channel (m)', '(afw)', afw, 'OP ')
-    call ovarre(ofile, 'Surface heat flux on first wall (W/m2) ', '(qpp)', qpp, 'OP ')
-    call ovarre(ofile, 'Nuclear power deposited in first wall per unit area (W/m2)', '', nuclear_heat_per_area, 'OP ')
+    call ovarre(ofile, 'Radius of coolant channel (m)', '(afw)', afw)
+    call ovarre(ofile, 'Mean surface heat flux on first wall (W/m2) ', '(qpp)', qpp, 'OP ')
+    call ovarre(ofile, 'Mean nuclear power deposited in first wall per unit area (W/m2)', '', nuclear_heat_per_area, 'OP ')
+    call ovarre(ofile, 'Ratio of peak local heat load (surface and nuclear) to mean', '(peaking_factor)', peaking_factor)
     call ovarre(ofile, 'Length of a single coolant channel (all in parallel) (m)', '(fw_channel_length)', fw_channel_length, 'OP ')
-    call ovarre(ofile, 'Pitch of coolant channels (m)', '(pitch)', pitch, 'OP ')
+    call ovarre(ofile, 'Pitch of coolant channels (m)', '(pitch)', pitch)
     call ovarre(ofile, 'Thermal conductivity of first wall material (W/K/m)', '(tkfw)', tkfw, 'OP ')
     call ovarre(ofile, 'Coolant density (kg/m3)', '(rhofo)', rhofo, 'OP ')
     call ovarre(ofile, 'Coolant mass flow rate in one channel (kg/s)', '(massrate)', massrate, 'OP ')
     call ovarre(ofile, 'Coolant velocity (m/s)', '(velocity)', velocity, 'OP ')
-    call ovarre(ofile, 'Outlet temperature of first wall coolant (K)', '(fwoutlet)', fwoutlet, 'OP ')
+    call ovarre(ofile, 'Outlet temperature of first wall coolant (K)', '(fwoutlet)', fwoutlet)
     
     call ovarre(ofile, 'Heat transfer coefficient', '(hcoeff)', hcoeff, 'OP ')
     call ovarre(ofile, 'Temperature drop in the wall material (simple model)', '(deltat_solid)', deltat_solid, 'OP ')
@@ -1612,7 +1612,7 @@ contains
         real(kind=double) :: heat_transfer, masflx, rhof, radius, cf, viscf, kf
         !  Local variables
         real(kind=double) :: velocity, reynolds, pr, f, nusselt, diameter
-        ! (15/11/27)
+        ! (27/11/2015)
         ! Gnielinski correlation.
         ! Ignore the distinction between wall and bulk temperatures
         ! https://en.wikipedia.org/wiki/Nusselt_number#Gnielinski_correlation
@@ -1654,7 +1654,7 @@ contains
     real(kind=double), intent(out) :: darcy_friction
     !  Local variables
     real(kind=double) :: bracket
-    ! (15/11/27)
+    ! (27/11/2015)
     ! Darcy friction factor, using Haaland equation, an approximation to the 
     ! implicit Colebrook–White equation
     ! https://en.wikipedia.org/wiki/Darcy_friction_factor_formulae#Haaland_equation
@@ -1807,11 +1807,13 @@ contains
     call ovarin(ofile, 'Switch for plant secondary cycle ', '(secondary_cycle)', secondary_cycle) 
     call ovarre(ofile, 'First wall coolant pressure (Pa)', '(fwpressure)', fwpressure)
     call ovarre(ofile, 'Blanket coolant pressure (Pa)', '(blpressure)', blpressure)
-    call ovarre(ofile, 'Radius of first wall cooling channels (m)', '(afw)', afw)
-    call ovarre(ofile, 'Wall thickness of first wall coolant channels (m)', '(fw_wall)', fw_wall)
+    
+    call ovarre(ofile, 'Mechanical pumping power for first wall (MW)', '(htpmw_fw)', htpmw_fw, 'OP ')
+    call ovarre(ofile, 'Mechanical pumping power for blanket (MW)', '(htpmw_blkt)', htpmw_blkt, 'OP ')
+    call ovarre(ofile, 'Mechanical pumping power for divertor (MW)', '(htpmw_div)', htpmw_div, 'OP ')
+    call ovarre(ofile, 'Mechanical pumping power for shield and vacuum vessel (MW)', '(htpmw_shld)', htpmw_shld, 'OP ')        
+    call ovarre(ofile, 'Total electrical coolant pumping power: first wall, blanket, shield and divertor (MW)', '(htpmw)', htpmw, 'OP ')    
 
-    call ovarrf(ofile, 'Allowable temperature of first wall material, excluding armour (K)', '(tfwmatmax)', tfwmatmax)
-    call ovarrf(ofile, 'Actual peak temperature of first wall material (K)', '(tpeak)', tpeak, 'OP ')
     call ovarre(ofile, 'Allowable nominal neutron fluence at first wall (MW.year/m2)', '(abktflnc)', abktflnc)    
     !call ovarre(ofile, 'Actual nominal neutron fluence at first wall (MW.year/m2)', '(flnce)', flnce)
     !call ovarre(ofile, 'First wall full-power lifetime (years)', '(fwlife)', fwlife)

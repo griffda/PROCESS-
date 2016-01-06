@@ -1497,15 +1497,28 @@ generating the plant's gross electrical power, with an efficiency given by
 quantity \texttt{etath}. The remainder is dumped to the environment through the condenser.  All of the low-grade heat is dumped to the environment.
 
 \begin{description}
-\item{\texttt{secondary\_cycle }:} This switch controls how the coolant pumping power in the first wall and blanket is determined, and also how the calculation of the plant's thermal to electric conversion efficiency (the secondary cycle thermal efficiency) proceeds. See also Section~\ref{sec:powerflow}, which describes the flow of power through the fusion power core.
+\item{\texttt{primary\_pumping }:} This switch controls the calculation of the mechanical pumping power required for the primary coolant.
 
-If \texttt{secondary\_cycle = 0}, the efficiency of the power generation cycle is set to a single value obtained from previous cycle modelling studies.  The heat deposited in theToroidal field coils divertor coolant is assumed to be at such low temperature that it cannot be used for power generation and is dumped to the environment.  The mechanical power consumed by the primary coolant pumps is estimated as a fixed fraction of the heat transported.
+If \texttt{primary\_pumping = 0}, the user sets mechanical pumping power directly.
+
+If \texttt{primary\_pumping = 1}, the user sets mechanical pumping power as a fraction of thermal power removed by coolant.
+
+If \texttt{primary\_pumping = 1}, the mechanical pumping power is calculated, as follows.
+
+User inputs for the coolant outlet temperature (which may be used as an iteration variable), the coolant channel diameter, and the segmentation of the blanket are used.  The peak temperature in the first wall material (underneath the armour) is derived. The user can apply an upper limit to this temperature, and if this constraint is used then it is strongly recommended to set the length of a first wall pipe (\texttt{fw\_channel\_length})as an iteration variable. The Gnielinski correlation is used to determine the heat transfer in the channel.  The stresses in the first wall are not currently taken into account. 
+
+The mechanical pumping power required for the first wall and breeder zone is calculated using the Darcy friction factor, estimated from the Haaland equation, an approximation to the Colebrook–White equation. (If you consider that the calculated value for the pumping power is too low, then you can add an additional electric power requirement using \texttt{baseel}.  Do not use \texttt{htpmw\_min} as this prevents the optimisation of the first wall.) The inlet and outlet temperatures of the first wall and blanket can be different. The isentropic efficiency of the first wall and blanket coolant pumps (enthalpy increase in the fluid for isentropic compression divided by the mechanical power used) is specified by the parameter \texttt{etaiso}.  Note that the mechanical pumping powers for the shield and divertor are still calculated using the simplified method (a fixed fraction of the heat transported). 
+
+\end{description}
+
+\begin{description}
+\item{\texttt{secondary\_cycle }:} This switch controls how the calculation of the plant's thermal to electric conversion efficiency (the secondary cycle thermal efficiency) proceeds. See also Section~\ref{sec:powerflow}, which describes the flow of power through the fusion power core.
+
+If \texttt{secondary\_cycle = 0}, the efficiency of the power generation cycle is set to a single value obtained from previous cycle modelling studies.  The heat deposited in theToroidal field coils divertor coolant is assumed to be at such low temperature that it cannot be used for power generation and is dumped to the environment.
 
 If \texttt{secondary\_cycle = 1}, the efficiency of the power generation cycle is set as above, but the divertor heat is used for electricity generation.
 
-In the remaining options (\texttt{secondary\_cycle = 1, 2 or 3}), a more detailed routine~\cite{Harrington_bop} takes user inputs for the coolant outlet temperature (which may be used as an iteration variable), the coolant channel diameter, and the segmentation of the blanket and calculates the peak temperature in the first wall material (underneath the armour). The user can apply an upper limit to this temperature, and if this constraint is used then it is strongly recommended to set the length of a first wall pipe (\texttt{fw\_channel\_length})as an iteration variable. The Gnielinski correlation is used to determine the heat transfer in the channel.  The stresses in the first wall are not currently taken into account. 
-
-The mechanical pumping power required for the first wall and breeder zone is then calculated using the Darcy friction factor, estimated from the Haaland equation, an approximation to the Colebrook–White equation. (If you consider that the calculated value for the pumping power is too low, then you can add an additional electric power requirement using \texttt{baseel}.  Do not use \texttt{htpmw\_min} as this prevents the optimisation of the first wall.) The inlet and outlet temperatures of the first wall and blanket can be different. The isentropic efficiency of the first wall and blanket coolant pumps (enthalpy increase in the fluid for isentropic compression divided by the mechanical power used) is specified by the parameter \texttt{etaiso}.  Note that the mechanical pumping powers for the shield and divertor are still calculated using the simplified method (a fixed fraction of the heat transported).  The heat deposited in the divertor coolant is used for power generation.
+In the remaining options (\texttt{secondary\_cycle = 1, 2 or 3}), the heat deposited in the divertor coolant is used for power generation.
 
 If \texttt{secondary\_cycle = 2}, the efficiency of the power generation cycle is input by the user.
 

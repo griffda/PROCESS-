@@ -1999,3 +1999,4 @@ end subroutine runtests
 ! 409      #348 New first wall model
 !          #329 Improved error handling in input.f90.
 ! 410      #341 New TF coil shape.
+!          #347 More options for primary pumping power - primary_pumping
