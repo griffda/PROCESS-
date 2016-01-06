@@ -1228,21 +1228,19 @@ module fwbs_variables
 
   !+ad_vars  tbrmin /1.1/ : minimum tritium breeding ratio (constraint equation 52)
   !+ad_varc                 (If iblanket=1, tbrmin=minimum 5-year time-averaged tritium breeding ratio)
+  
   !+ad_vars  iblanket_thickness /2/ : Blanket thickness switch:<UL>
   !+ad_varc     <LI> = 1 thin    0.53 m inboard, 0.91 m outboard
   !+ad_varc     <LI> = 2 medium  0.64 m inboard, 1.11 m outboard
   !+ad_varc     <LI> = 3 thick   0.75 m inboard, 1.30 m outboard</UL>
   !+ad_vars  Do not set blnkith, blnkoth, fwith or fwoth when iblanket=3.
   integer :: iblanket_thickness = 2
-
-  !+ad_vars  <P><B>The following are used in the thermodynamic blanket model </B><P>
-  
+ 
   !+ad_vars  primary_pumping /0/ : Switch for pumping of primary coolant (06/01/2016):<UL>
-  !+ad_varc     <LI> = 0 User sets mechanical pumping power directly (htpmw_blkt, htpmw_fw)
-  !+ad_varc              (peak first wall temperature is not calculated);
-  !+ad_varc     <LI> = 1 User sets mechanical pumping power as a fraction of thermal power removed by coolant 
-  !+ad_varc              (fpumpblkt, fpumpfw) (peak first wall temperature is not calculated);
-  !+ad_varc     <LI> = 2 Mechanical pumping power and (peak first wall temperature are calculated. </UL>
+  !+ad_varc     <LI> = 0 User sets mechanical pumping power directly (htpmw_blkt, htpmw_fw) 
+  !+ad_varc     <LI> = 1 User sets mechanical pumping power as a fraction of thermal power (fpumpblkt, fpumpfw)
+  !+ad_varc     <LI> = 2 Mechanical pumping power is calculated</UL>
+  !+ad_vars  (peak first wall temperature is only calculated if primary_pumping = 2)
   integer :: primary_pumping = 2
 
   !+ad_vars  secondary_cycle /0/ : Switch for thermodynamic model of power conversion cycle:<UL>
@@ -2393,7 +2391,7 @@ module heat_transport_variables
   !+ad_varc                      to drive the shield coolant pumps (default assumes
   !+ad_varc                      water coolant)
   real(kind(1.0D0)) :: fpumpshld = 0.005D0
-  !+ad_vars  htpmw_min /0.0/ : Minimum total electrical power for primary coolant pumps (MW) NOT recommended
+  !+ad_vars  htpmw_min /0.0/ : Minimum total electrical power for primary coolant pumps (MW) NOT RECOMMENDED
   real(kind(1.0D0)) :: htpmw_min = 0.0D0
 
   !+ad_vars  helpow : heat removal at cryogenic temperatures (W)
