@@ -2399,13 +2399,13 @@ module heat_transport_variables
   real(kind(1.0D0)) :: helpow = 0.0D0
   !+ad_vars  htpmw  :: heat transport system electrical pump power (MW)
   real(kind(1.0D0)) :: htpmw = 0.0D0
-  !+ad_vars  htpmw_blkt /10.0/ blanket coolant mechanical pumping power (MW)
+  !+ad_vars  htpmw_blkt /10.0/ : blanket coolant mechanical pumping power (MW)
   real(kind(1.0D0)) :: htpmw_blkt = 10.0D0
-  !+ad_vars  htpmw_div /10.0/ divertor coolant mechanical pumping power (MW)
+  !+ad_vars  htpmw_div /10.0/ : divertor coolant mechanical pumping power (MW)
   real(kind(1.0D0)) :: htpmw_div = 10.0D0
-  !+ad_vars  htpmw_fw /10.0/ first wall coolant mechanical pumping power (MW)
+  !+ad_vars  htpmw_fw /10.0/ : first wall coolant mechanical pumping power (MW)
   real(kind(1.0D0)) :: htpmw_fw = 10.0D0
-  !+ad_vars  htpmw_shld /1.0/ shield and vacuum vessel coolant mechanical pumping power (MW)
+  !+ad_vars  htpmw_shld /1.0/ : shield and vacuum vessel coolant mechanical pumping power (MW)
   real(kind(1.0D0)) :: htpmw_shld = 1.0D0
   !+ad_vars  htpsecmw : Waste power lost from primary coolant pumps (MW)
   !+ad_varc
