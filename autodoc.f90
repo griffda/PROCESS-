@@ -19,6 +19,7 @@ module autodoc_data
   !+ad_hist  09/06/2011 PJK Added version number
   !+ad_hist  07/11/2012 PJK Added variable descriptor file coding
   !+ad_hist  07/11/2012 PJK Initialised all flags components to zero
+  !+ad_hist  06/01/2015 MDK Changed lenmax to 120
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -54,7 +55,7 @@ module autodoc_data
   end type flags
 
   integer, parameter :: iounit = 1, hfunit = 2, vdunit = 3
-  integer, parameter :: lenmax = 100
+  integer, parameter :: lenmax = 120
   character(len=lenmax) :: hfile = 'adheader.src'
   character(len=lenmax) :: ffile = 'adfooter.src'
   character(len=lenmax) :: vdfile = 'vardes.html'

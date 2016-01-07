@@ -1236,18 +1236,19 @@ module fwbs_variables
   !+ad_vars  Do not set blnkith, blnkoth, fwith or fwoth when iblanket=3.
   integer :: iblanket_thickness = 2
  
-  !+ad_vars  primary_pumping /0/ : Switch for pumping of primary coolant (06/01/2016):<UL>
-  !+ad_varc     <LI> = 0 User sets mechanical pumping power directly (htpmw_blkt, htpmw_fw) 
-  !+ad_varc     <LI> = 1 User sets mechanical pumping power as a fraction of thermal power (fpumpblkt, fpumpfw)
+  !+ad_vars  primary_pumping /0/ : Switch for pumping power for primary coolant (06/01/2016):
+  !+ad_varc       (mechanical power only)<UL>
+  !+ad_varc     <LI> = 0 User sets pump power directly (htpmw_blkt, htpmw_fw) 
+  !+ad_varc     <LI> = 1 User sets pump power as a fraction of thermal power (fpumpblkt, fpumpfw)
   !+ad_varc     <LI> = 2 Mechanical pumping power is calculated</UL>
   !+ad_vars  (peak first wall temperature is only calculated if primary_pumping = 2)
   integer :: primary_pumping = 2
 
-  !+ad_vars  secondary_cycle /0/ : Switch for thermodynamic model of power conversion cycle:<UL>
-  !+ad_varc     <LI> = 0 pre-set efficiency for chosen blanket, from detailed models (divertor not to primary loop);
-  !+ad_varc     <LI> = 1 pre-set efficiency for chosen blanket, from detailed models (divertor to primary loop);
-  !+ad_varc     <LI> = 2 user input thermal-electric efficiency (etath);
-  !+ad_varc     <LI> = 3 steam Rankine cycle;
+  !+ad_vars  secondary_cycle /0/ : Switch for power conversion cycle:<UL>
+  !+ad_varc     <LI> = 0 Set efficiency for chosen blanket, from detailed models (divertor heat not used)
+  !+ad_varc     <LI> = 1 Set efficiency for chosen blanket, from detailed models (divertor heat used)
+  !+ad_varc     <LI> = 2 user input thermal-electric efficiency (etath)
+  !+ad_varc     <LI> = 3 steam Rankine cycle
   !+ad_varc     <LI> = 4 supercritical CO2 cycle</UL>
   integer :: secondary_cycle = 0
   !+ad_vars  coolwh : Blanket coolant (set via blkttype):<UL>
