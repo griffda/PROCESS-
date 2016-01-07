@@ -6,13 +6,13 @@
  
    Program : ./process.exe
    Version : 410    Release Date :: 2015-12-08
- Date/time : Wed Jan  6 14:32:52 GMT 2016
+ Date/time : Thu Jan  7 14:41:39 GMT 2016
       User : mkovari (Michael Kovari)
  Directory : /home/mkovari/PROCESS/my_develop2/test_suite
  
  **************************************************************************************************************
  
- PROCESS 410 : Run on Wed Jan  6 14:32:52 GMT 2016 by Michael Kovari
+ PROCESS 410 : Run on Thu Jan  7 14:41:39 GMT 2016 by Michael Kovari
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
 Internal tburn consistency check:  0.344E+04 0.342E+04
@@ -20,79 +20,47 @@ Internal tburn consistency check:  0.344E+04 0.344E+04
  
  VMCON Iterations
            1 vmcon iterations
-Constraint residuals (sqsumsq) =   3.79709E+00 Convergence parameter =   3.16426E+00
-Internal tburn consistency check:  0.822E+04 0.799E+04
-Internal tburn consistency check:  0.823E+04 0.822E+04
+Constraint residuals (sqsumsq) =   4.77003E+00 Convergence parameter =   3.70210E+00
+Internal tburn consistency check:  0.818E+04 0.795E+04
+Internal tburn consistency check:  0.818E+04 0.818E+04
            2 vmcon iterations
-Constraint residuals (sqsumsq) =   1.21606E+00 Convergence parameter =   2.98558E-01
-Internal tburn consistency check:  0.704E+04 0.713E+04
-Internal tburn consistency check:  0.704E+04 0.704E+04
+Constraint residuals (sqsumsq) =   1.23626E+00 Convergence parameter =   3.34000E-01
+Internal tburn consistency check:  0.703E+04 0.712E+04
+Internal tburn consistency check:  0.703E+04 0.703E+04
            3 vmcon iterations
-Constraint residuals (sqsumsq) =   2.24580E-01 Convergence parameter =   5.27248E-02
+Constraint residuals (sqsumsq) =   2.27973E-01 Convergence parameter =   5.25016E-02
 Internal tburn consistency check:  0.710E+04 0.715E+04
 Internal tburn consistency check:  0.710E+04 0.710E+04
            4 vmcon iterations
-Constraint residuals (sqsumsq) =   2.26578E-02 Convergence parameter =   2.94858E-02
-Internal tburn consistency check:  0.716E+04 0.718E+04
-Internal tburn consistency check:  0.716E+04 0.716E+04
-           5 vmcon iterations
-Constraint residuals (sqsumsq) =   7.31720E-03 Convergence parameter =   8.84635E-03
-Internal tburn consistency check:  0.718E+04 0.719E+04
-Internal tburn consistency check:  0.718E+04 0.718E+04
-           6 vmcon iterations
-Constraint residuals (sqsumsq) =   1.74690E-02 Convergence parameter =   1.73253E-03
-Internal tburn consistency check:  0.720E+04 0.720E+04
-           7 vmcon iterations
-Constraint residuals (sqsumsq) =   5.56071E-04 Convergence parameter =   3.04451E-03
-           8 vmcon iterations
-Constraint residuals (sqsumsq) =   9.19451E-03 Convergence parameter =   1.08740E-03
-Internal tburn consistency check:  0.720E+04 0.720E+04
-           9 vmcon iterations
-Constraint residuals (sqsumsq) =   4.65034E-04 Convergence parameter =   1.21310E-03
-          10 vmcon iterations
-Constraint residuals (sqsumsq) =   3.66184E-03 Convergence parameter =   4.65117E-03
-          11 vmcon iterations
-Constraint residuals (sqsumsq) =   3.90996E-02 Convergence parameter =   3.15103E-03
-Internal tburn consistency check:  0.720E+04 0.720E+04
-          12 vmcon iterations
-Constraint residuals (sqsumsq) =   5.24472E-04 Convergence parameter =   3.04784E-04
-          13 vmcon iterations
-Constraint residuals (sqsumsq) =   3.12932E-04 Convergence parameter =   5.59555E-04
-Internal tburn consistency check:  0.719E+04 0.719E+04
- VMCON optimiser line search attempt failed - retrying...
-          14 vmcon iterations
-Constraint residuals (sqsumsq) =   5.96402E-03 Convergence parameter =   1.14650E-03
-Internal tburn consistency check:  0.720E+04 0.720E+04
-          15 vmcon iterations
-Constraint residuals (sqsumsq) =   8.61141E-04 Convergence parameter =   2.70917E-04
- VMCON optimiser line search attempt failed - retrying...
-          16 vmcon iterations
-Constraint residuals (sqsumsq) =   2.59395E-03 Convergence parameter =   3.62734E-04
-          17 vmcon iterations
-Constraint residuals (sqsumsq) =   5.00058E-04 Convergence parameter =   2.09206E-04
-          18 vmcon iterations
-Constraint residuals (sqsumsq) =   3.33088E-05 Convergence parameter =   1.55989E-05
- VMCON optimiser line search attempt failed - retrying...
-          19 vmcon iterations
-Constraint residuals (sqsumsq) =   3.57520E-04 Convergence parameter =   3.24207E-05
- VMCON optimiser line search attempt failed - retrying...
-          20 vmcon iterations
-Constraint residuals (sqsumsq) =   4.29863E-05 Convergence parameter =   5.05135E-06
-          21 vmcon iterations
-Constraint residuals (sqsumsq) =   9.38157E-07 Convergence parameter =   2.88220E-07
- Convergence parameter < convergence criterion (epsvmc)
- Root of sum of squares of residuals < tolerance (sqsumsq_tol)
+ a(l,k) = 0.0D0 in subroutine sgefa
+ info=k=          71
+ Determinant = det(1) * 10.0**det(2)  0.000000000000000E+000
+   11.0000000000000     
+ H matrix is singular in subroutine hinv
+ A singular matrix was detected in HINV: info /= 1
 
-************************************* PROCESS found a feasible solution **************************************
+********************************* PROCESS COULD NOT FIND A FEASIBLE SOLUTION *********************************
 
-The optimisation required    21 iterations
-There were   1676 function calls
+VMCON error flag (ifail)                                                                                   6     
+
+The quadratic programming technique was restricted
+by an artificial bound, or failed due to a singular
+matrix.
+Try changing the equations in ICC, or
+adding new variables to IXC.
+
+The optimisation required     4 iterations
+There were    332 function calls
 
 ******************************************** Errors and Warnings *********************************************
 
- PROCESS status flag:   Information messages only                         
+ PROCESS status flag:   Warning messages                                  
 
  ID  LEVEL  MESSAGE
+132     2   DOOPT: Optimisation solver VMCON returns with ifail /= 1                        
+ Integer diagnostic values for this error:
+   1)              6
+  
 135     1   OUTPF: CS not using max current density: further optimisation may be possible   
   
 

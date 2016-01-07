@@ -1,30 +1,31 @@
 *--------------------------------------------------*
 *---------------Constraint Equations---------------*
-neqns = 21 * Number of equality constraints to be satisfied
+neqns = 22 * Number of equality constraints to be satisfied
 icc(1) = 1
 icc(2) = 2
 icc(3) = 5
-icc(4) = 8
-icc(5) = 10
-icc(6) = 11
-icc(7) = 13
-icc(8) = 16
-icc(9) = 24
-icc(10) = 26
-icc(11) = 27
-icc(12) = 30
-icc(13) = 31
-icc(14) = 32
-icc(15) = 33
-icc(16) = 34
-icc(17) = 35
-icc(18) = 39
-icc(19) = 15
-icc(20) = 56
-icc(21) = 62 
+icc(4) = 6
+icc(5) = 8
+icc(6) = 10
+icc(7) = 11
+icc(8) = 13
+icc(9) = 16
+icc(10) = 24
+icc(11) = 26
+icc(12) = 27
+icc(13) = 30
+icc(14) = 31
+icc(15) = 32
+icc(16) = 33
+icc(17) = 34
+icc(18) = 35
+icc(19) = 39
+icc(20) = 15
+icc(21) = 56
+icc(22) = 62 
 
 *---------------Iteration Variables----------------*
-nvar = 38 * Number of iteration variables to use
+nvar = 39 * Number of iteration variables to use
 ixc(1) = 2 * bt
 ixc(2) = 3 * rmajor
 boundu(3) = 13
@@ -80,13 +81,12 @@ boundu(60) = 9.0d4
 ixc(34) = 59 * fcutfsu
 *boundl(59) = 0.66667
 boundl(59) = 0.4
-
 ixc(35) = 63  * ftpeak (f-value for equation 39) 
-
 ixc(36) = 109 * ralpne
 ixc(37) = 110 * ftaulimit
-
 ixc(38) = 114 * fw_channel_length 
+
+ixc(39) = 8   * f-value for epsxβp limit equation (6)
 *-----------------Build Variables------------------*
 blnkith  = 0.755 * Inboard blanket thickness (m);
 blnkoth  = 1.275 * Outboard blanket thickness (m);

@@ -7,13 +7,13 @@
  
    Program : ./process.exe
    Version : 410    Release Date :: 2015-12-08
- Date/time : Wed Jan  6 14:33:06 GMT 2016
+ Date/time : Thu Jan  7 14:40:57 GMT 2016
       User : mkovari (Michael Kovari)
  Directory : /home/mkovari/PROCESS/my_develop2/test_suite
  
  **************************************************************************************************************
  
- PROCESS 410 : Run on Wed Jan  6 14:33:06 GMT 2016 by Michael Kovari
+ PROCESS 410 : Run on Thu Jan  7 14:40:57 GMT 2016 by Michael Kovari
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  demoa 1 ralpne  * Short descriptive title for the run
  (Please include this header in any models, presentations and papers based on these results)
@@ -302,7 +302,7 @@
  Thermal poloidal beta                                                                              9.244E-01  OP 
  Thermal toroidal beta (= beta-exp)                                                                 3.080E-02  OP 
  2nd stability beta : beta_p / (R/a)                                      (eps*betap)                   0.347  OP 
- 2nd stability beta upper limit                                           (epbetmax)                    0.600     
+ 2nd stability beta upper limit                                           (epbetmax)                    1.380     
  Beta g coefficient                                                       (dnbeta)                      4.383  OP 
  Normalised thermal beta                                                                                2.330  OP 
  Normalised total beta                                                                                  2.710  OP 
@@ -1742,7 +1742,7 @@
  Thermal poloidal beta                                                                              9.244E-01  OP 
  Thermal toroidal beta (= beta-exp)                                                                 3.080E-02  OP 
  2nd stability beta : beta_p / (R/a)                                      (eps*betap)                   0.347  OP 
- 2nd stability beta upper limit                                           (epbetmax)                    0.600     
+ 2nd stability beta upper limit                                           (epbetmax)                    1.380     
  Beta g coefficient                                                       (dnbeta)                      4.383  OP 
  Normalised thermal beta                                                                                2.330  OP 
  Normalised total beta                                                                                  2.710  OP 
@@ -3182,7 +3182,7 @@
  Thermal poloidal beta                                                                              9.244E-01  OP 
  Thermal toroidal beta (= beta-exp)                                                                 3.080E-02  OP 
  2nd stability beta : beta_p / (R/a)                                      (eps*betap)                   0.347  OP 
- 2nd stability beta upper limit                                           (epbetmax)                    0.600     
+ 2nd stability beta upper limit                                           (epbetmax)                    1.380     
  Beta g coefficient                                                       (dnbeta)                      4.383  OP 
  Normalised thermal beta                                                                                2.330  OP 
  Normalised total beta                                                                                  2.710  OP 

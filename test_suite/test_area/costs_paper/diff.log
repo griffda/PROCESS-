@@ -8,69 +8,69 @@ Total of 25 differences above allowed value
 
 Variable                                	ref       	new       	diff (%)  
 ----------------------------------------
-strtf2                                  	5.5e+08   	4.92e+08  	10.55     
-whtconcu                                	7.22e+04  	5.91e+04  	18.14     
-thwcndut                                	0.00443   	0.004     	9.62      
-road improvements                       	184       	32.9      	82.14     
-total land costs                        	584       	432       	25.89     
-sqsumsq                                 	2.15e-05  	1.68e-05  	22.18     
-windstrain                              	0.00383   	0.00362   	5.49      
-thkwp                                   	0.505     	0.413     	18.21     
-sigvert                                 	2.31e+08  	2.15e+08  	6.72      
-whtconsh                                	5.84e+04  	4.89e+04  	16.35     
-yarc(3)                                 	7.99      	0         	100.00    
-whtconin                                	6.88e+03  	6.39e+03  	7.11      
-jwdgpro                                 	2.87e+07  	2.69e+07  	6.17      
+sigttf(1)                               	-3.97e+08 	-3.48e+08 	12.39     
 yarc(4)                                 	5.75      	-8.61     	249.64    
+acstf                                   	0.00166   	0.00137   	17.61     
 sigtcon                                 	-2.87e+08 	-2.53e+08 	11.92     
+thkwp                                   	0.505     	0.413     	18.21     
+thwcndut                                	0.00443   	0.004     	9.62      
+copper strand for tf coil               	80.1      	68.2      	14.80     
+strtf2                                  	5.5e+08   	4.92e+08  	10.55     
+xarc(4)                                 	13.3      	8.39      	37.07     
+total land costs                        	584       	432       	25.89     
+qss/1.0d6                               	0.0181    	0.017     	5.96      
+whtconcu                                	7.22e+04  	5.91e+04  	18.14     
+jwdgpro                                 	2.87e+07  	2.69e+07  	6.17      
+xarc(5)                                 	15.4      	4.29      	72.22     
+whtconin                                	6.88e+03  	6.39e+03  	7.11      
+road improvements                       	184       	32.9      	82.14     
+windstrain                              	0.00383   	0.00362   	5.49      
 deflect                                 	-0.00627  	-0.0055   	12.34     
 aintmass                                	3.15e+06  	0         	100.00    
-acstf                                   	0.00166   	0.00137   	17.61     
-xarc(5)                                 	15.4      	4.29      	72.22     
-copper strand for tf coil               	80.1      	68.2      	14.80     
-xarc(4)                                 	13.3      	8.39      	37.07     
-sigttf(1)                               	-3.97e+08 	-3.48e+08 	12.39     
-whtcon                                  	1.54e+05  	1.32e+05  	13.91     
+whtconsh                                	5.84e+04  	4.89e+04  	16.35     
+yarc(3)                                 	7.99      	0         	100.00    
+sigvert                                 	2.31e+08  	2.15e+08  	6.72      
 tf coil radial plates                   	550       	484       	12.02     
-qss/1.0d6                               	0.0181    	0.017     	5.96      
+sqsumsq                                 	2.15e-05  	1.68e-05  	22.18     
+whtcon                                  	1.54e+05  	1.32e+05  	13.91     
 
 
 There are 19 variables in ref NOT IN new:
 
-top first wall vertical thickness (m)
-yctfc(4)
-pnuc deposited
+2*zdewex
+htpmw min
+xctfc(3)
+prad incident
 yctfc(2)
 plasma top position, vertical (m)
-yctfc(1)
+pnuc deposited
+yctfc(3)
+top first wall vertical thickness (m)
+xctfc(1)
 xctfc(2)
 fhetot
-prad incident
+top scrape-off vertical thickness (m)
 plasma top position, radial (m)
-xctfc(1)
-2*zdewex
+yctfc(4)
 dhecoil
 awphec/ap
-xctfc(3)
-htpmw min
-top scrape-off vertical thickness (m)
-yctfc(3)
 xctfc(4)
+yctfc(1)
 
 
 There are 14 variables in new NOT IN ref:
 
-mfp
-primary pumping
-htpmw shld
-qpp
-peaking factor
 zdewex
+htpmw shld
 vgaptop
-clh1
-ptop radial
+qpp
+primary pumping
 fwtth
-ptop vertical
-cboot
+clh1
+peaking factor
 mean nuclear power deposited in first wall per unit area (w/m2)
 htpmw div
+mfp
+ptop radial
+ptop vertical
+cboot

@@ -6,13 +6,13 @@
  
    Program : ./process.exe
    Version : 410    Release Date :: 2015-12-08
- Date/time : Wed Jan  6 14:33:11 GMT 2016
+ Date/time : Thu Jan  7 14:40:35 GMT 2016
       User : mkovari (Michael Kovari)
  Directory : /home/mkovari/PROCESS/my_develop2/test_suite
  
  **************************************************************************************************************
  
- PROCESS 410 : Run on Wed Jan  6 14:33:11 GMT 2016 by Michael Kovari
+ PROCESS 410 : Run on Thu Jan  7 14:40:35 GMT 2016 by Michael Kovari
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -244,7 +244,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Thermal poloidal beta                                                                              9.774E-01  OP 
  Thermal toroidal beta (= beta-exp)                                                                 3.257E-02  OP 
  2nd stability beta : beta_p / (R/a)                                      (eps*betap)                   0.372669  OP 
- 2nd stability beta upper limit                                           (epbetmax)                    0.600000     
+ 2nd stability beta upper limit                                           (epbetmax)                    1.380000     
  Beta g coefficient                                                       (dnbeta)                      4.383490  OP 
  Normalised thermal beta                                                                                2.463978  OP 
  Normalised total beta                                                                                  2.912377  OP 

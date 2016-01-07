@@ -5,16 +5,7 @@
 ## in_dat.py                              ##
 ############################################
 Warning: Line below is causing a problem. Check that line in IN.DAT is valid. Line skipped!
-primary_pumping = 2 * Switch for pumping of primary coolant
-
-Warning: Line below is causing a problem. Check that line in IN.DAT is valid. Line skipped!
 FBLLI   = 0.00,
-
-Warning: Line below is causing a problem. Check that line in IN.DAT is valid. Line skipped!
-primary_pumping = 0 * Switch for pumping of primary coolant
-
-Warning: Line below is causing a problem. Check that line in IN.DAT is valid. Line skipped!
-primary_pumping = 1 * Switch for pumping of primary coolant
 
 
 ## plot_proc.py                           ##

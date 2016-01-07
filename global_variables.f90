@@ -251,9 +251,11 @@ module physics_variables
   real(kind(1.0D0)) :: dnz = 0.0D0
   !+ad_vars  ealphadt /3520.0/ FIX : alpha birth energy in D-T reaction (keV)
   real(kind(1.0D0)), parameter :: ealphadt = 3520.0D0
-  !+ad_vars  epbetmax /0.6/ : maximum (eps*beta_poloidal) for 2nd stability beta limit
-  !+ad_varc                   (constraint equation 6)
-  real(kind(1.0D0)) :: epbetmax = 0.6D0
+  !+ad_vars  epbetmax /1.38/ : maximum (eps*beta_poloidal) (constraint equation 6)
+  !+ad_varc                    revised (07/01/16) Issue #346
+  !+ad_varc                    "Operation at the tokamak equilibrium poloidal beta-limit in TFTR"
+  !+ad_varc                    1992 Nucl. Fusion 32 1468
+  real(kind(1.0D0)) :: epbetmax = 1.38D0
   !+ad_vars  eps : inverse aspect ratio
   real(kind(1.0D0)) :: eps = 0.34399724802D0
   !+ad_vars  faccd : fraction of plasma current produced by auxiliary current drive
