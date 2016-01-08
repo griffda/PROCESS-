@@ -1645,7 +1645,7 @@ module pfcoil_variables
   real(kind(1.0D0)), dimension(ngc2) :: turns = 0.0D0
   !+ad_vars  vf(ngc2) /0.3/ : winding pack void fraction of PF coil i for coolant
   real(kind(1.0D0)), dimension(ngc2) :: vf = 0.3D0
-  !+ad_vars  vfohc /0.3/ : void fraction of central solenoid for coolant
+  !+ad_vars  vfohc /0.3/ : void fraction of central solenoid conductor for coolant
   real(kind(1.0D0)) :: vfohc = 0.3D0
   !+ad_vars  vsbn : total flux swing available for burn (Wb)
   real(kind(1.0D0)) :: vsbn = 0.0D0

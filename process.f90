@@ -2000,3 +2000,5 @@ end subroutine runtests
 !          #329 Improved error handling in input.f90.
 ! 410      #341 New TF coil shape.
 !          #347 More options for primary pumping power - primary_pumping
+!          #326 Minor changes to descriptions and a page number in pfcoil
+!          

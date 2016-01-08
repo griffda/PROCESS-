@@ -2456,7 +2456,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
   function selfinductance(a,b,c,N)
-    !  Equation 86, p. 316 of  Formulas and tables for the calculation
+    !  Equation 86, p. 136 of  Formulas and tables for the calculation
     !  of mutual and self-inductance [Revised], Rosa and Grover,
     !  Scientific papers of the Bureau of Standards, No. 169, 3rd ed., 1916
     ! a = mean radius of coil
