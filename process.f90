@@ -2001,4 +2001,5 @@ end subroutine runtests
 ! 410      #341 New TF coil shape.
 !          #347 More options for primary pumping power - primary_pumping
 !          #326 Minor changes to descriptions and a page number in pfcoil
-!          
+!          Replaced CS coil self-inductance formula - see benchmark.
+!          (PS This isn't a very important quantity!)

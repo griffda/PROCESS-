@@ -2456,21 +2456,38 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
   function selfinductance(a,b,c,N)
-    !  Equation 86, p. 136 of  Formulas and tables for the calculation
-    !  of mutual and self-inductance [Revised], Rosa and Grover,
-    !  Scientific papers of the Bureau of Standards, No. 169, 3rd ed., 1916
+    ! Formulas and tables for the calculation of mutual and self-inductance [Revised], 
+    ! Rosa and Grover, Scientific papers of the Bureau of Standards, No. 169, 3rd ed., 1916
     ! a = mean radius of coil
     ! b = length of coil
     ! c = radial winding thickness
     ! N = number of turns
-    real(kind(1.0D0)) :: a,b,c, N, selfinductance, r, r2_16a2    
-    
-    r = 0.2235D0*(b + c)  !  approx geometric mean distance of cross-section (Grover)
-    r2_16a2 = r*r / (16.0D0*a*a)
+    real(kind(1.0D0)) :: a,b,c, N, selfinductance, r, r2_16a2, x, x2, q, at, lambda, mu, p
 
-    selfinductance = rmu0 * a * N**2 * &
-                    (log(8.0D0*a/r)*(1.0D0 + 3.0D0*r2_16a2) - (2.0D0 + r2_16a2))
-  
+    !  Equation 88, p. 137      
+    x = b/c
+    x2 = x**2
+    q = log(1.0d0+x2) 
+    p = log(1.0d0+1.0d0/x2)
+    at = atan(x)
+    lambda = log(8.0d0*a/c) + 1/12.0d0 - pi*x/3.0d0 - 0.5d0*q + 1/(12.0d0*x2)*q &
+              + 1/12.0d0*x2*p + 2.0d0/3.0d0*(x-1.0d0/x)*at
+                 
+    mu = c**2/(96.0d0*a**2)*     &
+         ((log(8.0d0*a/c)-0.5d0*q)*(1+3.0d0*x2) + 3.45d0*x2 + 221.0d0/60.0d0   &
+         -1.6d0*pi*x**3 + 3.2d0*x**3*at - 0.1d0/x2*q + 0.5d0*x2**2*p)
+        
+    selfinductance = rmu0*a*N**2 * (lambda + mu)     
+    
+    if((selfinductance<0.0d0).or.(selfinductance .ne. selfinductance).or.(selfinductance>1000.0d0)) then
+        write(*,*) 'a = ',a, ' b = ', b
+        write(*,*) 'c = ',c, ' x = ', x
+        write(*,*) 'q = ',q, ' at = ', at
+        write(*,*) 'x2 = ',x2, ' N = ', N
+        write(*,*) 'lambda = ',lambda, ' mu = ', mu
+        write(*,*) 'selfinductance = ',selfinductance
+    end if
+    
   end function selfinductance
   
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2493,7 +2510,7 @@ contains
     else
         test = 'FAIL'
     end if
-    call ocmmnt(outfile,'Unit test of self-inductance formula : //test')
+    call ocmmnt(outfile,'Unit test of self-inductance formula: '//test)
     call ovarre(outfile,'Self-inductance of 1m Brooks coil: standard formula', '(l)',l, 'OP ')
     call ovarre(outfile,'Self-inductance of 1m Brooks coil: PROCESS formula', '(lp)',lp, 'OP ')
     call oblnkl(outfile)

@@ -1,38 +1,0 @@
- 
- **************************************************************************************************************
- ************************************************** PROCESS ***************************************************
- ************************************** Power Reactor Optimisation Code ***************************************
- **************************************************************************************************************
- 
-   Program : ./process.exe
-   Version : 410    Release Date :: 2015-12-08
- Date/time : Thu Jan  7 14:41:01 GMT 2016
-      User : mkovari (Michael Kovari)
- Directory : /home/mkovari/PROCESS/my_develop2/test_suite
- 
- **************************************************************************************************************
- 
- PROCESS 410 : Run on Thu Jan  7 14:41:01 GMT 2016 by Michael Kovari
- Reactor concept design: Pulsed tokamak model, (c) CCFE
- demo 1 model for cost paper  * Short descriptive title for the run
- 
- VMCON Iterations
-           1 vmcon iterations           2 vmcon iterations           3 vmcon iterations           4 vmcon iterations           5 vmcon iterations           6 vmcon iterations           7 vmcon iterations           8 vmcon iterations           9 vmcon iterations          10 vmcon iterations          11 vmcon iterations          12 vmcon iterations          13 vmcon iterations          14 vmcon iterations          15 vmcon iterations
-
-************************************* PROCESS found a feasible solution **************************************
-
-The optimisation required    15 iterations
-There were   1226 function calls
-
-******************************************** Errors and Warnings *********************************************
-
- PROCESS status flag:   Warning messages                                  
-
- ID  LEVEL  MESSAGE
-150     2   CHECK: Lower limit of volume averaged electron temperature (te) has been raised 
-  
-135     1   OUTPF: CS not using max current density: further optimisation may be possible   
-  
-
-******************************************* End of PROCESS Output ********************************************
-
