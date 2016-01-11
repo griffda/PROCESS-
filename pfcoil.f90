@@ -2909,6 +2909,8 @@ contains
     write(outfile,50)(tim(k),k=1,6)
 50  format(t40,'time (sec)'//t10,6f11.2)
 
+    write(outfile,51)(timelabel(k),k=1,6)
+51  format(t16, 6a11)
     call ocmmnt(outfile,'circuit')
 
     do k = 1,ncirt-1

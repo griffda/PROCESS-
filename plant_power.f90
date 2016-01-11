@@ -578,8 +578,9 @@ contains
     real(kind(1.0D0)) :: pfbusl,powpfr,cptburn,delktim,powpfi, &
          powpfr2,ensxpf,engx,vpfij,engxpc
     real(kind(1.0D0)), save :: pfbuspwr
-
-    integer :: i,ic,ngrpt,ig,ipf,jjpf,jjpf2,jpf
+    real(kind(1.0D0)), dimension(6) :: inductxcurrent,poloidalenergy
+    real(kind(1.0D0)), dimension(5) :: poloidalpower
+    integer :: i,ic,ngrpt,ig,ipf,jjpf,jjpf2,jpf,time
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -647,10 +648,12 @@ contains
     end do
 
     jpf = 0
+    poloidalenergy(:) = 0.0d0
     do jjpf = 1,ngrpt
        do jjpf2 = 1,ncls(jjpf)
           jpf = jpf + 1
           engx = 0.0D0
+          inductxcurrent(:) = 0.0d0
           do ipf = 1,ncirt
 
              !  Voltage in circuit jpf due to change in current from circuit ipf
@@ -661,13 +664,25 @@ contains
 
              !  MVA in circuit jpf at time, tim(3) due to changes in current
              powpfii(jpf) = powpfii(jpf) + vpfij*cpt(jpf,3)/1.d6
-             engx = engx + sxlg(jpf,ipf)*cpt(ipf,5)
+             
+             ! Term used for calculating stored energy at each time
+             do time = 1,6
+                inductxcurrent(time) = inductxcurrent(time) + sxlg(jpf,ipf)*cpt(ipf,time)
+             end do 
+             !engx = engx + sxlg(jpf,ipf)*cpt(ipf,5)
 
           end do
 
-          !  Compute inductive energy of each PF coil circuit at time tim(5)
-          engxpc = 0.5D0 * engx * cpt(jpf,5)
-          ensxpf = ensxpf + engxpc
+          !  Stored magnetic energy of the poloidal field at each time
+          do time = 1,6
+            poloidalenergy(time) = poloidalenergy(time) + 0.5D0 * inductxcurrent(time) * cpt(jpf,time)
+          end do
+          do time = 1,5
+            ! Mean rate of change of stored energy between time and time+1
+            poloidalpower(time) = (poloidalenergy(time+1)-poloidalenergy(time)) / (tim(time+1)-tim(time))
+          end do
+          !engxpc = 0.5D0 * engx * cpt(jpf,5)
+          !ensxpf = ensxpf + engxpc
 
           !  Resistive power in circuits at times tim(3) and tim(5) respectively (MW)
           powpfr = powpfr + turns(jpf) * cpt(jpf,3) * cktr(jjpf)/1.0D6
@@ -679,7 +694,8 @@ contains
 
     !  Compute the maximum stored energy and the maximum dissipative
     !  energy in all the PF circuits over the entire cycle time, MJ
-    ensxpfm = 1.0D-6 * ensxpf
+    !ensxpfm = 1.0D-6 * ensxpf
+    ensxpfm = 1.0D-6 * maxval(poloidalenergy)
 
     !  Maximum total MVA requirements
     peakmva =  max( (powpfr + powpfi), powpfr2)
@@ -713,26 +729,39 @@ contains
     !  Output Section
     if (iprint == 0) return
 
-    !call oheadr(outfile,'PF Coil Power Conversion')
     call oheadr(outfile,'PF Coils and Central Solenoid: Power and Energy')
     call ovarre(outfile,'Number of PF coil circuits','(pfckts)',pfckts)
-    !call ovarre(outfile,'Total power supply MVA for PF circuits', '(spsmva)',spsmva, 'OP ')
     call ovarre(outfile,'Sum of PF power supply ratings (MVA)', '(spsmva)',spsmva, 'OP ')
-    ! MDK Remove this output as it is not very obvious
-    ! call ovarre(outfile,'Av. max curr/turn of PF coil circuits (kA)', '(acptmax)',acptmax, 'OP ')
     call ovarre(outfile,'Total PF coil circuit bus length (m)', '(spfbusl)',spfbusl, 'OP ')
     call ovarre(outfile,'Total PF coil bus resistive power (kW)', '(pfbuspwr)',pfbuspwr, 'OP ')
     call ovarre(outfile,'Total PF coil resistive power (kW)', '(srcktpm)',srcktpm, 'OP ')
     call ovarre(outfile,'Maximum PF coil voltage (kV)','(vpfskv)',vpfskv)
-    call ovarre(outfile,'Max stored energy in PF coil circuits (MJ)', '(ensxpfm)',ensxpfm, 'OP ')
-    if (ensxpfm < 0)  then
-        ! MDK  This energy includes the CS and the plasma.
-        !call oheadr(outfile,'ERROR Negative stored energy in PF coils (ensxpfm)') 
-        !write(*,*) 'ERROR Negative stored energy in PF coils (ensxpfm)'
-        call oheadr(outfile,'ERROR Negative stored energy in poloidal field (ensxpfm)') 
-        write(*,*) 'ERROR Negative stored energy in poloidal field (ensxpfm)'
-    end if         
+    
+    call ovarre(outfile,'Maximum stored energy in poloidal field (MJ)', '(ensxpfm)',ensxpfm, 'OP ')
+    call ovarre(outfile,'Maximum absolute rate of change of stored energy in poloidal field (MW)', '',maxval(abs(poloidalpower))/1.0d6, 'OP ')
+    if (any(poloidalenergy<0.0d0))  then
+        call oheadr(outfile,'ERROR Negative stored energy in poloidal field') 
+        write(*,*)          'ERROR Negative stored energy in poloidal field'
+    end if     
 
+    call ocmmnt(outfile,'Energy stored in poloidal magnetic field :')  
+    call oblnkl(outfile)
+    
+    write(outfile,50)(tim(time),time=1,6)
+50  format(t45,'time (sec)'//t15,6f11.2)
+    write(outfile,55)(timelabel(time),time=1,6)  
+55  format(' Time point', t21,6a11)    
+
+    write(outfile,60) (poloidalenergy(time)/1.0d6,time=1,6)
+60  format(' Energy (MJ)',t17,6(1pe11.3))
+    call oblnkl(outfile)
+    
+    write(outfile,65)(intervallabel(time),time=1,5)  
+65  format(' Interval', t26,6a11)    
+    write(outfile,70) (poloidalpower(time)/1.0d6,time=1,5)
+70  format(' dE/dt (MW)',t22,5(1pe11.3))
+    call oblnkl(outfile)    
+    
   end subroutine pfpwr
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
