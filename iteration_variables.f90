@@ -241,6 +241,7 @@ subroutine loadxc
      case (112) ; xcm(i) = fzeffmax
      case (113) ; xcm(i) = ftaucq
      case (114) ; xcm(i) = fw_channel_length
+     case (115) ; xcm(i) = fpoloidalpower
     
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -516,6 +517,7 @@ subroutine convxc(xc,nn)
      case (112) ; fzeffmax = xc(i)/scale(i)
      case (113) ; ftaucq = xc(i)/scale(i)
      case (114) ; fw_channel_length = xc(i)/scale(i)
+     case (115) ; fpoloidalpower = xc(i)/scale(i)
 
      case default
         call report_error(57)

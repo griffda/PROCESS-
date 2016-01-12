@@ -2300,7 +2300,13 @@ module pf_power_variables
   real(kind(1.0D0)) :: srcktpm = 0.0D0
   !+ad_vars  vpfskv : PF coil voltage (kV)
   real(kind(1.0D0)) :: vpfskv = 0.0D0
-
+  
+  !+ad_vars  peakpoloidalpower : Peak absolute rate of change of stored energy in poloidal field (MW) (11/01/16)
+  real(kind(1.0D0)) :: peakpoloidalpower = 0.0D0
+  !+ad_vars  maxpoloidalpower /1000/ : Maximum permitted absolute rate of change of stored energy in poloidal field (MW)
+  real(kind(1.0D0)) :: maxpoloidalpower = 1000.0D0
+  
+  
 end module pf_power_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -3637,6 +3643,10 @@ module constraint_variables
   !+ad_vars  zeffmax /3.6/ : maximum value for Zeff
   !+ad_varc                   (constraint equation 64)
   real(kind(1.0D0)) :: zeffmax = 3.6D0
+  !+ad_vars  fpoloidalpower /1.0/ : f-value for constraint on rate of change of energy in poloidal field 
+  !+ad_varc                   (constraint equation 66, iteration variable 115)
+  real(kind(1.0D0)) :: fpoloidalpower = 1.0D0
+  
 
 end module constraint_variables
 

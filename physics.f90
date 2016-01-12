@@ -282,7 +282,8 @@ contains
        !  iterated using limit equation 41.
 
        tramp = max(tramp,tohs)
-       tqnch = max(tqnch,tohs)
+       !tqnch = max(tqnch,tohs)
+       tqnch = tohs
 
     end if
 

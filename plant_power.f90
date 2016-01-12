@@ -696,6 +696,8 @@ contains
     !  energy in all the PF circuits over the entire cycle time, MJ
     !ensxpfm = 1.0D-6 * ensxpf
     ensxpfm = 1.0D-6 * maxval(poloidalenergy)
+    ! Peak absolute rate of change of stored energy in poloidal field (MW)
+    peakpoloidalpower = maxval(abs(poloidalpower))/1.0d6
 
     !  Maximum total MVA requirements
     peakmva =  max( (powpfr + powpfi), powpfr2)
@@ -738,7 +740,14 @@ contains
     call ovarre(outfile,'Maximum PF coil voltage (kV)','(vpfskv)',vpfskv)
     
     call ovarre(outfile,'Maximum stored energy in poloidal field (MJ)', '(ensxpfm)',ensxpfm, 'OP ')
-    call ovarre(outfile,'Maximum absolute rate of change of stored energy in poloidal field (MW)', '',maxval(abs(poloidalpower))/1.0d6, 'OP ')
+    call ovarre(outfile,'Peak absolute rate of change of stored energy in poloidal field (MW)',  &
+                        'peakpoloidalpower',peakpoloidalpower, 'OP ')
+    
+    if ((ioptimz > 0).and.(active_constraints(66))) then
+        call ovarre(outfile,'Max permitted abs rate of change of stored energy in poloidal field (MW)', &
+                            'maxpoloidalpower',maxpoloidalpower)
+    end if                          
+    
     if (any(poloidalenergy<0.0d0))  then
         call oheadr(outfile,'ERROR Negative stored energy in poloidal field') 
         write(*,*)          'ERROR Negative stored energy in poloidal field'

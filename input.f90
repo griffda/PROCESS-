@@ -991,6 +991,10 @@ contains
        case ('fzeffmax')
           call parse_real_variable('fzeffmax', fzeffmax, 0.001D0, 1.0D0, &
                'f-value for Zeff limit equation')
+       case ('fpoloidalpower')
+          call parse_real_variable('fpoloidalpower', fpoloidalpower, 0.001D0, 1.0D0, &
+               'f-value for constraint on rate of change of energy in poloidal field')
+               
        case ('gammax')
           call parse_real_variable('gammax', gammax, 0.01D0, 10.0D0, &
                'Maximum current drive gamma (A/W-m2)')
@@ -2514,6 +2518,10 @@ contains
        case ('iscenr')
           call parse_int_variable('iscenr', iscenr, 1, 3, &
                'Switch for energy storage option')
+
+       case ('maxpoloidalpower')
+          call parse_real_variable('maxpoloidalpower', maxpoloidalpower, 0.0D0, 2.0D3, &
+               'Maximum permitted absolute rate of change of stored energy in poloidal field (MW)')
 
           !  Output file options settings
 

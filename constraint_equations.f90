@@ -984,22 +984,34 @@ contains
           end if
 	  
        case (64)  !  Upper limit on Zeff
-          cc(i) = 1.0D0 - fzeffmax * (zeffmax/zeff)
-	  if (present(con)) then
-             con(i) = zeffmax
-             err(i) = zeffmax * cc(i)
-             symbol(i) = '<'
-             units(i) = ''
-          end if
+        cc(i) = 1.0D0 - fzeffmax * (zeffmax/zeff)
+	    if (present(con)) then
+            con(i) = zeffmax
+            err(i) = zeffmax * cc(i)
+            symbol(i) = '<'
+            units(i) = ''
+        end if
 	  
        case (65)  !  Limit TF dump time to calculated quench time (IDM: 2MBSE3)
-          cc(i) = 1.0d0 - ftaucq * tdmptf / taucq
-	  if (present(con)) then
+        cc(i) = 1.0d0 - ftaucq * tdmptf / taucq
+	    if (present(con)) then
              con(i) = taucq
              err(i) = taucq * cc(i)
              symbol(i) = '>'
-             units(i) = ''
-          end if
+             units(i) = 's'
+        end if
+        
+        case (66)  !  Limit on rate of change of energy in poloidal field
+        cc(i) = 1.0d0 - fpoloidalpower * maxpoloidalpower / peakpoloidalpower
+	    if (present(con)) then
+             con(i) = maxpoloidalpower
+             err(i) = maxpoloidalpower * cc(i)
+             symbol(i) = '<'
+             units(i) = 'MW'
+        end if
+
+
+
 
       case default
 
@@ -1037,6 +1049,12 @@ contains
              write(*,*) 'pinjimw = ', pinjimw
              write(*,*) 'pinjemw = ', pinjemw
 
+          case (66)
+             write(*,*) 'fpoloidalpower = ', fpoloidalpower
+             write(*,*) 'maxpoloidalpower = ', maxpoloidalpower
+             write(*,*) 'peakpoloidalpower = ', peakpoloidalpower
+
+          
           end select
 
           idiags(1) = icc(i) ; fdiags(1) = cc(i)

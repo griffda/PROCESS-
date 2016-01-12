@@ -2003,3 +2003,5 @@ end subroutine runtests
 !          #326 Minor changes to descriptions and a page number in pfcoil
 !          Replaced CS coil self-inductance formula - see benchmark.
 !          (PS This isn't a very important quantity!)
+!          #338 Output PF energy and current vs. time
+!          Also add maximum rate of change of PF energy as a constraint
