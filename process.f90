@@ -287,7 +287,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '410    Release Date :: 2015-12-08'
+       '411    Release Date :: 2016-01-012'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -2004,4 +2004,4 @@ end subroutine runtests
 !          Replaced CS coil self-inductance formula - see benchmark.
 !          (PS This isn't a very important quantity!)
 !          #338 Output PF energy and current vs. time
-!          Also add maximum rate of change of PF energy as a constraint
+! 411      Added maximum rate of change of PF energy as a constraint.
