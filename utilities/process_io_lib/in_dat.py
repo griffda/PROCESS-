@@ -1036,13 +1036,13 @@ class InDat(object):
             # Ignore title, header and commented lines
             if line_type != "Title" and line_type != "Comment":
 
-                try:
+                # try:
                     # for non-title lines process line and store data.
-                    process_line(self.data, line_type, l_line)
-                except KeyError:
-                    print("Warning: Line below is causing a problem. Check "
-                          "that line in IN.DAT is valid. Line skipped!\n{0}".
-                          format(line))
+                process_line(self.data, line_type, l_line)
+                # except KeyError:
+                #    print("Warning: Line below is causing a problem. Check "
+            #              "that line in IN.DAT is valid. Line skipped!\n{0}".
+        #                  format(line))
 
     def add_iteration_variable(self, variable_number):
         """ Function to add iteration variable to IN.DAT data dictionary

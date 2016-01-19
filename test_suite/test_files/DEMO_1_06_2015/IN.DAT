@@ -1,4 +1,4 @@
-***** DEMO1 2014 with radial build parameters from 
+***** DEMO1 2014 with radial build parameters from
 ***** Meszaros et al, Proc. SOFT 2014
 *****
 ***** Including variations suggested November 2014 including:
@@ -258,7 +258,7 @@ EMULT = 1.18
 iblanket = 1
 FHOLE   = 0.05,
 DENSTL  = 7800.0,
-FBLLI   = 0.00,
+*FBLLI   = 0.00,
 FBLLIPB = 0.00,
 FBLVD   = 0.00,
 FBLLI2O = 0.07,
@@ -328,36 +328,36 @@ $VACCY
 $END
 
 $OSECTS
-      bt          = 5.6476E+00 
-      rmajor      = 9.1077E+00 
-      te          = 1.3212E+01 
-      beta        = 3.0810E-02 
-      dene        = 7.9759E+19 
-      fdene       = 1.2000E+00 
-      hfact       = 1.1000E+00 
-      oacdcp      = 9.9963E+06 
-      fwalld      = 1.3024E-01 
-     ohcth       = 8.2414E-01 
-     q           = 3.2267E+00 
-     bore        = 2.5006E+00 
-     fbetatry    = 4.8361E-01 
-     coheof      = 1.3465E+07 
-     fjohc       = 2.5000E-01 
-     fjohc0      = 2.5000E-01 
-     fcohbop     = 9.3592E-01 
-     gapoh       = 5.0000E-02 
-     fvsbrnni    = 4.4628E-01 
-     fstrcase    = 1.0000E+00 
-     fstrcond    = 8.6890E-01 
-     fiooic      = 3.6068E-01 
-     fvdump      = 6.1211E-01 
-     vdalw       = 1.2650E+01 
-     fjprot      = 1.0000E+00 
-     tdmptf      = 3.0000E+01 
-     thkcas      = 4.9102E-01 
-     thwcndut    = 4.0000E-03 
-     gapds       = 1.2000E-01 
-     tfcth       = 1.0500E+00 
-     flhthresh   = 1.2725E+00 
-     fimpvar     = 4.1100E-04 
+      bt          = 5.6476E+00
+      rmajor      = 9.1077E+00
+      te          = 1.3212E+01
+      beta        = 3.0810E-02
+      dene        = 7.9759E+19
+      fdene       = 1.2000E+00
+      hfact       = 1.1000E+00
+      oacdcp      = 9.9963E+06
+      fwalld      = 1.3024E-01
+     ohcth       = 8.2414E-01
+     q           = 3.2267E+00
+     bore        = 2.5006E+00
+     fbetatry    = 4.8361E-01
+     coheof      = 1.3465E+07
+     fjohc       = 2.5000E-01
+     fjohc0      = 2.5000E-01
+     fcohbop     = 9.3592E-01
+     gapoh       = 5.0000E-02
+     fvsbrnni    = 4.4628E-01
+     fstrcase    = 1.0000E+00
+     fstrcond    = 8.6890E-01
+     fiooic      = 3.6068E-01
+     fvdump      = 6.1211E-01
+     vdalw       = 1.2650E+01
+     fjprot      = 1.0000E+00
+     tdmptf      = 3.0000E+01
+     thkcas      = 4.9102E-01
+     thwcndut    = 4.0000E-03
+     gapds       = 1.2000E-01
+     tfcth       = 1.0500E+00
+     flhthresh   = 1.2725E+00
+     fimpvar     = 4.1100E-04
 $END

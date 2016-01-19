@@ -121,6 +121,7 @@ contains
     !+ad_hist  02/09/14 PJK New peak field with ripple calculation
     !+ad_hist  26/11/15 RK  Quench time calculation, WP insertion gap
     !+ad_hist  08/12/15 MDK New TF coil shape with straight vertical section
+    !+ad_hist  19/01/16 JM  Updated tfboreh and tfborev for new radial build
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -135,7 +136,7 @@ contains
     !  Local variables
     integer :: i,peaktfflag
     real(kind(1.0D0)) :: awpc,awptf,bcylir,cplen,leni,leno,leno0, &
-         radwp,rbcndut,rcoil,rcoilp,tant,thtcoil,wbtf, a, b, c, radvv
+         radwp,rbcndut,rcoil,rcoilp,tant,thtcoil,wbtf, a, b, c, radvv, deltf
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Determine layout of the inboard midplane TF coil leg
@@ -386,12 +387,17 @@ contains
 
     !  Area of steel structure in winding pack
 
-    aswp = turnstf*acndttf + arp   
+    aswp = turnstf*acndttf + arp
 
     !  TF coil horizontal and vertical bores
+    tfborev = 2.0D0*(rminor*kappa + vgaptop + fwith + blnktth + vvblgap + &
+        shldtth + ddwi+ vgap2 + thshield + tftsgap + tfcth)
 
-    !tfboreh = rtot - rtfcin - tfcth  !  tfcth = 0.5D0*(tfthko + tfcth)
-    !tfborev = (hpfu - tfcth) + hmax
+    deltf = bore + ohcth + precomp + gapoh + tfcth * ((1.0d0 / cos(pi/tfno)) - 1.0d0) + tftsgap
+    tfboreh = tfcth + deltf + thshield + gapds + ddwi + shldith + vvblgap + &
+        blnkith + fwith + scrapli + rminor + rminor + scraplo + fwoth + &
+        blnkoth + vvblgap + shldoth + ddwi + gapsto + thshield + &
+        tftsgap + tfthko
 
     !  TF Coil areas and masses
 
@@ -457,8 +463,8 @@ contains
     whtcon = whtconsc + whtconcu + whtconsh + whtconin
 
     !  Total TF coil mass (all coils)
-    whttf = (whtcas + whtcon + whtrp + whtgw) * tfno    
-    
+    whttf = (whtcas + whtcon + whtrp + whtgw) * tfno
+
     !  Peak field including ripple
     call peak_tf_with_ripple(tfno,wwp1,thkwp,radwp,bmaxtf,bmaxtfrp,peaktfflag)
 
@@ -466,10 +472,10 @@ contains
     call stresscl
 
     if (iprint == 1) call outtf(outfile, peaktfflag)
-   
+
     if ((whttf<1.0d0).or.(whttf/=whttf)) then
         write(*,*) '  whtcas = ', whtcas, ' whtcon = ', whtcon
-        write(*,*) '   whtrp = ', whtrp,  '   tfno = ', tfno        
+        write(*,*) '   whtrp = ', whtrp,  '   tfno = ', tfno
         write(*,*) '   whtgw = ', whtgw,  '  tfcth = ', tfcth
         write(*,*) '  thkcas = ',thkcas,  ' casthi = ', casthi
         write(*,*) '  casths = ',casths,  '  tfcth = ', tfcth
@@ -1149,33 +1155,33 @@ contains
     real(kind(1.0D0)) :: fstraight, a, b
     integer :: i
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
-    xarc(1) = rtfcin + tfcth/2.0d0 
+
+    xarc(1) = rtfcin + tfcth/2.0d0
     xarc(2) = rmajor - rminor/5.0d0
-    xarc(3) = rtot - tfcth/2.0d0   
-    xarc(4) = xarc(2)              
-    xarc(5) = xarc(1)    
+    xarc(3) = rtot - tfcth/2.0d0
+    xarc(4) = xarc(2)
+    xarc(5) = xarc(1)
     ! Height of straight section as a fraction of the coil inner height
     fstraight = 0.6d0
-    if (snull==0) then    
-        ! Double null        
+    if (snull==0) then
+        ! Double null
         yarc(1) = fstraight * hmax
-        yarc(2) = hmax 
-        yarc(3) = 0 
+        yarc(2) = hmax
+        yarc(3) = 0
         yarc(4) = -hmax
         yarc(5) = -fstraight * hmax
-    else 
-        ! Single null        
+    else
+        ! Single null
         yarc(1) = fstraight * (hpfu - tfcth)
-        yarc(2) = hpfu - tfcth 
-        yarc(3) = 0 
+        yarc(2) = hpfu - tfcth
+        yarc(3) = 0
         yarc(4) = -hmax
         yarc(5) = -fstraight * hmax
     end if
-    
+
     ! Horizontal and vertical radii of inside edge of TF coil
     ! Arcs are numbered clockwise:
-    ! 1=upper inboard, 2=upper outboard, 3=lower ouboard, 4=lower inboard 
+    ! 1=upper inboard, 2=upper outboard, 3=lower ouboard, 4=lower inboard
     ! 'tfleng' is the length of the coil midline.
     tfleng = yarc(1) - yarc(5)
     do i = 1, 4
@@ -1185,14 +1191,14 @@ contains
         a = tfa(i) + tfcth/2.0d0
         b = tfb(i) + tfcth/2.0d0
         tfleng = tfleng + 0.25d0 * circumference(a,b)
-    end do       
-    
-    contains 
+    end do
+
+    contains
     function circumference(a,b)
         real(kind(1.0D0)) :: circumference, a, b
         !  Calculate ellipse circumference using Ramanujan approximation (m)
         circumference = pi * ( 3.0D0*(a+b) - sqrt( (3.0D0*a + b)*(a + 3.0D0*b) ) )
-    end function    
+    end function
 
   end subroutine coilshap
 
@@ -1207,9 +1213,9 @@ contains
     !+ad_args  tfthk        : input real : TF coil thickness (m)
     !+ad_desc  This routine calculates the self inductance of a TF coil
     !+ad_desc  approximated by a straight inboard section and two elliptical arcs.
-    !+ad_desc  The inductance of the TFC (considered as a single axisymmetric turn) 
+    !+ad_desc  The inductance of the TFC (considered as a single axisymmetric turn)
     !+ad_desc  is calculated by numerical integration over the cross-sectional area.
-    !+ad_desc  The contribution from the cross-sectional area of the 
+    !+ad_desc  The contribution from the cross-sectional area of the
     !+ad_desc  coil itself is calculated by taking the field as B(r)/2.
     !+ad_desc  The field in the bore is calculated for unit current.
     !+ad_desc  Top/bottom symmetry is assumed.
@@ -1233,19 +1239,19 @@ contains
     x0 = xarc(2)
     y0 = yarc(2)
 
-    ! Minor and major radii of the inside and outside perimeters of the the 
+    ! Minor and major radii of the inside and outside perimeters of the the
     ! Inboard leg and arc.
-    ! Average the upper and lower halves, which are different in the 
+    ! Average the upper and lower halves, which are different in the
     ! single null case
     ai = xarc(2) - xarc(1)
     bi = (yarc(2)-yarc(4))/2.0d0 - yarc(1)
     ao = ai + tfthk
     bo = bi + tfthk
     ! Interval used for integration
-    dr = ao / dble(nintervals)  
+    dr = ao / dble(nintervals)
     ! Start both integrals from the centre-point where the arcs join.
-    ! Initialise major radius  
-    r = x0 - dr/2.0d0   
+    ! Initialise major radius
+    r = x0 - dr/2.0d0
     do i = 1,nintervals
         ! Field in the bore for unit current
         b = rmu0/(2.0D0*pi*r)
@@ -1257,8 +1263,8 @@ contains
             h_bore = 0.0d0
             ! Include the contribution from the straight section
             h_thick = bo * sqrt(1 - ((r-x0)/ao)**2) + yarc(1)
-        end if        
-        ! Assume B in TF coil = 1/2  B in bore        
+        end if
+        ! Assume B in TF coil = 1/2  B in bore
         ! Multiply by 2 for upper and lower halves of coil
         tfind = tfind + b*dr*(2.0D0*h_bore + h_thick)
         r = r - dr
@@ -1269,9 +1275,9 @@ contains
     bi = (yarc(2) - yarc(4))/2.0d0
     ao = ai + tfthk
     bo = bi + tfthk
-    dr = ao / dble(nintervals)   
-    ! Initialise major radius     
-    r = x0 + dr/2.0d0   
+    dr = ao / dble(nintervals)
+    ! Initialise major radius
+    r = x0 + dr/2.0d0
     do i = 1,nintervals
         ! Field in the bore for unit current
         b = rmu0/(2.0D0*pi*r)
@@ -1281,13 +1287,13 @@ contains
             h_thick = bo * sqrt(1 - ((r-x0)/ao)**2) - h_bore
         else
             h_bore = 0.0d0
-            h_thick = bo * sqrt(1 - ((r-x0)/ao)**2) 
-        end if        
-        ! Assume B in TF coil = 1/2  B in bore        
+            h_thick = bo * sqrt(1 - ((r-x0)/ao)**2)
+        end if
+        ! Assume B in TF coil = 1/2  B in bore
         ! Multiply by 2 for upper and lower halves of coil
         tfind = tfind + b*dr*(2.0D0*h_bore + h_thick)
         r=r+dr
-    end do        
+    end do
 
   end subroutine tfcind
 
@@ -1459,8 +1465,8 @@ contains
     call ovarre(outfile,'Additional steel (radial plate) fraction of winding pack','(arp/ap)',arp/ap, 'OP ')
     call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap, 'OP ')
     call ovarre(outfile,'Helium fraction of winding pack','(avwp/ap)',avwp/ap, 'OP ')
-    call ovarrf(outfile,'      Total for winding pack','',(acond + turnstf*acndttf + arp + aiwp + avwp)/ap)    
-    
+    call ovarrf(outfile,'      Total for winding pack','',(acond + turnstf*acndttf + arp + aiwp + avwp)/ap)
+
     call ovarre(outfile,'Winding radial thickness (m)','(thkwp)',thkwp, 'OP ')
     call ovarre(outfile,'Winding width 1 (m)','(wwp1)',wwp1, 'OP ')
     call ovarre(outfile,'Winding width 2 (m)','(wwp2)',wwp2, 'OP ')

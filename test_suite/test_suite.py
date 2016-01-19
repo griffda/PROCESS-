@@ -179,14 +179,18 @@ def get_var_lists(f1, f2):
     both = []
 
     for var1 in key_list_1:
-        if var1 not in key_list_2:
-            in_list1.append(var1)
-        else:
-            both.append(var1)
+        status = check_exclusions(var1)
+        if status:
+            if var1 not in key_list_2:
+                in_list1.append(var1)
+            else:
+                both.append(var1)
 
     for var2 in key_list_2:
-        if var2 not in key_list_1:
-            in_list2.append(var2)
+        status = check_exclusions(var2)
+        if status:
+            if var2 not in key_list_1:
+                in_list2.append(var2)
 
     return both, in_list1, in_list2
 
