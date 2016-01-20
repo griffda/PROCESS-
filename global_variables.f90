@@ -2186,6 +2186,7 @@ module vacuum_variables
   !+ad_hist  29/10/12 PJK Initial version of module
   !+ad_hist  12/08/15 MDK vacuum_model and associated variables (#304 section 1)
   !+ad_hist  22/09/15 MDK Battes, Day and Rohde pump-down model (#304 section 2)
+  !+ad_hist  20/01/16 JM  Added pump throughput defaulted to ITER value
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2202,7 +2203,6 @@ module vacuum_variables
   !+ad_varc              of one ITER cryopump (50 Pa m3 s-1), all operating at the same time
   !+ad_varc              (vacuum_model = 'simple')
   real(kind(1.0D0)) :: niterpump = 0.0D0
-
   !+ad_vars  ntype /1/ : switch for vacuum pump type:<UL>
   !+ad_varc         <LI> = 0 for turbomolecular pump (magnetic bearing)
   !+ad_varc                  with speed of 2.0 m3/s
@@ -2218,6 +2218,8 @@ module vacuum_variables
   real(kind(1.0D0)) :: pbase = 5.0D-4
   !+ad_vars  prdiv /0.36/ : divertor chamber pressure during burn (Pa)
   real(kind(1.0D0)) :: prdiv = 0.36D0
+  !+ad_vars  pumptp /1.2155D22/ : Pump throughput (molecules/s) (default is ITER value)
+  real(kind(1.0D0)) :: pumptp = 1.2155D22
   !+ad_vars  rat /1.3e-8/ : plasma chamber wall outgassing rate (Pa-m/s)
   real(kind(1.0D0)) :: rat = 1.3D-8
   !+ad_vars  tn /300.0/ : neutral gas temperature in chamber (K)

@@ -2552,6 +2552,9 @@ contains
        case ('prdiv')
           call parse_real_variable('prdiv', prdiv, 0.0D0, 10.0D0, &
                'Divertor chamber pressure in burn (Pa)')
+       case ('pumptp')
+          call parse_real_variable('pumptp', pumptp, 0.0D0, 1.0D30, &
+               'Pump throughput (molecules/s) (default is ITER value)')
        case ('rat')
           call parse_real_variable('rat', rat, 1.0D-10, 1.0D-6, &
                'Plas chamber wall outgas rate (Pa-m/s)')
