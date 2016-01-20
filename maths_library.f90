@@ -80,7 +80,7 @@ module maths_library
   !use process_output
 
   implicit none
-  
+
   !  Precision variable
   integer, parameter :: double = 8
 
@@ -430,7 +430,7 @@ contains
     integer :: numerator, i
     if (k == 0) then
         coefficient = 1
-    else        
+    else
         coefficient = 1.0D0
         do i = 1, k
             numerator = n + 1 -i
@@ -2456,7 +2456,7 @@ contains
     if (info < 0) return
 
 	!  Setup line overwrite for VMCON iterations output
-	open(unit=iotty, carriagecontrol='FORTRAN')
+	open(unit=iotty)
 	write(*,*) ""
 	! MDK To prevent circular dependencies in compilation, I will replace this
 	! a simple write statement
@@ -2465,10 +2465,10 @@ contains
 
     !  Start the iteration by calling the quadratic programming
     !  subroutine
-    
+
     iteration: do
        !  Output to terminal number of VMCON iterations
-       write(iotty, '("+", I, '' vmcon iterations'')'), niter+1
+       write(iotty, '("+", I20, "vmcon iterations")'), niter+1
 
        !  Increment the quadratic subproblem counter
        nqp = nqp + 1
@@ -3640,7 +3640,7 @@ contains
     end do
 
     !  MDK Check for singular matrix
-    !  h matrix is unchanged if determinant only (job=10) is requested.    
+    !  h matrix is unchanged if determinant only (job=10) is requested.
 
     if (verbose == 1) then
        call sgedi(h,ih,n,iwa,det,10)
@@ -5710,7 +5710,7 @@ contains
   end subroutine eshellvol
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   subroutine dshellvol(rmajor,rminor,zminor,drin,drout,dz,vin,vout,vtot)
 
     !+ad_name  dshellvol

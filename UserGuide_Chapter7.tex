@@ -26,8 +26,8 @@ available options are (type the following on the command line):
 4.6.3 or above) \\
 \> \texttt{make ARCH=JAC} \> JET Analysis Cluster (pgf95 compiler)
 \end{tabbing}
-The Intel Fortran compiler is the default option, so typing simply
-\texttt{make} will have the same effect as typing \texttt{make ARCH=FUN}.
+The GNU gfortran compiler is the default option, so typing simply
+\texttt{make} will have the same effect as typing \texttt{make ARCH=GFORT}.
 
 The code is almost trivial to port to new architectures, by adding extra
 stanzas to the makefile as required.
@@ -147,7 +147,7 @@ to be given permission to do so via the CCFE \texttt{GitLab} server.
 
 \item \texttt{cd SomewhereAppropriate} (you choose!)
 
-\item 
+\item
 \texttt{git clone git@git.ccfe.ac.uk:process/process.git -b develop my\_develop}
 This copies the \texttt{develop} branch of the repository into a local folder \texttt{my\_develop}, which will be created if it does not already exist.
 \item \texttt{cd my\_develop}
@@ -155,7 +155,7 @@ This copies the \texttt{develop} branch of the repository into a local folder \t
 \item \texttt{git checkout develop}
 
 The sequence of commands above will provide you with a full copy of the \texttt{develop} branch of the \process\ source code, Python utilities and all
-the documentation files. 
+the documentation files.
 
 \item \texttt{make all}\\
 This performs a full compilation and builds the executable, creates the User Guide, creates the python dictionaries and produces all the web-based documentation.
@@ -219,7 +219,7 @@ and all test runs are successful!), use the following commands:
 \item \texttt{git add changedfile1 changedfile2 ...}  \\
   (This `stages' the modified files marking them as ready for committing).  \\
   \texttt{git commit}
-  
+
   Alternatively, just use\\
   \texttt{git commit -a} \\
   This commits all modified tracked files.
@@ -325,22 +325,22 @@ Section~\ref{sec:codemods}).
 
 \item If you have changed any "use" statements in the code, or any compilation dependencies in the Makefile, run \\
 \texttt{make clean}
-  
+
 \item \texttt{make all} \\
-This ensures that all the code and documentation compiles successfully.  
+This ensures that all the code and documentation compiles successfully.
 
 \item Run the input file(s) in the \texttt{tests} folder to ensure PROCESS runs correctly.
 
-\item 
+\item
 Close all open editor windows.  The commit will not work otherwise.
 
 \item   \texttt{git commit -a} \\
   This commits all modified tracked files.\\
   \\
-  Alternatively, you can this in two steps:\\  
+  Alternatively, you can this in two steps:\\
   \texttt{git add process.f90 process.tex changedfile1 changedfile2 ...}  \\
   (This `stages' the modified files marking them as ready for committing).  \\
-  \texttt{git commit}  
+  \texttt{git commit}
 
 \item An editor window will open; add a line summarising the changes you have made.  Use a format like this:
 \begin{verbatim}
@@ -349,7 +349,7 @@ Further details. Changes due to Git issues can be described like this:
 #270    Description
 #273    Description
 \end{verbatim}
-Save and close the window. This will initiate the commit to your \textit{local}\ copy of the repository.  
+Save and close the window. This will initiate the commit to your \textit{local}\ copy of the repository.
 
 \item \texttt{git tag -a rXYZ -m `Revision XYZ'}
 

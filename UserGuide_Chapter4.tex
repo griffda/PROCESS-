@@ -20,13 +20,17 @@ utilities (see Chapter~\ref{chap:utilities}), add the following lines to your \t
 module use /home/PROCESS/modules
 module swap python
 module load process/master
+
+If using default gfortran compiler instead of ifort:
+(module unload ifort/10.0.023)
+(module load gcc/4.8.2)
 \end{verbatim}
 \end{quote}
 (If you want to use the latest draft version of the code instead of the latest verified release version, replace \texttt{module load process/master} with \texttt{module load process/develop} above.)
 
 \section{User Interface}
 \label{sec:gui}
-The user interface allows for viewing and editing of \indat\ files in a web browser. Launch the interface (GUI) by typing \verb+start_gui+ from the Unix command line. 
+The user interface allows for viewing and editing of \indat\ files in a web browser. Launch the interface (GUI) by typing \verb+start_gui+ from the Unix command line.
 
 (The interface uses Django for its web framework. Currently it can only be
 launched by running the Django development server locally. This is performed
@@ -46,7 +50,7 @@ automatically if you launch the GUI as above. For instructions on starting the s
 
 Every variable is listed along with its current value, a 'reference'
 value and a short description. Hovering over the short description will
-provide a longer description. Until an input file is opened, all values are given their default values assigned by \process. 
+provide a longer description. Until an input file is opened, all values are given their default values assigned by \process.
 
 The reference values are used to compare differences between two files.
 Differences between the reference value and the current input value will be
@@ -111,9 +115,9 @@ graphical output to be produced easily.
 
 \section{Optimisation mode}
 
-Switch \texttt{ioptimz} should be set to \texttt{1} for optimisation mode. 
+Switch \texttt{ioptimz} should be set to \texttt{1} for optimisation mode.
 
-If \texttt{ioptimz = 0}, a non-optimisation pass is performed first.  Occasionally this provides a feasible set of initial conditions that aids convergence of the optimiser, but it is recommended to use \texttt{ioptimz = 1}. 
+If \texttt{ioptimz = 0}, a non-optimisation pass is performed first.  Occasionally this provides a feasible set of initial conditions that aids convergence of the optimiser, but it is recommended to use \texttt{ioptimz = 1}.
 
 Enable all the relevant consistency equations, and it is advisable to enable the corresponding iteration variables shown in bold in Table~\ref{tab:eqns}. A number of limit equations (inequality constraints) can also be activated.  For limit equations, the corresponding f-value must be selected as an iteration variable.  In optimisation mode, the number of iteration variables is unlimited.
 
@@ -135,7 +139,7 @@ sharp changes in gradient in the parameter values.
 
 It should be remembered that the value of the scan variable is set in the
 array \texttt{sweep}, and this overrules any value set for the variable
-elsewhere in the input file. 
+elsewhere in the input file.
 
 The output from an optimisation run contains an indication as to which iteration variables lie at their limiting values. A typical input file for use with \process\ in optimisation mode is contained in Appendix~\ref{app:infile2}.
 
@@ -144,7 +148,7 @@ The output from an optimisation run contains an indication as to which iteration
 
 Non-optimisation mode is sometimes used to perform benchmark comparisons, whereby the
 machine size, output power etc.\ are known and one only wishes to find the
-calculated stresses, beta values and fusion powers, for example. 
+calculated stresses, beta values and fusion powers, for example.
 
 Running \process\ in non-optimisation mode requires few changes to be made to the
 input file from the non-optimisation case. The main differences between
@@ -164,7 +168,7 @@ optimisation mode and non-optimisation mode are:
 \end{enumerate}
 
 As before, the user must decide which constraint equations and iteration
-variables to activate. 
+variables to activate.
 
 
 \section{Troubleshooting}
@@ -174,7 +178,7 @@ Experience has shown that the first few attempts at running \process\ with a
 new input file tends to produce unfeasible results --- that is, the code will
 not find a consistent set of machine parameters. The highly non-linear nature
 of the numerics of \process\ is the reason for this difficulty, and it often
-requires a great deal of painstaking adjustment of the input file to overcome.  The utility 
+requires a great deal of painstaking adjustment of the input file to overcome.  The utility
 \texttt{a\_to\_b} (~\autoref{sec:atob}) is useful in this situation.
 
 \subsection{Error handling}
@@ -287,11 +291,11 @@ highest residues should be examined further. In optimisation mode, the code
 also indicates which iteration variables lie at the edge of their allowed
 range.
 
-Unfeasible runs can be caused by specifying physically incompatible input parameters,  using insufficient iteration variables, or by starting the problem with unsuitable values of the iteration variables. 
+Unfeasible runs can be caused by specifying physically incompatible input parameters,  using insufficient iteration variables, or by starting the problem with unsuitable values of the iteration variables.
 
 The utility \texttt{run\_process} (Section~\ref{subsec:run_process}) carries out many runs, changing the starting values of the iteration variables randomly.  It stops once a feasible solution is found.
 
-Another approach is to start with an input file that gives a feasible solution, and modify it step by step towards the parameters desired.  This process is automated by the 
+Another approach is to start with an input file that gives a feasible solution, and modify it step by step towards the parameters desired.  This process is automated by the
 utility \texttt{a\_to\_b} ((Section~\ref{sec:atob}).
 
 It is important to choose the right number of \textit{useful}\/ iteration variables for the
@@ -360,4 +364,3 @@ sufficient new iteration variables activated at each step.  If the situation
 becomes unfeasible it can be helpful to reset the initial iteration variable
 values to those shown in the output from a previous feasible case, and rerun
 the code.
-

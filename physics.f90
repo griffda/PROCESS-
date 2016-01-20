@@ -249,16 +249,16 @@ contains
     else
        q95 = q  !  i.e. input (or iteration variable) value
     end if
-    
+
     !  Calculate density and temperature profile quantities
     !  If ipedestal = 1 and iscdens = 1 then set pedestal density to
     !    fgwped * Greenwald density limit
     !  Note: this used to be done before plasma current
-    
+
     if ((ipedestal == 1).and.(iscdens == 1)) then
       neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
     end if
-    
+
     call plasma_profiles
 
     btot = sqrt(bt**2 + bp**2)
@@ -404,16 +404,16 @@ contains
     pcoreradmw = pcoreradpv*vol
     pedgeradmw = pedgeradpv*vol
     pradmw = pradpv*vol
-    
-    ! MDK 
+
+    ! MDK
     !  Nominal mean photon wall load on entire first wall area including divertor and beam holes
     !  Note that 'fwarea' excludes these, so they have been added back in.
     if (iwalld == 1) then
        photon_wall = ffwal * pradmw / sarea
     else
        photon_wall = (1.0D0-fhcd-fdiv)*pradmw / fwarea
-    end if    
-    
+    end if
+
 
     !  Calculate ohmic power
 
@@ -421,7 +421,7 @@ contains
          pohmpv,pohmmw,rpfac,rplas)
     ! Resistive diffusion time = current penetration time ~ mu0.a^2/resistivity
     res_time = 2.0D0*rmu0*rmajor / (rplas*kappa95)
-    
+
     !  Calculate L- to H-mode power threshold for different scalings
 
     call pthresh(dene,dnla,bt,rmajor,kappa,sarea,aion,pthrmw)
@@ -497,7 +497,7 @@ contains
     end if
 
     call culblm(bt,dnbeta,plascur,rminor,betalim)
-    
+
     ! Calculate some derived quantities that may not have been defined earlier
     rad_fraction = pradmw / (falpha*palpmw+pchargemw+pohmmw+pinjmw)
 
@@ -772,7 +772,7 @@ contains
     !  alphap, alphat and alphaj are indices relevant to profiles of
     !  the form
     !             p = p0.(1-(r/a)**2)**alphap, etc.
-    !  
+    !
     !  Convert these indices to those relevant to profiles of the form
     !             p = p0.psi**alfpnw, etc.
 
@@ -877,7 +877,7 @@ contains
     !+ad_args  None
     !+ad_desc  This function calculates the bootstrap current fraction
     !+ad_desc  using the Sauter, Angioni and Lin-Liu scaling.
-    !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+    !+ad_desc  <P>The code was extracted from the ASTRA code, and was
     !+ad_desc  supplied by Emiliano Fable, IPP Garching
     !+ad_desc  (private communication).
     !+ad_prob  None
@@ -993,7 +993,7 @@ contains
       !+ad_args  j  : input integer : radial element index in range 1 to nr
       !+ad_args  nr : input integer : maximum value of j
       !+ad_desc  This function calculates the local beta poloidal.
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
       !+ad_desc  supplied by Emiliano Fable, IPP Garching
       !+ad_desc  (private communication).
       !+ad_desc  <P>beta poloidal = 4*pi*ne*Te/Bpo**2
@@ -1042,7 +1042,7 @@ contains
       !+ad_args  j  : input integer : radial element index in range 1 to nr
       !+ad_args  nr : input integer : maximum value of j
       !+ad_desc  This function calculates the local total beta poloidal.
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
       !+ad_desc  supplied by Emiliano Fable, IPP Garching
       !+ad_desc  (private communication).
       !+ad_desc  <P>beta poloidal = 4*pi*(ne*Te+ni*Ti)/Bpo**2
@@ -1097,7 +1097,7 @@ contains
       !+ad_desc  collisions: <I>NU* = Nuei*q*Rt/eps**1.5/Vte</I>
       !+ad_desc  The electron-ion collision frequency NUEI=NUEE*1.4*ZEF is
       !+ad_desc  used.
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
       !+ad_desc  supplied by Emiliano Fable, IPP Garching
       !+ad_desc  (private communication).
       !+ad_prob  None
@@ -1138,7 +1138,7 @@ contains
       !+ad_desc  This function calculates the frequency of electron-electron
       !+ad_desc  collisions (Hz): <I>NUEE = 4*SQRT(pi)/3*Ne*e**4*lambd/
       !+ad_desc  SQRT(Me)/Te**1.5</I>
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
       !+ad_desc  supplied by Emiliano Fable, IPP Garching
       !+ad_desc  (private communication).
       !+ad_prob  None
@@ -1179,7 +1179,7 @@ contains
       !+ad_desc  This function calculates the Coulomb logarithm, valid
       !+ad_desc  for e-e collisions (T_e > 0.01 keV), and for
       !+ad_desc  e-i collisions (T_e > 0.01*Zeff^2) (Alexander, 9/5/1994).
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
       !+ad_desc  supplied by Emiliano Fable, IPP Garching
       !+ad_desc  (private communication).
       !+ad_prob  None
@@ -1220,7 +1220,7 @@ contains
       !+ad_desc  This function calculates the relative frequency of ion
       !+ad_desc  collisions: <I>NU* = Nui*q*Rt/eps**1.5/Vti</I>
       !+ad_desc  The full ion collision frequency NUI is used.
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
       !+ad_desc  supplied by Emiliano Fable, IPP Garching
       !+ad_desc  (private communication).
       !+ad_prob  None
@@ -1260,7 +1260,7 @@ contains
       !+ad_args  j  : input integer : radial element index in range 1 to nr
       !+ad_desc  This function calculates the full frequency of ion
       !+ad_desc  collisions (Hz).
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
       !+ad_desc  supplied by Emiliano Fable, IPP Garching
       !+ad_desc  (private communication).
       !+ad_prob  None
@@ -1301,7 +1301,7 @@ contains
       !+ad_desc  This function calculates the coefficient scaling grad(ln(ne))
       !+ad_desc  in the Sauter bootstrap current scaling.
       !+ad_desc  Code by Angioni, 29th May 2002.
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
       !+ad_desc  supplied by Emiliano Fable, IPP Garching
       !+ad_desc  (private communication).
       !+ad_prob  None
@@ -1366,7 +1366,7 @@ contains
       !+ad_desc  This function calculates the coefficient scaling grad(ln(Te))
       !+ad_desc  in the Sauter bootstrap current scaling.
       !+ad_desc  Code by Angioni, 29th May 2002.
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
       !+ad_desc  supplied by Emiliano Fable, IPP Garching
       !+ad_desc  (private communication).
       !+ad_prob  None
@@ -1453,7 +1453,7 @@ contains
       !+ad_desc  This function calculates the coefficient scaling grad(ln(Ti))
       !+ad_desc  in the Sauter bootstrap current scaling.
       !+ad_desc  Code by Angioni, 29th May 2002.
-      !+ad_desc  <P>The code was extracted from the ASTRA code, and was 
+      !+ad_desc  <P>The code was extracted from the ASTRA code, and was
       !+ad_desc  supplied by Emiliano Fable, IPP Garching
       !+ad_desc  (private communication).
       !+ad_prob  None
@@ -2597,7 +2597,7 @@ contains
     !+ad_cont  N/A
     !+ad_args  bt       : input real :  toroidal field on axis (T)
     !+ad_args  idensl   : input/output integer : switch denoting which formula to enforce
-    !+ad_args  pdivt    : input real :  power flowing to the edge plasma via 
+    !+ad_args  pdivt    : input real :  power flowing to the edge plasma via
     !+ad_argc                           charged particles (MW)
     !+ad_args  plascur  : input real :  plasma current (A)
     !+ad_args  prn1     : input real :  edge density / average plasma density
@@ -3273,7 +3273,7 @@ contains
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  N. A. Uckan and ITER Physics Group,
     !+ad_docc    "ITER Physics Design Guidelines: 1989",
-    !+ad_docc    ITER Documentation Series, No. 10, IAEA/ITER/DS/10 (1990) 
+    !+ad_docc    ITER Documentation Series, No. 10, IAEA/ITER/DS/10 (1990)
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3639,7 +3639,7 @@ contains
        rtaue = -0.67D0
 
     case (27)  !  ELMy: ITERH-97P(y)
-       tauee = hfact * 0.029D0 * pcur**0.90D0 * bt**0.20D0 * & 
+       tauee = hfact * 0.029D0 * pcur**0.90D0 * bt**0.20D0 * &
             powerht**(-0.66D0) * dnla19**0.40D0 * &
             rmajor**2.03D0 * aspect**(-0.19D0) * kappa**0.92D0 * &
             afuel**0.2D0
@@ -3769,23 +3769,23 @@ contains
        ptaue = 0.49D0
        qtaue = 0.0D0
        rtaue = -0.55D0
-       
+
     case (40)  !  "Non-power law" (NPL) Murari energy confinement scaling
-       !   Based on the ITPA database of H-mode discharges               
+       !   Based on the ITPA database of H-mode discharges
        !   A new approach to the formulation and validation of scaling expressions for plasma confinement in tokamaks
-       !   A. Murari et al 2015 Nucl. Fusion 55 073009, doi:10.1088/0029-5515/55/7/073009  
+       !   A. Murari et al 2015 Nucl. Fusion 55 073009, doi:10.1088/0029-5515/55/7/073009
        !   Table 4.  (Issue #311)
-       !  Note that aspect ratio and M (afuel) do not appear, and B (bt) only 
+       !  Note that aspect ratio and M (afuel) do not appear, and B (bt) only
        !  appears in the "saturation factor" h.
        h = dnla19**0.448D0 / (1.0D0 + exp(-9.403D0*(bt/dnla19)**1.365D0))
        tauee = hfact * 0.0367D0 * pcur**1.006D0 * rmajor**1.731D0 * kappaa**1.450D0 * &
                powerht**(-0.735D0) * h
-       
+
        gtaue = 0.0D0
        ptaue = 0.448D0
        qtaue = 0.0D0
        rtaue = -0.735D0
-       
+
 
     case default
        idiags(1) = isc ; call report_error(81)
@@ -3809,8 +3809,8 @@ contains
     !  Global energy confinement time
 
     taueff = ((ratio + 1.0D0)/(ratio/tauei + 1.0D0/tauee))
-    
-    ! This is used only in subroutine startup, which is currently (r400) 
+
+    ! This is used only in subroutine startup, which is currently (r400)
     ! not used.
     ftaue = (tauee-gtaue) / &
          (n20**ptaue * (te/10.0D0)**qtaue * powerht**rtaue)
@@ -4284,7 +4284,7 @@ contains
 
     !  psyncpv should be per unit volume; Albajar gives it as total
 
-    psyncpv = psync/vol      
+    psyncpv = psync/vol
 
   end subroutine psync_albajar_fidone
 
@@ -4302,7 +4302,7 @@ contains
     !+ad_args  radl    : output real : line radiation only (MW/m3)
     !+ad_args  radcore : output real : total impurity radiation from core (MW/m3)
     !+ad_args  radtot  : output real : total impurity radiation (MW/m3)
-    !+ad_desc  This routine calculates the total radiation losses from 
+    !+ad_desc  This routine calculates the total radiation losses from
     !+ad_desc  impurity line radiation and bremsstrahlung for all elements
     !+ad_desc  for a given temperature and density profile.
     !+ad_desc  <P>Bremsstrahlung equation from Johner
@@ -5449,7 +5449,7 @@ contains
        else
             call ovarrf(outfile,'Current density profile factor','(alphaj)',alphaj)
        end if
-       
+
        call ovarrf(outfile,'Plasma internal inductance, li','(rli)',rli, 'OP ')
        call ovarrf(outfile,'Vertical field at plasma (T)','(bvert)',bvert, 'OP ')
     end if
@@ -5468,7 +5468,7 @@ contains
 
     if (istell == 0) then
        call ovarrf(outfile,'Safety factor on axis','(q0)',q0)
-       
+
        if (icurr == 2) then
           call ovarrf(outfile,'Mean edge safety factor','(q)',q)
        else
@@ -5503,13 +5503,13 @@ contains
     call ovarrf(outfile,'2nd stability beta : beta_p / (R/a)', '(eps*betap)',eps*betap, 'OP ')
     call ovarrf(outfile,'2nd stability beta upper limit','(epbetmax)', epbetmax)
 
-    if (istell == 0) then    
-       if (iprofile == 1) then       
+    if (istell == 0) then
+       if (iprofile == 1) then
             call ovarrf(outfile,'Beta g coefficient','(dnbeta)',dnbeta, 'OP ')
        else
             call ovarrf(outfile,'Beta g coefficient','(dnbeta)',dnbeta)
        end if
-       
+
        call ovarrf(outfile,'Normalised thermal beta',' ',1.0D8*betath*rminor*bt/plascur, 'OP ')
        call ovarrf(outfile,'Normalised total beta',' ',1.0D8*beta*rminor*bt/plascur, 'OP ')
     end if
@@ -5552,11 +5552,11 @@ contains
     call ovarre(outfile,'Hot beam density (/m3)','(dnbeam)',dnbeam, 'OP ')
     call ovarre(outfile,'Density limit from scaling (/m3)','(dnelimt)',dnelimt, 'OP ')
     if ((ioptimz > 0).and.(active_constraints(5))) then
-        call ovarre(outfile,'Density limit (enforced) (/m3)','(boundu(9)*dnelimt)',boundu(9)*dnelimt, 'OP ')    
+        call ovarre(outfile,'Density limit (enforced) (/m3)','(boundu(9)*dnelimt)',boundu(9)*dnelimt, 'OP ')
     end if
     call ovarre(outfile,'Helium ion density (thermalised ions only) / electron density','(ralpne)',ralpne)
     call oblnkl(outfile)
-    
+
     call ovarin(outfile,'Plasma impurity model','(imprad_model)',imprad_model)
     if (imprad_model == 0) then
        call ocmmnt(outfile,'Original model; ITER 1989 Bremsstrahlung calculation')
@@ -5584,7 +5584,7 @@ contains
        end do
     end if
     call ovarre(outfile,'Average mass of all ions (amu)','(aion)',aion, 'OP ')
-    ! MDK Say which impurity is varied, if iteration variable fimpvar (102) is turned on 
+    ! MDK Say which impurity is varied, if iteration variable fimpvar (102) is turned on
     if (any(ixc == 102)) then
         call ovarst(outfile,'Impurity used as an iteration variable' , '', '"' // impurity_arr(impvar)%label // '"')
         call ovarre(outfile,'Fractional density of variable impurity (ion / electron density)','(fimpvar)',fimpvar)
@@ -5644,10 +5644,13 @@ contains
     end if
     call ovarre(outfile,'Total core radiation power (MW)', '(pcoreradmw)',pcoreradmw, 'OP ')
     call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', pedgeradmw, 'OP ')
-    call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw, 'OP ')    
-    call ovarre(outfile,'Radiation fraction = total radiation / total power deposited in plasma','(rad_fraction)',rad_fraction, 'OP ')    
-    call ovarre(outfile,'Nominal mean radiation load on inside surface of reactor (MW/m2)','(photon_wall)',photon_wall, 'OP ')
-    call ovarre(outfile,'Nominal mean neutron load on inside surface of reactor (MW/m2)','(wallmw)',wallmw, 'OP ')    
+    call ovarre(outfile,'Total radiation power (MW)','(pradmw)',pradmw, 'OP ')
+    call ovarre(outfile,'Radiation fraction = total radiation / total power deposited in plasma', &
+        '(rad_fraction)', rad_fraction, 'OP ')
+    call ovarre(outfile,'Nominal mean radiation load on inside surface of reactor (MW/m2)', &
+        '(photon_wall)', photon_wall, 'OP ')
+    call ovarre(outfile,'Nominal mean neutron load on inside surface of reactor (MW/m2)', &
+        '(wallmw)', wallmw, 'OP ')
 
     call oblnkl(outfile)
     call ovarre(outfile,'Ohmic heating power (MW)','(pohmmw)',pohmmw, 'OP ')
@@ -5692,7 +5695,7 @@ contains
        call oblnkl(outfile)
        if ((ioptimz > 0).and.(active_constraints(15))) then
           call ovarre(outfile,'L-H threshold power (enforced) (MW)', '(boundl(103)*plhthresh)',boundl(103)*plhthresh, 'OP ')
-       else          
+       else
           call ovarre(outfile,'L-H threshold power (NOT enforced) (MW)', '(plhthresh)',plhthresh, 'OP ')
        end if
     end if
@@ -5719,8 +5722,10 @@ contains
     call ovarrf(outfile,'Global energy confinement time (s)','(taueff)',taueff, 'OP ')
     call ovarrf(outfile,'Ion energy confinement time (s)','(tauei)',tauei, 'OP ')
     call ovarrf(outfile,'Electron energy confinement time (s)','(tauee)',tauee, 'OP ')
-    call ovarre(outfile,'n.tau = Volume-average electron density x Energy confinement time (s/m3)','(dntau)',dntau, 'OP ')
-    call ocmmnt(outfile,'Triple product = Vol-average electron density x Vol-average electron temperature x Energy confinement time:')
+    call ovarre(outfile,'n.tau = Volume-average electron density x Energy confinement time (s/m3)', &
+        '(dntau)', dntau, 'OP ')
+    call ocmmnt(outfile,'Triple product = Vol-average electron density x Vol-average&
+        & electron temperature x Energy confinement time:')
     call ovarre(outfile,'Triple product  (keV s/m3)','(dntau*te)',dntau*te, 'OP ')
     call ovarre(outfile,'Transport loss power assumed in scaling law (MW)', '(powerht)',powerht, 'OP ')
     call ovarin(outfile,'Switch for radiation loss term usage in power balance', '(iradloss)',iradloss)
@@ -5768,7 +5773,7 @@ contains
 
        call ovarre(outfile,'Loop voltage during burn (V)','(vburn)', plascur*rplas*facoh, 'OP ')
        call ovarre(outfile,'Plasma resistance (ohm)','(rplas)',rplas, 'OP ')
-       
+
        call ovarre(outfile,'Resistive diffusion time (s)','(res_time)',res_time, 'OP ')
        call ovarre(outfile,'Plasma inductance (H)','(rlp)',rlp, 'OP ')
        call ovarrf(outfile,'Sawteeth coefficient','(csawth)',csawth)

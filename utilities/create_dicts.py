@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
    This is a program to automatically produce the process_dicts.py file
@@ -262,22 +262,23 @@ def get_array_from_fortran(array_name):
 
     """
     rexp = array_name + r" = \(/"
-    #find files that look like they have an assignment in
+    # find files that look like they have an assignment in
     filelist = find(SOURCEDIR, rexp)
-    if len(filelist) > 1 :
-        print('The regular expression ',rexp, '\n  does not appear exactly once in the folder \n',SOURCEDIR,
+    if len(filelist) > 1:
+        print('The regular expression ', rexp,
+              '\n  does not appear exactly once in the folder \n', SOURCEDIR,
               '\n The list of files is ', filelist, file=sys.stderr)
-    assert(len(filelist)==1)
-    #slice the file between the parenthesis
+    assert(len(filelist) == 1)
+    # slice the file between the parenthesis
     arr = slice_file(filelist[0], rexp, r"/\)")
 
     arr = [remove_comments(x) for x in arr]
-    #combine whole array onto one line
+    # combine whole array onto one line
     array_line = "".join(arr)
-    #regex that gets the string between the brackets
+    # regex that gets the string between the brackets
     array_regex = rexp + r"(.*?)/\)"
     val_string = re.search(array_regex, array_line).group(1)
-    #split the string and convert it to the correct type
+    # split the string and convert it to the correct type
     value = [to_type(x) for x in val_string.split(",")]
 
     list_type = type(value[0])
@@ -1044,7 +1045,7 @@ def print_module():
 def print_nsweep2varname():
 
     """
-    Prints: 
+    Prints:
     DICT_NSWEEP2VARNAME
     """
     lam = lambda x: int(x[0])

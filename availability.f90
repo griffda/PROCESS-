@@ -123,8 +123,8 @@ contains
             bktlife = min(abktflnc/wallmw, tlife)
        else
             bktlife = min(fwlife, abktflnc/wallmw, tlife)
-       end if       
-       
+       end if
+
        !  Divertor
 
        divlife = min(adivflnc/hldiv, tlife)
@@ -141,7 +141,7 @@ contains
     !  Plant Availability (This subroutine is not used for IAVAIL = 2)
     ! if iavail = 0 use input value for cfactr
     if (iavail == 1) then
-        ! calculate cfactr using Taylor and Ward 1999 model; 
+        ! calculate cfactr using Taylor and Ward 1999 model;
        !  Which component has the shorter life?
        if (divlife < bktlife) then
           ld = divlife
@@ -174,9 +174,9 @@ contains
        !  Total availability
        cfactr = 1.0D0 - (uplanned + uutot - (uplanned*uutot))
     end if
-    
+
     !  Capacity factor
-    cpfact = cfactr * (tburn / tcycle)   
+    cpfact = cfactr * (tburn / tcycle)
 
     !  Modify lifetimes to take account of the availability
 
@@ -246,7 +246,7 @@ contains
             '(uutot)',uutot,'OP ')
     end if
     if (iavail == 0) then
-        call ovarre(outfile,'Total plant availability fraction', '(cfactr)',cfactr) 
+        call ovarre(outfile,'Total plant availability fraction', '(cfactr)',cfactr)
     else
         call ovarre(outfile,'Total plant availability fraction', '(cfactr)',cfactr, 'OP ')
     end if
@@ -286,7 +286,7 @@ contains
     !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
     implicit none
 
     !  Arguments
@@ -294,7 +294,7 @@ contains
     integer, intent(in) :: outfile, iprint
 
     !  Local variables
-    
+
     real(kind(1.0D0)) :: u_planned
     real(kind(1.0D0)) :: u_unplanned
     real(kind(1.0D0)) :: u_unplanned_magnets
@@ -336,18 +336,18 @@ contains
     redun_vac = floor(vpumpn*redun_vacp/100.0 + 0.5D0)
     call calc_u_unplanned_vacuum(outfile,iprint, u_unplanned_vacuum)
 
-    !  Total unplanned unavailability    
+    !  Total unplanned unavailability
 
     u_unplanned = min(1.0D0, u_unplanned_magnets + &
          u_unplanned_div + u_unplanned_fwbs + &
-         u_unplanned_bop + u_unplanned_hcd + u_unplanned_vacuum)  
-       
+         u_unplanned_bop + u_unplanned_hcd + u_unplanned_vacuum)
+
     !  Total availability
 
     cfactr = max(1.0D0 - (u_planned + u_unplanned + u_planned*u_unplanned), 0.0D0)
 
     !  Capacity factor
-    cpfact = cfactr * (tburn / tcycle)   
+    cpfact = cfactr * (tburn / tcycle)
 
     !  Modify lifetimes to take account of the availability
 
@@ -358,20 +358,20 @@ contains
     if (iprint /= 1) return
 
     call ocmmnt(outfile,'Total unavailability:')
-    call oblnkl(outfile) 
+    call oblnkl(outfile)
     call ovarre(outfile,'Total planned unavailability', '(u_planned)', u_planned, 'OP ')
     call ovarre(outfile,'Total unplanned unavailability', '(u_unplanned)', u_unplanned, 'OP ')
     call oblnkl(outfile)
-    
+
     if (iavail == 0) then
-        call ovarre(outfile,'Total plant availability fraction', '(cfactr)',cfactr) 
+        call ovarre(outfile,'Total plant availability fraction', '(cfactr)',cfactr)
     else
         call ovarre(outfile,'Total plant availability fraction', '(cfactr)',cfactr, 'OP ')
     end if
     call ovarre(outfile,'Total DT operational time (years)','(t_operation)',t_operation, 'OP ')
     call ovarre(outfile,'Total plant lifetime (years)','(tlife)',tlife)
     call ovarre(outfile,'Capacity factor: total lifetime electrical energy output / output power','(cpfact)',cpfact, 'OP ')
-   
+
   end subroutine avail_new
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -400,7 +400,7 @@ contains
     !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
     implicit none
 
     !  Arguments
@@ -424,7 +424,7 @@ contains
 
        !  First wall / blanket
 
-       !bktlife = min(fwlife, abktflnc/wallmw, tlife)       
+       !bktlife = min(fwlife, abktflnc/wallmw, tlife)
        bktlife =  min(abktflnc/wallmw, tlife)
 
        !  Divertor
@@ -448,7 +448,7 @@ contains
 
     !  Blanket replacement time
     !  ( Calculated using scaling from 2014 EUROfusion RAMI report )
-    
+
     !  Mean time to repair blanket is same as replacing both blanket and divertor.
     !  The +2.0 at the end is for the 1 month cooldown and pump down at either end
     !  of the maintenance period
@@ -529,7 +529,7 @@ contains
 !    !+ad_docs  None
 !    !
 !    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
 !    implicit none
 
 !    !  Arguments
@@ -537,7 +537,7 @@ contains
 !    !  Local variables
 
 !    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
 !    if (ife /= 1) then
 
 !       !  First wall / blanket
@@ -590,7 +590,7 @@ contains
     !+ad_docs  2014 EUROfusion RAMI report, &quot;Availability in PROCESS&quot;
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
     implicit none
 
     !  Arguments
@@ -621,13 +621,13 @@ contains
     !  Minimum unplanned unavailability
 
     mag_min_u_unplanned = mag_main_time / (t_operation + mag_main_time)
-    
+
     !  Point at which risk of unplanned unavailability increases
     !  conf_mag is the c factor, which determines the temperature margin at which lifetime starts to decline.
 
     start_of_risk = mag_temp_marg_limit / conf_mag
 
-    !  Determine if temperature margin is in region with risk of 
+    !  Determine if temperature margin is in region with risk of
     !  unplanned unavailability
 
     if (temp_margin >= start_of_risk) then
@@ -656,7 +656,7 @@ contains
     call ovarre(outfile,'Magnets unplanned unavailability', &
          '(u_unplanned_magnets)',u_unplanned_magnets, 'OP ')
     call oblnkl(outfile)
-    
+
   end subroutine calc_u_unplanned_magnets
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -679,7 +679,7 @@ contains
     !+ad_hist  02/12/14 JM  Initial version
     !+ad_hist  06/05/15 MDK Rewrote routine to match engineering paper
     !+ad_stat  Okay
-    !+ad_docs  
+    !+ad_docs
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -696,41 +696,42 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Calculate cycle limit in terms of days 
+    !  Calculate cycle limit in terms of days
     ! Number of cycles between planned blanket replacements, N
     n = divlife * year / tcycle
-    ! The probability of failure in one pulse cycle 
-    ! (before the reference cycle life)    
+    ! The probability of failure in one pulse cycle
+    ! (before the reference cycle life)
     pf = (div_prob_fail / day) * tcycle
     a0 = 1.0D0 - pf * div_umain_time * year / tcycle
-    
-    !  Integrating the instantaneous availability gives the mean 
+
+    !  Integrating the instantaneous availability gives the mean
     !  availability over the planned cycle life N
     if (div_nu <= div_nref) then
         write(*,*) 'div_nu <= div_nref'
         write(*,*) 'The cycle when the divertor fails with 100% probability <= Reference value for cycle cycle life of divertor'
-        call ocmmnt(outfile,'EROROR: The cycle when the divertor fails with 100% probability <= Reference value for cycle cycle life of divertor')
+        call ocmmnt(outfile,'EROROR: The cycle when the divertor fails with 100% probability&
+            & <= Reference value for cycle cycle life of divertor')
     end if
-    
+
     if (n <= div_nref) then
        div_avail = a0
-    else if (n >= div_nu) then       
+    else if (n >= div_nu) then
        div_avail = 0.0D0
-    else    
-       div_avail = (a0/(div_nu-div_nref))*(div_nu - 0.5D0*div_nref**2.0D0/n -0.5D0*n)              
-    end if   
-    
-    u_unplanned_div = 1.0D0 - div_avail  
+    else
+       div_avail = (a0/(div_nu-div_nref))*(div_nu - 0.5D0*div_nref**2.0D0/n -0.5D0*n)
+    end if
+
+    u_unplanned_div = 1.0D0 - div_avail
 
     if (iprint /= 1) return
     call ocmmnt(outfile,'Divertor:')
-    call oblnkl(outfile)   
+    call oblnkl(outfile)
     call ovarre(outfile,'Probability of failure per operational day', '(div_prob_fail)',div_prob_fail)
     call ovarre(outfile,'Repair time (years)', '(div_umain_time)',div_umain_time)
     call ovarre(outfile,'Reference value for cycle life', '(div_nref)',div_nref)
     call ovarre(outfile,'The cycle when failure is 100% certain', '(div_nu)',div_nu)
     call ovarre(outfile,'Number of cycles between planned replacements', '(n)',n)
-    call ovarre(outfile,'Unplanned unavailability', '(u_unplanned_div)', u_unplanned_div, 'OP ')   
+    call ovarre(outfile,'Unplanned unavailability', '(u_unplanned_div)', u_unplanned_div, 'OP ')
     call oblnkl(outfile)
 
   end subroutine calc_u_unplanned_divertor
@@ -775,34 +776,35 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Calculate cycle limit in terms of days
-    
+
 	 ! MDK Rewrote routine to match the engineering paper
     ! Number of cycles between planned blanket replacements, N
     n = bktlife * year / tcycle
 
-    ! The probability of failure in one pulse cycle 
-    ! (before the reference cycle life)    
+    ! The probability of failure in one pulse cycle
+    ! (before the reference cycle life)
     pf = (fwbs_prob_fail / day) * tcycle
     a0 = 1.0D0 - pf * fwbs_umain_time * year / tcycle
- 
+
     if (fwbs_nu <= fwbs_nref) then
         write(*,*) 'fwbs_nu <= fwbs_nref'
         write(*,*) 'The cycle when the blanket fails with 100% probability <= Reference value for cycle life of blanket'
-        call ocmmnt(outfile,'EROROR: The cycle when the blanket fails with 100% probability <= Reference value for cycle life of blanket')
+        call ocmmnt(outfile,'EROROR: The cycle when the blanket fails with 100% probability&
+            & <= Reference value for cycle life of blanket')
     end if
- 
-    !  Integrating the instantaneous availability gives the mean 
+
+    !  Integrating the instantaneous availability gives the mean
     !  availability over the planned cycle life N
     if (n <= fwbs_nref) then
        fwbs_avail = a0
-    else if (n >= fwbs_nu) then       
+    else if (n >= fwbs_nu) then
        fwbs_avail = 0.0D0
-    else    
-       fwbs_avail = (a0/(fwbs_nu-fwbs_nref))*(fwbs_nu - 0.5D0*fwbs_nref**2.0D0/n -0.5D0*n)              
-    end if   
-    
-    u_unplanned_fwbs = 1.0D0 - fwbs_avail  
-   
+    else
+       fwbs_avail = (a0/(fwbs_nu-fwbs_nref))*(fwbs_nu - 0.5D0*fwbs_nref**2.0D0/n -0.5D0*n)
+    end if
+
+    u_unplanned_fwbs = 1.0D0 - fwbs_avail
+
     if (iprint /= 1) return
     call ocmmnt(outfile,'First wall / Blanket:')
     call oblnkl(outfile)
@@ -979,7 +981,7 @@ contains
     real(kind(1.0D0)) :: pump_failures, n_shutdown, t_op_bt, sum_prob
 
     real(kind(1.0D0)), dimension(vpumpn + redun_vac + 1) :: vac_fail_p
-    
+
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Number of shutdowns
@@ -996,32 +998,32 @@ contains
     total_pumps = vpumpn + redun_vac
 
     !  Cryopump failure rate per machine operational period
-    !  From "Selected component failure rate values from fusion 
+    !  From "Selected component failure rate values from fusion
     !  safety assessment tasks", Cadwallader (1994)
-     
+
     !  probability of pump failure per operational period
     cryo_failure_rate = 2.0D-6 * 365.25D0 * 24.0D0 * t_op_bt
 
     !  probability of no pump failure per operational period
     cryo_nfailure_rate = 1.0D0 - cryo_failure_rate
-    
+
     sum_prob = 0.0D0
     do n = redun_vac + 1, total_pumps
-    
-        !  Probability for n failures in the operational period, n > number of redundant pumps
-        vac_fail_p(n) = binomial(total_pumps,n)*(cryo_nfailure_rate**(total_pumps-n))*(cryo_failure_rate**n)  
 
-        !  calculate sum in formula for downtime        
+        !  Probability for n failures in the operational period, n > number of redundant pumps
+        vac_fail_p(n) = binomial(total_pumps,n)*(cryo_nfailure_rate**(total_pumps-n))*(cryo_failure_rate**n)
+
+        !  calculate sum in formula for downtime
         sum_prob = sum_prob + vac_fail_p(n) * (n - redun_vac)
     end do
     ! Total down-time in reactor life
     t_down = (n_shutdown + 1.0D0) * cryo_main_time * sum_prob
-    
+
     !  Total vacuum unplanned unavailability
     u_unplanned_vacuum = max(0.005, t_down / (t_operation + t_down))
-    
+
     if (iprint /= 1) return
-    
+
     !if (verbose == 1) then
         !do n = redun_vac + 1, total_pumps
             !write(outfile,*) 'binomial', binomial(total_pumps,n)
@@ -1030,7 +1032,7 @@ contains
         !end do
     !end if
 
-    call ocmmnt(outfile,'Vacuum:')    
+    call ocmmnt(outfile,'Vacuum:')
     call oblnkl(outfile)
     call ovarin(outfile,'Number of pumps (excluding redundant pumps)', '(vpumpn)', vpumpn, 'OP ')
     call ovarin(outfile,'Number of redundant pumps', '(redun_vac)', redun_vac, 'OP ')

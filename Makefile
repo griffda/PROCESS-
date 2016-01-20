@@ -96,7 +96,7 @@ source = \
  tfcoil.f90 \
  vacuum.f90 \
  costs.f90 \
- costs_2015.f90 
+ costs_2015.f90
 
 object = \
  availability.o \
@@ -140,21 +140,21 @@ object = \
  tfcoil.o \
  vacuum.o \
  costs.o \
- costs_2015.o 
+ costs_2015.o
 
 ###### Architecture specifics #######
 #
 # Default = FUN (Fusion Unix Network)
 # Alternatives: FUN, JAC, GFORT
-ARCH = FUN
-DEBUG = YES
+ARCH = GFORT
+DEBUG = NO
 
 ###### Fusion Unix Network - Intel Fortran
 
 FORTRAN_FUN = ifort
-FFLAGS_FUN = -cpp 
+FFLAGS_FUN = -cpp
 LFLAGS_FUN = ${LDFLAGS}
-LIBS_FUN   = 
+LIBS_FUN   =
 ifeq (${DEBUG},YES)
 	FFLAGS_FUN = -cpp -g -check bounds -check pointers -check uninit -traceback
 endif
@@ -164,17 +164,17 @@ endif
 FORTRAN_JAC = pgf95
 FFLAGS_JAC = -Mpreprocess
 LFLAGS_JAC =
-LIBS_JAC   = 
+LIBS_JAC   =
 ifeq (${DEBUG},YES)
 	FFLAGS_JAC = -Mpreprocess -g -C -Mchkptr -traceback
 endif
 
 ###### gfortran
 
-FORTRAN_GFORT = f95
-FFLAGS_GFORT = -cpp 
-LFLAGS_GFORT = 
-LIBS_GFORT   = 
+FORTRAN_GFORT = gfortran
+FFLAGS_GFORT = -cpp -std=legacy
+LFLAGS_GFORT =
+LIBS_GFORT   =
 ifeq (${DEBUG},YES)
 	FFLAGS_GFORT = -cpp -g -fbounds-check -fbacktrace
 endif
@@ -225,7 +225,7 @@ divertor.o: error_handling.o global_variables.o output.o
 error_handling.o: output.o fson_library.o root.dir
 evaluators.o: error_handling.o global_variables.o numerics.o output.o
 fispact.o: global_variables.o
-fson_library.o: 
+fson_library.o:
 global_variables.o:
 hcpb.o : global_variables.o output.o maths_library.o refprop_interface.o
 ife.o: availability.o costs.o error_handling.o global_variables.o output.o
@@ -234,7 +234,7 @@ initial.o: error_handling.o global_variables.o output.o scan.o stellarator.o
 input.o: error_handling.o global_variables.o numerics.o output.o scan.o
 iteration_variables.o: error_handling.o global_variables.o numerics.o
 machine_build.o: error_handling.o global_variables.o output.o
-maths_library.o: global_variables.o 
+maths_library.o: global_variables.o
 numerics.o: global_variables.o maths_library.o
 output.o: global_variables.o numerics.o
 pfcoil.o: error_handling.o global_variables.o maths_library.o output.o sctfcoil.o
@@ -254,7 +254,7 @@ refprop_interface.o: error_handling.o refprop.o
 rfp.o: current_drive.o input.o global_variables.o machine_build.o output.o pfcoil.o \
   plasma_profiles.o physics.o
 safety.o: global_variables.o output.o
-scan.o: error_handling.o global_variables.o numerics.o output.o 
+scan.o: error_handling.o global_variables.o numerics.o output.o
 sctfcoil.o: error_handling.o global_variables.o maths_library.o output.o
 startup.o: global_variables.o maths_library.o output.o physics.o
 stellarator.o: availability.o buildings.o costs.o current_drive.o divertor.o error_handling.o \

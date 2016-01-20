@@ -217,7 +217,7 @@ contains
     integer :: i, j
     logical :: constraints_exist=.false.
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
+
     call parse_input_file(nin,nout,show_changes)
 
     ! Set all the values of the active_constraints array
@@ -227,8 +227,8 @@ contains
             constraints_exist = .true.
         end if
     end do
-    
-    if (constraints_exist == .false.) then
+
+    if (constraints_exist .eqv. .false.) then
        ! Fill the two arrays that specify the active constraints with defaults
         active_constraints(1) = .true.
         active_constraints(2) = .true.
@@ -249,9 +249,9 @@ contains
                 j = j+1
                 icc(j) = i
             end if
-        end do        
+        end do
      end if
-   
+
   end subroutine input
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -624,10 +624,10 @@ contains
                'Flag to scale beta coefficient with R/a')
        case ('hfact')
           call parse_real_variable('hfact', hfact, 0.01D0, 10.0D0, &
-               'Energy confinement time H factor')               
+               'Energy confinement time H factor')
        case ('taumax')
           call parse_real_variable('taumax', taumax, 0.1D0, 100.0D0, &
-               'Maximum allowed energy confinement time (s)')               
+               'Maximum allowed energy confinement time (s)')
        case ('ibss')
           call parse_int_variable('ibss', ibss, 1, 4, &
                'Switch for bootstrap scaling')
@@ -751,10 +751,10 @@ contains
                'Edge safety factor')
        case ('q0')
           call parse_real_variable('q0', q0, 0.01D0, 20.0D0, &
-               'Safety factor on axis')              
+               'Safety factor on axis')
        case ('tauratio')
           call parse_real_variable('tauratio', tauratio, 0.1D0, 100.0D0, &
-               'Ratio of He and pellet particle confinement times') 
+               'Ratio of He and pellet particle confinement times')
        case ('ralpne')
           call parse_real_variable('ralpne', ralpne, 1.0D-12, 1.0D0, &
                'Thermal alpha density / electron density')
@@ -788,11 +788,11 @@ contains
        case ('te')
           call parse_real_variable('te', te, 1.0D0, 200.0D0, &
                'Electron temperature (keV)')
-               
+
        case ('taulimit')
           call parse_real_variable('taulimit', taulimit, 1.0D0, 100.0D0, &
                'Lower limit on taup/taueff the ratio of alpha particle to energy confinement times')
-               
+
        case ('teped')
           call parse_real_variable('teped', teped, 0.0D0, 20.0D0, &
                'Electron temperature pedestal height (keV)')
@@ -820,7 +820,7 @@ contains
        case ('fniterpump')
           call parse_real_variable('fniterpump', fniterpump, 0.001D0, 10.0D0, &
                'f-value for constraint on number of vacuum pumps')
-               
+
        case ('auxmin')
           call parse_real_variable('auxmin', auxmin, 0.01D0, 100.0D0, &
                'Minimum auxiliary power (MW)')
@@ -994,7 +994,7 @@ contains
        case ('fpoloidalpower')
           call parse_real_variable('fpoloidalpower', fpoloidalpower, 0.001D0, 1.0D0, &
                'f-value for constraint on rate of change of energy in poloidal field')
-               
+
        case ('gammax')
           call parse_real_variable('gammax', gammax, 0.01D0, 10.0D0, &
                'Maximum current drive gamma (A/W-m2)')
@@ -1254,7 +1254,7 @@ contains
             write(outfile,*) 'ERROR. BLNKITH input is not required for CCFE HCPB model with Tritium Breeding Ratio calculation -'
             write(outfile,*) 'please remove it from the input file'
             write(outfile,*) '**********'
-          else          
+          else
             call parse_real_variable('blnkith', blnkith, 0.0D0, 10.0D0, &
                 'Inboard blanket thickness (m)')
           end if
@@ -1265,7 +1265,7 @@ contains
             write(outfile,*) 'ERROR. BLNKOTH input is not required for CCFE HCPB model with Tritium Breeding Ratio calculation -'
             write(outfile,*) 'please remove it from the input file'
             write(outfile,*) '**********'
-          else     
+          else
             call parse_real_variable('blnkoth', blnkoth, 0.0D0, 10.0D0, &
                 'Outboard blanket thickness (m)')
           end if
@@ -1423,7 +1423,7 @@ contains
        case ('alstroh')
           call parse_real_variable('alstroh', alstroh, 1.0D6, 1.0D11, &
                'Allowable hoop stress in Central Solenoid structural material (Pa)')
-       
+
        case ('dcase')
           call parse_real_variable('dcase', dcase, 1.0D3, 1.0D5, &
                'Density of TF coil case (kg/m3)')
@@ -1589,13 +1589,13 @@ contains
                'TF coil conduit case thickness (m)')
        case ('tinstf')
           call parse_real_variable('tinstf', tinstf, 0.0D0, 0.1D0, &
-               'Ground wall insulation thickness (m)')       
+               'Ground wall insulation thickness (m)')
        case ('spiral_od')
           call parse_real_variable('spiral_od', spiral_od, 0.0D0, 0.1D0, &
                'central tube for helium coolant: outer diameter (m)')
        case ('spiral_id')
           call parse_real_variable('spiral_id', spiral_id, 0.0D0, 0.1D0, &
-               'central tube for helium coolant: inner diameter (m)')              
+               'central tube for helium coolant: inner diameter (m)')
        case ('tmargmin')
           call parse_real_variable('tmargmin', tmargmin, 0.0D0, 10.0D0, &
                'Minimum allowable temp margin (K)')
@@ -1614,7 +1614,7 @@ contains
        case ('vftf')
           call parse_real_variable('vftf', vftf, 0.0D0, 1.0D0, &
                'Coolant fraction of TF coil leg')
- 
+
           !  PF coil settings
 
        case ('ac1oh')
@@ -1733,19 +1733,19 @@ contains
           call parse_real_variable('fwpressure', fwpressure, 1.0d5, 1.0D8, &
                'first wall coolant pressure (Pa)')
        case ('fwcoolant')
-          call parse_string_variable('fwcoolant', fwcoolant, 'first wall coolant')     
+          call parse_string_variable('fwcoolant', fwcoolant, 'first wall coolant')
           call lower_case(fwcoolant)
        case ('roughness')
           call parse_real_variable('fwoutlet', fwoutlet, 0.0d0, 1.0D-2, &
-               'first wall channel roughness epsilon')    
+               'first wall channel roughness epsilon')
        case ('fw_channel_length')
           call parse_real_variable('fw_channel_length', fw_channel_length, 0.1d0, 1.0D2, &
-               'first wall channel length')    
+               'first wall channel length')
        case ('peaking_factor')
           call parse_real_variable('peaking_factor', peaking_factor, 1.0d0, 100.0D0, &
-               'peaking factor for first wall heat loads')    
-       
-               
+               'peaking factor for first wall heat loads')
+
+
        case ('bctmp')
           call parse_real_variable('bctmp', bctmp, 1.0D0, 800.0D0, &
                'First wall bulk coolant temperature (C)')
@@ -1755,7 +1755,7 @@ contains
        case ('coolp')
           call parse_real_variable('coolp', coolp, 1.0D5, 1.0D8, &
                'blanket coolant pressure (Pa) stellarator ONLY')
-       
+
        case ('dtstor')
           call parse_real_variable('dtstor', dtstor, 50.0D0, 500.0D0, &
                'Max temp change in thermal storage medium (K)')
@@ -1776,7 +1776,7 @@ contains
 
        case ('primary_pumping')
           call parse_int_variable('primary_pumping', primary_pumping, 0, 2, &
-               'Switch for pumping of primary coolant') 
+               'Switch for pumping of primary coolant')
        case ('htpmw_blkt')
           call parse_real_variable('htpmw_blkt', htpmw_blkt, 0.0D0, 2.0D2, &
                'blanket coolant mechanical pumping power (MW)')
@@ -1788,13 +1788,13 @@ contains
                'first wall coolant mechanical pumping power (MW)')
        case ('htpmw_shld')
           call parse_real_variable('htpmw_shld', htpmw_shld, 0.0D0, 1.0D2, &
-               'shield and vacuum vessel coolant mechanical pumping power (MW)')               
-                    
-       
+               'shield and vacuum vessel coolant mechanical pumping power (MW)')
+
+
        case ('secondary_cycle')
           call parse_int_variable('secondary_cycle', secondary_cycle, 0, 4, &
                'Switch for blanket thermodynamic model')
-               
+
        case ('afwi')
           call parse_real_variable('afwi', afwi, 1.0D-3, 0.05D0, &
                'I/B fw/blkt coolant channel inner radius (m)')
@@ -1827,8 +1827,8 @@ contains
                'Max temperature of first wall material (K)')
        case ('fw_th_conductivity')
           call parse_real_variable('fw_th_conductivity', fw_th_conductivity, 1.0D0, 100.0D0, &
-               'thermal conductivity of first wall material at 293 K (W/m/K)')               
-               
+               'thermal conductivity of first wall material at 293 K (W/m/K)')
+
        case ('etaiso')
           call parse_real_variable('etaiso', etaiso, 0.1D0, 1.0D0, &
                'Isentropic efficiency of coolant pumps')
@@ -1958,20 +1958,20 @@ contains
        case ('breeder_f')
           call parse_real_variable('breeder_f', breeder_f, 0.00D0, 1.0D0, &
                'Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)')
-               
-               
+
+
        case ('breeder_multiplier')
           call parse_real_variable('breeder_multiplier', breeder_multiplier, 0.0D0, 1.0D0, &
-               'combined breeder/multipler fraction of blanket by volume')        
+               'combined breeder/multipler fraction of blanket by volume')
        case ('vfcblkt')
           call parse_real_variable('vfcblkt', vfcblkt, 0.0D0, 1.0D0, &
                'He coolant fraction of blanket by volume')
        case ('vfpblkt')
           call parse_real_variable('vfpblkt', vfpblkt, 0.0D0, 1.0D0, &
-               'He purge gas fraction of blanket by volume')               
-               
-               
-               
+               'He purge gas fraction of blanket by volume')
+
+
+
        case ('iblanket_thickness')
           call parse_int_variable('iblanket_thickness', iblanket_thickness, 1, 3, &
                'Blanket thickness switch')
@@ -2167,7 +2167,7 @@ contains
           'Cost scaling factor for energy conversion system (2015 costs model)')
        case ('cost_factor_misc')
           call parse_real_variable('cost_factor_misc', cost_factor_misc, 0.1D0, 10.0D0, &
-          'Cost scaling factor for remaining subsystems (2015 costs model)')          
+          'Cost scaling factor for remaining subsystems (2015 costs model)')
        case ('maintenance_fwbs')
           call parse_real_variable('maintenance_fwbs', maintenance_fwbs, 0.0D0, 1.0D0, &
           'Maintenance cost factor: first wall, blanket, shield, divertor')
@@ -2177,7 +2177,7 @@ contains
        case ('amortization')
           call parse_real_variable('amortization', amortization, 1.0D0, 50.0D0, &
                'amortization factor (fixed charge factor) "A" (years)')
-                  
+
        case ('cost_model')
           call parse_int_variable('cost_model', cost_model, 0, 2, &
                'Switch for cost model')
@@ -2342,7 +2342,7 @@ contains
                'cost of waste disposal (M$/yr)', icode)
 
           !  Availability settings
- 
+
        case ('iavail')
           call parse_int_variable('iavail', iavail, 0, 2, &
                'Switch for plant availability model')
@@ -2367,18 +2367,18 @@ contains
 
        case ('div_nref')
           call parse_real_variable('div_nref', div_nref, 1.0D3, 1.0D8, &
-               'Reference value for cycle life of divertor')               
+               'Reference value for cycle life of divertor')
        case ('div_nu')
           call parse_real_variable('div_nu', div_nu, 1.0D3, 1.0D8, &
-               'The cycle when the divertor fails with 100% probability')               
+               'The cycle when the divertor fails with 100% probability')
 
        case ('fwbs_nref')
           call parse_real_variable('fwbs_nref', fwbs_nref, 1.0D3, 1.0D8, &
-               'Reference value for cycle life of blanket')               
+               'Reference value for cycle life of blanket')
        case ('fwbs_nu')
           call parse_real_variable('fwbs_nu', fwbs_nu, 1.0D3, 1.0D8, &
-               'The cycle when the blanket fails with 100% probability')               
-               
+               'The cycle when the blanket fails with 100% probability')
+
        case ('fwbs_prob_fail')
           call parse_real_variable('fwbs_prob_fail', fwbs_prob_fail, 0.0D0, 1.0D0, &
                'Fwbs probability of failure (per op day)')
@@ -2541,8 +2541,8 @@ contains
 
        case ('vacuum_model')
           call parse_string_variable('vacuum_model', vacuum_model, 'vacuum_model')
-       
-       
+
+
        case ('ntype')
           call parse_int_variable('ntype', ntype, 0, 1, &
                'Pump type')
@@ -2558,7 +2558,7 @@ contains
        case ('tn')
           call parse_real_variable('tn', tn, 1.0D0, 1.0D3, &
                'Neutral gas temp in chamber (K)')
-       
+
        case ('pumpareafraction')
           call parse_real_variable('pumpareafraction', pumpareafraction, 1.0D-6, 1.0D0, &
                'Area of one pumping port as a fraction of plasma surface area')
@@ -2577,10 +2577,10 @@ contains
       case ('outgasfactor')
           call parse_real_variable('outgasfactor', outgasfactor, 1.0D-6, 1.0D3, &
                'outgassing prefactor kw: outgassing rate at 1 s per unit area (Pa m s-1)')
-       
-   
-               
-       
+
+
+
+
 
           !  Stellarator settings
 
@@ -2838,18 +2838,18 @@ contains
           error_message = 'Unknown variable in input file: '//varnam(1:varlen)
           write(*,*) error_message
           write(*,*) 'Error occurred at this line in the IN.DAT file:', lineno
-          write(*,*) line          
+          write(*,*) line
           error = .True.
-          
+
 
        end select variable
 
        !  Uncomment the following to abort the code if an obsolete variable name
        !  has been found in the input file
 
-       if (obsolete_var) then          
+       if (obsolete_var) then
           error_message = 'Obsolete variable specified'
-          write(*,*) error_message          
+          write(*,*) error_message
           write(*,*) 'Error occurred at this line in the IN.DAT file: ', lineno
           write(*,*) line
           error = .True.
@@ -2862,9 +2862,9 @@ contains
        cycle
 
     end do loop_over_lines
-    
-    if (error == .True.) stop
-    
+
+    if (error .eqv. .True.) stop
+
     ! MDK Try allocating here
     allocate(name_xc(nvar))
 
@@ -2989,7 +2989,7 @@ contains
     !  Check whether a subscript was found by the preceding call to GET_VARIABLE_NAME
     !  and stop if this is the case
 
-    if (subscript_present) then       
+    if (subscript_present) then
        write(*,*) 'Unexpected subscript found in IN.DAT at line number: ', lineno
        write(*,*) 'Name and description of variable: '
        write(*,*) varnam, description
@@ -3058,7 +3058,7 @@ contains
     !  Check whether a subscript was found by the preceding call to GET_VARIABLE_NAME
     !  and stop if this is the case
 
-    if (subscript_present) then       
+    if (subscript_present) then
        write(*,*) 'Unexpected subscript found in IN.DAT at line number: ', lineno
        write(*,*) 'Name and description of variable: '
        write(*,*) varnam, description
@@ -3137,7 +3137,7 @@ contains
        oldval = varval(isub1)
        call get_value_real(val,icode)
 
-       if (icode /= 0) then          
+       if (icode /= 0) then
           write(*,*) 'Error in IN.DAT found at line ',lineno
           write(*,*) 'Variable name, description:'
           write(*,*) varnam, description
@@ -4496,7 +4496,7 @@ contains
     if (min_value > max_value) then
        write(outfile,*) 'Illegal relative values of min_value and max_value'
        write(outfile,*) 'for variable ',cvar
-       
+
        write(*,*) 'Illegal relative values of min_value and max_value'
        write(*,*) 'for variable ',cvar
           error = .True.
@@ -4507,7 +4507,7 @@ contains
        write(outfile,*) 'Minimum value = ',min_value
        write(outfile,*) 'Maximum value = ',max_value
        write(outfile,*) ' Actual value = ',varval
-       
+
        write(*,*) cvar,' lies outside its allowed range :'
        write(*,*) 'Minimum value = ',min_value
        write(*,*) 'Maximum value = ',max_value
@@ -4556,7 +4556,7 @@ contains
     if (min_value > max_value) then
        write(outfile,*) 'Illegal relative values of min_value and max_value'
        write(outfile,*) 'for variable ',cvar
-       
+
        write(*,*) 'Illegal relative values of min_value and max_value'
        write(*,*) 'for variable ',cvar
           error = .True.
@@ -4567,11 +4567,11 @@ contains
        write(outfile,*) 'Minimum value = ',min_value
        write(outfile,*) 'Maximum value = ',max_value
        write(outfile,*) ' Actual value = ',varval
-       
+
        write(*,*) cvar,' lies outside its allowed range :'
        write(*,*) 'Minimum value = ',min_value
        write(*,*) 'Maximum value = ',max_value
-       write(*,*) ' Actual value = ',varval       
+       write(*,*) ' Actual value = ',varval
           error = .True.
     end if
 

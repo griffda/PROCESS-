@@ -2558,14 +2558,14 @@ module times_variables
   real(kind(1.0D0)), dimension(6) :: tim = 0.0D0
   !+ad_vars  timelabel(6) : array of time labels during plasma pulse (s)
   character(len=11), dimension(6) :: timelabel = (/ 'Start',   &
-                                                    'BOP',     &
-                                                    'EOR',     &
-                                                    'BOF',     &
-                                                    'EOF',     &
-                                                    'EOP' /)
+                                                    'BOP  ',     &
+                                                    'EOR  ',     &
+                                                    'BOF  ',     &
+                                                    'EOF  ',     &
+                                                    'EOP  ' /)
   !+ad_vars  intervallabel(6) : time intervals - as strings (s)
   character(len=11), dimension(5) :: intervallabel = (/ 'tramp',     &
-                                                        'tohs',      &
+                                                        'tohs ',      &
                                                         'theat',     &
                                                         'tburn',     &
                                                         'tqnch' /)
