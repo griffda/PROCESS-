@@ -1117,6 +1117,8 @@ module fwbs_variables
   !+ad_varc             <LI> = 2 KIT HCPB model;
   !+ad_varc             <LI> = 3 CCFE HCPB model with Tritium Breeding Ratio calculation</UL>
   integer :: iblanket = 1
+  !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)
+  real(kind(1.0D0)) :: li6enrich = 30.0D0
   !+ad_vars  pnucblkt : nuclear heating in the blanket (MW)
   real(kind(1.0D0)) :: pnucblkt = 0.0D0
   !+ad_vars  pnuccp : nuclear heating in the ST centrepost (MW)
@@ -1147,8 +1149,6 @@ module fwbs_variables
 
   !+ad_vars  breeder_f /0.154/ :  Volume ratio: Li4SiO4/(Be12Ti+Li4SiO4) (iteration variable 108)
   real(kind(1.0D0)) :: breeder_f = 0.5D0
-  !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)
-  real(kind(1.0D0)) :: li6enrich = 30.0D0
   !+ad_vars  breeder_multiplier /0.75/ FIX : combined breeder/multipler fraction of blanket by volume
   real(kind(1.0D0)) :: breeder_multiplier = 0.75D0
   !+ad_vars  vfcblkt /0.05295/ : He coolant fraction of blanket by volume
@@ -1198,8 +1198,6 @@ module fwbs_variables
   !+ad_varc                  <LI> = 1 'small'
   !+ad_varc                  <LI> = 2 'large'</UL>
   integer :: hcdportsize = 1
-  !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)
-  !+ad_varc                     (iblanket=2 or 3 (KIT or CCFE HCPB))
   !+ad_vars  nflutf : peak fast neutron fluence on TF coil superconductor (n/m2)
   !+ad_varc           (iblanket=2 (KIT HCPB))
   real(kind(1.0D0)) :: nflutf = 0.0D0
