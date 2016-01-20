@@ -1759,6 +1759,7 @@ contains
     !+ad_desc  an output file
     !+ad_prob  None
     !+ad_hist  10/02/15 JM  Initial version
+    !+ad_hist  10/02/15 JM  Added note about emult being fixed for this model
     !+ad_stat  Okay
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1810,6 +1811,7 @@ contains
     call ovarre(ofile, 'Total nuclear heating in TF+PF coils (CS is negligible) (MW)', '(ptfnuc)', ptfnuc, 'OP ')
     call ovarre(ofile, 'Total nuclear heating in FW (MW)', '(pnucfw)', pnucfw, 'OP ')
 	call ovarre(ofile, 'Total nuclear heating in the blanket (including emult) (MW)', '(pnucblkt)', pnucblkt, 'OP ')
+    call ocmmnt(ofile, '(Note: emult is fixed for this model inside the code)')
 	call ovarre(ofile, 'Total nuclear heating in the shield (MW)', '(pnucshld)', pnucshld, 'OP ')
 	call ovarre(ofile, 'Total nuclear heating in the divertor (MW)', '(pnucdiv)', pnucdiv, 'OP ')
     call osubhd(ofile,'Diagostic output for nuclear heating :')
