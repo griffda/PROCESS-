@@ -255,7 +255,7 @@ code's variables, and contains the following information about each:
 \begin{itemize}
 \item name
 \item dimensions (of arrays)
-\item default value(s)  
+\item default value(s)
 \item description, including physical units if relevant
 \item for switches/flags, the meanings of all allowed values
 \item iteration variable number, if relevant
@@ -310,7 +310,7 @@ It is important to remember that iteration variables \textit{must never be
 initialised to zero}. The code will not be able to adjust the variable's value
 if this is done, and it will stop with an error message.
 
-For example, the major radius is available as an iteration variable, and appears in the variable description file as \texttt{rmajor /8.14/ : plasma major radius (m) (iteration variable 3)}. 
+For example, the major radius is available as an iteration variable, and appears in the variable description file as \texttt{rmajor /8.14/ : plasma major radius (m) (iteration variable 3)}.
 If it is selected as an iteration variable, it will be adjusted by the code.  The value input by the user (or the default, if no value is specified), will be used as the starting value.
 
 % Tables summarising iteration variables
@@ -376,7 +376,7 @@ no. & variable name     & description                                   & eqn & 
 52  & \texttt{vdalw}    & allowable TF coil dump voltage                          &     & \texttt{0.001D0} & \texttt{1.000D6} \\
 53  & \texttt{fjprot}   & f-value for TF coil current protection limit equation   & 35  & \texttt{0.001D0} & \texttt{1.000D0} \\
 54  & \texttt{ftmargtf} & f-value for TF coil temperature margin limit equation   & 36  & \texttt{0.001D0} & \texttt{1.000D0} \\
-55  & \texttt{tmargmin} & minimum allowable TF/CS coil temperature margin          &     & \texttt{0.001D0} & \texttt{100.0D0} \\
+55  & \texttt{} & (OBSOLETE)          &     & - & - \\
 \hline
 \end{tabular}
 \end{center}
@@ -441,8 +441,8 @@ no. & variable name     & description                                           
 97  & \texttt{fpsepr}   & f-value for $P_{\mbox{\scriptsize separatrix}}/R_{\mbox{\scriptsize major}}$ limit equation & 56
   & \texttt{0.001D0} & \texttt{1.000D0} \\
 98  & \texttt{li6enrich}& lithium-6 enrichment percentage (\texttt{blktmodel=1})  &     & \texttt{7.400D0} & \texttt{100.0D0} \\
-99  & \texttt{}         & (OBSOLETE)                                              & 57  & \texttt{0.001D0} & \texttt{1.000D0} \\
-100 & \texttt{}         & (OBSOLETE)                                              & 58  & \texttt{0.001D0} & \texttt{1.000D0} \\
+99  & \texttt{}         & (OBSOLETE)                                              &   & - & - \\
+100 & \texttt{}         & (OBSOLETE)                                              &   & - & - \\
 101 & \texttt{prp}      & ratio of TF coil radial plate area to winding pack area &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
 102 & \texttt{fimpvar}  & impurity fraction of element \texttt{impvar}            &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
 103 & \texttt{flhthresh}& f-value for L-H power threshold limit equation          & 15  & \texttt{1.000D0} & \texttt{1.000D6} \\
@@ -563,13 +563,13 @@ equations.
 % constraints introducing so called slack variables $s$ \cite[e.g.]{Avriel2003},
 % i.e.
 % \begin{equation}
-% c(\vec{x}) \geq 0 
+% c(\vec{x}) \geq 0
 % \end{equation}
-% can be rewritten as 
+% can be rewritten as
 % \begin{equation}
 % c(\vec{x}) - s = 0 \textnormal{ with } s \geq 0.
 % \end{equation}
-% These slack variables then allow for easy distinction between 
+% These slack variables then allow for easy distinction between
 % \begin{itemize}
 % \item a {\it binding} or {\it active} constraint $s=0$,
 % \item a {\it non-binding} or {\it non-active} constraint $s>0$,
@@ -582,11 +582,11 @@ equations.
 % inequalities to be turn into equality constraints and for consistency with the
 % non-optimisation solver.
 
-% XXX Influence on performance? 
+% XXX Influence on performance?
 
 % XXX include test results from new version.
 
-% XXX Comment on reduction of iteration variables and NVAR $>$ NEQNS. 
+% XXX Comment on reduction of iteration variables and NVAR $>$ NEQNS.
 
 
 % Table summarising constraint equations
@@ -729,7 +729,7 @@ $\pm 3 $        & neutron wall load \\
 $\pm 4 $        & total TF coil + PF coil power \\
 $\pm 5 $        & ratio of fusion power to injection power \\
 $\pm 6 $        & cost of electricity \\
-$\pm 7 $        & 
+$\pm 7 $        &
 $ \left\{ \begin{array}{ll}
  \mbox{direct cost} & \mbox{if \texttt{ireactor = 0}} \\
  \mbox{constructed cost} & \mbox{otherwise}

@@ -638,7 +638,7 @@ def test_plot_proc(fs):
     # add to utilities.log
     amend_utility_log("plot_proc.py")
 
-    sys.stdout = open("utilities.log", "a")
+    #sys.stdout = open("utilities.log", "a")
 
     # test all MFILEs
     for key in fs.keys():
@@ -647,11 +647,11 @@ def test_plot_proc(fs):
             # file_name = fs[key]["path"] + "new.MFILE.DAT"
             results.append(pp.test(file_name))
 
-            if results[-1]:
-                subprocess.call(["mv", "ref.SUMMARY.pdf", "test_area/{0}/".
-                                format(key)])
+            #if results[-1]:
+            #    subprocess.call(["mv", "ref.SUMMARY.pdf", "test_area/{0}/".
+            #                    format(key)])
 
-    sys.stdout = sys.__stdout__
+    #sys.stdout = sys.__stdout__
 
     # Output message
     msg = "Test ==>  {0:<40}".format("plot_proc.py")

@@ -47,7 +47,7 @@ program process
   !+ad_hist  09/10/12 PJK Modified to use scan_module
   !+ad_hist  10/10/12 PJK Modified to use numerics module
   !+ad_hist  06/11/12 PJK Renamed this source file from aamain.f90 to process.f90.
-  !+ad_hisc               Transferred routine inform from aachange.f90 
+  !+ad_hisc               Transferred routine inform from aachange.f90
   !+ad_hist  13/02/14 PJK Added mfile close statement
   !+ad_hist  10/09/14 PJK Added vfile close statement
   !+ad_stat  Okay
@@ -72,18 +72,18 @@ program process
 
   !  Local variables
   integer :: ifail
-  ! MDK  
+  ! MDK
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Initialise things
   call init
-  
+
   ! Run built-in tests.
   ! These are distinct from the tests that are dependent on 'unit_test'.
   if (run_tests == 1) call runtests
-  
+
   !  Call equation solver (HYBRD)
   call eqslv(ifail)
 
@@ -105,11 +105,11 @@ program process
   close(unit=nplot)
   close(unit=mfile)
   if (verbose == 1) close(unit=vfile)
-  
+
   ! MDK System calls to append IN.DAT to OUT.DAT
   call system('cat '//trim(fileprefix)//'OUT.DAT  '//trim(fileprefix)//'IN.DAT  '//'> '//tempfile)
   call system('mv  '//tempfile//'  '//trim(fileprefix)//'OUT.DAT')
-  
+
 
 end program process
 
@@ -210,7 +210,7 @@ subroutine init
 
   !  Open verbose diagnostics file
   if (verbose == 1) then
-     open(unit=vfile,file=trim(fileprefix)//'VFILE.DAT',status='unknown')  
+     open(unit=vfile,file=trim(fileprefix)//'VFILE.DAT',status='unknown')
      write(vfile,'(a80)') 'nviter = number of VMCON iterations.'
      write(vfile,'(a80)') '(1-mod(ifail,7))=1 indicates that there has '// &
           'been an escape from a failed line search.'
@@ -287,7 +287,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '411    Release Date :: 2016-01-012'
+       '412    Release Date :: 2016-01-20'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -457,7 +457,7 @@ subroutine run_summary
   ! Issue #270
   call ocmmnt(nout,'Quantities listed in standard row format are labelled as follows in columns 112-114:')
   call ocmmnt(nout,'ITV : Active iteration variable (in any output blocks)')
-  call ocmmnt(nout,'OP  : Calculated output quantity')  
+  call ocmmnt(nout,'OP  : Calculated output quantity')
   call ocmmnt(nout,'Unlabelled quantities in standard row format are generally inputs')
   call ocmmnt(nout,'Note that calculated quantities may be trivially rescaled from inputs, or equal to bounds which are input.')
   ! MDK Note that the label must be exactly three characters or none - I don't know how to fix this.
@@ -482,7 +482,7 @@ subroutine run_summary
 
   ustring = '"'//trim(progid(4)(13:20))//'"'
   call ovarst(mfile,'User','(username)',ustring)
-  
+
   rstring = '"'//runtitle//'"'
   call ovarst(mfile,'PROCESS run title','(runtitle)',rstring)
 
@@ -513,11 +513,11 @@ subroutine run_summary
 		write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
 40 	format(t1,i3,t10,i3,t18,a33)
   end if
-  
-!  call ocmmnt(nout, & 
+
+!  call ocmmnt(nout, &
 !       'The following constraint equations have been imposed,')
 !  if (ioptimz == -1) then
-!     call ocmmnt(nout, & 
+!     call ocmmnt(nout, &
 !          'but limits will not be enforced by the code :')
 !  else
 !     call ocmmnt(nout,'and will be enforced by the code :')
@@ -1119,7 +1119,7 @@ subroutine doopt(ifail)
   call ovarin(nout,'Number of iteration variables','(nvar)',nvar)
   call ovarin(nout,'Number of constraints','(neqns)',neqns)
   call ovarin(nout,'Optimisation switch','(ioptimz)',ioptimz)
-  call ovarin(nout,'Figure of merit switch','(minmax)',minmax) 
+  call ovarin(nout,'Figure of merit switch','(minmax)',minmax)
   if (ifail /= 1) then
      call ovarin(nout,'VMCON error flag','(ifail)',ifail)
   end if
@@ -1132,16 +1132,16 @@ subroutine doopt(ifail)
      string1 = 'PROCESS has successfully optimised the iteration variables'
   else
      string1 = 'PROCESS has tried to optimise the iteration variables'
-  end if  
+  end if
 
   if (minmax > 0) then
-     string2 = ' to minimise the figure of merit: ' 
+     string2 = ' to minimise the figure of merit: '
   else
-     string2 = ' to maximise the figure of merit: '    
+     string2 = ' to maximise the figure of merit: '
   end if
-  
+
   strfom = lablmm(abs(minmax))
-  call upper_case(strfom)   
+  call upper_case(strfom)
   write(nout,10) trim(string1) // trim(string2),  trim(strfom)
 10 format(a90, t92, a22)
 ! MDK end
@@ -1196,7 +1196,7 @@ subroutine doopt(ifail)
   !  Print out information on numerics
   call osubhd(nout,'The solution vector is comprised as follows :')
 !  write(nout,50)
-! Remove Lagrange multipliers as no-one understands them.  
+! Remove Lagrange multipliers as no-one understands them.
 ! MFILE not changed
 !50 format(t47,'lower',t59,'upper')
 
@@ -1216,12 +1216,12 @@ subroutine doopt(ifail)
      xcs(inn) = xcm(inn)*scafc(inn)
 !     write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
 !          vlam(neqns+nineqns+inn), vlam(neqns+nineqns+1+inn+nvar)
-	  write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn)	  
+	  write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn)
 !80 format(t2,i4,t8,a9,t19,4(1pe12.4))
 !80 format(t2,i4,t8,a30,t39,2(1pe12.4))
 80 format(t2,i4,t8,a30,t39,1pe12.4, t52, 0pf10.4)
 ! MDK The 0p is needed because of a bizarre "feature"/bug in fortran:
-! the 1p in the previous format continues until changed.	  
+! the 1p in the previous format continues until changed.
      call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
 
      !  'Range-normalised' iteration variable values for MFILE:
@@ -1500,7 +1500,7 @@ subroutine output(outfile)
   use structure_module
   use tfcoil_module
   use vacuum_module
-  
+
   !  Import blanket modules
   use ccfe_hcpb_module
   use kit_hcpb_module
@@ -1540,7 +1540,7 @@ subroutine output(outfile)
 
   if (iavail > 1) then
      call avail_new(outfile, 1)
-  else 
+  else
      call avail(outfile,1)
   end if
   call outplas(outfile)
@@ -1574,16 +1574,16 @@ subroutine output(outfile)
   call strucall(outfile,1)
 
   if (irfp == 0) call induct(outfile,1)
-  
+
   if (iblanket == 1) then           ! CCFE HCPB model
-	 call ccfe_hcpb(nout, 1) 
+	 call ccfe_hcpb(nout, 1)
   else if (iblanket == 2) then      ! KIT HCPB model
-     call kit_hcpb(nout, 1) 
+     call kit_hcpb(nout, 1)
   else if (iblanket == 3) then      ! CFE HCPB model with Tritium Breeding Ratio calculation
      call ccfe_hcpb(nout, 1)
-	 call tbr_shimwell(nout, 1, breeder_f, li6enrich, iblanket_thickness, tbr)      
+	 call tbr_shimwell(nout, 1, breeder_f, li6enrich, iblanket_thickness, tbr)
   end if
- 
+
   !call fwbs(outfile,1)
 
   if (ifispact == 1) then
@@ -1605,7 +1605,7 @@ subroutine output(outfile)
   if (cost_model==0) call bldgcall(outfile,1)
   call acpow(outfile,1)
   call power2(outfile,1)
-  
+
   !select case (iblanket)
   !case(1)
   !	call ccfe_hcpb(outfile, 1)
@@ -1626,10 +1626,10 @@ subroutine runtests
   call ovarre(nout,'Binomial coefficients C(5,3): 10', '(binomial(5,3))', binomial(5,3))
   call ovarre(nout,'Binomial coefficients C(5,4): 5', '(binomial(5,4))', binomial(5,4))
   call ovarre(nout,'Binomial coefficients C(5,5): 1', '(binomial(5,5))', binomial(5,5))
-  
+
   call brookscoil(nout)
 end subroutine runtests
-  
+
 
 ! SVN 145: New CICC plots for User Guide
 ! SVN 149: MGF power usage correction
@@ -1972,24 +1972,24 @@ end subroutine runtests
 ! GIT 399: Minimum total electrical power for primary coolant pumps (htpmw_min) (#303). The user now specifies the allowable von Mises stress for TFC and hoop stress for CS.
 ! GIT 400: Blanket fractions now defined using breeder_multiplier: combined breeder/multipler fraction. Steel is remainder. Cryogenics output added.
 !          Corrected surface heat flux on first wall #309. Cost of electricity and maintenance cost now included in 2015 cost model.
-! GIT 401: Add active_constraints(ipeqns) : logical array showing which constraints are active. 
+! GIT 401: Add active_constraints(ipeqns) : logical array showing which constraints are active.
 !          #308 L-H threshold power (enforced) is boundl(103)*plhthresh.
 !          #306 Added central tube for helium coolant in TF cable, but these variables don't yet do anything.
 !          #311 Added Murari energy confinement non-power law scaling (isc=40)
 ! GIT 402  #318 Update to ICC list in user guide
-!          #316 plot_proc missing values from MFILE 
+!          #316 plot_proc missing values from MFILE
 !          #315 Add comment to user Guide that release notes should be included on the checklist for adding changes.
 !          #314 Inconsistent input data for blanket model: change default vfpblkt = 0.1 to have a working default input blanket model.
 !          #263 'tmargmin' should not be an iteration variable.  Set the label and vardes text for iteration variable 55 to "obsolete".
-! GIT 403  #242 As we never use the divertor output, I will just switch it off. 
-!          #270 Add "ITV" to all iteration variable outputs, and 
+! GIT 403  #242 As we never use the divertor output, I will just switch it off.
+!          #270 Add "ITV" to all iteration variable outputs, and
 !          ensure that all iteration variables are output using ovarre or ovarin, except for f-values.
 ! GIT 404  #256 There is now a warning in the output file and to the terminal if the sweep variable is also an iteration variable.
 !          #270 Quantities listed in standard format are labelled as follows in columns 112-114:
 !               ITV : Active iteration variable (in any output blocks)
 !               OP  : Calculated output quantity
 !          Tweaked OUT.DAT in a few places.
-!          #213 Make helium content an iteration variable and constrain tauP/tauE 
+!          #213 Make helium content an iteration variable and constrain tauP/tauE
 ! 405      #304 Add a very simple vacuum pump model (Section 1).
 ! 406      #325 New rule for Power supply cost.  May not be complete.
 !          #327 Tweaks to make old cost model work
@@ -2005,3 +2005,5 @@ end subroutine runtests
 !          (PS This isn't a very important quantity!)
 !          #338 Output PF energy and current vs. time
 ! 411      Added maximum rate of change of PF energy as a constraint.
+! 412      Master release: Checked recent changes using the test suite. Made a
+!          few minor changes. Updated test function in plot_proc.

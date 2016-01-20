@@ -1230,17 +1230,17 @@ module fwbs_variables
 
   !+ad_vars  tbrmin /1.1/ : minimum tritium breeding ratio (constraint equation 52)
   !+ad_varc                 (If iblanket=1, tbrmin=minimum 5-year time-averaged tritium breeding ratio)
-  
+
   !+ad_vars  iblanket_thickness /2/ : Blanket thickness switch:<UL>
   !+ad_varc     <LI> = 1 thin    0.53 m inboard, 0.91 m outboard
   !+ad_varc     <LI> = 2 medium  0.64 m inboard, 1.11 m outboard
   !+ad_varc     <LI> = 3 thick   0.75 m inboard, 1.30 m outboard</UL>
   !+ad_vars  Do not set blnkith, blnkoth, fwith or fwoth when iblanket=3.
   integer :: iblanket_thickness = 2
- 
+
   !+ad_vars  primary_pumping /0/ : Switch for pumping power for primary coolant (06/01/2016):
   !+ad_varc       (mechanical power only)<UL>
-  !+ad_varc     <LI> = 0 User sets pump power directly (htpmw_blkt, htpmw_fw) 
+  !+ad_varc     <LI> = 0 User sets pump power directly (htpmw_blkt, htpmw_fw)
   !+ad_varc     <LI> = 1 User sets pump power as a fraction of thermal power (fpumpblkt, fpumpfw)
   !+ad_varc     <LI> = 2 Mechanical pumping power is calculated</UL>
   !+ad_vars  (peak first wall temperature is only calculated if primary_pumping = 2)
@@ -1818,7 +1818,7 @@ module tfcoil_variables
   !+ad_vars  estotf : stored energy per TF coil (GJ) OBSOLETE
   real(kind(1.0D0)) :: estotf = 0.0D0
 
-  !+ad_vars  estotft : total stored energy in the toroidal field (GJ) 
+  !+ad_vars  estotft : total stored energy in the toroidal field (GJ)
 
   real(kind(1.0D0)) :: estotft = 0.0D0
 
@@ -1999,7 +1999,6 @@ module tfcoil_variables
   real(kind(1.0D0)) :: spiral_id = 0.008D0
 
   !+ad_vars  tmargmin /2.5/ : minimum allowable temperature margin (CS and TF coils) (K)
-  !+ad_varc                   (iteration variable 55)
   real(kind(1.0D0)) :: tmargmin = 2.5D0
   !+ad_vars  temp_margin  : temperature margin (K)
   real(kind(1.0D0)) :: temp_margin = 0.00D0
@@ -2068,10 +2067,10 @@ module tfcoil_variables
   real(kind(1.0D0)), dimension(5) :: yarc = 0.0D0
   !+ad_vars  yctfc(4) : y location of arc centre i (m)
   real(kind(1.0D0)), dimension(4) :: yctfc = 0.0D0
-  
+
   ! New TF shape:  Horizontal and vertical radii of inside edge of TF coil
   ! Arcs are numbered clockwise:
-  ! 1=upper inboard, 2=upper outboard, 3=lower ouboard, 4=lower inboard 
+  ! 1=upper inboard, 2=upper outboard, 3=lower ouboard, 4=lower inboard
   !+ad_vars  tfa(4) : Horizontal radius of inside edge of TF coil (m)
   real(kind(1.0D0)), dimension(4) :: tfa = 0.0D0
   !+ad_vars  tfb(4) : Vertical radius of inside edge of TF coil (m)
@@ -2300,13 +2299,13 @@ module pf_power_variables
   real(kind(1.0D0)) :: srcktpm = 0.0D0
   !+ad_vars  vpfskv : PF coil voltage (kV)
   real(kind(1.0D0)) :: vpfskv = 0.0D0
-  
+
   !+ad_vars  peakpoloidalpower : Peak absolute rate of change of stored energy in poloidal field (MW) (11/01/16)
   real(kind(1.0D0)) :: peakpoloidalpower = 0.0D0
   !+ad_vars  maxpoloidalpower /1000/ : Maximum permitted absolute rate of change of stored energy in poloidal field (MW)
   real(kind(1.0D0)) :: maxpoloidalpower = 1000.0D0
-  
-  
+
+
 end module pf_power_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2569,7 +2568,7 @@ module times_variables
                                                         'tohs',      &
                                                         'theat',     &
                                                         'tburn',     &
-                                                        'tqnch' /)                                                    
+                                                        'tqnch' /)
   !+ad_vars  tohs /30.0/ : plasma current ramp-up time for current initiation (s)
   !+ad_varc                (but calculated if lpulse=0)
   !+ad_varc                (iteration variable 65)
@@ -3643,10 +3642,10 @@ module constraint_variables
   !+ad_vars  zeffmax /3.6/ : maximum value for Zeff
   !+ad_varc                   (constraint equation 64)
   real(kind(1.0D0)) :: zeffmax = 3.6D0
-  !+ad_vars  fpoloidalpower /1.0/ : f-value for constraint on rate of change of energy in poloidal field 
+  !+ad_vars  fpoloidalpower /1.0/ : f-value for constraint on rate of change of energy in poloidal field
   !+ad_varc                   (constraint equation 66, iteration variable 115)
   real(kind(1.0D0)) :: fpoloidalpower = 1.0D0
-  
+
 
 end module constraint_variables
 

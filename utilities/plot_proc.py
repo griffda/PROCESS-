@@ -1719,9 +1719,9 @@ def test(f):
         main(page1, page2, m_file)
 
         # with bpdf.PdfPages(args.o) as pdf:
-        with bpdf.PdfPages("ref.SUMMARY.pdf") as pdf:
-            pdf.savefig(page1)
-            pdf.savefig(page2)
+        # with bpdf.PdfPages("ref.SUMMARY.pdf") as pdf:
+        #    pdf.savefig(page1)
+        #    pdf.savefig(page2)
 
         return True
     except:
