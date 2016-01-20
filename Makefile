@@ -147,12 +147,13 @@ object = \
 # Default = FUN (Fusion Unix Network)
 # Alternatives: FUN, JAC, GFORT
 ARCH = GFORT
-DEBUG = NO
+DEBUG = YES
 
 ###### Fusion Unix Network - Intel Fortran
 
 FORTRAN_FUN = ifort
 FFLAGS_FUN = -cpp
+FFLAGS_ALT_FUN = ${FFLAGS_FUN}
 LFLAGS_FUN = ${LDFLAGS}
 LIBS_FUN   =
 ifeq (${DEBUG},YES)
@@ -163,6 +164,7 @@ endif
 
 FORTRAN_JAC = pgf95
 FFLAGS_JAC = -Mpreprocess
+FFLAGS_ALT_JAC = ${FFLAGS_JAC}
 LFLAGS_JAC =
 LIBS_JAC   =
 ifeq (${DEBUG},YES)
@@ -172,7 +174,8 @@ endif
 ###### gfortran
 
 FORTRAN_GFORT = gfortran
-FFLAGS_GFORT = -cpp -std=legacy
+FFLAGS_GFORT = -cpp
+FFLAGS_ALT_GFORT = ${FFLAGS_GFORT} -std=legacy
 LFLAGS_GFORT =
 LIBS_GFORT   =
 ifeq (${DEBUG},YES)
@@ -186,6 +189,7 @@ endif
 
 FORTRAN = ${FORTRAN_${ARCH}}
 FFLAGS = ${FFLAGS_${ARCH}}
+FFLAGS_ALT = ${FFLAGS_ALT_${ARCH}}
 LFLAGS = ${LFLAGS_${ARCH}}
 LIBS   = ${LIBS_${ARCH}}
 
@@ -224,7 +228,8 @@ current_drive.o: error_handling.o global_variables.o output.o plasma_profiles.o
 divertor.o: error_handling.o global_variables.o output.o
 error_handling.o: output.o fson_library.o root.dir
 evaluators.o: error_handling.o global_variables.o numerics.o output.o
-fispact.o: global_variables.o
+fispact.o: global_variables.o output.o
+	${FORTRAN} ${FFLAGS_ALT} -c fispact.f90 -o fispact.o
 fson_library.o:
 global_variables.o:
 hcpb.o : global_variables.o output.o maths_library.o refprop_interface.o
