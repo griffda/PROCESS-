@@ -329,6 +329,8 @@ Note that density and temperature can have different pedestal positions
 $\rho_{ped,n}$ (\texttt{rhopedn}) and $\rho_{ped,T}$ (\texttt{rhopedt}) in
 agreement with simulations.
 
+The pedestal density can be set directly (if \texttt{iscdens=1}), or as a fraction of the Greenwald density (if \texttt{iscdens=1}).  The default fraction is 0.8~\cite{Bernert}. 
+
 \subsubsection{Beta limits}
 
 The plasma beta limit~\cite{IPDG,172} is given by
@@ -555,16 +557,12 @@ p.11 \\
 \texttt{22} & Gyro-reduced Bohm (stellarator) & Bull. Am. Phys. Society, \textbf{34}
 (1989) p.1964 \\
 \texttt{23} & Lackner-Gottardi (stellarator) & Nuclear Fusion \textbf{30} (1990) p.767 \\
-\texttt{24} & ITER-93H (H-mode) & Plasma Physics and Controlled Nuclear Fusion
-Research \\
+\texttt{24} & ITER-93H (H-mode) & Plasma Physics and Controlled Nuclear Fusion Research \\
  & & (Proc. 15th Int. Conf., Seville, 1994) IAEA-CN-60/E-P-3 \\
-\texttt{25} & TITAN (RFP) & TITAN RFP Fusion Reactor Study, Scoping Phase
-Report \\
+\texttt{25} & TITAN (RFP) & TITAN RFP Fusion Reactor Study, Scoping Phase Report \\
  & & UCLA-PPG-1100, page 5--9, Jan 1987 \\
-\texttt{26} & ITER H-97P ELM-free (H-mode) & J. G. Cordey et al., EPS
-Berchtesgaden, 1997 \\
-\texttt{27} & ITER H-97P ELMy (H-mode) & J. G. Cordey et al., EPS
-Berchtesgaden, 1997 \\
+\texttt{26} & ITER H-97P ELM-free (H-mode) & J. G. Cordey et al., EPS Berchtesgaden, 1997 \\
+\texttt{27} & ITER H-97P ELMy (H-mode) & J. G. Cordey et al., EPS Berchtesgaden, 1997 \\
 \texttt{28} & ITER-96P (= ITER97-L) (L-mode) & Nuclear Fusion \textbf{37} (1997) p.1303 \\
 \texttt{29} & Valovic modified ELMy (H-mode) &  \\
 \texttt{30} & Kaye PPPL April 98 (L-mode) &  \\
@@ -577,6 +575,8 @@ Berchtesgaden, 1997 \\
 \texttt{37} & ISS95 (stellarator) & Nuclear Fusion \textbf{36} (1996) p.1063 \\
 \texttt{38} & ISS04 (stellarator) & Nuclear Fusion \textbf{45} (2005) p.1684 \\
 \texttt{39} & DS03 (H-mode) & Plasma Phys.\ Control.\ Fusion \textbf{50} (2008) 043001, equation 4.13 \\
+\texttt{40} & Non-power law & A. Murari et al 2015 Nucl. Fusion 55 073009, \\
+ & & doi:10.1088/0029-5515/55/7/073009  Table 4. \\
 \hline
 \end{tabular}
 \normalsize
@@ -802,9 +802,12 @@ The models used for the thermoydraulics of the first wall, the profile of deposi
 
 \item{\texttt{iblanket}:} This switch selects between different types of blanket.
 
-In the CCFE HCPB (helium-cooled pebble bed) model (\texttt{iblanket = 1}), the energy deposition in the armour and first wall, blanket and shield are calculated using parametric fits to an MCNP neutron and photon transport model of a sector of a tokamak.  The blanket contains lithium orthosilicate Li$_4$SiO$_4$, titanium beryllide TiBe$_{12}$, helium and Eurofer steel.
+In the CCFE HCPB (helium-cooled pebble bed) model (\texttt{iblanket = 1}), the energy deposition in the armour and first wall, blanket and shield are calculated using parametric fits to an MCNP neutron and photon transport model of a sector of a tokamak.  The blanket contains lithium orthosilicate Li$_4$SiO$_4$, titanium beryllide TiBe$_{12}$, helium and Eurofer steel. 
 
 The KIT HCPB model (\texttt{iblanket = 2}) allows the energy multiplication factor \texttt{emult}, the shielding requirements and tritium breeding ratio to be calculated self-consistently with the blanket and shielding materials and sub-assembly thicknesses, and for constraints to be applied to satisfy the engineering requirements. For further details of this model, see Section~\ref{sec:blanket_neutronics}.
+
+The CCFE HCPB model with tritium breeding ratio (\texttt{iblanket = 3}) has the features of the CCFE HCPB model above, with a set of fitting functions for calculating tritium breeding ratio (TBR).  It requires a choice of \texttt{iblanket\_thickness}, specifiying a THIN, MEDIUM or THICK blanket.  This fixes the values of inboard and outboard blanket thickness, and the initial values of first wall thickness (3 cm) and first wall armour (3 mm).  Note that these last two can be modified by the first wall thermohydraulic module, in which case the output will not be fully self-consistent.  The lithium-6 enrichment and the breeder fraction (Li4SiO4/(Be12Ti+Li4SiO4) by volume) are available as iteration variables, and the minimum TBR can be set as a constraint.  The maximum values of TBR achievable are as follows:\\
+Thin: 1.247, Medium: 1.261, Thick: 1.264.
 
 \item{\texttt{secondary\_cycle }:} This switch controls how the coolant pumping power in the first wall and blanket is determined, and also how the calculation of the plant's thermal to electric conversion efficiency (the secondary cycle thermal efficiency) proceeds. See Section~\ref{sec:powerflow}.
  
@@ -997,8 +1000,7 @@ inner leg]
 }
 \end{figure}
 
-Each TF coil is defined in the $(R,Z)$ plane by four circular arcs of
-different radius, which create an approximately D-shaped profile. Because of the finite
+Each TF coil is defined in the $(R,Z)$ plane by a straight section and four elliptical arcs. Because of the finite
 number of TF coils used in a tokamak (18 for ITER), the toroidal field
 has a ripple introduced into it, the amplitude of which can be limited to a
 few percent (given by input parameter \texttt{ripmax}, default value 1\%) by
@@ -1090,8 +1092,7 @@ To enforce the stress limits calculated using either of these models,
 constraint equation no.\ 31 (case stress) and/or constraint equation no.\ 32
 (conduit stress) should be turned on with iteration variables no.\ 48
 (\texttt{fstrcase}) and/or no.\ 49 (\texttt{fstrcond}), respectively. The
-stress limit can be adjusted using input parameters \texttt{csutf} and
-\texttt{csytf}.
+stress limit is set using input parameter \texttt{alstrtf}.
 
 \subsection{Poloidal field coils}
 \label{sec:pfcoils}
@@ -1226,11 +1227,7 @@ variable \texttt{fcuohsu}.
 
 If the central solenoid is superconducting, the coil contains steel for
 strength. The cross-sectional area of steel is determined by the $J \times B$
-hoop force on the coil divided by the allowable hoop stress, calculated as the
-lower of the two quantities (2/3 * \texttt{csytf}) and (0.5 * \texttt{csutf}),
-where input parameter \texttt{csytf} (Pa) is the yield strength of the steel,
-and \texttt{csutf} (Pa) is the ultimate strength of the steel. (This is the
-same calculation as for the allowable stress in the TF coil cases.) A steel
+hoop force on the coil divided by the allowable hoop stress, given by the input \texttt{alstroh}. A steel
 thickness is given in the output, which would be the thickness of a
 steel case of the same cross-sectional area if it simply surrounded the
 conducting region.
@@ -1500,13 +1497,28 @@ generating the plant's gross electrical power, with an efficiency given by
 quantity \texttt{etath}. The remainder is dumped to the environment through the condenser.  All of the low-grade heat is dumped to the environment.
 
 \begin{description}
-\item{\texttt{secondary\_cycle }:} This switch controls how the coolant pumping power in the first wall and blanket is determined, and also how the calculation of the plant's thermal to electric conversion efficiency (the secondary cycle thermal efficiency) proceeds. See also Section~\ref{sec:powerflow}, which describes the flow of power through the fusion power core.
+\item{\texttt{primary\_pumping }:} This switch controls the calculation of the mechanical pumping power required for the primary coolant.
 
-If \texttt{secondary\_cycle = 0}, the efficiency of the power generation cycle is set to a single value obtained from previous cycle modelling studies.  The heat deposited in the divertor coolant is assumed to be at such low temperature that it cannot be used for power generation and is dumped to the environment.  The mechanical power consumed by the primary coolant pumps is estimated as a fixed fraction of the heat transported.
+If \texttt{primary\_pumping = 0}, the user sets mechanical pumping power directly.
+
+If \texttt{primary\_pumping = 1}, the user sets mechanical pumping power as a fraction of thermal power removed by coolant.
+
+If \texttt{primary\_pumping = 1}, the mechanical pumping power is calculated, as follows.
+
+User inputs for the coolant outlet temperature (which may be used as an iteration variable), the coolant channel diameter, and the segmentation of the blanket are used.  The peak temperature in the first wall material (underneath the armour) is derived. The user can apply an upper limit to this temperature, and if this constraint is used then it is strongly recommended to set the length of a first wall pipe (\texttt{fw\_channel\_length})as an iteration variable. The Gnielinski correlation is used to determine the heat transfer in the channel.  The stresses in the first wall are not currently taken into account. 
+
+The mechanical pumping power required for the first wall and breeder zone is calculated using the Darcy friction factor, estimated from the Haaland equation, an approximation to the Colebrook–White equation. (If you consider that the calculated value for the pumping power is too low, then you can add an additional electric power requirement using \texttt{baseel}.  Do not use \texttt{htpmw\_min} as this prevents the optimisation of the first wall.) The inlet and outlet temperatures of the first wall and blanket can be different. The isentropic efficiency of the first wall and blanket coolant pumps (enthalpy increase in the fluid for isentropic compression divided by the mechanical power used) is specified by the parameter \texttt{etaiso}.  Note that the mechanical pumping powers for the shield and divertor are still calculated using the simplified method (a fixed fraction of the heat transported). 
+
+\end{description}
+
+\begin{description}
+\item{\texttt{secondary\_cycle }:} This switch controls how the calculation of the plant's thermal to electric conversion efficiency (the secondary cycle thermal efficiency) proceeds. See also Section~\ref{sec:powerflow}, which describes the flow of power through the fusion power core.
+
+If \texttt{secondary\_cycle = 0}, the efficiency of the power generation cycle is set to a single value obtained from previous cycle modelling studies.  The heat deposited in theToroidal field coils divertor coolant is assumed to be at such low temperature that it cannot be used for power generation and is dumped to the environment.
 
 If \texttt{secondary\_cycle = 1}, the efficiency of the power generation cycle is set as above, but the divertor heat is used for electricity generation.
 
-In the remaining options (\texttt{secondary\_cycle = 1, 2 or 3}), a more detailed routine~\cite{Harrington_bop} takes user inputs for the coolant outlet temperature (which may be used as an iteration variable), the internal coolant channel diameter, and the segmentation of the blanket and calculates the maximum temperature in the armour. If this temperature is above user-specified material limits, the outer diameter of the first wall pipes is reduced, up to a limit determined by the internal coolant pressure. The mechanical pumping power required for the first wall and breeder zone is then calculated from thermal-hydraulic formulae, assuming these are separate coolant loops with the same inlet and outlet temperatures. The isentropic efficiency of the first wall and blanket coolant pumps (enthalpy increase in the fluid for isentropic compression divided by the mechanical power used) is specified by the parameter \texttt{etaiso}.  Note that the mechanical pumping powers for the shield and divertor are still calculated using the simplified method (a fixed fraction of the heat transported).  The heat deposited in the divertor coolant is used for power generation.
+In the remaining options (\texttt{secondary\_cycle = 1, 2 or 3}), the heat deposited in the divertor coolant is used for power generation.
 
 If \texttt{secondary\_cycle = 2}, the efficiency of the power generation cycle is input by the user.
 
@@ -2279,58 +2291,28 @@ nuclide inventory will also be included as the need arises.
 
 \section{Cost Models}
 
-The cost accounting used by \process\ combines methods~\cite{cost1} used in
-the TETRA code~\cite{tetra} and the Generomak~\cite{generomak} scheme.  The
-costs are split into the standard accounting categories~\cite{cost2} generally
-used in the reporting of power plant costs. The best references for the
-algorithms used are~\cite{storac}, and source file \texttt{costs.f90} in the
-code itself.
+Two cost models are available, determined by the switch \texttt{cost\_model}.
 
-The majority of the costed items have a unit cost associated with them. These
-values scale with (for example) power output, volume, component mass etc., and
-many are available to be changed via the input file. All costs and their
-algorithms correspond to 1990 dollars.
+\subsection{1990 cost model (\texttt{cost\_model = 0})}
 
-An entirely new capital cost model is being developed, and will be described in~\cite{kovari_cost}.
+This combines methods~\cite{cost1} used in the TETRA code~\cite{tetra} and the Generomak~\cite{generomak} scheme.  The
+costs are split into accounting categories~\cite{cost2}. The best references for the algorithms used are~\cite{storac}, and source file \texttt{costs.f90} in the code itself. The majority of the costed items have a unit cost associated with them. These values scale with (for example) power output, volume, component mass etc., and many are available to be changed via the input file. All costs and their algorithms correspond to 1990 dollars.
 
-\subsection{$N^{th}$ of a kind costs}
+The unit costs of the components of the fusion power core are relevant to ``first-of-a-kind'' items. That is to say, the items are assumed to be relatively expensive to build as they are effectively prototypes and specialised tools and machines have perhaps been made specially to create them. However, if a ``production line'' has been set up, and R \& D progress has allowed more experience to be gained in constructing the power core components, the costs will be reduced as a result. Variable \texttt{fkind} may be used to multiply the raw unit costs of the fusion power core items (by a
+factor less than one) to simulate this cost reduction for an $N^{th}$-of-a-kind device. In other systems studies of fusion power plants~\cite{galambos}, values for this multiplier have ranged from 0.5 to 0.8.
 
-The unit costs of the components of the fusion power core are relevant to
-``first-of-a-kind'' items. That is to say, the items are assumed to be
-relatively expensive to build as they are effectively prototypes and
-specialised tools and machines have perhaps been made specially to create
-them. However, if a ``production line'' has been set up, and R \& D progress
-has allowed more experience to be gained in constructing the power core
-components, the costs will be reduced as a result. Variable \texttt{fkind} may
-be used to multiply the raw unit costs of the fusion power core items (by a
-factor less than one) to simulate this cost reduction for an
-$N^{th}$-of-a-kind device. In other systems studies of fusion power
-plants~\cite{galambos}, values for this multiplier have ranged from 0.5 to
-0.8.
+Many of the unit costs have four possible choices, relating to the level of safety assurance~\cite{lsa} flag \texttt{lsa}. A value \texttt{lsa = 1} corresponds to a plant with a full safety credit (i.e.\ is truly passively safe). Levels \texttt{2} and \texttt{3} lie between the two extremes, and level \texttt{4} corresponds to a present day fission reactor, with no safety credit.
 
-\subsection{Level of safety assurance}
+The first wall, blanket, divertor, centrepost (if present) and current drive system have relatively short lifetimes because of their hostile environment, after which they must be replaced. Because of this frequent renewal they can be regarded as though they are ``fuel'' items, and can be costed accordingly. Switch \texttt{ifueltyp} is used to control whether this option is used in the code. If \texttt{ifueltyp = 1}, the costs of the first wall, blanket, divertor and a fraction \texttt{fcdfuel} of the cost of the current drive system are treated as fuel costs. If \texttt{ifueltyp = 0}, these are treated as capital costs.
 
-Many of the unit costs have four possible choices, relating to the level of
-safety assurance~\cite{lsa} flag \texttt{lsa}. A value \texttt{lsa = 1}
-corresponds to a plant with a full safety credit (i.e.\ is truly passively
-safe). Levels \texttt{2} and \texttt{3} lie between the two extremes, and
-level \texttt{4} corresponds to a present day fission reactor, with no safety
-credit.
+If the switch \texttt{ireactor = 0}, no cost of electricity calculation is performed. If \texttt{ireactor = 1}, then the cost of electricity is evaluated, with the value quoted in units of \$/MWh.
 
-\subsection{Replaceable components}
+The net electric power is calculated in routine \texttt{POWER}. It is possible that the net electric power can become negative due to a high recirculating power. Switch \texttt{ipnet} determines whether the net electric power is scaled to always remain positive (\texttt{ipnet = 0}), or whether it is allowed to become negative (\texttt{ipnet = 1}), in which case no cost of electricity calculation is performed.
 
-The first wall, blanket, divertor, centrepost (if present) and current drive
-system have relatively short lifetimes because of their hostile environment,
-after which they must be replaced. Because of this frequent renewal they can
-be regarded as though they are ``fuel'' items, and can be costed
-accordingly. Switch \texttt{ifueltyp} is used to control whether this option
-is used in the code. If \texttt{ifueltyp = 1}, the costs of the first wall,
-blanket, divertor and a fraction \texttt{fcdfuel} of the cost of the current
-drive system are treated as fuel costs. If \texttt{ifueltyp = 0}, these are
-treated as capital costs.
+\subsection{2015 Kovari model (\texttt{cost\_model = 1})}
+This model~\cite{kovari_cost} provides only capital cost, and is not currently suitable for estimating the cost of electricity.  $N^{th}$-of-a-kind factors, level of safety assurance factors, and blanket replacement costs are not included.  The mean electric output is calculated using the capacity factor, which takes accountof the availability and the dwell time for a pulsed reactor.  The capital cost divided by the mean electric output is a useful comparison parameter.
 
-\subsection{Plant availability}
-
+\section{Plant availability}
 
 Switch \texttt{iavail} is used to control how the overall plant availability
 factor \texttt{cfactr} is calculated, as follows
@@ -2373,16 +2355,7 @@ For the toroidal field coils, the chance of a quench is likely to be the largest
 The unplanned downtime for the blanket is based on the number of cycles it experiences before planned replacment.  (This model is restricted to pulsed reactors.) The cycle life of the blanket is expressed using a reference lifetime.  Before this liefetime, there is a constant but small probability of failure in ecah pulse.  After the reference lifetime the reliability of the blanket starts to decline, reaching zero at the upper lifetime limit.
 
 It is assumed that the vacuum system can be maintained in parallel with blanket replacement, so it does not contribute to the planned downtime.  The unplanned downtime is based on an assumed failure rate for a cryopump, and a specified total number of pumps, with some of them being redundant.  The resulting downtime can be reduced to a negligible level if there are several redundant pumps, but in addition, there is a fixed unavailability to allow for common mode failures affecting several pumps.
-a
-\subsection{Net electric power calculation}
 
-The net electric power is calculated in routine \texttt{POWER}. It is possible that the net electric power can become negative due to a high recirculating power. Switch
-\texttt{ipnet} determines whether the net electric power is scaled to always
-remain positive (\texttt{ipnet = 0}), or whether it is allowed to become
-negative (\texttt{ipnet = 1}), in which case no cost of electricity
-calculation is performed.
 
-\subsection{Cost of electricity calculations}
 
-Switch \texttt{ireactor} determines whether the cost of electricity is calculated. If \texttt{ireactor = 0}, no cost of electricity calculation is performed. If \texttt{ireactor = 1}, then the cost of electricity is evaluated, with the value quoted in units of \$/MWh.
 

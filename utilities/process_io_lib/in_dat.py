@@ -9,18 +9,22 @@
 
 """
 
+import subprocess
 import numpy as np
 
 # Dictionary for variable types
-try :
+try:
     from process_io_lib.process_dicts import DICT_VAR_TYPE
 except ImportError:
     print("The Python dictionaries have not yet been created. Please run \
 'make dicts'!")
     exit()
-    
+
 # Dictionary for ixc -> name
 from process_io_lib.process_dicts import DICT_IXC_SIMPLE
+
+# Dictionary for icc -> name
+from process_io_lib.process_dicts import DICT_ICC_FULL
 
 # Dictionary for variable modules
 from process_io_lib.process_dicts import DICT_MODULE
@@ -30,6 +34,11 @@ from process_io_lib.process_dicts import DICT_DESCRIPTIONS
 
 # Dictionary for parameter defaults
 from process_io_lib.process_dicts import DICT_DEFAULT
+
+# ioptimz values
+ioptimz_des = {"-1": "for no optimisation, HYBRD only",
+               "0": "for HYBRD and VMCON (not recommended)",
+               "1": "for optimisation, VMCON only"}
 
 
 def fortran_python_scientific(var_value):
@@ -251,7 +260,7 @@ def process_bound(data, line):
     bound = no_comment_line[0].strip("boundl").replace("(", "").\
         replace(")", "").strip()
     bound_value = no_comment_line[1].strip().replace(",", "").replace("d", "e").\
-        replace("D","e")
+        replace("D", "e")
 
     # If bound not in the bound dictionary then add entry for bound with an
     # empty dictionary
@@ -306,7 +315,13 @@ def process_parameter(data, line):
     if len(no_comment_line[-1].split(",")) > 2:
         value = no_comment_line[1].strip()
     else:
-        value = no_comment_line[1].strip().replace(",", "")
+        try:
+            value = no_comment_line[1].strip().replace(",", "")
+        except IndexError:
+            print('Error when reading IN.DAT file on line', no_comment_line,
+                  '\n Please note, that our Python Library cannot cope with',
+                  ' variable definitions on multiple lines.')
+            exit()
 
     # Find group of variables the parameter belongs to
     parameter_group = find_parameter_group(name)
@@ -394,6 +409,7 @@ def write_title(title, out_file):
     :return: Nothing
     """
 
+    out_file.write("\n")
     # Insert title name into line of fixed width
     formatted_title = "*" + title.center(50, "-") + "*\n"
 
@@ -414,8 +430,8 @@ def write_constraint_equations(data, out_file):
     write_title("Constraint Equations", out_file)
 
     # Write number of equations to file
-    neqns_line = "neqns = {0} * {1}\n\n".format(data["neqns"].value,
-                                                data["neqns"].comment)
+    neqns_line = "neqns = {0} * {1}\n".format(data["neqns"].value,
+                                              data["neqns"].comment)
     out_file.write(neqns_line)
 
     # List of constraints
@@ -424,7 +440,9 @@ def write_constraint_equations(data, out_file):
     # Write constraints to file
     counter = 1
     for constraint in constraint_equations:
-        constraint_line = "icc({0}) = {1}\n\n".format(counter, constraint)
+        comment = DICT_ICC_FULL[str(constraint)]["name"]
+        constraint_line = "icc({0}) = {1} * {2}\n".format(counter,
+                                                          constraint, comment)
         out_file.write(constraint_line)
         counter += 1
 
@@ -444,8 +462,8 @@ def write_iteration_variables(data, out_file):
     iteration_variables = data["ixc"].value
 
     # Write nvar
-    nvar_line = "nvar = {0} * {1}\n\n".format(data["nvar"].value,
-                                              data["nvar"].comment)
+    nvar_line = "nvar = {0} * {1}\n".format(data["nvar"].value,
+                                            data["nvar"].comment)
     out_file.write(nvar_line)
 
     # Write constraints to file
@@ -453,8 +471,8 @@ def write_iteration_variables(data, out_file):
     for variable in iteration_variables:
         comment = DICT_IXC_SIMPLE[str(variable).replace(",", ";").
                                   replace(".", ";").replace(":", ";")]
-        variable_line = "ixc({0}) = {1} * {2}\n\n".format(counter, variable,
-                                                          comment)
+        variable_line = "ixc({0}) = {1} * {2}\n".format(counter, variable,
+                                                        comment)
         out_file.write(variable_line)
         counter += 1
 
@@ -463,14 +481,14 @@ def write_iteration_variables(data, out_file):
 
             # Lower bound
             if "l" in data["bounds"].value[str(variable)].keys():
-                lower_bound_line = "boundl({0}) = {1}\n\n".\
+                lower_bound_line = "boundl({0}) = {1}\n".\
                     format(variable, data["bounds"].value[str(variable)]["l"].
                            replace("e", "d"))
                 out_file.write(lower_bound_line)
 
             # Upper bound
             if "u" in data["bounds"].value[str(variable)].keys():
-                upper_bound_line = "boundu({0}) = {1}\n\n".\
+                upper_bound_line = "boundu({0}) = {1}\n".\
                     format(variable, data["bounds"].value[str(variable)]["u"].
                            replace("e", "d"))
                 out_file.write(upper_bound_line)
@@ -501,19 +519,26 @@ def write_parameters(data, out_file):
                     for k in range(len(data["fimp"].get_value)):
                         tmp_fimp_name = "fimp({0})".format(str(k+1).zfill(1))
                         tmp_fimp_value = data["fimp"].get_value[k]
-                        parameter_line = "{0} = {1}\n\n".\
+                        parameter_line = "{0} = {1}\n".\
                             format(tmp_fimp_name, tmp_fimp_value)
                         out_file.write(parameter_line)
+                elif item == "ioptimz":
+                    iop_val = data["ioptimz"].get_value
+                    iop_comment = ioptimz_des[str(iop_val)]
+                    parameter_line = "{0} = {1} * {2}\n". \
+                        format(item.ljust(8), iop_val, iop_comment)
+                    out_file.write(parameter_line)
+
                 elif item == "zref":
                     for j in range(len(data["zref"].get_value)):
                         tmp_zref_name = "zref({0})".format(str(j+1).zfill(1))
                         tmp_zref_value = data["zref"].get_value[j]
-                        parameter_line = "{0} = {1}\n\n".\
+                        parameter_line = "{0} = {1}\n".\
                             format(tmp_zref_name, tmp_zref_value)
                         out_file.write(parameter_line)
                 elif "vmec" in item:
-                    parameter_line = "{0} = {1}\n\n".format(item,
-                                                            data[item].value)
+                    parameter_line = "{0} = {1}\n".format(item,
+                                                          data[item].value)
                     out_file.write(parameter_line)
                 else:
                     # Left justification set to 8 to allow easier reading
@@ -537,7 +562,7 @@ def write_parameters(data, out_file):
                     except:
                         pass
 
-                    parameter_line = "{0} = {1} * {2}\n\n". \
+                    parameter_line = "{0} = {1} * {2}\n". \
                         format(item.ljust(8), line_value,
                                data[item].comment.split("\n")[0])
                     out_file.write(parameter_line)
@@ -652,10 +677,10 @@ def add_parameter(data, parameter_name, parameter_value):
     else:
         data[parameter_name].value = parameter_value
 
-    #def __delitem__(self, key):
+    # def __delitem__(self, key):
     #    del self.__dict__[key]
 
-    #def keys(self):
+    # def keys(self):
     #    return self.__dict__.keys()
 
 
@@ -686,6 +711,13 @@ def change_fimp(data, fimp_id, fimp_val):
     :return:
     """
     data["fimp"].value[fimp_id] = fimp_val
+    if type(data["fimp"].value[fimp_id]) == str:
+        tmp_fimp = list(data["fimp"].value.split(","))
+        tmp_fimp[fimp_id] = fimp_val
+        new_fimp = str(tmp_fimp).strip("[").strip("]").replace("'", "")
+        data["fimp"].value = new_fimp
+    else:
+        data["fimp"].value[fimp_id] = fimp_val
 
 
 def change_zref(data, zref_id, zref_val):
@@ -696,7 +728,14 @@ def change_zref(data, zref_id, zref_val):
     :param zref_val: new zref array value
     :return:
     """
-    data["zref"].value[zref_id] = zref_val
+
+    if type(data["zref"].value[zref_id]) == str:
+        tmp_zref = list(data["zref"].value.split(","))
+        tmp_zref[zref_id] = zref_val
+        new_zref = str(tmp_zref).strip("[").strip("]").replace("'", "")
+        data["zref"].value = new_zref
+    else:
+        data["zref"].value[zref_id] = zref_val
 
 
 def add_bound(data, bound, bound_type, bound_value):
@@ -765,6 +804,8 @@ def parameter_type(name, value):
 
     # Check if parameter is a list
     if isinstance(value, list):
+        if value[-1] == '':
+            value = value[:-1]
 
         # Real array parameter
         if "real_array" in param_type:
@@ -772,7 +813,6 @@ def parameter_type(name, value):
 
         # Integer array parameter
         elif "int_array" in param_type:
-
             return [int(item) for item in value]
 
     # Check if parameter is a string
@@ -785,6 +825,8 @@ def parameter_type(name, value):
         # If a real array split and make a float list
         elif "real_array" in param_type:
             value = value.split(",")
+            if value[-1] == '':
+                value = value[:-1]
             return [float(item) for item in value]
 
         # If an integer variable convert to integer
@@ -794,6 +836,8 @@ def parameter_type(name, value):
         # If an integer array split and make an integer list
         elif "int_array" in param_type:
             value = value.split(",")
+            if value[-1] == '':
+                value = value[:-1]
             return [int(item) for item in value]
 
         # If type unknown return original value
@@ -992,13 +1036,13 @@ class InDat(object):
             # Ignore title, header and commented lines
             if line_type != "Title" and line_type != "Comment":
 
-                try:
+                # try:
                     # for non-title lines process line and store data.
-                    process_line(self.data, line_type, l_line)
-                except KeyError:
-                    print("Warning: Line below is causing a problem. Check "
-                          "that line in IN.DAT is valid. Line skipped!\n{0}".
-                          format(line))
+                process_line(self.data, line_type, l_line)
+                # except KeyError:
+                #    print("Warning: Line below is causing a problem. Check "
+            #              "that line in IN.DAT is valid. Line skipped!\n{0}".
+        #                  format(line))
 
     def add_iteration_variable(self, variable_number):
         """ Function to add iteration variable to IN.DAT data dictionary
@@ -1150,8 +1194,22 @@ class InDat(object):
         output.close()
 
 
+def test(f):
+    """Test function
+
+    :param f: file name to test
+    """
+    try:
+        i = InDat(filename=f)
+        i.write_in_dat(output_filename="test_out_IN.DAT")
+        subprocess.call(["rm", "test_out_IN.DAT"])
+        return True
+    except:
+        return False
+
+
 if __name__ == "__main__":
-    #i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
+    # i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
     i = InDat(filename="../../Original_IN.DAT")
     # print(i.data["ixc"].value)
     # print(i.data["fimp"].value)

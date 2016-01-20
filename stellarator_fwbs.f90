@@ -1958,7 +1958,7 @@ contains
     !cryomass = fvolcry * 4.0D0 * (2.0D0*(rtot-rsldi) + 2.0D0*hmax) * &
     !     2.0D0 * pi * rmajor * ddwi * denstl
 
-    cryomass = vdewin * denstl
+    vvmass = vdewin * denstl
 
     !  Sum of internal vacuum vessel and external cryostat masses
 
@@ -2140,7 +2140,7 @@ contains
     call ovarre(outfile,'External cryostat volume (m3)','(vdewex)',vdewex)
     call ovarre(outfile,'Total cryostat + vacuum vessel mass (kg)','(dewmkg)',dewmkg)
     call ovarre(outfile,'Internal vacuum vessel volume (m3)','(vdewin)',vdewin)
-    call ovarre(outfile,'Vacuum vessel mass (kg)','(cryomass)',cryomass)
+    call ovarre(outfile,'Vacuum vessel mass (kg)','(vvmass)',vvmass)
     call ovarre(outfile,'Divertor area (m2)','(divsur)',divsur)
     call ovarre(outfile,'Divertor mass (kg)','(divmas)',divmas)
 

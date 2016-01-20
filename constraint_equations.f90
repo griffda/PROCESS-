@@ -55,6 +55,7 @@ module constraints
   use tfcoil_variables
   use times_variables
   use cost_variables
+  use vacuum_variables
 
   implicit none
 
@@ -156,6 +157,10 @@ contains
     !+ad_hist  13/11/14 PJK Changed iradloss usage in eqns 2 and 4
     !+ad_hist  17/11/14 PJK Added 'not recommended' comments to constraints 3 and 4
     !+ad_hist  25/11/14 JM  Added new eqn 61
+    !+ad_hist  06/08/15 MDK Eqn 62: Issue #213 - lower limit on taup/taueff the ratio of particle to energy confinement times
+    !+ad_hist  26/08/15 MDK Eqn 63: Issue #304 - upper limit on niterpump (vacuum_model = simple)
+    !+ad_hist  18/11/15 RK  Eqn 64: Added constrain equation to limit Zeff
+    !+ad_hist  26/11/15 RK  Eqn 65: Added constrain equation to set dump time
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -441,7 +446,9 @@ contains
        case (17)  !  Equation for radiation power upper limit
           !  pradmaxpv is the maximum possible power/vol that can be radiated
 
-          pradmaxpv = pinjmw/vol + palppv + pchargepv + pohmpv
+          !pradmaxpv = pinjmw/vol + palppv + pchargepv + pohmpv
+          ! Take account of alpha losses.
+          pradmaxpv = pinjmw/vol + palppv*falpha + pchargepv + pohmpv
           cc(i) = 1.0D0 - fradpwr * pradmaxpv / pradpv
           if (present(con)) then
              con(i) = pradmaxpv * (1.0D0 - cc(i))
@@ -706,12 +713,12 @@ contains
           end if
 
        case (39)  !  Equation for first wall temperature upper limit
-
+          ! Issue #348 (15/12/02) 
           if (tpeak == 0.0D0) call report_error(5)
 
-          cc(i) = 1.0D0 - ftpeak * tpkmax/tpeak
+          cc(i) = 1.0D0 - ftpeak * tfwmatmax/tpeak
           if (present(con)) then
-             con(i) = tpkmax * (1.0D0 - cc(i))
+             con(i) = tfwmatmax * (1.0D0 - cc(i))
              err(i) = tpeak * cc(i)
              symbol(i) = '<'
              units(i) = 'K'
@@ -958,7 +965,55 @@ contains
              units(i) = ''
           end if
 
-       case default
+       case (62)  !  Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
+          cc(i) = 1.0D0 - ftaulimit * (taup / taueff) / taulimit
+          if (present(con)) then
+             con(i) = taulimit
+             err(i) = (taup / taueff) * cc(i)
+             symbol(i) = '>'
+             units(i) = ''
+          end if
+
+       case (63)  !  Upper limit on niterpump (vacuum_model = simple)
+          cc(i) = 1.0D0 - fniterpump * tfno / niterpump
+          if (present(con)) then
+             con(i) = tfno
+             err(i) = tfno * cc(i)
+             symbol(i) = '<'
+             units(i) = ''
+          end if
+	  
+       case (64)  !  Upper limit on Zeff
+        cc(i) = 1.0D0 - fzeffmax * (zeffmax/zeff)
+	    if (present(con)) then
+            con(i) = zeffmax
+            err(i) = zeffmax * cc(i)
+            symbol(i) = '<'
+            units(i) = ''
+        end if
+	  
+       case (65)  !  Limit TF dump time to calculated quench time (IDM: 2MBSE3)
+        cc(i) = 1.0d0 - ftaucq * tdmptf / taucq
+	    if (present(con)) then
+             con(i) = taucq
+             err(i) = taucq * cc(i)
+             symbol(i) = '>'
+             units(i) = 's'
+        end if
+        
+        case (66)  !  Limit on rate of change of energy in poloidal field
+        cc(i) = 1.0d0 - fpoloidalpower * maxpoloidalpower / peakpoloidalpower
+	    if (present(con)) then
+             con(i) = maxpoloidalpower
+             err(i) = maxpoloidalpower * cc(i)
+             symbol(i) = '<'
+             units(i) = 'MW'
+        end if
+
+
+
+
+      case default
 
           idiags(1) = icc(i)
           call report_error(13)
@@ -994,6 +1049,12 @@ contains
              write(*,*) 'pinjimw = ', pinjimw
              write(*,*) 'pinjemw = ', pinjemw
 
+          case (66)
+             write(*,*) 'fpoloidalpower = ', fpoloidalpower
+             write(*,*) 'maxpoloidalpower = ', maxpoloidalpower
+             write(*,*) 'peakpoloidalpower = ', peakpoloidalpower
+
+          
           end select
 
           idiags(1) = icc(i) ; fdiags(1) = cc(i)

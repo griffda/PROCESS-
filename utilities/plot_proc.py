@@ -6,11 +6,11 @@
   James Morris
   13/04/2014
   CCFE
+  Revised by Michael Kovari, 7/1/2016
 
-  Compatible with PROCESS version ???
-  Latest update 17/06/2014 PJK
 """
 
+import sys
 import argparse
 import process_io_lib.mfile as mf
 import matplotlib.pyplot as plt
@@ -24,110 +24,45 @@ import numpy as np
 try:
     import process_io_lib.process_dicts as proc_dict
 except ImportError:
-    print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!")
+    print("The Python dictionaries have not yet been created. Please run 'make dicts'!")
     exit()
 
 
 solenoid = 'pink'
+cscompression = 'red'
 tfc = 'cyan'
+thermal_shield = 'gray'
 vessel = 'green'
-shield = 'salmon'
+shield = 'green'
 blanket = 'magenta'
 plasma = 'khaki'
-cryostat='red'
+cryostat = 'red'
 firstwall = 'darkblue'
 winding = 'blue'
+nbshield_colour = 'gray'
 
 thin = 0
 
-# Setup command line arguments
-parser = argparse.ArgumentParser(description="Produce a one-page summary "
-                                             "of the PROCESS MFILE file "
-                                             "for a given scan."
-                                             "For info contact "
-                                             "rich.kemp@ccfe.ac.uk or"
-                                             "james.morris2@ccfe.ac.uk")
-
-parser.add_argument("-f", metavar='FILENAME', type=str,
-                    default="MFILE.DAT",
-                    help='specify input filename')
-
-parser.add_argument("-o", metavar='OUTPUT', type=str,
-                    default="2_page_summary.pdf",
-                    help='specify output filename')
-
-parser.add_argument("-s", "--show", help="show plot as well as saving "
-                    "figure", action="store_true")
-
-parser.add_argument("--svg", help="save plots as svg files",
-                    action="store_true")
-
-args = parser.parse_args()
-
-# read MFILE
-m_file = mf.MFile(args.f)
-scan = -1
-bore = m_file.data["bore"].get_scan(scan)
-ohcth = m_file.data["ohcth"].get_scan(scan)
-gapoh = m_file.data["gapoh"].get_scan(scan)
-tfcth = m_file.data["tfcth"].get_scan(scan)
-gapds = m_file.data["gapds"].get_scan(scan)
-ddwi = m_file.data["ddwi"].get_scan(scan)
-shldith = m_file.data["shldith"].get_scan(scan)
-blnkith = m_file.data["blnkith"].get_scan(scan)
-fwith = m_file.data["fwith"].get_scan(scan)
-scrapli = m_file.data["scrapli"].get_scan(scan)
-rmajor = m_file.data["rmajor"].get_scan(scan)
-rminor = m_file.data["rminor"].get_scan(scan)
-scraplo = m_file.data["scraplo"].get_scan(scan)
-fwoth = m_file.data["fwoth"].get_scan(scan)
-blnkoth = m_file.data["blnkoth"].get_scan(scan)
-shldoth = m_file.data["shldoth"].get_scan(scan)
-ddwi = m_file.data["ddwi"].get_scan(scan)
-gapsto = m_file.data["gapsto"].get_scan(scan)
-tfthko = m_file.data["tfthko"].get_scan(scan)
-rdewex = m_file.data["rdewex"].get_scan(scan)
-ddwex = m_file.data["ddwex"].get_scan(scan)
-tfno = m_file.data["tfno"].get_scan(scan)
-wwp1 = m_file.data["wwp1"].get_scan(scan)
-wwp2 = m_file.data["wwp2"].get_scan(scan)
-thkwp = m_file.data["thkwp"].get_scan(scan)
-tinstf = m_file.data["tinstf"].get_scan(scan)
-thkcas = m_file.data["thkcas"].get_scan(scan)
-nbshield = m_file.data["nbshield"].get_scan(scan)
-rtanbeam = m_file.data["rtanbeam"].get_scan(scan)
-rtanmax = m_file.data["rtanmax"].get_scan(scan)
-beamwd = m_file.data["beamwd"].get_scan(scan)
-casthi = m_file.data["casthi"].get_scan(scan)
-# Pedestal profile parameters
-ipedestal = m_file.data["ipedestal"].get_scan(scan)
-neped = m_file.data["neped"].get_scan(scan)
-nesep = m_file.data["nesep"].get_scan(scan)
-rhopedn = m_file.data["rhopedn"].get_scan(scan)
-rhopedt = m_file.data["rhopedt"].get_scan(scan)
-tbeta = m_file.data["tbeta"].get_scan(scan)
-teped = m_file.data["teped"].get_scan(scan)
-tesep = m_file.data["tesep"].get_scan(scan)
-alphan = m_file.data["alphan"].get_scan(scan)
-alphat = m_file.data["alphat"].get_scan(scan)
-ne0 = m_file.data["ne0"].get_scan(scan)
-te0 = m_file.data["te0"].get_scan(scan)
-#Plasma
-triang = m_file.data["triang95"].get_scan(scan)
-
-
-RADIAL_BUILD = ["bore", "ohcth", "gapoh", "tfcth", "gapds",
-                "ddwi", "shldith", "blnkith", "fwith", "scrapli",
+RADIAL_BUILD = ["bore", "ohcth", "precomp", "gapoh", "tfcth",
+                "deltf", "thshieldi", "gapds",
+                "ddwi", "shldith", "vvblgapi", "blnkith", "fwith", "scrapli",
                 "rminori", "rminoro", "scraplo", "fwoth", "blnkoth",
-                "shldoth", "ddwo", "gapsto", "tfthko"]
+                "vvblgapo", "shldoth", "ddwo", "gapsto", "thshieldo",
+                "tftsgap", "tfthko"]
 
-VERTICAL_BUILD = ["tfcth", "vgap2", "ddwi", "shldtth", "blnktth",
-                  "top first wall vertical thickness (m)",
-                  "top scrape-off vertical thickness (m)",
-                  "rminor*kappa", "midplane", "rminor*kappa",
-                  "vgap", "divfix", "shldtth", "ddwi", "vgap2", "tfcth"]
+vertical_upper = ["rminor*kappa", "vgaptop",
+                  "fwtth", "blnktth", "vvblgap",
+                  "shldtth", "ddwi",
+                  "vgap2", "thshield",
+                  "tftsgap", "tfcth"]
 
+vertical_lower = ["rminor*kappa", "vgap",
+                  "divfix",
+                  "shldlth", "ddwi",
+                  "vgap2",
+                  "thshield",
+                  "tftsgap",
+                  "tfcth"]
 
 ANIMATION_INFO = [("rmajor", "Major radius", "m"),
                   ("rminor", "Minor radius", "m"),
@@ -137,20 +72,19 @@ rtangle = np.pi / 2
 
 
 def plotdh(axis, r0, a, delta, kap):
-    """Plots half a thin D-section.
+    """Plots half a thin D-section, centred on z = 0.
 
     Arguments:
         axis --> axis object to plot to
-        r0 --> major radius
-        a --> minor radius
+        r0 --> major radius of centre
+        a --> horizontal radius
         delta --> triangularity
         kap --> elongation
 
     Returns:
         rs --> radial coordinates of D-section
         zs --> vertical coordinates of D-section
-
-    """
+        """
     angs = np.linspace(0, np.pi, 50, endpoint=True)
     rs = r0 + a * np.cos(angs + delta * np.sin(1.0 * angs))
     zs = kap * a * np.sin(angs)
@@ -257,7 +191,6 @@ def plot_centre_cross(axis, mfile_data, scan):
         axis --> axis object to plot to
         mfile_data --> MFILE data object
         scan --> scan number to use
-
     """
     rmajor = mfile_data.data["rmajor"].get_scan(scan)
     axis.plot([rmajor - 0.25, rmajor + 0.25, rmajor, rmajor, rmajor],
@@ -277,58 +210,57 @@ def cumulative_radial_build(section, mfile_data, scan):
         cumulative_build --> cumulative radial build up to section given
 
     """
-
+    complete = False
     cumulative_build = 0
     for item in RADIAL_BUILD:
         if item == "rminori" or item == "rminoro":
             cumulative_build += mfile_data.data["rminor"].get_scan(scan)
+        elif item == "vvblgapi" or item == "vvblgapo":
+            cumulative_build += mfile_data.data["vvblgap"].get_scan(scan)
+        elif item == "thshieldi" or item == "thshieldo":
+            cumulative_build += mfile_data.data["thshield"].get_scan(scan)
         elif "ddw" in item:
             cumulative_build += mfile_data.data["ddwi"].get_scan(scan)
         else:
             cumulative_build += mfile_data.data[item].get_scan(scan)
         if item == section:
+            complete = True
             break
+    if complete == False:
+        print('radial build parameter ', section, ' not found')
     return cumulative_build
 
-
-def cumulative_vertical_build(mfile_data, scan):
-    """Function for calculating the cumulative vertical build
+def cumulative_radial_build2(section, mfile_data, scan):
+    """Function for calculating the cumulative radial build up to and
+    including the given section.
 
     Arguments:
+        section --> section of the radial build to go up to
         mfile_data --> MFILE data object
         scan --> scan number to use
 
     Returns:
-        cumulative_build --> vertical build list
+        cumulative_build --> cumulative radial build up to and including section given
+        previous         --> cumulative radial build up to section given
 
     """
-
-    cumulative_build = list()
-    cumulative_build.append(0.0)
-
-    # Top
-    top_build = 0
-    start = False
-    for i in range(len(VERTICAL_BUILD) - 1, -1, -1):
-        if not start:
-            if VERTICAL_BUILD[i] == "midplane":
-                start = True
+    cumulative_build = 0; build = 0
+    for item in RADIAL_BUILD:
+        if item == "rminori" or item == "rminoro":
+            build = mfile_data.data["rminor"].get_scan(scan)
+        elif item == "vvblgapi" or item == "vvblgapo":
+            build = mfile_data.data["vvblgap"].get_scan(scan)
+        elif item == "thshieldi" or item == "thshieldo":
+            build = mfile_data.data["thshield"].get_scan(scan)
+        elif "ddw" in item:
+            build = mfile_data.data["ddwi"].get_scan(scan)
         else:
-            top_build += mfile_data.data[VERTICAL_BUILD[i]].get_scan(scan)
-            cumulative_build.insert(0, top_build)
-
-    # bottom
-    start = False
-    bottom_build = 0
-    for j in range(0, len(VERTICAL_BUILD), 1):
-        if not start:
-            if VERTICAL_BUILD[j] == "midplane":
-                start = True
-        else:
-            bottom_build -= mfile_data.data[VERTICAL_BUILD[j]].get_scan(scan)
-            cumulative_build.append(bottom_build)
-
-    return cumulative_build
+            build = mfile_data.data[item].get_scan(scan)
+        cumulative_build += build
+        if item == section:
+            break
+    previous = cumulative_build - build
+    return (cumulative_build, previous)
 
 
 def poloidal_cross_section(axis, mfile_data, scan=-1):
@@ -353,17 +285,32 @@ def poloidal_cross_section(axis, mfile_data, scan=-1):
     axis.set_title('Poloidal cross-section')
 
     if mfile_data.data["snull"].get_scan(scan):
-        plot_snull_cryo(axis, mfile_data, scan)
+        plot_vacuum_vessel_snull(axis, mfile_data, scan)
         plot_shield_snull(axis, mfile_data, scan)
+        plot_blanket_snull(axis, mfile_data, scan)
+        plot_firstwall_snull(axis, mfile_data, scan)
 
     plot_plasma(axis, mfile_data, scan)
     plot_centre_cross(axis, mfile_data, scan)
+    plot_cryostat(axis, mfile_data, scan)
+
+def plot_cryostat(axis, mfile_data, scan):
+    """Function to plot cryostat in poloidal cross-section"""
+    rect = patches.Rectangle([rdewex, 0], ddwex, zdewex+ddwex, lw=0, facecolor=cryostat)
+    axis.add_patch(rect)
+    rect = patches.Rectangle([rdewex, 0], ddwex, -(zdewex+ddwex), lw=0, facecolor=cryostat)
+    axis.add_patch(rect)
+
+    rect = patches.Rectangle([0, zdewex], rdewex, ddwex, lw=0, facecolor=cryostat)
+    axis.add_patch(rect)
+    rect = patches.Rectangle([0, -zdewex], rdewex, -ddwex, lw=0, facecolor=cryostat)
+    axis.add_patch(rect)
+
 
 def color_key(axis):
     """Function to plot the colour key
     Arguments:
       axis --> object to add plot to
-
     """
     axis.set_ylim([0, 10])
     axis.set_xlim([0, 10])
@@ -372,28 +319,41 @@ def color_key(axis):
     axis.set_autoscalex_on(False)
 
     axis.text(-5, 10, 'Central Solenoid', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0, 9.6], 1, 0.5, lw=0, facecolor=solenoid))
+    axis.add_patch(patches.Rectangle([0.2, 9.7], 1, 0.4, lw=0, facecolor=solenoid))
 
-    axis.text(-5, 9, 'Vacuum vessel', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0, 8.6], 1, 0.5, lw=0, facecolor=vessel))
+    axis.text(-5, 9, 'CS compression', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 8.7], 1, 0.4, lw=0, facecolor=cscompression))
 
-    axis.text(-5, 8, 'TF coil', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0, 7.6], 1, 0.5, lw=0, facecolor=tfc))
+    axis.text(-5, 8,  'TF coil', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 7.7], 1, 0.4, lw=0, facecolor=tfc))
 
-    axis.text(-5, 7, 'Shield', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0, 6.6], 1, 0.5, lw=0, facecolor=shield))
+    axis.text(-5, 7,  'Thermal shield', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 6.7], 1, 0.4, lw=0, facecolor=thermal_shield))
 
-    axis.text(-5, 6, 'Blanket', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0, 5.6], 1, 0.5, lw=0, facecolor=blanket))
+    axis.text(-5, 6,  'V. vessel & shield', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 5.7], 1, 0.4, lw=0, facecolor=vessel))
 
-    axis.text(-5, 5, 'First wall', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0, 4.6], 1, 0.5, lw=0, facecolor=firstwall))
+    axis.text(-5, 5,  'Blanket', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 4.7], 1, 0.4, lw=0, facecolor=blanket))
 
-    axis.text(-5, 4, 'Plasma', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0, 3.6], 1, 0.5, lw=0, facecolor=plasma))
+    axis.text(-5, 4,  'First wall', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 3.7], 1, 0.4, lw=0, facecolor=firstwall))
+
+    axis.text(-5, 3,  'Plasma', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 2.7], 1, 0.4, lw=0, facecolor=plasma))
+
+    axis.text(-5, 2,  'PF coils', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 1.7], 1, 0.4, lw=1, facecolor='none'))
+
+    axis.text(-5, 1,  'NB duct shield', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 0.7], 1, 0.4, lw=0, facecolor=nbshield_colour))
+
+    axis.text(-5, 0.1,  'cryostat', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, -0.3], 1, 0.4, lw=0, facecolor=cryostat))
 
 
-def toroidal_cross_section(axis):
+
+def toroidal_cross_section(axis, mfile_data, scan=-1):
     """Function to plot toroidal cross-section
     Arguments:
       axis --> axis object to add plot to
@@ -413,22 +373,51 @@ def toroidal_cross_section(axis):
     axis.set_ylabel('y / m')
     axis.set_title('Toroidal cross-section')
 
-    rbmax = bore + ohcth + gapoh + tfcth
     arc(axis, rmajor, style='dashed')
+
     # Colour in the main components
-    arc_fill(axis, bore, bore + ohcth, color=solenoid)
-    arc_fill(axis, bore + ohcth + gapoh, rbmax, color=tfc)
-    arc_fill(axis,rbmax+gapds,rbmax + gapds + ddwi, color = vessel)
-    arc_fill(axis, rbmax + gapds + ddwi, rbmax + gapds + ddwi + shldith, color=shield)
-    arc_fill(axis, rbmax + gapds + ddwi + shldith, rbmax + gapds + ddwi + shldith + blnkith, color=blanket)
-    arc_fill(axis, rbmax + gapds + ddwi + shldith + blnkith, rbmax + gapds + ddwi + shldith + blnkith+fwith, color=firstwall)
+    r2, r1 = cumulative_radial_build2("ohcth", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=solenoid)
+
+    r2, r1 = cumulative_radial_build2("precomp", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=cscompression)
+
+    r2, r1 = cumulative_radial_build2("tfcth", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=tfc)
+
+    r2, r1 = cumulative_radial_build2("thshieldi", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=thermal_shield)
+
+
+    r2, r1 = cumulative_radial_build2("ddwi", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=vessel)
+
+    r2, r1 = cumulative_radial_build2("shldith", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=vessel)
+
+    r2, r1 = cumulative_radial_build2("blnkith", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=blanket)
+
+    r2, r1 = cumulative_radial_build2("fwith", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=firstwall)
+
     arc_fill(axis, rmajor-rminor, rmajor+rminor, color=plasma)
-    arc_fill(axis, rmajor + rminor + scraplo, rmajor + rminor + scraplo + fwoth, color=firstwall)
-    arc_fill(axis, rmajor + rminor + scraplo + fwoth,rmajor + rminor + scraplo + fwoth + blnkoth, color=blanket)
-    rsldo =  rmajor + rminor + scraplo + fwoth + blnkoth + shldoth
-    rtot = rsldo + ddwi + gapsto + tfthko/2
-    arc_fill(axis, rmajor + rminor + scraplo + fwoth + blnkoth, rsldo, color=shield)
-    arc_fill(axis, rsldo, rsldo + ddwi, color=vessel)
+
+    r2, r1 = cumulative_radial_build2("fwoth", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=firstwall)
+
+    r2, r1 = cumulative_radial_build2("blnkoth", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=blanket)
+
+    r2, r1 = cumulative_radial_build2("shldoth", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=shield)
+
+    r2, r1 = cumulative_radial_build2("ddwo", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=vessel)
+
+    r2, r1 = cumulative_radial_build2("thshieldo", mfile_data, scan)
+    arc_fill(axis, r1, r2, color=thermal_shield)
+
     arc_fill(axis, rdewex, rdewex+ddwex, color=cryostat)
 
     # Segment the TF coil inboard
@@ -440,10 +429,10 @@ def toroidal_cross_section(axis):
     ang = i*spacing
     angl = ang - spacing/2
     angu = ang + spacing/2
-    r1 = bore + ohcth + gapoh
-    r2 = bore + ohcth + gapoh + tfcth
-    r3 = rsldo + ddwi + gapsto
-    r4 = r3 + tfthko
+    r1, null = cumulative_radial_build2("gapoh", mfile_data, scan)
+    r2, null = cumulative_radial_build2("tfcth", mfile_data, scan)
+    r4, r3 = cumulative_radial_build2("tfthko", mfile_data, scan)
+
     #Coil width
     w = r2 * np.tan(spacing/2)
     xi = r1 * np.cos(angl)
@@ -461,7 +450,10 @@ def toroidal_cross_section(axis):
     axis.text((rdewex+ddwex)/1.41, (rdewex+ddwex)/1.41, "cryostat", fontsize=(10),ha='left', va='bottom')
 
     for item in i:
-        TF_outboard(axis, item, tfno=tfno,r3=r3, r4=r4, w=w)
+        # Neutral beam shielding
+        TF_outboard(axis, item, tfno=tfno,r3=r3, r4=r4, w=w+nbshield, facecolor=nbshield_colour)
+        # Overlay TF coil segments
+        TF_outboard(axis, item, tfno=tfno,r3=r3, r4=r4, w=w, facecolor='cyan')
 
     # Winding pack: inboard
     rect = patches.Rectangle([r1 + thkcas +tinstf, 0], thkwp/2, wwp2/2, lw=0, facecolor=winding)
@@ -469,66 +461,35 @@ def toroidal_cross_section(axis):
     rect = patches.Rectangle([r1 + thkcas +tinstf + thkwp/2, 0], thkwp/2, wwp1/2, lw=0, facecolor=winding)
     axis.add_patch(rect)
     # Outboard
-    rect = patches.Rectangle([rtot-tfthko/2+casthi+tinstf, 0], thkwp/2, wwp1/2, lw=0, facecolor=winding)
+    rect = patches.Rectangle([r3+casthi+tinstf, 0], thkwp/2, wwp1/2, lw=0, facecolor=winding)
     axis.add_patch(rect)
-    rect = patches.Rectangle([rtot-tfthko/2+casthi+tinstf+thkwp/2, 0], thkwp/2, wwp2/2, lw=0, facecolor=winding)
+    rect = patches.Rectangle([r3+casthi+tinstf+thkwp/2, 0], thkwp/2, wwp2/2, lw=0, facecolor=winding)
     axis.add_patch(rect)
 
     # Neutral beam geometry
     a = w
     b = tfthko
     c = beamwd + 2 * nbshield
-    d = rtot - 0.5 * b
+    d = r3
     e = np.sqrt(a**2 +(d+b)**2)
     # Coordinates of the inner and outer edges of the beam at its tangency point
-    rinner = rtanbeam - c/2
-    router = rtanbeam + c/2
+    rinner = rtanbeam - beamwd
+    router = rtanbeam + beamwd
     beta = np.arccos(rinner/e)
     xinner = rinner * np.cos(beta)
     yinner = rinner * np.sin(beta)
     xouter = router * np.cos(beta)
     youter = router * np.sin(beta)
     # Corner of TF coils
-    xcorner = d + b + nbshield * np.cos(beta)
-    ycorner = a + nbshield * np.sin(beta)
+    xcorner = r4
+    ycorner = w+nbshield
     axis.plot([xinner, xcorner], [yinner, ycorner], linestyle='dotted', color='black')
     x = xcorner + c * np.cos(beta) - nbshield * np.cos(beta)
     y = ycorner + c * np.sin(beta) - nbshield * np.sin(beta)
     axis.plot([xouter, x], [youter, y], linestyle='dotted', color='black')
-    # Neutral beam shielding
-    x1 = d
-    y1 = a
-    x2 = d + b
-    y2 = a
-    x3 = d + b
-    y3 = ycorner
-    x4 = d
-    y4 = y3
-    verts = [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x1, y1)]
-    path = Path(verts, closed=True)
-    patch = patches.PathPatch(path, facecolor='gray', lw=0)
-    axis.add_patch(patch)
-
-    spacing = 2*np.pi/tfno
-    dx = w * np.sin(spacing)
-    dy = w * np.cos(spacing)
-    sx = (w+nbshield) * np.sin(spacing)
-    sy = (w+nbshield) * np.cos(spacing)
-    x1 = r3 * np.cos(spacing) + sx
-    y1 = r3 * np.sin(spacing) - sy
-    x2 = r4 * np.cos(spacing) + sx
-    y2 = r4 * np.sin(spacing) - sy
-    x3 = r4 * np.cos(spacing) +dx
-    y3 = r4 * np.sin(spacing) - dy
-    x4 = r3 * np.cos(spacing) + dx
-    y4 = r3 * np.sin(spacing) - dy
-    verts = [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x1, y1)]
-    path = Path(verts, closed=True)
-    patch = patches.PathPatch(path, facecolor='gray', lw=0)
-    axis.add_patch(patch)
 
 
-def TF_outboard(axis, item, tfno,r3, r4, w):
+def TF_outboard(axis, item, tfno,r3, r4, w, facecolor):
     spacing = 2*np.pi/tfno
     ang = item*spacing
     dx = w * np.sin(ang)
@@ -543,7 +504,7 @@ def TF_outboard(axis, item, tfno,r3, r4, w):
     y4 = r3 * np.sin(ang) + dy
     verts = [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x1, y1)]
     path = Path(verts, closed=True)
-    patch = patches.PathPatch(path, facecolor='cyan', lw=0)
+    patch = patches.PathPatch(path, facecolor=facecolor, lw=0)
     axis.add_patch(patch)
 
 
@@ -582,6 +543,33 @@ def arc_fill(axis, r1, r2, color='pink'):
     verts = list(zip(xs1, ys1))
     verts.extend(list(zip(xs2, ys2)))
     endpoint=[(r2,0)]
+    verts.extend(endpoint)
+    path = Path(verts, closed=True)
+    patch = patches.PathPatch(path, facecolor=color, lw=0)
+    axis.add_patch(patch)
+
+def ellips_fill(axis, a1=0, a2=0, b1=0, b2=0, x0=0, y0=0, ang1=0, ang2=rtangle, color='pink'):
+    """Fills the space between two concentric ellipse sectors.
+
+    Arguments
+
+    axis: plot object
+    a1, a2, b1, b2 horizontal and vertical radii to be filled
+    x0, y0 coordinates of centre of the ellipses
+    ang1, ang2 are the polar angles of the start and end
+
+    """
+    angs = np.linspace(ang1, ang2, endpoint=True)
+    r1 = ((np.cos(angs)/a1)**2 + (np.sin(angs)/b1)**2)**(-0.5)
+    xs1 = r1 * np.cos(angs) + x0
+    ys1 = r1 * np.sin(angs) + y0
+    angs = np.linspace(ang2, ang1, endpoint=True)
+    r2 = ((np.cos(angs)/a2)**2 + (np.sin(angs)/b2)**2)**(-0.5)
+    xs2 = r2 * np.cos(angs) + x0
+    ys2 = r2 * np.sin(angs) + y0
+    verts = list(zip(xs1, ys1))
+    verts.extend(list(zip(xs2, ys2)))
+    endpoint=verts[-1:]
     verts.extend(endpoint)
     path = Path(verts, closed=True)
     patch = patches.PathPatch(path, facecolor=color, lw=0)
@@ -656,64 +644,109 @@ def plot_tprofile(prof):
     prof.plot(rho,te)
 
 
-def plot_snull_cryo(axis, mfile_data, scan):
-    """Function to plot top of vacuum vessel
+def plot_vacuum_vessel_snull(axis, mfile_data, scan):
+    """Function to plot vacuum vessel
 
     Arguments:
         axis --> axis object to plot to
         mfile_data --> MFILE data object
         scan --> scan number to use
-
     """
     triang = mfile_data.data["triang95"].get_scan(scan)
-
-    # vacuum vessel
     temp_array_1 = ()
     temp_array_2 = ()
-    # Outer side
+
+    # Outer side (furthest from plasma)
     radx = (cumulative_radial_build("ddwo", mfile_data, scan)
-            + cumulative_radial_build("gapds", mfile_data,
-                                      scan)) / 2.0
+            + cumulative_radial_build("gapds", mfile_data, scan)) / 2.0
     rminx = (cumulative_radial_build("ddwo", mfile_data, scan)
-             - cumulative_radial_build("gapds", mfile_data,
-                                       scan)) / 2.0
+             - cumulative_radial_build("gapds", mfile_data, scan)) / 2.0
 
-    a = cumulative_vertical_build(mfile_data, scan)
-    kapx = a[2] / rminx
+    kapx = cumulative_upper['ddwi'] / rminx
+
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_1 = temp_array_1 + ((rs, zs))
 
-    kapx = a[13] / rminx
+    kapx = cumulative_lower['ddwi'] / rminx
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_2 = temp_array_2 + ((rs, zs))
 
-    # Inner side
+    # Inner side (nearest to the plasma)
     radx = (cumulative_radial_build("shldoth", mfile_data, scan)
-            + cumulative_radial_build("ddwi", mfile_data,
-                                      scan)) / 2.0
+            + cumulative_radial_build("ddwi", mfile_data, scan)) / 2.0
     rminx = (cumulative_radial_build("shldoth", mfile_data, scan)
-             - cumulative_radial_build("ddwi", mfile_data,
-                                       scan)) / 2.0
+             - cumulative_radial_build("ddwi", mfile_data, scan)) / 2.0
 
-    a = cumulative_vertical_build(mfile_data, scan)
-    kapx = a[3] / rminx
+    kapx = (cumulative_upper['ddwi'] - upper["ddwi"]) / rminx
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_1 = temp_array_1 + ((rs, zs))
-    kapx = a[12] / rminx
+
+    kapx = (cumulative_lower['ddwi'] + lower["ddwi"]) / rminx
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_2 = temp_array_2 + ((rs, zs))
+
 
     rs = np.concatenate([temp_array_1[0], temp_array_1[2][::-1]])
     zs = np.concatenate([temp_array_1[1], temp_array_1[3][::-1]])
-    axis.fill(rs, zs, color='green')
+    axis.fill(rs, zs, color=vessel)
 
     rs = np.concatenate([temp_array_2[0], temp_array_2[2][::-1]])
     zs = np.concatenate([temp_array_2[1], temp_array_2[3][::-1]])
-    axis.fill(rs, zs, color='green')
+    axis.fill(rs, zs, color=vessel)
 
 
 def plot_shield_snull(axis, mfile_data, scan):
-    """Function to plot single null case of shield
+    """Function to plot shield
+
+    Arguments:
+        axis --> axis object to plot to
+        mfile_data --> MFILE data object
+        scan --> scan number to use
+    """
+    triang = mfile_data.data["triang95"].get_scan(scan)
+    temp_array_1 = ()
+    temp_array_2 = ()
+
+    # Side furthest from plasma
+    radx = (cumulative_radial_build("shldoth", mfile_data, scan)
+            + cumulative_radial_build("ddwi", mfile_data, scan)) / 2.0
+    rminx = (cumulative_radial_build("shldoth", mfile_data, scan)
+             - cumulative_radial_build("ddwi", mfile_data, scan)) / 2.0
+
+    kapx = cumulative_upper['shldtth'] / rminx
+
+    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
+    temp_array_1 = temp_array_1 + ((rs, zs))
+
+    kapx = cumulative_lower['shldlth'] / rminx
+    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
+    temp_array_2 = temp_array_2 + ((rs, zs))
+
+    # Side nearest to the plasma
+    radx = (cumulative_radial_build("vvblgapo", mfile_data, scan)
+            + cumulative_radial_build("shldith", mfile_data, scan)) / 2.0
+    rminx = (cumulative_radial_build("vvblgapo", mfile_data, scan)
+             - cumulative_radial_build("shldith", mfile_data, scan)) / 2.0
+
+    kapx = (cumulative_upper['vvblgap'] - upper["vvblgap"]) / rminx
+    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
+    temp_array_1 = temp_array_1 + ((rs, zs))
+
+    kapx = (cumulative_lower['divfix'] + lower["divfix"]) / rminx
+    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
+    temp_array_2 = temp_array_2 + ((rs, zs))
+
+
+    rs = np.concatenate([temp_array_1[0], temp_array_1[2][::-1]])
+    zs = np.concatenate([temp_array_1[1], temp_array_1[3][::-1]])
+    axis.fill(rs, zs, color=shield)
+
+    rs = np.concatenate([temp_array_2[0], temp_array_2[2][::-1]])
+    zs = np.concatenate([temp_array_2[1], temp_array_2[3][::-1]])
+    axis.fill(rs, zs, color=shield)
+
+def plot_blanket_snull(axis, mfile_data, scan):
+    """Function to plot single null case of blanket
 
     Arguments:
       axis --> axis object to plot to
@@ -721,86 +754,87 @@ def plot_shield_snull(axis, mfile_data, scan):
       scan --> scan number to use
 
     """
-    #triang = mfile_data.data["triang95"].get_scan(scan)
-    #blnkith = mfile_data.data["blnkith"].get_scan(scan)
-    #blnkoth = mfile_data.data["blnkoth"].get_scan(scan)
-    #fwith = mfile_data.data["fwith"].get_scan(scan)
-    #fwoth = mfile_data.data["fwoth"].get_scan(scan)
-    blnktth = mfile_data.data["blnktth"].get_scan(scan)
-    tfwvt = mfile_data.data["top first wall vertical thickness (m)"]. \
-        get_scan(scan)
-    c_shldith = cumulative_radial_build("shldith", mfile_data, scan)
-    c_blnkoth = cumulative_radial_build("blnkoth", mfile_data, scan)
-    c_blnkith = cumulative_radial_build("blnkith", mfile_data, scan)
-    c_fwoth = cumulative_radial_build("fwoth", mfile_data, scan)
-    a = cumulative_vertical_build(mfile_data, scan)
+    point_array = ()
 
-    temp_array_1 = ()
-    temp_array_2 = ()
-
-    radx = (cumulative_radial_build("shldoth", mfile_data, scan) +
-            cumulative_radial_build("ddwi", mfile_data, scan)) / 2.0
-    rminx = (cumulative_radial_build("shldoth", mfile_data, scan) -
-             cumulative_radial_build("ddwi", mfile_data, scan)) / 2.0
-    kapx = a[3] / rminx
-    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
-    temp_array_1 = temp_array_1 + ((rs, zs))
-    kapx = a[12] / rminx
-    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
-    temp_array_2 = temp_array_2 + ((rs, zs))
-
+    # Upper blanket: outer surface
     radx = (cumulative_radial_build("blnkoth", mfile_data, scan) +
-            cumulative_radial_build("shldith", mfile_data, scan)) / 2.0
+            cumulative_radial_build("vvblgapi", mfile_data, scan)) / 2.0
     rminx = (cumulative_radial_build("blnkoth", mfile_data, scan) -
-             cumulative_radial_build("shldith", mfile_data, scan)) / 2.0
-    kapx = a[4] / rminx
-    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
-    temp_array_1 = temp_array_1 + ((rs, zs))
-    kapx = a[11] / rminx
-    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
-    temp_array_2 = temp_array_2 + ((rs, zs))
+             cumulative_radial_build("vvblgapi", mfile_data, scan)) / 2.0
 
+    kapx = cumulative_upper['blnktth'] / rminx
+    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
+    point_array = point_array + ((rs, zs))
+
+    # Upper blanket: inner surface
     radx = (cumulative_radial_build("fwoth", mfile_data, scan) +
             cumulative_radial_build("blnkith", mfile_data, scan)) / 2.0
     rminx = (cumulative_radial_build("fwoth", mfile_data, scan) -
              cumulative_radial_build("blnkith", mfile_data, scan)) / 2.0
-    kapx = a[5] / rminx
-    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
-    temp_array_1 = temp_array_1 + ((rs, zs))
 
+    kapx = cumulative_upper['fwtth'] / rminx
+    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
+    point_array = point_array + ((rs, zs))
+
+    # Plot upper blanket
+    rs = np.concatenate([point_array[0], point_array[2][::-1]])
+    zs = np.concatenate([point_array[1], point_array[3][::-1]])
+    axis.fill(rs, zs, color=blanket)
+
+    # Lower blanket
+    blnktth = mfile_data.data["blnktth"].get_scan(scan)
+    c_shldith = cumulative_radial_build("shldith", mfile_data, scan)
+    c_blnkoth = cumulative_radial_build("blnkoth", mfile_data, scan)
+    divgap = cumulative_lower['divfix']
+    plotdhgap(axis, c_shldith, c_blnkoth, blnkith, blnkoth, divgap,
+              -blnktth, triang, blanket)
+
+
+def plot_firstwall_snull(axis, mfile_data, scan):
+    """Function to plot single null case of first wall
+
+    Arguments:
+      axis --> axis object to plot to
+      mfile_data --> MFILE.DAT object
+      scan --> scan number to use
+
+    """
+    blnktth = mfile_data.data["blnktth"].get_scan(scan)
+    tfwvt = mfile_data.data["fwtth"].get_scan(scan)
+    point_array = ()
+
+    # Upper first wall: outer surface
+    radx = (cumulative_radial_build("fwoth", mfile_data, scan) +
+            cumulative_radial_build("blnkith", mfile_data, scan)) / 2.0
+    rminx = (cumulative_radial_build("fwoth", mfile_data, scan) -
+             cumulative_radial_build("blnkith", mfile_data, scan)) / 2.0
+
+    kapx = cumulative_upper['fwtth'] / rminx
+    (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
+    point_array = point_array + ((rs, zs))
+
+    # Upper first wall: inner surface
     radx = (cumulative_radial_build("scraplo", mfile_data, scan) +
             cumulative_radial_build("fwith", mfile_data, scan)) / 2.0
     rminx = (cumulative_radial_build("scraplo", mfile_data, scan) -
              cumulative_radial_build("fwith", mfile_data, scan)) / 2.0
-    kapx = a[6] / rminx
+
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
-    temp_array_1 = temp_array_1 + ((rs, zs))
+    point_array = point_array + ((rs, zs))
 
-    # Top
-    rs = np.concatenate([temp_array_1[0], temp_array_1[2][::-1]])
-    zs = np.concatenate([temp_array_1[1], temp_array_1[3][::-1]])
-    axis.fill(rs, zs, color=shield)
-
-    #for i in range(len(rs)):
-    #print(rs[i], zs[i])
-
-    rs = np.concatenate([temp_array_1[0 + 2 * 1], temp_array_1[2 + 2 * 1][::-1]])
-    zs = np.concatenate([temp_array_1[1 + 2 * 1], temp_array_1[3 + 2 * 1][::-1]])
-    axis.fill(rs, zs, color=blanket)
-
-    rs = np.concatenate([temp_array_1[0 + 2 * 2], temp_array_1[2 + 2 * 2][::-1]])
-    zs = np.concatenate([temp_array_1[1 + 2 * 2], temp_array_1[3 + 2 * 2][::-1]])
+    # Plot upper first wall
+    rs = np.concatenate([point_array[0], point_array[2][::-1]])
+    zs = np.concatenate([point_array[1], point_array[3][::-1]])
     axis.fill(rs, zs, color=firstwall)
 
-    # Bottom
-    rs = np.concatenate([temp_array_2[0], temp_array_2[2][::-1]])
-    zs = np.concatenate([temp_array_2[1], temp_array_2[3][::-1]])
-    axis.fill(rs, zs, color=shield)
 
-    plotdhgap(axis, c_shldith, c_blnkoth, blnkith, blnkoth, a[11],
-              -blnktth, triang, blanket)
+    # Lower first wall
+    c_blnkith = cumulative_radial_build("blnkith", mfile_data, scan)
+    c_fwoth = cumulative_radial_build("fwoth", mfile_data, scan)
+    divgap = cumulative_lower['divfix']
+
     plotdhgap(axis, c_blnkith, c_fwoth, fwith, fwoth,
-              a[11] + blnktth, -tfwvt, triang, firstwall )
+              divgap + blnktth, -tfwvt, triang, firstwall )
 
 
 def angle_check(angle1, angle2):
@@ -826,116 +860,56 @@ def plot_tf_coils(axis, mfile_data, scan):
         scan --> scan number to use
 
     """
-
-    vert_build = cumulative_vertical_build(mfile_data, scan)
-
     # Arc points
-    x_1 = mfile_data.data["xarc(1)"].get_scan(scan)
-    y_1 = mfile_data.data["yarc(1)"].get_scan(scan)
-    x_2 = mfile_data.data["xarc(2)"].get_scan(scan)
-    y_2 = mfile_data.data["yarc(2)"].get_scan(scan)
-    x_3 = mfile_data.data["xarc(3)"].get_scan(scan)
-    y_3 = mfile_data.data["yarc(3)"].get_scan(scan)
-    x_4 = mfile_data.data["xarc(4)"].get_scan(scan)
-    y_4 = mfile_data.data["yarc(4)"].get_scan(scan)
-    x_5 = mfile_data.data["xarc(5)"].get_scan(scan)
-    #y_5 = mfile_data.data["yarc(5)"].get_scan(scan)
-
-    # Arc centres
-    x_c_1 = mfile_data.data["xctfc(1)"].get_scan(scan)
-    y_c_1 = mfile_data.data["yctfc(1)"].get_scan(scan)
-    x_c_2 = mfile_data.data["xctfc(2)"].get_scan(scan)
-    y_c_2 = mfile_data.data["yctfc(2)"].get_scan(scan)
-    x_c_3 = mfile_data.data["xctfc(3)"].get_scan(scan)
-    y_c_3 = mfile_data.data["yctfc(3)"].get_scan(scan)
-    x_c_4 = mfile_data.data["xctfc(4)"].get_scan(scan)
-    y_c_4 = mfile_data.data["yctfc(4)"].get_scan(scan)
-
-    # Arc radii
-    rad_1 = np.sqrt((x_1 - x_c_1) ** 2 + (y_1 - y_c_1) ** 2)
-    rad_2 = np.sqrt((x_2 - x_c_2) ** 2 + (y_2 - y_c_2) ** 2)
-    rad_3 = np.sqrt((x_3 - x_c_3) ** 2 + (y_3 - y_c_3) ** 2)
-    rad_4 = np.sqrt((x_4 - x_c_4) ** 2 + (y_4 - y_c_4) ** 2)
-
-    # Arc angles
-    a_1_1 = (x_1 - x_c_1) / rad_1
-    a_1_2 = (x_2 - x_c_1) / rad_1
-    a_1_1, a_1_2 = angle_check(a_1_1, a_1_2)
-    angle_1_1 = sp.arcsin(a_1_1)
-    angle_1_2 = sp.arcsin(a_1_2)
-
-    a_2_1 = (x_2 - x_c_2) / rad_2
-    a_2_2 = (x_3 - x_c_2) / rad_2
-    a_2_1, a_2_2 = angle_check(a_2_1, a_2_2)
-    angle_2_1 = sp.arcsin(a_2_1)
-    angle_2_2 = sp.arcsin(a_2_2)
-
-    a_3_1 = (x_3 - x_c_3) / rad_3
-    a_3_2 = (x_4 - x_c_3) / rad_3
-    a_3_1, a_3_2 = angle_check(a_3_1, a_3_2)
-    angle_3_1 = sp.arcsin(a_3_1)
-    angle_3_2 = sp.arcsin(a_3_2)
-
-    a_4_1 = (x_4 - x_c_4) / rad_4
-    a_4_2 = (x_5 - x_c_4) / rad_4
-    a_4_1, a_4_2 = angle_check(a_4_1, a_4_2)
-    angle_4_1 = sp.arcsin(a_4_1)
-    angle_4_2 = sp.arcsin(a_4_2)
-
-    in_x_1 = rad_1 * np.sin(np.linspace(angle_1_1, angle_1_2, 30,
-                                        endpoint=True)) + x_c_1
-    in_x_2 = rad_2 * np.sin(np.linspace(angle_2_1, angle_2_2, 30,
-                                        endpoint=True)) + x_c_2
-    in_x_3 = rad_3 * np.sin(np.linspace(angle_3_1, angle_3_2, 30,
-                                        endpoint=True)) + x_c_3
-    in_x_4 = rad_4 * np.sin(np.linspace(angle_4_1, angle_4_2, 30,
-                                        endpoint=True)) + x_c_4
-    in_x = np.concatenate((in_x_1, in_x_2, in_x_3, in_x_4))
-
-    in_y_1 = rad_1 * np.cos(np.linspace(angle_1_1, angle_1_2, 30,
-                                        endpoint=True)) + y_c_1
-    in_y_2 = rad_2 * np.cos(np.linspace(angle_2_1, angle_2_2, 30,
-                                        endpoint=True)) + y_c_2
-    in_y_3 = rad_3 * np.cos(np.linspace(angle_3_1, angle_3_2, 30,
-                                        endpoint=True)) + y_c_3
-    in_y_4 = rad_4 * np.cos(np.linspace(angle_4_1, angle_4_2, 30,
-                                        endpoint=True)) + y_c_4
-    in_y = np.concatenate((in_y_1, in_y_2, in_y_3, in_y_4))
-
-    in_x = np.concatenate([in_x, in_x[::-1]])
-    in_y = np.concatenate([in_y, -in_y[::-1]])
-
-    #in_width = cumulative_radial_build("gapsto", mfile_data, scan) - \
-    #    cumulative_radial_build("tfcth", mfile_data, scan)
-    #out_width = in_width + mfile_data.data["tfcth"].get_scan(scan) + \
-    #    mfile_data.data["tfthko"].get_scan(scan)
-    #out_x = ((in_x - cumulative_radial_build("tfcth", mfile_data, scan)) *
-    #         (out_width/in_width))
-
-    centre_in_x = (cumulative_radial_build("tfcth", mfile_data, scan) + \
-                   cumulative_radial_build("gapsto", mfile_data, scan)) / 2.0
-    centre_out_x = (cumulative_radial_build("gapoh", mfile_data, scan) + \
-                    cumulative_radial_build("tfthko", mfile_data, scan)) / 2.0
-    in_width = (cumulative_radial_build("gapsto", mfile_data, scan) - \
-                cumulative_radial_build("tfcth", mfile_data, scan))
-    out_width = (cumulative_radial_build("tfthko", mfile_data, scan) - \
-                 cumulative_radial_build("gapoh", mfile_data, scan))
-
-    out_x = ((in_x - centre_in_x) * (out_width / in_width)) + centre_out_x
-    extern = (vert_build[7] / vert_build[6])
-    if vert_build[-1]:
-        extern = (vert_build[0] - vert_build[15]) / (vert_build[1] -
-                                                     vert_build[14])
-    out_y = in_y * extern
-
-    shift = (vert_build[0] + vert_build[15]) / 2.0
-    out_y += shift
-    in_y += shift
-
-    ins_x = np.concatenate((in_x, out_x[::-1]))
-    ins_y = np.concatenate((in_y, out_y[::-1]))
-
-    axis.fill(ins_x, ins_y, color='cyan')
+    # MDK Only 4 points now required for elliptical arcs
+    x1 = mfile_data.data["xarc(1)"].get_scan(scan)
+    y1 = mfile_data.data["yarc(1)"].get_scan(scan)
+    x2 = mfile_data.data["xarc(2)"].get_scan(scan)
+    y2 = mfile_data.data["yarc(2)"].get_scan(scan)
+    x3 = mfile_data.data["xarc(3)"].get_scan(scan)
+    y3 = mfile_data.data["yarc(3)"].get_scan(scan)
+    x4 = mfile_data.data["xarc(4)"].get_scan(scan)
+    y4 = mfile_data.data["yarc(4)"].get_scan(scan)
+    x5 = mfile_data.data["xarc(5)"].get_scan(scan)
+    y5 = mfile_data.data["yarc(5)"].get_scan(scan)
+    if y3 != 0:
+        print("TF coil geometry: The value of yarc(3) is not zero, but should be.")
+    # Inboard upper arc
+    x0 = x2
+    y0 = y1
+    a1 = x2-x1
+    b1 = y2-y1
+    a2 = a1+tfcth
+    b2 = b1+tfcth
+    ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=rtangle, ang2=2*rtangle, color='cyan')
+    # Outboard upper arc
+    x0 = x2
+    y0 = 0
+    a1 = x3-x2
+    b1 = y2
+    a2 = a1+tfcth
+    b2 = b1+tfcth
+    ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=0, ang2=rtangle, color='cyan')
+    # Inboard lower arc
+    x0 = x4
+    y0 = y5
+    a1 = x4-x5
+    b1 = y5-y4
+    a2 = a1+tfcth
+    b2 = b1+tfcth
+    ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=-rtangle, ang2=-2*rtangle, color='cyan')
+    # Outboard lower arc
+    x0 = x4
+    y0 = 0
+    a1 = x3-x2
+    b1 = -y4
+    a2 = a1+tfcth
+    b2 = b1+tfcth
+    ellips_fill(axis, a1=a1, a2=a2, b1=b1, b2=b2, x0=x0, y0=y0, ang1=0, ang2=-rtangle, color='cyan')
+    # Vertical leg
+    # Bottom left corner
+    rect = patches.Rectangle([x5-tfcth, y5], tfcth, (y1-y5), lw=0, facecolor='cyan')
+    axis.add_patch(rect)
 
 
 def plot_pf_coils(axis, mfile_data, scan):
@@ -945,7 +919,6 @@ def plot_pf_coils(axis, mfile_data, scan):
         axis --> axis object to plot to
         mfile_data --> MFILE.DAT object
         scan --> scan number to use
-
     """
 
     coils_r = []
@@ -961,14 +934,14 @@ def plot_pf_coils(axis, mfile_data, scan):
             number_of_coils += 1
 
     # Get OH coil
-    coils_r.append(mfile_data.data["rpf(nohc)"].get_scan(scan))
-    coils_z.append(mfile_data.data["zpf(nohc)"].get_scan(scan))
-    coils_dr.append(mfile_data.data["ohdr"].get_scan(scan))
-    coils_dz.append(mfile_data.data["ohdz"].get_scan(scan))
+    # coils_r.append(mfile_data.data["rpf(nohc)"].get_scan(scan))
+    # coils_z.append(mfile_data.data["zpf(nohc)"].get_scan(scan))
+    # coils_dr.append(mfile_data.data["ohdr"].get_scan(scan))
+    # coils_dz.append(mfile_data.data["ohdz"].get_scan(scan))
     bore  = mfile_data.data["bore"].get_scan(scan)
     ohcth = mfile_data.data["ohcth"].get_scan(scan)
     ohdz = mfile_data.data["ohdz"].get_scan(scan)
-    coil_text.append("CS")
+    #coil_text.append("CS")
 
     # Rest of the coils
     for coil in range(1, number_of_coils):
@@ -1073,13 +1046,13 @@ def plot_header(axis, mfile_data, scan):
 
     data2 = [("!" + str(mfile_data.data["runtitle"].get_scan(scan)),
              "Run title", ""),
-            ("!" + str(mfile_data.data["procver"].get_scan(scan)),
+             ("!" + str(mfile_data.data["procver"].get_scan(scan)),
              "PROCESS Version", ""),
-            ("!" + mfile_data.data["date"].get_scan(scan), "Date:", ""),
-            ("!" + mfile_data.data["time"].get_scan(scan), "Time:", ""),
-            ("!" + mfile_data.data["username"].get_scan(scan), "User:", ""),
-            ("!" + proc_dict.DICT_OPTIMISATION_VARS
-            [abs(int(mfile_data.data["minmax"].get_scan(scan)))],
+             ("!" + mfile_data.data["date"].get_scan(scan), "Date:", ""),
+             ("!" + mfile_data.data["time"].get_scan(scan), "Time:", ""),
+             ("!" + mfile_data.data["username"].get_scan(scan), "User:", ""),
+             ("!" + proc_dict.DICT_OPTIMISATION_VARS
+             [abs(int(mfile_data.data["minmax"].get_scan(scan)))],
              "Optimising:", "")]
 
     if mfile_data.data["imprad model"].get_scan(scan) == 1:
@@ -1227,7 +1200,7 @@ def plot_physics_info(axis, mfile_data, scan):
 
     tepeak = mfile_data.data["te0"].get_scan(scan) / \
         mfile_data.data["te"].get_scan(scan)
-	
+
     nepeak = mfile_data.data["ne0"].get_scan(scan) / \
         mfile_data.data["dene"].get_scan(scan)
 
@@ -1317,9 +1290,7 @@ def plot_magnetics_info(axis, mfile_data, scan):
             ("alstrtf", "Allowable stress", "Pa"),
             ("", "", ""),
             ("#Costs", "", ""),
-            ("coe", "Cost of electricity", "\$/MWh"),
-            ("concost", "Constructed cost", "M\$"),
-            ("capcost", "Total capex", "M\$")]
+            ("coe", "Cost of electricity", "\$/MWh")]
 
     plot_info(axis, data, mfile_data, scan)
 
@@ -1363,7 +1334,7 @@ def plot_power_info(axis, mfile_data, scan):
     plant_eff = 100.0 * (mfile_data.data["pnetelmw"].get_scan(scan) /
                          mfile_data.data["powfmw"].get_scan(scan))
 
-    imprad = mfile_data.data["imprad"].get_scan(scan)
+    imprad = mfile_data.data["imprad model"].get_scan(scan)
 
 
     # Define appropriate pedestal and impurity parameters
@@ -1394,7 +1365,6 @@ def plot_power_info(axis, mfile_data, scan):
             ("pnucshld", "Nuclear heating in shield", "MW"),
             ("pdivt", "Power to divertor", "MW"),
             (pthresh, "H-mode threshold", "MW"),
-            ("fwbllife", "FW/Blanket life", "years"),
             ("divlife", "Divertor life", "years"),
             ("pthermmw", "Primary (high grade) heat", "MW"),
             (gross_eff, "Gross cycle efficiency", "%"),
@@ -1492,7 +1462,8 @@ def main(fig1, fig2, m_file_data, scan=-1):
 
     # Plot toroidal cross-section
     plot_2 = fig2.add_subplot(222, aspect='equal')
-    toroidal_cross_section(plot_2)
+    #toroidal_cross_section(plot_2)
+    toroidal_cross_section(plot_2, m_file_data, scan=-1)
 
     # Plot color key
     plot_3 = fig2.add_subplot(241)
@@ -1581,10 +1552,295 @@ def save_plots(m_file_data, scan=-1):
     fig.savefig('tprofile.svg', format='svg', dpi=1200)
 
 
+def test(f):
+    """Test Function
+
+    :param f: filename to test
+    """
+
+    try:
+        # read MFILE
+        m_file = mf.MFile(filename=f)
+        scan = -1
+
+        global bore
+        bore = m_file.data["bore"].get_scan(scan)
+        global ohcth
+        ohcth = m_file.data["ohcth"].get_scan(scan)
+        global gapoh
+        gapoh = m_file.data["gapoh"].get_scan(scan)
+        global tfcth
+        tfcth = m_file.data["tfcth"].get_scan(scan)
+        global gapds
+        gapds = m_file.data["gapds"].get_scan(scan)
+        global ddwi
+        ddwi = m_file.data["ddwi"].get_scan(scan)
+        global shldith
+        shldith = m_file.data["shldith"].get_scan(scan)
+        global blnkith
+        blnkith = m_file.data["blnkith"].get_scan(scan)
+        global fwith
+        fwith = m_file.data["fwith"].get_scan(scan)
+        global scrapli
+        scrapli = m_file.data["scrapli"].get_scan(scan)
+        global rmajor
+        rmajor = m_file.data["rmajor"].get_scan(scan)
+        global rminor
+        rminor = m_file.data["rminor"].get_scan(scan)
+        global scraplo
+        scraplo = m_file.data["scraplo"].get_scan(scan)
+        global fwoth
+        fwoth = m_file.data["fwoth"].get_scan(scan)
+        global blnkoth
+        blnkoth = m_file.data["blnkoth"].get_scan(scan)
+        global shldoth
+        shldoth = m_file.data["shldoth"].get_scan(scan)
+        # ddwi = m_file.data["ddwi"].get_scan(scan)
+        global gapsto
+        gapsto = m_file.data["gapsto"].get_scan(scan)
+        global tfthko
+        tfthko = m_file.data["tfthko"].get_scan(scan)
+        global rdewex
+        rdewex = m_file.data["rdewex"].get_scan(scan)
+        global ddwex
+        ddwex = m_file.data["ddwex"].get_scan(scan)
+        global zdewex
+        zdewex = m_file.data["zdewex"].get_scan(scan)
+        global tfno
+        tfno = m_file.data["tfno"].get_scan(scan)
+        global wwp1
+        wwp1 = m_file.data["wwp1"].get_scan(scan)
+        global wwp2
+        wwp2 = m_file.data["wwp2"].get_scan(scan)
+        global thkwp
+        thkwp = m_file.data["thkwp"].get_scan(scan)
+        global tinstf
+        tinstf = m_file.data["tinstf"].get_scan(scan)
+        global thkcas
+        thkcas = m_file.data["thkcas"].get_scan(scan)
+        global nbshield
+        nbshield = m_file.data["nbshield"].get_scan(scan)
+        global rtanbeam
+        rtanbeam = m_file.data["rtanbeam"].get_scan(scan)
+        global rtanmax
+        rtanmax = m_file.data["rtanmax"].get_scan(scan)
+        global beamwd
+        beamwd = m_file.data["beamwd"].get_scan(scan)
+        global casthi
+        casthi = m_file.data["casthi"].get_scan(scan)
+        # # Pedestal profile parameters
+        global ipedestal
+        ipedestal = m_file.data["ipedestal"].get_scan(scan)
+        global neped
+        neped = m_file.data["neped"].get_scan(scan)
+        global nesep
+        nesep = m_file.data["nesep"].get_scan(scan)
+        global rhopedn
+        rhopedn = m_file.data["rhopedn"].get_scan(scan)
+        global rhopedt
+        rhopedt = m_file.data["rhopedt"].get_scan(scan)
+        global tbeta
+        tbeta = m_file.data["tbeta"].get_scan(scan)
+        global teped
+        teped = m_file.data["teped"].get_scan(scan)
+        global tesep
+        tesep = m_file.data["tesep"].get_scan(scan)
+        global alphan
+        alphan = m_file.data["alphan"].get_scan(scan)
+        global alphat
+        alphat = m_file.data["alphat"].get_scan(scan)
+        global ne0
+        ne0 = m_file.data["ne0"].get_scan(scan)
+        global te0
+        te0 = m_file.data["te0"].get_scan(scan)
+        # # Plasma
+        global triang
+        triang = m_file.data["triang95"].get_scan(scan)
+
+        # Build the dictionaries of radial and vertical build values and cumulative
+        # values
+        global radial
+        radial = dict()
+        global cumulative_radial
+        cumulative_radial = dict()
+        subtotal = 0
+        for item in RADIAL_BUILD:
+            if item == "rminori" or item == "rminoro":
+                build = m_file.data["rminor"].get_scan(scan)
+            elif item == "vvblgapi" or item == "vvblgapo":
+                build = m_file.data["vvblgap"].get_scan(scan)
+            elif item == "thshieldi" or item == "thshieldo":
+                build = m_file.data["thshield"].get_scan(scan)
+            elif "ddw" in item:
+                build = m_file.data["ddwi"].get_scan(scan)
+            else:
+                build = m_file.data[item].get_scan(scan)
+
+        radial[item] = build
+        subtotal += build
+        cumulative_radial[item] = subtotal
+
+        global upper
+        upper = dict()
+        global cumulative_upper
+        cumulative_upper = dict()
+        subtotal = 0
+        for item in vertical_upper:
+            upper[item] = m_file.data[item].get_scan(scan)
+            subtotal += upper[item]
+            cumulative_upper[item] = subtotal
+
+        global lower
+        lower = dict()
+        global cumulative_lower
+        cumulative_lower = dict()
+        subtotal = 0
+        for item in vertical_lower:
+            lower[item] = m_file.data[item].get_scan(scan)
+            subtotal -= lower[item]
+            cumulative_lower[item] = subtotal
+
+        colour_dict = {}
+        colour_dict['ohcth'] = solenoid
+        colour_dict['tfcth'] = tfc
+        colour_dict['thshield'] = thermal_shield
+        colour_dict['ddwi'] = vessel
+        colour_dict['shldith'] = shield
+        colour_dict['blnkith'] = blanket
+        colour_dict['rminor'] = plasma
+        colour_dict['fwith'] = firstwall
+        colour_dict['fwoth'] = firstwall
+
+        # create main plot
+        page1 = plt.figure(figsize=(12, 9), dpi=80)
+        page2 = plt.figure(figsize=(12, 9), dpi=80)
+
+        # run main
+        main(page1, page2, m_file)
+
+        # with bpdf.PdfPages(args.o) as pdf:
+        # with bpdf.PdfPages("ref.SUMMARY.pdf") as pdf:
+        #    pdf.savefig(page1)
+        #    pdf.savefig(page2)
+
+        return True
+    except:
+        return False
+
+
 if __name__ == '__main__':
 
+    # Setup command line arguments
+    parser = argparse. \
+        ArgumentParser(description="Produces a two page summary of the PROCESS MFILE output, using the MFILE.  "
+        "For info contact rich.kemp@ccfe.ac.uk or james.morris2@ccfe.ac.uk")
+
+    parser.add_argument("-f", metavar='FILENAME', type=str,
+                        default="", help='specify filename prefix')
+
+    parser.add_argument("-s", "--show", help="show plot as well as saving figure",
+                        action="store_true")
+
+    parser.add_argument("--svg", help="save plots as svg files",
+                        action="store_true")
+
+    args = parser.parse_args()
+
     # read MFILE
-    m_file = mf.MFile(args.f)
+    m_file = mf.MFile(args.f + "MFILE.DAT")
+    scan = -1
+    bore = m_file.data["bore"].get_scan(scan)
+    ohcth = m_file.data["ohcth"].get_scan(scan)
+    gapoh = m_file.data["gapoh"].get_scan(scan)
+    tfcth = m_file.data["tfcth"].get_scan(scan)
+    gapds = m_file.data["gapds"].get_scan(scan)
+    ddwi = m_file.data["ddwi"].get_scan(scan)
+    shldith = m_file.data["shldith"].get_scan(scan)
+    blnkith = m_file.data["blnkith"].get_scan(scan)
+    fwith = m_file.data["fwith"].get_scan(scan)
+    scrapli = m_file.data["scrapli"].get_scan(scan)
+    rmajor = m_file.data["rmajor"].get_scan(scan)
+    rminor = m_file.data["rminor"].get_scan(scan)
+    scraplo = m_file.data["scraplo"].get_scan(scan)
+    fwoth = m_file.data["fwoth"].get_scan(scan)
+    blnkoth = m_file.data["blnkoth"].get_scan(scan)
+    shldoth = m_file.data["shldoth"].get_scan(scan)
+    ddwi = m_file.data["ddwi"].get_scan(scan)
+    gapsto = m_file.data["gapsto"].get_scan(scan)
+    tfthko = m_file.data["tfthko"].get_scan(scan)
+    rdewex = m_file.data["rdewex"].get_scan(scan)
+    zdewex = m_file.data["zdewex"].get_scan(scan)
+    ddwex = m_file.data["ddwex"].get_scan(scan)
+    tfno = m_file.data["tfno"].get_scan(scan)
+    wwp1 = m_file.data["wwp1"].get_scan(scan)
+    wwp2 = m_file.data["wwp2"].get_scan(scan)
+    thkwp = m_file.data["thkwp"].get_scan(scan)
+    tinstf = m_file.data["tinstf"].get_scan(scan)
+    thkcas = m_file.data["thkcas"].get_scan(scan)
+    nbshield = m_file.data["nbshield"].get_scan(scan)
+    rtanbeam = m_file.data["rtanbeam"].get_scan(scan)
+    rtanmax = m_file.data["rtanmax"].get_scan(scan)
+    beamwd = m_file.data["beamwd"].get_scan(scan)
+    casthi = m_file.data["casthi"].get_scan(scan)
+    # Pedestal profile parameters
+    ipedestal = m_file.data["ipedestal"].get_scan(scan)
+    neped = m_file.data["neped"].get_scan(scan)
+    nesep = m_file.data["nesep"].get_scan(scan)
+    rhopedn = m_file.data["rhopedn"].get_scan(scan)
+    rhopedt = m_file.data["rhopedt"].get_scan(scan)
+    tbeta = m_file.data["tbeta"].get_scan(scan)
+    teped = m_file.data["teped"].get_scan(scan)
+    tesep = m_file.data["tesep"].get_scan(scan)
+    alphan = m_file.data["alphan"].get_scan(scan)
+    alphat = m_file.data["alphat"].get_scan(scan)
+    ne0 = m_file.data["ne0"].get_scan(scan)
+    te0 = m_file.data["te0"].get_scan(scan)
+    # Plasma
+    triang = m_file.data["triang95"].get_scan(scan)
+
+    # Build the dictionaries of radial and vertical build values and cumulative values
+    radial = {} ; cumulative_radial = {}; subtotal = 0
+    for item in RADIAL_BUILD:
+        if item == "rminori" or item == "rminoro":
+            build = m_file.data["rminor"].get_scan(scan)
+        elif item == "vvblgapi" or item == "vvblgapo":
+            build = m_file.data["vvblgap"].get_scan(scan)
+        elif item == "thshieldi" or item == "thshieldo":
+            build = m_file.data["thshield"].get_scan(scan)
+        elif "ddw" in item:
+            build = m_file.data["ddwi"].get_scan(scan)
+        else:
+            build = m_file.data[item].get_scan(scan)
+
+    radial[item] = build
+    subtotal += build
+    cumulative_radial[item] = subtotal
+
+    upper = {} ; cumulative_upper = {}; subtotal = 0
+    for item in vertical_upper:
+        upper[item] = m_file.data[item].get_scan(scan)
+        subtotal +=upper[item]
+        cumulative_upper[item] = subtotal
+
+    lower = {} ; cumulative_lower = {}; subtotal = 0
+    for item in vertical_lower:
+        lower[item] = m_file.data[item].get_scan(scan)
+        subtotal -=lower[item]
+        cumulative_lower[item] = subtotal
+
+    colour_dict = {}
+    colour_dict['ohcth'] = solenoid
+    colour_dict['tfcth'] = tfc
+    colour_dict['thshield'] = thermal_shield
+    colour_dict['ddwi'] = vessel
+    colour_dict['shldith'] = shield
+    colour_dict['blnkith'] = blanket
+    colour_dict['rminor'] = plasma
+    colour_dict['fwith'] = firstwall
+    colour_dict['fwoth'] = firstwall
+
+    # read MFILE
+    # m_file = mf.MFile(args.f)
     scan = -1
 
     # create main plot
@@ -1594,7 +1850,8 @@ if __name__ == '__main__':
     # run main
     main(page1, page2, m_file)
 
-    with bpdf.PdfPages(args.o) as pdf:
+    # with bpdf.PdfPages(args.o) as pdf:
+    with bpdf.PdfPages(args.f + "SUMMARY.pdf") as pdf:
         pdf.savefig(page1)
         pdf.savefig(page2)
 
@@ -1606,5 +1863,3 @@ if __name__ == '__main__':
     # This bit doesn't work - the argument is not recognised for some reason.:
     if args.svg:
         save_plots(m_file)
-
-

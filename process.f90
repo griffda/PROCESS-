@@ -47,7 +47,7 @@ program process
   !+ad_hist  09/10/12 PJK Modified to use scan_module
   !+ad_hist  10/10/12 PJK Modified to use numerics module
   !+ad_hist  06/11/12 PJK Renamed this source file from aamain.f90 to process.f90.
-  !+ad_hisc               Transferred routine inform from aachange.f90 
+  !+ad_hisc               Transferred routine inform from aachange.f90
   !+ad_hist  13/02/14 PJK Added mfile close statement
   !+ad_hist  10/09/14 PJK Added vfile close statement
   !+ad_stat  Okay
@@ -64,6 +64,7 @@ program process
   use process_output
   use scan_module
   use numerics
+  use ccfe_hcpb_module
 
   implicit none
 
@@ -71,11 +72,17 @@ program process
 
   !  Local variables
   integer :: ifail
+  ! MDK
+  character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   !  Initialise things
   call init
+
+  ! Run built-in tests.
+  ! These are distinct from the tests that are dependent on 'unit_test'.
+  if (run_tests == 1) call runtests
 
   !  Call equation solver (HYBRD)
   call eqslv(ifail)
@@ -91,12 +98,18 @@ program process
 
   call oheadr(nout,'End of PROCESS Output')
   call oheadr(iotty,'End of PROCESS Output')
+  call oheadr(nout,'Copy of PROCESS Input Follows')
 
   close(unit=nin)
   close(unit=nout)
   close(unit=nplot)
   close(unit=mfile)
   if (verbose == 1) close(unit=vfile)
+
+  ! MDK System calls to append IN.DAT to OUT.DAT
+  call system('cat '//trim(fileprefix)//'OUT.DAT  '//trim(fileprefix)//'IN.DAT  '//'> '//tempfile)
+  call system('mv  '//tempfile//'  '//trim(fileprefix)//'OUT.DAT')
+
 
 end program process
 
@@ -136,13 +149,15 @@ subroutine init
   !+ad_hist  25/06/14 PJK Introduced call to initialise error handling
   !+ad_hist  22/07/14 PJK Rearranged calls to print output headers
   !+ad_hist  10/09/14 PJK Added vfile open statement
+  !+ad_hist  19/05/15 PJK Added ability to use a file prefix obtained
+  !+ad_hisc               from a command line argument
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use error_handling
-  use global_variables, only: verbose
+  use global_variables, only: verbose, fileprefix
   use impurity_radiation_module
   use numerics
   use process_input
@@ -153,7 +168,9 @@ subroutine init
   !  Arguments
 
   !  Local variables
-  integer :: i
+  integer :: i, nargs
+  !character(len=100) :: fileprefix, executable
+  character(len=100) :: executable
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -163,11 +180,21 @@ subroutine init
   !  Initialise the program variables
   call initial
 
-  !  Open the three input/output external files
-  open(unit=nin,file='IN.DAT',status='old')
-  open(unit=nout,file='OUT.DAT',status='unknown')
-  open(unit=nplot,file='PLOT.DAT',status='unknown')
-  open(unit=mfile,file='MFILE.DAT',status='unknown')
+  !  Obtain a file prefix from a command line argument
+  !  (uses Fortran 2003 routines)
+
+  nargs = command_argument_count()
+  if (nargs == 0) then
+     fileprefix = ''
+  else
+     call get_command_argument(1, fileprefix)
+  end if
+
+  !  Open the input/output external files
+  open(unit=nin,file=trim(fileprefix)//'IN.DAT',status='old')
+  open(unit=nout,file=trim(fileprefix)//'OUT.DAT',status='unknown')
+  open(unit=nplot,file=trim(fileprefix)//'PLOT.DAT',status='unknown')
+  open(unit=mfile,file=trim(fileprefix)//'MFILE.DAT',status='unknown')
 
   !  Input any desired new initial values
   call input
@@ -183,7 +210,7 @@ subroutine init
 
   !  Open verbose diagnostics file
   if (verbose == 1) then
-     open(unit=vfile,file='VFILE.DAT',status='unknown')  
+     open(unit=vfile,file=trim(fileprefix)//'VFILE.DAT',status='unknown')
      write(vfile,'(a80)') 'nviter = number of VMCON iterations.'
      write(vfile,'(a80)') '(1-mod(ifail,7))=1 indicates that there has '// &
           'been an escape from a failed line search.'
@@ -258,8 +285,9 @@ subroutine inform(progid)
   !  Local variables
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
+  character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '389    Release Date :: 2015-04-30'
+       '412    Release Date :: 2016-01-20'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -272,7 +300,7 @@ subroutine inform(progid)
 
   !  Program name
   progname = 'PROCESS'
-
+  call get_command_argument(0,executable)
   !  Create temporary data file
   call system('/bin/rm -f '// tempfile // char(0))
   call system('/bin/touch '// tempfile // char(0))
@@ -307,7 +335,8 @@ subroutine inform(progid)
 
   !  Annotate information and store in PROGID character array
   !  for use in other program units via the routine argument
-  progid(1) = '  Program : ' // progname
+  !progid(1) = '  Program : ' // progname
+  progid(1) = '  Program : ' // executable
   progid(2) = '  Version : ' // progver
   progid(3) = 'Date/time : ' // id(1)
   progid(4) = '     User : ' // trim(id(2)) // ' (' // trim(id(3)) // ')'
@@ -353,6 +382,7 @@ subroutine run_summary
   !+ad_hist  22/07/14 PJK Moved routine from input.f90, and rearranged layout,
   !+ad_hisc               incorporating old routine codever
   !+ad_hisc  02/03/15 JM  Added runtitle to MFILE
+  !+ad_hist  05/08/15 MDK Header describes output flag
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -377,6 +407,7 @@ subroutine run_summary
   character(len=12) :: dstring
   character(len=7) :: tstring
   character(len=10) :: ustring
+  character(len=100) :: rstring
   integer :: version
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -407,7 +438,7 @@ subroutine run_summary
      call ocmmnt(outfile, progid(2))  !  version
      call ocmmnt(outfile, progid(3))  !  date/time
      call ocmmnt(outfile, progid(4))  !  user
-     call ocmmnt(outfile, progid(5))  !  computer
+     !call ocmmnt(outfile, progid(5))  !  computer
      call ocmmnt(outfile, progid(6))  !  directory
 
      !  Print code version and run description
@@ -416,13 +447,20 @@ subroutine run_summary
      call oblnkl(outfile)
      call ocmmnt(outfile, progid(0))
      call ocmmnt(outfile, 'Reactor concept design: '// trim(icase) // ', (c) CCFE')
-     call osubhd(outfile, runtitle)
+     !call osubhd(outfile, runtitle)
+     call ocmmnt(outfile, runtitle)
   end do
 
-  call ocmmnt(nout,'(Please include this header in any models, ' // &
-       'presentations and papers based on these results)')
+  call ocmmnt(nout,'(Please include this header in any models, presentations and papers based on these results)')
   call oblnkl(nout)
   call ostars(nout, width)
+  ! Issue #270
+  call ocmmnt(nout,'Quantities listed in standard row format are labelled as follows in columns 112-114:')
+  call ocmmnt(nout,'ITV : Active iteration variable (in any output blocks)')
+  call ocmmnt(nout,'OP  : Calculated output quantity')
+  call ocmmnt(nout,'Unlabelled quantities in standard row format are generally inputs')
+  call ocmmnt(nout,'Note that calculated quantities may be trivially rescaled from inputs, or equal to bounds which are input.')
+  ! MDK Note that the label must be exactly three characters or none - I don't know how to fix this.
 
   !  Beware of possible future changes to the progid(...) layouts
 
@@ -444,41 +482,55 @@ subroutine run_summary
 
   ustring = '"'//trim(progid(4)(13:20))//'"'
   call ovarst(mfile,'User','(username)',ustring)
-  
-  call ovarst(mfile,'PROCESS run title','(runtitle)',runtitle)
+
+  rstring = '"'//runtitle//'"'
+  call ovarst(mfile,'PROCESS run title','(runtitle)',rstring)
 
 #ifndef unit_test
-  call oblnkl(nout)
-  call ocmmnt(nout,'The following variables will be adjusted by')
-  call ocmmnt(nout,'the code during the iteration process :')
-  call oblnkl(nout)
+! MDK these lines duplicate the ones below.
+!  call oblnkl(nout)
+!  call ocmmnt(nout,'The following variables will be adjusted by')
+!  call ocmmnt(nout,'the code during the iteration process :')
+!  call oblnkl(nout)
 
-  write(nout,10)
-10 format(t10,'ixc',t18,'label')
+!  write(nout,10)
+!10 format(t10,'ixc',t18,'label')
 
+!  call oblnkl(nout)
+
+!  write(nout,20) (ii,ixc(ii),lablxc(ixc(ii)),ii=1,nvar)
+!20 format(t1,i3,t10,i3,t18,a9)
+
+! MDK Only print out the constraints here for HYBRD.
+! For VMCON they are printed out later with residues.
   call oblnkl(nout)
-
-  write(nout,20) (ii,ixc(ii),lablxc(ixc(ii)),ii=1,nvar)
-20 format(t1,i3,t10,i3,t18,a9)
-
-  call oblnkl(nout)
-  call ocmmnt(nout, & 
-       'The following constraint equations have been imposed,')
   if (ioptimz == -1) then
-     call ocmmnt(nout, & 
-          'but limits will not be enforced by the code :')
-  else
-     call ocmmnt(nout,'and will be enforced by the code :')
+		call ocmmnt(nout, 'The following constraint equations have been imposed,')
+		call ocmmnt(nout, 'but limits will not be enforced by the code :')
+		write(nout,30)
+30 	format(t10,'icc',t25,'label')
+		call oblnkl(nout)
+		write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
+40 	format(t1,i3,t10,i3,t18,a33)
   end if
-  call oblnkl(nout)
 
-  write(nout,30)
-30 format(t10,'icc',t25,'label')
+!  call ocmmnt(nout, &
+!       'The following constraint equations have been imposed,')
+!  if (ioptimz == -1) then
+!     call ocmmnt(nout, &
+!          'but limits will not be enforced by the code :')
+!  else
+!     call ocmmnt(nout,'and will be enforced by the code :')
+!  end if
+!  call oblnkl(nout)
 
-  call oblnkl(nout)
+!  write(nout,30)
+!30 format(t10,'icc',t25,'label')
 
-  write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
-40 format(t1,i3,t10,i3,t18,a33)
+!  call oblnkl(nout)
+
+!  write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
+!40 format(t1,i3,t10,i3,t18,a33)
 #endif
 
 end subroutine run_summary
@@ -560,6 +612,8 @@ subroutine eqslv(ifail)
   nprint = 0
 
   !  Use HYBRD to find a starting point
+  ! MDK Try allocating here
+  allocate(name_xc(nvar))
   call loadxc
   call eqsolv(fcnhyb,neqns,xcm,rcm,ftol,epsfcn,factor,nprint,ifail, &
        wa,iptnt,resdl,nfev1)
@@ -573,7 +627,7 @@ subroutine eqslv(ifail)
        'PROCESS has performed a HYBRD (non-optimisation) run,')
 
   if (ifail /= 1) then
-     call ocmmnt(nout,'but could not find a feasible set of parameters.')
+     call ocmmnt(nout,'but could NOT find a feasible set of parameters.')
      call oblnkl(nout)
      call ovarin(nout,'Number of iteration variables and constraints','(neqns)',neqns)
      call ovarin(nout,'HYBRD error flag','(ifail)',ifail)
@@ -599,7 +653,7 @@ subroutine eqslv(ifail)
   end do
   sqsumsq = sqrt(sumsq)
 
-  call ovarre(nout,'Estimate of the constraints','(sqsumsq)',sqsumsq)
+  call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq, 'OP ')
 
   !  If necessary, write out a relevant error message
   if (ifail /= 1) then
@@ -639,7 +693,9 @@ subroutine eqslv(ifail)
      write(nout,30) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn),resdl(inn)
      call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
   end do
-30 format(t2,i4,t8,a9,t19,1pe12.4,1pe12.4,1pe12.4)
+!30 format(t2,i4,t8,a9,t19,1pe12.4,1pe12.4,1pe12.4)
+! Make lablxc longer
+30 format(t2,i4,t8,a30,t39,1pe12.4,1pe12.4,1pe12.4)
 
   call osubhd(nout, &
        'The following constraint residues should be close to zero :')
@@ -977,6 +1033,7 @@ subroutine doopt(ifail)
   use function_evaluator
   use numerics
   use process_output
+  use process_input
 
   implicit none
 
@@ -989,6 +1046,8 @@ subroutine doopt(ifail)
   real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
   character(len=1), dimension(ipeqns) :: sym
   character(len=10), dimension(ipeqns) :: lab
+  character(len=30) :: strfom
+  character(len=60) :: string1, string2
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -996,6 +1055,8 @@ subroutine doopt(ifail)
   if (ioptimz < 0) return
 
   !  Set up variables to be iterated
+  ! MDK Allocating here doesn't work if there is a scan
+  ! allocate(name_xc(nvar))
   call loadxc
   call boundxc
   call optimiz(fcnvmc1,fcnvmc2,ifail,f)
@@ -1013,10 +1074,10 @@ subroutine doopt(ifail)
 
   !  Print out information on solution
   call oheadr(nout,'Numerics')
-  call ocmmnt(nout,'PROCESS has performed a VMCON (optimisation) run,')
+  call ocmmnt(nout,'PROCESS has performed a VMCON (optimisation) run.')
   if (ifail /= 1) then
-     call ocmmnt(nout,'but could not find a feasible set of parameters.')
-
+     !call ocmmnt(nout,'but could not find a feasible set of parameters.')
+     call oheadr(nout,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
      call oheadr(iotty,'PROCESS COULD NOT FIND A FEASIBLE SOLUTION')
      call ovarin(iotty,'VMCON error flag (ifail)','',ifail)
      call oblnkl(iotty)
@@ -1030,7 +1091,7 @@ subroutine doopt(ifail)
      call oheadr(iotty,'PROCESS found a feasible solution')
   end if
 
-  call oblnkl(nout)
+  !call oblnkl(nout)
 
   !  If necessary, write out a relevant error message
   if (ifail /= 1) then
@@ -1044,7 +1105,7 @@ subroutine doopt(ifail)
         call ocmmnt(nout,'WARNING: Constraint residues are HIGH; consider re-running')
         call ocmmnt(nout,'   with lower values of EPSVMC to confirm convergence...')
         call ocmmnt(nout,'   (should be able to get down to about 1.0E-8 okay)')
-
+        call oblnkl(nout)
         call ocmmnt(iotty,'WARNING: Constraint residues are HIGH; consider re-running')
         call ocmmnt(iotty,'   with lower values of EPSVMC to confirm convergence...')
         call ocmmnt(iotty,'   (should be able to get down to about 1.0E-8 okay)')
@@ -1062,25 +1123,28 @@ subroutine doopt(ifail)
   if (ifail /= 1) then
      call ovarin(nout,'VMCON error flag','(ifail)',ifail)
   end if
-  call ovarre(nout,'Figure of merit objective function','(f)',f)
-  call ovarre(nout,'Estimate of the constraints','(sqsumsq)',sqsumsq)
+  ! MDK call ovarre(nout,'Figure of merit objective function','(f)',f)
+  call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq, 'OP ')
   call oblnkl(nout)
 
+! MDK Try cleaner code, one line output
   if (ifail == 1) then
-     call ocmmnt(nout, &
-          'PROCESS has successfully optimised the program variables')
+     string1 = 'PROCESS has successfully optimised the iteration variables'
   else
-     call ocmmnt(nout, &
-          'PROCESS has tried to optimise the program variables')
+     string1 = 'PROCESS has tried to optimise the iteration variables'
   end if
 
   if (minmax > 0) then
-     write(nout,10) lablmm(abs(minmax))
+     string2 = ' to minimise the figure of merit: '
   else
-     write(nout,20) lablmm(abs(minmax))
+     string2 = ' to maximise the figure of merit: '
   end if
-10 format(' to minimise the ',a22)
-20 format(' to maximise the ',a22)
+
+  strfom = lablmm(abs(minmax))
+  call upper_case(strfom)
+  write(nout,10) trim(string1) // trim(string2),  trim(strfom)
+10 format(a90, t92, a22)
+! MDK end
 
   call oblnkl(nout)
 
@@ -1097,12 +1161,13 @@ subroutine doopt(ifail)
            call ocmmnt(nout, &
                 'as shown by the following iteration variables that are')
            call ocmmnt(nout, &
-                'at the edge of their prescribed range :')
+                'at or near to the edge of their prescribed range :')
            call oblnkl(nout)
            iflag = 1
         end if
         xcval = xcm(ii)*scafc(ii)
-        write(nout,30) ii,lablxc(ixc(ii)),xcval,bondl(ii)*scafc(ii)
+        !write(nout,30) ii,lablxc(ixc(ii)),xcval,bondl(ii)*scafc(ii)
+        write(nout,30) lablxc(ixc(ii)),xcval,bondl(ii)*scafc(ii)
      end if
 
      if (xcm(ii) > xmaxx) then
@@ -1112,41 +1177,54 @@ subroutine doopt(ifail)
            call ocmmnt(nout, &
                 'as shown by the following iteration variables that are')
            call ocmmnt(nout, &
-                'at the edge of their prescribed range :')
+                'at or near to the edge of their prescribed range :')
            call oblnkl(nout)
            iflag = 1
         end if
         xcval = xcm(ii)*scafc(ii)
-        write(nout,40) ii,lablxc(ixc(ii)),xcval,bondu(ii)*scafc(ii)
+        write(nout,40) lablxc(ixc(ii)),xcval,bondu(ii)*scafc(ii)
      end if
   end do
 
-30 format(t4,'Variable ',i3,' (',a9, &
-        ',',1pe12.4,') is at or below its lower bound:',1pe12.4)
-40 format(t4,'Variable ',i3,' (',a9, &
-        ',',1pe12.4,') is at or above its upper bound:',1pe12.4)
+!30 format(t4,'Variable ',i3,' (',a9, &
+!        ',',1pe12.4,') is at or below its lower bound:',1pe12.4)
+30 format(t4, a30, '=',1pe12.4,' is at or below its lower bound:',1pe12.4)
+40 format(t4, a30, '=',1pe12.4,' is at or above its upper bound:',1pe12.4)
+!40 format(t4,'Variable ',i3,' (',a9, &
+!        ',',1pe12.4,') is at or above its upper bound:',1pe12.4)
 
   !  Print out information on numerics
   call osubhd(nout,'The solution vector is comprised as follows :')
-  write(nout,50)
-50 format(t47,'lower',t59,'upper')
+!  write(nout,50)
+! Remove Lagrange multipliers as no-one understands them.
+! MFILE not changed
+!50 format(t47,'lower',t59,'upper')
 
   write(nout,60)
-60 format(t23,'final',t33,'fractional',t46,'Lagrange',t58,'Lagrange')
+!60 format(t23,'final',t33,'fractional',t46,'Lagrange',t58,'Lagrange')
+60 format(t43,'final',t55,'final /')
+
 
   write(nout,70)
-70 format(t5,'i',t23,'value',t35,'change',t45,'multiplier', &
-        t57,'multiplier')
+!70 format(t5,'i',t23,'value',t35,'change',t45,'multiplier', &
+!        t57,'multiplier')
+70 format(t5,'i',t43,'value',t55,'initial')
 
   call oblnkl(nout)
 
   do inn = 1,nvar
      xcs(inn) = xcm(inn)*scafc(inn)
-     write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
-          vlam(neqns+nineqns+inn), vlam(neqns+nineqns+1+inn+nvar)
+!     write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
+!          vlam(neqns+nineqns+inn), vlam(neqns+nineqns+1+inn+nvar)
+	  write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn)
+!80 format(t2,i4,t8,a9,t19,4(1pe12.4))
+!80 format(t2,i4,t8,a30,t39,2(1pe12.4))
+80 format(t2,i4,t8,a30,t39,1pe12.4, t52, 0pf10.4)
+! MDK The 0p is needed because of a bizarre "feature"/bug in fortran:
+! the 1p in the previous format continues until changed.
      call ovarre(mfile,lablxc(ixc(inn)),'(itvar'//int_to_string3(inn)//')',xcs(inn))
 
-     !  'Range-normalised' iteration variable values:
+     !  'Range-normalised' iteration variable values for MFILE:
      !  0.0 (at lower bound) to 1.0 (at upper bound)
      if (bondl(inn) == bondu(inn)) then
         xnorm = 1.0D0
@@ -1155,10 +1233,13 @@ subroutine doopt(ifail)
         xnorm = max(xnorm, 0.0D0)
         xnorm = min(xnorm, 1.0D0)
      end if
+     ! Added ratio final/initial to MFILE
+     call ovarre(mfile,trim(lablxc(ixc(inn)))//' (final value/initial value)', &
+          '(xcm'//int_to_string3(inn)//')',xcm(inn))
      call ovarre(mfile,trim(lablxc(ixc(inn)))//' (range normalised)', &
           '(nitvar'//int_to_string3(inn)//')',xnorm)
   end do
-80 format(t2,i4,t8,a9,t19,4(1pe12.4))
+
 
   call osubhd(nout, &
        'The following equality constraint residues should be close to zero :')
@@ -1396,6 +1477,7 @@ subroutine output(outfile)
   use build_module
   use buildings_module
   use costs_module
+  use costs_2015_module
   use cost_variables
   use current_drive_module
   use divertor_module
@@ -1418,7 +1500,7 @@ subroutine output(outfile)
   use structure_module
   use tfcoil_module
   use vacuum_module
-  
+
   !  Import blanket modules
   use ccfe_hcpb_module
   use kit_hcpb_module
@@ -1450,10 +1532,15 @@ subroutine output(outfile)
      return
   end if
 
-  call costs(outfile,1)
+  if (cost_model == 1) then
+     call costs_2015(outfile,1)
+  else
+     call costs(outfile,1)
+  end if
+
   if (iavail > 1) then
      call avail_new(outfile, 1)
-  else 
+  else
      call avail(outfile,1)
   end if
   call outplas(outfile)
@@ -1464,6 +1551,7 @@ subroutine output(outfile)
   call outtim(outfile)
   call divcall(outfile,1)
   call radialb(outfile,1)
+  call vbuild(outfile,1)
 
   if (irfp == 0) then
      call tfcoil(outfile,1)
@@ -1487,12 +1575,15 @@ subroutine output(outfile)
 
   if (irfp == 0) call induct(outfile,1)
 
-  if (iblanket == 1) then
-	call ccfe_hcpb(outfile, 1)
-  else if (iblanket == 2) then
-	call kit_hcpb(outfile, 1)
+  if (iblanket == 1) then           ! CCFE HCPB model
+	 call ccfe_hcpb(nout, 1)
+  else if (iblanket == 2) then      ! KIT HCPB model
+     call kit_hcpb(nout, 1)
+  else if (iblanket == 3) then      ! CFE HCPB model with Tritium Breeding Ratio calculation
+     call ccfe_hcpb(nout, 1)
+	 call tbr_shimwell(nout, 1, breeder_f, li6enrich, iblanket_thickness, tbr)
   end if
-  
+
   !call fwbs(outfile,1)
 
   if (ifispact == 1) then
@@ -1511,16 +1602,34 @@ subroutine output(outfile)
   end if
 
   call vaccall(outfile,1)
-  call bldgcall(outfile,1)
+  if (cost_model==0) call bldgcall(outfile,1)
   call acpow(outfile,1)
   call power2(outfile,1)
-  
+
   !select case (iblanket)
   !case(1)
   !	call ccfe_hcpb(outfile, 1)
   !end select
 
 end subroutine output
+
+subroutine runtests
+  use maths_library
+  use global_variables
+  use numerics
+  use process_output
+  use pfcoil_module
+  implicit none
+  call ovarre(nout,'Binomial coefficients C(5,0): 1', '(binomial(5,0))', binomial(5,0))
+  call ovarre(nout,'Binomial coefficients C(5,1): 5', '(binomial(5,1))', binomial(5,1))
+  call ovarre(nout,'Binomial coefficients C(5,2): 10', '(binomial(5,2))', binomial(5,2))
+  call ovarre(nout,'Binomial coefficients C(5,3): 10', '(binomial(5,3))', binomial(5,3))
+  call ovarre(nout,'Binomial coefficients C(5,4): 5', '(binomial(5,4))', binomial(5,4))
+  call ovarre(nout,'Binomial coefficients C(5,5): 1', '(binomial(5,5))', binomial(5,5))
+
+  call brookscoil(nout)
+end subroutine runtests
+
 
 ! SVN 145: New CICC plots for User Guide
 ! SVN 149: MGF power usage correction
@@ -1854,3 +1963,47 @@ end subroutine output
 ! GIT 387: More minor fixes for powerflow. Notes to be released with r388
 ! GIT 388: Minor fix to version number
 ! GIT 389: New release. See release notes.
+! GIT 390: Rewrite of calc_u_unplanned_fwbs and calc_u_unplanned_divertor
+! GIT 393: Issue #290 Improvements to thermohydraulic model of first wall.
+! GIT 395: Rewrite to vacuum pump availability. New Binomial routine.
+! GIT 396: New cost model complete.  J Shimwell parametric TBR model #195. #292, #293
+! GIT 397: Issues dealt with now or previously: #301 #219 #244 #252 #255 #262 #264 #268 #269 #278 #294 #295 #284
+! GIT 398: Tidy first wall and blanket thermohydraulics (#302), Radial plate error (#300), Append input file to output file (#305)
+! GIT 399: Minimum total electrical power for primary coolant pumps (htpmw_min) (#303). The user now specifies the allowable von Mises stress for TFC and hoop stress for CS.
+! GIT 400: Blanket fractions now defined using breeder_multiplier: combined breeder/multipler fraction. Steel is remainder. Cryogenics output added.
+!          Corrected surface heat flux on first wall #309. Cost of electricity and maintenance cost now included in 2015 cost model.
+! GIT 401: Add active_constraints(ipeqns) : logical array showing which constraints are active.
+!          #308 L-H threshold power (enforced) is boundl(103)*plhthresh.
+!          #306 Added central tube for helium coolant in TF cable, but these variables don't yet do anything.
+!          #311 Added Murari energy confinement non-power law scaling (isc=40)
+! GIT 402  #318 Update to ICC list in user guide
+!          #316 plot_proc missing values from MFILE
+!          #315 Add comment to user Guide that release notes should be included on the checklist for adding changes.
+!          #314 Inconsistent input data for blanket model: change default vfpblkt = 0.1 to have a working default input blanket model.
+!          #263 'tmargmin' should not be an iteration variable.  Set the label and vardes text for iteration variable 55 to "obsolete".
+! GIT 403  #242 As we never use the divertor output, I will just switch it off.
+!          #270 Add "ITV" to all iteration variable outputs, and
+!          ensure that all iteration variables are output using ovarre or ovarin, except for f-values.
+! GIT 404  #256 There is now a warning in the output file and to the terminal if the sweep variable is also an iteration variable.
+!          #270 Quantities listed in standard format are labelled as follows in columns 112-114:
+!               ITV : Active iteration variable (in any output blocks)
+!               OP  : Calculated output quantity
+!          Tweaked OUT.DAT in a few places.
+!          #213 Make helium content an iteration variable and constrain tauP/tauE
+! 405      #304 Add a very simple vacuum pump model (Section 1).
+! 406      #325 New rule for Power supply cost.  May not be complete.
+!          #327 Tweaks to make old cost model work
+! 407      #304 Section 2 : pump-down model
+! 408      #328 PF coil and CS cross-section and cost
+!          New error reporting in input.f90.
+! 409      #348 New first wall model
+!          #329 Improved error handling in input.f90.
+! 410      #341 New TF coil shape.
+!          #347 More options for primary pumping power - primary_pumping
+!          #326 Minor changes to descriptions and a page number in pfcoil
+!          Replaced CS coil self-inductance formula - see benchmark.
+!          (PS This isn't a very important quantity!)
+!          #338 Output PF energy and current vs. time
+! 411      Added maximum rate of change of PF energy as a constraint.
+! 412      Master release: Checked recent changes using the test suite. Made a
+!          few minor changes. Updated test function in plot_proc.

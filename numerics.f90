@@ -71,24 +71,36 @@ module numerics
   !+ad_hisc               character(len=...) statement, otherwise
   !+ad_hisc               compilation using gfortran fails
   !+ad_hist  27/02/15 JM  Changed default values for boundu(4) and boundu & l (103)
+  !+ad_hist  27/05/15 MDK Added breeder_f as iteration variable 108
+  !+ad_hist  29/05/15 MDK Figure of merit 2 (P_fus P_in-total) has been replaced by "not used"
+  !+ad_hist  11/06/15 MDK Add active_constraints(ipeqns) : Boolean array showing which constraints are active.
+  !+ad_hist  05/08/15 MDK Add ralpne as an iteration variable. Constraint 62 on taup/taueff the ratio of particle to energy confinement times
+  !+ad_hist  26/08/15 MDK fniterpump as iteration variable 11, constraint 63 niterpump < tfno
+  !+ad_hist  18/11/15  RK Added new FoM for minimising RMAJOR and maximising TBURN and
+  !+ad_hisc               added constraint equation to limit Z_eff, including new iteration
+  !+ad_hisc		  variable 112 (fzeffmax)
+  !+ad_hist  26/11/15  RK New constraint equation for taucq
+  !+ad_hist  10/12/15  RK Net electrical output added as FoM
   !+ad_stat  Okay
   !+ad_docs  None
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use global_variables, only: verbose
+  use global_variables
+  use constants
   use maths_library
 
   implicit none
+  integer, private :: i, j      ! Loop counters
 
   public
 
-  !+ad_vars  ipnvars /107/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 107
-  !+ad_vars  ipeqns /61/ FIX : number of constraint equations available
-  integer, parameter :: ipeqns  = 61
-  !+ad_vars  ipnfoms /15/ FIX : number of available figures of merit
-  integer, parameter :: ipnfoms = 15
+  !+ad_vars  ipnvars /115/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 115
+  !+ad_vars  ipeqns /66/ FIX : number of constraint equations available
+  integer, parameter :: ipeqns = 66
+  !+ad_vars  ipnfoms /17/ FIX : number of available figures of merit
+  integer, parameter :: ipnfoms = 17
 
   integer, parameter :: ipvlam  = ipeqns+2*ipnvars+1
   integer, parameter :: iptnt   = (ipeqns*(3*ipeqns+13))/2
@@ -109,8 +121,8 @@ module numerics
   character(len=22), dimension(ipnfoms) :: lablmm = (/ &
        !+ad_varc  <LI> ( 1) major radius
        'major radius.         ', &
-       !+ad_varc  <LI> ( 2) P_fus P_in-total
-       'P_fus P_in-total.     ', &
+       !+ad_varc  <LI> ( 2) not used
+       'not used.             ', &
        !+ad_varc  <LI> ( 3) neutron wall load
        'neutron wall load.    ', &
        !+ad_varc  <LI> ( 4) P_tf + P_pf
@@ -137,8 +149,13 @@ module numerics
        !+ad_varc  <LI> (14) pulse length
        'pulse length.         ', &
        !+ad_varc  <LI> (15) plant availability factor (N.B. requires
-       !+ad_varc            iavail=1 to be set) </UL>
-       'plant availability.   ' /)
+       !+ad_varc            iavail=1 to be set)
+       'plant availability.   ', &
+       !+ad_varc  <LI> (16) linear combination of major radius (minimised) and pulse length (maximised)
+       !+ad_varc              note: FoM should be minimised only!
+       'min R0, max tau_burn. ', &
+       !+ad_varc  <LI> (17) net electrical output </UL>
+       'net electrical output.' /)
 
   !+ad_vars  ncalls : number of function calls during solution
   integer :: ncalls = 0
@@ -159,21 +176,30 @@ module numerics
   !+ad_vars  icc(ipeqns) /1,2,5,7,9,10,11,14,17,24,27,33,35,36/ :
   !+ad_varc           array defining which constraint equations to activate
   !+ad_varc           (see lablcc for descriptions)
+  ! integer, dimension(ipeqns) :: icc = 0
+  ! MDK If no constraints are specified in the input file, the icc array is now
+  ! populated with its default values in input.f90.
+  ! This may not have been the best method, in hindsight.
+  ! The declaration statement below must be included in this format to enable the
+  ! dictionaries to be created.  The initialised values must be zero, because
+  ! this is tested in input.f90.
+  ! The dictionaries will now show icc = 0 by default.
+
   integer, dimension(ipeqns) :: icc = (/ &
-       1,  &  !  1
-       2,  &  !  2
-       5,  &  !  3
-       7,  &  !  4
-       9,  &  !  5
-       10, &  !  6
-       11, &  !  7
-       14, &  !  8
-       17, &  !  9
-       24, &  !  10
-       27, &  !  11
-       33, &  !  12
-       35, &  !  13
-       36, &  !  14
+       0,  &  !  1
+       0,  &  !  2
+       0,  &  !  3
+       0,  &  !  4
+       0,  &  !  5
+       0,  &  !  6
+       0,  &  !  7
+       0,  &  !  8
+       0,  &  !  9
+       0,  &  !  10
+       0,  &  !  11
+       0,  &  !  12
+       0,  &  !  13
+       0,  &  !  14
        0,  &  !  15
        0,  &  !  16
        0,  &  !  17
@@ -220,8 +246,18 @@ module numerics
        0,  &  !  58
        0,  &  !  59
        0,  &  !  60
-       0   &  !  61
+       0,  &  !  61
+       0,  &  !  62
+       0,  &  !  63
+       0,  &  !  64
+       0,  &  !  65
+       0   &  !  66
        /)
+
+
+  !+ad_vars  active_constraints(ipeqns) : Logical array showing which constraints are active
+  logical, dimension(ipeqns) :: active_constraints = .false.
+
   !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
   !+ad_varc                   (starred ones are turned on by default):<UL>
   character(len=33), dimension(ipeqns) :: lablcc = (/ &
@@ -247,7 +283,7 @@ module numerics
        'Toroidal field 1/R consistency   ', &
        !+ad_varc  <LI> (11) * Radial build (consistency equation)
        'Radial build consistency         ', &
-       !+ad_varc  <LI> (12) Volt second lower limit
+       !+ad_varc  <LI> (12) Volt second lower limit (STEADY STATE)
        'Volt second lower limit          ', &
        !+ad_varc  <LI> (13) Burn time lower limit (PULSE)
        'Burn time lower limit            ', &
@@ -257,8 +293,8 @@ module numerics
        'L-H power threshold limit        ', &
        !+ad_varc  <LI> (16) Net electric power lower limit
        'Net electric power lower limit   ', &
-       !+ad_varc  <LI> (17) * Radiation power upper limit
-       'Radiation power upper limit      ', &
+       !+ad_varc  <LI> (17) * Radiation fraction upper limit
+       'Radiation fraction upper limit   ', &
        !+ad_varc  <LI> (18) Divertor heat load upper limit
        'Divertor heat load upper limit   ', &
        !+ad_varc  <LI> (19) MVA upper limit
@@ -346,9 +382,23 @@ module numerics
        'NB shine-through frac upper limit', &
        !+ad_varc  <LI> (60) Central solenoid temperature margin lower limit (SCTF)
        'CS temperature margin lower limit', &
-       !+ad_varc  <LI> (61) Minimum availability value</UL>
-       'Minimum availability value       '  &
-       /)  !  Please note: All strings between '...' above must be exactly 33 chars long
+       !+ad_varc  <LI> (61) Minimum availability value
+       'Minimum availability value       ',  &
+       !+ad_varc  <LI> (62) taup/taueff the ratio of particle to energy confinement times
+       'taup/taueff                      ', &
+       !+ad_varc  <LI> (63) The number of ITER-like vacuum pumps niterpump < tfno 
+       'number of ITER-like vacuum pumps ',  &
+       !+ad_varc  <LI> (64) Zeff less than or equal to zeffmax
+       'Zeff limit                       ',  &
+       !+ad_varc  <LI> (65) Dump time set by VV loads
+       'Dump time set by VV stress       ',   &
+       !+ad_varc  <LI> (66) Limit on rate of change of energy in poloidal field 
+       !+ad_varc            (Use iteration variable 65(tohs))</UL>
+       'Rate of change of energy in field'   &
+       /)  
+       !  Please note: All strings between '...' above must be exactly 33 chars long
+       ! Each line of code has a comma before the ampersand, except the last one.
+       ! The last ad_varc line ends with the html tag "</UL>".
 
   !+ad_vars  ixc(ipnvars) /4,5,6,7,10,12,13,19,28,29,36,39,50,53,54,61/ :
   !+ad_varc               array defining which iteration variables to activate
@@ -460,10 +510,20 @@ module numerics
        0,  &  !  104
        0,  &  !  105
        0,  &  !  106
-       0   &  !  107
+       0,  &  !  107
+       0,  &  !  108
+       0,  &  !  109
+       0,  &  !  110
+       0,  &  !  111
+       0,  &  !  112
+       0,  &  !  113
+       0,  &  !  114
+       0   &  !  115
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
+  ! WARNING These labels are used as variable names by write_new_in_dat.py, and possibly
+  ! othr python utilities, so they cannot easily be changed.
   character(len=9), dimension(ipnvars) :: lablxc = (/ &
        !+ad_varc  <LI> ( 1) aspect
        'aspect   ', &
@@ -519,7 +579,7 @@ module numerics
        'ffuspow  ', &
        !+ad_varc  <LI> (27) fhldiv (f-value for equation 18)
        'fhldiv   ', &
-       !+ad_varc  <LI> (28) * fradpwr (f-value for equation 17)
+       !+ad_varc  <LI> (28) * fradpwr (f-value for equation 17), total radiation fraction
        'fradpwr  ', &
        !+ad_varc  <LI> (29) * bore
        'bore     ', &
@@ -573,8 +633,8 @@ module numerics
        'fjprot   ', &
        !+ad_varc  <LI> (54) * ftmargtf (f-value for equation 36)
        'ftmargtf ', &
-       !+ad_varc  <LI> (55) tmargmin
-       'tmargmin ', &
+       !+ad_varc  <LI> (55) obsolete
+       'obsolete ', &
        !+ad_varc  <LI> (56) tdmptf
        'tdmptf   ', &
        !+ad_varc  <LI> (57) thkcas
@@ -677,9 +737,29 @@ module numerics
        'fnbshinef', &
        !+ad_varc  <LI> (106) ftmargoh (f-value for equation 60)
        'ftmargoh ', &
-       !+ad_varc  <LI> (107) favail (f-value for equation 61)</UL>
-       'favail   '  &
+       !+ad_varc  <LI> (107) favail (f-value for equation 61)
+       'favail   ', &
+       !+ad_varc  <LI> (108) breeder_f: Volume of Li4SiO4 / (Volume of Be12Ti + Li4SiO4)
+       'breeder_f', &
+       !+ad_varc  <LI> (109) ralpne: thermal alpha density / electron density
+       'ralpne   ', &
+       !+ad_varc  <LI> (110) ftaulimit: Lower limit on taup/taueff the ratio of alpha particle
+       !+ad_varc       to energy confinement times
+       'ftaulimit', &
+       !+ad_varc  <LI> (111) fniterpump: f-value for constraint that
+       !+ad_varc       number of vacuum pumps <  TF coils
+       'fniterpump',  &
+       !+ad_varc  <LI> (112) fzeffmax: f-value for max Zeff 
+       'fzeffmax',  &
+       !+ad_varc  <LI> (113) ftaucq: f-value for minimum quench time 
+       'ftaucq',  &
+       !+ad_varc  <LI> (114) fw_channel_length: Length of a single first wall channel 
+       'fw_channel_l',  &
+       !+ad_varc  <LI> (115) fpoloidalpower: f-value for max rate of change of energy in poloidal field </UL>
+       'fpoloidalpower'  &
        /)
+
+  character(len=9), dimension(:), allocatable :: name_xc
 
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
   real(kind(1.0D0)) :: sqsumsq = 0.0D0
@@ -695,22 +775,22 @@ module numerics
   !+ad_vars  boundl(ipnvars) : lower bounds used on ixc variables during
   !+ad_varc                    VMCON optimisation runs
   real(kind(1.0D0)), dimension(ipnvars) :: boundl = (/ &
-       1.100D0, &  !  1 
-       0.010D0, &  !  2 
-       0.100D0, &  !  3 
-       5.000D0, &  !  4 
-       0.001D0, &  !  5 
-       1.00D19, &  !  6 
-       1.00D-6, &  !  7 
-       0.001D0, &  !  8 
-       0.001D0, &  !  9 
+       1.100D0, &  !  1
+       0.010D0, &  !  2
+       0.100D0, &  !  3
+       5.000D0, &  !  4
+       0.001D0, &  !  5
+       1.00D19, &  !  6
+       1.00D-6, &  !  7
+       0.001D0, &  !  8
+       0.001D0, &  !  9
        0.100D0, &  !  10
        1.00D-3, &  !  11
        1.000D5, &  !  12
        1.000D0, &  !  13
        0.001D0, &  !  14
        0.001D0, &  !  15
-       0.000D0, &  !  16
+       0.010D0, &  !  16
        0.100D0, &  !  17
        2.000D0, &  !  18
        1.000D0, &  !  19
@@ -792,7 +872,7 @@ module numerics
        0.001D0, &  !  95
        0.001D0, &  !  96
        0.001D0, &  !  97
-       0.001D0, &  !  98
+       10.00D0, &  !  98
        0.001D0, &  !  99
        0.001D0, &  !  100
        1.00D-6, &  !  101
@@ -801,21 +881,29 @@ module numerics
        0.001D0, &  !  104
        0.001D0, &  !  105
        0.001D0, &  !  106
-       0.001D0  &  !  107
+       0.001D0, &  !  107
+       0.060D0, &  !  108
+       0.050D0, &  !  109
+       0.001D0, &  !  110
+       0.001D0, &  !  111
+       0.001D0, &  !  112
+       0.001D0, &  !  113
+       0.001D0, &  !  114
+       0.001D0  &  !  115
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
   !+ad_varc                    VMCON optimisation runs
   real(kind(1.0D0)), dimension(ipnvars) :: boundu = (/ &
-       10.00D0, &  !  1 
-       100.0D0, &  !  2 
-       10.00D0, &  !  3 
-       150.0D0, &  !  4 
-       1.000D0, &  !  5 
-       1.00D21, &  !  6 
-       1.000D0, &  !  7 
-       1.000D0, &  !  8 
-       1.000D0, &  !  9 
+       10.00D0, &  !  1
+       100.0D0, &  !  2
+       10.00D0, &  !  3
+       150.0D0, &  !  4
+       1.000D0, &  !  5
+       1.00D21, &  !  6
+       1.000D0, &  !  7
+       1.000D0, &  !  8
+       1.000D0, &  !  9
        3.000D0, &  !  10
        1.000D3, &  !  11
        1.500D8, &  !  12
@@ -834,7 +922,7 @@ module numerics
        1.000D0, &  !  25
        1.000D0, &  !  26
        1.000D0, &  !  27
-       1.000D0, &  !  28
+       0.990D0, &  !  28 Issue #219
        10.00D0, &  !  29
        1.000D0, &  !  30
        1.000D1, &  !  31
@@ -913,7 +1001,15 @@ module numerics
        1.000D0, &  !  104
        1.000D0, &  !  105
        1.000D0, &  !  106
-       1.000D0  &  !  107
+       1.000D0, &  !  107
+       1.000D0, &  !  108
+       0.150D0, &  !  109
+       1.000D0, &  !  110
+       1.000D0, &  !  111
+       1.000D0, &  !  112
+       1.000D0, &  !  113
+       1.000D3, &  !  114
+       1.000D0  &  !  115
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0
@@ -925,6 +1021,7 @@ module numerics
   real(kind(1.0D0)), dimension(ipnvars) :: xcm = 0.0D0
   real(kind(1.0D0)), dimension(ipnvars) :: xcs = 0.0D0
   real(kind(1.0D0)), dimension(ipvlam)  :: vlam = 0.0D0
+
 
 contains
 
@@ -1158,7 +1255,7 @@ contains
          gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
          liwa,ilower,iupper,bndl,bndu)
 
-    !  If VMCON has exited with error code 5 try another run using a multiple of 
+    !  If VMCON has exited with error code 5 try another run using a multiple of
     !  the identity matrix as input for the Hessian b(n,n).
     !  Only do this if VMCON has not iterated (nviter=1).
 
@@ -1170,7 +1267,7 @@ contains
           xv(ii) = xcm(ii)	 !  Re-initialise iteration values
        end do
        if (verbose == 1) then
-          write(*,*) 'VMCON error code = 5.  Rerunning VMCON using a new'  
+          write(*,*) 'VMCON error code = 5.  Rerunning VMCON using a new'
           write(*,*) 'initial estimate of the second derivative matrix.'
        end if
 

@@ -28,6 +28,14 @@ def index(request):
     #one for input values
     in_dict, ref_dict = split_dicts(request)
 
+    # f = open('test_views.txt', 'w')
+    # f.write('\n\nNext is in_dict')
+    # for k in in_dict:
+    #     f.write('\n' + k)
+    # f.write('\n\nNext is ref_dict')
+    # for k in ref_dict:
+    #     f.write('\n' + k)
+
 
     if "submit_download" in request.POST:
         #if the user wants to download the file
@@ -88,5 +96,3 @@ def create_context(in_dat=None, ref_dat=None):
     context["lablcc"] = GUI_LABLCC
 
     return context
-
-

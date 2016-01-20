@@ -9,11 +9,33 @@
    Tom Miller 09/14
 
 """
-from process_io_lib.process_dicts import DICT_DEFAULT, DICT_MODULE,\
-                                    DICT_DESCRIPTIONS, DICTIONARY_VERSION, \
-                                    DICT_IXC_SIMPLE
+
+from process_io_lib.process_dicts import DICT_DEFAULT, DICT_MODULE, \
+    DICT_DESCRIPTIONS, DICTIONARY_VERSION, DICT_IXC_SIMPLE
 import copy
 import argparse
+
+# variables in input file but not in dictionaries.
+OMISSIONS = list()
+
+# ioptimz values
+ioptimz_des = {"-1": "for no optimisation HYBRD only",
+               "0": "for HYBRD and VMCON (not recommended)",
+               "1": "for optimisation VMCON only"}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 24e4d72793ba597a813007586f1440fcc3fd81f8
+
+class BColours:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 
 def is_valid(varname):
@@ -22,8 +44,13 @@ def is_valid(varname):
 
     """
     if varname not in DICT_DEFAULT:
-        raise ValueError("Unrecognised input variable: " + varname)
+        error_msg = BColours.FAIL + "Unrecognised input variable: {0}. " \
+            "Variable will be skipped".format(varname) + BColours.ENDC
+        print(error_msg)
+        OMISSIONS.append(varname)
+        # raise ValueError(error_msg)
     return True
+
 
 def get_type(varname):
     """Gets the type of a varname. Undestands arrays ie. ixc(2) is int,
@@ -38,6 +65,7 @@ def get_type(varname):
         is_valid(varname)
         return type(DICT_DEFAULT[varname])
 
+
 def mimic_type(in_val, tar):
     """Converts in_val to have the same type as tar
 
@@ -45,12 +73,12 @@ def mimic_type(in_val, tar):
     if isinstance(in_val, str):
         in_val = in_val.strip(", ")
     if isinstance(tar, list):
-        #allow trailing commas for lists
+        # allow trailing commas for lists
         in_val = str(in_val)
         in_val = in_val.strip("[]")
         ret = []
         for i in in_val.split(','):
-            #cast every variable in the list
+            # cast every variable in the list
             ret.append(mimic_type(i, tar[0]))
         return ret
     elif isinstance(tar, int):
@@ -58,10 +86,11 @@ def mimic_type(in_val, tar):
     elif isinstance(tar, float):
         return float(str(in_val).lower().replace('d', 'e'))
     elif isinstance(tar, str):
-        #remove all quote marks and spaces
+        # remove all quote marks and spaces
         return str(in_val).strip('"\' ')
     else:
         raise ValueError("Unknown type for variable passed to mimic_type")
+
 
 def cast(varname, val):
     """Casts a string input from user 'val' to a python variable of
@@ -73,10 +102,18 @@ def cast(varname, val):
             array_name = varname.split('(')[0]
             return mimic_type(val, DICT_DEFAULT[array_name][0])
         else:
-            return mimic_type(val, DICT_DEFAULT[varname])
+            if varname not in OMISSIONS:
+                return mimic_type(val, DICT_DEFAULT[varname])
     except ValueError:
-        raise ValueError("Could not cast " + str(val) + " to type " + \
-        str(type(DICT_DEFAULT[varname]))+ " for variable " + varname)
+        error_msg = BColours.FAIL + "Could not cast {0} to type {1} for" \
+            "variable {2}. Please check DICT_DEFAULT for parameter type.". \
+            format(str(val), str(type(DICT_DEFAULT[varname])), varname) + \
+            BColours.ENDC
+        print(error_msg)
+        # raise ValueError("Could not cast " + str(val) + " to type " +
+        #                  str(type(DICT_DEFAULT[varname])) + " for variable "+
+        #                  varname)
+
 
 def interpret_array_var(st):
     """Interprets a fortran style array access eg boundl(4). Returns
@@ -86,6 +123,7 @@ def interpret_array_var(st):
     array_name, array_st_index = st.split('(')
     is_valid(array_name)
     return array_name, int(array_st_index)-1
+
 
 def parse_int_line(line, char):
     """Helper function for get_comment. Splits the line by char,
@@ -100,6 +138,7 @@ def parse_int_line(line, char):
         return None
     return num, char.join(li[1:]).strip()
 
+
 def get_line_by_int(num, desc):
     """Looks through the line in desc for a line that looks like it's
        describing the value of the variable. See if the line starts with
@@ -108,24 +147,25 @@ def get_line_by_int(num, desc):
     """
     for line in desc.split('\n'):
         line = line.strip()
-        #look for '= #' type lines
+        # look for '= #' type lines
         if line[0] == "=":
             line = line[1:].strip()
             t = parse_int_line(line, " ")
             if t and (t[0] == num or t[0] == -num):
                 return t[1].strip("* ")
-        #look for (#) style lines
+        # look for (#) style lines
         if line[0] == "(":
             line = line[1:].strip()
             t = parse_int_line(line, ")")
             if t and (t[0] == num or t[0] == -num):
                 return t[1].strip("* ")
-        #look for lines that start with an int
+        # look for lines that start with an int
         if line[0].isdigit():
             t = parse_int_line(line, " ")
             if t and (t[0] == num or t[0] == -num):
                 return t[1].strip("* ")
     return ""
+
 
 def get_comment(val, desc):
     """Gets the description that should be printed in the IN.DAT for
@@ -136,30 +176,32 @@ def get_comment(val, desc):
 
     if desc.strip() == "":
         return ""
-    #commas, full stops, colons  must not appear in comments
+    # commas, full stops, colons  must not appear in comments
     desc = desc.replace(',', ';')
     desc = desc.replace('.', ';')
     desc = desc.replace(':', '*')
     firstline = desc.split('\n')[0].strip("* ")
     if not isinstance(val, int):
-        #for non ints, just use the first line of the desc
+        # for non ints, just use the first line of the desc
         return "* " + firstline
 
-    #for ints, get rid of parenthesis
+    # for ints, get rid of parenthesis
     ret = firstline.split('(')[0].strip("* ")
 
-    #then try and describe the value taken
+    # then try and describe the value taken
     int_desc = get_line_by_int(val, desc)
     if int_desc:
         return "* " + ret + " * " + int_desc
     else:
         return "* " + ret
 
+
 def make_mod_header(st):
     """Makes the header line for a module
 
     """
     return "*" + st.center(50, "-") + "*"
+
 
 def make_line(var, val, comment=True):
     """Returns a var = val * comment line
@@ -168,11 +210,15 @@ def make_line(var, val, comment=True):
     """
     assignstr = (str(var) + " = " + str(val)).ljust(15)
     if comment and var in DICT_DESCRIPTIONS:
-        desc = get_comment(val, DICT_DESCRIPTIONS[var])
+        if var == "ioptimz":
+            desc = ioptimz_des[str(val)]
+        else:
+            desc = get_comment(val, DICT_DESCRIPTIONS[var])
     else:
         desc = ""
 
     return assignstr + "  " + desc
+
 
 def strip_line(line):
     """Strips of irrelevant parts of a line such as comments, old-style
@@ -201,12 +247,12 @@ class GuiInDat(object):
     def __getitem__(self, key):
         key = key.lower()
         if '(' in key:
-            #work out which array and which index is being accessed
+            # work out which array and which index is being accessed
             array_name, array_index = interpret_array_var(key)
             is_valid(array_name)
             if array_name not in self.__data__:
-                #if it's a valid array but not in the dictionary, copy the
-                #dictionary value
+                # if it's a valid array but not in the dictionary, copy the
+                # dictionary value
                 self.__data__[array_name] = copy.copy(DICT_DEFAULT[array_name])
             return self.__data__[array_name][array_index]
         else:
@@ -220,9 +266,9 @@ class GuiInDat(object):
         if '(' in key:
             array_name, array_index = interpret_array_var(key)
             is_valid(array_name)
-            #cast the value to the correct type
+            # cast the value to the correct type
             val = cast(key, val)
-            if not array_name in self.__data__:
+            if array_name not in self.__data__:
                 self.__data__[array_name] = copy.copy(DICT_DEFAULT[array_name])
             self.__data__[array_name][array_index] = val
         else:
@@ -252,40 +298,39 @@ class GuiInDat(object):
         self["ixc"] = self["ixc"][:self["nvar"]]
         self["icc"] = self["icc"][:self["neqns"]]
 
-
     def __str__(self):
         """Convets self to text format
 
         """
-        LB = "\n" #line break character
+        LB = "\n"  # line break character
         ret = ""
 
-        #print the descritption
+        # print the descritption
         for line in self.Run_Description.split("\n"):
             ret += "*****" + line.rstrip() + LB
         ret += LB + make_mod_header("-") + LB + LB
 
-        #constraints
+        # constraints
         ret += make_mod_header("Constraint Equations") + LB
         neqns = self["neqns"]
         ret += make_line("neqns", neqns, False) + LB
 
-        #always print in sorted order
+        # always print in sorted order
         icc_temp = sorted(self["icc"][:neqns])
         for num in range(self["neqns"]):
             const_num = icc_temp[num]
             ret += make_line("icc(" + str(num+1) + ")", const_num, False)
             ret += " * "
-            #get the description of the constraint from lablcc
+            # get the description of the constraint from lablcc
             ret += get_line_by_int(const_num, DICT_DESCRIPTIONS["lablcc"])
             ret += LB
         ret += LB
 
-        #itervars
+        # itervars
         ret += make_mod_header("Iteration Variables") + LB
         nvar = self["nvar"]
         ret += make_line("nvar", nvar, False) + LB
-        #always print in sorted order
+        # always print in sorted order
         ixc_temp = sorted(self["ixc"][:nvar])
         for num in range(self["nvar"]):
             iter_num = ixc_temp[num]
@@ -294,40 +339,40 @@ class GuiInDat(object):
             ret += make_line("ixc(" + str(num+1) + ")", iter_num, False)
             ret += " * "
 
-            #write a description
+            # write a description
             varname = DICT_IXC_SIMPLE[str(iter_num)]
             ret += varname + " "
             ret += get_comment(0.1, DICT_DESCRIPTIONS[varname])
             ret += LB
 
-            #print the lower and upper bounds below
+            # print the lower and upper bounds below
             ret += make_line(lbname, self[lbname], False) + LB
             ret += make_line(ubname, self[ubname], False) + LB
             ret += LB
 
-        #don't print these, they've already been printed
+        # don't print these, they've already been printed
         neverprint = {"neqns", "nvar", "ixc", "icc", "boundl", "boundu"}
-        #these are important, always print them
+        # these are important, always print them
         alwaysprint = {"ioptimz", "minmax"}
 
-        #if isweep isn't 0, always print sweep information
+        # if isweep isn't 0, always print sweep information
         if self["isweep"] != 0:
             alwaysprint.add("nsweep")
             alwaysprint.add("sweep")
 
-        #print the main body
+        # print the main body
         for module, arr in DICT_MODULE.items():
             ret += make_mod_header(module) + LB
 
             for varname in arr:
-                #don't print these, they have already been printed
+                # don't print these, they have already been printed
                 if varname in neverprint:
                     continue
-                #if the value is different or is an important variable
+                # if the value is different or is an important variable
                 if self.is_diff(varname) or varname in alwaysprint:
                     val = self[varname]
                     if isinstance(val, list):
-                        #don't print the python style [ ] array characters
+                        # don't print the python style [ ] array characters
                         ret += make_line(varname, str(val)[1:-1]) + LB
                     else:
                         ret += make_line(varname, val) + LB
@@ -352,10 +397,10 @@ class GuiInDat(object):
         """
         lines = []
         currentline = ""
-        #first we need to make a pass and merge together run-on lines
-        #eg IXC = 1, 2, 3, 4
-        #5, 6, 7
-        #becomes IXC = 1,2,3,4,5
+        # first we need to make a pass and merge together run-on lines
+        # eg IXC = 1, 2, 3, 4
+        # 5, 6, 7
+        # becomes IXC = 1,2,3,4,5
         for line in inputlines:
             if line == "":
                 continue
@@ -366,35 +411,35 @@ class GuiInDat(object):
             line = strip_line(line)
             if line == "":
                 continue
-            #if a new variable assignment starts on this line
+            # if a new variable assignment starts on this line
             if "=" in line:
-                #save the accumulated line
+                # save the accumulated line
                 lines.append(currentline)
-                #start a new line
+                # start a new line
                 currentline = line
             else:
-                #otherwise concat this line onto the last with a comma
-                #seperator if needed
+                # otherwise concat this line onto the last with a comma
+                # seperator if needed
                 if currentline:
                     currentline += "," + line
                 else:
                     currentline = line
 
         lines.append(currentline)
-        if lines[0] and not "=" in lines[0]:
-            raise ValueError("First line '" + lines[0] + "'" + \
-                            "does not contain '=' sign")
+        if lines[0] and "=" not in lines[0]:
+            raise ValueError("First line '" + lines[0] + "'" +
+                             "does not contain '=' sign")
 
         self.Run_Description = self.Run_Description.strip()
 
-        #now make the assignments
+        # now make the assignments
         for line in lines:
             if line == "":
                 continue
             varname, varval = line.split("=")[:2]
             self[varname.strip()] = varval.strip()
 
-        #cut off the end of ixc and icc if neqns and nvar are set low enough
+        # cut off the end of ixc and icc if neqns and nvar are set low enough
         self.clip()
 
     def read_file(self, filename):
@@ -411,10 +456,10 @@ class GuiInDat(object):
         file_handle.write(str(self))
 
 
-#if called as main function, convert an IN.DAT
+# if called as main function, convert an IN.DAT
 if __name__ == "__main__":
     PROGDESC = "Reads an IN.DAT file and prints an IN.DAT file of the same " + \
-           "format as used by the GUI. Redirect to output file using '>'"
+        "format as used by the GUI. Redirect to output file using '>'"
 
     PARSER = argparse.ArgumentParser(description=PROGDESC)
     PARSER.add_argument("inputfile", help="IN.DAT file to read from")

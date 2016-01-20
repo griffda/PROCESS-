@@ -78,7 +78,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: qtorus, gasld
+    real(kind(1.0D0)) :: qtorus, gasld, pumpn
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -89,13 +89,91 @@ contains
     !  Total fuel gas load (kg/s)
     !  2 nuclei * nucleus-pairs/sec * mass/nucleus
 
+! MDK Check this!!
     gasld = 2.0D0*qfuel * afuel*umass
-
-    call vacuum(powfmw,rmajor,rminor,0.5D0*(scrapli+scraplo),sarea,vol, &
+    
+    if (vacuum_model == 'old') then    
+        call vacuum(powfmw,rmajor,rminor,0.5D0*(scrapli+scraplo),sarea,vol, &
          shldoth,shldith,tfcth,rsldi-gapds-ddwi,tfno,tdwell,dene,idivrt, &
-         qtorus,gasld,vpumpn,nvduct,dlscal,vacdshm,vcdimax,iprint,outfile)
+         qtorus,gasld,pumpn,nvduct,dlscal,vacdshm,vcdimax,iprint,outfile)
+        ! MDK pumpn is real: convert to integer by rounding.
+        vpumpn = floor(pumpn+0.5D0)    
+    else if (vacuum_model == 'simple') then
+        call vacuum_simple(niterpump,iprint,outfile)
+    else
+      write(*,*) 'ERROR "vacuum_model" seems to be invalid:', vacuum_model
+      write(outfile,*) 'ERROR "vacuum_model" seems to be invalid:', vacuum_model
+    end if
+    
+         
 
   end subroutine vaccall
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  subroutine vacuum_simple(npump,iprint,outfile)
+    !+ad_name  vacuum_simple
+    !+ad_summ  Simple model of vacuum pumping system
+    !+ad_type  Subroutine
+    !+ad_auth  MD Kovari, CCFE, Culham Science Centre
+    !+ad_args  iprint : input integer : Switch to write output (1=yes)
+    !+ad_args  outfile : input integer : Fortran output unit identifier
+    !+ad_args  npump : output real : number of pumps for pumpdown and steady-state
+    !+ad_prob  None
+    !+ad_call  oblnkl
+    !+ad_call  ocmmnt
+    !+ad_call  oheadr
+    !+ad_call  osubhd
+    !+ad_call  ovarin
+    !+ad_call  ovarre
+    !+ad_hist  12/08/15 MDK
+    !+ad_hist  22/09/15 MDK. Battes, Day and Rohde pump-down model: See global_variables.f90
+    !+ad_stat  Okay
+    
+    implicit none
+
+    !  Arguments
+    integer, intent(in) :: iprint, outfile
+    real(kind(1.0D0)), intent(out) :: npump
+    real(kind(1.0D0)) :: pumpspeed, pumpdownspeed, npumpdown, niterpump, wallarea
+    if (tdwell <= 0.0d0) then
+        write(*,*) 'Negative dwell time.  Reset tdwell = 100 seconds'
+        tdwell = 100.0D0
+    end if
+    
+    ! Steady-state model (super simple)
+    ! One ITER torus cryopump has a throughput of 50 Pa m3/s = 1.2155e+22 molecules/s
+    ! Issue #304
+    niterpump = qfuel / 1.2155D22
+    
+    ! Pump-down: 
+    ! Pumping speed per pump m3/s
+    pumpspeed = pumpspeedmax * pumpareafraction * pumpspeedfactor * sarea / tfno
+        
+    wallarea = (sarea / 1084.0d0) * 2000.0d0
+    ! Required pumping speed for pump-down
+    pumpdownspeed = (outgasfactor * wallarea / pbase ) * tdwell**(-outgasindex)
+    ! Number of pumps required for pump-down
+    npumpdown = pumpdownspeed / pumpspeed
+    
+    ! Combine the two (somewhat inconsistent) models 
+    ! Note that 'npump' can be constrained by constraint equation 63
+    npump = max(niterpump, npumpdown)
+    
+    !  Output section
+    if (iprint == 0) return
+
+    call oheadr(outfile,'Vacuum System')
+    call ovarst(outfile,'Switch for vacuum pumping model','(vacuum_model)','"'//vacuum_model//'"')
+    call ocmmnt(outfile,'Simple steady-state model with comparison to ITER cryopumps')
+    call ovarre(outfile,'Plasma fuelling rate (nucleus-pairs/s)','(qfuel)',qfuel, 'OP ')
+    call ocmmnt(outfile,'Number of high vacuum pumps, each with the throughput')
+    call ocmmnt(outfile,' of one ITER cryopump (50 Pa m3 s-1 = 1.2e+22 molecules/s),')
+    call ovarre(outfile,' all operating at the same time', '(niterpump)',niterpump, 'OP ')
+    
+    call ovarre(outfile,'Dwell time', '(tdwell)',tdwell)
+    call ovarre(outfile,'Number of pumps required for pump-down', '(npumpdown)',npumpdown, 'OP ')
+    call ovarre(outfile,'Number of pumps required overall', '(npump)',npump, 'OP ')
+    
+  end subroutine vacuum_simple
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -414,33 +492,29 @@ contains
     call ocmmnt(outfile,'Pumpdown to Base Pressure :')
     call oblnkl(outfile)
     call ovarre(outfile,'First wall outgassing rate (Pa m/s)','(rat)',rat)
-    call ovarre(outfile,'Total outgassing load (Pa m3/s)','(ogas)',ogas)
+    call ovarre(outfile,'Total outgassing load (Pa m3/s)','(ogas)',ogas, 'OP ')
     call ovarre(outfile,'Base pressure required (Pa)','(pbase)',pbase)
-    call ovarre(outfile,'Required N2 pump speed (m3/s)','(s(1))',s(1))
-    call ovarre(outfile,'N2 pump speed provided (m3/s)','(snet(1))',snet(1))
+    call ovarre(outfile,'Required N2 pump speed (m3/s)','(s(1))',s(1), 'OP ')
+    call ovarre(outfile,'N2 pump speed provided (m3/s)','(snet(1))',snet(1), 'OP ')
 
     call osubhd(outfile,'Pumpdown between Burns :')
-    call ovarre(outfile,'Plasma chamber volume (m3)','(volume)',volume)
-    call ovarre(outfile,'Chamber pressure after burn (Pa)','(pend)',pend)
-    call ovarre(outfile,'Chamber pressure before burn (Pa)','(pstart)', &
-         pstart)
+    call ovarre(outfile,'Plasma chamber volume (m3)','(volume)',volume, 'OP ')
+    call ovarre(outfile,'Chamber pressure after burn (Pa)','(pend)',pend, 'OP ')
+    call ovarre(outfile,'Chamber pressure before burn (Pa)','(pstart)', pstart)
     call ovarre(outfile,'Dwell time between burns (s)','(tdwell.)',tdwell)
-    call ovarre(outfile,'Required D-T pump speed (m3/s)','(s(2))',s(2))
-    call ovarre(outfile,'D-T pump speed provided (m3/s)','(snet(2))',snet(2))
+    call ovarre(outfile,'Required D-T pump speed (m3/s)','(s(2))',s(2), 'OP ')
+    call ovarre(outfile,'D-T pump speed provided (m3/s)','(snet(2))',snet(2), 'OP ')
 
     call osubhd(outfile,'Helium Ash Removal :')
-    call ovarre(outfile,'Divertor chamber gas pressure (Pa)','(prdiv)', &
-         prdiv)
-    call ovarre(outfile,'Helium gas fraction in divertor chamber','(fhe)', &
-         fhe)
-    call ovarre(outfile,'Required helium pump speed (m3/s)','(s(3))',s(3))
-    call ovarre(outfile,'Helium pump speed provided (m3/s)','(snet(3))', &
-         snet(3))
+    call ovarre(outfile,'Divertor chamber gas pressure (Pa)','(prdiv)', prdiv)
+    call ovarre(outfile,'Helium gas fraction in divertor chamber','(fhe)', fhe, 'OP ')
+    call ovarre(outfile,'Required helium pump speed (m3/s)','(s(3))',s(3), 'OP ')
+    call ovarre(outfile,'Helium pump speed provided (m3/s)','(snet(3))', snet(3), 'OP ')
 
     call osubhd(outfile,'D-T Removal at Fuelling Rate :')
-    call ovarre(outfile,'D-T fuelling rate (kg/s)','(frate)',frate)
-    call ovarre(outfile,'Required D-T pump speed (m3/s)','(s(4))',s(4))
-    call ovarre(outfile,'D-T pump speed provided (m3/s)','(snet(4))',snet(4))
+    call ovarre(outfile,'D-T fuelling rate (kg/s)','(frate)',frate, 'OP ')
+    call ovarre(outfile,'Required D-T pump speed (m3/s)','(s(4))',s(4), 'OP ')
+    call ovarre(outfile,'D-T pump speed provided (m3/s)','(snet(4))',snet(4), 'OP ')
 
     if (nflag == 1) then
        call oblnkl(outfile)
@@ -472,15 +546,14 @@ contains
     end select
 
     call oblnkl(outfile)
-
     call ovarin(outfile,'Number of large pump ducts','(nduct)',nduct)
-    call ovarre(outfile,'Passage diameter, divertor to ducts (m)', &
-         '(d(imax))',d(imax))
-    call ovarre(outfile,'Passage length (m)','(l1)',l1)
-    call ovarre(outfile,'Diameter of ducts (m)','(dout)',dout)
-    call ovarre(outfile,'Duct length, divertor to elbow (m)','(l2)',l2)
+    call ovarre(outfile,'Passage diameter, divertor to ducts (m)', '(d(imax))',d(imax), 'OP ')
+    call ovarre(outfile,'Passage length (m)','(l1)',l1, 'OP ')
+    call ovarre(outfile,'Diameter of ducts (m)','(dout)',dout, 'OP ')
+    
+    call ovarre(outfile,'Duct length, divertor to elbow (m)','(l2)',l2, 'OP ')
     call ovarre(outfile,'Duct length, elbow to pumps (m)','(l3)',l3)
-    call ovarre(outfile,'Number of pumps','(pumpn)',pumpn)
+    call ovarre(outfile,'Number of pumps','(pumpn)',pumpn, 'OP ')
     call oblnkl(outfile)
     write(outfile,20) ipump
 20  format(' The vacuum system uses ',a5,'pumps')
@@ -488,3 +561,4 @@ contains
   end subroutine vacuum
 
 end module vacuum_module
+

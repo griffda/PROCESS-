@@ -170,7 +170,7 @@
   { "level": 3, "message": "CHECK: Minimum cycle time constraint 42 not available" },
   { "level": 3, "message": "CHECK: Blanket material fractions do not sum to 1.0" },
   { "level": 2, "message": "PLANT_THERMAL_EFFICIENCY: Turbine temperature tturb out of range of validity" },
-  { "level": 2, "message": "PUMPPOWER: Pressure drop calculation uses invalid Reynolds number" },
+  { "level": 2, "message": "PUMPPOWER: Reynolds number outside range 1e4 - 1e7.  Set verbose=1 for more info" },
   { "level": 2, "message": "INITIALISE_REFPROP: Problem in call to setup(REFPROP)" },
   { "level": 2, "message": "FLUID_PROPERTIES: Problem in call to tpflsh(REFPROP)" },
   { "level": 2, "message": "FLUID_PROPERTIES: Problem in call to trnprp(REFPROP)" },

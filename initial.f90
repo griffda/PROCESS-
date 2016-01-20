@@ -67,6 +67,7 @@ subroutine initial
   !+ad_hist  05/11/12 PJK Removed call to ifeini
   !+ad_hist  05/11/12 PJK Removed pulsed reactor variables
   !+ad_hist  05/03/15 JM  Changed blanket fraction check to new models
+  !+ad_hist  26/08/15 MDK Added check that constraint 63 is not used with wrong vacuum model
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -266,6 +267,7 @@ subroutine check
   use rfp_variables
   use tfcoil_variables
   use stellarator_variables
+  use vacuum_variables
 
   implicit none
 
@@ -292,6 +294,7 @@ subroutine check
      call report_error(139)
   end if
 
+
   if ( any(icc(1:neqns+nineqns) == 0) ) then
      idiags(1) = neqns ; idiags(2) = nineqns
      call report_error(140)
@@ -306,6 +309,14 @@ subroutine check
   if ( any(icc(1:neqns+nineqns) == 4) ) then
      call report_error(163)
   end if
+  
+  ! MDK Report error is constraint 63 is used with old vacuum model
+  if (any(icc(1:neqns+nineqns) == 63).and.(vacuum_model.ne.'simple') ) then
+     write(*,*) 'Constraint 63 is requested without the correct vacuum model ("simple").'
+     write(*,*) 'vacuum_model = ', vacuum_model
+     write(*,*) 'PROCESS stopping'
+     stop
+  end if  
 
   !  Fuel ion fractions must add up to 1.0
 
@@ -374,14 +385,15 @@ subroutine check
         boundu(4) = max(boundu(4), boundl(4))
      end if
 
-     !  Density checks
-
-     if (neped < nesep) then
+     !  Density checks: 
+     !  not required if pedestal is set using Greenwald density (Issue #292)
+     
+     if ((iscdens == 0) .and. (neped < nesep)) then
         fdiags(1) = neped ; fdiags(2) = nesep
         call report_error(151)
      end if
 
-     if ((abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7)) then
+     if ((iscdens == 0) .and. (abs(rhopedn-1.0D0) <= 1.0D-7).and.((neped-nesep) >= 1.0D-7)) then
         fdiags(1) = rhopedn ; fdiags(2) = neped ; fdiags(3) = nesep
         call report_error(152)
      end if
@@ -391,8 +403,9 @@ subroutine check
      !  volume-averaged density never drops below the pedestal
      !  density. Prevent this by adjusting dene, and its lower bound
      !  (which will only have an effect if this is an optimisation run)
+     !  Not required if pedestal is set using Greenwald density (Issue #292)
 
-     if (dene <= neped) then
+     if ((iscdens == 0) .and. (dene <= neped)) then
         fdiags(1) = dene ; fdiags(2) = neped
         dene = neped*1.001D0
         call report_error(154)
@@ -547,24 +560,18 @@ subroutine check
   !   coolwh = 2
   !end if
 
-  !  Ensure that blanket material fractions add up to 1.0
-  
-  !  CCFE HCPB Model
-  if (istell == 1) then
-    fsum = 1.0
-  end if
+  !  Ensure that blanket material fractions allow non-zero space for steel  
+  !  CCFE HCPB Model  
   
   if (istell == 0) then
-    if (iblanket == 1) then
-      fsum = fbltibe12 + fblli2sio4 + fblss + vfcblkt + vfpblkt
-      if (abs(fsum-1.0D0) > 1.0D-4) then
+    if ((iblanket == 1).or.(iblanket == 3)) then
+      fsum = breeder_multiplier + vfcblkt + vfpblkt
+      if (fsum >= 1.0D0) then
         idiags(1) = iblanket
-        fdiags(2) = fbltibe12
-        fdiags(3) = fblli2sio4
-        fdiags(4) = fblss
-        fdiags(5) = vfcblkt
-        fdiags(6) = vfpblkt
-        fdiags(7) = fsum
+        fdiags(2) = breeder_multiplier
+        fdiags(3) = vfcblkt
+        fdiags(4) = vfpblkt
+        fdiags(5) = fsum        
         call report_error(165)
       end if
     end if

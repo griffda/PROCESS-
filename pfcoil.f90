@@ -61,7 +61,7 @@ module pfcoil_module
   implicit none
 
   private
-  public :: pfcoil, outpf, outvolt, induct, vsec, bfield
+  public :: pfcoil, outpf, outvolt, induct, vsec, bfield, brookscoil
 
   !  Local variables
 
@@ -122,6 +122,8 @@ contains
     !+ad_hisc               and steel case thickness
     !+ad_hist  17/11/14 PJK Removed aturn argument from superconpf
     !+ad_hist  24/11/14 PJK Corrected wtc for resistive coils
+    !+ad_hist  16/01/15 JM  Added variable "itr_sum" for new costs module
+    !+ad_hist  16/01/15 JM  Added counter variables "c", "m" & "n" for new costs module
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -136,7 +138,7 @@ contains
     integer, parameter :: lrow1 = 2*nptsmx + ngrpmx
     integer, parameter :: lcol1 = ngrpmx
 
-    integer :: i,ii,iii,ij,it,j,k,ncl,nfxf0,ng2,ngrp0,nng,nocoil,npts,npts0
+    integer :: i,ii,iii,ij,it,j,k,c,m,n,ncl,nfxf0,ng2,ngrp0,nng,nocoil,npts,npts0
     integer :: ccount, top_bottom
     integer, dimension(ngrpmx) :: pcls0
     integer, dimension(ngrpmx+2) :: ncls0
@@ -704,6 +706,17 @@ contains
        end do
     end do
 
+    !  Find sum of current x turns x radius for all coils for 2015 costs model
+    c = 0
+    itr_sum = 0.0D0
+    do m=1, ngrp
+       do n=1, ncls(m)
+          c = c + 1
+          itr_sum = itr_sum + (rpf(c) * turns(c) * cptdin(c))
+       end do
+    end do
+    itr_sum = itr_sum + ((bore + 0.5*ohcth) * turns(nohc) * cptdin(nohc))
+
     !  Find OH coil information
 
     if (iohcl /= 0) call ohcalc
@@ -876,9 +889,10 @@ contains
     if (ipfres == 0) then
 
        !  Superconducting coil
-       !  Allowable (hoop) stress (Pa); calculated as for the TF coils' alstrtf
+       !  Allowable (hoop) stress (Pa) alstroh
+       ! Now a user input
 
-       alstroh = min( (2.0D0*csytf/3.0D0), (0.5D0*csutf) )
+       ! alstroh = min( (2.0D0*csytf/3.0D0), (0.5D0*csutf) )
        areaspf = forcepf / alstroh
 
        !  Thickness of hypothetical steel cylinders assumed to encase the CS along
@@ -900,7 +914,7 @@ contains
 
     awpoh = areaoh - areaspf
 
-    !  Fudge to ensure awpoh is positive; result is continuous, smooth and
+    !  Issue #97. Fudge to ensure awpoh is positive; result is continuous, smooth and
     !  monotonically decreases
 
     da = 0.0001D0  !  1 cm^2
@@ -2209,6 +2223,8 @@ contains
     !+ad_hisc               if noh is too large
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  06/01/16 MDK Put the self-inductance formula in a function, 
+    !+ad_hist  06/01/16 MDK added Brooks coil test
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2228,7 +2244,7 @@ contains
     real(kind(1.0D0)), allocatable, dimension(:) :: roh,zoh
     real(kind(1.0D0)), dimension(nplas) :: rplasma,zplasma
     real(kind(1.0D0)), dimension(ngc2+nohmax) :: rc,zc,xc,cc,xcin,xcout
-    real(kind(1.0D0)) :: a,b,c,br,bz,deltar,delzoh,psi,r,reqv,rl,rp,r2_16a2
+    real(kind(1.0D0)) :: a,b,c,br,bz,deltar,delzoh,psi,r,reqv,rl,rp
     real(kind(1.0D0)) :: xohpf,xohpl,xpfpl,zp
     integer :: i,ig,ii,ij,j,jj,k,nc,ncoilj,ncoils,nef,noh
 
@@ -2347,18 +2363,10 @@ contains
     if (iohcl /= 0) then
 
        !  OH coil self inductance
-       !  Equation 86, p. 316 of  Formulas and tables for the calculation
-       !  of mutual and self-inductance [Revised], Rosa and Grover,
-       !  Scientific papers of the Bureau of Standards, No. 169, 3rd ed., 1916
-
-       a = rohc            !  mean radius of coil
-       b = 2.0D0*zh(nohc)  !  length of coil
+       a = rohc                 !  mean radius of coil
+       b = 2.0D0*zh(nohc)       !  length of coil
        c = rb(nohc) - ra(nohc)  !  radial winding thickness
-       r = 0.2235D0*(b + c)  !  approx geometric mean distance of cross-section (Grover)
-       r2_16a2 = r*r / (16.0D0*a*a)
-
-       sxlg(nohc,nohc) = rmu0 * a * turns(nohc)**2 * &
-            (log(8.0D0*a/r)*(1.0D0 + 3.0D0*r2_16a2) - (2.0D0 + r2_16a2))
+       sxlg(nohc,nohc) = selfinductance(a,b,c,turns(nohc))
 
        !  OH coil / PF coil mutual inductances
 
@@ -2445,6 +2453,72 @@ contains
 
   end subroutine induct
 
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  function selfinductance(a,b,c,N)
+    ! Formulas and tables for the calculation of mutual and self-inductance [Revised], 
+    ! Rosa and Grover, Scientific papers of the Bureau of Standards, No. 169, 3rd ed., 1916
+    ! a = mean radius of coil
+    ! b = length of coil
+    ! c = radial winding thickness
+    ! N = number of turns
+    real(kind(1.0D0)) :: a,b,c, N, selfinductance, r, r2_16a2, x, x2, q, at, lambda, mu, p
+
+    !  Equation 88, p. 137      
+    x = b/c
+    x2 = x**2
+    q = log(1.0d0+x2) 
+    p = log(1.0d0+1.0d0/x2)
+    at = atan(x)
+    lambda = log(8.0d0*a/c) + 1/12.0d0 - pi*x/3.0d0 - 0.5d0*q + 1/(12.0d0*x2)*q &
+              + 1/12.0d0*x2*p + 2.0d0/3.0d0*(x-1.0d0/x)*at
+                 
+    mu = c**2/(96.0d0*a**2)*     &
+         ((log(8.0d0*a/c)-0.5d0*q)*(1+3.0d0*x2) + 3.45d0*x2 + 221.0d0/60.0d0   &
+         -1.6d0*pi*x**3 + 3.2d0*x**3*at - 0.1d0/x2*q + 0.5d0*x2**2*p)
+        
+    selfinductance = rmu0*a*N**2 * (lambda + mu)     
+    
+    if((selfinductance<0.0d0).or.(selfinductance .ne. selfinductance).or.(selfinductance>1000.0d0)) then
+        write(*,*) 'a = ',a, ' b = ', b
+        write(*,*) 'c = ',c, ' x = ', x
+        write(*,*) 'q = ',q, ' at = ', at
+        write(*,*) 'x2 = ',x2, ' N = ', N
+        write(*,*) 'lambda = ',lambda, ' mu = ', mu
+        write(*,*) 'selfinductance = ',selfinductance
+    end if
+    
+  end function selfinductance
+  
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+  subroutine brookscoil(outfile)
+    ! http://www.nessengr.com/techdata/brooks/brooks.html  
+    real(kind(1.0D0)) :: a,b,c, N, l, lp
+    character(len=10) :: test    
+    integer, intent(in) :: outfile
+      
+    c = 1.0d0
+    a = 1.5d0 * c
+    b = c
+    N = 1.0d0
+    
+    l = 0.025491d0 * c * 100.0d0 * N**2 * 1.0d-6
+    lp = selfinductance(a,b,c,N)
+    if ((l/lp < 1.05d0).and.(l/lp > 0.95d0)) then 
+        test = 'PASS'
+    else
+        test = 'FAIL'
+    end if
+    call ocmmnt(outfile,'Unit test of self-inductance formula: '//test)
+    call ovarre(outfile,'Self-inductance of 1m Brooks coil: standard formula', '(l)',l, 'OP ')
+    call ovarre(outfile,'Self-inductance of 1m Brooks coil: PROCESS formula', '(lp)',lp, 'OP ')
+    call oblnkl(outfile)
+    write(*,*) 'Test of self-inductance formula: '//test
+    
+  end subroutine brookscoil
+
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine outpf(outfile)
@@ -2478,6 +2552,7 @@ contains
     !+ad_hist  06/11/14 PJK Added extra diagnostic outputs
     !+ad_hist  10/11/14 PJK Removed critical current density output for resistive coils
     !+ad_hist  11/11/14 PJK Added extra area outputs
+    !+ad_hist  13/10/15 MDK Issue #328 use max current in the PF Coil Table.
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2522,39 +2597,42 @@ contains
 
           call osubhd(outfile,'Central Solenoid Current Density Limits :')
           call ovarre(outfile,'Maximum field at Beginning Of Pulse (T)', &
-               '(bmaxoh0)',bmaxoh0)
+               '(bmaxoh0)',bmaxoh0, 'OP ')
           call ovarre(outfile,'Critical superconductor current density at BOP (A/m2)', &
-               '(jscoh_bop)',jscoh_bop)
+               '(jscoh_bop)',jscoh_bop, 'OP ')
           call ovarre(outfile,'Critical strand current density at BOP (A/m2)', &
-               '(jstrandoh_bop)',jstrandoh_bop)
+               '(jstrandoh_bop)',jstrandoh_bop, 'OP ')
           call ovarre(outfile,'Allowable overall current density at BOP (A/m2)', &
-               '(rjohc0)',rjohc0)
+               '(rjohc0)',rjohc0, 'OP ')
           call ovarre(outfile,'Actual overall current density at BOP (A/m2)', &
-               '(cohbop)',cohbop)
+               '(cohbop)',cohbop, 'OP ')
           call oblnkl(outfile)
           call ovarre(outfile,'Maximum field at End Of Flattop (T)', &
-               '(bmaxoh)',bmaxoh)
+               '(bmaxoh)',bmaxoh, 'OP ')
           call ovarre(outfile,'Critical superconductor current density at EOF (A/m2)', &
-               '(jscoh_eof)',jscoh_eof)
+               '(jscoh_eof)',jscoh_eof, 'OP ')
           call ovarre(outfile,'Critical strand current density at EOF (A/m2)', &
-               '(jstrandoh_eof)',jstrandoh_eof)
+               '(jstrandoh_eof)',jstrandoh_eof, 'OP ')
           call ovarre(outfile,'Allowable overall current density at EOF (A/m2)', &
-               '(rjohc)',rjohc)
-          call ovarre(outfile,'Actual overall current density at EOF (A/m2)', &
-               '(coheof)',coheof)
+               '(rjohc)',rjohc, 'OP ')
+          call ovarre(outfile,'Actual overall current density at EOF (A/m2)', '(coheof)',coheof)
           call oblnkl(outfile)
+          ! MDK add ohcth, bore and gapoh as they can be iteration variables
+          call ovarre(outfile,'CS inside radius (m)', '(bore)',bore)
+          call ovarre(outfile,'CS thickness (m)', '(ohcth)',ohcth)
+          call ovarre(outfile,'Gap between central solenoid and TF coil (m)', '(gapoh)',gapoh)
           call ovarre(outfile,'CS overall cross-sectional area (m2)', &
-               '(areaoh)',areaoh)
+               '(areaoh)',areaoh, 'OP ')
           call ovarre(outfile,'CS conductor+void cross-sectional area (m2)', &
-               '(awpoh)',awpoh)
+               '(awpoh)',awpoh, 'OP ')
           call ovarre(outfile,'   CS conductor cross-sectional area (m2)', &
-               '(awpoh*(1-vfohc))',awpoh*(1.0D0-vfohc))
+               '(awpoh*(1-vfohc))',awpoh*(1.0D0-vfohc), 'OP ')
           call ovarre(outfile,'   CS void cross-sectional area (m2)', &
-               '(awpoh*vfohc)',awpoh*vfohc)
+               '(awpoh*vfohc)',awpoh*vfohc, 'OP ')
           call ovarre(outfile,'CS steel cross-sectional area (m2)', &
-               '(areaoh-awpoh)',areaoh-awpoh)
+               '(areaoh-awpoh)',areaoh-awpoh, 'OP ')
           call ovarre(outfile,'CS steel area fraction', &
-               '',(areaoh-awpoh)/areaoh)
+               '',(areaoh-awpoh)/areaoh, 'OP ')
           call ovarre(outfile,'Allowable hoop stress in CS steel (Pa)', &
                '(alstroh)',alstroh)
           call ovarre(outfile,'Strain on superconductor', &
@@ -2566,7 +2644,7 @@ contains
           call ovarre(outfile,'Helium coolant temperature (K)', &
                '(tftmp)',tftmp)
           call ovarre(outfile,'CS temperature margin (K)', &
-               '(tmargoh)',tmargoh)
+               '(tmargoh)',tmargoh, 'OP ')
 
           if ( (abs(coheof) < 0.99D0*abs(rjohc)).and. &
                (abs(cohbop) < 0.99D0*abs(rjohc0)) ) then
@@ -2610,11 +2688,10 @@ contains
        call ocmmnt(outfile,'Resistive PF coils')
 
        call osubhd(outfile,'Resistive Power :')
-       call ovarre(outfile,'PF coil resistive power (W)','(powpfres)', &
-            powpfres)
+       call ovarre(outfile,'PF coil resistive power (W)','(powpfres)', powpfres, 'OP ')
        if (iohcl /= 0) then
           call ovarre(outfile,'Central solenoid resistive power (W)','(powohres)', &
-               powohres)
+               powohres, 'OP ')
        end if
 
     end if
@@ -2682,7 +2759,7 @@ contains
     write(outfile,40) rmajor,0.0D0,2.0D0*rminor,2.0D0*rminor*kappa,1.0D0
 40  format(' Plasma',t10,5f12.2)
 
-    call osubhd(outfile,'PF Coil Information :')
+    call osubhd(outfile,'PF Coil Information at Peak Current:')
 
     write(outfile,50)
 50  format(' coil', &
@@ -2728,11 +2805,12 @@ contains
 
     if (iohcl /= 0) then
        if (ipfres == 0) then
-          write(outfile,100) ric(nohc),rjpfalw(nohc),cohbop, &
-               (cohbop/rjpfalw(nohc)),wtc(nohc),wts(nohc), &
+       ! Issue #328
+          write(outfile,100) ric(nohc),rjpfalw(nohc),max(abs(cohbop),abs(coheof)), &
+               (max(abs(cohbop),abs(coheof))/rjpfalw(nohc)),wtc(nohc),wts(nohc), &
                bpf(nohc)
        else
-          write(outfile,100) ric(nohc),-1.0D0,cohbop, &
+          write(outfile,100) ric(nohc),-1.0D0,max(abs(cohbop),abs(coheof)), &
                1.0D0,wtc(nohc),wts(nohc),bpf(nohc)
        end if
     end if
@@ -2748,7 +2826,7 @@ contains
 120 format(t6,f8.2,t41,1pe11.3,1pe12.3)
 
     call osubhd(outfile,'PF coil current scaling information :')
-    call ovarre(outfile,'Sum of squares of residuals ','(ssq0)',ssq0)
+    call ovarre(outfile,'Sum of squares of residuals ','(ssq0)',ssq0, 'OP ')
     call ovarre(outfile,'Smoothing parameter ','(alfapf)',alfapf)
 
   end subroutine outpf
@@ -2779,6 +2857,7 @@ contains
     !+ad_hist  15/05/14 PJK Added vstot to output
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  20/10/14 PJK OH to CS
+    !+ad_hist  03/08/15 MDK Change in output format for fcohop, fcohbof
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2807,7 +2886,7 @@ contains
          t2,'Total :   ',t13,3(f10.2,5x) )
 
     call oblnkl(outfile)
-    call ovarre(outfile,'Total volt-second consumption by coils (Wb)','(vstot)',vstot)
+    call ovarre(outfile,'Total volt-second consumption by coils (Wb)','(vstot)',vstot, 'OP ')
 
     call osubhd(outfile, &
          'Summary of volt-second consumption by circuit (Wb) :')
@@ -2830,6 +2909,8 @@ contains
     write(outfile,50)(tim(k),k=1,6)
 50  format(t40,'time (sec)'//t10,6f11.2)
 
+    write(outfile,51)(timelabel(k),k=1,6)
+51  format(t16, 6a11)
     call ocmmnt(outfile,'circuit')
 
     do k = 1,ncirt-1
@@ -2865,9 +2946,8 @@ contains
 90  format(t3,i2,t12,6(1pe11.3))
 
     call oblnkl(outfile)
-    write(outfile,100) fcohbop, fcohbof
-100 format(' fcohbop:',f10.3,5x,'fcohbof:',f10.3)
-
+    call ovarre(outfile,'Ratio of central solenoid current at beginning of Pulse / end of flat-top','(fcohbop)',fcohbop)
+    call ovarre(outfile,'Ratio of central solenoid current at beginning of Flat-top / end of flat-top','(fcohbof)',fcohbof, 'OP ')
   end subroutine outvolt
 
 end module pfcoil_module

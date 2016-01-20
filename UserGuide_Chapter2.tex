@@ -255,7 +255,7 @@ code's variables, and contains the following information about each:
 \begin{itemize}
 \item name
 \item dimensions (of arrays)
-\item default value(s)  
+\item default value(s)
 \item description, including physical units if relevant
 \item for switches/flags, the meanings of all allowed values
 \item iteration variable number, if relevant
@@ -310,7 +310,7 @@ It is important to remember that iteration variables \textit{must never be
 initialised to zero}. The code will not be able to adjust the variable's value
 if this is done, and it will stop with an error message.
 
-For example, the major radius is available as an iteration variable, and appears in the variable description file as \texttt{rmajor /8.14/ : plasma major radius (m) (iteration variable 3)}. 
+For example, the major radius is available as an iteration variable, and appears in the variable description file as \texttt{rmajor /8.14/ : plasma major radius (m) (iteration variable 3)}.
 If it is selected as an iteration variable, it will be adjusted by the code.  The value input by the user (or the default, if no value is specified), will be used as the starting value.
 
 % Tables summarising iteration variables
@@ -349,7 +349,7 @@ no. & variable name     & description                                   & eqn & 
 25  & \texttt{fpnetel}  & f-value for net electric power limit equation & 16  & \texttt{0.001D0} & \texttt{1.000D0} \\
 26  & \texttt{ffuspow}  & f-value for fusion power limit equation       & 9   & \texttt{0.001D0} & \texttt{1.000D0} \\
 27  & \texttt{fhldiv}   & f-value for divertor heat load limit equation & 18  & \texttt{0.001D0} & \texttt{1.000D0} \\
-28  & \texttt{fradpwr}  & f-value for radiation power limit equation    & 17  & \texttt{0.001D0} & \texttt{1.000D0} \\
+28  & \texttt{fradpwr}  & f-value for radiation power limit equation    & 17  & \texttt{0.001D0} & \texttt{0.990D0} \\
 29  & \texttt{bore}     & machine bore                                  &     & \texttt{0.100D0} & \texttt{10.00D0} \\
 30  & \texttt{fmva}     & f-value for MVA limit equation                & 19  & \texttt{0.010D0} & \texttt{1.000D0} \\
 31  & \texttt{gapomin}  & minimum gap between outboard vacuum vessel and TF coil &     & \texttt{0.001D0} & \texttt{10.00D0} \\
@@ -376,7 +376,7 @@ no. & variable name     & description                                   & eqn & 
 52  & \texttt{vdalw}    & allowable TF coil dump voltage                          &     & \texttt{0.001D0} & \texttt{1.000D6} \\
 53  & \texttt{fjprot}   & f-value for TF coil current protection limit equation   & 35  & \texttt{0.001D0} & \texttt{1.000D0} \\
 54  & \texttt{ftmargtf} & f-value for TF coil temperature margin limit equation   & 36  & \texttt{0.001D0} & \texttt{1.000D0} \\
-55  & \texttt{tmargmin} & minimum allowable TF/CS coil temperature margin          &     & \texttt{0.001D0} & \texttt{100.0D0} \\
+55  & \texttt{} & (OBSOLETE)          &     & - & - \\
 \hline
 \end{tabular}
 \end{center}
@@ -440,9 +440,9 @@ no. & variable name     & description                                           
 96  & \texttt{fvvhe}    & f-value for vessel He concentration limit equation      & 55  & \texttt{0.001D0} & \texttt{1.000D0} \\
 97  & \texttt{fpsepr}   & f-value for $P_{\mbox{\scriptsize separatrix}}/R_{\mbox{\scriptsize major}}$ limit equation & 56
   & \texttt{0.001D0} & \texttt{1.000D0} \\
-98  & \texttt{li6enrich}& lithium-6 enrichment percentage (\texttt{blktmodel=1})  &     & \texttt{0.001D0} & \texttt{100.0D0} \\
-99  & \texttt{}         & (OBSOLETE)                                              & 57  & \texttt{0.001D0} & \texttt{1.000D0} \\
-100 & \texttt{}         & (OBSOLETE)                                              & 58  & \texttt{0.001D0} & \texttt{1.000D0} \\
+98  & \texttt{li6enrich}& lithium-6 enrichment percentage (\texttt{blktmodel=1})  &     & \texttt{7.400D0} & \texttt{100.0D0} \\
+99  & \texttt{}         & (OBSOLETE)                                              &   & - & - \\
+100 & \texttt{}         & (OBSOLETE)                                              &   & - & - \\
 101 & \texttt{prp}      & ratio of TF coil radial plate area to winding pack area &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
 102 & \texttt{fimpvar}  & impurity fraction of element \texttt{impvar}            &     & \texttt{1.00D-6} & \texttt{0.010D0} \\
 103 & \texttt{flhthresh}& f-value for L-H power threshold limit equation          & 15  & \texttt{1.000D0} & \texttt{1.000D6} \\
@@ -450,6 +450,14 @@ no. & variable name     & description                                           
 105 & \texttt{fnbshinef}& f-value for NBI shine-through fraction limit equation   & 59  & \texttt{0.001D0} & \texttt{1.000D0} \\
 106 & \texttt{ftmargoh} & f-value for CS coil temperature margin limit equation   & 60  & \texttt{0.001D0} & \texttt{1.000D0} \\
 107 & \texttt{favail}   & f-value for minimum availability limit equation         & 61  & \texttt{0.001D0} & \texttt{1.000D0} \\
+108 & \texttt{breeder\_f}& breeder volume ratio: Li4SiO4/(Be12Ti+Li4SiO4)         &     & \texttt{0.060D0} & \texttt{1.000D0} \\
+109 & \texttt{ralpne}   & thermal alpha density / electron density                &     & \texttt{0.050D0} & \texttt{0.150D0} \\
+110 & \texttt{ftaulimit}& f-value for limit on ratio of alpha particle to energy confinement times & 62  & \texttt{0.001D0} & \texttt{1.000D0} \\
+111 & \texttt{fniterpump}& f-value for constraint that number of pumps < tfno     & 63  & \texttt{0.001D0} & \texttt{1.000D0} \\
+112 & \texttt{fzeffmax}  & f-value for Zeff limit equation                        & 64  & \texttt{0.001D0} & \texttt{1.000D0} \\
+113 & \texttt{ftaucq}  & f-value for quench time limit equation                   & 65  & \texttt{0.001D0} & \texttt{1.000D0} \\
+114 & \texttt{fw\_channel\_length}  & Length of a single first wall channel         & 39  & \texttt{0.001D0} & \texttt{1.000D3} \\
+115 & \texttt{fpoloidalpower}  & f-value for max rate of change of energy in poloidal field & 66  & \texttt{0.001D0} & \texttt{1.000D0} \\
 \hline
 \end{tabular}
 \end{center}
@@ -555,13 +563,13 @@ equations.
 % constraints introducing so called slack variables $s$ \cite[e.g.]{Avriel2003},
 % i.e.
 % \begin{equation}
-% c(\vec{x}) \geq 0 
+% c(\vec{x}) \geq 0
 % \end{equation}
-% can be rewritten as 
+% can be rewritten as
 % \begin{equation}
 % c(\vec{x}) - s = 0 \textnormal{ with } s \geq 0.
 % \end{equation}
-% These slack variables then allow for easy distinction between 
+% These slack variables then allow for easy distinction between
 % \begin{itemize}
 % \item a {\it binding} or {\it active} constraint $s=0$,
 % \item a {\it non-binding} or {\it non-active} constraint $s>0$,
@@ -574,11 +582,11 @@ equations.
 % inequalities to be turn into equality constraints and for consistency with the
 % non-optimisation solver.
 
-% XXX Influence on performance? 
+% XXX Influence on performance?
 
 % XXX include test results from new version.
 
-% XXX Comment on reduction of iteration variables and NVAR $>$ NEQNS. 
+% XXX Comment on reduction of iteration variables and NVAR $>$ NEQNS.
 
 
 % Table summarising constraint equations
@@ -606,7 +614,7 @@ no. & description                                               & type & \texttt
 14  & neutral beam decay lengths = \texttt{tbeamin} consistency (NBI) & C    & \textbf{19},1,2,3,6 \\
 15  & L-H power threshold limit                                 & L    & \textbf{103} \\
 16  & net electric power lower limit                            & L    & \textbf{25},1,2,3 \\
-17  & radiation power upper limit                               & L    & \textbf{28} \\
+17  & radiation fraction upper limit                            & L    & \textbf{28} \\
 18  & divertor heat load upper limit                            & L    & \textbf{27} \\
 19  & MVA upper limit                                           & L    & \textbf{30} \\
 20  & neutral beam tangency radius upper limit (NBI)            & L    & \textbf{33},31,3,13 \\
@@ -669,12 +677,17 @@ no. & description                                               & type & \texttt
 53  & peak neutron fluence on TF coil upper limit               & L    & \textbf{92},93,94 \\
 54  & peak TF coil nuclear heating upper limit                  & L    & \textbf{95},93,94 \\
 55  & final He concentration in vacuum vessel upper limit       & L    & \textbf{96},93,94 \\
-56  & $P_{\mbox{\scriptsize separatrix}}/R_{\mbox{\scriptsize major}}$ upper limit & L    & \textbf{97},1,3 \\
+56  & $P_{\mbox{\scriptsize separatrix}}/R_{\mbox{\scriptsize major}}$ upper limit & L    & \textbf{97},1,3,102 \\
 57  & (OBSOLETE) TF coil outer leg toroidal thickness lower limit (SCTF)   & L    & \textbf{99},29,13  \\
 58  & (OBSOLETE) TF coil outer leg radial thickness lower limit (SCTF)     & L    & \textbf{100},13 \\
 59  & Neutral beam shine-through fraction upper limit (NBI)     & L    & \textbf{105},6,19,4 \\
-60  & Central solenoid temperature margin lower limit (SCTF)    & L    & \textbf{106}, \\
-61  & Minimum availability value limit                          & L    & \textbf{107}, \\
+60  & Central solenoid temperature margin lower limit (SCTF)    & L    & \textbf{106} \\
+61  & Minimum availability value limit                          & L    & \textbf{107} \\
+62  & Lower limit on the ratio of alpha particle to energy confinement times  & L    & \textbf{110} \\
+63  & Number of vacuum pumps (vacuum\_model=simple)             & L    & \textbf{111} \\
+64  & Limit on Zeff $\le$ Zeffmax                               & L    & \textbf{112} \\
+65  & TF dump time greater than or equal to calculated quench time & L    & \textbf{56}, 113 \\
+66  & Limit on rate of change of energy in poloidal field       & L    & \textbf{65, 115 } \\
 \hline
 \end{tabular}
 \end{center}
@@ -716,7 +729,7 @@ $\pm 3 $        & neutron wall load \\
 $\pm 4 $        & total TF coil + PF coil power \\
 $\pm 5 $        & ratio of fusion power to injection power \\
 $\pm 6 $        & cost of electricity \\
-$\pm 7 $        & 
+$\pm 7 $        &
 $ \left\{ \begin{array}{ll}
  \mbox{direct cost} & \mbox{if \texttt{ireactor = 0}} \\
  \mbox{constructed cost} & \mbox{otherwise}
@@ -729,6 +742,8 @@ $\pm 12$        & hydrogen plant capital cost \\
 $\pm 13$        & hydrogen production rate \\
 $\pm 14$        & pulse length \\
 $\pm 15$        & plant availability factor (N.B.\ requires \texttt{iavail>=1}) \\
+$\pm 16$        & minimise R0 and maximise burn time (linear combination) \\
+$\pm 17$        & net electrical power \\
 \hline
 \end{tabular}
 \end{center}
@@ -802,6 +817,7 @@ $27$ & \texttt{tbrmin}     & minimum tritium breeding ratio (\texttt{blktmodel=1
 $28$ & \texttt{bt}         & toroidal field on axis \\
 $29$ & \texttt{coreradius} & normalised radius defining the core region \\
 $30$ & \texttt{fimpvar}    & impurity fraction of element \texttt{impvar} \\
+$31$ & \texttt{taulimit}   & Taup/taueff lower limit \\
 \hline
 \end{tabular}
 \end{center}

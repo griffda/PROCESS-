@@ -28,6 +28,20 @@ module load process/master
 \label{sec:gui}
 The user interface allows for viewing and editing of \indat\ files in a web browser. Launch the interface (GUI) by typing \verb+start_gui+ from the Unix command line. 
 
+(The interface uses Django for its web framework. Currently it can only be
+launched by running the Django development server locally. This is performed
+automatically if you launch the GUI as above. For instructions on starting the server manually, see the \verb|README| file in the \texttt{utilities/processgui} directory.)
+
+\textit{Please note: If you are working on a Linux desktop machine and already
+  have Firefox open, typing} \verb+start_gui+ \textit{on a Fusion Unix Network
+  machine will try to open a \process\ GUI session on the already-open Firefox
+  running locally. This will fail! You need to either close the local Firefox
+  session completely before typing} \verb+start_gui+ \textit{or open a
+  different browser manually (e.g.\ konqueror) after typing} \verb+start_gui+
+\textit{and navigate to 127.0.0.1:8000 in the address bar.}
+
+
+
 \includegraphics[scale=1]{gui.eps}
 
 Every variable is listed along with its current value, a 'reference'
@@ -52,28 +66,48 @@ When using the Firefox web browser it can save time to select \\
 
 You can searching for a particular variable can be done using the browser's in-built search. Use the "Expand" button in the top-right of the window to expand every module heading and use Ctrl-f to search.
 
+\section{Executing the Code}
+
+Execute \process\ by simply typing \texttt{process} on the Unix command line.
+
+By default, the input and output file names are as described in the following
+sections. If, however, \process\ is executed with an argument, this is used as
+a prefix to the file names:
+\begin{quote}
+\begin{verbatim}
+process myrun
+\end{verbatim}
+\end{quote}
+will assume that the input file is called \textit{myrun}\indat, etc.
+
+The input file must be in the current directory.  The output files \textit{myrun}\outdat\
+and \textit{myrun}\mfile\ will be created in the current directory.
+
 \section{The Input File}
 \label{sec:infile}
 
-The input file \indat\ is used to change the values of the physics, engineering and other code parameters from their default values, and to set up the numerics (constraint equations, iteration variables etc.) required to define the problem to be solved.  The user interface writes the input file, so it is not necessary to edit it directly.  Details of layout and format are in Appendix~\ref{app:infile}.
+The input file \indat\ is used to change the values of the physics,
+engineering and other code parameters from their default values, and to set up
+the numerics (constraint equations, iteration variables etc.) required to
+define the problem to be solved.  The user interface writes the input file, so
+it is not necessary to edit it directly.  Details of layout and format are in
+Appendix~\ref{app:infile}.
 
-If the code encounters a problem reading the input file, it will stop immediately
-with an error message. The last line of the output file \outdat\ may give an indication of where in the input file the problem lies.
+If the code encounters a problem reading the input file, it will stop
+immediately with an error message. The last line of the output file \outdat\
+may give an indication of where in the input file the problem lies.
 
 \section{The Output Files}
 
 The main output from the code is sent to file \outdat\ in the working
-directory.  It is essential to check that the code reports that it has found a \textit{feasible solution}.
+directory.  It is essential to check that the code reports that it has found a
+\textit{feasible solution}.
 
 A second file, \mfile, is also produced in the working directory.  This file
 contains most of the same data as \outdat\ but in a different format, and has
 been designed to be ``machine-readable'' by some of the utility programs
 described in Chapter~\ref{chap:utilities}, to allow simple post-processing and
 graphical output to be produced easily.
-
-\section{Executing the Code}
-
-The input file \indat\ must be in the current directory.  Execute \process\ by simply typing \texttt{process} on the Unix command line.  The output files \outdat\ and \mfile\ will be created in the current directory.
 
 \section{Optimisation mode}
 

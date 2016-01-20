@@ -123,6 +123,7 @@ subroutine caller(xc,nvars)
   use build_module
   use buildings_module
   use costs_module
+  use costs_2015_module
   use current_drive_module
   use divertor_module
    !use fwbs_module
@@ -186,7 +187,7 @@ subroutine caller(xc,nvars)
   !  Tokamak and RFP calls
   call geomty
   call radialb(nout,0)
-  call vbuild
+  call vbuild(nout,0)
 
   if (irfp == 0) then
      call physics
@@ -213,10 +214,13 @@ subroutine caller(xc,nvars)
 
   call pulse(nout,0)
   
-  if (iblanket == 1) then
-	 call ccfe_hcpb(nout, 0)
-  else if (iblanket == 2) then
-     call kit_hcpb(nout, 0)  
+  if (iblanket == 1) then           ! CCFE HCPB model
+	 call ccfe_hcpb(nout, 0) 
+  else if (iblanket == 2) then      ! KIT HCPB model
+     call kit_hcpb(nout, 0) 
+  else if (iblanket == 3) then      ! CFE HCPB model with Tritium Breeding Ratio calculation
+     call ccfe_hcpb(nout, 0)
+	 call tbr_shimwell(nout, 0, breeder_f, li6enrich, iblanket_thickness, tbr)      
   end if 
    
   call divcall(nout,0)
@@ -234,7 +238,7 @@ subroutine caller(xc,nvars)
 
   call power1
   call vaccall(nout,0)
-  call bldgcall(nout,0)
+  if (cost_model==0) call bldgcall(nout,0)
   call acpow(nout,0)
   call power2(nout,0)
 
@@ -244,8 +248,13 @@ subroutine caller(xc,nvars)
      call avail(nout,0)
   end if
 
-  call costs(nout,0)
-  
+  if (cost_model == 1) then
+     call costs_2015(0,0)
+  else
+     call costs(nout,0)
+  end if
+
+
   !+**PJK  if (ifispact.eq.1) then
   !+**PJK     call fispac(0)
   !+**PJK     call loca(nout,0)

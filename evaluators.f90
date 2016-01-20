@@ -203,7 +203,7 @@ contains
           loop = loop+1
           call caller(xv,n)
           if (verbose == 1) then
-              write(*,*) 'Internal tburn consistency check: ',tburn,tburn0
+              write(*, '(a, 2e10.3)') 'Internal tburn consistency check: ',tburn,tburn0
           end if 
        end do
        if (loop >= 10) then
@@ -370,6 +370,8 @@ contains
     !+ad_hist  22/05/14 PJK Name changes to power quantities
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  06/10/14 PJK Added orbit loss power
+    !+ad_hist  18/11/15  RK Major radius/burn time optimiser added
+    !+ad_hist  10/12/15  RK Net electrical output added as FoM
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -400,7 +402,10 @@ contains
        fc = sgn * 0.2D0 * rmajor
 
     case (2)  !  fusion power / input power
-       fc = sgn * powfmw / (pinjmw + porbitlossmw + tfcpmw + ppump/1.0D6)
+        write(*,*) 'Figure of merit 2 (fusion power / input power) is not used.'
+        write(*,*) 'Figure of merit 5 (fusion gain Q) is available.'
+        stop
+       ! fc = sgn * powfmw / (pinjmw + porbitlossmw + tfcpmw + ppump/1.0D6)
 
     case (3)  !  neutron wall load
        fc = sgn * wallmw
@@ -410,7 +415,7 @@ contains
 
     case (5)  !  fusion power / injection power
        fc = sgn * powfmw / pinjmw
-
+       
     case (6)  !  cost of electricity
        fc = sgn * coe/100.0D0
 
@@ -418,7 +423,7 @@ contains
        if (ireactor == 0) then
           fc = sgn * cdirt/1.0D3
        else
-          fc = sgn * concost/1.0D3
+          fc = sgn * concost/1.0D4
        end if
 
     case (8)  !  aspect ratio
@@ -447,6 +452,12 @@ contains
        if (iavail /= 1) call report_error(23)
 
        fc = sgn * cfactr
+
+    case (16)  !  major radius/burn time
+       fc = sgn * ( 0.95d0 * (rmajor/9.0d0) + 0.05d0 * (7200.d0/tburn) )
+       
+    case (17)  !  net electrical output
+       fc = sgn * pnetelmw / 500.0d0
 
     case default
        idiags(1) = iab ; call report_error(24)

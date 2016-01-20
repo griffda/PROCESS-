@@ -260,7 +260,7 @@ contains
     if (ife /= 1) then
        if ((ipowerflow == 0).or.(blkttype == 3)) then
           call ocosts(outfile,'22121','Blanket beryllium cost (M$)',c22121)
-          call ocosts(outfile,'22122','Blanket breeder material cost (M$)',c22122)
+          call ocosts(outfile,'22122','Blanket breeder material cost (M$)',c22122)                
        else
           call ocosts(outfile,'22121','Blanket lithium-lead cost (M$)',c22121)
           call ocosts(outfile,'22122','Blanket lithium cost (M$)',c22122)
@@ -557,6 +557,8 @@ contains
     annfwbl = (fwallcst + blkcst) * &
          (1.0D0+cfind(lsa)) * fcap0cp * crffwbl
 
+         
+
     !  Cost of electricity due to first wall/blanket replacements
 
     coefwbl = 1.0D9 * annfwbl / kwhpy
@@ -761,7 +763,14 @@ contains
     call ovarrf(outfile,'Cost of electricity (m$/kWh)','(coe)',coe)
 
     call osubhd(outfile,'Power Generation Costs :')
-
+    
+    if ((annfwbl /= annfwbl).or.(annfwbl > 1.0D10).or.(annfwbl < 0.0D0)) then
+        write(outfile,*)'Problem with annfwbl'
+        write(outfile,*)'fwallcst=', fwallcst, '  blkcst=', blkcst
+        write(outfile,*)'crffwbl=', crffwbl,   '  fcap0cp=', fcap0cp
+        write(outfile,*)'feffwbl=', feffwbl,   '  fwbllife=', fwbllife
+    end if
+    
     write(outfile,200) &
          anncap,coecap, &
          annoam,coeoam, &
@@ -1603,6 +1612,7 @@ contains
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  16/10/14 PJK Replaced sccufac usage with input copper fractions
     !+ad_hist  24/11/14 PJK Corrected conductor costs for resistive coils
+    !+ad_hist  13/10/15 MDK Issue #328 Fix conductor costs.
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1700,37 +1710,21 @@ contains
 
     if (iohcl == 1) then
 
-       !  Superconductor ($/m)
-
-       !costpfsc = ucsc(isumatoh) * &
-       !     (sccufac * max(abs(bmaxoh),abs(bmaxoh0)) ) * &
-       !     abs(ric(nohc)/turns(nohc))*1.0D6 / &
-       !     max(abs(cohbop),abs(coheof)) * dcond(isumatoh)
+       !  Superconductor ($/m)  
+       !  Issue #328  Use CS conductor cross-sectional area (m2) 
        if (ipfres == 0) then
-          costpfsc = ucsc(isumatoh) * &
-               awpoh*(1.0D0-fcuohsu)*(1.0D0-vf(nohc)) * &
-               abs(ric(nohc)/turns(nohc))*1.0D6 / &
-               max(abs(cohbop),abs(coheof)) * dcond(isumatoh)
+          costpfsc = ucsc(isumatoh) * awpoh*(1-vfohc)*(1-fcuohsu)/turns(nohc) * dcond(isumatoh)
        else
           costpfsc = 0.0D0
        end if
 
        !  Copper ($/m)
-
-       !costpfcu = uccu * &
-       !     (1.0D0 - sccufac*max(abs(bmaxoh),abs(bmaxoh0)) ) * &
-       !     abs(ric(nohc)/turns(nohc))*1.0D6 / &
-       !     max(abs(cohbop),abs(coheof)) * dcopper
+       
        if (ipfres == 0) then
-          costpfcu = uccu * &
-               awpoh*fcuohsu*(1.0D0-vf(nohc)) * &
-               abs(ric(nohc)/turns(nohc))*1.0D6 / &
-               max(abs(cohbop),abs(coheof)) * dcopper
+          costpfcu = uccu * awpoh*(1-vfohc)*fcuohsu/turns(nohc) * dcopper
        else
-          costpfcu = uccu * &
-               awpoh*(1.0D0-vf(nohc)) * &
-               abs(ric(nohc)/turns(nohc))*1.0D6 / &
-               max(abs(cohbop),abs(coheof)) * dcopper
+          ! MDK I don't know if this is ccorrect as we never use the resistive model
+          costpfcu = uccu * awpoh*(1-vfohc)/turns(nohc) * dcopper
        end if
 
        !  Total cost/metre of superconductor and copper wire (OH coil)
@@ -1932,7 +1926,7 @@ contains
     cmlsa(3) = 0.9225D0
     cmlsa(4) = 1.0000D0
 
-    c2223 = 1.0D-6 * cryomass * uccryo
+    c2223 = 1.0D-6 * vvmass * uccryo
     c2223 = fkind * c2223 * cmlsa(lsa)
 
   end subroutine acc2223
@@ -1961,6 +1955,7 @@ contains
     !+ad_hist  --/--/-- PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  22/05/14 PJK Powers now in MW instead of W
+    !+ad_hist  17/09/15 MDK #327 Neutral beam cost now depends on pnbitot
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -2010,7 +2005,9 @@ contains
 
        !  Account 223.3 : Neutral Beam
 
-       c2233 = 1.0D-6 * ucnbi * (1.0D6*pnbeam)**exprf
+       ! c2233 = 1.0D-6 * ucnbi * (1.0D6*pnbeam)**exprf
+       ! #327
+       c2233 = 1.0D-6 * ucnbi * (1.0D6*pnbitot)**exprf
        if (ifueltyp == 1) c2233 = (1.0D0-fcdfuel) * c2233
        c2233 = fkind * c2233
 

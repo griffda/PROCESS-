@@ -60,7 +60,7 @@ up-to-date, relevant and tidy. Please keep to the following guidelines
 whenever the source code is modified.
 \begin{enumerate}
 
-\item Use comments copiously, and in keeping with the existing code.
+\item Use comments copiously in the code.
 
 \item Use the standard header layout, and do not omit any of the
   sections. Here is an example subprogram header:
@@ -119,13 +119,14 @@ whenever the source code is modified.
   (i.e.\ \texttt{culblm.html} for the example above) using your favourite web
   browser.
 
-\item If you add a new routine to a module, remember to modify the module's
-  header as well as the routine's (add a \verb.!+ad_cont. line to it).
+\item If you add a new routine to a module, remember to modify the header of the module as well as that of the new routine (add a \verb.!+ad_cont. line to it).
 
-\item Add a suitable level of documentation to this User Guide whenever a
+\item Add suitable documentation to this User Guide whenever a
   model is added or modified. This should be done immediately to ensure that
   the Guide remains consistent with the source code. Change the code's revision
   number and the date in \texttt{process.tex}.
+  
+\item Add a new file to the folder \texttt{release\_notes}.  It is particularly important to describe here any changes to the required IN.DAT - especially any change that makes previous IN.DAT files unusable.  
 
 \end{enumerate}
 

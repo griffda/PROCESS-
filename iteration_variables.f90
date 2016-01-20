@@ -71,6 +71,12 @@ subroutine loadxc
   !+ad_hist  06/10/14 PJK Added fnbshinef (105)
   !+ad_hist  11/11/14 PJK Added ftmargoh (106)
   !+ad_hist  25/11/14 JM  Added favail (107)
+  !+ad_hist  27/05/15 MDK Added breeder_f (108)
+  !+ad_hist  03/08/15 MDK Create list of iteration variable names
+  !+ad_hist  05/08/15 MDK Added ralpne, ftaulimit
+  !+ad_hist  26/08/15 MDK Added fniterpump (111)
+  !+ad_hist  18/11/15 RK  Added fzeffmax (112)
+  !+ad_hist  26/11/15 RK  Added ftaucq (113)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -94,6 +100,7 @@ subroutine loadxc
   use stellarator_variables
   use tfcoil_variables
   use times_variables
+  use global_variables
 
   implicit none
 
@@ -101,8 +108,7 @@ subroutine loadxc
 
   !  Local variables
 
-  integer :: i
-
+  integer :: i,j
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   do i = 1,nvar
@@ -228,13 +234,35 @@ subroutine loadxc
      case (105) ; xcm(i) = fnbshinef
      case (106) ; xcm(i) = ftmargoh
      case (107) ; xcm(i) = favail
-
+     case (108) ; xcm(i) = breeder_f
+     case (109) ; xcm(i) = ralpne
+     case (110) ; xcm(i) = ftaulimit
+     case (111) ; xcm(i) = fniterpump
+     case (112) ; xcm(i) = fzeffmax
+     case (113) ; xcm(i) = ftaucq
+     case (114) ; xcm(i) = fw_channel_length
+     case (115) ; xcm(i) = fpoloidalpower
+    
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
         call report_error(54)
 
      end select
 
+      ! Simple list of iteration variable names 
+      name_xc(i) = lablxc(ixc(i))
+      ! Note that iteration variable 18 has more than one name:
+      if ((ixc(i) == 18).and.(icurr /= 2)) name_xc(i) = 'q95'
+      if ((ixc(i) == 18).and.(icurr == 2)) name_xc(i) = 'qbar'
+      
+      
+       ! MDK Check if sweep variable is also an iteration variable
+       if (name_xc(i) == vlabel) then
+            write(nout,*) 'WARNING: The sweep variable is also an iteration variable.'
+            write(nout,*) 'The values of the sweep variable will be overwritten by the optimiser.'
+            write(*,*) 'WARNING: The sweep variable is also an iteration variable.'
+       end if
+      
      !  Check that no iteration variable is zero
 
      if (abs(xcm(i)) <= 1.0D-12) then
@@ -330,6 +358,10 @@ subroutine convxc(xc,nn)
   !+ad_hist  06/10/14 PJK Added fnbshinef (105)
   !+ad_hist  11/11/14 PJK Added ftmargoh (106)
   !+ad_hist  25/11/14 JM  Added favail (107)
+  !+ad_hist  27/05/15 MDK Added breeder_f (108)
+  !+ad_hist  05/08/15 MDK Added ralpne (109), ftaulimit (110)
+  !+ad_hist  18/11/15 RK  Added fzeffmax (112)
+  !+ad_hist  26/11/15 RK  Added ftaucq (113)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -478,6 +510,14 @@ subroutine convxc(xc,nn)
      case (105) ; fnbshinef = xc(i)/scale(i)
      case (106) ; ftmargoh  = xc(i)/scale(i)
      case (107) ; favail    = xc(i)/scale(i)
+     case (108) ; breeder_f = xc(i)/scale(i)
+     case (109) ; ralpne    = xc(i)/scale(i)
+     case (110) ; ftaulimit = xc(i)/scale(i)
+     case (111) ; fniterpump = xc(i)/scale(i)
+     case (112) ; fzeffmax = xc(i)/scale(i)
+     case (113) ; ftaucq = xc(i)/scale(i)
+     case (114) ; fw_channel_length = xc(i)/scale(i)
+     case (115) ; fpoloidalpower = xc(i)/scale(i)
 
      case default
         call report_error(57)

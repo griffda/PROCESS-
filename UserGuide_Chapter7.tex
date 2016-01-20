@@ -147,19 +147,21 @@ to be given permission to do so via the CCFE \texttt{GitLab} server.
 
 \item \texttt{cd SomewhereAppropriate} (you choose!)
 
-\item \texttt{git clone git@git.ccfe.ac.uk:process/process.git process}
-
-\item \texttt{cd process}
+\item 
+\texttt{git clone git@git.ccfe.ac.uk:process/process.git -b develop my\_develop}
+This copies the \texttt{develop} branch of the repository into a local folder \texttt{my\_develop}, which will be created if it does not already exist.
+\item \texttt{cd my\_develop}
 
 \item \texttt{git checkout develop}
 
+The sequence of commands above will provide you with a full copy of the \texttt{develop} branch of the \process\ source code, Python utilities and all
+the documentation files. 
+
+\item \texttt{make all}\\
+This performs a full compilation and builds the executable, creates the User Guide, creates the python dictionaries and produces all the web-based documentation.
+
 \end{enumerate}
 
-The above sequence of commands will provide you with a full copy of the
-\texttt{develop} branch of the \process\ source code, Python utilities and all
-the documentation files. Type \texttt{make all} to perform a full compilation
-and build the executable, create the User Guide and produce all the web-based
-documentation.
 
 \subsection{Git workflow}
 
@@ -214,47 +216,49 @@ and all test runs are successful!), use the following commands:
 
 \item \texttt{git status}  (this will show a list of modified files)
 
-\item \texttt{git add changedfile1 changedfile2 ...}  (this `stages' the files
-  marking them as ready for committing)
+\item \texttt{git add changedfile1 changedfile2 ...}  \\
+  (This `stages' the modified files marking them as ready for committing).  \\
+  \texttt{git commit}
+  
+  Alternatively, just use\\
+  \texttt{git commit -a} \\
+  This commits all modified tracked files.
 
-\item \texttt{git commit}
+\item An editor window will open; add a line summarising the changes you have made, save and close the window. This will initiate the commit to your \textit{local}\ copy of the repository.
 
-\item An editor window will open; add a line summarising the changes you have
-  made, save and close the window. This will initiate the commit to your
-  \textit{local}\ copy of the repository.
-
-\item \texttt{git push}  (to send the changes to the central \texttt{GitLab}
-  repository)
+\item \texttt{git push} \\
+Copies the changes you have made locally to the version in the central \texttt{GitLab} repository.  This uses a merging process, but if no-one else has changed your branch then the central version will simply become a copy of your local version.
 
 \end{enumerate}
 
 \subsubsection{Merging \texttt{develop} into working branch}
 
-It is a good idea to periodically merge the \texttt{develop} branch into the
-branch in which you are working.
+It is a good idea to periodically merge the \texttt{develop} branch into the branch in which you are working, to ensure that any changes made in \texttt{develop} are included in your working branch.
 \begin{enumerate}
 
 \item Firstly, make sure you have committed your latest changes into the
-  central \texttt{GitLab} repository as described in the previous section.
+  central \texttt{GitLab} repository as described in the previous section.  Set the directory containing the working branch as your current directory.
 
-\item \texttt{git pull}
+\item \texttt{git pull}.  \\
+Merges the version in the central repository into the local branch by copying over any changes that have been made in the version stored centrally.
 
-\item \texttt{git checkout develop}
+\item \texttt{git checkout develop}  \\
+This switches the "current branch" to \texttt{develop}.
 
-\item \texttt{git pull}
+\item \texttt{git pull} \\
+Updates the current branch of the local repository to the same branch on the central repository.
 
-\item \texttt{git checkout dev\_mynewmodel}
+\item \texttt{git checkout dev\_mynewmodel}  \\
+This switches the "current branch" to \texttt{dev\_mynewmodel}.
 
-\item \texttt{git merge develop}
+\item \texttt{git merge develop} \\
+Merges \texttt{develop} into the \texttt{dev\_mynewmodel} branch.
 
-\item Look for messages on the screen indicating that some files cannot be
-  merged directly because of a merge `conflict'. This typically happens if the
+\item Look for messages on the screen containing the word "conflict" indicating that some files cannot be merged directly. This typically happens if the
   same (or very closely-spaced) lines have been edited in both the
   \texttt{develop} and \texttt{dev\_mynewmodel} branches.
 
-  If any files are affected, edit them and look for any lines containing
-  \texttt{=======}. Such lines separate the changes made in the two branches,
-  as in:
+  If any files are affected, they will be listed.  Edit them and look for any lines containing  \texttt{=======}. Such lines separate the changes made in the two branches, as in:
 \begin{verbatim}
 <<<<<<< HEAD
 This line was edited in dev_mynewmodel branch
@@ -266,7 +270,8 @@ This line was edited in develop branch
   \texttt{file1} etc.\ are the names of the files you removed conflicts
   from. Finally type \texttt{git commit} and edit the change log file.
 
-\item \texttt{git push}
+\item \texttt{git push} \\
+Updates the central repository.
 
 \end{enumerate}
 
@@ -282,7 +287,8 @@ differences:
 \item Firstly, make sure you have committed your latest changes to the working
   branch into the central \texttt{GitLab} repository.
 
-\item \texttt{git pull}
+\item \texttt{git pull}\\
+Merges the version in the central repository into the local branch by copying over any changes that have been made in the version stored centrally.
 
 \item \texttt{git checkout dev\_mynewmodel}
 
@@ -317,16 +323,33 @@ Section~\ref{sec:codemods}).
   the definition of \verb+\version+ in \texttt{process.tex} by changing the
   Revision (to \texttt{XYZ}) and the date.
 
-\item \texttt{git add process.f90 process.tex file1 file2 ...}  (where
-  \texttt{file1} etc.\ are other changed files ready to be committed as listed
-  via \texttt{git status})
+\item If you have changed any "use" statements in the code, or any compilation dependencies in the Makefile, run \\
+\texttt{make clean}
+  
+\item \texttt{make all} \\
+This ensures that all the code and documentation compiles successfully.  
 
-\item \texttt{git commit}
+\item Run the input file(s) in the \texttt{tests} folder to ensure PROCESS runs correctly.
 
-\item Add a one- or two-line comment describing the changes made, using a format similar to
+\item 
+Close all open editor windows.  The commit will not work otherwise.
+
+\item   \texttt{git commit -a} \\
+  This commits all modified tracked files.\\
+  \\
+  Alternatively, you can this in two steps:\\  
+  \texttt{git add process.f90 process.tex changedfile1 changedfile2 ...}  \\
+  (This `stages' the modified files marking them as ready for committing).  \\
+  \texttt{git commit}  
+
+\item An editor window will open; add a line summarising the changes you have made.  Use a format like this:
 \begin{verbatim}
-09/12/2014: (rXYZ)  A short description of the changes made
+rXYZ    A summary of the changes made
+Further details. Changes due to Git issues can be described like this:
+#270    Description
+#273    Description
 \end{verbatim}
+Save and close the window. This will initiate the commit to your \textit{local}\ copy of the repository.  
 
 \item \texttt{git tag -a rXYZ -m `Revision XYZ'}
 
@@ -334,12 +357,9 @@ Section~\ref{sec:codemods}).
 
 \item \texttt{git push origin rXYZ}
 
-\item \texttt{make all}
-
 \end{enumerate}
 
-The instructions given in Section~\ref{sec:fullrebuild} should now be followed
-to make the new \texttt{develop} release available to all users.
+The instructions given in Section~\ref{sec:fullrebuild} should now be followed to make the new \texttt{develop} release available to all users.
 
 \subsubsection{Merging develop into master}
 
@@ -355,15 +375,19 @@ or \texttt{develop} branches are updated a full rebuild of the standard
 executables and documentation should be performed. This is done as follows:
 \begin{enumerate}
 
+\item Ensure that all key users have been informed (using the commit message described above or directly).
+
 \item \texttt{alter PROCESS}  (this changes your current login to that of the
   \texttt{PROCESS} user; only registered individuals are able to do this)
 
 \item \texttt{cd develop}  (or \texttt{cd master}, as appropriate to the
   branch to be rebuilt)
 
-\item \texttt{git pull}
+\item \texttt{git pull}\\
+Updates the version stored in this folder to the version stored centrally.
 
 \item \texttt{make all}
+This is essential because the Git repository does not include any of the files generated in the compilation process.
 
 \item \texttt{exit}  (to return to your own username again)
 
