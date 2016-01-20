@@ -22,7 +22,7 @@ icc(18) = 35
 icc(19) = 39
 icc(20) = 15
 icc(21) = 56
-icc(22) = 62 
+icc(22) = 62
 
 *---------------Iteration Variables----------------*
 nvar = 39 * Number of iteration variables to use
@@ -81,10 +81,10 @@ boundu(60) = 9.0d4
 ixc(34) = 59 * fcutfsu
 *boundl(59) = 0.66667
 boundl(59) = 0.4
-ixc(35) = 63  * ftpeak (f-value for equation 39) 
+ixc(35) = 63  * ftpeak (f-value for equation 39)
 ixc(36) = 109 * ralpne
 ixc(37) = 110 * ftaulimit
-ixc(38) = 114 * fw_channel_length 
+ixc(38) = 114 * fw_channel_length
 
 ixc(39) = 8   * f-value for epsxβp limit equation (6)
 
@@ -180,7 +180,7 @@ fauxbop  = 0.032 * Fraction of gross electric power to balance-of-plant
 *htpmw_fw = 50
 *htpmw_shld = 2
 primary_pumping = 1 * Switch for pumping of primary coolant
-fpumpfw = 0.05
+fpumpfw = 0.06
 fpumpblkt = 0.01
 fpumpdiv = 0.01
 fpumpshld = 0.01

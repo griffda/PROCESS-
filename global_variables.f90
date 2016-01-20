@@ -1320,8 +1320,8 @@ module fwbs_variables
 
   !+ad_vars  etaiso /0.85/ : isentropic efficiency of first wall and blanket coolant pumps (secondary_cycle>1)
   real(kind(1.0D0)) :: etaiso = 0.85D0
-  !+ad_vars  fvoldw /1.4/ : area coverage factor for vacuum vessel volume
-  real(kind(1.0D0)) :: fvoldw = 1.4D0
+  !+ad_vars  fvoldw /1.74/ : area coverage factor for vacuum vessel volume
+  real(kind(1.0D0)) :: fvoldw = 1.74D0
   !+ad_vars  fvolsi /1.0/ : area coverage factor for inboard shield volume
   real(kind(1.0D0)) :: fvolsi = 1.0D0
   !+ad_vars  fvolso /0.64/ : area coverage factor for outboard shield volume
