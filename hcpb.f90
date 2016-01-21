@@ -2153,7 +2153,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 subroutine tbr_shimwell(outfile, iprint, breeder_f, li6enrich, iblanket_thickness, tbr)
-    !+ad_name  cprops
+    !+ad_name  tbr_shimwell
     !+ad_summ  Calculates TBR
     !+ad_type  Subroutine
     !+ad_auth  Michael Kovari

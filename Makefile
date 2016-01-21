@@ -208,7 +208,6 @@ LIBS   = ${LIBS_${ARCH}}
 	${FORTRAN} ${FFLAGS} -c $*.f90
 
 default: process.exe
-
 # object dependencies (usually via modules or header files)
 #fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o refprop_interface.o \
 #  maths_library.o
@@ -337,6 +336,14 @@ userguide: process.tex
 	@ dvipdf process
 
 doc: html userguide
+
+help:
+	$(info .)
+	$(info ****************************** PROCESS Makefile *********************************)
+	$(info .)
+	$(info Info: see instructions below for using gfortran compiler on CCFE fusion machines.)
+	$(info =>    module unload ifort/10.0.023)
+	$(info =>    module load gcc/4.8.2)
 
 dicts: root.dir
 	@ touch utilities/process_io_lib/process_dicts.py
