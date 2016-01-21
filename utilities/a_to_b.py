@@ -51,7 +51,7 @@ import process_io_lib.mfile as mfmod
 try:
     from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_VAR_TYPE, \
         DICT_DEFAULT, DICT_IXC_BOUNDS, IFAIL_SUCCESS, \
-        DICT_INPUT_BOUNDS
+        DICT_INPUT_BOUNDS, DICT_DESCRIPTIONS
 except ImportError:
     print("The Python dictionaries have not yet been created. Please run \
 'make dicts'!")
@@ -106,7 +106,7 @@ def get_val(varname, in_dat):
        default value of variable
        Args
             varname --> String name of variable
-            in_dat --> INDat object
+            in_dat --> InDat object
 
     """
     if varname in in_dat.data.keys():
@@ -150,7 +150,7 @@ def update_infile(var_dict, in_dat):
         if key in in_dat.data.keys():
             #if the variable is already in infile, update it
             in_dat.data[key].value = var_dict[key]
-            in_dat.variables[key].value = var_dict[key]
+            in_dat.data[key].value = var_dict[key]
         elif key in DICT_VAR_TYPE.keys() or is_bound(key):
             #if it isn't, add it to infile only if in valid variable list
             var = inmod.INVariable(key, var_dict[key])
@@ -195,9 +195,9 @@ def run_process(path_to_process, niter=100, bound_spread=1.2):
        run is carried out, False if niter is exceeded.
 
     """
-    in_dat = inmod.INDATNew("IN.DAT")
+    in_dat = inmod.InDat("IN.DAT")
     #get list of itervars
-    ixc_list = in_dat.variables['ixc'].value
+    ixc_list = in_dat.data['ixc'].value
     itervars = []
     for var in ixc_list:
         if var != '':
@@ -207,7 +207,7 @@ def run_process(path_to_process, niter=100, bound_spread=1.2):
     lbs = []
     ubs = []
     for name in itervars:
-        val = get_val(name, in_dat)
+        val = float(get_val(name, in_dat))
         if name in DICT_INPUT_BOUNDS:
             process_lb = DICT_INPUT_BOUNDS[name]["lb"]
             process_ub = DICT_INPUT_BOUNDS[name]["ub"]
@@ -220,7 +220,8 @@ def run_process(path_to_process, niter=100, bound_spread=1.2):
     #loop niter times, varying iteration variables if no solution
     for i in range(niter + 1):
         #returncode = os.system(path_to_process + " >& process.log")
-        returncode = subprocess.call([path_to_process + " >& process.log"])
+        # returncode = subprocess.call(["{0}/process.exe >& process.log".format(path_to_process)])
+        returncode = subprocess.call(["{0}/process.exe >> process.log".format(path_to_process)], shell=True)
         if returncode != 0:
             print('\n Error: There was a problem with PROCESS \
                         execution %i!' % returncode)
@@ -231,7 +232,7 @@ def run_process(path_to_process, niter=100, bound_spread=1.2):
         if not process_stopped():
             #if process didn't stop, check ifail in the mfile
             mfile = mfmod.MFile("MFILE.DAT")
-            ifail = mfile.data["ifail"].get_scan(0)
+            ifail = mfile.data["ifail"].get_scan(-1)
             if ifail == IFAIL_SUCCESS:
                 #if the run was succesful, return True
                 if process_warnings():
@@ -269,7 +270,7 @@ def copy_files(from_dir, target_dir, count=None):
             print("Can't find %s" % from_file)
             exit()
         #os.system("cp " + from_file + " " + to_file)
-        subprocess.call(["cp " + from_file + " " + to_file])
+        subprocess.call(["cp " + from_file + " " + to_file], shell=True)
 
 def get_step_dicts(a_dat, b_dat, allowed_diffs=None):
     """Works out which values are to be stepped from the value in A to the
@@ -280,8 +281,8 @@ def get_step_dicts(a_dat, b_dat, allowed_diffs=None):
        values of the variables in B. Any variable that appears in B and a
        value cannot be found in A will be added to a_dat.
        Args
-            a_dat --> INDat object corresponding to A IN.DAT
-            b_dat --> INDat object corresponding to B IN.DAT
+            a_dat --> InDat object corresponding to A IN.DAT
+            b_dat --> InDat object corresponding to B IN.DAT
             allowed_diffs --> Set of integer switches that are allowed to
                               differ between A and B
        returns
@@ -327,14 +328,18 @@ def get_step_dicts(a_dat, b_dat, allowed_diffs=None):
                 #same, nothing needs to be done
                 if var in allowed_diffs or target_val == original_val:
                     continue
-                print("Warning, differing values for %s " % var + \
+                print("Warning, differing values for %s " % var +
                       "in A and B")
                 print("A:", original_val, "  B:", target_val)
                 print("Using value in B\n")
                 if var in a_dat.data.keys():
-                    a_dat.remove_variable(var)
-                new_variable = inmod.INVariable(var, target_val)
-                a_dat.add_variable(new_variable)
+                    a_dat.remove_parameter(var)
+                param_group = inmod.find_parameter_group(var)
+                comment = DICT_DESCRIPTIONS[var].replace(",", ";").\
+                    replace(".", ";").replace(":", ";")
+                new_variable = inmod.INVariable(var, target_val,
+                                                "real_variable", param_group, "")
+                a_dat.add_parameter(var, target_val)
     return original_dict, target_dict
 
 def set_iter_vals(a_dat, b_dat, original_dict, target_dict, bound_fac=1.001):
@@ -350,15 +355,15 @@ def set_iter_vals(a_dat, b_dat, original_dict, target_dict, bound_fac=1.001):
                       be stepped, remove it
         Neither -> Nothing to be done
        Args
-            a_dat --> INDat object corresponding to A IN.DAT
-            b_dat --> INDat object corresponding to B IN.DAT
+            a_dat --> InDat object corresponding to A IN.DAT
+            b_dat --> InDat object corresponding to B IN.DAT
             original_dict --> Dictionary of values to be stepped and value in A
             target_dict --> Dictionary of values to be stepped and value in B
             bound_fac --> Separation factor of target bounds. Default = 1.001
 
     """
-    for num in b_dat.variables["ixc"].value:
-        if num not in a_dat.variables["ixc"].value:
+    for num in b_dat.data["ixc"].value:
+        if num not in a_dat.data["ixc"].value:
             #if the variable is an iteration variable in B but not in
             #A, then make it an iteration variable in A
             print(DICT_IXC_SIMPLE[str(num)], "is set as iteration variable" + \
@@ -372,8 +377,8 @@ def set_iter_vals(a_dat, b_dat, original_dict, target_dict, bound_fac=1.001):
             del target_dict[DICT_IXC_SIMPLE[str(num)]]
             del original_dict[DICT_IXC_SIMPLE[str(num)]]
 
-    for num in a_dat.variables["ixc"].value:
-        if num not in b_dat.variables["ixc"].value:
+    for num in a_dat.data["ixc"].value:
+        if num not in b_dat.data["ixc"].value:
             #if an iteration value in A, but not in B, we want to narrow
             #the limits of the variable each step. This can be done by
             #setting boundu(#) and boundl(#) in target_dict and original_dict
@@ -403,14 +408,14 @@ def get_icc_changes(a_dat, b_dat):
        A and B. Positive numbers indicate an equation to be added, negative
        numbers indicate an equation to be removed
        Args
-            a_dat --> INDat object corresponding to A
-            b_dat --> INDat object corresponding to B
+            a_dat --> InDat object corresponding to A
+            b_dat --> InDat object corresponding to B
        Returns
             icc_changes --> List of equation numbers to be changed
 
     """
-    a_icc = a_dat.variables["icc"].value
-    b_icc = b_dat.variables["icc"].value
+    a_icc = a_dat.data["icc"].value
+    b_icc = b_dat.data["icc"].value
     a_unique = [item for item in a_icc if item not in b_icc]
     b_unique = [item for item in b_icc if item not in a_icc]
 
@@ -428,7 +433,7 @@ def make_icc_changes(i, nsteps, icc_changes, in_dat):
             i --> Current step counter
             nsteps --> Final number of steps
             icc_changes --> Array of all icc changes to be made from A to B
-            in_dat --> INDat object
+            in_dat --> InDat object
        Returns
             changes_made --> icc changes made this step
 
@@ -465,8 +470,8 @@ def setup():
         os.mkdir(CONF.outdir)
 
     # Read A and B
-    a_dat = inmod.INDATNew(CONF.a)
-    b_dat = inmod.INDATNew(CONF.b)
+    a_dat = inmod.InDat(CONF.a)
+    b_dat = inmod.InDat(CONF.b)
 
     if "isweep" in a_dat.data.keys():
         if a_dat.data["isweep"].value > 1:
@@ -521,10 +526,10 @@ def main():
     original_dict, target_dict, icc_changes = setup()
 
     os.chdir(CONF.wdir)
-    in_dat = inmod.INDATNew("IN.DAT")
+    in_dat = inmod.InDat("IN.DAT")
 
     iter_vars = []
-    for num in in_dat.variables["ixc"].value:
+    for num in in_dat.data["ixc"].value:
         iter_vars.append(DICT_IXC_SIMPLE[str(num)])
 
     print("doing step 0")
