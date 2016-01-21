@@ -642,7 +642,7 @@ def test_plot_proc(fs):
 
     # test all MFILEs
     for key in fs.keys():
-        if "error_" not in key:
+        if "error_" and "stellarator" not in key:
             file_name = "test_area/{0}/new.MFILE.DAT".format(key)
             # file_name = fs[key]["path"] + "new.MFILE.DAT"
             results.append(pp.test(file_name))
@@ -704,11 +704,27 @@ class TestCase(object):
         files appropriately.
         """
 
+        if self.test == "stellarator":
+            subprocess.call(["cp {0} .".format(self.path + "device.dat")],
+                            shell=True)
+            subprocess.call(["cp {0} .".format(self.path + "vmec_info.dat")],
+                            shell=True)
+            subprocess.call(["cp {0} .".format(self.path + "vmec_Rmn.dat")],
+                            shell=True)
+            subprocess.call(["cp {0} .".format(self.path + "vmec_Zmn.dat")],
+                            shell=True)
+
         # run PROCESS
-        subprocess.call(["cp {0} .".format(self.path + "/IN.DAT")],
+        subprocess.call(["cp {0} .".format(self.path + "IN.DAT")],
                         shell=True)
         self.process_exit_code = subprocess.call(["./process.exe >> run.log"],
-                                                 shell=True, timeout=100)
+                                                 shell=True, timeout=1000)
+
+        if self.test == "stellarator":
+            subprocess.call(["rm device.dat"], shell=True)
+            subprocess.call(["rm vmec_info.dat"], shell=True)
+            subprocess.call(["rm vmec_Rmn.dat"], shell=True)
+            subprocess.call(["rm vmec_Zmn.dat"], shell=True)
 
         # check PROCESS call exit code
         if self.process_exit_code != 0:

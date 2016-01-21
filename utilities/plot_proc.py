@@ -1723,6 +1723,11 @@ def test(f):
         #    pdf.savefig(page1)
         #    pdf.savefig(page2)
 
+        # tidy up to avoid memory issues
+        del page1
+        del page2
+        plt.close()
+
         return True
     except:
         return False
