@@ -69,6 +69,7 @@ described below.
 | `--stat` | if you want to see some abbreviated stats for each commit | `git log --stat` |
 | `--oneline` | Outputs commit number, date and message to a single line | `git log --oneline` |
 | `--graph` | display commits in a ASCI graph/timeline | `git log --graph` |
+| `-S` | only show commits adding or removing code matching the string | `git log -S "find_me"` |
 
 - to output the log to a file add `>> file_name.log` to the end of the command
 
