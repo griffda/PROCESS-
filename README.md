@@ -53,6 +53,25 @@ Additionally
 
 ## Development
 
+### Commit Logs
+
+To see the commit messages you can use the `git log` command. There are various options
+described below.
+
+| Command | Description | Example |
+| -------- | -------- | --------- |
+| `-(n)`   | show the last `n` commits  | `git log -5` |
+| `--since or --after` |  limits the logs to be from date given | `git log --since "21-01-15"` |
+| | can use `number.scale` where scale=year, month, week, day and minute | `git log --since 2.weeks` |
+| `--until or --before` |  limits the logs to be up to date given | `git log --until "22-01-15"` |
+| `--author` | only shows commits from given author | `git log --author "morrisj"` |
+| `--grep` | only show commits with a commit message containing the string given | `git log --grep "magnet"`  |
+| `--stat` | if you want to see some abbreviated stats for each commit | `git log --stat` |
+| `--oneline` | Outputs commit number, date and message to a single line | `git log --oneline` |
+| `--graph` | display commits in a ASCI graph/timeline | `git log --graph` |
+
+- to output the log to a file add `>> file_name.log` to the end of the command
+
 ### Changing the code
 
 Major changes
