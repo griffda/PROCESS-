@@ -308,9 +308,10 @@ subroutine inform(progid)
   !  Write information to data file
   call system('/bin/date >> ' // tempfile // char(0))
   call system('/usr/bin/whoami >> ' // tempfile // char(0))
-  call system("/usr/bin/finger `/usr/bin/whoami` " // &
-       "| /usr/bin/head -1 | /usr/bin/cut -f 4 " // &
-       "| /usr/bin/cut -f 2-3 -d ' ' >> " // tempfile // char(0))
+  !call system("finger `/usr/bin/whoami` " // &
+  !     "| /usr/bin/head -1 | /usr/bin/cut -f 4 " // &
+  !     "| /usr/bin/cut -f 2-3 -d ' ' >> " // tempfile // char(0))  
+  
   call system('/bin/hostname >> ' // tempfile // char(0))
   call system('/bin/pwd >> ' // tempfile // char(0))
 
@@ -327,7 +328,7 @@ subroutine inform(progid)
   read(unit,'(A)') id(2)
   read(unit,'(A)') id(3)
   read(unit,'(A)') id(4)
-  read(unit,'(A)') id(5)
+  !read(unit,'(A)') id(5)
   close(unit)
 
   !  Delete temporary data file
@@ -336,12 +337,14 @@ subroutine inform(progid)
   !  Annotate information and store in PROGID character array
   !  for use in other program units via the routine argument
   !progid(1) = '  Program : ' // progname
+  
   progid(1) = '  Program : ' // executable
   progid(2) = '  Version : ' // progver
   progid(3) = 'Date/time : ' // id(1)
-  progid(4) = '     User : ' // trim(id(2)) // ' (' // trim(id(3)) // ')'
-  progid(5) = ' Computer : ' // id(4)
-  progid(6) = 'Directory : ' // id(5)
+  !progid(4) = '     User : ' // trim(id(2)) // ' (' // trim(id(3)) // ')'
+  progid(4) = '     User : ' // id(2) 
+  progid(5) = ' Computer : ' // id(3)
+  progid(6) = 'Directory : ' // id(4)
 
   !  Summarise most useful data, and store in progid(0)
   progid(0) = trim(progname) // ' ' // trim(progver(:7)) // &

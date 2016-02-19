@@ -372,22 +372,27 @@ contains
     !  prp = (arp/turnstf) / awptf, hence the trp expression above
 
     arp = turnstf * 4.0D0 * trp*(trp + leno0)
+    
+    ! Central helium channel down the conductor core
+    awphec = turnstf * ((pi/4.0d0)*dhecoil**2)
 
     !  Total conductor cross-sectional area, taking account of void area
+    !  and central helium channel down the conductor core
 
-    acond = acstf * turnstf * (1.0D0-vftf)
+    acond = acstf * turnstf * (1.0D0-vftf) - awphec
 
-    !  Void area in cable, for He
-
-    avwp = acstf * turnstf * vftf
-
+    !  Void area in cable for He, not including central channel
+    avwp = acstf * turnstf * vftf    
+    
     !  Insulation area (not including ground-wall)
 
     aiwp = turnstf * (leno0**2 - acndttf - acstf)
 
     !  Area of steel structure in winding pack
-
     aswp = turnstf*acndttf + arp
+    
+    ! Coil perimeter along its cross-sectional centre (tfleng): 
+    ! NOW calculated in  subroutine coilshap
 
     !  TF coil horizontal and vertical bores
     tfborev = 2.0D0*(rminor*kappa + vgaptop + fwith + blnktth + vvblgap + &
@@ -440,26 +445,22 @@ contains
 
     !  Masses of conductor constituents:
 
-    !  Superconductor
+    !  Superconductor.
+    !  Includes space allowance for central helium channel, area awphec
+    whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * (1.0D0-fcutfsu) - tfleng*awphec) &
+               *dcond(isumattf)     
 
-    whtconsc = tfleng * turnstf * acstf*(1.0D0-vftf) * &
-         (1.0D0-fcutfsu)*dcond(isumattf)
-
-    !  Copper
-
-    whtconcu = tfleng * turnstf * acstf*(1.0D0-vftf) * &
-         fcutfsu*dcopper
+    !  Copper         
+     whtconcu = (tfleng * turnstf * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) &
+                *dcopper     
 
     !  Steel conduit (sheath)
-
     whtconsh = tfleng * turnstf * acndttf * denstl
 
     !  Conduit insulation (aiwp already contains turnstf)
-
     whtconin = tfleng * aiwp * dcondins
 
     !  Total conductor mass
-
     whtcon = whtconsc + whtconcu + whtconsh + whtconin
 
     !  Total TF coil mass (all coils)
@@ -1448,11 +1449,13 @@ contains
     call ovarre(outfile,'Conduit insulation mass per coil (kg)','(whtconin)',whtconin, 'OP ')
     call ovarre(outfile,'Total conductor cable mass per coil (kg)','(whtcon)',whtcon, 'OP ')
     call ovarre(outfile,'Cable conductor + void area (m2)','(acstf)',acstf, 'OP ')
-    call ovarre(outfile,'Cable space coolant fraction','(vftf)',vftf)
+    call ovarre(outfile,'Coolant fraction in cable excluding central channel','(vftf)',vftf)
+    call ovarre(outfile,'Diameter of central helium channel in cable','(dhecoil)',dhecoil)
+    
     call ovarre(outfile,'Conduit case thickness (m)','(thwcndut)',thwcndut)
     call ovarre(outfile,'Conduit insulation thickness (m)','(thicndut)',thicndut)
 
-    ap = acond + turnstf*acndttf + arp + aiwp + avwp
+    ap = acond + turnstf*acndttf + arp + aiwp + avwp + awphec
 
     call osubhd(outfile,'Winding Pack Information :')
 
@@ -1464,8 +1467,10 @@ contains
     call ovarre(outfile,'Conduit fraction of winding pack','(turnstf*acndttf/ap)',turnstf*acndttf/ap, 'OP ')
     call ovarre(outfile,'Additional steel (radial plate) fraction of winding pack','(arp/ap)',arp/ap, 'OP ')
     call ovarre(outfile,'Insulator fraction of winding pack','(aiwp/ap)',aiwp/ap, 'OP ')
-    call ovarre(outfile,'Helium fraction of winding pack','(avwp/ap)',avwp/ap, 'OP ')
-    call ovarrf(outfile,'      Total for winding pack','',(acond + turnstf*acndttf + arp + aiwp + avwp)/ap)
+    call ovarre(outfile,'Helium area fraction of winding pack excluding central channel','(avwp/ap)',avwp/ap, 'OP ')
+    call ovarre(outfile,'Central helium channel area as fraction of winding pack','(awphec/ap)',awphec/ap, 'OP ')
+    call ovarrf(outfile,'Check total area fractions in winding pack = 1','', &
+                        (acond + turnstf*acndttf + arp + aiwp + avwp + awphec)/ap)
 
     call ovarre(outfile,'Winding radial thickness (m)','(thkwp)',thkwp, 'OP ')
     call ovarre(outfile,'Winding width 1 (m)','(wwp1)',wwp1, 'OP ')
@@ -1581,7 +1586,7 @@ contains
          jwdgpro,jwdgcrt,vd,tmarg)
 
       !+ad_name  supercon
-      !+ad_summ  Routine to calculate the TF coil superconductor properties
+      !+ad_summ  Routine to calculate the TF superconducting cable  properties
       !+ad_type  Subroutine
       !+ad_auth  P J Knight, CCFE, Culham Science Centre
       !+ad_auth  J Galambos, ORNL
@@ -1653,7 +1658,7 @@ contains
       !+ad_hisc               areas in bi2212 jstrand input
       !+ad_hist  11/11/14 PJK Shifted exit criteria for temperature margin
       !+ad_hisc               iteration to reduce calculations
-      !+ad_hist  03/08/15 MDK Rename argument tdump = tdmptf as this is a global varibale
+      !+ad_hist  03/08/15 MDK Rename argument tdump = tdmptf as this is a global variable
       !+ad_stat  Okay
       !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
       !
@@ -1673,15 +1678,16 @@ contains
       integer :: lap
       real(kind(1.0D0)) :: b,bc20m,bcrit,c0,delt,fcond,icrit,iooic, &
            jcritsc,jcrit0,jcritm,jcritp,jcritstr,jsc,jstrand,jtol,jwdgop, &
-           t,tc0m,tcrit,ttest,ttestm,ttestp, tdump
+           t,tc0m,tcrit,ttest,ttestm,ttestp, tdump, fhetot
       ! real(kind(1.0D0)) :: iooic
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       ! Rename tdmptf as it is called tdump in this routine and those called from here.
       tdump = tdmptf
+      
+      fhetot = fhe + (pi/4.0d0)*dhecoil*dhecoil/acs
 
-      !  Conductor fraction
-
-      fcond = 1.0D0 - fhe
+      !  Conductor fraction (including central helium channel)
+      fcond = 1.0D0 - fhetot
 
       !  Find critical current density in superconducting strand, jcritstr
 
@@ -1706,8 +1712,8 @@ contains
          !  composition that does not require a user-defined copper fraction,
          !  so this is irrelevant in this model
 
-         !  Previously (wrongly) jstrand = jwp * acs*(1.0D0-fhe)/aturn
-         jstrand = jwp * aturn / (acs*(1.0D0-fhe))
+         !  Previously (wrongly) jstrand = jwp * acs*(1.0D0-fhe)/aturn         
+         jstrand = jwp * aturn / (acs*(1.0D0-fhetot))
 
          call bi2212(bmax,jstrand,thelium,fhts,jcritstr,tmarg)
          jcritsc = jcritstr / (1.0D0-fcu)
@@ -1732,23 +1738,18 @@ contains
       end select
 
       !  Critical current
-
-      icrit = jcritstr * acs * (1.0D0-fhe)
+      icrit = jcritstr * acs * (1.0D0-fhetot)
 
       !  Critical current density in winding pack
-
       jwdgcrt = icrit / aturn
 
       !  Ratio of operating / critical current
-
       iooic = iop / icrit
 
       !  Operating current density
-
       jwdgop = iop / aturn
 
       !  Temperature margin (already calculated in bi2212 for isumat=2)
-
       if (isumat /= 2) then
 
          !  Newton-Raphson method; start at requested minimum temperature margin
@@ -1829,7 +1830,7 @@ contains
       call oblnkl(outfile)
       call ovarre(outfile,'Peak field at conductor (T)','(bmax)',bmax, 'OP ')
       call ovarre(outfile,'Helium temperature at peak field (K)','(thelium)',thelium)
-      call ovarre(outfile,'Helium fraction inside cable space','(vftf)',fhe)
+      call ovarre(outfile,'Total helium fraction inside cable space','(fhetot)',fhetot, 'OP ')
       call ovarre(outfile,'Copper fraction of conductor','(fcutfsu)',fcu)
       call ovarre(outfile,'Strain on superconductor','(strncon)',strain)
 
