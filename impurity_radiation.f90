@@ -67,8 +67,8 @@ module impurity_radiation_module
   !+ad_vars  nimp /14/ FIX : number of ion species in impurity radiation model
   integer, public, parameter :: nimp = 14
 
-  !+ad_vars  coreradius /0.9/ : normalised radius defining the 'core' region
-  real(kind(1.0D0)), public :: coreradius = 0.9D0
+  !+ad_vars  coreradius /0.6/ : normalised radius defining the 'core' region
+  real(kind(1.0D0)), public :: coreradius = 0.6D0
 
   !+ad_vars  fimp(nimp) /1.0,0.1,0.02,0.0,0.0,0.0,0.0,0.0,0.0016,0.0,0.0,0.0,0.0,0.0/ :
   !+ad_varc         impurity number density fractions relative to electron density
