@@ -17,6 +17,7 @@ module impurity_radiation_module
   !+ad_cont  pbremden
   !+ad_cont  pimpden
   !+ad_cont  fradcore
+  !+ad_cont  Zav_of_te
   !+ad_args  N/A
   !+ad_desc  This module contains routines for calculating the
   !+ad_desc  bremsstrahlung and line radiation of impurities
@@ -55,7 +56,7 @@ module impurity_radiation_module
 
   private
   public :: initialise_imprad, impradprofile, z2index, element2index, fradcore
-  public :: imp_dat
+  public :: imp_dat, Zav_of_te
 
   !+ad_vars  imprad_model /1/ : switch for impurity radiation model:<UL>
   !+ad_varc               <LI>  = 0 original ITER 1989 model
@@ -800,5 +801,82 @@ contains
     end if
 
   end function fradcore
+
+
+  function Zav_of_te(imp_element,te) 
+
+    !+ad_name  Zav_of_te 
+    !+ad_summ  Electron temperature dependent average atomic number
+    !+ad_type  Function returning real
+    !+ad_auth  H Lux, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  imp_element : input imp_dat : impurity element
+    !+ad_args  te : input real : electron temperature (keV)
+    !+ad_desc  This routine returns the interpolated average atomic
+    !+ad_desc  charge for a given electron temperature.
+    !+ad_desc  <P>The Zav versus temperature data is interpolated from
+    !+ad_desc  lookup tables from the ADAS data base provided by Martin O'Mullane.
+    !+ad_prob  If the requested temperature for the calculation is outside
+    !+ad_prob  of the tabulated range of the fit, the nearest temperature
+    !+ad_prob  point's data is used.
+    !+ad_call  report_error
+    !+ad_hist  22/02/16 HL  First draft of routine
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+       implicit none
+
+    real(kind(1.0D0)) :: Zav_of_te
+
+    !  Arguments
+
+    type(imp_dat),  intent(in) :: imp_element
+    real(kind(1.0D0)), intent(in) :: te
+
+    !  Local variables
+
+    integer :: i
+    real(kind(1.0D0)) :: xi, yi, c, lz
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  Interpolate tabulated data
+
+    !  Temperatures lower than the minimum, or higher than the maximum,
+    !  are dealt with by taking the Zav value at the nearest tabulated
+    !  temperature point
+
+    if (te <= imp_element%Temp_keV(1)) then
+       ! This should not be too unreasonable.
+       Zav_of_te = imp_element%Zav(1)
+
+    else if (te >= imp_element%Temp_keV(imp_element%len_tab)) then
+       !  This should be okay, as most elements are fully ionised by now.
+       Zav_of_te = imp_element%Zav(imp_element%len_tab)
+
+    else 
+
+       do i = 1, imp_element%len_tab-1
+
+          !  Linear interpolation in log-log space
+
+          if ( (te > imp_element%Temp_keV(i)) .and. &
+               (te <= imp_element%Temp_keV(i+1)) ) then
+
+             yi = log(imp_element%Zav(i))
+             xi = log(imp_element%Temp_keV(i))
+             c  = (log(imp_element%Zav(i+1)) - yi) / &
+                  (log(imp_element%Temp_keV(i+1)) - xi)
+             Zav_of_te = exp( yi + c * (log(te) - xi) )
+             exit
+          end if
+
+       end do
+
+    end if
+
+  end function Zav_of_te
+
 
 end module impurity_radiation_module
