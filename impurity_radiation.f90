@@ -656,7 +656,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    pbremden = imp_element%frac * ne * ne * imp_element%Z * imp_element%Z &
+    pbremden = imp_element%frac * ne * ne * Zav_of_te(imp_element)**2 &
          * 5.355D-37 * sqrt(te)
 
   end function pbremden
