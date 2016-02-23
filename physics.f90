@@ -2420,6 +2420,7 @@ contains
     !+ad_call  report_error
     !+ad_hist  13/05/14 PJK Initial version
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  23/02/16 HL impurity Z now dependent on te
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -2468,7 +2469,8 @@ contains
     znimp = 0.0D0
     do imp = 1,nimp
        if (impurity_arr(imp)%Z > 2) then
-          znimp = znimp + impurity_arr(imp)%Z*(impurity_arr(imp)%frac * dene)
+         ! znimp = znimp + impurity_arr(imp)%Z*(impurity_arr(imp)%frac * dene)
+          znimp = znimp + Zav_of_te(impurity_arr(imp),te)*(impurity_arr(imp)%frac * dene)
        end if
     end do
 
@@ -2528,7 +2530,8 @@ contains
 
     zeff = 0.0D0
     do imp = 1,nimp
-       zeff = zeff + impurity_arr(imp)%frac * (impurity_arr(imp)%Z)**2
+       !zeff = zeff + impurity_arr(imp)%frac * (impurity_arr(imp)%Z)**2
+       zeff = zeff + impurity_arr(imp)%frac * Zav_of_te(impurity_arr(imp),te)**2
     end do
 
     !  Define coulomb logarithm
@@ -2579,7 +2582,8 @@ contains
     do imp = 1,nimp
        if (impurity_arr(imp)%Z > 2) then
           zeffai = zeffai + impurity_arr(imp)%frac &
-               * (impurity_arr(imp)%Z)**2 / impurity_arr(imp)%amass
+          !     * (impurity_arr(imp)%Z)**2 / impurity_arr(imp)%amass
+               * Zav_of_te(impurity_arr(imp),te)**2 / impurity_arr(imp)%amass   
        end if
     end do
 

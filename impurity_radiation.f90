@@ -837,7 +837,7 @@ contains
     !  Local variables
 
     integer :: i
-    real(kind(1.0D0)) :: xi, yi, c, lz
+    real(kind(1.0D0)) :: xi, yi, c
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
