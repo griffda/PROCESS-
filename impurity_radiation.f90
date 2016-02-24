@@ -859,16 +859,16 @@ contains
 
        do i = 1, imp_element%len_tab-1
 
-          !  Linear interpolation in log-log space
+          !  Linear interpolation in log-lin space
 
           if ( (te > imp_element%Temp_keV(i)) .and. &
                (te <= imp_element%Temp_keV(i+1)) ) then
 
-             yi = log(imp_element%Zav(i))
+             yi = imp_element%Zav(i)
              xi = log(imp_element%Temp_keV(i))
-             c  = (log(imp_element%Zav(i+1)) - yi) / &
+             c  = (imp_element%Zav(i+1) - yi) / &
                   (log(imp_element%Temp_keV(i+1)) - xi)
-             Zav_of_te = exp( yi + c * (log(te) - xi) )
+             Zav_of_te = yi + c * (log(te) - xi)
              exit
           end if
 
