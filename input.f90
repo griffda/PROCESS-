@@ -384,6 +384,7 @@ contains
     !+ad_hist  12/08/15 MDK vacuum_model and associated variables #304
     !+ad_hist  18/11/15 RK  zeffmax and fzeffmax for constraint equation 64
     !+ad_hist  26/11/15 RK  added sigvvall to TF variables, tfinsgap
+    !+ad_hist  29/03/16 HL Added coreradiationfraction
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -548,6 +549,10 @@ contains
        case ('coreradius')
           call parse_real_variable('coreradius', coreradius, 0.0D0, 1.0D0, &
                'Normalised core radius')
+       case ('coreradiationfraction')
+          call parse_real_variable('coreradiationfraction', &
+               coreradiationfraction, 0.0D0, 1.0D0, &
+               'Fraction of core radiation subtracted from P_L')
        case ('csawth')
           call parse_real_variable('csawth', csawth, 0.0D0, 10.0D0, &
                'Coefficient for sawteeth effects')

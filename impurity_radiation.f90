@@ -41,6 +41,7 @@ module impurity_radiation_module
   !+ad_hist  25/09/14 PJK Corrected root.dir include syntax
   !+ad_hist  06/10/14 PJK Changed impvar default from 10 to 9
   !+ad_hist  08/12/14 PJK Changed impdir label
+  !+ad_hist  29/03/16 HL Added coreradiationfraction
   !+ad_stat  Okay
   !+ad_docs  Johner, Fusion Science and Technology 59 (2011), pp 308-349
   !+ad_docs  Sertoli, private communication
@@ -70,6 +71,9 @@ module impurity_radiation_module
 
   !+ad_vars  coreradius /0.6/ : normalised radius defining the 'core' region
   real(kind(1.0D0)), public :: coreradius = 0.6D0
+
+  !+ad_vars  coreradiationfraction /1.0/ : fraction of radiation from 'core' region that is subtracted from the loss power
+  real(kind(1.0D0)), public :: coreradiationfraction = 1.0D0  
 
   !+ad_vars  fimp(nimp) /1.0,0.1,0.02,0.0,0.0,0.0,0.0,0.0,0.0016,0.0,0.0,0.0,0.0,0.0/ :
   !+ad_varc         impurity number density fractions relative to electron density
@@ -757,7 +761,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  function fradcore(rho,coreradius)
+  function fradcore(rho,coreradius,coreradiationfraction)
 
     !+ad_name  fradcore
     !+ad_summ  Function to calculate core radiation fraction 
@@ -768,14 +772,16 @@ contains
     !+ad_cont  N/A
     !+ad_args  rho        : input real : normalised minor radius
     !+ad_args  coreradius : input real : normalised core radius
+    !+ad_args coreradiationfraction : input real : fraction of core radiation
     !+ad_desc  This function calculates the core radiation fraction
     !+ad_desc  at normalised minor radius <CODE>rho</CODE> given a fixed
-    !+ad_desc  core radius
+    !+ad_desc  core radius using only a specified fraction of that radiation.
     !+ad_prob  None
     !+ad_call  None
     !+ad_hist  08/10/13 RK  Initial draft
     !+ad_hist  16/12/13 HL  Added coreradius as optional input
     !+ad_hist  19/05/14 PJK First PROCESS implementation
+    !+ad_hist 29/03/16 HL Added coreradiationfraction
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -789,13 +795,14 @@ contains
 
     real(kind(1.0D0)), intent(in) :: rho
     real(kind(1.0D0)), intent(in) :: coreradius
+    real(kind(1.0D0)), intent(in) :: coreradiationfraction
 
     !  Local variables
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     if (rho < coreradius) then
-       fradcore = 1.0D0
+       fradcore = coreradiationfraction
     else
        fradcore = 0.0D0
     end if

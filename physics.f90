@@ -4365,7 +4365,7 @@ contains
              call impradprofile(impurity_arr(imp), nrho, trho, pimp, pbrem, pline)
 
              radtot  = radtot  + pimp*rho
-             radcore = radcore + pimp*rho * fradcore(rho,coreradius)
+             radcore = radcore + pimp*rho * fradcore(rho,coreradius,coreradiationfraction)
              radb = radb + pbrem*rho
              radl = radl + pline*rho
           end if
