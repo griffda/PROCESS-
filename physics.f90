@@ -5645,6 +5645,8 @@ contains
     call ovarrf(outfile,'synchrotron wall reflectivity factor','(ssync)',ssync)
     if (imprad_model == 1) then
        call ovarre(outfile,"Normalised minor radius defining 'core'", '(coreradius)',coreradius)
+       call ovarre(outfile,"Fraction of core radiation subtracted from P_L", &
+            '(coreradiationfraction)',coreradiationfraction)
     end if
     call ovarre(outfile,'Total core radiation power (MW)', '(pcoreradmw)',pcoreradmw, 'OP ')
     call ovarre(outfile,'Edge radiation power (MW)','(pedgeradmw)', pedgeradmw, 'OP ')
