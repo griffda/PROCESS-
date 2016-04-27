@@ -91,6 +91,17 @@ Minor changes
 - Make your changes to the code and at suitable stages commit locally:
     - `git add file_changed_1 file_changed_2`
     - `git commit -m "COMMIT MESSAGE"`
+- The commit message should be informative and give useful information for future development.
+  - Such as:
+  ```
+  Made changes to the TF coil magnet model. Updated the allowable stress in the coils
+  to be 600MPa. Remove side-wall case. Ran test suite and everything OK.
+  ```
+  - not
+  ```
+  Update to magnet model
+  ```
+
 - Before pushing back to the repository make sure that your branch is up to date
 with any changes that might have been made by other developers, `git pull`
 - When you wish to push your branch back to the repository enter `git push`
@@ -155,6 +166,10 @@ in `process.tex` by changing the Revision (to XYZ) and the date
 - Add a tag number `git tag -a rXYZ -m "revision XYZ"`
 - `git push`
 - `git push origin rXYZ`
+
+When releasing a ***tagged version of the code the user should compile a release note for the repo***.
+This note should outline the major changes for the release, including issues from GitLab that
+were resolved, bugs fixed, etc.
 
 ## Contacts
 
