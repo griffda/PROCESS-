@@ -248,10 +248,10 @@ plant_power.o: error_handling.o global_variables.o output.o
 plasma_geometry.o: global_variables.o
 plasma_profiles.o: error_handling.o global_variables.o maths_library.o
 process.o: availability.o buildings.o constraint_equations.o costs.o current_drive.o \
-  divertor.o error_handling.o evaluators.o global_variables.o ife.o \
-  impurity_radiation.o input.o machine_build.o numerics.o output.o pfcoil.o physics.o \
-  plant_power.o pulse.o rfp.o scan.o sctfcoil.o startup.o stellarator.o structure.o \
-  tfcoil.o vacuum.o maths_library.o hcpb.f90
+  divertor.o error_handling.o evaluators.o global_variables.o hcpb.o ife.o \
+  impurity_radiation.o input.o machine_build.o maths_library.o numerics.o output.o \
+	pfcoil.o physics.o plant_power.o pulse.o rfp.o scan.o sctfcoil.o startup.o \
+	stellarator.o structure.o tfcoil.o vacuum.o
 pulse.o: error_handling.o global_variables.o maths_library.o output.o physics.o
 refprop.o:
 refprop_interface.o: error_handling.o refprop.o

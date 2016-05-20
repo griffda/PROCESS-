@@ -114,6 +114,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  19/06/14 PJK Removed obsolete calls to nbeam, ech, lwhymod
   !+ad_hist  02/12/14 JM  Added new availability model in caller (avail_new)
   !+ad_hist  13/03/15 JM  Changed calling of blanket models and import of blanket modules
+  !+ad_hist  20/05/16 JM  Added more detailed comments to the caller
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -126,7 +127,6 @@ subroutine caller(xc,nvars)
   use costs_2015_module
   use current_drive_module
   use divertor_module
-   !use fwbs_module
   use fwbs_variables
   use ife_module
   use ife_variables
@@ -148,14 +148,17 @@ subroutine caller(xc,nvars)
   use tfcoil_module
   use vacuum_module
   use cost_variables
-  
-  !  Import blanket modules
+
+  ! Import blanket modules !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!
+
   use ccfe_hcpb_module
   use kit_hcpb_module
 
   implicit none
 
-  !  Arguments
+  !  Arguments !
+  !!!!!!!!!!!!!!
 
   real(kind(1.0D0)), dimension(ipnvars), intent(in) :: xc
   integer, intent(in) :: nvars
@@ -167,86 +170,208 @@ subroutine caller(xc,nvars)
   !  Increment the call counter
   ncalls = ncalls + 1
 
-  !  Convert variables
+  !  Convert variables !
+  !!!!!!!!!!!!!!!!!!!!!!
+
   call convxc(xc,nvars)
 
-  !  Perform the various function calls
+  !  Perform the various function calls !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !  Stellarator calls
+  !  Stellarator caller !
+  !!!!!!!!!!!!!!!!!!!!!!
+
   if (istell /= 0) then
      call stcall
      return
   end if
 
-  !  Inertial Fusion Energy calls
+  !  Inertial Fusion Energy caller !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   if (ife /= 0) then
      call ifecll
      return
   end if
 
-  !  Tokamak and RFP calls
+  !  Tokamak and RFP calls !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  ! Plasma geometry model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!
+
   call geomty
+
+  ! Machine Build Model !
+  !!!!!!!!!!!!!!!!!!!!!!!
+
+  ! Radial build
   call radialb(nout,0)
+
+  ! Vertical build
   call vbuild(nout,0)
 
+  ! Physics model !
+  !!!!!!!!!!!!!!!!!
+
   if (irfp == 0) then
+     ! if a tokamak
      call physics
   else
+     ! if a rfp machine
      call rfpphy
   end if
 
+  ! startup model (not used) !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   !call startup(nout,0)  !  commented-out for speed reasons
+
+  ! Toroidal field coil model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   if (irfp == 0) then
+     ! if a tokamak
      call tfcoil(nout,0)
   else
+     ! if a rfp machine
      call rfptfc(nout,0)
   end if
 
+  ! Toroidal field coil superconductor model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   call tfspcall(nout,0)
 
+  ! Poloidal field coil model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   if (irfp == 0) then
+     ! if a tokamak
+
+     ! Poloidal field and OH coil model
      call pfcoil
+
+     ! Poloidal field coil inductance calculation
      call induct(nout,0)
+
+     ! Volt-second capability of PF coil set
      call vsec
+
   else
+     ! if a rfp machine
      call rfppfc(nout,0)
+
   end if
 
+  ! Pulsed reactor model !
+  !!!!!!!!!!!!!!!!!!!!!!!!
+
   call pulse(nout,0)
-  
+
+  ! Blanket model !
+  !!!!!!!!!!!!!!!!!!
+
+  ! Blanket switch values
+  ! No.  |  model
+  ! ---- | ------
+  ! 1    |  CCFE HCPB model
+  ! 2    |  KIT HCPB model
+  ! 3    |  CCFE HCPB model with Tritium Breeding Ratio calculation
+
   if (iblanket == 1) then           ! CCFE HCPB model
-	 call ccfe_hcpb(nout, 0) 
+	   call ccfe_hcpb(nout, 0)
   else if (iblanket == 2) then      ! KIT HCPB model
-     call kit_hcpb(nout, 0) 
+     call kit_hcpb(nout, 0)
   else if (iblanket == 3) then      ! CFE HCPB model with Tritium Breeding Ratio calculation
      call ccfe_hcpb(nout, 0)
-	 call tbr_shimwell(nout, 0, breeder_f, li6enrich, iblanket_thickness, tbr)      
-  end if 
-   
+	   call tbr_shimwell(nout, 0, breeder_f, li6enrich, iblanket_thickness, tbr)
+  end if
+
+  ! Divertor Model !
+  !!!!!!!!!!!!!!!!!!
+
   call divcall(nout,0)
+
+  ! Structure Model !
+  !!!!!!!!!!!!!!!!!!!
+
   call strucall(nout,0)
 
-  if (itart == 1) call cntrpst(nout,0)
+  ! Tight asepct ratio machine model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  if (itart == 1) then
+     call cntrpst(nout,0)
+  end if
+
+  ! Toroidal field coil power model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call tfpwr(nout,0)
 
+  ! Poloidal field coil power model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   if (irfp == 0) then
+     ! if a tokamak
      call pfpwr(nout,0)
   else
+     ! if a rfp machine
      call rfppfp(nout,0)
   end if
 
+  ! Plant heat transport part 1 !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   call power1
+
+  ! Vacuum model !
+  !!!!!!!!!!!!!!!!
+
   call vaccall(nout,0)
-  if (cost_model==0) call bldgcall(nout,0)
+
+  ! Buildings model (1990 costs model only) !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  if (cost_model==0) then
+     call bldgcall(nout,0)
+  end if
+
+  ! Plant AC power requirements !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   call acpow(nout,0)
+
+  ! Plant heat transport pt 2 !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   call power2(nout,0)
 
+  ! Availability model !
+  !!!!!!!!!!!!!!!!!!!!!!
+
+  ! Availability switch values
+  ! No.  |  model
+  ! ---- | ------
+  ! 0    |  Input value for cfactr
+  ! 1    |  Ward and Taylor model (1999)
+  ! 2    |  Morris model (2015)
+
   if (iavail > 1) then
-     call avail_new(nout,0)
+     call avail_new(nout,0)  ! Morris model (2015)
   else
-     call avail(nout,0)
+     call avail(nout,0)      ! Taylor and Ward model (1999)
   end if
+
+  ! Costs model !
+  !!!!!!!!!!!!!!!
+
+  ! Cost switch values
+  ! No.  |  model
+  ! ---- | ------
+  ! 0    |  1990 costs model
+  ! 1    |  2015 Kovari model
 
   if (cost_model == 1) then
      call costs_2015(0,0)
@@ -254,10 +379,12 @@ subroutine caller(xc,nvars)
      call costs(nout,0)
   end if
 
+  ! FISPACT and LOCA model (not used) !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !+**PJK  if (ifispact.eq.1) then
-  !+**PJK     call fispac(0)
-  !+**PJK     call loca(nout,0)
-  !+**PJK  end if
+  !  if (ifispact.eq.1) then
+  !     call fispac(0)
+  !     call loca(nout,0)
+  !  end if
 
 end subroutine caller
