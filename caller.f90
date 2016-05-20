@@ -43,7 +43,7 @@ subroutine caller(xc,nvars)
   !+ad_call  vacuum_module
   !+ad_call  acpow
   !+ad_call  avail
-  !+ad_call  avail_new
+  !+ad_call  avail_2
   !+ad_call  bldgcall
   !+ad_call  cntrpst
   !+ad_call  convxc
@@ -112,7 +112,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  06/11/12 PJK Added availability_module
   !+ad_hist  06/11/12 PJK Added plasma_geometry_module
   !+ad_hist  19/06/14 PJK Removed obsolete calls to nbeam, ech, lwhymod
-  !+ad_hist  02/12/14 JM  Added new availability model in caller (avail_new)
+  !+ad_hist  02/12/14 JM  Added new availability model in caller (avail_2)
   !+ad_hist  13/03/15 JM  Changed calling of blanket models and import of blanket modules
   !+ad_hist  20/05/16 JM  Added more detailed comments to the caller
   !+ad_stat  Okay
@@ -359,9 +359,9 @@ subroutine caller(xc,nvars)
   ! 2    |  Morris model (2015)
 
   if (iavail > 1) then
-     call avail_new(nout,0)  ! Morris model (2015)
+     call avail_2(nout,0)  ! Morris model (2015)
   else
-     call avail(nout,0)      ! Taylor and Ward model (1999)
+     call avail(nout,0)    ! Taylor and Ward model (1999)
   end if
 
   ! Costs model !

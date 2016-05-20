@@ -1407,7 +1407,7 @@ subroutine output(outfile)
   !+ad_call  vaccum_module
   !+ad_call  acpow
   !+ad_call  avail
-  !+ad_call  avail_new
+  !+ad_call  avail_2
   !+ad_call  bldgcall
   !+ad_call  cntrpst
   !+ad_call  costs
@@ -1542,7 +1542,7 @@ subroutine output(outfile)
   end if
 
   if (iavail > 1) then
-     call avail_new(outfile, 1)
+     call avail_2(outfile, 1)
   else
      call avail(outfile,1)
   end if
