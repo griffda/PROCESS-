@@ -79,7 +79,7 @@ Major changes
 
 - Create a new branch (e.g. "model_a_development") on the GitLab webpage.
     - or run `git branch new_branch_name` after clone the repo (next bullet)
-- Clone the repo `git clone git.git.ccfe.ac.uk:process/process.git`
+- Clone the repo `git clone git@git.ccfe.ac.uk:process/process.git`
 - Swap to your branch `git checkout new_branch_name`
 
 Minor changes
