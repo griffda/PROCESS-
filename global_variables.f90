@@ -3578,7 +3578,7 @@ module constraint_variables
   !+ad_vars  fwalld /1.0/ : f-value for maximum wall load
   !+ad_varc                 (constraint equation 8, iteration variable 14)
   real(kind(1.0D0)) :: fwalld = 1.0D0
-  !+ad_vars  fzeffmax /1.0/ : f-value for mazimum zeff
+  !+ad_vars  fzeffmax /1.0/ : f-value for maximum zeff
   !+ad_varc                 (constraint equation 64, iteration variable 112)
   real(kind(1.0D0)) :: fzeffmax = 1.0D0
   !+ad_vars  gammax /2.0/ : maximum current drive gamma
