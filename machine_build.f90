@@ -648,6 +648,7 @@ contains
     !+ad_hist  15/10/12 PJK Added physics_variables
     !+ad_hist  17/10/12 PJK Added divertor_variables
     !+ad_hist  01/12/15 RK  Added new geometry and output
+    !+ad_hist  26/05/16 RK  Fixed new geometry
     !+ad_stat  Okay
     !+ad_docs  TART option: Peng SOFT paper
     !
@@ -665,7 +666,7 @@ contains
 
     real(kind(1.0D0)), parameter :: soleno = 0.2D0  !  length along outboard divertor
     !  plate that scrapeoff hits
-    real(kind(1.0D0)) :: kap,tri,xpointo,rprimeo,phio,thetao
+    real(kind(1.0D0)) :: kap,tri,xpointo,rprimeo,phio,thetao, rci, rco, thetai
     real(kind(1.0D0)) :: yspointo,xspointo,yprimeb
     real(kind(1.0d0)) :: triu, tril, denomo, alphad, rxpt, zxpt
     real(kind(1.0d0)) :: rspi, zspi, rspo, zspo, rplti, zplti
@@ -719,38 +720,65 @@ contains
     !
     !divht = yprimeb + yspointo - kap*rminor
 
-    ! New method, assuming straight legs
-    
+    ! New method, assuming straight legs -- superceded by new method 26/5/2016
+    ! Assumed 90 degrees at X-pt -- wrong!
+    !
     !  Find half-angle of outboard arc
-
-    denomo = (tril**2 + kap**2 - 1.0D0)/( 2.0D0*(1.0D0+tril) ) - tril
-    thetao = atan(kap/denomo)
-    !  Angle between horizontal and inner divertor leg
-    alphad = (pi/2.0d0) - thetao
+    !denomo = (tril**2 + kap**2 - 1.0D0)/( 2.0D0*(1.0D0+tril) ) - tril
+    !thetao = atan(kap/denomo)
+    !!  Angle between horizontal and inner divertor leg
+    !alphad = (pi/2.0d0) - thetao
+    
+    ! Method 26/05/2016
+    ! Find radius of inner and outer plasma arcs
+    	
+    rco = 0.5*sqrt((rminor**2 * ((tril+1.0d0)**2 + kap**2)**2)/((tril + 1.0d0)**2))
+    rci = 0.5*sqrt((rminor**2 * ((tril-1.0d0)**2 + kap**2)**2)/((tril - 1.0d0)**2))
+	   
+    ! Find angles between vertical and legs
+    ! Inboard arc angle = outboard leg angle
+    
+    thetao = asin(1.0d0 - (rminor*(1.0d0 - tril))/rci)
+    
+    ! Outboard arc angle = inboard leg angle
+    
+    thetai = asin(1.0d0 - (rminor*(1.0d0 + tril))/rco)
     
     !  Position of lower x-pt
     rxpt = rmajor - tril*rminor
     zxpt = -1.0d0 * kap * rminor
     
     ! Position of inner strike point
-    rspi = rxpt - plsepi*cos(alphad)
-    zspi = zxpt - plsepi*sin(alphad)
+    !rspi = rxpt - plsepi*cos(alphad)
+    !zspi = zxpt - plsepi*sin(alphad)
+    rspi = rxpt - plsepi*cos(thetai)
+    zspi = zxpt - plsepi*sin(thetai)
     
     ! Position of outer strike point
-    rspo = rxpt + plsepo*cos((pi/2.0d0)-alphad)
-    zspo = zxpt - plsepo*sin((pi/2.0d0)-alphad)
+    !rspo = rxpt + plsepo*cos((pi/2.0d0)-alphad)
+    !zspo = zxpt - plsepo*sin((pi/2.0d0)-alphad)
+    rspo = rxpt + plsepo*cos(thetao)
+    zspo = zxpt - plsepo*sin(thetao)
     
     ! Position of inner plate ends
-    rplti = rspi - (plleni/2.0d0)*sin(betai + alphad - pi/2.0d0)
-    zplti = zspi + (plleni/2.0d0)*cos(betai + alphad - pi/2.0d0)
-    rplbi = rspi + (plleni/2.0d0)*sin(betai + alphad - pi/2.0d0)
-    zplbi = zspi - (plleni/2.0d0)*cos(betai + alphad - pi/2.0d0)
+    !rplti = rspi - (plleni/2.0d0)*sin(betai + alphad - pi/2.0d0)
+    !zplti = zspi + (plleni/2.0d0)*cos(betai + alphad - pi/2.0d0)
+    !rplbi = rspi + (plleni/2.0d0)*sin(betai + alphad - pi/2.0d0)
+    !zplbi = zspi - (plleni/2.0d0)*cos(betai + alphad - pi/2.0d0)
+    rplti = rspi + (plleni/2.0d0)*cos(thetai + betai)
+    zplti = zspi + (plleni/2.0d0)*sin(thetai + betai)
+    rplbi = rspi - (plleni/2.0d0)*cos(thetai + betai)
+    zplbi = zspi - (plleni/2.0d0)*sin(thetai + betai)
     
     ! Position of outer plate ends
-    rplto = rspo + (plleno/2.0d0)*sin(betao - alphad)
-    zplto = zspo + (plleno/2.0d0)*cos(betao - alphad)
-    rplbo = rspo - (plleno/2.0d0)*sin(betao - alphad)
-    zplbo = zspo - (plleno/2.0d0)*cos(betao - alphad)
+    !rplto = rspo + (plleno/2.0d0)*sin(betao - alphad)
+    !zplto = zspo + (plleno/2.0d0)*cos(betao - alphad)
+    !rplbo = rspo - (plleno/2.0d0)*sin(betao - alphad)
+    !zplbo = zspo - (plleno/2.0d0)*cos(betao - alphad)
+    rplto = rspo - (plleno/2.0d0)*cos(thetao + betao)
+    zplto = zspo + (plleno/2.0d0)*sin(thetao + betao)
+    rplbo = rspo + (plleno/2.0d0)*cos(thetao + betao)
+    zplbo = zspo - (plleno/2.0d0)*sin(thetao + betao)
     
     divht = max(zplti, zplto) - min(zplbo, zplbi)
     
@@ -763,10 +791,15 @@ contains
      call ovarrf(outfile, 'Plasma top position, vertical (m)', '(ptop_vertical)', ptop_vertical, 'OP ')
      call ovarrf(outfile, 'Plasma geometric centre, radial (m)', '(rmajor)', rmajor, 'OP ')
      call ovarrf(outfile, 'Plasma geometric centre, vertical (m)', '(0.0)', 0.0d0, 'OP ')
+     call ovarrf(outfile, 'Plasma lower triangularity', '(tril)', tril, 'OP ')
+     call ovarrf(outfile, 'Plasma elongation', '(kappa)', kap, 'OP ')
      call ovarrf(outfile, 'TF coil vertical offset (m)', '(tfoffset)', tfoffset, 'OP ')
+     call ovarrf(outfile, 'Plasma outer arc radius of curvature (m)', '(rco)', rco, 'OP ')
+     call ovarrf(outfile, 'Plasma inner arc radius of curvature (m)', '(rci)', rci, 'OP ')
      call ovarrf(outfile, 'Plasma lower X-pt, radial (m)', '(rxpt)', rxpt, 'OP ')
      call ovarrf(outfile, 'Plasma lower X-pt, vertical (m)', '(zxpt)', zxpt, 'OP ')
-     call ovarrf(outfile, 'Poloidal plane angle between horizontal and inner leg (rad)', '(alphad)', alphad, 'OP ')
+     call ovarrf(outfile, 'Poloidal plane angle between vertical and inner leg (rad)', '(thetai)', thetai, 'OP ')
+     call ovarrf(outfile, 'Poloidal plane angle between vertical and outer leg (rad)', '(thetao)', thetao, 'OP ')
      call ovarrf(outfile, 'Poloidal plane angle between inner leg and plate (rad)', '(betai)', betai)
      call ovarrf(outfile, 'Poloidal plane angle between outer leg and plate (rad)', '(betao)', betao)
      call ovarrf(outfile, 'Inner divertor leg poloidal length (m)', '(plsepi)', plsepi)
