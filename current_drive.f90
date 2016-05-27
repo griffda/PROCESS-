@@ -32,13 +32,15 @@ module current_drive_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  ! Import modules !
+  !!!!!!!!!!!!!!!!!!
+
   use constants
   use current_drive_variables
   use error_handling
   use profiles_module
   use physics_variables
   use process_output
-  ! MDK
   use heat_transport_variables
 
   implicit none
@@ -103,14 +105,16 @@ contains
 
     implicit none
 
-    !  Arguments
+    ! Arguments !
+    !!!!!!!!!!!!!
 
     integer, intent(in) :: iprint,outfile
 
-    !  Local variables
+    ! Local variables !
+    !!!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: dene20,effnbss,effofss,effrfss,fpion, &
-         gamnb,gamof,gamrf, power1
+         gamnb,gamof,gamrf,power1
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -119,35 +123,38 @@ contains
     plhybd = 0.0D0
     pofcd  = 0.0D0
     cnbeam = 0.0D0
-
     porbitlossmw = 0.0D0
 
+    ! irfcd |  switch for current drive calculation
+    ! = 0   |  turned off
+    ! = 1   |  turned on
     if (irfcd /= 0) then
 
+       ! put electron density in desired units (10^-20 m-3)
        dene20 = dene * 1.0D-20
 
-       !  Calculate current drive efficiencies in units of Amps/Watt.
-
+       ! Calculate current drive efficiencies in units of Amps/Watt.
+       ! iefrf |  switch for current drive efficiency model
        select case (iefrf)
 
-       case (1)  !  Fenstermacher Lower Hybrid model
+       case (1)  ! Fenstermacher Lower Hybrid model
 
           effrfss = (0.36D0 * (1.0D0 + (te/25.0D0)**1.16D0)) / &
                (rmajor*dene20) * feffcd
           effcd = effrfss
 
-       case (2)  !  Ion-Cyclotron current drive
+       case (2)  ! Ion-Cyclotron current drive
 
           effrfss = 0.63D0 * 0.1D0*ten / (2.0D0 + zeff) / &
                (rmajor*dene20) * feffcd
           effcd = effrfss
 
-       case (3)  !  Fenstermacher Electron Cyclotron Resonance model
+       case (3)  ! Fenstermacher Electron Cyclotron Resonance model
 
           effrfss = 0.21D0 * ten/ (rmajor * dene20 * dlamee) * feffcd
           effcd = effrfss
 
-       case (4)  !  Ehst Lower Hybrid / Fast Wave current drive
+       case (4)  ! Ehst Lower Hybrid / Fast Wave current drive
 
           effrfss = te**0.77D0 * (0.034D0 + 0.196D0 * beta) / &
                (rmajor*dene20) * ( 32.0D0/(5.0D0+zeff) + 2.0D0 + &
@@ -155,33 +162,33 @@ contains
                3.76D0/zeff) / 12.507D0 * feffcd
           effcd = effrfss
 
-       case (5)  !  ITER Neutral Beam current drive
+       case (5)  ! ITER Neutral Beam current drive
 
           call iternb(effnbss,fpion,nbshinef)
           effnbss = effnbss * feffcd
           effcd = effnbss
 
-       case (6)  !  Culham Lower Hybrid current drive model
+       case (6)  ! Culham Lower Hybrid current drive model
 
           call cullhy(effrfss)
           effrfss = effrfss * feffcd
           effcd = effrfss
 
-       case (7)  !  Culham ECCD model
+       case (7)  ! Culham ECCD model
 
           call culecd(effrfss)
           effrfss = effrfss * feffcd
           effcd = effrfss
 
-       case (8)  !  Culham Neutral Beam model
+       case (8)  ! Culham Neutral Beam model
 
           call culnbi(effnbss,fpion,nbshinef)
           effnbss = effnbss * feffcd
           effcd = effnbss
 
-       case (9)  !  (trivial) RFP Oscillating Field CD model
+       case (9)  ! (trivial) RFP Oscillating Field CD model
 
-          effofss = 0.8D0 * feffcd !  TITAN figure: efficiency = 0.8 A/W
+          effofss = 0.8D0 * feffcd ! TITAN figure: efficiency = 0.8 A/W
           effcd = effofss
 
        case default
@@ -190,99 +197,88 @@ contains
 
        end select
 
-       !  Compute current drive wall plug and injected powers (MW),
-       !  and efficiencies
-
+       ! Compute current drive wall plug and injected powers (MW) and efficiencies
        select case (iefrf)
 
-       case (1,2,4,6)  !  LHCD or ICCD
+       case (1,2,4,6)  ! LHCD or ICCD
 
           !  Injected power
-
           plhybd = 1.0D-6 * faccd * plascur / effrfss + pheat
           pinjimw = 0.0D0
           pinjemw = plhybd
 
           !  Wall plug power
-
           pwplh = plhybd / etalh
 
           !  Wall plug to injector efficiency
-
           etacd = etalh
 
           !  Normalised current drive efficiency gamma
-
           gamrf = effrfss * (dene20 * rmajor)
           gamcd = gamrf
 
-
-       case (3,7)  !  ECCD
+       case (3,7)  ! ECCD
 
           echpwr = 1.0D-6 * faccd * plascur / effrfss + pheat
           pinjimw = 0.0D0
           pinjemw = echpwr
-
           echwpow = echpwr / etaech
           etacd = etaech
+          ! (gamma not calculated for ECCD)
 
-          !  (gamma not calculated for ECCD)
+       case (5,8)  ! NBCD
 
-       case (5,8)  !  NBCD
           ! MDK. See Gitlab issue #248, and scanned note.
           power1 = 1.0D-6 * faccd * plascur / effnbss + pheat
-          ! Account for first orbit losses 
+
+          ! Account for first orbit losses
           ! (power due to particles that are ionised but not thermalised) [MW]:
           ! This includes a second order term in shinethrough*(first orbit loss)
           forbitloss = min(0.999,forbitloss) ! Should never be needed
           pnbitot = power1 / (1.0D0-forbitloss+forbitloss*nbshinef)
+
           ! Shinethrough power (atoms that are not ionised) [MW]:
           nbshinemw = pnbitot * nbshinef
+
           ! First orbit loss
-          porbitlossmw = forbitloss * (pnbitot - nbshinemw)          
+          porbitlossmw = forbitloss * (pnbitot - nbshinemw)
+
           ! Power deposited
           pinjmw = pnbitot - nbshinemw - porbitlossmw
           pinjimw = pinjmw * fpion
-          pinjemw = pinjmw * (1.0D0-fpion)         
+          pinjemw = pinjmw * (1.0D0-fpion)
+
           ! neutral beam wall plug power
           pwpnb = pnbitot/etanbi
-          ! MDK
           pinjwp = pwpnb
           etacd = etanbi
-
           gamnb = effnbss * (dene20 * rmajor)
           gamcd = gamnb
 
           !  Neutral beam current (A)
-
-          !cnbeam = 1.0D-3 * (pnbeam*1.0D6) / enbeam
           cnbeam = 1.0D-3 * (pnbitot*1.0D6) / enbeam
-          ! MDK end
 
-       case (9)  !  OFCD
+       case (9)  ! OFCD
 
           pofcd = 1.0D-6 * faccd * plascur / effofss + pheat
           pinjimw = 0.0D0
           pinjemw = pofcd
-
           etacd = etaof
-
           gamof = effofss * (dene20 * rmajor)
           gamcd = gamof
 
        end select
-       
-       ! MDK Reset injected power to zero for ignited plasma (fudge)
+
+       ! Reset injected power to zero for ignited plasma (fudge)
        if (ignite == 1) then
            pinjwp = 0.0D0
        end if
 
-       !  Total injected power
+       ! Total injected power
 
        pinjmw = pinjemw + pinjimw
 
-       !  Ratio of fusion to input (injection+ohmic) power
-
+       ! Ratio of fusion to input (injection+ohmic) power
        if (abs(pinjmw + porbitlossmw + pohmmw) < 1.0D-6) then
           bigq = 1.0D18
        else
@@ -291,7 +287,8 @@ contains
 
     end if
 
-    !  Output section
+    ! Output !
+    !!!!!!!!!!
 
     if (iprint == 0) return
 
@@ -335,8 +332,7 @@ contains
     end if
 
     call ovarin(outfile,'Current drive efficiency model','(iefrf)',iefrf)
-    call ovarre(outfile,'Auxiliary power used for plasma heating only (MW)', &
-         '(pheat)',pheat)
+    call ovarre(outfile,'Auxiliary power used for plasma heating only (MW)', '(pheat)', pheat)
     call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq, 'OP ')
     call ovarre(outfile,'Current drive efficiency (A/W)','(effcd)',effcd, 'OP ')
     call ovarre(outfile,'Normalised current drive efficiency, gamma (10^20 A/W-m2)', &
@@ -370,7 +366,7 @@ contains
        call ovarre(outfile,'Lower hybrid wall plug power (MW)','(pwplh)',pwplh, 'OP ')
     end if
 
-    ! MDK rearranged and added nbshinemw       
+    ! MDK rearranged and added nbshinemw
     !if (abs(pnbeam) > 1.0D-8) then
     if ((iefrf == 5).or.(iefrf== 8)) then
        call ovarre(outfile,'Neutral beam energy (keV)','(enbeam)',enbeam)
@@ -379,9 +375,9 @@ contains
        call ovarre(outfile,'Beam gamma (10^20 A/W-m2)','(gamnb)',gamnb, 'OP ')
        call ovarre(outfile,'Neutral beam wall plug efficiency','(etanbi)',etanbi)
        call ovarre(outfile,'Beam decay lengths to centre','(taubeam)',taubeam, 'OP ')
-       call ovarre(outfile,'Beam shine-through fraction','(nbshinef)',nbshinef, 'OP ')       
+       call ovarre(outfile,'Beam shine-through fraction','(nbshinef)',nbshinef, 'OP ')
        call ovarre(outfile,'Neutral beam wall plug power (MW)','(pwpnb)',pwpnb, 'OP ')
-       
+
        call oblnkl(outfile)
        call ocmmnt(outfile,'Neutral beam power balance :')
        call ocmmnt(outfile,'----------------------------')
@@ -390,15 +386,15 @@ contains
        call ovarrf(outfile,'Beam power deposited in plasma (MW)','(pinjmw)',pinjmw, 'OP ')
        call ovarrf(outfile,'Total (MW)', &
                            '(porbitlossmw+nbshinemw+pinjmw)',porbitlossmw+nbshinemw+pinjmw)
-       call oblnkl(outfile)                    
+       call oblnkl(outfile)
        call ovarrf(outfile,'Beam power entering vacuum vessel (MW)','(pnbitot)',pnbitot, 'OP ')
        call oblnkl(outfile)
-       
-       call ovarre(outfile,'Fraction of beam energy to ions','(fpion)',fpion, 'OP ')       
+
+       call ovarre(outfile,'Fraction of beam energy to ions','(fpion)',fpion, 'OP ')
        call ovarre(outfile,'Beam duct shielding thickness (m)','(nbshield)',nbshield)
        call ovarre(outfile,'Beam tangency radius / Plasma major radius','(frbeam)',frbeam)
        call ovarre(outfile,'Beam centreline tangency radius (m)','(rtanbeam)', rtanbeam, 'OP ')
-       call ovarre(outfile,'Maximum possible tangency radius (m)','(rtanmax)', rtanmax, 'OP ')          
+       call ovarre(outfile,'Maximum possible tangency radius (m)','(rtanmax)', rtanmax, 'OP ')
     end if
 
     if (abs(echpwr) > 1.0D-8) then
@@ -452,51 +448,45 @@ contains
 
     implicit none
 
-    !  Arguments
+    ! Arguments !
+    !!!!!!!!!!!!!
 
     real(kind(1.0D0)), intent(out) :: effnbss,fpion,fshine
 
-    !  Local variables
+    ! Local variables !
+    !!!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: dend,dent,dpath,sigstop
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    !  Check argument sanity
-
+    ! Check argument sanity
     if ((1.0D0+eps) < frbeam) then
        fdiags(1) = eps ; fdiags(2) = frbeam
        call report_error(15)
     end if
 
-    !  Calculate beam path length to centre
-
+    ! Calculate beam path length to centre
     dpath = rmajor * sqrt( (1.0D0 + eps)**2 - frbeam**2)
 
-    !  Calculate beam stopping cross-section
-
+    ! Calculate beam stopping cross-section
     sigstop = sigbeam(enbeam/abeam,te,dene,ralpne,rncne,rnone,rnfene)
 
-    !  Calculate number of decay lengths to centre
-
+    ! Calculate number of decay lengths to centre
     taubeam = dpath * dene * sigstop
 
-    !  Shine-through fraction of beam
-
+    ! Shine-through fraction of beam
     fshine = exp(-2.0D0 * dpath*dene*sigstop)
     fshine = max(fshine, 1.0D-20)
 
-    !  Deuterium and tritium beam densities
-
+    ! Deuterium and tritium beam densities
     dend = deni * (1.0D0-ftritbm)
     dent = deni * ftritbm
 
-    !  Power split to ions / electrons
-
+    ! Power split to ions / electrons
     call cfnbi(abeam,enbeam,ten,dene,dend,dent,zeffai,dlamie,fpion)
 
-    !  Current drive efficiency
-
+    ! Current drive efficiency
     effnbss = frbeam * &
          etanb(abeam,alphan,alphat,aspect,dene,enbeam,rmajor,ten,zeff)
 
@@ -542,25 +532,28 @@ contains
 
       real(kind(1.0D0)) :: etanb
 
-      !  Arguments
+      ! Arguments !
+      !!!!!!!!!!!!!
 
       real(kind(1.0D0)), intent(in) :: abeam,alphan,alphat,aspect,dene, &
            ebeam,rmajor,ten,zeff
 
-      !  Local variables
+      ! Local variables !
+      !!!!!!!!!!!!!!!!!!!
 
       real(kind(1.0D0)) :: abd,bbd,dene20,dum,epseff,ffac,gfac,rjfunc, &
            xj,xjs,yj,zbeam
 
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+      ! TODO comment this subroutine.
+
       zbeam = 1.0D0
       bbd = 1.0D0
 
       dene20 = 1.0D-20*dene
 
-      !  Ratio of E_beam/E_crit
-
+      ! Ratio of E_beam/E_crit
       xjs = ebeam / (bbd*10.0D0*abeam*ten)
       xj = sqrt(xjs)
 
