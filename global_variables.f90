@@ -165,13 +165,17 @@ module physics_variables
 
   !+ad_vars  abeam : beam ion mass (amu)
   real(kind(1.0D0)) :: abeam = 0.0D0
+
   !+ad_vars  afuel : average mass of fuel portion of ions (amu)
   real(kind(1.0D0)) :: afuel = 0.0D0
+
   !+ad_vars  aion : average mass of all ions (amu)
   real(kind(1.0D0)) :: aion = 0.0D0
+
   !+ad_vars  alphaj /1.0/ : current profile index;
   !+ad_varc                 calculated from q0, q if iprofile=1
   real(kind(1.0D0)) :: alphaj = 1.0D0
+
   !+ad_vars  alphan /0.25/ : density profile index
   real(kind(1.0D0)) :: alphan = 0.25D0
   !+ad_vars  alphap : pressure profile index
@@ -1061,6 +1065,8 @@ module fwbs_variables
   !+ad_hist  25/02/15 JM  Removed redundant blanket fractions and switches
   !+ad_hist  02/04/15 JM  Removed fwerlim
   !+ad_hist  12/04/15 JM  Removed costr, astr, bstr, estr, lblnkt
+  !+ad_hist  01/06/16 JM  Added denw
+  !+ad_hist  01/06/16 JM  Added option 4 to iblanket
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1070,79 +1076,112 @@ module fwbs_variables
 
   public
 
-  !  General blanket parameters
+  ! General blanket parameters
 
   !+ad_vars  bktlife : blanket lifetime (years)
   real(kind(1.0D0)) :: bktlife = 0.0D0
+
   !+ad_vars  coolmass : mass of water coolant (in shield, blanket,
   !+ad_varc             first wall, divertor) (kg)
   real(kind(1.0D0)) :: coolmass = 0.0D0
+
   !+ad_vars  vvmass : vacuum vessel mass (kg)
   ! Formerly known as cryomass.
   real(kind(1.0D0)) :: vvmass = 0.0D0
+
   !+ad_vars  denstl /7800.0/ : density of steel (kg/m3)
   real(kind(1.0D0)) :: denstl = 7800.0D0
+
+  !+ad_vars  denw /19250.0/ : density of tungsten (kg/m3)
+  real(kind(1.0D0)) :: denw = 19250.0D0
+
   !+ad_vars  dewmkg : total mass of vacuum vessel + cryostat (kg)
   real(kind(1.0D0)) :: dewmkg = 0.0D0
+
   !+ad_vars  emult /1.269/ : energy multiplication in blanket and shield
   !                         (calculated if blktmodel>0)
   real(kind(1.0D0)) :: emult = 1.269D0
+
   !+ad_vars  emultmw : power due to energy multiplication in blanket and shield [MW]
   real(kind(1.0D0)) :: emultmw = 0.0D0
+
   !+ad_vars  fblss /0.09705/ : KIT blanket model: steel fraction of breeding zone
   real(kind(1.0D0)) :: fblss = 0.09705D0
+
   !+ad_vars  fdiv /0.115/ : area fraction taken up by divertor
   real(kind(1.0D0)) :: fdiv = 0.115D0
+
   !+ad_vars  fhcd /0.0/ : area fraction covered by heating/current drive
   !+ad_varc               apparatus plus diagnostics
   real(kind(1.0D0)) :: fhcd = 0.0D0
+
   !+ad_vars  fhole /0.0/ : area fraction taken up by other holes (not used)
   real(kind(1.0D0)) :: fhole = 0.0D0
+
   !+ad_vars  fwbsshape /2/ : first wall, blanket, shield and vacuum vessel shape:<UL>
   !+ad_varc                  <LI> = 1 D-shaped (cylinder inboard + ellipse outboard);
   !+ad_varc                  <LI> = 2 defined by two ellipses</UL>
   integer :: fwbsshape = 2
+
   !+ad_vars  fwlife : first wall full-power lifetime (y)
   real(kind(1.0D0)) :: fwlife = 0.0D0
+
   !+ad_vars  fwmass : first wall mass (kg)
   real(kind(1.0D0)) :: fwmass = 0.0D0
+
   !+ad_vars  fw_armour_mass : first wall armour mass (kg)
   real(kind(1.0D0)) :: fw_armour_mass = 0.0D0
+
   !+ad_vars  fw_armour_thickness /0.005/ : first wall armour thickness (m)
   real(kind(1.0D0)) :: fw_armour_thickness = 0.005D0
+
   !+ad_vars  fw_armour_vol : first wall armour volume (m3)
   real(kind(1.0D0)) :: fw_armour_vol = 0.0D0
+
   !+ad_vars  iblanket /1/ : switch for blanket model: <UL>
   !+ad_varc             <LI> = 1 CCFE HCPB model;
   !+ad_varc             <LI> = 2 KIT HCPB model;
   !+ad_varc             <LI> = 3 CCFE HCPB model with Tritium Breeding Ratio calculation</UL>
+  !+ad_varc             <LI> = 4 KIT HCLL model;
   integer :: iblanket = 1
+
   !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)
   real(kind(1.0D0)) :: li6enrich = 30.0D0
+
   !+ad_vars  pnucblkt : nuclear heating in the blanket (MW)
   real(kind(1.0D0)) :: pnucblkt = 0.0D0
+
   !+ad_vars  pnuccp : nuclear heating in the ST centrepost (MW)
   real(kind(1.0D0)) :: pnuccp = 0.0D0
+
   !+ad_vars  pnucdiv : nuclear heating in the divertor (MW)
   real(kind(1.0D0)) :: pnucdiv = 0.0D0
+
   !+ad_vars  pnucfw : nuclear heating in the first wall (MW)
   real(kind(1.0D0)) :: pnucfw = 0.0D0
+
   !+ad_vars  pnuchcd : nuclear heating in the HCD apparatus and diagnostics (MW)
   real(kind(1.0D0)) :: pnuchcd = 0.0D0
+
   !+ad_vars  pnucloss : nuclear heating lost via holes (MW)
   real(kind(1.0D0)) :: pnucloss = 0.0D0
+
   !+ad_vars  pnucloss : nuclear heating to vacuum vessel and beyond(MW)
   real(kind(1.0D0)) :: pnucvvplus = 0.0D0
+
   !+ad_vars  pnucshld : nuclear heating in the shield (MW)
   real(kind(1.0D0)) :: pnucshld = 0.0D0
+
   !+ad_vars  whtblkt : mass of blanket (kg)
   real(kind(1.0D0)) :: whtblkt = 0.0D0
+
   !+ad_vars  whtblss : mass of blanket - steel part (kg)
   real(kind(1.0D0)) :: whtblss = 0.0D0
+
   !+ad_vars  armour_fw_bl_mass : Total mass of armour, first wall and blanket (kg)
   real(kind(1.0D0)) :: armour_fw_bl_mass = 0.0D0
 
-   !  CCFE HCPB Blanket Model (with or without TBR calculation)
+  ! CCFE HCPB Blanket Model (with or without TBR calculation)
 
   !+ad_vars  <P><B>The following are used only in the CCFE HCPB blanket model
   !+ad_varc  (iblanket=1):</B><P>
@@ -1209,7 +1248,7 @@ module fwbs_variables
   !+ad_vars  nphcdout /2/ : number of outboard ports for heating/current drive
   !+ad_varc                 (iblanket=2 (KIT HCPB))
   integer :: nphcdout = 2
-  !+ad_vars  tbr : tritium breeding ratio (iblanket=2 (KIT HCPB))
+  !+ad_vars  tbr : tritium breeding ratio (iblanket=2,3 (KIT HCPB/HCLL))
   real(kind(1.0D0)) :: tbr = 0.0D0
   !+ad_vars  tritprate : tritium production rate (g/day) (iblanket=2 (KIT HCPB))
   real(kind(1.0D0)) :: tritprate = 0.0D0
@@ -1236,7 +1275,7 @@ module fwbs_variables
   !+ad_vars  Do not set blnkith, blnkoth, fwith or fwoth when iblanket=3.
   integer :: iblanket_thickness = 2
 
-  !+ad_vars  primary_pumping /0/ : Switch for pumping power for primary coolant (06/01/2016):
+  !+ad_vars  primary_pumping /2/ : Switch for pumping power for primary coolant (06/01/2016):
   !+ad_varc       (mechanical power only)<UL>
   !+ad_varc     <LI> = 0 User sets pump power directly (htpmw_blkt, htpmw_fw)
   !+ad_varc     <LI> = 1 User sets pump power as a fraction of thermal power (fpumpblkt, fpumpfw)

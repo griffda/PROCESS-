@@ -1951,7 +1951,7 @@ contains
           call parse_int_variable('hcdportsize', hcdportsize, 1, 2, &
                'H/CD port size')
        case ('iblanket')
-          call parse_int_variable('iblanket', iblanket, 1, 3, 'Switch for blanket model')
+          call parse_int_variable('iblanket', iblanket, 1, 4, 'Switch for blanket model')
           if (iblanket == 3) then
               fwith = 0.03D0
               fwoth = 0.03D0

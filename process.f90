@@ -64,7 +64,6 @@ program process
   use process_output
   use scan_module
   use numerics
-  use ccfe_hcpb_module
 
   implicit none
 
@@ -310,8 +309,8 @@ subroutine inform(progid)
   call system('/usr/bin/whoami >> ' // tempfile // char(0))
   !call system("finger `/usr/bin/whoami` " // &
   !     "| /usr/bin/head -1 | /usr/bin/cut -f 4 " // &
-  !     "| /usr/bin/cut -f 2-3 -d ' ' >> " // tempfile // char(0))  
-  
+  !     "| /usr/bin/cut -f 2-3 -d ' ' >> " // tempfile // char(0))
+
   call system('/bin/hostname >> ' // tempfile // char(0))
   call system('/bin/pwd >> ' // tempfile // char(0))
 
@@ -337,12 +336,12 @@ subroutine inform(progid)
   !  Annotate information and store in PROGID character array
   !  for use in other program units via the routine argument
   !progid(1) = '  Program : ' // progname
-  
+
   progid(1) = '  Program : ' // executable
   progid(2) = '  Version : ' // progver
   progid(3) = 'Date/time : ' // id(1)
   !progid(4) = '     User : ' // trim(id(2)) // ' (' // trim(id(3)) // ')'
-  progid(4) = '     User : ' // id(2) 
+  progid(4) = '     User : ' // id(2)
   progid(5) = ' Computer : ' // id(3)
   progid(6) = 'Directory : ' // id(4)
 
@@ -1465,12 +1464,13 @@ subroutine output(outfile)
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added rfp_module
   !+ad_hist  05/11/12 PJK Added ife_variables
-  !+ad_hist  05/11/12 PJK Added ife_module
   !+ad_hist  05/11/12 PJK Added pulse_module
+  !+ad_hist  05/11/12 PJK Added ife_module
   !+ad_hist  06/11/12 PJK Added startup_module
   !+ad_hist  06/11/12 PJK Added availability_module
   !+ad_hist  19/06/14 PJK Removed obsolete calls to nbeam, ech, lwhymod
   !+ad_hist  09/07/14 PJK Turned on error handling
+  !+ad_hist  07/06/16  JM Added some extra comments
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1504,23 +1504,24 @@ subroutine output(outfile)
   use tfcoil_module
   use vacuum_module
 
-  !  Import blanket modules
+  ! Import blanket modules
   use ccfe_hcpb_module
   use kit_hcpb_module
+  use kit_hcll_module
 
   implicit none
 
-  !  Arguments
+  ! Arguments
 
   integer, intent(in) :: outfile
 
-  !  Local variables
+  ! Local variables
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  !  Turn on error reporting
-  !  (warnings etc. encountered in previous iterations may have cleared themselves
-  !  during the solution process)
+  ! Turn on error reporting
+  ! (warnings etc. encountered in previous iterations may have cleared themselves
+  ! during the solution process)
   errors_on = .true.
 
   !  Call stellarator output routine instead if relevant
@@ -1529,11 +1530,20 @@ subroutine output(outfile)
      return
   end if
 
-  !  Call inertial fusion energy output routine instead if relevant
+  ! Call inertial fusion energy output routine instead if relevant
   if (ife /= 0) then
      call ifeout(outfile)
      return
   end if
+
+  ! Costs model !
+  !!!!!!!!!!!!!!!
+
+  ! Cost switch values
+  ! No.  |  model
+  ! ---- | ------
+  ! 0    |  1990 costs model
+  ! 1    |  2015 Kovari model
 
   if (cost_model == 1) then
      call costs_2015(outfile,1)
@@ -1541,78 +1551,174 @@ subroutine output(outfile)
      call costs(outfile,1)
   end if
 
+  ! Availability model !
+  !!!!!!!!!!!!!!!!!!!!!!
+
+  ! Availability switch values
+  ! No.  |  model
+  ! ---- | ------
+  ! 0    |  Input value for cfactr
+  ! 1    |  Ward and Taylor model (1999)
+  ! 2    |  Morris model (2015)
+
   if (iavail > 1) then
-     call avail_2(outfile, 1)
+     call avail_2(outfile, 1)  ! Morris model (2015)
   else
-     call avail(outfile,1)
+     call avail(outfile,1)  ! Taylor and Ward model (1999)
   end if
+
+
+  ! TODO what is this? not in caller.f90?
   call outplas(outfile)
+
+  ! startup model (not used) !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   !call startup(outfile,1)  !  commented-out for speed reasons
+
+  ! TODO what is this? not in caller.f90
   call igmarcal(outfile)
+
+  ! TODO what is this? Not in caller.f90?
   call cudriv(outfile,1)
+
+  ! Pulsed reactor model !
+  !!!!!!!!!!!!!!!!!!!!!!!!
+
   call pulse(outfile,1)
+
+
   call outtim(outfile)
+
+  ! Divertor Model !
+  !!!!!!!!!!!!!!!!!!
+
   call divcall(outfile,1)
+
+  ! Machine Build Model !
+  !!!!!!!!!!!!!!!!!!!!!!!
+
+  ! Radial build
   call radialb(outfile,1)
+
+  ! Vertical build
   call vbuild(outfile,1)
 
+  ! Toroidal field coil model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   if (irfp == 0) then
+     ! if a tokamak
      call tfcoil(outfile,1)
   else
+     ! if a rfp machine
      call rfptfc(outfile,1)
   end if
 
+  ! Toroidal field coil superconductor model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   call tfspcall(outfile,1)
 
-  if (itart == 1) call cntrpst(outfile,1)
+  ! Tight asepct ratio machine model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  if (itart == 1) then
+    call cntrpst(outfile,1)
+  end if
+
+  ! Poloidal field coil model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   if (irfp == 0) then
+     ! if a tokamak
      call outpf(outfile)
   else
+     ! if a rfp machine
      call rfppfc(outfile,1)
   end if
 
+  ! TODO what is outvolt?
   if (irfp == 0) call outvolt(outfile)
+
+  ! Structure Model !
+  !!!!!!!!!!!!!!!!!!!
 
   call strucall(outfile,1)
 
+  ! Poloidal field coil inductance calculation
+
   if (irfp == 0) call induct(outfile,1)
+
+  ! Blanket model !
+  !!!!!!!!!!!!!!!!!!
+
+  ! Blanket switch values
+  ! No.  |  model
+  ! ---- | ------
+  ! 1    |  CCFE HCPB model
+  ! 2    |  KIT HCPB model
+  ! 3    |  CCFE HCPB model with Tritium Breeding Ratio calculation
+  ! 4    |  KIT HCLL model
 
   if (iblanket == 1) then           ! CCFE HCPB model
 	 call ccfe_hcpb(nout, 1)
   else if (iblanket == 2) then      ! KIT HCPB model
      call kit_hcpb(nout, 1)
-  else if (iblanket == 3) then      ! CFE HCPB model with Tritium Breeding Ratio calculation
+  else if (iblanket == 3) then      ! CCFE HCPB model with Tritium Breeding Ratio calculation
      call ccfe_hcpb(nout, 1)
-	 call tbr_shimwell(nout, 1, breeder_f, li6enrich, iblanket_thickness, tbr)
+	   call tbr_shimwell(nout, 1, breeder_f, li6enrich, iblanket_thickness, tbr)
+  else if (iblanket == 4) then      ! KIT HCLL model
+     call kit_hcll(nout, 1)
   end if
 
-  !call fwbs(outfile,1)
+  ! FISPACT and LOCA model (not used) !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  if (ifispact == 1) then
-     call fispac(0)
-     call fispac(1)
-     call loca(outfile,0)
-     call loca(outfile,1)
-  end if
+  ! if (ifispact == 1) then
+  !   call fispac(0)
+  !   call fispac(1)
+  !   call loca(outfile,0)
+  !   call loca(outfile,1)
+  !end if
+
+  ! Toroidal field coil power model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call tfpwr(outfile,1)
 
+  ! Poloidal field coil power model !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   if (irfp == 0) then
+     ! if a tokamak
      call pfpwr(outfile,1)
   else
+     ! if a rfp machine
      call rfppfp(outfile,1)
   end if
 
-  call vaccall(outfile,1)
-  if (cost_model==0) call bldgcall(outfile,1)
-  call acpow(outfile,1)
-  call power2(outfile,1)
+  ! Vacuum model !
+  !!!!!!!!!!!!!!!!
 
-  !select case (iblanket)
-  !case(1)
-  !	call ccfe_hcpb(outfile, 1)
-  !end select
+  call vaccall(outfile,1)
+
+  ! Buildings model (1990 costs model only) !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  if (cost_model==0) then
+    call bldgcall(outfile,1)
+  end if
+
+  ! Plant AC power requirements !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  call acpow(outfile,1)
+
+  ! Plant heat transport pt 2 !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  call power2(outfile,1)
 
 end subroutine output
 

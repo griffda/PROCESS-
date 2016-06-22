@@ -987,29 +987,30 @@ contains
     !  is 1 or 0, is user choice on whether the shield thermal power goes to primary or secondary heat
     if (secondary_cycle == 0) then
 
-		!  Primary thermal power (MW)
-		pthermmw = pthermfw + pthermblkt + iprimshld*pthermshld
+  		!  Primary thermal power (MW)
+  		pthermmw = pthermfw + pthermblkt + iprimshld*pthermshld
 
-		!  Secondary thermal power deposited in divertor (MW)
-		psecdiv = pthermdiv
+  		!  Secondary thermal power deposited in divertor (MW)
+  		psecdiv = pthermdiv
 
-		! Divertor primary/secondary power switch value
-		iprimdiv = 0
+  		! Divertor primary/secondary power switch value
+  		iprimdiv = 0
 
-	else
-		!  Primary thermal power (MW)
-		pthermmw = pthermfw + pthermblkt + iprimshld*pthermshld + pthermdiv
+	  else
 
-		!  Secondary thermal power deposited in divertor (MW)
-		psecdiv = 0.0D0
+  		!  Primary thermal power (MW)
+  		pthermmw = pthermfw + pthermblkt + iprimshld*pthermshld + pthermdiv
 
-		! Divertor primary/secondary power switch value
-		iprimdiv = 1
+  		!  Secondary thermal power deposited in divertor (MW)
+  		psecdiv = 0.0D0
 
-	end if
-	if (abs(pthermmw) < 1.0D-4) write(*,*) 'ERROR Primary thermal power is zero or negative'
+  		! Divertor primary/secondary power switch value
+  		iprimdiv = 1
 
-	! #284 Fraction of total high-grade thermal power to divertor
+	  end if
+	  if (abs(pthermmw) < 1.0D-4) write(*,*) 'ERROR Primary thermal power is zero or negative'
+
+	  ! #284 Fraction of total high-grade thermal power to divertor
     pdivfraction = pthermdiv / pthermmw
     ! Loss in efficiency as this primary power is collecetd at very low temperature
     delta_eta = 0.339*pdivfraction
@@ -1027,7 +1028,7 @@ contains
     !  Wall plug injection power
     ! MDK
     ! pinjwp = (pinjmw + porbitlossmw + palpfwmw)/etacd
-	! pinjwp calculated in current_drive.f90
+	  ! pinjwp calculated in current_drive.f90
 
     !  Waste injection power
     if (ignite == 0) then

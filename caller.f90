@@ -154,6 +154,7 @@ subroutine caller(xc,nvars)
 
   use ccfe_hcpb_module
   use kit_hcpb_module
+  use kit_hcll_module
 
   implicit none
 
@@ -278,14 +279,17 @@ subroutine caller(xc,nvars)
   ! 1    |  CCFE HCPB model
   ! 2    |  KIT HCPB model
   ! 3    |  CCFE HCPB model with Tritium Breeding Ratio calculation
+  ! 4    |  KIT HCLL model
 
   if (iblanket == 1) then           ! CCFE HCPB model
 	   call ccfe_hcpb(nout, 0)
   else if (iblanket == 2) then      ! KIT HCPB model
      call kit_hcpb(nout, 0)
-  else if (iblanket == 3) then      ! CFE HCPB model with Tritium Breeding Ratio calculation
+  else if (iblanket == 3) then      ! CCFE HCPB model with Tritium Breeding Ratio calculation
      call ccfe_hcpb(nout, 0)
 	   call tbr_shimwell(nout, 0, breeder_f, li6enrich, iblanket_thickness, tbr)
+  else if (iblanket == 4) then      ! KIT HCLL model
+     call kit_hcll(nout, 0)
   end if
 
   ! Divertor Model !
