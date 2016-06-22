@@ -384,7 +384,8 @@ contains
     !+ad_hist  12/08/15 MDK vacuum_model and associated variables #304
     !+ad_hist  18/11/15 RK  zeffmax and fzeffmax for constraint equation 64
     !+ad_hist  26/11/15 RK  added sigvvall to TF variables, tfinsgap
-    !+ad_hist  29/03/16 HL Added coreradiationfraction
+    !+ad_hist  29/03/16 HL  Added coreradiationfraction
+    !+ad_hist  02/06/16 RK  Allowed negative triangularity
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -649,7 +650,7 @@ contains
           write(outfile,*) ' '
           obsolete_var = .true.
        case ('icurr')
-          call parse_int_variable('icurr', icurr, 1, 7, &
+          call parse_int_variable('icurr', icurr, 1, 8, &
                'Switch for plasma current scaling')
        case ('idensl')
           call parse_int_variable('idensl', idensl, 1, 7, &
@@ -811,7 +812,7 @@ contains
           call parse_real_variable('tratio', tratio, 0.0D0, 2.0D0, &
                'Ion / electron temperature ratio')
        case ('triang')
-          call parse_real_variable('triang', triang, 0.0D0, 1.0D0, &
+          call parse_real_variable('triang', triang, -1.0D0, 1.0D0, &
                'Plasma separatrix triangularity')
        case ('triang95')
           call parse_real_variable('triang95', triang95, 0.0D0, 1.0D0, &

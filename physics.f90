@@ -1741,6 +1741,7 @@ contains
     !+ad_hist  27/11/13 PJK Added new arguments to bpol
     !+ad_hist  28/11/13 PJK Added current profile consistency if iprofile=1
     !+ad_hist  26/06/14 PJK Added error handling
+    !+ad_hist  02/06/16 RK  Added Sauter scaling for negative triangularity
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  J D Galambos, STAR Code : Spherical Tokamak Analysis and Reactor Code,
@@ -1749,6 +1750,7 @@ contains
     !+ad_docc  ITER Documentation Series No.10, IAEA/ITER/DS/10, IAEA, Vienna, 1990
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
     !+ad_docc  DEMO Tokamak' Document, March 2012, EFDA Report
+    !+ad_docc  Sauter, Geometric formulas for systems codes..., FED 2016
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1764,7 +1766,7 @@ contains
 
     !  Local variables
 
-    real(kind(1.0D0)) :: asp, curhat, fq
+    real(kind(1.0D0)) :: asp, curhat, fq, w07
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -1773,8 +1775,17 @@ contains
     asp = 1.0D0/eps
 
     !  Calculate the function Fq that scales the edge q from the
-    !  circular cross-section cylindrical case.
-
+    !  circular cross-section cylindrical case
+    
+    !  First check for negative triangularity using unsuitable current scaling
+    
+    if ((icurr.ne.8).and.(triang.lt.0.0)) then
+     write(*,*) 'Triangularity is negative without icurr = 8.'
+     write(*,*) 'Please check and try again.'
+     write(*,*) 'PROCESS stopping'
+     stop
+    end if
+    
     select case (icurr)
 
     case (1)  !  Peng analytical fit
@@ -1804,7 +1815,18 @@ contains
        !  N.B. If iprofile=1, alphaj will be wrong during the first call (only)
 
        call conhas(alphaj,alphap,bt,triang,eps,kappa,p0,fq)
-
+       
+    case (8)  !  Sauter scaling allowing negative triangularity [FED May 2016]
+    
+        ! Assumes zero squareness, note takes kappa, delta at separatrix not _95
+    
+        w07 = 1.0d0    ! zero squareness - can be modified later if required
+	
+        fq = (1.0d0 + 1.2d0*(kappa - 1.0d0) + 0.56d0*(kappa-1.0d0)**2) * &
+             (1.0d0 + 0.09d0 * triang + 0.16d0 * triang**2) * &
+	     (1.0d0 + 0.45d0 * triang * eps)/(1.0d0 - 0.74d0 * eps) * &
+	     (1.0d0 + 0.55d0 * (w07 - 1.0d0))
+	
     case default
        idiags(1) = icurr ; call report_error(77)
 
@@ -1814,6 +1836,9 @@ contains
 
     if (icurr /= 2) then
        curhat = 5.0D6 * rminor**2 / (rmajor*qpsi) * fq
+    end if
+    if (icurr == 8) then 
+       curhat = 4.1d6 * rminor**2 / (rmajor*qpsi) * fq
     end if
 
     !  Calculate the equivalent edge safety factor (= qcyl)
@@ -1825,7 +1850,7 @@ contains
     !  Calculate plasma current
 
     plascur = curhat * bt
-
+    
     !  Calculate the poloidal field
 
     bp = bpol(itart,plascur,qpsi,asp,bt,kappa,triang,pperim)
