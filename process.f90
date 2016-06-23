@@ -286,7 +286,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=100) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '412    Release Date :: 2016-01-20'
+       '413    Release Date :: 2016-06-23'
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
@@ -2116,3 +2116,4 @@ end subroutine runtests
 ! 411      Added maximum rate of change of PF energy as a constraint.
 ! 412      Master release: Checked recent changes using the test suite. Made a
 !          few minor changes. Updated test function in plot_proc.
+! 413      HCLL model now implemented. See milestone march 2016 for details.
