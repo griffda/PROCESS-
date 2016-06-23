@@ -969,7 +969,7 @@ module kit_hcll_module
      emultmw = (powfmw*0.8D0*pnuc_bkt_ratio)*(emult - 1.0D0)
 
      ! Nuclear heating in the divertor
-     pnucdiv = powfmw*0.8D0*(1.0D0 - CF)
+     pnucdiv = powfmw*0.8D0*fdiv
 
      ! Radiation power incident on divertor (MW)
      praddiv = pradmw * fdiv
@@ -1001,7 +1001,6 @@ module kit_hcll_module
      else if (primary_pumping == 2) then
 
        ! Mechanical pumping power is calculated for first wall and blanket
-       ! TODO - do stuff that would be called in "call thermo_hydraulic_model"
        call thermo_hydraulic_model
 
        ! For divertor and shield, mechanical pumping power is a fraction of thermal power removed by coolant
@@ -1015,7 +1014,7 @@ module kit_hcll_module
 
        ! Blanket He pumping power (MW)
        ! TODO - keep this instead of more detailed calculation?
-       p_pump= P_pump_0*(pnucblkt/P_th_0)
+       ! p_pump= P_pump_0*(pnucblkt/P_th_0)
 
      end if
 
