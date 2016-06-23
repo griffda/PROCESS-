@@ -3444,6 +3444,7 @@ module constraint_variables
   !+ad_hist  11/11/14 PJK Added ftmargoh
   !+ad_hist  06/08/15 MDK ftaulimit
   !+ad_hist  18/11/15 RK  fzeffmax and zeffmax
+  !+ad_hist  23/06/16 JM  Removed dtmpmx as no longer used anywhere
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -3465,9 +3466,6 @@ module constraint_variables
   !+ad_vars  bmxlim /12.0/ : maximum peak toroidal field (T)
   !+ad_varc                  (constraint equation 25)
   real(kind(1.0D0)) :: bmxlim = 12.0D0
-  !+ad_vars  dtmpmx /1.0e3/ : maximum first wall coolant temperature rise (K)
-  !+ad_varc                   (constraint equation 38)
-  real(kind(1.0D0)) :: dtmpmx = 1.0D3
   !+ad_vars  fauxmn /1.0/ : f-value for minimum auxiliary power
   !+ad_varc                 (constraint equation 40, iteration variable 64)
   real(kind(1.0D0)) :: fauxmn = 1.0D0
@@ -4187,6 +4185,7 @@ module pulse_variables
   !+ad_call  None
   !+ad_hist  05/11/12 PJK Initial version of module
   !+ad_hist  21/08/14 PJK Moved some variables into fwbs_variables
+  !+ad_hist  23/06/16 JM  Removed tmprse as no longer used anywhere
   !+ad_stat  Okay
   !+ad_docs  Work File Notes in F/MPE/MOD/CAG/PROCESS/PULSE
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -4219,8 +4218,6 @@ module pulse_variables
   !+ad_varc          <LI> = 0 continuous operation;
   !+ad_varc          <LI> = 1 pulsed operation</UL>
   integer :: lpulse = 0
-  !+ad_vars  tmprse /40.0/ : first wall coolant temperature rise (C)
-  real(kind(1.0D0)) :: tmprse = 40.0D0
 
 end module pulse_variables
 

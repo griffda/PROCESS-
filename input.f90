@@ -386,6 +386,7 @@ contains
     !+ad_hist  26/11/15 RK  added sigvvall to TF variables, tfinsgap
     !+ad_hist  29/03/16 HL  Added coreradiationfraction
     !+ad_hist  02/06/16 RK  Allowed negative triangularity
+    !+ad_hist  23/06/16 JM  Removed dtmpmx and tmprse as not in rest of code (#377)
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -839,9 +840,6 @@ contains
        case ('bmxlim')
           call parse_real_variable('bmxlim', bmxlim, 0.1D0, 50.0D0, &
                'Maximum toroidal field (T)')
-       case ('dtmpmx')
-          call parse_real_variable('dtmpmx', dtmpmx, 1.0D0, 1000.0D0, &
-               'Maximum temp rise in f.w. coolant (K)')
        case ('fauxmn')
           call parse_real_variable('fauxmn', fauxmn, 0.001D0, 10.0D0, &
                'F-value for minimum auxiliary power')
@@ -1774,9 +1772,6 @@ contains
        case ('lpulse')
           call parse_int_variable('lpulse', lpulse, 0, 1, &
                'Switch for pulsed reactor model')
-       case ('tmprse')
-          call parse_real_variable('tmprse', tmprse, 1.0D0, 1.0D3, &
-               'Temperature rise in first wall coolant (C)')
 
           !  First wall, blanket, shield settings
 

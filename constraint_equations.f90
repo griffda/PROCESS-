@@ -166,6 +166,7 @@ contains
     !+ad_hist  18/11/15 RK  Eqn 64: Added constrain equation to limit Zeff
     !+ad_hist  26/11/15 RK  Eqn 65: Added constrain equation to set dump time
     !+ad_hist  24/05/16 JM  Added more information in the comments
+    !+ad_hist  23/06/16 JM  Removed equation 38. No longer used anywhere in the code
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -987,21 +988,6 @@ contains
              err(i) = gamcd * cc(i)
              symbol(i) = '<'
              units(i) = '1E20 A/Wm2'
-          end if
-
-       case (38)  ! Equation for first wall coolant temperature rise upper limit
-
-          ! TODO check and remove this constraint equation (issue #377)
-          ! fdtmp  |  f-value for first wall temperature rise
-          ! dtmpmx |  maximum first wall coolant temperature rise (K)
-          ! tmprse |  first wall coolant temperature rise (C)
-          cc(i) = 1.0D0 - fdtmp * dtmpmx/tmprse
-
-          if (present(con)) then
-             con(i) = dtmpmx * (1.0D0 - cc(i))
-             err(i) = tmprse * cc(i)
-             symbol(i) = '<'
-             units(i) = 'K'
           end if
 
        case (39)  ! Equation for first wall temperature upper limit
