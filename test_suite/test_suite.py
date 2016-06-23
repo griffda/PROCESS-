@@ -336,6 +336,11 @@ def copy_test_to_test_area(test_name, test_status, ars):
     subprocess.call(["cp", "{0}/{1}/ref.MFILE.DAT".format(ars.ref, test_name),
                      "test_area/{0}/".format(test_name)])
 
+    # new.OUT.DAT to test_files
+
+    subprocess.call(["cp", "OUT.DAT", "test_files/{0}/new.OUT.DAT".
+                    format(test_name)])
+
     # new.OUT.DAT
     subprocess.call(["mv", "OUT.DAT", "test_area/{0}/new.OUT.DAT".
                     format(test_name)])
@@ -638,7 +643,7 @@ def test_plot_proc(fs):
     # add to utilities.log
     amend_utility_log("plot_proc.py")
 
-    #sys.stdout = open("utilities.log", "a")
+    # sys.stdout = open("utilities.log", "a")
 
     # test all MFILEs
     for key in fs.keys():
@@ -647,11 +652,11 @@ def test_plot_proc(fs):
             # file_name = fs[key]["path"] + "new.MFILE.DAT"
             results.append(pp.test(file_name))
 
-            #if results[-1]:
+            # if results[-1]:
             #    subprocess.call(["mv", "ref.SUMMARY.pdf", "test_area/{0}/".
             #                    format(key)])
 
-    #sys.stdout = sys.__stdout__
+    # sys.stdout = sys.__stdout__
 
     # Output message
     msg = "Test ==>  {0:<40}".format("plot_proc.py")
