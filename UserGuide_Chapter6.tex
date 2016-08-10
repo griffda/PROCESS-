@@ -443,6 +443,13 @@ the pedestal as well as the peaking factors.  Optional arguments are
 If the column of the density or temperature data does not exist, it is
 ignored. A warning is issued.
 
+\subsection{create\_dicts.py}
+
+This automatically generates the \texttt{process\_dicts.py} file used by \process utility programs.  It does this by scanning the Fortran source code.  The standard output should be redirected, using\\
+\begin{verbatim}
+create_dicts.py > process_dicts.py
+\end{verbatim}
+
 
 
 \subsection{Step from one model to another (a\_to\_b.py)}
@@ -818,11 +825,33 @@ optional arguments:
   -e END, --end END     file format default = .pdf
 \end{verbatim}
 
-\subsection{create\_dicts.py}
 
-This automatically generates the \texttt{process\_dicts.py} file used by \process utility programs.  It does this by scanning the Fortran source code.  The standard output should be redirected, using\\
+\subsubsection{diagnose\_uncertainties.py}
+This is a Python facility to display the input parameter distributions in the final runs vs. the ones specified in the input file. This can be used to determine whether the input distributions are sufficiently sampled or whether the resulting distributions are skewed due to unfeasible designs being excluded. 
+
+\begin{description}
+\item{\textbf{Input:}}
+ \texttt{uncertainties.nc}, \texttt{evaluate\_uncertainties.json}
+                                
+\item{\textbf{Output:}}
+Uncertainties\_Diagnostic\_varname.pdf
+\end{description}
+
+Usage:
 \begin{verbatim}
-create_dicts.py > process_dicts.py
+diagnose_uncertainties.py [-h] [-e END] [-u UNCERTAINTIES] [-f FILENAME]
+
+Program to check the final uncertainty distributions in the input parameters.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -e END, --end END     file format default =pdf
+  -u UNCERTAINTIES, --uncertainties UNCERTAINTIES
+                        uncertainties config file default =
+                        evaluate_uncertainties.json
+  -f FILENAME, --filename FILENAME
+                        uncertainties data file, default =uncertainties.nc
+
 \end{verbatim}
 
 

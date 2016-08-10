@@ -7,18 +7,22 @@ Author: H. Lux (Hanni.Lux@ccfe.ac.uk)
 Input file:
 uncertainties.nc
 
-
 """
 
 
 #######################
 #imported libraries
 
+from matplotlib import rc,use
+rc('font',size=20)
+rc(('xtick','ytick'),labelsize=15)
+
+
 import argparse
 from numpy import loadtxt
 from matplotlib.ticker import NullFormatter
 from pylab import figure, axes, show, savefig
-from process_io_lib.process_config import NETCDF_SWITCH
+from sys import stderr
 
 
 def fig_2dscatter_and_hist(xarr, yarr, labelx, labely):
@@ -53,8 +57,8 @@ def fig_2dscatter_and_hist(xarr, yarr, labelx, labely):
     axhistx.hist(xarr, bins=bins)
     axhisty.hist(yarr, bins=bins, orientation='horizontal')
 
-    axhistx.set_xlim( axscatter.get_xlim() )
-    axhisty.set_ylim( axscatter.get_ylim() )
+    axhistx.set_xlim(axscatter.get_xlim())
+    axhisty.set_ylim(axscatter.get_ylim())
 
 
 if __name__ == '__main__':
@@ -67,9 +71,9 @@ if __name__ == '__main__':
 
 
     PARSER.add_argument("-e", "--end",
-                        default='.pdf',
+                        default='pdf',
                         help="file format default =\
-.pdf")
+pdf")
 
 
     PARSER.add_argument("variables", metavar='v', type=str,
@@ -89,70 +93,68 @@ uncertainties.nc")
 ############################################################
 #main program
 
-    #version with NetCDF files:
-    if NETCDF_SWITCH:
-        from process_io_lib.process_netcdf import NetCDFReader
+    from process_io_lib.process_netcdf import NetCDFReader
+
+    if ARGS.variables == 'all':
+        with NetCDFReader(FILENAME) as ncdf_reader:
+            DICTS = ncdf_reader.get_run_dicts(0)
+
+            if len(DICTS) > 6:
+                print('Error: There are too many variables stored.'
+                      'Choose 2 for plotting!', file=stderr)
+                print('Stored variables', list(DICTS.keys()),
+                      file=stderr)
+                exit()
+
+            DATA = {}
+            LABELS = list(DICTS.keys())
+            for i in range(len(LABELS)):
+                DATA[str(i)] = []
+
+            for datadict in ncdf_reader.run_dicts(start_run=0):
+                for i in range(len(LABELS)):
+                    DATA[str(i)] += [datadict[LABELS[i]]]
 
 
-        if ARGS.variables == 'all':
-            with NetCDFReader(FILENAME) as ncdf_reader:
-                MFILE = ncdf_reader.get_run(0)
-                if len(MFILE.data) > 6:
-                    print('There are too many variables stored.\
- Choose 2 for plotting!')
+        for i in range(len(LABELS)-1):
+            XARR = DATA[str(i)]
+            YARR = DATA[str(i+1)]
+            fig_2dscatter_and_hist(XARR, YARR, LABELS[i], LABELS[i+1])
+            savefig('Uncertainties_'+LABELS[i]+'_'+LABELS[i+1]+ARGS.end)
+            print('Stored variables', list(DICTS.keys()))
+            print('Number of successful runs', len(XARR))
+
+    else:
+        XARR = []
+        YARR = []
+
+        with NetCDFReader(FILENAME) as ncdf_reader:
+
+            # Get multiple runs
+            for datadict in ncdf_reader.run_dicts(start_run=0):
+                try:
+                    XARR += [datadict[ARGS.variables[0]]]
+                except KeyError:
+                    print('Error: Variable', ARGS.variables[0],
+                          'not in', FILENAME, 'Choose from',
+                          list(datadict.keys()), file=stderr)
+                    exit()
+                try:
+                    YARR += [datadict[ARGS.variables[1]]]
+                except KeyError:
+                    print('Error: Variable', ARGS.variables[1],
+                          'not in', FILENAME, 'Choose from',
+                          list(datadict.keys()), file=stderr)
                     exit()
 
-                DATA = {}
-                LABELS = list(MFILE.data.keys())
-                for i in range(len(MFILE.data)):
-                    DATA[str(i)] = []
-
-                for MFILE in ncdf_reader.runs(start_run=0):
-                    for i in range(len(LABELS)):
-                        DATA[str(i)] += [MFILE.data[LABELS[i]].get_scan(-1)]
-
-
-            for i in range(len(LABELS)-1):
-                XARR = DATA[str(i)]
-                YARR = DATA[str(i+1)]
-                fig_2dscatter_and_hist(XARR, YARR, LABELS[i], LABELS[i+1])
-                savefig('Uncertainties_'+LABELS[i]+'_'+LABELS[i+1]+ARGS.end)
-
-        else:
-            XARR = []
-            YARR = []
-
-            with NetCDFReader(FILENAME) as ncdf_reader:
-
-                # Get multiple runs
-                for MFILE in ncdf_reader.runs(start_run=0):
-
-                    XARR += [MFILE.data[ARGS.variables[0]].get_scan(-1)]
-                    YARR += [MFILE.data[ARGS.variables[1]].get_scan(-1)]
-            fig_2dscatter_and_hist(XARR, YARR, ARGS.variables[0],
-                                   ARGS.variables[1])
-            savefig('Uncertainties_'+ARGS.variables[0]+'_'+ARGS.variables[1]\
-                    +ARGS.end)
+        fig_2dscatter_and_hist(XARR, YARR, ARGS.variables[0],
+                               ARGS.variables[1])
+        savefig('Uncertainties_'+ARGS.variables[0]+'_'+ARGS.variables[1]\
+                +'.'+ARGS.end)
+        print('Stored variables', list(datadict.keys()))
+        print('Number of successful runs', len(XARR))
+        
 
 
-    #version without NetCDF files:
-    else:
-        UFILE = open(FILENAME, 'r')
-        LABELS = UFILE.readline()
-        UFILE.close()
-        LABELS = LABELS.split()
-
-        DATA = loadtxt(FILENAME, skiprows=1)
-
-        if ARGS.variables == 'all':
-            for i in range(len(DATA[0])-1):
-                XARR = DATA[:, i]
-                YARR = DATA[:, i+1]
-
-                fig_2dscatter_and_hist(XARR, YARR, LABELS[i], LABELS[i+1])
-                savefig('Uncertainties_'+LABELS[i]+'_'+LABELS[i+1]+ARGS.end)
-        else:
-            print('Sorry, this option is not actually programmed yet!')
-            exit()
 
 show()
