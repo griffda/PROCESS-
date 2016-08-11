@@ -120,7 +120,7 @@ uncertainties.nc")
             XARR = DATA[str(i)]
             YARR = DATA[str(i+1)]
             fig_2dscatter_and_hist(XARR, YARR, LABELS[i], LABELS[i+1])
-            savefig('Uncertainties_'+LABELS[i]+'_'+LABELS[i+1]+ARGS.end)
+            savefig('Uncertainties_'+LABELS[i]+'_'+LABELS[i+1]+'.'+ARGS.end)
             print('Stored variables', list(DICTS.keys()))
             print('Number of successful runs', len(XARR))
 
