@@ -63,7 +63,7 @@ module costs_2015_module
   end type scl
 
   ! Scaling law array (unused entries will be zeroes)
-  type(scl), dimension(100) :: s
+  type(scl), save, dimension(100) :: s
   real(kind=double) :: total_costs, mean_electric_output, annual_electric_output, &
                        maintenance
 
