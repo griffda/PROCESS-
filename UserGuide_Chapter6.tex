@@ -4,7 +4,7 @@
 A number of utilities for \process\ are available, for instance to modify the
 input file \indat, run \process\ until a feasible solution is found, or to
 extract and plot data from the \process\ output. All utilities are available
-from \texttt{~PROCESS/master/utilities}.
+from \texttt{~PROCESS/master/utilities} where also example config files are kept.
 
 For \process\ \textit{users}, only the executables described in
 Section~\ref{sec:py_exec} are relevant. For anyone interested in modifying the
@@ -50,7 +50,7 @@ This program modifies a given \indat\ file such that the specified initial value
 
 \begin{description}
 \item{\textbf{Input:}}
-\indat, \outdat\
+\indat, \mfile\
 
 \item{\textbf{Output:}}
 \texttt{new\_IN.DAT}
@@ -123,7 +123,7 @@ Creates an index of all \process\ run comments, after they have been created by 
 
 \begin{description}
 \item{\textbf{Input:}}
-None
+README.txt files in subfolders
 
 \item{\textbf{Output:}}
 \verb|Index.txt|
@@ -159,9 +159,9 @@ Run2:
 \end{verbatim}
 \end{framed}
 
-\subsection{test\_process.py}
+\subsection{Test the solver accuracy and globality (test\_process.py)}
 
-This program has a similar structure to the \texttt{run\_process.py} program, but varies the iteration variable start parameters for as many iterations as requested by the configuration file. It outputs a summary of the final iteration parameter values and figure of merit values for testing the accuracy of the optimisation solver in PROCESS.
+This program has a similar structure to the \texttt{run\_process.py} program, but varies the iteration variable start parameters for as many iterations as requested by the configuration file. It outputs a summary of the final iteration parameter values and figure of merit values for testing the accuracy of the optimisation solver in PROCESS. This also allows the user to verify that the final solution is not only a local solution. For this type of study a large value of the factor within which the iteration variables are changed should be chosen! 
 
 \begin{description}
 \item{\textbf{Input:}}
@@ -328,12 +328,27 @@ python output_data.py -o out.txt
 \end{verbatim}
 \end{quote}
 
+\subsection{Create archivable files for PROCESS Runs database (archive.sh)}
+
+This is a very simple shell script to create all the relevant files for the PROCESS Runs database on the EUROfusion IDM\footnote{https://idm.euro-fusion.org/?uid=2MUP64}. It uses the \verb|output\_data.py| and the \verb|plot\_proc.py| utilities.
+
+\begin{description}
+\item{\textbf{Input:}}
+\indat, \outdat, \mfile
+
+\item{\textbf{Output:}}
+\verb|PREFIX.|\indat, \verb|PREFIX.|\outdat, \verb|PREFIX.pdf|, \verb|PREFIX.csv|
+\end{description}
+
+The convention for the PREFIX is to use the following format e.g. DEMO1\_detailed\_description\_Year\_Month\_Day, where DEMO1 is the description of the design investigated and the detailed description summarises the key changes made to the design.
+
+
 \subsection{plot\_sweep.py}
 
 This utility plots normalised values from \plotdat\ and allows comparisons of
 changes in values from a sweep compared to the first point in the sweep. It is
 now deprecated due to the existence of more flexible sweep-generating
-and output-handling utilities.
+and output-handling utilities. 
 
 \begin{description}
 \item{\textbf{Input:}}
