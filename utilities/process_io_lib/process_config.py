@@ -597,9 +597,14 @@ class RunProcessConfig(ProcessConfig):
 
         """ modifies IN.DAT using the configuration parameters"""
 
-        self.modify_vars()
+        # Need to keep this order! 
+        # If bounds are modified in vars, but ixc is newly added,
+        # bounds do not get put into IN.DAT. Hence, vars needs to be modified
+        # first.
         self.modify_ixc()
         self.modify_icc()
+        self.modify_vars()
+
 
 
     def modify_vars(self):
