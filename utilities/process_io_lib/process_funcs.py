@@ -6,17 +6,19 @@ Author: Hanni Lux (Hanni.Lux@ccfe.ac.uk)
 Compatible with PROCESS version 368 """
 
 from os.path import join as pjoin
+from sys import stderr
 try:
     from process_io_lib.process_dicts import DICT_IXC_SIMPLE, DICT_IXC_BOUNDS,\
     NON_F_VALUES, IFAIL_SUCCESS, DICT_DEFAULT, DICT_INPUT_BOUNDS
 except ImportError:
     print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!")
+'make dicts'!", file=stderr)
     exit()
 from process_io_lib.in_dat import InDat
 from process_io_lib.mfile import MFile
 from numpy.random import uniform
 from time import sleep
+
 
 
 def get_neqns_itervars(wdir='.'):
@@ -96,6 +98,11 @@ def  get_variable_range(itervars, factor, wdir='.'):
         else:
             value = get_from_indat_or_default(in_dat, varname)
 
+            if value == None: 
+                print('Error: Iteration variable {} has None value!'.format(
+                        varname))
+                exit()
+
             # to allow the factor to have some influence
             if value == 0.:
                 value = 1.
@@ -111,8 +118,9 @@ def  get_variable_range(itervars, factor, wdir='.'):
 
         if lbs[-1] > ubs[-1]:
             print('Error: Iteration variable {} has BOUNDL={.f} >\
- BOUNDU={.f}\n Update process_dicts or input file!'.format(varname, lbs[-1],
-                                                           ubs[-1]))
+ BOUNDU={.f}\n Update process_dicts or input file!'.format(varname,
+                                                           lbs[-1], ubs[-1]),
+                  file=stderr)
 
             exit()
         #assert lbs[-1] < ubs[-1]
@@ -144,7 +152,7 @@ def check_in_dat():
         if DICT_IXC_BOUNDS[itervarname]['lb'] < lowerinputbound:
             print("Warning: boundl for ", itervarname,
                   " lies out of allowed input range!\n Reset boundl(",
-                  itervarno, ") to ", lowerinputbound)
+                  itervarno, ") to ", lowerinputbound, file=stderr)
             DICT_IXC_BOUNDS[itervarname]['lb'] = lowerinputbound
             set_variable_in_indat(in_dat, "boundl("+str(itervarno)+")",
                                   lowerinputbound)
@@ -155,7 +163,7 @@ def check_in_dat():
         if DICT_IXC_BOUNDS[itervarname]['ub'] > upperinputbound:
             print("Warning: boundu for", itervarname,
                   "lies out of allowed input range!\n Reset boundu({}) \
-to".format(itervarno), upperinputbound)
+to".format(itervarno), upperinputbound, file=stderr)
             DICT_IXC_BOUNDS[itervarname]['ub'] = upperinputbound
             set_variable_in_indat(in_dat, "boundu("+str(itervarno)+")",
                                   upperinputbound)
@@ -180,7 +188,7 @@ def check_logfile(logfile='process.log'):
         for line in outlogfile:
             if errormessage in line:
                 print('An Error has occured. Please check the output \
-                       file for more information.')
+                       file for more information.', file=stderr)
                 exit()
 
 
@@ -196,7 +204,7 @@ def check_input_error(wdir='.'):
 
     if error_id == 130:
         print('Error in input file. Please check OUT.DAT \
-for more information.')
+for more information.', file=stderr)
         exit()
 
 
@@ -363,6 +371,7 @@ def get_from_indat_or_default(in_dat, varname):
         return in_dat.data[varname].get_value
     else:
         return DICT_DEFAULT[varname]
+
 
 
 def set_variable_in_indat(in_dat, varname, value):
