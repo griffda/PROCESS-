@@ -728,11 +728,11 @@ def plot_shield_snull(axis, mfile_data, scan):
     rminx = (cumulative_radial_build("vvblgapo", mfile_data, scan)
              - cumulative_radial_build("shldith", mfile_data, scan)) / 2.0
 
-    kapx = (cumulative_upper['vvblgap'] - upper["vvblgap"]) / rminx
+    kapx = (cumulative_upper['vvblgap']) / rminx
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_1 = temp_array_1 + ((rs, zs))
 
-    kapx = (cumulative_lower['divfix'] + lower["divfix"]) / rminx
+    kapx = (cumulative_lower['divfix']) / rminx
     (rs, zs) = plotdh(axis, radx, rminx, triang, kapx)
     temp_array_2 = temp_array_2 + ((rs, zs))
 
