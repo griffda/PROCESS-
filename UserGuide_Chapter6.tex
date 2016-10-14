@@ -287,7 +287,7 @@ parameters, poloidal and toroidal cross-sections, and temperature and density pr
  \mfile
 
 \item{\textbf{Output:}}
-\verb|proc_plot_out.pdf| (or as specified by user)
+\verb|SUMMARY.pdf| (or as specified by user)
 \end{description}
 
 \paragraph{Configuration Options:}
@@ -295,14 +295,36 @@ parameters, poloidal and toroidal cross-sections, and temperature and density pr
 Optional arguments are:
 \begin{quote}
 \begin{verbatim}
-# change the input file name
-python plot_proc.py -f MFILE.DAT
-# change the output file name
-python plot_proc.py -o out.pdf
-# show the plot as well as saving the figure
-python plot_proc.py -s
+usage: plot_proc.py [-h] [-f FILENAME] [-s]
+
+Produces a two page summary of the PROCESS MFILE output, using the MFILE. For
+info contact michael.kovari@ukaea.uk or james.morris2@ukaea.uk
+
+optional arguments:
+  -h, --help   show this help message and exit
+  -f FILENAME  specify input/output file prefix
+  -s, --show   show plot as well as saving figure
 \end{verbatim}
 \end{quote}
+
+The individual parameters displayed in the 2 page summary are defined as follows:
+
+\begin{description}
+\item[\texttt{runtitle}] Variable describing the purpose of the run
+\item[\texttt{PROCESS version}]Tagged version of \process\/ used for the run.
+\item[\texttt{Date}] Date of the \process\/ run
+\item[\texttt{Time}] Time of the \process\/ run
+\item[\texttt{User}] Nave of the user who ran \process.
+\item[\texttt{Optimisation}] Figure of merit (\texttt{minmax}, see Table \ref{tab:foms}) for constrained optimisation see Appendix \ref{app:Opt}.
+\item[\texttt{Plasma Composition}] Number densities of several ion species relative to the electron density.
+\item[\texttt{Coil Currents etc.}] Peak coil currents of the PF coils in $MA$, flux swing of the central solenoid used for startup and total available in $Wb$. Total burn time \texttt{tburn} in hrs (see \ref{fig:current_vs_time}).
+\item[\texttt{TF coils}] Describes the type, the peak field at the TF coil including ripple at the outboard edge of the inboard TF coil winding pack in $T$, the ratio of operating to superconducting critical current in TF coil $I/I_{crit}$, the temperature margin with respect to critical temperature of super conductor in $K$, Van Mises stresses on TF coils
+\item[\texttt{Cost of electricity}] This is the cost of electricity in $/MWh$. Check the respective cost model for the reference year of the inflation used.
+\item[\texttt{Geometry}] This is the major radius $R_0$, the minor radius $a$, the aspect ratio $A$, the plasma elongation at the 95\% flux surface $\kappa_{95}$, the plasma triangularity at the 95\% flux surface $\delta_{95}$, the surface area of the plasma, the plasma volume, the number of TF coils, the inboard and outboard thicknesses of the blanket and shield as well as the total fusion power.
+\item[\texttt{Power flows}] Average neutron wall load $W_{all}=\frac{P_{neutrons}}{S_{plasma,surface}f_{user}}$ \cite{kovari_eng}, the normalised radius of the 'core' region $\rho_{core}$ used in the radiation correction of the confinement scaling \cite{hanni_radiation,Lux2016}, the electron density at the pedestal top $n_{e,ped}[m^{-3}$, the normalised radius $\rho=r/a$ at the pedestal top, the helium fraction relative to the electron density, the core radiation $P_{rad} (\rho<\rho_{core})$ subtracted from $P_{heat}$ in confinement scaling and $W_{th}$, the total radidation inside the separatrix, the nuclear heating power to blanket $P_{nuc,blkt}= P_{neutr} (1−e^{−\frac{\Delta x_{blkt}}{\lambda_{decay}}})$, the nuclear heating power to the shield% _(,)=_−_(,)
+%Psep/ Pdiv = power crossing the separatrix, M = average ion mass, Thermal power _= high grade heat for electricity production, gross cycle efficiency _(,)/_, Net cycle efficiency (_(,)−_(,))/(_−_(,) ), Net electric power_(,)=_(,)−_, Plant efficiency _(,)/_ 
+\end{description}
+
 
 \subsection{output\_data.py}
 

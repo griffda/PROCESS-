@@ -1766,16 +1766,16 @@ if __name__ == '__main__':
     # Setup command line arguments
     parser = argparse. \
         ArgumentParser(description="Produces a two page summary of the PROCESS MFILE output, using the MFILE.  "
-        "For info contact rich.kemp@ccfe.ac.uk or james.morris2@ccfe.ac.uk")
+        "For info contact michael.kovari@ukaea.uk or james.morris2@ukaea.uk")
 
     parser.add_argument("-f", metavar='FILENAME', type=str,
-                        default="", help='specify filename prefix')
+                        default="", help='specify input/output file prefix')
 
     parser.add_argument("-s", "--show", help="show plot as well as saving figure",
                         action="store_true")
 
-    parser.add_argument("--svg", help="save plots as svg files",
-                        action="store_true")
+    #parser.add_argument("--svg", help="save plots as svg files",
+    #                    action="store_true")
 
     args = parser.parse_args()
 
@@ -1894,5 +1894,5 @@ if __name__ == '__main__':
         plt.show(page2)
 
     # This bit doesn't work - the argument is not recognised for some reason.:
-    if args.svg:
-        save_plots(m_file)
+    #if args.svg:
+    #    save_plots(m_file)
