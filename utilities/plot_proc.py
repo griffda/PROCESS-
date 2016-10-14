@@ -24,7 +24,8 @@ import numpy as np
 try:
     import process_io_lib.process_dicts as proc_dict
 except ImportError:
-    print("The Python dictionaries have not yet been created. Please run 'make dicts'!")
+    print("The Python dictionaries have not yet been created. Please run",
+          " 'make dicts'!")
     exit()
 
 
@@ -153,17 +154,21 @@ def plot_plasma(axis, mfile_data, scan):
     kappa = (1.1 * mfile_data.data["kappa95"].get_scan(scan)) + 0.04
     snull = mfile_data.data["snull"].get_scan(scan)
 
-    x1 = (2. * r0 * (1. + delta) - a * (delta ** 2 + kappa ** 2 - 1.0)) / (2. * (1. + delta))
-    x2 = (2. * r0 * (delta - 1.) - a * (delta ** 2 + kappa ** 2 - 1.0)) / (2. * (delta - 1.))
-    r1 = 0.5 * math.sqrt((a ** 2 * ((delta + 1.) ** 2 + kappa ** 2) ** 2) / ((delta + 1.) ** 2))
-    r2 = 0.5 * math.sqrt((a ** 2 * ((delta - 1.) ** 2 + kappa ** 2) ** 2) / ((delta - 1.) ** 2))
+    x1 = (2. * r0 * (1. + delta) - a * (delta ** 2 + kappa ** 2 - 1.0)) /\
+        (2. * (1. + delta))
+    x2 = (2. * r0 * (delta - 1.) - a * (delta ** 2 + kappa ** 2 - 1.0)) /\
+        (2. * (delta - 1.))
+    r1 = 0.5 * math.sqrt((a ** 2 * ((delta + 1.) ** 2 + kappa ** 2) ** 2) /\
+                             ((delta + 1.) ** 2))
+    r2 = 0.5 * math.sqrt((a ** 2 * ((delta - 1.) ** 2 + kappa ** 2) ** 2) / \
+                             ((delta - 1.) ** 2))
     theta1 = sp.arcsin((kappa * a) / r1)
     theta2 = sp.arcsin((kappa * a) / r2)
     inang = 1.0 / r1
     outang = 1.5 / r2
     if snull == 0:
-        angs1 = np.linspace(-(inang + theta1) + np.pi, (inang + theta1) + np.pi,
-                            256, endpoint=True)
+        angs1 = np.linspace(-(inang + theta1) + np.pi, (inang + theta1) \
+                                 + np.pi, 256, endpoint=True)
         angs2 = np.linspace(-(outang + theta2), (outang + theta2), 256,
                             endpoint=True)
     elif snull < 0:
@@ -240,7 +245,8 @@ def cumulative_radial_build2(section, mfile_data, scan):
         scan --> scan number to use
 
     Returns:
-        cumulative_build --> cumulative radial build up to and including section given
+        cumulative_build --> cumulative radial build up to and including
+                             section given
         previous         --> cumulative radial build up to section given
 
     """
@@ -296,14 +302,18 @@ def poloidal_cross_section(axis, mfile_data, scan=-1):
 
 def plot_cryostat(axis, mfile_data, scan):
     """Function to plot cryostat in poloidal cross-section"""
-    rect = patches.Rectangle([rdewex, 0], ddwex, zdewex+ddwex, lw=0, facecolor=cryostat)
+    rect = patches.Rectangle([rdewex, 0], ddwex, zdewex+ddwex, lw=0,
+                             facecolor=cryostat)
     axis.add_patch(rect)
-    rect = patches.Rectangle([rdewex, 0], ddwex, -(zdewex+ddwex), lw=0, facecolor=cryostat)
+    rect = patches.Rectangle([rdewex, 0], ddwex, -(zdewex+ddwex), lw=0,
+                             facecolor=cryostat)
     axis.add_patch(rect)
 
-    rect = patches.Rectangle([0, zdewex], rdewex, ddwex, lw=0, facecolor=cryostat)
+    rect = patches.Rectangle([0, zdewex], rdewex, ddwex, lw=0,
+                             facecolor=cryostat)
     axis.add_patch(rect)
-    rect = patches.Rectangle([0, -zdewex], rdewex, -ddwex, lw=0, facecolor=cryostat)
+    rect = patches.Rectangle([0, -zdewex], rdewex, -ddwex, lw=0,
+                             facecolor=cryostat)
     axis.add_patch(rect)
 
 
@@ -319,37 +329,47 @@ def color_key(axis):
     axis.set_autoscalex_on(False)
 
     axis.text(-5, 10, 'Central Solenoid', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0.2, 9.7], 1, 0.4, lw=0, facecolor=solenoid))
+    axis.add_patch(patches.Rectangle([0.2, 9.7], 1, 0.4, lw=0,
+                                     facecolor=solenoid))
 
     axis.text(-5, 9, 'CS compression', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0.2, 8.7], 1, 0.4, lw=0, facecolor=cscompression))
+    axis.add_patch(patches.Rectangle([0.2, 8.7], 1, 0.4, lw=0,
+                                     facecolor=cscompression))
 
-    axis.text(-5, 8,  'TF coil', ha='left', va='top', size='medium')
+    axis.text(-5, 8, 'TF coil', ha='left', va='top', size='medium')
     axis.add_patch(patches.Rectangle([0.2, 7.7], 1, 0.4, lw=0, facecolor=tfc))
 
-    axis.text(-5, 7,  'Thermal shield', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0.2, 6.7], 1, 0.4, lw=0, facecolor=thermal_shield))
+    axis.text(-5, 7, 'Thermal shield', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 6.7], 1, 0.4, lw=0,
+                                     facecolor=thermal_shield))
 
-    axis.text(-5, 6,  'V. vessel & shield', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0.2, 5.7], 1, 0.4, lw=0, facecolor=vessel))
+    axis.text(-5, 6, 'V. vessel & shield', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 5.7], 1, 0.4, lw=0,
+                                     facecolor=vessel))
 
-    axis.text(-5, 5,  'Blanket', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0.2, 4.7], 1, 0.4, lw=0, facecolor=blanket))
+    axis.text(-5, 5, 'Blanket', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 4.7], 1, 0.4, lw=0,
+                                     facecolor=blanket))
 
-    axis.text(-5, 4,  'First wall', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0.2, 3.7], 1, 0.4, lw=0, facecolor=firstwall))
+    axis.text(-5, 4, 'First wall', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 3.7], 1, 0.4, lw=0,
+                                     facecolor=firstwall))
 
-    axis.text(-5, 3,  'Plasma', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0.2, 2.7], 1, 0.4, lw=0, facecolor=plasma))
+    axis.text(-5, 3, 'Plasma', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 2.7], 1, 0.4, lw=0,
+                                     facecolor=plasma))
 
-    axis.text(-5, 2,  'PF coils', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0.2, 1.7], 1, 0.4, lw=1, facecolor='none'))
+    axis.text(-5, 2, 'PF coils', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 1.7], 1, 0.4, lw=1,
+                                     facecolor='none'))
 
-    axis.text(-5, 1,  'NB duct shield', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0.2, 0.7], 1, 0.4, lw=0, facecolor=nbshield_colour))
+    axis.text(-5, 1, 'NB duct shield', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, 0.7], 1, 0.4, lw=0,
+                                     facecolor=nbshield_colour))
 
-    axis.text(-5, 0.1,  'cryostat', ha='left', va='top', size='medium')
-    axis.add_patch(patches.Rectangle([0.2, -0.3], 1, 0.4, lw=0, facecolor=cryostat))
+    axis.text(-5, 0.1, 'cryostat', ha='left', va='top', size='medium')
+    axis.add_patch(patches.Rectangle([0.2, -0.3], 1, 0.4, lw=0,
+                                     facecolor=cryostat))
 
 
 
@@ -362,7 +382,7 @@ def toroidal_cross_section(axis, mfile_data, scan=-1):
     """
 
     xmin = 0
-    xmax =20
+    xmax = 20
     ymin = 0
     ymax = 20
     axis.set_ylim([ymin, ymax])
@@ -424,7 +444,7 @@ def toroidal_cross_section(axis, mfile_data, scan=-1):
     # Calculate centrelines
     n = int(tfno/4)+1
     spacing = 2*np.pi/tfno
-    i = np.arange(0,n)
+    i = np.arange(0, n)
 
     ang = i*spacing
     angl = ang - spacing/2
@@ -439,31 +459,38 @@ def toroidal_cross_section(axis, mfile_data, scan=-1):
     yi = r1 * np.sin(angl)
     xo = r2 * np.cos(angl)
     yo = r2 * np.sin(angl)
-    axis.plot((xi, xo),(yi, yo), color='black')
+    axis.plot((xi, xo), (yi, yo), color='black')
     xi = r1 * np.cos(angu)
     yi = r1 * np.sin(angu)
     xo = r2 * np.cos(angu)
     yo = r2 * np.sin(angu)
-    axis.plot((xi, xo),(yi, yo), color='black')
+    axis.plot((xi, xo), (yi, yo), color='black')
     # Annotate plot.
-    axis.text(rmajor*np.cos(0.3), rmajor*np.sin(0.3), "plasma", fontsize=(12),ha='center', va='center')
-    axis.text((rdewex+ddwex)/1.41, (rdewex+ddwex)/1.41, "cryostat", fontsize=(10),ha='left', va='bottom')
+    axis.text(rmajor*np.cos(0.3), rmajor*np.sin(0.3), "plasma",
+              fontsize=(12), ha='center', va='center')
+    axis.text((rdewex+ddwex)/1.41, (rdewex+ddwex)/1.41, "cryostat",
+              fontsize=(10), ha='left', va='bottom')
 
     for item in i:
         # Neutral beam shielding
-        TF_outboard(axis, item, tfno=tfno,r3=r3, r4=r4, w=w+nbshield, facecolor=nbshield_colour)
+        TF_outboard(axis, item, tfno=tfno, r3=r3, r4=r4, w=w+nbshield,
+                    facecolor=nbshield_colour)
         # Overlay TF coil segments
-        TF_outboard(axis, item, tfno=tfno,r3=r3, r4=r4, w=w, facecolor='cyan')
+        TF_outboard(axis, item, tfno=tfno, r3=r3, r4=r4, w=w, facecolor='cyan')
 
     # Winding pack: inboard
-    rect = patches.Rectangle([r1 + thkcas +tinstf, 0], thkwp/2, wwp2/2, lw=0, facecolor=winding)
+    rect = patches.Rectangle([r1 + thkcas +tinstf, 0], thkwp/2, wwp2/2, lw=0,
+                             facecolor=winding)
     axis.add_patch(rect)
-    rect = patches.Rectangle([r1 + thkcas +tinstf + thkwp/2, 0], thkwp/2, wwp1/2, lw=0, facecolor=winding)
+    rect = patches.Rectangle([r1 + thkcas +tinstf + thkwp/2, 0], thkwp/2,
+                             wwp1/2, lw=0, facecolor=winding)
     axis.add_patch(rect)
     # Outboard
-    rect = patches.Rectangle([r3+casthi+tinstf, 0], thkwp/2, wwp1/2, lw=0, facecolor=winding)
+    rect = patches.Rectangle([r3+casthi+tinstf, 0], thkwp/2, wwp1/2, lw=0,
+                             facecolor=winding)
     axis.add_patch(rect)
-    rect = patches.Rectangle([r3+casthi+tinstf+thkwp/2, 0], thkwp/2, wwp2/2, lw=0, facecolor=winding)
+    rect = patches.Rectangle([r3+casthi+tinstf+thkwp/2, 0], thkwp/2, wwp2/2,
+                             lw=0, facecolor=winding)
     axis.add_patch(rect)
 
     # Neutral beam geometry
@@ -483,13 +510,14 @@ def toroidal_cross_section(axis, mfile_data, scan=-1):
     # Corner of TF coils
     xcorner = r4
     ycorner = w+nbshield
-    axis.plot([xinner, xcorner], [yinner, ycorner], linestyle='dotted', color='black')
+    axis.plot([xinner, xcorner], [yinner, ycorner], linestyle='dotted',
+              color='black')
     x = xcorner + c * np.cos(beta) - nbshield * np.cos(beta)
     y = ycorner + c * np.sin(beta) - nbshield * np.sin(beta)
     axis.plot([xouter, x], [youter, y], linestyle='dotted', color='black')
 
 
-def TF_outboard(axis, item, tfno,r3, r4, w, facecolor):
+def TF_outboard(axis, item, tfno, r3, r4, w, facecolor):
     spacing = 2*np.pi/tfno
     ang = item*spacing
     dx = w * np.sin(ang)
@@ -537,7 +565,7 @@ def arc_fill(axis, r1, r2, color='pink'):
     angs = np.linspace(0, rtangle, endpoint=True)
     xs1 = r1 * np.cos(angs)
     ys1 = r1 * np.sin(angs)
-    angs = np.linspace(rtangle,0, endpoint=True)
+    angs = np.linspace(rtangle, 0, endpoint=True)
     xs2 = r2 * np.cos(angs)
     ys2 = r2 * np.sin(angs)
     verts = list(zip(xs1, ys1))
