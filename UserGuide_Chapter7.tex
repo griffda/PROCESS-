@@ -5,6 +5,31 @@ This chapter will be of interest to people involved in the continuing
 maintenance of the \process\ source code. As stated elsewhere, the source code
 is maintained by CCFE, and resides in a Git repository on the CCFE servers.
 
+\section{Environment set-up (developers only)}
+\label{sec:run_environment_dev}
+
+Please note that this section is only relevant for people actually developing the \process\/ code, i.e. if you are interested in running a copy of the code from your local directory on the fusion unix network. For normal users please refer to Chapter \ref{sec:run_environment}.
+
+To set up the environment to run the code, the user interface and the associated utilities (see Chapter~\ref{chap:utilities}), add the following lines to your \texttt{.bashrc} file.  This is a file in the user's home directory, assuming the bash Unix shell is being used.  Although hidden, it can be opened by issuing the relevant command, for example \texttt{gedit .bashrc}.
+\begin{quote}
+\begin{verbatim}
+module swap python
+module unload NAG
+module unload boost
+
+If using default gfortran compiler instead of ifort:
+(module unload ifort/10.0.023)
+(module load gcc/4.8.2)
+
+export PYTHONPATH=$PYTHONPATH:/PATH_TO_LOCAL_PROCESS_DIRECTORY/utilities
+export PATH=$PATH:/PATH_TO_LOCAL_PROCESS_DIRECTORY
+export PATH=$PATH:/PATH_TO_LOCAL_PROCESS_DIRECTORY/utilities
+\end{verbatim}
+\end{quote}
+
+This loads and unloads the relevant modules and sets the path to the process and utilities executables as well as setting the correct path for the python libraries.
+
+
 \section{The Makefile}
 \label{sec:makefile}
 
