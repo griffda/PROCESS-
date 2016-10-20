@@ -98,7 +98,7 @@ def  get_variable_range(itervars, factor, wdir='.'):
         else:
             value = get_from_indat_or_default(in_dat, varname)
 
-            if value == None: 
+            if value == None:
                 print('Error: Iteration variable {} has None value!'.format(
                         varname))
                 exit()
@@ -216,7 +216,12 @@ def process_stopped(wdir='.'):
     Checks the process Mfile whether it has
     prematurely stopped.
     """
-    m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
+    try:
+        m_file = MFile(filename=pjoin(wdir, "MFILE.DAT"))
+    except FileNotFoundError as err:
+        print("No MFILE has been found! FYI:\n {0}".format(err), file=stderr)
+        print("Code continues to run!", file=stderr)
+        return True
 
     error_status = m_file.data['error status'].get_scan(-1)
 
