@@ -163,11 +163,21 @@ uncertainties.nc")
                     try:
                         XARR += [datadict[varname]]
                     except KeyError:
-                        print('Error: Variable', varname,
-                              'can currently not be treated!\n',
-                              'Check separately! \n',
-                              list(datadict.keys()), file=stderr)
-                        break
+                        if varname == 'fimp(14)':
+                            try:
+                                XARR += [datadict['fimp(14']]
+                            except KeyError:
+                                print('Error: Variable', varname,
+                                      'can currently not be treated!\n',
+                                      'Check separately! \n',
+                                      list(datadict.keys()), file=stderr)
+                                break
+                        else :
+                            print('Error: Variable', varname,
+                                  'can currently not be treated!\n',
+                                  'Check separately! \n',
+                                  list(datadict.keys()), file=stderr)
+                            break
 
 
                 if XARR != []:
