@@ -84,6 +84,8 @@ def plot_distribution(xarr, labelx, unc_dict):
         std = unc_dict['std']
         xvalues = linspace(min(xarr), max(xarr), 500)
         yvalues = mlab.normpdf(xvalues, mean, std)
+        #to correct normalisation for half Gaussian
+        yvalues = yvalues * 2.
         if varname in DICT_INPUT_BOUNDS:
             args = argwhere(logical_or(
                     xvalues < DICT_INPUT_BOUNDS[varname]['lb'],
@@ -100,7 +102,8 @@ def plot_distribution(xarr, labelx, unc_dict):
         std = unc_dict['std']
         xvalues = linspace(min(xarr), max(xarr), 500)
         yvalues = mlab.normpdf(xvalues, mean, std)
-
+        #to correct normalisation for half Gaussian
+        yvalues = yvalues * 2.
         if varname in DICT_INPUT_BOUNDS:
             args = argwhere(logical_or(
                     xvalues < mean,
