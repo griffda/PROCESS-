@@ -26,13 +26,15 @@ def plot_scan(cargs, m_file_data):
 
     """
 
-    x = range(1, m_file_data.get_num_scans()+1)
+    nscans = int(m_file_data.data["isweep"].get_scan(-1))
+    x = range(1, nscans+1)
     data = {}
     for param in cargs.p:
-        values = m_file_data.data[param].get_scans()
+        values = m_file_data.data[param].get_scans()[:nscans]
         if values[0] != 0.0:
             values = [val/values[0] for val in values]
-        data[param] = values
+        if param not in data.keys():
+            data[param] = values
 
     fig = plt.figure(figsize=(12, 9), dpi=100)
     ax = fig.add_subplot(111)
