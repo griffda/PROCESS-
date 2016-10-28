@@ -84,6 +84,8 @@ def plot_distribution(xarr, labelx, unc_dict):
         std = unc_dict['std']
         xvalues = linspace(min(xarr), max(xarr), 500)
         yvalues = mlab.normpdf(xvalues, mean, std)
+        #to correct normalisation for half Gaussian
+        yvalues = yvalues * 2.
         if varname in DICT_INPUT_BOUNDS:
             args = argwhere(logical_or(
                     xvalues < DICT_INPUT_BOUNDS[varname]['lb'],
@@ -100,7 +102,8 @@ def plot_distribution(xarr, labelx, unc_dict):
         std = unc_dict['std']
         xvalues = linspace(min(xarr), max(xarr), 500)
         yvalues = mlab.normpdf(xvalues, mean, std)
-
+        #to correct normalisation for half Gaussian
+        yvalues = yvalues * 2.
         if varname in DICT_INPUT_BOUNDS:
             args = argwhere(logical_or(
                     xvalues < mean,
@@ -160,11 +163,21 @@ uncertainties.nc")
                     try:
                         XARR += [datadict[varname]]
                     except KeyError:
-                        print('Error: Variable', varname,
-                              'can currently not be treated!\n',
-                              'Check separately! \n',
-                              list(datadict.keys()), file=stderr)
-                        break
+                        if varname == 'fimp(14)':
+                            try:
+                                XARR += [datadict['fimp(14']]
+                            except KeyError:
+                                print('Error: Variable', varname,
+                                      'can currently not be treated!\n',
+                                      'Check separately! \n',
+                                      list(datadict.keys()), file=stderr)
+                                break
+                        else :
+                            print('Error: Variable', varname,
+                                  'can currently not be treated!\n',
+                                  'Check separately! \n',
+                                  list(datadict.keys()), file=stderr)
+                            break
 
 
                 if XARR != []:

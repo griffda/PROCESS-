@@ -11,13 +11,14 @@
 
 import subprocess
 import numpy as np
+from sys import stderr
 
 # Dictionary for variable types
 try:
     from process_io_lib.process_dicts import DICT_VAR_TYPE
 except ImportError:
     print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!")
+'make dicts'!", file=stderr)
     exit()
 
 # Dictionary for ixc -> name
@@ -313,14 +314,20 @@ def process_parameter(data, line):
 
     # Parameter value
     if len(no_comment_line[-1].split(",")) > 2:
-        value = no_comment_line[1].strip()
+        try:
+            value = no_comment_line[1].strip()
+        except IndexError:
+            print('Error when reading IN.DAT file on line', no_comment_line,
+                  '\n Please note, that our Python Library cannot cope with',
+                  ' variable definitions on multiple lines.', file=stderr)
+            exit()
     else:
         try:
             value = no_comment_line[1].strip().replace(",", "")
         except IndexError:
             print('Error when reading IN.DAT file on line', no_comment_line,
                   '\n Please note, that our Python Library cannot cope with',
-                  ' variable definitions on multiple lines.')
+                  ' variable definitions on multiple lines.', file=stderr)
             exit()
 
     # Find group of variables the parameter belongs to
@@ -671,7 +678,7 @@ def add_parameter(data, parameter_name, parameter_value):
         except KeyError:
             # The dictionary doesn't recognise the variable name
             print("Parameter {0} not recognised. Check!".
-                  format(parameter_name))
+                  format(parameter_name, file=stderr))
 
     # If it is already in there change the value to the new value
     else:
@@ -883,7 +890,7 @@ def variable_constraint_type_check(item_number, var_type):
 
         except ValueError:
             print("Value {0} for {1} not valid. Check value!".
-                  format(item_number, var_type))
+                  format(item_number, var_type), file=stderr)
 
     # Check if item is in float format
     elif isinstance(item_number, float):
@@ -1007,7 +1014,8 @@ class InDat(object):
         self.data = dict()
 
         # read in IN.DAT
-        self.read_in_dat()
+        if filename is not None:
+            self.read_in_dat()
 
     def read_in_dat(self):
         """Function to read in 'self.filename' and put data into dictionary
@@ -1036,13 +1044,13 @@ class InDat(object):
             # Ignore title, header and commented lines
             if line_type != "Title" and line_type != "Comment":
 
-                # try:
+                try:
                     # for non-title lines process line and store data.
-                process_line(self.data, line_type, l_line)
-                # except KeyError:
-                #    print("Warning: Line below is causing a problem. Check "
-            #              "that line in IN.DAT is valid. Line skipped!\n{0}".
-        #                  format(line))
+                    process_line(self.data, line_type, l_line)
+                except KeyError:
+                    print("Warning: Line below is causing a problem. Check "
+                          "that line in IN.DAT is valid. Line skipped!\n{0}".
+                          format(line), file=stderr)
 
     def add_iteration_variable(self, variable_number):
         """ Function to add iteration variable to IN.DAT data dictionary

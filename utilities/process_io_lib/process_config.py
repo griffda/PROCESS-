@@ -12,6 +12,7 @@ Compatible with PROCESS version 382
 
 import os
 import subprocess
+from sys import stderr
 from time import sleep
 from numpy.random import seed, uniform, normal
 from numpy import argsort, ndarray, argwhere, logical_or
@@ -30,7 +31,7 @@ try:
         DICT_NSWEEP2VARNAME, DICT_IXC_SIMPLE, DICT_INPUT_BOUNDS
 except ImportError:
     print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!")
+'make dicts'!", file=stderr)
     exit()
 from process_io_lib.process_netcdf import NetCDFWriter
 
@@ -184,8 +185,9 @@ class ProcessConfig(object):
                                   stderr=logfile)
         except subprocess.CalledProcessError as err:
             print('\n Error: There was a problem with the PROCESS \
-                   execution!', err)
-            print('       Refer to the logfile for more information!')
+execution!', err, file=stderr)
+            print('       Refer to the logfile for more information!',
+                  file=stderr)
             exit()
 
         logfile.close()
@@ -202,7 +204,7 @@ class ProcessConfig(object):
         try:
             configfile = open(self.filename, 'r')
         except FileNotFoundError:
-            print('Error: No config file named %s' %self.filename)
+            print('Error: No config file named %s' %self.filename, file=stderr)
             self.configfileexists = False
             return False
 
@@ -231,7 +233,7 @@ class ProcessConfig(object):
         try:
             configfile = open(self.filename, 'r')
         except FileNotFoundError:
-            print('Error: No config file named %s' %self.filename)
+            print('Error: No config file named %s' %self.filename, file=stderr)
             self.configfileexists = False
             return None
 
@@ -272,7 +274,7 @@ class ProcessConfig(object):
             indatfile.close()
         except FileNotFoundError:
             print('Error: %s does not exist! Create file or modify config file!'
-                  %self.or_in_dat)
+                  %self.or_in_dat, file=stderr)
             exit()
 
         buf = self.get_attribute('process')
@@ -454,7 +456,7 @@ class RunProcessConfig(ProcessConfig):
                 self.create_itervar_diff = False
             else:
                 print('WARNING: Value for create_itervar_diff\
- is not defined!')
+ is not defined!', file=stderr)
 
         self.add_ixc = self.get_attribute_csv_list('add_ixc')
 
@@ -482,7 +484,7 @@ class RunProcessConfig(ProcessConfig):
         try:
             configfile = open(self.filename, 'r')
         except FileNotFoundError:
-            print('Error: No config file named %s' %self.filename)
+            print('Error: No config file named %s' %self.filename, file=stderr)
             self.configfileexists = False
             return []
 
@@ -515,7 +517,7 @@ class RunProcessConfig(ProcessConfig):
         try:
             configfile = open(self.filename, 'r')
         except FileNotFoundError:
-            print('Error: No config file named %s' %self.filename)
+            print('Error: No config file named %s' %self.filename, file=stderr)
             self.configfileexists = False
             return
 
@@ -542,7 +544,7 @@ class RunProcessConfig(ProcessConfig):
         try:
             configfile = open(self.filename, 'r')
         except FileNotFoundError:
-            print('Error: No config file named %s' %self.filename)
+            print('Error: No config file named %s' %self.filename, file=stderr)
             self.configfileexists = False
             return
 
@@ -595,9 +597,14 @@ class RunProcessConfig(ProcessConfig):
 
         """ modifies IN.DAT using the configuration parameters"""
 
-        self.modify_vars()
+        # Need to keep this order! 
+        # If bounds are modified in vars, but ixc is newly added,
+        # bounds do not get put into IN.DAT. Hence, vars needs to be modified
+        # first.
         self.modify_ixc()
         self.modify_icc()
+        self.modify_vars()
+
 
 
     def modify_vars(self):
@@ -634,7 +641,7 @@ class RunProcessConfig(ProcessConfig):
         #check that there is no variable in both lists
         if set(self.add_ixc).intersection(self.del_ixc) != set([]):
             print('Error: You are trying to add and delete \
-                   the same variable from ixc!')
+                   the same variable from ixc!', file=stderr)
             exit()
 
         in_dat = InDat()
@@ -655,7 +662,7 @@ class RunProcessConfig(ProcessConfig):
         #check that there is no variable in both lists
         if set(self.add_icc).intersection(self.del_icc) != set([]):
             print('Error: You are trying to add and delete the same \
-                  variable from icc!')
+                  variable from icc!', file=stderr)
             exit()
 
         in_dat = InDat()
@@ -673,8 +680,6 @@ class RunProcessConfig(ProcessConfig):
 #class UncertaintiesConfig(RunProcessConfig)
 ################################################################################
 
-NETCDF_SWITCH = True
-
 class UncertaintiesConfig(ProcessConfig, Config):
 
     """
@@ -687,8 +692,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
     uncertainties = []
     output_vars = []
     dict_results = {}
-    if NETCDF_SWITCH:
-        ncdf_writer = None
+    ncdf_writer = None
 
 
     def __init__(self, configfilename="evaluate_uncertainties.json"):
@@ -720,6 +724,49 @@ class UncertaintiesConfig(ProcessConfig, Config):
         self.uncertainties = self.get("uncertainties",
                                       default=self.uncertainties)
         self.output_vars = self.get("output_vars", default=self.output_vars)
+        #add uncertain variables to output
+        for u_dict in self.uncertainties:
+            if not u_dict['varname'] in self.output_vars:
+                self.output_vars += [u_dict['varname']]
+
+        #add normalised constraints/iteration variables to output
+        in_dat = InDat(self.or_in_dat)
+        nvar = in_dat.data['nvar'].get_value
+        for i in range(1, nvar+1):
+            nitvar = 'nitvar{:03}'.format(i)
+            if not nitvar in self.output_vars:
+                self.output_vars += [nitvar]
+        neqns = in_dat.data['neqns'].get_value
+        for i in range(1, neqns+1):
+            normres = 'normres{:03}'.format(i)
+            if not normres in self.output_vars:
+                self.output_vars += [normres]
+
+        #treat special cases (bounds, fimp, zref)
+        add_bounds = False
+        add_zref = False
+        del_list = []
+        for i, varname in enumerate(self.output_vars):
+            if 'bound' in varname:
+                del_list += [varname]
+                add_bounds = True
+            elif 'fimp(' in varname: #fimpvar also exists!
+                #has different format in MFILE!!
+                fimpno = int(varname.split("(")[1].split(")")[0])
+                self.output_vars[i] = 'fimp({:02}'.format(fimpno)
+            elif 'zref' in varname:
+                del_list += [varname]
+                add_zref = True
+
+        for varname in del_list:
+            self.output_vars.remove(varname)
+
+        if add_bounds:
+            self.output_vars += ['bounds']
+        if add_zref:
+            self.output_vars += ['zref']
+
+
         for varname in self.output_vars:
             self.dict_results[varname] = []
 
@@ -776,7 +823,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
             else:
 
                 print('Error: Inbuild sweep is not compatible with uncertainty\
- evaluation! Edit IN.DAT file!')
+ evaluation! Edit IN.DAT file!', file=stderr)
                 exit()
         else:
             # create a scan!
@@ -786,7 +833,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
                 #a certain variable is used as iteration variable, if not
                 #choose another
                 print("Error: The developer should program this more wisely\
- using a sweep variable that is not an iteration variable!")
+ using a sweep variable that is not an iteration variable!", file=stderr)
                 exit()
             else:
                 set_variable_in_indat(in_dat, 'nsweep', nsweep)
@@ -812,12 +859,22 @@ class UncertaintiesConfig(ProcessConfig, Config):
         """ run several checks before you start running """
 
         if self.uncertainties == {}:
-            print('Error: No uncertain parameter specified in config file!')
+            print('Error: No uncertain parameter specified in config file!',
+                  file=stderr)
             exit()
 
+        #check uncertainties are not conflicting
+        u_var_list = []
+        for u_dict in self.uncertainties:
+            u_var_list += [u_dict['varname']]
+        if len(u_var_list) != len(set(u_var_list)):
+            print('Error: You have multiply defined uncertain variables!',
+                  file=stderr)
+            exit()
 
         if self.output_vars == []:
-            print('Error: No output variables specified in config file!')
+            print('Error: No output variables specified in config file!',
+                  file=stderr)
             exit()
 
         in_dat = InDat()
@@ -830,7 +887,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
             varname = u_dict['varname'].lower()
             if varname in ixc_varname_list:
                 print('Error: an uncertain variable should never be an\
- iteration variable at the same time!', varname)
+ iteration variable at the same time!', varname, file=stderr)
                 exit()
 
             if u_dict['errortype'].lower() == 'uniform':
@@ -838,7 +895,8 @@ class UncertaintiesConfig(ProcessConfig, Config):
                 ubound = u_dict['upperbound']
                 if lbound > ubound:
                     print('Error: the lower bound of the uncertain variable',
-                          varname, 'is higher than its upper bound!')
+                          varname, 'is higher than its upper bound!',
+                          file=stderr)
                     exit()
 
                 if varname in DICT_INPUT_BOUNDS:
@@ -847,12 +905,14 @@ class UncertaintiesConfig(ProcessConfig, Config):
                         u_dict['lowerbound'] = DICT_INPUT_BOUNDS[varname]['lb']
                         print('Warning: The lower bound of the uncertain variable',
                               varname, 'is lower than the lowest allowed input',
-                              'value! \n Corrected value to', u_dict['lowerbound'])
+                              'value! \n Corrected value to',
+                              u_dict['lowerbound'], file=stderr)
                     if ubound > DICT_INPUT_BOUNDS[varname]['ub']:
                         u_dict['upperbound'] = DICT_INPUT_BOUNDS[varname]['ub']
                         print('Warning: The upper bound of the uncertain variable',
                               varname, 'is higher than the highest allowed input',
-                              'value! \n Corrected value to', u_dict['upperbound'])
+                              'value! \n Corrected value to',
+                              u_dict['upperbound'], file=stderr)
 
             elif u_dict['errortype'].lower() == 'relative':
                 err = u_dict['percentage']/100.
@@ -861,7 +921,7 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
                 if err < 0.:
                     print('Error: The percentage of the uncertain variable',
-                          varname, 'should never be negative!')
+                          varname, 'should never be negative!', file=stderr)
                     exit()
 
                 if varname in DICT_INPUT_BOUNDS:
@@ -869,12 +929,12 @@ class UncertaintiesConfig(ProcessConfig, Config):
                     if u_dict['mean'] < DICT_INPUT_BOUNDS[varname]['lb']:
                         print('Error: The mean of the uncertain variable',
                               varname, 'is lower than the lowest allowed input!',
-                              DICT_INPUT_BOUNDS[varname]['lb'])
+                              DICT_INPUT_BOUNDS[varname]['lb'], file=stderr)
                         exit()
                     elif u_dict['mean'] > DICT_INPUT_BOUNDS[varname]['ub']:
                         print('Error: The mean of the uncertain variable',
                               varname, 'is higher than the highest allowed input!',
-                              DICT_INPUT_BOUNDS[varname]['ub'])
+                              DICT_INPUT_BOUNDS[varname]['ub'], file=stderr)
                         exit()
 
                     #check bounds are inside input bounds
@@ -884,7 +944,8 @@ class UncertaintiesConfig(ProcessConfig, Config):
                         u_dict['upperbound'] = ubound
                         print('Warning: The lower bound of the uncertain variable',
                               varname, 'is lower than the lowest allowed input',
-                              'value! \n Corrected value to', u_dict['lowerbound'])
+                              'value! \n Corrected value to',
+                              u_dict['lowerbound'], file=stderr)
                     if ubound > DICT_INPUT_BOUNDS[varname]['ub']:
                         if u_dict['errortype'] != 'uniform':
                             u_dict['errortype'] = 'uniform'
@@ -892,7 +953,8 @@ class UncertaintiesConfig(ProcessConfig, Config):
                         u_dict['upperbound'] = DICT_INPUT_BOUNDS[varname]['ub']
                         print('Warning: The upper bound of the uncertain variable',
                               varname, 'is higher than the highest allowed input',
-                              'value! \n Corrected value to', u_dict['upperbound'])
+                              'value! \n Corrected value to',
+                              u_dict['upperbound'], file=stderr)
 
             elif u_dict['errortype'].lower() in  ['gaussian', 'lowerhalfgaussian',
                                                   'upperhalfgaussian']:
@@ -903,13 +965,13 @@ class UncertaintiesConfig(ProcessConfig, Config):
                         print('Error: The mean of the uncertain variable',
                               varname, 'is lower than the lowest allowed input!',
                               u_dict['mean'], '<',
-                              DICT_INPUT_BOUNDS[varname]['lb'])
+                              DICT_INPUT_BOUNDS[varname]['lb'], file=stderr)
                         exit()
                     elif u_dict['mean'] > DICT_INPUT_BOUNDS[varname]['ub']:
                         print('Error: The mean of the uncertain variable',
                               varname, 'is higher than the highest allowed input!',
                               u_dict['mean'], '>',
-                              DICT_INPUT_BOUNDS[varname]['ub'])
+                              DICT_INPUT_BOUNDS[varname]['ub'], file=stderr)
                         exit()
 
 
@@ -934,6 +996,11 @@ class UncertaintiesConfig(ProcessConfig, Config):
                         args = argwhere(logical_or(
                                 values < DICT_INPUT_BOUNDS[varname]['lb'],
                                 values > DICT_INPUT_BOUNDS[varname]['ub']))
+                else: #cutoff at 0 - typically negative values are meaningless
+                    args = argwhere(values < 0.)
+                    while len(args) > 0:
+                        values[args] = normal(mean, std, len(args))
+                        args = argwhere(values < 0)
 
             elif u_dict['errortype'].lower() == 'uniform':
                 lbound = u_dict['lowerbound']
@@ -958,10 +1025,12 @@ class UncertaintiesConfig(ProcessConfig, Config):
                                 values < DICT_INPUT_BOUNDS[varname]['lb'],
                                 values > mean))
                 else:
-                    args = argwhere(values > mean)
+                    args = argwhere(logical_or(values < 0.,
+                                               values > mean))
                     while len(args) > 0:
                         values[args] = normal(mean, std, len(args))
-                        args = argwhere(values > mean)
+                        args = argwhere(logical_or(values < 0.,
+                                                   values > mean))
             elif u_dict['errortype'].lower() == 'upperhalfgaussian':
                 mean = u_dict['mean']
                 std = u_dict['std']
@@ -1011,56 +1080,26 @@ class UncertaintiesConfig(ProcessConfig, Config):
 
     def add_results2netcdf(self, run_id):
 
-        """ reads current MFILE and adds specified output variables
+        """ reads current MFILE and IN.DAT and adds specified output variables
             of last scan point to summary netCDF file """
 
+        m_file = MFile(filename="MFILE.DAT")
+        in_dat = InDat()
 
-        if NETCDF_SWITCH:
-            m_file = MFile(filename="MFILE.DAT")
-
-            with NetCDFWriter(self.wdir+"/uncertainties.nc", append=True,
-                              overwrite=False) as ncdf_writer:
-                try:
-                    ncdf_writer.write_mfile_data(m_file, run_id,
-                                                 save_vars=self.output_vars,
-                                                 latest_scan_only=True,
-                                                 ignore_unknowns=False)
-                except KeyError as err:
-                    print('Error: You have specified an output variable that\
- does not exist in MFILE. If this is a valid PROCESS variable, request it being\
- added to the MFILE output, else check your spelling!')
-                    print(err)
-                    exit()
-
-        else:
-            m_file = MFile(filename="MFILE.DAT")
-
-            if m_file.data['ifail'].get_scan(-1) == 1:
-                for varname in self.output_vars:
-                    value = m_file.data[varname].get_scan(-1) #get last scan
-                    self.dict_results[varname] += [value]
-            else:
-                self.write_results()
-                print('WARNING to developer: scan has unfeasible point at the\
-     end!\nPress Enter to continue!')
-                raw_input()
-
-
-    def write_results(self):
-        """ writes data into file. Uncessary, if netcdf library works?"""
-
-        if not NETCDF_SWITCH:
-            results = open('uncertainties.nc', 'w')
-            for varname in self.output_vars:
-                results.write(varname + '\t')
-            results.write('\n')
-
-            for i in range(len(self.dict_results[self.output_vars[0]])):
-                for varname in self.output_vars:
-                    results.write(str(self.dict_results[varname][i]) + '\t')
-                results.write('\n')
-
-            results.close()
+        with NetCDFWriter(self.wdir+"/uncertainties.nc", append=True,
+                          overwrite=False) as ncdf_writer:
+            try:
+                ncdf_writer.write_data(m_file, in_dat, run_id,
+                                             save_vars=self.output_vars,
+                                             mfile_latest_scan_only=True,
+                                             ignore_unknowns=True)
+            except KeyError as err:
+                print('Error: You have specified an output variable that'
+                      ' does not exist in MFILE. If this is a valid PROCESS'
+                      ' variable, request it being  added to the MFILE output,'
+                      ' else check your spelling!', file=stderr)
+                print(err, file=stderr)
+                exit()
 
 
 
