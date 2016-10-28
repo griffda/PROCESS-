@@ -50,6 +50,8 @@ program process
   !+ad_hisc               Transferred routine inform from aachange.f90
   !+ad_hist  13/02/14 PJK Added mfile close statement
   !+ad_hist  10/09/14 PJK Added vfile close statement
+  !+ad_hist  28/10/16 MK Removed systems commands and added a subroutine 
+  !+ad_hist              get_DDMonYYTimeZone to get date and time
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  Box file F/RS/CIRE5523/PWF (up to 15/01/96)
@@ -72,13 +74,14 @@ program process
   !  Local variables
   integer :: ifail
   ! MDK
-  character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
+  character(len = *), parameter :: tempfile = 'SCRATCHFILE.DAT'
+  character(len = 120) :: line
+  integer :: iost
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   !  Initialise things
   call init
-
+  
   ! Run built-in tests.
   ! These are distinct from the tests that are dependent on 'unit_test'.
   if (run_tests == 1) call runtests
@@ -99,18 +102,25 @@ program process
   call oheadr(iotty,'End of PROCESS Output')
   call oheadr(nout,'Copy of PROCESS Input Follows')
 
-  close(unit=nin)
-  close(unit=nout)
-  close(unit=nplot)
-  close(unit=mfile)
-  if (verbose == 1) close(unit=vfile)
+  close(unit = nin)
+  close(unit = nout)
+  close(unit = nplot)
+  close(unit = mfile)
+  if (verbose == 1) close(unit = vfile)
 
-  ! MDK System calls to append IN.DAT to OUT.DAT
-  call system('cat '//trim(fileprefix)//'OUT.DAT  '//trim(fileprefix)//'IN.DAT  '//'> '//tempfile)
-  call system('mv  '//tempfile//'  '//trim(fileprefix)//'OUT.DAT')
+  open(unit = 100, FILE="IN.DAT")
+  open(unit = 101, FILE="OUT.DAT", ACCESS = "append")
+  
+  DO
+     read(100,'(A)',IOSTAT = iost) line
+     write(101, '(A)' ) trim(line)
+     if(iost < 0) exit  ! exit if End of line is reached
+  END DO
+  close(unit = 100)
+  close(unit = 101)
 
 
-end program process
+    end program process
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -169,7 +179,7 @@ subroutine init
   !  Local variables
   integer :: i, nargs
   !character(len=100) :: fileprefix, executable
-  character(len=100) :: executable
+  character(len=120) :: executable
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -279,18 +289,22 @@ subroutine inform(progid)
   implicit none
 
   !  Arguments
-  character(len=72), dimension(0:10) :: progid
+  character(len=110), dimension(0:10) :: progid
 
   !  Local variables
   character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
-  character(len=100) :: executable
+  character(len=120) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
        '413    Release Date :: 2016-06-23'
+  character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
   integer :: unit
   logical :: unit_available
-
+  character(8)  :: date
+  character(10) :: time
+  character(5)  :: zone
+  integer, dimension(8) :: values
   !  External routines
 
   !  external system
@@ -299,48 +313,20 @@ subroutine inform(progid)
 
   !  Program name
   progname = 'PROCESS'
-  call get_command_argument(0,executable)
-  !  Create temporary data file
-  call system('/bin/rm -f '// tempfile // char(0))
-  call system('/bin/touch '// tempfile // char(0))
+  call get_command_argument(0, executable)
+  call get_DDMonYYTimeZone(dt_time)
+  id(1) = trim(dt_time)  !values(3)//"/"// values(2)//"/"// values(1)  !   5 6 7!date
+  call getlog(id(2))    ! Get user ID
+  call hostnm(id(3))    ! Get host name
+  call getcwd(id(4))    ! Get current working directory
 
-  !  Write information to data file
-  call system('/bin/date >> ' // tempfile // char(0))
-  call system('/usr/bin/whoami >> ' // tempfile // char(0))
-  !call system("finger `/usr/bin/whoami` " // &
-  !     "| /usr/bin/head -1 | /usr/bin/cut -f 4 " // &
-  !     "| /usr/bin/cut -f 2-3 -d ' ' >> " // tempfile // char(0))
-
-  call system('/bin/hostname >> ' // tempfile // char(0))
-  call system('/bin/pwd >> ' // tempfile // char(0))
-
-  !  Read back information into ID array
-  unit = 20
-  unit_available = .false.
-  do while (.not.unit_available)
-     inquire(unit, exist=unit_available)
-     unit = unit+1
-  end do
-
-  open(unit,file=tempfile,status='old')
-  read(unit,'(A)') id(1)
-  read(unit,'(A)') id(2)
-  read(unit,'(A)') id(3)
-  read(unit,'(A)') id(4)
-  !read(unit,'(A)') id(5)
-  close(unit)
-
-  !  Delete temporary data file
-  call system('/bin/rm -f ' // tempfile // char(0))
-
+  
   !  Annotate information and store in PROGID character array
   !  for use in other program units via the routine argument
-  !progid(1) = '  Program : ' // progname
 
   progid(1) = '  Program : ' // executable
   progid(2) = '  Version : ' // progver
   progid(3) = 'Date/time : ' // id(1)
-  !progid(4) = '     User : ' // trim(id(2)) // ' (' // trim(id(3)) // ')'
   progid(4) = '     User : ' // id(2)
   progid(5) = ' Computer : ' // id(3)
   progid(6) = 'Directory : ' // id(4)
@@ -402,7 +388,7 @@ subroutine run_summary
   !  Local variables
   integer, parameter :: width = 110
   integer :: lap, ii, outfile
-  character(len=72), dimension(0:10) :: progid
+  character(len=110), dimension(0:10) :: progid
   character(len=5) :: vstring
   character(len=8) :: date
   character(len=10) :: time
@@ -1739,6 +1725,56 @@ subroutine runtests
   call brookscoil(nout)
 end subroutine runtests
 
+
+subroutine get_DDMonYYTimeZone(dt_time)
+  !+ad_name  get_DDMonYYTimeZone
+  !+ad_summ  Routine to get date, time and timezone
+  !+ad_type  Subroutine
+  !+ad_auth  M Kumar, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  dt_time : output string  : String containing formatted time and date
+  !+ad_desc  This routine calls the intrinsic DATE_AND_TIME subroutine
+  !+ad_desc  and format the output in 
+  !+ad_desc  DD Mon YYYY hr:minute:second time difference from UTC.
+  !+ad_hist  28/10/16 MK Initial version
+  !+ad_stat  Okay
+
+! Arguments
+    CHARACTER(len = *), INTENT(OUT) :: dt_time
+! Local variables
+    INTEGER :: values(8)
+    CHARACTER(len = 1), parameter :: tspt = ":"
+    CHARACTER(len = 1), parameter :: spspt = " "
+
+    CHARACTER(len = 2)  :: dd
+    CHARACTER(len = 5)  :: mons(12)
+    CHARACTER(len = 4)  :: yyyy
+    CHARACTER(len = 2)  :: hr    ! Hour of the day
+    CHARACTER(len = 2)  :: mnt   ! Minute of the hour
+    CHARACTER(len = 2)  :: scnd  ! The seconds of the minute 
+    CHARACTER(len = 5)  :: zn    ! In form (+-)hhmm, representing the difference with respect to Coordinated Universal Time (UTC).
+    CHARACTER(len = 20) :: znfrmt    
+
+    mons = [' Jan ',' Feb ',' Mar ',' Apr ',' May ',' Jun ',&
+      ' Jul ',' Aug ',' Sep ',' Oct ',' Nov ',' Dec ']
+
+    CALL DATE_AND_TIME(ZONE = zn, VALUES = values)
+    znfrmt = zn(1:3)//" Hour "//zn(4:5)//" Minute"
+    znfrmt = trim(znfrmt)
+    WRITE(  dd,'(i2)') values(3)
+    WRITE(yyyy,'(i4)') values(1)
+    write(hr, '(i2)')  values(5)
+    write(mnt, '(i2)')  values(6)
+    write(scnd, '(i2)')  values(7)
+    if(mnt(1:1) == " ")   mnt(1:1) = "0"
+    if(scnd(1:1) == " ") scnd(1:1) = "0"
+    
+    dt_time = dd//mons(values(2))//yyyy//spspt// &
+             hr//tspt//mnt//tspt//scnd//spspt//znfrmt
+    dt_time = trim(dt_time)
+    
+  END subroutine get_DDMonYYTimeZone
+    
 
 ! SVN 145: New CICC plots for User Guide
 ! SVN 149: MGF power usage correction
