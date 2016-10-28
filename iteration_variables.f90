@@ -389,7 +389,7 @@ subroutine convxc(xc,nn)
   !  Arguments
 
   integer, intent(in) :: nn
-  real(kind(1.0D0)), dimension(ipnvars), intent(inout) :: xc
+  real(kind(1.0D0)), dimension(ipnvars), intent(in) :: xc
 
   !  Local variables
 
