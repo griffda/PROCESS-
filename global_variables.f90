@@ -2885,6 +2885,13 @@ module build_variables
   !+ad_varc         <LI> = 0 central solenoid not present;
   !+ad_varc         <LI> = 1 central solenoid exists</UL>
   integer :: iohcl = 1
+  
+  !+ad_vars  iprecomp /1/ : switch for existence of central solenoid pre-compression structure:<UL>
+  !+ad_varc         <LI> = 0 no pre-compression structure;
+  !+ad_varc         <LI> = 1 calculated pre-compression structure</UL>
+  integer :: iprecomp = 1
+
+
   !+ad_vars  ohcth /0.811/ : central solenoid thickness (m)
   !+ad_varc                 (iteration variable 16)
   real(kind(1.0D0)) :: ohcth = 0.811D0

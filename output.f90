@@ -338,13 +338,15 @@ contains
     !+ad_hist  15/05/14 PJK Increased output width to 110 characters
     !+ad_hist  23/07/14 PJK Trimmed off trailing spaces
     !+ad_hist  05/08/15 MDK Remove "stop" command when the comment is too long.
+    !+ad_hist  28/10/16 MK Modified previous output to reflect warning message.
+    !+ad_hist              Removed variable (dummy) and use "string" to print.
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-
+   
     !  Arguments
 
     integer, intent(in) :: file
@@ -354,11 +356,10 @@ contains
 
     integer, parameter :: maxwidth = 110
     integer :: lh
-    character(len=110) :: dummy
+!    character(len = maxwidth) :: dummy
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    lh = len(string)
+    lh = len(trim(string))
 
     if (lh == 0) then
        write(*,*) 'Error in routine OCMMNT :'
@@ -368,16 +369,16 @@ contains
     end if
 
     if (lh >= maxwidth) then
-       write(*,*) 'Error in routine OCMMNT :'
-       write(*,*) string
-       write(*,*) 'This is too long to fit into ',maxwidth,' columns.'
+       write(*, *) 'Warning in routine OCMMNT :'
+       write(*, '(A)') string
+!       write(*,*) 'This is too long to fit into ',maxwidth,' columns.'
+       write(*, '(A,i3,A)') 'This is longer than ',maxwidth,' columns.'  ! MK 28/10/2016 Modified previous output to reflect warning message
        !write(*,*) 'PROCESS stopping.'
        !stop
     end if
-    dummy = string
-    !write(file,'(t2,a)') trim(string)
-    write(file,'(t2,a)') trim(dummy)
-
+!    dummy = trim(string)
+    write(file,'(t2,a)') trim(string)
+    !write(file,'(t2,a)') dummy
   end subroutine ocmmnt
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
