@@ -3298,11 +3298,15 @@ contains
     !+ad_hist  26/06/14 PJK Added error handling
     !+ad_hist  13/11/14 PJK Modified iradloss usage
     !+ad_hist  17/06/15 MDK Added Murari scaling (40)
+    !+ad_hist  02/11/16 HL  Added Petty, Lang scalings (41,42)
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  N. A. Uckan and ITER Physics Group,
     !+ad_docc    "ITER Physics Design Guidelines: 1989",
     !+ad_docc    ITER Documentation Series, No. 10, IAEA/ITER/DS/10 (1990)
+    !+ad_docc  A. Murari et al 2015 Nucl. Fusion, 55, 073009
+    !+ad_docc  C.C. Petty 2008 Phys. Plasmas, 15, 080501
+    !+ad_docc  P.T. Lang et al. 2012 IAEA conference proceeding EX/P4-01
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3322,7 +3326,7 @@ contains
 
     real(kind(1.0D0)) :: chii,ck2,denfac,dnla19,dnla20,eps2,gjaeri,iotabar, &
          n20,pcur,qhat,ratio,rll,str2,str5,taueena,tauit1,tauit2, &
-         term1,term2, h
+         term1,term2, h, qratio, nratio, nGW
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -3815,6 +3819,38 @@ contains
        qtaue = 0.0D0
        rtaue = -0.735D0
 
+    case (41) ! Beta independent dimensionless confinement scaling 
+       ! C.C. Petty 2008 Phys. Plasmas 15, 080501, equation 36
+       ! Note that there is no dependence on the average fuel mass 'afuel'
+       tauee = hfact * 0.052D0 * pcur**0.75D0 * bt**0.3D0 * &
+            dnla19**0.32D0 * powerht**(-0.47D0) * rmajor**2.09D0 * &
+            kappaa**0.88D0 * aspect**(-0.84D0)
+
+       gtaue = 0.0D0
+       ptaue = 0.32D0
+       qtaue = 0.0D0
+       rtaue = -0.47D0
+
+    case (42) ! High density relevant confinement scaling
+       ! P.T. Lang et al. 2012, IAEA conference proceeding EX/P4-01
+       ! Note that in the paper kappaa is defined as V/(2pi^2Ra^2) 
+       ! which should be equivalent to our local definition assuming
+       ! V = 2piR * (X-sectional area)
+       ! q should be q95: incorrect if icurr = 2 (ST current scaling)
+       qratio = q/qstar 
+       ! Greenwald density in m^-3
+       nGW = 1.0D14 * plascur/(pi*rminor*rminor)
+       nratio = dnla/nGW
+       tauee = hfact * 6.94D-7 * pcur**1.3678D0 * bt**0.12D0 * &
+            dnla19**0.032236D0 * powerht**(-0.74D0) * rmajor**1.2345D0 * &
+            kappaa**0.37D0 * aspect**2.48205D0 * afuel**0.2D0 * &
+            qratio**0.77D0 * aspect**(-0.9D0*log(aspect)) * &
+            nratio**(-0.22D0*log(nratio))
+
+       gtaue = 0.0D0
+       ptaue = 0.032236D0 -0.22D0*log(nratio)
+       qtaue = 0.0D0
+       rtaue = -0.74D0 
 
     case default
        idiags(1) = isc ; call report_error(81)

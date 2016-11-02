@@ -151,6 +151,7 @@ module physics_variables
   !+ad_hist  20/05/15 RK  Added iscdens, fgwped for pedestal density scaling
   !+ad_hist  17/06/15 MDK Added Murari scaling (isc=40)
   !+ad_hist  11/09/15 MDK res_time
+  !+ad_hist  02/11/16 HL  Added Petty and Lang confinement scalings (isc=41/42)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -160,8 +161,8 @@ module physics_variables
 
   public
 
-  !+ad_vars  ipnlaws /40/ FIX : number of energy confinement time scaling laws
-  integer, parameter :: ipnlaws = 40
+  !+ad_vars  ipnlaws /42/ FIX : number of energy confinement time scaling laws
+  integer, parameter :: ipnlaws = 42
 
   !+ad_vars  abeam : beam ion mass (amu)
   real(kind(1.0D0)) :: abeam = 0.0D0
@@ -493,7 +494,11 @@ module physics_variables
   !+ad_varc  <LI> (39)  DS03 (H-mode)
        'DS03                 (H)', &
   !+ad_varc  <LI> (40)  Murari et al non-power law (H-mode)</UL>
-       'Murari et al NPL     (H)' /)
+       'Murari et al NPL     (H)', & 
+  !+ad_varc  <LI> (41)  Petty 2008 (H-mode)</UL>
+       'Petty 2008           (H)', &   
+  !+ad_varc  <LI> (41)  Lang et al. 2012 (H-mode)</UL>
+       'Lang et al. 2012     (H)' /)
 
   !+ad_vars  iscrp /1/ : switch for plasma-first wall clearances:<UL>
   !+ad_varc         <LI> = 0 use 10% of rminor;
