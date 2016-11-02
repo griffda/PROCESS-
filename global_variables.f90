@@ -493,9 +493,9 @@ module physics_variables
        'ISS04            (stell)', &
   !+ad_varc  <LI> (39)  DS03 (H-mode)
        'DS03                 (H)', &
-  !+ad_varc  <LI> (40)  Murari et al non-power law (H-mode)</UL>
+  !+ad_varc  <LI> (40)  Murari et al non-power law (H-mode)
        'Murari et al NPL     (H)', & 
-  !+ad_varc  <LI> (41)  Petty 2008 (H-mode)</UL>
+  !+ad_varc  <LI> (41)  Petty 2008 (H-mode)
        'Petty 2008           (H)', &   
   !+ad_varc  <LI> (41)  Lang et al. 2012 (H-mode)</UL>
        'Lang et al. 2012     (H)' /)
