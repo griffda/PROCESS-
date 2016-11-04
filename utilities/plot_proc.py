@@ -1750,6 +1750,7 @@ def test(f):
         # with bpdf.PdfPages("ref.SUMMARY.pdf") as pdf:
         #    pdf.savefig(page1)
         #    pdf.savefig(page2)
+        # plt.show()
 
         # tidy up to avoid memory issues
         del page1

@@ -647,10 +647,11 @@ def test_plot_proc(fs):
 
     # test all MFILEs
     for key in fs.keys():
-        if "error_" and "stellarator" not in key:
-            file_name = "test_area/{0}/new.MFILE.DAT".format(key)
-            # file_name = fs[key]["path"] + "new.MFILE.DAT"
-            results.append(pp.test(file_name))
+        if "error_" not in key:
+            if "stellarator" not in key:
+                file_name = "test_area/{0}/new.MFILE.DAT".format(key)
+                # file_name = fs[key]["path"] + "new.MFILE.DAT"
+                results.append(pp.test(file_name))
 
             # if results[-1]:
             #    subprocess.call(["mv", "ref.SUMMARY.pdf", "test_area/{0}/".
