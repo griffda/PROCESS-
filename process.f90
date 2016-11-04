@@ -84,44 +84,44 @@ program process
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   mainRun : if (inExist) then
   !  Initialise things
-  call init
+     call init
   
   ! Run built-in tests.
   ! These are distinct from the tests that are dependent on 'unit_test'.
-  if (run_tests == 1) call runtests
+     if (run_tests == 1) call runtests
 
   !  Call equation solver (HYBRD)
-  call eqslv(ifail)
+     call eqslv(ifail)
 
   !  Call routine to do optimisation scans
-  if (ioptimz >= 0) then
-     call scan
-  else
-     call final(ifail)
-  end if
+     if (ioptimz >= 0) then
+        call scan
+     else
+        call final(ifail)
+     end if
 
-  call show_errors
+     call show_errors
 
-  call oheadr(nout,'End of PROCESS Output')
-  call oheadr(iotty,'End of PROCESS Output')
-  call oheadr(nout,'Copy of PROCESS Input Follows')
+     call oheadr(nout,'End of PROCESS Output')
+     call oheadr(iotty,'End of PROCESS Output')
+     call oheadr(nout,'Copy of PROCESS Input Follows')
 
-  close(unit = nin)
-  close(unit = nout)
-  close(unit = nplot)
-  close(unit = mfile)
-  if (verbose == 1) close(unit = vfile)
+     close(unit = nin)
+     close(unit = nout)
+     close(unit = nplot)
+     close(unit = mfile)
+     if (verbose == 1) close(unit = vfile)
 
-  open(unit = 100, FILE="IN.DAT")
-  open(unit = 101, FILE="OUT.DAT", ACCESS = "append")
-  fmtAppend = '(A)'
-  DO
-     read(100, fmtAppend, IOSTAT = iost) line
-     write(101, fmtAppend) trim(line)
-     if(iost < 0) exit  ! exit if End of line is reached in IN.DAT
-  END DO
-  close(unit = 100)
-  close(unit = 101)
+     open(unit = 100, FILE="IN.DAT")
+     open(unit = 101, FILE="OUT.DAT", ACCESS = "append")
+     fmtAppend = '(A)'
+     DO
+        read(100, fmtAppend, IOSTAT = iost) line
+        write(101, fmtAppend) trim(line)
+        if(iost < 0) exit  ! exit if End of line is reached in IN.DAT
+     END DO
+     close(unit = 100)
+     close(unit = 101)
   else mainRun
       write(*, *) "There is no input file named IN.DAT in the analysis folder"
   end if mainRun
@@ -321,7 +321,7 @@ subroutine inform(progid)
   progname = 'PROCESS'
   call get_command_argument(0, executable)
   call get_DDMonYYTimeZone(dt_time)
-  id(1) = trim(dt_time)
+  id(1) = trim(dt_time) !values(3)//"/"// values(2)//"/"// values(1)  !   5 6 7!date
   call getlog(id(2))    ! Get user ID
   call hostnm(id(3))    ! Get host name
   call getcwd(id(4))    ! Get current working directory
@@ -394,7 +394,7 @@ subroutine run_summary
   !  Local variables
   integer, parameter :: width = 110
   integer :: lap, ii, outfile
-  character(len = 110) :: progid(0:10)
+  character(len = 110) :: progid(0:10)  !, dimension(0:10) 
   character(len = 5)   :: vstring
   character(len = 8)   :: date
   character(len = 10)  :: time
