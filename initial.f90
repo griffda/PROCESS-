@@ -120,6 +120,7 @@ subroutine devtyp
   !+ad_hist  31/10/12 PJK Added stellarator_variables
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added ife_variables
+  !+ad_hist  04/11/16 MK Added check for content of device file 
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -134,43 +135,49 @@ subroutine devtyp
   !  Local variables
 
   integer :: idev
+  integer :: iost
   logical :: iexist
-
+  character(len = 20) :: devFile
+  character(len = 5) :: line
+  line = ' '
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+  devFile = 'device.dat'
   istell = 0
   irfp   = 0
   ife    = 0
+  idev   = 0      ! Default value MK
 
-  !  Read a second input file. If the file does not exist, then the
-  !  standard tokamak option is assumed.
+  !  Read a second input file. If the file does not exist or  
+  !  blank, then the standard tokamak option is assumed.
 
-  inquire(file='device.dat',exist=iexist)
-
+  inquire(file = devFile, exist = iexist)
+  
   if (iexist) then
-
-     open(unit=1,file='device.dat',status='old')
-     read(1,*) idev
-     close(unit=1)
-
+     open(unit = 101, file = 'device.dat', status = 'old')
+         DO
+            read(101,'(A)', IOSTAT = iost) line
+            read(line, '(I2)') idev
+            if(iost < 0 .or. idev > 0) exit
+         END DO
+        close(unit = 101)
+        
      !  Set relevant switch
 
-     select case (idev)
+        select case (idev)
 
-     case (1)  !  Stellarator model
-        istell = 1
+        case (1)  !  Stellarator model
+           istell = 1
 
-     case (2)  !  Reversed Field Pinch model
-        irfp = 1
+        case (2)  !  Reversed Field Pinch model
+           irfp = 1
 
-     case (3)  !  Inertial Fusion Energy model
-        ife = 1
+        case (3)  !  Inertial Fusion Energy model
+           ife = 1
 
-     case default  !  Tokamak model
-        continue
+        case default  !  Tokamak model
+           continue
 
-     end select
-
+        end select
   end if
 
 end subroutine devtyp
