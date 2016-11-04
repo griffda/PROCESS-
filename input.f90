@@ -130,6 +130,7 @@ module process_input
   !+ad_hist  30/06/14 PJK Added error_handling
   !+ad_hist  22/07/14 PJK Moved run_summary into process.f90
   !+ad_hist  19/05/15 PJK Added lower_case
+  !+ad_hist  01/11/16 JM  Added iprecomp switch for OH coil pre-compression structure
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1349,6 +1350,9 @@ contains
        case ('iohcl')
           call parse_int_variable('iohcl', iohcl, 0, 1, &
                'Switch for existence of OH coil')
+       case ('iprecomp')
+          call parse_int_variable('iprecomp', iprecomp, 0, 1, &
+               'Switch for existence of OH coil pre-compression structure')
        case ('ohcth')
           call parse_real_variable('ohcth', ohcth, 0.0D0, 10.0D0, &
                'OH coil thickness (m)')

@@ -116,6 +116,7 @@ contains
     !+ad_hist  06/03/15 JM  Put an additional call to ripple_amplitude after the change to 
     !+ad_hisc 				rtot (issue #221)
     !+ad_hist  19/11/15 RK  Added pre-compression structure, thermal shield, and TF angular correction
+    !+ad_hist  01/11/16 JM  Added iprecomp switch for pre-compression structure calc. If 0 precomp=0
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -153,9 +154,12 @@ contains
     
     vgaptop = max(0.5d0*(scrapli+scraplo), vgaptop)
     
-    ! Calculate pre-compression structure thickness
-    
-    precomp = fseppc / (2.0d0 * pi * fcspc * sigallpc * (bore + bore + ohcth))
+    ! Calculate pre-compression structure thickness is iprecomp=1
+    if (iprecomp == 1) then
+      precomp = fseppc / (2.0d0 * pi * fcspc * sigallpc * (bore + bore + ohcth))
+    else
+      precomp = 0.0D0
+    end if
 
     ! Radial build to tfcoil
     
