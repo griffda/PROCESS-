@@ -73,12 +73,16 @@ program process
 
   !  Local variables
   integer :: ifail
-  ! MDK
-  character(len = *), parameter :: tempfile = 'SCRATCHFILE.DAT'
-  character(len = 120) :: line
+  character(len = 130) :: line
+  character(len = 10)  :: fmtAppend
+  character(len = 10) :: inFile
   integer :: iost
+  logical :: inExist
 
+  inFile = "IN.DAT"
+  inquire(file = inFile, exist = inExist)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  mainRun : if (inExist) then
   !  Initialise things
   call init
   
@@ -110,15 +114,17 @@ program process
 
   open(unit = 100, FILE="IN.DAT")
   open(unit = 101, FILE="OUT.DAT", ACCESS = "append")
-  
+  fmtAppend = '(A)'
   DO
-     read(100,'(A)',IOSTAT = iost) line
-     write(101, '(A)' ) trim(line)
-     if(iost < 0) exit  ! exit if End of line is reached
+     read(100, fmtAppend, IOSTAT = iost) line
+     write(101, fmtAppend) trim(line)
+     if(iost < 0) exit  ! exit if End of line is reached in IN.DAT
   END DO
   close(unit = 100)
   close(unit = 101)
-
+  else mainRun
+      write(*, *) "There is no input file named IN.DAT in the analysis folder"
+  end if mainRun
 
     end program process
 
@@ -292,7 +298,7 @@ subroutine inform(progid)
   character(len=110), dimension(0:10) :: progid
 
   !  Local variables
-  character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
+!  character(len=*), parameter :: tempfile = 'SCRATCHFILE.DAT'
   character(len=10) :: progname
   character(len=120) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
@@ -315,7 +321,7 @@ subroutine inform(progid)
   progname = 'PROCESS'
   call get_command_argument(0, executable)
   call get_DDMonYYTimeZone(dt_time)
-  id(1) = trim(dt_time)  !values(3)//"/"// values(2)//"/"// values(1)  !   5 6 7!date
+  id(1) = trim(dt_time)
   call getlog(id(2))    ! Get user ID
   call hostnm(id(3))    ! Get host name
   call getcwd(id(4))    ! Get current working directory
@@ -388,14 +394,14 @@ subroutine run_summary
   !  Local variables
   integer, parameter :: width = 110
   integer :: lap, ii, outfile
-  character(len=110), dimension(0:10) :: progid
-  character(len=5) :: vstring
-  character(len=8) :: date
-  character(len=10) :: time
-  character(len=12) :: dstring
-  character(len=7) :: tstring
-  character(len=10) :: ustring
-  character(len=100) :: rstring
+  character(len = 110) :: progid(0:10)
+  character(len = 5)   :: vstring
+  character(len = 8)   :: date
+  character(len = 10)  :: time
+  character(len = 12)  :: dstring
+  character(len = 7)   :: tstring
+  character(len = 10)  :: ustring
+  character(len = 100) :: rstring
   integer :: version
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -584,7 +590,8 @@ subroutine eqslv(ifail)
   !  Local variables
   integer :: inn,nprint,nx
   real(kind(1.0D0)) :: sumsq
-  real(kind(1.0D0)), dimension(iptnt) :: wa
+!  real(kind(1.0D0)), dimension(iptnt) :: wa
+  real(kind(1.0D0)) :: wa(iptnt)
   real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
   character(len=1), dimension(ipeqns) :: sym
   character(len=10), dimension(ipeqns) :: lab
@@ -1759,7 +1766,7 @@ subroutine get_DDMonYYTimeZone(dt_time)
       ' Jul ',' Aug ',' Sep ',' Oct ',' Nov ',' Dec ']
 
     CALL DATE_AND_TIME(ZONE = zn, VALUES = values)
-    znfrmt = zn(1:3)//" Hour "//zn(4:5)//" Minute"
+    znfrmt = zn(1:3)//":"//zn(4:5)//"(hh:mm) UTC"
     znfrmt = trim(znfrmt)
     WRITE(  dd,'(i2)') values(3)
     WRITE(yyyy,'(i4)') values(1)
