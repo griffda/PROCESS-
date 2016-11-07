@@ -897,7 +897,7 @@ module numerics
   real(kind(1.0D0)), dimension(ipnvars) :: boundu = (/ &
        10.00D0, &  !  1
        100.0D0, &  !  2
-       10.00D0, &  !  3
+       50.00D0, &  !  3
        150.0D0, &  !  4
        1.000D0, &  !  5
        1.00D21, &  !  6
