@@ -6,6 +6,7 @@ program process
   !+ad_summ  Power Reactor Optimisation Code for Environmental and Safety Studies
   !+ad_type  Main program
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
+  !+ad_auth  M Kumar, CCFE, Culham Science Centre
   !+ad_cont  N/A
   !+ad_args  None
   !+ad_desc  Power Reactor Optimisation Code for Environmental and Safety Studies
@@ -52,6 +53,7 @@ program process
   !+ad_hist  10/09/14 PJK Added vfile close statement
   !+ad_hist  28/10/16 MK Removed systems commands and added a subroutine 
   !+ad_hist              get_DDMonYYTimeZone to get date and time
+  !+ad_hist  04/11/16 MK Added check for existence of input file 
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  Box file F/RS/CIRE5523/PWF (up to 15/01/96)
@@ -75,11 +77,13 @@ program process
   integer :: ifail
   character(len = 130) :: line
   character(len = 10)  :: fmtAppend
-  character(len = 10) :: inFile
+  character(len = 50) :: inFile
+  character(len = 15) :: outFile 
   integer :: iost
   logical :: inExist
 
-  inFile = "IN.DAT"
+  inFile = trim(fileprefix)//"IN.DAT"
+  outFile = trim(fileprefix)//"OUT.DAT"
   inquire(file = inFile, exist = inExist)
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   mainRun : if (inExist) then
@@ -112,18 +116,18 @@ program process
      close(unit = mfile)
      if (verbose == 1) close(unit = vfile)
 
-     open(unit = 100, FILE="IN.DAT")
-     open(unit = 101, FILE="OUT.DAT", ACCESS = "append")
+     open(unit = 100, FILE = inFile)
+     open(unit = 101, FILE = outFile, ACCESS = "append")
      fmtAppend = '(A)'
      DO
         read(100, fmtAppend, IOSTAT = iost) line
         write(101, fmtAppend) trim(line)
-        if(iost < 0) exit  ! exit if End of line is reached in IN.DAT
+        if(iost < 0) exit                   ! exit if End of line is reached in IN.DAT
      END DO
      close(unit = 100)
      close(unit = 101)
   else mainRun
-      write(*, *) "There is no input file named IN.DAT in the analysis folder"
+      write(*, *) "There is no input file named"//inFile//" in the analysis folder"
   end if mainRun
 
     end program process
@@ -250,7 +254,7 @@ subroutine inform(progid)
   !+ad_desc  machine etc. for the present run, and stores the information
   !+ad_desc  in a character string array.
   !+ad_prob  Non-standard Fortran, because of the unix system calls used.
-  !+ad_call  None (except system calls)
+  !+ad_call  get_DDMonYYTimeZone
   !+ad_hist  03/10/96 PJK Initial version
   !+ad_hist  07/10/96 PJK PROCESS 3001
   !+ad_hist  08/10/96 PJK PROCESS 3002
@@ -593,8 +597,8 @@ subroutine eqslv(ifail)
 !  real(kind(1.0D0)), dimension(iptnt) :: wa
   real(kind(1.0D0)) :: wa(iptnt)
   real(kind(1.0D0)), dimension(ipeqns) :: con1, con2, err
-  character(len=1), dimension(ipeqns) :: sym
-  character(len=10), dimension(ipeqns) :: lab
+  character(len = 1), dimension(ipeqns) :: sym
+  character(len = 10), dimension(ipeqns) :: lab
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
