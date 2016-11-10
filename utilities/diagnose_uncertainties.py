@@ -89,12 +89,12 @@ def plot_distribution(xarr, labelx, unc_dict):
         if varname in DICT_INPUT_BOUNDS:
             args = argwhere(logical_or(
                     xvalues < DICT_INPUT_BOUNDS[varname]['lb'],
-                    xvalues > mean))
+                    xvalues > u_mean))
             yvalues[args] = zeros(len(args))
 
         else:
             args = argwhere(logical_or(xvalues < 0.,
-                                       xvalues > mean))
+                                       xvalues > u_mean))
             yvalues[args] = zeros(len(args))
 
     elif unc_dict['errortype'].lower() == 'upperhalfgaussian':
@@ -106,11 +106,11 @@ def plot_distribution(xarr, labelx, unc_dict):
         yvalues = yvalues * 2.
         if varname in DICT_INPUT_BOUNDS:
             args = argwhere(logical_or(
-                    xvalues < mean,
+                    xvalues < u_mean,
                     xvalues > DICT_INPUT_BOUNDS[varname]['ub']))
             yvalues[args] = zeros(len(args))
         else:
-            args = argwhere(xvalues < mean)
+            args = argwhere(xvalues < u_mean)
             yvalues[args] = zeros(len(args))
 
     plot(xvalues, yvalues, 'k-')
