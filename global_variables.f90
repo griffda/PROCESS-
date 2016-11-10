@@ -35,7 +35,7 @@ module global_variables
   integer :: verbose = 0
   !+ad_vars  run_tests /0/ : Turns on built-in tests if set to 1
   integer :: run_tests = 0
-  character(len=100) :: fileprefix = 'dummy_file_prefix'
+  character(len=30) :: fileprefix = "" !'dummy_file_prefix'
   character(len=25) :: xlabel,vlabel
 
 end module global_variables
