@@ -81,6 +81,7 @@ module numerics
   !+ad_hisc		  variable 112 (fzeffmax)
   !+ad_hist  26/11/15  RK New constraint equation for taucq
   !+ad_hist  10/12/15  RK Net electrical output added as FoM
+  !+ad_hist  09/11/16 HL  Added new constraint 67, it. var. 116
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -95,10 +96,10 @@ module numerics
 
   public
 
-  !+ad_vars  ipnvars /115/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 115
-  !+ad_vars  ipeqns /66/ FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 66
+  !+ad_vars  ipnvars /116/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 116
+  !+ad_vars  ipeqns /67/ FIX : number of constraint equations available
+  integer, parameter :: ipeqns = 67
   !+ad_vars  ipnfoms /17/ FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 17
 
@@ -251,7 +252,8 @@ module numerics
        0,  &  !  63
        0,  &  !  64
        0,  &  !  65
-       0   &  !  66
+       0,  &  !  66
+       0   &  !  67
        /)
 
 
@@ -393,8 +395,10 @@ module numerics
        !+ad_varc  <LI> (65) Dump time set by VV loads
        'Dump time set by VV stress       ',   &
        !+ad_varc  <LI> (66) Limit on rate of change of energy in poloidal field
-       !+ad_varc            (Use iteration variable 65(tohs))</UL>
-       'Rate of change of energy in field'   &
+       !+ad_varc            (Use iteration variable 65(tohs))
+       'Rate of change of energy in field',   &
+       !+ad_varc  <LI> (67) Simple Radiation Wall load limit</UL>
+       'Upper Lim. on Radiation Wall load'   &
        /)
        !  Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -518,7 +522,8 @@ module numerics
        0,  &  !  112
        0,  &  !  113
        0,  &  !  114
-       0   &  !  115
+       0,  &  !  115
+       0   &  !  116
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -755,8 +760,10 @@ module numerics
        'ftaucq        ',  &
        !+ad_varc  <LI> (114) fw_channel_length: Length of a single first wall channel
        'fw_channel_l  ',  &
-       !+ad_varc  <LI> (115) fpoloidalpower: f-value for max rate of change of energy in poloidal field </UL>
-       'fpoloidalpower'  &
+       !+ad_varc  <LI> (115) fpoloidalpower: f-value for max rate of change of energy in poloidal field 
+       'fpoloidalpower',  &
+       !+ad_varc  <LI> (116) fradwall: f-value for radiation wall load limit (eq. 67)</UL>
+       'fradwall      '  &
        /)
 
   character(len=9), dimension(:), allocatable :: name_xc
@@ -889,7 +896,8 @@ module numerics
        0.001D0, &  !  112
        0.001D0, &  !  113
        0.001D0, &  !  114
-       0.001D0  &  !  115
+       0.001D0, &  !  115
+       0.001D0  &  !  116
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -1009,7 +1017,8 @@ module numerics
        1.000D0, &  !  112
        1.000D0, &  !  113
        1.000D3, &  !  114
-       1.000D0  &  !  115
+       1.000D0, &  !  115
+       1.000D0  &  !  116
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

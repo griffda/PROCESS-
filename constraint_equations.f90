@@ -167,6 +167,7 @@ contains
     !+ad_hist  26/11/15 RK  Eqn 65: Added constrain equation to set dump time
     !+ad_hist  24/05/16 JM  Added more information in the comments
     !+ad_hist  23/06/16 JM  Removed equation 38. No longer used anywhere in the code
+    !+ad_hist  09/11/16 HL Added new eqn 67
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1437,6 +1438,20 @@ contains
              err(i) = maxpoloidalpower * cc(i)
              symbol(i) = '<'
              units(i) = 'MW'
+           end if
+
+       case (67) ! Simple upper limit on radiation wall load
+          
+           ! fradwall    |  f-value for upper limit on radiation wall load
+           ! maxradwallload  |  Maximum permitted radiation wall load (MW/m^2)
+           ! peakradwallload |  Peak radiation wall load (MW/m^2)
+           cc(i) = 1.0d0 - fradwall * maxradwallload / peakradwallload
+
+           if (present(con)) then
+             con(i) = maxradwallload
+             err(i) =  maxradwallload * cc(i)
+             symbol(i) = '<'
+             units(i) = 'MW/m^2'
            end if
 
        case default

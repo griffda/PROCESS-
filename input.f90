@@ -388,6 +388,7 @@ contains
     !+ad_hist  29/03/16 HL  Added coreradiationfraction
     !+ad_hist  02/06/16 RK  Allowed negative triangularity
     !+ad_hist  23/06/16 JM  Removed dtmpmx and tmprse as not in rest of code (#377)
+    !+ad_hist  10/11/16 HL  Added fradwall, maxradwallload, peakfactrad
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -939,6 +940,9 @@ contains
        case ('fradpwr')
           call parse_real_variable('fradpwr', fradpwr, 0.0D0, 1.0D0, &
                'F-value for radiation power limit')
+       case ('fradwall')
+          call parse_real_variable('fradwall', fradwall, 0.001D0, 1.0D0, &
+               'f-value for upper limit on radiation wall load')
        case ('frfpf')
           call parse_real_variable('frfpf', frfpf, 0.001D0, 10.0D0, &
                'F-value for RFP reversal parameter')
@@ -999,10 +1003,12 @@ contains
        case ('fpoloidalpower')
           call parse_real_variable('fpoloidalpower', fpoloidalpower, 0.001D0, 1.0D0, &
                'f-value for constraint on rate of change of energy in poloidal field')
-
        case ('gammax')
           call parse_real_variable('gammax', gammax, 0.01D0, 10.0D0, &
                'Maximum current drive gamma (A/W-m2)')
+       case ('maxradwallload')
+          call parse_real_variable('maxradwallload', maxradwallload, 0.1D0, 10.0D0, &
+               'Maximum permitted radiation wall load (MW/m^2)')
        case ('mvalim')
           call parse_real_variable('mvalim', mvalim, 0.0D0, 1000.0D0, &
                'Maximum MVA limit')
@@ -1012,6 +1018,9 @@ contains
        case ('nflutfmax')
           call parse_real_variable('nflutfmax', nflutfmax, 1.0D22, 1.0D24, &
                'Max fast neutron fluence on TF coil (n/m2)')
+       case ('peakfactrad')
+          call parse_real_variable('peakfactrad', peakfactrad, 0.1D0, 10D0, &
+               'peaking factor for radiation wall load')
        case ('pnetelin')
           call parse_real_variable('pnetelin', pnetelin, 1.0D0, 1.0D4, &
                'Required net electric power (MW)')

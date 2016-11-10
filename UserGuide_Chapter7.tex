@@ -151,6 +151,22 @@ commits to the \texttt{develop} or \texttt{master} branches of the \process\
 Git repository are to be made, and how new code releases are performed. It is
 assumed that readers have a working knowledge of Git commands.
 
+
+\subsection{Tagging}
+\label{sec:tagging}
+Tagging in \process\/ is used to document the version of the code any individual run has been performed with. This is necessary for proper provenance capture. Currently, only the gitlab commit number is unique, assuring full version control, but the \process\/ version tag documented in each output is not updated with each commit. From November 2016 onwards, we have changed our tagging system for the \process\/ versions (details see below). Any versions ending in {\bf .0} should be fully tested. How and when to tag versions is described in more detail in the upcoming sections detailing the code update and release procedures.
+
+\subsubsection{Tagging in the development version}
+Instead of having a single revision number - as was previously the case - we will be following the convention where the {\it development} version of \process\/ gets tagged according the format {\bf MasterRelease.MajorModel.MinorChange}, i.e. '1.3.29', corresponds to the 29th minor update since the implementation of the 3rd new major model after the 1st master release with the new tagging format.
+
+\subsubsection{Tagging in the master version}
+The {\it master} version of \process\/ will be tagged according to the format {\bf MasterRelease.0} and will correspond to the same code version as the development version with {\bf MasterRelease.0.0}.
+
+\subsubsection{Tagging in a separate branch}
+This section covers tagging in e.g. the separate DEMO1 baseline branch and assures that while this branch can develop independently of the development branch, it still has unique version tagging and provenance capture. Tagging of a separate branch should be started when it is forked from develop. Hence, the initial tag should be {\bf BID\_MasterRelease.MajorModel.MinorChange}, where {\bf BID} is a short but informative branch identifier consisting of letters only. This allows for branching from the development version at any point. Ideally it does start from a fully tested version though! \Red{Manoj, please check that both characters as well as the new dot format are possible options for the autodoc tool!}
+
+
+
 \subsection{Initial access to the source code}
 \label{sec:getsource}
 
@@ -213,6 +229,8 @@ are transferred to the new model's files with minimal effort.
 Once the new model has been finished and tested successfully (complete with full
 documentation --- see Section~\ref{sec:codemods}), the branch should be merged
 back into the \texttt{develop} branch.
+
+\Red{Note that typically development branches do not need version tagging as they should not be used in any production runs. However, e.g. for the DEMO baseline design a separate branch will be created to conserve the \process\/ output in the state when the baseline was fixed.}
 
 \subsubsection{Branching from \texttt{develop}}
 
@@ -333,13 +351,11 @@ Merges the version in the central repository into the local branch by copying ov
 
 Whenever a commit to the \texttt{develop} branch is to be made, the following
 procedure should be followed. Ensure all documentation is up to date (see
-Section~\ref{sec:codemods}).
+Section~\ref{sec:codemods}) and the code is fully tested.
 \begin{enumerate}
 
 \item In routine \texttt{inform} of file \texttt{process.f90}, change the
-  definition of \texttt{progver} by incrementing the revision number by one to
-  \texttt{XYZ} (for instance) and the Release Date. It is important to keep
-  exactly the same format.
+  definition of \texttt{progver} by incrementing the \Red{last digit of the revision number by one e.g. from \texttt{1.3.26} to \texttt{1.3.27} for each minor commit or the second git for each fully tested major model that is included while setting the last digit to 0 e.g. from \texttt{1.3.26} to \texttt{1.4.0}}. Furthermore, update the Release Date. It is important to keep exactly the same format. 
 
 \item Add a brief comment to the bottom of source file \texttt{process.f90}
   describing the changes made since the last commit in the same branch. Start
@@ -347,7 +363,7 @@ Section~\ref{sec:codemods}).
 
 \item If any of the User Guide \texttt{.tex} files have been modified, edit
   the definition of \verb+\version+ in \texttt{process.tex} by changing the
-  Revision (to \texttt{XYZ}) and the date.
+  Revision \Red{(to e.g. \texttt{1.3.27})} and the date.
 
 \item If you have changed any "use" statements in the code, or any compilation dependencies in the Makefile, run \\
 \texttt{make clean}
@@ -363,33 +379,35 @@ Close all open editor windows.  The commit will not work otherwise.
 \item   \texttt{git commit -a} \\
   This commits all modified tracked files.\\
   \\
-  Alternatively, you can this in two steps:\\
+  Alternatively, you can do this in two steps:\\
   \texttt{git add process.f90 process.tex changedfile1 changedfile2 ...}  \\
   (This `stages' the modified files marking them as ready for committing).  \\
   \texttt{git commit}
 
 \item An editor window will open; add a line summarising the changes you have made.  Use a format like this:
 \begin{verbatim}
-rXYZ    A summary of the changes made
+1.3.27   A summary of the changes made
 Further details. Changes due to Git issues can be described like this:
 #270    Description
 #273    Description
 \end{verbatim}
 Save and close the window. This will initiate the commit to your \textit{local}\ copy of the repository.
 
-\item \texttt{git tag -a rXYZ -m `Revision XYZ'}
+\item \texttt{git tag -a 1.3.27 -m `Revision 1.3.27'}
 
 \item \texttt{git push}
 
-\item \texttt{git push origin rXYZ}
+\item \texttt{git push origin 1.3.27}
 
 \end{enumerate}
+
+\Red{James, can you verify this is possible!}
 
 The instructions given in Section~\ref{sec:fullrebuild} should now be followed to make the new \texttt{develop} release available to all users.
 
 \subsubsection{Merging develop into master}
 
-\Red{(to follow)}
+\Red{When merging develop into master, please note that the tagging changes as described in section \ref{sec:tagging}.}
 
 \subsection{Full code rebuild}
 \label{sec:fullrebuild}
@@ -422,3 +440,5 @@ This is essential because the Git repository does not include any of the files g
 The \texttt{make all} step performs the rebuild of the \texttt{process.exe} executable
 file, updates the User Guide and all the html files, and recreates the Python
 dictionaries as required by the Python utilities.
+
+
