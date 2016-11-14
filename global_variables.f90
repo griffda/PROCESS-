@@ -35,7 +35,7 @@ module global_variables
   integer :: verbose = 0
   !+ad_vars  run_tests /0/ : Turns on built-in tests if set to 1
   integer :: run_tests = 0
-  character(len=100) :: fileprefix = 'dummy_file_prefix'
+  character(len=30) :: fileprefix = "" !'dummy_file_prefix'
   character(len=25) :: xlabel,vlabel
 
 end module global_variables
@@ -3456,7 +3456,8 @@ module constraint_variables
   !+ad_hist  11/11/14 PJK Added ftmargoh
   !+ad_hist  06/08/15 MDK ftaulimit
   !+ad_hist  18/11/15 RK  fzeffmax and zeffmax
-  !+ad_hist  23/06/16 JM  Removed dtmpmx as no longer used anywhere
+  !+ad_hist  23/06/16 JM  Removed dtmpmx as no longer used anywhere  
+  !+ad_hist  09/11/16 HL  Added fradwall, maxradwalload, peakfactrad and peakradwalload
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -3569,6 +3570,9 @@ module constraint_variables
   !+ad_vars  fradpwr /1.0/ : f-value for core radiation power limit
   !+ad_varc                  (constraint equation 17, iteration variable 28)
   real(kind(1.0D0)) :: fradpwr = 1.0D0
+  !+ad_vars  fradwall /1.0/ : f-value for upper limit on radiation wall load 
+  !+ad_varc                   (constr. equ. 67, iteration variable 116 )
+  real(kind(1.0D0)) :: fradwall = 1.0D0
   !+ad_vars  frfpf /1.0/ : f-value for RFP reversal parameter
   !+ad_varc                (constraint equation 49, iteration variable 80)
   real(kind(1.0D0)) :: frfpf = 1.0D0
@@ -3633,6 +3637,9 @@ module constraint_variables
   !+ad_vars  gammax /2.0/ : maximum current drive gamma
   !+ad_varc                 (constraint equation 37)
   real(kind(1.0D0)) :: gammax = 2.0D0
+  !+ad_vars maxradwallload /1.0/ :  Maximum permitted radiation wall load (MW/m^2)
+  !+ad_varc                         (constraint equation 67)
+  real(kind(1.0D0)) :: maxradwallload = 1.0D0
   !+ad_vars  mvalim /40.0/ : maximum MVA limit
   !+ad_varc                  (constraint equation 19)
   real(kind(1.0D0)) :: mvalim = 40.0D0
@@ -3643,6 +3650,12 @@ module constraint_variables
   !+ad_varc                      (blktmodel>0)
   !+ad_varc                      (constraint equation 53)
   real(kind(1.0D0)) :: nflutfmax = 1.0D23
+  !+ad_vars  peakfactrad /3.33/  : peaking factor for radiation wall load 
+  !+ad_varc                       (constraint equation 67)
+  real(kind(1.0D0)) :: peakfactrad = 3.33D0
+  !+ad_vars  peakradwallload : Peak radiation wall load (MW/m^2)
+  !+ad_varc                        (constraint equation 67)
+  real(kind(1.0D0)) :: peakradwallload = 0.0D0
   !+ad_vars  pnetelin /1000.0/ : required net electric power (MW)
   !+ad_varc                      (constraint equation 16)
   real(kind(1.0D0)) :: pnetelin = 1.0D3

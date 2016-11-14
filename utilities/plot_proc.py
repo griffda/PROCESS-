@@ -1432,7 +1432,7 @@ def plot_current_drive_info(axis, mfile_data, scan):
     pdivt = mfile_data.data["pdivt"].get_scan(scan)
     pdivr = pdivt / mfile_data.data["rmajor"].get_scan(scan)
 
-    pdivnr = 10.0e20 * mfile_data.data["pdivt"].get_scan(scan) / \
+    pdivnr = 1.0e20 * mfile_data.data["pdivt"].get_scan(scan) / \
              (mfile_data.data["rmajor"].get_scan(scan) *
               mfile_data.data["dene"].get_scan(scan))
 

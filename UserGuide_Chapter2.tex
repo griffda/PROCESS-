@@ -287,7 +287,9 @@ Variables that are adjusted by \process\ in order to satisfy the constraints and
 calls are made to the physics and engineering routines, with slightly
 different values for the iteration variables on each call, and the equation
 solver determines the effect on the output due to these small changes to the
-input (see Figures~\ref{fig:flow_hybrd} and \ref{fig:flow_vmcon}). Tables~\ref{tab:itvars1} and~\ref{tab:itvars2} list the iteration variables available in \process.  Any one or more of these variables may be selected.
+input (see Figures~\ref{fig:flow_hybrd} and \ref{fig:flow_vmcon}). Tables~\ref{tab:itvars1}, 
+\ref{tab:itvars2} and~\ref{tab:itvars3} list the iteration variables available in \process. 
+ Any one or more of these variables may be selected.
 
 Clearly, the equation solvers need at least as many variables to iterate as
 there are equations to solve, i.e.\ \texttt{nvar} $\geq$ \texttt{neqns}. If
@@ -384,7 +386,7 @@ no. & variable name     & description                                   & eqn & 
 {\label{tab:itvars1}
   \textit{Iteration variables 1 to 55 present in \process. The f-values correspond to the
     given constraint equations (see Table~\ref{tab:eqns}). The other iteration
-    variables are shown in Table~\ref{tab:itvars2}.}
+    variables are shown in Tables~\ref{tab:itvars2} and \ref{tab:itvars3}.}
 }
 \end{table}
 \clearpage
@@ -452,12 +454,7 @@ no. & variable name     & description                                           
 107 & \texttt{favail}   & f-value for minimum availability limit equation         & 61  & \texttt{0.001D0} & \texttt{1.000D0} \\
 108 & \texttt{breeder\_f}& breeder volume ratio: Li4SiO4/(Be12Ti+Li4SiO4)         &     & \texttt{0.060D0} & \texttt{1.000D0} \\
 109 & \texttt{ralpne}   & thermal alpha density / electron density                &     & \texttt{0.050D0} & \texttt{0.150D0} \\
-110 & \texttt{ftaulimit}& f-value for limit on ratio of alpha particle to energy confinement times & 62  & \texttt{0.001D0} & \texttt{1.000D0} \\
-111 & \texttt{fniterpump}& f-value for constraint that number of pumps < tfno     & 63  & \texttt{0.001D0} & \texttt{1.000D0} \\
-112 & \texttt{fzeffmax}  & f-value for Zeff limit equation                        & 64  & \texttt{0.001D0} & \texttt{1.000D0} \\
-113 & \texttt{ftaucq}  & f-value for quench time limit equation                   & 65  & \texttt{0.001D0} & \texttt{1.000D0} \\
-114 & \texttt{fw\_channel\_length}  & Length of a single first wall channel         & 39  & \texttt{0.001D0} & \texttt{1.000D3} \\
-115 & \texttt{fpoloidalpower}  & f-value for max rate of change of energy in poloidal field & 66  & \texttt{0.001D0} & \texttt{1.000D0} \\
+110 & \texttt{ftaulimit}& f-value for limit on ratio of $\alpha$ part. to energy conf. times & 62  & \texttt{0.001D0} & \texttt{1.000D0} \\
 \hline
 \end{tabular}
 \end{center}
@@ -465,7 +462,33 @@ no. & variable name     & description                                           
 {\label{tab:itvars2}
   \textit{Iteration variables 56 onwards. The f-values correspond to the
     given constraint equations (see Table~\ref{tab:eqns}). The other iteration
-    variables are shown in Table~\ref{tab:itvars1}.}
+    variables are shown in Tables~\ref{tab:itvars1} and \ref{tab:itvars3}.}
+}
+\end{table}
+\clearpage
+\normalsize
+
+\begin{table}[tbph]
+\footnotesize
+\begin{center}
+
+\begin{tabular}{||c|l|l|c|c|c||} \hline
+\texttt{ixc} &          &                                               & \texttt{icc} & lower        & upper       \\
+no. & variable name     & description                                   & eqn & bound        & bound       \\ \hline
+111 & \texttt{fniterpump}& f-value for constraint that number of pumps $<$ tfno     & 63  & \texttt{0.001D0} & \texttt{1.000D0} \\
+112 & \texttt{fzeffmax}  & f-value for Zeff limit equation                        & 64  & \texttt{0.001D0} & \texttt{1.000D0} \\
+113 & \texttt{ftaucq}  & f-value for quench time limit equation                   & 65  & \texttt{0.001D0} & \texttt{1.000D0} \\
+114 & \texttt{fw\_channel\_length}  & Length of a single first wall channel         & 39  & \texttt{0.001D0} & \texttt{1.000D3} \\
+115 & \texttt{fpoloidalpower}  & f-value for max rate of change of energy in poloidal field & 66  & \texttt{0.001D0} & \texttt{1.000D0} \\
+116 & \texttt{fradwall} & f-value for upper limit on radiation wall load          & 67  & \texttt{0.001D0} & \texttt{1.000D0} \\
+\hline
+\end{tabular}
+\end{center}
+\caption[List of iteration variables 111 onwards]
+{\label{tab:itvars3}
+  \textit{Iteration variables 111 onwards. The f-values correspond to the
+    given constraint equations (see Table~\ref{tab:eqns}). The other iteration
+    variables are shown in Tables~\ref{tab:itvars1} and \ref{tab:itvars2}.}
 }
 \end{table}
 \clearpage
@@ -657,8 +680,8 @@ J_{\mbox{\scriptsize protection}}$ upper limit (SCTF)                   & L    &
 {\label{tab:eqns}
   \textit{Summary of the first 50 constraint equations present in \process. Consistency
     equations are marked C, limit equations are marked L\@. Some
-    (non-exhaustive) iteration variable numbers (see Tables~\ref{tab:itvars1}
-    and~\ref{tab:itvars2}) that directly affect the associated constraint
+    (non-exhaustive) iteration variable numbers (see Tables~\ref{tab:itvars1},\ref{tab:itvars2} 
+    and~\ref{tab:itvars3}) that directly affect the associated constraint
     equations are given, the one listed first being the most relevant.}
 }
 \normalsize
@@ -688,6 +711,7 @@ no. & description                                               & type & \texttt
 64  & Limit on Zeff $\le$ Zeffmax                               & L    & \textbf{112} \\
 65  & TF dump time greater than or equal to calculated quench time & L    & \textbf{56}, 113 \\
 66  & Limit on rate of change of energy in poloidal field       & L    & \textbf{65, 115 } \\
+67  & Simple upper limit on radiation wall load                 & L    & \textbf{116}, 102, 4,6 \\
 \hline
 \end{tabular}
 \end{center}
@@ -695,8 +719,8 @@ no. & description                                               & type & \texttt
 {\label{tab:eqns2}
   \textit{Summary of constraint equations 51 onwards. Consistency
     equations are marked C, limit equations are marked L\@. Some
-    (non-exhaustive) iteration variable numbers (see Tables~\ref{tab:itvars1}
-    and~\ref{tab:itvars2}) that directly affect the associated constraint
+    (non-exhaustive) iteration variable numbers (see Tables~\ref{tab:itvars1}, \ref{tab:itvars2}
+    and~\ref{tab:itvars3}) that directly affect the associated constraint
     equations are given, the one listed first being the most relevant.}
 }
 \normalsize

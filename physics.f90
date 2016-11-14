@@ -210,6 +210,7 @@ contains
     !+ad_hist  01/10/14 PJK Added plhthresh
     !+ad_hist  01/04/15 JM  Added total transport power from scaling law
     !+ad_hist  11/09/15 MDK Resistive diffusion time
+    !+ad_hist  10/11/16 HL  Added peakradwallload calculation
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  T. Hartmann and H. Zohm: Towards a 'Physics Design Guidelines for a
@@ -413,6 +414,8 @@ contains
     else
        photon_wall = (1.0D0-fhcd-fdiv)*pradmw / fwarea
     end if
+
+    peakradwallload = photon_wall * peakfactrad
 
 
     !  Calculate ohmic power
@@ -5716,6 +5719,12 @@ contains
         '(rad_fraction)', rad_fraction, 'OP ')
     call ovarre(outfile,'Nominal mean radiation load on inside surface of reactor (MW/m2)', &
         '(photon_wall)', photon_wall, 'OP ')
+    call ovarre(outfile,'Peaking factor for radiation wall load', &
+        '(peakfactrad)', peakfactrad, 'IP ')
+    call ovarre(outfile,'Maximum permitted radiation wall load (MW/m^2)', &
+        '(maxradwallload)', maxradwallload, 'IP ')
+    call ovarre(outfile,'Peak radiation wall load (MW/m^2)', &
+        '(peakradwallload)', peakradwallload, 'OP ')
     call ovarre(outfile,'Nominal mean neutron load on inside surface of reactor (MW/m2)', &
         '(wallmw)', wallmw, 'OP ')
 

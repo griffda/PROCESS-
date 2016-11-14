@@ -27,7 +27,7 @@ rc('figure.subplot', right=0.81)
 
 import argparse
 import matplotlib.mlab as mlab
-from numpy import linspace, argwhere, logical_or, zeros
+from numpy import linspace, argwhere, logical_or, zeros, mean
 from matplotlib.ticker import NullFormatter
 from pylab import figure, hist, show, savefig, gca, plot, xlabel
 from sys import stderr
@@ -50,10 +50,10 @@ def plot_distribution(xarr, labelx, unc_dict):
 
 
     if unc_dict['errortype'].lower() == 'gaussian':
-        mean = unc_dict['mean']
-        std = unc_dict['std']
+        u_mean = unc_dict['mean']
+        u_std = unc_dict['std']
         xvalues = linspace(min(xarr), max(xarr), 500)
-        yvalues = mlab.normpdf(xvalues, mean, std)
+        yvalues = mlab.normpdf(xvalues, u_mean, u_std)
         # assures values are inside input bounds!
         if varname in DICT_INPUT_BOUNDS:
             args = argwhere(logical_or(
@@ -80,37 +80,37 @@ def plot_distribution(xarr, labelx, unc_dict):
         yvalues = [mean(n_arr)]*10
 
     elif unc_dict['errortype'].lower() == 'lowerhalfgaussian':
-        mean = unc_dict['mean']
-        std = unc_dict['std']
+        u_mean = unc_dict['mean']
+        u_std = unc_dict['std']
         xvalues = linspace(min(xarr), max(xarr), 500)
-        yvalues = mlab.normpdf(xvalues, mean, std)
+        yvalues = mlab.normpdf(xvalues, u_mean, u_std)
         #to correct normalisation for half Gaussian
         yvalues = yvalues * 2.
         if varname in DICT_INPUT_BOUNDS:
             args = argwhere(logical_or(
                     xvalues < DICT_INPUT_BOUNDS[varname]['lb'],
-                    xvalues > mean))
+                    xvalues > u_mean))
             yvalues[args] = zeros(len(args))
 
         else:
             args = argwhere(logical_or(xvalues < 0.,
-                                       xvalues > mean))
+                                       xvalues > u_mean))
             yvalues[args] = zeros(len(args))
 
     elif unc_dict['errortype'].lower() == 'upperhalfgaussian':
-        mean = unc_dict['mean']
-        std = unc_dict['std']
+        u_mean = unc_dict['mean']
+        u_std = unc_dict['std']
         xvalues = linspace(min(xarr), max(xarr), 500)
-        yvalues = mlab.normpdf(xvalues, mean, std)
+        yvalues = mlab.normpdf(xvalues, u_mean, u_std)
         #to correct normalisation for half Gaussian
         yvalues = yvalues * 2.
         if varname in DICT_INPUT_BOUNDS:
             args = argwhere(logical_or(
-                    xvalues < mean,
+                    xvalues < u_mean,
                     xvalues > DICT_INPUT_BOUNDS[varname]['ub']))
             yvalues[args] = zeros(len(args))
         else:
-            args = argwhere(xvalues < mean)
+            args = argwhere(xvalues < u_mean)
             yvalues[args] = zeros(len(args))
 
     plot(xvalues, yvalues, 'k-')
@@ -172,7 +172,7 @@ uncertainties.nc")
                                       'Check separately! \n',
                                       list(datadict.keys()), file=stderr)
                                 break
-                        else :
+                        else:
                             print('Error: Variable', varname,
                                   'can currently not be treated!\n',
                                   'Check separately! \n',
