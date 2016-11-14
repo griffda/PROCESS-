@@ -6,13 +6,13 @@
  
    Program : ./process.exe
    Version : 413    Release Date :: 2016-06-23
- Date/time : Fri  4 Nov 15:49:35 GMT 2016
+ Date/time : Mon 14 Nov 15:12:00 GMT 2016
       User : morrisj
  Directory : /home/morrisj/Work/fortran/process/test_suite
  
  **************************************************************************************************************
  
- PROCESS 413 : Run on Fri  4 Nov 15:49:35 GMT 2016 by localhost.localdoma
+ PROCESS 413 : Run on Mon 14 Nov 15:12:00 GMT 2016 by localhost.localdoma
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
