@@ -45,6 +45,7 @@ module scan_module
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  22/07/14 PJK Raised ipnscns from 50 to 200
   !+ad_hist  06/08/15 MDK Added taulimit (31)
+  !+ad_hist  14/11/16 JM  Added epsvmc (32)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -73,7 +74,7 @@ module scan_module
   !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 200
   !+ad_vars  ipnscnv /30/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 31
+  integer, parameter :: ipnscnv = 32
 
   !+ad_vars  isweep /0/ : number of scan points to calculate
   integer :: isweep = 0
@@ -108,7 +109,9 @@ module scan_module
   !+ad_varc          <LI> 28 bt
   !+ad_varc          <LI> 29 coreradius
   !+ad_varc          <LI> 30 fimpvar
-  !+ad_varc          <LI> 31 taulimit</UL>
+  !+ad_varc          <LI> 31 taulimit
+  !+ad_varc          <LI> 32 epsvmc</UL>
+
   integer :: nsweep = 1
 
   !+ad_vars  sweep(ipnscns) : actual values to use in scan
@@ -382,7 +385,10 @@ contains
        case (31)
           taulimit = sweep(iscan)
           vlabel = 'taulimit' ; xlabel = 'Taup/taueff_lower_limit'
-       
+       case (32)
+          epsvmc = sweep(iscan)
+          vlabel = 'epsvmc' ; xlabel = 'VMCON error tolerance'
+
        case default
           idiags(1) = nsweep ; call report_error(96)
 
