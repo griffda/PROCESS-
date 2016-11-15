@@ -375,7 +375,7 @@ def close_print(ver):
     Prints closing summary to the terminal and the summary.log file.
     """
 
-    msg = "\nPROCESS version r{0} test run complete".format(ver)
+    msg = "\nPROCESS version {0} test run complete".format(ver)
 
     # To terminal
     print(BColours.BOLD + msg + BColours.ENDC)
@@ -465,7 +465,7 @@ def get_version(tests_dict):
 
     for item in version_numbers:
         if item != "":
-            return int(item)
+            return item
 
 
 def overwrite_references(ars, dr, vr):

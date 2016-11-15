@@ -1,4 +1,4 @@
-# PROCESS Release Notes v1.0.0
+# PROCESS Release Notes v1.0
 
 ## Version numbering
 
@@ -28,6 +28,7 @@ This will be similar to the .NET convention of version numbering
 | README | Update to README.md file in PROCESS and contains information about the code, how to build, run and other things. | |
 | User guide | Fix for solver diagram | `#359` |
 |  | Update to bashrc instructions | `#417` |
+|  | Update to tagging information |  |
 | Radiation model | Bremstrahlung power density now depends on `Te`  |  |
 |  | Changed Z in plasma_composition to be dependent on `Te` |  |
 |  | Changed log-log interpolation in `Zav_of_Te` to log-lin |  |
@@ -37,4 +38,8 @@ This will be similar to the .NET convention of version numbering
 | Uncertainties | Fixed incorrect normalisation of half Gaussian distributions |  |
 | PF Coils | Switch `iprecomp` added to allow user to switch off CS coil pre-compression structure calculation | `#434` |
 | Confinement | Added Petty 2008 and Lang 2012 confinement scaling | `#43` |
+| Code cleanup | Dummy variable defined as intent(INOUT) | `#432` |
+|  | Check content of device.dat  | `#438` |
+|  | Change `make clean` to remove html | `#445` |
+| Scanning | Make `epsvmc` a scanning variable | `#425` | 
 |  |  |  |

@@ -28,14 +28,14 @@
  **************************************************************************************************************
  
    Program : ./process.exe
-   Version : 413    Release Date :: 2016-06-23
- Date/time : Mon 14 Nov 15:11:46 GMT 2016
+   Version : 1.0      Release Date :: 2016-11-15
+ Date/time : 15 Nov 2016 13:26:55 +00:00(hh:mm) UTC
       User : morrisj
  Directory : /home/morrisj/Work/fortran/process/test_suite
  
  **************************************************************************************************************
  
- PROCESS 413 : Run on Mon 14 Nov 15:11:46 GMT 2016 by localhost.localdoma
+ PROCESS 1.0 : Run on 15 Nov 2016 13:26:55 +00:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)
@@ -407,6 +407,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Total radiation power (MW)                                               (pradmw)                  2.145E+02  OP 
  Radiation fraction = total radiation / total power deposited in plasma   (rad_fraction)            5.839E-01  OP 
  Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             1.406E-01  OP 
+ Peaking factor for radiation wall load                                   (peakfactrad)             3.330E+00  IP 
+ Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          1.000E+00  IP 
+ Peak radiation wall load (MW/m^2)                                        (peakradwallload)         4.684E-01  OP 
  Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  8.710E-01  OP 
  
  Ohmic heating power (MW)                                                 (pohmmw)                  8.087E-01  OP 
@@ -525,6 +528,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ISS04            (stell)          3.823                   1.065
  DS03                 (H)          5.355                   0.761
  Murari et al NPL     (H)          2.663                   1.528
+ Petty 2008           (H)          6.293                   0.647
+ Lang et al. 2012     (H)          0.000                 100.000
  
  ******************************************** Current Drive System ********************************************
  
@@ -1839,6 +1844,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Total radiation power (MW)                                               (pradmw)                  2.145E+02  OP 
  Radiation fraction = total radiation / total power deposited in plasma   (rad_fraction)            5.839E-01  OP 
  Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             1.406E-01  OP 
+ Peaking factor for radiation wall load                                   (peakfactrad)             3.330E+00  IP 
+ Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          1.000E+00  IP 
+ Peak radiation wall load (MW/m^2)                                        (peakradwallload)         4.684E-01  OP 
  Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  8.710E-01  OP 
  
  Ohmic heating power (MW)                                                 (pohmmw)                  8.087E-01  OP 
@@ -1957,6 +1965,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ISS04            (stell)          3.823                   1.065
  DS03                 (H)          5.355                   0.761
  Murari et al NPL     (H)          2.663                   1.528
+ Petty 2008           (H)          6.293                   0.647
+ Lang et al. 2012     (H)          0.000                 100.000
  
  ******************************************** Current Drive System ********************************************
  
@@ -3271,6 +3281,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Total radiation power (MW)                                               (pradmw)                  2.145E+02  OP 
  Radiation fraction = total radiation / total power deposited in plasma   (rad_fraction)            5.839E-01  OP 
  Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             1.406E-01  OP 
+ Peaking factor for radiation wall load                                   (peakfactrad)             3.330E+00  IP 
+ Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          1.000E+00  IP 
+ Peak radiation wall load (MW/m^2)                                        (peakradwallload)         4.684E-01  OP 
  Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  8.710E-01  OP 
  
  Ohmic heating power (MW)                                                 (pohmmw)                  8.087E-01  OP 
@@ -3389,6 +3402,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ISS04            (stell)          3.823                   1.065
  DS03                 (H)          5.355                   0.761
  Murari et al NPL     (H)          2.663                   1.528
+ Petty 2008           (H)          6.293                   0.647
+ Lang et al. 2012     (H)          0.000                 100.000
  
  ******************************************** Current Drive System ********************************************
  
@@ -4389,7 +4404,7 @@ $INPT1
 NEQNS = 19,
 NVAR = 34,
 ICC = 1,  2,  5,  8, 10, 11, 13, 16, 24, 26, 27, 30, 31, 32, 33, 34, 35, 15, 56
-IXC = 2,  3,  4,  5,  6,  9, 10, 12, 14, 16, 18, 29, 36, 37, 38, 39, 41, 42, 44, 48, 49, 50, 51, 52, 53, 56, 57, 58, 61, 13, 103, 102, 60, 59
+IXC = 2,  3,  4,  5,  6,  9, 10, 12, 14, 16, 18, 29, 36, 37, 38, 39, 41, 42, 44, 48, 49, 50, 51, 52, 53, 56, 57, 58, 61, 13, 103,
 BOUNDU(3) = 13,
 BOUNDU(9)  = 1.2,
 *boundu(9) = 1.2,
@@ -4723,4 +4738,5 @@ $OSECTS
      tfcth       = 1.0500E+00
      flhthresh   = 1.2725E+00
      fimpvar     = 4.1100E-04
+$END
 $END

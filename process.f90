@@ -306,7 +306,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=120) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '413    Release Date :: 2016-06-23'
+       '1.0      Release Date :: 2016-11-15'
   character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
   integer :: unit
@@ -381,6 +381,7 @@ subroutine run_summary
   !+ad_hisc               incorporating old routine codever
   !+ad_hisc  02/03/15 JM  Added runtitle to MFILE
   !+ad_hist  05/08/15 MDK Header describes output flag
+  !+ad_hist  15/11/16 JM  Changed the version numbering to new format (1.0.0)
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -462,11 +463,9 @@ subroutine run_summary
 
   !  Beware of possible future changes to the progid(...) layouts
 
-  !  The following should work up to version 99999
   !  Relies on an internal read statement
-  vstring = progid(2)(13:17)
-  read(vstring,'(i5)') version
-  call ovarin(mfile,'PROCESS version number','(procver)',version)
+  vstring = progid(2)(13:21)
+  call ovarst(mfile,'PROCESS version number','(procver)','"'//vstring//'"')
 
   call date_and_time(date=date, time=time)
 
@@ -2164,3 +2163,4 @@ subroutine get_DDMonYYTimeZone(dt_time)
 ! 412      Master release: Checked recent changes using the test suite. Made a
 !          few minor changes. Updated test function in plot_proc.
 ! 413      HCLL model now implemented. See milestone march 2016 for details.
+! 1.0.0    Master release and update of versioning format. See release_notes_1_0_0.md

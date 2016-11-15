@@ -5,14 +5,14 @@
  **************************************************************************************************************
  
    Program : ./process.exe
-   Version : 413    Release Date :: 2016-06-23
- Date/time : Mon 14 Nov 15:11:57 GMT 2016
+   Version : 1.0      Release Date :: 2016-11-15
+ Date/time : 15 Nov 2016 13:27:04 +00:00(hh:mm) UTC
       User : morrisj
  Directory : /home/morrisj/Work/fortran/process/test_suite
  
  **************************************************************************************************************
  
- PROCESS 413 : Run on Mon 14 Nov 15:11:57 GMT 2016 by localhost.localdoma
+ PROCESS 1.0 : Run on 15 Nov 2016 13:27:04 +00:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  demo 1 vacuum model test  * Short descriptive title for the run
  (Please include this header in any models, presentations and papers based on these results)
@@ -396,6 +396,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Total radiation power (MW)                                               (pradmw)                  2.453E+02  OP 
  Radiation fraction = total radiation / total power deposited in plasma   (rad_fraction)            6.208E-01  OP 
  Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             1.675E-01  OP 
+ Peaking factor for radiation wall load                                   (peakfactrad)             3.330E+00  IP 
+ Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          1.000E+00  IP 
+ Peak radiation wall load (MW/m^2)                                        (peakradwallload)         5.576E-01  OP 
  Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  9.861E-01  OP 
  
  Ohmic heating power (MW)                                                 (pohmmw)                  8.796E-01  OP 
@@ -514,6 +517,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ISS04            (stell)          3.819                   1.066
  DS03                 (H)          5.343                   0.762
  Murari et al NPL     (H)          2.668                   1.526
+ Petty 2008           (H)          6.266                   0.650
+ Lang et al. 2012     (H)          0.000                 100.000
  
  ******************************************** Current Drive System ********************************************
  
@@ -1754,7 +1759,7 @@ ipowerflow = 0   * Switch for power flow model * pre-2014 version;
 
 *------------Impurity Radiation Module-------------*
 coreradius = 0.6  * Normalised radius defining the 'core' region
-fimp = 1.0, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.00044, 5e-05  * Impurity number density fractions relative to electron density
+fimp = 1.0, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.00044, 5e-05  * Impurity number density fractions relative to
 fimpvar = 0.00023564  * Impurity fraction to be used as fimp(impvar)
 impvar = 13      * Fimp element value to be varied if iteration
 
@@ -1777,7 +1782,7 @@ isumatpf = 3     * Switch for superconductor material in pf coils * nbti;
 ncls = 1, 1, 2, 2  * Number of pf coils in group j
 ngrp = 4         * Number of groups of pf coils;
 ohhghf = 0.9     * Central solenoid height / tf coil internal height
-rjconpf = 11000000.0, 11000000.0, 6000000.0, 6000000.0, 8000000.0, 8000000.0, 8000000.0, 8000000.0  * Average winding pack current density of pf coil i (a/m2)
+rjconpf = 11000000.0, 11000000.0, 6000000.0, 6000000.0, 8000000.0, 8000000.0, 8000000.0, 8000000.0  * Average winding pack current
 rpf2 = -1.825    * Offset (m) of radial position of ipfloc=2 pf coils
 sigpfalw = 300.0  * Allowable stress in pf coils/central solenoid (mpa)
 zref = 3.6, 1.2, 1.0, 2.8, 1.0, 1.0, 1.0, 1.0  * Pf coil vertical positioning adjuster
@@ -1806,7 +1811,7 @@ rhopedn = 0.94   * R/a of density pedestal (ipedestal=1)
 rhopedt = 0.94   * R/a of temperature pedestal (ipedestal=1)
 teped = 5.5      * Electron temperature of pedestal (kev) (ipedestal=1)
 tesep = 0.1      * Electron temperature at separatrix (kev) (ipedestal=1)
-ishape = 2       * Switch for plasma cross-sectional shape calculation * set kappa to the natural elongation value (zohm iter scaling);
+ishape = 2       * Switch for plasma cross-sectional shape calculation * set kappa to the natural elongation value (zohm iter scal
 kappa = 1.7      * Plasma separatrix elongation (calculated if ishape > 0)
 q = 3.2267       * Safety factor 'near' plasma edge (iteration variable 18)
 tauratio = 10.0   * Ratio of he and pellet particle confinement times
@@ -1859,4 +1864,5 @@ tdwell = 500.0   * Time between pulses in a pulsed reactor (s)
 
 *-----------------Vacuum Variables-----------------*
 vacuum_model = simple
+pumpspeedfactor = 0.4
 pumpspeedfactor = 0.4

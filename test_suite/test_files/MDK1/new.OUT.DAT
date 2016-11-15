@@ -5,14 +5,14 @@
  **************************************************************************************************************
  
    Program : ./process.exe
-   Version : 413    Release Date :: 2016-06-23
- Date/time : Mon 14 Nov 15:11:34 GMT 2016
+   Version : 1.0      Release Date :: 2016-11-15
+ Date/time : 15 Nov 2016 13:27:14 +00:00(hh:mm) UTC
       User : morrisj
  Directory : /home/morrisj/Work/fortran/process/test_suite
  
  **************************************************************************************************************
  
- PROCESS 413 : Run on Mon 14 Nov 15:11:34 GMT 2016 by localhost.localdoma
+ PROCESS 1.0 : Run on 15 Nov 2016 13:27:14 +00:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -347,6 +347,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Total radiation power (MW)                                               (pradmw)                  2.674E+02  OP 
  Radiation fraction = total radiation / total power deposited in plasma   (rad_fraction)            6.352E-01  OP 
  Nominal mean radiation load on inside surface of reactor (MW/m2)         (photon_wall)             1.738E-01  OP 
+ Peaking factor for radiation wall load                                   (peakfactrad)             3.330E+00  IP 
+ Maximum permitted radiation wall load (MW/m^2)                           (maxradwallload)          1.000E+00  IP 
+ Peak radiation wall load (MW/m^2)                                        (peakradwallload)         5.788E-01  OP 
  Nominal mean neutron load on inside surface of reactor (MW/m2)           (wallmw)                  1.009E+00  OP 
  
  Ohmic heating power (MW)                                                 (pohmmw)                  8.837E-01  OP 
@@ -465,6 +468,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ISS04            (stell)          3.531                   1.053
  DS03                 (H)          4.984                   0.746
  Murari et al NPL     (H)          2.419                   1.538
+ Petty 2008           (H)          5.918                   0.629
+ Lang et al. 2012     (H)          0.000                 100.000
  
  ******************************************** Current Drive System ********************************************
  
@@ -1516,7 +1521,7 @@ icc(17) = 35
 icc(18) = 39
 icc(19) = 15
 icc(20) = 56
-icc(21) = 62 
+icc(21) = 62
 
 *---------------Iteration Variables----------------*
 nvar = 38 * Number of iteration variables to use
@@ -1576,12 +1581,12 @@ ixc(34) = 59 * fcutfsu
 *boundl(59) = 0.66667
 boundl(59) = 0.4
 
-ixc(35) = 63  * ftpeak (f-value for equation 39) 
+ixc(35) = 63  * ftpeak (f-value for equation 39)
 
 ixc(36) = 109 * ralpne
 ixc(37) = 110 * ftaulimit
 
-ixc(38) = 114 * fw_channel_length 
+ixc(38) = 114 * fw_channel_length
 *-----------------Build Variables------------------*
 blnkith  = 0.755 * Inboard blanket thickness (m);
 blnkoth  = 1.275 * Outboard blanket thickness (m);
@@ -1785,4 +1790,5 @@ vftf     = 0.33 * Coolant fraction of tfc 'cable' (itfsup=1); or of tfc leg (itf
 *-----------------Times Variables------------------*
 tburn    = 1000.0 * Burn time (s) (calculated if lpulse=1)
 *-----------------Vacuum Variables-----------------*
+output_costs = 0
 output_costs = 0

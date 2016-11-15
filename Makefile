@@ -294,6 +294,8 @@ clean:
 	rm -f *~
 	rm -f utilities/process_io_lib/process_dicts.py
 	rm -f utilities/processgui/dicts/gui_dicts.py
+	rm -f *.html
+	rm -f *.aux
 
 cleandoc:
 	rm -f autodoc
