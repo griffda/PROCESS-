@@ -147,29 +147,51 @@ sure the two branches don't diverge you will need to merge your branch with deve
 
 ### Tagging
 
+Version takes the form `x.y.z` for internal development versions and takes the form `x.y` 
+for external master releases. 
+
+This will be similar to the .NET convention of version numbering
+
+
+`[major version]`.`[minor version]`.`[revision number]`
+
+`[major version]` - release containing numerous major changes
+
+`[minor version]` - medium change, i.e. new model, major bug fix
+
+`[revision number]` - weekly or on demand build/change
+
+
 To add a tag to a commit do the following:
 
 - In routine inform of file `process.f90`, change the definition of `progver` by
-incrementing the revision number by one to `XYZ` (for instance) and the Release Date. It
-is important to keep exactly the same format
+incrementing the revision appropriately (given guidance above) to `x.y.z` and the release date. It
+is important to keep exactly the same format.
 - Add a brief comment to the bottom of source file `process.f90` describing the changes made
-since the last commit in the same branch.  Start the line with `!  GIT XYZ:`, following the
+since the last commit in the same branch.  Start the line with `! x.y.z:`, following the
 existing examples
 - If any of the User Guide `.tex` files have been modified, edit the definition of `\version`
-in `process.tex` by changing the Revision (to XYZ) and the date
+in `process.tex` by changing the Revision (to `x.y.z`) and the date
 - If you have changed any ”use” statements in the code, or any compilation dependencies in the Makefile, run
 `make clean`
 - To ensure that all the code and documentation compiles successfully run `make all`
 - Run `test_suite.py` in the `test_suite` folder to ensure PROCESS runs correctly
 - Add files changed `git add file_1 file_2 ...`
 - Commit changes `git commit -m "COMMIT MESSAGE"`
-- Add a tag number `git tag -a rXYZ -m "revision XYZ"`
+- Add a tag number `git tag -a x.y.z -m "Version x.y.z"`
 - `git push`
-- `git push origin rXYZ`
+- `git push origin x.y.z`
 
 When releasing a ***tagged version of the code the user should compile a release note for the repo***.
 This note should outline the major changes for the release, including issues from GitLab that
 were resolved, bugs fixed, etc.
+
+**Tagging Commands**
+
+| Command | Description |
+| -------- | -------- | 
+| `git describe --tags`   | show the current tag  | 
+| `git tag -l "1.0.*"` | list tags contained in `1.0.z` |
 
 ## Contacts
 

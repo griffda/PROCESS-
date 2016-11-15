@@ -15,6 +15,19 @@ import argparse
 import process_io_lib.mfile as mf
 from process_io_lib.process_dicts import DICT_VAR_TYPE, DICT_DESCRIPTIONS
 
+DEFAULT_COMPARE_PARAMS = [
+    "rmajor", "rminor", "aspect", "kappa", "kappa95", "triang", "triang95",
+    "fimp(01", "fimp(02", "fimp(03", "fimp(04", "fimp(05",
+    "fimp(06", "fimp(07", "fimp(08", "fimp(09", "fimp(10",
+    "fimp(11", "fimp(12", "fimp(13", "fimp(14",
+    "sarea", "vol", "tfno", "shldith", "shldoth", "blnkith", "blnkoth",
+    "powfmw", "plascur/1d6", "bt", "q95", "betap", "te", "dene",
+    "hfact", "vstot", "bt", "bmaxtfrp", "tmarg", "iooic",
+    "strtf1", "strtf2", "alstrtf", "pgrossmw", "htpmw",
+    "pnetelmw", "wallmw", "ralpne", "pcoreradmw", "pradmw",
+    "pnucblkt", "pnucshld", "pdivt", "pheat", "bootipf",
+    "faccd", "facoh", "gamnb", "enbeam", "powerht"]
+
 
 class BColors(object):
     HEADER = '\033[95m'
@@ -55,6 +68,9 @@ def main(arg):
 
     if arg.save:
         ofile = open("comp.txt", "w")
+
+    if arg.defaults:
+        var_list = DEFAULT_COMPARE_PARAMS
 
     for v in var_list:
         if "normres" in v:
@@ -122,8 +138,6 @@ def main(arg):
 
     if arg.save:
         ofile.close()
-    # elif DICT_VAR_TYPE[v] == "real_array":
-    # if DICT_VAR_TYPE[v] == "int_array"
 
 
 if __name__ == "__main__":
@@ -144,6 +158,8 @@ if __name__ == "__main__":
     parser.add_argument('--acc', type=float, default=5.0)
 
     parser.add_argument('--verbose', type=float, default=0.0)
+
+    parser.add_argument('--defaults', action="store_true")
 
     args = parser.parse_args()
 
