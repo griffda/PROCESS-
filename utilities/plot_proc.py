@@ -671,6 +671,28 @@ def plot_tprofile(prof):
         te = te0 * (1-rho**2)**alphat
     prof.plot(rho,te)
 
+def plot_qprofile(prof):
+    """ Function to plot q profile, formula taken from Nevins bootstrap model.
+
+    Arguments:
+      prof --> axis object to add plot to
+    """
+    XMIN = 0
+    XMAX = 1
+    YMIN = 0
+    YMAX = 10
+    prof.set_ylim([YMIN, YMAX])
+    prof.set_xlim([XMIN, XMAX])
+    prof.set_autoscaley_on(False)
+    prof.set_xlabel('r/a')
+    prof.set_ylabel('q(r)')
+    prof.set_title("q profile (Nevin's formula)")
+
+    rho = np.linspace(0,1)
+    q_r = q0 + (q95-q0)*(rho + rho*rho + rho**3)/(3.0)
+
+    prof.plot(rho,q_r)
+
 
 def plot_vacuum_vessel_snull(axis, mfile_data, scan):
     """Function to plot vacuum vessel
@@ -1498,12 +1520,14 @@ def main(fig1, fig2, m_file_data, scan=-1):
     color_key(plot_3)
 
     # Plot profiles
-    plot_4 = fig2.add_subplot(223, aspect= 0.05)
+    plot_4 = fig2.add_subplot(234, aspect= 0.05)
     plot_nprofile(plot_4)
 
-    plot_5 = fig2.add_subplot(224, aspect= 1/35)
+    plot_5 = fig2.add_subplot(235, aspect= 1/35)
     plot_tprofile(plot_5)
 
+    plot_6 = fig2.add_subplot(236, aspect=1/10)
+    plot_qprofile(plot_6)
 
 
     # Setup params for text plots
@@ -1831,6 +1855,9 @@ if __name__ == '__main__':
     te0 = m_file.data["te0"].get_scan(scan)
     # Plasma
     triang = m_file.data["triang95"].get_scan(scan)
+    alphaj = m_file.data["alphaj"].get_scan(scan)
+    q0 = m_file.data["q0"].get_scan(scan)
+    q95 = m_file.data["q95"].get_scan(scan)
 
     # Build the dictionaries of radial and vertical build values and cumulative values
     radial = {} ; cumulative_radial = {}; subtotal = 0
