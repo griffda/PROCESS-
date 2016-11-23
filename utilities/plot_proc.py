@@ -686,12 +686,15 @@ def plot_qprofile(prof):
     prof.set_autoscaley_on(False)
     prof.set_xlabel('r/a')
     prof.set_ylabel('q(r)')
-    prof.set_title("q profile (Nevin's formula)")
+    prof.set_title("q profile")
 
     rho = np.linspace(0,1)
-    q_r = q0 + (q95-q0)*(rho + rho*rho + rho**3)/(3.0)
+    q_r_nevin = q0 + (q95-q0)*(rho + rho*rho + rho**3)/(3.0)
+    q_r_sauter = q0 + (q95-q0)*(rho*rho)
 
-    prof.plot(rho,q_r)
+    prof.plot(rho,q_r_nevin, label="Nevin")
+    prof.plot(rho,q_r_sauter, label="Sauter")
+    prof.legend()
 
 
 def plot_vacuum_vessel_snull(axis, mfile_data, scan):
