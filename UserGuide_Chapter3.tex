@@ -1476,6 +1476,39 @@ Figure~\ref{fig:powerflow3}).
 
 The remaining photon power (i.e.\ the fraction not incident upon the divertor or lost through holes or the heating / current drive apparatus) is assumed to be absorbed by the first wall. Power due to ions derived from the neutral beams but lost before being thermalised (known as "first orbit loss"), and from the fast alpha particles lost before being thermalised, also contribute to the total thermal power absorbed by the first wall.
 
+\subsubsection{Thermal cycling package}
+This performs calculations on the first wall of the machine. Evaluation of the
+mechanical and thermal stresses on this component lead to a measure of the
+maximum number of cycles to which the first wall can be subjected, and hence
+to the minimum allowable length of each reactor cycle for a specified first
+wall lifetime. The cycle time can be constrained to be at least the minimum
+value by turning on constraint equation no.\ 42 with iteration variable no.\
+67 (\texttt{ftcycl}).
+
+The thickness of the first wall is constrained to lie within lower and upper
+bounds, which ensures that it can withstand the internal coolant pressure and
+the peak temperature and neutron fluence.
+
+Switch \texttt{itcycl} activates the desired model for the first wall axial
+stress calculations. If \texttt{itcycl = 1} (the default), the wall is fully
+constrained axially, and no bending can occur. If \texttt{itcycl = 2}, there
+is no constraint on the axial motion, but no bending can occur. Finally, if
+\texttt{itcycl = 3}, again there is no axial constraint, and bending is
+allowed to occur.
+
+\subsubsection{First wall coolant temperature rise limit}
+
+The rise in temperature of the first wall coolant can be limited to be no more
+than the value of \texttt{dtmpmx} by turning on constraint equation no.\ 38 with
+iteration variable no.\ 62 (\texttt{fdtmp}).
+
+\subsubsection{First wall peak temperature limit}
+
+The maximum first wall temperature can be limited to be no more than the value
+of variable \texttt{tpkmax} by turning on constraint equation no.\ 39 with
+iteration variable no.\ 63 (\texttt{ftpeak}).
+
+
 \subsubsection{Power conversion cycle}
 \label{sec:etath}
 
@@ -1690,39 +1723,6 @@ calculations relevant to a pulsed power plant, as detailed below.
 Switch \texttt{lpulse} determines whether the power plant is assumed to be
 based on steady-state (\texttt{lpulse = 0}) or pulsed (\texttt{lpulse = 1})
 operation.
-
-\subsection{Thermal cycling package}
-\Red{Update...}
-This performs calculations on the first wall of the machine. Evaluation of the
-mechanical and thermal stresses on this component lead to a measure of the
-maximum number of cycles to which the first wall can be subjected, and hence
-to the minimum allowable length of each reactor cycle for a specified first
-wall lifetime. The cycle time can be constrained to be at least the minimum
-value by turning on constraint equation no.\ 42 with iteration variable no.\
-67 (\texttt{ftcycl}).
-
-The thickness of the first wall is constrained to lie within lower and upper
-bounds, which ensures that it can withstand the internal coolant pressure and
-the peak temperature and neutron fluence.
-
-Switch \texttt{itcycl} activates the desired model for the first wall axial
-stress calculations. If \texttt{itcycl = 1} (the default), the wall is fully
-constrained axially, and no bending can occur. If \texttt{itcycl = 2}, there
-is no constraint on the axial motion, but no bending can occur. Finally, if
-\texttt{itcycl = 3}, again there is no axial constraint, and bending is
-allowed to occur.
-
-\subsection{First wall coolant temperature rise limit}
-
-The rise in temperature of the first wall coolant can be limited to be no more
-than the value of \texttt{dtmpmx} by turning on constraint equation no.\ 38 with
-iteration variable no.\ 62 (\texttt{fdtmp}).
-
-\subsection{First wall peak temperature limit}
-
-The maximum first wall temperature can be limited to be no more than the value
-of variable \texttt{tpkmax} by turning on constraint equation no.\ 39 with
-iteration variable no.\ 63 (\texttt{ftpeak}).
 
 \subsection{Start-up power requirements}
 

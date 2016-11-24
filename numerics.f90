@@ -337,9 +337,9 @@ module numerics
        'TF coil temp. margin lower limit ', &
        !+ad_varc  <LI> (37) Current drive gamma upper limit
        'Current drive gamma limit        ', &
-       !+ad_varc  <LI> (38) First wall coolant temperature rise upper limit (PULSE)
+       !+ad_varc  <LI> (38) First wall coolant temperature rise upper limit
        '1st wall coolant temp rise limit ', &
-       !+ad_varc  <LI> (39) First wall peak temperature upper limit (PULSE)
+       !+ad_varc  <LI> (39) First wall peak temperature upper limit
        'First wall peak temperature limit', &
        !+ad_varc  <LI> (40) Start-up injection power lower limit (PULSE)
        'Start-up inj. power lower limit  ', &
