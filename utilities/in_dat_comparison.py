@@ -109,7 +109,7 @@ if __name__ == "__main__":
                                                  "between two PROCESS "
                                                  "input files."
                                                  "For info contact "
-                                                 "james.morris2@ukaea.ac.uk")
+                                                 "james.morris2@ukaea.uk")
 
     PARSER.add_argument('-f', metavar='f', type=str, nargs='+',
                         help='Files to compare')

@@ -13,12 +13,15 @@
 import sys
 import argparse
 import process_io_lib.mfile as mf
+import matplotlib
+matplotlib.rcParams["figure.max_open_warning"] = 40
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf as bpdf
 
 import math
 from matplotlib.path import Path
 import matplotlib.patches as patches
+
 import scipy as sp
 import numpy as np
 try:
@@ -1711,6 +1714,12 @@ def test(f):
         # # Plasma
         global triang
         triang = m_file.data["triang95"].get_scan(scan)
+        global alphaj
+        alphaj = m_file.data["alphaj"].get_scan(scan)
+        global q0
+        q0 = m_file.data["q0"].get_scan(scan)
+        global q95
+        q95 = m_file.data["q95"].get_scan(scan)
 
         # Build the dictionaries of radial and vertical build values and cumulative
         # values
@@ -1779,10 +1788,11 @@ def test(f):
         #    pdf.savefig(page2)
         # plt.show()
 
-        # tidy up to avoid memory issues
-        del page1
-        del page2
-        plt.close()
+        # # tidy up to avoid memory issues
+        # del page1
+        # del page2
+        plt.close(page1)
+        plt.close(page2)
 
         return True
     except:
@@ -1927,3 +1937,6 @@ if __name__ == '__main__':
     # This bit doesn't work - the argument is not recognised for some reason.:
     #if args.svg:
     #    save_plots(m_file)
+    plt.close(page1)
+    plt.close(page2)
+

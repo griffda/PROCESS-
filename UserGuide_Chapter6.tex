@@ -870,8 +870,6 @@ optional arguments:
 
 \end{verbatim}
 
-
-
 \subsection{Batch Jobs}
 As \process\/ typically runs very fast and does not produce much data output, it is not typically necessary to submit \process\/ runs or any of the python executables as a batch job to the fusion linux machines. However, the \texttt{evaluate\_uncertainties.py} tool is one example of a python tool for \process\/ that does run for a long time and does create a lots of output. As the CPU time limit for any non-batch jobs on the fuslw machines is 30 Minutes, any decently sampled \texttt{evaluate\_uncertainties.py} run will need to be submitted as a batch job. (Please note, that if you have forgotten to submit your job as a batch job, your job will be terminated after 30 CPU minutes, but as the output is written to file continuously, you should not loose any of the output that has been produced until then.)
 
@@ -918,6 +916,68 @@ inputs in both with different values and inputs in both with the same value.
 Arguments\\
 \texttt{-f        }     Files to compare\\
 \texttt{-s        }     Save output to file called input\_comp.txt\\
+
+\subsection{ref\_check.py}
+Tool for comparing a PROCESS MFILE output file to a JSON reference file for a 
+certain type of machine.
+
+The JSON file format contains two dictionaries: 'PARAMS' and 'LISTS'.
+
+Arguments\\
+\texttt{-r        }     Reference JSON file\\
+\texttt{-f        }     MFILE file to compare to JSON reference\\
+\texttt{-s        }     Save output to file called input\_comp.txt\\
+
+Below is an example of the JSON reference file. The PARAMS dictionary takes 
+just a variable name and the value it has for the reference. The LIMITS 
+dictionary takes the limit value name as the key. The content of the limit is 
+then the limit value, whether it is a minimum or maximum and then lastly the 
+paramter it is limiting. For more examples look at the cfetr\_small\_ref.json in 
+the test suite CFETR\_small case folder.
+
+\begin{framed}
+\begin{verbatim}
+{
+	"PARAMS": 
+        {
+            "rmajor" : 5.7,
+            "rminor": 1.6,
+            "aspect": 3.563,
+            "bt": 5.0,
+            "kappa": 1.8,
+            "triang": 0.4,
+            "hfact": 1.3,
+            "powfmw": 250
+        },
+
+    "LIMITS": 
+        {
+            "alstrtf" : 
+                {
+                    "limit": 600.0e6,
+                    "type": "-",
+                    "parameter": "strtf2"
+                },      
+            "pseprmax" : 
+                {
+                    "limit": 25.0,
+                    "type": "-",
+                    "parameter": "pdivt/rmajor"
+                },
+            "ripmax" : 
+               {
+                   "limit": 0.5,
+                    "type": "-",
+                    "parameter": "ripple"
+                }
+        }  
+}
+\end{verbatim}
+\end{framed}
+
+The code outputs the parameters which don't match, the parameters that match, the 
+lower limits that aren't satisfied, the lower limits that are satisfied, the upper 
+limits that aren't satisfied and the upper limits that are satisfied. 
 
 
 \subsection{test\_suite.py}

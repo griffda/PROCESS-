@@ -6,14 +6,14 @@
  **************************************************************************************************************
  
    Program : ./process.exe
-   Version : 1.0      Release Date :: 2016-11-15
- Date/time : 15 Nov 2016 13:27:26 +00:00(hh:mm) UTC
+   Version : 1.0.2    Release Date :: 2016-11-17
+ Date/time : 29 Nov 2016 11:38:59 +00:00(hh:mm) UTC
       User : morrisj
  Directory : /home/morrisj/Work/fortran/process/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0 : Run on 15 Nov 2016 13:27:26 +00:00(hh:mm) UTC by localhost.localdomain
+ PROCESS 1.0.2 : Run on 29 Nov 2016 11:38:59 +00:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  demoa 1 ralpne  * Short descriptive title for the run
  (Please include this header in any models, presentations and papers based on these results)
