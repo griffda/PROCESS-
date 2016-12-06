@@ -147,7 +147,15 @@ def check_in_dat():
 
     for itervarno in ixc_list:
         itervarname = DICT_IXC_SIMPLE[str(itervarno)]
-        lowerinputbound = DICT_INPUT_BOUNDS[itervarname]['lb']
+        try: 
+            lowerinputbound = DICT_INPUT_BOUNDS[itervarname]['lb']
+        except KeyError as err:
+            print('Error:')
+            print('There seems to be some information missing from the dicts.')
+            print('Please flag this up for a developer to investigate!')
+            print(itervarname, err)
+            print(DICT_INPUT_BOUNDS[itervarname])
+            exit()
 
         if DICT_IXC_BOUNDS[itervarname]['lb'] < lowerinputbound:
             print("Warning: boundl for ", itervarname,

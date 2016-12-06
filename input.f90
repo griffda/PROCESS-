@@ -389,6 +389,7 @@ contains
     !+ad_hist  02/06/16 RK  Allowed negative triangularity
     !+ad_hist  23/06/16 JM  Removed dtmpmx and tmprse as not in rest of code (#377)
     !+ad_hist  10/11/16 HL  Added fradwall, maxradwallload, peakfactrad
+    !+ad_hist  06/12/16 HL  Added ftaulimit as input variable
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -610,6 +611,10 @@ contains
           write(outfile,*) '**********'
           write(outfile,*) ' '
           obsolete_var = .true.
+       case ('ftaulimit')
+          call parse_real_variable('ftaulimit', ftaulimit, 0.001D0, 1.0D0, &
+               'f-value for lower limit on taup/taueff the ratio of alpha particle to energy confinement times')
+
        case ('ftr')
           write(outfile,*) ' '
           write(outfile,*) '**********'
