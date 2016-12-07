@@ -44,8 +44,8 @@ boundl(4) = 3.00
 boundu(4) = 14.00
 
 ixc(2)    = 3        * rmajor * Plasma major radius (m)  
-boundl(3) = 5.68  
-boundu(3) = 5.72
+boundl(3) = 5.699  
+boundu(3) = 5.701
 
 ixc(3)    = 5        * beta * Total plasma beta  
 boundl(5) = 0.010  
@@ -76,8 +76,8 @@ boundl(26) = 0.99
 boundu(26) = 1.00
 
 ixc(10)   = 2        * bt * Toroidal field on axis (t) (iteration variable 2)
-boundl(2) = 4.95
-boundu(2) = 5.05
+boundl(2) = 4.475
+boundu(2) = 4.525
 
 ixc(11) = 46         * fpinj * f-value for max nbi power
 boundl(46) = 0.01
@@ -222,10 +222,10 @@ shldith  = 0.300    * Inboard shield thickness (m)
 blnkith  = 0.432    * Inboard blanket thickness (m)
 scrapli  = 0.150    * Gap between plasma and first wall; inboard side (m)
 scraplo  = 0.150    * Gap between plasma and first wall; outboard side (m)
-blnkoth  = 0.732    * Inboard blanket thickness (m)
+blnkoth  = 1.132    * Inboard blanket thickness (m)
 *- Included blanket/shield -> vacuum vessel gap in shield thickness (m)
-shldoth  = 1.120    * Inboard shield thickness (m)
-gapomin  = 0.500    * Minimum gap between outboard vacuum vessel and tf coil (m)
+shldoth  = 0.820    * Inboard shield thickness (m)
+gapomin  = 0.450    * Minimum gap between outboard vacuum vessel and tf coil (m)
 ddwex    = 0.150    * Cryostat thickness (m)
 
 *----- Build ----- Vertical build
@@ -237,7 +237,7 @@ vgap2   = 0.116    * Vertical gap between vacuum vessel and tf coil (m)
 
 cost_model   = 0   * 1990 costs model
 output_costs = 0   * Output costs switch
-iavail       = 0   * Switch for plant availabilit model
+iavail       = 1   * Switch for plant availabilit model
 
 *---------------Constraint Variables---------------*
 
@@ -259,14 +259,14 @@ tbrmin    = 1.0    * Minimum tritium breeding ratio
 
 aspect   = 3.563     * Aspect ratio
 rmajor   = 5.700     * Plasma major radius (m)
-bt       = 5.0       * Toroidal field on axis (T)
+bt       = 4.5       * Toroidal field on axis (T)
 ishape   = 0         * Switch for plasma cross-sectional shape calculation
 kappa    = 1.8       * Plasma elongation
 triang   = 0.4       * Plasma separatrix triangularity
 ripmax   = 0.5       * maximum allowable toroidal field ripple amplitude at plasma edge (%)
 bscfmax  = 0.64      * Maximum fraction of plasma current from bootstrap
 hfact    = 1.3       * H factor on energy confinement times
-pseprmax = 20.0      * Maximum ratio of power crossing the separatrix to
+pseprmax = 17.0      * Maximum ratio of power crossing the separatrix to
 powfmax  = 250.0     * Maximum fusion power (MW)
 ignite   = 0         * Plasma not ignited
 iradloss = 1         * Radiation loss power allocation
@@ -283,7 +283,7 @@ runtitle = "CFETR small (5.7m) reference file"
 
 bmxlim = 12.0       * Max TF field on coil (T)
 cpttf   = 67.4e3     * TF coil current per turn (A)
-alstrtf = 700.0e6    * Allowable von Mises stress in TF coil structural material (Pa)
+alstrtf = 592.0e6    * Allowable von Mises stress in TF coil structural material (Pa)
 tftmp   = 4.5        * Temperature for superconductor (K)
 tmargmin = 2.0       * Minimum temperature margin (K)
-tinstf = 0.005      * Ground wall insulation thickness (m)
+tinstf = 0.005   * Ground wall insulation thickness (m)
