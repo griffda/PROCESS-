@@ -297,6 +297,12 @@ clean:
 	rm -f *.html
 	rm -f *.aux
 
+win_clean:
+	del process.exe *.o *.mod
+	del utilities/process_io_lib/process_dicts.py
+	del *.html
+	del *.aux
+
 cleandoc:
 	rm -f autodoc
 	rm -f *.aux *.log process.dvi process.toc process.lof process.lot process.pdf
