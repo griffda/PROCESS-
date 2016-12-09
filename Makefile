@@ -27,6 +27,8 @@
 #
 #  Type 'make clean' to clean up the directory to allow a full Fortran recompilation
 #
+#  Type 'make win_clean' to clean up the directory to allow a full Fortran recompilation on Windows
+#
 #  Type 'make cleandoc' to remove all html files and the intermediate files used
 #    to build the PROCESS User Guide, so that they can be recreated using 'make doc'
 #
