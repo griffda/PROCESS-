@@ -28,6 +28,9 @@ DEFAULT_COMPARE_PARAMS = [
     "pnucblkt", "pnucshld", "pdivt", "pheat", "bootipf",
     "faccd", "facoh", "gamnb", "enbeam", "powerht"]
 
+BLANKET_COMPARE_PARAMS = [
+    "blnkith", "blnkoth", "powfmw", "pnucblkt", "pnucfw",
+    "ptfnuc", "pnucshld", "pnucdiv", "tbr", "li6enrich", "fwarea", "emult"]
 
 class BColors(object):
     HEADER = '\033[95m'
@@ -71,6 +74,9 @@ def main(arg):
 
     if arg.defaults:
         var_list = DEFAULT_COMPARE_PARAMS
+    
+    if arg.blanket:
+        var_list = BLANKET_COMPARE_PARAMS
 
     for v in var_list:
         if "normres" in v:
@@ -103,8 +109,8 @@ def main(arg):
                 des = DICT_DESCRIPTIONS[key]
             else:
                 des = "-"
-            a = norm_vals > 1.0 + arg.acc/100.0
-            b = norm_vals < 1.0 - arg.acc/100.0
+            a = norm_vals >= 1.0 + arg.acc/100.0
+            b = norm_vals <= 1.0 - arg.acc/100.0
             if a[1]:
                 diff_list.append(v)
                 line = BColors.ENDC + v + "\t" + des + "\t" + str(values[0]) + "\t" + \
@@ -160,6 +166,8 @@ if __name__ == "__main__":
     parser.add_argument('--verbose', type=float, default=0.0)
 
     parser.add_argument('--defaults', action="store_true")
+
+    parser.add_argument('--blanket', action="store_true")
 
     args = parser.parse_args()
 

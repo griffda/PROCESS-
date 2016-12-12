@@ -16,7 +16,6 @@ import argparse
 import collections
 
 # PROCESS libraries
-sys.path.append('/home/morrisj/Work/fortran/process/utilities/')
 from process_io_lib.mfile import MFile
 
 # Constants
