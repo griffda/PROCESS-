@@ -356,10 +356,14 @@ optional arguments:
 \end{verbatim}
 \end{quote}
 
+\subsection{Create csv file summarising data for database (create\_csv4database.py)}
+
+This is essentially the same tool as \texttt{output\_data.py}, but the format is frozen to assure consistency for the PROCESS Runs database excel spreadsheet.
+
 \subsection{Create archivable files for PROCESS Runs database (archive.sh)}
 \label{ssec:archive}
 
-This is a very simple shell script to create all the relevant files for the PROCESS Runs database on the EUROfusion IDM\footnote{https://idm.euro-fusion.org/?uid=2MUP64}. It uses the \verb|output\_data.py| and the \verb|plot\_proc.py| utilities.
+This is a very simple shell script to create all the relevant files for the PROCESS Runs database on the EUROfusion IDM\footnote{https://idm.euro-fusion.org/?uid=2MUP64}. It uses the \verb|create\_csv4database.py| and the \verb|plot\_proc.py| utilities.
 
 \begin{description}
 \item{\textbf{Input:}}
