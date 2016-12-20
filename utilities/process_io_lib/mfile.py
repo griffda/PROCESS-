@@ -25,14 +25,20 @@
 
 import operator
 import logging
+from sys import stderr
 LOG = logging.getLogger("mfile")
 
 try:
+    from fuzzywuzzy import process as fuzzysearch
+except ImportError:
+    LOG.info("Fuzzy variable name suggestions not available for MFile")
+
+try :
     import process_io_lib.process_dicts
     from process_io_lib.process_dicts import DICT_NSWEEP2VARNAME
 except ImportError:
-    print("The Python dictionaries have not yet been created. Please run \
-'make dicts'!")
+    print("Error: The Python dictionaries have not yet been created. Please"
+          "run 'make dicts'!", file=stderr)
     exit()
 
 
@@ -221,14 +227,29 @@ class MFile(object):
             self.data[var_key] = var
             self.data[var_key].set_scan(1, value)
 
+    def suggest_variable(self, search_string, limit=3):
+        """
+        Return a list of possible variable matches for the given search_string
+        in this MFile.
+        limit is the maximum number of suggestions returned.
+        """
+        return [x[0] for x in fuzzysearch.extract(search_string,
+                                                  self.data.keys(),
+                                                  limit=limit)]
+
 
 def sort_value(val):
     """Function to sort out value line in MFILE."""
     if '"' in val:
         return str(val.strip('"'))
     else:
-        return float(val)
-
+        try:
+            return float(val)
+        except ValueError as err:
+            print("Please fix this!", file=stderr)
+            print(err, file=stderr)
+            print(val)
+            exit()
 
 def sort_brackets(var):
     """Function to sort bracket madness on variable name."""
