@@ -94,7 +94,4 @@ if __name__ == '__main__':
 
             vary_iteration_variables(ITERVARS, LBS, UBS)
 
-
-
-
-    CONFIG.write_results()
+    # CONFIG.write_results()
