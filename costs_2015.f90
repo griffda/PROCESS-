@@ -584,7 +584,7 @@ contains
 
     s(23)%label = "Lithium orthosilicate pebble manufacturing"
     ! Reference cost of lithium pebble manufacture (2014 $)
-    s(23)%cref = 0.65D6
+    s(23)%cref = 6.5D4
     ! Scale with mass of pebbles (kg)
     s(23)%k = whtblli4sio4
     s(23)%kref = 10.0D0
