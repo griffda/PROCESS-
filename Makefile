@@ -155,6 +155,13 @@ object = \
 ARCH = GFORT
 DEBUG = YES
 
+ifeq ($(OS),Windows_NT)
+	MYROOT_1 = echo character(len=*), parameter :: ROOTDIR = "%cd%" > root.dir
+	MYROOT_2 = echo ROOTDIR = "%cd%" > utilities\rootdir.py
+else
+	MYROOT_1 = nope_1
+endif 
+
 ###### Fusion Unix Network - Intel Fortran
 
 FORTRAN_FUN = ifort
@@ -282,7 +289,8 @@ process.exe: $(object)
 	$(FORTRAN) $(LFLAGS) -o $@ $(object) $(LIBS)
 
 root.dir:
-	./setrootdir
+	${MYROOT_1}
+	${MYROOT_2}
 
 ### Utilities #################
 
@@ -301,9 +309,10 @@ clean:
 
 win_clean:
 	del process.exe *.o *.mod
-	del utilities/process_io_lib/process_dicts.py
+	del utilities\process_io_lib\process_dicts.py
+	del utilities\processgui\dicts\gui_dicts.py
 	del *.html
-	del *.aux
+	del root.dir
 
 cleandoc:
 	rm -f autodoc
@@ -373,6 +382,17 @@ dicts: root.dir
 	@ touch utilities/processgui/dicts/gui_dicts.py
 	@ mv utilities/processgui/dicts/gui_dicts.py utilities/processgui/dicts/gui_dicts.py_prev
 	utilities/processgui/dicts/make_gui_dicts.py > utilities/processgui/dicts/gui_dicts.py
+	@ echo ''
+	@ echo 'Dictionaries have been updated'
+	@ echo ''
+
+win_dicts: root.dir
+	@ echo ''
+	@ echo 'Creating Python dictionaries... warnings are usually ignorable!'
+	@ echo ''
+	python utilities\create_dicts.py > utilities\process_io_lib\process_dicts.py
+	@ rename utilities\processgui\dicts\gui_dicts.py utilities\processgui\dicts\gui_dicts.py_prev
+	python utilities\processgui\dicts\make_gui_dicts.py > utilities\processgui\dicts\gui_dicts.py
 	@ echo ''
 	@ echo 'Dictionaries have been updated'
 	@ echo ''
