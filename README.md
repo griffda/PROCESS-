@@ -193,12 +193,86 @@ were resolved, bugs fixed, etc.
 | `git describe --tags`   | show the current tag  | 
 | `git tag -l "1.0.*"` | list tags contained in `1.0.z` |
 
+## Windows Users
+
+PROCESS does compile and run on Windows. The following instructions will get you to the point of compiling 
+and running the fortran code (and the Python utilities) on Windows.
+
+
+1. Install `mingw` using the following [installer](http://www.fortran.com/blog/wp-content/uploads/2013/05/g95-Mingw_201210.exe).
+
+    - click on basic setup and install the following options
+        - `mingw32-base`
+        - `mingw32-gcc-gfortran`
+        - `mingw32-gcc-g++`
+        - `msys-base`
+
+    - Setup the windows environment variable `PATH` = `c:\MinGW\bin\`
+        - in `c:\MinGW\bin\` make a copy of `mingw32-make.exe` called `make.exe`
+
+3. Install a suitable editor or IDE. [Microsoft Visual Studio Code](https://code.visualstudio.com/) is 
+recommended.
+
+4. Install a Python distribution for windows and make sure it is available on the Windows command prompt.
+    - Recommend the [Anaconda Python distribution](https://www.continuum.io/downloads) for Windows.
+
+5. Install [git](https://git-for-windows.github.io/) for Windows
+    - ideally choose the option of having the git commands available to the Windows command prompt.
+    - set your git `user.name` and `user.email` to the desired values
+        ```
+        git config --global user.name "User Name"
+        git config --global user.email "user.name@domain.com"
+        ```
+    - turn of git converting line endings to `CRLF`
+        ```
+        git config --global core.autocrlf false
+        ```
+
+6. Clone the code from the PROCESS gitlab repository.
+    ```
+    git clone http://git.ccfe.ac.uk/process/process.git -b branch folder_name
+    ```
+
+7. **Check that your editor is using `LF` line endings and not `CRLF` line endings.**
+
+8. Go into the PROCESS code folder and build the code by running the following in the command prompt
+    ```
+    make
+    ```
+
+9. Run the code (provided there is an  `IN.DAT`)
+    ```
+    process.exe
+    ```
+
+10. Running the utilities
+
+    - Edit environment variables and creating a new one called `PYTHONPATH` and set it 
+    to `c:\some path\utilities\`. Where `some path` is the location of the process folder.
+    - Make the PROCESS Python dictionaries
+        ```
+        make win_dicts
+        ```
+    - Run a utility, e.g.
+        ```
+        python utilities\plot_proc.py -f MFILE.DAT
+        ```
+
+11. To create the HTML documentation run,
+    ```
+    make win_doc
+    ```
+
+12. Finally, to clean the make run,
+    ```
+    make win_clean
+    ```
+
+
 ## Contacts
 
-[Richard Kembleton](richard.kembleton@ukaea.uk)
+[Hanni Lux](Hanni.lux@ukaea.uk)
 
 [Michael Kovari](michael.kovari@ukaea.uk)
-
-[Hanni Lux](Hanni.lux@ukaea.uk)
 
 [James Morris](james.morris2@ukaea.uk)

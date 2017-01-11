@@ -2,9 +2,10 @@
 #
 #  Makefile for the PROCESS systems code
 #
-#  GIT Revision 412
+#  GIT Version 1.0.5
 #
 #  P J Knight
+#  J Morris
 #
 #  Culham Centre for Fusion Energy
 #  D3 Culham Science Centre
@@ -12,7 +13,7 @@
 #  Oxfordshire
 #  OX14 3DB
 #
-#  peter.knight@ccfe.ac.uk
+#  james.morris2@ukaea.uk
 #
 #  Instructions:
 #  =============
@@ -26,8 +27,6 @@
 #    (currently this is turned on by default)
 #
 #  Type 'make clean' to clean up the directory to allow a full Fortran recompilation
-#
-#  Type 'make win_clean' to clean up the directory to allow a full Fortran recompilation on Windows
 #
 #  Type 'make cleandoc' to remove all html files and the intermediate files used
 #    to build the PROCESS User Guide, so that they can be recreated using 'make doc'
@@ -51,6 +50,17 @@
 #
 #  Type 'make all' to compile the code, create all the documentation,
 #    and build the dictionaries.
+#
+#  Windows
+#  =======
+#
+#  Type 'make' to make the defaults on Windows
+#
+#  Type 'make win_dicts' to write the Python dictionaries
+#
+#  Type 'make win_doc' to write the html documentation for PROCESS
+#
+#  Type 'make win_clean' to clean up the directory to allow a full Fortran recompilation on Windows
 #
 ################# Start of Custom Section #####################
 
