@@ -169,7 +169,8 @@ ifeq ($(OS),Windows_NT)
 	MYROOT_1 = echo character(len=*), parameter :: ROOTDIR = "%cd%" > root.dir
 	MYROOT_2 = echo ROOTDIR = "%cd%" > utilities\rootdir.py
 else
-	MYROOT_1 = nope_1
+	MYROOT_1 = echo "  character(len=*), parameter :: ROOTDIR = '"`pwd`"'" > root.dir
+	MYROOT_2 = echo "ROOTDIR = '"`pwd`"'" > utilities/rootdir.py
 endif 
 
 ###### Fusion Unix Network - Intel Fortran
