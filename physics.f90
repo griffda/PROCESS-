@@ -5756,6 +5756,7 @@ contains
     end if
 
     call ovarre(outfile,'Psep / R ratio (MW/m)','(pdivt/rmajor)',pdivt/rmajor, 'OP ')
+    call ovarre(outfile,'Psep Bt / qAR ratio (MWT/m)','(pdivtbt/qar)', ((pdivt*bt)/(q95*aspect*rmajor)), 'OP ')
 
     if (istell == 0) then
        call osubhd(outfile,'H-mode Power Threshold Scalings :')

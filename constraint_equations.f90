@@ -167,7 +167,8 @@ contains
     !+ad_hist  26/11/15 RK  Eqn 65: Added constrain equation to set dump time
     !+ad_hist  24/05/16 JM  Added more information in the comments
     !+ad_hist  23/06/16 JM  Removed equation 38. No longer used anywhere in the code
-    !+ad_hist  09/11/16 HL Added new eqn 67
+    !+ad_hist  09/11/16 HL  Added new eqn 67
+    !+ad_hist  25/01/17 JM  Added new eqn 68 for psep*b/q*A*r limit
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1452,6 +1453,25 @@ contains
              err(i) =  maxradwallload * cc(i)
              symbol(i) = '<'
              units(i) = 'MW/m^2'
+           end if
+      
+       case (68) ! New Psep scaling (PsepB/qAR)
+       
+           ! Issue #464
+           ! fpsepbqar       |  f-value for upper limit on psepbqar
+           ! psepbqarmax     |  Maximum permitted PsepB/qAR (MWT/m)
+           ! pdivt           |  Power going to divertor (Psep) (MW)
+           ! bt              |  Toroidal field on-axis (T)
+           ! q95             |  Safety factor q on 95% flux surface
+           ! aspect          |  aspect ratio
+           ! rmajor          |  plasma major radius (m)
+           cc(i) = 1.0d0 - fpsepbqar * psepbqarmax / ((pdivt*bt)/(q95*aspect*rmajor))
+
+           if (present(con)) then
+             con(i) = psepbqarmax
+             err(i) = psepbqarmax * cc(i)
+             symbol(i) = '<'
+             units(i) = 'MWT/m'
            end if
 
        case default

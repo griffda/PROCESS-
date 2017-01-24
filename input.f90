@@ -390,6 +390,7 @@ contains
     !+ad_hist  23/06/16 JM  Removed dtmpmx and tmprse as not in rest of code (#377)
     !+ad_hist  10/11/16 HL  Added fradwall, maxradwallload, peakfactrad
     !+ad_hist  06/12/16 HL  Added ftaulimit as input variable
+    !+ad_hist  19/01/17 JM  Added gamma_ecrh as an input variable
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1095,8 +1096,11 @@ contains
        case ('ftritbm')
           call parse_real_variable('ftritbm', ftritbm, 0.0D0, 1.0D0, &
                'Tritium fraction of beam')
+       case ('gamma_ecrh')
+          call parse_real_variable('gamma_ecrh', gamma_ecrh, 0.0D0, 1.0D0, &
+               'User input ECRH gamma_CD')
        case ('iefrf')
-          call parse_int_variable('iefrf', iefrf, 1, 9, &
+          call parse_int_variable('iefrf', iefrf, 1, 10, &
                'Switch for curr drive efficiency model')
        case ('irfcd')
           call parse_int_variable('irfcd', irfcd, 0, 1, &

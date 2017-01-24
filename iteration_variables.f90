@@ -78,6 +78,7 @@ subroutine loadxc
   !+ad_hist  18/11/15 RK  Added fzeffmax (112)
   !+ad_hist  26/11/15 RK  Added ftaucq (113)
   !+ad_hist  10/11/16 HL  Added fradwall (116)
+  !+ad_hist  19/01/17 JM  Added fpsepbqar (117)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -244,6 +245,7 @@ subroutine loadxc
      case (114) ; xcm(i) = fw_channel_length
      case (115) ; xcm(i) = fpoloidalpower
      case (116) ; xcm(i) = fradwall
+     case (117) ; xcm(i) = fpsepbqar
     
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -365,6 +367,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  18/11/15 RK  Added fzeffmax (112)
   !+ad_hist  26/11/15 RK  Added ftaucq (113)
   !+ad_hist  10/11/16 HL  Added fradwall (116)
+  !+ad_hist  19/01/17 JM  Added fpsepbqar (117)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -522,6 +525,7 @@ subroutine convxc(xc,nn)
      case (114) ; fw_channel_length = xc(i)/scale(i)
      case (115) ; fpoloidalpower = xc(i)/scale(i)
      case (116) ; fradwall = xc(i)/scale(i)
+     case (117) ; fpsepbqar = xc(i)/scale(i)
 
      case default
         call report_error(57)

@@ -1441,10 +1441,10 @@ contains
     call ocmmnt(outfile,'-------------------------------------')
 	call ovarrf(outfile,'Fusion power (MW)','(powfmw)',powfmw, 'OP ')
 	call ovarrf(outfile,'Power from energy multiplication in blanket and shield (MW)','(emultmw)',emultmw, 'OP ')
-	call ovarrf(outfile,'Injected power (MW)','(pnbitot)',pnbitot, 'OP ')
+	call ovarrf(outfile,'Injected power (MW)','(pinjmw)',pinjmw, 'OP ')
 	call ovarrf(outfile,'Ohmic power (MW)','(pohmmw)',pohmmw, 'OP ')
 	call ovarrf(outfile,'Power deposited in primary coolant by pump (MW)','(htpmw_mech)',htpmw_mech, 'OP ')
-	sum = powfmw+emultmw+pnbitot+htpmw_mech+pohmmw
+	sum = powfmw+emultmw+pinjmw+htpmw_mech+pohmmw
 	call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
 	call oblnkl(outfile)
 	call ovarrf(outfile,'Heat extracted from armour and first wall (MW)','(pthermfw)',pthermfw, 'OP ')

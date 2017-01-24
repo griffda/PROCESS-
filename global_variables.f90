@@ -844,6 +844,8 @@ module current_drive_variables
   real(kind(1.0D0)) :: ftritbm = 1.0D-6
   !+ad_vars  gamcd : normalised current drive efficiency (1.0e20 A/W-m2)
   real(kind(1.0D0)) :: gamcd = 0.0D0
+  !+ad_vars  gamma_ecrh : user input ECRH gamma
+  real(kind(1.0D0)) :: gamma_ecrh = 0.35D0
   !+ad_vars  iefrf /5/ : switch for current drive efficiency model: <OL>
   !+ad_varc         <LI> Fenstermacher Lower Hybrid
   !+ad_varc         <LI> Ion Cyclotron current drive
@@ -853,7 +855,8 @@ module current_drive_variables
   !+ad_varc         <LI> new Culham Lower Hybrid model
   !+ad_varc         <LI> new Culham ECCD model
   !+ad_varc         <LI> new Culham Neutral Beam model
-  !+ad_varc         <LI> RFP Oscillating Field current drive </OL>
+  !+ad_varc         <LI> RFP Oscillating Field current drive
+  !+ad_varc         <LI> ECRH user input gamma </OL>
   integer :: iefrf = 5
   !+ad_vars  irfcd /1/ : switch for current drive calculation:<UL>
   !+ad_varc         <LI> = 0 turned off;
@@ -3458,6 +3461,7 @@ module constraint_variables
   !+ad_hist  18/11/15 RK  fzeffmax and zeffmax
   !+ad_hist  23/06/16 JM  Removed dtmpmx as no longer used anywhere  
   !+ad_hist  09/11/16 HL  Added fradwall, maxradwalload, peakfactrad and peakradwalload
+  !+ad_hist  19/01/17 JM  Added variables for constraint equation for psepbqar (68)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -3552,6 +3556,9 @@ module constraint_variables
   !+ad_vars  fportsz /1.0/ : f-value for neutral beam tangency radius limit
   !+ad_varc                  (constraint equation 20, iteration variable 33)
   real(kind(1.0D0)) :: fportsz = 1.0D0
+  !+ad_vars  fpsepbqar /1.0/ : f-value for maximum Psep*Bt/qAR limit
+  !+ad_varc                 (constraint equation 68, iteration variable 117)
+  real(kind(1.0D0)) :: fpsepbqar = 1.0D0
   !+ad_vars  fpsepr /1.0/ : f-value for maximum Psep/R limit
   !+ad_varc                 (constraint equation 56, iteration variable 97)
   real(kind(1.0D0)) :: fpsepr = 1.0D0
@@ -3662,6 +3669,9 @@ module constraint_variables
   !+ad_vars  powfmax /1500.0/ : maximum fusion power (MW)
   !+ad_varc                     (constraint equation 9)
   real(kind(1.0D0)) :: powfmax = 1.5D3
+  !+ad_vars  psepbqarmax /9.5/ : maximum ratio of Psep*Bt/qAR (MWT/m)
+  !+ad_varc                      (constraint equation 68)
+  real(kind(1.0D0)) :: psepbqarmax = 9.5D0
   !+ad_vars  pseprmax /25.0/ : maximum ratio of power crossing the separatrix to
   !+ad_varc                      plasma major radius (Psep/R) (MW/m)
   !+ad_varc                      (constraint equation 56)

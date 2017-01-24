@@ -27,6 +27,7 @@ module current_drive_module
   !+ad_hist  31/10/12 PJK Changed public/private lists
   !+ad_hist  19/06/14 PJK Removed obsolete routines nbeam, ech, lwhymod
   !+ad_hist  26/06/14 PJK Added error handling
+  !+ad_hist  25/01/17 JM  Added case 10 for iefrf for user input ECRH
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -191,6 +192,12 @@ contains
           effofss = 0.8D0 * feffcd ! TITAN figure: efficiency = 0.8 A/W
           effcd = effofss
 
+       case (10)  ! ECRH user input gamma
+
+          gamcd = gamma_ecrh
+          effrfss = gamcd / (dene20 * rmajor)
+          etacd = etaech
+
        case default
           idiags(1) = iefrf
           call report_error(126)
@@ -209,6 +216,7 @@ contains
 
           !  Wall plug power
           pwplh = plhybd / etalh
+          pinjwp = pwplh
 
           !  Wall plug to injector efficiency
           etacd = etalh
@@ -217,14 +225,15 @@ contains
           gamrf = effrfss * (dene20 * rmajor)
           gamcd = gamrf
 
-       case (3,7)  ! ECCD
+       case (3,7,10)  ! ECCD
 
           echpwr = 1.0D-6 * faccd * plascur / effrfss + pheat
           pinjimw = 0.0D0
           pinjemw = echpwr
           echwpow = echpwr / etaech
+          pinjwp = echwpow
           etacd = etaech
-          ! (gamma not calculated for ECCD)
+
 
        case (5,8)  ! NBCD
 
@@ -316,8 +325,13 @@ contains
 
     case (9)
        call ocmmnt(outfile,'Oscillating Field Current Drive')
+    
+    case (10)
+       call ocmmnt(outfile,'Electron Cyclotron Current Drive (user input gamma_CD)')
 
     end select
+
+    call ovarin(outfile,'Current drive efficiency model','(iefrf)',iefrf)
 
     if (ignite == 1) then
        call ocmmnt(outfile, &
@@ -330,8 +344,7 @@ contains
        call ocmmnt(outfile,'Current is driven by both inductive')
        call ocmmnt(outfile,'and non-inductive means.')
     end if
-
-    call ovarin(outfile,'Current drive efficiency model','(iefrf)',iefrf)
+    
     call ovarre(outfile,'Auxiliary power used for plasma heating only (MW)', '(pheat)', pheat)
     call ovarre(outfile,'Fusion gain factor Q','(bigq)',bigq, 'OP ')
     call ovarre(outfile,'Current drive efficiency (A/W)','(effcd)',effcd, 'OP ')

@@ -306,7 +306,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=120) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '1.0.5    Release Date :: 2017-01-11'
+       '1.0.6    Release Date :: 2017-01-25'
   character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
   integer :: unit
@@ -2164,3 +2164,4 @@ subroutine get_DDMonYYTimeZone(dt_time)
 !          few minor changes. Updated test function in plot_proc.
 ! 413      HCLL model now implemented. See milestone march 2016 for details.
 ! 1.0.0    Master release and update of versioning format. See release_notes_1_0_0.md
+! 1.0.6    Version used for start of 2017 baseline work
