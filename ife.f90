@@ -2337,6 +2337,7 @@ contains
     !+ad_hist  21/03/97 PJK Initial version
     !+ad_hist  25/09/12 PJK Initial F90 version
     !+ad_hist  29/10/12 PJK Added vacuum_variables
+    !+ad_hist  02/02/17 JM  Changed vpumpn to integer value
     !+ad_stat  Okay
     !+ad_docs  F/MI/PJK/LOGBOOK12, p.87
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -2357,7 +2358,7 @@ contains
     nvduct = 16
     vacdshm = 0.0D0
     vcdimax = 0.3D0
-    vpumpn = 32.0D0
+    vpumpn = 32
 
   end subroutine ifevac
 

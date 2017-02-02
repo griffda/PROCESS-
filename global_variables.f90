@@ -2234,6 +2234,7 @@ module vacuum_variables
   !+ad_hist  12/08/15 MDK vacuum_model and associated variables (#304 section 1)
   !+ad_hist  22/09/15 MDK Battes, Day and Rohde pump-down model (#304 section 2)
   !+ad_hist  20/01/16 JM  Added pump throughput defaulted to ITER value
+  !+ad_hist  02/02/17 JM  Changed vpumpn to integer
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2276,7 +2277,6 @@ module vacuum_variables
   !+ad_vars  vcdimax : diameter of duct passage (m)
   real(kind(1.0D0)) :: vcdimax = 0.0D0
   !+ad_vars  vpumpn : number of high vacuum pumps
-  !real(kind(1.0D0)) :: vpumpn = 0.0D0
   integer :: vpumpn = 0
 
   !+ad_vars  <P><B>The following are used in the Battes, Day and Rohde pump-down model

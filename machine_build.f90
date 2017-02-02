@@ -293,7 +293,8 @@ contains
           fdiags(1) = wwp1*tfno/rmajor
           call report_error(141)
        else if (ripflag == 2) then
-          idiags(1) = tfno
+          ! Convert to integer as idiags is integer array
+          idiags(1) = INT(tfno)
           call report_error(142)
        else
           fdiags(1) = (rmajor+rminor)/rtot

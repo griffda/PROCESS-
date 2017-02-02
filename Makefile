@@ -200,10 +200,11 @@ endif
 FORTRAN_GFORT = gfortran
 FFLAGS_GFORT = -cpp
 FFLAGS_ALT_GFORT = ${FFLAGS_GFORT} -std=legacy
+FFLAGS_LIB_GFORT = -cpp -g -fbounds-check -fbacktrace
 LFLAGS_GFORT =
 LIBS_GFORT   =
 ifeq (${DEBUG},YES)
-	FFLAGS_GFORT = -cpp -g -fbounds-check -fbacktrace
+	FFLAGS_GFORT = -cpp -g -fbounds-check -fbacktrace -Wconversion
 endif
 
 ################### End of Custom Section #####################
@@ -214,6 +215,7 @@ endif
 FORTRAN = ${FORTRAN_${ARCH}}
 FFLAGS = ${FFLAGS_${ARCH}}
 FFLAGS_ALT = ${FFLAGS_ALT_${ARCH}}
+FFLAGS_LIB = ${FFLAGS_LIB_${ARCH}}
 LFLAGS = ${LFLAGS_${ARCH}}
 LIBS   = ${LIBS_${ARCH}}
 
@@ -254,6 +256,7 @@ evaluators.o: error_handling.o global_variables.o numerics.o output.o
 fispact.o: global_variables.o output.o
 	${FORTRAN} ${FFLAGS_ALT} -c fispact.f90 -o fispact.o
 fson_library.o:
+	${FORTRAN} ${FFLAGS_LIB} -c fson_library.f90 -o fson_library.o
 fw.o : global_variables.o output.o refprop_interface.o
 global_variables.o:
 hcll.o : fw.o global_variables.o output.o
@@ -280,6 +283,7 @@ process.o: availability.o buildings.o constraint_equations.o costs.o current_dri
 	stellarator.o structure.o tfcoil.o vacuum.o
 pulse.o: error_handling.o global_variables.o maths_library.o output.o physics.o
 refprop.o:
+	${FORTRAN} ${FFLAGS_LIB} -c refprop.f -o refprop.o
 refprop_interface.o: error_handling.o refprop.o
 rfp.o: current_drive.o input.o global_variables.o machine_build.o output.o pfcoil.o \
   plasma_profiles.o physics.o
@@ -393,10 +397,10 @@ dicts: root.dir
 	@ rm -f *.f90*~
 	utilities/create_dicts.py > utilities/process_io_lib/process_dicts.py
 	@ chmod 755 utilities/process_io_lib/process_dicts.py
-# @ touch utilities/processgui/dicts/gui_dicts.py
-# @ mv utilities/processgui/dicts/gui_dicts.py utilities/processgui/dicts/gui_dicts.py_prev
-# utilities/processgui/dicts/make_gui_dicts.py > utilities/processgui/dicts/gui_dicts.py
-# @ echo ''
+	# @ touch utilities/processgui/dicts/gui_dicts.py
+	# @ mv utilities/processgui/dicts/gui_dicts.py utilities/processgui/dicts/gui_dicts.py_prev
+	# utilities/processgui/dicts/make_gui_dicts.py > utilities/processgui/dicts/gui_dicts.py
+	# @ echo ''
 	@ echo 'Dictionaries have been updated'
 	@ echo ''
 
