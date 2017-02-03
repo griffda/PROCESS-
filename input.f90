@@ -391,6 +391,7 @@ contains
     !+ad_hist  10/11/16 HL  Added fradwall, maxradwallload, peakfactrad
     !+ad_hist  06/12/16 HL  Added ftaulimit as input variable
     !+ad_hist  19/01/17 JM  Added gamma_ecrh as an input variable
+    !+ad_hist  03/02/17 JM  Added psepbqarmax as input
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -1033,6 +1034,9 @@ contains
        case ('powfmax')
           call parse_real_variable('powfmax', powfmax, 1.0D0, 1.0D4, &
                'Maximum fusion power (MW)')
+       case ('psepbqarmax')
+          call parse_real_variable('psepbqarmax', psepbqarmax, 1.0D0, 50.0D0, &
+               'Maximum Psep*Bt/q*A*R ratio (MW.T/m)')
        case ('pseprmax')
           call parse_real_variable('pseprmax', pseprmax, 1.0D0, 50.0D0, &
                'Maximum Psep/R ratio (MW/m)')

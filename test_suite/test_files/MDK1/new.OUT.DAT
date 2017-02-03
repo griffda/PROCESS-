@@ -5,14 +5,14 @@
  **************************************************************************************************************
  
    Program : ./process.exe
-   Version : 1.0.4    Release Date :: 2016-12-02
- Date/time :  7 Dec 2016 14:25:31 +00:00(hh:mm) UTC
+   Version : 1.0.6    Release Date :: 2017-01-25
+ Date/time :  3 Feb 2017 16:16:42 +00:00(hh:mm) UTC
       User : morrisj
- Directory : /home/morrisj/Work/fortran/process/test_suite
+ Directory : /home/morrisj/Work/fortran/divertor_merge/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.4 : Run on  7 Dec 2016 14:25:31 +00:00(hh:mm) UTC by localhost.localdomain
+ PROCESS 1.0.6 : Run on  3 Feb 2017 16:16:42 +00:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -139,19 +139,19 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Allowable blanket neutron fluence (MW-yr/m2)                             (abktflnc)                5.000E+00     
  Allowable divertor heat fluence (MW-yr/m2)                               (adivflnc)                7.000E+00     
  First wall / blanket lifetime (FPY)                                      (bktlife)                 4.954E+00  OP 
- Divertor lifetime (FPY)                                                  (divlife)                 5.856E+00  OP 
+ Divertor lifetime (FPY)                                                  (divlife)                 1.618E+00  OP 
  Number of remote handling systems                                        (num_rh_systems)                  4     
  Time needed to replace divertor (years)                                  (mttr_divertor)           4.685E-01     
  Time needed to replace blanket (years)                                   (mttr_blanket)            6.692E-01     
  Time needed to replace blkt + div (years)                                (mttr_blanket)            6.692E-01     
- Total planned unavailability                                             (uplanned)                1.190E-01  OP 
+ Total planned unavailability                                             (uplanned)                2.428E-01  OP 
  
  Magnets:
  
  Minimum temperature margin (K)                                           (tmargmin)                1.700E+00     
  c parameter, determining the temperature margin where lifetime declines  (conf_mag)                9.900E-01     
  Temperature Margin (K)                                                   (temp_margin)             2.300E+00  OP 
- Magnets unplanned unavailability                                         (u_unplanned_magnets      1.857E-02  OP 
+ Magnets unplanned unavailability                                         (u_unplanned_magnets      2.154E-02  OP 
  
  Divertor:
  
@@ -159,8 +159,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Repair time (years)                                                      (div_umain_time)          2.500E-01     
  Reference value for cycle life                                           (div_nref)                7.000E+03     
  The cycle when failure is 100% certain                                   (div_nu)                  1.400E+04     
- Number of cycles between planned replacements                            (n)                       2.031E+04     
- Unplanned unavailability                                                 (u_unplanned_div)         1.000E+00  OP 
+ Number of cycles between planned replacements                            (n)                       5.611E+03     
+ Unplanned unavailability                                                 (u_unplanned_div)         1.826E-02  OP 
  
  First wall / Blanket:
  
@@ -174,26 +174,26 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Balance of plant:
  
  Failure rate (1/h)                                                       (bop_fail_rate)           9.390E-05     
- Number of failures in lifetime                                           (bop_num_failures)               22  OP 
+ Number of failures in lifetime                                           (bop_num_failures)               19  OP 
  Balance of plant MTTR                                                    (bop_mttr)                1.095E-02     
- Balance of plant unplanned unavailability                                (u_unplanned_bop)         9.116E-03  OP 
+ Balance of plant unplanned unavailability                                (u_unplanned_bop)         9.159E-03  OP 
  
  Vacuum:
  
  Number of pumps (excluding redundant pumps)                              (vpumpn)                         46  OP 
  Number of redundant pumps                                                (redun_vac)                      12  OP 
- Total unplanned down-time due to pumps, excl fixed 0.5% (years)          (t_down)                  5.350E-04  OP 
+ Total unplanned down-time due to pumps, excl fixed 0.5% (years)          (t_down)                  1.032E-07  OP 
  Vacuum unplanned unavailability                                          (u_unplanned_vacuum)      5.000E-03  OP 
  
  Total unavailability:
  
- Total planned unavailability                                             (u_planned)               1.190E-01  OP 
- Total unplanned unavailability                                           (u_unplanned)             1.000E+00  OP 
+ Total planned unavailability                                             (u_planned)               2.428E-01  OP 
+ Total unplanned unavailability                                           (u_unplanned)             9.222E-02  OP 
  
- Total plant availability fraction                                        (cfactr)                  0.000E+00  OP 
- Total DT operational time (years)                                        (t_operation)             2.643E+01  OP 
+ Total plant availability fraction                                        (cfactr)                  6.426E-01  OP 
+ Total DT operational time (years)                                        (t_operation)             2.272E+01  OP 
  Total plant lifetime (years)                                             (tlife)                   3.000E+01     
- Capacity factor: total lifetime electrical energy output / output power  (cpfact)                  0.000E+00  OP 
+ Capacity factor: total lifetime electrical energy output / output power  (cpfact)                  5.085E-01  OP 
  
  *************************************************** Plasma ***************************************************
  
@@ -364,6 +364,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power into divertor zone via charged particles (MW)                      (pdivt)                   1.536E+02  OP 
  Psep / R ratio (MW/m)                                                    (pdivt/rmajor)            1.700E+01  OP 
+ Psep Bt / qAR ratio (MWT/m)                                              (pdivtbt/qar)             9.028E+00  OP 
  
  H-mode Power Threshold Scalings :
  
@@ -474,10 +475,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ******************************************** Current Drive System ********************************************
  
  Neutral Beam Current Drive
+ Current drive efficiency model                                           (iefrf)                           5     
  
  Current is driven by both inductive
  and non-inductive means.
- Current drive efficiency model                                           (iefrf)                           5     
  Auxiliary power used for plasma heating only (MW)                        (pheat)                   0.000E+00     
  Fusion gain factor Q                                                     (bigq)                    3.817E+01  OP 
  Current drive efficiency (A/W)                                           (effcd)                   3.750E-02  OP 
@@ -1437,10 +1438,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  -------------------------------------
  Fusion power (MW)                                                        (powfmw)                   1942.367268  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   369.927804  OP 
- Injected power (MW)                                                      (pnbitot)                    50.012390  OP 
+ Injected power (MW)                                                      (pinjmw)                     50.000001  OP 
  Ohmic power (MW)                                                         (pohmmw)                      0.883716  OP 
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 44.353538  OP 
- Total (MW)                                                                                          2407.544717  OP 
+ Total (MW)                                                                                          2407.532327  OP 
  
  Heat extracted from armour and first wall (MW)                           (pthermfw)                  509.171459  OP 
  Heat extracted from blanket (MW)                                         (pthermblkt)               1534.053029  OP 

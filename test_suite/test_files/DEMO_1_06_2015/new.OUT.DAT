@@ -28,14 +28,14 @@
  **************************************************************************************************************
  
    Program : ./process.exe
-   Version : 1.0.4    Release Date :: 2016-12-02
- Date/time :  7 Dec 2016 14:25:46 +00:00(hh:mm) UTC
+   Version : 1.0.6    Release Date :: 2017-01-25
+ Date/time :  3 Feb 2017 16:16:52 +00:00(hh:mm) UTC
       User : morrisj
- Directory : /home/morrisj/Work/fortran/process/test_suite
+ Directory : /home/morrisj/Work/fortran/divertor_merge/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.4 : Run on  7 Dec 2016 14:25:46 +00:00(hh:mm) UTC by localhost.localdomain
+ PROCESS 1.0.6 : Run on  3 Feb 2017 16:16:52 +00:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)
@@ -188,11 +188,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************* First wall and blanket (M$) **************************
  
  Lithium enrichment                                                           203 
- Lithium orthosilicate pebble manufacturing                                   831 
+ Lithium orthosilicate pebble manufacturing                                    83 
  Titanium beryllide pebble manufacturing                                     2210 
  First wall W coating manufacturing                                           104 
  Blanket and shield materials and manufacturing                               286 
- Total first wall and blanket cost                                           3634 
+ Total first wall and blanket cost                                           2886 
  
  ***************** Active maintenance and remote handling (M$) ******************
  
@@ -230,27 +230,27 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Diagnostics systems                                                          640 
  Radiological protection                                                       50 
  Access control and security systems                                           65 
- Assembly                                                                    2475 
- Control and communication                                                    580 
+ Assembly                                                                    2312 
+ Control and communication                                                    550 
  Additional project expenditure                                              1624 
  Logistics                                                                    214 
- Total remaining subsystem costs                                            15548 
+ Total remaining subsystem costs                                            15353 
  
- TOTAL OVERNIGHT CAPITAL COST (M$)                                          30869 
- Annual maintenance cost (M$)                                                1613 
+ TOTAL OVERNIGHT CAPITAL COST (M$)                                          29926 
+ Annual maintenance cost (M$)                                                1462 
  
  Net electric output (MW)                                                 (pnetelmw)                  500.000  OP 
  Capacity factor                                                          (cpfact)                      0.593  OP 
  Mean electric output (MW)                                                (mean_electric_outpu        296.703  OP 
- Capital cost / mean electric output ($/W)                                                            104.041  OP 
- Levelized cost of electricity ($/MWh)                                    (coe)                      2055.683  OP 
+ Capital cost / mean electric output ($/W)                                                            100.863  OP 
+ Levelized cost of electricity ($/MWh)                                    (coe)                      1938.950  OP 
  
  ********************************************* Plant Availability *********************************************
  
  Allowable blanket neutron fluence (MW-yr/m2)                             (abktflnc)                1.500E+01     
  Allowable divertor heat fluence (MW-yr/m2)                               (adivflnc)                2.000E+01     
  First wall / blanket lifetime (years)                                    (bktlife)                 2.296E+01  OP 
- Divertor lifetime (years)                                                (divlife)                 9.602E+00  OP 
+ Divertor lifetime (years)                                                (divlife)                 4.186E+00  OP 
  Heating/CD system lifetime (years)                                       (cdrlife)                 2.296E+01  OP 
  Total plant lifetime (years)                                             (tlife)                   4.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     
@@ -424,6 +424,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power into divertor zone via charged particles (MW)                      (pdivt)                   1.529E+02  OP 
  Psep / R ratio (MW/m)                                                    (pdivt/rmajor)            1.700E+01  OP 
+ Psep Bt / qAR ratio (MWT/m)                                              (pdivtbt/qar)             9.124E+00  OP 
  
  H-mode Power Threshold Scalings :
  
@@ -534,10 +535,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ******************************************** Current Drive System ********************************************
  
  Neutral Beam Current Drive
+ Current drive efficiency model                                           (iefrf)                           5     
  
  Current is driven by both inductive
  and non-inductive means.
- Current drive efficiency model                                           (iefrf)                           5     
  Auxiliary power used for plasma heating only (MW)                        (pheat)                   0.000E+00     
  Fusion gain factor Q                                                     (bigq)                    3.270E+01  OP 
  Current drive efficiency (A/W)                                           (effcd)                   3.657E-02  OP 
@@ -1437,10 +1438,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  -------------------------------------
  Fusion power (MW)                                                        (powfmw)                   1661.442  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   316.425  OP 
- Injected power (MW)                                                      (pnbitot)                    50.008  OP 
+ Injected power (MW)                                                      (pinjmw)                     50.000  OP 
  Ohmic power (MW)                                                         (pohmmw)                      0.809  OP 
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                  1.968  OP 
- Total (MW)                                                                                          2030.651  OP 
+ Total (MW)                                                                                          2030.643  OP 
  
  Heat extracted from armour and first wall (MW)                           (pthermfw)                  391.215  OP 
  Heat extracted from blanket (MW)                                         (pthermblkt)               1307.808  OP 
@@ -1625,11 +1626,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************* First wall and blanket (M$) **************************
  
  Lithium enrichment                                                           203 
- Lithium orthosilicate pebble manufacturing                                   831 
+ Lithium orthosilicate pebble manufacturing                                    83 
  Titanium beryllide pebble manufacturing                                     2210 
  First wall W coating manufacturing                                           104 
  Blanket and shield materials and manufacturing                               286 
- Total first wall and blanket cost                                           3634 
+ Total first wall and blanket cost                                           2886 
  
  ***************** Active maintenance and remote handling (M$) ******************
  
@@ -1667,27 +1668,27 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Diagnostics systems                                                          640 
  Radiological protection                                                       50 
  Access control and security systems                                           65 
- Assembly                                                                    2475 
- Control and communication                                                    580 
+ Assembly                                                                    2312 
+ Control and communication                                                    550 
  Additional project expenditure                                              1624 
  Logistics                                                                    214 
- Total remaining subsystem costs                                            15548 
+ Total remaining subsystem costs                                            15353 
  
- TOTAL OVERNIGHT CAPITAL COST (M$)                                          30869 
- Annual maintenance cost (M$)                                                1613 
+ TOTAL OVERNIGHT CAPITAL COST (M$)                                          29926 
+ Annual maintenance cost (M$)                                                1462 
  
  Net electric output (MW)                                                 (pnetelmw)                  500.000  OP 
  Capacity factor                                                          (cpfact)                      0.593  OP 
  Mean electric output (MW)                                                (mean_electric_outpu        296.703  OP 
- Capital cost / mean electric output ($/W)                                                            104.041  OP 
- Levelized cost of electricity ($/MWh)                                    (coe)                      2055.683  OP 
+ Capital cost / mean electric output ($/W)                                                            100.863  OP 
+ Levelized cost of electricity ($/MWh)                                    (coe)                      1938.950  OP 
  
  ********************************************* Plant Availability *********************************************
  
  Allowable blanket neutron fluence (MW-yr/m2)                             (abktflnc)                1.500E+01     
  Allowable divertor heat fluence (MW-yr/m2)                               (adivflnc)                2.000E+01     
  First wall / blanket lifetime (years)                                    (bktlife)                 2.296E+01  OP 
- Divertor lifetime (years)                                                (divlife)                 9.602E+00  OP 
+ Divertor lifetime (years)                                                (divlife)                 4.186E+00  OP 
  Heating/CD system lifetime (years)                                       (cdrlife)                 2.296E+01  OP 
  Total plant lifetime (years)                                             (tlife)                   4.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     
@@ -1861,6 +1862,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power into divertor zone via charged particles (MW)                      (pdivt)                   1.529E+02  OP 
  Psep / R ratio (MW/m)                                                    (pdivt/rmajor)            1.700E+01  OP 
+ Psep Bt / qAR ratio (MWT/m)                                              (pdivtbt/qar)             9.124E+00  OP 
  
  H-mode Power Threshold Scalings :
  
@@ -1971,10 +1973,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ******************************************** Current Drive System ********************************************
  
  Neutral Beam Current Drive
+ Current drive efficiency model                                           (iefrf)                           5     
  
  Current is driven by both inductive
  and non-inductive means.
- Current drive efficiency model                                           (iefrf)                           5     
  Auxiliary power used for plasma heating only (MW)                        (pheat)                   0.000E+00     
  Fusion gain factor Q                                                     (bigq)                    3.270E+01  OP 
  Current drive efficiency (A/W)                                           (effcd)                   3.657E-02  OP 
@@ -2874,10 +2876,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  -------------------------------------
  Fusion power (MW)                                                        (powfmw)                   1661.442  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   316.425  OP 
- Injected power (MW)                                                      (pnbitot)                    50.008  OP 
+ Injected power (MW)                                                      (pinjmw)                     50.000  OP 
  Ohmic power (MW)                                                         (pohmmw)                      0.809  OP 
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                  1.968  OP 
- Total (MW)                                                                                          2030.651  OP 
+ Total (MW)                                                                                          2030.643  OP 
  
  Heat extracted from armour and first wall (MW)                           (pthermfw)                  391.215  OP 
  Heat extracted from blanket (MW)                                         (pthermblkt)               1307.808  OP 
@@ -3062,11 +3064,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ************************* First wall and blanket (M$) **************************
  
  Lithium enrichment                                                           203 
- Lithium orthosilicate pebble manufacturing                                   831 
+ Lithium orthosilicate pebble manufacturing                                    83 
  Titanium beryllide pebble manufacturing                                     2210 
  First wall W coating manufacturing                                           104 
  Blanket and shield materials and manufacturing                               286 
- Total first wall and blanket cost                                           3634 
+ Total first wall and blanket cost                                           2886 
  
  ***************** Active maintenance and remote handling (M$) ******************
  
@@ -3104,27 +3106,27 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Diagnostics systems                                                          640 
  Radiological protection                                                       50 
  Access control and security systems                                           65 
- Assembly                                                                    2475 
- Control and communication                                                    580 
+ Assembly                                                                    2312 
+ Control and communication                                                    550 
  Additional project expenditure                                              1624 
  Logistics                                                                    214 
- Total remaining subsystem costs                                            15548 
+ Total remaining subsystem costs                                            15353 
  
- TOTAL OVERNIGHT CAPITAL COST (M$)                                          30869 
- Annual maintenance cost (M$)                                                1613 
+ TOTAL OVERNIGHT CAPITAL COST (M$)                                          29926 
+ Annual maintenance cost (M$)                                                1462 
  
  Net electric output (MW)                                                 (pnetelmw)                  500.000  OP 
  Capacity factor                                                          (cpfact)                      0.593  OP 
  Mean electric output (MW)                                                (mean_electric_outpu        296.703  OP 
- Capital cost / mean electric output ($/W)                                                            104.041  OP 
- Levelized cost of electricity ($/MWh)                                    (coe)                      2055.683  OP 
+ Capital cost / mean electric output ($/W)                                                            100.863  OP 
+ Levelized cost of electricity ($/MWh)                                    (coe)                      1938.950  OP 
  
  ********************************************* Plant Availability *********************************************
  
  Allowable blanket neutron fluence (MW-yr/m2)                             (abktflnc)                1.500E+01     
  Allowable divertor heat fluence (MW-yr/m2)                               (adivflnc)                2.000E+01     
  First wall / blanket lifetime (years)                                    (bktlife)                 2.296E+01  OP 
- Divertor lifetime (years)                                                (divlife)                 9.602E+00  OP 
+ Divertor lifetime (years)                                                (divlife)                 4.186E+00  OP 
  Heating/CD system lifetime (years)                                       (cdrlife)                 2.296E+01  OP 
  Total plant lifetime (years)                                             (tlife)                   4.000E+01     
  Total plant availability fraction                                        (cfactr)                  7.500E-01     
@@ -3298,6 +3300,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Power into divertor zone via charged particles (MW)                      (pdivt)                   1.529E+02  OP 
  Psep / R ratio (MW/m)                                                    (pdivt/rmajor)            1.700E+01  OP 
+ Psep Bt / qAR ratio (MWT/m)                                              (pdivtbt/qar)             9.124E+00  OP 
  
  H-mode Power Threshold Scalings :
  
@@ -3408,10 +3411,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ******************************************** Current Drive System ********************************************
  
  Neutral Beam Current Drive
+ Current drive efficiency model                                           (iefrf)                           5     
  
  Current is driven by both inductive
  and non-inductive means.
- Current drive efficiency model                                           (iefrf)                           5     
  Auxiliary power used for plasma heating only (MW)                        (pheat)                   0.000E+00     
  Fusion gain factor Q                                                     (bigq)                    3.270E+01  OP 
  Current drive efficiency (A/W)                                           (effcd)                   3.657E-02  OP 
@@ -4311,10 +4314,10 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  -------------------------------------
  Fusion power (MW)                                                        (powfmw)                   1661.442  OP 
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                   316.425  OP 
- Injected power (MW)                                                      (pnbitot)                    50.008  OP 
+ Injected power (MW)                                                      (pinjmw)                     50.000  OP 
  Ohmic power (MW)                                                         (pohmmw)                      0.809  OP 
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                  1.968  OP 
- Total (MW)                                                                                          2030.651  OP 
+ Total (MW)                                                                                          2030.643  OP 
  
  Heat extracted from armour and first wall (MW)                           (pthermfw)                  391.215  OP 
  Heat extracted from blanket (MW)                                         (pthermblkt)               1307.808  OP 
