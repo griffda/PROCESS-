@@ -560,6 +560,7 @@ contains
     !+ad_hist  24/04/14 PJK Calculation always proceeds irrespective of iprint
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  05/08/15 MDK Added output labels.  Tweaked descriptions in output.
+    !+ad_hisc  03/02/17 JM  Added check for interval length on rate of change of stored energy
     !+ad_stat  Okay
     !+ad_docs  None
     !
@@ -679,7 +680,13 @@ contains
           end do
           do time = 1,5
             ! Mean rate of change of stored energy between time and time+1
-            poloidalpower(time) = (poloidalenergy(time+1)-poloidalenergy(time)) / (tim(time+1)-tim(time))
+            if(abs(tim(time+1)-tim(time)).gt.1.0d0) then
+                poloidalpower(time) = (poloidalenergy(time+1)-poloidalenergy(time)) / (tim(time+1)-tim(time))
+            else
+                ! Flag when an interval is small or zero MDK 30/11/16
+                poloidalpower(time) = 9.9d9          
+            end if
+
           end do
           !engxpc = 0.5D0 * engx * cpt(jpf,5)
           !ensxpf = ensxpf + engxpc
