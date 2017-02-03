@@ -654,6 +654,7 @@ contains
     !+ad_hist  17/10/12 PJK Added divertor_variables
     !+ad_hist  01/12/15 RK  Added new geometry and output
     !+ad_hist  26/05/16 RK  Fixed new geometry
+    !+ad_hist  02/02/17 JM  Replaces rstrko global variable with rspo
     !+ad_stat  Okay
     !+ad_docs  TART option: Peng SOFT paper
     !
@@ -674,7 +675,7 @@ contains
     real(kind(1.0D0)) :: kap,tri,xpointo,rprimeo,phio,thetao, rci, rco, thetai
     real(kind(1.0D0)) :: yspointo,xspointo,yprimeb
     real(kind(1.0d0)) :: triu, tril, denomo, alphad, rxpt, zxpt
-    real(kind(1.0d0)) :: rspi, zspi, rspo, zspo, rplti, zplti
+    real(kind(1.0d0)) :: rspi, zspi, zspo, rplti, zplti
     real(kind(1.0d0)) :: rplbi, zplbi, rplto, zplto, rplbo, zplbo
     real(kind(1.0d0)) :: rpltop, zpltop, rgeocent, zgeocent, ptop_radial,ptop_vertical
 

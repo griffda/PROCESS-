@@ -89,7 +89,8 @@ contains
     !+ad_desc  This routine performs the cost accounting for a fusion power plant.
     !+ad_prob  None
     !+ad_call  calc_building_costs
-    !+ad_hist  05/01/15 JM Initial version
+    !+ad_hist  05/01/15 JM  Initial version
+    !+ad_hist  02/02/17 JM  Only calculate coe if electric output > 1E-5
     !+ad_stat  Okay
     !+ad_docs  PROCESS Costs Paper (M. Kovari, J. Morris)
     !
@@ -153,8 +154,10 @@ contains
                    maintenance_gen
 
     ! Levelized cost of electricity (LCOE) ($/MWh)
-    coe = (1.0D0/annual_electric_output)*(total_costs/amortization + maintenance)
-
+    if(annual_electric_output.gt.0.00001) then
+        coe = (1.0D0/annual_electric_output)*(total_costs/amortization + maintenance)
+    endif
+    
     ! Switch on output if there is a NaN error
     if ((abs(concost) > 9.99D99).or.(concost /= concost)) then
         call write_costs_to_output

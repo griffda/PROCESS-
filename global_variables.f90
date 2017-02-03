@@ -920,6 +920,7 @@ module divertor_variables
   !+ad_hist  17/10/12 PJK Initial version of module
   !+ad_hist  13/08/13 PJK Changed hldiv comment (no 'outboard');
   !+ad_hisc               tdiv now an input for stellarators
+  !+ad_hist  02/02/17 JM  Replaced rstrko with rspo
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1020,8 +1021,8 @@ module divertor_variables
   real(kind(1.0D0)) :: rlenmax = 0.5D0
   !+ad_vars  rsrd : effective separatrix/divertor radius ratio
   real(kind(1.0D0)) :: rsrd = 0.0D0
-  !+ad_vars  rstrko : outboard strike point radius (m)
-  real(kind(1.0D0)) :: rstrko = 0.0D0
+  !+ad_vars  rspo : outboard strike point radius (m)
+  real(kind(1.0D0)) :: rspo = 0.0D0
   !+ad_vars  tconl : main plasma connection length (m)
   real(kind(1.0D0)) :: tconl = 0.0D0
   !+ad_vars  tdiv /2.0/ : temperature at divertor (eV)

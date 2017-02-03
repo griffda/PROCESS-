@@ -51,9 +51,10 @@ program process
   !+ad_hisc               Transferred routine inform from aachange.f90
   !+ad_hist  13/02/14 PJK Added mfile close statement
   !+ad_hist  10/09/14 PJK Added vfile close statement
-  !+ad_hist  28/10/16 MK Removed systems commands and added a subroutine 
-  !+ad_hist              get_DDMonYYTimeZone to get date and time
-  !+ad_hist  04/11/16 MK Added check for existence of input file 
+  !+ad_hist  28/10/16 MK  Removed systems commands and added a subroutine 
+  !+ad_hist               get_DDMonYYTimeZone to get date and time
+  !+ad_hist  04/11/16 MK  Added check for existence of input file 
+  !+ad_hist  03/02/17 JM  Fixed input file existence check, now fileprefix defined before init
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !+ad_docs  Box file F/RS/CIRE5523/PWF (up to 15/01/96)
@@ -78,59 +79,75 @@ program process
   character(len = 130) :: line
   character(len = 10)  :: fmtAppend
   character(len = 50) :: inFile
-  character(len = 15) :: outFile 
+  character(len = 50) :: outFile 
   integer :: iost
   logical :: inExist
+  integer :: nargs
+
+  !  Obtain a file prefix from a command line argument
+  !  (uses Fortran 2003 routines)
+  nargs = command_argument_count()
+  
+  if (nargs == 0) then
+     fileprefix = ''
+  else
+     call get_command_argument(1, fileprefix)
+  end if
 
   inFile = trim(fileprefix)//"IN.DAT"
   outFile = trim(fileprefix)//"OUT.DAT"
   inquire(file = inFile, exist = inExist)
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   mainRun : if (inExist) then
-  !  Initialise things
-     call init
+    !  Initialise things
+    call init
   
-  ! Run built-in tests.
-  ! These are distinct from the tests that are dependent on 'unit_test'.
-     if (run_tests == 1) call runtests
+    ! Run built-in tests.
+    ! These are distinct from the tests that are dependent on 'unit_test'.
+    if (run_tests == 1) call runtests
 
-  !  Call equation solver (HYBRD)
-     call eqslv(ifail)
+     ! Call equation solver (HYBRD)
+    call eqslv(ifail)
 
-  !  Call routine to do optimisation scans
-     if (ioptimz >= 0) then
-        call scan
-     else
-        call final(ifail)
-     end if
+     ! Call routine to do optimisation scans
+    if (ioptimz >= 0) then
+       call scan
+    else
+       call final(ifail)
+    end if
 
-     call show_errors
+    call show_errors
 
-     call oheadr(nout,'End of PROCESS Output')
-     call oheadr(iotty,'End of PROCESS Output')
-     call oheadr(nout,'Copy of PROCESS Input Follows')
+    call oheadr(nout,'End of PROCESS Output')
+    call oheadr(iotty,'End of PROCESS Output')
+    call oheadr(nout,'Copy of PROCESS Input Follows')
 
-     close(unit = nin)
-     close(unit = nout)
-     close(unit = nplot)
-     close(unit = mfile)
-     if (verbose == 1) close(unit = vfile)
+    close(unit = nin)
+    close(unit = nout)
+    close(unit = nplot)
+    close(unit = mfile)
+    if (verbose == 1) close(unit = vfile)
 
-     open(unit = 100, FILE = inFile)
-     open(unit = 101, FILE = outFile, ACCESS = "append")
-     fmtAppend = '(A)'
-     DO
-        read(100, fmtAppend, IOSTAT = iost) line
-        write(101, fmtAppend) trim(line)
-        if(iost < 0) exit                   ! exit if End of line is reached in IN.DAT
-     END DO
-     close(unit = 100)
-     close(unit = 101)
+    open(unit = 100, FILE = inFile)
+    open(unit = 101, FILE = outFile, ACCESS = "append")
+    fmtAppend = '(A)'
+    DO
+      read(100, fmtAppend, IOSTAT = iost) line
+      write(101, fmtAppend) trim(line)
+      if(iost < 0) exit                   ! exit if End of line is reached in IN.DAT
+    END DO
+    close(unit = 100)
+    close(unit = 101)
+
   else mainRun
-      write(*, *) "There is no input file named"//inFile//" in the analysis folder"
+
+    write(*, *) "There is no input file named"//inFile//" in the analysis folder"
+
   end if mainRun
 
-    end program process
+end program process
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -187,8 +204,7 @@ subroutine init
   !  Arguments
 
   !  Local variables
-  integer :: i, nargs
-  !character(len=100) :: fileprefix, executable
+  integer :: i
   character(len=120) :: executable
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -198,16 +214,6 @@ subroutine init
 
   !  Initialise the program variables
   call initial
-
-  !  Obtain a file prefix from a command line argument
-  !  (uses Fortran 2003 routines)
-
-  nargs = command_argument_count()
-  if (nargs == 0) then
-     fileprefix = ''
-  else
-     call get_command_argument(1, fileprefix)
-  end if
 
   !  Open the input/output external files
   open(unit=nin,file=trim(fileprefix)//'IN.DAT',status='old')

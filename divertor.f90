@@ -83,6 +83,7 @@ contains
     !+ad_hist  17/10/12 PJK Added divertor_variables
     !+ad_hist  14/11/13 PJK Removed upper limit on plsep
     !+ad_hist  19/06/14 PJK Removed sect?? flags
+    !+ad_hist  02/02/17 JM  Replaced rstrko with rspo
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -136,7 +137,7 @@ contains
     !  Strike point field values
 
     bpstk = bp * 0.45D0
-    btstk = bt * rmajor/rstrko
+    btstk = bt * rmajor/rspo
     rbpbt = bpstk / btstk
 
     !  Parallel diffusivity in the plasma scrapeoff (m2/s)
@@ -149,8 +150,8 @@ contains
 
     !  Divertor area and radius ratio
 
-    rsrd = (rnull + rmajor + rminor) / (rnull + rstrko)
-    diva = pi* (rnull + rstrko) * plsep
+    rsrd = (rnull + rmajor + rminor) / (rnull + rspo)
+    diva = pi* (rnull + rspo) * plsep
     adas = diva/sarea
 
     !  Main plasma separatrix area to divertor (and power fraction)
@@ -167,7 +168,7 @@ contains
 
     tconl = 2.5D0 * rmajor * q * sqrt(1.0D0 + 1.0D0/(q*aspect)**2)
     dtheta = plsep/rminor
-    dconl = 2.5D0 * rstrko * q * dtheta * &
+    dconl = 2.5D0 * rspo * q * dtheta * &
          sqrt(1.0D0 + 1.0D0/(q*aspect)**2)
     rconl = dconl / tconl
 
@@ -241,7 +242,7 @@ contains
     call ovarre(outfile,'B_p / B_t strike point','(rbpbtc)',rbpbt)
     call ovarre(outfile,'Connection length ratio','(rconl)',rconl)
     call ovarre(outfile,'Radius ratio R_s/R_d','(rsrd)',rsrd)
-    call ovarre(outfile,'Strike radius (m)','(rstrko)',rstrko)
+    call ovarre(outfile,'Strike radius (m)','(rspo)',rspo)
     call ovarre(outfile,'Connection length (m)','(tconl)',tconl)
 
     !  Quantities calculated by the Harrison model

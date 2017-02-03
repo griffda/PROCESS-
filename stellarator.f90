@@ -586,7 +586,7 @@ contains
     !+ad_docs  Stellarator Plasma Geometry Model for the Systems
     !+ad_docc  Code PROCESS, F. Warmer, 19/06/2013
     !+ad_docs  J. Geiger, IPP Greifswald internal document:  'Darstellung von
-    !+ad_docc  ineinandergeschachtelten toroidal geschlossenen Flächen mit
+    !+ad_docc  ineinandergeschachtelten toroidal geschlossenen Flï¿½chen mit
     !+ad_docc  Fourierkoeffizienten' ('Representation of nested, closed
     !+ad_docc  surfaces with Fourier coefficients')
     !
@@ -907,7 +907,7 @@ contains
 
     !  Outer divertor strike point radius, set equal to major radius
 
-    rstrko = rmajor
+    rspo = rmajor
 
     !  First wall area: scales with minor radius
 
