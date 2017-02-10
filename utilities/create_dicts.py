@@ -44,7 +44,7 @@ SOURCEDIR = ROOTDIR
 #DICT_DEFAULT. This is used for adding important variables to the dictionary
 #that the script fails to parse.
 FIXEDVALS = {"ngc2" : 18, "nimp" : 14}
-FIXEDDEFS = {"impdir" : ROOTDIR+"/impuritydata",
+FIXEDDEFS = {"impdir" : ROOTDIR+"/data/impuritydata",
              "sweep" : [0.0] * 200
             }
 

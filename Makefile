@@ -353,7 +353,7 @@ cleandoc:
 otherfiles = Makefile setrootdir vardes.html \
              *.tex *.eps process.pdf \
              autodoc.f90 adheader.src adfooter.src \
-             impuritydata/* fluids/* \
+             data/* \
              utilities/*.py utilities/*.conf utilities/*.json \
              utilities/process_io_lib/*.py utilities/process_io_lib/*.json \
              utilities/processgui/*

@@ -118,11 +118,11 @@ module impurity_radiation_module
 
     !  Obtain the root directory
 
-#include "root.dir"
+  include "root.dir"
 
   !+ad_vars  impdir /'/home/PROCESS/[branch]/impuritydata'/ :
   !+ad_varc           Directory containing impurity radiation data files
-  character(len=80), public :: impdir = ROOTDIR//'/impuritydata/'
+  character(len=80), public :: impdir = ROOTDIR//'/data/impuritydata/'
 
   !+ad_vars  impvar /9 (argon)/ : fimp element value to be varied if iteration
   !+ad_varc                       variable number 102 is turned on
