@@ -350,7 +350,7 @@ cleandoc:
 # from the current directory
 # (excludes input files IN.DAT, device.dat)
 
-otherfiles = Makefile setrootdir vardes.html \
+otherfiles = Makefile vardes.html \
              *.tex *.eps process.pdf \
              autodoc.f90 adheader.src adfooter.src \
              data/* \
@@ -381,11 +381,11 @@ autodoc: autodoc.f90
 html: autodoc
 	@ cat $(source) | ./autodoc
 
-userguide: process.tex
-	@ latex process
-	@ latex process # to make sure cross-references are included
-	@ latex process # to make doubly sure cross-references are included
-	@ dvipdf process
+userguide: documentation/process.tex
+	@ pdflatex documentation/process
+	@ pdflatex documentation/process
+	@ mv -t documentation process.pdf process.log
+	@ rm process.lo* process.toc process.out *.aux documentation/*.aux
 
 doc: html userguide
 
