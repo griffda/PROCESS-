@@ -142,6 +142,7 @@ module process_input
   use constraint_variables
   use cost_variables
   use current_drive_variables
+  use divertor_Kallenbach_variables
   use divertor_variables
   use error_handling
   use fwbs_variables
@@ -164,7 +165,7 @@ module process_input
   implicit none
 
   private
-  public :: input, check_range_int, check_range_real
+  public :: input, check_range_int, check_range_real, lower_case
   integer, public, parameter :: nin = 10
 
 #ifdef unit_test
@@ -392,6 +393,7 @@ contains
     !+ad_hist  06/12/16 HL  Added ftaulimit as input variable
     !+ad_hist  19/01/17 JM  Added gamma_ecrh as an input variable
     !+ad_hist  03/02/17 JM  Added psepbqarmax as input
+    !+ad_hist  08/02/17 JM  Added Kallenbach inputs
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -593,6 +595,9 @@ contains
        case ('fgwped')
           call parse_real_variable('fgwped', fgwped, 0.01D0, 5.0D0, &
                'Fraction of n_G at pedestal top')
+       case ('fgwsep')
+          call parse_real_variable('fgwsep', fgwsep, 0.001D0, 1.0D0, &
+               'Fraction of n_G at separatrix')
        case ('fhe3')
           call parse_real_variable('fhe3', fhe3, 0.0D0, 1.0D0, &
                'Helium-3 fuel fraction')
@@ -759,6 +764,9 @@ contains
        case ('neped')
           call parse_real_variable('neped', neped, 0.0D0, 1.0D21, &
                'Electron density pedestal height (/m3)')
+       case ('neratio')
+          call parse_real_variable('neratio', neratio, 0.001D0, 1.0D0, &
+               'ratio of mean SOL density at OMP to separatrix density at OMP') 
        case ('nesep')
           call parse_real_variable('nesep', nesep, 0.0D0, 1.0D21, &
                'Electron density at separatrix (/m3)')
@@ -1145,6 +1153,43 @@ contains
        case ('tramp')
           call parse_real_variable('tramp', tramp, 0.0D0, 1.0D4, &
                'Initial charge time for PF coils (s)')
+        
+       ! Divertor settings: 2016 Kallenbach model (2016/07/04)
+
+       case ('lambda_target')
+          call parse_real_variable('lambda_target', lambda_target, 0.001D0, 1.0D0, &
+               'SOL power fall-off length at the target, perpendicular to field [m]')
+       case ('lambda_q')
+          call parse_real_variable('lambda_q', lambda_q, 0.0001D0, 1.0D0, &
+               'SOL power fall-off length at the outer midplane, perpendicular to field [m]')
+       case ('lcon')
+          call parse_real_variable('lcon', lcon, 1.0D0, 1.0D4, &
+               'Connection length: length of a "typical" field-line in the SOL from outer midplane to divertor target [m]')
+       case ('netau')
+          call parse_real_variable('netau', netau, 0.1D0, 1.0D5, &
+               'Parameter describing the degree to which local ionisation equilibrium is reached in the SOL. [ms.1e20/m3]')
+       case ('kallenbach_switch')
+          call parse_int_variable('kallenbach_switch', kallenbach_switch, 0, 1, &
+               'Switch to turn on the 1D Kallenbach divertor model (1=on, 0=off)')
+       case ('kallenbach_tests')
+          call parse_int_variable('kallenbach_tests', kallenbach_tests, 0, 1, &
+               'Switch to turn on tests of the 1D Kallenbach divertor model (1=on, 0=off)')
+
+       case ('targetangle')
+          call parse_real_variable('targetangle', targetangle, 0.1D0, 90.0D0, &
+               'Angle between field-line and divertor target (degrees)')
+       case ('ttarget')
+          call parse_real_variable('ttarget', ttarget, 0.1D0, 1.0D4, &
+               'Plasma temperature adjacent to divertor sheath [eV]')
+       case ('qtargettotal')
+          call parse_real_variable('qtargettotal', qtargettotal, 0.1D0, 1.0D8, &
+               'Power density on target including surface recombination [W/m2]')
+       case ('impurity_enrichment')
+          call parse_real_variable('impurity_enrichment', impurity_enrichment, 0.1D0, 20.0D0, &
+               'Ratio of impurity concentrations in SOL to confined plasma')
+       case ('helium_enrichment')
+          call parse_real_variable('helium_enrichment', helium_enrichment, 0.1D0, 20.0D0, &
+               'Ratio of helium concentration in SOL to confined plasma')
 
           !  Divertor settings
 

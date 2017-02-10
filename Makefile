@@ -70,9 +70,12 @@ source = \
  caller.f90 \
  commons.for \
  comtrn.for \
+ costs.f90 \
+ costs_2015.f90 \
  constraint_equations.f90 \
  current_drive.f90 \
  divertor.f90 \
+ divertor_ode.f90 \
  error_handling.f90 \
  evaluators.f90 \
  fispact.f90 \
@@ -89,6 +92,7 @@ source = \
  machine_build.f90 \
  maths_library.f90 \
  numerics.f90 \
+ ode.f90 \
  output.f90 \
  pfcoil.f90 \
  physics.f90 \
@@ -97,6 +101,8 @@ source = \
  plasma_profiles.f90 \
  process.f90 \
  pulse.f90 \
+ read_radiation.f90 \
+ read_and_get_atomic_data.f90 \
  refprop.f \
  refprop_interface.f90 \
  rfp.f90 \
@@ -108,17 +114,18 @@ source = \
  stellarator_fwbs.f90 \
  structure.f90 \
  tfcoil.f90 \
- vacuum.f90 \
- costs.f90 \
- costs_2015.f90
+ vacuum.f90
 
 object = \
  availability.o \
  buildings.o \
  caller.o \
  constraint_equations.o \
+ costs.o \
+ costs_2015.o \
  current_drive.o \
  divertor.o \
+ divertor_ode.o \
  error_handling.o \
  evaluators.o \
  fispact.o \
@@ -135,6 +142,7 @@ object = \
  machine_build.o \
  maths_library.o \
  numerics.o \
+ ode.o \
  output.o \
  pfcoil.o \
  physics.o \
@@ -143,6 +151,8 @@ object = \
  plasma_profiles.o \
  process.o \
  pulse.o \
+ read_radiation.o \
+ read_and_get_atomic_data.o \
  refprop.o \
  refprop_interface.o \
  rfp.o \
@@ -154,9 +164,7 @@ object = \
  stellarator_fwbs.o \
  structure.o \
  tfcoil.o \
- vacuum.o \
- costs.o \
- costs_2015.o
+ vacuum.o 
 
 ###### Architecture specifics #######
 #
@@ -242,7 +250,7 @@ default: process.exe
 
 availability.o: global_variables.o output.o maths_library.o
 buildings.o: global_variables.o output.o
-caller.o: availability.o buildings.o costs.o costs_2015.o current_drive.o divertor.o \
+caller.o: availability.o buildings.o costs.o costs_2015.o current_drive.o divertor.o divertor_ode.o \
   global_variables.o hcll.o hcpb.o ife.o machine_build.o numerics.o output.o pfcoil.o physics.o \
   plant_power.o plasma_geometry.o pulse.o rfp.o sctfcoil.o startup.o structure.o \
   stellarator.o tfcoil.o vacuum.o
@@ -251,6 +259,7 @@ costs.o: error_handling.o global_variables.o output.o
 costs_2015.o: error_handling.o global_variables.o output.o hcpb.o
 current_drive.o: error_handling.o global_variables.o output.o plasma_profiles.o
 divertor.o: error_handling.o global_variables.o output.o
+divertor_ode.o:read_and_get_atomic_data.o impurity_radiation.o read_radiation.o input.o ode.o
 error_handling.o: output.o fson_library.o root.dir
 evaluators.o: error_handling.o global_variables.o numerics.o output.o
 fispact.o: global_variables.o output.o
@@ -269,6 +278,7 @@ iteration_variables.o: error_handling.o global_variables.o numerics.o
 machine_build.o: error_handling.o global_variables.o output.o
 maths_library.o: global_variables.o
 numerics.o: global_variables.o maths_library.o
+ode.o:
 output.o: global_variables.o numerics.o
 pfcoil.o: error_handling.o global_variables.o maths_library.o output.o sctfcoil.o
 physics.o: current_drive.o error_handling.o global_variables.o impurity_radiation.o \
@@ -277,11 +287,13 @@ plant_power.o: error_handling.o global_variables.o output.o
 plasma_geometry.o: global_variables.o
 plasma_profiles.o: error_handling.o global_variables.o maths_library.o
 process.o: availability.o buildings.o constraint_equations.o costs.o current_drive.o \
-  divertor.o error_handling.o evaluators.o global_variables.o hcll.o hcpb.o ife.o \
-  impurity_radiation.o input.o machine_build.o maths_library.o numerics.o output.o \
-	pfcoil.o physics.o plant_power.o pulse.o rfp.o scan.o sctfcoil.o startup.o \
-	stellarator.o structure.o tfcoil.o vacuum.o
+  divertor.o divertor_ode.o error_handling.o evaluators.o global_variables.o hcll.o hcpb.o \
+  ife.o impurity_radiation.o input.o machine_build.o maths_library.o numerics.o output.o \
+  pfcoil.o physics.o plant_power.o pulse.o rfp.o scan.o sctfcoil.o startup.o \
+  stellarator.o structure.o tfcoil.o vacuum.o
 pulse.o: error_handling.o global_variables.o maths_library.o output.o physics.o
+read_and_get_atomic_data.o: maths_library.o read_radiation.o
+read_radiation.o: maths_library.o impurity_radiation.o
 refprop.o:
 	${FORTRAN} ${FFLAGS_LIB} -c refprop.f -o refprop.o
 refprop_interface.o: error_handling.o refprop.o

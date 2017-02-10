@@ -81,7 +81,8 @@ module physics_module
   !+ad_hist  13/05/14 PJK Added plasma_composition routine, impurity_radiation_module
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  01/10/14 PJK Added numerics
-  !+ad_hist  20/05/15  RK Added iscdens, fgwped for pedestal density scaling
+  !+ad_hist  20/05/15 RK  Added iscdens, fgwped for pedestal density scaling
+  !+ad_hist  08/02/17 JM  Added Kallenbach model parameters
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -92,6 +93,7 @@ module physics_module
   use constraint_variables
   use current_drive_module
   use current_drive_variables
+  use divertor_kallenbach_variables
   use divertor_variables
   use error_handling
   use fwbs_variables
@@ -258,6 +260,7 @@ contains
 
     if ((ipedestal == 1).and.(iscdens == 1)) then
       neped = fgwped * 1.0D14 * plascur/(pi*rminor*rminor)
+      nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
     end if
 
     call plasma_profiles
@@ -5662,11 +5665,16 @@ contains
     call ovarrf(outfile,'Effective charge','(zeff)',zeff, 'OP ')
     call ovarrf(outfile,'Mass weighted effective charge','(zeffai)',zeffai, 'OP ')
 
+
     call ovarin(outfile,'Plasma profile model','(ipedestal)',ipedestal)
     call ovarrf(outfile,'Density profile factor','(alphan)',alphan)
     call ovarrf(outfile,'Density pedestal r/a location','(rhopedn)',rhopedn)
     call ovarre(outfile,'Electron density pedestal height (/m3)','(neped)',neped)
+    fgwped = neped/dlimit(7)
+    fgwsep = nesep/dlimit(7)
+    call ovarre(outfile,'Electron density at pedestal / nGW','(fgwped)',fgwped)
     call ovarre(outfile,'Electron density at separatrix (/m3)','(nesep)',nesep)
+    call ovarre(outfile,'Electron density at separatrix / nGW','(fgwsep)',fgwsep)
     call ovarrf(outfile,'Temperature profile index','(alphat)',alphat)
     call ovarrf(outfile,'Temperature profile index beta','(tbeta)',tbeta)
     call ovarrf(outfile,'Temperature pedestal r/a location','(rhopedt)',rhopedt)

@@ -79,6 +79,7 @@ subroutine loadxc
   !+ad_hist  26/11/15 RK  Added ftaucq (113)
   !+ad_hist  10/11/16 HL  Added fradwall (116)
   !+ad_hist  19/01/17 JM  Added fpsepbqar (117)
+  !+ad_hist  08/02/17 JM  Added fpsep, tesep and ttarget  (118, 119, 120)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -88,6 +89,7 @@ subroutine loadxc
   use constraint_variables
   use cost_variables
   use current_drive_variables
+  use divertor_kallenbach_variables
   use divertor_variables
   use error_handling
   use fwbs_variables
@@ -246,6 +248,9 @@ subroutine loadxc
      case (115) ; xcm(i) = fpoloidalpower
      case (116) ; xcm(i) = fradwall
      case (117) ; xcm(i) = fpsepbqar
+     case (118) ; xcm(i) = fpsep
+     case (119) ; xcm(i) = tesep
+     case (120) ; xcm(i) = ttarget
     
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -368,6 +373,7 @@ subroutine convxc(xc,nn)
   !+ad_hist  26/11/15 RK  Added ftaucq (113)
   !+ad_hist  10/11/16 HL  Added fradwall (116)
   !+ad_hist  19/01/17 JM  Added fpsepbqar (117)
+  !+ad_hist  08/02/17 JM  Added fpsep, tesep, ttarget (118, 119, 120)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -377,6 +383,7 @@ subroutine convxc(xc,nn)
   use constraint_variables
   use cost_variables
   use current_drive_variables
+  use divertor_kallenbach_variables
   use divertor_variables
   use error_handling
   use fwbs_variables
@@ -526,8 +533,12 @@ subroutine convxc(xc,nn)
      case (115) ; fpoloidalpower = xc(i)/scale(i)
      case (116) ; fradwall = xc(i)/scale(i)
      case (117) ; fpsepbqar = xc(i)/scale(i)
+     case (118) ; fpsep = xc(i)/scale(i)
+     case (119) ; tesep = xc(i)/scale(i)
+     case (120) ; ttarget = xc(i)/scale(i)
 
      case default
+     
         call report_error(57)
 
      end select

@@ -69,6 +69,7 @@ program process
   use process_output
   use scan_module
   use numerics
+  use divertor_Kallenbach_variables, only:kallenbach_tests
 
   implicit none
 
@@ -107,6 +108,12 @@ program process
     ! Run built-in tests.
     ! These are distinct from the tests that are dependent on 'unit_test'.
     if (run_tests == 1) call runtests
+
+    if(kallenbach_tests==1) then
+      write(*,*)'Running test of Kallenbach divertor model.  Then stop.'
+      call Kallenbach_test()
+      stop
+    endif
 
      ! Call equation solver (HYBRD)
     call eqslv(ifail)
@@ -312,7 +319,7 @@ subroutine inform(progid)
   character(len=10) :: progname
   character(len=120) :: executable
   character(len=*), parameter :: progver = &  !  Beware: keep exactly same format...
-       '1.0.6    Release Date :: 2017-01-25'
+       '1.0.7    Release Date :: 2017-02-10'
   character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
   integer :: unit
@@ -1485,6 +1492,8 @@ subroutine output(outfile)
   use costs_2015_module
   use cost_variables
   use current_drive_module
+  use divertor_kallenbach_variables
+  use divertor_ode, only: divertor_kallenbach
   use divertor_module
   use error_handling
   use fwbs_module
@@ -1595,7 +1604,22 @@ subroutine output(outfile)
   ! Divertor Model !
   !!!!!!!!!!!!!!!!!!
 
-  call divcall(outfile,1)
+  if(Kallenbach_switch.eq.1) then
+    call divertor_Kallenbach(rmajor=rmajor,rminor=rminor, &
+      bt=bt,plascur=plascur, bvert=bvert,q=q, &
+      verboseset=.false., lambda_tar=lambda_target,lambda_omp=lambda_q, &
+      Ttarget=Ttarget,qtargettotal=qtargettotal,            &
+      targetangle=targetangle,Lcon=Lcon, netau_in=netau, &
+      unit_test=.false.,abserrset=1.d-6, helium_enrichment=helium_enrichment, &
+      impurity_enrichment=impurity_enrichment,              &
+      psep_kallenbach=psep_kallenbach, tomp=tomp, neomp=neomp, &
+      outfile=nout,iprint=1 )
+
+  else 
+    ! Old Divertor Model ! Comment this out MDK 30/11/16
+    call divcall(outfile,1)
+
+  end if
 
   ! Machine Build Model !
   !!!!!!!!!!!!!!!!!!!!!!!
@@ -2171,3 +2195,4 @@ subroutine get_DDMonYYTimeZone(dt_time)
 ! 413      HCLL model now implemented. See milestone march 2016 for details.
 ! 1.0.0    Master release and update of versioning format. See release_notes_1_0_0.md
 ! 1.0.6    Version used for start of 2017 baseline work
+! 1.0.7    Kallenbach model implemented but not fully tested

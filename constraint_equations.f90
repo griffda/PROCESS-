@@ -43,7 +43,9 @@ module constraints
   use build_variables
   use constants
   use constraint_variables
+  use cost_variables
   use current_drive_variables
+  use divertor_kallenbach_variables
   use divertor_variables
   use error_handling
   use fwbs_variables
@@ -58,7 +60,6 @@ module constraints
   use stellarator_variables
   use tfcoil_variables
   use times_variables
-  use cost_variables
   use vacuum_variables
 
   implicit none
@@ -169,6 +170,7 @@ contains
     !+ad_hist  23/06/16 JM  Removed equation 38. No longer used anywhere in the code
     !+ad_hist  09/11/16 HL  Added new eqn 67
     !+ad_hist  25/01/17 JM  Added new eqn 68 for psep*b/q*A*r limit
+    !+ad_hist  08/02/17 JM  Added constraint equations 69,70 and 71 for Kallenbach model
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
@@ -1472,6 +1474,48 @@ contains
              err(i) = psepbqarmax * cc(i)
              symbol(i) = '<'
              units(i) = 'MWT/m'
+           end if
+
+       case (69)  ! ensure separatrix power is less than value from Kallenbach divertor
+
+           ! fpsep             | f-value for consistency of two values of separatrix power      
+           ! psep_kallenbach   | Power conducted through the separatrix, as calculated by the divertor model [W]. 
+           ! pdivt             |  power to conducted to the divertor region (MW)
+           cc(i) = 1.0d0 - fpsep * (psep_kallenbach/1.0d6) / pdivt
+
+           if (present(con)) then
+             con(i) = psep_kallenbach/1.0d6
+             err(i) = psep_kallenbach/1.0d6 * cc(i)
+             symbol(i) = '<'
+             units(i) = 'MW'
+           end if
+
+       case (70)  ! Separatrix temperature consistency
+
+           ! tomp   | separatrix temperature calculated by the Kallenbach divertor model [eV]
+           ! tesep  | electron temperature at separatrix [keV]
+           cc(i) = 1.0D0 - tomp/(1000.0D0*tesep)
+
+           if (present(con)) then
+             con(i) = tomp
+             err(i) = tomp* cc(i)
+             symbol(i) = '='
+             units(i) = 'eV'
+           end if
+
+       case (71)  ! Separatrix density consistency
+
+           ! neomp    | Mean SOL density at OMP calculated by the Kallenbach divertor model [m-3]
+           ! nesep    | electron density at separatrix [m-3]
+           ! neratio  | ratio of mean SOL density at OMP to separatrix density at OMP
+
+           cc(i) = 1.0D0 - neomp/(nesep*neratio)
+
+           if (present(con)) then
+             con(i) = neomp
+             err(i) = neomp* cc(i)
+             symbol(i) = '='
+             units(i) = 'm-3'
            end if
 
        case default

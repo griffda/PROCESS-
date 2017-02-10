@@ -52,7 +52,7 @@ module refprop_interface
 
   !  Obtain the root directory
 
-#include "root.dir"
+  include "root.dir"
 
   character(len=60) :: fluids_dir = ROOTDIR//'/fluids/'
 

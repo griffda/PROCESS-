@@ -152,6 +152,8 @@ module physics_variables
   !+ad_hist  17/06/15 MDK Added Murari scaling (isc=40)
   !+ad_hist  11/09/15 MDK res_time
   !+ad_hist  02/11/16 HL  Added Petty and Lang confinement scalings (isc=41/42)
+  !+ad_hist  08/02/17 JM  Added fgwsep the fraction of Greenwald density to set as separatrix density
+  !+ad_hist  08/02/17 JM  Gave teped, tesep, neped and nesep non-zero defaults
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -282,9 +284,12 @@ module physics_variables
   !+ad_vars  ffwal /0.92/ : factor to convert plasma surface area to first wall
   !+ad_varc                 area in neutron wall load calculation (iwalld=1)
   real(kind(1.0D0)) :: ffwal = 0.92D0
-  !+ad_vars  fgwped /0.80/ : fraction of Greenwald density to set as pedestal-top density
+  !+ad_vars  fgwped /0.85/ : fraction of Greenwald density to set as pedestal-top density
   !+ad_varc                  (ipedestal=1, iscdens=1)
-  real(kind(1.0D0)) :: fgwped = 0.80D0
+  real(kind(1.0D0)) :: fgwped = 0.85D0
+  !+ad_vars  fgwsep /0.50/ : fraction of Greenwald density to set as separatrix density
+  !+ad_varc                  (ipedestal=1, iscdens=1)
+  real(kind(1.0D0)) :: fgwsep = 0.50D0
   !+ad_vars  fhe3 /0.0/ : helium-3 fuel fraction
   real(kind(1.0D0)) :: fhe3 = 0.0D0
   !+ad_vars  figmer : physics figure of merit (= plascur*aspect**sbar, where sbar=1)
@@ -382,10 +387,10 @@ module physics_variables
   !+ad_varc             <LI> = 0 set pedestal-top density manually using neped;
   !+ad_varc             <LI> = 1 set pedestal-top density as fgwped * Greenwald density limit </UL>
   integer :: iscdens = 0
-  !+ad_vars  neped /0.0/ : electron density of pedestal (/m3) (ipedestal=1)
-  real(kind(1.0D0)) :: neped = 0.0D0
-  !+ad_vars  nesep /0.0/ : electron density at separatrix (/m3) (ipedestal=1)
-  real(kind(1.0D0)) :: nesep = 0.0D0
+  !+ad_vars  neped /0.0/ : electron density of pedestal [m-3] (ipedestal=1)
+  real(kind(1.0D0)) :: neped = 8.0D19
+  !+ad_vars  nesep /0.0/ : electron density at separatrix [m-3] (ipedestal=1)
+  real(kind(1.0D0)) :: nesep = 5.0D19
   !+ad_vars  rhopedn /1.0/ : r/a of density pedestal (ipedestal=1)
   real(kind(1.0D0)) :: rhopedn = 1.0D0
   !+ad_vars  rhopedt /1.0/ : r/a of temperature pedestal (ipedestal=1)
@@ -393,9 +398,9 @@ module physics_variables
   !+ad_vars  tbeta /2.0/ : temperature profile index beta  (ipedestal=1)
   real(kind(1.0D0)) :: tbeta = 2.0D0
   !+ad_vars  teped /0.0/ : electron temperature of pedestal (keV) (ipedestal=1)
-  real(kind(1.0D0)) :: teped = 0.0D0
+  real(kind(1.0D0)) :: teped = 1.0D0
   !+ad_vars  tesep /0.0/ : electron temperature at separatrix (keV) (ipedestal=1)
-  real(kind(1.0D0)) :: tesep = 0.0D0
+  real(kind(1.0D0)) :: tesep = 0.1D0
 
   !+ad_vars  iprofile /1/ : switch for current profile consistency:<UL>
   !+ad_varc             <LI> = 0 use input values for alphaj, rli, dnbeta
@@ -902,6 +907,79 @@ module current_drive_variables
 
 end module current_drive_variables
 
+! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+module divertor_kallenbach_variables
+
+  !+ad_name  divertor_kallenbach_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  tokamak divertor components, Kallenbach model, issue #400
+  !+ad_type  Module
+  !+ad_auth  Michael Kovari, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_args  N/A
+  !+ad_desc  This module contains global variables relating to tokamak
+  !+ad_desc  divertor components.
+  !+ad_prob  None
+  !+ad_call  None
+  !+ad_hist  04/07/16 MDK Initial version of module
+  !+ad_stat  Okay
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  implicit none
+
+  public
+
+  !+ad_vars  kallenbach_switch /0/ : Switch to turn on the 1D Kallenbach divertor model (1=on, 0=off)
+  integer :: kallenbach_switch = 0
+
+  !+ad_vars  kallenbach_tests /0/ : Switch to run tests of 1D Kallenbach divertor model (1=on, 0=off)
+  integer :: kallenbach_tests = 0
+  
+  !+ad_vars  lambda_target /0.005/ : SOL power fall-off length at the target, perpendicular to field [m]
+  real(kind(1.0D0)) :: lambda_target = 0.005D0
+
+  !+ad_vars  lambda_q /0.002/ : SOL power fall-off length at the outer midplane, perpendicular to field [m]
+  real(kind(1.0D0)) :: lambda_q = 0.002D0
+
+  !+ad_vars  lcon : Connection length: length of a "typical" field-line in the SOL from outer midplane 
+  !+ad_varc         to divertor target [m].  Calculated if not input
+  real(kind(1.0D0)) :: lcon = -1.0D0
+
+  !+ad_vars  netau /0.5/ : Parameter describing the departure from local ionisation equilibrium in the SOL. [ms.1e20/m3]
+  real(kind(1.0D0)) :: netau = 0.5D0
+
+  !+ad_vars  targetangle /10.0/ : Angle between field-line and divertor target (degrees)
+  real(kind(1.0D0)) :: targetangle = 10.0D0
+
+  !+ad_vars  ttarget /2.3/ : Plasma temperature adjacent to divertor sheath [eV] (iteration variable 120)
+  real(kind(1.0D0)) :: ttarget = 2.3D0
+
+  !+ad_vars  qtargettotal /5.0e6/ : Power density on target including surface recombination [W/m2]
+  real(kind(1.0D0)) :: qtargettotal = 5.0D6
+
+  !+ad_vars  helium_enrichment /1.0/ : Ratio of helium concentration in SOL to confined plasma 
+  real(kind(1.0D0)) :: helium_enrichment = 1.0D0
+
+  !+ad_vars  impurity_enrichment /5.0/ : Ratio of impurity concentrations in SOL to confined plasma 
+  real(kind(1.0D0)) :: impurity_enrichment = 5.0D0
+
+  !+ad_vars  psep_kallenbach : Power conducted through the separatrix, as calculated by the divertor model [W]
+  !+ad_varc                    Not equal to pdivt unless constraint is imposed.
+  real(kind(1.0D0)) :: psep_kallenbach = 0.0D0
+
+  !+ad_vars  tomp : separatrix temperature calculated by the Kallenbach divertor model [eV]  
+  real(kind(1.0D0)) :: tomp = 0.0D0
+
+  ! Issue #457
+  !+ad_vars  neomp : Mean SOL density at OMP calculated by the Kallenbach divertor model [m-3]
+  real(kind(1.0D0)) :: neomp = 0.0D0
+
+  !+ad_vars  neratio : ratio of mean SOL density at OMP to separatrix density at OMP
+  real(kind(1.0D0)) :: neratio = 0.75D0
+  
+end module divertor_kallenbach_variables
+  
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module divertor_variables
@@ -3719,6 +3797,9 @@ module constraint_variables
   !+ad_varc                   (constraint equation 66, iteration variable 115)
   real(kind(1.0D0)) :: fpoloidalpower = 1.0D0
 
+  !+ad_vars  fpsep /1.0/ : f-value to ensure separatrix power is less than value from Kallenbach divertor
+  !+ad_varc                   (constraint equation 69, iteration variable 118)
+  real(kind(1.0D0)) :: fpsep = 1.0D0
 
 end module constraint_variables
 

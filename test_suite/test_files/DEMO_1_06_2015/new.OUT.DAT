@@ -29,13 +29,13 @@
  
    Program : ./process.exe
    Version : 1.0.6    Release Date :: 2017-01-25
- Date/time :  3 Feb 2017 16:16:52 +00:00(hh:mm) UTC
+ Date/time : 10 Feb 2017 11:22:33 +00:00(hh:mm) UTC
       User : morrisj
  Directory : /home/morrisj/Work/fortran/divertor_merge/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.6 : Run on  3 Feb 2017 16:16:52 +00:00(hh:mm) UTC by localhost.localdomain
+ PROCESS 1.0.6 : Run on 10 Feb 2017 11:22:33 +00:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)
@@ -360,7 +360,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Density profile factor                                                   (alphan)                      1.000     
  Density pedestal r/a location                                            (rhopedn)                     0.940     
  Electron density pedestal height (/m3)                                   (neped)                   6.780E+19     
+ Electron density at pedestal / nGW                                       (fgwped)                  9.678E-01     
  Electron density at separatrix (/m3)                                     (nesep)                   2.000E+19     
+ Electron density at separatrix / nGW                                     (fgwsep)                  2.855E-01     
  Temperature profile index                                                (alphat)                      1.450     
  Temperature profile index beta                                           (tbeta)                       2.000     
  Temperature pedestal r/a location                                        (rhopedt)                     0.940     
@@ -1798,7 +1800,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Density profile factor                                                   (alphan)                      1.000     
  Density pedestal r/a location                                            (rhopedn)                     0.940     
  Electron density pedestal height (/m3)                                   (neped)                   6.780E+19     
+ Electron density at pedestal / nGW                                       (fgwped)                  9.678E-01     
  Electron density at separatrix (/m3)                                     (nesep)                   2.000E+19     
+ Electron density at separatrix / nGW                                     (fgwsep)                  2.855E-01     
  Temperature profile index                                                (alphat)                      1.450     
  Temperature profile index beta                                           (tbeta)                       2.000     
  Temperature pedestal r/a location                                        (rhopedt)                     0.940     
@@ -3236,7 +3240,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Density profile factor                                                   (alphan)                      1.000     
  Density pedestal r/a location                                            (rhopedn)                     0.940     
  Electron density pedestal height (/m3)                                   (neped)                   6.780E+19     
+ Electron density at pedestal / nGW                                       (fgwped)                  9.678E-01     
  Electron density at separatrix (/m3)                                     (nesep)                   2.000E+19     
+ Electron density at separatrix / nGW                                     (fgwsep)                  2.855E-01     
  Temperature profile index                                                (alphat)                      1.450     
  Temperature profile index beta                                           (tbeta)                       2.000     
  Temperature pedestal r/a location                                        (rhopedt)                     0.940     

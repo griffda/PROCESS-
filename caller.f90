@@ -115,6 +115,7 @@ subroutine caller(xc,nvars)
   !+ad_hist  02/12/14 JM  Added new availability model in caller (avail_2)
   !+ad_hist  13/03/15 JM  Changed calling of blanket models and import of blanket modules
   !+ad_hist  20/05/16 JM  Added more detailed comments to the caller
+  !+ad_hist  10/02/17 JM  Added divertor Kallenbach divertor model
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -127,6 +128,8 @@ subroutine caller(xc,nvars)
   use costs_2015_module
   use current_drive_module
   use divertor_module
+  use divertor_ode
+  use divertor_Kallenbach_variables
   use fwbs_variables
   use ife_module
   use ife_variables
@@ -295,14 +298,35 @@ subroutine caller(xc,nvars)
   ! Divertor Model !
   !!!!!!!!!!!!!!!!!!
 
-  call divcall(nout,0)
+  ! New divertor model
+  if(kallenbach_switch.eq.1) then
+
+    call divertor_Kallenbach(rmajor=rmajor,rminor=rminor, &
+        bt=bt,plascur=plascur,                                &
+        bvert=bvert,q=q,                                      &
+        verboseset=.false.,                                   &
+        lambda_tar=lambda_target,lambda_omp=lambda_q,         &
+        Ttarget=Ttarget,qtargettotal=qtargettotal,            &
+        targetangle=targetangle,Lcon=Lcon, &
+        netau_in=netau,unit_test=.false.,abserrset=1.d-6,     &
+        helium_enrichment=helium_enrichment,                  &
+        impurity_enrichment=impurity_enrichment,              &
+        psep_kallenbach=psep_kallenbach, tomp=tomp, neomp=neomp, &
+        outfile=nout,iprint=0 )                               
+
+  else if(kallenbach_switch.eq.0) then
+  
+    ! Old Divertor Model ! Comment this out MDK 30/11/16
+    call divcall(nout,0)
+
+  end if
 
   ! Structure Model !
   !!!!!!!!!!!!!!!!!!!
 
   call strucall(nout,0)
 
-  ! Tight asepct ratio machine model !
+  ! Tight aspect ratio machine model !
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   if (itart == 1) then

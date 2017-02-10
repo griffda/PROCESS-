@@ -83,6 +83,7 @@ module numerics
   !+ad_hist  10/12/15  RK Net electrical output added as FoM
   !+ad_hist  09/11/16 HL  Added new constraint 67, it. var. 116
   !+ad_hist  19/01/17 JM  Added new constraint 68, it. var. 117
+  !+ad_hist  08/02/17 JM  Added new constraints 69,70, 71, it. var. 118, 119, 120 (Kallenbach)
   !+ad_stat  Okay
   !+ad_docs  None
   !
@@ -97,10 +98,10 @@ module numerics
 
   public
 
-  !+ad_vars  ipnvars /116/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 117
-  !+ad_vars  ipeqns /67/ FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 68
+  !+ad_vars  ipnvars /120/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 120
+  !+ad_vars  ipeqns /71/ FIX : number of constraint equations available
+  integer, parameter :: ipeqns = 71
   !+ad_vars  ipnfoms /17/ FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 17
 
@@ -255,7 +256,10 @@ module numerics
        0,  &  !  65
        0,  &  !  66
        0,  &  !  67
-       0   &  !  68
+       0,  &  !  68
+       0,  &  !  69
+       0,  &  !  70
+       0   &  !  71
        /)
 
 
@@ -399,10 +403,18 @@ module numerics
        !+ad_varc  <LI> (66) Limit on rate of change of energy in poloidal field
        !+ad_varc            (Use iteration variable 65(tohs))
        'Rate of change of energy in field',   &
-       !+ad_varc  <LI> (67) Simple Radiation Wall load limit</UL>
+       !+ad_varc  <LI> (67) Simple Radiation Wall load limit
        'Upper Lim. on Radiation Wall load',   &
-       !+ad_varc  <LI> (68) Psep * Bt / qAR upper limit</UL>
-       'Upper Lim. on Psep * Bt / q A R  '   &
+       !+ad_varc  <LI> (68) Psep * Bt / qAR upper limit
+       'Upper Lim. on Psep * Bt / q A R  ',   &
+       !+ad_varc  <LI> (69) ensure separatrix power is less than value from Kallenbach divertor
+       !+ad_varc            (Use iteration variable 118 (fpsep))
+       'pdivt < psep_kallenbach divertor ',   &
+       !+ad_varc  <LI> (70) ensure that tomp is equal to the separatrix temperature in the pedestal profile, 
+       !+ad_varc            (Use iteration variable 119 (tesep))
+       'Separatrix temp consistency      ',   &
+       !+ad_varc  <LI> (71) ensure that neomp is equal to the separatrix density (nesep) x neratio</UL>
+       'Separatrix density consistency   '    &
        /)
        !  Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -528,7 +540,10 @@ module numerics
        0,  &  !  114
        0,  &  !  115
        0,  &  !  116
-       0   &  !  117
+       0,  &  !  117
+       0,  &  !  118
+       0,  &  !  119
+       0   &  !  120
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -770,7 +785,13 @@ module numerics
        !+ad_varc  <LI> (116) fradwall: f-value for radiation wall load limit (eq. 67)</UL>
        'fradwall      ',  &
        !+ad_varc  <LI> (117) fpsepbqar: f-value for  Psep*Bt/qar upper limit (eq. 68)</UL>
-       'fpsepbqar     '  &
+       'fpsepbqar     ',  &
+       !+ad_varc  <LI> (118) fpsep: f-value to ensure separatrix power is less than value from Kallenbach divertor
+       'fpsep         ',  &
+       !+ad_varc  <LI> (119) tesep:  separatrix temperature calculated by the Kallenbach divertor model
+       'tesep         ',  &
+       !+ad_varc  <LI> (120) ttarget: Plasma temperature adjacent to divertor sheath [eV]</UL>
+       'ttarget       '  &
        /)
 
   character(len=9), dimension(:), allocatable :: name_xc
@@ -905,7 +926,10 @@ module numerics
        0.001D0, &  !  114
        0.001D0, &  !  115
        0.001D0, &  !  116
-       0.001D0  &  !  117
+       0.001D0, &  !  117
+       0.001D0, &  !  118
+       0.000D0, &  !  119
+       0.001D0  &  !  120
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -1027,7 +1051,10 @@ module numerics
        1.000D3, &  !  114
        1.000D0, &  !  115
        1.000D0, &  !  116
-       1.000D0  &  !  117
+       1.000D0, &  !  117
+       1.000D0, &  !  118
+       1.000D1, &  !  119
+       1.000D3  &  !  120
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

@@ -1807,13 +1807,13 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    if ((temp_in<100.0d0).or.(temp_in>1500.0d0).or.(temp_in/=temp_in)) call write_output
+    ! if ((temp_in<100.0d0).or.(temp_in>1500.0d0).or.(temp_in/=temp_in)) call write_output
 
-    if ((temp_out<100.0d0).or.(temp_out>1500.0d0).or.(temp_out/=temp_out)) call write_output
+    ! if ((temp_out<100.0d0).or.(temp_out>1500.0d0).or.(temp_out/=temp_out)) call write_output
 
-    if ((pressure<1.0d5).or.(pressure>1.0d9).or.(pressure/=pressure)) call write_output
+    ! if ((pressure<1.0d5).or.(pressure>1.0d9).or.(pressure/=pressure)) call write_output
 
-    if ((mfp<1.0d-8).or.(mfp>1.0d0).or.(mfp/=mfp)) call write_output
+    ! if ((mfp<1.0d-8).or.(mfp>1.0d0).or.(mfp/=mfp)) call write_output
 
     ! Mean properties
     temp_mean = (temp_in + temp_out)/2.0d0
@@ -1867,7 +1867,7 @@ contains
     coolpin = pressure + deltap
 
     ! Obtain inlet enthalpy and entropy from inlet pressure and temperature
-    if ((coolpin>1.0d9).or.(coolpin<=0.0d0).or.(coolpin/=coolpin)) call write_output
+    ! if ((coolpin>1.0d9).or.(coolpin<=0.0d0).or.(coolpin/=coolpin)) call write_output
 
     !
     call fluid_properties(temp_in, coolpin, coolant, enthalpy=h2, entropy=s2, label='2049')
