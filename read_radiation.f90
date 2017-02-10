@@ -107,7 +107,7 @@ contains
     ! The # character must be at the start of the line.
     include "root.dir"
 
-    character(len=80), save :: lzdir = trim(ROOTDIR//'/lz_non_corona_14_elements/')
+    character(len=80), save :: lzdir = trim(ROOTDIR//'/data/lz_non_corona_14_elements/')
     
     ! select case (OprSys)
     !     case(0)
@@ -170,7 +170,7 @@ contains
         call read_impurity_data(filename,nt, nnetau,impurity_data,logT_z(location,:),lnetau_z(location,:))
 
         if (verbose) then
-            write(*,*)'Element = '// element//'./LZ_NON_CORONA/'//element//'_z_tau.dat'
+            write(*,*)'Element = '// element//'./data/LZ_NON_CORONA/'//element//'_z_tau.dat'
             write(*,*)'Mean Z'
             write(*,*)'log(T) values'
             write(*,'(8(f10.3))')(logT_z(location,i), i= 1, nt)

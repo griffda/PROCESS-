@@ -39,7 +39,7 @@ subroutine get_h_rates(density, temperature, s, al, cx, plt, prb, mass, verbose)
     ! The # character must be at the start of the line.
     include "root.dir"
 
-    character(len=80), save :: hdatadir = trim(ROOTDIR//'/h_data/')
+    character(len=80), save :: hdatadir = trim(ROOTDIR//'/data/h_data/')
     ! Maxima for log density and log temperature in each data file
     real(kind(1.0D0)), save:: max_scd_d, max_scd_t       
     real(kind(1.0D0)), save:: max_acd_d, max_acd_t        
