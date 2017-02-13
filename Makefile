@@ -331,8 +331,8 @@ clean:
 	rm -f *~
 	rm -f utilities/process_io_lib/process_dicts.py
 	rm -f utilities/processgui/dicts/gui_dicts.py
-	rm -f *.html
 	rm -f *.aux
+	rm -rf documentation/html
 
 win_clean:
 	del process.exe *.o *.mod
@@ -380,6 +380,8 @@ autodoc: autodoc.f90
 
 html: autodoc
 	@ cat $(source) | ./autodoc
+	@ mkdir -p documentation/html
+	@ mv *.html documentation/html
 
 userguide: documentation/process.tex
 	@ pdflatex documentation/process
