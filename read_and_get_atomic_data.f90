@@ -1,132 +1,171 @@
 module read_and_get_atomic_data
-!use global_variables, only : OprSys
-use maths_library
-use read_radiation
-implicit none
+  !+ad_name  read_and_get_atomic_data
+  !+ad_summ  Module for reading atomic data
+  !+ad_type  Module
+  !+ad_auth  M Kovari, CCFE, Culham Science Centre
+  !+ad_args  N/A
+  !+ad_desc  This module reads atomic data for the PROCESS Kallenbach divertor model
+  !+ad_prob  None
+  !+ad_hist  25/01/17 MDK  Initial version of module
+  !+ad_stat  Okay
+  !+ad_docs  
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  ! Modules to import !
+  !!!!!!!!!!!!!!!!!!!!!
+
+    use maths_library
+    use read_radiation
+    
+    implicit none
 
 contains
-subroutine get_h_rates(density, temperature, s, al, cx, plt, prb, mass, verbose)
-    implicit none
-    ! -> density:     electron density  (m^-3)
-    ! -> temperature: electron temperature  (eV)
-    !
-    ! <- s(n):    ionisation rate coefficient (m^3/s) - scd
-    ! <- al(n):   recombination rate coefficient (m^3/s) - acd
-    ! <- cx(n):   charge exchange rate coefficient (m^3/s) - ccd
-    ! <- plt(n):  line radiation power rate coefficient (Wm^3) - plt
-    ! <- prb(n):  continuum radiation power rate coefficient (Wm^3) - prb
-    !
-    ! keywords:
-    ! -> mass:    relative atomic mass for cx rate coefficient
-    real(kind(1.0D0)), intent(in):: density, temperature, mass
-    real(kind(1.0D0)), intent(out):: s, al, cx, plt, prb
-    logical, intent(in)::verbose
 
-    integer::m
+  subroutine get_h_rates(density, temperature, s, al, cx, plt, prb, mass, verbose)
+    !+ad_name  get_h_rates
+    !+ad_summ  
+    !+ad_type  subroutine
+    !+ad_auth  M Kovari, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  density : input real : electron density  (m^-3)
+    !+ad_args  temperature : input real : electron temperature  (eV)
+    !+ad_args  s : output real : ionisation rate coefficient (m^3/s)
+    !+ad_args  al : output real : recombination rate coefficient (m^3/s)
+    !+ad_args  cx : output real : charge exchange rate coefficient (m^3/s)
+    !+ad_args  plt : output real : line radiation power rate coefficient (Wm^3)
+    !+ad_args  prb : output real : continuum radiation power rate coefficient (Wm^3)
+    !+ad_args  mass : input real : relative atomic mass for cx rate coefficient
+    !+ad_args  verbose : input logical : verbose switch
+    !+ad_desc  
+    !+ad_prob  None
+    !+ad_hist  01/02/17 MDK  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    ! Subroutine declarations !
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    real(kind(1.0D0)), intent(in) :: density, temperature, mass
+
+    real(kind(1.0D0)), intent(out) :: s, al, cx, plt, prb
+
+    logical, intent(in) :: verbose
+
+    integer :: m
+
     ! These arrays are read only once and then saved
     ! Density values: "_d"
     real(kind(1.0D0)), save, dimension(24) :: scd_d, acd_d, ccd_d, plt_d,prb_d
+
     ! Temperature values: "_t"
-    real(kind(1.0D0)), save, dimension(29):: scd_t,acd_t,ccd_t, plt_t, prb_t
+    real(kind(1.0D0)), save, dimension(29) :: scd_t,acd_t,ccd_t, plt_t, prb_t
+
     ! Rate coefficients: "_r"
     real(kind(1.0D0)), save, dimension(24,29) :: scd_r, acd_r, ccd_r, plt_r,prb_r
-    character(len=100)::acd_file,scd_file,plt_file,prb_file, ccd_file
-    real(kind(1.0D0)):: logdens, logtemp, minldensity, minltemp, maxldensity, maxltemp
+
+    character(len=100) :: acd_file, scd_file, plt_file, prb_file, ccd_file
+
+    real(kind(1.0D0)) :: logdens, logtemp, minldensity, minltemp, maxldensity, maxltemp
+
     logical, save :: FirstCall = .true.
-    logical::iexist
-    integer:: ine, ite
+
+    logical :: iexist
+
+    integer :: ine, ite
+
     !  Obtain the root directory from the file 'root.dir'
     ! The # character must be at the start of the line.
     include "root.dir"
 
     character(len=80), save :: hdatadir = trim(ROOTDIR//'/data/h_data/')
+
     ! Maxima for log density and log temperature in each data file
-    real(kind(1.0D0)), save:: max_scd_d, max_scd_t       
-    real(kind(1.0D0)), save:: max_acd_d, max_acd_t        
-    real(kind(1.0D0)), save:: max_ccd_d, max_ccd_t        
-    real(kind(1.0D0)), save:: max_plt_d, max_plt_t
-    real(kind(1.0D0)), save:: max_prb_d, max_prb_t      
-!    select case (OprSys)
-!      case(0)
-!         hdatadir = trim(ROOTDIR//'/h_data/')
-!      case(1)
-!         hdatadir = trim(ROOTDIR//'\h_data\')
-!      case default
-!         hdatadir = trim(ROOTDIR//'/h_data/')
-!    end select
+    real(kind(1.0D0)), save :: max_scd_d, max_scd_t       
+    real(kind(1.0D0)), save :: max_acd_d, max_acd_t        
+    real(kind(1.0D0)), save :: max_ccd_d, max_ccd_t        
+    real(kind(1.0D0)), save :: max_plt_d, max_plt_t
+    real(kind(1.0D0)), save :: max_prb_d, max_prb_t      
 
     ine = 24
     ite = 29
 
-    logdens = log10(density/1.d6)
+    logdens = log10(density/1.0D6)
     logtemp = log10(temperature)
 
-    if(FirstCall) then        ! Read the data
-        FirstCall=.false.
-        !  Add trailing / to hdatadir if necessary
-        if (index(hdatadir,'/',.true.) .ne. len(trim(hdatadir))) hdatadir = hdatadir//'/'
-        if (index(hdatadir,'\',.true.) .ne. len(trim(hdatadir))) hdatadir = hdatadir//'\'
-        acd_file = trim(hdatadir)//'acd96_h.dat'
-        scd_file = trim(hdatadir)//'scd96_h.dat'
-        plt_file = trim(hdatadir)//'plt96_h.dat'
-        prb_file = trim(hdatadir)//'prb96_h.dat'
+    ! Read the data
+    if(FirstCall) then
 
-        m = floor(mass+0.5)                     ! round to an integer
-        ! Select the correct atomic species for the cx rates: H, D or T
-        if      (m == 1) then
-            ccd_file = trim(hdatadir)//'ccd96_h.dat'
-        elseif (m == 2) then
-            ccd_file = trim(hdatadir)//'ccd96_d.dat'
-        elseif (m == 3) then
-            ccd_file = trim(hdatadir)//'ccd96_t.dat'
-        else
-            write(*,*) 'The atomic mass is ', m, '.  It must be in the range 1-3.'
-        end if
+      FirstCall=.false.
 
-        inquire(file=trim(acd_file), exist=iexist)
-        if (.not.iexist) write(*,*) "ERROR  File "// acd_file // ' does not exist'
-        inquire(file=trim(scd_file), exist=iexist)
-        if (.not.iexist) write(*,*) "ERROR  File "// scd_file // ' does not exist'
-        inquire(file=trim(plt_file), exist=iexist)
-        if (.not.iexist) write(*,*) "ERROR  File "// plt_file // ' does not exist'
-        inquire(file=trim(prb_file), exist=iexist)
-        if (.not.iexist) write(*,*) "ERROR  File "// prb_file // ' does not exist'
-        inquire(file=trim(ccd_file), exist=iexist)
-        if (.not.iexist) write(*,*) "ERROR  File "// ccd_file // ' does not exist'
+      !  Add trailing / to hdatadir if necessary
+      ! if (index(hdatadir,'/',.true.) .ne. len(trim(hdatadir))) hdatadir = hdatadir//'/'
+      ! if (index(hdatadir,'\',.true.) .ne. len(trim(hdatadir))) hdatadir = hdatadir//'\'
 
-        ! ionisation data
-        call read_atomdat(scd_d,scd_t,scd_r, ine=24, ite=29, filename=scd_file, verbose=verbose)
-        ! recombination data
-        call read_atomdat(acd_d,acd_t,acd_r, ine=24, ite=29, filename=acd_file, verbose=verbose)
-        ! cx data
-        call read_atomdat(ccd_d,ccd_t,ccd_r, ine=24, ite=29, filename=ccd_file, verbose=verbose)
-        ! line radiation data
-        call read_atomdat(plt_d,plt_t,plt_r, ine=24, ite=29, filename=plt_file, verbose=verbose)
-        ! continuum radiation data
-        call read_atomdat(prb_d,prb_t,prb_r, ine=24, ite=29, filename=prb_file, verbose=verbose)  
+      acd_file = trim(hdatadir)//'acd96_h.dat'
+      scd_file = trim(hdatadir)//'scd96_h.dat'
+      plt_file = trim(hdatadir)//'plt96_h.dat'
+      prb_file = trim(hdatadir)//'prb96_h.dat'
+
+      m = floor(mass+0.5)                     ! round to an integer
+      ! Select the correct atomic species for the cx rates: H, D or T
+      if      (m == 1) then
+          ccd_file = trim(hdatadir)//'ccd96_h.dat'
+      elseif (m == 2) then
+          ccd_file = trim(hdatadir)//'ccd96_d.dat'
+      elseif (m == 3) then
+          ccd_file = trim(hdatadir)//'ccd96_t.dat'
+      else
+          write(*,*) 'The atomic mass is ', m, '.  It must be in the range 1-3.'
+      end if
+
+      inquire(file=trim(acd_file), exist=iexist)
+      if (.not.iexist) write(*,*) "ERROR  File "// acd_file // ' does not exist'
+      inquire(file=trim(scd_file), exist=iexist)
+      if (.not.iexist) write(*,*) "ERROR  File "// scd_file // ' does not exist'
+      inquire(file=trim(plt_file), exist=iexist)
+      if (.not.iexist) write(*,*) "ERROR  File "// plt_file // ' does not exist'
+      inquire(file=trim(prb_file), exist=iexist)
+      if (.not.iexist) write(*,*) "ERROR  File "// prb_file // ' does not exist'
+      inquire(file=trim(ccd_file), exist=iexist)
+      if (.not.iexist) write(*,*) "ERROR  File "// ccd_file // ' does not exist'
+
+      ! ionisation data
+      call read_atomdat(scd_d,scd_t,scd_r, ine=24, ite=29, filename=scd_file, verbose=verbose)
+      ! recombination data
+      call read_atomdat(acd_d,acd_t,acd_r, ine=24, ite=29, filename=acd_file, verbose=verbose)
+      ! cx data
+      call read_atomdat(ccd_d,ccd_t,ccd_r, ine=24, ite=29, filename=ccd_file, verbose=verbose)
+      ! line radiation data
+      call read_atomdat(plt_d,plt_t,plt_r, ine=24, ite=29, filename=plt_file, verbose=verbose)
+      ! continuum radiation data
+      call read_atomdat(prb_d,prb_t,prb_r, ine=24, ite=29, filename=prb_file, verbose=verbose)  
         
-        ! Store the maxima for log density and log temperature in each data file
-        ! Subtract a smidgen to ensure that the values submitted for interpolation are 
-        ! the range.
-        max_scd_d=maxval(scd_d) - 0.00001
-        max_scd_t=maxval(scd_t) - 0.00001
+      ! Store the maxima for log density and log temperature in each data file
+      ! Subtract a smidgen to ensure that the values submitted for interpolation are 
+      ! the range.
+      max_scd_d=maxval(scd_d) - 0.00001
+      max_scd_t=maxval(scd_t) - 0.00001
         
-        max_acd_d=maxval(acd_d) - 0.00001
-        max_acd_t=maxval(acd_t) - 0.00001
+      max_acd_d=maxval(acd_d) - 0.00001
+      max_acd_t=maxval(acd_t) - 0.00001
         
-        max_ccd_d=maxval(ccd_d) - 0.00001
-        max_ccd_t=maxval(ccd_t) - 0.00001
+      max_ccd_d=maxval(ccd_d) - 0.00001
+      max_ccd_t=maxval(ccd_t) - 0.00001
         
-        max_plt_d=maxval(plt_d) - 0.00001
-        max_plt_t=maxval(plt_t) - 0.00001        
+      max_plt_d=maxval(plt_d) - 0.00001
+      max_plt_t=maxval(plt_t) - 0.00001        
         
-        max_prb_d=maxval(prb_d) - 0.00001
-        max_prb_t=maxval(prb_t) - 0.00001       
+      max_prb_d=maxval(prb_d) - 0.00001
+      max_prb_t=maxval(prb_t) - 0.00001       
         
     end if
 
-    ! Using function interpolate(x_len, x_array, y_len, y_array, f, x, y, delta)    
-    
+    ! Using function interpolate(x_len, x_array, y_len, y_array, f, x, y, delta)
     ! ionisation        
     s   = 1.d-6*10.0**(interpolate(ine, scd_d, ite, scd_t, scd_r,   &
                                   min(logdens,max_scd_d),           &
@@ -148,10 +187,37 @@ subroutine get_h_rates(density, temperature, s, al, cx, plt, prb, mass, verbose)
                                   min(logdens,max_prb_d),           &
                                   min(logtemp,max_prb_t)))
 
-end subroutine get_h_rates
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  end subroutine get_h_rates
 
-subroutine read_atomdat(density,temperature,rates, ine, ite, filename, verbose)
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine read_atomdat(density,temperature,rates, ine, ite, filename, verbose)
+    !+ad_name  get_h_rates
+    !+ad_summ  
+    !+ad_type  subroutine
+    !+ad_auth  M Kovari, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  density : input real : electron density  (m^-3)
+    !+ad_args  temperature : input real : electron temperature  (eV)
+    !+ad_args  s : input  : ionisation rate coefficient (m^3/s)
+    !+ad_args  al : input  : recombination rate coefficient (m^3/s)
+    !+ad_args  cx : input  : charge exchange rate coefficient (m^3/s)
+    !+ad_args  plt : input  : line radiation power rate coefficient (Wm^3)
+    !+ad_args  prb : input  : continuum radiation power rate coefficient (Wm^3)
+    !+ad_args  mass : input  : relative atomic mass for cx rate coefficient
+    !+ad_args  verbose : output  : verbose switch
+    !+ad_desc  
+    !+ad_prob  None
+    !+ad_hist  01/02/17 MDK  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    ! Subroutine declarations !
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)), dimension(ine) :: density
     real(kind(1.0D0)), dimension(ite):: temperature
@@ -174,9 +240,11 @@ subroutine read_atomdat(density,temperature,rates, ine, ite, filename, verbose)
     read(8,'(8(f10.5))')((rates(I,L),I=1,ine),L=1,ite)
     close(unit=8)
 
-end subroutine read_atomdat
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-subroutine unit_test_read()
+  end subroutine read_atomdat
+
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine unit_test_read()
         ! Radiative cooling function Lz
         ! To test the interpolation, use a point at the geometrical mean of the two
         ! first temperatures and the two first values of ne.tau
@@ -210,9 +278,11 @@ subroutine unit_test_read()
         prb= 10.0**((-29.50732 -29.49208  -29.65257 -29.64218)/4.0) / 1.0e6
         write(*,'(5(e12.5),2x)')s, al, cx, plt, prb
         return
-end subroutine unit_test_read
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-subroutine plot_rates()
+  end subroutine unit_test_read
+
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine plot_rates()
     ! Reads rate coefficients for deuterium.
     ! Compare to Figure 2 in Kallenbach 2016.
     real(kind(1.0D0)):: s(3), al(3), cx
@@ -228,7 +298,7 @@ subroutine plot_rates()
     write(12,'(30a11)')'te [eV]','cx', 'ionis19', 'recomb19', 'line rad19', 'cont rad19', 'tot rad19',&
                                        'ionis20', 'recomb20', 'line rad20', 'cont rad20', 'tot rad20',&
                                        'ionis21', 'recomb21', 'line rad21', 'cont rad21', 'tot rad21'
-    mass=2.
+    mass=2.0D0
     ! Just read data
     call get_h_rates(1.d20, 1.0d0, dummy, dummy, dummy, dummy, dummy, &
                           mass, verbose=.true.)
@@ -242,7 +312,7 @@ subroutine plot_rates()
     enddo
     close(unit=12)
 
-end subroutine plot_rates
+  end subroutine plot_rates
 
 
 end module read_and_get_atomic_data

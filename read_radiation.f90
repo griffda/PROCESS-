@@ -51,8 +51,6 @@ contains
     ! Modules to import !
     !!!!!!!!!!!!!!!!!!!!!
 
-    ! use global_variables, only : OprSys
-
     implicit none
 
     ! Variable declarations !
@@ -103,20 +101,11 @@ contains
     ! First call boolean switch
     logical, save :: FirstCall(nimp) = .true.
 
-    !  Obtain the root directory from the file 'root.dir'
+    ! Obtain the root directory from the file 'root.dir'
     ! The # character must be at the start of the line.
     include "root.dir"
 
     character(len=80), save :: lzdir = trim(ROOTDIR//'/data/lz_non_corona_14_elements/')
-    
-    ! select case (OprSys)
-    !     case(0)
-    !       lzdir = trim(ROOTDIR//'/lz_non_corona_14_elements/')
-    !     case(1)
-    !       lzdir = trim(ROOTDIR//'\lz_non_corona_14_elements\')
-    !     case default
-    !       lzdir = trim(ROOTDIR//'/lz_non_corona_14_elements/')
-    ! end select
 
     ! Find the index of the element.  Exclude hydrogen by starting at 2 (Helium)
     do i = 2, nimp
@@ -126,6 +115,7 @@ contains
         endif
     enddo
 
+    ! Check element was found
     if (location.eq.0) then
       write(*,*)'element '//element//' not supported'
     end if
@@ -144,16 +134,14 @@ contains
         ! Each data file may have its own values of T and n, stored in arrays logT_lz, lnetau_lz etc
         ! Store data in logarithm form for interpolation
 
-        !  Add trailing / to hdatadir if necessary
-        if (index(lzdir,'/',.true.) .ne. len(trim(lzdir))) lzdir = lzdir//'/'
-        if (index(lzdir,'\',.true.) .ne. len(trim(lzdir))) lzdir = lzdir//'\'
+        ! Assign loss data filename
+        filename = trim(lzdir)//trim(element)//'_lz_tau.dat'
 
-        ! 
-        filename=trim(lzdir)//trim(element)//'_lz_tau.dat'
+        ! Read the impuriy data
+        call read_impurity_data(filename, nt, nnetau, impurity_data, logT_lz(location,:), lnetau_lz(location,:))
 
-        call read_impurity_data(filename,nt,nnetau,impurity_data,logT_lz(location,:),lnetau_lz(location,:))
-
-        data_lz(location,:,:)=log(impurity_data)
+        ! Store log impurity data
+        data_lz(location,:,:) = log(impurity_data)
 
         if (verbose) then
             write(*,*)'Lz'
@@ -163,11 +151,13 @@ contains
                 write(*,*)'log(ne.tau)= ',lnetau_lz(location,j)
                 write(*,'(8(e10.3))')(impurity_data(i,j), i= 1, nt)
             enddo
-         endif
+        endif
 
-        filename=trim(lzdir)//trim(element)//'_z_tau.dat'
+        ! Assign z data filename
+        filename = trim(lzdir)//trim(element)//'_z_tau.dat'
 
-        call read_impurity_data(filename,nt, nnetau,impurity_data,logT_z(location,:),lnetau_z(location,:))
+        ! Read z data
+        call read_impurity_data(filename, nt, nnetau, impurity_data, logT_z(location,:), lnetau_z(location,:))
 
         if (verbose) then
             write(*,*)'Element = '// element//'./data/LZ_NON_CORONA/'//element//'_z_tau.dat'
@@ -178,17 +168,22 @@ contains
                 write(*,*)'log(ne.tau)= ',lnetau_z(location,j)
                 write(*,'(8(e10.3))')(impurity_data(i,j), i= 1, nt)
             enddo
-         endif
+        endif
 
-        data_z(location,:,:)=log(impurity_data)
+        ! Store log z data
+        data_z(location,:,:) = log(impurity_data)
 
-        filename=trim(lzdir)//trim(element)//'_z2_tau.dat'
+        ! Assign z^2 data filename
+        filename = trim(lzdir)//trim(element)//'_z2_tau.dat'
 
-        call read_impurity_data(filename,nt, nnetau,impurity_data,logT_qz(location,:),lnetau_qz(location,:))
+        ! Read root-mean square z data
+        call read_impurity_data(filename, nt, nnetau, impurity_data, logT_qz(location,:), lnetau_qz(location,:))
 
+        ! Square RMS z data
         impurity_data = impurity_data**2
 
-        data_qz(location,:,:)=log(impurity_data)
+        ! Store z^2 data
+        data_qz(location,:,:) = log(impurity_data)
 
         if (verbose) then
             write(*,*)'Mean Z^2'
@@ -236,7 +231,7 @@ contains
     !+ad_cont  N/A
     !+ad_args  filename      : input character   : filename of data
     !+ad_args  nt            : output integer    : length of temperature data
-    !+ad_args  nnetau        : output integer    : length of 
+    !+ad_args  nnetau        : output integer    : length of netau data
     !+ad_args  impurity_data : output real array : impurity data array
     !+ad_args  logT_array    : output real array : log temperature array
     !+ad_args  lnetau_array  : output real array : log netau array
@@ -267,16 +262,18 @@ contains
     real(kind(1.0D0)), intent(out), dimension(5) :: lnetau_array
     real(kind(1.0D0)), intent(out), dimension(200) :: logT_array
 
-    ! 
+    ! netau data
     real(kind(1.0D0)) :: data_netau
 
     ! 
     integer :: pos, i, j, iostatus
 
+    ! Electron temperature array [eV]
     real(kind(1.0D0)), dimension(200) :: T_array
 
     character(len=100) :: string, substring
 
+    ! Open data file
     open(unit=8,file=filename,status='old')
     read(8,*)
     read(8,*)
@@ -290,17 +287,23 @@ contains
 
     do         
       read(8,*,IOSTAT=iostatus)string
-      if(index(string,'Te[eV]').ne.0) exit  ! The string 'Te[eV]' is present
+      
+      ! The string 'Te[eV]' is present
+      if(index(string,'Te[eV]').ne.0) exit
+
       if(iostatus.ne.0)then
           write(*,*)'Problem in reading impurity data from file ',filename
           stop
       endif
+
     enddo
-            
+
     read(8,'(8(f10.3))')(T_array(i), i= 1, nt)
 
-    logT_array=log(T_array)
+    ! Create log temperature array [eV]
+    logT_array = log(T_array)
 
+    ! Loop over netau
     do j = 1, nnetau
 
       ! Read the non-coronal parameter ne.tau
@@ -308,7 +311,7 @@ contains
 
       pos = index(string,'=')
 
-      substring=string(pos+1:)
+      substring = string(pos+1:)
 
       read(substring,*)data_netau
 
@@ -327,17 +330,41 @@ contains
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine plot_Lz()
-    ! Reads radiative loss functions for test purposes only.
-    ! Compare to Figure 3 in Kallenbach 2016.
-    character(len=2)::element
-    real(kind(1.0D0))::dummy
-    integer::i,j
-    integer,parameter::points=27
-    real(kind(1.0D0))::te(points)=(/1.,1.2, 1.5, 2.,2.5, 3.,4.,5.,6.,7.,8.,9.,10.,12., 14., 16., 20., &
-                   30., 40., 50., 60., 70., 80., 90.,  &
-                   100., 150., 200./)
-    real(kind(1.0D0))::Lz_plot(nimp)
-    real(kind(1.0D0))::netau=0.5
+    !+ad_name  plot_lz
+    !+ad_summ  Write loss data to file for plotting
+    !+ad_type  subroutine
+    !+ad_auth  M Kovari, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  Write loss data to file for plotting
+    !+ad_desc  Compare to Figure 3 in Kallenbach 2016.
+    !+ad_prob  None
+    !+ad_hist  08/02/17 MDK Initial version
+    !+ad_hist  13/02/17 JM  Tidy
+    !+ad_stat  Okay
+    !+ad_docs  
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    ! Subroutine declarations !
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    character(len=2) :: element
+
+    real(kind(1.0D0)) :: dummy
+
+    integer :: i, j
+
+    integer, parameter :: points = 27
+
+    ! Temperature plot points
+    real(kind(1.0D0)) :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3., 4., 5., 6., 7., 8., 9., &
+        10., 12., 14., 16., 20., 30., 40., 50., 60., 70., 80., 90., 100., 150., 200./)
+
+    real(kind(1.0D0)) :: Lz_plot(nimp)
+
+    real(kind(1.0D0)) :: netau = 0.5
 
     open(unit=12,file='radiative_loss_functions.txt',status='replace')
     write(12,'(30a11)')'Te (eV)', (imp_label(i), i=2,nimp)
@@ -361,35 +388,58 @@ contains
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine plot_z()
-    ! Reads mean Z and mean Z^2.
-    ! Compare to plots such as He_z.ps etc in
-    !  /home/mkovari/sol/kallenbach/divertor_ode/LZ_NON_CORONA.
-    character(len=2)::element
-    real(kind(1.0D0))::dummy
-    integer::i,j,k
-    integer,parameter::points=27
-    real(kind(1.0D0))::te(points)=(/1.,1.2, 1.5, 2.,2.5, 3.,4.,5.,6.,7.,8.,9.,10.,12., 14., 16., 20., &
-                   30., 40., 50., 60., 70., 80., 90.,  &
-                   100., 150., 200./)
-    real(kind(1.0D0))::Z_plot(3,nimp)
-    real(kind(1.0D0))::netau(3)=(/0.1, 1.0, 10.0/)
+    !+ad_name  plot_z
+    !+ad_summ  Write z and z^2 data to file for plotting
+    !+ad_type  subroutine
+    !+ad_auth  M Kovari, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_desc  Write z and z^2 data to file for plotting
+    !+ad_prob  None
+    !+ad_hist  08/02/17 MDK Initial version
+    !+ad_hist  13/02/17 JM  Tidy
+    !+ad_stat  Okay
+    !+ad_docs  
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    ! Subroutine declarations !
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+    character(len=2) :: element
+
+    real(kind(1.0D0)) :: dummy
+
+    integer :: i, j, k
+
+    integer, parameter :: points = 27
+
+    real(kind(1.0D0)) :: te(points) = (/1., 1.2, 1.5, 2., 2.5, 3.,4., 5., 6., 7., &
+        8., 9.,10.,12., 14., 16., 20., 30., 40., 50., 60., 70., 80., 90., 100., 150., 200./)
+
+    real(kind(1.0D0)) :: Z_plot(3,nimp)
+
+    real(kind(1.0D0)) :: netau(3) = (/0.1, 1.0, 10.0/)
     
     open(unit=12,file='mean_Z.txt',status='replace')
+
     write(12,*)'Mean Z'
+
     write(12,'(a11,  42(3(a4, es7.1)))')'Te (ev)',((imp_label(i),netau(j), j=1,3),i=2,nimp)
-    !
+    
     ! Just read data.  Exclude hydrogen by starting at 2
-    do i=2,nimp
-        element=imp_label(i)
-        dummy=read_lz(element,30.0d0,1.0d0, mean_z=.true., mean_qz=.false., verbose=.true.)
-        dummy=read_lz(element,30.0d0,1.0d0, mean_z=.false., mean_qz=.true., verbose=.true.)
+    do i = 2, nimp
+        element = imp_label(i)
+        dummy = read_lz(element,30.0d0,1.0d0, mean_z=.true., mean_qz=.false., verbose=.true.)
+        dummy = read_lz(element,30.0d0,1.0d0, mean_z=.false., mean_qz=.true., verbose=.true.)
     enddo
 
-    do i=1,points
-        do j=1,3
-            do k=2,nimp
-                element=imp_label(k)
-                Z_plot(j,k)=read_lz(element,te(i),netau(j), mean_z=.true., mean_qz=.false., verbose=.false.)
+    do i = 1, points
+        do j = 1, 3
+            do k = 2, nimp
+                element = imp_label(k)
+                Z_plot(j,k) = read_lz(element,te(i),netau(j), mean_z=.true., mean_qz=.false., verbose=.false.)
             enddo
         enddo
         write(12,'(42es11.3)')te(i), ((Z_plot(j,k), j=1,3), k=2,nimp)
@@ -398,11 +448,11 @@ contains
     write(12,*)
     write(12,*)'Mean Z^2'
     write(12,'(a11,  42(3(a4, es7.1)))')'Te (ev)', ((imp_label(i),netau(j), j=1,3),i=2,nimp)
-    do i=1,points
-        do j=1,3
-            do k=2,nimp
-                element=imp_label(k)
-                Z_plot(j,k)=read_lz(element,te(i),netau(j), mean_z=.false., mean_qz=.true., verbose=.false.)
+    do i = 1, points
+        do j = 1, 3
+            do k = 2, nimp
+                element = imp_label(k)
+                Z_plot(j,k) = read_lz(element,te(i),netau(j), mean_z=.false., mean_qz=.true., verbose=.false.)
             enddo
         enddo
         write(12,'(42es11.3)')te(i), ((Z_plot(j,k), j=1,3), k=2,nimp)
@@ -410,6 +460,6 @@ contains
 
     close(unit=12)
 
-end subroutine plot_z
+  end subroutine plot_z
 
 end module read_radiation

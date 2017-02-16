@@ -25,8 +25,8 @@ module divertor_ode
 
   implicit none
 
-  ! Subroutine declarations !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! Module declarations !
+  !!!!!!!!!!!!!!!!!!!!!!!
 
   logical, private :: verbose
   logical, public, save :: impurities_present(nimp)=.false.
@@ -1268,19 +1268,43 @@ end module divertor_ode
 !---------------------------------------------------------------------------
 ! This routine is outside the module, so it functions as test for the module.
 
-subroutine Kallenbach_test()
+subroutine kallenbach_test()
+  !+ad_name  kallenbach_test
+  !+ad_summ  Test for divertor kallenbach model
+  !+ad_type  subroutine
+  !+ad_auth  M Kovari, CCFE, Culham Science Centre
+  !+ad_cont  N/A
+  !+ad_desc  Test of Kallenbach divertor model
+  !+ad_prob  None
+  !+ad_hist  01/02/17 MDK  Initial version
+  !+ad_stat  Okay
+  !+ad_docs  
+  !
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  ! Modules to import !
+  !!!!!!!!!!!!!!!!!!!!!
+
   use divertor_ode
   use read_and_get_atomic_data
   use read_radiation
   use constants
-  use process_output, only: oblnkl,obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
-  real(kind(1.0D0))::rmajor, rminor, bt,plascur, bvert, dummy, dummy2, dummy3
+  use process_output, only: oblnkl, obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
+
+  implicit none
+
+   ! Subroutine declarations !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  integer :: i
+
+  real(kind(1.0D0))::rmajor, rminor, bt, plascur, bvert, dummy, dummy2, dummy3
 
   ! This section just for reproducing the original numbers
-  rmajor = 8.0d0
-  rminor = 2.75d0
-  bt = 4.00972d0*(rmajor + rminor)/rmajor
-  plascur = 1.33542d0*(2.0d0*pi*rminor)/rmu0
+  rmajor = 8.0D0
+  rminor = 2.75D0
+  bt = 4.00972D0*(rmajor + rminor)/rmajor
+  plascur = 1.33542D0*(2.0D0*pi*rminor)/rmu0
 
   call oheadr(nout, 'Divertor: Kallenbach 1D Model - TESTS - ')
   call osubhd(nout, 'Inputs :')
@@ -1288,25 +1312,26 @@ subroutine Kallenbach_test()
   call ovarre(nout, 'Major radius [m]','(rmajor)', rmajor)
   call ovarre(nout, 'Minor radius [m]','(rminor)', rminor)
   call ovarre(nout, 'Toroidal field [T]','(bt)', bt, 'OP ')
-  call ovarre(nout, 'Vertical (equilibrium) field [T]','(bvert)', 0.0d0)
+  call ovarre(nout, 'Vertical (equilibrium) field [T]','(bvert)', 0.0D0)
   call ovarre(nout, 'Plasma current [A]','(plascur)', plascur)
-  call ovarre(nout, 'q95 [A]','(q)', 3.0d0)
+  call ovarre(nout, 'q95 [A]','(q)', 3.0D0)
 
   ! Set the impurity fractions to the test values
-  do i=2,nimp
-    impurity_arr(i)%frac=0.0d0
+  do i = 2, nimp
+    impurity_arr(i)%frac = 0.0D0
   enddo
-  impurity_arr(5)%frac=0.04d0
 
-  call divertor_Kallenbach(rmajor=8.0d0, rminor=2.75d0,     &
+  impurity_arr(5)%frac = 0.04D0
+
+  call divertor_Kallenbach(rmajor=8.0D0, rminor=2.75D0,     &
                            bt=bt, plascur=plascur,      &
-                           bvert=0.0d0, q=3.0d0,            &
+                           bvert=0.0D0, q=3.0D0,            &
                            verboseset=.false.,          &
-                           lambda_tar=0.005d0,lambda_omp=0.002d0 ,         &
-                           Ttarget=2.3d0,qtargettotal=4.175d6,                  &
-                           targetangle=10.0d0,Lcon=100.0d0,            &
-                           netau_in=0.5d0,unit_test=.false.,abserrset=1.d-6,     &
-                           helium_enrichment=1.0d0, impurity_enrichment=1.0d0,   &
+                           lambda_tar=0.005D0,lambda_omp=0.002D0 ,         &
+                           Ttarget=2.3D0,qtargettotal=4.175D6,                  &
+                           targetangle=10.0D0,Lcon=100.0D0,            &
+                           netau_in=0.5D0,unit_test=.false.,abserrset=1.0D-6,     &
+                           helium_enrichment=1.0D0, impurity_enrichment=1.0D0,   &
                            psep_kallenbach=dummy, tomp=dummy2, neomp=dummy3, &
                            outfile=nout,iprint=1 )
 
