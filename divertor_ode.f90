@@ -265,6 +265,9 @@ contains
     ! Total power running along SOL [W]
     real(kind(1.0D0)) :: Power0
 
+    ! impurity element name - temporary
+    character(len=2) :: element='**'
+
     ! ODE solver parameters !
     !!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -413,15 +416,11 @@ contains
     endif
 
     ! Get impurity concentrations every time, as they can change
-    ! Helium has its own enrichment factor
-    ! Start by converting to lower case (just in case)
-    do i = 2, nimp
+    ! Helium has its own enrichment factor, and is always present.  i = 2
+    impurity_concs(2)= impurity_arr(2)%frac * helium_enrichment
+    do i = 3, nimp
         if(impurities_present(i)) then
-            if (imp_label(i).eq.'he') then
-                impurity_concs(i)= impurity_arr(i)%frac * helium_enrichment
-            else
-                impurity_concs(i)= impurity_arr(i)%frac * impurity_enrichment
-            endif
+           impurity_concs(i)= impurity_arr(i)%frac * impurity_enrichment
         else
             impurity_concs(i)=0.0d0
         endif
