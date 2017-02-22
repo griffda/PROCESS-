@@ -90,9 +90,9 @@ ixc(36) = 59 * copper fraction of cable conductor (TF coils)
 boundu(59) = 0.94
 ixc(37) = 54 * ftmargtf
 
-ixc(38) = 118 * fpsep: f-value to ensure separatrix power is less than value from Kallenbach divertor
-boundl(118) = 0.01
-boundu(118)=10.0
+ixc(38) = 118 * fpsep: f-value to ensure separatrix power is related to that from Kallenbach divertor
+boundl(118) = 0.75
+boundu(118)=1.25
 
 ixc(39) = 119 * tesep
 boundl(119) = 0.1
@@ -100,7 +100,7 @@ boundu(119) = 10.0
 
 ixc(40) = 120 * ttarget  Plasma temperature adjacent to divertor sheath [eV]
 boundl(120) = 0.1
-boundu(120) = 10.0
+boundu(120) = 20.0
 
 *-----------------Build Variables------------------*
 
