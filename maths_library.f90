@@ -2553,7 +2553,7 @@ contains
     
        !  Output to terminal number of VMCON iterations
        iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
-       write(iotty, '("  ==>", I5, "  vmcon iterations", "   min [", a20, "] max iterations", a1)', &
+       write(iotty, '("   ==>", I5, "  vmcon iterations", "   min [", a20, "] max iterations", a1)', &
              ADVANCE="NO"), niter+1, adjustl(iteration_progress), achar(13)
 
        !  Increment the quadratic subproblem counter
