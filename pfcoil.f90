@@ -41,6 +41,7 @@ module pfcoil_module
   !+ad_hist  15/04/13 PJK Added fwbs_variables
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  16/10/14 PJK Added sctfcoil_module
+  !+ad_hist  22/02/17 JM  Changed function selfinductance to Bunet's formula
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2456,37 +2457,65 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   
   function selfinductance(a,b,c,N)
+    !+ad_name  selfinductance
+    !+ad_summ  Calculates the selfinductance using Bunet's formula
+    !+ad_type  Function returning real
+    !+ad_auth  M. Kovari, CCFE
+    !+ad_cont  N/A
+    !+ad_args  a  : input real : mean radius of coil (m)
+    !+ad_args  b  : input real : length of coil (m) (given as l in the reference)
+    !+ad_args  c  : input real : radial winding thickness (m)
+    !+ad_args  N  : input real : number of turns
+    !+ad_desc  This routine calculates the self inductance in Henries
+    !+ad_prob  None
+    !+ad_call  None
+    !+ad_hist  22/02/17 JM  Initial version (issue #396)
+    !+ad_stat  Okay
+    !+ad_docs  Radiotron Designers Handbook (4th Edition) chapter 10
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    ! Function declarations
+    real(kind(1.0D0)) :: a, b, c, N, selfinductance
+
+    ! Calculate self inductance
+    selfinductance = (1.0d-6/0.0254d0)*a**2*N**2/(9.0d0*a + 10.0d0*b + 8.4d0*c + 3.2d0*c*b/a)      
+
+    ! OLD Formula
+    ! JM - KEEP FOR NOW
     ! Formulas and tables for the calculation of mutual and self-inductance [Revised], 
     ! Rosa and Grover, Scientific papers of the Bureau of Standards, No. 169, 3rd ed., 1916
     ! a = mean radius of coil
     ! b = length of coil
     ! c = radial winding thickness
     ! N = number of turns
-    real(kind(1.0D0)) :: a,b,c, N, selfinductance, r, r2_16a2, x, x2, q, at, lambda, mu, p
+    ! real(kind(1.0D0)) :: a,b,c, N, selfinductance, r, r2_16a2, x, x2, q, at, lambda, mu, p
 
-    !  Equation 88, p. 137      
-    x = b/c
-    x2 = x**2
-    q = log(1.0d0+x2) 
-    p = log(1.0d0+1.0d0/x2)
-    at = atan(x)
-    lambda = log(8.0d0*a/c) + 1/12.0d0 - pi*x/3.0d0 - 0.5d0*q + 1/(12.0d0*x2)*q &
-              + 1/12.0d0*x2*p + 2.0d0/3.0d0*(x-1.0d0/x)*at
+    ! !  Equation 88, p. 137      
+    ! x = b/c
+    ! x2 = x**2
+    ! q = log(1.0d0+x2) 
+    ! p = log(1.0d0+1.0d0/x2)
+    ! at = atan(x)
+    ! lambda = log(8.0d0*a/c) + 1/12.0d0 - pi*x/3.0d0 - 0.5d0*q + 1/(12.0d0*x2)*q &
+    !           + 1/12.0d0*x2*p + 2.0d0/3.0d0*(x-1.0d0/x)*at
                  
-    mu = c**2/(96.0d0*a**2)*     &
-         ((log(8.0d0*a/c)-0.5d0*q)*(1+3.0d0*x2) + 3.45d0*x2 + 221.0d0/60.0d0   &
-         -1.6d0*pi*x**3 + 3.2d0*x**3*at - 0.1d0/x2*q + 0.5d0*x2**2*p)
+    ! mu = c**2/(96.0d0*a**2)*     &
+    !      ((log(8.0d0*a/c)-0.5d0*q)*(1+3.0d0*x2) + 3.45d0*x2 + 221.0d0/60.0d0   &
+    !      -1.6d0*pi*x**3 + 3.2d0*x**3*at - 0.1d0/x2*q + 0.5d0*x2**2*p)
         
-    selfinductance = rmu0*a*N**2 * (lambda + mu)     
+    ! selfinductance = rmu0*a*N**2 * (lambda + mu)     
     
-    if((selfinductance<0.0d0).or.(selfinductance .ne. selfinductance).or.(selfinductance>1000.0d0)) then
-        write(*,*) 'a = ',a, ' b = ', b
-        write(*,*) 'c = ',c, ' x = ', x
-        write(*,*) 'q = ',q, ' at = ', at
-        write(*,*) 'x2 = ',x2, ' N = ', N
-        write(*,*) 'lambda = ',lambda, ' mu = ', mu
-        write(*,*) 'selfinductance = ',selfinductance
-    end if
+    ! if((selfinductance<0.0d0).or.(selfinductance .ne. selfinductance).or.(selfinductance>1000.0d0)) then
+    !     write(*,*) 'a = ',a, ' b = ', b
+    !     write(*,*) 'c = ',c, ' x = ', x
+    !     write(*,*) 'q = ',q, ' at = ', at
+    !     write(*,*) 'x2 = ',x2, ' N = ', N
+    !     write(*,*) 'lambda = ',lambda, ' mu = ', mu
+    !     write(*,*) 'selfinductance = ',selfinductance
+    ! end if
     
   end function selfinductance
   
