@@ -92,6 +92,7 @@ ixc(38) = 115 * fpoloidalpower  f-value for constraint on rate of change of ener
 
 ixc(39) = 118 * fpsep: f-value to ensure separatrix power is less than value from Kallenbach divertor
 boundu(118)=1.05
+fpsep  =    1
 
 ixc(40) = 119 * tesep
 boundl(119) = 0.1
