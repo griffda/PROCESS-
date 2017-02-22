@@ -782,9 +782,9 @@ module numerics
        'fw_channel_l  ',  &
        !+ad_varc  <LI> (115) fpoloidalpower: f-value for max rate of change of energy in poloidal field 
        'fpoloidalpower',  &
-       !+ad_varc  <LI> (116) fradwall: f-value for radiation wall load limit (eq. 67)</UL>
+       !+ad_varc  <LI> (116) fradwall: f-value for radiation wall load limit (eq. 67)
        'fradwall      ',  &
-       !+ad_varc  <LI> (117) fpsepbqar: f-value for  Psep*Bt/qar upper limit (eq. 68)</UL>
+       !+ad_varc  <LI> (117) fpsepbqar: f-value for  Psep*Bt/qar upper limit (eq. 68)
        'fpsepbqar     ',  &
        !+ad_varc  <LI> (118) fpsep: f-value to ensure separatrix power is less than value from Kallenbach divertor
        'fpsep         ',  &
