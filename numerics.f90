@@ -1300,6 +1300,8 @@ contains
          gammv,etav,xa,bdelta,delta,ldel,gm,bdl,bdu,h,lh,wa,lwa,iwa, &
          liwa,ilower,iupper,bndl,bndu)
 
+    write(*,*) ""
+
     !  If VMCON has exited with error code 5 try another run using a multiple of
     !  the identity matrix as input for the Hessian b(n,n).
     !  Only do this if VMCON has not iterated (nviter=1).

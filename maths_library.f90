@@ -76,6 +76,7 @@ module maths_library
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   use global_variables, only: verbose
+  use numerics, only: maxcal
   use constants
   ! MDK Remove this dependency, as iotty is now defined in global variables.
   !use process_output
@@ -2407,6 +2408,7 @@ contains
     !+ad_hist  08/07/14 PJK/MDK Added a test of the residuals to the convergence
     !+ad_hisc               criteria
     !+ad_hist  10/09/14 PJK/MDK Added new info=7 value
+    !+ad_hist  22/02/17 JM  Updated VMCON iteration info output
     !+ad_stat  Okay
     !+ad_docs  ANL-80-64: Solution of the General Nonlinear Programming Problem
     !+ad_docc  with Subroutine VMCON, Roger L Crane, Kenneth E Hillstrom and
@@ -2451,6 +2453,8 @@ contains
     real(kind(1.0D0)), parameter :: cp2 = 0.2D0
     real(kind(1.0D0)), parameter :: cp5 = 0.5D0
     real(kind(1.0D0)), parameter :: one = 1.0D0
+
+    character(len=20) :: iteration_progress
 
     !  External routines
 
@@ -2537,17 +2541,20 @@ contains
 	!  Setup line overwrite for VMCON iterations output
 	open(unit=iotty)
 	write(*,*) ""
-	! MDK To prevent circular dependencies in compilation, I will replace this
-	! a simple write statement
-    ! call oheadr(iotty, "VMCON Iterations")
-    write(*,*) "VMCON Iterations"
+    write(*,*) repeat("*", 110)
+    write(*,*) ""
+    write(*,*) "  VMCON Iterations"
+    write(*,*) ""
 
     !  Start the iteration by calling the quadratic programming
     !  subroutine
 
     iteration: do
+    
        !  Output to terminal number of VMCON iterations
-       write(iotty, '("+", I20, "vmcon iterations")'), niter+1
+       iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
+       write(iotty, '("  ==>", I5, "  vmcon iterations", "   min [", a20, "] max iterations", a1)', &
+             ADVANCE="NO"), niter+1, adjustl(iteration_progress), achar(13)
 
        !  Increment the quadratic subproblem counter
        nqp = nqp + 1
