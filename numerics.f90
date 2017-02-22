@@ -99,7 +99,7 @@ module numerics
   public
 
   !+ad_vars  ipnvars /120/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 120
+  integer, parameter :: ipnvars = 121
   !+ad_vars  ipeqns /71/ FIX : number of constraint equations available
   integer, parameter :: ipeqns = 71
   !+ad_vars  ipnfoms /17/ FIX : number of available figures of merit
@@ -114,8 +114,6 @@ module numerics
   !+ad_varc           <LI> = 0  for HYBRD and VMCON (not recommended);
   !+ad_varc           <LI> = 1  for optimisation, VMCON only</UL>
   integer :: ioptimz = 1
-  !+ad_vars  maxcal /200/ : maximum number of VMCON iterations
-  integer :: maxcal = 200
 
   !+ad_vars  minmax /7/ : switch for figure-of-merit (see lablmm for descriptions)
   !+ad_varc               negative => maximise, positive => minimise
@@ -543,7 +541,8 @@ module numerics
        0,  &  !  117
        0,  &  !  118
        0,  &  !  119
-       0   &  !  120
+       0,  &  !  120
+       0   &  !  121
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -790,7 +789,9 @@ module numerics
        'fpsep         ',  &
        !+ad_varc  <LI> (119) tesep:  separatrix temperature calculated by the Kallenbach divertor model
        'tesep         ',  &
-       !+ad_varc  <LI> (120) ttarget: Plasma temperature adjacent to divertor sheath [eV]</UL>
+       !+ad_varc  <LI> (120) ttarget: Plasma temperature adjacent to divertor sheath [eV]
+       'ttarget       ',  &
+       !+ad_varc  <LI> (121) neratio: ratio of mean SOL density at OMP to separatrix density at OMP</UL>
        'ttarget       '  &
        /)
 
@@ -929,7 +930,8 @@ module numerics
        0.001D0, &  !  117
        0.001D0, &  !  118
        0.000D0, &  !  119
-       0.001D0  &  !  120
+       0.001D0, &  !  120
+       0.001D0  &  !  121
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -1054,7 +1056,8 @@ module numerics
        1.000D0, &  !  117
        1.000D0, &  !  118
        1.000D1, &  !  119
-       1.000D3  &  !  120
+       1.000D3, &  !  120
+       1.000D0  &  !  121
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

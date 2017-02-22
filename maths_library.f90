@@ -75,8 +75,7 @@ module maths_library
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  use global_variables, only: verbose
-  use numerics, only: maxcal
+  use global_variables, only: verbose, maxcal
   use constants
   ! MDK Remove this dependency, as iotty is now defined in global variables.
   !use process_output

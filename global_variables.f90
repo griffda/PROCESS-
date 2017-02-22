@@ -35,6 +35,10 @@ module global_variables
   integer :: verbose = 0
   !+ad_vars  run_tests /0/ : Turns on built-in tests if set to 1
   integer :: run_tests = 0
+
+  !+ad_vars  maxcal /200/ : maximum number of VMCON iterations
+  integer :: maxcal = 200
+
   character(len=30) :: fileprefix = "" !'dummy_file_prefix'
   character(len=25) :: xlabel,vlabel
 
