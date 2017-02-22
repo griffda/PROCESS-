@@ -4,7 +4,7 @@
 
 *---------------Constraint Equations---------------*
 
-neqns = 24 * Number of equality constraints to be satisfied
+neqns = 23 * Number of equality constraints to be satisfied
 icc(1) = 1 * Beta
 icc(2) = 2 * Global power balance
 icc(3) = 5 * Density upper limit
@@ -26,9 +26,10 @@ icc(18) = 35 * J_winding pack
 icc(19) = 68 * Pseparatrix Bt / q A R
 icc(20) = 65 * dumpt time by VV stresses
 icc(21) = 36 * TF temp marg
-icc(22) = 66 * Limit on rate of change of energy in poloidal field (tohs is fixed)
-icc(23) = 69 * Separatrix power < than value from Kallenbach divertor (Use iteration variable 118 (fpsep))
-icc(24) = 70 * ensure that tomp is equal to the separatrix temperature in the pedest al profile (Use iteration variable 119 (tesep))
+
+icc(22) = 69 * Separatrix power < than value from Kallenbach divertor (Use iteration variable 118 (fpsep))
+icc(23) = 70 * ensure that tomp is equal to the separatrix temperature in the pedestal profile (Use iteration variable 119 (tesep))
+*icc(23) = 71 * ensure that neomp is equal to the separatrix density (nesep) x neratio
 *---------------Iteration Variables----------------*
 
 nvar = 40 * Number of iteration variables to use
@@ -88,16 +89,18 @@ boundu(60) = 9.0e4
 ixc(36) = 59 * copper fraction of cable conductor (TF coils)
 boundu(59) = 0.94
 ixc(37) = 54 * ftmargtf
-ixc(38) = 115 * fpoloidalpower  f-value for constraint on rate of change of energy in po loidal field (constraint equation 66)
 
-ixc(39) = 118 * fpsep: f-value to ensure separatrix power is less than value from Kallenbach divertor
-boundu(118)=1.05
-fpsep  =    1
+ixc(38) = 118 * fpsep: f-value to ensure separatrix power is less than value from Kallenbach divertor
+boundl(118) = 0.01
+boundu(118)=10.0
 
-ixc(40) = 119 * tesep
+ixc(39) = 119 * tesep
 boundl(119) = 0.1
-boundu(119) = 1.0
+boundu(119) = 10.0
 
+ixc(40) = 120 * ttarget  Plasma temperature adjacent to divertor sheath [eV]
+boundl(120) = 0.1
+boundu(120) = 10.0
 
 *-----------------Build Variables------------------*
 
@@ -151,23 +154,11 @@ maxpoloidalpower = 300 * Maximum permitted absolute rate of change of stored e n
 
 output_costs = 0
 cost_model = 0
-abktflnc = 15 * Allowable first wall/blanket neutron
-adivflnc = 20.0 * Allowable divertor heat fluence (mw-yr/m2)
-cfactr   = 0.75 * Total plant availability fraction;
-dintrt   = 0.00 * Diff between borrowing and saving interest rates
-fcap0    = 1.15 * Average cost of money for construction of plant
-fcap0cp  = 1.06 * Average cost of money for replaceable components
-fcontng  = 0.15 * Project contingency factor
-fcr0     = 0.065 * Fixed charge rate during construction
-fkind    = 1.0 * Multiplier for nth of a kind costs
+
+
 iavail   = 0 * Switch for plant availability model;
 ifueltyp = 1 * Switch;
-lsa      = 2 * Level of safety assurance switch (generally; use 3 or 4);
-ratecdol = 0.06 * Effective cost of money in constant dollars
-tlife    = 40 * Plant life (years)
-ucblvd   = 280.0 * Unit cost for blanket vanadium ($/kg)
-ucdiv    = 5.0d5 * Cost of divertor blade ($)
-ucme     = 3.0d8 * Unit cost of maintenance equipment ($/w**0;3)
+
 
 *-------------Current Drive Variables--------------*
 
@@ -189,7 +180,7 @@ lambda_q = 0.002
 targetangle = 5.0          * Angle between field-line and divertor target (degrees)
 ttarget = 2.3              * Plasma temperature adjacent to divertor sheath [eV]
 qtargettotal = 5.0e6       * Power density on target including surface recombination [W/m2]
-
+neratio = 1.0              * ratio of mean SOL density at OMP to separatrix density at OMP
 *------------------Fwbs Variables------------------*
 
 vfshld   = 0.60 * Coolant void fraction in shield
@@ -296,7 +287,7 @@ iscdens = 1 * set pedestal-top density as fgwped * Greenwald density limit
 
 fgwped = 0.85 * fraction of Greenwald density to set as pedestal-top density
 neped    = 0.678e20 * Electron density of pedestal (/m3) (ipedestal=1)
-nesep    = 0.2e20 * Electron density at separatrix (/m3) (ipedestal=1)
+nesep    = 0.5e20 * Electron density at separatrix (/m3) (ipedestal=1)
 rhopedn  = 0.94 * R/a of density pedestal (ipedestal=1)
 rhopedt  = 0.94 * R/a of temperature pedestal (ipedestal=1)
 tbeta    = 2.0 * Temperature profile index beta  (ipedestal=1)
