@@ -766,7 +766,7 @@ contains
                'Electron density pedestal height (/m3)')
        case ('neratio')
           call parse_real_variable('neratio', neratio, 0.001D0, 1.0D0, &
-               'ratio of mean SOL density at OMP to separatrix density at OMP') 
+               'ratio of mean SOL density at OMP to separatrix density at OMP')
        case ('nesep')
           call parse_real_variable('nesep', nesep, 0.0D0, 1.0D21, &
                'Electron density at separatrix (/m3)')
@@ -1018,6 +1018,10 @@ contains
        case ('fpoloidalpower')
           call parse_real_variable('fpoloidalpower', fpoloidalpower, 0.001D0, 1.0D0, &
                'f-value for constraint on rate of change of energy in poloidal field')
+       case ('fpsep')
+          call parse_real_variable('fpsep', fpsep, 0.001D0, 1.0D0, &
+                       'f-value to ensure separatrix power is less than value from Kallen bach divertor')
+
        case ('gammax')
           call parse_real_variable('gammax', gammax, 0.01D0, 10.0D0, &
                'Maximum current drive gamma (A/W-m2)')
@@ -1153,7 +1157,7 @@ contains
        case ('tramp')
           call parse_real_variable('tramp', tramp, 0.0D0, 1.0D4, &
                'Initial charge time for PF coils (s)')
-        
+
        ! Divertor settings: 2016 Kallenbach model (2016/07/04)
 
        case ('lambda_target')

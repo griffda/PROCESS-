@@ -4,7 +4,7 @@
 
 *---------------Constraint Equations---------------*
 
-neqns = 23 * Number of equality constraints to be satisfied
+neqns = 24 * Number of equality constraints to be satisfied
 icc(1) = 1 * Beta
 icc(2) = 2 * Global power balance
 icc(3) = 5 * Density upper limit
@@ -28,9 +28,10 @@ icc(20) = 65 * dumpt time by VV stresses
 icc(21) = 36 * TF temp marg
 icc(22) = 66 * Limit on rate of change of energy in poloidal field (tohs is fixed)
 icc(23) = 69 * Separatrix power < than value from Kallenbach divertor (Use iteration variable 118 (fpsep))
+icc(24) = 70 * ensure that tomp is equal to the separatrix temperature in the pedest al profile (Use iteration variable 119 (tesep))
 *---------------Iteration Variables----------------*
 
-nvar = 39 * Number of iteration variables to use
+nvar = 40 * Number of iteration variables to use
 ixc(1) = 2 * bt
 boundu(2) = 20.0
 ixc(2) = 3 * rmajor
@@ -92,7 +93,9 @@ ixc(38) = 115 * fpoloidalpower  f-value for constraint on rate of change of ener
 ixc(39) = 118 * fpsep: f-value to ensure separatrix power is less than value from Kallenbach divertor
 boundu(118)=1.05
 
-
+ixc(40) = 119 * tesep
+boundl(119) = 0.1
+boundu(119) = 1.0
 
 
 *-----------------Build Variables------------------*
@@ -141,6 +144,7 @@ tbrnmn   = 7.2e3 * Minimum burn time (s)
 walalw   = 8.0 * Allowable wall-load (mw/m2)
 psepbqarmax = 9.5D0 * maximum ratio of Psep*Bt/qAR (MWT/m)
 maxpoloidalpower = 300 * Maximum permitted absolute rate of change of stored e nergy in poloidal field (MW)
+
 
 *------------------Cost Variables------------------*
 
@@ -227,7 +231,7 @@ fimp(11) = 0.0
 fimp(12) = 0.0
 fimp(13) = 0.000
 fimp(14) = 5e-05
-fimpvar  = 0.004 * Impurity fraction to be used as fimp(impvar)
+fimpvar  = 0.002 * Impurity fraction to be used as fimp(impvar)
 impvar   = 9 * Fimp element value to be varied if iteration
 
 *fimp(13) = 0.00044
@@ -296,7 +300,8 @@ rhopedn  = 0.94 * R/a of density pedestal (ipedestal=1)
 rhopedt  = 0.94 * R/a of temperature pedestal (ipedestal=1)
 tbeta    = 2.0 * Temperature profile index beta  (ipedestal=1)
 teped    = 5.5 * Electron temperature of pedestal (kev) (ipedestal=1)
-tesep    = 0.2 * Electron temperature at separatrix (kev) (ipedestal=1)
+tesep    = 2.8711E-01 * Electron temperature at separatrix (kev) (ipedestal=1)
+
 iprofile = 1 * Switch for current profile consistency;
 isc      = 34 * Switch for energy confinement time scaling law
 ishape   = 2 * Switch for plasma cross-sectional shape calculation;
