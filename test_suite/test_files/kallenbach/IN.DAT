@@ -32,7 +32,7 @@ icc(23) = 70 * ensure that tomp is equal to the separatrix temperature in the pe
 icc(24) = 71 * ensure that neomp is equal to the separatrix density (nesep) x neratio
 *---------------Iteration Variables----------------*
 
-nvar = 40 * Number of iteration variables to use
+nvar = 41 * Number of iteration variables to use
 ixc(1) = 2 * bt
 boundu(2) = 20.0
 ixc(2) = 3 * rmajor
@@ -51,6 +51,9 @@ ixc(8) = 12 * oacdcp
 ixc(9) = 13 * tfcth
 ixc(10) = 14 * fwalld
 ixc(11) = 16 * ohcth
+boundl(16) = 0.2
+boundu(16) = 2.0
+
 ixc(12) = 18 * q
 boundl(18) = 3.0
 ixc(13) = 29 * bore
@@ -93,8 +96,8 @@ boundu(59) = 0.94
 ixc(37) = 54 * ftmargtf
 
 ixc(38) = 118 * fpsep: f-value to ensure separatrix power is related to that from Kallenbach divertor
-boundl(118) = 0.75
-boundu(118)=1.25
+boundl(118) = 0.5
+boundu(118)=1.5
 
 ixc(39) = 119 * tesep
 boundl(119) = 0.1
@@ -102,7 +105,12 @@ boundu(119) = 10.0
 
 ixc(40) = 120 * ttarget  Plasma temperature adjacent to divertor sheath [eV]
 boundl(120) = 0.1
-boundu(120) = 20.0
+boundu(120) = 10.0
+
+ixc(41) = 21 * f-value for burn time limit equation
+boundl(21) = 0.001
+boundu(21) = 5.0
+
 
 *-----------------Build Variables------------------*
 
@@ -309,13 +317,8 @@ tohs   = 300 * OH ramp up time (s)
 tdwell = 0 * dwell time (s)
 
 *------------------Rfp Variables-------------------*
-
-
 *-------------------Scan Module--------------------*
-
-
 *--------------Stellarator Variables---------------*
-
 
 *-----------------Tfcoil Variables-----------------*
 
@@ -340,7 +343,5 @@ vdalw    = 10.00 * Max voltage across tf coil during quench (kv)
 vftf     = 0.300 * Coolant fraction of tfc 'cable' (itfsup=1); or of tfc leg (itfsup=0)
 
 *-----------------Times Variables------------------*
-
-tburn    = 1.0d4 * Burn time (s) (calculated if lpulse=1)
 
 *-----------------Vacuum Variables-----------------*
