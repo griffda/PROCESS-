@@ -623,8 +623,6 @@ subroutine eqslv(ifail)
   nprint = 0
 
   !  Use HYBRD to find a starting point
-  ! MDK Try allocating here
-  allocate(name_xc(nvar))
   call loadxc
   call eqsolv(fcnhyb,neqns,xcm,rcm,ftol,epsfcn,factor,nprint,ifail, &
        wa,iptnt,resdl,nfev1)
