@@ -994,6 +994,10 @@ contains
        case ('ftmargtf')
           call parse_real_variable('ftmargtf', ftmargtf, 0.001D0, 10.0D0, &
                'F-value for TF coil temp. margin')
+       case ('ftmargoh')
+          call parse_real_variable('ftmargoh', ftmargoh, 0.001D0, 10.0D0, &
+               'F-value for TF coil temp. margin')
+
        case ('ftohs')
           call parse_real_variable('ftohs', ftohs, 0.001D0, 10.0D0, &
                'F-value for plasma current ramp-up time')
