@@ -10,7 +10,7 @@ module divertor_ode
   !+ad_prob  None
   !+ad_hist  25/01/17 MDK  Initial version of module
   !+ad_stat  Okay
-  !+ad_docs  
+  !+ad_docs
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -30,7 +30,7 @@ module divertor_ode
 
   logical, private :: verbose
   logical, public, save :: impurities_present(nimp)=.false.
-  
+
   integer, private :: iprint
   integer, private :: element_index(nimp)
 
@@ -48,7 +48,7 @@ module divertor_ode
 
   ! conversion from flux density [el/s] to Pascal [Molecules]
   ! see page 6 of paper.
-  real(kind(1.0D0)), private :: fluxdens_to_pa= 1.0D0/1.55e23  
+  real(kind(1.0D0)), private :: fluxdens_to_pa= 1.0D0/1.55e23
 
   ! Useful values (combinations of other constants/variables)
   real(kind(1.0D0)), private :: eightemi, eightemi48,  elEion
@@ -66,10 +66,10 @@ module divertor_ode
 
   ! Allowable absolute/relative error
   real(kind(1.0D0)), private :: abserr, relerr
-  
+
   ! Circumference of plasma at outboard midplane [m]
   real(kind(1.0D0)), private :: circumference
-  
+
   ! Circumference of normal to helical field line [m]
   real(kind(1.0D0)), private :: circumf_bu
 
@@ -80,11 +80,11 @@ module divertor_ode
   real(kind(1.0D0)), private :: zeffpoint3
 
   ! SOL radial thickness extrapolated to OMP [m]
-  real(kind(1.0D0)), private :: lambda_target, lambda_q 
-  
+  real(kind(1.0D0)), private :: lambda_target, lambda_q
+
   ! SOL power fall-off length changes [m]
   real(kind(1.0D0)), private, parameter :: lengthofwideSOL=5.0D0
-  
+
   ! Ratio: psep_kallenbach / Powerup
   real(kind(1.0D0)), private, parameter :: seppowerratio=2.3D0
 
@@ -106,11 +106,11 @@ contains
     !+ad_args  output : output type : des
 
     !+ad_desc  Calculate radiative loss and plasma profiles along a flux tube including momentum losses.
-    !+ad_desc  Description in A. Kallenbach et al., PPCF 58 (2016) 045013, this version based on that 
+    !+ad_desc  Description in A. Kallenbach et al., PPCF 58 (2016) 045013, this version based on that
     !+ad_desc  sent by Arne 17.5.2016.
-    !+ad_desc  Note this solver is not suitable for stiff equations - which these are. Instead I have 
+    !+ad_desc  Note this solver is not suitable for stiff equations - which these are. Instead I have
     !+ad_desc  set the neutral density derivatives to zero when the neutral density is small.
-    !+ad_desc  Multiple impurities permitted in this version, the concentrations are from 
+    !+ad_desc  Multiple impurities permitted in this version, the concentrations are from
     !+ad_desc  impurity_radiation_module, but multiplied by suitable multipliers.
     !+ad_prob  None
     !+ad_hist  25/01/17 MDK  Initial tidied version
@@ -138,13 +138,17 @@ contains
     ! Modules to import !
     !!!!!!!!!!!!!!!!!!!!!
 
-    use ode_mod , only : ode
+    use ode_mod , only :                      ode
+    use constraint_variables, only :          fpsep
+    use numerics, only : active_constraints,  boundl, boundu
+    use divertor_kallenbach_variables, only : neratio
+    use physics_variables, only :             nesep, pdivt
 
     ! Variable declarations !
     !!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-    
+
     ! Code variables
     logical::verbose
     logical,save::firstcall=.true.
@@ -159,10 +163,10 @@ contains
 
     ! Plasma major/minor radius [m]
     real(kind(1.0D0)), intent(in) :: rmajor, rminor
-    
+
     ! Toroidal field on-axis [T]
     real(kind(1.0D0)), intent(in) :: bt
-    
+
     ! Plasma current [A]
     real(kind(1.0D0)), intent(in) :: plascur
 
@@ -189,16 +193,16 @@ contains
 
     ! "non-coronal parameter" for radiative loss function [ms.1e20/m3]
     real(kind(1.0D0)), intent(in) :: netau_in
-    
+
     ! Absolute error input
     real(kind(1.0D0)), optional, intent(in) :: abserrset
-    
+
     ! Helium and impurity enrichment
     real(kind(1.0D0)), optional, intent(in) :: helium_enrichment, impurity_enrichment
 
     ! Power conducted through the separatrix, calculated by divertor model [W]
     real(kind(1.0D0)), optional, intent(out) :: psep_kallenbach
-    
+
     ! Temperature (eV) and density (1/m3) at outboard midplane
     real(kind(1.0D0)), optional, intent(out) :: tomp, neomp
 
@@ -219,16 +223,16 @@ contains
 
     ! electron energy loss due to ionization [eV]
     real(kind(1.0D0)) :: Eion
-    
+
     ! kinetic energy for the first group of neutrals [eV]
     real(kind(1.0D0)) :: Eneutrals
-    
-    ! neutral velocity along the flux bundle, group 1 [m/s] 
+
+    ! neutral velocity along the flux bundle, group 1 [m/s]
     real(kind(1.0D0)) :: v0
-    
+
     ! Sheath energy transmission coefficient (kallenbach paper pg. 4)
     real(kind(1.0D0)) :: gammasheath
-    
+
     ! Recombination energy [eV]
     real(kind(1.0D0)) :: Erecomb
 
@@ -237,13 +241,13 @@ contains
 
     ! Ion sound speed near target [m/s]
     real(kind(1.0D0)) :: cs0
-    
-    ! Nominal neutral pressure at target [Pa] 
+
+    ! Nominal neutral pressure at target [Pa]
     real(kind(1.0D0)) :: p0partflux
 
     ! Target area to target wetted area factor
     real(kind(1.0D0)) :: sinfact
-    
+
     ! Relative distribution between 2 neutral particle classes
     real(kind(1.0D0)) :: neutfrac1, neutfrac2
 
@@ -252,16 +256,16 @@ contains
 
     ! neutral density in group 1, 2
     real(kind(1.0D0)) :: n010, n020
-    
+
     ! electron temperature [eV]
     real(kind(1.0D0)) :: te0
-    
+
     ! n*v [1/m2.s]
     real(kind(1.0D0)) :: nv0
-    
+
     ! Pressure [Pa]
     real(kind(1.0D0)) :: pressure0
-    
+
     ! Total power running along SOL [W]
     real(kind(1.0D0)) :: Power0
 
@@ -284,7 +288,7 @@ contains
     integer(kind=4) :: iwork(5)
 
     ! First step [m]
-    real(kind(1.0D0)) :: step0=0.0005              
+    real(kind(1.0D0)) :: step0=0.0005
 
     ! Ratio between successive step sizes
     real(kind(1.0D0)) :: factor
@@ -301,7 +305,7 @@ contains
     real(kind(1.0D0)) :: plossion, lz, raddens, radHdens, qperp_total, qperp_conv, qperp_conducted
     real(kind(1.0D0)) :: n01, n02, te, nv, pressure, Power, nv24, bracket, nel20, Pthermal, n0e20
     real(kind(1.0D0)) :: cs, mach
-    
+
     !+ad_vars  A_cross : Area of flux bundle perpendicular to B
     real(kind(1.0D0)) :: A_cross
 
@@ -318,7 +322,7 @@ contains
     real(kind(1.0D0)) :: nete
 
     ! TODO: same name as density...
-    !+ad_vars  nete0 : Plasma thermal pressure near target 
+    !+ad_vars  nete0 : Plasma thermal pressure near target
     real(kind(1.0D0)) :: nete0
 
     !+ad_vars  nel0 : Electron density near target [m-3]
@@ -339,12 +343,12 @@ contains
     ! Mean charge and quadratic mean charge from ADAS
     real(kind(1.0D0)) :: z, qz
 
-    ! Zeff for divertor region 
+    ! Zeff for divertor region
     real(kind(1.0D0)) :: zeff_div
-    
-    ! Power density on target due to surface recombination [W/m2] 
+
+    ! Power density on target due to surface recombination [W/m2]
     real(kind(1.0D0)) :: qtargetrecomb
-    
+
     ! Total power on target [W]
     real(kind(1.0D0)) :: powertargettotal
 
@@ -370,7 +374,7 @@ contains
     real(kind(1.0D0)) :: IonFluxTarget
 
     ! Typical SOL temperature, used only for estimating zeffective in the SOL [eV]
-    real(kind(1.0D0)) :: ttypical=30.0D0 
+    real(kind(1.0D0)) :: ttypical=30.0D0
 
     ! Major radius at outer midplane = target approx [m]
     romp = rmajor + rminor
@@ -441,7 +445,7 @@ contains
     if (verbose) then
         write(*,*) 'subroutine divertor_Kallenbach'
     end if
-    
+
     ! ion mass [kg]
     mi = umass*aplas
 
@@ -518,7 +522,7 @@ contains
     ! This will be changed subsequently for L>llabdaint.
     ! neutral velocity along the flux bundle, group 1 [m/s]
     v0 = 0.25D0 * sqrt(8.0D0/pi * echarge*Eneutrals / mi)
-    
+
     ! Rename this for consistency
     v01 = v0
 
@@ -550,7 +554,7 @@ contains
     ! Mach=1 is assumed as boundary condition at the target
     ! This equation not stated explicitly in the paper.
     ! Plasma density near target [m-3]
-    nel0 = qtarget*sinfact/(gammasheath*echarge*Ttarget*cs0)      
+    nel0 = qtarget*sinfact/(gammasheath*echarge*Ttarget*cs0)
 
     ! Ion flux density perp to B at target [m-2.s-1]
     partfluxtar = nel0*cs0
@@ -593,9 +597,9 @@ contains
     nv0 = -nel0*cs0
 
     ! Pressure  (Kallenbach paper equation 6) [Pa]
-    pressure0 = mi*nv0**2.0D0 / nel0 + nel0*2.0D0*echarge*te0     
+    pressure0 = mi*nv0**2.0D0 / nel0 + nel0*2.0D0*echarge*te0
 
-    ! n*T [eV.m-3] 
+    ! n*T [eV.m-3]
     nete0 = nel0*te0
 
     ! Total power running along SOL [W]
@@ -656,7 +660,7 @@ contains
 
     do step = 0, step_num+1
         if(step.ne.0) then
-            
+
             ! Solve the set of differential equations
             call ode(differential, neqn, y, x, xout, relerr, abserr, iflag, work, iwork )
 
@@ -782,7 +786,7 @@ contains
         endif
     end do
 
-    if(verbose) then 
+    if(verbose) then
         write(*,*)'Differential equations complete'
     end if
 
@@ -843,12 +847,28 @@ contains
     call ovarre(outfile, 'SOL power fall-off length at the outer midplane [m]','(lambda_q)', lambda_q)
     call ovarre(outfile, 'Plasma temperature at outer midplane [eV]','(tomp)', tomp, 'OP ')
     call ovarre(outfile, 'Plasma density at outer midplane [m-3]','(neomp)', neomp, 'OP ')
-    call ocmmnt(outfile, 'WARNING Not yet consistent with "nesep"')
+    if(active_constraints(71) .eqv. .true.)then
+        call ocmmnt(outfile, 'Constraint 71 is applied as follows.')
+        call ovarre(outfile, '. Ratio: SOL density at OMP / separatrix density','(neratio)', neratio)
+    else
+             call ocmmnt(outfile, 'Separatrix density consistency constraint 71 is NOT applied')
+    end if
+    call ovarre(outfile, '. COMPARISON: Plasma density at separatrix [m-3]','(nesep)', nesep, 'OP ')
+
     call ovarre(outfile, 'Poloidal field at outer midplane [T]','(Bp_omp)', Bp_omp, 'OP ')
     call ovarre(outfile, 'Power at outer midplane [W] ','(Powerup)', Powerup, 'OP ')
     call ovarre(outfile, 'Power conducted through the separatrix, calculated by divertor model [W] ',&
                          '(psep_kallenbach)', psep_kallenbach, 'OP ')
-    call ocmmnt(outfile, 'Not equal to pdivt unless constraint is imposed.')
+    if(active_constraints(69) .eqv. .true.)then
+        call ocmmnt(outfile, 'Constraint 69 is applied to the following ratio:')
+        call ovarre(outfile, '. Separatrix power from main plasma model / Sep power from divertor model','(fpsep)', fpsep)
+        call ovarre(outfile, '.  Lower limit of ratio','(boundl(118))', boundl(118))
+        call ovarre(outfile, '.  Upper limit of ratio','(boundu(118))', boundu(118))
+    else
+         call ocmmnt(outfile, 'Separatrix power consistency constraint 69 is NOT applied')
+    end if
+    call ovarre(outfile, '. COMPARISON: Separatrix power from main plasma model [MW]','(pdivt)', pdivt, 'OP ')
+
     call ovarre(outfile, 'Ratio: psep_kallenbach / Powerup ','(seppowerratio)', seppowerratio)
 
     call osubhd(outfile, 'Properties of SOL plasma adjacent to divertor sheath :')
@@ -857,7 +877,7 @@ contains
     call ovarre(outfile, 'Ion flux density perp to B at target [partfluxtar] m-2s-1 ','(partfluxtar)', partfluxtar, 'OP ')
     call ovarre(outfile, 'Ion flux density on target [partfluxtar/sinfact]  m-2s-1 ','(IonFluxTarget)', IonFluxTarget, 'OP ')
     call ovarre(outfile, 'Nominal neutral pressure at target [p0partflux] [Pa] ','(p0partflux)', p0partflux, 'OP ')
-    call ovarre(outfile, 'Plasma temperature near target [eV] ','(Ttarget)', Ttarget)
+    call ovarre(outfile, 'Plasma temperature near target [eV] ','(ttarget)', ttarget)
     call ovarre(outfile, 'Total power in SOL near target, Power0 [W] ','(Power0)', Power0, 'OP ')
     call ovarre(outfile, 'Total plasma pressure near target (thermal+dynamic) [Pa] ','(pressure0)', pressure0, 'OP ')
     call ovarre(outfile, 'Momentum loss factor [-] ','(fmom)', fmom, 'OP ')
@@ -920,7 +940,7 @@ contains
     real(kind(1.0D0)) :: lambda
     real(kind(1.0D0)), intent(in) :: x
 
-    if(x.lt.lengthofwideSOL) then 
+    if(x.lt.lengthofwideSOL) then
         lambda = lambda_target
     else if(x.ge.lengthofwideSOL) then
         lambda = lambda_q
@@ -955,10 +975,10 @@ contains
     !+ad_prob  None
     !+ad_hist  01/02/17 MDK  Initial version
     !+ad_stat  Okay
-    !+ad_docs  
+    !+ad_docs
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        
+
     implicit none
 
     integer :: i
@@ -972,7 +992,7 @@ contains
     ! YP(), the value of the derivative
     real(kind(1.0D0)),intent(out) :: yp(10)
 
-    ! 
+    !
     real(kind(1.0D0)):: n01, n02, te, nv, pressure, Power, nv24, bracket
 
     real(kind(1.0D0)):: nel, v, n0
@@ -986,7 +1006,7 @@ contains
     real(kind(1.0D0)):: A_cross
 
     ! Combined weighted radiative loss function
-    real(kind(1.0D0))::LzTotal       
+    real(kind(1.0D0))::LzTotal
 
     ! Set initial values
     n01 = Y(1)*1.e20
@@ -1013,7 +1033,7 @@ contains
             write(*,*) 'y= ', y
             stop
         endif
-        
+
     endif
 
     nel = (pressure + sqrt(bracket))/(4.0d0*echarge*te)
@@ -1022,7 +1042,7 @@ contains
 
     if(n0.gt.abserr*1.e20)  then
         call get_h_rates(nel, te, s, al, cx, plt, prb, aplas, verbose=.false.)
-        
+
         ! charge exchange for equation 7
         cxrate = cx*nel*n0
 
@@ -1277,7 +1297,7 @@ subroutine kallenbach_test()
   !+ad_prob  None
   !+ad_hist  01/02/17 MDK  Initial version
   !+ad_stat  Okay
-  !+ad_docs  
+  !+ad_docs
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

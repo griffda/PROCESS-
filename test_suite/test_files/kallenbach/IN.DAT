@@ -1,10 +1,10 @@
-
+runtitle = 'Kallenbach divertor model'
 *--------------------------------------------------*
 
 
 *---------------Constraint Equations---------------*
 
-neqns = 23 * Number of equality constraints to be satisfied
+neqns = 24 * Number of equality constraints to be satisfied
 icc(1) = 1 * Beta
 icc(2) = 2 * Global power balance
 icc(3) = 5 * Density upper limit
@@ -29,7 +29,7 @@ icc(21) = 36 * TF temp marg
 
 icc(22) = 69 * Separatrix power < than value from Kallenbach divertor (Use iteration variable 118 (fpsep))
 icc(23) = 70 * ensure that tomp is equal to the separatrix temperature in the pedestal profile (Use iteration variable 119 (tesep))
-*icc(23) = 71 * ensure that neomp is equal to the separatrix density (nesep) x neratio
+icc(24) = 71 * ensure that neomp is equal to the separatrix density (nesep) x neratio
 *---------------Iteration Variables----------------*
 
 nvar = 40 * Number of iteration variables to use
@@ -38,9 +38,11 @@ boundu(2) = 20.0
 ixc(2) = 3 * rmajor
 boundu(3) = 13
 ixc(3) = 4 * te
-boundu(4) = 150.0
+boundl(4) = 10.0
+boundu(4) = 50.0
 ixc(4) = 5 * beta
 ixc(5) = 6 * dene
+boundl(6) =  6.0E+19
 ixc(6) = 9 * fdene
 boundu(9) = 1.2
 ixc(7) = 10 * hfact
@@ -132,7 +134,6 @@ bmxlim   = 14.0 * Maximum peak toroidal field (t)
 fbetatry = 0.4815 * F-value for beta limit
 fdene    = 1.2 * F-value for density limit
 ffuspow  = 1 * F-value for maximum fusion power
-*fiooic   = 0.3978 * F-value for tf coil operating current / critical
 fjohc    = 0.25 * F-value for central solenoid current at end-of-flattop
 fjohc0   = 0.25 * F-value for central solenoid current at beginning of pulse
 fjprot   = 1.0 * F-value for tf coil winding pack current density
@@ -149,16 +150,12 @@ walalw   = 8.0 * Allowable wall-load (mw/m2)
 psepbqarmax = 9.5D0 * maximum ratio of Psep*Bt/qAR (MWT/m)
 maxpoloidalpower = 300 * Maximum permitted absolute rate of change of stored e nergy in poloidal field (MW)
 
-
 *------------------Cost Variables------------------*
 
 output_costs = 0
 cost_model = 0
-
-
 iavail   = 0 * Switch for plant availability model;
 ifueltyp = 1 * Switch;
-
 
 *-------------Current Drive Variables--------------*
 
@@ -180,7 +177,7 @@ lambda_q = 0.002
 targetangle = 5.0          * Angle between field-line and divertor target (degrees)
 ttarget = 2.3              * Plasma temperature adjacent to divertor sheath [eV]
 qtargettotal = 5.0e6       * Power density on target including surface recombination [W/m2]
-neratio = 1.0              * ratio of mean SOL density at OMP to separatrix density at OMP
+neratio = 0.75              * ratio of mean SOL density at OMP to separatrix density at OMP
 *------------------Fwbs Variables------------------*
 
 vfshld   = 0.60 * Coolant void fraction in shield
@@ -226,14 +223,11 @@ fimp(14) = 5e-05
 fimpvar  = 0.002 * Impurity fraction to be used as fimp(impvar)
 impvar   = 9 * Fimp element value to be varied if iteration
 
-*fimp(13) = 0.00044
-*fimpvar  = 0.0003891 * Impurity fraction to be used as fimp(impvar)
-
 *---------------------Numerics---------------------*
 
 ioptimz  = 1 * for optimisation VMCON only
 minmax   = 1 * Switch for figure-of-merit (see lablmm for descriptions)
-epsvmc   = 1.0e-8 * Error tolerance for vmcon
+epsvmc   = 1.0e-6 * Error tolerance for vmcon
 
 *----------------Pf Power Variables----------------*
 
