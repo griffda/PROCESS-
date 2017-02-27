@@ -1671,7 +1671,8 @@ module pfcoil_variables
   !+ad_varc            <LI> = 2 Bi-2212 high temperature superconductor (range of
   !+ad_varc                     validity T < 20K, adjusted field b < 104 T, B > 6 T);
   !+ad_varc            <LI> = 3 NbTi;
-  !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters</UL>
+  !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters
+  !+ad_varc            <LI> = 5 WST Nb3Sn parameterisation</UL>
   integer :: isumatoh = 1
   !+ad_vars  isumatpf /1/ : switch for superconductor material in PF coils:<UL>
   !+ad_varc            <LI> = 1 ITER Nb3Sn critical surface model with standard
@@ -1679,7 +1680,8 @@ module pfcoil_variables
   !+ad_varc            <LI> = 2 Bi-2212 high temperature superconductor (range of
   !+ad_varc                     validity T < 20K, adjusted field b < 104 T, B > 6 T);
   !+ad_varc            <LI> = 3 NbTi;
-  !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters</UL>
+  !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters
+  !+ad_varc            <LI> = 5 WST Nb3Sn parameterisation</UL>
   integer :: isumatpf = 1
   !+ad_vars  jscoh_bop : central solenoid superconductor critical current density (A/m2)
   !+ad_varc                  at beginning-of-pulse
@@ -1931,8 +1933,8 @@ module tfcoil_variables
 
   !+ad_vars  dcase /8000.0/ : density of coil case (kg/m3)
   real(kind(1.0D0)) :: dcase = 8000.0D0
-  !+ad_vars  dcond(4) /9000.0/ : density of superconductor type given by isumattf/isumatoh/isumatpf (kg/m3)
-  real(kind(1.0D0)), dimension(4) :: dcond = 9000.0D0
+  !+ad_vars  dcond(5) /9000.0/ : density of superconductor type given by isumattf/isumatoh/isumatpf (kg/m3)
+  real(kind(1.0D0)), dimension(5) :: dcond = 9000.0D0
   !+ad_vars  dcondins /1800.0/ : density of conduit + ground-wall insulation (kg/m3)
   real(kind(1.0D0)) :: dcondins = 1800.0D0
   !+ad_vars  dcopper /8900.0/ : density of copper (kg/m3)
@@ -1983,7 +1985,8 @@ module tfcoil_variables
   !+ad_varc            <LI> = 2 Bi-2212 high temperature superconductor (range of
   !+ad_varc                     validity T < 20K, adjusted field b < 104 T, B > 6 T);
   !+ad_varc            <LI> = 3 NbTi;
-  !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters</UL>
+  !+ad_varc            <LI> = 4 ITER Nb3Sn model with user-specified parameters
+  !+ad_varc            <LI> = 5 WST Nb3Sn parameterisation</UL>
   integer :: isumattf = 1
   !+ad_vars  itfsup /1/ : switch for TF coil conductor model:<UL>
   !+ad_varc          <LI> = 0 copper;
@@ -2035,6 +2038,14 @@ module tfcoil_variables
   real(kind(1.0D0)) :: sigtcon = 0.0D0
   !+ad_vars  sigttf(2) : tangential stress in TF coil regions (Pa)
   real(kind(1.0D0)), dimension(2) :: sigttf = 0.0D0
+    !+ad_vars  s_tresca_case : TF coil case Tresca stress (MPa)
+  real(kind(1.0D0)) :: s_tresca_case  = 0.0D0
+  !+ad_vars  s_tresca_cond : TF coil conduit Tresca stress (MPa)
+  real(kind(1.0D0)) :: s_tresca_cond  = 0.0D0
+  !+ad_vars  s_vmises_case : TF coil case von Mises stress (MPa)
+  real(kind(1.0D0)) :: s_vmises_case  = 0.0D0
+  !+ad_vars  s_vmises_cond : TF coil conduit von Mises stress (MPa)
+  real(kind(1.0D0)) :: s_vmises_cond  = 0.0D0
   !+ad_vars  sigver : vertical TF coil stress (MPa)
   real(kind(1.0D0)) :: sigver  = 0.0D0
   !+ad_vars  sigvert : vertical tensile stress in TF coil (Pa)
@@ -2044,9 +2055,9 @@ module tfcoil_variables
   !+ad_vars  strncon /-0.005/ : strain in superconductor material (TF, PF and CS)
   !+ad_varc                     (used in ITER Nb3Sn critical surface model)
   real(kind(1.0D0)) :: strncon = -0.005D0
-  !+ad_vars  strtf1 : Von Mises stress in TF cable conduit (Pa)
+  !+ad_vars  strtf1 : Constrained stress in TF cable conduit (Pa)
   real(kind(1.0D0)) :: strtf1 = 0.0D0
-  !+ad_vars  strtf2 : Von Mises stress in TF coil case (Pa)
+  !+ad_vars  strtf2 : Constrained stress in TF coil case (Pa)
   real(kind(1.0D0)) :: strtf2 = 0.0D0
   !+ad_vars  taucq : allowable TF quench time (s)
   real(kind(1.0D0)) :: taucq = 30.0D0
@@ -3464,8 +3475,8 @@ module cost_variables
   !+ad_vars  ucrb /400.0/ : cost of reactor building (M$/m3)
   real(kind(1.0D0)) :: ucrb = 400.0D0
   !+ad_vars  ucsc(4) /600.0,600.0,300.0,600.0/ : cost of superconductor ($/kg)
-  real(kind(1.0D0)), dimension(4) :: ucsc = &
-       (/600.0D0, 600.0D0, 300.0D0, 600.0D0/)
+  real(kind(1.0D0)), dimension(5) :: ucsc = &
+       (/600.0D0, 600.0D0, 300.0D0, 600.0D0, 600.0D0/)
   !+ad_vars  ucsh /115.0/ FIX : cost of shops and warehouses (M$/m3)
   real(kind(1.0D0)) :: ucsh = 115.0D0
   !+ad_vars  ucshld /32.0/ : cost of shield structural steel ($/kg)

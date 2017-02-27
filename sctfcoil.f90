@@ -40,6 +40,7 @@ module sctfcoil_module
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  16/09/14 PJK Removed myall_stress routine
   !+ad_hist  14/14/15 JM  Added output of peak field fit values if run_test=1
+  !+ad_hist  27/02/17 JM  Added wstsc parameterisation
   !+ad_stat  Okay
   !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
   !
@@ -55,7 +56,7 @@ module sctfcoil_module
   use tfcoil_variables
 
   private
-  public :: bi2212, itersc, jcrit_nbti, outtf, sctfcoil, stresscl, &
+  public :: bi2212, itersc, wstsc, jcrit_nbti, outtf, sctfcoil, stresscl, &
        tfcind, tfspcall
 
   !  Module variables
@@ -122,6 +123,7 @@ contains
     !+ad_hist  26/11/15 RK  Quench time calculation, WP insertion gap
     !+ad_hist  08/12/15 MDK New TF coil shape with straight vertical section
     !+ad_hist  19/01/16 JM  Updated tfboreh and tfborev for new radial build
+    !+ad_hist  27/02/17 JM  Added WST Nb3Sn option for superconductor
     !+ad_stat  Okay
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !+ad_docs  PROCESS Superconducting TF Coil Model, J. Morris, CCFE, 1st May 2014
@@ -660,7 +662,7 @@ contains
     !  Local variables
 
     integer :: i
-    real(kind(1.0D0)) :: seff, tcbs, fac, svmxz, svmyz
+    real(kind(1.0D0)) :: seff, tcbs, fac, svmxz, svmyz, t_ins_eff
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -700,45 +702,62 @@ contains
     radtf(3) = rbmax
 
     eyoung(1) = eystl
-    eyoung(2) = eyngeff(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
+    
+    ! include groundwall insulation + insertion gap in thicndut
+    ! inertion gap is tfinsgap on 4 sides
+    t_ins_eff = thicndut + ((tfinsgap+tinstf)/turnstf)
+    
+    eyoung(2) = eyngeff(eystl,eyins,eywp,eyrp,trp,t_ins_eff,seff,thwcndut,tcbs)
+    !eyoung(2) = eyngeff(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
 
     jeff(1) = 0.0D0
     jeff(2) = ritfc / ( pi * (radtf(3)**2 - radtf(2)**2))
 
     !  Call stress routine
-
     call two_layer_stress(poisson,radtf,eyoung,jeff,sigrtf,sigttf,deflect)
 
     !  Convert to conduit + case
 
+    !fac = eystl*eyins*seff / &
+    !     (eyins*(seff-2.0D0*thicndut) + 2.0D0*thicndut*eystl)
+
     fac = eystl*eyins*seff / &
-         (eyins*(seff-2.0D0*thicndut) + 2.0D0*thicndut*eystl)
+         (eyins*(seff-2.0D0*t_ins_eff) + 2.0D0*t_ins_eff*eystl)
 
     sigrcon = sigrtf(2)/eyoung(2) * fac
     sigtcon = sigttf(2)/eyoung(2) * fac
     sigvert = vforce / (acasetf + acndttf*turnstf + arp)
 
     !  Find case strain
-
     casestr = sigvert / eystl
 
     !  Find Von-Mises stresses
     !  For winding pack region take worst of two walls
     svmxz = sigvm(sigrcon, 0.0D0, sigvert, 0.0D0,0.0D0,0.0D0)
     svmyz = sigvm(0.0D0, sigtcon, sigvert, 0.0D0,0.0D0,0.0D0)
-    strtf1 = max(svmxz,svmyz)
+    
+    ! von Mises stresses [MPa]
+    s_vmises_case = sigvm(sigrtf(1), sigttf(1), sigvert, 0.0D0,0.0D0,0.0D0)
+    s_vmises_cond = max(svmxz,svmyz)
 
-    strtf2 = sigvm(sigrtf(1), sigttf(1), sigvert, 0.0D0,0.0D0,0.0D0)
+    ! Tresca stress criterion [Mpa]
+    s_tresca_case = max(ABS(sigrtf(1)-sigttf(1)), ABS(sigttf(1)-sigvert), ABS(sigvert-sigrtf(1)))
+    s_tresca_cond = max(ABS(sigrcon-sigtcon), ABS(sigtcon-sigvert), ABS(sigvert-sigrcon)) 
+
+    ! Stress to constrain
+    strtf1 = s_tresca_cond
+    strtf2 = s_tresca_case
+    !strtf1 = s_vmises_cond
+    !strtf2 = s_vmises_case
 
     !  Young's modulus and strain in vertical direction on winding pack
-
-    eyzwp = eyngzwp(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
+    eyzwp = eyngzwp(eystl,eyins,eywp,eyrp,trp,t_ins_eff,seff,thwcndut,tcbs)
+    !eyzwp = eyngzwp(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
     windstrain = sigvert / eyzwp
 
     !  Radial strain in insulator
-
     insstrain = sigrtf(2) / eyins * &
-         edoeeff(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
+         edoeeff(eystl,eyins,eywp,eyrp,trp,t_ins_eff,seff,thwcndut,tcbs)
 
   end subroutine stresscl
 
@@ -1370,6 +1389,8 @@ contains
     case (4)
        call ocmmnt(outfile, &
             '  (ITER Nb3Sn critical surface model, user-defined parameters)')
+    case (5)
+      call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
     end select
 
     call osubhd(outfile,'Wedged TF Coils, with two-step winding')
@@ -1498,16 +1519,18 @@ contains
        call osubhd(outfile,'TF Coil Stresses (CCFE two-layer model) :')
     end if
     call ovarin(outfile,'TF coil model','(tfc_model)',tfc_model)
+    call ovarre(outfile,'Allowable Tresca stress limit (Pa)','(alstrtf)',alstrtf)
     call ovarre(outfile,'Vertical stress (Pa)','(sigvert)',sigvert, 'OP ')
+    if (tfc_model == 1) then
+      call ovarre(outfile,'Case radial stress (Pa)','(sigrtf(1))',sigrtf(1))
+      call ovarre(outfile,'Case tangential stress (Pa)','(sigttf(1))',sigttf(1), 'OP ')
+    end if
     call ovarre(outfile,'Conduit radial stress (Pa)','(sigrcon)',sigrcon, 'OP ')
     call ovarre(outfile,'Conduit tangential stress (Pa)','(sigtcon)',sigtcon, 'OP ')
-    call ovarre(outfile,'Conduit Von Mises combination stress (Pa)','(strtf1)',strtf1, 'OP ')
-    if (tfc_model == 1) then
-       !call ovarre(outfile,'Case inboard radial stress (Pa)','(sigrtf(1))',sigrtf(1))
-       call ovarre(outfile,'Case inboard tangential stress (Pa)','(sigttf(1))',sigttf(1), 'OP ')
-    end if
-    call ovarre(outfile,'Case peak Von Mises combination stress (Pa)','(strtf2)',strtf2, 'OP ')
-    call ovarre(outfile,'Allowable stress (Pa)','(alstrtf)',alstrtf)
+    call ovarre(outfile,'Tresca stress in case (MPa)', '(s_tresca_case)', s_tresca_case, 'OP ')
+    call ovarre(outfile,'Tresca stress in conduit (MPa)', '(s_tresca_cond)', s_tresca_cond, 'OP ')
+    call ovarre(outfile,'von Mises stress in case (MPa)', '(s_vmises_case)', s_vmises_case, 'OP ')
+    call ovarre(outfile,'von Mises stress in conduit (MPa)', '(s_vmises_cond)', s_vmises_cond, 'OP ')
     call ovarre(outfile,'Deflection at midplane (m)','(deflect)',deflect, 'OP ')
     if (tfc_model == 1) then
        call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')
@@ -1606,6 +1629,7 @@ contains
       !+ad_argc                           2 = Bi-2212 High Temperature Superconductor,
       !+ad_argc                           3 = NbTi,
       !+ad_argc                           4 = ITER Nb3Sn, user-defined parameters
+      !+ad_argc                           5 = WST Nb3Sn parameterisation
       !+ad_args  fhts    : input real : Adjustment factor (<= 1) to account for strain,
       !+ad_argc                         radiation damage, fatigue or AC losses
       !+ad_args  strain : input real : Strain on superconductor at operation conditions
@@ -1732,6 +1756,16 @@ contains
          call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
          jcritstr = jcritsc * (1.0D0-fcu)
 
+      case (5) ! WST Nb3Sn parameterisation
+         bc20m = 32.97D0
+         tc0m = 16.06D0
+
+         !  jcritsc returned by itersc is the critical current density in the
+         !  superconductor - not the whole strand, which contains copper
+
+         call wstsc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+         jcritstr = jcritsc * (1.0D0-fcu)
+
       case default  !  Error condition
          idiags(1) = isumat ; call report_error(105)
 
@@ -1772,19 +1806,31 @@ contains
             end if
             ttestm = ttest - delt
             ttestp = ttest + delt
+
             select case (isumat)
+
             case (1,4)
                call itersc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
                if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
                call itersc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
                call itersc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+
             case (3)
                call jcrit_nbti(ttest ,bmax,c0,bc20m,tc0m,jcrit0,t)
                if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
                call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
                call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
+
+            case (5)
+               call wstsc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+               if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
+               call wstsc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+               call wstsc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
+
             end select
+
             ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
+
          end do solve_for_tmarg
 
          tmarg = ttest - thelium
@@ -1814,6 +1860,9 @@ contains
       case (4)
          call ocmmnt(outfile,'Superconductor used: Nb3Sn')
          call ocmmnt(outfile,'  (ITER Jcrit model, user-defined parameters)')
+      case (5)
+         call ocmmnt(outfile,'Superconductor used: Nb3Sn')
+         call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
       case default
 
       end select
@@ -2124,6 +2173,135 @@ contains
     jcrit = jc1 * jc2 * jc3 / scalefac
 
   end subroutine itersc
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine wstsc(thelium,bmax,strain,bc20max,tc0max,jcrit,bcrit,tcrit)
+
+    !+ad_name  wstsc
+    !+ad_summ  Implementation of WST Nb3Sn critical surface implementation
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  thelium : input real : Coolant/SC temperature (K)
+    !+ad_args  bmax : input real : Magnetic field at conductor (T)
+    !+ad_args  strain : input real : Strain in superconductor
+    !+ad_args  bc20max : input real : Upper critical field (T) for superconductor
+    !+ad_argc                      at zero temperature and strain
+    !+ad_args  tc0max : input real : Critical temperature (K) at zero field and strain
+    !+ad_args  jcrit : output real : Critical current density in superconductor (A/m2)
+    !+ad_args  bcrit : output real : Critical field (T)
+    !+ad_args  tcrit : output real : Critical temperature (K)
+    !+ad_desc  This routine calculates the critical current density and
+    !+ad_desc  temperature in the superconducting TF coils using the
+    !+ad_desc  WST Nb3Sn critical surface model.
+    !+ad_prob  None
+    !+ad_call  report_error
+    !+ad_hist  22/02/17 JM  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  https://idm.euro-fusion.org/?uid=2MMDTG 
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    ! Arguments
+
+    real(kind(1.0D0)), intent(in) :: thelium, bmax, strain, bc20max, tc0max
+    real(kind(1.0D0)), intent(out) :: jcrit, bcrit, tcrit
+
+    ! Local variables
+    
+    ! Scaling constant C [AT/mm2]
+    real(kind(1.0D0)), parameter :: csc = 83075.0D0
+
+    ! Low field exponent p
+    real(kind(1.0D0)), parameter :: p = 0.593D0
+
+    ! High field exponent q
+    real(kind(1.0D0)), parameter :: q = 2.156D0
+
+    ! Strain fitting constant C_{a1}
+    real(kind(1.0D0)), parameter :: ca1 = 50.06D0
+    
+    ! Strain fitting constant C_{a2}
+    real(kind(1.0D0)), parameter :: ca2 = 0.0D0
+
+    ! epsilon_{0,a}
+    real(kind(1.0D0)), parameter :: eps0a = 0.00312D0  
+    
+    real(kind(1.0D0)), parameter :: epsmax = -1.1D-3  !  epsilon_{max} (not used)
+
+    real(kind(1.0D0)) :: bred, epssh, t, bc20eps, &
+         tc0eps, bzero, strfun, jc1, jc2, jc3, scalefac
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    !  $\epsilon_{sh}$
+
+    epssh = (ca2*eps0a)/(sqrt(ca1**2 - ca2**2))
+
+    !  Strain function $s(\epsilon)$
+    !  0.83 < s < 1.0, for -0.005 < strain < 0.005
+
+    strfun = sqrt(epssh**2 + eps0a**2) - sqrt((strain-epssh)**2 + eps0a**2)
+    strfun = strfun*ca1 - ca2*strain
+    strfun = 1.0D0 + (1.0D0/(1.0D0 - ca1*eps0a))*strfun
+
+    !  $B^*_{C2} (0,\epsilon)$
+
+    bc20eps = bc20max*strfun
+
+    !  $T^*_C (0,\epsilon)$
+
+    tc0eps = tc0max * strfun**(1.0D0/3.0D0)
+
+    !  Reduced temperature, restricted to be < 1
+    !  Should remain < 1 for thelium < 0.94*tc0max (i.e. 15 kelvin for isumattf=1)
+
+    if (thelium/tc0eps >= 1.0D0) then
+       fdiags(1) = thelium ; fdiags(2) = tc0eps
+       call report_error(159)
+    end if
+    t = min(thelium/tc0eps, 0.9999D0)
+
+    !  Reduced magnetic field at zero temperature
+    !  Should remain < 1 for bmax < 0.83*bc20max (i.e. 27 tesla for isumattf=1)
+
+    if (bmax/bc20eps >= 1.0D0) then
+       fdiags(1) = bmax ; fdiags(2) = bc20eps
+       call report_error(160)
+    end if
+    bzero = min(bmax/bc20eps, 0.9999D0)
+
+    !  Critical temperature (K)
+
+    tcrit = tc0eps * (1.0D0 - bzero)**(1.0D0/1.52D0)  !  bzero must be < 1 to avoid NaNs
+
+    !  Critical field (T)
+
+    bcrit = bc20eps * (1.0D0 - t**1.52D0)
+
+    !  Reduced magnetic field, restricted to be < 1
+
+    if (bmax/bcrit >= 1.0D0) then
+       fdiags(1) = bmax ; fdiags(2) = bcrit
+       call report_error(161)
+    end if
+    bred = min(bmax/bcrit, 0.9999D0)
+
+    !  Critical current density in superconductor (A/m2)
+
+    jc1 = (csc/bmax)*strfun
+    jc2 = (1.0D0-t**1.52D0) * (1.0D0-t**2)  !  t must be < 1 to avoid NaNs
+    jc3 = bred**p * (1.0D0-bred)**q  !  bred must be < 1 to avoid NaNs
+
+    ! scale from mm2 to m2
+    scalefac = 1.0D6
+
+    jcrit = jc1 * jc2 * jc3*scalefac
+
+  end subroutine wstsc
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
