@@ -241,7 +241,7 @@ LIBS   = ${LIBS_${ARCH}}
 .f90.mod:
 	${FORTRAN} ${FFLAGS} -c $*.f90
 
-default: process.exe
+default: process.exe html
 # object dependencies (usually via modules or header files)
 #fwbs.o: machine_build.o global_variables.o output.o plasma_geometry.o refprop_interface.o \
 #  maths_library.o
