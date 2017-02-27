@@ -15,13 +15,13 @@
  
    Program : ./process.exe
    Version : 1.0.7    Release Date :: 2017-02-10
- Date/time : 16 Feb 2017  9:46:52 +00:00(hh:mm) UTC
+ Date/time : 27 Feb 2017 10:36:25 +00:00(hh:mm) UTC
       User : morrisj
- Directory : /home/morrisj/Work/fortran/divertor_merge/test_suite
+ Directory : /home/morrisj/Work/fortran/develop/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.7 : Run on 16 Feb 2017  9:46:52 +00:00(hh:mm) UTC by localhost.localdomain
+ PROCESS 1.0.7 : Run on 27 Feb 2017 10:36:25 +00:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Steady-state tokamak model, (c) CCFE
  "CFETR small (5.7m) reference file"
  (Please include this header in any models, presentations and papers based on these results)
@@ -880,7 +880,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    2     2.1E-02 1.9E+00 7.8E-02 2.0E-01 1.4E-01 4.2E-04
    3     1.7E-01 7.8E-02 2.1E+00 3.4E-01 1.4E-01 8.8E-04
    4     7.1E-02 2.0E-01 3.4E-01 2.1E+00 1.4E-01 8.8E-04
-  CS     1.6E-01 1.4E-01 1.4E-01 1.4E-01 4.3E+00 1.6E-03
+  CS     1.6E-01 1.4E-01 1.4E-01 1.4E-01 5.4E+00 1.6E-03
  Plasma  4.4E-04 4.2E-04 8.8E-04 8.8E-04 1.6E-03 1.1E-05
  
  ********************* Heat transfer parameters at the coolant outlet: Inboard first wall *********************
@@ -1137,23 +1137,23 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ****************************** PF Coils and Central Solenoid: Power and Energy *******************************
  
  Number of PF coil circuits                                               (pfckts)                  1.000E+01     
- Sum of PF power supply ratings (MVA)                                     (spsmva)                  8.955E+02  OP 
+ Sum of PF power supply ratings (MVA)                                     (spsmva)                  9.780E+02  OP 
  Total PF coil circuit bus length (m)                                     (spfbusl)                 1.856E+03  OP 
  Total PF coil bus resistive power (kW)                                   (pfbuspwr)                6.147E+02  OP 
  Total PF coil resistive power (kW)                                       (srcktpm)                 6.147E+02  OP 
  Maximum PF coil voltage (kV)                                             (vpfskv)                  2.000E+01     
- Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 7.741E+03  OP 
- Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         4.934E+02  OP 
+ Maximum stored energy in poloidal field (MJ)                             (ensxpfm)                 8.568E+03  OP 
+ Peak absolute rate of change of stored energy in poloidal field (MW)     peakpoloidalpower         5.461E+02  OP 
  Energy stored in poloidal magnetic field :
  
                                             time (sec)
 
                      0.00      15.69      31.38      41.38    1041.38    1057.07
  Time point         Start      BOP        EOR        BOF        EOF        EOP        
- Energy (MJ)      0.000E+00  6.109E+03  5.507E+03  5.507E+03  7.741E+03  0.000E+00
+ Energy (MJ)      0.000E+00  6.882E+03  5.535E+03  5.535E+03  8.568E+03  0.000E+00
  
  Interval                tramp      tohs       theat      tburn      tqnch      
- dE/dt (MW)            3.894E+02 -3.839E+01  0.000E+00  2.234E+00 -4.934E+02
+ dE/dt (MW)            4.386E+02 -8.583E+01  0.000E+00  3.033E+00 -5.461E+02
  
  
  *********************************************** Vacuum System ************************************************
@@ -1212,37 +1212,37 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Tritium building volume (m3)                                             (triv)                    4.000E+04     
  Electrical building volume (m3)                                          (elev)                    4.718E+04     
  Control building volume (m3)                                             (conv)                    6.000E+04     
- Cryogenics building volume (m3)                                          (cryv)                    1.166E+04     
+ Cryogenics building volume (m3)                                          (cryv)                    1.181E+04     
  Administration building volume (m3)                                      (admv)                    1.000E+05     
  Shops volume (m3)                                                        (shov)                    1.000E+05     
- Total volume of nuclear buildings (m3)                                   (volnucb)                 8.793E+05     
+ Total volume of nuclear buildings (m3)                                   (volnucb)                 8.794E+05     
  
  **************************************** Electric Power Requirements *****************************************
  
  Facility base load (MW)                                                  (basemw)                  5.000E+00     
  Divertor coil power supplies (MW)                                        (bdvmw)                   0.000E+00     
- Cryoplant electric power (MW)                                            (crymw)                   2.218E+01  OP 
+ Cryoplant electric power (MW)                                            (crymw)                   2.275E+01  OP 
  Primary coolant pumps (MW)                                               (htpmw..)                 6.542E-01  OP 
- PF coil power supplies (MW)                                              (ppfmw)                   3.655E+02  OP 
+ PF coil power supplies (MW)                                              (ppfmw)                   3.503E+02  OP 
  TF coil power supplies (MW)                                              (ptfmw)                   6.597E+00  OP 
  Plasma heating supplies (MW)                                             (pheatingmw)              2.810E+02  OP 
  Tritium processing (MW)                                                  (trithtmw..)              1.500E+01     
  Vacuum pumps  (MW)                                                       (vachtmw..)               5.000E-01     
  
- Total pulsed power (MW)                                                  (pacpmw)                  7.282E+02  OP 
- Total base power required at all times (MW)                              (fcsht)                   3.675E+01  OP 
+ Total pulsed power (MW)                                                  (pacpmw)                  7.136E+02  OP 
+ Total base power required at all times (MW)                              (fcsht)                   3.676E+01  OP 
  
  ************************************************* Cryogenics *************************************************
  
  Conduction and radiation heat loads on cryogenic components (MW)         (qss/1.0D6)               6.982E-03  OP 
  Nuclear heating of cryogenic components (MW)                             (qnuc/1.0D6)              1.807E-03  OP 
- AC losses in cryogenic components (MW)                                   (qac/1.0D6)               7.434E-03  OP 
+ AC losses in cryogenic components (MW)                                   (qac/1.0D6)               8.228E-03  OP 
  Resistive losses in current leads (MW)                                   (qcl/1.0D6)               1.480E-02  OP 
- 45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             1.396E-02  OP 
- Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            4.498E-02  OP 
+ 45% allowance for heat loads in transfer lines, storage tanks etc (MW)   (qmisc/1.0D6)             1.432E-02  OP 
+ Sum = Total heat removal at cryogenic temperatures (W)                   (helpow/1.0D6)            4.613E-02  OP 
  Temperature of cryogenic components (K)                                  (tmpcry)                  4.500E+00     
  Efficiency (figure of merit) of cryogenic plant is 13% of ideal Carnot v                           2.028E-03  OP 
- Electric power for cryogenic plant (MW)                                  (crypmw)                  2.218E+01  OP 
+ Electric power for cryogenic plant (MW)                                  (crypmw)                  2.275E+01  OP 
  
  ************************************ Plant Power / Heat Transport Balance ************************************
  
@@ -1316,15 +1316,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Other secondary thermal power constituents :
  
- Heat removal from cryogenic plant (MW)                                   (crypmw)                     22.182  OP 
- Heat removal from facilities (MW)                                        (fachtmw)                    36.753  OP 
+ Heat removal from cryogenic plant (MW)                                   (crypmw)                     22.750  OP 
+ Heat removal from facilities (MW)                                        (fachtmw)                    36.757  OP 
  Coolant pumping efficiency losses (MW)                                   (htpsecmw)                    0.033  OP 
  Heat removal from injection power (MW)                                   (pinjht)                    196.712  OP 
  Heat removal from tritium plant (MW)                                     (trithtmw)                   15.000  OP 
  Heat removal from vacuum pumps (MW)                                      (vachtmw)                     0.500  OP 
  TF coil resistive power (MW)                                             (tfcmw)                       0.000  OP 
  
- Total low-grade thermal power (MW)                                       (psechtmw)                  402.081  OP 
+ Total low-grade thermal power (MW)                                       (psechtmw)                  402.653  OP 
  Total High-grade thermal power (MW)                                      (pthermmw)                  255.591  OP 
  
  Number of primary heat exchangers                                        (nphx)                            1  OP 
@@ -1362,15 +1362,15 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  Electrical Power Balance :
  --------------------------
- Net electric power output(MW)                                            (pnetelmw.)                -257.663  OP 
+ Net electric power output(MW)                                            (pnetelmw.)                -258.234  OP 
  Electric power for heating and current drive (MW)                        (pinjwp)                    281.013  OP 
  Electric power for primary coolant pumps (MW)                            (htpmw)                       0.654  OP 
  Electric power for vacuum pumps (MW)                                     (vachtmw)                     0.500     
  Electric power for tritium plant (MW)                                    (trithtmw)                   15.000     
- Electric power for cryoplant (MW)                                        (crypmw)                     22.182  OP 
+ Electric power for cryoplant (MW)                                        (crypmw)                     22.750  OP 
  Electric power for TF coils (MW)                                         (tfacpd)                      6.597  OP 
  Electric power for PF coils (MW)                                         (pfwp)                        0.012  OP 
- All other internal electric power requirements (MW)                      (fachtmw)                    36.753  OP 
+ All other internal electric power requirements (MW)                      (fachtmw)                    36.757  OP 
  Total (MW)                                                                                           105.048  OP 
  
  Gross electrical output* (MW)                                            (pgrossmw)                  105.048  OP 
@@ -1382,19 +1382,19 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power from energy multiplication in blanket and shield (MW)              (emultmw)                    47.171  OP 
  Total (MW)                                                                                           294.848  OP 
  
- Net electrical output (MW)	                                              (pnetelmw)                 -257.663  OP 
+ Net electrical output (MW)	                                              (pnetelmw)                 -258.234  OP 
  Heat rejected by main power conversion circuit (MW)                      (rejected_main)             150.543  OP 
- Heat rejected by other cooling circuits (MW)                             (psechtmw)                  402.081  OP 
+ Heat rejected by other cooling circuits (MW)                             (psechtmw)                  402.653  OP 
  Total (MW)                                                                                           294.961  OP 
  
  
  Plant efficiency measures :
  
- Net electric power / total nuclear power (%)                             (pnetelmw/(powfmw+em        -87.389  OP 
- Net electric power / total fusion power (%)                              (pnetelmw/powfmw)          -104.032  OP 
+ Net electric power / total nuclear power (%)                             (pnetelmw/(powfmw+em        -87.582  OP 
+ Net electric power / total fusion power (%)                              (pnetelmw/powfmw)          -104.263  OP 
  Gross electric power* / high grade heat (%)                              (etath)                      41.100     
  (*Power for pumps in secondary circuit already subtracted)
- Recirculating power fraction                                             (cirpowfr)                    3.453  OP 
+ Recirculating power fraction                                             (cirpowfr)                    3.458  OP 
  
  ******************************************** Errors and Warnings *********************************************
  

@@ -1510,7 +1510,7 @@ contains
           call parse_real_variable('dcase', dcase, 1.0D3, 1.0D5, &
                'Density of TF coil case (kg/m3)')
        case ('dcond')
-          call parse_real_array('dcond', dcond, isub1, 4, &
+          call parse_real_array('dcond', dcond, isub1, 5, &
                'TF/PF coil superconductor density (kg/m3)', icode)
        case ('dcondins')
           call parse_real_variable('dcondins', dcondins, 5.0D2, 1.0D4, &
@@ -1555,7 +1555,7 @@ contains
           call parse_real_variable('frhocp', frhocp, 0.01D0, 5.0D0, &
                'TART c/p resistivity enhancement factor')
        case ('isumattf')
-          call parse_int_variable('isumattf', isumattf, 1, 4, &
+          call parse_int_variable('isumattf', isumattf, 1, 5, &
                'TF coil superconductor material')
           if (isumattf == 2) then
              write(outfile,*) ' '
@@ -1741,10 +1741,10 @@ contains
           call parse_int_variable('ipfres', ipfres, 0, 1, &
                'Switch for supercond / resist PF coils')
        case ('isumatoh')
-          call parse_int_variable('isumatoh', isumatoh, 1, 4, &
+          call parse_int_variable('isumatoh', isumatoh, 1, 5, &
                'OH coil superconductor material')
        case ('isumatpf')
-          call parse_int_variable('isumatpf', isumatpf, 1, 4, &
+          call parse_int_variable('isumatpf', isumatpf, 1, 5, &
                'PF coil superconductor material')
        case ('ncls')
           call parse_int_array('ncls', ncls, isub1, ngrpmx, &

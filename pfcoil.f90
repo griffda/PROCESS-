@@ -42,6 +42,7 @@ module pfcoil_module
   !+ad_hist  26/06/14 PJK Added error_handling
   !+ad_hist  16/10/14 PJK Added sctfcoil_module
   !+ad_hist  22/02/17 JM  Changed function selfinductance to Bunet's formula
+  !+ad_hist  27/02/17 JM  Added WST Nb3Sn as option for superconductor
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1968,6 +1969,7 @@ contains
     !+ad_argc                           2 = Bi-2212 High Temperature Superconductor,
     !+ad_argc                           3 = NbTi,
     !+ad_argc                           4 = ITER Nb3Sn, user-defined parameters
+    !+ad_argc                           5 = WST Nb3Sn parameterisation
     !+ad_args  fhts    : input real : Adjustment factor (<= 1) to account for strain,
     !+ad_argc                         radiation damage, fatigue or AC losses
     !+ad_args  strain : input real : Strain on superconductor at operation conditions
@@ -2055,6 +2057,16 @@ contains
        call itersc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
        jcritstr = jcritsc * (1.0D0-fcu)
 
+    case (5) ! WST Nb3Sn parameterisation
+         bc20m = 32.97D0
+         tc0m = 16.06D0
+
+         !  jcritsc returned by itersc is the critical current density in the
+         !  superconductor - not the whole strand, which contains copper
+
+         call wstsc(thelium,bmax,strain,bc20m,tc0m,jcritsc,bcrit,tcrit)
+         jcritstr = jcritsc * (1.0D0-fcu)
+
     case default  !  Error condition
        idiags(1) = isumat ; call report_error(156)
 
@@ -2100,6 +2112,11 @@ contains
              if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
              call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
              call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
+          case (5)
+             call wstsc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
+             if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
+             call wstsc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
+             call wstsc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
           end select
           ttest = ttest - 2.0D0*delt*(jcrit0-jsc)/(jcritp-jcritm)
        end do solve_for_tmarg
@@ -2622,6 +2639,8 @@ contains
           case (4)
              call ocmmnt(outfile, &
                   '  (ITER Nb3Sn critical surface model, user-defined parameters)')
+          case (5)
+             call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
           end select
 
           call osubhd(outfile,'Central Solenoid Current Density Limits :')
@@ -2702,6 +2721,8 @@ contains
        case (4)
           call ocmmnt(outfile, &
                '  (ITER Nb3Sn critical surface model, user-defined parameters)')
+       case (5)
+          call ocmmnt(outfile, ' (WST Nb3Sn critical surface model)')
        end select
 
        call ovarre(outfile,'Copper fraction in conductor','(fcupfsu)',fcupfsu)
