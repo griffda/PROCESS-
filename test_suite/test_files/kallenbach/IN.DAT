@@ -4,7 +4,7 @@ runtitle = 'Kallenbach divertor model'
 
 *---------------Constraint Equations---------------*
 
-neqns = 23 * Number of equality constraints to be satisfied
+neqns = 22 * Number of equality constraints to be satisfied
 icc(1) = 1 * Beta
 icc(2) = 2 * Global power balance
 icc(3) = 5 * Density upper limit
@@ -15,27 +15,25 @@ icc(7) = 13 * Burn time lower limit
 icc(8) = 15 * L
 icc(9) = 16 * Net electric power lower limit
 icc(10) = 24 * Beta upper limit
-
 icc(11) = 60 * Central solenoid temperature margin lower limit
 
 icc(12) = 30 * Injection power upper limit
 icc(13) = 31 * TF coil case stress upper limit
 icc(14) = 32 * TF coil conduit stress upper limit
-icc(15) = 33 * I_op/I_Crit
-icc(16) = 34 * Dump voltage upper limit
-icc(17) = 35 * J_winding pack
-icc(18) = 68 * Pseparatrix Bt / q A R
-icc(19) = 65 * dumpt time by VV stresses
-icc(20) = 36 * TF temp marg
+icc(15) = 34 * Dump voltage upper limit
+icc(16) = 35 * J_winding pack
+icc(17) = 68 * Pseparatrix Bt / q A R
+icc(18) = 65 * dumpt time by VV stresses
+icc(19) = 36 * TF temp marg
 
-icc(21) = 69 * Separatrix power < than value from Kallenbach divertor (Use iteration variable 118 (fpsep))
-icc(22) = 70 * ensure that tomp is equal to the separatrix temperature in the pedestal profile (Use iteration variable 119 (tesep))
-icc(23) = 71 * ensure that neomp is equal to the separatrix density (nesep) x neratio
+icc(20) = 69 * Separatrix power < than value from Kallenbach divertor (Use iteration variable 118 (fpsep))
+icc(21) = 70 * ensure that tomp is equal to the separatrix temperature in the pedestal profile (Use iteration variable 119 (tesep))
+icc(22) = 71 * ensure that neomp is equal to the separatrix density (nesep) x neratio
 *---------------Iteration Variables----------------*
 
-nvar = 40 * Number of iteration variables to use
+nvar = 39 * Number of iteration variables to use
 ixc(1) = 2 * bt
-boundu(2) = 20.0
+boundu(2) = 10.0
 ixc(2) = 3 * rmajor
 boundu(3) = 13
 ixc(3) = 4 * te
@@ -61,57 +59,57 @@ ixc(13) = 29 * bore
 boundl(29) = 1.0
 
 ixc(14) = 36 * fbetatry
+
 ixc(15) = 37 * coheof
-
-
+boundu(37) = 2.0e7
 ixc(16) = 41 * fcohbop
+
 ixc(17) = 42 * gapoh
 boundl(42) = 0.05
 boundu(42) = 0.1
 ixc(18) = 44 * fvsbrnni
 ixc(19) = 48 * fstrcase
 ixc(20) = 49 * fstrcond
-ixc(21) = 50 * fiooic
-boundu(50) = 1.0
-ixc(22) = 51 * fvdump
-ixc(23) = 52 * vdalw
+
+ixc(21) = 51 * fvdump
+ixc(22) = 52 * vdalw
 boundu(52) = 10.0
-ixc(24) = 53 * fjprot
-ixc(25) = 56 * tdmptf
-ixc(26) = 57 * thkcas
-ixc(27) = 58 * thwcndut
+ixc(23) = 53 * fjprot
+ixc(24) = 56 * tdmptf
+ixc(25) = 57 * thkcas
+ixc(26) = 58 * thwcndut
 boundl(58) = 8.0d-3
-ixc(28) = 61 * gapds
-boundl(61) = 0.12
-ixc(29) = 102 * fimpvar
-ixc(30) = 103 * flhthresh
+ixc(27) = 61 * gapds
+boundu(61) = 0.12
+ixc(28) = 102 * fimpvar
+ixc(29) = 103 * flhthresh
 boundu(103) = 10.0
-ixc(31) = 117 *fpsepbqar
-ixc(32) = 113 *ftaucq
-ixc(33) = 60 * cpttf
+ixc(30) = 117 *fpsepbqar
+ixc(31) = 113 *ftaucq
+ixc(32) = 60 * cpttf
 boundl(60) = 6.0e4
 boundu(60) = 9.0e4
-ixc(34) = 59 * copper fraction of cable conductor (TF coils)
+ixc(33) = 59 * copper fraction of cable conductor (TF coils)
 boundu(59) = 0.94
-ixc(35) = 54 * ftmargtf
+ixc(34) = 54 * ftmargtf
 
-ixc(36) = 118 * fpsep: f-value to ensure separatrix power is related to that from Kallenbach divertor
+ixc(35) = 118 * fpsep: f-value to ensure separatrix power is related to that from Kallenbach divertor
 boundl(118) = 0.85
 boundu(118)=1.15
 
-ixc(37) = 119 * tesep
+ixc(36) = 119 * tesep
 boundl(119) = 0.1
 boundu(119) = 10.0
 
-ixc(38) = 120 * ttarget  Plasma temperature adjacent to divertor sheath [eV]
+ixc(37) = 120 * ttarget  Plasma temperature adjacent to divertor sheath [eV]
 boundl(120) = 0.1
 boundu(120) = 10.0
 
-ixc(39) = 21 * f-value for burn time limit equation
-boundl(21) = 0.001
+ixc(38) = 21 * ftburn f-value for burn time limit equation
+boundl(21) = 1.0
 boundu(21) = 1.5
 
-ixc(40) = 106 * ftmargoh (f-value for equation 60)
+ixc(39) = 106 * ftmargoh (f-value for equation 60)
 ftmargoh = 0.5
 
 *-----------------Build Variables------------------*
@@ -125,7 +123,7 @@ gapds    = 0.12 * Gap between inboard vacuum vessel and tf coil (m)
 gapoh    = 0.05 * Gap between central solenoid and tf coil (m)
 gapomin  = 0.20 * Minimum gap between outboard vacuum vessel and tf coil (m)
 iohcl    = 1 * Switch for existence of central solenoid;
-ohcth    = 0.8181 * Central solenoid thickness (m)
+ohcth    = 1.1 * Central solenoid thickness (m)
 scrapli  = 0.225 * Gap between plasma and first wall; inboard side (m)
 scraplo  = 0.225 * Gap between plasma and first wall; outboard side (m)
 shldith  = 0.30 * Inboard shield thickness (m)
@@ -237,7 +235,7 @@ impvar   = 9 * Fimp element value to be varied if iteration
 
 ioptimz  = 1 * for optimisation VMCON only
 minmax   = 1 * Switch for figure-of-merit (see lablmm for descriptions)
-epsvmc   = 1.0e-6 * Error tolerance for vmcon
+epsvmc   = 1.0e-5 * Error tolerance for vmcon
 maxcal   = 100
 
 *----------------Pf Power Variables----------------*
