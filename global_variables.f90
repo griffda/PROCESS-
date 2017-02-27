@@ -2038,6 +2038,14 @@ module tfcoil_variables
   real(kind(1.0D0)) :: sigtcon = 0.0D0
   !+ad_vars  sigttf(2) : tangential stress in TF coil regions (Pa)
   real(kind(1.0D0)), dimension(2) :: sigttf = 0.0D0
+    !+ad_vars  s_tresca_case : TF coil case Tresca stress (MPa)
+  real(kind(1.0D0)) :: s_tresca_case  = 0.0D0
+  !+ad_vars  s_tresca_cond : TF coil conduit Tresca stress (MPa)
+  real(kind(1.0D0)) :: s_tresca_cond  = 0.0D0
+  !+ad_vars  s_vmises_case : TF coil case von Mises stress (MPa)
+  real(kind(1.0D0)) :: s_vmises_case  = 0.0D0
+  !+ad_vars  s_vmises_cond : TF coil conduit von Mises stress (MPa)
+  real(kind(1.0D0)) :: s_vmises_cond  = 0.0D0
   !+ad_vars  sigver : vertical TF coil stress (MPa)
   real(kind(1.0D0)) :: sigver  = 0.0D0
   !+ad_vars  sigvert : vertical tensile stress in TF coil (Pa)
@@ -2047,9 +2055,9 @@ module tfcoil_variables
   !+ad_vars  strncon /-0.005/ : strain in superconductor material (TF, PF and CS)
   !+ad_varc                     (used in ITER Nb3Sn critical surface model)
   real(kind(1.0D0)) :: strncon = -0.005D0
-  !+ad_vars  strtf1 : Von Mises stress in TF cable conduit (Pa)
+  !+ad_vars  strtf1 : Constrained stress in TF cable conduit (Pa)
   real(kind(1.0D0)) :: strtf1 = 0.0D0
-  !+ad_vars  strtf2 : Von Mises stress in TF coil case (Pa)
+  !+ad_vars  strtf2 : Constrained stress in TF coil case (Pa)
   real(kind(1.0D0)) :: strtf2 = 0.0D0
   !+ad_vars  taucq : allowable TF quench time (s)
   real(kind(1.0D0)) :: taucq = 30.0D0

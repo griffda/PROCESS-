@@ -662,7 +662,7 @@ contains
     !  Local variables
 
     integer :: i
-    real(kind(1.0D0)) :: seff, tcbs, fac, svmxz, svmyz
+    real(kind(1.0D0)) :: seff, tcbs, fac, svmxz, svmyz, t_ins_eff
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -702,45 +702,62 @@ contains
     radtf(3) = rbmax
 
     eyoung(1) = eystl
-    eyoung(2) = eyngeff(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
+    
+    ! include groundwall insulation + insertion gap in thicndut
+    ! inertion gap is tfinsgap on 4 sides
+    t_ins_eff = thicndut + ((tfinsgap+tinstf)/turnstf)
+    
+    eyoung(2) = eyngeff(eystl,eyins,eywp,eyrp,trp,t_ins_eff,seff,thwcndut,tcbs)
+    !eyoung(2) = eyngeff(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
 
     jeff(1) = 0.0D0
     jeff(2) = ritfc / ( pi * (radtf(3)**2 - radtf(2)**2))
 
     !  Call stress routine
-
     call two_layer_stress(poisson,radtf,eyoung,jeff,sigrtf,sigttf,deflect)
 
     !  Convert to conduit + case
 
+    !fac = eystl*eyins*seff / &
+    !     (eyins*(seff-2.0D0*thicndut) + 2.0D0*thicndut*eystl)
+
     fac = eystl*eyins*seff / &
-         (eyins*(seff-2.0D0*thicndut) + 2.0D0*thicndut*eystl)
+         (eyins*(seff-2.0D0*t_ins_eff) + 2.0D0*t_ins_eff*eystl)
 
     sigrcon = sigrtf(2)/eyoung(2) * fac
     sigtcon = sigttf(2)/eyoung(2) * fac
     sigvert = vforce / (acasetf + acndttf*turnstf + arp)
 
     !  Find case strain
-
     casestr = sigvert / eystl
 
     !  Find Von-Mises stresses
     !  For winding pack region take worst of two walls
     svmxz = sigvm(sigrcon, 0.0D0, sigvert, 0.0D0,0.0D0,0.0D0)
     svmyz = sigvm(0.0D0, sigtcon, sigvert, 0.0D0,0.0D0,0.0D0)
-    strtf1 = max(svmxz,svmyz)
+    
+    ! von Mises stresses [MPa]
+    s_vmises_case = sigvm(sigrtf(1), sigttf(1), sigvert, 0.0D0,0.0D0,0.0D0)
+    s_vmises_cond = max(svmxz,svmyz)
 
-    strtf2 = sigvm(sigrtf(1), sigttf(1), sigvert, 0.0D0,0.0D0,0.0D0)
+    ! Tresca stress criterion [Mpa]
+    s_tresca_case = max(ABS(sigrtf(1)-sigttf(1)), ABS(sigttf(1)-sigvert), ABS(sigvert-sigrtf(1)))
+    s_tresca_cond = max(ABS(sigrcon-sigtcon), ABS(sigtcon-sigvert), ABS(sigvert-sigrcon)) 
+
+    ! Stress to constrain
+    strtf1 = s_tresca_cond
+    strtf2 = s_tresca_case
+    !strtf1 = s_vmises_cond
+    !strtf2 = s_vmises_case
 
     !  Young's modulus and strain in vertical direction on winding pack
-
-    eyzwp = eyngzwp(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
+    eyzwp = eyngzwp(eystl,eyins,eywp,eyrp,trp,t_ins_eff,seff,thwcndut,tcbs)
+    !eyzwp = eyngzwp(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
     windstrain = sigvert / eyzwp
 
     !  Radial strain in insulator
-
     insstrain = sigrtf(2) / eyins * &
-         edoeeff(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
+         edoeeff(eystl,eyins,eywp,eyrp,trp,t_ins_eff,seff,thwcndut,tcbs)
 
   end subroutine stresscl
 
@@ -1502,16 +1519,18 @@ contains
        call osubhd(outfile,'TF Coil Stresses (CCFE two-layer model) :')
     end if
     call ovarin(outfile,'TF coil model','(tfc_model)',tfc_model)
+    call ovarre(outfile,'Allowable Tresca stress limit (Pa)','(alstrtf)',alstrtf)
     call ovarre(outfile,'Vertical stress (Pa)','(sigvert)',sigvert, 'OP ')
+    if (tfc_model == 1) then
+      call ovarre(outfile,'Case radial stress (Pa)','(sigrtf(1))',sigrtf(1))
+      call ovarre(outfile,'Case tangential stress (Pa)','(sigttf(1))',sigttf(1), 'OP ')
+    end if
     call ovarre(outfile,'Conduit radial stress (Pa)','(sigrcon)',sigrcon, 'OP ')
     call ovarre(outfile,'Conduit tangential stress (Pa)','(sigtcon)',sigtcon, 'OP ')
-    call ovarre(outfile,'Conduit Von Mises combination stress (Pa)','(strtf1)',strtf1, 'OP ')
-    if (tfc_model == 1) then
-       !call ovarre(outfile,'Case inboard radial stress (Pa)','(sigrtf(1))',sigrtf(1))
-       call ovarre(outfile,'Case inboard tangential stress (Pa)','(sigttf(1))',sigttf(1), 'OP ')
-    end if
-    call ovarre(outfile,'Case peak Von Mises combination stress (Pa)','(strtf2)',strtf2, 'OP ')
-    call ovarre(outfile,'Allowable stress (Pa)','(alstrtf)',alstrtf)
+    call ovarre(outfile,'Tresca stress in case (MPa)', '(s_tresca_case)', s_tresca_case, 'OP ')
+    call ovarre(outfile,'Tresca stress in conduit (MPa)', '(s_tresca_cond)', s_tresca_cond, 'OP ')
+    call ovarre(outfile,'von Mises stress in case (MPa)', '(s_vmises_case)', s_vmises_case, 'OP ')
+    call ovarre(outfile,'von Mises stress in conduit (MPa)', '(s_vmises_cond)', s_vmises_cond, 'OP ')
     call ovarre(outfile,'Deflection at midplane (m)','(deflect)',deflect, 'OP ')
     if (tfc_model == 1) then
        call ovarre(outfile,"Winding pack vertical Young's Modulus (Pa)",'(eyzwp)', eyzwp, 'OP ')
