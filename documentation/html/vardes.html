@@ -26,7 +26,7 @@
  <!--End of autodoc header ================================================-->
  
  <H2>
- PROCESS Variable Descriptor File : dated 20170227
+ PROCESS Variable Descriptor File : dated 20170228
  </H2>
  <HR>
  Variables labelled with FIX are initialised with the given
@@ -1680,6 +1680,8 @@
  <LI>
  ohhghf /0.71/ : central solenoid height / TF coil internal height
  <LI>
+ oh_steel_frac /0.5/ : central solenoid steel fraction (iteration variable 122)
+ <LI>
  pfcaseth(ngc2) : steel case thickness for PF coil i (m)
  <LI>
  pfclres /2.5e-8/ : PF coil resistivity (if ipfres=1) (Ohm-m)
@@ -1724,6 +1726,8 @@
  <LI>
  rpf2 /-1.63/ : offset (m) of radial position of ipfloc=2 PF coils
  from being at rmajor (offset = rpf2*triang*rminor)
+ <LI>
+ s_tresca_oh : Tresca stress coils/central solenoid [MPa]
  <LI>
  sccufac /0.0188/ : ratio of superconductor to copper
  cable at a magnetic field of 1T (RFP coils only)
@@ -3220,6 +3224,9 @@
  fnbshinef /1.0/ : f-value for maximum neutral beam shine-through fraction
  (constraint equation 59, iteration variable 105)
  <LI>
+ foh_stress /1.0/ : f-value for Tresca stress in OH coil
+ (constraint equation 72, iteration variable 123)
+ <LI>
  fpeakb /1.0/ : f-value for maximum toroidal field
  (constraint equation 25, iteration variable 35)
  <LI>
@@ -4353,9 +4360,9 @@
  </H3>
  <UL>
  <LI>
- ipnvars /120/ FIX : total number of variables available for iteration
+ ipnvars /123/ FIX : total number of variables available for iteration
  <LI>
- ipeqns /71/ FIX : number of constraint equations available
+ ipeqns /72/ FIX : number of constraint equations available
  <LI>
  ipnfoms /17/ FIX : number of available figures of merit
  <LI>
@@ -4486,7 +4493,9 @@
  (Use iteration variable 118 (fpsep))
  <LI> (70) ensure that tomp is equal to the separatrix temperature in the pedestal profile,
  (Use iteration variable 119 (tesep))
- <LI> (71) ensure that neomp is equal to the separatrix density (nesep) x neratio</UL>
+ <LI> (71) ensure that neomp is equal to the separatrix density (nesep) x neratio<
+ <LI> (72) central solenoid Tresca stress limit</UL>
+ (Use iteration variable 123 (foh_stress))
  <LI>
  ixc(ipnvars) /4,5,6,7,10,12,13,19,28,29,36,39,50,53,54,61/ :
  array defining which iteration variables to activate
@@ -4616,7 +4625,9 @@
  <LI> (118) fpsep: f-value to ensure separatrix power is less than value from Kallenbach divertor
  <LI> (119) tesep:  separatrix temperature calculated by the Kallenbach divertor model
  <LI> (120) ttarget: Plasma temperature adjacent to divertor sheath [eV]
- <LI> (121) neratio: ratio of mean SOL density at OMP to separatrix density at OMP</UL>
+ <LI> (121) neratio: ratio of mean SOL density at OMP to separatrix density at OMP
+ <LI> (122) oh_steel_frac : streel fraction of OH coil
+ <LI> (123) foh_stress : f-value for CS coil Tresca stress limit</UL>
  <LI>
  sqsumsq : sqrt of the sum of the square of the constraint residuals
  <LI>
@@ -4738,6 +4749,12 @@
  </H3>
  <H3>
  <A HREF="vsec.html">vsec</A>
+ </H3>
+ <H3>
+ <A HREF="hoop_stress.html">hoop_stress</A>
+ </H3>
+ <H3>
+ <A HREF="axial_stress.html">axial_stress</A>
  </H3>
  <H3>
  <A HREF="induct.html">induct</A>

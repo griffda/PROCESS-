@@ -80,7 +80,9 @@ subroutine loadxc
   !+ad_hist  10/11/16 HL  Added fradwall (116)
   !+ad_hist  19/01/17 JM  Added fpsepbqar (117)
   !+ad_hist  08/02/17 JM  Added fpsep, tesep and ttarget  (118, 119, 120)
-  !+ad_hist  22/02/17 JM  Added neratio
+  !+ad_hist  22/02/17 JM  Added neratio (121)
+  !+ad_hist  27/02/17 JM  Added oh_steel_frac (122)
+  !+ad_hist  27/02/17 JM  Added foh_stress (123)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -253,6 +255,8 @@ subroutine loadxc
      case (119) ; xcm(i) = tesep
      case (120) ; xcm(i) = ttarget
      case (121) ; xcm(i) = neratio
+     case (122) ; xcm(i) = oh_steel_frac
+     case (123) ; xcm(i) = foh_stress
     
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -540,6 +544,8 @@ subroutine convxc(xc,nn)
      case (119) ; tesep = xc(i)/scale(i)
      case (120) ; ttarget = xc(i)/scale(i)
      case (121) ; neratio = xc(i)/scale(i)
+     case (122) ; oh_steel_frac = xc(i)/scale(i)
+     case (123) ; foh_stress = xc(i)/scale(i)
 
      case default
      
