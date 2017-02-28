@@ -936,7 +936,7 @@ contains
        !  (superconducting coils only)
 
        !rjohc = pfjalw(bohci,bohco,ra(nohc),rb(nohc),sigpfalw)
-       call superconpf(bmaxoh,vfohc,fcuohsu,abs(ric(nohc))/awpoh, &
+       call superconpf(bmaxoh,vfohc,fcuohsu,(abs(ric(nohc))/awpoh)*1.0D6, &
             isumatoh,fhts,strncon,tftmp,bcritsc,tcritsc,jcritwp, &
             jstrandoh_eof,jscoh_eof,tmarg1)
 
@@ -945,7 +945,7 @@ contains
        !  Allowable coil overall current density at BOP
 
        !rjpfalw(nohc) = pfjalw(bmaxoh0,abs(bzo),ra(nohc),rb(nohc),sigpfalw)
-       call superconpf(bmaxoh0,vfohc,fcuohsu,abs(ric(nohc))/awpoh, &
+       call superconpf(bmaxoh0,vfohc,fcuohsu,(abs(ric(nohc))/awpoh)*1.0D6, &
             isumatoh,fhts,strncon,tftmp,bcritsc,tcritsc,jcritwp, &
             jstrandoh_bop,jscoh_bop,tmarg2)
 
