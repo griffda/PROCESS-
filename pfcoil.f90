@@ -68,7 +68,7 @@ module pfcoil_module
   !  Local variables
 
   integer :: nef,nfxf
-  real(kind(1.0D0)) :: ricpf, ssq0
+  real(kind(1.0D0)) :: ricpf, ssq0, sig_axial, sig_hoop
   real(kind(1.0D0)), dimension(nfixmx) :: rfxf,zfxf,cfxf,xind
   real(kind(1.0D0)), dimension(ngrpmx,nclsmx) :: rcls,zcls
   real(kind(1.0D0)), dimension(ngrpmx) :: ccls,ccls2,ccl0
@@ -801,8 +801,8 @@ contains
 
     integer :: timepoint
 
-    real(kind(1.0D0)) :: areaspf,bmax,bmaxoh2,bohci,bohco,bri,bro, &
-         bzi,bzo,da,forcepf,hohc,jcritwp,sgn,tmarg1,tmarg2
+    real(kind(1.0D0)) :: areaspf, bmax, bmaxoh2, bohci, bohco, bri, bro, &
+         bzi, bzo, da, forcepf, hohc, jcritwp, sgn, tmarg1, tmarg2
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -891,16 +891,30 @@ contains
     if (ipfres == 0) then
 
        !  Superconducting coil
+
+       ! New calculation from M. N. Wilson for hoop stress
+       call hoop_stress(ra(nohc), sig_hoop)
+
+       ! New calculation from Y. Iwasa for axial stress
+       call axial_stress(sig_axial)
+
        !  Allowable (hoop) stress (Pa) alstroh
        ! Now a user input
-
        ! alstroh = min( (2.0D0*csytf/3.0D0), (0.5D0*csutf) )
-       areaspf = forcepf / alstroh
+
+       ! Now steel area fraction is iteration variable and constraint 
+       ! equation is used for OH coil stress
+
+       ! Area of steel in OH coil
+       areaspf = oh_steel_frac*areaoh
+       ! areaspf = forcepf / alstroh
+
+       s_tresca_oh = max(ABS(sig_hoop-sig_axial), ABS(sig_axial-0.0D0), ABS(0.0D0 - sig_hoop))
+       !s_tresca_oh = max(ABS(sig_hoop-0.0D0), ABS(0.0D0-0.0D0), ABS(0.0D0 - sig_hoop))
 
        !  Thickness of hypothetical steel cylinders assumed to encase the CS along
        !  its inside and outside edges; in reality, the steel is distributed
        !  throughout the conductor
-
        pfcaseth(nohc) = 0.25D0 * areaspf/hohc
 
     else
@@ -2210,6 +2224,160 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  subroutine hoop_stress(r, s_hoop)
+    !+ad_name  hoop_stress
+    !+ad_summ  Calculation of hoop stress of central solenoid
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  r : input real : radial position a < r < b
+    !+ad_args  s_hoop : output real : hoop stress (MPa)
+    !+ad_desc  This routine calculates the hoop stress of the central solenoid 
+    !+ad_desc  from "Superconducting magnets", M. N. Wilson OUP
+    !+ad_prob  None
+    !+ad_hist  24/02/17 JM  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+    real(kind(1.0D0)), intent(in) :: r
+    real(kind(1.0D0)), intent(out) :: s_hoop
+
+    !  Local variables
+    real(kind(1.0D0)) :: K, M, a, b, B_a, B_b, alpha, epsilon, j
+
+    real(kind(1.0D0)) :: hp_term_1, hp_term_2, hp_term_3, hp_term_4
+
+    real(kind(1.0D0)) :: s_hoop_nom
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ! Inner radius of OH coil [m]
+    a = ra(nohc)
+
+    ! Outer radius of OH coil [m]
+    b = rb(nohc)
+
+    ! alpha
+    alpha = b/a
+
+    ! epsilon
+    epsilon = r/a
+
+    ! Field at inner radius of coil [T]
+    B_a = bmaxoh0
+
+    ! Field at outer radius of coil [T]
+    ! Assume to be 0 for now
+    B_b = 0.0D0
+
+    ! current density [A/m^2]
+    j = cohbop
+
+    ! K term
+    K = ((alpha*B_a - B_b)*j*a)/(alpha - 1.0D0)
+
+    ! M term
+    M = ((B_a - B_b)*j*a)/(alpha - 1.0D0)
+
+    ! calculate hoop stress terms
+    hp_term_1 = K*((2.0D0 + poisson)/(3.0D0*(alpha + 1.0D0)))
+
+    hp_term_2 = alpha**2 + alpha + 1.0D0 + alpha**2/epsilon**2 - &
+      epsilon*(((1.0D0 + 2.0D0*poisson)*(alpha + 1.0D0)) / (2.0D0 + poisson))
+
+    hp_term_3 = M*((3.0D0 + poisson) / (8.0D0))
+
+    hp_term_4 = alpha**2 + 1.0D0 + alpha**2/epsilon**2 - &
+            epsilon**2*((1.0D0 + 3.0D0*poisson)/(3.0D0 + poisson))
+
+    s_hoop_nom = hp_term_1*hp_term_2 - hp_term_3*hp_term_4
+        
+    s_hoop = s_hoop_nom/oh_steel_frac
+
+  end subroutine hoop_stress
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine axial_stress(s_axial)
+    !+ad_name  axial_stress
+    !+ad_summ  Calculation of axial stress of central solenoid
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  r : input real : radial position a < r < b
+    !+ad_args  s_hoop : output real : hoop stress (MPa)
+    !+ad_desc  This routine calculates the axial stress of the central solenoid 
+    !+ad_desc  from "Case studies in superconducting magnets", Y. Iwasa, Springer
+    !+ad_prob  None
+    !+ad_hist  27/02/17 JM  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    !  Arguments
+    real(kind(1.0D0)), intent(out) :: s_axial
+
+    !  Local variables
+    real(kind(1.0D0)) :: b, hl, ni
+
+    real(kind(1.0D0)) :: kb2, k2b2, ekb2_1, ekb2_2, ek2b2_1, ek2b2_2
+
+  !real(kind(1.0D0)) :: kb, k2b
+
+    real(kind(1.0D0)) :: axial_term_1, axial_term_2, axial_term_3
+
+    real(kind(1.0D0)) :: axial_force
+
+    real(kind(1.0D0)) :: aa, bb, cc
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    ! Outer radius of OH coil [m]
+    b = rb(nohc)
+
+    ! Half height of OH coil [m]
+    hl = zh(nohc)
+
+    ! OH coil current [A]
+    ni = ric(nohc)*1.0E6
+
+    ! kb term for elliptical integrals
+    ! kb2 = SQRT((4.0D0*b**2)/(4.0D0*b**2 + hl**2))
+    kb2 = (4.0D0*b**2)/(4.0D0*b**2 + hl**2)
+
+    ! k2b term for elliptical integrals
+    !k2b2 = SQRT((4.0D0*b**2)/(4.0D0*b**2 + 4.0D0*hl**2))
+    k2b2 = (4.0D0*b**2)/(4.0D0*b**2 + 4.0D0*hl**2)
+
+    ! term 1
+    axial_term_1 = -(rmu0/2.0D0)*(ni/(2.0D0*hl))**2
+
+    ! term 2
+    call ellipke(kb2, ekb2_1, ekb2_2)
+    axial_term_2 = 2.0D0*hl*(SQRT(4.0D0*b**2 + hl**2))*(ekb2_1 - ekb2_2)
+
+    ! term 3
+    call ellipke(k2b2, ek2b2_1, ek2b2_2)
+    axial_term_3 = 2.0D0*hl*(SQRT(4.0D0*b**2 + 4.0D0*hl**2))*(ek2b2_1 - ek2b2_2)
+
+    ! calculate axial force [N]
+    axial_force = axial_term_1*(axial_term_2 - axial_term_3)
+
+    ! calculate axial stress [MPa]
+    s_axial = axial_force/(oh_steel_frac*0.5*areaoh)
+
+  end subroutine axial_stress
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   subroutine induct(outfile,iprint)
 
     !+ad_name  induct
@@ -2681,8 +2849,14 @@ contains
                '(areaoh-awpoh)',areaoh-awpoh, 'OP ')
           call ovarre(outfile,'CS steel area fraction', &
                '',(areaoh-awpoh)/areaoh, 'OP ')
-          call ovarre(outfile,'Allowable hoop stress in CS steel (Pa)', &
+          call ovarre(outfile,'Allowable stress in CS steel (Pa)', &
                '(alstroh)',alstroh)
+          call ovarre(outfile,'Hoop stress in CS steel (Pa)', &
+               '(sig_hoop)', sig_hoop, 'OP ')
+          call ovarre(outfile,'Axial stress in CS steel (Pa)', &
+               '(sig_axial)', sig_axial, 'OP ')
+          call ovarre(outfile,'Tresca stress in CS steel (Pa)', &
+               '(s_tresca_oh)', s_tresca_oh, 'OP ')
           call ovarre(outfile,'Strain on superconductor', &
                '(strncon)',strncon)
           call ovarre(outfile,'Copper fraction in strand', &

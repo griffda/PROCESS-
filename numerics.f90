@@ -98,10 +98,10 @@ module numerics
 
   public
 
-  !+ad_vars  ipnvars /120/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 121
-  !+ad_vars  ipeqns /71/ FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 71
+  !+ad_vars  ipnvars /123/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 123
+  !+ad_vars  ipeqns /72/ FIX : number of constraint equations available
+  integer, parameter :: ipeqns = 72
   !+ad_vars  ipnfoms /17/ FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 17
 
@@ -257,7 +257,8 @@ module numerics
        0,  &  !  68
        0,  &  !  69
        0,  &  !  70
-       0   &  !  71
+       0,  &  !  71
+       0   &  !  72
        /)
 
 
@@ -411,8 +412,11 @@ module numerics
        !+ad_varc  <LI> (70) ensure that tomp is equal to the separatrix temperature in the pedestal profile, 
        !+ad_varc            (Use iteration variable 119 (tesep))
        'Separatrix temp consistency      ',   &
-       !+ad_varc  <LI> (71) ensure that neomp is equal to the separatrix density (nesep) x neratio</UL>
-       'Separatrix density consistency   '    &
+       !+ad_varc  <LI> (71) ensure that neomp is equal to the separatrix density (nesep) x neratio<
+       'Separatrix density consistency   ',    &
+       !+ad_varc  <LI> (72) central solenoid Tresca stress limit</UL>
+       !+ad_varc            (Use iteration variable 123 (foh_stress))
+       'CS Tresca stress limit           '    &
        /)
        !  Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -542,7 +546,9 @@ module numerics
        0,  &  !  118
        0,  &  !  119
        0,  &  !  120
-       0   &  !  121
+       0,  &  !  121
+       0,  &  !  122
+       0   &  !  123
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -791,7 +797,11 @@ module numerics
        'tesep         ',  &
        !+ad_varc  <LI> (120) ttarget: Plasma temperature adjacent to divertor sheath [eV]
        'ttarget       ',  &
-       !+ad_varc  <LI> (121) neratio: ratio of mean SOL density at OMP to separatrix density at OMP</UL>
+       !+ad_varc  <LI> (121) neratio: ratio of mean SOL density at OMP to separatrix density at OMP
+       'ttarget       ',  &
+       !+ad_varc  <LI> (122) oh_steel_frac : streel fraction of OH coil
+       'ttarget       ',  &
+       !+ad_varc  <LI> (123) foh_stress : f-value for CS coil Tresca stress limit</UL>
        'ttarget       '  &
        /)
 
@@ -931,7 +941,9 @@ module numerics
        0.001D0, &  !  118
        0.000D0, &  !  119
        0.001D0, &  !  120
-       0.001D0  &  !  121
+       0.001D0, &  !  121
+       0.001D0, &  !  122
+       0.001D0  &  !  123
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -1057,7 +1069,9 @@ module numerics
        1.000D0, &  !  118
        1.000D1, &  !  119
        1.000D3, &  !  120
-       1.000D0  &  !  121
+       1.000D0, &  !  121
+       0.950D0, &  !  122
+       1.000D0  &  !  123
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

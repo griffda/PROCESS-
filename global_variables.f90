@@ -1583,6 +1583,7 @@ module pfcoil_variables
   !+ad_hist  11/11/14 PJK Added tmargoh
   !+ad_hist  22/04/15 JM  Added etapsu, pfwp and pfsec
   !+ad_hist  11/06/15 MDK Added spiral_od and spiral_id
+  !+ad_hist  24/02/17 JM  Added oh_steel_frac
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -1709,6 +1710,8 @@ module pfcoil_variables
   integer :: nohc = 0
   !+ad_vars  ohhghf /0.71/ : central solenoid height / TF coil internal height
   real(kind(1.0D0)) :: ohhghf = 0.71D0
+  !+ad_vars  oh_steel_frac /0.5/ : central solenoid steel fraction (iteration variable 122)
+  real(kind(1.0D0)) :: oh_steel_frac = 0.5D0
   !+ad_vars  pfcaseth(ngc2) : steel case thickness for PF coil i (m)
   real(kind(1.0D0)), dimension(ngc2) :: pfcaseth = 0.0D0
   !+ad_vars  pfclres /2.5e-8/ : PF coil resistivity (if ipfres=1) (Ohm-m)
@@ -1754,6 +1757,8 @@ module pfcoil_variables
   !+ad_vars  rpf2 /-1.63/ : offset (m) of radial position of ipfloc=2 PF coils
   !+ad_varc                 from being at rmajor (offset = rpf2*triang*rminor)
   real(kind(1.0D0)) :: rpf2 = -1.63D0
+  !+ad_vars  s_tresca_oh : Tresca stress coils/central solenoid [MPa]
+  real(kind(1.0D0)) :: s_tresca_oh = 0.0D0
   !+ad_vars  sccufac /0.0188/ : ratio of superconductor to copper
   !+ad_varc                     cable at a magnetic field of 1T (RFP coils only)
   real(kind(1.0D0)) :: sccufac = 0.0188D0
@@ -2038,7 +2043,7 @@ module tfcoil_variables
   real(kind(1.0D0)) :: sigtcon = 0.0D0
   !+ad_vars  sigttf(2) : tangential stress in TF coil regions (Pa)
   real(kind(1.0D0)), dimension(2) :: sigttf = 0.0D0
-    !+ad_vars  s_tresca_case : TF coil case Tresca stress (MPa)
+  !+ad_vars  s_tresca_case : TF coil case Tresca stress (MPa)
   real(kind(1.0D0)) :: s_tresca_case  = 0.0D0
   !+ad_vars  s_tresca_cond : TF coil conduit Tresca stress (MPa)
   real(kind(1.0D0)) :: s_tresca_cond  = 0.0D0
@@ -2093,8 +2098,8 @@ module tfcoil_variables
   real(kind(1.0D0)) :: tficrn = 0.0D0
   !+ad_vars  tfind : TF coil inductance (H)
   real(kind(1.0D0)) :: tfind = 0.0D0
-  !+ad_vars  tfinsgap /0.005/ : TF coil WP insertion gap (m)
-  real(kind(1.0D0)) :: tfinsgap = 0.005D0
+  !+ad_vars  tfinsgap /0.010/ : TF coil WP insertion gap (m)
+  real(kind(1.0D0)) :: tfinsgap = 0.010D0
   !+ad_vars  tflegmw : TF coil outboard leg resistive power (MW)
   real(kind(1.0D0)) :: tflegmw = 0.0D0
   !+ad_vars  tflegres /2.5e-8/ : resistivity of a TF coil leg (Ohm-m)
@@ -3638,6 +3643,9 @@ module constraint_variables
   !+ad_vars  fnbshinef /1.0/ : f-value for maximum neutral beam shine-through fraction
   !+ad_varc                    (constraint equation 59, iteration variable 105)
   real(kind(1.0D0)) :: fnbshinef = 1.0D0
+  !+ad_vars  foh_stress /1.0/ : f-value for Tresca stress in OH coil
+  !+ad_varc                    (constraint equation 72, iteration variable 123)
+  real(kind(1.0D0)) :: foh_stress = 1.0D0
   !+ad_vars  fpeakb /1.0/ : f-value for maximum toroidal field
   !+ad_varc                 (constraint equation 25, iteration variable 35)
   real(kind(1.0D0)) :: fpeakb = 1.0D0
