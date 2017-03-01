@@ -409,7 +409,7 @@ module numerics
        !+ad_varc  <LI> (69) ensure separatrix power is less than value from Kallenbach divertor
        !+ad_varc            (Use iteration variable 118 (fpsep))
        'pdivt < psep_kallenbach divertor ',   &
-       !+ad_varc  <LI> (70) ensure that tomp is equal to the separatrix temperature in the pedestal profile, 
+       !+ad_varc  <LI> (70) ensure that tomp is equal to the separatrix temperature in the pedestal profile,
        !+ad_varc            (Use iteration variable 119 (tesep))
        'Separatrix temp consistency      ',   &
        !+ad_varc  <LI> (71) ensure that neomp is equal to the separatrix density (nesep) x neratio<
@@ -785,7 +785,7 @@ module numerics
        'ftaucq        ',  &
        !+ad_varc  <LI> (114) fw_channel_length: Length of a single first wall channel
        'fw_channel_l  ',  &
-       !+ad_varc  <LI> (115) fpoloidalpower: f-value for max rate of change of energy in poloidal field 
+       !+ad_varc  <LI> (115) fpoloidalpower: f-value for max rate of change of energy in poloidal field
        'fpoloidalpower',  &
        !+ad_varc  <LI> (116) fradwall: f-value for radiation wall load limit (eq. 67)
        'fradwall      ',  &
@@ -798,14 +798,14 @@ module numerics
        !+ad_varc  <LI> (120) ttarget: Plasma temperature adjacent to divertor sheath [eV]
        'ttarget       ',  &
        !+ad_varc  <LI> (121) neratio: ratio of mean SOL density at OMP to separatrix density at OMP
-       'ttarget       ',  &
+       'neratio       ',  &
        !+ad_varc  <LI> (122) oh_steel_frac : streel fraction of OH coil
-       'ttarget       ',  &
+       'oh_steel_frac ',  &
        !+ad_varc  <LI> (123) foh_stress : f-value for CS coil Tresca stress limit</UL>
-       'ttarget       '  &
+       'foh_stress    '  &
        /)
 
-  character(len=9), dimension(:), allocatable :: name_xc
+  character(len=14), dimension(:), allocatable :: name_xc
 
   !+ad_vars  sqsumsq : sqrt of the sum of the square of the constraint residuals
   real(kind(1.0D0)) :: sqsumsq = 0.0D0

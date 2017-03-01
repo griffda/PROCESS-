@@ -189,7 +189,7 @@ contains
 
     !  Add one if an OH coil is present, and make an extra group
 
-    if (iohcl /= 0) then 
+    if (iohcl /= 0) then
        nohc = nohc + 1
        ncls(ngrp+1) = 1
     end if
@@ -266,7 +266,7 @@ contains
           do k = 1,ncls(j)
              rcls(j,k) = rohc + rpf1
 
-             !  Z coordinate of coil enforced so as not 
+             !  Z coordinate of coil enforced so as not
              !  to occupy the same space as the OH coil
 
              zcls(j,k) = signn(k) * ( hmax*ohhghf + 0.1D0 + &
@@ -485,7 +485,7 @@ contains
 
     !  Flux swing required from CS coil
 
-    csflux = -(vsres + vsind) - pfflux 
+    csflux = -(vsres + vsind) - pfflux
 
     if (iohcl == 1) then
 
@@ -902,7 +902,7 @@ contains
        ! Now a user input
        ! alstroh = min( (2.0D0*csytf/3.0D0), (0.5D0*csutf) )
 
-       ! Now steel area fraction is iteration variable and constraint 
+       ! Now steel area fraction is iteration variable and constraint
        ! equation is used for OH coil stress
 
        ! Area of steel in OH coil
@@ -2232,7 +2232,7 @@ contains
     !+ad_cont  N/A
     !+ad_args  r : input real : radial position a < r < b
     !+ad_args  s_hoop : output real : hoop stress (MPa)
-    !+ad_desc  This routine calculates the hoop stress of the central solenoid 
+    !+ad_desc  This routine calculates the hoop stress of the central solenoid
     !+ad_desc  from "Superconducting magnets", M. N. Wilson OUP
     !+ad_prob  None
     !+ad_hist  24/02/17 JM  Initial version
@@ -2296,7 +2296,7 @@ contains
             epsilon**2*((1.0D0 + 3.0D0*poisson)/(3.0D0 + poisson))
 
     s_hoop_nom = hp_term_1*hp_term_2 - hp_term_3*hp_term_4
-        
+
     s_hoop = s_hoop_nom/oh_steel_frac
 
   end subroutine hoop_stress
@@ -2311,7 +2311,7 @@ contains
     !+ad_cont  N/A
     !+ad_args  r : input real : radial position a < r < b
     !+ad_args  s_hoop : output real : hoop stress (MPa)
-    !+ad_desc  This routine calculates the axial stress of the central solenoid 
+    !+ad_desc  This routine calculates the axial stress of the central solenoid
     !+ad_desc  from "Case studies in superconducting magnets", Y. Iwasa, Springer
     !+ad_prob  None
     !+ad_hist  27/02/17 JM  Initial version
@@ -2409,7 +2409,7 @@ contains
     !+ad_hisc               if noh is too large
     !+ad_hist  19/06/14 PJK Removed sect?? flags
     !+ad_hist  26/06/14 PJK Added error handling
-    !+ad_hist  06/01/16 MDK Put the self-inductance formula in a function, 
+    !+ad_hist  06/01/16 MDK Put the self-inductance formula in a function,
     !+ad_hist  06/01/16 MDK added Brooks coil test
     !+ad_stat  Okay
     !+ad_docs  None
@@ -2640,7 +2640,7 @@ contains
   end subroutine induct
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   function selfinductance(a,b,c,N)
     !+ad_name  selfinductance
     !+ad_summ  Calculates the selfinductance using Bunet's formula
@@ -2666,11 +2666,11 @@ contains
     real(kind(1.0D0)) :: a, b, c, N, selfinductance
 
     ! Calculate self inductance
-    selfinductance = (1.0d-6/0.0254d0)*a**2*N**2/(9.0d0*a + 10.0d0*b + 8.4d0*c + 3.2d0*c*b/a)      
+    selfinductance = (1.0d-6/0.0254d0)*a**2*N**2/(9.0d0*a + 10.0d0*b + 8.4d0*c + 3.2d0*c*b/a)
 
     ! OLD Formula
     ! JM - KEEP FOR NOW
-    ! Formulas and tables for the calculation of mutual and self-inductance [Revised], 
+    ! Formulas and tables for the calculation of mutual and self-inductance [Revised],
     ! Rosa and Grover, Scientific papers of the Bureau of Standards, No. 169, 3rd ed., 1916
     ! a = mean radius of coil
     ! b = length of coil
@@ -2678,21 +2678,21 @@ contains
     ! N = number of turns
     ! real(kind(1.0D0)) :: a,b,c, N, selfinductance, r, r2_16a2, x, x2, q, at, lambda, mu, p
 
-    ! !  Equation 88, p. 137      
+    ! !  Equation 88, p. 137
     ! x = b/c
     ! x2 = x**2
-    ! q = log(1.0d0+x2) 
+    ! q = log(1.0d0+x2)
     ! p = log(1.0d0+1.0d0/x2)
     ! at = atan(x)
     ! lambda = log(8.0d0*a/c) + 1/12.0d0 - pi*x/3.0d0 - 0.5d0*q + 1/(12.0d0*x2)*q &
     !           + 1/12.0d0*x2*p + 2.0d0/3.0d0*(x-1.0d0/x)*at
-                 
+
     ! mu = c**2/(96.0d0*a**2)*     &
     !      ((log(8.0d0*a/c)-0.5d0*q)*(1+3.0d0*x2) + 3.45d0*x2 + 221.0d0/60.0d0   &
     !      -1.6d0*pi*x**3 + 3.2d0*x**3*at - 0.1d0/x2*q + 0.5d0*x2**2*p)
-        
-    ! selfinductance = rmu0*a*N**2 * (lambda + mu)     
-    
+
+    ! selfinductance = rmu0*a*N**2 * (lambda + mu)
+
     ! if((selfinductance<0.0d0).or.(selfinductance .ne. selfinductance).or.(selfinductance>1000.0d0)) then
     !     write(*,*) 'a = ',a, ' b = ', b
     !     write(*,*) 'c = ',c, ' x = ', x
@@ -2701,25 +2701,25 @@ contains
     !     write(*,*) 'lambda = ',lambda, ' mu = ', mu
     !     write(*,*) 'selfinductance = ',selfinductance
     ! end if
-    
+
   end function selfinductance
-  
+
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  
+
   subroutine brookscoil(outfile)
-    ! http://www.nessengr.com/techdata/brooks/brooks.html  
+    ! http://www.nessengr.com/techdata/brooks/brooks.html
     real(kind(1.0D0)) :: a,b,c, N, l, lp
-    character(len=10) :: test    
+    character(len=10) :: test
     integer, intent(in) :: outfile
-      
+
     c = 1.0d0
     a = 1.5d0 * c
     b = c
     N = 1.0d0
-    
+
     l = 0.025491d0 * c * 100.0d0 * N**2 * 1.0d-6
     lp = selfinductance(a,b,c,N)
-    if ((l/lp < 1.05d0).and.(l/lp > 0.95d0)) then 
+    if ((l/lp < 1.05d0).and.(l/lp > 0.95d0)) then
         test = 'PASS'
     else
         test = 'FAIL'
@@ -2729,7 +2729,7 @@ contains
     call ovarre(outfile,'Self-inductance of 1m Brooks coil: PROCESS formula', '(lp)',lp, 'OP ')
     call oblnkl(outfile)
     write(*,*) 'Test of self-inductance formula: '//test
-    
+
   end subroutine brookscoil
 
 
@@ -2848,7 +2848,7 @@ contains
           call ovarre(outfile,'CS steel cross-sectional area (m2)', &
                '(areaoh-awpoh)',areaoh-awpoh, 'OP ')
           call ovarre(outfile,'CS steel area fraction', &
-               '',(areaoh-awpoh)/areaoh, 'OP ')
+               '(oh_steel_frac)',oh_steel_frac)
           call ovarre(outfile,'Allowable stress in CS steel (Pa)', &
                '(alstroh)',alstroh)
           call ovarre(outfile,'Hoop stress in CS steel (Pa)', &

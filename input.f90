@@ -1410,6 +1410,12 @@ contains
        case ('fseppc')
           call parse_real_variable('fseppc', fseppc, 1.0D6, 1.0D9, &
                'CS separation force held by CS pre-comp structure')
+       case ('oh_steel_frac')
+          call parse_real_variable('oh_steel_frac', oh_steel_frac, 1.0D-3, 0.999D0, &
+               'Central solenoid steel fraction')
+       case ('foh_stress')
+          call parse_real_variable('foh_stress', foh_stress, 1.0D-3, 1.0D0, &
+               'F-value for CS coil Tresca stress limit')
 !       case ('fwith')
 !          call parse_real_variable('fwith', fwith, 0.0D0, 10.0D0, &
 !               'Inboard first wall thickness, initial estimate (m)')

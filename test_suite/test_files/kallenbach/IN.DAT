@@ -2,7 +2,7 @@ runtitle = 'Kallenbach divertor model'
 *--------------------------------------------------*
 *---------------Constraint Equations---------------*
 
-neqns = 21 * Number of equality constraints to be satisfied
+neqns = 22 * Number of equality constraints to be satisfied
 icc(1) = 1 * Beta
 icc(2) = 2 * Global power balance
 icc(3) = 5 * Density upper limit
@@ -26,9 +26,11 @@ icc(19) = 36 * TF temp marg
 icc(20) = 69 * Separatrix power < than value from Kallenbach divertor (Use iteration variable 118 (fpsep))
 icc(21) = 70 * ensure that tomp is equal to the separatrix temperature in the pedestal profile (Use iteration variable 119 (tesep))
 *icc(22) = 71 * ensure that neomp is equal to the separatrix density (nesep) x neratio
+
+icc(22) = 72 * central solenoid Tresca stress limit
 *---------------Iteration Variables----------------*
 
-nvar = 40 * Number of iteration variables to use
+nvar = 42 * Number of iteration variables to use
 
 ixc(1) = 2 * bt
 boundu(2) = 10.0
@@ -170,6 +172,11 @@ ixc(39) = 106 * ftmargoh (f-value for equation 60)
 
 ixc(40) = 46 * fpinj (f-value for equation 30)
 
+ixc(41) = 122 * oh_steel_frac : streel fraction of OH coil
+oh_steel_frac = 0.5  * central solenoid steel fraction (iteration variable 122)
+
+ixc(42) = 123 * foh_stress : f-value for CS coil Tresca stress limit (see asltroh)
+
 *-----------------Build Variables------------------*
 
 blnkith  = 0.755 * Inboard blanket thickness (m);
@@ -295,7 +302,6 @@ ngrp     = 4 * Number of groups of pf coils;
 ohhghf   = 0.9 * Central solenoid height / tf coil internal height
 rjconpf  = 1.1d7, 1.1d7, 6.d6, 6.d6, 8.d6, 8.0d6, 8.0d6, 8.0d6, * Average winding pack current density of pf coil i (a/m2)
 rpf2     = -1.825 * Offset (m) of radial position of ipfloc=2 pf coils
-sigpfalw = 300.0 * Allowable stress in pf coils/central solenoid (mpa)
 zref(1) = 3.6
 zref(2) = 1.2
 zref(3) = 1.0
@@ -306,7 +312,7 @@ zref(7) = 1.0
 zref(8) = 1.0
 
 isumatoh = 5
-alstroh = 6.0D8 * allowable hoop stress in Central Solenoid structural material (Pa)
+alstroh = 6.0D8 * allowable TRESCA stress in Central Solenoid structural material (Pa)
 
 *----------------Physics Variables-----------------*
 
