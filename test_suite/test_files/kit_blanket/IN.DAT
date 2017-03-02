@@ -172,7 +172,7 @@ iblanket = 2 * KIT blanket model
 li6enrich = 60.0 * li 6 enrichment %
 
 secondary_cycle = 2 * Switch for thermodynamic model of power conversion cycle;
-tfwmatmax = 873  * Maximum temperature of first wall material (k) (secondary_cycle>1)
+tfwmatmax = 900  * Maximum temperature of first wall material (k) (secondary_cycle>1)
 fwclfr   = 0.1 * First wall coolant fraction
 vfshld   = 0.60 * Coolant void fraction in shield
 fw_channel_length = 7.0  * Length of a single first wall channel (all in parallel) (m) (15/11/27)

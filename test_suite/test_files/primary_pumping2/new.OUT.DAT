@@ -6,6 +6,7 @@
  
    Program : ./process.exe
    Version : 1.0.8    Release Date :: 2017-02-28
+<<<<<<< HEAD
  Date/time :  1 Mar 2017 16:12:24 +00:00(hh:mm) UTC
       User : mkovari
  Directory : /home/mkovari/develop/test_suite
@@ -13,6 +14,15 @@
  **************************************************************************************************************
  
  PROCESS 1.0.8 : Run on  1 Mar 2017 16:12:24 +00:00(hh:mm) UTC by freia008
+=======
+ Date/time :  1 Mar 2017 16:19:31 +00:00(hh:mm) UTC
+      User : morrisj
+ Directory : /home/morrisj/Work/fortran/develop/test_suite
+ 
+ **************************************************************************************************************
+ 
+ PROCESS 1.0.8 : Run on  1 Mar 2017 16:19:31 +00:00(hh:mm) UTC by localhost.localdomain
+>>>>>>> 943d820a3c3cc053b1b47901ae24e6265536bc29
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -810,7 +820,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
     CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         3.215E+00  OP 
     CS void cross-sectional area (m2)                                     (awpoh*vfohc)             1.378E+00  OP 
  CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            4.593E+00  OP 
+<<<<<<< HEAD
  CS steel area fraction                                                   (oh_steel_frac)           5.000E-01     
+=======
+ CS steel area fraction                                                                             5.000E-01  OP 
+>>>>>>> 943d820a3c3cc053b1b47901ae24e6265536bc29
  Allowable stress in CS steel (Pa)                                        (alstroh)                 4.000E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                5.718E+08  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -7.554E+08  OP 

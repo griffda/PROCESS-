@@ -15,6 +15,7 @@
  
    Program : ./process.exe
    Version : 1.0.8    Release Date :: 2017-02-28
+<<<<<<< HEAD
  Date/time :  1 Mar 2017 16:09:25 +00:00(hh:mm) UTC
       User : mkovari
  Directory : /home/mkovari/develop/test_suite
@@ -22,6 +23,15 @@
  **************************************************************************************************************
  
  PROCESS 1.0.8 : Run on  1 Mar 2017 16:09:25 +00:00(hh:mm) UTC by freia008
+=======
+ Date/time :  1 Mar 2017 16:19:50 +00:00(hh:mm) UTC
+      User : morrisj
+ Directory : /home/morrisj/Work/fortran/develop/test_suite
+ 
+ **************************************************************************************************************
+ 
+ PROCESS 1.0.8 : Run on  1 Mar 2017 16:19:50 +00:00(hh:mm) UTC by localhost.localdomain
+>>>>>>> 943d820a3c3cc053b1b47901ae24e6265536bc29
  Reactor concept design: Steady-state tokamak model, (c) CCFE
  "CFETR small (5.7m) reference file"
  (Please include this header in any models, presentations and papers based on these results)
