@@ -410,6 +410,8 @@ contains
 
     integer :: iost
     integer :: ioldvl,isub1,isub2,ival,varlen
+    integer :: no_constraints=0
+    integer :: no_iteration=0
 
     character(len=40) :: clabel, clbl,clbl2
     character(len=32) :: varnam
@@ -508,23 +510,28 @@ contains
        case ('icc')
           call parse_int_array('icc', icc, isub1, ipeqns, &
                'Constraint equation', icode)
+          no_constraints = no_constraints + 1
        case ('ioptimz')
           call parse_int_variable('ioptimz', ioptimz, -1, 1, &
                'Switch for solver method')
        case ('ixc')
           call parse_int_array('ixc', ixc, isub1, ipnvars, &
                'Iteration variable', icode)
+          no_iteration = no_iteration + 1
+
        case ('maxcal')
           call parse_int_variable('maxcal', maxcal, 0, 10000, &
                'Max no of VMCON iterations')
        case ('minmax')
           call parse_int_variable('minmax', minmax, -ipnfoms, ipnfoms, 'Switch for figure of merit')
-      case ('neqns')
-          call parse_int_variable('neqns', neqns, 1, ipeqns, 'No of equality constraints')
-      case ('nineqns')
+       case ('neqns')
+           write(*,*)'The number of constraints is counted automatically and does not need to be stated in IN.DAT.'
+     !    call parse_int_variable('neqns', neqns, 1, ipeqns, 'No of equality constraints')
+       case ('nineqns')
           call parse_int_variable('nineqns', nineqns, 1, ipeqns, 'No of inequality constraints')
        case ('nvar')
-          call parse_int_variable('nvar', nvar, 1, ipnvars, 'No of independent variables')
+          write(*,*)'The number of iteration variables is counted automatically and does not need to be stated in IN.DAT.'
+       !  call parse_int_variable('nvar', nvar, 1, ipnvars, 'No of independent variables')
 
           !  Physics settings
 
@@ -2954,6 +2961,9 @@ contains
        cycle
 
     end do loop_over_lines
+    neqns = no_constraints
+    nvar = no_iteration
+    write(*,*)neqns,' constraints.  ',nvar,' iteration variables'
 
     if (error .eqv. .True.) stop
 
