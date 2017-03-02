@@ -116,7 +116,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  
+
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -220,11 +220,10 @@ contains
     !  Output section
 
     if (iprint == 1) then
-
-       call osubhd(outfile,'Central solenoid considerations:')
-       call ovarre(outfile,'Minimum plasma current ramp-up time (s)', &
-            '(tohsmn)',tohsmn)
-
+       if(active_constraints(41) .eqv. .true.)then
+          call osubhd(outfile,'Central solenoid considerations:')
+          call ovarre(outfile,'Minimum plasma current ramp-up time (s)', '(tohsmn)',tohsmn)
+      end if
     end if
 
   end subroutine tohswg
