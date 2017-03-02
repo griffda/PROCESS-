@@ -69,6 +69,7 @@ module pfcoil_module
 
   integer :: nef,nfxf
   real(kind(1.0D0)) :: ricpf, ssq0, sig_axial, sig_hoop
+  real(kind(1.0D0)) :: axial_force
   real(kind(1.0D0)), dimension(nfixmx) :: rfxf,zfxf,cfxf,xind
   real(kind(1.0D0)), dimension(ngrpmx,nclsmx) :: rcls,zcls
   real(kind(1.0D0)), dimension(ngrpmx) :: ccls,ccls2,ccl0
@@ -896,7 +897,7 @@ contains
        call hoop_stress(ra(nohc), sig_hoop)
 
        ! New calculation from Y. Iwasa for axial stress
-       call axial_stress(sig_axial)
+       call axial_stress(sig_axial,axial_force)
 
        !  Allowable (hoop) stress (Pa) alstroh
        ! Now a user input
@@ -2303,7 +2304,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine axial_stress(s_axial)
+  subroutine axial_stress(s_axial,axial_force)
     !+ad_name  axial_stress
     !+ad_summ  Calculation of axial stress of central solenoid
     !+ad_type  Subroutine
@@ -2323,7 +2324,7 @@ contains
     implicit none
 
     !  Arguments
-    real(kind(1.0D0)), intent(out) :: s_axial
+    real(kind(1.0D0)), intent(out) :: s_axial,axial_force
 
     !  Local variables
     real(kind(1.0D0)) :: b, hl, ni
@@ -2333,8 +2334,6 @@ contains
   !real(kind(1.0D0)) :: kb, k2b
 
     real(kind(1.0D0)) :: axial_term_1, axial_term_2, axial_term_3
-
-    real(kind(1.0D0)) :: axial_force
 
     real(kind(1.0D0)) :: aa, bb, cc
 
@@ -2857,6 +2856,8 @@ contains
                '(sig_axial)', sig_axial, 'OP ')
           call ovarre(outfile,'Tresca stress in CS steel (Pa)', &
                '(s_tresca_oh)', s_tresca_oh, 'OP ')
+          call ovarre(outfile,'Axial force in CS (N)', &
+               '(axial_force)', axial_force, 'OP ')
           call ovarre(outfile,'Strain on superconductor', &
                '(strncon)',strncon)
           call ovarre(outfile,'Copper fraction in strand', &

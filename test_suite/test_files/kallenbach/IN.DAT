@@ -180,8 +180,8 @@ boundu(65) = 310.0
 tohs   = 300 * OH ramp up time (s)
 
 ixc(36) = 118 * fpsep: f-value to ensure separatrix power is related to that from Kallenbach divertor
-boundl(118) = 0.85
-boundu(118)=1.15
+boundl(118) = 0.95
+boundu(118)=1.05
 
 ixc(37) = 119 * tesep
 boundl(119) = 0.1
