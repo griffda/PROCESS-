@@ -6,23 +6,13 @@
  
    Program : ./process.exe
    Version : 1.0.8    Release Date :: 2017-02-28
-<<<<<<< HEAD
- Date/time :  1 Mar 2017 16:09:44 +00:00(hh:mm) UTC
+ Date/time :  2 Mar 2017 14:09:38 +00:00(hh:mm) UTC
       User : mkovari
  Directory : /home/mkovari/develop/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.8 : Run on  1 Mar 2017 16:09:44 +00:00(hh:mm) UTC by freia008
-=======
- Date/time :  1 Mar 2017 16:19:42 +00:00(hh:mm) UTC
-      User : morrisj
- Directory : /home/morrisj/Work/fortran/develop/test_suite
- 
- **************************************************************************************************************
- 
- PROCESS 1.0.8 : Run on  1 Mar 2017 16:19:42 +00:00(hh:mm) UTC by localhost.localdomain
->>>>>>> 943d820a3c3cc053b1b47901ae24e6265536bc29
+ PROCESS 1.0.8 : Run on  2 Mar 2017 14:09:38 +00:00(hh:mm) UTC by freia008
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -532,10 +522,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Beam centreline tangency radius (m)                                      (rtanbeam)                9.038E+00  OP 
  Maximum possible tangency radius (m)                                     (rtanmax)                 1.426E+01  OP 
  
- Central solenoid considerations:
- 
- Minimum plasma current ramp-up time (s)                                  (tohsmn)                  4.316E+01     
- 
  Volt-second considerations:
  
  Total V-s capability of OH/PF coils (Wb)                                 (abs(vstot))              7.259E+02     
@@ -821,15 +807,12 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
     CS conductor cross-sectional area (m2)                                (awpoh*(1-vfohc))         3.216E+00  OP 
     CS void cross-sectional area (m2)                                     (awpoh*vfohc)             1.378E+00  OP 
  CS steel cross-sectional area (m2)                                       (areaoh-awpoh)            4.595E+00  OP 
-<<<<<<< HEAD
  CS steel area fraction                                                   (oh_steel_frac)           5.000E-01     
-=======
- CS steel area fraction                                                                             5.000E-01  OP 
->>>>>>> 943d820a3c3cc053b1b47901ae24e6265536bc29
  Allowable stress in CS steel (Pa)                                        (alstroh)                 4.000E+08     
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                5.722E+08  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -7.586E+08  OP 
  Tresca stress in CS steel (Pa)                                           (s_tresca_oh)             1.331E+09  OP 
+ Axial force in CS (N)                                                    (axial_force)            -1.743E+09  OP 
  Strain on superconductor                                                 (strncon)                -5.000E-03     
  Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
  Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     

@@ -15,23 +15,13 @@
  
    Program : ./process.exe
    Version : 1.0.8    Release Date :: 2017-02-28
-<<<<<<< HEAD
- Date/time :  1 Mar 2017 16:09:25 +00:00(hh:mm) UTC
+ Date/time :  2 Mar 2017 14:07:27 +00:00(hh:mm) UTC
       User : mkovari
  Directory : /home/mkovari/develop/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.8 : Run on  1 Mar 2017 16:09:25 +00:00(hh:mm) UTC by freia008
-=======
- Date/time :  1 Mar 2017 16:19:50 +00:00(hh:mm) UTC
-      User : morrisj
- Directory : /home/morrisj/Work/fortran/develop/test_suite
- 
- **************************************************************************************************************
- 
- PROCESS 1.0.8 : Run on  1 Mar 2017 16:19:50 +00:00(hh:mm) UTC by localhost.localdomain
->>>>>>> 943d820a3c3cc053b1b47901ae24e6265536bc29
+ PROCESS 1.0.8 : Run on  2 Mar 2017 14:07:27 +00:00(hh:mm) UTC by freia008
  Reactor concept design: Steady-state tokamak model, (c) CCFE
  "CFETR small (5.7m) reference file"
  (Please include this header in any models, presentations and papers based on these results)
@@ -778,6 +768,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Hoop stress in CS steel (Pa)                                             (sig_hoop)                5.957E+08  OP 
  Axial stress in CS steel (Pa)                                            (sig_axial)              -6.733E+08  OP 
  Tresca stress in CS steel (Pa)                                           (s_tresca_oh)             1.269E+09  OP 
+ Axial force in CS (N)                                                    (axial_force)            -9.513E+08  OP 
  Strain on superconductor                                                 (strncon)                -5.000E-03     
  Copper fraction in strand                                                (fcuohsu)                 7.000E-01     
  Void (coolant) fraction in conductor                                     (vfohc)                   3.000E-01     
