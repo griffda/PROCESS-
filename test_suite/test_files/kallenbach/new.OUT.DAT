@@ -6,13 +6,13 @@
  
    Program : ./process.exe
    Version : 1.0.8    Release Date :: 2017-02-28
- Date/time :  2 Mar 2017 14:07:55 +00:00(hh:mm) UTC
+ Date/time :  3 Mar 2017  9:51:46 +00:00(hh:mm) UTC
       User : mkovari
  Directory : /home/mkovari/develop/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.8 : Run on  2 Mar 2017 14:07:55 +00:00(hh:mm) UTC by freia008
+ PROCESS 1.0.8 : Run on  3 Mar 2017  9:51:46 +00:00(hh:mm) UTC by freia009
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  'Kallenbach divertor model'
  (Please include this header in any models, presentations and papers based on these results)
@@ -1342,214 +1342,212 @@ runtitle = 'Kallenbach divertor model'
 *---------------Constraint Equations---------------*
 
 
-icc(1) = 1 * Beta
-icc(2) = 2 * Global power balance
-icc(3) = 5 * Density upper limit
-icc(4) = 8 * Neutron wall load upper limit
+icc = 1 * Beta
+icc = 2 * Global power balance
+icc = 5 * Density upper limit
+icc = 8 * Neutron wall load upper limit
 walalw  = 8.0 * Allowable wall-load (mw/m2)
 
-icc(5) = 10 * Toroidal field 1/R (consistency equation)
-icc(6) = 11 * Radial build (consistency equation)
-icc(7) = 13 * Burn time lower limit
+icc = 10 * Toroidal field 1/R (consistency equation)
+icc = 11 * Radial build (consistency equation)
+icc = 13 * Burn time lower limit
 tbrnmn  = 7.2e3 * Minimum burn time (s)
 
-icc(8) = 15 * L-H power threshold limit
-icc(9) = 16 * Net electric power lower limit
+icc = 15 * L-H power threshold limit
+icc = 16 * Net electric power lower limit
 pnetelin = 500.0 * Required net electric power (Mw)
 
-icc(10) = 24 * Beta upper limit
-icc(11) = 60 * Central solenoid temperature margin lower limit
+icc = 24 * Beta upper limit
+icc = 60 * Central solenoid temperature margin lower limit
 
-icc(12) = 30 * Injection power upper limit
+icc = 30 * Injection power upper limit
 pinjalw = 50.0 * Maximum allowable value for injected power (mw)
 
-icc(13) = 31 * TF coil case stress upper limit
-icc(14) = 32 * TF coil conduit stress upper limit
+icc = 31 * TF coil case stress upper limit
+icc = 32 * TF coil conduit stress upper limit
 alstrtf  = 6.0E8 * allowable stress in TF coil (Pa)
 
-icc(15) = 34 * Dump voltage upper limit
+icc = 34 * Dump voltage upper limit
 vdalw   = 10.00 * Max voltage across tf coil during quench (kv)
 
-icc(16) = 35 * J_winding pack/J_protection upper limit (TFC)
+icc = 35 * J_winding pack/J_protection upper limit (TFC)
 
-icc(17) = 36 * TF temp margin  See tmargmin
+icc = 36 * TF temp margin  See tmargmin
 
-icc(18) = 65 * dump time by VV stresses
+icc = 65 * dump time by VV stresses
 sigvvall= 9.3e7 * allowable stress from TF quench in vacuum vessel (Pa)
 
-icc(19) = 66 * Limit on rate of change of energy in poloidal field (Use iteration variable 65(tohs))
+icc = 66 * Limit on rate of change of energy in poloidal field (Use iteration variable 65(tohs))
 maxpoloidalpower = 300 * Maximum permitted absolute rate of change of stored energy in poloidal field (MW)
 
-icc(20) = 68 * Pseparatrix Bt / q A R
+icc = 68 * Pseparatrix Bt / q A R
 psepbqarmax = 9.5D0 * maximum ratio of Psep*Bt/qAR (MWT/m)
 
-icc(21) = 69 * Separatrix power < than value from Kallenbach divertor (Use iteration variable 118 (fpsep))
-icc(22) = 70 * ensure that tomp is equal to the separatrix temperature in the pedestal profile (Use iteration variable 119 (tesep)
-*icc(22) = 71 * ensure that neomp is equal to the separatrix density (nesep) x neratio
+icc = 69 * Separatrix power < than value from Kallenbach divertor (Use iteration variable 118 (fpsep))
+icc = 70 * ensure that tomp is equal to the separatrix temperature in the pedestal profile (Use iteration variable 119 (tesep))
+*icc = 71 * ensure that neomp is equal to the separatrix density (nesep) x neratio
 
-icc(23) = 72 * central solenoid Tresca stress limit
+icc = 72 * central solenoid Tresca stress limit
 alstroh = 6.0D8 * allowable TRESCA stress in Central Solenoid structural material (Pa)
 
-*neqns = 23 * Number of equality constraints to be satisfied
 *---------------Iteration Variables----------------*
 
-ixc(1) = 2 * bt
+ixc = 2 * bt
 boundu(2) = 10.0
 bt = 5.3
 
-ixc(2) = 3 * rmajor
+ixc = 3 * rmajor
 boundl(3) = 8.9
 boundu(3) = 12
 rmajor    = 9.4 * Plasma major radius (m) (iteration variable 3)
 
-ixc(3) = 4 * te
+ixc = 4 * te
 boundl(4) = 10.0
 boundu(4) = 30.0
 te        = 13.07 * Volume averaged electron temperature (kev)
 
-ixc(4) = 5 * beta
+ixc = 5 * beta
 beta   = 0.035
 
-ixc(5) = 6 * dene
+ixc = 6 * dene
 boundl(6) =  6.0E+19
 dene      = 7.5e+19 * Electron density (/m3) (iteration variable 6)
 
-ixc(6) = 9 * fdene
+ixc = 9 * fdene
 boundu(9) = 1.2
 fdene     = 1.2 * F-value for density limit
 
-ixc(7) = 10 * hfact
+ixc = 10 * hfact
 boundu(10) = 1.1
 
-ixc(8) = 12 * oacdcp
+ixc = 12 * oacdcp
 oacdcp   = 9.5E+06 * Overall current density in tf coil inboard legs (a/m2)
 
-ixc(9) = 13 * tfcth
+ixc = 13 * tfcth
 tfcth = 1.0
 
-ixc(10) = 14 * fwalld
+ixc = 14 * fwalld
 fwalld  = 0.13 * F-value for maximum wall load
 
-ixc(11) = 16 * ohcth
+ixc = 16 * ohcth
 boundl(16) = 0.8
 boundu(16) = 2.0
 ohcth      = 1.0 * Central solenoid thickness (m)
 
-ixc(12) = 18 * q
+ixc = 18 * q
 boundl(18) = 3.0
 q          = 3.0 * Safety factor 'near' plasma edge (iteration variable 18)
 
-ixc(13) = 29 * bore
+ixc = 29 * bore
 boundl(29) = 1.5
 bore       = 2.3
 
-ixc(14) = 36 * fbetatry
+ixc = 36 * fbetatry
 fbetatry = 0.5 * F-value for beta limit
 
-ixc(15) = 37 * coheof
+ixc = 37 * coheof
 boundu(37) = 2.0e7
 coheof   = 1.2e7 * Central solenoid overall current density at end of flat-top (a/m2)
 
-ixc(16) = 41 * fcohbop
+ixc = 41 * fcohbop
 boundl(41) = 0.5
 fcohbop    = 0.9
 
-ixc(17) = 42 * gapoh
+ixc = 42 * gapoh
 boundl(42) = 0.05
 boundu(42) = 0.1
 gapoh      = 0.05 * Gap between central solenoid and tf coil (m)
 * Why is this an iteration variable?
 
-ixc(18) = 44 * fvsbrnni
+ixc = 44 * fvsbrnni
 fvsbrnni = 0.48 * Fraction of the plasma current produced by non-inductive means
 
-ixc(19) = 48 * fstrcase
+ixc = 48 * fstrcase
 ixc(20) = 49 * fstrcond
 
-ixc(21) = 51 * fvdump
+ixc = 51 * fvdump
 fvdump  = 0.9 * F-value for dump voltage (constraint equation 34)
 
-ixc(22) = 52 * vdalw maximum voltage across TF coil during quench (kV)
+ixc = 52 * vdalw maximum voltage across TF coil during quench (kV)
 * Why is this an iteration variable?
 boundu(52) = 10.0
 
-ixc(23) = 53 * fjprot
+ixc = 53 * fjprot
 fjprot  = 1.0 * F-value for tf coil winding pack current density
 
-ixc(24) = 56 * tdmptf
+ixc = 56 * tdmptf
 tdmptf  = 25.0 * Dump time for tf coil (s)
 
-ixc(25) = 57 * thkcas
+ixc = 57 * thkcas
 thkcas  = 0.5 * Inboard tf coil case outer (non-plasma side) thickness (m)
 
-ixc(26) = 58 * thwcndut
+ixc = 58 * thwcndut
 boundl(58) = 0.008
 thwcndut   = 0.008 * Tf coil conduit case thickness (m)
 
-ixc(27) = 61 * gapds
+ixc = 61 * gapds
 boundl(61) = 0.02
 boundu(61) = 0.12
 gapds      = 0.12 * Gap between inboard vacuum vessel and tf coil (m)
 * Why is this an iteration variable?
 
-ixc(28) = 102 * fimpvar
+ixc = 102 * fimpvar
 * See impurity variables
 
-ixc(29) = 103 * flhthresh
+ixc = 103 * flhthresh
 boundu(103) = 10.0
 flhthresh   = 1.35 * F-value for l-h power threshold
 
-ixc(30) = 117 *fpsepbqar
+ixc = 117 *fpsepbqar
 
-ixc(31) = 113 *ftaucq
+ixc = 113 *ftaucq
 
-ixc(32) = 60 * cpttf
+ixc = 60 * cpttf
 boundl(60) = 6.0e4
 boundu(60) = 9.0e4
 cpttf      = 6.5e+04 * Tf coil current per turn (a)
 
-ixc(33) = 59 * copper fraction of cable conductor (TF coils)
+ixc = 59 * copper fraction of cable conductor (TF coils)
 boundu(59) = 0.94
 fcutfsu    = 0.8
 
-ixc(34) = 54 * ftmargtf
+ixc = 54 * ftmargtf
 
-ixc(35) = 65 * tohs
+ixc = 65 * tohs
 boundl(65) = 290.0
 boundu(65) = 310.0
 tohs   = 300 * OH ramp up time (s)
 
-ixc(36) = 118 * fpsep: f-value to ensure separatrix power is related to that from Kallenbach divertor
+ixc = 118 * fpsep: f-value to ensure separatrix power is related to that from Kallenbach divertor
 boundl(118) = 0.95
 boundu(118)=1.05
 
-ixc(37) = 119 * tesep
+ixc = 119 * tesep
 boundl(119) = 0.1
 boundu(119) = 10.0
 tesep       = 0.28 * Electron temperature at separatrix (kev) (ipedestal=1)
 
-ixc(38) = 120 * ttarget  Plasma temperature adjacent to divertor sheath [eV]
+ixc = 120 * ttarget  Plasma temperature adjacent to divertor sheath [eV]
 boundl(120) = 0.1
 boundu(120) = 10.0
 ttarget     = 2.3  * Plasma temperature adjacent to divertor sheath [eV]
 
-ixc(39) = 21 * ftburn f-value for burn time limit equation
+ixc = 21 * ftburn f-value for burn time limit equation
 boundl(21) = 0.001
 boundu(21) = 1.002
 ftburn   = 1.0 * F-value for minimum burn time
 
-ixc(40) = 106 * ftmargoh (f-value for equation 60)
+ixc = 106 * ftmargoh (f-value for equation 60)
 
-ixc(41) = 115 * fpoloidalpower: f-value for max rate of change of energy in poloidal field
+ixc = 115 * fpoloidalpower: f-value for max rate of change of energy in poloidal field
 
-ixc(42) = 46 * fpinj (f-value for equation 30)
+ixc = 46 * fpinj (f-value for equation 30)
 
-ixc(43) = 122 * oh_steel_frac : streel fraction of OH coil
+ixc = 122 * oh_steel_frac : streel fraction of OH coil
 oh_steel_frac = 0.5  * central solenoid steel fraction (iteration variable 122)
 
-ixc(44) = 123 * foh_stress : f-value for CS coil Tresca stress limit (see asltroh)
+ixc = 123 * foh_stress : f-value for CS coil Tresca stress limit (see asltroh)
 
-*nvar = 44 * Number of iteration variables to use
 *-----------------Build Variables------------------*
 
 blnkith  = 0.755 * Inboard blanket thickness (m);

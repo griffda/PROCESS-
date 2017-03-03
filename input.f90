@@ -507,18 +507,21 @@ contains
        case ('ftol')
           call parse_real_variable('ftol', ftol, 0.0D0, 1.0D0, &
                'HYBRD tolerance')
+
+       ! New optional argument startindex used MDK 3/3/17
+       ! Allows simplified IN.DAT format for icc and ixc.
        case ('icc')
-          call parse_int_array('icc', icc, isub1, ipeqns, &
-               'Constraint equation', icode)
           no_constraints = no_constraints + 1
+          call parse_int_array('icc', icc, isub1, ipeqns, &
+               'Constraint equation', icode,no_constraints)
+      case ('ixc')
+          no_iteration = no_iteration + 1
+          call parse_int_array('ixc', ixc, isub1, ipnvars, &
+                   'Iteration variable', icode,no_iteration)
+
        case ('ioptimz')
           call parse_int_variable('ioptimz', ioptimz, -1, 1, &
                'Switch for solver method')
-       case ('ixc')
-          call parse_int_array('ixc', ixc, isub1, ipnvars, &
-               'Iteration variable', icode)
-          no_iteration = no_iteration + 1
-
        case ('maxcal')
           call parse_int_variable('maxcal', maxcal, 0, 10000, &
                'Max no of VMCON iterations')
@@ -3278,7 +3281,7 @@ contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine parse_int_array(varnam,varval,isub1,n,description,icode)
+  subroutine parse_int_array(varnam,varval,isub1,n,description,icode,startindex)
 
     !+ad_name  parse_int_array
     !+ad_summ  Routine that obtains the values of an integer array
@@ -3313,17 +3316,15 @@ contains
     implicit none
 
     !  Arguments
-
     character(len=*), intent(in) :: varnam, description
     integer, intent(inout) :: isub1
     integer, intent(in) :: n
     integer, intent(out) :: icode
     integer, dimension(n), intent(inout) :: varval
+    integer, intent(in), optional :: startindex
 
     !  Local variables
-
     integer :: oldval, val
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     !  Check whether a subscript was found by the preceding call to GET_VARIABLE_NAME
@@ -3346,9 +3347,10 @@ contains
                trim(varnam),'(',isub1,') = ',varval(isub1)
        end if
 
-    else
+   else  ! subscript is not present
 
        isub1 = 1
+       if(present(startindex))isub1 = startindex
        do
           call get_value_int(val,icode)
           !  icode == 1 denotes an error
