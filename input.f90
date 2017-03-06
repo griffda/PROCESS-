@@ -1174,6 +1174,9 @@ contains
        case ('tramp')
           call parse_real_variable('tramp', tramp, 0.0D0, 1.0D4, &
                'Initial charge time for PF coils (s)')
+       case ('pulsetimings')
+          call parse_real_variable('pulsetimings', pulsetimings, 0.0D0, 1.0D0, &
+               'Pulse timings switch for lpulse=1')
 
        ! Divertor settings: 2016 Kallenbach model (2016/07/04)
 

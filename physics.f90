@@ -282,12 +282,19 @@ contains
 
     else
 
-       !  tohs is set either in INITIAL or INPUT, or by being
-       !  iterated using limit equation 41.
+       if (pulsetimings == 0.0D0) then
+         ! tramp is input
+         tohs = plascur/1.0D5
+         tqnch = tohs
 
-       tramp = max(tramp,tohs)
-       !tqnch = max(tqnch,tohs)
-       tqnch = tohs
+       else
+         !  tohs is set either in INITIAL or INPUT, or by being
+         !  iterated using limit equation 41.
+         tramp = max(tramp,tohs)
+         !tqnch = max(tqnch,tohs)
+         tqnch = tohs
+       end if
+       
 
     end if
 

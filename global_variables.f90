@@ -2678,6 +2678,7 @@ module times_variables
   !+ad_hist  27/06/13 PJK Relabelled tohs, tohsin
   !+ad_hist  17/09/14 PJK Changed default values
   !+ad_hist  12/11/14 PJK Added tcycle; tdwell default changed from 100s to 1800s
+  !+ad_hist  06/03/17 JM  Added pulsetimings switch
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2687,6 +2688,10 @@ module times_variables
 
   public
 
+  !+ad_vars  pulsetimings /0.0/ : switch for pulse timings (if lpulse=1):<UL>
+  !+ad_varc            <LI> = 0, tohs = Ip(MA)/0.1 tramp, tqnch = input;
+  !+ad_varc            <LI> = 1, tohs = iteration var or input. tramp/tqnch max of input or tohs</UL>
+  real(kind(1.0D0)) :: pulsetimings = 1.0D0
   !+ad_vars  tburn /1000.0/ : burn time (s) (calculated if lpulse=1)
   real(kind(1.0D0)) :: tburn = 1000.0D0
   !+ad_vars  tburn0 : burn time (s) - used for internal consistency
