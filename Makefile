@@ -340,6 +340,7 @@ win_clean:
 	del utilities\processgui\dicts\gui_dicts.py
 	del *.html
 	del root.dir
+	rmdir /q /s documentation\html
 
 cleandoc:
 	rm -f autodoc
@@ -393,6 +394,10 @@ doc: html userguide
 
 win_doc: autodoc
 	@ type $(source) | autodoc
+	@ rmdir /q /s documentation\html
+	@ mkdir documentation\html
+	@ copy *.html documentation\html
+	@ del *.html
 
 help:
 	$(info .)
