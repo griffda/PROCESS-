@@ -1739,10 +1739,12 @@ subroutine output(outfile)
 
   call acpow(outfile,1)
 
-  ! Plant heat transport pt 2 !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! Plant heat transport pt 2 & 3 !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call power2(outfile,1)
+
+  call power3(nout,1)
 
 end subroutine output
 

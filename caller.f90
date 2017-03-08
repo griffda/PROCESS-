@@ -371,10 +371,12 @@ subroutine caller(xc,nvars)
 
   call acpow(nout,0)
 
-  ! Plant heat transport pt 2 !
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! Plant heat transport pt 2 & 3!
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   call power2(nout,0)
+
+  call power3(nout,0)
 
   ! Availability model !
   !!!!!!!!!!!!!!!!!!!!!!

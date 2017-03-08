@@ -7,13 +7,13 @@
  
    Program : ./process.exe
    Version : 1.0.8    Release Date :: 2017-02-28
- Date/time :  3 Mar 2017  9:51:35 +00:00(hh:mm) UTC
-      User : mkovari
- Directory : /home/mkovari/develop/test_suite
+ Date/time :  8 Mar 2017 15:49:37 +00:00(hh:mm) UTC
+      User : morrisj
+ Directory : /home/morrisj/Work/fortran/soft_2016_work/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.8 : Run on  3 Mar 2017  9:51:35 +00:00(hh:mm) UTC by freia009
+ PROCESS 1.0.8 : Run on  8 Mar 2017 15:49:37 +00:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  demoa 1 ralpne  * Short descriptive title for the run
  (Please include this header in any models, presentations and papers based on these results)
@@ -1491,6 +1491,48 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  (*Power for pumps in secondary circuit already subtracted)
  Recirculating power fraction                                             (cirpowfr)                    0.389  OP 
  
+ Time-dependent power usage
+ 
+         Pulse timings [s]:
+ 
+                                          tramp      tohs     theat     tburn     tqnch    tdwell
+                                          -----      ----     -----     -----     -----    ------
+                               Duration   30.00     30.00     10.00   7200.20     30.00    500.00
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+         Continous power usage [MWe]:
+ 
+                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
+                                 ------   -----      ----     -----     -----     -----    ------
+                        Primary cooling  100.00    100.00    100.00    100.00    100.00    100.00
+                              Cyroplant   63.45     63.45     63.45     63.45     63.45     63.45
+                                 Vacuum    0.50      0.50      0.50      0.50      0.50      0.50
+                                Tritium   15.00     15.00     15.00     15.00     15.00     15.00
+                                     TF    8.92      8.92      8.92      8.92      8.92      8.92
+                             Facilities    5.00      5.00      5.00      5.00      5.00      5.00
+                                 ------   -----      ----     -----     -----     -----    ------
+                                  Total  192.88    192.88    192.88    192.88    192.88    192.88
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+         Intermittent power usage [MWe]:
+ 
+                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
+                                 ------   -----      ----     -----     -----     -----    ------
+                                 H & CD    0.00    300.00    300.00    125.01    300.00      0.00
+                                     PF  857.00   -344.66      0.00      2.20  -1039.76      0.00
+                                 ------   -----      ----     -----     -----     -----    ------
+                                  Total  857.00    -44.66    300.00    127.21   -739.76      0.00
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+         Power production [MWe]:
+ 
+                                          tramp      tohs     theat     tburn     tqnch    tdwell       avg
+                                          -----      ----     -----     -----     -----    ------       ---
+                            Gross power    0.00      0.00      0.00    818.86      0.00      0.00
+                              Net power-1049.88   -148.21   -492.88    498.77    546.88   -192.88    444.90
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+ 
  **************************************************************************************************************
  ***** Scan point  2 of  3: Taup/taueff_lower_limit, taulimit =  7.000E+00 *****
  **************************************************************************************************************
@@ -2955,6 +2997,48 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Gross electric power* / high grade heat (%)                              (etath)                      36.798     
  (*Power for pumps in secondary circuit already subtracted)
  Recirculating power fraction                                             (cirpowfr)                    0.389  OP 
+ 
+ Time-dependent power usage
+ 
+         Pulse timings [s]:
+ 
+                                          tramp      tohs     theat     tburn     tqnch    tdwell
+                                          -----      ----     -----     -----     -----    ------
+                               Duration   30.00     30.00     10.00   7199.92     30.00    500.00
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+         Continous power usage [MWe]:
+ 
+                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
+                                 ------   -----      ----     -----     -----     -----    ------
+                        Primary cooling  100.00    100.00    100.00    100.00    100.00    100.00
+                              Cyroplant   63.45     63.45     63.45     63.45     63.45     63.45
+                                 Vacuum    0.50      0.50      0.50      0.50      0.50      0.50
+                                Tritium   15.00     15.00     15.00     15.00     15.00     15.00
+                                     TF    8.92      8.92      8.92      8.92      8.92      8.92
+                             Facilities    5.00      5.00      5.00      5.00      5.00      5.00
+                                 ------   -----      ----     -----     -----     -----    ------
+                                  Total  192.88    192.88    192.88    192.88    192.88    192.88
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+         Intermittent power usage [MWe]:
+ 
+                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
+                                 ------   -----      ----     -----     -----     -----    ------
+                                 H & CD    0.00    300.00    300.00    125.01    300.00      0.00
+                                     PF  857.04   -344.73      0.00      2.20  -1039.78      0.00
+                                 ------   -----      ----     -----     -----     -----    ------
+                                  Total  857.04    -44.73    300.00    127.21   -739.78      0.00
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+         Power production [MWe]:
+ 
+                                          tramp      tohs     theat     tburn     tqnch    tdwell       avg
+                                          -----      ----     -----     -----     -----    ------       ---
+                            Gross power    0.00      0.00      0.00    818.86      0.00      0.00
+                              Net power-1049.91   -148.15   -492.88    498.77    546.91   -192.88    444.90
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
  
  **************************************************************************************************************
  ***** Scan point  3 of  3: Taup/taueff_lower_limit, taulimit =  9.000E+00 *****
@@ -4421,6 +4505,48 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Gross electric power* / high grade heat (%)                              (etath)                      36.782     
  (*Power for pumps in secondary circuit already subtracted)
  Recirculating power fraction                                             (cirpowfr)                    0.393  OP 
+ 
+ Time-dependent power usage
+ 
+         Pulse timings [s]:
+ 
+                                          tramp      tohs     theat     tburn     tqnch    tdwell
+                                          -----      ----     -----     -----     -----    ------
+                               Duration   30.00     30.00     10.00   7200.72     30.00    500.00
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+         Continous power usage [MWe]:
+ 
+                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
+                                 ------   -----      ----     -----     -----     -----    ------
+                        Primary cooling  100.00    100.00    100.00    100.00    100.00    100.00
+                              Cyroplant   68.22     68.22     68.22     68.22     68.22     68.22
+                                 Vacuum    0.50      0.50      0.50      0.50      0.50      0.50
+                                Tritium   15.00     15.00     15.00     15.00     15.00     15.00
+                                     TF    9.00      9.00      9.00      9.00      9.00      9.00
+                             Facilities    5.00      5.00      5.00      5.00      5.00      5.00
+                                 ------   -----      ----     -----     -----     -----    ------
+                                  Total  197.72    197.72    197.72    197.72    197.72    197.72
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+         Intermittent power usage [MWe]:
+ 
+                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
+                                 ------   -----      ----     -----     -----     -----    ------
+                                 H & CD    0.00    300.00    300.00    125.01    300.00      0.00
+                                     PF  876.42   -343.62      0.00      2.26  -1076.33      0.00
+                                 ------   -----      ----     -----     -----     -----    ------
+                                  Total  876.42    -43.62    300.00    127.27   -776.33      0.00
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+         Power production [MWe]:
+ 
+                                          tramp      tohs     theat     tburn     tqnch    tdwell       avg
+                                          -----      ----     -----     -----     -----    ------       ---
+                            Gross power    0.00      0.00      0.00    823.72      0.00      0.00
+                              Net power-1074.14   -154.09   -497.72    498.73    578.61   -197.72    444.56
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
  
  ******************************************** Errors and Warnings *********************************************
  

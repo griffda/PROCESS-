@@ -131,6 +131,7 @@ module process_input
   !+ad_hist  22/07/14 PJK Moved run_summary into process.f90
   !+ad_hist  19/05/15 PJK Added lower_case
   !+ad_hist  01/11/16 JM  Added iprecomp switch for OH coil pre-compression structure
+  !+ad_hist  08/03/17 JM  Added time-dependent power reqs
   !+ad_stat  Okay
   !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
   !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -2156,6 +2157,9 @@ contains
        case ('pwpm2')
           call parse_real_variable('pwpm2', pwpm2, 0.0D0, 1.0D3, &
                'Base AC power requirement (W/m2)')
+       case ('pinjmax')
+          call parse_real_variable('pinjmax', pinjmax, 0.0D0, 1.0D3, &
+               'Maximum injector wall plug power during pulse (MW)')
        case ('tfacpd')
           call parse_real_variable('tfacpd', tfacpd, 0.0D0, 100.0D0, &
                'Total ss TF coil AC power demand (MW)')

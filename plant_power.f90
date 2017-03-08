@@ -40,6 +40,7 @@ module power_module
   !+ad_hist  31/10/12 PJK Added cost_variables
   !+ad_hist  17/12/14 PJK Added error_handling
   !+ad_hist  23/04/15 MDK Removed fhole
+  !+ad_hist  07/03/17 JM  Added power3 for time-dependent power
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -65,7 +66,7 @@ module power_module
   implicit none
 
   private
-  public :: tfpwr, pfpwr, acpow, power1, power2
+  public :: tfpwr, pfpwr, acpow, power1, power2, power3
 
   !  Precision variable
   integer, parameter :: double = 8
@@ -580,7 +581,6 @@ contains
          powpfr2,ensxpf,engx,vpfij,engxpc
     real(kind(1.0D0)), save :: pfbuspwr
     real(kind(1.0D0)), dimension(6) :: inductxcurrent,poloidalenergy
-    real(kind(1.0D0)), dimension(5) :: poloidalpower
     integer :: i,ic,ngrpt,ig,ipf,jjpf,jjpf2,jpf,time
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1520,6 +1520,207 @@ contains
 
 
   end subroutine power2
+
+  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  subroutine power3(outfile,iprint)
+
+    !+ad_name  power3
+    !+ad_summ  Calculates the time-dependent power requirements
+    !+ad_type  Subroutine
+    !+ad_auth  J Morris, CCFE, Culham Science Centre
+    !+ad_cont  N/A
+    !+ad_args  outfile : input integer : output file unit
+    !+ad_args  iprint : input integer : switch for writing to output (1=yes)
+    !+ad_desc  This routine calculates the time dependent power requirements 
+    !+ad_desc  and outputs them to the output file
+    !+ad_prob  None
+    !+ad_hist  07/03/17 JM  Initial version
+    !+ad_stat  Okay
+    !+ad_docs  None
+    !
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    implicit none
+
+    ! Arguments
+    integer, intent(in) :: outfile, iprint
+
+    ! Local variables
+    real(kind(1.0D0)) :: t_cs, t_ip_up, t_heat, t_flat_top, t_ip_down, t_extra
+
+    ! Total continuous power
+    real(kind(1.0D0)), dimension(6) :: p_cont_tot
+
+    ! Total intermittent power
+    real(kind(1.0D0)), dimension(6) :: p_int_tot
+
+    ! Power arrays
+    ! Primary cooling power array (MW)
+    real(kind(1.0D0)), dimension(6) :: p_cooling
+
+    ! Vacuum system power array (MW)
+    real(kind(1.0D0)), dimension(6) :: p_vac
+
+    ! Cyroplant system power array (MW)
+    real(kind(1.0D0)), dimension(6) :: p_cryo
+
+    ! Heating and current drive power array (MW)
+    real(kind(1.0D0)), dimension(6) :: p_hcd
+
+    ! Tritium system power array (MW)
+    real(kind(1.0D0)), dimension(6) :: p_tritium
+
+    ! Facilities power array (MW) 
+    real(kind(1.0D0)), dimension(6) :: p_fac
+
+    ! TF coil system power array (MW)
+    real(kind(1.0D0)), dimension(6) :: p_tf
+
+    ! PF coil system power array (MW)
+    real(kind(1.0D0)), dimension(6) :: p_pf
+
+    ! Gross electric power array
+    real(kind(1.0D0)), dimension(6) :: p_gross
+
+    ! Net electric power array
+    real(kind(1.0D0)), dimension(6) :: p_net
+
+    ! Net electric power average
+    real(kind(1.0D0)) :: p_net_avg
+
+    ! Times
+    ! Central solenoid pre-magnetisation time (s)
+    t_cs = tramp
+
+    ! Plasma current ramp up time (s)
+    t_ip_up = tohs
+
+    ! Plasma heating phase (s)
+    t_heat = theat
+
+    ! Flat-top phase (s)
+    t_flat_top = tburn
+
+    ! Plasma current ramp down time (s)
+    t_ip_down = tqnch
+
+    ! Extra time between pulses (s)
+    t_extra = tdwell
+
+    ! Continuous power usage
+
+    ! Primary pumping electrical power [MWe]
+    p_cooling(1:6) = htpmw
+
+    ! Cryoplant electrical power [MWe]
+    p_cryo(1:6) = crypmw
+
+    ! Vacuum electrical power [MWe]
+    p_vac(1:6) = vachtmw
+
+    ! Tritium system electrical power [MWe]
+    p_tritium(1:6) = trithtmw
+
+    ! Facilities electrical power [MWe]
+    p_fac(1:6) = fachtmw
+
+    ! TF coil electrical power [MWe]
+    p_tf(1:6) = tfacpd
+
+    ! Total continuous power [MWe]
+    p_cont_tot = p_cooling + p_cryo + p_vac + p_tritium + p_fac + p_tf
+
+    ! Intermittent power usage
+
+    ! Heating and current drive electrical power [MWe]
+    p_hcd(1) = 0.0D0
+    p_hcd(2) = pinjmax/etacd
+    p_hcd(3) = pinjmax/etacd
+    p_hcd(4) = pinjwp
+    p_hcd(5) = pinjmax/etacd
+    p_hcd(6) = 0.0D0
+
+    ! PF coils electrical power [MWe]
+    p_pf(1) = poloidalpower(1)/1.0D6
+    p_pf(2) = poloidalpower(2)/1.0D6
+    p_pf(3) = poloidalpower(3)/1.0D6
+    p_pf(4) = poloidalpower(4)/1.0D6
+    p_pf(5) = poloidalpower(5)/1.0D6
+    p_pf(6) = 0.0D0
+
+    ! Total intermittent power [MWe]
+    p_int_tot(1:6) = p_pf + p_hcd
+
+    ! Gross power [MWe]
+    p_gross(1:3) = 0.0D0
+    p_gross(4) = pgrossmw
+    p_gross(5:6) = 0.0D0
+
+    ! Net electric power [MWe]
+    p_net =  p_gross - (p_cooling + p_cryo + p_vac + p_fac + p_tritium + p_tf + p_pf + p_hcd)
+
+    ! Net electric power average [MWe]
+    p_net_avg = ((p_net(1)*t_cs) + (p_net(2)*t_ip_up) + (p_net(3)*t_heat) + &
+        (p_net(4)*t_flat_top) + (p_net(5)*t_ip_down) + (p_net(6)*t_extra)) / &
+        (t_cs + t_ip_up + t_heat + t_flat_top + t_ip_down + t_extra)
+
+    ! Output
+    if (iprint == 0) return
+
+    call osubhd(outfile,'Time-dependent power usage')
+
+    write(outfile,'(t10,a)') 'Pulse timings [s]:'
+    call oblnkl(outfile)
+    write(outfile,10) "", "tramp", "tohs", "theat", "tburn", "tqnch", "tdwell"
+    write(outfile,10) "", "-----", "----", "-----", "-----", "-----", "------"
+    write(outfile,20) "Duration", t_cs, t_ip_up, t_heat, t_flat_top, t_ip_down, t_extra
+    write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
+    call oblnkl(outfile)
+
+    write(outfile,'(t10,a)') 'Continous power usage [MWe]:'
+    call oblnkl(outfile)
+    write(outfile,10) "System", "tramp", "tohs", "theat", "tburn", "tqnch", "tdwell"
+    write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
+    write(outfile,20) "Primary cooling", p_cooling(1), p_cooling(2), p_cooling(3), p_cooling(4), p_cooling(5), p_cooling(6)
+    write(outfile,20) "Cyroplant", p_cryo(1), p_cryo(2), p_cryo(3), p_cryo(4), p_cryo(5), p_cryo(6)
+    write(outfile,20) "Vacuum", p_vac(1), p_vac(2), p_vac(3), p_vac(4), p_vac(5), p_vac(6)
+    write(outfile,20) "Tritium", p_tritium(1), p_tritium(2), p_tritium(3), p_tritium(4), p_tritium(5), p_tritium(6)
+    write(outfile,20) "TF", p_tf(1), p_tf(2), p_tf(3), p_tf(4), p_tf(5), p_tf(6)
+    write(outfile,20) "Facilities", p_fac(1), p_fac(2), p_fac(3), p_fac(4), p_fac(5), p_fac(6)
+    write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
+    write(outfile,20) "Total", p_cont_tot(1), p_cont_tot(2), p_cont_tot(3), p_cont_tot(4), p_cont_tot(5), p_cont_tot(6)
+    write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
+    call oblnkl(outfile)
+
+    write(outfile,'(t10,a)') 'Intermittent power usage [MWe]:'
+    call oblnkl(outfile)
+    write(outfile,10) "System", "tramp", "tohs", "theat", "tburn", "tqnch", "tdwell"
+    write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
+    write(outfile,20) "H & CD", p_hcd(1), p_hcd(2), p_hcd(3), p_hcd(4), p_hcd(5), p_hcd(6)
+    write(outfile,20) "PF", p_pf(1), p_pf(2), p_pf(3), p_pf(4), p_pf(5), p_pf(6)
+    write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
+    write(outfile,20) "Total", p_int_tot(1), p_int_tot(2), p_int_tot(3), p_int_tot(4), p_int_tot(5), p_int_tot(6)
+    write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
+
+    call oblnkl(outfile)
+
+    write(outfile,'(t10,a)') 'Power production [MWe]:'
+    call oblnkl(outfile)
+    write(outfile,30) "", "tramp", "tohs", "theat", "tburn", "tqnch", "tdwell", "avg"
+    write(outfile,30) "", "-----", "----", "-----", "-----", "-----", "------", "---"
+    write(outfile,20) "Gross power", p_gross(1), p_gross(2), p_gross(3), p_gross(4), p_gross(5), p_gross(6)
+    write(outfile,40) "Net power", p_net(1), p_net(2), p_net(3), p_net(4), p_net(5), p_net(6), p_net_avg
+    write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
+
+    call oblnkl(outfile)    
+
+    10     format(t20,a20,t40,a8,t50,a8,t60,a8,t70,a8,t80,a8,t90,a8)
+    20     format(t20,a20,t40,f8.2,t50,f8.2,t60,f8.2,t70,f8.2,t80,f8.2,t90,f8.2,t100,f8.2)
+    30     format(t20,a20,t40,a8,t50,a8,t60,a8,t70,a8,t80,a8,t90,a8,t100,a8)
+    40     format(t20,a20,t40,f8.2,t50,f8.2,t60,f8.2,t70,f8.2,t80,f8.2,t90,f8.2,t100,f8.2,t110,f8.2)
+
+  end subroutine power3
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

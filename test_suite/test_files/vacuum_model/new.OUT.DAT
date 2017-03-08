@@ -6,13 +6,13 @@
  
    Program : ./process.exe
    Version : 1.0.8    Release Date :: 2017-02-28
- Date/time :  3 Mar 2017  9:53:44 +00:00(hh:mm) UTC
-      User : mkovari
- Directory : /home/mkovari/develop/test_suite
+ Date/time :  8 Mar 2017 15:47:45 +00:00(hh:mm) UTC
+      User : morrisj
+ Directory : /home/morrisj/Work/fortran/soft_2016_work/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.8 : Run on  3 Mar 2017  9:53:44 +00:00(hh:mm) UTC by freia009
+ PROCESS 1.0.8 : Run on  8 Mar 2017 15:47:45 +00:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  demo 1 vacuum model test  * Short descriptive title for the run
  (Please include this header in any models, presentations and papers based on these results)
@@ -1454,6 +1454,48 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Gross electric power* / high grade heat (%)                              (etath)                      36.804     
  (*Power for pumps in secondary circuit already subtracted)
  Recirculating power fraction                                             (cirpowfr)                    0.388  OP 
+ 
+ Time-dependent power usage
+ 
+         Pulse timings [s]:
+ 
+                                          tramp      tohs     theat     tburn     tqnch    tdwell
+                                          -----      ----     -----     -----     -----    ------
+                               Duration   30.00     30.00     10.00   7200.00     30.00    500.00
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+         Continous power usage [MWe]:
+ 
+                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
+                                 ------   -----      ----     -----     -----     -----    ------
+                        Primary cooling  100.00    100.00    100.00    100.00    100.00    100.00
+                              Cyroplant   61.65     61.65     61.65     61.65     61.65     61.65
+                                 Vacuum    0.50      0.50      0.50      0.50      0.50      0.50
+                                Tritium   15.00     15.00     15.00     15.00     15.00     15.00
+                                     TF    8.89      8.89      8.89      8.89      8.89      8.89
+                             Facilities    5.00      5.00      5.00      5.00      5.00      5.00
+                                 ------   -----      ----     -----     -----     -----    ------
+                                  Total  191.05    191.05    191.05    191.05    191.05    191.05
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+         Intermittent power usage [MWe]:
+ 
+                                 System   tramp      tohs     theat     tburn     tqnch    tdwell
+                                 ------   -----      ----     -----     -----     -----    ------
+                                 H & CD    0.00    300.00    300.00    125.02    300.00      0.00
+                                     PF  853.05   -348.27      0.00      2.18  -1028.85      0.00
+                                 ------   -----      ----     -----     -----     -----    ------
+                                  Total  853.05    -48.27    300.00    127.20   -728.85      0.00
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
+         Power production [MWe]:
+ 
+                                          tramp      tohs     theat     tburn     tqnch    tdwell       avg
+                                          -----      ----     -----     -----     -----    ------       ---
+                            Gross power    0.00      0.00      0.00    817.04      0.00      0.00
+                              Net power-1044.10   -142.78   -491.05    498.79    537.81   -191.05    445.05
+                                 ------   -----      ----     -----     -----     -----    ------
+ 
  
  ******************************************** Errors and Warnings *********************************************
  
