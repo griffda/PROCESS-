@@ -389,7 +389,7 @@ module physics_variables
   integer :: ipedestal = 1
   !+ad_vars  iscdens /0/ : switch for pedestal profiles:<UL>
   !+ad_varc             <LI> = 0 set pedestal-top density manually using neped;
-  !+ad_varc             <LI> = 1 set pedestal-top density as fgwped * Greenwald density limit </UL>
+  !+ad_varc             <LI> = 1 set pedestal-top density as fgwped*Greenwald, and separatrix as fgwsep*Greenwald  </UL>
   integer :: iscdens = 0
   !+ad_vars  neped /0.0/ : electron density of pedestal [m-3] (ipedestal=1)
   real(kind(1.0D0)) :: neped = 8.0D19
@@ -503,9 +503,9 @@ module physics_variables
   !+ad_varc  <LI> (39)  DS03 (H-mode)
        'DS03                 (H)', &
   !+ad_varc  <LI> (40)  Murari et al non-power law (H-mode)
-       'Murari et al NPL     (H)', & 
+       'Murari et al NPL     (H)', &
   !+ad_varc  <LI> (41)  Petty 2008 (H-mode)
-       'Petty 2008           (H)', &   
+       'Petty 2008           (H)', &
   !+ad_varc  <LI> (41)  Lang et al. 2012 (H-mode)</UL>
        'Lang et al. 2012     (H)' /)
 
@@ -939,14 +939,14 @@ module divertor_kallenbach_variables
 
   !+ad_vars  kallenbach_tests /0/ : Switch to run tests of 1D Kallenbach divertor model (1=on, 0=off)
   integer :: kallenbach_tests = 0
-  
+
   !+ad_vars  lambda_target /0.005/ : SOL power fall-off length at the target, perpendicular to field [m]
   real(kind(1.0D0)) :: lambda_target = 0.005D0
 
   !+ad_vars  lambda_q /0.002/ : SOL power fall-off length at the outer midplane, perpendicular to field [m]
   real(kind(1.0D0)) :: lambda_q = 0.002D0
 
-  !+ad_vars  lcon : Connection length: length of a "typical" field-line in the SOL from outer midplane 
+  !+ad_vars  lcon : Connection length: length of a "typical" field-line in the SOL from outer midplane
   !+ad_varc         to divertor target [m].  Calculated if not input
   real(kind(1.0D0)) :: lcon = -1.0D0
 
@@ -962,17 +962,17 @@ module divertor_kallenbach_variables
   !+ad_vars  qtargettotal /5.0e6/ : Power density on target including surface recombination [W/m2]
   real(kind(1.0D0)) :: qtargettotal = 5.0D6
 
-  !+ad_vars  helium_enrichment /1.0/ : Ratio of helium concentration in SOL to confined plasma 
+  !+ad_vars  helium_enrichment /1.0/ : Ratio of helium concentration in SOL to confined plasma
   real(kind(1.0D0)) :: helium_enrichment = 1.0D0
 
-  !+ad_vars  impurity_enrichment /5.0/ : Ratio of impurity concentrations in SOL to confined plasma 
+  !+ad_vars  impurity_enrichment /5.0/ : Ratio of impurity concentrations in SOL to confined plasma
   real(kind(1.0D0)) :: impurity_enrichment = 5.0D0
 
   !+ad_vars  psep_kallenbach : Power conducted through the separatrix, as calculated by the divertor model [W]
   !+ad_varc                    Not equal to pdivt unless constraint is imposed.
   real(kind(1.0D0)) :: psep_kallenbach = 0.0D0
 
-  !+ad_vars  tomp : separatrix temperature calculated by the Kallenbach divertor model [eV]  
+  !+ad_vars  tomp : separatrix temperature calculated by the Kallenbach divertor model [eV]
   real(kind(1.0D0)) :: tomp = 0.0D0
 
   ! Issue #457
@@ -981,9 +981,9 @@ module divertor_kallenbach_variables
 
   !+ad_vars  neratio : ratio of mean SOL density at OMP to separatrix density at OMP
   real(kind(1.0D0)) :: neratio = 0.75D0
-  
+
 end module divertor_kallenbach_variables
-  
+
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module divertor_variables
@@ -2997,7 +2997,7 @@ module build_variables
   !+ad_varc         <LI> = 0 central solenoid not present;
   !+ad_varc         <LI> = 1 central solenoid exists</UL>
   integer :: iohcl = 1
-  
+
   !+ad_vars  iprecomp /1/ : switch for existence of central solenoid pre-compression structure:<UL>
   !+ad_varc         <LI> = 0 no pre-compression structure;
   !+ad_varc         <LI> = 1 calculated pre-compression structure</UL>
@@ -3568,7 +3568,7 @@ module constraint_variables
   !+ad_hist  11/11/14 PJK Added ftmargoh
   !+ad_hist  06/08/15 MDK ftaulimit
   !+ad_hist  18/11/15 RK  fzeffmax and zeffmax
-  !+ad_hist  23/06/16 JM  Removed dtmpmx as no longer used anywhere  
+  !+ad_hist  23/06/16 JM  Removed dtmpmx as no longer used anywhere
   !+ad_hist  09/11/16 HL  Added fradwall, maxradwalload, peakfactrad and peakradwalload
   !+ad_hist  19/01/17 JM  Added variables for constraint equation for psepbqar (68)
   !+ad_stat  Okay
@@ -3689,7 +3689,7 @@ module constraint_variables
   !+ad_vars  fradpwr /1.0/ : f-value for core radiation power limit
   !+ad_varc                  (constraint equation 17, iteration variable 28)
   real(kind(1.0D0)) :: fradpwr = 1.0D0
-  !+ad_vars  fradwall /1.0/ : f-value for upper limit on radiation wall load 
+  !+ad_vars  fradwall /1.0/ : f-value for upper limit on radiation wall load
   !+ad_varc                   (constr. equ. 67, iteration variable 116 )
   real(kind(1.0D0)) :: fradwall = 1.0D0
   !+ad_vars  frfpf /1.0/ : f-value for RFP reversal parameter
@@ -3769,7 +3769,7 @@ module constraint_variables
   !+ad_varc                      (blktmodel>0)
   !+ad_varc                      (constraint equation 53)
   real(kind(1.0D0)) :: nflutfmax = 1.0D23
-  !+ad_vars  peakfactrad /3.33/  : peaking factor for radiation wall load 
+  !+ad_vars  peakfactrad /3.33/  : peaking factor for radiation wall load
   !+ad_varc                       (constraint equation 67)
   real(kind(1.0D0)) :: peakfactrad = 3.33D0
   !+ad_vars  peakradwallload : Peak radiation wall load (MW/m^2)
