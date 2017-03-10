@@ -1,3 +1,4 @@
+
 runtitle = 'Kallenbach divertor model'
 
 *---------------Constraint Equations---------------*
@@ -104,21 +105,26 @@ icc = 70 * ensure that tomp is equal to the separatrix temperature in the pedest
 ixc = 119 * tesep
 boundl(119) = 0.1
 boundu(119) = 10.0
-tesep       = 0.2 * Electron temperature at separatrix (kev) (ipedestal=1)
+tesep       = 0.25 * Electron temperature at separatrix (kev) (ipedestal=1)
 
 * Divertor target plasma temperature
-ixc = 120 * ttarget  Plasma temperature adjacent to divertor sheath [eV]
-boundl(120) = 0.1
-boundu(120) = 5.0
-ttarget     = 2.3  * Plasma temperature adjacent to divertor sheath [eV]
+*ixc = 120 * ttarget  Plasma temperature adjacent to divertor sheath [eV]
+*boundl(120) = 0.1
+*boundu(120) = 4.4
+ttarget     = 4.4  * Plasma temperature adjacent to divertor sheath [eV]
 
-*icc = 71 * ensure that neomp is equal to the separatrix density (nesep) x neratio
+icc = 71       * ensure that neomp is equal to the separatrix density (nesep) x neratio
+ixc = 121       * neratio: ratio of mean SOL density at OMP to separatrix density at OMP
+boundl(121) = 0.1
+boundu(121) = 1.3
+neratio = 1.0  * ratio of mean SOL density at OMP to separatrix density at OMP
+fgwsep = 0.5    * Electron density at separatrix / nGW
 
 icc = 72 * central solenoid Tresca stress limit
 ixc = 123 * foh_stress : f-value for CS coil Tresca stress limit (see asltroh)
 alstroh = 6.0D8 * allowable TRESCA stress in Central Solenoid structural material (Pa)
 
-*---------------Iteration Variables----------------*
+*---------------Other Iteration Variables----------------*
 
 ixc = 2 * bt
 boundu(2) = 10.0
@@ -244,7 +250,7 @@ netau = 0.5                * Parameter describing the departure from local ionis
 lambda_q = 0.002
 targetangle = 5.0          * Angle between field-line and divertor target (degrees)
 qtargettotal = 5.0e6       * Power density on target including surface recombination [W/m2]
-neratio = 0.75              * ratio of mean SOL density at OMP to separatrix density at OMP
+
 
 *------------------Fwbs Variables------------------*
 vfshld   = 0.60 * Coolant void fraction in shield
@@ -332,7 +338,7 @@ iscdens = 1 * set pedestal-top density as fgwped * Greenwald density limit
 
 fgwped = 0.85 * fraction of Greenwald density to set as pedestal-top density
 neped    = 0.678e20 * Electron density of pedestal (/m3) (ipedestal=1)
-nesep    = 0.5e20 * Electron density at separatrix (/m3) (ipedestal=1)
+
 rhopedn  = 0.94 * R/a of density pedestal (ipedestal=1)
 rhopedt  = 0.94 * R/a of temperature pedestal (ipedestal=1)
 tbeta    = 2.0 * Temperature profile index beta  (ipedestal=1)
@@ -354,6 +360,9 @@ lpulse = 1 * Switch for reactor model;
 tdwell = 0 * dwell time (s)
 
 *-------------------Scan Module--------------------*
+isweep   = 11  * Number of scan points to calculate
+nsweep   = 33  * Switch denoting quantity to scan;
+sweep    = 4.5, 4.75, 5.0, 5.25, 5.5, 5.75, 6.0, 6.25, 6.5, 6.75, 7.0   * Actual values to use in scan
 *-----------------Tfcoil Variables-----------------*
 itfsup   = 1  * switch for TF coil conductor model 1=superconductor
 isumattf = 5
@@ -369,4 +378,5 @@ vftf     = 0.300 * Coolant fraction of tfc 'cable' (itfsup=1)
 
 *-----------------Times Variables------------------*
 
+*-----------------Vacuum Variables-----------------*
 *-----------------Vacuum Variables-----------------*

@@ -46,6 +46,7 @@ module scan_module
   !+ad_hist  22/07/14 PJK Raised ipnscns from 50 to 200
   !+ad_hist  06/08/15 MDK Added taulimit (31)
   !+ad_hist  14/11/16 JM  Added epsvmc (32)
+  !+ad_hist  10/03/17 MDK Added ttarget (33)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -66,6 +67,7 @@ module scan_module
   use process_output
   use tfcoil_variables
   use fwbs_variables
+  use divertor_kallenbach_variables
 
   implicit none
 
@@ -74,8 +76,7 @@ module scan_module
   !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 200
   !+ad_vars  ipnscnv /30/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 32
-
+  integer, parameter :: ipnscnv = 33
   !+ad_vars  isweep /0/ : number of scan points to calculate
   integer :: isweep = 0
   !+ad_vars  nsweep /1/ : switch denoting quantity to scan:<UL>
@@ -110,7 +111,8 @@ module scan_module
   !+ad_varc          <LI> 29 coreradius
   !+ad_varc          <LI> 30 fimpvar
   !+ad_varc          <LI> 31 taulimit
-  !+ad_varc          <LI> 32 epsvmc</UL>
+  !+ad_varc          <LI> 32 epsvmc
+  !+ad_varc          <LI> 33 ttarget</UL>
 
   integer :: nsweep = 1
 
@@ -185,7 +187,7 @@ contains
     ! character(len=25) :: xlabel,vlabel
     character(len=48) :: tlabel
 
-    integer, parameter :: noutvars = 58
+    integer, parameter :: noutvars = 61
     integer, parameter :: width = 110
 
     character(len=25), dimension(noutvars), save :: plabel
@@ -267,7 +269,7 @@ contains
        plabel(48) = 'Net_electric_Pwr_(MW)____'
        plabel(49) = 'Recirculating_Fraction___'
        plabel(50) = 'Psep/R___________________'
-       plabel(51) = 'fimpvar__________________'       
+       plabel(51) = 'fimpvar__________________'
        plabel(52) = 'Tot._radiation_power_(MW)'
        plabel(53) = 'First_wall_peak_temp_(K)_'
        plabel(54) = 'Cu_frac_TFC_conductor____'
@@ -275,6 +277,9 @@ contains
        plabel(56) = 'Conductor_area_TFC_(m2)__'
        plabel(57) = 'Area_TF_inboard_leg_(m2)_'
        plabel(58) = 'Taup/taueff_lower_limit__'
+       plabel(59) = 'Plasma_temp_at_separatrix'
+       plabel(60) = 'SOL_density_at_OMP_______'
+       plabel(61) = 'Power_through__separatrix'
 
        call ovarin(mfile,'Number of scan points','(isweep)',isweep)
        call ovarin(mfile,'Scanning variable number','(nsweep)',nsweep)
@@ -287,10 +292,10 @@ contains
        select case (nsweep)
 
           ! Use underscores instead of spaces in xlabel
-          ! MDK Remove the "=" from vlabel, to make it easier to compare with 
+          ! MDK Remove the "=" from vlabel, to make it easier to compare with
           ! list of iteration variables
 
-       case (1) 
+       case (1)
           aspect = sweep(iscan)
           vlabel = 'aspect' ; xlabel = 'Aspect_ratio'
        case (2)
@@ -316,7 +321,7 @@ contains
           vlabel = 'fqval' ; xlabel = 'Big_Q_f-value'
        case (9)
           te = sweep(iscan)
-          vlabel = 'te' ; xlabel = 'Electron_temperature_(keV)'
+          vlabel = 'te' ; xlabel = 'Electron_temperature_keV'
        case (10)
           boundu(15) = sweep(iscan)
           vlabel = 'boundu(15)' ; xlabel = 'Volt-second_upper_bound'
@@ -388,6 +393,10 @@ contains
        case (32)
           epsvmc = sweep(iscan)
           vlabel = 'epsvmc' ; xlabel = 'VMCON error tolerance'
+       case (33)
+          ttarget = sweep(iscan)
+          vlabel = 'ttarget' ; xlabel = 'Plasma temp at divertor'
+
 
        case default
           idiags(1) = nsweep ; call report_error(96)
@@ -400,7 +409,7 @@ contains
        call ostars(nout,width)
        ! MDK Added the "=" back in to the output statement.
        write(nout,10) ' ***** Scan point ', iscan,' of ',isweep,': ',trim(xlabel),', ',trim(vlabel),' = ',sweep(iscan),' *****'
-10     format(a,i2,a,i2,5a,1pe10.3,a)    
+10     format(a,i2,a,i2,5a,1pe10.3,a)
        call ostars(nout,width)
 
        !  Write additional information to mfile
@@ -481,7 +490,10 @@ contains
        outvar(56,iscan) = acond
        outvar(57,iscan) = tfareain/tfno
        outvar(58,iscan) = taulimit
-       
+       outvar(59,iscan) = tesep
+       outvar(60,iscan) = neomp
+       outvar(61,iscan) = psep_kallenbach
+
 
     end do  !  End of scanning loop
 
