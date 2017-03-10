@@ -2491,6 +2491,7 @@ module heat_transport_variables
   !+ad_hist  17/12/14 PJK Modified htpmw_* descriptions
   !+ad_hist  13/01/15 PJK Changed pinjht description
   !+ad_hist  08/03/17 JM  Added time-dependent power reqs
+  !+ad_hist  10/03/17 JM  Removed ffwlg (issue #473)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -2524,9 +2525,6 @@ module heat_transport_variables
   real(kind(1.0D0)) :: fauxbop = 0.06D0
   !+ad_vars  fcsht : total baseline power required at all times (MW)
   real(kind(1.0D0)) :: fcsht = 0.0D0
-  !+ad_vars  ffwlg /1.0/ : fraction of first wall / divertor power to low grade heat
-  !+ad_varc                (ipowerflow=0)
-  real(kind(1.0D0)) :: ffwlg = 1.0D0
   !+ad_vars  fgrosbop : scaled fraction of gross power to balance-of-plant
   real(kind(1.0D0)) :: fgrosbop = 0.0D0
   !+ad_vars  fmgdmw /0.0/ : power to mgf (motor-generator flywheel) units (MW)
