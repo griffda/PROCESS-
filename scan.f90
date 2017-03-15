@@ -76,7 +76,7 @@ module scan_module
   !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 200
   !+ad_vars  ipnscnv /34/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 35
+  integer, parameter :: ipnscnv = 36
   !+ad_vars  isweep /0/ : number of scan points to calculate
   integer :: isweep = 0
   !+ad_vars  nsweep /1/ : switch denoting quantity to scan:<UL>
@@ -114,7 +114,8 @@ module scan_module
   !+ad_varc          <LI> 32 epsvmc
   !+ad_varc          <LI> 33 ttarget
   !+ad_varc          <LI> 34 qtargettotal
-  !+ad_varc          <LI> 35 lambda_q</UL>
+  !+ad_varc          <LI> 35 lambda_q
+  !+ad_varc          <LI> 36 lambda_target</UL>
 
   integer :: nsweep = 1
 
@@ -189,7 +190,7 @@ contains
     ! character(len=25) :: xlabel,vlabel
     character(len=48) :: tlabel
 
-    integer, parameter :: noutvars = 64
+    integer, parameter :: noutvars = 65
     integer, parameter :: width = 110
 
     character(len=25), dimension(noutvars), save :: plabel
@@ -279,12 +280,13 @@ contains
        plabel(56) = 'Conductor_area_TFC_(m2)__'
        plabel(57) = 'Area_TF_inboard_leg_(m2)_'
        plabel(58) = 'Taup/taueff_lower_limit__'
-       plabel(59) = 'Plasma_temp_at_separatrix'
+       plabel(59) = 'Plasma_temp_at_sep_[keV]_'
        plabel(60) = 'SOL_density_at_OMP_______'
        plabel(61) = 'Power_through__separatrix'
        plabel(62) = 'neomp/nesep_____________ '
        plabel(63) = 'qtargettotal____________ '
-       plabel(64) = 'Total pressure at target_'
+       plabel(64) = 'Total_pressure_at_target_'
+       plabel(65) = 'Temperature_at_target____'
 
 
        call ovarin(mfile,'Number of scan points','(isweep)',isweep)
@@ -407,7 +409,10 @@ contains
           vlabel = 'qtargettotal' ; xlabel = 'Total Q on target [W/m2] '
       case (35)
           lambda_q = sweep(iscan)
-          vlabel = 'lambda_q' ; xlabel = 'SOL power fall-off at OMP'
+          vlabel = 'lambda_q' ; xlabel = 'lambda_q at OMP (m)'
+      case (36)
+          lambda_target = sweep(iscan)
+          vlabel = 'lambda_target' ; xlabel = 'lambda_q at target (m)'
 
 
        case default
@@ -508,6 +513,7 @@ contains
        outvar(62,iscan) = neratio
        outvar(63,iscan) = qtargettotal
        outvar(64,iscan) = pressure0
+       outvar(65,iscan) = ttarget
 
 
     end do  !  End of scanning loop
