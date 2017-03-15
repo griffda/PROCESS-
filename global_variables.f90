@@ -982,6 +982,9 @@ module divertor_kallenbach_variables
   !+ad_vars  neratio : ratio of mean SOL density at OMP to separatrix density at OMP
   real(kind(1.0D0)) :: neratio = 0.75D0
 
+  !+ad_vars  pressure0 : Total plasma pressure near target (thermal+dynamic) [Pa]
+  real(kind(1.0D0)) :: pressure0 = 0.0D0
+
 end module divertor_kallenbach_variables
 
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1232,8 +1235,8 @@ module fwbs_variables
   !+ad_vars  iblanket /1/ : switch for blanket model: <UL>
   !+ad_varc             <LI> = 1 CCFE HCPB model;
   !+ad_varc             <LI> = 2 KIT HCPB model;
-  !+ad_varc             <LI> = 3 CCFE HCPB model with Tritium Breeding Ratio calculation</UL>
-  !+ad_varc             <LI> = 4 KIT HCLL model;
+  !+ad_varc             <LI> = 3 CCFE HCPB model with Tritium Breeding Ratio calculation;
+  !+ad_varc             <LI> = 4 KIT HCLL model</UL>
   integer :: iblanket = 1
 
   !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)

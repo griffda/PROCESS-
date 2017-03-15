@@ -91,7 +91,7 @@ module divertor_ode
 contains
 
   subroutine divertor_Kallenbach(rmajor,rminor,bt,plascur,bvert,q,verboseset,     &
-             lambda_tar,lambda_omp,Ttarget,qtargettotal,targetangle,Lcon,netau_in,&
+             lambda_tar,lambda_omp,ttarget,qtargettotal,targetangle,Lcon,netau_in,&
              unit_test,abserrset,helium_enrichment, impurity_enrichment, &
              psep_kallenbach, tomp, neomp,  &
              outfile,iprint)
@@ -141,7 +141,7 @@ contains
     use ode_mod , only :                      ode
     use constraint_variables, only :          fpsep
     use numerics, only : active_constraints,  boundl, boundu
-    use divertor_kallenbach_variables, only : neratio
+    use divertor_kallenbach_variables, only : neratio, pressure0
     use physics_variables, only :             nesep, pdivt
 
     ! Variable declarations !
@@ -180,7 +180,7 @@ contains
     real(kind(1.0D0)), intent(in) :: lambda_tar, lambda_omp
 
     ! Target temperature input [eV]
-    real(kind(1.0D0)), intent(in) :: Ttarget
+    real(kind(1.0D0)), intent(in) :: ttarget
 
     !+ad_vars  qtargettotal : Power density on target including surface recombination [W/m2]
     real(kind(1.0D0)),intent(in) :: qtargettotal
@@ -263,9 +263,6 @@ contains
     ! n*v [1/m2.s]
     real(kind(1.0D0)) :: nv0
 
-    ! Pressure [Pa]
-    real(kind(1.0D0)) :: pressure0
-
     ! Total power running along SOL [W]
     real(kind(1.0D0)) :: Power0
 
@@ -274,8 +271,6 @@ contains
 
     ! ODE solver parameters !
     !!!!!!!!!!!!!!!!!!!!!!!!!
-
-    character(len=2)::label
 
     ! Number of steps along the 1D line
     integer(kind=4), parameter :: step_num = 100
@@ -530,7 +525,7 @@ contains
     v02 = v0*neutpenfact2
 
     ! Sound speed [m/s]
-    cs0 = sqrt(2.0D0*echarge*Ttarget/mi)
+    cs0 = sqrt(2.0D0*echarge*ttarget/mi)
 
     ! Target area to target wetted area factor
     sinfact = 1.0D0 / (sin(targetangle*degree) * Bp_omp / Btotal)
@@ -554,7 +549,7 @@ contains
     ! Mach=1 is assumed as boundary condition at the target
     ! This equation not stated explicitly in the paper.
     ! Plasma density near target [m-3]
-    nel0 = qtarget*sinfact/(gammasheath*echarge*Ttarget*cs0)
+    nel0 = qtarget*sinfact/(gammasheath*echarge*ttarget*cs0)
 
     ! Ion flux density perp to B at target [m-2.s-1]
     partfluxtar = nel0*cs0
@@ -591,7 +586,7 @@ contains
     n020 = partfluxtar*neutfrac2/v02
 
     ! electron temperature [eV]
-    te0 =  Ttarget
+    te0 =  ttarget
 
     ! n*v [m-2.s-1]
     nv0 = -nel0*cs0
@@ -1317,7 +1312,7 @@ subroutine kallenbach_test()
 
   integer :: i
 
-  real(kind(1.0D0))::rmajor, rminor, bt, plascur, bvert, dummy, dummy2, dummy3
+  real(kind(1.0D0))::rmajor, rminor, bt, plascur, dummy, dummy2, dummy3
 
   ! This section just for reproducing the original numbers
   rmajor = 8.0D0
@@ -1342,12 +1337,12 @@ subroutine kallenbach_test()
 
   impurity_arr(5)%frac = 0.04D0
 
-  call divertor_Kallenbach(rmajor=8.0D0, rminor=2.75D0,     &
+  call divertor_Kallenbach(rmajor=rmajor, rminor=rminor,     &
                            bt=bt, plascur=plascur,      &
                            bvert=0.0D0, q=3.0D0,            &
                            verboseset=.false.,          &
                            lambda_tar=0.005D0,lambda_omp=0.002D0 ,         &
-                           Ttarget=2.3D0,qtargettotal=4.175D6,                  &
+                           ttarget=2.3D0,qtargettotal=4.175D6,                  &
                            targetangle=10.0D0,Lcon=100.0D0,            &
                            netau_in=0.5D0,unit_test=.false.,abserrset=1.0D-6,     &
                            helium_enrichment=1.0D0, impurity_enrichment=1.0D0,   &

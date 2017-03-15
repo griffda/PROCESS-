@@ -75,8 +75,8 @@ module scan_module
 
   !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 200
-  !+ad_vars  ipnscnv /30/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 33
+  !+ad_vars  ipnscnv /34/ FIX : number of available scan variables
+  integer, parameter :: ipnscnv = 34
   !+ad_vars  isweep /0/ : number of scan points to calculate
   integer :: isweep = 0
   !+ad_vars  nsweep /1/ : switch denoting quantity to scan:<UL>
@@ -112,7 +112,8 @@ module scan_module
   !+ad_varc          <LI> 30 fimpvar
   !+ad_varc          <LI> 31 taulimit
   !+ad_varc          <LI> 32 epsvmc
-  !+ad_varc          <LI> 33 ttarget</UL>
+  !+ad_varc          <LI> 33 ttarget
+  !+ad_varc          <LI> 34 qtargettotal</UL>
 
   integer :: nsweep = 1
 
@@ -187,7 +188,7 @@ contains
     ! character(len=25) :: xlabel,vlabel
     character(len=48) :: tlabel
 
-    integer, parameter :: noutvars = 61
+    integer, parameter :: noutvars = 64
     integer, parameter :: width = 110
 
     character(len=25), dimension(noutvars), save :: plabel
@@ -280,6 +281,10 @@ contains
        plabel(59) = 'Plasma_temp_at_separatrix'
        plabel(60) = 'SOL_density_at_OMP_______'
        plabel(61) = 'Power_through__separatrix'
+       plabel(62) = 'neomp/nesep_____________ '
+       plabel(63) = 'qtargettotal____________ '
+       plabel(64) = 'Total pressure at target_'
+
 
        call ovarin(mfile,'Number of scan points','(isweep)',isweep)
        call ovarin(mfile,'Scanning variable number','(nsweep)',nsweep)
@@ -396,6 +401,9 @@ contains
        case (33)
           ttarget = sweep(iscan)
           vlabel = 'ttarget' ; xlabel = 'Plasma temp at divertor'
+      case (34)
+          qtargettotal = sweep(iscan)
+          vlabel = 'qtargettotal' ; xlabel = 'Total Q on target [W/m2] '
 
 
        case default
@@ -493,6 +501,9 @@ contains
        outvar(59,iscan) = tesep
        outvar(60,iscan) = neomp
        outvar(61,iscan) = psep_kallenbach
+       outvar(62,iscan) = neratio
+       outvar(63,iscan) = qtargettotal
+       outvar(64,iscan) = pressure0
 
 
     end do  !  End of scanning loop

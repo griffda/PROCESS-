@@ -111,7 +111,7 @@ tesep       = 0.25 * Electron temperature at separatrix (kev) (ipedestal=1)
 *ixc = 120 * ttarget  Plasma temperature adjacent to divertor sheath [eV]
 *boundl(120) = 0.1
 *boundu(120) = 4.4
-ttarget     = 4.4  * Plasma temperature adjacent to divertor sheath [eV]
+ttarget     = 4.5  * Plasma temperature adjacent to divertor sheath [eV]
 
 icc = 71       * ensure that neomp is equal to the separatrix density (nesep) x neratio
 ixc = 121       * neratio: ratio of mean SOL density at OMP to separatrix density at OMP
@@ -361,8 +361,8 @@ tdwell = 0 * dwell time (s)
 
 *-------------------Scan Module--------------------*
 isweep   = 11  * Number of scan points to calculate
-nsweep   = 33  * Switch denoting quantity to scan;
-sweep    = 4.5, 4.75, 5.0, 5.25, 5.5, 5.75, 6.0, 6.25, 6.5, 6.75, 7.0   * Actual values to use in scan
+nsweep   = 34  * Switch denoting quantity to scan;* qtargettotal Power density on target including surface recombination [W/m2]
+sweep    = 5.0e6, 4.9e6, 4.8e6, 4.7e6, 4.6e6, 4.5e6,4.4e6,4.3e6,4.2e6,4.1e6, 4.0e6, * Actual values to use in scan
 *-----------------Tfcoil Variables-----------------*
 itfsup   = 1  * switch for TF coil conductor model 1=superconductor
 isumattf = 5
