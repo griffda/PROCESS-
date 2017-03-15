@@ -22,6 +22,8 @@ module divertor_ode
   use process_output, only: oblnkl,obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
   use constants
   use process_input, only: lower_case
+  use divertor_kallenbach_variables, only : neratio, pressure0, lengthofwideSOL
+
 
   implicit none
 
@@ -82,9 +84,6 @@ module divertor_ode
   ! SOL radial thickness extrapolated to OMP [m]
   real(kind(1.0D0)), private :: lambda_target, lambda_q
 
-  ! SOL power fall-off length changes [m]
-  real(kind(1.0D0)), private, parameter :: lengthofwideSOL=5.0D0
-
   ! Ratio: psep_kallenbach / Powerup
   real(kind(1.0D0)), private, parameter :: seppowerratio=2.3D0
 
@@ -93,7 +92,7 @@ contains
   subroutine divertor_Kallenbach(rmajor,rminor,bt,plascur,bvert,q,verboseset,     &
              lambda_tar,lambda_omp,ttarget,qtargettotal,targetangle,Lcon,netau_in,&
              unit_test,abserrset,helium_enrichment, impurity_enrichment, &
-             psep_kallenbach, tomp, neomp,  &
+             psep_kallenbach, teomp, neomp,  &
              outfile,iprint)
     !+ad_name  divertor_Kallenbach
     !+ad_summ  calculate radiative loss and plasma profiles along a flux tube including momentum losses
@@ -140,8 +139,7 @@ contains
 
     use ode_mod , only :                      ode
     use constraint_variables, only :          fpsep
-    use numerics, only : active_constraints,  boundl, boundu
-    use divertor_kallenbach_variables, only : neratio, pressure0
+    use numerics, only : active_constraints, name_xc,  boundl, boundu
     use physics_variables, only :             nesep, pdivt
 
     ! Variable declarations !
@@ -204,7 +202,7 @@ contains
     real(kind(1.0D0)), optional, intent(out) :: psep_kallenbach
 
     ! Temperature (eV) and density (1/m3) at outboard midplane
-    real(kind(1.0D0)), optional, intent(out) :: tomp, neomp
+    real(kind(1.0D0)), optional, intent(out) :: teomp, neomp
 
     ! Btheta, Bphi at OMP (equation 1 of Kallenbach)
     real(kind(1.0D0)) :: Bp_omp, Bt_omp
@@ -804,7 +802,7 @@ contains
     IonFluxTarget = partfluxtar/sinfact
 
     ! Plasma temperature at outer midplane [eV]
-    tomp = te
+    teomp = te
 
     ! Plasma density at outer midplane [m-3]
     neomp = nel
@@ -840,7 +838,7 @@ contains
 
     call osubhd(outfile, 'Properties of SOL plasma at outer midplane :')
     call ovarre(outfile, 'SOL power fall-off length at the outer midplane [m]','(lambda_q)', lambda_q)
-    call ovarre(outfile, 'Plasma temperature at outer midplane [eV]','(tomp)', tomp, 'OP ')
+    call ovarre(outfile, 'Plasma temperature at outer midplane [eV]','(teomp)', teomp, 'OP ')
     call ovarre(outfile, 'Plasma density at outer midplane [m-3]','(neomp)', neomp, 'OP ')
     if(active_constraints(71) .eqv. .true.)then
         call ocmmnt(outfile, 'Constraint 71 is applied as follows.')
@@ -857,8 +855,10 @@ contains
     if(active_constraints(69) .eqv. .true.)then
         call ocmmnt(outfile, 'Constraint 69 is applied to the following ratio:')
         call ovarre(outfile, '. Separatrix power from main plasma model / Sep power from divertor model','(fpsep)', fpsep)
-        call ovarre(outfile, '.  Lower limit of ratio','(boundl(118))', boundl(118))
-        call ovarre(outfile, '.  Upper limit of ratio','(boundu(118))', boundu(118))
+        if (any(name_xc == 'fpsep'))then
+            call ovarre(outfile, '.  Lower limit of ratio','(boundl(118))', boundl(118))
+            call ovarre(outfile, '.  Upper limit of ratio','(boundu(118))', boundu(118))
+        end if
     else
          call ocmmnt(outfile, 'Separatrix power consistency constraint 69 is NOT applied')
     end if
@@ -1346,7 +1346,7 @@ subroutine kallenbach_test()
                            targetangle=10.0D0,Lcon=100.0D0,            &
                            netau_in=0.5D0,unit_test=.false.,abserrset=1.0D-6,     &
                            helium_enrichment=1.0D0, impurity_enrichment=1.0D0,   &
-                           psep_kallenbach=dummy, tomp=dummy2, neomp=dummy3, &
+                           psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3, &
                            outfile=nout,iprint=1 )
 
 

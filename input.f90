@@ -411,11 +411,11 @@ contains
     !  Local variables
 
     integer :: iost
-    integer :: ioldvl,isub1,isub2,ival,varlen
+    integer :: isub1,isub2,ival,varlen
     integer :: no_constraints=0
     integer :: no_iteration=0
 
-    character(len=40) :: clabel, clbl,clbl2
+    character(len=40) :: clbl,clbl2
     character(len=32) :: varnam
     real(kind(1.0D0)) :: oldval,rval
 
@@ -1216,6 +1216,9 @@ contains
        case ('helium_enrichment')
           call parse_real_variable('helium_enrichment', helium_enrichment, 0.1D0, 20.0D0, &
                'Ratio of helium concentration in SOL to confined plasma')
+       case ('lengthofwidesol')
+          call parse_real_variable('lengthofwideSOL', lengthofwideSOL, 0.01D0, 100.0D0, &
+               'Distance from target at which SOL power fall-off length changes [m]')
 
           !  Divertor settings
 

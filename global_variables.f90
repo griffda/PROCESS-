@@ -959,7 +959,7 @@ module divertor_kallenbach_variables
   !+ad_vars  ttarget /2.3/ : Plasma temperature adjacent to divertor sheath [eV] (iteration variable 120)
   real(kind(1.0D0)) :: ttarget = 2.3D0
 
-  !+ad_vars  qtargettotal /5.0e6/ : Power density on target including surface recombination [W/m2]
+  !+ad_vars  qtargettotal /5.0e6/ : Power density on target including surface recombination [W/m2] (iteration variable 124)
   real(kind(1.0D0)) :: qtargettotal = 5.0D6
 
   !+ad_vars  helium_enrichment /1.0/ : Ratio of helium concentration in SOL to confined plasma
@@ -972,8 +972,8 @@ module divertor_kallenbach_variables
   !+ad_varc                    Not equal to pdivt unless constraint is imposed.
   real(kind(1.0D0)) :: psep_kallenbach = 0.0D0
 
-  !+ad_vars  tomp : separatrix temperature calculated by the Kallenbach divertor model [eV]
-  real(kind(1.0D0)) :: tomp = 0.0D0
+  !+ad_vars  teomp : separatrix temperature calculated by the Kallenbach divertor model [eV]
+  real(kind(1.0D0)) :: teomp = 0.0D0
 
   ! Issue #457
   !+ad_vars  neomp : Mean SOL density at OMP calculated by the Kallenbach divertor model [m-3]
@@ -984,6 +984,9 @@ module divertor_kallenbach_variables
 
   !+ad_vars  pressure0 : Total plasma pressure near target (thermal+dynamic) [Pa]
   real(kind(1.0D0)) :: pressure0 = 0.0D0
+
+  !+ad_vars  lengthofwideSOL /5.0/ : Distance from target at which SOL power fall-off length changes [m]
+  real(kind(1.0D0)) :: lengthofwideSOL = 5.0D0
 
 end module divertor_kallenbach_variables
 

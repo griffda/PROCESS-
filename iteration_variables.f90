@@ -83,6 +83,7 @@ subroutine loadxc
   !+ad_hist  22/02/17 JM  Added neratio (121)
   !+ad_hist  27/02/17 JM  Added oh_steel_frac (122)
   !+ad_hist  27/02/17 JM  Added foh_stress (123)
+  !+ad_hist  15/03/17 MDK  Added qtargettotal (124)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -257,27 +258,28 @@ subroutine loadxc
      case (121) ; xcm(i) = neratio
      case (122) ; xcm(i) = oh_steel_frac
      case (123) ; xcm(i) = foh_stress
-    
+     case (124) ; xcm(i) = qtargettotal
+
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
         call report_error(54)
 
      end select
 
-      ! Simple list of iteration variable names 
+      ! Simple list of iteration variable names
       name_xc(i) = lablxc(ixc(i))
       ! Note that iteration variable 18 has more than one name:
       if ((ixc(i) == 18).and.(icurr /= 2)) name_xc(i) = 'q95'
       if ((ixc(i) == 18).and.(icurr == 2)) name_xc(i) = 'qbar'
-      
-      
+
+
        ! MDK Check if sweep variable is also an iteration variable
        if (name_xc(i) == vlabel) then
             write(nout,*) 'WARNING: The sweep variable is also an iteration variable.'
             write(nout,*) 'The values of the sweep variable will be overwritten by the optimiser.'
             write(*,*) 'WARNING: The sweep variable is also an iteration variable.'
        end if
-      
+
      !  Check that no iteration variable is zero
 
      if (abs(xcm(i)) <= 1.0D-12) then
@@ -546,9 +548,10 @@ subroutine convxc(xc,nn)
      case (121) ; neratio = xc(i)/scale(i)
      case (122) ; oh_steel_frac = xc(i)/scale(i)
      case (123) ; foh_stress = xc(i)/scale(i)
+     case (124) ; qtargettotal = xc(i)/scale(i)
 
      case default
-     
+
         call report_error(57)
 
      end select

@@ -1493,13 +1493,13 @@ contains
 
        case (70)  ! Separatrix temperature consistency
 
-           ! tomp   | separatrix temperature calculated by the Kallenbach divertor model [eV]
+           ! teomp   | separatrix temperature calculated by the Kallenbach divertor model [eV]
            ! tesep  | electron temperature at separatrix [keV]
-           cc(i) = 1.0D0 - tomp/(1000.0D0*tesep)
+           cc(i) = 1.0D0 - teomp/(1000.0D0*tesep)
 
            if (present(con)) then
-             con(i) = tomp
-             err(i) = tomp* cc(i)
+             con(i) = teomp
+             err(i) = teomp* cc(i)
              symbol(i) = '='
              units(i) = 'eV'
            end if

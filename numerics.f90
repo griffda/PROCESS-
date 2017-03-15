@@ -98,8 +98,8 @@ module numerics
 
   public
 
-  !+ad_vars  ipnvars /123/ FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 123
+  !+ad_vars  ipnvars /124/ FIX : total number of variables available for iteration
+  integer, parameter :: ipnvars = 124
   !+ad_vars  ipeqns /72/ FIX : number of constraint equations available
   integer, parameter :: ipeqns = 72
   !+ad_vars  ipnfoms /17/ FIX : number of available figures of merit
@@ -409,7 +409,7 @@ module numerics
        !+ad_varc  <LI> (69) ensure separatrix power is less than value from Kallenbach divertor
        !+ad_varc            (Use iteration variable 118 (fpsep))
        'pdivt < psep_kallenbach divertor ',   &
-       !+ad_varc  <LI> (70) ensure that tomp is equal to the separatrix temperature in the pedestal profile,
+       !+ad_varc  <LI> (70) ensure that teomp is equal to the separatrix temperature in the pedestal profile,
        !+ad_varc            (Use iteration variable 119 (tesep))
        'Separatrix temp consistency      ',   &
        !+ad_varc  <LI> (71) ensure that neomp is equal to the separatrix density (nesep) x neratio<
@@ -548,7 +548,8 @@ module numerics
        0,  &  !  120
        0,  &  !  121
        0,  &  !  122
-       0   &  !  123
+       0,  &  !  123
+       0   &  !  124
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -801,8 +802,10 @@ module numerics
        'neratio       ',  &
        !+ad_varc  <LI> (122) oh_steel_frac : streel fraction of OH coil
        'oh_steel_frac ',  &
-       !+ad_varc  <LI> (123) foh_stress : f-value for CS coil Tresca stress limit</UL>
-       'foh_stress    '  &
+       !+ad_varc  <LI> (123) foh_stress : f-value for CS coil Tresca stress limit
+       'foh_stress    ',  &
+       !+ad_varc  <LI> (124) qtargettotal : Total power density on target [W/m2]</UL>
+       'qtargettotal  '  &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -943,7 +946,8 @@ module numerics
        0.001D0, &  !  120
        0.001D0, &  !  121
        0.001D0, &  !  122
-       0.001D0  &  !  123
+       0.001D0, &  !  123
+       0.001D0  &  !  124
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -1071,7 +1075,8 @@ module numerics
        1.000D3, &  !  120
        1.000D0, &  !  121
        0.950D0, &  !  122
-       1.000D0  &  !  123
+       1.000D0, &  !  123
+       1.000D2  &  !  124
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

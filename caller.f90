@@ -311,7 +311,7 @@ subroutine caller(xc,nvars)
         netau_in=netau,unit_test=.false.,abserrset=1.d-6,     &
         helium_enrichment=helium_enrichment,                  &
         impurity_enrichment=impurity_enrichment,              &
-        psep_kallenbach=psep_kallenbach, tomp=tomp, neomp=neomp, &
+        psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
         outfile=nout,iprint=0 )                               
 
   else if(kallenbach_switch.eq.0) then
