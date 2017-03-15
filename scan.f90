@@ -76,7 +76,7 @@ module scan_module
   !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 200
   !+ad_vars  ipnscnv /34/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 34
+  integer, parameter :: ipnscnv = 35
   !+ad_vars  isweep /0/ : number of scan points to calculate
   integer :: isweep = 0
   !+ad_vars  nsweep /1/ : switch denoting quantity to scan:<UL>
@@ -113,7 +113,8 @@ module scan_module
   !+ad_varc          <LI> 31 taulimit
   !+ad_varc          <LI> 32 epsvmc
   !+ad_varc          <LI> 33 ttarget
-  !+ad_varc          <LI> 34 qtargettotal</UL>
+  !+ad_varc          <LI> 34 qtargettotal
+  !+ad_varc          <LI> 35 lambda_q</UL>
 
   integer :: nsweep = 1
 
@@ -404,6 +405,9 @@ contains
       case (34)
           qtargettotal = sweep(iscan)
           vlabel = 'qtargettotal' ; xlabel = 'Total Q on target [W/m2] '
+      case (35)
+          lambda_q = sweep(iscan)
+          vlabel = 'lambda_q' ; xlabel = 'SOL power fall-off at OMP'
 
 
        case default
