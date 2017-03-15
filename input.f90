@@ -395,6 +395,7 @@ contains
     !+ad_hist  19/01/17 JM  Added gamma_ecrh as an input variable
     !+ad_hist  03/02/17 JM  Added psepbqarmax as input
     !+ad_hist  08/02/17 JM  Added Kallenbach inputs
+    !+ad_hist  10/03/17 JM  Removed ffwlg (issue #473)
     !+ad_stat  Okay
     !+ad_docs  A User's Guide to the PROCESS Systems Code, P. J. Knight,
     !+ad_docc    AEA Fusion Report AEA FUS 251, 1993
@@ -2121,9 +2122,6 @@ contains
        case ('fauxbop')
           call parse_real_variable('fauxbop', fauxbop, 0.0D0, 1.0D0, &
                'Frac. of gross electric power to BOP')
-       case ('ffwlg')
-          call parse_real_variable('ffwlg', ffwlg, 0.0D0, 1.0D0, &
-               '1st wall/dvrtr power frac to lg heat')
        case ('fmgdmw')
           call parse_real_variable('fmgdmw', fmgdmw, 0.0D0, 100.0D0, &
                'Power to MGF units (MW)')
