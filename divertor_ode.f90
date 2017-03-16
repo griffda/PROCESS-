@@ -1017,7 +1017,7 @@ contains
 
     if ((bracket .lt. 0.0)) then
 
-        if(bracket .ge. -0.00001*pressure**2) then
+        if(bracket .ge. -0.0001*pressure**2) then
             ! Continue calculation
             bracket=0.d0
         else

@@ -2781,6 +2781,7 @@ contains
 
     integer :: k,nef
     character(len=2) :: intstring
+    logical :: CSlimit=.false.
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2868,11 +2869,13 @@ contains
                '(tftmp)',tftmp)
           call ovarre(outfile,'CS temperature margin (K)', &
                '(tmargoh)',tmargoh, 'OP ')
-
-          if ( (abs(coheof) < 0.99D0*abs(rjohc)).and. &
-               (abs(cohbop) < 0.99D0*abs(rjohc0)) ) then
-             call report_error(135)
-          end if
+          ! Check whether CS coil is hitting any limits
+          ! iteration variable (39) fjohc0
+          ! iteration variable(38) fjohc
+          if ( (abs(coheof) > 0.99D0*abs(boundu(38)*rjohc)).or. &
+               (abs(cohbop) > 0.99D0*abs(boundu(39)*rjohc0)) ) CSlimit=.true.
+          if (tmargoh < 1.01D0*tmargmin) CSlimit=.true.
+          if (.not.CSlimit) call report_error(135)
 
        else
           call ocmmnt(outfile,'Resistive central solenoid')

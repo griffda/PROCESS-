@@ -126,9 +126,9 @@ boundu(120) = 3.0
 ttarget     = 3.0  * Plasma temperature adjacent to divertor sheath [eV]
 
 icc = 71       * ensure that neomp is equal to the separatrix density (nesep) x neratio
-ixc = 121       * neratio: ratio of mean SOL density at OMP to separatrix density at OMP
-boundl(121) = 0.1
-boundu(121) = 0.9
+*ixc = 121       * neratio: ratio of mean SOL density at OMP to separatrix density at OMP
+*boundl(121) = 0.1
+*boundu(121) = 0.9
 neratio = 0.9  * ratio of mean SOL density at OMP to separatrix density at OMP
 fgwsep = 0.5    * Electron density at separatrix / nGW
 
@@ -264,10 +264,10 @@ Kallenbach_switch = 1
 Kallenbach_tests = 0
 helium_enrichment = 1.0    * Ratio of helium concentration in SOL to confined plasma
 impurity_enrichment=5.0d0  * Ratio of impurity concentrations in SOL to confined plasma
-lambda_target=5.0d-3        * SOL power fall-off length at the target, perpendicular to field [m]
+*lambda_target=5.0d-3        * SOL power fall-off length at the target, perpendicular to field [m]
 
 netau = 0.5                * Parameter describing the departure from local ionisation equilibrium in the SOL. [ms.1e20/m3]
-*lambda_q = 0.002
+lambda_q = 0.002
 targetangle = 5.0          * Angle between field-line and divertor target (degrees)
 lengthofwideSOL = 40.0     * Distance from target at which SOL power fall-off length changes [m]
 
@@ -380,15 +380,15 @@ lpulse = 1 * Switch for reactor model;
 tdwell = 0 * dwell time (s)
 
 *-------------------Scan Module--------------------*
-isweep   = 7  * Number of scan points to calculate
-nsweep   = 35  * Switch denoting quantity to scan
+isweep   = 11  * Number of scan points to calculate
+nsweep   = 36  * Switch denoting quantity to scan
 *31 taulimit
 *32 epsvmc
 *33 ttarget
 *34 qtargettotal
 *35 lambda_q
 *36 lambda_target
-sweep    = 0.0015, 0.0020, 0.0025, 0.0030, 0.0035, 0.0040, 0.0045,   * Actual values to use in scan
+sweep    = 0.005, 0.006, 0.007, 0.008, 0.009, 0.010, 0.012, 0.014, 0.016, 0.018, 0.020, * Actual values to use in scan
 *-----------------Tfcoil Variables-----------------*
 itfsup   = 1  * switch for TF coil conductor model 1=superconductor
 isumattf = 5
