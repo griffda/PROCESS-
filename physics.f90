@@ -294,7 +294,7 @@ contains
          !tqnch = max(tqnch,tohs)
          tqnch = tohs
        end if
-       
+
 
     end if
 
@@ -1789,16 +1789,16 @@ contains
 
     !  Calculate the function Fq that scales the edge q from the
     !  circular cross-section cylindrical case
-    
+
     !  First check for negative triangularity using unsuitable current scaling
-    
+
     if ((icurr.ne.8).and.(triang.lt.0.0)) then
      write(*,*) 'Triangularity is negative without icurr = 8.'
      write(*,*) 'Please check and try again.'
      write(*,*) 'PROCESS stopping'
      stop
     end if
-    
+
     select case (icurr)
 
     case (1)  !  Peng analytical fit
@@ -1828,18 +1828,18 @@ contains
        !  N.B. If iprofile=1, alphaj will be wrong during the first call (only)
 
        call conhas(alphaj,alphap,bt,triang,eps,kappa,p0,fq)
-       
+
     case (8)  !  Sauter scaling allowing negative triangularity [FED May 2016]
-    
+
         ! Assumes zero squareness, note takes kappa, delta at separatrix not _95
-    
+
         w07 = 1.0d0    ! zero squareness - can be modified later if required
-	
+
         fq = (1.0d0 + 1.2d0*(kappa - 1.0d0) + 0.56d0*(kappa-1.0d0)**2) * &
              (1.0d0 + 0.09d0 * triang + 0.16d0 * triang**2) * &
 	     (1.0d0 + 0.45d0 * triang * eps)/(1.0d0 - 0.74d0 * eps) * &
 	     (1.0d0 + 0.55d0 * (w07 - 1.0d0))
-	
+
     case default
        idiags(1) = icurr ; call report_error(77)
 
@@ -1850,7 +1850,7 @@ contains
     if (icurr /= 2) then
        curhat = 5.0D6 * rminor**2 / (rmajor*qpsi) * fq
     end if
-    if (icurr == 8) then 
+    if (icurr == 8) then
        curhat = 4.1d6 * rminor**2 / (rmajor*qpsi) * fq
     end if
 
@@ -1863,7 +1863,7 @@ contains
     !  Calculate plasma current
 
     plascur = curhat * bt
-    
+
     !  Calculate the poloidal field
 
     bp = bpol(itart,plascur,qpsi,asp,bt,kappa,triang,pperim)
@@ -2621,7 +2621,7 @@ contains
        if (impurity_arr(imp)%Z > 2) then
           zeffai = zeffai + impurity_arr(imp)%frac &
           !     * (impurity_arr(imp)%Z)**2 / impurity_arr(imp)%amass
-               * Zav_of_te(impurity_arr(imp),te)**2 / impurity_arr(imp)%amass   
+               * Zav_of_te(impurity_arr(imp),te)**2 / impurity_arr(imp)%amass
        end if
     end do
 
@@ -3832,7 +3832,7 @@ contains
        qtaue = 0.0D0
        rtaue = -0.735D0
 
-    case (41) ! Beta independent dimensionless confinement scaling 
+    case (41) ! Beta independent dimensionless confinement scaling
        ! C.C. Petty 2008 Phys. Plasmas 15, 080501, equation 36
        ! Note that there is no dependence on the average fuel mass 'afuel'
        tauee = hfact * 0.052D0 * pcur**0.75D0 * bt**0.3D0 * &
@@ -3846,11 +3846,11 @@ contains
 
     case (42) ! High density relevant confinement scaling
        ! P.T. Lang et al. 2012, IAEA conference proceeding EX/P4-01
-       ! Note that in the paper kappaa is defined as V/(2pi^2Ra^2) 
+       ! Note that in the paper kappaa is defined as V/(2pi^2Ra^2)
        ! which should be equivalent to our local definition assuming
        ! V = 2piR * (X-sectional area)
        ! q should be q95: incorrect if icurr = 2 (ST current scaling)
-       qratio = q/qstar 
+       qratio = q/qstar
        ! Greenwald density in m^-3
        nGW = 1.0D14 * plascur/(pi*rminor*rminor)
        nratio = dnla/nGW
@@ -3863,7 +3863,7 @@ contains
        gtaue = 0.0D0
        ptaue = 0.032236D0 -0.22D0*log(nratio)
        qtaue = 0.0D0
-       rtaue = -0.74D0 
+       rtaue = -0.74D0
 
     case default
        idiags(1) = isc ; call report_error(81)
@@ -4692,7 +4692,7 @@ contains
 
     !  Calculate power balances for all scaling laws assuming H = 1
 
-    do iisc = 1,ipnlaws
+    do iisc = 32,ipnlaws
        call pcond(afuel,palpmw,aspect,bt,dnitot,dene,dnla,eps,d1, &
             iinvqd,iisc,ignite,kappa,kappa95,kappaa,pchargemw,pinjmw, &
             plascur,pohmpv,pcoreradpv,rmajor,rminor,te,ten,tin,q,qstar,vol, &
@@ -5844,7 +5844,7 @@ contains
        call ovarre(outfile,'Start-up resistive (Wb)','(vsres)',vsres, 'OP ')
        call ovarre(outfile,'Flat-top resistive (Wb)','(vsbrn)',vsbrn, 'OP ')
 
-       call ovarrf(outfile,'Bootstrap fraction goose', '(cboot)',cboot)
+       call ovarrf(outfile,'bootstrap current fraction multiplier', '(cboot)',cboot)
        call ovarrf(outfile,'Bootstrap fraction (ITER 1989)', '(bscf_iter89)',bscf_iter89, 'OP ')
        call ovarrf(outfile,'Bootstrap fraction (Nevins et al)', '(bscf_nevins)',bscf_nevins, 'OP ')
        call ovarrf(outfile,'Bootstrap fraction (Wilson et al)', '(bscf_wilson)',bscf_wilson, 'OP ')
@@ -5868,7 +5868,7 @@ contains
 
        call ovarre(outfile,'Resistive diffusion time (s)','(res_time)',res_time, 'OP ')
        call ovarre(outfile,'Plasma inductance (H)','(rlp)',rlp, 'OP ')
-       call ovarrf(outfile,'Sawteeth coefficient','(csawth)',csawth)
+       call ovarrf(outfile,'Coefficient for sawtooth effects on burn V-s requirement','(csawth)',csawth)
     end if
 
     call osubhd(outfile,'Fuelling :')
@@ -5918,15 +5918,15 @@ contains
 
     call oheadr(outfile,'Times')
 
-    call ovarrf(outfile,'Initial charge time for PF coils (s)','(tramp)', tramp)
+    call ovarrf(outfile,'Initial charge time for CS from zero current (s)','(tramp)', tramp)
     call ovarrf(outfile,'Plasma current ramp-up time (s)','(tohs)',tohs)
     call ovarrf(outfile,'Heating time (s)','(theat)',theat)
     call ovarre(outfile,'Burn time (s)','(tburn)',tburn, 'OP ')
-    call ovarrf(outfile,'Shutdown time for PF coils (s)','(tqnch)',tqnch)
+    call ovarrf(outfile,'Reset time to zero current for CS (s)','(tqnch)',tqnch)
     call ovarrf(outfile,'Time between pulses (s)','(tdwell)',tdwell)
     call oblnkl(outfile)
-    call ovarre(outfile,'Pulse time (s)','(tpulse)',tpulse, 'OP ')
-    call ovarrf(outfile,'Down time (s)','(tdown)',tdown, 'OP ')
+    !call ovarre(outfile,'Pulse time (s)','(tpulse)',tpulse, 'OP ')
+    !call ovarrf(outfile,'Down time (s)','(tdown)',tdown, 'OP ')
     call ovarre(outfile,'Total plant cycle time (s)','(tcycle)',tcycle, 'OP ')
 
   end subroutine outtim
