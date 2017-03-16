@@ -24,6 +24,7 @@ import matplotlib.patches as patches
 
 import scipy as sp
 import numpy as np
+import kallenbach_plotting
 try:
     import process_io_lib.process_dicts as proc_dict
 except ImportError:
@@ -496,28 +497,30 @@ def toroidal_cross_section(axis, mfile_data, scan=-1):
                              lw=0, facecolor=winding)
     axis.add_patch(rect)
 
-    # Neutral beam geometry
-    a = w
-    b = tfthko
-    c = beamwd + 2 * nbshield
-    d = r3
-    e = np.sqrt(a**2 +(d+b)**2)
-    # Coordinates of the inner and outer edges of the beam at its tangency point
-    rinner = rtanbeam - beamwd
-    router = rtanbeam + beamwd
-    beta = np.arccos(rinner/e)
-    xinner = rinner * np.cos(beta)
-    yinner = rinner * np.sin(beta)
-    xouter = router * np.cos(beta)
-    youter = router * np.sin(beta)
-    # Corner of TF coils
-    xcorner = r4
-    ycorner = w+nbshield
-    axis.plot([xinner, xcorner], [yinner, ycorner], linestyle='dotted',
+    iefrf = mfile_data.data["iefrf"].get_scan(scan)
+    if((iefrf == 5)or(iefrf==8)):
+        # Neutral beam geometry
+        a = w
+        b = tfthko
+        c = beamwd + 2 * nbshield
+        d = r3
+        e = np.sqrt(a**2 +(d+b)**2)
+        # Coordinates of the inner and outer edges of the beam at its tangency point
+        rinner = rtanbeam - beamwd
+        router = rtanbeam + beamwd
+        beta = np.arccos(rinner/e)
+        xinner = rinner * np.cos(beta)
+        yinner = rinner * np.sin(beta)
+        xouter = router * np.cos(beta)
+        youter = router * np.sin(beta)
+        # Corner of TF coils
+        xcorner = r4
+        ycorner = w+nbshield
+        axis.plot([xinner, xcorner], [yinner, ycorner], linestyle='dotted',
               color='black')
-    x = xcorner + c * np.cos(beta) - nbshield * np.cos(beta)
-    y = ycorner + c * np.sin(beta) - nbshield * np.sin(beta)
-    axis.plot([xouter, x], [youter, y], linestyle='dotted', color='black')
+        x = xcorner + c * np.cos(beta) - nbshield * np.cos(beta)
+        y = ycorner + c * np.sin(beta) - nbshield * np.sin(beta)
+        axis.plot([xouter, x], [youter, y], linestyle='dotted', color='black')
 
 
 def TF_outboard(axis, item, tfno, r3, r4, w, facecolor):
@@ -1274,7 +1277,6 @@ def plot_physics_info(axis, mfile_data, scan):
             (tepeak, r"$T_{e0}/ < T_e >$", ""),
             (nepeak, r"$n_{e0}/ < n_{\mathrm{e, vol}} >$", ""),
             ("zeff", r"$Z_{\mathrm{eff}}$", ""),
-            ("zeffso", r"$Z_{\mathrm{eff, SoL}}$", ""),
             (dnz, r"$n_Z/ < n_{\mathrm{e, vol}} >$", ""),
             ("taueff", r"$\tau_e$", "s"),
             ("hfact", "H-factor", ""),
@@ -1447,8 +1449,15 @@ def plot_current_drive_info(axis, mfile_data, scan):
     xmax = 1
     ymin = -16
     ymax = 1
-
-    axis.text(-0.05, 1, 'Neutral Beam Current Drive:', ha='left', va='center')
+    iefrf = mfile_data.data["iefrf"].get_scan(scan)
+    nbi = False
+    ecrh = False
+    if((iefrf == 5)or(iefrf==8)):
+        nbi = True
+        axis.text(-0.05, 1, 'Neutral Beam Current Drive:', ha='left', va='center')
+    if((iefrf == 3)or(iefrf==7)or(iefrf==10)):
+        ecrh = True
+        axis.text(-0.05, 1, 'Electron Cyclotron Current Drive:', ha='left', va='center')
     axis.set_ylim([ymin, ymax])
     axis.set_xlim([xmin, xmax])
     axis.set_axis_off()
@@ -1476,7 +1485,20 @@ def plot_current_drive_info(axis, mfile_data, scan):
     hfact = mfile_data.data["hfact"].get_scan(scan)
     hstar = hfact * (powerht / (powerht + psync + pbrem)) ** 0.31
 
-    data = [(pinjie, "Steady state auxiliary power", "MW"),
+    if ecrh:
+        data = [(pinjie, "Steady state auxiliary power", "MW"),
+            ("pheat", "Power for heating only", "MW"),
+            ("bootipf", "Bootstrap fraction", ""),
+            ("faccd", "Auxiliary fraction", ""),
+            ("facoh", "Inductive fraction", ""),
+            ("powerht", "Plasma heating used for H factor", "MW"),
+            (pdivr, r"$\frac{P_{\mathrm{div}}}{R_{0}}$", "MW m$^{-1}$"),
+            (pdivnr, r"$\frac{P_{\mathrm{div}}}{<n> R_{0}}$",
+             r"$\times 10^{-20}$ MW m$^{2}$"),
+            (flh, r"$\frac{P_{\mathrm{div}}}{P_{\mathrm{LH}}}$", ""),
+            (hstar, "H* (non-rad. corr.)", "")]
+    if nbi:
+        data = [(pinjie, "Steady state auxiliary power", "MW"),
             ("pheat", "Power for heating only", "MW"),
             ("bootipf", "Bootstrap fraction", ""),
             ("faccd", "Auxiliary fraction", ""),
@@ -1489,7 +1511,6 @@ def plot_current_drive_info(axis, mfile_data, scan):
              r"$\times 10^{-20}$ MW m$^{2}$"),
             (flh, r"$\frac{P_{\mathrm{div}}}{P_{\mathrm{LH}}}$", ""),
             (hstar, "H* (non-rad. corr.)", "")]
-
     plot_info(axis, data, mfile_data, scan)
 
 
@@ -1562,9 +1583,7 @@ def main(fig1, fig2, m_file_data, scan=-1):
     # Current drive
     plot_6 = fig1.add_subplot(236)
     plot_current_drive_info(plot_6, m_file_data, scan)
-
     fig1.subplots_adjust(wspace=0.25)
-
 
 def save_plots(m_file_data, scan=-1):
     """Function to recreate and save individual plots.
@@ -1871,6 +1890,7 @@ if __name__ == '__main__':
     alphaj = m_file.data["alphaj"].get_scan(scan)
     q0 = m_file.data["q0"].get_scan(scan)
     q95 = m_file.data["q95"].get_scan(scan)
+    kallenbach_switch = m_file.data["kallenbach_switch"].get_scan(scan)
 
     # Build the dictionaries of radial and vertical build values and cumulative values
     radial = {} ; cumulative_radial = {}; subtotal = 0
@@ -1940,3 +1960,5 @@ if __name__ == '__main__':
     plt.close(page1)
     plt.close(page2)
 
+    if(kallenbach_switch==1):
+        kallenbach_plotting
