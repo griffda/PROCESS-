@@ -380,7 +380,7 @@ lpulse = 1 * Switch for reactor model;
 tdwell = 0 * dwell time (s)
 
 *-------------------Scan Module--------------------*
-isweep   = 11  * Number of scan points to calculate
+isweep   = 6  * Number of scan points to calculate
 nsweep   = 36  * Switch denoting quantity to scan
 *31 taulimit
 *32 epsvmc
