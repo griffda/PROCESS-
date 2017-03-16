@@ -51,9 +51,9 @@ program process
   !+ad_hisc               Transferred routine inform from aachange.f90
   !+ad_hist  13/02/14 PJK Added mfile close statement
   !+ad_hist  10/09/14 PJK Added vfile close statement
-  !+ad_hist  28/10/16 MK  Removed systems commands and added a subroutine 
+  !+ad_hist  28/10/16 MK  Removed systems commands and added a subroutine
   !+ad_hist               get_DDMonYYTimeZone to get date and time
-  !+ad_hist  04/11/16 MK  Added check for existence of input file 
+  !+ad_hist  04/11/16 MK  Added check for existence of input file
   !+ad_hist  03/02/17 JM  Fixed input file existence check, now fileprefix defined before init
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
@@ -80,7 +80,7 @@ program process
   character(len = 130) :: line
   character(len = 10)  :: fmtAppend
   character(len = 50) :: inFile
-  character(len = 50) :: outFile 
+  character(len = 50) :: outFile
   integer :: iost
   logical :: inExist
   integer :: nargs
@@ -88,7 +88,7 @@ program process
   !  Obtain a file prefix from a command line argument
   !  (uses Fortran 2003 routines)
   nargs = command_argument_count()
-  
+
   if (nargs == 0) then
      fileprefix = ''
   else
@@ -104,7 +104,7 @@ program process
   mainRun : if (inExist) then
     !  Initialise things
     call init
-  
+
     ! Run built-in tests.
     ! These are distinct from the tests that are dependent on 'unit_test'.
     if (run_tests == 1) call runtests
@@ -343,7 +343,7 @@ subroutine inform(progid)
   call hostnm(id(3))    ! Get host name
   call getcwd(id(4))    ! Get current working directory
 
-  
+
   !  Annotate information and store in PROGID character array
   !  for use in other program units via the routine argument
 
@@ -412,7 +412,7 @@ subroutine run_summary
   !  Local variables
   integer, parameter :: width = 110
   integer :: lap, ii, outfile
-  character(len = 110) :: progid(0:10)  !, dimension(0:10) 
+  character(len = 110) :: progid(0:10)  !, dimension(0:10)
   character(len = 5)   :: vstring
   character(len = 8)   :: date
   character(len = 10)  :: time
@@ -1329,11 +1329,11 @@ subroutine final(ifail)
   call output(nout)
 
   if (nfev1 == 0) then  !  no HYBRD call
-     if (nviter == 1) then
-        write(iotty,10) nviter,ncalls
-     else
-        write(iotty,20) nviter,ncalls
-     end if
+     !if (nviter == 1) then
+     !    write(iotty,10) nviter,ncalls
+     !else
+    !    write(iotty,20) nviter,ncalls
+     !end if
   else if (nviter == 0) then  !  no VMCON call
      if (nfev1 == 1) then
         write(iotty,30) nfev1,ncalls
@@ -1613,7 +1613,7 @@ subroutine output(outfile)
       psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
       outfile=nout,iprint=1 )
 
-  else 
+  else
     ! Old Divertor Model ! Comment this out MDK 30/11/16
     call divcall(outfile,1)
 
@@ -1774,7 +1774,7 @@ subroutine get_DDMonYYTimeZone(dt_time)
   !+ad_cont  N/A
   !+ad_args  dt_time : output string  : String containing formatted time and date
   !+ad_desc  This routine calls the intrinsic DATE_AND_TIME subroutine
-  !+ad_desc  and format the output in 
+  !+ad_desc  and format the output in
   !+ad_desc  DD Mon YYYY hr:minute:second time difference from UTC.
   !+ad_hist  28/10/16 MK Initial version
   !+ad_stat  Okay
@@ -1791,9 +1791,9 @@ subroutine get_DDMonYYTimeZone(dt_time)
     CHARACTER(len = 4)  :: yyyy
     CHARACTER(len = 2)  :: hr    ! Hour of the day
     CHARACTER(len = 2)  :: mnt   ! Minute of the hour
-    CHARACTER(len = 2)  :: scnd  ! The seconds of the minute 
+    CHARACTER(len = 2)  :: scnd  ! The seconds of the minute
     CHARACTER(len = 5)  :: zn    ! In form (+-)hhmm, representing the difference with respect to Coordinated Universal Time (UTC).
-    CHARACTER(len = 20) :: znfrmt    
+    CHARACTER(len = 20) :: znfrmt
 
     mons = [' Jan ',' Feb ',' Mar ',' Apr ',' May ',' Jun ',&
       ' Jul ',' Aug ',' Sep ',' Oct ',' Nov ',' Dec ']
@@ -1808,13 +1808,13 @@ subroutine get_DDMonYYTimeZone(dt_time)
     write(scnd, '(i2)')  values(7)
     if(mnt(1:1) == " ")   mnt(1:1) = "0"
     if(scnd(1:1) == " ") scnd(1:1) = "0"
-    
+
     dt_time = dd//mons(values(2))//yyyy//spspt// &
              hr//tspt//mnt//tspt//scnd//spspt//znfrmt
     dt_time = trim(dt_time)
-    
+
   END subroutine get_DDMonYYTimeZone
-    
+
 
 ! SVN 145: New CICC plots for User Guide
 ! SVN 149: MGF power usage correction

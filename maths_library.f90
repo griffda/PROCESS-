@@ -527,7 +527,7 @@ contains
     else
         d = 1e-9
     endif
-        
+
     left = 1
     right = length
     do
@@ -555,12 +555,12 @@ contains
     ! by x_array and the grid y values specified by y_array
     ! Reference: http://en.wikipedia.org/wiki/Bilinear_interpolation
     implicit none
-    integer, intent(in) :: x_len, y_len           
+    integer, intent(in) :: x_len, y_len
     real(kind(1.0D0)), dimension(x_len), intent(in) :: x_array
     real(kind(1.0D0)), dimension(y_len), intent(in) :: y_array
     real(kind(1.0D0)), dimension(x_len, y_len), intent(in) :: f
     real(kind(1.0D0)), intent(in) :: x,y
-    real(kind(1.0D0)), intent(in), optional :: delta   
+    real(kind(1.0D0)), intent(in), optional :: delta
     real(kind(1.0D0)) :: denom, x1, x2, y1, y2
     integer :: i,j
 
@@ -572,7 +572,7 @@ contains
 
     y1 = y_array(j)
     y2 = y_array(j+1)
-        
+
     denom = (x2 - x1)*(y2 - y1)
 
     interpolate = (f(i,j)*(x2-x)*(y2-y) + f(i+1,j)*(x-x1)*(y2-y) + &
@@ -2540,16 +2540,16 @@ contains
 	!  Setup line overwrite for VMCON iterations output
 	open(unit=iotty)
 	write(*,*) ""
-    write(*,*) repeat("*", 110)
-    write(*,*) ""
-    write(*,*) "  VMCON Iterations"
-    write(*,*) ""
+    !write(*,*) repeat("*", 110)
+    !write(*,*) ""
+    !write(*,*) "  VMCON Iterations"
+    !write(*,*) ""
 
     !  Start the iteration by calling the quadratic programming
     !  subroutine
 
     iteration: do
-    
+
        !  Output to terminal number of VMCON iterations
        iteration_progress = repeat("=", floor(((niter+1)/FLOAT(maxcal))*20.0D0))
        write(iotty, '("   ==>", I5, "  vmcon iterations", "   min [", a20, "] max iterations", a1)', &

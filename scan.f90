@@ -190,7 +190,7 @@ contains
     ! character(len=25) :: xlabel,vlabel
     character(len=48) :: tlabel
 
-    integer, parameter :: noutvars = 65
+    integer, parameter :: noutvars = 66
     integer, parameter :: width = 110
 
     character(len=25), dimension(noutvars), save :: plabel
@@ -287,6 +287,7 @@ contains
        plabel(63) = 'qtargettotal____________ '
        plabel(64) = 'Total_pressure_at_target_'
        plabel(65) = 'Temperature_at_target____'
+       plabel(66) = 'Helium_fraction__________'
 
 
        call ovarin(mfile,'Number of scan points','(isweep)',isweep)
@@ -435,7 +436,7 @@ contains
        call ovarin(mfile,'Scan point number','(iscan)',iscan)
 
        !  Call the optimization routine VMCON at this scan point
-
+       write(*,*)'Starting scan point ',iscan
        call doopt(ifail)
        call final(ifail)
 
@@ -514,6 +515,7 @@ contains
        outvar(63,iscan) = qtargettotal
        outvar(64,iscan) = pressure0
        outvar(65,iscan) = ttarget
+       outvar(66,iscan) = ralpne
 
 
     end do  !  End of scanning loop
