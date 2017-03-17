@@ -231,6 +231,10 @@ boundl(124) = 1.0e6
 boundu(124) = 10.0e6
 qtargettotal = 3.0e6       * Power density on target including surface recombination [W/m2]
 
+ixc = 125 *  fimp(9) : argon density fraction relative to electron density
+boundl(125) = 0.0
+boundu(125) = 0.01
+fimp(9) = 0.001
 *-----------------Build Variables------------------*
 blnkith  = 0.755 * Inboard blanket thickness (m);
 blnkoth  = 1.275 * Outboard blanket thickness (m);
@@ -300,7 +304,7 @@ fimp(5) = 0.0
 fimp(6) = 0.0
 fimp(7) = 0.0
 fimp(8) = 0.0
-fimp(9) = 0.0
+*fimp(9) = 0.0
 fimp(10) = 0.0
 fimp(11) = 0.0
 fimp(12) = 0.0

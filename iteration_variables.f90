@@ -84,6 +84,7 @@ subroutine loadxc
   !+ad_hist  27/02/17 JM  Added oh_steel_frac (122)
   !+ad_hist  27/02/17 JM  Added foh_stress (123)
   !+ad_hist  15/03/17 MDK  Added qtargettotal (124)
+  !+ad_hist  17/03/17 MDK  Added argon fimp(9) (125)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -259,6 +260,7 @@ subroutine loadxc
      case (122) ; xcm(i) = oh_steel_frac
      case (123) ; xcm(i) = foh_stress
      case (124) ; xcm(i) = qtargettotal
+     case (125) ; xcm(i) = impurity_arr(9)%frac
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -549,6 +551,8 @@ subroutine convxc(xc,nn)
      case (122) ; oh_steel_frac = xc(i)/scale(i)
      case (123) ; foh_stress = xc(i)/scale(i)
      case (124) ; qtargettotal = xc(i)/scale(i)
+     case (125) ; impurity_arr(9)%frac = xc(i)/scale(i)
+
 
      case default
 
