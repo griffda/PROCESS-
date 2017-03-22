@@ -436,22 +436,14 @@ def write_constraint_equations(data, out_file):
     # Header
     write_title("Constraint Equations", out_file)
 
-    # Write number of equations to file
-    neqns_line = "neqns = {0} * {1}\n".format(data["neqns"].value,
-                                              data["neqns"].comment)
-    out_file.write(neqns_line)
-
     # List of constraints
     constraint_equations = data["icc"].value
 
     # Write constraints to file
-    counter = 1
     for constraint in constraint_equations:
         comment = DICT_ICC_FULL[str(constraint)]["name"]
-        constraint_line = "icc({0}) = {1} * {2}\n".format(counter,
-                                                          constraint, comment)
+        constraint_line = "icc = {0} * {1}\n".format(constraint, comment)
         out_file.write(constraint_line)
-        counter += 1
 
 
 def write_iteration_variables(data, out_file):
@@ -468,20 +460,12 @@ def write_iteration_variables(data, out_file):
     # List of constraints
     iteration_variables = data["ixc"].value
 
-    # Write nvar
-    nvar_line = "nvar = {0} * {1}\n".format(data["nvar"].value,
-                                            data["nvar"].comment)
-    out_file.write(nvar_line)
-
     # Write constraints to file
-    counter = 1
     for variable in iteration_variables:
         comment = DICT_IXC_SIMPLE[str(variable).replace(",", ";").
                                   replace(".", ";").replace(":", ";")]
-        variable_line = "ixc({0}) = {1} * {2}\n".format(counter, variable,
-                                                        comment)
+        variable_line = "ixc = {0} * {1}\n".format(variable, comment)
         out_file.write(variable_line)
-        counter += 1
 
         # Write bounds if there are any
         if str(variable) in data["bounds"].value:
@@ -588,9 +572,6 @@ def add_iteration_variable(data, variable_number):
         data["ixc"].value.append(variable_number)
         data["ixc"].value.sort()
 
-        # Increase the number of iteration variables parameter by 1
-        data["nvar"].value = str(data["nvar"].get_value + 1)
-
     else:
         print("Variable number {0} already in iteration variable list".
               format(variable_number))
@@ -608,9 +589,6 @@ def remove_iteration_variable(data, variable_number):
     if variable_number in data["ixc"].value:
         data["ixc"].value.remove(variable_number)
         data["ixc"].value.sort()
-
-        # Decrease the number of iteration variables parameter by 1
-        data["nvar"].value = str(data["nvar"].get_value - 1)
     else:
         print("Variable number {0} not in iteration variable list".
               format(variable_number))
@@ -629,8 +607,6 @@ def add_constraint_equation(data, equation_number):
         data["icc"].value.append(equation_number)
         data["icc"].value.sort()
 
-        # Increase the number of constraint equations parameter by 1
-        data["neqns"].value = str(data["neqns"].get_value + 1)
     else:
         print("Equation number {0} already in constraint equations list".
               format(equation_number))
@@ -650,8 +626,6 @@ def remove_constraint_equation(data, equation_number):
         data["icc"].value.remove(equation_number)
         data["icc"].value.sort()
 
-        # Decrease the number of constraint equations parameter by 1
-        data["neqns"].value = str(data["neqns"].get_value - 1)
     else:
         print("Equation number {0} not in constraint equations list".
               format(equation_number))
@@ -1218,7 +1192,7 @@ def test(f):
 
 if __name__ == "__main__":
     # i = InDat(filename="../../modified_demo1_a31_rip06_2014_12_15.IN.DAT")
-    i = InDat(filename="../../Original_IN.DAT")
+    i = InDat(filename="kallenbach_IN.DAT")
     # print(i.data["ixc"].value)
     # print(i.data["fimp"].value)
     # print(i.data["ipfloc"].value)
@@ -1245,5 +1219,5 @@ if __name__ == "__main__":
     # i.remove_parameter("blnkithsddd")
     # i.remove_parameter("blnkith")
     # i.add_parameter("sweep", [3.0, 3.0])
-    print(i.data["bounds"].get_value)
+    # print(i.data["bounds"].get_value)
     i.write_in_dat()

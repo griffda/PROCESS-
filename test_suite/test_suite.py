@@ -287,6 +287,10 @@ def clean_up(drs):
     subprocess.call(["rm", "PLOT.DAT"])
     subprocess.call(["rm", "VFILE.DAT"])
 
+    # move kallenbach files
+    subprocess.call(["mv", "divertor_diagnostics.txt", "test_area/kallenbach/"])
+    subprocess.call(["mv", "output_divertor.txt", "test_area/kallenbach/"])
+
     # remove executable
     subprocess.call(["rm", "process.exe"])
 
