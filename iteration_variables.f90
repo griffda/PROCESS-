@@ -84,7 +84,7 @@ subroutine loadxc
   !+ad_hist  27/02/17 JM  Added oh_steel_frac (122)
   !+ad_hist  27/02/17 JM  Added foh_stress (123)
   !+ad_hist  15/03/17 MDK  Added qtargettotal (124)
-  !+ad_hist  17/03/17 MDK  Added argon fimp(9) (125)
+  !+ad_hist  17/03/17 MDK  Added impurities fimp(3-14) (125-136)
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -260,7 +260,18 @@ subroutine loadxc
      case (122) ; xcm(i) = oh_steel_frac
      case (123) ; xcm(i) = foh_stress
      case (124) ; xcm(i) = qtargettotal
-     case (125) ; xcm(i) = impurity_arr(9)%frac
+     case (125) ; xcm(i) = impurity_arr(3)%frac
+     case (126) ; xcm(i) = impurity_arr(4)%frac
+     case (127) ; xcm(i) = impurity_arr(5)%frac
+     case (128) ; xcm(i) = impurity_arr(6)%frac
+     case (129) ; xcm(i) = impurity_arr(7)%frac
+     case (130) ; xcm(i) = impurity_arr(8)%frac
+     case (131) ; xcm(i) = impurity_arr(9)%frac
+     case (132) ; xcm(i) = impurity_arr(10)%frac
+     case (133) ; xcm(i) = impurity_arr(11)%frac
+     case (134) ; xcm(i) = impurity_arr(12)%frac
+     case (135) ; xcm(i) = impurity_arr(13)%frac
+     case (136) ; xcm(i) = impurity_arr(14)%frac
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -526,7 +537,7 @@ subroutine convxc(xc,nn)
      case (99) ; ftftort   = xc(i)/scale(i)
      case (100) ; ftfthko  = xc(i)/scale(i)
      case (101) ; prp      = xc(i)/scale(i)
-     case (102)
+     case (102) 
         fimpvar = xc(i)/scale(i)
         impurity_arr(impvar)%frac = fimpvar
      case (103) ; flhthresh = xc(i)/scale(i)
@@ -551,8 +562,18 @@ subroutine convxc(xc,nn)
      case (122) ; oh_steel_frac = xc(i)/scale(i)
      case (123) ; foh_stress = xc(i)/scale(i)
      case (124) ; qtargettotal = xc(i)/scale(i)
-     case (125) ; impurity_arr(9)%frac = xc(i)/scale(i)
-
+     case (125) ; impurity_arr(3)%frac = xc(i)/scale(i)
+     case (126) ; impurity_arr(4)%frac = xc(i)/scale(i)
+     case (127) ; impurity_arr(5)%frac = xc(i)/scale(i)
+     case (128) ; impurity_arr(6)%frac = xc(i)/scale(i)
+     case (129) ; impurity_arr(7)%frac = xc(i)/scale(i)
+     case (130) ; impurity_arr(8)%frac = xc(i)/scale(i)
+     case (131) ; impurity_arr(9)%frac = xc(i)/scale(i)
+     case (132) ; impurity_arr(10)%frac = xc(i)/scale(i)
+     case (133) ; impurity_arr(11)%frac = xc(i)/scale(i)
+     case (134) ; impurity_arr(12)%frac = xc(i)/scale(i)
+     case (135) ; impurity_arr(13)%frac = xc(i)/scale(i)
+     case (136) ; impurity_arr(14)%frac = xc(i)/scale(i)
 
      case default
 

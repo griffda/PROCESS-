@@ -18,11 +18,12 @@ module divertor_ode
   !!!!!!!!!!!!!!!!!!!!!
 
   use read_and_get_atomic_data
-  use impurity_radiation_module, only: nimp, imp_label, impurity_arr, impvar
+  use impurity_radiation_module, only: nimp, imp_label, impurity_arr
+  !, impvar
   use process_output, only: oblnkl,obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
   use constants
   use process_input, only: lower_case
-  use divertor_kallenbach_variables, only : neratio, pressure0, lengthofwideSOL
+  use divertor_kallenbach_variables, only : neratio, pressure0, lengthofwidesol
 
 
   implicit none
@@ -404,7 +405,8 @@ contains
 
         ! Loop over the remaining PROCESS impurities
         do i = 3, nimp
-            if ((impurity_arr(i)%frac .gt. 1.e-10).or.(i.eq.impvar)) then
+            !if ((impurity_arr(i)%frac .gt. 1.e-10).or.(i.eq.impvar)) then
+            if (impurity_arr(i)%frac .gt. 1.e-10) then
                 impurities_present(i) = .true.
             end if
         end do
@@ -896,7 +898,7 @@ contains
 
     call ovarre(outfile, 'SOL power fall-off length at the target  [m]','(lambda_target)', lambda_target)
     call ocmmnt(outfile, 'Distance along field line from target to point where')
-    call ovarre(outfile, 'SOL power fall-off length changes [m]','(lengthofwideSOL)', lengthofwideSOL)
+    call ovarre(outfile, 'SOL power fall-off length changes [m]','(lengthofwidesol)', lengthofwidesol)
 
     call osubhd(outfile, 'Integrated powers :')
     call ovarre(outfile, 'Power lost due to impurity radiation [W] ','()', Y(7)*1.e6, 'OP ')
@@ -935,9 +937,9 @@ contains
     real(kind(1.0D0)) :: lambda
     real(kind(1.0D0)), intent(in) :: x
 
-    if(x.lt.lengthofwideSOL) then
+    if(x.lt.lengthofwidesol) then
         lambda = lambda_target
-    else if(x.ge.lengthofwideSOL) then
+    else if(x.ge.lengthofwidesol) then
         lambda = lambda_q
     end if
 
@@ -1084,9 +1086,9 @@ contains
 
     ! The area of the flux tube, measured perpendicular to B
     ! This is set to a step function as in Kallenbach
-    if(t.lt.lengthofwideSOL) then
+    if(t.lt.lengthofwidesol) then
         A_cross = circumf_bu*lambda_target
-    else if (t.ge.lengthofwideSOL) then
+    else if (t.ge.lengthofwidesol) then
         A_cross = circumf_bu*lambda_q
     end if
 

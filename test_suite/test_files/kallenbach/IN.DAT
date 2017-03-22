@@ -206,9 +206,6 @@ boundu(61) = 0.12
 gapds      = 0.02 * Gap between inboard vacuum vessel and tf coil (m)
 * Why is this an iteration variable?
 
-ixc = 102 * fimpvar
-* See impurity variables
-
 ixc = 113 *ftaucq
 
 ixc = 117 *fpsepbqar
@@ -231,9 +228,9 @@ boundl(124) = 1.0e6
 boundu(124) = 10.0e6
 qtargettotal = 3.0e6       * Power density on target including surface recombination [W/m2]
 
-ixc = 125 *  fimp(9) : argon density fraction relative to electron density
-boundl(125) = 0.0
-boundu(125) = 0.01
+ixc = 131  * fimp(9) : Argon density fraction relative
+boundl(131) = 1.0e-10
+boundu(131) = 0.01
 fimp(9) = 0.001
 *-----------------Build Variables------------------*
 blnkith  = 0.755 * Inboard blanket thickness (m);
@@ -273,7 +270,7 @@ lambda_target=5.0d-3        * SOL power fall-off length at the target, perpendic
 netau = 0.5                * Parameter describing the departure from local ionisation equilibrium in the SOL. [ms.1e20/m3]
 lambda_q = 0.002
 targetangle = 5.0          * Angle between field-line and divertor target (degrees)
-lengthofwideSOL = 40.0     * Distance from target at which SOL power fall-off length changes [m]
+lengthofwidesol = 40.0     * Distance from target at which SOL power fall-off length changes [m]
 
 
 *------------------Fwbs Variables------------------*
@@ -308,10 +305,8 @@ fimp(8) = 0.0
 fimp(10) = 0.0
 fimp(11) = 0.0
 fimp(12) = 0.0
-*fimp(13) = 0.000
+fimp(13) = 0.000
 fimp(14) = 5e-05
-fimpvar  = 2.5E-04 * Impurity fraction to be used as fimp(impvar)
-impvar   = 13 * Fimp element value to be varied if iteration
 
 *---------------------Numerics---------------------*
 ioptimz  = 1 * for optimisation VMCON only

@@ -1,3 +1,4 @@
+ impvar is now deprecated - use iteration variables 125-136 instead.
  
  **************************************************************************************************************
  ************************************************** PROCESS ***************************************************
@@ -6,13 +7,12 @@
  
    Program : ./process.exe
    Version : 1.0.9    Release Date :: 2017-03-08
- Date/time : 15 Mar 2017 10:20:05 +00:00(hh:mm) UTC
       User : mkovari
  Directory : /home/mkovari/develop/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.9 : Run on 15 Mar 2017 10:20:05 +00:00(hh:mm) UTC by freia042
+ PROCESS 1.0.9 : Run on 20 Mar 2017 16:11:50 +00:00(hh:mm) UTC by freia042
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)
@@ -229,8 +229,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Xe concentration                                                         fimp(13)                  0.000E+00     
  W_ concentration                                                         fimp(14)                  5.000E-05     
  Average mass of all ions (amu)                                           (aion)                    2.860E+00  OP 
- Impurity used as an iteration variable                                                            "Ar"
- Fractional density of variable impurity (ion / electron density)         (fimpvar)                 3.789E-03  ITV
  
  Effective charge                                                         (zeff)                        2.514  OP 
  Mass weighted effective charge                                           (zeffai)                      0.436  OP 
@@ -344,7 +342,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Ejima coefficient                                                        (gamma)                       0.300     
  Start-up resistive (Wb)                                                  (vsres)                   7.441E+01  OP 
  Flat-top resistive (Wb)                                                  (vsbrn)                   3.794E+02  OP 
- Bootstrap fraction goose                                                 (cboot)                       1.000     
+ bootstrap current fraction multiplier                                    (cboot)                       1.000     
  Bootstrap fraction (ITER 1989)                                           (bscf_iter89)                 0.311  OP 
  Bootstrap fraction (Nevins et al)                                        (bscf_nevins)                 0.297  OP 
  Bootstrap fraction (Wilson et al)                                        (bscf_wilson)                 0.377  OP 
@@ -355,7 +353,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma resistance (ohm)                                                  (rplas)                   4.574E-09  OP 
  Resistive diffusion time (s)                                             (res_time)                3.306E+03  OP 
  Plasma inductance (H)                                                    (rlp)                     1.675E-05  OP 
- Sawteeth coefficient                                                     (csawth)                      1.000     
+ Coefficient for sawtooth effects on burn V-s requirement                 (csawth)                      1.000     
  
  Fuelling :
  
@@ -369,37 +367,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
     scaling law              confinement time (s)     H-factor for
                                  for H = 1           power balance
  
- Neo-Alcator      (ohmic)         37.944                   0.122
- Mirnov               (H)         16.058                   0.289
- Merezkhin-Muhkovatov (L)          6.574                   0.706
- Shimomura            (H)         13.846                   0.335
- Kaye-Goldston        (L)          2.339                   1.994
- ITER 89-P            (L)          2.142                   2.166
- ITER 89-O            (L)          2.391                   1.940
- Rebut-Lallia         (L)          4.373                   1.061
- Goldston             (L)          2.385                   1.956
- T10                  (L)          3.259                   1.424
- JAERI-88             (L)          2.724                   1.703
- Kaye-Big Complex     (L)          1.669                   2.780
- ITER H90-P           (H)          6.484                   0.715
- ITER Mix             (L)          2.142                   2.166
- Riedel               (L)          1.156                   4.013
- Christiansen         (L)          1.045                   4.439
- Lackner-Gottardi     (L)          3.555                   1.305
- Neo-Kaye             (L)          2.105                   2.204
- Riedel               (H)          2.834                   1.637
- ITER H90-P amended   (H)          8.068                   0.574
- LHD              (stell)          1.097                   4.230
- Gyro-reduced Bohm(stell)          1.530                   3.031
- Lackner-Gottardi (stell)          2.539                   1.827
- ITER-93H             (H)          6.239                   0.744
- TITAN RFP                         9.823                   0.472
- ITER H-97P ELM-free  (H)          5.409                   0.858
- ITER H-97P ELMy      (H)          5.157                   0.899
- ITER-96P             (L)          1.653                   2.805
- Valovic modified ELMy(H)          4.788                   0.968
- Kaye PPPL April 98   (L)          1.778                   2.610
- ITERH-PB98P(y)       (H)          4.387                   1.058
  IPB98(y)             (H)          5.272                   0.880
  IPB98(y,1)           (H)          5.302                   0.875
  IPB98(y,2)           (H)          4.217                   1.100
@@ -445,15 +412,13 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  *************************************************** Times ****************************************************
  
- Initial charge time for PF coils (s)                                     (tramp)                      30.000     
+ Initial charge time for CS from zero current (s)                         (tramp)                      30.000     
  Plasma current ramp-up time (s)                                          (tohs)                       30.000     
  Heating time (s)                                                         (theat)                      10.000     
  Burn time (s)                                                            (tburn)                   7.200E+03  OP 
- Shutdown time for PF coils (s)                                           (tqnch)                      30.000     
+ Reset time to zero current for CS (s)                                    (tqnch)                      30.000     
  Time between pulses (s)                                                  (tdwell)                   1800.000     
  
- Pulse time (s)                                                           (tpulse)                  7.270E+03  OP 
- Down time (s)                                                            (tdown)                    1890.000  OP 
  Total plant cycle time (s)                                               (tcycle)                  9.100E+03  OP 
  
  ************************************************ Radial Build ************************************************
@@ -1274,8 +1239,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PROCESS error status flag                                                (error_status)                    2     
 150     2   CHECK: Lower limit of volume averaged electron temperature (te) has been raised 
 155     2   CHECK: boundl(6) has been raised to ensure dene > neped                         
-135     1   OUTPF: CS not using max current density: further optimisation may be possible   
- Final error identifier                                                   (error_id)                      135     
+ Final error identifier                                                   (error_id)                      155     
  
  ******************************************* End of PROCESS Output ********************************************
  
@@ -1491,7 +1455,6 @@ vfblkt   = 0.10 * Coolant void fraction in blanket (blktmodel=0);
 
 etath    = 0.375 * Thermal to electric conversion efficiency; input if ipowerflow=0
 fauxbop  = 0.032 * Fraction of gross electric power to balance-of-plant
-ffwlg    = 0.01 * Fraction of first wall / divertor power to low grade heat
 ipowerflow = 0 * Switch for power flow model;
 primary_pumping = 0 * Switch for pumping power for primary coolant
 
@@ -1649,5 +1612,4 @@ vftf     = 0.333 * Coolant fraction of tfc 'cable' (itfsup=1); or of tfc leg (it
 tburn    = 1.0d4 * Burn time (s) (calculated if lpulse=1)
 
 *-----------------Vacuum Variables-----------------*
-
-
+*-----------------Vacuum Variables-----------------*

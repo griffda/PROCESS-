@@ -309,7 +309,6 @@ $HTPWR
 ipowerflow=0
 FAUXBOP = 0.032
 ETATH = 0.375
-FFWLG = 0.01
 *iprimhtp = 1
 *htpmw=155
 *168.7/.87

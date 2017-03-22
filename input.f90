@@ -732,6 +732,7 @@ contains
        case ('impvar')
           call parse_int_variable('impvar', impvar, 3, nimp, &
                'Index for impurity fraction iteration variable')
+          write(outfile,*) 'impvar is now deprecated - use iteration variables 125-136 instead.'   
        case ('ipedestal')
           call parse_int_variable('ipedestal', ipedestal, 0, 1, &
                'Switch for plasma profile type')
@@ -1217,7 +1218,7 @@ contains
           call parse_real_variable('helium_enrichment', helium_enrichment, 0.1D0, 20.0D0, &
                'Ratio of helium concentration in SOL to confined plasma')
        case ('lengthofwidesol')
-          call parse_real_variable('lengthofwideSOL', lengthofwideSOL, 0.01D0, 100.0D0, &
+          call parse_real_variable('lengthofwidesol', lengthofwidesol, 0.01D0, 100.0D0, &
                'Distance from target at which SOL power fall-off length changes [m]')
 
           !  Divertor settings

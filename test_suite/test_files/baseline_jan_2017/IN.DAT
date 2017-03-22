@@ -207,7 +207,6 @@ vfblkt   = 0.10 * Coolant void fraction in blanket (blktmodel=0);
 
 etath    = 0.375 * Thermal to electric conversion efficiency; input if ipowerflow=0
 fauxbop  = 0.032 * Fraction of gross electric power to balance-of-plant
-ffwlg    = 0.01 * Fraction of first wall / divertor power to low grade heat
 ipowerflow = 0 * Switch for power flow model;
 primary_pumping = 0 * Switch for pumping power for primary coolant
 
@@ -320,7 +319,7 @@ te       = 13.07 * Volume averaged electron temperature (kev)
 triang   = 0.5 * Plasma separatrix triangularity (calculated if ishape=1; 3 or 4)
 zfear    = 1 * High-z impurity switch; 0=iron; 1=argon
 
-maxradwallload = 0.5 * Maximum permitted radiation wall load (MW/m2) 
+maxradwallload = 0.5 * Maximum permitted radiation wall load (MW/m2)
 peakfactrad = 2.00 * peaking factor for radiation wall load
 
 *-----------------Pulse Variables------------------*
@@ -349,7 +348,7 @@ ripmax   = 0.6 * Maximum allowable toroidal field ripple amplitude
 tdmptf   = 30.0 * Dump time for tf coil (s)
 
 tfno     = 16 * Number of tf coils (default = 50 for stellarators)
-alstrtf = 6.6D8 * allowable von Mises stress in TF coil structural material (Pa ) 
+alstrtf = 6.6D8 * allowable von Mises stress in TF coil structural material (Pa )
 
 tftmp    = 4.75 * Peak helium coolant temperature in tf coils and pf coils (k)
 thicndut = 1.5d-3 * Conduit insulation thickness (m)
@@ -365,4 +364,3 @@ vftf     = 0.333 * Coolant fraction of tfc 'cable' (itfsup=1); or of tfc leg (it
 tburn    = 1.0d4 * Burn time (s) (calculated if lpulse=1)
 
 *-----------------Vacuum Variables-----------------*
-

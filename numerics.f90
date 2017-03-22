@@ -99,7 +99,7 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 125
+  integer, parameter :: ipnvars = 136
   !+ad_vars  ipeqns  FIX : number of constraint equations available
   integer, parameter :: ipeqns = 72
   !+ad_vars  ipnfoms FIX : number of available figures of merit
@@ -550,7 +550,18 @@ module numerics
        0,  &  !  122
        0,  &  !  123
        0,  &  !  124
-       0   &  !  125
+       0,  &  !  125
+       0,  &  !  126
+       0,  &  !  127
+       0,  &  !  128
+       0,  &  !  129
+       0,  &  !  130
+       0,  &  !  131
+       0,  &  !  132
+       0,  &  !  133
+       0,  &  !  134
+       0,  &  !  135
+       0   &  !  136
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -807,8 +818,30 @@ module numerics
        'foh_stress    ',  &
        !+ad_varc  <LI> (124) qtargettotal : Total power density on target [W/m2]
        'qtargettotal  ',  &
-       !+ad_varc  <LI> (125) fimp(9) : argon density fraction relative to electron density</UL>
-       'fimp(9)       '  &
+       !+ad_varc  <LI> (125) fimp(3) :  Beryllium density fraction relative to electron density
+       'fimp(3)       ', &
+       !+ad_varc  <LI> (126) fimp(4) :  Carbon density fraction relative to electron density
+       'fimp(4)       ', &
+       !+ad_varc  <LI> (127) fimp(5) :  Nitrogen fraction relative to electron density
+       'fimp(5)       ', &
+       !+ad_varc  <LI> (128) fimp(6) :  Oxygen density fraction relative to electron density
+       'fimp(6)       ', &
+       !+ad_varc  <LI> (129) fimp(7) :  Neon density fraction relative to electron density
+       'fimp(7)       ', &
+       !+ad_varc  <LI> (130) fimp(8) :  Silicon density fraction relative to electron density
+       'fimp(8)       ', &
+       !+ad_varc  <LI> (131) fimp(9) :  Argon density fraction relative to electron density
+       'fimp(9)       ', &
+       !+ad_varc  <LI> (132) fimp(10) :  Iron density fraction relative to electron density
+       'fimp(10)      ', &
+       !+ad_varc  <LI> (133) fimp(11) :  Nickel density fraction relative to electron density
+       'fimp(11)      ', &
+       !+ad_varc  <LI> (134) fimp(12) :  Krypton density fraction relative to electron density
+       'fimp(12)      ', &
+       !+ad_varc  <LI> (135) fimp(13) :  Xenon density fraction relative to electron density
+       'fimp(13)      ', &
+       !+ad_varc  <LI> (136) fimp(14) :  Tungsten density fraction relative to electron density</UL>
+       'fimp(14)      ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -951,7 +984,18 @@ module numerics
        0.001D0, &  !  122
        0.001D0, &  !  123
        0.001D0, &  !  124
-       1.00D-6  &  !  125
+       1.00D-8, &  !  125
+       1.00D-8, &  !  126
+       1.00D-8, &  !  127
+       1.00D-8, &  !  128
+       1.00D-8, &  !  129
+       1.00D-8, &  !  130
+       1.00D-8, &  !  131
+       1.00D-8, &  !  132
+       1.00D-8, &  !  133
+       1.00D-8, &  !  134
+       1.00D-8, &  !  135
+       1.00D-8  &  !  136
        /)
 
   !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
@@ -1081,7 +1125,18 @@ module numerics
        0.950D0, &  !  122
        1.000D0, &  !  123
        1.000D2, &  !  124
-       0.010D0  &  !  125
+       0.010D0, &  !  125
+       0.010D0, &  !  126
+       0.010D0, &  !  127
+       0.010D0, &  !  128
+       0.010D0, &  !  129
+       0.010D0, &  !  130
+       0.010D0, &  !  131
+       0.010D0, &  !  132
+       0.010D0, &  !  133
+       0.010D0, &  !  134
+       0.010D0, &  !  135
+       0.010D0  &  !  136
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

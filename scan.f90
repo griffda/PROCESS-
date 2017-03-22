@@ -392,10 +392,10 @@ contains
        case (29)
           coreradius = sweep(iscan)
           vlabel = 'coreradius' ; xlabel = 'Core_radius'
-       case (30)
-          fimpvar = sweep(iscan)
-          impurity_arr(impvar)%frac = fimpvar
-          vlabel = 'fimpvar' ; xlabel = 'Impurity_fraction'
+       !case (30)
+        !  fimpvar = sweep(iscan)
+        !  impurity_arr(impvar)%frac = fimpvar
+        !  vlabel = 'fimpvar' ; xlabel = 'Impurity_fraction'
        case (31)
           taulimit = sweep(iscan)
           vlabel = 'taulimit' ; xlabel = 'Taup/taueff_lower_limit'
@@ -500,7 +500,8 @@ contains
           outvar(49,iscan) = 0.0D0
        end if
        outvar(50,iscan) = pdivt/rmajor
-       outvar(51,iscan) = fimpvar
+       !outvar(51,iscan) = fimpvar
+       outvar(51,iscan) = 0.0d0
        outvar(52,iscan) = pradmw
        outvar(53,iscan) = tpeak
        outvar(54,iscan) = fcutfsu

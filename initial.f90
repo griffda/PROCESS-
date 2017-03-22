@@ -120,7 +120,7 @@ subroutine devtyp
   !+ad_hist  31/10/12 PJK Added stellarator_variables
   !+ad_hist  05/11/12 PJK Added rfp_variables
   !+ad_hist  05/11/12 PJK Added ife_variables
-  !+ad_hist  04/11/16 MK Added check for content of device file 
+  !+ad_hist  04/11/16 MK Added check for content of device file
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -147,11 +147,11 @@ subroutine devtyp
   ife    = 0
   idev   = 0      ! Default value MK
 
-  !  Read a second input file. If the file does not exist or  
+  !  Read a second input file. If the file does not exist or
   !  blank, then the standard tokamak option is assumed.
 
   inquire(file = devFile, exist = iexist)
-  
+
   if (iexist) then
      open(unit = 101, file = 'device.dat', status = 'old')
          DO
@@ -160,7 +160,7 @@ subroutine devtyp
             if(iost < 0 .or. idev > 0) exit
          END DO
         close(unit = 101)
-        
+
      !  Set relevant switch
 
         select case (idev)
@@ -316,14 +316,14 @@ subroutine check
   if ( any(icc(1:neqns+nineqns) == 4) ) then
      call report_error(163)
   end if
-  
+
   ! MDK Report error is constraint 63 is used with old vacuum model
   if (any(icc(1:neqns+nineqns) == 63).and.(vacuum_model.ne.'simple') ) then
      write(*,*) 'Constraint 63 is requested without the correct vacuum model ("simple").'
      write(*,*) 'vacuum_model = ', vacuum_model
      write(*,*) 'PROCESS stopping'
      stop
-  end if  
+  end if
 
   !  Fuel ion fractions must add up to 1.0
 
@@ -348,9 +348,9 @@ subroutine check
 
   !  Set relevant impurity fraction if iteration variable 102 is turned on
 
-  if ( any(ixc == 102) ) then
-     impurity_arr(impvar)%frac = fimpvar
-  end if
+  !if ( any(ixc == 102) ) then
+    ! impurity_arr(impvar)%frac = fimpvar
+  !end if
 
   !  Warn if ion power balance equation is being used with the new radiation model
 
@@ -392,9 +392,9 @@ subroutine check
         boundu(4) = max(boundu(4), boundl(4))
      end if
 
-     !  Density checks: 
+     !  Density checks:
      !  not required if pedestal is set using Greenwald density (Issue #292)
-     
+
      if ((iscdens == 0) .and. (neped < nesep)) then
         fdiags(1) = neped ; fdiags(2) = nesep
         call report_error(151)
@@ -426,7 +426,7 @@ subroutine check
 
   end if
 
-  !  Tight aspect ratio options 
+  !  Tight aspect ratio options
 
   if (itart == 1) then
 
@@ -567,9 +567,9 @@ subroutine check
   !   coolwh = 2
   !end if
 
-  !  Ensure that blanket material fractions allow non-zero space for steel  
-  !  CCFE HCPB Model  
-  
+  !  Ensure that blanket material fractions allow non-zero space for steel
+  !  CCFE HCPB Model
+
   if (istell == 0) then
     if ((iblanket == 1).or.(iblanket == 3)) then
       fsum = breeder_multiplier + vfcblkt + vfpblkt
@@ -578,7 +578,7 @@ subroutine check
         fdiags(2) = breeder_multiplier
         fdiags(3) = vfcblkt
         fdiags(4) = vfpblkt
-        fdiags(5) = fsum        
+        fdiags(5) = fsum
         call report_error(165)
       end if
     end if

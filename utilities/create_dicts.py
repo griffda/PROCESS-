@@ -1048,6 +1048,7 @@ def print_nsweep2varname():
     Prints:
     DICT_NSWEEP2VARNAME
     """
+
     lam = lambda x: int(x[0])
     nsweep2varname = dict_nsweep2varname()
     comment = 'Dictionary mapping nsweep to varname'
