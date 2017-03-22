@@ -14,7 +14,6 @@ module pfcoil_module
   !+ad_cont  peakb
   !+ad_cont  bfmax
   !+ad_cont  waveform
-  !+ad_cont  pfjalw
   !+ad_cont  superconpf
   !+ad_cont  vsec
   !+ad_cont  induct
@@ -43,6 +42,7 @@ module pfcoil_module
   !+ad_hist  16/10/14 PJK Added sctfcoil_module
   !+ad_hist  22/02/17 JM  Changed function selfinductance to Bunet's formula
   !+ad_hist  27/02/17 JM  Added WST Nb3Sn as option for superconductor
+  !+ad_hist  22/03/17 JM  Removed pfjalw as no longer used anywhere
   !+ad_stat  Okay
   !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
   !
@@ -636,7 +636,6 @@ contains
           !  Allowable current density (for superconducting coils)
 
           if (ipfres == 0) then
-             !rjpfalw(i) = pfjalw(bpf(i),bpf2(i),ra(i),rb(i),sigpfalw)
              bmax = max(abs(bpf(i)), abs(bpf2(i)))
              call superconpf(bmax,vf(i),fcupfsu,rjconpf(i),isumatpf,fhts, &
                   strncon,tftmp,bcritsc,tcritsc,rjpfalw(i),jstrand,jsc,tmarg)
@@ -950,7 +949,6 @@ contains
        !  Allowable coil overall current density at EOF
        !  (superconducting coils only)
 
-       !rjohc = pfjalw(bohci,bohco,ra(nohc),rb(nohc),sigpfalw)
        call superconpf(bmaxoh,vfohc,fcuohsu,(abs(ric(nohc))/awpoh)*1.0D6, &
             isumatoh,fhts,strncon,tftmp,bcritsc,tcritsc,jcritwp, &
             jstrandoh_eof,jscoh_eof,tmarg1)
@@ -959,7 +957,6 @@ contains
 
        !  Allowable coil overall current density at BOP
 
-       !rjpfalw(nohc) = pfjalw(bmaxoh0,abs(bzo),ra(nohc),rb(nohc),sigpfalw)
        call superconpf(bmaxoh0,vfohc,fcuohsu,(abs(ric(nohc))/awpoh)*1.0D6, &
             isumatoh,fhts,strncon,tftmp,bcritsc,tcritsc,jcritwp, &
             jstrandoh_bop,jscoh_bop,tmarg2)
@@ -1906,64 +1903,6 @@ contains
     end do
 
   end subroutine waveform
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  function pfjalw(bi,bo,ri,ro,sigalw)
-
-    !+ad_name  pfjalw
-    !+ad_summ  Calculates maximum allowable current density in a
-    !+ad_summ  superconducting PF coil
-    !+ad_type  Function returning real
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_auth  J Galambos, ORNL
-    !+ad_auth  J Miller, ORNL
-    !+ad_cont  N/A
-    !+ad_args  bi : input real : peak field at inner edge (T)
-    !+ad_args  bo : input real : peak field at outer edge (T)
-    !+ad_args  ri : input real : radius of inner edge (m)
-    !+ad_args  ro : input real : radius of outer edge (m)
-    !+ad_args  sigalw : input real : allowable stress (tangential) (MPa)
-    !+ad_desc  This function calculates the maximum allowable current
-    !+ad_desc  density in a superconducting PF coil, using J. Miller's
-    !+ad_desc  quick method. Originally programmed by J. Galambos 1991.
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  09/05/12 PJK Initial F90 version
-    !+ad_stat  No longer used
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    real(kind(1.0D0)) :: pfjalw
-
-    !  Arguments
-
-    real(kind(1.0D0)), intent(in) :: bi,bo,ri,ro,sigalw
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: r2fact,rfact,yy,zz
-    real(kind(1.0D0)), parameter :: xbig = 32.0D0
-    real(kind(1.0D0)), parameter :: y1 = 1.0D0  !  temperature margin (K)
-    real(kind(1.0D0)), parameter :: y2 = 16.0D0 !  critical temperature at zero field (K)
-    real(kind(1.0D0)), parameter :: y3 = 23.0D0 !  critical field at zero temperature (T)
-    real(kind(1.0D0)), parameter :: y4 = 5.0D0  !  bulk He temperature (K)
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    rfact = ro/ri
-    r2fact = -0.053D0 * rfact**2 + 0.925D0*rfact + 0.1D0
-    yy = 1.0D0 - y1 / (y2*(1.0D0-bi/y3) - y4)
-    yy = max(yy, 0.001D0)
-    zz = 0.036D0 * sqrt(bi)/(1.0D0-bi/23.0D0)**2
-
-    pfjalw = 1.45D8/( xbig/sigalw * r2fact * (bi+bo)*(ri+ro) + &
-         1.0D0 + 0.6D0/yy * zz )
-
-  end function pfjalw
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
