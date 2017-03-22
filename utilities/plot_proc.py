@@ -24,7 +24,6 @@ import matplotlib.patches as patches
 
 import scipy as sp
 import numpy as np
-import kallenbach_plotting
 try:
     import process_io_lib.process_dicts as proc_dict
 except ImportError:
@@ -1961,4 +1960,5 @@ if __name__ == '__main__':
     plt.close(page2)
 
     if(kallenbach_switch==1):
-        kallenbach_plotting
+        if args.show:
+            import kallenbach_plotting

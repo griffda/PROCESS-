@@ -114,7 +114,6 @@ module impurity_radiation_module
 
   !+ad_vars  fimpvar /1.0e-3/ : impurity fraction to be used as fimp(impvar)
   !+ad_varc                     (iteration variable 102)
-  ! Deprecated
   real(kind(1.0D0)), public :: fimpvar = 1.0D-3
 
     !  Obtain the root directory
@@ -125,8 +124,8 @@ module impurity_radiation_module
   !+ad_varc           Directory containing impurity radiation data files
   character(len=80), public :: impdir = ROOTDIR//'/data/impuritydata/'
 
+  !+ad_vars  impvar : impurity to be iterated (deprecated)
   !+ad_varc                       variable number 102 is turned on
-  ! Deprecated
   integer, public :: impvar = 9
 
   !  Declare impurity data type
