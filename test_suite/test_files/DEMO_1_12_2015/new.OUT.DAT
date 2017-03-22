@@ -6,13 +6,13 @@
  
    Program : ./process.exe
    Version : 1.0.9    Release Date :: 2017-03-08
- Date/time : 15 Mar 2017 10:14:41 +00:00(hh:mm) UTC
-      User : mkovari
- Directory : /home/mkovari/develop/test_suite
+ Date/time : 22 Mar 2017 11:41:01 +00:00(hh:mm) UTC
+      User : morrisj
+ Directory : /home/morrisj/Work/fortran/develop/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.9 : Run on 15 Mar 2017 10:14:41 +00:00(hh:mm) UTC by freia042
+ PROCESS 1.0.9 : Run on 22 Mar 2017 11:41:01 +00:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -1540,10 +1540,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  ******************************************** Errors and Warnings *********************************************
  
  (See top of file for solver errors and warnings.)
- PROCESS status flag:   Information messages only
- PROCESS error status flag                                                (error_status)                    1     
-135     1   OUTPF: CS not using max current density: further optimisation may be possible   
- Final error identifier                                                   (error_id)                      135     
+ PROCESS status flag:   No messages
+ PROCESS error status flag                                                (error_status)                    0     
+ Final error/warning identifier                                           (error_id)                        0     
  
  ******************************************* End of PROCESS Output ********************************************
  

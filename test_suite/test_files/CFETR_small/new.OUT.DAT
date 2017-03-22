@@ -15,13 +15,13 @@
  
    Program : ./process.exe
    Version : 1.0.9    Release Date :: 2017-03-08
- Date/time : 15 Mar 2017 10:14:34 +00:00(hh:mm) UTC
-      User : mkovari
- Directory : /home/mkovari/develop/test_suite
+ Date/time : 22 Mar 2017 11:37:15 +00:00(hh:mm) UTC
+      User : morrisj
+ Directory : /home/morrisj/Work/fortran/develop/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.9 : Run on 15 Mar 2017 10:14:34 +00:00(hh:mm) UTC by freia042
+ PROCESS 1.0.9 : Run on 22 Mar 2017 11:37:15 +00:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Steady-state tokamak model, (c) CCFE
  "CFETR small (5.7m) reference file"
  (Please include this header in any models, presentations and papers based on these results)

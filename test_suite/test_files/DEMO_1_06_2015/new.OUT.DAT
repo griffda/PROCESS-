@@ -29,13 +29,13 @@
  
    Program : ./process.exe
    Version : 1.0.9    Release Date :: 2017-03-08
- Date/time : 15 Mar 2017 10:19:44 +00:00(hh:mm) UTC
-      User : mkovari
- Directory : /home/mkovari/develop/test_suite
+ Date/time : 22 Mar 2017 11:41:33 +00:00(hh:mm) UTC
+      User : morrisj
+ Directory : /home/morrisj/Work/fortran/develop/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.9 : Run on 15 Mar 2017 10:19:44 +00:00(hh:mm) UTC by freia042
+ PROCESS 1.0.9 : Run on 22 Mar 2017 11:41:33 +00:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)
@@ -4306,10 +4306,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PROCESS error status flag                                                (error_status)                    2     
 150     2   CHECK: Lower limit of volume averaged electron temperature (te) has been raised 
 155     2   CHECK: boundl(6) has been raised to ensure dene > neped                         
-135     1   OUTPF: CS not using max current density: further optimisation may be possible   
-135     1   OUTPF: CS not using max current density: further optimisation may be possible   
-135     1   OUTPF: CS not using max current density: further optimisation may be possible   
- Final error identifier                                                   (error_id)                      135     
+ Final error identifier                                                   (error_id)                      155     
  
  ******************************************* End of PROCESS Output ********************************************
  
@@ -4627,7 +4624,6 @@ $HTPWR
 ipowerflow=0
 FAUXBOP = 0.032
 ETATH = 0.375
-FFWLG = 0.01
 *iprimhtp = 1
 *htpmw=155
 *168.7/.87

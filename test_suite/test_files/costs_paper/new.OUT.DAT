@@ -7,13 +7,13 @@
  
    Program : ./process.exe
    Version : 1.0.9    Release Date :: 2017-03-08
- Date/time : 15 Mar 2017 10:14:28 +00:00(hh:mm) UTC
-      User : mkovari
- Directory : /home/mkovari/develop/test_suite
+ Date/time : 22 Mar 2017 11:41:24 +00:00(hh:mm) UTC
+      User : morrisj
+ Directory : /home/morrisj/Work/fortran/develop/test_suite
  
  **************************************************************************************************************
  
- PROCESS 1.0.9 : Run on 15 Mar 2017 10:14:28 +00:00(hh:mm) UTC by freia042
+ PROCESS 1.0.9 : Run on 22 Mar 2017 11:41:24 +00:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  demo 1 model for cost paper  * Short descriptive title for the run
  (Please include this header in any models, presentations and papers based on these results)
@@ -1535,8 +1535,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  PROCESS status flag:   Warning messages
  PROCESS error status flag                                                (error_status)                    2     
 150     2   CHECK: Lower limit of volume averaged electron temperature (te) has been raised 
-135     1   OUTPF: CS not using max current density: further optimisation may be possible   
- Final error identifier                                                   (error_id)                      135     
+ Final error identifier                                                   (error_id)                      150     
  
  ******************************************* End of PROCESS Output ********************************************
  
@@ -1823,7 +1822,6 @@ verbose = 0      * Switch for turning on/off diagnostic messages * turn on diagn
 *-------------Heat Transport Variables-------------*
 etath = 0.375    * Thermal to electric conversion efficiency; input if ipowerflow=0
 fauxbop = 0.032  * Fraction of gross electric power to balance-of-plant
-ffwlg = 0.01     * Fraction of first wall / divertor power to low grade heat
 fpumpblkt = 0.042  * Fraction of total blanket thermal power required
 fpumpdiv = 0.042  * Fraction of total divertor thermal power required
 fpumpfw = 0.042  * Fraction of total first wall thermal power required
