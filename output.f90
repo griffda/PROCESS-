@@ -44,7 +44,7 @@ module process_output
 
   public
 
-  
+
 
 contains
 
@@ -346,7 +346,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-   
+
     !  Arguments
 
     integer, intent(in) :: file
@@ -436,22 +436,22 @@ contains
     dum72 = descr
     dum20 = varnam
     stripped = varnam(2:len(varnam)-1)
-    
+
     if (present(output_flag)) then
         flag = output_flag
-    else 
+    else
         flag = ''
     end if
 
     if (file /= mfile) then
        !MDK add label if it is an iteration variable
-       ! The ITV flag overwrites the output_flag 
+       ! The ITV flag overwrites the output_flag
        if (any(name_xc == stripped))  flag = 'ITV'
-       if (verbose==1) then 
+       if (verbose==1) then
             write(file,10) dum72, dum20, value, flag
        else
             write(file,20) dum72, dum20, value, flag
-       end if                  
+       end if
     end if
 
 10  format(1x,a,t75,a,t100,f13.6, t115, a)
@@ -520,13 +520,13 @@ contains
     stripped = varnam(2:len(varnam)-1)
     if (present(output_flag)) then
         flag = output_flag
-    else 
+    else
         flag = ''
     end if
 
     if (file /= mfile) then
        ! MDK add ITV label if it is an iteration variable
-       ! The ITV flag overwrites the output_flag 
+       ! The ITV flag overwrites the output_flag
        if (any(name_xc == stripped))  flag = 'ITV'
        write(file,20) dum72, dum20, value, flag
     end if
@@ -595,13 +595,13 @@ contains
     stripped = varnam(2:len(varnam)-1)
     if (present(output_flag)) then
         flag = output_flag
-    else 
+    else
         flag = ''
     end if
 
     if (file /= mfile) then
        ! MDK add ITV label if it is an iteration variable
-       ! The ITV flag overwrites the output_flag 
+       ! The ITV flag overwrites the output_flag
        if (any(name_xc == stripped))  flag = 'ITV'
        write(file,20) dum72, dum20, value, flag
     end if
@@ -761,7 +761,7 @@ contains
 
     !  Local variables
 
-    character(len=30) :: dum30    
+    character(len=30) :: dum30
     character(len=20) :: dum20
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -772,8 +772,8 @@ contains
 
     dum30 = descr
     if (present(variable_name)) then
-        dum20 = variable_name    
-    else 
+        dum20 = variable_name
+    else
         dum20 = ''
     end if
 

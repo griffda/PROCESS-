@@ -53,7 +53,9 @@ def write_data(data, mfile_data, outfile, scan):
                     outfile.write('"'+data[i][1]+'",   '+value+'\n')
             else:
                 mfile_data.data[data[i][0]].get_scan(-1)
-                outfile.write("value missing!\n")
+                # Write the data label even if the data is not available.
+                outfile.write('"'+data[i][1]+'",   '+'value missing!'+'\n')
+                #outfile.write("value missing!\n")
         else:
             dat = data[i][0]
             if isinstance(dat, str):

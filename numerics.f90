@@ -819,19 +819,19 @@ module numerics
        !+ad_varc  <LI> (124) qtargettotal : Total power density on target [W/m2]
        'qtargettotal  ',  &
        !+ad_varc  <LI> (125) fimp(3) :  Beryllium density fraction relative to electron density
-       'fimp(3)       ', &
+       'fimp(03)      ', &
        !+ad_varc  <LI> (126) fimp(4) :  Carbon density fraction relative to electron density
-       'fimp(4)       ', &
+       'fimp(04)      ', &
        !+ad_varc  <LI> (127) fimp(5) :  Nitrogen fraction relative to electron density
-       'fimp(5)       ', &
+       'fimp(05)      ', &
        !+ad_varc  <LI> (128) fimp(6) :  Oxygen density fraction relative to electron density
-       'fimp(6)       ', &
+       'fimp(06)      ', &
        !+ad_varc  <LI> (129) fimp(7) :  Neon density fraction relative to electron density
-       'fimp(7)       ', &
+       'fimp(07)      ', &
        !+ad_varc  <LI> (130) fimp(8) :  Silicon density fraction relative to electron density
-       'fimp(8)       ', &
+       'fimp(08)      ', &
        !+ad_varc  <LI> (131) fimp(9) :  Argon density fraction relative to electron density
-       'fimp(9)       ', &
+       'fimp(09)      ', &
        !+ad_varc  <LI> (132) fimp(10) :  Iron density fraction relative to electron density
        'fimp(10)      ', &
        !+ad_varc  <LI> (133) fimp(11) :  Nickel density fraction relative to electron density

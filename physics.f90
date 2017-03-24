@@ -5651,13 +5651,16 @@ contains
        call oblnkl(outfile)
        call ocmmnt(outfile,'Plasma ion densities / electron density:')
        do imp = 1,nimp
+          ! MDK Update fimp, as this will make the ITV output work correctly.
+          fimp(imp)=impurity_arr(imp)%frac
           str1 = impurity_arr(imp)%label // ' concentration'
-          str2 = 'fimp('//int_to_string2(imp)//')'
-          ! MDK Add output flag for H and He, which are calculated
-          if ((imp==1).or.(imp==2)) then
-            call ovarre(outfile,str1,str2,impurity_arr(imp)%frac, 'OP ')
+          str2 = '(fimp('//int_to_string2(imp)//')'
+          ! MDK Add output flag for H which is calculated
+          if (imp==1) then
+            !call ovarre(outfile,str1,str2,impurity_arr(imp)%frac, 'OP ')
+            call ovarre(outfile,str1,str2,fimp(imp), 'OP ')
           else
-            call ovarre(outfile,str1,str2,impurity_arr(imp)%frac)
+            call ovarre(outfile,str1,str2,fimp(imp))
           end if
        end do
     end if
