@@ -167,4 +167,3 @@ plt.show(page2)
 with bpdf.PdfPages("1D divertor profiles.pdf") as pdf:
         pdf.savefig(fig)
         pdf.savefig(page2)
-

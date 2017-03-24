@@ -7,12 +7,21 @@
  
    Program : ./process.exe
    Version : 1.0.9    Release Date :: 2017-03-08
+<<<<<<< HEAD
       User : mkovari
  Directory : /home/mkovari/develop/test_suite
  
  **************************************************************************************************************
  
  PROCESS 1.0.9 : Run on 22 Mar 2017 14:50:52 +00:00(hh:mm) UTC by freia042
+=======
+      User : morrisj
+ Directory : /home/morrisj/Work/fortran/develop_new/test_suite
+ 
+ **************************************************************************************************************
+ 
+ PROCESS 1.0.9 : Run on 22 Mar 2017 15:51:13 +00:00(hh:mm) UTC by localhost.localdomain
+>>>>>>> 3693ffd61d5ff65bf41df16d15087ab5cd145c5e
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
