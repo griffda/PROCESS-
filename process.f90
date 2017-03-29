@@ -1607,7 +1607,7 @@ subroutine output(outfile)
       bt=bt,plascur=plascur, bvert=bvert,q=q, &
       verboseset=.false., lambda_tar=lambda_target,lambda_omp=lambda_q, &
       Ttarget=Ttarget,qtargettotal=qtargettotal,            &
-      targetangle=targetangle,Lcon=Lcon, netau_in=netau, &
+      targetangle=targetangle,lcon_factor=lcon_factor, netau_in=netau, &
       unit_test=.false.,abserrset=1.d-6, helium_enrichment=helium_enrichment, &
       impurity_enrichment=impurity_enrichment,              &
       psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &

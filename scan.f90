@@ -76,7 +76,7 @@ module scan_module
   !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 200
   !+ad_vars  ipnscnv /34/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 36
+  integer, parameter :: ipnscnv = 37
   !+ad_vars  isweep /0/ : number of scan points to calculate
   integer :: isweep = 0
   !+ad_vars  nsweep /1/ : switch denoting quantity to scan:<UL>
@@ -115,7 +115,8 @@ module scan_module
   !+ad_varc          <LI> 33 ttarget
   !+ad_varc          <LI> 34 qtargettotal
   !+ad_varc          <LI> 35 lambda_q
-  !+ad_varc          <LI> 36 lambda_target</UL>
+  !+ad_varc          <LI> 36 lambda_target
+  !+ad_varc          <LI> 37 lcon_factor</UL>
 
   integer :: nsweep = 1
 
@@ -190,7 +191,7 @@ contains
     ! character(len=25) :: xlabel,vlabel
     character(len=48) :: tlabel
 
-    integer, parameter :: noutvars = 66
+    integer, parameter :: noutvars = 68
     integer, parameter :: width = 110
 
     character(len=25), dimension(noutvars), save :: plabel
@@ -288,6 +289,8 @@ contains
        plabel(64) = 'Total_pressure_at_target_'
        plabel(65) = 'Temperature_at_target____'
        plabel(66) = 'Helium_fraction__________'
+       plabel(67) = 'Momentum_loss_factor_____'
+       plabel(68) = 'TotalPowerLost_[W]_______'
 
 
        call ovarin(mfile,'Number of scan points','(isweep)',isweep)
@@ -414,6 +417,9 @@ contains
       case (36)
           lambda_target = sweep(iscan)
           vlabel = 'lambda_target' ; xlabel = 'lambda_q at target (m)'
+      case (37)
+          lcon_factor = sweep(iscan)
+          vlabel = 'lcon_factor' ; xlabel = 'Correction for lcon'
 
 
        case default
@@ -517,6 +523,8 @@ contains
        outvar(64,iscan) = pressure0
        outvar(65,iscan) = ttarget
        outvar(66,iscan) = ralpne
+       outvar(67,iscan) = fmom
+       outvar(68,iscan) = TotalPowerLost
 
 
     end do  !  End of scanning loop

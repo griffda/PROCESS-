@@ -23,7 +23,7 @@ module divertor_ode
   use process_output, only: oblnkl,obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
   use constants
   use process_input, only: lower_case
-  use divertor_kallenbach_variables, only : neratio, pressure0, lengthofwidesol
+  use divertor_kallenbach_variables, only : neratio, pressure0, lengthofwidesol, fmom, TotalPowerLost
 
 
   implicit none
@@ -91,7 +91,7 @@ module divertor_ode
 contains
 
   subroutine divertor_Kallenbach(rmajor,rminor,bt,plascur,bvert,q,verboseset,     &
-             lambda_tar,lambda_omp,ttarget,qtargettotal,targetangle,Lcon,netau_in,&
+             lambda_tar,lambda_omp,ttarget,qtargettotal,targetangle,lcon_factor,netau_in,&
              unit_test,abserrset,helium_enrichment, impurity_enrichment, &
              psep_kallenbach, teomp, neomp,  &
              outfile,iprint)
@@ -187,8 +187,11 @@ contains
     ! target angle [deg]
     real(kind(1.0D0)),intent(in) :: targetangle
 
+    ! target angle [deg]
+    real(kind(1.0D0)),intent(in) :: lcon_factor
+
     ! connection length from omp to target [m]
-    real(kind(1.0D0)) :: Lcon
+    real(kind(1.0D0)) :: lcon
 
     ! "non-coronal parameter" for radiative loss function [ms.1e20/m3]
     real(kind(1.0D0)), intent(in) :: netau_in
@@ -309,9 +312,6 @@ contains
     !+ad_vars  balance : Power balance error - should be zero [W]
     real(kind(1.0D0)) :: balance
 
-    !+ad_vars  fmom : momentum loss factor [-]
-    real(kind(1.0D0)) :: fmom
-
     ! Plasma thermal pressure
     real(kind(1.0D0)) :: nete
 
@@ -349,9 +349,6 @@ contains
     ! Combined weighted radiative loss function
     real(kind(1.0D0)) :: LzTotal
 
-    !+ad_vars  TotalPowerLost : Total power lost due to radiation, ionisation and recombination [W]
-    real(kind(1.0D0)) :: TotalPowerLost
-
     !+ad_vars  WettedArea : Wetted area of target [m2]
     real(kind(1.0D0)) :: WettedArea
 
@@ -388,10 +385,7 @@ contains
     ! Connection length from OMP to target
     ! Start with the simplest approximation for elongated plasma
     ! q is 95. kappa is for the separatrix, perhaps.
-    ! Lcon is calculated if not input (still has default value = -1)
-    if(Lcon .le. 0.0) then
-        Lcon = pi*q*rmajor
-    end if
+    lcon = lcon_factor*pi*q*rmajor
 
     ! Set module level variables with values
     lambda_target = lambda_tar
@@ -630,7 +624,7 @@ contains
     y(10)=0.           ! Y(10)= integral of power loss due to electron impact ionisation [MW]
 
     ! Use logarithmic spacing for the x values along the SOL
-    factor = 10.0D0**(log10(Lcon/step0)/real(step_num))
+    factor = 10.0D0**(log10(lcon/step0)/real(step_num))
 
     ! Set initial x (ODE, T) value to step
     xout = step0
@@ -827,11 +821,7 @@ contains
     call ocmmnt(outfile, 'For graphical output use kallenbach_plotting.py')
     call osubhd(outfile, 'Global SOL properties :')
 
-    if(Lcon.gt.0.0) then
-        call ovarre(outfile, 'Connection length:  [m]','(Lcon)', Lcon, 'OP ')
-    else
-        call ovarre(outfile, 'Connection length:  [m]','(Lcon)', Lcon)
-    endif
+    call ovarre(outfile, 'Connection length:  [m]','(lcon)', lcon, 'OP ')
 
     call ovarre(outfile, 'Parameter for approach to local equilibrium  [ms.1e20/m3]','(netau)', netau)
     call ovarre(outfile, 'Typical SOL temperature, used only for estimating zeff_div [eV] ','(ttypical)', ttypical)
@@ -1314,13 +1304,14 @@ subroutine kallenbach_test()
 
   integer :: i
 
-  real(kind(1.0D0))::rmajor, rminor, bt, plascur, dummy, dummy2, dummy3
+  real(kind(1.0D0))::rmajor, rminor, bt, plascur, lcon_factor,dummy, dummy2, dummy3
 
   ! This section just for reproducing the original numbers
   rmajor = 8.0D0
   rminor = 2.75D0
   bt = 4.00972D0*(rmajor + rminor)/rmajor
   plascur = 1.33542D0*(2.0D0*pi*rminor)/rmu0
+  lcon_factor = 100.0D0 / (pi*3.0D0*rmajor)
 
   call oheadr(nout, 'Divertor: Kallenbach 1D Model - TESTS - ')
   call osubhd(nout, 'Inputs :')
@@ -1345,7 +1336,7 @@ subroutine kallenbach_test()
                            verboseset=.false.,          &
                            lambda_tar=0.005D0,lambda_omp=0.002D0 ,         &
                            ttarget=2.3D0,qtargettotal=4.175D6,                  &
-                           targetangle=10.0D0,Lcon=100.0D0,            &
+                           targetangle=10.0D0,lcon_factor=100.0D0,            &
                            netau_in=0.5D0,unit_test=.false.,abserrset=1.0D-6,     &
                            helium_enrichment=1.0D0, impurity_enrichment=1.0D0,   &
                            psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3, &

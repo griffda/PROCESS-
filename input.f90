@@ -732,7 +732,7 @@ contains
        case ('impvar')
           call parse_int_variable('impvar', impvar, 3, nimp, &
                'Index for impurity fraction iteration variable')
-          write(outfile,*) 'impvar is now deprecated - use iteration variables 125-136 instead.'   
+          write(outfile,*) 'impvar is now deprecated - use iteration variables 125-136 instead.'
        case ('ipedestal')
           call parse_int_variable('ipedestal', ipedestal, 0, 1, &
                'Switch for plasma profile type')
@@ -1189,9 +1189,9 @@ contains
        case ('lambda_q')
           call parse_real_variable('lambda_q', lambda_q, 0.0001D0, 1.0D0, &
                'SOL power fall-off length at the outer midplane, perpendicular to field [m]')
-       case ('lcon')
-          call parse_real_variable('lcon', lcon, 1.0D0, 1.0D4, &
-               'Connection length: length of a "typical" field-line in the SOL from outer midplane to divertor target [m]')
+       case ('lcon_factor')
+          call parse_real_variable('lcon_factor', lcon_factor, 1.0D-1, 1.0D1, &
+               'Correction factor for connection length from OMP to divertor')
        case ('netau')
           call parse_real_variable('netau', netau, 0.1D0, 1.0D5, &
                'Parameter describing the degree to which local ionisation equilibrium is reached in the SOL. [ms.1e20/m3]')

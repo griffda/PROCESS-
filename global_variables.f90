@@ -946,9 +946,9 @@ module divertor_kallenbach_variables
   !+ad_vars  lambda_q /0.002/ : SOL power fall-off length at the outer midplane, perpendicular to field [m]
   real(kind(1.0D0)) :: lambda_q = 0.002D0
 
-  !+ad_vars  lcon : Connection length: length of a "typical" field-line in the SOL from outer midplane
-  !+ad_varc         to divertor target [m].  Calculated if not input
-  real(kind(1.0D0)) :: lcon = -1.0D0
+  !+ad_vars  lcon_factor /1.0/ : Correction factor for connection length from OMP to divertor =
+  !+ad_varc                      connection length/(pi*q*rmajor)
+  real(kind(1.0D0)) :: lcon_factor = 1.0D0
 
   !+ad_vars  netau /0.5/ : Parameter describing the departure from local ionisation equilibrium in the SOL. [ms.1e20/m3]
   real(kind(1.0D0)) :: netau = 0.5D0
@@ -987,6 +987,12 @@ module divertor_kallenbach_variables
 
   !+ad_vars  lengthofwidesol /5.0/ : Distance from target at which SOL power fall-off length changes [m]
   real(kind(1.0D0)) :: lengthofwidesol = 5.0D0
+
+  !+ad_vars  fmom : momentum loss factor [-]
+  real(kind(1.0D0)), public :: fmom
+
+  !+ad_vars  TotalPowerLost : Total power lost due to radiation, ionisation and recombination [W]
+  real(kind(1.0D0)), public :: TotalPowerLost
 
 end module divertor_kallenbach_variables
 

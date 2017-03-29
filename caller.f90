@@ -285,12 +285,12 @@ subroutine caller(xc,nvars)
   ! 4    |  KIT HCLL model
 
   if (iblanket == 1) then           ! CCFE HCPB model
-	   call ccfe_hcpb(nout, 0)
+      call ccfe_hcpb(nout, 0)
   else if (iblanket == 2) then      ! KIT HCPB model
      call kit_hcpb(nout, 0)
   else if (iblanket == 3) then      ! CCFE HCPB model with Tritium Breeding Ratio calculation
      call ccfe_hcpb(nout, 0)
-	   call tbr_shimwell(nout, 0, breeder_f, li6enrich, iblanket_thickness, tbr)
+     call tbr_shimwell(nout, 0, breeder_f, li6enrich, iblanket_thickness, tbr)
   else if (iblanket == 4) then      ! KIT HCLL model
      call kit_hcll(nout, 0)
   end if
@@ -307,15 +307,15 @@ subroutine caller(xc,nvars)
         verboseset=.false.,                                   &
         lambda_tar=lambda_target,lambda_omp=lambda_q,         &
         Ttarget=Ttarget,qtargettotal=qtargettotal,            &
-        targetangle=targetangle,Lcon=Lcon, &
+        targetangle=targetangle,lcon_factor=lcon_factor, &
         netau_in=netau,unit_test=.false.,abserrset=1.d-6,     &
         helium_enrichment=helium_enrichment,                  &
         impurity_enrichment=impurity_enrichment,              &
         psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
-        outfile=nout,iprint=0 )                               
+        outfile=nout,iprint=0 )
 
   else if(kallenbach_switch.eq.0) then
-  
+
     ! Old Divertor Model ! Comment this out MDK 30/11/16
     call divcall(nout,0)
 
