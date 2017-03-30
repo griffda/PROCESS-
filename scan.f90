@@ -191,7 +191,7 @@ contains
     ! character(len=25) :: xlabel,vlabel
     character(len=48) :: tlabel
 
-    integer, parameter :: noutvars = 68
+    integer, parameter :: noutvars = 82
     integer, parameter :: width = 110
 
     character(len=25), dimension(noutvars), save :: plabel
@@ -291,6 +291,20 @@ contains
        plabel(66) = 'Helium_fraction__________'
        plabel(67) = 'Momentum_loss_factor_____'
        plabel(68) = 'TotalPowerLost_[W]_______'
+       plabel(69) = 'H__concentration_________'
+       plabel(70) = 'He_concentration_________'
+       plabel(71) = 'Be_concentration_________'
+       plabel(72) = 'C__concentration_________'
+       plabel(73) = 'N__concentration_________'
+       plabel(74) = 'O__concentration_________'
+       plabel(75) = 'Ne_concentration_________'
+       plabel(76) = 'Si_concentration_________'
+       plabel(77) = 'Ar_concentration_________'
+       plabel(78) = 'Fe_concentration_________'
+       plabel(79) = 'Ni_concentration_________'
+       plabel(80) = 'Kr_concentration_________'
+       plabel(81) = 'Xe_concentration_________'
+       plabel(82) = 'W__concentration_________'
 
 
        call ovarin(mfile,'Number of scan points','(isweep)',isweep)
@@ -525,6 +539,20 @@ contains
        outvar(66,iscan) = ralpne
        outvar(67,iscan) = fmom
        outvar(68,iscan) = TotalPowerLost
+       outvar(69,iscan) = fimp(1)
+       outvar(70,iscan) = fimp(2)
+       outvar(71,iscan) = fimp(3)
+       outvar(72,iscan) = fimp(4)
+       outvar(73,iscan) = fimp(5)
+       outvar(74,iscan) = fimp(6)
+       outvar(75,iscan) = fimp(7)
+       outvar(76,iscan) = fimp(8)
+       outvar(77,iscan) = fimp(9)
+       outvar(78,iscan) = fimp(10)
+       outvar(79,iscan) = fimp(11)
+       outvar(80,iscan) = fimp(12)
+       outvar(81,iscan) = fimp(13)
+       outvar(82,iscan) = fimp(14)
 
 
     end do  !  End of scanning loop

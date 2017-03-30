@@ -1132,8 +1132,9 @@ subroutine doopt(ifail)
   if (ifail /= 1) then
      call ovarin(nout,'VMCON error flag','(ifail)',ifail)
   end if
-  ! MDK call ovarre(nout,'Figure of merit objective function','(f)',f)
+  
   call ovarre(nout,'Square root of the sum of squares of the constraint residuals','(sqsumsq)',sqsumsq, 'OP ')
+  call ovarin(nout,'Number of VMCON iterations','(nviter)',nviter, 'OP ')
   call oblnkl(nout)
 
 ! MDK Try cleaner code, one line output
