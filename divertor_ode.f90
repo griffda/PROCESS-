@@ -44,6 +44,7 @@ module divertor_ode
   real(kind(1.0D0)), public :: impurity_concs(nimp)
 
   ! relative ion mass
+  ! Why not 2.5? TODO
   real(kind(1.0D0)), private :: aplas=2.0D0
 
   ! ion mass [kg]
@@ -490,7 +491,7 @@ contains
 
     ! useful parameter combinations
     eightemi = 8.0D0*echarge*mi
-    eightemi48 = eightemi*1.0D48
+    eightemi48 = 8.0D0*echarge*mi*1.0D48
     elEion = echarge*Eion
 
     ! Ratio of poloidal and toroidal fields at OMP (equation 1 of Kallenbach paper)
@@ -1091,7 +1092,7 @@ contains
     qperp_total = Power/A_cross
 
     ! Convective heat flux is positive
-    qperp_conv= -(5.*echarge*Te + 0.5*mi*v**2)*nv
+    qperp_conv= -(5.0d0*echarge*Te + 0.5*mi*v**2)*nv
 
     ! conducted heat flux
     qperp_conducted = qperp_total - qperp_conv

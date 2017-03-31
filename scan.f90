@@ -76,7 +76,7 @@ module scan_module
   !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 200
   !+ad_vars  ipnscnv /34/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 37
+  integer, parameter :: ipnscnv = 40
   !+ad_vars  isweep /0/ : number of scan points to calculate
   integer :: isweep = 0
   !+ad_vars  nsweep /1/ : switch denoting quantity to scan:<UL>
@@ -116,7 +116,10 @@ module scan_module
   !+ad_varc          <LI> 34 qtargettotal
   !+ad_varc          <LI> 35 lambda_q
   !+ad_varc          <LI> 36 lambda_target
-  !+ad_varc          <LI> 37 lcon_factor</UL>
+  !+ad_varc          <LI> 37 lcon_factor
+  !+ad_varc          <LI> 38 Neon upper limit
+  !+ad_varc          <LI> 39 Argon upper limit
+  !+ad_varc          <LI> 40 Xenon upper limit</UL>
 
   integer :: nsweep = 1
 
@@ -434,6 +437,15 @@ contains
       case (37)
           lcon_factor = sweep(iscan)
           vlabel = 'lcon_factor' ; xlabel = 'Correction for lcon'
+      case (38)
+          boundu(129) = sweep(iscan)
+          vlabel = 'boundu(129)' ; xlabel = ' Neon upper limit'
+      case (39)
+          boundu(131) = sweep(iscan)
+          vlabel = 'boundu(131)' ; xlabel = ' Argon upper limit'
+      case (40)
+          boundu(135) = sweep(iscan)
+          vlabel = 'boundu(135)' ; xlabel = ' Xenon upper limit'
 
 
        case default
