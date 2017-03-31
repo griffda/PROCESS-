@@ -842,6 +842,7 @@ def main(args):
                 # initiate test object for the test case
                 tests[key] = TestCase(key, drs[key], difference, args)
 
+
                 # run test
                 tests[key].run_test()
 
@@ -856,6 +857,7 @@ def main(args):
             tests[key] = TestCase(key, drs[key], difference, args)
 
             # run test
+            print("Starting test ==>  {0:<40}".format(key))
             tests[key].run_test()
 
             # Output message to terminal
