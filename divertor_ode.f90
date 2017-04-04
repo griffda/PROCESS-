@@ -386,7 +386,10 @@ contains
     ! Connection length from OMP to target
     ! Start with the simplest approximation for elongated plasma
     ! q is 95. kappa is for the separatrix, perhaps.
-    lcon = lcon_factor*pi*q*rmajor
+    ! MDK Issue #494
+    ! lambda_omp is taken to be the relevant radial distance from the separatrix at the OMP.
+    ! `lcon_factor` is still available but not recommended.
+    lcon = lcon_factor * 0.395d0*pi*q*rmajor/lambda_omp**0.196
 
     ! Set module level variables with values
     lambda_target = lambda_tar
@@ -1289,18 +1292,13 @@ subroutine kallenbach_test()
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! Modules to import !
-  !!!!!!!!!!!!!!!!!!!!!
-
   use divertor_ode
   use read_and_get_atomic_data
   use read_radiation
   use constants
   use process_output, only: oblnkl, obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
 
-  implicit none
-
-   ! Subroutine declarations !
+  implicit none!
   !!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   integer :: i
@@ -1312,7 +1310,11 @@ subroutine kallenbach_test()
   rminor = 2.75D0
   bt = 4.00972D0*(rmajor + rminor)/rmajor
   plascur = 1.33542D0*(2.0D0*pi*rminor)/rmu0
-  lcon_factor = 100.0D0 / (pi*3.0D0*rmajor)
+
+  ! MDK Issue #494.
+  ! Invert the equation for lcon to ensure lcon=100 for this test.
+  ! lcon = lcon_factor * 0.395d0*pi*q*rmajor/lambda_omp**0.196
+  lcon_factor = 100.0D0 / (0.395d0*pi*3.0d0*8.0D0/0.002D0**0.196)
 
   call oheadr(nout, 'Divertor: Kallenbach 1D Model - TESTS - ')
   call osubhd(nout, 'Inputs :')
@@ -1337,7 +1339,7 @@ subroutine kallenbach_test()
                            verboseset=.false.,          &
                            lambda_tar=0.005D0,lambda_omp=0.002D0 ,         &
                            ttarget=2.3D0,qtargettotal=4.175D6,                  &
-                           targetangle=10.0D0,lcon_factor=100.0D0,            &
+                           targetangle=10.0D0,lcon_factor=lcon_factor,            &
                            netau_in=0.5D0,unit_test=.false.,abserrset=1.0D-6,     &
                            helium_enrichment=1.0D0, impurity_enrichment=1.0D0,   &
                            psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3, &

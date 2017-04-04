@@ -32,7 +32,7 @@ ftburn   = 1.0 * F-value for minimum burn time
 icc = 15 * L-H power threshold limit
 ixc = 103 * flhthresh
 boundu(103) = 10.0
-flhthresh   = 1.35 * F-value for l-h power threshold
+flhthresh   = 1.5 * F-value for l-h power threshold
 
 icc = 16 * Net electric power lower limit
 fpnetel  = 1.0 * F-value for net electric power
@@ -40,7 +40,7 @@ pnetelin = 500.0 * Required net electric power (Mw)
 
 icc = 24 * Beta upper limit
 ixc = 36 * fbetatry
-fbetatry = 0.5 * F-value for beta limit
+fbetatry = 0.55 * F-value for beta limit
 ixc = 5 * beta
 beta   = 0.035
 
@@ -56,6 +56,7 @@ ixc = 48 * fstrcase
 
 icc = 32 * TF coil conduit stress upper limit
 ixc = 49 * fstrcond
+fstrcond = 0.8
 alstrtf  = 6.0E8 * allowable stress in TF coil (Pa)
 
 icc = 34 * Dump voltage upper limit
@@ -84,7 +85,7 @@ ixc = 110 * ftaulimit: f-value for lower limit on taup/taueff the ratio of alpha
 boundl(110) = 0.001
 boundu(110) = 1.0
 ftaulimit = 1.0
-ralpne   = 0.1 * Thermal alpha density / electron density
+ralpne   = 0.085 * Thermal alpha density / electron density
 *taulimit = 5.0 * Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
 
 
@@ -141,17 +142,17 @@ alstroh = 6.0D8 * allowable TRESCA stress in Central Solenoid structural materia
 
 ixc = 2 * bt
 boundu(2) = 10.0
-bt = 5.3
+bt = 5.0
 
 ixc = 3 * rmajor
 boundl(3) = 8.9
 boundu(3) = 12
-rmajor    = 9.4 * Plasma major radius (m) (iteration variable 3)
+rmajor    = 9.2 * Plasma major radius (m) (iteration variable 3)
 
 ixc = 4 * te
 boundl(4) = 10.0
 boundu(4) = 30.0
-te        = 13.07 * Volume averaged electron temperature (kev)
+te        = 13.0 * Volume averaged electron temperature (kev)
 
 ixc = 10 * hfact
 boundu(10) = 1.1
@@ -166,7 +167,7 @@ tfcth = 1.0
 ixc = 16 * ohcth
 boundl(16) = 0.8
 boundu(16) = 2.0
-ohcth      = 1.0 * Central solenoid thickness (m)
+ohcth      = 0.9 * Central solenoid thickness (m)
 
 ixc = 18 * q
 boundl(18) = 3.0
