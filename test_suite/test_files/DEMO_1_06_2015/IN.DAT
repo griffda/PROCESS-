@@ -245,7 +245,7 @@ fcohbop = 1.000d0,
 RPF2 = -1.825
 *ROUTR = 0.01,
 OHHGHF = 0.9,
-SIGPFALW = 300.0,
+
 isumatpf = 3,
 $END
 

@@ -12,7 +12,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.9 : Run on  4 Apr 2017 14:40:42 +01:00(hh:mm) UTC by freia008
+ PROCESS 1.0.9 : Run on  4 Apr 2017 15:15:23 +01:00(hh:mm) UTC by freia008
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -1562,7 +1562,7 @@ ngrp     = 4 * Number of groups of pf coils;
 ohhghf   = 0.9 * Central solenoid height / tf coil internal height
 rjconpf  = 1.1d7, 1.1d7, 6.d6, 6.d6, 8.d6, 8.0d6, 8.0d6, 8.0d6, * Average winding pack current density of pf coil i (a/m2)
 rpf2     = -1.825 * Offset (m) of radial position of ipfloc=2 pf coils
-sigpfalw = 300.0 * Allowable stress in pf coils/central solenoid (mpa)
+
 zref(1) = 3.6
 zref(2) = 1.2
 zref(3) = 1.0

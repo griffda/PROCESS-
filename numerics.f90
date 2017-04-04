@@ -186,121 +186,121 @@ module numerics
   ! this is tested in input.f90.
   ! The dictionaries will now show icc = 0 by default.
 
-  integer, dimension(ipeqns) :: icc = (/ &
-       0,  &  !  1
-       0,  &  !  2
-       0,  &  !  3
-       0,  &  !  4
-       0,  &  !  5
-       0,  &  !  6
-       0,  &  !  7
-       0,  &  !  8
-       0,  &  !  9
-       0,  &  !  10
-       0,  &  !  11
-       0,  &  !  12
-       0,  &  !  13
-       0,  &  !  14
-       0,  &  !  15
-       0,  &  !  16
-       0,  &  !  17
-       0,  &  !  18
-       0,  &  !  19
-       0,  &  !  20
-       0,  &  !  21
-       0,  &  !  22
-       0,  &  !  23
-       0,  &  !  24
-       0,  &  !  25
-       0,  &  !  26
-       0,  &  !  27
-       0,  &  !  28
-       0,  &  !  29
-       0,  &  !  30
-       0,  &  !  31
-       0,  &  !  32
-       0,  &  !  33
-       0,  &  !  34
-       0,  &  !  35
-       0,  &  !  36
-       0,  &  !  37
-       0,  &  !  38
-       0,  &  !  39
-       0,  &  !  40
-       0,  &  !  41
-       0,  &  !  42
-       0,  &  !  43
-       0,  &  !  44
-       0,  &  !  45
-       0,  &  !  46
-       0,  &  !  47
-       0,  &  !  48
-       0,  &  !  49
-       0,  &  !  50
-       0,  &  !  51
-       0,  &  !  52
-       0,  &  !  53
-       0,  &  !  54
-       0,  &  !  55
-       0,  &  !  56
-       0,  &  !  57
-       0,  &  !  58
-       0,  &  !  59
-       0,  &  !  60
-       0,  &  !  61
-       0,  &  !  62
-       0,  &  !  63
-       0,  &  !  64
-       0,  &  !  65
-       0,  &  !  66
-       0,  &  !  67
-       0,  &  !  68
-       0,  &  !  69
-       0,  &  !  70
-       0,  &  !  71
-       0   &  !  72
-       /)
+  integer, dimension(ipeqns) :: icc = 0
+  !integer, dimension(ipeqns) :: icc = (/ &
+    !    0,  &  !  1
+    !    0,  &  !  2
+    !    0,  &  !  3
+    !    0,  &  !  4
+    !    0,  &  !  5
+    !    0,  &  !  6
+    !    0,  &  !  7
+    !    0,  &  !  8
+    !    0,  &  !  9
+    !    0,  &  !  10
+    !    0,  &  !  11
+    !    0,  &  !  12
+    !    0,  &  !  13
+    !    0,  &  !  14
+    !    0,  &  !  15
+    !    0,  &  !  16
+    !    0,  &  !  17
+    !    0,  &  !  18
+    !    0,  &  !  19
+    !    0,  &  !  20
+    !    0,  &  !  21
+    !    0,  &  !  22
+    !    0,  &  !  23
+    !    0,  &  !  24
+    !    0,  &  !  25
+    !    0,  &  !  26
+    !    0,  &  !  27
+    !    0,  &  !  28
+    !    0,  &  !  29
+    !    0,  &  !  30
+    !    0,  &  !  31
+    !    0,  &  !  32
+    !    0,  &  !  33
+    !    0,  &  !  34
+    !    0,  &  !  35
+    !    0,  &  !  36
+    !    0,  &  !  37
+    !    0,  &  !  38
+    !    0,  &  !  39
+    !    0,  &  !  40
+    !    0,  &  !  41
+    !    0,  &  !  42
+    !    0,  &  !  43
+    !    0,  &  !  44
+    !    0,  &  !  45
+    !    0,  &  !  46
+    !    0,  &  !  47
+    !    0,  &  !  48
+    !    0,  &  !  49
+    !    0,  &  !  50
+    !    0,  &  !  51
+    !    0,  &  !  52
+    !    0,  &  !  53
+    !    0,  &  !  54
+    !    0,  &  !  55
+    !    0,  &  !  56
+    !    0,  &  !  57
+    !    0,  &  !  58
+    !    0,  &  !  59
+    !    0,  &  !  60
+    !    0,  &  !  61
+    !    0,  &  !  62
+    !    0,  &  !  63
+    !    0,  &  !  64
+    !    0,  &  !  65
+    !    0,  &  !  66
+    !    0,  &  !  67
+    !    0,  &  !  68
+    !    0,  &  !  69
+    !    0,  &  !  70
+    !    0,  &  !  71
+    !    0   &  !  72
+    !    /)
 
 
   !+ad_vars  active_constraints(ipeqns) : Logical array showing which constraints are active
   logical, dimension(ipeqns) :: active_constraints = .false.
 
   !+ad_vars  lablcc(ipeqns) : labels describing constraint equations
-  !+ad_varc                   (starred ones are turned on by default):<UL>
   character(len=33), dimension(ipeqns) :: lablcc = (/ &
-       !+ad_varc  <LI> ( 1) * Beta (consistency equation)
+       !+ad_varc  <LI> ( 1) Beta (consistency equation)
        'Beta consistency                 ', &
-       !+ad_varc  <LI> ( 2) * Global power balance (consistency equation)
+       !+ad_varc  <LI> ( 2) Global power balance (consistency equation)
        'Global power balance consistency ', &
        !+ad_varc  <LI> ( 3) Ion power balance
        'Ion power balance                ', &
        !+ad_varc  <LI> ( 4) Electron power balance
        'Electron power balance           ', &
-       !+ad_varc  <LI> ( 5) * Density upper limit
+       !+ad_varc  <LI> ( 5) Density upper limit
        'Density upper limit              ', &
        !+ad_varc  <LI> ( 6) (Epsilon x beta poloidal) upper limit
        '(Epsilon x beta-pol) upper limit ', &
-       !+ad_varc  <LI> ( 7) * Beam ion density (NBI) (consistency equation)
+       !+ad_varc  <LI> ( 7) Beam ion density (NBI) (consistency equation)
        'Beam ion density consistency     ', &
        !+ad_varc  <LI> ( 8) Neutron wall load upper limit
        'Neutron wall load upper limit    ', &
-       !+ad_varc  <LI> ( 9) * Fusion power upper limit
+       !+ad_varc  <LI> ( 9) Fusion power upper limit
        'Fusion power upper limit         ', &
-       !+ad_varc  <LI> (10) * Toroidal field 1/R (consistency equation)
+       !+ad_varc  <LI> (10) Toroidal field 1/R (consistency equation)
        'Toroidal field 1/R consistency   ', &
-       !+ad_varc  <LI> (11) * Radial build (consistency equation)
+       !+ad_varc  <LI> (11) Radial build (consistency equation)
        'Radial build consistency         ', &
        !+ad_varc  <LI> (12) Volt second lower limit (STEADY STATE)
        'Volt second lower limit          ', &
        !+ad_varc  <LI> (13) Burn time lower limit (PULSE)
        'Burn time lower limit            ', &
-       !+ad_varc  <LI> (14) * Neutral beam decay lengths to plasma centre (NBI) (consistency equation)
+       !+ad_varc  <LI> (14) Neutral beam decay lengths to plasma centre (NBI) (consistency equation)
        'NBI decay lengths consistency    ', &
        !+ad_varc  <LI> (15) L-H power threshold limit
        'L-H power threshold limit        ', &
        !+ad_varc  <LI> (16) Net electric power lower limit
        'Net electric power lower limit   ', &
-       !+ad_varc  <LI> (17) * Radiation fraction upper limit
+       !+ad_varc  <LI> (17) Radiation fraction upper limit
        'Radiation fraction upper limit   ', &
        !+ad_varc  <LI> (18) Divertor heat load upper limit
        'Divertor heat load upper limit   ', &
@@ -314,13 +314,13 @@ module numerics
        'Divertor collisionality upper lim', &
        !+ad_varc  <LI> (23) Conducting shell to plasma minor radius ratio upper limit
        'Conducting shell radius upper lim', &
-       !+ad_varc  <LI> (24) * Beta upper limit
+       !+ad_varc  <LI> (24) Beta upper limit
        'Beta upper limit                 ', &
        !+ad_varc  <LI> (25) Peak toroidal field upper limit
        'Peak toroidal field upper limit  ', &
        !+ad_varc  <LI> (26) Central solenoid EOF current density upper limit
        'CS coil EOF current density limit', &
-       !+ad_varc  <LI> (27) * Central solenoid BOP current density upper limit
+       !+ad_varc  <LI> (27) Central solenoid BOP current density upper limit
        'CS coil BOP current density limit', &
        !+ad_varc  <LI> (28) Fusion gain Q lower limit
        'Fusion gain Q lower limit        ', &
@@ -332,13 +332,13 @@ module numerics
        'TF coil case stress upper limit  ', &
        !+ad_varc  <LI> (32) TF coil conduit stress upper limit (SCTF)
        'TF coil conduit stress upper lim ', &
-       !+ad_varc  <LI> (33) * I_op / I_critical (TF coil) (SCTF)
+       !+ad_varc  <LI> (33) I_op / I_critical (TF coil) (SCTF)
        'I_op / I_critical (TF coil)      ', &
        !+ad_varc  <LI> (34) Dump voltage upper limit (SCTF)
        'Dump voltage upper limit         ', &
-       !+ad_varc  <LI> (35) * J_winding pack/J_protection upper limit (SCTF)
+       !+ad_varc  <LI> (35) J_winding pack/J_protection upper limit (SCTF)
        'J_winding pack/J_protection limit', &
-       !+ad_varc  <LI> (36) * TF coil temperature margin lower limit (SCTF)
+       !+ad_varc  <LI> (36) TF coil temperature margin lower limit (SCTF)
        'TF coil temp. margin lower limit ', &
        !+ad_varc  <LI> (37) Current drive gamma upper limit
        'Current drive gamma limit        ', &

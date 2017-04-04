@@ -231,29 +231,30 @@ contains
         end if
     end do
 
-    if (constraints_exist .eqv. .false.) then
-       ! Fill the two arrays that specify the active constraints with defaults
-        active_constraints(1) = .true.
-        active_constraints(2) = .true.
-        active_constraints(5) = .true.
-        active_constraints(7) = .true.
-        active_constraints(9) = .true.
-        active_constraints(11) = .true.
-        active_constraints(14) = .true.
-        active_constraints(17) = .true.
-        active_constraints(24) = .true.
-        active_constraints(27) = .true.
-        active_constraints(33) = .true.
-        active_constraints(35) = .true.
-        active_constraints(36) = .true.
-        j=0
-        do i = 1, ipeqns
-            if (active_constraints(i)) then
-                j = j+1
-                icc(j) = i
-            end if
-        end do
-     end if
+    ! Issue #491.  Remove default constraints.
+    ! if (constraints_exist .eqv. .false.) then
+    !    ! Fill the two arrays that specify the active constraints with defaults
+    !     active_constraints(1) = .true.
+    !     active_constraints(2) = .true.
+    !     active_constraints(5) = .true.
+    !     active_constraints(7) = .true.
+    !     active_constraints(9) = .true.
+    !     active_constraints(11) = .true.
+    !     active_constraints(14) = .true.
+    !     active_constraints(17) = .true.
+    !     active_constraints(24) = .true.
+    !     active_constraints(27) = .true.
+    !     active_constraints(33) = .true.
+    !     active_constraints(35) = .true.
+    !     active_constraints(36) = .true.
+    !     j=0
+    !     do i = 1, ipeqns
+    !         if (active_constraints(i)) then
+    !             j = j+1
+    !             icc(j) = i
+    !         end if
+    !     end do
+    !  end if
 
   end subroutine input
 

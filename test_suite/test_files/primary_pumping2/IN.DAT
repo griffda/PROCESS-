@@ -22,7 +22,7 @@ icc(18) = 35
 icc(19) = 39
 icc(20) = 15
 icc(21) = 56
-icc(22) = 62 
+icc(22) = 62
 
 *---------------Iteration Variables----------------*
 nvar = 39 * Number of iteration variables to use
@@ -81,10 +81,10 @@ boundu(60) = 9.0d4
 ixc(34) = 59 * fcutfsu
 *boundl(59) = 0.66667
 boundl(59) = 0.4
-ixc(35) = 63  * ftpeak (f-value for equation 39) 
+ixc(35) = 63  * ftpeak (f-value for equation 39)
 ixc(36) = 109 * ralpne
 ixc(37) = 110 * ftaulimit
-ixc(38) = 114 * fw_channel_length 
+ixc(38) = 114 * fw_channel_length
 
 ixc(39) = 8   * f-value for epsxβp limit equation (6)
 
@@ -224,7 +224,7 @@ ngrp     = 4 * Number of groups of pf coils;
 ohhghf   = 0.9 * Central solenoid height / tf coil internal height
 rjconpf  = 1.1d7, 1.1d7, 6.d6, 6.d6, 8.d6, 8.0d6, 8.0d6, 8.0d6, * Average winding pack current density of pf coil i (a/m2)
 rpf2     = -1.825 * Offset (m) of radial position of ipfloc=2 pf coils
-sigpfalw = 300.0 * Allowable stress in pf coils/central solenoid (mpa)
+
 zref(1) = 3.6
 zref(2) = 1.2
 zref(3) = 1.0
