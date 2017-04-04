@@ -122,8 +122,8 @@ module calltree_data
   !+ad_desc  <PRE>
   !+ad_desc  depth: 0    1    2    3    4
   !+ad_desc  .      a -- b ------- d -- e
-  !+ad_desc  .       \    \       /       
-  !+ad_desc  .        \----\- c -/        
+  !+ad_desc  .       \    \       /
+  !+ad_desc  .        \----\- c -/
   !+ad_desc  </PRE>
   !+ad_desc  This will be stored as the following linked list of five items:
   !+ad_desc  <PRE>
@@ -418,7 +418,7 @@ integer function read_line(line,command)
   !+ad_desc  <P>The routine returns 0 if a line was read in correctly
   !+ad_desc  (irrespective of whether there was an autodoc command within it),
   !+ad_desc  or -1 if the end of the file has been reached.
-  !+ad_prob  The fact that the function modifies its arguments is 
+  !+ad_prob  The fact that the function modifies its arguments is
   !+ad_prob  deprecated in standard Fortran - this is a standard
   !+ad_prob  methodology by C programmers! Its use here merely keeps
   !+ad_prob  the main program tidy...
@@ -761,7 +761,7 @@ subroutine section_summary(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'summ' command is encountered. 
+  !+ad_desc  This routine is called if a 'summ' command is encountered.
   !+ad_desc  If one is not already open, a 'Summary' section is started
   !+ad_desc  by writing the relevant section header line to the html file.
   !+ad_desc  The given line of text is then written to the html file.
@@ -811,7 +811,7 @@ subroutine section_type(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'type' command is encountered. 
+  !+ad_desc  This routine is called if a 'type' command is encountered.
   !+ad_desc  If one is not already open, a 'Type' section is started
   !+ad_desc  by writing the relevant section header line to the html file.
   !+ad_desc  The given line of text is then written to the html file.
@@ -861,7 +861,7 @@ subroutine section_details(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'desc' command is encountered. 
+  !+ad_desc  This routine is called if a 'desc' command is encountered.
   !+ad_desc  If one is not already open, a 'Details' section is started
   !+ad_desc  by writing the relevant section header line to the html file.
   !+ad_desc  The given line of text is then written to the html file.
@@ -911,7 +911,7 @@ subroutine section_problems(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'prob' command is encountered. 
+  !+ad_desc  This routine is called if a 'prob' command is encountered.
   !+ad_desc  If one is not already open, a 'Known Issues' section is started
   !+ad_desc  by writing the relevant section header line to the html file.
   !+ad_desc  The given line of text is then written to the html file.
@@ -961,7 +961,7 @@ subroutine section_contents(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'cont' command is encountered. 
+  !+ad_desc  This routine is called if a 'cont' command is encountered.
   !+ad_desc  If one is not already open, a 'Contents' section is started
   !+ad_desc  by writing the relevant section header line to the html file,
   !+ad_desc  and an un-numbered list (of bullet points) is started.
@@ -1037,7 +1037,7 @@ subroutine section_arguments(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if an 'args' command is encountered. 
+  !+ad_desc  This routine is called if an 'args' command is encountered.
   !+ad_desc  If one is not already open, an 'Arguments' section is started
   !+ad_desc  by writing the relevant section header line to the html file,
   !+ad_desc  and an un-numbered list (of bullet points) is started.
@@ -1095,7 +1095,7 @@ subroutine section_arguments_cont(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if an 'argc' command is encountered. 
+  !+ad_desc  This routine is called if an 'argc' command is encountered.
   !+ad_desc  If one is not already open, an 'Arguments' section is started
   !+ad_desc  by writing the relevant section header line to the html file,
   !+ad_desc  and an un-numbered list (of bullet points) is started.
@@ -1153,7 +1153,7 @@ subroutine section_calls(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'call' command is encountered. 
+  !+ad_desc  This routine is called if a 'call' command is encountered.
   !+ad_desc  If one is not already open, a 'Routines/Modules Called' section
   !+ad_desc  is started by writing the relevant section header line to the
   !+ad_desc  html file, and an un-numbered list (of bullet points) is started.
@@ -1229,7 +1229,7 @@ subroutine section_history(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'hist' command is encountered. 
+  !+ad_desc  This routine is called if a 'hist' command is encountered.
   !+ad_desc  If one is not already open, a 'History' section is started
   !+ad_desc  by writing the relevant section header line to the html file,
   !+ad_desc  and an un-numbered list (of bullet points) is started.
@@ -1287,7 +1287,7 @@ subroutine section_history_cont(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'hisc' command is encountered. 
+  !+ad_desc  This routine is called if a 'hisc' command is encountered.
   !+ad_desc  If one is not already open, a 'History' section is started
   !+ad_desc  by writing the relevant section header line to the html file,
   !+ad_desc  and an un-numbered list (of bullet points) is started.
@@ -1345,7 +1345,7 @@ subroutine section_status(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'stat' command is encountered. 
+  !+ad_desc  This routine is called if a 'stat' command is encountered.
   !+ad_desc  If one is not already open, a 'Status' section is started
   !+ad_desc  by writing the relevant section header line to the html file,
   !+ad_desc  and an un-numbered list (of bullet points) is started.
@@ -1403,7 +1403,7 @@ subroutine section_status_cont(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'stac' command is encountered. 
+  !+ad_desc  This routine is called if a 'stac' command is encountered.
   !+ad_desc  If one is not already open, a 'Status' section is started
   !+ad_desc  by writing the relevant section header line to the html file,
   !+ad_desc  and an un-numbered list (of bullet points) is started.
@@ -1461,7 +1461,7 @@ subroutine section_variables(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'vars' command is encountered. 
+  !+ad_desc  This routine is called if a 'vars' command is encountered.
   !+ad_desc  If one is not already open, a 'Variables' section is started
   !+ad_desc  by writing the relevant section header line to the html file,
   !+ad_desc  and an un-numbered list (of bullet points) is started.
@@ -1529,7 +1529,7 @@ subroutine section_variables_cont(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'varc' command is encountered. 
+  !+ad_desc  This routine is called if a 'varc' command is encountered.
   !+ad_desc  If one is not already open, a 'Variables' section is started
   !+ad_desc  by writing the relevant section header line to the html file,
   !+ad_desc  and an un-numbered list (of bullet points) is started.
@@ -1589,7 +1589,7 @@ subroutine section_author(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if an 'auth' command is encountered. 
+  !+ad_desc  This routine is called if an 'auth' command is encountered.
   !+ad_desc  If one is not already open, an 'Author' section is started
   !+ad_desc  by writing the relevant section header line to the html file,
   !+ad_desc  and an un-numbered list (of bullet points) is started.
@@ -1643,7 +1643,7 @@ subroutine section_documentation(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'docs' command is encountered. 
+  !+ad_desc  This routine is called if a 'docs' command is encountered.
   !+ad_desc  If one is not already open, a 'Further Documentation' section
   !+ad_desc  is started by writing the relevant section header line to the
   !+ad_desc  html file, and an un-numbered list (of bullet points) is started.
@@ -1701,7 +1701,7 @@ subroutine section_documentation_cont(line,flag)
   !+ad_cont  N/A
   !+ad_args  line : input string : line of text to be written
   !+ad_args  flag : input/output flags object : set of command flags
-  !+ad_desc  This routine is called if a 'docc' command is encountered. 
+  !+ad_desc  This routine is called if a 'docc' command is encountered.
   !+ad_desc  If one is not already open, a 'Further Documentation' section
   !+ad_desc  is started by writing the relevant section header line to the
   !+ad_desc  html file, and an un-numbered list (of bullet points) is started.
@@ -1960,9 +1960,9 @@ subroutine open_vardes(flag)
   call write_to_vardes(string,flag)
 
   call write_to_vardes(html_par,flag)
-  string = 'All other variables shown with a default value can be changed in'
+  string = 'All other variables shown with a default value  '
   call write_to_vardes(string,flag)
-  string = 'the input file.'
+  string = '(including arrays boundl, boundu and sweep) can be changed in the input file.'
   call write_to_vardes(string,flag)
 
   call write_to_vardes(html_par,flag)
@@ -2193,7 +2193,7 @@ subroutine new_parent(name)
   !+ad_args  name : input string : name of routine to be added to list
   !+ad_desc  This routine adds a new entry to the master list of routines,
   !+ad_desc  if a routine of the given name is not already present in the
-  !+ad_desc  linked list. 
+  !+ad_desc  linked list.
   !+ad_prob  None
   !+ad_call  autodoc_data
   !+ad_call  calltree_data
@@ -2393,8 +2393,8 @@ subroutine check_calltree_depth
   !+ad_desc  <PRE>
   !+ad_desc  depth: 0    1    2    3    4
   !+ad_desc  .      a -- b ------- d -- e
-  !+ad_desc  .       \    \       /       
-  !+ad_desc  .        \----\- c -/        
+  !+ad_desc  .       \    \       /
+  !+ad_desc  .        \----\- c -/
   !+ad_desc  </PRE>
   !+ad_desc  However, in the case of programs which contain any
   !+ad_desc  recursive calls (a calls b calls c calls a, for instance)
@@ -2635,7 +2635,7 @@ recursive subroutine descend_tree(subprogram)
   !+ad_type  Subroutine
   !+ad_auth  P J Knight, CCFE, Culham Science Centre
   !+ad_cont  N/A
-  !+ad_args  subprogram : input/output routine type : 
+  !+ad_args  subprogram : input/output routine type :
   !+ad_desc  This routine writes out the calling tree using correctly
   !+ad_desc  indented branches from each entry to show the tree structure.
   !+ad_desc  The routine is recursive so that each child's child is

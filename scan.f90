@@ -123,7 +123,7 @@ module scan_module
 
   integer :: nsweep = 1
 
-  !+ad_vars  sweep(ipnscns) : actual values to use in scan
+  !+ad_vars  sweep(ipnscns) /../: actual values to use in scan
   real(kind(1.0D0)), dimension(ipnscns) :: sweep = 0.0D0
 
 contains

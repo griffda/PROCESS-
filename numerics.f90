@@ -857,8 +857,8 @@ module numerics
   !+ad_vars  ftol /1.0e-4/ : error tolerance for HYBRD
   real(kind(1.0D0)) :: ftol = 1.0D-4
 
-  !+ad_vars  boundl(ipnvars) : lower bounds used on ixc variables during
-  !+ad_varc                    VMCON optimisation runs
+  !+ad_vars  boundl(ipnvars) /../ : lower bounds used on ixc variables during
+  !+ad_varc                         VMCON optimisation runs
   real(kind(1.0D0)), dimension(ipnvars) :: boundl = (/ &
        1.100D0, &  !  1
        0.010D0, &  !  2
@@ -998,8 +998,8 @@ module numerics
        1.00D-8  &  !  136
        /)
 
-  !+ad_vars  boundu(ipnvars) : upper bounds used on ixc variables during
-  !+ad_varc                    VMCON optimisation runs
+  !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
+  !+ad_varc                         VMCON optimisation runs
   real(kind(1.0D0)), dimension(ipnvars) :: boundu = (/ &
        10.00D0, &  !  1
        100.0D0, &  !  2
