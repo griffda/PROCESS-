@@ -5673,8 +5673,11 @@ contains
     call oblnkl(outfile)
 
     call ovarrf(outfile,'Effective charge','(zeff)',zeff, 'OP ')
-    call ovarrf(outfile,'Mass weighted effective charge','(zeffai)',zeffai, 'OP ')
 
+    ! Issue #487.  No idea what zeffai is.
+    ! I haven't removed it as it is used in subroutine rether,
+    !   (routine to find the equilibration power between the ions and electrons)
+    ! call ovarrf(outfile,'Mass weighted effective charge','(zeffai)',zeffai, 'OP ')
 
     call ovarin(outfile,'Plasma profile model','(ipedestal)',ipedestal)
     call ovarrf(outfile,'Density profile factor','(alphan)',alphan)
