@@ -1728,12 +1728,6 @@ contains
 
           !  PF coil settings
 
-       case ('ac1oh')
-          call parse_real_variable('ac1oh', ac1oh, 0.0D0, 1.0D0, &
-               'OH coil cable conduit area (m2)')
-       case ('acsoh')
-          call parse_real_variable('acsoh', acsoh, 1.0D-6, 1.0D0, &
-               'Conduit conductor X-section (m2)')
        case ('alfapf')
           call parse_real_variable('alfapf', alfapf, 1.0D-12, 1.0D0, &
                'PF coil current smoothing parameter')
@@ -1805,9 +1799,6 @@ contains
        case ('sccufac')
           call parse_real_variable('sccufac', sccufac, 0.001D0, 0.1D0, &
                'sc/cu ratio in PF coils per tesla')
-       case ('sigpfalw')
-          call parse_real_variable('sigpfalw', sigpfalw, 1.0D0, 1.0D3, &
-               'Allowable stress in the PF coil (MPa)')
        case ('sigpfcalw')
           call parse_real_variable('sigpfcalw', sigpfcalw, 1.0D0, 1.0D3, &
                'Allowable stress in the PF coil case (MPa)')

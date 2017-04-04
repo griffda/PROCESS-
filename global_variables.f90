@@ -1618,10 +1618,6 @@ module pfcoil_variables
   integer, parameter :: ngc = ngrpmx*nclsmx
   integer, parameter :: ngc2 = ngc+2
 
-  !+ad_vars  ac1oh /0.0/ : central solenoid cable conduit area (m2)
-  real(kind(1.0D0)) :: ac1oh = 0.0D0
-  !+ad_vars  acsoh /3.0e-4/ : conduit conductor cross section (m2)
-  real(kind(1.0D0)) :: acsoh = 3.0D-4
   !+ad_vars  alfapf /5.0e-10/ : smoothing parameter used in PF coil
   !+ad_varc                     current calculation at the beginning of pulse (BoP)
   real(kind(1.0D0)) :: alfapf = 5.0D-10
@@ -1774,9 +1770,6 @@ module pfcoil_variables
   !+ad_vars  sccufac /0.0188/ : ratio of superconductor to copper
   !+ad_varc                     cable at a magnetic field of 1T (RFP coils only)
   real(kind(1.0D0)) :: sccufac = 0.0188D0
-  !+ad_vars  sigpfalw /335.0/ : allowable stress in PF coils/central solenoid (MPa)
-  !+ad_varc                     excluding the steel coil case (OBSOLETE)
-  real(kind(1.0D0)) :: sigpfalw = 335.0D0
   !+ad_vars  sigpfcalw /500.0/ : maximum permissible tensile stress (MPa) in
   !+ad_varc                      steel coil cases for superconducting PF coils
   !+ad_varc                      (ipfres=0)

@@ -100,7 +100,7 @@ module scan_module
   !+ad_varc          <LI> 18 gammax
   !+ad_varc          <LI> 19 boundl(16: ohcth)
   !+ad_varc          <LI> 20 tbrnmn
-  !+ad_varc          <LI> 21 sigpfalw
+  !+ad_varc          <LI> 21 not used
   !+ad_varc          <LI> 22 cfactr (N.B. requires iavail=0)
   !+ad_varc          <LI> 23 boundu(72: fipir)
   !+ad_varc          <LI> 24 powfmax
@@ -385,8 +385,8 @@ contains
           tbrnmn = sweep(iscan)
           vlabel = 'tbrnmn' ; xlabel = 'Minimum_burn_time_(s)'
        case (21)
-          sigpfalw = sweep(iscan)
-          vlabel = 'sigpfalw' ; xlabel = 'Allowable_PF_coil_stress'
+          ! sigpfalw = sweep(iscan)
+          vlabel = 'obsolete' ; xlabel = 'obsolete'
        case (22)
           if (iavail == 1) call report_error(95)
           cfactr = sweep(iscan)
