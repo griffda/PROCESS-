@@ -5682,7 +5682,11 @@ contains
     call ovarin(outfile,'Plasma profile model','(ipedestal)',ipedestal)
     call ovarrf(outfile,'Density profile factor','(alphan)',alphan)
     call ovarrf(outfile,'Density pedestal r/a location','(rhopedn)',rhopedn)
-    call ovarre(outfile,'Electron density pedestal height (/m3)','(neped)',neped)
+    if(iscdens.eq.1)then
+        call ovarre(outfile,'Electron density pedestal height (/m3)','(neped)',neped, 'OP ')
+    else
+        call ovarre(outfile,'Electron density pedestal height (/m3)','(neped)',neped)
+    end if
     fgwped = neped/dlimit(7)
     fgwsep = nesep/dlimit(7)
     call ovarre(outfile,'Electron density at pedestal / nGW','(fgwped)',fgwped)
@@ -5721,7 +5725,7 @@ contains
     call ovarre(outfile,'Charged particle power (excluding alphas) (MW)', '(pchargemw)',pchargemw, 'OP ')
     call ovarre(outfile,'Total power deposited in plasma (MW)','()',falpha*palpmw+pchargemw+pohmmw+pinjmw, 'OP ')
 
-    call osubhd(outfile,'Radiation Power :')
+    call osubhd(outfile,'Radiation Power (excluding SOL):')
     if (imprad_model == 1) then
        call ovarre(outfile,'Bremsstrahlung radiation power (MW)','(pbrempv*vol)', pbrempv*vol, 'OP ')
        call ovarre(outfile,'Line radiation power (MW)','(plinepv*vol)', plinepv*vol, 'OP ')
