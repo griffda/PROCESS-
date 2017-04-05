@@ -2058,17 +2058,17 @@ contains
           select case (isumat)
           case (1,4)
              call itersc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
-             if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
+             if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
              call itersc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
              call itersc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
           case (3)
              call jcrit_nbti(ttest ,bmax,c0,bc20m,tc0m,jcrit0,t)
-             if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
+             if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
              call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
              call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
           case (5)
              call wstsc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
-             if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
+             if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
              call wstsc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
              call wstsc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
           end select

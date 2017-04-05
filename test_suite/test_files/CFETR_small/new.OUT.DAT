@@ -20,7 +20,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.9 : Run on  4 Apr 2017 15:14:36 +01:00(hh:mm) UTC by freia008
+ PROCESS 1.0.9 : Run on  5 Apr 2017  8:55:15 +01:00(hh:mm) UTC by freia025
  Reactor concept design: Steady-state tokamak model, (c) CCFE
  "CFETR small (5.7m) reference file"
  (Please include this header in any models, presentations and papers based on these results)
@@ -254,7 +254,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Average mass of all ions (amu)                                           (aion)                    2.913E+00  OP 
  
  Effective charge                                                         (zeff)                        2.762  OP 
- Mass weighted effective charge                                           (zeffai)                      0.427  OP 
  Plasma profile model                                                     (ipedestal)                       1     
  Density profile factor                                                   (alphan)                      0.250     
  Density pedestal r/a location                                            (rhopedn)                     1.000     

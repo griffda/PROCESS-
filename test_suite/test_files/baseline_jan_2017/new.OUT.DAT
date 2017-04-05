@@ -12,7 +12,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.9 : Run on  4 Apr 2017 15:13:33 +01:00(hh:mm) UTC by freia008
+ PROCESS 1.0.9 : Run on  5 Apr 2017  8:54:42 +01:00(hh:mm) UTC by freia025
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)
@@ -232,7 +232,6 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Average mass of all ions (amu)                                           (aion)                    2.860E+00  OP 
  
  Effective charge                                                         (zeff)                        2.514  OP 
- Mass weighted effective charge                                           (zeffai)                      0.436  OP 
  Plasma profile model                                                     (ipedestal)                       1     
  Density profile factor                                                   (alphan)                      1.000     
  Density pedestal r/a location                                            (rhopedn)                     0.940     

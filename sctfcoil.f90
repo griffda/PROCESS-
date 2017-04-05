@@ -374,7 +374,7 @@ contains
     !  prp = (arp/turnstf) / awptf, hence the trp expression above
 
     arp = turnstf * 4.0D0 * trp*(trp + leno0)
-    
+
     ! Central helium channel down the conductor core
     awphec = turnstf * ((pi/4.0d0)*dhecoil**2)
 
@@ -384,16 +384,16 @@ contains
     acond = acstf * turnstf * (1.0D0-vftf) - awphec
 
     !  Void area in cable for He, not including central channel
-    avwp = acstf * turnstf * vftf    
-    
+    avwp = acstf * turnstf * vftf
+
     !  Insulation area (not including ground-wall)
 
     aiwp = turnstf * (leno0**2 - acndttf - acstf)
 
     !  Area of steel structure in winding pack
     aswp = turnstf*acndttf + arp
-    
-    ! Coil perimeter along its cross-sectional centre (tfleng): 
+
+    ! Coil perimeter along its cross-sectional centre (tfleng):
     ! NOW calculated in  subroutine coilshap
 
     !  TF coil horizontal and vertical bores
@@ -450,11 +450,11 @@ contains
     !  Superconductor.
     !  Includes space allowance for central helium channel, area awphec
     whtconsc = (tfleng * turnstf * acstf*(1.0D0-vftf) * (1.0D0-fcutfsu) - tfleng*awphec) &
-               *dcond(isumattf)     
+               *dcond(isumattf)
 
-    !  Copper         
+    !  Copper
      whtconcu = (tfleng * turnstf * acstf*(1.0D0-vftf) * fcutfsu - tfleng*awphec) &
-                *dcopper     
+                *dcopper
 
     !  Steel conduit (sheath)
     whtconsh = tfleng * turnstf * acndttf * denstl
@@ -702,11 +702,11 @@ contains
     radtf(3) = rbmax
 
     eyoung(1) = eystl
-    
+
     ! include groundwall insulation + insertion gap in thicndut
     ! inertion gap is tfinsgap on 4 sides
     t_ins_eff = thicndut + ((tfinsgap+tinstf)/turnstf)
-    
+
     eyoung(2) = eyngeff(eystl,eyins,eywp,eyrp,trp,t_ins_eff,seff,thwcndut,tcbs)
     !eyoung(2) = eyngeff(eystl,eyins,eywp,eyrp,trp,thicndut,seff,thwcndut,tcbs)
 
@@ -735,14 +735,14 @@ contains
     !  For winding pack region take worst of two walls
     svmxz = sigvm(sigrcon, 0.0D0, sigvert, 0.0D0,0.0D0,0.0D0)
     svmyz = sigvm(0.0D0, sigtcon, sigvert, 0.0D0,0.0D0,0.0D0)
-    
+
     ! von Mises stresses [MPa]
     s_vmises_case = sigvm(sigrtf(1), sigttf(1), sigvert, 0.0D0,0.0D0,0.0D0)
     s_vmises_cond = max(svmxz,svmyz)
 
     ! Tresca stress criterion [Mpa]
     s_tresca_case = max(ABS(sigrtf(1)-sigttf(1)), ABS(sigttf(1)-sigvert), ABS(sigvert-sigrtf(1)))
-    s_tresca_cond = max(ABS(sigrcon-sigtcon), ABS(sigtcon-sigvert), ABS(sigvert-sigrcon)) 
+    s_tresca_cond = max(ABS(sigrcon-sigtcon), ABS(sigtcon-sigvert), ABS(sigvert-sigrcon))
 
     ! Stress to constrain
     strtf1 = s_tresca_cond
@@ -1472,7 +1472,7 @@ contains
     call ovarre(outfile,'Cable conductor + void area (m2)','(acstf)',acstf, 'OP ')
     call ovarre(outfile,'Coolant fraction in cable excluding central channel','(vftf)',vftf)
     call ovarre(outfile,'Diameter of central helium channel in cable','(dhecoil)',dhecoil)
-    
+
     call ovarre(outfile,'Conduit case thickness (m)','(thwcndut)',thwcndut)
     call ovarre(outfile,'Conduit insulation thickness (m)','(thicndut)',thicndut)
 
@@ -1707,7 +1707,7 @@ contains
       ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       ! Rename tdmptf as it is called tdump in this routine and those called from here.
       tdump = tdmptf
-      
+
       fhetot = fhe + (pi/4.0d0)*dhecoil*dhecoil/acs
 
       !  Conductor fraction (including central helium channel)
@@ -1736,7 +1736,7 @@ contains
          !  composition that does not require a user-defined copper fraction,
          !  so this is irrelevant in this model
 
-         !  Previously (wrongly) jstrand = jwp * acs*(1.0D0-fhe)/aturn         
+         !  Previously (wrongly) jstrand = jwp * acs*(1.0D0-fhe)/aturn
          jstrand = jwp * aturn / (acs*(1.0D0-fhetot))
 
          call bi2212(bmax,jstrand,thelium,fhts,jcritstr,tmarg)
@@ -1788,6 +1788,7 @@ contains
 
          !  Newton-Raphson method; start at requested minimum temperature margin
 
+         !ttest = thelium + tmargmin
          ttest = thelium + tmargmin
          delt = 0.01D0
          jtol = 1.0D4
@@ -1808,22 +1809,23 @@ contains
             ttestp = ttest + delt
 
             select case (isumat)
+            ! Issue #483 to be on the safe side, check the fractional as well as the absolute error
 
             case (1,4)
                call itersc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
-               if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
+               if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
                call itersc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
                call itersc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
 
             case (3)
                call jcrit_nbti(ttest ,bmax,c0,bc20m,tc0m,jcrit0,t)
-               if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
+               if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
                call jcrit_nbti(ttestm,bmax,c0,bc20m,tc0m,jcritm,t)
                call jcrit_nbti(ttestp,bmax,c0,bc20m,tc0m,jcritp,t)
 
             case (5)
                call wstsc(ttest ,bmax,strain,bc20m,tc0m,jcrit0,b,t)
-               if (abs(jsc-jcrit0) <= jtol) exit solve_for_tmarg
+               if ((abs(jsc-jcrit0) <= jtol).and.(abs((jsc-jcrit0)/jsc) <= 0.01)) exit solve_for_tmarg
                call wstsc(ttestm,bmax,strain,bc20m,tc0m,jcritm,b,t)
                call wstsc(ttestp,bmax,strain,bc20m,tc0m,jcritp,b,t)
 
@@ -2199,7 +2201,7 @@ contains
     !+ad_call  report_error
     !+ad_hist  22/02/17 JM  Initial version
     !+ad_stat  Okay
-    !+ad_docs  https://idm.euro-fusion.org/?uid=2MMDTG 
+    !+ad_docs  https://idm.euro-fusion.org/?uid=2MMDTG
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -2211,7 +2213,7 @@ contains
     real(kind(1.0D0)), intent(out) :: jcrit, bcrit, tcrit
 
     ! Local variables
-    
+
     ! Scaling constant C [AT/mm2]
     real(kind(1.0D0)), parameter :: csc = 83075.0D0
 
@@ -2223,13 +2225,13 @@ contains
 
     ! Strain fitting constant C_{a1}
     real(kind(1.0D0)), parameter :: ca1 = 50.06D0
-    
+
     ! Strain fitting constant C_{a2}
     real(kind(1.0D0)), parameter :: ca2 = 0.0D0
 
     ! epsilon_{0,a}
-    real(kind(1.0D0)), parameter :: eps0a = 0.00312D0  
-    
+    real(kind(1.0D0)), parameter :: eps0a = 0.00312D0
+
     real(kind(1.0D0)), parameter :: epsmax = -1.1D-3  !  epsilon_{max} (not used)
 
     real(kind(1.0D0)) :: bred, epssh, t, bc20eps, &
