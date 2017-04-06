@@ -308,7 +308,7 @@ subroutine caller(xc,nvars)
         lambda_tar=lambda_target,lambda_omp=lambda_q,         &
         Ttarget=Ttarget,qtargettotal=qtargettotal,            &
         targetangle=targetangle,lcon_factor=lcon_factor, &
-        netau_in=netau,unit_test=.false.,abserrset=1.d-6,     &
+        netau_in=netau,unit_test=.false.,abserrset=1.d-5,     &
         helium_enrichment=helium_enrichment,                  &
         impurity_enrichment=impurity_enrichment,              &
         psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &

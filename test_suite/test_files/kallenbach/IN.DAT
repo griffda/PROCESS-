@@ -80,7 +80,7 @@ ixc = 54 * ftmargtf
 icc = 62  * taup/taueff the ratio of particle to energy confinement times
 ixc = 109 * ralpne  Thermal alpha density / electron density
 boundl(109) = 0.01
-boundu(109) = 0.2
+boundu(109) = 0.15
 ixc = 110 * ftaulimit: f-value for lower limit on taup/taueff the ratio of alpha particle to energy confinement
 boundl(110) = 0.001
 boundu(110) = 1.0
@@ -210,7 +210,7 @@ gapds      = 0.02 * Gap between inboard vacuum vessel and tf coil (m)
 ixc = 113 *ftaucq
 
 ixc = 117 *fpsepbqar
-fpsepbqar = 7.0E-01
+fpsepbqar = 9.0E-01
 
 ixc = 60 * cpttf
 boundl(60) = 6.0e4
@@ -227,12 +227,9 @@ oh_steel_frac = 8.6E-01 * central solenoid steel fraction (iteration variable 12
 ixc = 124 * qtargettotal : Total power density on target [W/m2]
 boundl(124) = 1.0e6
 boundu(124) = 10.0e6
-qtargettotal = 3.0e6       * Power density on target including surface recombination [W/m2]
+qtargettotal = 2.0e6       * Power density on target including surface recombination [W/m2]
 
-ixc = 131  * fimp(9) : Argon density fraction relative
-boundl(131) = 1.0e-10
-boundu(131) = 0.01
-fimp(9) = 0.001
+
 *-----------------Build Variables------------------*
 blnkith  = 0.755 * Inboard blanket thickness (m);
 blnkoth  = 1.275 * Outboard blanket thickness (m);
@@ -302,12 +299,17 @@ fimp(5) = 0.0
 fimp(6) = 0.0
 fimp(7) = 0.0
 fimp(8) = 0.0
-*fimp(9) = 0.0
+fimp(9) = 0.0
 fimp(10) = 0.0
 fimp(11) = 0.0
 fimp(12) = 0.0
-fimp(13) = 0.000
+*
 fimp(14) = 5e-05
+
+ixc = 135   * fimp(13) : Xenon density fraction relative to electron density
+boundl(135) = 1.0e-10
+boundu(135) = 0.01
+fimp(13) = 0.0005
 
 *---------------------Numerics---------------------*
 ioptimz  = 1 * for optimisation VMCON only

@@ -13,7 +13,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.9 : Run on  5 Apr 2017  8:54:51 +01:00(hh:mm) UTC by freia025
+ PROCESS 1.0.9 : Run on  6 Apr 2017 15:33:54 +01:00(hh:mm) UTC by freia047
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  demoa 1 ralpne  * Short descriptive title for the run
  (Please include this header in any models, presentations and papers based on these results)
@@ -349,7 +349,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma profile model                                                     (ipedestal)                       1     
  Density profile factor                                                   (alphan)                      1.000     
  Density pedestal r/a location                                            (rhopedn)                     0.940     
- Electron density pedestal height (/m3)                                   (neped)                   6.282E+19     
+ Electron density pedestal height (/m3)                                   (neped)                   6.282E+19  OP 
  Electron density at pedestal / nGW                                       (fgwped)                  8.500E-01     
  Electron density at separatrix (/m3)                                     (nesep)                   3.695E+19     
  Electron density at separatrix / nGW                                     (fgwsep)                  5.000E-01     
@@ -386,7 +386,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Charged particle power (excluding alphas) (MW)                           (pchargemw)               1.352E+00  OP 
  Total power deposited in plasma (MW)                                     ()                        3.964E+02  OP 
  
- Radiation Power :
+ Radiation Power (excluding SOL):
  
  Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             6.666E+01  OP 
  Line radiation power (MW)                                                (plinepv*vol)             1.626E+02  OP 
@@ -1821,7 +1821,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma profile model                                                     (ipedestal)                       1     
  Density profile factor                                                   (alphan)                      1.000     
  Density pedestal r/a location                                            (rhopedn)                     0.940     
- Electron density pedestal height (/m3)                                   (neped)                   6.282E+19     
+ Electron density pedestal height (/m3)                                   (neped)                   6.282E+19  OP 
  Electron density at pedestal / nGW                                       (fgwped)                  8.500E-01     
  Electron density at separatrix (/m3)                                     (nesep)                   3.695E+19     
  Electron density at separatrix / nGW                                     (fgwsep)                  5.000E-01     
@@ -1858,7 +1858,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Charged particle power (excluding alphas) (MW)                           (pchargemw)               1.352E+00  OP 
  Total power deposited in plasma (MW)                                     ()                        3.964E+02  OP 
  
- Radiation Power :
+ Radiation Power (excluding SOL):
  
  Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             6.665E+01  OP 
  Line radiation power (MW)                                                (plinepv*vol)             1.626E+02  OP 
@@ -3294,7 +3294,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Plasma profile model                                                     (ipedestal)                       1     
  Density profile factor                                                   (alphan)                      1.000     
  Density pedestal r/a location                                            (rhopedn)                     0.940     
- Electron density pedestal height (/m3)                                   (neped)                   6.359E+19     
+ Electron density pedestal height (/m3)                                   (neped)                   6.359E+19  OP 
  Electron density at pedestal / nGW                                       (fgwped)                  8.500E-01     
  Electron density at separatrix (/m3)                                     (nesep)                   3.740E+19     
  Electron density at separatrix / nGW                                     (fgwsep)                  5.000E-01     
@@ -3331,7 +3331,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Charged particle power (excluding alphas) (MW)                           (pchargemw)               1.378E+00  OP 
  Total power deposited in plasma (MW)                                     ()                        3.986E+02  OP 
  
- Radiation Power :
+ Radiation Power (excluding SOL):
  
  Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             6.996E+01  OP 
  Line radiation power (MW)                                                (plinepv*vol)             1.561E+02  OP 

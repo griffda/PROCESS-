@@ -20,7 +20,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.9 : Run on  5 Apr 2017  8:55:15 +01:00(hh:mm) UTC by freia025
+ PROCESS 1.0.9 : Run on  6 Apr 2017 15:35:01 +01:00(hh:mm) UTC by freia047
  Reactor concept design: Steady-state tokamak model, (c) CCFE
  "CFETR small (5.7m) reference file"
  (Please include this header in any models, presentations and papers based on these results)
@@ -294,7 +294,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Charged particle power (excluding alphas) (MW)                           (pchargemw)               1.354E-01  OP 
  Total power deposited in plasma (MW)                                     ()                        1.373E+02  OP 
  
- Radiation Power :
+ Radiation Power (excluding SOL):
  
  Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             1.921E+01  OP 
  Line radiation power (MW)                                                (plinepv*vol)             2.576E+01  OP 

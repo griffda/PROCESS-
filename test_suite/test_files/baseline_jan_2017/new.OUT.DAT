@@ -12,7 +12,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.9 : Run on  5 Apr 2017  8:54:42 +01:00(hh:mm) UTC by freia025
+ PROCESS 1.0.9 : Run on  6 Apr 2017 15:35:15 +01:00(hh:mm) UTC by freia047
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Run Title (change this line using input variable 'runtitle')
  (Please include this header in any models, presentations and papers based on these results)
@@ -272,7 +272,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Charged particle power (excluding alphas) (MW)                           (pchargemw)               1.641E+00  OP 
  Total power deposited in plasma (MW)                                     ()                        4.346E+02  OP 
  
- Radiation Power :
+ Radiation Power (excluding SOL):
  
  Bremsstrahlung radiation power (MW)                                      (pbrempv*vol)             9.312E+01  OP 
  Line radiation power (MW)                                                (plinepv*vol)             1.529E+02  OP 

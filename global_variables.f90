@@ -1092,14 +1092,6 @@ module divertor_variables
   real(kind(1.0D0)) :: omegan = 1.0D0
   !+ad_vars  omlarg : power spillage to private flux factor
   real(kind(1.0D0)) :: omlarg = 0.0D0
-  !+ad_vars  plleni /1.0/ : length of inboard divertor plate (m)
-  real(kind(1.0D0)) :: plleni = 1.0D0
-  !+ad_vars  plleno /1.0/ : length of outboard divertor plate (m)
-  real(kind(1.0D0)) :: plleno = 1.0D0
-  !+ad_vars  plsepi /1.0/ : poloidal length, x-point to inboard strike point (m)
-  real(kind(1.0D0)) :: plsepi = 1.0D0
-  !+ad_vars  plsepo /1.5/ : poloidal length, x-point to outboard strike point (m)
-  real(kind(1.0D0)) :: plsepo = 1.5D0
   !+ad_vars  ppdivr : peak heat load at plate (with radiation) (MW/m2)
   real(kind(1.0D0)) :: ppdivr = 0.0D0
   !+ad_vars  prn1 /0.285/ : n-scrape-off / n-average plasma;
@@ -1115,8 +1107,6 @@ module divertor_variables
   real(kind(1.0D0)) :: rlenmax = 0.5D0
   !+ad_vars  rsrd : effective separatrix/divertor radius ratio
   real(kind(1.0D0)) :: rsrd = 0.0D0
-  !+ad_vars  rspo : outboard strike point radius (m)
-  real(kind(1.0D0)) :: rspo = 0.0D0
   !+ad_vars  tconl : main plasma connection length (m)
   real(kind(1.0D0)) :: tconl = 0.0D0
   !+ad_vars  tdiv /2.0/ : temperature at divertor (eV)
@@ -3077,6 +3067,18 @@ module build_variables
   real(kind(1.0D0)) :: vgaptop = 0.60D0
   !+ad_vars  vvblgap /0.05/ : gap between vacuum vessel and blanket (m)
   real(kind(1.0D0)) :: vvblgap = 0.05D0
+
+  !+ad_vars  plleni /1.0/ : length of inboard divertor plate (m)
+  real(kind(1.0D0)) :: plleni = 1.0D0
+  !+ad_vars  plleno /1.0/ : length of outboard divertor plate (m)
+  real(kind(1.0D0)) :: plleno = 1.0D0
+  !+ad_vars  plsepi /1.0/ : poloidal length, x-point to inboard strike point (m)
+  real(kind(1.0D0)) :: plsepi = 1.0D0
+  !+ad_vars  plsepo /1.5/ : poloidal length, x-point to outboard strike point (m)
+  real(kind(1.0D0)) :: plsepo = 1.5D0
+  !+ad_vars  rspo : outboard strike point radius (m)
+  real(kind(1.0D0)) :: rspo = 0.0D0
+
 
 end module build_variables
 
