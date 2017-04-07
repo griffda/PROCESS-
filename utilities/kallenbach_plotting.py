@@ -44,6 +44,19 @@ per_column = list(zip(*per_row))
 # 19 - y8
 # 20 - y9
 # 21 - y10
+# 22 - He
+# 23 - Be
+# 24 - C
+# 25 - N
+# 26 - O
+# 27 - Ne
+# 28 - Si
+# 29 - Ar
+# 30 - Fe
+# 31 - Ni
+# 32 - Kr
+# 33 - Xe
+# 34 - W
 
 # First page
 fig = plt.figure(figsize=(12, 9))
@@ -69,6 +82,23 @@ y7_mw = np.array([float(x) for x in per_column[18]])
 y8_mw = np.array([float(x) for x in per_column[19]])
 y9_mw = np.array([float(x) for x in per_column[20]])
 y10_mw = np.array([float(x) for x in per_column[21]])
+
+He_mw = [float(x)/1e6 for x in per_column[22]]
+Be_mw = [float(x)/1e6 for x in per_column[23]]
+C_mw = [float(x)/1e6 for x in per_column[24]]
+N_mw = [float(x)/1e6 for x in per_column[25]]
+O_mw = [float(x)/1e6 for x in per_column[26]]
+Ne_mw = [float(x)/1e6 for x in per_column[27]]
+Si_mw = [float(x)/1e6 for x in per_column[28]]
+Ar_mw = [float(x)/1e6 for x in per_column[29]]
+Fe_mw = [float(x)/1e6 for x in per_column[30]]
+Ni_mw = [float(x)/1e6 for x in per_column[31]]
+Kr_mw = [float(x)/1e6 for x in per_column[32]]
+Xe_mw = [float(x)/1e6 for x in per_column[33]]
+W_mw = [float(x)/1e6 for x in per_column[34]]
+
+
+
 # Total power emitted by the SOL does not include the ionisation loss
 power_loss_integral = y7_mw + y8_mw + y9_mw
 spherical_power_load = power_loss_integral / (4*3.142*(xpar*0.5)**2)
@@ -113,7 +143,7 @@ ax_2.loglog(per_column[1], hrad_mw, label="H rad")
 ax_2.loglog(per_column[1], cx_mw, label="CX")
 ax_2.loglog(per_column[1], im_mw, label="Imp rad")
 ax_2.loglog(per_column[1], ion_mw, label="Ionisation")
-#ax_2.set_ylim([1, 20000])
+
 ax_2.set_ylim(ymin=1)
 ax_2.legend(loc=1, prop={'size': 8})
 ax_2.plot((x_max, x_max), (0.001, 10000), ls='dashed', color="black")
@@ -142,14 +172,14 @@ ax_8.set_xlabel("$x\parallel B$ (m)", fontsize=14)
 ax_8.legend(loc=3, prop={'size': 12})
 ax_8.plot((x_max, x_max), (0.1, 1), ls='dashed', color="black")
 
-# Second page plots: First row
+# Second page plots
+# Row 1
 ax_9 = page2.add_subplot(421)
 ax_9.plot(per_column[1], power_loss_integral, label="Integrated power emission from SOL")
 ax_9.set_xlim([0.0, 0.015])
 ymax = power_loss_integral[-1]
 ymax = round(ymax/50 + 0.5) * 50
 #ax_9.set_ylim([0, ymax])
-ax_9.set_xlabel("$x\parallel B$ (m)", fontsize=14)
 ax_9.set_ylabel("(MW)")
 ax_9.legend(loc=1, prop={'size': 8})
 
@@ -160,6 +190,76 @@ ax_10.set_xlim([0.014, 200])
 ax_10.set_xlabel("$x\parallel B$ (m)", fontsize=14)
 ax_10.legend(loc=4, prop={'size': 8})
 ax_10.plot((x_max, x_max), (0.001, 50), ls='dashed', color="black")
+
+# Row 2
+ax_11 = page2.add_subplot(423, sharex=ax_9)
+ax_11.set_xlim([0.0, 0.015])
+ax_11.set_ylim([1, 1000])
+ax_11.set_xlabel("$x\parallel B$ (m)", fontsize=14)
+ax_11.set_ylabel("power dens. (MWm$^{-3}$)")
+if max(He_mw)>0.001:
+    ax_11.semilogy(per_column[1], He_mw, label="He")
+if max(Be_mw)>0.001:
+    ax_11.semilogy(per_column[1], Be_mw, label="Be")
+if max(C_mw)>0.001:
+    ax_11.semilogy(per_column[1], C_mw, label="C")
+if max(N_mw)>0.001:
+    ax_11.semilogy(per_column[1], N_mw, label="N")
+if max(O_mw)>0.001:
+    ax_11.semilogy(per_column[1], O_mw, label="O")
+if max(Ne_mw)>0.001:
+    ax_11.semilogy(per_column[1], Ne_mw, label="Ne")
+if max(Si_mw)>0.001:
+    ax_11.semilogy(per_column[1], Si_mw, label="Si")
+if max(Ar_mw)>0.001:
+    ax_11.semilogy(per_column[1], Ar_mw, label="Ar")
+if max(Fe_mw)>0.001:
+    ax_11.semilogy(per_column[1], Fe_mw, label="Fe")
+if max(Ni_mw)>0.001:
+    ax_11.semilogy(per_column[1], Ni_mw, label="Ni")
+if max(Kr_mw)>0.001:
+    ax_11.semilogy(per_column[1], Kr_mw, label="Kr")
+if max(Xe_mw)>0.001:
+    ax_11.semilogy(per_column[1], Xe_mw, label="Xe")
+if max(W_mw)>0.001:
+    ax_11.semilogy(per_column[1], W_mw, label="W")
+ax_11.legend(loc=1, prop={'size': 8})
+ax_11.plot((x_max, x_max), (1, 10000), ls='dashed', color="black")
+
+ax_11 = page2.add_subplot(424, sharex=ax_10)
+ax_11.set_xlim([0.014, 200])
+ax_11.set_ylim([1, 1000])
+ax_11.set_xlabel("$x\parallel B$ (m)", fontsize=14)
+ax_11.set_ylabel("power dens. (MWm$^{-3}$)")
+if max(He_mw)>0.001:
+    ax_11.semilogy(per_column[1], He_mw, label="He")
+if max(Be_mw)>0.001:
+    ax_11.semilogy(per_column[1], Be_mw, label="Be")
+if max(C_mw)>0.001:
+    ax_11.semilogy(per_column[1], C_mw, label="C")
+if max(N_mw)>0.001:
+    ax_11.semilogy(per_column[1], N_mw, label="N")
+if max(O_mw)>0.001:
+    ax_11.semilogy(per_column[1], O_mw, label="O")
+if max(Ne_mw)>0.001:
+    ax_11.semilogy(per_column[1], Ne_mw, label="Ne")
+if max(Si_mw)>0.001:
+    ax_11.semilogy(per_column[1], Si_mw, label="Si")
+if max(Ar_mw)>0.001:
+    ax_11.semilogy(per_column[1], Ar_mw, label="Ar")
+if max(Fe_mw)>0.001:
+    ax_11.semilogy(per_column[1], Fe_mw, label="Fe")
+if max(Ni_mw)>0.001:
+    ax_11.semilogy(per_column[1], Ni_mw, label="Ni")
+if max(Kr_mw)>0.001:
+    ax_11.semilogy(per_column[1], Kr_mw, label="Kr")
+if max(Xe_mw)>0.001:
+    ax_11.semilogy(per_column[1], Xe_mw, label="Xe")
+if max(W_mw)>0.001:
+    ax_11.semilogy(per_column[1], W_mw, label="W")
+ax_11.legend(loc=1, prop={'size': 8})
+ax_11.plot((x_max, x_max), (1, 10000), ls='dashed', color="black")
+
 
 
 plt.show(fig)

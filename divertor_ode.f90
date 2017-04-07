@@ -782,7 +782,7 @@ contains
             write(9,'(i5, 2x, f8.4, 43es11.3)')  &
                 step, x, te, nel20, Pthermal, pressure, v, mach, n0e20, Power, A_cross, qperp_total,  &
                 qperp_conv, qperp_conducted,plossdenscx, plossion, radHdens, raddens,                 &
-                y(7), y(8), y(9), y(10), (raddensspecies(i), i=2,nimp)
+                y(7), y(8), y(9), y(10), (max(raddensspecies(i),1.0d-99), i=2,nimp)
         end if
 
         ! Note when we reach the edge of the "near zone" (connection length = sab):
