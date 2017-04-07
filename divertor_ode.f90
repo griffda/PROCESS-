@@ -25,6 +25,7 @@ module divertor_ode
   use process_input, only: lower_case
   use divertor_kallenbach_variables, only : neratio, pressure0, lengthofwidesol, fmom, TotalPowerLost
   use build_variables, only: rspo
+  use physics_variables, only:  tesep_keV => tesep
 
   implicit none
 
@@ -360,7 +361,7 @@ contains
     real(kind(1.0D0)) :: IonFluxTarget
 
     ! Typical SOL temperature, used only for estimating zeffective in the SOL [eV]
-    real(kind(1.0D0)) :: ttypical=30.0D0
+    real(kind(1.0D0)) :: ttypical
 
     ! Impurity radiation by species
     real(kind(1.0D0)) :: raddensspecies(nimp)
@@ -368,6 +369,8 @@ contains
     ! Major radius at outer midplane [m]
     romp = rmajor + rminor
 
+    ! Typical SOL temperature, used only for estimating zeffective in the SOL [eV]
+    ttypical=1000.0d0*tesep_keV/2.0d0
     ! B theta at OMP
     Bt_omp = - bt*rmajor/romp
     ! B theta at target
@@ -1123,13 +1126,10 @@ contains
 
     ! Y(7) = integral of impurity radiation loss [MW]
     yp(7) =1.d-6*raddens*A_cross
-
     ! Y(8) = integral of radiation loss from hydrogenic species [MW]
     yp(8) =1.d-6*radHdens*A_cross
-
     ! Y(9) = integral of power loss due to charge exchange [MW]
     yp(9) =1.d-6*plossdenscx*A_cross
-
     ! Y(10)= integral of power loss due to electron impact ionisation [MW]
     yp(10)=1.d-6*plossion*A_cross
 

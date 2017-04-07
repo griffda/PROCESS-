@@ -79,15 +79,15 @@ module impurity_radiation_module
   !+ad_varc         impurity number density fractions relative to electron density
   !+ad_varc         (iteration variable 102 is fimp(impvar))
   real(kind(1.0D0)), public, dimension(nimp) :: fimp = &
-       (/ 1.0D0, 0.1D0, 0.02D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
-       0.0D0, 0.0016D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
+       (/ 1.0D0, 0.1D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, &
+       0.0D0, 0.00D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0, 0.0D0 /)
   !+ad_vars  imp_label(nimp) : impurity ion species names:<UL>
   character(len=2), public, dimension(nimp) :: imp_label = (/ &
   !+ad_varc  <LI> ( 1)  Hydrogen  (fraction calculated by code)
        'H_', &
-  !+ad_varc  <LI> ( 2)  Helium    (fraction calculated by code)
+  !+ad_varc  <LI> ( 2)  Helium
        'He', &
-  !+ad_varc  <LI> ( 3)  Beryllium (default fraction 2%)
+  !+ad_varc  <LI> ( 3)  Beryllium
        'Be', &
   !+ad_varc  <LI> ( 4)  Carbon
        'C_', &
@@ -99,7 +99,7 @@ module impurity_radiation_module
        'Ne', &
   !+ad_varc  <LI> ( 8)  Silicon
        'Si', &
-  !+ad_varc  <LI> ( 9)  Argon (default fraction 0.16%)
+  !+ad_varc  <LI> ( 9)  Argon
        'Ar', &
   !+ad_varc  <LI> (10)  Iron
        'Fe', &
@@ -114,6 +114,7 @@ module impurity_radiation_module
 
   !+ad_vars  fimpvar /1.0e-3/ : impurity fraction to be used as fimp(impvar)
   !+ad_varc                     (iteration variable 102)
+  ! Deprecated
   real(kind(1.0D0)), public :: fimpvar = 1.0D-3
 
     !  Obtain the root directory
