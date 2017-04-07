@@ -80,8 +80,11 @@ module divertor_ode
   ! Flux bundle area perp. to B at target [m2]
   real(kind(1.0D0)), private :: area0
 
+  ! Zeff for divertor region
+  real(kind(1.0D0)) :: zeff_div
+
   ! zeff_div to power 0.3
-  real(kind(1.0D0)), private :: zeffpoint3
+  ! real(kind(1.0D0)), private :: zeffpoint3
 
   ! SOL radial thickness extrapolated to OMP [m]
   real(kind(1.0D0)), private :: lambda_target, lambda_q
@@ -332,9 +335,6 @@ contains
     ! Mean charge and quadratic mean charge from ADAS
     real(kind(1.0D0)) :: z, qz
 
-    ! Zeff for divertor region
-    real(kind(1.0D0)) :: zeff_div
-
     ! Power density on target due to surface recombination [W/m2]
     real(kind(1.0D0)) :: qtargetrecomb
 
@@ -342,7 +342,7 @@ contains
     real(kind(1.0D0)) :: powertargettotal
 
     ! Combined weighted radiative loss function
-    real(kind(1.0D0)) :: LzTotal
+    ! real(kind(1.0D0)) :: LzTotal
 
     !+ad_vars  WettedArea : Wetted area of target [m2]
     real(kind(1.0D0)) :: WettedArea
@@ -579,7 +579,7 @@ contains
     enddo
 
     ! Set Zeff to power 0.3
-    zeffpoint3 = zeff_div**0.3
+    ! zeffpoint3 = zeff_div**0.3
 
     ! Initialise independent variables for differential equations
     ! neutral density in group 1 [m-3]
@@ -722,7 +722,7 @@ contains
 
         ! If the neutral density is small, set the atomic rates to zero.
         ! This adjustment is used in subroutine differential to make it behave better (less stiff)
-        if(n0.gt.abserr*1.e20) then
+        if(n0.gt.abserr*1.e18) then
             call get_h_rates(nel, te, s, al, cx, plt, prb, aplas, verbose=.false.)
 
             ! charge exchange rate for equation 7 [s-1]
@@ -989,15 +989,10 @@ contains
 
     !
     real(kind(1.0D0)):: n01, n02, te, nv, pressure, Power, nv24, bracket
-
     real(kind(1.0D0)):: nel, v, n0
-
     real(kind(1.0D0)):: s, al, cx, plt, prb
-
     real(kind(1.0D0)):: cxrate,plossdenscx,ionrate1,ionrate2,recrate
-
     real(kind(1.0D0)):: plossion,lz,raddens,radHdens,qperp_total,qperp_conv,qperp_conducted
-
     real(kind(1.0D0)):: A_cross
 
     ! Combined weighted radiative loss function
@@ -1035,27 +1030,21 @@ contains
     v = nv/nel
     n0 = n01 + n02                         ! neutral density = sum of the two velocity groups
 
-    if(n0.gt.abserr*1.e20)  then
+    if(n0.gt.abserr*1.e18)  then
         call get_h_rates(nel, te, s, al, cx, plt, prb, aplas, verbose=.false.)
 
         ! charge exchange for equation 7
         cxrate = cx*nel*n0
-
         ! ionisation of neutrals: velocity group 1
         ionrate1 = s * nel * n01
-
         ! ionisation of neutrals: velocity group 2
         ionrate2 = s * nel * n02
-
         ! recombination of ions and electrons
         recrate = al*nel**2.0D0
-
         ! energy conservation: equation 4, charge exchange term
         plossdenscx = echarge*te*cxrate
-
         ! energy conservation: equation 4, ionisation term
         plossion = (ionrate1 + ionrate2)*elEion
-
         ! radiation loss density for neutral hydrogenic species
         radHdens = (plt + prb)*n0*nel
     else
@@ -1112,8 +1101,13 @@ contains
     ! dn02dx Equation 2 - neutral continuity
     yp(2)=1.d-20*(-ionrate2)/v02
 
+    ! Parallel thermal conductivity! Issue #497
+    ! Revised formula from Huber and Chankin.
+    kappa0 = (8788/zeff_div) * (zeff_div+0.21)/(zeff_div+4.2)
+
     ! dtedx Equation 5 - thermal conduction equation
-    yp(3) =qperp_conducted * zeffpoint3 /te**2.5 /kappa0
+    !yp(3) =qperp_conducted * zeffpoint3 /te**2.5 /kappa0
+    yp(3) =qperp_conducted / te**2.5 / kappa0
 
     ! dnvdx Equation 3 - ion continuity
     yp(4) =1.d-24*(ionrate1 + ionrate2 - recrate)

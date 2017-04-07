@@ -102,8 +102,9 @@ Xe_mw = [float(x)/1e6 for x in per_column[33]]
 W_mw = [float(x)/1e6 for x in per_column[34]]
 n01 = [float(x) for x in per_column[35]]   #/1e20 m-3
 n02 = [float(x) for x in per_column[36]]   #/1e20 m-3
-nv = [float(x) for x in per_column[37]]    #/1e24 sm-2
-v = [float(x) for x in per_column[38]]     # ms-1
+# Particle flux and velocity are both negative in the code
+nv = [-float(x) for x in per_column[37]]    #/1e24 sm-2
+v = [-float(x) for x in per_column[38]]     # ms-1
 
 # Total power emitted by the SOL does not include the ionisation loss
 power_loss_integral = y7_mw + y8_mw + y9_mw
@@ -281,6 +282,37 @@ if max(W_mw)>0.001:
 ax_12.legend(loc=1, prop={'size': 8})
 ax_12.plot((x_max, x_max), (1, 10000), ls='dashed', color="black")
 
+# Row 3 Left
+ax_13 = page2.add_subplot(425)
+ax_13.plot(per_column[1], nv, label="Plasma flux [1e24 sm-2]")
+ax_13.set_xlim([0.0, 0.015])
+#ymax = v[-1]
+#ymax = round(ymax/50 + 0.5) * 50
+#ax_13.set_ylim([0, ymax])
+ax_13.legend(loc=1, prop={'size': 8})
+
+# Row 3 Right
+ax_14 = page2.add_subplot(426)
+ax_14.semilogx(per_column[1], nv, label="Plasma flux [1e24 sm-2]")
+ax_14.set_xlim([0.014, 200])
+ax_14.set_xlabel("$x\parallel B$ (m)", fontsize=14)
+#ax_14.set_ylim([0, ymax])
+ax_14.legend(loc=1, prop={'size': 8})
+ax_14.plot((x_max, x_max), (0.001, 50), ls='dashed', color="black")
+
+# Row 4 Left
+ax_15 = page2.add_subplot(427)
+ax_15.plot(per_column[1], v, label="Plasma speed [ms-1]")
+ax_15.set_xlim([0.0, 0.015])
+ax_15.legend(loc=1, prop={'size': 8})
+
+# Row 4 Right
+ax_16 = page2.add_subplot(428)
+ax_16.semilogx(per_column[1], v, label="Plasma speed [ms-1]")
+ax_16.set_xlim([0.014, 200])
+ax_16.set_xlabel("$x\parallel B$ (m)", fontsize=14)
+ax_16.legend(loc=1, prop={'size': 8})
+ax_16.plot((x_max, x_max), (0.001, 15000), ls='dashed', color="black")
 
 
 plt.show(fig)
