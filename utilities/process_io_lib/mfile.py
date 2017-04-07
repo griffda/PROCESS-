@@ -189,6 +189,12 @@ class MFile(object):
         """Function to open MFILE.DAT"""
         with open(self.filename, "r") as mfile:
             self.mfile_lines = mfile.readlines()
+        
+        for i in range(len(self.mfile_lines)):
+            if "*----" in self.mfile_lines[i]:
+                self.mfile_lines = self.mfile_lines[:i]
+                self.mfile_end = i
+                return
 
     def parse_mfile(self):
         """Function to parse MFILE.DAT"""

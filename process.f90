@@ -139,14 +139,17 @@ program process
 
     open(unit = 100, FILE = inFile)
     open(unit = 101, FILE = outFile, ACCESS = "append")
+    open(unit = 102, FILE=trim(fileprefix)//'MFILE.DAT', ACCESS = "append")
     fmtAppend = '(A)'
     DO
       read(100, fmtAppend, IOSTAT = iost) line
       write(101, fmtAppend) trim(line)
+      write(102, fmtAppend) trim(line)
       if(iost < 0) exit                   ! exit if End of line is reached in IN.DAT
     END DO
     close(unit = 100)
     close(unit = 101)
+    close(unit = 102)
 
   else mainRun
 

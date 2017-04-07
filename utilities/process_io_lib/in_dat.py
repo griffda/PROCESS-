@@ -974,14 +974,16 @@ class InDat(object):
             - Alterations to IN.DAT
     """
 
-    def __init__(self, filename="IN.DAT"):
+    def __init__(self, filename="IN.DAT", start_line=0):
         """ Initialise class
 
         :param filename: Name of input IN.DAT
+        :param start_line: Line to start reading from
         :return: Nothing
         """
 
         self.filename = filename
+        self.start_line = start_line
 
         # Initialise parameters
         self.in_dat_lines = list()
@@ -999,6 +1001,7 @@ class InDat(object):
         # Read in IN.DAT
         with open(self.filename) as indat:
             self.in_dat_lines = indat.readlines()
+            self.in_dat_lines = self.in_dat_lines[self.start_line:]
 
         # Remove empty lines from the file
         self.in_dat_lines = remove_empty_lines(self.in_dat_lines)
