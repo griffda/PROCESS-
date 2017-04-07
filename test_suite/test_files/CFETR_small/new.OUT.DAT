@@ -20,7 +20,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.9 : Run on  6 Apr 2017 15:35:01 +01:00(hh:mm) UTC by freia047
+ PROCESS 1.0.9 : Run on  7 Apr 2017 14:24:28 +01:00(hh:mm) UTC by freia036
  Reactor concept design: Steady-state tokamak model, (c) CCFE
  "CFETR small (5.7m) reference file"
  (Please include this header in any models, presentations and papers based on these results)
@@ -117,27 +117,27 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
     1  Beta consistency                      =  3.7685E-02              1.2850E-08                 3.4097E-07
     2  Global power balance consistency      =  2.9159E-01 MW/m3       -2.3347E-07 MW/m3          -8.0068E-07
-    3  Toroidal field 1/R consistency        =  2.5511E+01 T.m          6.7975E-14 T.m             2.6645E-15
-    4  TF coil temp. margin lower limit      >  2.0000E+00 K            1.6329E-12 K               8.1646E-13
-    5  Density upper limit                   <  9.7533E+19 /m3         -1.5160E+05 /m3            -1.5543E-15
+    3  Toroidal field 1/R consistency        =  2.5511E+01 T.m          6.5143E-14 T.m             2.5535E-15
+    4  TF coil temp. margin lower limit      >  2.0000E+00 K            1.6220E-12 K               8.1102E-13
+    5  Density upper limit                   <  9.7533E+19 /m3         -4.3313E+05 /m3            -4.4409E-15
     6  Radial build consistency              =  5.7008E+00 m            9.4937E-15 m               1.6653E-15
     7  Psep / R upper limit                  <  1.7000E+01 MW/m        -6.2211E-05 MW/m           -3.8974E-06
     8  Injection power upper limit           <  1.0000E+02 MW           3.1584E-04 MW              3.5158E-06
     9  Neutron wall load upper limit         <  8.0000E+00 MW/m2       -3.0495E-07 MW/m2          -8.2064E-07
-   10  TF coil case stress upper limit       <  5.9200E+08 Pa          -3.3413E-06 Pa             -8.8818E-15
-   11  TF coil conduit stress upper lim      <  5.9200E+08 Pa          -7.6832E-07 Pa             -2.4425E-15
-   12  J_winding pack/J_protection limit     <  3.1955E+07 A/m2        -6.8730E-07 A/m2           -3.1308E-14
-   13  I_op / I_critical (TF coil)           <  3.1253E+07 A/m2        -3.2074E-06 A/m2           -1.4611E-13
+   10  TF coil case stress upper limit       <  5.9200E+08 Pa          -3.8425E-06 Pa             -1.0214E-14
+   11  TF coil conduit stress upper lim      <  5.9200E+08 Pa          -2.6542E-06 Pa             -8.4377E-15
+   12  J_winding pack/J_protection limit     <  3.1955E+07 A/m2        -7.1168E-07 A/m2           -3.2419E-14
+   13  I_op / I_critical (TF coil)           <  3.1253E+07 A/m2        -3.2318E-06 A/m2           -1.4722E-13
    14  Radiation fraction upper limit        <  2.9159E-01 MW/m3        2.5403E-07 MW/m3           2.5828E-06
-   15  Dump voltage upper limit              <  2.0000E+01 V            1.4060E-13 V               1.5876E-14
+   15  Dump voltage upper limit              <  2.0000E+01 V            9.0455E-14 V               1.0214E-14
    16  Burn time lower limit                 >  2.0000E+02 sec          0.0000E+00 sec             0.0000E+00
    17  L-H power threshold limit             >  3.7485E+01 MW          -3.5469E-04 MW             -3.8978E-06
-   18  CS coil EOF current density limit     <  2.0766E+07 A/m2         1.4638E-07 A/m2            7.1054E-15
-   19  CS coil BOP current density limit     <  2.0291E+07 A/m2         4.8718E-08 A/m2            2.4425E-15
+   18  CS coil EOF current density limit     <  2.0766E+07 A/m2         1.1893E-07 A/m2            5.7732E-15
+   19  CS coil BOP current density limit     <  2.0291E+07 A/m2         7.5291E-08 A/m2            3.7748E-15
    20  taup/taueff                           >  5.0000E+00              1.0146E-05                 1.2162E-06
    21  Peak toroidal field upper limit       <  1.2000E+01 T           -1.6907E-14 T              -1.7764E-15
    22  Beam ion density consistency          =  9.5802E+17 /m3          3.3687E+12 /m3             3.5163E-06
-   23  Beta upper limit                      <  4.7823E-02              5.3553E-16                 1.4211E-14
+   23  Beta upper limit                      <  4.7823E-02              5.4808E-16                 1.4544E-14
    24  Fusion power upper limit              <  2.5000E+02 MW          -2.0428E-04 MW             -8.2026E-07
  
  ******************************************** Final Feasible Point ********************************************
@@ -655,7 +655,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF coil model                                                            (tfc_model)                       1     
  Allowable Tresca stress limit (Pa)                                       (alstrtf)                 5.920E+08     
  Vertical stress (Pa)                                                     (sigvert)                 1.328E+08  OP 
- Case radial stress (Pa)                                                  (sigrtf(1))               0.000E+00     
+ Case radial stress (Pa)                                                  (sigrtf(1))               2.442E-08     
  Case tangential stress (Pa)                                              (sigttf(1))              -2.434E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -1.001E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -1.818E+08  OP 
@@ -827,7 +827,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    2         0.000E+00  0.000E+00  9.938E+06  9.938E+06  9.938E+06  0.000E+00
    3         0.000E+00  0.000E+00 -7.382E+06 -7.382E+06 -7.382E+06  0.000E+00
    4         0.000E+00  0.000E+00 -7.382E+06 -7.382E+06 -7.382E+06  0.000E+00
-   5         0.000E+00  0.000E+00  2.647E-09  2.647E-09  0.000E+00  0.000E+00
+   5         0.000E+00  0.000E+00 -2.647E-09 -2.647E-09  2.118E-08  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.682E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -2.041E-01  OP 
@@ -1548,6 +1548,8 @@ boundu(18) = 3.0
 ixc(21) = 102        * fimpvar * Impurity fraction to be used as fimp(impvar)
 boundl(102) = 0.0012
 boundu(102) = 0.01
+fimp(3) = 0.02   * Beryllium
+fimp(9) = 0.0016 * Argon
 
 ixc(22) = 103        * flhthresh * F-value for l-h power threshold
 boundl(103) = 0.4
