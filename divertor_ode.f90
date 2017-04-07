@@ -136,16 +136,10 @@ contains
 
     ! OMP - outboard-midplane
 
-    ! Modules to import !
-    !!!!!!!!!!!!!!!!!!!!!
-
     use ode_mod , only :                      ode
     use constraint_variables, only :          fpsep
     use numerics, only : active_constraints, name_xc,  boundl, boundu
     use physics_variables, only :             nesep, pdivt
-
-    ! Variable declarations !
-    !!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
 
@@ -653,13 +647,12 @@ contains
         write(9,*) 'qconv=_Convected_power_density_through_a_surface_perpendicular_to_B_[W/m2]'
         write(9,*) 'qcond=_Conducted_power_density_through_a_surface_perpendicular_to_B_[W/m2]'
         write(9,*) 'im_rad=_Impurity_radiation_[W/m2]'
-        write(9,'(a5, 2x, a8, 43a11)')  &
+        write(9,'(a5, 2x, a8, 47a11)')  &
               'step', 'x//B_[m]', 'te_[eV]', 'ne/1e20/m3', 'Pth_[Pa]', 'Ptotal_[Pa]', &
               'v_[m/s]', 'mach ',                                                     &
               'n0/1e20/m3', 'Power_[W]', 'perp_area', 'qtot_W/m2', 'qconv_W/m2', 'qcond_W/m2',         &
               'CX_W/m3', 'Ion_W/m3' , 'H_rad_W/m3', 'im_rad_W/m3', 'Y(7)', 'Y(8)', 'Y(9)', 'Y(10)',    &
-              (impurity_arr(i)%Label, i=2,nimp)
-
+              (impurity_arr(i)%Label, i=2,nimp),'n01/1e20/m3','n02/1e20m-3','nv24','v/ms-1'
         open(unit=10, file='divertor_diagnostics.txt', status='replace')
      endif
 
@@ -754,7 +747,6 @@ contains
             radHdens = (plt + prb)*n0*nel
 
         else
-
             cxrate =0.0D0
             ionrate1 = 0.0D0
             ionrate2 = 0.0D0
@@ -762,7 +754,6 @@ contains
             plossdenscx = 0.0D0
             plossion = 0.0D0
             radHdens = 0.0D0
-
         endif
 
         ! Get radiative loss for all impurities present
@@ -779,10 +770,10 @@ contains
         enddo
 
         if(iprint.eq.1) then
-            write(9,'(i5, 2x, f8.4, 43es11.3)')  &
+            write(9,'(i5, 2x, f8.4, 46es11.3)')  &
                 step, x, te, nel20, Pthermal, pressure, v, mach, n0e20, Power, A_cross, qperp_total,  &
                 qperp_conv, qperp_conducted,plossdenscx, plossion, radHdens, raddens,                 &
-                y(7), y(8), y(9), y(10), (max(raddensspecies(i),1.0d-99), i=2,nimp)
+                y(7), y(8), y(9), y(10), (max(raddensspecies(i),1.0d-99), i=2,nimp),y(1),y(2),nv24,v
         end if
 
         ! Note when we reach the edge of the "near zone" (connection length = sab):
