@@ -1055,6 +1055,30 @@ def print_nsweep2varname():
 
     print_dict(nsweep2varname, 'DICT_NSWEEP2VARNAME', comment, lam)
 
+def print_icc_module():
+
+    """
+    Prints:
+    DICT_ICC_MODULE
+    """
+
+    lam = lambda x: int(x[0])
+    icc_modules = dict()
+    comment = "Dictionary mapping icc number to module"
+
+    file_loc = SOURCEDIR + "/constraint_equations.f90"
+
+    with open(file_loc) as f:
+        lines = f.readlines()
+    
+    counter = 1
+    for line in lines:
+        if "!#=#" in line:
+            module = line.split("#=#")[-1].replace(" ", "").strip("\n")
+            icc_modules[str(counter)] = module
+            counter += 1
+    print_dict(icc_modules, "DICT_ICC_MODULE", comment, lam)
+
 def print_all():
     """Prints every dictionary
     """
@@ -1070,6 +1094,7 @@ def print_all():
     print_descriptions()
     print_module()
     print_nsweep2varname()
+    print_icc_module()
 
 
 if __name__ == "__main__":

@@ -219,6 +219,7 @@ contains
 
        case (1)  ! Relationship between beta, temperature (keV) and density
           ! This is a consistency equation
+          !#=# physics
 
           ! betaft |  fast alpha beta component
           ! betanb |  neutral beam beta component
@@ -240,6 +241,7 @@ contains
 
        case (2)  ! Global plasma power balance equation
           ! This is a consistency equation
+          !#=# physics
 
           ! pscaling |  total transport power per volume (MW/m3)
           ! ptrepv   |  electron transport power per volume (MW/m3)
@@ -300,6 +302,7 @@ contains
 
        case (3)  ! Global power balance equation for ions
           ! This is a consistency equation
+          !#=# physics
 
           ! N.B. This constraint is currently NOT RECOMMENDED for use.
 
@@ -345,7 +348,7 @@ contains
 
        case (4)  ! Global power balance equation for electrons
           ! This is a consistency equation
-
+          !#=# physics
           ! N.B. This constraint is currently NOT RECOMMENDED for use.
 
           ! pscaling |  total transport power per volume (MW/m3)
@@ -403,6 +406,7 @@ contains
           end if
 
        case (5)  ! Equation for density upper limit
+          !#=# physics
 
           ! idensl |  switch for density limit to enforce
           ! = 1    |  old ASDEX;
@@ -442,6 +446,7 @@ contains
           end if
 
        case (6)  ! Equation for epsilon beta-poloidal upper limit
+          !#=# physics
 
           ! fbeta    |  f-value for epsilon beta-poloidal
           ! epbetmax |  maximum (eps*beta_poloidal)
@@ -458,6 +463,7 @@ contains
 
        case (7)  ! Equation for hot beam ion density
           ! This is a consistency equation (NBI)
+          !#=# physics
 
           ! ignite  |  switch for ignition assumption
           ! = 0     |  do not assume plasma ignition
@@ -483,6 +489,7 @@ contains
           end if
 
        case (8)  ! Equation for neutron wall load upper limit
+          !#=# physics
 
           ! fwalld |  f-value for maximum wall load
           ! walalw |  allowable wall load (MW/m2)
@@ -497,6 +504,7 @@ contains
           end if
 
        case (9)  ! Equation for fusion power upper limit
+          !#=# physics
 
           ! ffuspow |  f-value for maximum fusion power
           ! powfmax |  maximum fusion power (MW)
@@ -513,6 +521,7 @@ contains
        case (10)  ! Equation for field at TF coil
           ! This is a consistency equation
           ! (do not use for stellarators)
+          !#=# tfcoil
 
           ! rmajor |  plasma major radius (m)
           ! bt     |  toroidal field on axis (T)
@@ -529,6 +538,7 @@ contains
 
        case (11)  ! Equation for radial build
           ! This is a consistency equation
+          !#=# build
 
           ! rbld   |  sum of thicknesses to plasma major radius (m)
           ! rmajor |  plasma major radius (m)
@@ -542,6 +552,7 @@ contains
           end if
 
        case (12)  ! Equation for volt-second capability lower limit
+          !#=# pfcoil
 
           ! vsstt (lower limit) is positive; vstot (available) is negative
           ! fvs   |  f-value for flux swing (V-s) requirement
@@ -557,6 +568,7 @@ contains
           end if
 
        case (13)  ! Equation for burn time lower limit
+          !#=# times
 
           ! ftburn |  f-value for minimum burn time
           ! tburn  |  burn time (s)
@@ -572,6 +584,7 @@ contains
 
        case (14)  ! Equation to fix number of NBI decay lengths to plasma centre
           ! This is a consistency equation
+          !#=# current_drive
 
           ! taubeam |  neutral beam e-decay lengths to plasma centre
           ! tbeamin |  permitted neutral beam e-decay lengths to plasma centre
@@ -585,6 +598,7 @@ contains
           end if
 
        case (15)  ! Equation for L-H power threshold limit
+          !#=# physics
 
           ! flhthresh |  f-value for L-H power threshold
           ! plhthresh |  L-H mode power threshold (MW)
@@ -603,6 +617,7 @@ contains
           end if
 
        case (16)  ! Equation for net electric power lower limit
+          !#=# heat_transport
 
           ! fpnetel  |  f-value for net electric power
           ! pnetelmw |  net electric power (MW)
@@ -617,6 +632,7 @@ contains
           end if
 
        case (17)  ! Equation for radiation power upper limit
+          !#=# physics
 
           ! pradmaxpv is the maximum possible power/vol that can be radiated
           ! falpha included to take into account alpha power not deposited in plasma
@@ -641,6 +657,7 @@ contains
           end if
 
        case (18)  ! Equation for divertor heat load upper limit
+          !#=# divertor
 
           ! fhldiv   |  f-value for divertor heat load
           ! hldivlim |  divertor heat load limit (MW/m2)
@@ -655,6 +672,7 @@ contains
           end if
 
        case (19)  ! Equation for MVA upper limit
+          !#=# tfcoil
 
           ! totmva  |  total MVA in TF coil (MW)
           ! tfcpmw  |  peak resistive TF coil inboard leg power (MW)
@@ -673,6 +691,7 @@ contains
           end if
 
        case (20)  ! Equation for neutral beam tangency radius upper limit
+          !#=# current_drive
 
           ! fportsz  |  f-value for neutral beam tangency radius limit
           ! rtanmax  |  maximum tangency radius for centreline of beam (m)
@@ -687,6 +706,7 @@ contains
           end if
 
        case (21)  ! Equation for minor radius lower limit
+          !#=# physics
 
           ! frminor  |  f-value for minor radius limit
           ! rminor   |  plasma minor radius (m)
@@ -701,6 +721,7 @@ contains
           end if
 
        case (22)  ! Equation for divertor collision/connection length ratio upper limit
+          !#=# divertor
 
           ! fdivcol  |  f-value for divertor collisionality
           ! rlenmax  |  maximum value for length ratio
@@ -715,6 +736,7 @@ contains
           end if
 
        case (23)  ! Equation for conducting shell radius / rminor upper limit
+          !#=# physics
 
           ! rcw     |  conducting shell radius (m)
           ! rminor  |  plasma minor radius (m)
@@ -736,6 +758,7 @@ contains
           end if
 
        case (24)  ! Equation for beta upper limit
+          !#=# physics
 
           ! iculbl |  switch for beta limit scaling
           ! = 0    |  apply limit to total beta
@@ -798,6 +821,7 @@ contains
           end if
 
        case (25)  ! Equation for peak toroidal field upper limit
+          !#=# tfcoil
 
           ! fpeakb |  f-value for maximum toroidal field
           ! bmxlim |  maximum peak toroidal field (T)
@@ -812,6 +836,7 @@ contains
           end if
 
        case (26)  ! Equation for OH coil current density upper limit at EOF
+          !#=# pfcoil
 
           ! fjohc  |  f-value for central solenoid current at end-of-flattop
           ! rjohc  |  allowable central solenoid current density at end of flat-top (A/m2)
@@ -826,6 +851,7 @@ contains
           end if
 
        case (27)  ! Equation for OH coil current density upper limit at BOP
+          !#=# pfcoil
 
           ! fjohc0 |  f-value for central solenoid current at beginning of pulse
           ! rjohc0 |  allowable central solenoid current density at beginning of pulse (A/m2)
@@ -840,6 +866,7 @@ contains
           end if
 
        case (28)  ! Equation for fusion gain (big Q) lower limit
+          !#=# physics
 
           ! ignite    |  switch for ignition assumption
           ! = 0       |  do not assume plasma ignition
@@ -868,6 +895,7 @@ contains
 
        case (29)  ! Equation for inboard major radius
           ! This is a consistency equation
+          !#=# build
 
           ! rmajor   |  plasma major radius (m)
           ! rminor   |  plasma minor radius (m)
@@ -882,6 +910,7 @@ contains
           end if
 
        case (30)  ! Equation for injection power upper limit
+          !#=# current_drive
 
           ! Usual form is inverted to prevent problems when injection power is zero
           ! pinjmw  |  total auxiliary injected power (MW)
@@ -897,6 +926,7 @@ contains
           end if
 
        case (31)  ! Equation for TF coil case stress upper limit (SCTF)
+          !#=# tfcoil
 
           ! fstrcase |  f value for TF coil case stress
           ! alstrtf  |  allowable von Mises stress in TF coil structural material (MPa)
@@ -911,6 +941,7 @@ contains
           end if
 
        case (32)  ! Equation for TF coil conduit stress upper limit (SCTF)
+          !#=# tfcoil
 
           ! fstrcond |  f-value for TF coil conduit stress
           ! alstrtf  |  allowable von Mises stress in TF coil structural material (MPa)
@@ -925,6 +956,7 @@ contains
           end if
 
        case (33)  ! Equation for TF coil operating/critical J upper limit (SCTF)
+          !#=# tfcoil
 
           ! fiooic  |  f-value for TF coil operating current / critical current ratio
           ! jwdgcrt |  critical current density for winding pack (A/m2)
@@ -939,6 +971,7 @@ contains
           end if
 
        case (34)  ! Equation for TF coil dump voltage upper limit (SCTF)
+          !#=# tfcoil
 
           ! fvdump |  f-value for dump voltage
           ! vdalw  |  max voltage across TF coil during quench (kV)
@@ -953,6 +986,7 @@ contains
           end if
 
        case (35)  ! Equation for TF coil J_wp/J_prot upper limit (SCTF)
+          !#=# tfcoil
 
           ! fjprot  |  f-value for TF coil winding pack current density
           ! jwdgpro |  allowable TF coil winding pack current density, for dump
@@ -968,6 +1002,7 @@ contains
           end if
 
        case (36)  ! Equation for TF coil s/c temperature margin lower limit (SCTF)
+          !#=# tfcoil
 
           ! ftmargtf |  f-value for TF coil temperature margin
           ! tmargtf  |  TF coil temperature margin (K)
@@ -982,6 +1017,7 @@ contains
           end if
 
        case (37)  ! Equation for current drive gamma upper limit
+          !#=# current_drive
 
           ! fgamcd |  f-value for current drive gamma
           ! gammax |  maximum current drive gamma
@@ -995,8 +1031,11 @@ contains
              units(i) = '1E20 A/Wm2'
           end if
 
+          !#=# Empty
+
        case (39)  ! Equation for first wall temperature upper limit
           ! Issue #348 (15/12/02)
+          !#=# fwbs
 
           ! If the temperature peak == 0 then report an error
           if (tpeak == 0.0D0) call report_error(5)
@@ -1014,6 +1053,7 @@ contains
           end if
 
        case (40)  ! Equation for auxiliary power lower limit
+          !#=# current_drive
 
           ! fauxmn |  f-value for minimum auxiliary power
           ! pinjmw |  total auxiliary injected power (MW)
@@ -1028,6 +1068,7 @@ contains
           end if
 
        case (41)  ! Equation for plasma current ramp-up time lower limit
+          !#=# times
 
           ! ftohs  |  f-value for plasma current ramp up time
           ! tohs   |  plasma current ramp up time for current initiation (s)
@@ -1042,6 +1083,7 @@ contains
           end if
 
        case (42)  ! Equation for cycle time lower limit
+          !#=# times
 
           ! if the minimum cycle time == 0 report an error
           if (tcycmn == 0.0D0) call report_error(6)
@@ -1060,6 +1102,7 @@ contains
 
        case (43)  ! Equation for average centrepost temperature
           ! This is a consistency equation (TART)
+          !#=# tfcoil
 
           ! if the machine isn't a ST then report error
           if (itart == 0) call report_error(7)
@@ -1076,6 +1119,7 @@ contains
           end if
 
        case (44)  ! Equation for centrepost temperature upper limit (TART)
+          !#=# tfcoil
 
           ! if the machine isn't a ST then report error
           if (itart == 0) call report_error(8)
@@ -1093,6 +1137,7 @@ contains
           end if
 
        case (45)  ! Equation for edge safety factor lower limit (TART)
+          !#=# tfcoil
 
           ! if the machine isn't a ST then report error
           if (itart == 0) call report_error(9)
@@ -1112,6 +1157,7 @@ contains
 
        case (46)  ! Equation for Ip/Irod upper limit (TART)
           !  This is a q-edge type limit for certain aspect ratios
+          !#=# tfcoil
 
           ! if the machine isn't a ST then report error
           if (itart == 0) call report_error(10)
@@ -1134,6 +1180,7 @@ contains
 
        case (47)  ! Equation for TF coil toroidal thickness upper limit
           ! Relevant only to reversed field pinch devices
+          !#=# tf coil
 
           ! if the machine is not a rfp then exit and report an error
           if (irfp == 0) call report_error(11)
@@ -1153,6 +1200,7 @@ contains
           end if
 
        case (48)  ! Equation for poloidal beta upper limit
+          !#=# physics
 
           ! fbetap |  f-value for poloidal beta
           ! betpmx |  maximum poloidal beta
@@ -1167,6 +1215,7 @@ contains
           end if
 
        case (49)  ! Equation to ensure RFP reversal parameter F is negative
+          !#=# rfp
 
           ! TODO should this have an error message like constraint 47
 
@@ -1183,6 +1232,7 @@ contains
 
        case (50)  ! Equation for IFE repetition rate upper limit
           ! Relevant only to inertial fusion energy devices
+          !#=# ife
 
           ! if machine is not a inertial confinement machine then report error
           if (ife == 0) call report_error(12)
@@ -1201,6 +1251,7 @@ contains
 
        case (51)  ! Equation to enforce startup flux = available startup flux
           ! This is a consistency equation
+          !#=# pfcoil
 
           ! vsres |  resistive losses in startup V-s (Wb)
           ! vsind |  internal and external plasma inductance V-s (Wb)
@@ -1215,6 +1266,7 @@ contains
           end if
 
        case (52)  ! Equation for tritium breeding ratio lower limit
+          !#=# fwbs
 
           ! TODO should this only be for certain blanket models?
 
@@ -1231,6 +1283,7 @@ contains
           end if
 
        case (53)  ! Equation for fast neutron fluence on TF coil upper limit
+          !#=# fwbs
 
           ! fflutf    |  f-value for neutron fluence on TF coil
           ! nflutfmax |  max fast neutron fluence on TF coil (n/m2)
@@ -1245,6 +1298,7 @@ contains
           end if
 
        case (54)  ! Equation for peak TF coil nuclear heating upper limit
+          !#=# fwbs
 
           ! TODO this is only for blanket model > 0. Vardes states ptfnucpm3 is only for iblanket > 0 (issue #380)
 
@@ -1261,6 +1315,7 @@ contains
           end if
 
        case (55)  ! Equation for helium concentration in vacuum vessel upper limit
+          !#=# fwbs
 
           ! TODO another mention of blanket model > 0 in vardes. (issue #380)
           ! TODO vvhemax says iblanket = 2 only? (issue #381) is this correct.
@@ -1280,6 +1335,7 @@ contains
           end if
 
        case (56)  ! Equation for power through separatrix / major radius upper limit
+          !#=# physics
 
           ! fpsepr   |  f-value for maximum Psep/R limit
           ! pseprmax |  maximum ratio of power crossing the separatrix to plasma
@@ -1296,6 +1352,7 @@ contains
           end if
 
        case (57)  ! Equation for TF coil outer leg toroidal thickness lower limit
+          !#=# tfcoil
 
           ! ftftort |  f-value for TF coil outer leg toroidal width lower limit
           ! tftort  |  TF coil toroidal thickness (m)
@@ -1312,6 +1369,7 @@ contains
           end if
 
        case (58)  ! Equation for TF coil outer leg radial thickness lower limit
+          !#=# tfcoil
 
           ! ftfthko |  f-value for TF coil outer leg radial thickness lower limit
           ! tfthko  |  outboard TF coil thickness (m)
@@ -1327,6 +1385,7 @@ contains
           end if
 
        case (59)  ! Equation for neutral beam shine-through fraction upper limit
+          !#=# current_drive
 
           ! fnbshinef   |  f-value for maximum neutral beam shine-through fraction
           ! nbshinefmax |  maximum neutral beam shine-through fraction
@@ -1341,6 +1400,7 @@ contains
           end if
 
        case (60)  ! Equation for OH coil s/c temperature margin lower limit (SCTF)
+          !#=# tfcoil
 
           ! ftmargoh |  f-value for central solenoid temparature margin
           ! tmargoh  |  central solenoid temprature margin (K)
@@ -1355,6 +1415,7 @@ contains
           end if
 
        case (61)  ! Equation for availability limit
+          !#=# cost
 
           ! favail    |  f-value for minimum availability
           ! cfactr    |  total plant availability fraction
@@ -1369,6 +1430,7 @@ contains
           end if
 
        case (62)  ! Lower limit on taup/taueff the ratio of alpha particle to energy confinement times
+          !#=# physics
 
           ! ftaulimit |  f-value for lower limit on taup/taueff the ratio of alpha particle to energy confinement
           ! taup      |  alpha particle confinement time (s)
@@ -1384,6 +1446,7 @@ contains
           end if
 
        case (63)  ! Upper limit on niterpump (vacuum_model = simple)
+          !#=# vacuum
 
           ! TODO this is for vacuum_model == 'simple' only?
 
@@ -1402,6 +1465,7 @@ contains
           end if
 
        case (64)  ! Upper limit on Zeff
+          !#=# physics          
 
           ! fzeffmax |  f-value for maximum zeff
           ! zeffmax  |  maximum value for zeff
@@ -1417,6 +1481,7 @@ contains
 
        case (65)  ! Limit TF dump time to calculated quench time
            ! (IDM: 2MBSE3)
+           !#=# tfcoil
 
            ! ftaucq |  f-value for calculated minimum TF quench time
            ! tdmptf |  dump time for TF coil (s)
@@ -1431,6 +1496,7 @@ contains
            end if
 
        case (66)  ! Limit on rate of change of energy in poloidal field
+           !#=# pfcoil
 
            ! fpoloidalpower    |  f-value for constraint on rate of change of energy in poloidal field
            ! maxpoloidalpower  |  Maximum permitted absolute rate of change of stored energy in poloidal field (MW)
@@ -1445,6 +1511,7 @@ contains
            end if
 
        case (67) ! Simple upper limit on radiation wall load
+           !#=# physics
           
            ! fradwall    |  f-value for upper limit on radiation wall load
            ! maxradwallload  |  Maximum permitted radiation wall load (MW/m^2)
@@ -1459,6 +1526,7 @@ contains
            end if
       
        case (68) ! New Psep scaling (PsepB/qAR)
+           !#=# physics
        
            ! Issue #464
            ! fpsepbqar       |  f-value for upper limit on psepbqar
@@ -1478,6 +1546,7 @@ contains
            end if
 
        case (69)  ! ensure separatrix power is less than value from Kallenbach divertor
+           !#=# divertor
 
            ! fpsep             | f-value for consistency of two values of separatrix power      
            ! psep_kallenbach   | Power conducted through the separatrix, as calculated by the divertor model [W]. 
@@ -1492,6 +1561,7 @@ contains
            end if
 
        case (70)  ! Separatrix temperature consistency
+           !#=# divertor
 
            ! teomp   | separatrix temperature calculated by the Kallenbach divertor model [eV]
            ! tesep  | electron temperature at separatrix [keV]
@@ -1505,6 +1575,7 @@ contains
            end if
 
        case (71)  ! Separatrix density consistency
+           !#=# divertor
 
            ! neomp    | Mean SOL density at OMP calculated by the Kallenbach divertor model [m-3]
            ! nesep    | electron density at separatrix [m-3]
@@ -1520,6 +1591,7 @@ contains
            end if
 
        case (72) ! OH coil Tresca stress limit
+           !#=# tfcoil
        
            ! foh_stress      |  f-value for stress limit
            ! alstroh         |  Maximum permitted stress [MPa]
