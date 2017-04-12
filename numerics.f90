@@ -99,9 +99,9 @@ module numerics
   public
 
   !+ad_vars  ipnvars FIX : total number of variables available for iteration
-  integer, parameter :: ipnvars = 136
+  integer, parameter :: ipnvars = 137
   !+ad_vars  ipeqns  FIX : number of constraint equations available
-  integer, parameter :: ipeqns = 72
+  integer, parameter :: ipeqns = 73
   !+ad_vars  ipnfoms FIX : number of available figures of merit
   integer, parameter :: ipnfoms = 17
 
@@ -414,9 +414,12 @@ module numerics
        'Separatrix temp consistency      ',   &
        !+ad_varc  <LI> (71) ensure that neomp is equal to the separatrix density (nesep) x neratio<
        'Separatrix density consistency   ',    &
-       !+ad_varc  <LI> (72) central solenoid Tresca stress limit</UL>
+       !+ad_varc  <LI> (72) central solenoid Tresca stress limit
        !+ad_varc            (Use iteration variable 123 (foh_stress))
-       'CS Tresca stress limit           '    &
+       'CS Tresca stress limit           ',    &
+       !+ad_varc  <LI> (73) Psep >= Plh + Paux</UL>
+       !+ad_varc            (Use iteration variable 136 (fplhsep))
+       'Psep >= Plh + Paux               '    &
        /)
        !  Please note: All strings between '...' above must be exactly 33 chars long
        ! Each line of code has a comma before the ampersand, except the last one.
@@ -561,7 +564,8 @@ module numerics
        0,  &  !  133
        0,  &  !  134
        0,  &  !  135
-       0   &  !  136
+       0,  &  !  136
+       0   &  !  137
        /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
   !+ad_varc                   (starred ones are turned on by default):<UL>
@@ -841,7 +845,9 @@ module numerics
        !+ad_varc  <LI> (135) fimp(13) :  Xenon density fraction relative to electron density
        'fimp(13)      ', &
        !+ad_varc  <LI> (136) fimp(14) :  Tungsten density fraction relative to electron density</UL>
-       'fimp(14)      ' &
+       'fimp(14)      ', &
+        !+ad_varc  <LI> (137) fplhsep (f-value for equation 73)
+       'fplhsep       ' &
        /)
 
   character(len=14), dimension(:), allocatable :: name_xc
@@ -995,7 +1001,8 @@ module numerics
        1.00D-8, &  !  133
        1.00D-8, &  !  134
        1.00D-8, &  !  135
-       1.00D-8  &  !  136
+       1.00D-8, &  !  136
+       0.001D0  &  !  137
        /)
 
   !+ad_vars  boundu(ipnvars) /../ : upper bounds used on ixc variables during
@@ -1136,7 +1143,8 @@ module numerics
        0.010D0, &  !  133
        0.010D0, &  !  134
        0.010D0, &  !  135
-       0.010D0  &  !  136
+       0.010D0, &  !  136
+       1.000D0 &   !  137
        /)
 
   real(kind(1.0D0)), dimension(ipnvars) :: bondl = 0.0D0

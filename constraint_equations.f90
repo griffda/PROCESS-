@@ -1605,6 +1605,22 @@ contains
              units(i) = 'MPa'
            end if
 
+       case (73)  ! ensure separatrix power is greater than the L-H power + auxiliary power
+           !#=# physics
+
+           ! fplhsep    | f-value for consistency of two values of separatrix power      
+           ! plhthresh  | L-H mode power threshold (MW)
+           ! pdivt      | power conducted to the divertor region (MW)
+           ! pinjmw     | total auxiliary injected power (MW)
+           cc(i) = 1.0d0 - fplhsep * pdivt / (plhthresh+pinjmw)
+
+           if (present(con)) then
+             con(i) = pdivt
+             err(i) = pdivt * cc(i)
+             symbol(i) = '>'
+             units(i) = 'MW'
+           end if
+
        case default
 
           idiags(1) = icc(i)

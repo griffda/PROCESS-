@@ -300,6 +300,8 @@ module physics_variables
   real(kind(1.0D0)) :: figmer = 0.0D0
   !+ad_vars  fkzohm /1.0/ : Zohm elongation scaling adjustment factor (ishape=2, 3)
   real(kind(1.0D0)) :: fkzohm = 1.0D0
+  !+ad_vars  fplhsep /1.0/ : F-value for Psep >= Plh + Paux (constraint equation 73)
+  real(kind(1.0D0)) :: fplhsep = 1.0D0
   !+ad_vars  ftrit /0.5/ : tritium fuel fraction
   real(kind(1.0D0)) :: ftrit = 0.5D0
   !+ad_vars  fusionrate : fusion reaction rate (reactions/m3/sec)

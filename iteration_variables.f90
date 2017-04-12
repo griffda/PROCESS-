@@ -272,6 +272,7 @@ subroutine loadxc
      case (134) ; xcm(i) = impurity_arr(12)%frac
      case (135) ; xcm(i) = impurity_arr(13)%frac
      case (136) ; xcm(i) = impurity_arr(14)%frac
+     case (137) ; xcm(i) = fplhsep
 
      case default
         idiags(1) = i ; idiags(2) = ixc(i)
@@ -574,6 +575,7 @@ subroutine convxc(xc,nn)
      case (134) ; impurity_arr(12)%frac = xc(i)/scale(i)
      case (135) ; impurity_arr(13)%frac = xc(i)/scale(i)
      case (136) ; impurity_arr(14)%frac = xc(i)/scale(i)
+     case (137) ; fplhsep = xc(i)/scale(i)
 
      case default
 
