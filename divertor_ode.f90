@@ -835,7 +835,7 @@ contains
     call ovarre(outfile, 'Connection length:  [m]','(lcon)', lcon, 'OP ')
 
     call ovarre(outfile, 'Parameter for approach to local equilibrium  [ms.1e20/m3]','(netau)', netau)
-    call ovarre(outfile, 'Typical SOL temperature, used only for estimating zeff_div [eV] ','(ttypical)', ttypical)
+    call ovarre(outfile, 'Typical SOL temperature, used only for estimating zeff_div [eV] ','(ttypical)', ttypical, 'OP')
     call ocmmnt(outfile, 'The zeff_div is used only for estimating thermal conductivity of the SOL plasma.')
     call ovarre(outfile, 'Z effective [W] ','(zeff_div)', zeff_div, 'OP ')
 

@@ -103,6 +103,8 @@ fpoloidalpower = 0.35
 tohs   = 300 * OH ramp up time (s)
 
 icc = 68 * Pseparatrix Bt / q A R
+ixc = 117 *fpsepbqar
+fpsepbqar = 9.0E-01
 psepbqarmax = 9.5D0 * maximum ratio of Psep*Bt/qAR (MWT/m)
 
 * SOL model
@@ -208,9 +210,6 @@ gapds      = 0.02 * Gap between inboard vacuum vessel and tf coil (m)
 * Why is this an iteration variable?
 
 ixc = 113 *ftaucq
-
-ixc = 117 *fpsepbqar
-fpsepbqar = 9.0E-01
 
 ixc = 60 * cpttf
 boundl(60) = 6.0e4
