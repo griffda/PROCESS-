@@ -284,7 +284,7 @@ ax_12.plot((x_max, x_max), (1, 10000), ls='dashed', color="black")
 
 # Row 3 Left
 ax_13 = page2.add_subplot(425)
-ax_13.plot(per_column[1], nv, label="Plasma flux [1e24 sm-2]")
+ax_13.plot(per_column[1], nv, label="Plasma flux [1e24 s-1 m-2]")
 ax_13.set_xlim([0.0, 0.015])
 #ymax = v[-1]
 #ymax = round(ymax/50 + 0.5) * 50
@@ -293,7 +293,7 @@ ax_13.legend(loc=1, prop={'size': 8})
 
 # Row 3 Right
 ax_14 = page2.add_subplot(426)
-ax_14.semilogx(per_column[1], nv, label="Plasma flux [1e24 sm-2]")
+ax_14.semilogx(per_column[1], nv, label="Plasma flux [1e24 s-1 m-2]")
 ax_14.set_xlim([0.014, 200])
 ax_14.set_xlabel("$x\parallel B$ (m)", fontsize=14)
 #ax_14.set_ylim([0, ymax])

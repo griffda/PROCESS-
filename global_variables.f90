@@ -987,8 +987,8 @@ module divertor_kallenbach_variables
   !+ad_vars  pressure0 : Total plasma pressure near target (thermal+dynamic) [Pa]
   real(kind(1.0D0)) :: pressure0 = 0.0D0
 
-  !+ad_vars  lengthofwidesol /5.0/ : Distance from target at which SOL power fall-off length changes [m]
-  real(kind(1.0D0)) :: lengthofwidesol = 5.0D0
+  !+ad_vars  fractionwidesol /0.1/ : Distance from target at which SOL gets broader as a fraction of connection length
+  real(kind(1.0D0)) :: fractionwidesol = 0.1D0
 
   !+ad_vars  fmom : momentum loss factor [-]
   real(kind(1.0D0)), public :: fmom

@@ -1218,9 +1218,9 @@ contains
        case ('helium_enrichment')
           call parse_real_variable('helium_enrichment', helium_enrichment, 0.1D0, 20.0D0, &
                'Ratio of helium concentration in SOL to confined plasma')
-       case ('lengthofwidesol')
-          call parse_real_variable('lengthofwidesol', lengthofwidesol, 0.01D0, 100.0D0, &
-               'Distance from target at which SOL power fall-off length changes [m]')
+       case ('fractionwidesol')
+          call parse_real_variable('fractionwidesol', fractionwidesol, 0.001D0, 0.99D0, &
+               'Distance from target at which SOL gets broader as a fraction of connection length')
 
           !  Divertor settings
 

@@ -23,7 +23,7 @@ module divertor_ode
   use process_output, only: oblnkl,obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
   use constants
   use process_input, only: lower_case
-  use divertor_kallenbach_variables, only : neratio, pressure0, lengthofwidesol, fmom, TotalPowerLost
+  use divertor_kallenbach_variables, only : neratio, pressure0, fractionwidesol, fmom, TotalPowerLost
   use build_variables, only: rspo
   use physics_variables, only:  tesep_keV => tesep
 
@@ -92,6 +92,8 @@ module divertor_ode
 
   ! Ratio: psep_kallenbach / Powerup
   real(kind(1.0D0)), private, parameter :: seppowerratio=2.3D0
+
+  real(kind(1.0D0)), private :: lengthofwidesol
 
 contains
 
@@ -397,6 +399,8 @@ contains
     ! `lcon_factor` is still available but not recommended.
     ! lcon = lcon_factor * 0.395d0*pi*q*rmajor/lambda_omp**0.196
     lcon = lcon_factor * (pi*q*rmajor/93.2) * (21.25*log(1/lambda_omp)-8.7)
+
+    lengthofwidesol = fractionwidesol * lcon
 
     ! Set module level variables with values
     lambda_target = lambda_tar
@@ -835,7 +839,7 @@ contains
     call ovarre(outfile, 'Connection length:  [m]','(lcon)', lcon, 'OP ')
 
     call ovarre(outfile, 'Parameter for approach to local equilibrium  [ms.1e20/m3]','(netau)', netau)
-    call ovarre(outfile, 'Typical SOL temperature, used only for estimating zeff_div [eV] ','(ttypical)', ttypical, 'OP')
+    call ovarre(outfile, 'Typical SOL temperature, used only for estimating zeff_div [eV] ','(ttypical)', ttypical, 'OP ')
     call ocmmnt(outfile, 'The zeff_div is used only for estimating thermal conductivity of the SOL plasma.')
     call ovarre(outfile, 'Z effective [W] ','(zeff_div)', zeff_div, 'OP ')
 
@@ -899,7 +903,7 @@ contains
 
     call ovarre(outfile, 'SOL power fall-off length at the target  [m]','(lambda_target)', lambda_target)
     call ocmmnt(outfile, 'Distance along field line from target to point where')
-    call ovarre(outfile, 'SOL power fall-off length changes [m]','(lengthofwidesol)', lengthofwidesol)
+    call ovarre(outfile, 'SOL power fall-off length changes [m]','(lengthofwidesol)', lengthofwidesol, 'OP ')
 
     call osubhd(outfile, 'Integrated powers :')
     call ovarre(outfile, 'Power lost due to impurity radiation [W] ','()', Y(7)*1.e6, 'OP ')
