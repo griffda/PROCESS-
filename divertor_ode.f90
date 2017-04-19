@@ -467,7 +467,8 @@ contains
     end if
 
     ! Sheath energy transmission coefficient (Kallenbach paper page 4)
-    gammasheath = 8.0D0
+    ! Issue #500 item 3. Adjust sheath heat transmission coefficient for ion reflection.  
+    gammasheath = 6.5D0
 
     ! Dissociation energy, T2 to 2T = 4.59 eV
     ! Ionization energy, T to T+ e- = 13.55 eV
