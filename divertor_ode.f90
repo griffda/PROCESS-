@@ -23,7 +23,7 @@ module divertor_ode
   use process_output, only: oblnkl,obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
   use constants
   use process_input, only: lower_case
-  use divertor_kallenbach_variables, only : neratio, pressure0, fractionwidesol, fmom, TotalPowerLost
+  use divertor_kallenbach_variables, only : neratio, pressure0, fractionwidesol, fmom, TotalPowerLost, impurity_enrichment
   use build_variables, only: rspo
   use physics_variables, only:  tesep_keV => tesep
 
@@ -99,7 +99,7 @@ contains
 
   subroutine divertor_Kallenbach(rmajor,rminor,bt,plascur,bvert,q,verboseset,     &
              lambda_tar,lambda_omp,ttarget,qtargettotal,targetangle,lcon_factor,netau_in,&
-             unit_test,abserrset,helium_enrichment, impurity_enrichment, &
+             unit_test,abserrset,  &
              psep_kallenbach, teomp, neomp,  &
              outfile,iprint)
     !+ad_name  divertor_Kallenbach
@@ -201,7 +201,7 @@ contains
     real(kind(1.0D0)), optional, intent(in) :: abserrset
 
     ! Helium and impurity enrichment
-    real(kind(1.0D0)), optional, intent(in) :: helium_enrichment, impurity_enrichment
+    !real(kind(1.0D0)), optional, intent(in) :: helium_enrichment, impurity_enrichment
 
     ! Power conducted through the separatrix, calculated by divertor model [W]
     real(kind(1.0D0)), optional, intent(out) :: psep_kallenbach
@@ -424,11 +424,11 @@ contains
     endif
 
     ! Get impurity concentrations every time, as they can change
-    ! Helium has its own enrichment factor, and is always present.  i = 2
-    impurity_concs(2)= impurity_arr(2)%frac * helium_enrichment
-    do i = 3, nimp
+    !impurity_concs(2)= impurity_arr(2)%frac * helium_enrichment
+    !do i = 3, nimp
+    do i = 2, nimp
         if(impurities_present(i)) then
-           impurity_concs(i)= impurity_arr(i)%frac * impurity_enrichment
+           impurity_concs(i)= impurity_arr(i)%frac * impurity_enrichment(i)
         else
             impurity_concs(i)=0.0d0
         endif
@@ -917,6 +917,7 @@ contains
     call ocmmnt(outfile, 'The following impurities are used in the divertor model:')
     write(outfile, '(a17, 13a9)')'',(imp_label(i), i=2,14)
     write(outfile, '(a17, 13es9.1)')'Fraction in SOL', (impurity_concs(i), i=2,14)
+    write(outfile, '(a17, 13es9.1)')'Enrichment', (impurity_enrichment(i), i=2,14)
 
   end subroutine divertor_Kallenbach
 
@@ -1343,7 +1344,6 @@ subroutine kallenbach_test()
                            ttarget=2.3D0,qtargettotal=4.175D6,                  &
                            targetangle=10.0D0,lcon_factor=lcon_factor,            &
                            netau_in=0.5D0,unit_test=.false.,abserrset=1.0D-6,     &
-                           helium_enrichment=1.0D0, impurity_enrichment=1.0D0,   &
                            psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3, &
                            outfile=nout,iprint=1 )
 

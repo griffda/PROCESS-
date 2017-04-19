@@ -309,8 +309,6 @@ subroutine caller(xc,nvars)
         Ttarget=Ttarget,qtargettotal=qtargettotal,            &
         targetangle=targetangle,lcon_factor=lcon_factor, &
         netau_in=netau,unit_test=.false.,abserrset=1.d-5,     &
-        helium_enrichment=helium_enrichment,                  &
-        impurity_enrichment=impurity_enrichment,              &
         psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
         outfile=nout,iprint=0 )
 

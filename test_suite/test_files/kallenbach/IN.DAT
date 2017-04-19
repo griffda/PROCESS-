@@ -260,8 +260,23 @@ etaech = 0.4 * ECRH wall-plug efficiency
 *----------------Divertor Variables----------------*
 Kallenbach_switch = 1
 Kallenbach_tests = 0
-helium_enrichment = 1.0    * Ratio of helium concentration in SOL to confined plasma
-impurity_enrichment=5.0d0  * Ratio of impurity concentrations in SOL to confined plasma
+*helium_enrichment = 1.0    * Ratio of helium concentration in SOL to confined plasma
+*impurity_enrichment=5.0d0  * Ratio of impurity concentrations in SOL to confined plasma
+* Ratio of each impurity concentration in SOL to confined plasma
+impurity_enrichment(2) = 1.0
+impurity_enrichment(3) = 5.0
+impurity_enrichment(4) = 5.0
+impurity_enrichment(5) = 5.0
+impurity_enrichment(6) = 5.0
+impurity_enrichment(7) = 5.0
+impurity_enrichment(8) = 5.0
+impurity_enrichment(9) = 5.0
+impurity_enrichment(10) = 5.0
+impurity_enrichment(11) = 5.0
+impurity_enrichment(12) = 5.0
+impurity_enrichment(13) = 5.0
+impurity_enrichment(14) = 5.0
+
 lambda_target=5.0d-3        * SOL power fall-off length at the target, perpendicular to field [m]
 
 netau = 0.5                * Parameter describing the departure from local ionisation equilibrium in the SOL. [ms.1e20/m3]

@@ -1212,12 +1212,14 @@ contains
        case ('qtargettotal')
           call parse_real_variable('qtargettotal', qtargettotal, 0.1D0, 1.0D8, &
                'Power density on target including surface recombination [W/m2]')
+       !case ('impurity_enrichment')
+       !  call parse_real_variable('impurity_enrichment', impurity_enrichment, 0.1D0, 20.0D0, &
+       !       'Ratio of impurity concentrations in SOL to confined plasma')
+
        case ('impurity_enrichment')
-          call parse_real_variable('impurity_enrichment', impurity_enrichment, 0.1D0, 20.0D0, &
-               'Ratio of impurity concentrations in SOL to confined plasma')
-       case ('helium_enrichment')
-          call parse_real_variable('helium_enrichment', helium_enrichment, 0.1D0, 20.0D0, &
-               'Ratio of helium concentration in SOL to confined plasma')
+          call parse_real_array('impurity_enrichment', impurity_enrichment, isub1, 14, &
+          'Ratio of each impurity concentration in SOL to confined plasma', icode)          
+
        case ('fractionwidesol')
           call parse_real_variable('fractionwidesol', fractionwidesol, 0.001D0, 0.99D0, &
                'Distance from target at which SOL gets broader as a fraction of connection length')

@@ -518,13 +518,13 @@ subroutine run_summary
 ! For VMCON they are printed out later with residues.
   call oblnkl(nout)
   if (ioptimz == -1) then
-		call ocmmnt(nout, 'The following constraint equations have been imposed,')
-		call ocmmnt(nout, 'but limits will not be enforced by the code :')
-		write(nout,30)
-30 	format(t10,'icc',t25,'label')
-		call oblnkl(nout)
-		write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
-40 	format(t1,i3,t10,i3,t18,a33)
+      call ocmmnt(nout, 'The following constraint equations have been imposed,')
+      call ocmmnt(nout, 'but limits will not be enforced by the code :')
+      write(nout,30)
+30    format(t10,'icc',t25,'label')
+      call oblnkl(nout)
+      write(nout,40) (ii,icc(ii),lablcc(icc(ii)), ii=1,neqns+nineqns)
+40    format(t1,i3,t10,i3,t18,a33)
   end if
 
 !  call ocmmnt(nout, &
@@ -1613,8 +1613,7 @@ subroutine output(outfile)
       verboseset=.false., lambda_tar=lambda_target,lambda_omp=lambda_q, &
       Ttarget=Ttarget,qtargettotal=qtargettotal,            &
       targetangle=targetangle,lcon_factor=lcon_factor, netau_in=netau, &
-      unit_test=.false.,abserrset=1.d-5, helium_enrichment=helium_enrichment, &
-      impurity_enrichment=impurity_enrichment,              &
+      unit_test=.false.,abserrset=1.d-5,  &
       psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
       outfile=nout,iprint=1 )
 
@@ -1691,7 +1690,7 @@ subroutine output(outfile)
   ! 4    |  KIT HCLL model
 
   if (iblanket == 1) then           ! CCFE HCPB model
-	 call ccfe_hcpb(nout, 1)
+      call ccfe_hcpb(nout, 1)
   else if (iblanket == 2) then      ! KIT HCPB model
      call kit_hcpb(nout, 1)
   else if (iblanket == 3) then      ! CCFE HCPB model with Tritium Breeding Ratio calculation

@@ -964,11 +964,11 @@ module divertor_kallenbach_variables
   !+ad_vars  qtargettotal /5.0e6/ : Power density on target including surface recombination [W/m2] (iteration variable 124)
   real(kind(1.0D0)) :: qtargettotal = 5.0D6
 
-  !+ad_vars  helium_enrichment /1.0/ : Ratio of helium concentration in SOL to confined plasma
-  real(kind(1.0D0)) :: helium_enrichment = 1.0D0
+  ! real(kind(1.0D0)) :: helium_enrichment = 1.0D0
+  ! real(kind(1.0D0)) :: impurity_enrichment = 5.0D0
 
-  !+ad_vars  impurity_enrichment /5.0/ : Ratio of impurity concentrations in SOL to confined plasma
-  real(kind(1.0D0)) :: impurity_enrichment = 5.0D0
+  !+ad_vars  impurity_enrichment(2-14) /5.0/ : Ratio of each impurity concentration in SOL to confined plasma
+  real(kind(1.0D0)), dimension(14) :: impurity_enrichment = 5.0D0
 
   !+ad_vars  psep_kallenbach : Power conducted through the separatrix, as calculated by the divertor model [W]
   !+ad_varc                    Not equal to pdivt unless constraint is imposed.
