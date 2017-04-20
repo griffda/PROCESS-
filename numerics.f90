@@ -344,150 +344,153 @@ module numerics
        ! Each line of code has a comma before the ampersand, except the last one.
        ! The last ad_varc line ends with the html tag "</UL>".
 
-  !+ad_vars  ixc(ipnvars) /4,5,6,7,10,12,13,19,28,29,36,39,50,53,54,61/ :
+  ! Issue #495.  Remove default iteration variables
+  !+ad_vars  ixc(ipnvars) /0/ :
   !+ad_varc               array defining which iteration variables to activate
   !+ad_varc               (see lablxc for descriptions)
-  integer, dimension(ipnvars) :: ixc = (/ &
-       4,  &  !  1
-       5,  &  !  2
-       6,  &  !  3
-       7,  &  !  4
-       10, &  !  5
-       12, &  !  6
-       13, &  !  7
-       19, &  !  8
-       28, &  !  9
-       29, &  !  10
-       36, &  !  11
-       39, &  !  12
-       50, &  !  13
-       53, &  !  14
-       54, &  !  15
-       61, &  !  16
-       0,  &  !  17
-       0,  &  !  18
-       0,  &  !  19
-       0,  &  !  20
-       0,  &  !  21
-       0,  &  !  22
-       0,  &  !  23
-       0,  &  !  24
-       0,  &  !  25
-       0,  &  !  26
-       0,  &  !  27
-       0,  &  !  28
-       0,  &  !  29
-       0,  &  !  30
-       0,  &  !  31
-       0,  &  !  32
-       0,  &  !  33
-       0,  &  !  34
-       0,  &  !  35
-       0,  &  !  36
-       0,  &  !  37
-       0,  &  !  38
-       0,  &  !  39
-       0,  &  !  40
-       0,  &  !  41
-       0,  &  !  42
-       0,  &  !  43
-       0,  &  !  44
-       0,  &  !  45
-       0,  &  !  46
-       0,  &  !  47
-       0,  &  !  48
-       0,  &  !  49
-       0,  &  !  50
-       0,  &  !  51
-       0,  &  !  52
-       0,  &  !  53
-       0,  &  !  54
-       0,  &  !  55
-       0,  &  !  56
-       0,  &  !  57
-       0,  &  !  58
-       0,  &  !  59
-       0,  &  !  60
-       0,  &  !  61
-       0,  &  !  62
-       0,  &  !  63
-       0,  &  !  64
-       0,  &  !  65
-       0,  &  !  66
-       0,  &  !  67
-       0,  &  !  68
-       0,  &  !  69
-       0,  &  !  70
-       0,  &  !  71
-       0,  &  !  72
-       0,  &  !  73
-       0,  &  !  74
-       0,  &  !  75
-       0,  &  !  76
-       0,  &  !  77
-       0,  &  !  78
-       0,  &  !  79
-       0,  &  !  80
-       0,  &  !  81
-       0,  &  !  82
-       0,  &  !  83
-       0,  &  !  84
-       0,  &  !  85
-       0,  &  !  86
-       0,  &  !  87
-       0,  &  !  88
-       0,  &  !  89
-       0,  &  !  90
-       0,  &  !  91
-       0,  &  !  92
-       0,  &  !  93
-       0,  &  !  94
-       0,  &  !  95
-       0,  &  !  96
-       0,  &  !  97
-       0,  &  !  98
-       0,  &  !  99
-       0,  &  !  100
-       0,  &  !  101
-       0,  &  !  102
-       0,  &  !  103
-       0,  &  !  104
-       0,  &  !  105
-       0,  &  !  106
-       0,  &  !  107
-       0,  &  !  108
-       0,  &  !  109
-       0,  &  !  110
-       0,  &  !  111
-       0,  &  !  112
-       0,  &  !  113
-       0,  &  !  114
-       0,  &  !  115
-       0,  &  !  116
-       0,  &  !  117
-       0,  &  !  118
-       0,  &  !  119
-       0,  &  !  120
-       0,  &  !  121
-       0,  &  !  122
-       0,  &  !  123
-       0,  &  !  124
-       0,  &  !  125
-       0,  &  !  126
-       0,  &  !  127
-       0,  &  !  128
-       0,  &  !  129
-       0,  &  !  130
-       0,  &  !  131
-       0,  &  !  132
-       0,  &  !  133
-       0,  &  !  134
-       0,  &  !  135
-       0,  &  !  136
-       0   &  !  137
-       /)
+  integer, dimension(ipnvars) :: ixc = 0
+
+  ! integer, dimension(ipnvars) :: ixc = (/ &
+  !      4,  &  !  1
+  !      5,  &  !  2
+  !      6,  &  !  3
+  !      7,  &  !  4
+  !      10, &  !  5
+  !      12, &  !  6
+  !      13, &  !  7
+  !      19, &  !  8
+  !      28, &  !  9
+  !      29, &  !  10
+  !      36, &  !  11
+  !      39, &  !  12
+  !      50, &  !  13
+  !      53, &  !  14
+  !      54, &  !  15
+  !      61, &  !  16
+  !      0,  &  !  17
+  !      0,  &  !  18
+  !      0,  &  !  19
+  !      0,  &  !  20
+  !      0,  &  !  21
+  !      0,  &  !  22
+  !      0,  &  !  23
+  !      0,  &  !  24
+  !      0,  &  !  25
+  !      0,  &  !  26
+  !      0,  &  !  27
+  !      0,  &  !  28
+  !      0,  &  !  29
+  !      0,  &  !  30
+  !      0,  &  !  31
+  !      0,  &  !  32
+  !      0,  &  !  33
+  !      0,  &  !  34
+  !      0,  &  !  35
+  !      0,  &  !  36
+  !      0,  &  !  37
+  !      0,  &  !  38
+  !      0,  &  !  39
+  !      0,  &  !  40
+  !      0,  &  !  41
+  !      0,  &  !  42
+  !      0,  &  !  43
+  !      0,  &  !  44
+  !      0,  &  !  45
+  !      0,  &  !  46
+  !      0,  &  !  47
+  !      0,  &  !  48
+  !      0,  &  !  49
+  !      0,  &  !  50
+  !      0,  &  !  51
+  !      0,  &  !  52
+  !      0,  &  !  53
+  !      0,  &  !  54
+  !      0,  &  !  55
+  !      0,  &  !  56
+  !      0,  &  !  57
+  !      0,  &  !  58
+  !      0,  &  !  59
+  !      0,  &  !  60
+  !      0,  &  !  61
+  !      0,  &  !  62
+  !      0,  &  !  63
+  !      0,  &  !  64
+  !      0,  &  !  65
+  !      0,  &  !  66
+  !      0,  &  !  67
+  !      0,  &  !  68
+  !      0,  &  !  69
+  !      0,  &  !  70
+  !      0,  &  !  71
+  !      0,  &  !  72
+  !      0,  &  !  73
+  !      0,  &  !  74
+  !      0,  &  !  75
+  !      0,  &  !  76
+  !      0,  &  !  77
+  !      0,  &  !  78
+  !      0,  &  !  79
+  !      0,  &  !  80
+  !      0,  &  !  81
+  !      0,  &  !  82
+  !      0,  &  !  83
+  !      0,  &  !  84
+  !      0,  &  !  85
+  !      0,  &  !  86
+  !      0,  &  !  87
+  !      0,  &  !  88
+  !      0,  &  !  89
+  !      0,  &  !  90
+  !      0,  &  !  91
+  !      0,  &  !  92
+  !      0,  &  !  93
+  !      0,  &  !  94
+  !      0,  &  !  95
+  !      0,  &  !  96
+  !      0,  &  !  97
+  !      0,  &  !  98
+  !      0,  &  !  99
+  !      0,  &  !  100
+  !      0,  &  !  101
+  !      0,  &  !  102
+  !      0,  &  !  103
+  !      0,  &  !  104
+  !      0,  &  !  105
+  !      0,  &  !  106
+  !      0,  &  !  107
+  !      0,  &  !  108
+  !      0,  &  !  109
+  !      0,  &  !  110
+  !      0,  &  !  111
+  !      0,  &  !  112
+  !      0,  &  !  113
+  !      0,  &  !  114
+  !      0,  &  !  115
+  !      0,  &  !  116
+  !      0,  &  !  117
+  !      0,  &  !  118
+  !      0,  &  !  119
+  !      0,  &  !  120
+  !      0,  &  !  121
+  !      0,  &  !  122
+  !      0,  &  !  123
+  !      0,  &  !  124
+  !      0,  &  !  125
+  !      0,  &  !  126
+  !      0,  &  !  127
+  !      0,  &  !  128
+  !      0,  &  !  129
+  !      0,  &  !  130
+  !      0,  &  !  131
+  !      0,  &  !  132
+  !      0,  &  !  133
+  !      0,  &  !  134
+  !      0,  &  !  135
+  !      0,  &  !  136
+  !      0   &  !  137
+  !      /)
   !+ad_vars  lablxc(ipnvars) : labels describing iteration variables
-  !+ad_varc                   (starred ones are turned on by default):<UL>
+  !+ad_varc                   (NEW:THERE ARE NO DEFAULTS):<UL>
   ! WARNING These labels are used as variable names by write_new_in_dat.py, and possibly
   ! othr python utilities, so they cannot easily be changed.
   character(len=14), dimension(ipnvars) :: lablxc = (/ &
@@ -497,25 +500,25 @@ module numerics
        'bt            ', &
        !+ad_varc  <LI> ( 3) rmajor
        'rmajor        ', &
-       !+ad_varc  <LI> ( 4) * te
+       !+ad_varc  <LI> ( 4) te
        'te            ', &
-       !+ad_varc  <LI> ( 5) * beta
+       !+ad_varc  <LI> ( 5) beta
        'beta          ', &
-       !+ad_varc  <LI> ( 6) * dene
+       !+ad_varc  <LI> ( 6) dene
        'dene          ', &
-       !+ad_varc  <LI> ( 7) * rnbeam
+       !+ad_varc  <LI> ( 7) rnbeam
        'rnbeam        ', &
        !+ad_varc  <LI> ( 8) fbeta (f-value for equation 6)
        'fbeta         ', &
        !+ad_varc  <LI> ( 9) fdene (f-value for equation 5)
        'fdene         ', &
-       !+ad_varc  <LI> (10) * hfact
+       !+ad_varc  <LI> (10) hfact
        'hfact         ', &
        !+ad_varc  <LI> (11) pheat
        'pheat         ', &
-       !+ad_varc  <LI> (12) * oacdcp
+       !+ad_varc  <LI> (12) oacdcp
        'oacdcp        ', &
-       !+ad_varc  <LI> (13) * tfcth
+       !+ad_varc  <LI> (13) tfcth
        'tfcth         ', &
        !+ad_varc  <LI> (14) fwalld (f-value for equation 8)
        'fwalld        ', &
@@ -527,7 +530,7 @@ module numerics
        'tdwell        ', &
        !+ad_varc  <LI> (18) q
        'q             ', &
-       !+ad_varc  <LI> (19) * enbeam
+       !+ad_varc  <LI> (19) enbeam
        'enbeam        ', &
        !+ad_varc  <LI> (20) tcpav
        'tcpav         ', &
@@ -545,9 +548,9 @@ module numerics
        'ffuspow       ', &
        !+ad_varc  <LI> (27) fhldiv (f-value for equation 18)
        'fhldiv        ', &
-       !+ad_varc  <LI> (28) * fradpwr (f-value for equation 17), total radiation fraction
+       !+ad_varc  <LI> (28) fradpwr (f-value for equation 17), total radiation fraction
        'fradpwr       ', &
-       !+ad_varc  <LI> (29) * bore
+       !+ad_varc  <LI> (29) bore
        'bore          ', &
        !+ad_varc  <LI> (30) fmva (f-value for equation 19)
        'fmva          ', &
@@ -561,13 +564,13 @@ module numerics
        'fdivcol       ', &
        !+ad_varc  <LI> (35) fpeakb (f-value for equation 25)
        'fpeakb        ', &
-       !+ad_varc  <LI> (36) * fbetatry (f-value for equation 24)
+       !+ad_varc  <LI> (36) fbetatry (f-value for equation 24)
        'fbetatry      ', &
        !+ad_varc  <LI> (37) coheof
        'coheof        ', &
        !+ad_varc  <LI> (38) fjohc (f-value for equation 26)
        'fjohc         ', &
-       !+ad_varc  <LI> (39) * fjohc0 (f-value for equation 27)
+       !+ad_varc  <LI> (39) fjohc0 (f-value for equation 27)
        'fjohc0        ', &
        !+ad_varc  <LI> (40) fgamcd (f-value for equation 37)
        'fgamcd        ', &
@@ -589,15 +592,15 @@ module numerics
        'fstrcase      ', &
        !+ad_varc  <LI> (49) fstrcond (f-value for equation 32)
        'fstrcond      ', &
-       !+ad_varc  <LI> (50) * fiooic (f-value for equation 33)
+       !+ad_varc  <LI> (50) fiooic (f-value for equation 33)
        'fiooic        ', &
        !+ad_varc  <LI> (51) fvdump (f-value for equation 34)
        'fvdump        ', &
        !+ad_varc  <LI> (52) vdalw
        'vdalw         ', &
-       !+ad_varc  <LI> (53) * fjprot (f-value for equation 35)
+       !+ad_varc  <LI> (53) fjprot (f-value for equation 35)
        'fjprot        ', &
-       !+ad_varc  <LI> (54) * ftmargtf (f-value for equation 36)
+       !+ad_varc  <LI> (54) ftmargtf (f-value for equation 36)
        'ftmargtf      ', &
        !+ad_varc  <LI> (55) obsolete
        'obsolete      ', &
@@ -611,7 +614,7 @@ module numerics
        'fcutfsu       ', &
        !+ad_varc  <LI> (60) cpttf
        'cpttf         ', &
-       !+ad_varc  <LI> (61) * gapds
+       !+ad_varc  <LI> (61) gapds
        'gapds         ', &
        !+ad_varc  <LI> (62) fdtmp (f-value for equation 38)
        'fdtmp         ', &
@@ -1320,7 +1323,7 @@ contains
        b(:,:) = zero
        do ii = 1, n
           b(ii,ii) = bfactor
-          xv(ii) = xcm(ii)	 !  Re-initialise iteration values
+          xv(ii) = xcm(ii)      !  Re-initialise iteration values
        end do
        if (verbose == 1) then
           write(*,*) 'VMCON error code = 5.  Rerunning VMCON using a new'

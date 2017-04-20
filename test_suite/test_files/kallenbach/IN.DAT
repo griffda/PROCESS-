@@ -1,5 +1,5 @@
 
-runtitle = 'Kallenbach divertor model'
+runtitle = Kallenbach divertor model
 
 *---------------Constraint Equations---------------*
 icc = 1 * Beta
