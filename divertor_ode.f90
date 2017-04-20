@@ -270,7 +270,7 @@ contains
     character(len=2) :: element='**'
 
     ! Poloidal, toroidal and total field at target
-    real(kind(1.0D0)) :: Bp_target, Bt_target, Btotal_target
+    real(kind(1.0D0)) :: Bp_target, Bt_target, Btotal_target, pitch_angle_target
 
     ! ODE solver parameters !
     !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -390,6 +390,8 @@ contains
 
     Btotal_omp = sqrt(Bp_omp**2 + Bt_omp**2)
     Btotal_target = sqrt(Bp_omp**2 + Bt_target**2)
+    ! Approximation for pitch angle
+    pitch_angle_target = Bp_target / Btotal_target
 
     ! Connection length from OMP to target
     ! Start with the simplest approximation for elongated plasma
@@ -467,7 +469,7 @@ contains
     end if
 
     ! Sheath energy transmission coefficient (Kallenbach paper page 4)
-    ! Issue #500 item 3. Adjust sheath heat transmission coefficient for ion reflection.  
+    ! Issue #500 item 3. Adjust sheath heat transmission coefficient for ion reflection.
     gammasheath = 6.5D0
 
     ! Dissociation energy, T2 to 2T = 4.59 eV
@@ -537,8 +539,8 @@ contains
     ! Sound speed [m/s]
     cs0 = sqrt(2.0D0*echarge*ttarget/mi)
 
-    ! Target area to target wetted area factor
-    sinfact = 1.0D0 / (sin(targetangle*degree) * Bp_target / Btotal_target)
+    ! Ratio: target area perp to B / target wetted area
+    sinfact = 1.0D0 / (sin(targetangle*degree) * pitch_angle_target)
 
     ! Wetted area on target [m2]
     WettedArea= area0*sinfact
@@ -874,9 +876,12 @@ contains
 
     call ovarre(outfile, 'Ratio: psep_kallenbach / Powerup ','(seppowerratio)', seppowerratio)
 
+
     call osubhd(outfile, 'Properties of SOL plasma adjacent to divertor sheath :')
+
     call ovarre(outfile, 'Ion sound speed near target [m/s] ','(cs0)', cs0, 'OP ')
     call ovarre(outfile, 'Plasma density near target [m-3] ','(nel0)', nel0, 'OP ')
+
     call ovarre(outfile, 'Ion flux density perp to B at target [partfluxtar] m-2s-1 ','(partfluxtar)', partfluxtar, 'OP ')
     call ovarre(outfile, 'Ion flux density on target [partfluxtar/sinfact]  m-2s-1 ','(IonFluxTarget)', IonFluxTarget, 'OP ')
     call ovarre(outfile, 'Nominal neutral pressure at target [p0partflux] [Pa] ','(p0partflux)', p0partflux, 'OP ')
@@ -886,8 +891,9 @@ contains
     call ovarre(outfile, 'Momentum loss factor [-] ','(fmom)', fmom, 'OP ')
 
     call osubhd(outfile, 'Divertor target parameters :')
-    call ovarre(outfile, 'Angle between flux surface and normal to divertor target [deg]', &
-                         '(targetangle)', targetangle)
+    call ovarre(outfile, 'Angle between flux surface and normal to divertor target [deg]', '(targetangle)', targetangle)
+    call ovarre(outfile, 'Pitch angle of field line at target','(pitch_angle_target)', pitch_angle_target, 'OP ')
+    call ovarre(outfile, 'Ratio: area of flux tube perpendicular to B / target wetted area  ','(sinfact)', sinfact, 'OP ')
 
     call ovarre(outfile, 'Total power on target [W]','(powertargettotal)', powertargettotal, 'OP ')
     call ovarre(outfile, 'Power on target not including surface recombination [W]','(Power0)', Power0, 'OP ')

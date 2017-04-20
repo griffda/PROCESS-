@@ -915,7 +915,9 @@ DICT_OPTIMISATION_VARS = {1: 'Plasma major radius',
                           12: 'hydrogen production capital cost',
                           13: 'hydrogen production rate',
                           14: 'pulse length',
-                          15: 'plant availability factor'} """
+                          15: 'plant availability factor',
+                          16: 'linear combination of major radius (minimised) and pulse length (maximised)',
+                          17: 'net electrical output'} """
 
     print(out)
 
@@ -1070,7 +1072,7 @@ def print_icc_module():
 
     with open(file_loc) as f:
         lines = f.readlines()
-    
+
     counter = 1
     for line in lines:
         if "!#=#" in line:

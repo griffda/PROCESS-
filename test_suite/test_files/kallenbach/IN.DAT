@@ -281,7 +281,7 @@ lambda_target=5.0d-3        * SOL power fall-off length at the target, perpendic
 
 netau = 0.5                * Parameter describing the departure from local ionisation equilibrium in the SOL. [ms.1e20/m3]
 lambda_q = 0.002
-targetangle = 5.0          * Angle between field-line and divertor target (degrees)
+targetangle = 10.0          * Angle between field-line and divertor target (degrees)
 fractionwidesol = 0.1      * Distance from target at which SOL gets broader as a fraction of connection length
 
 
