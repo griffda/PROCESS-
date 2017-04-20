@@ -191,7 +191,7 @@ class MFile(object):
             self.mfile_lines = mfile.readlines()
         
         for i in range(len(self.mfile_lines)):
-            if "*----" in self.mfile_lines[i]:
+            if "*----" in self.mfile_lines[i] or "***" in self.mfile_lines[i]:
                 self.mfile_lines = self.mfile_lines[:i]
                 self.mfile_end = i
                 return

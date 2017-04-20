@@ -141,6 +141,8 @@ program process
     open(unit = 101, FILE = outFile, ACCESS = "append")
     open(unit = 102, FILE=trim(fileprefix)//'MFILE.DAT', ACCESS = "append")
     fmtAppend = '(A)'
+    write(102, fmtAppend) "***********************************************"
+
     DO
       read(100, fmtAppend, IOSTAT = iost) line
       write(101, fmtAppend) trim(line)
