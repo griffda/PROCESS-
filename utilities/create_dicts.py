@@ -915,9 +915,7 @@ DICT_OPTIMISATION_VARS = {1: 'Plasma major radius',
                           12: 'hydrogen production capital cost',
                           13: 'hydrogen production rate',
                           14: 'pulse length',
-                          15: 'plant availability factor',
-                          16: 'linear combination of major radius (minimised) and pulse length (maximised)',
-                          17: 'net electrical output'} """
+                          15: 'plant availability factor'} """
 
     print(out)
 
@@ -1072,14 +1070,45 @@ def print_icc_module():
 
     with open(file_loc) as f:
         lines = f.readlines()
-
+    
     counter = 1
     for line in lines:
-        if "!#=#" in line:
+        if "!#=# " in line:
             module = line.split("#=#")[-1].replace(" ", "").strip("\n")
             icc_modules[str(counter)] = module
             counter += 1
     print_dict(icc_modules, "DICT_ICC_MODULE", comment, lam)
+
+
+def print_icc_vars():
+
+    """
+    Prints:
+    DICT_ICC_VARS
+    """
+
+    lam = lambda x: int(x[0])
+    icc_vars = dict()
+    comment = "Dictionary mapping icc number icc vars"
+
+    file_loc = SOURCEDIR + "/constraint_equations.f90"
+
+    with open(file_loc) as f:
+        lines = f.readlines()
+    
+    counter = 1
+    for line in lines:
+        if "!#=#=#" in line:
+            vars = line.split("!#=#=#")[-1].replace(" ", "").strip("\n").split(",")
+            if vars[0] != "consistency" and vars[0] != "empty":
+                f_value = vars[0]
+                cons_var = vars[1]
+                icc_vars[str(counter)] = {"f":f_value, "v":cons_var}
+            else:
+                icc_vars[str(counter)] = "consistency"
+            counter += 1
+    print_dict(icc_vars, "DICT_ICC_VARS", comment, lam)
+
 
 def print_all():
     """Prints every dictionary
@@ -1097,6 +1126,7 @@ def print_all():
     print_module()
     print_nsweep2varname()
     print_icc_module()
+    print_icc_vars()
 
 
 if __name__ == "__main__":
