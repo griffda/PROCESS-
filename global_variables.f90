@@ -3838,7 +3838,7 @@ module constraint_variables
   real(kind(1.0D0)) :: fpoloidalpower = 1.0D0
 
   !+ad_vars  fpsep /1.0/ : f-value to ensure separatrix power is less than value from Kallenbach divertor
-  !+ad_varc                   (constraint equation 69, iteration variable 118)
+  !+ad_varc                   (Not required as constraint 69 is an equality)
   real(kind(1.0D0)) :: fpsep = 1.0D0
 
 end module constraint_variables

@@ -167,7 +167,7 @@ ax_4.semilogx(per_column[1], per_column[5], label="$P_{total}$")
 ax_4.semilogx(per_column[1], per_column[4], label="$P_{thermal}$")
 ax_4.set_xlim([0.014, 200])
 ax_4.legend(loc=3, prop={'size': 12})
-ax_4.plot((x_max, x_max), (0.0, 4500), ls='dashed', color="black")
+ax_4.plot((x_max, x_max), (0.0, 2000), ls='dashed', color="black")
 
 ax_6 = fig.add_subplot(426)
 ax_6.semilogx(per_column[1], per_column[2], label="$T_e$")

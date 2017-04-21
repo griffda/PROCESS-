@@ -1537,7 +1537,7 @@ contains
           ! zeff     |  plasma effective charge
           cc(i) = 1.0D0 - fzeffmax * (zeffmax/zeff)
 
-	        if (present(con)) then
+          if (present(con)) then
             con(i) = zeffmax
             err(i) = zeffmax * cc(i)
             symbol(i) = '<'
@@ -1580,7 +1580,7 @@ contains
        case (67) ! Simple upper limit on radiation wall load
            !#=# physics
            !#=#=# fradwall, maxradwallload
-          
+
            ! fradwall    |  f-value for upper limit on radiation wall load
            ! maxradwallload  |  Maximum permitted radiation wall load (MW/m^2)
            ! peakradwallload |  Peak radiation wall load (MW/m^2)
@@ -1592,11 +1592,11 @@ contains
              symbol(i) = '<'
              units(i) = 'MW/m^2'
            end if
-      
+
        case (68) ! New Psep scaling (PsepB/qAR)
            !#=# physics
            !#=#=# fpsepbqar, psepbqarmax
-       
+
            ! Issue #464
            ! fpsepbqar       |  f-value for upper limit on psepbqar
            ! psepbqarmax     |  Maximum permitted PsepB/qAR (MWT/m)
@@ -1618,15 +1618,17 @@ contains
            !#=# divertor
            !#=#=# fpsep, psep_kallenbach
 
-           ! fpsep             | f-value for consistency of two values of separatrix power      
-           ! psep_kallenbach   | Power conducted through the separatrix, as calculated by the divertor model [W]. 
+           ! fpsep             | f-value for consistency of two values of separatrix power
+           ! psep_kallenbach   | Power conducted through the separatrix, as calculated by the divertor model [W].
            ! pdivt             |  power to conducted to the divertor region (MW)
-           cc(i) = 1.0d0 - fpsep * (psep_kallenbach/1.0d6) / pdivt
+           !cc(i) = 1.0d0 - fpsep * (psep_kallenbach/1.0d6) / pdivt
+           cc(i) = 1.0d0 - (psep_kallenbach/1.0d6) / pdivt
 
            if (present(con)) then
              con(i) = psep_kallenbach/1.0d6
              err(i) = psep_kallenbach/1.0d6 * cc(i)
-             symbol(i) = '<'
+             !symbol(i) = '<'
+             symbol(i) = '='
              units(i) = 'MW'
            end if
 
@@ -1665,7 +1667,7 @@ contains
        case (72) ! OH coil Tresca stress limit
            !#=# tfcoil
            !#=#=# foh_stress, alstroh
-       
+
            ! foh_stress      |  f-value for stress limit
            ! alstroh         |  Maximum permitted stress [MPa]
            ! s_tresca_oh     |  Calculated Tresca stress for OH coil [MPa]
@@ -1682,7 +1684,7 @@ contains
            !#=# physics
            !#=#=# fplhsep, pdivt
 
-           ! fplhsep    | f-value for consistency of two values of separatrix power      
+           ! fplhsep    | f-value for consistency of two values of separatrix power
            ! plhthresh  | L-H mode power threshold (MW)
            ! pdivt      | power conducted to the divertor region (MW)
            ! pinjmw     | total auxiliary injected power (MW)

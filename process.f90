@@ -327,12 +327,12 @@ subroutine inform(progid)
        '1.0.9    Release Date :: 2017-03-08'
   character(len = 50) :: dt_time
   character(len=72), dimension(10) :: id
-  integer :: unit
-  logical :: unit_available
-  character(8)  :: date
-  character(10) :: time
-  character(5)  :: zone
-  integer, dimension(8) :: values
+  ! integer :: unit
+  ! logical :: unit_available
+  ! character(8)  :: date
+  ! character(10) :: time
+  ! character(5)  :: zone
+  ! integer, dimension(8) :: values
   !  External routines
 
   !  external system
@@ -1231,7 +1231,7 @@ subroutine doopt(ifail)
      xcs(inn) = xcm(inn)*scafc(inn)
 !     write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn), &
 !          vlam(neqns+nineqns+inn), vlam(neqns+nineqns+1+inn+nvar)
-	  write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn)
+     write(nout,80) inn,lablxc(ixc(inn)),xcs(inn),xcm(inn)
 !80 format(t2,i4,t8,a9,t19,4(1pe12.4))
 !80 format(t2,i4,t8,a30,t39,2(1pe12.4))
 80 format(t2,i4,t8,a30,t39,1pe12.4, t52, 0pf10.4)
@@ -1354,12 +1354,6 @@ subroutine final(ifail)
      write(iotty,70) nfev1,nviter,ncalls
   end if
 
-10 format( &
-       t2,'The optimisation required ',i5,' iteration',/, &
-       t2,'There were ',i6,' function calls')
-20 format( &
-       t2,'The optimisation required ',i5,' iterations',/, &
-       t2,'There were ',i6,' function calls')
 30 format( &
        t2,'The HYBRD point required ',i5,' iteration',/, &
        t2,'There were ',i6,' function calls')
@@ -1618,7 +1612,6 @@ subroutine output(outfile)
       unit_test=.false.,abserrset=1.d-5,  &
       psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
       outfile=nout,iprint=1 )
-!lambda_tar=lambda_target,lambda_omp=lambda_q,
 
   else
     ! Old Divertor Model ! Comment this out MDK 30/11/16

@@ -110,10 +110,6 @@ psepbqarmax = 9.5D0 * maximum ratio of Psep*Bt/qAR (MWT/m)
 * SOL model
 * ---------
 icc = 69 * Separatrix power < than value from Kallenbach divertor (Use iteration variable 118 (fpsep))
-*ixc = 118 * fpsep: f-value to ensure separatrix power is related to that from Kallenbach divertor
-*boundl(118) = 0.99
-*boundu(118)=1.01
-fpsep = 1.0
 
 * Separatrix temperature
 icc = 70 * ensure that teomp is equal to the separatrix temperature in the pedestal profile (Use iteration variable 119 (tesep))
@@ -312,17 +308,22 @@ fimp(5) = 0.0
 fimp(6) = 0.0
 fimp(7) = 0.0
 fimp(8) = 0.0
-fimp(9) = 0.0
+*
 fimp(10) = 0.0
 fimp(11) = 0.0
 fimp(12) = 0.0
 *
 fimp(14) = 5e-05
 
+ixc = 131   * fimp(9) : Argon density fraction relative to electron density
+boundl(135) = 1.0e-10
+boundu(135) = 0.01
+fimp(9) = 1.6E-03 
+
 ixc = 135   * fimp(13) : Xenon density fraction relative to electron density
 boundl(135) = 1.0e-10
 boundu(135) = 0.01
-fimp(13) = 0.0005
+fimp(13) = 2.8E-04
 
 *---------------------Numerics---------------------*
 ioptimz  = 1 * for optimisation VMCON only

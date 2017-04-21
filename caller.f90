@@ -310,8 +310,6 @@ subroutine caller(xc,nvars)
         netau_in=netau,unit_test=.false.,abserrset=1.d-5,     &
         psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
         outfile=nout,iprint=0 )
-        
-        !lambda_tar=lambda_target,lambda_omp=lambda_q,         &
   else if(kallenbach_switch.eq.0) then
 
     ! Old Divertor Model ! Comment this out MDK 30/11/16

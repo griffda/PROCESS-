@@ -325,8 +325,7 @@ module numerics
        'Upper Lim. on Radiation Wall load',   &
        !+ad_varc  <LI> (68) Psep * Bt / qAR upper limit
        'Upper Lim. on Psep * Bt / q A R  ',   &
-       !+ad_varc  <LI> (69) ensure separatrix power is less than value from Kallenbach divertor
-       !+ad_varc            (Use iteration variable 118 (fpsep))
+       !+ad_varc  <LI> (69) ensure separatrix power is equal to the value from Kallenbach divertor
        'pdivt < psep_kallenbach divertor ',   &
        !+ad_varc  <LI> (70) ensure that teomp is equal to the separatrix temperature in the pedestal profile,
        !+ad_varc            (Use iteration variable 119 (tesep))

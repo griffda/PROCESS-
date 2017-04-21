@@ -40,8 +40,8 @@ module divertor_ode
   real(kind(1.0D0)), public :: impurity_concs(nimp)
 
   ! relative ion mass
-  ! Why not 2.5? TODO
-  real(kind(1.0D0)), private :: aplas=2.0D0
+  ! Issue #501: change from 2 to 2.5
+  real(kind(1.0D0)), private :: aplas=2.5D0
 
   ! ion mass [kg]
   real(kind(1.0D0)), private :: mi
@@ -79,12 +79,6 @@ module divertor_ode
   ! Zeff for divertor region
   real(kind(1.0D0)) :: zeff_div
 
-  ! zeff_div to power 0.3
-  ! real(kind(1.0D0)), private :: zeffpoint3
-
-  ! SOL radial thickness extrapolated to OMP [m]
-  ! real(kind(1.0D0)), private :: lambda_target, lambda_q
-
   ! SOL radial thickness extrapolated to OMP [m]
   real(kind(1.0D0)), private :: sol_broadening
 
@@ -116,26 +110,12 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    ! Convention: Variables begining with
-    !   qperp:    Power density on a surface perpendicular to B [W/m2]
-    !   Power:        Power [W]
-    !   qtarget:  Power density on the target area [W/m2]
-    ! Note that despite the use of the suffix "perp", all these powers are ALONG the field line!
-    ! Cross-field transport is not explicitly included
-
-    ! Glossary !
-    !!!!!!!!!!!!
-
-    ! OMP - outboard-midplane
-
-    use ode_mod , only :                      ode
-    use constraint_variables, only :          fpsep
-    use numerics, only : active_constraints, name_xc,  boundl, boundu
-    use physics_variables, only :             nesep, pdivt
+    use ode_mod , only :            ode
+    use numerics, only :            active_constraints
+    use physics_variables, only :   nesep, pdivt
 
     implicit none
 
-    ! Code variables
     logical::verbose
     logical,save::firstcall=.true.
     logical, intent(in) :: verboseset
@@ -161,9 +141,6 @@ contains
 
     ! Plasma safety factor near edge
     real(kind(1.0D0)), intent(in) :: q
-
-    ! SOL radial thickness extrapolated to OMP [m]
-    ! real(kind(1.0D0)), intent(in) :: lambda_tar, lambda_omp
 
     ! Target temperature input [eV]
     real(kind(1.0D0)), intent(in) :: ttarget
@@ -257,11 +234,10 @@ contains
 
     ! Poloidal, toroidal and total field at target
     real(kind(1.0D0)) :: Bp_target, Bt_target, Btotal_target, pitch_angle, sin_pitch_angle
-
     real(kind(1.0D0)) :: poloidal_flux_expansion
 
-    ! ODE solver parameters !
-    !!!!!!!!!!!!!!!!!!!!!!!!!
+    ! ODE solver parameters
+    !!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Number of steps along the 1D line
     integer(kind=4), parameter :: step_num = 100
@@ -304,7 +280,6 @@ contains
     ! Plasma thermal pressure
     real(kind(1.0D0)) :: nete
 
-    ! TODO: same name as density...
     !+ad_vars  nete0 : Plasma thermal pressure near target
     real(kind(1.0D0)) :: nete0
 
@@ -331,9 +306,6 @@ contains
 
     ! Total power on target [W]
     real(kind(1.0D0)) :: powertargettotal
-
-    ! Combined weighted radiative loss function
-    ! real(kind(1.0D0)) :: LzTotal
 
     !+ad_vars  WettedArea : Wetted area of target [m2]
     real(kind(1.0D0)) :: WettedArea
@@ -387,20 +359,13 @@ contains
     sinfact = 1.0D0 / (sin(targetangle*degree) * sin_pitch_angle)
 
     ! Connection length from OMP to target
-    ! Start with the simplest approximation for elongated plasma
-    ! q is q95.
     ! MDK Issues #494, #497
-    ! lambda_omp is taken to be the relevant radial distance from the separatrix at the OMP.
+    ! lambda_q_omp is taken to be the relevant radial distance from the separatrix at the OMP.
     ! `lcon_factor` is still available but not recommended.
-    ! lcon = lcon_factor * 0.395d0*pi*q*rmajor/lambda_omp**0.196
     lcon = lcon_factor * (pi*q*rmajor/93.2) * (21.25*log(1/lambda_q_omp)-8.7)
 
     lengthofwidesol = fractionwidesol * lcon
     sol_broadening = lambda_q_target / lambda_q_omp
-
-    ! ! Set module level variables with values
-    ! lambda_target = lambda_tar
-    ! lambda_q = lambda_omp
 
     ! Populate array that says which impurities are present
     if(firstcall) then
@@ -410,7 +375,6 @@ contains
 
         ! Loop over the remaining PROCESS impurities
         do i = 3, nimp
-            !if ((impurity_arr(i)%frac .gt. 1.e-10).or.(i.eq.impvar)) then
             if (impurity_arr(i)%frac .gt. 1.e-10) then
                 impurities_present(i) = .true.
             end if
@@ -420,8 +384,6 @@ contains
     endif
 
     ! Get impurity concentrations every time, as they can change
-    !impurity_concs(2)= impurity_arr(2)%frac * helium_enrichment
-    !do i = 3, nimp
     do i = 2, nimp
         if(impurities_present(i)) then
            impurity_concs(i)= impurity_arr(i)%frac * impurity_enrichment(i)
@@ -500,8 +462,8 @@ contains
 
     ! useful parameter combinations
     eightemi = 8.0D0*echarge*mi
-    eightemi48 = 8.0D0*echarge*mi*1.0D48
-    elEion = echarge*Eion
+    eightemi48 = eightemi * 1.0D48
+    elEion = echarge * Eion
 
     ! (Stangeby NF 51 (2011), equation 1 of Kallenbach)
     bu = sin(atan(abs(Bp_omp/Bt_omp)))
@@ -675,8 +637,13 @@ do i = 2, nimp
         pressure = Y(5)
         Power   = Y(6)*1.e6
 
-        ! Flux bundle area perp. to B at x [m2]
-        A_cross = area(x)
+        ! The area of the flux tube, measured perpendicular to B
+        ! This is set to a step function as in Kallenbach
+        if(x.lt.lengthofwidesol) then
+            A_cross = area_target
+        else
+            A_cross = area_omp
+        end if
 
         ! Calculate density [m-3]
         bracket = max( (pressure**2.0D0 - eightemi48*te*nv24**2.0D0), 0.0D0)
@@ -847,12 +814,7 @@ do i = 1, nimp
     call ovarre(outfile, 'Power conducted through the separatrix, calculated by divertor model [W] ',&
                          '(psep_kallenbach)', psep_kallenbach, 'OP ')
     if(active_constraints(69) .eqv. .true.)then
-        call ocmmnt(outfile, 'Constraint 69 is applied to the following ratio:')
-        call ovarre(outfile, '. Separatrix power from main plasma model / Sep power from divertor model','(fpsep)', fpsep)
-        if (any(name_xc == 'fpsep'))then
-            call ovarre(outfile, '.  Lower limit of ratio','(boundl(118))', boundl(118))
-            call ovarre(outfile, '.  Upper limit of ratio','(boundu(118))', boundu(118))
-        end if
+        call ocmmnt(outfile, 'Separatrix power consistency constraint 69 is applied')
     else
          call ocmmnt(outfile, 'Separatrix power consistency constraint 69 is NOT applied')
     end if
@@ -907,52 +869,7 @@ do i = 1, nimp
 
   end subroutine divertor_Kallenbach
 
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  function area(x)
-    !+ad_name  area
-    !+ad_summ  Calculates the area of the flux tube, measured perpendicular to B
-    !+ad_type  Function returning real
-    !+ad_auth  M Kovari, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  x : input real : position along 1-D line (m)
-    !+ad_desc  Calculates the area of the flux tube, measured perpendicular to B
-    !+ad_desc  This is set to a step function as in Kallenbach
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  01/02/17 MDK Initial version
-    !+ad_stat  Okay
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    real(kind(1.0D0)) :: area
-    ! real(kind(1.0D0)) :: lambda
-    real(kind(1.0D0)), intent(in) :: x
-
-    ! if(x.lt.lengthofwidesol) then
-    !     lambda = lambda_target
-    ! else if(x.ge.lengthofwidesol) then
-    !     lambda = lambda_q
-    ! end if
-    !
-    ! area = circumf_bu*lambda
-
-    if(x.lt.lengthofwidesol) then
-        area = area_target
-    else
-        area = area_omp
-    end if
-
-    ! if(area.lt.0.001) then
-    !     write(*,*) 'SOL flux tube area in divertor model is only ', area, ' m2'
-    !     write(*,*) 'x = ', area, 'lambda_target = ', lambda_target, 'lambda_q = ', lambda_q
-    !     stop
-    ! endif
-
-  end function area
-
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ! ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine differential ( t, y, yp )
     !+ad_name  differential
@@ -1073,12 +990,6 @@ do i = 1, nimp
 
     ! The area of the flux tube, measured perpendicular to B
     ! This is set to a step function as in Kallenbach
-    ! if(t.lt.lengthofwidesol) then
-    !     A_cross = circumf_bu*lambda_target
-    ! else if (t.ge.lengthofwidesol) then
-    !     A_cross = circumf_bu*lambda_q
-    ! end if
-
     if(t.lt.lengthofwidesol) then
         A_cross = area_target
     else
@@ -1294,10 +1205,8 @@ subroutine kallenbach_test()
   use process_output, only: oblnkl, obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
 
   implicit none!
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   integer :: i
-
   real(kind(1.0D0))::rmajor, rminor, bt, plascur, lcon_factor,dummy, dummy2, dummy3
 
   ! This section just for reproducing the original numbers
@@ -1337,9 +1246,6 @@ subroutine kallenbach_test()
                            netau_in=0.5D0,unit_test=.false.,abserrset=1.0D-6,     &
                            psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3, &
                            outfile=nout,iprint=1 )
-
-
-                           !lambda_tar=0.005D0,lambda_omp=0.002D0 ,         &
 
   call ocmmnt(nout, 'Testing the reading of atomic rates and impurity radiative functions.')
   call ocmmnt(nout, 'Use "output_divertor.xlsx" in K:\Power Plant Physics and Technology\PROCESS\SOL & Divertor')

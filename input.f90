@@ -1036,9 +1036,9 @@ contains
        case ('fpoloidalpower')
           call parse_real_variable('fpoloidalpower', fpoloidalpower, 0.001D0, 1.0D0, &
                'f-value for constraint on rate of change of energy in poloidal field')
-       case ('fpsep')
-          call parse_real_variable('fpsep', fpsep, 0.001D0, 1.0D0, &
-                       'f-value to ensure separatrix power is less than value from Kallen bach divertor')
+    !    case ('fpsep')
+    !       call parse_real_variable('fpsep', fpsep, 0.001D0, 1.0D0, &
+    !                    'f-value to ensure separatrix power is less than value from Kallen bach divertor')
        case ('fpsepbqar')
           call parse_real_variable('fpsepbqar', fpsepbqar, 0.001D0, 1.0D0, &
                        'f-value for Psep * Bt / qAR upper limit ')
