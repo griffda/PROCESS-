@@ -1184,11 +1184,11 @@ contains
 
        ! Divertor settings: 2016 Kallenbach model (2016/07/04)
 
-       case ('lambda_target')
-          call parse_real_variable('lambda_target', lambda_target, 0.001D0, 1.0D0, &
-               'SOL power fall-off length at the target, perpendicular to field [m]')
-       case ('lambda_q')
-          call parse_real_variable('lambda_q', lambda_q, 0.0001D0, 1.0D0, &
+       case ('lambda_q_target')
+          call parse_real_variable('lambda_q_target', lambda_q_target, 0.001D0, 1.0D0, &
+               'SOL power fall-off length at the target, mapped to outer midplane [m]')
+       case ('lambda_q_omp')
+          call parse_real_variable('lambda_q_omp', lambda_q_omp, 0.0001D0, 1.0D0, &
                'SOL power fall-off length at the outer midplane, perpendicular to field [m]')
        case ('lcon_factor')
           call parse_real_variable('lcon_factor', lcon_factor, 1.0D-1, 1.0D1, &
@@ -1218,7 +1218,7 @@ contains
 
        case ('impurity_enrichment')
           call parse_real_array('impurity_enrichment', impurity_enrichment, isub1, 14, &
-          'Ratio of each impurity concentration in SOL to confined plasma', icode)          
+          'Ratio of each impurity concentration in SOL to confined plasma', icode)
 
        case ('fractionwidesol')
           call parse_real_variable('fractionwidesol', fractionwidesol, 0.001D0, 0.99D0, &

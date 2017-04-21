@@ -1612,12 +1612,13 @@ subroutine output(outfile)
   if(Kallenbach_switch.eq.1) then
     call divertor_Kallenbach(rmajor=rmajor,rminor=rminor, &
       bt=bt,plascur=plascur, bvert=bvert,q=q, &
-      verboseset=.false., lambda_tar=lambda_target,lambda_omp=lambda_q, &
+      verboseset=.false.,  &
       Ttarget=Ttarget,qtargettotal=qtargettotal,            &
       targetangle=targetangle,lcon_factor=lcon_factor, netau_in=netau, &
       unit_test=.false.,abserrset=1.d-5,  &
       psep_kallenbach=psep_kallenbach, teomp=teomp, neomp=neomp, &
       outfile=nout,iprint=1 )
+!lambda_tar=lambda_target,lambda_omp=lambda_q,
 
   else
     ! Old Divertor Model ! Comment this out MDK 30/11/16

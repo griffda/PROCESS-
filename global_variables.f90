@@ -942,11 +942,11 @@ module divertor_kallenbach_variables
   !+ad_vars  kallenbach_tests /0/ : Switch to run tests of 1D Kallenbach divertor model (1=on, 0=off)
   integer :: kallenbach_tests = 0
 
-  !+ad_vars  lambda_target /0.005/ : SOL power fall-off length at the target, perpendicular to field [m]
-  real(kind(1.0D0)) :: lambda_target = 0.005D0
+  !+ad_vars  lambda_target /0.005/ : SOL power fall-off length at the target, mapped to OMP [m]
+  real(kind(1.0D0)) :: lambda_q_target = 0.005D0
 
   !+ad_vars  lambda_q /0.002/ : SOL power fall-off length at the outer midplane, perpendicular to field [m]
-  real(kind(1.0D0)) :: lambda_q = 0.002D0
+  real(kind(1.0D0)) :: lambda_q_omp = 0.002D0
 
   !+ad_vars  lcon_factor /1.0/ : Correction factor for connection length from OMP to divertor =
   !+ad_varc                      connection length/(pi*q*rmajor)
@@ -955,8 +955,8 @@ module divertor_kallenbach_variables
   !+ad_vars  netau /0.5/ : Parameter describing the departure from local ionisation equilibrium in the SOL. [ms.1e20/m3]
   real(kind(1.0D0)) :: netau = 0.5D0
 
-  !+ad_vars  targetangle /10.0/ : Angle between field-line and divertor target (degrees)
-  real(kind(1.0D0)) :: targetangle = 10.0D0
+  !+ad_vars  targetangle /30.0/ : Angle between field-line and divertor target (degrees)
+  real(kind(1.0D0)) :: targetangle = 30.0D0
 
   !+ad_vars  ttarget /2.3/ : Plasma temperature adjacent to divertor sheath [eV] (iteration variable 120)
   real(kind(1.0D0)) :: ttarget = 2.3D0

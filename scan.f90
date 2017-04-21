@@ -429,11 +429,11 @@ contains
           qtargettotal = sweep(iscan)
           vlabel = 'qtargettotal' ; xlabel = 'Total Q on target [W/m2] '
       case (35)
-          lambda_q = sweep(iscan)
-          vlabel = 'lambda_q' ; xlabel = 'lambda_q at OMP (m)'
+          lambda_q_omp = sweep(iscan)
+          vlabel = 'lambda_q_omp' ; xlabel = 'lambda_q at OMP (m)'
       case (36)
-          lambda_target = sweep(iscan)
-          vlabel = 'lambda_target' ; xlabel = 'lambda_q at target (m)'
+          lambda_q_target = sweep(iscan)
+          vlabel = 'lambda_q_target' ; xlabel = 'lambda_q at target (m)'
       case (37)
           lcon_factor = sweep(iscan)
           vlabel = 'lcon_factor' ; xlabel = 'Correction for lcon'

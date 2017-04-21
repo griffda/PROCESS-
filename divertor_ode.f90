@@ -11,30 +11,25 @@ module divertor_ode
   !+ad_hist  25/01/17 MDK  Initial version of module
   !+ad_stat  Okay
   !+ad_docs
-  !
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! Modules to import !
-  !!!!!!!!!!!!!!!!!!!!!
 
   use read_and_get_atomic_data
   use impurity_radiation_module, only: nimp, imp_label, impurity_arr
-  !, impvar
   use process_output, only: oblnkl,obuild, ocentr, ocmmnt, oheadr, osubhd, ovarin, ovarre, ovarrf, ovarst
   use constants
   use process_input, only: lower_case
-  use divertor_kallenbach_variables, only : neratio, pressure0, fractionwidesol, fmom, TotalPowerLost, impurity_enrichment
+  use divertor_kallenbach_variables, only : neratio, pressure0, fractionwidesol, fmom, TotalPowerLost, impurity_enrichment, &
+                                            lambda_q_omp, lambda_q_target
   use build_variables, only: rspo
-  use physics_variables, only:  tesep_keV => tesep
+  use physics_variables, only:  tesep_keV => tesep, bp
 
   implicit none
 
-  ! Module declarations !
-  !!!!!!!!!!!!!!!!!!!!!!!
+  ! Module-level declarations !
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   logical, private :: verbose
   logical, public, save :: impurities_present(nimp)=.false.
-
   integer, private :: iprint
   integer, private :: element_index(nimp)
 
@@ -72,14 +67,14 @@ module divertor_ode
   ! Allowable absolute/relative error
   real(kind(1.0D0)), private :: abserr, relerr
 
-  ! Circumference of plasma at outboard midplane [m]
-  real(kind(1.0D0)), private :: circumference
+  ! Circumference of plasma at outboard midplane and at target [m]
+  real(kind(1.0D0)), private :: circumference_omp, circumference_target
 
   ! Circumference of normal to helical field line [m]
   real(kind(1.0D0)), private :: circumf_bu
 
-  ! Flux bundle area perp. to B at target [m2]
-  real(kind(1.0D0)), private :: area0
+  ! Flux bundle area perp. to B at target and at omp [m2]
+  real(kind(1.0D0)), private :: area_target, area_omp
 
   ! Zeff for divertor region
   real(kind(1.0D0)) :: zeff_div
@@ -88,7 +83,10 @@ module divertor_ode
   ! real(kind(1.0D0)), private :: zeffpoint3
 
   ! SOL radial thickness extrapolated to OMP [m]
-  real(kind(1.0D0)), private :: lambda_target, lambda_q
+  ! real(kind(1.0D0)), private :: lambda_target, lambda_q
+
+  ! SOL radial thickness extrapolated to OMP [m]
+  real(kind(1.0D0)), private :: sol_broadening
 
   ! Ratio: psep_kallenbach / Powerup
   real(kind(1.0D0)), private, parameter :: seppowerratio=2.3D0
@@ -98,33 +96,21 @@ module divertor_ode
 contains
 
   subroutine divertor_Kallenbach(rmajor,rminor,bt,plascur,bvert,q,verboseset,     &
-             lambda_tar,lambda_omp,ttarget,qtargettotal,targetangle,lcon_factor,netau_in,&
+             ttarget,qtargettotal,targetangle,lcon_factor,netau_in,&
              unit_test,abserrset,  &
              psep_kallenbach, teomp, neomp,  &
              outfile,iprint)
+
     !+ad_name  divertor_Kallenbach
     !+ad_summ  calculate radiative loss and plasma profiles along a flux tube including momentum losses
     !+ad_type  subroutine
     !+ad_auth  M Kovari, CCFE, Culham Science Centre
     !+ad_cont  N/A
-
-    ! TODO fill in this section
-    !+ad_args  input : input type : des
-    !+ad_args  output : output type : des
-
     !+ad_desc  Calculate radiative loss and plasma profiles along a flux tube including momentum losses.
     !+ad_desc  Description in A. Kallenbach et al., PPCF 58 (2016) 045013, this version based on that
     !+ad_desc  sent by Arne 17.5.2016.
     !+ad_desc  Note this solver is not suitable for stiff equations - which these are. Instead I have
     !+ad_desc  set the neutral density derivatives to zero when the neutral density is small.
-    !+ad_desc  Multiple impurities permitted in this version, the concentrations are from
-    !+ad_desc  impurity_radiation_module, but multiplied by suitable multipliers.
-    !+ad_prob  None
-    !+ad_hist  25/01/17 MDK  Initial tidied version
-    !+ad_hist  25/01/17 MDK  Rewrite using q= qperp_conducted + qperp_conv
-    !+ad_hist  25/01/17 MDK  Use new variable nv = n*v
-    !+ad_hist  25/01/17 MDK  Use new pressure and momentum-related variable: B = nmv^2+2neT
-    !+ad_hist  25/01/17 MDK  Rewrite from scratch using ODE solver "ode.f90"
     !+ad_stat  Okay
     !+ad_docs  https://people.sc.fsu.edu/~jburkardt/f_src/ode/ode.html
     !
@@ -177,7 +163,7 @@ contains
     real(kind(1.0D0)), intent(in) :: q
 
     ! SOL radial thickness extrapolated to OMP [m]
-    real(kind(1.0D0)), intent(in) :: lambda_tar, lambda_omp
+    ! real(kind(1.0D0)), intent(in) :: lambda_tar, lambda_omp
 
     ! Target temperature input [eV]
     real(kind(1.0D0)), intent(in) :: ttarget
@@ -216,7 +202,7 @@ contains
     real(kind(1.0D0)) :: BpPlasmaOmp
 
     ! Kallenbach equation 1 terms
-    real(kind(1.0D0)) :: Bfrac, bu
+    real(kind(1.0D0)) :: bu
 
     ! ion flux density into target [m-2.s-1]
     real(kind(1.0D0)) :: partfluxtar
@@ -270,7 +256,9 @@ contains
     character(len=2) :: element='**'
 
     ! Poloidal, toroidal and total field at target
-    real(kind(1.0D0)) :: Bp_target, Bt_target, Btotal_target, pitch_angle_target
+    real(kind(1.0D0)) :: Bp_target, Bt_target, Btotal_target, pitch_angle, sin_pitch_angle
+
+    real(kind(1.0D0)) :: poloidal_flux_expansion
 
     ! ODE solver parameters !
     !!!!!!!!!!!!!!!!!!!!!!!!!
@@ -376,6 +364,8 @@ contains
     ! B theta at OMP
     Bt_omp = - bt*rmajor/romp
     ! B theta at target
+    ! On the first iteration rspo may still have its initial value of zero:
+    if(rspo.lt.1.0d0) rspo = rmajor
     Bt_target = - bt*rmajor/rspo
 
     ! Cylindrical approximation for field due to plasma current
@@ -384,14 +374,17 @@ contains
     ! At the OMP the vertical field generated by the equilibrium field coils
     ! (assumed approximately constant), adds to the field generated by the plasma.
     Bp_omp = BpPlasmaOmp + abs(bvert)
-    ! At the target the poloidal field may be small if it is near the X-point.
-    ! Lacking a better idea, just used
-    Bp_target = Bp_omp
+    ! At the target the poloidal field is much smaller, as it is near the X-point.
+    ! Issue #500 item 6:
+    Bp_target = 0.35d0 * bp / 0.956d0
 
     Btotal_omp = sqrt(Bp_omp**2 + Bt_omp**2)
     Btotal_target = sqrt(Bp_omp**2 + Bt_target**2)
-    ! Approximation for pitch angle
-    pitch_angle_target = Bp_target / Btotal_target
+
+    ! Sine of pitch angle
+    sin_pitch_angle = abs(Bp_target / Btotal_target)
+    ! Ratio: target area perp to B / target wetted area
+    sinfact = 1.0D0 / (sin(targetangle*degree) * sin_pitch_angle)
 
     ! Connection length from OMP to target
     ! Start with the simplest approximation for elongated plasma
@@ -400,13 +393,14 @@ contains
     ! lambda_omp is taken to be the relevant radial distance from the separatrix at the OMP.
     ! `lcon_factor` is still available but not recommended.
     ! lcon = lcon_factor * 0.395d0*pi*q*rmajor/lambda_omp**0.196
-    lcon = lcon_factor * (pi*q*rmajor/93.2) * (21.25*log(1/lambda_omp)-8.7)
+    lcon = lcon_factor * (pi*q*rmajor/93.2) * (21.25*log(1/lambda_q_omp)-8.7)
 
     lengthofwidesol = fractionwidesol * lcon
+    sol_broadening = lambda_q_target / lambda_q_omp
 
-    ! Set module level variables with values
-    lambda_target = lambda_tar
-    lambda_q = lambda_omp
+    ! ! Set module level variables with values
+    ! lambda_target = lambda_tar
+    ! lambda_q = lambda_omp
 
     ! Populate array that says which impurities are present
     if(firstcall) then
@@ -439,8 +433,6 @@ contains
     ! IFLAG.  (ODE.F90) Normal input is +1.  The user should set IFLAG = -1 only
     ! if it is impossible to continue the integration beyond TOUT.
     iflag = 1
-
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! set verbose level
     verbose = verboseset
@@ -511,46 +503,38 @@ contains
     eightemi48 = 8.0D0*echarge*mi*1.0D48
     elEion = echarge*Eion
 
-    ! Ratio of poloidal and toroidal fields at OMP (equation 1 of Kallenbach paper)
-    Bfrac = abs(Bp_omp/Bt_omp)
-
     ! (Stangeby NF 51 (2011), equation 1 of Kallenbach)
-    bu = sin(atan(Bfrac))
+    bu = sin(atan(abs(Bp_omp/Bt_omp)))
 
-    ! Actual plasma circumference at OMP [m]
-    circumference = 2.0D0*pi*romp
+    ! Actual plasma circumference at OMP and target [m]
+    circumference_omp = 2.0D0*pi*romp
+    circumference_target = 2.0D0*pi*rspo
 
     ! Circumference measured normal to B at OMP [m]
-    circumf_bu = circumference*bu
+    circumf_bu = circumference_omp*bu
+    ! Flux bundle area perp. to B at omp [m2]
+    area_omp = circumf_bu * lambda_q_omp
 
-    ! Flux bundle area perp. to B at target [m2]
-    area0 = area(0.0D0)
-
-    ! This will be changed subsequently for L>llabdaint.
     ! neutral velocity along the flux bundle, group 1 [m/s]
     v0 = 0.25D0 * sqrt(8.0D0/pi * echarge*Eneutrals / mi)
-
     ! Rename this for consistency
     v01 = v0
-
     ! neutral velocity along the flux bundle, group 2 [m/s]
     v02 = v0*neutpenfact2
 
     ! Sound speed [m/s]
     cs0 = sqrt(2.0D0*echarge*ttarget/mi)
 
-    ! Ratio: target area perp to B / target wetted area
-    sinfact = 1.0D0 / (sin(targetangle*degree) * pitch_angle_target)
-
+    ! Flux bundle area perp. to B at target [m2]
+    area_target = area_omp * sol_broadening
     ! Wetted area on target [m2]
-    WettedArea= area0*sinfact
-
+    WettedArea= area_target*sinfact
     ! Wetted length on target measured in poloidal plane [m]
-    WettedLength = WettedArea/circumference
+    WettedLength = WettedArea/circumference_target
 
     ! Area on which the power due to isotropic losses from SOL energy is incident [m2]
     ! Issue #497 Change romp to rspo
-    receiving_area = 2.0D0*pi*rspo*2.0D0*WettedLength
+    receiving_area = circumference_target * 2.0D0 * WettedLength
 
     ! The connection length used for calculating the "near zone":
     sab = 2.0D0*WettedLength/cos(targetangle*degree) * Btotal_target/Bp_target
@@ -574,12 +558,9 @@ contains
     p0partflux = partfluxtar*fluxdens_to_pa/sinfact
 
     ! Find mean Z and mean Z^2 at a typical temperature 'ttypical' for each impurity
-    ! Sum to get Zeffective
-
-    ! Set initial Zeff for divertor
+    ! Sum + 1 to get Zeffective
     zeff_div = 1.0D0
-
-    do i = 2, nimp
+do i = 2, nimp
         if(impurities_present(i)) then
             element = imp_label(i)
             z = read_lz(element,ttypical,netau, mean_z=.true., mean_qz=.false., verbose=.false.)
@@ -587,9 +568,6 @@ contains
             zeff_div = zeff_div + impurity_concs(i)*(qz-z)
         endif
     enddo
-
-    ! Set Zeff to power 0.3
-    ! zeffpoint3 = zeff_div**0.3
 
     ! Initialise independent variables for differential equations
     ! neutral density in group 1 [m-3]
@@ -614,7 +592,7 @@ contains
     Power0 = qtarget*WettedArea
 
     ! Power deposited on target by recombination of hydrogenic ions [W]
-    Precomb = Erecomb*echarge*nel0*cs0*area0
+    Precomb = Erecomb*echarge*nel0*cs0*area_target
 
     ! Power density on target due to surface recombination [W/m2]
     qtargetrecomb = Precomb / WettedArea
@@ -769,7 +747,7 @@ contains
         ! Get radiative loss for all impurities present
         raddens = 0.0D0
 
-        do i = 1, nimp
+do i = 1, nimp
             if(impurities_present(i)) then
                 lz = read_lz(imp_label(i), te, netau, mean_z=.false., mean_qz=.false., verbose=.false.)
                 ! MDK Store species-specific radiation data
@@ -835,19 +813,25 @@ contains
     ! Output to OUT.DAT !
     !!!!!!!!!!!!!!!!!!!!!
 
+    pitch_angle = asin(sin_pitch_angle)/degree
+    poloidal_flux_expansion = Bp_omp / Bp_target
+
     call oheadr(outfile, 'Divertor: Kallenbach 1D Model')
     call ocmmnt(outfile, 'For graphical output use kallenbach_plotting.py')
+
     call osubhd(outfile, 'Global SOL properties :')
-
     call ovarre(outfile, 'Connection length:  [m]','(lcon)', lcon, 'OP ')
-
     call ovarre(outfile, 'Parameter for approach to local equilibrium  [ms.1e20/m3]','(netau)', netau)
     call ovarre(outfile, 'Typical SOL temperature, used only for estimating zeff_div [eV] ','(ttypical)', ttypical, 'OP ')
     call ocmmnt(outfile, 'The zeff_div is used only for estimating thermal conductivity of the SOL plasma.')
     call ovarre(outfile, 'Z effective [W] ','(zeff_div)', zeff_div, 'OP ')
 
-    call osubhd(outfile, 'Properties of SOL plasma at outer midplane :')
-    call ovarre(outfile, 'SOL power fall-off length at the outer midplane [m]','(lambda_q)', lambda_q)
+    call osubhd(outfile, 'Properties of SOL plasma :')
+    call ovarre(outfile, 'SOL power fall-off length at the outer midplane [m]','(lambda_q_omp)', lambda_q_omp)
+    call ovarre(outfile, 'SOL radial thickness at the target, mapped to OMP [m]','(lambda_q_target)', lambda_q_target)
+    call ovarre(outfile, 'SOL area (normal to B) at outer midplane [m2]','(area_omp)', area_omp, 'OP ')
+    call ovarre(outfile, 'SOL area (normal to B) at target [m2]','(area_target)', area_target, 'OP ')
+    call ovarre(outfile, 'Poloidal flux expansion: Bp(OMP)/Bp(target)','(poloidal_flux_expansion)', poloidal_flux_expansion, 'OP ')
     call ovarre(outfile, 'Plasma temperature at outer midplane [eV]','(teomp)', teomp, 'OP ')
     call ovarre(outfile, 'Plasma density at outer midplane [m-3]','(neomp)', neomp, 'OP ')
     if(active_constraints(71) .eqv. .true.)then
@@ -878,10 +862,8 @@ contains
 
 
     call osubhd(outfile, 'Properties of SOL plasma adjacent to divertor sheath :')
-
     call ovarre(outfile, 'Ion sound speed near target [m/s] ','(cs0)', cs0, 'OP ')
     call ovarre(outfile, 'Plasma density near target [m-3] ','(nel0)', nel0, 'OP ')
-
     call ovarre(outfile, 'Ion flux density perp to B at target [partfluxtar] m-2s-1 ','(partfluxtar)', partfluxtar, 'OP ')
     call ovarre(outfile, 'Ion flux density on target [partfluxtar/sinfact]  m-2s-1 ','(IonFluxTarget)', IonFluxTarget, 'OP ')
     call ovarre(outfile, 'Nominal neutral pressure at target [p0partflux] [Pa] ','(p0partflux)', p0partflux, 'OP ')
@@ -892,7 +874,7 @@ contains
 
     call osubhd(outfile, 'Divertor target parameters :')
     call ovarre(outfile, 'Angle between flux surface and normal to divertor target [deg]', '(targetangle)', targetangle)
-    call ovarre(outfile, 'Pitch angle of field line at target','(pitch_angle_target)', pitch_angle_target, 'OP ')
+    call ovarre(outfile, 'Pitch angle of field line at target [deg]','(pitch_angle)', pitch_angle, 'OP ')
     call ovarre(outfile, 'Ratio: area of flux tube perpendicular to B / target wetted area  ','(sinfact)', sinfact, 'OP ')
 
     call ovarre(outfile, 'Total power on target [W]','(powertargettotal)', powertargettotal, 'OP ')
@@ -907,10 +889,7 @@ contains
     call ovarre(outfile, 'EXTRA Power density on target due to isotropic losses from SOL [W/m2]','(extra_flux)', extra_flux, 'OP ')
     call ocmmnt(outfile, '(Based on 1/2 x (radiation + CX) in first "sab" of flux line.)')
     call ovarre(outfile, 'Connection length used for "near zone" (m)','(sab)', sab, 'OP ')
-
-    call ovarre(outfile, 'SOL power fall-off length at the target  [m]','(lambda_target)', lambda_target)
-    call ocmmnt(outfile, 'Distance along field line from target to point where')
-    call ovarre(outfile, 'SOL power fall-off length changes [m]','(lengthofwidesol)', lengthofwidesol, 'OP ')
+    call ovarre(outfile, 'Length of broadened downstream part of SOL [m]','(lengthofwidesol)', lengthofwidesol, 'OP ')
 
     call osubhd(outfile, 'Integrated powers :')
     call ovarre(outfile, 'Power lost due to impurity radiation [W] ','()', Y(7)*1.e6, 'OP ')
@@ -947,22 +926,28 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     real(kind(1.0D0)) :: area
-    real(kind(1.0D0)) :: lambda
+    ! real(kind(1.0D0)) :: lambda
     real(kind(1.0D0)), intent(in) :: x
 
+    ! if(x.lt.lengthofwidesol) then
+    !     lambda = lambda_target
+    ! else if(x.ge.lengthofwidesol) then
+    !     lambda = lambda_q
+    ! end if
+    !
+    ! area = circumf_bu*lambda
+
     if(x.lt.lengthofwidesol) then
-        lambda = lambda_target
-    else if(x.ge.lengthofwidesol) then
-        lambda = lambda_q
+        area = area_target
+    else
+        area = area_omp
     end if
 
-    area = circumf_bu*lambda
-
-    if(area.lt.0.001) then
-        write(*,*) 'SOL flux tube area in divertor model is only ', area, ' m2'
-        write(*,*) 'x = ', area, 'lambda_target = ', lambda_target, 'lambda_q = ', lambda_q
-        stop
-    endif
+    ! if(area.lt.0.001) then
+    !     write(*,*) 'SOL flux tube area in divertor model is only ', area, ' m2'
+    !     write(*,*) 'x = ', area, 'lambda_target = ', lambda_target, 'lambda_q = ', lambda_q
+    !     stop
+    ! endif
 
   end function area
 
@@ -1088,17 +1073,17 @@ contains
 
     ! The area of the flux tube, measured perpendicular to B
     ! This is set to a step function as in Kallenbach
-    if(t.lt.lengthofwidesol) then
-        A_cross = circumf_bu*lambda_target
-    else if (t.ge.lengthofwidesol) then
-        A_cross = circumf_bu*lambda_q
-    end if
+    ! if(t.lt.lengthofwidesol) then
+    !     A_cross = circumf_bu*lambda_target
+    ! else if (t.ge.lengthofwidesol) then
+    !     A_cross = circumf_bu*lambda_q
+    ! end if
 
-    if(A_cross.lt.0.001) then
-        write(*,*) 'SOL flux tube area in divertor model is only ', A_cross, ' m2'
-        write(*,*) 'x = ', t, 'lambda_target = ', lambda_target, 'lambda_q = ', lambda_q
-        stop
-    endif
+    if(t.lt.lengthofwidesol) then
+        A_cross = area_target
+    else
+        A_cross = area_omp
+    end if
 
     qperp_total = Power/A_cross
 
@@ -1347,13 +1332,14 @@ subroutine kallenbach_test()
                            bt=bt, plascur=plascur,      &
                            bvert=0.0D0, q=3.0D0,            &
                            verboseset=.false.,          &
-                           lambda_tar=0.005D0,lambda_omp=0.002D0 ,         &
                            ttarget=2.3D0,qtargettotal=4.175D6,                  &
-                           targetangle=10.0D0,lcon_factor=lcon_factor,            &
+                           targetangle=30.0D0,lcon_factor=lcon_factor,            &
                            netau_in=0.5D0,unit_test=.false.,abserrset=1.0D-6,     &
                            psep_kallenbach=dummy, teomp=dummy2, neomp=dummy3, &
                            outfile=nout,iprint=1 )
 
+
+                           !lambda_tar=0.005D0,lambda_omp=0.002D0 ,         &
 
   call ocmmnt(nout, 'Testing the reading of atomic rates and impurity radiative functions.')
   call ocmmnt(nout, 'Use "output_divertor.xlsx" in K:\Power Plant Physics and Technology\PROCESS\SOL & Divertor')
