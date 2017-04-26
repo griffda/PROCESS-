@@ -44,7 +44,7 @@ except ImportError:
 
 class MFileVariable(dict):
     """Class for containing a single mfile variable """
-    def __init__(self, var_name, var_description, var_unit=None, *args,
+    def __init__(self, var_name, var_description, var_unit=None, var_flag=None, *args,
                  **kwargs):
         """
         An object class to contain information (and data values) for a single
@@ -63,6 +63,7 @@ class MFileVariable(dict):
         self["var_name"] = var_name
         self["var_description"] = var_description
         self["var_unit"] = var_unit
+        self["var_flag"] = var_flag
         self.latest_scan = 0
         super().__init__(*args, **kwargs)
         LOG.debug("Initialising variable '{}': {}".
@@ -214,9 +215,13 @@ class MFile(object):
         else:
             var_value = sort_value(line[2])
         var_unit = get_unit(var_des)
-        self.add_to_mfile_variable(var_des, var_name, var_value, var_unit)
+        if len(line) >= 4:
+            var_flag = line[3]
+        else:
+            var_flag = None
+        self.add_to_mfile_variable(var_des, var_name, var_value, var_unit, var_flag)
 
-    def add_to_mfile_variable(self, des, name, value, unit, scan=None):
+    def add_to_mfile_variable(self, des, name, value, unit, flag, scan=None):
         """Function to add value to MFile class for that name/description
         """
         if name == "":
@@ -229,7 +234,7 @@ class MFile(object):
                                           get_number_of_scans()+1)
             self.data[var_key].set_scan(scan_num, value)
         else:
-            var = MFileVariable(name, des, unit)
+            var = MFileVariable(name, des, unit, var_flag=flag)
             self.data[var_key] = var
             self.data[var_key].set_scan(1, value)
 
