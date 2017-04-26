@@ -114,7 +114,7 @@ module scan_module
   !+ad_varc          <LI> 32 epsvmc
   !+ad_varc          <LI> 33 ttarget
   !+ad_varc          <LI> 34 qtargettotal
-  !+ad_varc          <LI> 35 lambda_q
+  !+ad_varc          <LI> 35 lambda_q_omp
   !+ad_varc          <LI> 36 lambda_target
   !+ad_varc          <LI> 37 lcon_factor
   !+ad_varc          <LI> 38 Neon upper limit
@@ -573,11 +573,11 @@ contains
 
     write(nplot,'(i8)') isweep
     write(nplot,'(a48)') tlabel
-    write(nplot,'(a25, 1p, 20e11.4)') xlabel,(sweep(iscan),iscan=1,isweep)
+    write(nplot,'(a25, 1p, 200e11.4)') xlabel,(sweep(iscan),iscan=1,isweep)
 
     do ivar = 1,noutvars
        !write(nplot,'(a25,20e11.4)') plabel(ivar), (outvar(ivar,iscan), iscan=1,isweep)
-       write(nplot,'(a25, 1p, 20e11.4)') plabel(ivar), (outvar(ivar,iscan), iscan=1,isweep)
+       write(nplot,'(a25, 1p, 200e11.4)') plabel(ivar), (outvar(ivar,iscan), iscan=1,isweep)
     end do
 
   end subroutine scan
