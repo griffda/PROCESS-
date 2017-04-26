@@ -533,9 +533,9 @@ contains
 
     call underscore(dum72)
     call underscore(dum20)
-    write(mfile,10) dum72, dum20, value
+    write(mfile,10) dum72, dum20, value, flag
 
-10  format(1x,a,t75,a,t100,1pe10.3)
+10  format(1x,a,t75,a,t100,1pe10.3," ",a,t10)
 20  format(1x,a,t75,a,t100,1pe10.3, t112, a)
 
   end subroutine ovarre
@@ -581,6 +581,7 @@ contains
 
     character(len=72) :: dum72
     character(len=20) :: dum20
+    character(len=15) :: dum15
     character(len=20) :: stripped
     character(len=3) :: flag
 
@@ -608,9 +609,9 @@ contains
 
     call underscore(dum72)
     call underscore(dum20)
-    write(mfile,10) dum72, dum20, value
+    write(mfile,10) dum72, dum20, value, flag
 
-10  format(1x,a,t75,a,t100,i10)
+10  format(1x,a,t75,a,t100,i10," ",a,t10)
 20  format(1x,a,t75,a,t100,i10,t112, a)
 
   end subroutine ovarin
