@@ -1615,7 +1615,7 @@ contains
            end if
 
        case (69)  ! ensure separatrix power is less than value from Kallenbach divertor
-           !#=# divertor
+           !#=# divertor_kallenbach
            !#=#=# fpsep, psep_kallenbach
 
            ! fpsep             | f-value for consistency of two values of separatrix power
@@ -1633,7 +1633,7 @@ contains
            end if
 
        case (70)  ! Separatrix temperature consistency
-           !#=# divertor
+           !#=# divertor_kallenbach
            !#=#=# consistency
 
            ! teomp   | separatrix temperature calculated by the Kallenbach divertor model [eV]
@@ -1648,7 +1648,7 @@ contains
            end if
 
        case (71)  ! Separatrix density consistency
-           !#=# divertor
+           !#=# divertor_kallenbach
            !#=#=# consistency
 
            ! neomp    | Mean SOL density at OMP calculated by the Kallenbach divertor model [m-3]
