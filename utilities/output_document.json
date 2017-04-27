@@ -1,12 +1,12 @@
 {
     "sections":{
-        "build":{
+        "Build":{
             "con":"build",
             "mod":"Build Variables"
         },
         "Buildings":{
             "con":"buildings",
-            "mod":"Building Variables"
+            "mod":"Buildings Variables"
         },
         "Costs":{
             "con":"cost",
@@ -38,7 +38,7 @@
         },
         "Numerics":{
             "con":"numerics",
-            "mod":"Numerics Variables"
+            "mod":"Numerics"
         },
         "PF Power":{
             "con":"pf_power",
@@ -46,7 +46,7 @@
         },
         "PF Coils":{
             "con":"pfcoil",
-            "mod":"Pf Coil Variables"
+            "mod":"Pfcoil Variables"
         },
         "Physics":{
             "con":"physics",

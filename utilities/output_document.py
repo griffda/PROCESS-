@@ -34,96 +34,6 @@ MODULES_FULL = proc_dict.DICT_MODULE
 DEFAULTS = proc_dict.DICT_DEFAULT
 DESCRIPTIONS = proc_dict.DICT_DESCRIPTIONS
 
-SECTIONS = collections.OrderedDict()
-SECTIONS["Build"] = {"con":"build", 
-                     "mod":"Build Variables",
-                     "tag":"#build"}
-SECTIONS["Buildings"] = {"con":"buildings", 
-                         "mod":"Buildings Variables",
-                         "tag":"#buildings"}
-SECTIONS["Costs"] = {"con":"cost",
-                     "mod":"Cost Variables",
-                     "tag":"#costs"}
-SECTIONS["Current Drive"] = {"con":"current_drive",
-                         "mod":"Current Drive Variables",
-                         "tag":"#current-drive"}
-SECTIONS["Divertor"] = {"con":"divertor",
-                        "mod":"Divertor Variables",
-                        "tag":"#divertor"}
-SECTIONS["Divertor Kallenbach"] = {"con":"divertor_kallenbach",
-                        "mod":"Divertor Kallenbach Variables",
-                        "tag":"#divertor-kallenbach"}
-SECTIONS["First Wall and Blanket"] = {"con":"fwbs", 
-                                     "mod":"Fwbs Variables", 
-                                     "tag":"#first-wall-and-blanket"}
-SECTIONS["Heat Transport"] = {"con":"heat_transport", 
-                        "mod":"Heat Transport Variables", 
-                        "tag":"#heat-transport"}
-SECTIONS["Impurity Radiation"] = {"con":"impurity_radiation", 
-                                 "mod":"Impurity Radiation Module", 
-                                 "tag":"#impurity-radiation"}
-SECTIONS["Numerics"] = {"con":"numerics", 
-                        "mod":"Numerics", 
-                        "tag":"#numerics"}
-SECTIONS["PF Power"] = {"con":"pf_power", 
-                        "mod":"Pf Power Variables", 
-                        "tag":"#pf-power"}
-SECTIONS["PF Coils"] = {"con":"pfcoil", 
-                        "mod":"Pfcoil Variables", 
-                        "tag":"#pf-coils"}
-SECTIONS["Physics"] = {"con":"physics", 
-                       "mod":"Physics Variables", 
-                       "tag":"#physics"}
-SECTIONS["Pulse"] = {"con":"pulse", 
-                       "mod":"Pulse Variables", 
-                       "tag":"#pulse"}
-SECTIONS["Scan"] = {"con":"scan", 
-                       "mod":"Scan Module", 
-                       "tag":"#scan"}
-SECTIONS["Stellarator"] = {"con":"stellarator", 
-                       "mod":"Stellarator Variables", 
-                       "tag":"#stellarator"}
-SECTIONS["TF Coils"] = {"con":"tfcoil", 
-                        "mod":"Tfcoil Variables", 
-                        "tag":"#tf-coils"}
-SECTIONS["Times"] = {"con":"times", 
-                     "mod":"Times Variables",
-                     "tag":"#times"}
-SECTIONS["Vacuum"] = {"con":"vacuum", 
-                     "mod":"Vacuum Variables",
-                     "tag":"#vacuum"}
-
-RADIAL_BUILD = collections.OrderedDict()
-RADIAL_BUILD[1] = {"name": "bore", "des": "Machine Bore"}
-RADIAL_BUILD[2] = {"name": "ohcth", "des": "Central Solenoid"}
-RADIAL_BUILD[3] = {"name": "precomp", "des": "CS precompression"}
-RADIAL_BUILD[4] = {"name": "gapoh", "des": "Gap between precomp and TF inboard"}
-RADIAL_BUILD[5] = {"name": "tfcth", "des": "TF coil inboard leg"}
-RADIAL_BUILD[6] = {"name": "deltf", "des": "Gap between TF inboard and thermal shield"}
-RADIAL_BUILD[7] = {"name": "thshield", "des": "Thermal shield"}
-RADIAL_BUILD[8] = {"name": "gapds", "des": "Gap between thermal shield and vacuum vessel"}
-RADIAL_BUILD[9] = {"name": "ddwi + shldith", "des": "Inboard vacuum vessel (and shielding)"}
-RADIAL_BUILD[10] = {"name": "vvblgap", "des": "Gap between vacuum vessel and inboard blanket"}
-RADIAL_BUILD[11] = {"name": "blnkith", "des": "Inboard blanket"}
-RADIAL_BUILD[12] = {"name": "fwith", "des": "Inboard first wall"}
-RADIAL_BUILD[13] = {"name": "scrapli", "des": "Inboard scrape-off layer"}
-RADIAL_BUILD[14] = {"name": "rminor", "des": "Plasma inboard minor radius"}
-RADIAL_BUILD[15] = {"name": "rminor", "des": "Plasma outboard minor radius"}
-RADIAL_BUILD[16] = {"name": "scraplo", "des": "Outboard scrape-off layer"}
-RADIAL_BUILD[17] = {"name": "fwoth", "des": "Outboard first wall"}
-RADIAL_BUILD[18] = {"name": "blnkoth", "des": "Outboard blanket"}
-RADIAL_BUILD[19] = {"name": "vvblgap", "des": "Gap between vacuum vessel and outboard blanket"}
-RADIAL_BUILD[20] = {"name": "ddwi + shldoth", "des": "Outboard vacuum vessel and shielding"}
-RADIAL_BUILD[21] = {"name": "gapsto", "des": "Gap between outboard vacuum vessel and thermal shield"}
-RADIAL_BUILD[22] = {"name": "thshield", "des": "Outboard thermal shield"}
-RADIAL_BUILD[23] = {"name": "tftsgap", "des": "Gap between outboard thermal shield and TF outboard"}
-RADIAL_BUILD[24] = {"name": "tfthko", "des": "TF coil outboard leg"}
-
-# VERTICAL_BUILD = collections.OrderedDict()
-# VERTICAL_BUILD[1] = {"name": "", "des": ""}
-
-EXCLUSION = ["ixc", "icc"]
-
 # =========================================================
 
 def bold(x):
@@ -214,8 +124,8 @@ def check_empty(key):
     Check not an empty section
     """
     title = key
-    con_mod = SECTIONS[key]["con"]
-    mod_name = SECTIONS[key]["mod"]
+    con_mod = DATA["sections"][key]["con"]
+    mod_name = DATA["sections"][key]["mod"]
     tot_count = 0
     con_count = 0
     it_count = 0
@@ -278,7 +188,7 @@ def output_contents():
     content_subheading("Radial Build")
     content_subheading("Vertical Build")
 
-    for k, v in SECTIONS.items():
+    for k, v in DATA["sections"].items():
 
         result =  check_empty(k)
 
@@ -292,8 +202,8 @@ def output_constraints(k):
     Output constraints for section k
     """
 
-    con_mod = SECTIONS[k]["con"]
-    mod_name = SECTIONS[k]["mod"]
+    con_mod = DATA["sections"][k]["con"]
+    mod_name = DATA["sections"][k]["mod"]
 
     heading(3, "Constraints")
     table_heading(["Constraint", "Description", "F-Value Name", "F-Value Value", 
@@ -351,8 +261,8 @@ def output_itvars(k):
     Output iteration variables for section k
     """
 
-    con_mod = SECTIONS[k]["con"]
-    mod_name = SECTIONS[k]["mod"]
+    con_mod = DATA["sections"][k]["con"]
+    mod_name = DATA["sections"][k]["mod"]
 
     heading(3, "Iteration Variables")
     output_line("* Values in **bold** are **not default** but user inputs.")
@@ -401,15 +311,15 @@ def output_inputs(k):
     Output inputs for section k
     """
 
-    con_mod = SECTIONS[k]["con"]
-    mod_name = SECTIONS[k]["mod"]
+    con_mod = DATA["sections"][k]["con"]
+    mod_name = DATA["sections"][k]["mod"]
 
     heading(3, "Inputs")
     table_heading(["Input", "Value", "Description"])
 
     for item in INFILE.data.keys():
         if item in MODULES_FULL[mod_name] :
-            if item not in IT_VAR_LIST and not in EXCLUSION:
+            if item not in IT_VAR_LIST and item not in DATA["exclusions"]["inputs"]:
 
                 item_value = INFILE.data[item].value
                 item_des = DESCRIPTIONS[item].split("\n")[0]
@@ -440,8 +350,8 @@ def output_outputs(k):
     Output outputs for section k
     """
 
-    con_mod = SECTIONS[k]["con"]
-    mod_name = SECTIONS[k]["mod"]
+    con_mod = DATA["sections"][k]["con"]
+    mod_name = DATA["sections"][k]["mod"]
 
     heading(3, "Outputs")
     table_heading(["Output", "Value", "Description"])
@@ -595,10 +505,8 @@ def output_modules():
 
     output_geometry()
 
-    for k, v in SECTIONS.items():
+    for k, v in DATA["sections"].items():
         
-        html_name = "{0}.html".format(SECTIONS[k]["tag"][1:])
-
         result = check_empty(k)
 
         if result["tot_count"] != 0:
@@ -612,9 +520,6 @@ def main(cargs):
     """
     Main
     """
-
-    # print(json.dumps(DATA, indent=4))
-    # print(json.dumps(DATA["sections"], indent=4))
 
     output_modules()
 
