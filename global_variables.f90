@@ -1562,8 +1562,8 @@ end module fwbs_variables
 
 module primary_pumping_variables
 
-  !+ad_name  fwbs_variables
-  !+ad_summ  Module containing global variables relating to the
+  !+ad_name  primary_pumping_variables
+  !+ad_summ  Module containing global variables relating to the priamry_pumping
   !+ad_summ  primary_pumping=3 option  (Mechanical pumping power is calculated using specified pressure drop)
   ! Issue #503
   !+ad_vars  gamma_he /1.667/ FIX : ratio of specific heats for helium (primary_pumping=3)
