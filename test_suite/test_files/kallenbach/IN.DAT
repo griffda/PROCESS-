@@ -217,7 +217,7 @@ ixc = 59 * copper fraction of cable conductor (TF coils)
 boundu(59) = 0.94
 fcutfsu    = 0.8
 
-ixc = 122 * central solenoid steel fraction 
+ixc = 122 * central solenoid steel fraction
 oh_steel_frac = 8.6E-01 * central solenoid steel fraction (iteration variable 122)
 
 ixc = 124 * qtargettotal : Total power density on target [W/m2]
@@ -394,15 +394,17 @@ lpulse = 1 * Switch for reactor model;
 tdwell = 0 * dwell time (s)
 
 *-------------------Scan Module--------------------*
-isweep   = 19  * Number of scan points to calculate
-nsweep   = 33  * Switch denoting quantity to scan
+
+isweep   = 1  * Number of scan points to calculate
+nsweep   = 36  * Switch denoting quantity to scan
 *31 taulimit
 *32 epsvmc
 *33 ttarget
 *34 qtargettotal
 *35 lambda_q_omp
 *36 lambda_target
-sweep = 3,5,10,15,20,  25,30,35,40,45,   40,35,30,25,20,  15,10,5,3  * Actual values to use in scan
+sweep = 0.003
+*sweep = 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.010, 0.011, 0.012  * Actual values to use in scan
 
 *-----------------Tfcoil Variables-----------------*
 itfsup   = 1  * switch for TF coil conductor model 1=superconductor
