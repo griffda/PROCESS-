@@ -13,7 +13,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.9 : Run on 26 Apr 2017 16:26:06 +01:00(hh:mm) UTC by localhost.localdomain
+ PROCESS 1.0.9 : Run on 27 Apr 2017 16:27:47 +01:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  demoa 1 ralpne  * Short descriptive title for the run
  (Please include this header in any models, presentations and papers based on these results)
@@ -1094,13 +1094,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Blanket coolant pressure (Pa)                                            (blpressure)              1.550E+07     
  Allowable temperature of first wall material, excluding armour (K)       (tfwmatmax)                1100.000     
  Actual peak temperature of first wall material (K)                       (tpeak)                     916.036  OP 
- Switch for pumping of primary coolant                                    (primary_pumping)                 2     
- Mechanical pumping power is calculated for first wall and blanket
- Pumping power for first wall (MW)                                        (htpmw_fw)                2.055E-01  OP 
- Pumping power for blanket (MW)                                           (htpmw_blkt)              5.300E-02  OP 
+ Mechanical pumping power for FW (MW)                                     (htpmw_fw)                2.055E-01  OP 
+ Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              5.300E-02  OP 
  Pumping power for divertor (MW)                                          (htpmw_div)               1.454E+01  OP 
  Pumping power for shield and vacuum vessel (MW)                          (htpmw_shld)              8.670E-02  OP 
- Total coolant pumping power: first wall, blanket, shield and divertor (M (htpmw)                   1.000E+02  OP 
+ Total primary coolant pumping power (MW)                                 (htpmw)                   1.000E+02  OP 
  
  ********************************** First wall and blanket : CCFE HCPB model **********************************
  
@@ -1316,6 +1314,17 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Divertor area fraction of whole toroid surface                           (fdiv)                    1.150E-01     
  H/CD apparatus + diagnostics area fraction                               (fhcd)                    0.000E+00     
  First wall area fraction                                                 (1-fdiv-fhcd)             8.850E-01     
+ Switch for pumping of primary coolant                                    (primary_pumping)                 2     
+ Mechanical pumping power is calculated for FW and blanket
+ Mechanical pumping power for FW and blanket cooling loop including heat  (htpmw_fw_blkt)           2.585E-01  OP 
+ Mechanical pumping power for FW (MW)                                     (htpmw_fw)                2.055E-01  OP 
+ Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              5.300E-02  OP 
+ Mechanical pumping power for divertor (MW)                               (htpmw_div)               1.454E+01  OP 
+ Mechanical pumping power for shield and vacuum vessel (MW)               (htpmw_shld)              8.670E-02  OP 
+ Electrical pumping power for FW and blanket (MW)                         (htpmwe_fw_blkt)          2.721E-01  OP 
+ Electrical pumping power for shield (MW)                                 (htpmwe_shld)             9.126E-02  OP 
+ Electrical pumping power for divertor (MW)                               (htpmwe_div)              1.531E+01  OP 
+ Total electrical pumping power for primary coolant (MW)                  (htpmw)                   1.000E+02  OP 
  Coolant pump power / non-pumping thermal power in shield                 (fpumpshld)               4.200E-02     
  Coolant pump power / non-pumping thermal power in divertor               (fpumpdiv)                4.200E-02     
  Electrical efficiency of heat transport coolant pumps                    (etahtp)                  9.500E-01     
@@ -1413,8 +1422,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 14.888  OP 
  Total (MW)                                                                                          2224.445  OP 
  
- Heat extracted from armour and first wall (MW)                           (pthermfw)                  437.476  OP 
- Heat extracted from blanket (MW)                                         (pthermblkt)               1424.913  OP 
+ Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            1862.389  OP 
  Heat extracted from shield  (MW)                                         (pthermshld)                  2.151  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 360.800  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
@@ -2566,13 +2574,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Blanket coolant pressure (Pa)                                            (blpressure)              1.550E+07     
  Allowable temperature of first wall material, excluding armour (K)       (tfwmatmax)                1100.000     
  Actual peak temperature of first wall material (K)                       (tpeak)                     916.035  OP 
- Switch for pumping of primary coolant                                    (primary_pumping)                 2     
- Mechanical pumping power is calculated for first wall and blanket
- Pumping power for first wall (MW)                                        (htpmw_fw)                2.054E-01  OP 
- Pumping power for blanket (MW)                                           (htpmw_blkt)              5.299E-02  OP 
+ Mechanical pumping power for FW (MW)                                     (htpmw_fw)                2.054E-01  OP 
+ Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              5.299E-02  OP 
  Pumping power for divertor (MW)                                          (htpmw_div)               1.454E+01  OP 
  Pumping power for shield and vacuum vessel (MW)                          (htpmw_shld)              8.669E-02  OP 
- Total coolant pumping power: first wall, blanket, shield and divertor (M (htpmw)                   1.000E+02  OP 
+ Total primary coolant pumping power (MW)                                 (htpmw)                   1.000E+02  OP 
  
  ********************************** First wall and blanket : CCFE HCPB model **********************************
  
@@ -2788,6 +2794,17 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Divertor area fraction of whole toroid surface                           (fdiv)                    1.150E-01     
  H/CD apparatus + diagnostics area fraction                               (fhcd)                    0.000E+00     
  First wall area fraction                                                 (1-fdiv-fhcd)             8.850E-01     
+ Switch for pumping of primary coolant                                    (primary_pumping)                 2     
+ Mechanical pumping power is calculated for FW and blanket
+ Mechanical pumping power for FW and blanket cooling loop including heat  (htpmw_fw_blkt)           2.584E-01  OP 
+ Mechanical pumping power for FW (MW)                                     (htpmw_fw)                2.054E-01  OP 
+ Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              5.299E-02  OP 
+ Mechanical pumping power for divertor (MW)                               (htpmw_div)               1.454E+01  OP 
+ Mechanical pumping power for shield and vacuum vessel (MW)               (htpmw_shld)              8.669E-02  OP 
+ Electrical pumping power for FW and blanket (MW)                         (htpmwe_fw_blkt)          2.720E-01  OP 
+ Electrical pumping power for shield (MW)                                 (htpmwe_shld)             9.126E-02  OP 
+ Electrical pumping power for divertor (MW)                               (htpmwe_div)              1.531E+01  OP 
+ Total electrical pumping power for primary coolant (MW)                  (htpmw)                   1.000E+02  OP 
  Coolant pump power / non-pumping thermal power in shield                 (fpumpshld)               4.200E-02     
  Coolant pump power / non-pumping thermal power in divertor               (fpumpdiv)                4.200E-02     
  Electrical efficiency of heat transport coolant pumps                    (etahtp)                  9.500E-01     
@@ -2885,8 +2902,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 14.888  OP 
  Total (MW)                                                                                          2224.398  OP 
  
- Heat extracted from armour and first wall (MW)                           (pthermfw)                  437.463  OP 
- Heat extracted from blanket (MW)                                         (pthermblkt)               1424.884  OP 
+ Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            1862.347  OP 
  Heat extracted from shield  (MW)                                         (pthermshld)                  2.151  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 360.794  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 
@@ -4039,13 +4055,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Blanket coolant pressure (Pa)                                            (blpressure)              1.550E+07     
  Allowable temperature of first wall material, excluding armour (K)       (tfwmatmax)                1100.000     
  Actual peak temperature of first wall material (K)                       (tpeak)                     915.217  OP 
- Switch for pumping of primary coolant                                    (primary_pumping)                 2     
- Mechanical pumping power is calculated for first wall and blanket
- Pumping power for first wall (MW)                                        (htpmw_fw)                2.040E-01  OP 
- Pumping power for blanket (MW)                                           (htpmw_blkt)              5.215E-02  OP 
+ Mechanical pumping power for FW (MW)                                     (htpmw_fw)                2.040E-01  OP 
+ Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              5.215E-02  OP 
  Pumping power for divertor (MW)                                          (htpmw_div)               1.468E+01  OP 
  Pumping power for shield and vacuum vessel (MW)                          (htpmw_shld)              8.904E-02  OP 
- Total coolant pumping power: first wall, blanket, shield and divertor (M (htpmw)                   1.000E+02  OP 
+ Total primary coolant pumping power (MW)                                 (htpmw)                   1.000E+02  OP 
  
  ********************************** First wall and blanket : CCFE HCPB model **********************************
  
@@ -4261,6 +4275,17 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Divertor area fraction of whole toroid surface                           (fdiv)                    1.150E-01     
  H/CD apparatus + diagnostics area fraction                               (fhcd)                    0.000E+00     
  First wall area fraction                                                 (1-fdiv-fhcd)             8.850E-01     
+ Switch for pumping of primary coolant                                    (primary_pumping)                 2     
+ Mechanical pumping power is calculated for FW and blanket
+ Mechanical pumping power for FW and blanket cooling loop including heat  (htpmw_fw_blkt)           2.561E-01  OP 
+ Mechanical pumping power for FW (MW)                                     (htpmw_fw)                2.040E-01  OP 
+ Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              5.215E-02  OP 
+ Mechanical pumping power for divertor (MW)                               (htpmw_div)               1.468E+01  OP 
+ Mechanical pumping power for shield and vacuum vessel (MW)               (htpmw_shld)              8.904E-02  OP 
+ Electrical pumping power for FW and blanket (MW)                         (htpmwe_fw_blkt)          2.696E-01  OP 
+ Electrical pumping power for shield (MW)                                 (htpmwe_shld)             9.372E-02  OP 
+ Electrical pumping power for divertor (MW)                               (htpmwe_div)              1.545E+01  OP 
+ Total electrical pumping power for primary coolant (MW)                  (htpmw)                   1.000E+02  OP 
  Coolant pump power / non-pumping thermal power in shield                 (fpumpshld)               4.200E-02     
  Coolant pump power / non-pumping thermal power in divertor               (fpumpdiv)                4.200E-02     
  Electrical efficiency of heat transport coolant pumps                    (etahtp)                  9.500E-01     
@@ -4358,8 +4383,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 15.024  OP 
  Total (MW)                                                                                          2238.583  OP 
  
- Heat extracted from armour and first wall (MW)                           (pthermfw)                  443.600  OP 
- Heat extracted from blanket (MW)                                         (pthermblkt)               1429.513  OP 
+ Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            1873.113  OP 
  Heat extracted from shield  (MW)                                         (pthermshld)                  2.209  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 364.166  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000  OP 

@@ -403,7 +403,7 @@ nsweep   = 36  * Switch denoting quantity to scan
 *34 qtargettotal
 *35 lambda_q_omp
 *36 lambda_target
-sweep = 0.003
+sweep = 0.007
 *sweep = 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.010, 0.011, 0.012  * Actual values to use in scan
 
 *-----------------Tfcoil Variables-----------------*

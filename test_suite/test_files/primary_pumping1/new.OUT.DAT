@@ -12,7 +12,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.9 : Run on 26 Apr 2017 16:27:13 +01:00(hh:mm) UTC by localhost.localdomain
+ PROCESS 1.0.9 : Run on 27 Apr 2017 16:26:56 +01:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -112,22 +112,22 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
     1  Beta consistency                      =  3.7320E-02             -8.3076E-11                -2.2260E-09
     2  Global power balance consistency      =  1.7243E-01 MW/m3        7.8332E-10 MW/m3           4.5427E-09
-    3  Density upper limit                   <  6.9271E+19 /m3          1.5927E+08 /m3             1.9160E-12
-    4  (Epsilon x beta-pol) upper limit      <  1.3800E+00              5.6499E-14                 1.5132E-13
+    3  Density upper limit                   <  6.9271E+19 /m3          1.5914E+08 /m3             1.9145E-12
+    4  (Epsilon x beta-pol) upper limit      <  1.3800E+00              5.6457E-14                 1.5121E-13
     5  Neutron wall load upper limit         <  8.0000E+00 MW/m2        1.6984E-08 MW/m2           1.6601E-08
     6  Toroidal field 1/R consistency        =  4.4828E+01 T.m          4.8821E-09 T.m             1.0891E-10
-    7  Radial build consistency              =  9.0375E+00 m           -1.9756E-09 m              -2.1859E-10
+    7  Radial build consistency              =  9.0375E+00 m           -1.9756E-09 m              -2.1860E-10
     8  Burn time lower limit                 >  7.2000E+03 sec          2.8125E-02 sec             3.9062E-06
     9  Net electric power lower limit        >  5.0000E+02 MW           7.6450E-04 MW              1.5290E-06
    10  Beta upper limit                      <  5.6067E-02             -8.3262E-11                -2.6384E-09
    11  CS coil EOF current density limit     <  6.4882E+07 A/m2        -8.8939E+01 A/m2           -5.4832E-06
    12  CS coil BOP current density limit     <  6.0797E+07 A/m2        -7.9521E+01 A/m2           -5.2320E-06
-   13  Injection power upper limit           <  5.0000E+01 MW           2.0428E-11 MW              4.0856E-13
+   13  Injection power upper limit           <  5.0000E+01 MW           2.0156E-11 MW              4.0312E-13
    14  TF coil case stress upper limit       <  5.5000E+08 Pa           6.9565E+00 Pa              1.2648E-08
    15  TF coil conduit stress upper lim      <  5.5000E+08 Pa           6.9292E+00 Pa              1.6319E-08
    16  I_op / I_critical (TF coil)           <  5.3959E+07 A/m2         3.2413E-04 A/m2            1.2014E-11
    17  Dump voltage upper limit              <  2.1520E+01 V            4.8993E-07 V               3.1736E-08
-   18  J_winding pack/J_protection limit     <  2.6980E+07 A/m2        -4.4114E-04 A/m2           -1.6351E-11
+   18  J_winding pack/J_protection limit     <  2.6980E+07 A/m2        -4.4113E-04 A/m2           -1.6350E-11
    19  First wall peak temperature limit     <  8.7300E+02 K            0.0000E+00 K               0.0000E+00
    20  L-H power threshold limit             >  1.0682E+02 MW           6.8960E-06 MW              4.4885E-08
    21  Psep / R upper limit                  <  1.7000E+01 MW/m         6.9040E-07 MW/m            4.0612E-08
@@ -885,7 +885,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -7.454E+06 -7.454E+06 -7.454E+06  0.000E+00
    5         0.000E+00  0.000E+00 -4.814E+06 -4.814E+06 -4.814E+06  0.000E+00
    6         0.000E+00  0.000E+00 -4.814E+06 -4.814E+06 -4.814E+06  0.000E+00
-   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
+   7         0.000E+00  0.000E+00  3.152E-09  3.152E-09 -5.044E-08  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.370E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.240E-01  OP 
@@ -1143,6 +1143,17 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Divertor area fraction of whole toroid surface                           (fdiv)                    1.150E-01     
  H/CD apparatus + diagnostics area fraction                               (fhcd)                    0.000E+00     
  First wall area fraction                                                 (1-fdiv-fhcd)             8.850E-01     
+ Switch for pumping of primary coolant                                    (primary_pumping)                 1     
+ User sets mechanical pumping power as a fraction of thermal power removed by coolant
+ Mechanical pumping power for FW and blanket cooling loop including heat  (htpmw_fw_blkt)           4.407E+01  OP 
+ Mechanical pumping power for FW (MW)                                     (htpmw_fw)                2.851E+01  OP 
+ Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              1.556E+01  OP 
+ Mechanical pumping power for divertor (MW)                               (htpmw_div)               3.663E+00  OP 
+ Mechanical pumping power for shield and vacuum vessel (MW)               (htpmw_shld)              5.143E-03  OP 
+ Electrical pumping power for FW and blanket (MW)                         (htpmwe_fw_blkt)          4.639E+01  OP 
+ Electrical pumping power for shield (MW)                                 (htpmwe_shld)             5.413E-03  OP 
+ Electrical pumping power for divertor (MW)                               (htpmwe_div)              3.856E+00  OP 
+ Total electrical pumping power for primary coolant (MW)                  (htpmw)                   5.025E+01  OP 
  Coolant pump power / non-pumping thermal power in shield                 (fpumpshld)               1.000E-02     
  Coolant pump power / non-pumping thermal power in divertor               (fpumpdiv)                1.000E-02     
  Electrical efficiency of heat transport coolant pumps                    (etahtp)                  9.500E-01     
@@ -1240,8 +1251,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 47.741282  OP 
  Total (MW)                                                                                          2444.904047  OP 
  
- Heat extracted from armour and first wall (MW)                           (pthermfw)                  503.709108  OP 
- Heat extracted from blanket (MW)                                         (pthermblkt)               1571.726612  OP 
+ Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            2075.435720  OP 
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.519404  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 369.996368  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000000  OP 

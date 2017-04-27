@@ -12,7 +12,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.9 : Run on 26 Apr 2017 16:26:13 +01:00(hh:mm) UTC by localhost.localdomain
+ PROCESS 1.0.9 : Run on 27 Apr 2017 16:27:34 +01:00(hh:mm) UTC by localhost.localdomain
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -111,8 +111,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
     1  Beta consistency                      =  3.7314E-02              2.3061E-10                 6.1802E-09
     2  Global power balance consistency      =  1.6924E-01 MW/m3       -1.6606E-09 MW/m3          -9.8121E-09
-    3  Density upper limit                   <  6.8675E+19 /m3         -8.5473E+09 /m3            -1.0372E-10
-    4  (Epsilon x beta-pol) upper limit      <  1.3800E+00             -1.3197E-12                -3.5352E-12
+    3  Density upper limit                   <  6.8675E+19 /m3         -8.5474E+09 /m3            -1.0372E-10
+    4  (Epsilon x beta-pol) upper limit      <  1.3800E+00             -1.3198E-12                -3.5354E-12
     5  Neutron wall load upper limit         <  8.0000E+00 MW/m2       -4.3810E-08 MW/m2          -4.3543E-08
     6  Toroidal field 1/R consistency        =  4.4729E+01 T.m         -2.4742E-07 T.m            -5.5316E-09
     7  Radial build consistency              =  9.0666E+00 m           -7.3354E-10 m              -8.0906E-11
@@ -700,7 +700,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  TF coil model                                                            (tfc_model)                       1     
  Allowable Tresca stress limit (Pa)                                       (alstrtf)                 5.500E+08     
  Vertical stress (Pa)                                                     (sigvert)                 2.027E+08  OP 
- Case radial stress (Pa)                                                  (sigrtf(1))               0.000E+00     
+ Case radial stress (Pa)                                                  (sigrtf(1))               2.442E-08     
  Case tangential stress (Pa)                                              (sigttf(1))              -3.473E+08  OP 
  Conduit radial stress (Pa)                                               (sigrcon)                -1.530E+08  OP 
  Conduit tangential stress (Pa)                                           (sigtcon)                -2.104E+08  OP 
@@ -884,7 +884,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -7.439E+06 -7.439E+06 -7.439E+06  0.000E+00
    5         0.000E+00  0.000E+00 -4.807E+06 -4.807E+06 -4.807E+06  0.000E+00
    6         0.000E+00  0.000E+00 -4.807E+06 -4.807E+06 -4.807E+06  0.000E+00
-   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00  0.000E+00
+   7         0.000E+00  0.000E+00  3.156E-09  3.156E-09 -2.525E-08  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.374E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.201E-01  OP 
@@ -1089,13 +1089,11 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Blanket coolant pressure (Pa)                                            (blpressure)              1.550E+07     
  Allowable temperature of first wall material, excluding armour (K)       (tfwmatmax)                 873.000000     
  Actual peak temperature of first wall material (K)                       (tpeak)                     872.999624  OP 
- Switch for pumping of primary coolant                                    (primary_pumping)                 2     
- Mechanical pumping power is calculated for first wall and blanket
- Pumping power for first wall (MW)                                        (htpmw_fw)                4.147E+01  OP 
- Pumping power for blanket (MW)                                           (htpmw_blkt)              2.526E-01  OP 
+ Mechanical pumping power for FW (MW)                                     (htpmw_fw)                4.147E+01  OP 
+ Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              2.526E-01  OP 
  Pumping power for divertor (MW)                                          (htpmw_div)               3.645E+00  OP 
  Pumping power for shield and vacuum vessel (MW)                          (htpmw_shld)              5.114E-03  OP 
- Total coolant pumping power: first wall, blanket, shield and divertor (M (htpmw)                   4.776E+01  OP 
+ Total primary coolant pumping power (MW)                                 (htpmw)                   4.776E+01  OP 
  
  ********************************** First wall and blanket : CCFE HCPB model **********************************
  
@@ -1318,6 +1316,17 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Divertor area fraction of whole toroid surface                           (fdiv)                    1.150E-01     
  H/CD apparatus + diagnostics area fraction                               (fhcd)                    0.000E+00     
  First wall area fraction                                                 (1-fdiv-fhcd)             8.850E-01     
+ Switch for pumping of primary coolant                                    (primary_pumping)                 2     
+ Mechanical pumping power is calculated for FW and blanket
+ Mechanical pumping power for FW and blanket cooling loop including heat  (htpmw_fw_blkt)           4.172E+01  OP 
+ Mechanical pumping power for FW (MW)                                     (htpmw_fw)                4.147E+01  OP 
+ Mechanical pumping power for blanket (MW)                                (htpmw_blkt)              2.526E-01  OP 
+ Mechanical pumping power for divertor (MW)                               (htpmw_div)               3.645E+00  OP 
+ Mechanical pumping power for shield and vacuum vessel (MW)               (htpmw_shld)              5.114E-03  OP 
+ Electrical pumping power for FW and blanket (MW)                         (htpmwe_fw_blkt)          4.392E+01  OP 
+ Electrical pumping power for shield (MW)                                 (htpmwe_shld)             5.383E-03  OP 
+ Electrical pumping power for divertor (MW)                               (htpmwe_div)              3.837E+00  OP 
+ Total electrical pumping power for primary coolant (MW)                  (htpmw)                   4.776E+01  OP 
  Coolant pump power / non-pumping thermal power in shield                 (fpumpshld)               1.000E-02     
  Coolant pump power / non-pumping thermal power in divertor               (fpumpdiv)                1.000E-02     
  Electrical efficiency of heat transport coolant pumps                    (etahtp)                  9.500E-01     
@@ -1415,8 +1424,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 45.372701  OP 
  Total (MW)                                                                                          2418.557493  OP 
  
- Heat extracted from armour and first wall (MW)                           (pthermfw)                  511.566716  OP 
- Heat extracted from blanket (MW)                                         (pthermblkt)               1539.389531  OP 
+ Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            2050.956247  OP 
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.516486  OP 
  Heat extracted from divertor (MW)                                        (pthermdiv)                 368.120099  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000000  OP 
