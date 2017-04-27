@@ -998,31 +998,24 @@ contains
     !  Primary (high-grade) thermal power, available for electricity generation.  Switch iprimshld
     !  is 1 or 0, is user choice on whether the shield thermal power goes to primary or secondary heat
     if (secondary_cycle == 0) then
-
   		!  Primary thermal power (MW)
-  		pthermmw = pthermfw_blkt + iprimshld*pthermshld
-
+        pthermmw = pthermfw_blkt + iprimshld*pthermshld
   		!  Secondary thermal power deposited in divertor (MW)
-  		psecdiv = pthermdiv
-
-  		! Divertor primary/secondary power switch value
-  		iprimdiv = 0
-
-        else
-
+        psecdiv = pthermdiv
+  		! Divertor primary/secondary power switch: does NOT contribute to energy generation cycle
+        iprimdiv = 0
+    else
   		!  Primary thermal power (MW)
-  		pthermmw = pthermfw_blkt + iprimshld*pthermshld + pthermdiv
-
+        pthermmw = pthermfw_blkt + iprimshld*pthermshld + pthermdiv
   		!  Secondary thermal power deposited in divertor (MW)
-  		psecdiv = 0.0D0
+        psecdiv = 0.0D0
+  		! Divertor primary/secondary power switch: contributes to energy generation cycle
+        iprimdiv = 1
+    end if
 
-  		! Divertor primary/secondary power switch value
-  		iprimdiv = 1
+    if (abs(pthermmw) < 1.0D-4) write(*,*) 'ERROR Primary thermal power is zero or negative'
 
-	  end if
-	  if (abs(pthermmw) < 1.0D-4) write(*,*) 'ERROR Primary thermal power is zero or negative'
-
-	  ! #284 Fraction of total high-grade thermal power to divertor
+	! #284 Fraction of total high-grade thermal power to divertor
     pdivfraction = pthermdiv / pthermmw
     ! Loss in efficiency as this primary power is collecetd at very low temperature
     delta_eta = 0.339*pdivfraction

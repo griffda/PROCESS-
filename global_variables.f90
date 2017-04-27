@@ -2537,8 +2537,8 @@ module heat_transport_variables
   real(kind(1.0D0)) :: etahth = 0.5D0
 
 
-  !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency; input if ipowerflow=0
-  !+ad_varc                 or if secondary_cycle=2; otherwise calculated
+  !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency
+  !+ad_varc                 if secondary_cycle=2; otherwise calculated
   real(kind(1.0D0)) :: etath = 0.35D0
   !+ad_vars  fachtmw : facility heat removal (MW)
   real(kind(1.0D0)) :: fachtmw = 0.0D0
