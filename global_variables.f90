@@ -1374,7 +1374,8 @@ module fwbs_variables
   !+ad_varc       (mechanical power only)<UL>
   !+ad_varc     <LI> = 0 User sets pump power directly (htpmw_blkt, htpmw_fw)
   !+ad_varc     <LI> = 1 User sets pump power as a fraction of thermal power (fpumpblkt, fpumpfw)
-  !+ad_varc     <LI> = 2 Mechanical pumping power is calculated</UL>
+  !+ad_varc     <LI> = 2 Mechanical pumping power is calculated
+  !+ad_varc     <LI> = 3 Mechanical pumping power is calculated using specified pressure drop</UL>
   !+ad_vars  (peak first wall temperature is only calculated if primary_pumping = 2)
   integer :: primary_pumping = 2
 
@@ -1452,8 +1453,7 @@ module fwbs_variables
   !+ad_varc        293 K (W/m/K) (Temperature dependence is as for unirradiated Eurofer)
   real(kind(1.0D0)) :: fw_th_conductivity = 28.34D0
 
-  !+ad_vars  etaiso /0.85/ : isentropic efficiency of first wall and blanket coolant pumps (secondary_cycle>1)
-  real(kind(1.0D0)) :: etaiso = 0.85D0
+
   !+ad_vars  fvoldw /1.74/ : area coverage factor for vacuum vessel volume
   real(kind(1.0D0)) :: fvoldw = 1.74D0
   !+ad_vars  fvolsi /1.0/ : area coverage factor for inboard shield volume
@@ -1551,12 +1551,37 @@ module fwbs_variables
   !+ad_varc            <LI> = 3 HCPB; efficiency taken from WP12-DAS08-T01, EFDA_D_2LLNBX</UL>
   integer :: blkttype = 3
 
-
-
+  !+ad_vars  etaiso /0.85/ : isentropic efficiency of FW and blanket coolant pumps
+  real(kind(1.0D0)) :: etaiso = 0.85D0
+  !+ad_vars  etahtp /0.95/ : electrical efficiency of primary coolant pumps
+  real(kind(1.0D0)) :: etahtp = 0.95D0
 
 
 end module fwbs_variables
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module primary_pumping_variables
+
+  !+ad_name  fwbs_variables
+  !+ad_summ  Module containing global variables relating to the
+  !+ad_summ  primary_pumping=3 option  (Mechanical pumping power is calculated using specified pressure drop)
+  ! Issue #503
+  !+ad_vars  gamma_he /1.667/ FIX : ratio of specific heats for helium (primary_pumping=3)
+  real(kind(1.0D0)) :: gamma_he = 1.667D0
+  !+ad_vars  cp_he /5195/ FIX: specific heat capacity at constant pressure: helium (primary_pumping=3) [J/(kg.K)]
+  real(kind(1.0D0)) :: cp_he = 5195.0D0
+  !+ad_vars  t_in_bb /573.13/ FIX: temperature in FW and blanket coolant at blanket entrance (primary_pumping=3) [K]
+  real(kind(1.0D0)) :: t_in_bb =573.13D0
+  !+ad_vars  t_out_bb /773.13/ FIX: temperature in FW and blanket coolant at blanket exit (primary_pumping=3) [K]
+  real(kind(1.0D0)) :: t_out_bb =773.13D0
+  !+ad_vars  p_he /8.0e6/ FIX: pressure in FW and blanket coolant at pump exit (primary_pumping=3) [Pa]
+  real(kind(1.0D0)) :: p_he =8.0D6
+  !+ad_vars  dp_he /5.5e5/ FIX: pressure drop in FW and blanket coolant including heat exchanger and pipes (primary_pumping=3) [Pa]
+  real(kind(1.0D0)) :: dp_he =5.5D5
+  !+ad_vars  htpmw_fw_blkt : mechanical pumping power for FW and blanket including heat exchanger and pipes (primary_pumping=3) [MW]
+  real(kind(1.0D0)) :: htpmw_fw_blkt = 0.0d0
+
+end module primary_pumping_variables
 ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 module pfcoil_variables
@@ -2510,9 +2535,8 @@ module heat_transport_variables
   real(kind(1.0D0)) :: etahlte = 0.75D0
   !+ad_vars  etahth /0.5/ : efficiency of H production for ihplant=4
   real(kind(1.0D0)) :: etahth = 0.5D0
-  !+ad_vars  etahtp /0.95/ : electrical efficiency of primary coolant pumps
-  !+ad_varc
-  real(kind(1.0D0)) :: etahtp = 0.95D0
+
+
   !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency; input if ipowerflow=0
   !+ad_varc                 or if secondary_cycle=2; otherwise calculated
   real(kind(1.0D0)) :: etath = 0.35D0
@@ -2545,6 +2569,8 @@ module heat_transport_variables
   real(kind(1.0D0)) :: fpumpshld = 0.005D0
   !+ad_vars  htpmw_min /0.0/ : Minimum total electrical power for primary coolant pumps (MW) NOT RECOMMENDED
   real(kind(1.0D0)) :: htpmw_min = 0.0D0
+
+
 
   !+ad_vars  helpow : heat removal at cryogenic temperatures (W)
   real(kind(1.0D0)) :: helpow = 0.0D0

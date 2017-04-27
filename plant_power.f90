@@ -62,6 +62,7 @@ module power_module
   use structure_variables
   use tfcoil_variables
   use times_variables
+  use primary_pumping_variables
 
   implicit none
 
@@ -72,7 +73,8 @@ module power_module
   integer, parameter :: double = 8
 
   !  Local variables
-  real(kind=double) :: htpmwe_fw, htpmwe_blkt, htpmwe_shld, htpmwe_div, htpmw_mech
+  real(kind=double) :: htpmwe_shld, htpmwe_div, htpmw_mech, pthermfw_blkt
+  real(kind=double) :: htpmwe_fw_blkt
   real(kind=double) :: pthermdiv, pthermfw, pthermblkt, pthermshld
   real(kind=double) :: ppumpmw, pcoresystems, pdivfraction, delta_eta, qss, qnuc, qac, qcl, qmisc
 
@@ -684,7 +686,7 @@ contains
                 poloidalpower(time) = (poloidalenergy(time+1)-poloidalenergy(time)) / (tim(time+1)-tim(time))
             else
                 ! Flag when an interval is small or zero MDK 30/11/16
-                poloidalpower(time) = 9.9d9          
+                poloidalpower(time) = 9.9d9
             end if
 
           end do
@@ -916,14 +918,6 @@ contains
     !+ad_call  cryo
     !+ad_call  plant_thermal_efficiency
     !+ad_hist  01/08/11 PJK Initial F90 version
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added current_drive_variables
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  18/10/12 PJK Added pfcoil_variables
-    !+ad_hist  18/10/12 PJK Added tfcoil_variables
-    !+ad_hist  29/10/12 PJK Added structure_variables
-    !+ad_hist  29/10/12 PJK Added pf_power_variables
-    !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  17/04/13 PJK Changed priheat to pthermmw in rnphx calculation
     !+ad_hist  17/04/13 PJK Added iprimnloss switch for pnucloss contribution
     !+ad_hisc               to primary heating
@@ -953,28 +947,39 @@ contains
     !- Collate pumping powers
     !------------------------------------------------------------------------------------
 
+    ! Combine fw and blanket for convenience
+    ! Already combined if primary_pumping=3
+    if(primary_pumping/=3) htpmw_fw_blkt = htpmw_fw + htpmw_blkt
+
     !  Account for pump electrical inefficiencies. The coolant pumps are not assumed to be
     !  100% efficient so the electric power to run them is greater than the power deposited
     !  in the coolant.  The difference should be lost as secondary heat.
-    htpmwe_fw = htpmw_fw / etahtp
-    htpmwe_blkt = htpmw_blkt / etahtp
+    htpmwe_fw_blkt = htpmw_fw_blkt / etahtp
     htpmwe_shld = htpmw_shld / etahtp
     htpmwe_div = htpmw_div / etahtp
 
     ! Total mechanical pump power (deposited in coolant)
-    htpmw_mech = htpmw_fw + htpmw_blkt + htpmw_shld + htpmw_div
+    htpmw_mech = htpmw_fw_blkt + htpmw_shld + htpmw_div
 
     ! Minimum total electrical power for primary coolant pumps  (MW) Issue #303
-    htpmw = max(htpmw_min, htpmwe_fw + htpmwe_blkt + htpmwe_shld + htpmwe_div)
+    ! Recommended to leave the minimum value at zero.
+    ! Note that htpmw is an ELECTRICAL power
+    htpmw = max(htpmw_min, htpmwe_fw_blkt + htpmwe_shld + htpmwe_div)
 
     !  Heat lost through pump power inefficiencies (MW)
     htpsecmw = htpmw - htpmw_mech
 
-    !  Total power deposited in first wall coolant (MW)
-    pthermfw = pnucfw + pradfw + htpmw_fw + porbitlossmw + palpfwmw + nbshinemw
-
-    !  Total power deposited in blanket coolant (MW) (energy multiplication in pnucblkt already)
-    pthermblkt = pnucblkt + htpmw_blkt
+    if(primary_pumping/=3) then
+        !  Total power deposited in first wall coolant (MW)
+        pthermfw = pnucfw + pradfw + htpmw_fw + porbitlossmw + palpfwmw + nbshinemw
+        !  Total power deposited in blanket coolant (MW) (energy multiplication in pnucblkt already)
+        pthermblkt = pnucblkt + htpmw_blkt
+        pthermfw_blkt = pthermfw + pthermblkt
+    elseif(primary_pumping==3)then
+        !  Total power deposited in first wall and blanket coolant combined (MW)
+        ! (energy multiplication in pnucblkt already)
+        pthermfw_blkt = pnucfw + pradfw + pnucblkt + htpmw_fw_blkt + porbitlossmw + palpfwmw + nbshinemw
+    end if
 
     !  Total power deposited in shield coolant (MW)
     pthermshld = pnucshld + htpmw_shld
@@ -985,7 +990,7 @@ contains
     pthermdiv = pdivt + (pnucdiv + praddiv) + htpmw_div
 
     !  Heat removal from first wall and divertor (MW) (only used in costs.f90)
-    pfwdiv = pthermfw + pthermdiv
+    if(primary_pumping/=3) pfwdiv = pthermfw + pthermdiv
 
     !  Thermal to electric efficiency
     call plant_thermal_efficiency(etath)
@@ -995,7 +1000,7 @@ contains
     if (secondary_cycle == 0) then
 
   		!  Primary thermal power (MW)
-  		pthermmw = pthermfw + pthermblkt + iprimshld*pthermshld
+  		pthermmw = pthermfw_blkt + iprimshld*pthermshld
 
   		!  Secondary thermal power deposited in divertor (MW)
   		psecdiv = pthermdiv
@@ -1003,10 +1008,10 @@ contains
   		! Divertor primary/secondary power switch value
   		iprimdiv = 0
 
-	  else
+        else
 
   		!  Primary thermal power (MW)
-  		pthermmw = pthermfw + pthermblkt + iprimshld*pthermshld + pthermdiv
+  		pthermmw = pthermfw_blkt + iprimshld*pthermshld + pthermdiv
 
   		!  Secondary thermal power deposited in divertor (MW)
   		psecdiv = 0.0D0
@@ -1085,12 +1090,6 @@ contains
     !+ad_hist  15/06/04 PJK Added use of IPRIMHTP, added HTPMW to PRECIR
     !+ad_hist  22/05/07 PJK Added hydrogen plant power requirements
     !+ad_hist  01/08/11 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  18/10/12 PJK Added fwbs_variables
-    !+ad_hist  18/10/12 PJK Added fwbs_module
-    !+ad_hist  18/10/12 PJK Added tfcoil_variables
-    !+ad_hist  30/10/12 PJK Added heat_transport_variables
     !+ad_hist  17/04/13 PJK Corrected precir, psecht, ctht
     !+ad_hist  17/04/13 PJK Added iprimnloss switch for pnucloss contribution
     !+ad_hisc               to secondary heating
@@ -1221,7 +1220,34 @@ contains
     call ovarre(outfile,'H/CD apparatus + diagnostics area fraction', '(fhcd)', fhcd)
     call ovarre(outfile,'First wall area fraction ', '(1-fdiv-fhcd)', 1.0D0-fdiv-fhcd)
 
-    if ((secondary_cycle == 0).or.(secondary_cycle == 1)) then
+    call ovarin(outfile, 'Switch for pumping of primary coolant', '(primary_pumping)', primary_pumping)
+    if (primary_pumping == 0) then
+        call ocmmnt(outfile, 'User sets mechanical pumping power directly')
+    else if (primary_pumping == 1) then
+        call ocmmnt(outfile, 'User sets mechanical pumping power as a fraction of thermal power removed by coolant')
+    else if (primary_pumping == 2) then
+        call ocmmnt(outfile, 'Mechanical pumping power is calculated for FW and blanket')
+    else if (primary_pumping == 3) then
+        call ocmmnt(outfile, 'Mechanical pumping power for FW and blanket cooling loop')
+        call ocmmnt(outfile, 'includes heat exchanger, using specified pressure drop')
+    end if
+
+    call ovarre(outfile, 'Mechanical pumping power for FW and blanket cooling loop including heat exchanger (MW)', &
+                       '(htpmw_fw_blkt)', htpmw_fw_blkt, 'OP ')
+
+    if (primary_pumping /= 3) then
+        call ovarre(outfile, 'Mechanical pumping power for FW (MW)', '(htpmw_fw)', htpmw_fw, 'OP ')
+        call ovarre(outfile, 'Mechanical pumping power for blanket (MW)', '(htpmw_blkt)', htpmw_blkt, 'OP ')
+    endif
+    call ovarre(outfile, 'Mechanical pumping power for divertor (MW)', '(htpmw_div)', htpmw_div, 'OP ')
+    call ovarre(outfile, 'Mechanical pumping power for shield and vacuum vessel (MW)', '(htpmw_shld)', htpmw_shld, 'OP ')
+
+    call ovarre(outfile, 'Electrical pumping power for FW and blanket (MW)', '(htpmwe_fw_blkt)', htpmwe_fw_blkt, 'OP ')
+    call ovarre(outfile, 'Electrical pumping power for shield (MW)', '(htpmwe_shld)', htpmwe_shld, 'OP ')
+    call ovarre(outfile, 'Electrical pumping power for divertor (MW)', '(htpmwe_div)', htpmwe_div, 'OP ')
+    call ovarre(outfile, 'Total electrical pumping power for primary coolant (MW)', '(htpmw)', htpmw, 'OP ')
+
+    if (((secondary_cycle == 0).or.(secondary_cycle == 1)).and.(primary_pumping/=3)) then
         call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in first wall', '(fpumpfw)', fpumpfw)
         call ovarre(outfile, 'Coolant pump power / non-pumping thermal power in blanket', '(fpumpblkt)', fpumpblkt)
     end if
@@ -1454,14 +1480,14 @@ contains
 	sum = powfmw+emultmw+pinjmw+htpmw_mech+pohmmw
 	call ovarrf(outfile,'Total (MW)','',sum, 'OP ')
 	call oblnkl(outfile)
-	call ovarrf(outfile,'Heat extracted from armour and first wall (MW)','(pthermfw)',pthermfw, 'OP ')
-	call ovarrf(outfile,'Heat extracted from blanket (MW)','(pthermblkt)',pthermblkt, 'OP ')
+	!call ovarrf(outfile,'Heat extracted from armour and first wall (MW)','(pthermfw)',pthermfw, 'OP ')
+	call ovarrf(outfile,'Heat extracted from first wall and blanket (MW)','(pthermfw_blkt)',pthermfw_blkt, 'OP ')
 	call ovarrf(outfile,'Heat extracted from shield  (MW)','(pthermshld)',pthermshld, 'OP ')
 	call ovarrf(outfile,'Heat extracted from divertor (MW)','(pthermdiv)',pthermdiv, 'OP ')
 	call ovarrf(outfile,'Nuclear and photon power lost to H/CD system (MW)','(psechcd)',psechcd, 'OP ')
-	call ovarrf(outfile,'Total (MW)','',pthermfw+pthermblkt+pthermshld+pthermdiv+psechcd, 'OP ')
+	call ovarrf(outfile,'Total (MW)','',pthermfw_blkt+pthermshld+pthermdiv+psechcd, 'OP ')
 	call oblnkl(outfile)
-    if (abs(sum - (pthermfw+pthermblkt+pthermshld+pthermdiv+psechcd)) > 5.0D0) then
+    if (abs(sum - (pthermfw_blkt+pthermshld+pthermdiv+psechcd)) > 5.0D0) then
 	    write(*,*) 'WARNING: Power balance for reactor is in error by more than 5 MW.'
 	    call ocmmnt(outfile,'WARNING: Power balance for reactor is in error by more than 5 MW.')
     end if
@@ -1532,7 +1558,7 @@ contains
     !+ad_cont  N/A
     !+ad_args  outfile : input integer : output file unit
     !+ad_args  iprint : input integer : switch for writing to output (1=yes)
-    !+ad_desc  This routine calculates the time dependent power requirements 
+    !+ad_desc  This routine calculates the time dependent power requirements
     !+ad_desc  and outputs them to the output file
     !+ad_prob  None
     !+ad_hist  07/03/17 JM  Initial version
@@ -1571,7 +1597,7 @@ contains
     ! Tritium system power array (MW)
     real(kind(1.0D0)), dimension(6) :: p_tritium
 
-    ! Facilities power array (MW) 
+    ! Facilities power array (MW)
     real(kind(1.0D0)), dimension(6) :: p_fac
 
     ! TF coil system power array (MW)
@@ -1713,7 +1739,7 @@ contains
     write(outfile,40) "Net power", p_net(1), p_net(2), p_net(3), p_net(4), p_net(5), p_net(6), p_net_avg
     write(outfile,10) "------", "-----", "----", "-----", "-----", "-----", "------"
 
-    call oblnkl(outfile)    
+    call oblnkl(outfile)
 
     10     format(t20,a20,t40,a8,t50,a8,t60,a8,t70,a8,t80,a8,t90,a8)
     20     format(t20,a20,t40,f8.2,t50,f8.2,t60,f8.2,t70,f8.2,t80,f8.2,t90,f8.2,t100,f8.2)

@@ -44,6 +44,7 @@ module ccfe_hcpb_module
   use tfcoil_variables
   use constants
   use global_variables
+  use primary_pumping_variables
 
   use fw_module
 
@@ -76,7 +77,7 @@ module ccfe_hcpb_module
   real(kind=double), private :: blanket_density
 
   ! Shield density
-  real(kind=double), private ::	shield_density
+  real(kind=double), private :: shield_density
 
   ! Vacuum vessel density
   real(kind=double), private :: vv_density
@@ -225,24 +226,22 @@ contains
     ip = iprint
     ofile = outfile
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ! MDK (27/11/2015)
+    fwith = 2*afw + 2*fw_wall
+    fwoth = fwith
 
-	  ! MDK (27/11/2015)
-	  fwith = 2*afw + 2*fw_wall
-	  fwoth = fwith
+    ! Coolant type
+    coolwh = 1
+    ! Note that the first wall coolant is now input separately.
 
-	  ! Coolant type
-	  coolwh = 1
-	  ! Note that the first wall coolant is now input separately.
+    ! Energy multiplication
+    emult = 1.269
 
-	  ! Energy multiplication
-	  emult = 1.269
+    ! Calculate blanket, shield, vacuum vessel and cryostat volumes
+    call component_volumes
 
-	  ! Calculate blanket, shield, vacuum vessel and cryostat volumes
-	  call component_volumes
-
-	  ! Centrepost heating for a ST machine
-	  if (itart == 1) then
+    ! Centrepost heating for a ST machine
+    if (itart == 1) then
         pnuccp = st_centrepost_nuclear_heating(pneutmw,hmax,tfcth)
     else
         pnuccp = 0.0D0
@@ -250,7 +249,7 @@ contains
 
     call component_masses
 
-	  ! Calculate the nuclear heating
+    ! Calculate the nuclear heating
     call nuclear_heating_magnets
     call nuclear_heating_fw
     call nuclear_heating_blanket
@@ -264,44 +263,42 @@ contains
 
     ! Split neutron power to main wall between fw, bkt, shld and TF with same fractions as before.
     ! Total nuclear power deposited (MW)
-	  nuc_pow_dep_tot = pnucfw + pnucblkt + pnucshld + ptfnuc
+    nuc_pow_dep_tot = pnucfw + pnucblkt + pnucshld + ptfnuc
 
-	  if((nuc_pow_dep_tot<1.0d0).or.(nuc_pow_dep_tot/=nuc_pow_dep_tot))  then
+    if((nuc_pow_dep_tot<1.0d0).or.(nuc_pow_dep_tot/=nuc_pow_dep_tot))  then
         write(*,*)'pnucfw =', pnucfw, ' at line 283  ', 'pnucblkt =', pnucblkt
         write(*,*)'pnucshld =', pnucshld, ' ptfnuc =', ptfnuc
     end if
 
-	  ! Power to the first wall (MW)
-	  pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    ! Power to the first wall (MW)
+    pnucfw = (pnucfw / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
 
-	  ! Power to the blanket (MW)
-	  pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    ! Power to the blanket (MW)
+    pnucblkt = (pnucblkt / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
 
-	  ! Power to the shield(MW)
-  	pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    ! Power to the shield(MW)
+    pnucshld = (pnucshld / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
 
-  	! Power to the TF coils (MW)
-  	ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
+    ! Power to the TF coils (MW)
+    ptfnuc = (ptfnuc / nuc_pow_dep_tot) * emult * 0.8D0 * (1.0D0-fdiv) * powfmw
 
-  	! pnucdiv is not changed.
-  	! The energy due to multiplication, by subtraction:
-  	emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - 0.8D0 * powfmw
+    ! pnucdiv is not changed.
+    ! The energy due to multiplication, by subtraction:
+    emultmw = pnucfw + pnucblkt + pnucshld + ptfnuc + pnucdiv - 0.8D0 * powfmw
 
     ! powerflow calculation for pumping power
-  	call powerflow_calc
+    call powerflow_calc
 
-    ! output !
-    !!!!!!!!!!
-
+    ! output
     if (ip == 0) return
-  	call write_ccfe_hcpb_output
+    call write_ccfe_hcpb_output
 
   end subroutine ccfe_hcpb
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine component_volumes
-	  !+ad_name  component_volumes
+    !+ad_name  component_volumes
     !+ad_summ  Calculate the blanket, shield, vacuum vessel and cryostat volumes
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -315,8 +312,6 @@ contains
 
     implicit none
 
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
     call blanket_half_height
     call shield_half_height
     call vv_half_height
@@ -328,16 +323,16 @@ contains
        call dshaped_shield
        call dshaped_vv
 
-	  ! Elliptical blanket and shield
+    ! Elliptical blanket and shield
     else
 
-	   call elliptical_blanket
-	   call elliptical_shield
-	   call elliptical_vv
+     call elliptical_blanket
+     call elliptical_shield
+     call elliptical_vv
 
     end if
 
-	  ! Apply coverage factors to volumes and surface areas
+    ! Apply coverage factors to volumes and surface areas
     call apply_coverage_factors
 
     ! Calculate cryostat geometry
@@ -360,14 +355,14 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	  ! Local variables
+    ! Local variables
 
     ! Blanket bottom/top half-height (m)
-	  real(kind=double) :: hbot, htop
+    real(kind=double) :: hbot, htop
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	  ! Calculate blanket internal lower half-height (m)
+    ! Calculate blanket internal lower half-height (m)
     hbot = rminor*kappa + vgap + divfix - blnktth
 
     ! Calculate blanket internal upper half-height (m)
@@ -401,11 +396,11 @@ contains
     ! Local variables
 
     ! Shield bottom/top half-height (m)
-  	real(kind=double) :: hbot, htop
+    real(kind=double) :: hbot, htop
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	  ! Calculate shield internal lower half-height (m)
+    ! Calculate shield internal lower half-height (m)
     hbot = rminor*kappa + vgap + divfix
 
     ! Calculate shield internal upper half-height (m)
@@ -439,11 +434,11 @@ contains
     ! Local variables
 
     ! Vacuum vessel bottom/top internal half-height (m)
-	  real(kind=double) :: hbot, htop
+    real(kind=double) :: hbot, htop
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	  ! Calculate vacuum vessel internal lower half-height (m)
+    ! Calculate vacuum vessel internal lower half-height (m)
     hbot = hmax - vgap2 - ddwi
 
     ! Calculate vacuum vessel internal upper half-height (m)
@@ -463,7 +458,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine dshaped_blanket
-  	!+ad_name  dshaped_blanket
+    !+ad_name  dshaped_blanket
     !+ad_summ  Calculate the blanket surface area and volume using dshaped scheme
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -507,7 +502,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine dshaped_shield
-	  !+ad_name  dshaped_shield
+    !+ad_name  dshaped_shield
     !+ad_summ  Calculate the shield surface area and volume using dshaped scheme
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -521,7 +516,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	  implicit none
+    implicit none
 
     ! Local variables
 
@@ -551,7 +546,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine dshaped_vv
-	  !+ad_name  dshaped_vv
+    !+ad_name  dshaped_vv
     !+ad_summ  Calculate the vacuum vessel volume using dshaped scheme
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -564,7 +559,7 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  	implicit none
+    implicit none
 
     ! Local variables
 
@@ -597,7 +592,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine elliptical_blanket
-  	!+ad_name  elliptical_blanket
+    !+ad_name  elliptical_blanket
     !+ad_summ  Calculate the blanket surface area and volume using elliptical scheme
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -626,7 +621,7 @@ contains
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	  ! Major radius to centre of inboard and outboard ellipses (m)
+    ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
     r1 = rmajor - rminor*triang
 
@@ -647,7 +642,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine elliptical_shield
-  	!+ad_name  elliptical_shield
+    !+ad_name  elliptical_shield
     !+ad_summ  Calculate the shield surface area and volume using elliptical scheme
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -676,12 +671,12 @@ contains
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	  ! Major radius to centre of inboard and outboard ellipses (m)
+    ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
     r1 = rmajor - rminor*triang
 
-  	! Distance between r1 and outer edge of inboard shield (m)
-	  r2 = r1 - (rsldi + shldith)
+    ! Distance between r1 and outer edge of inboard shield (m)
+    r2 = r1 - (rsldi + shldith)
 
     ! Distance between r1 and inner edge of outboard shield (m)
     r3 = (rsldo - shldoth) - r1
@@ -770,7 +765,7 @@ contains
     volblkto = volblkt*(1.0D0-fdiv-fhcd) - volblkti
     volblkt = volblkti + volblkto
 
-	  ! Apply shield coverage factors
+    ! Apply shield coverage factors
     shareaib = fvolsi*shareaib
     shareaob = fvolso*shareaob
     sharea = shareaib + shareaob
@@ -802,7 +797,7 @@ contains
     ! For rfp machines
     if (irfp == 1) then
 
-	    ! rrpf(i) = radius of RFP coil i (RFPs)
+      ! rrpf(i) = radius of RFP coil i (RFPs)
       rdewex = maxval(rrpf + 0.5D0*drpf) + rpf2dewar
 
     ! Tokamaks
@@ -878,9 +873,9 @@ contains
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Model factors and coefficients
-    a = 2.830D0   	! Exponential factor (m2/tonne)
-    b = 0.583D0   	! Exponential factor (m2/tonne)
-    e = 9.062D0	   	! Pre-factor (1/kg). Corrected see issue #272
+    a = 2.830D0     ! Exponential factor (m2/tonne)
+    b = 0.583D0     ! Exponential factor (m2/tonne)
+    e = 9.062D0       ! Pre-factor (1/kg). Corrected see issue #272
 
     ! First wall void fractions
 
@@ -893,26 +888,26 @@ contains
     ! mean FW coolant void fraction
     vffwm = vffwi
 
-	  ! Calculate smeared densities of blanket sections
-	  ! gaseous He coolant in armour, FW & blanket: He mass is neglected
-	  armour_density = W_density*(1.0D0-vffwm)
-	  fw_density = denstl*(1.0D0-vffwm)
+    ! Calculate smeared densities of blanket sections
+    ! gaseous He coolant in armour, FW & blanket: He mass is neglected
+    armour_density = W_density*(1.0D0-vffwm)
+    fw_density = denstl*(1.0D0-vffwm)
     blanket_density = whtblkt / volblkt
     shield_density = whtshld / volshld
-	  vv_density = vvmass / vdewin
+    vv_density = vvmass / vdewin
 
-	  ! Exponents (tonne/m2)
-	  ! Blanket exponent (/1000 for kg -> tonnes)
+    ! Exponents (tonne/m2)
+    ! Blanket exponent (/1000 for kg -> tonnes)
     x_blanket = (armour_density * fw_armour_thickness + &
-				fw_density * (fwith+fwoth)/2.0D0 + &
-				blanket_density * (blnkith+blnkoth)/2.0D0) / 1000.0D0
+              fw_density * (fwith+fwoth)/2.0D0 + &
+              blanket_density * (blnkith+blnkoth)/2.0D0) / 1000.0D0
 
     ! Shield exponent(/1000 for kg -> tonnes)
     x_shield = (shield_density * (shldith+shldoth)/2.0D0 + &
-				vv_density * ddwi) / 1000.D0
+              vv_density * ddwi) / 1000.D0
 
-	  ! Nuclear heating in TF coil
-	  ! Unit heating (W/kg/GW of fusion power) x mass (kg)
+    ! Nuclear heating in TF coil
+    ! Unit heating (W/kg/GW of fusion power) x mass (kg)
     tfc_nuc_heating = e*exp(-a*x_blanket)*exp(-b*x_shield) * whttf
 
     ! Total heating (MW)
@@ -937,7 +932,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine nuclear_heating_fw
-  	!+ad_name  nuclear_heating_fw
+    !+ad_name  nuclear_heating_fw
     !+ad_summ  Nuclear heating in the FW for CCFE HCPB model
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -967,7 +962,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine nuclear_heating_blanket
-  	!+ad_name  nuclear_heating_blanket
+    !+ad_name  nuclear_heating_blanket
     !+ad_summ  Nuclear heating in the blanket for CCFE HCPB model
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -1016,7 +1011,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine nuclear_heating_shield
-  	!+ad_name  nuclear_heating_shield
+    !+ad_name  nuclear_heating_shield
     !+ad_summ  Nuclear heating in the shield for CCFE HCPB model
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -1106,10 +1101,10 @@ contains
     !+ad_hist  10/06/15 MDK Corrected surface heat flux on first wall #309
     !+ad_hist  06/01/16 MDK Improved options for pumping power #347
     !+ad_stat  Okay
-    !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
+    real(kind=double):: t_in_compressor, dt_he, fpump, pfactor
 
     ! TODO - is this consistent with a double null machine?
     ! Radiation power incident on divertor (MW)
@@ -1132,36 +1127,57 @@ contains
     psurffwo = pradfw * fwareaob/fwarea + porbitlossmw + palpfwmw
     psurffwi = pradfw * (1.0D0 - fwareaob/fwarea)
 
-  	if (primary_pumping == 0) then
+    if (primary_pumping == 0) then
 
       ! User sets mechanical pumping power directly (primary_pumping_power)
-  	  ! Values of htpmw_blkt, htpmw_div, htpmw_fw, htpmw_shld set in input file
+      ! Values of htpmw_blkt, htpmw_div, htpmw_fw, htpmw_shld set in input file
 
-  	else if (primary_pumping == 1) then
-
+    else if (primary_pumping == 1) then
        ! User sets mechanical pumping power as a fraction of thermal power removed by coolant
-  	   htpmw_fw = fpumpfw * (pnucfw + psurffwi + psurffwo)
-  		 htpmw_blkt = fpumpblkt * pnucblkt
+       htpmw_fw = fpumpfw * (pnucfw + psurffwi + psurffwo)
+       htpmw_blkt = fpumpblkt * pnucblkt
        htpmw_shld = fpumpshld * pnucshld
        htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)
 
-  	else if (primary_pumping == 2) then
-
+    else if (primary_pumping == 2) then
        ! Mechanical pumping power is calculated for first wall and blanket
-  	   call thermo_hydraulic_model
-
+       call thermo_hydraulic_model
        ! For divertor and shield, mechanical pumping power is a fraction of thermal power removed by coolant
        htpmw_shld = fpumpshld * pnucshld
        htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)
 
-  	end if
+   else if (primary_pumping == 3) then
+      ! Issue #503
+      ! Mechanical pumping power is calculated using specified pressure drop for first wall and blanket circuit,
+      ! including heat exchanger and pipes
+      pfactor = (p_he/(p_he-dp_he))**((gamma_he-1.0d0)/gamma_he)
+      t_in_compressor = t_in_bb / pfactor
+      dt_he = t_out_bb - t_in_bb
+      fpump = t_in_compressor/(etaiso*dt_he) * (pfactor - 1.0d0)
+      htpmw_fw_blkt = fpump/(1-fpump) * (pnucfw + psurffwi + psurffwo + pnucblkt)
 
-  end subroutine
+      ! For divertor and shield, mechanical pumping power is a fraction of thermal power removed by coolant
+      htpmw_shld = fpumpshld * pnucshld
+      htpmw_div = fpumpdiv * (pdivt + pnucdiv + praddiv)
+      if (ip /= 0) then
+          call oheadr(ofile, 'Pumping for primary coolant (helium)')
+          call ovarre(ofile, 'Pressure drop in FW and blanket coolant incl. hx and pipes (Pa)', '(dp_he)', dp_he)
+          call ovarre(ofile, 'Fraction of FW and blanket thermal power required for pumping', '(fpump)', fpump, 'OP ')
+          call ovarre(ofile, 'Inlet temperature of FW & blanket coolant pump (K)', '(t_in_compressor)', t_in_compressor, 'OP ')
+          call ovarre(ofile, 'Outlet temperature of FW & blanket coolant pump (K)', '(t_in_bb)', t_in_bb)
+          call ovarre(ofile, 'Mechanical pumping power for FW and blanket cooling loop including heat exchanger (MW)', &
+                             '(htpmw_fw_blkt)', htpmw_fw_blkt, 'OP ')
+          call ovarre(ofile, 'Mechanical pumping power for divertor (MW)', '(htpmw_div)', htpmw_div, 'OP ')
+          call ovarre(ofile, 'Mechanical pumping power for shield and vacuum vessel (MW)', '(htpmw_shld)', htpmw_shld, 'OP ')
+      endif
+   end if
+
+  end subroutine powerflow_calc
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine thermo_hydraulic_model
-  	!+ad_name  thermo_hydraulic_model
+    !+ad_name  thermo_hydraulic_model
     !+ad_summ  Thermo-hydraulic model for first wall and blanket
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -1171,7 +1187,7 @@ contains
     !+ad_hist  23/02/15 JM  Initial version
     !+ad_hist  01/12/15 MDK Extensively revised Issue #348 (01/12/2015)
     !+ad_stat  Okay
-    !
+    ! ONLY CALLED if primary_pumping = 2
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
@@ -1245,7 +1261,7 @@ contains
     call fw_temp(ip, ofile, afw, fwith, fwareaib, psurffwi, pnucfwi, tpeakfwi, cf, rhof, mffwpi, 'Inboard first wall')
     ! Recalculate the mass flow rates here using the heat capacity output by fw_temp
 
-	  ! Total mass flow rate to remove inboard first wall power (kg/s)
+    ! Total mass flow rate to remove inboard first wall power (kg/s)
     mffwi = 1.0D6*(pnucfwi + psurffwi) / (cf*(fwoutlet - fwinlet))
 
     ! Total number of first wall pipes from channel length and pitch (02/12/2015)
@@ -1330,7 +1346,7 @@ contains
     htpmw_fw = htpmw_fwi + htpmw_fwo
     htpmw_blkt = htpmw_blkti + htpmw_blkto
 
-	  ! Peak first wall temperature (K)
+    ! Peak first wall temperature (K)
     tpeak = max(tpeakfwi, tpeakfwo)
 
     ! Totals
@@ -1370,20 +1386,11 @@ contains
     call ovarrf(ofile, 'Allowable temperature of first wall material, excluding armour (K)', '(tfwmatmax)', tfwmatmax)
     call ovarrf(ofile, 'Actual peak temperature of first wall material (K)', '(tpeak)', tpeak, 'OP ')
 
-    call ovarin(ofile, 'Switch for pumping of primary coolant', '(primary_pumping)', primary_pumping)
-    if (primary_pumping == 0) then
-        call ocmmnt(ofile, 'User sets mechanical pumping power directly')
-  	else if (primary_pumping == 1) then
-  	    call ocmmnt(ofile, 'User sets mechanical pumping power as a fraction of thermal power removed by coolant')
-  	else if (primary_pumping == 2) then
-  	    call ocmmnt(ofile, 'Mechanical pumping power is calculated for first wall and blanket')
-  	end if
-
-    call ovarre(ofile, 'Pumping power for first wall (MW)', '(htpmw_fw)', htpmw_fw, 'OP ')
-    call ovarre(ofile, 'Pumping power for blanket (MW)', '(htpmw_blkt)', htpmw_blkt, 'OP ')
+    call ovarre(ofile, 'Mechanical pumping power for FW (MW)', '(htpmw_fw)', htpmw_fw, 'OP ')
+    call ovarre(ofile, 'Mechanical pumping power for blanket (MW)', '(htpmw_blkt)', htpmw_blkt, 'OP ')
     call ovarre(ofile, 'Pumping power for divertor (MW)', '(htpmw_div)', htpmw_div, 'OP ')
     call ovarre(ofile, 'Pumping power for shield and vacuum vessel (MW)', '(htpmw_shld)', htpmw_shld, 'OP ')
-    call ovarre(ofile, 'Total coolant pumping power: first wall, blanket, shield and divertor (MW)', '(htpmw)', htpmw, 'OP ')
+    call ovarre(ofile, 'Total primary coolant pumping power (MW)', '(htpmw)', htpmw, 'OP ')
 
   end subroutine thermo_hydraulic_model
 
@@ -1415,14 +1422,14 @@ contains
     ! Divertor coolant volume (m3)
     coolvol = divsur * divclfr * divplt
 
-	  ! Blanket coolant volume (m3)
+    ! Blanket coolant volume (m3)
     coolvol = coolvol + volblkt*vfblkt
 
     ! Shield coolant volume (m3)
     coolvol = coolvol + volshld*vfshld
 
-	  ! First wall coolant volume (m3)
-	  coolvol = coolvol + fwareaib*fwith*vffwi + fwareaob*fwoth*vffwo
+    ! First wall coolant volume (m3)
+    coolvol = coolvol + fwareaib*fwith*vffwi + fwareaob*fwoth*vffwo
 
     ! Mass of He coolant = volume * density at typical coolant temperatures and pressures (kg)
     coolmass = coolvol*1.517D0
@@ -1430,8 +1437,8 @@ contains
     ! Average first wall coolant fraction, only used by old routines in fispact.f90, safety.f90
     fwclfr = (fwareaib*fwith*vffwi + fwareaob*fwoth*vffwo) / (fwarea*0.5D0*(fwith+fwoth))
 
-	  ! Component masses
-	  ! Divertor mass (kg)
+    ! Component masses
+    ! Divertor mass (kg)
     divsur = fdiva * 2.0D0 * pi * rmajor * rminor
     if (idivrt == 2) divsur = divsur * 2.0D0
     divmas = divsur * divdens * (1.0D0 - divclfr) * divplt
@@ -1472,10 +1479,10 @@ contains
     ! Penetration shield mass (set = internal shield) (kg)
     wpenshld = whtshld
 
-	  ! First wall volume (m^3)
-	  volfw = (fwareaib*fwith*(1.0D0-vffwi) + fwareaob*fwoth*(1.0D0-vffwo))
+    ! First wall volume (m^3)
+    volfw = (fwareaib*fwith*(1.0D0-vffwi) + fwareaob*fwoth*(1.0D0-vffwo))
 
-	  ! First wall mass, excluding armour (kg)
+    ! First wall mass, excluding armour (kg)
     fwmass = denstl * volfw
 
     ! First wall armour volume (m^3)
@@ -1577,7 +1584,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine write_ccfe_hcpb_output
-  	!+ad_name  write_ccfe_hcpb_output
+    !+ad_name  write_ccfe_hcpb_output
     !+ad_summ  Write output to file for CCFE HCPB model
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -1633,10 +1640,10 @@ contains
 
     call ovarre(ofile, 'Total nuclear heating in TF+PF coils (CS is negligible) (MW)', '(ptfnuc)', ptfnuc, 'OP ')
     call ovarre(ofile, 'Total nuclear heating in FW (MW)', '(pnucfw)', pnucfw, 'OP ')
-	  call ovarre(ofile, 'Total nuclear heating in the blanket (including emult) (MW)', '(pnucblkt)', pnucblkt, 'OP ')
+    call ovarre(ofile, 'Total nuclear heating in the blanket (including emult) (MW)', '(pnucblkt)', pnucblkt, 'OP ')
     call ocmmnt(ofile, '(Note: emult is fixed for this model inside the code)')
-	  call ovarre(ofile, 'Total nuclear heating in the shield (MW)', '(pnucshld)', pnucshld, 'OP ')
-	  call ovarre(ofile, 'Total nuclear heating in the divertor (MW)', '(pnucdiv)', pnucdiv, 'OP ')
+    call ovarre(ofile, 'Total nuclear heating in the shield (MW)', '(pnucshld)', pnucshld, 'OP ')
+    call ovarre(ofile, 'Total nuclear heating in the divertor (MW)', '(pnucdiv)', pnucdiv, 'OP ')
     call osubhd(ofile,'Diagostic output for nuclear heating :')
     call ovarre(ofile, 'Blanket exponential factor', '(exp_blanket)', exp_blanket, 'OP ')
     call ovarre(ofile, 'Shield: first exponential', '(exp_shield1)', exp_shield1, 'OP ')
@@ -1646,12 +1653,14 @@ contains
     call ovarre(ofile, 'First wall coolant pressure (Pa)', '(fwpressure)', fwpressure)
     call ovarre(ofile, 'Blanket coolant pressure (Pa)', '(blpressure)', blpressure)
 
-    call ovarre(ofile, 'Mechanical pumping power for first wall (MW)', '(htpmw_fw)', htpmw_fw, 'OP ')
-    call ovarre(ofile, 'Mechanical pumping power for blanket (MW)', '(htpmw_blkt)', htpmw_blkt, 'OP ')
-    call ovarre(ofile, 'Mechanical pumping power for divertor (MW)', '(htpmw_div)', htpmw_div, 'OP ')
-    call ovarre(ofile, 'Mechanical pumping power for shield and vacuum vessel (MW)', '(htpmw_shld)', htpmw_shld, 'OP ')
-    call ovarre(ofile, 'Total electrical coolant pumping power: first wall, blanket, shield and divertor (MW)', &
-        '(htpmw)', htpmw, 'OP ')
+    if(primary_pumping/=3)then
+        call ovarre(ofile, 'Mechanical pumping power for first wall (MW)', '(htpmw_fw)', htpmw_fw, 'OP ')
+        call ovarre(ofile, 'Mechanical pumping power for blanket (MW)', '(htpmw_blkt)', htpmw_blkt, 'OP ')
+        call ovarre(ofile, 'Mechanical pumping power for divertor (MW)', '(htpmw_div)', htpmw_div, 'OP ')
+        call ovarre(ofile, 'Mechanical pumping power for shield and vacuum vessel (MW)', '(htpmw_shld)', htpmw_shld, 'OP ')
+        call ovarre(ofile, 'Total electrical coolant pumping power: first wall, blanket, shield and divertor (MW)', &
+            '(htpmw)', htpmw, 'OP ')
+    end if
 
     call ovarre(ofile, 'Allowable nominal neutron fluence at first wall (MW.year/m2)', '(abktflnc)', abktflnc)
     call ovarin(ofile, 'No of inboard blanket modules poloidally', '(nblktmodpi)', nblktmodpi)
@@ -2386,15 +2395,15 @@ contains
     ofile = outfile
 
     ! Calculate FW/Blanket lifetime
-	  fwlife = min(abktflnc/wallmw, tlife)
+    fwlife = min(abktflnc/wallmw, tlife)
 
-	  ! Coolant type
-	  coolwh = 1
+    ! Coolant type
+    coolwh = 1
 
-	  ! Calculate component volumes
-	  call component_volumes
+    ! Calculate component volumes
+    call component_volumes
 
-	  ! Convert global variables into KIT blanket inputs
+    ! Convert global variables into KIT blanket inputs
     A_FW_IB = fwareaib * 1.0D4  ! [cm^2] IB first wall area
     A_FW_OB = fwareaob * 1.0D4  ! [cm^2] OB first wall area
     A_bl_IB = blareaib * 1.0D4  ! [cm^2] IB blanket area
@@ -2869,16 +2878,16 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	  ! Changed to % units by multiplying by 100.0
+    ! Changed to % units by multiplying by 100.0
     wib = (A_FW_IB / (A_FW_IB + A_FW_OB))*100.0D0
     wob = (A_FW_OB / (A_FW_IB + A_FW_OB))*100.0D0
 
-	  eu_frac = (chi_steels_BZ_IB + chi_steels_BZ_OB)/2.0D0
+    eu_frac = (chi_steels_BZ_IB + chi_steels_BZ_OB)/2.0D0
     tbr = 0.9157 * CF_bl * &
-		(1 - exp(-wib*(t_BZ_IB/38.35))) * &
-		(1 - exp(-wob*(t_BZ_OB/39.95))) * &
-		(1.17126 - 0.01231*eu_frac + 7.9431D-5*eu_frac**2) * &
-		(0.1362*log(e_Li) + 0.6331)
+       (1 - exp(-wib*(t_BZ_IB/38.35))) * &
+    (1 - exp(-wob*(t_BZ_OB/39.95))) * &
+    (1.17126 - 0.01231*eu_frac + 7.9431D-5*eu_frac**2) * &
+    (0.1362*log(e_Li) + 0.6331)
 
     ! Total tritium production rate (grammes/day)
     g_tot = tbr * P_n/(E_n*1.602D-19)/N_Av * PA_T*3600*24
@@ -3202,8 +3211,8 @@ contains
 
     ! Mass of steel in blanket (kg)
     whtblss = denstl * ( volblkti/blnkith * ( blbuith * fblss + blbmith * (1.0D0-fblhebmi) + &
-		blbpith * (1.0D0-fblhebpi) ) + volblkto/blnkoth * ( blbuoth * fblss + &
-		blbmoth * (1.0D0-fblhebmo) + blbpoth * (1.0D0-fblhebpo) ) )
+    blbpith * (1.0D0-fblhebpi) ) + volblkto/blnkoth * ( blbuoth * fblss + &
+       blbmoth * (1.0D0-fblhebmo) + blbpoth * (1.0D0-fblhebpo) ) )
 
     ! Mass of beryllium in blanket (kg)
     whtblbe = 1850.0D0 * fblbe * ( (volblkti * blbuith/blnkith) + (volblkto * blbuoth/blnkoth) )
@@ -3214,7 +3223,7 @@ contains
     ! Mass of blanket (kg)
     whtblkt = whtblss + whtblbe + whtblbreed
 
-	  ! Void fraction of blanket inboard portion
+    ! Void fraction of blanket inboard portion
     vfblkti = volblkti/volblkt * ( (blbuith/blnkith) * (1.0D0 - fblbe - fblbreed - fblss) &
        + (blbmith/blnkith) * fblhebmi + (blbpith/blnkith) * fblhebpi )
 
@@ -3230,7 +3239,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine component_volumes
-	  !+ad_name  component_volumes
+    !+ad_name  component_volumes
     !+ad_summ  Calculate the blanket, shield, vacuum vessel and cryostat volumes
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -3265,18 +3274,18 @@ contains
 
        call dshaped_vv
 
-	  ! Elliptical blanket and shield
+    ! Elliptical blanket and shield
     else
 
-	   call elliptical_blanket
+     call elliptical_blanket
 
-	   call elliptical_shield
+     call elliptical_shield
 
-	   call elliptical_vv
+     call elliptical_vv
 
     end if
 
-	  ! Apply coverage factors to volumes and surface areas
+    ! Apply coverage factors to volumes and surface areas
     call apply_coverage_factors
 
     ! Calculate cryostat geometry
@@ -3299,10 +3308,10 @@ contains
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	  ! Local variables
-	  real(kind=double) :: hbot, htop
+    ! Local variables
+    real(kind=double) :: hbot, htop
 
-	  ! Calculate blanket internal lower half-height (m)
+    ! Calculate blanket internal lower half-height (m)
     hbot = rminor*kappa + vgap + divfix - blnktth
 
     ! If a double null machine then symmetric
@@ -3334,9 +3343,9 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Local variables
-	  real(kind=double) :: hbot, htop
+    real(kind=double) :: hbot, htop
 
-	  ! Calculate shield internal lower half-height (m)
+    ! Calculate shield internal lower half-height (m)
     hbot = rminor*kappa + vgap + divfix
 
     ! If a double null machine then symmetric
@@ -3368,9 +3377,9 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     ! Local variables
-	  real(kind=double) :: hbot, htop
+    real(kind=double) :: hbot, htop
 
-	  ! Calculate vacuum vessel internal lower half-height (m)
+    ! Calculate vacuum vessel internal lower half-height (m)
     hbot = hmax - vgap2 - ddwi
 
     ! If a double null machine then symmetric
@@ -3390,7 +3399,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine dshaped_blanket
-	  !+ad_name  dshaped_blanket
+    !+ad_name  dshaped_blanket
     !+ad_summ  Calculate the blanket surface area and volume using dshaped scheme
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -3409,7 +3418,7 @@ contains
     ! Local variables
     real(kind=double) :: r1, r2
 
-	  ! Major radius to outer edge of inboard blanket (m)
+    ! Major radius to outer edge of inboard blanket (m)
     r1 = rsldi + shldith + blnkith
 
     ! Horizontal distance between inside edges of blanket (m)
@@ -3427,7 +3436,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine dshaped_shield
-	  !+ad_name  dshaped_shield
+    !+ad_name  dshaped_shield
     !+ad_summ  Calculate the shield surface area and volume using dshaped scheme
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -3464,7 +3473,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine dshaped_vv
-	  !+ad_name  dshaped_vv
+    !+ad_name  dshaped_vv
     !+ad_summ  Calculate the vacuum vessel volume using dshaped scheme
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -3500,7 +3509,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine elliptical_blanket
-	  !+ad_name  elliptical_blanket
+    !+ad_name  elliptical_blanket
     !+ad_summ  Calculate the blanket surface area and volume using elliptical scheme
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -3519,7 +3528,7 @@ contains
     ! Local variables
     real(kind=double) :: r1, r2, r3
 
-	  ! Major radius to centre of inboard and outboard ellipses (m)
+    ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
     r1 = rmajor - rminor*triang
 
@@ -3540,7 +3549,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine elliptical_shield
-	  !+ad_name  elliptical_shield
+    !+ad_name  elliptical_shield
     !+ad_summ  Calculate the shield surface area and volume using elliptical scheme
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -3559,12 +3568,12 @@ contains
     ! Local variables
     real(kind=double) :: r1, r2, r3
 
-	  ! Major radius to centre of inboard and outboard ellipses (m)
+    ! Major radius to centre of inboard and outboard ellipses (m)
     ! (coincident in radius with top of plasma)
     r1 = rmajor - rminor*triang
 
-  	! Distance between r1 and outer edge of inboard shield (m)
-	  r2 = r1 - (rsldi + shldith)
+    ! Distance between r1 and outer edge of inboard shield (m)
+    r2 = r1 - (rsldi + shldith)
 
     ! Distance between r1 and inner edge of outboard shield (m)
     r3 = (rsldo - shldoth) - r1
@@ -3640,7 +3649,7 @@ contains
     volblkto = volblkt*(1.0D0-fdiv-fhcd) - volblkti
     volblkt = volblkti + volblkto
 
-	  ! Apply shield coverage factors
+    ! Apply shield coverage factors
     shareaib = fvolsi*shareaib
     shareaob = fvolso*shareaob
     sharea = shareaib + shareaob
@@ -3672,7 +3681,7 @@ contains
     ! For rfp machines
     if (irfp == 1) then
 
-	     ! rrpf(i) = radius of RFP coil i (RFPs)
+       ! rrpf(i) = radius of RFP coil i (RFPs)
        rdewex = maxval(rrpf + 0.5D0*drpf) + rpf2dewar
 
     ! Tokamaks
@@ -3717,7 +3726,7 @@ contains
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine write_kit_hcpb_output
-	  !+ad_name  write_kit_hcpb_output
+    !+ad_name  write_kit_hcpb_output
     !+ad_summ  Write output to file for KIT HCPB model
     !+ad_type  Subroutine
     !+ad_auth  J. Morris, CCFE, Culham Science Centre
@@ -3734,7 +3743,7 @@ contains
 
     call oheadr(ofile, 'Blanket model output - KIT HCPB model')
     call osubhd(ofile, 'Blanket Composition :')
-	  call osubhd(ofile,'Blanket neutronics :')
+    call osubhd(ofile,'Blanket neutronics :')
     call ovarre(ofile,'Blanket heating (prior to energy multiplication) (MW)', '(pnucblkt)', pnucblkt)
     call ovarre(ofile,'Shield heating (MW)','(pnucshld)',pnucshld)
     call ovarre(ofile,'Energy multiplication in blanket','(emult)',emult)
@@ -3743,7 +3752,7 @@ contains
     call ovarin(ofile,'Number of outboard H/CD ports assumed', '(nphcdout)', nphcdout)
     select case (hcdportsize)
     case (1)
-		call ocmmnt(ofile,'     (small heating/current drive ports assumed)')
+       call ocmmnt(ofile,'     (small heating/current drive ports assumed)')
     case default
         call ocmmnt(ofile,'     (large heating/current drive ports assumed)')
     end select

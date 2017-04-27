@@ -1877,7 +1877,7 @@ contains
           !  First wall, blanket, shield settings
 
        case ('primary_pumping')
-          call parse_int_variable('primary_pumping', primary_pumping, 0, 2, &
+          call parse_int_variable('primary_pumping', primary_pumping, 0, 3, &
                'Switch for pumping of primary coolant')
        case ('htpmw_blkt')
           call parse_real_variable('htpmw_blkt', htpmw_blkt, 0.0D0, 2.0D2, &
