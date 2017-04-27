@@ -1104,7 +1104,7 @@ contains
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     implicit none
-    real(kind=double):: t_in_compressor, dt_he, fpump, pfactor
+    real(kind=double):: t_in_compressor, dt_he, fpump, pfactor, p_plasma
 
     ! TODO - is this consistent with a double null machine?
     ! Radiation power incident on divertor (MW)
@@ -1154,7 +1154,8 @@ contains
       t_in_compressor = t_in_bb / pfactor
       dt_he = t_out_bb - t_in_bb
       fpump = t_in_compressor/(etaiso*dt_he) * (pfactor - 1.0d0)
-      htpmw_fw_blkt = fpump/(1-fpump) * (pnucfw + psurffwi + psurffwo + pnucblkt)
+      p_plasma = pnucfw + psurffwi + psurffwo + pnucblkt
+      htpmw_fw_blkt = fpump/(1-fpump) * p_plasma
 
       ! For divertor and shield, mechanical pumping power is a fraction of thermal power removed by coolant
       htpmw_shld = fpumpshld * pnucshld
@@ -1163,6 +1164,7 @@ contains
           call oheadr(ofile, 'Pumping for primary coolant (helium)')
           call ovarre(ofile, 'Pressure drop in FW and blanket coolant incl. hx and pipes (Pa)', '(dp_he)', dp_he)
           call ovarre(ofile, 'Fraction of FW and blanket thermal power required for pumping', '(fpump)', fpump, 'OP ')
+          call ovarre(ofile, 'Total power absorbed by FW & blanket (MW)', '(p_plasma)', p_plasma, 'OP ')
           call ovarre(ofile, 'Inlet temperature of FW & blanket coolant pump (K)', '(t_in_compressor)', t_in_compressor, 'OP ')
           call ovarre(ofile, 'Outlet temperature of FW & blanket coolant pump (K)', '(t_in_bb)', t_in_bb)
           call ovarre(ofile, 'Mechanical pumping power for FW and blanket cooling loop including heat exchanger (MW)', &
