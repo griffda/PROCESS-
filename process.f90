@@ -418,7 +418,7 @@ subroutine run_summary
   integer, parameter :: width = 110
   integer :: lap, ii, outfile
   character(len = 110) :: progid(0:10)  !, dimension(0:10)
-  character(len = 5)   :: vstring
+  character(len = 7)   :: vstring
   character(len = 8)   :: date
   character(len = 10)  :: time
   character(len = 12)  :: dstring
