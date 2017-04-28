@@ -162,7 +162,7 @@ contains
     !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
     !
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
+
     implicit none
 
     !  Arguments
@@ -204,12 +204,12 @@ contains
           call caller(xv,n)
           if (verbose == 1) then
               write(*, '(a, 2e10.3)') 'Internal tburn consistency check: ',tburn,tburn0
-          end if 
+          end if
        end do
        if (loop >= 10) then
             write(*,*) 'Burn time values are not consistent in iteration: ', nviter
-            write(*,*) 'tburn,tburn0: ',tburn,tburn0            
-       end if       
+            write(*,*) 'tburn,tburn0: ',tburn,tburn0
+       end if
     end if
 
     !  Evaluate figure of merit (objective function)
@@ -415,7 +415,7 @@ contains
 
     case (5)  !  fusion power / injection power
        fc = sgn * powfmw / pinjmw
-       
+
     case (6)  !  cost of electricity
        fc = sgn * coe/100.0D0
 
@@ -439,10 +439,13 @@ contains
        fc = sgn * pinjmw
 
     case (12)  !  hydrogen production capital cost
-       fc = sgn * chplant / 1.0D2
-
+       ! #506 OBSOLETE
+       write(*,*) 'Figure of Merit 13 (Hydrogen production) is no longer supported.'
+       stop
     case (13)  !  hydrogen production rate
-       fc = sgn * hpower / 1.0D2
+       ! #506 OBSOLETE
+       write(*,*) 'Figure of Merit 13 (Hydrogen production) is no longer supported.'
+       stop
 
     case (14)  !  pulse length
        fc = sgn * tburn / 2.0D4
@@ -455,7 +458,7 @@ contains
 
     case (16)  !  major radius/burn time
        fc = sgn * ( 0.95d0 * (rmajor/9.0d0) + 0.05d0 * (7200.d0/tburn) )
-       
+
     case (17)  !  net electrical output
        fc = sgn * pnetelmw / 500.0d0
 

@@ -216,14 +216,9 @@ subroutine loadxc
      case (84) ; xcm(i) = chrad
      case (85) ; xcm(i) = pdrive
      case (86) ; xcm(i) = frrmax
-     case (87) ; xcm(i) = helecmw
-        if ((ihplant < 1).or.(ihplant > 3)) then
-           idiags(1) = ihplant ; call report_error(52)
-        end if
-     case (88) ; xcm(i) = hthermmw
-        if (ihplant < 4) then
-           idiags(1) = ihplant ; call report_error(53)
-        end if
+    ! #506 Hydrogen production removed
+     case (87) ; write(*,*) 'Iteration variable 87 is not supported.'
+     case (88) ; write(*,*) 'Iteration variable 87 is not supported.'
      case (89) ; xcm(i) = ftbr
      case (90) ; xcm(i) = blbuith
      case (91) ; xcm(i) = blbuoth
@@ -523,8 +518,9 @@ subroutine convxc(xc,nn)
      case (84) ; chrad     = xc(i)/scale(i)
      case (85) ; pdrive    = xc(i)/scale(i)
      case (86) ; frrmax    = xc(i)/scale(i)
-     case (87) ; helecmw   = xc(i)/scale(i)
-     case (88) ; hthermmw  = xc(i)/scale(i)
+     ! #506 Hydrogen production removed
+     case (87) ; write(*,*) 'Iteration variable 87 is not supported.'
+     case (88) ; write(*,*) 'Iteration variable 87 is not supported.'
      case (89) ; ftbr      = xc(i)/scale(i)
      case (90) ; blbuith   = xc(i)/scale(i)
      case (91) ; blbuoth   = xc(i)/scale(i)
@@ -538,7 +534,7 @@ subroutine convxc(xc,nn)
      case (99) ; ftftort   = xc(i)/scale(i)
      case (100) ; ftfthko  = xc(i)/scale(i)
      case (101) ; prp      = xc(i)/scale(i)
-     case (102) 
+     case (102)
         fimpvar = xc(i)/scale(i)
         impurity_arr(impvar)%frac = fimpvar
      case (103) ; flhthresh = xc(i)/scale(i)

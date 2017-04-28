@@ -211,13 +211,10 @@ contains
 
     call acc26
 
-    !  Hydrogen Production Plant
-
-    call acchyd
-
     !  Total plant direct cost
 
-    cdirt = c21 + c22 + c23 + c24 + c25 + c26 + chplant
+    !cdirt = c21 + c22 + c23 + c24 + c25 + c26 + chplant
+    cdirt = c21 + c22 + c23 + c24 + c25 + c26
 
     !  Account 9 : Indirect cost and project contingency
 
@@ -260,7 +257,7 @@ contains
     if (ife /= 1) then
        if ((ipowerflow == 0).or.(blkttype == 3)) then
           call ocosts(outfile,'22121','Blanket beryllium cost (M$)',c22121)
-          call ocosts(outfile,'22122','Blanket breeder material cost (M$)',c22122)                
+          call ocosts(outfile,'22122','Blanket breeder material cost (M$)',c22122)
        else
           call ocosts(outfile,'22121','Blanket lithium-lead cost (M$)',c22121)
           call ocosts(outfile,'22122','Blanket lithium cost (M$)',c22122)
@@ -432,11 +429,6 @@ contains
     call oshead(outfile,'Heat Rejection System')
     call ocosts(outfile,'26','Heat rejection system cost (M$)',c26)
 
-    if (ihplant /= 0) then
-       call oshead(outfile,'Hydrogen Production')
-       call ocosts(outfile,' ','Hydrogen production plant cost (M$)',chplant)
-    end if
-
     call oshead(outfile,'Plant Direct Cost')
     call ocosts(outfile,'cdirt','Plant direct cost (M$)',cdirt)
 
@@ -557,7 +549,7 @@ contains
     annfwbl = (fwallcst + blkcst) * &
          (1.0D0+cfind(lsa)) * fcap0cp * crffwbl
 
-         
+
 
     !  Cost of electricity due to first wall/blanket replacements
 
@@ -763,14 +755,14 @@ contains
     call ovarrf(outfile,'Cost of electricity (m$/kWh)','(coe)',coe)
 
     call osubhd(outfile,'Power Generation Costs :')
-    
+
     if ((annfwbl /= annfwbl).or.(annfwbl > 1.0D10).or.(annfwbl < 0.0D0)) then
         write(outfile,*)'Problem with annfwbl'
         write(outfile,*)'fwallcst=', fwallcst, '  blkcst=', blkcst
         write(outfile,*)'crffwbl=', crffwbl,   '  fcap0cp=', fcap0cp
         write(outfile,*)'feffwbl=', feffwbl,   '  fwbllife=', fwbllife
     end if
-    
+
     write(outfile,200) &
          anncap,coecap, &
          annoam,coeoam, &
@@ -1114,7 +1106,7 @@ contains
 
     if (ife /= 1) then
        c2211 = 1.0D-6 * cmlsa(lsa) * ((ucfwa+ucfws)*fwarea + ucfwps)
-            
+
     else
        c2211 = 1.0D-6 * cmlsa(lsa) * ( &
             ucblss   * (fwmatm(1,1)+fwmatm(2,1)+fwmatm(3,1)) + &
@@ -1465,7 +1457,7 @@ contains
 
     !  Total account 222
 
-    c222 = c2221 + c2222 + c2223 
+    c222 = c2221 + c2222 + c2223
 
   end subroutine acc222
 
@@ -1710,8 +1702,8 @@ contains
 
     if (iohcl == 1) then
 
-       !  Superconductor ($/m)  
-       !  Issue #328  Use CS conductor cross-sectional area (m2) 
+       !  Superconductor ($/m)
+       !  Issue #328  Use CS conductor cross-sectional area (m2)
        if (ipfres == 0) then
           costpfsc = ucsc(isumatoh) * awpoh*(1-vfohc)*(1-fcuohsu)/turns(nohc) * dcond(isumatoh)
        else
@@ -1719,7 +1711,7 @@ contains
        end if
 
        !  Copper ($/m)
-       
+
        if (ipfres == 0) then
           costpfcu = uccu * awpoh*(1-vfohc)*fcuohsu/turns(nohc) * dcopper
        else
@@ -2432,7 +2424,7 @@ contains
           !  Simplistic approach that assumes that a large stainless steel
           !  block acts as the thermal storage medium. No account is taken
           !  of the cost of the piping within the block, etc.
-          ! 
+          !
           !  shcss is the specific heat capacity of stainless steel (J/kg/K)
           !  dtstor is the maximum allowable temperature change in the
           !  stainless steel block (input)
@@ -2542,11 +2534,6 @@ contains
 
     if (ife == 1) cppa = cppa + 1.0D-6 * ucahts * ( &
          (1.0D6*tdspmw)**exphts + (1.0D6*tfacmw)**exphts )
-
-    !  Hydrogen production powers
-
-    if (ihplant /= 0) cppa = cppa + 1.0D-6 * ucahts * ( &
-         (1.0D6*hthermmw)**exphts + (1.0D6*helecmw)**exphts )
 
     cppa = fkind * cppa * cmlsa(lsa)
     c2262 = cppa
@@ -2706,7 +2693,7 @@ contains
 
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    c229 = 1.0D-6 * ucme 
+    c229 = 1.0D-6 * ucme
     c229 = fkind * c229
 
   end subroutine acc229
@@ -2908,58 +2895,7 @@ contains
   end subroutine acc26
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-  subroutine acchyd
-
-    !+ad_name  acchyd
-    !+ad_summ  Costs of a Hydrogen Production Plant
-    !+ad_type  Subroutine
-    !+ad_auth  P J Knight, CCFE, Culham Science Centre
-    !+ad_cont  N/A
-    !+ad_args  None
-    !+ad_desc  This routine evaluates the costs of a hydrogen production plant.
-    !+ad_desc  Costs are scaled with the hydrogen production rate (MW equivalent).
-    !+ad_prob  None
-    !+ad_call  None
-    !+ad_hist  --/--/-- PJK Initial version
-    !+ad_hist  25/09/12 PJK Initial F90 version
-    !+ad_stat  Okay
-    !+ad_docs  F/T&amp;M/PJK/LOGBOOK20, pp.2-3
-    !+ad_docs  AEA FUS 251: A User's Guide to the PROCESS Systems Code
-    !
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    implicit none
-
-    !  Arguments
-
-    !  Local variables
-
-    real(kind(1.0D0)) :: uchyd
-
-    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    select case (ihplant)
-
-    case (0)
-       uchyd = 0.0D0
-    case (1)
-       uchyd = uchlte
-    case (2)
-       uchyd = uchhten
-    case (3)
-       uchyd = uchhtex
-    case default
-       uchyd = uchth
-
-    end select
-
-    chplant = 1.0D-6 * uchyd * (1.0D3*hpower)
-
-  end subroutine acchyd
-
-  ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+  
   subroutine acc9
 
     !+ad_name  acc9

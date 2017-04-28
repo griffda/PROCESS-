@@ -143,9 +143,9 @@ module numerics
        'toroidal field.       ', &
        !+ad_varc  <LI> (11) total injected power
        'total injected power. ', &
-       !+ad_varc  <LI> (12) hydrogen plant capital cost
+       !+ad_varc  <LI> (12) hydrogen plant capital cost OBSOLETE
        'H plant capital cost. ', &
-       !+ad_varc  <LI> (13) hydrogen production rate
+       !+ad_varc  <LI> (13) hydrogen production rate OBSOLETE
        'H production rate.    ', &
        !+ad_varc  <LI> (14) pulse length
        'pulse length.         ', &

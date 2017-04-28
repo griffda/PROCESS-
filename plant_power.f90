@@ -1130,40 +1130,24 @@ contains
     !  Facility heat removal (fcsht calculated in ACPOW)
     fachtmw = fcsht
 
-    !  Hydrogen plant powers
-    if (ihplant == 0) then
-       helecmw = 0.0D0
-       hthermmw = 0.0D0
-       hpower = 0.0D0
-    else if (ihplant == 1) then
-       hthermmw = 0.0D0
-       hpower = etahlte * helecmw
-    else if (ihplant == 2) then
-       hthermmw = 0.48D0 * helecmw
-       hpower = etahhten * helecmw
-    else if (ihplant == 3) then
-       hthermmw = 0.19D0 * helecmw
-       hpower = etahhtex * helecmw
-    else
-       helecmw = 0.0D0
-       hpower = etahth * hthermmw
-    end if
-
     !  Electrical power consumed by fusion power core systems
     !  (excluding heat transport pumps and auxiliary injection power system)
     !  Added pfwp (waste heat from PF coil ohmic heating)
-    pcoresystems = crypmw + fachtmw + helecmw + ppumpmw + tfacpd + trithtmw + vachtmw + pfwp
+    !pcoresystems = crypmw + fachtmw + helecmw + ppumpmw + tfacpd + trithtmw + vachtmw + pfwp
+    pcoresystems = crypmw + fachtmw + ppumpmw + tfacpd + trithtmw + vachtmw + pfwp
 
     !  Total secondary heat
     !  (total low-grade heat rejected - does not contribute to power conversion cycle)
     !  Included ptfnuc
-    psechtmw = pcoresystems + pinjht + htpsecmw + hthermmw + psecdiv + psecshld + psechcd + ptfnuc
+    !psechtmw = pcoresystems + pinjht + htpsecmw + hthermmw + psecdiv + psecshld + psechcd + ptfnuc
+    psechtmw = pcoresystems + pinjht + htpsecmw + psecdiv + psecshld + psechcd + ptfnuc
 
     !  Calculate powers relevant to a power-producing plant
     if (ireactor == 1) then
 
        !  Gross electric power
-       pgrossmw = (pthermmw-hthermmw) * etath
+       !pgrossmw = (pthermmw-hthermmw) * etath
+       pgrossmw = pthermmw * etath
 
        !  Total recirculating power
        precircmw = pcoresystems + pinjwp + htpmw
@@ -1395,11 +1379,6 @@ contains
     call ovarrf(outfile,'Heat removal from cryogenic plant (MW)', '(crypmw)', crypmw, 'OP ')
     call ovarrf(outfile,'Heat removal from facilities (MW)', '(fachtmw)', fachtmw, 'OP ')
 
-    if (ihplant /= 0) then
-        call ovarrf(outfile, 'Electrical power used for hydrogen production (MW)', '(helecmw)', helecmw, 'OP ')
-        call ovarrf(outfile, 'Thermal power used for hydrogen production (MW)', '(hthermmw)', hthermmw, 'OP ')
-    end if
-
     call ovarrf(outfile,'Coolant pumping efficiency losses (MW)', '(htpsecmw)', htpsecmw, 'OP ')
     call ovarrf(outfile,'Heat removal from injection power (MW)', '(pinjht)', pinjht, 'OP ')
     call ovarrf(outfile,'Heat removal from tritium plant (MW)', '(trithtmw)', trithtmw, 'OP ')
@@ -1412,12 +1391,6 @@ contains
 
     call oblnkl(outfile)
     call ovarin(outfile,'Number of primary heat exchangers', '(nphx)', nphx, 'OP ')
-
-    if (ihplant /= 0) then
-        call oblnkl(outfile)
-        call ovarrf(outfile,'Hydrogen production rate (MW)', '(hpower)', hpower, 'OP ')
-        call ovarre(outfile,'Hydrogen production rate (Nm3/sec)', '(hpower/13)', hpower/13.0D0, 'OP ')
-    end if
 
     if (ireactor /= 1) return
 

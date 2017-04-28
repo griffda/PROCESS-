@@ -2903,42 +2903,6 @@ contains
           call parse_real_array('v3matf', v3matf, isub1, 3*(maxmat+1), &
                'IFE void 3 material fraction', icode)
 
-          !  Hydrogen plant settings
-
-       case ('etahhten')
-          call parse_real_variable('etahhten', etahhten, 0.0D0, 1.48D0, &
-               'H production efficiency for HTEN')
-       case ('etahhtex')
-          call parse_real_variable('etahhtex', etahhtex, 0.0D0, 1.19D0, &
-               'H production efficiency for HTEX')
-       case ('etahlte')
-          call parse_real_variable('etahlte', etahlte, 0.0D0, 1.0D0, &
-               'H production efficiency for LTE')
-       case ('etahth')
-          call parse_real_variable('etahth', etahth, 0.0D0, 1.0D0, &
-               'H production efficiency for TH')
-       case ('helecmw')
-          call parse_real_variable('helecmw', helecmw, 0.0D0, 8000.0D0, &
-               'Electrical power for H production (MW)')
-       case ('hthermmw')
-          call parse_real_variable('hthermmw', hthermmw, 0.0D0, 8000.0D0, &
-               'Thermal power for H production (MW)')
-       case ('ihplant')
-          call parse_int_variable('ihplant', ihplant, 0, 4, &
-               'Hydrogen Production Plant')
-       case ('uchhten')
-          call parse_real_variable('uchhten', uchhten, 0.0D0, 2000.0D0, &
-               'Unit cost of HTEN H production ($/kW)')
-       case ('uchhtex')
-          call parse_real_variable('uchhtex', uchhtex, 0.0D0, 2000.0D0, &
-               'Unit cost of HTEX H production ($/kW)')
-       case ('uchlte')
-          call parse_real_variable('uchlte', uchlte, 0.0D0, 2000.0D0, &
-               'Unit cost of LTE H production ($/kW)')
-       case ('uchth')
-          call parse_real_variable('uchth', uchth, 0.0D0, 2000.0D0, &
-               'Unit cost of TH H production ($/kW)')
-
        case default
           error_message = 'Unknown variable in input file: '//varnam(1:varlen)
           write(*,*) error_message

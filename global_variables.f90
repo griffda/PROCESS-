@@ -2527,15 +2527,6 @@ module heat_transport_variables
   real(kind(1.0D0)) :: baseel = 5.0D6
   !+ad_vars  crypmw : cryogenic plant power (MW)
   real(kind(1.0D0)) :: crypmw = 0.0D0
-  !+ad_vars  etahhten /1.35/ : efficiency of H production for ihplant=2
-  real(kind(1.0D0)) :: etahhten = 1.35D0
-  !+ad_vars  etahhtex /1.12/ : efficiency of H production for ihplant=3
-  real(kind(1.0D0)) :: etahhtex = 1.12D0
-  !+ad_vars  etahlte /0.75/ : efficiency of H production for ihplant=1
-  real(kind(1.0D0)) :: etahlte = 0.75D0
-  !+ad_vars  etahth /0.5/ : efficiency of H production for ihplant=4
-  real(kind(1.0D0)) :: etahth = 0.5D0
-
 
   !+ad_vars  etath /0.35/ : thermal to electric conversion efficiency
   !+ad_varc                 if secondary_cycle=2; otherwise calculated
@@ -2586,24 +2577,8 @@ module heat_transport_variables
   !+ad_varc
   real(kind(1.0D0)) :: htpsecmw = 0.0D0
 
-  !+ad_vars  ihplant /0/ : switch for hydrogen production plant:<UL>
-  !+ad_varc           <LI> = 0 no hydrogen plant;
-  !+ad_varc           <LI> = 1 Low Temperature Electrolysis;
-  !+ad_varc           <LI> = 2 High Temperature Electrolysis - endothermic;
-  !+ad_varc           <LI> = 3 High Temperature Electrolysis - exothermic;
-  !+ad_varc           <LI> = 4 Thermo-chemical</UL>
-  integer :: ihplant = 0
-  !+ad_vars  helecmw /0.0/ : electrical power required for H production (MW)
-  !+ad_varc                  (iteration variable 87)
-  real(kind(1.0D0)) :: helecmw = 0.0D0
-  !+ad_vars  hpower : hydrogen production (MW equivalent)
-  real(kind(1.0D0)) :: hpower = 0.0D0
-  !+ad_vars  hthermmw /0.0/ : thermal power required for H production (MW)
-  !+ad_varc                   (iteration variable 88)
-  !+ad_varc                   (N.B. calculated for ihplant=1,2,3)
-  real(kind(1.0D0)) :: hthermmw = 0.0D0
-  !+ad_vars  hvolume : hydrogen production (Normal m3/second)
-  real(kind(1.0D0)) :: hvolume = 0.0D0
+
+  ! Issue #506 Hydrogen production removed
 
   !  To be REMOVED
   !+ad_vars  ipowerflow /1/ : switch for power flow model:<UL>
@@ -3178,8 +3153,7 @@ module cost_variables
   !+ad_vars  cfind(4) /0.244,0.244,0.244,0.29/ : indirect cost factor (func of lsa)
   real(kind(1.0D0)), dimension(4) :: cfind = &
        (/0.244D0, 0.244D0, 0.244D0, 0.29D0/)
-  !+ad_vars  chplant : capital cost of hydrogen plant (M$)
-  real(kind(1.0D0)) :: chplant = 0.0D0
+
   !+ad_vars  cland /19.2/ : cost of land (M$)
   real(kind(1.0D0)) :: cland = 19.2D0
   !+ad_vars  coe : cost of electricity ($/MW-hr)
@@ -3459,16 +3433,8 @@ module cost_variables
   real(kind(1.0D0)) :: ucgss = 35.0D0
   !+ad_vars  uche3 /1.0e6/ : cost of helium-3 ($/kg)
   real(kind(1.0D0)) :: uche3 = 1.0D6
-  !+ad_vars  uchhten /1350.0/ : cost of H production (HTE - endothermic) ($/kW Hyd)
-  real(kind(1.0D0)) :: uchhten = 1350.0D0
-  !+ad_vars  uchhtex /900.0/ : cost of H production (HTE - exothermic) ($/kW Hyd)
-  real(kind(1.0D0)) :: uchhtex = 900.0D0
-  !+ad_vars  uchlte /400.0/ : cost of H production (LTE) ($/kW Hydrogen)
-  real(kind(1.0D0)) :: uchlte = 400.0D0
   !+ad_vars  uchrs /87.9e6/ : cost of heat rejection system ($)
   real(kind(1.0D0)) :: uchrs = 87.9D6
-  !+ad_vars  uchth /700.0/ : cost of H production (thermo-chemical) ($/kW Hydrogen)
-  real(kind(1.0D0)) :: uchth = 700.0D0
   !+ad_vars  uchts(2) /15.3,19.1/ : cost of heat transport system equipment
   !+ad_varc                         per loop ($/W); dependent on coolant type (coolwh)
   real(kind(1.0D0)), dimension(2) :: uchts = (/15.3D0, 19.1D0/)
