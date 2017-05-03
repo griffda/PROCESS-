@@ -76,7 +76,7 @@ module power_module
   real(kind=double) :: htpmwe_shld, htpmwe_div, htpmw_mech, pthermfw_blkt
   real(kind=double) :: htpmwe_fw_blkt
   real(kind=double) :: pthermdiv, pthermfw, pthermblkt, pthermshld
-  real(kind=double) :: ppumpmw, pcoresystems, pdivfraction, delta_eta, qss, qnuc, qac, qcl, qmisc
+  real(kind=double) :: ppumpmw, pcoresystems, pdivfraction, delta_eta, qss, qac, qcl, qmisc
 
   !  Primary power to divertor factor
   integer, private :: iprimdiv
@@ -1766,7 +1766,8 @@ contains
     if (itfsup == 1) qss = qss + 2.0D0*tfsai
 
     !  Nuclear heating of TF coils (W) (zero if resistive)
-    qnuc = 1.0D6 * ptfnuc
+    if(inuclear==0) qnuc = 1.0D6 * ptfnuc
+    ! Issue #511: if inuclear = 1 then qnuc is input.
 
     !  AC losses
     qac = 1.0D3 * ensxpfm/tpulse

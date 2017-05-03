@@ -263,6 +263,10 @@ contains
       nesep = fgwsep * 1.0D14 * plascur/(pi*rminor*rminor)
     end if
 
+    ! Issue #413 Dependence of Pedestal Properties on Plasma Parameters
+    ! ieped : switch for scaling pedestal-top temperature with plasma parameters
+    if ((ipedestal == 1).and.(ieped == 1)) teped = t_eped_scaling()
+
     call plasma_profiles
 
     btot = sqrt(bt**2 + bp**2)
@@ -517,6 +521,30 @@ contains
   end subroutine physics
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+function t_eped_scaling()
+    ! Issue #413.
+    ! Predictive pedestal modelling for DEMO,  Samuli Saarelma.
+    ! https://idm.euro-fusion.org/?uid=2MSZ4T
+
+    real(kind(1.0D0)) :: t_eped_scaling
+    ! Scaling constant and exponents
+    real(kind(1.0D0)) :: c0, a_delta, a_ip, a_r, a_beta, a_kappa, a_a
+
+    c0 = 2.16d0
+    a_delta = 0.82D0
+    a_ip = 0.26D0
+    a_r = -0.39D0
+    a_beta = 0.43D0
+    a_kappa = 0.50d0
+    a_a = 0.88D0
+
+    ! Elongation and triangularity are defined at the plasma boundary.
+    ! Total normalised plasma beta is used.
+    t_eped_scaling = c0 * triang**a_delta * (plascur/1.0d6)**a_ip * rmajor**a_r * &
+                          kappa**a_kappa  * normalised_total_beta**a_beta  * rminor**a_a
+end function t_eped_scaling
+
+    ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function bootstrap_fraction_iter89(aspect,beta,bt,cboot,plascur,q95,q0,rmajor,vol)
 
@@ -1863,6 +1891,8 @@ contains
     !  Calculate plasma current
 
     plascur = curhat * bt
+
+    normalised_total_beta = 1.0D8*beta*rminor*bt/plascur
 
     !  Calculate the poloidal field
 
@@ -5589,7 +5619,8 @@ contains
        end if
 
        call ovarrf(outfile,'Normalised thermal beta',' ',1.0D8*betath*rminor*bt/plascur, 'OP ')
-       call ovarrf(outfile,'Normalised total beta',' ',1.0D8*beta*rminor*bt/plascur, 'OP ')
+       !call ovarrf(outfile,'Normalised total beta',' ',1.0D8*beta*rminor*bt/plascur, 'OP ')
+       call ovarrf(outfile,'Normalised total beta',' ',normalised_total_beta, 'OP ')
     end if
 
     if (itart == 1) then

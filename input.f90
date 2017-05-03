@@ -757,6 +757,10 @@ contains
        case ('iscdens')
           call parse_int_variable('iscdens', iscdens, 0, 1, &
                'Switch for pedestal density scaling')
+       case ('ieped')
+          call parse_int_variable('ieped', ieped, 0, 1, &
+               'Switch for scaling pedestal-top temperature with plasma parameters')
+
        case ('iscrp')
           call parse_int_variable('iscrp', iscrp, 0, 1, &
                'Switch for scrapeoff width')
@@ -2054,6 +2058,14 @@ contains
               fwoth = 0.03D0
               fw_armour_thickness = 0.003D0
           end if
+
+       case ('inuclear')
+         call parse_int_variable('inuclear', inuclear, 0, 1, &
+              'switch for nuclear heating in the coils')
+       case ('qnuc')
+          call parse_real_variable('qnuc', qnuc, 0.0D0, 1.0D6, &
+               'nuclear heating in the coils (W)')
+
        case ('li6enrich')
           call parse_real_variable('li6enrich', li6enrich, 7.40D0, 100.0D0, &
                'Li-6 enrichment')

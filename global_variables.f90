@@ -205,6 +205,9 @@ module physics_variables
   real(kind(1.0D0)) :: betanb = 0.0D0
   !+ad_vars  betap : poloidal beta
   real(kind(1.0D0)) :: betap = 0.0D0
+  !+ad_vars  normalised_total_beta : normaised total beta
+  real(kind(1.0D0)) :: normalised_total_beta = 0.0D0
+
   !+ad_vars  betbm0 /1.5/ : leading coefficient for NB beta fraction
   real(kind(1.0D0)) :: betbm0 = 1.5D0
   !+ad_vars  bp : poloidal field (T)
@@ -294,6 +297,9 @@ module physics_variables
   !+ad_vars  fgwsep /0.50/ : fraction of Greenwald density to set as separatrix density
   !+ad_varc                  (ipedestal=1, iscdens=1)
   real(kind(1.0D0)) :: fgwsep = 0.50D0
+
+
+
   !+ad_vars  fhe3 /0.0/ : helium-3 fuel fraction
   real(kind(1.0D0)) :: fhe3 = 0.0D0
   !+ad_vars  figmer : physics figure of merit (= plascur*aspect**sbar, where sbar=1)
@@ -393,6 +399,14 @@ module physics_variables
   !+ad_varc             <LI> = 0 set pedestal-top density manually using neped;
   !+ad_varc             <LI> = 1 set pedestal-top density as fgwped*Greenwald, and separatrix as fgwsep*Greenwald  </UL>
   integer :: iscdens = 0
+
+  ! Issue #413
+  !+ad_vars  ieped /0/ : switch for scaling pedestal-top temperature with plasma parameters:<UL>
+  !+ad_varc             <LI> = 0 set pedestal-top temperature manually using teped;
+  !+ad_varc             <LI> = 1 set pedestal-top temperature using EPED scaling;
+  !+ad_varc             <LI>    https://idm.euro-fusion.org/?uid=2MSZ4T </UL>
+  integer :: ieped = 0
+
   !+ad_vars  neped /0.0/ : electron density of pedestal [m-3] (ipedestal=1)
   real(kind(1.0D0)) :: neped = 8.0D19
   !+ad_vars  nesep /0.0/ : electron density at separatrix [m-3] (ipedestal=1)
@@ -403,7 +417,7 @@ module physics_variables
   real(kind(1.0D0)) :: rhopedt = 1.0D0
   !+ad_vars  tbeta /2.0/ : temperature profile index beta  (ipedestal=1)
   real(kind(1.0D0)) :: tbeta = 2.0D0
-  !+ad_vars  teped /0.0/ : electron temperature of pedestal (keV) (ipedestal=1)
+  !+ad_vars  teped /0.0/ : electron temperature of pedestal (keV) (ipedestal=1, ieped=0)
   real(kind(1.0D0)) :: teped = 1.0D0
   !+ad_vars  tesep /0.0/ : electron temperature at separatrix (keV) (ipedestal=1)
   real(kind(1.0D0)) :: tesep = 0.1D0
@@ -1239,6 +1253,13 @@ module fwbs_variables
   !+ad_varc             <LI> = 3 CCFE HCPB model with Tritium Breeding Ratio calculation;
   !+ad_varc             <LI> = 4 KIT HCLL model</UL>
   integer :: iblanket = 1
+
+  !+ad_vars  inuclear /0/ : switch for nuclear heating in the coils: <UL>
+  !+ad_varc             <LI> = 0 Frances Fox model (default);
+  !+ad_varc             <LI> = 1 Fixed by user (qnuc)</UL>
+  integer :: inuclear = 1
+  !+ad_vars  qnuc /0.0/ : nuclear heating in the coils (W) (inuclear=1)
+  real(kind(1.0D0)) :: qnuc = 0.0D0
 
   !+ad_vars  li6enrich /30.0/ : lithium-6 enrichment of breeding material (%)
   real(kind(1.0D0)) :: li6enrich = 30.0D0

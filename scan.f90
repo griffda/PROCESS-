@@ -27,17 +27,6 @@ module scan_module
   !+ad_call  tfcoil_variables
   !+ad_hist  09/10/12 PJK Initial version of module
   !+ad_hist  10/10/12 PJK Modified to use new numerics module
-  !+ad_hist  15/10/12 PJK Added global_variables module
-  !+ad_hist  15/10/12 PJK Added physics_variables
-  !+ad_hist  16/10/12 PJK Added current_drive_variables
-  !+ad_hist  17/10/12 PJK Added variable descriptions
-  !+ad_hist  17/10/12 PJK Added divertor_variables
-  !+ad_hist  18/10/12 PJK Added pfcoil_variables
-  !+ad_hist  18/10/12 PJK Added tfcoil_variables
-  !+ad_hist  29/10/12 PJK Added pf_power_variables
-  !+ad_hist  30/10/12 PJK Added heat_transport_variables
-  !+ad_hist  31/10/12 PJK Added cost_variables
-  !+ad_hist  31/10/12 PJK Added constraint_variables
   !+ad_hist  28/11/13 PJK Added scan variable 27: tbrmin
   !+ad_hist  12/02/14 PJK Added scan variable 28: bt
   !+ad_hist  04/06/14 PJK Added scan variable 29: coreradius
@@ -52,6 +41,7 @@ module scan_module
   !
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+  use build_variables
   use constraint_variables
   use cost_variables
   use current_drive_variables
@@ -76,7 +66,7 @@ module scan_module
   !+ad_vars  ipnscns /200/ FIX : maximum number of scan points
   integer, parameter :: ipnscns = 200
   !+ad_vars  ipnscnv /34/ FIX : number of available scan variables
-  integer, parameter :: ipnscnv = 40
+  integer, parameter :: ipnscnv = 41
   !+ad_vars  isweep /0/ : number of scan points to calculate
   integer :: isweep = 0
   !+ad_vars  nsweep /1/ : switch denoting quantity to scan:<UL>
@@ -119,7 +109,8 @@ module scan_module
   !+ad_varc          <LI> 37 lcon_factor
   !+ad_varc          <LI> 38 Neon upper limit
   !+ad_varc          <LI> 39 Argon upper limit
-  !+ad_varc          <LI> 40 Xenon upper limit</UL>
+  !+ad_varc          <LI> 40 Xenon upper limit
+  !+ad_varc          <LI> 41 blnkoth</UL>
 
   integer :: nsweep = 1
 
@@ -194,7 +185,7 @@ contains
     ! character(len=25) :: xlabel,vlabel
     character(len=48) :: tlabel
 
-    integer, parameter :: noutvars = 82
+    integer, parameter :: noutvars = 83
     integer, parameter :: width = 110
 
     character(len=25), dimension(noutvars), save :: plabel
@@ -308,6 +299,7 @@ contains
        plabel(80) = 'Kr_concentration_________'
        plabel(81) = 'Xe_concentration_________'
        plabel(82) = 'W__concentration_________'
+       plabel(83) = 'teped____________________'
 
 
        call ovarin(mfile,'Number of scan points','(isweep)',isweep)
@@ -446,6 +438,9 @@ contains
       case (40)
           boundu(135) = sweep(iscan)
           vlabel = 'boundu(135)' ; xlabel = ' Xenon upper limit'
+      case (41)
+          blnkoth = sweep(iscan)
+          vlabel = 'blnkoth' ; xlabel = 'Outboard blanket thick.'
 
 
        case default
@@ -565,7 +560,7 @@ contains
        outvar(80,iscan) = fimp(12)
        outvar(81,iscan) = fimp(13)
        outvar(82,iscan) = fimp(14)
-
+       outvar(83,iscan) = teped
 
     end do  !  End of scanning loop
 
