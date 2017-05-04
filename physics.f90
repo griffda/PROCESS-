@@ -123,6 +123,7 @@ module physics_module
   integer :: iscz
   real(kind(1.0D0)) :: vcritx, photon_wall, rad_fraction
 
+
 contains
 
   ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -543,8 +544,19 @@ function t_eped_scaling()
     t_eped_scaling = c0 * triang**a_delta * (plascur/1.0d6)**a_ip * rmajor**a_r * &
                           kappa**a_kappa  * normalised_total_beta**a_beta  * rminor**a_a
 end function t_eped_scaling
-
     ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ function eped_warning()
+     logical :: eped_warning
+     eped_warning=.false.
+     if((triang<0.399d0).or.(triang>0.601d0)) eped_warning=.true.
+     if((kappa<1.499d0).or.(kappa>2.001d0)) eped_warning=.true.
+     if((plascur<9.99d6).or.(plascur>20.01d6)) eped_warning=.true.
+     if((rmajor<6.99d0).or.(rmajor>11.01d0)) eped_warning=.true.
+     if((rminor<1.99d0).or.(rminor>3.501d0))eped_warning=.true.
+     if((normalised_total_beta<1.99d0).or.(normalised_total_beta>3.01d0))eped_warning=.true.
+     if(tesep>0.5)eped_warning=.true.
+ end function eped_warning
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function bootstrap_fraction_iter89(aspect,beta,bt,cboot,plascur,q95,q0,rmajor,vol)
 
@@ -5391,12 +5403,6 @@ end function t_eped_scaling
     !+ad_hist  19/01/99 PJK Added powerht and minor word changes
     !+ad_hist  16/07/01 PJK Added kappaa
     !+ad_hist  20/09/11 PJK Initial F90 version
-    !+ad_hist  09/10/12 PJK Modified to use new process_output module
-    !+ad_hist  15/10/12 PJK Added physics_variables
-    !+ad_hist  16/10/12 PJK Added current_drive_variables
-    !+ad_hist  30/10/12 PJK Added times_variables
-    !+ad_hist  31/10/12 PJK Added constraint_variables
-    !+ad_hist  05/11/12 PJK Added rfp_variables
     !+ad_hist  17/12/12 PJK Added ZFEAR lines
     !+ad_hist  18/12/12 PJK Added PTHRMW(6 to 8)
     !+ad_hist  03/01/13 PJK Removed ICULDL if-statement
@@ -5710,24 +5716,38 @@ end function t_eped_scaling
     !   (routine to find the equilibration power between the ions and electrons)
     ! call ovarrf(outfile,'Mass weighted effective charge','(zeffai)',zeffai, 'OP ')
 
-    call ovarin(outfile,'Plasma profile model','(ipedestal)',ipedestal)
     call ovarrf(outfile,'Density profile factor','(alphan)',alphan)
-    call ovarrf(outfile,'Density pedestal r/a location','(rhopedn)',rhopedn)
-    if(iscdens.eq.1)then
-        call ovarre(outfile,'Electron density pedestal height (/m3)','(neped)',neped, 'OP ')
-    else
-        call ovarre(outfile,'Electron density pedestal height (/m3)','(neped)',neped)
-    end if
-    fgwped = neped/dlimit(7)
-    fgwsep = nesep/dlimit(7)
-    call ovarre(outfile,'Electron density at pedestal / nGW','(fgwped)',fgwped)
+    call ovarin(outfile,'Plasma profile model','(ipedestal)',ipedestal)
+    if(ipedestal==1)then
+        call ocmmnt(outfile,'Pedestal profiles are used.')
+        call ovarrf(outfile,'Density pedestal r/a location','(rhopedn)',rhopedn)
+        if(iscdens.eq.1)then
+            call ovarre(outfile,'Electron density pedestal height (/m3)','(neped)',neped, 'OP ')
+        else
+            call ovarre(outfile,'Electron density pedestal height (/m3)','(neped)',neped)
+        end if
+        fgwped = neped/dlimit(7)
+        fgwsep = nesep/dlimit(7)
+        call ovarre(outfile,'Electron density at pedestal / nGW','(fgwped)',fgwped)
+        call ovarrf(outfile,'Temperature pedestal r/a location','(rhopedt)',rhopedt)
+        ! Issue #413 Pedestal scaling
+        call ovarin(outfile,'Pedestal scaling switch','(ieped)',ieped)
+        if(ieped==1)then
+            call ocmmnt(outfile,'Saarelma 6-parameter pedestal temperature scaling is ON')
+            if(eped_warning())then
+                call ocmmnt(outfile,'WARNING: Pedestal parameters are outside the range of applicability of the scaling:')
+                call ocmmnt(outfile,'triang: 0.4 - 0.6; kappa: 1.5 - 2.0;   plascur: 10 - 20 MA, rmajor: 7 - 11 m;')
+                call ocmmnt(outfile,'rminor: 2 - 3.5 m; tesep: 0 - 0.5 keV; normalised_total_beta: 2 - 3; ')
+            endif
+        endif
+        call ovarrf(outfile,'Electron temp. pedestal height (keV)','(teped)',teped)
+        call ovarrf(outfile,'Electron temp. at separatrix (keV)','(tesep)',tesep)
+    endif
+
     call ovarre(outfile,'Electron density at separatrix (/m3)','(nesep)',nesep)
     call ovarre(outfile,'Electron density at separatrix / nGW','(fgwsep)',fgwsep)
     call ovarrf(outfile,'Temperature profile index','(alphat)',alphat)
     call ovarrf(outfile,'Temperature profile index beta','(tbeta)',tbeta)
-    call ovarrf(outfile,'Temperature pedestal r/a location','(rhopedt)',rhopedt)
-    call ovarrf(outfile,'Electron temp. pedestal height (keV)','(teped)',teped)
-    call ovarrf(outfile,'Electron temp. at separatrix (keV)','(tesep)',tesep)
 
     if (istell == 0) then
        call osubhd(outfile,'Density Limit using different models :')

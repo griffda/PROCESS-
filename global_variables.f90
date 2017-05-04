@@ -1257,7 +1257,7 @@ module fwbs_variables
   !+ad_vars  inuclear /0/ : switch for nuclear heating in the coils: <UL>
   !+ad_varc             <LI> = 0 Frances Fox model (default);
   !+ad_varc             <LI> = 1 Fixed by user (qnuc)</UL>
-  integer :: inuclear = 1
+  integer :: inuclear = 0
   !+ad_vars  qnuc /0.0/ : nuclear heating in the coils (W) (inuclear=1)
   real(kind(1.0D0)) :: qnuc = 0.0D0
 

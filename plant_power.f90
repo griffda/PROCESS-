@@ -1172,6 +1172,7 @@ contains
     call oheadr(outfile,'Cryogenics')
     call ovarre(outfile,'Conduction and radiation heat loads on cryogenic components (MW)', '(qss/1.0D6)', qss/1.0D6, 'OP ')
     call ovarre(outfile,'Nuclear heating of cryogenic components (MW)', '(qnuc/1.0D6)', qnuc/1.0D6, 'OP ')
+    if(inuclear==1)call ocmmnt(outfile,'Nuclear heating of cryogenic components is a user input.')
     call ovarre(outfile,'AC losses in cryogenic components (MW)', '(qac/1.0D6)', qac/1.0D6, 'OP ')
     call ovarre(outfile,'Resistive losses in current leads (MW)', '(qcl/1.0D6)', qcl/1.0D6, 'OP ')
     call ovarre(outfile,'45% allowance for heat loads in transfer lines, storage tanks etc (MW)', &
