@@ -12,7 +12,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.10 : Run on 28 Apr 2017 13:35:51 +01:00(hh:mm) UTC by freia045
+ PROCESS 1.0.10 : Run on  5 May 2017 13:37:07 +01:00(hh:mm) UTC by freia008
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -109,28 +109,28 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
                                                physical                 constraint                 normalised
                                               constraint                 residue                    residue
  
-    1  Beta consistency                      =  3.7314E-02              2.3061E-10                 6.1802E-09
-    2  Global power balance consistency      =  1.6924E-01 MW/m3       -1.6606E-09 MW/m3          -9.8121E-09
-    3  Density upper limit                   <  6.8675E+19 /m3         -8.5474E+09 /m3            -1.0372E-10
-    4  (Epsilon x beta-pol) upper limit      <  1.3800E+00             -1.3198E-12                -3.5354E-12
-    5  Neutron wall load upper limit         <  8.0000E+00 MW/m2       -4.3810E-08 MW/m2          -4.3543E-08
-    6  Toroidal field 1/R consistency        =  4.4729E+01 T.m         -2.4742E-07 T.m            -5.5316E-09
-    7  Radial build consistency              =  9.0666E+00 m           -7.3354E-10 m              -8.0906E-11
-    8  Burn time lower limit                 >  7.2000E+03 sec         -1.0432E-02 sec            -1.4489E-06
-    9  Net electric power lower limit        >  5.0000E+02 MW           1.5752E-04 MW              3.1505E-07
-   10  Beta upper limit                      <  5.6067E-02              2.2967E-10                 7.2795E-09
-   11  CS coil EOF current density limit     <  6.4971E+07 A/m2        -2.3152E+01 A/m2           -1.4254E-06
-   12  CS coil BOP current density limit     <  6.0903E+07 A/m2        -2.0659E+01 A/m2           -1.3568E-06
-   13  Injection power upper limit           <  5.0000E+01 MW          -2.0636E-07 MW             -4.1272E-09
-   14  TF coil case stress upper limit       <  5.5000E+08 Pa          -6.6416E+01 Pa             -1.2076E-07
-   15  TF coil conduit stress upper lim      <  5.5000E+08 Pa          -9.3926E+01 Pa             -2.2737E-07
-   16  I_op / I_critical (TF coil)           <  4.8346E+07 A/m2         1.4305E+01 A/m2            5.9177E-07
-   17  Dump voltage upper limit              <  2.4852E+01 V            9.4896E-06 V               4.6094E-07
-   18  J_winding pack/J_protection limit     <  2.4173E+07 A/m2         1.4309E+01 A/m2            5.9195E-07
-   19  First wall peak temperature limit     <  8.7300E+02 K           -3.7574E-04 K              -4.3040E-07
-   20  L-H power threshold limit             >  1.0645E+02 MW          -1.6064E-05 MW             -1.0422E-07
-   21  Psep / R upper limit                  <  1.7000E+01 MW/m        -1.6260E-06 MW/m           -9.5645E-08
-   22  taup/taueff                           >  5.0000E+00             -8.1142E-08                -1.6228E-08
+    1  Beta consistency                      =  3.7314E-02              2.3064E-10                 6.1810E-09
+    2  Global power balance consistency      =  1.6924E-01 MW/m3       -1.6608E-09 MW/m3          -9.8133E-09
+    3  Density upper limit                   <  6.8675E+19 /m3         -8.5499E+09 /m3            -1.0375E-10
+    4  (Epsilon x beta-pol) upper limit      <  1.3800E+00             -1.3197E-12                -3.5352E-12
+    5  Neutron wall load upper limit         <  8.0000E+00 MW/m2       -4.3815E-08 MW/m2          -4.3548E-08
+    6  Toroidal field 1/R consistency        =  4.4729E+01 T.m         -2.4751E-07 T.m            -5.5336E-09
+    7  Radial build consistency              =  9.0666E+00 m           -7.3341E-10 m              -8.0891E-11
+    8  Burn time lower limit                 >  7.2000E+03 sec         -1.0435E-02 sec            -1.4493E-06
+    9  Net electric power lower limit        >  5.0000E+02 MW           1.5776E-04 MW              3.1552E-07
+   10  Beta upper limit                      <  5.6067E-02              2.2970E-10                 7.2804E-09
+   11  CS coil EOF current density limit     <  6.4971E+07 A/m2        -2.3145E+01 A/m2           -1.4249E-06
+   12  CS coil BOP current density limit     <  6.0903E+07 A/m2        -2.0652E+01 A/m2           -1.3564E-06
+   13  Injection power upper limit           <  5.0000E+01 MW          -2.0643E-07 MW             -4.1286E-09
+   14  TF coil case stress upper limit       <  5.5000E+08 Pa          -6.6431E+01 Pa             -1.2078E-07
+   15  TF coil conduit stress upper lim      <  5.5000E+08 Pa          -9.3951E+01 Pa             -2.2743E-07
+   16  I_op / I_critical (TF coil)           <  4.8346E+07 A/m2         1.4310E+01 A/m2            5.9197E-07
+   17  Dump voltage upper limit              <  2.4852E+01 V            9.4939E-06 V               4.6115E-07
+   18  J_winding pack/J_protection limit     <  2.4173E+07 A/m2         1.4314E+01 A/m2            5.9216E-07
+   19  First wall peak temperature limit     <  8.7300E+02 K           -3.7578E-04 K              -4.3045E-07
+   20  L-H power threshold limit             >  1.0645E+02 MW          -1.6066E-05 MW             -1.0424E-07
+   21  Psep / R upper limit                  <  1.7000E+01 MW/m        -1.6262E-06 MW/m           -9.5657E-08
+   22  taup/taueff                           >  5.0000E+00             -8.1151E-08                -1.6230E-08
  
  ******************************************** Final Feasible Point ********************************************
  
@@ -257,9 +257,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Temperature and Density (volume averaged) :
  
  Electron temperature (keV)                                               (te)                         12.424133  ITV
- Electron temperature on axis (keV)                                       (te0)                        25.578276  OP 
+ Electron temperature on axis (keV)                                       (te0)                        25.578275  OP 
  Ion temperature (keV)                                                    (ti)                         12.424133     
- Ion temperature on axis (keV)                                            (ti0)                        25.578276  OP 
+ Ion temperature on axis (keV)                                            (ti0)                        25.578275  OP 
  Electron temp., density weighted (keV)                                   (ten)                        13.511195  OP 
  Electron density (/m3)                                                   (dene)                    7.630E+19  ITV
  Electron density on axis (/m3)                                           (ne0)                     9.340E+19  OP 
@@ -296,18 +296,20 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Average mass of all ions (amu)                                           (aion)                    2.671E+00  OP 
  
  Effective charge                                                         (zeff)                        2.173347  OP 
- Plasma profile model                                                     (ipedestal)                       1     
  Density profile factor                                                   (alphan)                      1.000000     
+ Plasma profile model                                                     (ipedestal)                       1     
+ Pedestal profiles are used.
  Density pedestal r/a location                                            (rhopedn)                     0.940000     
  Electron density pedestal height (/m3)                                   (neped)                   6.780E+19     
  Electron density at pedestal / nGW                                       (fgwped)                  9.873E-01     
+ Temperature pedestal r/a location                                        (rhopedt)                     0.940000     
+ Pedestal scaling switch                                                  (ieped)                           0     
+ Electron temp. pedestal height (keV)                                     (teped)                       5.500000     
+ Electron temp. at separatrix (keV)                                       (tesep)                       0.100000     
  Electron density at separatrix (/m3)                                     (nesep)                   2.000E+19     
  Electron density at separatrix / nGW                                     (fgwsep)                  2.912E-01     
  Temperature profile index                                                (alphat)                      1.450000     
  Temperature profile index beta                                           (tbeta)                       2.000000     
- Temperature pedestal r/a location                                        (rhopedt)                     0.940000     
- Electron temp. pedestal height (keV)                                     (teped)                       5.500000     
- Electron temp. at separatrix (keV)                                       (tesep)                       0.100000     
  
  Density Limit using different models :
  
@@ -632,7 +634,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Inboard leg centre radius (m)                                            (rtfcin)                  3.686E+00  OP 
  Outboard leg centre radius (m)                                           (rtot)                    1.616E+01  OP 
  Maximum inboard edge height (m)                                          (hmax)                    8.139E+00  OP 
- Gap between inboard vacuum vessel and TF coil (m)                        (gapds)                   1.200E-01  ITV
+ gap between inboard vacuum vessel and thermal shield (m)                 (gapds)                   1.200E-01  ITV
  
  TF coil inner surface shape is approximated
  by a straight segment and elliptical arcs between the following points :
@@ -884,7 +886,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
    4         0.000E+00  0.000E+00 -7.439E+06 -7.439E+06 -7.439E+06  0.000E+00
    5         0.000E+00  0.000E+00 -4.807E+06 -4.807E+06 -4.807E+06  0.000E+00
    6         0.000E+00  0.000E+00 -4.807E+06 -4.807E+06 -4.807E+06  0.000E+00
-   7         0.000E+00  0.000E+00  3.156E-09  3.156E-09 -2.525E-08  0.000E+00
+   7         0.000E+00  0.000E+00  0.000E+00  0.000E+00 -2.525E-08  0.000E+00
  
  Ratio of central solenoid current at beginning of Pulse / end of flat-to (fcohbop)                 9.374E-01  ITV
  Ratio of central solenoid current at beginning of Flat-top / end of flat (fcohbof)                -1.201E-01  OP 
@@ -1110,9 +1112,9 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  
  First Wall Armour Volume (m3)                                            (fw_armour_vol)               7.130438  OP 
  First Wall Volume (m3)                                                   (volfw)                      21.688659  OP 
- Blanket Volume (m3)                                                      (volblkt)                  1662.097118  OP 
+ Blanket Volume (m3)                                                      (volblkt)                  1662.097119  OP 
  Shield Volume (m3)                                                       (volshld)                   733.904358  OP 
- Vacuum vessel volume (m3)                                                (vdewin)                   1176.364312  OP 
+ Vacuum vessel volume (m3)                                                (vdewin)                   1176.364313  OP 
  
  Component Masses :
  
@@ -1383,7 +1385,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
          ----------------------------------------------------------------------------------------
                                  Totals           2419.58                0.01             2419.59
  
- Total power leaving reactor (across vacuum vessel boundary) (MW)                                    2419.608623  OP 
+ Total power leaving reactor (across vacuum vessel boundary) (MW)                                    2419.608614  OP 
  
  Other secondary thermal power constituents :
  
@@ -1395,8 +1397,8 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Heat removal from vacuum pumps (MW)                                      (vachtmw)                     0.500000  OP 
  TF coil resistive power (MW)                                             (tfcmw)                       0.000000  OP 
  
- Total low-grade thermal power (MW)                                       (psechtmw)                  251.499063  OP 
- Total High-grade thermal power (MW)                                      (pthermmw)                 2419.592832  OP 
+ Total low-grade thermal power (MW)                                       (psechtmw)                  251.499062  OP 
+ Total High-grade thermal power (MW)                                      (pthermmw)                 2419.592823  OP 
  
  Number of primary heat exchangers                                        (nphx)                            3  OP 
  
@@ -1406,56 +1408,56 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Only energy deposited in the plasma is included here.
  Total power loss is scaling power plus core radiation only (iradloss = 1)
  Transport power from scaling law (MW)                                    (pscalingmw)                316.587927  OP 
- Radiation power from inside "coreradius" (MW)                            (pcoreradmw)                106.002913  OP 
- Total (MW)                                                                                           422.590840  OP 
+ Radiation power from inside "coreradius" (MW)                            (pcoreradmw)                106.002912  OP 
+ Total (MW)                                                                                           422.590839  OP 
  
- Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             370.208580  OP 
+ Alpha power deposited in plasma (MW)                                     (falpha*palpmw)             370.208579  OP 
  Power from charged products of DD and/or D-He3 fusion (MW)               (pchargemw)                   1.498214  OP 
  Ohmic heating (MW)                                                       (pohmmw)                      0.884042  OP 
  Injected power deposited in plasma (MW)                                  (pinjmw)                     50.000000  OP 
- Total (MW)                                                                                           422.590836  OP 
+ Total (MW)                                                                                           422.590835  OP 
  
  Power Balance for Reactor - Summary :
  -------------------------------------
- Fusion power (MW)                                                        (powfmw)                   1950.772208  OP 
- Power from energy multiplication in blanket and shield (MW)              (emultmw)                   371.528542  OP 
+ Fusion power (MW)                                                        (powfmw)                   1950.772202  OP 
+ Power from energy multiplication in blanket and shield (MW)              (emultmw)                   371.528541  OP 
  Injected power (MW)                                                      (pinjmw)                     50.000000  OP 
  Ohmic power (MW)                                                         (pohmmw)                      0.884042  OP 
- Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 45.372701  OP 
- Total (MW)                                                                                          2418.557493  OP 
+ Power deposited in primary coolant by pump (MW)                          (htpmw_mech)                 45.372699  OP 
+ Total (MW)                                                                                          2418.557484  OP 
  
- Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            2050.956247  OP 
+ Heat extracted from first wall and blanket (MW)                          (pthermfw_blkt)            2050.956238  OP 
  Heat extracted from shield  (MW)                                         (pthermshld)                  0.516486  OP 
- Heat extracted from divertor (MW)                                        (pthermdiv)                 368.120099  OP 
+ Heat extracted from divertor (MW)                                        (pthermdiv)                 368.120098  OP 
  Nuclear and photon power lost to H/CD system (MW)                        (psechcd)                     0.000000  OP 
- Total (MW)                                                                                          2419.592832  OP 
+ Total (MW)                                                                                          2419.592823  OP 
  
  Electrical Power Balance :
  --------------------------
  Net electric power output(MW)                                            (pnetelmw.)                 499.999842  OP 
  Electric power for heating and current drive (MW)                        (pinjwp)                    125.031100  OP 
- Electric power for primary coolant pumps (MW)                            (htpmw)                      47.760738  OP 
+ Electric power for primary coolant pumps (MW)                            (htpmw)                      47.760736  OP 
  Electric power for vacuum pumps (MW)                                     (vachtmw)                     0.500000     
  Electric power for tritium plant (MW)                                    (trithtmw)                   15.000000     
  Electric power for cryoplant (MW)                                        (crypmw)                     39.293293  OP 
  Electric power for TF coils (MW)                                         (tfacpd)                      9.362052  OP 
  Electric power for PF coils (MW)                                         (pfwp)                        0.982268  OP 
  All other internal electric power requirements (MW)                      (fachtmw)                   108.928197  OP 
- Total (MW)                                                                                           846.857491  OP 
+ Total (MW)                                                                                           846.857488  OP 
  
- Gross electrical output* (MW)                                            (pgrossmw)                  846.857491  OP 
+ Gross electrical output* (MW)                                            (pgrossmw)                  846.857488  OP 
  (*Power for pumps in secondary circuit already subtracted)
  
  Power balance for power plant :
  -------------------------------
- Fusion power (MW)                                                        (powfmw)                   1950.772208  OP 
- Power from energy multiplication in blanket and shield (MW)              (emultmw)                   371.528542  OP 
- Total (MW)                                                                                          2322.300750  OP 
+ Fusion power (MW)                                                        (powfmw)                   1950.772202  OP 
+ Power from energy multiplication in blanket and shield (MW)              (emultmw)                   371.528541  OP 
+ Total (MW)                                                                                          2322.300743  OP 
  
  Net electrical output (MW)	                                              (pnetelmw)                  499.999842  OP 
- Heat rejected by main power conversion circuit (MW)                      (rejected_main)            1572.735341  OP 
- Heat rejected by other cooling circuits (MW)                             (psechtmw)                  251.499063  OP 
- Total (MW)                                                                                          2324.234246  OP 
+ Heat rejected by main power conversion circuit (MW)                      (rejected_main)            1572.735335  OP 
+ Heat rejected by other cooling circuits (MW)                             (psechtmw)                  251.499062  OP 
+ Total (MW)                                                                                          2324.234239  OP 
  
  
  Plant efficiency measures :
@@ -1630,7 +1632,7 @@ shldoth  = 0.80 * Outboard shield thickness (m)
 shldtth  = 0.30 * Upper/lower shield thickness (m);
 tfcth    = 1.0500e+00 * Inboard tf coil thickness; (centrepost for st) (m)
 vgap2    = 0.061 * Vertical gap between vacuum vessel and tf coil (m)
-vgaptf   = 1.60 * Vertical gap between x-point and divertor (m)
+vgap   = 1.60 * Vertical gap between x-point and divertor (m)
 tftsgap = 0.02
 thshield = 0.05
 vvblgap = 0.02

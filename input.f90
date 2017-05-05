@@ -1505,8 +1505,8 @@ contains
        case ('thshield')
           call parse_real_variable('thshield', thshield, 0.0D0, 10.0D0, &
                'TF/VV thermal shield thickness (m)')
-       case ('vgaptf')
-          call parse_real_variable('vgaptf', vgaptf, 0.0D0, 10.0D0, &
+       case ('vgap')
+          call parse_real_variable('vgap', vgap, 0.0D0, 10.0D0, &
                'Vert gap between x-pnt and divertor (m)')
        case ('vgap2')
           call parse_real_variable('vgap2', vgap2, 0.0D0, 10.0D0, &

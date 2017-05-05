@@ -1439,7 +1439,7 @@ contains
     call ovarre(outfile,'Inboard leg centre radius (m)','(rtfcin)',rtfcin, 'OP ')
     call ovarre(outfile,'Outboard leg centre radius (m)','(rtot)',rtot, 'OP ')
     call ovarre(outfile,'Maximum inboard edge height (m)','(hmax)',hmax, 'OP ')
-    call ovarre(outfile,'Gap between inboard vacuum vessel and TF coil (m)','(gapds)',gapds)
+    call ovarre(outfile,'gap between inboard vacuum vessel and thermal shield (m)','(gapds)',gapds)
 
     call oblnkl(outfile)
     call ocmmnt(outfile,'TF coil inner surface shape is approximated')

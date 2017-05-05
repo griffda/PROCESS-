@@ -2987,8 +2987,8 @@ module build_variables
   real(kind(1.0D0)) :: fwith = 0.0D0
   !+ad_vars  fwoth : outboard first wall thickness, initial estimate (m)
   real(kind(1.0D0)) :: fwoth = 0.0D0
-
-  !+ad_vars  gapds /0.155/ : gap between inboard vacuum vessel and TF coil (m)
+  ! Issue #481 Rename gapds
+  !+ad_vars  gapds /0.155/ : gap between inboard vacuum vessel and thermal shield (m)
   !+ad_varc                (iteration variable 61)
   real(kind(1.0D0)) :: gapds = 0.155D0
   !+ad_vars  gapoh /0.08/ : gap between central solenoid and TF coil (m)
@@ -3074,17 +3074,17 @@ module build_variables
   real(kind(1.0D0)) :: tfootfi = 1.19D0
   !+ad_vars  tfthko : outboard TF coil thickness (m)
   real(kind(1.0D0)) :: tfthko = 0.0D0
-  !+ad_vars  tftsgap /0.05/ : manufacturing/thermal expansion gap between TF and thermal shield (m)
+  !+ad_vars  tftsgap /0.05/ : Minimum metal-to-metal gap between TF coil and thermal shield (m)
   real(kind(1.0D0)) :: tftsgap = 0.05D0
   !+ad_vars  thshield /0.05/ : TF-VV thermal shield thickness (m)
   real(kind(1.0D0)) :: thshield = 0.05D0
-  !+ad_vars  vgap : (see vgaptf)
-  real(kind(1.0D0)) :: vgap = 0.0D0
+
   !+ad_vars  vgap2 /0.163/ : vertical gap between vacuum vessel and TF coil (m)
   real(kind(1.0D0)) :: vgap2 = 0.163D0
-  !+ad_vars  vgaptf /0.0/ : vertical gap between x-point and divertor (m)
+  ! Issue #481 Remove vgaptf
+  !+ad_vars  vgap /0.0/ : vertical gap between x-point and divertor (m)
   !+ad_varc                (if = 0, it is calculated)
-  real(kind(1.0D0)) :: vgaptf = 0.0D0
+  real(kind(1.0D0)) :: vgap= 0.0D0
   !+ad_vars  vgaptop /0.60/ : vertical gap between top of plasma and first wall (m)
   real(kind(1.0D0)) :: vgaptop = 0.60D0
   !+ad_vars  vvblgap /0.05/ : gap between vacuum vessel and blanket (m)

@@ -239,7 +239,7 @@ shldith  = 0.30 * Inboard shield thickness (m)
 shldoth  = 0.80 * Outboard shield thickness (m)
 shldtth  = 0.30 * Upper/lower shield thickness (m);
 vgap2    = 0.12 * Vertical gap between vacuum vessel and tf coil (m)
-vgaptf   = 1.60 * Vertical gap between x-point and divertor (m)
+vgap   = 1.60 * Vertical gap between x-point and divertor (m)
 
 *---------------Constraint Variables---------------*
 *------------------Cost Variables------------------*

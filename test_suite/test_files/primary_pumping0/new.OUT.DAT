@@ -12,7 +12,7 @@
  
  **************************************************************************************************************
  
- PROCESS 1.0.10 : Run on 28 Apr 2017 13:36:33 +01:00(hh:mm) UTC by freia045
+ PROCESS 1.0.10 : Run on  5 May 2017 13:35:53 +01:00(hh:mm) UTC by freia008
  Reactor concept design: Pulsed tokamak model, (c) CCFE
  Michael's test file
  (Please include this header in any models, presentations and papers based on these results)
@@ -295,18 +295,20 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Average mass of all ions (amu)                                           (aion)                    2.690E+00  OP 
  
  Effective charge                                                         (zeff)                        2.338464  OP 
- Plasma profile model                                                     (ipedestal)                       1     
  Density profile factor                                                   (alphan)                      1.000000     
+ Plasma profile model                                                     (ipedestal)                       1     
+ Pedestal profiles are used.
  Density pedestal r/a location                                            (rhopedn)                     0.940000     
  Electron density pedestal height (/m3)                                   (neped)                   6.780E+19     
  Electron density at pedestal / nGW                                       (fgwped)                  9.723E-01     
+ Temperature pedestal r/a location                                        (rhopedt)                     0.940000     
+ Pedestal scaling switch                                                  (ieped)                           0     
+ Electron temp. pedestal height (keV)                                     (teped)                       5.500000     
+ Electron temp. at separatrix (keV)                                       (tesep)                       0.100000     
  Electron density at separatrix (/m3)                                     (nesep)                   2.000E+19     
  Electron density at separatrix / nGW                                     (fgwsep)                  2.868E-01     
  Temperature profile index                                                (alphat)                      1.450000     
  Temperature profile index beta                                           (tbeta)                       2.000000     
- Temperature pedestal r/a location                                        (rhopedt)                     0.940000     
- Electron temp. pedestal height (keV)                                     (teped)                       5.500000     
- Electron temp. at separatrix (keV)                                       (tesep)                       0.100000     
  
  Density Limit using different models :
  
@@ -631,7 +633,7 @@ PROCESS has successfully optimised the iteration variables to minimise the figur
  Inboard leg centre radius (m)                                            (rtfcin)                  3.744E+00  OP 
  Outboard leg centre radius (m)                                           (rtot)                    1.633E+01  OP 
  Maximum inboard edge height (m)                                          (hmax)                    8.194E+00  OP 
- Gap between inboard vacuum vessel and TF coil (m)                        (gapds)                   1.200E-01  ITV
+ gap between inboard vacuum vessel and thermal shield (m)                 (gapds)                   1.200E-01  ITV
  
  TF coil inner surface shape is approximated
  by a straight segment and elliptical arcs between the following points :
@@ -1454,7 +1456,7 @@ shldoth  = 0.80 * Outboard shield thickness (m)
 shldtth  = 0.30 * Upper/lower shield thickness (m);
 tfcth    = 1.0500e+00 * Inboard tf coil thickness; (centrepost for st) (m)
 vgap2    = 0.061 * Vertical gap between vacuum vessel and tf coil (m)
-vgaptf   = 1.60 * Vertical gap between x-point and divertor (m)
+vgap   = 1.60 * Vertical gap between x-point and divertor (m)
 tftsgap = 0.02
 thshield = 0.05
 vvblgap = 0.02

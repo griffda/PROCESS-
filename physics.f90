@@ -5738,6 +5738,7 @@ end function t_eped_scaling
                 call ocmmnt(outfile,'WARNING: Pedestal parameters are outside the range of applicability of the scaling:')
                 call ocmmnt(outfile,'triang: 0.4 - 0.6; kappa: 1.5 - 2.0;   plascur: 10 - 20 MA, rmajor: 7 - 11 m;')
                 call ocmmnt(outfile,'rminor: 2 - 3.5 m; tesep: 0 - 0.5 keV; normalised_total_beta: 2 - 3; ')
+                write(*,*)'WARNING: Pedestal parameters are outside the range of applicability of the scaling'
             endif
         endif
         call ovarrf(outfile,'Electron temp. pedestal height (keV)','(teped)',teped)
